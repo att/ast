@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -183,9 +183,7 @@ extern Error_info_t*	_error_infop_;
 extern void		error(int, ...);
 extern int		errormsg(const char*, int, ...);
 extern void		errorv(const char*, int, va_list);
-#ifndef errorx
 extern char*		errorx(const char*, const char*, const char*, const char*);
-#endif
 extern Error_info_t*	errorctx(Error_info_t*, int, int);
 
 #undef	extern

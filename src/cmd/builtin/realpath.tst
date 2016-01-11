@@ -33,32 +33,32 @@ TEST 01 'kitchen sink'
 
 	EXEC	t/dd
 		INPUT -n -
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		ERROR -n -
 
 	EXEC	t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	t/b
 
@@ -70,39 +70,39 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--quiet t/b
 
@@ -113,11 +113,11 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--readlink t/dd
 		OUTPUT -
@@ -723,32 +723,32 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--physical t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--physical t/b
 
@@ -760,39 +760,39 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--physical t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--physical t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--physical --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--physical --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--physical --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--physical --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--physical --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--physical --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--physical --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--physical --quiet t/b
 
@@ -803,11 +803,11 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--physical --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--physical --quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--physical --readlink t/dd
 		OUTPUT -
@@ -1067,32 +1067,32 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize t/b
 
@@ -1104,39 +1104,39 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--canonicalize --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize --quiet t/b
 
@@ -1147,11 +1147,11 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--canonicalize --quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize --readlink t/dd
 		OUTPUT -
@@ -1180,18 +1180,18 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize --readlink t/c
 		OUTPUT -
@@ -1219,17 +1219,17 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --readlink --quiet t/dd/eee
 
 	EXEC	--canonicalize --readlink --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize --readlink --quiet t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize --readlink --quiet t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize --readlink --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize --readlink --quiet t/c
 		OUTPUT -
@@ -1731,32 +1731,32 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --logical --relative --readlink --quiet t/xxx
 
 	EXEC	--canonicalize --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize --physical t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize --physical t/b
 
@@ -1768,39 +1768,39 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --physical t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --physical t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize --physical --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--canonicalize --physical --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize --physical --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize --physical --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize --physical --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize --physical --quiet t/b
 
@@ -1811,11 +1811,11 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --physical --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--canonicalize --physical --quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize --physical --readlink t/dd
 		OUTPUT -
@@ -1844,18 +1844,18 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize --physical --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --physical --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize --physical --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize --physical --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize --physical --readlink t/c
 		OUTPUT -
@@ -1883,17 +1883,17 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --physical --readlink --quiet t/dd/eee
 
 	EXEC	--canonicalize --physical --readlink --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize --physical --readlink --quiet t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize --physical --readlink --quiet t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize --physical --readlink --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize --physical --readlink --quiet t/c
 		OUTPUT -
@@ -2073,29 +2073,29 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --physical --relative --readlink --quiet t/xxx
 
 	EXEC	--canonicalize-existing t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-existing t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-existing t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-existing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-existing t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-existing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing t/a
 		OUTPUT -
@@ -2118,30 +2118,30 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/xxx: canonicalization error [No such file or directory]'
 
 	EXEC	--canonicalize-existing --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-existing --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-existing --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-existing --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-existing --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --quiet t/a
 		OUTPUT -
@@ -2697,29 +2697,29 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-existing --logical --relative --readlink --quiet t/xxx
 
 	EXEC	--canonicalize-existing --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-existing --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-existing --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-existing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-existing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --physical t/a
 		OUTPUT -
@@ -2742,30 +2742,30 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/xxx: canonicalization error [No such file or directory]'
 
 	EXEC	--canonicalize-existing --physical --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-existing --physical --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-existing --physical --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-existing --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --physical --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-existing --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --physical --quiet t/a
 		OUTPUT -
@@ -3009,85 +3009,85 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-existing --physical --relative --readlink --quiet t/xxx
 
 	EXEC	--canonicalize-missing t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-missing t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-missing t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-missing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-missing t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-missing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing t/b
 
 	EXEC	--canonicalize-missing t/d/e
 
 	EXEC	--canonicalize-missing t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--canonicalize-missing --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-missing --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-missing --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-missing --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --quiet t/b
 
 	EXEC	--canonicalize-missing --quiet t/d/e
 
 	EXEC	--canonicalize-missing --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --readlink t/dd
 		OUTPUT -
@@ -3116,21 +3116,21 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize-missing --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize-missing --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize-missing --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize-missing --readlink t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
 
 	EXEC	--canonicalize-missing --readlink t/xxx
 		OUTPUT -
@@ -3155,20 +3155,20 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-missing --readlink --quiet t/dd/eee
 
 	EXEC	--canonicalize-missing --readlink --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize-missing --readlink --quiet t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize-missing --readlink --quiet t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize-missing --readlink --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize-missing --readlink --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
 
 	EXEC	--canonicalize-missing --readlink --quiet t/xxx
 		OUTPUT -
@@ -3681,85 +3681,85 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize-missing --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-missing --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-missing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-missing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --physical t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical t/b
 
 	EXEC	--canonicalize-missing --physical t/d/e
 
 	EXEC	--canonicalize-missing --physical t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --physical t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --physical --quiet t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd
 
 	EXEC	--canonicalize-missing --physical --quiet t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d
 
 	EXEC	--canonicalize-missing --physical --quiet t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z
 
 	EXEC	--canonicalize-missing --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical --quiet t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --physical --quiet t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/f
 
 	EXEC	--canonicalize-missing --physical --quiet t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical --quiet t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --physical --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical --quiet t/b
 
 	EXEC	--canonicalize-missing --physical --quiet t/d/e
 
 	EXEC	--canonicalize-missing --physical --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --physical --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical --quiet t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --physical --readlink t/dd
 		OUTPUT -
@@ -3788,21 +3788,21 @@ TEST 01 'kitchen sink'
 		ERROR - 'realpath: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize-missing --physical --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize-missing --physical --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize-missing --physical --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize-missing --physical --readlink t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
 
 	EXEC	--canonicalize-missing --physical --readlink t/xxx
 		OUTPUT -
@@ -3827,20 +3827,20 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/dd/eee
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/c
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/f
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/dd
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/realpath.tmp/d/e
 
 	EXEC	--canonicalize-missing --physical --readlink --quiet t/xxx
 		OUTPUT -

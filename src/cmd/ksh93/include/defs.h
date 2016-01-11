@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -140,6 +140,7 @@ struct shared
 	int		bltin_nnodes;	/* number of bltins nodes */ 
 	int		sigmax;
 	int		nforks;
+	int		shtype;
 	Shwait_f	waitevent;
 };
 
@@ -320,6 +321,7 @@ struct shared
 #define	SH_FCOMPLETE	17	/* set for filename completion */
 #define	SH_PREINIT	18	/* set with SH_INIT before parsing options */
 #define SH_COMPLETE	19	/* set for command completion */
+#define SH_IOPROMPT	20	/* set when prompting */
 
 #define SH_BASH			41
 #define SH_BRACEEXPAND		42
@@ -373,6 +375,7 @@ struct shared
 #   define SH_SHIFT_VERBOSE	75
 #   define SH_SOURCEPATH	76
 #   define SH_XPG_ECHO		77
+#   define SH_LASTPIPE		78
 #endif
 
 #define SH_HISTAPPEND		60
@@ -431,7 +434,7 @@ extern int		sh_outtype(Shell_t*, Sfio_t*);
 extern char 		*sh_mactry(Shell_t*,char*);
 extern int		sh_mathstd(const char*);
 extern void		sh_printopts(Shell_t*,Shopt_t,int,Shopt_t*);
-extern int 		sh_readline(Shell_t*,char**,volatile int,int,ssize_t,long);
+extern int 		sh_readline(Shell_t*,char**,void*,volatile int,int,ssize_t,long);
 extern Sfio_t		*sh_sfeval(char*[]);
 extern char		*sh_fmtj(const char*);
 extern char		*sh_fmtstr(const char*,int);

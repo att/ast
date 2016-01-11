@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -61,7 +61,7 @@ export ENV=/.$env
 if	[[ ! -o privileged ]]
 then
 	got=$($SHELL -E -c : 2>/dev/null)
-	if	[[ $g ]]
+	if	[[ $got ]]
 	then
 		got=$(printf %q "$got")
 		err_exit "\$ENV file &>/dev/null does not redirect stdout -- expected '', got $got"

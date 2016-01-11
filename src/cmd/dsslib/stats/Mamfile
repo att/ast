@@ -9,7 +9,7 @@ setv AS as
 setv ASFLAGS
 setv CC cc
 setv mam_cc_FLAGS ${mam_cc_DLL}
-setv CCFLAGS ${mam_cc_DEBUG}
+setv CCFLAGS ${-debug-symbols?1?${mam_cc_DEBUG} -D_BLD_DEBUG?${mam_cc_OPTIMIZE}?}
 setv CCLDFLAGS ${-strip-symbols?1?${mam_cc_LD_STRIP}??}
 setv COTEMP $$
 setv CPIO cpio
@@ -182,7 +182,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done stats.c
 meta stats.o %.c>%.o stats.c stats
 prev stats.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssstats]"\" -D_PACKAGE_ast -D_BLD_DEBUG -c stats.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssstats]"\" -D_PACKAGE_ast -c stats.c
 done stats.o generated
 make lib.o
 make lib.c
@@ -190,7 +190,7 @@ prev ${PACKAGE_ast_INCLUDE}/dss.h implicit
 done lib.c
 meta lib.o %.c>%.o lib.c lib
 prev lib.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_DEBUG -c lib.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c lib.c
 done lib.o generated
 exec - ${AR} rc libdssstats.a stats.o lib.o
 exec - (ranlib libdssstats.a) >/dev/null 2>&1 || true

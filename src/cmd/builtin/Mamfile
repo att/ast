@@ -169,7 +169,7 @@ meta dlls.o %.c>%.o dlls.c dlls
 prev dlls.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_dlls"
 setv LICENSE -DLICENSE="since=2002,author=gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_dlls -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c dlls.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_dlls -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c dlls.c
 done dlls.o generated
 bind -ldll
 bind -last
@@ -185,7 +185,7 @@ done look.c
 meta look.o %.c>%.o look.c look
 prev look.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_look"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_look -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c look.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_look -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c look.c
 done look.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_look"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o look look.o ${mam_libast} ${mam_libcmd}
@@ -209,7 +209,7 @@ done mime.c
 meta mime.o %.c>%.o mime.c mime
 prev mime.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_mime"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_mime -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c mime.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_mime -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c mime.c
 done mime.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_mime"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o mime mime.o ${mam_libast} ${mam_libcmd}
@@ -238,11 +238,12 @@ meta pty.o %.c>%.o pty.c pty
 prev pty.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pty"
 setv LICENSE -DLICENSE="since=2001,author=gsf+dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pty -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2001-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pty.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pty -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2001-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pty.c
 done pty.o generated
-bind -lutil dontcare
+make ${mam_libutil}
+done ${mam_libutil} dontcare virtual
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pty"
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L.} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pty pty.o ${mam_libutil} ${mam_libast} ${mam_libcmd}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pty pty.o ${mam_libast} ${mam_libcmd}
 done pty generated
 make nl
 make nl.o
@@ -254,7 +255,7 @@ meta nl.o %.c>%.o nl.c nl
 prev nl.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_nl"
 setv LICENSE -DLICENSE="since=2003,author=dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DCMD_STANDALONE=b_nl -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c nl.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DCMD_STANDALONE=b_nl -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c nl.c
 done nl.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_nl"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o nl nl.o ${mam_libast} ${mam_libcmd}
@@ -296,7 +297,7 @@ done pr.c
 meta pr.o %.c>%.o pr.c pr
 prev pr.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pr"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pr -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pr.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pr -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pr.c
 done pr.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pr"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pr pr.o ${mam_libast} ${mam_libcmd}
@@ -309,7 +310,7 @@ done strings.c
 meta strings.o %.c>%.o strings.c strings
 prev strings.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_strings"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_strings -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c strings.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_strings -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c strings.c
 done strings.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_strings"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o strings strings.o ${mam_libast} ${mam_libcmd}
@@ -328,7 +329,7 @@ done uudecode.c
 meta uudecode.o %.c>%.o uudecode.c uudecode
 prev uudecode.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uudecode"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uudecode.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uudecode.c
 done uudecode.o generated
 bind -luu
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uudecode"
@@ -345,7 +346,7 @@ done uuencode.c
 meta uuencode.o %.c>%.o uuencode.c uuencode
 prev uuencode.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uuencode"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uuencode.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uuencode.c
 done uuencode.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uuencode"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o uuencode uuencode.o ${mam_libuu} ${mam_libast} ${mam_libcmd}
@@ -358,7 +359,7 @@ done what.c
 meta what.o %.c>%.o what.c what
 prev what.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_what"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_what -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c what.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_what -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c what.c
 done what.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_what"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o what what.o ${mam_libast} ${mam_libcmd}
@@ -378,7 +379,7 @@ done who.c
 meta who.o %.c>%.o who.c who
 prev who.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_who"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_who -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c who.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_who -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c who.c
 done who.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_who"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o who who.o ${mam_libast} ${mam_libcmd}
@@ -586,6 +587,11 @@ make look.tst
 done look.tst
 exec - regress look.tst look
 done test.look virtual
+make test.ls
+make ls.tst
+done ls.tst
+exec - regress ls.tst
+done test.ls virtual
 make test.mkdir
 make mkdir.tst
 meta mkdir.tst %.rt>%.tst mkdir.rt mkdir

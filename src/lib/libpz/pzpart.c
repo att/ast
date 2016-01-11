@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1998-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1998-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -772,7 +772,7 @@ pzpartition(register Pz_t* pz, const char* partition)
 		error_info.file = s;
 		error_info.line = 0;
 	}
-	if (!(vm = vmopen(&pz->vmdisc, Vmlast, 0)))
+	if (!(vm = vmopen(Vmdcheap, Vmlast, 0)))
 	{
 		if (pz->disc->errorf)
 			(*pz->disc->errorf)(pz, pz->disc, ERROR_SYSTEM|2, "partition temporary vmalloc region open error");

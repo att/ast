@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -34,8 +34,10 @@
 #include	"io.h"
 #include	"jobs.h"
 #include	"history.h"
+#include	"variables.h"
+#include	"path.h"
 
-#if !defined(WCONTINUED) || !defined(WIFCONTINUED)
+#if !defined(WCONTINUED) || !defined(WIFCONTINUED) || defined(__APPLE__)
 #   undef  WCONTINUED
 #   define WCONTINUED	0
 #   undef  WIFCONTINUED
@@ -367,6 +369,7 @@ static void job_waitsafe(int sig, siginfo_t *info, void *context)
 static void job_waitsafe(int sig)
 #endif
 {
+	int saved_errno = errno;
 	if(job.in_critical || vmbusy())
 	{
 		job.savesig = sig;
@@ -374,6 +377,7 @@ static void job_waitsafe(int sig)
 	}
 	else
 		job_reap(sig);
+	errno = saved_errno;
 }
 
 /*
@@ -1053,6 +1057,8 @@ int job_list(struct process *pw,register int flag)
 	register int  n;
 	register const char *msg;
 	register int msize;
+	char *dir=0, *home = nv_getval(HOME);
+	size_t len = home?strlen(home):0;
 	if(!pw || pw->p_job<=0)
 		return(1);
 	if(pw->p_env != shp->jobenv)
@@ -1083,6 +1089,8 @@ int job_list(struct process *pw,register int flag)
 	sfprintf(outfile,"[%d] %c ",n, msize);
 	do
 	{
+		if(px && px->p_curdir)
+			dir = px->p_curdir;
 		n = 0;
 		if(flag&JOB_LFLAG)
 #if SHOPT_COSHELL
@@ -1123,7 +1131,23 @@ int job_list(struct process *pw,register int flag)
 			px = 0;
 		}
 		if(!px)
-			hist_list(shgd->hist_ptr,outfile,pw->p_name,0,";");
+		{
+			char *pwd;
+			if(dir && (pwd=nv_getval(PWDNOD)) && !strcmp(dir,pwd))
+				dir = 0;
+			hist_list(shgd->hist_ptr,outfile,pw->p_name,dir?'\n':0,";");
+			if(dir)
+			{
+				char *tilde = "";
+				if(!strncmp(dir,home,len) && dir[len]=='/' || dir[len]==0)
+				{
+					tilde = "~";
+					dir += len;
+				}
+				sfprintf(outfile,"  (wd: %s%s)\n",tilde,dir);
+				dir = 0;
+			}
+		}
 		else
 			sfputr(outfile, e_nlspace, -1);
 	}
@@ -1446,6 +1470,7 @@ int job_post(Shell_t *shp,pid_t pid, pid_t join)
 	else
 		pw = new_of(struct process,0);
 	pw->p_flag = 0;
+	pw->p_curdir = 0;
 	job.numpost++;
 	pw->p_exitval = job.exitval; 
 #if SHOPT_COSHELL
@@ -1523,6 +1548,8 @@ int job_post(Shell_t *shp,pid_t pid, pid_t join)
 		pw->p_nxtproc = 0;
 		do	pw->p_nxtjob = job.pwlist;
 		while	(asocasptr(&job.pwlist,pw->p_nxtjob,pw)!=pw->p_nxtjob);
+		if(pw->p_curdir = path_pwd(shp,0))
+			pw->p_curdir = strdup(pw->p_curdir);
 	}
 	job_unlock();
 	return(pw->p_job);
@@ -1917,7 +1944,8 @@ static struct process *job_unpost(Shell_t* shp,register struct process *pwtop,in
 	if(pwtop->p_job == job.curjobid)
 		return(0);
 	/* all processes complete, unpost job */
-	job_unlink(pwtop);
+	if(pwtop)
+		job_unlink(pwtop);
 	for(pw=pwtop; pw; pw=pw->p_nxtproc)
 	{
 		if(pw && pw->p_exitval)
@@ -1939,6 +1967,8 @@ static struct process *job_unpost(Shell_t* shp,register struct process *pwtop,in
 		pw->p_flag &= ~P_DONE;
 		job.numpost--;
 		pw->p_nxtjob = freelist;
+		if(pw->p_curdir)
+			free(pw->p_curdir);
 		freelist = pw;
 	}
 	pwtop->p_pid = 0;
@@ -1946,7 +1976,8 @@ static struct process *job_unpost(Shell_t* shp,register struct process *pwtop,in
 	sfprintf(sfstderr,"ksh: job line %4d: free pid=%d critical=%d job=%d\n",__LINE__,getpid(),job.in_critical,pwtop->p_job);
 	sfsync(sfstderr);
 #endif /* DEBUG */
-	job_free((int)pwtop->p_job);
+	if(pwtop)
+		job_free((int)pwtop->p_job);
 	return((struct process*)0);
 }
 
@@ -2060,6 +2091,7 @@ again:
 	{
 		count = bp->count;
 		jp = bp->list;
+		jpold = 0;
 		goto again;
 	}
 	if(jp && (env<0 || jp->env==env))

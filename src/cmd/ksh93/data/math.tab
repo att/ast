@@ -57,7 +57,7 @@ f 1 log1p
 f 1 log2
 f 1 logb
 f 1 nearbyint
-f 3 2 nextafter
+f 1 2 nextafter
 f 1 2 nexttoward
 f 2 pow
 f 2 remainder

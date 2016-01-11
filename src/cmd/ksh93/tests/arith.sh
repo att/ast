@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -314,7 +314,7 @@ then	err_exit 'display of unsigned integers in non-decimal bases wrong'
 fi
 $SHELL -c 'i=0;(( ofiles[i] != -1 && (ofiles[i] < mins || mins == -1) ));exit 0' 2> /dev/null || err_exit 'lexical error with arithemtic expression'
 $SHELL -c '(( +1 == 1))' 2> /dev/null || err_exit 'unary + not working'
-typeset -E20 val=123.01234567890
+typeset -E val=123.01234567890
 [[ $val == 123.0123456789 ]] || err_exit "rounding error val=$val"
 if	[[ $(print x$((10))=foo) != x10=foo ]]
 then	err_exit 'parsing error with x$((10))=foo'
@@ -854,5 +854,6 @@ function f
 integer -u u=123
 (( u.MAX < (1<<31) ))  && err_exit '$((i.MAX)) not workng when i is unsigned int'
 
+[[ $(( (2**32) << 67 )) == 0 ]] || err_exit 'left shift count 67 is non-zero' 
 
 exit $((Errors<125?Errors:125))

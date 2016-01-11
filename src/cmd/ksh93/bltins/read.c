@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,12 +14,12 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 /*
- * read [-ACprs] [-d delim] [-u filenum] [-t timeout] [-n n] [-N n] [name...]
+ * read [-ACprs] [-q format] [-d delim] [-u filenum] [-t timeout] [-n n] [-N n] [name...]
  *
  *   David Korn
  *   AT&T Labs
@@ -50,25 +50,170 @@
 
 struct read_save
 {
-        char	**argv;
+	char	**argv;
 	char	*prompt;
-        short	fd;
-        short	plen;
+	short	fd;
+	short	plen;
 	int	flags;
+	int	mindex;
 	ssize_t	len;
         long	timeout;
+};
+
+struct Method
+{
+	char	*name;
+	void	*fun;
+};
+
+static int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out)
+{
+	int	c, state=0, lastc=0, level=0, line=1;
+	size_t	here, offset = stktell(shp->stk);
+	char	*start;
+	bool	isname, isnull=false;
+	while((c = sfgetc(in)) > 0)
+	{
+		if(c=='\n')
+			line++;
+		if(state==0)
+		{
+			switch(c)
+			{
+			    case '\t': case ' ':
+				if(lastc==' ' || lastc=='\t')
+					continue;
+				break;
+			    case ',':
+				continue;
+			    case '[': case '{':
+				c = '(';
+				level++;
+				break;
+			    case ']': case '}':
+				c = ')';
+				level--;
+				break;
+			    case '"':
+				state = 1;
+				isname = true;
+				sfputc(shp->stk,c);
+				continue;
+			}
+			sfputc(out,c);
+			if(level==0)
+				break;
+		}
+		else if(state==1)
+		{
+			if(c=='"' && lastc != '\\') 
+				state=2;
+			else if(state==1 && !isalnum(c) && c!='_')
+				isname = false;
+			sfputc(shp->stk,c);
+		}
+		else if(state==2)
+		{
+			char *last;
+			if(c==' ' || c == '\t')
+				continue;
+			if(c==':')
+			{
+				int len;
+				while((c = sfgetc(in)) &&  isblank(c));
+				sfungetc(in,c);
+				if(!strchr("[{,\"",c))
+				{
+					if(isdigit(c) || c=='.' || c =='-')
+						sfwrite(out,"float ",6);
+					else if(c=='t' || c=='f')
+						sfwrite(out,"bool ",5);
+					else if(c=='n')
+					{
+						char buff[4];
+						isnull = true;
+						sfread(in,buff,4);
+						sfwrite(out,"typeset  ",8);
+					}
+				}
+				start = stkptr(shp->stk,offset);
+				here = stktell(shp->stk);
+				if(isname && !isalpha(*(start+1)) && c!='_')
+					isname = false;
+				len = here-offset-2;
+				if(!isname)
+				{
+					char *sp;
+					sfwrite(out,".[",2);
+					for(sp=start+1;len-->0;sp++)
+					{
+						if(*sp=='$')
+						{
+							if(sp>start+1)
+								sfwrite(out,start,sp-start);
+							sfputc(out,'\\');
+							sfputc(out,'$');
+							start = sp;
+						}
+					}
+					len = (sp- start)-1;
+				}
+				sfwrite(out,start+1, len);
+				if(!isname)
+					sfputc(out,']');
+				if(isnull)
+					isnull = false;
+				else
+					sfputc(out,'=');
+				stkseek(shp->stk,offset);
+				if(c=='{')
+					c = ' ';
+			}
+			if(c==',' || c=='\n' || c== '}' || c==']' || c=='{')
+			{
+				start = stkptr(shp->stk,offset);
+				here = stktell(shp->stk);
+				if(here>1)
+				{
+					*stkptr(shp->stk,here-1) = 0;
+					stresc(start+1);
+					sfputr(out,sh_fmtq(start+1),-1);
+					stkseek(shp->stk,offset);
+				}
+				if(c=='{')
+					sfputc(out,'=');
+				else
+					sfputc(out,' ');
+				if(c=='}' || c==']' || c=='{')
+					sfungetc(in,c);
+			}
+			c = ' ';
+			state = 0;
+		}
+		lastc = c;
+	}
+	return(0);
+}
+
+static struct Method methods[] = {
+	"json",	json2sh,
+	"ksh",	0,
+	0,	0
 };
 
 int	b_read(int argc,char *argv[], Shbltin_t *context)
 {
 	Sfdouble_t sec;
-	register char *name;
+	register char *name=0;
 	register int r, flags=0, fd=0;
 	register Shell_t *shp = context->shp;
 	ssize_t	len=0;
 	long timeout = 1000*shp->st.tmout;
 	int save_prompt, fixargs=context->invariant;
 	struct read_save *rp;
+	int mindex=0;
+	char *method = 0;
+	void *readfn = 0;
 	static char default_prompt[3] = {ESC,ESC};
 	rp = (struct read_save*)(context->data);
 	if(argc==0)
@@ -84,6 +229,7 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		fd = rp->fd;
 		argv = rp->argv;
 		name = rp->prompt;
+		mindex = rp->mindex;
 		r = rp->plen;
 		goto bypass;
 	}
@@ -94,6 +240,7 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		break;
 	    case 'C':
 		flags |= C_FLAG;
+		method = "ksh";
 		break;
 	    case 't':
 		sec = sh_strnum(shp,opt_info.arg, (char**)0,1);
@@ -108,8 +255,19 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		}
 		break;
 	    case 'p':
-		if((fd = shp->cpipe[0])<=0)
-			errormsg(SH_DICT,ERROR_exit(1),e_query);
+		if(shp->cpipe[0]<=0 || *opt_info.arg!='-' && (!strmatch(opt_info.arg,"+(\\w)") || isdigit(*opt_info.arg)))
+			name = opt_info.arg;
+		else
+		{
+			/* for backward compatibility */
+			fd = shp->cpipe[0];
+			argv--;
+			argc--;
+		}
+		break;
+	    case 'm':
+		method = opt_info.arg;
+		flags |= C_FLAG;
 		break;
 	    case 'n': case 'N':
 		flags &= ((1<<D_FLAG)-1);
@@ -127,14 +285,28 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		flags |= SS_FLAG;
 		break;
 	    case 'u':
-		fd = (int)opt_info.num;
-		if(sh_inuse(shp,fd))
+		if(opt_info.arg[0]=='p' && opt_info.arg[1]==0)
+		{
+			if((fd = shp->cpipe[0])<=0)
+				errormsg(SH_DICT,ERROR_exit(1),e_query);
+			break;
+		}
+		fd = (int)strtol(opt_info.arg,&opt_info.arg,10);
+		if(*opt_info.arg)
 			fd = -1;
+		else if(!sh_iovalidfd(shp,fd))
+			fd = -1;
+		else if(!(shp->inuse_bits&(1<<fd)) && (sh_inuse(shp,fd) || (shp->gd->hist_ptr && fd==sffileno(shp->gd->hist_ptr->histfp))))
 		break;
 	    case 'v':
 		flags |= V_FLAG;
 		break;
 	    case ':':
+		if(shp->cpipe[0]>0 && strcmp(opt_info.arg,"-p: prompt argument expected")==0)
+		{
+			fd = shp->cpipe[0];
+			break;
+		}
 		errormsg(SH_DICT,2, "%s", opt_info.arg);
 		break;
 	    case '?':
@@ -144,13 +316,26 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 	argv += opt_info.index;
 	if(error_info.errors)
 		errormsg(SH_DICT,ERROR_usage(2), "%s", optusage((char*)0));
+	if(method)
+	{
+		for(mindex=0; methods[mindex].name; mindex++)
+		{
+			if(strcmp(method,methods[mindex].name)==0)
+				break;
+		}
+		if(!methods[mindex].name)
+			errormsg(SH_DICT,ERROR_system(1),"%s method not supported",method);
+	}
+		
 	if(!((r=shp->fdstatus[fd])&IOREAD)  || !(r&(IOSEEK|IONOSEEK)))
 		r = sh_iocheckfd(shp,fd,fd);
 	if(fd<0 || !(r&IOREAD))
 		errormsg(SH_DICT,ERROR_system(1),e_file+4);
 	/* look for prompt */
-	if((name = *argv) && (name=strchr(name,'?')) && (r&IOTTY))
-		r = strlen(name++);
+	if(!name && *argv && (name=strchr(*argv,'?')))
+		name++;
+	if(name && (r&IOTTY))
+		r = strlen(name)+1;
 	else
 		r = 0;
 	if(argc==fixargs && (rp=newof(NIL(struct read_save*),struct read_save,1,0)))
@@ -163,6 +348,7 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		rp->prompt = name;
 		rp->plen = r;
 		rp->len = len;
+		rp->mindex = mindex;
 	}
 bypass:
 	shp->prompt = default_prompt;
@@ -174,7 +360,8 @@ bypass:
 	shp->timeout = 0;
 	save_prompt = shp->nextprompt;
 	shp->nextprompt = 0;
-	r=sh_readline(shp,argv,fd,flags,len,timeout);
+	readfn = (flags&C_FLAG)?methods[mindex].fun:0;
+	r=sh_readline(shp,argv,readfn,fd,flags,len,timeout);
 	shp->nextprompt = save_prompt;
 	if(r==0 && (r=(sfeof(shp->sftable[fd])||sferror(shp->sftable[fd]))))
 	{
@@ -207,7 +394,7 @@ static void timedout(void *handle)
  *  <flags> is union of -A, -r, -s, and contains delimiter if not '\n'
  *  <timeout> is number of milli-seconds until timeout
  */
-int sh_readline(register Shell_t *shp,char **names, volatile int fd, int flags,ssize_t size,long timeout)
+int sh_readline(register Shell_t *shp,char **names, void *readfn, volatile int fd, int flags,ssize_t size,long timeout)
 {
 	register ssize_t	c;
 	register unsigned char	*cp;
@@ -271,6 +458,7 @@ int sh_readline(register Shell_t *shp,char **names, volatile int fd, int flags,s
 			if(!nv_isattr(np,NV_MINIMAL))
 				np->nvenv = sp;
 			nv_setvtree(np);
+			*(void**)(np->nvfun+1) = readfn;
 		}
 		else
 			name = *++names;

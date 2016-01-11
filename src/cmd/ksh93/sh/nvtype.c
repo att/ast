@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -445,6 +445,11 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 			nrp++;
 			nq = nq->nvalue.nrp->np;
 		}
+		else if(nv_isattr(nq,NV_RDONLY) && nv_isattr(nq,NV_INTEGER))
+		{
+			if(nv_type(np)!=np || nv_getnum(nq)==0)
+				nq->nvalue.cp = Empty;
+		}
 		if(xp = (Namtype_t*)nv_hasdisc(nq,&type_disc))
 			xp->parent = mp;
 		if(flags==(NV_NOFREE|NV_ARRAY))
@@ -469,7 +474,7 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 			stkseek(shp->stk,offset);
 			if(nr)
 			{
-				if(nv_isattr(nq,NV_RDONLY) && (nq->nvalue.cp || nv_isattr(nq,NV_INTEGER)))
+				if(nv_isattr(nq,NV_RDONLY) && nv_type(np)!=np && (nq->nvalue.cp || nv_isattr(nq,NV_INTEGER)))
 					errormsg(SH_DICT,ERROR_exit(1),e_readonly, nq->nvname);
 				if(nv_isref(nq))
 					nq = nv_refnode(nq);
@@ -524,8 +529,6 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 						nv_delete(nr,shp->last_root,0);
 				}
 			}
-			else if(nv_isattr(nq,NV_RDONLY) && !nq->nvalue.cp && !nv_isattr(nq,NV_INTEGER))
-				errormsg(SH_DICT,ERROR_exit(1),e_required,nq->nvname,nv_name(mp));
 		}
 	}
 	if(nv_isattr(mp,NV_BINARY))
@@ -775,7 +778,9 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 			sfputc(sp,0);
 			for(n=strlen(buffer); n>0 && buffer[n-1]==' '; n--);
 			buffer[n] = 0;
-			if(cp)
+			if(nq->nvalue.cp==Empty && nv_isattr(nq,NV_RDONLY))
+				sfprintf(out,"\t[+%s?%s, default value is required at creation\n",nq->nvname,*buffer?buffer:"string");
+			else if(cp)
 				sfprintf(out,"\t[+%s?%s, default value is %s.\n",nq->nvname,*buffer?buffer:"string",cp);
 			else
 				sfprintf(out,"\t[+%s?%s.\n",nq->nvname,*buffer?buffer:"string");
@@ -1425,7 +1430,11 @@ int nv_settype(Namval_t* np, Namval_t *tp, int flags)
 			if(mp && nv_isarray(mp))
 				nv_settype(mp,tp,flags);
 			else
+			{
 				nv_arraysettype(np, tp, nv_getsub(np),flags);
+				if(mp)
+					nv_checkrequired(mp);
+			}
 		}
 		while(nv_nextsub(np));
 	}
@@ -1812,4 +1821,25 @@ Namval_t *nv_typeparent(Namval_t *np)
 	if(tp = (Namtype_t*)nv_hasdisc(np,&type_disc))
 		return(tp->parent);
 	return(0);
+}
+
+void nv_checkrequired(Namval_t *mp)
+{
+	Namtype_t	*dp, *dq=0;
+	Namval_t	*np, *mq, *nq;
+	int		i;
+	if(nv_arrayptr(mp) || !(dp=(Namtype_t*)nv_hasdisc(mp,&type_disc)))
+		return;
+	if(mq = nv_type(mp))
+		dq=(Namtype_t*)nv_hasdisc(mq,&type_disc);
+	for(i=0; i < dp->numnodes; i++) 
+	{
+		if(dq)
+			nq = nv_namptr(dq->nodes,i);
+		np = nv_namptr(dp->nodes,i);
+		if(nv_isattr(np,NV_RDONLY) && np->nvalue.cp==Empty)
+			errormsg(SH_DICT,ERROR_exit(1),e_required,np->nvname,nv_type(mp)->nvname);
+		if(nv_isattr(nq,NV_RDONLY))
+			nv_onattr(np,NV_RDONLY);
+	}
 }

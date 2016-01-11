@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -30,7 +30,7 @@
 #define EVENT_MINOR		0
 
 static const char usage[] =
-"[-?\n@(#)$Id: event (AT&T Research) 2007-06-05 $\n]"
+"[-?\n@(#)$Id: event (AT&T Research) 2013-10-25 $\n]"
 USAGE_LICENSE
 "[+NAME?event - shared event client and server]"
 "[+DESCRIPTION?\bevent\b is a shared event client and server. Events are "
@@ -211,7 +211,7 @@ typedef struct State_s			/* program state			*/
 	Dt_t*		events;		/* outstanding events dictionary	*/
 	char*		service;	/* service connect stream path		*/
 	char*		path;		/* event db path			*/
-	Sfio_t*		logf;		/* log buffer stream			*/
+	Sfio_t*		logf;		/* log file stream			*/
 	Sfio_t*		usrf;		/* usr buffer stream			*/
 	Sfio_t*		tmp;		/* tmp buffer stream			*/
 	char*		cmd[1024];	/* request command argv			*/
@@ -261,6 +261,7 @@ log(State_t* state, Connection_t* con, int type, const char* format, ...)
 {
 	va_list		ap;
 	char*		s;
+	int		n;
 
 	va_start(ap, format);
 	if (format)
@@ -271,11 +272,11 @@ log(State_t* state, Connection_t* con, int type, const char* format, ...)
 		if (!(s = sfstruse(state->tmp)))
 			error(ERROR_SYSTEM|3, "out of space");
 		if (type != 'I' && state->log && state->logf)
-			sfprintf(state->logf, "%s (%03d) %c %s\n", fmttime("%K", time(NiL)), con ? con->fd : 0, type, s);
+			sfprintf(state->logf, "%s (%03d) %c %s\n", fmttime("%K", time(NiL)), con ? con->fd : 0, toupper(type), s);
 		if (con && type != 'R' && type != 'S')
 		{
 			if (type != 'L' || !con->quiet)
-				sfprintf(state->usrf, "%c %s\n", type, s);
+				debug_printf(con->fd, "%c %s\n", toupper(type), s);
 			if (type == 'W')
 				con->code |= 1;
 			else if (type == 'E')
@@ -330,7 +331,7 @@ notify(State_t* state, Event_t* ep)
 				write(cp->fd, s, n);
 			}
 			else if (!cp->quiet)
-				log(state, cp, 'L', "%s raised", ep->name);
+				log(state, cp, 'i', "%s raised", ep->name);
 			n = ep->waiting == 1;
 			dtdelete(cp->waiting, wp);
 			if (n)
@@ -474,7 +475,7 @@ apply(State_t* state, Connection_t* con, int id, int index, datum key, datum val
 		{
 			if (!state->hold && (e = (Event_t*)dtmatch(state->events, key.dptr)))
 				notify(state, e);
-			log(state, con, 'L', "%s raised", key.dptr);
+			log(state, con, 'I', "%s raised", key.dptr);
 		}
 		else if (!dbm_error(state->dbm))
 			log(state, con, 'W', "%s unchanged", key.dptr);

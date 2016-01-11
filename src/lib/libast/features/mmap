@@ -26,29 +26,13 @@ tst	lib_mmap note{ standard mmap interface that works }end execute{
 	#endif
 	{
 		caddr_t		mm;
-		char		*t, *u, *f;
+		char		*file;
 		int		i, fd, okfixed;
-		char		file[1024], buf[MAPSIZE];
+		char		buf[MAPSIZE];
 		struct tms	stm, etm;
 		clock_t		rdtm, mmtm;
 
-		/* create data file in a local fs if possible */
-		t = file;
-		if (access(f = "/tmp", 0) == 0 ||
-		    access(f = "/usr/tmp", 0) == 0)
-		{
-			while (*t = *f++)
-				t++;
-			*t++ = '/';
-		}
-		u = t;
-		f = argv[0];
-		while (*t = *f++)
-			if (*t == '/')
-				t = u;
-			else if (*t != '.')
-				t++;
-		*t++ = '.'; *t++ = 'D'; *t = 0;
+		file = argv[1];
 		if ((fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666)) < 0)
 			return 1;
 
@@ -225,6 +209,7 @@ tst	-D_LARGEFILE64_SOURCE note{ mmap is worth using }end output{
 	#endif
 	#include <unistd.h>
 	#include <fcntl.h>
+	#include <string.h>
 	#include <sys/types.h>
 	#include <sys/mman.h>
 	#include <sys/stat.h>
@@ -257,17 +242,13 @@ tst	-D_LARGEFILE64_SOURCE note{ mmap is worth using }end output{
 	#endif
 	{
 		caddr_t		mm;
-		char		*t, *f;
+		char		*file, *t;
 		int		i, fd, k, run;
-		char		file[1024], buf[MAPSIZE];
+		char		buf[MAPSIZE];
 		struct tms	stm, etm;
 		clock_t		rdtm, mmtm;
 	
-		/* create data file */
-		f = argv[0]; t = file;
-		while (*t = *f++)
-			t++;
-		*t++ = '.'; *t++ = 'D'; *t = 0;
+		file = argv[1];
 		if ((fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666)) < 0)
 			return 1;
 	

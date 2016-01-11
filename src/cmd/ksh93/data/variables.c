@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -106,6 +106,14 @@ const struct shtable2 shtab_variables[] =
 	".sh.op_astbin",NV_NOFREE,			(char*)e_astbin,
 	"SH_OPTIONS",	0,				(char*)0,
 	"SHLVL",	NV_INTEGER|NV_NOFREE|NV_EXPORT,	(char*)0,
+	"COMP_CWORD",	NV_INTEGER|NV_SHORT|NV_UNSIGN,(char*)0,
+	"COMP_LINE",	NV_NOFREE,(char*)0,
+	"COMP_POINT",	NV_EXPORT|NV_INTEGER|NV_SHORT|NV_UNSIGN,(char*)0,
+	"COMP_WORDS",	NV_NOFREE,		(char*)0,
+	"COMP_KEY",	NV_EXPORT|NV_INTEGER|NV_SHORT|NV_UNSIGN,(char*)0,
+	"COMPREPLY",	0,				(char*)0,
+	"COMP_WORDBREAKS",	NV_NOFREE,		(char*)e_wordbreaks,
+	"COMP_TYPE",	NV_EXPORT|NV_INTEGER|NV_SHORT|NV_UNSIGN,(char*)0,
 #if SHOPT_FS_3D
 	"VPATH",	0,				(char*)0,
 #endif /* SHOPT_FS_3D */

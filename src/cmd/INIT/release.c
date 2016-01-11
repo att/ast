@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -43,7 +43,7 @@ USAGE_LICENSE
 "	window year of 69 (we can produce an example coding dated 1991 - this"
 "	can be patented?, how about 1+1=2?.) The date tag lines are followed by"
 "	\areadme\a text in reverse chronological order (newer entries at the"
-"	top of the file.) If no selection options are spcified then all"
+"	top of the file.) If no selection options are specified then all"
 "	changes are listed. If no \afile\a operands are specified then the"
 "	standard input is read.]"
 "[+?The entries for each \afile\a are annotated with the file directory name.]"

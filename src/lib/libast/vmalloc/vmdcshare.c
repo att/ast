@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -470,7 +470,7 @@ int		mode;	/*  1: keep memory segments		*/
 	memset(mmdc, 0, sizeof(Mmdisc_t));
 	mmdc->disc.memoryf = mmgetmem;
 	mmdc->disc.exceptf = mmexcept;
-	mmdc->disc.round   = (size/4) > VM_INCREMENT ? VM_INCREMENT : size/4;
+	mmdc->disc.round   = (size/4) > _Vmsegsize ? _Vmsegsize : size/4;
 	mmdc->disc.round   = ROUND(mmdc->disc.round, _Vmpagesize);
 	mmdc->mmvm = NIL(Mmvm_t*);
 	mmdc->size = size;

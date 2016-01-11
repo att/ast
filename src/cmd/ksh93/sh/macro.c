@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -102,6 +102,7 @@ typedef struct  _mac_
 #define M_NAMESCAN	6	/* ${!var*}	*/
 #define M_NAMECOUNT	7	/* ${#var*}	*/
 #define M_TYPE		8	/* ${@var}	*/
+#define M_EVAL		9	/* ${$var}	*/
 
 static int	substring(const char*, size_t, const char*, int[], int);
 static void	copyto(Mac_t*, int, int);
@@ -1152,9 +1153,19 @@ retry1:
 				mode = c;
 				goto retry1;
 			}
+#if SHOPT_BASH
+			else if(sh_isoption(mp->shp,SH_BASH) && c=='!' && isadigit(mode))
+				c = '$';
+#endif
 		}
 		/* FALL THRU */
 	    case S_SPC2:
+		if(type==M_BRACE && c=='$' && isalnum(mode=fcpeek(0)))
+		{
+			type = M_EVAL;
+			mode = c;
+			goto retry1;
+		}
 		var = 0;
 		*id = c;
 		v = special(mp->shp,c);
@@ -1339,6 +1350,43 @@ retry1:
 				sfprintf(mp->shp->strbuf,"%s%c",id,0);
 				id = sfstruse(mp->shp->strbuf);
 			}
+#if SHOPT_BASH
+			if(sh_isoption(mp->shp,SH_BASH) && (c=='}'||c==':') && type==M_VNAME && !nv_isattr(np,NV_REF))
+				type = M_EVAL;
+#endif
+			if(type==M_EVAL && np && (v=nv_getval(np)))
+			{
+				char *last;
+				int n = strtol(v,&last,10);
+				type = M_BRACE;
+				if(*last==0)
+				{
+					np = 0;
+					v = 0;
+					idnum = n;
+					if(n==0)
+						v = special(mp->shp,n);
+					else if(n <= mp->shp->st.dolc)
+					{
+						mp->shp->used_pos = 1;
+						v = mp->shp->st.dolv[n];
+					}
+					else
+						idnum = 0;
+					fcseek(-LEN);
+					stkseek(stkp,offset);
+					break;
+				}
+				else
+				{
+					np = nv_open(v,mp->shp->var_tree,flag|NV_NOFAIL);
+#if  0
+					type = M_BRACE;
+				if(c!='}')
+					mac_error(np);
+#endif
+				}
+			}
 		}
 		if(isastchar(mode))
 			var = 0;
@@ -1507,7 +1555,7 @@ retry1:
 	c = fcmbget(&LEN);
 	if(type>M_TREE)
 	{
-		if(c!=RBRACE)
+		if(c!=RBRACE && type!=M_EVAL)
 			mac_error(np);
 		if(type==M_NAMESCAN || type==M_NAMECOUNT)
 		{
@@ -1547,6 +1595,11 @@ retry1:
 					v = nv_getsub(np);
 			}
 		}
+		else if(type==M_EVAL && (np = nv_open(v,mp->shp->var_tree,NV_NOREF|NV_NOADD|NV_VARNAME|NV_NOFAIL)))
+		{
+			v = nv_getval(np);
+			goto skip;
+		}
 		else
 		{
 			if(!isastchar(mode))
@@ -1572,6 +1625,7 @@ retry1:
 		}
 		c = RBRACE;
 	}
+    skip:
 	nulflg = 0;
 	if(type && c==':')
 	{
@@ -1595,11 +1649,11 @@ retry1:
 		}
 		if(c!=RBRACE)
 		{
-			int newops = (c=='#' || c == '%' || c=='/');
+			bool newops = sh_lexstates[ST_BRACE][c]==S_MOD2;
 			offset = stktell(stkp);
 			if(newops && sh_isoption(mp->shp,SH_NOUNSET) && *id && id!=idbuff  && (!np || nv_isnull(np)))
 				errormsg(SH_DICT,ERROR_exit(1),e_notset,id);
-			if(c=='/' ||c==':' || ((!v || (nulflg && *v==0)) ^ (c=='+'||c=='#'||c=='%')))
+			if(c==',' || c=='^' || c=='/' ||c==':' || ((!v || (nulflg && *v==0)) ^ (c=='+'||c=='#'||c=='%')))
 			{
 				int newquote = mp->quote;
 				int split = mp->split;
@@ -1771,7 +1825,7 @@ retry1:
 		argp = 0;
 	}
 	/* check for substring operations */
-	else if(c == '#' || c == '%' || c=='/')
+	else if(sh_lexstates[ST_BRACE][c]==S_MOD2)
 	{
 		if(c=='/')
 		{
@@ -1866,7 +1920,23 @@ retry2:
 					sh_setmatch(mp->shp,0,0,nmatch,0,-1);
 			}
 			if(vsize)
+			{
+				if(c==',' || c=='^')
+					offset = stktell(stkp);
 				mac_copy(mp,v,vsize>0?vsize:strlen(v));
+				if(c==',' || c=='^')
+				{
+					v = stkptr(stkp,offset);
+					if(type)
+					{
+						char *sp;
+						for(sp=v;*sp;sp++)
+							 *sp = (c=='^'?toupper(*sp):tolower(*sp));
+					}
+					else if(*pattern=='?' || (v && *pattern==*v && pattern[1]==0))
+						 *v = (c=='^'?toupper(*v):tolower(*v));
+				}
+			}
 			if(addsub)
 			{
 				mp->shp->instance++;
@@ -2029,7 +2099,7 @@ nosub:
  * This routine handles command substitution
  * <type> is 0 for older `...` version
  */
-static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
+static void comsubst(Mac_t *mp,register Shnode_t* t, volatile int type)
 {
 	Sfdouble_t		num;
 	register int		c;
@@ -2048,6 +2118,7 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 	int			newlines,bufsize,nextnewlines;
 	Sfoff_t			foff;
 	Namval_t		*np;
+	pid_t			spid;
 	mp->shp->argaddr = 0;
 	savemac = *mp;
 	mp->shp->st.staklist=0;
@@ -2115,7 +2186,7 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 			}
 			sfputc(stkp,c);
 		}
-		sfputc(stkp,' ');
+		sfputc(stkp,'\n');
 		c = stktell(stkp);
 		str=stkfreeze(stkp,1);
 		/* disable verbose and don't save in history file */
@@ -2134,7 +2205,6 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 	if(t)
 	{
 		fcsave(&save);
-		sfclose(sp);
 		if(t->tre.tretyp==0 && !t->com.comarg && !t->com.comset)
 		{
 			/* special case $(<file) and $(<#file) */
@@ -2142,6 +2212,8 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 			int r;
 			struct checkpt buff;
 			struct ionod *ip=0;
+			if(sp)
+				sfclose(sp);
 			sh_pushcontext(mp->shp,&buff,SH_JMPIO);
 			if((ip=t->tre.treio) && 
 				((ip->iofile&IOLSEEK) || !(ip->iofile&IOUFD)) &&
@@ -2196,6 +2268,8 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 	}
 	if(foff > IOBSIZE)
 		sfsetbuf(sp,NULL,SF_UNBOUND);
+	spid = mp->shp->spid;
+	mp->shp->spid = 0;
 	while((str=(char*)sfreserve(sp,SF_UNBOUND,0)) && (c=bufsize=sfvalue(sp))>0)
 	{
 #if SHOPT_CRNL
@@ -2242,6 +2316,8 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, int type)
 		newlines = nextnewlines;
 		mac_copy(mp,str,c);
 	}
+	if(type==1 && spid)
+		job_wait(spid);
 	if(was_interactive)
 		sh_onstate(mp->shp,SH_INTERACTIVE);
 	if(--newlines>0 && mp->shp->ifstable['\n']==S_DELIM)
@@ -2741,7 +2817,7 @@ static char *sh_tilde(Shell_t *shp,register const char *string)
 		sfprintf(shp->stk, _fd_pid_dir_fmt, (long)getpid(), fd,"","");
 #else
 #   ifdef _fd_self_dir_fmt
-		sfprintf(shp->stk,_fd_pid_dir_fmt,fd,"","");
+		sfprintf(shp->stk,_fd_self_dir_fmt,fd,"","");
 #   else
 		sfprintf(shp->stk,"/dev/fd/%d", fd);
 #   endif

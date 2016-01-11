@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 /*
@@ -541,6 +541,78 @@ int	sh_mathstd(const char *name)
 	return(sh_mathstdfun(name,strlen(name),NULL)!=0);
 }
 
+static Sfdouble_t number(const char* s, char** p, int b, struct lval* lvalue)
+{
+	Sfdouble_t	r;
+	char*		t;
+	int		oerrno;
+	int		c;
+	char		base;
+	struct lval	v;
+
+	oerrno = errno;
+	errno = 0;
+	base = b;
+	if (!lvalue)
+		lvalue = &v;
+	else if (lvalue->shp->bltindata.bnode==SYSLET && !sh_isoption(lvalue->shp, SH_LETOCTAL))
+		while (*s=='0' && isdigit(s[1]))
+			s++;
+	lvalue->eflag = 0;
+	lvalue->isfloat = 0;
+	r = strtonll(s, &t, &base, -1);
+	if (*t=='8' || *t=='9')
+	{
+		base = 10;
+		errno = 0;
+		r = strtonll(s, &t, &base, -1);
+	}
+	if (base <= 1)
+		base = 10;
+	if (*t=='_')
+	{
+		if ((r==1||r==2) && strcmp(t,"_PI")==0)
+		{
+			t += 3;
+			r = Mtable[(int)r-1].value;
+		}
+		else if (r==2 && strcmp(t,"_SQRTPI")==0)
+		{
+			t += 7;
+			r = Mtable[2].value;
+		}
+	}
+	c = r==LLONG_MAX && errno ? 'e' : *t;
+	if (c==GETDECIMAL(0) || c=='e' || c == 'E' || base == 16 && (c == 'p' || c == 'P'))
+	{
+		r = strtold(s, &t);
+		lvalue->isfloat = TYPE_LD;
+	}
+	if (t > s)
+	{
+		if (*t=='f' || *t=='F')
+		{
+			t++;
+			lvalue->isfloat = TYPE_F;
+			r = (float)r;
+		}
+		else if (*t=='l' || *t=='L')
+		{
+			t++;
+			lvalue->isfloat= TYPE_LD;
+		}
+		else if (*t=='d' || *t=='D')
+		{
+			t++;
+			lvalue->isfloat= TYPE_LD;
+			r = (double)r;
+		}
+	}
+	errno = oerrno;
+	*p = t;
+	return r;
+}
+
 static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdouble_t n)
 {
 	Shell_t		*shp = lvalue->shp;
@@ -688,7 +760,7 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 					if(mp && *mp->name)
 					{
 						r = mp->value;
-						lvalue->isfloat=4;
+						lvalue->isfloat = TYPE_LD;
 						goto skip2;
 					}
 #endif
@@ -711,7 +783,7 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 			}
 			*str = c;
 #if 1
-			if(lvalue->isfloat==4)
+			if(lvalue->isfloat==TYPE_LD)
 				break;
 #endif
 			if(!np && lvalue->value)
@@ -740,92 +812,7 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 			}
 		}
 		else
-		{
-			char	lastbase=0, *val = xp, oerrno = errno;
-			lvalue->eflag = 0;
-			errno = 0;
-			if(shp->bltindata.bnode==SYSLET && !sh_isoption(shp,SH_LETOCTAL))
-			{
-				while(*val=='0' && isdigit(val[1]))
-					val++;
-			}
-			r = strtonll(val,&str, &lastbase,-1);
-			if(str>val)
-			{
-				if(*str=='f' || *str=='F')
-				{
-					lvalue->isfloat=2;
-					str++;
-				}
-				if(*str=='l' || *str=='L')
-				{
-					lvalue->isfloat=4;
-					str++;
-				}
-			}
-			if(*str=='_')
-			{
-				if((r==1||r==2) && strcmp(str,"_PI")==0)
-				{
-					r = Mtable[(int)r-1].value;
-					str +=3;
-				}
-				else if(r==2 && strcmp(str,"_SQRTPI")==0)
-				{
-					r = Mtable[2].value;
-					str +=7;
-				}
-			}
-			if(*str=='8' || *str=='9')
-			{
-				lastbase=10;
-				errno = 0;
-				r = strtonll(val,&str, &lastbase,-1);
-			}
-			if(lastbase<=1)
-				lastbase=10;
-			if(*val=='0')
-			{
-				while(*val=='0')
-					val++;
-				if(*val==0 || *val=='.' || *val=='x' || *val=='X')
-					val--;
-			}
-			if(r==LLONG_MAX && errno)
-				c='e';
-			else
-				c = *str;
-			if(c==GETDECIMAL(0) || c=='e' || c == 'E' || lastbase ==
- 16 && (c == 'p' || c == 'P'))
-			{
-				lvalue->isfloat=3;
-				r = strtold(val,&str);
-				if(str)
-				{
-					if(*str=='f' || *str == 'F')
-						lvalue->isfloat=2;
-					if(*str=='l' || *str == 'L')
-						lvalue->isfloat=4;
-				}
-				lvalue->isfloat=1;
-			}
-			else if(lastbase==10 && val[1])
-			{
-				if(val[2]=='#')
-					val += 3;
-				if((str-val)>2*sizeof(Sflong_t))
-				{
-					Sfdouble_t rr;
-					rr = strtold(val,&str);
-					if(rr!=r)
-					{
-						r = rr;
-						lvalue->isfloat=1;
-					}
-				}
-			}
-			errno = oerrno;
-		}
+			r = number(xp, &str, 0, lvalue);
 		break;
 	    }
 	    case VALUE:
@@ -870,18 +857,24 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 		if(lvalue->userfn && (ap=nv_arrayptr(np)) && (ap->flags&ARRAY_UNDEF))
 		{
 			r = (Sfdouble_t)integralof(np);
-			lvalue->isfloat=3;
+			lvalue->isfloat=5;
 			return(r);
 		}
 		r = nv_getnum(np);
 		if(nv_isattr(np,NV_INTEGER|NV_BINARY)==(NV_INTEGER|NV_BINARY))
-			lvalue->isfloat= (r!=(Sflong_t)r);
+			lvalue->isfloat= (r!=(Sflong_t)r)?TYPE_LD:0;
 		else if(nv_isattr(np,(NV_DOUBLE|NV_SHORT))==(NV_DOUBLE|NV_SHORT))
-			lvalue->isfloat=2;
+		{
+			lvalue->isfloat = TYPE_F;
+			r = (float)r;
+		}
 		else if(nv_isattr(np,(NV_DOUBLE|NV_LONG))==(NV_DOUBLE|NV_LONG))
-			lvalue->isfloat=3;
+			lvalue->isfloat = TYPE_LD;
 		else if(nv_isattr(np,NV_DOUBLE)==NV_DOUBLE)
-			lvalue->isfloat=4;
+		{
+			lvalue->isfloat = TYPE_D;
+			r = (double)r;
+		}
 		if((lvalue->emode&ARITH_ASSIGNOP) && nv_isarray(np))
 			lvalue->nosub = nv_aindex(np)+1;
 		return(r);
@@ -926,7 +919,7 @@ void	*sh_arithcomp(Shell_t *shp,register char *str)
 Sfdouble_t sh_strnum_20120720(Shell_t *shp,register const char *str, char** ptr, int mode)
 {
 	register Sfdouble_t d;
-	char base=(shp->inarith?0:10), *last;
+	char *last;
 	if(*str==0)
 	{
 		if(ptr)
@@ -934,10 +927,10 @@ Sfdouble_t sh_strnum_20120720(Shell_t *shp,register const char *str, char** ptr,
 		return(0);
 	}
 	errno = 0;
-	d = strtonll(str,&last,&base,-1);
-	if(*last || errno)
+	d = number(str,&last,shp->inarith?0:10,NiL);
+	if(*last)
 	{
-		if(!last || *last!='.' || last[1]!='.')
+		if(*last!='.' || last[1]!='.')
 		{
 			d = strval(shp,str,&last,arith,mode);
 			Varsubscript = true;

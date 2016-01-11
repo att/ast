@@ -1,4 +1,4 @@
-# : : generated from mkdir.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/mkdir.rt by mktest : : #
 
 # regression tests for the mkdir command
 
@@ -6,7 +6,7 @@ UNIT mkdir
 
 TEST 01 '"-m =" vs. umask'
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		INPUT -n -
 		OUTPUT -
 		ERROR -n -
@@ -122,7 +122,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 007
 
 	PROG	chmod -v + d
@@ -235,7 +235,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 070
 
 	PROG	chmod -v + d
@@ -348,7 +348,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 077
 
 	PROG	chmod -v + d
@@ -461,7 +461,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 700
 
 	PROG	chmod -v + d
@@ -574,7 +574,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 707
 
 	PROG	chmod -v + d
@@ -687,7 +687,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 770
 
 	PROG	chmod -v + d
@@ -800,7 +800,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rmdir d
 		OUTPUT -
 
-	EXEC	-m =rx d
+	EXEC	-m '=rx' d
 		UMASK 777
 
 	PROG	chmod -v + d

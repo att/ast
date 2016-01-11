@@ -191,7 +191,7 @@ done service.h
 done main.c
 meta main.o %.c>%.o main.c main
 prev main.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DPATHCHECK=CO_ID -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1990-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?coshell]"\" -D_PACKAGE_ast -DDEBUG -c main.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DPATHCHECK=CO_ID -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1990-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?coshell]"\" -D_PACKAGE_ast -DDEBUG -c main.c
 done main.o generated
 make job.o
 make job.c
@@ -282,7 +282,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done event.c
 meta event.o %.c>%.o event.c event
 prev event.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1990-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?coshell]"\" -c event.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1990-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?coshell]"\" -c event.c
 done event.o generated
 make ${mam_libdbm} archive
 done ${mam_libdbm} dontcare virtual

@@ -6367,3 +6367,32 @@ TEST 18 '--context[=before[,after]]'
 
 	EXEC	-o -H -n -C2 X i
 		OUTPUT - $'i:2:X\ni:3:X\ni:4:X\ni:5:X\n--\ni:11:X\ni:11:X'
+
+	EXEC	-B0 -A1 '[24]'
+		INPUT - $'1\n2\n3\n4\n5\n6\n7\n8\n9'
+		OUTPUT - $'2\n3\n4\n5'
+
+	EXEC	-C0,1 '[24]'
+
+	EXEC	-C,1 '[24]'
+
+	EXEC	-B0 -A1 '[25]'
+		OUTPUT - $'2\n3\n--\n5\n6'
+
+	EXEC	-C0,1 '[25]'
+
+	EXEC	-C,1 '[25]'
+
+	EXEC	-B1 -A1 '[25]'
+		OUTPUT - $'1\n2\n3\n4\n5\n6'
+
+	EXEC	-C1,1 '[25]'
+
+	EXEC	-C1 '[25]'
+
+	EXEC	-B1 -A1 '[26]'
+		OUTPUT - $'1\n2\n3\n--\n5\n6\n7'
+
+	EXEC	-C1,1 '[26]'
+
+	EXEC	-C1 '[26]'

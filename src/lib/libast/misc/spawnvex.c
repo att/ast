@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -594,7 +594,7 @@ spawnvex_apply(Spawnvex_t* vex, int cur, int flags)
 				i -= siz[j];
 				i -= siz[--j];
 			}
-			else if (i >= vex->cur)
+			else if (i >= vex->cur || !vex->op)
 				break;
 			op = vex->op[i++].number;
 			arg = vex->op[i++].number;

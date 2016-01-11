@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -168,8 +168,8 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 
 	b = canon ? canon : (char*)path;
 	if (!pathdev(dfd, path, canon, size, flags, &dev))
-		b = (char*)path;
-	else if (dev.path.offset)
+		return 0;
+	if (dev.path.offset)
 	{
 		oerrno = errno;
 		oflags |= dev.oflags;

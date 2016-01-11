@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -80,7 +80,8 @@ const struct shtable3 shtab_builtins[] =
 	"return",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return),
 	"enum",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(enum),
 #if SHOPT_BASH
-	"local",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
+	"declare",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
+	"local",	NV_BLTIN|BLT_ENV|BLT_DCL,	bltin(typeset),
 #endif
 #if _bin_newgrp || _usr_bin_newgrp
 	"newgrp",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login),
@@ -109,6 +110,10 @@ const struct shtable3 shtab_builtins[] =
 #   endif	/* SIGTSTP */
 	"jobs",		NV_BLTIN|BLT_ENV,		bltin(jobs),
 #endif	/* JOBS */
+#if SHOPT_COMPLETE
+	"compgen",	NV_BLTIN,			bltin(complete),
+	"complete",	NV_BLTIN,			bltin(complete),
+#endif /* SHOPT_COMPLETE */
 	"false",	NV_BLTIN|BLT_ENV,		bltin(false),
 	"getopts",	NV_BLTIN|BLT_ENV,		bltin(getopts),
 #if 0
@@ -136,6 +141,7 @@ const struct shtable3 shtab_builtins[] =
 	"wait",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(wait),
 	"type",		NV_BLTIN|BLT_ENV,		bltin(whence),
 	"whence",	NV_BLTIN|BLT_ENV,		bltin(whence),
+	"source",	NV_BLTIN|BLT_ENV,		bltin(dot_cmd),
 #ifdef SHOPT_CMDLIB_HDR
 #undef	mktemp		/* undo possible map-libc mktemp => _ast_mktemp */
 #include SHOPT_CMDLIB_HDR
@@ -389,7 +395,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optbuiltin[] =
-"[-1c?\n@(#)$Id: builtin (AT&T Research) 2012-07-12 $\n]"
+"[-1c?\n@(#)$Id: builtin (AT&T Research) 2014-06-05 $\n]"
 USAGE_LICENSE
 "[+NAME?builtin - add, delete, or display shell built-ins]"
 "[+DESCRIPTION?\bbuiltin\b can be used to add, delete, or display "
@@ -430,6 +436,8 @@ USAGE_LICENSE
     "subsequent invocations of \bbuiltin\b. Multiple libraries can be "
     "specified with separate invocations of \bbuiltin\b. Libraries are "
     "searched in the reverse order in which they are specified.]"
+"[n?Disable each of the specified built-ins. Special built-ins cannot be "
+    "disabled.  If no built-ns are specifed, display all disabled built-ins.]"
 "[l?List the library base name, plugin YYYYMMDD version stamp, and full "
     "path for \b-f\b\alib\a on one line on the standard output.]"
 "[p?Causes the output to be in a form of \bbuiltin\b commands that can be "
@@ -469,7 +477,8 @@ USAGE_LICENSE
 "[+?When invoked without operands and when the \bHOME\b environment "
 	"variable is set to a nonempty value,  the directory named by "
 	"the \bHOME\b environment variable will be used.  If \bHOME\b "
-	"is empty or unset, \bcd\b will fail.]"
+	"is empty or unset, it will use the home directory for the effective "
+	"user if possible.  Otherwise \bcd\b will fail.]"
 "[+?When \bcd\b is successful, the \bPWD\b environment variable will be set "
 	"to the name of an absolute pathname that does not contain any "
 	"\b..\b components corresponding to the new directory.  The "
@@ -544,7 +553,7 @@ const char sh_optdot[]	 =
 "[-1c?@(#)$Id: \b.\b (AT&T Research) 2000-04-02 $\n]"
 USAGE_LICENSE
 "[+NAME?\b.\b - execute commands in the current environment]"
-"[+DESCRIPTION?\b.\b is a special built-in command that executes commands "
+"[+DESCRIPTION?\f$0\f is a special built-in command that executes commands "
 	"from a function or a file in the current environment.]"
 "[+?If \aname\a refers to a function defined with the \bfunction\b \aname\a "
 	"syntax, the function executes in the current environment as "
@@ -665,6 +674,7 @@ USAGE_LICENSE
 "[+?\bexport\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.]"
+"[n?Remove the variable from the export list.]"
 "[p?Causes the output to be in the form of \bexport\b commands that can be "
 	"used as input to the shell to recreate the current exports.]"
 "\n"
@@ -1093,7 +1103,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optprint[] =
-"[-1c?\n@(#)$Id: print (AT&T Research) 2008-11-26 $\n]"
+"[-1c?\n@(#)$Id: print (AT&T Research) 2014-05-25 $\n]"
 USAGE_LICENSE
 "[+NAME?print - write arguments to standard output]"
 "[+DESCRIPTION?By default, \bprint\b writes each \astring\a operand to "
@@ -1129,12 +1139,14 @@ USAGE_LICENSE
 	"details on how to specify \aformat\a.]"
 "[j?Treat each \astring\a as a variable name and write the value in JSON "
 	"format.  Only valid for compound variables Cannot be used with \b-f\b.]"
-"[p?Write to the current co-process instead of standard output.]"
+"[p?Write to the current co-process instead of standard output.  Obsolete, use "
+	"\b-u p\b instead.]"
 "[r?Do not process \b\\\b sequences in each \astring\a operand as described "
 	"above.]"
 "[s?Write the output as an entry in the shell history file instead of "
 	"standard output.]"
-"[u]:[fd:=1?Write to file descriptor number \afd\a instead of standard output.]"
+"[u]:[fd:=1?Write to file descriptor number \afd\a instead of standard output. "
+	"If \afd\a is \bp\b, the co-process output file descriptor is used.]"
 "[v?Treat each \astring\a as a variable name and write the value in \b%B\b "
 	"format.  Cannot be used with \b-f\b.]"
 "[C?Treat each \astring\a as a variable name and write the value in \b%#B\b "
@@ -1150,7 +1162,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optprintf[] =
-"[-1c?\n@(#)$Id: printf (AT&T Research) 2009-02-02 $\n]"
+"[-1c?\n@(#)$Id: printf (AT&T Research) 2014-05-28 $\n]"
 USAGE_LICENSE
 "[+NAME?printf - write formatted output]"
 "[+DESCRIPTION?\bprintf\b writes each \astring\a operand to "
@@ -1256,6 +1268,8 @@ USAGE_LICENSE
 	"time conversions will be treated as if \bnow\b were supplied.]"
 "[+?\bprintf\b is equivalent to \bprint -f\b which allows additional "
 	"options to be specified.]"
+"[v]:[name?Put the output in the variable \aname\a instead of writing to "
+	"standard output.]"
 "\n"
 "\nformat [string ...]\n"
 "\n"
@@ -1267,7 +1281,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optpwd[] =
-"[-1c?\n@(#)$Id: pwd (AT&T Research) 1999-06-07 $\n]"
+"[-1c?\n@(#)$Id: pwd (AT&T Research) 2013-11-10 $\n]"
 USAGE_LICENSE
 "[+NAME?pwd - write working directory name]"
 "[+DESCRIPTION?\bpwd\b writes an absolute pathname of the current working "
@@ -1283,15 +1297,17 @@ USAGE_LICENSE
 "[L?The absolute pathname may contains symbolic link components.  This is "
 	"the default.]"
 "[P?The absolute pathname will not contain any symbolic link components.]"
+"[f?Print the directory name for the open directory file descriptor "
+	"\afd\a. Cannot be combined with other options.]#[fd]"
 "[+EXIT STATUS?]{"
 	"[+0?Successful completion.]"
 	"[+>0?An error occurred.]"
 "}"
-"[+SEE ALSO?\bcd\b(1), \bgetconf\b(1)]"
+"[+SEE ALSO?\bcd\b(1), \bgetconf\b(1), \breadlink\b(1), \brealpath\b(1)]"
 ;
 
 const char sh_optread[] =
-"[-1c?\n@(#)$Id: read (AT&T Research) 2006-12-19 $\n]"
+"[-1c?\n@(#)$Id: read (AT&T Research) 2014-07-20 $\n]"
 USAGE_LICENSE
 "[+NAME?read - read a line from standard input]"
 "[+DESCRIPTION?\bread\b reads a line from standard input and breaks it "
@@ -1313,15 +1329,25 @@ USAGE_LICENSE
 	"read and processed but \bread\b returns with a non-zero exit status.]"
 "[A?Unset \avar\a and then create an indexed array containing each field in "
 	"the line starting at index 0.]"
-"[C?Unset \avar\a and read  \avar\a as a compound variable.]"
+"[C?Unset \avar\a and read  \avar\a as a compound variable.  Equivalent to "
+	"\b-aksh\b]"
+"[a?Unset \avar\a and then create an indexed array containing each field in "
+	"the line starting at index 0.]"
 "[d]:[delim?Read until delimiter \adelim\a instead of to the end of line.]"
-"[p?Read from the current co-process instead of standard input.  An end of "
-	"file causes \bread\b to disconnect the co-process so that another "
-	"can be created.]"
+"[m]:[method?Unset \avar\a and read \avar\a as a compound variable in "
+	"the specified \amethod\a. Currently only \bjson\b and \bksh\b methods "
+	"are supported.]"
+"[p]:[prompt?Write \aprompt\a on each line before reading.  In earlier releases "
+	"\b-p\b caused the input to come from the current co-process.  Use "
+	"\b-u p\b instead.  For backward compatibility, if there is a "
+	"co-process active and \aprompt\a is a valid identifier, then "
+	"\aprompt\a will be treated as an argument and it will read from the "
+	"co-process instead of using \aprompt\a as the prompt.]"
 "[r?Do not treat \b\\\b specially when processing the input line.]"
 "[s?Save a copy of the input as an entry in the shell history file.]"
 "[S?Treat the input as if it was saved from a spreadsheet in csv format.]"
-"[u]#[fd:=0?Read from file descriptor number \afd\a instead of standard input.]"
+"[u]:[fd:=0?Read from file descriptor number \afd\a instead of standard input. "
+	"If \afd\a is \bp\b, the co-process input file descriptor is used.]"
 "[t]:[timeout?Specify a timeout \atimeout\a in seconds when reading from "
 	"a terminal or pipe.]"
 "[n]#[count?Read at most \acount\a characters.  For binary fields \acount\a "
@@ -1584,7 +1610,7 @@ USAGE_LICENSE
 ;
 
 const char sh_opttrap[] =
-"[-1c?\n@(#)$Id: trap (AT&T Research) 2012-07-05 $\n]"
+"[-1c?\n@(#)$Id: trap (AT&T Research) 2014-06-19 $\n]"
 USAGE_LICENSE
 "[+NAME?trap - trap signals and conditions]"
 "[+DESCRIPTION?\btrap\b is a special built-in that defines actions to be "
@@ -1626,6 +1652,7 @@ USAGE_LICENSE
 "[a?append the current trap setting to the specified \aaction\a.]"
 "[p?Causes the current traps to be output in a format that can be processed "
 	"as input to the shell to recreate the current traps.]"
+"[l?Output the list of signals and their numbers to standard output.]"
 "\n"
 "\n[action condition ...]\n"
 "\n"
@@ -1656,11 +1683,11 @@ USAGE_LICENSE
 	"options \b-i\b, \b-E\b, and \b-F\b cannot be specified with "
 	"the justification options \b-L\b, \b-R\b, and \b-Z\b.]"
 "[+?Note that the following preset aliases are set by the shell:]{"
-	"[+compound?\b\f?\f -C\b.]"
-	"[+float?\b\f?\f -lE\b.]"
-	"[+functions?\b\f?\f -f\b.]"
-	"[+integer?\b\f?\f -li\b.]"
-	"[+nameref?\b\f?\f -n\b.]"
+	"[+compound?\btypeset -C\b.]"
+	"[+float?\btypeset -lE\b.]"
+	"[+functions?\btypeset -f\b.]"
+	"[+integer?\btypeset -li\b.]"
+	"[+nameref?\btypeset -n\b.]"
 "}"
 "[+?If no \aname\as are specified then variables that have the specified "
 	"options are displayed.  If the first option is specified with "
@@ -1761,7 +1788,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optulimit[] =
-"[-1c?@(#)$Id: ulimit (AT&T Research) 2003-06-21 $\n]"
+"[-1c?@(#)$Id: ulimit (AT&T Research) 2014-06-19 $\n]"
 USAGE_LICENSE
 "[+NAME?ulimit - set or display resource limits]"
 "[+DESCRIPTION?\bulimit\b sets or displays resource limits.  These "
@@ -1812,6 +1839,7 @@ USAGE_LICENSE
 	"file creation mask for the current process to standard output.]"
 "[S?Causes the file creation mask to be written or treated as a symbolic value "
 	"rather than an octal number.]"
+"[p?Write the file creation mask in a format that can be use for re-input.]"
 "\n"
 "\n[mask]\n"
 "\n"
@@ -1917,10 +1945,13 @@ USAGE_LICENSE
 "[+?If \b-v\b is specified, the output will also contain information "
 	"that indicates how the given \aname\a would be interpreted by "
 	"the shell in the current execution environment.]" 
+"[P?Do not check to see if \aname\a is a reserved word, a built-in, "
+	"an alias, or a function.  This turns off the \b-v\b option.]"
 "[a?Displays all uses for each \aname\a rather than the first.]"
 "[f?Do not check for functions.]"
 "[p?Do not check to see if \aname\a is a reserved word, a built-in, "
 	"an alias, or a function.  This turns off the \b-v\b option.]"
+"[t?Output only the type for each command.]"
 "[q?Quiet mode. Returns 0 if all arguments are built-ins, functions, or are "
 	"programs found on the path.]"
 "[v?For each name you specify, the shell displays a line that indicates "

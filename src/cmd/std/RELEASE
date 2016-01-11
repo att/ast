@@ -1,3 +1,4 @@
+13-12-05 ls.c: move src/lib/libcmd
 13-09-26 split.c: fix opetget() docs
 13-09-19 ls.c: convert to mb*(Mbstate_t) api
 13-08-07 banner.c: (we still have banner?) drop bosu 3rd arg to main() -- thanks clang

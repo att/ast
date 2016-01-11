@@ -213,6 +213,15 @@ make features/wchar
 prev ast_common.h implicit
 done features/wchar
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/wchar
+make std/wchar.h implicit
+prev ast_wchar.h implicit
+done std/wchar.h dontcare
+make std/stdio.h implicit
+prev ast_stdio.h implicit
+done std/stdio.h dontcare
+prev ast_common.h implicit
+done FEATURE/wchar generated
+exec - cmp 2>/dev/null -s FEATURE/wchar ast_wchar.h || { rm -f ast_wchar.h; silent test -d . || mkdir .; ${STDCP} FEATURE/wchar ast_wchar.h; }
 make std/wctype.h implicit
 make ast_wctype.h implicit
 make FEATURE/wctype
@@ -220,21 +229,14 @@ meta FEATURE/wctype features/%>FEATURE/% features/wctype wctype
 make features/wctype
 done features/wctype
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/wctype
-prev std/endian.h implicit
-make std/wchar.h implicit
-prev ast_wchar.h implicit
-done std/wchar.h dontcare
+prev std/wctype.h implicit
 done FEATURE/wctype generated
 exec - cmp 2>/dev/null -s FEATURE/wctype ast_wctype.h || { rm -f ast_wctype.h; silent test -d . || mkdir .; ${STDCP} FEATURE/wctype ast_wctype.h; }
+prev std/endian.h implicit
+prev std/wchar.h implicit
 done ast_wctype.h dontcare generated
 done std/wctype.h dontcare
-make std/stdio.h implicit
-prev ast_stdio.h implicit
-done std/stdio.h dontcare
 prev std/stdio.h implicit
-prev ast_common.h implicit
-done FEATURE/wchar generated
-exec - cmp 2>/dev/null -s FEATURE/wchar ast_wchar.h || { rm -f ast_wchar.h; silent test -d . || mkdir .; ${STDCP} FEATURE/wchar ast_wchar.h; }
 prev std/stdio.h implicit
 prev ast_common.h implicit
 done ast_wchar.h dontcare generated
@@ -361,8 +363,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -438,10 +440,13 @@ make features/dirent
 done features/dirent
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/dirent
 prev include/ast_std.h implicit
+make std/dirent.h implicit
+prev ast_dirent.h implicit
+done std/dirent.h dontcare
 done FEATURE/dirent generated
 exec - cmp 2>/dev/null -s FEATURE/dirent ast_dirent.h || { rm -f ast_dirent.h; silent test -d . || mkdir .; ${STDCP} FEATURE/dirent ast_dirent.h; }
 prev include/ast_std.h implicit
-done ast_dirent.h generated
+done ast_dirent.h dontcare generated
 prev include/ast_ioctl.h implicit
 prev include/error.h implicit
 make include/aso.h implicit
@@ -483,9 +488,7 @@ make ast_param.h implicit
 prev FEATURE/param
 exec - cmp 2>/dev/null -s FEATURE/param ast_param.h || { rm -f ast_param.h; silent test -d . || mkdir .; ${STDCP} FEATURE/param ast_param.h; }
 done ast_param.h dontcare generated
-make std/dirent.h implicit
-prev ast_dirent.h implicit
-done std/dirent.h dontcare
+prev std/dirent.h implicit
 make ndir.h implicit
 done ndir.h dontcare virtual
 prev std/dirent.h implicit
@@ -1348,7 +1351,7 @@ prev include/ast.h implicit
 done misc/fts.c
 meta fts.o %.c>%.o misc/fts.c fts
 prev misc/fts.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Idir -Iinclude -Istd -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c misc/fts.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Idir -Iinclude -Istd -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c misc/fts.c
 done fts.o generated
 make astintercept.o
 make misc/astintercept.c
@@ -1689,8 +1692,6 @@ prev port/lclib.h implicit
 make vfork.h implicit
 done vfork.h dontcare virtual
 prev sys/socket.h implicit
-make stropts.h implicit
-done stropts.h dontcare virtual
 prev std/wchar.h implicit
 make FEATURE/float implicit
 meta FEATURE/float features/%>FEATURE/% features/float float
@@ -1793,7 +1794,7 @@ prev include/ast.h implicit
 done string/fmtbase.c
 meta fmtbase.o %.c>%.o string/fmtbase.c fmtbase
 prev string/fmtbase.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c string/fmtbase.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c string/fmtbase.c
 done fmtbase.o generated
 make fmtbuf.o
 make string/fmtbuf.c
@@ -2242,7 +2243,7 @@ prev misc/proclib.h implicit
 done misc/procrun.c
 meta procrun.o %.c>%.o misc/procrun.c procrun
 prev misc/procrun.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Imisc -Iinclude -Istd -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c misc/procrun.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Imisc -Iinclude -Istd -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c misc/procrun.c
 done procrun.o generated
 make procfree.o
 make misc/procfree.c
@@ -5757,7 +5758,7 @@ prev misc/univlib.h implicit
 done port/astconf.c
 meta astconf.o %.c>%.o port/astconf.c astconf
 prev port/astconf.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Imisc -Iinclude -Istd -D__OBSOLETE__=20130101 -DCONF_LIBSUFFIX=\""${mam_cc_SUFFIX_DYNAMIC-${mam_cc_SUFFIX_SHARED}}"\" -DCONF_LIBPREFIX=\""${mam_cc_PREFIX_DYNAMIC-${mam_cc_PREFIX_SHARED}}"\" -DHOSTTYPE=\""${mam_cc_HOSTTYPE}"\" -D_PACKAGE_ast -c port/astconf.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Imisc -Iinclude -Istd -D__OBSOLETE__=20140101 -DCONF_LIBSUFFIX=\""${mam_cc_SUFFIX_DYNAMIC-${mam_cc_SUFFIX_SHARED}}"\" -DCONF_LIBPREFIX=\""${mam_cc_PREFIX_DYNAMIC-${mam_cc_PREFIX_SHARED}}"\" -DHOSTTYPE=\""${mam_cc_HOSTTYPE}"\" -D_PACKAGE_ast -c port/astconf.c
 done astconf.o generated
 make astdynamic.o
 make port/astdynamic.c
@@ -5852,7 +5853,7 @@ done aso/asohdr.h
 done aso/aso.c
 meta aso.o %.c>%.o aso/aso.c aso
 prev aso/aso.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iaso -Icomp -Iinclude -Istd -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c aso/aso.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iaso -Icomp -Iinclude -Istd -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c aso/aso.c
 done aso.o generated
 make asoactivecpu.o
 make aso/asoactivecpu.c
@@ -6296,7 +6297,7 @@ prev include/sfio_t.h implicit
 done disc/sfstrtmp.c
 meta sfstrtmp.o %.c>%.o disc/sfstrtmp.c sfstrtmp
 prev disc/sfstrtmp.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c disc/sfstrtmp.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c disc/sfstrtmp.c
 done sfstrtmp.o generated
 make spawn.o
 make obsolete/spawn.c
@@ -7583,7 +7584,6 @@ make misc/magic.tab
 done misc/magic.tab
 exec - test '' = 'misc/magic.tab' || ${STDCMP} 2>/dev/null -s misc/magic.tab ${INSTALLROOT}/lib/file/magic || { ${STDMV} ${INSTALLROOT}/lib/file/magic ${INSTALLROOT}/lib/file/magic.old 2>/dev/null || true; ${STDCP} misc/magic.tab ${INSTALLROOT}/lib/file/magic ;}
 done ${INSTALLROOT}/lib/file/magic generated
-make ${INSTALLROOT}/include/ast/fmtmsg.h
 prev comp/fmtmsg.h
 prev ast_lib.h
 exec - case ${mam_cc_HOSTTYPE} in
@@ -7602,9 +7602,6 @@ exec - fi
 exec - }
 exec - ;;
 exec - esac
-prev ${INSTALLROOT}/include/prototyped.h implicit
-done ${INSTALLROOT}/include/ast/fmtmsg.h generated
-make ${INSTALLROOT}/include/ast/libgen.h
 prev comp/libgen.h
 prev ast_lib.h
 exec - case ${mam_cc_HOSTTYPE} in
@@ -7623,9 +7620,6 @@ exec - fi
 exec - }
 exec - ;;
 exec - esac
-prev ${INSTALLROOT}/include/prototyped.h implicit
-done ${INSTALLROOT}/include/ast/libgen.h generated
-make ${INSTALLROOT}/include/ast/syslog.h
 prev comp/syslog.h
 prev ast_lib.h
 exec - case ${mam_cc_HOSTTYPE} in
@@ -7644,9 +7638,6 @@ exec - fi
 exec - }
 exec - ;;
 exec - esac
-prev ast_namval.h implicit
-prev ${INSTALLROOT}/include/prototyped.h implicit
-done ${INSTALLROOT}/include/ast/syslog.h generated
 done install virtual
 make test
 done test dontcare virtual

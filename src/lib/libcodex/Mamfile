@@ -59,8 +59,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -310,7 +310,7 @@ prev codex.h implicit
 done code-rot13.c
 meta code-rot13.o %.c>%.o code-rot13.c code-rot13
 prev code-rot13.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-rot13.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-rot13.c
 done code-rot13.o generated
 make code-qp.o
 make code-qp.c
@@ -324,7 +324,7 @@ prev codex.h implicit
 done code-qp.c
 meta code-qp.o %.c>%.o code-qp.c code-qp
 prev code-qp.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-qp.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-qp.c
 done code-qp.o generated
 make code-uu.o
 make code-uu.c
@@ -332,7 +332,7 @@ prev codex.h implicit
 done code-uu.c
 meta code-uu.o %.c>%.o code-uu.c code-uu
 prev code-uu.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-uu.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-uu.c
 done code-uu.o generated
 make code-iconv.o
 make code-iconv.c
@@ -346,7 +346,7 @@ prev codex.h implicit
 done code-iconv.c
 meta code-iconv.o %.c>%.o code-iconv.c code-iconv
 prev code-iconv.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-iconv.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-iconv.c
 done code-iconv.o generated
 make code-vcodex.o
 make code-vcodex.c

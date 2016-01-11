@@ -1,4 +1,4 @@
-# : : generated from head.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/head.rt by mktest : : #
 
 UNIT head
 

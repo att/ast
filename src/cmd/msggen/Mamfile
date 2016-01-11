@@ -54,7 +54,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 202 in
+exec - "") case 206 in
 exec - 0) cp msgadmin.sh msgadmin
 exec - ;;
 exec - *) {
@@ -63,7 +63,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - msgadmin.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"
 exec - !
 exec - } > msgadmin
 exec - ;;
@@ -71,7 +71,7 @@ exec - esac
 exec - ;;
 exec - *) cat - msgadmin.sh > msgadmin <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"
 exec - !
 exec - ;;
 exec - esac
@@ -178,7 +178,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done msgcvt.c
 meta msgcvt.o %.c>%.o msgcvt.c msgcvt
 prev msgcvt.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msgcvt.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msgcvt.c
 done msgcvt.o generated
 bind -last
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o msgcvt msgcvt.o ${mam_libast}
@@ -201,7 +201,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done msggen.c
 meta msggen.o %.c>%.o msggen.c msggen
 prev msggen.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msggen.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msggen.c
 done msggen.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o msggen msggen.o ${mam_libast}
 done msggen generated
@@ -214,7 +214,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done msgget.c
 meta msgget.o %.c>%.o msgget.c msgget
 prev msgget.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msgget.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msggen]"\" -c msgget.c
 done msgget.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o msgget msgget.o ${mam_libast}
 done msgget generated

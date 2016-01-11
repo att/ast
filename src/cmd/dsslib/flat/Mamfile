@@ -9,7 +9,7 @@ setv AS as
 setv ASFLAGS
 setv CC cc
 setv mam_cc_FLAGS ${mam_cc_DLL}
-setv CCFLAGS ${mam_cc_DEBUG}
+setv CCFLAGS ${-debug-symbols?1?${mam_cc_DEBUG} -D_BLD_DEBUG?${mam_cc_OPTIMIZE}?}
 setv CCLDFLAGS ${-strip-symbols?1?${mam_cc_LD_STRIP}??}
 setv COTEMP $$
 setv CPIO cpio
@@ -59,8 +59,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -224,7 +224,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done flat.c
 meta flat.o %.c>%.o flat.c flat
 prev flat.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssflat]"\" -D_PACKAGE_ast -D_BLD_DEBUG -c flat.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssflat]"\" -D_PACKAGE_ast -c flat.c
 done flat.o generated
 make lib.o
 make lib.c
@@ -232,7 +232,7 @@ prev ${PACKAGE_ast_INCLUDE}/dss.h implicit
 done lib.c
 meta lib.o %.c>%.o lib.c lib
 prev lib.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_DEBUG -c lib.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c lib.c
 done lib.o generated
 exec - ${AR} rc libdssflat.a flat.o lib.o
 exec - (ranlib libdssflat.a) >/dev/null 2>&1 || true

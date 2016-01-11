@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -179,13 +179,6 @@ extern void		_vmmessage _ARG_((const char*, long, const char*, long));
 #define CHKFREEMEM(m,z)
 #define DEBUGDECL(_ty_,_ob_)
 #endif /*DEBUG*/
-
-/* hint to regulate memory requests to discipline functions */
-#if _ast_sizeof_size_t > 4 /* the address space is greater than 32-bit	*/
-#define VM_INCREMENT	(1024*1024) /* lots of memory available here	*/
-#else
-#define VM_INCREMENT	(64*1024)  /* perhaps more limited memory	*/
-#endif
 
 #define VM_PAGESIZE	8192 /* default assumed page size */
 #define VMPAGESIZE()	(_Vmpagesize ? _Vmpagesize : _vmpagesize())
@@ -404,6 +397,7 @@ typedef struct _vmextern_s
 	Vmuchar_t*		vm_memsbrk;  /* Vmdcsystem's memory	*/
 	Vmhold_t*		vm_hold;     /* list to hold regions	*/
 	size_t			vm_pagesize; /* OS memory page size	*/
+	size_t			vm_segsize;  /* min segment size	*/
 	unsigned int 		vm_sbrklock; /* lock for sbrkmem	*/
 	unsigned int		vm_assert;   /* options for ASSERT() 	*/
 } Vmextern_t;
@@ -421,6 +415,7 @@ typedef struct _vmextern_s
 #define _Vmmemaddr	(_Vmextern.vm_memaddr)
 #define _Vmmemsbrk	(_Vmextern.vm_memsbrk)
 #define _Vmpagesize	(_Vmextern.vm_pagesize)
+#define _Vmsegsize	(_Vmextern.vm_segsize)
 #define _Vmsbrklock	(_Vmextern.vm_sbrklock)
 #define _Vmhold		(_Vmextern.vm_hold)
 #define _Vmassert	(_Vmextern.vm_assert)

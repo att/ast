@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 : regress - run regression tests in command.tst

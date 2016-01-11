@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -192,8 +192,53 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type)
 	}
 	if(inquote && *bp==inquote)
 		*type = *bp++;
+	else
+	{
+		if(*cp==0 && cp[-1]==' ')
+			return(cp);
+	}
 	return(bp);
 }
+
+#if SHOPT_COMPLETE
+static char **prog_complete(Dt_t *dict, char *line, char *word, int cur)
+{
+	char *cp = line, *cmd, c, **com=0;
+	struct Complete *pcp;
+	while(isspace(*cp) || *cp=='#')
+		cp++;
+	if(*cp && cp<word)
+	{
+		cmd = cp;
+		while(*cp && !isspace(*cp))
+			cp++;
+		c = *cp;
+		*cp = 0;
+		pcp = dtmatch(dict,cmd);
+		if(!pcp && (cmd=strrchr(cmd,'/')))
+			pcp = dtmatch(dict,++cmd);
+		*cp= c;
+		if(!pcp)
+			pcp = dtmatch(dict," D");
+	}
+	else
+		pcp = dtmatch(dict," E");
+	if(pcp)
+	{
+		Stk_t *stkp = pcp->sh->stk;
+		char *savptr = stkfreeze(stkp,0);
+		int offset = stktell(stkp);
+		com = ed_pcomplete(pcp, line, word, cur);
+		if(com && com[1])
+			stkfreeze(stkp,1);
+		else if(savptr==stkptr(stkp,0))
+			stkseek(stkp,offset);
+		else
+			stkset(stkp,savptr,offset);
+	}
+	return(com);
+}
+#endif /* SHOPT_COMPLETE */
 
 /*
  * file name generation for edit modes
@@ -210,9 +255,10 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	struct argnod	*ap;
 	register char	*out;
 	char 		*av[2], *begin , *dir=0;
-	int		addstar=0, rval=0, var=0, strip=1;
+	int		addstar=0, rval=0, var=0, strip=1,narg=0;
 	int 		nomarkdirs = !sh_isoption(ep->sh,SH_MARKDIRS);
 	Shell_t		*shp=ep->sh;
+	char		**com=0;
 	sh_onstate(shp,SH_FCOMPLETE);
 	if(ep->e_nlist)
 	{
@@ -246,11 +292,13 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	}
 #endif /* SHOPT_MULTIBYTE */
 	out = outbuff + *cur + (sh_isoption(shp,SH_VI)!=0);
+#if 0
 	if(out[-1]=='"' || out[-1]=='\'')
 	{
 		rval = -(sh_isoption(shp,SH_VI)!=0);
 		goto done;
 	}
+#endif
 	comptr->comtyp = COMSCAN;
 	comptr->comarg = ap;
 	ap->argflag = (ARG_MAC|ARG_EXP);
@@ -259,9 +307,22 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	{
 		register int c;
 		char *last = out;
+		Namval_t *np = nv_search("COMP_KEY",shp->var_tree,0);
+		if(np)
+			np->nvalue.s = '\t';
+		if(np = nv_search("COMP_TYPE",shp->var_tree,0))
+			np->nvalue.s = (mode=='\\'?'\t':'?');
 		c =  *(unsigned char*)out;
 		var = mode;
 		begin = out = find_begin(outbuff,last,0,&var);
+#if SHOPT_COMPLETE
+		if(ep->compdict && mode!='?' && (com = prog_complete(ep->compdict,outbuff,out,*cur)))
+		{
+			char **av;
+			for(av=com; *av; av++);
+			narg = av-com;
+		}
+#endif /* SHOPT_COMPLETE */
 		/* addstar set to zero if * should not be added */
 		if(var=='$')
 		{
@@ -276,6 +337,8 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 			while(out < last)
 			{
 				c = *(unsigned char*)out;
+				if(c==0)
+					break;
 				if(isexp(c))
 					addstar = 0;
 				if (c == '/')
@@ -300,9 +363,8 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	if(mode!='*')
 		sh_onoption(shp,SH_MARKDIRS);
 	{
-		register char	**com;
 		char		*cp=begin, *left=0, *saveout=".";
-		int	 	nocase=0,narg,cmd_completion=0;
+		int	 	nocase=0,cmd_completion=0;
 		register 	int size='x';
 		while(cp>outbuff && ((size=cp[-1])==' ' || size=='\t'))
 			cp--;
@@ -320,7 +382,8 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		}
 		else
 		{
-			com = sh_argbuild(shp,&narg,comptr,0);
+			if(!com)
+				com = sh_argbuild(shp,&narg,comptr,0);
 			/* special handling for leading quotes */
 			if(begin>outbuff && (begin[-1]=='"' || begin[-1]=='\''))
 			begin--;
@@ -451,7 +514,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 				if(out[-1] =='"' || out[-1]=='\'')
 					  *--out = 0;
 			}
-			if(*begin==0)
+			if(*begin==0 && begin[-1]!=' ')
 				ed_ringbell();
 		}
 		else

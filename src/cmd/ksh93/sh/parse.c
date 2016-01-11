@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -759,7 +759,7 @@ static Shnode_t *funct(Lex_t *lexp)
 	register Shnode_t *t;
 	register int flag;
 	struct slnod *volatile slp=0;
-	Stak_t *savstak;
+	Stak_t *volatile savstak;
 	Sfoff_t	first, last;
 	struct functnod *volatile fp;
 	Sfio_t *iop;
@@ -1542,7 +1542,7 @@ static Shnode_t *simple(Lex_t *lexp,int flag, struct ionod *io)
 				{
 					if(nv_isattr(np,BLT_DCL))
 					{
-						assignment = 1+(*argp->argval=='a');
+						assignment = 1 + !strcmp(argp->argval,"alias");
 						if(np==SYSTYPESET)
 							lexp->intypeset = 1;
 						else if(np==SYSENUM)

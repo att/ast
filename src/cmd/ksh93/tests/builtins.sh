@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -727,5 +727,64 @@ if	cd -f $fd
 then	[[ -r null ]] || err_exit 'cannot find "null" file in /dev'
 else	err_exit 'cannot cd to ~{fd} when fd is /dev'
 fi
+
+[[ $(pwd -f $fd) == /dev ]] || err_exit "pwd -f $fd should be /dev"
+
+$SHELL <<- \EOF
+	home=$HOME
+	unset HOME
+	cd 2> /dev/null
+	[[ $(pwd) == "$home" ]]
+EOF
+[[ $? == 0 ]] || err_exit 'cd with no arguments fails if HOME is unset'
+
+cd "$tmp"
+if	mkdir -p f1
+then	redirect {d}<f1
+	pwd=$(pwd)
+	( cd -f $d && [[ $(pwd) == "$pwd/f1" ]]) || err_exit '$(pwd) does not show new directory' 
+	[[ $(pwd) == "$pwd" ]] || err_exit '$(pwd) is not $pwd'
+	[[ $(/bin/pwd) == "$pwd" ]] || err_exit  '/bin/pwd is not "$pwd"'
+	[[ $(/bin/pwd) == "$(pwd)" ]] || err_exit  '/bin/pwd is not pwd'
+	cd "$pwd"
+	rmdir "$pwd/f1"
+fi
+
+$SHELL 2> /dev/null <<- \!!! || err_exit 'alarm during read causes core dump'
+	function input_feed
+	{
+		typeset i
+		for ((i=0; i<3 ; i++))
+		do	print hello,world
+			sleep .3
+		done
+	}
+	alarm -r alarm_handler +.1
+	function alarm_handler.alarm
+	{
+		print "goodbye world" | read arg1 arg2
+	}
+	
+	input_feed | while IFS=',' read arg1 arg2
+	do	:
+	done
+!!!
+# test for eval bug when called from . script in a startup file.
+print $'eval : foo\nprint ok' > $tmp/evalbug
+print ". $tmp/evalbug" >$tmp/envfile
+[[ $(ENV=$tmp/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || err_exit 'eval inside dot script called from profile file not working'
+
+# test cd to a directory that doesn't have execute permission
+if	mkdir -p $tmp/a/b
+then	chmod -x $tmp/a/b
+	cd $tmp/a/b 2> /dev/null && err_exit 'cd to directory without execute should fail'
+fi
+
+if	print -s 'print hello world' 2> /dev/null
+then	[[ $(history -1) == *'hello world'* ]] || err_exit 'history file does not can results of print -s'
+else	err_exit 'print -s fails'
+fi
+
+builtin  -d set 2> /dev/null && err_exit 'buitin -d allows special builtins to be deleted'
 
 exit $((Errors<125?Errors:125))

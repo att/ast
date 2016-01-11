@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -210,7 +210,7 @@ static Void_t* safebrkmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsi
 
 	VMBOUNDARIES();
 	if(_Vmmemsbrk && _Vmmemsbrk < _Vmmemmax)
-	{	if(_Vmchkmem) /* mmap must use MAP_FIXED (eg, solaris) */
+	{	if(_Vmchkmem && (_Vmassert & VM_check_seg)) /* mmap must use MAP_FIXED (eg, solaris) */
 		{	for(;;) /* search for a mappable address */
 			{	newm = (*_Vmchkmem)(_Vmmemsbrk, nsize) ? _Vmmemsbrk : NIL(Vmuchar_t*);
 				if(csize > 0 && newm != ((Vmuchar_t*)caddr+csize) )
@@ -353,6 +353,12 @@ static Void_t* getmemory(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsiz
 	}
 	GETMEMCHK(vm, caddr, csize, nsize, disc);
 #if _mem_mmap_anon
+	if((_Vmassert & VM_safe) && (addr = safebrkmem(vm, caddr, csize, nsize, disc)))
+	{	GETMEMUSE(safebrkmem, disc);
+		return (Void_t*)addr;
+	}
+#endif
+#if _mem_mmap_anon
 	if((_Vmassert & VM_anon) && (addr = mmapanonmem(vm, caddr, csize, nsize, disc)))
 	{	GETMEMUSE(mmapanonmem, disc);
 		return (Void_t*)addr;
@@ -361,12 +367,6 @@ static Void_t* getmemory(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsiz
 #if _mem_mmap_zero
 	if((_Vmassert & VM_zero) && (addr = mmapzeromeminit(vm, caddr, csize, nsize, disc)))
 	{	GETMEMUSE(mmapzeromem, disc);
-		return (Void_t*)addr;
-	}
-#endif
-#if _mem_mmap_anon
-	if((_Vmassert & VM_safe) && (addr = safebrkmem(vm, caddr, csize, nsize, disc)))
-	{	GETMEMUSE(safebrkmem, disc);
 		return (Void_t*)addr;
 	}
 #endif
@@ -392,7 +392,7 @@ static Void_t* getmemory(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsiz
 	return NIL(Void_t*);
 }
 
-static Memdisc_t _Vmdcsystem = { { getmemory, NIL(Vmexcept_f), VM_INCREMENT, sizeof(Memdisc_t) }, FD_INIT, 0 };
+static Memdisc_t _Vmdcsystem = { { getmemory, NIL(Vmexcept_f), 0*64*1024*1024, sizeof(Memdisc_t) }, FD_INIT, 0 };
 
 __DEFINE__(Vmdisc_t*,  Vmdcsystem, (Vmdisc_t*)(&_Vmdcsystem) );
 __DEFINE__(Vmdisc_t*,  Vmdcsbrk, (Vmdisc_t*)(&_Vmdcsystem) );
@@ -433,12 +433,16 @@ Vmalloc_t* _vmheapinit(Vmalloc_t* vm)
 	{	/**/DEBUG_ASSERT(status == 0);
 		/**/DEBUG_ASSERT(Init == HEAPINIT);
 		_vmoptions(3);
+		_Vmdcsystem.disc.round = _Vmsegsize;
 	}
 
 	vm_assert = _Vmassert;
 	_Vmassert &= ~(VM_usage);
 	heap = vmopen(Vmheap->disc, VMHEAPMETH, VM_HEAPINIT);
 	_Vmassert = vm_assert;
+
+	if(_Vmassert & VM_verbose)
+		debug_printf(2,"vmalloc: pagesize=%zu segsize=%zu assert=0x%08x\n", _Vmpagesize, _Vmsegsize, _Vmassert);
 
 	if(!vm && heap != Vmheap)
 	{	if(heap)

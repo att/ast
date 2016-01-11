@@ -409,6 +409,6 @@ TEST 24 'multibyte euc'
 	EXPORT LC_CTYPE=ja_JP.eucJP
 
 	EXEC	-j1 1 -j2 2 -o 1.1 -t $'\xa1\xf7' a.dat b.dat
-		INPUT a.dat $'\x66\x31\xa1\xf7\x66\x32'
-		INPUT b.dat $'\x74\x32\xa1\xf7\x66\x31'
+		INPUT a.dat $'f1\xa1\xf7f2'
+		INPUT b.dat $'t2\xa1\xf7f1'
 		OUTPUT - 'f1'

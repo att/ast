@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -221,8 +221,8 @@ function fun
 	[[ $foo == hello ]] || err_exit 'export scoping problem in function'
 }
 fun
-[[ $(export | grep foo) == 'foo=hello' ]] || err_exit 'export not working in functions'
-[[ $(export | grep bar) ]] && err_exit 'typeset -x not local'
+[[ $(export | grep ^foo=) == 'foo=hello' ]] || err_exit 'export not working in functions'
+[[ $(export | grep ^bar=) ]] && err_exit 'typeset -x not local'
 [[ $($SHELL -c 'typeset -r IFS=;print -r $(pwd)' 2> /dev/null) == "$(pwd)" ]] || err_exit 'readonly IFS causes command substitution to fail'
 fred[66]=88
 [[ $(typeset -pa) == *fred* ]] || err_exit 'typeset -pa not working'

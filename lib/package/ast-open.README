@@ -94,7 +94,170 @@ All recorded changes follow.
 
 :::::::: ksh93 ::::::::
 
-13-10-08  --- Release ksh93v- ---
+14-12-24  --- Release ksh93v- ---
+14-12-24  A bug which occurred when the undocumented alarm builtin received an
+	  alarm timeout while in the read builtin has been fixed.
+14-12-24  A bug in the startup of interactive restricted ksh which give a 
+	  restricted error message for redirection to /dev/null has been fixed.
+14-12-24  A bug in which the output from builtin --? was garbled has been fixed.
+14-12-24  The SIGINFO signal has been added to DARWIN.
+14-12-23  A bug in which job control was being disabled by using `...` command
+	  substitution has been fixed.
+14-12-22  Some patches for compilation on Darwin have been added.
+14-12-02  The requirement that unquoted { and } must match inside string with
+	  ${name op string} has been removed (at least for now). 
+14-11-26  A bug in which hitting interrup while a PS1.get function was executing
+	  could cause in infinite loop has been fixed.
+14-11-25 +If tab completion for a command name that is an alias is attempted,
+	  it will use the completion for the command it is aliased to.
+14-11-24  Two bugs with programmable completion have been fixed.
+14-11-24  A parser bug with line continuation after the =~ operator with
+          [[...]] has been fixed.
+14-11-20  A fix in read for some multibyte locales such as shift JIS has been
+	  made.
+14-11-02  Merged in changes from Apple for Mac/OS.
+14-10-29  Several bugs in the read -m json builtin have been made.
+14-09-29  A bug which allowed builtin -d to delete a special built-in has been
+	  fixed.
+14-09-24 +When listing jobs, the shell now shows the directory that the job
+	  was started from when it was not started from the current working
+	  directory.
+14-09-09  A bug in which `` command substitutions could hang with large output
+	  has been fixed.
+14-09-02  A bug in the test and [...] command for arithmetic operations when one
+	  of the operands was a variable.
+14-08-28  a bug which could cause a core dump when unsetting a function that is 
+	  in the active call chain has been fixed.
+14-08-22  A bug in which a command substitution of a function that fails, does 
+	  not cause an assigment command to fail has been fixed
+14-08-05  A bug in which print -s would fail with bad file unit number has
+	  been fixed.
+14-07-22  A bug in which a non-zero exit status not last element of a pipeline
+	  could cause the pipeline to fail when pipefail is off has been fixed.
+14-07-21 +A -m method option has been added to read to read compound variables
+	  using a specified method. Currently only methods ksh and json are
+	  implemented.  -m ksh is equivalent to -C. 
+14-07-18 +In bash mode, the last element of a pipe is run in a subshell unless
+	  the option lastpipe is on.
+14-07-15  Fixed a bug in which json format output with 'print -j' had a comma
+	  after the last element.
+14-07-11 +Added -t flag and -P flag to whence and type for bash compaiblity.
+14-07-11 +Added -p flag to alias to output aliases for re-input.
+14-07-10  In bash mode x=() creates an empty index array instead of an empty
+	  compound variable.
+14-07-01  Some ifdefs were added so that ksh93 compiles with SHOPT_COMPLETE
+	  disabled.
+14-06-30 +The variable COMP_WORDBREAKS for programmable completion.
+14-06-25  A bug on some systems in which cd to a directory without execute
+	  permission would not fail has been fixed.
+14-06-25 +The BASH_SOURCE variable was added when ksh is run in bash mode.
+14-06-25 +The -D and -E options have been added to the complete builtin.
+14-06-19  References to dgk@research.att.com were deleted.
+14-06-19 +The -l flag to trap and the -p flag to umask were added as in bash.
+14-06-17 +In bash mode ${!parameter} is treated like ${$parameter}.
+14-06-17  Fixed a bug in which eval inside a dot script invoked by a profile file
+	  terminated the dot script prematurely after running the eval command.
+14-06-16 +Added parameter expansion operator ${$parameter} for variables and
+	  positional parameters.
+14-06-06  Added -a option to read which is equivalent to -A.
+14-06-05  Fixed a bug in builtin -p.
+14-06-05 +Added -n option to builtin to disable builtins.
+14-06-04  Fixed a couple of file completion bugs.
+14-06-02 +When compiled with the SHOPT_BASH and run with the name bash,
+	  the shell now uses dynamic scoping for name() and function name. 
+	  In addition the builtins declare and local are supported.
+	  The SHOPT_BASH option is on by default in the Makefile.
+	  More work remains with the bash compatibility option.
+14-05-25  Fixed a bug in vi command completion in which tab did not work
+	  after a space.
+14-05-25 +Replaced the -p option for read with -p prompt.  For backword
+	  compatibility, if a coprocess is running and prompt begins with -
+	  or is a valid variable name, -p causes the read from a pipe.
+14-05-25 +Modified the -u option for read and print so that it accepts the
+	  option argument p to indicate the coprocess file descriptor.
+14-05-08  A bug in the option parser which could cause 'X -a v=((...)...) to
+	  core dump has been fixed. 
+14-05-07  A change to improve the performance of appending an element to an
+	  array has been fixed.
+14-05-02 +A compilation option to add programmable completion with the two
+	  new builtins, complete and compgen has been added.  It should behave
+	  the same as it does with bash.  Please try this out and report any
+	  problems you find.  Use compgen --man and complete --man to get the
+	  man pages.  Use the bash documentation for now for information about
+	  programmable completion.  The compilation is on by default for now.
+14-04-05  A bug in which type name starting with the letter a, did not
+	  allow instances to be created has been fixed.
+14-04-03  A bug which caused a syntax error when a here-doc was embedded
+	  in `` command substitution has been fixed.
+14-03-31  A bug in `` command substition of a pipeline which could cause
+	  memory problems has been fixed.
+14-03-25  A bug in which the assignment A=() when A is an index array of types
+	  did not eliminate the zero-th element has been fixed.
+14-03-24  A bug in which the braceexpand option was ignored when noglob was
+	  on has been fixed.
+14-03-17  A bug in which a timer alarm during a built-in could cause a core
+	  dump has been fixed.
+14-03-03  A bug in which creating an empty array of a type variable with
+	  required fields has been fixed
+14-02-12  A bug which occurs in an interactive shell when a file is opened as
+	  file descriptor 3 for reading which causes a subsequent read
+	  command to fail to read a line from the file  has been fixed.
+14-02-06  The description of .sh.match in the sh.1 man page was fixed.
+14-02-05  A typeset -p bug for an associative array of types has been fixed.
+14-01-29  A process substitution bug which caused a process to hang has been
+	  fixed.
+14-01-27  Another bug in which extended regular expressions give with the =~
+	  operator in [[...]] gave syntax errors with multiple (...){...} has
+	  been fixed.
+14-01-23  The value of errno is now saved and restored during shell interrupt
+	  handlers.
+14-01-21  A bug in which a read from a script invoked with set -m could stop
+	  when trying to read, and cause the parent to try to restart which
+	  causes a loop has been fixed.
+14-01-20  A bug in the right shift operator in arithmetic expressions when the
+	  shift count is greated then the number of bits in a long integer has
+	  been fixed.
+14-01-20  Another memory leak which occured for functions defined in subshells
+	  has been fixed.
+14-01-14  Fixed a memory leak which occurred for local variables in a function
+	  that is invoked by a subshell.
+14-01-10  [[...]] now supports hexidecimal constants with aritmetic operators.
+14-01-09  A bug which could cause a core dump with nested subshells and
+	  functions has been fixed.
+14-01-09  A second bug in which appending to an empty array of types does
+	  starts with element 1 rather than 0 has been fixed.
+14-01-06  A bug which could cause a core dump when KSH_VERSION is exported in
+	  the envirnment has been fixed.  KSH_VERSION is a name reference to
+	  .sh.version.
+14-01-06  Fixed a bug that could cause a core dump wiith large prompts.
+14-01-06  A bug in which appending to an empty array of types does starts with
+	  element 1 rather than 0 has been fixed.
+14-01-02  A bug in which set -o nounset can trigger unset errors when reading
+	  function definitions has been fixed.
+13-12-31  The documente feature that state that unset a type subvariable that
+	  is readonly is required to be specified when creating an type instance
+	  now works.  The man page generated with typename --man now lists these
+	  fields as required fields.
+13-12-31  A bug in which extended regular expressions give with the =~ operator
+	  in [[...]] gave syntax errors with (...){...} has been fixed.
+13-12-30  A bug in the left shift operator in arithmetic expressions when the
+	  shift count is greated then the number of bits in a long integer has
+	  been fixed.
+13-12-05  If cd is invoked with no arguments and HOME is unset, it attempts to
+	  find the home directory and use that.  Otherwise an error occurs.
+13-12-04  A bug in the handling of $(<file) when contained in a subshell has
+	  been fixed.
+13-12-03  A bug in /bin/cd on Solaris which could cause a core dump has
+	  been fixed.
+13-11-25  The math functions nextafter and nexttowards now work when called
+	  different floating point types.
+13-11-22  Fixed bugs in support for f, d, and l suffices for floating point
+	  constants.
+13-11-14 +Added -f fd option to pwd to display the directory corresponding to
+	  file descriptor fd.
+13-11-12  A bug in [[...]] in which $? is not preserved while expanding the
+	  right hand side of a binary expression has been fixed.
+13-11-11  A bug in [[...]] in which [[ 1<2 ]] is a syntax error has been fixed.
 13-10-08  The shell arithmetic now recognized suffices f,F, l, and L for
 	  floating point constants.
 13-10-07  The shell now prints an error message on standard error when a
@@ -468,7 +631,7 @@ All recorded changes follow.
 12-10-16  Fixed a bug with typeset -p that could cause a core dump.
 12-10-15  Fixed a bug in which unsigned long was used when unsigned long long
 	  was needed.
-12-10-15  Fixed a bug in in which could cause long double data to not
+12-10-15  Fixed a bug in which could cause long double data to not
 	  aligned correctly in types.
 12-10-09  A bug in which nested types were not able to invoke a discipline
 	  method defined by an embedded type has been fixed.
@@ -5945,9 +6108,12 @@ All recorded changes follow.
 
 :::::::: builtin ::::::::
 
+14-02-06 grep.tst: add more --context=... tests
+13-12-05 ls.tst: move from src/cmd/std
 13-09-25 cksum.tst: adjust tests for gnu { md5 sha } text/binary indicator
 13-09-22 readlink.rt,realpath.rt: add tests
 13-09-19 head.tst,tail.tst: add incomplete line tests
+13-09-13 pr.c: Mbstate_t update
 13-07-17 tr.tst: sync with src/lib/libcmd/tr.c
 13-05-22 pty.c: fix timeout logic
 13-04-22 grep.tst: add --context[=before,after] tests
@@ -6937,6 +7103,7 @@ All recorded changes follow.
 
 :::::::: std ::::::::
 
+13-12-05 ls.c: move src/lib/libcmd
 13-09-26 split.c: fix opetget() docs
 13-09-19 ls.c: convert to mb*(Mbstate_t) api
 13-08-07 banner.c: (we still have banner?) drop bosu 3rd arg to main() -- thanks clang
@@ -7495,6 +7662,21 @@ All recorded changes follow.
 
 :::::::: libast ::::::::
 
+14-05-12 features/lib: mmap() error return may be ((caaddr_t)0) or ((caaddr_t)-1)
+14-05-09 misc/optget.c: save opt_info state in case infof callout munges it
+14-04-15 misc/spawnvex.c: fix nil pointer deref
+14-04-15 sfio/sfcvt.c: fix flot bug that printed |x|<1 as 0
+14-01-14 tm/strptime.c: add %t
+13-12-06 vmalloc: default to VMALLOC_OPTIONS=check=nosegment; turn on to enable overbooking checks
+13-12-01 port/astconf.c: add pathdev() intercept to pathconf() for fpathconf()
+13-12-01 comp/conf.tab: add PC { ACL SATTR XATTR } ops
+13-12-01 port/intercept.c: fix remove() intercept to handle directories
+13-11-20 sfio/sfcvt.c: drop [L]DBL_DIG limit checks -- what good are they?
+13-11-20 features/libpath.sh: widen net for ubuntu /lib64
+13-11-17 setlocale.c,utf32toutf8.c,utf8toutf32.c: handle nul byte/wchar_t and nil pointer cases (fixes the tr mem bug)
+13-11-14 features/*: fix tests that reference private argv[1] to handle iffe(1) argv[1]==tmp-file-name
+13-11-11 path/pathcanon.c,path/pathopen.c: fix O_XATTR errno logic, handle "/" path O_XATTR
+13-11-01 features/map.c: map-libc: add ast <error.h> symbols
 13-09-27 path/pathcanon.c: fix buffer clobber bug between pathdev() and fgetcwd()
 13-09-27 path/pathopen.c: handle easy O_XATTR case for /dev/fd open() semantics
 13-09-25 include/ast_std.h,comp/setlocale.c: AST_LC_unicode => AST_LC_unicodeliterals, LC_OPTIONS=...unicodeliterals...
@@ -9434,6 +9616,13 @@ All recorded changes follow.
 
 :::::::: libcmd ::::::::
 
+14-02-06 context.c: fix -B0 bug that added superfluous --
+14-01-26 grep.c: add { -An -Bn } for gnu compatibility
+13-12-05 ls.c: move from src/cmd/std
+13-12-01 getconf.c: add -f<fd>, --descriptor=<fd> for fpathconf()
+13-12-01 rm.c: fix --directory logic; could really use unlinkat(d,p,AT_REMOVE)
+13-11-18 wclib.c: fix multibyte buffer boundary side buffer logic
+13-10-31 Makefile: use test instead of [[ ... ]] for mamfile portability -- doh
 13-09-25 shasum.c: add sha*sum variants
 13-09-25 cksum.c: handle SUM_INDICATOR per-method { '*'(binary) ' '(text) } read mode indicator
 13-09-25 cksum.c: fix --header to include "text" when --text specified
@@ -10976,6 +11165,7 @@ All recorded changes follow.
 
 :::::::: libpz ::::::::
 
+13-11-20 pzlib.h,pzopen.c,pzpart.c: drop vmdisc
 11-09-21 sfdczip.c: set SF_SHARE if uncompress discipline pushed
 11-03-07 pzip.h,pzpart.c: handle length@offset variable row size
 06-12-18 pzline.c: move to separate plugin source dir

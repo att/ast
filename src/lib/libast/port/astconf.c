@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -303,6 +303,49 @@ typedef struct State_s
 static State_t	state = { "getconf", "_AST_FEATURES", "CONFORMANCE = standard", "POSIXLY_CORRECT", dynamic, -1 };
 
 static char*	feature(Feature_t*, const char*, const char*, const char*, unsigned int, Error_f);
+
+/*
+ * private ast pathconf() intercept with special /dev/ file checks on path for fpathconf()
+ */
+
+static intmax_t
+ast_pathconf(const char* path, int op, int* err)
+{
+#if _lib_pathconf
+	Pathdev_t	dev;
+	char		buf[PATH_MAX];
+	intmax_t	v;
+	int		olderrno;
+
+	olderrno = errno;
+	if (!pathdev(AT_FDCWD, path, buf, sizeof(buf), PATH_DEV, &dev))
+	{
+		errno = 0;
+		v = pathconf(path, op);
+	}
+	else if (dev.fd < 0)
+	{
+		errno = 0;
+		v = pathconf(buf, op);
+	}
+	else
+	{
+#if _lib_fpathconf
+		errno = 0;
+		v = fpathconf(dev.fd, op);
+#else
+		v = -1;
+		errno = EINVAL;
+#endif
+	}
+	if (v != -1 || !(*err = errno))
+		errno = olderrno;
+	return v;
+#else
+	*err = ENOSYS;
+	return -1;
+#endif
+}
 
 /*
  * return fmtbuf() copy of s
@@ -712,17 +755,20 @@ format(register Feature_t* fp, const char* path, const char* value, unsigned int
 			register char*	s;
 			register char*	e;
 			intmax_t	v;
+			unsigned long	b;
+			int		err;
 
 			/*
 			 * _PC_PATH_ATTRIBUTES is a bitmap for 'a' to 'z'
 			 */
 
-			if ((v = pathconf(path, _PC_PATH_ATTRIBUTES)) == -1L)
+			v = ast_pathconf(path, _PC_PATH_ATTRIBUTES, &err);
+			if (err)
 				return 0;
 			s = fp->value;
 			e = s + sizeof(fp->value) - 1;
-			for (n = 'a'; n <= 'z'; n++)
-				if (v & (1 << (n - 'a')))
+			for (n = 'a', b = 1; n <= 'z'; n++, b <<= 1)
+				if (v & b)
 				{
 					*s++ = n;
 					if (s >= e)
@@ -1117,9 +1163,10 @@ print(Sfio_t* sp, register Lookup_t* look, const char* name, const char* path, i
 		goto predef;
 #endif
 	case CONF_pathconf:
-		call = "pathconf";
 #if _lib_pathconf
-		if ((v = pathconf(path, p->op)) < 0)
+		call = "pathconf";
+		v = ast_pathconf(path, p->op, &n);
+		if (n)
 			defined = 0;
 		break;
 #else

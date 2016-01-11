@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1998-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1998-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -88,7 +88,6 @@ typedef struct Pzss_s			/* split stream state		*/
 	void*		discdata;	/* discipline specific data	*/
 
 #define _PZ_PRIVATE_ \
-	Vmdisc_t	vmdisc;		/* vmalloc region discipline	*/ \
 	Dtdisc_t	partdisc;	/* partition discipline		*/ \
 	Dt_t*		partdict;	/* partition dictionary by name	*/ \
 	Pzpart_t*	mainpart;	/* the main partition		*/ \

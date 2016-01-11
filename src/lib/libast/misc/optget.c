@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -1260,10 +1260,25 @@ info(Push_t* psp, char* s, char* e, Sfio_t* ip, char* id)
 	register char*	b;
 	int		n;
 	Push_t*		tsp;
+	int		index;
+	int		offset;
+	int		num;
+	intmax_t	number;
+	char*		arg;
 
 	static Push_t	push;
 
+	index = opt_info.index;
+	offset = opt_info.offset;
+	num = opt_info.num;
+	number = opt_info.number;
+	arg = opt_info.arg;
 	b = expand(s, e, &s, ip, id);
+	opt_info.index = index;
+	opt_info.offset = offset;
+	opt_info.num = num;
+	opt_info.number = number;
+	opt_info.arg = arg;
 	n = strlen(b);
 	if (tsp = newof(0, Push_t, 1, n + 1))
 	{

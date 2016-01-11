@@ -144,7 +144,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done codex.c
 meta codex.o %.c>%.o codex.c codex
 prev codex.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?codex]"\" -c codex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?codex]"\" -c codex.c
 done codex.o generated
 bind -lcodex
 bind -last

@@ -93,6 +93,11 @@ All recorded changes follow.
 
 :::::::: INIT ::::::::
 
+13-12-05 Makefile,package.sh: add BIN=1 to .paths for ast -lcmd builtins
+13-11-15 package.sh: fix rebuild logic to handle in-place no-map-libc <=> map-libc
+13-11-14 iffe.sh: handle "opt no-name" (specifically for "opt no-map-libc" => _opt_map_libc default)
+13-11-07 cc.darwin*: target 10.3 => 10.7
+13-10-30 iffe.sh: fix lcl|nxt logic to work for multi-arch style implementations
 13-09-25 iffe.sh: add _${API}_API_IMPLEMENT guards for implementation code
 13-08-11 iffe.sh: executed blocks now have a single argument that is a tmp file prefix
 13-08-11 iffe.sh: fix intrinsic function test to rule out type names

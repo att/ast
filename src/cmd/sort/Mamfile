@@ -193,7 +193,7 @@ done ${PACKAGE_ast_INCLUDE}/sfio_t.h
 done main.c
 meta main.o %.c>%.o main.c main
 prev main.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <phongvo@gmail.com>][-author?Doug McIlroy <doug@research.bell-labs.com>][-copyright?Copyright (c) 1996-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sort]"\" -c main.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?Phong Vo <phongvo@gmail.com>][-author?Doug McIlroy <doug@research.bell-labs.com>][-copyright?Copyright (c) 1996-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sort]"\" -c main.c
 done main.o generated
 bind -lrecsort
 bind -ldll
@@ -259,7 +259,7 @@ exec - !
 exec - ;;
 exec - esac
 exec - silent test -w testsort -a -x testsort || chmod u+w,+x testsort
-done testsort generated
+done testsort virtual
 exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
 exec - testsort sort
 done test.script virtual

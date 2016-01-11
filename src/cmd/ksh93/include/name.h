@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -158,6 +158,7 @@ struct Ufunction
 #define NV_OPTGET	(NV_BINARY)		/* function calls getopts */
 #define NV_SHVALUE	(NV_TABLE)		/* function assigns .sh.value */
 #define NV_JSON		(NV_TAGGED)		/* for json formatting */
+#define NV_JSON_LAST	(NV_TABLE)		/* last for json formatting */
 #define nv_isref(n)	(nv_isattr((n),NV_REF|NV_TAGGED|NV_FUNCT)==NV_REF)
 #define is_abuiltin(n)	(nv_isattr(n,NV_BLTIN|NV_INTEGER)==NV_BLTIN)
 #define is_afunction(n)	(nv_isattr(n,NV_FUNCTION|NV_REF)==NV_FUNCTION)
@@ -184,9 +185,9 @@ struct Ufunction
 
 /* ... etc */
 
-#define nv_setsize(n,s)	((n)->nvsize = (s)*2)
+#define nv_setsize(n,s)	((n)->nvsize = ((s)*4)|2)
 #undef nv_size
-#define nv_size(np)	((np)->nvsize>>1)
+#define nv_size(np)	((np)->nvsize>>2)
 #define nv_attr(np)	((np)->nvflag&~NV_MINIMAL)
 
 /* ...	for arrays */
@@ -211,6 +212,7 @@ extern void 		nv_optimize(Namval_t*);
 extern void 		nv_unref(Namval_t*);
 extern void		_nv_unset(Namval_t*,int);
 extern bool		nv_hasget(Namval_t*);
+extern void		nv_chkrequired(Namval_t*);
 extern int		nv_clone(Namval_t*, Namval_t*, int);
 void			clone_all_disc(Namval_t*, Namval_t*, int);
 extern Namfun_t		*nv_clone_disc(Namfun_t*, int);
@@ -229,13 +231,14 @@ extern Namval_t		*nv_mount(Namval_t*, const char *name, Dt_t*);
 extern Namval_t		*nv_arraychild(Namval_t*, Namval_t*, int);
 extern int		nv_compare(Dt_t*, Void_t*, Void_t*, Dtdisc_t*);
 extern void		nv_outnode(Namval_t*,Sfio_t*, int, int);
-extern bool		nv_subsaved(Namval_t*);
+extern bool		nv_subsaved(Namval_t*,int);
 extern void		nv_typename(Namval_t*, Sfio_t*);
 extern void		nv_newtype(Namval_t*);
 extern Namval_t		*nv_typeparent(Namval_t*);
 extern bool		nv_istable(Namval_t*);
 extern size_t		nv_datasize(Namval_t*, size_t*);
 extern Namfun_t		*nv_mapchar(Namval_t*, const char*);
+extern void		nv_checkrequired(Namval_t*); 
 #if SHOPT_FIXEDARRAY
    extern int		nv_arrfixed(Namval_t*, Sfio_t*, int, char*);
 #endif /* SHOPT_FIXEDARRAY */
@@ -284,4 +287,5 @@ extern const char	e_globalref[];
 extern const char	e_tolower[];
 extern const char	e_toupper[];
 extern const char	e_astbin[];
+extern const char	e_wordbreaks[];
 #endif /* _NV_PRIVATE */

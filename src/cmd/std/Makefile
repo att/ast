@@ -18,8 +18,6 @@ file :: file.c
 
 locale :: locale.c
 
-ls :: ls.c
-
 mesg :: mesg.c LICENSE=since=1995,author=dgk
 
 $(PACKAGE_LOCAL)mount :: mount.c LICENSE=since=1998,author=gsf $(CC.HOSTTYPE:N=sun4:?+last??)
@@ -50,6 +48,6 @@ expand :LINK: unexpand
 
 yes :: yes.sh LICENSE=since=2007,author=dgk
 
-:TEST: csplit dd locale ls seq touch tsort
+:TEST: csplit dd locale seq touch tsort
 
 :: y2k.dat

@@ -9,7 +9,7 @@ setv AS as
 setv ASFLAGS
 setv CC cc
 setv mam_cc_FLAGS
-setv CCFLAGS ${mam_cc_DEBUG}
+setv CCFLAGS ${-debug-symbols?1?${mam_cc_DEBUG} -D_BLD_DEBUG?${mam_cc_OPTIMIZE}?}
 setv CCLDFLAGS ${-strip-symbols?1?${mam_cc_LD_STRIP}??}
 setv COTEMP $$
 setv CPIO cpio
@@ -180,7 +180,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done dss.c
 meta dss.o %.c>%.o dss.c dss
 prev dss.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dss]"\" -D_PACKAGE_ast -D_BLD_DEBUG -c dss.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dss]"\" -D_PACKAGE_ast -c dss.c
 done dss.o generated
 bind -ldss
 bind -ldll

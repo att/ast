@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -112,6 +112,7 @@ void	sh_fault(register int sig, siginfo_t *info, void *context)
 void	sh_fault(register int sig)
 #endif
 {
+	int			saved_errno=errno; /* many platforms do not save/restore errno for signal handlers */
 	register Shell_t	*shp = sh_getinterp();
 	register int 		flag=0;
 	register char		*trap;
@@ -135,21 +136,21 @@ if(sig==SIGBUS)
 		/* critical region, save and process later */
 		if(!(shp->sigflag[sig]&SH_SIGIGNORE))
 			shp->savesig = sig;
-		return;
+		goto done;
 	}
 	/* handle ignored signals */
 	if(trap && *trap==0)
-		return;
+		goto done;
 	flag = shp->sigflag[sig]&~SH_SIGOFF;
 	if(!trap)
 	{
 		if(sig==SIGINT && (shp->trapnote&SH_SIGIGNORE))
-			return;
+			goto done;
 		if(flag&SH_SIGIGNORE)
 		{
 			if(shp->subshell)
 				shp->ignsig = sig;
-			return;
+			goto done;
 		}
 		if(flag&SH_SIGDONE)
 		{
@@ -161,7 +162,7 @@ if(sig==SIGBUS)
 				/* check for TERM signal between fork/exec */
 				if(sig==SIGTERM && job.in_critical)
 					shp->trapnote |= SH_SIGTERM;
-				return;
+				goto done;
 			}
 			shp->lastsig = sig;
 			sigrelease(sig);
@@ -194,7 +195,7 @@ if(sig==SIGBUS)
 					dp->exceptf = malloc_done;
 			}
 #endif
-			return;
+			goto done;
 		}
 	}
 	errno = 0;
@@ -224,7 +225,7 @@ if(sig==SIGBUS)
 			{
 				sigrelease(sig);
 				sh_exit(shp,SH_EXITSIG);
-				return;
+				goto done;
 			}
 		}
 #endif /* SIGTSTP */
@@ -232,7 +233,7 @@ if(sig==SIGBUS)
 	if(shp->bltinfun)
 		action = notify_builtin(shp,sig);
 	if(action>0)
-		return;
+		goto done;
 	shp->trapnote |= flag;
 #ifdef AST_SERIAL_RESTART
 	if(flag&(SH_SIGSET|SH_SIGTRAP))
@@ -243,10 +244,12 @@ if(sig==SIGBUS)
 	if(pp->mode==SH_JMPCMD && sh_isstate(shp,SH_STOPOK))
 	{
 		if(action<0)
-			return;
+			goto done;
 		sigrelease(sig);
 		sh_exit(shp,SH_EXITSIG);
 	}
+done:
+	errno = saved_errno;
 }
 
 /*

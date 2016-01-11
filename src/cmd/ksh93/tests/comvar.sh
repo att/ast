@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -682,4 +682,12 @@ c.c=()
 exp=$'(\n\ttypeset -C -a c\n)'
 [[ $(print -v c) == "$exp" ]] || err_exit 'setting compound array c.c=() does not preserve -C attribute'
 
-exit
+compound xx=(this=that integer x=5)
+exp=$'{\n\t"this": "that",\n\t"x": 5\n}'
+[[ $(print -j xx) == "$exp" ]] || err_exit "got $(print -j xx)" expected "$exp"
+
+compound y=(foo=bar;compound x=(lef=one right=2);integer z=5)
+exp=$'{\n\t"foo": "bar",\n\t"x": {\n\t\t"lef": "one",\n\t\t"right": "2"\n\t},\n\t"z": 5\n}'
+[[ $(print -j y) == "$exp" ]] || err_exit "got $(print -j y)" expected "$exp"
+
+exit $((Errors<125?Errors:125))

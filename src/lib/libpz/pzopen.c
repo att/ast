@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -80,10 +80,7 @@ pzopen(Pzdisc_t* disc, const char* path, unsigned long flags)
 			return 0;
 		if (!(pz = vmnewof(vm, 0, Pz_t, 1, 0)) || !(pz->tmp = sfstropen()) || !(pz->str = sfstropen()) || (flags & PZ_WRITE) && !(pz->det = sfstropen()))
 			goto bad;
-		pz->vmdisc = *Vmdcheap;
-		memfatal(&pz->vmdisc);
-		if (!vmdisc(vm, &pz->vmdisc))
-			goto bad;
+		memfatal(NiL);
 		tvgettime(&pz->start);
 		pz->major = PZ_MAJOR;
 		pz->minor = PZ_MINOR;

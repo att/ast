@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,91 +14,93 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 /*
- * Glenn Fowler
- * AT&T Research
- *
  * getconf - get configuration values
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: getconf (AT&T Research) 2012-06-25 $\n]"
+"[-?\n@(#)$Id: getconf (AT&T Research) 2013-12-01 $\n]"
 USAGE_LICENSE
 "[+NAME?getconf - get configuration values]"
-"[+DESCRIPTION?\bgetconf\b displays the system configuration value for"
-"	\aname\a. If \aname\a is a filesystem specific variable then"
-"	the value is determined relative to \apath\a or the current"
-"	directory if \apath\a is omitted. If \avalue\a is specified then"
-"	\bgetconf\b attempts to change the process local value to \avalue\a."
-"	\b-\b may be used in place of \apath\a when it is not relevant."
-"	If \apath\a is \b=\b then the the \avalue\a is cached and used"
-"	for subsequent tests in the calling and all child processes."
-"	Only \bwritable\b variables may be set; \breadonly\b variables"
-"	cannot be changed.]"
-"[+?The current value for \aname\a is written to the standard output. If"
-"	\aname\a is valid but undefined then \bundefined\b is written to"
-"	the standard output. If \aname\a is invalid or an error occurs in"
-"	determining its value, then a diagnostic written to the standard error"
-"	and \bgetconf\b exits with a non-zero exit status.]"
-"[+?More than one variable may be set or queried by providing the \aname\a"
-"	\apath\a \avalue\a 3-tuple for each variable, specifying \b-\b for"
-"	\avalue\a when querying.]"
-"[+?If no operands are specified then all known variables are written in"
-"	\aname\a=\avalue\a form to the standard output, one per line."
-"	Only one of \b--call\b, \b--name\b or \b--standard\b may be specified.]"
-"[+?This implementation uses the \bastgetconf\b(3) string interface to the native"
-"	\bsysconf\b(2), \bconfstr\b(2), \bpathconf\b(2), and \bsysinfo\b(2)"
-"	system calls. If \bgetconf\b on \b$PATH\b is not the default native"
-"	\bgetconf\b, named by \b$(getconf GETCONF)\b, then \bastgetconf\b(3)"
-"	checks only \bast\b specific extensions and the native system calls;"
-"	invalid options and/or names not supported by \bastgetconf\b(3) cause"
-"	the \bgetconf\b on \b$PATH\b to be executed.]"
+"[+DESCRIPTION?\bgetconf\b displays the system configuration value for "
+    "\aname\a. If \aname\a is a filesystem specific variable then the value "
+    "is determined relative to \apath\a or the current directory if \apath\a "
+    "is omitted. If \avalue\a is specified then \bgetconf\b attempts to "
+    "change the process local value to \avalue\a. \b-\b may be used in place "
+    "of \apath\a when it is not relevant. If \apath\a is \b=\b then the the "
+    "\avalue\a is cached and used for subsequent tests in the calling and "
+    "all child processes. Only \bwritable\b variables may be set; "
+    "\breadonly\b variables cannot be changed.]"
+"[+?The current value for \aname\a is written to the standard output. If "
+    "\aname\a is valid but undefined then \bundefined\b is written to the "
+    "standard output. If \aname\a is invalid or an error occurs in "
+    "determining its value, then a diagnostic written to the standard error "
+    "and \bgetconf\b exits with a non-zero exit status.]"
+"[+?More than one variable may be set or queried by providing the "
+    "\aname\a \apath\a \avalue\a 3-tuple for each variable, specifying \b-\b "
+    "for \avalue\a when querying.]"
+"[+?If no operands are specified then all known variables are written in "
+    "\aname\a=\avalue\a form to the standard output, one per line. Only one "
+    "of \b--call\b, \b--name\b or \b--standard\b may be specified.]"
+"[+?This implementation uses the \bastgetconf\b(3) string interface to "
+    "the native \bsysconf\b(2), \bconfstr\b(2), \bpathconf\b(2), "
+    "\bfpathconf\b(2), and \bsysinfo\b(2) system calls. If \bgetconf\b on "
+    "\b$PATH\b is not the default native \bgetconf\b, named by \b$(getconf "
+    "GETCONF)\b, then \bastgetconf\b(3) checks only \bast\b specific "
+    "extensions and the native system calls; invalid options and/or names "
+    "not supported by \bastgetconf\b(3) cause the \bgetconf\b on \b$PATH\b "
+    "to be executed.]"
 
 "[a:all?Call the native \bgetconf\b(1) with option \b-a\b.]"
 "[b:base?List base variable name sans call and standard prefixes.]"
-"[c:call?Display variables with call prefix that matches \aRE\a. The call"
-"	prefixes are:]:[RE]{"
-"		[+CS?\bconfstr\b(2)]"
-"		[+PC?\bpathconf\b(2)]"
-"		[+SC?\bsysconf\b(2)]"
-"		[+SI?\bsysinfo\b(2)]"
-"		[+XX?Constant value.]"
-"}"
+"[c:call?Display variables with call prefix that matches \aRE\a. The "
+    "call prefixes are:]:[RE]"
+    "{"
+        "[+CS?\bconfstr\b(2)]"
+        "[+PC?\bpathconf\b(2)]"
+        "[+PC?\bfpathconf\b(2)]"
+        "[+SC?\bsysconf\b(2)]"
+        "[+SI?\bsysinfo\b(2)]"
+        "[+XX?Constant value.]"
+    "}"
 "[d:defined?Only display defined values when no operands are specified.]"
+"[f:descriptor?If \apath\a is \b-\b then use file descriptor \afd\a.]#[fd]"
 "[l:lowercase?List variable names in lower case.]"
 "[n:name?Display variables with name that match \aRE\a.]:[RE]"
-"[p:portable?Display the named \bwritable\b variables and values in a form that"
-"	can be directly executed by \bsh\b(1) to set the values. If \aname\a"
-"	is omitted then all \bwritable\b variables are listed.]"
+"[p:portable?Display the named \bwritable\b variables and values in a "
+    "form that can be directly executed by \bsh\b(1) to set the values. If "
+    "\aname\a is omitted then all \bwritable\b variables are listed.]"
 "[q:quote?\"...\" quote values.]"
-"[r:readonly?Display the named \breadonly\b variables in \aname\a=\avalue\a form."
-"	If \aname\a is omitted then all \breadonly\b variables are listed.]"
-"[s:standard?Display variables with standard prefix that matches \aRE\a."
-"	Use the \b--table\b option to view all standard prefixes, including"
-"	local additions. The standard prefixes available on all systems"
-"	are:]:[RE]{"
-"		[+AES]"
-"		[+AST]"
-"		[+C]"
-"		[+GNU]"
-"		[+POSIX]"
-"		[+SVID]"
-"		[+XBS5]"
-"		[+XOPEN]"
-"		[+XPG]"
-"}"
-"[t:table?Display the internal table that contains the name, standard,"
-"	standard section, and system call symbol prefix for each variable.]"
-"[w:writable?Display the named \bwritable\b variables in \aname\a=\avalue\a"
-"	form. If \aname\a is omitted then all \bwritable\b variables are"
-"	listed.]"
-"[v:specification?Call the native \bgetconf\b(1) with option"
-"	\b-v\b \aname\a.]:[name]"
+"[r:readonly?Display the named \breadonly\b variables in "
+    "\aname\a=\avalue\a form. If \aname\a is omitted then all \breadonly\b "
+    "variables are listed.]"
+"[s:standard?Display variables with standard prefix that matches \aRE\a. "
+    "Use the \b--table\b option to view all standard prefixes, including "
+    "local additions. The standard prefixes available on all systems "
+    "are:]:[RE]"
+    "{"
+        "[+AES]"
+        "[+AST]"
+        "[+C]"
+        "[+GNU]"
+        "[+POSIX]"
+        "[+SVID]"
+        "[+XBS5]"
+        "[+XOPEN]"
+        "[+XPG]"
+    "}"
+"[t:table?Display the internal table that contains the name, standard, "
+    "standard section, and system call symbol prefix for each variable.]"
+"[w:writable?Display the named \bwritable\b variables in "
+    "\aname\a=\avalue\a form. If \aname\a is omitted then all \bwritable\b "
+    "variables are listed.]"
+"[v:specification?Call the native \bgetconf\b(1) with option \b-v\b "
+    "\aname\a.]:[name]"
 
 "\n"
 "\n[ name [ path [ value ] ] ... ]\n"
@@ -116,8 +118,8 @@ USAGE_LICENSE
             "is an implementation detail of process inheritance; it may "
             "change or vanish in the future; don't rely on it.]"
     "}"
-"[+SEE ALSO?\bpathchk\b(1), \bconfstr\b(2), \bpathconf\b(2),"
-"	\bsysconf\b(2), \bastgetconf\b(3)]"
+"[+SEE ALSO?\bpathchk\b(1), \bconfstr\b(2), \bpathconf\b(2), "
+    "\bfpathconf\b(2), \bsysconf\b(2), \bastgetconf\b(3)]"
 ;
 
 #include <cmd.h>
@@ -141,6 +143,7 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 	char*			pattern;
 	char*			native;
 	char*			cmd;
+	char*			dev;
 	Path_t*			e;
 	Path_t*			p;
 	int			flags;
@@ -150,6 +153,7 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 	int			q;
 	char**			oargv;
 	char			buf[PATH_MAX];
+	char			devbuf[64];
 	Path_t			std[64];
 	struct stat		st0;
 	struct stat		st1;
@@ -161,8 +165,8 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 	oargv = argv;
 	if (*(native = astconf("GETCONF", NiL, NiL)) != '/')
 		native = 0;
+	dev = 0;
 	flags = 0;
-	name = 0;
 	pattern = 0;
 	for (;;)
 	{
@@ -181,6 +185,9 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 			continue;
 		case 'd':
 			flags |= ASTCONF_defined;
+			continue;
+		case 'f':
+			sfsprintf(dev = devbuf, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d", (int)opt_info.num);
 			continue;
 		case 'l':
 			flags |= ASTCONF_lower;
@@ -234,6 +241,8 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 			argv++;
 			if (streq(path, empty))
 				path = 0;
+			else
+				path = dev;
 		}
 	}
 	if (error_info.errors || !name && *argv)
@@ -247,12 +256,15 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 		do
 		{
 			if (!(path = *++argv))
+			{
+				path = dev;
 				value = 0;
+			}
 			else
 			{
 				if (streq(path, empty))
 				{
-					path = 0;
+					path = dev;
 					flags = 0;
 				}
 				if ((value = *++argv) && (streq(value, empty)))

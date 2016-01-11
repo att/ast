@@ -1,3 +1,10 @@
+14-02-06 context.c: fix -B0 bug that added superfluous --
+14-01-26 grep.c: add { -An -Bn } for gnu compatibility
+13-12-05 ls.c: move from src/cmd/std
+13-12-01 getconf.c: add -f<fd>, --descriptor=<fd> for fpathconf()
+13-12-01 rm.c: fix --directory logic; could really use unlinkat(d,p,AT_REMOVE)
+13-11-18 wclib.c: fix multibyte buffer boundary side buffer logic
+13-10-31 Makefile: use test instead of [[ ... ]] for mamfile portability -- doh
 13-09-25 shasum.c: add sha*sum variants
 13-09-25 cksum.c: handle SUM_INDICATOR per-method { '*'(binary) ' '(text) } read mode indicator
 13-09-25 cksum.c: fix --header to include "text" when --text specified

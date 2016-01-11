@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -361,6 +361,21 @@ then	[[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || err_exit 'proc
 		got=$( print <(print foo) v=bam <(print bar))
 		[[ $got == $exp ]] ||  err_exit 'assignments after command substitution not treated as arguments'
 	fi
+	{
+		producer() {
+			for	((i = 0; i < 20000; i++ ))
+			do	print xxxxx${i}xxxxx
+			done
+		}
+		consumer() {
+			while	read var
+			do	print ${var}
+			done < ${1}
+		}
+		consumer <(producer) >  /dev/null
+	} & pid=$!
+	( sleep 5 ; kill -HUP $pid) 2> /dev/null  &
+	wait $pid 2> /dev/null || err_exit  "process substitution hangs"
 fi
 [[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || err_exit 'command -p not restricted'
 print cat >  $tmp/scriptx

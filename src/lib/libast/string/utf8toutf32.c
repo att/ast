@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -62,7 +62,7 @@ static const signed char	utf8tab[256] =
 	4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6,-1,-1,
 };
 
-int
+size_t
 utf8towc(wchar_t* wp, const char* str, size_t n)
 {
 	register unsigned char*	sp = (unsigned char*)str;
@@ -72,11 +72,11 @@ utf8towc(wchar_t* wp, const char* str, size_t n)
 	register wchar_t	w = 0;
 
 	if (!sp || !n)
-		return 0;
+		goto nul;
 	if ((m = utf8tab[*sp]) > 0)
 	{
 		if (m > n)
-			return -2;
+			return (size_t)-2;
 		if (wp)
 		{
 			if (m == 1)
@@ -99,13 +99,18 @@ utf8towc(wchar_t* wp, const char* str, size_t n)
 		return m;
 	}
 	if (!*sp)
+	{
+ nul:
+		if (wp)
+			*wp = 0;
 		return 0;
+	}
  invalid:
 	errno = EILSEQ;
-	return -1;
+	return (size_t)-1;
 }
 
-int
+size_t
 utf8toutf32(uint32_t* up, const char* str, size_t n)
 {
 	wchar_t		wc;
@@ -120,7 +125,7 @@ utf8toutf32(uint32_t* up, const char* str, size_t n)
  * str known to contain only valid UTF-8 characters
  */
 
-int
+size_t
 utf8toutf32v(uint32_t* up, const char* str)
 {
 	register unsigned char*	s = (unsigned char*)str;

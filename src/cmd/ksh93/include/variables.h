@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -97,15 +97,23 @@
 #define SH_ASTBIN	(shgd->bltin_nodes+67)
 #define OPTIONS		(shgd->bltin_nodes+68)
 #define SHLVL		(shgd->bltin_nodes+69)
+#define COMP_CWORD	(shgd->bltin_nodes+70)
+#define COMP_LINE	(shgd->bltin_nodes+71)
+#define COMP_POINT	(shgd->bltin_nodes+72)
+#define COMP_WORDS	(shgd->bltin_nodes+73)
+#define COMP_KEY	(shgd->bltin_nodes+74)
+#define COMPREPLY	(shgd->bltin_nodes+75)
+#define COMP_WORDBREAKS	(shgd->bltin_nodes+76)
+#define COMP_TAB	(shgd->bltin_nodes+77)
 #if SHOPT_FS_3D
-#   define VPATHNOD	(shgd->bltin_nodes+70)
+#   define VPATHNOD	(shgd->bltin_nodes+78)
 #   define NFS_3D	1
 #else
 #   define NFS_3D	0
 #endif /* SHOPT_FS_3D */
 #if SHOPT_VPIX
-#   define DOSPATHNOD	(shgd->bltin_nodes+70+NFS_3D)
-#   define VPIXNOD	(shgd->bltin_nodes+71+NFS_3D)
+#   define DOSPATHNOD	(shgd->bltin_nodes+78+NFS_3D)
+#   define VPIXNOD	(shgd->bltin_nodes+79+NFS_3D)
 #   define NVPIX	(NFS_3D+2)
 #else
 #   define NVPIX	NFS_3D

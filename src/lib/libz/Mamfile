@@ -59,8 +59,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -412,12 +412,12 @@ meta example.o %.c>%.o example.c example
 prev example.c
 setv _BLD_z -U_BLD_z
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c example.c
-done example.o generated
+done example.o virtual
 prev libz.a archive
 bind -lz
 bind -last
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L.} ${mam_cc_L+-L${INSTALLROOT}/lib} -o example example.o ${mam_libz} ${mam_libast}
-done example generated
+done example virtual
 make minigzip
 make minigzip.o
 make minigzip.c
@@ -431,10 +431,10 @@ meta minigzip.o %.c>%.o minigzip.c minigzip
 prev minigzip.c
 setv _BLD_z -U_BLD_z
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c minigzip.c
-done minigzip.o generated
+done minigzip.o virtual
 prev libz.a archive
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L.} ${mam_cc_L+-L${INSTALLROOT}/lib} -o minigzip minigzip.o ${mam_libz} ${mam_libast}
-done minigzip generated
+done minigzip virtual
 exec - example > /dev/null || echo libz example test FAILED
 exec - case `echo 'hello, hello!' | minigzip | minigzip -d; echo $?` in
 exec - 'hello, hello!

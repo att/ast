@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -49,12 +49,15 @@ static const Utf8_t	ops[] =
 	{ 0x80000000, 0xfc, 30 }
 };
 
-int
+size_t
 utf32toutf8(register char* s, register uint32_t w)
 {
 	register int	i;
 	char*		b;
+	char		tmp[6];
 
+	if (!s)
+		s = tmp;
 	for (i = 0; i < elementsof(ops); i++)
 		if (w < ops[i].range)
 		{

@@ -159,7 +159,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done setid.c
 meta setid.o %.c>%.o setid.c setid
 prev setid.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""kshsetid"\" -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshsetid]"\" -D_PACKAGE_ast -c setid.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""kshsetid"\" -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2013-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshsetid]"\" -D_PACKAGE_ast -c setid.c
 done setid.o generated
 exec - ${AR} rc libkshsetid.a setid.o
 exec - (ranlib libkshsetid.a) >/dev/null 2>&1 || true

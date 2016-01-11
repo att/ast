@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -22,8 +22,7 @@
  * Array processing routines
  *
  *   David Korn
- *   AT&T Labs
- *   dgk@research.att.com
+ *   dgkorn@gmail.com
  *
  */
 
@@ -45,6 +44,7 @@ struct index_array
         Namarr_t        header;
 	void		*xp;	/* if set, subscripts will be converted */
         int		cur;    /* index of current element */
+	int		last;	/* index of highest assigned element */
         int		maxi;   /* maximum index for array */
 	unsigned char	*bits;	/* bit array for child subscripts */
         union Value	val[1]; /* array of value holders */
@@ -718,7 +718,10 @@ static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *
 				if(is_associative(ap))
 					(*ap->fun)(np, NIL(char*), NV_AFREE);
 				else if(ap->table)
+				{
 					dtclose(ap->table);
+					ap->table = 0;
+				}
 				nv_offattr(np,NV_ARRAY);
 			}
 			if(!mp || mp!=np || is_associative(ap))
@@ -872,6 +875,7 @@ static struct index_array *array_grow(Namval_t *np, register struct index_array 
 	{
 		ap->header = arp->header;
 		ap->header.hdr.dsize = sizeof(*ap) + size;
+		ap->last = arp->last;
 		for(i=0;i < arp->maxi;i++)
 		{
 			ap->bits[i] = arp->bits[i];
@@ -920,6 +924,7 @@ static struct index_array *array_grow(Namval_t *np, register struct index_array 
 			Sfdouble_t d= nv_getnum(np);
 			i++;
 		}
+		ap->last = i;
 		ap->header.nelem = i;
 		ap->header.flags = flags;
 		ap->header.hdr.disc = &array_disc;
@@ -1304,6 +1309,7 @@ Namval_t *nv_putsub(Namval_t *np,register char *sp,register long size,int flags)
 						if(!array_covered(np,ap))
 							ap->header.nelem++;
 					}
+					ap->last = ap->header.nelem;
 				}
 				if(n=ap->maxi-ap->maxi)
 					memset(&ap->val[size],0,n*sizeof(union Value));
@@ -1783,7 +1789,8 @@ void *nv_associative(register Namval_t *np,const char *sp,int mode)
 	    case NV_ADELETE:
 		if(ap->cur)
 		{
-			if(!ap->header.scope || (Dt_t*)ap->header.scope==ap->header.table || !nv_search(ap->cur->nvname,(Dt_t*)ap->header.scope,0))
+			Dt_t* scope = ap->header.scope;
+			if(!scope || scope==ap->header.table || !nv_search(ap->cur->nvname,scope,0))
 				ap->header.nelem--;
 			_nv_unset(ap->cur,NV_RDONLY);
 			nv_delete(ap->cur,ap->header.table,0);
@@ -1803,6 +1810,7 @@ void *nv_associative(register Namval_t *np,const char *sp,int mode)
 			if(ap->header.nelem==0 && (ap->cur=nv_search("0",ap->header.table,0)))
 				nv_associative(np,(char*)0,NV_ADELETE);
 			dtclose(ap->header.table);
+			ap->header.table = 0;
 		}
 		return((void*)ap);
 	    case NV_ANEXT:
@@ -1927,13 +1935,15 @@ void nv_setvec(register Namval_t *np,int append,register int argc,register char 
 	}
 	if(append)
 	{
-		if(ap)
+		if(ap && ap->header.nelem==0)
+			arg0 = 0;
+		else if(ap)
 		{
 			if(!(aq = (struct index_array*)ap->header.scope))
 				aq = ap;
-			arg0 = ap->maxi;
-			while(--arg0>0 && ap->val[arg0].cp==0 && aq->val[arg0].cp==0);
-			arg0++;
+			if(ap->header.nelem > ap->last)
+				ap->last = ap->header.nelem;
+			arg0 = ap->last;
 		}
 		else
 		{
@@ -1942,11 +1952,15 @@ void nv_setvec(register Namval_t *np,int append,register int argc,register char 
 				arg0=1;
 		}
 	}
+	if(ap)
+		ap->last = arg0+argc;
 	while(--argc >= 0)
 	{
 		nv_putsub(np,NIL(char*),(long)argc+arg0,ARRAY_FILL|ARRAY_ADD);
 		nv_putval(np,argv[argc],0);
 	}
+	if(!ap && (ap = (struct index_array*)nv_arrayptr(np)))
+		ap->last = ap->header.nelem;
 }
 
 #undef nv_putsub

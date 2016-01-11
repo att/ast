@@ -1,8 +1,6 @@
 info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
-setv PACKAGE_X11 ${INSTALLROOT}
-setv PACKAGE_X11_INCLUDE ${PACKAGE_X11}/include/X11
-setv PACKAGE_X11_LIB ${PACKAGE_X11}/lib64
+setv PACKAGE_X11_LIB ${INSTALLROOT}/${INSTALLROOT}/..${PACKAGE_X11_LIB}
 setv PACKAGE_shell ${INSTALLROOT}
 setv PACKAGE_shell_INCLUDE ${PACKAGE_shell}/include
 setv PACKAGE_shell_LIB ${PACKAGE_shell}/lib
@@ -65,8 +63,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -668,7 +666,7 @@ exec - ${AR} rc libtcl.a panic.o regexp.o tclHash.o tclGet.o tclAsync.o tclLink.
 exec - ${AR} rc libtcl.a var.o eval.o list.o shcompat.o tcleval.o tclproc.o commands.o varcmd.o tclMain.o basic.o filecmd.o tclIO.o tclUnixChan.o tclIOUtil.o
 exec - (ranlib libtcl.a) >/dev/null 2>&1 || true
 done libtcl.a generated
-done tcl
+done tcl virtual
 prev libtcl.a archive
 make ${INSTALLROOT}/lib
 exec - if silent test ! -d ${INSTALLROOT}/lib

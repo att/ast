@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -668,5 +668,56 @@ function foo
 }
 val=${ foo;}
 [[ $val ]] && err_exit "function foo generates $val but should generate the empty string in command substitution"
+
+x=$(
+	for i in a b c 
+	do	read A
+		print -n "$A"
+		STDERR=$(</dev/null)
+	done <<< $'y\ny\ny\n'
+)
+[[ $x == yyy ]] || err_exit '$(</dev/null) in a subshell causes failure'
+
+
+$SHELL -c 'while((SECONDS<3)); do test -z `/bin/false | /bin/false | /bin/doesnotexist`;done;:' 2> /dev/null || err_exit 'non-existant last command in pipeline causes `` to fail'
+
+x=$({ sleep .1;false;} | true)
+[[ $? != 0 ]] && err_exit 'without pipefail, non-zero exit in pipeline causes command substitution to fail'
+
+foo() {
+  print -r foo | read
+  return 1
+}
+o1=$(foo "foo") && err_exit 'function which fails inside commad substitution should return non-zero exit status for assignments'
+
+# test for larg `` command substitutions
+tmpscr=$tmp/xxx.sh
+print 'x=` print -n '"'" > $tmpscr
+integer i
+for ((i=0; i < 4000; i++))
+do	print xxxxxxxxxxyyyyyyyyyyzzzzzzzzzzaaaaaaaaaabbbbbbbbbbcccccccccc
+done >>  $tmpscr
+print  "'"'`' >> $tmpscr
+(( size= $(wc -c < $tmpscr) -18 ))
+$SHELL  "$tmpscr" &
+cop=$!
+{ sleep 2; kill $cop; } 2>/dev/null &
+spy=$!
+if      wait $cop 2>/dev/null
+then    kill $spy 2>/dev/null
+else    err_exit -u2 "\`...\` hangs for large with output size $size"
+fi
+
+if	[[ -e /dev/zero ]]
+then	(( size = 117*1024 ))
+	$SHELL -c 'x=`(dd if=/dev/zero bs=1k count=117 2>/dev/null)`' &
+	cop=$!
+	{ sleep 2; kill $cop; } 2>/dev/null &
+	spy=$!
+	if      wait $cop 2>/dev/null
+	then    kill $spy 2>/dev/null
+	else    err_exit -u2 "\`(...)\` hangs for large with output size $size"
+	fi
+fi
 
 exit $((Errors<125?Errors:125))

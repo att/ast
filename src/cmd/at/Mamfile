@@ -178,7 +178,7 @@ done at.h
 done at.c
 meta at.o %.c>%.o at.c at
 prev at.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1996-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"\" -c at.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1996-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"\" -c at.c
 done at.o generated
 bind -lcoshell
 bind -lcs
@@ -256,7 +256,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 198 in
+exec - "") case 202 in
 exec - 0) cp crontab.sh ast_crontab
 exec - ;;
 exec - *) {
@@ -265,7 +265,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - crontab.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1996-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1996-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"
 exec - !
 exec - } > ast_crontab
 exec - ;;
@@ -273,7 +273,7 @@ exec - esac
 exec - ;;
 exec - *) cat - crontab.sh > ast_crontab <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1996-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1996-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?at]"
 exec - !
 exec - ;;
 exec - esac

@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 : mm2foswiki - convert mm/man subset to foswiki markups

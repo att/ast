@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
 static const char usage[] =
-"[-?\n@(#)$Id: grep (AT&T Research) 2013-04-22 $\n]"
+"[-?\n@(#)$Id: grep (AT&T Research) 2014-01-26 $\n]"
 USAGE_LICENSE
 "[--plugin?ksh]"
 "[+NAME?grep - search lines in files for matching patterns]"
@@ -49,15 +49,15 @@ USAGE_LICENSE
     "\apatterns\a.]"
 "[E:extended-regexp?\begrep\b mode: extended regular expression "
     "\apatterns\a.]"
-"[X:augmented-regexp?\bxgrep\b mode: augmented regular expression "
-    "\apatterns\a.]"
+"[F:fixed-string?\bfgrep\b mode: fixed string \apatterns\a.]"
+"[K:ksh-regexp?\bksh\b(1) extended file match \apatterns\a.]"
 "[P:perl-regexp?\bplgrep\b mode: \bperl\b(1) regular expression "
     "\apatterns\a.]"
-"[K:ksh-regexp?\bksh\b(1) extended file match \apatterns\a.]"
+"[X:augmented-regexp?\bxgrep\b mode: augmented regular expression "
+    "\apatterns\a.]"
 "[S:sh-regexp?\bsh\b(1) file match \apatterns\a.]"
-"[F:fixed-string?\bfgrep\b mode: fixed string \apatterns\a.]"
-"[A:approximate-regexp?\bagrep\b mode: approximate regular expression "
-    "\apatterns\a (not implemented.)]"
+"[A:after-context?Equivalent to \b--context=,\b\alines\a.]:?[lines:=2]"
+"[B:before-context?Equivalent to \b--context=\b\alines\a,.]:?[lines:=2]"
 "[C:context?Set the matched line context \abefore\a and \aafter\a count. "
     "If ,\aafter\a is omitted then it is set to \abefore\a. By default only "
     "matched lines are printed.]:?[before[,after]]:=2,2]"
@@ -765,6 +765,26 @@ grep(char* id, int options, int argc, char** argv, Shbltin_t* context)
 	while (c = optget(argv, usage))
 		switch (c)
 		{
+		case 'A':
+			if (opt_info.arg)
+			{
+				state.after = (int)strtol(opt_info.arg, &s, 0);
+				if (*s)
+					error(3, "%s: invalid after-context line count", s);
+			}
+			else
+				state.after = 2;
+			break;
+		case 'B':
+			if (opt_info.arg)
+			{
+				state.before = (int)strtol(opt_info.arg, &s, 0);
+				if (*s)
+					error(3, "%s: invalid before-context line count", s);
+			}
+			else
+				state.before = 2;
+			break;
 		case 'C':
 			if (opt_info.arg)
 			{

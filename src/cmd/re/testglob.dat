@@ -1,4 +1,4 @@
-: X/Open glob tests 2008-07-29
+: X/Open glob tests 2013-11-25
 
 # test workspace
 
@@ -129,6 +129,8 @@ Kns	\%x			OK		\%x
 Kns	\%x/*			OK		\%x/*
 Kns	./*/$x\)		OK		./*/$x\)
 Kns	./*-/$x\)		OK		./*-/$x\)
+
+K	ab/@(+(.|?)&!(.|..))	OK		ab/.cd ab/?(.|a)z ab/cd ab/hb.h ab/pp
 
 # ~(N) GLOB_NOMATCH prefix as if set by sh(1)
 

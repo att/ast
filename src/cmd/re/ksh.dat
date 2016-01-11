@@ -1,4 +1,4 @@
-: ksh strmatch tests 2012-09-27
+: ksh strmatch tests 2013-11-25
 
 K	@(a|b)			(a|b)			(1,2)(1,2)
 K	@(a|b)			c			NOMATCH
@@ -69,3 +69,14 @@ K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,256)(0,1)(2,256)
 K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,257)(0,1)(2,257)
 K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,258)(0,1)(2,258)
+
+Ka	@(+(.|?)&!(.|..))	arch		(0,4)(0,4)(0,4)(0,4)
+Kad	@(+(.|?)&!(.|..))	arch		(0,4)(0,4)(0,4)(0,4)
+Ka	@(+(.|?)&!(.|..))	.profile	(0,8)(0,8)(0,8)(0,8)
+Kad	@(+(.|?)&!(.|..))	.profile	(0,8)(0,8)(0,8)(0,8)
+Ka	@(+(.|?)&!(.|..))	.		NOMATCH
+Kad	@(+(.|?)&!(.|..))	.		NOMATCH
+Ka	@(+(.|?)&!(.|..))	..		NOMATCH
+Kad	@(+(.|?)&!(.|..))	..		NOMATCH
+Ka	@(+(.|?)&!(.|..))	...		(0,3)(0,3)(0,3)(0,3)
+Kad	@(+(.|?)&!(.|..))	...		(0,3)(0,3)(0,3)(0,3)

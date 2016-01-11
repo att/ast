@@ -1,4 +1,4 @@
-# : : generated from cut.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/cut.rt by mktest : : #
 
 UNIT cut
 
@@ -246,366 +246,366 @@ TEST 11 'multibyte UTF-8 -- off-by-oners doomed here'
 
 EXPORT LC_CTYPE=C.UTF-8
 
-	EXEC	-d $'\342\202\254' -f1 a.dat
+	EXEC	-d $'\xe2\x82\xac' -f1 a.dat
 		INPUT -n -
-		INPUT a.dat $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
-		OUTPUT - $'\303\237'
+		INPUT a.dat $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
+		OUTPUT - $'\xc3\x9f'
 		ERROR -n -
 
 	EXEC	-b 1-2 b.dat
-		INPUT b.dat $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
-		INPUT c.dat $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		INPUT b.dat $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
+		INPUT c.dat $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 1-2 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-n -b 1-2 b.dat
-		OUTPUT - $'\303\237'
+		OUTPUT - $'\xc3\x9f'
 
 	EXEC	-n -b 1-2 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-b 1-3 b.dat
-		OUTPUT - $'\303\237\342'
+		OUTPUT - $'\xc3\x9f\xe2'
 
 	EXEC	-b 1-3 c.dat
-		OUTPUT - $'\303\237\342\n'
+		OUTPUT - $'\xc3\x9f\xe2\n'
 
 	EXEC	-n -b 1-3 b.dat
-		OUTPUT - $'\303\237'
+		OUTPUT - $'\xc3\x9f'
 
 	EXEC	-n -b 1-3 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-b 1-4 b.dat
-		OUTPUT - $'\303\237\342\202'
+		OUTPUT - $'\xc3\x9f\xe2\x82'
 
 	EXEC	-b 1-4 c.dat
-		OUTPUT - $'\303\237\342\202\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\n'
 
 	EXEC	-n -b 1-4 b.dat
-		OUTPUT - $'\303\237'
+		OUTPUT - $'\xc3\x9f'
 
 	EXEC	-n -b 1-4 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-b 1-5 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-b 1-5 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-n -b 1-5 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 1-5 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 1-6 b.dat
-		OUTPUT - $'\303\237\342\202\254\342'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2'
 
 	EXEC	-b 1-6 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\n'
 
 	EXEC	-n -b 1-6 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 1-6 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 1-7 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82'
 
 	EXEC	-b 1-7 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\n'
 
 	EXEC	-n -b 1-7 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 1-7 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 1-8 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-b 1-8 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-n -b 1-8 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-n -b 1-8 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-b 1-9 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-b 1-9 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-n -b 1-9 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-n -b 1-9 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-b 1-10 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-b 1-10 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 1-10 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 1-10 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 1-11 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 1-11 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 1-11 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 1-11 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 1-12 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 1-12 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 1-12 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 1-12 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 1-13 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 1-13 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 1-13 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 1-13 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 1-14 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 1-14 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 1-14 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 1-14 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 1-15 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 1-15 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 1-15 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 1-15 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 1-16 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 1-16 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 1-16 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 1-16 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 2-3 b.dat
-		OUTPUT - $'\237\342'
+		OUTPUT - $'\x9f\xe2'
 
 	EXEC	-b 2-3 c.dat
-		OUTPUT - $'\237\342\n'
+		OUTPUT - $'\x9f\xe2\n'
 
 	EXEC	-n -b 2-3 b.dat
-		OUTPUT - $'\303\237'
+		OUTPUT - $'\xc3\x9f'
 
 	EXEC	-n -b 2-3 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-b 2-4 b.dat
-		OUTPUT - $'\237\342\202'
+		OUTPUT - $'\x9f\xe2\x82'
 
 	EXEC	-b 2-4 c.dat
-		OUTPUT - $'\237\342\202\n'
+		OUTPUT - $'\x9f\xe2\x82\n'
 
 	EXEC	-n -b 2-4 b.dat
-		OUTPUT - $'\303\237'
+		OUTPUT - $'\xc3\x9f'
 
 	EXEC	-n -b 2-4 c.dat
-		OUTPUT - $'\303\237\n'
+		OUTPUT - $'\xc3\x9f\n'
 
 	EXEC	-b 2-5 b.dat
-		OUTPUT - $'\237\342\202\254'
+		OUTPUT - $'\x9f\xe2\x82\xac'
 
 	EXEC	-b 2-5 c.dat
-		OUTPUT - $'\237\342\202\254\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\n'
 
 	EXEC	-n -b 2-5 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 2-5 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 2-6 b.dat
-		OUTPUT - $'\237\342\202\254\342'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2'
 
 	EXEC	-b 2-6 c.dat
-		OUTPUT - $'\237\342\202\254\342\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\n'
 
 	EXEC	-n -b 2-6 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 2-6 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 2-7 b.dat
-		OUTPUT - $'\237\342\202\254\342\202'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82'
 
 	EXEC	-b 2-7 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\n'
 
 	EXEC	-n -b 2-7 b.dat
-		OUTPUT - $'\303\237\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac'
 
 	EXEC	-n -b 2-7 c.dat
-		OUTPUT - $'\303\237\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\n'
 
 	EXEC	-b 2-8 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-b 2-8 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-n -b 2-8 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-n -b 2-8 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-b 2-9 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-b 2-9 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-n -b 2-9 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-n -b 2-9 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-b 2-10 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-b 2-10 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 2-10 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 2-10 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 2-11 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 2-11 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 2-11 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 2-11 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 2-12 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 2-12 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 2-12 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 2-12 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 2-13 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 2-13 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 2-13 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 2-13 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 2-14 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 2-14 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 2-14 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 2-14 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 2-15 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 2-15 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 2-15 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 2-15 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 2-16 b.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 2-16 c.dat
-		OUTPUT - $'\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 2-16 b.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 2-16 c.dat
-		OUTPUT - $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xc3\x9f\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 3-4 b.dat
-		OUTPUT - $'\342\202'
+		OUTPUT - $'\xe2\x82'
 
 	EXEC	-b 3-4 c.dat
-		OUTPUT - $'\342\202\n'
+		OUTPUT - $'\xe2\x82\n'
 
 	EXEC	-n -b 3-4 b.dat
 		OUTPUT -n - $'\n'
@@ -614,430 +614,430 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'\n'
 
 	EXEC	-b 3-5 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-b 3-5 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-n -b 3-5 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 3-5 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 3-6 b.dat
-		OUTPUT - $'\342\202\254\342'
+		OUTPUT - $'\xe2\x82\xac\xe2'
 
 	EXEC	-b 3-6 c.dat
-		OUTPUT - $'\342\202\254\342\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\n'
 
 	EXEC	-n -b 3-6 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 3-6 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 3-7 b.dat
-		OUTPUT - $'\342\202\254\342\202'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82'
 
 	EXEC	-b 3-7 c.dat
-		OUTPUT - $'\342\202\254\342\202\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\n'
 
 	EXEC	-n -b 3-7 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 3-7 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 3-8 b.dat
-		OUTPUT - $'\342\202\254\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-b 3-8 c.dat
-		OUTPUT - $'\342\202\254\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-n -b 3-8 b.dat
-		OUTPUT - $'\342\202\254\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-n -b 3-8 c.dat
-		OUTPUT - $'\342\202\254\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-b 3-9 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-b 3-9 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-n -b 3-9 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-n -b 3-9 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-b 3-10 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-b 3-10 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 3-10 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 3-10 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 3-11 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 3-11 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 3-11 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 3-11 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 3-12 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 3-12 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 3-12 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 3-12 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 3-13 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 3-13 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 3-13 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 3-13 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 3-14 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 3-14 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 3-14 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 3-14 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 3-15 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 3-15 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 3-15 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 3-15 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 3-16 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 3-16 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 3-16 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 3-16 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 4-5 b.dat
-		OUTPUT - $'\202\254'
+		OUTPUT - $'\x82\xac'
 
 	EXEC	-b 4-5 c.dat
-		OUTPUT - $'\202\254\n'
+		OUTPUT - $'\x82\xac\n'
 
 	EXEC	-n -b 4-5 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 4-5 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 4-6 b.dat
-		OUTPUT - $'\202\254\342'
+		OUTPUT - $'\x82\xac\xe2'
 
 	EXEC	-b 4-6 c.dat
-		OUTPUT - $'\202\254\342\n'
+		OUTPUT - $'\x82\xac\xe2\n'
 
 	EXEC	-n -b 4-6 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 4-6 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 4-7 b.dat
-		OUTPUT - $'\202\254\342\202'
+		OUTPUT - $'\x82\xac\xe2\x82'
 
 	EXEC	-b 4-7 c.dat
-		OUTPUT - $'\202\254\342\202\n'
+		OUTPUT - $'\x82\xac\xe2\x82\n'
 
 	EXEC	-n -b 4-7 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 4-7 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 4-8 b.dat
-		OUTPUT - $'\202\254\342\202\254'
+		OUTPUT - $'\x82\xac\xe2\x82\xac'
 
 	EXEC	-b 4-8 c.dat
-		OUTPUT - $'\202\254\342\202\254\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-n -b 4-8 b.dat
-		OUTPUT - $'\342\202\254\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-n -b 4-8 c.dat
-		OUTPUT - $'\342\202\254\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-b 4-9 b.dat
-		OUTPUT - $'\202\254\342\202\254f'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf'
 
 	EXEC	-b 4-9 c.dat
-		OUTPUT - $'\202\254\342\202\254f\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-n -b 4-9 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-n -b 4-9 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-b 4-10 b.dat
-		OUTPUT - $'\202\254\342\202\254f2'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-b 4-10 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 4-10 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 4-10 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 4-11 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 4-11 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 4-11 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 4-11 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 4-12 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 4-12 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 4-12 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 4-12 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 4-13 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 4-13 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 4-13 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 4-13 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 4-14 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 4-14 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 4-14 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 4-14 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 4-15 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 4-15 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 4-15 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 4-15 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 4-16 b.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 4-16 c.dat
-		OUTPUT - $'\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 4-16 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 4-16 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 5-6 b.dat
-		OUTPUT - $'\254\342'
+		OUTPUT - $'\xac\xe2'
 
 	EXEC	-b 5-6 c.dat
-		OUTPUT - $'\254\342\n'
+		OUTPUT - $'\xac\xe2\n'
 
 	EXEC	-n -b 5-6 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 5-6 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 5-7 b.dat
-		OUTPUT - $'\254\342\202'
+		OUTPUT - $'\xac\xe2\x82'
 
 	EXEC	-b 5-7 c.dat
-		OUTPUT - $'\254\342\202\n'
+		OUTPUT - $'\xac\xe2\x82\n'
 
 	EXEC	-n -b 5-7 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 5-7 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 5-8 b.dat
-		OUTPUT - $'\254\342\202\254'
+		OUTPUT - $'\xac\xe2\x82\xac'
 
 	EXEC	-b 5-8 c.dat
-		OUTPUT - $'\254\342\202\254\n'
+		OUTPUT - $'\xac\xe2\x82\xac\n'
 
 	EXEC	-n -b 5-8 b.dat
-		OUTPUT - $'\342\202\254\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac'
 
 	EXEC	-n -b 5-8 c.dat
-		OUTPUT - $'\342\202\254\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xac\n'
 
 	EXEC	-b 5-9 b.dat
-		OUTPUT - $'\254\342\202\254f'
+		OUTPUT - $'\xac\xe2\x82\xacf'
 
 	EXEC	-b 5-9 c.dat
-		OUTPUT - $'\254\342\202\254f\n'
+		OUTPUT - $'\xac\xe2\x82\xacf\n'
 
 	EXEC	-n -b 5-9 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf'
 
 	EXEC	-n -b 5-9 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf\n'
 
 	EXEC	-b 5-10 b.dat
-		OUTPUT - $'\254\342\202\254f2'
+		OUTPUT - $'\xac\xe2\x82\xacf2'
 
 	EXEC	-b 5-10 c.dat
-		OUTPUT - $'\254\342\202\254f2\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 5-10 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 5-10 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 5-11 b.dat
-		OUTPUT - $'\254\342\202\254f2\342'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 5-11 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 5-11 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 5-11 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 5-12 b.dat
-		OUTPUT - $'\254\342\202\254f2\342\202'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 5-12 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 5-12 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2'
 
 	EXEC	-n -b 5-12 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\n'
 
 	EXEC	-b 5-13 b.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 5-13 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 5-13 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 5-13 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 5-14 b.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 5-14 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 5-14 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 5-14 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 5-15 b.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 5-15 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 5-15 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 5-15 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 5-16 b.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 5-16 c.dat
-		OUTPUT - $'\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 5-16 b.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 5-16 c.dat
-		OUTPUT - $'\342\202\254\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 6-7 b.dat
-		OUTPUT - $'\342\202'
+		OUTPUT - $'\xe2\x82'
 
 	EXEC	-b 6-7 c.dat
-		OUTPUT - $'\342\202\n'
+		OUTPUT - $'\xe2\x82\n'
 
 	EXEC	-n -b 6-7 b.dat
 		OUTPUT -n - $'\n'
@@ -1046,316 +1046,316 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'\n'
 
 	EXEC	-b 6-8 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-b 6-8 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-n -b 6-8 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 6-8 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 6-9 b.dat
-		OUTPUT - $'\342\202\254f'
+		OUTPUT - $'\xe2\x82\xacf'
 
 	EXEC	-b 6-9 c.dat
-		OUTPUT - $'\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xacf\n'
 
 	EXEC	-n -b 6-9 b.dat
-		OUTPUT - $'\342\202\254f'
+		OUTPUT - $'\xe2\x82\xacf'
 
 	EXEC	-n -b 6-9 c.dat
-		OUTPUT - $'\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xacf\n'
 
 	EXEC	-b 6-10 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-b 6-10 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-n -b 6-10 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 6-10 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 6-11 b.dat
-		OUTPUT - $'\342\202\254f2\342'
+		OUTPUT - $'\xe2\x82\xacf2\xe2'
 
 	EXEC	-b 6-11 c.dat
-		OUTPUT - $'\342\202\254f2\342\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 6-11 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 6-11 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 6-12 b.dat
-		OUTPUT - $'\342\202\254f2\342\202'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82'
 
 	EXEC	-b 6-12 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 6-12 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 6-12 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 6-13 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 6-13 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 6-13 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 6-13 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 6-14 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 6-14 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 6-14 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 6-14 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 6-15 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 6-15 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 6-15 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 6-15 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 6-16 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 6-16 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 6-16 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 6-16 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 7-8 b.dat
-		OUTPUT - $'\202\254'
+		OUTPUT - $'\x82\xac'
 
 	EXEC	-b 7-8 c.dat
-		OUTPUT - $'\202\254\n'
+		OUTPUT - $'\x82\xac\n'
 
 	EXEC	-n -b 7-8 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 7-8 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 7-9 b.dat
-		OUTPUT - $'\202\254f'
+		OUTPUT - $'\x82\xacf'
 
 	EXEC	-b 7-9 c.dat
-		OUTPUT - $'\202\254f\n'
+		OUTPUT - $'\x82\xacf\n'
 
 	EXEC	-n -b 7-9 b.dat
-		OUTPUT - $'\342\202\254f'
+		OUTPUT - $'\xe2\x82\xacf'
 
 	EXEC	-n -b 7-9 c.dat
-		OUTPUT - $'\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xacf\n'
 
 	EXEC	-b 7-10 b.dat
-		OUTPUT - $'\202\254f2'
+		OUTPUT - $'\x82\xacf2'
 
 	EXEC	-b 7-10 c.dat
-		OUTPUT - $'\202\254f2\n'
+		OUTPUT - $'\x82\xacf2\n'
 
 	EXEC	-n -b 7-10 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 7-10 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 7-11 b.dat
-		OUTPUT - $'\202\254f2\342'
+		OUTPUT - $'\x82\xacf2\xe2'
 
 	EXEC	-b 7-11 c.dat
-		OUTPUT - $'\202\254f2\342\n'
+		OUTPUT - $'\x82\xacf2\xe2\n'
 
 	EXEC	-n -b 7-11 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 7-11 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 7-12 b.dat
-		OUTPUT - $'\202\254f2\342\202'
+		OUTPUT - $'\x82\xacf2\xe2\x82'
 
 	EXEC	-b 7-12 c.dat
-		OUTPUT - $'\202\254f2\342\202\n'
+		OUTPUT - $'\x82\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 7-12 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 7-12 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 7-13 b.dat
-		OUTPUT - $'\202\254f2\342\202\254'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-b 7-13 c.dat
-		OUTPUT - $'\202\254f2\342\202\254\n'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 7-13 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 7-13 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 7-14 b.dat
-		OUTPUT - $'\202\254f2\342\202\254\303'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 7-14 c.dat
-		OUTPUT - $'\202\254f2\342\202\254\303\n'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 7-14 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 7-14 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 7-15 b.dat
-		OUTPUT - $'\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 7-15 c.dat
-		OUTPUT - $'\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 7-15 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 7-15 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 7-16 b.dat
-		OUTPUT - $'\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 7-16 c.dat
-		OUTPUT - $'\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 7-16 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 7-16 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 8-9 b.dat
-		OUTPUT - $'\254f'
+		OUTPUT - $'\xacf'
 
 	EXEC	-b 8-9 c.dat
-		OUTPUT - $'\254f\n'
+		OUTPUT - $'\xacf\n'
 
 	EXEC	-n -b 8-9 b.dat
-		OUTPUT - $'\342\202\254f'
+		OUTPUT - $'\xe2\x82\xacf'
 
 	EXEC	-n -b 8-9 c.dat
-		OUTPUT - $'\342\202\254f\n'
+		OUTPUT - $'\xe2\x82\xacf\n'
 
 	EXEC	-b 8-10 b.dat
-		OUTPUT - $'\254f2'
+		OUTPUT - $'\xacf2'
 
 	EXEC	-b 8-10 c.dat
-		OUTPUT - $'\254f2\n'
+		OUTPUT - $'\xacf2\n'
 
 	EXEC	-n -b 8-10 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 8-10 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 8-11 b.dat
-		OUTPUT - $'\254f2\342'
+		OUTPUT - $'\xacf2\xe2'
 
 	EXEC	-b 8-11 c.dat
-		OUTPUT - $'\254f2\342\n'
+		OUTPUT - $'\xacf2\xe2\n'
 
 	EXEC	-n -b 8-11 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 8-11 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 8-12 b.dat
-		OUTPUT - $'\254f2\342\202'
+		OUTPUT - $'\xacf2\xe2\x82'
 
 	EXEC	-b 8-12 c.dat
-		OUTPUT - $'\254f2\342\202\n'
+		OUTPUT - $'\xacf2\xe2\x82\n'
 
 	EXEC	-n -b 8-12 b.dat
-		OUTPUT - $'\342\202\254f2'
+		OUTPUT - $'\xe2\x82\xacf2'
 
 	EXEC	-n -b 8-12 c.dat
-		OUTPUT - $'\342\202\254f2\n'
+		OUTPUT - $'\xe2\x82\xacf2\n'
 
 	EXEC	-b 8-13 b.dat
-		OUTPUT - $'\254f2\342\202\254'
+		OUTPUT - $'\xacf2\xe2\x82\xac'
 
 	EXEC	-b 8-13 c.dat
-		OUTPUT - $'\254f2\342\202\254\n'
+		OUTPUT - $'\xacf2\xe2\x82\xac\n'
 
 	EXEC	-n -b 8-13 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 8-13 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 8-14 b.dat
-		OUTPUT - $'\254f2\342\202\254\303'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3'
 
 	EXEC	-b 8-14 c.dat
-		OUTPUT - $'\254f2\342\202\254\303\n'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 8-14 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac'
 
 	EXEC	-n -b 8-14 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\n'
 
 	EXEC	-b 8-15 b.dat
-		OUTPUT - $'\254f2\342\202\254\303\274'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 8-15 c.dat
-		OUTPUT - $'\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 8-15 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 8-15 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 8-16 b.dat
-		OUTPUT - $'\254f2\342\202\254\303\274'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 8-16 c.dat
-		OUTPUT - $'\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 8-16 b.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 8-16 c.dat
-		OUTPUT - $'\342\202\254f2\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xacf2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 9-10 b.dat
 		OUTPUT - f2
@@ -1370,10 +1370,10 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'f2\n'
 
 	EXEC	-b 9-11 b.dat
-		OUTPUT - $'f2\342'
+		OUTPUT - $'f2\xe2'
 
 	EXEC	-b 9-11 c.dat
-		OUTPUT - $'f2\342\n'
+		OUTPUT - $'f2\xe2\n'
 
 	EXEC	-n -b 9-11 b.dat
 		OUTPUT - f2
@@ -1382,10 +1382,10 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'f2\n'
 
 	EXEC	-b 9-12 b.dat
-		OUTPUT - $'f2\342\202'
+		OUTPUT - $'f2\xe2\x82'
 
 	EXEC	-b 9-12 c.dat
-		OUTPUT - $'f2\342\202\n'
+		OUTPUT - $'f2\xe2\x82\n'
 
 	EXEC	-n -b 9-12 b.dat
 		OUTPUT - f2
@@ -1394,58 +1394,58 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'f2\n'
 
 	EXEC	-b 9-13 b.dat
-		OUTPUT - $'f2\342\202\254'
+		OUTPUT - $'f2\xe2\x82\xac'
 
 	EXEC	-b 9-13 c.dat
-		OUTPUT - $'f2\342\202\254\n'
+		OUTPUT - $'f2\xe2\x82\xac\n'
 
 	EXEC	-n -b 9-13 b.dat
-		OUTPUT - $'f2\342\202\254'
+		OUTPUT - $'f2\xe2\x82\xac'
 
 	EXEC	-n -b 9-13 c.dat
-		OUTPUT - $'f2\342\202\254\n'
+		OUTPUT - $'f2\xe2\x82\xac\n'
 
 	EXEC	-b 9-14 b.dat
-		OUTPUT - $'f2\342\202\254\303'
+		OUTPUT - $'f2\xe2\x82\xac\xc3'
 
 	EXEC	-b 9-14 c.dat
-		OUTPUT - $'f2\342\202\254\303\n'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 9-14 b.dat
-		OUTPUT - $'f2\342\202\254'
+		OUTPUT - $'f2\xe2\x82\xac'
 
 	EXEC	-n -b 9-14 c.dat
-		OUTPUT - $'f2\342\202\254\n'
+		OUTPUT - $'f2\xe2\x82\xac\n'
 
 	EXEC	-b 9-15 b.dat
-		OUTPUT - $'f2\342\202\254\303\274'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 9-15 c.dat
-		OUTPUT - $'f2\342\202\254\303\274\n'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 9-15 b.dat
-		OUTPUT - $'f2\342\202\254\303\274'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 9-15 c.dat
-		OUTPUT - $'f2\342\202\254\303\274\n'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 9-16 b.dat
-		OUTPUT - $'f2\342\202\254\303\274'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 9-16 c.dat
-		OUTPUT - $'f2\342\202\254\303\274\n'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 9-16 b.dat
-		OUTPUT - $'f2\342\202\254\303\274'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 9-16 c.dat
-		OUTPUT - $'f2\342\202\254\303\274\n'
+		OUTPUT - $'f2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 10-11 b.dat
-		OUTPUT - $'2\342'
+		OUTPUT - $'2\xe2'
 
 	EXEC	-b 10-11 c.dat
-		OUTPUT - $'2\342\n'
+		OUTPUT - $'2\xe2\n'
 
 	EXEC	-n -b 10-11 b.dat
 		OUTPUT - 2
@@ -1454,10 +1454,10 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'2\n'
 
 	EXEC	-b 10-12 b.dat
-		OUTPUT - $'2\342\202'
+		OUTPUT - $'2\xe2\x82'
 
 	EXEC	-b 10-12 c.dat
-		OUTPUT - $'2\342\202\n'
+		OUTPUT - $'2\xe2\x82\n'
 
 	EXEC	-n -b 10-12 b.dat
 		OUTPUT - 2
@@ -1466,58 +1466,58 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'2\n'
 
 	EXEC	-b 10-13 b.dat
-		OUTPUT - $'2\342\202\254'
+		OUTPUT - $'2\xe2\x82\xac'
 
 	EXEC	-b 10-13 c.dat
-		OUTPUT - $'2\342\202\254\n'
+		OUTPUT - $'2\xe2\x82\xac\n'
 
 	EXEC	-n -b 10-13 b.dat
-		OUTPUT - $'2\342\202\254'
+		OUTPUT - $'2\xe2\x82\xac'
 
 	EXEC	-n -b 10-13 c.dat
-		OUTPUT - $'2\342\202\254\n'
+		OUTPUT - $'2\xe2\x82\xac\n'
 
 	EXEC	-b 10-14 b.dat
-		OUTPUT - $'2\342\202\254\303'
+		OUTPUT - $'2\xe2\x82\xac\xc3'
 
 	EXEC	-b 10-14 c.dat
-		OUTPUT - $'2\342\202\254\303\n'
+		OUTPUT - $'2\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 10-14 b.dat
-		OUTPUT - $'2\342\202\254'
+		OUTPUT - $'2\xe2\x82\xac'
 
 	EXEC	-n -b 10-14 c.dat
-		OUTPUT - $'2\342\202\254\n'
+		OUTPUT - $'2\xe2\x82\xac\n'
 
 	EXEC	-b 10-15 b.dat
-		OUTPUT - $'2\342\202\254\303\274'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 10-15 c.dat
-		OUTPUT - $'2\342\202\254\303\274\n'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 10-15 b.dat
-		OUTPUT - $'2\342\202\254\303\274'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 10-15 c.dat
-		OUTPUT - $'2\342\202\254\303\274\n'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 10-16 b.dat
-		OUTPUT - $'2\342\202\254\303\274'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 10-16 c.dat
-		OUTPUT - $'2\342\202\254\303\274\n'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 10-16 b.dat
-		OUTPUT - $'2\342\202\254\303\274'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 10-16 c.dat
-		OUTPUT - $'2\342\202\254\303\274\n'
+		OUTPUT - $'2\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 11-12 b.dat
-		OUTPUT - $'\342\202'
+		OUTPUT - $'\xe2\x82'
 
 	EXEC	-b 11-12 c.dat
-		OUTPUT - $'\342\202\n'
+		OUTPUT - $'\xe2\x82\n'
 
 	EXEC	-n -b 11-12 b.dat
 		OUTPUT -n - $'\n'
@@ -1526,179 +1526,179 @@ EXPORT LC_CTYPE=C.UTF-8
 		OUTPUT - $'\n'
 
 	EXEC	-b 11-13 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-b 11-13 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-n -b 11-13 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 11-13 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 11-14 b.dat
-		OUTPUT - $'\342\202\254\303'
+		OUTPUT - $'\xe2\x82\xac\xc3'
 
 	EXEC	-b 11-14 c.dat
-		OUTPUT - $'\342\202\254\303\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\n'
 
 	EXEC	-n -b 11-14 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 11-14 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 11-15 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 11-15 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 11-15 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 11-15 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 11-16 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-b 11-16 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 11-16 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 11-16 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 12-13 b.dat
-		OUTPUT - $'\202\254'
+		OUTPUT - $'\x82\xac'
 
 	EXEC	-b 12-13 c.dat
-		OUTPUT - $'\202\254\n'
+		OUTPUT - $'\x82\xac\n'
 
 	EXEC	-n -b 12-13 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 12-13 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 12-14 b.dat
-		OUTPUT - $'\202\254\303'
+		OUTPUT - $'\x82\xac\xc3'
 
 	EXEC	-b 12-14 c.dat
-		OUTPUT - $'\202\254\303\n'
+		OUTPUT - $'\x82\xac\xc3\n'
 
 	EXEC	-n -b 12-14 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 12-14 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 12-15 b.dat
-		OUTPUT - $'\202\254\303\274'
+		OUTPUT - $'\x82\xac\xc3\xbc'
 
 	EXEC	-b 12-15 c.dat
-		OUTPUT - $'\202\254\303\274\n'
+		OUTPUT - $'\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 12-15 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 12-15 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 12-16 b.dat
-		OUTPUT - $'\202\254\303\274'
+		OUTPUT - $'\x82\xac\xc3\xbc'
 
 	EXEC	-b 12-16 c.dat
-		OUTPUT - $'\202\254\303\274\n'
+		OUTPUT - $'\x82\xac\xc3\xbc\n'
 
 	EXEC	-n -b 12-16 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 12-16 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 13-14 b.dat
-		OUTPUT - $'\254\303'
+		OUTPUT - $'\xac\xc3'
 
 	EXEC	-b 13-14 c.dat
-		OUTPUT - $'\254\303\n'
+		OUTPUT - $'\xac\xc3\n'
 
 	EXEC	-n -b 13-14 b.dat
-		OUTPUT - $'\342\202\254'
+		OUTPUT - $'\xe2\x82\xac'
 
 	EXEC	-n -b 13-14 c.dat
-		OUTPUT - $'\342\202\254\n'
+		OUTPUT - $'\xe2\x82\xac\n'
 
 	EXEC	-b 13-15 b.dat
-		OUTPUT - $'\254\303\274'
+		OUTPUT - $'\xac\xc3\xbc'
 
 	EXEC	-b 13-15 c.dat
-		OUTPUT - $'\254\303\274\n'
+		OUTPUT - $'\xac\xc3\xbc\n'
 
 	EXEC	-n -b 13-15 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 13-15 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 13-16 b.dat
-		OUTPUT - $'\254\303\274'
+		OUTPUT - $'\xac\xc3\xbc'
 
 	EXEC	-b 13-16 c.dat
-		OUTPUT - $'\254\303\274\n'
+		OUTPUT - $'\xac\xc3\xbc\n'
 
 	EXEC	-n -b 13-16 b.dat
-		OUTPUT - $'\342\202\254\303\274'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc'
 
 	EXEC	-n -b 13-16 c.dat
-		OUTPUT - $'\342\202\254\303\274\n'
+		OUTPUT - $'\xe2\x82\xac\xc3\xbc\n'
 
 	EXEC	-b 14-15 b.dat
-		OUTPUT - $'\303\274'
+		OUTPUT - $'\xc3\xbc'
 
 	EXEC	-b 14-15 c.dat
-		OUTPUT - $'\303\274\n'
+		OUTPUT - $'\xc3\xbc\n'
 
 	EXEC	-n -b 14-15 b.dat
-		OUTPUT - $'\303\274'
+		OUTPUT - $'\xc3\xbc'
 
 	EXEC	-n -b 14-15 c.dat
-		OUTPUT - $'\303\274\n'
+		OUTPUT - $'\xc3\xbc\n'
 
 	EXEC	-b 14-16 b.dat
-		OUTPUT - $'\303\274'
+		OUTPUT - $'\xc3\xbc'
 
 	EXEC	-b 14-16 c.dat
-		OUTPUT - $'\303\274\n'
+		OUTPUT - $'\xc3\xbc\n'
 
 	EXEC	-n -b 14-16 b.dat
-		OUTPUT - $'\303\274'
+		OUTPUT - $'\xc3\xbc'
 
 	EXEC	-n -b 14-16 c.dat
-		OUTPUT - $'\303\274\n'
+		OUTPUT - $'\xc3\xbc\n'
 
 	EXEC	-b 15-16 b.dat
-		OUTPUT - $'\274'
+		OUTPUT - $'\xbc'
 
 	EXEC	-b 15-16 c.dat
-		OUTPUT - $'\274\n'
+		OUTPUT - $'\xbc\n'
 
 	EXEC	-n -b 15-16 b.dat
-		OUTPUT - $'\303\274'
+		OUTPUT - $'\xc3\xbc'
 
 	EXEC	-n -b 15-16 c.dat
-		OUTPUT - $'\303\274\n'
+		OUTPUT - $'\xc3\xbc\n'
 
 TEST 12 'multibyte euc'
 
 EXPORT LC_CTYPE=ja_JP.eucJP
 
-	EXEC	-d $'\244\244' -f1 a.dat
+	EXEC	-d $'\xa4\xa4' -f1 a.dat
 		INPUT -n -
-		INPUT a.dat $'\244\242\244\244\244\244\244\246\244\250'
-		OUTPUT - $'\244\242'
+		INPUT a.dat $'\xa4\xa2\xa4\xa4\xa4\xa4\xa4\xa6\xa4\xa8'
+		OUTPUT - $'\xa4\xa2'
 		ERROR -n -

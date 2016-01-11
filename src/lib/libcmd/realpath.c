@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
 static const char usage[] =
-"[-?\n@(#)$Id: realpath (AT&T Research) 2013-09-19 $\n]"
+"[-?\n@(#)$Id: realpath (AT&T Research) 2013-12-06 $\n]"
 USAGE_LICENSE
 "[+NAME?realpath - print canonicalized path]"
 "[+DESCRIPTION?The canoncalized path of each \apath\a operand is printed "
@@ -35,7 +35,7 @@ USAGE_LICENSE
     "expanded in the output; otherwise all symbolic link components are "
     "recursively expanded (resolved) in the output. If no \apath\a operand "
     "is specified then \b.\b is assumed.]"
-"[+?When invoked as \breadlink\b: \b--readlink\b and \b--silent\b are "
+"[+?When invoked as \breadlink\b: \b--readlink\b and \b--quiet\b are "
     "set and exactly one \apath\a operand must be specified.]"
 
 "[d:dirfd?Resolve relative paths relative to the open directory "
@@ -55,7 +55,7 @@ USAGE_LICENSE
     "\b--canonicalize\b* options are specified then the symbolic link text "
     "is canonicalized and printed on the standard output. Otherwise the "
     "unprocessed symbolic link text is printed. This option also sets "
-    "\b--silent\b; to enable diagnostics use \b--readlink --verbose\b.]"
+    "\b--quiet\b; to enable diagnostics use \b--readlink --verbose\b.]"
 "[r:relative?Canonicalize relative paths; this may result in leading "
     "\b..\b components.]"
 #if 0

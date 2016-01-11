@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -247,5 +247,15 @@ got=$(typeset -p arr[0])
 exp='typeset -a arr=( () )'
 got=$(typeset -p arr)
 [[ $got == "$exp" ]] || err_exit "arr expected $exp got $got"
+
+unset foo
+typeset -A foo
+typeset -A foo[bar]
+foo[bar][x]=2
+(( foo[bar][x]++ ))
+[[ ${foo[bar][x]} == 3 ]] || err_ext 'subscrit gets added incorrectly to an associat array when ++ operator is called'
+
+
+
 
 exit $((Errors<125?Errors:125))

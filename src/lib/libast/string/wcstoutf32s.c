@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -61,7 +61,7 @@ wcstoutf32s(uint32_t* utf32, wchar_t* wchar, size_t n)
 		size_t		outbytesleft;
 		int		oerrno;
 
-		if (ast.mb_wc2uc == (void*)(-1) && (ast.mb_wc2uc = (void*)iconv_open("UTF-8", codeset(CODESET_ctype))) == -1)
+		if (ast.mb_wc2uc == (void*)(-1) && (ast.mb_wc2uc = (void*)iconv_open("UTF-8", codeset(CODESET_ctype))) == (void*)-1)
 			ast.mb_wc2uc = 0;
 		if (ast.mb_wc2uc == 0)
 			return -1;

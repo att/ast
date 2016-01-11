@@ -1,4 +1,4 @@
-# : : generated from mktemp.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/mktemp.rt by mktest : : #
 
 # regression tests for the mktemp command
 

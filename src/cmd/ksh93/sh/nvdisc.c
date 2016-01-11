@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -423,7 +423,7 @@ static char*	lookup(Namval_t *np, int type, Sfdouble_t *dp,Namfun_t *handle)
 	}
 	if(bp== &block)
 		block_done(bp);
-	if(nq && nq->nvalue.rp->running==1)
+	if(nq && nq->nvalue.rp && nq->nvalue.rp->running==1)
 	{
 		nq->nvalue.rp->running=0;
 		_nv_unset(nq,0);
@@ -1229,9 +1229,16 @@ Namval_t *sh_addbuiltin_20120720(Shell_t* shp,const char *path, Shbltin_f bltin,
 		stkseek(shp->stk,offset);
 		if(extra == (void*)1)
 		{
+			if(nv_isattr(np,BLT_SPC))
+				errormsg(SH_DICT,ERROR_exit(1),"Cannot delete: %s%s",name,is_spcbuiltin);
 			if(np->nvfun && !nv_isattr(np,NV_NOFREE))
 				free((void*)np->nvfun);
 			dtdelete(shp->bltin_tree,np);
+			return(0);
+		}
+		else if(extra == (void*)2)
+		{
+			nv_onattr(np,BLT_DISABLE);
 			return(0);
 		}
 		if(!bltin)

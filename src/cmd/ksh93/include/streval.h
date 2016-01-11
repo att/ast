@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -67,6 +67,11 @@
 #ifndef LDBL_DIG
 #   define LDBL_DIG DBL_DIG
 #endif
+
+#define TYPE_U	1
+#define TYPE_F	2
+#define TYPE_D	3
+#define TYPE_LD	4
 
 struct lval
 {
@@ -172,6 +177,9 @@ typedef struct _arith_
 #define A_ASSIGNOP	55
 #define A_ENUM		56
 #define A_ASSIGNOP1	57
+#define A_CALL1V	58
+#define A_CALL2V	59
+#define A_CALL3V	60
 
 
 /* define error messages */

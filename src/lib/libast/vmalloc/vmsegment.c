@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -37,6 +37,13 @@ void _STUB_vmprivate(){}
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94, 12/04/2012.
 */
+
+/* hint to regulate memory requests to discipline functions */
+#if _ast_sizeof_size_t > 4 /* the address space is greater than 32-bit	*/
+#define VM_SEGSIZE	(4*1024*1024)	/* lots of memory available here	*/
+#else
+#define VM_SEGSIZE	(64*1024)	/* perhaps more limited memory	*/
+#endif
 
 #ifdef DEBUG
 static int	N_segalloc;
@@ -503,10 +510,11 @@ Vmextern_t	_Vmextern =
 	0,									/* _Vmmemmax	*/
 	0,									/* _Vmmemaddr	*/
 	0,									/* _Vmmemsbrk	*/
-	0,									/* _Vmpagesize	*/
-	0,									/* _Vmsbrklock	*/
 	0,									/* _Vmhold	*/
-	VM_check_seg								/* _Vmassert	*/
+	0,									/* _Vmpagesize	*/
+	VM_SEGSIZE,								/* _Vmsegsize	*/
+	0,									/* _Vmsbrklock	*/
+	0									/* _Vmassert	*/
 };
 
 #endif
