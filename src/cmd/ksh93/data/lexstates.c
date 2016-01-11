@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -230,7 +230,7 @@ static const char sh_lexstate6[256] =
 	S_ERR,	S_SPC1,	S_ERR,	S_SPC1,	S_SPC2,	S_ERR,	S_ERR,	S_LIT,
 	S_PAR,	S_ERR,	S_SPC2,	S_ERR,	S_ERR,	S_SPC2,	S_ALP,	S_ERR,
 	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,
-	S_DIG,	S_DIG,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_SPC2,
+	S_DIG,	S_DIG,	S_ERR,	S_ERR,	S_ERR,	S_SPC2,	S_ERR,	S_SPC2,
 
 	S_SPC1,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
 	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
@@ -271,14 +271,14 @@ static const char sh_lexstate7[256] =
 	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,
 
 	S_ERR,	S_ERR,	S_ERR,	S_MOD2,	S_ERR,	S_MOD2,	S_ERR,	S_ERR,
-	S_ERR,	S_ERR,	S_MOD1,	S_MOD1,	S_ERR,	S_MOD1,	S_DOT,	S_MOD2,
+	S_ERR,	S_ERR,	S_MOD1,	S_MOD1,	S_MOD2,	S_MOD1,	S_DOT,	S_MOD2,
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	S_MOD1,	S_ERR,	S_ERR,	S_MOD1,	S_ERR,	S_MOD1,
 
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
-	0,	0,	0,	S_BRACT,S_ESC,	S_ERR,	S_ERR,	0,
+	0,	0,	0,	S_BRACT,S_ESC,	S_ERR,	S_MOD2,	0,
 
 	S_ERR,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,

@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 ### this script contains archaic constructs that work with all sh variants ###
@@ -74,6 +74,7 @@ package_use='=$HOSTTYPE=$PACKAGEROOT=$INSTALLROOT=$EXECROOT=$CC='
 PACKAGE_admin_tail_timeout=${PACKAGE_admin_tail_timeout:-"1m"}
 
 CROSS=0
+OK=ok
 
 admin_db=admin.db
 admin_env=admin.env
@@ -99,7 +100,7 @@ all_types='*.*|sun4'		# all but sun4 match *.*
 case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 0123)	USAGE=$'
 [-?
-@(#)$Id: package (AT&T Research) 2013-07-17 $
+@(#)$Id: package (AT&T Research) 2013-12-05 $
 ]'$USAGE_LICENSE$'
 [+NAME?package - source and binary package control]
 [+DESCRIPTION?The \bpackage\b command controls source and binary
@@ -2649,7 +2650,6 @@ run=-
 case $x in
 1)	: accept the current package use environment
 
-	OK=ok
 	KSH=$EXECROOT/bin/ksh
 	MAKE=nmake
 	NMAKE=$EXECROOT/bin/$MAKE
@@ -3075,7 +3075,6 @@ cat $INITROOT/$i.sh
 
 	# use these if possible
 
-	OK=ok
 	KSH=$EXECROOT/bin/ksh
 	MAKE=nmake
 	NMAKE=$EXECROOT/bin/$MAKE
@@ -5483,7 +5482,7 @@ make|view)
 	for i in arch arch/$HOSTTYPE
 	do	test -d $PACKAGEROOT/$i || $exec mkdir $PACKAGEROOT/$i || exit
 	done
-	for i in bin bin/$OK bin/$OK/lib fun include lib lib/package lib/package/gen src man man/man1 man/man3 man/man8
+	for i in bin fun include lib lib/package lib/package/gen src man man/man1 man/man3 man/man8 $OK $OK/bin $OK/lib
 	do	test -d $INSTALLROOT/$i || $exec mkdir $INSTALLROOT/$i || exit
 	done
 	make_recurse src
@@ -5745,21 +5744,21 @@ cat $j $k
 
 	if	(execrate) >/dev/null 2>&1
 	then	execrate=execrate
-		$make cd $INSTALLROOT/bin
+		$make cd $INSTALLROOT/$OK/bin
 		for i in chmod chgrp cmp cp ln mv rm
-		do	if	test ! -x $OK/$i -a -x /bin/$i.exe
+		do	if	test ! -x $i -a -x /bin/$i.exe
 			then	shellmagic
 				case $exec in
-				'')	echo "$SHELLMAGIC"'execrate /bin/'$i' "$@"' > $OK/$i
-					chmod +x $OK/$i
+				'')	echo "$SHELLMAGIC"'execrate /bin/'$i' "$@"' > $i
+					chmod +x $i
 					;;
-				*)	$exec echo \'"$SHELLMAGIC"'execrate /bin/'$i' "$@"'\'' >' $OK/$i
-					$exec chmod +x $OK/$i
+				*)	$exec echo \'"$SHELLMAGIC"'execrate /bin/'$i' "$@"'\'' >' $i
+					$exec chmod +x $i
 					;;
 				esac
 			fi
 		done
-		PATH=$INSTALLROOT/bin/$OK:$PATH
+		PATH=$INSTALLROOT/$OK/bin:$PATH
 		export PATH
 	else	execrate=
 	fi
@@ -5892,7 +5891,7 @@ cat $j $k
 	'')	if	test ! -f $INSTALLROOT/bin/.paths -o -w $INSTALLROOT/bin/.paths
 		then	N='
 '
-			b= f= h= n= p= u= B= L=
+			a= b= f= h= n= p= u= B= L=
 			if	test -f $INSTALLROOT/bin/.paths
 			then	exec < $INSTALLROOT/bin/.paths
 				while	read x
@@ -5900,6 +5899,8 @@ cat $j $k
 					'#'?*)		case $h in
 							'')	h=$x ;;
 							esac
+							;;
+					*BIN=*)		a=$x
 							;;
 					*BUILTIN_LIB=*)	b=$x
 							;;
@@ -5919,6 +5920,11 @@ cat $j $k
 			m=
 			case $p in
 			?*)	b=
+				;;
+			esac
+			case $a in
+			'')	a="BIN=1"
+				m=1
 				;;
 			esac
 			case $b in
@@ -5953,7 +5959,7 @@ cat $j $k
 			1)	case $u in
 				?*)	u=$N$u ;;
 				esac
-				echo "$h$N$p$N$f$N$u" > $INSTALLROOT/bin/.paths
+				echo "$h$N$a$N$p$N$f$N$u" > $INSTALLROOT/bin/.paths
 				;;
 			esac
 		fi
@@ -5981,43 +5987,45 @@ cat $j $k
 			ksh nmake tee cp ln mv rm \
 			*ast*.dll *cmd*.dll *dll*.dll *shell*.dll
 		do	executable $i && {
-				cmp -s $i $OK/$i 2>/dev/null || {
-					test -f $OK/$i &&
-					$exec $execrate $rm $OK/$i </dev/null
-					test -f $OK/$i &&
-					$exec $execrate $mv $OK/$i $OK/$i.old </dev/null
-					test -f $OK/$i &&
+				cmp -s $i ../$OK/bin$i 2>/dev/null || {
+					test -f ../$OK/bin/$i &&
+					$exec $execrate $rm ../$OK/bin/$i </dev/null
+					test -f ../$OK/bin/$i &&
+					$exec $execrate $mv ../$OK/bin/$i ../$OK/bin/$i.old </dev/null
+					test -f ../$OK/bin/$i &&
 					case $exec:$i in
 					:nmake|:ksh)
-						echo "$command: $OK/$i: cannot update [may be in use by a running process] remove manually and try again" >&2
+						echo "$command: ../$OK/bin/$i: cannot update [may be in use by a running process] remove manually and try again" >&2
 						exit 1
 						;;
 					esac
-					$exec $execrate $cp $i $OK/$i
+					$exec $execrate $cp $i ../$OK/bin/$i
 				}
 			}
 		done
-		if	test -f ../lib/make/makerules.mo
-		then	cmp -s ../lib/make/makerules.mo $OK/lib/makerules.mo ||
-			$exec $execrate $cp -p ../lib/make/makerules.mo $OK/lib/makerules.mo ||
-			$exec $execrate $cp ../lib/make/makerules.mo $OK/lib/makerules.mo
+		if	executable ../$OK/bin/nmake
+		then	MAKE="$INSTALLROOT/$OK/bin/nmake LOCALRULESPATH=$INSTALLROOT/$OK/lib/make"
 		fi
-		if	executable $OK/nmake
-		then	MAKE="$INSTALLROOT/bin/$OK/nmake LOCALRULESPATH=$INSTALLROOT/bin/$OK/lib"
+		if	executable ../$OK/bin/tee
+		then	TEE=$INSTALLROOT/$OK/bin/tee
 		fi
-		if	executable $OK/tee
-		then	TEE=$INSTALLROOT/bin/$OK/tee
-		fi
-		if	test "$KEEP_SHELL" != 1 && executable $OK/ksh
-		then	SHELL=$INSTALLROOT/bin/$OK/ksh
+		$make cd $INSTALLROOT/lib
+		for i in *ast.* *cmd.* *dll.* *shell.*
+		do	case $i in
+			*.a)	;;
+			*)	cmp -s $i ../$OK/lib/$i || $exec $cp -f $i ../$OK/lib ;;
+			esac
+		done
+		if	test "$KEEP_SHELL" != 1 && executable $INSTALLROOT/$OK/bin/ksh
+		then	SHELL=$INSTALLROOT/$OK/bin/ksh
 			export SHELL
 			COSHELL=$SHELL
 			export COSHELL
 		fi
 		case :$PATH: in
-		*:$INSTALLROOT/bin/$OK:*)
+		*:$INSTALLROOT/$OK:*)
 			;;
-		*)	PATH=$INSTALLROOT/bin/$OK:$PATH
+		*)	PATH=$INSTALLROOT/$OK/bin:$PATH
 			export PATH
 			;;
 		esac

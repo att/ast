@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 #
@@ -29,6 +29,13 @@ function err_exit
 }
 alias err_exit='err_exit $LINENO'
 
+function warning
+{
+	print -u2 -n "\t"
+	print -u2 -r ${Command}[$1]: warning: "${@:2}"
+}
+alias warning='warning $LINENO'
+
 Command=${0##*/}
 integer Errors=0
 
@@ -36,12 +43,9 @@ locales="en_US.UTF-8 en_US.ISO-8859-15 zh_CN.GB18030"
 supported="C.UTF-8"
 
 for lc_all in $locales
-do	if	{
-			PATH=/bin:/usr/bin:$PATH locale -a | grep -w ${lc_all%.*} &&
-			LC_ALL=$lc_all PATH=/bin:/usr/bin:$PATH iconv -f ${lc_all#*.} -t UTF-8 </dev/null
-		} >/dev/null 2>&1
+do	if	[[ $($SHELL -c "LC_ALL=$lc_all || echo error" 2>&1) == "" ]]
 	then	supported+=" $lc_all"
-	else	: "LC_ALL=$lc_all not supported" :
+	else	warning "LC_ALL=$lc_all not supported"
 	fi
 done
 
@@ -53,10 +57,10 @@ for lc_all in $supported
 do
 
 got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"' | iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1)
-[[ $got == "$exp0" ]] || err_exit "${lc_all} nounicodeliterals FAILED -- locale probably not supported -- expected '$exp0', got '$got'"
+[[ $got == "$exp0" ]] || err_exit "${lc_all} nounicodeliterals FAILED -- expected '$exp0', got '$got'"
 
 got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(nounicodeliterals)q\n" "$(printf "\u[20ac]")"' | iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1)
-[[ $got == "$exp0" ]] || err_exit "${lc_all} (nounicodeliterals) FAILED -- locale probably not supported -- expected '$exp0', got '$got'"
+[[ $got == "$exp0" ]] || err_exit "${lc_all} (nounicodeliterals) FAILED -- expected '$exp0', got '$got'"
 
 got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"')
 [[ $got == "$exp1" || $got == "$exp2" ]] || err_exit "${lc_all} unicode FAILED -- expected $exp1, got $got"

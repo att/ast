@@ -228,7 +228,7 @@ prev include.h implicit
 done ospf_lsa.c
 meta ospf_lsa.o %.c>%.o ospf_lsa.c ospf_lsa
 prev ospf_lsa.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Aman Shaikh <ashaikh@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsslsa]"\" -D_PACKAGE_ast -c ospf_lsa.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Aman Shaikh <ashaikh@research.att.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsslsa]"\" -D_PACKAGE_ast -c ospf_lsa.c
 done ospf_lsa.o generated
 make ospf_lsag_lsa.o
 make ospf_lsag_lsa.c

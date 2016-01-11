@@ -222,7 +222,7 @@ done ${INSTALLROOT}/include/ast/shell.h
 done dss.c
 meta dss.o %.c>%.o dss.c dss
 prev dss.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshdss]"\" -D_BLD_dss -D_PACKAGE_ast -D_API_shell=20120609 -c dss.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshdss]"\" -D_BLD_dss -D_PACKAGE_ast -D_API_shell=20120609 -c dss.c
 done dss.o generated
 exec - ${AR} rc libkshdss.a dss.o
 exec - (ranlib libkshdss.a) >/dev/null 2>&1 || true

@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -46,7 +46,7 @@ y[foo]=yellow
 [[ ${y[foo]} == yellow ]] || err_exit '${y[foo]} != yellow'
 (( y[foo] == 4 )) || err_exit '(( y[foo] != 4))'
 unset y
-typeset -a [Color_t] z
+typeset -a "[Color_t]" z
 z[green]=xyz
 [[ ${z[green]} == xyz ]] || err_exit '${z[green]} should be xyz'
 [[ ${z[1]} == xyz ]] || err_exit '${z[1]} should be xyz'
@@ -61,11 +61,11 @@ unset x y z
 done
 (
 typeset -T X_t=( typeset name=aha )
-typeset -a[X_t] arr
+typeset -a "[X_t]" arr
 ) 2> /dev/null
-[[ $? == 1 ]] || err_exit 'typeset -a[X_t] should generate an error message when X-t is not an enumeriation type'
+[[ $? == 1 ]] || err_exit 'typeset -a [X_t] should generate an error message when X-t is not an enumeriation type'
 
-typeset -a [Color_t] arr
+typeset -a "[Color_t]" arr
 arr[green]=foo
 [[ ${arr[1]} == ${arr[green]}  ]] || err_exit 'arr[1] != arr[green]'
 read -A arr <<<  'x y z xx yy'

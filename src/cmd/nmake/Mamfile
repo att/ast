@@ -326,7 +326,7 @@ prev make.h implicit
 done option.c
 meta option.o %.c>%.o option.c option
 prev option.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1984-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -D_PACKAGE_ast -c option.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1984-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -D_PACKAGE_ast -c option.c
 done option.o generated
 make parse.o
 make parse.c
@@ -389,7 +389,7 @@ prev make.h implicit
 done variable.c
 meta variable.o %.c>%.o variable.c variable
 prev variable.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c variable.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D__OBSOLETE__=20140101 -D_PACKAGE_ast -c variable.c
 done variable.o generated
 make version.o
 make version.c
@@ -653,150 +653,99 @@ done ${INSTALLROOT}/lib/make/makerules.mo virtual
 done install virtual
 make test
 make test.assert
-make tests/assert.tst
-make tests/cc.def implicit
-make tests/test.def implicit
-done tests/test.def
-done tests/cc.def
-done tests/assert.tst
-exec - regress tests/assert.tst
+make assert.tst
+done assert.tst virtual
 done test.assert virtual
 make test.assign
-make tests/assign.tst
-prev tests/test.def implicit
-done tests/assign.tst
-exec - regress tests/assign.tst
+make assign.tst
+done assign.tst virtual
 done test.assign virtual
 make test.attribute
-make tests/attribute.tst
-prev tests/cc.def implicit
-done tests/attribute.tst
-exec - regress tests/attribute.tst
+make attribute.tst
+done attribute.tst virtual
 done test.attribute virtual
 make test.automatic
-make tests/automatic.tst
-prev tests/test.def implicit
-done tests/automatic.tst
-exec - regress tests/automatic.tst
+make automatic.tst
+done automatic.tst virtual
 done test.automatic virtual
 make test.baserules
-make tests/baserules.tst
-prev tests/test.def implicit
-done tests/baserules.tst
-exec - regress tests/baserules.tst
+make baserules.tst
+done baserules.tst virtual
 done test.baserules virtual
 make test.common
-make tests/common.tst
-prev tests/cc.def implicit
-done tests/common.tst
-exec - regress tests/common.tst
+make common.tst
+done common.tst virtual
 done test.common virtual
 make test.diagnostics
-make tests/diagnostics.tst
-prev tests/test.def implicit
-done tests/diagnostics.tst
-exec - regress tests/diagnostics.tst
+make diagnostics.tst
+done diagnostics.tst virtual
 done test.diagnostics virtual
 make test.edit
-make tests/edit.tst
-prev tests/test.def implicit
-done tests/edit.tst
-exec - regress tests/edit.tst
+make edit.tst
+done edit.tst virtual
 done test.edit virtual
 make test.immediate
-make tests/immediate.tst
-prev tests/test.def implicit
-done tests/immediate.tst
-exec - regress tests/immediate.tst
+make immediate.tst
+done immediate.tst virtual
 done test.immediate virtual
 make test.implicit
-make tests/implicit.tst
-prev tests/cc.def implicit
-done tests/implicit.tst
-exec - regress tests/implicit.tst
+make implicit.tst
+done implicit.tst virtual
 done test.implicit virtual
 make test.internal
-make tests/internal.tst
-prev tests/test.def implicit
-done tests/internal.tst
-exec - regress tests/internal.tst
+make internal.tst
+done internal.tst virtual
 done test.internal virtual
 make test.interrupt
-make tests/interrupt.tst
-prev tests/test.def implicit
-done tests/interrupt.tst
-exec - regress tests/interrupt.tst
+make interrupt.tst
+done interrupt.tst virtual
 done test.interrupt virtual
 make test.metarule
-make tests/metarule.tst
-prev tests/cc.def implicit
-done tests/metarule.tst
-exec - regress tests/metarule.tst
+make metarule.tst
+done metarule.tst virtual
 done test.metarule virtual
 make test.option
-make tests/option.tst
-prev tests/cc.def implicit
-done tests/option.tst
-exec - regress tests/option.tst
+make option.tst
+done option.tst virtual
 done test.option virtual
 make test.panic
-make tests/panic.tst
-prev tests/test.def implicit
-done tests/panic.tst
-exec - regress tests/panic.tst
+make panic.tst
+done panic.tst virtual
 done test.panic virtual
 make test.prereq
-make tests/prereq.tst
-prev tests/cc.def implicit
-done tests/prereq.tst
-exec - regress tests/prereq.tst
+make prereq.tst
+done prereq.tst virtual
 done test.prereq virtual
 make test.quoting
-make tests/quoting.tst
-prev tests/test.def implicit
-done tests/quoting.tst
-exec - regress tests/quoting.tst
+make quoting.tst
+done quoting.tst virtual
 done test.quoting virtual
 make test.recurse
-make tests/recurse.tst
-prev tests/test.def implicit
-done tests/recurse.tst
-exec - regress tests/recurse.tst
+make recurse.tst
+done recurse.tst virtual
 done test.recurse virtual
 make test.scan
-make tests/scan.tst
-prev tests/cc.def implicit
-done tests/scan.tst
-exec - regress tests/scan.tst
+make scan.tst
+done scan.tst virtual
 done test.scan virtual
 make test.shell
-make tests/shell.tst
-prev tests/test.def implicit
-done tests/shell.tst
-exec - regress tests/shell.tst
+make shell.tst
+done shell.tst virtual
 done test.shell virtual
 make test.state
-make tests/state.tst
-prev tests/cc.def implicit
-done tests/state.tst
-exec - regress tests/state.tst
+make state.tst
+done state.tst virtual
 done test.state virtual
 make test.statement
-make tests/statement.tst
-prev tests/cc.def implicit
-done tests/statement.tst
-exec - regress tests/statement.tst
+make statement.tst
+done statement.tst virtual
 done test.statement virtual
 make test.syntax
-make tests/syntax.tst
-prev tests/test.def implicit
-done tests/syntax.tst
-exec - regress tests/syntax.tst
+make syntax.tst
+done syntax.tst virtual
 done test.syntax virtual
 make test.view
-make tests/view.tst
-prev tests/cc.def implicit
-done tests/view.tst
-exec - regress tests/view.tst
+make view.tst
+done view.tst virtual
 done test.view virtual
 done test dontcare virtual

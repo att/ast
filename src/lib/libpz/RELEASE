@@ -1,3 +1,4 @@
+13-11-20 pzlib.h,pzopen.c,pzpart.c: drop vmdisc
 11-09-21 sfdczip.c: set SF_SHARE if uncompress discipline pushed
 11-03-07 pzip.h,pzpart.c: handle length@offset variable row size
 06-12-18 pzline.c: move to separate plugin source dir

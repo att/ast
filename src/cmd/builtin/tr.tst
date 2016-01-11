@@ -377,6 +377,7 @@ TEST 13 'unlucky char sign extension?'
 
 TEST 14 'multibyte basics'
 	EXPORT	LC_CTYPE=C.UTF-8
+	export	LC_CTYPE=C.UTF-8
 	EXEC	-c $'[:alpha:]\n' 'X'
 		INPUT - $'\u[20ac]\u[20ac]'
 		OUTPUT - $'XX'

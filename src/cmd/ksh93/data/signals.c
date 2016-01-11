@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"defs.h"
@@ -102,6 +102,9 @@ const struct shtable2 shtab_signals[] =
 #endif /* SIGGRANT */
 	"HUP",		VAL(SIGHUP,SH_SIGDONE),				S("Hangup"),
 	"ILL",		VAL(SIGILL,SH_SIGDONE),				S("Illegal instruction"),
+#ifdef SIGINFO
+	"INFO",		VAL(SIGINFO,SH_SIGIGNORE),			S("Information request"),
+#endif /* SIGINFO */
 #ifdef JOBS
 	"INT",		VAL(SIGINT,SH_SIGINTERACTIVE),			S("Interrupt"),
 #else

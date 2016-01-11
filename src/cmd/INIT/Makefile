@@ -88,7 +88,7 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 	then	N='$("\n")'
 		H=$(CC.HOSTTYPE)
 		P="$(-mam:??$(.GETCONF LIBPATH:/:/ /G:/,/ : /G:Q)?)"
-		b= f= h= l= n= p= u= B= L=
+		a= b= f= h= l= n= p= u= B= L=
 		set : $P
 		while	:
 		do	while	:
@@ -118,6 +118,8 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 						;;
 				$L)		l=$x
 						;;
+				*BIN=*)		a=$x
+						;;
 				*BUILTIN_LIB=*)	b=$x
 						;;
 				*FPATH=*)	f=$x
@@ -136,6 +138,11 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 		m=
 		case $p in
 		?*)	b=
+			;;
+		esac
+		case $a in
+		'')	a=BIN=1
+			m=1
 			;;
 		esac
 		case $b in
@@ -226,7 +233,7 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 		1)	case $u in
 			?*)	u=$N$u ;;
 			esac
-			echo "$h$N$p$N$f$N$l$u" > $(<)
+			echo "$h$N$a$N$p$N$f$N$l$u" > $(<)
 			;;
 		esac
 	fi

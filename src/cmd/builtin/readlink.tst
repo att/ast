@@ -1031,33 +1031,33 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize t/b
 
@@ -1068,38 +1068,38 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--canonicalize t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 
 	EXEC	--canonicalize --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize --verbose t/b
 
@@ -1111,12 +1111,12 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --verbose t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize --readlink t/dd
 		OUTPUT -
@@ -1137,17 +1137,17 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --readlink t/dd/eee
 
 	EXEC	--canonicalize --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize --readlink t/c
 		OUTPUT -
@@ -1180,18 +1180,18 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize --readlink --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --readlink --verbose t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize --readlink --verbose t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize --readlink --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize --readlink --verbose t/c
 		OUTPUT -
@@ -1695,33 +1695,33 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/xxx: cannot read link text [No such file or directory]'
 
 	EXEC	--canonicalize --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize --physical t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize --physical t/b
 
@@ -1732,38 +1732,38 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --physical t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 		EXIT 0
 
 	EXEC	--canonicalize --physical t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize --physical --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 
 	EXEC	--canonicalize --physical --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize --physical --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize --physical --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize --physical --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize --physical --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize --physical --verbose t/b
 
@@ -1775,12 +1775,12 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize --physical --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --physical --verbose t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize --physical --readlink t/dd
 		OUTPUT -
@@ -1801,17 +1801,17 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize --physical --readlink t/dd/eee
 
 	EXEC	--canonicalize --physical --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize --physical --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize --physical --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize --physical --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize --physical --readlink t/c
 		OUTPUT -
@@ -1844,18 +1844,18 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize --physical --readlink --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize --physical --readlink --verbose t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize --physical --readlink --verbose t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize --physical --readlink --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize --physical --readlink --verbose t/c
 		OUTPUT -
@@ -2037,30 +2037,30 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/xxx: cannot read link text [No such file or directory]'
 
 	EXEC	--canonicalize-existing t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-existing t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-existing t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-existing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-existing t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-existing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing t/a
 		OUTPUT -
@@ -2077,29 +2077,29 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-existing t/xxx
 
 	EXEC	--canonicalize-existing --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-existing --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-existing --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-existing --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-existing --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --verbose t/a
 		OUTPUT -
@@ -2661,30 +2661,30 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/xxx: cannot read link text [No such file or directory]'
 
 	EXEC	--canonicalize-existing --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-existing --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-existing --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-existing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-existing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --physical t/a
 		OUTPUT -
@@ -2701,29 +2701,29 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-existing --physical t/xxx
 
 	EXEC	--canonicalize-existing --physical --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		EXIT 0
 
 	EXEC	--canonicalize-existing --physical --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-existing --physical --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-existing --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-existing --physical --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-existing --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-existing --physical --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-existing --physical --verbose t/a
 		OUTPUT -
@@ -2973,86 +2973,86 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/xxx: cannot read link text [No such file or directory]'
 
 	EXEC	--canonicalize-missing t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-missing t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-missing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-missing t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-missing t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing t/b
 
 	EXEC	--canonicalize-missing t/d/e
 
 	EXEC	--canonicalize-missing t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 
 	EXEC	--canonicalize-missing --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-missing --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-missing --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-missing --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --verbose t/b
 
 	EXEC	--canonicalize-missing --verbose t/d/e
 
 	EXEC	--canonicalize-missing --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --verbose t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --readlink t/dd
 		OUTPUT -
@@ -3073,20 +3073,20 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-missing --readlink t/dd/eee
 
 	EXEC	--canonicalize-missing --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize-missing --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize-missing --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize-missing --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize-missing --readlink t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
 
 	EXEC	--canonicalize-missing --readlink t/xxx
 		OUTPUT -
@@ -3117,21 +3117,21 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize-missing --readlink --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing --readlink --verbose t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize-missing --readlink --verbose t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize-missing --readlink --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize-missing --readlink --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
 
 	EXEC	--canonicalize-missing --readlink --verbose t/xxx
 		OUTPUT -
@@ -3645,86 +3645,86 @@ TEST 01 'kitchen sink'
 		EXIT 1
 
 	EXEC	--canonicalize-missing --physical t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-missing --physical t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-missing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --physical t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-missing --physical t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --physical t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical t/b
 
 	EXEC	--canonicalize-missing --physical t/d/e
 
 	EXEC	--canonicalize-missing --physical t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --physical t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --physical --verbose t/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd
 
 	EXEC	--canonicalize-missing --physical --verbose t/d
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d
 
 	EXEC	--canonicalize-missing --physical --verbose t/z
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z
 
 	EXEC	--canonicalize-missing --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical --verbose t/z/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/z/g
 
 	EXEC	--canonicalize-missing --physical --verbose t/f
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/f
 
 	EXEC	--canonicalize-missing --physical --verbose t/dd/g
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/g
 
 	EXEC	--canonicalize-missing --physical --verbose t/dd/eee
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/dd/eee
 
 	EXEC	--canonicalize-missing --physical --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical --verbose t/b
 
 	EXEC	--canonicalize-missing --physical --verbose t/d/e
 
 	EXEC	--canonicalize-missing --physical --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/dd
 
 	EXEC	--canonicalize-missing --physical --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/d/f
 
 	EXEC	--canonicalize-missing --physical --verbose t/xxx
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/t/xxx
 
 	EXEC	--canonicalize-missing --physical --readlink t/dd
 		OUTPUT -
@@ -3745,20 +3745,20 @@ TEST 01 'kitchen sink'
 	EXEC	--canonicalize-missing --physical --readlink t/dd/eee
 
 	EXEC	--canonicalize-missing --physical --readlink t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical --readlink t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize-missing --physical --readlink t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize-missing --physical --readlink t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize-missing --physical --readlink t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
 
 	EXEC	--canonicalize-missing --physical --readlink t/xxx
 		OUTPUT -
@@ -3789,21 +3789,21 @@ TEST 01 'kitchen sink'
 		ERROR - 'readlink: t/dd/eee: cannot read link text [Invalid argument]'
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/a
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/b
 		ERROR -n -
 		EXIT 0
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/b
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/c
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/d/e
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/f
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/d/dd
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/dd
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/c
-		OUTPUT - /home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
+		OUTPUT - /data/home/gsf/arch/linux.i386-64/src/cmd/builtin/readlink.tmp/d/e
 
 	EXEC	--canonicalize-missing --physical --readlink --verbose t/xxx
 		OUTPUT -

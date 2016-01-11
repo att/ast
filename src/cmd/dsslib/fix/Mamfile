@@ -189,7 +189,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done fix.c
 meta fix.o %.c>%.o fix.c fix
 prev fix.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssfix]"\" -D_PACKAGE_ast -c fix.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssfix]"\" -D_PACKAGE_ast -c fix.c
 done fix.o generated
 make lib.o
 make lib.c

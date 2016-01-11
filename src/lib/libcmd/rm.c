@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -27,7 +27,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: rm (AT&T Research) 2012-02-14 $\n]"
+"[-?\n@(#)$Id: rm (AT&T Research) 2013-12-01 $\n]"
 USAGE_LICENSE
 "[+NAME?rm - remove files]"
 "[+DESCRIPTION?\brm\b removes the named \afile\a arguments. By default it"
@@ -42,11 +42,9 @@ USAGE_LICENSE
 "	writing a 0 filled buffer the same size as the file, executing"
 "	\bfsync\b(2) and closing before attempting to remove. Implemented"
 "	only on systems that support \bfsync\b(2).]"
-"[d:directory?\bremove\b(3) (or \bunlink\b(2)) directories rather than"
-"	\brmdir\b(2), and don't require that they be empty before removal."
-"	The caller requires sufficient privilege, not to mention a strong"
-"	constitution, to use this option. Even though the directory must"
-"	not be empty, \brm\b still attempts to empty it before removal.]"
+"[d:directory?If the current entry is a directory then remove it using "
+    "\brmdir\b(3) instead of the default \bunlink\b(2). If \b--recursive\b "
+    "is not specified then non-empty directories will not be removed.]"
 "[f:force?Ignore nonexistent files, ignore no file operands specified,"
 "	and never prompt the user.]"
 "[i:interactive|prompt?Prompt whether to remove each file."
@@ -84,7 +82,7 @@ typedef struct State_s			/* program state		*/
 {
 	Shbltin_t*	context;	/* builtin context		*/
 	int		clobber;	/* clear out file data first	*/
-	int		directory;	/* remove(dir) not rmdir(dir)	*/
+	int		directory;	/* rmdir(dir) not unlink(dir)	*/
 	int		force;		/* force actions		*/
 	int		fs3d;		/* 3d enabled			*/
 	int		interactive;	/* prompt for approval		*/
@@ -154,8 +152,11 @@ rm(State_t* state, register FTSENT* ent)
 		if (!state->recursive)
 		{
 			fts_set(NiL, ent, FTS_SKIP);
-			error(2, "%s: directory", ent->fts_path);
-			break;
+			if (!state->directory)
+			{
+				error(2, "%s: directory", ent->fts_path);
+				break;
+			}
 		}
 		if (!beenhere(ent))
 		{
@@ -191,7 +192,7 @@ rm(State_t* state, register FTSENT* ent)
 						nonempty(ent);
 					}
 				}
-				if (ent->fts_info == FTS_D)
+				if (!state->directory && ent->fts_info == FTS_D)
 					break;
 			}
 			else
@@ -212,7 +213,7 @@ rm(State_t* state, register FTSENT* ent)
 				path = ent->fts_accpath;
 				if (state->verbose)
 					sfputr(sfstdout, ent->fts_path, '\n');
-				if ((ent->fts_info == FTS_DC || state->directory) ? remove(path) : rmdir(path))
+				if ((state->recursive || state->directory) ? rmdir(path) : unlink(path))
 					switch (errno)
 					{
 					case ENOENT:

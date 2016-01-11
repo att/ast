@@ -1,4 +1,4 @@
-# : : generated from cat.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/cat.rt by mktest : : #
 
 # regression tests for the cat command
 
@@ -1582,7 +1582,7 @@ TEST 02 -v
 
 	EXEC	-v i
 		INPUT -n -
-		INPUT i $'a\211b\311c\tdIe'
+		INPUT i $'a\x89b\xc9c\tdIe'
 		INPUT -n j X
 		OUTPUT - $'aM-\tbM-Ic\tdIe'
 		ERROR -n -

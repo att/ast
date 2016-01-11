@@ -15,7 +15,7 @@
 *                           Florham Park NJ                            *
 *                                                                      *
 *                     Phong Vo <phongvo@gmail.com>                     *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #include	<ast_common.h>

@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -112,5 +112,15 @@ typeset -a arr2
 	arr2+=(b=c xxxxx)
 } 2> /dev/null
 [[ $(typeset -p arr2) == "$exp" ]] || err_exit 'append (b=c xxxxx) to index array not working'
+
+typeset -T Foo_t=(integer x y)
+Foo_t -a foo
+foo+=(x=1 y=2)
+foo+=(x=3 y=4)
+[[ ${!foo[@]} == '0 1' ]] || err_exit  'append to empty array of types not working'
+foo=()
+foo+=(x=1 y=2)
+foo+=(x=3 y=4)
+[[ ${!foo[@]} == '0 1' ]] || err_exit  'append to unset array of types not working'
 
 exit $((Errors<125?Errors:125))

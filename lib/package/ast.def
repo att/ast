@@ -5,8 +5,8 @@
 message_set=3
 
 contributor+=(
-	[gsf]="Glenn Fowler <gsf@research.att.com>"
-	[dgk]="David Korn <dgk@research.att.com>"
+	[gsf]="Glenn Fowler <glenn.s.fowler@gmail.com>"
+	[dgk]="David Korn <dgkorn@gmail.com>"
 	[kpv]="Phong Vo <phongvo@gmail.com>"
 
 	[aedgar]="Adam Edgar <aedgar@research.att.com>"

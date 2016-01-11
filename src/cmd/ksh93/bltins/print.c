@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -76,9 +76,9 @@ static const struct printmap  Pmap[] =
 	3,	"csv",			"#q",
 	3,	"ere",			"R",
 	4,	"html",			"H",
-	9,	"nounicodeliterals",	"0q",
+	17,	"nounicodeliterals",	"0q",
 	7,	"pattern",		"P",
-	7,	"unicodeliterals",	"+q",
+	15,	"unicodeliterals",	"+q",
 	3,	"url",			"#H",
 	0,	0,			0,
 };
@@ -172,6 +172,7 @@ int    b_print(int argc, char *argv[], Shbltin_t *context)
 	const char *options, *msg = e_file+4;
 	char *format = 0, *fmttype=0;
 	int sflag = 0, nflag=0, rflag=0, vflag=0;
+	Namval_t *vname=0;
 	Optdisc_t disc;
 	disc.version = OPT_VERSION;
 	disc.infof = infof;
@@ -211,7 +212,8 @@ int    b_print(int argc, char *argv[], Shbltin_t *context)
 			/* print to history file */
 			if(!sh_histinit((void*)shp))
 				errormsg(SH_DICT,ERROR_system(1),e_history);
-			fd = sffileno(shp->gd->hist_ptr->histfp);
+			outfile = shp->gd->hist_ptr->histfp;
+			fd = sffileno(outfile);
 			sh_onstate(shp,SH_HISTORY);
 			sflag++;
 			break;
@@ -222,6 +224,12 @@ int    b_print(int argc, char *argv[], Shbltin_t *context)
 			rflag = 1;
 			break;
 		case 'u':
+			if(opt_info.arg[0]=='p' && opt_info.arg[1]==0)
+			{
+				fd = shp->coutpipe;
+				msg = e_query;
+				break;
+			}
 			fd = (int)strtol(opt_info.arg,&opt_info.arg,10);
 			if(*opt_info.arg)
 				fd = -1;
@@ -234,7 +242,13 @@ int    b_print(int argc, char *argv[], Shbltin_t *context)
 		case 'j':
 			fmttype = "json";
 		case 'v':
-			vflag='v';
+			if(argc < 0)
+			{
+				if(!(vname = nv_open(opt_info.arg, shp->var_tree,NV_VARNAME|NV_NOARRAY)))
+					errormsg(SH_DICT,2, "Cannot create variable %s", opt_info.arg);
+			}
+			else
+				vflag='v';
 			break;
 		case 'C':
 			vflag='C';
@@ -281,12 +295,21 @@ skip:
 	/* handle special case of '-' operand for print */
 	if(argc>0 && *argv && strcmp(*argv,"-")==0 && strcmp(argv[-1],"--"))
 		argv++;
+	if(vname)
+	{
+		if(!shp->strbuf2)
+			shp->strbuf2 = sfstropen();
+		outfile = shp->strbuf2;
+		goto printv;
+	}
 skip2:
 	if(fd < 0)
 	{
 		errno = EBADF;
 		n = 0;
 	}
+	else if(sflag)
+		n = IOREAD|IOWRITE|IOSEEK;
 	else if(!(n=shp->fdstatus[fd]))
 		n = sh_iocheckfd(shp,fd,fd);
 	if(!(n&IOWRITE))
@@ -296,7 +319,7 @@ skip2:
 			return(1);
 		errormsg(SH_DICT,ERROR_system(1),msg);
 	}
-	if(!(outfile=shp->sftable[fd]))
+	if(!sflag && !(outfile=shp->sftable[fd]))
 	{
 		sh_onstate(shp,SH_NOTRACK);
 		n = SF_WRITE|((n&IOREAD)?SF_READ:0);
@@ -306,6 +329,7 @@ skip2:
 	}
 	/* turn off share to guarantee atomic writes for printf */
 	n = sfset(outfile,SF_SHARE|SF_PUBLIC,0);
+printv:
 	if(format)
 	{
 		/* printf style print */
@@ -349,7 +373,9 @@ skip2:
 		else if(sh_echolist(shp,outfile,rflag,argv) && !nflag)
 			sfputc(outfile,'\n');
 	}
-	if(sflag)
+	if(vname)
+		nv_putval(vname, sfstruse(outfile),0);
+	else if(sflag)
 	{
 		hist_flush(shp->gd->hist_ptr);
 		sh_offstate(shp,SH_HISTORY);

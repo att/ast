@@ -1,6 +1,9 @@
+14-02-06 grep.tst: add more --context=... tests
+13-12-05 ls.tst: move from src/cmd/std
 13-09-25 cksum.tst: adjust tests for gnu { md5 sha } text/binary indicator
 13-09-22 readlink.rt,realpath.rt: add tests
 13-09-19 head.tst,tail.tst: add incomplete line tests
+13-09-13 pr.c: Mbstate_t update
 13-07-17 tr.tst: sync with src/lib/libcmd/tr.c
 13-05-22 pty.c: fix timeout logic
 13-04-22 grep.tst: add --context[=before,after] tests

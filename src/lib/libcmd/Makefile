@@ -28,7 +28,7 @@ cmd 1.2 :LIBRARY: RELEASE cmdinit.c \
 	vmstate.c wc.c revlib.c wclib.c sumlib.o context.c \
 	fts_fix.c lib.c \
 	grep.c xargs.c iconv.c realpath.c \
-	od.c tr.c \
+	od.c tr.c ls.c \
 	-lfsg -lmd -lutil
 
 grep.o : LICENSE=since=1995,author=gsf+doug
@@ -99,7 +99,7 @@ cmdlist.h : (src) $$(-mam:+$$(src))
 	!
 	for cmd
 	do	for dir in /bin /usr/bin
-		do	[[ -x $dir/$cmd ]] && break
+		do	test -x $dir/$cmd && break
 		done
 		echo "CMDLIST($cmd, \"$dir\")"
 	done

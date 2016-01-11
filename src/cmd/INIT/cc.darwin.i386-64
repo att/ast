@@ -1,4 +1,4 @@
-: unix wrapper for mac osx cc : 2012-02-29 :
+: unix wrapper for mac osx cc : 2013-11-07 :
 
 HOSTTYPE=darwin.i386-64
 
@@ -50,13 +50,13 @@ cc)	$CC -DCLK_TCK=100 "$@"
 dll)	# what a compatibility mess -- surely they can get the apis to play nice
 	tmp=/tmp/cc.${USER:-$LOGNAME}.$$.err
 	trap "rm -f $tmp" EXIT
-	case `MACOSX_DEPLOYMENT_TARGET=10.3 ld -undefined dynamic_lookup 2>&1` in
+	case `MACOSX_DEPLOYMENT_TARGET=10.7 ld -undefined dynamic_lookup 2>&1` in
 	*undefined*dynamic_lookup*)
 		ld -m -flat_namespace -undefined suppress -dylib -dynamic \
 			-ldylib1.o "$@" -lcc_dynamic -framework System >$tmp 2>&1
 		status=$?
 		;;
-	*)	MACOSX_DEPLOYMENT_TARGET=10.3 $CC -Wl,-flat_namespace -dynamiclib -undefined dynamic_lookup "$@" >$tmp 2>&1
+	*)	MACOSX_DEPLOYMENT_TARGET=10.7 $CC -Wl,-flat_namespace -dynamiclib -undefined dynamic_lookup "$@" >$tmp 2>&1
 		status=$?
 		;;
 	esac

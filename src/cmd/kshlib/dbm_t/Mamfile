@@ -183,7 +183,7 @@ done ${PACKAGE_ast_INCLUDE}/shell.h
 done dbm_t.c
 meta dbm_t.o %.c>%.o dbm_t.c dbm_t
 prev dbm_t.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""kshdbm_t"\" -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2007-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshdbm_t]"\" -D_PACKAGE_ast -D_BLD_DEBUG -c dbm_t.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""kshdbm_t"\" -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshdbm_t]"\" -D_PACKAGE_ast -c dbm_t.c
 done dbm_t.o generated
 exec - ${AR} rc libkshdbm_t.a dbm_t.o
 exec - (ranlib libkshdbm_t.a) >/dev/null 2>&1 || true

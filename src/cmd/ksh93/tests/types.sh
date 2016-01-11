@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -888,10 +888,62 @@ typeset -T p_t=( integer fd=-1 ; compound events=(  bool pollin=false ; );)
 p_t --man'
 [[ $? == 2 ]] || err_exit 'unable to generated manpage for types that contain compound variables'
 
-FPATH=$tmp/fundir
+export FPATH=$tmp/fundir
 mkdir -p $FPATH
 print 'typeset -T My_t=(integer i j)' > $FPATH/My_t
 $SHELL 2> /dev/null -c 'My_t a=(i=1 j=2); [[ "${a.i} ${a.j}" == "1 2" ]]' || 
 	err_exit "dynamic loading of type with assignment fails"
 
+$SHELL 2> /dev/null -c 'typeset -T My_t=(readonly x); My_t foo' && err_exit 'unset type subvariables defined as readonly are required to be specified for each type instance'
+
+typeset -T Goo_t=(typeset x)
+Goo_t -A foo
+foo[bar]=(x=1) foo[baz]=(x=2)
+exp='Goo_t -A foo=([bar]=(x=1) [baz]=(x=2))'
+[[ $(typeset -p foo) == "$exp" ]] || print 'typeset -p for associative array of types not correct'
+
+$SHELL <<- \!!! || err_exit 'creating an empty array of a type variable with required field fails'
+	typeset -T My_t=(readonly x)
+	My_t -a foo 2> /dev/null
+	foo[0]=(typeset -r x=bar)
+	exp='My_t -a foo=((typeset -r x=bar))'
+	[[ $(typeset -p foo) == "$exp" ]]
+!!!
+
+$SHELL <<- \!!! || err_exit 'creating an array with required fields with assigments fails'
+	typeset -T My_t=(readonly x)
+	My_t -a foo=((x=5) (x=6)) 2> /dev/null
+	exp='My_t -a foo=((typeset -r x=5) (typeset -r x=6))'
+	[[ $(typeset -p foo) == "$exp" ]]
+!!!
+
+$SHELL <<- \!!! && err_exit 'creating an array with required fields missing does not fail'
+	typeset -T My_t=(typeset -r x y)
+	My_t -a foo=((typeset -r x=5;)) 2> /dev/null
+!!!
+
+$SHELL <<- \!!! && err_exit 'creating an array element with required field missing does not fail'
+	typeset -T My_t=(typeset -r x y)
+	My_t -a foo
+	{ foo[1]=(x=2);} 2> /dev/null
+!!!
+
+$SHELL <<- \!!! && err_exit 'appending an array element with required field missing does not fail'
+	typeset -T My_t=(typeset -r x y)
+	My_t -a foo
+	{ foo+=(y=3);} 2> /dev/null
+!!!
+
+typeset -T My_t=(integer x y)
+My_t -a A
+A=()
+A+=(x=1 y=2)
+exp='My_t -a A=((typeset -l -i x=1;typeset -l -i y=2))'
+[[ $(typeset -p A) == "$exp" ]] || err_exit 'empty assignment to array of types creates element 0 by mistake'
+
+$SHELL 2> /dev/null -c 'typeset -T a_t=(x=3 y=4); a_t b=(x=1)' || err_exit 'Cannot create instances for type names starting with the letter a'
+
+$SHELL 2> /dev/null -c 'typeset -T X=(typeset x; function x.get { :; }); X -a xs=((x=yo) (x=jo)); [[ $(typeset -p xs) == "X -a xs=((x=yo) (x=jo))" ]]' || err_exit 'X -a xs=((v1) (v2)) where X is a type, not working'
+
 exit $((Errors<125?Errors:125))
+

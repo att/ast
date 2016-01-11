@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -648,7 +648,8 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 			{
 				int skip=0;
 				ep->e_crlf = 0;
-				*pp++ = c;
+				if(pp < ppmax)
+					*pp++ = c;
 				for(n=1; c = *last++; n++)
 				{
 					if(pp < ppmax)
@@ -667,7 +668,6 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 				}
 				if(c==0 || c==ESC || c=='\r')
 					last--;
-				qlen += (n+1);
 				break;
 			}
 			case '\b':
@@ -760,7 +760,12 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 			ep->e_term = nv_search("TERM",shp->var_tree,0);
 		if(ep->e_term && (term=nv_getval(ep->e_term)) && strlen(term)<sizeof(ep->e_termname) && strcmp(term,ep->e_termname))
 		{
+			bool r = sh_isoption(shp,SH_RESTRICTED);
+			if(r)
+				sh_offoption(shp,SH_RESTRICTED);
 			sh_trap(shp,".sh.subscript=$(tput cuu1 2>/dev/null)",0);
+			if(r)
+				sh_isoption(shp,SH_RESTRICTED);
 			if(pp=nv_getval(SH_SUBSCRNOD))
 				strncpy(CURSOR_UP,pp,sizeof(CURSOR_UP)-1);
 			nv_unset(SH_SUBSCRNOD);

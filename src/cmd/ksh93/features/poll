@@ -66,7 +66,7 @@ tst	pipe_socketpair note{ use socketpair() for peekable pipe() }end execute{
 		return(1);
 	}
 }end
-tst	socketpair_devfd -D_AST_INTERCEPT=0 note{ /proc/*/fd/N or /dev/fd/N handles socketpair() }end execute{
+tst	socketpair_devfd -D_AST_INTERCEPT=0 note{ /proc/.../fd/N or /dev/fd/N handles socketpair() }end execute{
 	#include <ast.h>
 	#include <fs3d.h>
 	#include <sys/types.h>

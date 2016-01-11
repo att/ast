@@ -1,3 +1,18 @@
+14-05-12 features/lib: mmap() error return may be ((caaddr_t)0) or ((caaddr_t)-1)
+14-05-09 misc/optget.c: save opt_info state in case infof callout munges it
+14-04-15 misc/spawnvex.c: fix nil pointer deref
+14-04-15 sfio/sfcvt.c: fix flot bug that printed |x|<1 as 0
+14-01-14 tm/strptime.c: add %t
+13-12-06 vmalloc: default to VMALLOC_OPTIONS=check=nosegment; turn on to enable overbooking checks
+13-12-01 port/astconf.c: add pathdev() intercept to pathconf() for fpathconf()
+13-12-01 comp/conf.tab: add PC { ACL SATTR XATTR } ops
+13-12-01 port/intercept.c: fix remove() intercept to handle directories
+13-11-20 sfio/sfcvt.c: drop [L]DBL_DIG limit checks -- what good are they?
+13-11-20 features/libpath.sh: widen net for ubuntu /lib64
+13-11-17 setlocale.c,utf32toutf8.c,utf8toutf32.c: handle nul byte/wchar_t and nil pointer cases (fixes the tr mem bug)
+13-11-14 features/*: fix tests that reference private argv[1] to handle iffe(1) argv[1]==tmp-file-name
+13-11-11 path/pathcanon.c,path/pathopen.c: fix O_XATTR errno logic, handle "/" path O_XATTR
+13-11-01 features/map.c: map-libc: add ast <error.h> symbols
 13-09-27 path/pathcanon.c: fix buffer clobber bug between pathdev() and fgetcwd()
 13-09-27 path/pathopen.c: handle easy O_XATTR case for /dev/fd open() semantics
 13-09-25 include/ast_std.h,comp/setlocale.c: AST_LC_unicode => AST_LC_unicodeliterals, LC_OPTIONS=...unicodeliterals...

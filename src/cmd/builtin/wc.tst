@@ -1,4 +1,4 @@
-# : : generated from wc.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/wc.rt by mktest : : #
 
 UNIT wc
 

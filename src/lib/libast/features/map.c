@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -75,6 +75,20 @@ main()
 	printf("#undef	eaccess\n");
 	printf("#define eaccess		_ast_eaccess\n");
 #endif
+	printf("#undef	error\n");
+	printf("#define error		_ast_error\n");
+	printf("#undef	error_break\n");
+	printf("#define error_break	_ast_error_break\n");
+	printf("#undef	errorctx\n");
+	printf("#define errorctx	_ast_errorctx\n");
+	printf("#undef	errorf\n");
+	printf("#define errorf		_ast_errorf\n");
+	printf("#undef	errormsg\n");
+	printf("#define errormsg	_ast_errormsg\n");
+	printf("#undef	errorv\n");
+	printf("#define errorv		_ast_errorv\n");
+	printf("#undef	errorx\n");
+	printf("#define errorx		_ast_errorx\n");
 #if !_lib_execvpe
 	printf("#undef	execvpe\n");
 	printf("#define execvpe		_ast_execvpe\n");

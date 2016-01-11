@@ -15,7 +15,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 : mkdir for systems that do not support -p : 2002-09-01 :

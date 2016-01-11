@@ -1,4 +1,4 @@
-# : : generated from rm.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/rm.rt by mktest : : #
 
 # regression tests for the rm command
 
@@ -8,6 +8,8 @@ TEST 01 basics
 
 	EXEC	-f x
 		INPUT - x
+		OUTPUT -
+		ERROR -n -
 
 	EXEC	-f x
 

@@ -1,13 +1,11 @@
 info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
-setv PACKAGE_X11 ${INSTALLROOT}
-setv PACKAGE_X11_INCLUDE ${PACKAGE_X11}/include/X11
-setv PACKAGE_X11_LIB ${PACKAGE_X11}/lib64
+setv PACKAGE_X11_LIB ${INSTALLROOT}/${INSTALLROOT}/..${PACKAGE_X11_LIB}
 setv PACKAGE_tk ${INSTALLROOT}
 setv PACKAGE_tk_INCLUDE ${PACKAGE_tk}/include
-setv PACKAGE_tk_LIB ${PACKAGE_tk}/lib64
+setv PACKAGE_tk_LIB ${PACKAGE_tk}/lib
 setv PACKAGE_tcl_INCLUDE ${INSTALLROOT}/include/tcl
-setv PACKAGE_tcl_LIB ${INSTALLROOT}/${INSTALLROOT}/../usr/lib64
+setv PACKAGE_tcl_LIB ${INSTALLROOT}/lib
 setv PACKAGE_shell ${INSTALLROOT}
 setv PACKAGE_shell_INCLUDE ${PACKAGE_shell}/include
 setv PACKAGE_shell_LIB ${PACKAGE_shell}/lib
@@ -194,7 +192,7 @@ done ${INSTALLROOT}/include/tcl/tksh.h
 done uinit.c
 meta uinit.o %.c>%.o uinit.c uinit
 prev uinit.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/tcl -I${INSTALLROOT}/include/ast -I${INSTALLROOT}/include -I/usr/include -D_PACKAGE_ast -D_API_shell=20120101 -c uinit.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/tcl -I${INSTALLROOT}/include/ast -I${INSTALLROOT}/include -D_PACKAGE_ast -D_API_shell=20120101 -c uinit.c
 done uinit.o generated
 make tkMain.o
 make tkMain.c
@@ -214,7 +212,7 @@ prev ${INSTALLROOT}/include/tcl/tksh.h implicit
 done tkMain.c
 meta tkMain.o %.c>%.o tkMain.c tkMain
 prev tkMain.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/tcl -I${INSTALLROOT}/include/ast -I${INSTALLROOT}/include -I/usr/include -D_PACKAGE_ast -D_API_shell=20120101 -c tkMain.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${INSTALLROOT}/include/tcl -I${INSTALLROOT}/include/ast -I${INSTALLROOT}/include -D_PACKAGE_ast -D_API_shell=20120101 -c tkMain.c
 done tkMain.o generated
 make ${mam_libX11} archive
 done ${mam_libX11} dontcare virtual

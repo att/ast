@@ -180,7 +180,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done lookup.c
 meta lookup.o %.c>%.o lookup.c lookup
 prev lookup.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2010-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsslookup]"\" -D_PACKAGE_ast -c lookup.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2010-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsslookup]"\" -D_PACKAGE_ast -c lookup.c
 done lookup.o generated
 make lib.o
 make lib.c

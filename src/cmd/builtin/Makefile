@@ -87,5 +87,5 @@ dontcare -lutil
 :: PROMO.mm RELEASE
 
 :TEST: asa cat chmod chown cksum cmp cp cut date expr fmt grep head \
-	join ln look mkdir mkfifo mktemp mv nl od paste readlink \
+	join ln look ls mkdir mkfifo mktemp mv nl od paste readlink \
 	realpath rm tail tr uniq uuencode wc xargs

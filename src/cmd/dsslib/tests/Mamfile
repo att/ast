@@ -178,7 +178,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done test.c
 meta test.o %.c>%.o test.c test
 prev test.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsstests]"\" -D_PACKAGE_ast -c test.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsstests]"\" -D_PACKAGE_ast -c test.c
 done test.o generated
 make lib.o
 make lib.c

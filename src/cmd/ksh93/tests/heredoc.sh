@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -519,6 +519,12 @@ builtin cat
 exp='foo bar baz bork blah blarg'
 got=$(cat <<<"foo bar baz" 3<&0 <<<"$(</dev/fd/3) bork blah blarg")
 [[ $got == "$exp" ]] || '3<%0 not working when 0 is <<< here-doc'
+
+x=$($SHELL -c 'test=`$SHELL  2>&1 << EOF
+print $?
+EOF`
+print $test')
+[[ $x == 0 ]] || err_exit  '`` command substitution containing here-doc not working'
 
 exit $((Errors<125?Errors:125))
 

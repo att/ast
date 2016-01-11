@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 #
@@ -33,9 +33,6 @@
 alias declare=typeset
 
 nameref FUNCNAME=.sh.fun
-integer SHLVL
-export SHLVL
-SHLVL+=1
 
 if	[[ ! $EUID ]]
 then	EUID=$(id -u)
@@ -52,7 +49,7 @@ if ! shopt -qo restricted; then
 	IFS=:
 	for i in $SHELLOPTS
 	do
-		[[ -n "$i" ]] && set -o $i
+		[[ -n "$i" ]] && shopt -s $i
 	done
 	unset IFS
 fi
@@ -93,22 +90,41 @@ function DIRSTACK.unset
 	unset -f DIRSTACK.unset
 }
 
+function __pwd
+{
+        typeset pwd=$(pwd) home=~
+        case $pwd in
+        $home)          pwd='~';;
+        $home/*)        pwd='~'"${pwd:${#home}}";;
+	esac
+	print -r -- "$pwd"
+}
+
+function PS1.get 
+{
+	integer exitval=$?
+	eval .sh.value=$($PROMPT_COMMAND)'$PS1'
+	return $exitval
+}
+
 function PS1.set 
 {
-	typeset prefix remaining=${.sh.value} var= n= k=
+	typeset prefix remaining=${.sh.value} var=$($PROMPT_COMMAND) n= k=
 	while	[[ $remaining ]]
 	do	prefix=${remaining%%'\'*}
-		remaining=${remaining#$prefix}
+		remaining=${remaining:${#prefix}}
 		var+="$prefix"
 		case ${remaining:1:1} in
 		t)	var+="\$(printf '%(%H:%M:%S)T')";;
 		d)	var+="\$(printf '%(%a %b:%e)T')";;
 		n)	var+=$'\n';;
 		s)	var+=ksh;;
-		w)	var+="\$(pwd)";;
+		w)	var+="\$(__pwd)";;
 		W)	var+="\$(basename \"\$(pwd)\")";;
 		u)	var+=$USER;;
-		h)	var+=$(hostname -s);;
+		H)	var+=$(hostname -s);;
+		h)	n=$(hostname -s)
+			var+=${n%%.*};;
 		'#')	var+=!;;
 		!)	var+=!;;
 		@)	var+="\$(printf '%(%I:%M%p)T')";;
@@ -117,6 +133,9 @@ function PS1.set
 			else	var+='$'
 			fi;;
 		'\')	var+='\\';;
+		'[')	prefix='\\\[*\\]'
+			remaining=${remaining#$prefix}
+			continue;;
 		'['|']')	;;
 		[0-7])	case ${remaining:1:3} in
 			[0-7][0-7][0-7])
@@ -148,24 +167,26 @@ function logout
 }
 PS1="bash$ "
 
-function source
-{
-	if ! shopt -qpo posix; then
-		unset	OPATH
-		typeset OPATH=$PATH
-		typeset PATH=$PATH
-		if shopt -q sourcepath; then
-			PATH=$OPATH:.
-		else
-			PATH=.
-		fi
-	fi
-	. "$@"
-}
+# this won't work when sourcpath is not set since PATH will be . while
+# running the . script.  sourcpath needs to be handled in b_dotcmd.
+#function source
+#{
+#	if ! shopt -qpo posix; then
+#		unset	OPATH
+#		typeset OPATH=$PATH
+#		typeset PATH=$PATH
+#		if shopt -q sourcepath; then
+#			PATH=$OPATH:.
+#		else
+#			PATH=.
+#		fi
+#	fi
+#	. "$@"
+#}
 unalias .
 alias .=source
-
-alias enable=builtin
+#endif
+alias builtin=command
 
 function help
 {
@@ -215,7 +236,6 @@ function help
 
 function cd
 {
-
 	local msg
 	local args
 	local i
@@ -253,3 +273,5 @@ typeset BASH=$0
 ! shopt -qo posix && HISTFILE=~/.bash_history
 HOSTNAME=$(hostname)
 nameref BASH_SUBSHELL=.sh.subshell
+nameref BASH_REMATCH=.sh.match
+nameref BASH_SOURCE=.sh.file

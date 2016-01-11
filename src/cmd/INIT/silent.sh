@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 # non-ksh stub for the nmake silent prefix

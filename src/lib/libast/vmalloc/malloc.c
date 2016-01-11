@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -104,11 +104,11 @@ typedef struct ______mstats Mstats_t;
 **	    abort	if Vmregion==Vmdebug then VM_DBABORT is set,
 **			otherwise _BLD_debug enabled assertions abort()
 **			on failure
-**	    check=c	enable check c[,d], prefix c with "no" to disable
+**	    check=c	enable check c[:d...], prefix c with "no" to disable
 **			    region: vmbest-integrity (on by default _BLD_DEBUG)
 **			    segment: _vmchkmem() anon memory availability checks
 **	    debug	verbose debug trace to stderr
-**	    getmemory=f	enable f[,g] getmemory() functions if supported, all by default
+**	    getmemory=f	enable f[:g..] getmemory() functions if supported, all by default
 **			    anon: mmap(MAP_ANON)
 **			    break|sbrk: sbrk()
 **			    native: native malloc()
@@ -120,8 +120,10 @@ typedef struct ______mstats Mstats_t;
 **			    best:  best fit
 **			    debug: detailed verification checks 
 **			    last:  only last malloc() value can be freed
+**	    pagesize=n	sets memory allocation page size to n
 **	    period=n	sets Vmregion=Vmdebug if not defined, if
 **			Vmregion==Vmdebug the region is checked every n ops
+**	    segsize=n	sets memory allocation segment size to n
 **	    start=n	sets Vmregion=Vmdebug if not defined, if
 **			Vmregion==Vmdebug region checking starts after n ops
 **	    test=x	enable tests du jour in the range 0x0001..0x8000
@@ -164,6 +166,7 @@ char**	sp;
 {
 	char*		s = *sp;
 	Vmulong_t	v = 0;
+	int		b;
 
 	if(s[0] == '0' && (s[1] == 'x' || s[1] == 'X') )
 	{	for(s += 2; *s; ++s)
@@ -183,7 +186,46 @@ char**	sp;
 			else break;
 		}
 	}
-
+	switch (*s)
+	{
+	case 'k':
+	case 'K':
+		b = 10;
+		break;
+	case 'm':
+	case 'M':
+		b = 20;
+		break;
+	case 'g':
+	case 'G':
+		b = 30;
+		break;
+	case 't':
+	case 'T':
+		b = 40;
+		break;
+	case 'p':
+	case 'P':
+		b = 50;
+		break;
+	case 'e':
+	case 'E':
+		b = 60;
+		break;
+	default:
+		b = 0;
+		break;
+	}
+	if (b)
+	{	if (*++s == 'i' || *s == 'I')
+		{	if (*++s == 'b' || *s == 'B')
+				s++;
+			v <<= b;
+		}
+		else
+			for (b /= 10; b; b--)
+				v *= 1000;
+	}
 	*sp = s;
 	return v;
 }
@@ -344,6 +386,8 @@ void _vmoptions(int boot)
 						if (v[0] == 'n' && v[1] == 'o')
 						{
 							v += 2;
+							if (v[0] == '-')
+								v++;
 							c = 0;
 						}
 						else
@@ -364,7 +408,7 @@ void _vmoptions(int boot)
 							_Vmassert |= b;
 						else
 							_Vmassert &= ~b;
-					} while ((v = strchr(v, ',')) && ++v);
+					} while ((v = strchr(v, ':')) && ++v);
 				break;
 			case 'd':		/* debug */
 				if (boot & 2)
@@ -377,6 +421,8 @@ void _vmoptions(int boot)
 						if (v[0] == 'n' && v[1] == 'o')
 						{
 							v += 2;
+							if (v[0] == '-')
+								v++;
 							c = 0;
 						}
 						else
@@ -419,7 +465,7 @@ void _vmoptions(int boot)
 							_Vmassert |= b;
 						else
 							_Vmassert &= ~b;
-					} while ((v = strchr(v, ',')) && ++v);
+					} while ((v = strchr(v, ':')) && ++v);
 				break;
 			case 'k':		/* keep */
 				if (boot & 2)
@@ -447,22 +493,40 @@ void _vmoptions(int boot)
 					}
 				}
 				break;
-			case 'p':		/* period=<count> */
-				if (boot & 2)
+			case 'p':		/* pagesize=<size> period=<count> */
+				switch (t[1])
 				{
-					if (!vm)
-						vm = vmopen(Vmdcsystem, Vmdebug, 0);
-					if (v && vm && vm->meth.meth == VM_MTDEBUG)
-						_Vmdbcheck = atou(&v);
+				case 'a':
+					if (boot & 1)
+						_Vmpagesize = atou(&v);
+					break;
+				case 'e':
+					if (boot & 2)
+					{
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (v && vm && vm->meth.meth == VM_MTDEBUG)
+							_Vmdbcheck = atou(&v);
+					}
+					break;
 				}
 				break;
-			case 's':		/* start=<count> */
-				if (boot & 2)
+			case 's':		/* segsize=<size> start=<count> */
+				switch (t[1])
 				{
-					if (!vm)
-						vm = vmopen(Vmdcsystem, Vmdebug, 0);
-					if (v && vm && vm->meth.meth == VM_MTDEBUG)
-						_Vmdbstart = atou(&v);
+				case 'e':
+					if (boot & 1)
+						_Vmsegsize = atou(&v);
+					break;
+				case 't':
+					if (boot & 2)
+					{
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (v && vm && vm->meth.meth == VM_MTDEBUG)
+							_Vmdbstart = atou(&v);
+					}
+					break;
 				}
 				break;
 			case 't':		/* test || trace=<path> */

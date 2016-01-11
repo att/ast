@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -1041,29 +1041,29 @@ struct argnod *sh_argprocsub(Shell_t *shp,struct argnod *argp)
 	shp->fdstatus[pv[fd]] &= ~IOCLEX;
 #endif /* SHOPT_DEVFD */
 	pid0=shp->procsub?*shp->procsub:0; 
-	if(!shp->procsub)
-		shp->procsub = procsub = newof(0,pid_t,shp->nprocsub=4,0);
-	else if((nn=procsub-shp->procsub) >= shp->nprocsub)
-	{
-		shp->nprocsub += 3;
-		shp->procsub = newof(shp->procsub,pid_t,shp->nprocsub,0);
-		procsub = shp->procsub + nn;
-	}
-	if(pid0)
-		*shp->procsub = 0;
 	if(fd)
 	{
+		if(!shp->procsub)
+			shp->procsub = procsub = newof(0,pid_t,shp->nprocsub=4,0);
+		else if((nn=procsub-shp->procsub) >= shp->nprocsub)
+		{
+			shp->nprocsub += 3;
+			shp->procsub = newof(shp->procsub,pid_t,shp->nprocsub,0);
+			procsub = shp->procsub + nn;
+		}
+		if(pid0)
+			*shp->procsub = 0;
 		shp->inpipe = pv;
 		sh_exec(shp,(Shnode_t*)argp->argchn.ap,(int)sh_isstate(shp,SH_ERREXIT));
+		if(pid0)
+			*shp->procsub = pid0;
+		*procsub++ = job.lastpost;
 	}
 	else
 	{
 		shp->outpipe = pv;
 		sh_exec(shp,(Shnode_t*)argp->argchn.ap,(int)sh_isstate(shp,SH_ERREXIT));
 	}
-	if(pid0)
-		*shp->procsub = pid0;
-	*procsub++ = job.lastpost;
 	shp->subshell = subshell;
 	if(monitor)
 		sh_onstate(shp,SH_MONITOR);

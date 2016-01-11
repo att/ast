@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -948,6 +948,7 @@ int sh_exec(register Shell_t *shp,register const Shnode_t *t, int flags)
 #ifdef SPAWN_cwd
 		int		vexi = shp->vexp->cur;
 #endif
+		pid_t		*procsub = 0;
 		volatile int	was_interactive = 0;
 		volatile int	was_errexit = sh_isstate(shp,SH_ERREXIT);
 		volatile int	was_monitor = sh_isstate(shp,SH_MONITOR);
@@ -990,6 +991,8 @@ int sh_exec(register Shell_t *shp,register const Shnode_t *t, int flags)
 			error_info.line = t->com.comline-shp->st.firstline;
 			spawnvex_add(shp->vex,SPAWN_frame,0,0,0);
 			com = sh_argbuild(shp,&argn,&(t->com),OPTIMIZE);
+			procsub = shp->procsub;
+			shp->procsub = 0;
 			echeck = 1;
 			if(t->tre.tretyp&COMSCAN)
 			{
@@ -1269,9 +1272,14 @@ tryagain:
 				}
 				if(np && pipejob==2)
 				{
-					job_unlock();
-					nlock--;
-					pipejob = 1;
+					if(shp->comsub==1 && np && is_abuiltin(np) && *np->nvname=='/')
+						np = 0;
+					else
+					{
+						job_unlock();
+						nlock--;
+						pipejob = 1;
+					}
 				}
 				/* check for builtins */
 				if(np && is_abuiltin(np))
@@ -1324,7 +1332,7 @@ tryagain:
 							else
 								type = (execflg && !shp->subshell && !shp->st.trapcom[0]);
 							shp->redir0 = 1;
-							sh_redirect(shp,io,type|(np==SYSDOT?0:IOHERESTRING|IOUSEVEX));
+							sh_redirect(shp,io,type|(np->nvalue.bfp==(Nambfp_f)b_dot_cmd?0:IOHERESTRING|IOUSEVEX));
 							for(item=buffp->olist;item;item=item->next)
 								item->strm=0;
 						}
@@ -1981,7 +1989,17 @@ tryagain:
 					tsetio = 1;
 				sh_redirect(shp,t->fork.forkio,execflg);
 				(t->fork.forktre)->tre.tretyp |= t->tre.tretyp&FSHOWME;
-				sh_exec(shp,t->fork.forktre,flags&~simple);
+				t = t->fork.forktre;
+				if((t->tre.tretyp&COMMSK)==TCOM && sh_isoption(
+shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
+				{
+
+					Shnode_t *tt = (Shnode_t*)stkalloc(shp->stk,sizeof(Shnode_t));
+					tt->par.partyp = type = TPAR;
+					tt->par.partre = (Shnode_t*)t;
+					t = tt;
+				}
+				sh_exec(shp,t,flags&~simple);
 			}
 			else
 				sfsync(shp->outpool);
@@ -1998,7 +2016,7 @@ tryagain:
 				if(!(type&SH_EXITSIG))
 				{
 					/* wait for remainder of pipline */
-					if(shp->pipepid>1)
+					if(shp->pipepid>1 && shp->comsub!=1)
 					{
 						job_wait(shp->pipepid);
 						type = shp->exitval;
@@ -2340,7 +2358,7 @@ tryagain:
 					save_prompt = shp->nextprompt;
 					shp->nextprompt = 3;
 					shp->timeout = 0;
-					shp->exitval=sh_readline(shp,&nullptr,0,1,(size_t)0,1000*shp->st.tmout);
+					shp->exitval=sh_readline(shp,&nullptr,(void*)0,0,1,(size_t)0,1000*shp->st.tmout);
 					shp->nextprompt = save_prompt;
 					if(shp->exitval||sfeof(sfstdin)||sferror(sfstdin))
 					{
@@ -2916,10 +2934,12 @@ tryagain:
 				register char *right;
 				register char *trap;
 				char *argv[6];
+				int savexit = shp->savexit;
 				n = type>>TSHIFT;
 				left = sh_macpat(shp,&(t->lst.lstlef->arg),OPTIMIZE);
 				if(type&TBINARY)
 					right = sh_macpat(shp,&(t->lst.lstrit->arg),((n==TEST_PEQ||n==TEST_PNE)?ARG_EXP:0)|OPTIMIZE);
+				shp->savexit = savexit;
 				if(trap=shp->st.trap[SH_DEBUGTRAP])
 					argv[0] = (type&TNEGATE)?((char*)e_tstbegin):"[[";
 				if(sh_isoption(shp,SH_XTRACE))
@@ -2982,14 +3002,18 @@ tryagain:
 			break;
 		    }
 		}
-		if(shp->procsub && *shp->procsub)
+		if(procsub && *procsub)
 		{
-			pid_t pid, *procsub;
+			pid_t pid;
 			int exitval = shp->exitval;
-			for(procsub=shp->procsub;pid=*procsub;procsub++)
+			while(pid = *procsub++)
 				job_wait(pid);
-			*shp->procsub = 0;
 			shp->exitval = exitval;
+		}
+		if(shp->trapnote&SH_SIGALRM)
+		{
+			shp->trapnote &= ~SH_SIGALRM;
+			sh_timetraps(shp);
 		}
 		if(shp->trapnote || (shp->exitval && sh_isstate(shp,SH_ERREXIT)) &&
 			t && echeck) 
@@ -3180,7 +3204,7 @@ pid_t _sh_fork(Shell_t *shp,register pid_t parent,int flags,int *jobid)
 			 * completed.  Make parent the job group id.
 			 */
 			if(postid==0)
-				job.curpgid = parent;
+				job.curpgid = job.jobcontrol?parent:getpid();
 			if(job.jobcontrol || (flags&FAMP))
 			{
 				if(setpgid(parent,job.curpgid)<0 && errno==EPERM)
@@ -3387,7 +3411,7 @@ static void sh_funct(Shell_t *shp,Namval_t *np,int argn, char *argv[],struct arg
 	SH_LEVELNOD->nvalue.s = lp->maxlevel;
 	shp->st.lineno = error_info.line;
 	np->nvalue.rp->running  += 2;
-	if(nv_isattr(np,NV_FPOSIX))
+	if(nv_isattr(np,NV_FPOSIX) && !sh_isoption(shp,SH_BASH))
 	{
 		char *save;
 		int loopcnt = shp->st.loopcnt;
@@ -3427,6 +3451,11 @@ static void sh_funct(Shell_t *shp,Namval_t *np,int argn, char *argv[],struct arg
 	nv_putval(SH_PATHNAMENOD,shp->st.filename,NV_NOFREE);
 	shp->pipepid = pipepid;
 	np->nvalue.rp->running  -= 2;
+	if(np->nvalue.rp && np->nvalue.rp->running==1)
+	{
+		np->nvalue.rp->running = 0;
+		_nv_unset(np, NV_RDONLY);
+	}
 }
 
 /*
@@ -4114,7 +4143,7 @@ int sh_funscope_20120720(Shell_t *shp,int argn, char *argv[],int(*fun)(void*),vo
 	}
 	if(jmpval)
 		r=shp->exitval;
-	if(r>SH_EXITSIG && ((r&SH_EXITMASK)==SIGINT || ((r&SH_EXITMASK)==SIGQUIT)))
+	if(!sh_isstate(shp,SH_IOPROMPT) && r>SH_EXITSIG && ((r&SH_EXITMASK)==SIGINT || ((r&SH_EXITMASK)==SIGQUIT)))
 		kill(getpid(),r&SH_EXITMASK);
 	if(jmpval > SH_JMPFUN)
 	{
@@ -4145,6 +4174,7 @@ int sh_eval_20120720(Shell_t *shp,register Sfio_t *iop, int mode)
 	volatile int lineno=0;
 	int binscript=shp->binscript;
 	char comsub = shp->comsub;
+	Sfio_t *iosaved = io_save;
 	io_save = iop; /* preserve correct value across longjmp */
 	shp->binscript = 0;
 	shp->comsub = 0;
@@ -4182,7 +4212,7 @@ int sh_eval_20120720(Shell_t *shp,register Sfio_t *iop, int mode)
 			mode = sh_state(SH_INTERACTIVE);
 		}
 		sh_exec(shp,t,sh_isstate(shp,SH_ERREXIT)|sh_isstate(shp,SH_NOFORK)|(mode&~SH_FUNEVAL));
-		if(!(mode&SH_FUNEVAL))
+		if(!io_save)
 			break;
 	}
 	sh_popcontext(shp,buffp);
@@ -4194,6 +4224,8 @@ int sh_eval_20120720(Shell_t *shp,register Sfio_t *iop, int mode)
 		shp->inlineno = lineno;
 	if(io_save)
 		sfclose(io_save);
+	if((io_save=iosaved) == iop)
+		io_save = 0;
 	sh_freeup(shp);
 	shp->st.staklist = saveslp;
 	shp->fn_reset = 0;

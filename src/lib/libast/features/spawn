@@ -29,9 +29,9 @@ tst	lib_posix_spawn unistd.h stdlib.h spawn.h -Dfork=______fork note{ posix_spaw
 		posix_spawnattr_t	attr;
 		int			n;
 		int			status;
-		char*			cmd[3];
+		char*			cmd[4];
 		char			tmp[1024];
-		if (argv[1])
+		if (argv[2])
 			_exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
 		signal(SIGHUP, SIG_IGN);
 		if (posix_spawnattr_init(&attr))
@@ -51,8 +51,9 @@ tst	lib_posix_spawn unistd.h stdlib.h spawn.h -Dfork=______fork note{ posix_spaw
 		}
 		/* first try an a.out and verify that SIGHUP is ignored */
 		cmd[0] = argv[0];
-		cmd[1] = "test";
-		cmd[2] = 0;
+		cmd[1] = argv[1];
+		cmd[2] = "test";
+		cmd[3] = 0;
 		if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0))
 		{
 			NOTE("posix_spawn() FAILED");
@@ -134,13 +135,14 @@ tst	lib_spawn_mode unistd.h stdlib.h note{ first spawn arg is mode and it works 
 	char**	argv;
 	{
 		int	status;
-		char*	cmd[3];
-		if (argv[1])
+		char*	cmd[4];
+		if (argv[2])
 			_exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
 		signal(SIGHUP, SIG_IGN);
 		cmd[0] = argv[0];
-		cmd[1] = "test";
-		cmd[2] = 0;
+		cmd[1] = argv[1];
+		cmd[2] = "test";
+		cmd[3] = 0;
 		if (spawnv(P_NOWAIT, cmd[0], cmd) < 0)
 			_exit(1);
 		status = 1;

@@ -59,8 +59,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -597,31 +597,31 @@ make vcama.o
 prev Vcama/vcama.c
 meta vcama.o %.c>%.o Vcama/vcama.c vcama
 prev Vcama/vcama.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcama.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcama.c
 done vcama.o generated
 make vcamadiff.o
 prev Vcama/vcamadiff.c
 meta vcamadiff.o %.c>%.o Vcama/vcamadiff.c vcamadiff
 prev Vcama/vcamadiff.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcamadiff.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcamadiff.c
 done vcamadiff.o generated
 make vcbdw.o
 prev Vcama/vcbdw.c
 meta vcbdw.o %.c>%.o Vcama/vcbdw.c vcbdw
 prev Vcama/vcbdw.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcbdw.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcama/vcbdw.c
 done vcbdw.o generated
 make vccrypt.o
 prev Vccrypto/vccrypt.c
 meta vccrypt.o %.c>%.o Vccrypto/vccrypt.c vccrypt
 prev Vccrypto/vccrypt.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVccrypto -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vccrypto/vccrypt.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVccrypto -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vccrypto/vccrypt.c
 done vccrypt.o generated
 make vcsum.o
 prev Vccrypto/vcsum.c
 meta vcsum.o %.c>%.o Vccrypto/vcsum.c vcsum
 prev Vccrypto/vcsum.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVccrypto -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vccrypto/vcsum.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVccrypto -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vccrypto/vcsum.c
 done vcsum.o generated
 make vcxaes.o
 prev Vccrypto/vcxaes.c
@@ -657,7 +657,7 @@ make vcdelta.o
 prev Vcdelta/vcdelta.c
 meta vcdelta.o %.c>%.o Vcdelta/vcdelta.c vcdelta
 prev Vcdelta/vcdelta.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcdelta -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vcdelta/vcdelta.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcdelta -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vcdelta/vcdelta.c
 done vcdelta.o generated
 make vcdtable.o
 prev Vcdelta/vcdtable.c
@@ -675,7 +675,7 @@ make vchamming.o
 prev Vcdelta/vchamming.c
 meta vchamming.o %.c>%.o Vcdelta/vchamming.c vchamming
 prev Vcdelta/vchamming.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcdelta -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vcdelta/vchamming.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcdelta -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vcdelta/vchamming.c
 done vchamming.o generated
 make vchbits.o
 prev Vchuff/vchbits.c
@@ -705,19 +705,19 @@ make vchuffgroup.o
 prev Vchuff/vchuffgroup.c
 meta vchuffgroup.o %.c>%.o Vchuff/vchuffgroup.c vchuffgroup
 prev Vchuff/vchuffgroup.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffgroup.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffgroup.c
 done vchuffgroup.o generated
 make vchuffman.o
 prev Vchuff/vchuffman.c
 meta vchuffman.o %.c>%.o Vchuff/vchuffman.c vchuffman
 prev Vchuff/vchuffman.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffman.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffman.c
 done vchuffman.o generated
 make vchuffpart.o
 prev Vchuff/vchuffpart.c
 meta vchuffpart.o %.c>%.o Vchuff/vchuffpart.c vchuffpart
 prev Vchuff/vchuffpart.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffpart.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVchuff -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_BLD_vcodex -D_PACKAGE_ast -c Vchuff/vchuffpart.c
 done vchuffpart.o generated
 make lz4.o
 prev Vclz4/lz4.c
@@ -736,55 +736,55 @@ prev Vclz4/vclz4.c
 meta vclz4.o %.c>%.o Vclz4/vclz4.c vclz4
 prev Vclz4/vclz4.c
 setv LICENSE -DLICENSE="since=2013,author=car"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVclz4 -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Chris Rath <car@research.att.com>][-copyright?Copyright (c) 2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vclz4/vclz4.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVclz4 -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Chris Rath <car@research.att.com>][-copyright?Copyright (c) 2013-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vclz4/vclz4.c
 done vclz4.o generated
 make vcbwt.o
 prev Vcmisc/vcbwt.c
 meta vcbwt.o %.c>%.o Vcmisc/vcbwt.c vcbwt
 prev Vcmisc/vcbwt.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcbwt.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcbwt.c
 done vcbwt.o generated
 make vcmap.o
 prev Vcmisc/vcmap.c
 meta vcmap.o %.c>%.o Vcmisc/vcmap.c vcmap
 prev Vcmisc/vcmap.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcmap.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcmap.c
 done vcmap.o generated
 make vcmtf.o
 prev Vcmisc/vcmtf.c
 meta vcmtf.o %.c>%.o Vcmisc/vcmtf.c vcmtf
 prev Vcmisc/vcmtf.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcmtf.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcmtf.c
 done vcmtf.o generated
 make vcetoa.o
 prev Vcmisc/vcetoa.c
 meta vcetoa.o %.c>%.o Vcmisc/vcetoa.c vcetoa
 prev Vcmisc/vcetoa.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcetoa.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcetoa.c
 done vcetoa.o generated
 make vcnetflow.o
 prev Vcmisc/vcnetflow.c
 meta vcnetflow.o %.c>%.o Vcmisc/vcnetflow.c vcnetflow
 prev Vcmisc/vcnetflow.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcnetflow.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcnetflow.c
 done vcnetflow.o generated
 make vcrle.o
 prev Vcmisc/vcrle.c
 meta vcrle.o %.c>%.o Vcmisc/vcrle.c vcrle
 prev Vcmisc/vcrle.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcrle.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcrle.c
 done vcrle.o generated
 make vcstrip.o
 prev Vcmisc/vcstrip.c
 meta vcstrip.o %.c>%.o Vcmisc/vcstrip.c vcstrip
 prev Vcmisc/vcstrip.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcstrip.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcstrip.c
 done vcstrip.o generated
 make vctranspose.o
 prev Vcmisc/vctranspose.c
 meta vctranspose.o %.c>%.o Vcmisc/vctranspose.c vctranspose
 prev Vcmisc/vctranspose.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vctranspose.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vctranspose.c
 done vctranspose.o generated
 make vcsfio.o
 prev Vcsf/vcsfio.c
@@ -796,13 +796,13 @@ make vcsieve.o
 prev Vcsieve/vcsieve.c
 meta vcsieve.o %.c>%.o Vcsieve/vcsieve.c vcsieve
 prev Vcsieve/vcsieve.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcsieve/vcsieve.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcsieve/vcsieve.c
 done vcsieve.o generated
 make vcrdb.o
 prev Vcrdb/vcrdb.c
 meta vcrdb.o %.c>%.o Vcrdb/vcrdb.c vcrdb
 prev Vcrdb/vcrdb.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcrdb -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcrdb/vcrdb.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcrdb -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcrdb/vcrdb.c
 done vcrdb.o generated
 make vcrdformat.o
 prev Vcrdb/vcrdformat.c
@@ -832,13 +832,13 @@ make vcrtable.o
 prev Vctable/vcrtable.c
 meta vcrtable.o %.c>%.o Vctable/vcrtable.c vcrtable
 prev Vctable/vcrtable.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcrdb -IVctable -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vctable/vcrtable.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcrdb -IVctable -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vctable/vcrtable.c
 done vcrtable.o generated
 make vctable.o
 prev Vctable/vctable.c
 meta vctable.o %.c>%.o Vctable/vctable.c vctable
 prev Vctable/vctable.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVctable -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vctable/vctable.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVctable -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vctable/vctable.c
 done vctable.o generated
 make vctblplan.o
 prev Vctable/vctblplan.c
@@ -892,20 +892,20 @@ make vcwprefix.o
 prev Vcwindow/vcwprefix.c
 meta vcwprefix.o %.c>%.o Vcwindow/vcwprefix.c vcwprefix
 prev Vcwindow/vcwprefix.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcwindow/vcwprefix.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcwindow/vcwprefix.c
 done vcwprefix.o generated
 make vcwvote.o
 prev Vcwindow/vcwvote.c
 meta vcwvote.o %.c>%.o Vcwindow/vcwvote.c vcwvote
 prev Vcwindow/vcwvote.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcwindow/vcwvote.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcwindow/vcwvote.c
 done vcwvote.o generated
 make vcxml.o
 prev Vcmisc/vcxml.c
 meta vcxml.o %.c>%.o Vcmisc/vcxml.c vcxml
 prev Vcmisc/vcxml.c
 setv LICENSE -DLICENSE="since=2013,author=gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcxml.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -IVcwindow -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2013-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libvcodex]"\" -D_PACKAGE_ast -D_BLD_vcodex -c Vcmisc/vcxml.c
 done vcxml.o generated
 exec - ${AR} rc libvcodex.a vcopen.o vcclose.o vcio.o vcdisc.o vcextract.o vcrecode.o vccontext.o vclog.o vcsfxsort.o vcperiod.o vclzparse.o vcbuffer.o vcbcktsort.o vcqsort.o vcmethod.o vcalias.o vcama.o vcamadiff.o vcbdw.o vccrypt.o vcsum.o vcxaes.o vcxcrc.o vcxhash.o vcxmd5.o vcdcache.o vcdelta.o vcdtable.o vcdtblinit.o vchamming.o
 exec - ${AR} rc libvcodex.a vchbits.o vchcode.o vchsize.o vchtrie.o vchuffgroup.o vchuffman.o vchuffpart.o lz4.o lz4hc.o vclz4.o vcbwt.o vcmap.o vcmtf.o vcetoa.o vcnetflow.o vcrle.o vcstrip.o vctranspose.o vcsfio.o vcsieve.o vcrdb.o vcrdformat.o vcrdparse.o vcrdplan.o vcrdvector.o vcrtable.o vctable.o vctblplan.o vcwclose.o vcwdecode.o vcwfile.o vcwmethod.o vcwmirror.o vcwngram.o vcwopen.o vcwprefix.o vcwvote.o vcxml.o

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -179,6 +179,7 @@ const char e_signo[]		= "Signal %d";
 
 /* string constants */
 const char e_astbin[]		= SH_CMDLIB_DIR;
+const char e_wordbreaks[]	= "\"'@><=;|&(:";
 const char e_heading[]		= "Current option settings";
 const char e_sptbnl[]		= " \t\n";
 const char e_tolower[]		= "tolower";

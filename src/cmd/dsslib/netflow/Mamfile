@@ -187,7 +187,7 @@ done flowlib.h
 done netflow.c
 meta netflow.o %.c>%.o netflow.c netflow
 prev netflow.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssnetflow]"\" -D_PACKAGE_ast -c netflow.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssnetflow]"\" -D_PACKAGE_ast -c netflow.c
 done netflow.o generated
 make flow-dump.o
 make flow-dump.c

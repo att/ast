@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -228,8 +228,8 @@ wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 						x = -1;
 					if ((cp-side) < o)
 					{
-						cp = buff;
 						nchars += (cp-side) - 1;
+						cp = buff;
 					}
 					else
 						cp = buff + (cp-side) - o;

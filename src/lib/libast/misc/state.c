@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
-static const char id[] = "\n@(#)$Id: ast (AT&T Research) 2013-06-24 $\0\n";
+static const char id[] = "\n@(#)$Id: ast (AT&T Research) 2013-11-26 $\0\n";
 
 #include <ast.h>
 

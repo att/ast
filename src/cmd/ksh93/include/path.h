@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -43,6 +43,7 @@
 #define PATH_SKIP		0020
 #define PATH_BUILTIN_LIB	0040
 #define PATH_STD_DIR		0100	/* directory is on  $(getconf PATH) */
+#define PATH_BIN		0200	/* path behaves like /bin for builtins */
 
 #define PATH_OFFSET	2		/* path offset for path_join */
 #define MAXDEPTH	(sizeof(char*)==2?64:1024) /* maximum recursion depth*/

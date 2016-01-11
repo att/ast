@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -367,22 +367,24 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 									errno = EINVAL;
 									goto nope;
 								}
-							c = s - v;
-							for (n = 0;; n++)
-								if (n >= elementsof(oflags))
+							if (c = s - v)
+								for (n = 0;; n++)
 								{
-									errno = EINVAL;
-									goto nope;
-								}
-								else if (oflags[n].length == c && !memcmp(oflags[n].name, v, c))
-								{
-									if (!oflags[n].oflag)
+									if (n >= elementsof(oflags))
 									{
-										errno = ENXIO;
+										errno = EINVAL;
 										goto nope;
 									}
-									dev->oflags |= oflags[n].oflag;
-									break;
+									else if (oflags[n].length == c && !memcmp(oflags[n].name, v, c))
+									{
+										if (!oflags[n].oflag)
+										{
+											errno = ENXIO;
+											goto nope;
+										}
+										dev->oflags |= oflags[n].oflag;
+										break;
+									}
 								}
 						} while (*s++ == ',');
 						dev->pid = -1;
@@ -520,38 +522,34 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 
 					t = r - 2;
 					r = x;
-					if (t == r)
-					{
-						buf[0] = *path == '/' ? '/' : '.';
-						buf[1] = 0;
-					}
-					else
+					if (t > r)
 					{
 						memcpy(buf, r, t - r);
 						for (r = buf + (t - r); r > buf && *(r - 1) == '/'; r--);
-						*r = 0;
 					}
-					if ((dev->fd = openat(dfd, buf, O_INTERCEPT|O_RDONLY|O_NONBLOCK|O_CLOEXEC|dev->oflags)) < 0)
-						r = 0;
-					else if ((n = openat(dev->fd, ".", O_INTERCEPT|O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
+					if (t == r)
 					{
-						r = 0;
+						r = buf;
+						*r++ = *path == '/' ? '/' : '.';
+					}
+					*r = 0;
+					if ((dev->fd = openat(dfd, buf, O_INTERCEPT|O_RDONLY|O_NONBLOCK|O_CLOEXEC|dev->oflags)) < 0)
+						return 0;
+					if ((n = openat(dev->fd, ".", O_INTERCEPT|O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
+					{
 						close(dev->fd);
 						dev->fd = -1;
+						return 0;
 					}
-					else
-					{
-						dev->oflags |= O_INTERCEPT;
-						close(dev->fd);
-						if (dev == &nodev)
-							close(n);
-						dev->fd = n;
-						for (r = t + 3; *r == '/'; r++);
-						dev->pid = -1;
-						dev->path.offset = r - (char*)path;
-						return r + strlen(r);
-					}
-					break;
+					dev->oflags |= O_INTERCEPT;
+					close(dev->fd);
+					if (dev == &nodev)
+						close(n);
+					dev->fd = n;
+					for (r = t + 3; *r == '/'; r++);
+					dev->pid = -1;
+					dev->path.offset = r - (char*)path;
+					return r + strlen(r);
 				}
 #endif
 		if (flags & PATH_DEV)

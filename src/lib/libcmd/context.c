@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #define CONTEXT_BLOCK		(1024*1024)
@@ -57,6 +57,7 @@ context_open(Sfio_t* ip, size_t before, size_t after, Context_list_f listf, void
 	cp->curline = cp->total - 1;
 	cp->listf = listf;
 	cp->handle = handle;
+	cp->next = 0;
 	return cp;
 }
 
@@ -75,7 +76,7 @@ context_line(Context_t* cp)
 	lp = &cp->line[cp->curline];
 	if (lp->show)
 	{
-		if (cp->listf(lp, lp->show == ':', 0, cp->handle))
+		if (cp->listf(lp, lp->show == ':', cp->before ? 0 : lp->line != cp->next && cp->next, cp->handle))
 			return 0;
 		cp->next = lp->line + 1;
 	}
@@ -172,7 +173,7 @@ context_show(Context_t* cp)
 		if (!cp->line[j].show && cp->line[j].line)
 		{
 			cp->line[j].show = '-';
-			if (cp->listf(&cp->line[j], 0, !i && cp->line[j].line != cp->next, cp->handle))
+			if (cp->listf(&cp->line[j], 0, !i && cp->line[j].line != cp->next && cp->next, cp->handle))
 				return 0;
 		}
 	}

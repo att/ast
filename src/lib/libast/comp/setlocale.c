@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -73,6 +73,9 @@ extern int		mblen(const char*, size_t);
 #ifndef AST_LC_CANONICAL
 #define AST_LC_CANONICAL	LC_abbreviated
 #endif
+
+typedef size_t (*Mbtowc_f)(wchar_t*, const char*, size_t, mbstate_t*);
+typedef size_t (*Wctomb_f)(char*, wchar_t, mbstate_t*);
 
 static void
 header(void)
@@ -585,22 +588,10 @@ sjis_mbtowc(register wchar_t* p, register const char* s, size_t n)
 
 #endif
 
-static size_t
-utf8_mbrtowc(wchar_t* w, const char* s, size_t n, mbstate_t* q)
-{
-	return s ? utf8towc(w, s, n) : 0;
-}
-
-static size_t
-utf8_wcrtomb(char* u, wchar_t w, mbstate_t* q)
-{
-	return u ? utf32toutf8(u, w) : 0;
-}
-
 static int
-utf8_wctomb(char* u, wchar_t w) 
+utf8_wctomb(char* u, wchar_t w)
 {
-	return u ? utf32toutf8(u, w) : 0;
+	return (int)utf32toutf8(u, w);
 }
 
 static size_t
@@ -616,7 +607,7 @@ utf8_mblen(const char* str, size_t n)
 {
 	uint32_t	u;
 
-	return utf8toutf32(&u, str, n);
+	return (int)utf8toutf32(&u, str, n);
 }
 
 static const unsigned char	utf8_wcw[] =
@@ -2201,7 +2192,8 @@ ast_mbrchar(wchar_t* w, const char* s, size_t n, Mbstate_t* q)
 	if (m == (size_t)(-2) && (q->mb_errno = E2BIG) || m == (size_t)(-1) && (q->mb_errno = EILSEQ))
 	{
 		m = 1;
-		*w = n ? *(unsigned char*)s : 0;
+		if (w)
+			*w = n ? *(unsigned char*)s : 0;
 	}
 	else
 		q->mb_errno = 0;
@@ -2326,9 +2318,9 @@ set_ctype(Lc_category_t* cp)
 			ast.mb_width = utf8_wcwidth;
 		ast.mb_alpha = utf8_alpha;
 		ast._ast_mbrlen = utf8_mbrlen;
-		ast._ast_mbrtowc = utf8_mbrtowc;
+		ast._ast_mbrtowc = (Mbtowc_f)utf8towc;
 		ast._ast_mbsrtowcs = ast_mbsrtowcs;
-		ast._ast_wcrtomb = utf8_wcrtomb;
+		ast._ast_wcrtomb = (Wctomb_f)utf32toutf8;
 		ast._ast_wcsrtombs = ast_wcsrtombs;
 		ast.mb_len = utf8_mblen;
 		ast.mb_towc = utf8towc;

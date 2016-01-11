@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -130,7 +130,10 @@ int		mode;	/* type of region		*/
 				write(9, "vmalloc: panic: heap initialization error #4\n", 45);
 			return NIL(Vmalloc_t*);
 		}
-		memset(base, 0, size);
+		if (_Vmassert & 0x10)
+			memset(base, 0, size);
+		else if (!(_Vmassert & 0x20))
+			memset(base, 0, vmsz + vdsz + sgsz);
 
 		/* make sure memory is properly aligned */
 		if((algn = (ssize_t)(VMLONG(base)%ALIGN)) == 0 )

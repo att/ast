@@ -145,7 +145,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done ${INSTALLROOT}/src/cmd/codex/codex.c
 meta codex.o %.c>%.o ${INSTALLROOT}/src/cmd/codex/codex.c codex
 prev ${INSTALLROOT}/src/cmd/codex/codex.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -Dmain=b_codex -D_PACKAGE_ast -D_BLD_codex -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2007-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshcodex]"\" -c ${INSTALLROOT}/src/cmd/codex/codex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${mam_cc_DLL} -I${PACKAGE_ast_INCLUDE} -Dmain=b_codex -D_PACKAGE_ast -D_BLD_codex -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?kshcodex]"\" -c ${INSTALLROOT}/src/cmd/codex/codex.c
 done codex.o generated
 make lib.o
 make lib.c

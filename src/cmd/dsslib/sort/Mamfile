@@ -187,7 +187,7 @@ done ${PACKAGE_ast_INCLUDE}/dsslib.h
 done sort.c
 meta sort.o %.c>%.o sort.c sort
 prev sort.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2011-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsssort]"\" -D_PACKAGE_ast -c sort.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2011-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dsssort]"\" -D_PACKAGE_ast -c sort.c
 done sort.o generated
 make lib.o
 make lib.c

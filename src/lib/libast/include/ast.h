@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
@@ -399,10 +399,10 @@ extern int		struid(const char*);
 extern int		struniq(char**, int);
 extern int		strvcmp(const char*, const char*);
 
-extern int		utf32toutf8(char*, uint32_t);
-extern int		utf8toutf32(uint32_t*, const char*, size_t);
-extern int		utf8toutf32v(uint32_t*, const char*);
-extern int		utf8towc(wchar_t*, const char*, size_t);
+extern size_t		utf32toutf8(char*, uint32_t);
+extern size_t		utf8toutf32(uint32_t*, const char*, size_t);
+extern size_t		utf8toutf32v(uint32_t*, const char*);
+extern size_t		utf8towc(wchar_t*, const char*, size_t);
 
 extern ssize_t		utf32stowcs(wchar_t*, uint32_t*, size_t);
 extern ssize_t		wcstoutf32s(uint32_t*, wchar_t*, size_t);

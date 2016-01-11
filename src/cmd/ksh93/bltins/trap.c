@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -24,8 +24,7 @@
  * kill  [-s sig] pid...
  *
  *   David Korn
- *   AT&T Labs
- *   research!dgk
+ *   dgkorn@gmail.com
  *
  */
 
@@ -43,16 +42,20 @@ static int	sig_number(Shell_t*,const char*);
 int	b_trap(int argc,char *argv[],Shbltin_t *context)
 {
 	register char *arg = argv[1];
-	register int sig, clear = 0, dflag = 0, pflag = 0, aflag=0;
+	register int sig, clear;
+	register bool pflag=false, dflag=false, aflag=false, lflag=false;
 	register Shell_t *shp = context->shp;
 	NOT_USED(argc);
 	while (sig = optget(argv, sh_opttrap)) switch (sig)
 	{
 	    case 'a':
-		aflag = 1;
+		aflag = true;
 		break;
 	    case 'p':
-		pflag=1;
+		pflag=true;
+		break;
+	    case 'l':
+		lflag = true;
 		break;
 	    case ':':
 		errormsg(SH_DICT,2, "%s", opt_info.arg);
@@ -67,6 +70,11 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 		errormsg(SH_DICT,ERROR_usage(2),"%s", optusage((char*)0));
 	if(pflag && aflag)
 		errormsg(SH_DICT,ERROR_usage(2),"-a and -p are mutually exclusive");
+	if(lflag)
+	{
+		sh_siglist(shp,sfstdout,-1);;
+		return(0);
+	}
 	if(arg = *argv)
 	{
 		char *action = arg;
@@ -89,7 +97,7 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 				else if(*action=='+' && action[1]==0 && shp->st.self == &shp->global)
 				{
 					clear++;
-					dflag++;
+					dflag = true;
 				}
 			}
 			if(!argv[0])

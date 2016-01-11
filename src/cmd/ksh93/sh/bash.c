@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 /*
@@ -29,11 +29,11 @@
 #include "name.h"
 
 #ifndef BASH_MAJOR
-#   define BASH_MAJOR	"1"
-#   define BASH_MINOR	"0"
+#   define BASH_MAJOR	"4"
+#   define BASH_MINOR	"2"
 #   define BASH_PATCH	"0"
 #   define BASH_BUILD	"0"
-#   define BASH_RELEASE	"experimental"
+#   define BASH_RELEASE	"ksh93"
 #endif 
 #define BASH_VERSION	BASH_MAJOR "." BASH_MINOR "." BASH_PATCH "(" BASH_BUILD ")-" BASH_RELEASE 
 
@@ -152,10 +152,11 @@ USAGE_LICENSE
 
 static void put_globignore(register Namval_t* np, const char *val, int flags, Namfun_t *fp)
 {
+	Shell_t *shp = np->nvshell;
 	if(val)
 		sh_onoption(shp,SH_DOTGLOB);
 	else
-		sh_offoption(sh_ptr(np),SH_DOTGLOB);
+		sh_offoption(shp,SH_DOTGLOB);
 
 	nv_putv(np,val,flags,fp);
 }
@@ -187,9 +188,9 @@ const Namdisc_t SH_FUNCNAME_disc  = { sizeof(struct funcname), put_funcname };
 
 /* shopt builtin */
 
-int     b_shopt(int argc,register char *argv[],void *extra)
+int     b_shopt(int argc,register char *argv[], Shbltin_t *extra)
 {
-        Shell_t *shp = (Shell_t*)extra;
+        Shell_t *shp = extra->shp;
 	int n, f, ret=0;
 	Shopt_t newflags=shp->options, opt;
 	int verbose=PRINT_SHOPT|PRINT_ALL|PRINT_NO_HEADER|PRINT_VERBOSE;
@@ -273,7 +274,7 @@ int     b_shopt(int argc,register char *argv[],void *extra)
 		if(setflag&SET_SET)
 		{
 			if(sh_isoption(shp,SH_INTERACTIVE))
-				off_option(shp,&opt,SH_NOEXEC);
+				off_option(&opt,SH_NOEXEC);
 			if(is_option(&opt,SH_VI)||is_option(&opt,SH_EMACS)||is_option(&opt,SH_GMACS))
 			{
 				off_option(&newflags,SH_VI);
@@ -297,7 +298,7 @@ int     b_shopt(int argc,register char *argv[],void *extra)
 			ret+=((newflags.v[n]&opt.v[n])!=opt.v[n]);
 	}
 	if(!quietflag&&!(setflag&(SET_SET|SET_UNSET)))
-		sh_printopts(newflags,verbose,&opt);
+		sh_printopts(shp,newflags,verbose,&opt);
 	return(ret);
 }
 
@@ -349,12 +350,16 @@ void bash_init(Shell_t *shp,int mode)
 
 		/* add builtins */
 		sh_addbuiltin(shp,"shopt", b_shopt, &sh);
+		sh_addbuiltin(shp,"enable", b_builtin, &sh);
+
 
 		/* set up some variables needed for --version
 		 * needs to go here because --version option is parsed before the init script.
 		 */
+#if 0  /* This was causing a core dump when running set to display all variables */
 		if(np=nv_open("HOSTTYPE",shp->var_tree,0))
 			nv_putval(np, BASH_HOSTTYPE, NV_NOFREE);
+#endif
 		if(np=nv_open("MACHTYPE",shp->var_tree,0))
 			nv_putval(np, BASH_MACHTYPE, NV_NOFREE);
 		if(np=nv_open("BASH_VERSION",shp->var_tree,0))
@@ -395,18 +400,24 @@ void bash_init(Shell_t *shp,int mode)
 		nv_disc(np, fp, 0);
 	}
 
+	if(np=nv_open("BASH_EXECUTION_STRING",shp->var_tree,0))
+	{
+		np->nvalue.cp = shp->comdiv;
+		nv_onattr(np,NV_NOFREE);
+	}
+
 	/* set startup files */
 	n=0;
 	if(sh_isoption(shp,SH_LOGIN_SHELL))
 	{
 		if(!sh_isoption(shp,SH_POSIX))
 		{
-			login_files[n++] = (char*)e_bash_profile;
-			login_files[n++] = (char*)e_bash_login;
+			shp->gd->login_files[n++] = (char*)e_bash_profile;
+			shp->gd->login_files[n++] = (char*)e_bash_login;
 		}
-		login_files[n++] = (char*)e_profile;
+		shp->gd->login_files[n++] = (char*)e_profile;
 	}
-	shp->login_files = login_files;
+	shp->gd->login_files = login_files;
 reinit:
 	xtrace = sh_isoption(shp,SH_XTRACE);
 	sh_offoption(shp,SH_XTRACE);

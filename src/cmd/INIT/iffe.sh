@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 # Glenn Fowler & Phong Vo
@@ -30,7 +30,7 @@ case $-:$BASH_VERSION in
 esac
 
 command=iffe
-version=2013-08-11 # update in USAGE too #
+version=2013-11-14 # update in USAGE too #
 
 compile() # $cc ...
 {
@@ -717,7 +717,7 @@ set=
 case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 0123)	USAGE=$'
 [-?
-@(#)$Id: iffe (AT&T Research) 2013-09-25 $
+@(#)$Id: iffe (AT&T Research) 2013-11-14 $
 ]
 '$USAGE_LICENSE$'
 [+NAME?iffe - C compilation environment feature probe]
@@ -976,7 +976,10 @@ case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 	[+one \aheader\a ...?Generates a \b#include\b statement for the first
 		header found in the \aheader\a list.]
 	[+opt \aname\a?Defines \b_opt_\b\aname\a if \aname\a is a space-separated
-		token in the global environment variable \bPACKAGE_OPTIONS\b.]
+		token in the global environment variable \bPACKAGE_OPTIONS\b.
+		\bopt no\b\a-name\a defines \b_opt_\b\aname\a if \bno\b-\aname\a
+		is not a space-separated token in the global environment variable
+		\bPACKAGE_OPTIONS\b.]
 	[+pth \afile\a [ \adir\a ... | { \ag1\a - ... - \agn\a } | < \apkg\a [\aver\a ...]] > ]]?Defines
 		\b_pth_\b\afile\a, with embedded \b/\b chars translated to
 		\b_\b, to the path of the first instance of \afile\a in the
@@ -3820,79 +3823,48 @@ $tst
 $ext
 $inc
 #include <$f.h>" > $tmp.c
-						case $f in
-						sys/*)	e= ;;
-						*)	e='-e /[\\\\\/]sys[\\\\\/]'$f'\\.h"/d' ;;
-						esac
+						r=
 						if	compile $cc -E $tmp.c <&$nullin >$tmp.i
-						then	i=`sed -e '/^#[line 	]*[0123456789][0123456789]*[ 	][ 	]*"[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:]*[\\\\\/].*[\\\\\/]'$f'\\.h"/!d' $e -e s'/.*"\\(.*\\)".*/\\1/' -e 's,\\\\,/,g' -e 's,///*,/,g' $tmp.i | sed 1q`
-							case $i in
-							[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]:[\\/]*)
-								;;
-							*/*/*)	k=`echo "$i" | sed 's,.*/\([^/]*/[^/]*\)$,../\1,'`
+						then	j=
+							for i in `grep '^#.*".*'$f'\\.h"' $tmp.i | head -1 | sed -e 's;.*"\\(.*\\)[\\\\\/]'$f'\\.h".*;\\1;' -e 's;/; ;g' -e 's/^ *[^ ]*//'`
+							do	j="$i $j"
+							done
+							k=$f.h
+							for i in $j
+							do	k=$i/$k
 								echo "$pre
 $tst
 $ext
 $inc
-#include <$k>" > $tmp.c
+#include \"$k\"" > $tmp.c
 								if	compile $cc -E $tmp.c <&$nullin >$tmp.i
-								then	j=`sed -e '/^#[line 	]*[0123456789][0123456789]*[ 	][ 	]*"[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:]*[\\\\\/].*[\\\\\/]'$f'\\.h"/!d' $e -e s'/.*"\\(.*\\)".*/\\1/' -e 's,\\\\,/,g' -e 's,///*,/,g' $tmp.i | sed 1q`
-									wi=`wc < "$i"`
-									wj=`wc < "$j"`
-									case $wi in
-									$wj)	i=$k	;;
-									esac
+								then	r=$k
+									break
 								fi
-								;;
-							*)	echo "$pre
+							done
+							case $r in
+							'')	echo "$pre
 $tst
 $ext
 $inc
-#include <../include/$f.h>" > $tmp.c
+#include \"/$k\"" > $tmp.c
 								if	compile $cc -E $tmp.c <&$nullin >&$nullout
-								then	i=../include/$f.h
+								then	r=$k
+								else	echo "$pre
+$tst
+$ext
+$inc
+#include \"../include/$f.h\"" > $tmp.c
+									if	compile $cc -E $tmp.c <&$nullin >&$nullout
+									then	r=../include/$f.h
+									fi
 								fi
 								;;
 							esac
-						else	i=
+						else	r=
 						fi
-						case $i in
-						[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]:[\\/]*|[\\/]*)
-							success
-							case $o in
-							lcl)	echo "#if defined(__STDPP__directive)"
-								echo "__STDPP__directive pragma pp:hosted"
-								echo "#endif"
-								echo "#include <$i>	/* the native <$f.h> */"
-								echo "#undef	$m"
-								usr="$usr$nl#define $m 1"
-								echo "#define $m	1"
-								;;
-							nxt)	echo "#define $m <$i>	/* include path for the native <$f.h> */"
-								echo "#define ${m}_str \"$i\"	/* include string for the native <$f.h> */"
-								usr="$usr$nl#define $m <$i>$nl#define ${m}_str \"$i\""
-								eval $m=\\\<$i\\\>
-								;;
-							esac
-							break
-							;;
-						../*/*)	success
-							case $o in
-							lcl)	echo "#include <$i>	/* the native <$f.h> */"
-								echo "#undef	$m"
-								usr="$usr$nl#define $m 1"
-								echo "#define $m	1"
-								eval $m=1
-								;;
-							nxt)	echo "#define $m <$i>	/* include path for the native <$f.h> */"
-								echo "#define ${m}_str \"$i\"	/* include string for the native <$f.h> */"
-								usr="$usr$nl#define $m <$i>$nl#define ${m}_str \"$i\""
-								eval $m=\\\<$i\\\>
-								;;
-							esac
-							break
-							;;
-						*)	failure
+						case $r in
+						'')	failure
 							case $o in
 							lcl)	case $all$config$undef in
 								?1?|??1)echo "#undef	$m		/* no native <$f.h> */" ;;
@@ -3905,6 +3877,41 @@ $inc
 								esac
 								;;
 							esac
+							;;
+						[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]:[\\/]*|[\\/]*)
+							success
+							case $o in
+							lcl)	echo "#if defined(__STDPP__directive)"
+								echo "__STDPP__directive pragma pp:hosted"
+								echo "#endif"
+								echo "#include \"$r\"	/* the native <$f.h> */"
+								echo "#undef	$m"
+								usr="$usr$nl#define $m 1"
+								echo "#define $m	1"
+								;;
+							nxt)	echo "#define $m \"$r\"	/* include path for the native <$f.h> */"
+								echo "#define ${m}_str \"$r\"	/* include string for the native <$f.h> */"
+								usr="$usr$nl#define $m \"$r\"$nl#define ${m}_str \"$r\""
+								eval $m=\\\<$r\\\>
+								;;
+							esac
+							break
+							;;
+						*)	success
+							case $o in
+							lcl)	echo "#include \"$r\"	/* the native <$f.h> */"
+								echo "#undef	$m"
+								usr="$usr$nl#define $m 1"
+								echo "#define $m	1"
+								eval $m=1
+								;;
+							nxt)	echo "#define $m \"$r\"	/* include path for the native <$f.h> */"
+								echo "#define ${m}_str \"$r\"	/* include string for the native <$f.h> */"
+								usr="$usr$nl#define $m \"$r\"$nl#define ${m}_str \"$r\""
+								eval $m=\\\"$r\\\"
+								;;
+							esac
+							break
 							;;
 						esac
 						;;
@@ -4293,12 +4300,28 @@ _END_EXTERNS_
 						break
 					done
 					;;
-				opt)	M=$m
-					is opt $a
-					case " $PACKAGE_OPTIONS " in
-					*" $a "*)	c=0 ;;
-					*)		c=1 ;;
+				opt)	case $a in
+					no-*)	case $shell in
+						ksh)	m=_opt_${m#_opt_no_}
+							a=${a#no-}
+							;;
+						*)	eval m=`echo $m | sed 's/_opt_no_/_opt_/'`
+							eval a=`echo $a | sed 's/^no-//'`
+							;;
+						esac
+						case " $PACKAGE_OPTIONS " in
+						*" no-$a "*)	c=1 ;;
+						*)		c=0 ;;
+						esac
+						;;
+					*)	case " $PACKAGE_OPTIONS " in
+						*" $a "*)	c=0 ;;
+						*)		c=1 ;;
+						esac
+						;;
 					esac
+					M=$m
+					is opt $a
 					report $c 1 "$a is set in \$PACKAGE_OPTIONS" "$a is not set in \$PACKAGE_OPTIONS"
 					;;
 				out|output)

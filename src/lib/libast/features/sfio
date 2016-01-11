@@ -126,20 +126,18 @@ tst	lib_cvt note{ native floating point conversions ok }end link{
 }end
 
 tst	xopen_stdio note{ Stdio fseek/fflush are X/Open-compliant }end execute{
+	#include <unistd.h>
 	#define Failed(file)	(unlink(file),1)
 	int
 	main(argc, argv)
 	int	argc;
 	char**	argv;
 	{	FILE	*f1, *f2;
-		char	file[1024], buf[1024], *f, *t;
+		char	buf[1024], *file;
 		int	i, fd;
 
-		/* create file */
-		for(f = argv[0], t = file; (*t = *f++) != 0; )
-			t++;
-		*t++ = '.'; *t++ = 'D'; *t++ = 0;
-		if((fd = creat(file,0666)) < 0)
+		file = argv[1];
+		if((fd = creat(file,0644)) < 0)
 			return 1;
 
 		for (i = 0; i < sizeof(buf); ++i)

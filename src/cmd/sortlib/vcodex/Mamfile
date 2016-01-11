@@ -166,7 +166,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done vcodex.c
 meta vcodex.o %.c>%.o vcodex.c vcodex
 prev vcodex.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_BLD_vcodex -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2005-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sortvcodex]"\" -c vcodex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_BLD_vcodex -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2005-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sortvcodex]"\" -c vcodex.c
 done vcodex.o generated
 exec - ${AR} rc libsortvcodex.a vcodex.o
 exec - (ranlib libsortvcodex.a) >/dev/null 2>&1 || true

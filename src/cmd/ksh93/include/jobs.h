@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -84,6 +84,7 @@ struct process
 	struct process *p_nxtjob;	/* next job structure */
 	struct process *p_nxtproc;	/* next process in current job */
 	Shell_t		*p_shp;		/* shell that posted the job */
+	char		*p_curdir;	/* current direcory at job start */
 #if SHOPT_COSHELL
 	Cojob_t		*p_cojob;	/* coshell job */
 #endif /* SHOPT_COSHELL */
@@ -165,6 +166,19 @@ extern struct jobs job;
 #   define vmbusy()	0
 #endif
 
+#if _hdr_aso
+
+#define job_lock()	asoincint(&job.in_critical)
+#define job_unlock()	\
+	do { \
+		int	_sig; \
+		if (asogetint(&job.in_critical) == 1 && (_sig = job.savesig) && !vmbusy()) \
+			job_reap(_sig); \
+		asodecint(&job.in_critical); \
+	} while(0)
+
+#else
+
 #define job_lock()	(job.in_critical++)
 #define job_unlock()	\
 	do { \
@@ -176,6 +190,8 @@ extern struct jobs job;
 			job.in_critical--; \
 		} \
 	} while(0)
+
+#endif
 
 extern const char	e_jobusage[];
 extern const char	e_done[];

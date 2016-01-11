@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -192,6 +192,11 @@ void sh_subfork(void)
 			sp->subpid = pid;
 		if(trap)
 			free((void*)trap);
+		if(comsub==1)
+		{
+			sh_close(sp->tmpfd);
+			sp->tmpfd = -1;
+		}
 		siglongjmp(*shp->jmplist,SH_JMPSUB);
 	}
 	else
@@ -205,24 +210,42 @@ void sh_subfork(void)
 		sh_offstate(shp,SH_MONITOR);
 		subshell_data = 0;
 		shp->subshell = 0;
+		shp->savesig = 0;
+		if(comsub==1)
+		{
+			sh_close(sp->pipefd);
+			sh_iorenumber(shp, sp->tmpfd, 1);
+			shp->savesig = -1;
+		}
 		shp->comsub = 0;
 		SH_SUBSHELLNOD->nvalue.s = 0;
 		sp->subpid=0;
 		shp->st.trapcom[0] = trap;
-		shp->savesig = 0;
 	}
 }
 
-bool nv_subsaved(register Namval_t *np)
+bool nv_subsaved(register Namval_t *np, int table)
 {
 	register struct subshell	*sp;
-	register struct Link		*lp;
+	register struct Link		*lp, *lpprev;
 	for(sp = (struct subshell*)subshell_data; sp; sp=sp->prev)
 	{
-		for(lp=sp->svar; lp; lp = lp->next)
+		lpprev = 0;
+		for(lp=sp->svar; lp; lpprev=lp, lp=lp->next)
 		{
 			if(lp->node==np)
+			{
+				if(table&NV_TABLE)
+				{
+					if(lpprev)
+						lpprev->next = lp->next;
+					else
+						sp->svar = lp->next;
+					free((void*)np);
+					free((void*)lp);
+				}
 				return(true);
+			}
 		}
 	}
 	return(false);
@@ -238,14 +261,16 @@ Namval_t *sh_assignok(register Namval_t *np,int add)
 	register Namval_t	*mp;
 	register struct Link	*lp;
 	register struct subshell *sp = (struct subshell*)subshell_data;
-	Shell_t			*shp = sp->shp;
-	Dt_t			*dp= shp->var_tree;
+	Shell_t			*shp;
+	Dt_t			*dp;
 	Namval_t		*mpnext;
 	Namarr_t		*ap;
 	int			save;
 	/* don't bother with this */
-	if(!sp->shpwd || np==SH_LEVELNOD || np==L_ARGNOD || np==SH_SUBSCRNOD || np==SH_NAMENOD)
+	if(!sp || !sp->shpwd || np==SH_LEVELNOD || np==L_ARGNOD || np==SH_SUBSCRNOD || np==SH_NAMENOD)
 		return(np);
+	shp = sp->shp;
+	dp = shp->var_tree;
 	/* don't bother to save if in newer scope */
 	if(sp->var!=shp->var_tree && sp->var!=shp->var_base && shp->last_root==shp->var_tree)
 		return(np);
@@ -416,13 +441,7 @@ static void table_unset(register Dt_t *root,int fun)
 	{
 		nq = (Namval_t*)dtnext(root,np);
 		flag=0;
-		if(fun && np->nvalue.rp && np->nvalue.rp->fname && *np->nvalue.rp->fname=='/')
-		{
-			np->nvalue.rp->fdict = 0;
-			flag = NV_NOFREE;
-		}
-		else
-			_nv_unset(np,NV_RDONLY);
+		_nv_unset(np,NV_RDONLY|NV_TABLE);
 		nv_delete(np,root,flag|NV_FUNCTION);
 	}
 }
@@ -433,8 +452,8 @@ int sh_subsavefd(register int fd)
 	register int old=0;
 	if(sp)
 	{
-		old = !(sp->fdsaved&(1<<(fd-1)));
-		sp->fdsaved |= (1<<(fd-1));
+		old = !(sp->fdsaved&(1<<fd));
+		sp->fdsaved |= (1<<fd);
 	}
 	return(old);
 }
@@ -477,6 +496,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 	struct sh_scoped savst;
 	struct dolnod   *argsav=0;
 	int argcnt;
+	bool pipefail=false;
 #ifdef SPAWN_cwd
 	Spawnvex_t *vp;
 #endif
@@ -533,7 +553,11 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 	if(!shp->subshare)
 		sp->pathlist = path_dup((Pathcomp_t*)shp->pathlist);
 	if(comsub)
+	{
 		shp->comsub = comsub;
+		if(comsub==1 && !(pipefail=sh_isoption(shp,SH_PIPEFAIL)))
+			sh_onoption(shp,SH_PIPEFAIL);
+	}
 	sp->shpwdfd=-1;
 	if(!comsub || !shp->subshare)
 	{
@@ -573,6 +597,18 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 			sp->monitor = (sh_isstate(shp,SH_MONITOR)!=0);
 			job.jobcontrol=0;
 			sh_offstate(shp,SH_MONITOR);
+		}
+		if(comsub==1)
+		{
+			int fds[2];
+			sh_rpipe(fds);
+			sp->pipe = 0;
+			sp->pipefd = fds[0];
+			sp->tmpfd = fds[1];
+			sh_subfork();
+		}
+		else if(comsub)
+		{
 			sp->pipe = sp;
 			/* save sfstdout and status */
 			sp->saveout = sfswap(sfstdout,NIL(Sfio_t*));
@@ -580,7 +616,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 			sp->tmpfd = -1;
 			sp->pipefd = -1;
 			/* use sftmp() file for standard output */
-			if(!(iop = sftmp(comsub==1?PIPE_BUF:IOBSIZE)))
+			if(!(iop = sftmp(IOBSIZE)))
 			{
 				sfswap(sp->saveout,sfstdout);
 				errormsg(SH_DICT,ERROR_system(1),e_tmpcreate);
@@ -637,23 +673,22 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 		{
 			/* sftmp() file has been returned into pipe */
 			iop = sh_iostream(shp,sp->pipefd,sp->pipefd);
-			sfclose(sfstdout);
+			if(comsub!=1)
+				sfclose(sfstdout);
 		}
-		else
+		else if(comsub>1)
 		{
-			if(comsub!=1 && shp->spid)
+			if(shp->spid)
 			{
-				int c = shp->exitval;
+				int c = shp->savexit;
 				job_wait(shp->spid);
-				if(shp->exitval==ERROR_NOENT)
-				{
-					shp->exitval = c;
-					exitset(shp);
-				}
+				shp->exitval = c;
 				if(shp->pipepid==shp->spid)
 					shp->spid = 0;
 				shp->pipepid = 0;
 			}
+			else if(comsub==1 && !pipefail)
+				sh_offoption(shp,SH_PIPEFAIL);
 			/* move tmp file to iop and restore sfstdout */
 			iop = sfswap(sfstdout,NIL(Sfio_t*));
 			if(!iop)
@@ -817,7 +852,9 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 	shp->savesig = 0;
 	if(nsig>0)
 		kill(getpid(),nsig);
-	if(sp->subpid)
+	if(comsub==1)
+		shp->spid = sp->subpid;
+	else if(sp->subpid)
 	{
 		job_wait(sp->subpid);
 		if(comsub>1)

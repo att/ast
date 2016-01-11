@@ -1,4 +1,4 @@
-# : : generated from mkfifo.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/mkfifo.rt by mktest : : #
 
 # regression tests for the mkfifo command
 
@@ -8,7 +8,10 @@ TWD
 
 TEST 01 '"-m =" vs. umask'
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
+		INPUT -n -
+		OUTPUT -
+		ERROR -n -
 		UMASK 000
 
 	PROG	chmod -v + f
@@ -121,7 +124,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 007
 
 	PROG	chmod -v + f
@@ -234,7 +237,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 070
 
 	PROG	chmod -v + f
@@ -347,7 +350,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 077
 
 	PROG	chmod -v + f
@@ -460,7 +463,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 700
 
 	PROG	chmod -v + f
@@ -573,7 +576,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 707
 
 	PROG	chmod -v + f
@@ -686,7 +689,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 770
 
 	PROG	chmod -v + f
@@ -799,7 +802,7 @@ TEST 01 '"-m =" vs. umask'
 	PROG	rm f
 		OUTPUT -
 
-	EXEC	-m =rw f
+	EXEC	-m '=rw' f
 		UMASK 777
 
 	PROG	chmod -v + f
@@ -915,6 +918,9 @@ TEST 01 '"-m =" vs. umask'
 TEST 02 VSC
 
 	EXEC	-m +rw f
+		INPUT -n -
+		OUTPUT -
+		ERROR -n -
 		UMASK 027
 
 	PROG	chmod -v + f

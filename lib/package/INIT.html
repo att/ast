@@ -13,12 +13,12 @@ dt	{ float:left; clear:both; }
 dd	{ margin-left:3em; }
 </STYLE>
 </HEAD>
-<BODY bgcolor=white link=slateblue vlink=teal >
+<BODY bgcolor='#ffffff' >
 <TABLE border=0 align=center width=96%>
 <TBODY><TR><TD valign=top align=left>
 <!--INDEX--><!--/INDEX-->
 <P>
-<P><CENTER><FONT color=red><FONT face=courier><H3><A name="INIT package">INIT package</A></H3></FONT></FONT></CENTER>
+<P><CENTER><H3><A name="INIT package">INIT package</A></H3></CENTER>
 The INIT package is required by all but the standalone
 and self extracting archive packages. It contains
 the package command, support scripts, and utilities.
@@ -27,7 +27,7 @@ source packages, and generates new package tarballs.
 Components in this package:
 <P>
 <P></P><TABLE border=0 frame=void rules=none width=100%><TBODY><TR><TD>
-<TABLE align=center bgcolor=papayawhip border=0 bordercolor=white cellpadding=2 cellspacing=2 width=99% >
+<TABLE align=center border=0 bordercolor='#ffffff' cellpadding=0 cellspacing=0 frame=void rules=none width=99% >
 <TBODY>
 <TR><TD align=left>
 INIT</TD></TR>
@@ -45,16 +45,21 @@ A recent
 <A href="#release change log">release change log</A>
 is also included.
 <P>
-<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="release change log">release change log</A></H3></FONT></FONT></CENTER>
+<P><HR><CENTER><H3><A name="release change log">release change log</A></H3></CENTER>
 <PRE>
 
 All recorded changes follow.
 
 </PRE>
 <P>
-<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="INIT changes">INIT changes</A></H3></FONT></FONT></CENTER>
+<P><HR><CENTER><H3><A name="INIT changes">INIT changes</A></H3></CENTER>
 <PRE>
 
+13-12-05 Makefile,package.sh: add BIN=1 to .paths for ast -lcmd builtins
+13-11-15 package.sh: fix rebuild logic to handle in-place no-map-libc &lt;=&gt; map-libc
+13-11-14 iffe.sh: handle "opt no-name" (specifically for "opt no-map-libc" =&gt; _opt_map_libc default)
+13-11-07 cc.darwin*: target 10.3 =&gt; 10.7
+13-10-30 iffe.sh: fix lcl|nxt logic to work for multi-arch style implementations
 13-09-25 iffe.sh: add _${API}_API_IMPLEMENT guards for implementation code
 13-08-11 iffe.sh: executed blocks now have a single argument that is a tmp file prefix
 13-08-11 iffe.sh: fix intrinsic function test to rule out type names
@@ -1016,7 +1021,7 @@ All recorded changes follow.
 <TR>
 <TD align=left></TD>
 <TD align=center></TD>
-<TD align=right>October 09, 2013</TD>
+<TD align=right>January 05, 2015</TD>
 </TR>
 </TABLE>
 <P>

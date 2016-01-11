@@ -156,7 +156,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done msgcpp.c
 meta msgcpp.o %.c>%.o msgcpp.c msgcpp
 prev msgcpp.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"\" -c msgcpp.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"\" -c msgcpp.c
 done msgcpp.o generated
 bind -lpp
 bind -last
@@ -179,7 +179,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 201 in
+exec - "") case 205 in
 exec - 0) cp msgcc.sh msgcc
 exec - ;;
 exec - *) {
@@ -188,7 +188,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - msgcc.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"
 exec - !
 exec - } > msgcc
 exec - ;;
@@ -196,7 +196,7 @@ exec - esac
 exec - ;;
 exec - *) cat - msgcc.sh > msgcc <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2000-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?msgcc]"
 exec - !
 exec - ;;
 exec - esac

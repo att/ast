@@ -156,7 +156,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done glean.c
 meta glean.o %.c>%.o glean.c glean
 prev glean.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2006-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sortglean]"\" -c glean.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2006-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?sortglean]"\" -c glean.c
 done glean.o generated
 exec - ${AR} rc libsortglean.a glean.o
 exec - (ranlib libsortglean.a) >/dev/null 2>&1 || true

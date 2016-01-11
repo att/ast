@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 : generate the ksh math builtin table
@@ -159,7 +159,6 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} z='$'_lib_${name}f r='$'TYPE_${name
 	case $name in
 	float|int)	x=0 y=1 ;;
 	esac
-	M=0 ### NOTE delete this line when arith eval handles typed args NOTE ###
 	case $M in
 	0)	;;
 	*)	f=$name
