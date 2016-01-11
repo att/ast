@@ -1,3 +1,4 @@
+16-01-08 features/lib: fixed syntax error in tst for memccpy that caused the system memccpy to never be used
 14-05-12 features/lib: mmap() error return may be ((caaddr_t)0) or ((caaddr_t)-1)
 14-05-09 misc/optget.c: save opt_info state in case infof callout munges it
 14-04-15 misc/spawnvex.c: fix nil pointer deref
