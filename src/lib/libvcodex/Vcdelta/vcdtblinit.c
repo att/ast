@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vcdhdr.h"
@@ -22,7 +22,7 @@
 
 /*	Construct default code tables for encoding/decoding delta instructions
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 /* default code table for compression	*/
@@ -39,7 +39,8 @@ Vcdsize_t	_Vcdsize =
 		};
 static Vcdtable_t	_Vcdtable =
 		{ 4,						/* s_near	*/
-		  3						/* s_same	*/
+		  3,						/* s_same	*/
+		  {0}
 		};
 
 #if __STD_C
@@ -53,7 +54,7 @@ Vcdindex_t*	idx;
 {
 	int		i, m, maxm, s, maxs, t, maxt;
 	Vcdcode_t*	code = tbl->code;
-	/**/DEBUG_DECLARE(int, k);
+	/**/DEBUG_DECLARE(int, k)
 
 	i = 0; /* the only RUN instruction has index 0	*/
 	code[i].inst1.type = VCD_RUN;

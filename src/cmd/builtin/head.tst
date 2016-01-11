@@ -5,12 +5,17 @@ UNIT head
 TEST 01 'default options'
 
 	EXEC
+		INPUT -n -
+		OUTPUT -
+		ERROR -n -
 
 	EXEC
 		INPUT -n - a
+		SAME OUTPUT INPUT
 
 	EXEC
-		INPUT -
+		INPUT -n - $'\n'
+		SAME OUTPUT INPUT
 
 	EXEC
 		INPUT - $'a\n'
@@ -40,9 +45,10 @@ TEST 02 '-<number><qualifier>'
 	EXEC	-1
 		INPUT - $'1\n2'
 		OUTPUT - 1
+		ERROR -n -
 
 	EXEC	-1c
-		INPUT -
+		INPUT -n -
 		OUTPUT -
 
 	EXEC	-1c
@@ -58,6 +64,7 @@ TEST 03 -n
 	EXEC	-n 4096m
 		INPUT - a
 		SAME OUTPUT INPUT
+		ERROR -n -
 
 	EXEC	-n 2048m
 		SAME OUTPUT INPUT
@@ -71,6 +78,7 @@ TEST 04 '-n<octal> and -<octal>'
 	EXEC	-08
 		INPUT - $'\n\n\n\n\n\n\n\n\n\n\n'
 		OUTPUT - $'\n\n\n\n\n\n\n'
+		ERROR -n -
 
 	EXEC	-n 08
 
@@ -82,3 +90,24 @@ TEST 04 '-n<octal> and -<octal>'
 	EXEC	-n 010
 
 	EXEC	-c 010
+
+TEST 05 'incomplete line'
+
+	EXEC	-n 1
+		INPUT -n - $'foo\nbar'
+		OUTPUT - foo
+		ERROR -n -
+
+	EXEC	-1
+
+	EXEC	-n 2
+		SAME OUTPUT INPUT
+
+	EXEC	-2
+		SAME OUTPUT INPUT
+
+	EXEC	-n 3
+		SAME OUTPUT INPUT
+
+	EXEC	-3
+		SAME OUTPUT INPUT

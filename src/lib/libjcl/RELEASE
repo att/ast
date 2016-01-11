@@ -1,3 +1,11 @@
+13-08-11 strcopy() => stpcpy()
+13-06-27 path.c,find.c: add ${N:s%old%new%:...} edit expressions to prefix file
+13-03-14 run.c: move --subtmp rm -rf to after the last step
+13-03-04 jcl.h,run.c,uniq.c: add { JCL_LISTDD JCL_LISTPARMS }
+13-01-15 open.c,run.c: use main scope name for tmp files
+13-01-14 run.c: JCL_LISTOUTPUTS => JCL_DISP_NEW or JCL_LIST_MOD
+12-12-04 add JCL_SUBTMP
+12-11-30 uniq.c: add item labels when more than 1 item type
 10-06-01 sync with ast api 20100601
 10-04-20 run.c: add timout arg to cowait()
 07-12-10 path.c: fix <size><suffix> ordering

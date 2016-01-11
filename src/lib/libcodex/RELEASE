@@ -1,3 +1,7 @@
+13-08-08 codex.c: handle <method>.WINDOW=NNN^<method>...
+13-08-06 code-vcodex.c: do not encode more than a window at a time!
+13-07-30 codexlist.c: work around installations with obsolete vcodex plugin
+13-05-24 code-vcodex.c: add to unify codex<=>vcodex 
 10-01-15 code-uu.c: add uu-base64-string to encode with no newline separators
 09-06-26 codex.h,codex.c: add Sfio_t* Codex_t.op for open/close/read/write apis
 08-05-23 code-qp.c: avoid isprint()/iscntrl() for CC_NATIVE==CC_ASCII

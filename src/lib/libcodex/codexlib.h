@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -15,8 +15,6 @@
 *                           Florham Park NJ                            *
 *                                                                      *
 *                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -67,7 +65,8 @@ typedef struct Codexstate_s
 
 #define CODEXERROR		(&codexstate.error)
 
-#define codex_first		(&codex_uu)
+#define codex_first		(&codex_vcodex)
+#define codex_vcodex_next	(&codex_uu)
 #define codex_uu_next		(&codex_qp)
 #define codex_qp_next		(&codex_rot13)
 #define codex_rot13_next	(&codex_iconv)
@@ -77,6 +76,7 @@ extern Codexmeth_t	codex_iconv;
 extern Codexmeth_t	codex_qp;
 extern Codexmeth_t	codex_rot13;
 extern Codexmeth_t	codex_uu;
+extern Codexmeth_t	codex_vcodex;
 
 extern Codexstate_t	codexstate;
 

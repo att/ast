@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -160,7 +160,7 @@
 
 #define NOTIME	TMX_NOTIME	/* not checked time			*/
 #define OLDTIME	((Time_t)(1))	/* oldest valid time			*/
-#define CURTIME	tmxgettime()	/* high resolution current time		*/
+#define CURTIME	TMX_NOW		/* high resolution current time		*/
 #define CURSECS	((Seconds_t)time(NiL)) /* seconds resolution time	*/
 
 /*
@@ -613,6 +613,7 @@ typedef struct Internal_s		/* internal rule and list info	*/
 	Rule_t*		retain;		/* .RETAIN rule pointer		*/
 	Rule_t*		scan;		/* .SCAN rule pointer		*/
 	Rule_t*		script;		/* .SCRIPT rule pointer		*/
+	Rule_t*		serialize;	/* - rule pointer		*/
 	Rule_t*		special;	/* .SPECIAL rule pointer	*/
 	Rule_t*		tmplist;	/* .TMPLIST rule pointer	*/
 	Rule_t*		unbind;		/* .UNBIND rule pointer		*/

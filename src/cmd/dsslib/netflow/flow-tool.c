@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -513,9 +513,6 @@ ftfread(register Dssfile_t* file, register Dssrecord_t* record, Dssdisc_t* disc)
 static int
 ftfwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 {
-	register State_t*	state = (State_t*)file->data;
-	register Netflow_t*	rp = (Netflow_t*)record->data;
-
 	if (disc->errorf)
 		(*disc->errorf)(NiL, disc, 1, "%s: write not implemented", file->format->name);
 	return -1;

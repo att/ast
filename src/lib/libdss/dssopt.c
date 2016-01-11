@@ -89,12 +89,8 @@ optmem(register Sfio_t* sp, Cxtype_t* type)
 
 	sfprintf(sp, "{\n");
 	for (mp = (Cxvariable_t*)dtfirst(type->member->members); mp; mp = (Cxvariable_t*)dtnext(type->member->members, mp))
-	{
-		if (optout(sp, mp->name, mp->type->name, NiL, NiL, mp->description, mp->type->member ? "This structure type has the following members:" : (char*)0))
+		if (optout(sp, mp->name, mp->type->name, NiL, NiL, mp->description, 0))
 			return -1;
-		if (mp->type->member && optmem(sp, mp->type))
-			return -1;
-	}
 	sfprintf(sp, "}\n");
 	return 0;
 }
@@ -112,7 +108,9 @@ opttype(Sfio_t* sp, register Cxtype_t* tp, int members)
 	register int		i;
 	Sfio_t*			tmp = 0;
 
-	if (tp->member)
+	if (tp->header.flags & CX_SCHEMA)
+		x = "This is the main schema type.";
+	else if (tp->member)
 		x = "This structure type has the following members:";
 	else if (tp->match)
 		x = tp->match->description;
@@ -141,7 +139,7 @@ opttype(Sfio_t* sp, register Cxtype_t* tp, int members)
 		sfstrclose(tmp);
 	if (i)
 		return -1;
-	if (tp->member && optmem(sp, tp))
+	if (!(tp->header.flags & CX_SCHEMA) && tp->member && optmem(sp, tp))
 		return -1;
 	else if (tp->base && tp->base->member && !(tp->base->header.flags & CX_REFERENCED) && opttype(sp, tp->base, 0))
 		return -1;
@@ -212,6 +210,7 @@ dssoptinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 	Dsslib_t*	lib;
 	Dssmeth_t*	meth;
 	Dssformat_t*	format;
+	Cx_t*		cx;
 	Cxmap_t*	mp;
 	Cxtype_t*	tp;
 	Cxvariable_t*	vp;
@@ -312,52 +311,55 @@ dssoptinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 			head = 0;
 		else if (meth->description && optout(sp, meth->name, NiL, NiL, NiL, meth->description, NiL))
 			return -1;
-		for (tp = (Cxtype_t*)dtfirst(state->cx->types); tp; tp = (Cxtype_t*)dtnext(state->cx->types, tp))
-			if (all || (tp->base || tp->match) && (tp->header.flags & CX_REFERENCED))
-			{
-				if (!head)
-				{
-					if (optout(sp, "----- data types -----", NiL, NiL, NiL, NiL, NiL))
-						return -1;
-					head = 1;
-				}
-				if (opttype(sp, tp, 0))
-					return -1;
-			}
-		head = 0;
-		for (mp = (Cxmap_t*)dtfirst(state->cx->maps); mp; mp = (Cxmap_t*)dtnext(state->cx->maps, mp))
-			if (all || (mp->header.flags & CX_REFERENCED))
-			{
-				if (!head)
-				{
-					if (optout(sp, "----- data maps -----", NiL, NiL, NiL, NiL, NiL))
-						return -1;
-					head = 1;
-				}
-				if (optout(sp, mp->name, NiL, NiL, NiL, mp->description, NiL))
-					return -1;
-				if (optmap(sp, mp))
-					return -1;
-			}
-		if (all && meth->cx && meth->cx->variables)
+		if (cx = meth->cx)
 		{
-			head = 0;
-			for (vp = (Cxvariable_t*)dtfirst(meth->cx->variables); vp; vp = (Cxvariable_t*)dtnext(meth->cx->variables, vp))
-				if (vp->prototype)
+			for (tp = (Cxtype_t*)dtfirst(cx->types); tp; tp = (Cxtype_t*)dtnext(cx->types, tp))
+				if (all || (tp->base || tp->match) && (tp->header.flags & CX_REFERENCED))
 				{
 					if (!head)
 					{
-						if (optout(sp, "----- functions -----", NiL, NiL, NiL, NiL, NiL))
+						if (optout(sp, "----- data types -----", NiL, NiL, NiL, NiL, NiL))
 							return -1;
 						head = 1;
 					}
-					if (optout(sp, vp->name, vp->prototype, NiL, vp->type->name, vp->description, NiL))
+					if (opttype(sp, tp, 0))
 						return -1;
 				}
+			head = 0;
+			for (mp = (Cxmap_t*)dtfirst(cx->maps); mp; mp = (Cxmap_t*)dtnext(cx->maps, mp))
+				if (all || (mp->header.flags & CX_REFERENCED))
+				{
+					if (!head)
+					{
+						if (optout(sp, "----- data maps -----", NiL, NiL, NiL, NiL, NiL))
+							return -1;
+						head = 1;
+					}
+					if (optout(sp, mp->name, NiL, NiL, NiL, mp->description, NiL))
+						return -1;
+					if (optmap(sp, mp))
+						return -1;
+				}
+			if (all && cx->variables)
+			{
+				head = 0;
+				for (vp = (Cxvariable_t*)dtfirst(cx->variables); vp; vp = (Cxvariable_t*)dtnext(cx->variables, vp))
+					if (vp->prototype)
+					{
+						if (!head)
+						{
+							if (optout(sp, "----- functions -----", NiL, NiL, NiL, NiL, NiL))
+								return -1;
+							head = 1;
+						}
+						if (optout(sp, vp->name, vp->prototype, NiL, vp->type->name, vp->description, NiL))
+							return -1;
+					}
+			}
 		}
 		head = 0;
 		if (!all)
-			for (vp = (Cxvariable_t*)dtfirst(meth->cx->fields); vp; vp = (Cxvariable_t*)dtnext(meth->cx->fields, vp))
+			for (vp = (Cxvariable_t*)dtfirst(cx->fields); vp; vp = (Cxvariable_t*)dtnext(cx->fields, vp))
 			{
 				if (!head)
 				{

@@ -27,8 +27,8 @@ CONF_LIBSUFFIX == "$(CC.SUFFIX.DYNAMIC|CC.SUFFIX.SHARED)"
 DEBUG ==
 __OBSOLETE__ == $("6 months ago":@F=%(%Y0101)T)
 
-HEADERSRC = ast.h ast_dir.h ast_getopt.h ast_std.h \
-	ast_namval.h ast_windows.h \
+HEADERSRC = ast.h ast_debug.h ast_dir.h ast_errorf.h ast_getopt.h ast_ioctl.h \
+	ast_intercept.h ast_namval.h ast_socket.h ast_std.h ast_windows.h \
 	ccode.h cdt.h cdtlib.h cmdarg.h debug.h dt.h error.h find.h ftw.h \
 	ftwalk.h fts.h fs3d.h getopt.h glob.h hash.h hashkey.h hashpart.h \
 	ip6.h lc.h ls.h magic.h mc.h mime.h mnt.h modecanon.h modex.h \
@@ -40,10 +40,10 @@ HEADERSRC = ast.h ast_dir.h ast_getopt.h ast_std.h \
 	$(HEADERSTD)
 
 HEADERGEN = align.h preroot.h sig.h tmx.h tv.h \
-	$(ID)_api.h $(ID)_botch.h $(ID)_ccode.h $(ID)_fcntl.h $(ID)_float.h \
-	$(ID)_fs.h $(ID)_lib.h $(ID)_map.h $(ID)_mmap.h $(ID)_mode.h $(ID)_ndbm.h \
-	$(ID)_param.h $(ID)_sys.h $(ID)_time.h $(ID)_time.h $(ID)_tty.h \
-	$(ID)_vfork.h $(ID)_wait.h $(ID)_limits.h $(ID)_standards.h $(ID)_sizeof.h \
+	$(ID)_api.h $(ID)_aso.h $(ID)_botch.h $(ID)_ccode.h $(ID)_fcntl.h $(ID)_fddir.h \
+	$(ID)_float.h $(ID)_fs.h $(ID)_lib.h $(ID)_map.h $(ID)_mmap.h $(ID)_mode.h \
+	$(ID)_ndbm.h $(ID)_param.h $(ID)_socket.h $(ID)_sys.h $(ID)_time.h $(ID)_time.h \
+	$(ID)_tty.h $(ID)_vfork.h $(ID)_wait.h $(ID)_limits.h $(ID)_standards.h $(ID)_sizeof.h \
 	$(HEADERSTD:/^/$(ID)_/)
 
 HEADEREXP = $(ID)_common.h
@@ -52,30 +52,34 @@ HEADEROPT = fmtmsg.h libgen.h syslog.h
 
 HEADERSTD = dirent.h iconv.h nl_types.h stdio.h wchar.h wctype.h
 
+HEADERSYS = sys/socket.h
+
 $(ID) 5.4 :LIBRARY: README RELEASE \
 	LIBAST.3 aso.3 ast.3 astsa.3 cdt.3 chr.3 compat.3 error.3 \
 	find.3 fmt.3 fmtls.3 fs3d.3 ftwalk.3 getcwd.3 hash.3 iblocks.3 \
 	int.3 ip6.3 magic.3 mem.3 mime.3 modecanon.3 optget.3 path.3 \
-	preroot.3 proc.3 re.3 regex.3 setenviron.3 sfdisc.3 sfio.3 \
-	sig.3 spawnveg.3 stak.3 stk.3 strcopy.3 strdup.3 strelapsed.3 \
+	preroot.3 proc.3 re.3 regex.3 setenviron.3 sfdisc.3 sfio.3 sig.3 \
+	spawnveg.3 spawnvex.3 stak.3 stk.3 strcopy.3 strdup.3 strelapsed.3 \
 	strerror.3 stresc.3 streval.3 strgid.3 strmatch.3 stropt.3 \
 	strperm.3 strsignal.3 strsort.3 strtape.3 strton.3 struid.3 \
 	swap.3 tab.3 tm.3 tmx.3 tok.3 touch.3 tv.3 vecargs.3 vmalloc.3 \
 	$(HEADERSRC) \
-	state.c transition.c \
+	state.c intercept.c transition.c \
 	dirlib.h opendir.c readdir.c rewinddir.c seekdir.c telldir.c \
-	getcwd.c fastfind.c \
+	fgetcwd.c getcwd.c fastfind.c \
 	hashlib.h hashalloc.c hashdump.c hashfree.c hashlast.c \
 	hashlook.c hashscan.c hashsize.c hashview.c hashwalk.c \
 	memhash.c memsum.c strhash.c strkey.c strsum.c \
 	stracmp.c strnacmp.c \
 	ccmap.c ccmapid.c ccnative.c \
-	chresc.c chrtoi.c streval.c strexpr.c strmatch.c strcopy.c \
+	chresc.c chrtoi.c streval.c strexpr.c strmatch.c \
 	modelib.h modei.c modex.c strmode.c \
-	strlcat.c strlcpy.c strlook.c strncopy.c strsearch.c strpsearch.c \
+	stpcpy.c stpncpy.c strlcat.c strlcpy.c \
+	strcopy.c strncopy.c \
+	strlook.c strsearch.c strpsearch.c \
 	stresc.c stropt.c strtape.c strpcmp.c strnpcmp.c strvcmp.c strnvcmp.c \
 	tok.c tokline.c tokscan.c \
-	pathaccess.c pathcat.c pathcanon.c pathcheck.c pathpath.c \
+	pathaccess.c pathcat.c pathcanon.c pathcheck.c pathopen.c pathpath.c \
 	pathexists.c pathfind.c pathkey.c pathprobe.c pathrepl.c \
 	pathnative.c pathposix.c pathtemp.c pathtmp.c pathstat.c \
 	pathgetlink.c pathsetlink.c pathbin.c pathshell.c pathcd.c \
@@ -87,7 +91,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	error.c errorf.c errormsg.c errorx.c \
 	localeconv.c setlocale.c translate.c \
 	catopen.c iconv.c lc.c lctab.c mc.c \
-	base64.c recfmt.c recstr.c reclen.c fmtrec.c \
+	base64.c qp.c recfmt.c recstr.c reclen.c fmtrec.c \
 	fmtbase.c fmtbuf.c fmtclock.c fmtdev.c fmtelapsed.c fmterror.c \
 	fmtesc.c fmtfmt.c fmtfs.c fmtident.c fmtint.c fmtip4.c fmtip6.c fmtls.c \
 	fmtmatch.c fmtmode.c fmtnum.c fmtperm.c fmtre.c fmttime.c fmtuid.c \
@@ -114,7 +118,8 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	strntol.c strntoll.c strntoul.c strntoull.c \
 	strcasecmp.c strncasecmp.c strerror.c \
 	mktemp.c tmpnam.c fsync.c \
-	execlp.c execve.c execvp.c execvpe.c spawnveg.c \
+	execlp.c execve.c execvp.c execvpe.c spawnveg.c spawnvex.c \
+	qsort.c qsort_r.c \
 	vfork.c killpg.c \
 	hsearch.c tsearch.c \
 	getlogin.c putenv.c setenv.c unsetenv.c \
@@ -122,7 +127,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	eaccess.c gross.c gross_sgi.h omitted.c \
 	fakelink.h readlink.c symlink.c \
 	getpgrp.c setpgid.c setsid.c waitpid.c \
-	creat64.c fcntl.c open.c \
+	creat64.c at.c \
 	atexit.c getdents.c getwd.c dup2.c errno.c \
 	getpreroot.c ispreroot.c realopen.c setpreroot.c \
 	getgroups.c mount.c system.c iblocks.c \
@@ -131,7 +136,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	sfdcdio.c sfdcdos.c sfdcfilter.c sfdcseekable.c \
 	sfdcslow.c sfdcsubstr.c sfdctee.c sfdcunion.c \
 	sfdcmore.c sfdcprefix.c \
-	wc.c wc2utf8.c \
+	codeset.c wc.c utf32toutf8.c utf8toutf32.c wcstoutf32s.c utf32stowcs.c \
 	/* standards */ \
 	basename.c closelog.c dirname.c fmtmsglib.c fnmatch.c ftw.c \
 	getdate.c getsubopt.c glob.c nftw.c openlog.c re_comp.c \
@@ -143,8 +148,8 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	regdecomp.c regerror.c regexec.c regfatal.c reginit.c regnexec.c \
 	regsubcomp.c regsubexec.c regsub.c regrecord.c regrexec.c regstat.c \
 	/* cdt */ \
-	dthdr.h dtclose.c dtdisc.c dthash.c dtlist.c dtmethod.c \
-	dtopen.c dtstrhash.c dttree.c dtview.c dtwalk.c \
+	dthdr.h dtclose.c dtdisc.c dthash.c dtlist.c dtmethod.c dtopen.c \
+	dtrehash.c dtstat.c dtstrhash.c dttree.c dtuser.c dtview.c dtwalk.c \
 	dtnew.c dtcomp.c \
 	/* sfio */ \
 	sfhdr.h sfdchdr.h \
@@ -159,6 +164,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	sfswap.c sftable.c sftell.c sftmp.c sfungetc.c sfvprintf.c \
 	sfvscanf.c sfwr.c sfwrite.c sfpurge.c sfraise.c sfwalk.c \
 	sfgetm.c sfmutex.c sfputm.c sfresize.c \
+	sfgetwc.c sfputwc.c \
 	_sfclrerr.c _sfeof.c _sferror.c _sffileno.c \
 	_sfopen.c _sfstacked.c _sfvalue.c \
 	_sfgetc.c _sfgetl.c _sfgetl2.c _sfgetu.c _sfgetu2.c \
@@ -195,12 +201,12 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	conftab.c \
 	$(CC.LD.STATIC) aststatic.c getopt.c getoptl.c $(CC.LD.DYNAMIC) \
 	/* aso */ \
-	aso.c asolock.c asometh.c asorelax.c aso-sem.c aso-fcntl.c \
+	aso.c asoactivecpu.c asolock.c asorelax.c asothreadid.c asoyield.c \
 	/* vmalloc */ \
-	vmalloc.h vmhdr.h vmbest.c vmclear.c vmclose.c vmdcheap.c vmdebug.c \
-	vmdisc.c vmexit.c vmlast.c vmopen.c vmpool.c vmprivate.c vmprofile.c \
-	vmregion.c vmsegment.c vmset.c vmstat.c vmstrdup.c vmtrace.c vmwalk.c \
-	vmmopen.c malloc.c vmgetmem.c \
+	vmalloc.h vmhdr.h malloc.c vmbest.c vmclear.c vmclose.c vmdcderive.c \
+	vmdcshare.c vmdcsystem.c vmdebug.c vmdisc.c vmexit.c vmgetmem.c \
+	vmlast.c vmmaddress.c vmopen.c vmpool.c vmsegment.c vmset.c vmstat.c \
+	vmstrdup.c vmtrace.c vmuserdata.c \
 	/* uwin */ \
 	mathimpl.h rlib.h \
 	a64l.c acosh.c asinh.c atanh.c cbrt.c crypt.c erf.c \
@@ -208,7 +214,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	log__L.c rand48.c random.c rcmd.c rint.c support.c \
 	/* obsolete */ \
 	sfstrtmp.c spawn.c \
-	-liconv -lw /* these should be pulled in by -lc */
+	-lsocket -liconv -lw /* these should be pulled in by -lc */
 
 /*
  * man is stdio.h problematic
@@ -227,10 +233,11 @@ virtual		ast/stdio.h
 
 		:NOPROTECT: sfprintf.c sfvprintf.c sfscanf.c sfvscanf.c
 
-		:NOOPTIMIZE: spawnveg.c
+		:NOOPTIMIZE: spawnvex.c
 "ibm.risc"	:NOOPTIMIZE: regcomp.c
 "linux.i386-64*":NOOPTIMIZE: sfset.c
 "sol?.*"	:NOOPTIMIZE: sfrd.c sfvprintf.c tmxfmt.c
+"sol*.sun4"	:NOOPTIMIZE: at.c
 "win32*"	:NOOPTIMIZE: fastfind.c mc.c
 "win32*-64*"	:NOOPTIMIZE: sfvprintf.c
 
@@ -249,6 +256,7 @@ virtual		ast/stdio.h
 if "$(PWD:B)" != "cc-*"
 
 $(INCLUDEDIR) :INSTALLPROTO: $(HEADEREXP) $(HEADERSRC) $(HEADERGEN)
+$(INCLUDEDIR)/sys :INSTALLPROTO: $(HEADERSYS)
 
 :INSTALLDIR: conf
 
@@ -354,9 +362,9 @@ end
 astmath.exe : .DONTCARE astmath.c
 	X=1
 	for N in 1 2 3 4 5 6 8
-	do	if	$(CC) -DN=$N -DIS $(CCFLAGS) -o $(*:N=*.c:B:S=.exe) $(*) 2>/dev/null
+	do	if	$(CC) -DN=$N -DIS -o $(*:N=*.c:B:S=.exe) $(*) 2>/dev/null
 		then	: implicit math function N=$N :
-		elif	$(CC) -DN=$N -DIS $(CCFLAGS) -o $(*:N=*.c:B:S=.exe) $(*) -lm 2>/dev/null
+		elif	$(CC) -DN=$N -DIS -o $(*:N=*.c:B:S=.exe) $(*) -lm 2>/dev/null
 		then	: math function N=$N requires -lm :
 			X=0
 			break

@@ -1,3 +1,5 @@
+13-07-24 coopen.c: close child side of msgfp in parent (stops hung caller on shell failure)
+12-12-01 coexec.c,cowait.c: fix service fd bugs
 12-02-22 coinit.c: handle non-identifier export var names
 11-12-13 cowait.c: handle sfpoll() error return on interrupt
 11-11-21 cowait.c: poll before blocking read to weed out killed jobs (no 'x' message)

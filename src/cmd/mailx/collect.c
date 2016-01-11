@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the BSD package               *
-*Copyright (c) 1978-2006 The Regents of the University of California an*
+*Copyright (c) 1978-2013 The Regents of the University of California an*
 *                                                                      *
 * Redistribution and use in source and binary forms, with or           *
 * without modification, are permitted provided that the following      *
@@ -444,6 +444,11 @@ collect(struct header* hp, unsigned long flags)
 		c = readline(pp.fp, pp.buf, sizeof(pp.buf));
 		state.collect.working = 0;
 		if (c < 0) {
+			if (flags & SIGN) {
+				flags &= ~SIGN;
+				c = '.';
+				goto sign;
+			}
 			if (state.var.interactive &&
 			    state.var.ignoreeof && ++eofcount < 32) {
 				note(0, "Use \".\" to terminate letter");
@@ -455,8 +460,14 @@ collect(struct header* hp, unsigned long flags)
 		state.collect.hadintr = 0;
 		if (pp.buf[0] == '.' && pp.buf[1] == 0 &&
 		    state.var.interactive &&
-		    (state.var.dot || state.var.ignoreeof))
+		    (state.var.dot || state.var.ignoreeof)) {
+			if (flags & SIGN) {
+				flags &= ~SIGN;
+				c = '.';
+				goto sign;
+			}
 			break;
+		}
 		if (pp.buf[0] != escape || !state.var.interactive) {
 			if (putline(state.collect.fp, pp.buf) < 0)
 				goto err;
@@ -475,6 +486,11 @@ collect(struct header* hp, unsigned long flags)
 			/*
 			 * Simulate end of file on input.
 			 */
+			if (flags & SIGN) {
+				flags &= ~SIGN;
+				c = '.';
+				goto sign;
+			}
 			goto out;
 		case ':':
 		case '_':
@@ -491,16 +507,19 @@ collect(struct header* hp, unsigned long flags)
 			break;
 		case 'A':
 		case 'a':
+		sign:
 			/*
 			 * Sign letter.
 			 */
-			s = c == 'a' ? state.var.sign : state.var.Sign;
+			s = c == 'A' ? state.var.Sign : state.var.sign;
 			if (s)
 				goto outstr;
 			if (state.var.signature && (fp = fileopen(state.var.signature, "EXr"))) {
 				filecopy(state.var.signature, fp, state.var.signature, state.collect.fp, stdout, (off_t)0, NiL, NiL, 0);
 				fileclose(fp);
 			}
+			if (c == '.')
+				goto out;
 			goto cont;
 		case 'b':
 			/*
@@ -643,6 +662,8 @@ collect(struct header* hp, unsigned long flags)
 				putline(state.collect.fp, s);
 				if (state.var.interactive)
 					putline(stdout, s);
+				if (c == '.')
+					goto out;
 			}
 			goto cont;
 		case 'p':

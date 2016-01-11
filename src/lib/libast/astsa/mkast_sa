@@ -101,6 +101,7 @@ cat > _ast_.c <<'!'
 			{
 				m = int_size[s];
 				printf("#define _ast_int%d_t		%s\n", m, int_type[t].name);
+				printf("#define _ast_sizeof_%s		%d\n", int_type[t].name, m);
 				if (m > 1)
 				{
 					if (*int_type[t].swap)
@@ -130,6 +131,10 @@ cat > _ast_.c <<'!'
 echo "#ifndef _AST_SA_H"
 echo "#define _AST_SA_H		1"
 echo
+if	test -f ast_sa_std.h
+then	cat ast_sa_std.h
+	echo
+fi
 for i in '' -DN=0 -DN=1 -DN=2 -DN=3 -DN=4 -DN=5 -DN=6 -DN=7 -DN=8
 do	"$@" $i -o _ast_.exe _ast_.c 2> /dev/null &&
 	./_ast_.exe &&

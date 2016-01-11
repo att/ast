@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _VCHHDR_H
@@ -116,9 +116,5 @@ do {	Vchobj_t* oo = (Vchobj_t*)(o); Vcchar_t* ff = (Vcchar_t*)(f); \
 	ssize_t nn = (ssize_t)(n); v = 0; \
 	for(; nn > 0; nn -= VCH_SW) GRPsize(v, sz, oo, ff, nn >= VCH_SW ? VCH_SW : nn); \
 } while(0)
-
-_BEGIN_EXTERNS_
-extern int	vchcopy(Vcodex_t*, ssize_t*, ssize_t*, ssize_t);
-_END_EXTERNS_
 
 #endif

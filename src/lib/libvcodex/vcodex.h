@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _VCODEX_H
@@ -22,24 +22,25 @@
 
 /*	VCODEX = COmpression + DElta + X (encryption, etc.)
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
-#define VC_VERSION	20081104L	/* ILU-NDV			*/
+#define VC_VERSION	20130423L	/* ILU-NDV			*/
 #define VC_ID		"vcodex"	/* package identification	*/
 #define VC_LIB		"vcodex_lib"	/* function name		*/
+
+#define VC_ALIASES	"lib/vcodex/aliases"	/* sibling on $PATH	*/
+#define VC_ZIPRC	".vcziprc"		/* per-user alias	*/
 
 #if _PACKAGE_ast
 #include	<ast_std.h>
 #undef	VCSFIO
 #define VCSFIO		1
-#undef	VCPROPRIETARY
-#define VCPROPRIETARY	0
 #else
 #include	<ast_common.h>
 #define VCSFIO		0
-#define VCPROPRIETARY	1
 #endif
+#include	<ast_errorf.h>
 
 #define VCODEX_PLUGIN_VERSION	AST_PLUGIN_VERSION(VC_VERSION)
 
@@ -194,6 +195,9 @@ struct _vcodex_s
 	ssize_t		head;		/* required buffer head size	*/
 	char*		file;		/* file with allocation request	*/
 	int		line;		/* line number in file		*/
+#if _AST_ERRORF_H
+	Error_f		errorf;		/* error/trace function		*/
+#endif
 #ifdef _VCODEX_PRIVATE
 	_VCODEX_PRIVATE
 #endif
@@ -203,6 +207,7 @@ struct _vcodex_s
 #define VC_FLAGS		007777	/* all supported flags		*/
 #define VC_ENCODE		000001	/* handle for encoding data	*/
 #define VC_DECODE		000002	/* handle to decode data	*/
+#define VC_OPTIONAL		000004	/* decode if magic header	*/
 #define VC_CLOSECODER		000010	/* 2nd-ary coders to be closed	*/
 
 /* event types passable to discipline event handlers */
@@ -225,6 +230,7 @@ struct _vcodex_s
 /* separators for arguments */
 #define VC_ARGSEP		'.'	/* separator for method args	*/
 #define VC_METHSEP		','	/* separator for methods	*/
+#define VC_METHALTSEP		'^'	/* alternate VC_METHSEP		*/
 
 /* function to initialize a discipline structure */
 #define VCDISC(dc,dt,sz,fn) \
@@ -268,8 +274,9 @@ extern int		vcwalkmeth _ARG_((Vcwalk_f, Void_t*));
 extern void		vcaddalias _ARG_((char**));
 extern char*		vcgetalias _ARG_((char*, char*, ssize_t));
 extern int		vcwalkalias _ARG_((Vcwalk_f, Void_t*));
-extern char*		vcgetfname _ARG_((char*, char*, ssize_t));
+extern int		vcgetfname _ARG_((char*, char**, char**));
 extern int		vcwalkfname _ARG_((Vcwalk_f, Void_t*));
+extern int		vcgetsuff _ARG_((char*, char**));
 
 extern char*		vcgetident _ARG_((Vcmethod_t*, char*, ssize_t));
 extern char*		vcgetmtarg _ARG_((char*, char*, ssize_t, Vcmtarg_t*, Vcmtarg_t**));
@@ -348,6 +355,7 @@ _END_EXTERNS_
 #define vcioskip(io, n)		((io)->next += (n))
 #define vcioputc(io, v)		(*(io)->next++ = (Vcchar_t)(v) )
 #define vciogetc(io)		(*(io)->next++)
+#define vciopeek(io)		(*(io)->next)
 #define vcioputs(io, str, sz)	(memcpy((io)->next, (str), (sz)), (io)->next += (sz) )
 #define vciogets(io, str, sz)	(memcpy((str), (io)->next, (sz)), (io)->next += (sz) )
 #define vciomove(io1, io2, sz)	(memcpy((io2)->next, (io1)->next, (sz)), \
@@ -474,16 +482,13 @@ _END_EXTERNS_
 	TYPES AND FUNCTIONS RELATED TO STRING, SUFFIX SORTING 
 *************************************************************************/
 
-#if VCSFXINT /* may be desirable when sizeof(int) < sizeof(ssize_t) */
-#define Vcsfxint_t	int
-#else
-#define Vcsfxint_t	ssize_t
-#endif
+typedef int32_t Vcinx_t;
+
 typedef struct _vcsfx_s
-{	Vcsfxint_t*	idx;	/* the sorted suffix array		*/
-	Vcsfxint_t*	inv;	/* the inverted indices/ranks		*/
+{	Vcinx_t*	idx;	/* the sorted suffix array		*/
+	Vcinx_t*	inv;	/* the inverted indices/ranks		*/
 	Vcchar_t*	str;	/* the source string			*/
-	Vcsfxint_t	nstr;
+	Vcinx_t		nstr;	/* input size				*/
 } Vcsfx_t;
 
 _BEGIN_EXTERNS_
@@ -584,6 +589,7 @@ _END_EXTERNS_
 #define	VCD_SOURCEFILE		(1<<0)	/* match window in source file	*/
 #define	VCD_TARGETFILE		(1<<1)	/* match window in target file	*/
 #define VC_RAW			(1<<2)	/* data was left uncoded	*/
+#define VC_INDEX		(1<<3)	/* index of subsequent blocks	*/
 #define VC_EOF			(1<<7)	/* end-of-file			*/
 
 
@@ -591,10 +597,6 @@ _END_EXTERNS_
 	TYPES AND FUNCTIONS FOR VARIOUS SUBPACKAGES AND TRANSFORMS
 *************************************************************************/
 #include <vcwindow.h>
-#if _PACKAGE_ast
-#include <vcsfio.h>
-#endif
-
 
 /*************************************************************************
 	BUILTIN/PLUGIN LIBRARY DEFINITIONS

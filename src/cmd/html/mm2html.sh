@@ -58,6 +58,20 @@ case $(getopts '[-][123:xyz]' opt --xyz 2>/dev/null; echo 0$opt) in
     standard input is read. \btroff2html\b(1) is similar but does a full
     \btroff\b(1) parse. \adir\a operands and directory components of
     \afile\a operands are added to the included file search list.]
+[+?The \b\.sh\b request, which executes \bksh\b(1) script fragments, is ignored
+    unless the \bHTMLPATH\b environment variable is defined. \bPATH=$HTMLPATH\b
+    is exported before the shell is executed.]
+[f:frame?Ignored for compatibility with \bmm2html\b(1).]:[name]
+[g:global-index?Ignored for compatibility with \bmm2html\b(1).html\b for framed HTML.]
+[h:html?Read html options from \afile\a. Unknown options are silently
+    ignored. See the \b.xx\b request below for a description of the
+    options. The file pathname may be followed by URL style \aname=value\a
+    pairs that are evaluated as if they came from
+    \afile.\a]:[file[??name=value;...]]]
+[l:license?Read license identification options from \afile\a. Unknown
+    options are silently ignored. See the \b.xx\b request below for a
+    description of the options. The file pathname may be followed by URL
+    style \aname=value\a pairs that are evaluated as if they came from
 [f:frame?Generate framed HTML files in:]:[name]
     {
         [+man documents]
@@ -477,10 +491,8 @@ function getline
 		do	IFS= read -r -u$fd a || {
 				if	(( so > 0 ))
 				then	eval exec "$fd>&-"
-					if	(( --so ))
-					then	(( fd = so + soff - 1 ))
-					else	(( fd = 0 ))
-					fi
+					(( so-- ))
+					fd=${so_fd[so]}
 					file=${so_file[so]}
 					line=${so_line[so]}
 					continue
@@ -631,7 +643,7 @@ function getline
 					+([\-+0123456789])=+([\-+0123456789]))
 						;;
 					[0123456789]*[0123456789])
-						(( n = $x ))
+						(( n = x ))
 						;;
 					esac
 					case ${text[0]} in
@@ -663,7 +675,8 @@ function getline
 			.so)	x=${text[1]}
 				for d in "${dirs[@]}"
 				do	if	[[ -f "$d$x" ]]
-					then	(( fd = so + soff ))
+					then	so_fd[so]=$fd
+						(( fd = so + soff ))
 						tmp=/tmp/m2h$$
 						getfiles "$d$x" > $tmp
 						eval exec "$fd< $tmp"
@@ -2179,7 +2192,7 @@ do	getline || {
 					x=${i//[[:alpha:]]/}
 					case $x in
 					+([0-9]))
-						if	(( $x > tbl_ns ))
+						if	(( x > tbl_ns ))
 						then	tbl_ns=$x
 							tbl_sp=''
 							for ((m=(tbl_ns+1)/2; m>0; m--))
@@ -2290,7 +2303,7 @@ do	getline || {
 						x=${i//[[:alpha:]]/}
 						case $x in
 						+([0-9]))
-							if	(( $x > tbl_ns ))
+							if	(( x > tbl_ns ))
 							then	tbl_ns=$x
 								tbl_sp=''
 								for ((m=(tbl_ns+1)/2; m>0; m--))
@@ -2486,10 +2499,12 @@ do	getline || {
 			;;
 		.sh)	case $HTMLPATH in
 			'')	;;
-			*)	(( fd = so + soff ))
+			*)	so_fd[so]=$fd
+				(( fd = so + soff ))
 				file=/tmp/m2h$$
-				#( eval PATH=$HTMLPATH "$*" ) > $file
-				$SHELL -c "PATH=$HTMLPATH $*" > $file
+				path=$PATH
+				eval PATH=$HTMLPATH "$*" > $file
+				PATH=$path
 				eval exec "$fd< $file"
 				rm $file
 				so_file[so]=$file
@@ -2990,7 +3005,7 @@ q
 		print -r -- "<TABLE align=center cellpadding=2 border=4 bgcolor=lightgrey width=90%><TR>"
 		for ((n = 0; n < labels; n++))
 		do	print -r -- "<TD align=center valign=center><A href=\"#${label[n]}\">${label[n]}</A></TD>"
-			if	(( (n + 1) < labels && !( (n + 1) % ${html.labels} ) ))
+			if	(( (n + 1) < labels && !( (n + 1) % html.labels ) ))
 			then	print -r -- "</TR><TR>"
 			fi
 		done

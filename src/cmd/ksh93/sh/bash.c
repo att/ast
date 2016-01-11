@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -153,9 +153,9 @@ USAGE_LICENSE
 static void put_globignore(register Namval_t* np, const char *val, int flags, Namfun_t *fp)
 {
 	if(val)
-		sh_onoption(SH_DOTGLOB);
+		sh_onoption(shp,SH_DOTGLOB);
 	else
-		sh_offoption(SH_DOTGLOB);
+		sh_offoption(sh_ptr(np),SH_DOTGLOB);
 
 	nv_putv(np,val,flags,fp);
 }
@@ -272,8 +272,8 @@ int     b_shopt(int argc,register char *argv[],void *extra)
 	{
 		if(setflag&SET_SET)
 		{
-			if(sh_isoption(SH_INTERACTIVE))
-				off_option(&opt,SH_NOEXEC);
+			if(sh_isoption(shp,SH_INTERACTIVE))
+				off_option(shp,&opt,SH_NOEXEC);
 			if(is_option(&opt,SH_VI)||is_option(&opt,SH_EMACS)||is_option(&opt,SH_GMACS))
 			{
 				off_option(&newflags,SH_VI);
@@ -318,37 +318,37 @@ void bash_init(Shell_t *shp,int mode)
 	if(mode < 0)
 	{
 		/* termination code */
-		if(sh_isoption(SH_LOGIN_SHELL) && !sh_isoption(SH_POSIX))
+		if(sh_isoption(shp,SH_LOGIN_SHELL) && !sh_isoption(shp,SH_POSIX))
 			sh_source(shp, NiL, sh_mactry(shp,(char*)e_bash_logout));
 		return;	
 	}
 
-	if(sh_isstate(SH_PREINIT))
+	if(sh_isstate(shp,SH_PREINIT))
 	{	/* pre-init stage */
-		if(sh_isoption(SH_RESTRICTED))
-			sh_onoption(SH_RESTRICTED2);
-		sh_onoption(SH_HISTORY2);
-		sh_onoption(SH_INTERACTIVE_COMM);
-		sh_onoption(SH_SOURCEPATH);
-		sh_onoption(SH_HISTAPPEND);
-		sh_onoption(SH_CMDHIST);
-		sh_onoption(SH_LITHIST);
-		sh_onoption(SH_NOEMPTYCMDCOMPL);
+		if(sh_isoption(shp,SH_RESTRICTED))
+			sh_onoption(shp,SH_RESTRICTED2);
+		sh_onoption(shp,SH_HISTORY2);
+		sh_onoption(shp,SH_INTERACTIVE_COMM);
+		sh_onoption(shp,SH_SOURCEPATH);
+		sh_onoption(shp,SH_HISTAPPEND);
+		sh_onoption(shp,SH_CMDHIST);
+		sh_onoption(shp,SH_LITHIST);
+		sh_onoption(shp,SH_NOEMPTYCMDCOMPL);
 		if(shp->login_sh==2)
-			sh_onoption(SH_LOGIN_SHELL);
+			sh_onoption(shp,SH_LOGIN_SHELL);
 		if(strcmp(astconf("CONFORMANCE",0,0),"standard")==0)
-			sh_onoption(SH_POSIX);
+			sh_onoption(shp,SH_POSIX);
 		if(strcmp(astconf("UNIVERSE",0,0),"att")==0)
-			sh_onoption(SH_XPG_ECHO);
+			sh_onoption(shp,SH_XPG_ECHO);
 		else
-			sh_offoption(SH_XPG_ECHO);
+			sh_offoption(shp,SH_XPG_ECHO);
 		if(strcmp(astconf("PATH_RESOLVE",0,0),"physical")==0)
-			sh_onoption(SH_PHYSICAL);
+			sh_onoption(shp,SH_PHYSICAL);
 		else
-			sh_offoption(SH_PHYSICAL);
+			sh_offoption(shp,SH_PHYSICAL);
 
 		/* add builtins */
-		sh_addbuiltin("shopt", b_shopt, &sh);
+		sh_addbuiltin(shp,"shopt", b_shopt, &sh);
 
 		/* set up some variables needed for --version
 		 * needs to go here because --version option is parsed before the init script.
@@ -397,9 +397,9 @@ void bash_init(Shell_t *shp,int mode)
 
 	/* set startup files */
 	n=0;
-	if(sh_isoption(SH_LOGIN_SHELL))
+	if(sh_isoption(shp,SH_LOGIN_SHELL))
 	{
-		if(!sh_isoption(SH_POSIX))
+		if(!sh_isoption(shp,SH_POSIX))
 		{
 			login_files[n++] = (char*)e_bash_profile;
 			login_files[n++] = (char*)e_bash_login;
@@ -408,16 +408,16 @@ void bash_init(Shell_t *shp,int mode)
 	}
 	shp->login_files = login_files;
 reinit:
-	xtrace = sh_isoption(SH_XTRACE);
-	sh_offoption(SH_XTRACE);
-	verbose = sh_isoption(SH_VERBOSE);
-	sh_offoption(SH_VERBOSE);
+	xtrace = sh_isoption(shp,SH_XTRACE);
+	sh_offoption(shp,SH_XTRACE);
+	verbose = sh_isoption(shp,SH_VERBOSE);
+	sh_offoption(shp,SH_VERBOSE);
 	if(np = nv_open("SHELLOPTS", shp->var_tree, NV_NOADD))
 		nv_offattr(np,NV_RDONLY);
 	iop = sfopen(NULL, bash_pre_rc, "s");
-	sh_eval(iop,0);
+	sh_eval(shp,iop,0);
 	if(xtrace)
-		sh_offoption(SH_XTRACE);
+		sh_offoption(shp,SH_XTRACE);
 	if(verbose)
-		sh_offoption(SH_VERBOSE);
+		sh_offoption(shp,SH_VERBOSE);
 }

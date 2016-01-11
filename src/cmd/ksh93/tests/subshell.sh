@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -241,7 +241,7 @@ err=$(
 	        }
 		# consume almost all fds to push the test to the fd limit #
 		integer max=$(ulimit --nofile)
-		(( max -= 6 ))
+		(( max -= 10 ))
 		for ((i=20; i < max; i++))
 		do	exec {i}>&1
 		done
@@ -616,5 +616,57 @@ do	if	[[ -e $f ]]
 	then	$SHELL -c "x=\$(command -p tee $f </dev/null 2>/dev/null)" || err_exit "$f in command substitution fails"
 	fi
 done
+
+$SHELL > /dev/null -c 'echo $(for x in whatever; do case y in *) true;; esac; done)' || err_exit 'syntax error with case in command substitution'
+
+$SHELL 2> /dev/null <<- \EOF || err_exit 'cannot run 100000 subshells'
+	( for ((i=0; i < 100000; i++))
+	do      (b=$(printf %08d ${i}))
+	done )
+EOF
+
+print 'print OK'  | out=$(${SHELL})
+[[ $out == OK ]] || err_exit '$() command substitution not waiting for process completion'
+
+print 'print OK' | out=$( ${SHELL} 2>&1 )
+out2="${out}$?"
+[[ "$out2" == 'OK0' ]]  ||  err_exit -u2 "expected OK0 got $out2"
+
+fun()
+{
+	echo=$(whence -p echo)
+	foo=` $echo foo`
+	print -n stdout=$foo
+	print -u2 stderr=$foo
+}
+[[ `fun 2>&1` == 'stdout=foostderr=foo' ]] || err_exit 'nested command substitution with 2>&1 not working'
+
+mkdir $tmp/bin$$
+print 'print foo' > $tmp/bin$$/foo
+chmod +x  $tmp/bin$$/foo
+: $(type foo)
+: ${ PATH=$tmp/bin$$:$PATH;}
+[[ $(whence foo) == "$tmp/bin$$/foo" ]] || err_exit '${...PATH=...} does not preserve PATH bindings'
+
+> $tmp/log
+function A
+{
+	trap 'print TRAP A >> $tmp/log' EXIT
+	print >&2
+}
+function B
+{
+	trap 'print TRAP B >> $tmp/log' EXIT
+	A
+}
+x=${ ( B ) ; }
+[[ $(<$tmp/log) ==  *'TRAP A'*'TRAP B'* ]] || err_exit 'trap A and trap B not both executed'
+
+function foo
+{
+	.sh.value=bam
+}
+val=${ foo;}
+[[ $val ]] && err_exit "function foo generates $val but should generate the empty string in command substitution"
 
 exit $((Errors<125?Errors:125))

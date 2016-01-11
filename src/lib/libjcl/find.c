@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -27,6 +27,7 @@
 
 #include <ctype.h>
 #include <ls.h>
+#include <regex.h>
 
 #define directory(p,s)	(stat((p),(s))>=0&&S_ISDIR((s)->st_mode))
 #define REGULAR(p,s)	(stat((p),(s))>=0&&(S_ISREG((s)->st_mode)||streq(p,"/dev/null")))
@@ -97,8 +98,11 @@ expand(Jcl_t* jcl, const char* name, int flags)
 	register int	c;
 	char*		b;
 	char*		v;
+	int		i;
 	size_t		n;
+	size_t		o;
 	size_t		p;
+	size_t		r;
 	Sfio_t*		vp;
 
 	if (jcl)
@@ -112,17 +116,17 @@ expand(Jcl_t* jcl, const char* name, int flags)
 					if (c == '$' && *s == '{')
 					{
 						b = s;
-						n = sfstrtell(jcl->tp);
+						o = sfstrtell(jcl->tp);
 						s++;
 						if (*s == '%' && *(s + 1) == '%')
 						{
 							s += 2;
 							sfputr(jcl->tp, JCL_AUTO, -1);
 						}
-						while ((c = *s++) && c != '}')
+						while ((c = *s++) && c != ':' && c != '}')
 							sfputc(jcl->tp, c);
 						sfputc(jcl->tp, 0);
-						v = sfstrseek(jcl->tp, n, SEEK_SET);
+						v = sfstrseek(jcl->tp, o, SEEK_SET);
 						if (isdigit(*v) && !*(v + 1))
 						{
 							if (t = matched(*v - '0', &n, jcl->disc))
@@ -147,6 +151,51 @@ expand(Jcl_t* jcl, const char* name, int flags)
 						{
 							sfputc(jcl->tp, '$');
 							s = b;
+							continue;
+						}
+						while (c == ':')
+						{
+							regex_t		re;
+							regmatch_t	match[10];
+
+							c = *s;
+							if (c == 's' && s++ || c != '/')
+							{
+								if (!(i = regcomp(&re, s, REG_AUGMENTED|REG_DELIMITED|REG_LENIENT|REG_NULL)))
+								{
+									s += re.re_npat;
+									if (!(i = regsubcomp(&re, s, NiL, 0, 0)))
+										s += re.re_npat;
+								}
+								if (!i && (*s == ':' || *s == '}'))
+								{
+									s++;
+									r = sfstrtell(jcl->tp);
+									sfputc(jcl->tp, 0);
+									v = sfstrseek(jcl->tp, o, SEEK_SET);
+									if (!(i = regexec(&re, v, elementsof(match), match, 0)) && !(i = regsubexec(&re, v, elementsof(match), match)))
+									{
+										sfputr(jcl->tp, re.re_sub->re_buf, -1);
+										regfree(&re);
+									}
+									else if (i != REG_NOMATCH)
+										regfatal(&re, 2, i);
+									else
+									{
+										sfstrseek(jcl->tp, r, SEEK_SET);
+										regfree(&re);
+									}
+								}
+								else
+								{
+									if (i)
+										regfatalpat(&re, 2, i, s);
+									while (*s && *s++ != '}');
+								}
+							}
+							else if (jcl->disc->errorf)
+								(*jcl->disc->errorf)(NiL, jcl->disc, 2, "%-.*s: unknown edit op", s - t, t);
+							c = *(s - 1);
 						}
 					}
 					else

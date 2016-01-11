@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -1345,7 +1345,7 @@ DD(register Jcl_t* jcl, register Jclstep_t* step, char* name)
 						dd->recfm = pd->recfm;
 						dd->lrecl = pd->lrecl;
 					}
-#if _2005_06_10__NOT_RELIBALE
+#if _2005_06_10__NOT_RELIABLE_
 					else if (n = pd ? pd->space : dd->space)
 					{
 						dd->lrecl = n;
@@ -1418,6 +1418,8 @@ DD(register Jcl_t* jcl, register Jclstep_t* step, char* name)
 				if (pd)
 					dd->recfm = pd->recfm;
 				else
+				{
+					dd->recfm = 0;
 					for (;;)
 					{
 						switch (*val++)
@@ -1455,6 +1457,7 @@ DD(register Jcl_t* jcl, register Jclstep_t* step, char* name)
 						}
 						break;
 					}
+				}
 			}
 			else if (streq(tok, "SPACE"))
 			{
@@ -1519,6 +1522,10 @@ DD(register Jcl_t* jcl, register Jclstep_t* step, char* name)
 				xel(jcl, END);
 		}
 	}
+#if 0
+	if (dd->disp[0] == JCL_DISP_NEW && !dd->recfm && jcl->disc->errorf)
+		(*jcl->disc->errorf)(NiL, jcl->disc, 1, "%s: no DCB for NEW DD", dd->name);
+#endif
 	if ((dd->flags & JCL_DD_INCLUDE) && dd->path && jclinclude(jcl, dd->path, JCL_PROC, NiL))
 		return -1;
 	if (dd->reference)

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1986-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1986-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -659,7 +659,7 @@ ppcontrol(void)
 				goto tuple;
 			old = *mac;
 			i0 = sym->flags;
-			sym->flags &= ~(SYM_BUILTIN|SYM_EMPTY|SYM_FINAL|SYM_FUNCTION|SYM_INIT|SYM_INITIAL|SYM_MULTILINE|SYM_NOEXPAND|SYM_PREDEFINED|SYM_REDEFINE|SYM_VARIADIC);
+			sym->flags &= ~(SYM_BUILTIN|SYM_EMPTY|SYM_FINAL|SYM_FUNCTION|SYM_INIT|SYM_MULTILINE|SYM_NOEXPAND|SYM_PREDEFINED|SYM_REDEFINE|SYM_VARIADIC);
 #if MACDEF
 			if (directive == MACDEF)
 				sym->flags |= SYM_MULTILINE;
@@ -1288,7 +1288,8 @@ ppcontrol(void)
 			if (pp.mode & BUILTIN) sym->flags |= SYM_BUILTIN;
 			if (pp.option & FINAL) sym->flags |= SYM_FINAL;
 			if (pp.mode & INIT) sym->flags |= SYM_INIT;
-			if (pp.option & INITIAL) sym->flags |= SYM_INITIAL;
+			if ((pp.mode & HOSTED) || (pp.option & INITIAL)) sym->flags |= SYM_INITIAL;
+			else sym->flags &= ~SYM_INITIAL;
 			if (pp.state & NOEXPAND)  sym->flags |= SYM_NOEXPAND;
 			if (pp.option & PREDEFINED) sym->flags |= SYM_PREDEFINED;
 			if (pp.mode & READONLY) sym->flags |= SYM_READONLY;
@@ -1307,6 +1308,7 @@ ppcontrol(void)
 			{
 			case X_DEFINED:
 			case X_EXISTS:
+			case X_EXISTS_NEXT:
 			case X_STRCMP:
 				error(2, "%s is a builtin predicate", pp.token);
 				goto eatdirective;

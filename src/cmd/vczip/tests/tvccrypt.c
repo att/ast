@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -32,14 +32,17 @@ static Vcchar_t	Plain2dt[] = /* twice above plaintext */
 	0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d,
 	0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34
 };
+#if 0
 static Vcchar_t Cryptdt[] = /* encrypted data */
 {	0x39, 0x25, 0x84, 0x1d, 0x02, 0xdc, 0x09, 0xfb,
 	0xdc, 0x11, 0x85, 0x97, 0x19, 0x6a, 0x0b, 0x32
 };
+#endif
 static Vcchar_t	Cipherkey[] = /* cipher key */
 {	0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
 	0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c
 };
+#if 0
 static Vcchar_t	Expandedkey[] = /* expanded key */
 {	0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
 	0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,
@@ -74,8 +77,9 @@ static Vcchar_t	Expandedkey[] = /* expanded key */
 	0xd0, 0x14, 0xf9, 0xa8, 0xc9, 0xee, 0x25, 0x89,
 	0xe1, 0x3f, 0x0c, 0xc8, 0xb6, 0x63, 0x0c, 0xa6
 };
+#endif
 
-int main()
+MAIN()
 {
 	Vcchar_t	*plaindt, *edt, *ddt;
 	ssize_t		plainsz, esz, dsz, k;

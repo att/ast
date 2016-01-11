@@ -16,26 +16,29 @@ mem	mallinfo.arena,mstats.bytes_total malloc.h
 sys	stat
 typ	ssize_t
 
-tst	mem_sbrk note{ brk()/sbrk() work as expected }end execute{
+tst	mem_sbrk note{ sbrk() works as expected }end execute{
 	#include        <sys/types.h>
 	#include        <unistd.h>
 	#undef	uchar
 	#define	uchar	unsigned char
 	int main()
 	{	uchar	*brk0, *brk1;
+		int	chg;
 
 		/* allocate a big chunk */
 		if(!(brk0 = (uchar*)sbrk(0)) || brk0 == (uchar*)(-1))
 			return 1;
-		brk0 += 256*1024;
-		if(brk(brk0) != 0)
+		chg = 256 * 1024;
+		brk0 += chg;
+		if(sbrk(chg) == ((void*)-1))
 			return 1;
 		if((brk1 = (uchar*)sbrk(0)) != brk0)
 			return 1;
 
 		/* now return half of it */
-		brk1 -= 128*1024;
-		if(brk(brk1) != 0 )
+		chg /= 2;
+		brk1 -= chg;
+		if(sbrk(-chg) == ((void*)-1))
 			return 1;
 		if((brk0 = (uchar*)sbrk(0)) != brk1)
 			return 1;
@@ -191,7 +194,7 @@ tst	malloc_hook note{ gnu malloc hooks work }end execute{
 	        __realloc_hook = test_realloc_hook;
 	}
 
-	void    (*__malloc_initialize_hook)(void) = test_initialize_hook;
+	typeof (__malloc_initialize_hook) __malloc_initialize_hook = test_initialize_hook;
 
 	int main()
 	{

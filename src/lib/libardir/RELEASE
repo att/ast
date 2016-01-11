@@ -1,4 +1,4 @@
-111-08-31 ar-omf.c: fix FILENAME #pragma prototyped incompatibility
+11-08-31 ar-omf.c: fix FILENAME #pragma prototyped incompatibility
 03-09-17 ardir.c: rewind initial peek to open position in case its /dev/stdin
 03-04-05 ar-port.c: fix bug that skipped initial long name entry
 	 ar-port.c: handle netbsd.i386 ' <long-index>' vs. '/<long-index>'

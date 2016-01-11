@@ -30,20 +30,20 @@ int	sh_main(int \fIargc\fP, char *\fIargv\fP[], Sh_init \fIfn\fP);
 Shell_t	*sh_init(int \fIargc\fP, char *\fIargv\fP[]);
 Shell_t	*sh_getinterp(void);
 
-Namval_t	*sh_addbuiltin(const char *\fIname\fP,Sh_bltin_f \fIfn\fP,void *\fIarg\fP);
+Namval_t	*sh_addbuiltin((Shell_t *\fIshp\fP,const char *\fIname\fP,Sh_bltin_f \fIfn\fP,void *\fIarg\fP);
 
-unsigned int	sh_isoption(int \fIoption\fP);
-unsigned int	sh_onoption(int \fIoption\fP);
-unsigned int	sh_offoption(int \fIoption\fP);
+unsigned int	sh_isoption((Shell_t *\fIshp\fP,int \fIoption\fP);
+unsigned int	sh_onoption((Shell_t *\fIshp\fP,int \fIoption\fP);
+unsigned int	sh_offoption((Shell_t *\fIshp\fP,int \fIoption\fP);
 
 void	*sh_parse(Shell_t *\fIshp\fP, Sfio_t *\fIsp\fP, int \fIflags\fP);
-int 	sh_trap(const char *\fIstring\fP, int \fImode\fP);
-int	sh_run(int \fIargc\fP, char *\fIargv\fP[]);
-int 	sh_eval(Sfio_t *\fIsp\fP,int \fImode\fP);
-int 	sh_fun(Namval_t *\fIfunnode\fP, Namval_t *\fIvarnode\fP, char *\fIargv\fP[]);
-int 	sh_funscope(int \fIargc\fP,char *\fIargv\fP[],int(*\fIfn\fP)(void*),void *\fIarg\fP,int \fIflags\fP);
-Shscope_t	*sh_getscope(int \fIindex\fP,int \fIwhence\fP);
-Shscope_t	*sh_setscope(Shscope_t *\fIscope\fP);
+int 	sh_trap((Shell_t *\fIshp\fP,const char *\fIstring\fP, int \fImode\fP);
+int	sh_run((Shell_t *\fIshp\fP,int \fIargc\fP, char *\fIargv\fP[]);
+int 	sh_eval(Shell_t *\fIshp\fP,Sfio_t *\fIshp\fP,int \fImode\fP);
+int 	sh_fun((Shell_t *\fIshp\fP,Namval_t *\fIfunnode\fP, Namval_t *\fIvarnode\fP, char *\fIargv\fP[]);
+int 	sh_funscope((Shell_t *\fIshp\fP,int \fIargc\fP,char *\fIargv\fP[],int(*\fIfn\fP)(void*),void *\fIarg\fP,int \fIflags\fP);
+Shscope_t	*sh_getscope((Shell_t *\fIshp\fP,int \fIindex\fP,int \fIwhence\fP);
+Shscope_t	*sh_setscope((Shell_t *\fIshp\fP, Shscope_t *\fIscope\fP);
 
 int	(*sh_fdnotify(int(*\fIfn\fP)(int,int)))(int,int);
 char	*sh_fmtq(const char *\fIstring\fP);

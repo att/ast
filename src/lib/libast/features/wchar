@@ -8,7 +8,8 @@ cat{
 	#define _AST_WCHAR_H	1
 }end
 
-lib	mbstowcs,wctomb,wcrtomb,wcslen,wcstombs,wcwidth stdlib.h stdio.h wchar.h
+lib	mbstowcs,wctomb,wcscmp,wcscoll,wcslen,wcstombs,wcsxfrm,wcwidth stdlib.h stdio.h wchar.h
+lib	mbrlen,mbrtowc,mbsrtowcs,wcrtomb,wcsrtombs stdlib.h stdio.h wchar.h
 lib	towlower,towupper stdlib.h stdio.h wchar.h
 typ	mbstate_t stdlib.h stdio.h wchar.h
 nxt	wchar
@@ -103,14 +104,33 @@ cat <<!
 	#define extern		__EXPORT__
 	#endif
 
+	#if !_lib_mbrlen
+	extern size_t		mbrlen(const char*, size_t, mbstate_t*);
+	#endif
+
+	#if !_lib_mbrtowc
+	extern  size_t		mbrtowc(wchar_t*, const char*, size_t, mbstate_t*);
+	#endif
+
+	#if !_lib_mbsrtowcs
+	extern  size_t		mbsrtowcs(wchar_t*, const char**, size_t, mbstate_t*);
+	#endif
+
+	#if !_lib_wcrtomb
+	extern size_t		wcrtomb(char*, wchar_t, mbstate_t*);
+	#endif
+
+	#if !_lib_wcsrtombs
+	extern size_t		wcsrtombs(char*, const wchar_t**, size_t, mbstate_t*);
+	#endif
+
+	/* the remaining mb*() and wc*() functions are obsolete */
+
 	#if !_lib_mbstowcs
 	extern size_t		mbstowcs(wchar_t*, const char*, size_t);
 	#endif
 	#if !_lib_wctomb
 	extern int		wctomb(char*, wchar_t);
-	#endif
-	#if !_lib_wcrtomb
-	extern size_t		wcrtomb(char*, wchar_t, mbstate_t*);
 	#endif
 	#if !_lib_wcslen
 	extern size_t		wcslen(const wchar_t*);

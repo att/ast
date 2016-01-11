@@ -1,0 +1,6 @@
+iff SHELL_API
+
+api shell 20120720 sh_trap sh_run sh_eval sh_fun sh_funscope sh_exit  \
+	sh_getscope sh_setscope sh_strnum sh_menu sh_reinit sh_bltin_tree \
+	sh_fd2sfio sh_pathopen sh_isoption sh_onoption sh_offoption  \
+	sh_addbuiltin

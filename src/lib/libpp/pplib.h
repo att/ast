@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1986-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1986-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -100,7 +100,8 @@
 #define SEARCH_IGNORE		(1<<1)	/* ignore if not found		*/
 #define SEARCH_INCLUDE		(1<<2)	/* ppsearch for include		*/
 #define SEARCH_VENDOR		(1<<3)	/* search vendor dirs only	*/
-#define SEARCH_USER		(1<<4)	/* first user flag		*/
+#define SEARCH_NEXT		(1<<4)	/* search next (uncover)	*/
+#define SEARCH_USER		(1<<8)	/* first user flag		*/
 
 #define STYLE_gnu		(1<<0)	/* gnu style args		*/
 

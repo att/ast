@@ -1,0 +1,751 @@
++p+ regress ed.tst ed
+TEST	ed
+01	file args
+01:31	no input file                                                         
+01:33	empty input file                                                      
+01:37	big input file                                                        
+01:41	non-existent input file                                               
+02	{ = # a c } commands
+02:47	=                                                                     
+02:52	# comments                                                            
+02:55	a top                                                                 
+02:60	a mid                                                                 
+02:64	a bot                                                                 
+02:68	c top                                                                 
+02:73	c mid                                                                 
+02:77	c bot                                                                 
+03	{ s } commands
+03:83	substitute                                                            
+03:89	substitute g                                                          
+03:95	substitute count                                                      
+03:100	substitute null g                                                     
+03:106	substitute splice                                                     
+03:112	substitute previous                                                   
+04	global commands
+04:120	global substitute splice                                              
+05	{ t } commands
+05:129	copy                                                                  
+05:135	copy reverse                                                          
+06	! command
+06:142	no saved command                                                      
+06:149	empty command                                                         
+06:153	to stdout                                                             
+06:159	to stderr                                                             
+07	REs
+07:166	remembered RE                                                         
+08	.
+TEST	ed, 26 tests, 0 errors
++p+ regress grep.tst grep
+TEST	grep
+01	-q, -v combinations
+01:3873	-q . /dev/null                                                        
+01:3876	-q -v . /dev/null                                                     
+01:3877	-q -v .                                                               
+01:3879	-q .                                                                  
+02	BRE, ERE, -x, -v, -e sanity
+02:3885	'^10*$' big.dat                                                       
+02:3887	-x '10*' big.dat                                                      
+02:3888	-x -e '10*' big.dat                                                   
+02:3889	-E '^1(00)*0?$' big.dat                                               
+02:3890	-x '[^[:digit:]]*[[=1=]][[.0.]]\{0,\}' big.dat                        
+02:3891	-E -x '[^[:digit:]]*[[=1=]][[.0.]]{0,}' big.dat                       
+02:3892	-E -e '^1((0)\2)*$' -e '^10((0)\2)*$' big.dat                         
+02:3893	-E -e $'^1((0)\\2)*$\n^10((0)\\2)*$' big.dat                          
+02:3894	-E -e '^1((0)\2)*$|^10((0)\4)*$' big.dat                              
+02:3895	-e '^1\(\(0\)\2\)*$' -e '^10\(\(0\)\2\)*$' big.dat                    
+02:3896	-e $'^1\\(\\(0\\)\\2\\)*$\n^10\\(\\(0\\)\\2\\)*$' big.dat             
+02:3897	-e '^1\(\(0\)\2\)*$' -e '^10\(\(0\)\2\)*$' big.dat                    
+02:3898	-x -e '1\(\(0\)\2\)*' -e '10\(\(0\)\2\)*' big.dat                     
+02:3899	-E -v '[2-9]|1.*1|^0' big.dat                                         
+02:3900	-E -x '1(0{0,2}){1,2}' big.dat                                        
+02:3901	-E '1*^10*$' big.dat                                                  
+02:3902	-E -x 'a.|b'                                                          
+02:3905	state.var.folder                                                      
+02:3908	XXXXXX                                                                
+02:3911	-v /usr/include                                                       
+02:3914	-E -e '(abc)' -e '(def)\1'                                            
+02:3917	-E -e $'(abc)\n(def)\\1'                                              
+02:3918	-E -e '(abc)|(def)\2'                                                 
+03	data chars except \0 \n
+03:3923	-c . chars.dat                                                        
+03:3925	-c -e '' chars.dat                                                    
+03:3926	-c -e $'\na' chars.dat                                                
+03:3927	-c -e $'a\n' chars.dat                                                
+03:3928	-c -e $'a\n' chars.dat                                                
+03:3929	-c -e a chars.dat                                                     
+03:3931	-c -x '' chars.dat                                                    
+03:3934	-E -c -x '' chars.dat                                                 
+04	char class on data chars except \0 \n
+04:3939	-c '[[:alnum:]]' chars.dat                                            
+04:3941	-c -i '[[:alnum:]]' chars.dat                                         
+04:3942	-c '[[:alpha:]]' chars.dat                                            
+04:3944	-c '[[:blank:]]' chars.dat                                            
+04:3946	-c '[[:cntrl:]]' chars.dat                                            
+04:3948	-c '[[:digit:]]' chars.dat                                            
+04:3950	-c '[[:graph:]]' chars.dat                                            
+04:3952	-c '[[:lower:]]' chars.dat                                            
+04:3954	-c '[[:upper:]]' chars.dat                                            
+04:3955	-c '[[:print:]]' chars.dat                                            
+04:3957	-c '[[:punct:]]' chars.dat                                            
+04:3959	-c '[[:space:]]' chars.dat                                            
+04:3961	-c '[[:xdigit:]]' chars.dat                                           
+04:3963	-c -i '[[:alpha:]]' chars.dat                                         
+04:3965	-c -i '[[:lower:]]' chars.dat                                         
+04:3966	-c -i '[[:upper:]]' chars.dat                                         
+05	-f, -F, big pattern
+05:3972	-c -f pat.dat                                                         
+05:3974	-c -E -fpat.dat                                                       
+05:3975	-c -F -fpat.dat                                                       
+05:3976	-v -c -f pat.dat                                                      
+05:3978	-v -c -F -fpat.dat                                                    
+05:3979	-v -c -E -fpat.dat                                                    
+05:3980	-c -x -fpat.dat                                                       
+05:3982	-c -x -F -f pat.dat                                                   
+05:3983	-c -x -E -f pat.dat                                                   
+05:3984	-v -c -x -fpat.dat                                                    
+05:3986	-v -c -x -F -f pat.dat                                                
+05:3987	-v -c -x -E -f pat.dat                                                
+06	-f, -F, big pattern
+06:3992	-n '\(.\)\(.\)\2\1' big.dat                                           
+06:3995	-c . out                                                              
+06:3998	-l . out                                                              
+06:4000	-l .                                                                  
+06:4002	-l . big.dat big.dat                                                  
+06:4004	-l . /dev/null big.dat big.dat /dev/null                              
+06:4005	-q -l . big.dat big.dat                                               
+06:4007	-c . big.dat big.dat                                                  
+06:4009	-c . /dev/null                                                        
+06:4012	-v -l . big.dat big.dat                                               
+07	-h, -H
+07:4018	z x.dat xyz.dat                                                       
+07:4020	-h z x.dat xyz.dat                                                    
+07:4022	-H z xyz.dat                                                          
+08	exit status, -s, -q, -e, -c, -l combinations
+08:4032	-e . /dev/null                                                        
+08:4034	-q -e . /dev/null                                                     
+08:4036	-e .                                                                  
+08:4039	-q -e .                                                               
+08:4042	-e . not_a_file                                                       
+08:4044	-q -e . not_a_file                                                    
+08:4046	-s -e . not_a_file                                                    
+08:4048	-q -s -e . not_a_file                                                 
+08:4050	-s -e . x.dat not_a_file                                              
+08:4052	-q -s -e . x.dat not_a_file                                           
+08:4054	-q -s -e . not_a_file x.dat                                           
+08#12	-c . /dev/null                                                        
+08#13	-q -c . /dev/null                                                     
+08#14	-c .                                                                  
+08#15	-q -c .                                                               
+08#16	-c . not_a_file                                                       
+08#17	-q -c . not_a_file                                                    
+08#18	-s -c . not_a_file                                                    
+08#19	-q -s -c . not_a_file                                                 
+08#20	-s -c . x.dat not_a_file                                              
+08#21	-q -s -c . x.dat not_a_file                                           
+08#22	-q -s -c . not_a_file x.dat                                           
+08#23	-l . /dev/null                                                        
+08#24	-q -l . /dev/null                                                     
+08#25	-l .                                                                  
+08#26	-q -l .                                                               
+08#27	-l . not_a_file                                                       
+08#28	-q -l . not_a_file                                                    
+08#29	-s -l . not_a_file                                                    
+08#30	-q -s -l . not_a_file                                                 
+08#31	-s -l . x.dat not_a_file                                              
+08#32	-q -s -l . x.dat not_a_file                                           
+08#33	-q -s -l . not_a_file x.dat                                           
+08:4058	-l A AB.dat BC.dat                                                    
+08:4061	-L C AB.dat BC.dat                                                    
+08:4062	-v -l C AB.dat BC.dat                                                 
+08:4063	-l C AB.dat BC.dat                                                    
+08:4065	-L A AB.dat BC.dat                                                    
+08:4066	-v -l A AB.dat BC.dat                                                 
+08:4067	-l B AB.dat BC.dat                                                    
+08:4069	-L Z AB.dat BC.dat                                                    
+08:4070	-l Z AB.dat BC.dat                                                    
+08:4073	-L B AB.dat BC.dat                                                    
+09	file not found
+09:4079	y nope.dat                                                            
+09:4081	-F -f nope.dat x.dat                                                  
+09:4083	-F -f nope.dat -f x.dat xyz.dat                                       
+09:4085	y x.dat nope.dat y.dat                                                
+10	simple gre tests from Andrew Hume
+10:4091	-q a                                                                  
+10:4094	-q a                                                                  
+10:4096	-q a                                                                  
+10:4098	-q .                                                                  
+10:4100	-q .                                                                  
+10:4102	-q .a                                                                 
+10:4104	-q .a                                                                 
+10:4106	-q .a                                                                 
+10:4108	-q '$'                                                                
+10:4110	-q '$'                                                                
+10:4112	-q '.$'                                                               
+10:4114	-q 'a$'                                                               
+10:4116	-q 'a$'                                                               
+10:4118	-q 'a$'                                                               
+10:4120	-q ^                                                                  
+10:4122	-q ^                                                                  
+10:4124	-q ^                                                                  
+10:4126	-q '^a$'                                                              
+10:4128	-q '^a.$'                                                             
+10:4130	-q '^a.$'                                                             
+10:4132	-q '^$'                                                               
+10:4134	-q ^.a                                                                
+10:4136	-q ^.a                                                                
+10:4138	-q '^.*a'                                                             
+10:4140	-q '^.*a'                                                             
+10:4142	-q '^.*a'                                                             
+10:4144	-q -E ^.+a                                                            
+10:4146	-q -E ^.+a                                                            
+10:4148	-q 'a*'                                                               
+10:4150	-q 'a*'                                                               
+10:4152	-q 'a*'                                                               
+10:4154	-q 'a*'                                                               
+10:4156	-q 'a*'                                                               
+10:4158	-q 'aa*'                                                              
+10:4160	-q 'aa*'                                                              
+10:4162	-q 'aa*'                                                              
+10:4164	-q '\$'                                                               
+10:4166	-q '\$'                                                               
+10:4168	-q '\$'                                                               
+10:4170	-q '\.'                                                               
+10:4172	-q -G '.^$'                                                           
+10:4174	-q -G '^x$'                                                           
+10:4176	-q -G 'a\$'                                                           
+10:4178	-q -G '\(ab\)$'                                                       
+10:4180	-q -G '\(ab\)$'                                                       
+10:4182	-q -E xr+y                                                            
+10:4184	-q -E xr+y                                                            
+10:4186	-q -E xr+y                                                            
+10:4188	-q -E 'xr?y'                                                          
+10:4190	-q -E 'xr?y'                                                          
+10:4192	-q -E 'a(bc|def)g'                                                    
+10:4194	-q -E 'a(bc|def)g'                                                    
+10:4196	-q '[0-9]'                                                            
+10:4198	-q '[0-9]'                                                            
+10:4200	-q '[0-9]'                                                            
+10:4202	-q '[^0-9]'                                                           
+10:4204	-q '[^0-9]'                                                           
+10:4206	-q -E 'x[0-9]+y'                                                      
+10:4208	-q -E 'x[0-9]+y'                                                      
+10:4210	-q -E 'x[0-9]+y'                                                      
+10:4212	-q -E 'x[0-9]?y'                                                      
+10:4214	-q -E 'x[0-9]?y'                                                      
+10:4216	-q -i X                                                               
+10:4218	-q -x read                                                            
+10:4220	-q -xF read                                                           
+10:4222	-q -F read                                                            
+10:4224	-q -F read                                                            
+10:4226	-q -F read                                                            
+10:4228	-q -F read                                                            
+10:4230	-q -F read                                                            
+10:4232	-q '[.]de..'                                                          
+10:4234	-q '[.]de..'                                                          
+10:4236	-q -G '^|s'                                                           
+10:4238	-q -G ..B                                                             
+10:4240	-q -G '$.*tt.*\$'                                                     
+10:4242	-q -E '^([a-z]+)\1$'                                                  
+10:4244	-q -E '([a-z]+)\1'                                                    
+10:4246	-q -E '([a-z]+)\1'                                                    
+10:4248	-q -E '([a-z]+)\1'                                                    
+10:4250	-q -G '\(....\).*\1'                                                  
+10:4252	-q -E '(....).*\1'                                                    
+10:4254	-q '^$'                                                               
+10:4256	-q -G '^$'                                                            
+10:4258	-q '[ab]\{2\}k'                                                       
+10:4260	-q '[ab]\{2\}k'                                                       
+10:4262	-q '[ab]\{2\}k'                                                       
+10:4264	-q '[ab]\{2,\}d'                                                      
+10:4266	-q '[ab]\{2,\}d'                                                      
+10:4268	-q 'q[ab]\{2,4\}d'                                                    
+10:4270	-q 'q[ab]\{2,4\}d'                                                    
+10:4272	-q 'q[ab]\{2,4\}d'                                                    
+10:4274	-q -E 'a[]]b'                                                         
+10:4276	-q -G 'a[]]b'                                                         
+10:4278	-q -E 'a[^]b]c'                                                       
+10:4280	-q -G 'a[^]b]c'                                                       
+10:4282	-q -i 'angel[^e]'                                                     
+10:4284	-q -i 'angel[^e]'                                                     
+10:4286	-q -G '^[^-].*>'                                                      
+10:4288	-q -i '^[A-Z]'                                                        
+10:4290	-q -i '^[A-Z]'                                                        
+10:4292	-q -i '^[^A-Z]'                                                       
+10:4294	-q -G '|abc'                                                          
+10:4296	-q -G '\(ac*\)c*d[ac]*\1'                                             
+10:4298	-q -E '(ac*)c*d[ac]*\1'                                               
+10:4300	-q -E 'ram|am'                                                        
+10:4302	-q -E '[a-za-za-za-za-za-za-za-za-za-z]'                              
+10:4304	-q '[a-za-za-za-za-za-za-za-za-za-z]'                                 
+10:4306	-q -E '[a-za-za-za-za-za-za-za-za-z]'                                 
+10:4308	-q '[a-za-za-za-za-za-za-za-za-z]'                                    
+10:4310	-q -E '[ ]*([^ ]+)[ ]*'                                               
+10:4312	-q -E '[ ]*([^ ]+)[ ]*'                                               
+10:4314	-q -E '[ ]*([^ ]+)[ ]*([(].*[)])?'                                    
+10:4316	-q -E '[ ]*([^ ]+)[ ]*([(].*[)])?'                                    
+10:4318	-q -E '((foo)|(bar))!bas'                                             
+10:4320	-q -E '((foo)|(bar))!bas'                                             
+10:4322	-q -E '((foo)|(bar))!bas'                                             
+10:4324	-q -E '((foo)|(bar))!bas'                                             
+10:4326	-q -E '((foo)|bar)!bas'                                               
+10:4328	-q -E '((foo)|bar)!bas'                                               
+10:4330	-q -E '(foo|(bar))!bas'                                               
+10:4332	-q -E '(foo|(bar))!bas'                                               
+10:4334	-q -E '^([^!]+!)?([^!]+)$|^.+!([^!]+!)([^!]+)$'                       
+10:4336	-q -E '^[abf][0-9][0-9][0-9]([0-9]|(\[[0-9]+\]))'                     
+10:4338	-q -E '^[abf][0-9][0-9][0-9]([0-9]|(\[[0-9]+\]))'                     
+10:4340	-q a                                                                  
+10:4343	-q a                                                                  
+10:4345	-q a                                                                  
+10:4347	-q .                                                                  
+10:4349	-q .a                                                                 
+10:4351	-q .a                                                                 
+10:4353	-q .a                                                                 
+10:4355	-q '.$'                                                               
+10:4357	-q 'a$'                                                               
+10:4359	-q 'a$'                                                               
+10:4361	-q 'a$'                                                               
+10:4363	-q '^a$'                                                              
+10:4365	-q '^a$'                                                              
+10:4367	-q '^a$'                                                              
+10:4369	-q '^a$'                                                              
+10:4371	-q '^a.$'                                                             
+10:4373	-q '^a.$'                                                             
+10:4375	-q '^a.$'                                                             
+10:4377	-q '^a.$'                                                             
+10:4379	-q '^$'                                                               
+10:4381	-q '^$'                                                               
+10:4383	-q ^.a                                                                
+10:4385	-q ^.a                                                                
+10:4387	-q '^.*a'                                                             
+10:4389	-q -E ^.+a                                                            
+10:4391	-q -E ^.+a                                                            
+10:4393	-q -E ^.+a                                                            
+10:4395	-q 'aa*'                                                              
+10:4397	-q 'aa*'                                                              
+10:4399	-q '\$'                                                               
+10:4401	-q '\$'                                                               
+10:4403	-q '\.'                                                               
+10:4405	-q '\.'                                                               
+10:4407	-q -G '.^$'                                                           
+10:4409	-q -G '.^$'                                                           
+10:4411	-q -G '^x$'                                                           
+10:4413	-q -G '^x$'                                                           
+10:4415	-q -G 'a\$'                                                           
+10:4417	-q -G '\(ab\)$'                                                       
+10:4419	-q -E xr+y                                                            
+10:4421	-q -E xr+y                                                            
+10:4423	-q -E 'xr?y'                                                          
+10:4425	-q -E 'a(bc|def)g'                                                    
+10:4427	-q -E 'a(bc|def)g'                                                    
+10:4429	-q -E 'a(bc|def)g'                                                    
+10:4431	-q -E 'a(bc|def)g'                                                    
+10:4433	-q '[0-9]'                                                            
+10:4435	-q '[0-9]'                                                            
+10:4437	-q '[^0-9]'                                                           
+10:4439	-q '[^0-9]'                                                           
+10:4441	-q '[^0-9]'                                                           
+10:4443	-q -E 'x[0-9]+y'                                                      
+10:4445	-q -E 'x[0-9]+y'                                                      
+10:4447	-q -E 'x[0-9]?y'                                                      
+10:4449	-q -x read                                                            
+10:4451	-q -x read                                                            
+10:4453	-q -x read                                                            
+10:4455	-q -x read                                                            
+10:4457	-q -xF read                                                           
+10:4459	-q -xF read                                                           
+10:4461	-q -xF read                                                           
+10:4463	-q -xF read                                                           
+10:4465	-q '[.]de..'                                                          
+10:4467	-q '[.]de..'                                                          
+10:4469	-q -G '^|s'                                                           
+10:4471	-q -G ..B                                                             
+10:4473	-q -E '^([a-z]+)\1$'                                                  
+10:4475	-q -E '([a-z]+)\1'                                                    
+10:4477	-q -E '([a-z]+)\1'                                                    
+10:4479	-q '[ab]\{2\}k'                                                       
+10:4481	-q '[ab]\{2\}k'                                                       
+10:4483	-q '[ab]\{2\}k'                                                       
+10:4485	-q '[ab]\{2,\}d'                                                      
+10:4487	-q '[ab]\{2,\}d'                                                      
+10:4489	-q 'q[ab]\{2,4\}d'                                                    
+10:4491	-q 'q[ab]\{2,4\}d'                                                    
+10:4493	-q -i 'angel[^e]'                                                     
+10:4495	-q -i 'angel[^e]'                                                     
+10:4497	-q -i 'angel[^e]'                                                     
+10:4499	-q -i 'angel[^e]'                                                     
+10:4501	-q -G '^[^-].*>'                                                      
+10:4503	-q -i '^[^A-Z]'                                                       
+10:4505	-q -i '^[^A-Z]'                                                       
+10:4507	-q -G '|abc'                                                          
+10:4509	-q -x '.|..'                                                          
+11	complex gre tests from Andrew Hume
+11:4515	-xF $'defg\nabcd'                                                     
+11:4518	abc                                                                   
+11:4522	-E 'pm|xdhu'                                                          
+11:4538	-v : g4.dat                                                           
+11:4556	'^com ' g5.dat                                                        
+11:4558	-E -f g6.pat g6.dat                                                   
+11:4586	'^[^`]*`[^`]*$'                                                       
+11:4599	-F -x -f g8.dat g8.dat                                                
+11:4601	-F -f g8.dat                                                          
+11:4604	-v '^\.x' g1.dat                                                      
+11:4607	-xvF -f g12.dat g12.dat                                               
+11:4608	-xvF -f INPUT                                                         
+12	alternating BM tests
+12:4613	-F $':::1:::0:\n:::1:1:0:'                                            
+12:4616	-F $':::1:::0:\n:::1:1:1:'                                            
+12:4617	-E ':::1:::0:|:::1:1:0:'                                              
+12:4618	-E ':::1:::0:|:::1:1:1:'                                              
+13	-c, -h, -t combinations
+13:4623	x x.dat xyz.dat                                                       
+13:4625	-c x x.dat xyz.dat                                                    
+13:4627	-ch x x.dat xyz.dat                                                   
+13:4629	-ct x x.dat xyz.dat                                                   
+13:4631	-cht x x.dat xyz.dat                                                  
+13:4633	-h x x.dat xyz.dat                                                    
+13:4635	-ht x x.dat xyz.dat                                                   
+13:4637	-t x x.dat xyz.dat                                                    
+14	-m with -c, -h, -n, -t combinations
+14:4643	-m -e 'open:{' -e 'close:}' g6.dat g7.dat                             
+14:5136	-m -e include:include -e define:define g6.dat g7.dat                  
+14:5198	-n -m -e 'open:{' -e 'close:}' g6.dat g7.dat                          
+14:5691	-n -m -e include:include -e define:define g6.dat g7.dat               
+14:5753	-c -m -e 'open:{' -e 'close:}' g6.dat g7.dat                          
+14:5758	-c -m -e include:include -e define:define g6.dat g7.dat               
+14:5763	-h -m -e 'open:{' -e 'close:}' g6.dat g7.dat                          
+14:6256	-h -m -e include:include -e define:define g6.dat g7.dat               
+14:6318	-c -h -m -e 'open:{' -e 'close:}' g6.dat g7.dat                       
+14:6323	-c -h -m -e include:include -e define:define g6.dat g7.dat            
+14:6328	-t -m -e 'open:{' -e 'close:}' g6.dat g7.dat                          
+TEST	grep, 367 tests, 0 errors
++p+ regress sed.tst sed
+TEST	sed
+01	empty script and passive command combinations
+01:21	=, -n, blank lines                                                    
+01:26	comments, including #n                                                
+01:29	empty script                                                          
+01:33	do-nothing script                                                     
+01:36	substitution; regexp dot; &; substitution flag                        
+02	line counting, ranges, overlaps
+02:42	d overlap                                                             
+02:47	d disjoint range                                                      
+02:50	d bypassing end of range                                              
+02:54	negation, address $, print                                            
+03	regexp addresses, append, insert, change
+03:60	-f script                                                             
+04	braces
+04:66	-f script                                                             
+05	hold, get combinations
+05:72	hold, get                                                             
+05:77	hold, exchange, get, brace without newline                            
+05:81	quit                                                                  
+06	next, regexp $
+06:87	-f script                                                             
+07	substitute flag combinations
+07:93	s newline p                                                           
+07:98	write, flag w                                                         
+07:103	s w file                                                              
+07:108	s pw file                                                             
+07:113	s pw file                                                             
+08	character classes, flag g
+08:120	-f script                                                             
+08:124	's/[\]/X/g'                                                           
+08:127	's/[^./]/X/g'                                                         
+08:129	's/[][]/X/g'                                                          
+08:131	's.[.]\..X.g'                                                         
+09	null matches
+09:135	-f script                                                             
+10	longest match, unmatched subexpressions
+10:141	-f script                                                             
+11	metacharacters in substition
+11:147	-f script                                                             
+12	branch combinations
+12:153	branches                                                              
+12:158	long labels may be truncated                                          
+12:161	jump to end of script                                                 
+12:165	end of bracket range                                                  
+12:170	end of change range                                                   
+12:174	end of change range                                                   
+12:178	end of change range                                                   
+15	weird delimiters, remembered expression
+15:185	-f script                                                             
+16	7680-char line, backreference
+16:191	-f script                                                             
+17	r from w file, nonexistent r
+17:197	-f script -n                                                          
+18	eof combinations
+18:203	eof in n                                                              
+18:208	eof in N                                                              
+19	transliterate
+19:214	-f script                                                             
+19:218	-f script                                                             
+20	N, D, G combinations
+20:224	N, D                                                                  
+20:229	D, G initial states                                                   
+21	a,c,r interaction
+21:235	-f script                                                             
+22	substitution null string combinations
+22:241	count 1 substitution for null string                                  
+22:247	count 2 substitution for null string                                  
+22:251	-f script                                                             
+22:254	count 3 substitution for null string                                  
+23	perverse semicolons
+23:260	's;\;;x;'                                                             
+24	multiple files
+24:265	-n '$=' INPUT INPUT INPUT                                             
+25	weird chars, line folding
+25:270	-n $'s/.*/&&&&&&&&&&/\nH\nH\nH\nG\nl'                                 
+26	multiple w files, multiple inputs, OUTPUT1 empty
+26:280	-f script -n                                                          
+27	assorted warnings
+27:295	trailing newline omitted                                              
+28	assorted diagnostics
+28:302	= not_a_file                                                          
+28:303	-e :x -e :x                                                           
+28:304	r/dev/null                                                            
+28:305	-f not_a_file                                                         
+28:306	-f not_a_file                                                         
+28:307	0p                                                                    
+28:308	//p                                                                   
+28:309	bx                                                                    
+28:310	/                                                                     
+28:311	/a                                                                    
+28:312	'/\'                                                                  
+28:313	/a/                                                                   
+28:314	1,c                                                                   
+28:315	1,/                                                                   
+28:316	1,2,3p                                                                
+28:317	'/\(/p'                                                               
+28:318	'/\1/p'                                                               
+28:319	s/a/b                                                                 
+28:320	s/a/b/q                                                               
+28:321	s/a/b/3g3                                                             
+28:322	s/a/b/gg                                                              
+28:323	s/a/b/pp                                                              
+28:324	s/a/b/wnot_a_file                                                     
+28:325	y/a                                                                   
+28:326	y/a/                                                                  
+28:327	y/a/b                                                                 
+28:328	y/aa/bb/                                                              
+28:329	y/aa/ab/                                                              
+28:330	y/a/bb/                                                               
+28:331	y/aa/b/                                                               
+28:332	1,2=                                                                  
+28:333	1,2q                                                                  
+28:334	:                                                                     
+28:335	'\'                                                                   
+28:336	a                                                                     
+28:337	c                                                                     
+28:338	e                                                                     
+28:339	f                                                                     
+28:340	i                                                                     
+28:341	j                                                                     
+28:342	k                                                                     
+28:343	m                                                                     
+28:344	o                                                                     
+28:345	r                                                                     
+28:346	s                                                                     
+28:347	u                                                                     
+28:348	v                                                                     
+28:349	w                                                                     
+28:350	y                                                                     
+28:351	z                                                                     
+28:352	'{'                                                                   
+28:353	'}'                                                                   
+28:354	1                                                                     
+28:355	pq                                                                    
+28:356	dq                                                                    
+28:357	aq                                                                    
+28:358	!!p                                                                   
+28:359	1#                                                                    
+28:360	'a\'                                                                  
+28:361	'w .'                                                                 
+28:362	's /a/b/'                                                             
+28:363	's/a/b/w .'                                                           
+29	customary extensions
+30	hold buffer line join
+30:403	-One $'\n/^Package:/{\ns/^Package:[[:space:]]*\\<\\([[:alnum:].+-]*$1[
+31	file access
+31:465	s/./x/ 000 644                                                        
+31:467	s/./x/ 644 000                                                        
+32	embedded \0
+TEST	sed, 119 tests, 0 errors
++p+ testglob -c
++p+ 0< testglob.dat
+TEST	testglob (AT&T Research) 2006-07-28, catch
+NOTE	X/Open glob tests 2008-04-30
+TEST	testglob, 924 tests, 0 errors
++p+ testfmt -c testfmt.dat
+TEST	testfmt (AT&T Research) 2005-05-20, catch
+NOTE	fmtmatch(3) and fmtre(3) tests 2001-05-23
+TEST	testfmt, 44 tests, 0 errors
++p+ testfnmatch -c testfnmatch.dat testregex.dat locale.dat testmatch.dat
+TEST	testfnmatch (AT&T Research) 2008-04-30, catch
+NOTE	transcribed from the gnu glibc fnmatch() tests : 2008-05-15
+NOTE	"en_US.UTF-8" locale
+NOTE	"C" locale
+NOTE	transcribed from the gnu glibc testfnm.c
+TEST	testfnmatch, 462 tests, 0 errors
+TEST	testfnmatch testregex (AT&T Research) 2008-04-30, catch
+NOTE	X/Open regex tests 2008-04-30
+NOTE	skipping lines 1537-1540
+TEST	testfnmatch testregex, 100 tests, 0 errors
+TEST	testfnmatch locale (AT&T Research) 2008-04-30, catch
+NOTE	X/Open regex locale tests 2008-05-15
+NOTE	"debug" locale
+NOTE	"C" locale
+NOTE	"en_US.UTF-8" locale
+NOTE	"C" locale
+NOTE	"es_ES" locale
+NOTE	locale does not support [[.ch.]] ligature: skipping lines 2406-2446
+NOTE	"C" locale
+TEST	testfnmatch locale, 122 tests, 0 errors
+TEST	testfnmatch testmatch (AT&T Research) 2008-04-30, catch
+NOTE	strmatch and strgrpmatch tests 2005-03-30
+NOTE	skipping lines 2681-2728
+TEST	testfnmatch testmatch, 184 tests, 0 errors
++p+ testmatch -c testregex.dat locale.dat testmatch.dat
+TEST	testmatch testregex (AT&T Research) 2005-05-20, catch
+NOTE	X/Open regex tests 2008-04-30
+NOTE	skipping lines 965-968
+TEST	testmatch testregex, 108 tests, 0 errors
+TEST	testmatch locale (AT&T Research) 2005-05-20, catch
+NOTE	X/Open regex locale tests 2008-05-15
+NOTE	"debug" locale
+NOTE	"C" locale
+NOTE	"en_US.UTF-8" locale
+NOTE	"C" locale
+NOTE	"es_ES" locale
+NOTE	locale does not support [[.ch.]] ligature: skipping lines 1834-1874
+NOTE	"C" locale
+TEST	testmatch locale, 132 tests, 0 errors
+TEST	testmatch (AT&T Research) 2005-05-20, catch
+NOTE	strmatch and strgrpmatch tests 2005-03-30
+TEST	testmatch, 259 tests, 0 errors
++p+ testregex -c testregex.dat locale.dat testmatch.dat testsub.dat testdecomp.dat rxposix.dat zero.dat regex++.dat iso8859-1.dat perl.dat minimal.dat escape.dat group.dat nullsubexpr.dat subexpr.dat nested.dat austin.dat xopen.dat pcre-1.dat pcre-2.dat pcre-3.dat pcre-4.dat pcre-5.dat cut.dat libtre.dat reg.dat repetition.dat rightassoc.dat forcedassoc.dat noop.dat
+TEST	testregex testregex (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	X/Open regex tests 2008-04-30
+TEST	testregex testregex, 4172 tests, 0 errors
+TEST	testregex locale (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	X/Open regex locale tests 2008-05-15
+NOTE	"debug" locale
+NOTE	"C" locale
+NOTE	"en_US.UTF-8" locale
+NOTE	"C" locale
+NOTE	"es_ES" locale
+NOTE	locale does not support [[.ch.]] ligature: skipping lines 224-264
+NOTE	"C" locale
+TEST	testregex locale, 806 tests, 0 errors
+TEST	testregex testmatch (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	strmatch and strgrpmatch tests 2005-03-30
+TEST	testregex testmatch, 652 tests, 0 errors
+TEST	testregex testsub (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	regsubcomp and regsubexec tests 2008-02-14
+TEST	testregex testsub, 207 tests, 0 errors
+TEST	testregex testdecomp (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	regdecomp tests 2007-03-19
+TEST	testregex testdecomp, 13 tests, 0 errors
+TEST	testregex rxposix (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	generated from Tom Lord's rx posix-test-cases.h 2002-04-09
+TEST	testregex rxposix, 812 tests, 0 errors
+TEST	testregex zero (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	regex zero width extension tests 2001-05-25
+TEST	testregex zero, 430 tests, 0 errors
+TEST	testregex regex++ (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	translated from the Regex++ tests.txt by cvtregex++.c 2001-05-16
+NOTE	regex++ \' not supported: skipping lines 397-403
+NOTE	[[.ligature.]] not supported: skipping lines 680-699
+NOTE	regex++ \l not supported: skipping lines 716-728
+NOTE	regex++ \Q not supported: skipping lines 742-746
+NOTE	regex++ \C not supported: skipping lines 748-749
+NOTE	regex++ \X not supported: skipping lines 750-756
+NOTE	perl \G not supported: skipping lines 771-776
+TEST	testregex regex++, 1387 tests, 0 errors
+TEST	testregex iso8859-1 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	regex iso8859-1 tests 2008-05-14
+NOTE	"es_ES.ISO-8859-1" locale
+NOTE	locale does not support ISO-8859-1 8 bit Icelandic eth alpha: skipping lines 33-38
+NOTE	"C" locale
+TEST	testregex iso8859-1, 47 tests, 0 errors
+TEST	testregex perl (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the perl re_tests 2001-05-25
+TEST	testregex perl, 681 tests, 0 errors
+TEST	testregex minimal (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	REG_MINIMAL tests 2003-06-09
+NOTE	"es" locale
+NOTE	"C" locale
+TEST	testregex minimal, 378 tests, 0 errors
+TEST	testregex escape (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	the great escapes
+TEST	testregex escape, 97 tests, 0 errors
+TEST	testregex group (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	perl group extension tests 2001-06-18
+TEST	testregex group, 84 tests, 0 errors
+TEST	testregex nullsubexpr (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	null subexpression matches : 2002-06-06
+TEST	testregex nullsubexpr, 185 tests, 0 errors
+TEST	testregex subexpr (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	subexpressions 2002-04-17
+TEST	testregex subexpr, 64 tests, 0 errors
+TEST	testregex nested (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	(?%...) nested matched pair regex tests 2005-05-28
+TEST	testregex nested, 1245 tests, 0 errors
+TEST	testregex austin (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	www.opengroup.org austin-group-l mailing list examples 2002-08-07
+TEST	testregex austin, 64 tests, 0 errors
+TEST	testregex xopen (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	x/open examples 2002-04-17
+TEST	testregex xopen, 37 tests, 0 errors
+TEST	testregex pcre-1 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the pcre testdata/testinput1 2001-06-15
+TEST	testregex pcre-1, 1595 tests, 0 errors
+TEST	testregex pcre-2 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the pcre testdata/testinput2 2001-06-15
+TEST	testregex pcre-2, 707 tests, 0 errors
+TEST	testregex pcre-3 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+TEST	testregex pcre-3, 2167 tests, 0 errors
+TEST	testregex pcre-4 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the pcre testdata/testinput4 2008-05-14
+NOTE	"es_ES.ISO-8859-1" locale
+TEST	testregex pcre-4, 77 tests, 0 errors
+TEST	testregex pcre-5 (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the pcre testdata/testinput5 2001-06-15
+TEST	testregex pcre-5, 173 tests, 0 errors
+TEST	testregex cut (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	perl cut tests 2002-06-05
+TEST	testregex cut, 82 tests, 0 errors
+TEST	testregex libtre (AT&T Research) 2008-05-15, catch
+NOTE	regex (AT&T Research) 2008-05-11
+NOTE	converted from the libtre 0.3.1 retest.c regression tests : 2002-03-27 :
+libtre.dat:151: [--Z]+ versus !ABC-./XYZ~ ERE failed: match was: (0,11) expected: (1,10)
+libtre.dat:152: [*--] versus - BRE regexec failed: expected: (0,1)
+libtre.dat:153: [*--] versus * BRE regexec failed: expected: (0,1)
+libtre.dat:154: [*--Z]+ versus !+*,---ABC ERE regexec failed: expected: (1,7)
+bad test case libtre.dat:166: ERE locale nesting not supported
+make: *** exit code 1 making test.regex
+make: *** 1 action failed

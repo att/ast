@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -15,8 +15,6 @@
 *                           Florham Park NJ                            *
 *                                                                      *
 *                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -498,8 +496,7 @@ Codexmeth_t	codex_uu =
 	"[+bsd|ucb?BSD \buuencode\b(1).]"
 	"[+string?Encode into a string with no separators (base64 only).]"
 	"[+text?Encode \\n => \\r\\n, decode \\r\\n => \\n.]"
-	"[+(version)?codex-uu (AT&T Research) 2010-01-15]"
-	"[+(author)?Glenn Fowler <gsf@research.att.com>]",
+	"[-?\n@(#)$Id: codex-uu (AT&T Research) 2010-01-15 $\n]" USAGE_LICENSE,
 	CODEX_DECODE|CODEX_ENCODE|CODEX_UU,
 	0,
 	0,

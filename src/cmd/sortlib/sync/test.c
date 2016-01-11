@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -24,6 +24,7 @@
  */
 
 #include <ss.h>
+#include <ssexit.h>
 
 typedef struct State_s
 {
@@ -38,6 +39,7 @@ E00(int index, Rsobj_t* rp, Rsobj_t* dp, void** data)
 {
 	register State_t*	state;
 	char*			s;
+	int			x;
 	char			env[32];
 
 	if (!(state = (State_t*)*data))
@@ -51,7 +53,12 @@ E00(int index, Rsobj_t* rp, Rsobj_t* dp, void** data)
 		state->pretty = 'A';
 		strcpy(state->sp = (char*)(state + 1), s);
 		*data = state;
+		x = SS_EXIT_FIRST;
 	}
+	else if (rp == dp)
+		x = SS_EXIT_LAST;
+	else
+		x = SS_EXIT_MOST;
 	state->count++;
 	if (*state->sp)
 		switch (state->pretty = *state->sp++)
@@ -91,7 +98,7 @@ E00(int index, Rsobj_t* rp, Rsobj_t* dp, void** data)
 			state->status = RS_TERMINATE;
 			break;
 		}
-	sfprintf(sfstderr, "sort exit E%02d %lu %c [%u] \"%-.*s\"\n", index, state->count, state->pretty, rp->datalen, rp->datalen ? (rp->datalen - 1) : 0, rp->data);
+	sfprintf(sfstderr, "sort exit E%02d %lu %d %c [%u] \"%-.*s\"\n", index, state->count, x, state->pretty, rp->datalen, rp->datalen ? (rp->datalen - 1) : 0, rp->data);
 	return state->status;
 }
 

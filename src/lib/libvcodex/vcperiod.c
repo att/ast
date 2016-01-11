@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
@@ -33,21 +33,23 @@ ssize_t	dtsz;
 #endif
 {
 	Vcchar_t	*dt;
-	Vcsfxint_t	*dist, *peak, *lcp;
-	Vcsfxint_t	i, n, k, p, m, s, c, sz;
+	Vcinx_t		*dist, *lcp;
+	Vcinx_t		i, k, p, m, n, s, maxs, sz;
+	Vcinx_t		*peak, period;
 	Vcsfx_t		*sfx;
 
-#define PEAKBOUND	3 /* bound to check for local peaks */
-	if(!data || (sz = (Vcsfxint_t)dtsz) <= PEAKBOUND*PEAKBOUND)
+	if(!data || (sz = (Vcinx_t)dtsz) <= 16 /* too little data */ )
 		return -1;
 
-	/* compute suffix array and longest-common-prefix array */
-	if(!(lcp = (Vcsfxint_t*)calloc(1, sz*sizeof(Vcsfxint_t))) )
+	/* sfx is the indices of substrings sorted in lex order */
+	if(!(lcp = (Vcinx_t*)calloc(1, sz*sizeof(Vcinx_t))) )
 		return -1;
 	if(!(sfx = vcsfxsort(data, (size_t)sz)) )
 	{	free(lcp);
 		return -1;
 	}
+
+	/* lcp[] keeps lengths of longest common prefixes between adj elts in sfx */
 	for(dt = (Vcchar_t*)data, p = 0, i = 0; i < sz; ++i)
 	{	if(sfx->inv[i] == 0)
 			continue;
@@ -60,16 +62,16 @@ ssize_t	dtsz;
 	}
 
 	/* dist[k] counts number of matches at distance k */
-	dist = sfx->inv; memset(dist, 0, sz*sizeof(Vcsfxint_t));
-	c = vclogi(sz); /* bound search to save time */
+	dist = sfx->inv; memset(dist, 0, sz*sizeof(Vcinx_t));
+	maxs = 4*vclogi(sz); /* bound search to save time */
 	for(i = 0; i < sz; ++i)
-	{	for(m = 0, s = c, k = i+1; k < sz && s >= 0; ++k, --s)
+	{	for(m = 0, s = maxs, k = i+1; k < sz && s >= 0; ++k, --s)
 		{	if(lcp[k] == 0)
 				break;
 			if((m = sfx->idx[k] - sfx->idx[i]) > 0 ) /* match distance */
 				break;
 		}
-		for(n = 0, s = c, p = i-1; p >= 0 && s >= 0; --p, --s)
+		for(n = 0, s = maxs, p = i-1; p >= 0 && s >= 0; --p, --s)
 		{	if(lcp[p] == 0)
 				break;
 			if((n = sfx->idx[p] - sfx->idx[i]) > 0 ) /* match distance */
@@ -81,56 +83,61 @@ ssize_t	dtsz;
 			dist[n] += 1;
 	}
 
-	/* compute an array of candidate peaks */
-	peak = sfx->idx; memset(peak, 0, sz*sizeof(Vcsfxint_t));
+#define NEIGHBOR	2 /* #neighbors to check on each side */
+	peak = sfx->idx; memset(peak, 0, sz*sizeof(Vcinx_t));
 
-	/* initialize running sum of distances of a suitable neighborhood */
-	for(m = 0, i = 0; i < 2*PEAKBOUND+1; ++i)
-		m += dist[i];
+	maxs = 0; /* max #matches at any distance */
+	for(p = 0; p < sz/2; ++p)
+		if(dist[p] > maxs)
+			maxs = dist[p];
+	maxs = maxs/8 > 0 ? maxs/8 : maxs/4 > 0 ? maxs/4 : maxs/2 > 0 ? maxs/2 : maxs;
 
-	/* a peak is larger than the total sum of a small neighborhood around it */
-	for(n = sz - 2*PEAKBOUND, i = PEAKBOUND; i < n; ++i)
-	{	if(dist[i] > 2*(m - dist[i]) )
-			peak[i] = 1;
-		m = m - dist[i-PEAKBOUND] + dist[i+PEAKBOUND];
+	for(s = 0, p = 0; p < 2*NEIGHBOR+1; ++p)
+		s += dist[p]; /* total size of neighbors of p=NEIGHBOR */
+	for(p = NEIGHBOR; 2*p < sz; ++p ) /* a peak is > 2*(sum of neighbors) */
+	{	if(dist[p] >= maxs && dist[p] > 2*(s-dist[p]) )
+			peak[p] = 1;
+		s += dist[p+NEIGHBOR+1] - dist[p-NEIGHBOR];
 	}
-#ifdef DEBUG
-	for(i = 2; i < sz; ++i)
-	{	if(dist[i] <= 0)
-			continue;
-		DEBUG_PRINT(3,"%d: ",i); DEBUG_PRINT(3,"%d",dist[i]);
-		if(peak[i])
-			DEBUG_WRITE(3, "<p>", 3);
-		DEBUG_WRITE(3,"\n", 1);
-	}
-#endif
 
-	/* a period is a peak with multiples that have matches */
-	p = 0; m = 0; c = vclogi(sz);
-	for(i = PEAKBOUND; 2*i < sz; ++i)
-	{	if(!peak[i] || !peak[2*i])
+	period = 0; /* elect best period */
+	maxs = 2*vclogi(sz); /* a candidate period must have many repeats */
+	for(p = NEIGHBOR; 2*p < sz; ++p)
+	{	if(!peak[p] || dist[p] < dist[period]/8 )
 			continue;
-		for(s = 1, n = dist[i], k = i+i; k < sz; k += i)
-		{	if(dist[k] == 0)
-				continue;
-			else if(dist[k] > 2*n ) /* k is a better period */
-			{	n = 0;
-				break;
-			}
 
-			n += dist[k]; /* sum the weights */
-			if(peak[k])
-			{	s += 1; /* count peaks */
-				peak[k] = 0;
+		n = 1; /* count number of repeats */
+		for(s = 0, k = p+p; s < maxs && 2*k < sz; s += 1, k += p)
+			if(dist[k] > 0)
+				n += 1;
+		if(2*n < maxs) /* too few repeats to be a period */
+			continue;
+
+		if(period == 0)
+			period = p;
+		else
+		{	m = n = 0; /* count repeats for period and p */
+			for(k = 2; k*p < sz; ++k)
+			{	m += dist[k*period];
+				n += dist[k*p];
 			}
+			if(n > m)
+				period = p;
 		}
-
-		if(s > c && n > m )
-			{ p = i; m = n; c = s; }
 	}
 
-	/**/DEBUG_PRINT(2, "dtsz=%d, ", sz); DEBUG_PRINT(2, "period=%d\n", p);
+	if(period == 0) /* pick early peak unless something else dramatically better */
+	{	for(p = NEIGHBOR; 2*p < sz; ++p)
+		{	if(!peak[p] || dist[p] < maxs || dist[p] <= dist[period] )
+				continue;
+			else if(period == 0)
+				period = p;
+			else if((p%period) != 0 && dist[p] > (p/period)*dist[period] )
+				period = p;
+		}
+	}
+
 	free(lcp);
 	free(sfx);
-	return (ssize_t)p;
+	return (ssize_t)period;
 }

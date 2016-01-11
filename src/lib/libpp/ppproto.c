@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1986-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1986-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -282,6 +282,9 @@ strcopy(register char* s, register const char* t)
 	return s - 1;
 }
 
+#undef	stpcpy
+#define stpcpy(a,b)	strcopy((a),(b))
+
 #endif
 
 static void
@@ -290,7 +293,7 @@ proto_error(char* iob, int level, char* msg, char* arg)
 	register char*	p;
 	char		buf[1024];
 
-	p = strcopy(buf, "proto: ");
+	p = stpcpy(buf, "proto: ");
 	if (iob)
 	{
 		register Proto_t*	proto = (Proto_t*)(iob - sizeof(Proto_t));
@@ -300,20 +303,20 @@ proto_error(char* iob, int level, char* msg, char* arg)
 			if (proto->file)
 			{
 				*p++ = '"';
-				p = strcopy(p, proto->file);
+				p = stpcpy(p, proto->file);
 				*p++ = '"';
 				*p++ = ',';
 				*p++ = ' ';
 			}
-			p = strcopy(p, "line ");
+			p = stpcpy(p, "line ");
 			p = number(p, proto->line);
 		}
 		else if (proto->file)
-			p = strcopy(p, proto->file);
+			p = stpcpy(p, proto->file);
 	}
 	else
 	{
-		p = strcopy(p, msg);
+		p = stpcpy(p, msg);
 		msg = arg;
 		arg = 0;
 	}
@@ -323,12 +326,12 @@ proto_error(char* iob, int level, char* msg, char* arg)
 		*p++ = ' ';
 	}
 	if (level == 1)
-		p = strcopy(p, "warning: ");
-	p = strcopy(p, msg);
+		p = stpcpy(p, "warning: ");
+	p = stpcpy(p, msg);
 	if (arg)
 	{
 		*p++ = ' ';
-		p = strcopy(p, arg);
+		p = stpcpy(p, arg);
 	}
 	*p++ = '\n';
 	write(2, buf, p - buf);
@@ -372,9 +375,9 @@ linesync(register Proto_t* proto, register char* p, register long n)
 #endif
 	{
 #if PROTOMAIN
-		p = strcopy(p, "\n#line ");
+		p = stpcpy(p, "\n#line ");
 #else
-		p = strcopy(p, "\n# ");
+		p = stpcpy(p, "\n# ");
 #endif
 		p = number(p, n);
 		*p++ = '\n';
@@ -394,7 +397,7 @@ init(Proto_t* proto, char* op, int flags)
 
 	if (flags & INIT_DEFINE)
 	{
-		op = strcopy(op, "\
+		op = stpcpy(op, "\
 \n\
 #if !defined(__PROTO__)\n\
 #  if defined(__STDC__) || defined(__cplusplus) || defined(_proto) || defined(c_plusplus)\n\
@@ -456,7 +459,7 @@ init(Proto_t* proto, char* op, int flags)
 ");
 	}
 	else
-		op = strcopy(op, "\
+		op = stpcpy(op, "\
 \n\
 #if !defined(__PROTO__)\n\
 #include <prototyped.h>\n\
@@ -494,7 +497,7 @@ init(Proto_t* proto, char* op, int flags)
 				op--;
 				break;
 			case '%':
-				op = strcopy(op - 1, proto->package);
+				op = stpcpy(op - 1, proto->package);
 				continue;
 			default:
 				continue;
@@ -899,9 +902,9 @@ lex(register Proto_t* proto, register long flags)
 				if (flags & JUNK)
 				{
 					*(ip - 1) = 0;
-					op = strcopy(om, "/* ");
-					op = strcopy(op, im);
-					op = strcopy(op, " */\n");
+					op = stpcpy(om, "/* ");
+					op = stpcpy(op, im);
+					op = stpcpy(op, " */\n");
 				}
 				flags &= ~(DEFINE|DIRECTIVE|IDID|INDIRECT|JUNK|MATCH|SHARP|TYPEDEF);
 			}
@@ -911,9 +914,9 @@ lex(register Proto_t* proto, register long flags)
 				if ((flags & (DEFINE|SHARP)) == (DEFINE|SHARP))
 				{
 					*(ip - 1) = 0;
-					op = strcopy(om, "#if defined(__STDC__) || defined(__STDPP__)\n");
-					op = strcopy(op, im);
-					op = strcopy(op, "\n#else\n");
+					op = stpcpy(om, "#if defined(__STDC__) || defined(__STDPP__)\n");
+					op = stpcpy(op, im);
+					op = stpcpy(op, "\n#else\n");
 					bp = ip;
 					ip = im;
 					*op++ = *ip++;
@@ -924,7 +927,7 @@ lex(register Proto_t* proto, register long flags)
 							while (*--op == ' ' || *op == '\t');
 							if (*ip == '#')
 							{
-								op = strcopy(op + 1, "/**/");
+								op = stpcpy(op + 1, "/**/");
 								while (*++ip == ' ' || *ip == '\t');
 							}
 							else
@@ -939,7 +942,7 @@ lex(register Proto_t* proto, register long flags)
 							}
 						}
 					ip = bp;
-					op = strcopy(op, "\n#endif\n");
+					op = stpcpy(op, "\n#endif\n");
 					op = linesync(proto, op, proto->line);
 				}
 				flags &= ~(DEFINE|DIRECTIVE|IDID|INDIRECT|MATCH|OTHER|SHARP|SKIP|TOKENS|TYPEDEF);
@@ -1014,7 +1017,7 @@ lex(register Proto_t* proto, register long flags)
 				flags |= SKIP;
 				SYNC();
 				line = proto->line;
-				op = strcopy(op - 6, "__INLINE__");
+				op = stpcpy(op - 6, "__INLINE__");
 				SYNC();
 			}
 			break;
@@ -1285,7 +1288,7 @@ lex(register Proto_t* proto, register long flags)
 							while (*++ip == ' ' || *ip == '\t');
 							if (*ip++ == '<' && *ip++ == 's' && *ip++ == 't' && *ip++ == 'd' && *ip++ == 'a' && *ip++ == 'r' && *ip++ == 'g' && *ip++ == '.' && *ip++ == 'h' && *ip++ == '>')
 							{
-								op = strcopy(op, "\
+								op = stpcpy(op, "\
 if !defined(va_start)\n\
 #if defined(__STDARG__)\n\
 #include <stdarg.h>\n\
@@ -1311,9 +1314,9 @@ if !defined(va_start)\n\
 								while (*++t == ' ' || *t == '\t');
 								if (*t == '_' && *(t + 1) == '_')
 								{
-									op = strcopy(op, "undef __MANGLE__\n");
+									op = stpcpy(op, "undef __MANGLE__\n");
 									op = linesync(proto, op, proto->line);
-									op = strcopy(op, "#define __MANGLE__ __LINKAGE__");
+									op = stpcpy(op, "#define __MANGLE__ __LINKAGE__");
 									break;
 								}
 							}
@@ -1326,9 +1329,9 @@ if !defined(va_start)\n\
 							while (*++ip == ' ' || *ip == '\t');
 							if (*ip == 'e' && *++ip == 'x' && *++ ip == 't' && *++ip == 'e' && *++ip == 'r' && *++ip == 'n' && (*++ip == ' ' || *ip == '\t' || *ip == '\n' || *ip == '\r'))
 							{
-								op = strcopy(op, "undef __MANGLE__\n");
+								op = stpcpy(op, "undef __MANGLE__\n");
 								op = linesync(proto, op, proto->line);
-								op = strcopy(op, "#define __MANGLE__ __LINKAGE__");
+								op = stpcpy(op, "#define __MANGLE__ __LINKAGE__");
 								break;
 							}
 							flags |= DEFINE|MATCH;
@@ -1355,7 +1358,7 @@ if !defined(va_start)\n\
 						if (args)
 						{
 							v = number(op, args < 0 ? -args : args);
-							v = strcopy(v, " argument actual/formal mismatch");
+							v = stpcpy(v, " argument actual/formal mismatch");
 							*v++ = ' ';
 							v = memcopy(v, im, ie - im);
 							*v = 0;
@@ -1459,12 +1462,12 @@ if !defined(va_start)\n\
 				}
 #if _s5r4_386_compiler_bug_fixed_
 				if (op <= om || *(op - 1) == ',' && (*op++ = ' '))
-					op = strcopy(op, "int");
+					op = stpcpy(op, "int");
 #else
 				if (op <= om)
-					op = strcopy(op, "int");
+					op = stpcpy(op, "int");
 				else if (*(op - 1) == ',')
-					op = strcopy(op, " int");
+					op = stpcpy(op, " int");
 #endif
 				while (v < m)
 					PUTCHR(*v++);
@@ -1522,7 +1525,7 @@ if !defined(va_start)\n\
 		else PUTCHR(*ie++);
 	}
 						/*...INDENT*/
-						if (op <= om) op = strcopy(op, "void");
+						if (op <= om) op = stpcpy(op, "void");
 						PUTCHR(')');
 						if (flags & EXTERN)
 						{
@@ -1544,7 +1547,7 @@ if !defined(va_start)\n\
 				else if ((flags & (MATCH|PLUSONLY|SKIP|TOKENS)) == (MATCH|TOKENS))
 				{
 					line = proto->line;
-					op = strcopy(om, " __PARAM__(");
+					op = stpcpy(om, " __PARAM__(");
 					op = memcopy(op, im, ie - im);
 					PUTCHR(',');
 					PUTCHR(' ');
@@ -1554,7 +1557,7 @@ if !defined(va_start)\n\
 					{
 						if ((vc = ie - im + 1) > sizeof(proto->variadic)) vc = sizeof(proto->variadic);
 						memcopy(proto->variadic, im, vc);
-						op = strcopy(op, "va_alist)) __OTORP__(va_dcl)\n{");
+						op = stpcpy(op, "va_alist)) __OTORP__(va_dcl)\n{");
 					}
 					else
 					{
@@ -1621,7 +1624,7 @@ if !defined(va_start)\n\
 					if (!(flags & SKIP))
 					{
 						flags |= SKIP;
-						proto->op = strcopy(op, " __OTORP__(");
+						proto->op = stpcpy(op, " __OTORP__(");
 						proto->ip = im + 1;
 						n = *(ie - 1);
 						*(ie - 1) = ';';
@@ -1752,7 +1755,7 @@ if !defined(va_start)\n\
 							else if (n == 10) memcopy(aom, "(__VARARG__))", 13);
 							else
 							{
-								ko = strcopy(aom, " __PROTO__(");
+								ko = stpcpy(aom, " __PROTO__(");
 								ko = memcopy(ko, aim, aie - aim);
 								*ko = ')';
 								if (++ko >= om)
@@ -1781,17 +1784,17 @@ if !defined(va_start)\n\
 					else if (flags & PLUSPLUS)
 					{
 						op = om;
-						if (!(flags & TOKENS)) op = strcopy(op, "(...)");
+						if (!(flags & TOKENS)) op = stpcpy(op, "(...)");
 						else op = memcopy(op, im, ie - im);
 						PUTCHR(c);
 					}
 					else
 					{
-						if (flags & DECLARE) op = strcopy(om, "()");
-						else if (!(flags & TOKENS)) op = strcopy(om, "(__VARARG__)");
+						if (flags & DECLARE) op = stpcpy(om, "()");
+						else if (!(flags & TOKENS)) op = stpcpy(om, "(__VARARG__)");
 						else
 						{
-							op = strcopy(om, " __PROTO__(");
+							op = stpcpy(om, " __PROTO__(");
 							op = memcopy(op, im, ie - im);
 							PUTCHR(')');
 						}
@@ -1841,12 +1844,12 @@ if !defined(va_start)\n\
 				flags |= MANGLE;
 				if (!(flags & PLUSONLY) || proto->package)
 				{
-					op = strcopy(op, " __MANGLE__");
+					op = stpcpy(op, " __MANGLE__");
 					if (proto->package)
 					{
-						op = strcopy(op - 1, proto->package);
+						op = stpcpy(op - 1, proto->package);
 						func = op + 1;
-						op = strcopy(op, "_DATA__");
+						op = stpcpy(op, "_DATA__");
 					}
 				}
 				else
@@ -1871,7 +1874,7 @@ if !defined(va_start)\n\
 			{
 				flags &= ~MATCH;
 				line = proto->line;
-				op = strcopy(op - 8, "__VA_START__");
+				op = stpcpy(op - 8, "__VA_START__");
 				SYNC();
 				for (;;)
 				{
@@ -1904,7 +1907,7 @@ if !defined(va_start)\n\
 					v = "ap";
 					n = 2;
 				}
-				op = strcopy(op, " __OTORP__(");
+				op = stpcpy(op, " __OTORP__(");
 				proto->ip = proto->variadic;
 				proto->op = op;
 				flags &= ~MATCH;
@@ -1927,15 +1930,15 @@ if !defined(va_start)\n\
 								if (!(flags & VARIADIC2))
 								{
 									op = memcopy(op, m, e - m);
-									op = strcopy(op, " = ");
+									op = stpcpy(op, " = ");
 								}
-								op = strcopy(op, "va_arg(");
+								op = stpcpy(op, "va_arg(");
 								op = memcopy(op, v, n);
 								PUTCHR(',');
 								PUTCHR(' ');
 								if (m > bp) op = memcopy(op, bp, m - bp);
-								else op = strcopy(op, "int ");
-								if (group > 1) op = strcopy(op, ")()");
+								else op = stpcpy(op, "int ");
+								if (group > 1) op = stpcpy(op, ")()");
 								else op = memcopy(op, e, proto->ip - e - 1);
 								PUTCHR(')');
 								PUTCHR(';');
@@ -1953,15 +1956,15 @@ if !defined(va_start)\n\
 								if (!(flags & VARIADIC2))
 								{
 									op = memcopy(op, m, e - m);
-									op = strcopy(op, " = ");
+									op = stpcpy(op, " = ");
 								}
-								op = strcopy(op, "va_arg(");
+								op = stpcpy(op, "va_arg(");
 								op = memcopy(op, v, n);
 								PUTCHR(',');
 								PUTCHR(' ');
 								if (m > bp) op = memcopy(op, bp, m - bp);
-								else op = strcopy(op, "int ");
-								if (group > 1) op = strcopy(op, ")()");
+								else op = stpcpy(op, "int ");
+								if (group > 1) op = stpcpy(op, ")()");
 								else op = memcopy(op, e, proto->ip - e - 1);
 								PUTCHR(')');
 								PUTCHR(';');
@@ -1985,7 +1988,7 @@ if !defined(va_start)\n\
 					}
 					break;
 				}
-				op = strcopy(op, ")");
+				op = stpcpy(op, ")");
 				flags |= VARIADIC2;
 				proto->line = line;
 				call = 0;
@@ -2062,7 +2065,7 @@ if !defined(va_start)\n\
 					while ((c = *--m) >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
 						*--t = c;
 					c = *t;
-					strcopy(m + 1, "(unsigned)");
+					stpcpy(m + 1, "(unsigned)");
 					*t = c;
 					break;
 				}
@@ -2454,9 +2457,9 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 			if (flags & PROTO_CLASSIC)
 			{
 				*proto->op++ = '#';
-				proto->op = strcopy(proto->op, PRAGMADIR);
+				proto->op = stpcpy(proto->op, PRAGMADIR);
 				*proto->op++ = ' ';
-				proto->op = strcopy(proto->op, pragmas[0].name);
+				proto->op = stpcpy(proto->op, pragmas[0].name);
 				*proto->op++ = '\n';
 			}
 			else
@@ -2468,15 +2471,15 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 		{
 			if (proto->flags & YACC)
 			{
-				proto->op = strcopy(proto->op, "\n%{\n" + !notice);
-				proto->op = strcopy(proto->op, GENERATED);
-				proto->op = strcopy(proto->op, "%}\n");
+				proto->op = stpcpy(proto->op, "\n%{\n" + !notice);
+				proto->op = stpcpy(proto->op, GENERATED);
+				proto->op = stpcpy(proto->op, "%}\n");
 			}
 			else
 			{
 				if (n || notice || options)
 					*proto->op++ = '\n';
-				proto->op = strcopy(proto->op, GENERATED);
+				proto->op = stpcpy(proto->op, GENERATED);
 				if (n)
 					proto->op = linesync(proto, proto->op, proto->line);
 				else if (proto->flags & (INIT_DEFINE|INIT_INCLUDE))
@@ -2585,7 +2588,7 @@ pppread(char* iob)
 #endif
 			lex(proto, proto->flags);
 			if ((proto->flags & (ERROR|MORE)) == ERROR)
-				proto->op = strcopy(proto->op, "/* NOTE: some constructs may not have been converted */\n");
+				proto->op = stpcpy(proto->op, "/* NOTE: some constructs may not have been converted */\n");
 		}
 		n = proto->op - proto->ob;
 		proto->op = proto->ob;

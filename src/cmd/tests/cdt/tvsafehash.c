@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -17,6 +17,10 @@
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
+#ifndef TMETHOD
+#define TMETHOD		Dtset /* hash table with chaining */
+#endif
+
 #include	"dttest.h"
 
 #include	<vmalloc.h>
@@ -38,10 +42,11 @@
 #define N_OBJ		20000	/* total number of objects	*/
 #define MEMSIZE		(N_OBJ*2*sizeof(Obj_t) + sizeof(Void_t*)*1024*1024 )
 
-#define	DT_DATA		1	/* data section of dictionary	*/
-#define DT_PROCESS	2	/* count of started processes	*/
-
-#define DTMETHOD	Dtset	/* hash table with chaining	*/
+#define	CDT_DATA	1	/* data section of dictionary	*/
+typedef struct _cdtdata_s
+{	Void_t*		data;
+	int		process;
+} Cdtdata_t;
 
 /* a persistent object is a pair of string and decimal number */
 typedef struct obj_s
@@ -70,34 +75,33 @@ Void_t* mmmemory(Dt_t* dt, Void_t* data, size_t size, Dtdisc_t* disc)
 /* handle dictionary events */
 static int mmevent(Dt_t* dt, int type, Void_t* data, Dtdisc_t* disc)
 {
-	Void_t		*ctrl;
+	Cdtdata_t	*cdtdt;
 	Mmdisc_t	*mmdc = (Mmdisc_t*)disc;
 
+	if(!(cdtdt = vmuserdata(mmdc->vm, CDT_DATA, sizeof(Cdtdata_t))) )
+		terror("Can't get shared memory data");
 	if(type == DT_OPEN)
-	{	ctrl = vmmvalue(mmdc->vm, DT_DATA, (Void_t*)0, VM_MMGET);
-		if(data) /* at the start of a dictionary opening */
-		{	if(!ctrl) /* data area not yet constructed */
+	{	if(data) /* at the start of a dictionary opening */
+		{	if(!asogetptr(&cdtdt->data)) /* data area not yet constructed */
 				return 0;
 			else /* got data area, just return it */
-			{	*((Void_t**)data) = ctrl;
+			{	*((Void_t**)data) = cdtdt->data;
 				return 1;
 			}
 		}
 		else	return 0;
 	}
 	else if(type == DT_ENDOPEN)  /* at the end of a dictionary opening */
-	{	ctrl = vmmvalue(mmdc->vm, DT_DATA, (Void_t*)0, VM_MMGET);
-		if(!ctrl) /* data area just constructed, record it */
-		{	ctrl = vmmvalue(mmdc->vm, DT_DATA, (Void_t*)dt->data, VM_MMSET);
-			return ctrl == (Void_t*)dt->data ? 0 : -1;
+	{	if(!asogetptr(&cdtdt->data)) /* save data area for future references */
+		{	asocasptr(&cdtdt->data, NIL(Void_t*), (Void_t*)dt->data);
+			return asogetptr(&cdtdt->data) == (Void_t*)dt->data ? 0 : -1;
 		}
 		else	return 0; /* data area existed */
 	}
-	else if(type == DT_CLOSE)
+	else if(type == DT_CLOSE) /* starting to close dictionary */
 		return 1; /* make sure no objects get deleted */
 	else if(type == DT_ENDCLOSE) /* at end of closing, close the memory region */
-	{	vmmrelease(mmdc->vm, 0);
-		vmclose(mmdc->vm);
+	{	vmclose(mmdc->vm);
 		mmdc->vm = NIL(Vmalloc_t*);
 		return 0; /* all done */
 	}
@@ -111,9 +115,10 @@ static int mmcompare(Dt_t* dt, Void_t* key1, Void_t* key2, Dtdisc_t* disc)
 }
 
 /* open a shared dictionary based on a common backing store */
-static Dt_t* opendictionary(int num, pid_t pid, char* store)
+static Dt_t* opendictionary(int num, pid_t pid, char* store, int type )
 {
 	Vmalloc_t	*vm;
+	Vmdisc_t	*vmdc;
 	Dt_t		*dt;
 	ssize_t		size;
 	int		proj;
@@ -121,8 +126,10 @@ static Dt_t* opendictionary(int num, pid_t pid, char* store)
 
 	/* create/reopen the region backed by a file using mmap */
 	proj = store == Mapstore ? -1 : 1;
-	if(!(vm = vmmopen(store, proj, MEMSIZE)) )
-		terror("Process[num=%d,pid=%d]: Couldn't create vmalloc region", num, pid);
+	if(!(vmdc = vmdcshare(store, proj, MEMSIZE, type)) )
+		terror("[store=%s]: Failed creating discipline for shared memory", store);
+	if(!(vm = vmopen(vmdc, Vmbest, 0)) )
+		terror("[store=%s]: Failed opening shared vmalloc region", store);
 
 	/* discipline for objects identified by their decimal values */
 	mmdc = store == Mapstore ? &Mapdisc : &Shmdisc;
@@ -138,7 +145,7 @@ static Dt_t* opendictionary(int num, pid_t pid, char* store)
 	mmdc->store = store;
 	mmdc->vm = vm;
 
-	if(!(dt = dtopen(&mmdc->disc, DTMETHOD)) ) /* open dictionary with hash-chain */
+	if(!(dt = dtopen(&mmdc->disc, TMETHOD)) )
 		terror("Process[num=%d,pid=%d]: Can't open dictionary for %s", num, pid, store);
 	dtcustomize(dt, DT_SHARE, 1); /* turn on concurrent access mode */
 
@@ -146,7 +153,7 @@ static Dt_t* opendictionary(int num, pid_t pid, char* store)
 }
 
 /* Creating a subprocess */
-static pid_t makeprocess(char* proc, int num, char* aso)
+static pid_t makeprocess(char* proc, int num)
 {
 	int	i;
 	pid_t	pid;
@@ -161,8 +168,6 @@ static pid_t makeprocess(char* proc, int num, char* aso)
 	{	sprintf(text, "%d", num);
 		i = 0;
 		argv[i++] = proc;
-		if (aso)
-			argv[i++] = aso;
 		argv[i++] = "--child";
 		argv[i++] = Mapstore;
 		argv[i++] = Shmstore;
@@ -178,6 +183,7 @@ static pid_t makeprocess(char* proc, int num, char* aso)
 static int pingpong(char* procnum)
 {
 	int		k, p, num, dir, n_move;
+	Cdtdata_t	*cdtdt;
 	Obj_t		obj, *o;
 	Dt_t		*shmdt, *mapdt, *insdt, *deldt;
 	Mmdisc_t	*mapdc, *shmdc;
@@ -188,19 +194,22 @@ static int pingpong(char* procnum)
 		terror("Process[num=%d]: can't get process id", num);
 
 	/* open the shared dictionaries */
-	if(!(mapdt = opendictionary(num, pid, Mapstore)) )
+	if(!(mapdt = opendictionary(num, pid, Mapstore, 1)) )
 		terror("Process[num=%d,pid=%d]: can't open dictionary for %s", num, pid, Mapstore);
 	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NIL(Dtdisc_t*), 0)) )
 		terror("Process[num=%d,pid=%d]: can't get dictionary discipline", num, pid);
-	if(!(shmdt = opendictionary(num, pid, Shmstore)) )
+	if(!(shmdt = opendictionary(num, pid, Shmstore, 1)) )
 		terror("Process[num=%d,pid=%d]: can't open dictionary for %s", num, pid, Shmstore);
 	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NIL(Dtdisc_t*), 0)) )
 		terror("Process[num=%d,pid=%d]: can't get dictionary discipline", num, pid);
 
 	/* wait for all to get going first */
-	p = (int)((long)vmmvalue(mapdc->vm, DT_PROCESS, (Void_t*)1, VM_MMADD)); 
+	if(!(cdtdt = vmuserdata(mapdc->vm, CDT_DATA, sizeof(Cdtdata_t))) )
+		terror("Process[num=%d,pid=%d]: can't get process count", num, pid);
+	
+	p = asoaddint(&cdtdt->process, 1);
 	for(k = 0; p < N_CONCUR; asorelax(1<<k), k = (k+1)&07 ) /* wait until all inserters are running */
-		p = (int)((long)vmmvalue(mapdc->vm, DT_PROCESS, (Void_t*)0, VM_MMGET));
+		p = asogetint(&cdtdt->process);
 	tinfo("Process[num=%d,pid=%d]: ready to go", num, pid);
 
 	/* delete from one and insert to the other */
@@ -229,12 +238,10 @@ tmain()
 {
 	pid_t		cpid[N_CONCUR], ppid, pid;
 	size_t		k, p;
-	char		*aso;
 	Dt_t		*mapdt, *shmdt;
 	Mmdisc_t	*mapdc, *shmdc;
 	Obj_t		*os, *om, obj;
 
-	aso = taso(ASO_PROCESS);
 	if(k = tchild())
 	{	Mapstore = argv[k++];
 		Shmstore = argv[k++];
@@ -247,18 +254,16 @@ tmain()
 	(void)unlink(Mapstore); 
 	(void)unlink(Shmstore); 
 
-	tinfo("\tParent[pid=%d]: initializing shared dictionaries for %s", ppid, aso);
-	if(!(mapdt = opendictionary(0, ppid, Mapstore)) )
+	tinfo("\tParent[pid=%d]: initializing shared dictionaries", ppid);
+	if(!(mapdt = opendictionary(0, ppid, Mapstore, -1)) )
 		terror("Parent[pid=%d]: Can't open dictionary for %s", ppid, Mapstore);
 	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NIL(Dtdisc_t*), 0)) )
 		terror("Parent[pid=%d]: Can't get discipline for %s", ppid, Mapstore);
-	vmmrelease(mapdc->vm, 1); /* to remove file on parent exit */
 
-	if(!(shmdt = opendictionary(0, ppid, Shmstore)) )
+	if(!(shmdt = opendictionary(0, ppid, Shmstore, -1)) )
 		terror("Parent[pid=%d]: Can't open dictionary for %s", ppid, Shmstore);
 	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NIL(Dtdisc_t*), 0)) )
 		terror("Parent[pid=%d]: Can't get discipline for %s", ppid, Shmstore);
-	vmmrelease(shmdc->vm, 1);  /* to remove shmid on parent exit */
 
 	for(k = 0; k < N_OBJ; ++k)
 	{	if(random()%2 == 0)
@@ -279,7 +284,7 @@ tmain()
 
 	tinfo("\tParent[pid=%d]: creating pingpong subprocesses", ppid);
 	for(p = 0; p < N_CONCUR; ++p )
-		if((cpid[p] = makeprocess(argv[0], p, aso)) < 0 )
+		if((cpid[p] = makeprocess(argv[0], p)) < 0 )
 			terror("Parent[pid=%d]: Could not make process %d", ppid, p);
 	if (twait(cpid, N_CONCUR))
 		terror("workload subprocess error");

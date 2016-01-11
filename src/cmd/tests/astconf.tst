@@ -13,7 +13,9 @@ TEST 01 synthesized getconf
 			print :\$_AST_FEATURES:
 			getconf PATH_RESOLVE - 0
 			print :\$_AST_FEATURES:"'
-		OUTPUT - $'::\n:PATH_RESOLVE - metaphysical:\n:PATH_RESOLVE - 0:'
+		OUTPUT - $':CONFORMANCE - ast:
+:CONFORMANCE - ast PATH_RESOLVE - metaphysical:
+:CONFORMANCE - ast PATH_RESOLVE - 0:'
 
 	EXEC -c '
 		_AST_FEATURES="CONFORMANCE = standard" $SHELL -c "
@@ -30,7 +32,9 @@ TEST 01 synthesized getconf
 			print :\$_AST_FEATURES:
 			getconf PATH_RESOLVE - 0
 			print :\$_AST_FEATURES:"'
-		OUTPUT - $':PATH_RESOLVE - logical:\n:PATH_RESOLVE - metaphysical:\n:PATH_RESOLVE - 0:'
+		OUTPUT - $':PATH_RESOLVE - logical CONFORMANCE - ast:
+:CONFORMANCE - ast PATH_RESOLVE - metaphysical:
+:CONFORMANCE - ast PATH_RESOLVE - 0:'
 
 	EXEC -c '
 		_AST_FEATURES="PATH_RESOLVE - logical PATH_test - 1" $SHELL -c "
@@ -39,7 +43,9 @@ TEST 01 synthesized getconf
 			print :\$_AST_FEATURES:
 			getconf PATH_RESOLVE - 0
 			print :\$_AST_FEATURES:"'
-		OUTPUT - $':PATH_RESOLVE - logical PATH_test - 1:\n:PATH_test - 1 PATH_RESOLVE - metaphysical:\n:PATH_test - 1 PATH_RESOLVE - 0:'
+		OUTPUT - $':PATH_RESOLVE - logical PATH_test - 1 CONFORMANCE - ast:
+:PATH_test - 1 CONFORMANCE - ast PATH_RESOLVE - metaphysical:
+:PATH_test - 1 CONFORMANCE - ast PATH_RESOLVE - 0:'
 
 	EXEC -c '
 		_AST_FEATURES="PATH_test - 1 PATH_RESOLVE - logical" $SHELL -c "
@@ -48,7 +54,9 @@ TEST 01 synthesized getconf
 			print :\$_AST_FEATURES:
 			getconf PATH_RESOLVE - 0
 			print :\$_AST_FEATURES:"'
-		OUTPUT - $':PATH_test - 1 PATH_RESOLVE - logical:\n:PATH_test - 1 PATH_RESOLVE - metaphysical:\n:PATH_test - 1 PATH_RESOLVE - 0:'
+		OUTPUT - $':PATH_test - 1 PATH_RESOLVE - logical CONFORMANCE - ast:
+:PATH_test - 1 CONFORMANCE - ast PATH_RESOLVE - metaphysical:
+:PATH_test - 1 CONFORMANCE - ast PATH_RESOLVE - 0:'
 
 	EXEC -c '
 		_AST_FEATURES="PATH_test - 1 PATH_RESOLVE - logical PATH_aha - 2" $SHELL -c "
@@ -57,7 +65,9 @@ TEST 01 synthesized getconf
 			print :\$_AST_FEATURES:
 			getconf PATH_RESOLVE - 0
 			print :\$_AST_FEATURES:"'
-		OUTPUT - $':PATH_test - 1 PATH_RESOLVE - logical PATH_aha - 2:\n:PATH_test - 1 PATH_aha - 2 PATH_RESOLVE - metaphysical:\n:PATH_test - 1 PATH_aha - 2 PATH_RESOLVE - 0:'
+		OUTPUT - $':PATH_test - 1 PATH_RESOLVE - logical PATH_aha - 2 CONFORMANCE - ast:
+:PATH_test - 1 PATH_aha - 2 CONFORMANCE - ast PATH_RESOLVE - metaphysical:
+:PATH_test - 1 PATH_aha - 2 CONFORMANCE - ast PATH_RESOLVE - 0:'
 
 	EXEC -c '
 		_AST_FEATURES="UNIVERSE = att" $SHELL -c "

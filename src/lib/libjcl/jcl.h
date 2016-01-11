@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -40,23 +40,27 @@
 #define JCL_IMPORT		0x00000004
 #define JCL_LISTAUTOEDITS	0x00000008
 #define JCL_LISTCOUNTS		0x00000010
-#define JCL_LISTEXEC		0x00000020
-#define JCL_LISTINPUTS		0x00000040
-#define JCL_LISTOUTPUTS		0x00000080
-#define JCL_LISTPROGRAMS	0x00000100
-#define JCL_LISTSCRIPTS		0x00000200
-#define JCL_LISTVARIABLES	0x00000400
-#define JCL_MAPPED		0x00000800
-#define JCL_MARKLENGTH		0x00001000
-#define JCL_PARAMETERIZE	0x00002000
-#define JCL_RECURSE		0x00004000
-#define JCL_SCOPE		0x00008000
-#define JCL_STANDARD		0x00010000
-#define JCL_SUBDIR		0x00020000
-#define JCL_TRACE		0x00040000
-#define JCL_VERBOSE		0x00080000
-#define JCL_WARN		0x00100000
-#define JCL_GDG			0x00200000
+#define JCL_LISTDD		0x00000020
+#define JCL_LISTEXEC		0x00000040
+#define JCL_LISTINPUTS		0x00000080
+#define JCL_LISTJOBS		0x00000100
+#define JCL_LISTOUTPUTS		0x00000200
+#define JCL_LISTPARMS		0x00000400
+#define JCL_LISTPROGRAMS	0x00000800
+#define JCL_LISTSCRIPTS		0x00001000
+#define JCL_LISTVARIABLES	0x00002000
+#define JCL_MAPPED		0x00004000
+#define JCL_MARKLENGTH		0x00008000
+#define JCL_PARAMETERIZE	0x00010000
+#define JCL_RECURSE		0x00020000
+#define JCL_SCOPE		0x00040000
+#define JCL_STANDARD		0x00080000
+#define JCL_SUBDIR		0x00100000
+#define JCL_SUBTMP		0x00200000
+#define JCL_TRACE		0x00400000
+#define JCL_VERBOSE		0x00800000
+#define JCL_WARN		0x01000000
+#define JCL_GDG			0x02000000
 
 #define JCL_JOB			0x20000000
 #define JCL_PGM			0x40000000

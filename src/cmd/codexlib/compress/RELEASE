@@ -1,2 +1,3 @@
+13-09-19 codex.tst: update from obsolete "<meth" and ">meth" to --decode=meth and --encode=meth
 07-09-22 prevent cl_block()'s on multiple sync()'s
 04-02-19 snarf from libz/sfdclzw.c

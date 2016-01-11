@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -349,5 +349,8 @@ unset var
 test ! ! ! 2> /dev/null || err_exit 'test ! ! ! should return 0'
 test ! ! x 2> /dev/null || err_exit 'test ! ! x should return 0'
 test ! ! '' 2> /dev/null && err_exit 'test ! ! "" should return non-zero'
+
+test ! = -o a  || err_exit 'test ! \( = -o a \) should return 0'
+test ! \( = -o a \)  || err_exit 'test ! \( = -o a \) should return 0'
 
 exit $((Errors<125?Errors:125))

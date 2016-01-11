@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -627,7 +627,6 @@ csopen(register Cs_t* state, const char* apath, int op)
 	unsigned long	addr;
 	unsigned long	port = 0;
 	struct stat	st;
-	gid_t		groups[NGROUPS_MAX + 1];
 	char		buf[PATH_MAX];
 	char		tmp[PATH_MAX];
 
@@ -898,9 +897,20 @@ csopen(register Cs_t* state, const char* apath, int op)
 				}
 				if (geteuid() && gid != n)
 				{
-					for (n = getgroups(elementsof(groups), groups); n >= 0; n--)
-						if (gid == groups[n])
-							break;
+					gid_t*	groups;
+					int	g;
+
+					if ((g = getgroups(0, NiL)) <= 0)
+						g = getconf("NGROUPS_MAX");
+					if (groups = newof(0, gid_t, g, 0))
+					{
+						for (n = getgroups(g, groups); n >= 0; n--)
+							if (gid == groups[n])
+								break;
+						free(groups);
+					}
+					else
+						n = -1;
 					if (n < 0)
 					{
 						errno = EACCES;

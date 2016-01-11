@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -131,7 +131,7 @@ dssfopen(Dss_t* dss, const char* path, Sfio_t* io, Dssflags_t flags, Dssformat_t
 			return 0;
 		}
 	}
-	else if (!(io = dssfind(path, NiL, DSS_VERBOSE, buf, sizeof(buf), dss->disc)))
+	else if (!(io = dssfind(path, "", DSS_VERBOSE, buf, sizeof(buf), dss->disc)))
 		return 0;
 	else
 		path = (const char*)buf;

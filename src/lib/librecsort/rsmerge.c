@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -396,20 +396,14 @@ int	pos;	/* stream position for resolving equal records	*/
 #endif
 {
 	reg Merge_t*	mg;
-	static Vmdisc_t	vmdisc;
-
-	if(!vmdisc.memoryf)
-	{	vmdisc.memoryf = Vmdcheap->memoryf;
-		vmdisc.exceptf = Vmdcheap->exceptf;
-		vmdisc.round   = RS_RESERVE;
-	}
+	Vmdisc_t*	vmdisc;
 
 	if(!(mg = (Merge_t*)vmresize(Vmheap,NIL(Void_t*),sizeof(Merge_t),VM_RSZERO)) )
 		return NIL(Merge_t*);
 
 	mg->vm = NIL(Vmalloc_t*);
-	if(rs->disc->defkeyf && !(mg->vm = vmopen(&vmdisc,Vmlast,0)) )
-	{	vmfree(Vmheap,mg);
+	if(rs->disc->defkeyf && (!(vmdisc = vmdcderive(Vmheap, RS_RESERVE, 0)) || !(mg->vm = vmopen(&vmdisc, Vmlast, 0))) )
+	{	vmfree(Vmheap, mg);
 		return NIL(Merge_t*);
 	}
 

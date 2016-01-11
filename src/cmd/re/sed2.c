@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1995-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1995-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -367,14 +367,17 @@ ye(Text *script, unsigned char *pc, Text *data)
 	unsigned char **m = (unsigned char**)(instr(pc)+1);
 	unsigned char *b;
 	unsigned int c, x;
+	wchar_t wc;
+	Mbstate_t sq;
 	int i, n;
 	Sfio_t *f;
 	if(x = (unsigned int)(*m++ - (unsigned char*)0)) {
 		if(!(f = sfstropen()))
 			error(ERROR_SYSTEM|3, "out of space");
+		mbtinit(&sq);
 		while(s<w) {
 			b = s;
-			c = mbchar(s);
+			c = mbtchar(&wc, s, w - s, &sq);
 			if(c < x && m[c]) {
 				n = m[c][0];
 				i = 0;

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -299,10 +299,10 @@ typedef struct Link_s			/* link info			*/
 	int		format;		/* format			*/ \
 	int		section;	/* file section number		*/ \
 	}		record;		/* record format info		*/ \
-	unsigned int	chmod:1;	/* must restore mode		*/ \
 	unsigned int	longlink:1;	/* f->linkpath too long		*/ \
 	unsigned int	longname:1;	/* f->name too long		*/ \
 	unsigned int	ordered:1;	/* ordered fileout() override	*/ \
+	unsigned int	restoremode:1;	/* must restore mode		*/ \
 	unsigned int	ro:1;		/* readonly { . .. ... - }	*/ \
 	unsigned int	skip:1;		/* skip this entry		*/
 
@@ -354,7 +354,7 @@ typedef struct Post_s			/* post processing restoration	*/
 	int		mode;		/* permissions			*/
 	int		uid;		/* user id			*/
 	int		gid;		/* group id			*/
-	unsigned int	chmod:1;	/* must restore mode		*/
+	unsigned int	restoremode:1;	/* must restore mode		*/
 } Post_t;
 
 typedef union Integral_u		/* byte|half swap probe		*/
@@ -490,7 +490,6 @@ typedef struct Pattern_s
 	Sfio_t*		sp;		/* tmp stream			*/ \
 	Sum_t*		sum;		/* method handle		*/ \
 	}		checksum;	/* --checksum state		*/ \
-	int		chmod;		/* must preserve mode		*/ \
 	int		clobber;	/* overwrite output files	*/ \
 	int		complete;	/* files completely in volume	*/ \
 	int		current;	/* current file[] index		*/ \
@@ -573,6 +572,7 @@ typedef struct Pattern_s
 	size_t		fill;		/* last member filler size	*/ \
 	}		mime; \
 	char*		mode;		/* output chmod(1) mode		*/ \
+	int		modekeep;	/* must preserve mode		*/ \
 	int		modtime;	/* retain mtime			*/ \
 	char*		mtime;		/* output date(1) mtime		*/ \
 	int		newer;		/* append only if newer		*/ \

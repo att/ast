@@ -1,3 +1,6 @@
+12-08-15 mm2foswiki: add
+12-08-15 mm2bb,mm2twiki: add (but ignore some) mm2html options for compatibility
+12-08-15 mm2bb,mm2html,mm2twiki: eliminate ksh -n warnings
 12-02-29 mm2html: fix so stack bug that popped one too many
 12-01-11 mm2html: fix \*(Rf to use <SUP>...</SUP>
 12-01-01 htmlrefs: add <SCRIPT src=...> to include list

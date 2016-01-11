@@ -455,3 +455,13 @@ LM\\\\O|p\\"\\"s
 "97"|"\xff*"
 "98"|"\xff*"
 "99"|"\xff*"'
+
+TEST 11 'file suffix conflicts'
+
+	EXEC -I $data -x suffix-txt 'password==""&&uid==0' ./suffix-txt
+		INPUT suffix-txt $'aha::0:0::/:/bin/sh'
+		OUTPUT - $'aha::0:0::/:/bin/sh'
+
+	EXEC -I $data -x suffix-txt 'password==""&&uid==0' suffix-txt
+		INPUT suffix-txt $'aha::0:0::/:/bin/sh'
+		OUTPUT - $'aha::0:0::/:/bin/sh'

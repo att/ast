@@ -1,3 +1,17 @@
+13-08-11 strcopy() => stpcpy()
+13-07-17 use O_CLOEXEC
+13-05-28 Makerules.mk: fix MAM CC.SUFFIX.OBJECT initialization
+13-05-07 main.c: drop Vmstat_t.m_busy Vmstat_t.m_free
+13-05-06 pkg-cobol-mfcobc.mk: add :COBWATCH:
+13-04-11 pkg-cobol-mfcobc.mk: add :COBTRACE:
+13-04-05 Makerules.mk: add .SOURCE.h defaults ala .SOURCE.a
+13-03-20 Makerules.mk: add CC.NM.NMFLAGS for stupid stupid stupid aix -Xany
+13-03-19 pkg-cobol-mfcobc.mk: incorporate optional probe-mfcobc.mk
+13-02-20 scan.c: makerule() from tmp buffer in case of shorter canon()
+13-02-14 command.c: .FOREGROUND => all MAKING prereqs in parent chain done (e.g. via coshell service)
+12-12-01 Makerules.mk: fix MAMROOT logic when PWD outside of viewpath
+12-11-09 option.c: omit delayed/unknown options from oldmake punt
+12-09-18 Makerules.mk: set --novirtual if VPATH contains less than 2 dirs
 12-06-20 O_cloexec|F_dupfd_cloexec edit
 12-05-22 bind.c,dump.c,make.c,mam.c,rule.c: fix --mam=static 3d vs VPATH diffs
 12-05-14 make.c: .IGNORE disables non-file "must"

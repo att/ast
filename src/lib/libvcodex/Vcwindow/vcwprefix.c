@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vcwhdr.h"
@@ -512,7 +512,7 @@ int		type;
 			while(sz > PF_MINSIZE && maxsz/sz < PF_MINBLKCNT)
 				sz -= PF_MINSIZE;
 		} 
-		pfx->blksz = sz; /**/ DEBUG_PRINT(2,"blksz=%d\n",pfx->blksz);
+		pfx->blksz = sz; /**/DEBUG_PRINT(2,"blksz=%d\n",pfx->blksz);
 
 		pfx->coef = 1; /* highest coef in hashing blocks */
 		for(; sz > 1; --sz)

@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -468,5 +468,27 @@ typeset -Z2 foo=3
 [[ $(typeset -p foo) == 'typeset -Z 2 -R 2 foo=03' ]] || err_exit '-Z2  not working'
 export foo
 [[ $(typeset -p foo) == 'typeset -x -Z 2 -R 2 foo=03' ]] || err_exit '-Z2  not working after export'
+
+unset foo
+export foo=/C/TEMP
+typeset -H bar=$foo
+got=$( $SHELL -c 'typeset -H foo;print -r -- "$foo')
+[[ $got == "$bar" ]] || err_exit 'typeset -H not working for export variables'
+
+unset exp got
+typeset -Z4 VAR1
+VAR1=1
+exp=$(typeset -p VAR1)
+export VAR1
+got=$(typeset -p VAR1)
+got=${got/ -x/}
+[[ $got == "$exp" ]] || err_exit 'typeset -x causes zerofill width to change'
+
+unset var
+typeset -bZ6 var
+for i in 2 3
+do      read -r -N6 var
+	[[ $var == dHdvdG93 ]] &&  ((i !=2)) && err_exit 'loop optimization bug with typeset -b variables'
+done <<< 'twotowthreetfourro'
 
 exit $((Errors<125?Errors:125))

@@ -1,3 +1,8 @@
+13-08-11 strcopy() => stpcpy()
+13-06-24 pax.h,pax.c,file.c: change chmod members to modekeep and restoremode
+12-11-08 file.c: fix lchmod() logic for systems that implement only ENOSYS
+12-10-17 copy.c: fix SEEK_HOLE loop that set last file byte to 0
+12-09-28 pax.c,options.c: document t<compress> => tar:<compress>
 12-05-25 file.c: #include <tm.h> for tmdate() prototype
 12-05-14 pax.c: use Format_t.match to eliminate explicit format references
 12-05-14 pax.c: add xz format -- requires local system standalone xz command

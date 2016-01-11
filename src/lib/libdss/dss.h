@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -236,7 +236,7 @@ extern int		dssend(Dss_t*, Dssexpr_t*);
 extern int		dsslist(Dss_t*, Dssexpr_t*, Sfio_t*);
 extern int		dssfree(Dss_t*, Dssexpr_t*);
 extern ssize_t		dssmagic(Dss_t*, Sfio_t*, const char*, const char*, uint32_t, size_t);
-extern int		dssprintf(Dss_t*, Cx_t*, Sfio_t*, const char*, Dssrecord_t*);
+extern ssize_t		dssprintf(Dss_t*, Cx_t*, Sfio_t*, const char*, Dssrecord_t*);
 
 extern int		dssget(Dssrecord_t*, Dssvariable_t*, Dsstype_t*, const char*, Dssvalue_t*);
 extern Dsstype_t*	dsstype(Dss_t*, const char*);

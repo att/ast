@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -127,7 +127,8 @@ cokill(register Coshell_t* co, register Cojob_t* cj, int sig)
 	n = 0;
 	do
 	{
-		cowait(co, (Cojob_t*)co, 0);
+		if (!cj || !cj->service)
+			cowait(co, (Cojob_t*)co, 0);
 		n |= cokillshell(co, cj, sig);
 	} while (any && (co = co->next));
 	return n;

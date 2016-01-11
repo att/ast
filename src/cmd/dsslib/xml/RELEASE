@@ -1,3 +1,4 @@
+12-09-14 dss.tst: update for libast::tmzone fix
 10-04-22 fix jsonident(), xmlread(), jsonread(), xmlwrite(), jsonwrite()
 10-04-21 handle json [...,...] array values
 10-04-20 json working

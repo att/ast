@@ -836,11 +836,8 @@ d2 :MAKE: b'
 b: warning: cannot recurse on virtual directory'
 
 	EXEC	--
-		ERROR - $'a:
-make [a]: warning: a makefile must be specified when Nmakefile,nmakefile,Makefile,makefile omitted
-make [a]: null: a main target must be specified
-make: *** exit code 1 making a'
-		EXIT 1
+		ERROR - $'a: warning: cannot recurse on virtual directory
+b: warning: cannot recurse on virtual directory'
 
 	EXEC	--novirtual
 

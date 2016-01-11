@@ -1,3 +1,4 @@
+12-08-15 dss.c: update default struct type output
 11-09-11 dss.c: its --map=file, not --map --- doh
 11-06-15 dss.c: document '< expr-file' '< file-list-file'
 10-05-21 dss.c: add SEE ALSO \bdss::dss\b(5P) (after libast::optget() fix)

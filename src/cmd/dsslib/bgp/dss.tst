@@ -566,6 +566,27 @@ TEST 14 "generic anonymized parser exercises"
 	EXEC	-x bgp '{print --all}' $data/a08.mrt
 		SAME OUTPUT $data/a08.out
 
+	EXEC	-x bgp '{print --all}' $data/a10.mrt
+		SAME OUTPUT $data/a10.out
+
+	EXEC	-x bgp '{print --all}' $data/a11.mrt
+		SAME OUTPUT $data/a11.out
+
+	EXEC	-x bgp '{print --all}' $data/a12.mrt
+		SAME OUTPUT $data/a12.out
+
+	EXEC	-x bgp '{print --all}' $data/a13.mrt
+		SAME OUTPUT $data/a13.out
+
+	EXEC	-x bgp '{print --all}' $data/a14.mrt
+		SAME OUTPUT $data/a14.out
+
+	EXEC	-x bgp '{print --all}' $data/a15.mrt
+		SAME OUTPUT $data/a15.out
+
+	EXEC	-x bgp '{print --all}' $data/a16.mrt
+		SAME OUTPUT $data/a16.out
+
 TEST 15 "feature specific parser exercises"
 
 	EXEC	-x bgp '(path =~ "26677 $")|{print "%(typeof(path))s %(sizeof(path))u %(path)s"}' $data/rib.20080601.0108.bz2
@@ -587,3 +608,18 @@ as16path_t 10 7018,30071,6175,2497,2500,7660,22388,11537,6509,{271,2884,7860,811
 
 	EXEC	-x bgp '{print "%(typeof(path))s %(sizeof(path))u %(path)s"}' $data/f01.mrt
 		SAME OUTPUT $data/f01.out
+
+	EXEC	-x bgp '{print "%(mvpn)s"}' $data/mvpn-key-01.dat
+		OUTPUT - '( key=( afi=1 mvpn=( group_addrv6=6:20F:405:60A:809:A0E:C0D:E12 originatorv4=0.6.2.16 rd=( as16=6 number=393741 ) src_addrv6=6:20E:405:609:809:A0D:C0D:E11 type=3 ) origin=48 safi=5 ) originatorv4=0.6.2.17 type=4 )'
+
+	EXEC	-x bgp '{print "%(mvpn.key)s"}' $data/mvpn-key-01.dat
+		OUTPUT - '( afi=1 mvpn=( group_addrv6=6:20F:405:60A:809:A0E:C0D:E12 originatorv4=0.6.2.16 rd=( as16=6 number=393741 ) src_addrv6=6:20E:405:609:809:A0D:C0D:E11 type=3 ) origin=48 safi=5 )'
+
+	EXEC	-x bgp '{print "%(mvpn.key.mvpn)s"}' $data/mvpn-key-01.dat
+		OUTPUT - '( group_addrv6=6:20F:405:60A:809:A0E:C0D:E12 originatorv4=0.6.2.16 rd=( as16=6 number=393741 ) src_addrv6=6:20E:405:609:809:A0D:C0D:E11 type=3 )'
+
+	EXEC	-x bgp '{print "%(mvpn.key.mvpn.rd)s"}' $data/mvpn-key-01.dat
+		OUTPUT - '( as16=6 number=393741 )'
+
+	EXEC	-x bgp '{print "%(mvpn.key.mvpn.rd.number)s"}' $data/mvpn-key-01.dat
+		OUTPUT - '393741'

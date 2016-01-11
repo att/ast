@@ -47,7 +47,6 @@ $(LIBDIR)/make :INSTALLDIR: package.mk PROBE.mk TEST.mk WWW.mk \
 cc ld ldd :PACKAGE_INIT: mamake.c proto.c ratz.c release.c
 
 :: RELEASE hosttype.tst p.c hello.c \
-	ar.ibm.risc \
 	cc.specialize cc.pentium4 \
 	ldd.cygwin.i386 \
 	cc.darwin.i386 cc.darwin.i386-64 cc.darwin ldd.darwin \
@@ -319,8 +318,6 @@ intl :MAPLIB: intl.c
 
 m :MAPLIB: m.c m2.c m3.c m4.c m5.c m6.c
 
-nsl :MAPLIB: nsl.c
-
 /*
  * what was sco smoking
  * almost all of gethost* are in -lnsl except gethostbyname which
@@ -328,7 +325,7 @@ nsl :MAPLIB: nsl.c
  * to do the -lnsl job
  */
 
-socket :MAPLIB: socket.c nsl.c
+socket socket - socket nsl :MAPLIB: socket.c
 
 /*
  * more substance abuse

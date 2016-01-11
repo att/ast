@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -1550,6 +1550,7 @@ initrule(void)
 	INIT(scan,		".SCAN",	P_attribute|P_readonly);
 	INIT(script,		".SCRIPT",	P_attribute|P_immediate);
 	INIT(semaphore,		".SEMAPHORE",	P_attribute);
+	INIT(serialize,		"-",		P_make|P_virtual|P_force|P_repeat|P_foreground|P_ignore|P_multiple);
 	INIT(source,		".SOURCE",	0);
 	INIT(special,		".SPECIAL",	P_attribute|P_internal|P_readonly);
 	INIT(sync,		".SYNC",	P_immediate);
@@ -1601,6 +1602,7 @@ initrule(void)
 		internal.empty->status = IGNORE;
 		internal.empty->time = OLDTIME;
 		internal.scan->scan = SCAN_USER;
+		internal.serialize->action = null;
 		addprereq(internal.source, internal.dot, PREREQ_APPEND);
 		addprereq(internal.special, internal.attribute, PREREQ_APPEND);
 		addprereq(internal.special, internal.scan, PREREQ_APPEND);

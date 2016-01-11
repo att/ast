@@ -1,0 +1,114 @@
+.fp 5 CW
+.de Af
+.ds ;G \\*(;G\\f\\$1\\$3\\f\\$2
+.if !\\$4 .Af \\$2 \\$1 "\\$4" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
+..
+.de aF
+.ie \\$3 .ft \\$1
+.el \{\
+.ds ;G \&
+.nr ;G \\n(.f
+.Af "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
+\\*(;G
+.ft \\n(;G \}
+..
+.de L
+.aF 5 \\n(.f "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de LR
+.aF 5 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de RL
+.aF 1 5 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.TH SPAWNVEX 3
+.SH NAME
+spawnvex \- process spawn with process file and resource control
+.SH SYNOPSIS
+.L "#include <ast.h>"
+.sp
+.L "SPAWN_FLAG(op)"
+.sp
+.L "SPAWN_RESET"
+.sp
+.L "SPAWN_cwd"
+.L "SPAWN_pgrp"
+.L "SPAWN_resetids"
+.L "SPAWN_sid"
+.L "SPAWN_sigdef"
+.L "SPAWN_sigmask"
+.L "SPAWN_umask"
+.sp
+.L "SPAWN_close"
+.L "SPAWN_dup2"
+.L "SPAWN_nocloexec"
+.sp
+.L "pid_t spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t*, vex);"
+.L "Spawnvex_t* spawnvex_open(void);"
+.L "int spawnvex_add(Spawnvex_t* vex, intmax_t arg1, intmax_t arg2);"
+.L "int spawnvex_apply(Spawnvex_t* vex, int index, int flags);"
+.L "int spawnvex_init(Spawnvex_t* vex);"
+.L "int spawnvex_close(Spawnvex_t* vex);"
+.SH DESCRIPTION
+.L spwanvex
+combines the
+.IR vfork (2)
+or
+.IR fork (2),
+control child attributes and file descriptors,
+and
+.IR exec (2)
+sequence into a single call.
+.PP
+.LR path ,
+.L argv
+and
+.L envv
+are as in
+.IR execve (2).
+.L pgid
+controls the new process group and session:
+.TP
+.L <0
+The new process becomes a session leader.
+is called in the child context.
+.TP
+.L 0
+The new process is in the callers process group.
+.TP
+.L 1
+The new process becomes a process group leader.
+.TP
+.L >1
+The new process joins the process group
+.IR pgid .
+.SH COMMENTS
+It is possible to code all process creation (except for
+.IR vfork (2)
+hack like in
+.IR csh (1))
+using
+.LR spawnveg .
+The
+.IR proc (3)
+routines and
+.IR ksh (1)
+do this on systems that don't support
+.IR fork (2).
+.SH "SEE ALSO"
+vfork(2), fork(2), exec(2), spawnve(2)

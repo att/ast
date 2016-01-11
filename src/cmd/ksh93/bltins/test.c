@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -28,6 +28,7 @@
  */
 
 
+#define _shtest_c
 #include	"defs.h"
 #include	<error.h>
 #include	<ls.h>
@@ -84,7 +85,7 @@ static int e3(struct test*);
 
 static int test_strmatch(Shell_t *shp,const char *str, const char *pat)
 {
-	regoff_t match[2*(MATCH_MAX+1)],n;
+	int match[2*(MATCH_MAX+1)],n;
 	register int c, m=0;
 	register const char *cp=pat; 
 	while(c = *cp++)
@@ -100,7 +101,7 @@ static int test_strmatch(Shell_t *shp,const char *str, const char *pat)
 		match[0] = 0;
 	if(m >  elementsof(match)/2)
 		m = elementsof(match)/2;
-	n = strgrpmatch(str, pat, match, m, STR_GROUP|STR_MAXIMAL|STR_LEFT|STR_RIGHT);
+	n = strgrpmatch(str, pat, (ssize_t*)match, m, STR_GROUP|STR_MAXIMAL|STR_LEFT|STR_RIGHT|STR_INT);
 	if(m==0 && n==1)
 		match[1] = strlen(str);
 	if(n)
@@ -135,6 +136,14 @@ int b_test(int argc, char *argv[],Shbltin_t *context)
 		}
 	}
 	not = c_eq(cp,'!');
+	if(not && c_eq(argv[2],'(') && argc<=7 && c_eq(argv[argc-1],')'))
+	{
+		int i;
+		for(i=2; i < argc; i++)
+			tdata.av[i] = tdata.av[i+1];
+		tdata.av[i] = 0;
+		argc -=2;
+	}
 	/* posix portion for test */
 	switch(argc)
 	{
@@ -325,15 +334,14 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 	    case 'V':
 #if SHOPT_FS_3D
 	    {
-		register int offset = staktell();
+		register int offset = stktell(shp->stk);
 		if(stat(arg,&statb)<0 || !S_ISREG(statb.st_mode))
 			return(0);
 		/* add trailing / */
-		stakputs(arg);
-		stakputc('/');
-		stakputc(0);
-		arg = (const char*)stakptr(offset);
-		stakseek(offset);
+		sfputr(shp->stk,arg,'/');
+		sfputc(shp->stk,0);
+		arg = (const char*)stkptr(shp->stk,offset);
+		stkseek(shp->stk,offset);
 		/* FALL THRU */
 	    }
 #else
@@ -375,14 +383,13 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 	    case 'H':
 #ifdef S_ISCDF
 	    {
-		register int offset = staktell();
+		register int offset = stktell(shp->stk);
 		if(test_stat(arg,&statb)>=0 && S_ISCDF(statb.st_mode))
 			return(1);
-		stakputs(arg);
-		stakputc('+');
-		stakputc(0);
-		arg = (const char*)stakptr(offset);
-		stakseek(offset);
+		sfputr(shp->stk,arg,'+');
+		sfputc(shp->stk,0);
+		arg = (const char*)stkptr(shp->stk,offset);
+		stkseek(shp->stk,offset);
 		return(test_stat(arg,&statb)>=0 && S_ISCDF(statb.st_mode));
 	    }
 #else
@@ -420,7 +427,7 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 		if(*arg=='?')
 			return(sh_lookopt(arg+1,&f)>0);
 		op = sh_lookopt(arg,&f);
-		return(op && (f==(sh_isoption(op)!=0)));
+		return(op && (f==(sh_isoption(shp,op)!=false)));
 	    case 't':
 	    {
 		char *last;
@@ -617,10 +624,10 @@ skip:
 				if((maxgroups=getgroups(0,(gid_t*)0)) <= 0)
 				{
 					/* pre-POSIX system */
-					maxgroups=NGROUPS_MAX;
+					maxgroups=shgd->lim.ngroups_max;
 				}
 			}
-			groups = (gid_t*)stakalloc((maxgroups+1)*sizeof(gid_t));
+			groups = (gid_t*)stkalloc(shp->stk,(maxgroups+1)*sizeof(gid_t));
 			n = getgroups(maxgroups,groups);
 			while(--n >= 0)
 			{

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -231,7 +231,7 @@ inittrap(void)
 {
 	register int	i;
 
-	memfatal();
+	memfatal(NiL);
 	trap.caught = newof(0, int, sig_info.sigmax + 1, 0);
 	for (i = 0; i < elementsof(signals); i++)
 		if (signal(signals[i], interrupt) == SIG_IGN)

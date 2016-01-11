@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -71,17 +71,6 @@ tmain()
 		terror("Resize to a different size succeeds?");
 
 	vmfree(vm,addr[0]);
-	if(vmsize(vm,addr[0]) >= 0)
-		terror("Wrong size for free pool element?");
-
-	if(vmsize(vm,addr[9]) != 15)
-		terror("Wrong size for pool element?");
-
-#ifdef DEBUG
-	for(i = 0; i < 10; ++i)
-		printf("size[%d]=%d\n",i,vmsize(vm,addr[i]));
-	printf("vmextent=%d\n",vmsize(vm,NIL(Void_t*)));
-#endif
 
 	texit(0);
 }

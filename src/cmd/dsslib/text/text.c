@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -490,7 +490,7 @@ textmeth(const char* name, const char* options, const char* schema, Dssdisc_t* d
 	}
 	*meth = *ometh;
 	meth->data = text = (Text_t*)(meth + 1);
-	text->format = strcopy(text->name, name) + 1;
+	text->format = stpcpy(text->name, name) + 1;
 	index = 0;
 	s = (char*)schema;
 	f = text->format;
@@ -563,7 +563,7 @@ textmeth(const char* name, const char* options, const char* schema, Dssdisc_t* d
 					goto drop;
 				}
 				var->index = index;
-				t = strcopy((char*)(var->name = (char*)(var + 1)), f);
+				t = stpcpy((char*)(var->name = (char*)(var + 1)), f);
 				if (d)
 					var->description = strcpy(t + 1, d);
 				break;

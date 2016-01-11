@@ -12,7 +12,9 @@
 ../cdt/dttree.c
 ../cdt/dtview.c
 ../cdt/dtwalk.c
+../comp/qsort.c
 ../include/cdt.h
+../include/dt.h
 ../include/hashkey.h
 ../include/hashpart.h
 ../include/ip6.h
@@ -35,6 +37,7 @@ ast_common.h
 astsa.manifest
 astsa.mm
 astsa.omk
+astsastd
 ccode.h
 debug.h
 error.c

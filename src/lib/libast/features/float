@@ -169,6 +169,11 @@ macro{
 	<<"#define FLT_MIN_EXP">>	FLT_MIN_EXP
 	<<"#endif">>
 	#endif
+	#ifdef FLT_EPSILON
+	<<"#ifndef FLT_EPSILON">>
+	<<"#define FLT_EPSILON">>	FLT_EPSILON
+	<<"#endif">>
+	#endif
 
 	#ifdef DBL_DIG
 	<<"#ifndef DBL_DIG">>
@@ -205,6 +210,11 @@ macro{
 	<<"#define DBL_MIN_EXP">>	DBL_MIN_EXP
 	<<"#endif">>
 	#endif
+	#ifdef DBL_EPSILON
+	<<"#ifndef DBL_EPSILON">>
+	<<"#define DBL_EPSILON">>	DBL_EPSILON
+	<<"#endif">>
+	#endif
 
 	#ifdef LDBL_DIG
 	<<"#ifndef LDBL_DIG">>
@@ -239,6 +249,11 @@ macro{
 	#ifdef LDBL_MIN_EXP
 	<<"#ifndef LDBL_MIN_EXP">>
 	<<"#define LDBL_MIN_EXP">>	LDBL_MIN_EXP
+	<<"#endif">>
+	#endif
+	#ifdef LDBL_EPSILON
+	<<"#ifndef LDBL_EPSILON">>
+	<<"#define LDBL_EPSILON">>	LDBL_EPSILON
 	<<"#endif">>
 	#endif
 }end
@@ -345,10 +360,10 @@ tst	- note{ missing floating point limits }end output{
 		{
 			pw = w;
 			w *= 2;
-			f = (_ast_intmax_t)w;
+			f = (_ast_intmax_t)(w - 1);
 			x = (_ast_intmax_t)f;
-		} while (w > pw && w == x);
-		w = (pw - 1) + pw;
+		} while (w > pw && (w - 1) == x);
+		w = (w < pw) ? ~0 : (pw - 1) + pw;
 		u = ~0;
 		if (u > w)
 			u = w;
@@ -421,9 +436,25 @@ tst	- note{ missing floating point limits }end output{
 	#endif
 	#endif
 	#ifndef FLT_DIG
+	#define FLT_DIG	s
 		printf("#ifndef FLT_DIG\n");
 		printf("#define FLT_DIG			%d\n", s);
 		printf("#endif\n");
+	#endif
+	#ifndef FLT_EPSILON
+		{
+			float		fn, fe, fc;
+
+			fn = fc = fe = 1.0;
+			while ((fn + 1) != fc)
+			{
+				fe = fn;
+				fn /= 2;
+			}
+			printf("#ifndef FLT_EPSILON\n");
+			printf("#define FLT_EPSILON	%1.*g%s\n", FLT_DIG + 2, fe, fs);
+			printf("#endif\n");
+		}
 	#endif
 	#ifndef FLT_MIN
 		printf("#ifndef FLT_MIN\n");
@@ -520,10 +551,10 @@ tst	- note{ missing floating point limits }end output{
 		{
 			pw = w;
 			w *= 2;
-			d = (_ast_intmax_t)w;
+			d = (_ast_intmax_t)(w - 1);
 			x = (_ast_intmax_t)d;
-		} while (w > pw && w == x);
-		w = (pw - 1) + pw;
+		} while (w > pw && (w - 1) == x);
+		w = (w < pw) ? ~0 : (pw - 1) + pw;
 		u = ~0;
 		if (u > w)
 			u = w;
@@ -596,9 +627,25 @@ tst	- note{ missing floating point limits }end output{
 	#endif
 	#endif
 	#ifndef DBL_DIG
+	#define DBL_DIG	s
 		printf("#ifndef DBL_DIG\n");
 		printf("#define DBL_DIG			%d\n", s);
 		printf("#endif\n");
+	#endif
+	#ifndef DBL_EPSILON
+		{
+			double		dn, de, dc;
+
+			dn = dc = de = 1.0;
+			while ((dn + 1) != dc)
+			{
+				de = dn;
+				dn /= 2;
+			}
+			printf("#ifndef DBL_EPSILON\n");
+			printf("#define DBL_EPSILON	%1.*g%s\n", DBL_DIG + 2, de, ds);
+			printf("#endif\n");
+		}
 	#endif
 	#ifndef DBL_MIN
 		printf("#ifndef DBL_MIN\n");
@@ -691,10 +738,10 @@ tst	- note{ missing floating point limits }end output{
 		{
 			pw = w;
 			w *= 2;
-			l = (_ast_intmax_t)w;
+			l = (_ast_intmax_t)(w - 1);
 			x = (_ast_intmax_t)l;
-		} while (w > pw && w == x);
-		w = (pw - 1) + pw;
+		} while (w > pw && (w - 1) == x);
+		w = (w < pw) ? ~0 : (pw - 1) + pw;
 		u = ~0;
 		if (u > w)
 			u = w;
@@ -767,9 +814,25 @@ tst	- note{ missing floating point limits }end output{
 	#endif
 	#endif
 	#ifndef LDBL_DIG
+	#define LDBL_DIG	s
 		printf("#ifndef LDBL_DIG\n");
 		printf("#define LDBL_DIG		%d\n", s);
 		printf("#endif\n");
+	#endif
+	#ifndef LDBL_EPSILON
+		{
+			_ast_fltmax_t	ln, le, lc;
+
+			ln = lc = le = 1.0;
+			while ((ln + 1) != lc)
+			{
+				le = ln;
+				ln /= 2;
+			}
+			printf("#ifndef LDBL_EPSILON\n");
+			printf("#define LDBL_EPSILON	%1.*Lg%s\n", LDBL_DIG + 2, le, ls);
+			printf("#endif\n");
+		}
 	#endif
 	#ifndef LDBL_MIN
 		printf("#ifndef LDBL_MIN\n");

@@ -1,1520 +1,346 @@
-
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.2.2.6
 hopv4         0.2.2.6
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         131591
-med           0
 message       1
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.1.2.4/30
 prefixv4      0.1.2.4/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.1.2.5
 src_addrv4    0.1.2.5
-src_addrv6    ::
-src_as        2
 src_as16      2
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:01
-suppressed    0
 time          2010-12-31+19:00:01
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.3.2.10
 hopv4         0.3.2.10
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         197131
-med           0
 message       2
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.2.2.8/30
 prefixv4      0.2.2.8/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.2.2.9
 src_addrv4    0.2.2.9
-src_addrv6    ::
-src_as        3
 src_as16      3
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:03
-suppressed    0
 time          2010-12-31+19:00:03
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.4.2.14
 hopv4         0.4.2.14
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         262672
 med           262671
 message       3
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.3.2.12/30
 prefixv4      0.3.2.12/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.3.2.13
 src_addrv4    0.3.2.13
-src_addrv6    ::
-src_as        4
 src_as16      4
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:05
-suppressed    0
 time          2010-12-31+19:00:05
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.5.2.19
 hopv4         0.5.2.19
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         328213
 med           328212
 message       4
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.4.2.17/32
 prefixv4      0.4.2.17/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.4.2.18
 src_addrv4    0.4.2.18
-src_addrv6    ::
-src_as        5
 src_as16      5
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:07
-suppressed    0
 time          2010-12-31+19:00:07
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.6.2.24
 hopv4         0.6.2.24
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         393754
 med           393753
 message       5
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.5.2.22/30
 prefixv4      0.5.2.22/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.5.2.23
 src_addrv4    0.5.2.23
-src_addrv6    ::
-src_as        6
 src_as16      6
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:09
-suppressed    0
 time          2010-12-31+19:00:09
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.7.2.29
 hopv4         0.7.2.29
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         459295
 med           459294
 message       6
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.6.2.27/32
 prefixv4      0.6.2.27/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.6.2.28
 src_addrv4    0.6.2.28
-src_addrv6    ::
-src_as        7
 src_as16      7
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:11
-suppressed    0
 time          2010-12-31+19:00:11
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.8.2.34
 hopv4         0.8.2.34
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         524836
 med           524835
 message       7
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.7.2.32/30
 prefixv4      0.7.2.32/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.7.2.33
 src_addrv4    0.7.2.33
-src_addrv6    ::
-src_as        8
 src_as16      8
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:13
-suppressed    0
 time          2010-12-31+19:00:13
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.9.2.39
 hopv4         0.9.2.39
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         590377
 med           590376
 message       8
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.8.2.37/30
 prefixv4      0.8.2.37/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.8.2.38
 src_addrv4    0.8.2.38
-src_addrv6    ::
-src_as        9
 src_as16      9
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:15
-suppressed    0
 time          2010-12-31+19:00:15
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.10.2.44
 hopv4         0.10.2.44
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         655918
 med           655917
 message       9
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.9.2.42/32
 prefixv4      0.9.2.42/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.9.2.43
 src_addrv4    0.9.2.43
-src_addrv6    ::
-src_as        10
 src_as16      10
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:17
-suppressed    0
 time          2010-12-31+19:00:17
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.11.2.49
 hopv4         0.11.2.49
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         721459
 med           721458
 message       10
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.10.2.47/32
 prefixv4      0.10.2.47/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.10.2.48
 src_addrv4    0.10.2.48
-src_addrv6    ::
-src_as        11
 src_as16      11
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:19
-suppressed    0
 time          2010-12-31+19:00:19
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.12.2.54
 hopv4         0.12.2.54
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         787000
 med           786999
 message       11
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.11.2.52/30
 prefixv4      0.11.2.52/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.11.2.53
 src_addrv4    0.11.2.53
-src_addrv6    ::
-src_as        12
 src_as16      12
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:21
-suppressed    0
 time          2010-12-31+19:00:21
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.13.2.59
 hopv4         0.13.2.59
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         852541
 med           852540
 message       12
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.12.2.57/32
 prefixv4      0.12.2.57/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.12.2.58
 src_addrv4    0.12.2.58
-src_addrv6    ::
-src_as        13
 src_as16      13
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:23
-suppressed    0
 time          2010-12-31+19:00:23
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.14.2.64
 hopv4         0.14.2.64
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         918082
 med           918081
 message       13
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.13.2.62/32
 prefixv4      0.13.2.62/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.13.2.63
 src_addrv4    0.13.2.63
-src_addrv6    ::
-src_as        14
 src_as16      14
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:25
-suppressed    0
 time          2010-12-31+19:00:25
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.15.2.69
 hopv4         0.15.2.69
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         983623
 med           983622
 message       14
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.14.2.67/30
 prefixv4      0.14.2.67/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.14.2.68
 src_addrv4    0.14.2.68
-src_addrv6    ::
-src_as        15
 src_as16      15
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:27
-suppressed    0
 time          2010-12-31+19:00:27
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.16.2.74
 hopv4         0.16.2.74
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         1049163
-med           0
 message       15
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.15.2.72/32
 prefixv4      0.15.2.72/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.15.2.73
 src_addrv4    0.15.2.73
-src_addrv6    ::
-src_as        16
 src_as16      16
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:29
-suppressed    0
 time          2010-12-31+19:00:29
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          32
 bitsv4        32
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.17.2.78
 hopv4         0.17.2.78
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         1114704
 med           1114703
 message       16
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.16.2.76/32
 prefixv4      0.16.2.76/32
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.16.2.77
 src_addrv4    0.16.2.77
-src_addrv6    ::
-src_as        17
 src_as16      17
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:31
-suppressed    0
 time          2010-12-31+19:00:31
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.18.2.83
 hopv4         0.18.2.83
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         1180244
-med           0
 message       17
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.17.2.81/30
 prefixv4      0.17.2.81/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.17.2.82
 src_addrv4    0.17.2.82
-src_addrv6    ::
-src_as        18
 src_as16      18
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:33
-suppressed    0
 time          2010-12-31+19:00:33
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.19.2.87
 hopv4         0.19.2.87
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         1245784
-med           0
 message       18
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.18.2.85/30
 prefixv4      0.18.2.85/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.18.2.86
 src_addrv4    0.18.2.86
-src_addrv6    ::
-src_as        19
 src_as16      19
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:35
-suppressed    0
 time          2010-12-31+19:00:35
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
-MESSAGE       0
-PART          0
 
 afi           1
-agg_addr      0.0.0.0
-agg_addrv4    0.0.0.0
-agg_addrv6    ::
-agg_addr32    0.0.0.0
-agg_addr32v4  0.0.0.0
-agg_addr32v6  ::
-agg_as        0
-agg_as16      0
-agg_as32      0
-atomic        0
 best          1
 bits          30
 bitsv4        30
-bitsv6        0
-cluster       
-community     
-damped        0
-dpa_addr      0.0.0.0
-dpa_addrv4    0.0.0.0
-dpa_addrv6    ::
-dpa_as        0
-dpa_as16      0
-dpa_as32      0
-dst_addr      0.0.0.0
-dst_addrv4    0.0.0.0
-dst_addrv6    ::
-dst_as        0
-dst_as16      0
-dst_as32      0
-extended      
-flags         0
-history       0
-hop           0.20.2.91
 hopv4         0.20.2.91
-hopv6         ::
-id            0
-internal      0
-key           0
-label         0
-labels        
 local         1311324
-med           0
 message       19
-mvpn          0
-new_state     0
-old_state     0
 origin        105
-originator    0.0.0.0
-path          
-path16        
-path32        
-prefix        0.19.2.89/30
 prefixv4      0.19.2.89/30
-prefixv6      ::/0
-rd_addr       0.0.0.0
-rd_as         0
-rd_number     0
-rd_type       0
-rib_failure   0
 safi          1
-slot          0
-src_addr      0.19.2.90
 src_addrv4    0.19.2.90
-src_addrv6    ::
-src_as        20
 src_as16      20
-src_as32      0
-stale         0
 stamp         2010-12-31+19:00:37
-suppressed    0
 time          2010-12-31+19:00:37
 type          84
-unknown       
-usec          0
 valid         1
-weight        0
 MESSAGE       1
-PART          0
+

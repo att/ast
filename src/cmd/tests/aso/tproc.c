@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -18,9 +18,6 @@
 *                                                                      *
 ***********************************************************************/
 #include "terror.h"
-
-#include <sys/mman.h>
-#include <sys/time.h>
 
 #ifndef N_PROC
 #define N_PROC		8
@@ -53,82 +50,59 @@ static void workload(unsigned int pid)
 tmain()
 {
 	ssize_t		k;
-	Asometh_t	*meth;
-	Void_t		*addr;
 	int		status;
-	int		zerof;
 	int		type;
 	char		*lockid;
 	pid_t		pid, cpid[N_PROC];
 	struct timeval	tv1, tv2;
 
-	taso(0);
 	tchild();
-	type = Tstall ? ASO_PROCESS : ASO_INTRINSIC;
 
-	/* get shared memory */
-	if((zerof = open("/dev/zero", O_RDWR)) < 0)
-		terror("Can't open /dev/zero");
-	addr = mmap(0, 3*sizeof(unsigned int), PROT_READ|PROT_WRITE, MAP_SHARED, zerof, 0);
-	if(!addr || addr == (Void_t*)(-1))
-		terror("mmap failed");
-
-	Lock = (unsigned int*)addr; /* this is used by asolock() */
+	Lock = (unsigned int*)tshared(3*sizeof(unsigned int)); /* this is used by asolock() */
 	Count = Lock+1; /* this is the shared counter to be updated asynchronously */
 	Active = Count+1; /* this counter sets all processes to work at the same time */
 
 	lockid = tstfile("aso", 0);
-	meth = 0;
-	while (meth = asometh(ASO_NEXT, meth))
-	{
-		if (!(meth->type & type))
-			continue;
-		if (asoinit(lockid, meth, 0))
-		{
-			twarn("%s method initialization failed", meth->name);
-			continue;
-		}
-		tinfo("testing %s method with %d processes", meth->name, N_PROC);
-		gettimeofday(&tv1, 0); /* start the timer */
+	tinfo("testing with %d processes", N_PROC);
+	gettimeofday(&tv1, 0); /* start the timer */
 
-		*Lock = 0;
-		*Count = 0;
-		*Active = 0;
+	*Lock = 0;
+	*Count = 0;
+	*Active = 0;
 
 #if N_PROC > 1
-		for(k = 0; k < N_PROC; ++k)
-			if((pid = fork()) < 0)
-				terror("Can't create a child process");
-			else if(pid > 0) /* parent process */
-			{	cpid[k] = pid;
-				continue;
-			}
-			else /* child process */
-			{	workload((unsigned int)getpid()); /* now start working concurrently */
-				texit(0);
-			}
+	for(k = 0; k < N_PROC; ++k)
+		if((pid = fork()) < 0)
+			terror("Can't create a child process");
+		else if(pid > 0) /* parent process */
+		{	cpid[k] = pid;
+			continue;
+		}
+		else /* child process */
+		{	workload((unsigned int)getpid()); /* now start working concurrently */
+			texit(0);
+		}
 
-		if (twait(cpid, N_PROC))
-			terror("workload subprocess error");
+	if (twait(cpid, N_PROC))
+		terror("workload subprocess error");
 #else
-		workload((unsigned int)getpid());
+	workload((unsigned int)getpid());
 #endif
 
-		if(*Lock != 0)
-			terror("Aso lock is still held by %d", *Lock);
-		if(*Count != N_PROC*N_STEP*N_REP)
-			terror("%s method count error -- expected %d, got %d", meth->name, N_PROC*N_STEP*N_REP, *Count);
+	if(*Lock != 0)
+		terror("Aso lock is still held by %d", *Lock);
+	if(*Count != N_PROC*N_STEP*N_REP)
+		terror("count error -- expected %d, got %d", N_PROC*N_STEP*N_REP, *Count);
 
-		gettimeofday(&tv2, 0); /* get end of time */
+	gettimeofday(&tv2, 0); /* get end of time */
 
-		if (tv1.tv_usec > tv2.tv_usec)
-		{	tv2.tv_sec -= 1;
-	    		tv2.tv_usec += 1000000;
-		}
- 
-		tinfo("%s method elapsed time %ld.%lds", meth->name,
-			tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
+	if (tv1.tv_usec > tv2.tv_usec)
+	{	tv2.tv_sec -= 1;
+    		tv2.tv_usec += 1000000;
 	}
+ 
+	tinfo("elapsed time %ld.%lds",
+		tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
 
 	texit(0);
 }

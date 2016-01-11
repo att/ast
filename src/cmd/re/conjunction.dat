@@ -1,0 +1,30 @@
+# regex conjunction tests
+
+A	[[:alnum:]]+				a15 b2 c3	(0,3)
+A	([[:alnum:]])+				a15 b2 c3	(0,3)(2,3)
+A	(([[:alnum:]]))+			a15 b2 c3	(0,3)(2,3)(2,3)
+
+A	[[:digit:]]+				a15 b2 c3	(1,3)
+A	([[:digit:]])+				a15 b2 c3	(1,3)(2,3)
+A	(([[:digit:]]))+			a15 b2 c3	(1,3)(2,3)(2,3)
+
+K	+([[:alnum:]])				a15 b2 c3	(0,3)(0,3)
+K	+(([[:alnum:]]))			a15 b2 c3	(0,3)(0,3)(2,3)
+
+K	+([[:digit:]])				a15 b2 c3	(1,3)(1,3)
+K	+(([[:digit:]]))			a15 b2 c3	(1,3)(1,3)(2,3)
+
+# the following group shows the difference between +(...) and (...)+ subgroup reporting
+
+A	(([[:alnum:]])&([[:digit:]]))+		a15 b2 c3	(1,3)(2,3)(2,3)(2,3)
+K	~(A)(([[:alnum:]])&([[:digit:]]))+	a15 b2 c3	(1,3)(2,3)(2,3)(2,3)
+
+A	(?K-a)+(([[:alnum:]])&([[:digit:]]))	a15 b2 c3	(1,3)(1,3)(2,3)(2,3)
+K	+(([[:alnum:]])&([[:digit:]]))		a15 b2 c3	(1,3)(1,3)(2,3)(2,3)
+
+# the following group should be the equivalent
+
+A/	/(([[:alnum:]])&([[:digit:]]))+/X/g		a15 b2 c3	aX bX cX
+K/	/~(A)(([[:alnum:]])&([[:digit:]]))+/X/g		a15 b2 c3	aX bX cX	# regsubexec() BUG fixed #
+A/	/(?K-a)+(([[:alnum:]])&([[:digit:]]))/X/g	a15 b2 c3	aX bX cX	# regsubexec() BUG fixed #
+K/	/+(([[:alnum:]])&([[:digit:]]))/X/g		a15 b2 c3	aX bX cX

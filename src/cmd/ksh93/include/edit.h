@@ -31,9 +31,6 @@
 
 #include	"FEATURE/options"
 #include        "FEATURE/locale"
-#if !SHOPT_VSH && !SHOPT_ESH
-#   define ed_winsize()	(SEARCHSIZE)
-#else
 
 #if !KSHELL
 #   include	<setjmp.h>
@@ -83,13 +80,18 @@ typedef struct Histmatch
 
 typedef struct edit
 {
-	sigjmp_buf e_env;
+	struct termios	e_ttyparm;      /* initial tty parameters */
+	struct termios	e_nttyparm;     /* raw tty parameters */
+	int	e_raw;		/* set when in raw mode or alt mode */
 	int	e_intr;
 	int	e_kill;
 	int	e_erase;
 	int	e_werase;
 	int	e_eof;
 	int	e_lnext;
+	int	e_fd;		/* file descriptor */
+	int	e_ttyspeed;	/* line speed, also indicates tty parms are valid */
+	sigjmp_buf e_env;
 	int	e_fchar;
 	int	e_plen;		/* length of prompt string */
 	char	e_crlf;		/* zero if cannot return to beginning of line */
@@ -100,7 +102,6 @@ typedef struct edit
 	int	e_hloff;	/* line number offset for command */
 	int	e_hismin;	/* minimum history line number */
 	int	e_hismax;	/* maximum history line number */
-	int	e_raw;		/* set when in raw mode or alt mode */
 	int	e_cur;		/* current line position */
 	int	e_eol;		/* end-of-line position */
 	int	e_pcur;		/* current physical line position */
@@ -123,18 +124,11 @@ typedef struct edit
 	genchar	*e_Ubuf;	/* temporary workspace buffer */
 	genchar	*e_physbuf;	/* temporary workspace buffer */
 	int	e_lbuf[LOOKAHEAD];/* pointer to look-ahead buffer */
-	int	e_fd;		/* file descriptor */
-	int	e_ttyspeed;	/* line speed, also indicates tty parms are valid */
 	int	e_tabcount;
 #ifdef _hdr_utime
 	ino_t	e_tty_ino;
 	dev_t	e_tty_dev;
 	char	*e_tty;
-#endif
-#if SHOPT_OLDTERMIO
-	char	e_echoctl;
-	char	e_tcgeta;
-	struct termio e_ott;
 #endif
 #if SHOPT_MULTIBYTE
 	int	e_curchar;
@@ -149,8 +143,6 @@ typedef struct edit
 #else
 	char	e_prbuff[PRSIZE]; /* prompt buffer */
 #endif /* KSHELL */
-	struct termios	e_ttyparm;      /* initial tty parameters */
-	struct termios	e_nttyparm;     /* raw tty parameters */
 	struct termios e_savetty;	/* saved terminal state */
 	int	e_savefd;	/* file descriptor for saved terminal state */
 	char	e_macro[4];	/* macro buffer */
@@ -254,8 +246,6 @@ extern const char	e_runvi[];
    extern const char	e_version[];
 #endif /* KSHELL */
 
-#if SHOPT_HISTEXPAND
-
 /* flags */
 
 #define	HIST_EVENT	0x1	/* event designator seen */
@@ -279,8 +269,6 @@ extern const char	e_runvi[];
 
 #define	HIST_FLAG_RETURN_MASK	(HIST_EVENT|HIST_PRINT|HIST_ERROR)
 
-extern int hist_expand(const char *, char **);
-#endif
+extern int hist_expand(Shell_t *shp,const char *, char **);
 
-#endif
 #endif

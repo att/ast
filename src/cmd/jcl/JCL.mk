@@ -19,13 +19,19 @@ if ! JCL_AUTO_pound
 JCL_AUTO_pound		= 01
 end
 
+EVENT = event
+
 ":JCL:" : .MAKE .OPERATOR
 	.INIT : .JCL.INIT
 	.JCL.INIT : .MAKE .VIRTUAL .FORCE
-		if COSHELL == "$(SHELL)"
-			COSHELL =
+		if JCLFLAGS == "*--noexec*" && JCLFLAGS == "*--list=*"
+			EVENT = print X
+		else
+			if "$(COSHELL:B:N!=*cosh*)"
+				COSHELL =
+			end
+			:COSHELL: service=event db=$(JCLEVENTS) $(COSHELL:+coshell $(JCLGROUP:+group=$(JCLGROUP)))
 		end
-		:COSHELL: service=event db=$(JCLEVENTS) coshell $(JCLGROUP:+group=$(JCLGROUP))
 
 .SOURCE : $(JCLINCLUDE)
 
@@ -33,13 +39,13 @@ end
 	$(~:N=*=*) $(~:T=E) $(JCL) $(JCLFLAGS) $(*)
 
 .EVENT.WAIT : .USE .VIRTUAL .FORCE .IGNORE
-	event wait $(<)
+	$(EVENT) wait $(<)
 
 .EVENT.RAISE : .USE .VIRTUAL .FORCE .IGNORE
-	event raise $(<:/.RAISE$//)$(JCL_AUTO_FRAGMENT_INDEX:+$(~$(<<):N=\(JCL_AUTO_FRAG\):+-$(JCL_AUTO_FRAG)))
+	$(EVENT) raise $(<:/.RAISE$//)$(JCL_AUTO_FRAGMENT_INDEX:+$(~$(<<):N=\(JCL_AUTO_FRAG\):+-$(JCL_AUTO_FRAG)))
 
-.EVENT.DELETE : .USE .VIRTUAL .FORCE .IGNORE
-	event clear $(<:/.DELETE$//)
+.EVENT.CLEAR : .USE .VIRTUAL .FORCE .IGNORE
+	$(EVENT) clear $(<:/.CLEAR$//)
 
 .binding. =
 
@@ -75,3 +81,9 @@ end
 .INTERRUPT.USR2 : .FUNCTION
 	query - blocked
 	return continue
+
+JOB-% : .MAKE .TERMINAL ""
+	local JOB
+	JOB := JOB-$(%)$(JCL_AUTO_at)$(JCL_AUTO_pound)
+	force $(JOB)
+	make $(JOB)

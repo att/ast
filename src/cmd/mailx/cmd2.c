@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the BSD package               *
-*Copyright (c) 1978-2011 The Regents of the University of California an*
+*Copyright (c) 1978-2013 The Regents of the University of California an*
 *                                                                      *
 * Redistribution and use in source and binary forms, with or           *
 * without modification, are permitted provided that the following      *
@@ -563,7 +563,7 @@ mail(char* str)
 
 	memset(&head, 0, sizeof(head));
 	extract(&head, GTO|GMETOO, str);
-	sendmail(&head, 0);
+	sendmail(&head, SIGN);
 	return 0;
 }
 

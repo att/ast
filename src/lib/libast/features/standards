@@ -1,5 +1,20 @@
 set stdio
-if tst note{ _ALL_SOURCE & _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ works }end compile{
+if tst note{ _GNU_SOURCE works }end compile{
+		#define _GNU_SOURCE 1
+		#include <sys/types.h>
+		#include <sys/stat.h>
+		#include <stdlib.h>
+		#include <unistd.h>
+		#include <fcntl.h>
+		#if !defined(__linux__) || !defined( __USE_GNU)
+		(
+		#endif
+	}end {
+		#ifndef _GNU_SOURCE
+		#define _GNU_SOURCE 1
+		#endif
+	}
+elif tst note{ _ALL_SOURCE & _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & _GNU_SOURCE & __EXTENSIONS__ works }end compile{
 		#define _ALL_SOURCE	1
 		#define _POSIX_SOURCE	1
 		#define _POSIX_C_SOURCE	21000101L
@@ -10,6 +25,7 @@ if tst note{ _ALL_SOURCE & _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & __E
 		#include <sys/stat.h>
 		#include <stdlib.h>
 		#include <unistd.h>
+		#include <fcntl.h>
 	}end {
 		#ifndef _ALL_SOURCE
 		#define _ALL_SOURCE	1
@@ -30,7 +46,7 @@ if tst note{ _ALL_SOURCE & _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & __E
 		#define __EXTENSIONS__	1
 		#endif
 	}
-elif tst note{ _ALL_SOURCE & _POSIX_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ works }end compile{
+elif tst note{ _ALL_SOURCE & _POSIX_SOURCE & _XOPEN_SOURCE & _GNU_SOURCE & __EXTENSIONS__ works }end compile{
 		#define _ALL_SOURCE	1
 		#define _POSIX_SOURCE	1
 		#define _XOPEN_SOURCE	9900
@@ -40,6 +56,7 @@ elif tst note{ _ALL_SOURCE & _POSIX_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ work
 		#include <sys/stat.h>
 		#include <stdlib.h>
 		#include <unistd.h>
+		#include <fcntl.h>
 	}end {
 		#ifndef _ALL_SOURCE
 		#define _ALL_SOURCE	1
@@ -57,7 +74,7 @@ elif tst note{ _ALL_SOURCE & _POSIX_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ work
 		#define __EXTENSIONS__	1
 		#endif
 	}
-elif tst note{ _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ works }end compile{
+elif tst note{ _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & _GNU_SOURCE & __EXTENSIONS__ works }end compile{
 		#define _POSIX_SOURCE	1
 		#define _POSIX_C_SOURCE	21000101L
 		#define _XOPEN_SOURCE	9900
@@ -66,6 +83,7 @@ elif tst note{ _POSIX_SOURCE & _POSIX_C_SOURCE & _XOPEN_SOURCE & __EXTENSIONS__ 
 		#include <sys/types.h>
 		#include <sys/stat.h>
 		#include <stdlib.h>
+		#include <fcntl.h>
 		#include <unistd.h>
 	}end {
 		#ifndef _POSIX_SOURCE
@@ -166,6 +184,8 @@ cat{
 
 #if __MACH__
 #undef  _POSIX_SOURCE
+#undef  _POSIX_C_SOURCE
+#undef  _XOPEN_SOURCE
 #endif
 
 }end

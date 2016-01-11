@@ -1,3 +1,5 @@
+13-08-11 strcopy() => stpcpy()
+13-08-11 ppexpr.c,ppop.c: add clang _has_include => #exists, _has_include_next => #exists_next
 12-06-06 ppline.c: preserve hosted sync even for normal sync
 12-02-29 pp.probe: handle predefined function-like macro definitions
 12-02-14 ppproto.c: fix "already noticed" logic

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -15,8 +15,6 @@
 *                           Florham Park NJ                            *
 *                                                                      *
 *                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,14 +29,15 @@
 #include <ast.h>
 #include <error.h>
 
-#define CODEX_VERSION		20090704L
+#define CODEX_VERSION		20130501L
 #define CODEX_PLUGIN_VERSION	AST_PLUGIN_VERSION(CODEX_VERSION)
 
 #define CODEX_DECODE	0x0001		/* decode supported		*/
 #define CODEX_ENCODE	0x0002		/* encode supported		*/
+#define CODEX_VCODEX	0x0004		/* vcodex method		*/
+#define CODEX_PLAIN	0x0008		/* don't encode ident header	*/
 
 #define CODEX_RETAIN	0x0010		/* initf-donef retain state	*/
-#define CODEX_INVERT	0x0020		/* invert composition		*/
 #define CODEX_TRACE	0x0040		/* enable trace			*/
 #define CODEX_VERBOSE	0x0080		/* enable verbose trace		*/
 
@@ -48,6 +47,7 @@
 #define CODEX_SUM	0x0800		/* checksum			*/
 #define CODEX_UU	0x1000		/* uuencode (ISO text)		*/
 
+#define CODEX_DONE	0x08000000L	/* method donef called		*/
 #define CODEX_CACHED	0x10000000L	/* cached entry			*/
 #define CODEX_SERIAL	0x20000000L	/* serial number assigned	*/
 #define CODEX_FLUSH	0x40000000L	/* flush-only sync		*/
@@ -72,7 +72,6 @@ struct Codex_s				/* coder public state		*/
 {
 	Sfdisc_t	sfdisc;		/* coder sfio discipline	*/
 	Sfio_t*		sp;		/* data base stream		*/
-	Sfio_t*		dp;		/* optional data delta stream	*/
 	Sfoff_t		size;		/* expected size if != -1	*/
 	Codexdisc_t*	disc;		/* coder discipline		*/
 	Codexmeth_t*	meth;		/* coder method			*/
@@ -86,7 +85,7 @@ struct Codex_s				/* coder public state		*/
 struct Codexdata_s			/* codexdata() info		*/
 {
 	Codexnum_t	size;		/* value size			*/
-	Codexnum_t	num;		/* value if buf!=0		*/
+	Codexnum_t	num;		/* value if buf==0		*/
 	void*		buf;		/* size byte value		*/
 };
 
@@ -95,8 +94,11 @@ struct Codexdisc_s			/* coder discipline		*/
 	Codexnum_t	version;	/* CODEX_VERSION		*/
 	Error_f		errorf;		/* error message function	*/
 	ssize_t		(*passf)(void*, size_t, Codexdisc_t*, Codexmeth_t*);
-	const char*	passphrase;	/* passphrase			*/
+	char*		passphrase;	/* passphrase			*/
 	Sfio_t*		identify;	/* decode method string if != 0	*/
+	char*		source;		/* to delta against		*/
+	char*		window;		/* window spec			*/
+	Codexnum_t	flags;		/* CODEX_* flags		*/
 };
 
 struct Codexmeth_s			/* coder method			*/
@@ -118,7 +120,7 @@ struct Codexmeth_s			/* coder method			*/
 	Sfoff_t		(*seekf)(Codex_t*, Sfoff_t, int);
 	int		(*dataf)(Codex_t*, Codexdata_t*);
 
-	void*		vcmeth;		/* vcodex(3) method		*/
+	void*		unused;		/* unused			*/
 	void*		data;		/* coder private data		*/
 	Codexmeth_t*	next;		/* next in list of all coders	*/
 };
@@ -156,8 +158,8 @@ extern Codexmeth_t*	codex_lib(const char*);
 #define extern		__EXPORT__
 #endif
 
-extern int		codex(Sfio_t*, Sfio_t*, const char*, Codexnum_t, Codexdisc_t*, Codexmeth_t*);
-extern int		codexpop(Sfio_t*, Sfio_t*, int);
+extern int		codex(Sfio_t*, const char*, Codexnum_t, Codexdisc_t*, Codexmeth_t*);
+extern int		codexpop(Sfio_t*, int);
 extern int		codexcmp(const char*, const char*);
 extern int		codexdata(Sfio_t*, Codexdata_t*);
 extern ssize_t		codexgetpass(const char*, void*, size_t);
@@ -168,6 +170,7 @@ extern int		codexadd(const char*, Codexmeth_t*);
 extern Sfio_t*		codexnull(void);
 extern ssize_t		codexpass(void*, size_t, Codexdisc_t*, Codexmeth_t*);
 extern int		codexsize(Sfio_t*, Sfoff_t);
+extern int		codexoptinfo(Opt_t*, Sfio_t*, const char*, Optdisc_t*);
 
 #undef	extern
 

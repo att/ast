@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -49,7 +49,7 @@ static void* consumer(void* arg)
 	unsigned int	id = (unsigned int)integralof(arg);
  
 	while (1)
-	{	asolock(&Asolock, id, ASO_SPINLOCK);
+	{	asolock(&Asolock, id, ASO_LOCK);
 
 		if((obj = Objlist))
 		{	Objlist = obj->next;
@@ -66,62 +66,49 @@ static void* consumer(void* arg)
  
 tmain()
 {
-	int		i, m, type;
-	Asometh_t	*meth;
+	int		i, m;
 	Obj_t		*obj;
 	char		*lockid;
 	pthread_t	thread[N_THREADS];
 	struct timeval	tv1, tv2;
  
 	topts();
-	type = Tstall ? ASO_THREAD : ASO_INTRINSIC;
 	lockid = tstfile("aso", 0);
-	meth = 0;
-	while (meth = asometh(ASO_NEXT, meth))
-	{
-		if (!(meth->type & type))
-			continue;
-		if (asoinit(lockid, meth, 0))
-		{
-			twarn("%s method initialization failed", meth->name);
-			continue;
-		}
-		tinfo("testing %s method with %d threads", meth->name, N_THREADS);
-		Asolock = 0;
-		/* create object list */
-		for (i = 0; i < N_OBJS; i++)
-		{	if(!(obj = malloc(sizeof(Obj_t))) )
-				terror("malloc failed");
-			obj->value = i;
-			obj->next = Objlist;
-			Objlist = obj;
-		}
- 
-		/* time before starting the threads... */
-		gettimeofday(&tv1, NULL);
-
-		N_free = 0;
-		for(i = 0; i < N_THREADS; ++i)
-			pthread_create(&thread[i], NULL, consumer, (char*)0 + i + 1);
- 
-		for(i = 0; i < N_THREADS; ++i)
-			pthread_join(thread[i], NULL);
- 
-		/* time after threads finished... */
-		gettimeofday(&tv2, NULL);
-
-		if(N_free != N_OBJS)
-			terror("%s method free() call error -- expected %d, got %d", meth->name, N_OBJS, N_free);
- 
-		if (tv1.tv_usec > tv2.tv_usec)
-		{
-	    		tv2.tv_sec--;
-	    		tv2.tv_usec += 1000000;
-		}
- 
-		tinfo("%s method elapsed time %ld.%lds", meth->name,
-			tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
+	tinfo("testing with %d threads", N_THREADS);
+	Asolock = 0;
+	/* create object list */
+	for (i = 0; i < N_OBJS; i++)
+	{	if(!(obj = malloc(sizeof(Obj_t))) )
+			terror("malloc failed");
+		obj->value = i;
+		obj->next = Objlist;
+		Objlist = obj;
 	}
+ 
+	/* time before starting the threads... */
+	gettimeofday(&tv1, NULL);
+
+	N_free = 0;
+	for(i = 0; i < N_THREADS; ++i)
+		pthread_create(&thread[i], NULL, consumer, (char*)0 + i + 1);
+ 
+	for(i = 0; i < N_THREADS; ++i)
+		pthread_join(thread[i], NULL);
+ 
+	/* time after threads finished... */
+	gettimeofday(&tv2, NULL);
+
+	if(N_free != N_OBJS)
+		terror("free() call error -- expected %d, got %d", N_OBJS, N_free);
+ 
+	if (tv1.tv_usec > tv2.tv_usec)
+	{
+    		tv2.tv_sec--;
+    		tv2.tv_usec += 1000000;
+	}
+ 
+	tinfo("elapsed time %ld.%lds",
+		tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
  
 	texit(0);
 }

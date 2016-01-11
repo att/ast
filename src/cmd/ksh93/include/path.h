@@ -54,6 +54,7 @@ typedef struct pathcomp
 {
 	struct pathcomp *next;
 	int		refcount;
+	int		fd;
 	dev_t		dev;
 	ino_t		ino;
 	time_t		mtime;
@@ -75,6 +76,7 @@ extern void		path_newdir(Shell_t*,Pathcomp_t*);
 extern Pathcomp_t	*path_dirfind(Pathcomp_t*,const char*,int);
 extern Pathcomp_t	*path_unsetfpath(Shell_t*);
 extern Pathcomp_t	*path_addpath(Shell_t*,Pathcomp_t*,const char*,int);
+extern bool		path_cmdlib(Shell_t*, const char*, bool);
 extern Pathcomp_t	*path_dup(Pathcomp_t*);
 extern void		path_delete(Pathcomp_t*);
 extern void 		path_alias(Namval_t*,Pathcomp_t*);
@@ -92,7 +94,7 @@ extern Pathcomp_t 	*path_get(Shell_t*,const char*);
 #undef extern
 extern char 		*path_pwd(Shell_t*,int);
 extern Pathcomp_t	*path_nextcomp(Shell_t*,Pathcomp_t*,const char*,Pathcomp_t*);
-extern int		path_search(Shell_t*,const char*,Pathcomp_t**,int);
+extern bool		path_search(Shell_t*,const char*,Pathcomp_t**,int);
 extern char		*path_relative(Shell_t*,const char*);
 extern int		path_complete(Shell_t*,const char*, const char*,struct argnod**);
 #if SHOPT_BRACEPAT

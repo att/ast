@@ -122,7 +122,7 @@ static void	trap_timeout(void* handle)
 		tp->timeout = 0;
 	tp->flags |= L_FLAG;
 	tp->sh->sigflag[SIGALRM] |= SH_SIGALRM;
-	if(sh_isstate(SH_TTYWAIT))
+	if(sh_isstate(tp->sh,SH_TTYWAIT))
 		sh_timetraps(tp->sh);
 }
 
@@ -141,7 +141,7 @@ void	sh_timetraps(Shell_t *shp)
 			{
 				tp->flags &= ~L_FLAG;
 				if(tp->action)
-					sh_fun(tp->action,tp->node,(char**)0);
+					sh_fun(shp,tp->action,tp->node,(char**)0);
 				tp->flags &= ~L_FLAG;
 				if(!tp->flags)
 				{

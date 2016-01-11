@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1994-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1994-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -30,7 +30,7 @@ case $-:$BASH_VERSION in
 esac
 
 command=iffe
-version=2012-07-17 # update in USAGE too #
+version=2013-08-11 # update in USAGE too #
 
 compile() # $cc ...
 {
@@ -548,15 +548,16 @@ execute()
 	*)	noteout=$stderr ;;
 	esac
 	if	test "" != "$cross"
-	then	crossexec $cross "$@" 9>&$noteout
+	then	crossexec $cross "$@" $tmp.u 9>&$noteout
 		_execute_=$?
 	elif	test -d /NextDeveloper
-	then	"$@" <&$nullin >&$nullout 9>&$noteout
+	then	"$@" $tmp.u <&$nullin >&$nullout 9>&$noteout
 		_execute_=$?
-		"$@" <&$nullin | cat
-	else	"$@" 9>&$noteout
+		"$@" $tmp.u <&$nullin | cat
+	else	"$@" $tmp.u 9>&$noteout
 		_execute_=$?
 	fi
+	rm -rf $tmp.u* > /dev/null 2>&1
 	return $_execute_
 }
 
@@ -600,6 +601,7 @@ exclude()
 
 all=0
 apis=
+apisame=
 binding="-dy -dn -Bdynamic -Bstatic -Wl,-ashared -Wl,-aarchive -call_shared -non_shared '' -static"
 complete=0
 config=0
@@ -715,7 +717,7 @@ set=
 case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 0123)	USAGE=$'
 [-?
-@(#)$Id: iffe (AT&T Research) 2012-07-17 $
+@(#)$Id: iffe (AT&T Research) 2013-09-25 $
 ]
 '$USAGE_LICENSE$'
 [+NAME?iffe - C compilation environment feature probe]
@@ -893,6 +895,8 @@ case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 		when \aNAME\a_API is >= \aYYYYMMDD\a (\aNAME\a is \aname\a
 		converted to upper case). If \aNAME\a_API is not defined
 		then \asymbol\a maps to the newest \aYYYYMMDD\a for \aname\a.]
+	[+api \aname1\a = \aname2\a?Set the default \aname1\a api version to
+		the \aname2\a api version.]
 	[+define \aname\a [ (\aarg,...\a) ]] [ \avalue\a ]]?Emit a macro
 		\b#define\b for \aname\a if it is not already defined. The
 		definition is passed to subsequent tests.]
@@ -1022,8 +1026,11 @@ case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 		but does not define a macro.]
 	[+(\aexpression\a)?Equivalent to \bexp -\b \aexpression\a.]
 }
-[+?Code block names may be prefixed by \bno\b to invert the test sense. The
-	block names are:]{
+[+?Code block names may be prefixed by \bno\b to invert the test sense. Any
+	block that is eventually executed as a command will have a single
+	command argument set to a temp file prefix that may be used to
+	generate temp files for the test. The temp files/dirs are removed
+	after the block execution. The block names are:]{
 	[+cat?The block is copied to the output file.]
 	[+compile?The block is compiled (\bcc -c\b).]
 	[+cross?The block is executed as a shell script using \bcrossexec\b(1)
@@ -1294,7 +1301,7 @@ case $debug in
 	fi
 	;;
 esac
-trap "rm -f $core $tmp*" 0
+trap "rm -rf $core $tmp*" 0
 if	(:>$tmp.c) 2>/dev/null
 then	rm -f $tmp.c
 else	echo "$command: cannot create tmp files in current dir" >&2
@@ -2241,8 +2248,8 @@ $lin
 	case $arg in
 	'')	case $op in
 		api)	arg=-
-			case $1:$2 in
-			[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]*:[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])
+			case $1:$2:$3 in
+			[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]*:[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]:*)
 				a=$1
 				shift
 				case " $apis " in
@@ -2285,6 +2292,9 @@ $lin
 					eval api_sym_${a}='$'syms
 					shift
 				done
+				;;
+			[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]*:=:[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]*)
+				apisame="$apisame $1 $3"
 				;;
 			*)	echo "$command: $op: expected: name YYYYMMDD symbol ..." >&$stderr
 				;;
@@ -3025,10 +3035,24 @@ int x;
 									echo "#define ${API}_VERSION	${ver}"
 								done
 							esac
+							set x x $apisame
+							while	:
+							do	case $# in
+								[0123])	break ;;
+								esac
+								shift 2
+								echo "#ifndef _API_${1}"
+								echo "#define _API_${1}	_API_${2}"
+								echo "#endif"
+							done
 							case $apis in
 							?*)	for api in $apis
 								do	API=`echo $api | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 									echo "#define ${API}API(rel)	( _BLD_${api} || !_API_${api} || _API_${api} >= rel )"
+									echo
+									echo "#ifndef _${API}_API_IMPLEMENT"
+									echo "#define _${API}_API_IMPLEMENT	1"
+									echo
 									map=
 									sep=
 									eval syms='"${'api_sym_${api}'}"'
@@ -3072,6 +3096,8 @@ int x;
 									echo "#endif"
 									echo
 									echo "#define _API_${api}_MAP	\"$map\""
+									echo
+									echo "#endif"
 								done
 								echo
 								;;
@@ -4025,6 +4051,9 @@ $std
 $usr
 $pre
 $inc
+#ifdef _IFFE_type
+$v i;
+#else
 typedef int (*_IFFE_fun)();
 #ifdef _IFFE_extern
 _BEGIN_EXTERNS_
@@ -4032,6 +4061,7 @@ extern int $v();
 _END_EXTERNS_
 #endif
 static _IFFE_fun i=(_IFFE_fun)$v;int main(){return ((unsigned int)i)^0xaaaa;}
+#endif
 "
 					d=-D_IFFE_extern
 					if	compile $cc -c $tmp.c <&$nullin >&$nullout
@@ -4059,8 +4089,10 @@ static _IFFE_fun i=(_IFFE_fun)$v;int main(){return ((unsigned int)i)^0xaaaa;}
 								;;
 							esac
 						fi
-					else	case $intrinsic in
-						'')	copy $tmp.c "
+					else	if	compile $cc -D_IFFE_type -c $tmp.c <&$nullin >&$nullout
+						then	c=1
+						else	case $intrinsic in
+							'')	copy $tmp.c "
 $tst
 $ext
 $std
@@ -4072,13 +4104,15 @@ extern int foo();
 _END_EXTERNS_
 static int ((*i)())=foo;int main(){return(i==0);}
 "
-							compile $cc -c $tmp.c <&$nullin >&$nullout
-							intrinsic=$?
-							;;
-						esac
+								compile $cc -c $tmp.c <&$nullin >&$nullout
+								intrinsic=$?
+								;;
+							esac
+							c=$intrinsic
+						fi
 						case $o in
-						mth)	report $intrinsic 1 "$v() in math lib" "$v() not in math lib" "default for function $v()" ;;
-						*)	report $intrinsic 1 "$v() in default lib(s)" "$v() not in default lib(s)" "default for function $v()" ;;
+						mth)	report $c 1 "$v() in math lib" "$v() not in math lib" "default for function $v()" ;;
+						*)	report $c 1 "$v() in default lib(s)" "$v() not in default lib(s)" "default for function $v()" ;;
 						esac
 					fi
 					;;
@@ -4341,12 +4375,13 @@ _END_EXTERNS_
 					case $a in
 					*.c)	rm -f $tmp.exe
 						{
+						grep '^#include.*iffe --include-first' $a
 						echo "$tst
 $ext
 $std
 $usr
 $inc"
-						cat $a
+						grep -v '^#include.*iffe --include-first' $a
 						} > $tmp.c
 						compile $cc -o $tmp.exe $tmp.c $lib $deflib <&$nullin >&$stderr 2>&$stderr &&
 						$executable $tmp.exe &&
@@ -4467,8 +4502,8 @@ nam &/g' \
 #endif/'
 					;;
 				typ)	case $p in
-					"")	x= ;;
-					*)	x="$p " ;;
+					"")	x= r='*' ;;
+					*)	x="$p " r= ;;
 					esac
 					is typ "$x$v"
 					{
@@ -4492,7 +4527,7 @@ $x$v v; i = 1; v = i;"
 $tst
 $ext
 $inc
-struct xxx { $x$v mem; };
+struct xxx { $x$v$r mem; };
 static struct xxx v;
 struct xxx* f() { return &v; }"
 						;;

@@ -26,6 +26,7 @@ tst - output{
 	_END_EXTERNS_
 	int main()
 	{
+	#if ! __CYGWIN__
 		int		i;
 		struct stat	statb;
 		static char*	pty[] = { "/dev/ptyp0000", "/dev/ptym/ptyp0", "/dev/ptyp0" };
@@ -51,6 +52,7 @@ tst - output{
 				printf("#define _pty_first\t\"%s\"\n", pty[i]);
 				break;
 			}
+	#endif
 		return 0;
 	}
 }end  

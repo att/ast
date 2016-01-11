@@ -257,7 +257,101 @@ ssize_t grbranching(Graph_t* gr)
 	return w;
 }
 
+/* sort edges in reverse order of weights */
+static Gredge_t* gredgesort(Gredge_t* list)
+{
+	Gredge_t	*link, *equl, *less, *more;
+	ssize_t		w, wght;
 
+	if(!list)
+		return NIL(Gredge_t*);
+
+	equl = list; list = list->link; equl->link = NIL(Gredge_t*);
+	wght = BREDGE(equl)->wght; /* partition list by this weight */
+	more = less = NIL(Gredge_t*);
+	for(; list; list = link)
+	{	link = list->link;
+
+		if((w = BREDGE(list)->wght) > wght)
+		{	list->link = more;
+			more = list;
+		}
+		else if(w == wght)
+		{	list->link = equl;
+			equl = list;
+		}
+		else /* if(w < wght) */
+		{	list->link = less;
+			less = list;
+		}
+	}
+
+	/* recurse and sort the sublists */
+	if(more && more->link)
+		more = gredgesort(more);
+	if(less && less->link)
+		less = gredgesort(less);
+
+	if((list = more) ) /* heaviest ones go first */
+	{	for(link = list; link->link; )
+			link = link->link;
+		link->link = equl; /* link to the equals */
+	}
+	else	list = equl; /* no heavier ones than this */
+
+	for(link = equl; link->link; )
+		link = link->link;
+	link->link = less; /* lighter ones go last */
+
+	return list;
+}
+
+/* Greedy approximation of a branching */
+ssize_t grbrgreedy(Graph_t* gr)
+{
+	Grnode_t	*n;
+	Gredge_t	*e, *list;
+	ssize_t		wght;
+
+	list = NIL(Gredge_t*); /* link all edges into a big list */
+	for(n = (Grnode_t*)dtflatten(gr->nodes); n; n = (Grnode_t*)dtlink(gr->nodes,n) )
+	{	for(e = n->oedge; e; e = e->onext)
+		{	e->link = list;
+			list = e;
+		}
+		n->oedge = n->iedge = NIL(Gredge_t*); /* wipe out edge lists */
+	}
+	list = gredgesort(list); /* sort in reverse order by weights */
+
+	wght = 0;
+	for(e = list; e; e = e->link)
+	{	if(e->head == e->tail) /* self-loop cannot be a branching edge */
+			continue;
+		if(e->head->iedge) /* node already got an incoming edge */
+			continue;
+
+		for(n = e->tail;; ) /* check cycle */
+		{	if(!n->iedge) /* no cycle */
+				break;
+
+			if((n = n->iedge->tail) == e->head) /* causing a cycle */
+			{	n = NIL(Grnode_t*);
+				break;
+			}
+		}
+
+		if(n) /* ok to add to the branching */
+		{	e->inext = NIL(Gredge_t*); e->head->iedge = e;
+			e->onext = e->tail->oedge; e->tail->oedge = e;
+			wght += BREDGE(e)->wght;
+		}
+	}
+
+	return wght;
+}
+
+
+/* set or query weights of an edge */
 ssize_t grbrweight(Gredge_t* e, ssize_t w)
 {
 	if(w > 0)
@@ -311,18 +405,22 @@ main(int argc, char** argv)
 	int		type = 0;
 
 	if(argc > 1 && strcmp(argv[1],"-l") == 0)
-		type = -1;
+	{	type = -1;
+		argc--; argv++;
+	}
 	if(argc > 1 && strcmp(argv[1],"-r") == 0)
-		type = 1;
+	{	type = 1;
+		argc--; argv++;
+	}
 
-	gr = gropen(0);
+	gr = gropen(0,0);
 	while(fgets(buf,sizeof(buf),stdin))
 	{	if(buf[0] == '#')
 			continue;
 		if(sscanf(buf,"%d,%d,%d", &t, &h, &w) != 3)
 			continue;
-		tn = grnode(gr, t, 1);
-		hn = grnode(gr, h, 1);
+		tn = grnode(gr, (Void_t*)(t), 1);
+		hn = grnode(gr, (Void_t*)(h), 1);
 		if(type > 0 && t >= h) /* only use edges with t < h */
 			continue; 
 		if(type < 0 && t <= h) /* only use edges with t > h */
@@ -331,7 +429,9 @@ main(int argc, char** argv)
 		grbrweight(e, w);
 	}
 
-	printf("\nTotal weight=%d\n", grbranching(gr));
+	if(argc > 1 && strcmp(argv[1],"-g") == 0)
+		printf("\nTotal weight=%d\n", grbrgreedy(gr));
+	else	printf("\nTotal weight=%d\n", grbranching(gr));
 	for(n = (Grnode_t*)dtflatten(gr->nodes); n; n = (Grnode_t*)dtlink(gr->nodes, n) )
 		if((e = n->iedge) )
 			fprintf(stderr, "%d -> %d [%d]\n", e->tail->label, e->head->label, grbrweight(e, 0) );

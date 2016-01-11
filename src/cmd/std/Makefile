@@ -16,8 +16,6 @@ du :: du.c
 
 file :: file.c
 
-iconv :: iconv.c
-
 locale :: locale.c
 
 ls :: ls.c

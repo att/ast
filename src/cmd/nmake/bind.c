@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -1985,16 +1985,16 @@ pathname(register char* s, register Rule_t* r)
 	{
 		if (!state.logical && r->view && !(r->dynamic & D_bindindex))
 		{
-			s = strcopy(s, state.view[r->view].path);
+			s = stpcpy(s, state.view[r->view].path);
 			*s++ = '/';
 		}
 		if (r->source && !(r->dynamic & D_bindindex))
 		{
-			s = strcopy(s, state.source[r->source].path);
+			s = stpcpy(s, state.source[r->source].path);
 			*s++ = '/';
 		}
 	}
-	return strcopy(s, r->name);
+	return stpcpy(s, r->name);
 }
 #endif
 

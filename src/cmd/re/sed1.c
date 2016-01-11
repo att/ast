@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1995-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1995-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -453,18 +453,22 @@ yc(Text *script, Text *t)
 	unsigned char *s, *pb, *qb;
 	unsigned char *p, *q, *o, *v, **w;
 	int pc, qc;
+	wchar_t wc;
+	Mbstate_t oq, pq, qq;
 	m = 0;
 	if(mbwide()) {
+		mbinit(&pq);
 		pb = t->w;
-		if((delim = mbchar(pb)) == '\n' || delim=='\\')
+		if((delim = mbchar(&wc, pb, t->e - pb, &pq)) == '\n' || delim=='\\')
 			syntax("missing delimiter");
+		mbinit(&pq);
 		p = pb;
-		while((o=p),(pc = mbchar(p))!=delim) {
+		while((o=p),(pc = mbchar(&wc, p, t->e - p, &pq))!=delim) {
 			if(pc=='\n')
 				syntax("missing delimiter");
 			if(pc=='\\') {
 				o = p;
-				pc = mbchar(p);
+				pc = mbchar(&wc, p, t->e - p, &pq);
 			}
 			if((p-o)>1 && pc>m)
 				m = pc;
@@ -473,10 +477,10 @@ yc(Text *script, Text *t)
 	if(m) {
 		x = 0;
 		qb = p;
-		while((o=p), (pc = mbchar(p))!=delim) {
+		while((o=p), (pc = mbchar(&wc, p, t->e - p, &pq))!=delim) {
 			if(pc=='\\') {
 				o = p;
-				pc = mbchar(p);
+				pc = mbchar(&wc, p, t->e - p, &pq);
 			}
 			x += (p-o)+1;
 		}
@@ -490,29 +494,35 @@ yc(Text *script, Text *t)
 		script->w += x;
 		for(i=0; i<m; i++)
 			w[i] = 0;
+		mbinit(&pq);
 		p = pb;
+		mbinit(&qq);
 		q = qb;
-		while((pb=p), (pc = mbchar(p))!=delim) {
+		while((pb=p), (oq = pq), (pc = mbchar(&wc, p, t->e - p, &pq))!=delim) {
 			if(pc=='\\') {
-				pb = p;
-				if((qc = mbchar(p))=='n')
+				if((qc = mbchar(&wc, p, t->e - p, &pq))=='n')
 					pc = '\n';
 				else if(qc==delim || qc=='\\')
 					pc = qc;
-				else
-					p = pb-1;
+				else {
+					p = pb;
+					pq = oq;
+				}
 			}
+			oq = qq;
 			qb = q;
-			if((qc = mbchar(q)) == '\n')
+			if((qc = mbchar(&wc, q, t->e - q, &qq)) == '\n')
 				syntax("missing delimiter");
 			if(qc==delim)
 				syntax("string lengths differ");
 			if(qc=='\\') {
-				qb = q;
-				if((qc = mbchar(q))=='n')
+				qq = oq;
+				if((qc = mbchar(&wc, q, t->e - q, &qq))=='n')
 					*qb = '\n';
-				else if(qc!=delim && qc!='\\')
-					q = qb-1;
+				else if(qc!=delim && qc!='\\') {
+					q = qb;
+					qq = oq;
+				}
 			}
 			i = (q-qb);
 			if(w[pc]) {
@@ -527,7 +537,7 @@ yc(Text *script, Text *t)
 				v += i;
 			}
 		}
-		if(mbchar(q) != delim)
+		if(mbchar(&wc, q, t->e - q, &qq) != delim)
 			syntax("string lengths differ");
 	}
 	else {

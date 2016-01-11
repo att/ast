@@ -2,7 +2,7 @@ if ! ( CC.HOSTTYPE == "*win*" && CC.SUFFIX.DYNAMIC == ".dll" || "$(PACKAGE_OPTIO
 	libtype = :static
 end
 
-:PACKAGE: - X11 tk tcl shell$(libtype) ast$(libtype)
+:PACKAGE: - X11 tk tcl shell$(libtype):20120101 ast$(libtype)
 
 CCFLAGS = $(CC.OPTIMIZE)
 

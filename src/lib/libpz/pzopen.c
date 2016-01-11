@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1998-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1998-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -28,33 +28,6 @@
 #include <ls.h>
 
 Pzstate_t	state = { "libpz:pz" };
-
-/*
- * print message and fail on VM_BADADDR,VM_NOMEM
- */
-
-static int
-nomalloc(Vmalloc_t* region, int type, void* obj, Vmdisc_t* disc)
-{
-	Pz_t*		pz = (Pz_t*)((char*)disc - offsetof(Pz_t, vmdisc));
-	Vmstat_t	st;
-
-	switch (type)
-	{
-	case VM_BADADDR:
-		if (pz->disc->errorf)
-			(*pz->disc->errorf)(pz, pz->disc, ERROR_SYSTEM|2, "invalid pointer %p passed to free or realloc", obj);
-		return -1;
-	case VM_NOMEM:
-		if (pz->disc->errorf)
-		{
-			vmstat(region, &st);
-			(*pz->disc->errorf)(pz, pz->disc, ERROR_SYSTEM|2, "storage allocator out of space on %lu byte request ( region %lu segments %lu busy %lu:%lu:%lu free %lu:%lu:%lu )", (size_t)obj, st.extent, st.n_seg, st.n_busy, st.s_busy, st.m_busy, st.n_free, st.s_free, st.m_free);
-		}
-		return -1;
-	}
-	return 0;
-}
 
 /*
  * find and open file with optional suffix and sfio mode
@@ -108,7 +81,7 @@ pzopen(Pzdisc_t* disc, const char* path, unsigned long flags)
 		if (!(pz = vmnewof(vm, 0, Pz_t, 1, 0)) || !(pz->tmp = sfstropen()) || !(pz->str = sfstropen()) || (flags & PZ_WRITE) && !(pz->det = sfstropen()))
 			goto bad;
 		pz->vmdisc = *Vmdcheap;
-		pz->vmdisc.exceptf = nomalloc;
+		memfatal(&pz->vmdisc);
 		if (!vmdisc(vm, &pz->vmdisc))
 			goto bad;
 		tvgettime(&pz->start);

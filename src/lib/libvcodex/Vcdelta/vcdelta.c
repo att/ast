@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vcdhdr.h"
 
 /*	Delta compression based on the Vcdiff data format.
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 #define SLOP		64	/* max overhead space needed for output */
@@ -202,18 +202,18 @@ ssize_t		n;	/* number of fragments		*/
 #if 0
 {	Vcmatch_t* m;
 	if((m = mtch)->mpos < 0)
-	{	PRINT(2, "add %6d      ", mtch->size);
-		PRINT(2, "pos %6d\n", mtch->tpos - vcpa->nsrc);
+	{	DEBUG_PRINT(2, "add %6d      ", mtch->size);
+		DEBUG_PRINT(2, "pos %6d\n", mtch->tpos - vcpa->nsrc);
 	}
 	if(m->mpos >= 0 || n > 1)
 	{	if(m->mpos < 0)
 			m += 1;
-		PRINT(2, "cpy %6d      ", mtch[n-1].tpos+mtch[n-1].size - m->tpos);
-		PRINT(2, "pos %6d      ", m->tpos - vcpa->nsrc);
-		PRINT(2, "adr %6d      ", m->mpos);
+		DEBUG_PRINT(2, "cpy %6d      ", mtch[n-1].tpos+mtch[n-1].size - m->tpos);
+		DEBUG_PRINT(2, "pos %6d      ", m->tpos - vcpa->nsrc);
+		DEBUG_PRINT(2, "adr %6d      ", m->mpos);
 		if((l = n - (m == mtch ? 0 : 1)) > 1 )
-			PRINT(2,"#frags %6d", l);
-		WRITE(2,"\n",1);
+			DEBUG_PRINT(2,"#frags %6d", l);
+		DEBUG_WRITE(2,"\n",1);
 	}
 }
 #endif

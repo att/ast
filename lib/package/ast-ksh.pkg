@@ -1,4 +1,4 @@
-ast-ksh :PACKAGE: ksh93 libast libcmd libcoshell libsum libdll
+ast-ksh :PACKAGE: ksh93 msggen libast libcmd libcoshell libsum libdll
 
 :COVERS: ksh
 

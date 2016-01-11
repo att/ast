@@ -1,0 +1,60 @@
+NOTE regression tests for the readlink command
+
+UNIT readlink
+
+KEEP t
+
+operands="dd d z dd/g z/g f dd/g dd/eee a b d/e d/dd c xxx"
+
+init='
+function init
+{
+	typeset dir="dd dd/g dd/eee dd/h d z z/g z/eee z/h"
+	typeset reg="f dd/g/g dd/eee/g dd/h/g z/g/g z/eee/g z/h/g"
+	typeset lnk="eee dd/g h dd/eee b a c b f d/e dd d/dd dd z d/e c"
+	typeset top=$1
+	typeset f
+
+	mkdir $top
+	for f in $dir
+	do	mkdir -p "$top/$f"
+	done
+	for f in $reg
+	do	: > $top/$f
+	done
+	set $lnk
+	while	(( $# >= 2 ))
+	do	ln -s $1 $top/$2
+		shift 2
+	done
+}
+'
+print -r -- "$init"
+
+TEST 'kitchen sink'
+
+	DO init t
+
+eval "$init"
+init $WORK/t
+for a in '' --canonicalize --canonicalize-existing --canonicalize-missing
+do
+	for b in '' --logical --physical
+	do
+		for c in '' --relative
+		do
+			for d in '' --readlink
+			do
+				for e in '' --verbose
+				do
+					for f in $operands
+					do
+
+	EXEC $a $b $c $d $e t/$f
+
+					done
+				done
+			done
+		done
+	done
+done

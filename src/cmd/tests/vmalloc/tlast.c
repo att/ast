@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -40,12 +40,6 @@ tmain()
 
 	if(vmresize(vm,addr[9],256,1) == NIL(Void_t*))
 		terror("Resize last element does not succeed?");
-
-#ifdef DEBUG
-	for(i = 0; i < 10; ++i)
-		printf("size[%d]=%d\n",i,vmsize(vm,addr[i]));
-	printf("vmextent=%d\n",vmsize(vm,NIL(Void_t*)));
-#endif
 
 	texit(0);
 }

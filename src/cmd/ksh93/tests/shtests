@@ -1,16 +1,16 @@
 : ksh regression test harness :
 
-USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2000-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 
 command=shtests
 
 setslocale='*@(locale).sh'
-timesensitive='*@(options|sigchld|subshell).sh'
+timesensitive='*@(options|sig*|subshell).sh'
 valgrindflags='--xml=yes --log-file=/dev/null --track-origins=yes --read-var-info=yes'
 
 USAGE=$'
 [-s8?
-@(#)$Id: shtests (AT&T Research) 2012-05-29 $
+@(#)$Id: shtests (AT&T Research) 2013-08-24 $
 ]
 '$USAGE_LICENSE$'
 [+NAME?shtests - ksh regression test harness]
@@ -39,10 +39,10 @@ USAGE=$'
 [t!:time?Include the current date/time in the test identification
     messages.]
 [u:utf8?Run the test scripts in the ast-specific C.UTF-8 locale.]
-[v!:vmalloc_options?Run tests with \bVMALLOC_OPTIONS=abort\b. Test
+[v!:vmalloc-options?Run tests with \bVMALLOC_OPTIONS=abort\b. Test
     script names matching \b'$timesensitive$'\b are run with
     \bVMALLOC_OPTIONS\b unset.]
-[V:valgrind?Set \b--novmalloc_options\b and run the test scripts with
+[V:valgrind?Set \b--novmalloc-options\b and run the test scripts with
     \bvalgrind\b(1) on \bksh\b. If \b$SHELL-g\b exists and is executable
     than it is used instead of \b$SHELL\b.]
 [x:trace?Enable script execution trace.]
@@ -170,8 +170,7 @@ trap + PIPE # unadvertized -- set SIGPIPE to SIG_DFL #
 
 integer compile=-1 posix=-1 utf8=-1
 integer debug=0 locale=0 time=1
-typeset vmalloc_options=abort trace= valgrind=
-vmalloc_options= #XXX# until multi-region vmalloc trace fixed #XXX#
+typeset vmalloc_options= trace= valgrind=
 
 while	getopts -a $command "$USAGE" OPT
 do	case $OPT in
@@ -191,7 +190,7 @@ do	case $OPT in
 	u)	utf8=$OPTARG
 		;;
 	v)	if	(( OPTARG ))
-		then	vmalloc_options=abort
+		then	vmalloc_options=method=best,abort
 		else	vmalloc_options=
 		fi
 		;;
@@ -238,25 +237,29 @@ if	[[ $VMALLOC_OPTIONS ]]
 then	vmalloc_options=$VMALLOC_OPTIONS
 else	VMALLOC_OPTIONS=$vmalloc_options
 fi
-[[ $VMALLOC_OPTIONS ]] || timesensitive=.
+[[ ,$VMALLOC_OPTIONS, == *,@(abort|check),* ]] || timesensitive=.
 export PATH PWD SHCOMP SHELL VMALLOC_OPTIONS
 PWD=$(pwd)
 SHELL=${SHELL-ksh}
-case $0 in
-/*)	d=$(dirname $0);;
-*/*)	d=$PWD/$(dirname $0);;
-*)	d=$PWD;;
+case ${0%/*} in
+*/bin)	case $0 in
+	/*)	bin=$(dirname $0);;
+	*)	bin=$PWD/$(dirname $0);;
+	esac
+	;;
+*)	bin=$PWD
+	;;
 esac
 case $SHELL in
 /*)	;;
-*/*)	SHELL=$d/$SHELL;;
+*/*)	SHELL=$bin/$SHELL;;
 *)	SHELL=$(whence $SHELL);;
 esac
 PATH=/bin:/usr/bin
 if	[[ -d /usr/ucb ]]
 then	PATH=$PATH:/usr/ucb
 fi
-PATH=$PATH:$d
+PATH=$PATH:$bin
 if	[[ $INSTALLROOT && -r $INSTALLROOT/bin/.paths ]]
 then	PATH=$INSTALLROOT/bin:$PATH
 fi
@@ -335,8 +338,7 @@ do	if	[[ ! -r $i ]]
 			fi
 			if	(( e == 0 ))
 			then	echo test $o passed ${time:+"at $(date +%Y-%m-%d+%H:%M:%S)"} "[ $t $T 0 ${E}s ]"
-			else	e=$?
-				if	(( e != 1 ))
+			else	if	(( e != 1 ))
 				then	E=${E}s
 				fi
 				echo test $o failed ${time:+"at $(date +%Y-%m-%d+%H:%M:%S)"} with exit code $e "[ $t $T $e $E ]"

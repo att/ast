@@ -15,7 +15,7 @@
 #                           Florham Park NJ                            #
 #                                                                      #
 #                 Glenn Fowler <gsf@research.att.com>                  #
-#                   Phong Vo <kpv@research.att.com>                    #
+#                     Phong Vo <phongvo@gmail.com>                     #
 #              Doug McIlroy <doug@research.bell-labs.com>              #
 #                                                                      #
 ########################################################################

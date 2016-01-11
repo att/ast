@@ -47,3 +47,13 @@ EXEC -c 08
 EXEC -010
 EXEC -n 010
 EXEC -c 010
+
+TEST 'incomplete line'
+
+DATA - -n $'foo\nbar'
+EXEC -n 1
+EXEC -1
+EXEC -n 2
+EXEC -2
+EXEC -n 3
+EXEC -3

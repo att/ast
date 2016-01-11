@@ -1,3 +1,14 @@
+13-10-10 bgp-mrt.c: fix STATE_BGP_TABLE to parse all attr() before nlri()
+13-08-28 mrt.h: MRT_ATTR_AIGP_20120425 => MRT_ATTR_AIGP
+13-08-28 bgp.c: add BGP_aigp, "aigp_t aigp { values_t aigp }"
+13-08-28 bgp-mrt.c: parse MRT_ATTR_AIGP subtype 1
+13-04-18 bgp-mrt.c: add mvpn_t.src_as* to the member table -- doh
+13-03-21 bgp-mrt.c: fix TABLE_DUMP_V2_RIB* old record data bleed through
+13-03-11 bgp-mrt.c: fix mvpn.src_addrv[46] set bit
+13-03-09 bgp-mrt.c: adjust debug message size to include common mrt header
+12-08-20 bgp-mrt.c: fix bad MCAST_VPN dump data workaround
+12-08-15 bgp.c,bgp-mrt.c: elevate struct data to cx struct types
+12-08-08 bgp.c,bgp-mrt.c: fix mvpn parse anomalies
 12-06-14 bgp.c: document int mvpn.type == route type index
 12-06-13 bgp.c: add "bgp_t mvpn.key" for mvpn route key
 12-05-31 bgp.c: add bgp_t mvpn.<member> support

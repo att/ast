@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchhdr.h"
@@ -42,7 +42,7 @@ typedef struct _table_s
 typedef struct _obj_s
 {	Vchobj_t	obj;	/* object			*/
 	Vcchar_t	size;	/* Huffman code size in part	*/
-	short		freq;	/* frequency			*/
+	ssize_t		freq;	/* object frequency in part	*/
 } Obj_t;
 
 typedef struct _group_s
@@ -175,10 +175,10 @@ ssize_t		ptsz;
 		CLRTABLE(size,VCH_SIZE);
 		vchsize(VCH_SIZE, freq, size, 0);
 		for(k = 0; k < VCH_SIZE; ++k)
-		{	if(freq[k] != 0)
+		{	if(freq[k] != 0) /* info of non-trivial code only */
 			{	grp->obj[p].obj = (Vchobj_t)k;
 				grp->obj[p].size = (Vcchar_t)size[k];
-				grp->obj[p].freq = (short)freq[k];
+				grp->obj[p].freq = freq[k];
 				p += 1;
 			}
 		}
@@ -447,6 +447,7 @@ Void_t**	out;	/* to return output buffer 	*/
 	ssize_t		n_output;
 	Vcio_t		io;
 	Group_t		*grp = vcgetmtdata(vc, Group_t*);
+	/**/DEBUG_DECLARE(static int, N_grphuff) DEBUG_COUNT(N_grphuff);
 
 	if(dtsz == 0)
 		return 0;
@@ -484,7 +485,7 @@ Void_t**	out;	/* to return output buffer 	*/
 	tbl = grp->tbl; ntbl = grp->ntbl;
 
 	/* get space for output */
-	n_output = (ntbl+1)*(VCH_SIZE+8) + (grp->cmpsz+7)/8;
+	n_output = (ntbl+1)*(2*VCH_SIZE) + (grp->cmpsz+7)/8; /* upper-bound for output size */
 	if(!(output = vcbuffer(vc, NIL(Vcchar_t*), n_output, 0)) )
 		return -1;
 	vcioinit(&io, output, n_output);
@@ -532,7 +533,7 @@ Void_t**	out;	/* to return output buffer 	*/
 	vcioendb(&io, b, n, VC_ENCODE);
 
 	dt = output;
-	n = vciosize(&io); /**/ DEBUG_ASSERT(n <= n_output);
+	n = vciosize(&io); /**/DEBUG_ASSERT(n <= n_output);
 	if(vcrecode(vc, &output, &n, 0, 0) < 0 )
 		return -1;
 	if(dt != output)
@@ -729,7 +730,7 @@ Vcmethod_t	_Vchuffgroup =
 {	grphuff,
 	grpunhuff,
 	grpevent,
-	"huffgroup", "Huffman encoding by groups",
+	"huffgroup", "Huffman encoding by groups.",
 	"[-version?huffgroup (AT&T Research) 2003-01-01]" USAGE_LICENSE,
 	0,
 	1024*1024,

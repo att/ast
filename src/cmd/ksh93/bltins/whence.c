@@ -57,9 +57,9 @@ int	b_command(register int argc,char *argv[],Shbltin_t *context)
 	while((n = optget(argv,sh_optcommand))) switch(n)
 	{
 	    case 'p':
-		if(sh_isoption(SH_RESTRICTED))
+		if(sh_isoption(shp,SH_RESTRICTED))
 			 errormsg(SH_DICT,ERROR_exit(1),e_restricted,"-p");
-		sh_onstate(SH_DEFPATH);
+		sh_onstate(shp,SH_DEFPATH);
 		break;
 	    case 'v':
 		flags |= X_FLAG;
@@ -213,7 +213,7 @@ static int whence(Shell_t *shp,char **argv, register int flags)
 			aflag++;
 		}
 	search:
-		if(sh_isstate(SH_DEFPATH))
+		if(sh_isstate(shp,SH_DEFPATH))
 		{
 			cp=0;
 			notrack=1;

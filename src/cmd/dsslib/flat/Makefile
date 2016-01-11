@@ -20,4 +20,4 @@ flat plugin=dss static :LIBRARY: flat.c lib.c -ldss
 	data/pwd-bin.dat      data/pwd-bin.dss      data/pwd-txt.dat	\
 	data/pwd-txt.dss      data/q-txt.dss        data/qa-txt.dss	\
 	data/qe-bin.dat       data/qe-bin.dss       data/qe-txt.dss	\
-	data/variable.dss
+	data/suffix-txt.dss   data/variable.dss

@@ -470,27 +470,27 @@ TEST 13 'merge with E35 exit'
 		INPUT c $'cc\nxx'
 		INPUT d $'dd\nww'
 		OUTPUT - $'aa\nbb\ncc\ndd\nww\nxx\nyy\nzz'
-		ERROR - $'sort exit E35 1 A [3] "aa"
-sort exit E35 2 A [3] "bb"
-sort exit E35 3 A [3] "cc"
-sort exit E35 4 C [3] "dd"
-sort exit E35 5 C [3] "ww"
-sort exit E35 6 C [3] "xx"
-sort exit E35 7 C [3] "yy"
-sort exit E35 8 C [3] "zz"'
+		ERROR - $'sort exit E35 1 0 A [3] "aa"
+sort exit E35 2 4 A [3] "bb"
+sort exit E35 3 4 A [3] "cc"
+sort exit E35 4 4 C [3] "dd"
+sort exit E35 5 4 C [3] "ww"
+sort exit E35 6 4 C [3] "xx"
+sort exit E35 7 4 C [3] "yy"
+sort exit E35 8 4 C [3] "zz"'
 
 	EXPORT SORT_E35_STATUS=DADADADA
 	EXEC
 		OUTPUT - $'bb\ndd\nxx\nzz'
 
-		ERROR - $'sort exit E35 1 D [3] "aa"
-sort exit E35 2 A [3] "bb"
-sort exit E35 3 D [3] "cc"
-sort exit E35 4 A [3] "dd"
-sort exit E35 5 D [3] "ww"
-sort exit E35 6 A [3] "xx"
-sort exit E35 7 D [3] "yy"
-sort exit E35 8 A [3] "zz"'
+		ERROR - $'sort exit E35 1 0 D [3] "aa"
+sort exit E35 2 4 A [3] "bb"
+sort exit E35 3 4 D [3] "cc"
+sort exit E35 4 4 A [3] "dd"
+sort exit E35 5 4 D [3] "ww"
+sort exit E35 6 4 A [3] "xx"
+sort exit E35 7 4 D [3] "yy"
+sort exit E35 8 4 A [3] "zz"'
 
 	EXPORT SORT_E35_STATUS=A
 	EXEC -lsync,control=merge.ss y z
@@ -498,31 +498,31 @@ sort exit E35 8 A [3] "zz"'
 		INPUT y $'aa\nbb\ncc\ndd'
 		INPUT z $'ww\nxx\nyy\nzz'
 		OUTPUT - $'aa\nbb\ncc\ndd\nww\nxx\nyy\nzz'
-		ERROR - $'sort exit E35 1 A [3] "aa"
-sort exit E35 2 A [3] "bb"
-sort exit E35 3 A [3] "cc"
-sort exit E35 4 A [3] "dd"
-sort exit E35 5 A [3] "ww"
-sort exit E35 6 A [3] "xx"
-sort exit E35 7 A [3] "yy"
-sort exit E35 8 A [3] "zz"'
+		ERROR - $'sort exit E35 1 0 A [3] "aa"
+sort exit E35 2 4 A [3] "bb"
+sort exit E35 3 4 A [3] "cc"
+sort exit E35 4 4 A [3] "dd"
+sort exit E35 5 4 A [3] "ww"
+sort exit E35 6 4 A [3] "xx"
+sort exit E35 7 4 A [3] "yy"
+sort exit E35 8 4 A [3] "zz"'
 
 	EXEC -lsync,control=merge.ss z y
 
 	EXEC -lsync,control=merge.ss z y z
 		OUTPUT - $'aa\nbb\ncc\ndd\nww\nww\nxx\nxx\nyy\nyy\nzz\nzz'
-		ERROR - $'sort exit E35 1 A [3] "aa"
-sort exit E35 2 A [3] "bb"
-sort exit E35 3 A [3] "cc"
-sort exit E35 4 A [3] "dd"
-sort exit E35 5 A [3] "ww"
-sort exit E35 6 A [3] "ww"
-sort exit E35 7 A [3] "xx"
-sort exit E35 8 A [3] "xx"
-sort exit E35 9 A [3] "yy"
-sort exit E35 10 A [3] "yy"
-sort exit E35 11 A [3] "zz"
-sort exit E35 12 A [3] "zz"'
+		ERROR - $'sort exit E35 1 0 A [3] "aa"
+sort exit E35 2 4 A [3] "bb"
+sort exit E35 3 4 A [3] "cc"
+sort exit E35 4 4 A [3] "dd"
+sort exit E35 5 4 A [3] "ww"
+sort exit E35 6 4 A [3] "ww"
+sort exit E35 7 4 A [3] "xx"
+sort exit E35 8 4 A [3] "xx"
+sort exit E35 9 4 A [3] "yy"
+sort exit E35 10 4 A [3] "yy"
+sort exit E35 11 4 A [3] "zz"
+sort exit E35 12 4 A [3] "zz"'
 
 	EXEC -lsync,control=exit.ss z y z
 		INPUT exit.ss $'SORT FIELDS=(1,2,CH,A)\nMODS E35=(E35,100,test)'
@@ -537,28 +537,28 @@ TEST 14 'sort with E15 exit'
 		INPUT c $'cc\nxx'
 		INPUT d $'dd\nww'
 		OUTPUT - $'az\nbb\ncx\nww\nxx\nyy\nzz'
-		ERROR - $'sort exit E15 1 M [3] "cx"
-sort exit E15 2 M [3] "xx"
-sort exit E15 3 M [3] "dd"
-sort exit E15 4 M [3] "ww"
-sort exit E15 5 M [3] "bb"
-sort exit E15 6 M [3] "yy"
-sort exit E15 7 M [3] "az"
-sort exit E15 8 M [3] "zz"'
+		ERROR - $'sort exit E15 1 0 M [3] "cx"
+sort exit E15 2 4 M [3] "xx"
+sort exit E15 3 4 M [3] "dd"
+sort exit E15 4 4 M [3] "ww"
+sort exit E15 5 4 M [3] "bb"
+sort exit E15 6 4 M [3] "yy"
+sort exit E15 7 4 M [3] "az"
+sort exit E15 8 8 M [3] "zz"'
 
 	EXPORT SORT_E15_STATUS=MMMMMMMMC
 	EXEC -lsync,control=sort.ss c d b a
 		INPUT sort.ss $'SORT FIELDS=(1,1,CH,A,2,1,CH,D)\nMODS E15=(E15,100,test)'
 		INPUT a $'aa\nab'
 		OUTPUT - $'az\nab\nbb\ncx\nww\nxx\nyy'
-		ERROR - $'sort exit E15 1 M [3] "cx"
-sort exit E15 2 M [3] "xx"
-sort exit E15 3 M [3] "dd"
-sort exit E15 4 M [3] "ww"
-sort exit E15 5 M [3] "bb"
-sort exit E15 6 M [3] "yy"
-sort exit E15 7 M [3] "az"
-sort exit E15 8 M [3] "ab"'
+		ERROR - $'sort exit E15 1 0 M [3] "cx"
+sort exit E15 2 4 M [3] "xx"
+sort exit E15 3 4 M [3] "dd"
+sort exit E15 4 4 M [3] "ww"
+sort exit E15 5 4 M [3] "bb"
+sort exit E15 6 4 M [3] "yy"
+sort exit E15 7 4 M [3] "az"
+sort exit E15 8 8 M [3] "ab"'
 
 TEST 15 'duplicate key diagnostic'
 
