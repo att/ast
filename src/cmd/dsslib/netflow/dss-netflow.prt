@@ -1,0 +1,15 @@
+# dss -x netflow -t fixed pzip partition
+# pin (AT&T Labs Research) 2001-12-05
+# row 84 window 20832 compression level 6
+
+84	# high frequency 49
+
+13 7 44 34 37-38 42 76 39 77 8 5 45 4 6 32 11 15
+29 25 61
+74 43 10 9 68-71
+3 2 41 40 1 0 33 22 19
+67 63 75 62
+23 35
+27 31
+26 30
+59

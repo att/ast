@@ -1,0 +1,23 @@
+10-01-15 code-uu.c: add uu-base64-string to encode with no newline separators
+09-06-26 codex.h,codex.c: add Sfio_t* Codex_t.op for open/close/read/write apis
+08-05-23 code-qp.c: avoid isprint()/iscntrl() for CC_NATIVE==CC_ASCII
+07-09-26 code-uu.c: uu_sync() => flush() for encode only -- doh
+07-09-22 code-uu.c: fix uu_read() partial reads
+07-09-22 codex.c: handle PASSPHRASE=* as documented
+07-09-22 codex.c: handle quoted parameter values
+06-08-23 code-uu.c: fix remainder output *and* input bugs
+05-09-25 add '^' equivalent to '|'
+04-02-14 codex.c: SFDCNEXT() and SFDCPREV() now provided by <sfio_t.h>
+04-01-11 codex.c: top level composition parse, handle CODEX_INVERT
+04-01-10 codex.c: use CODEX_FLUSH to disable SF_SYNC before initf
+04-01-09 prepare codex.h for possible { decodef encodef } addition
+04-01-04 codexcmp.c: fix return value to match strcmp(3)
+03-12-30 codexmeth.c: case-sensitive match on qualified name
+03-12-26 add CODEX_OPTIONS='trace=method-name-pattern debug'
+03-12-25 codex.c: pop intermediate disciplines on error
+03-12-22 add "RETAIN" option for CODEX_RETAIN
+	 add "SIZE=size" and alternative codexsize() for expected output size
+03-12-18 add to ast -- still working on relationship with { -lvcodex -lz -lbz }
+03-12-16 codexlib.c: add cache to codex()
+03-12-15 { rot13 qp uu iconv } working
+03-12-11 first code

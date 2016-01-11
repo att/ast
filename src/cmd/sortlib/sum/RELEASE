@@ -1,0 +1,9 @@
+11-08-23 sortsum.c: handle -t' ' => 1 or more [[:space:]] -- doh
+10-05-27 sortsum.c: hadle -t'multibyte'
+08-08-28 sortsum.c: add --regress to normalize arch dependent rounding
+08-05-08 sortsum.c,sort.tst: tweak default floating point rounding
+06-01-15 sortsum.c: fix var length field extension logic, add op=count
+03-05-27 sortsum.c: op=op:arg:key... order enforced to avoid op/type ambiguity
+03-05-24 sortsum.c: handle ccode maps
+03-05-23 sortsum.tst: add
+03-05-21 sortsum.c: add

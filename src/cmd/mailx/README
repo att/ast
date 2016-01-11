@@ -1,0 +1,22 @@
+Here is an example .mailrc
+--
+# mail defaults
+
+set folder=mail log=+Log attachments=+Att followup=+From
+set autoprint dot flipr header headerbotch searchheaders
+set hold keep quiet nosave showto
+set crt=${LINES} indentprefix="> "
+set askheaders="subject" editheaders="subject cc"
+set fixedheaders="Organization: AT&T Labs Research"
+set prompt="& " more="\E[7m More\E[m" rule="--------"
+set DEAD=+dead.letter EDITOR=ed PAGER=more VISUAL=vi
+
+set local=${domain} spam spamlog=+spam
+set spamok=cjn@gtlinc.com
+set spamfrom=gsrinivas@worldnet.att.net
+
+retain subject newsgroups
+
+if f ~/.aliases
+	alias < ~/.aliases
+endif

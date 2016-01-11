@@ -1,0 +1,125 @@
+: vcodex test harness
+
+unit=vcodex
+
+inc=
+lib=
+files=
+verbose=
+
+case $1 in
+-\?)	print -u2 "Usage: testvcodex [-v] [cc-options] [*.h] [*.c]"
+	exit 2
+	;;
+-v)	exec 9>&2
+	shift
+	verbose=1
+	;;
+*)	exec 9>/dev/null
+	;;
+esac
+while	: "$@" :
+do	case $1 in
+	*.c)	files="$files $1" ;;
+	*/*.h)	inc="$inc -I${1%/*}" ;;
+	*.h)	inc="$inc -I." ;;
+	-l*)	lib="$lib $1" ;;
+	-*|*,*)	inc="$inc $1" ;;
+	*)	base=${1##*/}
+		case $base in
+		cc.*|*.cc)
+			break ;;
+		*.*)	lib="$lib $1" ;;
+		*)	break ;;
+		esac
+		;;
+	esac
+	shift
+done
+
+if	test -d $unit
+then	source=$unit
+else	source=.
+fi
+
+case $inc in
+"")	inc=-I$source ;;
+esac
+case $lib in
+"")	lib=-last ;;
+esac
+case $files in
+"")	eval files='"' $source/*.c '"' ;;
+esac
+
+case $# in
+0)	set cc ;;
+esac
+
+case $verbose in
+'')	trap 'rm -f t.exe t-*.exe xxx yyy zzz; exit 0' 0 1 2 13 15 ;;
+*)	inc="-DTVERBOSE $inc" ;;
+esac
+
+integer tests=0 errors=0 locked=0
+print -u2 "TEST	$unit"
+prev="make test"
+for v in $(dlls --info 2>/dev/null)
+do	if	[[ $v == env=* ]]
+	then	v=${v#env=}
+		nameref e=$v
+		export $v=$INSTALLROOT/lib/vcodex:$INSTALLROOT/lib:$e
+		break
+	fi
+done
+for file in $files
+do	(( tests = tests + 1 ))
+	test=${file%.c}
+	test=${test##*/}
+	print -u2 -f "%-15s " $test
+	test -f t.exe && {
+		rm -f t.exe || {
+			(( locked = locked + 1 ))
+			mv t.exe t-$locked.exe || {
+				print -u2 previous $prev t.exe locked
+				break 2
+			}
+		}
+	}
+	prev=$file
+	# XXX compensate for nmake -lvcodex/foo => plugin #
+	lcl= plugins=
+	case $file in
+	*crypt*)plugins="$plugins crypt" ;;
+	*rdb*)	plugins="$plugins rdb" ;;
+	*sum*)	plugins="$plugins sum" ;;
+	esac
+	for p in $plugins
+	do	set -A plugin $INSTALLROOT/lib/vcodex/*$p*
+		[[ -f ${plugin[1]} ]] && lcl="$lcl ${plugin[1]}"
+	done
+	"$@" $inc -o t.exe $file $lcl $lib >&9 2>&1
+	code=$?
+	rm -f ${test}.[oO]*
+	case $code in
+	0)	if	./t.exe
+		then	print -u2 passed
+			continue
+		fi
+		;;
+	*)	print -u2 compile FAILED
+		;;
+	esac
+	(( errors = errors + 1 ))
+done
+msg="TEST	$unit, $tests test"
+case $tests in
+1)	;;
+*)	msg=${msg}s ;;
+esac
+msg="$msg, $errors error"
+case $errors in
+1)	;;
+*)	msg=${msg}s ;;
+esac
+print -u2 "$msg"

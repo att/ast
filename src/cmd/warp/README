@@ -1,0 +1,41 @@
+warp (AT&T Labs Research) 1998-04-01
+
+=== to retrieve the warp binary archive ===
+
+(1) ftp raptor.research.att.com
+
+	Name: anonymous
+	Password: <your name>
+
+(2) cd /pub/advsoft/ast
+
+(3) warp-*.tgz are gzip tar archives for the supported architectures;
+    get the one compatible with your local system architecture
+
+=== to install the warp binaries ===
+
+(4) on your local system select a directory that contains a bin
+    directory compatible with the selected architecture; this can
+    be an empty directory; call this directory $INSTALLROOT
+
+	INSTALLROOT=selected-directory
+
+(5) untar the selected warp-*.tgz in $INSTALLROOT
+
+	cd $INSTALLROOT
+	gunzip < warp-*.tgz | tar xvf -
+
+=== to use warp ===
+
+(6) export PATH=$INSTALLROOT/bin:$PATH FPATH=$INSTALLROOT/fun:$FPATH
+
+(7) run the test script
+
+	testwarp
+
+(8) try the man page examples
+
+Glenn Fowler
+gsf@research.att.com
+AT&T Labs Research
+Florham Park, NJ

@@ -1,0 +1,2 @@
+# pp archive pax format
+format=vdb label.insert=pp:archive record.delimiter record.header

@@ -1,0 +1,1884 @@
+.fp 5 CW
+.TH VCODEX 3 "Jun 26 2007"
+
+.SH NAME
+\fBVcodex\fR \- Data transformation for compression, encryption, etc.
+
+.SH SYNOPSIS
+.de Tp
+.fl
+.ne 2
+.TP
+..
+.de Ss
+.fl
+.ne 2
+.SS "\\$1"
+..
+.de Cs
+.nf
+.ft 5
+..
+.de Ce
+.ft 1
+.fi
+..
+.de Sh
+.fl
+.ne 4
+.PP
+.SS "\\$1"
+.PP
+..
+.ta 1.0i 2.0i 3.0i 4.0i 5.0i
+
+.Cs
+#include <vcodex.h>
+libvcodex.a      -lvcodex
+.Ce
+
+.Sh "BASIC TYPES"
+
+.Cs
+Void_t*;
+Vcchar_t;
+Vcint_t;
+Vcbits_t;
+Vcdisc_t;
+Vcmethod_t;
+Vcmtarg_t;
+Vcwalk_f;
+Vcodex_t;
+.Ce
+
+.Sh "BASIC OPERATIONS"
+
+.Cs
+Vcodex_t*    vcopen(Vcdisc_t* disc, Vcmethod_t* meth,
+                    Void_t* init, Vcodex_t* coder, int flags);
+Vcodex_t*    vccreate(char* spec, int flags);
+ssize_t      vcextract(Vcodex_t* vc, Void_t** datap);
+Vcodex_t*    vcrestore(Vcodex_t* vc, Void_t* data,
+                       size_t size);
+int          vcclose(Vcodex_t* vc);
+
+ssize_t      vcapply(Vcodex_t* vc, Void_t* data,
+                     size_t size, Void_t** output);
+ssize_t      vcrecode(Vcodex_t* vc, Vcchar_t** datap,
+                      ssize_t* sizep, ssize_t head);
+size_t       vcundone(Vcodex_t* vc);
+
+Vcchar_t*    vcbuffer(Vcodex_t* vc, Vcchar_t* trunc,
+                      ssize_t size, ssize_t head);
+int          vctellbuf(Vcodex_t* vc, Vcbuffer_f bufferf);
+
+Vccontext_t* vcinitcontext(Vcodex_t* vc, Vccontext_t* ctxt);
+Vccontext_t* vcfreecontext(Vcodex_t* vc, Vccontext_t* ctxt);
+type         vcgetcontext(vc, type);
+.Ce
+
+.Sh "TYPES AND FUNCTIONS FOR DATA TRANSFORM METHODS"
+
+.Cs
+typedef struct _vcmethod_s
+{ Vcapply_f  encodef;     /* function to encode a data set  */
+  Vcapply_f  decodef;     /* function to decode a data set  */
+  int        (*eventf)(Vcodex_t*, int, Void_t*);
+  char*      name;        /* the name of the transform      */
+  char*      desc;        /* a description of the transform */
+  Vcmtarg_t* args;        /* arguments usable with vcopen() */
+  ssize_t    window;      /* suggested window size          */
+  int        type;        /* VC_MTSOURCE                    */
+} Vcmethod_t;
+.Ce
+
+.ne 5
+.Cs
+typedef struct _vcmtarg_s
+{ char*      name;        /* the name of the argument       */
+  char*      desc;        /* a description of the argument  */
+  Void_t*    data;        /* any associated data            */
+} Vcmtarg_t;
+.Ce
+
+.ne 5
+.Cs
+typedef struct _vcmtcode_s
+{ Vcchar_t*  data;        /* encoded data of a handle       */
+  ssize_t    size;        /* size of encoded data           */
+  Vcodex_t*  coder;       /* reconstructed coder            */
+} Vcmtcode_t;
+
+#define      VC_OPENING
+#define      VC_CLOSING
+#define      VC_INITCONTEXT
+#define      VC_FREECONTEXT
+#define      VC_FREEBUFFER
+#define      VC_SETMTARG
+#define      VC_EXTRACT
+#define      VC_RESTORE
+#define      VC_GETIDENT
+#define      VC_TELLBUFFER
+
+int          vcaddmeth(Vcmethod_t** list, ssize_t size);
+Vcmethod_t*  vcgetmeth(char* name, int type);
+int          vcwalkmeth(Vcwalk_f walkf, Void_t* disc);
+
+char*        vcgetident(Vcmethod_t* meth, char* buf, ssize_t size);
+
+char*        vcgetmtarg(char* data, char* val, ssize_t vlsz,
+                        Vcmtarg_t* list, Vcmtarg_t** arg);
+int          vcsetmtarg(Vcodex_t* vc, char* name, void* val,
+                        int type);
+
+type         vcgetmtdata(Vcodex_t* vc, type);
+void         vcsetmtdata(Vcodex_t* vc, data);
+.Ce
+
+.Sh "AVAILABLE METHODS"
+
+.Cs
+Vcmethod_t*  Vcdelta;
+Vcmethod_t*  Vcsieve;
+Vcmethod_t*  Vchamming;
+Vcmethod_t*  Vchuffman;
+Vcmethod_t*  Vchuffgroup;
+Vcmethod_t*  Vchuffpart;
+Vcmethod_t*  Vcrle;
+Vcmethod_t*  Vcmtf;
+Vcmethod_t*  Vcbwt;
+Vcmethod_t*  Vcmap;
+Vcmethod_t*  Vctranspose;
+Vcmethod_t*  Vctable;
+Vcmethod_t*  Vcrdb;
+Vcmethod_t*  Vcrelation;
+.Ce
+
+.ne 8
+.Sh "DISCIPLINE AND EVENT HANDLING"
+
+.Cs
+typedef int  (*Vcevent_f)(Vcodex_t*, int, Void_t*, Vcdisc_t*);
+
+typedef struct
+{ Void_t*    data;        /* additional data, e.g., source */
+  size_t     size;        /* size of the additional data   */
+  Vcevent_f  eventf;      /* event handler                 */
+} Vcdisc_t;
+
+#define      VC_OPENING
+#define      VC_CLOSING
+#define      VC_DISC
+
+Vcdisc_t*    vcdisc(Vcodex_t* vc, Vcdisc_t* disc);
+Vcdisc_t*    vcgetdisc(Vcodex_t* vc);
+.Ce
+
+.Sh "DELTA COMPRESSION TYPES AND FUNCTIONS"
+
+.Cs
+typedef struct
+{ Vcchar_t   type;
+  Vcchar_t   size;
+  Vcchar_t   mode;
+} Vcdinst_t;
+
+typedef struct
+{ Vcinst_t   inst1;
+  Vcinst_t   inst2;
+} Vcdcode_t;
+
+typedef struct
+{ Vcchar_t   s_near;
+  Vcchar_t   s_same;
+  Vcdcode_t  code[256];
+} Vcdtable_t;
+
+ssize_t  vcdputtable(Vcdtable_t* tbl, Void_t* buf, size_t n);
+int      vcdgettable(Vcdtable_t* tbl, Void_t* buf, size_t n);
+.Ce
+
+.Sh "MATCHING WINDOWS TO DELTA-COMPRESS LARGE FILES"
+
+.PP
+.Cs
+typedef struct {...}      Vcwindow_t;
+typedef struct {...}      Vcwmethod_t;
+
+typedef int (*Vcwevent_f)(Vcw_t* vcw, int type, Void_t* data,
+                          Vcwdisc_t* disc);
+
+typedef struct
+{ Sfio_t*    srcf;       /* source file                 */
+  Sfio_t*    tarf;       /* target file                 */
+  Vcwevent_f eventf;     /* event handler               */
+} Vcwdisc_t;
+.Ce
+
+.ne 7
+.Cs
+typedef struct
+{ int        type;       /* VCD_[SOURCE|TARGET]FILE     */
+  Void_t*    wdata;      /* window data                 */
+  ssize_t    wsize;      /* window length               */
+  Sfoff_t    wpos;       /* starting position in file   */
+  ssize_t    msize;      /* data size to be matched     */
+} Vcwmatch_t;
+
+Vcwmethod_t* Vcwmirror;  /* match by file positions     */
+Vcwmethod_t* Vcwvote;    /* match by n-gram frequencies */
+Vcwmethod_t* Vcwprefix;  /* use prefix matching         */
+
+Vcwindow_t*  vcwopen(Vcwdisc_t* disc, Vcwmethod_t* meth);
+int          vcwclose(Vcwindow_t* vcw);
+Vcwmatch_t*  vcwapply(Vcwindow_t* vcw, Void_t* data,
+                      size_t size, Sfoff_t pos);
+ssize_t      vcwfeedback(Vcwindow_t* vcw, ssize_t size);
+Vcwmethod_t* vcwgetmeth(char* name);
+int          vcwwalkmeth(Vcwalk_f walkf, Void_t* disc);
+.Ce
+
+.Sh "HUFFMAN CODING TYPES AND FUNCTIONS"
+
+.Cs
+ssize_t      vchsize(ssize_t* freq, ssize_t* size, int* runb);
+ssize_t      vchbits(ssize_t* size, Vcbits_t* bits);
+int          vchcopy(Vcodex_t* vc, ssize_t* freq,
+                     ssize_t* size, ssize_t maxs);
+ssize_t      vchputcode(ssize_t* size, ssize_t maxs,
+                        Vcchar_t* data, size_t dtsz);
+ssize_t      vchgetcode(ssize_t* size, ssize_t maxs,
+                        Vcchar_t* data, size_t dtsz);
+.Ce
+
+.Sh "FIXED-LENGTH TABLE TRANSFORM TYPES AND FUNCTIONS"
+
+.Cs
+#define      VCTBL_CEE    /* conditional empirical entropy  */
+#define      VCTBL_RLE    /* run-length compressive entropy */
+#define      VCTBL_LEFT   /* left to right dependency       */
+#define      VCTBL_RIGHT  /* right to left dependency       */
+#define      VCTBL_SINGLE /* use a single predictor only    */
+.Ce
+
+.ne 5
+.Cs
+typedef struct _vctblcolumn_s /* column specifications      */
+{ ssize_t    index;       /* column index                   */
+  ssize_t    pred1;       /* <0 if self compressing         */
+  ssize_t    pred2;       /* >=0 if supporting pred1        */
+} Vctblcolumn_t;
+
+typedef struct _vctblplan_s /* transform plan               */
+{ ssize_t        ncols;   /* # of columns or row size       */
+  Vctblcolumn_t* trans;   /* the plan to transform data     */
+} Vctblplan_t;
+
+Vctblplan_t* vctblmakeplan(Void_t* data, size_t size,
+                           size_t ncols, int flags);
+void         vctblfreeplan(Vctblplan_t* plan);
+ssize_t      vctblencodeplan(Vctblplan_t* plan, Void_t** codep);
+Vctblplan_t* vctbldecodeplan(Void_t* code, size_t cdsz);
+.Ce
+
+.Sh "RELATIONAL DATA TRANSFORM TYPES AND FUNCTIONS"
+
+.Cs
+#define VCRD_FIELD        /* given data is field-oriented   */
+#define VCRD_FULL         /* make fields or records full    */
+#define VCRD_FIXED        /* fixed-length field             */
+
+#define VCRD_DOT          /* field was of the form x.y...   */
+#define VCRD_SLASH        /* like above but form x.y.../z   */
+.Ce
+
+.ne 9
+.Cs
+typedef struct _vcrdsepar_s
+{ int           fsep;     /* computed field separator       */
+  int           rsep;     /* record separator               */
+  ssize_t       size;     /* actual amount of data used     */
+  ssize_t       recn;     /* total number of records        */
+  ssize_t       recf;     /* # records containing an fsep   */
+  double        allz;     /* (entropy)size for all data     */
+  double        fldz;     /* total (entropy)size by fields  */
+} Vcrdsepar_t;
+.Ce
+
+.ne 7
+.Cs
+typedef struct _vcrdinfo_s
+{ ssize_t       recn;     /* number of records, if known    */
+  ssize_t       fldn;     /* number of fields, if known     */
+  ssize_t*      flen;     /* field lengths, if known        */
+  int           fsep;     /* field separator, if needed     */
+  int           rsep;     /* record separator, if needed    */
+} Vcrdinfo_t;
+.Ce
+
+.ne 4
+.Cs
+typedef struct _vcrdrecord_s
+{ Vcchar_t*     data;     /* data in a field for a record   */
+  ssize_t       dtsz;     /* size of data                   */
+} Vcrdrecord_t;
+.Ce
+
+.ne 8
+.Cs
+typedef struct _vcrdfield_s
+{ int           type;     /* field type data                */
+  Vcrdrecord_t* rcrd;     /* list of records for this field */
+  ssize_t       maxz;     /* maximum size of any record     */
+  ssize_t*      vect;     /* transform vector by this field */
+  Vcchar_t*     data;     /* field data if allocated here   */
+  Vcchar_t*     exdt;     /* space for extracted data       */
+} Vcrdfield_t;
+.Ce
+
+.ne 9
+.Cs
+typedef struct _vcrdtable_s
+{ Vcrdinfo_t*   info;     /* information on table data      */
+  ssize_t       parz;     /* size of parsed data            */
+  ssize_t       recn;     /* number of records              */
+  ssize_t       fldn;     /* number of fields               */
+  Vcrdfield_t*  fld;      /* list of fields                 */
+  ssize_t*      vtmp;     /* temp space of recn elements    */
+  Vcchar_t*     exdt;     /* space for extracted data       */
+} Vcrdtable_t;
+.Ce
+
+.ne 4
+.Cs
+typedef struct _vcrdplan_s
+{ ssize_t    fldn;        /* number of fields               */
+  ssize_t    pred[];      /* predictor list                 */
+} Vcrdplan_t;
+.Ce
+
+.Cs
+ssize_t      vcrdsepar(Vcrdsepar_t* rds, ssize_t nrds,
+                    Vcchar_t* data, ssize_t dtsz, int rsep);
+
+Vcrdtable_t* vcrdparse(Vcrdinfo_t* info,
+                    Vcchar_t* data, ssize_t dtsz, int type);
+void         vcrdclose(Vcrdtable_t* tbl);
+ssize_t      vcrdfield(Vcrdtable_t* tbl, ssize_t f, ssize_t n,
+                    Vcchar_t* data, ssize_t dtsz);
+int          vcrdattrs(Vcrdtable_t* tbl, ssize_t f, int attrs,
+                    int type);
+ssize_t      vcrdsize(Vcrdtable_t* tbl);
+ssize_t      vcrdextract(Vcrdtable_t* tbl, ssize_t f,
+                    Vcchar_t** datap, int type);
+
+typedef ssize_t (*Vcrdweight_f)(Vcchar_t* str1, ssize_t n1,
+                    Vcchar_t* str2, ssize_t n2);
+ssize_t      vcrdweight(Vcrdtable_t* tbl, ssize_t f,
+                    ssize_t* vect, Vcrdweight_f wghtf);
+int          vcrdvector(Vcrdtable_t* tbl, ssize_t f,
+                    Vcchar_t* trdt, ssize_t dtsz, int type);
+
+Vcrdplan_t*  vcrdmakeplan(Vcrdtable_t* tbl, Vcrdweight_t wghtf);
+void         vcrdfreeplan(Vcrdplan_t* plan);
+int          vcrdexecplan(Vcrdtable_t* tbl, Vcrdplan_t* plan,
+                    int type);
+.Ce
+
+.Sh "SUFFIX ARRAY TYPES AND FUNCTIONS"
+
+.Cs
+typedef struct _vcsfx_s
+{ ssize_t*   idx;        /* sorted suffix array            */
+  ssize_t*   inv;        /* inverted index/rank            */
+  Vcchar_t*  str;        /* string to be sorted            */
+  size_t     nstr;       /* length of string               */
+} Vcsfx_t;
+
+Vcsfx_t*     vcsfxsort(const Void_t* str, size_t nstr);
+ssize_t      vcperiod(const Void_t* data, size_t dtsz);
+.Ce
+
+.Sh "GENERALIZED LEMPEL-ZIV PARSING"
+
+.Cs
+#define      VCLZ_REVERSE
+#define      VCLZ_MAP
+
+typedef ssize_t (*Vclzparse_f)(Vclzparse_t* vcpa, int type,
+                             Vclzmatch_t* mtch, ssize_t n);
+
+typedef struct _vclzmatch_s
+{ ssize_t    tpos;        /* position in target string     */
+  ssize_t    mpos;        /* position of matched data      */
+  ssize_t    size;        /* length of match               */
+} Vclzmatch_t;
+.Ce
+
+.ne 10
+.Cs
+typedef struct _vclzparse_s
+{ Vclzparse_f  parsef;    /* to process a set of segments  */ 
+  Vcchar_t*  src;         /* source string to learn from   */
+  ssize_t    nsrc;        /* length of source data         */
+  Vcchar_t*  tar;         /* target string to be parsed    */
+  ssize_t    ntar;        /* length of target data         */
+  ssize_t    mmin;        /* minimum required match length */
+  Vcchar_t*  cmap;        /* array to map bytes to bytes   */
+  int        type;        /* VCLZ_REVERSE|VCLZ_MAP         */
+} Vclzparse_t;
+
+int          vclzparse(Vclzparse_t* vcpa, ssize_t bound);
+.Ce
+
+.Sh "BIT/BYTE/STRING FAST I/O SUBSYSTEM"
+
+.Cs
+void         vcioinit(Vcio_t* io, Vcchar_t* buf, int n);
+size_t       vciosize(Vcio_t* io);
+size_t       vciomore(Vcio_t* io);
+Vcchar_t*    vciodata(Vcio_t* io);
+Vcchar_t*    vcionext(Vcio_t* io);
+Vcchar_t*    vcioskip(Vcio_t* io, int n);
+void         vciomove(Vcio_t* to, Vcio_t* from, int n);
+ssize_t      vcioputc(Vcio_t* io, int c);
+int          vciogetc(Vcio_t* io);
+ssize_t      vcioputu(Vcio_t* io, Vcint_t v);
+Vcint_t      vciogetu(Vcio_t* io);
+ssize_t      vcioputm(Vcio_t* io, Vcint_t v, Vcint_t max);
+Vcint_t      vciogetm(Vcio_t* io, Vcint_t max);
+ssize_t      vcioput2(Vcio_t* io, Vcint_t v,
+                      Vcchar_t a, Vcchar_t b);
+Vcint_t      vcioget2(Vcio_t* io, Vcchar_t a, Vcchar_t b);
+ssize_t      vcioputg(Vcio_t* io, Vcint_t v);
+Vcint_t      vciogetg(Vcio_t* io);
+ssize_t      vcioputlist(Vcio_t* io, Vcint_t* list, ssize_t n);
+Vcint_t      vciogetlist(Vcio_t* io, Vcint_t* list, ssize_t n);
+ssize_t      vcioputs(Vcio_t* io, Void_t* s, size_t len);
+ssize_t      vciogets(Vcio_t* io, Void_t* s, size_t len);
+.Ce
+.ne 2
+.Cs
+void         vciosetb(Vcio_t* io, Vcbits_t bits, ssize_t nbit,
+                      int type);
+void         vcioendb(Vcio_t* io, Vcbits_t bits, ssize_t nbit,
+                      int type);
+void         vciofilb(Vcio_t* io, Vcbits_t bits, ssize_t nbit);
+Vcbits_t     vciodelb(Vcio_t* io, Vcbits_t bits, ssize_t nbit,
+                      ssize_t ndel);
+void         vcioflsb(Vcio_t* io, Vcbits_t bits, ssize_t nbit);
+Vcbits_t     vcioaddb(Vcio_t* io, Vcbits_t bits, ssize_t nbit,
+                      Vcbits_t add, ssize_t nadd);
+.Ce
+
+.ne 12
+.Sh "STREAM PROCESSING"
+
+.Cs
+Vcsfio_t;
+typedef void (*Vcsferror_f)(const char*);
+
+typedef struct _vcsfdata_s
+{ int         type;         /* various processing modes     */
+  char*       trans;        /* transformation specification */
+  char*       window;       /* window specification         */
+  char*       source;       /* source file to delta against */
+  Vcsferror_f errorf;       /* to process errors            */
+} Vcsfdata_t;
+
+Vcsfio_t*    vcsfio(Sfio_t* sf, Vcsfdata_t* sfdt, int type);
+ssize_t      vcsfread(Vcsfio_t* vcsf, Void_t* buf, size_t n);
+ssize_t      vcsfwrite(Vcsfio_t* vcsf, Void_t* buf, size_t n);
+int          vcsfsync(Vcsfio_t* vcsf);
+int          vcsfclose(Vcsfio_t* vcsf);
+.Ce
+
+.Sh "ALIAS PROCESSING"
+
+.Cs
+void         vcaddalias(char** list);
+char*        vcgetalias(char* name, char* spec, ssize_t size);
+int          vcwalkalias(Vcwalk_f walkf, Void_t* disc);
+.Ce
+
+.Sh "MISCELLANIES"
+
+.Cs
+double       vclog(size_t v);
+size_t       vclogi(size_t v);
+size_t       vcsizeu(Vcint_t v);
+Vcint_t      vcatoi(char* buf);
+ssize_t      vcitoa(Vcint_t v, char* buf, ssize_t n);
+
+Vcint_t      vcintcode(Vcint_t v, Vcint_t near,
+                       Vcint_t min, Vcint_t max, int type);
+char*        vcstrcode(char* s, char* buf, ssize_t n);
+
+typedef int  (*Vccompare_f)(void* elt1, void* elt2, void* disc);
+void         vcqsort(void* list, ssize_t nelts, ssize_t eltsize,
+                     Vccompare_f comparf, void* disc);
+
+ssize_t      vcbcktsort(ssize_t* idx, ssize_t* tmp, ssize_t n,
+                        Vcchar_t*, ssize_t* maxc);
+
+char*        vcsubstring(char* data, int separ,
+                         char* buf, ssize_t bufsz, int type);
+.Ce
+
+.PP
+.SH DESCRIPTION
+
+.PP
+\fIVcodex\fP provides a collection of data transforms including
+compression, differencing and encryption via a discipline and method
+interface
+(see \fIThe Discipline and Method Architecture for Reusable Libraries\fP,
+Software Practice & Experience, v.30, pp.107-128, 2000).
+
+.Sh "BASIC TYPES"
+
+.PP
+.Ss "  Void_t*"
+This type is used to pass data between \fIVcodex\fP and application code.
+\f5Void_t\fP is defined as \f5void\fP for ANSI-C and C++
+and \f5char\fP for older compilation environments.
+.PP
+.Ss " Vcchar_t"
+This defines the type of bytes as manipulated by Vcodex.
+.PP
+.Ss " Vcint_t"
+This defines an integer type of maximum supported size.
+.PP
+.Ss " Vcbits_t"
+This defines an integer type suitable for bit manipulation and I/O.
+.PP
+.Ss "  Vcdisc_t"
+This defines the type of a discipline structure.
+.PP
+.Ss "  Vcmethod_t"
+This defines the type of a data transform.
+.PP
+.Ss "  Vcmtarg_t"
+This defines the type of a structure describing arguments to a method.
+.PP
+.Ss "  Vcwalk_f"
+This defines the type of a function to be invoked while walking
+some list of data structures. Its prototype is:
+.Cs
+    int (*Vcwalk_f)(Void_t* obj, char* name, char* value, Void_t* disc);
+.Ce
+.Tp
+\f5obj\fP:
+This is the object being walked. For example, if the list of methods
+is being walked, this would be a pointer to a \f5Vcmethod_t\fP object.
+.Tp
+\f5name, value\fP:
+The name and value of the object being walked.
+.Tp
+\f5disc\fP:
+The structure passed along to the invoking walk function.
+See also \f5vcwalkmeth()\fP and \f5vcwalkalias()\fP.
+.PP
+.Ss "  Vcodex_t"
+This defines the type of a Vcodex handle.
+
+.Sh "BASIC OPERATIONS"
+
+.PP
+.Ss "  Vcodex_t* vcopen(Vcdisc_t* disc, Vcmethod_t* meth, Void_t* init, Vcodex_t* coder, int flags)"
+\f5vcopen()\fP creates a handle to process data.
+It returns the new handle on success or \f5NULL\fP on failure.
+.Tp
+\f5disc\fP:
+A discipline structure to describe data (see DISCIPLINE section).
+.Tp
+\f5meth\fP:
+a data transform method (see METHODS section).
+.Tp
+\f5init\fP:
+Any additional parameters for the given method.
+.Tp
+\f5coder\fP:
+This specifies a \fIcontinuation coder\fP, i.e.,
+another handle to process various data parts produced by
+the main transform. 
+.Tp
+\f5flags\fP:
+This gives the bit values to control behaviors of the new handle.
+Exactly one of \f5VC_ENCODE\fP and \f5VC_DECODE\fP should be specified
+to indicate whether the handle is used for encoding or decoding.
+The bit \f5VC_CLOSECODER\fP, if specified, indicates that
+the continuation coder, if any, should be closed on handle closing. 
+.PP
+.Ss "  vccreate(char* spec, int flags);"
+This function creates a composite handle based on the specification of
+a sequence of methods. It returns the composite handle on success and \f5NULL\fP on failure.
+See section ALIAS PROCESSING for the syntax of a specification.
+.PP
+.Ss "  ssize_t vcextract(Vcodex_t* vc, Void_t** datap)"
+This function extract data from a composite encoding handle \f5vc\fP
+that can be used later by \f5vcrestore()\fP to construct a composite decoder.
+The data is returned in  \f5*storep\fP.
+\f5vcextract()\fP returns the data length on success and \f5-1\fP on failure.
+.PP
+.Ss "  Vcodex_t* vcrestore(Vcodex_t* vc, Void_t* data, size_t size)"
+\f5vcrestore()\fP constructs a composite decoding handle from the given data.
+It returns the handle on success and \f5NULL\fP on failure.
+.PP
+.Ss "  int vcclose(Vcodex_t* vc)"
+This closes the \f5vc\fP handle,
+meaning to free all associated memory resources.
+\f5vcclose()\fP returns \f50\fP on success or \f5-1\fP on error.
+.PP
+.Ss "  ssize_t vcapply(Vcodex_t* vc, Void_t* data, size_t size, Void_t** output)"
+This applies the data transform associated with \f5vc\fP
+to the given \f5data\fP.
+If the handle was opened for decoding,
+the given \f5data\fP and \f5size\fP should
+match exactly the previously encoded result.
+\f5vcapply()\fP returns the length of the output data buffer or
+\f5-1\fP on failure.
+If \f5output == NULL\fP, only the size of the result will be returned.
+If \f5output != NULL\fP, the transformed data will be returned
+in \f5*output\fP (see also \f5vcundone()\fP below.)
+Note that each call to \f5vcapply()\fP returns a separate buffer
+of encoded or decoded data. These buffers should be freed as soon
+as the respective data have been consumed. See \f5vcbuffer()\fP for
+how to do that.
+.PP
+.Ss "  ssize_t vcrecode(Vcodex_t* vc, Vcchar_t** datap, ssize_t* sizep, ssize_t head);"
+This function is intended to be used by method writers for continuation of
+data process in secondary coders. It invokes \f5vcapply()\fP
+on the continuation coder to transform the data given
+in \f5*datap\fP and \f5*sizep\fP. The transformed data and its size are returned
+in the same arguments. \f5head\fP, if positive, causes buffer allocation in secondary
+coders to leave that much room in front of the transformed data.
+In this way, successive calls of \f5vcrecode()\fP can leave an accumulated amount
+of header space for adding data later by the callers.
+\f5vcrecode()\fP returns the size of the transformed data on success and \f5-1\fP on error.
+.PP
+.Ss "  size_t vcundone(Vcodex_t* vc);"
+Certain methods (e.g., \f5Vctable\fP) may not process all given data.
+After a successful \f5vcapply()\fP call (i.e., it returns
+a non-negative value),
+the call \f5vcundone()\fP tells the amount of data left unprocessed.
+.PP
+.Ss "  Vcchar_t* vcbuffer(Vcodex_t* vc, Vcchar_t* trunc, ssize_t size, ssize_t head);"
+This function manages the buffer pool for a handle.
+It always returns \f5NULL\fP on freeing buffers.
+For buffer allocation, it returns the allocated buffer or \f5NULL\fP on failure.
+
+When \f5trunc != NULL\fP, it specifies a buffer in \f5vc\fP
+or one of the continuation coders to be truncated down to \f5size\fP or freed
+if \f5size < 0\fP.
+When \f5trunc == NULL\fP, there are two cases.
+If \f5size\fP is negative, all buffers allocated via
+\f5vc\fP and continuation coders are freed.
+Otherwise, a new buffer of the given \f5size\fP is allocated.
+This buffer is guaranteed to have at least \f5n\fP writable
+bytes in front of the allocated buffer where \f5n\fP is \f5head\fP
+plus some other amount as defined by various \f5vcrecode()\fP calls
+during continuation processing.
+.PP
+.Ss "  Vcchar_t* vctellbuf(Vcodex_t* vc, Vcbuffer_f bufferf);"
+This function walks though all handles
+starting from \f5vc\fP calls \f5bufferf()\fP on the lists 
+of buffers in these handles.
+The needed types are:
+
+.Cs
+  typedef struct _vcbuffer_s    Vcbuffer_t;
+  struct _vcbuffer_s
+  {  Vcbuffer_t*     next;
+     size_t          size;   /* total buffer size    */
+     char*           file;   /* file allocating it   */
+     int             line;   /* line number in file  */
+     unsigned char   buf[1]; /* actual data buffer   */
+  };
+
+  int (*Vcbuffer_f)(Vcodex_t* vc,
+                    Vcbuffer_t*  list, Vcmethod_t* meth);
+.Ce
+
+Here, \f5list\fP is a linked list of buffers of the type \f5Vcbuffer_t\fP
+and \f5meth\fP is the method used for the given handle.
+.PP
+.Ss "  Vccontext_t* vcinitcontext(Vcodex_t* vc, Vccontext_t* ctxt);"
+The function creates a new context if \f5ctxt\fP is \f5NULL\fP
+or makes \f5ctxt\fP the current context if it is not \f5NULL\fP. It returns the
+current context or \f5NULL\fP on error.
+
+In certain situations, states may be retained across calls of \f5vcapply()\fP or \f5vcrecode()\fP.
+For example, the \f5Vctable\fP transform computes and reuses
+a transformation plan repeatedly as appropriate.
+A handle using such a transform should create separate contexts
+to keep states for different table types.
+In particular, a transform such as \f5Vctable\fP could extend
+\f5Vccontext_t\fP by including it as the first element
+of a private context type. In that case, the method should also supply an
+\f5eventf\fP function capable of handling the events \f5VC_INITCONTEXT\fP
+and \f5VC_FREECONTEXT\fP. The first allocates a new context while the latter
+frees a given one.
+.PP
+.Ss "  int vcfreecontext(Vcodex_t* vc, Vccontext_t* ctxt);"
+This function deletes the given context \f5ctxt\fP.
+.PP
+.Ss "  type vcgetcontext(vc, type);"
+This macro function retrieves the current context of \f5vc\fP and
+coerces that to its given private \f5type\fP.
+
+.ne 8
+.Sh "TYPES AND FUNCTIONS FOR DATA TRANSFORMING METHODS"
+
+.PP
+Methods are of the type \f5Vcmethod_t\fP as defined below:
+
+.ne 11
+.Cs
+typedef struct _vcmethod_s
+{    Vcapply_f  encodef; /* function to encode data         */
+     Vcapply_f  decodef; /* function to decode data         */
+     int        (*eventf)(Vcodex_t*, int, Void_t*);
+     char*      name;   /* the string name of the transform */
+     char*      desc;   /* a short description              */
+     Vcmtarg_t* args;   /* arguments usable with vcopen()   */
+     ssize_t    window; /* suggested window size            */
+     int        type;	/* VC_MTSOURCE                      */
+} Vcmethod_t;
+.Ce
+
+.Tp
+\f5encodef, decodef\fP:
+These are functions to encode and decode data.
+.Tp
+\f5eventf\fP:
+If not \f5NULL\fP, this is a function to handle events.
+.Tp
+\f5args\fP:
+This defines a list of arguments usable to initialize the method.
+See ALIAS PROCESSING for details on how to specify arguments.
+Each element of the list is of the type \f5Vcmtarg_t\fP:
+
+.ne 5
+.Cs
+typedef struct _vcmtarg_s
+{ char*      name;  /* the name of the argument       */
+  char*      desc;  /* a description of the argument  */
+  Void_t*    data;  /* any associated data            */
+} Vcmtarg_t;
+.Ce
+
+.Tp
+\f5type\fP:
+This provides flags telling certain characteristics of the method.
+Currently only \f5VC_MTSOURCE\fP is used to indicate that
+the method is a delta compressor.
+.PP
+The list of events passable to \f5eventf\fP are:
+.Tp
+\f5VC_OPENING\fP:
+A new handle is opened. The third argument is data for initialization.
+.Tp
+\f5VC_CLOSING\fP;
+A handle is being closed. All private method data should be deallocated.
+.Tp
+\f5VC_INITCONTEXT\fP:
+Create a new context for data transformation.
+.Tp
+\f5VC_FREECONTEXT\fP:
+Delete the given context.
+.Tp
+\f5VC_FREEBUFFER\fP:
+Free any allocated buffers for this handle or buffers allocated in
+other handles created internally.
+.Tp
+\f5VC_SETMTARG\fP:
+Set a parameter which should be specified in a \f5name=value\fP format.
+For example, to tell the \f5Vctranspose\fP data transform that the
+number of columns for the data to be transformed next is \f510\fP,
+the event \f5VC_SETMTARG\fP can be raised with associated data ``\fIcolumns=10\fP''.
+.Tp
+\f5VC_EXTRACT\fP:
+.Tp
+\f5VC_RESTORE\fP:
+The third argument to the \f5eventf\fP function should be a structure of type \f5Vcmtcode_t\fP:
+
+.ne 5
+.Cs
+typedef struct _vcmtcode_s
+{ Vcchar_t*  data;  /* encoded data of a handle       */
+  ssize_t    size;  /* size of encoded data           */
+  Vcodex_t*  coder; /* reconstructed coder            */
+} Vcmtarg_t;
+.Ce
+
+For \f5VC_EXTRACT\fP,
+internal states should be coded in a form suitable for persistent storage
+and returned in the fields \f5Vcmtcode_t.data\fP and \f5Vcmtcode_t.size\fP.
+For \f5VC_RESTORE\fP,
+a coder for decoding data should be constructed based on
+the data in the fields \f5Vcmtcode_t.data\fP and \f5Vcmtcode_t.size\fP
+and returned in \f5Vcmtcode_t.coder\fP.
+In both cases, the \f5eventf\fP function should return a positive value on success.
+.Tp
+\f5VC_GETIDENT\fP:
+Obtaining the identification string of the method.
+The handling of this event is optional.
+If not defined, the identification string will be
+the method's name translated into the ASCII character set.
+.Tp
+\f5VC_TELLBUFFER\fP:
+This event is used mostly for debugging memory usage. It is a request
+to process memory buffers being maintained by a handle and its continuation.
+The third argument to \f5eventf\fP should be the address of a function
+defined with the below type. The arguments are:
+\f5vc\fP the handle creating the buffer, \f5list\fP the list of buffers in that handle
+and \f5meth\fP the method in use.
+
+.Cs
+typedef struct _vcbuffer_s  Vcbuffer_t;
+typedef int    (*Vcbuffer_f)(Vcodex_t* vc,
+                          Vcbuffer_t* list, Vcmethod_t* meth);
+struct _vcbuffer_s
+{ Vcbuffer_t*  next; /* link to next buffer      */
+  ssize_t      size; /* size of the buffer       */
+  char*        file; /* file creating the buffer */
+  int          line; /* line number in the file  */
+  ...
+};
+.Ce
+
+.PP
+.Ss "  int vcaddmeth(Vcmethod_t** list, ssize_t size);"
+This function adds a list of methods to the collection of available methods.
+It is intended to be used by applications that wish to make their own
+transforms available to a search via \f5vcgetmeth()\fP.
+.PP
+.Ss "  Vcmethod_t* vcgetmeth(char* name, int type);"
+This function returns a method matching \f5name\fP.
+If \f5type\fP is zero, \f5name\fP is assumed to be in the native codeset
+(e.g., ASCII or some form of EBCDIC).
+Otherwise, it should have been previously coded by \f5vcstrcode()\fP.
+Such coding of a string makes the data portable across platforms using different
+codesets.
+.PP
+.Ss "  int vcwalkmeth(Vcwalk_f walkf, Void_t* disc);"
+This function walks the currently available list of methods and
+invokes \f5walkf\fP as \f5(*walkf)(meth,name,desc,disc)\fP.
+Here, \f5meth\fP is the method being walked while \f5name\fP and \f5desc\fP
+are its name and description.
+.PP
+.Ss "  char* vcgetident(Vcmethod_t* meth, char* buf, ssize_t size);"
+This function returns the identification string of the method \f5meth\fP.
+This string is guaranteed to be in ASCII so that it can be portably stored.
+\f5buf\fP and \f5size\fP define a buffer that \f5vcgetident()\fP
+may use to store the identification string.
+\f5vcgetident()\fP returns \f5NULL\fP on error.
+.PP
+.Ss "  char* vcgetmtarg(char* data, char* val, ssize_t vlsz, Vcmtarg_t* list, Vcmtarg_t** arg);"
+This call may be used by a method writer to parse the string \f5data\fP which should be
+composed of elements separated by periods.
+Each element can be either just a plain string \fIname\fP or a pair \fIname=value\fP.
+The string \fIname\fP will be matched against \f5list\fP to find a matching argument.
+If one is found, \f5*arg\fP will be set to it.
+\f5value\fP, if any, will be copied into the buffer \f5val\fP without exceeding \f5vlsz\fP.
+\f5vcgetmtarg()\fP returns the remainder of unparsed data or \f5NULL\fP on failure.
+.PP
+.Ss "  int vcsetmtarg(Vcodex_t* vc, char* name, void* val, int type);"
+This function invokes \f5eventf()\fP to set an argument (parameter).
+By convention, each transform should ignore any inapplicable parameters.
+The \f5type\fP argument can be \f50\fP, \f51\fP,\f52\fP to indicate that
+the \f5val\fP argument is a \fIbyte\fP, an \fIinteger\fP or a \fIstring\fP respectively.
+A byte value is coded in C-style while an integer is coded in decimal.
+For example, the call \f5vcsetarg(vc, "columns", 10, 1)\fP
+set the number of columns to \f510\fP for a method such as \f5Vctranspose\fP or \f5Vctable\fP.
+.PP
+.Ss "  type vcgetmtdata(Vcodex_t* vc, type);"
+.Ss "  void vcsetmtdata(Vcodex_t* vc, data);"
+These macro functions retrieve and set the private data structure
+created by the transform to use in the handle \f5vc\fP.
+\f5vcgetmtdata()\fP coerces the data structure to its private type.
+.PP
+
+.Sh "AVAILABLE METHODS"
+
+.PP
+.Ss "  Vcdelta"
+This method implements a generalized Lempel-Ziv parsing strategy
+to compress a target data segment either by itself or
+against another source data segment.
+The source data segment, if any, should be specified 
+by the \f5data\fP and \f5size\fP field of a discipline structure.
+The compressed data are in the standard format defined by the IETF RFC3284.
+String matching is based on a suffix sorting algorithm
+if the \f5init\fP argument to \f5vcopen()\fP is the string \f5"s"\fP.
+Otherwise, a hashing algorithm is used.
+.PP
+.Ss "Vcsieve"
+This method implement various strategies to condition data for compressibility.
+The argument \f5init\fP to \f5vcopen()\fP can be composed from:
+.Tp
+\f5delta\fP:
+This does delta compression with approximate matching.
+A matched data segment is coded by subtracting
+it against the matching segment.
+Thus, in this case, \f5Vcsieve\fP does not reduce data.
+However, the data that it produces is amenable to compression
+by other transforms, for example, a run-length compressor
+together with a Huffman coder.
+If \f5delta\fP is not specified, only exact matching will be done
+and matched data will not be coded by subtracting as described.
+.Tp
+\f5reverse\fP:
+This allows matching data in reverse. For example \f5abc\fP
+can be matched with \f5cba\fP (as well as another instance of \f5abc\fP).
+.Tp
+\f5map\fP:
+This allows defining a set of pairs of letters that are allowed to match
+with one another. For example, \f5map=ATGCatgc\fP allows matching \f5A\fP
+with \f5T\fP, \f5G\fP with \f5C\fP, etc. For example, such a \f5map\fP specification
+along with \f5reverse\fP can be used to compress DNA data.
+.Tp
+\f5mmin\fP:
+This defines a minimum prefix that must be exactly matched before further matching
+either exact or approximate.
+.PP
+.Ss "  Vchamming"
+This code a target data segment by subtracting it against another source data segment
+given in the discipline structure. If the source data segment is short, it will be
+repeated as necessary.
+.PP
+.Ss "  Vchuffman"
+This method performs Huffman coding.
+.PP
+.Ss "  Vchuffgroup"
+This method first divides the given data into small contiguous parts
+of equal size (except perhaps the last one). Then,
+the parts are collected into groups so that
+each group can be compressed
+separately with its own Huffman code table.
+.PP
+.Ss "  Vchuffpart"
+This method divides the given data
+into contiguous sections each of which uses a separate Huffman coding
+table optimized for it.
+.PP
+.Ss "  Vcrle"
+This method encodes runs in data.
+Normally, runs are encoded using a scheme whereby a run is indicated by
+some escape character and its length is encoded in a compact variable size format.
+The run lengths are coded in a separate area from the data so that
+the two types of data can be effectively compressed via a later continuation coder
+if there is one.
+An alternative run encoding method is indicated
+by giving the string \f5"0"\fP as the \f5init\fP argument of \f5vcopen()\fP.
+In this case, only runs of 0's are encoded using a binary encoding method.
+This is useful in a compression technique that produces large sequences of zeros
+such as the Burrows-Wheeler transform \f5Vcbwt\fP or the table transform
+\f5Vctable\fP.
+.PP
+.Ss "  Vcbwt"
+\f5Vcbwt\fP performs a Burrows-Wheeler transform on the given data.
+This data is amenable to better compression via some combination of
+move-to-front, run-length encoding and entropy coding.
+.PP
+.Ss "  Vcmtf"
+This method performs a move-to-front transform on the data,
+i.e., mapping each data byte into their positions in some
+dynamically updated array of the 256 byte values.
+By default, the array is updated using a predictive method
+aiming at creating more zeros.
+If the \f5init\fP argument of \f5vcopen()\fP is the string \f5"0"\fP,
+the array is updated by moving the encoded byte to position 0
+(i.e., the traditional MTF transform).
+.PP
+.Ss "  Vctranspose"
+This method transposes rows and columns.
+If the \f5init\fP argument of \f5vcopen()\fP is the string \f5"v"\fP,
+each row ends with some separator character.
+If the \f5init\fP argument is anything else, row lengths are fixed size.
+In that case, the row size (i.e., number of columns) is normally encoded
+at the start of transformed data unless the \f5init\fP argument is \f5"0"\fP.
+The number of columns may be learned directly from the data.
+But it and the row separator can also be set
+via \f5vcsetmtarg()\fP using one of \f5columns\fP and \f5rsep\fP or \f5fsep\fP.
+Only data fitting the table profile, i.e., the maximum number of well-defined rows
+will be processed. The unprocessed amount can be retrieved via \f5vcundone()\fP.
+.PP
+.Ss "  Vctable"
+This method transforms table data, i.e., two-dimensional byte arrays,
+into a form that is amenable to compression via a combination of move-to-front (\f5Vcmtf\fP),
+run-length encoding (\f5Vcrle\fP) and entropy coding (e.g., \f5Vchuffgroup\fP).
+Normally, the number of columns is learned directly from data.
+However, it can also be explicitly set via \f5vcsetmtarg()\fP
+by the parameter \f5columns\fP.
+Only data fitting the table profile will be processed.
+The unprocessed amount can be told via \f5vcundone()\fP.
+.PP
+.Ss "  Vcrdb"
+This method transforms a relational data table to make it more compressible.
+The size of unprocessed data can be told with \f5vcundone()\fP.
+A relational data table is of one of two forms:
+.Tp
+\fIFlat\fP:
+This is a collection of records such that each of which terminates with a record separator.
+Within each record is a sequence of fields each of which terminates with a field separator.
+Field and record separators can be set via \f5vcmtsetarg()\fP using \f5fsep\fP and \f5rsep\fP.
+The attribute \f5full\fP can be used to coerce padding of field values so that they all
+have the same lengths.
+All attributes can be set in the \f5init\fP argument of \f5vcopen()\fP.
+.Tp
+\fISchematic\fP:
+This is a collection of records  such that each of which consists
+of a set of fields, each of a fixed length. The lengths of such fields
+can be set via \f5schema=[f1,f2,...]\fP either via the \f5init\fP
+argument of \f5vcopen()\fP or via \f5vcmtsetarg()\fP.
+.PP
+.Ss "  Vcrelation"
+This method is similar to \f5Vcrdb\fP for flat relational data tables
+but uses a faster algorithm with comparable or better performance for this class of data.
+Field and record separators can be set via \f5vcmtsetarg()\fP using \f5fsep\fP and \f5rsep\fP.
+.PP
+.Ss "  Vcmap"
+This method maps each byte to another byte.
+An application-specific mapping can be specified via
+the field \f5data\fP of the discipline structure.
+It must be a \f5Vcchar_t\fP array of size 256 where each
+position has its mapped value.
+Predefined mappings are provided to translate between
+ASCII and various versions of EBCDIC.
+These can be selected via
+\f5init\fP argument of \f5vcopen()\fP:
+.Tp
+\f5a2e, e2a\fP:
+These pertain to the EBCDIC character set defined
+by the X/OPEN \fBdd(1)\fP command.
+.Tp
+\f5a2i, i2a\fP:
+These pertain to the EBCDIC character set defined
+the \fBdd(1)\fP command on IBM systems.
+.Tp
+\f5a2h, h2a\fP:
+These pertain to the EBCDIC character set defined
+on IBM-37 AS/400 systems.
+.Tp
+\f5a2o, o2a\fP:
+These pertain to the EBCDIC character set defined
+on IBM OpenEdition Unix systems.
+.Tp
+\f5a2s, s2a\fP:
+These pertain to the EBCDIC character set defined
+on Siemens Posix systems.
+
+.Sh "DISCIPLINE AND EVENT HANDLING"
+
+.PP
+A delta compression method such as \f5Vcdelta\fP
+requires source data to compare against.
+Such information must be supplied by an application via the discipline
+structure \f5Vcdisc_t\fP:
+
+.ne 5
+.Cs
+typedef struct
+{ Void_t*    data;
+  size_t     size;
+  Vcevent_f  eventf;
+} Vcdisc_t;
+.Ce
+
+.PP
+.Ss "  int (*eventf)(Vcodex_t* dt, int type, Void_t* data, Vcdisc_t* disc)"
+If not \f5NULL\fP, \f5eventf\fP announces various events.
+Unless noted otherwise,
+a negative value causes the calling operation to terminate with failure while
+a non-negative return value let the calling function proceed normally.
+Following are the events:
+.Tp
+\f5VC_OPENING\fP:
+When \f5data\fP is \f5NULL\fP, this announces the opening of the handle \f5vc\fP.
+Otherwise, an error has happened during initialization and
+\f5data\fP was the method used to open the handle,
+.Tp
+\f5VC_CLOSING\fP:
+The handle \f5vc\fP is being closed.
+The argument \f5data\fP will be \f5NULL\fP in this case.
+.Tp
+\f5VC_DISC\fP:
+The current discipline of \f5vc\fP is being changed to the new one given in
+\f5(Vcdisc_t*)data\fP.
+.PP
+.Ss "  Vcdisc_t* vcdisc(Vcodex_t* vc, Vcdisc_t* disc);"
+This changes the discipline of \f5vc\fP to \f5disc\fP.
+On success, \f5vcdisc()\fP returns the previous discipline if it is
+not \f5NULL\fP; otherwise, it returns \f5disc\fP.
+On failure, \f5vcdisc()\fP returns \f5NULL\fP.
+See also the methods \f5Vctable\fP and \f5Vctranspose\fP.
+.PP
+.Ss "  vcgetdisc(Vcodex_t* vc);"
+This macro function retrieves the discipline for \f5vc\fP.
+
+.Sh "VCDELTA TYPES AND FUNCTIONS"
+
+.PP
+The types \f5Vcdinst_t\fP, \f5Vcdcode_t\fP and \f5Vcdtable_t\fP describe
+the structures of a code table and the instructions. Their usage is
+described in the paper IETF RFC draft-korn-vcdiff-xx.txt (http://www.ietf.org).
+.PP
+.Ss "  ssize_t vcdputtable(Vcdtable_t* table, Void_t* buf, size_t n)"
+This function encodes the given \f5table\fP and stores the result in \f5buf\fP.
+It returns the output size on success and \f5-1\fP on error.
+.PP
+.Ss "  int vcdgettable(Vcdtable_t* table, Void_t* buf, size_t n)"
+This function decodes the data in \f5buf\fP into a code table which
+is stored in the space pointed to by \f5table\fP.
+It returns \f50\fP on success and \f5-1\fP on error.
+.PP
+
+.Sh "WINDOW MATCHING METHODS FOR DELTA COMPRESSION"
+
+.PP
+This collection of types and functions provides a subpackage
+for computing matching windows to help with delta compresssion.
+.PP
+.Ss "  Vcwindow_t* vcwopen(Vcwdisc_t* disc, Vcwmethod_t* meth);"
+This opens a handle for computing matching windows based
+on the given method \f5meth\fP.
+The discipline structure, \f5disc\fP, provides source and target file
+handles and an event handling function. Source and target file handles,
+if given, should be opened for reading. Currently, the event handling function
+is only called with \f5VCW_OPENING\fP and \f5VCW_CLOSING\fP.
+If \f5meth\fP is \f5NULL\fP, the handle is opened for decoding data.
+Below are the methods:
+.Tp
+\f5Vcwmirror\fP;
+This method reuses the position of the data in the target file
+as the tentative start of the computed matching window
+in the source file. It may add a small amount of data around
+that position to enhance string matching.
+.Tp
+\f5Vcwvote\fP:
+This method uses the frequencies of the n-grams (for some private n)
+in a target window of data and a voting algorithm to find
+a matching window in either the source file or the target file.
+.Tp
+\f5Vcwprefix\fP:
+This method uses prefix matching on blocks of data to determine
+windows matching portions of target data.
+.PP
+.Ss "  int vcwclose(Vcwindow_t* vcw);"
+This closes the handle \f5vcw\fP.
+.PP
+.Ss "  Vcwmatch_t* vcwapply(Vcwindow_t* vcw, Void_t* data, size_t size, Sfoff_t pos);"
+This applies the windowing method of \f5vcw\fP to compute
+a suitable matching window to the given data segment.
+\f5pos\fP gives the starting position of the data segment in the target file.
+If the handle was opened with both a source and a target files,
+the computed matching window can be anywhere in the source file but it is restricted
+to the part of the target file before \f5pos\fP.
+A matching window, if found,
+is returned in a \f5Vcwmatch_t\fP structure with elements:
+.Tp
+\f5type\fP:
+This is either \f5VCD_SOURCEFILE\fP or \f5VCD_TARGETFILE\fP
+to indicate which file the matching window is from.
+.Tp
+\f5wdata, wsize, wpos\fP:
+These give the desired window data and the position in the respective file.
+.Tp
+\f5msize\fP:
+This gives the amount of data from \f5data\fP that should be used for
+compressing against the computed window data.
+.PP
+.Ss "  ssize_t vcwfeedback(Vcwindow_t* vcw, ssize_t size);"
+This tells \f5vcw\fP the compression result from the use of the window computed
+in the last \f5vcwapply()\fP call. Certain methods may use this information
+to focus window searching.
+.PP
+.Ss " Vcwmethod_t* vcwgetmeth(char* name);"
+This function searches for a window matching method matching \f5name\fP.
+It returns the method or \f5NULL\fP on failure.
+.PP
+.Ss " int vcwwalkmeth(Vcwalk_f walkf, Void_t* disc);"
+This walks the list of window matching methods
+in the same manner as \f5vcwalkmeth()\fP.
+
+.Sh "HUFFMAN CODING TYPES AND FUNCTIONS"
+
+.PP
+The compression methods \f5Vchuffman\fP, \f5Vchuffgroup\fP and \f5Vchuffpart\fP
+are based on the Huffman encoding. The functions described here
+provide efficient algorithms for encoding and decoding of certain basic
+data structures required in Huffman encoding.
+.PP
+.Ss " ssize_t vchsize(ssize_t* freq, ssize_t* size, int* runb)"
+This function computes the code lengths in bits for all bytes given
+their frequency as defined in \f5freq[]\fP.
+Code lengths are returned in \f5size[]\fP.
+If there is a single run, the run byte is returned in \f5*runb\fP.
+\f5vchsize()\fP returns the maximum length of any code.
+.PP
+.Ss " ssize_t vchbits(ssize_t* size, Vcbits_t* bits)"
+This function computes the actual codes to encode each byte based on
+the sizes given in \f5size[]\fP. It returns the maximum code size.
+.PP
+.Ss " int vchcopy(Vcodex_t* vc, ssize_t* freq, ssize_t* size, in maxs)"
+This function sets the frequency and size arrays in handle \f5vc\fP
+if they are not \f5NULL\fP. \f5maxs\fP is the maximum code size as given
+given in \f5size[]\fP. \f5vc\fP will use these arrays for encoding
+instead of computing them from the data being encoded.
+\f5vchcopy()\fP returns \f50\fP on success and \f5-1\fP on failure.
+.PP
+.Ss " ssize_t vchputcode(ssize_t* size, ssize_t maxs, Vcchar_t* data, size_t dtsz)"
+The Huffman code is completely specified by the lengths of the codes as given
+in the \f5size\fP array.
+This function encodes the \f5size[]\fP array in a compressed portable form
+suitable for output. The \f5data\fP array should have a sufficiently large
+size \f5dtsz\fP to store the result. It returns the length of the result in bytes.
+.PP
+.Ss " ssize_t vchgetcode(ssize_t* size, ssize_t maxs, Vcchar_t* data, size_t dtsz)"
+This function decodes the \f5size[]\fP array from the encoded data given
+in \f5data\fP. It returns the number of bytes consumed from \f5data\fP
+for decoding \f5size[]\fP.
+
+.Sh "FIXED-LENGTH TABLE TRANSFORM TYPES AND FUNCTIONS"
+
+.PP
+Data in tables with fixed number of columns
+can be better compressed by transforming the data of each column
+based on whether or not it can be predicted well by some other column.
+The data types and functions needed for such a data transformation
+are described below.
+
+.ne 11
+.Cs
+typedef struct _vctblcolumn_s /* column specifications   */
+{ ssize_t        index;  /* column index                 */
+  ssize_t        pred1;  /* <0 if self compressing       */
+  ssize_t        pred2;  /* if pred1<0, 1 for doing MTF  */
+} Vctbltrans_t;
+
+typedef struct _vctblplan_s /* transform plan            */
+{ ssize_t        ncols;  /* row size or # of columns     */
+  Vctblcolumn_t* trans;  /* the plan to transform data   */
+  Vcodex_t*      zip;    /* Vcdelta to code plan         */
+} Vctblplan_t;
+.Ce
+
+.PP
+.Ss "  Vctbplan_t* vctblmakeplan(Void_t* data, size_t size, size_t ncols, int flags);"
+This function uses the given \f5data\fP to compute a plan that
+can be used to compress table with fixed-length rows.
+\f5vctblmakeplan()\fP returns the plan on success or \f5NULL\fP on failure.
+The argument \f5ncols\fP tells the number of columns.
+The argument \f5flags\fP should be a combination of the below bits:
+.Tp
+\f5VCTBL_RLE\fP: use run-length compressive entropy to measure dependency strength (default).
+.Tp
+\f5VCTBL_CEE\fP: use conditional empirical entropy to measure dependency strength.
+.Tp
+\f5VCTBL_LEFT\fP: use left to right dependency relations (default).
+.Tp
+\f5VCTBL_RIGHT\fP: use right to left dependency relations (default).
+.Tp
+\f5VCTBL_SINGLE\fP: use only a single predictor. Default is two predictors.
+.PP
+.Ss "  void vctblfreeplan(Vctblplan_t* plan);"
+This function frees a plan computed by \f5vctblmakeplan()\fP.
+.PP
+.Ss "  ssize_t vctblencodeplan(Vctblplan_t* plan, Void_t** codep);"
+.Ss "  Vctblplan_t* vctbldecodeplan(Void_t* code, size_t cdsz);"
+\f5vctblencodeplan()\fP computes from the given \f5plan\fP a string suitable
+for permanent storage.
+It returns the length of the string on success
+and \f5-1\fP on failure.
+The code string itself is returned in \f5*codep\fP on success.
+\f5vctbldecodeplan()\fP reconstructs the plan encoded in the given string.
+
+.Sh "RELATIONAL DATA TRANSFORM TYPES AND FUNCTIONS"
+
+Each relational data table consists of a number of records where
+each record contains a number of fields. We allow fields to be any
+combinations of being fixed-length or delineated by some separators.
+The collection of data types and functions provided here enable construction
+of on-line data structures suitable for manipulating relational
+data tables. In particular, the type \f5Vcrdtable_t\fP describes
+the structure of a relational dataset.
+In the case when the data are records and fields purely delineated by record
+and field separators, a record may be allowed to not containing a full
+complement of fields. In such a case, the on-line structure fills in
+missing fields with data consisting of single record separators so that
+the table appears as if all records have the same number of fields.
+
+.PP
+.Ss "  ssize_t vcrdsepar(Vcrdsepar_t* rds, ssize_t nrds, Vcchar_t* data, ssize_t dtsz, int rsep);"
+A relational dataset may consist of records separated by some record separator.
+In addition, each record consists of fields separated by some field separator.
+Often, a dataset may be given without specification of either of these separators.
+This function computes candidates for record and field separators for such a dataset.
+.Tp
+\f5rds, nrds\fP: These define an array with \f5nrds\fP elements of the type \f5Vcrdsepar_t\fP.
+\f5vcrdsepar()\fP returns up to \f5nrds\fP best candidate separators in this array.
+.Tp
+\f5data, dtsz\fP: These provide the data used in computing the separator candidates.
+.Tp
+\f5rsep\fP: If this is non-negative and less than 256, it defines the record separator.
+In that case, only the field separator will be computed.
+.PP
+.Ss "  Vcrdtable_t* vcrdparse(Vcrdinfo_t* info, Vcchar_t* data, ssize_t dtsz, int type);"
+.Ss "  ssize_t vcrdsize(Vcrdtable_t* tbl);"
+.Ss "  void vcrdclose(Vcrdtable_t* tbl);"
+These functions constructs and frees \f5Vcrdtable_t\fP structures
+to represent data by fields and records.
+\f5vcrdsize()\fP returns the actual amount of data from \f5data\fP used to
+construct the table after a \f5vcrdparse()\fP or \f5vcrdfield()\fP call
+(i.e., not all data may be used in such a call). Below are the arguments for \f5vcrdparse()\fP:
+.Tp
+\f5info\fP: This structure defines initial information about the table data.
+The field \f5flen\fP, if not \f5NULL\fP, should be an array with positive \f5fldn\fP elements.
+Each element of \f5flen[]\fP can be (1) \fIpositive\fP to define
+a fixed-length field, (2) \fIzero\fP to define a field delineated by a separator, and
+(3) \fInegative\fP to define a field delineated by some separator
+but having been filled in so that data across all records have the same length, the absolute
+value of the given value.
+.Tp
+\f5data, dtsz\fP: The raw data of the table.
+The fields \f5recn\fP and \f5fldn\fP of \f5info\fP must be positive if
+either \f5data\fP is \f5NULL\fP or \f5dtsz <= 0\fP. In this case,
+only a skeleton \f5Vcrdtable_t\fP structure will be constructed.
+Field data must be filled in later via \f5vcrdfield()\fP.
+.Tp
+\f5type\fP: This is either \f50\fP or \f5VCRD_FIELD\fP. The latter means
+that the given data is in a field-oriented format instead of the default record-oriented format.
+The fields \f5recn\fP and \f5fldn\fP of \f5info\fP must be positive if data is field-oriented.
+.PP
+.Ss "  ssize_t vcrdfield(Vcrdtable_t* tbl, ssize_t f, ssize_t n, Vcchar_t* data, ssize_t dtsz);"
+This call changes the data of a field in the table \f5tbl\fP.
+The field index is given in \f5f\fP while its length is given in \f5n\fP.
+The treatment of \f5n\fP is exactly the same as described above for elements in the \f5flen[]\fP array.
+\f5vcrdfield()\fP returns the size of data actually used.
+.PP
+.Ss "  vcrdattrs(Vcrdtable_t* tbl, ssize_t f, int attrs, int type);"
+This call sets the attributes of fields in the table \f5tbl\fP.
+If \f5f\fP is nonnegative, it indicates the single field to change.
+Otherwise, all fields will be considered to change.
+\f5type\fP can be zero or non-zero to turn off or on the given attributes.
+\f5attrs\fP is a bit combination of the below attributes:
+.Tp
+\f5VCRD_FULL\fP:
+If the field is delineated by a separator, values across records may have different lengths.
+When this attribute is on, such values will be padded with the separator as necessary to make
+all have the same length. Note that this padding is done virtually on data extraction only.
+See also \f5vcrdextract()\fP.
+.Tp
+\f5VCRD_DOT\fP:
+Certain fields contain values such as floating point numbers or IP addresses
+are of the form \fIxxx.yyy.zzz...\fP. In the case of IP addresses, a value
+may also be ended in \fI/nnn\fP to indicate the number of bits to use.
+When this attribute is on, such a value will be converted into a fixed-length sequence
+of bytes, each representing a component of the value. The conversion is done
+only if all values of the field can be converted uniformly. On a successful conversion,
+the \f5type\fP attribute of the respective \f5Vcrdfield_t\fP will be set to contain
+\f5VCRD_DOT\fP and perhaps also \f5VCRD_SLASH\fP if the \fI/nnn\fP pattern was detected and converted.
+.PP
+.Ss "  ssize_t vcrdextract(Vcrdtable_t* tbl, ssize_t f, Vcchar_t** datap, int type);"
+This call extracts from table \f5tbl\fP the data of a field \f5f\fP if \f5f\fP is non-negative
+or the data of the entire table otherwise. The data array is returned in \f5*datap\fP and its
+size is the return value. \f5type\fP can be a bit combination of the following:
+.Tp
+\f5VCRD_FULL\fP:
+If this bit is on, records with missing fields will be filled in with the record separator
+as appropriate to make all records have the same number of fields.
+Note that variable-length fields may also be filled separately by their internal attributes
+as described in \f5vcrdattrs()\fP.
+.Tp
+\f5VCRD_FIELD\fP:
+The default data orientation is by record.
+This bit causes data to be extracted in a field-oriented fashion.
+Note that this bit implies \f5VCRD_FULL\fP.
+.PP
+.ne 4
+.Cs
+typedef struct _vcrdplan_s
+{ ssize_t         fldn;   /* number of fields             */
+  ssize_t         pred[]; /* predictor list               */
+} Vcrdplan_t;
+.Ce
+
+.PP
+\f5Vcrdplan_t\fP defines the dependency relations among fields.
+\f5fldn\fP is the number of fields while \f5pred[]\fP gives the predictive relations.
+If \f5pred[i] != i\fP, field \f5pred[i]\fP predicts field \f5i\fP.
+Otherwise, \f5i\fP is unpredicted.
+.PP
+.Ss "  ssize_t vcrdweight(Vcrdtable_t* tbl, ssize_t f, ssize_t* vect, Vcrdweight_f wghtf);"
+This function computes the weight of field \f5f\fP in table \f5tbl\fP.
+The weight of a field is calculated by summing the weights of values in adjacent records.
+\f5vect\fP, if not \f5NULL\fP, is a vector used to reorder the records of \f5fld\fP before
+calculating its weight. \f5wghtf\fP, if not \f5NULL\fP, is a function to compute the weight
+of two given strings of data. When \f5wghtf\fP is \f5NULL\fP, an internal function is used
+which simply computes the length of the common prefix of the two given strings.
+.PP
+.Ss "  int vcrdvector(Vcrdtable_t* tbl, ssize_t f, Vcchar_t* trdt, ssize_t dtsz, int type);"
+This function computes a transform vector of field \f5f\fP in table \f5tbl\fP.
+It returns -1 on error and non-negative on success. On success, the return value 1 signifies
+that all values are equal.
+.Tp
+\f5type == VC_ENCODE\fP:
+If \f5trdt\fP is not \f5NULL\fP, it is memory of size \f5dtsz\fP.
+Record data will be transposed column by column into it
+based on the sort states up to a particular column.
+In this case, the internal transform vector, if any,  will not be changed.
+On the other hand, if \f5trdt\fP is \f5NULL\fP, the internal transform vector will
+be computed if not yet done so.
+.Tp
+\f5type == VC_DECODE\fP:
+This inverts the data previously transformed by \f5vcrdvector()\fP and repopulates the field \f5f\fP.
+The transform vector will be updated to reflect the new data.
+.PP
+.Ss "  Vcrdplan_t* vcrdmakeplan(Vcrdtable_t* tbl, Vcrdweight_f wghtf);"
+.Ss "  void vcrdfreeplan(Vcrdplan_t* plan);"
+\f5vcrdmakeplan()\fP computes the field dependency in a relational data table to define
+a plan to transform the data for better compression. It returns \f5NULL\fP on error.
+\f5wghtf\fP, if not \f5NULL\fP or \f5VCRD_NOPLAN\fP,
+is a function to compute the weight of a pair of strings.
+\f5vcrdfreeplan()\fP frees all memory associated with the given plan.
+.PP
+.Ss "  int vcrdexecplan(Vcrdtable_t* tbl, Vcrdplan_t* plan, int type);"
+This function executes the given \f5plan\fP to transform the fields in table \f5tbl\fP.
+The argument \f5type\fP is either \f5VC_ENCODE\fP or \f5VC_DECODE\fP to indicate whether
+the data is being encoded or decoded.
+The function returns \f5-1\fP on error.
+
+.Sh "SUFFIX ARRAY TYPES AND FUNCTIONS"
+
+.ne 6
+.Cs
+typedef struct _vcsfx_s
+{ ssize_t*      idx;    /* sorted suffix indices       */
+  ssize_t*      inv;    /* inverse permuation of idx[] */
+  Vcchar_t*     str;    /* string with sorted suffixes */
+  size_t        nstr;   /* length of above string      */
+} Vcsfx_t;
+.Ce
+
+.PP
+.Ss "  Vcsfx_t* vcsfxsort(const Void_t* str, size_t nstr);"
+\f5vcsfxsort()\fP sorts indices of suffixes of \f5str\fP to create
+a suffix array. The string is treated as if it ends with an element
+larger than all other bytes in the string. In this way, the order for
+all suffixes are well-defined. \f5vcsfxsort()\fP returns a structure
+of type \f5Vcsfx_t\fP as above on success or \f5NULL\fP on failure.
+The field \f5Vcsfx_t.idx\fP has the indices of all suffixes sorted
+lexicographically. The field \f5Vcsfx_t.inv\fP has the inverse
+permutation of \f5Vcsfx_t.idx\fP. That is, \f5inv[idx[i]] == i\fP.
+.PP
+.Ss "  ssize_t  vcperiod(const Void_t* data, size_t dtsz);"
+\f5vcperiod\fP computes a quasi-period in the given data, if any.
+This is useful to determine the number of columns in table data.
+
+.Sh "GENERALIZED LEMPEL-ZIV PARSING"
+
+.PP
+Certain transforms such as the delta compression method \f5Vcdelta\fP uses
+a greedy parsing scheme based on a combination of Lempel-Ziv'77 and
+Tichy's block-move. Source and target strings are conceptually concatenated into
+a superstring. The resulting data is then parsed starting from target data to
+construct a sequence of matching fragments.
+
+As an example, consider parsing a target sequence 
+\f5abcde\fP given the source sequence \f5abcdabcdabcdf\fP.
+The catenated sequence is \f5abcdeabcdabcdabcdf\fP so parsing
+may produce the below matching segments and a possible
+reconstruction plan from the \f5Vcdelta\fP transform with the
+shown COPY and ADD instructions:
+
+.Cs
+5  4  0    /* position 5 matches 4 bytes starting at 0 */
+9  8  5    /* position 9 matches 8 bytes starting at 5 */
+
+COPY 4  0  /* abcd......... */
+COPY 8  5  /* abcdabcdabcd. */
+ADD  1  f  /* abcdabcdabcdf */
+.Ce
+
+.Ss "  int vclzparse(Vclzparse_t* vcpa, ssize_t bound);"
+This function parses the target data and calls
+\f5vcpa->parsef\fP on each parsed segments.
+Normally, hashing is used for string matching but if
+\f5bound < 0\fP and the parsing does not use reverse matching
+or character mapping, then a suffix sorting algorithm is used for string matching.
+The handle \f5vcpa\fP is of type \f5Vclzparse_t\fP
+and specifies the data to be parsed and parsing parameters.
+The argument \f5bound\fP, if negative, means that a suffix sorting algorithm
+will be used for string matching. This tends to be slow but finds longer matches.
+If \f5bound\fP is non-negative, a hashing method is used for string matching.
+This is faster but may miss some long matches. Further, if \f5bound\fP is positive
+it provides a hint to prune the hash table of far away addresses.
+
+.PP
+.ne 10
+.Cs
+typedef struct _vclzparse_s
+{ Vclzparse_f parsef;   /* function to process a segment sequence   */
+  Vcchar_t*   src;      /* the source string, if not NULL           */
+  ssize_t     nsrc;     /* the length of the source data            */
+  Vcchar_t*   tar;      /* the target string to be parsed           */
+  ssize_t     ntar;     /* the length of the target data            */
+  ssize_t     mmin;     /* the minimum length required for a match  */
+  Vcchar_t*   cmap;     /* if !NULL, byte pairs to map for matching */
+  int         type;     /* a combination of VCLZ_REVERSE|VCLZ_MAP   */
+} Vclzparse_t;
+
+typedef struct _vclzmatch_s
+{ ssize_t     tpos;     /* the position of data in target string    */
+  ssize_t     mpos;     /* the matching position in source/target   */
+  ssize_t     size;     /* the length of the data involved          */
+} Vclzmatch_t;
+.Ce
+
+If the bit \f5VCLZ_REVERSE\fP is on in the field \f5Vclzparse_t.type\fP,
+reverse matching is allowed. For example \f5abc\fP may match with \f5cba\fP
+as well as \f5abc\fP. Likewise, if the bit \f5VCLZ_MAP\fP is on,
+the field \f5Vclzparse_t.map\fP should be a string specifying pairs
+of characters that are allowed to match. For example, if \f5map\fP
+is "\f5ATGCatcg\fP", then \f5A\fP matches with \f5T\fP,
+\f5G\fP matches with \f5C\fP, and so on.
+This example pattern and reverse matching are useful for compressing DNA data.
+
+.Ss "  ssize_t (*Vclzparse_f)(Vclzparse_t* vcpa, int type, Vclzmatch_t* mtch, ssize_t n);"
+This call-back function is invoked on sequences of data segments. It should return
+the amount of data actually consumed. A negative return value causes \f5vclzparse()\fP
+to stop and return immediately. A zero return value means that all the data covered
+by the given segments should be considered unmatchable.
+.Tp
+\f5vcpa\fP:
+The same handle that was passed to \f5vclzparse()\fP.
+.Tp
+\f5type\fP:
+This is a combination of \f5VCLZ_REVERSE\fP and \f5VCLZ_MAP\fP to tell
+what type of matching was done.
+.Tp
+\f5mtch, n\fP:
+This is the list of parsed segments, each presented in a structure
+of type \f5Vclzmatch_t\fP. Only \f5mtch[0]\fP may have \f5mpos < 0\fP
+to indicate a segment of unmatched data.
+Other elements should indicate actual matches.
+
+.Sh "BIT/BYTE/STRING I/O SUBSYSTEM"
+
+.PP
+The below functions are provided by \f5Vcodex\fP for portable data encoding.
+These functions perform only minimal bound checking, if any.
+Applications should take care of such details.
+.PP
+.Ss "  void vcioinit(Vcio_t* io, Vcchar_t* buf, int n);"
+This initializes a \f5Vcio_t\fP structure \f5io\fP with
+the given buffer \f5buf\fP with size \f5n\fP bytes.
+.PP
+.Ss "  size_t vciosize(Vcio_t* io);"
+This returns the extent that the buffer has been written to or read from.
+.PP
+.Ss "  size_t vciomore(Vcio_t* io);"
+This returns the size of the remaining part of the buffer that has
+not yet been written to or read from.
+.PP
+.Ss "  Vcchar_t* vciodata(Vcio_t* io);"
+This returns the original data buffer.
+.PP
+.Ss "  Vcchar_t* vcionext(Vcio_t* io);"
+This returns the pointer to the next position in the buffer that can
+be written to or read from.
+.PP
+.Ss "  Vcchar_t* vcioskip(Vcio_t* io, int n);"
+This skips ahead \f5n\fP bytes and returns the resulting pointer to the buffer.
+.PP
+.SS "  void vciomove(Vcio_t* to, Vcio_t* from, int n);"
+This moves \f5n\fP bytes between the given buffer and advances their
+positions accordingly.
+.PP
+.Ss "  ssize_t vcioputc(Vcio_t* io, int c);"
+.Ss "  int vciogetc(Vcio_t* io);"
+These functions write and read bytes respectively.
+.PP
+.Ss "  ssize_t vcioputs(Vcio_t* io, Void_t* s, size_t len);"
+.Ss "  ssize_t vciogets(Vcio_t* io, Void_t* s, size_t len);"
+These functions write and read arrays of bytes.
+They return the number of bytes written or read.
+.PP
+.Ss "  ssize_t vcioputu(Vcio_t io, Vcint_t v);"
+.Ss "  Vcint_t vciogetu(Vcio_t* io);"
+These functions write and read unsigned integers using a 7-bit encoding
+in the Sfio style.
+\f5vcputu()\fP returns the number of bytes used to encode the value.
+.PP
+.Ss "  ssize_t vcioputm(Vcio_t* io, Vcint_t v, Vcint_t max);
+.Ss "  Vcint_t vciogetm(Vcio_t* io, Vcint_t max);"
+These functions write and read unsigned integers
+using an 8-bit encoding in the Sfio style.
+The size of the encoding depends on the magnitude of \f5max\fP.
+For example, if \f5max\fP is 255, only one byte is used while, if \f5max\fP
+is 256, two bytes will be used.
+\f5vcputm()\fP returns the number of bytes used to encode the value.
+.PP
+.Ss "  ssize_t vcioput2(Vcio_t* io, Vcint_t v, Vcchar_t a, Vcchar_t b);"
+.Ss "  Vcint_t vcioget2(Vcio_t* io, Vcchar_t a, Vcchar_t b);"
+These functions write and read unsigned integers using a
+compact binary coding with \f5a\fP and \f5b\fP as digits.
+\f5vcput2()\fP returns the number of bytes used to encode the value.
+.PP
+.Ss "  ssize_t vcioputg(Vcio_t* io, Vcint_t v);"
+.Ss "  Vcint_t vciogetg(Vcio_t* io);"
+These functions write and read integers using the Gamma code.
+.PP
+.Ss "  ssize_t vcioputlist(Vcio_t* io, Vcint_t* list, ssize_t n);"
+.Ss "  Vcint_t vciogetlist(Vcio_t* io, Vcint_t* list, ssize_t n);"
+These functions write and read lists of non-negative integers using 
+a compact bit code. Note that the list size \f5n\fP given in \f5vciogetl()\fP
+must match exactly the list size given to \f5vcioputl()\fP.
+.PP
+.Ss "  void vciosetb(Vcio_t* io, Vcbits_t bits, ssize_t nbit, int type);"
+.Ss "  void vcioendb(Vcio_t* io, Vcbits_t bits, ssize_t nbit, int type);"
+.Ss "  void vciofilb(Vcio_t* io, Vcbits_t bits, ssize_t nbit);"
+.Ss "  void vcioflsb(Vcio_t* io, Vcbits_t bits, ssize_t nbit);"
+.Ss "  Vcbits_t vcioaddb(Vcio_t* io, Vcbits_t bits, ssize_t nbit, Vcbits_t add, ssize_t nadd);"
+.Ss "  Vcbits_t vciodelb(Vcio_t* io, Vcbits_t bits, ssize_t nbit, ssize_t ndel);"
+
+These \fImacro functions\fP constitute a set of operations for fast bit I/O.
+
+The variables \f5bits\fP and \f5nbit\fP are \f5declared\fP
+by the application and will be asociated with the handle \f5io\fP via \f5vciosetb()\fP.
+The association is for either encoding, i.e., \f5type=VC_ENCODE\fP,
+or decoding, i.e., \f5type=VC_DECODE\fP, and must be done before any bit operations.
+
+\f5vcioendb()\fP must be called to finalize bit I/O to get ready for other forms of I/O.
+
+\f5vciofilb()\fP fills \f5bits\fP with some number of bits available from \f5io\fP.
+\f5nbit\fP is updated to indicate the number of available bits.
+
+\f5vcioflsb()\fP flushes the bits available in \f5bits\fP out to \f5io\fP.
+Bits are flushed in 8-bit aggregates into bytes.
+\f5nbit\fP is updated to indicate the number of bits remained unflushed in \f5bits\fP.
+
+\f5vcioaddb()\fP adds \f5nadd\fP bits from \f5add\fP to \f5bits\fP.
+It is the caller's respobsibility to ensure that there is room in \f5bits\fP
+to add the new bits. Otherwise, bits may be lost.
+
+\f5vciodelb()\fP takes off \f5ndel\fP number of bits from \f5bits\fP.
+Such bits are lost forever.
+
+.Sh "STREAM PROCESSING"
+
+.PP
+The functions described in this section process data from a stream.
+Depending on local environments, these functions are either based
+on the Sfio library or on Stdio, the ANSI-C I/O interface.
+.PP
+.Ss "  Vcsfio_t"
+The type \f5Vcsfio_t\fP represents a stream for performing I/O.
+When Stdio is used, it is an opaque type keeping
+state information needed for data transformation.
+In this case, the I/O functions \f5vcsfwrite()\fP and \f5vcsfread()\fP should be used
+to read and write data.
+When Sfio is used, it is defined as \f5Sfio_t\fP.
+In this case, all normal Sfio operations could be used on the stream.
+Functions such as \f5vcsfread()\fP and \f5vcsfwrite()\fP will be macro redefinitions of 
+their corresponding Sfio functions.
+.PP
+.Ss "  Vcsfdata_t"
+The type \f5Vcsfdata_t\fP is used to pass initialization data to \f5vcsfio()\fP.
+
+.ne 7
+.Cs
+typedef struct _vcsfdata_s
+{       int         type;   /* various types of processing  */
+        char*       trans;  /* transformation specification */
+        char*       window; /* window specification         */
+        char*       source; /* source file to delta against */
+        Vcsferror_f errorf; /* to process errors            */
+} Vcsfdata_t;
+.Ce
+
+.Tp
+\f5type\fP:
+This is composed from two bits: \f5VCSF_VCDIFF\fP for outputting a header
+as defined by the IETF RFC3284 for the VCDIFF delta encoding format or
+\f5VCSF_PLAIN\fP for outputting no header at all. If neither bits are
+set, a header based on methods used will be output.
+.Tp
+\f5trans\fP:
+This is the transform specification.
+See section ALIAS PROCESSING for details.
+.Tp
+\f5window\fP:
+This specifies window size and window matching method.
+The window size if defined should come first and be
+an integer with optional suffix \f5k\fP for kilobyte
+or \f5m\fP for megabyte. This window size defines the maximum amount
+of data to be transformed at one time.
+A window matching method
+should be defined starting with a period then the name of the method.
+.Tp
+\f5source\fP:
+Source file to delta-compress against if the first method
+is a delta compressor.
+.Tp
+\f5errorf\fP:
+This function announces an error encountered during data processing.
+It is called as \f5(*errorf)(char* string)\fP where \f5string\fP
+tells the error type.
+.PP
+.Ss "Vcsfio_t* vcsfio(Sfio_t* sf, Vcsfdata_t* sfdt, int type);"
+This function constructs a \f5Vcsfio_t\fP handle to perform encoding
+or decoding on the stream \f5sf\fP depending on whether
+\f5type\fP is \f5VC_ENCODE\fP or \f5VC_DECODE\fP.
+When the Sfio library is in use,
+the same stream \f5sf\fP is returned. When the Stdio library is in use,
+the type \f5Sfio_t\fP is a macro redefinition of the \f5FILE\fP type while
+\f5Vcsfio_t\fP is an opaque type as described earlier.
+
+The structure \f5sfdt\fP provides the specification for methods used
+to transform data.
+The method specification \f5sfdt->spec\fP
+must be supplied on encoding and also on decoding
+if \f5sfdt->type\fP has the bit \f5VCSF_PLAIN\fP.
+If \f5type\fP is \f5VC_DECODE\fP, \frsfdt\fP can be \f5NULL\fP.
+In that case, the transforms needed to decode data will be
+obtained from starting data in the stream.
+.PP
+.Ss "  ssize_t vcsfread(Vcsfio_t* vcsf, Void_t* buf, size_t n);"
+This function reads from a stream of encoded data and decode them into the
+given buffer \f5buf\fP. It returns the length of the decoded data on success and
+a negative value on failure.
+.PP
+.Ss "  ssize_t vcsfwrite(Vcsfio_t* vcsf, const Void_t* data, size_t n);
+This function writes the raw data given in \f5data\fP to the stream \f5vcsf\fP.
+Such data will be encoded before written out to the underlying data stream.
+On success, the amount of raw data written is returned. On failure, a negative
+value is returned.
+.PP
+.Ss "  int vcsfsync(Vcsfio_t* vcsf);"
+This function flushes unwritten data out to the underlying stream.
+.PP
+.Ss "  int vcsfclose(Vcsfio_t* vcsf);"
+This function closes the stream \f5vcsf\fP. Unwritten data will be flushed
+out to the underlying stream first.
+
+.Sh "ALIAS PROCESSING"
+
+.PP
+.Ss "  void vcaddalias(char** list);"
+This function adds a set of aliases or short-hands for
+longer sequences of method specification.
+The given \f5list\fP is null-terminated.
+
+Each item on \f5list\fP is a string of the form \fIalias~=~specification\fP.
+Each specification is a list of comma-separated elements.
+Each element should be a transform name
+followed by any arguments. The arguments are separated by '.'.
+Each argument may be a \fIname\fP or a \fIname=value\fP pair.
+In the latter case,
+\fIvalue\fP can have C characters embedded in them. For example, consider
+the below two specifications:
+
+.Cs
+    rdb.fsep=[\et],bwt,mtf,rle.0,huffgroup
+    rdb.schema=[10,20,30],table,mtf,rle.0,huffgroup
+.Ce
+
+The first specification says that the \f5Vcrdb\fP transform of relational data
+should be used first. In this case, the data file is a flat file database with
+text lines as records and the field separator is the tab character as
+defined by \f5fsep=[\et]\fP. After \f5rdb\fP is done processing, it will pass
+its output onto the Burrows-Wheeler transform \f5bwt\fP which, in turn, will invoke
+the move-to-front transform \f5mtf\fP, and so on.
+
+The second specification also invokes the \f5Vcrdb\fP first but this time
+the data consists of records with three fixed-length fields
+of lengths 10, 20 and 30 in that order. After \f5rdb\fP is done processing,
+it will invoke the \f5table\fP transform to process each field.
+.PP
+.Ss "char* vcgetalias(char* alias, char* spec, ssize_t size);"
+This function returns the specification corresponding to the given \f5alias\fP.
+The arguments \f5spec\fP and \f5size\fP define a buffer to return
+the specification in. \f5vcgetalias()\fP returns the specification or \f5NULL\fP
+on failure.
+.PP
+.Ss "int vcwalkalias(Vcwalk_f walkf, Void_t* disc);"
+This function invokes
+\f5(*walkf)(0, name, spec, disc)\fP on each defined alias.
+.Ce
+
+.Sh "MISCELLANIES"
+
+.PP
+.Ss "  double vclog(size_t v);"
+.Ss "  ssize_t vclogi(size_t v);"
+\f5vclog()\fP computes the base-2 logarithm of \f5v\fP.
+\f5vclogi()\fP only returns the integer part.
+.PP
+.Ss "  ssize_t vcsizeu(Vcint_t v);"
+This macro function returns the number of bytes needed to encode \f5v\fP
+using \f5vcioputu()\fP.
+.PP
+.Ss "  Vcint_t vcatoi(char* buf);"
+.Ss "  ssize_t vcitoa(Vcint_t v, char* buf, ssize_t n);"
+These functions convert a string to an integer and vice versa.
+\f5vcitoa()\fP requires that \f5n\fP be sufficiently large to store
+the constructed null-terminate string. It returns the string length.
+.PP
+.Ss "  Vcint_t vcintcode(Vcint_t v, Vcint_t near, Vcint_t min, Vcint_t max, int type);"
+This function encodes/decodes the integer \f5v\fP based on whether \f5type\fP is
+\f5VC_ENCODE\fP or \f5VC_DECODE\fP.
+\f5v\fP and \f5near\fP should be in the inclusive range \f5[min,max]\fP.
+\f5v\fP is coded assuming that it is close to \f5near\fP.
+This type of integer coding is useful to reduce data representation
+in a transform such as \f5Vcsieve\fP which tend to code sequence of addresses
+that are close to one another.
+.PP
+.Ss "  char* vcstrcode(char* s, char* buf, ssize_t n);"
+This function translates the characters in the string \f5s\fP
+from its native code set to the ASCII code set which can be
+used for portable persistent data.
+It returns \f5buf\fP which should have the translated string
+on success and \f5NULL\fP on error.
+.PP
+.Ss "  typedef int (*Vccompare_f)(void* elt1, void* elt2, void* disc);"
+.Ss "  void vcqsort(void* list, ssize_t nelts, ssize_t eltsize, Vccompare_f comparf, void* disc);"
+\f5vcqsort()\fP is like the \f5qsort()\fP function but it allows specifying
+an element \f5disc\fP to pass on to the comparison function \f5comparf\fP.
+This is useful to provide data about elements being compared.
+.PP
+.Ss "  ssize_t vcbcktsort(ssize_t* sort, ssize_t* list, ssize_t n, Vcchar_t* data, ssize_t bckt[256]);"
+This function sorts indices given in \f5list\fP and returns them in \f5sort\fP.
+The number of element is \f5n\fP and the bytes used to sort are given in \f5data\fP.
+The \f5bckt[]\fP array returns the cumulative counts of bytes. For example,
+\f5bckt[0]\fP is the count of byte \f50\fP, \f5bckt[1]\fP is the count of bytes \f50\fP
+and \f51\fP, and so on.
+.PP
+.Ss "  char* vcsubstring(char* data, int separ, char* buf, ssize_t bufsz, int type);"
+This function extracts a substring of \f5data\fP and returns it in the buffer \f5buf\fP
+with a null byte appended. \f5vcsubstring()\fP returns a pointer to the remainder
+of \f5data\fP. Substrings are separated by \f5separ\fP.
+Characters in C-notation are allowed. Data can also be grouped by square brackets.
+The backslash escapes the next character.
+.Tp
+\f5type == 0\fP:
+Only search for \f5separ\fP but still respecting backslashes and grouping by brackets.
+.Tp
+\f5type == 1\fP:
+The backslash character means special treatment of characters as in the C language.
+The left square bracket means to obtain every character until the appearance
+of an un-escaped right square bracket. The brackets will be left out of
+the returned data.
+
+.PP
+.SH AUTHOR
+Kiem-Phong Vo
+
+.PP
+.SH ACKNOWLEDGMENTS
+David Korn helped designing the \f5VCDIFF\fP data format standardized in RFC3284.
+Binh Vo invented the table compressor \f5Vctable\fP. He also
+helped designing a number of transforms such as
+\f5Vchuffgroup\fP, \f5Vchuffpart\fP and \f5Vcmtf\fP.

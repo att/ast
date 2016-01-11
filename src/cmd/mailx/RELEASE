@@ -1,0 +1,158 @@
+12-06-05 spam.c: fix insider() domain check that skipped pure domain with not host
+12-04-13 cmd1.c: fix empty list null pointer deref
+12-02-29 add headfake boolean option to fake 'From ' line in saved message
+11-09-11 add sender=/address/head/pattern/[&|]/head/pattern/...
+11-07-17 fix message list to apply mimeview() to part 0 (main message body)
+10-09-08 fix edited To: in message to override command line recipients
+10-06-01 sync with ast api 20100601
+09-06-09 names.c,vars.c: fix alias expansion cross-dictionary bug
+09-05-15 proc.c,quit.c: add buffer checks to filetemp()
+08-11-04 spam.c: fix 0-terminated overrun in usermatch() -- wow
+08-02-12 local.c: favor fcntl() lock over flock() for N(otan)FS
+08-01-15 cmd3.c: add `if f?path' so old Mail doesn't carp
+07-02-06 cmd2.c: "S name" => .../From/name
+06-10-11 data.c: ARG_MAX => private ARGMAX
+06-10-11 add sfstropen()/sfstruse() error checks
+06-06-24 fio.c: fix nul count scan bug
+06-04-17 head.c,spam.c: catch and normalize inventive subject spaces
+05-03-28 main.c: add -r address; add L variable attribute
+05-02-17 head.c: CONTENT_type PART_text trumps CONTENT_encoding binary
+05-02-08 local.h: blankline=>allblanks (lynxos libc symbol hijack)
+04-08-17 head.c: handle Content-Type: message
+04-07-22 lex.c: access() => eaccess()
+04-04-15 spam.c: add spamtest mask names, fix spam() ordering
+04-03-25 mailx.h: shquote=>shellquote to avoid netbsd clash in <stdlib.h>!!
+04-03-17 spam.c: fix usermatch() loop
+04-01-28 data.c: k,K are now autoprint (like d)
+04-01-22 data.c: K is alias for mark; omitted mark defaults to nospam
+	 list.c: addr- shorthand for addr-$
+04-01-20 data.c: k is alias for mark; omitted mark defaults to spam
+04-01-16 main.c: mark -f option value optional
+03-12-10 spam.c: fix word match bug that matched prefixes instead of full word
+03-11-20 main.c: optget() if _PACKAGE_ast -- finally
+03-11-14 add spamsubhead=1 to edit spam subject heading list
+03-01-17 add shquote() to quote popen pathnames; fix save to -f core dump
+02-12-12 imap.c: handle no-name attachments
+02-12-11 head.c: application of DeMorgan's law proves Murphy's
+02-12-04 local.h: include FEATURE/lcl from lcl.iffe to avoid local.h clash
+02-11-22 head.c: convert unfriendly attachment path name characters to '_'
+02-10-31 imap.c: drop obsolete RFC2060 FETCH args
+02-10-20 spam.c: test=0x0060 for Authentication-Warning: checks
+02-10-16 spam.c: test=0x0010 to verify From: in domain matches Received: hosts
+02-10-08 mailx: fix a few strncopy() size off-by-ones
+02-10-01 mailx: fix ancient buffer overflows by comitting to ast -- bye bsd
+02-09-22 local.c: honor MAIL if its a regular file
+02-09-08 add spambody to catch mail filter warnings embedded in message bodies
+02-09-07 head.c: fix bug that retained mime boundary from previous message
+02-09-04 head.c: add call to isdate() to verify ishead() dates
+02-09-03 handle \r\n => \n on input
+02-08-28 vars.c: fix ${domain} initialization
+02-08-21 spam.c: test=0x0004 for X-Authentication-Warning
+	 send.c: disable interpolation "-- " signature test
+02-06-07 spam.c: delay lower priority tests until all headers seen
+02-05-31 imap.c: error messages to stderr -- duh
+02-03-17 spam.c: add spamtest=bitmask: 0x0001: content-type==text/html
+02-01-31 data.c: clarify imap var docs
+02-01-30 local.iffe: add to handle no <termios.h> and ftruncate()
+02-01-24 ifdef { SIGTSTP SIGTTOU SIGTTIN }
+02-01-16 properly update References: in replies
+01-10-15 `get attachment dir' copies attachment to dir
+01-04-01 add state.var.hostname for smtp HELO
+	 add fmtident() to initialize state.version 
+01-01-01 fix map bug that retained alias after expansion
+	 smtp: add domain to RCPT TO: if omitted
+00-11-27 add Date: and From: to smtp
+00-09-21 drop leading */ from user name
+00-05-09 add cd,pwd,${PWD},${OLDPWD} with ${CDPATH} check
+00-05-04 lex: flush stdout before prompt!
+00-03-17 add -Qn to get status of n most recent messages
+	 fix imap -NS unread count
+	 loosen up headerbotch header checks
+00-02-29 handle multiline SMTP responses
+99-07-17 fix imap reply via imap_setinput() omission
+	 @x.y.z in spam list matches x.y.z domain suffix
+	 tone down hostmatch(), check unknown in Received:
+	 fix $MAIL lock by checking syscall return value -- how novel
+	 add -S, -o justfrom
+	 add -NS to print info and exit
+	 spam: Message-Id: <>
+	 spam: To: suppressed
+	 spam: strgrpmatch() instead of strcasecmp()
+	 imap: normalize imap message before send
+98-12-25 "text/enriched" treated like "text/plain"
+	 PART_text && PART_inline => in the body
+98-11-11 `save +' with `set followup=+From' saves msg in `+From/sender'
+98-06-01 fix header parse for message/rfc822
+	 add sendmail=smtp://host sendmail=/dev/tcp/host/inet.smtp
+98-02-14 more spam stuff
+	 to==from==user isn't spam
+	 Status: header means already scanned (MSCAN)
+	 spam check in setinput() (either here or in setptr())
+	 `---*' can separate headers from body
+98-02-07 defined(SFIO_VERSION) insead of defined(printf) for sfio disciplines
+98-01-11 set spam to mark spam candidates X
+	 set spamlog=file to automatically log spam msgs on quit
+	 set spamto=addr1,...,addrN for candidate spam recipients
+	 set spamfrom=addr1,...,addrN for candidate spam senders
+	 set spamsub=word1,...,wordN for candidate subject word prefixes
+	 add :!x for messages not matching x
+	 set local=domain1,...,domainN
+	 check for nuls in mail file
+	 set headerbotch treats \n\nReturn-Path: as From line if not in header
+97-11-27 couldn't resist the date
+97-11-11 change fflush() (in stdio.h) to do physical seek to logical position
+	 this should squash the empty message bug
+97-10-31 replace ferror() checks with checks at the io ops
+97-08-11 ~m with no messages no longer dumps core
+	 sendmail="<_PATH_SENDMAIL> -oi" to retain `.' lines (least suprise?)
+	 keep most descriptive content-type
+97-07-17 -t implies SEND mode
+	 set quiet still lists folder status on startup
+	 attachments named n-m instead of n:m for fat fs
+	 if no encoding type and mimeview(encoding) then its an encoding
+97-02-14 [Ss]plit now takes message list arg, Split ignores headers
+	 no longer dumps for non-empty files with no From
+	 ~f preserves attachment encoding/boundaries
+	 text/plain with name="" is now an attachment
+	 ${MAIL} is default system mailbox
+	 ${MAIL}/.. is default system mailbox dir
+96-09-06 version 9.6
+	 set headerbotch to handle mailers that add space between std headers
+	 set more[=prompt] to enable sfio more discipline (overrides PAGER)
+	 alias < file (note space around <) to read sendmail alias file for map
+	 join [messagelist] -- reply with auto ~m ~v
+	 Join [messagelist] -- Reply with auto ~m ~v
+	 multipart content converted to print/type/split (attachment) lines
+	 get attachment-index [path] after print/type decodes attachment to file
+	 ~g file interpolates content for multipart message
+	 ~g `uuencode -h -x base64': no header/trailer, base64 encoding
+	 set fixedheaders="hdr1\nhdr2..." added to outgoing message header
+	 help [ command | ~ [ command ] set [ variable ] ]
+	 set MAILCAP; get checks ${MAILCAP} for view command(s), Get doesn't
+	 mime [ pattern[;] command | < file ] -- add/del/list mime capabilities
+	 alias case insensitive -- mail addrs and sendmail aliases are anyway
+	 use <cdt.h>
+	 use <mime.h>
+	 mark [messagelist] mark
+	 folder directories treated as mh folders
+	 set inbox=+inbox -- SAVE messages not held in this mh folder
+	 SAVE messages deleted from any mailbox
+	 cast off_t %ld to (long) -- how do you say long long in portable?
+	 if displayed message from me then don't ignore To:
+	 mailbox() attempts all standard places
+	 retain mime type/encoding in lower case
+96-08-11 version 9.0
+	 convert to prototyped ANSI C
+	 all non-shared externs static
+	 globals into state.*
+	 internalize mail.help and mail.tildehelp
+	 alternates: equivalent to: alias alt[i] myname
+	 split to split messages into numbered files
+	 blast,Blast to blast message headers and body into name=value list
+	 if "a" [ == != ] "b"
+	 ${mode} is readonly with value either "send" or "receive"
+	 some options are readonly
+	 some options may only be set on command line
+	 some options may not ne set while sourcing
+	 most command line flags have option names
+	 set all shows unset vars too

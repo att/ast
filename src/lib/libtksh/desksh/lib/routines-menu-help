@@ -1,0 +1,47 @@
+# File Manager -- Help Menu
+
+function display_about # window
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "DesKsh -- a desktop for the KornShell"
+      label $w.f.label2 -text "Written by Charles Harless and Erik Wile"
+      label $w.f.label3 -text "AT&T Research Laboratories 1996"
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1
+      pack $w.f.label2
+      pack $w.f.label3
+      pack $w.f.ok
+      pack $w.f
+      tkwait variable test
+}
+
+function display_help # window
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "HELP ME!"
+      label $w.f.label2 -text "You can use the various menus or buttons to access"
+      label $w.f.label3 -text "the various functions available to the desktop."
+      label $w.f.label4 -text "Make sure you select a file in the file list"
+      label $w.f.label5 -text "before attempting to do a certain function."
+      label $w.f.label6 -text "For more information, check out the manual page."
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+#      button $w.f.man -text " Manual Page " -command "Man_Page="desksh"; display_man_page"
+      pack $w.f.label1 
+      pack $w.f.label2 
+      pack $w.f.label3 
+      pack $w.f.label4 
+      pack $w.f.label5 
+      pack $w.f.label6 
+      pack $w.f.ok
+#      pack $w.f.man 
+      pack $w.f
+
+      tkwait variable test
+}
+

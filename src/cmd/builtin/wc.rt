@@ -1,0 +1,63 @@
+# regression tests for the wc utility
+
+UNIT wc
+
+IGNORESPACE
+
+TEST 'empty input'
+
+DATA - -
+
+EXEC
+EXEC -c
+EXEC -l
+EXEC -w
+EXEC -L
+
+TEST 'default options'
+
+EXEC <<<$'a b\nc'
+
+TEST 'no newline'
+
+DATA - -n $'x'
+
+EXEC -c
+EXEC -l
+EXEC -w
+EXEC -L
+
+TEST 'words'
+
+DATA - $'x y'
+
+EXEC -c
+EXEC -l
+EXEC -w
+EXEC -L
+
+TEST 'words with no newline'
+
+DATA - -n $'x y\nzzzzz'
+
+EXEC -c
+EXEC -l
+EXEC -w
+EXEC -L
+
+TEST '-l counts newline bytes'
+
+DATA - -n $'a b'
+
+EXEC -l
+EXEC -l <<<$'x y'
+EXEC -l <<<$'x\ny'
+
+TEST '-L does not count the newline'
+
+EXEC -L <<<$'1\n12'
+EXEC -L <<<$'1\n123\n1'
+
+DATA - -n $'\n123456'
+
+EXEC -L

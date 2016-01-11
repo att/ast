@@ -1,0 +1,60 @@
+<MAP>
+	<NAME>ipflags</>
+	<DESCRIPTION>IP flags.</>
+	<PART>
+		<ITEM>
+			<NAME>FIN</>
+			<BIT>0</>
+		</>
+		<ITEM>
+			<NAME>SYN</>
+			<BIT>1</>
+		</>
+		<ITEM>
+			<NAME>RST</>
+			<BIT>2</>
+		</>
+		<ITEM>
+			<NAME>PSH</>
+			<BIT>3</>
+		</>
+		<ITEM>
+			<NAME>ACK</>
+			<BIT>4</>
+		</>
+		<ITEM>
+			<NAME>URG</>
+			<BIT>5</>
+		</>
+		<ITEM>
+			<NAME>SYNACK</>
+			<BIT>6</>
+		</>
+		<ITEM>
+			<NAME>SYNRST</>
+			<BIT>7</>
+		</>
+		<ITEM>
+			<NAME>TIMEOUT</>
+			<BIT>31</>
+		</>
+	</>
+</>
+<MAP>
+	<NAME>ipprotocol</>
+	<DESCRIPTION>IP protocol.</>
+	<PART>
+		<ITEM>
+			<NAME>ICMP</>
+			<VALUE>1</>
+		</>
+		<ITEM>
+			<NAME>TCP</>
+			<VALUE>6</>
+		</>
+		<ITEM>
+			<NAME>UDP</>
+			<VALUE>17</>
+		</>
+	</>
+</>

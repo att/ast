@@ -1,0 +1,9 @@
+11-09-11 fix %(GROUP)s for the OVERFLOW total
+03-05-05 fix --print OVERFLOW key lookup to return 0/nil value
+03-04-05 avoid possible floating point underflow/overflow
+03-02-19 add `-' field operand to just count records or groups
+03-02-11 add --print=format; Vmbest => Vmlast
+03-02-07 add --count; check variable/type print width hint; allow width overflow
+03-01-24 use cxcast() for group value pretty print
+03-01-08 fix bucket alloc size
+02-12-25 first release

@@ -1,0 +1,50 @@
+NOTE regression tests for the mkfifo command
+
+UNIT mkfifo
+
+TWD
+
+TEST '"-m =" vs. umask'
+
+	for mask in 000 007 070 077 700 707 770 777
+	do
+
+	UMASK $mask
+
+	for who in '' u g o ug uo go a
+	do
+
+	EXEC -m ${who}=rw f
+	PROG chmod -v + f
+	PROG rm f
+
+	done
+
+	for perm in 777 +777 -777 222 +222 -222
+	do
+
+	EXEC -m ${perm} f
+	PROG chmod -v + f
+	PROG rm f
+
+	done
+
+	done
+
+TEST VSC
+
+	for mask in 027 u=rx,g=rx,o=rwx u=rwx,g=rx,o=rx u=rwx,g=rx,o=x u=rwx,g=rx,o=r u=rwx,g=rx,o=rwx
+	do
+
+	UMASK $mask
+
+	for perm in +rw +x u=rwx g=rwx o=rwx o+wx +wx + -w -
+	do
+
+	EXEC -m ${perm} f
+	PROG chmod -v + f
+	PROG rm f
+
+	done
+
+	done

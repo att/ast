@@ -1,0 +1,396 @@
+.fp 5 CW
+.de L		\" literal font
+.ft 5
+.if !\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \f1
+..
+.de LR
+.}S 5 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de RL
+.}S 1 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.TH COSHELL 3
+.SH NAME \" @(#)coshell.3 (gsf@research.att.com) 10/11/90
+coshell \- shell coprocess support
+.SH SYNOPSIS
+.L "#include <coshell.h>"
+.br
+.L "\-lcoshell \-last"
+.SH DESCRIPTION
+The
+.I coshell
+routines support the shell as a coprocess.
+This coprocess may be either
+.IR ksh (1)
+or
+.IR sh (1)
+executing on the local host, or it may be
+.IR coshell (1)
+with access to shells on hosts throughout the local network.
+.PP
+The coshell inherits the environment of the calling process.
+Signals sent to the calling process are passed to the coshell.
+.PP
+More than one coshell may be open in the current process.
+If the
+.L Coshell_t*
+argument to the
+.LR cowait() ,
+.LR cokill() ,
+.LR copending() ,
+.LR cozombie() ,
+or
+.L coclose()
+calls below is
+.L 0
+then the call is applied to all open coshell.
+.PP
+.L "Coshell_t* coopen(const char* shell, int flags, const char* attributes)"
+.PP
+Returns a pointer to a new coshell.
+.L NULL 
+is returned on error.
+If
+.L shell
+is
+.L NULL
+then the coshell executable is determined by doing the usual path search,
+in order, on the value of the environment variable
+.B COSHELL
+and the commands
+.BR ksh
+and
+.BR sh .
+.L flags
+is the inclusive-or of the following:
+.TP
+.L CO_ANY
+Return a pointer to a previously opened coshell if possible, otherwise
+open a new coshell.
+.TP
+.L CO_DEBUG
+Enable library debug tracing.
+.TP
+.L CO_IGNORE
+Ignore any command errors.
+By default any command error that is not tested by a condtional causes
+the job to terminate.
+.TP
+.L CO_LOCAL
+Commands are to be executed on the local host only.
+.TP
+.L CO_SHELL
+The caller is
+.BR sh (1):
+internal file descriptors are moved to 10 or above;
+SIGSTOP and SIGCONT handlers are not installed.
+.TP
+.L CO_SILENT
+Don't trace commands.
+By default commands are traced using the shell
+.B \-x
+option.
+.TP
+.L CO_NONBLOCK
+Normally
+.L coexec()
+blocks when the job queue is full and waits until a job completes.
+.L CO_NONBLOCK
+causes
+.L coexec()
+to return
+.L NULL
+when the job queue is full.
+.PP
+.L attributes
+is a string that is interpreted by the coshell.
+If
+.L attributes
+is
+.L NULL
+then the value of the environment variable
+.B COATTRIBUTES
+is used if defined.
+.B ksh
+and
+.B sh
+ignore this string.
+The return value points to a structure with the following readonly elements:
+.TP
+.L "int flags"
+The default flags.
+.TP
+.L "int outstanding"
+The number of jobs that have not been waited for.
+.TP
+.L "int running"
+The number of jobs still running.
+.TP
+.L "int total"
+The total number of jobs sent to the coshell.
+.TP
+.L "unsigned long user"
+The total user time of all completed jobs in
+.L 1/CO_QUANT
+second increments.
+.TP
+.L "unsigned long sys"
+The total system time of all completed jobs in
+.L 1/CO_QUANT
+second increments.
+.PP
+.L "int coclose(Coshell_t* sh)"
+.PP
+Close an open coshell pointed to by
+.LR sh .
+The coshell exit status is returned.
+.PP
+.L "Cojob_t* coexec(Coshell_t* sh, const char* cmd, int flags, const char* out, const char* err, const char* att)"
+.PP
+Sends the shell command line
+.L cmd
+to the open coshell pointed to by
+.L sh
+for execution.
+.L flags
+are the same as in the
+.L coopen()
+call, and are used to augment the default settings from
+.LR coopen() .
+.L out
+is the standard output file name and defaults to
+.B stdout
+if
+.LR NULL .
+.L err
+is the standard error file name and defaults to
+.B stderr
+if
+.LR NULL .
+.LR att ,
+if
+.RL non- NULL ,
+contains job attributes that are appended to the attributes from
+.L coopen()
+before being sent to the coshell.
+The return value points to a structure with the following elements:
+.TP
+.L "int id"
+A number that uniquely identifies the job within the coshell.
+.TP
+.L "int status"
+The job exit status, valid only for job pointers returned by
+.LR cowait() .
+.TP
+.L "int flags"
+The flags enabled for this job.
+.TP
+.L "void* local"
+A user reserved pointer, initially set to
+.L NULL
+on return from
+.LR coexec() .
+This is the only job field that may be modified by the user.
+The user defined value is preserved until after the
+.L cowait()
+call that returns the job pointer.
+.TP
+.L "unsigned long user"
+The user time of this job in
+.L 1/CO_QUANT
+second increments, valid only for job pointers returned by
+.LR cowait() .
+.TP
+.L "unsigned long sys"
+The system time of this job in
+.L 1/CO_QUANT
+second increments, valid only for job pointers returned by
+.LR cowait() .
+.PP
+.L "Cojob_t* cowait(Coshell_t* sh, Cojob_t* job, int timeout)"
+.PP
+Returns the job pointer in the coshell pointed to by
+.L sh
+for the job pointed to by
+.LR job .
+If
+.L job
+is
+.L NULL
+then a pointer to any completed job is returned.
+.L cowait()
+blocks until the specified job(s) complete.
+.L NULL
+is returned on error or if all jobs have completed and
+.L errno
+is set to EINVAL for coshell communication errors,
+ECHILD if
+.L job
+is
+.L NULL
+and there are no children, and ESRCH if
+.L job
+is not
+.L NULL
+and not an active job.
+.L "cozombie(sh)"
+is the number of jobs that may be waited for without blocking.
+The return value
+.LR status ,
+.L user
+and
+.L sys
+job fields are set to their final values.
+The return value is valid until the next
+.LR coexec() ,
+.L cowait()
+or
+.L coclose()
+call.
+.L timeout
+is the maximum time in milliseconds that wait will block.
+If the wait times out then 0 is returned.
+A negative
+.L timeout
+waits until a job completes or a signal is received.
+.TP
+.L "int cojobs(Coshell_t* sh)"
+Returns the number of outstanding jobs that are children of the caller.
+(Remote jobs or jobs executed by a separate daemon are not counted here.)
+.TP
+.L "int copending(Coshell_t* sh)"
+Returns the number of pending jobs; this is the number of
+.L cowait()
+calls required to reap all running jobs.
+.TP
+.L "int cozombie(Coshell_t* sh)"
+Returns the number of jobs that have completed but have not been
+.L cowait()'d
+for.
+.TP
+.L "int cokill(Coshell_t* sh, Cojob_t* job, int sig)"
+The signal
+.L sig
+is sent to the job pointed to by
+.L job
+running in the coshell pointed to by
+.LR sh .
+If
+.L job
+is
+.L NULL
+then the signal is sent to all jobs in the coshell.
+If both
+.L sh
+and
+.L job
+are
+.L NULL 
+then the signal is sent to all jobs in all coshells.
+.L \-1
+is returned on error,
+.L 0
+otherwise.
+.TP
+.L "int cosync(Coshell_t* sh, const char* path, int fd, int mode)"
+Sync all outstanding file operations for either the file
+.L path
+or the file descriptor
+.L fd
+after its shell action has completed in
+.LR sh .
+If
+.L path
+is
+.L NULL
+then 
+.L fd
+is used.
+If 
+.L fd<0
+and
+.L mode>=0
+then
+.L path
+is opened using
+.L mode.
+This is an unfortunate workaround for NFS and remote coshells, and is a
+no-op for all real file systems.
+It should be called after
+.L cowait()
+to ensure that all file system cache info has been flushed.
+.IR sync (2)
+or
+.IR fsync (2)
+must still be called to schedule file data to be written to disk.
+.TP
+.L "char* coinit(Coshell_t* sh)"
+Returns the shell initialization commands for the next job.
+These commands represent process state changes that may have occurred
+since the last call to
+.L coinit(),
+e.g., current working directory or umask.
+If
+.L sh
+is local (a child of the calling process)
+.L coinit()
+may return the empty string;
+if
+.L sh
+is remote then considerably more information may be returned.
+This routine is used by remote coshell implementations and is
+not normally called from user code.
+.TP
+.L "void coquote(Sfio_T* sp, const char* string, int type)"
+Applies shell single quoting to
+.L string
+and copies the result into the sfio stream
+.L sp.
+If
+.L type!=0
+then any occurence of \f5/\fP\fIhosttype\fP\f5/\fP is translated to
+\f5/$HOSTTYPE/\fP, where
+.I hosttype
+is the current value of the
+.L HOSTTYPE
+environment variable.
+This routine is used by remote coshell implementations and is
+not normally called from user code.
+.SH CAVEATS
+.L cosync()
+is a hack workaround, but we do have to work in the real world.
+.PP
+A bug in
+.IR bsh (1)
+and
+.IR ksh (1)
+implementations up to and including ksh88e causes some interrupted
+jobs to return 0 exit status.
+This should be fixed in later shell releases.
+.PP
+.L "trap 0"
+is reserved by
+.L coexec()
+at the outermost scope.
+To use
+.L "trap 0"
+use
+.L "(...)"
+to force a subshell.
+.SH "SEE ALSO"
+coshell(1), ksh(1), nmake(1), sh(1), cs(3), libast(3)

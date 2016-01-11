@@ -1,0 +1,7 @@
+08-06-06 sync with vcodex kpv update
+06-05-09 don't add .qz to non-regular file paths
+06-04-28 use input suffix on output if it doesn't already have one
+05-11-09 fix mixed input compression logic
+05-08-23 use sfdcvcodex() instead of vcsfio()
+	 delay RS_WRITE_FILE until first encoded input if possible
+05-06-30 first release

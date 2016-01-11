@@ -1,0 +1,94 @@
+10-06-01 sync with ast api 20100601
+08-04-08 event.c: use dbmlib.iffe
+07-10-23 main.c: avoid UOUT CO_SERIALIZE cswrite hangs via O_NONBLOCK
+07-09-25 handle CO_SERIALIZE
+06-10-11 add sfstropen()/sfstruse() error checks
+06-09-19 command.c,cotest.c: sysconf() => astconf()
+06-08-15 shell.c: unset CO_ENV_SHELL
+06-08-11 main.c: handle CO_ENV_MSGFD msgfd != 3
+06-08-11 COSHELL.mk: handle connect=*
+06-08-04 shell.c: handle CO_APPEND for job out|err
+06-06-21 event.c: add --older, --newer, REQ_all
+06-06-18 event.c: add event name pattern match/glob
+06-06-11 event.c,COSHELL.mk: add
+03-03-04 add state.remote=CS_REMOTE_SHELL
+01-12-12 resolve SETSHELL local vs. global conflict -- its both
+	 ignore attr now really ignores host -- duh
+01-12-11 add global maxidle=0 to ignore idle
+	 split readonly and user settable values in `g' command output
+00-12-14 shell is per host attribute
+00-02-01 --- release 2.2 ---
+99-06-24 cosh: change exit to return
+99-06-24 --- release 2.1 ---
+97-12-07 update for CS_SVC_SUFFIX
+96-12-25 add constant casts for long shift counts
+96-05-09 coinit(CO_SERVER)
+96-02-29 use <hashkey.h>
+96-01-31 AT&T Research
+96-01-31 --- release 2.0 ---
+95-07-17 add perhost job limit
+	 all specific misc attr expr to override idle
+95-05-09 convert init script to hostinfo
+	 fix indirect bug that forgot to poll the command stream!
+95-04-01 change streval() to strexpr()
+95-01-01 don't bias out home host with cpu>1
+	 add shell=path to set remote shell path
+	 add debug=level to set debug level as an attribute
+	 add identify=1 to identify remote command output
+	 identify="format with %s"
+	 attributes may be set on the command line
+	 add COINIT to cosh so .coshrc can check for new coshell
+	 add state.grace to g output
+94-11-11 csstat() lazy evaluation in expressions
+94-07-17 --- release 1.1 ---
+94-06-11 add disable=secs to disable hosts of jobs killed by SIGKILL
+	 handle shell quoted space in -r strings
+94-04-01 add per host access=(expression) to control access
+	 add per host bypass=(expression) to bypass min idle
+	 add uid, gid, day (monday:1,sunday:7), hour, min to expressions
+	 add periodic check for share/lib/cs/access for access control
+	 add grace=n for busy job grace running time
+	 add scale=n (default == # cpu) load average scale
+	 add migrate="command" to override default SIGSTOP for hogs
+	 add profile="command" to override default ". .profile"
+94-03-11 fix pseudo-float and elapsed-time constant operand conversions
+	 add static minidle to disambiguate from dynamic idle
+	 fix remote shellopen to work for csh users (there's still some left?)
+94-03-01 fix maxload to be pseudo-float
+93-10-11 add CO_OPT_ACK coexec() ack
+	 add maxload,percpu,perserver,peruser job limits
+93-03-11 reschedule jobs queued on hung shells
+92-11-11 minor fixes to handle `coshell -' on pipeline
+92-09-26 /dev/tcp/* supported as alternative to /dev/fdp/*
+92-04-01 --- release 1.0 ---
+92-02-29 fix COATTRIBUTES quote bug, handle aaa==bbb@ccc in expressions
+92-02-11 add `noattr' to delete misc attributes
+91-10-11 add COTEMP temp file base to job environment
+91-08-11 jobs queued for shell open now in job table
+91-07-17 add heterogenous pool support
+	 add % weight for additional cpus
+	 fix (type@xxx) expression evaluation
+91-03-11 fix handling of down hosts
+91-02-11 add string comparisons to attribute evaluation
+	 update for new message interface
+91-01-31 add -?
+90-12-11 if . has idle=0 then local bias entry is ignored
+90-11-11 local host not reported down if status missing
+90-10-11 . $ENV after .profile in $COINIT
+	 add -l <expr> to list hosts matching <expr>
+	 change CO_{attr,close,open} msgs to CO_server
+	 add load and up readonly attributes
+90-10-01 libx/cs -> libcs
+90-08-11 check auto=0 file attribute
+	 fix bug that dropped multiple SHELL job status messages
+	 arbitrary attributes and C-style attribute expressions supported
+	 ks <job> and kc <job> added to stop and continue jobs
+	 signals sent to remote shells use signal name rather than number
+	 add shell/job label attribute
+90-07-17 add auto=[01] attribute for automatic scheduling pool
+	 tune scheduling
+	 add server protocol check (narrows unix-domain socket panic window)
+	 catch SIGHUP to reconnect connect stream path
+90-07-11 bad rank shells dropped from pool
+	 more rank tuning
+90-06-01 --- release 0.0 ---

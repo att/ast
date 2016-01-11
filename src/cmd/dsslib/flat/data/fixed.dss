@@ -1,0 +1,34 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>fixdb</>
+	<DESCRIPTION>fixed width record with terminator test</>
+	<FIELD>
+		<NAME>s1</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<WIDTH>2</>
+		</>
+	</>
+	<FIELD>
+		<NAME>s2</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<WIDTH>2</>
+		</>
+	</>
+	<FIELD>
+		<NAME>s3</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<WIDTH>2</>
+		</>
+	</>
+	<FIELD>
+		<NAME>s4</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<WIDTH>2</>
+			<DELIMITER>&newline;</>
+		</>
+	</>
+</>

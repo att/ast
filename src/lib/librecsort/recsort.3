@@ -1,0 +1,305 @@
+.fp 5 CW
+.TH RECSORT 3
+.SH NAME
+\fBRecsort\fR \- sorting records
+.SH SYNOPSIS
+.de Tp
+.fl
+.ne 2
+.TP
+..
+.de Ss
+.fl
+.ne 2
+.SS "\\$1"
+..
+.de Cs
+.nf
+.ft 5
+..
+.de Ce
+.ft 1
+.fi
+..
+.ta 1.0i 2.0i 3.0i 4.0i 5.0i
+.Cs
+#include    <recsort.h>
+#define     uchar unsigned char
+#define     ulong unsigned long
+.Ce
+.Ss "RECSORT TYPES"
+.Cs
+Rs_t;
+Rsdisc_t;
+Rsmethod_t;
+Rsobj_t;
+.Ce
+.Ss "OPENING/CLOSING SORT CONTEXTS"
+.Cs
+Rs_t*            rsopen(Rsdisc_t* disc, Rsmethod_t* meth, ssize_t c_max, int type);
+int              rsclose(Rs_t* rs);
+void             rsclear(Rs_t* rs);
+.Ce
+.Ss "SORT METHODS"
+.Cs
+Rsmethod_t*      Rsradix;
+Rsmethod_t*      Rssplay;
+Rsmethod_t*      Rsrasp;
+Rsmethod_t*      Rsverify;
+Rsmethod_t*      rsmethod(Rs_t* rs, Rsmethod_t* meth);
+.Ce
+.Ss "SORT DISCIPLINE"
+.Cs
+Rsdisc_t*        rsdisc(Rs_t* rs, Rsdisc_t* disc);
+typedef ssize_t  (*Rsdefkey_f)(Rs_t* rs, Void_t* data, size_t s_data,
+                           Void_t* key, size_t s_key, Rsdisc_t* disc);
+typedef int      (*Rsevent_f)(Rs_t* rs, int type, Void_t* data, Rsdisc_t* disc);
+typedef struct
+{ int            type;    /* RS_KSAMELEN|RS_DSAMELEN        */
+  ssize_t        data;    /* data length or separator       */
+  ssize_t        key;     /* key offset or expansion factor */
+  ssize_t        keylen;  /* key length or key end offset   */
+  Rsdefdey_f     defkeyf; /* function to define a key       */
+} Rsdisc_t;
+.Ce
+.Ss "OBJECT OPERATIONS"
+.Cs
+ssize_t          rsprocess(Rs_t* rs, Void_t* data, ssize_t size);
+ssize_t          rscount(rs);
+Rsobj_t*         rslist(Rs_t* rs);
+int              rswrite(Rs_t* rs, Sfio_t* f, int type);
+int              rsmerge(Rs_t* rs, Sfio_t* f, Sfio_t** files, int n, int type);
+.Ce
+.SH DESCRIPTION
+.PP
+\fIRecsort\fP provides functions to sort strings in main memory and
+to merge sorted data from different files.
+These functions form a sort engine suitable for constructing
+programs such as \fB/bin/sort\fP(1).
+.PP
+.Ss "RECSORT TYPES"
+.PP
+.Ss "  Rs_t"
+This defines the type of a sorting context handle.
+.PP
+.Ss "  Rsdisc_t"
+This defines the type of a discipline structure which describes
+how keys are defined.
+.PP
+.Ss "  Rsmethod_t"
+This defines the type of a sorting method.
+.PP
+.Ss "  Rsobj_t"
+This is the type of a record to be sorted.
+It contains the following fields:
+.Cs
+      ulong    order;
+      Rsobj_t* left;
+      Rsobj_t* right;
+      Rsobj_t* equal;
+      uchar*   key;
+      ssize_t  keylen;
+      uchar*   data;
+      ssize_t  datalen;
+.Ce
+.Tp
+\f5order, left\fP:
+These fields are only significant in calls to event functions
+raised by method \f5Rsverify\fP.
+.Tp
+\f5right, equal\fP:
+The \f5rslist()\fP call returns a linked list of sorted records.
+\f5obj->right\fP defines the forward link for \f5obj\fP.
+\f5obj->equal\fP, if not \f5NULL\fP,
+points to a \f5NULL\fP-terminated linked list of records
+compared equal to \f5obj\fP.
+.Tp
+\f5key, keylen, data, datalen\fP:
+These fields define the key and data of the given record.
+.PP
+.Ss "OPENING/CLOSING SORT CONTEXTS"
+.PP
+.Ss "  Rs_t* rsopen(Rsdisc_t* disc, Rsmethod_t* meth, ssize_t c_max, int type)"
+This function creates a new sort context based on discipline \f5disc\fP
+and sort method \f5meth\fP.
+\f5rsopen()\fP returns the new sort context or \f5NULL\fP on error.
+.Tp
+\f5c_max\fP:
+Due to memory cache behavior, it is sometimes worthwhile to limit
+the amount of data sorted by a sort method at any given time.
+Data across calls to \f5rsprocess()\fP accumulated for a sort method
+is limited as follows.
+If \f5c_max < 0\fP, there is no limit.
+If \f5c_max = 0\fP, each \f5rsprocess()\fP call sorts data separately.
+If \f5c_max > 0\fP, data will be accumulated up to \f5c_max\fP before sorted.
+Thus, when \f5c_max >= 0\fP, many sorted list of records may result.
+These lists will be merged together in a \f5rslist()\fP or \f5rswrite()\fP call.
+.Tp
+\f5type\fP:
+This is a bit combination of:
+(1) \f5RS_UNIQ\fP, keeping only one in a set of duplicated records,
+(2) \f5RS_REVERSE\fP, sorting records in reverse order, and
+(3) \f5RS_DATA\fP, comparing records by keys, then by data.
+.PP
+.Ss "  int rsclose(Rs_t* rs)"
+This deletes \f5rs\fP and associated memory.
+If the discipline has an event function, the event \f5RS_CLOSE\fP will
+be raised first. If the event funtion returns a negative value, \f5rsclose()\fP
+will return the same value immediately.
+\f5rsclose()\fP returns 0 on success.
+.PP
+.Ss "  void rsclear(Rs_t* rs)"
+This frees memory in \f5rs\fP without closing \f5rs\fP.
+.PP
+.Ss "SORT METHODS"
+.PP
+Sort methods are of type \f5Rsmethod_t*\fP.
+The fields \f5int Rsmethod_t.type\fP and \f5char* Rsmethod_t.name\fP
+contain the method type and name respectively.
+.PP
+.Ss "  Rsradix"
+This is radix sort.
+Records are partitioned in phases by byte values.
+.PP
+.Ss "  Rssplay"
+Records are inserted into a top-down splay tree.
+.PP
+.Ss "  Rsrasp"
+This is a combination of radix sort and splay trees.
+Records are partitioned by first bytes of their keys.
+Then, groups with short keys are sorted using radix sort
+while groups with long keys are sorted in splay trees.
+A final merge phase collects everything together.
+.PP
+.Ss "  Rsverify"
+This method is used to verify if data is sorted.
+When a record is out of order,
+the event \f5RS_VERIFY\fP will be announced (see \f5Rsdisc_t.eventf\fP).
+.PP
+.Ss "  Rsmethod_t* rsmethod(Rs_t* rs, Rsmethod_t* meth)"
+If \f5meth\fP is not \f5NULL\fP,
+\f5rsmethod()\fP changes the sort method of \f5rs\fP to \f5meth\fP.
+This should be done only when there are no partially sorted records in \f5rs\fP,
+i.e., before any \f5rsprocess()\fP call or immediately after a \f5rsclear()\fP call.
+\f5rsmethod()\fP returns the old method on success and \f5NULL\fP on failure.
+.PP
+.Ss "SORT DISCIPLINE"
+.PP
+Object key management is defined in the type \f5Rsdisc_t\fP:
+.Cs
+    typedef struct
+    { int        type;
+      ssize_t    data;
+      ssize_t    key;
+      ssize_t    keylen;
+      Rsdefkey_f defkeyf;
+      Rsevent_f  eventf;
+    } Rsdisc_t;
+.Ce
+.PP
+.Ss "  Rsdisc_t.type"
+This should be a bit combination of \f5RS_KSAMELEN\fP and \f5RS_DSAMELEN\fP to
+indicate respectively that keys and data have constant lengths.
+.PP
+.Ss "  Rsdisc_t.data"
+If \f5type&RS_DSAMELEN\fP, \f5Rsdisc_t.data\fP is the length of the data of a record.
+Otherwise, \f5Rsdisc_t.data\fP defines the byte that
+separates records in a byte stream (see \f5rsprocess()\fP.)
+.PP
+.Ss "  Rsdisc_t.key, Rsdisc_t.keylen"
+.Ss "  Rsdisc_t.defkeyf(Rs_t* rs, Void_t* data, ssize_t s_data, Void_t* key, ssize_t s_key, Rsdisc_t* disc)"
+Assume a record \fIdata\fP of length \fIs_data\fP.
+If \f5Rsdisc_t.defkeyf\fP is \f5NULL\fP,
+\f5Rsdisc_t.key\fP and \f5Rsdisc_t.keylen\fP together define a key.
+\fIdata\fP+\f5Rsdisc_t.key\fP is the key's starting address.
+If \f5Rsdisc_t.keylen\fP is positive, it is the length of the key.
+Otherwise, the length of the key is the quantity
+\fIs_data\fP+\f5Rsdisc_t.keylen-Rsdisc_t.key\fP.
+
+If \f5Rsdisc_t.defkeyf\fP is not \f5NULL\fP, it is called to define a key.
+The key should be constructed in the given area \f5key\fP whose size is \f5s_key\fP.
+\f5s_key\fP is guaranteed to be at least \f5Rsdisc_t.key*s_data\fP.
+\f5Rsdisc_t.defkeyf\fP should return the length of the key or a negative value on error.
+.PP
+.Ss "  Rsdisc_t.eventf(Rs_t* rs, int type, Void_t* data, Rsdisc_t* disc)"
+If \f5eventf\fP is not \f5NULL\fP, it is called to announce certain
+events and associated data. If the return value of \f5eventf\fP is negative,
+the operation causing the announcement will immediately return an error condition.
+Following are supported events:
+.Tp
+\f5RS_CLOSE\fP:
+This event is raised when \f5rs\fP is about to be closed.
+The associated \f5data\fP is \f5NULL\fP.
+.Tp
+\f5RS_DISC\fP:
+This event is raised when the discipline is about to be changed.
+\f5(Sfdisc_t*)data\fP is the new discipline.
+.Tp
+\f5RS_METHOD\fP:
+This event is raised when the method is about to be changed.
+\f5(Sfmethod_t*)data\fP is the new method.
+.Tp
+\f5RS_VERIFY\fP:
+This event is raised when method \f5Rsverify\fP detects
+a record, \f5r=(Rsobj_t*)data\fP, out of order with respect to
+a previous record \f5p\fP. There are three cases.
+If \f5r\fP compares equal with \f5p\fP and \f5RS_UNIQ\fP is on,
+then \f5r->equal\fP is \f5p\fP.
+If \f5r\fP compares less than \f5p\fP and \f5RS_REVERSE\fP is off,
+then \f5r->right\fP is \f5p\fP.
+Finally, if \f5r\fP compares larger than \f5p\fP and \f5RS_REVERSE\fP is on,
+then \f5r->left\fP is \f5p\fP.
+
+\f5r->order\fP and \f5p->order\fP are the ordinal positions of \f5r\fP and \f5p\fP
+in the stream of records.
+
+The return value of \f5eventf\fP is significant as follows.
+If it is negative, the verification process is aborted.
+If it is zero, the verification process continues as if \f5r\fP did not exist.
+If it is positive, the verification process continues as if \f5r\fP was in order.
+.PP
+.Ss "  Rsdisc_t* rsdisc(Rs_t* rs, Rsdisc_t* disc)"
+If \f5disc\fP is not \f5NULL\fP,
+\f5rsdisc()\fP changes the discipline of \f5rs\fP to \f5disc\fP.
+This should be done only when there are no partially sorted records in the context,
+i.e., before any \f5rsprocess()\fP call or immediately after a \f5rsclear()\fP call.
+\f5rsdisc()\fP returns the old discipline on success and \f5NULL\fP on failure.
+.PP
+.Ss "OBJECT OPERATIONS"
+.PP
+.Ss "  ssize_t rsprocess(Rs_t* rs, Void_t* data, ssize_t s_data)"
+.Ss "  ssize_t rscount(Rs_t* rs)"
+\f5rsprocess()\fP partitions \f5data\fP into records and inserts them into \f5rs\fP.
+If \f5s_data\fP is non-positive,
+\f5data\fP is a single record of size \f5-s_data\fP.
+Otherwise, \f5data\fP is partitioned into records
+according to the rules defined in the discipline of \f5rs\fP.
+\f5rsprocess()\fP returns the number of bytes actually processed or \f5-1\fP on error.
+After an \f5rsprocess()\fP call,
+the number of processed records can be retrieved with \f5rscount()\fP.
+.PP
+.Ss "  Rsobj_t* rslist(Rs_t* rs)"
+This returns a sorted list of records previously inserted into \f5rs\fP.
+After \f5rslist()\fP has been called, no new records can be inserted
+until \f5rs\fP is cleared with \f5rsclear(rs)\fP.
+.PP
+.Ss "  int rswrite(Rs_t* rs, Sfio_t* f, int type)"
+This writes sorted records in \f5rs\fP to stream \f5f\fP then clears \f5rs\fP.
+If \f5type\fP is any non-zero
+combination of \f5RS_ITEXT\fP and \f5RS_OTEXT\fP, data is output in a plain format.
+Otherwise, data is encoded for fast merging (see \f5rsmerge()\fP.)
+\f5rswrite()\fP returns 0 on success and -1 on failure.
+.PP
+.Ss "  int rsmerge(Rs_t* rs, Sfio_t* f, Sfio_t** files, int n, int type)"
+This merges the given \f5n\fP \f5files\fP and writes the result to \f5f\fP.
+If \f5type\fP contains \f5RS_ITEXT\fP,
+the input data is assumed to be in a plain format.
+Otherwise, data is assumed to be encoded for fast merging.
+In addition, if \f5type\fP is any non-zero combination of
+\f5RS_ITEXT\fP and \f5RS_OTEXT\fP, data is output in a plain format.
+Otherwise, data is encoded for fast file merging.
+\f5rsmerge()\fP returns 0 on success and -1 on failure.
+.PP
+.SH AUTHORS
+Kiem-Phong Vo, kpv@research.att.com, and
+Glenn S. Fowler, gsf@research.att.com

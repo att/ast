@@ -1,0 +1,254 @@
+# File Manager - Window Routines
+
+function PWD.set
+{
+    typeset dwidget=$w.files.dir.list fwidget=$w.files.file.list i item
+    exist=$(winfo exists $w)
+    if ((exist==1))
+    then $dwidget delete 0 end
+ 	 $fwidget delete 0 end
+	 $dwidget insert end ".. <parent directory>"
+	 for i in *
+	 do
+		item=$dwidget
+		[[ -f $i ]] && item=$fwidget
+		$item insert end $i
+	 done
+    fi
+}
+
+function create_directory_listing # window
+{
+	typeset f="$(pwd)"
+	typeset w=$1
+
+	filename="$f/"
+	update_window $w 
+	directory_listing_update $w.files
+
+	bind $w.files.file.list "<1>" \
+		"directory_listing_single_click %W %y $w; update_information %W %y %w; focus $w.sel.e"
+	bind $w.files.dir.list "<1>" \
+		"directory_listing_single_click %W %y $w; update_information %W %y %w; focus $w.sel.e"
+	bind $w.files.dir.list "<Double-1>" \
+		"directory_listing_double_click $w.files %y ; focus $w.sel.e"
+	bind $w.sel.e "<Return>" "directory_listing_update $w.files"
+
+}
+
+function update_window # window 
+{
+	typeset w=$1 
+
+        frame $w.who
+        label $w.who.id -textvar WhoId
+
+        frame $w.date
+        label $w.date.d -textvar Time
+
+	frame $w.sel
+	entry $w.sel.e -textvariable filename
+
+        frame $w.info -relief raised -bd 2
+        label $w.info.all -textvar Information
+
+        frame $w.binfo -relief raised -bd 2
+        label $w.binfo.all -textvar Button_Info
+
+	frame $w.files
+	frame $w.files.dir
+	frame $w.files.file
+	make_xy_scrollbar $w.files.dir
+	make_xy_scrollbar $w.files.file
+
+        pack $w.who.id
+        pack $w.date.d 
+        pack $w.info.all
+        pack $w.binfo.all
+	pack $w.sel.e -fill x -expand 1
+	pack $w.files.dir $w.files.file -side left -fill both -expand 1
+	pack $w.who $w.date $w.sel $w.files -side top -fill both
+        pack $w.binfo -side bottom -fill both
+        pack $w.info -side bottom -fill both
+}
+
+function make_xy_scrollbar # widget
+{
+	typeset w=$1
+
+	listbox $w.list -yscrollcommand "$w.scroll set"
+	scrollbar $w.scroll -command "$w.list yview"
+	pack $w.list -side left -fill both -expand 1
+	pack $w.scroll -side left -fill y
+}
+
+function directory_listing_update # widget
+{
+	typeset dwidget=$1.dir.list fwidget=$1.file.list i w
+
+        if [[ $filename == */ ]]
+	then if [[ -d $filename ]]
+	     then  cd $filename > /dev/null 2>&1
+	     else  cd $(dirname $filename) > /dev/null 2>&1
+	     fi
+        fi
+
+	$dwidget delete 0 end
+	$fwidget delete 0 end
+	$dwidget insert end ".. <parent directory>"
+	for i in *
+	do
+		w=$dwidget
+		[[ -f $i ]] && w=$fwidget
+		$w insert end $i
+	done
+}
+
+
+function update_information # widget point window
+{
+      typeset temp=""
+      Information=""
+
+      if [[ -f $filename ]]
+      then temp=$($1 get $($1 nearest $2))
+           Information=$(ls -f "%(mode)s  %(uid)s  %(size)s  %(mtime)s" $temp)
+      fi
+}
+
+function directory_listing_single_click # widget point window
+{
+      filename=$(pwd)/$($1 get $($1 nearest $2))
+      filename=${filename%%" "*}
+}
+
+function directory_listing_double_click # widget point
+{
+	dir1=$($1.dir.list get $($1.dir.list nearest $2))
+        dir2=${dir1%%" "*}
+        cd $dir2
+        filename=$(pwd)/
+	directory_listing_update $1
+}
+
+function change_toolbar
+{
+
+     if ((show_toolbar==1))
+     then pack $w.bbar -after $w.mbar -fill x
+          pack $w.binfo -before $w.info -side bottom -fill both
+     else pack forget $w.bbar
+          pack forget $w.binfo
+     fi
+
+}
+
+function create_menu # window
+{
+     typeset w=$1
+
+     frame $w.mbar -relief raised -bd 2
+     pack $w.mbar -side top -fill x
+     menubutton $w.mbar.file -text File -menu $w.mbar.file.menu
+     menubutton $w.mbar.help -text Help -menu $w.mbar.help.menu
+     menubutton $w.mbar.util -text Utilities -menu $w.mbar.util.menu
+     menubutton $w.mbar.opt -text Options -menu $w.mbar.opt.menu
+     pack $w.mbar.file $w.mbar.util $w.mbar.opt -side left
+     pack $w.mbar.help -side right
+
+     menu $w.mbar.file.menu
+     $w.mbar.file.menu add command -label "Create File" -command "create_file $w"
+     $w.mbar.file.menu add command -label "Edit" -command "edit_file $w"
+     $w.mbar.file.menu add command -label "Run" -command "run_file $w"
+     $w.mbar.file.menu add command -label "Delete" -command "delete_file $w"
+     $w.mbar.file.menu add command -label "Move" -command "move_file $w"
+     $w.mbar.file.menu add command -label "Copy" -command "copy_file $w"
+     $w.mbar.file.menu add separator
+     $w.mbar.file.menu add command -label "Print" -command "print_file $w"
+     $w.mbar.file.menu add separator
+     $w.mbar.file.menu add command -label "Make Directory" -command "make_dir $w"
+     $w.mbar.file.menu add command -label "Remove Directory" -command "remove_dir $w"
+     $w.mbar.file.menu add separator
+     $w.mbar.file.menu add command -label "Quit" -command "destroy $w"
+
+     menu $w.mbar.util.menu
+     $w.mbar.util.menu add command -label "Change Mode" -command "chmod_file $w $(ls -f "%(mode)s" $filename)"
+#     $w.mbar.util.menu add command -label "Change Mode" -command "chmod_file $w"
+     $w.mbar.util.menu add command -label "Sort File" -command "sort_file $w"
+     $w.mbar.util.menu add command -label "Split File" -command "split_file $w"
+     $w.mbar.util.menu add separator
+     $w.mbar.util.menu add command -label "Type of File" -command "type_file $w"
+     $w.mbar.util.menu add command -label "Compare Files" -command "cmp_files $w"
+     $w.mbar.util.menu add command -label "Word Count" -command "wc_file $w"
+     $w.mbar.util.menu add command -label "Disk Usage" -command "disk_usage $w"
+     $w.mbar.util.menu add cascade -label "Look at files" -menu $w.mbar.util.menu.files
+     $w.mbar.util.menu add separator
+     $w.mbar.util.menu add cascade -label "PAX" -menu $w.mbar.util.menu.pax
+     $w.mbar.util.menu add command -label "Find File" -command "find_file $w"
+     $w.mbar.util.menu add command -label "Project Manager" -command "p_manager"
+#     $w.mbar.util.menu add separator
+#     $w.mbar.util.menu add command -label "Manual Pages" -command "man_page $w"
+
+     menu $w.mbar.opt.menu
+     $w.mbar.opt.menu add checkbutton -label "Show Commands" -variable show_cmd
+     $w.mbar.opt.menu add checkbutton -label "Show Toolbar" -variable show_toolbar -command "change_toolbar"
+
+     menu $w.mbar.util.menu.pax
+     $w.mbar.util.menu.pax add command -label "PAX" -command "pax_file $w"
+     $w.mbar.util.menu.pax add command -label "UNPAX" -command "unpax_file $w"
+
+     menu $w.mbar.util.menu.files
+     $w.mbar.util.menu.files add command -label "Head" -command "head_file $w"
+     $w.mbar.util.menu.files add command -label "Tail" -command "tail_file $w"
+
+     menu $w.mbar.help.menu
+     $w.mbar.help.menu add command -label "About" -command "display_about $w"
+     $w.mbar.help.menu add command -label "Help" -command "display_help $w"
+}
+
+function create_button_bar # window
+{
+     typeset w=$1
+
+     frame $w.bbar -relief raised -bd 2
+     pack $w.bbar -side top -fill x
+
+     button $w.bbar.cf -image gwrite -command "create_file $w"
+     button $w.bbar.ef -image gedit -command "edit_file $w"
+     button $w.bbar.rf -image gexec -command "run_file $w"
+     button $w.bbar.df -image gtrash -command "delete_file $w"
+     button $w.bbar.mf -image gmove -command "move_file $w"
+     button $w.bbar.cp -image gcopy -command "copy_file $w"
+     button $w.bbar.q  -image gexit -command "destroy $w"
+     button $w.bbar.pm -image gtools -command "p_manager"
+     button $w.bbar.ff -image gsearch -command "find_file $w"
+
+     pack $w.bbar.cf -side left
+     pack $w.bbar.ef -side left
+     pack $w.bbar.rf -side left
+     pack $w.bbar.df -side left
+     pack $w.bbar.mf -side left
+     pack $w.bbar.cp -side left
+     pack $w.bbar.ff -side left
+     pack $w.bbar.pm -side left
+     pack $w.bbar.q -side left
+
+     bind $w.bbar.cf "<Enter>" 'Button_Info="Create New File"'
+     bind $w.bbar.cf "<Leave>" 'Button_Info=""'
+     bind $w.bbar.ef "<Enter>" 'Button_Info="Edit File"'
+     bind $w.bbar.ef "<Leave>" 'Button_Info=""'
+     bind $w.bbar.rf "<Enter>" 'Button_Info="Run File"'
+     bind $w.bbar.rf "<Leave>" 'Button_Info=""'
+     bind $w.bbar.df "<Enter>" 'Button_Info="Delete File"'
+     bind $w.bbar.df "<Leave>" 'Button_Info=""'
+     bind $w.bbar.mf "<Enter>" 'Button_Info="Move File"'
+     bind $w.bbar.mf "<Leave>" 'Button_Info=""'
+     bind $w.bbar.cp "<Enter>" 'Button_Info="Copy File"'
+     bind $w.bbar.cp "<Leave>" 'Button_Info=""'
+     bind $w.bbar.q "<Enter>" 'Button_Info="Quit File Manager"'
+     bind $w.bbar.q "<Leave>" 'Button_Info=""'
+     bind $w.bbar.pm "<Enter>" 'Button_Info="Run Project Manager"'
+     bind $w.bbar.pm "<Leave>" 'Button_Info=""'
+     bind $w.bbar.ff "<Enter>" 'Button_Info="Find File?"'
+     bind $w.bbar.ff "<Leave>" 'Button_Info=""'
+}

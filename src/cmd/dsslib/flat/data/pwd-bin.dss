@@ -1,0 +1,78 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>passwd</>
+	<DESCRIPTION>The password file, binary format.</>
+	<IDENT>@(#)$Id: pwd (AT&T Labs Research) 2002-11-28 $</>
+	<MAGIC>
+		<STRING>passwd</>
+		<VERSION>20021128</>
+		<SWAP>be</>
+	</>
+	<LIBRARY>num_t</>
+	<FIELD>
+		<NAME>uid</>
+		<TYPE>unsigned</>
+		<DESCRIPTION>User id number.</>
+		<PHYSICAL>
+			<TYPE>be_t</>
+			<WIDTH>4</>
+		</>
+	</>
+	<FIELD>
+		<NAME>gid</>
+		<TYPE>unsigned</>
+		<DESCRIPTION>Group id number.</>
+		<PHYSICAL>
+			<TYPE>bcd_t</>
+			<WIDTH>4</>
+		</>
+	</>
+	<FIELD>
+		<NAME>pad</>
+		<TYPE>string</>
+		<DESCRIPTION>Alignment pad.</>
+		<PHYSICAL>
+			<WIDTH>8</>
+		</>
+	</>
+	<FIELD>
+		<NAME>name</>
+		<TYPE>string</>
+		<DESCRIPTION>Login name.</>
+		<PHYSICAL>
+			<WIDTH>64</>
+		</>
+	</>
+	<FIELD>
+		<NAME>password</>
+		<TYPE>string</>
+		<DESCRIPTION>Encrypted password.</>
+		<PHYSICAL>
+			<WIDTH>64</>
+		</>
+	</>
+	<FIELD>
+		<NAME>comment</>
+		<TYPE>string</>
+		<DESCRIPTION>Local information.</>
+		<PHYSICAL>
+			<WIDTH>64</>
+		</>
+	</>
+	<FIELD>
+		<NAME>home</>
+		<TYPE>string</>
+		<DESCRIPTION>Home directory path.</>
+		<PHYSICAL>
+			<WIDTH>64</>
+		</>
+	</>
+	<FIELD>
+		<NAME>shell</>
+		<TYPE>string</>
+		<DESCRIPTION>Login shell path.</>
+		<PHYSICAL>
+			<WIDTH>64</>
+		</>
+	</>
+</>

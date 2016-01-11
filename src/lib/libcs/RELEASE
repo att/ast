@@ -1,0 +1,90 @@
+10-06-01 sync with ast api 20100601
+10-04-12 Makefile: defer share and local generation to first use
+08-04-09 csopen.c: fix mkmount() path cleanup
+08-04-09 csopen.c: add debug=-1 mkmount() error message
+07-06-05 csclient.c: add CS_CLIENT_SEP
+06-09-19 css.c: sysconf() => astconf()
+06-08-15 csclient.c: fix prompt logic
+06-08-14 csopen.c: fix group=name logic
+06-08-04 csclient.c: fix CS_CLIENT_ARGV
+06-06-11 csclient.c: add
+06-05-31 csopen.c,cs.h: add csattach() for non-/dev/fdp/ streams
+05-02-04 Makefile: drop -lnetinet (for lynxos)
+04-07-22 csopen.c,cssend.c,csauth.c,cslocal.c: access() => eaccess()
+04-07-19 cslocal.c: call spawnveg() for standalone 3d
+04-03-25 csrecv.c,cssend.c: OPEN_MAX_CEIL => OPEN_MAX
+03-08-01 csdata.c: add NoF pure data workaround, drop const + prototyped
+03-03-28 msglib.h: add D_FILENO ifdef
+02-10-02 features/lib,genlocal.sh: add ssh, pid to hang warning
+	 msglist.c: tmform() => fmttime()
+01-12-12 cssfd: CS_POLL_CLOSE now close()'s if not dropped -- double duh
+	 csstat: change down test to avoid unsigned long overflow
+01-10-31 cssend,csrecv: use msg_accrights over msg_control
+	 cspath: don't check /dev/fd/* -- duh
+01-05-11 csserve: sync cs.* with css->*
+	 csspoll: handl cspoll() EINTR that doesn't set cs.interrupt
+01-01-01 cspoll: fix getmsg() flag arg
+	 csaddr: fix local host addr initialization
+00-06-01 csopen: handle dynamic ip assignment underfoot
+00-05-11 csopen: handle /dev/tcp/local/9876/FOO/other
+00-05-09 cssfd: CS_POLL_WRITE implies O_NONBLOCK
+00-02-14 cschallenge(): add stat() to verify touch()
+00-02-03 features/lib: add sys/types.h to htons etc. header refs
+00-01-25 genlocal: use package instead of hostinfo
+99-10-07 csbind: NODELAY for CS_ADDR_NOW only
+99-09-22 cs*: add CS_MNT_TAIL for multi-char mount files
+	 css: _UWIN workaround for st_ino verification
+99-07-17 csaddr: clear more state->flags bits to avoid prev csopen() carryover
+99-05-20 msg*: handle f_basetype and f_fsid for redhat 6.0 linux -- boo
+99-05-13 css: fix disc.wakeup logic
+	 cspoll: add debug=6 poll trace
+99-04-23 csaddr: check for 127.0.0.[01] from hostname lookup == local
+98-06-29 cs.h: add Cs == (&cs)
+98-06-03 csserve: fix SIGCHLD exit bug
+98-02-14 csopen: add PROC_ZOMBIE for systems that don't fork() in csdaemon()
+97-11-27 csopen: /dev/tcp/*/inet.*/user for client inet.* authentication
+	 css.h: add CSS_AUTHENTICATE for server inet.* authentication
+97-11-11 csread: add CS_RESTART to restart on interrupt
+	 cslib: CS_AUTH_MODE for authentication file mode
+	 cs.h: drop CS_SVC_SERVICE, add CS_SVC_SUFFIX
+	 SERVICE.mk: executable name changed from server => `service'.svc
+	 csopen: rm CS_MOUNT_PROCESS if no connect and pid invalid
+97-07-17 add css.h, csserve() on top of css
+	 CS_INTERFACE=2 for thread safe state instead of global cs.*
+	 cspoll(CS_POLL_WRITE) events cleared on write
+	 csspoll(timeout,CSS_INTERRUPT|CSS_ERROR)
+	 cs.h,msg.h: fix dll import/export
+97-05-09 cslib.h: check _hdr_netdb,_hdr_netinet_in,_hdr_netinet_tcp
+	 features/lib: statvfs.f_fstr
+	 msglib.h: <ast.h> before "cs_lib.h"
+97-04-01 csport: htons() done too soon
+96-12-25 genlocal: add correct nslookup query
+	 fix sizeof(long)==4 assumptions
+	 install genlocal and genshare in $(INSTALLROOT)/lib/$(ID)
+96-02-29 use <hashkey.h>
+	 add csport()
+	 drop CS_MOUNT_*; use csvar(CS_VAR_*,trust) instead
+	 CS_VAR_PROXY ($CS_MOUNT_PROXY) names proxy connect stream
+	 csopen() attempts proxy open on local failure
+	 hold CS_PROC_FD_TST cssend() fds until next cssend()
+	 csread(CS_LINE) really means 1 line
+	 fix cslocal() and csopen() fdp initiate timing bug
+96-01-31 add warning to local rather than generate on install
+96-01-22 no <sys/uio.h> on linux (defined(MAX_IOVEC))
+95-11-11 trap 127.0.0.[01] local address alias in cspath() and csntoa()
+95-10-31 CS_MNT_OTHER '.' -> '#' to placate NT (trailing . ignored -- thanks)
+95-10-11 export -> coexport
+	 add dirsize() to cslib.h
+	 check _mem_d_reclen_dirent for d_reclen
+95-08-11 (done)(handle,EXIT_TERM(signal)) called on csserve() interrupt
+		0 return ignores signal
+	 csserve() now creates local auth dir if not there, duh
+	 fix genlocal hostinfo timeout
+95-07-17 fix remote auth off by one error
+95-05-09 add linux /proc/<pid>/fd/<fd> to cssend()-csrecv()
+	 add bsd4.4 msghdr.msg_accrights -> msghdr.msg_control mods
+	 bsd4.4 thinks S_ISFIFO() and S_ISSOCK() are the same!
+	 features/cs.c now uses sfio
+95-04-01 convert genlocal.sh to hostinfo
+95-03-19 bsd4.4 stole devname(), so use devpath() in cspath()
+94-12-15 csinfo("-",0) gets standard info

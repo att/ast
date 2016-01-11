@@ -1,0 +1,2 @@
+sys	param,select
+typ	__fd_mask select.h time.h

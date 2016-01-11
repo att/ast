@@ -1,0 +1,19 @@
+10-06-01 sync with ast api 20100601
+06-10-11 add sfstropen()/sfstruse() error checks
+06-06-11 cs.c: switch to csclient()
+02-10-02 tst.c: tmform() => fmttime()
+01-01-01 vcs_src/*: drop old notices, fix signal handler prototype
+00-05-09 mbb: add (message bulletin board service)
+99-09-22 cs: update for CS_MNT_TAIL
+99-05-18 cs,css: long options
+98-05-01 css: add
+97-05-09 imount: add
+96-12-25 cs: fix -i eof logic
+96-02-29 nam protocol change
+	 add vcs+ifs beta
+	 drop getdomainname() call
+	 vcs: use ast equivalents for strstr ftruncate realpath
+95-12-08 add -r raw interactive mode
+95-07-17 add /trust=user when server not in PATH
+95-04-01 start this file
+	 fix cat server read bug CS_LINE -> CS_EXACT

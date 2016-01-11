@@ -1,0 +1,103 @@
+hdr	netdb,stropts,netinet/in,netinet/tcp
+lib	fattach,getdtablesize,gethostname,getrlimit,sigblock,uname
+lib	recvmsg,sendmsg
+lib	ntohs,ntohl,htons,htonl sys/types.h sys/socket.h netinet/in.h
+mem	statvfs.f_fstr sys/types.h sys/statvfs.h
+mem	msghdr.msg_accrights sys/types.h sys/uio.h sys/socket.h
+mem	msghdr.msg_control sys/types.h sys/uio.h sys/socket.h
+mem	msghdr.msg_flags sys/types.h sys/uio.h sys/socket.h
+mem	utsname.nodeext sys/utsname.h
+sym	revents sys/types.h poll.h
+sys	file,inet/tcp_user,resource,select,socket,sockio,uio,un,utsname
+
+tst	stream_pipe note{ pipes are streams }end execute{
+	#include <sys/types.h>
+	#include <stropts.h>
+	_BEGIN_EXTERNS_
+	extern int	pipe _ARG_((int*));
+	_END_EXTERNS_
+	main()
+	{	struct strpeek	pbuf;
+		int fds[2];
+		if (pipe(fds)) return 1;
+		pbuf.flags = 0;
+		pbuf.ctlbuf.maxlen = pbuf.databuf.maxlen =
+		pbuf.ctlbuf.len = pbuf.databuf.len = 0;
+		pbuf.ctlbuf.buf = pbuf.databuf.buf = 0;
+		return ioctl(fds[0],I_PEEK,&pbuf) < 0;
+	}
+}end
+
+tst	tst_rsh run{
+	: remote shell
+	path=`echo $PATH:/usr/add-on/ucb/bin:/usr/add-on/bsd/bin:/usr/ucb:/usr/bsd | sed 's/:/ /g'`
+	rsh=ssh
+	hostname=`exec 2>/dev/null && hostname || uname -n || cat /etc/whoami || echo local`
+	for b in ssh rsh remsh
+	do	for d in $path
+		do	if	test -x $d/$b
+			then	case $b in
+				rsh)	case `$d/$b $hostname echo ok 2>/dev/null & sleep 5` in
+					ok)	;;
+					*)	continue ;;
+					esac
+					;;
+				esac
+				rsh=$d/$b
+				break 2
+			fi
+		done
+	done
+	echo '#define CS_REMOTE_SHELL	''"'$rsh'"	/* remote shell path */'
+}end
+
+tst	compile{
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	int f()
+	{
+		int len;
+		struct sockaddr	sa;
+		return getsockname(0, &sa, &len);
+	}
+}end pass{
+	echo 'typedef int Sock_size_t;'
+}end fail{
+	echo 'typedef size_t Sock_size_t;'
+}end
+
+tst	cat{
+	#if _sys_inet_tcp_user
+	#define CS_LIB_V10	1
+	#else
+	#if _sys_socket && _hdr_netdb
+	#define CS_LIB_SOCKET	1
+	#if _sys_un
+	#define CS_LIB_SOCKET_UN	1
+	#if _mem_msg_accrights_msghdr && ! _mem_msg_flags_msghdr
+	#undef _mem_msg_control_msghdr
+	#endif
+	#if _lib_recvmsg && _lib_sendmsg && ( _mem_msg_accrights_msghdr || _mem_msg_control_msghdr )
+	#define CS_LIB_SOCKET_RIGHTS	1
+	#endif
+	#endif
+	#endif
+	#if _hdr_stropts && _lib_fattach && _stream_pipe
+	#define CS_LIB_STREAM	1
+	#endif
+	#endif
+	#if !_sys_statvfs
+	#define _mem_f_fstr_statvfs	1
+	#define _mem_f_fsid_statvfs	1
+	#endif
+}end
+
+tst	mem_f_fsid_statvfs compile{
+	#include <sys/types.h>
+	#include <sys/statvfs.h>
+	int foo()
+	{
+		struct statvfs	fs;
+		fs.f_fsid = 0;
+	}
+}end

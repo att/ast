@@ -1,0 +1,62 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>passwd</>
+	<DESCRIPTION>The password file.</>
+	<IDENT>@(#)$Id: pwd (AT&T Labs Research) 2002-10-31 $</>
+	<FIELD>
+		<NAME>name</>
+		<TYPE>string</>
+		<DESCRIPTION>Login name.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>password</>
+		<TYPE>string</>
+		<DESCRIPTION>Encrypted password.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>uid</>
+		<TYPE>number</>
+		<DESCRIPTION>User id number.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>gid</>
+		<TYPE>number</>
+		<DESCRIPTION>Group id number.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>comment</>
+		<TYPE>string</>
+		<DESCRIPTION>Local information.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>home</>
+		<TYPE>string</>
+		<DESCRIPTION>Home directory path.</>
+		<PHYSICAL>
+			<DELIMITER>:</>
+		</>
+	</>
+	<FIELD>
+		<NAME>shell</>
+		<TYPE>string</>
+		<DESCRIPTION>Login shell path.</>
+		<PHYSICAL>
+			<DELIMITER>&newline;</>
+		</>
+	</>
+</>

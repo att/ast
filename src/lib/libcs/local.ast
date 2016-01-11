@@ -1,0 +1,85 @@
+#
+# classic advanced software technology department local host attributes
+# @(#)local.ast (AT&T Bell Laboratories) 07/04/95
+#
+local		busy=2m		pool=9
+#
+# servers
+#
+gryphon		type=sun4	rating=20	cpu=3		os=solbourne
+toucan		type=sun4	rating=21	cpu=4
+got		type=sol.sun4	rating=35	cpu=4		os=2.4
+lynx		type=hp.pa	rating=43
+swift		type=sgi.mips2	rating=95	cpu=4
+#
+# sparc 20
+#
+jacana		type=sol.sun4	rating=42	idle=15m	os=2.4
+pelican		type=sol.sun4	rating=42	idle=15m
+#
+# sparc 10
+#
+dodo		type=sun4	rating=30	idle=15m
+#
+# sparc 5
+#
+drake		type=sol.sun4	rating=30	idle=15m	os=2.3
+peregrine	type=sol.sun4	rating=30	idle=15m	os=5.5
+#
+# sparc 2
+#
+kiwi		type=5e.sol.sun4 rating=22	idle=15m	os=2.4
+condor		type=sun4	rating=22	idle=15m
+early		type=sun4	rating=22	idle=15m
+roc		type=sun4	rating=22	idle=15m
+#
+# sparc 1+
+#
+anton		type=sun4	rating=12	idle=15m
+bluejay		type=sun4	rating=12	idle=15m
+callisto	type=sun4	rating=12	idle=15m
+sylvia		type=sun4	rating=12	idle=15m
+#kakapo		type=sun4	rating=12	idle=15m
+#
+# sparc 1
+#
+avocet		type=sun4	rating=10	idle=15m
+cardinal	type=sun4	rating=10	idle=15m
+duck		type=sun4	rating=10	idle=15m
+kite		type=sun4	rating=10	idle=15m
+parrot		type=sun4	rating=10	idle=15m
+robin		type=sun4	rating=10	idle=15m
+#emu		type=sun4	rating=10	idle=15m
+#cuckoo		type=sun4	rating=10	idle=15m
+#mynah		type=sun4	rating=10	idle=15m
+#paloma		type=sun4	rating=10	idle=15m
+#falcon		type=sol.sun4	rating=10	idle=15m
+#
+# sgi R3000
+#
+#quetzal	type=sgi.mips	rating=13	idle=15m
+#
+# sgi R4000 IP22
+#
+daffy		type=sgi.mips2	rating=95	idle=15m	os=irix-5.3
+daytona		type=sgi.mips2	rating=95	idle=15m
+flicker		type=sgi.mips2	rating=95	idle=15m
+nithack		type=sgi.mips2	rating=127	idle=15m	os=irix-5.3
+rosella		type=sgi.mips2	rating=95	idle=15m
+htron		type=sgi.mips2	rating=63	idle=15m	os=irix-5.3
+wren		type=sgi.mips2	rating=63	idle=15m	os=irix-5.3
+#
+# sgi R4000 IP20
+#
+guan		type=sgi.mips2	rating=63	idle=15m
+nighthawk	type=sgi.mips2	rating=63	idle=15m
+nightjar	type=sgi.mips2	rating=63	idle=15m
+tweety		type=sgi.mips2	rating=63	idle=15m
+#
+# bsd i386
+#
+panda		type=bsd.i386	rating=12	idle=15m
+#
+# att 386
+#
+quail		type=att.i386	rating=10	idle=15m

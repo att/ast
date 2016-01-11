@@ -1,0 +1,52 @@
+.SH FILES
+.TP 2.5i
+.PD 0
+Makefile, makefile
+default makefiles, tried in order
+.TP 2.5i
+Makeargs, makeargs
+default argument files, tried in order
+.TP 2.5i
+$MAKELIB/Makeinit.mk
+engine initialization script
+.TP 2.5i
+$MAKELIB/makerules.mo
+default compiled base rules
+.TP 2.5i
+.BR base .ml
+make lock file
+.TP 2.5i
+.BR base .mo
+make object file
+.TP 2.5i
+.BR base .ms
+make statefile
+.PD
+.SH CAVEATS
+Any variables that are expanded while reading makefiles are
+.I frozen
+into the corresponding
+.I \*(nM
+object file.
+If the value of a
+.I frozen
+variable changes from one invocation of
+.I \*(nM
+to the next,
+either in a command line definition or in the environment,
+then a warning is issued and the makefile is automatically recompiled.
+Most frozen variable expansions can be deferred by entering
+.BI $( var )
+as
+.BI $$( var ) .
+.PP
+Some commands return nonzero status inappropriately.
+Use
+.B ignore
+.I command
+to overcome any difficulties.
+.PP
+.I \*(nM
+only detects source files that it builds or those that exist before
+.I \*(nM
+is executed.

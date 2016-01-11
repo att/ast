@@ -1,0 +1,263 @@
+The Tk Toolkit
+
+SCCS: @(#) README 1.37 97/01/29 13:24:34
+
+1. Introduction
+---------------
+
+This directory and its descendants contain the sources and documentation
+for Tk, an X11 toolkit implemented with the Tcl scripting language.  The
+information here corresponds to Tk 4.2, patch level 2 for Tk 4.2.  This
+is actually the first official patch release for Tk 4.2: patch level 1
+was only released for the Macintosh.  Tk 4.2 is designed to work with
+Tcl 7.6 and may not work with any other version of Tcl.
+
+Tk 4.2 is a minor release.  The main changes are a revision of the
+gridder, a new set of standard dialog boxes, and a new virtual event
+mechanism.  See below for details.  There should be no backward
+incompatibilities in Tk 4.2 except for two small changes related to the
+gridder.
+
+2. Documentation
+----------------
+
+The best way to get started with Tk is to read one of the introductory
+books on Tcl and Tk:
+
+    Tcl and the Tk Toolkit, by John Ousterhout,
+    Addison-Wesley, 1994, ISBN 0-201-63337-X
+
+    Practical Programming in Tcl and Tk, by Brent Welch,
+    Prentice-Hall, 1995, ISBN 0-13-182007-9
+
+    Exploring Expect, by Don Libes,
+    O'Reilly and Associates, 1995, ISBN 1-56592-090-2
+
+The "doc" subdirectory in this release contains a complete set of
+reference manual entries for Tk.  Files with extension ".1" are for
+programs such as wish; files with extension ".3" are for C library
+procedures; and files with extension ".n" describe Tcl commands.  To
+print any of the manual entries, cd to the "doc" directory and invoke
+your favorite variant of troff using the normal -man macros, for example
+
+		ditroff -man wish.1
+
+to print wish.1.  If Tk has been installed correctly and your "man"
+program supports it, you should be able to access the Tcl manual entries
+using the normal "man" mechanisms, such as
+
+		man wish
+
+If you are porting Tk 3.6 scripts to Tk 4.0 or later releases, you may
+find the Postscript file doc/tk4.0.ps useful.  It is a porting guide
+that summarizes the new features and discusses how to deal with the
+changes in Tk 4.0 that are not backwards compatible.
+
+There is also an official home for Tcl and Tk on the Web:
+	http://www.smli.com/research/tcl
+These Web pages include release updates, reports on bug fixes and porting
+issues, HTML versions of the manual pages, and pointers to many other
+Tcl/Tk Web pages at other sites.  Check them out!
+
+3. Compiling and installing Tk
+------------------------------
+
+This release contains everything you should need to compile and run
+Tk under UNIX, Macintoshes, and PCs (either Windows NT, Windows 95,
+or Win 3.1 with Win32s).
+
+Before trying to compile Tk you should do the following things:
+
+    (a) Check for a binary release.  Pre-compiled binary releases are
+        available now for PCs and Macintoshes, and several flavors of
+        UNIX.  Binary releases are much easier to install than source
+        releases.  To find out whether a binary release is available for
+        your platform, check the home page for the Sun Tcl/Tk project
+        (http://www.sunlabs.com/research/tcl) and also check in the FTP
+        directory from which you retrieved the base distribution.
+
+    (b) Make sure you have the most recent patch release.  Look in the
+	FTP directory from which you retrieved this distribution to see
+	if it has been updated with patches.  Patch releases fix bugs
+	without changing any features, so you should normally use the
+	latest patch release for the version of Tk that you want. 
+	Patch releases are available in two forms.  A file like
+	tk4.2p2.tar.Z is a complete release for patch level 2 of Tk
+	version 4.2.  If there is a file with a higher patch level than
+	this release, just fetch the file with the highest patch level
+	and use it.
+
+	Patches are also available in the form of patch files that just
+	contain the changes from one patch level to another.  These
+	files have names like tk4.2p2.patch, tk4.2p3.patch, etc.  They
+	may also have .gz or .Z extensions to indicate compression.  To
+	use one of these files, you apply it to an existing release with
+	the "patch" program.  Patches must be applied in order,
+	except that there is no patch level 1 for Tcl 7.6:
+	tk4.2p2.patch must be applied to an unpatched Tk 4.2 release
+	to produce a Tk 4.2p2 release;  tk4.2p3.patch can then be
+	applied to Tk 4.2p2 to produce Tk 4.2p3, and so on. To apply an
+	uncompressed patch file such as tk4.2p2.patch, invoke a shell
+	command like the following from the directory containing this
+	file:
+	    patch -p < tk4.2p2.patch
+	If the patch file has a .gz extension, it was compressed with
+	gzip.  To apply it, invoke a command like the following:
+	    gunzip -c tk4.2p2.patch.gz | patch -p
+	If the patch file has a .Z extension, it was compressed with
+	compress.  To apply it, invoke a command like the following:
+	    zcat tk4.2p2.patch.Z | patch -p
+	If you're applying a patch to a release that has already been
+	compiled, then before applying the patch you should cd to the
+	"unix" subdirectory and type "make distclean" to restore the
+	directory to a pristine state.
+
+Once you've done this, change to the "unix" subdirectory if you're
+compiling under UNIX, "win" if you're compiling under Windows, or
+"mac" if you're compiling on a Macintosh.  Then follow the instructions
+in the README file in that directory for compiling Tk, installing it,
+and running the test suite.
+
+4. Getting started
+------------------
+
+The best way to get started with Tk is by reading one of the introductory
+books.
+
+The subdirectory library/demos contains a number of pre-canned scripts
+that demonstrate various features of Tk.  See the README file in the
+directory for a description of what's available.  The file
+library/demos/widget is a script that you can use to invoke many individual
+demonstrations of Tk's facilities, see the code that produced the demos,
+and modify the code to try out alternatives.
+
+5. Summary of changes in Tk 4.2
+-------------------------------
+
+Here are the new features in Tk 4.2.  The release also includes several
+bug fixes.  See the "changes" file for a complete list of all changes.
+
+    1. The grid geometry manager has been completely rewritten:
+        - The layout algorithm produces much better layouts than before,
+	  particularly where rows or columns were stretchable.
+	- There is a new -pad option for rows and columns.
+	- The command "grid forget" has been renamed "grid remove",
+	  and "grid forget" now has semantics like "pack forget".
+	- The "grid" command no longer accepts floating-point values
+	  for row or column weights: integers must be used.
+
+    2. There are new commands for creating common dialog boxes:
+    tk_chooseColor, tk_getOpenFile, tk_getSaveFile and tk_messageBox.
+    These use native dialog boxes if they are available.  Examples of
+    the dialogs are available in the widget demo.
+
+    3. There is a new virtual event mechanism for handling events in a
+    more portable way.  See the new command "event".  It also allows
+    events (both physical and virtual) to be generated dynamically.
+    The Macintosh now generates <<Cut>>, <<Copy>>, <<Paste>>, and <<Clear>>
+    events from the edit menu.
+
+The only incompatible changes in this release are the last two for the
+gridder ("grid forget" and integer row/column weights).  Most scripts
+that ran under Tk 4.1 should also work under Tk 4.2 with no changes.
+
+6. Tcl/Tk newsgroup
+-------------------
+
+There is a network news group "comp.lang.tcl" intended for the exchange
+of information about Tcl, Tk, and related applications.  Feel free to use
+this newsgroup both for general information questions and for bug reports.
+We read the newsgroup and will attempt to fix bugs and problems reported
+to it.
+
+When using comp.lang.tcl, please be sure that your e-mail return address
+is correctly set in your postings.  This allows people to respond directly
+to you, rather than the entire newsgroup, for answers that are not of
+general interest.  A bad e-mail return address may prevent you from
+getting answers to your questions.  You may have to reconfigure your news
+reading software to ensure that it is supplying valid e-mail addresses.
+
+7. Tcl/Tk contributed archive
+--------------------------
+
+Many people have created exciting packages and applications based on Tcl
+and/or Tk and made them freely available to the Tcl community.  An archive
+of these contributions is kept on the machine ftp.neosoft.com.  You
+can access the archive using anonymous FTP;  the Tcl contributed archive is
+in the directory "/pub/tcl".  The archive also contains several FAQ
+("frequently asked questions") documents that provide solutions to problems
+that are commonly encountered by TCL newcomers.
+
+8. Support and bug fixes
+------------------------
+
+We're very interested in receiving bug reports and suggestions for
+improvements.  We prefer that you send this information to the
+comp.lang.tcl newsgroup rather than to any of us at Sun.  We'll see
+anything on comp.lang.tcl, and in addition someone else who reads 
+comp.lang.tcl may be able to offer a solution.  The normal turn-around
+time for bugs is 3-6 weeks.  Enhancements may take longer and may not
+happen at all unless there is widespread support for them (we're
+trying to slow the rate at which Tk turns into a kitchen sink).  It's
+very difficult to make incompatible changes to Tcl at this point, due
+to the size of the installed base.
+
+When reporting bugs, please provide a short wish script that we can
+use to reproduce the bug.  Make sure that the script runs with a
+bare-bones wish and doesn't depend on any extensions or other
+programs, particularly those that exist only at your site.  Also,
+please include three additional pieces of information with the
+script:
+    (a) how do we use the script to make the problem happen (e.g.
+	what things do we click on, in what order)?
+    (b) what happens when you do these things (presumably this is
+        undesirable)?
+    (c) what did you expect to happen instead?
+
+The Tcl/Tk community is too large for us to provide much individual
+support for users.  If you need help we suggest that you post questions
+to comp.lang.tcl.  We read the newsgroup and will attempt to answer
+esoteric questions for which no-one else is likely to know the answer.
+In addition, Tcl/Tk support and training are available commercially from
+NeoSoft (info@neosoft.com), Computerized Processes Unlimited
+(gwl@cpu.com), and Data Kinetics (education@dkl.com).
+
+9. Release organization
+------------------------
+
+Each Tk release is identified by two numbers separated by a dot, e.g.
+3.2 or 3.3.  If a new release contains changes that are likely to break
+existing C code or Tcl scripts then the major release number increments
+and the minor number resets to zero: 3.0, 4.0, etc.  If a new release
+contains only bug fixes and compatible changes, then the minor number
+increments without changing the major number, e.g. 3.1, 3.2, etc.  If
+you have C code or Tcl scripts that work with release X.Y, then they
+should also work with any release X.Z as long as Z > Y.
+
+Alpha and beta releases have an additional suffix of the form a2 or b1.
+For example, Tk 3.3b1 is the first beta release of Tk version 3.3,
+Tk 3.3b2 is the second beta release, and so on.  A beta release is an
+initial version of a new release, used to fix bugs and bad features
+before declaring the release stable.  An alpha release is like a beta
+release, except it's likely to need even more work before it's "ready
+for prime time".  New releases are normally preceded by one or more
+alpha and beta releases.  We hope that lots of people will try out
+the alpha and beta releases and report problems.  We'll make new alpha/
+beta releases to fix the problems, until eventually there is a beta
+release that appears to be stable.  Once this occurs we'll make the
+final release.
+
+We can't promise to maintain compatibility among alpha and beta releases.
+For example, release 4.1b2 may not be backward compatible with 4.1b1, even
+though the final 4.1 release will be backward compatible with 4.0.  This
+allows us to change new features as we find problems during beta testing.
+We'll try to minimize incompatibilities between beta releases, but if a
+major problem turns up then we'll fix it even if it introduces an
+incompatibility.  Once the official release is made then there won't
+be any more incompatibilities until the next release with a new major
+version number.
+
+Patch releases have a suffix such as p1 or p2.  These releases contain
+bug fixes only.  A patch release (e.g Tk 4.1p2) should be completely
+compatible with the base release from which it is derived (e.g. Tk
+4.1), and you should normally use the highest available patch release.

@@ -1,0 +1,10 @@
+09-10-01 vczip.c: make discipline data static -- it may be accessed after main() returns
+09-07-04 vczip.c: first attempt to unify vcodex(--method) and codex(--transform)
+09-02-02 vczip.c: -u is now a flag (no optional arg)
+09-01-18 vczip.c: fix bug that forgot to assign src file path
+08-11-04 vczip.c: change date to official kpv -lvcodex release
+08-06-06 sync with kpv; add ast plugins and optget() usage
+05-09-25 vczip.c: fix empty input test for pipes
+05-06-16 vczip.c: snarf from kpv
+05-06-30 vczip.c: handle vcsfmeth interface change
+05-06-28 vczip.c: snarf from kpv

@@ -1,0 +1,6 @@
+[OPTIONS]
+COMPRESS=TRUE
+REPORT=ON
+TITLE=Manual
+[FILES]
+old-tour.rtf

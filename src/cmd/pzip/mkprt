@@ -1,0 +1,7 @@
+for i
+do	j=${i##*/}
+	j=${j%.*}
+	print
+	print "\"${j}\""
+	grep -v '^#' $i
+done

@@ -1,0 +1,74 @@
+11-09-21 sfdczip.c: set SF_SHARE if uncompress discipline pushed
+11-03-07 pzip.h,pzpart.c: handle length@offset variable row size
+06-12-18 pzline.c: move to separate plugin source dir
+06-10-11 add sfstruse() error checks
+06-03-22 pzopen.c: change "input stream close error" to "data corrupted"
+05-07-17 pzinflate.c: use sferror() instead of sfsync() -- doh
+	 pzsplit.c: drop SF_WRITE sfreserve() to keep writes aligned
+05-06-30 pzsplit.c: work around sfreserve() write failure via sfwrite()
+04-04-08 add pznospace()
+04-02-29 pzip.h,pzline.c: fix pz_init() prototype
+03-11-04 pzpart.c: use PZ_HEAD to avoid multiple PZ_UPDATE, fix wrk overflow
+03-07-23 pzsplit.c: --split file size limited to --window
+03-07-17 pzpart.c: fix "//" partition translation
+	 pzpart.c: add include="file", library="..." disabled during include
+	 pzpart.c: default split window threshhold is now 16K
+	 pzsplit.c: free Id_t when done
+03-05-13 sfdcpzip.c: add SF_DBUFFER exception, SF_SHARE before sfreserve()
+03-05-05 sfdcpzip.c,sfdczip.c: add bzip support
+03-04-15 pzlib.h: add PZ_MARK_PART for partial last input record
+	 pzlib.h: add PZ_MARK_TAIL for tail records
+	 partial input record is now a warning and handled on inflate
+03-03-03 pzhead.c: PZ_FORCE disables unknown input diagnostic
+03-02-10 sfdczip.c,sfdcpzip.c: handle PZ_CRC and SFGZ_NOCRC
+03-02-06 pzhead.c: fmtquote() FMT_ALWAYS update
+03-01-04 pzpart.c: list range only if more than 2 elements
+02-12-25 pzip.h,pzpart.c,pzdeflate.c,pzwrite.c: add PZ_SORT
+02-12-18 pzwrite.c: add partial row buffer
+02-12-12 sfdcpzip.c: move disc arg to the end for discplined consistency
+02-12-11 sfdczip.c: add
+	 sfdcpzip.c: fix SF_WRITE, set disc.partition if passed in
+02-11-22 sfdcpzip.c: fix bug that did not close pz->pz->io (and its fd!)
+	 pzpart: check option errors (duh) and accept comment option
+02-10-31 pzpart: partition file "/" or "//" or "/gzip/" => gzip compress
+02-04-30 pzopen,pzhead: tighten pzip magic check via reasonable version number
+02-03-09 pzopen,pzdeflate,pzsync: add fatal error checks
+02-02-14 pzopen: disable PZ_UNKNOWN check if PZ_NOPZIP -- duh
+02-01-11 pzdeflate: use Sfoff_t for sfmove() return instead of ssize_t
+01-08-11 pzinit: add for static discipline library linking
+01-07-17 pzlib: call dllerror() on failed dllfind()
+01-06-28 pzpartnext: add to iterate over all partitions
+	 pzpartition: default partition can be on one line: `"label" size -'
+01-02-02 delay buffer allocation until pzpartinit()
+	 pzpart: fix non-terminated string bug for url-style paths
+01-01-01 pzopen: open new stream instead of using sfstdin for sfdcgzip()
+00-12-11 pzpart(): add -X0 => prefix.skip => skip prefix on uncompress
+00-10-04 pzhead(): accept empty input for compression -- duh
+00-05-31 pzclose(): check for pz->io == 0
+00-02-14 PZ_DELAY|PZ_HANDLE|PZ_UNKNOWN for 'unknown format' after pzlib() done
+00-01-26 pzlib: dlsym() for NAME and _NAME (some don't map `_' automatically)
+99-08-11 discipline cleanup
+	 pzdeflate: last record incomplete is an error
+	 pzline: add
+	 pzpart: add partition#name partition?name=value,...
+	 pzclose: add scaled bps to PZ_SUMMARY
+	 pzfixed: use size if available and do 2 col freq check
+	 pzfixed: add optional pz for tracing
+	 pzip.h: add PZ_REGRESS, Pz_t.test, drop PZ_TEST*
+	 *: details => options, use optstr() with usage for PZ_OPTION
+	 pzpart: fix off-by one max col check
+99-07-17 sfdcpzip: don't free disc on SF_CLOSE
+	 pzsplit: add
+99-06-23 add EOF checks to PZGETP() and PZGETZ()
+99-06-21 add Pz_t.fixed, name=value to partition file
+99-06-15 pzfixed: fix divide by 0
+99-06-04 resize pp->fix after detail changes
+99-03-17 add pzfixed()
+98-11-11 nmap==0 allowed
+98-11-01 add PZ_NOGZIP,PZ_NOPZIP for finer convert control
+98-10-20 add Pzdisc_t readf and writef and file trailer
+	 add pzconvert() discipline
+98-10-15 hide some Pzpart_t details; part access by name only
+98-10-01 2.0 format and interface -- Pzpart_t for multiple partitions
+98-09-09 1.3 format -- separate <run,off> <val> compression groups
+98-08-11 1.0 release

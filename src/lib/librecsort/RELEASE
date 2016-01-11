@@ -1,0 +1,81 @@
+12-05-28 rskey.c: fix unsigned comparison to 0
+11-10-11 recsort.h,rskeyopen.c: RSKEY_VERSION=20111011, add Rsdisc_t* argument
+11-09-27 rsopen.c,rsmerge.c: drop obsolete VM_TRUST
+10-05-25 rskey.c: locale-ize Rskey_t.tab and key_m_code()
+10-04-22 rskey.c: 'C' codeer => 'E' to make way for posix -C
+09-12-09 rskey.c: add h option for key_n_code (IEEE 1541-2002 scales)
+09-05-11 rskey.c: add collation mbxfrm() overflow panic (yes I know)
+09-05-11 rskey.c: fix mbxfrm() return value logic
+07-12-14 rskey.c: fix mb fixed field offset >= 99 key gen 
+07-10-30 rshdr.h: default INSIZE == PROCSIZE -- worth ~25% time!
+07-10-30 rskey.h,rskeyopen.c,rskey.c: honor locale collation order
+07-10-10 rskey.c: handle ascii signed zoned decimal (0x70 => negative)
+07-04-16 recsort.h,rskey.c: add RSKEY_KEYS
+06-12-15 rskeyhdr.h: increase MAXFIELD to INT_MAX
+06-07-17 rsprocess.c: re-key after RS_READ calout
+06-06-29 rsprocess.c: set obj key,keylen before RS_READ
+06-05-10 rsmerge.c: (car) caught 2 more missing RS_WRITE callouts!
+06-04-20 rsmerge.c: no RS_WRITE events for intermediate merge -- doh
+06-04-19 finally fixed multi-level merge v record format bugs
+06-02-14 recsort.h: always __EXPORT__ rs_disc()
+06-02-09 rstemp.c: sfset(SF_READ|SF_WRITE) not needed
+05-12-01 -lsync event callout bug fixes -- finally working?
+05-11-28 rswrite.c: honor RS_OTEXT
+05-11-09 rsmerge.c: fix RS_ITEXT+notify logic
+05-10-18 rsprocess.c: RS_READ callouts finally in the right place
+05-10-12 rstemp.c: keep temp write SF_WRITE and temp read SF_READ
+05-08-22 rsmerge.c: fix RS_WRITE callouts
+05-06-30 rsmerge.c: handle all RS_TEXT record formats
+05-06-28 add rsnew()+rsinit() to split rsopen() for rsfile*()
+05-06-27 rstemp.c: add temp file support and RS_TEMP_* events
+	 rsfile.c: add input/output file open RS_FILE_* events
+05-06-11 rskey*.c: initialize disc->data via REC_*_TYPE macros -- doh
+05-05-15 handle disc->data Recfmt_t
+04-10-31 rsmerge.c: fix EOF detection
+04-10-15 rs-copy.c: add
+04-10-11 recsort.h: change int count to Sfulong_t count
+04-09-28 recsort.h: add { RS_TERMINATE RS_DELETE RS_ACCEPT RS_INSERT }
+	 rsprocess.c,rswrite.c: initial RS_INSERT code -- not right yet
+04-08-11 rskeydump.c: list key.nproc if >1
+04-06-15 rsprocess.c: fix V format record read
+04-02-11 rskey.c: fix old ast reclen:fieldlen:offset parse
+03-10-11 recsort.h: add RS_IGNORE Rs_t.type hint
+03-09-18 rswrite.c: fix RS_WRITE exceptions
+03-09-06 rskey.c: add 'Z' key_z_code for zoned decimal
+03-09-04 rsprocess.c: rs->disc->data==-1 => ibm v format records
+03-09-03 rslib.c: rslib() separator expanded to [,\t\r\n]
+03-09-01 recsort.h: add rslib(), discipline stack, extra event arg
+03-08-29 recsort.h: add RS_READ and RS_WRITE events
+03-08-15 rskey.c: add -Jseed for random shuffle (jumble)
+03-05-27 rskey.c: add Ci[o] code set [conversion]
+03-05-26 rskey.c: add 'p' packed decimal (bcd)
+03-05-23 recsort.h: add Rskey_t.code for global ccode index
+03-05-22 rskey.c: handle -k.reclen -k.position.length
+03-05-21 recsort.h: add events mask to Rsdisc_t, change Rskey_t disc to pointer
+	 rsnotify.c: add
+03-03-07 Makefile: generate dll for dr. ek
+03-01-21 rsmerge.c: fix typo that kicked in on large (~100K) record sizes
+01-01-01 recsort.h: _RSHDR_H => _BLD_recsort; should have been done years ago
+00-08-31 rskey.c: fix code() buffer off by one (too far)
+00-03-17 rskey.c: consult RLIMIT_DATA for size limits
+00-01-25 rskey.c: win32.i386 optimizer generates bad code for key_n_code
+99-11-19 rskeylist.c: add usage
+99-07-28 rskey.c: factor number of key fields into rs.disc.key
+99-03-03 recsort.h: add RSKEYDISC() to get Rskey_t.keydisc from Rsdisc_t*
+98-08-11 add rsmerge() write error detection
+96-12-25 add (ulong) for alpha 64 bit << bug (ahem..correct stdc interpretation)
+	 add (int) for unsigned char subtracts
+	 drop function __IMPORT__
+	 use vmalloc() for all allocations
+	 we're getting sick of bsd: <stdlib.h> has a radixsort() prototype!
+	 unroll rs-rasp.c for the hp.pa compiler; don't trust it!
+96-10-31 sfio,dll update
+	 drop MAXFIELD restriction by converting to linked list
+	 add -k*a to accumulate fields from dup keys
+96-10-22 K&R cast cleanup
+96-10-17 iffe test for sizeof(long)==8
+96-10-15 oops -- regression test bug let rswrite() bug through
+96-10-11 all regression tests pass for all methods
+96-10-01 rskey discipline and eventf; remove libast dependencies
+96-09-20 rskey(kp,s,obsolete)
+96-09-18 first working version with -lsort (ok, so -c and -m don't work yet)

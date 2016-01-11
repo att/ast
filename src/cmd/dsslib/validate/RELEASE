@@ -1,0 +1,6 @@
+03-04-05 avoid possible floating point underflow/overflow
+03-02-11 Vmbest => Vmlast
+03-01-27 keep per field dict of all invalid values for summary
+03-01-26 add unknown map value dictionary
+03-01-21 add cxlocation() to errorf messages
+03-01-11 first release

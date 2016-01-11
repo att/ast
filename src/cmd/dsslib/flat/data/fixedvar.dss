@@ -1,0 +1,43 @@
+<METHOD>flat</>
+<FLAT>
+ <NAME>TEST</>
+ <DESCRIPTION>converted by cpy2dss from copybook standard input</>
+ <IDENT>@(#)$Id: TEST (AT&T Labs Research) 2005-07-17 $</>
+ <LIBRARY>num_t</>
+ <FIELD>
+  <NAME>TEST_FIELD_01</>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <WIDTH>4</>
+  </>
+ </>
+ <FIELD>
+  <NAME>TEST_FIELD_02</>
+  <FIELD>
+   <NAME>TEST_FIELD_02_SIZE</>
+   <TYPE>number</>
+   <PHYSICAL>
+    <CODESET>ascii</>
+    <WIDTH>2</>
+   </>
+  </>
+  <FIELD>
+   <NAME>TEST_FIELD_02_DATA</>
+   <TYPE>string</>
+   <PHYSICAL>
+    <CODESET>ascii</>
+    <WIDTH>TEST_FIELD_02_SIZE</>
+   </>
+  </>
+ </>
+ <FIELD>
+  <NAME>TEST_FIELD_03</>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <WIDTH>4</>
+   <DELIMITER>&newline;</>
+  </>
+ </>
+</>'

@@ -1,0 +1,43 @@
+09-01-06 cpp.tst: add macro definition overwrite test
+09-01-05 cpp.tst: add another multiple include guard test
+08-10-31 cpp.tst: add #x and pp:nomultiple tests
+06-05-09 cpp.tst: add pp:externalize tests
+	 cpp.tst: add compatibility ul numeric qualifier tests
+06-01-11 cpp.tst: update pp:passthrough tests
+05-12-16 cpp.tst: add imake pp:passthrough comment splice test
+05-04-11 cpp.tst: add '"a" #s' catliteral + stringize
+04-10-01 cpp.tst: adjust for hidden line patch
+04-08-11 cpp.tst: adjust for ppproto.c patch
+03-12-12 cpp.tst: add empty macro actual tests
+03-11-25 cpp.tst: add -D-d test
+03-11-12 cpp.tst: add #if expression tests
+03-06-21 cpp.tst: add T_INVALID ? splice bug test
+03-05-19 cpp.tst: add stray SKIPMACRO test
+03-05-18 cpp.tst: add SYS_FUNCTION ungetchr() bug fix test
+03-04-30 cpp.tst: add pp:mapinclude tests
+02-11-07 cpp.c: exit() => return for lame linters
+02-10-10 cpp.tst: add does not end with `newline' tests
+02-05-24 cpp.tst: add TEST 15 pragma space canonicalization tests
+02-03-15 cpp.tst: add TEST 14 for libpp/ppproto.c memory fault fix
+01-10-20 cpp.tst: add pp:splicespace "..." tests
+01-06-01 cpp.tst: add -M* dependency generation tests
+01-02-14 cpp.tst: pp:pragmaexpand pp:catliteral # operator interactions
+01-02-05 cpp.tst: add (finally)
+96-01-31 --- release 2.0 ---
+92-04-01 update for new libpp
+92-04-01 --- release 1.1 ---
+90-10-11 update cpp.1
+88-06-08 update makefile to install Makeinstall.mk ALTPP.LINK links
+88-02-29 redo PP_INITDIR initialization
+87-10-11 update man page
+87-09-18 add ppop(PP_DONE) call
+87-04-24 recode for updated library interface
+87-04-03 add -D-Ttest to enable debugging test code
+87-04-02 add -I-Rfile for PP_READ
+	 move #include "ppdefault.h" to ppargs.c using PP_READ
+	 add -D-I[id] to name line sync directive ("line" if id omitted)
+87-03-31 change -Nfilename to -D-Ffilename
+87-03-30 add -D-Llanguage for PP_LANGUAGE,language
+	 add -D-H for PP_NOHOSTED
+	 add -I-H for PP_HOSTED
+87-03-24 --- release 1.0 ---

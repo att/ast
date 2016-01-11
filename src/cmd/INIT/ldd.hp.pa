@@ -1,0 +1,21 @@
+: hp.pa ldd
+while	:
+do	case $# in
+	0)	break ;;
+	esac
+	case $1 in
+	-*|+*)	;;
+	*)	break ;;
+	esac
+	shift
+done
+trap ':' 15
+for cmd
+do	case $# in
+	1)	;;
+	*)	echo $cmd: ;;
+	esac
+	_HP_DLDOPTS=-ldd "$cmd" < /dev/null 2> /dev/null | sort -u
+	# chatr "$cmd" |
+	# sed -e '/^[ 	]*dynamic[ 	][ 	]*/!d' -e 's//	/'
+done

@@ -1,0 +1,288 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>netflow-sample</>
+	<DESCRIPTION>AT&T netflow smart sample.</>
+	<IDENT>@(#)$Id: netflow-sample txt (AT&T Labs Research) 2004-04-01 $</>
+	<LIBRARY>ip_t</>
+	<LIBRARY>time_t</>
+	<FIELD>
+		<NAME>router</>
+		<DESCRIPTION>the router</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>iface</>
+		<DESCRIPTION>input interface</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>oface</>
+		<DESCRIPTION>output interface</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>in</>
+		<DESCRIPTION>input SNMPID</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>out</>
+		<DESCRIPTION>output SNMPID</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_addr</>
+		<DESCRIPTION>source IP address</>
+		<TYPE>ipaddr_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_mask</>
+		<DESCRIPTION>source IP address mask used for routing at the router</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_port</>
+		<DESCRIPTION>source port</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_as</>
+		<DESCRIPTION>source AS</>
+		<TYPE>as_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_addr</>
+		<DESCRIPTION>the destination IP address</>
+		<TYPE>ipaddr_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_mask</>
+		<DESCRIPTION>dst_ination IP mask used for routing </>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_port</>
+		<DESCRIPTION>dst_ination IP port</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_as</>
+		<DESCRIPTION>dst_ination AS</>
+		<TYPE>as_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>protocol</>
+		<DESCRIPTION>protocol of the flow</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>tcpflags</>
+		<DESCRIPTION>tcp flags</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>tos</>
+		<DESCRIPTION>type of service</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>bytes</>
+		<DESCRIPTION>number of bytes</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>packets</>
+		<DESCRIPTION>number of packets</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>first</>
+		<DESCRIPTION>start of the flow in seconds since the epoch</>
+		<TYPE>tm_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>firstms</>
+		<DESCRIPTION>start of the flow in residual milliseconds</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>last</>
+		<DESCRIPTION>end of the flow in seconds since the epoch</>
+		<TYPE>tm_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>lastms</>
+		<DESCRIPTION>end of the flow in residual milliseconds</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>lossfactor</>
+		<DESCRIPTION>raw netflow loss factor</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>samplingfactor</>
+		<DESCRIPTION>the sampling rate (see smart sampling)</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>packetsamplingfactor</>
+		<DESCRIPTION>the sampling rate that the router is using for sampled netflow</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_prefix</>
+		<DESCRIPTION>bgp network for source IP</>
+		<TYPE>ipprefix_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_prefix</>
+		<DESCRIPTION>bgp network for dest IP</>
+		<TYPE>ipprefix_t</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_organization</>
+		<DESCRIPTION>AT&T customer associated with the src IP</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_organization</>
+		<DESCRIPTION>AT&T customer associated with the dest IP</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_cp</>
+		<DESCRIPTION>content provider associated with the src IP</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_cp</>
+		<DESCRIPTION>content provider associated with the dest IP</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>application</>
+		<DESCRIPTION>application</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>ingress</>
+		<DESCRIPTION>list of entering traffic interfaces</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>egress</>
+		<DESCRIPTION>list of leaving traffic interfaces</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>,</>
+		</>
+	</>
+	<FIELD>
+		<NAME>doublecount</>
+		<DESCRIPTION>dunno</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>&newline;</>
+		</>
+	</>
+</>

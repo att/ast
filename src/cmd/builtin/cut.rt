@@ -1,0 +1,144 @@
+# regression tests for the cut utility
+# some from gnu textutils
+
+UNIT cut
+
+TEST '-d -f'
+
+	DATA f1 $'a:b:c'
+	EXEC -d: -f1,3- f1
+	EXEC -d: -f1,3- f1
+	EXEC -d: -f2- f1
+	EXEC -d: -f4 f1
+	EXEC -d: -f4 f1
+
+TEST 02 '-c'
+
+	DATA f1
+	EXEC -c4 f1
+	DATA f1 $'123'
+	EXEC -c4 f1
+	EXEC -c4 f1
+	DATA f1 $'123\n1'
+	EXEC -c4 f1
+	DATA f2 $'1234567890'
+	EXEC -c-5 f2
+	EXEC -c1-5 f2
+	EXEC -c5- f2
+	EXEC -c5-10 f2
+
+TEST 03	'-d -f -s'
+
+	DATA f1 $'abc'
+	EXEC -s -d: -f2,3 f1
+	DATA f1 $'a:b:c'
+	EXEC -s -d: -f3- f1
+	EXEC -s -d: -f3-4 f1
+	EXEC -s -d: -f3,4 f1
+	EXEC -s -d: -f2,3 f1
+	EXEC -s -d: -f1,3 f1
+
+TEST 04 '-d -f'
+
+	DATA f1 $':::'
+	EXEC -d: -f1-3 f1
+	DATA f1 $':::'
+	EXEC -d: -f1-4 f1
+	EXEC -d: -f2-3 f1
+	EXEC -d: -f2-4 f1
+	DATA f5 $'1 2 3 4 5'
+	EXEC -d' ' -f1-5 f5
+	EXEC -d' ' -f1 f5
+	EXEC -d' ' -f2 f5
+	EXEC -d' ' -f3 f5
+	EXEC -d' ' -f4 f5
+	EXEC -d' ' -f5 f5
+	EXEC -d' ' -f1,2 f5
+	EXEC -d' ' -f1,3 f5
+	EXEC -d' ' -f1,4 f5
+	EXEC -d' ' -f1,5 f5
+	EXEC -d' ' -f2,3 f5
+	EXEC -d' ' -f2,4 f5
+	EXEC -d' ' -f2,5 f5
+	EXEC -d' ' -f2,4 f5
+	EXEC -d' ' -f3,5 f5
+	EXEC -d' ' -f4,5 f5
+
+TEST 05 '-d -f -s'
+
+	DATA f1 $':::'
+	EXEC -s -d: -f1-3 f1
+	DATA f1 $':::'
+	EXEC -s -d: -f1-4 f1
+	DATA f1 $':::'
+	EXEC -s -d: -f2-3 f1
+	DATA f1 $':::'
+	EXEC -s -d: -f2-4 f1
+	DATA f1 $':::\n:'
+	EXEC -s -d: -f2-4 f1
+	DATA f1 $':::\n:1'
+	EXEC -s -d: -f2-4 f1
+	DATA f1 $':::\n:a'
+	EXEC -s -d: -f1-4 f1
+	DATA f1 $':::\n:1'
+	EXEC -s -d: -f3- f1
+
+TEST 07 'no fields'
+
+	DATA f1
+	EXEC -f3- f1
+	EXEC -s -f3- f1
+	EXEC -b 1 f1
+
+TEST 08 'two empty fields'
+
+	DATA f1 $':'
+	EXEC -s -d: -f2-4 f1
+
+TEST 09 'fixed length records'
+
+	DATA -n f1 $'abcdefghij'
+	EXEC  -r5 -b2-4 f1
+	EXEC  -N -r5 -b2-4 f1
+
+TEST 10 'misc errors'
+
+	DIAGNOSTICS
+
+	EXEC
+	EXEC -b
+	EXEC -f
+	DATA f1 $':'
+	EXEC f1
+	EXEC -b '' f1
+	EXEC -f '' f1
+	EXEC -s -b4 f1
+
+TEST 11 'multibyte UTF-8 -- off-by-oners doomed here'
+
+	EXPORT LC_CTYPE=C.UTF-8
+
+	DATA a.dat $'\303\237\342\202\254\342\202\254f2\342\202\254\303\274'
+	EXEC -d $'\342\202\254' -f1 a.dat
+
+	DATA b.dat $'\303\237\342\202\254\342\202\254\146\062\342\202\254\303\274'
+	DATA c.dat $'\303\237\342\202\254\342\202\254\146\062\342\202\254\303\274\012'
+	for ((i = 1; i < 16; i++))
+	do	for ((j = i + 1; j <= 16; j++))
+		do
+			for n in '' -n
+			do
+				for f in b c
+				do
+					EXEC $n -b $i-$j $f.dat
+				done
+			done
+		done
+	done
+
+TEST 12 'multibyte euc'
+
+	EXPORT LC_CTYPE=ja_JP.eucJP
+
+	DATA a.dat $'\xa4\xa2\xa4\xa4\xa4\xa4\xa4\xa6\xa4\xa8'
+	EXEC -d $'\xa4\xa4' -f1 a.dat

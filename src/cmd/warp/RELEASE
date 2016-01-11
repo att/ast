@@ -1,0 +1,14 @@
+12-06-22 warp.c: add utimensat()
+08-11-15 warp.c: fix time() _WIN32 intercept
+05-02-01 warp.sh: IFS may be unset and { ash bsh } don't on startup -- wow
+05-01-01 warp.c,feature/lib: add utimes() intercept with struct timespec
+04-12-09 warp.sh: %s instead of %#, add clock_gettime() intercepts
+04-07-26 warp.sh: update runtime docs
+04-07-23 Makefile: link with static ast libs
+01-10-20 warp: drop :WWW: standalone distribution
+99-11-19 warp: fix _RLD_LIST for sgi.mips4-n32
+99-05-21 add: _xstat64
+99-04-01 add :WWW:, change from function to script
+98-04-01 add in factor code and intercepts
+98-03-11 initial release
+98-03-05 first implementation

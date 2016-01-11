@@ -1,0 +1,29 @@
+# regression tests for the cmp utility
+
+UNIT cmp
+
+TEST basics
+
+	DATA i $'a\x{89}b\x{c9}c\tdIe'
+	DATA j $'a\x{8a}b\x{ca}c\ndJe'
+	EXEC i j
+	EXEC -b i j
+	EXEC -c i j
+	EXEC -bc i j
+	for ((n=1; n<=11; n++))
+	do
+		for ((d=0; d<=5; d++))
+		do
+			EXEC -n $n -d $d -l i j
+			EXEC -n $n -d $d -lb i j
+			EXEC -n $n -d $d -lc i j
+			EXEC -n $n -d $d -lbc i j
+		done
+	done
+	for ((i=0; i<=11; i++))
+	do
+		for ((j=0; j<=11; j++))
+		do
+			EXEC -i $i:$j -l i j
+		done
+	done

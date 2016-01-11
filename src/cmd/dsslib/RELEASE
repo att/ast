@@ -1,0 +1,4 @@
+11-08-19 add DSS_BASE method flag to handle cx scoping
+02-11-22 */*.c: add unsigned => signed casts for msvc long long => double 
+02-11-20 split support libs from libdss main source
+	 flat: add lazy field recognition

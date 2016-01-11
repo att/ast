@@ -1,0 +1,2 @@
+: sgi.mips ldd
+odump -Dl "$@"

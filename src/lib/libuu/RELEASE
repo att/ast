@@ -1,0 +1,7 @@
+09-09-24 uulib: add cat method for mail sevenbit|7bit encoding
+03-01-07 uulib: check UU_HEADER in bx_header()
+01-03-27 uulib: add UU_LOCAL for local path conversion
+00-03-06 uulib: !UU_HEADER decode checks for candidate encodings
+00-03-04 uulib: add posix decode size check
+98-12-25 uu_encode: fix dp->fill usage
+98-11-11 uulib: add binhex encode

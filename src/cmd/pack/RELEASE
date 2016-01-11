@@ -1,0 +1,4 @@
+2003-05-21 pack.tst: add
+2003-04-28 pack,unpack: handle file size > 2Gb (and > 4Gb)
+2002-03-09 pack,unpack: diagnostic if no file operands
+1999-05-03 add optget() docs

@@ -1,0 +1,97 @@
+.\"
+.\" Glenn Fowler
+.\" AT&T Bell Laboratories
+.\"
+.\" @(#)bax.1 (gsf@research.att.com) 05/09/95
+.\"
+.fp 5 CW
+.TH BAX 1
+.SH NAME
+bax \- tw + pax delta backup
+.SH SYNOPSIS
+.B bax
+.I file
+.I base
+[
+.I "dir ..."
+]
+.SH DESCRIPTION
+.I bax
+generates backup tapes using
+.I tw
+and
+.IR pax .
+.I file
+is the name of the backup archive to be generated.
+If
+.I base
+is
+.L \-
+then a full backup is generated in
+.IR file .
+Otherwise
+.I base
+names a previous full backup against which a delta backup archive is
+generated in 
+.IR file .
+The backup starts at the directories
+.IR "dir ..." ,
+.L /
+by default.
+File system boundaries are not crossed;  multiple file systems
+must be specified as separate
+.I dir
+arguments.
+.P
+Variables defined in the shell script
+.L ../lib/bax/init
+located on
+.L $PATH
+customize the files and directories to be backed up.
+The variables and their default values are:
+.TP
+\fBarch_name\f5='arch'\fR
+.TP
+\fBarch_keep\f5='bin|fun|lib'\fR
+Shell patterns that match the architecture specific root directories and files.
+The architecture specific files that match
+\f5*/${\fIarch_name\f5}/*/${\fIarch_keep\f5}\fR are retained;
+all other architecture specific files are skipped.
+.TP
+\fBbig_size\f5=5000000\fR
+.TP
+\fBbig_magic_keep\f5='mail'\fR
+Files larger than \f5${\fIbig_size\f5}\fR must have a magic file type
+that matches \f5${\fIbig_magic_keep\f5}\fR.
+.TP
+\fBname_skip\f5'?(*.)(old|save|tmp)?(.*)|.*-cache'\fR
+File base names that match \f5${\fIname_skip\f5}\fR are skipped.
+.TP
+\fBpath_skip\f5='/dev|/usr/local/ast/ship'\fR
+File path names that match \f5${\fIpath_skip\f5}\fR are skipped.
+.TP
+\fBreg_magic_skip\f5='core|cql * index|history|TeX dvi'\fR
+Regular files with a magic file type that matches \f5${\fIreg_magic_skip\f5}\fR
+are skipped.
+.TP
+\fBsrc_name\f5='src'\fR
+.TP
+\fBsrc_magic_skip\f5='executable|object|(archive|shared) library'\fR
+Files under \f5*/${\fIsrc_name\f5}/*\fR with a magic file type that
+matches \f5${\fIreg_magic_skip\f5}\fR are skipped.
+.SH EXAMPLES
+To generate a full backup on \f5/dev/st0\fP:
+.EX
+bax /dev/st0 -
+.EE
+To generate a delta backup in \f5/tmp/delta.bax\fP for the full backup above:
+.EX
+bax /tmp/delta.bax /dev/st0
+.EE
+or if you have two tape drives:
+.EX
+mt /dev/st1 eod # to append the next delta
+bax /dev/st1 /dev/st0
+.EE
+.SH "SEE ALSO"
+file(1), pax(1), tw(1), vdelta(3)

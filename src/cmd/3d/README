@@ -1,0 +1,25 @@
+vpath - /#option/debug=level
+
+	set debug trace level
+
+vpath - /#option/trace[=pid]
+
+	turn on truss style tracing with option pid prefix
+
+vpath	/dev/tcp/share/cat/#/home/gsf/tmp/call.out \
+	/#fs/proc/global/monitor/call=fork,exec,exit
+
+	monitor fork,exec,exit by sending messages to the cat server
+
+vpath	/tmp/io.out \
+	/#fs/io/global/monitor/call=open,close,write
+
+	monitor open,close,write by appending messages /tmp/io.out
+
+vpath /home/gsf/tmp/rpl.out /#fs/rpl/monitor
+
+	create a per-tree monitor to rpl.out
+
+vpath . /#rpl /tmp /#rpl
+
+	all calls on files in . and /tmp trees monitored to rpl.out

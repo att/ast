@@ -1,0 +1,61 @@
+07-12-07 jcl.rt: add prefix '/' delimiter tests
+07-06-06 JCL.mk: add USR1 USR2 interrupt handlers
+07-02-20 cpy2dss.c: handle POINTER, ignore IS
+06-11-11 jcl.c: fix map vs name=value arg precedence
+06-11-11 JCL.mk: export JCL_AUTO_* instead of via command line
+06-10-11 add sfstruse() error checks
+06-08-15 jcm.mk: add --index=n
+06-08-11 JCL.mk: add JCLGROUP for shared coshell
+06-08-08 JCL.mk: parameterize to JCLROOT=$(PACKAGEROOT)
+06-08-03 jcm.c: fix group base prereq
+06-07-31 JCL.mk: parameterize event db path
+06-06-21 jcm.c,JCL.mk: .EVENT.WAIT and .EVENT.RAISE update
+06-06-11 jcm.c: .EVENT.GET => .EVENT.WAIT, .EVENT.SET => .EVENT.RAISE
+06-05-25 cpy2dss.c: handle PIC -9(3).9(2)
+06-05-22 jcm.c,JCL.mk: add .EVENT.GET .EVENT.SET
+06-05-18 jcl.c: exit code cleanup
+06-05-17 jcl.c: update docs
+06-05-16 jcm.c: add job.base and user 'O' for job.name if specified
+05-09-22 jcm.c: add --initialize=file, handle 'T' card prescan
+	 jcm.rt: add tests
+05-09-15 cpy2dss.c: ebcdic-m (mvs) now the default
+05-09-12 jcm.c: ~PX0000 => $(JCL_AUTO_PX)0000
+05-08-31 jcl.rt,JCL.mk: add
+05-08-29 jcm.c: add JCL_AUTO prefix to makefile jcl action vars
+	 jcl.c: add -O, --odate, -R, --rdate, -S, --date
+05-05-31 cpy2dss.c: add typename()
+05-05-09 cpy2dss.c: add <QUOTEALL>
+05-04-18 cpy2dss.c: add --escape, --quote-begin, --quote-end
+05-04-11 cpy2dss.c: handle accumulated fields > fixed record size
+	 cpy2dss.c: handle --sized --text --variable
+05-02-14 jcl.c: add --import env var precedence over --map definitions
+04-12-23 cpy2dss.c: mark structs and struct arrays for --offsets
+04-12-21 cpy2dss.c: add type field to --offsets
+04-10-31 jcl.tst: add JCL_DD_ALIAS tests
+	 jcl.c: add -r,--resolve to resolve/map path operands
+04-10-20 cpy2dss.c: add -C,--comp=from:to
+04-09-27 cpy2dss.c: fix OCCURS and structure offsets, add -k,--keep
+04-09-21 jcl.c: add -s,--subdir
+04-09-20 jcl.tst: handle "export JCL_AUTO_JOB=job" change
+04-09-15 jcl.c: fix optset() to honor jcl->roflags
+	 jcl.tst: add * prefix match tests
+04-08-24 cpy2dss.c: handle REDEFINES => <UNION>, add --offsets
+04-08-06 split cmd/jcl => lib/libjcl + cmd/jcl
+04-06-18 jcl.c: JCL_LISTDATA => JCL_LISTINPUTS|JCL_LISTOUTPUTS
+	 jcl.c: --list=dd => --list=inputs or --list=outputs
+	 cpy2dss.c: add --bytemask
+04-06-09 jcl.c: default JCL_MAPFILE is now optional
+04-05-31 cpy2dss.c: fix structure pop logic, add --sized
+04-05-20 cpy2dss.c: fix --variable to *also* emit <VARIABLE>1</>
+04-05-19 cpy2dss.c: fix --variable to emit terminator and width
+04-05-14 cpy2dss.c: add --terminator=char and --variable
+04-05-06 cpy2dss.c: handle nested structs and out of sync level indices
+04-05-04 cpy2dss.c: promote from test area
+04-02-29 jcl.tst: add empty PARM test
+03-11-14 jcm.c: add from control-m experiments
+03-10-20 --map=prefix by default, --map=- to disable
+	 --map file now a sequence of ops: "map" and "set" for now
+03-10-15 add --map=prefix-map
+03-10-10 more tests
+03-10-08 reliable -x output with regression tests
+03-10-01 first code

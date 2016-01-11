@@ -1,0 +1,35 @@
+: -O* specialization cc wrapper : 2011-11-11 :
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+cc=cc
+
+CCREPLACE='' # these (possibly empty) options replace -O*
+CCALWAYS='' # these (possibly empty) options always set
+
+case $CCREPLACE in
+'')	;;
+*)	case " $* " in
+	*" -O"*)
+		set '' "$@" ''
+		shift
+		while	:
+		do	a=$1
+			shift
+			case $a in
+			'')	break
+				;;
+			-O*)	set '' "$@" $CCREPLACE
+				;;
+			*)	set '' "$@" "$a"
+				;;
+			esac
+			shift
+		done
+		;;
+	esac
+	;;
+esac
+$cc $CCALWAYS "$@"

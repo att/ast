@@ -1,0 +1,3 @@
+DESKSH_IMGS=$HOME/desksh/imgs
+PRINT_CMD=lp
+TKCDB=$HOME/tkcdb

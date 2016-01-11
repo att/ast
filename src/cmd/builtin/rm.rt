@@ -1,0 +1,13 @@
+NOTE regression tests for the rm command
+
+UNIT rm
+
+TEST basics
+
+	DATA - x
+	EXEC -f x
+	EXEC -f x
+
+	DATA - x
+	EXEC -f x x
+	EXEC -f x x

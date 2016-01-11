@@ -1,0 +1,5 @@
+10-05-26 Rskey_t.tab is now an array
+07-04-20 handle no main key as documented
+07-04-20 add "absolute" option to just list the minimum/maximum
+06-11-23 add min:=a,min:=b for two separate minima tests
+06-06-29 first release

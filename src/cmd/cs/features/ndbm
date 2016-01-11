@@ -1,0 +1,20 @@
+tst	lib_ndbm -ldbm note{ -ldbm has ndbm interface }end link{
+	#include <ndbm.h>
+	main()
+	{
+		int		n;
+		DBM*		dbm;
+		datum		val;
+		static datum	key;
+		dbm = dbm_open("dbm", 0, 0);
+		dbm->dbm_blkptr = 0;
+		dbm->dbm_keyptr = 0;
+		val = dbm_fetch(dbm, key);
+		n = dbm_store(dbm, key, val, 0);
+		n = dbm_delete(dbm, key);
+		n = dbm_error(dbm);
+		dbm_clearerr(dbm);
+		dbm_close(dbm);
+		return 0;
+	}
+}end

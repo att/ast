@@ -1,0 +1,22 @@
+www
+
+	http://publibz.boulder.ibm.com/cgi-bin/bookmgr_OS390/BOOKS/iea2b600/
+
+ispf rexx skeleton
+
+	http://systemprogrammer.com/sub9.htm
+
+control-M
+
+	http://www.bmc.com/supportu/hou_Support_ProdVersion/0,2906,19097_0_36034_0,00.html
+
+	auto edit
+
+		%%BLANKn	n blanks
+		%%A%%B		eval %%B first, then %%A(value-of-B)
+
+jcm
+	.SOURCE : /billing...
+	event : JOB-jobname
+	JOB-jobname : jobname
+		$(JCL) $(JCLFLAGS) $(*)

@@ -1,0 +1,140 @@
+<METHOD>flat</>
+<#INCLUDE#>ip.map</>
+<FLAT>
+	<NAME>netflow-cflow</>
+	<DESCRIPTION>netflow cflow.</>
+	<IDENT>@(#)$Id: netflow-cflow txt (AT&T Labs Research) 2006-02-07 $</>
+	<LIBRARY>ip_t</>
+	<LIBRARY>time_t</>
+	<PRINT>%(flowid)s %(linkid)s %(src_addr)s %(dst_addr)s %(packets)s %(bytes)s %(start:%K)s %(end:%K)s %(src_port)s %(dst_port)s %(tcpflags)s %(protocol)s</>
+	<FIELD>
+		<NAME>flowid</>
+		<DESCRIPTION>flow identifier</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>NA_1</>
+		<DESCRIPTION>not used</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>NA_2</>
+		<DESCRIPTION>not used</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>linkid</>
+		<DESCRIPTION>link id</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_addr</>
+		<DESCRIPTION>source IP address</>
+		<TYPE>ipaddr_t</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_addr</>
+		<DESCRIPTION>destination IP address</>
+		<TYPE>ipaddr_t</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>packets</>
+		<DESCRIPTION>number of packets</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>bytes</>
+		<DESCRIPTION>number of bytes</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>start</>
+		<DESCRIPTION>start of the flow in seconds since the epoch</>
+		<TYPE>time_t</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>end</>
+		<DESCRIPTION>end of the flow in seconds since the epoch</>
+		<TYPE>time_t</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>src_port</>
+		<DESCRIPTION>source port</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>dst_port</>
+		<DESCRIPTION>dst_ination IP port</>
+		<TYPE>number</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>tcpflags</>
+		<DESCRIPTION>tcp flags</>
+		<TYPE>number</>
+		<MAP>ipflags</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>protocol</>
+		<DESCRIPTION>protocol of the flow</>
+		<TYPE>number</>
+		<MAP>ipprotocol</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>NA_3</>
+		<DESCRIPTION>not used</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>NA_4</>
+		<DESCRIPTION>not used</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>&newline;</>
+		</>
+	</>
+</>

@@ -1,0 +1,12 @@
+10-06-01 sync with ast api 20100601
+07-02-22 probe.c: fix double sfclose(fp)
+06-09-05 probe.c: add -f, --force
+02-10-30 probe.c: reset proc->rfd after sfnew() to avoid close() error
+02-09-21 probe.c: handle strlen(base) != BASE_MAX
+02-09-11 probe.c: add more override docs
+02-01-30 probe.c: add probe.ini check to match libast/pathprobe()
+01-12-03 probe.c: return HOME relative path if readonly/non-suid fs
+00-08-11 probe: fix non-suid generation check
+00-01-11 probe: fix -t with writable info
+99-09-01 probe: add --override
+99-05-09 probe: long options

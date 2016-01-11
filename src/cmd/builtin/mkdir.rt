@@ -1,0 +1,40 @@
+NOTE regression tests for the mkdir command
+
+UNIT mkdir
+
+TEST '"-m =" vs. umask'
+
+	for mask in 000 007 070 077 700 707 770 777
+	do
+
+	UMASK $mask
+
+	for who in '' u g o ug uo go a
+	do
+
+	EXEC -m ${who}=rx d
+	PROG chmod -v + d
+	PROG rmdir d
+
+	done
+
+	for perm in 777 +777 -777 222 +222 -222
+	do
+
+	EXEC -m ${perm} d
+	PROG chmod -v + d
+	PROG rmdir d
+
+	done
+
+	done
+
+TEST '-p vs umask vs intermediate and final modes'
+
+	UMASK 0202
+
+	EXEC -pv a/b/c
+
+	PROG chmod -v + a a/b a/b/c
+
+	EXEC -v d

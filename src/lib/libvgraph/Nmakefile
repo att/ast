@@ -1,0 +1,10 @@
+:PACKAGE: ast
+
+CCFLAGS = $(CC.DLL) $(CC.OPTIMIZE)
+
+vgraph :LIBRARY: grhdr.h kpvdebug.h \
+	graph.c grbranching.c grfold.c grsearch.c
+
+$(INCLUDEDIR) :INSTALLDIR: vgraph.h
+
+:: RELEASE Makefile

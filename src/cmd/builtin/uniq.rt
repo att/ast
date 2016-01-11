@@ -1,0 +1,393 @@
+# regression tests for the uniq utility
+
+UNIT uniq
+
+TEST '-f -s'
+
+DATA tst.dat <<!
+field1 field2 field3 abcx
+field1 field2 field3 pdqx
+abc
+!
+
+EXEC -f 3 -s 3 tst.dat
+
+EXEC -f 3 -s 4 tst.dat
+
+TEST '-i'
+
+DATA tst.dat <<!
+field1 field2 field3 abcx
+field1 field2 field3 pdqx
+FIELD1 FIELD2 FIELD3 PDQX
+abc
+AbC
+!
+
+EXEC -i -f 3 -s 3 tst.dat
+
+EXEC -i -f 3 -s 4 tst.dat
+
+TEST 'gnu tests'
+
+EXEC <<'!'
+!
+
+EXEC <<'!'
+a
+a
+!
+
+DATA tst.dat -n $'a a'
+EXEC
+
+DATA tst.dat -n $'a b'
+EXEC
+
+DATA tst.dat -n $'a a b'
+EXEC
+
+EXEC <<'!'
+b
+a
+a
+!
+
+EXEC <<'!'
+a
+b
+c
+!
+
+DATA tst.dat $'\366\nv'
+EXEC
+
+TEST '-u'
+
+EXEC -u <<'!'
+a
+a
+!
+
+EXEC -u <<'!'
+a
+b
+!
+
+EXEC -u <<'!'
+a
+b
+a
+!
+
+EXEC -u <<'!'
+a
+a
+!
+
+EXEC -u <<'!'
+a
+a
+!
+
+TEST '-d'
+
+EXEC -d <<'!'
+a
+a
+!
+
+EXEC -d <<'!'
+a
+b
+!
+
+EXEC -d <<'!'
+a
+b
+a
+!
+
+EXEC -d <<'!'
+a
+a
+b
+!
+
+TEST '-1'
+
+EXEC -1 <<'!'
+a a
+b a
+!
+
+TEST '-f 1'
+
+EXEC -f 1 <<'!'
+a a
+b a
+!
+
+EXEC -f 1 <<'!'
+a a
+b b
+!
+
+EXEC -f 1 <<'!'
+a a a
+b a c
+!
+
+EXEC -f 1 <<'!'
+b a
+a a
+!
+
+TEST '-f 2'
+
+EXEC -f 2 <<'!'
+a a c
+b a c
+!
+
+TEST '+1'
+
+EXEC +1 <<'!'
+aaa
+aaa
+!
+
+EXEC +1 <<'!'
+baa
+aaa
+!
+
+TEST '-s 1'
+
+EXEC -s 1 <<'!'
+aaa
+aaa
+!
+
+TEST '-s 2'
+
+EXEC -s 2 <<'!'
+baa
+aaa
+!
+
+TEST '+1 --'
+
+EXEC +1 -- <<'!'
+aaa
+aaa
+!
+
+EXEC +1 -- <<'!'
+baa
+aaa
+!
+
+TEST '-f 1 -s 1'
+
+EXEC -f 1 -s 1 <<'!'
+a aaa
+b ab
+!
+
+EXEC -f 1 -s 1 <<'!'
+a aaa
+b aaa
+!
+
+TEST '-s 1 -f 1'
+
+EXEC -s 1 -f 1 <<'!'
+a aaa
+b ab
+!
+
+EXEC -s 1 -f 1 <<'!'
+a aaa
+b aaa
+!
+
+TEST '-s 4'
+
+EXEC -s 4 <<'!'
+abc
+abcd
+!
+
+TEST '-s 0'
+
+EXEC -s 0 <<'!'
+abc
+abcd
+!
+
+EXEC -s 0 <<'!'
+abc
+!
+
+TEST '-w 0'
+
+EXEC -w 0 <<'!'
+abc
+abcd
+!
+
+TEST '-w 1'
+
+EXEC -w 1 <<'!'
+a a
+b a
+!
+
+TEST '-w 3'
+
+EXEC -w 3 <<'!'
+a a
+b a
+!
+
+TEST '-w 1 -f 1'
+
+EXEC -w 1 -f 1 <<'!'
+a a a
+b a c
+!
+
+TEST '-f 1 -w 1'
+
+EXEC -f 1 -w 1 <<'!'
+a a a
+b a c
+!
+
+TEST '-f 1 -w 4'
+
+EXEC -f 1 -w 4 <<'!'
+a a a
+b a c
+!
+
+TEST '-f 1 -w 3'
+
+EXEC -f 1 -w 3 <<'!'
+a a a
+b a c
+!
+
+TEST 'embedded nul'
+
+DATA tst.dat -f$'a%Za\na\n'
+EXEC
+
+EXEC <<'!'
+a	a
+a a
+!
+
+TEST '-f 1'
+
+EXEC -f 1 <<'!'
+a	a
+a a
+!
+
+TEST '-f 2'
+
+EXEC -f 2 <<'!'
+a	a a
+a a a
+!
+
+TEST '-f 1'
+
+EXEC -f 1 <<'!'
+a	a
+a	a
+!
+
+TEST '-c'
+
+EXEC -c <<'!'
+a
+b
+!
+
+EXEC -c <<'!'
+a
+a
+!
+
+TEST '-D'
+
+EXEC -D <<'!'
+a
+a
+!
+
+TEST '-D -w1'
+
+EXEC -D -w1 <<'!'
+a a
+a b
+!
+
+TEST '-D -c'
+
+EXEC -D -c <<'!'
+a a
+a b
+!
+
+TEST '--all-repeated'
+
+EXEC --all-repeated=separate <<'!'
+a
+a
+!
+
+EXEC --all-repeated=separate <<'!'
+a
+a
+b
+c
+c
+!
+
+EXEC --all-repeated=separate <<'!'
+a
+a
+b
+b
+c
+!
+
+EXEC --all-repeated=prepend <<'!'
+a
+a
+!
+
+EXEC --all-repeated=prepend <<'!'
+a
+a
+b
+c
+c
+!
+
+EXEC --all-repeated=prepend <<'!'
+a
+b
+!
+
+EXEC --all-repeated=none --check-chars=1 <<<$'a1\nb2\nb3\nc4\nd5\nd6\nd7\ne8\nf9\nfA\ngB'
+
+EXEC --all-repeated=prepend --check-chars=1
+
+EXEC --all-repeated=separate --check-chars=1
+
+EXEC --all-repeated=boofar --check-chars=1

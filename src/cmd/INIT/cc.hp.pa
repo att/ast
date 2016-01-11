@@ -1,0 +1,13 @@
+: hp.pa cc wrapper for reasonable ansi C defaults : 2004-02-29 :
+
+HOSTTYPE=hp.pa
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+_AST_CC_hp_pa_DEFAULT=${_AST_CC_hp_pa_DEFAULT-"+DAportable"}
+
+/opt/ansic/bin/cc -Ae +e -Wl,+s $_AST_CC_hp_pa_DEFAULT \
+	${INSTALLROOT:+-Wl,+cdp,${INSTALLROOT}/lib/:} \
+	-Wl,+vnocompatwarnings "$@"

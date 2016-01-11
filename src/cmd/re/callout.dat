@@ -1,0 +1,15 @@
+: regex external callout tests 2012-01-25
+
+{E	abc(?{ABC})			<abc>		(1,4){ABC}(1:1)		external callouts not supported
+E	(abc(?{ABC})|xyz(?{XYZ}))	<abc>		(1,4)(1,4){ABC}(1:1)
+E	(abc(?{ABC})|xyz(?{XYZ}))	<xyz>		(1,4)(1,4){XYZ}(2:1)
+E	(abc(?{ABC})|xyz(?{XYZ}))+	<abcxyz>	(1,7)(4,7){ABC}(1:4){XYZ}(2:1)
+E	(abc(?{ABC})|xyz(?{XYZ}))+	<xyzabc>	(1,7)(4,7){XYZ}(2:4){ABC}(1:1)
+
+K	abc~({ABC})			<abc>		(1,4){ABC}(1:1)
+K	(abc~({ABC})|xyz~({XYZ}))	<abc>		(1,4)(1,4){ABC}(1:1)
+K	(abc~({ABC})|xyz~({XYZ}))	<xyz>		(1,4)(1,4){XYZ}(2:1)
+K	+(abc~({ABC})|xyz~({XYZ}))	<abcxyz>	(1,7)(1,7){ABC}(1:4){XYZ}(2:1)
+K	+(abc~({ABC})|xyz~({XYZ}))	<xyzabc>	(1,7)(1,7){XYZ}(2:4){ABC}(1:1)
+
+}

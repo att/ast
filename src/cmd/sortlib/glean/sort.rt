@@ -1,0 +1,39 @@
+NOTE regression tests for the sort glean plugin
+
+UNIT sort
+
+TEST 'basics'
+
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min="3,3n",min="4,4",max="3,3n",max="4,4r"' <<'!'
+a,1,5,s
+a,2,5,s
+a,1,5,m
+a,1,5,s
+a,2,4,s
+a,1,6,s
+a,2,1,s
+a,2,1,m
+a,2,9,s
+a,2,9,m
+a,1,2,m
+a,1,6,m
+a,2,7,m
+a,1,4,s
+a,1,5,s
+a,2,9,m
+!
+
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min="3,3n"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min="3,3n",min="4,4"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min:="3,3n",min:="4,4"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,max="3,3n"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,max="3,3n",max="4,4r"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,max:="3,3n",max:="4,4r"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min="3,3n",min="4,4",max="3,3n",max="4,4r"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min:="3,3n",min:="4,4",max="3,3n",max="4,4r"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min="3,3n",min="4,4",max:="3,3n",max:="4,4r"'
+EXEC -t, -k1,1 -k2,2n -lglean,'count,min:="3,3n",min:="4,4",max:="3,3n",max:="4,4r"'
+EXEC -t, -lglean,'min:="3,3n",min:="4,4",max:="3,3n",max:="4,4r"'
+EXEC -t, -lglean,'count,min:="3,3n",min:="4,4",max:="3,3n",max:="4,4r"'
+EXEC -t, -lglean,'absolute,min:="3,3n",min:="4,4",max:="3,3n",max:="4,4r"'
+EXEC -t, -lglean,'absolute,count,min:="3,3n",min:="4,4",max:="3,3n",max:="4,4r"'

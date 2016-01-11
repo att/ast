@@ -1,0 +1,26 @@
+: linux.pentium4 gcc wrapper : 2005-10-24 :
+
+HOSTTYPE=linux.pentium4
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+case " $* " in
+*" -O "*)
+	set -A argv -- "$@"
+	set -A nargv
+	integer i j
+	for ((i = j = 0; i < ${#argv[@]}; i++))
+	do	if	[[ ${argv[i]} == -O ]]
+		then	nargv[j++]=-O3
+			nargv[j++]=-march=pentium4
+		else	nargv[j++]=${argv[i]}
+		fi
+	done
+	gcc "${nargv[@]}"
+	exit
+	;;
+esac
+
+gcc "$@"

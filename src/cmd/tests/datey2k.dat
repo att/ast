@@ -1,0 +1,341 @@
+#
+# tmscan() test data for the C locale
+#
+
+SET			NOW			Sat Jan  1 00:00:00 EST 2000
+
+Mon			%a			Mon Jan  3 00:00:00 EST 2000
+Sun			%a			Sun Jan  2 00:00:00 EST 2000
+Fri			%a			Fri Jan  7 00:00:00 EST 2000
+September		%B			Fri Sep  1 00:00:00 EDT 2000
+January			%B			Sat Jan  1 00:00:00 EST 2000
+December		%B			Fri Dec  1 00:00:00 EST 2000
+Sep Mon			%b %a			Mon Sep  4 00:00:00 EDT 2000
+jan fri			%b %a			Fri Jan  7 00:00:00 EST 2000
+DEC MON			%b %a			Mon Dec  4 00:00:00 EST 2000
+Jan Wed 1989		%b %a %Y		Wed Jan  4 00:00:00 EST 1989
+Fri 9			%a %H			Fri Jan  7 09:00:00 EST 2000
+Feb 10:30		%b %H:%S		Tue Feb  1 10:00:30 EST 2000
+10:30			%H:%M			Sat Jan  1 10:30:00 EST 2000
+13:30			%H:%M			Sat Jan  1 13:30:00 EST 2000
+00 96059		%H %y%j			Wed Feb 28 00:00:00 EST 1996
+00 96060		%H %y%j			Thu Feb 29 00:00:00 EST 1996
+00 96061		%H %y%j			Fri Mar  1 00:00:00 EST 1996
+
+#
+# export DATEMSK=date.msk for the following
+#
+
+10/1/87 4 PM				NIL	Thu Oct  1 16:00:00 EDT 1987
+Friday					NIL	Fri Jan  7 00:00:00 EST 2000
+Friday September 18, 1987, 10:30:30	NIL	Fri Sep 18 10:30:30 EDT 1987
+24,9,1986 10:30				NIL	Wed Sep 24 10:30:00 EDT 1986
+at monday the 1st of december in 1986	NIL	Mon Dec  1 00:00:00 EST 1986
+run job at 3 PM, december 2nd		NIL	Sat Dec  2 15:00:00 EST 2000
+1/1/00 12 AM				NIL	Sat Jan  1 00:00:00 EST 2000
+
+#
+# the rest should kick in tmdate()
+#
+
+Wed Jul 17 7 AM 2005			NULL	Sun Jul 17 07:00:00 EDT 2005
+Sat Aug 11 2 PM 1979			NULL	Sat Aug 11 14:00:00 EDT 1979
+Sat Dec 31 5:03 PM 1983			NULL	Sat Dec 31 17:03:00 EST 1983
+Sat Jan  1 12:03 AM 2000 EST		NULL	Sat Jan  1 00:03:00 EST 2000
+Sat Jan  1 12:03 AM 2000 -0500		NULL	Sat Jan  1 00:03:00 EST 2000
+Sat Jan  1 12:03 AM 2000 EET		NULL	Fri Dec 31 17:03:00 EST 1999
+Sat Jan  1 12:03 AM 2000 +0200		NULL	Fri Dec 31 17:03:00 EST 1999
+midnight 96060				NULL	Thu Feb 29 00:00:00 EST 1996
+1999198					NULL	Sat Jul 17 00:00:00 EDT 1999
+1999-198				NULL	Sat Jul 17 00:00:00 EDT 1999
+2000199					NULL	Mon Jul 17 00:00:00 EDT 2000
+2000-199				NULL	Mon Jul 17 00:00:00 EDT 2000
+2002-08-11				NULL	Sun Aug 11 00:00:00 EDT 2002
+2002 08 10				NULL	Wed Oct  1 20:02:00 EDT 2008
+2002 08 09				NULL	Mon Sep  1 20:02:00 EDT 2008
+31/Dec/1999:23:00:05 -0100		NULL	Fri Dec 31 19:00:05 EST 1999
+31/Dec/1999:23:00:05 +0100		NULL	Fri Dec 31 17:00:05 EST 1999
+
+#
+# a few leap year tests
+#
+
+1996-02-29 00:00:00			NULL	Thu Feb 29 00:00:00 EST 1996
+1998-02-29 00:00:00			NULL	Sun Mar  1 00:00:00 EST 1998
+2000-02-29 00:00:00			NULL	Tue Feb 29 00:00:00 EST 2000
+
+#
+# signed upper limit
+#
+
+,#2147483647				NULL	Mon Jan 18 22:14:07 EST 2038
+
+#
+# at command examples
+#
+
+2pm + 1 week				NULL	Mon Jan  3 14:00:00 EST 2000
+2pm next week				NULL	Mon Jan  3 14:00:00 EST 2000
+1800					NULL	Sat Jan  1 18:00:00 EST 2000
+0730 tomorrow				NULL	Sun Jan  2 07:30:00 EST 2000
+now + 1 hour				NULL	Sat Jan  1 01:00:00 EST 2000
+now + 3 hours				NULL	Sat Jan  1 03:00:00 EST 2000
++0 1 minute				NULL	Sat Jan  1 00:00:00 EST 2000
++1 1 minute				NULL	Sat Jan  1 00:01:00 EST 2000
++2 1 minute				NULL	Sat Jan  1 00:02:00 EST 2000
++ 5 hours 10 minutes			NULL	Sat Jan  1 05:10:00 EST 2000
+in 7 hours				NULL	Sat Jan  1 07:00:00 EST 2000
+in 7 days				NULL	Sat Jan  8 00:00:00 EST 2000
+0815AM Jan 24				NULL	Mon Jan 24 08:15:00 EST 2000
+8 : 15am jan24				NULL	Mon Jan 24 08:15:00 EST 2000
+now + 1day				NULL	Sun Jan  2 00:00:00 EST 2000
+1700 utc				NULL	Sat Jan  1 12:00:00 EST 2000
+2110 UCT+ 30minutes			NULL	Sat Jan  1 16:40:00 EST 2000
+1 min					NULL	Sat Jan  1 00:01:00 EST 2000
+next min				NULL	Sat Jan  1 00:01:00 EST 2000
+exact next min				NULL	Sat Jan  1 00:01:00 EST 2000
+2 min					NULL	Sat Jan  1 00:02:00 EST 2000
+next 2 min				NULL	Sat Jan  1 00:02:00 EST 2000
+exact next 2 min			NULL	Sat Jan  1 00:02:00 EST 2000
+1 hour					NULL	Sat Jan  1 01:00:00 EST 2000
+next hour				NULL	Sat Jan  1 01:00:00 EST 2000
+exact next hour				NULL	Sat Jan  1 01:00:00 EST 2000
+1 day					NULL	Sun Jan  2 00:00:00 EST 2000
+next day				NULL	Sun Jan  2 00:00:00 EST 2000
+exact next day				NULL	Sun Jan  2 00:00:00 EST 2000
+2 days					NULL	Mon Jan  3 00:00:00 EST 2000
+next 2 days				NULL	Mon Jan  3 00:00:00 EST 2000
+
+#
+# cron command examples
+#
+
+0 0 1,15 * 1				NULL	Mon May  1 00:00:00 EDT 2000
+0 0 * * 1				NULL	Mon Jan  3 00:00:00 EST 2000
+0 0 * * *				NULL	Sun Jan  2 00:00:00 EST 2000
+15 0 * * *				NULL	Sat Jan  1 00:15:00 EST 2000
+15 4 * * *				NULL	Sat Jan  1 04:15:00 EST 2000
+40 4 * * *				NULL	Sat Jan  1 04:40:00 EST 2000
+0 0 * * 1-5				NULL	Mon Jan  3 00:00:00 EST 2000
+0 0 * * 0,6				NULL	Sun Jan  2 00:00:00 EST 2000
+
+#
+# date command examples
+#
+
+10080045				NULL	Sun Oct  8 00:45:00 EDT 2000
+
+# format tests
+
+SET			NOW			Tue Feb 29 01:02:03 EST 2000
+
+NIL	%% %a %A %b %B			% Tue Tuesday Feb February
+NIL	%d_%D_%e_%h_%H			29_02/29/00_29_Feb_01
+NIL	%I_%j_%_I_%_H_%m		01_060_ 1_ 1_02
+NIL	%H%M%S%-H%-M%-S%_H%_M%_S	010203123 1 2 3
+NIL	%M_%n_%p_%r			02_\n_AM_01:02:03 AM
+NIL	%s_%S_%t_%T			951804123_03_\t_01:02:03
+NIL	%U_%V_%w_%W			09_09_2_09
+NIL	%x_%X_%y_%Y			02/29/00_01:02:03_00_2000
+NIL	%z_%Z				-0500_EST
+NIL	%Y-%m-%d			2000-02-29
+
+NIL	%a		Tue
+NIL	%A		Tuesday
+NIL	%b		Feb
+NIL	%B		February
+NIL	%c		Tue Feb 29 01:02:03 2000
+NIL	%C		20
+NIL	%d		29
+NIL	%D		02/29/00
+NIL	%e		29
+NIL	%E		%E
+NIL	%f		Tue Feb 29 01:02:03 EST 2000
+NIL	%F		2000-02-29
+NIL	%g		00
+NIL	%G		2000
+NIL	%h		Feb
+NIL	%H		01
+NIL	%i		Tue Feb 29 01:02:03 -0500 EST 2000
+NIL	%I		01
+NIL	%j		060
+NIL	%J		059
+NIL	%k		Tue Feb 29 01:02:03 EST 2000
+NIL	%K		2000-02-29+01:02:03
+NIL	%l		Feb 29  2000
+NIL	%L		Tue Feb 29 01:02:03 EST 2000
+NIL	%m		02
+NIL	%M		02
+NIL	%N		000000000
+NIL	%o		%o
+NIL	%O		%O
+NIL	%p		AM
+NIL	%P		am
+NIL	%Q/%Qr/%Qd/	Feb 29  2000
+NIL	%r		01:02:03 AM
+NIL	%R		01:02
+NIL	%s		951804123
+NIL	%S		03
+NIL	%t		\t
+NIL	%T		01:02:03
+NIL	%u		2
+NIL	%U		09
+NIL	%v		%v
+NIL	%V		09
+NIL	%w		2
+NIL	%W		09
+NIL	%x		02/29/00
+NIL	%X		01:02:03
+NIL	%y		00
+NIL	%Y		2000
+NIL	%z		-0500
+
+NIL	%0a		Tue
+NIL	%0A		Tuesday
+NIL	%0b		Feb
+NIL	%0B		February
+NIL	%0c		Tue Feb 29 01:02:03 2000
+NIL	%0C		20
+NIL	%0d		29
+NIL	%0D		02/29/00
+NIL	%0e		29
+NIL	%0E		%E
+NIL	%0f		Tue Feb 29 01:02:03 EST 2000
+NIL	%0F		2000-02-29
+NIL	%0g		00
+NIL	%0G		2000
+NIL	%0h		Feb
+NIL	%0H		01
+NIL	%0i		Tue Feb 29 01:02:03 -0500 EST 2000
+NIL	%0I		01
+NIL	%0j		060
+NIL	%0J		059
+NIL	%0k		Tue Feb 29 01:02:03 EST 2000
+NIL	%0K		2000-02-29+01:02:03
+NIL	%0l		Feb 29  2000
+NIL	%0L		Tue Feb 29 01:02:03 EST 2000
+NIL	%0m		02
+NIL	%0M		02
+NIL	%0N		000000000
+NIL	%0o		%o
+NIL	%0O		%O
+NIL	%0p		AM
+NIL	%0P		am
+NIL	%0Q/%Qr/%Qd/	Feb 29  2000
+NIL	%0r		01:02:03 AM
+NIL	%0R		01:02
+NIL	%0s		951804123
+NIL	%0S		03
+NIL	%0t		\t
+NIL	%0T		01:02:03
+NIL	%0u		2
+NIL	%0U		09
+NIL	%0v		%v
+NIL	%0V		09
+NIL	%0w		2
+NIL	%0W		09
+NIL	%0x		02/29/00
+NIL	%0X		01:02:03
+NIL	%0y		00
+NIL	%0Y		2000
+NIL	%0z		-0500
+
+NIL	%-a		Tue
+NIL	%-A		Tuesday
+NIL	%-b		Feb
+NIL	%-B		February
+NIL	%-c		Tue Feb 29 01:02:03 2000
+NIL	%-C		20
+NIL	%-d		29
+NIL	%-D		02/29/00
+NIL	%-e		29
+NIL	%-E		%E
+NIL	%-f		Tue Feb 29 01:02:03 EST 2000
+NIL	%-F		2000-02-29
+NIL	%-g		0
+NIL	%-G		2000
+NIL	%-h		Feb
+NIL	%-H		1
+NIL	%-i		Tue Feb 29 01:02:03 -0500 EST 2000
+NIL	%-I		1
+NIL	%-j		60
+NIL	%-J		59
+NIL	%-k		Tue Feb 29 01:02:03 EST 2000
+NIL	%-K		2000-02-29+01:02:03
+NIL	%-l		Feb 29  2000
+NIL	%-L		Tue Feb 29 01:02:03 EST 2000
+NIL	%-m		2
+NIL	%-M		2
+NIL	%-N		0
+NIL	%-o		%o
+NIL	%-O		%O
+NIL	%-p		AM
+NIL	%-P		am
+NIL	%-Q/%Qr/%Qd/	Feb 29  2000
+NIL	%-r		01:02:03 AM
+NIL	%-R		01:02
+NIL	%-s		951804123
+NIL	%-S		3
+NIL	%-t		\t
+NIL	%-T		01:02:03
+NIL	%-u		2
+NIL	%-U		9
+NIL	%-v		%v
+NIL	%-V		9
+NIL	%-w		2
+NIL	%-W		9
+NIL	%-x		02/29/00
+NIL	%-X		01:02:03
+NIL	%-y		0
+NIL	%-Y		2000
+NIL	%-z		-0500
+
+NIL	%_a		Tue
+NIL	%_A		Tuesday
+NIL	%_b		Feb
+NIL	%_B		February
+NIL	%_c		Tue Feb 29 01:02:03 2000
+NIL	%_C		20
+NIL	%_d		29
+NIL	%_D		02/29/00
+NIL	%_e		29
+NIL	%_E		%E
+NIL	%_f		Tue Feb 29 01:02:03 EST 2000
+NIL	%_F		2000-02-29
+NIL	%_g		 0
+NIL	%_G		2000
+NIL	%_h		Feb
+NIL	%_H		 1
+NIL	%_i		Tue Feb 29 01:02:03 -0500 EST 2000
+NIL	%_I		 1
+NIL	%_j		 60
+NIL	%_J		 59
+NIL	%_k		Tue Feb 29 01:02:03 EST 2000
+NIL	%_K		2000-02-29 01:02:03
+NIL	%_l		Feb 29  2000
+NIL	%_L		Tue Feb 29 01:02:03 EST 2000
+NIL	%_m		 2
+NIL	%_M		 2
+NIL	%_N		        0
+NIL	%_o		%o
+NIL	%_O		%O
+NIL	%_p		AM
+NIL	%_P		am
+NIL	%_Q/%Qr/%Qd/	Feb 29  2000
+NIL	%_r		01:02:03 AM
+NIL	%_R		01:02
+NIL	%_s		951804123
+NIL	%_S		 3
+NIL	%_t		\t
+NIL	%_T		01:02:03
+NIL	%_u		2
+NIL	%_U		 9
+NIL	%_v		%v
+NIL	%_V		 9
+NIL	%_w		2
+NIL	%_W		 9
+NIL	%_x		02/29/00
+NIL	%_X		01:02:03
+NIL	%_y		 0
+NIL	%_Y		2000
+NIL	%_z		-05:00

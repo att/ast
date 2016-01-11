@@ -1,0 +1,29 @@
+11-09-11 dss.c: its --map=file, not --map --- doh
+11-06-15 dss.c: document '< expr-file' '< file-list-file'
+10-05-21 dss.c: add SEE ALSO \bdss::dss\b(5P) (after libast::optget() fix)
+10-05-11 dss.c: drop --info=style in favor of generic --plugins=style
+10-05-04 dss.c: change -i,--info to -i,--info={man|html|nroff|usage}
+09-07-02 dss.c: fix EXAMPLES typo
+08-07-17 dss.c: tweak self-docs
+06-10-11 add sfstruse() error checks
+03-02-06 dss.c: convert main loop to dssrun()
+03-01-23 dss.c: update stamp to reflect library version 20030123
+03-01-15 dss.c: fix match docs for Cxmatch_t
+02-12-25 dss.c: fix default expression logic -- dsscomp() requires {...} at top
+02-12-24 dss.c: init checks now done by dssbeg()/dssend()
+02-12-17 propagate -ldss changes
+02-12-04 dss.c: dssopen() and method option check before main arg check
+02-12-01 dss.tst: move to method specific source dirs
+02-11-27 dss.c,dss.tst: change --format => --print, --type => --format
+02-11-22 dss.tst,Makefile: redo data file naming
+02-10-18 dss.c: handle DSS_NOOUTPUT after dssbeg()
+02-10-17 dss.c: drop ancient argv[0] method initialization
+02-10-09 dss.tst: add bgp-ipma and flat tests, rename test data files
+02-09-24 bgp.prt,netflow.prt: move to src/lib/libdss/dss-*.prt
+02-09-11 dss.c: add -n, query dssbeg() and dssend() calls, -c matched/total
+02-08-29 move pta to separate source directory
+02-08-11 update --method docs
+02-07-31 dss.c: optout() now handles usage string as well as text
+02-07-19 dss.tst: add text method =~ and !~ tests
+02-06-14 add Dssflags_t arg to dssfopen()
+02-05-29 standalone command source

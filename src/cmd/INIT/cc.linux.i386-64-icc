@@ -1,0 +1,22 @@
+: linux.i386-64 icc wrapper : 2011-10-18 :
+
+HOSTTYPE=linux.i386-64-icc
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+icc=$(which icc 2>/dev/null)
+case $icc in
+"")	if	test -f /etc/profile.d/icc.sh
+	then	. /etc/profile.d/icc.sh
+	fi
+	icc=$(which icc 2>/dev/null)
+	case $icc in
+	"")	echo icc: not found >&2
+		exit 127
+		;;
+	esac
+	;;
+esac
+$icc "$@"

@@ -1,0 +1,408 @@
+####################################################################
+#                                                                  #
+#               Copyright (c) 2000-2002 Thomas Lord                #
+#                                                                  #
+#      This is free software; you can redistribute it and/or       #
+#   modify it under the terms of the GNU General Public License    #
+#          as published by the Free Software Foundation;           #
+#     either version 2, or (at your option) any later version.     #
+#                                                                  #
+#         This software is distributed in the hope that it         #
+#            will be useful, but WITHOUT ANY WARRANTY;             #
+#       without even the implied warranty of MERCHANTABILITY       #
+#               or FITNESS FOR A PARTICULAR PURPOSE.               #
+#       See the GNU General Public License for more details.       #
+#                                                                  #
+#              You should have received a copy of the              #
+#                    GNU General Public License                    #
+#         along with this software (see the file COPYING.)         #
+#                  If not, a copy is available at                  #
+#               http://www.gnu.org/copyleft/gpl.html               #
+#                                                                  #
+#                   Tom Lord <lord@regexps.com>                    #
+#                                                                  #
+####################################################################
+: generated from Tom Lord's rx posix-test-cases.h 2002-04-09
+
+B	a	a	(0,1)	posix-2.8.3.1-0
+B	\.	.	(0,1)	posix-2.8.3.1-1
+B	\[	[	(0,1)	posix-2.8.3.1-2
+B	\\	\	(0,1)	posix-2.8.3.1-3
+B	\*	*	(0,1)	posix-2.8.3.1-4
+B	\^	^	(0,1)	posix-2.8.3.1-5
+B	\$	$	(0,1)	posix-2.8.3.1-6
+B	\	NULL	EESCAPE	posix-2.8.3.1-7
+B	x\.	x.	(0,2)	posix-2.8.3.1-8
+B	x\[	x[	(0,2)	posix-2.8.3.1-9
+B	x\\	x\	(0,2)	posix-2.8.3.1-10
+B	x\*	x*	(0,2)	posix-2.8.3.1-11
+B	x\^	x^	(0,2)	posix-2.8.3.1-12
+B	x\$	x$	(0,2)	posix-2.8.3.1-13
+B	x\	NULL	EESCAPE	posix-2.8.3.1-14
+B	.	a	(0,1)	posix-2.8.3.1.3-0
+B$	.	\n	(0,1)	posix-2.8.3.1.3-1
+B	[]x]	]	(0,1)	posix-2.8.3.2-0
+E	[]x]	]	(0,1)	posix-2.8.3.2-0
+B	[]x]	x	(0,1)	posix-2.8.3.2-1
+E	[]x]	x	(0,1)	posix-2.8.3.2-1
+B	[]	NULL	EBRACK	posix-2.8.3.2-2
+E	[]	NULL	EBRACK	posix-2.8.3.2-2
+B	[.]	.	(0,1)	posix-2.8.3.2-3
+E	[.]	.	(0,1)	posix-2.8.3.2-3
+B	[.]	a	NOMATCH	posix-2.8.3.2-4
+E	[.]	a	NOMATCH	posix-2.8.3.2-4
+B	[*]	*	(0,1)	posix-2.8.3.2-5
+E	[*]	*	(0,1)	posix-2.8.3.2-5
+B	[[]	[	(0,1)	posix-2.8.3.2-6
+E	[[]	[	(0,1)	posix-2.8.3.2-6
+B	[\]	\	(0,1)	posix-2.8.3.2-7
+E	[\]	\	(0,1)	posix-2.8.3.2-7
+B	[[.]	NULL	ECOLLATE	posix-2.8.3.2-8
+E	[[.]	NULL	ECOLLATE	posix-2.8.3.2-8
+B	[[=]	NULL	ECOLLATE	posix-2.8.3.2-9
+E	[[=]	NULL	ECOLLATE	posix-2.8.3.2-9
+B	[[:]	NULL	ECTYPE	posix-2.8.3.2-10
+E	[[:]	NULL	ECTYPE	posix-2.8.3.2-10
+B	[abc]	a	(0,1)	posix-2.8.3.2-11
+E	[abc]	a	(0,1)	posix-2.8.3.2-11
+B	[abc]	b	(0,1)	posix-2.8.3.2-12
+E	[abc]	b	(0,1)	posix-2.8.3.2-12
+B	[abc]	c	(0,1)	posix-2.8.3.2-13
+E	[abc]	c	(0,1)	posix-2.8.3.2-13
+B	[abc]	d	NOMATCH	posix-2.8.3.2-14
+E	[abc]	d	NOMATCH	posix-2.8.3.2-14
+B	x[abc]	xa	(0,2)	posix-2.8.3.2-15
+E	x[abc]	xa	(0,2)	posix-2.8.3.2-15
+B	x[abc]	xb	(0,2)	posix-2.8.3.2-16
+E	x[abc]	xb	(0,2)	posix-2.8.3.2-16
+B	x[abc]	xc	(0,2)	posix-2.8.3.2-17
+E	x[abc]	xc	(0,2)	posix-2.8.3.2-17
+B	x[abc]	xd	NOMATCH	posix-2.8.3.2-18
+E	x[abc]	xd	NOMATCH	posix-2.8.3.2-18
+B	[^abc]	a	NOMATCH	posix-2.8.3.2-19
+E	[^abc]	a	NOMATCH	posix-2.8.3.2-19
+B	[^abc]	b	NOMATCH	posix-2.8.3.2-20
+E	[^abc]	b	NOMATCH	posix-2.8.3.2-20
+B	[^abc]	c	NOMATCH	posix-2.8.3.2-21
+E	[^abc]	c	NOMATCH	posix-2.8.3.2-21
+B	[^abc]	d	(0,1)	posix-2.8.3.2-22
+E	[^abc]	d	(0,1)	posix-2.8.3.2-22
+B	x[^abc]	xa	NOMATCH	posix-2.8.3.2-23
+E	x[^abc]	xa	NOMATCH	posix-2.8.3.2-23
+B	x[^abc]	xb	NOMATCH	posix-2.8.3.2-24
+E	x[^abc]	xb	NOMATCH	posix-2.8.3.2-24
+B	x[^abc]	xc	NOMATCH	posix-2.8.3.2-25
+E	x[^abc]	xc	NOMATCH	posix-2.8.3.2-25
+B	x[^abc]	xd	(0,2)	posix-2.8.3.2-26
+E	x[^abc]	xd	(0,2)	posix-2.8.3.2-26
+B	[[:alnum:]][[:alnum:]]*	%abc123890XYZ=	(1,13)	posix-2.8.3.2-27
+E	[[:alnum:]][[:alnum:]]*	%abc123890XYZ=	(1,13)	posix-2.8.3.2-27
+B$	[[:cntrl:]][[:cntrl:]]*	%\n\t\r\f 	(1,5)	posix-2.8.3.2-28
+E$	[[:cntrl:]][[:cntrl:]]*	%\n\t\r\f 	(1,5)	posix-2.8.3.2-28
+B	[[:lower:]][[:lower:]]*	AbcdE	(1,4)	posix-2.8.3.2-29
+E	[[:lower:]][[:lower:]]*	AbcdE	(1,4)	posix-2.8.3.2-29
+Bi	[[:lower:]][[:lower:]]*	AbcdE	(0,5)	posix-2.8.3.2-30
+Ei	[[:lower:]][[:lower:]]*	AbcdE	(0,5)	posix-2.8.3.2-30
+Bi$	[[:space:]][[:space:]]*	x \t\f\nx	(1,5)	posix-2.8.3.2-31
+Ei$	[[:space:]][[:space:]]*	x \t\f\nx	(1,5)	posix-2.8.3.2-31
+B	[[:alpha:]][[:alpha:]]*	%abC123890xyz=	(1,4)	posix-2.8.3.2-32
+E	[[:alpha:]][[:alpha:]]*	%abC123890xyz=	(1,4)	posix-2.8.3.2-32
+B	[[:digit:]][[:digit:]]*	%abC123890xyz=	(4,10)	posix-2.8.3.2-33
+E	[[:digit:]][[:digit:]]*	%abC123890xyz=	(4,10)	posix-2.8.3.2-33
+B$	[[:print:]][[:print:]]*	\n %abC12\f	(1,8)	posix-2.8.3.2-34
+E$	[[:print:]][[:print:]]*	\n %abC12\f	(1,8)	posix-2.8.3.2-34
+B$	[[:upper:]][[:upper:]]*	\n aBCDEFGHIJKLMNOPQRSTUVWXYz	(3,27)	posix-2.8.3.2-35
+E$	[[:upper:]][[:upper:]]*	\n aBCDEFGHIJKLMNOPQRSTUVWXYz	(3,27)	posix-2.8.3.2-35
+Bi$	[[:upper:]][[:upper:]]*	\n aBCDEFGHIJKLMNOPQRSTUVWXYz	(2,28)	posix-2.8.3.2-36
+Ei$	[[:upper:]][[:upper:]]*	\n aBCDEFGHIJKLMNOPQRSTUVWXYz	(2,28)	posix-2.8.3.2-36
+Bi$	[[:blank:]][[:blank:]]*	\na \t b	(2,5)	posix-2.8.3.2-37
+Ei$	[[:blank:]][[:blank:]]*	\na \t b	(2,5)	posix-2.8.3.2-37
+B$	[[:graph:]][[:graph:]]*	\n %abC12\f	(2,8)	posix-2.8.3.2-38
+E$	[[:graph:]][[:graph:]]*	\n %abC12\f	(2,8)	posix-2.8.3.2-38
+B	[[:punct:]][[:punct:]]*	a~!@#$%^&*()_+=-`[]{};':"|\,./?>< 	(1,33)	posix-2.8.3.2-39
+E	[[:punct:]][[:punct:]]*	a~!@#$%^&*()_+=-`[]{};':"|\,./?>< 	(1,33)	posix-2.8.3.2-39
+B	[[:xdigit:]][[:xdigit:]]*	-0123456789ABCDEFabcdef	(1,23)	posix-2.8.3.2-40
+E	[[:xdigit:]][[:xdigit:]]*	-0123456789ABCDEFabcdef	(1,23)	posix-2.8.3.2-40
+B	[a-z][a-z]*	ABCabcxyzABC	(3,9)	posix-2.8.3.2-41
+E	[a-z][a-z]*	ABCabcxyzABC	(3,9)	posix-2.8.3.2-41
+B	[a-z][z-a]*	NULL	ERANGE	posix-2.8.3.2-42
+E	[a-z][z-a]*	NULL	ERANGE	posix-2.8.3.2-42
+B	[a-a][a-a]*	zaaaaab	(1,6)	posix-2.8.3.2-43
+E	[a-a][a-a]*	zaaaaab	(1,6)	posix-2.8.3.2-43
+Bi	[a-a][a-a]*	ZAAAAAB	(1,6)	posix-2.8.3.2-44
+Ei	[a-a][a-a]*	ZAAAAAB	(1,6)	posix-2.8.3.2-44
+B	[--Z][--Z]*	!ABC-./XYZ~	(1,10)	posix-2.8.3.2-45
+E	[--Z][--Z]*	!ABC-./XYZ~	(1,10)	posix-2.8.3.2-45
+B	[*--Z][*--Z]*	!+*,---ABC	(1,7)	posix-2.8.3.2-46
+E	[*--Z][*--Z]*	!+*,---ABC	(1,7)	posix-2.8.3.2-46
+B	[a-][a-]*	xa-a--a-ay	(1,9)	posix-2.8.3.2-47
+E	[a-][a-]*	xa-a--a-ay	(1,9)	posix-2.8.3.2-47
+B	[a[.-.]z][a[.-.]z]*	ba-a-a-zw	(1,8)	posix-2.8.3.2-48
+E	[a[.-.]z][a[.-.]z]*	ba-a-a-zw	(1,8)	posix-2.8.3.2-48
+B	[[.a.]-[.z.]][[.a.]-z]*	ABCabcxyzABC	(3,9)	posix-2.8.3.2-49
+E	[[.a.]-[.z.]][[.a.]-z]*	ABCabcxyzABC	(3,9)	posix-2.8.3.2-49
+B	[[.a.]-[.a.]][[.a.]-[.a.]]*	zaaaaab	(1,6)	posix-2.8.3.2-50
+E	[[.a.]-[.a.]][[.a.]-[.a.]]*	zaaaaab	(1,6)	posix-2.8.3.2-50
+Bi	[a-[.a.]][[.a.]-a]*	ZAAAAAB	(1,6)	posix-2.8.3.2-51
+Ei	[a-[.a.]][[.a.]-a]*	ZAAAAAB	(1,6)	posix-2.8.3.2-51
+B	[[.-.]-[.Z.]][[.-.]-[.Z.]]*	!ABC-./XYZ~	(1,10)	posix-2.8.3.2-52
+E	[[.-.]-[.Z.]][[.-.]-[.Z.]]*	!ABC-./XYZ~	(1,10)	posix-2.8.3.2-52
+B	[*--Z][*-[.-.]Z]*	!+*,---ZABC	(1,8)	posix-2.8.3.2-53
+E	[*--Z][*-[.-.]Z]*	!+*,---ZABC	(1,8)	posix-2.8.3.2-53
+B	[[:digit:]a-z#$%][[:digit:]a-z#$%]*	__abc#lmn012$x%yz789*	(2,20)	posix-2.8.3.2-54
+E	[[:digit:]a-z#$%][[:digit:]a-z#$%]*	__abc#lmn012$x%yz789*	(2,20)	posix-2.8.3.2-54
+Bi	[[:digit:]a-z#$%][[:digit:]a-z#$%]*	__abcLMN012x%#$yz789*	(2,20)	posix-2.8.3.2-55
+Ei	[[:digit:]a-z#$%][[:digit:]a-z#$%]*	__abcLMN012x%#$yz789*	(2,20)	posix-2.8.3.2-55
+B	[^[:digit:]a-z#$%][^[:digit:]a-z#$%]*	abc#lmn012$x%yz789--@*,abc	(18,23)	posix-2.8.3.2-56
+E	[^[:digit:]a-z#$%][^[:digit:]a-z#$%]*	abc#lmn012$x%yz789--@*,abc	(18,23)	posix-2.8.3.2-56
+Bi	[^[:digit:]a-z#$%][^[:digit:]a-z#$%]*	abC#LMn012$x%yz789--@*,abc	(18,23)	posix-2.8.3.2-57
+Ei	[^[:digit:]a-z#$%][^[:digit:]a-z#$%]*	abC#LMn012$x%yz789--@*,abc	(18,23)	posix-2.8.3.2-57
+B	[^-][^-]*	---afd*(&,ml---	(3,12)	posix-2.8.3.2-58
+E	[^-][^-]*	---afd*(&,ml---	(3,12)	posix-2.8.3.2-58
+B	[^--Z][^--Z]*	---AFD*(&,ml---	(6,12)	posix-2.8.3.2-59
+E	[^--Z][^--Z]*	---AFD*(&,ml---	(6,12)	posix-2.8.3.2-59
+Bi	[^--Z][^--Z]*	---AFD*(&,ml---	(6,10)	posix-2.8.3.2-60
+Ei	[^--Z][^--Z]*	---AFD*(&,ml---	(6,10)	posix-2.8.3.2-60
+B	abc[def]ghi	xabcdghiy	(1,8)	posix-2.8.3.3-0
+B	abc\(\(de\)\(fg\)\)hi	xabcdefghiy	(1,10)(4,8)(4,6)(6,8)	posix-2.8.3.3-1
+B	abc*def	xabdefy	(1,6)	posix-2.8.3.3-2
+B	abc*def	xabcdefy	(1,7)	posix-2.8.3.3-3
+B	abc*def	xabcccccccdefy	(1,13)	posix-2.8.3.3-4
+B	abc\(def\)*ghi	xabcghiy	(1,7)	posix-2.8.3.3-5
+B	abc\(def\)*ghi	xabcdefghi	(1,10)(4,7)	posix-2.8.3.3-6
+B	abc\(def\)*ghi	xabcdefdefdefghi	(1,16)(10,13)	posix-2.8.3.3-7
+B	abc\{0,1\}def	xabdefy	(1,6)	posix-2.8.3.3-8
+B	abc\{0,1\}def	xabcdefy	(1,7)	posix-2.8.3.3-9
+B	abc\{0,1\}def	xabccdefy	NOMATCH	posix-2.8.3.3-10
+B	abc\{1,3\}def	xabdefy	NOMATCH	posix-2.8.3.3-11
+B	abc\{1,3\}def	xabcdefy	(1,7)	posix-2.8.3.3-12
+B	abc\{1,3\}def	xabccdefy	(1,8)	posix-2.8.3.3-13
+B	abc\{1,3\}def	xabcccdefy	(1,9)	posix-2.8.3.3-14
+B	abc\{1,3\}def	xabccccdefy	NOMATCH	posix-2.8.3.3-15
+B	abc\{1,\}def	xabdefy	NOMATCH	posix-2.8.3.3-16
+B	abc\{1,\}def	xabcdefy	(1,7)	posix-2.8.3.3-17
+B	abc\{1,\}def	xabccdefy	(1,8)	posix-2.8.3.3-18
+B	abc\{1,\}def	xabcccdefy	(1,9)	posix-2.8.3.3-19
+B	abc\{1,\}def	xabccccdefy	(1,10)	posix-2.8.3.3-20
+B	abc\{3\}def	xabdefy	NOMATCH	posix-2.8.3.3-21
+B	abc\{3\}def	xabcdefy	NOMATCH	posix-2.8.3.3-22
+B	abc\{3\}def	xabccdefy	NOMATCH	posix-2.8.3.3-23
+B	abc\{3\}def	xabcccdefy	(1,9)	posix-2.8.3.3-24
+B	abc\{3\}def	xabccccdefy	NOMATCH	posix-2.8.3.3-25
+B	abc\{ 1,3\}def	NULL	BADBR	posix-2.8.3.3-26
+B	abc\{1 ,3\}def	NULL	BADBR	posix-2.8.3.3-27
+B	abc\{1, 3\}def	NULL	BADBR	posix-2.8.3.3-28
+B	abc\{1,3 \}def	NULL	BADBR	posix-2.8.3.3-29
+B	\(\(a*\)\)*x\2	ax	(1,2)(1,1)(1,1)	posix-2.8.3.3-30
+B	\(\(a*\)\)*x\2	axa	(0,3)(0,1)(0,1)	posix-2.8.3.3-31
+B	\(\(abc\)*\(abc\)*\)\3	abcabc	(0,6)(0,3)(-1,-1)(0,3)	posix-2.8.3.3-32
+B	\(\(abc\)\{0,1\}\(abc\)\{0,1\}\)\3	abcabc	(0,6)(0,3)(-1,-1)(0,3)	posix-2.8.3.3-33
+B	\(\(abc\)\{0,2\}\(abc\)\{0,2\}\)\3	abcabc	(0,6)(0,3)(-1,-1)(0,3)	posix-2.8.3.3-34
+B	a\(b\)c\2	NULL	ESUBREG	posix-2.8.3.3-35
+Bi	\(abc\)\1	abcabc	(0,6)(0,3)	posix-2.8.3.3-36
+Bi	\(abc\)\1	aBcAbC	(0,6)(0,3)	posix-2.8.3.3-37
+B	^abc	abcdef	(0,3)	posix-2.8.3.5-0
+B	^abc	xyzabcdef	NOMATCH	posix-2.8.3.5-1
+B$	^abc	\nabcdef	NOMATCH	posix-2.8.3.5-2
+B	abc$	defabc	(3,6)	posix-2.8.3.5-3
+B$	abc$	defabc\n	NOMATCH	posix-2.8.3.5-4
+B	^abc$	abc	(0,3)	posix-2.8.3.5-5
+B$	^abc$	\nabc\n	NOMATCH	posix-2.8.3.5-6
+B	a\{0,1\}^bc	bc	NOMATCH	posix-2.8.3.5-7
+B	a\{0,1\}^bc	^bc	(0,3)	posix-2.8.3.5-8
+B	a\{0,1\}^bc	a^bc	(0,4)	posix-2.8.3.5-9
+B	a^bc	abc	NOMATCH	posix-2.8.3.5-10
+B	a^bc	a^bc	(0,4)	posix-2.8.3.5-11
+B	ab$c\{0,1\}	ab	NOMATCH	posix-2.8.3.5-12
+B	ab$c\{0,1\}	ab$	(0,3)	posix-2.8.3.5-13
+B	ab$c\{0,1\}	ab$c	(0,4)	posix-2.8.3.5-14
+B	ab$c	abc	NOMATCH	posix-2.8.3.5-15
+B$	ab$c	ab\nc	NOMATCH	posix-2.8.3.5-16
+B	ab$c	ab$	NOMATCH	posix-2.8.3.5-17
+B	ab$c	ab$c	(0,4)	posix-2.8.3.5-18
+E	a	a	(0,1)	posix-2.8.4.1.1-0
+E	\.	a.b	(1,2)	posix-2.8.4.1.2-0
+E	\[	a[b	(1,2)	posix-2.8.4.1.2-1
+E	\\	a\b	(1,2)	posix-2.8.4.1.2-2
+E	\(	a(b	(1,2)	posix-2.8.4.1.2-3
+E	\*	a*b	(1,2)	posix-2.8.4.1.2-4
+E	\+	a+b	(1,2)	posix-2.8.4.1.2-5
+E	\?	a?b	(1,2)	posix-2.8.4.1.2-6
+E	\|	a|b	(1,2)	posix-2.8.4.1.2-7
+E	\^	a^b	(1,2)	posix-2.8.4.1.2-8
+E	\$	a$b	(1,2)	posix-2.8.4.1.2-9
+E	.	a	(0,1)	posix-2.8.4.1.3-0
+E$	.	\n	(0,1)	posix-2.8.4.1.3-1
+E	abc[def]ghi	xabcdghiy	(1,8)	posix-2.8.4.3-0
+E	abc((de)(fg))hi	xabcdefghiy	(1,10)(4,8)(4,6)(6,8)	posix-2.8.4.3-1
+E	abc*def	xabdefy	(1,6)	posix-2.8.4.3-2
+E	abc*def	xabcdefy	(1,7)	posix-2.8.4.3-3
+E	abc*def	xabcccccccdefy	(1,13)	posix-2.8.4.3-4
+E	abc(def)*ghi	xabcghiy	(1,7)	posix-2.8.4.3-5
+E	abc(def)*ghi	xabcdefghi	(1,10)(4,7)	posix-2.8.4.3-6
+E	abc(def)*ghi	xabcdefdefdefghi	(1,16)(10,13)	posix-2.8.4.3-7
+E	abc+def	xabdefy	NOMATCH	posix-2.8.4.3-8
+E	abc+def	xabcdefy	(1,7)	posix-2.8.4.3-9
+E	abc+def	xabcccccccdefy	(1,13)	posix-2.8.4.3-10
+E	abc(def)+ghi	xabcghiy	NOMATCH	posix-2.8.4.3-11
+E	abc(def)+ghi	xabcdefghi	(1,10)(4,7)	posix-2.8.4.3-12
+E	abc(def)+ghi	xabcdefdefdefghi	(1,16)(10,13)	posix-2.8.4.3-13
+E	abc?def	xabdefy	(1,6)	posix-2.8.4.3-14
+E	abc?def	xabcdefy	(1,7)	posix-2.8.4.3-15
+E	abc?def	xabcccccccdefy	NOMATCH	posix-2.8.4.3-16
+E	abc(def)?ghi	xabcghiy	(1,7)	posix-2.8.4.3-17
+E	abc(def)?ghi	xabcdefghi	(1,10)(4,7)	posix-2.8.4.3-18
+E	abc(def)?ghi	xabcdefdefdefghi	NOMATCH	posix-2.8.4.3-19
+E	abc{0,1}def	xabdefy	(1,6)	posix-2.8.4.3-20
+E	abc{0,1}def	xabcdefy	(1,7)	posix-2.8.4.3-21
+E	abc{0,1}def	xabccdefy	NOMATCH	posix-2.8.4.3-22
+E	abc{1,3}def	xabdefy	NOMATCH	posix-2.8.4.3-23
+E	abc{1,3}def	xabcdefy	(1,7)	posix-2.8.4.3-24
+E	abc{1,3}def	xabccdefy	(1,8)	posix-2.8.4.3-25
+E	abc{1,3}def	xabcccdefy	(1,9)	posix-2.8.4.3-26
+E	abc{1,3}def	xabccccdefy	NOMATCH	posix-2.8.4.3-27
+E	abc{1,}def	xabdefy	NOMATCH	posix-2.8.4.3-28
+E	abc{1,}def	xabcdefy	(1,7)	posix-2.8.4.3-29
+E	abc{1,}def	xabccdefy	(1,8)	posix-2.8.4.3-30
+E	abc{1,}def	xabcccdefy	(1,9)	posix-2.8.4.3-31
+E	abc{1,}def	xabccccdefy	(1,10)	posix-2.8.4.3-32
+E	abc{3}def	xabdefy	NOMATCH	posix-2.8.4.3-33
+E	abc{3}def	xabcdefy	NOMATCH	posix-2.8.4.3-34
+E	abc{3}def	xabccdefy	NOMATCH	posix-2.8.4.3-35
+E	abc{3}def	xabcccdefy	(1,9)	posix-2.8.4.3-36
+E	abc{3}def	xabccccdefy	NOMATCH	posix-2.8.4.3-37
+E	abc{ 1,3}def	NULL	BADBR	posix-2.8.4.3-38
+E	abc{1 ,3}def	NULL	BADBR	posix-2.8.4.3-39
+E	abc{1, 3}def	NULL	BADBR	posix-2.8.4.3-40
+E	abc{1,3 }def	NULL	BADBR	posix-2.8.4.3-41
+E	(wee|week)(night|knights)s*	weeknights	(0,10)(0,4)(4,9)	posix-2.8.4.3-42
+E	(a|aaa)*	aaaa	(0,4)(3,4)	posix-2.8.4.3-43
+E	(a|aaa){0,100}	aaaa	(0,4)(3,4)	posix-2.8.4.3-44
+E	(wee|week)(night|knights)(s*)	weeknights	(0,10)(0,4)(4,9)(9,10)	posix-2.8.4.3-45
+E	(week|wee)(knights|night)	weeknights	(0,10)(0,3)(3,10)	posix-2.8.4.3-46
+E	(aaa|a)+	aaaa	(0,4)(3,4)	posix-2.8.4.3-47
+E	(a*)*x\1	aaaax	(0,5)(4,4)	posix-2.8.4.3-48
+E	(a*)*x\1(a*)	aaaaxaa	(0,7)(4,4)(5,7)	posix-2.8.4.3-49
+E	(a*)*x(\1a*)	aaaaxaa	(0,7)(4,4)(5,7)	posix-2.8.4.3-50
+E	(a*)*x(\1x)*(.*)	aaaaxxyy	(0,8)(4,4)(5,6)(6,8)	posix-2.8.4.3-51
+E	(a{0,}){0,}x\1	aaaax	(0,5)(4,4)	posix-2.8.4.3-52
+E	(a{0,}){0,}x\1(a{0,})	aaaaxaa	(0,7)(4,4)(5,7)	posix-2.8.4.3-53
+E	(a{0,}){0,}x(\1x){0,}(.{0,})	aaaaxxyy	(0,8)(4,4)(5,6)(6,8)	posix-2.8.4.3-54
+E	a{0,1}^bc	bc	(0,2)	posix-2.8.4.6-0
+E	a{0,1}^bc	^bc	NOMATCH	posix-2.8.4.6-1
+E	a{0,1}^bc	a^bc	NOMATCH	posix-2.8.4.6-2
+E	a^bc	abc	NOMATCH	posix-2.8.4.6-3
+E	a^bc	a^bc	NOMATCH	posix-2.8.4.6-4
+E	ab$c{0,1}	ab	(0,2)	posix-2.8.4.6-5
+E	ab$c{0,1}	ab$	NOMATCH	posix-2.8.4.6-6
+E	ab$c{0,1}	ab$c	NOMATCH	posix-2.8.4.6-7
+E	ab$c	abc	NOMATCH	posix-2.8.4.6-8
+E$	ab$c	ab\nc	NOMATCH	posix-2.8.4.6-9
+E	ab$c	ab$	NOMATCH	posix-2.8.4.6-10
+E	ab$c	ab$c	NOMATCH	posix-2.8.4.6-11
+Bi	xx	xX	OK	posix-case-0
+Ei	xx	xX	OK	posix-case-0
+Bi	xX	xx	OK	posix-case-1
+Ei	xX	xx	OK	posix-case-1
+Bi	x x	x X	OK	posix-case-2
+Ei	x x	x X	OK	posix-case-2
+Bi	x X	x x	OK	posix-case-3
+Ei	x X	x x	OK	posix-case-3
+Bi	x X	x y x	NOMATCH	posix-case-4
+Ei	x X	x y x	NOMATCH	posix-case-4
+B	^*x	*x	OK	posix-nosub-0
+B	\(*x\)	*x	OK	posix-nosub-1
+B	*x	*x	OK	posix-nosub-3
+B	a\{2,5\}	a	NOMATCH	posix-nosub-4
+E	a{2,5}	a	NOMATCH	posix-nosub-5
+B	a\{2,5\}	aa	OK	posix-nosub-6
+E	a{2,5}	aa	OK	posix-nosub-7
+B	a\{2,5\}	aaa	OK	posix-nosub-8
+E	a{2,5}	aaa	OK	posix-nosub-9
+B	a\{2,5\}	aaaa	OK	posix-nosub-10
+E	a{2,5}	aaaa	OK	posix-nosub-11
+B	a\{2,5\}	aaaaa	OK	posix-nosub-12
+E	a{2,5}	aaaaa	OK	posix-nosub-13
+B	a\{2,5\}	aaaaaa	OK	posix-nosub-14
+E	a{2,5}	aaaaaa	OK	posix-nosub-15
+E	(abcd){10,11}	abcd	NOMATCH	posix-nosub-16
+E	back-tracking oriented stream-of-solution functions	in the spec, and the back-tracking oriented stream-of-solution functions	OK	posix-nosub-17
+Bb	^abc	abcdef	NOMATCH	posix-not_ol-0
+Eb	^abc	abcdef	NOMATCH	posix-not_ol-0
+Bb$	^abc	xyz\nabcdef	NOMATCH	posix-not_ol-1
+Eb$	^abc	xyz\nabcdef	NOMATCH	posix-not_ol-1
+Bb	^abc	xyzabcdef	NOMATCH	posix-not_ol-2
+Eb	^abc	xyzabcdef	NOMATCH	posix-not_ol-2
+Bb$	^abc	\nabcdef	NOMATCH	posix-not_ol-3
+Eb$	^abc	\nabcdef	NOMATCH	posix-not_ol-3
+Be	abc$	defabc	NOMATCH	posix-not_ol-4
+Ee	abc$	defabc	NOMATCH	posix-not_ol-4
+Be$	abc$	defabc\nghi	NOMATCH	posix-not_ol-5
+Ee$	abc$	defabc\nghi	NOMATCH	posix-not_ol-5
+Be$	abc$	defabc\n	NOMATCH	posix-not_ol-6
+Ee$	abc$	defabc\n	NOMATCH	posix-not_ol-6
+Be	^abc$	abc	NOMATCH	posix-not_ol-7
+Ee	^abc$	abc	NOMATCH	posix-not_ol-7
+Bb	^abc$	abc	NOMATCH	posix-not_ol-8
+Eb	^abc$	abc	NOMATCH	posix-not_ol-8
+Bbe	^abc$	abc	NOMATCH	posix-not_ol-9
+Ebe	^abc$	abc	NOMATCH	posix-not_ol-9
+Bb$	^abc$	\nabc\n	NOMATCH	posix-not_ol-10
+Eb$	^abc$	\nabc\n	NOMATCH	posix-not_ol-10
+Be$	^abc$	\nabc\n	NOMATCH	posix-not_ol-11
+Ee$	^abc$	\nabc\n	NOMATCH	posix-not_ol-11
+Bbe$	^abc$	\nabc\n	NOMATCH	posix-not_ol-12
+Ebe$	^abc$	\nabc\n	NOMATCH	posix-not_ol-12
+Eb	^a(b)*c	abcdef	NOMATCH	posix-complex-not_ol-0
+Eb$	^a(b)*c	xyz\nabcdef	NOMATCH	posix-complex-not_ol-1
+Eb	^a(b)*c	xyzabcdef	NOMATCH	posix-complex-not_ol-2
+Eb$	^a(b)*c	\nabcdef	NOMATCH	posix-complex-not_ol-3
+Ee	a(b)*c$	defabc	NOMATCH	posix-complex-not_ol-4
+Ee$	a(b)*c$	defabc\nghi	NOMATCH	posix-complex-not_ol-5
+Ee$	a(b)*c$	defabc\n	NOMATCH	posix-complex-not_ol-6
+Ee	^a(b)*c$	abc	NOMATCH	posix-complex-not_ol-7
+Eb	^a(b)*c$	abc	NOMATCH	posix-complex-not_ol-8
+Ebe	^a(b)*c$	abc	NOMATCH	posix-complex-not_ol-9
+Eb$	^a(b)*c$	\nabc\n	NOMATCH	posix-complex-not_ol-10
+Ee$	^a(b)*c$	\na(b)*c\n	NOMATCH	posix-complex-not_ol-11
+Ebe$	^a(b)*c$	\nabc\n	NOMATCH	posix-complex-not_ol-12
+B$	.	\n	OK	posix-newline-0
+E$	.	\n	OK	posix-newline-0
+Bn$	.	\n	NOMATCH	posix-newline-1
+En$	.	\n	NOMATCH	posix-newline-1
+Bn$	^abc	xyz\nabcdef\nxyz	(4,7)	posix-newline-2
+En$	^abc	xyz\nabcdef\nxyz	(4,7)	posix-newline-2
+Bn$	^abc	xyz\nxabcdef\nxyz	NOMATCH	posix-newline-3
+En$	^abc	xyz\nxabcdef\nxyz	NOMATCH	posix-newline-3
+Bn$	z$\nabc	xyz\nabcdef\nxyz	NOMATCH	posix-newline-4
+En$	z$\nabc	xyz\nabcdef\nxyz	(2,7)	posix-newline-5
+Bnb$	^abc	abc\nabcdef\nxyz	(4,7)	posix-newline-6
+Enb$	^abc	abc\nabcdef\nxyz	(4,7)	posix-newline-6
+Bn$	def$	xyz\nabcdef\nxyz	(7,10)	posix-newline-7
+En$	def$	xyz\nabcdef\nxyz	(7,10)	posix-newline-7
+Bn$	def$	xyz\nxabcdefx\nxyz	NOMATCH	posix-newline-8
+En$	def$	xyz\nxabcdefx\nxyz	NOMATCH	posix-newline-8
+Bn$	def$\nx	xyz\nabcdef\nxyz	NOMATCH	posix-newline-9
+En$	def$\nx	xyz\nabcdef\nxyz	(7,12)	posix-newline-10
+En$	^a(b)*c	xyz\nabcdef\nxyz	(4,7)(5,6)	posix-complex-newline-2
+En$	^a(b)*c	xyz\nxabcdef\nxyz	NOMATCH	posix-complex-newline-3
+Bn$	z$\na(b)*c	xyz\nabcdef\nxyz	NOMATCH	posix-complex-newline-4
+En$	z$\na(b)*c	xyz\nabcdef\nxyz	(2,7)(5,6)	posix-complex-newline-5
+Enb$	^a(b)*c	abc\nabcdef\nxyz	(4,7)(5,6)	posix-complex-newline-6
+En$	d(e)f$	xyz\nabcdef\nxyz	(7,10)(8,9)	posix-complex-newline-7
+En$	d(e)f$	xyz\nxabcdefx\nxyz	NOMATCH	posix-complex-newline-8
+Bn$	d(e)f$\nx	xyz\nabcdef\nxyz	NOMATCH	posix-complex-newline-9
+En$	d(e)f$\nx	xyz\nabcdef\nxyz	(7,12)(8,9)	posix-complex-newline-10
+B	^*x	*x	(0,2)	posix-check-0
+B	\(*x\)	*x	(0,2)(0,2)	posix-check-1
+B	*x	*x	(0,2)	posix-check-2
+B	a\{2,5\}	a	NOMATCH	posix-check-3
+B	a\{2,5\}	aa	OK	posix-check-4
+B	a\{2,5\}	aaa	OK	posix-check-5
+B	a\{2,5\}	aaaa	OK	posix-check-6
+B	a\{2,5\}	aaaaa	OK	posix-check-7
+B	a\{2,5\}	aaaaaa	(0,5)	posix-check-8
+E	(abcd){10,11}	abcd	NOMATCH	posix-check-9
+E	(abcd){9223372036854775808}	NULL	BADBR	posix-check-10
+E	back-tracking oriented stream-of-solution functions	in the spec, and the back-tracking oriented stream-of-solution functions	OK	posix-check-11
+B	\(\([-[:alnum:]]*\)\([-[:alnum:]][-[:alnum:]][-[:alnum:]]*\)\)--.*--\(\3\)	abcq--xyz--cq--abcq--xyz--foo--aqbc--xyz--sdlfj--abcq--sdlfq	(0,53)(0,19)(0,15)(15,19)(49,53)	posix-check-13

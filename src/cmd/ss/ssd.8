@@ -1,0 +1,137 @@
+.fp 5 CW
+.de L		\" literal font
+.ft 5
+.it 1 }N
+.if !\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+..
+.de LR
+.}S 5 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de RL
+.}S 1 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.TH SSD 8
+.SH NAME \" @(#)ssd.8 (gsf@research.att.com) 04/01/94
+ssd \- network system status demon
+.SH SYNOPSIS
+ssd [
+.I host
+]
+.SH DESCRIPTION
+.I ssd
+is a local network system status demon that generates data for
+.IR ss (1)
+and the
+.IR cs (3)
+routine
+.LR csstat .
+There is one
+.I ssd
+demon per host.
+The status information for each host is maintained in a directory that
+is accessible by all hosts.
+Network file system traffic is minimized by placing the information in the
+.B atime
+and
+.B mtime
+.IR stat (2)
+fields.
+Demon update frequencies are also randomized to avoid network traffic spikes.
+.PP
+Demons are started by explicit calls to either
+.IR ss (1)
+or
+.LR csstat .
+However, it wouldn't hurt to place
+.EX
+	ss . >/dev/null 2>&1
+.EE
+in
+.LR rc.local .
+.PP
+If the
+.I host
+argument is given then a demon is started on that host.
+.PP
+If the optional command
+.I ssd.idle
+is placed in the same directory as
+.I ssd
+then it is executed, with the current hostname as the first argument,
+to determine the host idle time.
+.I ssd.idle
+is under complete control of the local installation and is not supplied
+in the standard distribution.
+.I ssd
+must be restarted in order for it to recognize a newly added
+.IR ssd.idle .
+.I ssd
+reads the first line of output from
+.I ssd.idle
+to determine the idle time:
+.RS
+.TP
+.L busy
+The idle time is set to
+.IR 0 .
+.TP
+.L free
+The idle time is set to a large value.
+.TP
+.L idle
+The number of seconds since the last idle time check is added to
+the previous idle time value.
+.TP
+.I seconds
+The idle time is set to
+.IR seconds .
+.RE
+.PP
+For any other value
+.I ssd
+calculates the idle time using the default algorithm.
+.SH CAVEATS
+It may take a minute for a demon to recognize that another
+demon is already running.
+Because the local demon may be initiated by a status request
+it may also take a minute for the status routine to recognize that the
+local host is up.
+.PP
+The status information is placed in a directory that must be accessible
+from all hosts on the local network.
+The mount permissions on this directory should be tuned to prevent
+hosts from hanging when the host servicing the directory is down.
+The status information for 
+.I host
+is placed in the file
+.BI share/lib/ss/ host.
+The demon for 
+.I host
+can be killed by simply removing (\f5rm -f\fP) the
+.BI share/lib/ss/ host
+file.
+.SH FILES
+.TP 2i
+.B share/lib/ss/.log
+demon error log
+.TP 2i
+.BI share/lib/ss/ host
+status for
+.I host
+.SH "SEE ALSO"
+ss(1), cs(3)

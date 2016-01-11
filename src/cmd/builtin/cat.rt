@@ -1,0 +1,52 @@
+NOTE regression tests for the cat command
+
+UNIT cat --regress
+
+TEST basics
+
+index=0
+files=
+for data in $(
+	for ((i = 0; i <= 2#11111; i++ ))
+	do	printf $'%05..2u\n' $i
+	done |
+	sed -e 's/1/a/' -e 's/1/b/' -e 's/1/c/' -e 's/1/d/' -e 's/1/e/' -e 's/./&n/g' -e 's/0//g' -e 's/n$//'
+	)
+do	d=d$(printf $'%05..2u' $index)
+	((index++))
+	files="$files $d"
+	DATA $d "${data//n/$'\n'}"
+done
+
+options=(
+	show-ends
+	show-nonprinting
+	number-nonblank
+	squeeze-blank
+)
+
+# generate tests for all option and input file combinations
+
+integer b i m=${#options[@]}
+for (( b=0; b<(1<<m); b++ ))
+do	
+	o=
+	for (( i=0; i<m; i++ ))
+	do	
+		if	(( b & (1<<i) ))
+		then	o="$o --${options[i]}"
+		fi
+	done
+	for f in $files
+	do
+		EXEC $o $f
+	done
+done
+
+TEST '-v'
+
+	DO getconf UNIVERSE = att
+	DATA i $'a\x{89}b\x{c9}c\tdIe'
+	DATA j -n X
+	EXEC -v i
+	EXEC -v j

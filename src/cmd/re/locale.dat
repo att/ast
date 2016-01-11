@@ -1,0 +1,206 @@
+: X/Open regex locale tests 2008-05-15
+
+# regex private persistent locale data exercises
+
+Ei	Ei		Ei		(0,2)
+Ei	Ei		ei		(0,2)
+Ei	ei		Ei		(0,2)
+Ei	ei		ei		(0,2)
+
+# ast debug mutibyte locale
+
+{C	debug
+
+E	a.z			a<2xx>z		(0,7)
+E	a.z			a<2az>xa<2za>z	(7,14)
+
+E	[a]+			ba<2a0><2a1>ab	(1,2)
+E	[[.a.]]+		ba<2a0><2a1>ab	(1,2)
+E	[[.<2a0>.]]+		ba<2a0><2a1>ab	(2,7)
+E	[[.<2a5>.]]+		ba<2a0><2a1>ab	NOMATCH
+E	[[=<2a0>=]]+		ba<2a0><2a1>ab	(1,13)
+#E	[[=<2a5>=]]+		ba<2a0><2a1>ab	(1,13)
+
+E	((..)*(...)*).*		abc		(0,3)(0,3)(?,?)(0,3)
+E	((..)*(...)*).*		<2a0><2b0><1c>	(0,14)(0,14)(?,?)(0,14)
+
+S	a?z			a<2xx>z		(0,7)
+S	a?z			a<2az>xa<2za>z	(7,14)
+
+K	+([a])			ba<2a0><2a1>ab	(1,2)(1,2)
+K	+([[.a.]])		ba<2a0><2a1>ab	(1,2)(1,2)
+K	+([[.<2a0>.]])		ba<2a0><2a1>ab	(2,7)(2,7)
+K	+([[.<2a5>.]])		ba<2a0><2a1>ab	NOMATCH
+K	+([[=<2a0>=]])		ba<2a0><2a1>ab	(1,13)(1,13)
+
+K	@(*(..)*(...))*		abc		(0,3)(0,0)(0,0)(0,0)
+K	@(*(..)*(...))*		<2a0><2b0><1c>	(0,14)(0,0)(0,0)(0,0)
+
+ES	[a-z][0-9]		AZ90az90	(5,7)
+ES	[a-z][0-9]		A<2a1>9Z	(1,7)
+ES	[a-z][0-9]		Ach9Z		(1,4)
+ES	a[[.c.]]z		acz		(0,3)
+ES	a[[.ch.]]z		achz		(0,4)
+
+ES	[[:lower:]][[:digit:]]	AZ90az90	(5,7)
+ES	[[:lower:]][[:digit:]]	B<2a1>b9Z	(6,8)
+ES	[[:lower:]][[:digit:]]	B<2A1>b9Z	(6,8)
+ES	[[:lower:]][[:digit:]]	Ach9Z		(2,4)
+
+BES	[a-z][0-9]		AZ90az90	(5,7)
+BES	[a-z][0-9]		A<2a1>9Z	(1,7)
+BES	[a-z][0-9]		Ach9Z		(1,4)
+BES	[a-z][0-9]		ACH9Z		NOMATCH
+BES	[A-Z][0-9]		ACH9Z		(1,4)
+
+BEAm	.			abc		(0,1)
+BEAml	.			abc		(0,1)
+BEAmr	.			abc		(2,3)
+BEAmlr	.			abc		NOMATCH
+BEAmlr	.			a		(0,1)
+
+SKm	?			abc		(0,1)
+SKml	?			abc		(0,1)
+SKmr	?			abc		(2,3)
+SKmlr	?			abc		NOMATCH
+SKmlr	?			a		(0,1)
+
+}
+
+# UTF-8 multibyte locale
+
+{C	en_US.UTF-8
+
+{S$	?		\xC3\x89	(0,2)	locale does not support UTF-8
+
+E$	\xC3\x89i	\xC3\x89i	(0,3)
+E$	\xC3\x89i	\xC3\xA9i	NOMATCH
+E$	\xC3\xA9i	\xC3\x89i	NOMATCH
+E$	\xC3\xA9i	\xC3\xA9i	(0,3)
+
+Ei$	\xC3\x89i	\xC3\x89i	(0,3)
+Ei$	\xC3\x89i	\xC3\xA9i	(0,3)
+Ei$	\xC3\xA9i	\xC3\x89i	(0,3)
+Ei$	\xC3\xA9i	\xC3\xA9i	(0,3)
+
+E$	\xC3\x89i	\xC3\x89i	(0,3)
+E$	\xC3\x89i	\xC3\xA9i	NOMATCH
+E$	\xC3\xA9i	\xC3\x89i	NOMATCH
+E$	\xC3\xA9i	\xC3\xA9i	(0,3)
+
+Ei$	\xC3\x89i	\xC3\x89i	(0,3)
+Ei$	\xC3\x89i	\xC3\xA9i	(0,3)
+Ei$	\xC3\xA9i	\xC3\x89i	(0,3)
+Ei$	\xC3\xA9i	\xC3\xA9i	(0,3)
+
+ES$	k[[=o=]]r		ist-k\xC3\xB6rperlich	(4,8)
+ES$	k[[=o=]]r		ist-k\xC3\x96rperlich	(4,8)
+ES$	k[[=o=]]r		ist-korperlich		(4,7)
+ES$	k[[=o=]]r		ist-kOrperlich		(4,7)
+ES$	k[[=O=]]r		ist-kOrperlich		(4,7)
+
+ES$	k[[=\xC3\xB6=]]r	ist-k\xC3\xB6rperlich	(4,8)
+ES$	k[[=\xC3\xB6=]]r	ist-k\xC3\x96rperlich	(4,8)
+ES$	k[[=\xC3\xB6=]]r	ist-korperlich		(4,7)
+ES$	k[[=\xC3\xB6=]]r	ist-kOrperlich		(4,7)
+ES$	k[[=\xC3\x96=]]r	ist-kOrperlich		(4,7)
+
+ESi$	k[[=o=]]r		ist-k\xC3\xB6rperlich	(4,8)
+ESi$	k[[=o=]]r		ist-k\xC3\x96rperlich	(4,8)
+ESi$	k[[=o=]]r		ist-korperlich		(4,7)
+ESi$	k[[=o=]]r		ist-kOrperlich		(4,7)
+ESi$	k[[=O=]]r		ist-kOrperlich		(4,7)
+
+ESi$	k[[=\xC3\xB6=]]r	ist-k\xC3\xB6rperlich	(4,8)
+ESi$	k[[=\xC3\xB6=]]r	ist-k\xC3\x96rperlich	(4,8)
+ESi$	k[[=\xC3\xB6=]]r	ist-korperlich		(4,7)
+ESi$	k[[=\xC3\xB6=]]r	ist-kOrperlich		(4,7)
+ESi$	k[[=\xC3\x96=]]r	ist-kOrperlich		(4,7)
+
+ESi$	k[[=o=]]r		IST-K\xC3\xB6RPERLICH	(4,8)
+ESi$	k[[=o=]]r		IST-K\xC3\x96RPERLICH	(4,8)
+ESi$	k[[=o=]]r		IST-KORPERLICH		(4,7)
+ESi$	k[[=o=]]r		IST-KoRPERLICH		(4,7)
+ESi$	k[[=O=]]r		IST-KoRPERLICH		(4,7)
+
+ESi$	k[[=\xC3\xB6=]]r	IST-K\xC3\xB6RPERLICH	(4,8)
+ESi$	k[[=\xC3\xB6=]]r	IST-K\xC3\x96RPERLICH	(4,8)
+ESi$	k[[=\xC3\xB6=]]r	IST-KORPERLICH		(4,7)
+ESi$	k[[=\xC3\xB6=]]r	IST-KoRPERLICH		(4,7)
+ESi$	k[[=\xC3\x96=]]r	IST-KoRPERLICH		(4,7)
+
+ESi$	K[[=O=]]R		ist-k\xC3\xB6rperlich	(4,8)
+ESi$	K[[=O=]]R		ist-k\xC3\x96rperlich	(4,8)
+ESi$	K[[=O=]]R		ist-korperlich		(4,7)
+ESi$	K[[=O=]]R		ist-kOrperlich		(4,7)
+ESi$	K[[=o=]]R		ist-kOrperlich		(4,7)
+
+ESi$	K[[=\xC3\xB6=]]R	ist-k\xC3\xB6rperlich	(4,8)
+ESi$	K[[=\xC3\xB6=]]R	ist-k\xC3\x96rperlich	(4,8)
+ESi$	K[[=\xC3\xB6=]]R	ist-korperlich		(4,7)
+ESi$	K[[=\xC3\xB6=]]R	ist-kOrperlich		(4,7)
+ESi$	K[[=\xC3\x96=]]R	ist-kOrperlich		(4,7)
+
+ESi$	K[[=O=]]R		IST-K\xC3\xB6RPERLICH	(4,8)
+ESi$	K[[=O=]]R		IST-K\xC3\x96RPERLICH	(4,8)
+ESi$	K[[=O=]]R		IST-KORPERLICH		(4,7)
+ESi$	K[[=O=]]R		IST-KoRPERLICH		(4,7)
+ESi$	K[[=o=]]R		IST-KoRPERLICH		(4,7)
+
+ESi$	K[[=\xC3\xB6=]]R	IST-K\xC3\xB6RPERLICH	(4,8)
+ESi$	K[[=\xC3\xB6=]]R	IST-K\xC3\x96RPERLICH	(4,8)
+ESi$	K[[=\xC3\xB6=]]R	IST-KORPERLICH		(4,7)
+ESi$	K[[=\xC3\xB6=]]R	IST-KoRPERLICH		(4,7)
+ESi$	K[[=\xC3\x96=]]R	IST-KoRPERLICH		(4,7)
+
+}
+
+}
+
+# Espanol locale -- collation element tests
+
+{C	es_ES
+
+{S	[[.ch.]]	ch	(0,2)		locale does not support [[.ch.]] collation element
+
+E	[[.Ch.]]	Ch	ECOLLATE
+S	[[.Ch.]]	Ch	NOMATCH
+
+ES	[[.ch.]]	ch	(0,2)
+ES	[[.ch.]]	cH	NOMATCH
+ES	[[.CH.]]	CH	(0,2)
+ES	[[.ch.]-d]	c	NOMATCH
+ES	[[.ch.]-d]	d	(0,1)
+ES	[[.ch.]-d]	ch	(0,2)
+ES	[c-[.ch.]]	c	(0,1)
+ES	[c-[.ch.]]	d	NOMATCH
+ES	[c-[.ch.]]	ch	(0,2)
+
+ESi	[[.ch.]]	ch	(0,2)
+ESi	[[.ch.]]	cH	(0,2)
+ESi	[[.ch.]]	Ch	(0,2)
+ESi	[[.ch.]]	CH	(0,2)
+
+ESi	[[.cH.]]	ch	(0,2)
+ESi	[[.cH.]]	cH	(0,2)
+ESi	[[.cH.]]	Ch	(0,2)
+ESi	[[.cH.]]	CH	(0,2)
+
+ESi	[[.Ch.]]	ch	(0,2)
+ESi	[[.Ch.]]	cH	(0,2)
+ESi	[[.Ch.]]	Ch	(0,2)
+ESi	[[.Ch.]]	CH	(0,2)
+
+ESi	[[.CH.]]	ch	(0,2)
+ESi	[[.CH.]]	cH	(0,2)
+ESi	[[.CH.]]	Ch	(0,2)
+ESi	[[.CH.]]	CH	(0,2)
+
+ESi	[[.ch.]-d]	CH	(0,2)
+ESi	[[.CH.]-D]	c	NOMATCH
+ESi	[[.Ch.]-d]	d	(0,1)
+ESi	[[.Ch.]-d]	D	(0,1)
+
+}
+
+}

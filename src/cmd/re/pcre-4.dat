@@ -1,0 +1,42 @@
+: converted from the pcre testdata/testinput4 2008-05-14
+
+E$v	[\\b]	\b	(0,1)
+E$v	SAME	a	NOMATCH
+
+{C	es_ES.ISO-8859-1
+
+{E	\w	É	(0,1)	locale does not recognize ISO-8859-1 8 bit E-acute alpha
+
+Ev	^[\w]+	École	(0,5)
+Ev	^[\w]+	École	(0,5)
+Ev	^[\w]+	École	(0,5)
+Ev	^[\W]+	École	NOMATCH
+Ev	^[\W]+	École	NOMATCH
+E	^\w+	École	(0,5)
+E	^\w+	École	(0,5)
+
+E$	(.+)\\b(.+)	:École:	(0,7)(0,6)(6,7)
+Ei	École	École	(0,5)
+Ei	SAME	école	(0,5)
+Ei	École	École	(0,5)
+Ei	SAME	école	(0,5)
+Exiv	^[\xc8-\xc9]	École	(0,1)
+Exiv	SAME	école	(0,1)
+Exi	^\xc9	École	(0,1)
+Exi	SAME	école	(0,1)
+Exv	^[\xc8-\xc9]	École	(0,1)
+Exv	SAME	école	NOMATCH
+Ex	^\xc9	École	(0,1)
+Ex	SAME	école	NOMATCH
+E$xiv	^[\xc8-\xc9]	École	(0,1)
+E$xiv	SAME	école	(0,1)
+E$xi	^\xc9	École	(0,1)
+E$xi	SAME	école	(0,1)
+E$xv	^[\xc8-\xc9]	École	(0,1)
+E$xv	SAME	école	NOMATCH
+E$x	^\xc9	École	(0,1)
+E$x	SAME	école	NOMATCH
+
+}
+
+}

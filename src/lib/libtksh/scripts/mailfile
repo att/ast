@@ -1,0 +1,169 @@
+##########################################################################
+# mailfile
+# Jeff Korn
+#
+# This script allows the user to email a file or directory to another
+# user.  It will gzip and uuencode files (if necessary) and tar 
+# directories.  If the COMPRESS enviroment variable is set, it will
+# use the program COMPRESS instead of gzip.
+##########################################################################
+
+if [[ $tk_version = "" ]]
+then
+	if whence tksh > /dev/null
+	then
+		tk_version=xxx exec tksh $0
+	else
+		print -u2 "This script requires Tksh"
+	fi
+	exit 1
+fi
+
+########################### Open File Dialog Box #########################
+
+function GetFile # msg default
+{
+	typeset msg="${1-"Select a file:"}" olddir="$(pwd)" f="${2-"$(pwd)/"}"
+	typeset w=$(toplevel .fileselect -bd 4 -class Getfile)
+
+	GetFileName="$f"
+	GetFileResources
+	GetFileWindow $w "$msg" > /dev/null
+	GetFileSetFiles $w.files
+
+	wm title .fileselect "$msg"
+	bind $w.files.file.list "<1>" \
+		"GetFileSClick %W %y ; focus $w.sel.e"
+	bind $w.files.dir.list "<1>" \
+		"GetFileSClick %W %y ; focus $w.sel.e"
+	bind $w.files.dir.list "<Double-1>" \
+		"GetFileDClick $w.files %y ; focus $w.sel.e"
+	bind $w.sel.e "<Return>" "GetFileSetFiles $w.files"
+
+	tkwait variable GetFileDone
+	destroy $w
+	cd "$olddir"
+}
+
+function GetFileWindow # w msg
+{
+	typeset w=$1 msg="$2"
+
+	# Create everything
+
+	message $w.msg -aspect 1000 -text "$msg"
+
+	frame $w.sel
+	label $w.sel.l -padx 0
+	entry $w.sel.e -textvariable GetFileName
+
+	frame $w.files
+	frame $w.files.dir
+	frame $w.files.file
+	MkXYScroll $w.files.dir
+	MkXYScroll $w.files.file
+
+	frame $w.buttons
+	button $w.buttons.ok -command $'#!ksh\nGetFileDone=1'
+	button $w.buttons.cancel \
+		-command $'#!ksh\n'"GetFileName='' ; GetFileDone=1"
+
+	# Take this out if you want a generic open file dialog box
+	frame $w.dest
+	label $w.dest.l -text "E-mail address:"
+	entry $w.dest.e -textvar Dest
+
+	# Pack everything
+
+	pack $w.sel.l -side left
+	pack $w.sel.e -side right -fill x -expand 1
+	pack $w.msg -side top -fill x
+	pack $w.files.dir $w.files.file -side left -fill both
+	pack $w.buttons.ok $w.buttons.cancel -side right
+	pack $w.dest.l -side left
+	pack $w.dest.e -side left -expand 1 -fill x
+	pack $w.msg $w.sel $w.files $w.dest $w.buttons -side top -fill both
+}
+
+function GetFileResources
+{
+	option add "*Getfile*ok.text"		OK		startup
+	option add "*Getfile*cancel.text"	Cancel		startup
+	option add "*Getfile*l.text"		Selection:	startup
+}
+
+function MkXYScroll # widget
+{
+	typeset w=$1
+
+	listbox $w.list -yscrollcommand "$w.scroll set"
+	scrollbar $w.scroll -command "$w.list yview"
+	pack $w.list -side left -fill both -expand 1
+	pack $w.scroll -side left -fill y
+}
+
+function GetFileSetFiles # widget
+{
+	typeset dwidget=$1.dir.list fwidget=$1.file.list i w
+
+	if [[ -d $GetFileName ]]
+	then	cd $GetFileName > /dev/null 2>&1
+	else	cd $(dirname $GetFileName) > /dev/null 2>&1
+	fi
+
+	$dwidget delete 0 end
+	$fwidget delete 0 end
+	$dwidget insert end ..
+	for i in *
+	do
+		w=$dwidget
+		[[ -f $i ]] && w=$fwidget
+		$w insert end $i
+	done
+}
+
+function GetFileSClick # widget point
+{
+	GetFileName=$(pwd)/$($1 get $($1 nearest $2))
+}
+
+function GetFileDClick # widget point
+{
+	cd $($1.dir.list get $($1.dir.list nearest $2))
+	GetFileName=$(pwd)/
+	GetFileSetFiles $1
+}
+
+##########################################################################
+
+wm withdraw .
+
+GetFile "Select file to send:"
+
+[[ $GetFileName == "" ]] && exit 0
+[[ $Dest == "" ]] && exit 0
+name=$(basename $GetFileName)
+
+case $COMPRESS in
+	compress)	EXT=Z ;;
+	zip)		EXT=zip ;;
+	pack)		EXT=z ;;
+	*)		COMPRESS=gzip 
+			EXT=gz ;;
+esac
+
+case $GetFileName in
+	"")	break ;;
+	*.gz)	uuencode $name < $GetFileName | mail $Dest ;;
+	*.tgz)	uuencode $name < $GetFileName | mail $Dest ;;
+	*.uu)	mail $Dest < $GetFileName ;;
+	*)	
+		if [[ -d $GetFileName ]]
+		then
+		    tar -cvpf - $GetFileName | COMPRESS | uuencode \
+			$name.tar.$EXT | mail $Dest
+		else
+		    $COMPRESS < $GetFileName | uuencode $name.$EXT | mail $Dest
+		fi
+		;;
+esac

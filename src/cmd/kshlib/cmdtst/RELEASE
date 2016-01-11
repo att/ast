@@ -1,0 +1,7 @@
+12-05-11 grep.c,xargs.c: add [--plugin?ksh] to differentiate from standalone commands
+12-05-07 grep.c: add case 'y': to *really* ignore --color
+12-05-03 grep.c: add -Y, --color -- ignored for GNU compatibility
+12-05-03 grep.c,xargs.c: b_*() prototype context arg changed to Shbltin_t* for -lcmd compatibility
+12-04-20 grep.c: always enable FTS_META (to disable pure FTS_PHYSICAL)
+12-04-11 grep,xargs: fix first round of beta test bugs (interrupts, pwd)
+12-03-30 grep,xargs: first release for beta testing

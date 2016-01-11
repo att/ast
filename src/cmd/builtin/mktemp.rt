@@ -1,0 +1,33 @@
+NOTE regression tests for the mktemp command
+
+UNIT mktemp
+
+regressflags="--regress=12345 --unsafe"
+
+TEST basics
+
+	EXPORT TMPDIR=tmp
+
+	PROG mkdir $TMPDIR
+
+	EXEC $regressflags
+	EXEC $regressflags tst
+	EXEC $regressflags tst.
+	EXEC $regressflags tst_
+	EXEC $regressflags tstXXXXXXXX
+	EXEC $regressflags tst.XXXXXXXX
+	EXEC $regressflags tst_XXXXXXXX
+
+	EXEC $regressflags --tmp
+	EXEC $regressflags --tmp tst
+	EXEC $regressflags --tmp tmp/tst
+	EXEC $regressflags --tmp tst.
+	EXEC $regressflags --tmp tmp/tst.
+	EXEC $regressflags --tmp tst_
+	EXEC $regressflags --tmp tmp/tst_
+	EXEC $regressflags --tmp tstXXXXXXXX
+	EXEC $regressflags --tmp tmp/tstXXXXXXXX
+	EXEC $regressflags --tmp tst.XXXXXXXX
+	EXEC $regressflags --tmp tmp/tst.XXXXXXXX
+	EXEC $regressflags --tmp tst_XXXXXXXX
+	EXEC $regressflags --tmp tmp/tst_XXXXXXXX

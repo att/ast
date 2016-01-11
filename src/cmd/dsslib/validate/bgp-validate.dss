@@ -1,0 +1,14 @@
+<CONSTRAINT>
+	<NAME>bits</>
+	<DEFAULT>0</>
+	<MIN>0</>
+	<MAX>32</>
+</>
+<#INCLUDE#>bgp-map.dss</>
+<DSS>
+	<METHOD>bgp</>
+	<FIELD>
+		<NAME>bits</>
+		<CONSTRAINT>bits</>
+	</>
+</>

@@ -1,0 +1,49 @@
+# regression tests for the head utility
+
+UNIT head
+
+TEST 'default options'
+
+EXEC < /dev/null
+
+DATA - -n $'a'
+EXEC
+
+EXEC <<!
+
+!
+
+EXEC <<<$'a\n'
+EXEC <<<$'1\n2\n3\n4\n5\n6\n7\n8'
+EXEC <<<$'1\n2\n3\n4\n5\n6\n7\n8\n9'
+EXEC <<<$'1\n2\n3\n4\n5\n6\n7\n8\n9\n0'
+EXEC <<<$'1\n2\n3\n4\n5\n6\n7\n8\n9\n0\na'
+EXEC <<<$'1\n2\n3\n4\n5\n6\n7\n8\n9\n0\na\nb'
+
+TEST '-<number><qualifier>'
+
+EXEC -1 <<<$'1\n2'
+EXEC -1c < /dev/null
+
+DATA - -n $'12'
+EXEC -1c
+
+DATA - -n $'1234567890abcdefg'
+EXEC -14c
+
+TEST '-n'
+
+EXEC -n 4096m <<<$'a'
+EXEC -n 2048m
+
+DATA - -f$'z%Zz\n'
+EXEC
+
+TEST '-n<octal> and -<octal>'
+
+EXEC -08 <<<$'\n\n\n\n\n\n\n\n\n\n\n'
+EXEC -n 08
+EXEC -c 08
+EXEC -010
+EXEC -n 010
+EXEC -c 010

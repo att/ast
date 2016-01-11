@@ -1,0 +1,22 @@
+<METHOD>flat</>
+<FLAT>
+ <RECORD>
+  <FIXED>4</>
+ </>
+ <FIELD>
+  <NAME>id</>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <WIDTH>2</>
+  </>
+ </>
+ <FIELD>
+  <NAME>type</>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <WIDTH>2</>
+  </>
+ </>
+</>

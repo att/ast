@@ -1,0 +1,1984 @@
+{\rtf1 \ansi \deff0
+{\*\comment generator: html2rtf (AT&T Labs Research) 04/01/97}
+{\fonttbl
+{\f0 \froman Times New Roman;}
+{\f1 \fmodern Line Printer;}
+{\f2 \froman Symbol;}
+{\f3 \fswiss Ariel;}
+}
+\fs24
+ {\*\comment generator: troff2html (AT&T Labs Research) 04/01/97 -man}
+{\b\fs32\par\pard\qc\li0\tx0\tx20000\~ SH\~(\~1\~)\~\~\~\~\~\~\~\~\~\~\~\~\~USER
+ COMMANDS\~\~\~\~\~\~\~\~\~\~\~\~SH\~(\~1\~)}
+ }{\brdrt\brdrsh\par}{\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.NAME} NAME
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}sh, rsh \'2d shell,
+ the standard/restricted command and programming language {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.SYNOPSIS} SYNOPSIS
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}{\b sh }[ {\b\'b1 abcefhikmnoprstuvxCD
+ }] [ {\b\'2d R }file ] [ {\b\'b1 o }option
+ ] .\~.\~. [ {\b\'2d }] [ arg .\~.\~. ] {\b\line rsh
+ }[ {\b\'b1 abcefhikmnoprstuvxCD }] [ {\b\'2d R
+ }file ] [ {\b\'b1 o }option ] .\~.\~. [ {\b\'2d
+ }] [ arg .\~.\~. ] {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.DESCRIPTION} DESCRIPTION
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}{\i Sh }is a command and
+ programming language that executes commands read from a terminal or a file.
+ {\i Rsh }is a restricted version of the standard command interpreter {\i sh};
+ it is used to set up login names and execution environments whose capabilities
+ are more controlled than those of the standard shell. See {\i Invocation
+ }below for the meaning of arguments to the shell. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Definitions} Definitions.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}A {\i metacharacter }is
+ one of the following characters: {\b\par\pard\qc\li1120\tx1120\tx20000 ; & ( ) | < > new-line
+ space tab} \par\pard\qc\li840\tx840\tx20000 A {\i blank }is a {\b tab }or a {\b space}.
+ An {\i identifier }is a sequence of letters, digits, or underscores starting
+ with a letter or underscore. Identifiers are used as components of {\i variable
+ }names. A {\i vname }is a sequence of one or more identifiers separated
+ by a {\b{\fs26 .}} and optionally preceded by a {\b{\fs26 .}}.
+ Vnames are used as function and variable names. A {\i word }is a sequence
+ of {\i characters }from the character set defined by the current locale,
+ excluding non-quoted {\i metacharacters}. \par\pard\qc\li840\tx840\tx20000 A {\i command }is a sequence
+ of characters in the syntax of the shell language. The shell reads each
+ command and carries out the desired action either directly or by invoking
+ separate utilities. A built-in command is a command that is carried out
+ by the shell itself without creating a separate process. Some commands are
+ built-in purely for convenience and are not documented here. Built-ins that
+ cause side effects in the shell environment and built-ins that are found
+ before performing a path search (see {\uldb Execution}{\v HTML2RTF.Execution}{\*\comment{\i Execution }}below)
+ are documented here. For historical reasons, some of these built-ins behave
+ differently than other built-ins and are called {\i special built-ins}.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Commands} Commands. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}A
+ {\i simple-command }is a list of variable assignments (see {\uldb Variable Assignments}{\v HTML2RTF.Variable.Assignments}{\*\comment{\i Variable
+ Assignments }}below) or a sequence of {\i blank }separated words which
+ may be preceded by a list of variable assignments (see {\uldb Environment}{\v HTML2RTF.Environment}{\*\comment{\i Environment
+ }}below). The first word specifies the name of the command to be executed.
+ Except as specified below, the remaining words are passed as arguments to
+ the invoked command. The command name is passed as argument 0 (see {\i exec}(2)).
+ The {\i value }of a simple-command is its exit status; 0-255 if it terminates
+ normally; 256+{\i signum\~}if it terminates abnormally (the name of
+ the signal corresponding to the exit status can be obtained via the {\b\'2d l
+ }option of the {\b kill }built-in utility). \par\pard\qc\li840\tx840\tx20000 A {\i pipeline
+ }is a sequence of one or more {\i commands }separated by {\b |}.
+ The standard output of each command but the last is connected by a {\i pipe}(2)
+ to the standard input of the next command. Each command, except possibly
+ the last, is run as a separate process; the shell waits for the last command
+ to terminate. The exit status of a pipeline is the exit status of the last
+ command. Each pipeline can be preceded by the {\i reserved word }{\b !
+ }which causes the exit status of the pipeline to become 0 if the exit
+ status of the last command is non-zero, and 1 if the exit status of the
+ last command is 0. \par\pard\qc\li840\tx840\tx20000 A {\i list }is a sequence of one or more pipelines
+ separated by {\b ;}, {\b&}, {\b |&}, {\b&&},
+ or {\b |\~|}, and optionally terminated by {\b ;},
+ {\b&}, or {\b |&}. Of these five symbols, {\b ;},
+ {\b&}, and {\b |& }have equal precedence, which
+ is lower than that of {\b&& }and {\b |\~|}.
+ The symbols {\b&& }and {\b |\~| }also have equal
+ precedence. A semicolon ({\b ;}) causes sequential execution of
+ the preceding pipeline; an ampersand ({\b&}) causes asynchronous
+ execution of the preceding pipeline (i.e., the shell does {\i not }wait
+ for that pipeline to finish). The symbol {\b |& }causes asynchronous
+ execution of the preceding pipeline with a two-way pipe established to the
+ parent shell; the standard input and output of the spawned pipeline can
+ be written to and read from by the parent shell by applying the redirection
+ operators {\b<& }and {\b>& }with arg {\b p
+ }to commands and by using {\b\'2d p }option of the built-in
+ commands {\b read }and {\b print }described later. The
+ symbol {\b&& }(\~{\b |\~|}\~) causes
+ the {\i list }following it to be executed only if the preceding pipeline
+ returns a zero (non-zero) value. One or more new-lines may appear in a {\i list
+ }instead of a semicolon, to delimit a command. \par\pard\qc\li840\tx840\tx20000 A {\i command }is either
+ a simple-command or one of the following. Unless otherwise stated, the value
+ returned by a command is that of the last simple-command executed in the
+ command. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 for} {\i vname\~}[\~{\b in}
+ {\i word\~}.\~.\~. \~] {\b ;do}{\i list\~}{\b ;done}
+ \tab Each time a {\b for }command is executed, {\i vname }is set
+ to the next {\i word }taken from the {\b in }{\i word }list.
+ If {\b in}{\i word\~}.\~.\~. is omitted, then the
+ {\b for }command executes the {\b do} {\i list\~}once
+ for each positional parameter that is set starting from {\b 1 }(see
+ {\uldb Parameter Expansion}{\v HTML2RTF.Parameter.Expansion}{\*\comment{\i Parameter Expansion }}below). Execution ends
+ when there are no more words in the list. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 for ((} [\~{\i expr1\~}\~]
+ {\b ;} [\~{\i expr2\~}\~] {\b ;} [\~{\i expr3\~}\~]
+ {\b ))}{\b ;do}{\i list\~}{\b ;done} \tab The
+ arithmetic expression {\i expr1 }is evaluated first (see {\uldb Arithmetic Evaluation}{\v HTML2RTF.Arithmetic.Evaluation}{\*\comment{\i Arithmetic
+ Evaluation }}below). The arithmetic expression {\i expr2 }is repeatedly
+ evaluated until it evaluates to zero and when non-zero, {\i list }is executed
+ and the arithmetic expression {\i expr3 }evaluated. If any expression is
+ omitted, then it behaves as if it evaluated to 1. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 select}
+ {\i vname\~}[\~{\b in} {\i word\~}.\~.\~.
+ \~] {\b ;do}{\i list\~}{\b ;done} \tab A {\b select
+ }command prints on standard error (file descriptor 2) the set of {\i word}s,
+ each preceded by a number. If {\b in}{\i word\~}.\~.\~.
+ is omitted, then the positional parameters starting from {\b 1 }are
+ used instead (see {\uldb Parameter Expansion}{\v HTML2RTF.Parameter.Expansion}{\*\comment{\i Parameter Expansion }}below).
+ The {\fs22{\b PS3 }}prompt is printed and a line is read
+ from the standard input. If this line consists of the number of one of the
+ listed {\i word}s, then the value of the variable {\i vname }is set to
+ the {\i word }corresponding to this number. If this line is empty, the
+ selection list is printed again. Otherwise the value of the variable {\i vname
+ }is set to {\i null}. The contents of the line read from standard input
+ is saved in the variable {\fs22{\b REPLY}. }The {\i list
+ }is executed for each selection until a {\b break }or {\i end-of-file
+ }is encountered. If the {\fs22{\b REPLY }}variable is
+ set to {\i null }by the execution of {\i list}, then the selection list
+ is printed before displaying the {\fs22{\b PS3 }}prompt
+ for the next selection. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 case} {\i word\~}{\b in}
+ [\~[\~{\b (}\~]{\i pattern\~}[\~| {\i pattern\~}\~].\~.\~.{\b )}{\i list\~}{\b ;;}\~].\~.\~.{\b esac}
+ \tab A {\b case }command executes the {\i list }associated with
+ the first {\i pattern }that matches {\i word}. The form of the patterns
+ is the same as that used for file-name generation (see {\uldb File Name Generation}{\v HTML2RTF.File.Name.Generation}{\*\comment{\i File
+ Name Generation }}below). The {\b ;; }operator causes execution
+ of {\b case }to terminate. If {\b ;& }is used in place
+ of {\b ;; }the next subsequent list, if any, is executed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 if}
+ {\i list\~}{\b ;then} {\i list\~}[\~{\b elif}
+ {\i list\~}{\b ;then}{\i list\~}\~].\~.\~.[\~{\b ;else}{\i list\~}\~]{\b ;fi}
+ \tab The {\i list }following {\b if} is executed and, if it returns
+ a zero exit status, the {\i list }following the first {\b then }is
+ executed. Otherwise, the {\i list }following {\b elif} is executed
+ and, if its value is zero, the {\i list }following the next {\b then
+ }is executed. Failing each successive {\b elif }{\i list\~},
+ the {\b else }{\i list }is executed. If the {\b if }{\i list
+ }has non-zero exit status and there is no {\b else }{\i list},
+ then the {\b if }command returns a zero exit status. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 while}
+ {\i list\~}{\b ;do} {\i list\~}{\b ;done} \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 until}
+ {\i list\~}{\b ;do} {\i list\~}{\b ;done} \tab A
+ {\b while }command repeatedly executes the {\b while }{\i list
+ }and, if the exit status of the last command in the list is zero, executes
+ the {\b do }{\i list}; otherwise the loop terminates. If no commands
+ in the {\b do }{\i list }are executed, then the {\b while }command
+ returns a zero exit status; {\b until }may be used in place of
+ {\b while }to negate the loop termination test. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 ((}{\i expression\~}{\b ))}
+ \tab The {\i expression }is evaluated using the rules for arithmetic evaluation
+ described below. If the value of the arithmetic expression is non-zero,
+ the exit status is 0, otherwise the exit status is 1. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 (}{\i list\~}{\b )}
+ \tab Execute {\i list }in a separate environment. Note, that if two adjacent
+ open parentheses are needed for nesting, a space must be inserted to avoid
+ evaluation as an arithmetic command as described above. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\{ }{\i list\~}{\b ;\}}
+ \tab{\i list }is simply executed. Note that unlike the metacharacters {\b (
+ }and {\b )}, {\b\{ }and {\b\} }are {\i reserved
+ word}s and must occur at the beginning of a line or after a {\b ; }in
+ order to be recognized. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 [[}{\i expression \~}{\b ]]}
+ \tab Evaluates {\i expression }and returns a zero exit status when {\i expression
+ }is true. See {\i Conditional Expressions }below, for a description of
+ {\i expression}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 function} {\i varname\~}{\b\{}
+ {\i list\~}{\b ;\}} \tab{\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 varname\~}{\b () \{}
+ {\i list\~}{\b ;\}} \tab Define a function which is referenced
+ by {\i varname}. A function whose {\i varname }contains a {\b{\fs26 .}
+ }is called a discipline function and the portion of the {\i varname
+ }preceding the last {\b{\fs26 .} }must refer to an existing
+ variable. The body of the function is the {\i list }of commands between
+ {\b\{ }and {\b\}}. A function defined with the {\b function}
+ {\i varname\~}syntax can also be used as an argument to the {\b .}
+ special built-in command to get the equivalent behavior as if the {\i varname\~}{\b ()}
+ syntax were used to define it. (See {\i Functions }below.) {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 time}
+ [\~{\i pipeline\~}\~] \tab If {\i pipeline\~}is omitted
+ the user and system time for the current shell and completed child processes
+ is printed on standard error. Otherwise, {\i pipeline }is executed and
+ the elapsed time as well as the user and system time are printed on standard
+ error. \par\pard\qc\li840\tx840\tx20000 The following reserved words are recognized as reserved only
+ when they are the first word of a command and are not quoted: {\b\par\pard\qc\li1120\tx1120\tx20000 if
+ then else elif fi case esac for while until do done \{ \} function select
+ time [[ ]] ! }{\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Variable.Assignments} Variable
+ \~Assignments. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}One or more
+ variable assignments can start a simple command or can be arguments to the
+ {\b typeset}, {\b export}, or {\b readonly }special
+ built-in commands. The syntax for an {\i assignment\~}is of the form:
+ {\i\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 varname\~}{\b =}{\i word\~}\tab{\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 varname\~}{\b [}{\i word\~}{\b ]}={\b}{\i word\~}{\b\tab}No
+ space is permitted between {\i varname\~}and the {\b =} or
+ between {\b =} and {\i word\~}. {\i\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 varname\~}{\b =(}{\i assign_list\~}{\b )}
+ \tab No space is permitted between {\i varname\~}and the {\b =}.
+ An {\i assign_list\~}can be one of the following: {\i\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 word\~}...
+ \tab Indexed array assignment. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 [}{\i word\~}{\b ]=}{\i word\~}.\~.\~.
+ \tab Associative array assignment. {\i\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 assignment\~}.\~.\~.
+ \tab Nested variable assignment. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 typeset} [\~{\i options}\~]
+ {\i assignment\~}.\~.\~. \tab Nested variable assignment. Multiple
+ assignments can be specified by separating each of them with a {\b ;}.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Comments} Comments. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}A
+ word beginning with {\b # }causes that word and all the following
+ characters up to a new-line to be ignored. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Aliasing} Aliasing.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The first word of each
+ command is replaced by the text of an {\b alias }if an {\b alias
+ }for this word has been defined. An {\b alias }name consists
+ of any number of characters excluding metacharacters, quoting characters,
+ file expansion characters, parameter expansion and command substitution
+ characters, and {\b =}. The replacement string can contain any
+ valid shell script including the metacharacters listed above. The first
+ word of each command in the replaced text, other than any that are in the
+ process of being replaced, will be tested for aliases. If the last character
+ of the alias value is a {\i blank }then the word following the alias will
+ also be checked for alias substitution. Aliases can be used to redefine
+ built-in commands but cannot be used to redefine the reserved words listed
+ above. Aliases can be created and listed with the {\b alias }command
+ and can be removed with the {\b unalias }command. {\i\par\pard\qc\li840\tx840\tx20000 Aliasing
+ }is performed when scripts are read, not while they are executed. Therefore,
+ for an alias to take effect, the {\b alias }definition command
+ has to be executed before the command which references the alias is read.
+ \par\pard\qc\li840\tx840\tx20000 The following aliases are compiled into the shell but can be unset or
+ redefined: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 autoload='typeset \'2dfu' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 command='command
+ ' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 fc=hist }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 float='typeset \'2dE'
+ }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 functions='typeset \'2df' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 hash='alias
+ \'2dt \'2d\~\'2d' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 history='hist \'2dl'
+ }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 integer='typeset \'2di' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 nameref='typeset
+ \'2dn' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 nohup='nohup ' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 r='hist \'2ds'
+ }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 redirect='command exec' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 stop='kill \'2ds
+ {\fs22 STOP}' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 suspend='kill \'2ds {\fs22 STOP}
+ $$' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 times='\{ \{ time;\} 2>&1;\}' }\tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 type='whence
+ \'2dv' }\tab{\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Tilde.Substitution} Tilde
+ \~Substitution. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}After alias
+ substitution is performed, each word is checked to see if it begins with
+ an unquoted {\b ~}. For tilde substitution, {\i word }also refers
+ to the {\i word }portion of parameter expansion (see {\uldb Parameter Expansion}{\v HTML2RTF.Parameter.Expansion}{\*\comment{\i Parameter
+ Expansion }}below). If it does, then the word up to a {\b / }is
+ checked to see if it matches a user name in the password database (often
+ the {\b /etc/passwd }file). If a match is found, the {\b ~ }and
+ the matched login name are replaced by the login directory of the matched
+ user. If no match is found, the original text is left unchanged. A {\b ~
+ }by itself, or in front of a {\b /}, is replaced by {\fs22{\b $HOME}.
+ }A {\b ~ }followed by a {\b + }or {\b\'2d }is
+ replaced by the value of {\b{\fs22 $PWD }}and {\b{\fs22 $OLDPWD
+ }}respectively. \par\pard\qc\li840\tx840\tx20000 In addition, when expanding a {\i variable assignment},
+ {\i tilde }substitution is attempted when the value of the assignment begins
+ with a {\b ~}, and when a {\b ~ }appears after a {\b :}.
+ The {\b : }also terminates a {\b ~ }login name. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Command.Substitution} Command
+ \~Substitution. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The standard
+ output from a command enclosed in parentheses preceded by a dollar sign
+ ( {\b $(\~) }) or a pair of grave accents (\~{\b{\fs26 `}\~{\fs26 `}}\~)
+ may be used as part or all of a word; trailing new-lines are removed. In
+ the second (obsolete) form, the string between the quotes is processed for
+ special quoting characters before the command is executed (see {\uldb Quoting}{\v HTML2RTF.Quoting}{\*\comment{\i Quoting
+ }}below). The command substitution \~{\b $(\~cat file\~)}\~can
+ be replaced by the equivalent but faster \~{\b $(\~<file\~)}\~.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Arithmetic.Substitution} Arithmetic \~Substitution.
+ \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}An arithmetic expression enclosed
+ in double parentheses preceded by a dollar sign ( {\b $((\~)) })
+ is replaced by the value of the arithmetic expression within the double
+ parentheses. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Process.Substitution} Process \~Substitution.
+ \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}This feature is only available
+ on versions of the UNIX operating system that support the {\b /dev/fd
+ }directory for naming open files. Each command argument of the form
+ {\b< (}{\i list\~}{\b )} or {\b> (}{\i list\~}{\b )}
+ will run process {\i list }asynchronously connected to some file in {\b /dev/fd}.
+ The name of this file will become the argument to the command. If the form
+ with {\b> }is selected then writing on this file will provide
+ input for {\i list}. If {\b< }is used, then the file passed
+ as an argument will contain the output of the {\i list }process. For example,
+ {\b\par\pard\qc\li1120\tx1120\tx20000 paste <(cut \'2df1} {\i file1}{\b ) <(cut
+ \'2df3} {\i file2}{\b ) | tee >(}{\i process1}{\b )
+ >(}{\i process2}{\b )}{\i }{\i\par\pard\qc\li1120\tx1120\tx20000 cuts }fields 1 and
+ 3 from the files {\i file1 }and {\i file2 }respectively, {\i pastes }the
+ results together, and sends it to the processes {\i process1 }and {\i process2},
+ as well as putting it onto the standard output. Note that the file, which
+ is passed as an argument to the command, is a UNIX {\i pipe}(2) so programs
+ that expect to {\i lseek}(2) on the file will not work. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Parameter.Expansion} Parameter
+ \~Expansion. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}A {\i parameter
+ }is a {\i variable}, one or more digits, or any of the characters {\b *},
+ {\b @}, {\b #}, {\b ?}, {\b\'2d},
+ {\b $}, and {\b !\~}. A {\i variable }is denoted
+ by a {\i vname}. To create a variable whose {\i vname }contains a {\b{\fs26 .}},
+ a variable whose {\i vname }consists of everything before the last {\b{\fs26 .}}
+ must already exist. A {\i variable }has a {\i value }and zero or more
+ {\i attributes}. {\i Variables }can be assigned {\i values }and {\i attributes
+ }by using the {\b typeset }special built-in command. The attributes
+ supported by the shell are described later with the {\b typeset }special
+ built-in command. Exported variables pass values and attributes to the environment.
+ \par\pard\qc\li840\tx840\tx20000 The shell supports both indexed and associative arrays. An element of
+ an array variable is referenced by a {\i subscript}. A {\i subscript }for
+ an indexed array is denoted by an {\i arithmetic expression }(see {\uldb Arithmetic Evaluation}{\v HTML2RTF.Arithmetic.Evaluation}{\*\comment{\i Arithmetic
+ Evaluation }}below) between a {\b [ }and a {\b ]}.
+ To assign values to an indexed array, use {\b set \'2dA} {\i vname}
+ {\i value} .\~.\~. . The value of all subscripts must be in the
+ range of 0 through 4095. Indexed arrays need not be declared. Any reference
+ to a variable with a valid subscript is legal and an array will be created
+ if necessary. \par\pard\qc\li840\tx840\tx20000 An associative array is created with the {\b\'2d A
+ }option to {\b typeset. }A {\i subscript }for an associative
+ array is denoted by a string enclosed between {\b [ }and {\b ]}.
+ \par\pard\qc\li840\tx840\tx20000 Referencing any array without a subscript is equivalent to referencing
+ the array with subscript 0. \par\pard\qc\li840\tx840\tx20000 The {\i value }of a {\i variable }may be
+ assigned by writing: {\i\par\pard\qc\li1120\tx1120\tx20000 vname}{\b =}{\i value\~\~}[\~{\i vname}{\b =}{\i value
+ }\~] .\~.\~. \par\pard\qc\li840\tx840\tx20000 or {\i\line vname}{\b [}{\i subscript}{\b ]=}{\i value\~\~}[\~{\i vname}{\b [}{\i subscript}{\b ]=}{\i value
+ }\~] .\~.\~. \par\pard\qc\li840\tx840\tx20000 Note that no space is allowed before or
+ after the {\b =}. \par\pard\qc\li840\tx840\tx20000 A {\i nameref }is a variable that is a reference
+ to another variable. A nameref is created with the {\b\'2d n }attribute
+ of {\b typeset}. The value of the variable at the time of the {\b typeset
+ }command becomes the variable that will be referenced whenever the
+ nameref variable is used. The name of a nameref cannot contain a {\b{\fs26 .}}.
+ When a variable or function name contains a {\b{\fs26 .}},
+ and the portion of the name up to the first {\b{\fs26 .}}
+ matches the name of a nameref, the variable referred to is obtained by replacing
+ the nameref portion with the name of the variable referenced by the nameref.
+ A nameref provides a convenient way to refer to the variable inside a function
+ whose name is passed as an argument to a function. For example, if the name
+ of a variable is passed as the first argument to a function, the command
+ {\b\line typeset \'2dn var=$1} \line inside the function
+ causes references and assignments to {\b var }to be references
+ and assignments to the variable whose name has been passed to the function.
+ \par\pard\qc\li840\tx840\tx20000 If either of the floating point attributes, {\b\'2d E}, or
+ {\b\'2d F}, or the integer attribute, {\b\'2d i},
+ is set for {\i vname}, then the {\i value }is subject to arithmetic evaluation
+ as described below. \par\pard\qc\li840\tx840\tx20000 Positional parameters, parameters denoted by a number,
+ may be assigned values with the {\b set }special built-in command.
+ Parameter {\b $0 }is set from argument zero when the shell is invoked.
+ \par\pard\qc\li840\tx840\tx20000 The character {\b $ }is used to introduce substitutable {\i parameters}.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b\}} \tab The
+ shell reads all the characters from {\b $\{ }to the matching {\b\}
+ }as part of the same word even if it contains braces or metacharacters.
+ The value, if any, of the parameter is substituted. The braces are required
+ when {\i parameter }is followed by a letter, digit, or underscore that
+ is not to be interpreted as part of its name, when the variable name contains
+ a {\b{\fs26 .}}, or when a variable is subscripted. If
+ {\i parameter }is one or more digits then it is a positional parameter.
+ A positional parameter of more than one digit must be enclosed in braces.
+ If {\i parameter }is {\b * }or {\b @}, then all the positional
+ parameters, starting with {\b $1}, are substituted (separated by
+ a field separator character). If an array {\i vname }with subscript {\b *
+ }or {\b @ }is used, then the value for each of the elements
+ is substituted, separated by the first character of the value of {\fs22{\b IFS}.
+ }{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{#}{\i parameter\~}{\b\}} \tab If {\i parameter
+ }is {\b * }or {\b @}, the number of positional parameters
+ is substituted. Otherwise, the length of the value of the {\i parameter }is
+ substituted. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{#}{\i vname}{\b [*]\}} \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{#}{\i vname}{\b [@]\}}
+ \tab The number of elements in the array {\i vname }is substituted. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{!}{\i vname\~}{\b\}}
+ \tab Expands to the name of the variable referred to by {\i vname}. This
+ will be {\i vname }except when {\i vname }is a name reference. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{!}{\i vname\~}{\b [}{\i subscript\~}{\b ]\}}{\i
+ \tab}Expands to name of the subscript unless {\i subscript }is {\b *
+ }or {\b @}. When {\i subscript }is {\b *}, the
+ list of array subscripts for {\i vname\~}is generated. For a variable
+ that is not an array, the value is 0 if the variable is set. Otherwise it
+ is null. When {\i subscript }is {\b @}, same as above, except
+ that when used in double quotes, each array subscript yields a separate
+ argument. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{!}{\i prefix\~}{\b *\}} \tab Expands
+ to the names of the variables whose names begin with {\i prefix}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :\'2d}{\i word\~}{\b\}}
+ \tab If {\i parameter }is set and is non-null then substitute its value;
+ otherwise substitute {\i word}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :=}{\i word\~}{\b\}}
+ \tab If {\i parameter }is not set or is null then set it to {\i word}; the
+ value of the parameter is then substituted. Positional parameters may not
+ be assigned to in this way. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :?}{\i word\~}{\b\}}
+ \tab If {\i parameter }is set and is non-null then substitute its value;
+ otherwise, print {\i word }and exit from the shell (if not interactive).
+ If {\i word }is omitted then a standard message is printed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :+}{\i word\~}{\b\}}
+ \tab If {\i parameter }is set and is non-null then substitute {\i word};
+ otherwise substitute nothing. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :}{\i offset\~}{\b :}{\i length\~}{\b\}}
+ \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b :}{\i offset\~}{\b\}}
+ \tab Expands to the portion of the value of {\i parameter }starting at the
+ character (counting from {\b 0\~}) determined by expanding
+ {\i offset }as an arithmetic expression and consisting of the number of
+ characters determined by the arithmetic expression defined by {\i length.
+ }In the second form, the remainder of the value is used. If {\i parameter
+ }is {\b * }or {\b @}, or is an array name indexed by
+ {\b * }or {\b @}, then {\i offset }and {\i length }refer
+ to the array index and number of elements respectively. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b #}{\i pattern\~}{\b\}}
+ \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b ##}{\i pattern\~}{\b\}}
+ \tab If the shell {\i pattern }matches the beginning of the value of {\i parameter},
+ then the value of this expansion is the value of the {\i parameter }with
+ the matched portion deleted; otherwise the value of this {\i parameter }is
+ substituted. In the first form the smallest matching pattern is deleted
+ and in the second form the largest matching pattern is deleted. When {\i parameter
+ }is {\b @}, {\b *}, or an array variable with subscript
+ {\b @ }or {\b *}, the substring operation is applied to
+ each element in turn. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b %}{\i pattern\~}{\b\}}
+ \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b %%}{\i pattern\~}{\b\}}
+ \tab If the shell {\i pattern }matches the end of the value of {\i parameter},
+ then the value of this expansion is the value of the {\i parameter }with
+ the matched part deleted; otherwise substitute the value of {\i parameter}.
+ In the first form the smallest matching pattern is deleted and in the second
+ form the largest matching pattern is deleted. When {\i parameter }is {\b @},
+ {\b *}, or an array variable with subscript {\b @ }or
+ {\b *}, the substring operation is applied to each element in turn.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b /}{\i pattern\~}{\b /}{\i string\~}{\b\}
+ }\tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b //}{\i pattern\~}{\b /}{\i string\~}{\b\}
+ \tab}{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b /#}{\i pattern\~}{\b /}{\i string\~}{\b\}
+ \tab}{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 $\{}{\i parameter\~}{\b /%}{\i pattern\~}{\b /}{\i string\~}{\b\}
+ \tab}Expands {\i parameter }and replaces the longest match of {\i pattern
+ }with the given {\i string. }Each occurrence of {\b\'5c}{\i n\~}in
+ {\i string }is replaced by the portion of {\i parameter\~}that matches
+ the {\i n\~}-th sub-pattern. In the first form, only the first occurrence
+ of {\i pattern }is replaced. In the second form, each match for {\i pattern
+ }is replaced by the given {\i string. }The third form restricts the pattern
+ match to the beginning of the string while the fourth form restricts the
+ pattern match to the end of the string. When {\i string }is null, the {\i pattern
+ }will be deleted and the {\b / }in front of {\i string }may
+ be omitted. When {\i parameter }is {\b @}, {\b *}, or
+ an array variable with subscript {\b @ }or {\b *}, the
+ substitution operation is applied to each element in turn. \par\pard\qc\li840\tx840\tx20000 In the above,
+ {\i word }is not evaluated unless it is to be used as the substituted string,
+ so that, in the following example, {\b pwd }is executed only if
+ {\b d }is not set or is null: \par\pard\qc\li1120\tx1120\tx20000 print \~$\{d:\'2d\~$(\~pwd\~)\~\}
+ \par\pard\qc\li840\tx840\tx20000 If the colon ( {\b : ) }is omitted from the above expressions,
+ then the shell only checks whether {\i parameter }is set or not. \par\pard\qc\li840\tx840\tx20000 The
+ following parameters are automatically set by the shell: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 #
+ }\tab The number of positional parameters in decimal. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d
+ }\tab Options supplied to the shell on invocation or by the {\b set
+ }command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 ? }\tab The decimal value returned by the last
+ executed command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 $ }\tab The process number of this shell.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 _ }\tab Initially, the value of {\b _ }is an absolute
+ pathname of the shell or script being executed as passed in the {\i environment}.
+ Subsequently it is assigned the last argument of the previous command. This
+ parameter is not set for commands which are asynchronous. This parameter
+ is also used to hold the name of the matching {\b{\fs22 MAIL }}file
+ when checking for mail. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 ! }\tab The process number of the last
+ background command invoked. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.edchar }\tab This variable
+ contains the value of the keyboard character (or sequence of characters
+ if the first character is an ESC, ascii {\b 033\~}) that has
+ been entered when processing a {\b{\fs22 KEYBD }}trap (see
+ {\uldb Key Bindings}{\v HTML2RTF.Key.Bindings}{\*\comment{\i Key Bindings }}below). If the value is changed as
+ part of the trap action, then the new value replaces the key (or key sequence)
+ that caused the trap. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.edcol }\tab The character position
+ of the cursor at the time of the most recent {\b{\fs22 KEYBD }}trap.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.edmode }\tab The value is set to ESC when processing a
+ {\b{\fs22 KEYBD }}trap while in {\b vi }insert
+ mode. (See {\i Vi Editing Mode }below.) Otherwise, {\b .sh.edmode }is
+ null when processing a {\b{\fs22 KEYBD }}trap. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.edtext
+ }\tab The characters in the input buffer at the time of the most recent
+ {\b{\fs22 KEYBD }}trap. The value is null when not processing
+ a {\b{\fs22 KEYBD }}trap. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.name }\tab Set
+ to the name of the variable at the time that a discipline function is invoked.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.subscript }\tab Set to the name subscript of the variable
+ at the time that a discipline function is invoked. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.value }\tab Set
+ to the value of the variable at the time that the {\b set }discipline
+ function is invoked. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 .sh.version }\tab Set to a value that
+ identifies the version of this shell. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LINENO }}\tab The
+ current line number within the script or function being executed. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 OLDPWD
+ }}\tab The previous working directory set by the {\b cd }command.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 OPTARG }}\tab The value of the last option argument
+ processed by the {\b getopts }built-in command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 OPTIND
+ }}\tab The index of the last option argument processed by the {\b getopts
+ }built-in command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 PPID }}\tab The process
+ number of the parent of the shell. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 PWD }}\tab The
+ present working directory set by the {\b cd }command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 RANDOM
+ }}\tab Each time this variable is referenced, a random integer,
+ uniformly distributed between 0 and 32767, is generated. The sequence of
+ random numbers can be initialized by assigning a numeric value to {\fs22{\b RANDOM}.
+ }{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 REPLY }}\tab This variable is set by the
+ {\b select }statement and by the {\b read }built-in command
+ when no arguments are supplied. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 SECONDS }}\tab Each
+ time this variable is referenced, the number of seconds since shell invocation
+ is returned. If this variable is assigned a value, then the value returned
+ upon reference will be the value that was assigned plus the number of seconds
+ since the assignment. \par\pard\qc\li840\tx840\tx20000 The following variables are used by the shell:
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 CDPATH }}\tab The search path
+ for the {\b cd }command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 COLUMNS }}\tab If
+ this variable is set, the value is used to define the width of the edit
+ window for the shell edit modes and for printing {\b select }lists.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 EDITOR }}\tab If the value of this variable ends
+ in {\i emacs}, {\i gmacs}, or {\i vi }and the {\b{\fs22 VISUAL
+ }}variable is not set, then the corresponding option (see special
+ built-in command {\uldb set}{\v HTML2RTF.set}{\*\comment{\b set }}below) will be turned on.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b ENV }\tab}If this variable is set, then parameter
+ expansion, command substitution, and arithmetic substitution are performed
+ on the value to generate the pathname of the script that will be executed
+ when the shell is invoked (see {\uldb Invocation}{\v HTML2RTF.Invocation}{\*\comment{\i Invocation }}below).
+ This file is typically used for {\b alias }and {\b function
+ }definitions. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 FCEDIT }}\tab Obsolete name
+ for the default editor name for the {\b hist }command. {\b{\fs22 FCEDIT
+ }}is not used when {\b{\fs22 HISTEDIT }}is set.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b FIGNORE }\tab}A pattern that defines the set
+ of filenames that will be ignored when performing filename matching. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b FPATH
+ }\tab}The search path for function definitions. This path is searched
+ for a file with the same name as the function or command when a function
+ with the {\b\'2d u }attribute is referenced and when a command
+ is not found. If an executable file with the name of that command is found,
+ then it is read and executed in the current environment. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 HISTCMD
+ }}\tab Number of the current command in the history file. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 HISTEDIT
+ }}\tab Name for the default editor name for the {\b hist }command.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b HISTFILE }\tab}If this variable is set when the
+ shell is invoked, then the value is the pathname of the file that will be
+ used to store the command history (see {\uldb Command Re-entry}{\v HTML2RTF.Command.Re.entry}{\*\comment{\i Command
+ Re-entry }}below). \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b HISTSIZE }\tab}If this
+ variable is set when the shell is invoked, then the number of previously
+ entered commands that are accessible by this shell will be greater than
+ or equal to this number. The default is 128. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 HOME }}\tab The
+ default argument (home directory) for the {\b cd }command. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b IFS
+ }\tab}Internal field separators, normally {\b space}, {\b tab},
+ and {\b new-line }that are used to separate the results of command
+ substitution or parameter expansion and to separate fields with the built-in
+ command {\b read}. The first character of the {\fs22{\b IFS
+ }}variable is used to separate arguments for the {\b "$*" }substitution
+ (see {\uldb Quoting}{\v HTML2RTF.Quoting}{\*\comment{\i Quoting }}below). Each single occurrence of an {\fs22{\b IFS
+ }}character in the string to be split, that is not in the {\i isspace\~}character
+ class, and any adjacent characters in {\fs22{\b IFS }}that
+ are in the {\i isspace\~}character class, delimit a field. One or more
+ characters in {\fs22{\b IFS }}that belong to the {\i isspace\~}character
+ class, delimit a field. In addition, if the same {\i isspace\~}character
+ appears consecutively inside {\fs22{\b IFS}, }this character
+ is treated as if it were not in the {\i isspace\~}class, so that if
+ {\fs22{\b IFS }}consists of two {\b tab }characters,
+ then two adjacent {\b tab }characters delimit a null field. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LANG
+ }}\tab This variable determines the locale category for any category
+ not specifically selected with a variable starting with {\b{\fs22 LC_
+ }}or {\fs22{\b LANG}. }{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LC_ALL
+ }}\tab This variable overrides the value of the {\b{\fs22 LANG
+ }}variable and any other {\b{\fs22 LC_ }}variable.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LC_COLLATE }}\tab This variable determines the
+ locale category for character collation information. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LC_CTYPE
+ }}\tab This variable determines the locale category for character
+ handling functions. It determines the character classes for pattern matching
+ (see {\uldb File Name Generation}{\v HTML2RTF.File.Name.Generation}{\*\comment{\i File Name Generation }}below). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LC_NUMERIC
+ }}\tab This variable determines the locale category for the decimal
+ point character. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 LINES }}\tab If this variable
+ is set, the value is used to determine the column length for printing {\b select
+ }lists. Select lists will print vertically until about two-thirds
+ of {\b{\fs22 LINES }}lines are filled. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 MAIL
+ }}\tab If this variable is set to the name of a mail file {\i and
+ }the {\b{\fs22 MAILPATH }}variable is not set, then the
+ shell informs the user of arrival of mail in the specified file. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 MAILCHECK
+ }}\tab This variable specifies how often (in seconds) the shell
+ will check for changes in the modification time of any of the files specified
+ by the {\b{\fs22 MAILPATH }}or {\b{\fs22 MAIL }}variables.
+ The default value is 600 seconds. When the time has elapsed the shell will
+ check before issuing the next prompt. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 MAILPATH }}\tab A
+ colon ( {\b : }) separated list of file names. If this variable
+ is set, then the shell informs the user of any modifications to the specified
+ files that have occurred within the last {\b{\fs22 MAILCHECK }}seconds.
+ Each file name can be followed by a {\b ? }and a message that will
+ be printed. The message will undergo parameter expansion, command substitution,
+ and arithmetic substitution with the variable {\b $_ }defined as
+ the name of the file that has changed. The default message is {\i you have
+ mail in $_\~. }{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 PATH }}\tab The search path
+ for commands (see {\uldb Execution}{\v HTML2RTF.Execution}{\*\comment{\i Execution }}below). The user may
+ not change {\b{\fs22 PATH} }if executing under {\b rsh
+ }(except in {\b .profile\~). }\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b PS1
+ }\tab}The value of this variable is expanded for parameter expansion,
+ command substitution, and arithmetic substitution to define the primary
+ prompt string which by default is ``{\b $\~\~\~}''.
+ The character {\b ! }in the primary prompt string is replaced by
+ the {\i command }number (see {\uldb Command Re-entry}{\v HTML2RTF.Command.Re.entry}{\*\comment{\i Command Re-entry
+ }}below). Two successive occurrences of {\b ! }will produce
+ a single {\b ! }when the prompt string is printed. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b PS2
+ }\tab}Secondary prompt string, by default ``{\b> \~}''.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b PS3 }\tab}Selection prompt string used within
+ a {\b select }loop, by default ``{\b #? \~}''. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b PS4
+ }\tab}The value of this variable is expanded for parameter evaluation,
+ command substitution, and arithmetic substitution and precedes each line
+ of an execution trace. By default, {\fs22{\b PS4 }}is ``{\b +
+ \~}''. In addition when {\fs22{\b PS4 }}is unset,
+ the execution trace prompt is also ``{\b + \~}''. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22{\b SHELL
+ }\tab}The pathname of the {\i shell }is kept in the environment.
+ At invocation, if the basename of this variable is {\b rsh}, {\b rksh},
+ or {\b krsh}, then the shell becomes restricted. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 TMOUT
+ }}\tab If set to a value greater than zero, {\b{\fs22 TMOUT
+ }}will be the default timeout value for the {\b read }built-in
+ command. The {\b select }compound command terminates after {\b{\fs22 TMOUT
+ }}seconds when input is from a terminal. Otherwise, the shell
+ will terminate if a line is not entered within the prescribed number of
+ seconds while reading from a terminal. (Note that the shell can be compiled
+ with a maximum bound for this value which cannot be exceeded.) {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000{\fs22 VISUAL
+ }}\tab If the value of this variable ends in {\i emacs}, {\i gmacs},
+ or {\i vi }then the corresponding option (see Special Command {\uldb set}{\v HTML2RTF.set}{\*\comment{\b set
+ }}below) will be turned on. The value of {\b{\fs22 VISUAL
+ }}overrides the value of {\b{\fs22 EDITOR. }}\par\pard\qc\li840\tx840\tx20000 The
+ shell gives default values to {\b{\fs22 PATH}}, {\b{\fs22 PS1}},
+ {\b{\fs22 PS2}}, {\b{\fs22 PS3}}, {\b{\fs22 PS4}},
+ {\b{\fs22 MAILCHECK}}, {\b{\fs22 FCEDIT}},
+ {\b{\fs22 TMOUT}} and {\b{\fs22 IFS}},
+ while {\fs22{\b HOME}, }{\fs22{\b SHELL},
+ }{\fs22{\b ENV}, }and {\fs22{\b MAIL }}are
+ not set at all by the shell (although {\fs22{\b HOME }}{\i is
+ }set by {\i login}(1)). On some systems {\fs22{\b MAIL }}and
+ {\fs22{\b SHELL }}are also set by {\i login}(1). {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Field.Splitting} Field
+ \~Splitting. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}After parameter
+ expansion and command substitution, the results of substitutions are scanned
+ for the field separator characters (those found in {\fs22{\b IFS\~}})
+ and split into distinct fields where such characters are found. Explicit
+ null fields (\~{\b "\~"} or {\b '\~'}\~)
+ are retained. Implicit null fields (those resulting from {\i parameters }that
+ have no values or command substitutions with no output) are removed. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.File.Name.Generation} File
+ \~Name \~Generation. \~\~\~}\par\pard\qc\li840\tx840\tx20000}}Following
+ splitting, each field is scanned for the characters {\b *}, {\b ?},
+ {\b (}, and {\b [\~}unless the {\b\'2d f }option
+ has been set. If one of these characters appears, then the word is regarded
+ as a {\i pattern}. Each file name component that contains any pattern character
+ is replaced with a lexicographically sorted set of names that matches the
+ pattern from that directory. If no file name is found that matches the pattern,
+ then that component of the filename is left unchanged. If {\fs22{\b FIGNORE
+ }}is set, then each file name component that matches the pattern
+ defined by the value of {\fs22{\b FIGNORE }}is ignored
+ when generating the matching filenames. The names {\b . }and {\b ..
+ }are also ignored. If {\fs22{\b FIGNORE }}is not
+ set, the character {\b . }at the start of each file name component
+ will be ignored unless the first character of the pattern corresponding
+ to this component is the character {\b . }itself. Note, that for
+ other uses of pattern matching the {\b / }and {\b . }are
+ not treated specially. {\b\par\pard\qc\li1400\tx1400\tx20000\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 * }\tab Matches any
+ string, including the null string. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 ? }\tab Matches any single
+ character. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b [\~}\~.\~.\~.\~{\b\~ ]
+ }\tab Matches any one of the enclosed characters. A pair of characters
+ separated by {\b\'2d }matches any character lexically between
+ the pair, inclusive. If the first character following the opening {\b [\~}is
+ a {\b ! }then any character not enclosed is matched. A {\b\'2d
+ }can be included in the character set by putting it as the first or
+ last character. \line Within {\b [\~}and {\b\~ ]\~},
+ character classes can be specified with the syntax {\b [:}{\i class}{\b :]}
+ where class is one of the following classes defined in the ANSI-C standard:
+ {\b\line alnum alpha blank cntrl digit graph lower print punct space upper
+ xdigit }\line Within {\b [\~}and {\b\~ ]\~},
+ an equivalence class can be specified with the syntax {\b [=}{\i c}{\b =]}
+ which matches all characters with the same primary collation weight (as
+ defined by the current locale) as the character {\i c}. \line Within {\b [\~}and
+ {\b\~ ]\~}, {\b [.}{\i symbol}{\b .]}
+ matches the collating symbol {\i symbol}. A {\i pattern-list }is
+ a list of one or more patterns separated from each other with a {\b&
+ }or {\b |}. A {\b& }signifies that all patterns
+ must be matched whereas {\b | }requires that only one pattern be
+ matched. Composite patterns can be formed with one or more of the following
+ sub-patterns: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 ?(}{\i pattern-list\~}{\b )}
+ \tab Optionally matches any one of the given patterns. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 *(}{\i pattern-list\~}{\b )}
+ \tab Matches zero or more occurrences of the given patterns. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 +(}{\i pattern-list\~}{\b )}
+ \tab Matches one or more occurrences of the given patterns. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 @(}{\i pattern-list\~}{\b )}
+ \tab Matches exactly one of the given patterns. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 !(}{\i pattern-list\~}{\b )}
+ \tab Matches anything except one of the given patterns. Each sub-pattern
+ in a composite pattern is numbered, starting at 1, by the location of the
+ {\b (} within the pattern. The sequence {\b\'5c}{\i n\~},
+ where {\i n\~}is a single digit and {\b\'5c}{\i n\~}comes
+ after the {\i n}-th. sub-pattern, matches the same string as the sub-pattern
+ itself. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Quoting} Quoting. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Each
+ of the {\i metacharacters }listed earlier (see {\uldb Definitions}{\v HTML2RTF.Definitions}{\*\comment{\i Definitions
+ }}above) has a special meaning to the shell and causes termination of
+ a word unless quoted. A character may be {\i quoted }(i.e., made to stand
+ for itself) by preceding it with a {\b\'5c}. The pair {\b\'5c new-line
+ }is removed. All characters enclosed between a pair of single quote
+ marks (\~{\b '\~'}\~) that is not preceded by a {\b $
+ }are quoted. A single quote cannot appear within the single quotes.
+ A single quoted string preceded by an unquoted {\b $ }is processed
+ as an ANSI-C string except that {\b\'5c 0 }within the string
+ causes the remainder of the string to be ignored and {\b\'5c E }is
+ equivalent to the escape character (ascii {\b 033}). Inside double
+ quote marks ({\b "\~"}), parameter and command substitution
+ occur and {\b\'5c }quotes the characters {\b\'5c},
+ {\b{\fs26 `}}, {\b "}, and {\b $}.
+ A {\b $ }in front of a double quoted string will be ignored in
+ the "C" or "POSIX" locale, and may cause the string to be replaced by a
+ locale specific string otherwise. The meaning of {\b $* }and {\b $@
+ }is identical when not quoted or when used as a variable assignment
+ value or as a file name. However, when used as a command argument, {\b "$*"
+ }is equivalent to {\b "$1}{\i d}{\b\~ $2}{\i d}\~.\~.\~.{\b "},
+ where {\i d }is the first character of the {\fs22{\b IFS }}variable,
+ whereas {\b "$@" }is equivalent to {\b "$1"\~}{\b "$2"\~}.\~.\~.\~.
+ Inside grave quote marks ({\b{\fs26 `}\~{\fs26 `}}),
+ {\b\'5c }quotes the characters {\b\'5c}, {\b{\fs26 `}},
+ and {\b $}. If the grave quotes occur within double quotes, then
+ {\b\'5c }also quotes the character {\b "}. \par\pard\qc\li840\tx840\tx20000 The special
+ meaning of reserved words or aliases can be removed by quoting any character
+ of the reserved word. The recognition of function names or built-in command
+ names listed below cannot be altered by quoting them. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Arithmetic.Evaluation} Arithmetic
+ \~Evaluation. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The shell performs
+ arithmetic evaluation for arithmetic substitution, to evaluate an arithmetic
+ command, to evaluate an indexed array subscript, and to evaluate arguments
+ to the built-in commands {\b shift }and {\b let}. Evaluations
+ are performed using double precision floating point arithmetic. Floating
+ point constants follow the ANSI-C programming language conventions. Integer
+ constants are of the form [\~{\i base}{\b #\~}\~]{\i n\~}where
+ {\i base }is a decimal number between two and sixty-four representing the
+ arithmetic base and {\i n }is a number in that base. The digits above 9
+ are represented by the lower case letters, the upper case letters, {\b @},
+ and {\b _ }respectively. For bases less than or equal to 36, upper
+ and lower case characters can be used interchangeably. If {\i base }is
+ omitted, then base 10 is used. \par\pard\qc\li840\tx840\tx20000 An arithmetic expression uses the same
+ syntax, precedence, and associativity of expression as the C language. All
+ the C language operators that apply to floating point quantities can be
+ used. In addition, when the value of an arithmetic variable or sub-expression
+ can be represented as a long integer, all C language integer arithmetic
+ operations can be performed. Variables can be referenced by name within
+ an arithmetic expression without using the parameter expansion syntax. When
+ a variable is referenced, its value is evaluated as an arithmetic expression.
+ \par\pard\qc\li840\tx840\tx20000 The following math library functions can be used with an arithmetic expression:
+ {\b\par\pard\qc\li1120\tx1120\tx20000 abs acos asin atan cos cosh exp int log sin sinh sqrt tan
+ tanh }\par\pard\qc\li840\tx840\tx20000 An internal representation of a {\i variable }as a double
+ precision floating point can be specified with the {\b\'2d E}
+ [\~{\i n\~}\~] or {\b\'2d F} [\~{\i n\~}\~]
+ option of the {\b typeset }special built-in command. The {\b\'2d E
+ }option causes the expansion of the value to be represented using
+ scientific notation when it is expanded. The optional option argument {\i n
+ }defines the number of significant figures. The {\b\'2d F }option
+ causes the expansion to be represented as a floating decimal number when
+ it is expanded. The optional option argument {\i n }defines the number
+ of places after the decimal point in this case. \par\pard\qc\li840\tx840\tx20000 An internal integer representation
+ of a {\i variable }can be specified with the {\b\'2d i} [\~{\i n\~}\~]
+ option of the {\b typeset }special built-in command. The optional
+ option argument {\i n }specifies an arithmetic base to be used when expanding
+ the variable. If you do not specify an arithmetic base, the first assignment
+ to the variable determines the arithmetic base. \par\pard\qc\li840\tx840\tx20000 Arithmetic evaluation
+ is performed on the value of each assignment to a variable with the {\b\'2d E},
+ {\b\'2d F}, or {\b\'2d i }attribute. Assigning
+ a floating point number to a variable whose type is an integer causes the
+ fractional part to be truncated. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Prompting} Prompting.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}When used interactively,
+ the shell prompts with the value of {\fs22{\b PS1 }}after
+ expanding it for parameter expansion, command substitution, and arithmetic
+ substitution, before reading a command. In addition, each single {\b !
+ }in the prompt is replaced by the command number. A {\b !! }is
+ required to place {\b ! }in the prompt. If at any time a new-line
+ is typed and further input is needed to complete a command, then the secondary
+ prompt (i.e., the value of {\b{\fs22 PS2}}) is issued.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Conditional.Expressions} Conditional \~Expressions.
+ \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}A {\i conditional expression }is
+ used with the {\b [[ }compound command to test attributes of files
+ and to compare strings. Field splitting and file name generation are not
+ performed on the words between {\b [[ }and {\b ]]}. Each
+ expression can be constructed from one or more of the following unary or
+ binary expressions: {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string} \tab True, if {\i string }is
+ not null. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d a} {\i file} \tab Same as {\b\'2d e}
+ below. This is obsolete. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d b} {\i file} \tab True, if
+ {\i file }exists and is a block special file. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d c}
+ {\i file} \tab True, if {\i file }exists and is a character special file.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d d} {\i file} \tab True, if {\i file }exists and is
+ a directory. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d e} {\i file} \tab True, if {\i file }exists.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d f} {\i file} \tab True, if {\i file }exists and is
+ an ordinary file. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d g} {\i file} \tab True, if {\i file
+ }exists and it has its setgid bit set. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d k} {\i file}
+ \tab True, if {\i file }exists and it has its sticky bit set. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d n}
+ {\i string} \tab True, if length of {\i string }is non-zero. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d o}
+ {\i option} \tab True, if option named {\i option }is on. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d p}
+ {\i file} \tab True, if {\i file }exists and is a fifo special file or a
+ pipe. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d r} {\i file} \tab True, if {\i file }exists
+ and is readable by current process. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d s} {\i file}
+ \tab True, if {\i file }exists and has size greater than zero. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d t}
+ {\i fildes} \tab True, if file descriptor number {\i fildes }is open and
+ associated with a terminal device. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d u} {\i file}
+ \tab True, if {\i file }exists and it has its setuid bit set. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d w}
+ {\i file} \tab True, if {\i file }exists and is writable by current process.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d x} {\i file} \tab True, if {\i file }exists and is
+ executable by current process. If {\i file }exists and is a directory,
+ then true if the current process has permission to search in the directory.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d z} {\i string} \tab True, if length of {\i string }is
+ zero. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d L} {\i file} \tab True, if {\i file }exists
+ and is a symbolic link. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d O} {\i file} \tab True, if
+ {\i file }exists and is owned by the effective user id of this process.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d G} {\i file} \tab True, if {\i file }exists and its
+ group matches the effective group id of this process. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d S}
+ {\i file} \tab True, if {\i file }exists and is a socket. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 file1}
+ {\b\'2d nt} {\i file2} \tab True, if {\i file1 }exists and
+ {\i file2 }does not, or {\i file1 }is newer than {\i file2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 file1}
+ {\b\'2d ot} {\i file2} \tab True, if {\i file2 }exists and
+ {\i file1 }does not, or {\i file1 }is older than {\i file2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 file1}
+ {\b\'2d ef} {\i file2} \tab True, if {\i file1 }and {\i file2
+ }exist and refer to the same file. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string} {\b ==} {\i pattern}
+ \tab True, if {\i string }matches {\i pattern}. Any part of {\i pattern }can
+ be quoted to cause it to be matched as a string. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string} {\b =}
+ {\i pattern} \tab Same as {\b ==} above, but is obsolete. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string}
+ {\b !=} {\i pattern} \tab True, if {\i string }does not match {\i pattern}.
+ {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string1} {\b<} {\i string2} \tab True, if {\i string1 }comes
+ before {\i string2 }based on ASCII value of their characters. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 string1}
+ {\b>} {\i string2} \tab True, if {\i string1 }comes after {\i string2
+ }based on ASCII value of their characters. \line The following obsolete
+ arithmetic comparisons are also permitted: {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1} {\b\'2d eq}
+ {\i exp2} \tab True, if {\i exp1 }is equal to {\i exp2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1} {\b\'2d ne}
+ {\i exp2} \tab True, if {\i exp1 }is not equal to {\i exp2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1}
+ {\b\'2d lt} {\i exp2} \tab True, if {\i exp1 }is less than
+ {\i exp2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1} {\b\'2d gt} {\i exp2} \tab True, if
+ {\i exp1 }is greater than {\i exp2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1} {\b\'2d le}
+ {\i exp2} \tab True, if {\i exp1 }is less than or equal to {\i exp2}. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 exp1}
+ {\b\'2d ge} {\i exp2} \tab True, if {\i exp1 }is greater than
+ or equal to {\i exp2}. \par\pard\qc\li840\tx840\tx20000 In each of the above expressions, if {\i file
+ }is of the form {\b /dev/fd/}{\i n}, where {\i n }is an integer,
+ then the test is applied to the open file whose descriptor number is {\i n}.
+ \par\pard\qc\li840\tx840\tx20000 A compound expression can be constructed from these primitives by using
+ any of the following, listed in decreasing order of precedence. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 (}{\i expression}{\b )}
+ \tab True, if {\i expression }is true. Used to group expressions. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 !}
+ {\i expression} \tab True if {\i expression }is false. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 expression1}
+ {\b&&} {\i expression2} \tab True, if {\i expression1 }and
+ {\i expression2 }are both true. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 expression1} {\b ||} {\i expression2}
+ \tab True, if either {\i expression1 }or {\i expression2 }is true. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Input.Output} Input/Output.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Before a command is executed,
+ its input and output may be redirected using a special notation interpreted
+ by the shell. The following may appear anywhere in a simple-command or may
+ precede or follow a {\i command }and are {\i not }passed on to the invoked
+ command. Command substitution, parameter expansion, and arithmetic substitution
+ occur before {\i word }or {\i digit }is used except as noted below. File
+ name generation occurs only if the shell is interactive and the pattern
+ matches a single file. Field splitting is not performed. \par\pard\qc\li840\tx840\tx20000 In each of the
+ following redirections, if {\i file }is of the form {\b /dev/tcp/}{\i host}{\b /}{\i port},
+ or {\b /dev/udp/}{\i host}{\b /}{\i port}, where {\i host
+ }is a hostname or host address, and {\i port }is an integer port number,
+ then the redirection attempts to make a {\b tcp} or {\b udp}
+ connection to the corresponding socket. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b<}{\i word
+ }\tab Use file {\i word }as standard input (file descriptor 0). \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b>}{\i word
+ }\tab Use file {\i word }as standard output (file descriptor 1). If the
+ file does not exist then it is created. If the file exists, and the {\b noclobber
+ }option is on, this causes an error; otherwise, it is truncated to
+ zero length. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b> |}{\i word }\tab Sames as {\b>},
+ except that it overrides the {\b noclobber }option. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b>>}{\i word
+ }\tab Use file {\i word }as standard output. If the file exists, then output
+ is appended to it (by first seeking to the end-of-file); otherwise, the
+ file is created. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b<>}{\i word }\tab Open file {\i word }for
+ reading and writing as standard input. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000<<}[\~{\b\'2d}\~]{\i word}
+ \tab The shell input is read up to a line that is the same as {\i word }after
+ any quoting has been removed, or to an end-of-file. No parameter substitution,
+ command substitution, arithmetic substitution or file name generation is
+ performed on {\i word}. The resulting document, called a {\i here-document},
+ becomes the standard input. If any character of {\i word }is quoted, then
+ no interpretation is placed upon the characters of the document; otherwise,
+ parameter expansion, command substitution, and arithmetic substitution occur,
+ {\b\'5c new-line }is ignored, and {\b\'5c }must
+ be used to quote the characters {\b\'5c}, {\b $},
+ {\b{\fs26 `}}. If {\b\'2d }is appended
+ to {\b<<}, then all leading tabs are stripped from {\i word
+ }and from the document. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b<&}{\i digit }\tab The standard
+ input is duplicated from file descriptor {\i digit }(see {\i dup}(2)).
+ Similarly for the standard output using {\b>&\~}{\i digit}.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b<&}{\i digit}{\b\'2d }\tab The file descriptor
+ given by {\i digit }is moved to standard input. Similarly for the standard
+ output using {\b>&\~}{\i digit}{\b\'2d}.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000<&\'2d }\tab The standard input is closed. Similarly
+ for the standard output using {\b>&\'2d}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000<& p
+ }\tab The input from the co-process is moved to standard input. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000>& p
+ }\tab The output to the co-process is moved to standard output. \par\pard\qc\li840\tx840\tx20000 If
+ one of the above is preceded by a digit, then the file descriptor number
+ referred to is that specified by the digit (instead of the default 0 or
+ 1). For example: {\b\par\pard\qc\li1120\tx1120\tx20000 .\~.\~. \~2>&1}
+ \par\pard\qc\li840\tx840\tx20000 means file descriptor 2 is to be opened for writing as a duplicate
+ of file descriptor 1. \par\pard\qc\li840\tx840\tx20000 The order in which redirections are specified is
+ significant. The shell evaluates each redirection in terms of the ({\i file
+ descriptor}, {\i file}) association at the time of evaluation. For example:
+ {\b\par\pard\qc\li1120\tx1120\tx20000 .\~.\~. \~1>}{\i fname\~}{\b 2>&1}
+ \par\pard\qc\li840\tx840\tx20000 first associates file descriptor 1 with file {\i fname\~}. It
+ then associates file descriptor 2 with the file associated with file descriptor
+ 1 (i.e. {\i fname\~}). If the order of redirections were reversed,
+ file descriptor 2 would be associated with the terminal (assuming file descriptor
+ 1 had been) and then file descriptor 1 would be associated with file {\i fname\~}.
+ \par\pard\qc\li840\tx840\tx20000 If a command is followed by {\b& }and job control is not active,
+ then the default standard input for the command is the empty file {\b /dev/null}.
+ Otherwise, the environment for the execution of a command contains the file
+ descriptors of the invoking shell as modified by input/output specifications.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Environment} Environment. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The
+ {\i environment }(see {\i environ}(7)) is a list of name-value
+ pairs that is passed to an executed program in the same way as a normal
+ argument list. The names must be {\i identifiers }and the values are character
+ strings. The shell interacts with the environment in several ways. On invocation,
+ the shell scans the environment and creates a variable for each name found,
+ giving it the corresponding value and attributes and marking it {\i export}.
+ Executed commands inherit the environment. If the user modifies the values
+ of these variables or creates new ones, using the {\b export }or
+ {\b typeset \'2dx }commands, they become part of the environment.
+ The environment seen by any executed command is thus composed of any name-value
+ pairs originally inherited by the shell, whose values may be modified by
+ the current shell, plus any additions which must be noted in {\b export
+ }or {\b typeset \'2dx }commands. \par\pard\qc\li840\tx840\tx20000 The environment for
+ any {\i simple-command }or function may be augmented by prefixing it with
+ one or more variable assignments. A variable assignment argument is a word
+ of the form {\i identifier=value}. Thus: {\b{\fs22\par\pard\qc\li1120\tx1120\tx20000 TERM}=450
+ \~cmd \~args} and {\b\line (export \~{\fs22 TERM};
+ \~{\fs22 TERM}=450; \~cmd \~args)} \par\pard\qc\li840\tx840\tx20000 are equivalent
+ (as far as the above execution of {\i cmd }is concerned except for special
+ built-in commands listed below \'2d those that are preceded with a dagger).
+ \par\pard\qc\li840\tx840\tx20000 If the obsolete {\b\'2d k }option is set, {\i all }variable
+ assignment arguments are placed in the environment, even if they occur after
+ the command name. The following first prints {\b a=b c }and then
+ {\b c}: \line
+{\b\~\~\~\~\~\~\~\~echo\~\~a=b\~\~c\~\~\~\~\line
+\~\~\~\~\~\~\~\~set\~\~\'2dk\~\line
+\~\~\~\~\~\~\~\~echo\~\~a=b\~\~c\~\~\~\~\line
+}This
+ feature is intended for use with scripts written for early versions of the
+ shell and its use in new scripts is strongly discouraged. It is likely to
+ disappear someday. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Functions} Functions. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}For
+ historical reasons, there are two ways to define functions, the {\i name}{\b (\~)
+ }syntax and the {\b function }{\i name }syntax, described
+ in the {\i Commands }section above. Shell functions are read in and stored
+ internally. Alias names are resolved when the function is read. Functions
+ are executed like commands with the arguments passed as positional parameters.
+ (See {\i Execution }below.) \par\pard\qc\li840\tx840\tx20000 Functions defined by the {\b function
+ }{\i name }syntax and called by name execute in the same process
+ as the caller and share all files and present working directory with the
+ caller. Traps caught by the caller are reset to their default action inside
+ the function. A trap condition that is not caught or ignored by the function
+ causes the function to terminate and the condition to be passed on to the
+ caller. A trap on {\fs22{\b EXIT }}set inside a function
+ is executed in the environment of the caller after the function completes.
+ Ordinarily, variables are shared between the calling program and the function.
+ However, the {\b typeset }special built-in command used within
+ a function defines local variables whose scope includes the current function
+ and all functions it calls. Errors within functions return control to the
+ caller. \par\pard\qc\li840\tx840\tx20000 Functions defined with the {\i name}{\b (\~) }syntax
+ and functions defined with the {\b function }{\i name }syntax
+ that are invoked with the {\b{\fs26 .}} special built-in
+ are executed in the caller's environment and share all variables and traps
+ with the caller. Errors within these function executions cause the script
+ that contains them to abort. \par\pard\qc\li840\tx840\tx20000 The special built-in command {\b return
+ }is used to return from function calls. \par\pard\qc\li840\tx840\tx20000 Function names can be listed
+ with the {\b\'2d f }or {\b +f }option of the {\b typeset
+ }special built-in command. The text of functions, when available,
+ will also be listed with {\b\'2d f}. Functions can be undefined
+ with the {\b\'2d f }option of the {\b unset }special
+ built-in command. \par\pard\qc\li840\tx840\tx20000 Ordinarily, functions are unset when the shell executes
+ a shell script. Functions that need to be defined across separate invocations
+ of the shell should be placed in a directory and the {\b{\fs22 FPATH
+ }}variable should contain the name of this directory. They may
+ also be specified in the {\b{\fs22 ENV }}file. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Discipline.Functions} Discipline
+ \~Functions. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Each variable
+ can have zero or more discipline functions associated with it. The shell
+ initially understands the discipline names {\b get}, {\b set},
+ and {\b unset} but on most systems others can be added at run time
+ via the C programming interface extension provided by the {\b builtin
+ }built-in utility. If the {\b get} discipline is defined
+ for a variable, it is invoked whenever the given variable is referenced.
+ If the variable {\b .sh.value} is assigned a value inside the discipline
+ function, the referenced variable will evaluate to this value instead. If
+ the {\b set} discipline is defined for a variable, it is invoked
+ whenever the given variable is assigned a value. The variable {\b .sh.value}
+ is given the value of the variable before invoking the discipline, and the
+ variable will be assigned the value of {\b .sh.value} after the
+ discipline completes. If {\b .sh.value} is unset inside the discipline,
+ then that value is unchanged. If the {\b unset} discipline is defined
+ for a variable, it is invoked whenever the given variable is unset. The
+ variable will not be unset unless it is unset explicitly from within this
+ discipline function. \par\pard\qc\li840\tx840\tx20000 The variable {\b .sh.name }contains the
+ name of the variable for which the discipline function is called, {\b .sh.subscript
+ }is the subscript of the variable, and {\b .sh.value }will
+ contain the value being assigned inside the {\b .set }discipline
+ function. For the {\b set} discipline, changing {\b .sh.value
+ }will change the value that gets assigned. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Jobs} Jobs.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}If the {\b monitor }option
+ of the {\b set }command is turned on, an interactive shell associates
+ a {\i job} with each pipeline. It keeps a table of current jobs, printed
+ by the {\b jobs }command, and assigns them small integer numbers.
+ When a job is started asynchronously with {\b&}, the shell prints
+ a line which looks like: \par\pard\qc\li840\tx840\tx20000 [1] 1234 \par\pard\qc\li840\tx840\tx20000 indicating that the job which was
+ started asynchronously was job number 1 and had one (top-level) process,
+ whose process id was 1234. \par\pard\qc\li840\tx840\tx20000 This paragraph and the next require features
+ that are not in all versions of UNIX and may not apply. If you are running
+ a job and wish to do something else you may hit the key {\b ^Z}
+ (control-Z) which sends a STOP signal to the current job. The shell will
+ then normally indicate that the job has been `Stopped', and print another
+ prompt. You can then manipulate the state of this job, putting it in the
+ background with the {\b bg }command, or run some other commands
+ and then eventually bring the job back into the foreground with the foreground
+ command {\b fg}. A {\b ^Z} takes effect immediately and
+ is like an interrupt in that pending output and unread input are discarded
+ when it is typed. \par\pard\qc\li840\tx840\tx20000 A job being run in the background will stop if it tries
+ to read from the terminal. Background jobs are normally allowed to produce
+ output, but this can be disabled by giving the command {\b stty tostop}.
+ If you set this tty option, then background jobs will stop when they try
+ to produce output like they do when they try to read input. \par\pard\qc\li840\tx840\tx20000 There are
+ several ways to refer to jobs in the shell. A job can be referred to by
+ the process id of any process of the job or by one of the following: \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %}{\i number
+ }\tab The job with the given number. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %}{\i string }\tab Any
+ job whose command line begins with {\i string}. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %?}{\i string
+ }\tab Any job whose command line contains {\i string}. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %% }\tab Current
+ job. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %+ }\tab Equivalent to {\b %%}. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b %\'2d
+ }\tab Previous job. \par\pard\qc\li840\tx840\tx20000 The shell learns immediately whenever a process
+ changes state. It normally informs you whenever a job becomes blocked so
+ that no further progress is possible, but only just before it prints a prompt.
+ This is done so that it does not otherwise disturb your work. The {\b notify
+ }option of the {\b set }command causes the shell to print
+ these job change messages as soon as they occur. \par\pard\qc\li840\tx840\tx20000 When the {\b monitor
+ }option is on, each background job that completes triggers any trap
+ set for {\b CHLD}. \par\pard\qc\li840\tx840\tx20000 When you try to leave the shell while jobs
+ are running or stopped, you will be warned that `You have stopped(running)
+ jobs.' You may use the {\b jobs }command to see what they are.
+ If you immediately try to exit again, the shell will not warn you a second
+ time, and the stopped jobs will be terminated. When a login shell receives
+ a HUP signal, it sends a HUP signal to each job that has not been disowned
+ with the {\b disown }built-in command described below. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Signals} Signals.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The {\fs22 INT}
+ and {\fs22 QUIT} signals for an invoked command are ignored if the
+ command is followed by {\b& }and the {\b monitor }option
+ is not active. Otherwise, signals have the values inherited by the shell
+ from its parent (but see also the {\b trap }built-in command below).
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Execution} Execution. \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Each
+ time a command is read, the above substitutions are carried out. If the
+ command name matches one of the {\i Special Built-in Commands }listed below,
+ it is executed within the current shell process. Next, the command name
+ is checked to see if it matches a user defined function. If it does, the
+ positional parameters are saved and then reset to the arguments of the {\i function
+ }call. A function is also executed in the current shell process. When
+ the {\i function }completes or issues a {\b return}, the positional
+ parameter list is restored. For functions defined with the {\b function
+ }{\i name }syntax, any trap set on {\fs22{\b EXIT }}within
+ the function is executed. The exit value of a {\i function }is the value
+ of the last command executed. If a command name is not a {\i special built-in
+ command }or a user defined {\i function}, but it is one of the built-in
+ commands listed below, it is executed in the current shell process. \par\pard\qc\li840\tx840\tx20000 The
+ shell variable {\b{\fs22 PATH }}defines the search path
+ for the directory containing the command. Alternative directory names are
+ separated by a colon ({\b :}). The default path is {\b /bin:/usr/bin:
+ }(specifying {\b /bin}, {\b /usr/bin}, and the current
+ directory in that order). The current directory can be specified by two
+ or more adjacent colons, or by a colon at the beginning or end of the path
+ list. If the command name contains a {\b /}, then the search path
+ is not used. Otherwise, each directory in the path is searched for an executable
+ file that is not a directory. If the shell determines that there is a built-in
+ version of a command corresponding to a given pathname, this built-in is
+ invoked in the current process. A process is created and an attempt is made
+ to execute the command via {\i exec}(2). If the file has execute permission
+ but is not an {\b a.out }file, it is assumed to be a file containing
+ shell commands. A separate shell is spawned to read it. All non-exported
+ variables are removed in this case. If the shell command file doesn't have
+ read permission, or if the {\i setuid }and/or {\i setgid }bits are set
+ on the file, then the shell executes an agent whose job it is to set up
+ the permissions and execute the shell with the shell command file passed
+ down as an open file. A parenthesized command is executed in a sub-shell
+ without removing non-exported variables. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Command.Re.entry} Command
+ \~Re-entry. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The text of the
+ last {\b{\fs22 HISTSIZE }}(default 128) commands entered
+ from a terminal device is saved in a {\i history }file. The file {\b{\fs22 $HOME}/.sh_history
+ }is used if the {\b{\fs22 HISTFILE }}variable is
+ not set or if the file it names is not writable. A shell can access the
+ commands of all {\i interactive }shells which use the same named {\fs22{\b HISTFILE}.
+ }The built-in command {\b hist }is used to list or edit a portion
+ of this file. The portion of the file to be edited or listed can be selected
+ by number or by giving the first character or characters of the command.
+ A single command or range of commands can be specified. If you do not specify
+ an editor program as an argument to {\b hist }then the value of
+ the variable {\fs22{\b HISTEDIT }}is used. If {\fs22{\b HISTEDIT
+ }}is unset, the obsolete variable {\fs22{\b FCEDIT }}is
+ used. If {\fs22{\b FCEDIT }}is not defined, then {\b /bin/ed
+ }is used. The edited command(s) is printed and re-executed upon leaving
+ the editor unless you quit without writing. The {\b\'2d s }option
+ (and in obsolete versions, the editor name {\b\'2d\~})
+ is used to skip the editing phase and to re-execute the command. In this
+ case a substitution parameter of the form {\i old}{\b =}{\i new}
+ can be used to modify the command before execution. For example, with the
+ preset alias {\b r}, which is aliased to {\b 'hist \'2ds'},
+ typing `{\b r bad=good c}' will re-execute the most recent command
+ which starts with the letter {\b c}, replacing the first occurrence
+ of the string {\b bad }with the string {\b good}. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.In.line.Editing.Options} In-line
+ \~Editing \~Options. \~\~\~}\par\pard\qc\li840\tx840\tx20000}}Normally,
+ each command line entered from a terminal device is simply typed followed
+ by a {\b new-line} (`RETURN' or `LINE\~FEED'). If either the
+ {\b emacs}, {\b gmacs}, or {\b vi }option is
+ active, the user can edit the command line. To be in either of these edit
+ modes {\b set }the corresponding option. An editing option is automatically
+ selected each time the {\fs22{\b VISUAL }}or {\fs22{\b EDITOR
+ }}variable is assigned a value ending in either of these option
+ names. \par\pard\qc\li840\tx840\tx20000 The editing features require that the user's terminal accept `RETURN'
+ as carriage return without line feed and that a space (`\~') must overwrite
+ the current character on the screen. \par\pard\qc\li840\tx840\tx20000 The editing modes implement a concept
+ where the user is looking through a window at the current line. The window
+ width is the value of {\fs22{\b COLUMNS }}if it is defined,
+ otherwise 80. If the window width is too small to display the prompt and
+ leave at least 8 columns to enter input, the prompt is truncated from the
+ left. If the line is longer than the window width minus two, a mark is displayed
+ at the end of the window to notify the user. As the cursor moves and reaches
+ the window boundaries the window will be centered about the cursor. The
+ mark is a {\b>} (<{\b , }{\b *}) if the line
+ extends on the right (left, both) side(s) of the window. \par\pard\qc\li840\tx840\tx20000 The search commands
+ in each edit mode provide access to the history file. Only strings are matched,
+ not patterns, although a leading {\b ^ }in the string restricts
+ the match to begin at the first character in the line. \par\pard\qc\li840\tx840\tx20000 Each of the edit
+ modes has an operation to list the files or commands that match a partially
+ entered word. When applied to the first word on the line, or the first word
+ after a {\b ;}, {\b |}, {\b&}, or {\b (},
+ and the word does not begin with {\b ~ }or contain a {\b /},
+ the list of aliases, functions, and executable commands defined by the {\b{\fs22 PATH
+ }}variable that could match the partial word is displayed. Otherwise,
+ the list of files that match the given word is displayed. If the partially
+ entered word does not contain any file expansion characters, a {\b *
+ }is appended before generating these lists. After displaying the generated
+ list, the input line is redrawn. These operations are called command name
+ listing and file name listing, respectively. There are additional operations,
+ referred to as command name completion and file name completion, which compute
+ the list of matching commands or files, but instead of printing the list,
+ replace the current word with a complete or partial match. For file name
+ completion, if the match is unique, a {\b / }is appended if the
+ file is a directory and a space is appended if the file is not a directory.
+ Otherwise, the longest common prefix for all the matching files replaces
+ the word. For command name completion, only the portion of the file names
+ after the last {\b / }are used to find the longest command prefix.
+ If only a single name matches this prefix, then the word is replaced with
+ the command name followed by a space. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Key.Bindings} Key
+ \~Bindings. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The {\b{\fs22 KEYBD
+ }}trap can be used to intercept keys as they are typed and change
+ the characters that are actually seen by the shell. This trap is executed
+ after each character (or sequence of characters when the first character
+ is ESC) is entered while reading from a terminal. The variable {\b .sh.edchar
+ }contains the character or character sequence which generated the
+ trap. Changing the value of {\b .sh.edchar }in the trap action
+ causes the shell to behave as if the new value were entered from the keyboard
+ rather than the original value. \par\pard\qc\li840\tx840\tx20000 The variable {\b .sh.edcol }is
+ set to the input column number of the cursor at the time of the input. The
+ variable {\b .sh.edmode }is set to ESC when in {\b vi }insert
+ mode (see below) and is null otherwise. By prepending {\b $\{.sh.editmode\}
+ }to a value assigned to {\b .sh.edchar }it will cause the
+ shell to change to control mode if it is not already in this mode. \par\pard\qc\li840\tx840\tx20000 This
+ trap is not invoked for characters entered as arguments to editing directives,
+ or while reading input for a character search. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Emacs.Editing.Mode} Emacs
+ \~Editing \~Mode. \~\~\~}\par\pard\qc\li840\tx840\tx20000}}This mode
+ is entered by enabling either the {\b emacs }or {\b gmacs }option.
+ The only difference between these two modes is the way they handle {\b ^T}.
+ To edit, the user moves the cursor to the point needing correction and then
+ inserts or deletes characters or words as needed. All the editing commands
+ are control characters or escape sequences. The notation for control characters
+ is caret ({\b ^}) followed by the character. For example, {\b ^F
+ }is the notation for control {\b F}. This is entered by depressing
+ `f' while holding down the `CTRL' (control) key. The `SHIFT' key is {\i not
+ }depressed. (The notation {\b ^? }indicates the DEL (delete)
+ key.) \par\pard\qc\li840\tx840\tx20000 The notation for escape sequences is {\b M- }followed by
+ a character. For example, {\b M-f }(pronounced Meta f) is entered
+ by depressing ESC (ascii {\b 033}) followed by `f'. ({\b M-F
+ }would be the notation for ESC followed by `SHIFT' (capital) `F'.)
+ \par\pard\qc\li840\tx840\tx20000 All edit commands operate from any place on the line (not just at the
+ beginning). Neither the `RETURN' nor the `LINE FEED' key is entered after
+ edit commands except when noted. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^F }\tab Move cursor
+ forward (right) one character. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-f }\tab Move cursor forward
+ one word. (The {\b emacs }editor's idea of a word is a string of
+ characters consisting of only letters, digits and underscores.) \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^B
+ }\tab Move cursor backward (left) one character. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-b }\tab Move
+ cursor backward one word. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^A }\tab Move cursor to start of
+ line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^E }\tab Move cursor to end of line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^]}{\i char
+ }\tab Move cursor forward to character {\i char }on current line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-^]}{\i char
+ }\tab Move cursor backward to character {\i char }on current line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^X^X
+ }\tab Interchange the cursor and mark. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 erase }\tab (User defined
+ erase character as defined by the {\i stty}(1) command, usually {\b ^H
+ }or {\b #}.) Delete previous character. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^D }\tab Delete
+ current character. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-d }\tab Delete current word. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-^H
+ }\tab (Meta-backspace) Delete previous word. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-h }\tab Delete
+ previous word. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-^? }\tab (Meta-DEL) Delete previous word (if
+ your interrupt character is {\b ^? }(DEL, the default) then this
+ command will not work). \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^T }\tab Transpose current character
+ with previous character and advance the cursor in {\i emacs }mode. Transpose
+ two previous characters in {\i gmacs }mode. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^C }\tab Capitalize
+ current character. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-c }\tab Capitalize current word. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-l
+ }\tab Change the current word to lower case. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^K }\tab Delete
+ from the cursor to the end of the line. If preceded by a numerical parameter
+ whose value is less than the current cursor position, then delete from given
+ position up to the cursor. If preceded by a numerical parameter whose value
+ is greater than the current cursor position, then delete from cursor up
+ to given cursor position. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^W }\tab Kill from the cursor to
+ the mark. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-p }\tab Push the region from the cursor to the
+ mark on the stack. {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 kill }\tab (User defined kill character as defined
+ by the stty command, usually {\b ^G }or {\b @}.) Kill
+ the entire current line. If two {\i kill }characters are entered in succession,
+ all kill characters from then on cause a line feed (useful when using paper
+ terminals). \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^Y }\tab Restore last item removed from line. (Yank
+ item back to the line.) \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^L }\tab Line feed and print current
+ line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^@ }\tab (Null character) Set mark. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-}{\i space
+ }\tab (Meta space) Set mark. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^J }\tab (New\~line) Execute
+ the current line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^M }\tab (Return) Execute the current line.
+ {\i\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 eof }\tab End-of-file character, normally {\b ^D}, is processed
+ as an End-of-file only if the current line is null. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^P }\tab Fetch
+ previous command. Each time {\b ^P }is entered the previous command
+ back in time is accessed. Moves back one line when not on the first line
+ of a multi-line command. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-< }\tab Fetch the least recent
+ (oldest) history line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-> }\tab Fetch the most recent (youngest)
+ history line. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^N }\tab Fetch next command line. Each time {\b ^N
+ }is entered the next command line forward in time is accessed. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^R}{\i string
+ }\tab Reverse search history for a previous command line containing {\i string}.
+ If a parameter of zero is given, the search is forward. {\i String }is
+ terminated by a `RETURN' or `NEW\~LINE'. If string is preceded by a
+ {\b ^}, the matched line must begin with {\i string}. If {\i string
+ }is omitted, then the next command line containing the most recent {\i string
+ }is accessed. In this case a parameter of zero reverses the direction
+ of the search. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 ^O }\tab Operate \'2d Execute the current
+ line and fetch the next line relative to current line from the history file.
+ \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-}{\i digits }\tab (Escape) Define numeric parameter, the
+ digits are taken as a parameter to the next command. The commands that accept
+ a parameter are {\b ^F}, {\b ^B}, {\i erase}, {\b ^C},
+ {\b ^D}, {\b ^K}, {\b ^R}, {\b ^P},
+ {\b ^N}, {\b ^]}, {\b M-.}, {\b M-^]},
+ {\b M-_}, {\b M-b}, {\b M-c}, {\b M-d},
+ {\b M-f}, {\b M-h}, {\b M-l }and {\b M-^H}.
+ \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-}{\i letter }\tab Soft-key \'2d Your alias list is searched
+ for an alias by the name {\b _}{\i letter }and if an alias of
+ this name is defined, its value will be inserted on the input queue. The
+ {\i letter }must not be one of the above meta-functions. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b M-[}{\i letter
+ }\tab Soft-key \'2d Your alias list is searched for an alias by the
+ name {\b __}{\i letter }and if an alias of this name is defined,
+ its value will be inserted on the input queue. The can be used to program
+ functions keys on many terminals. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-. }\tab The last word of
+ the previous command is inserted on the line. If preceded by a numeric parameter,
+ the value of this parameter determines which word to insert rather than
+ the last word. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-_ }\tab Same as {\b M-.}. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-*
+ }\tab Attempt file name generation on the current word. An asterisk
+ is appended if the word doesn't match any file or contain any special pattern
+ characters. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-ESC }\tab Command or file name completion as
+ described above. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-= }\tab Command or file name listing as
+ described above. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b ^U }\tab Multiply parameter of next command
+ by 4. \par\pard\qc\fi-560\li1120\tx1120\tx20000{\b\'5c }\tab Escape next character. Editing characters,
+ the user's erase, kill and interrupt (normally {\b ^?}) characters
+ may be entered in a command line or in a search string if preceded by a
+ {\b\'5c}. The {\b\'5c }removes the next character's
+ editing features (if any). {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 ^V }\tab Display version of the
+ shell. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 M-# }\tab If the line does not begin with a {\b #},
+ a {\b # }is inserted at the beginning of the line and after each
+ new-line, and the line is entered. This causes a comment to be inserted
+ in the history file. If the line begins with a {\b #}, the {\b #
+ }is deleted and one {\b # }after each new-line is also deleted.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Vi.Editing.Mode} Vi \~Editing \~Mode.
+ \~\~\~}\par\pard\qc\li840\tx840\tx20000}}There are two typing modes. Initially,
+ when you enter a command you are in the {\i input }mode. To edit, the user
+ enters {\i control }mode by typing ESC ({\b 033}) and moves the
+ cursor to the point needing correction and then inserts or deletes characters
+ or words as needed. Most control commands accept an optional repeat {\i count
+ }prior to the command. \par\pard\qc\li840\tx840\tx20000 When in {\b vi }mode on most systems,
+ canonical processing is initially enabled and the command will be echoed
+ again if the speed is 1200 baud or greater and it contains any control characters
+ or less than one second has elapsed since the prompt was printed. The ESC
+ character terminates canonical processing for the remainder of the command
+ and the user can then modify the command line. This scheme has the advantages
+ of canonical processing with the type-ahead echoing of raw mode. \par\pard\qc\li840\tx840\tx20000 If the
+ option {\b viraw }is also set, the terminal will always have canonical
+ processing disabled. This mode is implicit for systems that do not support
+ two alternate end of line delimiters, and may be helpful for certain terminals.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Input.Edit.Commands}\~\~\~\~\~ Input
+ Edit Commands \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}By
+ default the editor is in input mode. {\i\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 erase }\tab (User defined
+ erase character as defined by the stty command, usually {\b ^H }or
+ {\b #}.) Delete previous character. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^W }\tab Delete
+ the previous blank separated word. On some systems the {\b viraw}
+ option may be required for this to work. {\i\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 eof }\tab As the first character
+ of the line causes the shell to terminate unless the {\b ignoreeof}
+ option is set. Otherwise this character is ignored. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^V }\tab Escape
+ next character. Editing characters and the user's erase or kill characters
+ may be entered in a command line or in a search string if preceded by a
+ {\b ^V}. The {\b ^V }removes the next character's editing
+ features (if any). On some systems the {\b viraw} option may be
+ required for this to work. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b\'5c }\tab Escape the next {\i erase
+ }or {\i kill }character. {\fs22{\b\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Motion.Edit.Commands}\~\~\~\~\~ Motion
+ Edit Commands \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}These
+ commands will move the cursor. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b l}
+ \tab Cursor forward (right) one character. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b w}
+ \tab Cursor forward one alpha-numeric word. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b W}
+ \tab Cursor to the beginning of the next word that follows a blank. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b e}
+ \tab Cursor to end of word. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b E} \tab Cursor to end
+ of the current blank delimited word. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b h} \tab Cursor
+ backward (left) one character. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b b} \tab Cursor
+ backward one word. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b B} \tab Cursor to preceding
+ blank separated word. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b |} \tab Cursor to column
+ {\i count}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b f}{\i c} \tab Find the next character
+ {\i c} in the current line. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b F}{\i c} \tab Find
+ the previous character {\i c} in the current line. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b t}{\i c}
+ \tab Equivalent to {\b f }followed by {\b h}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b T}{\i c}
+ \tab Equivalent to {\b F }followed by {\b l}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b ;}
+ \tab Repeats {\i count }times, the last single character find command, {\b f},
+ {\b F}, {\b t}, or {\b T}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b ,}
+ \tab Reverses the last single character find command {\i count }times. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 0
+ }\tab Cursor to start of line. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 ^ }\tab Cursor to first
+ non-blank character in line. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 $ }\tab Cursor to end of line.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 % }\tab Moves to balancing {\b (}, {\b )},
+ {\b\{}, {\b\}}, {\b [}, or {\b ]}. If
+ cursor is not on one of the above characters, the remainder of the line
+ is searched for the first occurrence of one of the above characters first.
+ {\fs22{\b\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Search.Edit.Commands}\~\~\~\~\~ Search
+ Edit Commands \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}These
+ commands access your command history. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b k}
+ \tab Fetch previous command. Each time {\b k }is entered the previous
+ command back in time is accessed. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b\'2d}
+ \tab Equivalent to {\b k}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b j} \tab Fetch
+ next command. Each time {\b j }is entered the next command forward
+ in time is accessed. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b +} \tab Equivalent to {\b j}.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b G} \tab The command number {\i count }is fetched.
+ The default is the least recent history command. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b /}{\i string
+ }\tab Search backward through history for a previous command containing
+ {\i string}. {\i String }is terminated by a `RETURN' or `NEW\~LINE'.
+ If string is preceded by a {\b ^}, the matched line must begin
+ with {\i string}. If {\i string} is null, the previous string will be
+ used. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ?}{\i string }\tab Same as {\b / }except that
+ search will be in the forward direction. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 n }\tab Search for
+ next match of the last pattern to {\b / }or {\b ? }commands.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 N }\tab Search for next match of the last pattern to {\b /
+ }or {\b ?}, but in reverse direction. {\fs22{\b\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Text.Modification.Edit.Commands}\~\~\~\~\~ Text
+ Modification Edit Commands \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}These
+ commands will modify the line. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 a }\tab Enter input
+ mode and enter text after the current character. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 A }\tab Append
+ text to the end of the line. Equivalent to {\b $a}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b c}{\i motion}
+ \tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 c}[{\i count}]{\i motion} \tab Delete current character
+ through the character that {\i motion }would move the cursor to and enter
+ input mode. If {\i motion} is {\b c}, the entire line will be
+ deleted and input mode entered. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 C }\tab Delete the current
+ character through the end of line and enter input mode. Equivalent to {\b c$}.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 S }\tab Equivalent to {\b cc}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b s}
+ \tab Replace characters under the cursor in input mode. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 D }\tab Delete
+ the current character through the end of line. Equivalent to {\b d$}.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b d}{\i motion} \tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 d}[{\i count}]{\i motion}
+ \tab Delete current character through the character that {\i motion }would
+ move to. If {\i motion} is {\b d , }the entire line will be deleted.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 i }\tab Enter input mode and insert text before the current
+ character. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 I }\tab Insert text before the beginning of the
+ line. Equivalent to {\b 0i}. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b P} \tab Place
+ the previous text modification before the cursor. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b p}
+ \tab Place the previous text modification after the cursor. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 R }\tab Enter
+ input mode and replace characters on the screen with characters you type
+ overlay fashion. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b r}{\i c} \tab Replace the {\i count
+ }character(s) starting at the current cursor position with {\i c}, and
+ advance the cursor. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b x} \tab Delete current character.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b X} \tab Delete preceding character. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b .}
+ \tab Repeat the previous text modification command. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b ~}
+ \tab Invert the case of the {\i count }character(s) starting at the current
+ cursor position and advance the cursor. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b _}
+ \tab Causes the {\i count }word of the previous command to be appended and
+ input mode entered. The last word is used if {\i count }is omitted. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 *
+ }\tab Causes an {\b * }to be appended to the current word and
+ file name generation attempted. If no match is found, it rings the bell.
+ Otherwise, the word is replaced by the matching pattern and input mode is
+ entered. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c }\tab Command or file name completion as described
+ above. {\fs22{\b\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Other.Edit.Commands}\~\~\~\~\~ Other
+ Edit Commands \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Miscellaneous
+ commands. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b y}{\i motion} \tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 y}[{\i count}]{\i motion}
+ \tab Yank current character through character that {\i motion }would move
+ the cursor to and puts them into the delete buffer. The text and cursor
+ are unchanged. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 yy }\tab Yanks the entire line. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 Y }\tab Yanks
+ from current position to end of line. Equivalent to {\b y$}. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 u
+ }\tab Undo the last text modifying command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 U }\tab Undo
+ all the text modifying commands performed on the line. \par\pard\qc\fi-560\li1400\tx1400\tx20000 [{\i count}]{\b v}
+ \tab Returns the command {\b hist \'2de $\{{\fs22 VISUAL}:\'2d$\{{\fs22 EDITOR}:\'2dvi\}\}}{\i
+ count }in the input buffer. If {\i count }is omitted, then the current
+ line is used. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^L }\tab Line feed and print current line. Has
+ effect only in control mode. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^J }\tab (New\~line) Execute
+ the current line, regardless of mode. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^M }\tab (Return) Execute
+ the current line, regardless of mode. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 # }\tab If the first
+ character of the command is a {\b #}, then this command deletes
+ this {\b # }and each {\b # }that follows a newline. Otherwise,
+ sends the line after inserting a {\b # }in front of each line in
+ the command. Useful for causing the current line to be inserted in the history
+ as a comment and uncommenting previously commented commands in the history
+ file. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000 = }\tab Command or file name listing as described above.
+ \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b @}{\i letter }\tab Your alias list is searched for an alias
+ by the name {\b _}{\i letter }and if an alias of this name is
+ defined, its value will be inserted on the input queue for processing. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b ^V
+ }\tab Display version of the shell. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Built.in.Commands} Built-in
+ \~Commands. \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}The following
+ simple-commands are executed in the shell process. Input/Output redirection
+ is permitted. Unless otherwise indicated, the output is written on file
+ descriptor 1 and the exit status, when there is no syntax error, is zero.
+ Except for {\b :}, {\b true}, {\b false}, {\b echo},
+ {\b command}, {\b newgrp}, and {\b login}, all
+ built-in commands accept {\b\'2d\'2d }to indicate end of
+ options. They also interpret the option {\b\'2d ? }as a help
+ request and print a {\i usage }message on standard error. Commands that
+ are preceded by one or two \'a7 symbols are special built-in commands
+ and are treated specially in the following ways: \par\pard\qc\fi-560\li1120\tx1120\tx20000 1. \tab Variable
+ assignment lists preceding the command remain in effect when the command
+ completes. \par\pard\qc\fi-560\li1120\tx1120\tx20000 2. \tab I/O redirections are processed after variable assignments.
+ \par\pard\qc\fi-560\li1120\tx1120\tx20000 3. \tab Errors cause a script that contains them to abort. \par\pard\qc\fi-560\li1120\tx1120\tx20000 4. \tab They
+ are not valid function names. \par\pard\qc\fi-560\li1120\tx1120\tx20000 5. \tab Words following a command preceded
+ by \'a7\'a7 that are in the format of a variable assignment are
+ expanded with the same rules as a variable assignment. This means that tilde
+ substitution is performed after the {\b = }sign and field splitting
+ and file name generation are not performed. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b :}
+ [\~{\i arg\~}.\~.\~. \~] \tab The command only expands
+ parameters. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b\~ . }{\i name\~}{\b [\~}{\i arg\~}{\b .\~.\~.
+ \~] \tab}If {\i name }is a function defined with the {\b function
+ }{\i name }reserved word syntax, the function is executed in the
+ current environment (as if it had been defined with the {\i name}{\b ()
+ }syntax.) Otherwise if {\i name }refers to a file, the file is read
+ in its entirety and the commands are executed in the current shell environment.
+ The search path specified by {\b{\fs22 PATH }}is used to
+ find the directory containing the file. If any arguments {\i arg }are given,
+ they become the positional parameters while processing the {\b . }command
+ and the original positional parameters are restored upon completion. Otherwise
+ the positional parameters are unchanged. The exit status is the exit status
+ of the last command executed. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7\'a7 {\b alias} [\~{\b\'2d ptx}
+ \~] [\~{\i name}[\~{\b =}{\i value\~}\~]\~].\~.\~.
+ \tab{\b alias }with no arguments prints the list of aliases in the
+ form {\i name=value }on standard output. The {\b\'2d p }option
+ causes the word {\b alias }to be inserted before each one. When
+ one or more arguments are given, an {\i alias }is defined for each {\i name
+ }whose {\i value }is given. A trailing space in {\i value }causes the
+ next word to be checked for alias substitution. The obsolete {\b\'2d t
+ }option is used to set and list tracked aliases. The value of a tracked
+ alias is the full pathname corresponding to the given {\i name}. The value
+ becomes undefined when the value of {\fs22{\b PATH }}is
+ reset but the alias remains tracked. Without the {\b\'2d t }option,
+ for each {\i name }in the argument list for which no {\i value }is given,
+ the name and value of the alias is printed. The obsolete {\b\'2d x
+ }option has no effect. The exit status is non-zero if a {\i name }is
+ given, but no value, and no alias has been defined for the {\i name\~}.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 bg} [\~{\i job\~}.\~.\~. \~] \tab This
+ command is only on systems that support job control. Puts each specified
+ {\i job }into the background. The current job is put in the background
+ if {\i job }is not specified. See {\i Jobs }for a description of the format
+ of {\i job}. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b break} [\~{\i n\~}\~]
+ \tab Exit from the enclosing {\b for\~}, {\b while\~},
+ {\b until\~}, or {\b select }loop, if any. If {\i n
+ }is specified, then break {\i n }levels. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 builtin} [\~{\b\'2d ds}
+ \~] [\~{\b\'2d f} {\i file\~}\~][\~{\i name\~}.\~.\~.\~]
+ \tab If {\i name }is not specified, and no {\b\'2d f }option
+ is specified, the built-ins are printed on standard output. The {\b\'2d s
+ }option prints only the special built-ins. Otherwise, each {\i name
+ }represents the pathname whose basename is the name of the built-in. The
+ entry point function name is determined by prepending {\b b_ }to
+ the built-in name. Special built-ins cannot be bound to a pathname or deleted.
+ The {\b\'2d d }option deletes each of the given built-ins.
+ On systems that support dynamic loading, the {\b\'2d f }option
+ names a shared library containing the code for built-ins. Once a library
+ is loaded, its symbols become available for subsequent invocations of {\b builtin}.
+ Multiple libraries can be specified with separate invocations of the {\b builtin
+ }command. Libraries are searched in the reverse order in which they
+ are specified. When a library is loaded, it looks for a function in the
+ library whose name is {\b lib_init() }and invokes this function
+ with an argument of {\b 0}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 cd} [\~{\b\'2d LP}
+ \~] [\~{\i arg\~}\~] \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 cd} [\~{\b\'2d LP}
+ \~] {\i old\~}{\i new\~}\tab This command can be in either of
+ two forms. In the first form it changes the current directory to {\i arg}.
+ If {\i arg }is {\b\'2d }the directory is changed to the previous
+ directory. The shell variable {\b{\fs22 HOME }}is the default
+ {\i arg}. The variable {\fs22{\b PWD }}is set to the current
+ directory. The shell variable {\b{\fs22 CDPATH }}defines
+ the search path for the directory containing {\i arg}. Alternative directory
+ names are separated by a colon ({\b :}). The default path is {\b< null>
+ }(specifying the current directory). Note that the current directory
+ is specified by a null path name, which can appear immediately after the
+ equal sign or between the colon delimiters anywhere else in the path list.
+ If {\i arg }begins with a {\b /} then the search path is not used.
+ Otherwise, each directory in the path is searched for {\i arg}. \par\pard\qc\li1120\tx1120\tx20000 The second
+ form of {\b cd }substitutes the string {\i new }for the string
+ {\i old }in the current directory name, {\fs22{\b PWD}, }and
+ tries to change to this new directory. \par\pard\qc\li1120\tx1120\tx20000 By default, symbolic link names
+ are treated literally when finding the directory name. This is equivalent
+ to the {\b\'2d L }option. The {\b\'2d P }option
+ causes symbolic links to be resolved when determining the directory. The
+ last instance of {\b\'2d L }or {\b\'2d P }on the
+ command line determines which method is used. \par\pard\qc\li1120\tx1120\tx20000 The {\b cd }command
+ may not be executed by {\b rsh\~. }{\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 command}
+ [\~{\b\'2d pvV} \~] {\i name\~}[\~{\i arg\~}.\~.\~.\~]
+ \tab Without the {\b\'2d v }or {\b\'2d V }options,
+ {\b command }executes {\i name }with the arguments given by {\i arg}.
+ The {\b\'2d p }option causes a default path to be searched
+ rather than the one defined by the value of {\fs22{\b PATH}.
+ }Functions will not be searched for when finding {\i name}. In addition,
+ if {\i name }refers to a special built-in, none of the special properties
+ associated with the leading daggers will be honored. (For example, the predefined
+ alias {\b redirect='command exec' }prevents a script from terminating
+ when an invalid redirection is given.) With the {\b\'2d v }option,
+ {\b command }is equivalent to the built-in {\b whence }command
+ described below. The {\b\'2d V }option causes {\b command
+ }to act like {\b whence \'2dv}. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b continue}
+ [\~{\i n\~}\~] \tab Resume the next iteration of the enclosing
+ {\b for\~}, {\b while\~}, {\b until\~},
+ or {\b select }loop. If {\i n }is specified, then resume at the
+ {\i n}-th enclosing loop. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 disown} [\~{\i job\~}.\~.\~.
+ \~] \tab Causes the shell not to send a HUP signal to each given {\i job},
+ or all active jobs if {\i job }is omitted, when a login shell terminates.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 echo} [\~{\i arg\~}.\~.\~. \~] \tab When
+ the first {\i arg }does not begin with a \'2d, and none of the arguments
+ contain a \'5c, then {\b echo }prints each of its arguments
+ separated by a space and terminated by a new-line. Otherwise, the behavior
+ of {\b echo }is system dependent and {\b print }or {\b printf
+ }described below should be used. See {\i echo}(1) for usage and description.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b eval} [\~{\i arg\~}.\~.\~. \~]
+ \tab The arguments are read as input to the shell and the resulting command(s)
+ executed. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b exec} [\~{\b\'2d c}
+ \~] [\~{\b\'2d a} {\i name\~}\~][\~{\i arg\~}.\~.\~.\~]
+ \tab If {\i arg }is given, the command specified by the arguments is executed
+ in place of this shell without creating a new process. The {\b\'2d c
+ }option causes the environment to be cleared before applying variable
+ assignments associated with the {\b exec }invocation. The {\b\'2d a
+ }option causes {\i name }rather than the first {\i arg}, to become
+ {\b argv[0] }for the new process. Input/output arguments may appear
+ and affect the current process. If {\i arg }is not given, the effect of
+ this command is to modify file descriptors as prescribed by the input/output
+ redirection list. In this case, any file descriptor numbers greater than
+ 2 that are opened with this mechanism are closed when invoking another program.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b#{\footnote HTML2RTF.exit} exit}[\~{\i n\~}\~] \tab Causes
+ the shell to exit with the exit status specified by {\i n}. The value will
+ be the least significant 8 bits of the specified status. If {\i n }is omitted,
+ then the exit status is that of the last command executed. An end-of-file
+ will also cause the shell to exit except for a shell which has the {\b ignoreeof
+ }option (see {\uldb set}{\v HTML2RTF.set}{\*\comment{\b set }}below) turned on. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7\'a7
+ {\b export} [\~{\b\'2d p} \~] [\~{\i name\~}[\~{\b =}{\i value\~}\~]
+ \~].\~.\~. \tab If {\i name }is not given, the names and values
+ of each variable with the export attribute are printed with the values quoted
+ in a manner that allows them to be re-input. The {\b\'2d p }option
+ causes the word {\b export }to be inserted before each one. Otherwise,
+ the given {\i name}s are marked for automatic export to the {\i environment
+ }of subsequently-executed commands. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 false} \tab Does nothing,
+ and exits 1. Used with {\b until }for infinite loops. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 fg}
+ [\~{\i job\~}.\~.\~. \~] \tab This command is only on
+ systems that support job control. Each {\i job }specified is brought to
+ the foreground and waited for in the specified order. Otherwise, the current
+ job is brought into the foreground. See {\i Jobs }for a description of
+ the format of {\i job}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 getconf} [\~{\i name\~}[\~{\i pathname\~}\~]
+ \~] \tab Prints the current value of the configuration parameter given
+ by {\i name}. The configuration parameters are defined by the IEEE POSIX
+ 1003.1 and IEEE POSIX 1003.2 standards. (See {\i pathconf}(2) and {\i sysconf}(2).)
+ The {\i pathname }argument is required for parameters whose value depends
+ on the location in the file system. If no arguments are given, {\b getconf
+ }prints the names and values of the current configuration parameters.
+ The pathname {\b / }is used for each of the parameters that requires
+ {\i pathname}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 getopts} [\~{\b\~ -a} {\i name\~}\~]
+ {\i optstring vname\~}[\~{\i arg\~}.\~.\~.\~]
+ \tab Checks {\i arg }for legal options. If {\i arg }is omitted, the positional
+ parameters are used. An option argument begins with a {\b + }or
+ a {\b\'2d}. An option not beginning with {\b + }or
+ {\b\'2d }or the argument {\b\'2d\~\'2d }ends
+ the options. {\i optstring }contains the letters that {\b getopts }recognizes.
+ If a letter is followed by a {\b :}, that option is expected to
+ have an argument. The options can be separated from the argument by blanks.
+ The option {\b\'2d ? }causes {\b getopts }to generate
+ a usage message on standard error. The {\b\'2d a }argument
+ can be used to specify the name to use for the usage message, which defaults
+ to {\b $0}. {\b\par\pard\qc\li1120\tx1120\tx20000 getopts }places the next option letter
+ it finds inside variable {\i vname }each time it is invoked. The option
+ letter will be prepended with a {\b + }when {\i arg }begins with
+ a {\b +}. The index of the next {\i arg }is stored in {\fs22{\b OPTIND}.
+ }The option argument, if any, gets stored in {\fs22{\b OPTARG}.
+ }\par\pard\qc\li1120\tx1120\tx20000 A leading {\b : }in {\i optstring }causes {\b getopts
+ }to store the letter of an invalid option in {\fs22{\b OPTARG},
+ }and to set {\i vname }to {\b ? }for an unknown option and
+ to {\b : }when a required option is missing. Otherwise, {\b getopts
+ }prints an error message. The exit status is non-zero when there are
+ no more options. \par\pard\qc\li1120\tx1120\tx20000 There is no way to specify any of the options {\b :},
+ {\b +}, {\b\'2d}, {\b ?}, {\b [},
+ and {\b ]}. The option {\b # }can only be specified as
+ the first option. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 hist} [\~{\b\'2d e} {\i ename\~}\~\~]
+ [\~{\b\'2d nlr\~}\~][\~{\i first\~}[\~{\i last\~}\~]\~]
+ \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 hist \'2ds }[\~{\i old}{\b =}{\i new\~}\~]
+ [\~{\i command\~}\~] \tab In the first form, a range of commands
+ from {\i first }to {\i last }is selected from the last {\fs22{\b HISTSIZE
+ }}commands that were typed at the terminal. The arguments {\i first
+ }and {\i last }may be specified as a number or as a string. A string
+ is used to locate the most recent command starting with the given string.
+ A negative number is used as an offset to the current command number. If
+ the {\b\'2d l }option is selected, the commands are listed
+ on standard output. Otherwise, the editor program {\i ename }is invoked
+ on a file containing these keyboard commands. If {\i ename }is not supplied,
+ then the value of the variable {\fs22{\b HISTEDIT }}is
+ used. If {\fs22{\b HISTEDIT }}is not set, then {\fs22{\b FCEDIT
+ }}(default {\b /bin/ed\~}) is used as the editor.
+ When editing is complete, the edited command(s) is executed if the changes
+ have been saved. If {\i last }is not specified, then it will be set to
+ {\i first}. If {\i first }is not specified, the default is the previous
+ command for editing and \'2d16 for listing. The option {\b\'2d r
+ }reverses the order of the commands and the option {\b\'2d n
+ }suppresses command numbers when listing. In the second form, {\i command
+ }is interpreted as {\i first }described above and defaults to the last
+ command executed. The resulting command is executed after the optional substitution
+ {\i old\~}{\b =}{\i new\~}is performed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 jobs}
+ [\~{\b\'2d lnp\~}\~] [\~{\i job\~}.\~.\~.
+ \~] \tab Lists information about each given job; or all active jobs if
+ {\i job }is omitted. The {\b\'2d l }option lists process ids
+ in addition to the normal information. The {\b\'2d n }option
+ only displays jobs that have stopped or exited since last notified. The
+ {\b\'2d p }option causes only the process group to be listed.
+ See {\i Jobs }for a description of the format of {\i job}. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 kill}
+ [\~{\b\'2d s} {\i signame\~}\~] {\i job\~}.\~.\~.
+ \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 kill} [\~{\b\'2d n} {\i signum\~}\~]
+ {\i job\~}.\~.\~. \tab{\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 kill} {\b\'2d l}
+ [\~{\i sig\~}.\~.\~. \~] \tab Sends either the TERM (terminate)
+ signal or the specified signal to the specified jobs or processes. Signals
+ are either given by number with the {\b\'2d n }option or by
+ name with the {\b\'2d s }option (as given in {\b< signal.h>},
+ stripped of the prefix ``SIG'' with the exception that SIGCLD is named CHLD).
+ For backward compatibility, the {\b n }and {\b s }can
+ be omitted and the number or name placed immediately after the {\b\'2d}.
+ If the signal being sent is TERM (terminate) or HUP (hangup), then the job
+ or process will be sent a CONT (continue) signal if it is stopped. The argument
+ {\i job }can be the process id of a process that is not a member of one
+ of the active jobs. See {\i Jobs }for a description of the format of {\i job}.
+ In the third form, {\b kill \'2dl}, if {\i sig }is not specified,
+ the signal names are listed. Otherwise, for each {\i sig }that is a name,
+ the corresponding signal number is listed. For each {\i sig }that is a
+ number, the signal name corresponding to the least significant 8 bits of
+ {\i sig }is listed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 let} {\i arg\~}.\~.\~.
+ \tab Each {\i arg }is a separate {\i arithmetic expression }to be evaluated.
+ See {\i Arithmetic Evaluation }above, for a description of arithmetic expression
+ evaluation. \par\pard\qc\li1120\tx1120\tx20000 The exit status is 0 if the value of the last expression is
+ non-zero, and 1 otherwise. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b newgrp} [\~{\i arg\~}.\~.\~.
+ \~] \tab Equivalent to {\b exec /bin/newgrp}{\i arg\~}.\~.\~.\~.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 print} [\~{\b\'2d Rnprs\~}\~] [\~{\b\'2d u}
+ {\i unit\~}\~] [\~{\b\'2d f}{\i format\~}\~][\~{\i arg\~}.\~.\~.\~]
+ \tab With no options or with option {\b\'2d }or {\b\'2d\~\'2d},
+ each {\i arg }is printed on standard output. The {\b\'2d f }option
+ causes the arguments to be printed as described by {\b printf}.
+ In this case, any {\b n}, {\b r}, {\b R }options
+ are ignored. Otherwise, unless the {\b\'2d R }or {\b\'2d r},
+ are specified, the following escape conventions will be applied: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c a
+ }\tab The alert character (ascii {\b 07}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c b
+ }\tab The backspace character (ascii {\b 010}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c c
+ }\tab Causes {\b print }to end without processing more arguments
+ and not adding a new-line. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c f }\tab The formfeed character
+ (ascii {\b 014}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c n }\tab The new-line character
+ (ascii {\b 012}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c r }\tab The carriage return
+ character (ascii {\b 015}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c t }\tab The tab
+ character (ascii {\b 011}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c v }\tab The vertical
+ tab character (ascii {\b 013}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c E }\tab The
+ escape character (ascii {\b 033}). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'5c\'5c }\tab The
+ backslash character \'5c. \par\pard\qc\fi-560\li1400\tx1400\tx20000{\b\'5c 0}{\i x }\tab The character
+ defined by the 1, 2, or 3-digit octal string given by {\i x}. \par\pard\qc\li1120\tx1120\tx20000 The
+ {\b\'2d R }option will print all subsequent arguments and options
+ other than {\b\'2d n}. The {\b\'2d p }option causes
+ the arguments to be written onto the pipe of the process spawned with {\b |&
+ }instead of standard output. The {\b\'2d s }option causes
+ the arguments to be written onto the history file instead of standard output.
+ The {\b\'2d u }option can be used to specify a one digit file
+ descriptor unit number {\i unit }on which the output will be placed. The
+ default is 1. If the option {\b\'2d n }is used, no {\b new-line
+ }is added to the output. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 printf} {\i format\~}[\~{\i arg\~}.\~.\~.
+ \~] \tab The arguments {\i arg }are printed on standard output in accordance
+ with the ANSI-C formatting rules associated with the format string {\i format}.
+ If the number of arguments exceeds the number of format specifications,
+ the {\b format }string is reused to format remaining arguments.
+ The following extensions can also be used: \par\pard\qc\li1400\tx1400\tx20000\par\pard\qc\fi-560\li1400\tx1400\tx20000\'b7 \tab A {\b %b
+ }format can be used instead of {\b %s }to cause escape sequences
+ in the corresponding {\i arg }to be expanded as described in {\b print.
+ }\par\pard\qc\li1400\tx1400\tx20000\par\pard\qc\fi-560\li1400\tx1400\tx20000\'b7 \tab A {\b %P }format can be used instead of {\b %s
+ }to cause {\i arg }to be interpreted as an extended regular expression
+ and be printed as a shell pattern. \par\pard\qc\li1400\tx1400\tx20000\par\pard\qc\fi-560\li1400\tx1400\tx20000\'b7 \tab A {\b %q }format
+ can be used instead of {\b %s }to cause the resulting string to
+ be quoted in a manner than can be reinput to the shell. \par\pard\qc\li1400\tx1400\tx20000\par\pard\qc\fi-560\li1400\tx1400\tx20000\'b7 \tab The
+ precision field of the {\b %d }format can be followed by a {\b .
+ }and the output base. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 pwd} [\~{\b\'2d LP}
+ \~] \tab Outputs the value of the current working directory. The {\b\'2d L
+ }option is the default; it prints the logical name of the current
+ directory. If the {\b\'2d P }option is given, all symbolic
+ links are resolved from the name. The last instance of {\b\'2d L
+ }or {\b\'2d P }on the command line determines which method
+ is used. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 read} [\~{\b\'2d Aprs\~}\~]
+ [\~{\b\'2d d} {\i delim\~}\~] [\~{\b\'2d t}{\i timeout\~}\~][\~{\b\'2d u}{\i unit\~}\~][\~{\i vname}{\b ?}{\i prompt\~}{\b\~ ][\~}{\i vname\~}{\b .\~.\~.\~]
+ \tab}The shell input mechanism. One line is read and is broken up into
+ fields using the characters in {\b{\fs22 IFS }}as separators.
+ The escape character, {\b\'5c}, is used to remove any special
+ meaning for the next character and for line continuation. The {\b\'2d d
+ }option causes the read to continue to the first character of {\i delim
+ }rather than new-line. In raw mode, {\b\'2d r, }the {\b\'5c
+ }character is not treated specially. The first field is assigned to
+ the first {\i vname}, the second field to the second {\i vname}, etc.,
+ with leftover fields assigned to the last {\i vname}. The {\b\'2d A
+ }option causes the variable {\i vname }to be unset and each field
+ that is read to be stored in successive elements of the indexed array {\i vname.
+ }The {\b\'2d p }option causes the input line to be taken
+ from the input pipe of a process spawned by the shell using {\b |&}.
+ If the {\b\'2d s }option is present, the input will be saved
+ as a command in the history file. The option {\b\'2d u }can
+ be used to specify a one digit file descriptor unit {\i unit }to read from.
+ The file descriptor can be opened with the {\b exec }special built-in
+ command. The default value of unit {\i n }is 0. The option {\b\'2d t
+ }is used to specify a timeout in seconds when reading from a terminal
+ or pipe. If {\i vname }is omitted, then {\fs22{\b REPLY }}is
+ used as the default {\i vname}. An end-of-file with the {\b\'2d p
+ }option causes cleanup for this process so that another can be spawned.
+ If the first argument contains a {\b ?}, the remainder of this
+ word is used as a {\i prompt }on standard error when the shell is interactive.
+ The exit status is 0 unless an end-of-file is encountered or {\b read
+ }has timed out. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7\'a7 {\b readonly} [\~{\b\'2d p}
+ \~] [\~{\i vname}[\~{\b =}{\i value\~}\~]
+ \~].\~.\~. \tab If {\i vname }is not given, the names and values
+ of each variable with the readonly attribute is printed with the values
+ quoted in a manner that allows them to be re-inputted. The {\b\'2d p
+ }option causes the word {\b readonly }to be inserted before
+ each one. Otherwise, the given {\i vname}s are marked readonly and these
+ names cannot be changed by subsequent assignment. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b return}
+ [\~{\i n\~}\~] \tab Causes a shell {\i function }or {\b\~ .}
+ script to return to the invoking script with the exit status specified by
+ {\i n}. The value will be the least significant 8 bits of the specified
+ status. If {\i n }is omitted, then the return status is that of the last
+ command executed. If {\b return }is invoked while not in a {\i function
+ }or a {\b\~ .} script, then it behaves the same as {\b exit}.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b#{\footnote HTML2RTF.set} set}[\~{\b\'b1 Cabefhkmnopstuvx}
+ \~] [\~{\b\'b1 o} [\~{\i option\~}\~]\~].\~.\~.[\~{\b\'b1 A}{\i vname\~}\~][\~{\i arg\~}.\~.\~.\~]
+ \tab The options for this command have meaning as follows: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d A
+ }\tab Array assignment. Unset the variable {\i vname }and assign values
+ sequentially from the {\i arg }list. If {\b +A }is used, the variable
+ {\i vname }is not unset first. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d C }\tab Prevents redirection
+ {\b> }from truncating existing files. Files that are created
+ are opened with the O_EXCL mode. Requires {\b> | }to truncate
+ a file when turned on. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d a }\tab All subsequent variables
+ that are defined are automatically exported. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d b }\tab Prints
+ job completion messages as soon as a background job changes state rather
+ than waiting for the next prompt. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d e }\tab If a command
+ has a non-zero exit status, execute the {\fs22{\b ERR }}trap,
+ if set, and exit. This mode is disabled while reading profiles. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d f
+ }\tab Disables file name generation. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d h }\tab Each
+ command becomes a tracked alias when first encountered. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d k
+ }\tab (Obsolete). All variable assignment arguments are placed in the
+ environment for a command, not just those that precede the command name.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d m }\tab Background jobs will run in a separate process
+ group and a line will print upon completion. The exit status of background
+ jobs is reported in a completion message. On systems with job control, this
+ option is turned on automatically for interactive shells. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d n
+ }\tab Read commands and check them for syntax errors, but do not execute
+ them. Ignored for interactive shells. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d o }\tab The following
+ argument can be one of the following option names: {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 allexport
+ }\tab Same as {\b\'2d a}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 errexit }\tab Same
+ as {\b\'2d e}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 bgnice }\tab All background jobs
+ are run at a lower priority. This is the default mode. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 emacs }\tab Puts
+ you in an {\i emacs }style in-line editor for command entry. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 gmacs
+ }\tab Puts you in a {\i gmacs }style in-line editor for command entry.
+ {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 ignoreeof }\tab The shell will not exit on end-of-file. The
+ command {\b exit }must be used. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 keyword }\tab Same
+ as {\b\'2d k}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 markdirs }\tab All directory names
+ resulting from file name generation have a trailing {\b / }appended.
+ {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 monitor }\tab Same as {\b\'2d m}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 noclobber
+ }\tab Same as {\b\'2d C}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 noexec }\tab Same
+ as {\b\'2d n}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 noglob }\tab Same as {\b\'2d f}.
+ {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 nolog }\tab Do not save function definitions in the history
+ file. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 notify }\tab Same as {\b\'2d b}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 nounset
+ }\tab Same as {\b\'2d u}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 privileged }\tab Same
+ as {\b\'2d p}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 verbose }\tab Same as {\b\'2d v}.
+ {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 trackall }\tab Same as {\b\'2d h}. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 vi
+ }\tab Puts you in insert mode of a {\i vi }style in-line editor until
+ you hit the escape character {\b 033}. This puts you in control
+ mode. A return sends the line. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 viraw }\tab Each character is
+ processed as it is typed in {\i vi }mode. {\b\line\par\pard\qc\fi-560\li1680\tx1680\tx20000 xtrace }\tab Same
+ as {\b\'2d x}. \par\pard\qc\fi-560\li1680\tx1680\tx20000 If no option name is supplied, then thecurrentoptionsettingsareprinted.
+ \tab{\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d p }\tab Disables processing of the {\b{\fs22 $HOME}/.profile
+ }file and uses the file {\b /etc/suid_profile }instead of
+ the {\fs22{\b ENV }}file. This mode is on whenever the
+ effective uid (gid) is not equal to the real uid (gid). Turning this off
+ causes the effective uid and gid to be set to the real uid and gid. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d s
+ }\tab Sort the positional parameters lexicographically. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d t
+ }\tab (Obsolete). Exit after reading and executing one command. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d u
+ }\tab Treat unset parameters as an error when substituting. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d v
+ }\tab Print shell input lines as they are read. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d x }\tab Print
+ commands and their arguments as they are executed. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d\~\'2d
+ }\tab Do not change any of the options; useful in setting {\b $1
+ }to a value beginning with {\b\'2d}. If no arguments
+ follow this option then the positional parameters are unset. \par\pard\qc\li1120\tx1120\tx20000 As an
+ obsolete feature, if the first {\i arg }is {\b\'2d }then the
+ {\b\'2d x }and {\b\'2d v }options are turned off
+ and the next {\i arg }is treated as the first argument. Using {\b +
+ }rather than {\b\'2d }causes these options to be turned
+ off. These options can also be used upon invocation of the shell. The current
+ set of options may be found in {\b $\'2d}. Unless {\b\'2d A
+ }is specified, the remaining arguments are positional parameters and
+ are assigned, in order, to {\b $1 }{\b $2 }.\~.\~.\~.
+ If no arguments are given, then the names and values of all variables are
+ printed on the standard output. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b shift} [\~{\i n\~}\~]
+ \tab The positional parameters from {\b $}{\i n}{\b +1}
+ .\~.\~. are renamed {\b $1 }.\~.\~.\~, default
+ {\i n }is 1. The parameter {\i n }can be any arithmetic expression that
+ evaluates to a non-negative number less than or equal to {\b $#}.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 sleep} {\i seconds\~}\tab Suspends execution for the
+ number of decimal seconds or fractions of a second given by {\i seconds}.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b trap'} [\~{\b\'2d p} \~] [\~{\i action\~}\~][\~{\i sig\~}\~].\~.\~.
+ \tab The {\b\'2d p }option causes the trap action associated
+ with each trap as specified by the arguments to be printed with appropriate
+ quoting. Otherwise, {\i action }will be processed as if it were an argument
+ to {\b eval }when the shell receives signal(s) {\i sig}. Each
+ {\i sig }can be given as a number or as the name of the signal. Trap commands
+ are executed in order of signal number. Any attempt to set a trap on a signal
+ that was ignored on entry to the current shell is ineffective. If {\i action
+ }is omitted and the first {\i sig }is a number, or if {\i action }is
+ {\b\'2d}, then the trap(s) for each {\i sig }are reset to
+ their original values. If {\i action }is the null string then this signal
+ is ignored by the shell and by the commands it invokes. If {\i sig }is
+ {\fs22{\b ERR }}then {\i action }will be executed whenever
+ a command has a non-zero exit status. If {\i sig }is {\fs22{\b DEBUG
+ }}then {\i action }will be executed before each command. If {\i sig
+ }is {\b 0 }or {\fs22{\b EXIT }}and the {\b trap
+ }statement is executed inside the body of a function, then the command
+ {\i action }is executed after the function completes. If {\i sig }is {\b 0
+ }or {\fs22{\b EXIT }}for a {\b trap }set
+ outside any function then the command {\i action }is executed on exit from
+ the shell. If {\i sig }is {\fs22{\b KEYBD}, }then {\i action
+ }will be executed whenever a key is read while in {\b emacs},
+ {\b gmacs}, or {\b vi }mode. The {\b trap }command
+ with no arguments prints a list of commands associated with each signal
+ number. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 true} \tab Does nothing, and exits 0. Used with {\b while
+ }for infinite loops. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7\'a7 {\b typeset} [\~{\b\'b1 AHflnprtux\~}\~]
+ [\~{\b\'b1 EFLRZi[\~}{\i n\~}{\b\~ ] \~][\~}{\i vname\~}{\b [\~=}{\i value\~}{\b\~ ]\~\~].\~.\~.
+ \tab}Sets attributes and values for shell variables and functions. When
+ invoked inside a function, a new instance of the variable {\i vname }is
+ created. The variable's value and type are restored when the function completes.
+ The following list of attributes may be specified: {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d A
+ }\tab Declares {\i vname }to be an associative array. Subscripts are
+ strings rather than arithmetic expressions. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d E }\tab Declares
+ {\i vname }to be a double precision floating point number. If {\i n }is
+ non-zero, it defines the number of significant figures that are used when
+ expanding {\i vname}. Otherwise, ten significant figures will be used.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d F }\tab Declares {\i vname }to be a double precision
+ floating point number. If {\i n }is non-zero, it defines the number of
+ places after the decimal point that are used when expanding {\i vname}.
+ Otherwise ten places after the decimal point will be used. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d H
+ }\tab This option provides UNIX to host-name file mapping on non-UNIX
+ machines. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d L }\tab Left justify and remove leading blanks
+ from {\i value}. If {\i n }is non-zero, it defines the width of the field,
+ otherwise it is determined by the width of the value of first assignment.
+ When the variable is assigned to, it is filled on the right with blanks
+ or truncated, if necessary, to fit into the field. The {\b\'2d R
+ }option is turned off. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d R }\tab Right justify
+ and fill with leading blanks. If {\i n }is non-zero, it defines the width
+ of the field, otherwise it is determined by the width of the value of first
+ assignment. The field is left filled with blanks or truncated from the end
+ if the variable is reassigned. The {\b\'2d L }option is turned
+ off. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d Z }\tab Right justify and fill with leading zeros
+ if the first non-blank character is a digit and the {\b\'2d L }option
+ has not been set. Remove leading zeros if the {\b\'2d L }option
+ is also set. If {\i n }is non-zero, it defines the width of the field,
+ otherwise it is determined by the width of the value of first assignment.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d f }\tab The names refer to function names rather than
+ variable names. No assignments can be made and the only other valid options
+ are {\b\'2d t}, {\b\'2d u }and {\b\'2d x}.
+ The {\b\'2d t }option turns on execution tracing for this function.
+ The {\b\'2d u }option causes this function to be marked undefined.
+ The {\fs22{\b FPATH }}variable will be searched to find
+ the function definition when the function is referenced. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d i
+ }\tab Declares {\i vname }to be represented internally as integer.
+ The right hand side of an assignment is evaluated as an arithmetic expression
+ when assigning to an integer. If {\i n }is non-zero, it defines the output
+ arithmetic base, otherwise the output base will be ten. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d l
+ }\tab All upper-case characters are converted to lower-case. The upper-case
+ option, {\b\'2d u}, is turned off. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d n }\tab Declares
+ {\i vname }to be a reference to the variable whose name is defined by the
+ value of variable {\i vname}. This is usually used to reference a variable
+ inside a function whose name has been passed as an argument. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d r
+ }\tab The given {\i vname}s are marked readonly and these names cannot
+ be changed by subsequent assignment. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d t }\tab Tags the
+ variables. Tags are user definable and have no special meaning to the shell.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d u }\tab All lower-case characters are converted to
+ upper-case. The lower-case option, {\b\'2d l}, is turned off.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d x }\tab The given {\i vname}s are marked for automatic
+ export to the {\i environment }of subsequently-executed commands. Variables
+ whose names contain a {\b{\fs26 .}} cannot be exported.
+ \par\pard\qc\li1120\tx1120\tx20000 The {\b\'2d i }attribute cannot be specified along with
+ {\b\'2d R}, {\b\'2d L}, {\b\'2d Z},
+ or {\b\'2d f}. \par\pard\qc\li1120\tx1120\tx20000 Using {\b + }rather than {\b\'2d
+ }causes these options to be turned off. If no {\i vname }arguments
+ are given, a list of {\i vnames }(and optionally the {\i values\~})
+ of the {\i variables }is printed. (Using {\b + }rather than {\b\'2d
+ }keeps the values from being printed.) The {\b\'2d p }option
+ causes {\b typeset }followed by the option letters to be printed
+ before each name rather than the names of the options. If any option other
+ than {\b\'2d p }is given, only those variables which have all
+ of the given options are printed. Otherwise, the {\i vname}s and {\i attributes
+ }of all {\i variables }are printed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 ulimit} [\~{\b\'2d HSacdfmnpstv}
+ \~] [\~{\i limit\~}\~] \tab Set or display a resource limit.
+ The available resource limits are listed below. Many systems do not support
+ one or more of these limits. The limit for a specified resource is set when
+ {\i limit }is specified. The value of {\i limit }can be a number in the
+ unit specified below with each resource, or the value {\b unlimited}.
+ The {\b\'2d H }and {\b\'2d S }options specify
+ whether the hard limit or the soft limit for the given resource is set.
+ A hard limit cannot be increased once it is set. A soft limit can be increased
+ up to the value of the hard limit. If neither the {\b H }nor {\b S
+ }options is specified, the limit applies to both. The current resource
+ limit is printed when {\i limit }is omitted. In this case, the soft limit
+ is printed unless {\b H }is specified. When more than one resource
+ is specified, then the limit name and unit is printed before the value.
+ {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d a }\tab Lists all of the current resource
+ limits. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d c }\tab The number of 512-byte blocks on the
+ size of core dumps. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d d }\tab The number of K-bytes on
+ the size of the data area. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d f }\tab The number of 512-byte
+ blocks on files that can be written by the current process or by child processes
+ (files of any size may be read). {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d m }\tab The number
+ of K-bytes on the size of physical memory. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d n }\tab The
+ number of file descriptors plus 1. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d p }\tab The number
+ of 512-byte blocks for pipe buffering. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d s }\tab The
+ number of K-bytes on the size of the stack area. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d t }\tab The
+ number of CPU seconds to be used by each process. {\b\line\par\pard\qc\fi-560\li1400\tx1400\tx20000\'2d v }\tab The
+ number of K-bytes for virtual memory. \par\pard\qc\li1120\tx1120\tx20000 If no option is given, {\b\'2d f
+ }is assumed. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 umask} [\~{\b\'2d S}
+ \~] [\~{\i mask\~}\~] \tab The user file-creation mask is
+ set to {\i mask }(see {\i umask}(2)). {\i mask }can either
+ be an octal number or a symbolic value as described in {\i chmod}(1). If
+ a symbolic value is given, the new umask value is the complement of the
+ result of applying {\i mask }to the complement of the previous umask value.
+ If {\i mask }is omitted, the current value of the mask is printed. The
+ {\b\'2d S }option causes the mode to be printed as a symbolic
+ value. Otherwise, the mask is printed in octal. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7 {\b unalias}
+ [\~{\b\'2d a} \~] {\i name\~}.\~.\~. \tab The
+ aliases given by the list of {\i name}s are removed from the alias list.
+ The {\b\'2d a }option causes all the aliases to be unset. \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000\'a7{\b unset}
+ [\~{\b\'2d fnv} \~] {\i vname\~}.\~.\~.
+ \tab The variables given by the list of {\i vname}s are unassigned, i.e.,
+ their values and attributes are erased. Readonly variables cannot be unset.
+ If the {\b\'2d f }option is set, then the names refer to {\i function
+ }names. If the {\b\'2d v }option is set, then the names refer
+ to {\i variable }names. The {\b\'2d f }option overrides {\b\'2d v}.
+ If {\b\'2d n }is set and {\i name }is a name reference, then
+ {\i name }will be unset rather than the variable that it references. The
+ default is equivalent to {\b\'2d v}. Unsetting {\fs22{\b LINENO},
+ }{\fs22{\b MAILCHECK}, }{\fs22{\b OPTARG},
+ }{\fs22{\b OPTIND}, }{\fs22{\b RANDOM},
+ }{\fs22{\b SECONDS}, }{\fs22{\b TMOUT},
+ }and {\fs22{\b _ }}removes their special meaning even
+ if they are subsequently assigned to. {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 wait} [\~{\i job\~}.\~.\~.
+ \~] \tab Wait for the specified {\i job }and report its termination status.
+ If {\i job }is not given, then all currently active child processes are
+ waited for. The exit status from this command is that of the last process
+ waited for. See {\i Jobs }for a description of the format of {\i job}.
+ {\b\par\pard\qc\li1120\tx1120\tx20000\line\par\pard\qc\fi-560\li1120\tx1120\tx20000 whence} [\~{\b\'2d afpv} \~] {\i name\~}.\~.\~.
+ \tab For each {\i name}, indicate how it would be interpreted if used as
+ a command name. \par\pard\qc\li1120\tx1120\tx20000 The {\b\'2d v }option produces a more verbose
+ report. The {\b\'2d f }options skips the search for functions.
+ The {\b\'2d p }option does a path search for {\i name }even
+ if name is an alias, a function, or a reserved word. The {\b\'2d a
+ }option is similar to the {\b\'2d v }option but causes
+ all interpretations of the given name to be reported. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Invocation} Invocation.
+ \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}If the shell is invoked
+ by {\i exec}(2), and the first character of argument zero ({\b $0})
+ is {\b\'2d}, then the shell is assumed to be a {\i login }shell
+ and commands are read from {\b /etc/profile }and then from either
+ {\b .profile }in the current directory or {\b{\fs22 $HOME}/.profile},
+ if either file exists. Next, for interactive shells, commands are read from
+ the file named by performing parameter expansion, command substitution,
+ and arithmetic substitution on the value of the environment variable {\fs22{\b ENV
+ }}if the file exists. If the {\b\'2d s }option is
+ not present and {\i arg }is, then a path search is performed on the first
+ {\i arg }to determine the name of the script to execute. The script {\i arg
+ }must have read permission and any {\i setuid }and {\i setgid }settings
+ will be ignored. If the script is not found on the path, {\i arg }is processed
+ as if it named a built-in command or function. Commands are then read as
+ described below; the following options are interpreted by the shell when
+ it is invoked: \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b\'2d c }\tab If the {\b\'2d c
+ }option is present, then commands are read from the first {\i arg}.
+ Any remaining arguments become positional parameters starting at {\b 0}.
+ {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d s }\tab If the {\b\'2d s }option is present
+ or if no arguments remain, then commands are read from the standard input.
+ Shell output, except for the output of the {\i special builtin-in commands
+ }listed above, is written to file descriptor 2. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d i }\tab If
+ the {\b\'2d i }option is present or if the shell input and
+ output are attached to a terminal (as told by {\i tcgetattr}(2)), then
+ this shell is {\i interactive}. In this case {\fs22 TERM} is ignored
+ (so that {\b kill 0} does not kill an interactive shell) and {\fs22 INTR}
+ is caught and ignored (so that {\b wait }is interruptible). In
+ all cases, {\fs22 QUIT} is ignored by the shell. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d r
+ }\tab If the {\b\'2d r }option is present, the shell is
+ a restricted shell. {\b\line\par\pard\qc\fi-560\li1120\tx1120\tx20000\'2d D }\tab A list of all double quoted
+ strings that are preceded by a {\b $ }will be printed on standard
+ output and the shell will exit. This set of strings will be subject to language
+ translation when the locale is not C or POSIX. No commands will be executed.
+ \par\pard\qc\li1120\tx1120\tx20000\par\pard\qc\fi-560\li1120\tx1120\tx20000{\b\'2d I}{\i filename\~}\tab The {\b\'2d R }{\i filename
+ }option is used to generate a cross reference database that can be used
+ by a separate utility to find definitions and references for variables and
+ commands. \par\pard\qc\li840\tx840\tx20000 The remaining options and arguments are described under the
+ {\b set }command above. An optional {\b\'2d }as the
+ first argument is ignored. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.Rsh.Only} Rsh \~Only.
+ \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}{\i Rsh }is used to set up login
+ names and execution environments whose capabilities are more controlled
+ than those of the standard shell. The actions of {\b rsh }are identical
+ to those of {\b sh\~}, except that the following are disallowed:
+ \line changing directory (see {\i cd}(1)), \line setting
+ or unsetting the value or attributes of {\fs22{\b SHELL}, }{\fs22{\b ENV},
+ }or {\fs22{\b PATH}}{\fs20 0, }\line specifying
+ path or command names containing {\b /}, \line redirecting output
+ ({\b>}, {\b> |}, {\b<>}, and {\b>>}).
+ \line adding or deleting built-in commands. \par\pard\qc\li840\tx840\tx20000 The restrictions above are
+ enforced after {\b .profile} and the {\fs22{\b ENV }}files
+ are interpreted. \par\pard\qc\li840\tx840\tx20000 When a command to be executed is found to be a shell
+ procedure, {\b rsh }invokes {\i sh\~}to execute it. Thus,
+ it is possible to provide to the end-user shell procedures that have access
+ to the full power of the standard shell, while imposing a limited menu of
+ commands; this scheme assumes that the end-user does not have write and
+ execute permissions in the same directory. \par\pard\qc\li840\tx840\tx20000 The net effect of these rules
+ is that the writer of the {\b .profile }has complete control over
+ user actions, by performing guaranteed setup actions and leaving the user
+ in an appropriate directory (probably {\i not }the login directory). \par\pard\qc\li840\tx840\tx20000 The
+ system administrator often sets up a directory of commands (e.g., {\b /usr/rbin})
+ that can be safely invoked by {\b rsh}. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.EXIT.STATUS} EXIT
+ \~STATUS \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}Errors detected
+ by the shell, such as syntax errors, cause the shell to return a non-zero
+ exit status. Otherwise, the shell returns the exit status of the last command
+ executed (see also the {\uldb exit}{\v HTML2RTF.exit}{\*\comment{\b exit }}command above). If
+ the shell is being used non-interactively, then execution of the shell file
+ is abandoned. Run time errors detected by the shell are reported by printing
+ the command or function name and the error condition. If the line number
+ that the error occurred on is greater than one, then the line number is
+ also printed in square brackets ({\b []}) after the command or
+ function name. {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.FILES} FILES \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}/etc/passwd
+ \line /etc/profile \line /etc/suid_profile {\fs22\line $HOME}/{\b .}profile
+ \line /tmp/sh* \line /dev/null {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.SEE.ALSO} SEE \~ALSO
+ \~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}cat(1), cd(1), chmod(1), cut(1),
+ echo(1), emacs(1), env(1), gmacs(1), newgrp(1), stty(1), test(1), umask(1),
+ vi(1), dup(2), exec(2), fork(2), ioctl(2), lseek(2), paste(1), pathconf(2),
+ pipe(2), sysconf(2), umask(2), ulimit(2), wait(2), rand(3), a.out(5), profile(5),
+ environ(7). \par\pard\qc\li840\tx840\tx20000 Morris I. Bolsky and David G. Korn, {\i The New KornShell Command
+ and Programming Language}, Prentice Hall, 1995. {\i\par\pard\qc\li840\tx840\tx20000 POSIX \'2d Part
+ 2: Shell and Utilities, }IEEE Std 1003.2-1992, ISO/IEC 9945-2, IEEE, 1993.
+ {\fs22{\b\par\pard\qc\li840\tx840\tx20000\line\par\pard\qc\fi-560\li840\tx840\tx20000{\b\fs30#{\footnote HTML2RTF.CAVEATS} CAVEATS \~\~\~\~\~}\par\pard\qc\li840\tx840\tx20000}}If
+ a command is executed, and then a command with the same name is installed
+ in a directory in the search path before the directory where the original
+ command was found, the shell will continue to {\i exec }the original command.
+ Use the {\b\'2d t }option of the {\b alias }command
+ to correct this situation. \par\pard\qc\li840\tx840\tx20000 Some very old shell scripts contain a {\b ^
+ }as a synonym for the pipe character {\b |}. \par\pard\qc\li840\tx840\tx20000 Using the
+ {\b hist }built-in command within a compound command will cause
+ the whole command to disappear from the history file. \par\pard\qc\li840\tx840\tx20000 The built-in command
+ {\b\~ .} {\i file\~}reads the whole file before any commands
+ are executed. Therefore, {\b alias }and {\b unalias }commands
+ in the file will not apply to any commands defined in the file. \par\pard\qc\li840\tx840\tx20000 Traps
+ are not processed while a job is waiting for a foreground process. Thus,
+ a trap on {\b CHLD }won't be executed until the foreground job
+ terminates. \par\pard\qc\li840\tx840\tx20000 It is a good idea to leave a space after the comma operator
+ in arithmetic expressions to prevent the comma from being interpreted as
+ the decimal point character in certain locales. {\brdrt\brdrsh\par}{\b\fs32\par\pard\qc\li0\tx0\tx20000\~ Sun
+ Release 4.0\~\~\~\~\~\~\~\~\~\~\~\~\~Last change:\~\~\~\~\~\~\~\~\~\~\~\~1b}
+ }
+}

@@ -1,0 +1,85 @@
+: lynxos.ppc cc wrapper with -mshared default : 2005-06-01 :
+
+HOSTTYPE=lynxos.ppc
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+cc=gcc
+
+link=1
+static=0
+set . "$@" /../
+while	:
+do	shift
+	case $1 in
+	/../)	break ;;
+	esac
+	case $1 in
+	*.[cChHiI]|*.[cChHiI][pPxX][pPxX])
+		set . -D__NO_INCLUDE_WARN__ -I/sys/include/kernel -I/sys/include/family/ppc "$@"
+		shift
+		break
+		;;
+	-o)	case $2 in
+		/../)	;;
+		*)	x=$1
+			shift
+			set . "$@" "$x"
+			shift
+			;;
+		esac
+		;;
+	-static)static=1
+		;;
+	-mshared)
+		static=n
+		continue
+		;;
+	-l*)	case $static in
+		0)	static=n
+			set . -L/lib/shlib "$@"
+			shift
+			;;
+		esac
+		;;
+	-[cE])	link=0
+		;;
+	esac
+	x=$1
+	shift
+	set . "$@" "$x"
+done
+while	:
+do	case $1 in
+	/../)	shift
+		break
+		;;
+	-l*)	case $static in
+		0)	static=n
+			set . -L/lib/shlib "$@"
+			shift
+			;;
+		esac
+		;;
+	-[cE])	link=0
+		;;
+	esac
+	x=$1
+	shift
+	set . "$@" "$x"
+	shift
+done
+case $link:$static in
+1:0)	static=n ;;   
+esac
+case $static in
+n)	specs=/tmp/cc$$.specs
+	trap 'status=$?; rm -f $specs; exit $status' 0 1 2
+	echo '*link: %{shared:-shared} %{static:-static} %{mshared|shared: %{static: %eerror: -shared and -static may not be combined. }}' > $specs
+	$cc -specs=$specs -mshared "$@"
+	;;
+*)	$cc "$@"
+	;;
+esac

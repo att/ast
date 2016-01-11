@@ -1,0 +1,14 @@
+POSIX regex snarfed from Doug McIlroy's C++.  Converted to C by Glenn
+Fowler.  *'d features have been added to Doug's original code.  testre
+should compile with other regex implementations, but you may need to
+run with -c to catch non-terminating loops and memory faults.
+
+FEATURE			BRE		ERE		ARE
+-------			---		---		---
+negation		NO		expr \!		expr !
+conjunction		NO		expr \& expr	expr & expr
+NULL subgroups		YES		NO		YES
+word boundaries*	\< expr \>	\< expr \>	< expr >
+minimal match*		NO		REG_MINIMAL	REG_MINIMAL
+shell patterns*		REG_SHELL	NO		NO
+ksh patterns*		NO		NO		REG_SHELL

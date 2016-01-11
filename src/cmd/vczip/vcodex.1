@@ -1,0 +1,135 @@
+.TH VCODEX 1 "May 31 2001"
+.SH NAME
+\fBvcdiff\fP, \fBvcundiff\fP, \fBvcmap\fP \- data tranforms including compression.
+.SH SYNOPSIS
+\fBvcdiff [-m] [-e] [-d] [-G] [-w] [-t] [source [target]] [< target] > delta\fP
+.LP
+\fBvcundiff [source [target]] [> target] < delta\fP
+.LP
+\fBvchuff [-r] [-f] [-w] [-t] [input [output]] [< input] [> output]\fP
+.LP
+\fBvcunhuff [input [output]] [< input] [> output]\fP
+.LP
+\fBvcmap [map] < input > output\fP
+.SH DESCRIPTION
+.de Tp
+.fl
+.ne 2
+.TP
+..
+.de Ss
+.fl
+.ne 2
+.SS "\\$1"
+..
+.ta 1.0i 2.0i 3.0i 4.0i 5.0i
+.Ss "\fBvcdiff [-m] [-e] [-d] [-w] [-t] [-G] [source [target]] [< target] > delta\fP"
+\fBvcdiff\fP is a delta compressor, i.e., it can compress a \fItarget file\fP
+given a \fIsource file\fP or it can just compress a target file by itself.
+Source and target files can be given as a pair of arguments
+or the source can be given as a single argument
+and the target given as the standard input.
+The symbol \fB-\fP means \fInone\fP for the source file and \fIstandard input\fP
+for the target file. For example, below are valid invocations of \fBvcdiff\fP:
+.PP
+.nf
+.ft 5
+	vcdiff source < target > delta
+	vcdiff source - < target > delta
+	vcdiff source target > delta
+	vcdiff - target > delta
+	vcdiff < target > delta
+.ft 1
+.fi
+.PP
+Large \fItarget\fP data may be partitioned into windows
+suitable for in-core processing. These windows are matched against
+source windows that may come from the source file or some earlier
+part of the target file. By default, \fBvcdiff\fP uses a fast search
+algorithms based on matching n-gram frequencies
+Below are arguments for \fBvcdiff\fP:
+.Tp
+\fI-m\fP:
+This option causes \fBvcdiff\fP to just mirror file offsets between matching
+source and target windows.
+\fI-e\P:
+This option causes \fBvcdiff\fP to perform an exhaustive search based on
+n-gram frequencies to find a matching source window to a target window.
+This search nearly always finds an optimally matching window but it is
+slow, hence the name.
+See the description of the windowing method \f5Sfwslow\fP
+in \fIvcodex(3)\fP for details.
+.Tp
+\fI-d\fP:
+This option causes \fBvcdiff\fP to compute only the differences
+between source and target data. That is, it will not attempt
+to compress target data using data from the target windows themselves.
+.Tp
+\fI-G\P:
+This option causes \fBvcdiff\fP
+to compute a delta encoded with the \fBGDIFF\fP format
+(http://www.w3.org/TR/NOTE-gdiff-19970901.html).
+.Tp
+\fI-w\fP:
+This option sets the window size, i.e., amount of data to be processed
+at one time.
+.Tp
+\fI-t\P:
+This option causes ]fBvcdiff\fP to generate a trace of source and target
+windows and results of their compression.
+.PP
+.Ss "\fBvcundiff [source [target]] [> target] < delta\fP"
+\fBvcundiff\fP decodes data produced by \fBvcdiff\fP.
+Thus, if the data was a result of compressing a target file
+against a source file, then the source file must be given
+in order to decode correctly.
+Source and target files are given in a manner similar to that of \fBvcdiff\fP
+except that the target file is now an output file instead of an input file.
+In addition, since the shell typically opens a standard output file only for
+writing, if the compressed data was created
+with \fI-g\fP or \fI-s\fP options in \fBvcdiff\fP, the target file
+should be given as an argument so that \fBvcunhuff\fP can open it
+for both reading and writing.
+.PP
+.Ss "\fBvchuff [-r] [-f] [-w] [-t] [input [output]] [< input] [> output]\fP"
+.Ss "\fBvcunhuff [input [output]] [< input] [> output]\fP"
+\fBvchuff\fP and \fBvcunhuff\fP provide a pair of Huffman compressor 
+and decompressor.
+.Tp
+\f5-r\fP:
+This causes \fBvchuff\fP to use
+a recursive partitioning algorithm to compute areas with different statistical
+models and compress them separately to improve compression.
+.Tp
+\f5-f\fP:
+This causes \fBvchuff\fP to use
+a first-fit partitioning algorithm to compute areas with different statistical
+models and compress them separately to improve compression.
+.Tp
+\fI-w\fP:
+This option sets the window size, i.e., amount of data to be processed
+at one time.
+.Tp
+\f5-t\fP:
+This causes \fBvchuff\fP to generate a trace of parts that are
+compressed separately.
+.PP
+.Ss "\fBvcmap [map] < input > output\fP"
+\fBvcmap\fP maps the bytes of the \fIinput\fP file
+using the given \fImap\fP and writes the result to \fIoutput\fP.
+If \fImap\fP is not given, \fBvcmap\fP use the \fBrot13\fP mapping.
+A \fImap\fP is a string with an even number of characters.
+Each pair of letters specifies that the left character is mapped
+to the right character. For example, the below call will map
+all lower case 'a' to upper case 'A':
+.PP
+.nf
+.ft 5
+      vcmap "aA" < input > output 
+.ft 1
+.fi
+.PP
+.SH SEE ALSO
+\fBcompress(1)\fP, \fBdiff(1)\fP, \fBpack(1)\fP, \fBrot13(1)\fP, \fBvcodex(3)\fP.
+.SH AUTHOR
+Kiem-Phong Vo (kpv@research.att.com)

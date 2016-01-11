@@ -1,0 +1,11 @@
+: hp.pa64 cc wrapper for reasonable ansi C defaults : 2001-02-11 :
+
+HOSTTYPE=hp.pa64
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+/opt/ansic/bin/cc +D2.0W -Ae +e -Wl,+s \
+	${INSTALLROOT:+-Wl,+cdp,${INSTALLROOT}/lib/:} \
+	-Wl,+vnocompatwarnings "$@"

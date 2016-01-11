@@ -1,0 +1,95 @@
+# File Manager -- File Menu Routines
+
+function create_file # window
+{
+       ask_one_file_name $1
+       if ((show_cmd==1))
+       then print "xterm -e $EDITOR $FileName"
+            eval print -n \"$PS1 \"
+       fi
+       xterm -e $EDITOR $FileName & 
+       directory_listing_update $w.files
+}
+
+function edit_file # window
+{
+       if ((show_cmd==1))
+       then print "xterm -e $EDITOR $filename"
+            eval print -n \"$PS1 \"
+       fi
+       xterm -e $EDITOR $filename &
+       directory_listing_update $w.files
+}
+
+function run_file # window
+{
+       if ((show_cmd==1))
+       then print "xterm -e $filename"
+            eval print -n \"$PS1 \"
+       fi
+       xterm -e $filename &
+       directory_listing_update $w.files
+}
+
+function delete_file # window
+{
+       if ((show_cmd==1))
+       then print "rm $filename"
+            eval print -n \"$PS1 \"
+       fi
+       rm $filename
+       directory_listing_update $w.files
+}
+
+function copy_file # window
+{
+       ask_location $1
+       if ((show_cmd==1))
+       then print "cp $filename $Location"
+            eval print -n \"$PS1 \"
+       fi
+       cp $filename $Location
+       directory_listing_update $w.files
+}
+
+function move_file # window
+{
+       ask_location $1
+       if ((show_cmd==1))
+       then print "mv $filename $Location"
+            eval print -n \"$PS1 \"
+       fi
+       mv $filename $Location
+       directory_listing_update $w.files
+}
+
+function make_dir # window
+{
+       ask_directory $1
+       if ((show_cmd==1))
+       then print "mkdir $Directory"
+            eval print -n \"$PS1 \"
+       fi
+       mkdir $Directory
+       directory_listing_update $w.files
+}
+
+function remove_dir # window
+{
+       if ((show_cmd==1))
+       then print "rmdir $Directory"
+            eval print -n \"$PS1 \"
+       fi
+       rmdir $filename
+       directory_listing_update $w.files
+}
+
+function print_file # window
+{
+       if ((show_cmd==1))
+       then print "$DESKSH_PRINTCMD $filename > /dev/null"
+            eval print -n \"$PS1 \"
+       fi
+       $DESKSH_PRINTCMD $filename > /dev/null
+}
+

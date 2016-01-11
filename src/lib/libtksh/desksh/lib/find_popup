@@ -1,0 +1,1241 @@
+# find by erik wile
+# version 1.0 alpha
+
+
+: ${TW_ROOT:=$DESKSH_ROOT} ${TW_FUN:=$DESKSH_FUN}
+
+: ${TW_ROOT:=/home/esw/tksh/desksh} ${TW_FUN:=$TW_ROOT}
+
+
+if [[ $tk_version == "" ]]
+then
+	print -u2 "This script really requires Tksh"
+#	return
+fi
+
+set -o nolog
+
+function append {
+	typeset -n var=$1 && [[ $var == ?(*:)${2}?(:*) ]] || var=$var:$2
+}
+append FPATH ${TW_ROOT}
+autoload directory_dialog
+
+function require {
+	typeset -f $1 >/dev/null || command . ${2:-$1} || \
+		print -u2 $'\n'"Could not load function $1 from file ${2:-$1}"$'\n'
+}
+
+# read in the gui generation routines in here.
+require generate ${TW_FUN}/generate
+
+require text_open_window ${TW_FUN}/utils
+
+require message_window ${TW_FUN}/routines-utilities
+
+
+find=(	
+	labels=(
+		dirs="Search subdirectories of:"
+		browse_title="Select subdirectory."
+		pattern="For files that match the pattern:"
+		expression="For the expression:"
+		)
+		
+	buttons=(
+		browse="Browse"
+		advanced="Advanced"
+		ok="Search"
+		cancel="Cancel"
+		simple="Simple"
+		adv=( refresh="Refresh")
+		)
+	entry=(
+		fields=(
+			"name"			"fstype"\
+			"dev"			"rdev"\
+			"ino"			"mtime"\
+			"atime"			"ctime"\
+			"size"			"blocks"\
+			"perm"			"mode"\
+			"uid"			"gid"\
+			"type"			"nlink"\
+			"_text_"		"path"\
+			)
+		calls=(
+			"name"			"name"\
+			"name"			"name"\
+			"number"		"time"\
+			"time"			"time"\
+			"number"		"name"\
+			"name"			"name"\
+			"uid"			"gid"\
+			"type"			"number"\
+			"text"			"name"\
+			)
+		text=(
+			"named"			"on filesystem"\
+			"on disk"		"on remote disk"\
+			"at inode"		"last modified"\
+			"last accessed"		"created"\
+			"of size"		"on disk blocks"\
+			"with permission"	"in mode (octal)"\
+			"owned by"		"in the group of"\
+			"of type"		"number of hard links"\
+			"containing text"	"with path"\
+			)
+		names=(
+			"Name"			"Filesystem"\
+			"Disk Name"		"Remote Disk Name"\
+			"Inode"			"Time of last Modification"\
+			"Time of last Access"	"Time Created"\
+			"Size"			"Blocks"\
+			"Permisson (String)"	"Permission (Octal)"\
+			"File Owner"		"Group of File"\
+			"Type of File"		"Number of Links"\
+			"Search for Text."	"Path"\
+			)
+		)
+	)
+
+
+find_tree=(
+	menubar=(
+		optns=( w=menubutton t="Options"
+			fast=( w=checkbutton l="Fast Search" k="find_set_fast" )
+			ignore=( w=checkbutton l="Hide Errors" k="find_set_silent" )
+			sym=( w=checkbutton l="Follow Symlinks" k="find_set_followsym" )
+			pre=( w=checkbutton l="Directories First" k="find_set_preorder" )
+			paths=( w=checkbutton l="Show Full Paths" k="find_set_showpath" )
+			homes=( w=checkbutton l="Unless from $HOME" k="find_set_homepath" )
+			s1=( w=separator )
+			scr=( w=checkbutton l="Pass thru Command" k="find_set_cmdexe" c=find_exec_cmd )
+			s2=( w=separator )
+			simp=( w=radiobutton k=find_set_interface u="simple" l="Normal Display" c='find_exec_interface ${root}' )
+			frames=( w=radiobutton k=find_set_interface u="frames" l="Advanced" c='find_exec_interface ${root}' )
+			adv=( w=radiobutton k=find_set_interface u="clause" l="Clauses" c='find_exec_interface ${root}' )
+
+			s3=( w=separator )
+			save=( w=command l="Save Options" c=find_save_settings )
+
+			p=( fast ignore sym pre paths homes s1 scr s2 simp frames adv s3 save )
+			)
+
+		results=( w=menubutton t="Output"
+			window=( w=radiobutton k=find_set_results u="window"
+				l="Info Window" )
+			cmdline=( w=radiobutton k=find_set_results u="return"
+				l="Return Names" )
+			file=( w=radiobutton k=find_set_results u="file"
+				l="To a file..." )
+			p=( window cmdline file ) )
+
+
+		help=( w=menubutton t="Help" p=( about ) po="-side right"
+			about=( w=command l="About" c=find_about )
+			)
+
+		pack=( optns results help )
+		fopts="-relief raised -bd 2"
+		opts="-side left"
+		)
+
+
+	root=(
+		title=( w=label t="Search subdirectories of:" o="-anchor w")
+		bar=(
+			browse=( w=button t="Browse" o='-padx 1 -pady 1'
+			c='directory_dialog find_set_root \"${find.labels.browse_title}\"' )
+			ent=( w=entry v=find_set_root o="-relief sunken -width 40" )
+
+			pack="ent browse"
+			opts="-side left -fill x -expand 1"
+			)
+		
+		pack=( title bar )
+		opts="-side top -fill x -expand 1"
+		)
+
+	pattern=(
+		l=( w=label t="${find.labels.pattern}" o="-anchor w" )
+		bar=(
+			b=( w=button t=${find.buttons.advanced} c='find_advanced ${root}' o='-padx 1 -pady 1' )
+			e=( w=entry v=find_clause o='-relief sunken -width 40' )
+
+			pack=( e b )
+			opts="-side left -fill x -expand 1"
+
+			)
+
+		pack=( l bar )
+		opts="-side top -fill x -expand 1"
+		)
+
+
+	buttons=(
+		ok=( w=button t="Search" c='find_search ${root}' )
+		new=( w=button t="Clear" c='find_clear ${root}' )
+		dismiss=( w=button t="Dismiss" c='find_destroy ${root}' )
+		simple=( w=button t="Simple" c='find_short ${root}' )
+
+		pack=( ok !simple new dismiss )
+		opts="-side left -expand 1 -padx 2 -pady 3"
+		eltopts="-relief raised -bd 3 -padx 2 -pady 3" 
+		)
+
+	frames=(
+		prompt=( w=label t="Search based upon:" o="-anchor w" )
+		fr=(
+			clausel=(
+			
+				name=( w=button t="Name" o="-bd 2"	
+					s='find_toptab=${window}' )
+				datetime=( w=button t="Date/Time" )
+				size=( w=button t="Size" )
+				other=( w=button t="Other" )
+				content=( w=button t="File Content" )
+
+				pack=( name datetime size other content )
+				opts="-side left"
+				eltopts='-padx 1 -pady 0 -command "find_tab ${myname%.*.*}.frames ${window##*.}" -bd 1'
+				)
+
+			frames=(
+				name=(	pack=( match notmatch )
+					match=(	pack=( l e )
+						l=( w=label t="Name matches:" po="-anchor w -side left" )
+						e=( w=entry v=find_namematch o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					notmatch=(	pack=( l e )	opts="-side left"
+						l=( w=label t="Ignore those with path:" po="-anchor w -side left" )
+						e=( w=entry v=find_namenomatch o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					opts="-pady 5 -padx 5 -expand 1 -fill x"
+					)
+				datetime=(	pack=( before after )
+					before=(	pack=( l e )
+						l=( w=label t="Modified before:" po="-anchor w -side left" )
+						e=( w=entry v=find_datebefore o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					after=(	pack=( l e )	opts="-side left"
+						l=( w=label t="Modified since:" po="-anchor w -side left" )
+						e=( w=entry v=find_dateafter o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					opts="-pady 5 -padx 5 -expand 1 -fill x"
+					
+					)
+				size=(	pack=( greater less )
+					greater=(	pack=( l e )
+						l=( w=label t="larger than:" po="-anchor w -side left" )
+						e=( w=entry v=find_sizegreat o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					less=(	pack=( l e )	opts="-side left"
+						l=( w=label t="smaller than:" po="-anchor w -side left" )
+						e=( w=entry v=find_sizeless o='-relief sunken -width 20' )
+						opts="-side right -expand 1 -fill x"
+						)
+					opts="-pady 5 -padx 5 -expand 1 -fill x"
+					
+					)
+				other="find_tree.adv"
+				content=(	pack=( l )
+					l=( w=label t="Use grep as cmd" )
+					)
+
+				pack=( name !datetime !size !other !content )
+				opts="-side top -expand 1 -fill x -padx 0 -pady 0"
+#				eltopts="-pady 0"
+				fopts="-relief raised -bd 2"
+				)
+
+			pack=( clausel frames )
+			opts="-side top -expand 1 -fill x -padx 0 -pady 0"
+			)
+
+		pack=( !prompt fr )
+		opts="-side top -expand 1 -fill x"
+
+		)
+
+	adv=(
+		vars='adv=${window}'
+		sets='find_adv_global=${window}'
+
+		group=(
+			grpbut=( w=button c='find_group ${adv}' t="Group" )
+			group=( w=label t="the previous two search criteria" )
+	
+			pack=( grpbut group )
+			opts="-side left"
+			eltopts="-padx 1 -pady 1"
+			)
+
+		refine=(
+			b=( w=button t="Refine search" c='find_add_clause ${adv} 0' )
+			l=( w=label t="(add new)" )
+			p=( w=button t="Prune" c='find_refresh ${adv}' )
+			m=( w=label t="(remove empty)" )
+
+
+			pack=( b l p m )
+			opts="-side left"
+			eltopts="-padx 1 -pady 1"
+			)
+
+		prune=(
+
+			pack=( b l )
+			opts="-side left"
+			eltopts="-padx 1 -pady 1"
+			)
+
+		clausebar=(
+			offset=( w=label v='find_clause$find_clause_count.offset' )
+			opname=( w=tksh_opt_menu v='find_clause$find_clause_count.op_name' o="-relief raised"
+				choices=( "and" "or" )
+				names=( "and" "or" )
+				values=( "&&" "||" )
+				default=0
+				value='find_clause$find_clause_count.op_sym'
+				)
+
+			pack=( offset opname )
+			opts="-side left"
+			eltopts="-padx 1 -pady 1"
+			)
+
+		querybar=(
+			fixed=(
+				offset=( w=label v='find_clause$find_clause_count.offset' )
+				but=( w=find_opt_menu v='find_clause$find_clause_count.desc' o='${root} -relief raised -padx 1 -pady 1' )
+
+				compare=( w=tksh_opt_menu v='find_clause$find_clause_count.intcmp' o='-relief raised -padx 1 -pady 1 -default $cmpdefault'
+					choices=( "greater than"\
+						"greater than or equal"\
+						"equal"\
+						"less than or equal"\
+						"less than"\
+						"not equal" )
+					names=( "greater than" "g/eq to" "equal" \
+						"l/eq to" "less than" "not equal" )
+					values=( ">" ">=" "==" "<=" "<" "!=" )
+					default=0
+					value='find_clause$find_clause_count.numcmp'
+					)
+				timecmp=( w=tksh_opt_menu v='find_clause$find_clause_count.intticmp' o='-relief raised -padx 1 -pady 1 -default $timedefault'
+					choices=( "before" "on" "after" )
+					names=( "before" "on" "since" )
+					values=( "<" "==" ">" )
+					default=0
+					value='find_clause$find_clause_count.timecmp'
+					)
+				not=( o='-variable find_clause$find_clause_count.invert'
+					w=checkbutton t=not s='find_clause$find_clause_count.invert=${invcl:-0}')
+
+				pack=( offset !not but !compare !timecmp )
+				opts="-side left -anchor w -expand 0"
+				)
+
+			entry=( w=entry v='find_clause$find_clause_count.query'
+				o="-relief sunken -width 30" )
+		
+			browse=( w=button t="Choose"
+				c="print -u2 'error not browse action not set' "
+				o="-padx 1 -pady 1" )
+
+			pack=( fixed entry !browse )
+			opts="-side left -expand 1 -fill x"
+			)
+
+
+		pack=( refine !group )
+		opts="-side top -expand 1 -fill x"
+		)
+
+
+	input=(
+		l=( w=label t="Execute:" )
+		e=( w=entry v=find_set_cmd o="-width 20 -relief sunken -bd 2" )
+		l2=( w=label t="on matches." )
+		m=( w=checkbutton t="prefix filename on result" k=find_set_cmdpathecho po="-side bottom" )
+		pack=( l e l2 m ) opts="-side left"
+		)
+
+	info=(
+		visit=(
+			desc=( w=label t="Found" )
+			number=( w=label v=find_file_number )
+			end=( w=label t="files so far; visited" )
+			count=( w=label v=find_file_visited )
+
+			pack=( desc number end count )
+			opts="-side left"
+			)
+
+		input=(
+			l=( w=label t="Output file name:" )
+			l=( w=label v=find_prompt )
+			e=( w=entry v=find_set_input o="-width 20 -relief sunken -bd 2" )
+			m=(	l=( w=label t="on matches." )
+				m=( w=checkbutton t="prefix filename to result" k=find_set_cmdpathecho )
+				pack=( l m ) opts="-side left"
+				)
+				
+			b=( w=button t="Ok" c="find_input_complete" )
+
+			pack=( l e !m b ) opts="-side left"
+			)
+
+		message=( w=label v=find_message )
+		error=( w=label v=find_error )
+
+		pack=( !visit message !input !error )
+		opts="-side left"
+		)
+
+	pack=( menubar root !frames pattern !input buttons info )
+
+	opts="-side top -fill x -expand 1"
+	fopts="-bd 4 -class Getfile"
+	framecmd=toplevel
+	)
+
+
+
+# sets up and brings on the screen the window that has a straightforward
+# interface.
+function find_popup # mesage (default: Find what?)
+{
+        typeset msg="${1:-"Find what?"}"
+
+	generate .findwindow find_tree
+        wm title .findwindow "$msg"
+
+	find_clause_count=0;
+	find_clause_root=0;
+	find_clause.offset=""
+
+	find_read_settings .findwindow
+}
+
+
+function find_tab
+{
+#	print -u2 find_toptab=$find_toptab
+	typeset oldtab=$find_toptab
+	$find_toptab configure -bd 1
+	find_toptab=${oldtab%.*}.${2}
+	$find_toptab configure -bd 2
+#	print -u2 path=$1 newtab=$2 oldtab=$oldtab
+		
+	unpack $1 ${oldtab##*.}
+	repack $1 ${find_toptab##*.}
+}
+
+
+function find_add_clause {
+
+	typeset adv=$1 ent=$2 vars=$3
+	typeset op='and' sym='&&'
+	
+
+	if [[ $find_clause_root == "0" ]]
+	then
+		let find_clause_count=$find_clause_count+1;
+		find_clause_root=$find_clause_count
+		find_query_bar_setup $adv.clause$find_clause_count $ent $adv $vars
+		find_refresh $adv noprune
+		return
+	fi
+
+	typeset old_ct=$find_clause_count
+	
+	let find_clause_count=$find_clause_count+1;
+	typeset cl_ct=$find_clause_count
+
+# the conjunction is clause n+1, the clause to be conjoined is n+2
+
+	nameref this_clause=find_clause$cl_ct
+	this_clause.op_name=$op		# just what is the name
+	this_clause.op_sym=$sym		# and how is it represented
+	this_clause.left=$find_clause_root	# which clause is on its left?
+	let this_clause.right=find_clause_count+1	# and right
+	this_clause.offset=""
+
+#	echo This clause is number $cl_ct!
+
+	find_clause_root=$cl_ct; # we're the root of the tree now!
+
+	gets=(	[adv]='($lefttext${cl.op_sym}$righttext)'
+		[english]='( $lefttext ${cl.op_name} $righttext )'
+		[text]='( $lefttext ${cl.op_sym} $righttext )'	)
+
+	for type in "${!gets[@]}"
+	do
+#		echo templating $type for ${gets[$type]}
+		. /dev/fd/3 3<< ++template2
+		function this_clause.$type.get {
+			nameref cl=\${.sh.name%.$type}
+			nameref res=.sh.value
+
+			nameref left=find_clause\${cl.left}.$type
+			typeset lefttext=\$left
+			nameref right=find_clause\${cl.right}.$type
+			typeset righttext=\$right
+	
+			if [[ \$lefttext == "" ]]
+			then	res=\$righttext
+			elif [[ \$righttext == "" ]]
+			then	res=\$lefttext
+			else	res="${gets[$type]}"
+			fi
+		}
+++template2
+	done
+
+	function this_clause.prune.get {
+		# we have to get the name of the clause without the .prune part
+		nameref cl=${.sh.name%.prune}
+		typeset num=${.sh.name#find_clause} 
+		integer num=${num%.prune}
+		nameref res=.sh.value
+
+#		echo number is $num
+
+		nameref left=find_clause${cl.left}.prune
+		cl.left=$left
+		nameref right=find_clause${cl.right}.prune
+		cl.right=$right
+
+
+		if [[ ${cl.left} == 0 ]]
+		then
+			res=${cl.right}
+#			print -u2 clause $num going away since child is empty
+			find_query_bar_remove opclause$num
+		elif [[ ${cl.right} == 0 ]]
+		then
+			res=${cl.left}
+#			print -u2 clause $num going away since child is empty
+			find_query_bar_remove opclause$num
+		else	res=$num
+#			print -u2 clause $num is sticking around ${cl.left} and ${cl.right} need it.
+		fi
+	}
+
+
+	function this_clause.offset.set {
+		# we have to get the name of the clause without the .offset part
+		nameref cl=${.sh.name%.offset}
+
+		nameref left=find_clause${cl.left}
+		nameref right=find_clause${cl.right}
+
+		left.offset=${cl.offset}'    '
+		right.offset=${cl.offset}'    '
+
+		# this clause's offset is automatically set for us.
+	}
+
+	function this_clause.query.set {
+		nameref cl=${.sh.name%.query}
+
+		nameref left=find_clause${cl.left}
+		nameref right=find_clause${cl.right}
+#		echo "our argument is \"${.sh.value}\""
+		left.query=""
+		right.query=""
+	}
+	
+	unpack	find_tree.adv	"group"
+
+	typeset clframe=$adv.opclause$cl_ct
+	generate $clframe find_tree.adv.clausebar
+	pack	$clframe -anchor w
+
+	let find_clause_count=$find_clause_count+1;
+	find_query_bar_setup $adv.clause$find_clause_count $ent $adv $vars
+
+	# to determine if there are enough clauses to warrant the group button.
+	nameref root=find_clause$find_clause_root
+	nameref child=find_clause${root.left}
+	[[ ${child.left} != "" ]] && repack	find_tree.adv group
+
+	find_clause.offset=""
+
+	#refresh the generated clause display
+	find_refresh $adv noprune
+}
+
+function find_group {
+	typeset adv=$1
+
+	typeset oldroot=$find_clause_root
+	nameref root=find_clause$find_clause_root
+	find_clause_root=${root.left}
+	nameref newroot=find_clause$find_clause_root
+	root.left=${newroot.right}
+	newroot.right=${oldroot}
+
+	nameref child=find_clause${newroot.left}
+	
+	[[ ${child.left} == "" ]] && unpack find_tree.adv group
+
+	find_clause.offset=""
+	
+	#refresh the clause displayed
+	find_refresh $adv
+}
+
+
+# currently arrays are not supported by tksh for use in "-textvar"iables.
+# (to the best of my knowledge)  So variables with numbers appended
+# are the poison of choice.... one call to eval is used the rest of this 
+# funny variable business is accomplished through the use of namerefs.
+function find_query_bar_setup {
+	typeset advbar=$1
+	typeset ent=$2
+	typeset adv=$3
+	typeset vars=$4
+
+	nameref this_clause=find_clause$find_clause_count
+	this_clause.field="name"
+	this_clause.invert="0"
+	this_clause.query=""
+	this_clause.offset=""
+
+#	this_clause= ( field=name invert=0 query=uglyyy offset="" )
+
+	function this_clause.adv.get {
+		nameref cl=${.sh.name%.adv}
+		nameref res=.sh.value
+		nameref equal=cl.${cl.eqname}
+#		echo the equalilty true name is... ${!equal} valued $equal
+
+		typeset eq="=="
+	
+		if [[ $equal == 1 ]]
+		then	eq="!="
+		elif [[ $equal == 0 ]]
+		then 	eq="=="
+		else	eq=$equal
+		fi
+
+		case ${cl.type} in
+		text) 
+			res="";;
+		number)
+			integer querynum=${cl.query};
+			res="($res${cl.field}${eq}$querynum)";;
+		*)
+			res="($res${cl.field}${eq}\"${cl.query}\")";;
+		esac
+	}
+
+	function this_clause.prune.get {
+		nameref cl=${.sh.name%.prune}
+		typeset num=${.sh.name#find_clause}
+		integer num=${num%.prune}
+		nameref res=.sh.value
+
+		if [[ ${cl.query} == "" ]]
+		then
+#			print -u2 clause $num going away it is useless
+			find_query_bar_remove clause$num
+			res=0
+		else
+#			print -u2 clause $num staying, it is used.
+			res=$num
+		fi
+	}
+
+	function this_clause.text.get {
+		nameref cl=${.sh.name%.adv}
+		nameref res=.sh.value
+
+		if [[ ${cl.field} == _text_ ]]
+		then	res="${cl.query}"
+		else	res=""
+		fi
+	}
+
+	function this_clause.english.get {
+		nameref cl=${.sh.name%.english}
+		nameref res=.sh.value
+	
+		(( ${cl.invert} == 1 )) && res="( not "
+		res="$res${cl.field}=\"${cl.query}\""
+		(( ${cl.invert} == 1 )) && res="$res )"
+	}
+
+	generate $advbar find_tree.adv.querybar "$adv" "$vars"
+	pack $advbar -side top -fill x -expand 1
+
+	find_query_change $ent $find_clause_count "$adv"
+}
+
+function find_query_bar_remove {
+	typeset advbar=$1
+
+#	echo unpacking $find_adv_global.$advbar from $(pack slaves $find_adv_global)
+
+	pack forget $find_adv_global.$advbar
+}
+	
+
+function find_opt_menu {
+	typeset w=$1
+	shift
+	typeset adv=$1
+	shift
+
+#	echo the option menu got this: $w $adv $@
+	
+	menubutton	$w "$@" -menu $w.menu
+	typeset	m=$(menu $w.menu)
+
+
+	for this_desc in "${!find.entry.names[@]}"
+	do
+#		echo $m
+		$m add command -label "${find.entry.names[$this_desc]}" \
+			-command "find_query_change $this_desc \
+				$find_clause_count $adv"
+	done
+}
+
+function find_query_change {
+	typeset which=$1
+	typeset clause=$2
+	nameref thiscl=find_clause$clause
+	typeset win=$3.clause$clause
+
+	thiscl.field=${find.entry.fields[$which]}
+	thiscl.desc=${find.entry.text[$which]}
+	thiscl.type=${find.entry.calls[$which]}
+
+	unpack	find_tree.adv.querybar.fixed "not compare timecmp" ${win}.fixed
+	unpack	find_tree.adv.querybar "browse"	${win}
+	thiscl.query=""
+
+
+	case ${thiscl.type} in
+	name)
+		thiscl.eqname=invert
+		repack	find_tree.adv.querybar.fixed	not	${win}.fixed;;
+	number)
+		thiscl.query=0
+		thiscl.eqname=numcmp
+		repack	find_tree.adv.querybar.fixed	compare	${win}.fixed;;
+	time)
+		thiscl.query="now"
+		thiscl.eqname=timecmp
+		repack	find_tree.adv.querybar.fixed	timecmp	${win}.fixed
+		$win.browse configure -text "Calendar" -command \
+			"time_browse find_clause$clause.name"
+		repack	find_tree.adv.querybar	browse	$win;;
+	
+	uid)
+		thiscl.eqname=invert
+		$win.browse configure -text "User Names" -command \
+			"uid_browse find_clause$clause.name"
+		repack	find_tree.adv.querybar.fixed	not	${win}.fixed
+		repack	find_tree.adv.querybar	browse	$win;;
+	gid)
+		thiscl.eqname=invert
+		$win.browse configure -text "Group Names" -command \
+			"gid_browse find_clause$clause.name"
+		repack	find_tree.adv.querybar.fixed	not	${win}.fixed
+		repack	find_tree.adv.querybar	browse	$win;;
+	type)
+		thiscl.eqname=invert
+		$win.browse configure -text "Type Names" -command \
+			"find_type_browse find_clause$clause.name"
+		repack	find_tree.adv.querybar.fixed	not	${win}.fixed
+		repack	find_tree.adv.querybar	browse	$win;;
+	text)	:;;
+	*)
+		echo the horror ${find.entry.calls[$which]};;
+	esac
+}
+
+function find_error {
+	find_error=$1
+	packonly find_tree.info error
+
+}
+
+function find_exec_cmd {
+	if [[ $find_set_cmdexe == 1 ]]
+	then	
+		repack find_tree input
+	else
+		unpack find_tree input
+	fi
+}
+
+
+
+function find_search {
+	typeset w=$1
+	#actually do the search!
+	find_file_number=0;
+
+	: ${find_set_root:=/}
+
+	if [[ ! -d "$find_set_root" ]]
+	then	find_error "No such directory: $find_set_root"
+		return
+	fi
+
+#	echo Searching for ${find_clause.result}
+
+
+	typeset textquery=${find_clause.text}
+
+	if [[ $textquery != "" ]]
+	then
+		echo doing textual query... on $textquery
+	fi
+
+#	echo We\'re looking for ${find_clause.english}
+
+	typeset cmd=""
+
+	if [[ $find_set_cmdexe == 1 ]]
+	then
+		if ! whence ${find_set_cmd%% *} > /dev/null 2>&1
+		then	find_finished $1
+			find_error "Cannot run command \"$find_set_cmd\""
+			return
+		fi
+
+		cmd="$find_set_cmd"
+	fi
+
+
+
+	if [[ $find_set_results == file ]]
+	then
+		find_prompt="Output file name:"
+		find_set_input=$find_set_outfile
+
+		unpack find_tree.info.input m > /dev/null
+
+		function find_input_complete {
+			find_set_outfile=$find_set_input
+			[[ $find_set_outfile != /* ]] && \
+				find_set_outfile=~/$find_set_outfile
+		}
+
+		$w.buttons.ok configure -text "Cancel" -command "find_finished $w"
+		packonly find_tree.info input
+		find_set_outfile=""
+		tkwait variable find_set_outfile
+
+
+		if ! command exec 9>$find_set_outfile 2>/dev/null
+		then	find_finished $1
+			find_error "Can not create $find_set_outfile"
+			return
+		fi
+		
+
+	fi
+
+	find_start $1
+
+	typeset twopts=""
+
+	typeset showpath=$find_set_showpath
+
+	[[ $find_set_homepath == 1 && $find_set_root == ${HOME}/* ]] && showpath=0
+
+	[[ $showpath == 1 ]] && twopts="-d $find_set_root $twopts"
+	[[ $find_set_silent == 1 ]] && twopts="-i $twopts"
+	[[ $find_set_followsym == 0 ]] && twopts="-P $twopts"
+	[[ $find_set_followsym == 1 ]] && twopts="-L $twopts"
+	[[ $find_set_preorder == 1 ]] && twopts="-m $twopts"
+	[[ $find_set_preorder == 0 ]] && twopts="-p $twopts"
+
+	find_ing=true
+	find_stopped=false
+
+	[[ $showpath == 0 ]] && typeset docd="cd $find_set_root"
+
+	typeset filter=find_filter
+
+	if [[ $find_set_fast == 0 ]]
+	then
+		( $docd ; tw $twopts -e "
+		begin:
+			int count=0, max=1;
+		action:
+			count++;
+			if ${find_clause.result} {
+				printf('%d:%s\n',count, path);
+			}
+			else if (!(count % max)) {
+				if ( count >= (max*10) ) max*=10;
+				printf('%d\n', count);
+			}
+			" ) |&
+	else
+		filter=echo
+
+		/home/gsf/arch/sgi.mips2/bin/tw -F $find_set_fcodes -f $find_set_root $twopts -e "select: ${find_clause.result} " |&
+	fi
+
+	typeset result_disp;
+	typeset more_end="";
+	
+	typeset msg="Searching from $find_set_root for ${find_clause.result}"$'\n'
+
+	case ${find_set_results} in
+	window)	text_init_window results .findwindow.results find_destroy "$msg"
+		result_disp="text_winput results";;
+	return)	echo $msg
+		result_disp=echo ;;
+	file)	
+		result_disp="print -u9" 
+		more_end="\; exec 9>&-" ;;
+	*)	print -u2 Bad result set in initialization.;;
+	esac
+
+	if [[ $cmd != "" ]]
+	then
+
+		[[ $find_set_cmdpathecho == 1 ]] && typeset addname="\$1:"$'\n'
+		. /dev/fd/0 << func++
+		function find_disp_result {
+			typeset res="\$($cmd \$1)"
+			[[ \$res != "" ]] && $result_disp "$addname\${res}"
+		}
+func++
+		result_disp=find_disp_result
+	fi
+
+	text_read_pipe $filter \
+		"$result_disp" \
+		"find_end $1 $more_end" \
+		"addone find_file_number"
+}
+
+# expects:
+#	a parameter to filter -- either a number or a number and info pair.
+# returns:
+#	the info with a successful return value or, a failed return
+#	value if there is no info to return.
+#
+function find_filter {
+	find_file_visited=${1%%:*}
+	[[ $1 != *:* ]] && return 1
+	echo ${1#*:}
+	return 0
+}
+
+function find_start {
+	typeset w=$1
+
+	$w.buttons.ok configure -text "Stop" -command "find_stop $w"
+
+	packonly find_tree.info visit
+}
+
+
+function find_finished {
+	typeset w=$1
+
+	find_ing=false
+	$w.buttons.ok configure -text "Search" -command "find_search $w"
+
+
+	find_message="Ready"
+	[[ $find_set_results == "file" ]] && \
+		find_message="Wrote $find_file_number matches to \"$find_set_outfile\""
+	packonly find_tree.info message
+}
+
+function find_end {
+	find_finished $1
+
+
+	if [[ $find_file_number == 0 ]]
+	then
+		case ${find_set_results} in
+		window)	message_window "No matches found." ;;
+		return)	;&
+		file)	;&
+		script)	
+
+			find_message="No matches found";;
+
+		*)	print -u2 Bad result set in initialization.;;
+		esac
+	fi
+}
+
+function find_stop {
+	if [[ $find_stopped == false ]]
+	then
+		kill $!
+		find_stopped=true
+	fi
+}
+
+function find_destroy {
+	if [[ $find_ing == true ]]
+	then
+		find_stop
+		after 5 find_destroy "$@"
+
+	else
+		destroy $1
+	fi
+}
+
+function find_clear {
+	find_read_settings $1
+
+	if [[ $find_clause_root != 0 ]] 
+	then
+		nameref root=find_clause$find_clause_root
+		root.query=""
+
+		find_clause_root=${root.prune}
+
+		find_refresh
+	fi
+}
+
+function find_exec_interface {
+	case $find_set_interface in
+	"simple")
+		find_short $1;;
+	"frames")
+		find_advanced $1
+		find_tab find_tree.frames.fr.frames name;;
+	"clause") 
+		find_advanced $1
+		find_tab find_tree.frames.fr.frames other;;
+	*)	echo "Bad find_set_interface in startup file: \"$find_set_interface\"";;
+	esac
+	
+}
+
+function find_advanced {
+	typeset w=$1
+
+	$w.pattern.bar.b configure -text "${find.buttons.adv.refresh}" -command "find_refresh $find_adv_global"
+
+	$w.pattern.l configure -text "${find.labels.expression}"
+
+	$w.pattern.bar.e configure -relief groove
+
+	repack find_tree frames >/dev/null
+	repack find_tree.buttons simple >/dev/null
+
+	#refresh the generated clause display
+	find_refresh $find_adv_global
+
+	function find_clause.result.get {
+		.sh.value=$find_clause
+	}
+
+}
+
+function find_short {
+	typeset w=$1
+
+	$w.pattern.l configure -text "${find.labels.pattern}"
+
+	$w.pattern.bar.b configure -text ${find.buttons.advanced} -command "find_advanced $w"
+	$w.pattern.bar.e configure -relief sunken
+
+	unpack find_tree frames >/dev/null
+	unpack find_tree.buttons simple >/dev/null
+
+	# this is for the simple search... it is changed by the advanced
+	# search engine
+	function find_clause.result.get {
+		
+		.sh.value="(name == \"$find_clause\")"
+	}
+
+	# make sure no advanced stuff is left over in the simple search field
+	find_clause=""
+
+}
+
+function find_refresh {
+	[[ $find_refreshing == 1 ]] && return
+	[[ $2 != "noprune" ]] && find_prune
+	find_refreshing=1
+
+	typeset -A numsof=( [find_namematch]=0 [find_namenomatch]=17 [find_datebefore]=5 
+				[find_dateafter]=5 [find_sizegreat]=8 [find_sizeless]=8 )
+
+	typeset -A optsof
+	optsof[find_namenomatch]="invcl=1"
+	optsof[find_dateafter]="timedefault=2"
+	optsof[find_sizeless]="cmpdefault=4"
+
+	for whichvar in find_namematch find_namenomatch find_datebefore \
+			find_dateafter find_sizegreat find_sizeless
+	do
+		typeset -n var=${whichvar} numvar=${whichvar}_number
+		if [[ $var != "" || $numvar != 0 ]]
+		then
+			if [[ $numvar == 0 ]]
+			then
+				find_add_clause $1 numsof[$whichvar] "${optsof[$whichvar]}"
+				numvar=$find_clause_count
+		
+			fi
+		
+			typeset -n clause=find_clause$numvar
+			clause.query=$var
+		fi
+		typeset +n var numvar clause
+	done
+
+
+	find_clause=${find_clause.adv}
+	find_refreshing=0
+}
+
+
+function find_prune {
+	#prunes empty clauses.
+	[[ $find_clause_root == 0 ]] && return
+	nameref root=find_clause$find_clause_root
+
+	find_clause_root=${root.prune}
+
+	find_clause.offset=""
+
+#	find_refresh $find_adv_global
+}
+
+
+# The value of "find_clause" (which does not actually exist as a
+# variable) is the value of the entire tree.  This is found by
+# traversing the tree and having each tree element, either a
+# conjunction (and or) or a search criterion (field=value) displaying
+# itself apropriately.
+find_clause=""
+
+# this is for the simple search... it is changed by the advanced
+# search engine
+function find_clause.result.get {
+	.sh.value="(name == \"$find_clause\")"
+}
+
+# iterates through types adv, text, and english, creating the root node.
+for type in adv text english
+do
+#	echo templating $type
+	. /dev/fd/3 3<< ++template
+	function find_clause.$type.get {
+		nameref root=find_clause\$find_clause_root
+
+		.sh.value=\${root.$type}
+	}
+++template
+done
+
+# When the offset field of the dummy variable variable, find_clause
+# gets "set," it initiates a tree traversal starting at the root of
+# the tree of clauses in "find_clause[0-9]+" variables.  These
+# simulated array variables have discipline functions on them with
+# different behavior depending on what kind of clause it is.  If it is
+# a conjunction, it sets its own padding to be what it is passed, and
+# calls its children's set discipline with four characters more space.
+# This indents the children.  If they are themselves conjunctions,
+# they continue the traversal, adding padding.  Query clauses have no
+# discipline function and the recursion stops there.
+
+function find_clause.offset.set {
+	nameref root=find_clause$find_clause_root
+
+	.sh.value=""
+
+	root.offset=""
+}
+
+
+function find_about {
+	print -u2 Not done yet.
+}
+
+function find_read_settings {
+	find_refreshing=0
+
+	for name in find_namematch find_namenomatch find_datebefore \
+			find_dateafter find_sizegreat find_sizeless
+	do
+		typeset -n var=$name
+		var=''
+		typeset -n varnum=${name}_number
+		varnum=0
+		typeset +n var varnum
+	done
+
+	find_message="Ready"
+	find_pattern=''
+
+	[[ $DESKSH_HOME == "" ]] && export DESKSH_HOME=$HOME/.desksh
+	[[ $DESKSH_HOME != /* ]] && DESKSH_HOME="$HOME/$DESKSH_HOME"
+
+	typeset statefile
+
+	for statefile in "$DESKSH_LIB/twrc" "$DESKSH_HOME/twrc"
+	do
+		if [[ -r $statefile ]]
+		then
+#		print -u2 reading settings.
+		
+			. $statefile
+		else
+			if [[ ! -d ${statefile%/twrc} ]] 
+			then
+				print -u2 warning: your DESKSH_HOME \"$DESKSH_HOME\" does not exist.
+				print -u2 you will not be able to save settings.
+			else
+				print -u2 "No saved settings?  Use Save under the Options menu to personalize defaults."
+			fi
+		fi
+	done
+
+	[[ $find_set_root == '.' ]] && find_set_root=$PWD
+
+	find_exec_cmd		# sync the display with the settings.
+	find_exec_interface $1	# ditto
+}
+
+function find_save_settings {
+	if [[ ! -d $DESKSH_HOME ]]
+	then
+		print -u2 your DESKSH_HOME \"$DESKSH_HOME\" does not exist.
+		return
+	fi
+
+	typeset statefile=$DESKSH_HOME/twrc
+
+	print \# Automatically generated file. >| $statefile
+	
+	for i in ${!find_set_*}
+	do	
+		eval echo $i=\\\"\$$i\\\" >> $statefile
+	done
+
+	find_message="Options saved"
+	packonly find_tree.info message
+}
+
+

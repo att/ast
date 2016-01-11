@@ -1,0 +1,5 @@
+: hp.pa ld wrapper for reasonable warning defaults
+
+# @(#)ld.hp.pa (AT&T Labs Research) 1998-01-23
+
+/bin/ld +s +vnocompatwarnings "$@"

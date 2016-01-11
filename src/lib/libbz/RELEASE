@@ -1,0 +1,9 @@
+10-11-08 bzlib.[ch]: change bzReadGetUnused 3rd arg to void* for strict aliasing
+09-04-15 bzlib.c: add bzfopen()
+03-05-13 sfdcbzip.c: add SF_DBUFFER exception, SF_SHARE before sfreserve()
+02-02-14 blocksort.c: drop -O for msvc
+02-01-24 bzhdr.h: rename from bzlib_private.h for 14 char fs
+01-01-01 bzlib.h: add _PACKAGE_ast checks
+99-09-11 sfdcbzip: return >0 if discipline pushed
+99-07-17 sfdcbzip: don't free disc on SF_CLOSE
+99-03-17 split library from command, sfdcbzip.[ch]

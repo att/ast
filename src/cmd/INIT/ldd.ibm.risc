@@ -1,0 +1,16 @@
+: ibm.risc ldd
+case $# in
+1)	header=0 ;;
+*)	header=1 ;;
+esac
+for file
+do	case $header in
+	1)	echo "$file:"
+		header=2
+		;;
+	2)	echo
+		echo "$file:"
+		;;
+	esac
+	dump -H "$file" | sed '1,/\*\*\*Import/d'
+done

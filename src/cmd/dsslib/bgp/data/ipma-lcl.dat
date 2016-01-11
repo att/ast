@@ -1,0 +1,241 @@
+<html>
+<head>
+ <title>SingAREN BGP Routes - 1net</title>
+</head>
+<body bgcolor=white>
+<font face="Arial, Helvetica"><h1>SingAREN BGP Routing Table</h1></font>
+<table>
+<tr><td><font face="Arial, Helvetica">Neighbour: </font></td><td><font face="Arial, Helvetica">1net</font></td></tr>
+<tr><td><font face="Arial, Helvetica">Last updated: </font></td><td><font face="Arial, Helvetica">Sun Sep 16 06:30:08 2001</font></td></tr>
+</table><p>
+<table border=0 cellspacing=0 cellpadding=0>
+<tr><td colspan=5><font face="Arial, Helvetica" size=4>Advertised - 6</font></td></tr>
+<tr bgcolor=#b0b0ff><td>Prefix</td><td width=10></td><td>Network</td><td width=10></td><td>AS Path</td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.122.131.0</td><td>&nbsp</td><td>Kent Ridge Digital Labs</td><td>&nbsp</td><td>9434 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.122.132.0/22</td><td>&nbsp</td><td>Kent Ridge Digital Labs</td><td>&nbsp</td><td>9434 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.122.136.0/22</td><td>&nbsp</td><td>Kent Ridge Digital Labs</td><td>&nbsp</td><td>9434 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.122.140.0</td><td>&nbsp</td><td>Kent Ridge Digital Labs</td><td>&nbsp</td><td>9434 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.8.94.0/23</td><td>&nbsp</td><td>Singapore Advanced Research and Education Network</td><td>&nbsp</td><td>local</td></tr>
+<tr bgcolor=#eeeeee valign=top><td>209.224.117.0</td><td>&nbsp</td><td>NAP.NET, LLC</td><td>&nbsp</td><td>local</td></tr>
+<tr><td>&nbsp</td></tr>
+<tr><td colspan=5><font face="Arial, Helvetica" size=4>Received - 213</font></td></tr>
+<tr bgcolor=#b0b0ff><td>Prefix</td><td width=10></td><td>Network</td><td width=10></td><td>AS Path</td></tr>
+<tr bgcolor=#eeeeee valign=top><td>128.88.0.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>137.132.0.0</td><td>&nbsp</td><td>National University of Singapore</td><td>&nbsp</td><td>7658 7472 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>137.132.12.128/27</td><td>&nbsp</td><td>National University of Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>137.132.15.0/24</td><td>&nbsp</td><td>National University of Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>137.132.25.0/24</td><td>&nbsp</td><td>National University of Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>146.215.64.0/24</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 9989 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>146.215.65.0/24</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 9989 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>146.215.66.0/24</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 9989 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>147.60.0.0</td><td>&nbsp</td><td>Union Bank of Switzerland (Tokyo)</td><td>&nbsp</td><td>7658 9740 10100 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>153.20.0.0</td><td>&nbsp</td><td>Ngee Ann Polytechnic</td><td>&nbsp</td><td>7658 9877 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>155.69.0.0</td><td>&nbsp</td><td>Nanyang Technological University</td><td>&nbsp</td><td>7658 9419 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>155.69.64.0/19</td><td>&nbsp</td><td>Nanyang Technological University</td><td>&nbsp</td><td>7658 9247 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>155.69.96.0/23</td><td>&nbsp</td><td>Nanyang Technological University</td><td>&nbsp</td><td>7658 9247 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>160.96.0.0</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 7634 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>160.96.128.0/18</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 7634 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>164.78.0.0</td><td>&nbsp</td><td>Singapore Polytechnic</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.24.0/21</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.64.0/21</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.75.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.76.0/23</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.78.136/29</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.78.144/30</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.94.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.98.0/23</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.104.0/25</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.111.128/25</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.112.0/21</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.124.0/22</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.128.0/22</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.132.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.134.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.135.0/25</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.152.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.154.0/24</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>165.21.156.0/22</td><td>&nbsp</td><td>Singapore Telecommunications Pte Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>166.121.0.0</td><td>&nbsp</td><td>Ministry of Education Computer Services Branch</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>166.121.2.0/26</td><td>&nbsp</td><td>Ministry of Education Computer Services Branch</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>166.121.2.64/26</td><td>&nbsp</td><td>Ministry of Education Computer Services Branch</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>166.121.36.0/24</td><td>&nbsp</td><td>Ministry of Education Computer Services Branch</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>166.121.37.0/24</td><td>&nbsp</td><td>Ministry of Education Computer Services Branch</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.6.86.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.170.64.0/19</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.170.66.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.170.82.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.170.83.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.170.88.0</td><td>&nbsp</td><td>Hewlett-Packard Company</td><td>&nbsp</td><td>7658 151 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.190.204.0/23</td><td>&nbsp</td><td>Defence Science Organisation</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.245.58.0</td><td>&nbsp</td><td>Singapore Computer System Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>192.245.59.0</td><td>&nbsp</td><td>Singapore Computer System Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.0.127.0</td><td>&nbsp</td><td>Nanyang Polytechnic</td><td>&nbsp</td><td>7658 17617 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.0.149.0</td><td>&nbsp</td><td>Institute of Southeast Asian Studies (ISEAS)</td><td>&nbsp</td><td>7658 7472 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.12.94.0/23</td><td>&nbsp</td><td>Nanyang Polytechnic</td><td>&nbsp</td><td>7658 17617 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.40.224.0/21</td><td>&nbsp</td><td>IDC of NCS in Singapore</td><td>&nbsp</td><td>7658 17549 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.40.231.0</td><td>&nbsp</td><td>IDC of NCS in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.42.118.16/28</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.42.194.0/23</td><td>&nbsp</td><td>Internet Competency Centre</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.42.216.0/23</td><td>&nbsp</td><td>Telecommunication Authority Of Singapore(TAS)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.55.64.0/19</td><td>&nbsp</td><td>Davnet Singapore Pte Ltd</td><td>&nbsp</td><td>7658 10117 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.56.128.0/20</td><td>&nbsp</td><td>DataOne (Asia) Pte Ltd</td><td>&nbsp</td><td>7658 9656 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.56.144.0/21</td><td>&nbsp</td><td>DataOne (Asia) Pte Ltd</td><td>&nbsp</td><td>7658 9656 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.79.64.0/19</td><td>&nbsp</td><td>Asia Pacific Network Information Center (APNIC2)</td><td>&nbsp</td><td>7658 9740 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.79.96.0/19</td><td>&nbsp</td><td>Cable & Wireless Network Services (Singapore)</td><td>&nbsp</td><td>7658 9740 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.79.192.0/19</td><td>&nbsp</td><td>STT Communications Network</td><td>&nbsp</td><td>7658 9989 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.85.160.0/22</td><td>&nbsp</td><td>iAdvantage Limited</td><td>&nbsp</td><td>7658 9729 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.95.73.96/27</td><td>&nbsp</td><td>UUNET Singapore pte. limited</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.95.103.184/29</td><td>&nbsp</td><td>UUNET-SG Customer Assignment</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.95.126.64/27</td><td>&nbsp</td><td>UUNET-SG Customer Assignment</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.95.126.96/28</td><td>&nbsp</td><td>UUNET-SG Customer Assignment</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.95.126.112/28</td><td>&nbsp</td><td>Asia Pacific Network Information Center (APNIC2)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.126.128.0/19</td><td>&nbsp</td><td>Cable & & Wireless Network Services (Singapore)</td><td>&nbsp</td><td>7658 9740 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.0.0/19</td><td>&nbsp</td><td>SINGAPORE CABLE VISION LTD</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.32.0/19</td><td>&nbsp</td><td>SINGAPORE CABLE VISION LTD</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.64.0/19</td><td>&nbsp</td><td>SINGAPORE CABLE VISION LTD</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.96.0/19</td><td>&nbsp</td><td>SINGAPORE CABLE VISION LTD</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.128.0/19</td><td>&nbsp</td><td>Singapore Cable Vision Ltd</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.160.0/19</td><td>&nbsp</td><td>Singapore Cable Vision Ltd</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.192.0/19</td><td>&nbsp</td><td>Singapore Cable Vision Ltd</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.156.224.0/19</td><td>&nbsp</td><td>Singapore Cable Vision Ltd</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.157.128.0/19</td><td>&nbsp</td><td>Webvisions Pte Ltd</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.157.160.0/21</td><td>&nbsp</td><td>Webvisions Pte Ltd</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.160.211.0</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 9255 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.160.212.0</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 9255 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.161.32.0/19</td><td>&nbsp</td><td>Singapore Management University</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.166.0.0/17</td><td>&nbsp</td><td>Magix Broadband Network</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.32.0/20</td><td>&nbsp</td><td>Asia Pacific Network Information Center, Pty. Ltd.</td><td>&nbsp</td><td>7658 9740 4831 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.45.0</td><td>&nbsp</td><td>Asia Pacific Network Information Center, Pty. Ltd.</td><td>&nbsp</td><td>7658 9740 4831 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.47.0</td><td>&nbsp</td><td>KEPPEL DIGIHUB LTD.,</td><td>&nbsp</td><td>7658 9740 4831 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.224.0/21</td><td>&nbsp</td><td>1-NET ISP Services Network.</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.232.0/21</td><td>&nbsp</td><td>1-NET ISP Services Network.</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>202.172.240.0/21</td><td>&nbsp</td><td>1-NET ISP Services Network.</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.81.32.0/20</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 17560 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.0.0/20</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.1.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.1.32/28</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.1.96/27</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.1.192/26</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.2.0/23</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.2.128/25</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.3.33/32</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.3.34/32</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.3.35/32</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.3.96/28</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.3.128/25</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.7.0/29</td><td>&nbsp</td><td>MORI BUILDING CO.,LTD</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.7.192/26</td><td>&nbsp</td><td>MORI BUILDING CO.,LTD</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.8.0/21</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.8.40/29</td><td>&nbsp</td><td>MORI BUILDING CO.,LTD</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.9.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.10.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.11.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.20.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.21.240/28</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.22.0</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.112.27.8/29</td><td>&nbsp</td><td>TELECOMMUNICATION AUTHORITY OF SINGAPORE</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.18.64/27</td><td>&nbsp</td><td>CyberQuote Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.44.224/27</td><td>&nbsp</td><td>Asia Pacific Network Information Center (APNIC2)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.59.0</td><td>&nbsp</td><td>Ministry of Defence</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.65.128/26</td><td>&nbsp</td><td>Nanyang Girls School</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.77.112/28</td><td>&nbsp</td><td>Best Cad Computers Pte Ltd (Jurongville Sec)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.77.192/26</td><td>&nbsp</td><td>Cyberquote Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.81.0/25</td><td>&nbsp</td><td>National Computer Systems</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.82.0/23</td><td>&nbsp</td><td>Ministry of Defence</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.95.0</td><td>&nbsp</td><td>National Computer Systems</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.108.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.186.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.187.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.188.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.222.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.116.223.0</td><td>&nbsp</td><td>National Library Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.9.128/26</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.19.96/28</td><td>&nbsp</td><td>E-station</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.22.0</td><td>&nbsp</td><td>ADSL (Starhub)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.24.0/22</td><td>&nbsp</td><td>1-net</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.28.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.31.224/27</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.64.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.65.0</td><td>&nbsp</td><td>NLB</td><td>&nbsp</td><td>7658 10091 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.69.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.77.96/27</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.78.0/23</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.80.0/29</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.91.96/27</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.98.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.99.0</td><td>&nbsp</td><td>1-Net Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.102.80/28</td><td>&nbsp</td><td>Internet Innovation Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.109.128/25</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.110.0</td><td>&nbsp</td><td>E-station Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.136.192/26</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.140.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.141.0</td><td>&nbsp</td><td>3rd ISP in Singapore</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.145.0</td><td>&nbsp</td><td>Starhub Webspeed ADSL</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.171.0</td><td>&nbsp</td><td>31 Kaki Bukit Rd 3, #05-18/20 TechLink Lobby A</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.117.183.64/27</td><td>&nbsp</td><td>31 Kaki Bukit Rd 3, #05-18/20 TechLink Lobby A</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.47.0</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.56.0/23</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.73.128/25</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.78.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.79.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.80.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.81.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.82.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.83.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.84.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.85.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.86.16/28</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.115.0</td><td>&nbsp</td><td>National Library Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.177.0</td><td>&nbsp</td><td>Safra Radio</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.186.0</td><td>&nbsp</td><td>Asia Pacific Network Information Center (APNIC2)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.120.203.64/26</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.124.96.0/19</td><td>&nbsp</td><td>Severious Communications Pte Ltd</td><td>&nbsp</td><td>7658 10075 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.125.252.0/22</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.70.128/25</td><td>&nbsp</td><td>Mybiz Singapore Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.75.0</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 17549 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.82.128/25</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.101.128/27</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.119.64/28</td><td>&nbsp</td><td>1-Net Singapore Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.135.0</td><td>&nbsp</td><td>Webvisions Pte Ltd</td><td>&nbsp</td><td>7658 9892 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.152.192/27</td><td>&nbsp</td><td>Keppel Securities Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.176.160/29</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.185.64/27</td><td>&nbsp</td><td>Singapore Telecommunications Ltd</td><td>&nbsp</td><td>7658 9255 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.200.128/25</td><td>&nbsp</td><td>National Computer Systems Pte Ltd (NCS)</td><td>&nbsp</td><td>7658 17549 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.200.192/26</td><td>&nbsp</td><td>National Computer Systems Pte Ltd (NCS)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.202.16/28</td><td>&nbsp</td><td>National Computer Systems Pte Ltd (NCS)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.202.160/28</td><td>&nbsp</td><td>National Computer Systems Pte Ltd (NCS)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.202.176/28</td><td>&nbsp</td><td>National Computer Systems Pte Ltd (NCS)</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.126.244.192/26</td><td>&nbsp</td><td>Xpress Print Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.16.96/27</td><td>&nbsp</td><td>Ong & Co Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.23.0</td><td>&nbsp</td><td>Raffles Girl's Secondary School</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.24.0</td><td>&nbsp</td><td>Raffles Girl's Secondary School</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.27.0</td><td>&nbsp</td><td>Television Corporation Of S'pore Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.43.128/27</td><td>&nbsp</td><td>Urban Redevelopment Authority</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.133.0</td><td>&nbsp</td><td>75 Science Park Drive</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.153.128/26</td><td>&nbsp</td><td>Briza Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.184.0/22</td><td>&nbsp</td><td>75 Science Park Drive</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.212.0/22</td><td>&nbsp</td><td>75 Science Park Drive</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.217.48/28</td><td>&nbsp</td><td>G.K Goh Stockbrokers Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.237.0</td><td>&nbsp</td><td>75 Science Park Drive</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.248.0</td><td>&nbsp</td><td>NEC Singapore Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.127.255.0</td><td>&nbsp</td><td>NEC Singapore Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.160.128.0/20</td><td>&nbsp</td><td>EASYCALL INTERNET SINGAPORE</td><td>&nbsp</td><td>7658 17455 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.166.128.0/19</td><td>&nbsp</td><td>iASPire.net Pte Ltd</td><td>&nbsp</td><td>7658 10031 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.194.128.0/20</td><td>&nbsp</td><td>DSLGLOBAL/GHOSTWEB</td><td>&nbsp</td><td>7658 9729 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.194.176.0/21</td><td>&nbsp</td><td>iAdvantage Ltd.</td><td>&nbsp</td><td>7658 9729 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>203.194.184.0/22</td><td>&nbsp</td><td>iAdvantage Ltd.</td><td>&nbsp</td><td>7658 9729 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.24.136.0/25</td><td>&nbsp</td><td>Asia Pacific Network Information Center</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.24.193.0</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.24.194.0</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.24.195.0</td><td>&nbsp</td><td>National Computer Board</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.24.200.0</td><td>&nbsp</td><td>Pacific Internet Limited</td><td>&nbsp</td><td>7658 9506 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.193.0.0/20</td><td>&nbsp</td><td>QALA Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.193.2.0/23</td><td>&nbsp</td><td>QALA Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.193.14.0</td><td>&nbsp</td><td>QALA Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr bgcolor=#eeeeee valign=top><td>210.193.15.0</td><td>&nbsp</td><td>QALA Pte Ltd</td><td>&nbsp</td><td>7658 </td></tr>
+<tr><td>&nbsp</td></tr>
+<tr bgcolor=#b0b0ff><td colspan=5>Acknowledgements</td></tr>
+<tr bgcolor=#eeeeee><td colspan=5>Special thanks to <a href="mailto:djirku@enfm.utcc.utoronto.ca">David Jirku</a> for providing the source code upon which this script is based.<td></tr>
+</table><p>
+</body>
+</html>

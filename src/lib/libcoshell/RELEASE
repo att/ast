@@ -1,0 +1,49 @@
+12-02-22 coinit.c: handle non-identifier export var names
+11-12-13 cowait.c: handle sfpoll() error return on interrupt
+11-11-21 cowait.c: poll before blocking read to weed out killed jobs (no 'x' message)
+11-08-30 codata.c,coopen.c: drop macro "..." catenation for old cc
+10-08-11 coinit.c: force _BLD_DLL for environ intercept
+10-06-01 sync with ast api 20100601
+10-05-19 cokill.c: do cowait(co,co,0) to drain pending messages
+10-05-15 coshell.h,coopen.c: add CO_ORPHAN for PROC_ORPHAN
+10-05-11 coopen.c: add PROC_ORPHAN for CO_SHELL
+10-05-10 coopen.c: no atexit() for CO_SHELL
+10-04-15 first ksh93u local job pool tests work (service daemon tbd)
+10-04-14 cowait.c: add 3rd cowait() arg timeout; 0 Coshell_t* operates on all open coshells
+10-04-10 coshell.h: add CO_SHELL for shell using coshell!
+09-12-09 coexport.c: add runtime CO_ENV_EXPORT hook that avoids changing environ
+08-10-28 coopen.c: close write side of parent msgfd -- doh
+08-04-28 coexec.c: check for fd 1,2 equivalence before CO_SERIALIZE 2>&1
+07-10-29 coshell.h,coexec.c: fix procrun()/system() intercept logic
+07-08-15 add CO_SEPARATE,CO_MODE_SEPARATE for separate shell+wait per action
+07-04-09 Makefile: $(CC.PIC) to allow archive to be pulled into other dlls
+06-08-22 coshell.h: procrun => coprocrun, system => cosystem
+06-08-09 coshell.h: export CO_ENV_MSGFD for COSHELL=coshell
+06-08-02 coexec.c: Cojob_t.flags&CO_SERVICE for service requests
+06-08-02 cokill.c: cokill() signal==0 => kill CO_SERVICE jobs
+06-07-27 coexec.c: drop server cowait() that bypassed caller
+06-06-21 coexec.c: add non-block cowait() to drain responses
+06-06-11 fix service intercept cleanup
+06-05-24 add service=name:init lightweight service intercepts
+05-04-19 cowait.c: beef up invalid message tests and diagnostics
+05-04-11 drop fixed CO_MSGFD for $_coshell_msgfd
+05-04-07 coexec.c: fix !_lib_fork&&_map_spawnve close-on-exec redirection
+04-09-22 cowait.c: remove CO_SERIALIZE temporaries after listing -- duh
+04-09-01 co*: add CO_SERIALIZE
+04-07-22 system.c: access() => eaccess()
+04-02-11 coinit.c: fix CO_CROSS PATH initialization
+02-10-30 coclose.c: fix reference-after-free bug in coclose()
+02-01-31 codata.c,coopen.c: fix CO_MSGFD parameterization
+02-01-24 coopen.c: fix small memory leak
+01-10-26 coopen.c: hung sfclose(fp) -> close(sffileno(fp)) -- wow
+01-09-11 coinit.c: fix coident[] for ancient bsh that die on `test == 1'
+	 coinit.c: and fix coident[] to weed out buggy ksh88i trap on exit
+01-05-31 co*: add CO_CROSS, expose CO_DEVFD
+01-04-23 coquote: add state.type to avoid getenv() overwrite on some systems
+01-01-01 cokill: killjob => cokilljob, killshell => cokillshell
+00-12-18 coinit: CO_OSH ? "${!-$$}" : "${!:-$$}"
+00-10-25 codata: $ZSH_VERSION is not ksh
+00-02-14 procrun,system: system(3) returns wait() status (not shell status)
+99-11-19 co*: add CO_OSH for bsdi lack of times(1)
+	 coexec: CO_IGNORE for all but real ksh
+98-06-22 coinit: quote cd path arg

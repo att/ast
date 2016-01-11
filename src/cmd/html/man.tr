@@ -1,0 +1,672 @@
+'''''\"
+'''''\" Copyright (c) 1993 AT&T, All Rights Reserved
+'''''\"
+.deth
+.tmwrong version of man entry macros (use -man6 if available)
+.ab
+..
+.ift \{\
+.fp5 CW
+.dsmW \&\f5
+.dsmB \&\f(CB
+.dsTm \v'-0.5m'\s-4TM\s+4\v'0.5m'
+.dsSm \v'-0.5m'\s-4SM\s+4\v'0.5m'
+.dsRg \v'-0.4m'\s-4\(rg\s+4\v'0.4m'
+.dsrq ''
+.dslq ``
+.tr*\(**
+'br\}
+.ifn \{\
+.dsmW \f3
+.dsmB \f3
+.dsTm \uTM\d
+.dsSm \uSM\d
+.dsRg (Reg.)
+.dslq \&"
+.dsrq \&"
+'br\}
+.deOP
+.ie'\\$3'[]' \ \f1[\ \*(mB\\$1\f2\^\\$2\|\f1\ ]
+.el\&\\$4\&\*(mB\\$1\fP\f2\^\\$2\|\fP\\$3
+..
+.deAT
+.ift \{\
+.ds]W 7th Edition
+.if\\$13 .ds ]W 7th Edition
+.if\\$14 .ds ]W System III
+.if\\$15 \{\
+.ie\\$2  .ds ]W System V
+.el.ds ]W System V Release \\$2
+'br\} \}
+..
+.deAC
+.ift \{\
+.
+.
+.ds]W PRPQ 5799-CGZ: IBM 4.3/RT
+'br\}
+..
+.deUC
+.ift \{\
+.ds]W 3rd Berkeley Distribution
+.if\\$13 .ds ]W 3rd Berkeley Distribution
+.if\\$14 .ds ]W 4th Berkeley Distribution
+.if\\$15 .ds ]W 4.2 Berkeley Distribution
+.if\\$16 .ds ]W 4.3 Berkeley Distribution
+.if\\$1M .ds ]W M\s-1ORE\s+1/bsd
+.if\\$1U .ds ]W Utah 4.3 HPBSD release 1.0
+'br\}
+..
+.deSU
+.ift \{\
+.ds]W Sun Microsystems Rel 3.0
+.if\\$12 .ds ]W Sun Microsystems Rel 3.2
+.if\\$1D .ds ]W Sun Microsystems D/NFS
+'br\}
+..
+.deLX
+.ds]K utility
+.if\\$15 .ds ]K file
+.if\\$12 .ds ]K system call
+.if\\$13 .ds ]K function
+.SH LIMITATIONS
+This \\*(]K is not available on those
+M\s-2ORE\s+2/bsd
+systems which do not include
+the Network File System.
+..
+.deDS
+.RS
+.nf
+.sp
+..
+.deDE
+.fi
+.RE
+.sp.5
+..
+.de}E
+.}f
+.in\\n()Ru+\\n(INu
+.ll\\n(LLu
+.lt\\n(LLu
+.pl\\n()Lu
+..
+.deDT
+.ift .ta 3.6m 7.2m 10.8m 14.4m 18m 21.6m 25.2m 28.8m 32.4m 36m 39.6m 43.2m 46.8m
+.ifn .ta 5n 10n 15n 20n 25n 30n 35n 40n 45n 50n 55n 60n 65n
+..
+.deHY
+.hy14
+..
+.de}f
+.ift .vs \\n()Vp
+.ps\\n()S
+.ft1
+..
+.de}H
+.ev1
+.}C
+.}E
+.ie\\n()s 'sp|2v
+.el'sp|3v
+.ps\\n()S-1
+.ft3
+.ie\\*(]L .tl \\*(]H\\*(]D\\*(]H
+.el.tl \\*(]H\\*(]D \|\\*(]L\\*(]H
+.ft1
+.ps\\n()S
+.ie\\n()s 'sp 1.5v
+.el'sp 3v
+.ev
+.ns
+..
+.de}F
+.ev1
+.}E
+.if\\n()s 'sp |\\n(.pu-1v-1p
+.if\\n()t 'sp |\\n(.pu-3v
+.ifn 'sp |\\n(.pu-4v
+.ifn .tl Page %\\*(]W
+.if\\n()s .tl - % -
+.if\\n()t \{.if o .tl Page %\\*(]W
+.ife .tl \\*(]WPage % \}
+'bp
+.ev
+..
+.de}C
+..
+.de}M
+.}N
+.wh-.5p }C
+.ll\\n(LLu
+.bp
+..
+.de}K
+.}N
+.pl1
+.ll\\n(LLu
+..
+.deTH
+.PD
+.nrIN \\n()Mu
+.ds]H \\$1\^(\^\\$2\^)
+.if\\n()s .ds ]D
+.if\\n()t .ds ]D UNIX System V
+.ifn .ds ]D UNIX System V
+.ds]L 
+.if!\\$3 .ds ]L (\^\\$3\^)
+.if!\\$4 .ds ]D \\$4
+.wh0 }H
+.wh-\\n(:mu }F
+.em}M
+.if\\n(nl .bp 1
+.nr)I \\n()Mu
+.nr)R 0
+.}E
+.DT
+.ifn \{.na
+.nh\}
+.ift \{.bd S 3 3
+.HY \}
+..
+.deIX
+.if\\nF .tm .IE\tENTRY\t\\$1\t\\$2\t\\$3\t\\$4\t\\$5\t\\$6\t\\*(PN\\n%
+..
+.deTX
+.dsTx "UNKNOWN TITLE ABBREVIATION: \\$1
+.if'\\$1'DOCBOX' .ds Tx "Documentation Set
+.if'\\$1'BGBOX' .ds Tx "Beginner's Guides Minibox
+.if'\\$1'GSBG' .ds Tx "Getting Started with SunOS: Beginner's Guide
+.if'\\$1'SUBG' .ds Tx "Setting Up Your SunOS Environment: Beginner's Guide 
+.if'\\$1'SHBG' .ds Tx "Self Help with Problems: Beginner's Guide
+.if'\\$1'SVBG' .ds Tx "SunView\ 1 Beginner's Guide
+.if'\\$1'MMBG' .ds Tx "Mail and Messages: Beginner's Guide
+.if'\\$1'DMBG' .ds Tx "Doing More with SunOS: Beginner's Guide
+.if'\\$1'UNBG' .ds Tx "Using the Network: Beginner's Guide
+.if'\\$1'GDBG' .ds Tx "Games, Demos & Other Pursuits
+.if'\\$1'SABOX' .ds Tx "System Administration Manuals Minibox
+.if'\\$1'CHANGE' .ds Tx "Release 4.0 Change Notes
+.if'\\$1'INSTALL' .ds Tx "Installing the SunOS
+.if'\\$1'ADMIN' .ds Tx "System and Network Administration
+.if'\\$1'SECUR' .ds Tx "Security Features Guide
+.if'\\$1'PROM' .ds Tx "PROM User's Manual
+.if'\\$1'DIAG' .ds Tx "Sun System Diagnostics Manual
+.if'\\$1'REFBOX' .ds Tx "Reference Manuals Minibox
+.if'\\$1'MANPAGES' .ds Tx "SunOS Reference Manual
+.if'\\$1'REFMAN' .ds Tx "SunOS Reference Manual
+.if'\\$1'SSI' .ds Tx "Sun System Introduction
+.if'\\$1'SSO' .ds Tx "System Services Overview
+.if'\\$1'TEXT' .ds Tx "Editing Text Files
+.if'\\$1'DOCS' .ds Tx "Formatting Documents
+.if'\\$1'TROFF' .ds Tx "Using \&\fLnroff\fP and \&\fLtroff\fP
+.if'\\$1'INDEX' .ds Tx "Global Index
+.if'\\$1'PTBOX' .ds Tx "Programmer's Tools Manuals Minibox
+.if'\\$1'CPG' .ds Tx "C Programmer's Guide
+.if'\\$1'CREF' .ds Tx "C Reference Manual
+.if'\\$1'ASSY' .ds Tx "Assembly Language Manual
+.if'\\$1'PUL' .ds Tx "Programming Utilities and Libraries
+.if'\\$1'DEBUG' .ds Tx "Debugging Tools
+.if'\\$1'NETP' .ds Tx "Network Programming
+.if'\\$1'DRIVER' .ds Tx "Writing Device Drivers
+.if'\\$1'FPOINT' .ds Tx "Floating Point Programmers Guide
+.if'\\$1'SVPG' .ds Tx "SunView\ 1 Programmer's Guide
+.if'\\$1'SVSPG' .ds Tx "SunView\ 1 System Programmer's Guide
+.if'\\$1'PIXRCT' .ds Tx "Pixrect Reference Manual
+.if'\\$1'CGI' .ds Tx "SunCGI Reference Manual
+.if'\\$1'CORE' .ds Tx "SunCore Reference Manual
+.if'\\$1'4ASSY' .ds Tx "Sun-4 Assembly Language Reference Manual
+.if'\\$1'KR' .ds Tx "The C Programming Language
+\fI\\*(Tx\fP\\$2
+..
+.deSH
+.}X 0 "\\$1" smaller
+.nr)E 2
+\&\\$1 \|\\$2 \|\\$3 \|\\$4 \|\\$5 \|\\$6
+..
+.deSS
+.}X 3n "" ""
+.nr)E 2
+\&\\$1 \|\\$2 \|\\$3 \|\\$4 \|\\$5 \|\\$6
+..
+.de}X
+.}E
+.ti\\$1
+.sp\\n(PDu
+.ne1.1v
+.nr)R 0
+.fi
+.it1 }N
+.SM
+.B
+..
+.de}2
+.nr)E 0
+.}E
+.nr)I \\n()Mu
+.ns
+.ft1
+..
+.deVS
+'if'\\$1'4' .mc \s12\(br\s0
+..
+.deVE
+'mc
+..
+.deSM
+.nh
+.ps\\n()S-1
+.if!\\$1 \&\\$1
+.if!\\$2 \&\\$2
+.if!\\$3 \&\\$3
+.if!\\$4 \&\\$4
+.if!\\$5 \&\\$5
+.if!\\$6 \&\\$6
+.if!\\$1 .ps \\n()S
+.if\\$1 .it 1 }N
+.HY
+..
+.deR
+.nh
+.ft1
+.it1 }N
+.if!\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.HY
+..
+.deI
+.nh
+.ft2
+.it1 }N
+.if!\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.HY
+..
+.deB
+.nh
+.ft3
+.it1 }N
+.if!\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.HY
+..
+.deMW
+.nh
+.it1 }N
+.ie\\n(.$ \{\
+.ie\\n(.$=1 \*(mW\&\\$1\fP
+.el.ie \\n(.$=2 \*(mW\&\\$1 \\$2\fP
+.el.ie \\n(.$=3 \*(mW\&\\$1 \\$2 \\$3\fP
+.el.ie \\n(.$=4 \*(mW\&\\$1 \\$2 \\$3 \\$4\fP
+.el.ie \\n(.$=5 \*(mW\&\\$1 \\$2 \\$3 \\$4 \\$5\fP
+.el.ie \\n(.$=6 \*(mW\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6\fP
+.el.ie \\n(.$=7 \*(mW\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7\fP
+.el.ie \\n(.$=8 \*(mW\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8\fP
+.el\*(mW\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9\fP \}
+.el\{\
+.ift .ft 5
+.ifn .ft 3 \}
+.HY
+..
+.deL
+.nh
+.it1 }N
+.ift \{.ie!\\$1 \%\&\f5\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.el.ft 5 \}
+.ifn \{.ft 3
+.if!\\$1 \{.ie\\$2 `\\$1'
+.el.ie\\$3 `\\$1 \\$2'
+.el.ie\\$4 `\\$1 \\$2 \\$3'
+.el.ie\\$5 `\\$1 \\$2 \\$3 \\$4'
+.el.ie\\$6 `\\$1 \\$2 \\$3 \\$4 \\$5'
+.el`\\$1 \\$2 \\$3 \\$4 \\$5 \\$6'\}\}
+.HY
+..
+.deF
+.nh
+.it1 }N
+.ift \{\
+.ie!\\$1 \%\&\f5\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.el.ft 5 \}
+.ifn \{\
+.ie!\\$1 \%\&\f3\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.el.ft 3 \}
+.HY
+..
+.deRI
+.}S 1 2 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deIR
+.}S 2 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deIB
+.}S 2 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deRB
+.}S 1 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deBR
+.}S 3 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deBI
+.}S 3 2 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deRM
+.ift .}S 1 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 1 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deMR
+.ift .}S 5 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 3 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deIM
+.ift .}S 2 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 2 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deMI
+.ift .}S 5 2 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 3 2 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deBM
+.ift .}S 3 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 3 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deMB
+.ift .}S 5 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.ifn .}S 3 3 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de}S
+.nh
+.ds]F
+.if\\$12 .if !\\$5 .ds ]F\^
+.ie!\\$4 .}S \\$2 \\$1 "\&\\$3\f\\$1\\$4\\*(]F" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
+.el\&\\$3
+.}f
+.HY
+..
+.deSB
+.nh
+.ie\\n(.$=1 \f3\s-1\&\\$1\s0\fP
+.el.ie \\n(.$=2 \f3\s-1\&\\$1 \\$2\s0\fP
+.el.ie \\n(.$=3 \f3\s-1\&\\$1 \\$2 \\$3\s0\fP
+.el.ie \\n(.$=4 \f3\s-1\&\\$1 \\$2 \\$3 \\$4\s0\fP
+.el.ie \\n(.$=5 \f3\s-1\&\\$1 \\$2 \\$3 \\$4 \\$5\s0\fP
+.el.ie \\n(.$=6 \f3\s-1\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6\s0\fP
+.el.ie \\n(.$=7 \f3\s-1\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7\s0\fP
+.el.ie \\n(.$=8 \f3\s-1\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8\s0\fP
+.el\f3\s-1\&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9\s0\fP
+.HY
+..
+.deLR
+.nh
+.ift \%\&\f5\\$1\f1\\$2
+.ifn \%`\\$1'\\$2
+.HY
+..
+.deRL
+.nh
+.ift \%\&\f1\\$1\f5\\$2\f1\\$3
+.ifn \%\\$1`\\$2'\\$3
+.HY
+..
+.deFR
+.ift \%\&\f5\\$1\f1\\$2 \\$3 \\$4 \\$5 \\$6
+.ifn \%\&\f3\\$1\f1\\$2 \\$3 \\$4 \\$5 \\$6
+..
+.deRF
+.ift \%\&\f1\\$1\f5\\$2\f1\\$3
+.ifn \%\&\f1\\$1\f3\\$2\f1\\$3
+..
+.deEX
+.sp\\n(PDu
+.in+5n
+.ifn .ft 3
+.ift \{\
+.ft5
+.if\\$1-1 \{\
+.ps-1
+.vs-1
+.nreX 1 \}\}
+.nf
+..
+.deEE
+.fi
+.if\\n(eX \{\
+.ps+1
+.vs+1
+.nreX 0 \}
+.ft1
+.in-5n
+.sp\\n(PDu
+..
+.dePP
+.sp\\n(PDu
+.ne1.1v
+.}E
+.nr)I \\n()Mu
+.ns
+..
+.deP
+.PP
+..
+.deLP
+.PP
+..
+.dePD
+.ift .nr PD .4v
+.ifn .nr PD 1v
+.if!\\$1 .nr PD \\$1v
+..
+.deHP
+.sp\\n(PDu
+.ne1.1v
+.if!\\$1 .nr )I \\$1n
+.ll\\n(LLu
+.in\\n()Ru+\\n(INu+\\n()Iu
+.ti\\n()Ru+\\n(INu
+.}f
+..
+.deIP
+.TP \\$2
+\&\\$1
+..
+.deTP
+.if!\\$1 .nr )I \\$1n
+.sp\\n(PDu
+.ne1.1v
+.in\\n()Ru
+.ns
+.it1 }N
+.nr)E 1
+.di]B
+..
+.deTF
+.ift .IP "" \w'\f5\\$1\ \ \fP'u
+.ifn .IP "" \w'\f3\\$1\ \ \fP'u
+.PD0
+..
+.de}1
+.ds]X \&\\*(]B\\
+.rm]B
+.nr)E 0
+.if!\\$1 .nr )I \\$1n
+.}f
+.ll\\n(LLu
+.in\\n()Ru+\\n(INu+\\n()Iu
+.ti\\n(INu
+.ie!\\n()Iu+\\n()Ru-\w\\*(]Xu-3p \{\\*(]X
+.br\}
+.el\\*(]X\h|\\n()Iu+\\n()Ru\c
+.}f
+..
+.de}N
+.if\\n()E .br
+.di
+.if\\n()E0 .}f
+.if\\n()E1 .}1
+.if\\n()E2 .}2
+..
+.deRS
+.nr]\\n+()p \\n()I
+.nr)\\n()p \\n()R
+.ie!\\$1 .nr )R +\\$1n
+.el.nr )R +\\n()I
+.nr)I \\n()Mu
+.}E
+..
+.deRE
+.if!\\$1 \{.ie \\$10 .nr )p 1 1
+.el.nr )p \\$1 1 \}
+.ds]i \\*(]I\\n()p
+.ds]r \\*(]R\\n()p
+.nr)I \\*(]i
+.nr)R \\*(]r
+.if\\n()p .nr )p -1
+.}E
+..
+.dePM
+.ie\\$2 .nr ;V \\n(YR
+.el\{.ie \\$2-1900 .nr ;V \\$2
+.ie \\$2-50 .nr ;V (\\n(YR/100-1)*100+\\$2
+.el.nr ;V (\\n(YR/100)*100+\\$2 \}
+.ie\\$1 \{\
+.(B
+.(E 2 0
+.(B
+.(E 3 0 \}
+.el.ie \\$1RS \{\
+.(B
+\!.	tl \f2AT&T \- PROPRIETARY (RESTRICTED)\fP
+\!.	tl \f1Solely for authorized persons having a need to know
+\!.	tl pursuant to Company Instructions.\fP
+.(E 3 3v \}
+.el.ie \\$1RG \{\
+.(B
+\!.	tl \f2AT&T \- PROPRIETARY (REGISTERED)\fP
+\!.	tl \f1Solely for authorized persons having a need to know
+\!.	tl and subject to cover sheet instructions.\fP
+.(E 3 3v \}
+.el.ie \\$1CP \{\
+.(B
+\!.	tl \f1SEE PROPRIETARY NOTICE ON COVER PAGE\fP
+.(E 3 1v \}
+.el.ie \\$1CR \{\
+.(B
+\!.	tl \f1Copyright \\(co \\n(;V AT&T
+\!.	tl All rights reserved.\fP
+.(E 3 2v \}
+.el.ie \\$1UW \{\
+.(B
+\!.	tl \f2AT&T \- PROPRIETARY\fP
+\!.	tl \f1THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+\!.	tl AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+\!.	tl ACCORDANCE WITH APPLICABLE AGREEMENTS.
+\!.	tl Copyright \\(co \\n(;V AT&T
+\!.	tl Unpublished & Not for Publication
+\!.	tl All rights reserved.\fP
+.(E 3 7v \}
+.el\{\
+.(B
+\!.	tl \f2AT&T \- PROPRIETARY\fP
+\!.	tl \f1Use pursuant to Company Instructions.\fP
+.(E 3 2v \}
+..
+.de)G
+.ev2
+.nf
+.sp1
+.?1
+.?2
+.?3
+.?4
+.br
+.ev
+'bp
+..
+.de(B
+.ev1
+'fi
+.di>K
+..
+.de(E
+.br
+.di
+.ev
+.ie(\\n(dn=0)&(0\\$2=0) \{\
+.nr?\\$1 0
+.rm>K ?\\$1
+'br\}
+.el\{\
+.ie0\\$2>0 .nr ?\\$1 0\\$2
+.el.nr ?\\$1 \\n(dn \}
+.nr:U \\n(:mu+\\n(?1+\\n(?2+\\n(?3+\\n(?4+\\n(?5+1v
+.if\\n(:Uu>(\\n(.pu-\\n(nlu-.5v) 'bp
+.ch)G
+.rn>K ?\\$1
+.wh-\\n(:Uu )G
+..
+.nr)s 0
+.ift .if \ns .nr )s 1
+.nr)t 0
+.ift .if !\ns .nr )t 1
+.if\n()s \{.nr )L 9i
+.nrLL 4.75i
+.nr)O .463i
+.nr)S 9
+.nr)V 10 \}
+.if\n()t \{.nr )L 11i
+.nrLL 6.5i
+.nr)O .75i
+.nr)S 10
+.nr)V 12 \}
+.ift .ds S \s\n()S
+.ifn \{\
+.dsS
+.ie!\ns \{\
+.nr)L 11i
+.nrLL 6.5i
+.nr)O .5i
+'br\}
+.el\{\
+.nr)L 9i
+.nrLL 4.75i
+.nr)O .3i
+'br\} \}
+.if\nT .nr LL 80n
+.if\nV>1 \{\
+.nrLL 82n
+.nr)L 84v
+.rmul \}
+.nr)p 0 1
+.ds]I \\\\n(]
+.ds]R \\\\n()
+.if\nd0 .nr m \n(mo-1
+.if\nm0 .ds ]m January
+.if\nm1 .ds ]m February
+.if\nm2 .ds ]m March
+.if\nm3 .ds ]m April
+.if\nm4 .ds ]m May
+.if\nm5 .ds ]m June
+.if\nm6 .ds ]m July
+.if\nm7 .ds ]m August
+.if\nm8 .ds ]m September
+.if\nm9 .ds ]m October
+.if\nm10 .ds ]m November
+.if\nm11 .ds ]m December
+.ifn \{.nr m \nm+1
+.ie\nd .ds ]W (last mod. \nm/\nd/\ny)
+.el.ds ]W (printed \n(mo/\n(dy/\n(yr)
+'br\}
+.if\n()s .ds ]W
+.if\n()t \{.ie \nd \{.ie \ny-50 .ds ]W \*(]m \nd, 20\ny
+.el .ds ]W \*(]m \nd, 19\ny\}
+.el.ds ]W \*(]m \n(dy, \n(YR
+'br\}
+.pl\n()Lu
+.ll\n(LLu
+.lt\n(LLu
+.po\n()Ou
+.}f
+.if\n()s .nr :m 3.5v
+.if\n()t .nr :m 6v
+.ifn .nr :m 7v
+.ift .nr )M 3.6m
+.ifn .nr )M 5n
+.em}K

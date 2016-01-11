@@ -1,0 +1,928 @@
+: translated from the Regex++ tests.txt by cvtregex++.c 2001-05-16
+# manual edits were done to insert the standard error codes
+#
+# inserted {...} features tests may have changed line numbers and/or ordering
+#
+# comments beyond this point are verbatim from the original input
+# 
+# this file contains a script of tests to run through regress.exe
+#
+# comments start with a semicolon and proceed to the end of the line
+#
+# changes to regular expression compile flags start with a "-" as the first
+# non-whitespace character and consist of a list of the printable names
+# of the flags, for example "match_default"
+#
+# Other lines contain a test to perform using the current flag status
+# the first token contains the expression to compile, the second the string
+# to match it against. If the second string is "!" then the expression should
+# not compile, that is the first string is an invalid regular expression.
+# This is then followed by a list of integers that specify what should match,
+# each pair represents the starting and ending positions of a subexpression
+# starting with the zeroth subexpression (the whole match).
+# A value of -1 indicates that the subexpression should not take part in the
+# match at all, if the first value is -1 then no part of the expression should
+# match the string.
+#
+
+# - match_default normal REG_EXTENDED
+
+#
+# try some really simple literals:
+E	a	a	(0,1)
+E	Z	Z	(0,1)
+E	Z	aaa	NOMATCH
+E	Z	xxxxZZxxx	(4,5)
+
+# and some simple brackets:
+E	(a)	zzzaazz	(3,4)(3,4)
+Exz	()	zzz	(0,0)(0,0)
+Exz	()	NULL	(0,0)(0,0)
+E	(	!	EPAREN
+E	)	!	NOMATCH
+E	(aa	!	EPAREN
+E	aa)	!	NOMATCH
+E	a	b	NOMATCH
+E	\(\)	()	(0,2)
+E	\(a\)	(a)	(0,3)
+E	\()	!	NOMATCH
+E	(\)	!	EPAREN
+E	p(a)rameter	ABCparameterXYZ	(3,12)(4,5)
+E	[pq](a)rameter	ABCparameterXYZ	(3,12)(4,5)
+
+# now try escaped brackets:
+# - match_default bk_parens REG_BASIC
+B	\(a\)	zzzaazz	(3,4)(3,4)
+B	\(\)	zzz	(0,0)(0,0)
+B	\(\)	NULL	(0,0)(0,0)
+B	\(	!	EPAREN
+B	\)	!	EPAREN
+B	\(aa	!	EPAREN
+B	aa\)	!	EPAREN
+B	()	()	(0,2)
+B	(a)	(a)	(0,3)
+B	(\)	!	EPAREN
+B	\()	!	EPAREN
+
+# now move on to "." wildcards
+# - match_default normal REG_EXTENDED REG_STARTEND
+E	.	a	(0,1)
+E$	.	\n	(0,1)
+E$	.	\r	(0,1)
+E	.	NULL	NOMATCH
+# - match_default normal match_not_dot_newline REG_EXTENDED REG_STARTEND REG_NEWLINE
+En	.	a	(0,1)
+En$	.	\n	NOMATCH
+En$	.	\r	(0,1)
+En	.	NULL	NOMATCH
+# - match_default normal match_not_dot_null match_not_dot_newline REG_EXTENDED REG_STARTEND REG_NEWLINE
+En$	.	\n	NOMATCH
+En$	.	\r	(0,1)
+# this *WILL* produce an error from the POSIX API functions:
+# - match_default normal match_not_dot_null match_not_dot_newline REG_EXTENDED REG_STARTEND REG_NEWLINE REG_NO_POSIX_TEST
+Enz	.	NULL	NOMATCH
+
+
+#
+# now move on to the repetion ops,
+# starting with operator *
+# - match_default normal REG_EXTENDED
+E	a*	b	(0,0)
+E	ab*	a	(0,1)
+E	ab*	ab	(0,2)
+E	ab*	sssabbbbbbsss	(3,10)
+E	ab*c*	a	(0,1)
+E	ab*c*	abbb	(0,4)
+E	ab*c*	accc	(0,4)
+E	ab*c*	abbcc	(0,5)
+E	*a	!	BADRPT
+E$	\n*	\n\n	(0,2)
+E	\**	**	(0,2)
+E	\*	*	(0,1)
+
+# now try operator +
+E	ab+	a	NOMATCH
+E	ab+	ab	(0,2)
+E	ab+	sssabbbbbbsss	(3,10)
+E	ab+c+	a	NOMATCH
+E	ab+c+	abbb	NOMATCH
+E	ab+c+	accc	NOMATCH
+E	ab+c+	abbcc	(0,5)
+E	+a	!	BADRPT
+E$	\n+	\n\n	(0,2)
+E	\+	+	(0,1)
+E	\+	++	(0,1)
+E	\++	++	(0,2)
+# - match_default normal bk_plus_qm REG_EXTENDED REG_NO_POSIX_TEST
+Exz	+	+	BADRPT
+Exz	\+	!	NOMATCH
+Exz	a\+	aa	NOMATCH
+
+# now try operator ?
+# - match_default normal REG_EXTENDED
+E	a?	b	(0,0)
+E	ab?	a	(0,1)
+E	ab?	ab	(0,2)
+E	ab?	sssabbbbbbsss	(3,5)
+E	ab?c?	a	(0,1)
+E	ab?c?	abbb	(0,2)
+E	ab?c?	accc	(0,2)
+E	ab?c?	abcc	(0,3)
+E	?a	!	BADRPT
+E$	\n?	\n\n	(0,1)
+E	\?	?	(0,1)
+E	\?	??	(0,1)
+E	\??	??	(0,1)
+# - match_default normal bk_plus_qm REG_EXTENDED REG_NO_POSIX_TEST
+Exz	?	?	BADRPT
+Exz	\?	!	NOMATCH
+Exz	a\?	aa	NOMATCH
+Exz	a\?	b	NOMATCH
+
+# - match_default normal limited_ops
+B	a?	a?	(0,2)
+B	a+	a+	(0,2)
+B	a\?	a?	(0,2)
+B	a\+	a+	(0,2)
+
+# now try operator {}
+# - match_default normal REG_EXTENDED
+E	a{2}	a	NOMATCH
+E	a{2}	aa	(0,2)
+E	a{2}	aaa	(0,2)
+E	a{2,}	a	NOMATCH
+E	a{2,}	aa	(0,2)
+E	a{2,}	aaaaa	(0,5)
+E	a{2,4}	a	NOMATCH
+E	a{2,4}	aa	(0,2)
+E	a{2,4}	aaa	(0,3)
+E	a{2,4}	aaaa	(0,4)
+E	a{2,4}	aaaaa	(0,4)
+# spaces are now allowed inside {}
+E	a{ 2 , 4 }	aaaaa	BADBR
+E	a{}	!	BADBR
+E	a{ }	!	BADBR
+E	a{2	!	EBRACE
+E	a}	!	NOMATCH
+E	\{\}	{}	(0,2)
+
+# - match_default normal bk_braces
+B	a\{2\}	a	NOMATCH
+B	a\{2\}	aa	(0,2)
+B	a\{2\}	aaa	(0,2)
+B	a\{2,\}	a	NOMATCH
+B	a\{2,\}	aa	(0,2)
+B	a\{2,\}	aaaaa	(0,5)
+B	a\{2,4\}	a	NOMATCH
+B	a\{2,4\}	aa	(0,2)
+B	a\{2,4\}	aaa	(0,3)
+B	a\{2,4\}	aaaa	(0,4)
+B	a\{2,4\}	aaaaa	(0,4)
+B	a\{ 2 , 4 \}	aaaaa	BADBR
+B	{}	{}	(0,2)
+
+# now test the alternation operator |
+# - match_default normal REG_EXTENDED
+E	a|b	a	(0,1)
+E	a|b	b	(0,1)
+E	a(b|c)	ab	(0,2)(1,2)
+E	a(b|c)	ac	(0,2)(1,2)
+E	a(b|c)	ad	NOMATCH
+E	|c	!	ENULL
+E	c|	!	ENULL
+E	(|)	!	ENULL
+E	(a|)	!	ENULL
+E	(|a)	!	ENULL
+E	a\|	a|	(0,2)
+# - match_default normal limited_ops
+B	a|	a|	(0,2)
+B	a\|	a|	(0,2)
+B	|	|	(0,1)
+# - match_default normal bk_vbar REG_NO_POSIX_TEST
+Bxz	a|	a|	(0,2)
+Bxz	a\|b	a	(0,1)
+Bxz	a\|b	b	(0,1)
+
+# now test the set operator []
+# - match_default normal REG_EXTENDED
+# try some literals first
+E	[abc]	a	(0,1)
+E	[abc]	b	(0,1)
+E	[abc]	c	(0,1)
+E	[abc]	d	NOMATCH
+E	[^bcd]	a	(0,1)
+E	[^bcd]	b	NOMATCH
+E	[^bcd]	d	NOMATCH
+E	[^bcd]	e	(0,1)
+E	a[b]c	abc	(0,3)
+E	a[ab]c	abc	(0,3)
+E	a[^ab]c	adc	(0,3)
+E	a[]b]c	a]c	(0,3)
+E	a[[b]c	a[c	(0,3)
+E	a[-b]c	a-c	(0,3)
+E	a[^]b]c	adc	(0,3)
+E	a[^-b]c	adc	(0,3)
+E	a[b-]c	a-c	(0,3)
+E	a[b	!	EBRACK
+E	a[]	!	EBRACK
+
+# then some ranges
+E	[b-e]	a	NOMATCH
+E	[b-e]	b	(0,1)
+E	[b-e]	e	(0,1)
+E	[b-e]	f	NOMATCH
+E	[^b-e]	a	(0,1)
+E	[^b-e]	b	NOMATCH
+E	[^b-e]	e	NOMATCH
+E	[^b-e]	f	(0,1)
+E	a[1-3]c	a2c	(0,3)
+E	a[3-1]c	!	ERANGE
+E	a[1-3-5]c	!	ERANGE
+E	a[1-	!	EBRACK
+
+# and some classes
+E	a[[:alpha:]]c	abc	(0,3)
+E	a[[:unknown:]]c	!	ECTYPE
+E	a[[:	!	ECTYPE
+E	a[[:alpha	!	ECTYPE
+E	a[[:alpha:]	!	EBRACK
+E	a[[:alpha,:]	!	ECTYPE
+E	a[[:]:]]b	!	ECTYPE
+E	a[[:-:]]b	!	ECTYPE
+E	a[[:alph:]]	!	ECTYPE
+E	a[[:alphabet:]]	!	ECTYPE
+E	[[:alnum:]]+	-%@a0X-	(3,6)
+E	[[:alpha:]]+	-%@aX0-	(3,5)
+E$	[[:blank:]]+	a  \tb	(1,4)
+E$	[[:cntrl:]]+	a\n\tb	(1,3)
+E	[[:digit:]]+	a019b	(1,4)
+E	[[:graph:]]+	a%b 	(0,3)
+E	[[:lower:]]+	AabC	(1,3)
+# This test fails with STLPort, disable for now as this is a corner case anyway...
+#[[:print:]]+ "\na b\n" 1 4
+E$	[[:punct:]]+	%-&\t	(0,3)
+E$	[[:space:]]+	a \n\t\rb	(1,5)
+E	[[:upper:]]+	aBCd	(1,3)
+E	[[:xdigit:]]+	p0f3Cx	(1,5)
+
+# now test flag settings:
+# - escape_in_lists REG_NO_POSIX_TEST
+Exz$	[\n]	\n	(0,1)
+# - REG_NO_POSIX_TEST
+Bxz$	[\n]	\n	(0,1)
+Bxz$	[\n]	\\	NOMATCH
+Bxz	[[:class:]	:	ECTYPE
+Bxz	[[:class:]	[	ECTYPE
+Bxz	[[:class:]	c	ECTYPE
+
+# line anchors
+# - match_default normal REG_EXTENDED
+En	^ab	ab	(0,2)
+En	^ab	xxabxx	NOMATCH
+En$	^ab	xx\nabzz	(3,5)
+En	ab$	ab	(0,2)
+En	ab$	abxx	NOMATCH
+En$	ab$	ab\nzz	(0,2)
+# - match_default match_not_bol match_not_eol normal REG_EXTENDED REG_NOTBOL REG_NOTEOL
+Eben	^ab	ab	NOMATCH
+Eben	^ab	xxabxx	NOMATCH
+Eben$	^ab	xx\nabzz	(3,5)
+Eben	ab$	ab	NOMATCH
+Eben	ab$	abxx	NOMATCH
+Eben$	ab$	ab\nzz	(0,2)
+
+# back references
+# - match_default normal REG_EXTENDED
+E	a(b)\2c	!	ESUBREG
+E	a(b\1)c	!	ESUBREG
+E	a(b*)c\1d	abbcbbd	(0,7)(1,3)
+E	a(b*)c\1d	abbcbd	NOMATCH
+E	a(b*)c\1d	abbcbbbd	NOMATCH
+E	^(.)\1	abc	NOMATCH
+E	a([bc])\1d	abcdabbd	(4,8)(5,6)
+# strictly speaking this is at best ambiguous, at worst wrong, this is what most
+# re implimentations will match though.
+E	a(([bc])\2)*d	abbccd	(0,6)(3,5)(3,4)
+
+E	a(([bc])\2)*d	abbcbd	NOMATCH
+E	a((b)*\2)*d	abbbd	(0,5)(1,4)(2,3)
+E	(ab*)[ab]*\1	ababaaa	(0,7)(0,1)
+E	(a)\1bcd	aabcd	(0,5)(0,1)
+E	(a)\1bc*d	aabcd	(0,5)(0,1)
+E	(a)\1bc*d	aabd	(0,4)(0,1)
+E	(a)\1bc*d	aabcccd	(0,7)(0,1)
+E	(a)\1bc*[ce]d	aabcccd	(0,7)(0,1)
+E	^(a)\1b(c)*cd$	aabcccd	(0,7)(0,1)(4,5)
+
+#
+# characters by code:
+# - match_default normal REG_EXTENDED REG_STARTEND
+{E	\101	A	(0,1)		not an ascii implementation
+E	\172	z	(0,1)
+E	\0172	z	NOMATCH
+}
+E	NULL	NULL	ENULL
+E	NULL	NULL	ENULL
+
+#
+# word operators:
+{E	\w	a	(0,1)		perl \w not supported
+E	\w	z	(0,1)
+E	\w	A	(0,1)
+E	\w	Z	(0,1)
+E	\w	_	(0,1)
+E	\w	}	NOMATCH
+E	\w	`	NOMATCH
+E	\w	[	NOMATCH
+E	\w	@	NOMATCH
+}
+# non-word:
+{E	\W	W	NOMATCH		perl \W not supported
+E	\W	z	NOMATCH
+E	\W	A	NOMATCH
+E	\W	Z	NOMATCH
+E	\W	_	NOMATCH
+E	\W	}	(0,1)
+E	\W	`	(0,1)
+E	\W	[	(0,1)
+E	\W	@	(0,1)
+
+E	\<\w+\W+	 aa  aa  a 	(1,5)
+}
+# word boundaries
+{E	\<a\>	,a,	(1,2)		word boundaries not supported
+E	\<*	!	BADRPT
+E	\>*	!	BADRPT
+E	\<+	!	BADRPT
+E	\>+	!	BADRPT
+E	\<?	!	BADRPT
+E	\>?	!	BADRPT
+# word start:
+E	\<abcd	  abcd	(2,6)
+E	\<ab	cab	NOMATCH
+E$	\\<ab	\nab	(1,3)
+E	\<tag	::tag	(2,5)
+# word end:
+E	abc\>	abc	(0,3)
+E	abc\>	abcd	NOMATCH
+E$	abc\\>	abc\n	(0,3)
+E	abc\>	abc::	(0,3)
+
+E	\<abc	abcabc abc\n\nabc	(0,3)
+E	\<	  ab a aaa  		(2,2)
+}
+# word boundary:
+{E	\babcd	abcd	(0,4)		perl \b not supported
+E	\babcd	:abcd:	(1,5)		perl \b not supported
+E	\bab	cab	NOMATCH
+E$	\\bab	\nab	(1,3)
+E	\btag	::tag	(2,5)
+E	abc\b	abc	(0,3)
+E	abc\b	abcd	NOMATCH
+E$	abc\\b	abc\n	(0,3)
+E	abc\b	abc::	(0,3)
+
+E	\b	  abb a abbb 	(0,0)
+}
+# within word:
+{E	\B	ab	(1,1)		perl \B not supported
+E	a\Bb	ab	(0,2)
+E	a\B	ab	(0,1)
+E	a\B	a	NOMATCH
+E	a\B	a 	NOMATCH
+}
+
+#
+# buffer operators:
+{E	\`abc	abc	(0,3)		regex++ \' not supported
+E$	\\`abc	\nabc	NOMATCH
+E	\`abc	 abc	NOMATCH
+E	abc\'	abc	(0,3)
+E$	abc\\'	abc\n	NOMATCH
+E	abc\'	abc 	NOMATCH
+}
+
+#
+# extra escape sequences:
+E$	\a	\a	(0,1)
+E$	\f	\f	(0,1)
+E$	\n	\n	(0,1)
+E$	\r	\r	(0,1)
+E$	\t	\t	(0,1)
+E$	\v	\v	(0,1)
+
+E$	\\a	\a	(0,1)
+E$	\\f	\f	(0,1)
+E$	\\n	\n	(0,1)
+E$	\\r	\r	(0,1)
+E$	\\t	\t	(0,1)
+E$	\\v	\v	(0,1)
+
+E	\\a	\a	(0,2)
+E	\\f	\f	(0,2)
+E	\\n	\n	(0,2)
+E	\\r	\r	(0,2)
+E	\\t	\t	(0,2)
+E	\\v	\v	(0,2)
+
+#
+# now follows various complex expressions designed to try and bust the matcher:
+E	a(((b)))c	abc	(0,3)(1,2)(1,2)(1,2)
+E	a(b|(c))d	abd	(0,3)(1,2)
+E	a(b|(c))d	acd	(0,3)(1,2)(1,2)
+E	a(b*|c)d	abbd	(0,4)(1,3)
+# just gotta have one DFA-buster, of course
+E	a[ab]{20}	aaaaabaaaabaaaabaaaab	(0,21)
+# and an inline expansion in case somebody gets tricky
+E	a[ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab]	aaaaabaaaabaaaabaaaab	(0,21)
+# and in case somebody just slips in an NFA...
+E	a[ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab][ab](wee|week)(knights|night)	aaaaabaaaabaaaabaaaabweeknights	(0,31)(21,24)(24,31)
+# one really big one
+E	1234567890123456789012345678901234567890123456789012345678901234567890	a1234567890123456789012345678901234567890123456789012345678901234567890b	(1,71)
+# fish for problems as brackets go past 8
+E	[ab][cd][ef][gh][ij][kl][mn]	xacegikmoq	(1,8)
+E	[ab][cd][ef][gh][ij][kl][mn][op]	xacegikmoq	(1,9)
+E	[ab][cd][ef][gh][ij][kl][mn][op][qr]	xacegikmoqy	(1,10)
+E	[ab][cd][ef][gh][ij][kl][mn][op][q]	xacegikmoqy	(1,10)
+# and as parenthesis go past 9:
+E	(a)(b)(c)(d)(e)(f)(g)(h)	zabcdefghi	(1,9)(1,2)(2,3)(3,4)(4,5)(5,6)(6,7)(7,8)(8,9)
+E	(a)(b)(c)(d)(e)(f)(g)(h)(i)	zabcdefghij	(1,10)(1,2)(2,3)(3,4)(4,5)(5,6)(6,7)(7,8)(8,9)(9,10)
+E	(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)	zabcdefghijk	(1,11)(1,2)(2,3)(3,4)(4,5)(5,6)(6,7)(7,8)(8,9)(9,10)(10,11)
+E	(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)(k)	zabcdefghijkl	(1,12)(1,2)(2,3)(3,4)(4,5)(5,6)(6,7)(7,8)(8,9)(9,10)(10,11)(11,12)
+E	(a)d|(b)c	abc	(1,3)(-1,-1)(1,2)
+E	_+((www)|(ftp)|(mailto)):_*	_wwwnocolon _mailto:	(12,20)(13,19)(-1,-1)(-1,-1)(13,19)
+
+# subtleties of matching
+E	a(b)?cd		acd	(0,3)
+E	a(b)?c\1d	acd	NOMATCH
+E	a(b?c)+d	accd	(0,4)(2,3)
+E	(wee|week)(knights|night)	weeknights	(0,10)(0,3)(3,10)
+E	.*	abc	(0,3)
+E	a(b|(c))d	abd	(0,3)(1,2)
+E	a(b|(c))d	acd	(0,3)(1,2)(1,2)
+E	a(b*|c|e)d	abbd	(0,4)(1,3)
+E	a(b*|c|e)d	acd	(0,3)(1,2)
+E	a(b*|c|e)d	ad	(0,2)(1,1)
+E	a(b?)c	abc	(0,3)(1,2)
+E	a(b?)c	ac	(0,2)(1,1)
+E	a(b+)c	abc	(0,3)(1,2)
+E	a(b+)c	abbbc	(0,5)(1,4)
+E	a(b*)c	ac	(0,2)(1,1)
+E	(a|ab)(bc([de]+)f|cde)	abcdef	(0,6)(0,1)(1,6)(3,5)
+E	a([bc]?)c	abc	(0,3)(1,2)
+E	a([bc]?)c	ac	(0,2)(1,1)
+E	a([bc]+)c	abc	(0,3)(1,2)
+E	a([bc]+)c	abcc	(0,4)(1,3)
+E	a([bc]+)bc	abcbc	(0,5)(1,3)
+E	a(bb+|b)b	abb	(0,3)(1,2)
+E	a(bbb+|bb+|b)b	abb	(0,3)(1,2)
+E	a(bbb+|bb+|b)b	abbb	(0,4)(1,3)
+E	a(bbb+|bb+|b)bb	abbb	(0,4)(1,2)
+E	(.*).*	abcdef	(0,6)(0,6)
+E	(a*)*	bc	(0,0)(0,0)
+
+# do we get the right subexpression when it is used more than once?
+E	a(b|c)*d	ad	(0,2)
+E	a(b|c)*d	abcd	(0,4)(2,3)
+E	a(b|c)+d	abd	(0,3)(1,2)
+E	a(b|c)+d	abcd	(0,4)(2,3)
+E	a(b|c?)+d	ad	(0,2)(1,1)
+E	a(b|c?)+d	abcd	(0,4)(2,3)
+E	a(b|c){0,0}d	ad	(0,2)
+E	a(b|c){0,1}d	ad	(0,2)
+E	a(b|c){0,1}d	abd	(0,3)(1,2)
+E	a(b|c){0,2}d	ad	(0,2)
+E	a(b|c){0,2}d	abcd	(0,4)(2,3)
+E	a(b|c){0,}d	ad	(0,2)
+E	a(b|c){0,}d	abcd	(0,4)(2,3)
+E	a(b|c){1,1}d	abd	(0,3)(1,2)
+E	a(b|c){1,2}d	abd	(0,3)(1,2)
+E	a(b|c){1,2}d	abcd	(0,4)(2,3)
+E	a(b|c){1,}d	abd	(0,3)(1,2)
+E	a(b|c){1,}d	abcd	(0,4)(2,3)
+E	a(b|c){2,2}d	acbd	(0,4)(2,3)
+E	a(b|c){2,2}d	abcd	(0,4)(2,3)
+E	a(b|c){2,4}d	abcd	(0,4)(2,3)
+E	a(b|c){2,4}d	abcbd	(0,5)(3,4)
+E	a(b|c){2,4}d	abcbcd	(0,6)(4,5)
+E	a(b|c){2,}d	abcd	(0,4)(2,3)
+E	a(b|c){2,}d	abcbd	(0,5)(3,4)
+E	a(b+|((c)*))+d	abd	(0,3)(1,2)
+E	a(b+|((c)*))+d	abcd	(0,4)(2,3)(2,3)(2,3)
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_NOSPEC literal
+L	\**?/{}	\**?/{}	(0,7)
+
+# - match_default normal REG_EXTENDED REG_NO_POSIX_TEST
+# try to match C++ syntax elements:
+# line comment:
+Exz$	//[^\n]*	++i //here is a line comment\n	(4,28)
+# block comment:
+Exz	/\*([^*]|\*+[^*/])*\*+/	/* here is a block comment */	(0,29)(26,27)
+Exz	/\*([^*]|\*+[^*/])*\*+/	/**/	(0,4)
+Exz	/\*([^*]|\*+[^*/])*\*+/	/***/	(0,5)
+Exz	/\*([^*]|\*+[^*/])*\*+/	/****/	(0,6)
+Exz	/\*([^*]|\*+[^*/])*\*+/	/*****/	(0,7)
+Exz	/\*([^*]|\*+[^*/])*\*+/	/*****/*/	(0,7)
+# preprossor directives:
+E$	^[[:blank:]]*#([^\n]*\\[[:space:]]+)*[^\n]*	#define some_symbol	(0,19)
+E$	^[[:blank:]]*#([^\n]*\\[[:space:]]+)*[^\n]*	#define some_symbol(x) #x	(0,25)
+E$	^[[:blank:]]*#([^\n]*\\[[:space:]]+)*[^\n]*	#define some_symbol(x) \\  \r\n  foo();\\\r\n   printf(#x);	(0,27)
+# literals:
+E	((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?	0xFF	(0,4)(0,4)(0,4)
+E	((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?	35	(0,2)(0,2)(-1,-1)(0,2)
+E	((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?	0xFFu	(0,5)(0,4)(0,4)
+E	((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?	0xFFL	(0,5)(0,4)(0,4)(-1,-1)(4,5)
+E	((0x[[:xdigit:]]+)|([[:digit:]]+))u?((int(8|16|32|64))|L)?	0xFFFFFFFFFFFFFFFFuint64	(0,24)(0,18)(0,18)(-1,-1)(19,24)(19,24)(22,24)
+# strings:
+#E	'([^\\']|\\.)*'	'\\x3A'	(0,6)(4,5)
+E	'([^\\']|\\.)*'	'\\''	(0,4)(1,3)
+E$	'([^']|\\.)*'	'\n'	(0,3)(1,2)
+
+# now try and test some unicode specific characters:
+# - match_default normal REG_EXTENDED REG_UNICODE_ONLY
+E	[[:unicode:]]+	a\0300\0400z	ECTYPE
+
+# finally try some case insensitive matches:
+# - match_default normal REG_EXTENDED REG_ICASE
+# upper and lower have no meaning here so they fail, however these
+# may compile with other libraries...
+Ei	[[:lower:]]+	Ab	(0,2)
+Ei	[[:lower:]]+	aB	(0,2)
+Ei	[[:upper:]]+	Ab	(0,2)
+Ei	[[:upper:]]+	aB	(0,2)
+Ei	0123456789@abcdefghijklmnopqrstuvwxyz_`ABCDEFGHIJKLMNOPQRSTUVWXYZ	0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_`abcdefghijklmnopqrstuvwxyz	(0,65)
+Ei	0123456789@abcdefghijklmnopqrstuvwxyz\^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ	0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz	(0,66)
+Ei	0123456789@abcdefghijklmnopqrstuvwxyz\[\\\]\^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ\{\|\}	0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}	(0,72)
+
+# known and suspected bugs:
+# - match_default normal REG_EXTENDED
+E	\(	(	(0,1)
+E	\)	)	(0,1)
+E	\$	$	(0,1)
+E	\^	^	(0,1)
+E	\.	.	(0,1)
+E	\*	*	(0,1)
+E	\+	+	(0,1)
+E	\?	?	(0,1)
+E	\[	[	(0,1)
+E	\]	]	(0,1)
+E	\|	|	(0,1)
+E	\\	\\	(0,1)
+E	#	#	(0,1)
+E	\#	#	BADESC
+Ex	\#	#	(0,1)
+E	a-	a-	(0,2)
+E	\-	-	BADESC
+Ex	\-	-	(0,1)
+E	\{	{	(0,1)
+E	\}	}	(0,1)
+E	0	0	(0,1)
+E	1	1	(0,1)
+E	9	9	(0,1)
+E	b	b	(0,1)
+E	B	B	(0,1)
+E	<	<	(0,1)
+E	>	>	(0,1)
+E	w	w	(0,1)
+E	W	W	(0,1)
+E	`	`	(0,1)
+E	'	'	(0,1)
+E$	\n	\n	(0,1)
+E	,	,	(0,1)
+E	a	a	(0,1)
+E	f	f	(0,1)
+E	n	n	(0,1)
+E	r	r	(0,1)
+E	t	t	(0,1)
+E	v	v	(0,1)
+E	c	c	(0,1)
+E	x	x	(0,1)
+E	:	:	(0,1)
+E	(\.[[:alnum:]]+){2}	w.a.b 	(1,5)(3,5)
+
+# - match_default normal REG_EXTENDED REG_ICASE
+Ei	a	A	(0,1)
+Ei	A	a	(0,1)
+Ei	[abc]+	abcABC	(0,6)
+Ei	[ABC]+	abcABC	(0,6)
+Ei	[a-z]+	abcABC	(0,6)
+Ei	[A-Z]+	abzANZ	(0,6)
+Ei	[a-Z]+	abzABZ	ERANGE
+Eix	[a-Z]+	abzABZ	NOMATCH
+Ei	[A-z]+	abzABZ	(0,6)
+Ei	[[:lower:]]+	abyzABYZ	(0,8)
+Ei	[[:upper:]]+	abzABZ	(0,6)
+Ei	[[:word:]]+	abcZZZ	(0,6)
+Ei	[[:alpha:]]+	abyzABYZ	(0,8)
+Ei	[[:alnum:]]+	09abyzABYZ	(0,10)
+
+# updated tests for version 2:
+# - match_default normal REG_EXTENDED
+E$	\x41	A	(0,1)
+E$	\xff	\xFF	(0,1)
+E$	\xFF	\xff	(0,1)
+# - match_default normal REG_EXTENDED REG_NO_POSIX_TEST
+{Exz$	\\c[	\e	(0,1)			perl \c not supported
+# - match_default normal REG_EXTENDED
+E$	\\cA	\001	(0,1)
+E$	\\cz	\032	(0,1)
+E$	\\c=	!	NOMATCH
+E$	\\c?	!	NOMATCH
+}
+E	=:	=:	(0,2)
+
+# word start:
+E	[[:<:]]abcd	  abcd	(2,6)
+E	[[:<:]]ab	cab	NOMATCH
+E$	[[:<:]]ab	\nab	(1,3)
+E	[[:<:]]tag	::tag	(2,5)
+#word end:
+E	abc[[:>:]]	abc	(0,3)
+E	abc[[:>:]]	abcd	NOMATCH
+E$	abc[[:>:]]	abc\n	(0,3)
+E	abc[[:>:]]	abc::	(0,3)
+
+# collating elements and rewritten set code:
+# - match_default normal REG_EXTENDED REG_STARTEND
+{E	[[.zero.]]	0	(0,1)		[[.element-name.]] not supported
+E	[[.one.]]	1	(0,1)
+E	[[.two.]]	2	(0,1)
+E	[[.three.]]	3	(0,1)
+E	[[.a.]]	baa	(1,2)
+#E	[[.NUL.]]	NULL	(0,1)
+E	[[.right-curly-bracket.]]	}	(0,1)
+E	[[=right-curly-bracket=]]	}	(0,1)
+}
+E	[[:<:]z]	!	ECTYPE
+E	[a[:>:]]	!	ECTYPE
+E	[[=a=]]	a	(0,1)
+# - match_default normal REG_EXTENDED REG_STARTEND REG_ICASE
+Ei	[[.A.]]	A	(0,1)
+Ei	[[.A.]]	a	(0,1)
+Ei	[[.A.]-b]+	AaBb	(0,4)
+Ei	[A-[.b.]]+	AaBb	(0,4)
+Ei	[[.a.]-B]+	AaBb	ERANGE
+Eix	[[.a.]-B]+	AaBb	NOMATCH
+Ei	[a-[.B.]]+	AaBb	ERANGE
+Eix	[a-[.B.]]+	AaBb	NOMATCH
+# - match_default normal REG_EXTENDED REG_NO_POSIX_TEST
+Exz$	[\x61]	a	(0,1)
+Exz$	[\x61-c]+	abcd	(0,3)
+Exz$	[a-\x63]+	abcd	(0,3)
+# - match_default normal REG_EXTENDED REG_STARTEND
+E	[[.a.]-c]+	abcd	(0,3)
+E	[a-[.c.]]+	abcd	(0,3)
+E	[[:alpha:]-a]	!	ERANGE
+E	[a-[:alpha:]]	!	NOMATCH
+
+# try mutli-character ligatures:
+{E	[[.ae.]]	ae	(0,2)		[[.ligature.]] not supported
+E	[[.ae.]]	aE	NOMATCH
+E	[[.AE.]]	AE	(0,2)
+E	[[.Ae.]]	Ae	(0,2)
+E	[[.ae.]-b]	a	NOMATCH
+E	[[.ae.]-b]	b	(0,1)
+E	[[.ae.]-b]	ae	(0,2)
+E	[a-[.ae.]]	a	(0,1)
+E	[a-[.ae.]]	b	NOMATCH
+E	[a-[.ae.]]	ae	(0,2)
+# - match_default normal REG_EXTENDED REG_STARTEND REG_ICASE
+Ei	[[.ae.]]	AE	(0,2)
+Ei	[[.ae.]]	Ae	(0,2)
+Ei	[[.AE.]]	Ae	(0,2)
+Ei	[[.Ae.]]	aE	(0,2)
+Ei	[[.AE.]-B]	a	NOMATCH
+Ei	[[.Ae.]-b]	b	(0,1)
+Ei	[[.Ae.]-b]	B	(0,1)
+Ei	[[.ae.]-b]	AE	(0,2)
+}
+
+# - match_default normal REG_EXTENDED REG_STARTEND
+#extended perl style escape sequences:
+{E$	\\e	\033	(0,1)		perl \e not supported
+}
+{E$	\\x1b	\033	(0,1)		perl \x not supported
+E$	\\x{1b}	\033	(0,1)
+E	\x{}	!	NOMATCH
+E	\x{	!	NOMATCH
+E	\x}	!	NOMATCH
+E	\x	!	NOMATCH
+E	\x{yy	!	NOMATCH
+E	\x{1b	!	NOMATCH
+}
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_NO_POSIX_TEST
+{Exz	\l+	ABabcAB	(2,5)		regex++ \l not supported
+Exz	[\l]+	ABabcAB	(2,5)
+Exz	[a-\l]	!	NOMATCH
+E	[a-\l]	!	ERANGE
+E	[\l-a]	!	ERANGE
+Exz	[\L]	!	(0,1)
+Exz	\L+	abABCab	(2,5)
+Exz	\L+	ab,.-ab	(2,5)
+Exz	\u+	abABCab	(2,5)
+Exz	[\u]+	abABCab	(2,5)
+Exz	[\U]	!	(0,1)
+Exz	\U+	ABabcAB	(2,5)
+}
+{Exz	\d+	ab012ab	(2,5)		perl \d not supported
+Exz	[a-\d]	!	NOMATCH
+E	[a-\d]	!	ERANGE
+E	[\d-a]	!	ERANGE
+Exz	[\d]+	ab012ad	(6,7)
+Evxz	[\d]+	ab012ad	(2,5)
+Exz	[\D]	!D	(1,2)
+Evxz	[\D]	!D	(0,1)
+Exz	\D+	01abc01	(2,5)
+Exz	\s+	ab   ab	(2,5)
+Exz	[\s]+	as   as	(1,2)
+Evxz	[\s]+	as   as	(2,5)
+Exz	[\S]	!S	(1,2)
+Evxz	[\S]	!S	(0,1)
+Exz	\S+	  abc  	(2,5)
+}
+# - match_default normal REG_EXTENDED REG_STARTEND
+{E	\Qabc	abc	(0,3)		regex++ \Q not supported
+E	\Qabc\E	abcd	(0,3)
+E	\Qabc\Ed	abcde	(0,4)
+E	\Q+*?\\E	+*?\\	(0,4)
+}
+
+{E	\C+	abcde	(0,5)		regex++ \C not supported
+}
+{E	\X+	abcde	(0,5)		regex++ \X not supported
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_UNICODE_ONLY
+E	\X+	a\768\769	(0,3)
+E	\X+	\2309\2307	(0,2)
+E	\X+	\2489\2494	(0,2)
+}
+
+# - match_default normal REG_EXTENDED REG_STARTEND
+{E	\Aabc	abc	(0,3)		regex++ \A not supported
+E	\Aabc	aabc	NOMATCH
+E	a\Aab	abc	NOMATCH
+E	abc\z	abc	(0,3)
+E	abc\z	abcd	NOMATCH
+E$	abc\\z	abc\n\n	NOMATCH
+E$	abc\\Z	abc\n	(0,3)
+E$	abc\\Z	abc\n\n	(0,3)
+E	abc\Z	abc	(0,3)
+E	\Aabc	abc   abc	(0,3)
+}
+
+{E	\Gabc	abc	(0,3)		perl \G not supported
+E	\G\w+\W+	abc  abc a cbbb   	(0,5)
+E	\Ga+b+	aaababb  abb	(0,4)
+E	\Gabc	dabcd	NOMATCH
+E	a\Gbc	abc	NOMATCH
+}
+
+#
+# now test grep,
+# basically check all our restart types - line, word, etc
+# checking each one for null and non-null matches.
+#
+# - match_default normal REG_EXTENDED REG_STARTEND REG_GREP
+E	a	 a a a aa	(1,2)
+E	a+b+	aabaabbb ab	(0,3)
+E	a(b*|c|e)d	adabbdacd	(0,2)(1,1)
+E$	a	\na\na\na\naa	(1,2)
+
+E$	^	   \n\n  \n\n\n	(0,0)
+E$	^ab	ab  \nab  ab\n	(0,2)
+E$	^[^\n]*\n	   \n  \n\n  \n	(0,4)
+
+E	abc	abc	(0,3)
+E	abc	 abc abcabc 	(1,4)
+E$	\n\n	 \n\n\n       \n      \n\n\n\n  	(1,3)
+
+E$	$	   \n\n  \n\n\n	(10,10)
+En$	$	   \n\n  \n\n\n	(3,3)
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_GREP REG_ICASE
+Ei	A	 a a a aa	(1,2)
+Ei	A+B+	aabaabbb ab	(0,3)
+Ei	A(B*|c|e)D	adabbdacd	(0,2)(1,1)
+Ei$	A	\na\na\na\naa	(1,2)
+
+Ei$	^aB	Ab  \nab  Ab\n	(0,2)
+Ei$	\\<abc	Abcabc aBc\n\nabc	(0,3)
+
+Ei	ABC	abc	(0,3)
+Ei	abc	 ABC ABCABC 	(1,4)
+
+
+#
+# now test merge,
+#
+# - match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_no_copy
+# start by testing subs:
+#	a+	...aaa,,,	($`,...)
+#	a+	...aaa,,,	($',,,,)
+#	a+	...aaa,,,	($&,aaa)
+#	a+	...aaa,,,	($0,aaa)
+#	a+	...aaa,,,	($1,NULL)
+#	a+	...aaa,,,	($15,NULL)
+#	(a+)b+	...aaabbb,,,	($1,aaa)
+#	[[:digit:]]*	123ab	(<$0>,<123><><><>)
+#	[[:digit:]]*	123ab1	(<$0>,<123><><><1>)
+
+# and now escapes:
+#	a+	...aaa,,,	($x,$x)
+#	a+	...aaa,,,	(\a,\a)
+#	a+	...aaa,,,	(\f,\f)
+#	a+	...aaa,,,	(\n,\n)
+#	a+	...aaa,,,	(\r,\r)
+#	a+	...aaa,,,	(\t,\t)
+#	a+	...aaa,,,	(\v,\v)
+
+#	a+	...aaa,,,	(\x21,!)
+#	a+	...aaa,,,	(\x{21},!)
+#	a+	...aaa,,,	(\c@,\0)
+#	a+	...aaa,,,	(\e,\27)
+#	a+	...aaa,,,	(\0101,A)
+#	a+	...aaa,,,	((\0101),A)
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_sed format_no_copy
+#	(a+)(b+)	...aabb,,	(\0,aabb)
+#	(a+)(b+)	...aabb,,	(\1,aa)
+#	(a+)(b+)	...aabb,,	(\2,bb)
+#	(a+)(b+)	...aabb,,	(&,aabb)
+#	(a+)(b+)	...aabb,,	($,$)
+#	(a+)(b+)	...aabb,,	($1,$1)
+#	(a+)(b+)	...aabb,,	(()?:,()?:)
+#	(a+)(b+)	...aabb,,	(\\,\\)
+#	(a+)(b+)	...aabb,,	(\&,&)
+
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_MERGE format_perl format_no_copy
+#	(a+)(b+)	...aabb,,	($0,aabb)
+#	(a+)(b+)	...aabb,,	($1,aa)
+#	(a+)(b+)	...aabb,,	($2,bb)
+#	(a+)(b+)	...aabb,,	($&,aabb)
+#	(a+)(b+)	...aabb,,	(&,&)
+#	(a+)(b+)	...aabb,,	(\0,\0)
+#	(a+)(b+)	...aabb,,	(()?:,()?:)
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_MERGE
+# move to copying unmatched data:
+#	a+	...aaa,,,	(bbb,...bbb,,,)
+#	a+(b+)	...aaabb,,,	($1,...bb,,,)
+#	a+(b+)	...aaabb,,,ab*abbb?	($1,...bb,,,b*bbb?)
+
+#	(a+)|(b+)	...aaabb,,,ab*abbb?	((?1A)(?2B),...AB,,,AB*AB?)
+#	(a+)|(b+)	...aaabb,,,ab*abbb?	(?1A:B,...AB,,,AB*AB?)
+#	(a+)|(b+)	...aaabb,,,ab*abbb?	((?1A:B)C,...ACBC,,,ACBC*ACBC?)
+#	(a+)|(b+)	...aaabb,,,ab*abbb?	(?1:B,...B,,,B*B?)
+
+#
+# changes to newline handling with 2.11:
+#
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_GREP
+
+E$	^.	  \n  \r\n  	(0,1)
+E$	.$	  \n  \r\n  	(8,9)
+En$	.$	  \n  \r\n  	(1,2)
+
+# - match_default normal REG_EXTENDED REG_STARTEND REG_GREP REG_UNICODE_ONLY
+#E	^.	\8232 \8233  	(0,1)
+#E	.$	\8232 \8233  	(1,2)
+
+#
+# non-greedy repeats added 21/04/00
+# - match_default normal REG_EXTENDED
+E	a{1,3}{1}	!	BADRPT
+{E	a*?	aa	(0,0)		non-greedy repeats not supported
+E	a**	aaa	(0,3)
+E	a??	aa	(0,0)
+E	a++	!	BADRPT
+E	a+?	aa	(0,1)
+E	a{1,3}?	aaa	(0,1)
+E	\w+?w	...ccccccwcccccw	(3,10)
+E	\W+\w+?w	...ccccccwcccccw	(0,10)
+E	abc|\w+?	abd	(0,1)
+E	abc|\w+?	abcd	(0,3)
+E	<\s*tag[^>]*>(.*?)<\s*/tag\s*>	 <tag>here is some text</tag> <tag></tag>	(1,29)(6,23)
+E	<\s*tag[^>]*>(.*?)<\s*/tag\s*>	 < tag attr=\"something\">here is some text< /tag > <tag></tag>	(1,51)(26,43)
+}
+
+#
+# non-marking parenthesis added 25/04/00
+# - match_default normal REG_EXTENDED
+{E	(?:abc)+	xxabcabcxx	(2,8)		non-marking parens not supported
+E	(?:a+)(b+)	xaaabbbx	(1,7)(4,7)
+E	(a+)(?:b+)	xaaabbba	(1,7)(1,4)
+E	(?:(a+)b+)	xaaabbba	(1,7)(1,4)
+E	(?:a+(b+))	xaaabbba	(1,7)(4,7)
+E	a+(?#b+)b+	xaaabbba	(1,7)
+}
+
+#
+# try some partial matches:
+# - match_partial match_default normal REG_EXTENDED REG_NO_POSIX_TEST
+Exz	(xyz)(.*)abc	xyzaaab	NOMATCH
+Exz	(xyz)(.*)abc	xyz	NOMATCH
+Exz	(xyz)(.*)abc	xy	NOMATCH

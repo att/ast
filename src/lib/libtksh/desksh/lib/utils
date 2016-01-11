@@ -1,0 +1,125 @@
+# desksh utility functions.
+
+typeset -A text_output
+typeset -A text_destructors
+
+popup=(
+	t=(
+		text=( w=text o='-relief raised -bd 2 -yscrollcommand "${parwindow}.scroll set"' s='text_output[$winid]=${window}' )
+		scroll=( w=scrollbar c='${text_output[$winid]} yview' )
+		
+		pack=( text scroll )
+		opts="-side left -fill y"
+		)
+	ok=( w=button t="Ok" c='unset text_output[$winid]; ${destructor:-destroy} ${root}' )
+	
+	pack=( t ok )
+	opts="-side top"
+	framecmd=toplevel
+	)
+
+# expects:
+#	$1 - A window identifier (string) of a window set up by
+#		text_init_window
+#
+# action:
+#	Puts the window specified on the screen.
+#
+# returns:
+#	2 if the id given is already on the screen.
+#	1 if the id given was not set initialized previously
+#	0 upon success.
+#
+function text_open_window {
+	typeset winid=$1
+	[[ ${text_winnames[$winid]} == "" ]] && return 1
+	[[ ${text_output[$winid]} != "" ]] && return 2
+
+	generate ${text_winnames[$winid]} popup "" \
+		"destructor=${text_destructors[$winid]} winid=${winid}"
+
+	[[ ${text_initial[$winid]} != "" ]] && \
+		text_winput $winid "${text_initial[$winid]}"
+
+}
+
+# expects:
+#	$1 - A window identifier (string)
+#	$2 - The (tk) name of the window to associate with it
+#	$3 - Optional destructor to use in place of tk's "destroy."
+#	$4 - Optional inital text you want to appear in the window
+#		when it is finally mapped.
+#
+# action:
+#	if the given window doesn't exist, set it up so that will when
+#	text_open_window is called; if the given window is already
+#	displayed, clear the window and put in any initial text.
+#
+function text_init_window {
+	typeset winid=$1
+	text_initial[$winid]="$4"
+	if [[ ${text_output[$winid]} != "" ]]
+	then
+		${text_output[$winid]} delete 1.0 end 
+
+		[[ $4 != "" ]] && text_winput $winid "${text_initial[$winid]}"
+	else
+		text_winnames[$winid]=$2
+		text_destructors[$winid]=${3:-destroy}
+	fi
+}
+
+
+# expects:
+#	$1 - A window identifier for a window that has been initialized
+#		with text_init_window
+#	$2 - Text to display.
+#
+# action:
+#	Outputs the text given to the window, automatically scrolling the
+#	window, unless the user moves the cursor.
+#
+# returns:
+#	1 if the window identifier is not valid
+#	0 upon success
+#
+function text_winput {
+	typeset winid=$1
+	if [[ ${text_output[$winid]} == "" ]]
+	then
+		text_open_window $winid || return 1
+	fi
+	${text_output[$winid]} insert end "${*:2}"$'\n'
+	${text_output[$winid]} yview insert
+}
+
+
+# does the obvious - convenient since ++ does not work with 
+function addone { nameref var=$1; var=$((var+1)); }
+
+
+# expects:
+#	-p - An open pipe.
+#	$1 - A filter to apply to the data.  default: echo
+#	$2 - Command used to display the data default: echo
+#	$3 - Command to run upon termination of the pipe. default: ':'
+#	$4 - Command run before data is displayed.
+#
+# action:
+#	reads from the pipe, it filters each line read and if the filter
+#	returns success, executes 
+#
+function text_read_pipe {
+	typeset result
+	while read -p -r var			# blocking on read lets tk do work
+	do
+		if result=$(${1:-echo} $var)	# filter out info not displayed
+		then
+			${4:-:}			# optional extra command
+			${2:-echo} $result	# display the result
+		fi
+
+	done
+
+	${3:-:}					# final cleanup
+}

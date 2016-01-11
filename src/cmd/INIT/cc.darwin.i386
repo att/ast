@@ -1,0 +1,73 @@
+: unix wrapper for mac osx cc : 2012-02-29 :
+
+HOSTTYPE=darwin.i386
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+CC='/usr/bin/cc -m32'
+op=init
+for arg
+do	case $op in
+	init)	op=ld
+		set ''
+		;;
+	esac
+	case $arg in
+	-c)	op=cc
+		;;
+	-E)	op=cpp
+		continue
+		;;
+	-G)	op=dll
+		continue
+		;;
+	-lc)	continue
+		;;
+	-lm)	continue
+		;;
+	-O)	continue
+		;;
+	esac
+	set "$@" "$arg"
+done
+case $# in
+0)	;;
+*)	shift ;;
+esac
+case $* in
+-v)	$CC "$@"; exit ;;
+esac
+case $op in
+init)	echo "cc: arguments expected" >&2
+	exit 1
+	;;
+cpp)	$CC -E "$@"
+	;;
+cc)	$CC -DCLK_TCK=100 "$@"
+	;;
+dll)	# what a compatibility mess -- surely they can get the apis to play nice
+	tmp=/tmp/cc.${USER:-$LOGNAME}.$$.err
+	trap "rm -f $tmp" EXIT
+	case `MACOSX_DEPLOYMENT_TARGET=10.3 ld -undefined dynamic_lookup 2>&1` in
+	*undefined*dynamic_lookup*)
+		ld -m -flat_namespace -undefined suppress -dylib -dynamic \
+			-ldylib1.o "$@" -lcc_dynamic -framework System >$tmp 2>&1
+		status=$?
+		;;
+	*)	MACOSX_DEPLOYMENT_TARGET=10.3 $CC -Wl,-flat_namespace -dynamiclib -undefined dynamic_lookup "$@" >$tmp 2>&1
+		status=$?
+		;;
+	esac
+	egrep -v ' (warning .*multiple definitions|definition) of ' $tmp >&2
+	exit $status
+	;;
+ld)	tmp=/tmp/cc.${USER:-$LOGNAME}.$$.err
+	trap "rm -f $tmp" EXIT
+	$CC -Wl,-m -DCLK_TCK=100 "$@" >$tmp 2>&1
+	status=$?
+	egrep -v ' (warning .*multiple definitions of|definition of|as lazy binding|not from earlier dynamic) ' $tmp >&2
+	exit $status
+	;;
+esac

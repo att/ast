@@ -1,0 +1,24 @@
+arch		strtoi	strtof					notes
+----		------	------					-----
+darwin.i386	32/64	6.37.38-15.307.308-18.4931.4932		libc nan sign
+darwin.ppc	32/64	6.37.38-15.307.308-31.291.308
+freebsd6.i386	32/64	6.37.38-15.307.308-18.4931.4932		DEBUG
+hp.ia64		32/64	6.37.38-15.307.308-33.4931.4932
+ibm.risc	32/64	6.37.38-15.307.308-15.307.308		libc nan sign
+linux.i386	32/64	6.37.38-15.307.308-18.4931.4932
+linux.i386-64	64/64	6.37.38-15.307.308-18.4931.4932
+linux.ia64	64/64	6.37.38-15.307.308-18.4931.4932		libc nan sign
+linux.ppc64	32/64	6.37.38-15.307.308-15.307.308
+netbsd6.i386	32/64	6.37.38-15.307.308-18.4931.4932		DEBUG
+sgi.mips3	32/64	6.37.38-15.307.308-31.307.308		libc { nan 0.0 } sign
+sol8.sun4	32/64	6.37.38-15.307.308-33.4931.4932		libc nan sign
+sol10.sun4	32/64	6.37.38-15.307.308-33.4931.4932
+
+if (tchild())
+{	/* exec'd child */
+}
+else
+{	/* original parent */
+}
+	check argv[1] for "--child"
+	child proc exec inserts "--child" as first arg

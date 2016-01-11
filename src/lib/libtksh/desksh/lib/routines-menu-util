@@ -1,0 +1,222 @@
+# File Manager -- Utilities Menu Routines
+
+function unpax_file # window
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.c
+      label $w.c.title -text "Unpacking File"
+      button $w.c.ok -text " OK " -command "test=2; pax -r -f $filename; destroy $w.c"
+      pack $w.c.title $w.c.ok
+      pack $w.c
+      tkwait variable test
+}
+
+function pax_file
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.c
+      label $w.c.title -text "Packing File"
+      button $w.c.ok -text " OK " -command "test=2; pax -w -f $filename.pax $filename; destroy $w.c"
+      pack $w.c.title $w.c.ok
+      pack $w.c
+      tkwait variable test
+}
+
+function find_file # window
+{
+	find_popup
+}
+
+function run_chmod # window
+{
+    typeset u="u+" g="g+" o="o+"
+    typeset uc=0 gc=0 oc=0
+
+    for ((i=0; i < 9; i++))
+    do  fmode[i]=${filemode:i:1}
+    done
+  
+    for ((i=0; i < 3; i++))
+    do  if [[ ${fmode[i]} != - ]] 
+        then u=$u${fmode[i]}
+             uc=1
+        fi
+    done
+    for ((i=3; i < 6; i++))
+    do  if [[ ${fmode[i]} != - ]] 
+        then g=$g${fmode[i]}
+             gc=1
+        fi
+    done
+    for ((i=6; i < 9; i++))
+    do  if [[ ${fmode[i]} != - ]] 
+        then o=$o${fmode[i]}
+             oc=1
+        fi
+    done
+    
+    if (( $uc == 1 ))
+    then chmod $u $filename
+    fi
+
+    if (( $gc == 1 ))
+    then chmod $g $filename
+    fi
+
+    if (( $oc == 1 ))
+    then chmod $o $filename
+    fi
+
+}
+
+function chmod_file # window
+{
+      typeset w=$1
+      typeset test=1
+
+      filemode=$2
+
+#      filemode=$(ls -f "%(mode)s" $filename)
+      filemode=${filemode:1}
+
+      frame $w.f
+      label $w.f.label -text "Change the below information"
+      entry $w.f.entry -width 20 -relief sunken -bd 2 -textvariable filemode
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label
+      pack $w.f.entry
+      pack $w.f.ok 
+      pack $w.f
+      tkwait variable test
+
+      run_chmod $1
+}
+
+function cmp_files # window
+{
+      ask_two_file_names $1
+      run_command_multiple_output "cmp $FileName1 $FileName2" "File Comparison"
+}
+
+function sort_file # window
+{
+      run_command_multiple_output "sort $filename" "Sort File"
+}
+
+function split_file # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Number_Lines=1
+      New_Name=""
+      frame $w.f
+      label $w.f.label -text "Enter Information"
+      label $w.f.label1 -text "Number Lines:  "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable Number_Lines
+      label $w.f.label2 -text "New File Name:  "
+      entry $w.f.entry2 -width 20 -relief sunken -bd 2 -textvariable New_Name 
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label
+      pack $w.f.label1 $w.f.entry1
+      pack $w.f.label2 $w.f.entry2
+      pack $w.f.ok 
+      pack $w.f
+      tkwait variable test
+
+      run_command_one_output "split -l $Number_Lines -f $New_Name $filename" "Splitting File" $1
+}
+
+function run_wc # window
+{
+      typeset w=$1
+      typeset test=1
+      typeset line1="Not Requested" line2="Not Requested" line3="Not Requested"
+
+      frame $w.f
+      label $w.f.label -text "Count Results"
+
+      if ((Characters == 1))
+      then   line1=$(wc -c $filename)
+      fi
+      if ((Words == 1))
+      then   line2=$(wc -w $filename)
+      fi
+      if ((Lines == 1))
+      then   line3=$(wc -l $filename)
+      fi
+
+      label $w.f.label1 -text "characters  :  $line1"
+      label $w.f.label2 -text "words       :  $line2"
+      label $w.f.label3 -text "lines       :  $line3"
+
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label $w.f.label1 $w.f.label2 $w.f.label3 $w.f.ok 
+      pack $w.f
+      tkwait variable test
+}
+
+function wc_file # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Characters=0
+      Words=0
+      Lines=0
+
+      frame $w.f
+      label $w.f.label1 -text "Word Count Options"
+      checkbutton $w.f.chars -text "Characters" -variable Characters -anchor w
+      checkbutton $w.f.words -text "Words" -variable Words -anchor w
+      checkbutton $w.f.lines -text "Lines" -variable Lines -anchor w
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f; run_wc $w"
+      pack $w.f.label1 $w.f.chars $w.f.words $w.f.lines $w.f.ok 
+      pack $w.f
+      tkwait variable test
+}
+
+function man_page # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Man_Page=""
+      frame $w.f
+      label $w.f.label1 -text "Enter Command: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable Man_Page
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.entry1
+      pack $w.f.ok 
+      pack $w.f
+      tkwait variable test
+
+      display_man_page 
+}
+
+function type_file # window
+{
+      run_command_one_output "file $filename" "Type of File" $1
+}
+
+function disk_usage # window
+{
+      run_command_one_output "du -t $filename" "Disk Usage" $1
+}
+
+function head_file # window
+{
+      how_many_lines $1
+      run_command_multiple_output "head -$Number_Lines $filename" "Head of File"
+}
+
+function tail_file # window
+{
+      how_many_lines $1
+      run_command_multiple_output "tail -$Number_Lines $filename" "Tail of File"
+}
+

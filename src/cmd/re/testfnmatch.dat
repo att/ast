@@ -1,0 +1,576 @@
+####################################################################
+#                                                                  #
+#        Copyright (C) 2000 Free Software Foundation, Inc.         #
+#                                                                  #
+#      This is free software; you can redistribute it and/or       #
+#   modify it under the terms of the GNU General Public License    #
+#          as published by the Free Software Foundation;           #
+#     either version 2, or (at your option) any later version.     #
+#                                                                  #
+#         This software is distributed in the hope that it         #
+#            will be useful, but WITHOUT ANY WARRANTY;             #
+#       without even the implied warranty of MERCHANTABILITY       #
+#               or FITNESS FOR A PARTICULAR PURPOSE.               #
+#       See the GNU General Public License for more details.       #
+#                                                                  #
+#              You should have received a copy of the              #
+#                    GNU General Public License                    #
+#         along with this software (see the file COPYING.)         #
+#                  If not, a copy is available at                  #
+#               http://www.gnu.org/copyleft/gpl.html               #
+#                                                                  #
+#               Ulrich Drepper <drepper@redhat.com>                #
+#                                                                  #
+####################################################################
+: transcribed from the gnu glibc fnmatch() tests : 2008-05-15
+
+# Derived from the IEEE 2003.2 text.  The standard only contains some
+# wording describing the situations to be tested.  It does not specify
+# any specific tests.  I.e., the tests below are in no case sufficient.
+# They are hopefully necessary, though.
+
+# B.6 004(C)
+S	!#%+,-./01234567889	!#%+,-./01234567889		OK
+S	:;=@ABCDEFGHIJKLMNO	:;=@ABCDEFGHIJKLMNO		OK
+S	PQRSTUVWXYZ]abcdefg	PQRSTUVWXYZ]abcdefg		OK
+S	hijklmnopqrstuvwxyz	hijklmnopqrstuvwxyz		OK
+S	^_{}~			^_{}~				OK
+
+# B.6 005(C)
+S$	\\"\\$\\&\\'\\(\\)	"$&'()		OK
+S$	\\*\\?\\[\\\\\\`\\|	*?[\\`|		OK
+S$	\\<\\>	<>				OK
+
+# B.6 006(C)
+S	[?*[][?*[][?*[]		?*[		OK
+S	?/b			a/b		OK
+
+# B.6 007(C)
+S	a?b			a/b		OK
+S	a/?			a/b		OK
+S	?/b			aa/b		NOMATCH
+S	a?b			aa/b		NOMATCH
+S	a/?			a/bb		NOMATCH
+
+# B.6 009(C)
+S	[abc]			abc		NOMATCH
+S	[abc]			x		NOMATCH
+S	[abc]			a		OK
+S	[[abc]			[		OK
+S	[][abc]			a		OK
+S	[]a]]			a]		OK
+
+# B.6 010(C)
+S	[!abc]			xyz		NOMATCH
+S	[!abc]			x		OK
+S	[!abc]			a		NOMATCH
+
+# B.6 011(C)
+S	[][abc]			]		OK
+S	[][abc]			abc]		NOMATCH
+S	[][]abc			[]abc		NOMATCH
+S	[!]]			]		NOMATCH
+S	[!]a]			aa]		NOMATCH
+S	[!a]			]		OK
+S	[!a]]			]]		OK
+
+# B.6 012(C)
+S	[[.a.]]			a		OK
+S	[[.-.]]			-		OK
+S	[[.-.][.].]]		-		OK
+S	[[.].][.-.]]		-		OK
+S	[[.-.][=u=]]		-		OK
+S	[[.-.][:alpha:]]	-		OK
+S	[![.a.]]		a		NOMATCH
+
+# B.6 013(C)
+S	[[.b.]]			a		NOMATCH
+S	[[.b.][.c.]]		a		NOMATCH
+S	[[.b.][=b=]]		a		NOMATCH
+
+
+# B.6 015(C)
+S	[[=a=]]			a		OK
+S	[[=a=]b]		b		OK
+S	[[=a=][=b=]]		b		OK
+S	[[=a=][=b=]]		a		OK
+S	[[=a=][.b.]]		a		OK
+S	[[=a=][:digit:]]	a		OK
+
+# B.6 016(C)
+S	[[=a=]b]		=		NOMATCH
+S	[[=a=]b]		]		NOMATCH
+S	[[=b=][=c=]]		a		NOMATCH
+S	[[=b=][.].]]		a		NOMATCH
+S	[[=b=][:digit:]]	a		NOMATCH
+
+# B.6 017(C)
+S	[[:alnum:]]		a		OK
+S	[![:alnum:]]		a		NOMATCH
+S	[[:alnum:]]		-		NOMATCH
+S	[[:alnum:]]a		a]a		NOMATCH
+S	[[:alnum:]-]		-		OK
+S	[[:alnum:]]a		aa		OK
+S	[![:alnum:]]		-		OK
+S	[!][:alnum:]]		]		NOMATCH
+S	[![:alnum:][]		[		NOMATCH
+S	[[:alnum:]]		a		OK
+S	[[:alnum:]]		b		OK
+S	[[:alnum:]]		c		OK
+S	[[:alnum:]]		d		OK
+S	[[:alnum:]]		e		OK
+S	[[:alnum:]]		f		OK
+S	[[:alnum:]]		g		OK
+S	[[:alnum:]]		h		OK
+S	[[:alnum:]]		i		OK
+S	[[:alnum:]]		j		OK
+S	[[:alnum:]]		k		OK
+S	[[:alnum:]]		l		OK
+S	[[:alnum:]]		m		OK
+S	[[:alnum:]]		n		OK
+S	[[:alnum:]]		o		OK
+S	[[:alnum:]]		p		OK
+S	[[:alnum:]]		q		OK
+S	[[:alnum:]]		r		OK
+S	[[:alnum:]]		s		OK
+S	[[:alnum:]]		t		OK
+S	[[:alnum:]]		u		OK
+S	[[:alnum:]]		v		OK
+S	[[:alnum:]]		w		OK
+S	[[:alnum:]]		x		OK
+S	[[:alnum:]]		y		OK
+S	[[:alnum:]]		z		OK
+S	[[:alnum:]]		A		OK
+S	[[:alnum:]]		B		OK
+S	[[:alnum:]]		C		OK
+S	[[:alnum:]]		D		OK
+S	[[:alnum:]]		E		OK
+S	[[:alnum:]]		F		OK
+S	[[:alnum:]]		G		OK
+S	[[:alnum:]]		H		OK
+S	[[:alnum:]]		I		OK
+S	[[:alnum:]]		J		OK
+S	[[:alnum:]]		K		OK
+S	[[:alnum:]]		L		OK
+S	[[:alnum:]]		M		OK
+S	[[:alnum:]]		N		OK
+S	[[:alnum:]]		O		OK
+S	[[:alnum:]]		P		OK
+S	[[:alnum:]]		Q		OK
+S	[[:alnum:]]		R		OK
+S	[[:alnum:]]		S		OK
+S	[[:alnum:]]		T		OK
+S	[[:alnum:]]		U		OK
+S	[[:alnum:]]		V		OK
+S	[[:alnum:]]		W		OK
+S	[[:alnum:]]		X		OK
+S	[[:alnum:]]		Y		OK
+S	[[:alnum:]]		Z		OK
+S	[[:alnum:]]		0		OK
+S	[[:alnum:]]		1		OK
+S	[[:alnum:]]		2		OK
+S	[[:alnum:]]		3		OK
+S	[[:alnum:]]		4		OK
+S	[[:alnum:]]		5		OK
+S	[[:alnum:]]		6		OK
+S	[[:alnum:]]		7		OK
+S	[[:alnum:]]		8		OK
+S	[[:alnum:]]		9		OK
+S	[[:alnum:]]		!		NOMATCH
+S	[[:alnum:]]		#		NOMATCH
+S	[[:alnum:]]		%		NOMATCH
+S	[[:alnum:]]		+		NOMATCH
+S	[[:alnum:]]		,		NOMATCH
+S	[[:alnum:]]		-		NOMATCH
+S	[[:alnum:]]		.		NOMATCH
+S	[[:alnum:]]		/		NOMATCH
+S	[[:alnum:]]		:		NOMATCH
+S	[[:alnum:]]		;		NOMATCH
+S	[[:alnum:]]		=		NOMATCH
+S	[[:alnum:]]		@		NOMATCH
+S	[[:alnum:]]		[		NOMATCH
+S$	[[:alnum:]]		\\		NOMATCH
+S	[[:alnum:]]		]		NOMATCH
+S	[[:alnum:]]		^		NOMATCH
+S	[[:alnum:]]		_		NOMATCH
+S	[[:alnum:]]		{		NOMATCH
+S	[[:alnum:]]		}		NOMATCH
+S	[[:alnum:]]		~		NOMATCH
+S	[[:alnum:]]		"		NOMATCH
+S	[[:alnum:]]		$		NOMATCH
+S	[[:alnum:]]		&		NOMATCH
+S	[[:alnum:]]		'		NOMATCH
+S	[[:alnum:]]		(		NOMATCH
+S	[[:alnum:]]		)		NOMATCH
+S	[[:alnum:]]		*		NOMATCH
+S	[[:alnum:]]		?		NOMATCH
+S	[[:alnum:]]		`		NOMATCH
+S	[[:alnum:]]		|		NOMATCH
+S	[[:alnum:]]		<		NOMATCH
+S	[[:alnum:]]		>		NOMATCH
+S$	[[:cntrl:]]		\t		OK
+S	[[:cntrl:]]		t		NOMATCH
+S	[[:lower:]]		t		OK
+S$	[[:lower:]]		\t		NOMATCH
+S	[[:lower:]]		T		NOMATCH
+S$	[[:space:]]		\t		OK
+S	[[:space:]]		t		NOMATCH
+S	[[:alpha:]]		t		OK
+S$	[[:alpha:]]		\t		NOMATCH
+S	[[:digit:]]		0		OK
+S$	[[:digit:]]		\t		NOMATCH
+S	[[:digit:]]		t		NOMATCH
+S$	[[:print:]]		\t		NOMATCH
+S	[[:print:]]		t		OK
+S	[[:upper:]]		T		OK
+S$	[[:upper:]]		\t		NOMATCH
+S	[[:upper:]]		t		NOMATCH
+S$	[[:blank:]]		\t		OK
+S	[[:blank:]]		t		NOMATCH
+S$	[[:graph:]]		\t		NOMATCH
+S	[[:graph:]]		t		OK
+S	[[:punct:]]		.		OK
+S	[[:punct:]]		t		NOMATCH
+S$	[[:punct:]]		\t		NOMATCH
+S	[[:xdigit:]]		0		OK
+S$	[[:xdigit:]]		\t		NOMATCH
+S	[[:xdigit:]]		a		OK
+S	[[:xdigit:]]		A		OK
+S	[[:xdigit:]]		t		NOMATCH
+S	[[alpha]]		a		NOMATCH
+S	[[alpha:]]		a		NOMATCH
+S	[[alpha]]		a]		OK
+S	[[alpha:]]		a]		OK
+S	[[:alpha:][.b.]]	a		OK
+S	[[:alpha:][=b=]]	a		OK
+S	[[:alpha:][:digit:]]	a		OK
+S	[[:digit:][:alpha:]]	a		OK
+
+# B.6 018(C)
+S	[a-c]			a		OK
+S	[a-c]			b		OK
+S	[a-c]			c		OK
+S	[b-c]			a		NOMATCH
+S	[b-c]			d		NOMATCH
+S	[a-c]			B		NOMATCH
+S	[A-C]			b		NOMATCH
+S	[a-c]			NULL		NOMATCH
+S	[a-ca-z]		as		NOMATCH
+S	[[.a.]-c]		a		OK
+S	[a-[.c.]]		a		OK
+S	[[.a.]-[.c.]]		a		OK
+S	[[.a.]-c]		b		OK
+S	[a-[.c.]]		b		OK
+S	[[.a.]-[.c.]]		b		OK
+S	[[.a.]-c]		c		OK
+S	[a-[.c.]]		c		OK
+S	[[.a.]-[.c.]]		c		OK
+S	[[.a.]-c]		d		NOMATCH
+S	[a-[.c.]]		d		NOMATCH
+S	[[.a.]-[.c.]]		d		NOMATCH
+
+# B.6 019(C)
+S	[c-a]			a		OK
+S	[[.c.]-a]		a		OK
+S	[c-[.a.]]		a		OK
+S	[[.c.]-[.a.]]		a		OK
+S	[c-a]			c		OK
+S	[[.c.]-a]		c		OK
+S	[c-[.a.]]		c		OK
+S	[[.c.]-[.a.]]		c		OK
+
+# B.6 020(C)
+S	[a-c0-9]		a		OK
+S	[a-c0-9]		d		NOMATCH
+S	[a-c0-9]		B		NOMATCH
+
+# B.6 021(C)
+S	[-a]			-		OK
+S	[-b]			a		NOMATCH
+S	[!-a]			-		NOMATCH
+S	[!-b]			a		OK
+S	[a-c-0-9]		-		NOMATCH
+S	[a-c-0-9]		b		OK
+S	a[0-1-3]		a2		OK
+S	a[01-3]			a2		OK
+
+# B.6 024(C)
+S	*			NULL		OK
+S	*			asd/sdf		OK
+
+# B.6 025(C)
+S	[a-c][a-z]		as		OK
+S	??			as		OK
+
+# B.6 026(C)
+S	as*df			asd/sdf		OK
+S	as*			asd/sdf		OK
+S	*df			asd/sdf		OK
+S	as*dg			asd/sdf		NOMATCH
+S	as*df			asdf		OK
+S	as*df?			asdf		NOMATCH
+S	as*??			asdf		OK
+S	a*???			asdf		OK
+S	*????			asdf		OK
+S	????*			asdf		OK
+S	??*?			asdf		OK
+
+# B.6 027(C)
+S	/			/		OK
+S	/*			/		OK
+S	*/			/		OK
+S	/?			/		NOMATCH
+S	?/			/		NOMATCH
+S	?			/		OK
+S	?			.		OK
+S	??			/.		OK
+S	[!a-c]			/		OK
+S	[!a-c]			.		OK
+
+# B.6 029(C)
+Sp	/			/		OK
+Sp	//			//		OK
+Sp	/*			/.a		OK
+Sp	/?a			/.a		OK
+Sp	/[!a-z]a		/.a		OK
+Sp	/*/?b			/.a/.b		OK
+
+# B.6 030(C)
+Sp	?			/		NOMATCH
+Sp	*			/		NOMATCH
+Sp	a?b			a/b		NOMATCH
+Sp	/*b			/.a/.b		NOMATCH
+
+# B.6 031(C)
+S$	\\/\\$			/$		OK
+S$	\\/\\[			/[		OK
+S$	\\/[			/[		NOMATCH
+
+# B.6 032(C)
+Ss$	\\/\\$			/$		NOMATCH
+Ss$	\\/\\$			/\\$		NOMATCH
+Ss$	\\/\\$			\\/\\$		OK
+
+# B.6 033(C)
+Sd	.*			.asd		OK
+Sd	*			/.asd		OK
+Sd	*/?*f			/as/.df		OK
+Sd	.[!a-z]*		..asd		OK
+
+# B.6 034(C)
+Sd	*			.asd		NOMATCH
+Sd	?asd			.asd		NOMATCH
+Sd	[!a-z]*			.asd		NOMATCH
+
+# B.6 035(C)
+Sdp	/.			/.		OK
+Sdp	/.*/.*			/.a./.b.	OK
+Sdp	/.??/.??		/.a./.b.	OK
+
+# B.6 036(C)
+Sdp	*			/.		NOMATCH
+Sdp	/*			/.		NOMATCH
+Sdp	/?			/.		NOMATCH
+Sdp	/[!a-z]			/.		NOMATCH
+Sdp	/*/*			/a./.b.		NOMATCH
+Sdp	/??/???			/a./.b.		NOMATCH
+
+# Test of GNU extensions.
+Sgp	x			x		OK
+Sgp	x			x/y		OK
+Sgp	x			x/y/z		OK
+Sgp	*			x		OK
+Sgp	*			x/y		OK
+Sgp	*			x/y/z		OK
+Sgp	*x			x		OK
+Sgp	*x			x/y		OK
+Sgp	*x			x/y/z		OK
+Sgp	x*			x		OK
+Sgp	x*			x/y		OK
+Sgp	x*			x/y/z		OK
+Sgp	a			x		NOMATCH
+Sgp	a			x/y		NOMATCH
+Sgp	a			x/y/z		NOMATCH
+Sgp	x/y			x		NOMATCH
+Sgp	x/y			x/y		OK
+Sgp	x/y			x/y/z		OK
+Sgp	x?y			x		NOMATCH
+Sgp	x?y			x/y		NOMATCH
+Sgp	x?y			x/y/z		NOMATCH
+
+# Following are tests outside the scope of IEEE 2003.2 since they are using
+# locales other than the C locale.  The main focus of the tests is on the
+# handling of ranges and the recognition of character (vs bytes).
+
+{C	en_US.UTF-8
+
+{S$	?		\xC3\x89	(0,2)	locale does not support UTF-8
+
+S	[a-z]		a		OK
+S	[a-z]		z		OK
+S$	[a-z]		\xC3\xA4	OK
+S$	[a-z]		\xC3\xB6	OK
+S$	[a-z]		\xC3\xBC	OK
+S	[a-z]		A		NOMATCH
+S	[a-z]		Z		NOMATCH
+S$	[a-z]		\xC3\x84	NOMATCH
+S$	[a-z]		\xC3\x96	NOMATCH
+S$	[a-z]		\xC3\x9C	NOMATCH
+S	[A-Z]		a		NOMATCH
+S	[A-Z]		z		NOMATCH
+S$	[A-Z]		\xC3\xA4	NOMATCH
+S$	[A-Z]		\xC3\xB6	NOMATCH
+S$	[A-Z]		\xC3\xBC	NOMATCH
+S	[A-Z]		A		OK
+S	[A-Z]		Z		OK
+S$	[A-Z]		\xC3\x84	OK
+S$	[A-Z]		\xC3\x96	OK
+S$	[A-Z]		\xC3\x9C	OK
+S	[[:lower:]]	a		OK
+S	[[:lower:]]	z		OK
+S$	[[:lower:]]	\xC3\xA4	OK
+S$	[[:lower:]]	\xC3\xB6	OK
+S$	[[:lower:]]	\xC3\xBC	OK
+S	[[:lower:]]	A		NOMATCH
+S	[[:lower:]]	Z		NOMATCH
+S$	[[:lower:]]	\xC3\x84	NOMATCH
+S$	[[:lower:]]	\xC3\x96	NOMATCH
+S$	[[:lower:]]	\xC3\x9C	NOMATCH
+S	[[:upper:]]	a		NOMATCH
+S	[[:upper:]]	z		NOMATCH
+S$	[[:upper:]]	\xC3\xA4	NOMATCH
+S$	[[:upper:]]	\xC3\xB6	NOMATCH
+S$	[[:upper:]]	\xC3\xBC	NOMATCH
+S	[[:upper:]]	A		OK
+S	[[:upper:]]	Z		OK
+S$	[[:upper:]]	\xC3\x84	OK
+S$	[[:upper:]]	\xC3\x96	OK
+S$	[[:upper:]]	\xC3\x9C	OK
+S	[[:alpha:]]	a		OK
+S	[[:alpha:]]	z		OK
+S$	[[:alpha:]]	\xC3\xA4	OK
+S$	[[:alpha:]]	\xC3\xB6	OK
+S$	[[:alpha:]]	\xC3\xBC	OK
+S	[[:alpha:]]	A		OK
+S	[[:alpha:]]	Z		OK
+S$	[[:alpha:]]	\xC3\x84	OK
+S$	[[:alpha:]]	\xC3\x96	OK
+S$	[[:alpha:]]	\xC3\x9C	OK
+
+S	[[=a=]b]	a		OK
+S$	[[=a=]b]	\xC3\xA2	OK
+S$	[[=a=]b]	\xC3\xA0	OK
+S$	[[=a=]b]	\xC3\xA1	OK
+S$	[[=a=]b]	\xC3\xA4	OK
+S	[[=a=]b]	b		OK
+S	[[=a=]b]	c		NOMATCH
+S$	[[=\xC3\xA2=]b]	a		OK
+S$	[[=\xC3\xA2=]b]	\xC3\xA2	OK
+S$	[[=\xC3\xA2=]b]	\xC3\xA0	OK
+S$	[[=\xC3\xA2=]b]	\xC3\xA1	OK
+S$	[[=\xC3\xA2=]b]	\xC3\xA4	OK
+S$	[[=\xC3\xA2=]b]	b		OK
+S$	[[=\xC3\xA2=]b]	c		NOMATCH
+S$	[[=\xC3\xA0=]b]	a		OK
+S$	[[=\xC3\xA0=]b]	\xC3\xA2	OK
+S$	[[=\xC3\xA0=]b]	\xC3\xA0	OK
+S$	[[=\xC3\xA0=]b]	\xC3\xA1	OK
+S$	[[=\xC3\xA0=]b]	\xC3\xA4	OK
+S$	[[=\xC3\xA0=]b]	b		OK
+S$	[[=\xC3\xA0=]b]	c		NOMATCH
+S$	[[=\xC3\xA1=]b]	a		OK
+S$	[[=\xC3\xA1=]b]	\xC3\xA2	OK
+S$	[[=\xC3\xA1=]b]	\xC3\xA0	OK
+S$	[[=\xC3\xA1=]b]	\xC3\xA1	OK
+S$	[[=\xC3\xA1=]b]	\xC3\xA4	OK
+S$	[[=\xC3\xA1=]b]	b		OK
+S$	[[=\xC3\xA1=]b]	c		NOMATCH
+S$	[[=\xC3\xA4=]b]	a		OK
+S$	[[=\xC3\xA4=]b]	\xC3\xA2	OK
+S$	[[=\xC3\xA4=]b]	\xC3\xA0	OK
+S$	[[=\xC3\xA4=]b]	\xC3\xA1	OK
+S$	[[=\xC3\xA4=]b]	\xC3\xA4	OK
+S$	[[=\xC3\xA4=]b]	b		OK
+S$	[[=\xC3\xA4=]b]	c		NOMATCH
+
+}
+
+}
+
+: transcribed from the gnu glibc testfnm.c
+
+Sd	*LIB*		lib		NOMATCH
+Sdi	*LIB*		lib		OK
+S	a[/]b		a/b		OK
+S	[a-z]/[a-z]	a/b		OK
+Sp	*		a/b		NOMATCH
+Sp	*[b]		a/b		NOMATCH
+S	[*]/b		a/b		NOMATCH
+S	[*]/b		*/b		OK
+S	[?]/b		a/b		NOMATCH
+S	[?]/b		?/b		OK
+S	[[a]/b		a/b		OK
+S	[[a]/b		[/b		OK
+S$	\\*/b		a/b		NOMATCH
+S$	\\*/b		*/b		OK
+S$	\\?/b		a/b		NOMATCH
+S$	\\?/b		?/b		OK
+S$	\\[/b		[/b		OK
+S	??/b		aa/b		OK
+S	???b		aa/b		OK
+Sp	???b		aa/b		NOMATCH
+Sdp	?a/b		.a/b		NOMATCH
+Sdp	a/?b		a/.b		NOMATCH
+Sdp	*a/b		.a/b		NOMATCH
+Sdp	a/*b		a/.b		NOMATCH
+Sdp	[.]a/b		.a/b		NOMATCH
+Sdp	a/[.]b		a/.b		NOMATCH
+Sdp	*/?		a/b		OK
+Sdp	?/*		a/b		OK
+Sdp	.*/?		.a/b		OK
+Sdp	*/.?		a/.b		OK
+Sdp	*/*		a/.b		NOMATCH
+Sd	*?*/*		a/.b		OK
+Sdp	*[.]/b		a./b		OK
+
+Sp	*[[:alpha:]]/*[[:alnum:]]	a/b			OK
+Sp	*[![:digit:]]*/[![d-d]		a/b			OK
+Sp	*[![:digit:]]*/[[d-d]		a/[			OK
+Sp	*[![:digit:]]*/[![d-d]		a/[			NOMATCH
+Sp	*[![:digit:]]*/[![:d-d]		a/b			NOMATCH
+Sp	*[![:digit:]]*/[![:d-d]		a/[			NOMATCH
+Sp	*[![:digit:]]*/[[:d-d]		a/[			NOMATCH
+
+Sdp	a?b		a.b		OK
+Sdp	a*b		a.b		OK
+Sdp	a[.]b		a.b		OK
+Sgp	*a*		a/b		OK
+Sgp	*a?		ab/c		OK
+Sgp	a?		ab/c		OK
+
+Sp	a[/]b		a/b		OK
+Sp	*[/]b		a/b		OK
+S	[/b		[/b		OK
+
+# path prefix tests
+
+Slp	foo*		foobar/frobozz		(0,7)
+
+Sgp	x		x			(0,1)
+Sgp	x		x/y			(0,1)
+Sgp	x		x/y/z			(0,1)
+Sgp	*		x			(0,1)
+Sgp	*		x/y			(0,1)
+Sgp	*		x/y/z			(0,1)
+Sgp	x*		x			(0,1)
+Sgp	x*		x/y			(0,1)
+Sgp	x*		x/y/z			(0,1)
+Sgp	a		x			NOMATCH
+Sgp	a		x/y			NOMATCH
+Sgp	a		x/y/z			NOMATCH
+Sgp	x/y		x			NOMATCH
+Sgp	x/y		x/y			(0,4)
+Sgp	x/y		x/y/z			(0,4)
+Sgp	x?y		x			NOMATCH
+Sgp	x?y		x/y			NOMATCH
+Sgp	x?y		x/y/z			NOMATCH

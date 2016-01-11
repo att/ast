@@ -1,0 +1,90 @@
+======================================
+Tksh -  Tcl/Tk extension for KornShell
+======================================
+
+Jeff Korn
+jlk@research.att.com
+
+2/10/00	(Version 7.6)
+
+Introduction
+------------
+
+This directory contains source and documentation for Tksh, an
+implementation of the Tcl C library on top of the Kornshell
+API.  Tksh allows Tcl libraries such as Tk to run on top of
+ksh93 without modification, and will also interpret Tcl
+scripts.  Tcl version 7.6 is implemented.  Tk version 4.2
+is provided with Tksh.
+
+Documentation
+-------------
+
+This directory contains the man page for tksh ("tksh.1").
+To print the man page, use troff with the normal -man macros:
+	troff -man tksh.1
+
+A paper describing Tksh is available on the Tksh homepage,
+as well as more up to date information.  The URL is:
+	http://www.cs.princeton.edu/~jlk/tksh
+
+
+Prerequisites
+-------------
+
+Tksh requires that you have the AST libraries (libshell.a,
+libcmd.a and libast.a) and required header files.  Tksh
+requires nmake to build, which is also part of the AST
+package.  If you do not have this software, you can obtain
+a copy at:
+
+	http://www.research.att.com/sw/tools/reuse
+
+You should be using ksh93e or later (Tksh will also work with
+ksh93d, but is less stable and requires the object file "main.o"
+from the ksh distribution).
+
+Installing Tksh
+---------------
+
+Tksh will install with any ANSI C compiler (tested with gcc) and
+nmake.   Typing "nmake" will run the configuration script and compile
+Tksh.  If compilation is succesful, you can try out tksh by running
+the binary "tksh" in the compile directory.
+
+There is a demo that you can run (the standard Tk demo) by typing
+	./tksh widget
+
+To install tksh, run:
+	nmake all install INSTALLROOT=directory-name
+Tksh will place the binary under $INSTALLROOT/bin
+and libraries under $INSTALLROOT/lib
+
+Examples
+--------
+
+In the "scripts" directory, there are a couple of example scripts
+written in Tksh.  The script "watchdir" is a good example
+of using shell and Tk together.  It should be run interactively
+(by using the "." command in ksh).  The script "mailfile" is
+a script that implements an open file dialog box and allows the
+user to email a file or directory.
+
+The directory desksh contains an example of a desktop environment
+written with Tksh.  This is a work in progress.
+
+Debugging
+---------
+
+To compile a version for debugging, define "DEBUG".  If Tksh is
+compiled as a debug version, setting the environment variable
+"TKSHDEBUG" (for example, by running the command as "TKSHDEBUG=1 ./tksh")
+will cause Tksh to print (many!) debug messages to stderr.
+
+Bugs
+----
+
+Send bug reports to me (jlk@research.att.com).  I'll try to fix
+problems when I can, but I don't have too much time to support
+this software.  Please include as much information as possible
+in your bug report.

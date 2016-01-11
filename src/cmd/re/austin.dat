@@ -1,0 +1,27 @@
+: www.opengroup.org austin-group-l mailing list examples 2002-08-07
+
+E	((week|wee)(night|knights))(s*)	weeknights	(0,10)(0,10)(0,3)(3,10)(10,10)	RE-ASSOC.3696.a
+E	(w|wx)(y|x.*)			wxyz		(0,4)(0,1)(1,4)			RE-ASSOC.3703.a
+E	(w|wx)(y|x.*).*			wxyz		(0,4)(0,2)(2,3)			RE-ASSOC.3703.b
+B	\(a\{2,3\}\)\1*			aaaa		(0,4)(0,2)			RE-ASSOC.3708.a
+B	\(a\{2,3\}\)\1*			aaa		(0,3)(0,3)			RE-ASSOC.3709.a
+B	\(a\{2,3\}\)\1			aaaa		(0,4)(0,2)			RE-ASSOC.3709.b
+B	\(a*\(b\)*\)\{2\}\2		ba		NOMATCH				RE-ASSOC.3713.a
+E	((..)*(.....)*)*		xxxxx		(0,5)(0,5)(?,?)(0,5)			RE-ASSOC.3713.b
+Bu	\(^b\)\1			bbbb		(0,2)(0,1)
+E	(^b)\1				bbbb		(0,2)(0,1)			RE-ASSOC.3713.d
+
+E	(week|wee)(night|knights)(s*)	weeknights	(0,10)(0,4)(4,9)(9,10)		RE-CONCAT.3695.a
+E	(.|..).*			ab		(0,2)(0,2)			RE-CONCAT.3695.b
+E	(..)				ab		(0,2)(0,2)			RE-CONCAT.3695.c
+E	(.{1,2})			ab		(0,2)(0,2)			RE-CONCAT.3695.d
+E	(wee|week)(knights|night)(s*)	weeknights	(0,10)(0,4)(4,9)(9,10)		RE-CONCAT.3695.e
+E	(wee|week)(knights|night)	weeknights	(0,10)(0,3)(3,10)		RE-CONCAT.3695.f
+E	(week|wee)(night|knights)	weeknights	(0,10)(0,3)(3,10)		RE-CONCAT.3695.g
+B	\(\(abc\)\{0,2\}\(abc\)\{0,2\}\)\3	abcabc	(0,6)(0,3)(?,?)(0,3)		RE-CONCAT.3695.h
+
+E	(a.*z|b.*y)*.*			azbazbyc	(0,8)(5,7)			RE-ITERATE.3698.a
+E	(x?)*y\1z?			xxxxyz		(0,6)(4,4)			RE-ITERATE.3748.a
+
+E	(wee)(k*)(night|knights)(s*)	weeknights	(0,10)(0,3)(3,4)(4,9)(9,10)	RE-ASSOC.0000.a
+E	(wee)k*(night|knights)(s*)	weeknights	(0,10)(0,3)(4,9)(9,10)		RE-ASSOC.0000.b

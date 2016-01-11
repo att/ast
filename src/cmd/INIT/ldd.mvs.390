@@ -1,0 +1,18 @@
+: mvs.390 ldd
+case $# in
+1)	header=0 ;;
+*)	header=1 ;;
+esac
+for file
+do	case $header in
+	1)	echo "$file:"
+		header=2
+		;;
+	2)	echo
+		echo "$file:"
+		;;
+	esac
+	strings $file |
+	sed -e '/\<[[:lower:]][[:alnum:]]*\.dll\>/!d' -e 's/^/	/' |
+	sort -u
+done

@@ -1,0 +1,1927 @@
+.\"
+.\" G. S. Fowler
+.\" AT&T Bell Laboratories
+.\"
+.\"
+.de EX          \" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS
+.PD 0
+.ft 5
+.nf
+..
+.de EE          \" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.TH CPP 1
+.SH NAME
+cpp \- standalone C preprocessor
+.SH SYNOPSIS
+.B /lib/cpp [
+option ...
+.B ] [
+ifile
+.B [
+ofile
+.B ] ]
+.SH DESCRIPTION
+.PP
+.I cpp
+is the standalone preprocessor that is automatically invoked by the
+.IR cc (1)
+command.
+Although primarily intended for the
+.B C
+language,
+there are several options that support
+preprocessing of other languages.
+.PP
+.I cpp
+accepts two optional file name arguments.
+.I ifile
+and
+.I ofile
+are respectively the input and output for the preprocessor,
+defaulting to standard input
+and standard output if not specified.
+.B WARNING:
+this is a non-standard file argument syntax that is required by some C
+compiler implementations.
+.SS "Dialects"
+.I cpp
+preprocesses one of two dialects.  Each of them has three modes - 
+.B strict
+,
+.B transition
+, and
+.B C++
+:
+.TP
+.B ansi
+The default dialect
+.B ansi
+provides a conforming implementation, with extensions, of the
+preprocessing translation stages defined in the ANSI C standard.
+Refer to this document for detailed descriptions.
+The macro
+.B __STDC__
+is predefined in this dialect.
+.TP
+.B compatibility
+This dialect provides almost complete compatibility with the old (Reiser)
+.IR cpp .
+Non-supported features of old
+.I cpp
+appear in the diagnostics when possible.
+The macro
+.B __STDC__
+is not predefined in this dialect.
+Refer to the
+.B Compatibility
+section below for a description of differences between this and the
+.B ansi
+dialect.
+.PP
+The dialects may have a strict interpretation, controlled by the
+.B \-D\-S
+option.
+When the
+.B strict
+mode is in effect,
+warning diagnostics are issued when dialect extensions are used in
+.B non-hosted
+files (see the
+.B \-I\-H
+option below).
+.PP
+The macro
+.B __STDPP__
+is predefined to be 1 in all dialects.
+.SS "Options"
+The options are processed in order from left to right.
+Options issuing directives are executed after \fB"pp_default.h"\fP
+is read.
+The options are:
+.TP
+.BI \-A arg
+SVR4 assertion.
+.I arg
+is the name of assertion.  This option is equivalent to the directive
+\fB#assert\fP \fIarg\fP.
+.TP
+.B \-C
+Do not strip comments from the input files.
+.TP
+.BI \-D arg
+Additional
+.I cpp
+options accepted by most versions of
+.IR cc (1).
+.I arg
+may be:
+.RS
+.PD 0
+.TP
+.B \-C
+Preprocess the
+.B compatibility
+dialect.
+.TP
+.BI \-D level
+Set the debug trace level to
+.IR level .
+See the
+.B pp:debug
+pragma below.
+.TP
+.BI \-F filename
+Change the name of the input file reported in the line control information to
+.IR filename .
+.TP
+.B \-H
+Mark all files
+.BR hosted .
+See the
+.B \-I\-H
+option below.
+.TP
+\fB\-L\fP[\fIline-directive\fP]
+Change the directive name for line number control output directives to 
+.IR line-directive .
+The line number control output directives are of the form
+\fB#\fP\fIline-directive line "file"\fP.
+The defaults are
+.B line
+if
+.I line-directive
+is omitted, and null if the
+.B \-D\-L
+option is omitted.
+.TP
+.B \-M
+Mark all files to be included only once.
+See the
+.B allmultiple
+and
+.B multiple
+pragmas below.
+.TP
+.B \-P
+Enable the
+.B passthrough
+mode.
+Specifies the passthrough mode,
+especially useful for preprocessing other languages
+(e.g.,
+.IR nmake (1)).
+This option is not suitable for
+.B C
+language processing.
+In this mode:
+.RS
+.PD 0
+.TP 0.2i
+\(bu
+comments are removed
+.TP 0.2i
+\(bu
+space characters are preserved on output
+.TP 0.2i
+\(bu
+.B #(...)
+results are not enclosed in "\|"
+.TP 0.2i
+\(bu
+.B \e
+escapes the special meaning of " and '
+.TP 0.2i
+\(bu
+.B \enewline
+is removed only in directives
+.TP 0.2i
+\(bu
+" and ' constants may contain
+.BR newline s
+.PD
+.RE
+.TP
+.B \-Q
+Produce a checkpoint dump of
+.I ifile
+in
+.IR ofile .
+A checkpoint dump file requires no preprocessing; it contains a
+fully preprocessed text section followed by a dump of the
+macro definitions.
+Checkpoint dump files may be subject to
+.B #include
+directives just as normal text files.
+Performance will most likely be improved for source files that reference
+large collections of common, stable header files.
+.TP
+.B \-R
+Preprocess for 
+.B
+transition
+mode.
+.TP
+.B \-S
+Provide a strict dialect interpretation.
+See the
+.B pp:strict
+pragma below.
+.TP
+.BI \-T test
+Enable the internal debugging test
+.IR test .
+.I test
+may be
+.BR 1 ,
+.B 2
+or
+.B 3
+(both 1 and 2).
+A diagnostic indicating the behavior of selected tests is issued.
+.TP
+.B \-W
+Produce additional compatibility diagnostics relating to the current dialect.
+.TP
+.BI \-X probe
+Set the default definition probe key to
+.IR probe .
+In the absence of
+.B pp_default.h
+.I probe
+is used to generate the information using
+.IR probe (1).
+.TP
+.B \-\+
+Preprocess for the
+.B C++
+language.
+See the
+.B pp:plusplus
+pragma below.
+.TP
+.BI \+ option
+Invert the sense of the corresponding
+.BI \- option
+from above.
+.TP
+:\fIoption\fP[=\fIvalue\fP]
+Equivalent to the directive
+\fB#pragma pp:\fP\fIoption value\fP.
+.TP
+.BI % directive
+Enters the preprocessing directive
+.I directive
+from the command line.
+.TP
+#\fIpredicate\fP([\fIargs\fP])
+Equivalent to the directive
+\fB#define\fP #\fIpredicate\fP([\fIargs\fP]).
+.TP
+\fIname\fP[=\fIvalue\fP]
+Equivalent to the directive
+\fB#define\fP \fIname value\fP.
+.I value
+defaults to
+.B 1
+if omitted.
+.PD
+.RE
+.TP
+.B \-E
+No effect.
+Provides compatibility with some versions of
+.IR cc (1).
+.TP
+.B \-H
+Print the included reference files in \fIstderr\fP.  This is for System V
+compatibility.
+.TP
+.BI \-I arg
+Include file related options.
+.I arg
+may be:
+.RS
+.PD 0
+.TP
+.B \-
+Cause "\|" include files to be searched for in all
+.B \-I
+directories and <\|> include files to be searched for only in the
+.B \-I
+directories listed after
+.BR \-I\- .
+The standard include directory is always searched last for both include
+file forms.
+This allows the
+.I "directory of the including file"
+(see the
+.BI \-I dir
+option below)
+to be replaced by a list of directories for "\|" include files.
+To first search for "\|" include files in the directory of
+.I ifile
+specify
+.BI \-I " directory(ifile)" " \-I\-" " ...",
+where
+.I directory(ifile)
+is the directory portion of the
+.I ifile
+file name.
+.IR "(See Makerules(1) for directory prefix of include files in Scan Rule)" .
+.TP
+.B \-C
+This is for C++.  Any \fB-I\fIdir\fR after \fB-I-C\fP will be marked as
+C source.  This is equivalent to \fBpp:cdir\fP pragma below.
+.TP
+\fB\-D\fP[\fIfile\fP]
+Use the default definitions from
+.I file
+rather than
+.BR pp_default.h .
+If
+.I file
+is omitted then no default definitions file is read.
+.I file
+is read using the
+.B \-I\-R
+mechanism described below.
+.TP
+\fB\-H\fP[\fIdirectory\fP]
+Include files found in 
+.B \-I
+directories listed after
+.B \-I\-H
+are marked
+.BR hosted .
+If
+.I directory
+is specified then all
+.B \-I
+directories, including
+.I directory
+itself, listed after
+.BI \-I directory
+are marked hosted.
+Most warning diagnostics are relaxed for
+.B hosted
+files.
+Files found in the standard include file directory
+.RB ( \-I\-S
+below) are marked
+.B hosted
+by default.
+If
+.B \-D\-H
+.RB ( \-D+H )
+is specified then all files are marked
+.B hosted
+.RB ( non-hosted )
+regardless of the
+.B \-I\-H
+option.
+.TP
+.BI \-I directory
+Initialization files,
+.RB (e.g., " pp_default.h, \-I\-R ),
+are searched for in
+.I directory
+before the default standard include directory.
+.TP
+\fB\-I\fP[\fIfile\fP\||\|\-\fIchar\|suffix\fP]
+Ignore \fB"..."\fP quoted
+.B #include
+file names listed in file
+.IR file ,
+or, if
+.BI \- char\|suffix
+is specified, the file named by either changing characters following
+.I char
+in the input file base name to
+.I suffix
+or appending
+.I char\|suffix
+to the input file name if it does not contain
+.IR char .
+.B #include
+on any of the listed files will be ignored.
+Only the last
+.B \-I\-I
+option takes effect.
+If
+.I file
+is omitted then the option is ignored.
+.TP
+.BI \-R file
+Read the contents of
+.I file
+using
+\fB#include\fP "\fIfile\fP".
+.I file
+and all files included by
+.I file
+are marked
+.B hosted
+even if
+.B \-D\+H
+is specified.
+Line sync output is also disabled for
+these files.
+.TP
+.BI \-S dir
+Set the standard include file directory to
+.IR dir .
+This directory is the last place searched for all include file forms.
+The default standard include file directory is 
+.BR /usr/include .
+Only one standard include directory may be specified.
+.TP
+.BI \-T file
+Read the contents of \fIfile\fP before
+the input file.  The output of \fIfile\fP from \fIcpp\fP is used 
+in the input file.
+.TP
+.BI \+ option
+Invert the sense of the corresponding -\fIoption\fP from above
+.TP
+.I dir
+"\|" include files not beginning with
+.B /
+are first searched for in the directory of the including file,
+then in the directories named in
+.B \-I
+options and finally the standard directory.
+<\|> include files use the same search order as "\|" files except
+that <\|> files are not searched for in the directory of the
+including file.
+The
+.I "directory of the including file"
+can be replaced by a possibly empty list of directories using the
+.BI \-I\-
+option described above.
+(NOTE:
+.I dir
+cannot start with the
+.B \-
+character.)
+.PD
+.RE
+.TP
+.B \-M
+Output the file dependencies in makefile assertion format.  This is for BSD compatibility.
+.TP
+.B \-P
+Preprocess without producing line control information.
+.TP
+.B \-T
+Truncate macro names for compatibility with
+non-flexname (8 character) compilation systems. This is equivalent to \fBpp:truncate\fP pragma below.
+.TP
+.BI \-U name
+Equivalent to the directive
+\fB#undef\fP \fIname\fP.
+.TP
+.B \-V
+Prints the \fIcpp\fP version in \fIstderr\fP.
+.TP
+.BI \-X dialect 
+Set the System V standard preprocessing dialect to
+.IR dialect .
+.I dialect
+may be one of:
+.RS
+.PD 0
+.TP 0.5i
+.B a
+The default \fBansi\fP dialect.
+.TP 0.5i
+.B [Ac]
+The \fBansi\fP strict mode (ANSI conforming).
+.B \-D\-S
+is preferred.
+.TP 0.5i
+.B F
+The C++ mode.
+.TP 0.5i
+.B f
+The \fBcompatibility\fP transition and C++ mode.
+.TP 0.5i
+.B [ks]
+The \fBcompatibility\fP strict mode.
+.TP 0.5i
+.B o
+The old \fIcpp\fP.
+.TP 0.5i
+.B t
+The \fBcompatibility\fP transition mode.
+.B \-D\-C
+is preferred.
+.PD
+.RE
+.RS
+.sp
+The following table summarizes the mode(s) that each 
+\fIdialect\fP represents:
+.sp 1
+.TS
+.ds f. t.tbl
+.if \n+(b.=1 .nr d. \n(.c-\n(c.-1
+.de 35
+.ps \n(.s
+.vs \n(.vu
+.in \n(.iu
+.if \n(.u .fi
+.if \n(.j .ad
+.if \n(.j=0 .na
+..
+.nf
+.nr #~ 0
+.if \n(.T .if n .nr #~ 0.6n
+.ds #d .d
+.if \(ts\n(.z\(ts\(ts .ds #d nl
+.fc
+.nr 33 \n(.s
+.rm 52 53 54 55 56
+.if \(ts\n(.z\(ts\(ts .wh \n(nlu+\n(.tu-2v #f
+.de #f
+.ie \\n(#& \{ \
+.	nr #& 0
+.	nr #| 1
+.	di #o \}
+.el \{ \
+.	ch #f
+.	nr T. 1
+.	T#
+.	sp \\n(.tu
+.	mk #T
+.	nr ^a \\n(#T
+.	nr ^b \\n(#T
+.	nr ^c \\n(#T
+.	nr ^d \\n(#T
+.	nr ^e \\n(#T
+.	if \\n(#| \{ \
+.		in 0
+.		#+
+.		rm #+
+.		mk 32
+.		nr #| 0
+.		in \}
+.	if \\(ts\\n(.z\\(ts\\(ts .wh \\n(nlu+\\n(.tu-2v #f \}
+..
+.de #%
+.if \\(ts\\n(.z\\(ts#o\\(ts \{ \
+.	sp |0u
+.	in 0
+.	#+
+.	in
+.	sp |\\n(.hu
+.	di
+.	rn #o #+ \}
+..
+.nr 52 0
+.nr 38 \w\fIdialect\fB
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBa\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBA|c\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBF\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBf\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBk|s\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBo\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.nr 38 \w\fBt\fP
+.if \n(52<\n(38 .nr 52 \n(38
+.52
+.rm 52
+.nr 53 0
+.nr 38 \wcompatibility
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w0
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w0
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w0
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w1
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w1
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w1
+.if \n(53<\n(38 .nr 53 \n(38
+.nr 38 \w1
+.if \n(53<\n(38 .nr 53 \n(38
+.53
+.rm 53
+.nr 54 0
+.nr 38 \wtransition
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w1
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w0
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w0
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w1
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w0
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w0
+.if \n(54<\n(38 .nr 54 \n(38
+.nr 38 \w1
+.if \n(54<\n(38 .nr 54 \n(38
+.54
+.rm 54
+.nr 55 0
+.nr 38 \wstrict
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w0
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w1
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w0
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w0
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w1
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w0
+.if \n(55<\n(38 .nr 55 \n(38
+.nr 38 \w0
+.if \n(55<\n(38 .nr 55 \n(38
+.55
+.rm 55
+.nr 56 0
+.nr 38 \wC++\fR
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w0
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w0
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w1
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w1
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w0
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w0
+.if \n(56<\n(38 .nr 56 \n(38
+.nr 38 \w0
+.if \n(56<\n(38 .nr 56 \n(38
+.56
+.rm 56
+.nr 38 1n
+.nr 51 0
+.nr 40 \n(51+((2*\n(38)/2)
+.nr 52 +\n(40
+.nr 41 \n(52+((6*\n(38)/2)
+.nr 53 +\n(41
+.nr 42 \n(53+((6*\n(38)/2)
+.nr 54 +\n(42
+.nr 43 \n(54+((6*\n(38)/2)
+.nr 55 +\n(43
+.nr 44 \n(55+((6*\n(38)/2)
+.nr 56 +\n(44
+.nr TW \n(56
+.nr TW +((2*\n(38)/2)
+.if \n(TW>\n(.l .tm Warning: Table (\n(TWu wide) at line 13 file t.tbl exceeds current line length
+.ne 8v+2p
+.nr #I \n(.i
+.in +(\n(.lu-\n(TWu-\n(.iu)/2u
+.fc  
+.nr #T 0-1
+.nr #a 0-1
+.nr #a 0-1
+.eo
+.de T#
+.nr 35 1m
+.ds #d .d
+.if \(ts\n(.z\(ts\(ts .ds #d nl
+.mk ##
+.nr ## -1v
+.ls 1
+.if \n(#T>=0 .nr #a \n(#T
+.if \n(T. .vs \n(.vu-\n(.sp
+.if \n(T. \v'-1p'\h'|0'\h'1p'\s\n(33\l'|\n(TWu-1p\(ul'\s0\v'2p'\h'|0'\h'-1p'\s\n(33\l'|\n(TWu+1p\(ul'\s0\v'-1p'
+.if \n(T. .vs
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'|0'\h'-1p'\v'1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v-2p'\s0\v'\n(\*(#du-\n(#au+1v+1p'\h'2p'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'|\n(TWu'
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'(|\n(41u+|\n(52u)/2u'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'|\n(TWu'
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'(|\n(42u+|\n(53u)/2u'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'|\n(TWu'
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'(|\n(43u+|\n(54u)/2u'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'|\n(TWu'
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'(|\n(44u+|\n(55u)/2u'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'|\n(TWu'
+.if \n(#a>=0 .sp -1
+.if \n(#a>=0 \h'|\n(TWu'\h'-1p'\v'-1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v+2p'\s0\v'\n(\*(#du-\n(#au+1v-1p'\h'2p'\v'1p'\s\n(33\h'-\n(#~u'\L'|\n(#au-1v-2p'\s0\v'\n(\*(#du-\n(#au+1v+1p'
+.ls
+..
+.ec
+.nr 36 \n(.v
+.vs \n(.vu-\n(.sp
+\v'-1p'\h'|0'\h'-1p'\s\n(33\l'|\n(TWu+1p\(ul'\s0\v'2p'\h'|0'\h'1p'\s\n(33\l'|\n(TWu-1p\(ul'\s0\v'-1p'
+.vs \n(36u
+.mk #a
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fIdialect\fB\h'|\n(41u'compatibility\h'|\n(42u'transition\h'|\n(43u'strict\h'|\n(44u'C++\fR
+.nr 36 \n(.v
+.vs \n(.vu-\n(.sp
+\h'|0'\h'1p'\s\n(33\l'|\n(TWu-1p\(ul'\s0
+.vs \n(36u
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBa\fP\h'|\n(41u'0\h'|\n(42u'1\h'|\n(43u'0\h'|\n(44u'0
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBA|c\fP\h'|\n(41u'0\h'|\n(42u'0\h'|\n(43u'1\h'|\n(44u'0
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBF\fP\h'|\n(41u'0\h'|\n(42u'0\h'|\n(43u'0\h'|\n(44u'1
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBf\fP\h'|\n(41u'1\h'|\n(42u'1\h'|\n(43u'0\h'|\n(44u'1
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBk|s\fP\h'|\n(41u'1\h'|\n(42u'0\h'|\n(43u'1\h'|\n(44u'0
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBo\fP\h'|\n(41u'1\h'|\n(42u'0\h'|\n(43u'0\h'|\n(44u'0
+.nr 32 0
+.nr 32 \n(32u+\n(.du+2p
+.ta \n(52u \n(53u \n(54u \n(55u \n(56u 
+.nr 35 1m
+.nr 31 \n(.f
+\&\h'|\n(40u'\fBt\fP\h'|\n(41u'1\h'|\n(42u'1\h'|\n(43u'0\h'|\n(44u'0
+.fc
+.nr T. 1
+.T# 1
+.in \n(#Iu
+.35
+.nr #a 0
+.ch #f
+.if \n-(b.=0 .nr c. \n(.c-\n(d.-12
+.TE
+.sp 1
+.RE
+.TP
+.BI \-Y dir
+Set the standard include file directory to
+.IR dir .
+.BI \-I\-S dir
+is preferred.
+.SS "Directives"
+.I cpp
+directives are a single line
+(after all
+.B \enewline
+sequences have been removed)
+starting with
+.B #
+as the first non-space character on the line.
+A space character is any one of
+.BR space ,
+.BR tab ,
+.B vertical-tab
+or
+.BR formfeed .
+.B vertical-tab
+and
+.B formfeed
+are not valid between the initial
+.B #
+and the terminating
+.BR newline .
+Any number of
+.B space
+and
+.B tab
+characters may appear between the initial
+.B #
+and the directive name.
+All tokens in directives are significant; trailing tokens,
+sometimes used as commentary in other implementations,
+must be enclosed in
+.BR "/* ... */" .
+The
+.BR #include ,
+.BR #if ,
+.BR #ifdef ,
+.B #ifndef
+and
+.B #macdef
+directives can be nested, although the
+nesting levels must balance within files.
+In the following an
+.I identifier
+matches the regular expression
+.B "[a\-zA\-Z_][a\-zA\-Z_0\-9]*"
+and must not be immediately preceded by
+.BR "[0\-9]" .
+.PP
+The directives are:
+.TP
+.BI #define " name" " " token-string
+Replace subsequent instances of
+.I name
+with
+.IR token-string .
+.TP
+.BI #define " name(arg" ", ..., " "arg) token-string"
+Replace subsequent instances of
+.I name
+followed by a
+.BR ( ,
+a list of comma-separated set of tokens, and a
+.B )
+by
+.IR token-string ,
+where each occurrence of an
+.I arg
+in the
+.I token-string
+is replaced by the expanded value of the
+corresponding set of tokens in the comma-separated list.
+The argument replaced
+.I token-string
+is then re-scanned for further macro replacement.
+Notice that there can be no space between
+.I name
+and
+.B (
+in the definition.
+Formal arguments appearing in single or double quoted strings are
+replaced by the corresponding unexpanded actual argument text only in the
+.B compatibility
+dialect.
+Macro recursion is inhibited by not expanding a macro name appearing
+in its own definition.
+.RS
+.PP
+If the last formal argument is followed by the
+.B ...
+token then it is replaced by the expanded value
+of all remaining actual arguments and intervening
+.B ,
+tokens from the macro call.
+If there is only one formal argument then the macro may be called with
+no actual arguments, otherwise there must be at least one actual
+argument for the last formal argument.
+.PP
+The token
+.B #
+in
+.I token-string
+causes the immediately following formal argument to be replaced by
+the unexpanded value of the corresponding actual argument
+enclosed in double quotes.
+The token
+.B ##
+in
+.I token-string
+concatenates the space separated tokens immediately preceding and following the
+.B ##
+token.
+The resulting token is not checked for further macro expansions.
+Formal arguments preceding
+.B ##
+or following
+.B ##
+and
+.B #
+are replaced by the unexpanded value of the corresponding actual argument.
+.RE
+.TP
+.BI #define " #predicate" ( argument )
+Makes the assertion
+.RI # predicate ( argument )
+that may be tested only in
+.B #if
+or
+.B #elif
+directive expressions.
+.I predicate
+must be an identifier and
+.I argument
+may be any balanced parenthesis sequence of tokens not containing
+.BR newline .
+The assertion in no way conflicts with the
+.B #define
+macro name space.
+Space character sequences in
+.I argument
+are canonicalized into single
+.B space
+characters and
+macro expansion is inhibited on both
+.I predicate
+and
+.I argument
+during predicate assertion and evaluation.
+Within
+.B #if
+expressions,
+.I #predicate(argument)
+evaluates to 1 if
+.BI #define " #predicate" ( argument )
+has been specified; otherwise it evaluates to 0.
+Likewise,
+.I #predicate(\|)
+evaluates to 1 if any assertion has been made on
+.IR predicate .
+Multiple assertions on
+.I predicate
+are allowed, with all such assertions evaluating to 1 in
+.B #if
+expressions.
+.TP
+.BI #macdef " name..."
+Defines the multi-line macro
+.IR name .
+A matching
+.B #endmac
+ends the definition.
+Nesting is allowed.
+As with
+.BR #define ,
+.I name
+may have arguments.
+The definition body may contain directives;
+these directives are not executed until the macro is expanded.
+.TP
+.BI #elif " constant-expression"
+Allows multiple alternate branches for the
+.B #if
+directive.
+.I constant-expression
+evaluation is the same as for
+.BR #if .
+.TP
+.B #else
+Reverses the sense of the test directive
+matching this directive.
+If lines previous to this directive are ignored then the following lines
+will appear in the output.
+.TP
+.B #endif
+Ends a section of lines begun by a test directive
+.RB ( #if ,
+.BR #ifdef ,
+or
+.BR #ifndef ).
+Each test directive must have a matching
+.BR #endif .
+.TP
+\fB#error\fP [\fImessage\fP]
+Emits
+.I message
+as a
+.I cpp
+error diagnostic and terminates preprocessing immediately.
+The default
+.I message
+is
+.BR "user error" .
+.TP
+.BI #if " constant-expression"
+Subsequent lines will appear in the output if and only if
+.I constant-expression
+evaluates to non-zero.
+All non-assignment C operators are valid in
+.IR constant-expression .
+Operator precedence is the same as in the C language.
+Computations are done using
+.B "long int"
+and
+.B "unsigned long int"
+arithmetic on the host machine; floating point computations are not supported.
+Any macros in
+.I constant-expression
+are expanded before the expression is evaluated.
+The builtin predicate
+.BI defined( name )
+tests if the macro name
+.I name
+has been defined.
+The builtin predicate
+.BI exists( file )
+tests if
+.I file
+can be found using
+.B #include
+search rules.
+.I file
+must be enclosed in "\|" or <\|>.
+.B exists
+accepts additional optional quoted string arguments that are
+.B :
+separated lists of directories to search for the existence of
+.IR file .
+The normal
+.B #include
+search rules are overridden in this case.
+The builtin predicate
+.BI strcmp( token1,token2 )
+compares the macro expanded string values of
+.I token1
+and
+.I token2
+using the
+.IR strcmp (3)
+library function.
+Only these operators, functions, predicates, integer constants
+and names may be used in
+.IR constant-expression .
+In particular, the
+.B sizeof
+and
+.B ,
+(comma)
+operators are not valid in this context.
+.TP
+.BI #ifdef " name"
+The lines following will appear in the output if
+.I name
+has been the subject of a previous
+.B #define
+without being the subject of an intervening
+.BR #undef .
+.TP
+.BI #ifndef " name"
+The lines following will not appear in the output if
+.I name
+has been the subject of a previous
+.B #define
+without being the subject of an intervening
+.BR #undef .
+.TP
+.BI #include " <filename>"
+The standard include directories (see the
+.B \-I
+option above)
+are searched for a header identified uniquely by
+.IR filename ,
+and the directive is replaced by the entire contents of the header.
+If the
+.B allmultiple
+pragma is off then subsequent
+.B #include
+references to the header named by
+.I filename
+are ignored unless the header contains a
+.B #pragma multiple
+directive that was processed during the first inclusion of the header.
+Any macros on the directive line are first expanded before the
+directive is processed.
+.TP
+\fB#include\fP \fI"filename"\fP
+The directory of the including file (see the
+.B \-I
+option above)
+is searched for a source file identified uniquely by
+.IR filename ,
+and the directive is replaced by the entire contents of the source file.
+If the
+.B allmultiple
+pragma is off then subsequent
+.B #include
+references to the source file named by
+.I filename
+are ignored unless the source file contains a
+.B #pragma multiple
+directive that was processed during the first inclusion of the source file.
+Any macros on the directive line are first expanded before the
+directive is processed.
+If the source file search fails then the directive is reprocessed as
+if it were
+.BI #include " <filename>."
+.TP
+\fB#let\fP \fIidentifier\fP = \fIconstant-expression\fP
+Defines the macro
+.I identifier
+to be the value of the evaluated
+.IR constant-expression ,
+where
+.I constant-expression
+is the same as for the
+.B #if
+directive.
+Macro redefinition diagnostics are suppressed for macros defined by
+.BR #let .
+.TP
+\fB#line\fP \fIinteger-constant\fP [\fI"filename"\fP]
+Outputs line control information for the next pass.
+.I integer-constant
+is the line number of the next line and
+.I filename
+is the originating file.
+The current file name is set to
+.I filename
+if specified.
+Any macros on the directive line are first expanded before the
+directive is processed.
+.TP
+\fB#pragma\fP [\fIpass\fP:][\fBno\fP]\fIoption\fP [\fIargs\fP ...]
+Sets preprocessor and compiler control options.
+Use of
+.B #pragma
+should be limited to
+.B hosted
+files as the interpretation varies between compiler implementations.
+A warning diagnostic is issued when
+.B #pragma
+directive is encountered in a
+.B non-hosted
+file.
+This directive is completely ignored for
+.B non-hosted
+files in the
+.B "strict ansi"
+dialect.
+If
+.I pass
+is
+.B pp
+then the option is used and verified and is not passed on,
+else if
+.I pass
+is omitted then the option is used and passed on,
+otherwise the option is passed on and not used.
+.B #pragma
+arguments are not checked for macro expansions.
+If
+.B no
+is present then
+.I option
+is turned off.
+Pass specific pragmas should not omit
+.IR pass: .
+Options specified on the command line override options in
+the default include file.
+The
+.I cpp
+specific options are:
+.RS
+.PD 0
+.TP
+.B allmultiple
+Marks all include files
+.BR multiple .
+This is the default.
+.TP
+.B builtin
+Sets a mode that marks all macros defined by
+.B #define
+.IR builtin .
+.I builtin
+macro definitions are not dumped by the
+.B \-D\-Q
+option.
+.TP
+.B cdir
+Marks include files after this pragma as C source.  This is for C++.
+.TP
+.B compatibility
+Sets the
+.B compatibility
+dialect.
+.TP
+.BI debug " number"
+Sets the debug trace level to
+.IR number .
+Higher levels produce more output.
+Debug tracing is enabled only in debugging versions of the preprocessor.
+.TP
+.B elseif
+Allows \fB#else if\fP, \fB#else ifdef\fP, and \fB#else ifndef\fP directives.
+.TP
+\fBhostdir\fP "\fIdir\fP"
+Include files found in
+.I dir
+or after 
+.I dir
+in the
+.B \-I
+directory list are marked hosted.
+.TP
+\fBid\fP "\fIstring\fP"
+Adds the characters in
+.I string
+to the set of characters that may appear within an identifier name.
+For example,
+\fB#pragma pp:id "$"\fP
+causes
+.B sys$call
+to be tokenized as a single identifier.
+.I string
+is currently limited to
+"\fB$\fP".
+Once added a character cannot be deleted from the identifier set.
+.TP
+\fBinclude \fP"\fIdir\fP"
+Equivalent to the
+\fB\-I\fP\fIdir\fP command line option.
+.TP
+.B linetype
+Specifies that line number control output directives are to contain
+an additional include file type argument.
+The line number control output directives are of the form
+\fB#\fP\fIline-directive line "file" type\fP
+where
+.I line-directive
+is set by the 
+.B \-D\-L
+option (null by default), and
+.I type
+is
+.B 1
+for include file push,
+.B 2
+for include file pop and null otherwise.
+.TP
+.B load
+Specifies that lines following this directive were produced by a
+.B \-D\-Q
+checkpoint dump.
+This option should not be used explicitly.
+.TP
+.BI macref " name type"
+Specifies that macro reference pragmas are to be emitted.
+.I name
+is the macro name and
+.I type
+is
+.B \-2
+for
+.BR undef ,
+.B \-1
+for a reference in
+.BR #if ,
+.B #ifdef
+or
+.BR #ifndef ,
+.B 0
+for macro expansion
+and
+.B >0
+(number of lines in the definition) for macro definition.
+.TP
+\fBmap\fP [\fIid ...\fP] "/\fIfrom\fP/[,/\fIto\fP/]" [ "/\fIold\fP/\fInew\fP/[\fIglnu\fP]" ... ]
+.B map
+allows unknown directives and
+.B pragma
+options to be mapped to other directives and rescanned.
+The optional
+.IR id 's
+support the mapping of standard directives and options as well.
+In this case the standard directives and options may be accessed by
+.IR __id__ .
+.PP
+Each unknown directive line is space canonicalized and placed in a buffer
+that is subject to
+.B pp:map
+editing.
+This buffer contains the initial
+.B #
+and omits the trailing
+.BR newline .
+.I from
+is an
+.IR egrep (1)
+style regular expression, with the addition of the identifier
+delimiter operators
+.B <
+and
+.BR > ,
+and the proviso that
+.B "^"
+and
+.B "$"
+match the beginning and end of string (rather than line).
+The expressions are delimited by
+.B /
+in the example, but any character may be used, as long as it is escaped
+within the expressions.
+The maps are searched, last in first out, for the longest
+.I from
+pattern that matches the unknown directive buffer.
+The
+.IR ed (1)
+style substitute expressions for the longest
+.I from
+match are then applied left to right.
+The optional
+.B g
+substitutes all occurrences of
+.I old
+to
+.IR new .
+.B l
+.RB ( u )
+converts
+.I new
+to lower (upper) case.
+.B n
+specifies that the substitute expression is to be applied only if
+all previous substitute expressions failed.
+The standard C escape sequences are recognized in all map patterns.
+In particular,
+\fB\en\fP
+translates to
+.BR newline ,
+allowing a single directive line to be mapped into many lines.
+After all substitutions have been applied the resulting buffer is
+pushed back onto the input token stream and rescanned.
+The original directive line number is preserved during the rescan.
+.PP
+If any of the mapped lines start with
+.B ##
+then the text between
+.B ##
+and the next
+.B newline
+is copied verbatim to the output.
+If the resulting buffer is empty then the input directive is ignored.
+.PP
+If
+.I to
+is also specified then the nested construct 
+.I from
+to
+.I to
+is matched.
+.PP
+For example,
+.EX
+#pragma pp:map "/#(pragma )?ident>/"
+.EE
+causes
+.B "#pragma ident ..."
+and
+.B "#ident ..."
+directives to be silently ignored and
+.EX
+#pragma pp:map "/#pragma lint:/" ",#pragma lint:(.*),##/*\e1*/,u"
+.EE
+maps
+.B "#pragma lint:argsused"
+to
+.B "/*ARGSUSED*/"
+on output.
+.TP
+.B multiple
+If the 
+.B allmultiple
+option is on then the
+.B #include
+directive ensures that each header and source file is included
+at most one time.
+A
+.B #pragma multiple
+directive,
+when processed during the first inclusion of the header (source file),
+causes all subsequent
+.B #include
+directives on that header (source file) to re-read the contents of the
+header (source file).
+.TP
+.B pluscomment
+Enable C++ comments.
+.TP
+.B plusplus
+Preprocess for C++.
+See
+.B "Additional Processing"
+below.
+.TP
+.B predefined
+Macroes defined after this pragma are marked as predefined.
+.TP
+.B prototyped
+Input source files that set the
+.B prototyped
+option will be filtered using the
+.IR proto (1)
+transformations.
+.TP
+.B readonly
+Sets a mode that marks all macros defined by
+.B #define
+or undefined by
+.B #undef
+.IR readonly .
+A
+.I readonly
+macro cannot be redefined by either
+.B #define
+or
+.BR #undef .
+.TP
+\fBreserved\fP \fIname\fP[=\fIvalue\fP] ...
+The
+.I name
+arguments are marked as reserved keywords.
+.I value
+optionally specifies the keyword lexical value.
+This option is used when compiler front ends are linked directly
+with the preprocessor.
+The ``classic'' C and C++ keywords have predefined lexical values, as do
+.BR asm ,
+.BR const ,
+.BR enum ,
+.BR signed ,
+.B void
+and
+.BR volatile .
+If
+.I value
+is omitted for a keyword that has no predefined lexical value then
+.B NOISE
+is assumed.
+.I value
+may be one of:
+.RS
+.PD 0
+.TP
+.B GROUP
+A group noise token that may be followed by zero or one balanced
+.B "(\|.\|.\|.\|)"
+groups and zero or one balanced
+.B "{\|.\|.\|.\|}"
+groups (e.g.,
+.BR asm ).
+.TP
+.B LINE
+A line noise token terminated by the next
+.BR newline .
+.TP
+.B NOISE
+A noise token to be ignored (e.g.,
+.BR near ).
+.TP
+.B STATEMENT
+A statement noise token terminated by the next semicolon.
+.PD
+.RE
+.TP
+.B spaceout
+In the
+.B ansi
+dialect for the standalone
+.I cpp
+.B spaceout
+causes input spacing to be copied to the output.
+The default for the
+.B ansi
+dialect is to place a single space between each output token.
+This mode is required by some
+.B asm
+implementations that allow the assembly text to be preprocessed.
+.TP
+.B splicecat
+.B \enewline
+line splicing may be used to concatenate tokens
+in macros definition.
+.TP
+\fBstandard\fP "\fIdir"\fP
+Names
+.I dir
+as the standard include directory.
+.TP
+.B strict
+Set the strict interpretation mode.
+.TP
+.B stringspan
+Allow \e\fBnewline\fR line in strings.
+.TP
+.B text
+.B notext
+suppresses output to
+.I ofile
+generated by input text.
+This allows files to be scanned for
+.I cpp
+directives without generating any text output.
+Note that the
+.B \-P
+option must still be used to suppress line number information output.
+.TP
+.B transition
+Sets transition mode.
+.TP
+.B truncate
+Truncate macro names for compatibility with non-flexname (8 characters)
+compilation systems. 
+.TP
+.BI version
+Outputs both
+.BI "#pragma pp:version" " version-string"
+and
+.BR "#pragma version" ,
+allowing later passes to emit similar version pragmas.
+.TP
+.B warn
+Produce warnings about extensions used in non-hosted files in the
+strict dialect.
+.PD
+.RE
+.TP
+.BI #rename " oldname newname"
+Changes the name of the macro \fIoldname\fP to \fInewname\fP.
+.TP
+.BI #undef " name"
+Remove the definition of the macro
+.I name
+(if any).
+.TP
+.BI #undef " #predicate(argument)"
+.PD 0
+.TP
+.BI #undef " #predicate(\|)"
+.PD
+The first form removes the assertion of
+.IR predicate(argument) ,
+if any, while the second
+form removes all assertions on
+.IR predicate .
+.TP
+\fB#warning\fP [\fImessage\fP]
+Emits
+.I message
+as a
+.I cpp
+warning diagnostic and continues normal processing.
+The default
+.I message
+is
+.BR "user warning" .
+.SS "Builtin Macro"
+The builtin macro
+.BI #( [op]\|identifier ... )
+provides access to preprocess time symbols and definitions.
+The value of this macro is enclosed in "\|" unless otherwise noted.
+Just as with the
+.B #
+and
+.B ##
+operators,
+any macro formal arguments appearing within
+.B #(...)
+in a macro definition are copied without expansion on macro invocation.
+.I arg
+may be one of the following:
+.TP
+.B FILE
+The current file name.
+.B __FILE__
+is defined to be
+.B #(FILE)
+for ANSI conformance.
+.TP
+.B LINE
+The current line number (not quoted).
+.B __LINE__
+is defined to be
+.B #(LINE)
+for ANSI conformance.
+.TP
+.B DATE
+The current month, day and year
+.IB ( "MMM DD YYYY" ).
+.B __DATE__
+is defined to be
+.B #(DATE)
+for ANSI conformance.
+.TP
+.B TIME
+The current time
+.IB ( "HH:MM:SS" ).
+.B __TIME__
+is defined to be
+.B #(TIME)
+for ANSI conformance.
+.TP
+.B BASE
+The base name of
+.BR FILE .
+.TP
+.B PATH
+The full path name of the most recent
+.B #include
+directive or
+.B exists
+predicate evaluation.
+.B __PATH__
+is defined to be
+.B #(PATH)
+in deference to ANSI conformance.
+.TP
+.B VERSION
+The
+.I cpp
+version stamp.
+.B __VERSION__
+is defined to be
+.B #(VERSION)
+in deference to ANSI conformance.
+.TP
+.B ARGC
+The number of arguments of a variable arguments macro.  
+.B __ARGC__ 
+is defined to be 
+.B #(ARGC) 
+for ANSI conformance.
+.TP
+.BI getenv name
+The value of
+.I name
+as returned by the
+.IR getenv (3)
+library call.
+.TP
+.BI getmac name
+The definition of the preprocessor macro
+.IR name .
+Notice that macro formal names appearing in macro definitions are replaced by
+internal format token sequences.
+.TP
+.BI getopt option
+The setting for the option or pragma
+.IR option .
+.TP
+.BI getprd predicate
+The argument associated with
+.I predicate
+from the most recent assertion
+on
+.IR predicate .
+.SS "Default Definitions"
+\fB#include "pp_default.h"\fP
+is automatically executed before the first line of
+.I ifile
+is read using the
+.B \-I\-R
+mechanism described above.
+A file other than
+.B pp_default.h
+may be specified using the
+.B \-I\-D
+option.
+.B pp_default.h
+typically contains
+.B #define
+directives that describe the current hardware and software environment.
+By using the
+.BI \-I dir
+or
+.BI \-I\-D file
+options different
+.B pp_default.h
+files may be referenced to support cross-compilation.
+.PP
+Proposed standard assertions for
+.B pp_default.h
+are:
+.TP
+.BI system( system-name )
+Defines the operating system name.
+Example values for
+.I system-name
+are
+.BR unix ,
+.B vms
+and
+.BR msdos .
+.TP
+.BI release( system-release )
+Defines the operating system release name.
+Example values for
+.I system-release
+are
+.BR hpux ,
+.BR bsd ,
+.BR svr4 ,
+.BR sun ,
+.BR uts ,
+and
+.BR xinu .
+.TP
+.BI version( release-version )
+Defines the operating system release version.
+Example values for
+.I release-version
+are
+.B 4.1c
+and
+.B 4.3
+for
+.BR release(bsd) ,
+.B 8
+and
+.B 9
+for
+.B release(research)
+and
+.BR 3.0
+etc. for
+.BR release(V) .
+.TP
+.BI model( model-name )
+Defines the hardware model or workstation name.
+Example values for
+.I model-name
+are
+.BR apollo ,
+.BR sun ,
+.B ibm-pc
+and
+.BR unix-pc .
+.TP
+.BI architecture( architecture-name )
+Defines the processor architecture name.
+Example values for
+.I architecture-name
+are
+.BR u3b ,
+.BR m68000 ,
+.BR ibm ,
+.BR pdp11 ,
+and
+.BR vax .
+.TP
+.BI machine( architecture-version )
+Defines the processor architecture version.
+Example values for
+.I architecture-version
+are
+.BR 2 ,
+.B 20
+and
+.B 20s
+for
+.BR architecture(3b) ,
+.B 70
+etc. for
+.B architecture(pdp11)
+and
+.BR 750 ,
+.B 780
+and
+.B micro
+for
+.BR architecture(vax) .
+.TP
+.BI addressing( addressing-mode )
+Defines the addressing mode, useful for PC compiler implementations.
+Example values for
+.I addressing-mode
+are:
+.BR small ,
+.BR medium ,
+.BR large ,
+.BR segmented
+and
+.BR unsegmented .
+.SS "Additional Processing"
+Adjacent "\|" string constants appearing in the text are concatenated.
+However, strings are not concatenated in directives.
+.PP
+The new character escapes \fB\ea\fP, \fB\ev\fP and \fB\ex...\fP are
+converted to octal notation for compatibility with older passes.
+This will disappear as ANSI C support becomes more pervasive.
+.PP
+The
+.BR \|::\| ,
+.B \|.*\|
+and
+.B \|\->*\|
+operators and
+.BR \|// " ..."
+comments are recognized for the
+.B C++
+language.
+.SS "Compatibility"
+The
+.B compatibility
+dialect supports pervasive
+.I Reiserisms
+that will be hard to shake out of old code as the ANSI standard arrives.
+Compatibility support includes:
+.TP 0.2i
+\(bu
+.B #assert
+and
+.B #unassert
+are supported by maps to
+.B "#define #"
+and
+.BR "#assert #" .
+.TP 0.2i
+\(bu
+the
+.I "disappearing comments"
+trick used to concatenate tokens within macro definitions
+(this trick does not work outside of macro definitions, but at
+least a diagnostic is produced).
+If
+.B pp:splicecat
+is set then the line splice sequence \fB\enewline\fP may also be used
+to concatenate tokens in macro definitions, otherwise \fB\enewline\fP
+translates to space.
+.TP 0.2i
+\(bu
+.B vertical-tab
+is treated as
+.B space
+in directive lines
+.TP 0.2i
+\(bu
+.B formfeed
+is treated as a
+.B newline
+character (although the line count is not incremented by
+.BR formfeed )
+.TP 0.2i
+\(bu
+macro formal arguments appearing within "\|" or '\|' quotes in macro
+definitions are replaced by the corresponding actual argument text
+.TP 0.2i
+\(bu
+macro call arguments are not expanded before being placed in
+the macro body text
+.TP 0.2i
+\(bu
+trailing characters in directives are silently ignored
+.SH FILES
+.PD 0
+.TP 1.5i
+/usr/include
+standard directory for
+.B #include
+files
+.TP 1.5i
+/usr/local/include
+sometimes searched after the standard directory during initialization
+.TP 1.5i
+pp_default.h
+predefined symbols and assertions
+.PD
+.SH SEE ALSO
+cc(1), egrep(1), m4(1), makerules(1), nmake(1), probe(1), proto(1),
+getenv(3), pp(3), strcmp(3)
+.br
+.IR "American National Standard for Information Systems -- Programming Language C",
+ANSI X3.159-1989.
+.SH DIAGNOSTICS
+The error messages produced by
+.I cpp
+are intended to be self-explanatory.
+The line number and file name are printed along with the diagnostic.
+.PP
+.IR predefined ,
+.IR readonly
+and
+.I active
+macro diagnostics may surprise old
+.I cpp
+users.
+.SH AUTHOR
+Glenn Fowler
+.br
+AT&T Bell Laboratories
+.br
+gsf@research.att.com

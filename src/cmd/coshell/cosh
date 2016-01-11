@@ -1,0 +1,36 @@
+# cosh [-qQ] | [-...] | [info]
+#
+# [un]initialize coshell and environment
+# -q uninitializes the environment
+# -Q drops the server and sends cumulative stats to $HOME/.cosh
+# -* sends op to server
+# otherwise server started using local [args] host info
+
+function cosh # [ option ]
+{
+	case $* in
+	-[qQ]*)	unset COSHELL NPROC
+		unalias on
+		case $1 in
+		-Q)	{ date; coshell -t -sl -Q; } >> $HOME/.$0 2>/dev/null ;;
+		esac
+		title - coshell
+		;;
+	-\?|--\?*)
+		print -u2 "Usage: $0 [-qQ] | [-...] | [attributes]"
+		return 1
+		;;
+	-|-?*)	coshell "$@"
+		;;
+	*)	if	coshell -q 2>/dev/null
+		then	unset COINIT
+		else	coshell + "$@" && coshell -v
+			export COINIT=1
+		fi
+		export COSHELL=coshell NPROC=10
+		alias on='coshell -r'
+		title + coshell
+		test -f $HOME/.coshrc && . $HOME/.coshrc
+		;;
+	esac
+}

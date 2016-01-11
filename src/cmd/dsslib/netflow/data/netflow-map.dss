@@ -1,0 +1,15 @@
+<DSS>
+	<NAME>netflow-map</>
+	<DESCRIPTION>netflow with value maps</>
+	<IDENT>@(#)$Id: netflow-map (AT&T Labs Research) 2003-04-05 $</>
+	<METHOD>netflow</>
+	<#INCLUDE#>ip.map</>
+	<FIELD>
+		<NAME>tcp_flags</>
+		<MAP>ipflags</>
+	</>
+	<FIELD>
+		<NAME>prot</>
+		<MAP>ipprotocol</>
+	</>
+</>

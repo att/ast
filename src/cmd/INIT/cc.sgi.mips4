@@ -1,0 +1,90 @@
+: sgi.mips4 cc wrapper that generates mips4 binaries : 2007-04-27 :
+
+HOSTTYPE=sgi.mips4
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+cc=/usr/bin/cc
+debug=
+dynamic=-G0
+flags=-OPT:Olimit=0
+fatal=1035
+ignore=1685,733,1048,1155,1171,1184,1209,1343,3169,3170,3433
+ldignore=15,84,85,13
+optimize=
+
+case $_AST_cc_OPTIONS in
+?*)	eval $_AST_cc_OPTIONS ;;
+esac
+case $fatal in
+?*)	fatal="-diag_error $fatal" ;;
+esac
+case $ignore in
+?*)	ignore="-woff $ignore" ;;
+esac
+case $ldignore in
+?*)	ifs=$IFS
+	IFS=,
+	v=$ldignore
+	ldignore=
+	for i in $v
+	do	ldignore="$ldignore -Wl,-woff,$i"
+	done
+	IFS=$ifs
+	;;
+esac
+case $debug in
+?*)	integer n=0
+	for i
+	do	case $i in
+		-g*)	case $debug in
+			-)	continue ;;
+			esac
+			i=$debug
+			;;
+		esac
+		a[n++]=$i
+	done
+	set -- ${a[@]}
+	;;
+esac
+case $optimize in
+?*)	integer n=0
+	for i
+	do	case $i in
+		-O*)	case $optimize in
+			-)	continue ;;
+			esac
+			i=$optimize
+			;;
+		esac
+		a[n++]=$i
+	done
+	set -- ${a[@]}
+	;;
+esac
+
+case $1 in
+-mips2)	if	test -d /usr/lib32
+	then	LD_LIBRARYN32_PATH=/lib32 $cc -32 -mips2 $flags $dynamic $ldignore $ignore "$@"
+	else	$cc -mips2 $flags $ignore "$@"
+	fi
+	;;
+-mips3)	$cc -n32 -mips3 $flags $dynamic $fatal $ldignore $ignore "$@"
+	;;
+*)	case " $* " in
+	*" -ldl "*)
+		integer n=0
+		for i
+		do	case $i in
+			-ldl)	;;
+			*)	a[n++]=$i ;;
+			esac
+		done
+		set -- ${a[@]}
+	esac
+	$cc -64 -mips4 $flags $dynamic $fatal $ldignore $ignore "$@"
+	;;
+esac

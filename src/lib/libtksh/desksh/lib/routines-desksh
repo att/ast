@@ -1,0 +1,26 @@
+# Desktop Manager
+# This loads up a generic tksh window and places three buttons in it.
+# This is basically a simple desktop manager which gives access to
+# xterms and the file manager
+
+# have the window come up at the right size
+wm withdraw .
+# keep your .sh_history from growing by 44k per execution of desksh!
+set -o nolog
+# give the interactive prompt your normal environment.
+[[ -r $DESKSH_SAVE_ENV ]] && . $DESKSH_SAVE_ENV
+# tell it the find utility is an auto-load file
+autoload find_popup
+
+. $DESKSH_ROOT/routines-fman
+. $DESKSH_ROOT/routines-pman
+
+wm title . "Desktop Manager"
+
+button .b1 -text "File Manager" -command "f_manager"
+button .b2 -text "X Terminal (shell)" -command "ENV=$DESKSH_SAVE_ENV; xterm &"
+button .b3 -text "Quit" -command "exit"
+pack .b1 .b2 .b3 -fill x
+update
+wm deiconify .
+

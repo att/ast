@@ -1,0 +1,60 @@
+set	prototyped
+
+header	sys/types.h
+header	pty.h
+header	libutil.h
+header	sys/pty.h
+header	sys/ptyio.h
+header	sys/vty.h
+header	sys/ioctl.h
+header	stropts.h
+
+lib	openpty,_getpty,ptsname -lutil
+lib	grantpt,unlockpt,posix_openpt stdlib.h
+
+tst - output{
+	#include	<sys/types.h>
+	#include	<sys/stat.h>
+	#if _lib_ptsname && _npt_ptsname
+	_BEGIN_EXTERNS_
+	#if _STD_
+		extern char*	ptsname(int);
+	#else
+		extern char*	ptsname();
+	#endif
+	#endif
+	_END_EXTERNS_
+	int main()
+	{
+		int		i;
+		struct stat	statb;
+		static char*	pty[] = { "/dev/ptyp0000", "/dev/ptym/ptyp0", "/dev/ptyp0" };
+	#if _lib_ptsname
+		int		fd;
+		static char*	ptc[] = { "/dev/ptmx", "/dev/ptc", "/dev/ptmx_bsd" };
+
+		for (i = 0; i < sizeof(ptc) / sizeof(ptc[0]); i++)
+			if((fd = open(ptc[i], 2))>=0)
+			{
+				if (ptsname(fd))
+				{
+					printf("#define _pty_clone\t\"%s\"\n", ptc[i]);
+					close(fd);
+					break;
+				}
+				close(fd);
+			}
+	#endif
+		for (i = 0;; i++)
+			if(i >= (sizeof(pty) / sizeof(pty[0]) - 1) || stat(pty[i], &statb)>=0)
+			{
+				printf("#define _pty_first\t\"%s\"\n", pty[i]);
+				break;
+			}
+		return 0;
+	}
+}end  
+
+extern	_getpty		char*		(int*, int, mode_t, int)
+extern	openpty		int		(int*, int*, char*, struct termios*, struct winsize*)
+extern	ptsname		char*		(int)

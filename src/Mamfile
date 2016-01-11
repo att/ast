@@ -1,0 +1,7 @@
+info mam static
+note source level :MAKE: equivalent
+make install
+make all
+exec - ${MAMAKE} -r '*/*' ${MAMAKEARGS}
+done all virtual
+done install virtual

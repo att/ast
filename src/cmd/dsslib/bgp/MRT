@@ -1,0 +1,1421 @@
+   All MRT format messages have a common header which includes a
+   timestamp, Type, Subtype, and length field.  The header is followed
+   by a message field.  The basic MRT format is illustrated below.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                           Timestamp                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |             Type              |            Subtype            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                             Length                            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Message... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Header Field Descriptions:
+
+
+      Timestamp:
+
+         Time in seconds since 1 January 1970 00:00:00 UTC
+
+
+      Type:
+
+         A 2-octet field that indicates the Type of information
+         contained in the message field.  Types 1 through 5 are used for
+         MRT control information while Types 6 and higher are used for
+         routing information.
+
+
+      Subtype:
+
+         A 2-octet message Subtype field
+
+
+      Length:
+
+         A 4-octet message length field.  The length does not include
+         the header.
+
+4.  MRT Control Types
+
+   The MRT format defines five Control Type messages.  These messages
+   are using to relay the current state of MRT message source.  The
+   message field MAY contain an OPTIONAL ASCII text string for
+   diagnostic purposes.  These control messages are unidirectional in
+   nature and there is no form of an acknowledgment or response from the
+   receiver to the sender.  The Subtype field is unused for these Types
+   and SHOULD be set to 0.
+
+   The MRT Control Types are defined below:
+
+       0    NULL
+       1    START
+       2    DIE
+       3    I_AM_DEAD
+       4    PEER_DOWN
+
+4.1.  NULL Type
+
+   The NULL Type message causes no operation, A sender may wish to send
+   these for synchronization or keep-alive purposes.
+
+4.2.  START Type
+
+   The START Type indicates a sender is about to begin sending MRT
+   messages
+
+4.3.  DIE Type
+
+   A DIE Type signals that the receiver should shut down.
+
+4.4.  I_AM_DEAD Type
+
+   A I_AM_DEAD indicates that the sender is shutting down.
+
+4.5.  PEER_DOWN Type
+
+   A PEER_DOWN is sent when the sender's peer is down.  In practice, a
+   sender will likely have multiple peers.  It is RECOMMENDED that the
+   sender use the Message field to convey the IP address of the peer
+   represented in US-ASCII.
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007               [Page 8]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+5.  MRT Routing Information Types
+
+   The following Types are currently defined for the MRT format.  Types
+   5-12 were defined in the initial MRT Toolkit package.  The BGP4MP
+   Type, number 16, was initially defined in the Zebra routing software
+   package.  The ISIS Type was initially defined in the Sprint Labs
+   Python Routing Toolkit (PyRT).
+
+       5    BGP          *DEPRECATED*
+       6    RIP
+       7    IDRP         *DEPRECATED*
+       8    RIPNG
+       9    BGP4PLUS     *DEPRECATED*
+       10   BGP4PLUS_01  *DEPRECATED*
+       11   OSPF
+       12   TABLE_DUMP
+       13   TABLE_DUMP_V2
+       16   BGP4MP
+       17   BGP4MP_ET
+       32   ISIS
+       33   ISIS_ET
+       48   OSPFv3
+       49   OSPFv3_ET
+
+5.1.  BGP Type
+
+   The BGP Type indicates the Message field contains BGP routing
+   information.  The BGP routing protocol is defined in RFC 4271
+   [RFC4271].  The information in the message is dependent on the
+   Subtype value.  The BGP Type and all associated Subtypes are
+   considered to be DEPRECATED by the BGP4MP Type.
+
+   The following BGP Subtypes are defined for the MRT BGP Type.
+
+       0    BGP_NULL
+       1    BGP_UPDATE
+       2    BGP_PREF_UPDATE
+       3    BGP_STATE_CHANGE
+       4    BGP_SYNC
+       5    BGP_OPEN
+       6    BGP_NOTIFY
+       7    BGP_KEEPALIVE
+
+5.1.1.  BGP_NULL Subtype
+
+   The BGP_NULL Subtype is a reserved Subtype.
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007               [Page 9]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+5.1.2.  BGP_UPDATE Subtype
+
+   The BGP_UPDATE Subtype is used to encode BGP UPDATE messages.  The
+   format of the MRT Message field for this Subtype is as follows:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Source AS number       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Source IP address                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |    Destination AS number      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Destination IP address                   |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    BGP UPDATE Contents (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The BGP UPDATE contents include the entire BGP UPDATE message which
+   follows the BGP Message Header.  The BGP Message Header itself is not
+   included.
+
+5.1.3.  BGP_PREF_UPDATE Subtype
+
+   The BGP_PREF_UPDATE Subtype is not defined.
+
+5.1.4.  BGP_STATE_CHANGE Subtype
+
+   The BGP_STATE_CHANGE Subtype is used to record changes in the BGP
+   finite state machine.  These FSM states and their numeric encodings
+   are defined in RFC 4271 [RFC4271], Appendix 1.  Both the old state
+   value and the new state value are encoded as 2-octet numbers.  The
+   format of the MRT Message field is as follows:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Source AS number       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                       Source IP address                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |            Old State          |          New State            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 10]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+5.1.5.  BGP_SYNC Subtype
+
+   The BGP_SYNC Subtype is used to indicate a File Name where BGP Table
+   Dump messages should be recorded.  The View # corresponds to the View
+   # provided in the TABLE_DUMP Type messages.  The following format
+   applies to this Subtype:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        View #                 |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |            File Name... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The File Name is terminated with a NULL (0) character.
+
+5.1.6.  BGP_OPEN Subtype
+
+   The BGP_OPEN Subtype is used to encode BGP OPEN messages.  The format
+   of the MRT Message field for this Subtype is the same as the
+   BGP_UPDATE, however, the last field contains the contents of the BGP
+   OPEN message.
+
+5.1.7.  BGP_NOTIFY Subtype
+
+   The BGP_NOTIFY Subtype is used to encode BGP NOTIFICATION messages.
+   The format of the MRT Message field for this Subtype is the same as
+   the BGP_UPDATE, however, the last field contains the contents of the
+   BGP NOTIFICATION message.
+
+5.1.8.  BGP_KEEPALIVE Subtype
+
+   The BGP_KEEPALIVE Subtype is used to encode BGP KEEPALIVE messages.
+   The format of the MRT Message field for this Subtype is the same as
+   the BGP_UPDATE, however, the last field contains no information.
+
+5.2.  RIP Type
+
+   The RIP Type is used to export RIP protocol packets as defined in RFC
+   1058 [RFC1058].  The Subtype field is currently reserved for this
+   Type and SHOULD be set to 0.
+
+   The format of the MRT Message field for the RIP Type is as follows:
+
+
+
+
+
+
+
+
+
+      Message:
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007               [Page 6]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+         A variable length message.  The contents of this field are
+         context dependent on the Type and Subtype fields.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007               [Page 7]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 11]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Source IP address                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Destination IP address                   |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    RIP Message Contents (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.3.  IDRP Type
+
+   The IDRP Type is used to export Inter-Domain-Routing Protocol (IDRP)
+   protocol information as defined in the ISO/IEC 10747 standard.  The
+   Subtype field is unused.  This Type is deprecated due to lack of
+   deployment of IDRP.
+
+5.4.  RIPNG Type
+
+   The RIPNG Type is used to export RIPNG protocol packets as defined in
+   RFC 2080 [RFC2080].  The Subtype field is currently reserved for this
+   Type and SHOULD be set to 0.
+
+   The format of the MRT Message field for the RIPNG Type is as follows:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Source IP address                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Destination IP address                   |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                  RIPNG Message Contents (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.5.  BGP4PLUS and BGP4PLUS_01 Types
+
+   The BGP4PLUS and BGP4PLUS_01 Types were defined to support IPv6 BGP
+   routing information.  The BGP4PLUS Type was specified based on the
+   initial Internet Draft for Multiprotocol Extensions to BGP-4.  The
+   BGP4PLUS_01 Type was specified to correspond to the -01 revision of
+   this Internet Draft.  The two Types share the same definitions in
+   terms of their MRT format specifications.
+
+   The Subtype field definitions are shared with the BGP Type, however,
+   the address fields in the BGP_UPDATE, BGP_OPEN, BGP_NOTIFY,
+   BGP_KEEPALIVE, and BGP_STATE_CHANGE Subtype messages are extended to
+   16 octets for IPv6 addresses.  As with the BGP Type, the BGP4PLUS and
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 12]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+   BGP4PLUS_01 Types are deprecated as they superseded by the BGP4MP
+   Type.
+
+5.6.  OSPF Type
+
+   This Type supports the OSPF Protocol as defined in RFC 2328
+   [RFC2328].  The Subtype field may contain two possible values:
+
+       0    OSPF_STATE_CHANGE
+       1    OSPF_LSA_UPDATE
+
+   The format of the MRT Message field for the OSPF Type is as follows:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Source IP address                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Destination IP address                   |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                  OSPF Message Contents (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.7.  TABLE_DUMP Type
+
+   The TABLE_DUMP Type is used to encode the contents of a BGP Routing
+   Information Base (RIB).  Each RIB entry is encoded in a distinct
+   sequential MRT record.  The Subtype field is used to encode whether
+   the RIB entry contains IPv4 or IPv6 addresses.  There are currently
+   two possible values for the Subtype as shown below.
+
+       1    AFI_IPv4
+       2    AFI_IPv6
+
+   The format of the TABLE_DUMP Type is illustrated below.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 13]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |           View #              |       Sequence number         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Prefix (variable)                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       | Prefix Length |    Status     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Originated Time                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    Peer IP address (variable)                 |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |           Peer AS             |       Attribute Length        |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   BGP Attribute... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The View field is normally 0 and is intended for cases where an
+   implementation may have multiple RIB views (such as a route server).
+   The Sequence field is a simple incremental counter for each RIB
+   entry.  A typical RIB dump will exceed the 16-bit bounds of this
+   counter and implementation should simply wrap back to zero and
+   continue incrementing the counter in such cases.
+
+   The Prefix field contains the IP address of a particular routing RIB
+   entry.  The size of this field is dependent on the value of the
+   Subtype for this message.  For AFI_IPv4, this field is 4 octets, for
+   AFI_IPv6, it is 16 octets in length.  The Prefix Length field
+   indicates the length in bits of the prefix mask for the preceding
+   Prefix field.
+
+   The Status octet is not used in the TABLE_DUMP Type and SHOULD be set
+   to 1.
+
+   The Originated Time contains the 4-octet time at which this prefix
+   was heard.  The value represents the time in seconds since 1 January
+   1970 00:00:00 UTC.
+
+   The Peer IP field is the IP address of the peer which provided the
+   update for this RIB entry.  As with the Prefix field, the size of
+   this field is dependent on the Subtype.  AFI_IPv4 indicates a 4 octet
+   field and an IPv4 address, while a Subtype of AFI_IPv6 requires a 16
+   octet field and an IPv6 address.  The Peer AS field contains the AS
+   number of the peer.
+
+   Attribute length is the length of Attribute field and is 2-octets.
+   The Attribute field contains the attribute information for the RIB
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 14]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+   entry.
+
+5.8.  TABLE_DUMP_V2 Type
+
+   The TABLE_DUMP_V2 type updates the TABLE_DUMP type to include 32-bit
+   ASN support and full support for BGP Multiprotocol extensions.  It
+   also improves upon the space efficiency of the TABLE_DUMP type by
+   employing an index table for peers and permitting a single MRT record
+   per NLRI entry.  The following subtypes are used with the
+   TABLE_DUMP_V2 type.
+
+       1    INDEX_TABLE
+       2    RIB_IPV4_UNICAST
+       3    RIB_IPV4_MULTICAST
+       4    RIB_IPV6_UNICAST
+       5    RIB_IPV6_MULTICAST
+       6    RIB_GENERIC
+
+   An initial INDEX_TABLE MRT record provides the BGP ID of the
+   collector, an optional view name, and a list of indexed peers.
+   Following the INDEX_TABLE MRT record, a series of MRT records are
+   used to encode RIB table entries.  The header of the INDEX_TABLE
+   Subtype is shown below.  The View Name is optional and if not
+   present, the View Name Length MUST be set to 0.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Collector BGP ID                         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |       View Name Length        |     View Name (variable)      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |          Peer Count           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The Peer Type field is a bit field which encodes the type of the AS
+   and IP address as follows:
+
+      Bit 0 - unset for IPv4 Peer IP address, set of IPv6
+      Bit 1 - unset when Peer AS field is 16 bits, set when it's 32 bits
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 15]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |   Peer Type   |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Peer BGP ID                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Peer IP address (variable)                  |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Peer AS (variable)                     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The Peer Type, Peer BGP ID, Peer IP, and Peer AS fields are repeated
+   as indicated by the Peer Count field.  The position of the Peer in
+   the INDEX_TABLE is used as an index in the subsequent TABLE_DUMP_V2
+   MRT records.  The index number begins with 0.
+
+   The records which follow the INDEX_TABLE record constitute the RIB
+   entries and include a header which specify a sequence number, NLRI,
+   and a count of the number of RIB entries which follow.
+
+   The RIB_IPV4_UNICAST, RIB_IPV4_MULTICAST, RIB_IPV6_UNICAST, and
+   RIB_IPV6_MULTICAST headers are shown below.  The Prefix Length and
+   Prefix fields are encoded in the same manner as the BGP NLRI encoding
+   for IPV4 and IPV6 prefixes.  Namely, the Prefix field contains
+   address prefixes followed by enough trailing bits to make the end of
+   the field fall on an octet boundary.  Note that the value of trailing
+   bits is irrelevant.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Sequence number                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       | Prefix Length |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Prefix (variable)                      |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         Entry Count           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The RIB_GENERIC header is shown below.  It includes Address Family
+   Identifier (AFI), Subsequent AFI and a single NLRI entry.  The NLRI
+   information is specific to the AFI and SAFI values.  An
+   implementation which does not recognize particular AFI and SAFI
+   values SHOULD discard the remainder of the MRT record.
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 16]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Sequence number                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |    Address Family Identifier  |Subsequent AFI |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |     Network Layer Reachability Information (variable)         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         Entry Count           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The RIB entry headers are followed by a series of RIB entries which
+   are repeated Entry Count times.  These entries share a common format
+   as shown below.  They include a Peer Index from the INDEX_TABLE MRT
+   record, an originated time for the RIB entry, and the BGP path
+   attribute length and attributes encoded as provided in a BGP Update
+   message.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         Peer Index            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Originated Time                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |      Attribute Length         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    BGP Attributes... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   There is one exception to the encoding of BGP attributes for the BGP
+   MP_REACH_NLRI attribute (BGP Type Code 14) [RFC 4760].  Since the
+   AFI, SAFI, and NLRI information is already encoded in the
+   MULTIPROTOCOL header, only the Next Hop Address Length and Next Hop
+   Address fields are included.  The Reserved field is omitted.  The
+   attribute length is also adjusted to reflect only the length of the
+   Next Hop Address Length and Next Hop Address fields.
+
+5.9.  BGP4MP Type
+
+   This Type was initially defined in the Zebra software package for the
+   BGP protocol with multiprotocol extension support as defined by RFC
+   4760 [RFC4760].  It supersedes the BGP, BGP4PLUS, BGP4PLUS_01 Types.
+   The BGP4MP Type has four Subtypes which are defined as follows:
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 17]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+       0    BGP4MP_STATE_CHANGE
+       1    BGP4MP_MESSAGE
+       2    BGP4MP_ENTRY                  *DEPRECATED*
+       3    BGP4MP_SNAPSHOT
+       4    BGP4MP_STATE_CHANGE_AS4
+       5    BGP4MP_MESSAGE_AS4
+
+5.9.1.  BGP4MP_STATE_CHANGE Subtype
+
+   This record is used to encode state changes in the BGP finite state
+   machine.  As with the BGP_STATE_CHANGE Subtype, the BGP FSM states
+   are encoded in the Old State and New State fields to indicate the
+   previous and current state.  The format is illustrated below:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Source AS number       |     Destination AS number     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Interface Index        |        Address Family         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Source IP address (variable)              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Destination IP address (variable)           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |            Old State          |          New State            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   While BGP4MP_STATE_CHANGE message is similar to the BGP_STATE_CHANGE
+   message, it also includes interface index and Address Family fields.
+   As with the BGP_STATE_CHANGE message, the FSM states and their
+   numeric encodings are defined in RFC 4271 [RFC4271], Appendix 1.  The
+   interface index provides the interface number of the peering session.
+   The index value is OPTIONAL and MAY be zero if unknown or
+   unsupported.  The Address Family indicates what types of addresses
+   are in the the address fields.  At present, the following AFI Types
+   are supported:
+
+       1    AFI_IPv4
+       2    AFI_IPv6
+
+5.9.2.  BGP4MP_MESSAGE Subtype
+
+   This Subtype is used to encode BGP Messages.  It is similar to the
+   BGP_UPDATE Subtype, except that is can be used to encode any Type of
+   message (not just BGP UPDATES).  In order to determine the BGP
+   message Type, the entire BGP message, including the BGP header, is
+   included in the BGP Message field.  The BGP4MP_MESSAGE fields are
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 18]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+   shown below:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Source AS number       |     Destination AS number     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Interface Index        |        Address Family         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Source IP address (variable)              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Destination IP address (variable)           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    BGP Message... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The interface index provides the interface number of the peering
+   session.  The index value is OPTIONAL and MAY be zero if unknown or
+   unsupported.  The Address Family indicates what types of addresses
+   are in the the subsequent address fields.  At present, the following
+   AFI Types are supported:
+
+       1    AFI_IPv4
+       2    AFI_IPv6
+
+   Note that the Address Family value only applies to the IP addresses
+   contained in the MRT header.  The BGP4MP_MESSAGE Subtype is otherwise
+   transparent to the contents of the actual message which may contain
+   any valid AFI/SAFI values.  Only one BGP message may be encoded in
+   the BGP4MP_MESSAGE Subtype.
+
+5.9.3.  BGP4MP_ENTRY Subtype
+
+   This Subtype is similar to the TABLE_DUMP Type and is used to record
+   RIB table entries.  It extends the TABLE_DUMP Type to include true
+   multiprotocol support.  However, this type does not support 32-bit AS
+   numbers and has not been widely implemented.  This type is deprecated
+   in favor of the TABLE_DUMP_V2 which includes 32-bit AS number support
+   and a more compact format.
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 19]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Source AS number       |     Destination AS number     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Interface Index        |        Address Family         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Source IP address (variable)              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Destination IP address (variable)           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |           View #              |             Status            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Time last change                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Address Family         |    SAFI       | Next-Hop-Len  |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Next Hop Address (variable)               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       | Prefix Length  |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Address Prefix (variable)                 |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |       Attribute Length        |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    BGP Attribute... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.9.4.  BGP4MP_SNAPSHOT Subtype
+
+   This Subtype is used to indicate a filename containing BGP4MP_ENTRY
+   records.  It is similar to the BGP_SYNC message Subtype and shares
+   the same fields.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        View #                 |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |            File Name... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.9.5.  BGP4MP_MESSAGE_AS4 Subtype
+
+   This Subtype updates the BGP4MP_MESSAGE Subtype to support 32BIT
+   Autonomous System numbers.  The BGP4MP_MESSAGE_AS4 fields are shown
+   below:
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 20]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                        Source AS number                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Destination AS number                     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Interface Index        |        Address Family         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Source IP address (variable)              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Destination IP address (variable)           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                    BGP Message... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.10.  BGP4MP_ET
+
+   This Type was initially defined in the Sprint Labs Python Routing
+   Toolkit (PyRT).  It extends the header field of the BGP4MP Type to
+   include a 32-bit microsecond timestamp field.  The Subtypes and other
+   field definitions remain as defined for the BGP4MP Type.  The 32-bit
+   microsecond timestamp immediately follows the length field in the
+   BGP4MP Type and precedes all other fields in the message.  The header
+   modification is illustrated below.
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                           Timestamp                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |             Type              |            Subtype            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                             Length                            |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      microsecond timestamp                    |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                      Message... (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.11.  ISIS Type
+
+   This Type was initially defined in the Sprint Labs Python Routing and
+   supports the IS-IS routing protocol as defined in RFC 1195 [RFC1195].
+   There is no Type specific header for the ISIS Type.  The Subtype code
+   for this Type is undefined.  The ISIS PDU directly follows the MRT
+   common header fields.
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 21]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+5.12.  ISIS_ET Type
+
+   The ISIS_ET Type extends the the ISIS Type to support microsecond
+   timestamps.  As with the BGP4MP_ET Type, a 32-bit microsecond
+   timestamp field is appended to the MRT common header after the length
+   field.  The ISIS_ET Type is otherwise identical to the ISIS Type.
+
+5.13.  OSPFv3 Type
+
+   The OSPFv3 Type extends the original OSPF Type to support IPv6
+   addresses for the OSPFv3 protocol as defined in RFC 2740 [RFC2740].
+   The format of the MRT Message field for the OSPFv3 Type is as
+   follows:
+
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |        Address Family         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                     Source IP address (variable)              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Destination IP address (variable)           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                  OSPF Message Contents (variable)
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+5.14.  OSPFv3_ET Type
+
+   The OSPFv3_ET Type extends the the OSPFv3 Type to support microsecond
+   timestamps.  As with the BGP4MP_ET Type, a 32-bit microsecond
+   timestamp field is appended to the MRT common header after the length
+   field.  The OSPFv3_ET Type is otherwise identical to the OSPFv3 Type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 22]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+6.  IANA Considerations
+
+   This section provides guidance to the Internet Assigned Numbers
+   Authority (IANA) regarding registration of values related to the MRT
+   specification, in accordance with BCP 26, RFC 2434 [RFC2434].
+
+   There are two name spaces in MRT that require registration: Type
+   Codes and Subtype Codes.
+
+   MRT is not intended as a general-purpose specification for protocol
+   information export, and allocations should not be made for purposes
+   unrelated to routing protocol information export.
+
+   The following policies are used here with the meanings defined in BCP
+   26: "Specification Required", "IETF Consensus".
+
+6.1.  Type Codes
+
+   Type Codes have a range from 0 to 65535, of which 0-64 have been
+   allocated.  New Type Codes MUST be allocated starting at 65.  Type
+   Codes 65 - 32767 are to be assigned by IETF Consensus.  Type Codes
+   32768 - 65535 are assigned based on Specification Required.
+
+6.2.  Subtype Codes
+
+   Subtype Codes have a range from 0 to 65535.  Subtype definitions are
+   specific to a particular Type Code definition.  New Subtype Code
+   definition must reference an existing Type Code to which the Subtype
+   belongs.  As Subtype Codes are specific to Type Codes, new numbers
+   must be unique for the particular Type Code to which the Subtype
+   applies.  Subtype Codes specific to the Type Codes 0 - 32767 are
+   assigned by IETF Consensus.  Suptype Codes specific to Type Codes
+   32768 - 65535 are assigned based on Specification Required.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 23]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+7.  Security Considerations
+
+   The MRT Format utilizes a structure which can store routing protocol
+   information data.  The fields defined in the MRT specification are of
+   a descriptive nature and provide information that is useful to
+   facilitate the analysis of routing data.  As such, the fields
+   currently defined in the MRT specification do not in themselves
+   create additional security risks, since the fields are not used to
+   induce any particular behavior by the recipient application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 24]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+8.  References
+
+8.1.  Normative References
+
+   [RFC1058]  Hedrick, C., "Routing Information Protocol", RFC 1058,
+              June 1988.
+
+   [RFC1195]  Callon, R., "Use of OSI IS-IS for routing in TCP/IP and
+              dual environments", RFC 1195, December 1990.
+
+   [RFC2080]  Malkin, G. and R. Minnear, "RIPng for IPv6", RFC 2080,
+              January 1997.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2328]  Moy, J., "OSPF Version 2", STD 54, RFC 2328, April 1998.
+
+   [RFC2434]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 2434,
+              October 1998.
+
+   [RFC2740]  Coltun, R., Ferguson, D., and J. Moy, "OSPF for IPv6",
+              RFC 2740, December 1999.
+
+   [RFC4271]  Rekhter, Y., Li, T., and S. Hares, "A Border Gateway
+              Protocol 4 (BGP-4)", RFC 4271, January 2006.
+
+   [RFC4760]  Bates, T., Chandra, R., Katz, D., and Y. Rekhter,
+              "Multiprotocol Extensions for BGP-4", RFC 4760,
+              January 2007.
+
+8.2.  Informative References
+
+   [MRT PROG GUIDE]
+              Labovitz, C., "MRT Programmer's Guide", November 1999,
+              <http://www.merit.edu/nrd/resources/mrtprogrammer.pdf>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 25]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+Authors' Addresses
+
+   Larry Blunk
+   Merit Network
+
+   Email: ljb@merit.edu
+
+
+   Manish Karir
+   Merit Network
+
+   Email: mkarir@merit.edu
+
+
+   Craig Labovitz
+   Arbor Networks
+
+   Email: labovit@arbor.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 26]
+
+Internet-Draft                 MRT Format                     March 2007
+
+
+Full Copyright Statement
+
+   Copyright (C) The IETF Trust (2007).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST AND
+   THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+   THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is provided by the IETF
+   Administrative Support Activity (IASA).
+
+
+
+
+
+Blunk, et al.           Expires September 6, 2007              [Page 27]
+
+------------------------------------
+2. Multiprotocol Reachable NLRI - MP_REACH_NLRI (Type Code 14):
+
+   This is an optional non-transitive attribute that can be used for the
+   following purposes:
+
+      (a) to advertise a feasible route to a peer
+
+      (b) to permit a router to advertise the Network Layer address of
+          the router that should be used as the next hop to the
+          destinations listed in the Network Layer Reachability
+          Information field of the MP_NLRI attribute.
+
+      (c) to allow a given router to report some or all of the
+          Subnetwork Points of Attachment (SNPAs) that exist within the
+          local system
+
+   The attribute is encoded as shown below:
+
+      +---------------------------------------------------------+
+      | Address Family Identifier (2 octets)                    |
+      +---------------------------------------------------------+
+      | Subsequent Address Family Identifier (1 octet)          |
+      +---------------------------------------------------------+
+      | Length of Next Hop Network Address (1 octet)            |
+      +---------------------------------------------------------+
+      | Network Address of Next Hop (variable)                  |
+      +---------------------------------------------------------+
+      | Number of SNPAs (1 octet)                               |
+      +---------------------------------------------------------+
+      | Length of first SNPA(1 octet)                           |
+      +---------------------------------------------------------+
+      | First SNPA (variable)                                   |
+      +---------------------------------------------------------+
+      | Length of second SNPA (1 octet)                         |
+      +---------------------------------------------------------+
+      | Second SNPA (variable)                                  |
+      +---------------------------------------------------------+
+      | ...                                                     |
+      +---------------------------------------------------------+
+      | Length of Last SNPA (1 octet)                           |
+      +---------------------------------------------------------+
+      | Last SNPA (variable)                                    |
+      +---------------------------------------------------------+
+      | Network Layer Reachability Information (variable)       |
+      +---------------------------------------------------------+
+
+   The use and meaning of these fields are as follows:
+
+      Address Family Identifier:
+
+         This field carries the identity of the Network Layer protocol
+         associated with the Network Address that follows. Presently
+         defined values for this field are specified in RFC 1700 (see
+         the Address Family Numbers section).
+
+      Subsequent Address Family Identifier:
+
+         This field provides additional information about the type of
+         the Network Layer Reachability Information carried in the
+         attribute.
+
+      Length of Next Hop Network Address:
+
+         A 1 octet field whose value expresses the length of the
+         "Network Address of Next Hop" field as measured in octets
+
+      Network Address of Next Hop:
+
+         A variable length field that contains the Network Address of
+         the next router on the path to the destination system
+
+      Number of SNPAs:
+
+         A 1 octet field which contains the number of distinct SNPAs to
+         be listed in the following fields.  The value 0 may be used to
+         indicate that no SNPAs are listed in this attribute.
+
+      Length of Nth SNPA:
+
+         A 1 octet field whose value expresses the length of the "Nth
+         SNPA of Next Hop" field as measured in semi-octets
+
+      Nth SNPA of Next Hop:
+
+         A variable length field that contains an SNPA of the router
+         whose Network Address is contained in the "Network Address of
+         Next Hop" field.  The field length is an integral number of
+         octets in length, namely the rounded-up integer value of one
+         half the SNPA length expressed in semi-octets; if the SNPA
+         contains an odd number of semi-octets, a value in this field
+         will be padded with a trailing all-zero semi-octet.
+
+      Network Layer Reachability Information:
+
+         A variable length field that lists NLRI for the feasible routes
+         that are being advertised in this attribute. When the
+         Subsequent Address Family Identifier field is set to one of the
+         values defined in this document, each NLRI is encoded as
+         specified in the "NLRI encoding" section of this document.
+
+   The next hop information carried in the MP_REACH_NLRI path attribute
+   defines the Network Layer address of the border router that should be
+   used as the next hop to the destinations listed in the MP_NLRI
+   attribute in the UPDATE message.  When advertising a MP_REACH_NLRI
+   attribute to an external peer, a router may use one of its own
+   interface addresses in the next hop component of the attribute,
+   provided the external peer to which the route is being advertised
+   shares a common subnet with the next hop address.  This is known as a
+   "first party" next hop.  A BGP speaker can advertise to an external
+
+   peer an interface of any internal peer router in the next hop
+   component, provided the external peer to which the route is being
+   advertised shares a common subnet with the next hop address.  This is
+   known as a "third party" next hop information.  A BGP speaker can
+   advertise any external peer router in the next hop component,
+   provided that the Network Layer address of this border router was
+   learned from an external peer, and the external peer to which the
+   route is being advertised shares a common subnet with the next hop
+   address.  This is a second form of "third party" next hop
+   information.
+
+   Normally the next hop information is chosen such that the shortest
+   available path will be taken.  A BGP speaker must be able to support
+   disabling advertisement of third party next hop information to handle
+   imperfectly bridged media or for reasons of policy.
+
+   A BGP speaker must never advertise an address of a peer to that peer
+   as a next hop, for a route that the speaker is originating.  A BGP
+   speaker must never install a route with itself as the next hop.
+
+   When a BGP speaker advertises the route to an internal peer, the
+   advertising speaker should not modify the next hop information
+   associated with the route.  When a BGP speaker receives the route via
+   an internal link, it may forward packets to the next hop address if
+   the address contained in the attribute is on a common subnet with the
+   local and remote BGP speakers.
+
+   An UPDATE message that carries the MP_REACH_NLRI must also carry the
+   ORIGIN and the AS_PATH attributes (both in EBGP and in IBGP
+   exchanges).  Moreover, in IBGP exchanges such a message must also
+   carry the LOCAL_PREF attribute. If such a message is received from an
+   external peer, the local system shall check whether the leftmost AS
+   in the AS_PATH attribute is equal to the autonomous system number of
+   the peer than sent the message. If that is not the case, the local
+   system shall send the NOTIFICATION message with Error Code UPDATE
+   Message Error, and the Error Subcode set to Malformed AS_PATH.
+
+   An UPDATE message that carries no NLRI, other than the one encoded in
+   the MP_REACH_NLRI attribute, should not carry the NEXT_HOP attribute.
+   If such a message contains the NEXT_HOP attribute, the BGP speaker
+   that receives the message should ignore this attribute.
+
+3. Multiprotocol Unreachable NLRI - MP_UNREACH_NLRI (Type Code 15):
+
+   This is an optional non-transitive attribute that can be used for the
+   purpose of withdrawing multiple unfeasible routes from service.
+
+   The attribute is encoded as shown below:
+
+      +---------------------------------------------------------+
+      | Address Family Identifier (2 octets)                    |
+      +---------------------------------------------------------+
+      | Subsequent Address Family Identifier (1 octet)          |
+      +---------------------------------------------------------+
+      | Withdrawn Routes (variable)                             |
+      +---------------------------------------------------------+
+
+   The use and the meaning of these fields are as follows:
+
+      Address Family Identifier:
+
+         This field carries the identity of the Network Layer protocol
+         associated with the NLRI that follows. Presently defined values
+         for this field are specified in RFC 1700 (see the Address
+         Family Numbers section).
+
+      Subsequent Address Family Identifier:
+
+         This field provides additional information about the type of
+         the Network Layer Reachability Information carried in the
+         attribute.
+
+      Withdrawn Routes:
+
+         A variable length field that lists NLRI for the routes that are
+         being withdrawn from service. When the Subsequent Address
+         Family Identifier field is set to one of the values defined in
+         this document, each NLRI is encoded as specified in the "NLRI
+         encoding" section of this document.
+
+   An UPDATE message that contains the MP_UNREACH_NLRI is not required
+   to carry any other path attributes.

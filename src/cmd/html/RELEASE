@@ -1,0 +1,109 @@
+12-02-29 mm2html: fix so stack bug that popped one too many
+12-01-11 mm2html: fix \*(Rf to use <SUP>...</SUP>
+12-01-01 htmlrefs: add <SCRIPT src=...> to include list
+11-12-30 mm2html: add .xx faq
+11-09-11 mm2html: add .H n "title" link="href"
+11-08-06 mm2html: use optget() style for .SH and .TP
+11-04-18 htmlrefs: don't symlink .html for --copy (doh)
+10-09-07 use += to append to compond values
+10-06-01 sync with ast api 20100601
+10-05-28 mm2*.sh: use --???MAN=nx for man section titles
+10-04-11 mm2html.sh: headings now internal anchors by default
+10-01-31 mm2html.sh: handle bsd mandoc
+10-01-25 mm2html.sh: handle optget --nroff { .H[01234] .OP }
+10-01-15 mm2html.sh: handle <name>(<number><chars>) references
+09-09-17 mm2bb.sh: .sn now uses expand(1) instead of cat(1)
+09-07-01 mm2html.sh: --frame=foo for man generates side content frame
+09-07-01 mm2html.sh: add redirection hackery to insert html.labels
+09-06-30 mm2html.sh: increase heading level for -o html.labels
+09-05-08 mm2twiki.sh: add for mm => twiki markups
+07-12-11 mm2bb.sh: fix bb list and fill logic, add long name \n[CC...]
+07-12-11 mm2html.sh: add long name \n[CC...]
+07-08-11 mm2bb.sh: --texish for tex style bb markups
+07-04-20 mm2bb.sh: add for mm => bb markups
+07-02-09 mm2html.sh: expand \*(.. rather than escape to \\(*..
+06-10-31 mm2html: fix tager=_top omission bug
+06-10-11 add sfstruse() error checks
+06-05-03 htmlrefs.c: add COPY to avoid e.g. cgi symlinks
+05-10-15 mm2html.sh: add BP name=value parameters
+05-10-10 mm2html.sh: add .CE, .BP *.@(gif|png) ... => <IMG...>
+05-02-22 htmlrefs.c: rel=internal ignored if --external
+05-02-14 mm2html.sh: add .xx linkframe="" for no target=_top
+05-02-01 mm2html.sh: IFS may be unset!
+05-01-11 mm2html.sh: add --top
+04-12-22 mm2html.sh: fix .xx link unverified rm
+04-08-01 htmlrefs.c: symlink only if different mtime
+04-06-18 htmlrefs.c: add -S,--symlink to symlink() rather than copy
+04-04-26 troff2html: handle .ta
+04-04-04 mm2html: .xx link|text separated by tab for table entry urls
+04-02-29 mm2html: .TS box => void lines
+03-08-11 mm2html: handle man .TH args>2
+03-03-25 mm2html: table border size '' => 0
+03-02-06 troff2html.c: fmtquote() FMT_ALWAYS update
+02-10-24 mm2html: viewgraph link target is _top too
+02-10-15 mm2html: ident footer is now a TABLE instead of a DIV
+02-08-30 mm2html: .AL with no args is equivalent to .NL
+02-08-26 mm2html: fix .VL mark indent logic
+02-08-19 mm2html: ignore .fp
+02-06-09 mm2html: expand mailto address pattern match
+02-05-31 mm2html: check .vG arg count before shift
+	 mm2html: \e => &#0092;
+02-03-17 mm2html: add .SG no-op
+	 mm2html: check .EX figure# label args
+	 mm2html: add .so/.sn dir search to .BP
+02-03-15 mm2html: add LC_NUMERIC=C for floating point constants
+02-02-14 mm2html: shorten indentation
+02-01-16 mm2html: handle .so and .xx in getline
+	 mm2html: .sn and .so look in dir of including file
+01-10-20 htmlrefs: fix <!--INTERNAL--> filter delete detection, GLOB_AUGMENTED
+01-05-09 mm2html: ignore a few more requests
+01-05-04 mm2html: more tbl adjustments from Bruce Lilly
+01-05-02 mm2html: tweak tbl column spacing, handle .TH [N]
+01-05-01 mm2html: tbl fixes
+01-04-27 mm2html: fix .SH,.SH indentation; ignore { .nh .hc .hy }
+01-03-22 mm2html,troff2html: ignore { .hw .lw }
+01-03-01 troff2html: fix bug that treated \*(]? as \*]?
+01-02-28 troff2html: add \n(YR and fix macros for y2k -- oops
+01-01-31 htmlrefs: fix nul char bug in <!--INTERNAL--> filter
+01-01-01 mm2html: fix incorrect \h'... #local refs
+	 mm2html: append <!--LABELS-->...<!--/LABELS--> for second pass
+	 mm2html: add .xx [no]index to inhibit or restart index labels
+	 mm2html: add .xx noFOO, .xx [no]index
+	 mm2html: .xx begin|end before <BODY> gets copied to <HEAD>
+	 mm2html: identification trailer aligned right
+	 htmlrefs: <!--INTERNAL--> in index.html <HEAD> skips file/dir
+00-12-14 mm2html: fix tbl colspan
+00-12-12 mm2html: ignore bgcolor for table with no box
+00-12-07 download: .tar.gz => .tgz
+	 htmlrefs: add --delete
+00-12-05 mm2html: add .PM
+	 mm2html: <id@id.id...> => mailto:
+00-11-27 mm2html: --frame is now 1 level instead of 2; no *-body and *-head
+	 mm2html: add .IS ... .IE indentation
+	 mm2html: .LR foo (1) generates man link
+	 htmlrefs: add https support
+00-10-31 htmlrefs: remove if internal filter leaves <= 1 line
+00-05-25 mm2html: add viewgraph outline and navigation
+00-05-11 mm2html: add .vG viewgraph macros
+00-03-04 htmlrefs: add <LINK rel=dynamic>
+00-02-14 htmlrefs: add .htaccess and <LINK> checks
+	 mm2html: add .xx ref=...
+	 mm2html: use "..." tag attribute quote instead of '...'
+	 mm2html: .BL => <UL> square circle disc
+00-02-03 mm2html: fix -o nohtml.ident
+00-01-20 mm2html: fix -o quoted arg parse
+	 htmlrefs: add --perlwarn for embedded perl constructs
+99-08-11 mm2html,troff2html: add .xx begin=x end=x
+	 mm2html: handle simple .TS ... .TE; room for improvement
+	 mm2html: fix <TABLE><TR>...</TR></TABLE> nesting
+	 mm2html: add SEE ALSO hot links
+	 mm2html: hot link man name not (section)
+99-05-17 download,html2db,mm2html: long options
+99-05-13 html2rtf: long options
+99-04-01 fix .xx link
+	 long options, macro search bug fix
+99-01-01 html2rtf: fix </LI> with no <LI> core dump
+98-04-01 add company corporation location meta.* organization
+97-05-09 info tollbar=path for junk before </BODY>
+97-05-01 \h'0...' for hyperlinks
+97-04-01 first release

@@ -1,0 +1,81 @@
+NOTE regression tests for the ksh dbm_t plugin
+
+UNIT ksh
+
+TEST '--create, --read, --write'
+
+	EXEC -c 'builtin -f dbm_t
+		set \
+			aaa	111 \
+			bbb	222 \
+			ccc	333 \
+			ppp	444 \
+			qqq	555 \
+			rrr	666 \
+			xxx	777 \
+			yyy	888 \
+			zzz	999
+		Dbm_t --create tst=tst.dbm
+		while	(( $# >= 2 ))
+		do	tst[$1]=$2
+			shift 2
+		done
+	'
+
+	EXEC -c 'builtin -f dbm_t
+		Dbm_t tst=tst.dbm
+		set -s -- ${!tst[@]}
+		for key
+		do	print -r -- "$key=${tst[$key]}"
+		done
+	'
+
+	EXEC -c 'builtin -f dbm_t
+		Dbm_t --write tst=tst.dbm
+		set -s -- ${!tst[@]}
+		for key
+		do	tst[$key]=$(( ${tst[$key]} + 1000 ))
+		done
+		for key
+		do	print -r -- "$key=${tst[$key]}"
+		done
+	'
+
+TEST '--zero + --create, --read, --write'
+
+	EXEC -c 'builtin -f dbm_t
+		set \
+			aaa	111 \
+			bbb	222 \
+			ccc	333 \
+			ppp	444 \
+			qqq	555 \
+			rrr	666 \
+			xxx	777 \
+			yyy	888 \
+			zzz	999
+		Dbm_t --create --zero tst=tst.dbm
+		while	(( $# >= 2 ))
+		do	tst[$1]=$2
+			shift 2
+		done
+	'
+
+	EXEC -c 'builtin -f dbm_t
+		Dbm_t tst=tst.dbm
+		set -s -- ${!tst[@]}
+		for key
+		do	print -r -- "$key=${tst[$key]}"
+		done
+	'
+
+	EXEC -c 'builtin -f dbm_t
+		Dbm_t --write tst=tst.dbm
+		set -s -- ${!tst[@]}
+		for key
+		do	tst[$key]=$(( ${tst[$key]} + 1000 ))
+		done
+		for key
+		do	print -r -- "$key=${tst[$key]}"
+		done
+	'

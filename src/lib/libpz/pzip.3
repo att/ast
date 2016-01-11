@@ -1,0 +1,867 @@
+.TH PZIP 3 "1998-08-11"
+.SH NAME \" @(#)pzip.3 (gsf@research.att.com) 1998-08-11
+pzip \- fixed record partition compress/decompress library
+.SH SYNOPSIS
+.fp 5 CW
+.de L		\" literal font
+.ft 5
+.if !\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \f1
+..
+.de LR
+.}S 5 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de RL
+.}S 1 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de LI
+.}S 5 2 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de IL
+.}S 2 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.de Tp
+.fl
+.ne 3
+.TP
+..
+.de Ss
+.fl
+.ne 3
+.SS "\\$1"
+..
+.ta 1.0i 2.0i 3.0i 4.0i 5.0i
+.nf
+.ft 5
+#include   <pzip.h>
+.ft 1
+.fi
+.Ss "DATA TYPES"
+.nf
+.ft 5
+Pz_t;
+Pzpart_t;
+Pzdisc_t;
+
+int        (*Pzerror_f)(Pz_t*, Pzdisc_t*, int, const char*, ...);
+int        (*Pzcheck_f)(Pz_t*, unsigned char*, Pzdisc_t*);
+.ft 1
+.fi
+.Ss "CONSTANTS"
+.nf
+.ft 5
+PZ_VERSION
+
+PZ_WINDOW
+
+PZ_MAGIC_1
+PZ_MAGIC_2
+
+PZ_TEST
+.ft 1
+.fi
+.Ss "FLAGS"
+.nf
+.ft 5
+PZ_READ
+PZ_WRITE
+PZ_FORCE
+PZ_STAT
+PZ_STREAM
+PZ_CRC
+PZ_DUMP
+PZ_VERBOSE
+PZ_TEST_1
+PZ_TEST_2
+PZ_TEST_3
+PZ_TEST_4
+
+SFPZ_VERIFY
+SFPZ_CRC
+.ft 1
+.fi
+.Ss "OPENING/CLOSING STREAMS"
+.nf
+.ft 5
+Pz_t*      pzopen(Pzdisc_t* disc, const char* path, int flags);
+int        pzclose(Pz_t* pz);
+.ft 1
+.fi
+.Ss "INPUT/OUTPUT OPERATIONS"
+.nf
+.ft 5
+int        pzdeflate(Pz_t* pz, Sfio_t* out);
+int        pzinflate(Pz_t* pz, Sfio_t* out);
+
+int        pzgethdr(Pz_t* pz);
+int        pzputhdr(Pz_t* pz, Sfio_t* out);
+
+.ft 1
+.fi
+.Ss "STREAM INFORMATION"
+.nf
+.ft 5
+Pzpart_t*  pzgetpart(Pz_t* pz, const char* name);
+Pzpart_t*  pzsetpart(Pz_t* pz, Pzpart_t* part);
+
+void       pzdump(Pz_t* pz, Sfio_t* out);
+.ft 1
+.fi
+.Ss "SFIO DECOMPRESS DISCIPLINE"
+.nf
+.ft 5
+int        sfdcpzip(Sfio_t* stream, const char* options, int flags);
+.ft 1
+.fi
+.SH DESCRIPTION
+.PP
+.I pzip
+is a library of functions that support compression/decompression
+of data files of fixed length rows (records) and columns (fields).
+Each
+.I pzip
+stream represents a file of compressed or decompressed data
+that may be decompressed or compressed to an
+.IR sfio (3)
+output file stream.
+.PP
+.I pzip
+format performs better than
+.I gzip
+in space/time on data that has many (> 50%) columns
+that change at a low rate
+(columns with a low rate of change are low frequency;
+columns with a high rate of change are high frequency.)
+.PP
+The
+.I pzip
+compress format is itself
+.I gzipped
+using the
+.IR sfdcgzip ()
+.I sfio
+discipline.
+Decompressed data is reorganized according to the user-specified
+.I partition-file
+(see
+.L Pzdisc_t.partition
+below) before being passed to
+.IR gzip .
+Low frequency columns are run-length encoded and high frequency column groups
+are transposed to column-major order.
+The
+.I gzip
+tables are flushed, via the
+.IR sfsync ()
+discipline function, between each column partition group.
+This has a positive space/time effect on the
+.I gzip
+string match and huffman tables.
+.PP
+.I pzip
+format files self-idenfify by encoding partition information in a header.
+.PP
+
+.Ss "DATA TYPES"
+.PP
+.Ss "  Pz_t"
+This is the stream handle returned by
+.IR pzopen .
+None of the fields should be changed by the application.
+The fields are:
+.Tp
+.L "const char* id"
+The library identification string used by the
+.I libast
+.I errorf
+function to identify the source of error and warning messages.
+.Tp
+.L "Pzdisc_t* disc"
+A pointer to the user discipline structure from
+.IR pzopen .
+.Tp
+.L "unsigned int flags"
+The inclusive-or of the flags described below.
+.Tp
+.L "int major"
+The
+.I pzip
+file format major number.
+For
+.L PZ_READ
+it is the the value when the file was compressed,
+otherwise it is the major number of the current implementation.
+In general the file header and implementation major numbers must match.
+.Tp
+.L "int minor"
+The
+.I pzip
+file format minor number.
+For
+.L PZ_READ
+it is the the value when the file was compressed,
+otherwise it is the minor number of the current implementation.
+In general, all implementations and data files with the same
+file header major number are compatible.
+The minor allows the implementation to make runtime adjustments.
+.Tp
+.L "size_t win"
+The high frequency window size.
+This is the adjusted value that is divisible by both the row size and
+number of high frequency columns.
+.Tp
+.L "const char* path"
+The input file pathname.
+.Tp
+.L "Sfio_t* io"
+The input file
+.I sfio
+stream.
+.Tp
+.L "Vmalloc_t* vm"
+The
+.IR vmalloc (3)
+region handle for the entires stream.
+All allocations associated with the stream, except for
+.I sfio
+intiated allocations, are done in this region.
+The user may also allocate and free individual chunks of memory from
+this region, but must not call
+.IR vmclear ().
+The region is freed by
+.IR pzclose ().
+.Tp
+.L "size_t npart"
+The number of partitions.
+.Tp
+.L "Pzpart_t* part"
+The current active partition.
+.Tp
+.L "Pzpart_t* parts"
+A table of all partitions.
+.Tp
+.L "unsigned char* buf"
+The high frequency window buffer with
+.L win
+elements.
+.Tp
+.L "unsigned char* wrk"
+The PZ_WRITE high frequency window buffer with
+.L win
+elements.
+.Tp
+.L "unsigned char* pat"
+The low frequency pattern buffer with
+.L row
+elements.
+.PP
+
+.Ss "  Pzpart_t"
+.PP
+.L Pzpart_t
+defines one partition.
+The fields are:
+.Tp
+.L "char* name"
+The partition name.
+.Tp
+.L "int index"
+The partition index.
+May be used to access a partition given its index:
+.L "Pz_t.parts[Pzpart_t.index-1]."
+.Tp
+.L "size_t row"
+The partition fixed row size.
+.Tp
+.L "size_t col"
+The number of rows that can fit into the high frequency window column buffer.
+.Tp
+.L "size_t* map"
+An array with
+.L nmap
+elements that lists the high frequency column
+indexes in order.
+.Tp
+.L "size_t* grp"
+An array with
+.L ngrp
+elements that lists the sizes of each
+high frequency column partition group in the same order as
+.LR map .
+.Tp
+.L "size_t nmap"
+The number of elements in
+.LR map .
+.Tp
+.L "size_t ngrp"
+The number of elements in
+.LR grp .
+.Tp
+.L "unsigned char* low"
+An array with
+.L row
+elements.
+.LI low[ i ]
+is
+.L 1
+if column
+.I i
+is low frequency,
+otherwise it is
+.L 0
+(and column
+.I i
+is high frequency.)
+.Tp
+.L "int* value"
+If there are no fixed-value columns the
+.L value
+is
+.LR NULL .
+Otherwise it is an array with
+.L row
+elements.
+.LI value[ i ]
+is non-negative if column
+.I i
+has a fixed value
+(and
+.LI value[ i ]
+is the fixed column value).
+.Tp
+.L "size_t* fix"
+An array with
+.L nfix
+elements that lists fixed value columns.
+.Tp
+.L "size_t nfix"
+The number of elements in
+.LR fix .
+.PP
+
+.Ss "  Pzdisc_t"
+.PP
+.L Pzdisc_t
+defines a stream discipline structure to the
+.IR pzopen ()
+function.
+The discipline fields are:
+.Tp
+.L "unsigned long version"
+Must be initailized to
+.LR PZ_VERSION .
+.Tp
+.L "const char* comment"
+An optional string that is placed in the
+.I pzip
+output file header; this string can be viewed by the
+.IR pzip (1)
+command.
+Ignored for
+.L PZ_READ
+and
+.L PZ_STAT
+streams.
+.Tp
+.L "const char* options"
+An optional string of run-time options of the form
+.IR name = value .
+Currently only fixed value columns may be specified.
+The syntax is
+.IR begin [ -end ]= "'value'"
+where
+.I begin
+is the beginning column offset (starting at 0),
+.I end
+is the ending column offset for an inclusive range,
+and
+.I value
+is the fixed column value.
+Decompress time is improved when high frequency columns are given fixed values.
+.Tp
+.L "const char* partition"
+The name of the
+.I partition-file
+that contains a sequence of lines that
+specifie the data row size and the high frequency
+column partition groups.
+This entry must be specified for
+.L PZ_WRITE
+and is ignored for
+.L PZ_READ
+streams.
+Comments start with # and continue to the end of the line.
+The first non-comment line specifies the row size.
+The remaining lines operate on column offset ranges of the form:
+.IR begin [ -end ]
+where
+.I begin
+is the beginning column offset (starting at 0),
+.I end
+is the ending column offset for an inclusive range.
+The operations are:
+.RS
+.Tp
+.IR range " [ ... ]"
+places all columns in the specified
+.I range
+list in the same high frequency partition group.
+Each high frequency partition group is processed as a separate block by
+.IR gzip .
+.Tp
+.I "range='value'"
+specifies that each column in
+.I range
+has the fixed character value
+.IR value .
+C-style character escapes are valid for
+.IR value .
+.RE
+.Tp
+.L "const char* lib"
+The library name used by
+.IR pathfind (3)
+to locate partition files.
+The default is
+.LR '"pzip"' ,
+and the default partition file suffix is
+.LR .prt .
+.Tp
+.L "size_t window"
+Low frequency columns are processed one row at a time;
+high frequency columns are processed across many rows at a time.
+The space/time tradeoff is controlled by the number of
+high frequency columns that can be processed in one step.
+.L window
+sets this limit.
+The high frequency columns are transposed from row-major order to
+column-major order, which may bring on inefficient paging behavior
+on some systems when the window size is too large.
+The default of 4M (4194304) provides reasonable behavior across
+most paging implementations.
+Note that compression requires two
+.L window
+buffers whereas decompression requires one.
+.L window
+is shortened to be divisible by both the row size and the number
+of high frequency columns.
+.Tp
+.L "int (*errorf)(Pz_t* pz, Pzdisc_t* disc, int lev, const char*, fmt ...)"
+An optional function that is called to emit error and warning messages.
+It is most often set to the
+.I libast
+.IR errorf ():
+.EX
+disc.errorf = (Pzerror_f)errorf;
+.EE
+.Tp
+.L "int (*eventf)(Pz_t* pz, int event, void* value, Pzdisc_t* disc)"
+An optional function that is called when events occur during stream processing.
+.L event
+is set to the event and 
+.L value
+is an event specific value.
+The events are:
+.RS
+.Tp
+.L PZ_OPEN
+Called just before
+.IR pzopen ()
+returns successfully.
+.L value
+is
+.LR 0 .
+A
+.L -1
+return value causes
+.IR pzopen ()
+to fail.
+.Tp
+.L PZ_CLOSE
+Called before
+.IR pzclose ()
+releases any resources.
+.L value
+is
+.LR 0 .
+The return value is used as the 
+.IR pzclose ()
+return value.
+.Tp
+.L PZ_CHECK
+Called as each row in a
+.L PZ_WRITE
+stream is processed.
+.L value
+is a pointer to the row data before compression, and
+.L eventf
+may modify the contents up to the row size.
+The return value determines the disposition of the row:
+.L -1
+terminates all processing;
+.L 0
+ignores the row;
+otherwise the row is processed as usual.
+.RE
+
+.PP
+.Ss "CONSTANTS"
+.PP
+.Tp
+.L PZ_VERSION
+This is a macro value of type
+.L "long int"
+that defines
+the current version number of the
+.I pzip
+library interface.
+The form is a six digit date YYYYMMDD.
+.Tp
+.L PZ_WINDOW
+The default window size (4Mb).
+.Tp
+.L PZ_MAGIC_1
+The first character of the two character
+.I pzip
+header magic number.
+.Tp
+.L PZ_MAGIC_2
+The second character of the two character
+.I pzip
+header magic number.
+.PP
+
+.Ss "BIT FLAGS"
+.PP
+A number of bit flags control stream operations.
+They are set by the
+.L flags
+argument to
+.IR pzopen ().
+The flags are:
+.Tp
+.L PZ_READ
+The input file is opened for decompression to the output file.
+.Tp
+.L PZ_WRITE
+The input file is opened for compression to the output file.
+The input file is opened for decompression.
+.Tp
+.L PZ_FORCE
+For
+.LR PZ_READ ,
+if the input file is not in
+.I pzip
+format, then 
+.IR pzinflate ()
+operates in transparent mode.
+If the input file is in
+.I gzip
+format then
+.I gzip
+inflate is applied.
+Otherwise
+.L PZ_READ
+input files must be in
+.I pzip
+format.
+.Tp
+.L PZ_STAT
+The input file must be in
+.I pzip
+format; the handle may be used
+to retrieve header information, but
+.IR pzinflate ()
+is disabled.
+.Tp
+.L PZ_STREAM
+The
+.L path
+argument to
+.IR pzopen ()
+is treated as an
+.I sfio
+.L SF_READ
+stream.
+This is a hack used by
+.IR sfdcpzip ().
+.Tp
+.L PZ_CRC
+Enables decompress crc checking.
+crc checking is a perfomance wart in the otherwise respectable
+.IR libz (3)
+.I gzip
+library implementation.
+Decompression crc checking can increase decompression user time by as much
+as a factor of 2.
+.I pzip
+uses a version of
+.I libz
+that disables decompression crc checking
+and replaces it with a few sanity checks.
+The
+.I pzip
+format also has its own checks.
+.Tp
+.L PZ_DUMP
+Calls
+.IR pzdump ()
+just before a successful return from
+.IR pzopen ().
+.Tp
+.L PZ_VERBOSE
+Enables a verbose trace of internal actions.
+.Tp
+.L PZ_TEST_1
+Enables the implementation defined test #1.
+.LR PZ_TEST_2 ,
+.LR PZ_TEST_3 ,
+and
+.L PZ_TEST_4
+also provided.
+.PP
+
+.Ss "OPENING/CLOSING STREAMS"
+
+.PP
+.nf
+.ft 5
+Pz_t*      pzopen(Pzdisc_t* disc, const char* path, int flags);
+.ft 1
+.fi
+.PP
+This function opens a stream on
+.LR file .
+It returns a new stream handle on success and
+.L NULL
+on error.
+.L disc
+and
+.L flags
+are described above.
+If
+.L flags
+contains
+.L PZ_READ
+then
+.IR pzinflate ()
+may be called to decompress
+.LR file ,
+otherwise if
+.L flags
+contains
+.L PZ_WRITE
+.IR pzdeflate ()
+may be called to compress
+.LR file .
+
+.PP
+.nf
+.ft 5
+int        pzclose(Pz_t* pz);
+.ft 1
+.fi
+This functions close the stream handle
+.L pz
+returned by a previous call to
+.IR pzopen ().
+It returns
+.L 0
+on success and
+.L -1
+on error.
+All resources allocated on behalf of the stream are released.
+
+.PP
+.Ss "INPUT/OUTPUT OPERATIONS"
+
+.PP
+.nf
+.ft 5
+int        pzdeflate(Pz_t* pz, Sfio_t* out);
+.ft 1
+.fi
+This function compresses the entire
+.L PZ_WRITE
+.I pzip
+stream
+.L pz
+to the output
+.I sfio
+stream
+.LR out .
+It returns
+.L 0
+on success and
+.L -1
+on error.
+
+.PP
+.nf
+.ft 5
+int        pzinflate(Pz_t* pz, Sfio_t* out);
+.ft 1
+.fi
+This function decompresses the entire
+.L PZ_READ
+.I pzip
+stream
+.L pz
+to the output
+.I sfio
+stream
+.LR out .
+It returns
+.L 0
+on success and
+.L -1
+on error.
+
+.PP
+.nf
+.ft 5
+int        pzgethdr(Pz_t* pz);
+.ft 1
+.fi
+This function reads the header from the
+.L PZ_READ
+.I pzip
+stream
+.L pz
+and fills in the appropriate fields in
+.LR pz .
+It returns
+.L 0
+on success and
+.L -1
+on error.
+
+.PP
+.nf
+.ft 5
+int        pzputhdr(Pz_t* pz, Sfio_t* out);
+.ft 1
+.fi
+This function writes the header from the
+.L PZ_WRITE
+.I pzip
+stream
+.L pz
+to the
+.I sfio
+output stream
+.LR out .
+It returns
+.L 0
+on success and
+.L -1
+on error.
+
+.PP
+.Ss "STREAM INFORMATION"
+.PP
+.nf
+.ft 5
+Pzpart_t*  pzgetpart(Pz_t* pz, const char* name);
+.ft 1
+.fi
+This function returns a partition given its name.
+0 is returned if the partition is not found.
+The default partition name is the empty string ("").
+.PP
+.nf
+.ft 5
+Pzpart_t*  pzsetpart(Pz_t* pz, Pzpart_t* part);
+.ft 1
+.fi
+This function sets the current active partition to part.
+The previous active partition is returned.
+The current active partition is initialized to the default parition ("").
+.PP
+.nf
+.ft 5
+void       pzdump(Pz_t* pz, Sfio_t* out);
+.ft 1
+.fi
+This function writes the header header information from the
+.I pzip
+stream
+.L pz
+to the
+.I sfio
+output stream
+.L out
+in partition file format.
+A file containing this information is suitable for the
+.L Pzdisc_t.partition
+field.
+It returns
+.L 0
+on success and
+.L -1
+on error.
+
+.PP
+.Ss "SFIO DECOMPRESS DISCIPLINE"
+.PP
+.nf
+.ft 5
+int        sfdcpzip(Sfio_t* sp, const char* options, int flags);
+.ft 1
+.fi
+This function pushes a
+.I pzip
+decompress
+.I sfio
+discipline on the
+.I sfio
+stream
+.LR sp
+by calling
+.IR pzopen ()
+with
+.L PZ_READ|PZ_STREAM
+on
+.L sp
+and setting
+.L Pzdisc_t.options
+to
+.LR options .
+Because of the extra information involved,
+.I pzip
+compression is not supported by the discipline.
+This is better handled by the
+.IR pzip (1)
+command interface.
+This means that
+.L sp
+must be an
+.L SF_READ
+.I sfio
+stream.
+.IR sfdcpzip ()
+stacks the
+.I gzip
+decompress discipline
+.IR sfdcgzip ()
+on
+.L sp
+if necessary.
+0 is returned on success.
+
+.SH AUTHOR
+Glenn Fowler, gsf@research.att.com.

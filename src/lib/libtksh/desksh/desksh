@@ -1,0 +1,43 @@
+#DESKSH -- desktop gui for the kornshell
+#  Written by Charles Harless and Erik Wile
+#  AT&T Research  Copyright 1996
+
+# the only changes required to bring this to a new system involve two
+# lines in the default (../lib) deskshrc file, documented there.
+
+# to use you own defaults (eg for which version of tksh, create a
+# directory called $HOME/.desksh (or set $DESKSH_HOME in your
+# environment) and create a "deskshrc" file in that directory with
+# your individual preferences.
+
+typeset desksh_path=$(whence $0)
+desksh_path=${desksh_path%%+([!/])/+([!/])}lib
+
+: ${DESKSH_LIB:=$desksh_path}
+: ${DESKSH_HOME:=$HOME/.desksh} 
+
+typeset dir
+for dir in "$DESKSH_LIB" "$DESKSH_HOME"
+do
+	typeset desksh_rc="$dir/deskshrc"
+
+	if [[ -r "$desksh_rc" ]]
+	then
+		echo "reading $desksh_rc"
+		set -a
+		. $desksh_rc
+		set +a
+	else
+		echo "cannot read $desksh_rc"
+	fi
+done
+
+function append {
+	typeset -n var=$1 && [[ $var == ?(*:)${2}?(:*) ]] || var=$var:$2
+}
+append FPATH $DESKSH_ROOT
+
+: ${TKSH:=$(which tksh)}
+
+ENV=$DESKSH_ROOT/routines-desksh $TKSH
+echo

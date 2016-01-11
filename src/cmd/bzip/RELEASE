@@ -1,0 +1,5 @@
+02-02-14 bzip2.c: fix uwin core dump
+02-01-24 bzip2.c: use _PACKAGE_ast touch(3) instead of <utime.h>
+	 bzip2.c: fix strstr() loop
+01-01-01 bzip2.c: include bzlib.h first
+99-01-01 package for ast

@@ -1,0 +1,214 @@
+: regex zero width extension tests 2001-05-25
+
+{E	(?#aha)a		a		(0,1)	(?...) not supported
+
+# comments
+
+E	(?#aha)abc(?# foo )	aaabczz		(2,5)
+E	(?#oops			aaabczz		EPAREN
+
+# lookahead
+
+E	abc(?=foo)		abcabcfoo	(3,6)
+E	abc(?=foo)		abcabcfoobar	(3,6)
+E	abc(?=foo)foo		abcabcfoofoo	(3,9)
+E	abc(?=foo)foo		abcabcfoobar	(3,9)
+E	abc(?=foo)bar		abcabcfoobar	NOMATCH
+E	abc(foo)(bar)		abcabcfoobar	(3,12)(6,9)(9,12)
+E	abc(?=foo)(bar)		abcabcfoobar	NOMATCH
+E	abc(?=foo)(foo)		abcabcfoobar	(3,9)(6,9)
+E	abc(?=foo)foobar	abcabcfoobar	(3,12)
+E	abc(?=foo)(foo)bar	abcabcfoobar	(3,12)(6,9)
+
+# anonymous groups
+
+E	abc(?:foo)		abcabcfoo	(3,9)
+E	abc(?:foo)foo		abcabcfoo	NOMATCH
+E	abc(?:foo)bar		abcabcfoobar	(3,12)
+E	abc(?:foo)(bar)		abcabcfoobar	(3,12)(9,12)
+
+E	(?=abc)			xxabcabcxx	(2,2)
+E	(?=abc)?		xxabcabcxx	BADRPT
+E	(?=abc)*		xxabcabcxx	BADRPT
+E	(?=abc)+		xxabcabcxx	BADRPT
+
+E	(?:abc)			xxabcabcxx	(2,5)
+E	.(?:abc)		xxabcabcxx	(1,5)
+E	(?:abc).		xxabcabcxx	(2,6)
+E	.(?:abc).		xxabcabcxx	(1,6)
+E	..(?:abc)		xxabcabcxx	(0,5)
+E	(?:abc)..		xxabcabcxx	(2,7)
+E	..(?:abc)..		xxabcabcxx	(0,7)
+E	(?:abc)?		xxabcabcxx	(0,0)
+E	.(?:abc)?		xxabcabcxx	(0,1)
+E	(?:abc)?.		xxabcabcxx	(0,1)
+E	.(?:abc)?.		xxabcabcxx	(0,2)
+E	..(?:abc)?		xxabcabcxx	(0,5)
+E	(?:abc)?..		xxabcabcxx	(0,2)
+E	..(?:abc)?..		xxabcabcxx	(0,7)
+E	(?:abc){1}		xxabcabcxx	(2,5)
+E	.(?:abc){1}		xxabcabcxx	(1,5)
+E	(?:abc){1}.		xxabcabcxx	(2,6)
+E	.(?:abc){1}.		xxabcabcxx	(1,6)
+E	..(?:abc){1}		xxabcabcxx	(0,5)
+E	(?:abc){1}..		xxabcabcxx	(2,7)
+E	..(?:abc){1}..		xxabcabcxx	(0,7)
+E	(?:abc)(?:abc)		xxabcabcxx	(2,8)
+E	(?:abc)*		xxabcabcxx	(0,0)
+E	(?:abc)+		xxabcabcxx	(2,8)
+E	(?:abc){2}		xxabcabcxx	(2,8)
+E	(?:abc)*?		xxabcabcxx	(0,0)
+E	(?:abc)+?		xxabcabcxx	(2,5)
+E	(?:abc){2}?		xxabcabcxx	(2,8)
+
+# sanity check
+
+E	(abc)			xxabcabcxx	(2,5)(2,5)
+E	(abc)?			xxabcabcxx	(0,0)
+E	..(abc)?		xxabcabcxx	(0,5)(2,5)
+E	(abc)?..		xxabcabcxx	(0,2)
+E	..(abc)?..		xxabcabcxx	(0,7)(2,5)
+E	(abc){1}		xxabcabcxx	(2,5)(2,5)
+E	(abc)(abc)		xxabcabcxx	(2,8)(2,5)(5,8)
+E	(abc)*			xxabcabcxx	(0,0)
+E	(abc)+			xxabcabcxx	(2,8)(5,8)
+E	(abc){2}		xxabcabcxx	(2,8)(5,8)
+E	(abc)*?			xxabcabcxx	(0,0)
+E	(abc)+?			xxabcabcxx	(2,5)(2,5)
+E	(abc){2}?		xxabcabcxx	(2,8)(5,8)
+
+# scoped flags
+
+E	(?i)Hello.Hello		Hello Hello	(0,11)
+E	(?i)hello.hello		Hello Hello	(0,11)
+
+E	(?i)hello.(?-i)hello	Hello Hello	NOMATCH
+E	(?i:hello).(?-i:hello)	Hello Hello	NOMATCH
+E	(?i)hello.(?-i)Hello	Hello Hello	(0,11)
+E	(?i:hello).hello	Hello Hello	NOMATCH
+E	(?i:hello).Hello	Hello Hello	(0,11)
+
+Ei	(?i)hello.(?-i)hello	Hello Hello	NOMATCH
+Ei	hello.(?-i)hello	Hello Hello	NOMATCH
+Ei	hello.(?-i)Hello	Hello Hello	(0,11)
+
+# xxx
+
+E	..(abc)+..		xxabcabcxx	(0,10)(5,8)
+
+E	..(?:abc)+..		xxabcabcxx	(0,10)
+E	..(?:abc)*..		xxabcabcxx	(0,10)
+E	..(?:abc)?..		xxabcabcxx	(0,7)
+
+E	(..)(?:abc)+(..)	xxabcabcxx	(0,10)(0,2)(8,10)
+E	(..)(?:abc)*(..)	xxabcabcxx	(0,10)(0,2)(8,10)
+E	(..)(?:abc)?(..)	xxabcabcxx	(0,7)(0,2)(5,7)
+
+# shell can do it too
+
+K	*+([0-9])		abc123xyz	(0,6)(5,6)
+K	*+(\d)			abc123xyz	(0,6)(5,6)
+
+K	~(E).*([0-9])+		abc123xyz	(0,6)(5,6)
+K	~(E).*(\d)+		abc123xyz	(0,6)(5,6)
+
+E	.*([0-9])+		abc123xyz	(0,6)(5,6)
+E	.*(\d)+			abc123xyz	(0,6)(5,6)
+
+E	(?K)*+([0-9])		abc123xyz	NOMATCH
+E	(?K)*+([0-9])*		abc123xyz	(0,9)(5,6)
+E	(?K-lr)*+([0-9])	abc123xyz	(0,6)(5,6)
+E	(?K-a)*+([0-9])		abc123xyz	(0,6)(5,6)
+E	(?K)*+(\d)		abc123xyz	NOMATCH
+E	(?K)*+(\d)*		abc123xyz	(0,9)(5,6)
+E	(?K-lr)*+(\d)		abc123xyz	(0,6)(5,6)
+E	(?K-a)*+(\d)		abc123xyz	(0,6)(5,6)
+
+# backtracking
+
+Ei	\b(foo)\s+(\w+)	Food is on the foo table.		(15,24)(15,18)(19,24)
+Ei	foo(.*)bar	The food is under the bar in the barn.	(4,36)(7,33)
+Ei	foo(.*?)bar	The food is under the bar in the barn.	(4,25)(7,22)
+
+E	^\D*(?!123)		ABC123			(0,2)
+
+E	^(ABC)			ABC123			(0,3)(0,3)
+E	^(ABC)			ABC445			(0,3)(0,3)
+E	^(\D*)			ABC123			(0,3)(0,3)
+E	^(\D*)			ABC445			(0,3)(0,3)
+
+E	^(ABC)(?=123)		ABC123			(0,3)(0,3)
+E	^(ABC)(?!123)		ABC123			NOMATCH
+E	^(ABC)(?!123)		ABC445			(0,3)(0,3)
+A	^(\D*)(123)!		ABC123			(0,6)(0,2)
+A	^(\D*)(?:(123)!)	ABC123			(0,6)(0,2)
+A	^(\D*)(123)!		ABC445			(0,6)(0,3)
+A	^(\D*)(?:(123)!)	ABC445			(0,6)(0,3)
+E	^(\D*)(123)		ABC123			(0,6)(0,3)(3,6)
+E	^(\D*)(?:123)		ABC123			(0,6)(0,3)
+E	^(\D*)(?=123)		ABC123			(0,3)(0,3)
+E	^(\D*)(?!123)		ABC123			(0,2)(0,2)
+E	^(\D*)(?!123)		ABC445			(0,3)(0,3)
+E	^(\D*)(?=\d)		ABC123			(0,3)(0,3)
+E	^(\D*)(?=\d)		ABC445			(0,3)(0,3)
+E	^(\D*)(?=\d)(?!123)	ABC123			NOMATCH
+E	^(\D*)(?=\d)(?!123)	ABC445			(0,3)(0,3)
+
+E	(.*)(\d*)	I have 2 numbers: 53147		(0,23)(0,23)(23,23)
+E	(.*)(\d+)	I have 2 numbers: 53147		(0,23)(0,22)(22,23)
+E	(.*?)(\d*)	I have 2 numbers: 53147		(0,0)(0,0)(0,0)
+E	(.*?)(\d+)	I have 2 numbers: 53147		(0,8)(0,7)(7,8)
+E	(.*)(\d+)$	I have 2 numbers: 53147		(0,23)(0,22)(22,23)
+E	(.*?)(\d+)$	I have 2 numbers: 53147		(0,23)(0,18)(18,23)
+E	(.*)\b(\d+)$	I have 2 numbers: 53147		(0,23)(0,18)(18,23)
+E	(.*\D)(\d+)$	I have 2 numbers: 53147		(0,23)(0,18)(18,23)
+
+E	\(([^()]+|\([^()]*\))+\)	((()aaaaaaaaaaaaa	NOMATCH
+E	\(((?>[^()]+)|\([^()]*\))+\)	((()aaaaaaaaaaaaa	NOMATCH
+
+E	^(?:a*)ab		aaaaaaaaaaaaab		(0,14)
+E	^(?>a*)ab		aaaaaaaaaaaaab		NOMATCH
+
+# lookbehind
+
+A	(abc)foo		abcabcfoo	(3,9)(3,6)
+A	(?:abc)foo		abcabcfoo	(3,9)
+
+A	(abc&.*c)foo		abcabcfoo	(3,9)(3,6)
+A	(?:abc&.*c)foo		abcabcfoo	(3,9)
+
+E	abcfoo(?<=foo)		abcabcfoo	(3,9)
+E	abc(?<=abc)foo		abcabcfoo	(3,9)
+
+E	(?<=goo)bar		foobargoobar	(9,12)
+E	(?<!goo)bar		foobargoobar	(3,6)
+E	(?<!foo)bar		foobargoobar	(9,12)
+
+E	abc.*(?<=foo)bar	abcabcfoobar	(0,12)
+E	abc(foo)(bar)		abcabcfoobar	(3,12)(6,9)(9,12)
+
+# external callouts
+
+{E	abc(?{ABC})			<abc>		(1,4){ABC}(1:1)		external callouts not supported
+E	(abc(?{ABC})|xyz(?{XYZ}))	<abc>		(1,4)(1,4){ABC}(1:1)
+E	(abc(?{ABC})|xyz(?{XYZ}))+	<abcxyz>	(1,7)(4,7){ABC}(1:4){XYZ}(2:1)
+E	(abc(?{1ABC})|xyz(?{XYZ}))+	<abcxyz>	(4,7)(4,7){1ABC}(1:4){XYZ}(2:1)
+E	(a.c(?{1ABC})|abc(?{XYZ}))	<abcxyz>	(1,4)(1,4){1ABC}(1:4){XYZ}(2:4)
+
+K	abc~({ABC})			<abc>		(1,4){ABC}(1:1)
+K	(abc~({ABC})|xyz~({XYZ}))	<abc>		(1,4)(1,4){ABC}(1:1)
+K	+(abc~({ABC})|xyz~({XYZ}))	<abcxyz>	(1,7)(1,7){ABC}(1:4){XYZ}(2:1)
+K	+(abc~({1ABC})|xyz~({XYZ}))	<abcxyz>	(4,7)(4,7){1ABC}(1:4){XYZ}(2:1)
+K	(abc~({ABC})|*~({XYZ}))		<abcxyz>	(0,8)(0,8)
+K	~(o:abc~({ABC})|*~({XYZ}))	<abcxyz>	NOMATCH
+Km	(abc~({ABC})|*~({XYZ}))		<abcxyz>	(0,0)(0,0)
+K	((abc~({ABC}))|(*~({XYZ})))	<abcxyz>	(0,8)(0,8)(?,?)(0,8)
+Km	((abc~({ABC}))|(*~({XYZ})))	<abcxyz>	(0,0)(0,0)(?,?)(0,0)
+K	((abc~({ABC}))|(*c~({XYZ})))	<abcxyz>	(0,4)(0,4)(?,?)(0,4)
+Km	((abc~({ABC}))|(*c~({XYZ})))	<abcxyz>	(0,4)(0,4)(?,?)(0,4)
+K	(a?c~({ABC})|abc~({XYZ}))	<abcxyz>	(1,4)(1,4){ABC}(1:4){XYZ}(2:4)
+K	(a?c~({1ABC})|abc~({XYZ}))	<abcxyz>	(1,4)(1,4){1ABC}(1:4){XYZ}(2:4)
+
+}
+
+}

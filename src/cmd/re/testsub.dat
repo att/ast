@@ -1,0 +1,227 @@
+: regsubcomp and regsubexec tests 2008-02-14
+
+E/	/[az]/X/gg		abc.xyz			EFLAGS
+E/	/[az]/X/1g2		abc.xyz			EFLAGS
+E/	/[az]/X/X		abc.xyz			EFLAGS
+E/	/([az])/\2/		abc.xyz			ESUBREG
+
+E/t	/[az]/X/g		abc.xyz			Xbc.xyX
+E/t	/[az]/X/		abc.xyz			Xbc.xyz
+E/t	/[az]/X			abc.xyz			EDELIM
+E/t	/[az]/			abc.xyz			EDELIM
+E/t	/[az]			abc.xyz			EDELIM
+
+Eqt	/[az]/			abc.xyz			(0,1)
+Eqt	/[az]			abc.xyz			EDELIM
+Eqt	/[abcxyz]*/		abc/xyz			(0,3)
+Eqt	/[abcxyz]*		abc/xyz			EDELIM
+Eqt	/[abc/xyz]*/		abc/xyz			(0,7)
+Eqt	/[abc/xyz]*		abc/xyz			EDELIM
+
+E/	/[az]/X/g		abc.xyz			Xbc.xyX
+E/	/[az]/X/		abc.xyz			Xbc.xyz
+E/	/[az]/X			abc.xyz			Xbc.xyz
+E/	/[az]/			abc.xyz			bc.xyz
+E/	/[az]			abc.xyz			bc.xyz
+
+Eq	/[az]/			abc.xyz			(0,1)
+Eq	/[az]			abc.xyz			(0,1)
+Eq	/[abcxyz]*/		abc/xyz			(0,3)
+Eq	/[abcxyz]*		abc/xyz			(0,3)
+Eq	/[abc/xyz]*/		abc/xyz			(0,7)
+Eq	/[abc/xyz]*		abc/xyz			(0,7)
+
+E/$	\\[az]\\X\\		abc.xyz			EDELIM
+E/$	\n[az]\nX\n		abc.xyz			EDELIM
+E/$	\r[az]\rX\r		abc.xyz			EDELIM
+E/$	\t[az]\tX\t		abc.xyz			Xbc.xyz
+
+Eq$	\\[az]\\		abc.xyz			EDELIM
+Eq$	\n[az]\n		abc.xyz			EDELIM
+Eq$	\r[az]\r		abc.xyz			EDELIM
+Eq$	\t[az]\t		abc.xyz			(0,1)
+
+E/	/[az]/X/g		abc.xyz			Xbc.xyX
+E/	/[az]/X/l		abc.xyz			xbc.xyz
+E/	/[az]/x/l		abc.xyz			xbc.xyz
+E/	/[az]/X/gl		abc.xyz			xbc.xyx
+E/	/[az]/x/gl		abc.xyz			xbc.xyx
+E/	/[az]/X/p		abc.xyz			Xbc.xyz
+E/	/[az]/X/s		abc.xyz			Xbc.xyz
+E/	/[az]/X/u		abc.xyz			Xbc.xyz
+E/	/[az]/x/u		abc.xyz			Xbc.xyz
+E/	/[az]/X/gu		abc.xyz			Xbc.xyX
+E/	/[az]/x/gu		abc.xyz			Xbc.xyX
+E/	/[az]/X/w		abc.xyz			Xbc.xyz
+E/	/[az]/X/wXXXX		abc.xyz			Xbc.xyz
+
+E/	/[az]/X/		abc.xyz			Xbc.xyz
+E/	/[az]/X/g		abc.xyz			Xbc.xyX
+
+E/	/\b/-/			abc.xyz			-abc.xyz
+E/	/\b/-/g			abc.xyz			-abc-.-xyz-
+
+E/	/\</-/			abc.xyz			-abc.xyz
+E/	/\>/-/			abc.xyz			abc-.xyz
+E/	/\<|\>/-/		abc.xyz			-abc.xyz
+E/	/\</-/g			abc.xyz			-abc.-xyz
+E/	/\>/-/g			abc.xyz			abc-.xyz-
+E/	/\<|\>/-/g		abc.xyz			-abc-.-xyz-
+
+E/	/[[:<:]]/-/		abc.xyz			-abc.xyz
+E/	/[[:>:]]/-/		abc.xyz			abc-.xyz
+E/	/[[:<:]]|[[:>:]]/-/	abc.xyz			-abc.xyz
+E/	/[[:<:]]/-/g		abc.xyz			-abc.-xyz
+E/	/[[:>:]]/-/g		abc.xyz			abc-.xyz-
+E/	/[[:<:]]|[[:>:]]/-/g	abc.xyz			-abc-.-xyz-
+
+E/	/.\b/&-/		abc.xyz			abc-.xyz
+E/	/.\b/&-/g		abc.xyz			abc-.-xyz-
+E/	/.\b/\0-/		abc.xyz			abc-.xyz
+E/	/.\b/\0-/g		abc.xyz			abc-.-xyz-
+
+E/	/\b./-&/		abc.xyz			-abc.xyz
+E/	/\b./-&/g		abc.xyz			-a-b-c-.-x-y-z
+E/	/\b./-\0/		abc.xyz			-abc.xyz
+E/	/\b./-\0/g		abc.xyz			-a-b-c-.-x-y-z
+
+E/	/.\b/&\&/		abc.xyz			abc&.xyz
+E/	/.\b/&\&/g		abc.xyz			abc&.&xyz&
+E/	/.\b/\0\&/		abc.xyz			abc&.xyz
+E/	/.\b/\0\&/g		abc.xyz			abc&.&xyz&
+
+E/	/\b./\&&/		abc.xyz			&abc.xyz
+E/	/\b./\&&/g		abc.xyz			&a&b&c&.&x&y&z
+E/	/\b./\&\0/		abc.xyz			&abc.xyz
+E/	/\b./\&\0/g		abc.xyz			&a&b&c&.&x&y&z
+
+E/	/\b./\%%/		abc:xyz			%%bc:xyz
+E/	/\b./\%%/g		abc:xyz			%%%%%%%%%%%%%%
+
+E/	/(.*):(.*)/\2:\1/	ABC:xyz			xyz:ABC
+E/	/(.*):(.*)/\1:\2/l	ABC:xyz			abc:xyz
+E/	/(.*):(.*)/\1:\2/u	ABC:xyz			ABC:XYZ
+E/	/(.*):(.*)/\L\1:\U\2/	ABC:xyz			abc:XYZ
+
+E/	/^/x/g			12345			x12345
+E/	/$/x/g			12345			12345x
+E/	/^|$/x/g		12345			x12345x
+E/	/$|^/x/g		12345			x12345x
+E/	/2/x/g			12345			1x345
+E/	/^|2/x/g		12345			x1x345
+E/	/2|^/x/g		12345			x1x345
+E/	/$|2/x/g		12345			1x345x
+E/	/2|$/x/g		12345			1x345x
+E/	/2|^/x/g		12345			x1x345
+E/	/^|2|$/x/g		12345			x1x345x
+E/	/^|$|2/x/g		12345			x1x345x
+E/	/$|^|2/x/g		12345			x1x345x
+E/	/$|2|^/x/g		12345			x1x345x
+E/	/2|$|^/x/g		12345			x1x345x
+E/	/2|^|$/x/g		12345			x1x345x
+
+E/	/(^)/x/g		12345			x12345
+E/	/($)/x/g		12345			12345x
+E/	/(^)|($)/x/g		12345			x12345x
+E/	/($)|(^)/x/g		12345			x12345x
+E/	/(2)/x/g		12345			1x345
+E/	/(^)|2/x/g		12345			x1x345
+E/	/2|(^)/x/g		12345			x1x345
+E/	/($)|2/x/g		12345			1x345x
+E/	/2|($)/x/g		12345			1x345x
+E/	/(2)|(^)/x/g		12345			x1x345
+
+E/	/^|6/x/g		12345			x12345
+E/	/6|^/x/g		12345			x12345
+E/	/$|6/x/g		12345			12345x
+E/	/6|$/x/g		12345			12345x
+
+E/z	/2|/x/g			12345			x1x3x4x5x
+E/z	/6|/x/g			12345			x1x2x3x4x5x
+E/	/3|\</x/g		12345 626		x12x45 x626
+E/	/3|\</x/g		12345 1245 1245		x12x45 x1245 x1245
+
+E/	/a*/x/			123			x123
+E/	/a*/x/			aaa			x
+
+E/	/a*/x/g			123			x1x2x3x
+E/	/a*/x/g			aaa			x
+
+E/	/a*/x/1			123			x123
+E/	/a*/x/2			123			1x23
+E/	/a*/x/3			123			12x3
+E/	/a*/x/4			123			123x
+E/	/a*/x/5			123			123
+E/	/a*/x/1			aaa			x
+E/	/a*/x/2			aaa			aaa
+E/	/a*/x/3			aaa			aaa
+
+E/	/a*/x/1g		123			x1x2x3x
+E/	/a*/x/2g		123			1x2x3x
+E/	/a*/x/3g		123			12x3x
+E/	/a*/x/4g		123			123x
+E/	/a*/x/5g		123			123
+E/	/a*/x/1g		aaa			x
+E/	/a*/x/2g		aaa			aaa
+E/	/a*/x/3g		aaa			aaa
+
+E/	/:/@/g			1:2:3			1@2@3
+E/	/@/:/g			1@2@3			1:2:3
+E/	/a/&:&:&:&:&:&:&:&/	ababa			a:a:a:a:a:a:a:ababa
+
+E/	/:/@\&@/g		1:2:3			1@&@2@&@3
+E/	&:&@\&@&g		1:2:3			1@:@2@:@3
+
+E/	/.*/&&/			123			123123
+E/	/.*/&&&&&&&&/		123			123123123123123123123123
+
+B/xz	/-l\(.*\)/lib\1.a/	-lcoshell		libcoshell.a
+E/xz	/-l(.*)/lib\1.a/	-lcoshell		libcoshell.a
+
+K/	/[az]/X/gg		abc.xyz			EFLAGS
+K/	/[az]/X/1g2		abc.xyz			EFLAGS
+K/	/[az]/X/X		abc.xyz			EFLAGS
+K/	/@([az])/\2/		abc.xyz			ESUBREG
+
+K/	/[az]/X/		abc.xyz			Xbc.xyz
+K/	/[az]/X/g		abc.xyz			Xbc.xyX
+
+K/	/\b/-/			abc.xyz			-abc.xyz
+K/	/\b/-/g			abc.xyz			-abc-.-xyz-
+
+K/	/?\b/&-/		abc.xyz			ab&-.xyz
+K/	/?\b/&-/g		abc.xyz			ab&-&-xy&-
+K/	/?\b/\0-/		abc.xyz			abc-.xyz
+K/	/?\b/\0-/g		abc.xyz			abc-.-xyz-
+K/	/?\b/\0-/		abc.xyz			abc-.xyz
+K/	/?\b/\0-/g		abc.xyz			abc-.-xyz-
+
+K/	/\b?/-&/		abc.xyz			-&bc.xyz
+K/	/\b?/-&/g		abc.xyz			-&-&-&-&-&-&-&
+K/	/\b?/-\0/		abc.xyz			-abc.xyz
+K/	/\b?/-\0/g		abc.xyz			-a-b-c-.-x-y-z
+K/	/\b?/-\0/		abc.xyz			-abc.xyz
+K/	/\b?/-\0/g		abc.xyz			-a-b-c-.-x-y-z
+
+K/	/?\b/&\0/		abc.xyz			ab&c.xyz
+K/	/?\b/&\0/g		abc.xyz			ab&c&.xy&z
+K/	/?\b/\0&/		abc.xyz			abc&.xyz
+K/	/?\b/\0&/g		abc.xyz			abc&.&xyz&
+K/	/?\b/\0&/		abc.xyz			abc&.xyz
+K/	/?\b/\0&/g		abc.xyz			abc&.&xyz&
+
+K/	/\b?/\0&/		abc.xyz			a&bc.xyz
+K/	/\b?/\0&/g		abc.xyz			a&b&c&.&x&y&z&
+K/	/\b?/&\0/		abc.xyz			&abc.xyz
+K/	/\b?/&\0/g		abc.xyz			&a&b&c&.&x&y&z
+K/	/\b?/&\0/		abc.xyz			&abc.xyz
+K/	/\b?/&\0/g		abc.xyz			&a&b&c&.&x&y&z
+
+K/	/\b?/\%%/		abc:xyz			ESUBREG
+K/	/\b?/%%/		abc:xyz			%%bc:xyz
+K/	/\b?/%%/g		abc:xyz			%%%%%%%%%%%%%%
+
+K/	/@(*):@(*)/\2:\1/	ABC:xyz			xyz:ABC
+K/	/@(*):@(*)/\1:\2/l	ABC:xyz			abc:xyz
+K/	/@(*):@(*)/\1:\2/u	ABC:xyz			ABC:XYZ
+K/	/@(*):@(*)/\L\1:\U\2/	ABC:xyz			abc:XYZ

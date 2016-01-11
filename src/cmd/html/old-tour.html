@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<META NAME="generator" CONTENT="troff2html (AT&T Labs Research) 04/01/97 -mm">
+<TITLE>tour.mm mm document</TITLE>
+</HEAD>
+<BODY>
+<PRE><CENTER><H2>A Tour of the ast Commands and Libraries</H2><H4>
+Glenn Fowler
+
+AT&amp;T Labs - Research
+
+Murray Hill, NJ 07974
+
+</H4></CENTER>
+</PRE><DL COMPACT>
+<DT>
+<HR>
+<H3><A NAME="1Introduction">1&nbsp;&nbsp;Introduction</A></H3>
+<DD></DL>
+The <EM>ast </EM>commands and libraries were developed by the Software Engineering
+Research Department (<EM>aka </EM>the Advanced Software [Technology] Department)
+at AT&amp;T Bell Laboratories, Murray Hill, NJ.
+The strength of <EM>ast </EM>is how its individual components combine to form a
+cohesive computing environment across UNIX<SUP>&#174;</SUP> and non-UNIX platforms.
+<A HREF="#FN577">Cohesiveness*</A><FN ID="FN577">Footnote test.
+</FN>is maintained by well-defined library interfaces for algorithms upon which
+the commands are built.
+In many cases a library implementation was the driving force behind command
+implementations.
+<DL COMPACT>
+<DT>
+<HR>
+<H3><A NAME="2Motivation">2&nbsp;&nbsp;Motivation</A></H3>
+<DD></DL>
+Why should you consider using the <EM>ast </EM>software? After all, many of the
+commands look like what's already in <TT>/bin </TT>and <TT>/usr/local/gnu/bin</TT>.
+Although there is some replication, there are also some commands you won't
+find anywhere else: <EM>the </EM>ksh93, nmake, the 3d filesystem, cia, and yeast.
+<DL COMPACT>
+<DT>
+<HR>
+<H3><A NAME="3Installation">3&nbsp;&nbsp;Installation</A></H3>
+<DD></DL>
+The <EM>ast </EM>software installs in a single directory hierarchy, rooted at <TT>$INSTALLROOT</TT>,
+usually <TT>/usr/local/ast </TT>or <TT>/usr/add-on/ast</TT>.
+The top level <TT>$INSTALLROOT </TT>directories are:  <PRE>
+<TT>                       bin      executable binaries and scripts 
+                       fun      </TT><EM>ksh93</EM><TT> shell functions   
+                       lib      libraries       
+               lib/</TT><EM>command</EM><TT>      related files for </TT><EM>command</EM><TT>       
+               src/cmd/</TT><EM>xxx</EM><TT>      source for command </TT><EM>xxx</EM><TT>  
+            src/lib/lib</TT><EM>xxx</EM><TT>      source for library </TT><EM>xxx</EM><TT>  
+</TT></PRE>To access the commands and related data files:  <PRE>
+<TT>        export PATH=$INSTALLROOT/bin:$PATH      
+</TT></PRE>For each <EM>command </EM>that has a related data file <EM>file</EM>, <EM>file </EM>is found by searching
+<TT>$PATH </TT>for  e.g., the magic file for the file command is <TT>../lib/file/magic
+</TT>on <TT>$PATH</TT>.
+If <TT>$HOME/bin </TT>is before <TT>$INSTALLROOT/bin </TT>in <TT>$PATH </TT>then you can selectively
+override standard <EM>ast </EM>related files by placing them in the directory  This
+allows executables to be built without hard-coded pathnames and also requires
+only a change in <TT>$PATH </TT>when <TT>$INSTALLROOT </TT>changes.
+On systems with shared libraries one of  <PRE>
+<TT>        export LD_LIBRARY_PATH=$INSTALLROOT/lib:$LD_LIBRARY_PATH        
+        export LIBPATH=$INSTALLROOT/lib:$LIBPATH        
+        export LPATH=$INSTALLROOT/lib:$LPATH    
+</TT></PRE>is required to locate the <EM>ast </EM>shared libraries.
+<DL COMPACT>
+<P>
+<DT>
+<HR>
+<H3><A NAME="4Exploration">4&nbsp;&nbsp;Exploration</A></H3>
+<DD><EM>tw </EM></DL>
+combines <EM>find </EM>and <EM>xargs</EM>.
+It provides C style expressions on path names and elements of <TT>struct stat</TT>.
+To find suspicious executables:  <PRE>
+<TT>        tw -d / -e "uid=='root' &amp;&amp; (mode&amp;'u+s') &amp;&amp; parent.uid!=uid"     
+</TT></PRE>to change the owner of all of bozo's files:  <PRE>
+<TT>        tw -d / -e "uid=='bozo'" chown clown:circus     
+</TT></PRE><EM>tw </EM>collects file pathname arguments up to the exec arg limit before it
+executes the command.
+For paranoid users:  <PRE>
+<TT>        tw chmod go-rwx 
+</TT></PRE>which is equivalent to:  <PRE>
+<TT>        chmod -R go-rwx 
+</TT></PRE>(Now you don't need to add a <TT>-R </TT>option to your favorite commands.) To find
+all source files that include <TT>foo.h</TT>:  <PRE>
+<TT>        tw -e "name=='*.[chly]'" grep -l '^#.*include.*["&lt;]foo.h[&gt;"]'   
+</TT></PRE><EM>libast </EM>handles the magic number matching for the <EM>file </EM>command.
+The magic file, <TT>$INSTALLROOT/lib/file/magic</TT>, is carefully constructed to
+give the same output across all architectures:  <PRE>
+<TT>        cd $HOME/arch   
+        file */bin/cat  
+</TT></PRE>might produce:  <PRE>
+<TT>        att.i386/bin/cat:   elf i386 executable, 32-bit, little-endian, ..      
+        bsd.i386/bin/cat:   bsd 386 executable, compact, paged, pure, no..      
+        hp.pa/bin/cat:      hp pa-risc executable, shared, dynamically l..      
+        sgi.mips2/bin/cat:  elf mips executable, 32-bit, dynamically lin..      
+        sol.sun4/bin/cat:   elf sparc executable, 32-bit, dynamically li..      
+        sun4/bin/cat:       sun sparc executable, paged, dynamically lin..      
+</TT></PRE><EM>tw </EM>uses the same interface, making it easy to search for files based on
+type, name and content.
+The following searches for executable scripts:  <PRE>
+<TT>        tw -e "(mode&amp;'+x') &amp;&amp; type!=DIR &amp;&amp; magic!='*executable*'"       
+</TT></PRE>The <EM>tw </EM>algorithm efficiently detects file system loops, so following symbolic
+links is not a problem.
+The same algorithm is used by all <EM>ast </EM>commands that traverse directory
+hierarchies, and the following options to control pathname resolution:
+<PRE><TT>        -L (logical)         follow symbolic links      
+        -P (physical)        don't follow symbolic links        
+        -H (metaphysical)    -L for command line files, -P otherwise    
+</TT></PRE>The <EM>ksh93 </EM><EM>getconf </EM>builtin controls the default traversal mode:  <PRE>
+<TT>        getconf PATH_RESOLVE - { logical, physical, metaphysical }      
+</TT></PRE><DL COMPACT>
+<DT>
+<HR>
+<H3><A NAME="5Configuration">5&nbsp;&nbsp;Configuration</A></H3>
+<DD><DT>
+<HR>
+<H3><A NAME="6Compression">6&nbsp;&nbsp;Compression</A></H3>
+<DD><DT>
+<HR>
+<H3><A NAME="7Conclusion">7&nbsp;&nbsp;Conclusion</A></H3>
+<DD></DL>
+<HR>
+<P>April 18, 1997
+</BODY></HTML>

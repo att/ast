@@ -1,0 +1,43 @@
+NOTE regression tests for the chmod command
+
+UNIT chmod
+
+TEST '"=" vs. umask'
+
+	PROG touch f
+
+	for mask in 000 007 070 077 700 707 770 777
+	do
+
+	UMASK $mask
+
+	EXEC 777 f
+	EXEC -c 777 f
+	EXEC -c = f
+	EXEC -c =rw f
+	EXEC -c =,u=rw f
+	EXEC -c =,g=rw f
+	EXEC -c =,o=rw f
+	EXEC -c =,ug=rw f
+	EXEC -c =,uo=rw f
+	EXEC -c =,go=rw f
+	EXEC -c =,a=rw f
+
+	done
+
+TEST "X vs. DIR and REG"
+
+	UMASK 000
+
+	PROG touch f
+
+	EXEC 444 f
+	EXEC -c u=rX f
+	EXEC -c o+x f
+	EXEC -c u=rX f
+
+	PROG mkdir d
+
+	EXEC 400 d
+	EXEC -c u=rX d
+	EXEC -c o=rX d

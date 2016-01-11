@@ -1,0 +1,345 @@
+: strmatch and strgrpmatch tests 2010-11-22
+
+# shell patterns
+
+S	?.c		axc			NOMATCH
+S	?.c		a.c			(0,3)
+S	a*.c		ab.c			(0,4)
+S	*.c		a.c			(0,3)
+S	?*.c		a.c			(0,3)
+S	test?		testy			(0,5)
+S	test*		test			(0,4)
+S	tes*t		test			(0,4)
+S	*test		test			(0,4)
+S	t*s*t		test			(0,4)
+S	t*s*t		tesseract		(0,9)
+S	t?s?		test			(0,4)
+S	?s*t		psyot			(0,5)
+S	[a-z]s*t	asset			(0,5)
+S	s[!gh]t		set			(0,3)
+S	t[a-ce]st	test			(0,4)
+S	tea[ea-c]up	teacup			(0,6)
+S	[a-fh-z]*	jack			(0,4)
+S	\i\**		i*hello			(0,7)
+S	[a-z\\]		\			(0,1)
+S	[a-z%_]		b			(0,1)
+S	[\]		\			NOMATCH
+Sv	[\]		\			NOMATCH
+Sv	[\]		[\]			(0,3)
+S	[\\]		\			(0,1)
+Sv	[\\\\]		\\			(0,1)
+S	[\]]		]			(0,1)
+Sv	[\]]		]			(0,1)
+S	\i?*		itch			(0,4)
+S	\i?*		it			(0,2)
+S	?*?*?t		test			(0,4)
+S	?*?*?*?*	test			(0,4)
+S	*\]*\**\?*\[	]this*is?atest[		(0,15)
+S	[a-\\]*		at			(0,2)
+S	[a-d\\-/]	c			(0,1)
+S	*t?l*his	bright-land-hip-and-his	(0,23)
+S	test		test			(0,4)
+S	\		test			NOMATCH
+S	tes\		test			NOMATCH
+S	t*s*t		texxeract		NOMATCH
+S	t?st		tst			NOMATCH
+S	test?		test			NOMATCH
+S	s[!e]t		set			NOMATCH
+S	s[^e]t		set			NOMATCH
+S	[a-]*		atest			(0,5)
+S	[a-fh-z]	jack			(0,1)
+S	?*?*?t*?	test			NOMATCH
+S	*?????		test			NOMATCH
+S	*\		test			NOMATCH
+S	*?*?t?		test			NOMATCH
+S	t?		t			NOMATCH
+S	??*t		step			NOMATCH
+S	\[*		[abc			(0,4)
+S	[*		[abc			NOMATCH
+
+# ignore case
+
+Si	[a-z][0-9]		AZ90az90		(1,3)
+Si	aBrAcAdAbRa		AbRaCaDaBrA		(0,11)
+Si	aBrAc			1ABRA2abra3abrac	(11,16)
+Si	[a-z][0-9]		AZ90az90		(1,3)
+Si	[[:upper:]][[:lower:]]	aBCde			(0,2)
+
+Ki	b*(a)B*(A)		AaBaAbAa		(2,8)(3,5)(6,8)
+Ki	*(Ab|cD)		aBcD			(0,4)(0,4)
+Ki	+([[=Z=]])		azZa			(1,3)(1,3)
+
+# anchored shell patterns
+
+Sa	test		test			(0,4)
+Sa	test		ttest			NOMATCH
+Sa	test		testt			NOMATCH
+Sa	test		ttestt			NOMATCH
+Sl	test		test			(0,4)
+Sl	test		ttest			NOMATCH
+Sl	test		testt			(0,4)
+Sl	test		ttestt			NOMATCH
+Sr	test		test			(0,4)
+Sr	test		ttest			(1,5)
+Sr	test		testt			NOMATCH
+Sr	test		ttestt			NOMATCH
+
+# shell anomolies
+
+S	[b-n-y]		acz			(1,2)
+S	[y-b]		zya			(1,2)
+S	[y-b]		zba			(1,2)
+S	[y-b]		zxa			NOMATCH
+S	[a-e]*[!t	eel			NOMATCH
+S	[\		test			NOMATCH
+S	\t[est		test			NOMATCH
+S	?*[]		hello			NOMATCH
+S	[]		]			NOMATCH
+S	[\[-\]		[			NOMATCH
+Sv	[\[-\]		[			NOMATCH
+S	[\[-\]]		[			(0,1)
+S	[\[-\]]		]			(0,1)
+S	[\[\]]		[			(0,1)
+S	[\[\]]		]			(0,1)
+S	[]]		]			(0,1)
+S	[[]		[			(0,1)
+S	[][]		[			(0,1)
+S	[][]		]			(0,1)
+S	[\[-\]]		[			(0,1)
+S	[\[-\]]		]			(0,1)
+Sv	[\[-\]]		[			(0,1)
+S	[\[X\]]		[			(0,1)
+S	[\[X\]]		X			(0,1)
+S	[\[X\]]		]			(0,1)
+Sv	[\[-\]]		]			(0,1)
+S	[a		atest			NOMATCH
+S	[a-		atest			NOMATCH
+S	[a-z		atest			NOMATCH
+S	[a-fh-z		jack			NOMATCH
+S	[a-fh-z\]	jack			NOMATCH
+Sv	[a-fh-z\]	jack			NOMATCH
+S	[a-fh-z\\]	jack			(0,1)
+Sv	[a-fh-z\\]	jack			(0,1)
+S	[a-e\		atest			NOMATCH
+S	[a-\		atest			NOMATCH
+S	[a-bd-\		atest			NOMATCH
+S	(\		test			NOMATCH
+S	\t(est		test			NOMATCH
+S	(\(-\)		(			NOMATCH
+S	(a		atest			NOMATCH
+S	(a-		atest			NOMATCH
+S	(a-z		atest			NOMATCH
+S	(a-fh-z		jack			NOMATCH
+S	(a-fh-z\)	jack			NOMATCH
+S	(a-e\		atest			NOMATCH
+S	(a-\		atest			NOMATCH
+S	(a-bd-\		atest			NOMATCH
+
+# shell character classes
+
+S	[a-z][0-9]		AZ90az90	(5,7)
+S	[\z]			z\		(0,1)
+S	[!a-z]			a@Z`{z		(1,2)
+S	[$[:xdigit:].,]		gfa$1,234.AFG	(1,2)
+S	[---]			a-b		(1,2)
+S	[!-]			--a		(2,3)
+S	[a-]			--a		(0,1)
+S	[a-m-][a-m-]		--amoma--	(0,2)
+S	[b-m-y][b-m-y]		-abcmxyz-	(2,4)
+S	[c-m-b][c-m-b]		-abcmn-		(2,4)
+
+S	[z-a]			bcaz		(2,3)
+S	[!]			a		NOMATCH
+S	[!]			!		NOMATCH
+S	[A-Z-a]			cba		(2,3)
+S	[a-m-z]			nz		(0,1)
+S	[b-n-y]			aoz		(1,2)
+
+# augmented shell patterns
+
+K	a@()b			ab		(0,2)(1,1)
+K	*(abc)			abcabc		(0,6)(0,6)
+K	!(a)			a		(0,0)(0,0)
+K	xy!(*xy*)xy		xy.xx.yy.xy.xy	(0,11)(2,9)
+K	a\!			aa!a		(1,3)
+K	!(x)*(a)		NULL		(0,0)(0,0)(0,0)
+K	\[*			[abc		(0,4)
+K	[*			[abc		NOMATCH
+
+# augmented shell character classes
+
+K	[a-z][0-9]		AZ90az90	(5,7)
+Ki	[a-z][0-9]		AZ90az90	(1,3)
+K	[\z]*			z\		(0,2)
+K	+([!a-z])		a@Z`{z		(1,5)(1,5)
+K	[---]			a-b		(1,2)
+K	[!-]			--a		(2,3)
+K	*([a-])			--a		(0,3)(0,3)
+K	*([a-m-])		--amoma--	(0,4)(0,4)
+K	+([b-m-y])		-abcmxyz-	(2,7)(2,7)
+K	+([c-m-b])		-abcmn-		(2,5)(2,5)
+
+# augmented shell patterns with backrefs
+
+K	@([a-z])*\1		aa		(0,2)(0,1)
+K	@([a-z])*\1		axa		(0,3)(0,1)
+K	@([a-z])*\1		xax		(0,3)(0,1)
+K	@([a-z])*\1		aaa		(0,3)(0,1)
+K	@([a-z])*\\1		a\1		(0,3)(0,1)
+K	@([a-z])*\\1		ab\1		(0,4)(0,1)
+K	@([a-z])*\\1		a\\1		(0,4)(0,1)
+K	@([a-z])*\\1		a\\\1		(0,5)(0,1)
+K	a*\1			abc1		(0,4)
+K	a*\\1			abc\1		(0,5)
+K	+(a|@(b|c)|d)*\2	abczc		(0,5)(0,3)(2,3)
+K	@(?)\1\1@(?)\2\2\2	xxxxxxx		(0,7)(0,1)(3,4)
+K	+(?)\1\1+(?)\2\2\2	xxxxxxx		(0,7)(0,1)(3,4)
+
+# augmented shell subexpression patterns
+
+K	!(*.o)			foo.c		(0,5)(0,5)
+K	!(*.o)			foo.o		(0,4)(0,4)
+K	+(?)*\1			barxbar		(0,7)(0,3)
+K	+(?)\1			barbar		(0,6)(0,3)
+K	(+(?))\1		barbar		(0,6)(0,3)(0,3)
+K	+(?)\1			barxbar		NOMATCH
+K	+(a)*(b|c)+(a)		aabca		(0,5)(0,2)(2,4)(4,5)
+K	+(a|@(b|c)|d)*\1	cczc		(0,4)(0,1)(0,1)
+K	+(a|@(b|c)|d)*\2	aaab2b		(0,6)(0,4)(3,4)
+K	+(a|@(b|c)|d)*\2	abba		(0,3)(0,2)(1,2)
+K	+(a|@(b|c)|d)*\2	aba		NOMATCH
+K	+(a|@(b|c)|d)*\2	abczb		(0,5)(0,2)(1,2)
+K	+(a|@(b|c)|d)*\2	bba2		(0,2)(0,1)(0,1)
+K	+(a|@(b|c)|d)*\2	cca2		(0,2)(0,1)(0,1)
+K	?			/abc		(0,1)
+K	@(*/bar|*/foo)		/home/ksh/foo//bar/abcabcabc	(0,18)(0,18)
+K	@([a-z])*\1		1a1		NOMATCH
+K	@([a-z])*\1		a1a		(0,3)(0,1)
+K	@([a-z])*\1		xa\1		NOMATCH
+K	@([a-z])*\\1		a\\\a		NOMATCH
+K	@([a-z])*\\1		aa		NOMATCH
+K	@(abc)*\1		abcfooabc	(0,9)(0,3)
+K	a*\1			abca		NOMATCH
+K	a*\1			abc\1		(0,5)
+K	@(abc)@(foo)@(xyz)	abcfooxyz	(0,9)(0,3)(3,6)(6,9)
+K	@(abc)@(???)@(xyz)	abcfooxyz	(0,9)(0,3)(3,6)(6,9)
+K	@(abc)@(*)@(xyz)	abcfooxyz	(0,9)(0,3)(3,6)(6,9)
+K	@(abc)@(foo)\1		abcfooabc	(0,9)(0,3)(3,6)
+K	@(abc)@(???)\1		abcfooabc	(0,9)(0,3)(3,6)
+K	@(abc)@(*)\1		abcfooabc	(0,9)(0,3)(3,6)
+
+# fnmatch patterns
+
+S	\a\z			\a\z		NOMATCH
+Ss	\a\z			\a\z		(0,4)
+
+Sa	*			.abc		(0,4)
+Sa	*			Xabc		(0,4)
+Sa	?abc			.abc		(0,4)
+Sa	?abc			Xabc		(0,4)
+Sa	??abc			X.abc		(0,5)
+Sa	.*			.abc		(0,4)
+Sa	.*			Xabc		NOMATCH
+Sa	?.*			X.abc		(0,5)
+Sa	[!a-z]abc		.abc		(0,4)
+Sa	[!a-z]abc		Xabc		(0,4)
+
+# pax patterns
+
+Ka	(/ |/?*/|_______[0-9_][0-9_][0-9_]E[BL]E[BL]_)*	/         	(0,10)(0,2)
+Ka	(/ |/?*/|_______[0-9_][0-9_][0-9_]E[BL]E[BL]_)*	//         	NOMATCH
+Ka	(/ |/?*/|_______[0-9_][0-9_][0-9_]E[BL]E[BL]_)*	/1/         	(0,12)(0,3)
+Ka	(/ |/?*/|_______[0-9_][0-9_][0-9_]E[BL]E[BL]_)*	_______123EBEL_	(0,15)(0,15)
+
+# the old strgrpmatch can't handle these
+
+{K	[a-e]*[!t	eel[!t			NOMATCH
+K	[\		[\			(0,2)
+K	[]		[]			(0,2)
+K	[		[			(0,1)
+K	[a		[a			(0,2)
+K	(\		(\			(0,2)
+K	\(\		(\			(0,2)
+K	()		)			(0,0)(0,0)
+K	\(\)		)			NOMATCH
+K	()		()			(0,0)(0,0)
+K	\(\)		()			(0,2)
+K	(		(			(0,1)
+K	\(		(			(0,1)
+K	(a		(a			(0,2)
+K	\(a		(a			(0,2)
+
+K	+([abc])&*([bcd])	abcd		(1,3)(1,3)(1,3)
+K	*([abc])&+([bcd])	abcd		(1,3)(1,3)(1,3)
+K	!(a*)&+(?)		abb		(1,3)(1,3)(1,3)
+K	!(*(???|?????))		aa		(0,2)(0,2)
+K	!(*(???|?????))		aaa		(0,2)(0,2)
+K	!(*(???|?????))		aaaa		(0,4)(0,4)
+K	!(*(???|?????))		aaaaa		(0,4)(0,4)
+K	!(*(???|?????))		aaaaaa		(0,4)(0,4)
+K	!(*(???|?????))		aaaaaaa		(0,7)(0,7)
+K	!(*(???|?????))		aaaaaaaa	(0,7)(0,7)
+K	!(*(???|?????))		aaaaaaaaa	(0,7)(0,7)
+K	!(*(???)*(?????))	aa		(0,2)(0,2)
+K	!(*(???)*(?????))	aaa		(0,2)(0,2)
+K	!(*(???)*(?????))	aaaa		(0,4)(0,4)
+K	!(*(???)*(?????))	aaaaa		(0,4)(0,4)
+K	!(*(???)*(?????))	aaaaaa		(0,4)(0,4)
+K	!(*(???)*(?????))	aaaaaaa		(0,7)(0,7)
+K	!(*(???)*(?????))	aaaaaaaa	(0,7)(0,7)
+K	!(*(???)*(?????))	aaaaaaaaa	(0,7)(0,7)
+K	+(a|@(b|c)|d)*\2	ab2		NOMATCH
+K	+(a|@(b|c)|d)*\2	aaab2		NOMATCH
+K	+(a|@(b|c)|d)*\2	cczc		(0,4)(0,2)(1,2)
+K	+(a|@(b|c)|d)*\1	cczcc		(0,5)(0,2)(1,2)
+K	*+(x)*			abcxxxxdef	(0,10)(6,7)
+K	+(a)*+(a)		aabca		(0,5)(0,2)(4,5)
+K	+(a|@(b|c)|d)*\1	aaab2		(0,3)(0,1)
+K	+(a|@(b|c)|d)*\1	aba		(0,3)(0,1)
+K	+(a|@(b|c)|d)*\2	bca2		NOMATCH
+K	+(a|@(b|c)|d)*\2	cczcc		(0,5)(0,2)(1,2)
+K	a((A)|(B)|(C))z		aCzq		(0,3)(1,2)(?,?)(?,?)(1,2)
+K	foo@(bar|xyz+(q))bam	foobarbam	(0,9)(3,6)
+}
+
+# from the ksh regression tests
+
+K	\[(*)\]			[123]def	(0,5)(1,4)
+
+# from libast
+
+K2	(a|ascii|?(iso)646|?(iso)8859|latin)	ascii	(0,5)(0,5)
+K2	?(iso)8859				iso8859	(0,7)(0,3)
+K4	(a|ascii|?(iso)646|?(iso)8859|latin)	iso8859	(0,7)(0,7)(?,?)(0,3)
+
+# strgrpmatch stress
+
+E	a*a*a*a*a*b		aaaaaaaaac	NOMATCH
+E	a*a*a*a*a*b		aaaaaaaaab	(0,10)
+
+K	*(a)*(a)*(a)*(a)*(a)b	aaaaaaaaac	NOMATCH
+K	*(a)*(a)*(a)*(a)*(a)b	aaaaaaaaab	(0,10)(0,9)(9,9)(9,9)(9,9)(9,9)
+
+K	x*(a:|z:)			xz:string gjlb	(0,3)(1,3)
+K	*(a:|z:)			z:string gjlb	(0,2)(0,2)
+K	*(a:|z:)			xz:string gjlb	(0,0)(0,0)
+K	+(a:|z:)			xz:string gjlb	(1,3)(1,3)
+
+K	((a:|z:)+([string]))*([ ])	z:string gjlb	(0,9)(0,8)(0,2)(2,8)(8,9)
+K	((a:|z:)+([string]))*([ ])	xz:string gjlb	(1,10)(1,9)(1,3)(3,9)(9,10)
+K	*((a:|z:)+([string]))*([ ])	ghkahkgvdhkg saghka sghkvavsghkasdg z:string gjlb jbgajkvbahjkgvbadhjkvb	(0,0)(0,0)(?,?)(?,?)(0,0)
+
+K	+((a:|z:)+([string]))*([ ])	ujsdfiabhf ajkbfjkad boahjdbg hjadvbgj advb gjadbgjad vgjadvbg jadv gdjagv adjgvadsj adjgv ajgvajgvs javdj ssjvfjwassj gbjadgvsjkndbg asdjkgb asdhjkgb jkqeagvbtahjkevtg adhjkgv dhkasvgadhk gdsvh gvdghk adghkad ghkahkgvdhkg saghka sghkvavsghkasdg z:string gjlb jbgajkvbahjkgvbadhjkvb vbasdjgv jkadgvbadjgv a:string aksjbadvbajkgb advshjkgvakjg vashkgvashkgvashjkgvhkgadhvadvadhgvadhkgv adhkgvadhkvadhgva	(246,255)(246,254)(246,248)(248,254)(254,255)
+K	*((a:|z:)+([string]))*([ ])	ujsdfiabhf ajkbfjkad boahjdbg hjadvbgj advb gjadbgjad vgjadvbg jadv gdjagv adjgvadsj adjgv ajgvajgvs javdj ssjvfjwassj gbjadgvsjkndbg asdjkgb asdhjkgb jkqeagvbtahjkevtg adhjkgv dhkasvgadhk gdsvh gvdghk adghkad ghkahkgvdhkg saghka sghkvavsghkasdg z:string gjlb jbgajkvbahjkgvbadhjkvb vbasdjgv jkadgvbadjgv a:string aksjbadvbajkgb advshjkgvakjg vashkgvashkgvashjkgvhkgadhvadvadhgvadhkgv adhkgvadhkvadhgva	(0,0)(0,0)(?,?)(?,?)(0,0)
+
+# ansi cc trigraph gotchas
+
+K	ast*([0-9])?(.dll)	ast54.dll		(0,9)(3,5)(5,9)
+K	ast???(.dll)		ast54.dll		(0,9)(5,9)
+K	*/ast???(.dll)		ast.so/ast54.dll	(0,16)(12,16)
+K	?(ast.so/)ast???(.dll)	ast.so/ast54.dll	(0,16)(0,7)(12,16)
+
+# strmatch() cache boundaries
+
+SK	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,127)
+SK	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,128)

@@ -1,0 +1,39 @@
+03-07-17 pzip.c: update --split doc
+	 pin.c: add --maxhigh=N% high frequency column hard limit
+	 pin.c: fix tsp cost matrix free() bug
+03-04-05 pop.c: add OP_VERBOSE for cut() trace
+03-01-04 pin.c: list range only if more than 2 elements
+02-12-25 pin: add --sort
+02-02-14 Makefile: add explicit -lz references
+01-10-31 pin: add --reorder=tsp via -ltsp
+01-10-30 pzip: fix --window doc typo
+01-10-08 pin: add --optimize={dynamic|greedy|non|transitive}
+	 pin: add --optimize method table for easy expansion
+01-08-11 pzip: set error_info.id from argv for statically linked disciplines
+01-06-28 pzip: --split turns implies PZ_READ even with -p
+01-02-02 pzip.tst: add -w window size test
+00-10-04 pin: add -T0x800 TSP v3 dump
+00-10-03 pin: add -T0x400 TSP v2 dump
+00-10-02 pin: fix -p bug that botched the input read
+	 pin: TSP dump now computes exact big value
+00-09-29 pin: add -T0x200 TSP v1 reorder matrix dump
+00-05-31 pin: --size does filter() to verify guess, 0 if wrong
+00-02-11 pin: always have state.map, even with no freq filter
+99-11-03 pin: alb optimize()+solution() update (quadratic loop)
+99-09-25 pzip: change --split to --split[=pattern]
+99-09-11 pzip: change --split=dir to --split
+99-08-11 pzip: add --append, --split=dir
+	 pzip: fix SEE ALSO
+99-06-23 pin: add --cache to enable pin-* cache; off by default now
+99-06-22 pin,pop: add --prefix
+99-06-20 pzip: add --prefix
+99-03-22 rectify: add
+99-03-17 pin,pzip: add --bzip for investigation
+	 pin,pop: -r row-size now optional thanks to pzfixed()
+	 pin: fix bugs for high==0
+99-03-11 pin,pop,pzip: long options
+	 pin: -hn% for % frequency cutoff, default is -h10%
+98-11-01 pzip: delete sfclose(sfstdout) since SF_ATEXIT handles it now
+98-10-20 pin: maintain frequency and pair compress size cache
+	 pop: -s schema => -f pop-schema || mps-style-format
+98-08-11 initial release

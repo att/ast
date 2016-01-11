@@ -1,0 +1,341 @@
+: converted from the pcre testdata/testinput2 2010-06-20
+
+E	abc	abc	(0,3)
+E	SAME	defabc	(3,6)
+E$	SAME	\\Aabc	(2,5)
+E$	SAME	\\Adefabc	(5,8)
+E$	SAME	ABC	NOMATCH
+E	^abc	abc	(0,3)
+E$	SAME	\\Aabc	NOMATCH
+E$	SAME	defabc	NOMATCH
+E$	SAME	\\Adefabc	NOMATCH
+E	^abc$	abc	(0,3)
+E$	SAME	def\nabc	NOMATCH
+E$	(?X)ab\\gdef	NULL	BADESC
+E	x{5,4}	NULL	BADBR
+E	z{1073741823}	NULL	BADBR
+E	[abcd	NULL	EBRACK
+E$v	[\\B]	B	(0,1)
+E$xv	[\\B]	B	(0,1)
+E	[z-a]	NULL	ERANGE
+Eu	^*	NULL	(0,0)
+E	(abc	NULL	EPAREN
+E	(?# abc	NULL	EPAREN
+E	(?z)abc	NULL	BADRPT
+E	cat|dog|elephant	this sentence eventually mentions a cat	(36,39)
+E	SAME	this sentences rambles on and on for a while and then reaches elephant	(62,70)
+E	cat|dog|elephant	this sentence eventually mentions a cat	(36,39)
+E	SAME	this sentences rambles on and on for a while and then reaches elephant	(62,70)
+Ei	cat|dog|elephant	this sentence eventually mentions a CAT cat	(36,39)
+Ei	SAME	this sentences rambles on and on for a while to elephant ElePhant	(48,56)
+E$	(ab\\2)	NULL	ESUBREG
+E	{4,5}abc	NULL	BADRPT
+E$	(a)(b)(c)\\2	abcb	(0,4)(0,1)(1,2)(2,3)
+E$	SAME	\\O0abcb	(3,7)(3,4)(4,5)(5,6)
+E$	SAME	\\O3abcb	(3,7)(3,4)(4,5)(5,6)
+E$	SAME	\\O6abcb	(3,7)(3,4)(4,5)(5,6)
+E$	SAME	\\O9abcb	(3,7)(3,4)(4,5)(5,6)
+E$	SAME	\\O12abcb	(4,8)(4,5)(5,6)(6,7)
+E$	(a)bc|(a)(b)\\2	abc	(0,3)(0,1)
+E$	SAME	\\O0abc	(3,6)(3,4)
+E$	SAME	\\O3abc	(3,6)(3,4)
+E$	SAME	\\O6abc	(3,6)(3,4)
+E$	SAME	aba	(0,3)(?,?)(0,1)(1,2)
+E$	SAME	\\O0aba	(3,6)(?,?)(3,4)(4,5)
+E$	SAME	\\O3aba	(3,6)(?,?)(3,4)(4,5)
+E$	SAME	\\O6aba	(3,6)(?,?)(3,4)(4,5)
+E$	SAME	\\O9aba	(3,6)(?,?)(3,4)(4,5)
+E$	SAME	\\O12aba	(4,7)(?,?)(4,5)(5,6)
+
+E	abc$	abc	(0,3)
+E$	SAME	abc\n	NOMATCH
+E$n	SAME	abc\n	(0,3)
+E$	SAME	abc\ndef	NOMATCH
+E$	(a)(b)(c)(d)(e)\\6	NULL	ESUBREG
+E	the quick brown fox	the quick brown fox	(0,19)
+E	SAME	this is a line with the quick brown fox	(20,39)
+Ea	the quick brown fox	the quick brown fox	(0,19)
+Ea	SAME	this is a line with the quick brown fox	NOMATCH
+E	ab(?z)cd	NULL	BADRPT
+E	^abc|def	abcdef	(0,3)
+E$	SAME	abcdef\\B	(0,3)
+E	.*((abc)$|(def))	defabc	(0,6)(3,6)(3,6)
+E$	SAME	\\Zdefabc	(0,8)(5,8)(5,8)
+E	abc	abc	(0,3)
+E	^abc|def	abcdef	(0,3)
+E$	SAME	abcdef\\B	(0,3)
+E	.*((abc)$|(def))	defabc	(0,6)(3,6)(3,6)
+E$	SAME	\\Zdefabc	(0,8)(5,8)(5,8)
+E	the quick brown fox	the quick brown fox	(0,19)
+E	SAME	The Quick Brown Fox	NOMATCH
+E	the quick brown fox	the quick brown fox	(0,19)
+E	SAME	The Quick Brown Fox	NOMATCH
+E$	abc.def	abc\ndef	(0,7)
+E$n	SAME	abc\ndef	NOMATCH
+E	abc$	abc	(0,3)
+E$	SAME	abc\n	NOMATCH
+E$	(abc)\\2	NULL	ESUBREG
+E$	(abc\\1)	abc	ESUBREG
+E	)	NULL	NOMATCH
+E	)	)	(0,1)
+E	a[]b	NULL	EBRACK
+E	[^aeiou ]{3,}	co-processors, and for	(2,5)
+E	<.*>	abc<def>ghi<klm>nop	(3,16)
+E	<.*?>	abc<def>ghi<klm>nop	(3,8)
+Em	<.*?>	abc<def>ghi<klm>nop	(3,8)
+E	<.**>	abc<def>ghi<klm>nop	(3,16)
+Em	<.**>	abc<def>ghi<klm>nop	(3,8)
+Em	<.*>	abc<def>ghi<klm>nop	(3,8)
+Ev	<.*>(?U)	abc<def>ghi<klm>nop	(3,16)
+Ev	(?U)<.*>	abc<def>ghi<klm>nop	(3,8)
+E	<.*>(?-g)	abc<def>ghi<klm>nop	(3,16)
+E	(?-g)<.*>	abc<def>ghi<klm>nop	(3,8)
+Em	={3,}	abc========def	(3,6)
+Ev	(?U)={3,}?	abc========def	(3,11)
+E	(?<!foo|bar)baz	baz	(0,3)
+E	SAME	foobaz	NOMATCH
+E	SAME	barbaz	NOMATCH
+E	SAME	bambaz	(3,6)
+E	(?<!cattle)foo	foo	(0,3)
+E	SAME	catfoo	(3,6)
+E	SAME	and cattlefoo	NOMATCH
+E	(?<!bar|cattle)foo	foo	(0,3)
+E	SAME	catfoo	(3,6)
+E	SAME	the barfoo	NOMATCH
+E	SAME	and cattlefoo	NOMATCH
+E	(?<=a)b		b	NOMATCH
+E	SAME		ab	(1,2)
+E	SAME		aaab	(3,4)
+E	(?<=a+)b	b	NOMATCH
+E	SAME		ab	(1,2)
+E	SAME		aaab	(3,4)
+E	(?<=a+)b+	aaabbb	(3,6)
+E	(?<=aaa|b{0,3})b	aaab	(3,4)
+E	SAME	aaabbb	(3,4)
+E$	(?<!(foo)a\\1)bar	fooafoobar	NOMATCH
+E$	SAME			foofoobar	(6,9)
+E$	SAME			bar		(0,3)
+E	(a)(?(1)a|b)	aa	(0,2)(0,1)
+E	SAME		ab	NOMATCH
+E	(a)(?(1)a|b|c)	aa	(0,2)(0,1)
+E	(?(?=a)a|b)	a	(0,1)
+E	SAME		b	(0,1)
+E	SAME		z	NOMATCH
+E	(?(?=a)a|b|c)	a	(0,1)
+E	SAME		b	(0,1)
+E	SAME		c	(0,1)
+E	SAME		z	NOMATCH
+E	(?(1a)	NULL	BADRPT
+E	(?(?i))	NULL	ENULL
+Ez	(?(?i))	NULL	ENULL
+E	(?(abc))	NULL	BADRPT
+E	(?(?<ab))	NULL	BADRPT
+E	a$	a	(0,1)
+E$	SAME	a\n	NOMATCH
+E$n	SAME	a\n	(0,1)
+E$	SAME	\\Za	(2,3)
+E$	SAME	\\Za\n	NOMATCH
+En	a$	a	(0,1)
+En$	SAME	a\n	(0,1)
+En$	SAME	\\Za\n	(2,3)
+En$	SAME	\\Za	(2,3)
+E$v	^((a+)(?U)([ab]+)(?-U)([bc]+)(\\w*))	aaaaabbbbbcccccdef	(0,18)(0,18)(0,5)(5,6)(6,15)(15,18)
+En	(?>^abc)	abc	(0,3)
+En$	SAME	def\nabc	(4,7)
+En$	SAME	defabc	NOMATCH
+E	(?<=ab(c+)d)ef	abdef	NOMATCH
+E	SAME		abcdef	(4,6)(2,3)
+E	SAME		abccdef	(5,7)(2,4)
+E	(?<=ab(?<=c*)d)ef	abdef	(3,5)
+E	SAME			abcdef	NOMATCH
+E	(?<=ab(c|de)f)g	abcfg	(4,5)(2,3)
+E	(?<=ab(c|de)f)g	abdefg	(5,6)(2,4)
+E	(?<=bullock)-cart	the bullock-cart	(11,16)
+E	(?<=bullock|donkey)-cart	the bullock-cart	(11,16)
+E	(?<=bullock|donkey)-cart	the donkey-cart	(10,15)
+E	SAME	a donkey-cart race	(8,13)
+E	SAME	cart	NOMATCH
+E	SAME	horse-and-cart	NOMATCH
+E	(?>.*)(?<=(abcd)|(xyz))	alphabetabcd	(0,12)(8,12)
+E	SAME	endingxyz	(0,9)(?,?)(6,9)
+E	(?<=ab(?i)x(?-i)y|(?i)z|b)ZZ	abxyZZ	(4,6)
+E	SAME	abXyZZ	(4,6)
+E	SAME	ZZZ	(1,3)
+E	SAME	zZZ	(1,3)
+E	SAME	bZZ	(1,3)
+E	SAME	BZZ	(1,3)
+E	SAME	ZZ	NOMATCH
+E	SAME	abXYZZ	NOMATCH
+E	SAME	zzz	NOMATCH
+E	SAME	bzz	NOMATCH
+E	(?<!(foo)a)bar	bar	(0,3)
+E	SAME	foobbar	(4,7)
+E	SAME	fooabar	NOMATCH
+E	(a)(?(1)a|b)	a	NOMATCH
+E	(a)(?(1)a|b)	aa	(0,2)(0,1)
+E	^(a)(?(1)a|b)$	a	NOMATCH
+E	^(a)(?(1)a|b)$	aa	(0,2)(0,1)
+E	^(a)?(?(1)a|b)$	a	NOMATCH
+E	^(a)?(?(1)a|b)$	aa	(0,2)(0,1)
+E	^(a)?(?(1)a|b)*$	a	(0,1)(0,1)
+E	^(a)?(?(1)a|b)*$	aa	(0,2)(0,1)
+E	^(a)?(?(1)a|b)+$	a	NOMATCH
+E	^(a)?(?(1)a|b)+$	aa	(0,2)(0,1)
+E	^(a)?(?(1)a|b){0}$	a	(0,1)(0,1)
+E	^(a)?(?(1)a|b){0}$	aa	NOMATCH
+E	^(a)?(?(1)a|b){1}$	a	NOMATCH
+E	^(a)?(?(1)a|b){1}$	aa	(0,2)(0,1)
+E$	^(a\\1?){4}$	aaaaaa	ESUBREG
+E	a[b-a]	NULL	ERANGE
+E	a[]b	NULL	EBRACK
+E	a[	NULL	EBRACK
+E	*a	NULL	BADRPT
+E	(*)b	NULL	BADRPT
+E	abc)	NULL	NOMATCH
+E	abc)	abc)	(0,4)
+E	(abc	NULL	EPAREN
+Ei	(abc	NULL	EPAREN
+E	a**	aaa	(0,3)
+Em	a**	aaa	(0,0)
+E	a*	aaa	(0,3)
+Em	a*	aaa	(0,0)
+E	)(	NULL	EPAREN
+E$	\\1	NULL	ESUBREG
+E$	\\2	NULL	ESUBREG
+E$	(a)|\\2	NULL	ESUBREG
+Ei	a[b-a]	NULL	ERANGE
+Ei	a[]b	NULL	EBRACK
+Ei	a[	NULL	EBRACK
+Ei	*a	NULL	BADRPT
+Ei	(*)b	NULL	BADRPT
+Ei	)(	NULL	EPAREN
+E	:(?:	NULL	EPAREN
+E	(?<%)b	NULL	BADRPT
+E	a(?{)b	NULL	EBRACE
+E	a(?{{})b	NULL	EBRACE
+E	a(?{}})b	NULL	EPAREN
+E	a(?{"{"})b	NULL	EBRACE
+E	a(?{"{"}})b	ab	(0,2)
+E	(?(1?)a|b)	NULL	BADRPT
+E	(?(1)a|b|c)	NULL	ESUBREG
+E	[a[:xyz:	NULL	ECTYPE
+E	(?<=x+)y	NULL	NOMATCH
+E	SAME		xy	(1,2)
+E	SAME		xxxy	(3,4)
+E	a{37,17}	NULL	BADBR
+E	abc\	NULL	EESCAPE
+E	abc\	NULL	EESCAPE
+Ei	abc\	NULL	EESCAPE
+E	(a)bc(d)	abcd	(0,4)(0,1)(3,4)
+E$	SAME	abcd\\C2	(0,4)(0,1)(3,4)
+E$	SAME	abcd\\C5	(0,4)(0,1)(3,4)
+E	(.{20})	abcdefghijklmnopqrstuvwxyz	(0,20)(0,20)
+E$	SAME	abcdefghijklmnopqrstuvwxyz\\C1	(0,20)(0,20)
+E$	SAME	abcdefghijklmnopqrstuvwxyz\\G1	(0,20)(0,20)
+E	(.{15})	abcdefghijklmnopqrstuvwxyz	(0,15)(0,15)
+E$	SAME	abcdefghijklmnopqrstuvwxyz\\C1\\G1	(0,15)(0,15)
+E	(.{16})	abcdefghijklmnopqrstuvwxyz	(0,16)(0,16)
+E$	SAME	abcdefghijklmnopqrstuvwxyz\\C1\\G1\\L	(0,16)(0,16)
+E$	^(a|(bc))de(f)	adef\\G1\\G2\\G3\\G4\\L	(0,4)(0,1)(?,?)(3,4)
+E$	SAME	bcdef\\G1\\G2\\G3\\G4\\L	(0,5)(0,2)(0,2)(4,5)
+E$	SAME	adefghijk\\C0	(0,4)(0,1)(?,?)(3,4)
+E$	^abc\\00def	abc\00def\\L\\C0	BADESC
+E$	^abc\\x00xyz	abc\x00xyz\\L\\C0	(0,7)
+E$x	SAME	abc\x00xyz\\L\\C0	(0,7)
+E$	^abc\\x{00}def	abc\x{00}def\\L\\C0	(0,7)
+E$x	SAME	abc\x{00}def\\L\\C0	(0,7)
+E$	\\Biss\\B	Mississippi	(1,4)
+E$	\\Biss\\B	Mississippi	(1,4)
+E	iss	Mississippi	(1,4)
+E$	\\Biss\\B	Mississippi	(1,4)
+E$	\\Biss\\B	Mississippi	(1,4)
+E$	SAME	Mississippi\\A	(1,4)
+E	(?<=[Ms])iss	Mississippi	(1,4)
+E	(?<=[Ms])iss	Mississippi	(1,4)
+E	^iss	ississippi	(0,3)
+E$	.*iss	abciss\nxyzisspqr	(0,13)
+E$m	.*iss	abciss\nxyzisspqr	(0,6)
+E	.i.	Mississippi	(0,3)
+E$	SAME	Mississippi\\A	(0,3)
+E$	SAME	Missouri river	(0,3)
+E$	SAME	Missouri river\\A	(0,3)
+E	^.is	Mississippi	(0,3)
+E$	^ab\\n	ab\nab\ncd	(0,3)
+E$n	^ab\\n	ab\nab\ncd	(0,3)
+E	a?b?	a	(0,1)
+E	SAME	b	(0,1)
+E	SAME	ab	(0,2)
+E$	SAME	NULL	(0,0)
+E$	SAME	\\N	(0,0)
+E	|-	abcd	ENULL
+E	SAME	-abc	ENULL
+E$	SAME	\\Nab-c	ENULL
+E$	SAME	\\Nabc	ENULL
+Ez	|-	abcd	(0,0)
+Ez	SAME	-abc	(0,1)
+E$z	SAME	\\Nab-c	(0,0)
+E$z	SAME	\\Nabc	(0,0)
+E	a*(b+)(z)(z)	aaaabbbbzzzz	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O0	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O1	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O2	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O3	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O4	(0,10)(4,8)(8,9)(9,10)
+E$	SAME	aaaabbbbzzzz\\O5	(0,10)(4,8)(8,9)(9,10)
+E$c	\\(             # ( at start\n\
+  (?:           # Non-capturing bracket\n\
+  (?>[^()]+)    # Either a sequence of non-brackets (no backtracking)\n\
+  |             # Or\n\
+  (?R)          # Recurse - i.e. nested bracketed string\n\
+  )*            # Zero or more contents\n\
+  \\)            # Closing )\n\
+	(abcd)	BADRPT	(0,6)
+E$c	SAME	(abcd)xyz	BADRPT	(0,6)
+E$c	SAME	xyz(abcd)	BADRPT	(3,9)
+E$c	SAME	(ab(xy)cd)pqr	BADRPT	(0,10)
+E$c	SAME	(ab(xycd)pqr	BADRPT	(3,9)
+E$c	SAME	() abc ()	BADRPT	(0,2)
+E$c	SAME	12(abcde(fsh)xyz(foo(bar))lmno)89	BADRPT	(2,31)
+E$c	SAME	abcd	BADRPT	NOMATCH
+E$c	SAME	abcd)	BADRPT	NOMATCH
+E$c	SAME	(abcd	BADRPT	NOMATCH
+E$c	\\(  ( (?>[^()]+) | (?R) )* \\)	(ab(xy)cd)pqr	BADRPT	(0,10)(7,9)
+E$c	SAME	1(abcd)(x(y)z)pqr	BADRPT	(1,7)(2,6)
+E$c	\\(  (?: (?>[^()]+) | (?R) ) \\)	(abcd)	BADRPT	(0,6)
+E$c	SAME	(ab(xy)cd)	BADRPT	(3,7)
+E$c	SAME	(a(b(c)d)e)	BADRPT	(4,7)
+E$c	SAME	((ab))	BADRPT	(0,6)
+E$c	SAME	()	BADRPT	NOMATCH
+E$c	\\(  (?: (?>[^()]+) | (?R) )? \\)	()	BADRPT	(0,2)
+E$c	SAME	12(abcde(fsh)xyz(foo(bar))lmno)89	BADRPT	(8,13)
+E$c	\\(  ( (?>[^()]+) | (?R) )* \\)	(ab(xy)cd)	BADRPT	(0,10)(7,9)
+E$c	\\( ( ( (?>[^()]+) | (?R) )* ) \\)	(ab(xy)cd)	BADRPT	(0,10)(1,9)(7,9)
+E$c	\\( (123)? ( ( (?>[^()]+) | (?R) )* ) \\)	(ab(xy)cd)	BADRPT	(0,10)
+E$c	SAME	(123ab(xy)cd)	BADRPT	(0,13)(1,4)(4,12)(10,12)
+E$c	\\( ( (123)? ( (?>[^()]+) | (?R) )* ) \\)	(ab(xy)cd)	BADRPT	(0,10)(1,9)
+E$c	SAME	(123ab(xy)cd)	BADRPT	(0,13)(1,12)(1,4)(10,12)
+E$c	\\( (((((((((( ( (?>[^()]+) | (?R) )* )))))))))) \\)	(ab(xy)cd)	BADRPT	(0,10)(1,9)(1,9)(1,9)(1,9)(1,9)(1,9)(1,9)(1,9)(1,9)(1,9)(7,9)
+E$c	\\( ( ( (?>[^()<>]+) | ((?>[^()]+)) | (?R) )* ) \\)	(abcd(xyz<p>qrs)123)	BADRPT	(0,20)(1,19)(16,19)(9,15)
+E$c	\\( ( ( (?>[^()]+) | ((?R)) )* ) \\)	(ab(cd)ef)	BADRPT	(0,10)(1,9)(7,9)(3,7)
+E$c	SAME	(ab(cd(ef)gh)ij)	BADRPT	(0,16)(1,15)(13,15)(3,13)
+E	[[.ch.]]	NULL	ECOLLATE
+E	[[=ch=]]	NULL	ECOLLATE
+E	[[:rhubarb:]]	NULL	ECTYPE
+Ei	[[:upper:]]	A	(0,1)
+Ei	SAME	a	(0,1)
+Ei	[[:lower:]]	A	(0,1)
+Ei	SAME	a	(0,1)
+E	([[:lower:]])[[:lower:]]	ab	(0,2)(0,1)
+E	SAME	aB	NOMATCH
+E	SAME	Ab	NOMATCH
+E	SAME	AB	NOMATCH
+E	((?i)[[:lower:]])[[:lower:]]	ab	(0,2)(0,1)
+E	SAME	aB	NOMATCH
+E	SAME	Ab	(0,2)(0,1)
+E	SAME	AB	NOMATCH
+Ei	((?-i)[[:lower:]])[[:lower:]]	ab	(0,2)(0,1)
+Ei	SAME	aB	(0,2)(0,1)
+Ei	SAME	Ab	NOMATCH
+Ei	SAME	AB	NOMATCH
+E$v	[\\200-\\410]	NULL	ERANGE
+E	^(?(0)f|b)oo	NULL	ESUBREG

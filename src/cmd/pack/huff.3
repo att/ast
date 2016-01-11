@@ -1,0 +1,153 @@
+.TH HUFFMAN 3
+.SH NAME
+\fBhuffman\fR \- huffman coding/decoding
+.SH SYNOPSIS
+.ta .75i 1.5i 2.25i 3i 3.75i 4.5i 5.25i 6i
+.PP
+.nf
+\fB
+#include <huffman.h>
+
+Huff_t *huffinit(Sfio_t *\fIfile\fP, long \fIsize\fP)
+Huff_t *huffgethdr(Sfio_t *\fIfile\fP)
+int huffputhdr(Huff_t *\fIptr\fP, Sfio_t *\fIfile\fP)
+int huffencode(Huff_t *\fIptr\fP, Sfio_t *\fIinfile\fP, Sfio_t *\fIoutfile\fP, int \fIsize\fP)
+int huffdecode(Huff_t *\fIptr\fP, Sfio_t *\fIinfile\fP, Sfio_t *\fIoutfile\fP, int \fIsize\fP)
+int huffend(Huff_t *\fIptr\fP)
+long huffisize(Huff_t *\fIptr\fP)
+long huffosize(Huff_t *\fIptr\fP)
+int huffhsize(Huff_t *\fIptr\fP)
+\fR
+.fi
+.SH DESCRIPTION
+.PP
+The
+\fIhuffman\fR
+routines can be used to pack and unpack files or strings
+using static huffman encoding.
+The
+.I huffint
+routine counts the frequency of the first
+.I size
+characters in
+.I file
+and returns an encoded table based on these frequencies.
+The
+.I file
+argument can refer to a file or string that has been opened with
+.IR dfopen (3).
+If
+.I size
+is less than zero, the complete file or string will be used.
+When successful,
+.I huffinit
+returns a pointer to an encoded huffman table which can be used as
+the first argument to other
+.I huffman
+routines.
+Otherwise,
+.I huffinit
+returns a null pointer and the
+.B errno
+variable contains the cause of the error. 
+.PP
+.I huffputhdr
+writes the encoding information to
+.I file
+in the format used by the
+.IR pack (1)
+utility.
+When successful,
+.I huffputhdr
+returns the number of bytes written.
+Otherwise,
+.I huffputhdr
+returns \-1 and the
+.B errno
+variable contains the cause of the error. 
+.PP
+.I huffgethdr
+reads from
+.I file
+and builds the encoding table.
+The information in
+.I file
+must be in the format produced by
+.IR huffputhdr .
+When successful,
+.I huffgethdr
+returns a pointer to an encoded huffman table which can be used as
+the first argument to other
+.I huffman
+routines.
+Otherwise,
+.I huffgethdr
+returns a null pointer and the
+.B errno
+variable contains the cause of the error. 
+.PP
+.I huffencode
+encodes
+.I infile
+using the huffman codes contained in
+.I ptr
+and writes the encoded result onto
+.IR outfile .
+The
+.I size
+arguments specifies the number of bytes from
+.I infile
+that will be encoded.
+The whole file will be encoded if
+.I size
+is less than zero.
+When successful,
+.I huffencode
+returns the number of bytes written.
+Otherwise,
+.I huffencode
+returns \-1 and the
+.B errno
+variable contains the cause of the error. 
+When successful,
+.PP
+.I huffdecode
+decodes
+.I infile
+using the huffman codes contained in
+.I ptr
+and writes the decoded results onto
+.IR outfile .
+The
+.I size
+arguments specifies the number maximum number of bytes
+that will be decoded and written to
+.IR outfile .
+The whole file will be decoded if
+.I size
+is less than zero.
+.I huffdecode
+returns the number of bytes decoded.
+Otherwise,
+.I huffdecode
+returns \-1 and the
+.B errno
+variable contains the cause of the error. 
+.PP
+.IR huffisize ,
+.IR huffosize ,
+and
+.I huffhsize
+provide the size of the input file, the output file, and the
+header respectively.
+.SH HISTORY
+\fIhuffman\fR is a library interface that can be used to implement
+the pack and unpack utilities provided in System V.  The code was
+derived from the pack and unpack utilities but was substantially
+rewritten to provide better performance and to utilize the sfio
+library. It can also be
+use to encode and decode strings.
+.SH AUTHOR
+ David Korn
+.SH SEE ALSO
+pack(1), unpack(1), sfio(3).

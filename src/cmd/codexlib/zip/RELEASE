@@ -1,0 +1,2 @@
+04-01-17 deflate.c: fix last block logic to handle catenation
+03-12-24 first release

@@ -1,0 +1,76 @@
+: 3B1/PC7300 unix.mc68k cc wrapper for ANSI C : 2002-09-01 :
+
+HOSTTYPE=unix.mc68k
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+# /bin/cc predates ANSI C; use gcc
+# some headers depend on SYSTEM5 or mc68k being defined
+# headers for Ethernet software are under /usr/ethernet/include
+# both /usr/lib/libnet.a and /usr/lib/libcurses.a define select()
+#	-lcurses uses a version of select for napms(), but that
+#		implementation always returns an error if given file
+#		descriptors to watch
+#	the one in -lnet must be used if fds (instead of or in addition to
+#		a timeout) are of interest therefore, -lnet should be
+#		specified before -lcurses
+#	rename(old, new) in /usr/lib/libnet.a fails if new exists
+#		(permitted by ANSI/ISO C-1990 7.9.4.2)
+# gcc -fpic doesn't work as there's no _GLOBAL_OFFSET_TABLE symbol
+
+cc="gcc"
+
+exec=
+show=:
+inc=0
+lib=0
+set '' -DSYSTEM5 -Dmc68k "$@" ''
+shift
+while	:
+do	a=$1
+	shift
+	case $a in
+	'')	break
+		;;
+	-lcurses|libcurses.a|*/libcurses.a)
+		lib=1
+		set '' "$@" -lnet
+		shift
+		;;
+	-lnet|libnet.a|*/libnet.a)
+		lib=1
+		;;
+	-o)	a=$1
+		shift
+		set '' "$@" -o
+		shift
+		;;
+	-fpic)	continue
+		;;
+	-n)	exec=:
+		continue
+		;;
+	-v)	show=echo
+		continue
+		;;
+	-*)	;;
+	*)	case $inc in
+		0)	inc=1
+			set '' "$@" -I/usr/ethernet/include
+			shift
+			;;
+		esac
+		;;
+	esac
+	set '' "$@" "$a"
+	shift
+done
+case $lib in
+0)	set '' "$@" -lnet
+	shift
+	;;
+esac
+$show $cc "$@"
+$exec $cc "$@"

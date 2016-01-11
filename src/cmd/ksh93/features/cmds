@@ -1,0 +1,4 @@
+cmd	newgrp,test,id,wc,cut,logname,universe,pfexec,tput
+pth	ed fail{
+	echo '#define _pth_ed	"ed" /* ed not found on standard PATH */'
+}end

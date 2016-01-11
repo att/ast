@@ -1,0 +1,17 @@
+: regdecomp tests 2009-11-11
+
+Ekqt=	/a/			/a/
+Ekqt=	/ab/			/ab/
+Ekqt=	/abc/			/abc/
+Ekqt=	/\w/			/[0-9A-Z_a-z]/
+Ekqt=	/\wb+/			/[0-9A-Z_a-z]b+/
+Ekqt=	/\*c/			/\*c/
+Ekqt=	/[a/c]/			EBRACK
+Ekqt=	/[a\/c]/		/[\/ac]/
+Ekqtv=	/[a\/c]/		/[\/ac]/
+Ekqt=	/[a-z^]/		/[a-z^]/
+Ekqt=	/[^a-z^]/		/[^^a-z]/
+Ekqt=	/[][a]/			/[][a]/
+Ekqt=	/abc/			/abc/
+Ekqt=	/12345678901234567/	/12345678901234567/
+Ekqt=	/123456789012345678/	/123456789012345678/

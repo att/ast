@@ -1,0 +1,3259 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<META NAME="generator" CONTENT="troff2html (AT&T Labs Research) 04/01/97 -man">
+<TITLE>sh.1 man document</TITLE>
+<H3><TABLE WIDTH=100%><TR><TH ALIGN=LEFT>&nbsp;SH&nbsp;(&nbsp;1&nbsp;)&nbsp;<TH ALIGN=CENTER>USER COMMANDS<TH ALIGN=RIGHT>SH&nbsp;(&nbsp;1&nbsp;)</TABLE>
+</H3> </HEAD>
+<BODY>
+<HR>
+<DL COMPACT><FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="NAME">NAME &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>sh, rsh &#045; shell, the standard/restricted command and programming language
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="SYNOPSIS">SYNOPSIS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><STRONG>sh </STRONG>[ <STRONG>&#177;abcefhikmnoprstuvxCD </STRONG>] [ <STRONG>&#045;R </STRONG>file ] [ <STRONG>&#177;o </STRONG>option ] .&nbsp;.&nbsp;.
+[ <STRONG>&#045; </STRONG>] [ arg .&nbsp;.&nbsp;.
+] <STRONG><BR>
+rsh </STRONG>[ <STRONG>&#177;abcefhikmnoprstuvxCD </STRONG>] [ <STRONG>&#045;R </STRONG>file ] [ <STRONG>&#177;o </STRONG>option ] .&nbsp;.&nbsp;.
+[ <STRONG>&#045; </STRONG>] [ arg .&nbsp;.&nbsp;.
+] <FONT SIZE=-1><STRONG>
+<P>
+<DT>
+<H3><A NAME="DESCRIPTION">DESCRIPTION &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><EM>Sh </EM>is a command and programming language that executes commands read from
+a terminal or a file.
+<EM>Rsh </EM>is a restricted version of the standard command interpreter <EM>sh</EM>; it
+is used to set up login names and execution environments whose capabilities
+are more controlled than those of the standard shell.
+See <EM>Invocation </EM>below for the meaning of arguments to the shell.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Definitions">Definitions.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>A <EM>metacharacter </EM>is one of the following characters: <DL COMPACT><STRONG><P>
+; &amp; ( ) | &lt; &gt; new-line space tab</STRONG> </DL>
+<P>
+A <EM>blank </EM>is a <STRONG>tab </STRONG>or a <STRONG>space</STRONG>.
+An <EM>identifier </EM>is a sequence of letters, digits, or underscores starting
+with a letter or underscore.
+Identifiers are used as components of <EM>variable </EM>names.
+A <EM>vname </EM>is a sequence of one or more identifiers separated by a <STRONG><FONT SIZE=+1>.</FONT></STRONG> and optionally
+preceded by a <STRONG><FONT SIZE=+1>.</FONT></STRONG>.
+Vnames are used as function and variable names.
+A <EM>word </EM>is a sequence of <EM>characters </EM>from the character set defined by the
+current locale, excluding non-quoted <EM>metacharacters</EM>.
+<P>
+A <EM>command </EM>is a sequence of characters in the syntax of the shell language.
+The shell reads each command and carries out the desired action either
+directly or by invoking separate utilities.
+A built-in command is a command that is carried out by the shell itself
+without creating a separate process.
+Some commands are built-in purely for convenience and are not documented
+here.
+Built-ins that cause side effects in the shell environment and built-ins
+that are found before performing a path search (see <A HREF="#Execution"><EM>Execution </EM></A>below) are
+documented here.
+For historical reasons, some of these built-ins behave differently than
+other built-ins and are called <EM>special built-ins</EM>.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Commands">Commands.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>A <EM>simple-command </EM>is a list of variable assignments (see <A HREF="#Variable Assignments"><EM>Variable Assignments
+</EM></A>below) or a sequence of <EM>blank </EM>separated words which may be preceded by
+a list of variable assignments (see <A HREF="#Environment"><EM>Environment </EM></A>below).
+The first word specifies the name of the command to be executed.
+Except as specified below, the remaining words are passed as arguments
+to the invoked command.
+The command name is passed as argument 0 (see <A HREF="exec(2)"><EM>exec</EM>(2)</A>).
+The <EM>value </EM>of a simple-command is its exit status; 0-255 if it terminates
+normally; 256+<EM>signum&nbsp;</EM> if it terminates abnormally (the name of the signal
+corresponding to the exit status can be obtained via the <STRONG>&#045;l </STRONG>option of the
+<STRONG>kill </STRONG>built-in utility).
+<P>
+A <EM>pipeline </EM>is a sequence of one or more <EM>commands </EM>separated by <STRONG>|</STRONG>.
+The standard output of each command but the last is connected by a <EM>pipe</EM>(2)
+to the standard input of the next command.
+Each command, except possibly the last, is run as a separate process; the
+shell waits for the last command to terminate.
+The exit status of a pipeline is the exit status of the last command.
+Each pipeline can be preceded by the <EM>reserved word </EM><STRONG>! </STRONG>which causes the exit
+status of the pipeline to become 0 if the exit status of the last command
+is non-zero, and 1 if the exit status of the last command is 0.
+<P>
+A <EM>list </EM>is a sequence of one or more pipelines separated by <STRONG>;</STRONG>, <STRONG>&amp;</STRONG>, <STRONG>|&amp;</STRONG>, <STRONG>&amp;&amp;</STRONG>,
+or <STRONG>|&nbsp;|</STRONG>, and optionally terminated by <STRONG>;</STRONG>, <STRONG>&amp;</STRONG>, or <STRONG>|&amp;</STRONG>.
+Of these five symbols, <STRONG>;</STRONG>, <STRONG>&amp;</STRONG>, and <STRONG>|&amp; </STRONG>have equal precedence, which is lower
+than that of <STRONG>&amp;&amp; </STRONG>and <STRONG>|&nbsp;|</STRONG>.
+The symbols <STRONG>&amp;&amp; </STRONG>and <STRONG>|&nbsp;| </STRONG>also have equal precedence.
+A semicolon (<STRONG>;</STRONG>) causes sequential execution of the preceding pipeline;
+an ampersand (<STRONG>&amp;</STRONG>) causes asynchronous execution of the preceding pipeline
+(i.e., the shell does <EM>not </EM>wait for that pipeline to finish).
+The symbol <STRONG>|&amp; </STRONG>causes asynchronous execution of the preceding pipeline with
+a two-way pipe established to the parent shell; the standard input and
+output of the spawned pipeline can be written to and read from by the parent
+shell by applying the redirection operators <STRONG>&lt;&amp; </STRONG>and <STRONG>&gt;&amp; </STRONG>with arg <STRONG>p </STRONG>to commands
+and by using <STRONG>&#045;p </STRONG>option of the built-in commands <STRONG>read </STRONG>and <STRONG>print </STRONG>described
+later.
+The symbol <STRONG>&amp;&amp; </STRONG>(&nbsp;<STRONG>|&nbsp;|</STRONG>&nbsp;) causes the <EM>list </EM>following it to be executed only
+if the preceding pipeline returns a zero (non-zero) value.
+One or more new-lines may appear in a <EM>list </EM>instead of a semicolon, to delimit
+a command.
+<P>
+A <EM>command </EM>is either a simple-command or one of the following.
+Unless otherwise stated, the value returned by a command is that of the
+last simple-command executed in the command.
+<DL COMPACT><STRONG><P>
+<DT>
+for</STRONG> <EM>vname&nbsp;</EM> [&nbsp; <STRONG>in</STRONG> <EM>word&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] <STRONG>;do</STRONG><EM>list&nbsp;</EM><STRONG>;done</STRONG> 
+<DD>Each time a <STRONG>for </STRONG>command is executed, <EM>vname </EM>is set to the next <EM>word </EM>taken
+from the <STRONG>in </STRONG><EM>word </EM>list.
+If <STRONG>in</STRONG><EM> word&nbsp; </EM>.&nbsp;.&nbsp;.
+is omitted, then the <STRONG>for </STRONG>command executes the <STRONG>do</STRONG> <EM>list&nbsp;</EM> once for each positional
+parameter that is set starting from <STRONG>1 </STRONG>(see <A HREF="#Parameter Expansion"><EM>Parameter Expansion </EM></A>below).
+Execution ends when there are no more words in the list.
+<STRONG><P>
+<DT>
+for ((</STRONG> [&nbsp;<EM>expr1&nbsp;</EM>&nbsp;] <STRONG>;</STRONG> [&nbsp;<EM>expr2&nbsp;</EM>&nbsp;] <STRONG>;</STRONG> [&nbsp;<EM>expr3&nbsp;</EM>&nbsp;] <STRONG>))</STRONG><STRONG>;do</STRONG><EM>list&nbsp;</EM><STRONG>;done</STRONG> 
+<DD>The arithmetic expression <EM>expr1 </EM>is evaluated first (see <A HREF="#Arithmetic Evaluation"><EM>Arithmetic Evaluation
+</EM></A>below).
+The arithmetic expression <EM>expr2 </EM>is repeatedly evaluated until it evaluates
+to zero and when non-zero, <EM>list </EM>is executed and the arithmetic expression
+<EM>expr3 </EM>evaluated.
+If any expression is omitted, then it behaves as if it evaluated to 1.
+<STRONG><P>
+<DT>
+select</STRONG> <EM>vname&nbsp;</EM> [&nbsp; <STRONG>in</STRONG> <EM>word&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] <STRONG>;do</STRONG><EM>list&nbsp;</EM><STRONG>;done</STRONG> 
+<DD>A <STRONG>select </STRONG>command prints on standard error (file descriptor 2) the set of
+<EM>word</EM>s, each preceded by a number.
+If <STRONG>in</STRONG><EM> word&nbsp; </EM>.&nbsp;.&nbsp;.
+is omitted, then the positional parameters starting from <STRONG>1 </STRONG>are used instead
+(see <A HREF="#Parameter Expansion"><EM>Parameter Expansion </EM></A>below).
+The <FONT SIZE=-1><STRONG>PS3 </STRONG></FONT>prompt is printed and a line is read from the standard input.
+If this line consists of the number of one of the listed <EM>word</EM>s, then the
+value of the variable <EM>vname </EM>is set to the <EM>word </EM>corresponding to this number.
+If this line is empty, the selection list is printed again.
+Otherwise the value of the variable <EM>vname </EM>is set to <EM>null</EM>.
+The contents of the line read from standard input is saved in the variable
+<FONT SIZE=-1><STRONG>REPLY</STRONG>.
+</FONT>The <EM>list </EM>is executed for each selection until a <STRONG>break </STRONG>or <EM>end-of-file </EM>is
+encountered.
+If the <FONT SIZE=-1><STRONG>REPLY </STRONG></FONT>variable is set to <EM>null </EM>by the execution of <EM>list</EM>, then the
+selection list is printed before displaying the <FONT SIZE=-1><STRONG>PS3 </STRONG></FONT>prompt for the next
+selection.
+<STRONG><P>
+<DT>
+case</STRONG> <EM>word&nbsp;</EM> <STRONG>in</STRONG> [&nbsp; [&nbsp;<STRONG>(</STRONG>&nbsp;]<EM>pattern&nbsp;</EM> [&nbsp; | <EM>pattern&nbsp;</EM>&nbsp;].&nbsp;.&nbsp;.<STRONG>)</STRONG><EM>list&nbsp;</EM><STRONG>;;</STRONG>&nbsp;].&nbsp;.&nbsp;.<STRONG>esac</STRONG> 
+<DD>A <STRONG>case </STRONG>command executes the <EM>list </EM>associated with the first <EM>pattern </EM>that
+matches <EM>word</EM>.
+The form of the patterns is the same as that used for file-name generation
+(see <A HREF="#File Name Generation"><EM>File Name Generation </EM></A>below).
+The <STRONG>;; </STRONG>operator causes execution of <STRONG>case </STRONG>to terminate.
+If <STRONG>;&amp; </STRONG>is used in place of <STRONG>;; </STRONG>the next subsequent list, if any, is executed.
+<STRONG><P>
+<DT>
+if</STRONG> <EM>list&nbsp;</EM> <STRONG>;then</STRONG> <EM>list&nbsp;</EM> [&nbsp; <STRONG>elif</STRONG> <EM>list&nbsp;</EM> <STRONG>;then</STRONG><EM>list&nbsp;</EM>&nbsp;].&nbsp;.&nbsp;.[&nbsp;<STRONG>;else</STRONG><EM>list&nbsp;</EM>&nbsp;]<STRONG>;fi</STRONG> 
+<DD>The <EM>list </EM>following <STRONG>if</STRONG> is executed and, if it returns a zero exit status,
+the <EM>list </EM>following the first <STRONG>then </STRONG>is executed.
+Otherwise, the <EM>list </EM>following <STRONG>elif</STRONG> is executed and, if its value is zero,
+the <EM>list </EM>following the next <STRONG>then </STRONG>is executed.
+Failing each successive <STRONG>elif </STRONG><EM>list&nbsp;</EM>, the <STRONG>else </STRONG><EM>list </EM>is executed.
+If the <STRONG>if </STRONG><EM>list </EM>has non-zero exit status and there is no <STRONG>else </STRONG><EM>list</EM>, then
+the <STRONG>if </STRONG>command returns a zero exit status.
+<STRONG><P>
+<DT>
+while</STRONG> <EM>list&nbsp;</EM> <STRONG>;do</STRONG> <EM>list&nbsp;</EM> <STRONG>;done</STRONG> 
+<DD><STRONG><DT>
+until</STRONG> <EM>list&nbsp;</EM> <STRONG>;do</STRONG> <EM>list&nbsp;</EM> <STRONG>;done</STRONG> 
+<DD>A <STRONG>while </STRONG>command repeatedly executes the <STRONG>while </STRONG><EM>list </EM>and, if the exit status
+of the last command in the list is zero, executes the <STRONG>do </STRONG><EM>list</EM>; otherwise
+the loop terminates.
+If no commands in the <STRONG>do </STRONG><EM>list </EM>are executed, then the <STRONG>while </STRONG>command returns
+a zero exit status; <STRONG>until </STRONG>may be used in place of <STRONG>while </STRONG>to negate the loop
+termination test.
+<STRONG><P>
+<DT>
+((</STRONG><EM>expression&nbsp;</EM><STRONG>))</STRONG> 
+<DD>The <EM>expression </EM>is evaluated using the rules for arithmetic evaluation described
+below.
+If the value of the arithmetic expression is non-zero, the exit status
+is 0, otherwise the exit status is 1.
+<STRONG><P>
+<DT>
+(</STRONG><EM>list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Execute <EM>list </EM>in a separate environment.
+Note, that if two adjacent open parentheses are needed for nesting, a space
+must be inserted to avoid evaluation as an arithmetic command as described
+above.
+<STRONG><P>
+<DT>
+{ </STRONG><EM>list&nbsp;</EM><STRONG>;}</STRONG> 
+<DD><EM>list </EM>is simply executed.
+Note that unlike the metacharacters <STRONG>( </STRONG>and <STRONG>)</STRONG>, <STRONG>{ </STRONG>and <STRONG>} </STRONG>are <EM>reserved word</EM>s
+and must occur at the beginning of a line or after a <STRONG>; </STRONG>in order to be recognized.
+<STRONG><P>
+<DT>
+[[</STRONG><EM> expression &nbsp;</EM><STRONG>]]</STRONG> 
+<DD>Evaluates <EM>expression </EM>and returns a zero exit status when <EM>expression </EM>is
+true.
+See <EM>Conditional Expressions </EM>below, for a description of <EM>expression</EM>.
+<STRONG><P>
+<DT>
+function</STRONG> <EM>varname&nbsp;</EM> <STRONG>{</STRONG> <EM>list&nbsp;</EM> <STRONG>;}</STRONG> 
+<DD><EM><DT>
+varname&nbsp;</EM> <STRONG>() {</STRONG> <EM>list&nbsp;</EM> <STRONG>;}</STRONG> 
+<DD>Define a function which is referenced by <EM>varname</EM>.
+A function whose <EM>varname </EM>contains a <STRONG><FONT SIZE=+1>.</FONT> </STRONG>is called a discipline function and
+the portion of the <EM>varname </EM>preceding the last <STRONG><FONT SIZE=+1>.</FONT> </STRONG>must refer to an existing
+variable.
+The body of the function is the <EM>list </EM>of commands between <STRONG>{ </STRONG>and <STRONG>}</STRONG>.
+A function defined with the <STRONG>function</STRONG> <EM>varname&nbsp;</EM> syntax can also be used as
+an argument to the <STRONG>.</STRONG> special built-in command to get the equivalent behavior
+as if the <EM>varname&nbsp;</EM><STRONG>()</STRONG> syntax were used to define it.
+(See <EM>Functions </EM>below.) <STRONG>
+<P>
+<DT>
+time</STRONG> [&nbsp; <EM>pipeline&nbsp;</EM> &nbsp;] 
+<DD>If <EM>pipeline&nbsp;</EM> is omitted the user and system time for the current shell
+and completed child processes is printed on standard error.
+Otherwise, <EM>pipeline </EM>is executed and the elapsed time as well as the user
+and system time are printed on standard error.
+</DL><P>
+The following reserved words are recognized as reserved only when they
+are the first word of a command and are not quoted: <DL COMPACT><STRONG><P>
+if then else elif fi case esac for while until do done { } function select
+time [[ ]] ! </STRONG></DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Variable Assignments">Variable &nbsp;Assignments.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>One or more variable assignments can start a simple command or can be arguments
+to the <STRONG>typeset</STRONG>, <STRONG>export</STRONG>, or <STRONG>readonly </STRONG>special built-in commands.
+The syntax for an <EM>assignment&nbsp;</EM> is of the form: <DL COMPACT><EM>
+<P>
+<DT>
+varname&nbsp;</EM><STRONG>=</STRONG><EM>word&nbsp;</EM> 
+<DD><EM><DT>
+varname&nbsp;</EM><STRONG>[</STRONG><EM>word&nbsp;</EM><STRONG>]</STRONG>=<STRONG></STRONG><EM>word&nbsp;</EM><STRONG> 
+<DD></STRONG>No space is permitted between <EM>varname&nbsp;</EM> and the <STRONG>=</STRONG> or between <STRONG>=</STRONG> and <EM>word&nbsp;</EM>.
+<EM><P>
+<DT>
+varname&nbsp;</EM><STRONG>=(</STRONG><EM>assign_list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>No space is permitted between <EM>varname&nbsp;</EM> and the <STRONG>=</STRONG>.
+An <EM>assign_list&nbsp;</EM> can be one of the following: <DL COMPACT><DL COMPACT><EM>
+<DT>
+word&nbsp;</EM> ...
+<DD>Indexed array assignment.
+<STRONG><DT>
+[</STRONG><EM>word&nbsp;</EM><STRONG>]=</STRONG><EM>word&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>Associative array assignment.
+<EM><DT>
+assignment&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>Nested variable assignment.
+<STRONG><DT>
+typeset</STRONG> [&nbsp;<EM>options</EM>&nbsp;] <EM>assignment&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>Nested variable assignment.
+Multiple assignments can be specified by separating each of them with a
+<STRONG>;</STRONG>.
+</DL>
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Comments">Comments.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>A word beginning with <STRONG># </STRONG>causes that word and all the following characters
+up to a new-line to be ignored.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Aliasing">Aliasing.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The first word of each command is replaced by the text of an <STRONG>alias </STRONG>if an
+<STRONG>alias </STRONG>for this word has been defined.
+An <STRONG>alias </STRONG>name consists of any number of characters excluding metacharacters,
+quoting characters, file expansion characters, parameter expansion and
+command substitution characters, and <STRONG>=</STRONG>.
+The replacement string can contain any valid shell script including the
+metacharacters listed above.
+The first word of each command in the replaced text, other than any that
+are in the process of being replaced, will be tested for aliases.
+If the last character of the alias value is a <EM>blank </EM>then the word following
+the alias will also be checked for alias substitution.
+Aliases can be used to redefine built-in commands but cannot be used to
+redefine the reserved words listed above.
+Aliases can be created and listed with the <STRONG>alias </STRONG>command and can be removed
+with the <STRONG>unalias </STRONG>command.
+<EM><P>
+Aliasing </EM>is performed when scripts are read, not while they are executed.
+Therefore, for an alias to take effect, the <STRONG>alias </STRONG>definition command has
+to be executed before the command which references the alias is read.
+<P>
+The following aliases are compiled into the shell but can be unset or redefined:
+<DL COMPACT><DL COMPACT><STRONG><DT>
+autoload='typeset &#045;fu' </STRONG>
+<DD><STRONG><DT>
+command='command ' </STRONG>
+<DD><STRONG><DT>
+fc=hist </STRONG>
+<DD><STRONG><DT>
+float='typeset &#045;E' </STRONG>
+<DD><STRONG><DT>
+functions='typeset &#045;f' </STRONG>
+<DD><STRONG><DT>
+hash='alias &#045;t &#045;&nbsp;&#045;' </STRONG>
+<DD><STRONG><DT>
+history='hist &#045;l' </STRONG>
+<DD><STRONG><DT>
+integer='typeset &#045;i' </STRONG>
+<DD><STRONG><DT>
+nameref='typeset &#045;n' </STRONG>
+<DD><STRONG><DT>
+nohup='nohup ' </STRONG>
+<DD><STRONG><DT>
+r='hist &#045;s' </STRONG>
+<DD><STRONG><DT>
+redirect='command exec' </STRONG>
+<DD><STRONG><DT>
+stop='kill &#045;s <FONT SIZE=-1>STOP</FONT>' </STRONG>
+<DD><STRONG><DT>
+suspend='kill &#045;s <FONT SIZE=-1>STOP</FONT> $$' </STRONG>
+<DD><STRONG><DT>
+times='{ { time;} 2&gt;&amp;1;}' </STRONG>
+<DD><STRONG><DT>
+type='whence &#045;v' </STRONG>
+<DD></DL>
+</DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Tilde Substitution">Tilde &nbsp;Substitution.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>After alias substitution is performed, each word is checked to see if it
+begins with an unquoted <STRONG>~</STRONG>.
+For tilde substitution, <EM>word </EM>also refers to the <EM>word </EM>portion of parameter
+expansion (see <A HREF="#Parameter Expansion"><EM>Parameter Expansion </EM></A>below).
+If it does, then the word up to a <STRONG>/ </STRONG>is checked to see if it matches a user
+name in the password database (often the <STRONG>/etc/passwd </STRONG>file).
+If a match is found, the <STRONG>~ </STRONG>and the matched login name are replaced by the
+login directory of the matched user.
+If no match is found, the original text is left unchanged.
+A <STRONG>~ </STRONG>by itself, or in front of a <STRONG>/</STRONG>, is replaced by <FONT SIZE=-1><STRONG>$HOME</STRONG>.
+</FONT>A <STRONG>~ </STRONG>followed by a <STRONG>+ </STRONG>or <STRONG>&#045; </STRONG>is replaced by the value of <STRONG><FONT SIZE=-1>$PWD </FONT></STRONG>and <STRONG><FONT SIZE=-1>$OLDPWD </FONT></STRONG>respectively.
+<P>
+In addition, when expanding a <EM>variable assignment</EM>, <EM>tilde </EM>substitution is
+attempted when the value of the assignment begins with a <STRONG>~</STRONG>, and when a
+<STRONG>~ </STRONG>appears after a <STRONG>:</STRONG>.
+The <STRONG>: </STRONG>also terminates a <STRONG>~ </STRONG>login name.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Command Substitution">Command &nbsp;Substitution.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The standard output from a command enclosed in parentheses preceded by
+a dollar sign ( <STRONG>$(&nbsp;) </STRONG>) or a pair of grave accents (&nbsp;<STRONG><FONT SIZE=+1><SUB>`</SUB></FONT>&nbsp;<FONT SIZE=+1><SUB>`</SUB></FONT></STRONG>&nbsp;) may be used as
+part or all of a word; trailing new-lines are removed.
+In the second (obsolete) form, the string between the quotes is processed
+for special quoting characters before the command is executed (see <A HREF="#Quoting"><EM>Quoting
+</EM></A>below).
+The command substitution &nbsp;<STRONG>$(&nbsp;cat file&nbsp;)</STRONG>&nbsp; can be replaced by the equivalent
+but faster &nbsp;<STRONG>$(&nbsp;&lt;file&nbsp;)</STRONG>&nbsp;.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Arithmetic Substitution">Arithmetic &nbsp;Substitution.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>An arithmetic expression enclosed in double parentheses preceded by a dollar
+sign ( <STRONG>$((&nbsp;)) </STRONG>) is replaced by the value of the arithmetic expression within
+the double parentheses.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Process Substitution">Process &nbsp;Substitution.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>This feature is only available on versions of the UNIX operating system
+that support the <STRONG>/dev/fd </STRONG>directory for naming open files.
+Each command argument of the form <STRONG>&lt;(</STRONG><EM>list&nbsp;</EM><STRONG>)</STRONG> or <STRONG>&gt;(</STRONG><EM>list&nbsp;</EM><STRONG>)</STRONG> will run process
+<EM>list </EM>asynchronously connected to some file in <STRONG>/dev/fd</STRONG>.
+The name of this file will become the argument to the command.
+If the form with <STRONG>&gt; </STRONG>is selected then writing on this file will provide input
+for <EM>list</EM>.
+If <STRONG>&lt; </STRONG>is used, then the file passed as an argument will contain the output
+of the <EM>list </EM>process.
+For example, <DL COMPACT><STRONG><P>
+paste &lt;(cut &#045;f1</STRONG> <EM>file1</EM><STRONG>) &lt;(cut &#045;f3</STRONG> <EM>file2</EM><STRONG>) | tee &gt;(</STRONG><EM>process1</EM><STRONG>) &gt;(</STRONG><EM>process2</EM><STRONG>)</STRONG><EM> </EM><EM><P>
+cuts </EM></DL>
+fields 1 and 3 from the files <EM>file1 </EM>and <EM>file2 </EM>respectively, <EM>pastes </EM>the
+results together, and sends it to the processes <EM>process1 </EM>and <EM>process2</EM>,
+as well as putting it onto the standard output.
+Note that the file, which is passed as an argument to the command, is a
+UNIX <EM>pipe</EM>(2) so programs that expect to <EM>lseek</EM>(2) on the file will not work.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Parameter Expansion">Parameter &nbsp;Expansion.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>A <EM>parameter </EM>is a <EM>variable</EM>, one or more digits, or any of the characters
+<STRONG>*</STRONG>, <STRONG>@</STRONG>, <STRONG>#</STRONG>, <STRONG>?</STRONG>, <STRONG>&#045;</STRONG>, <STRONG>$</STRONG>, and <STRONG>!&nbsp;</STRONG>.
+A <EM>variable </EM>is denoted by a <EM>vname</EM>.
+To create a variable whose <EM>vname </EM>contains a <STRONG><FONT SIZE=+1>.</FONT></STRONG>, a variable whose <EM>vname </EM>consists
+of everything before the last <STRONG><FONT SIZE=+1>.</FONT></STRONG> must already exist.
+A <EM>variable </EM>has a <EM>value </EM>and zero or more <EM>attributes</EM>.
+<EM>Variables </EM>can be assigned <EM>values </EM>and <EM>attributes </EM>by using the <STRONG>typeset </STRONG>special
+built-in command.
+The attributes supported by the shell are described later with the <STRONG>typeset
+</STRONG>special built-in command.
+Exported variables pass values and attributes to the environment.
+<P>
+The shell supports both indexed and associative arrays.
+An element of an array variable is referenced by a <EM>subscript</EM>.
+A <EM>subscript </EM>for an indexed array is denoted by an <EM>arithmetic expression
+</EM>(see <A HREF="#Arithmetic Evaluation"><EM>Arithmetic Evaluation </EM></A>below) between a <STRONG>[ </STRONG>and a <STRONG>]</STRONG>.
+To assign values to an indexed array, use <STRONG>set &#045;A</STRONG> <EM>vname</EM> <EM>value</EM> .&nbsp;.&nbsp;.
+.
+The value of all subscripts must be in the range of 0 through 4095.
+Indexed arrays need not be declared.
+Any reference to a variable with a valid subscript is legal and an array
+will be created if necessary.
+<P>
+An associative array is created with the <STRONG>&#045;A </STRONG>option to <STRONG>typeset.
+</STRONG>A <EM>subscript </EM>for an associative array is denoted by a string enclosed between
+<STRONG>[ </STRONG>and <STRONG>]</STRONG>.
+<P>
+Referencing any array without a subscript is equivalent to referencing
+the array with subscript 0.
+<P>
+The <EM>value </EM>of a <EM>variable </EM>may be assigned by writing: <DL COMPACT><EM><P>
+vname</EM><STRONG>=</STRONG><EM>value&nbsp;&nbsp; </EM>[&nbsp; <EM>vname</EM><STRONG>=</STRONG><EM>value </EM>&nbsp;] .&nbsp;.&nbsp;.
+</DL>
+<P>
+or <DL COMPACT><EM><BR>
+vname</EM><STRONG>[</STRONG><EM>subscript</EM><STRONG>]=</STRONG><EM>value&nbsp;&nbsp; </EM>[&nbsp; <EM>vname</EM><STRONG>[</STRONG><EM>subscript</EM><STRONG>]=</STRONG><EM>value </EM>&nbsp;] .&nbsp;.&nbsp;.
+</DL>
+<P>
+Note that no space is allowed before or after the <STRONG>=</STRONG>.
+<P>
+A <EM>nameref </EM>is a variable that is a reference to another variable.
+A nameref is created with the <STRONG>&#045;n </STRONG>attribute of <STRONG>typeset</STRONG>.
+The value of the variable at the time of the <STRONG>typeset </STRONG>command becomes the
+variable that will be referenced whenever the nameref variable is used.
+The name of a nameref cannot contain a <STRONG><FONT SIZE=+1>.</FONT></STRONG>.
+When a variable or function name contains a <STRONG><FONT SIZE=+1>.</FONT></STRONG>, and the portion of the name
+up to the first <STRONG><FONT SIZE=+1>.</FONT></STRONG> matches the name of a nameref, the variable referred
+to is obtained by replacing the nameref portion with the name of the variable
+referenced by the nameref.
+A nameref provides a convenient way to refer to the variable inside a function
+whose name is passed as an argument to a function.
+For example, if the name of a variable is passed as the first argument
+to a function, the command <DL COMPACT><STRONG><BR>
+typeset &#045;n var=$1</STRONG> </DL>
+<BR>
+inside the function causes references and assignments to <STRONG>var </STRONG>to be references
+and assignments to the variable whose name has been passed to the function.
+<P>
+If either of the floating point attributes, <STRONG>&#045;E</STRONG>, or <STRONG>&#045;F</STRONG>, or the integer attribute,
+<STRONG>&#045;i</STRONG>, is set for <EM>vname</EM>, then the <EM>value </EM>is subject to arithmetic evaluation
+as described below.
+<P>
+Positional parameters, parameters denoted by a number, may be assigned
+values with the <STRONG>set </STRONG>special built-in command.
+Parameter <STRONG>$0 </STRONG>is set from argument zero when the shell is invoked.
+<P>
+The character <STRONG>$ </STRONG>is used to introduce substitutable <EM>parameters</EM>.
+<DL COMPACT><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>}</STRONG> 
+<DD>The shell reads all the characters from <STRONG>${ </STRONG>to the matching <STRONG>} </STRONG>as part of
+the same word even if it contains braces or metacharacters.
+The value, if any, of the parameter is substituted.
+The braces are required when <EM>parameter </EM>is followed by a letter, digit,
+or underscore that is not to be interpreted as part of its name, when the
+variable name contains a <STRONG><FONT SIZE=+1>.</FONT></STRONG>, or when a variable is subscripted.
+If <EM>parameter </EM>is one or more digits then it is a positional parameter.
+A positional parameter of more than one digit must be enclosed in braces.
+If <EM>parameter </EM>is <STRONG>* </STRONG>or <STRONG>@</STRONG>, then all the positional parameters, starting with
+<STRONG>$1</STRONG>, are substituted (separated by a field separator character).
+If an array <EM>vname </EM>with subscript <STRONG>* </STRONG>or <STRONG>@ </STRONG>is used, then the value for each
+of the elements is substituted, separated by the first character of the
+value of <FONT SIZE=-1><STRONG>IFS</STRONG>.
+</FONT><STRONG><DT>
+${#</STRONG><EM>parameter&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If <EM>parameter </EM>is <STRONG>* </STRONG>or <STRONG>@</STRONG>, the number of positional parameters is substituted.
+Otherwise, the length of the value of the <EM>parameter </EM>is substituted.
+<STRONG><DT>
+${#</STRONG><EM>vname</EM><STRONG>[*]}</STRONG> 
+<DD><STRONG><DT>
+${#</STRONG><EM>vname</EM><STRONG>[@]}</STRONG> 
+<DD>The number of elements in the array <EM>vname </EM>is substituted.
+<STRONG><P>
+<DT>
+${!</STRONG><EM>vname&nbsp;</EM><STRONG>}</STRONG> 
+<DD>Expands to the name of the variable referred to by <EM>vname</EM>.
+This will be <EM>vname </EM>except when <EM>vname </EM>is a name reference.
+<STRONG><P>
+<DT>
+${!</STRONG><EM>vname&nbsp;</EM><STRONG>[</STRONG><EM>subscript&nbsp;</EM><STRONG>]}</STRONG><EM> 
+<DD></EM>Expands to name of the subscript unless <EM>subscript </EM>is <STRONG>* </STRONG>or <STRONG>@</STRONG>.
+When <EM>subscript </EM>is <STRONG>*</STRONG>, the list of array subscripts for <EM>vname&nbsp;</EM> is generated.
+For a variable that is not an array, the value is 0 if the variable is
+set.
+Otherwise it is null.
+When <EM>subscript </EM>is <STRONG>@</STRONG>, same as above, except that when used in double quotes,
+each array subscript yields a separate argument.
+<STRONG><P>
+<DT>
+${!</STRONG><EM>prefix&nbsp;</EM><STRONG>*}</STRONG> 
+<DD>Expands to the names of the variables whose names begin with <EM>prefix</EM>.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:&#045;</STRONG><EM>word&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If <EM>parameter </EM>is set and is non-null then substitute its value; otherwise
+substitute <EM>word</EM>.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:=</STRONG><EM>word&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If <EM>parameter </EM>is not set or is null then set it to <EM>word</EM>; the value of the
+parameter is then substituted.
+Positional parameters may not be assigned to in this way.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:?</STRONG><EM>word&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If <EM>parameter </EM>is set and is non-null then substitute its value; otherwise,
+print <EM>word </EM>and exit from the shell (if not interactive).
+If <EM>word </EM>is omitted then a standard message is printed.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:+</STRONG><EM>word&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If <EM>parameter </EM>is set and is non-null then substitute <EM>word</EM>; otherwise substitute
+nothing.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:</STRONG><EM>offset&nbsp;</EM><STRONG>:</STRONG><EM>length&nbsp;</EM><STRONG>}</STRONG> 
+<DD><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>:</STRONG><EM>offset&nbsp;</EM><STRONG>}</STRONG> 
+<DD>Expands to the portion of the value of <EM>parameter </EM>starting at the character
+(counting from <STRONG>0&nbsp;</STRONG>) determined by expanding <EM>offset </EM>as an arithmetic expression
+and consisting of the number of characters determined by the arithmetic
+expression defined by <EM>length.
+</EM>In the second form, the remainder of the value is used.
+If <EM>parameter </EM>is <STRONG>* </STRONG>or <STRONG>@</STRONG>, or is an array name indexed by <STRONG>* </STRONG>or <STRONG>@</STRONG>, then <EM>offset
+</EM>and <EM>length </EM>refer to the array index and number of elements respectively.
+<STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>#</STRONG><EM>pattern&nbsp;</EM><STRONG>}</STRONG> 
+<DD><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>##</STRONG><EM>pattern&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If the shell <EM>pattern </EM>matches the beginning of the value of <EM>parameter</EM>, then
+the value of this expansion is the value of the <EM>parameter </EM>with the matched
+portion deleted; otherwise the value of this <EM>parameter </EM>is substituted.
+In the first form the smallest matching pattern is deleted and in the second
+form the largest matching pattern is deleted.
+When <EM>parameter </EM>is <STRONG>@</STRONG>, <STRONG>*</STRONG>, or an array variable with subscript <STRONG>@ </STRONG>or <STRONG>*</STRONG>, the
+substring operation is applied to each element in turn.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>%</STRONG><EM>pattern&nbsp;</EM><STRONG>}</STRONG> 
+<DD><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>%%</STRONG><EM>pattern&nbsp;</EM><STRONG>}</STRONG> 
+<DD>If the shell <EM>pattern </EM>matches the end of the value of <EM>parameter</EM>, then the
+value of this expansion is the value of the <EM>parameter </EM>with the matched
+part deleted; otherwise substitute the value of <EM>parameter</EM>.
+In the first form the smallest matching pattern is deleted and in the second
+form the largest matching pattern is deleted.
+When <EM>parameter </EM>is <STRONG>@</STRONG>, <STRONG>*</STRONG>, or an array variable with subscript <STRONG>@ </STRONG>or <STRONG>*</STRONG>, the
+substring operation is applied to each element in turn.
+<STRONG><P>
+<DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>/</STRONG><EM>pattern&nbsp;</EM><STRONG>/</STRONG><EM>string&nbsp;</EM><STRONG>} </STRONG>
+<DD><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>//</STRONG><EM>pattern&nbsp;</EM><STRONG>/</STRONG><EM>string&nbsp;</EM><STRONG>} 
+<DD></STRONG><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>/#</STRONG><EM>pattern&nbsp;</EM><STRONG>/</STRONG><EM>string&nbsp;</EM><STRONG>} 
+<DD></STRONG><STRONG><DT>
+${</STRONG><EM>parameter&nbsp;</EM><STRONG>/%</STRONG><EM>pattern&nbsp;</EM><STRONG>/</STRONG><EM>string&nbsp;</EM><STRONG>} 
+<DD></STRONG>Expands <EM>parameter </EM>and replaces the longest match of <EM>pattern </EM>with the given
+<EM>string.
+</EM>Each occurrence of <STRONG>&#092;</STRONG><EM>n&nbsp;</EM> in <EM>string </EM>is replaced by the portion of <EM>parameter&nbsp;</EM>
+that matches the <EM>n&nbsp;</EM>-th sub-pattern.
+In the first form, only the first occurrence of <EM>pattern </EM>is replaced.
+In the second form, each match for <EM>pattern </EM>is replaced by the given <EM>string.
+</EM>The third form restricts the pattern match to the beginning of the string
+while the fourth form restricts the pattern match to the end of the string.
+When <EM>string </EM>is null, the <EM>pattern </EM>will be deleted and the <STRONG>/ </STRONG>in front of
+<EM>string </EM>may be omitted.
+When <EM>parameter </EM>is <STRONG>@</STRONG>, <STRONG>*</STRONG>, or an array variable with subscript <STRONG>@ </STRONG>or <STRONG>*</STRONG>, the
+substitution operation is applied to each element in turn.
+</DL>
+<P>
+In the above, <EM>word </EM>is not evaluated unless it is to be used as the substituted
+string, so that, in the following example, <STRONG>pwd </STRONG>is executed only if <STRONG>d </STRONG>is
+not set or is null: 
+<DL COMPACT>
+<P>
+print &nbsp;${d:&#045;&nbsp;$(&nbsp;pwd&nbsp;)&nbsp;} </DL>
+<P>
+If the colon ( <STRONG>: ) </STRONG>is omitted from the above expressions, then the shell
+only checks whether <EM>parameter </EM>is set or not.
+<P>
+The following parameters are automatically set by the shell: <DL COMPACT><DL COMPACT><STRONG>
+<DT>
+# </STRONG>
+<DD>The number of positional parameters in decimal.
+<STRONG><DT>
+&#045; </STRONG>
+<DD>Options supplied to the shell on invocation or by the <STRONG>set </STRONG>command.
+<STRONG><DT>
+? </STRONG>
+<DD>The decimal value returned by the last executed command.
+<STRONG><DT>
+$ </STRONG>
+<DD>The process number of this shell.
+<STRONG><DT>
+_ </STRONG>
+<DD>Initially, the value of <STRONG>_ </STRONG>is an absolute pathname of the shell or script
+being executed as passed in the <EM>environment</EM>.
+Subsequently it is assigned the last argument of the previous command.
+This parameter is not set for commands which are asynchronous.
+This parameter is also used to hold the name of the matching <STRONG><FONT SIZE=-1>MAIL </FONT></STRONG>file
+when checking for mail.
+<STRONG><DT>
+! </STRONG>
+<DD>The process number of the last background command invoked.
+<STRONG><DT>
+.sh.edchar </STRONG>
+<DD>This variable contains the value of the keyboard character (or sequence
+of characters if the first character is an ESC, ascii <STRONG>033&nbsp;</STRONG>) that has been
+entered when processing a <STRONG><FONT SIZE=-1>KEYBD </FONT></STRONG>trap (see <A HREF="#Key Bindings"><EM>Key Bindings </EM></A>below).
+If the value is changed as part of the trap action, then the new value
+replaces the key (or key sequence) that caused the trap.
+<STRONG><DT>
+.sh.edcol </STRONG>
+<DD>The character position of the cursor at the time of the most recent <STRONG><FONT SIZE=-1>KEYBD
+</FONT></STRONG>trap.
+<STRONG><DT>
+.sh.edmode </STRONG>
+<DD>The value is set to ESC when processing a <STRONG><FONT SIZE=-1>KEYBD </FONT></STRONG>trap while in <STRONG>vi </STRONG>insert
+mode.
+(See <EM>Vi Editing Mode </EM>below.) Otherwise, <STRONG>.sh.edmode </STRONG>is null when processing
+a <STRONG><FONT SIZE=-1>KEYBD </FONT></STRONG>trap.
+<STRONG><DT>
+.sh.edtext </STRONG>
+<DD>The characters in the input buffer at the time of the most recent <STRONG><FONT SIZE=-1>KEYBD
+</FONT></STRONG>trap.
+The value is null when not processing a <STRONG><FONT SIZE=-1>KEYBD </FONT></STRONG>trap.
+<STRONG><DT>
+.sh.name </STRONG>
+<DD>Set to the name of the variable at the time that a discipline function
+is invoked.
+<STRONG><DT>
+.sh.subscript </STRONG>
+<DD>Set to the name subscript of the variable at the time that a discipline
+function is invoked.
+<STRONG><DT>
+.sh.value </STRONG>
+<DD>Set to the value of the variable at the time that the <STRONG>set </STRONG>discipline function
+is invoked.
+<STRONG><DT>
+.sh.version </STRONG>
+<DD>Set to a value that identifies the version of this shell.
+<STRONG><DT>
+<FONT SIZE=-1>LINENO </FONT></STRONG>
+<DD>The current line number within the script or function being executed.
+<STRONG><DT>
+<FONT SIZE=-1>OLDPWD </FONT></STRONG>
+<DD>The previous working directory set by the <STRONG>cd </STRONG>command.
+<STRONG><DT>
+<FONT SIZE=-1>OPTARG </FONT></STRONG>
+<DD>The value of the last option argument processed by the <STRONG>getopts </STRONG>built-in
+command.
+<STRONG><DT>
+<FONT SIZE=-1>OPTIND </FONT></STRONG>
+<DD>The index of the last option argument processed by the <STRONG>getopts </STRONG>built-in
+command.
+<STRONG><DT>
+<FONT SIZE=-1>PPID </FONT></STRONG>
+<DD>The process number of the parent of the shell.
+<STRONG><DT>
+<FONT SIZE=-1>PWD </FONT></STRONG>
+<DD>The present working directory set by the <STRONG>cd </STRONG>command.
+<STRONG><DT>
+<FONT SIZE=-1>RANDOM </FONT></STRONG>
+<DD>Each time this variable is referenced, a random integer, uniformly distributed
+between 0 and 32767, is generated.
+The sequence of random numbers can be initialized by assigning a numeric
+value to <FONT SIZE=-1><STRONG>RANDOM</STRONG>.
+</FONT><STRONG><DT>
+<FONT SIZE=-1>REPLY </FONT></STRONG>
+<DD>This variable is set by the <STRONG>select </STRONG>statement and by the <STRONG>read </STRONG>built-in command
+when no arguments are supplied.
+<STRONG><DT>
+<FONT SIZE=-1>SECONDS </FONT></STRONG>
+<DD>Each time this variable is referenced, the number of seconds since shell
+invocation is returned.
+If this variable is assigned a value, then the value returned upon reference
+will be the value that was assigned plus the number of seconds since the
+assignment.
+</DL></DL><P>
+The following variables are used by the shell: <DL COMPACT><DL COMPACT><STRONG>
+<DT>
+<FONT SIZE=-1>CDPATH </FONT></STRONG>
+<DD>The search path for the <STRONG>cd </STRONG>command.
+<STRONG><DT>
+<FONT SIZE=-1>COLUMNS </FONT></STRONG>
+<DD>If this variable is set, the value is used to define the width of the edit
+window for the shell edit modes and for printing <STRONG>select </STRONG>lists.
+<STRONG><DT>
+<FONT SIZE=-1>EDITOR </FONT></STRONG>
+<DD>If the value of this variable ends in <EM>emacs</EM>, <EM>gmacs</EM>, or <EM>vi </EM>and the <STRONG><FONT SIZE=-1>VISUAL
+</FONT></STRONG>variable is not set, then the corresponding option (see special built-in
+command <A HREF="#set"><STRONG>set </STRONG></A>below) will be turned on.
+<DT>
+<FONT SIZE=-1><STRONG>ENV </STRONG>
+<DD></FONT>If this variable is set, then parameter expansion, command substitution,
+and arithmetic substitution are performed on the value to generate the
+pathname of the script that will be executed when the shell is invoked
+(see <A HREF="#Invocation"><EM>Invocation </EM></A>below).
+This file is typically used for <STRONG>alias </STRONG>and <STRONG>function </STRONG>definitions.
+<STRONG><DT>
+<FONT SIZE=-1>FCEDIT </FONT></STRONG>
+<DD>Obsolete name for the default editor name for the <STRONG>hist </STRONG>command.
+<STRONG><FONT SIZE=-1>FCEDIT </FONT></STRONG>is not used when <STRONG><FONT SIZE=-1>HISTEDIT </FONT></STRONG>is set.
+<DT>
+<FONT SIZE=-1><STRONG>FIGNORE </STRONG>
+<DD></FONT>A pattern that defines the set of filenames that will be ignored when performing
+filename matching.
+<DT>
+<FONT SIZE=-1><STRONG>FPATH </STRONG>
+<DD></FONT>The search path for function definitions.
+This path is searched for a file with the same name as the function or
+command when a function with the <STRONG>&#045;u </STRONG>attribute is referenced and when a
+command is not found.
+If an executable file with the name of that command is found, then it is
+read and executed in the current environment.
+<STRONG><DT>
+<FONT SIZE=-1>HISTCMD </FONT></STRONG>
+<DD>Number of the current command in the history file.
+<STRONG><DT>
+<FONT SIZE=-1>HISTEDIT </FONT></STRONG>
+<DD>Name for the default editor name for the <STRONG>hist </STRONG>command.
+<DT>
+<FONT SIZE=-1><STRONG>HISTFILE </STRONG>
+<DD></FONT>If this variable is set when the shell is invoked, then the value is the
+pathname of the file that will be used to store the command history (see
+<A HREF="#Command Re-entry"><EM>Command Re-entry </EM></A>below).
+<DT>
+<FONT SIZE=-1><STRONG>HISTSIZE </STRONG>
+<DD></FONT>If this variable is set when the shell is invoked, then the number of previously
+entered commands that are accessible by this shell will be greater than
+or equal to this number.
+The default is 128.
+<STRONG><DT>
+<FONT SIZE=-1>HOME </FONT></STRONG>
+<DD>The default argument (home directory) for the <STRONG>cd </STRONG>command.
+<DT>
+<FONT SIZE=-1><STRONG>IFS </STRONG>
+<DD></FONT>Internal field separators, normally <STRONG>space</STRONG>, <STRONG>tab</STRONG>, and <STRONG>new-line </STRONG>that are used
+to separate the results of command substitution or parameter expansion
+and to separate fields with the built-in command <STRONG>read</STRONG>.
+The first character of the <FONT SIZE=-1><STRONG>IFS </STRONG></FONT>variable is used to separate arguments for
+the <STRONG>"$*" </STRONG>substitution (see <A HREF="#Quoting"><EM>Quoting </EM></A>below).
+Each single occurrence of an <FONT SIZE=-1><STRONG>IFS </STRONG></FONT>character in the string to be split, that
+is not in the <EM>isspace&nbsp;</EM> character class, and any adjacent characters in
+<FONT SIZE=-1><STRONG>IFS </STRONG></FONT>that are in the <EM>isspace&nbsp;</EM> character class, delimit a field.
+One or more characters in <FONT SIZE=-1><STRONG>IFS </STRONG></FONT>that belong to the <EM>isspace&nbsp;</EM> character class,
+delimit a field.
+In addition, if the same <EM>isspace&nbsp;</EM> character appears consecutively inside
+<FONT SIZE=-1><STRONG>IFS</STRONG>, </FONT>this character is treated as if it were not in the <EM>isspace&nbsp;</EM> class,
+so that if <FONT SIZE=-1><STRONG>IFS </STRONG></FONT>consists of two <STRONG>tab </STRONG>characters, then two adjacent <STRONG>tab </STRONG>characters
+delimit a null field.
+<STRONG><DT>
+<FONT SIZE=-1>LANG </FONT></STRONG>
+<DD>This variable determines the locale category for any category not specifically
+selected with a variable starting with <STRONG><FONT SIZE=-1>LC_ </FONT></STRONG>or <FONT SIZE=-1><STRONG>LANG</STRONG>.
+</FONT><STRONG><DT>
+<FONT SIZE=-1>LC_ALL </FONT></STRONG>
+<DD>This variable overrides the value of the <STRONG><FONT SIZE=-1>LANG </FONT></STRONG>variable and any other <STRONG><FONT SIZE=-1>LC_
+</FONT></STRONG>variable.
+<STRONG><DT>
+<FONT SIZE=-1>LC_COLLATE </FONT></STRONG>
+<DD>This variable determines the locale category for character collation information.
+<STRONG><DT>
+<FONT SIZE=-1>LC_CTYPE </FONT></STRONG>
+<DD>This variable determines the locale category for character handling functions.
+It determines the character classes for pattern matching (see <A HREF="#File Name Generation"><EM>File Name
+Generation </EM></A>below).
+<STRONG><DT>
+<FONT SIZE=-1>LC_NUMERIC </FONT></STRONG>
+<DD>This variable determines the locale category for the decimal point character.
+<STRONG><DT>
+<FONT SIZE=-1>LINES </FONT></STRONG>
+<DD>If this variable is set, the value is used to determine the column length
+for printing <STRONG>select </STRONG>lists.
+Select lists will print vertically until about two-thirds of <STRONG><FONT SIZE=-1>LINES </FONT></STRONG>lines
+are filled.
+<STRONG><DT>
+<FONT SIZE=-1>MAIL </FONT></STRONG>
+<DD>If this variable is set to the name of a mail file <EM>and </EM>the <STRONG><FONT SIZE=-1>MAILPATH </FONT></STRONG>variable
+is not set, then the shell informs the user of arrival of mail in the specified
+file.
+<STRONG><DT>
+<FONT SIZE=-1>MAILCHECK </FONT></STRONG>
+<DD>This variable specifies how often (in seconds) the shell will check for
+changes in the modification time of any of the files specified by the <STRONG><FONT SIZE=-1>MAILPATH
+</FONT></STRONG>or <STRONG><FONT SIZE=-1>MAIL </FONT></STRONG>variables.
+The default value is 600 seconds.
+When the time has elapsed the shell will check before issuing the next
+prompt.
+<STRONG><DT>
+<FONT SIZE=-1>MAILPATH </FONT></STRONG>
+<DD>A colon ( <STRONG>: </STRONG>) separated list of file names.
+If this variable is set, then the shell informs the user of any modifications
+to the specified files that have occurred within the last <STRONG><FONT SIZE=-1>MAILCHECK </FONT></STRONG>seconds.
+Each file name can be followed by a <STRONG>? </STRONG>and a message that will be printed.
+The message will undergo parameter expansion, command substitution, and
+arithmetic substitution with the variable <STRONG>$_ </STRONG>defined as the name of the
+file that has changed.
+The default message is <EM>you have mail in $_&nbsp;.
+</EM><STRONG><DT>
+<FONT SIZE=-1>PATH </FONT></STRONG>
+<DD>The search path for commands (see <A HREF="#Execution"><EM>Execution </EM></A>below).
+The user may not change <STRONG><FONT SIZE=-1>PATH</FONT> </STRONG>if executing under <STRONG>rsh </STRONG>(except in <STRONG>.profile&nbsp;).
+</STRONG><DT>
+<FONT SIZE=-1><STRONG>PS1 </STRONG>
+<DD></FONT>The value of this variable is expanded for parameter expansion, command
+substitution, and arithmetic substitution to define the primary prompt
+string which by default is ``<STRONG>$&nbsp;&nbsp;&nbsp;</STRONG>''.
+The character <STRONG>! </STRONG>in the primary prompt string is replaced by the <EM>command
+</EM>number (see <A HREF="#Command Re-entry"><EM>Command Re-entry </EM></A>below).
+Two successive occurrences of <STRONG>! </STRONG>will produce a single <STRONG>! </STRONG>when the prompt
+string is printed.
+<DT>
+<FONT SIZE=-1><STRONG>PS2 </STRONG>
+<DD></FONT>Secondary prompt string, by default ``<STRONG>&gt; &nbsp;</STRONG>''.
+<DT>
+<FONT SIZE=-1><STRONG>PS3 </STRONG>
+<DD></FONT>Selection prompt string used within a <STRONG>select </STRONG>loop, by default ``<STRONG>#? &nbsp;</STRONG>''.
+<DT>
+<FONT SIZE=-1><STRONG>PS4 </STRONG>
+<DD></FONT>The value of this variable is expanded for parameter evaluation, command
+substitution, and arithmetic substitution and precedes each line of an
+execution trace.
+By default, <FONT SIZE=-1><STRONG>PS4 </STRONG></FONT>is ``<STRONG>+ &nbsp;</STRONG>''.
+In addition when <FONT SIZE=-1><STRONG>PS4 </STRONG></FONT>is unset, the execution trace prompt is also ``<STRONG>+ &nbsp;</STRONG>''.
+<DT>
+<FONT SIZE=-1><STRONG>SHELL </STRONG>
+<DD></FONT>The pathname of the <EM>shell </EM>is kept in the environment.
+At invocation, if the basename of this variable is <STRONG>rsh</STRONG>, <STRONG>rksh</STRONG>, or <STRONG>krsh</STRONG>,
+then the shell becomes restricted.
+<STRONG><DT>
+<FONT SIZE=-1>TMOUT </FONT></STRONG>
+<DD>If set to a value greater than zero, <STRONG><FONT SIZE=-1>TMOUT </FONT></STRONG>will be the default timeout
+value for the <STRONG>read </STRONG>built-in command.
+The <STRONG>select </STRONG>compound command terminates after <STRONG><FONT SIZE=-1>TMOUT </FONT></STRONG>seconds when input is
+from a terminal.
+Otherwise, the shell will terminate if a line is not entered within the
+prescribed number of seconds while reading from a terminal.
+(Note that the shell can be compiled with a maximum bound for this value
+which cannot be exceeded.) <STRONG>
+<DT>
+<FONT SIZE=-1>VISUAL </FONT></STRONG>
+<DD>If the value of this variable ends in <EM>emacs</EM>, <EM>gmacs</EM>, or <EM>vi </EM>then the corresponding
+option (see Special Command <A HREF="#set"><STRONG>set </STRONG></A>below) will be turned on.
+The value of <STRONG><FONT SIZE=-1>VISUAL </FONT></STRONG>overrides the value of <STRONG><FONT SIZE=-1>EDITOR.
+</FONT></STRONG></DL></DL><P>
+The shell gives default values to <STRONG><FONT SIZE=-1>PATH</FONT></STRONG>, <STRONG><FONT SIZE=-1>PS1</FONT></STRONG>, <STRONG><FONT SIZE=-1>PS2</FONT></STRONG>, <STRONG><FONT SIZE=-1>PS3</FONT></STRONG>, <STRONG><FONT SIZE=-1>PS4</FONT></STRONG>, <STRONG><FONT SIZE=-1>MAILCHECK</FONT></STRONG>,
+<STRONG><FONT SIZE=-1>FCEDIT</FONT></STRONG>, <STRONG><FONT SIZE=-1>TMOUT</FONT></STRONG> and <STRONG><FONT SIZE=-1>IFS</FONT></STRONG>, while <FONT SIZE=-1><STRONG>HOME</STRONG>, </FONT><FONT SIZE=-1><STRONG>SHELL</STRONG>, </FONT><FONT SIZE=-1><STRONG>ENV</STRONG>, </FONT>and <FONT SIZE=-1><STRONG>MAIL </STRONG></FONT>are not set at
+all by the shell (although <FONT SIZE=-1><STRONG>HOME </STRONG></FONT><EM>is </EM>set by <EM>login</EM>(1)).
+On some systems <FONT SIZE=-1><STRONG>MAIL </STRONG></FONT>and <FONT SIZE=-1><STRONG>SHELL </STRONG></FONT>are also set by <EM>login</EM>(1).
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Field Splitting">Field &nbsp;Splitting.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>After parameter expansion and command substitution, the results of substitutions
+are scanned for the field separator characters (those found in <FONT SIZE=-1><STRONG>IFS&nbsp; </STRONG></FONT>) and
+split into distinct fields where such characters are found.
+Explicit null fields (&nbsp;<STRONG>"&nbsp;"</STRONG> or <STRONG>'&nbsp;'</STRONG>&nbsp;) are retained.
+Implicit null fields (those resulting from <EM>parameters </EM>that have no values
+or command substitutions with no output) are removed.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="File Name Generation">File &nbsp;Name &nbsp;Generation.
+&nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Following splitting, each field is scanned for the characters <STRONG>*</STRONG>, <STRONG>?</STRONG>, <STRONG>(</STRONG>,
+and <STRONG>[&nbsp; </STRONG>unless the <STRONG>&#045;f </STRONG>option has been set.
+If one of these characters appears, then the word is regarded as a <EM>pattern</EM>.
+Each file name component that contains any pattern character is replaced
+with a lexicographically sorted set of names that matches the pattern from
+that directory.
+If no file name is found that matches the pattern, then that component
+of the filename is left unchanged.
+If <FONT SIZE=-1><STRONG>FIGNORE </STRONG></FONT>is set, then each file name component that matches the pattern
+defined by the value of <FONT SIZE=-1><STRONG>FIGNORE </STRONG></FONT>is ignored when generating the matching
+filenames.
+The names <STRONG>.
+</STRONG>and <STRONG>..
+</STRONG>are also ignored.
+If <FONT SIZE=-1><STRONG>FIGNORE </STRONG></FONT>is not set, the character <STRONG>.
+</STRONG>at the start of each file name component will be ignored unless the first
+character of the pattern corresponding to this component is the character
+<STRONG>.
+</STRONG>itself.
+Note, that for other uses of pattern matching the <STRONG>/ </STRONG>and <STRONG>.
+</STRONG>are not treated specially.
+<DL COMPACT><DL COMPACT><STRONG><P>
+<DT>
+* </STRONG>
+<DD>Matches any string, including the null string.
+<STRONG><DT>
+? </STRONG>
+<DD>Matches any single character.
+<DT>
+<STRONG>[&nbsp;</STRONG>&nbsp;.&nbsp;.&nbsp;.&nbsp;<STRONG>&nbsp;] </STRONG>
+<DD>Matches any one of the enclosed characters.
+A pair of characters separated by <STRONG>&#045; </STRONG>matches any character lexically between
+the pair, inclusive.
+If the first character following the opening <STRONG>[&nbsp; </STRONG>is a <STRONG>! </STRONG>then any character
+not enclosed is matched.
+A <STRONG>&#045; </STRONG>can be included in the character set by putting it as the first or
+last character.
+<BR>
+Within <STRONG>[&nbsp; </STRONG>and <STRONG>&nbsp;]&nbsp;</STRONG>, character classes can be specified with the syntax <STRONG>[:</STRONG><EM>class</EM><STRONG>:]</STRONG>
+where class is one of the following classes defined in the ANSI-C standard:
+<STRONG><BR>
+alnum alpha blank cntrl digit graph lower print punct space upper xdigit
+</STRONG><BR>
+Within <STRONG>[&nbsp; </STRONG>and <STRONG>&nbsp;]&nbsp;</STRONG>, an equivalence class can be specified with the syntax
+<STRONG>[=</STRONG><EM>c</EM><STRONG>=]</STRONG> which matches all characters with the same primary collation weight
+(as defined by the current locale) as the character <EM>c</EM>.
+<BR>
+Within <STRONG>[&nbsp; </STRONG>and <STRONG>&nbsp;]&nbsp;</STRONG>, <STRONG>[.</STRONG><EM>symbol</EM><STRONG>.]</STRONG> matches the collating symbol <EM>symbol</EM>.
+</DL>
+</DL>
+A <EM>pattern-list </EM>is a list of one or more patterns separated from each other
+with a <STRONG>&amp; </STRONG>or <STRONG>|</STRONG>.
+A <STRONG>&amp; </STRONG>signifies that all patterns must be matched whereas <STRONG>| </STRONG>requires that
+only one pattern be matched.
+Composite patterns can be formed with one or more of the following sub-patterns:
+<DL COMPACT><DL COMPACT><STRONG><DT>
+?(</STRONG><EM>pattern-list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Optionally matches any one of the given patterns.
+<STRONG><DT>
+*(</STRONG><EM>pattern-list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Matches zero or more occurrences of the given patterns.
+<STRONG><DT>
++(</STRONG><EM>pattern-list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Matches one or more occurrences of the given patterns.
+<STRONG><DT>
+@(</STRONG><EM>pattern-list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Matches exactly one of the given patterns.
+<STRONG><DT>
+!(</STRONG><EM>pattern-list&nbsp;</EM><STRONG>)</STRONG> 
+<DD>Matches anything except one of the given patterns.
+</DL>
+</DL>
+Each sub-pattern in a composite pattern is numbered, starting at 1, by
+the location of the <STRONG>(</STRONG> within the pattern.
+The sequence <STRONG>&#092;</STRONG><EM>n&nbsp;</EM>, where <EM>n&nbsp;</EM> is a single digit and <STRONG>&#092;</STRONG><EM>n&nbsp;</EM> comes after the <EM>n</EM>-th.
+sub-pattern, matches the same string as the sub-pattern itself.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Quoting">Quoting.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Each of the <EM>metacharacters </EM>listed earlier (see <A HREF="#Definitions"><EM>Definitions </EM></A>above) has a
+special meaning to the shell and causes termination of a word unless quoted.
+A character may be <EM>quoted </EM>(i.e., made to stand for itself) by preceding
+it with a <STRONG>&#092;</STRONG>.
+The pair <STRONG>&#092;new-line </STRONG>is removed.
+All characters enclosed between a pair of single quote marks (&nbsp;<STRONG>'&nbsp;'</STRONG>&nbsp;) that
+is not preceded by a <STRONG>$ </STRONG>are quoted.
+A single quote cannot appear within the single quotes.
+A single quoted string preceded by an unquoted <STRONG>$ </STRONG>is processed as an ANSI-C
+string except that <STRONG>&#092;0 </STRONG>within the string causes the remainder of the string
+to be ignored and <STRONG>&#092;E </STRONG>is equivalent to the escape character (ascii <STRONG>033</STRONG>).
+Inside double quote marks (<STRONG>"&nbsp;"</STRONG>), parameter and command substitution occur
+and <STRONG>&#092; </STRONG>quotes the characters <STRONG>&#092;</STRONG>, <STRONG><FONT SIZE=+1><SUB>`</SUB></FONT></STRONG>, <STRONG>"</STRONG>, and <STRONG>$</STRONG>.
+A <STRONG>$ </STRONG>in front of a double quoted string will be ignored in the "C" or "POSIX"
+locale, and may cause the string to be replaced by a locale specific string
+otherwise.
+The meaning of <STRONG>$* </STRONG>and <STRONG>$@ </STRONG>is identical when not quoted or when used as a
+variable assignment value or as a file name.
+However, when used as a command argument, <STRONG>"$*" </STRONG>is equivalent to <STRONG>"$1</STRONG><EM>d</EM><STRONG>&nbsp;$2</STRONG><EM>d</EM>&nbsp;.&nbsp;.&nbsp;.<STRONG>"</STRONG>,
+where <EM>d </EM>is the first character of the <FONT SIZE=-1><STRONG>IFS </STRONG></FONT>variable, whereas <STRONG>"$@" </STRONG>is equivalent
+to <STRONG>"$1"&nbsp; </STRONG><STRONG>"$2"&nbsp; </STRONG>.&nbsp;.&nbsp;.&nbsp;.
+Inside grave quote marks (<STRONG><FONT SIZE=+1><SUB>`</SUB></FONT>&nbsp;<FONT SIZE=+1><SUB>`</SUB></FONT></STRONG>), <STRONG>&#092; </STRONG>quotes the characters <STRONG>&#092;</STRONG>, <STRONG><FONT SIZE=+1><SUB>`</SUB></FONT></STRONG>, and <STRONG>$</STRONG>.
+If the grave quotes occur within double quotes, then <STRONG>&#092; </STRONG>also quotes the
+character <STRONG>"</STRONG>.
+<P>
+The special meaning of reserved words or aliases can be removed by quoting
+any character of the reserved word.
+The recognition of function names or built-in command names listed below
+cannot be altered by quoting them.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Arithmetic Evaluation">Arithmetic &nbsp;Evaluation.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The shell performs arithmetic evaluation for arithmetic substitution, to
+evaluate an arithmetic command, to evaluate an indexed array subscript,
+and to evaluate arguments to the built-in commands <STRONG>shift </STRONG>and <STRONG>let</STRONG>.
+Evaluations are performed using double precision floating point arithmetic.
+Floating point constants follow the ANSI-C programming language conventions.
+Integer constants are of the form [&nbsp;<EM>base</EM><STRONG>#&nbsp;</STRONG>&nbsp;]<EM>n&nbsp;</EM> where <EM>base </EM>is a decimal
+number between two and sixty-four representing the arithmetic base and
+<EM>n </EM>is a number in that base.
+The digits above 9 are represented by the lower case letters, the upper
+case letters, <STRONG>@</STRONG>, and <STRONG>_ </STRONG>respectively.
+For bases less than or equal to 36, upper and lower case characters can
+be used interchangeably.
+If <EM>base </EM>is omitted, then base 10 is used.
+<P>
+An arithmetic expression uses the same syntax, precedence, and associativity
+of expression as the C language.
+All the C language operators that apply to floating point quantities can
+be used.
+In addition, when the value of an arithmetic variable or sub-expression
+can be represented as a long integer, all C language integer arithmetic
+operations can be performed.
+Variables can be referenced by name within an arithmetic expression without
+using the parameter expansion syntax.
+When a variable is referenced, its value is evaluated as an arithmetic
+expression.
+<P>
+The following math library functions can be used with an arithmetic expression:
+<DL COMPACT><STRONG><P>
+abs acos asin atan cos cosh exp int log sin sinh sqrt tan tanh </STRONG></DL>
+<P>
+An internal representation of a <EM>variable </EM>as a double precision floating
+point can be specified with the <STRONG>&#045;E</STRONG> [&nbsp;<EM>n&nbsp;</EM>&nbsp;] or <STRONG>&#045;F</STRONG> [&nbsp;<EM>n&nbsp;</EM>&nbsp;] option of the <STRONG>typeset
+</STRONG>special built-in command.
+The <STRONG>&#045;E </STRONG>option causes the expansion of the value to be represented using
+scientific notation when it is expanded.
+The optional option argument <EM>n </EM>defines the number of significant figures.
+The <STRONG>&#045;F </STRONG>option causes the expansion to be represented as a floating decimal
+number when it is expanded.
+The optional option argument <EM>n </EM>defines the number of places after the decimal
+point in this case.
+<P>
+An internal integer representation of a <EM>variable </EM>can be specified with
+the <STRONG>&#045;i</STRONG> [&nbsp;<EM>n&nbsp;</EM>&nbsp;] option of the <STRONG>typeset </STRONG>special built-in command.
+The optional option argument <EM>n </EM>specifies an arithmetic base to be used
+when expanding the variable.
+If you do not specify an arithmetic base, the first assignment to the variable
+determines the arithmetic base.
+<P>
+Arithmetic evaluation is performed on the value of each assignment to a
+variable with the <STRONG>&#045;E</STRONG>, <STRONG>&#045;F</STRONG>, or <STRONG>&#045;i </STRONG>attribute.
+Assigning a floating point number to a variable whose type is an integer
+causes the fractional part to be truncated.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Prompting">Prompting.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>When used interactively, the shell prompts with the value of <FONT SIZE=-1><STRONG>PS1 </STRONG></FONT>after
+expanding it for parameter expansion, command substitution, and arithmetic
+substitution, before reading a command.
+In addition, each single <STRONG>! </STRONG>in the prompt is replaced by the command number.
+A <STRONG>!! </STRONG>is required to place <STRONG>! </STRONG>in the prompt.
+If at any time a new-line is typed and further input is needed to complete
+a command, then the secondary prompt (i.e., the value of <STRONG><FONT SIZE=-1>PS2</FONT></STRONG>) is issued.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Conditional Expressions">Conditional &nbsp;Expressions.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>A <EM>conditional expression </EM>is used with the <STRONG>[[ </STRONG>compound command to test attributes
+of files and to compare strings.
+Field splitting and file name generation are not performed on the words
+between <STRONG>[[ </STRONG>and <STRONG>]]</STRONG>.
+Each expression can be constructed from one or more of the following unary
+or binary expressions: <DL COMPACT><EM>
+<DT>
+string</EM> 
+<DD>True, if <EM>string </EM>is not null.
+<STRONG><DT>
+&#045;a</STRONG> <EM>file</EM> 
+<DD>Same as <STRONG>&#045;e</STRONG> below.
+This is obsolete.
+<STRONG><DT>
+&#045;b</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a block special file.
+<STRONG><DT>
+&#045;c</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a character special file.
+<STRONG><DT>
+&#045;d</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a directory.
+<STRONG><DT>
+&#045;e</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists.
+<STRONG><DT>
+&#045;f</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is an ordinary file.
+<STRONG><DT>
+&#045;g</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and it has its setgid bit set.
+<STRONG><DT>
+&#045;k</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and it has its sticky bit set.
+<STRONG><DT>
+&#045;n</STRONG> <EM>string</EM> 
+<DD>True, if length of <EM>string </EM>is non-zero.
+<STRONG><DT>
+&#045;o</STRONG> <EM>option</EM> 
+<DD>True, if option named <EM>option </EM>is on.
+<STRONG><DT>
+&#045;p</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a fifo special file or a pipe.
+<STRONG><DT>
+&#045;r</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is readable by current process.
+<STRONG><DT>
+&#045;s</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and has size greater than zero.
+<STRONG><DT>
+&#045;t</STRONG> <EM>fildes</EM> 
+<DD>True, if file descriptor number <EM>fildes </EM>is open and associated with a terminal
+device.
+<STRONG><DT>
+&#045;u</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and it has its setuid bit set.
+<STRONG><DT>
+&#045;w</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is writable by current process.
+<STRONG><DT>
+&#045;x</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is executable by current process.
+If <EM>file </EM>exists and is a directory, then true if the current process has
+permission to search in the directory.
+<STRONG><DT>
+&#045;z</STRONG> <EM>string</EM> 
+<DD>True, if length of <EM>string </EM>is zero.
+<STRONG><DT>
+&#045;L</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a symbolic link.
+<STRONG><DT>
+&#045;O</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is owned by the effective user id of this process.
+<STRONG><DT>
+&#045;G</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and its group matches the effective group id of this
+process.
+<STRONG><DT>
+&#045;S</STRONG> <EM>file</EM> 
+<DD>True, if <EM>file </EM>exists and is a socket.
+<EM><DT>
+file1</EM> <STRONG>&#045;nt</STRONG> <EM>file2</EM> 
+<DD>True, if <EM>file1 </EM>exists and <EM>file2 </EM>does not, or <EM>file1 </EM>is newer than <EM>file2</EM>.
+<EM><DT>
+file1</EM> <STRONG>&#045;ot</STRONG> <EM>file2</EM> 
+<DD>True, if <EM>file2 </EM>exists and <EM>file1 </EM>does not, or <EM>file1 </EM>is older than <EM>file2</EM>.
+<EM><DT>
+file1</EM> <STRONG>&#045;ef</STRONG> <EM>file2</EM> 
+<DD>True, if <EM>file1 </EM>and <EM>file2 </EM>exist and refer to the same file.
+<EM><DT>
+string</EM> <STRONG>==</STRONG> <EM>pattern</EM> 
+<DD>True, if <EM>string </EM>matches <EM>pattern</EM>.
+Any part of <EM>pattern </EM>can be quoted to cause it to be matched as a string.
+<EM><DT>
+string</EM> <STRONG>=</STRONG> <EM>pattern</EM> 
+<DD>Same as <STRONG>==</STRONG> above, but is obsolete.
+<EM><DT>
+string</EM> <STRONG>!=</STRONG> <EM>pattern</EM> 
+<DD>True, if <EM>string </EM>does not match <EM>pattern</EM>.
+<EM><DT>
+string1</EM> <STRONG>&lt;</STRONG> <EM>string2</EM> 
+<DD>True, if <EM>string1 </EM>comes before <EM>string2 </EM>based on ASCII value of their characters.
+<EM><DT>
+string1</EM> <STRONG>&gt;</STRONG> <EM>string2</EM> 
+<DD>True, if <EM>string1 </EM>comes after <EM>string2 </EM>based on ASCII value of their characters.
+</DL>
+<BR>
+The following obsolete arithmetic comparisons are also permitted: <DL COMPACT><EM>
+<DT>
+exp1</EM> <STRONG>&#045;eq</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is equal to <EM>exp2</EM>.
+<EM><DT>
+exp1</EM> <STRONG>&#045;ne</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is not equal to <EM>exp2</EM>.
+<EM><DT>
+exp1</EM> <STRONG>&#045;lt</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is less than <EM>exp2</EM>.
+<EM><DT>
+exp1</EM> <STRONG>&#045;gt</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is greater than <EM>exp2</EM>.
+<EM><DT>
+exp1</EM> <STRONG>&#045;le</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is less than or equal to <EM>exp2</EM>.
+<EM><DT>
+exp1</EM> <STRONG>&#045;ge</STRONG> <EM>exp2</EM> 
+<DD>True, if <EM>exp1 </EM>is greater than or equal to <EM>exp2</EM>.
+</DL>
+<P>
+In each of the above expressions, if <EM>file </EM>is of the form <STRONG>/dev/fd/</STRONG><EM>n</EM>, where
+<EM>n </EM>is an integer, then the test is applied to the open file whose descriptor
+number is <EM>n</EM>.
+<P>
+A compound expression can be constructed from these primitives by using
+any of the following, listed in decreasing order of precedence.
+<DL COMPACT><STRONG><DT>
+(</STRONG><EM>expression</EM><STRONG>)</STRONG> 
+<DD>True, if <EM>expression </EM>is true.
+Used to group expressions.
+<STRONG><DT>
+!</STRONG> <EM>expression</EM> 
+<DD>True if <EM>expression </EM>is false.
+<EM><DT>
+expression1</EM> <STRONG>&amp;&amp;</STRONG> <EM>expression2</EM> 
+<DD>True, if <EM>expression1 </EM>and <EM>expression2 </EM>are both true.
+<EM><DT>
+expression1</EM> <STRONG>||</STRONG> <EM>expression2</EM> 
+<DD>True, if either <EM>expression1 </EM>or <EM>expression2 </EM>is true.
+</DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Input/Output">Input/Output.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Before a command is executed, its input and output may be redirected using
+a special notation interpreted by the shell.
+The following may appear anywhere in a simple-command or may precede or
+follow a <EM>command </EM>and are <EM>not </EM>passed on to the invoked command.
+Command substitution, parameter expansion, and arithmetic substitution
+occur before <EM>word </EM>or <EM>digit </EM>is used except as noted below.
+File name generation occurs only if the shell is interactive and the pattern
+matches a single file.
+Field splitting is not performed.
+<P>
+In each of the following redirections, if <EM>file </EM>is of the form <STRONG>/dev/tcp/</STRONG><EM>host</EM><STRONG>/</STRONG><EM>port</EM>,
+or <STRONG>/dev/udp/</STRONG><EM>host</EM><STRONG>/</STRONG><EM>port</EM>, where <EM>host </EM>is a hostname or host address, and <EM>port
+</EM>is an integer port number, then the redirection attempts to make a <STRONG>tcp</STRONG>
+or <STRONG>udp</STRONG> connection to the corresponding socket.
+<DL COMPACT>
+<P>
+<DT>
+<STRONG>&lt;</STRONG><EM>word </EM>
+<DD>Use file <EM>word </EM>as standard input (file descriptor 0).
+<P>
+<DT>
+<STRONG>&gt;</STRONG><EM>word </EM>
+<DD>Use file <EM>word </EM>as standard output (file descriptor 1).
+If the file does not exist then it is created.
+If the file exists, and the <STRONG>noclobber </STRONG>option is on, this causes an error;
+otherwise, it is truncated to zero length.
+<P>
+<DT>
+<STRONG>&gt;|</STRONG><EM>word </EM>
+<DD>Sames as <STRONG>&gt;</STRONG>, except that it overrides the <STRONG>noclobber </STRONG>option.
+<P>
+<DT>
+<STRONG>&gt;&gt;</STRONG><EM>word </EM>
+<DD>Use file <EM>word </EM>as standard output.
+If the file exists, then output is appended to it (by first seeking to
+the end-of-file); otherwise, the file is created.
+<P>
+<DT>
+<STRONG>&lt;&gt;</STRONG><EM>word </EM>
+<DD>Open file <EM>word </EM>for reading and writing as standard input.
+<STRONG><P>
+<DT>
+&lt;&lt;</STRONG>[&nbsp;<STRONG>&#045;</STRONG>&nbsp;]<EM>word</EM> 
+<DD>The shell input is read up to a line that is the same as <EM>word </EM>after any
+quoting has been removed, or to an end-of-file.
+No parameter substitution, command substitution, arithmetic substitution
+or file name generation is performed on <EM>word</EM>.
+The resulting document, called a <EM>here-document</EM>, becomes the standard input.
+If any character of <EM>word </EM>is quoted, then no interpretation is placed upon
+the characters of the document; otherwise, parameter expansion, command
+substitution, and arithmetic substitution occur, <STRONG>&#092;new-line </STRONG>is ignored,
+and <STRONG>&#092; </STRONG>must be used to quote the characters <STRONG>&#092;</STRONG>, <STRONG>$</STRONG>, <STRONG><FONT SIZE=+1><SUB>`</SUB></FONT></STRONG>.
+If <STRONG>&#045; </STRONG>is appended to <STRONG>&lt;&lt;</STRONG>, then all leading tabs are stripped from <EM>word </EM>and
+from the document.
+<P>
+<DT>
+<STRONG>&lt;&amp;</STRONG><EM>digit </EM>
+<DD>The standard input is duplicated from file descriptor <EM>digit </EM>(see <A HREF="dup(2)"><EM>dup</EM>(2)</A>).
+Similarly for the standard output using <STRONG>&gt;&amp;&nbsp;</STRONG><EM>digit</EM>.
+<P>
+<DT>
+<STRONG>&lt;&amp;</STRONG><EM>digit</EM><STRONG>&#045; </STRONG>
+<DD>The file descriptor given by <EM>digit </EM>is moved to standard input.
+Similarly for the standard output using <STRONG>&gt;&amp;&nbsp;</STRONG><EM>digit</EM><STRONG>&#045;</STRONG>.
+<STRONG><P>
+<DT>
+&lt;&amp;&#045; </STRONG>
+<DD>The standard input is closed.
+Similarly for the standard output using <STRONG>&gt;&amp;&#045;</STRONG>.
+<STRONG><P>
+<DT>
+&lt;&amp;p </STRONG>
+<DD>The input from the co-process is moved to standard input.
+<STRONG><P>
+<DT>
+&gt;&amp;p </STRONG>
+<DD>The output to the co-process is moved to standard output.
+</DL>
+<P>
+If one of the above is preceded by a digit, then the file descriptor number
+referred to is that specified by the digit (instead of the default 0 or
+1).
+For example: <DL COMPACT><STRONG><P>
+.&nbsp;.&nbsp;.
+&nbsp;2&gt;&amp;1</STRONG> </DL>
+<P>
+means file descriptor 2 is to be opened for writing as a duplicate of file
+descriptor 1.
+<P>
+The order in which redirections are specified is significant.
+The shell evaluates each redirection in terms of the (<EM>file descriptor</EM>,
+<EM>file</EM>) association at the time of evaluation.
+For example: <DL COMPACT><STRONG><P>
+.&nbsp;.&nbsp;.
+&nbsp;1&gt;</STRONG><EM>fname&nbsp;</EM><STRONG> 2&gt;&amp;1</STRONG> </DL>
+<P>
+first associates file descriptor 1 with file <EM>fname&nbsp;</EM>.
+It then associates file descriptor 2 with the file associated with file
+descriptor 1 (i.e.
+<EM>fname&nbsp;</EM>).
+If the order of redirections were reversed, file descriptor 2 would be
+associated with the terminal (assuming file descriptor 1 had been) and
+then file descriptor 1 would be associated with file <EM>fname&nbsp;</EM>.
+<P>
+If a command is followed by <STRONG>&amp; </STRONG>and job control is not active, then the default
+standard input for the command is the empty file <STRONG>/dev/null</STRONG>.
+Otherwise, the environment for the execution of a command contains the
+file descriptors of the invoking shell as modified by input/output specifications.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Environment">Environment.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The <EM>environment </EM>(see <A HREF="environ(7)"><EM>environ</EM>(7)</A>) is a list of name-value pairs that is
+passed to an executed program in the same way as a normal argument list.
+The names must be <EM>identifiers </EM>and the values are character strings.
+The shell interacts with the environment in several ways.
+On invocation, the shell scans the environment and creates a variable for
+each name found, giving it the corresponding value and attributes and marking
+it <EM>export</EM>.
+Executed commands inherit the environment.
+If the user modifies the values of these variables or creates new ones,
+using the <STRONG>export </STRONG>or <STRONG>typeset &#045;x </STRONG>commands, they become part of the environment.
+The environment seen by any executed command is thus composed of any name-value
+pairs originally inherited by the shell, whose values may be modified by
+the current shell, plus any additions which must be noted in <STRONG>export </STRONG>or
+<STRONG>typeset &#045;x </STRONG>commands.
+<P>
+The environment for any <EM>simple-command </EM>or function may be augmented by
+prefixing it with one or more variable assignments.
+A variable assignment argument is a word of the form <EM>identifier=value</EM>.
+Thus: <DL COMPACT><STRONG><FONT SIZE=-1><P>
+TERM</FONT>=450 &nbsp;cmd &nbsp;args</STRONG>				and <STRONG><BR>
+(export &nbsp;<FONT SIZE=-1>TERM</FONT>; &nbsp;<FONT SIZE=-1>TERM</FONT>=450; &nbsp;cmd &nbsp;args)</STRONG> </DL>
+<P>
+are equivalent (as far as the above execution of <EM>cmd </EM>is concerned except
+for special built-in commands listed below &#045; those that are preceded with
+a dagger).
+<P>
+If the obsolete <STRONG>&#045;k </STRONG>option is set, <EM>all </EM>variable assignment arguments are
+placed in the environment, even if they occur after the command name.
+The following first prints <STRONG>a=b c </STRONG>and then <STRONG>c</STRONG>: <PRE>
+<DL COMPACT><STRONG>        echo &nbsp;a=b &nbsp;c    
+        set &nbsp;&#045;k 
+        echo &nbsp;a=b &nbsp;c    
+</STRONG></DL></PRE>This feature is intended for use with scripts written for early versions
+of the shell and its use in new scripts is strongly discouraged.
+It is likely to disappear someday.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Functions">Functions.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>For historical reasons, there are two ways to define functions, the <EM>name</EM><STRONG>(&nbsp;)
+</STRONG>syntax and the <STRONG>function </STRONG><EM>name </EM>syntax, described in the <EM>Commands </EM>section
+above.
+Shell functions are read in and stored internally.
+Alias names are resolved when the function is read.
+Functions are executed like commands with the arguments passed as positional
+parameters.
+(See <EM>Execution </EM>below.) <P>
+Functions defined by the <STRONG>function </STRONG><EM>name </EM>syntax and called by name execute
+in the same process as the caller and share all files and present working
+directory with the caller.
+Traps caught by the caller are reset to their default action inside the
+function.
+A trap condition that is not caught or ignored by the function causes the
+function to terminate and the condition to be passed on to the caller.
+A trap on <FONT SIZE=-1><STRONG>EXIT </STRONG></FONT>set inside a function is executed in the environment of
+the caller after the function completes.
+Ordinarily, variables are shared between the calling program and the function.
+However, the <STRONG>typeset </STRONG>special built-in command used within a function defines
+local variables whose scope includes the current function and all functions
+it calls.
+Errors within functions return control to the caller.
+<P>
+Functions defined with the <EM>name</EM><STRONG>(&nbsp;) </STRONG>syntax and functions defined with the
+<STRONG>function </STRONG><EM>name </EM>syntax that are invoked with the <STRONG><FONT SIZE=+1>.</FONT></STRONG> special built-in are executed
+in the caller's environment and share all variables and traps with the
+caller.
+Errors within these function executions cause the script that contains
+them to abort.
+<P>
+The special built-in command <STRONG>return </STRONG>is used to return from function calls.
+<P>
+Function names can be listed with the <STRONG>&#045;f </STRONG>or <STRONG>+f </STRONG>option of the <STRONG>typeset </STRONG>special
+built-in command.
+The text of functions, when available, will also be listed with <STRONG>&#045;f</STRONG>.
+Functions can be undefined with the <STRONG>&#045;f </STRONG>option of the <STRONG>unset </STRONG>special built-in
+command.
+<P>
+Ordinarily, functions are unset when the shell executes a shell script.
+Functions that need to be defined across separate invocations of the shell
+should be placed in a directory and the <STRONG><FONT SIZE=-1>FPATH </FONT></STRONG>variable should contain the
+name of this directory.
+They may also be specified in the <STRONG><FONT SIZE=-1>ENV </FONT></STRONG>file.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Discipline Functions">Discipline &nbsp;Functions.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Each variable can have zero or more discipline functions associated with
+it.
+The shell initially understands the discipline names <STRONG>get</STRONG>, <STRONG>set</STRONG>, and <STRONG>unset</STRONG>
+but on most systems others can be added at run time via the C programming
+interface extension provided by the <STRONG>builtin </STRONG>built-in utility.
+If the <STRONG>get</STRONG> discipline is defined for a variable, it is invoked whenever
+the given variable is referenced.
+If the variable <STRONG>.sh.value</STRONG> is assigned a value inside the discipline function,
+the referenced variable will evaluate to this value instead.
+If the <STRONG>set</STRONG> discipline is defined for a variable, it is invoked whenever
+the given variable is assigned a value.
+The variable <STRONG>.sh.value</STRONG> is given the value of the variable before invoking
+the discipline, and the variable will be assigned the value of <STRONG>.sh.value</STRONG>
+after the discipline completes.
+If <STRONG>.sh.value</STRONG> is unset inside the discipline, then that value is unchanged.
+If the <STRONG>unset</STRONG> discipline is defined for a variable, it is invoked whenever
+the given variable is unset.
+The variable will not be unset unless it is unset explicitly from within
+this discipline function.
+<P>
+The variable <STRONG>.sh.name </STRONG>contains the name of the variable for which the discipline
+function is called, <STRONG>.sh.subscript </STRONG>is the subscript of the variable, and
+<STRONG>.sh.value </STRONG>will contain the value being assigned inside the <STRONG>.set </STRONG>discipline
+function.
+For the <STRONG>set</STRONG> discipline, changing <STRONG>.sh.value </STRONG>will change the value that gets
+assigned.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Jobs">Jobs.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>If the <STRONG>monitor </STRONG>option of the <STRONG>set </STRONG>command is turned on, an interactive shell
+associates a <EM>job</EM> with each pipeline.
+It keeps a table of current jobs, printed by the <STRONG>jobs </STRONG>command, and assigns
+them small integer numbers.
+When a job is started asynchronously with <STRONG>&amp;</STRONG>, the shell prints a line which
+looks like: 	<P>
+[1] 1234 <P>
+indicating that the job which was started asynchronously was job number
+1 and had one (top-level) process, whose process id was 1234.
+<P>
+This paragraph and the next require features that are not in all versions
+of UNIX and may not apply.
+If you are running a job and wish to do something else you may hit the
+key <STRONG>^Z</STRONG> (control-Z) which sends a STOP signal to the current job.
+The shell will then normally indicate that the job has been `Stopped',
+and print another prompt.
+You can then manipulate the state of this job, putting it in the background
+with the <STRONG>bg </STRONG>command, or run some other commands and then eventually bring
+the job back into the foreground with the foreground command <STRONG>fg</STRONG>.
+A <STRONG>^Z</STRONG> takes effect immediately and is like an interrupt in that pending
+output and unread input are discarded when it is typed.
+<P>
+A job being run in the background will stop if it tries to read from the
+terminal.
+Background jobs are normally allowed to produce output, but this can be
+disabled by giving the command <STRONG>stty tostop</STRONG>.
+If you set this tty option, then background jobs will stop when they try
+to produce output like they do when they try to read input.
+<P>
+There are several ways to refer to jobs in the shell.
+A job can be referred to by the process id of any process of the job or
+by one of the following: 
+<DL COMPACT>
+<DT>
+<STRONG>%</STRONG><EM>number </EM>
+<DD>The job with the given number.
+<DT>
+<STRONG>%</STRONG><EM>string </EM>
+<DD>Any job whose command line begins with <EM>string</EM>.
+<DT>
+<STRONG>%?</STRONG><EM>string </EM>
+<DD>Any job whose command line contains <EM>string</EM>.
+<DT>
+<STRONG>%% </STRONG>
+<DD>Current job.
+<DT>
+<STRONG>%+ </STRONG>
+<DD>Equivalent to <STRONG>%%</STRONG>.
+<DT>
+<STRONG>%&#045; </STRONG>
+<DD>Previous job.
+</DL>
+<P>
+The shell learns immediately whenever a process changes state.
+It normally informs you whenever a job becomes blocked so that no further
+progress is possible, but only just before it prints a prompt.
+This is done so that it does not otherwise disturb your work.
+The <STRONG>notify </STRONG>option of the <STRONG>set </STRONG>command causes the shell to print these job
+change messages as soon as they occur.
+<P>
+When the <STRONG>monitor </STRONG>option is on, each background job that completes triggers
+any trap set for <STRONG>CHLD</STRONG>.
+<P>
+When you try to leave the shell while jobs are running or stopped, you
+will be warned that `You have stopped(running) jobs.' You may use the <STRONG>jobs
+</STRONG>command to see what they are.
+If you immediately try to exit again, the shell will not warn you a second
+time, and the stopped jobs will be terminated.
+When a login shell receives a HUP signal, it sends a HUP signal to each
+job that has not been disowned with the <STRONG>disown </STRONG>built-in command described
+below.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Signals">Signals.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The <FONT SIZE=-1>INT</FONT> and <FONT SIZE=-1>QUIT</FONT> signals for an invoked command are ignored if the command
+is followed by <STRONG>&amp; </STRONG>and the <STRONG>monitor </STRONG>option is not active.
+Otherwise, signals have the values inherited by the shell from its parent
+(but see also the <STRONG>trap </STRONG>built-in command below).
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Execution">Execution.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Each time a command is read, the above substitutions are carried out.
+If the command name matches one of the <EM>Special Built-in Commands </EM>listed
+below, it is executed within the current shell process.
+Next, the command name is checked to see if it matches a user defined function.
+If it does, the positional parameters are saved and then reset to the arguments
+of the <EM>function </EM>call.
+A function is also executed in the current shell process.
+When the <EM>function </EM>completes or issues a <STRONG>return</STRONG>, the positional parameter
+list is restored.
+For functions defined with the <STRONG>function </STRONG><EM>name </EM>syntax, any trap set on <FONT SIZE=-1><STRONG>EXIT
+</STRONG></FONT>within the function is executed.
+The exit value of a <EM>function </EM>is the value of the last command executed.
+If a command name is not a <EM>special built-in command </EM>or a user defined <EM>function</EM>,
+but it is one of the built-in commands listed below, it is executed in
+the current shell process.
+<P>
+The shell variable <STRONG><FONT SIZE=-1>PATH </FONT></STRONG>defines the search path for the directory containing
+the command.
+Alternative directory names are separated by a colon (<STRONG>:</STRONG>).
+The default path is <STRONG>/bin:/usr/bin: </STRONG>(specifying <STRONG>/bin</STRONG>, <STRONG>/usr/bin</STRONG>, and the
+current directory in that order).
+The current directory can be specified by two or more adjacent colons,
+or by a colon at the beginning or end of the path list.
+If the command name contains a <STRONG>/</STRONG>, then the search path is not used.
+Otherwise, each directory in the path is searched for an executable file
+that is not a directory.
+If the shell determines that there is a built-in version of a command corresponding
+to a given pathname, this built-in is invoked in the current process.
+A process is created and an attempt is made to execute the command via
+<EM>exec</EM>(2).
+If the file has execute permission but is not an <STRONG>a.out </STRONG>file, it is assumed
+to be a file containing shell commands.
+A separate shell is spawned to read it.
+All non-exported variables are removed in this case.
+If the shell command file doesn't have read permission, or if the <EM>setuid
+</EM>and/or <EM>setgid </EM>bits are set on the file, then the shell executes an agent
+whose job it is to set up the permissions and execute the shell with the
+shell command file passed down as an open file.
+A parenthesized command is executed in a sub-shell without removing non-exported
+variables.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Command Re-entry">Command &nbsp;Re-entry.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The text of the last <STRONG><FONT SIZE=-1>HISTSIZE </FONT></STRONG>(default 128) commands entered from a terminal
+device is saved in a <EM>history </EM>file.
+The file <STRONG><FONT SIZE=-1>$HOME</FONT>/.sh_history </STRONG>is used if the <STRONG><FONT SIZE=-1>HISTFILE </FONT></STRONG>variable is not set
+or if the file it names is not writable.
+A shell can access the commands of all <EM>interactive </EM>shells which use the
+same named <FONT SIZE=-1><STRONG>HISTFILE</STRONG>.
+</FONT>The built-in command <STRONG>hist </STRONG>is used to list or edit a portion of this file.
+The portion of the file to be edited or listed can be selected by number
+or by giving the first character or characters of the command.
+A single command or range of commands can be specified.
+If you do not specify an editor program as an argument to <STRONG>hist </STRONG>then the
+value of the variable <FONT SIZE=-1><STRONG>HISTEDIT </STRONG></FONT>is used.
+If <FONT SIZE=-1><STRONG>HISTEDIT </STRONG></FONT>is unset, the obsolete variable <FONT SIZE=-1><STRONG>FCEDIT </STRONG></FONT>is used.
+If <FONT SIZE=-1><STRONG>FCEDIT </STRONG></FONT>is not defined, then <STRONG>/bin/ed </STRONG>is used.
+The edited command(s) is printed and re-executed upon leaving the editor
+unless you quit without writing.
+The <STRONG>&#045;s </STRONG>option (and in obsolete versions, the editor name <STRONG>&#045;&nbsp;</STRONG>) is used to
+skip the editing phase and to re-execute the command.
+In this case a substitution parameter of the form <EM>old</EM><STRONG>=</STRONG><EM>new</EM> can be used to
+modify the command before execution.
+For example, with the preset alias <STRONG>r</STRONG>, which is aliased to <STRONG>'hist &#045;s'</STRONG>, typing
+`<STRONG>r bad=good c</STRONG>' will re-execute the most recent command which starts with
+the letter <STRONG>c</STRONG>, replacing the first occurrence of the string <STRONG>bad </STRONG>with the
+string <STRONG>good</STRONG>.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="In-line Editing Options">In-line &nbsp;Editing &nbsp;Options.
+&nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Normally, each command line entered from a terminal device is simply typed
+followed by a <STRONG>new-line</STRONG> (`RETURN' or `LINE&nbsp;FEED').
+If either the <STRONG>emacs</STRONG>, <STRONG>gmacs</STRONG>, or <STRONG>vi </STRONG>option is active, the user can edit the
+command line.
+To be in either of these edit modes <STRONG>set </STRONG>the corresponding option.
+An editing option is automatically selected each time the <FONT SIZE=-1><STRONG>VISUAL </STRONG></FONT>or <FONT SIZE=-1><STRONG>EDITOR
+</STRONG></FONT>variable is assigned a value ending in either of these option names.
+<P>
+The editing features require that the user's terminal accept `RETURN' as
+carriage return without line feed and that a space (`&nbsp;') must overwrite
+the current character on the screen.
+<P>
+The editing modes implement a concept where the user is looking through
+a window at the current line.
+The window width is the value of <FONT SIZE=-1><STRONG>COLUMNS </STRONG></FONT>if it is defined, otherwise 80.
+If the window width is too small to display the prompt and leave at least
+8 columns to enter input, the prompt is truncated from the left.
+If the line is longer than the window width minus two, a mark is displayed
+at the end of the window to notify the user.
+As the cursor moves and reaches the window boundaries the window will be
+centered about the cursor.
+The mark is a <STRONG>&gt;</STRONG> (&lt;<STRONG>, </STRONG><STRONG>*</STRONG>) if the line extends on the right (left, both) side(s)
+of the window.
+<P>
+The search commands in each edit mode provide access to the history file.
+Only strings are matched, not patterns, although a leading <STRONG>^ </STRONG>in the string
+restricts the match to begin at the first character in the line.
+<P>
+Each of the edit modes has an operation to list the files or commands that
+match a partially entered word.
+When applied to the first word on the line, or the first word after a <STRONG>;</STRONG>,
+<STRONG>|</STRONG>, <STRONG>&amp;</STRONG>, or <STRONG>(</STRONG>, and the word does not begin with <STRONG>~ </STRONG>or contain a <STRONG>/</STRONG>, the list
+of aliases, functions, and executable commands defined by the <STRONG><FONT SIZE=-1>PATH </FONT></STRONG>variable
+that could match the partial word is displayed.
+Otherwise, the list of files that match the given word is displayed.
+If the partially entered word does not contain any file expansion characters,
+a <STRONG>* </STRONG>is appended before generating these lists.
+After displaying the generated list, the input line is redrawn.
+These operations are called command name listing and file name listing,
+respectively.
+There are additional operations, referred to as command name completion
+and file name completion, which compute the list of matching commands or
+files, but instead of printing the list, replace the current word with
+a complete or partial match.
+For file name completion, if the match is unique, a <STRONG>/ </STRONG>is appended if the
+file is a directory and a space is appended if the file is not a directory.
+Otherwise, the longest common prefix for all the matching files replaces
+the word.
+For command name completion, only the portion of the file names after the
+last <STRONG>/ </STRONG>are used to find the longest command prefix.
+If only a single name matches this prefix, then the word is replaced with
+the command name followed by a space.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Key Bindings">Key &nbsp;Bindings.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The <STRONG><FONT SIZE=-1>KEYBD </FONT></STRONG>trap can be used to intercept keys as they are typed and change
+the characters that are actually seen by the shell.
+This trap is executed after each character (or sequence of characters when
+the first character is ESC) is entered while reading from a terminal.
+The variable <STRONG>.sh.edchar </STRONG>contains the character or character sequence which
+generated the trap.
+Changing the value of <STRONG>.sh.edchar </STRONG>in the trap action causes the shell to
+behave as if the new value were entered from the keyboard rather than the
+original value.
+<P>
+The variable <STRONG>.sh.edcol </STRONG>is set to the input column number of the cursor
+at the time of the input.
+The variable <STRONG>.sh.edmode </STRONG>is set to ESC when in <STRONG>vi </STRONG>insert mode (see below)
+and is null otherwise.
+By prepending <STRONG>${.sh.editmode} </STRONG>to a value assigned to <STRONG>.sh.edchar </STRONG>it will
+cause the shell to change to control mode if it is not already in this
+mode.
+<P>
+This trap is not invoked for characters entered as arguments to editing
+directives, or while reading input for a character search.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Emacs Editing Mode">Emacs &nbsp;Editing &nbsp;Mode.
+&nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>This mode is entered by enabling either the <STRONG>emacs </STRONG>or <STRONG>gmacs </STRONG>option.
+The only difference between these two modes is the way they handle <STRONG>^T</STRONG>.
+To edit, the user moves the cursor to the point needing correction and
+then inserts or deletes characters or words as needed.
+All the editing commands are control characters or escape sequences.
+The notation for control characters is caret (<STRONG>^</STRONG>) followed by the character.
+For example, <STRONG>^F </STRONG>is the notation for control <STRONG>F</STRONG>.
+This is entered by depressing `f' while holding down the `CTRL' (control)
+key.
+The `SHIFT' key is <EM>not </EM>depressed.
+(The notation <STRONG>^? </STRONG>indicates the DEL (delete) key.) <P>
+The notation for escape sequences is <STRONG>M- </STRONG>followed by a character.
+For example, <STRONG>M-f </STRONG>(pronounced Meta f) is entered by depressing ESC (ascii
+<STRONG>033</STRONG>) followed by `f'.
+(<STRONG>M-F </STRONG>would be the notation for ESC followed by `SHIFT' (capital) `F'.)
+<P>
+All edit commands operate from any place on the line (not just at the beginning).
+Neither the `RETURN' nor the `LINE FEED' key is entered after edit commands
+except when noted.
+<DL COMPACT>
+<P>
+<DT>
+<STRONG>^F </STRONG>
+<DD>Move cursor forward (right) one character.
+<DT>
+<STRONG>M-f </STRONG>
+<DD>Move cursor forward one word.
+(The <STRONG>emacs </STRONG>editor's idea of a word is a string of characters consisting
+of only letters, digits and underscores.) 
+<DT>
+<STRONG>^B </STRONG>
+<DD>Move cursor backward (left) one character.
+<DT>
+<STRONG>M-b </STRONG>
+<DD>Move cursor backward one word.
+<DT>
+<STRONG>^A </STRONG>
+<DD>Move cursor to start of line.
+<DT>
+<STRONG>^E </STRONG>
+<DD>Move cursor to end of line.
+<DT>
+<STRONG>^]</STRONG><EM>char </EM>
+<DD>Move cursor forward to character <EM>char </EM>on current line.
+<DT>
+<STRONG>M-^]</STRONG><EM>char </EM>
+<DD>Move cursor backward to character <EM>char </EM>on current line.
+<DT>
+<STRONG>^X^X </STRONG>
+<DD>Interchange the cursor and mark.
+<EM><DT>
+erase </EM>
+<DD>(User defined erase character as defined by the <EM>stty</EM>(1) command, usually
+<STRONG>^H </STRONG>or <STRONG>#</STRONG>.) Delete previous character.
+<DT>
+<STRONG>^D </STRONG>
+<DD>Delete current character.
+<DT>
+<STRONG>M-d </STRONG>
+<DD>Delete current word.
+<DT>
+<STRONG>M-^H </STRONG>
+<DD>(Meta-backspace) Delete previous word.
+<DT>
+<STRONG>M-h </STRONG>
+<DD>Delete previous word.
+<DT>
+<STRONG>M-^? </STRONG>
+<DD>(Meta-DEL) Delete previous word (if your interrupt character is <STRONG>^? </STRONG>(DEL,
+the default) then this command will not work).
+<DT>
+<STRONG>^T </STRONG>
+<DD>Transpose current character with previous character and advance the cursor
+in <EM>emacs </EM>mode.
+Transpose two previous characters in <EM>gmacs </EM>mode.
+<DT>
+<STRONG>^C </STRONG>
+<DD>Capitalize current character.
+<DT>
+<STRONG>M-c </STRONG>
+<DD>Capitalize current word.
+<DT>
+<STRONG>M-l </STRONG>
+<DD>Change the current word to lower case.
+<DT>
+<STRONG>^K </STRONG>
+<DD>Delete from the cursor to the end of the line.
+If preceded by a numerical parameter whose value is less than the current
+cursor position, then delete from given position up to the cursor.
+If preceded by a numerical parameter whose value is greater than the current
+cursor position, then delete from cursor up to given cursor position.
+<DT>
+<STRONG>^W </STRONG>
+<DD>Kill from the cursor to the mark.
+<DT>
+<STRONG>M-p </STRONG>
+<DD>Push the region from the cursor to the mark on the stack.
+<EM><DT>
+kill </EM>
+<DD>(User defined kill character as defined by the stty command, usually <STRONG>^G
+</STRONG>or <STRONG>@</STRONG>.) Kill the entire current line.
+If two <EM>kill </EM>characters are entered in succession, all kill characters from
+then on cause a line feed (useful when using paper terminals).
+<DT>
+<STRONG>^Y </STRONG>
+<DD>Restore last item removed from line.
+(Yank item back to the line.) 
+<DT>
+<STRONG>^L </STRONG>
+<DD>Line feed and print current line.
+<DT>
+<STRONG>^@ </STRONG>
+<DD>(Null character) Set mark.
+<DT>
+<STRONG>M-</STRONG><EM>space </EM>
+<DD>(Meta space) Set mark.
+<DT>
+<STRONG>^J </STRONG>
+<DD>(New&nbsp;line) Execute the current line.
+<DT>
+<STRONG>^M </STRONG>
+<DD>(Return) Execute the current line.
+<EM><DT>
+eof </EM>
+<DD>End-of-file character, normally <STRONG>^D</STRONG>, is processed as an End-of-file only
+if the current line is null.
+<DT>
+<STRONG>^P </STRONG>
+<DD>Fetch previous command.
+Each time <STRONG>^P </STRONG>is entered the previous command back in time is accessed.
+Moves back one line when not on the first line of a multi-line command.
+<DT>
+<STRONG>M-&lt; </STRONG>
+<DD>Fetch the least recent (oldest) history line.
+<DT>
+<STRONG>M-&gt; </STRONG>
+<DD>Fetch the most recent (youngest) history line.
+<DT>
+<STRONG>^N </STRONG>
+<DD>Fetch next command line.
+Each time <STRONG>^N </STRONG>is entered the next command line forward in time is accessed.
+<DT>
+<STRONG>^R</STRONG><EM>string </EM>
+<DD>Reverse search history for a previous command line containing <EM>string</EM>.
+If a parameter of zero is given, the search is forward.
+<EM>String </EM>is terminated by a `RETURN' or `NEW&nbsp;LINE'.
+If string is preceded by a <STRONG>^</STRONG>, the matched line must begin with <EM>string</EM>.
+If <EM>string </EM>is omitted, then the next command line containing the most recent
+<EM>string </EM>is accessed.
+In this case a parameter of zero reverses the direction of the search.
+<STRONG><DT>
+^O </STRONG>
+<DD>Operate &#045; Execute the current line and fetch the next line relative to
+current line from the history file.
+<DT>
+<STRONG>M-</STRONG><EM>digits </EM>
+<DD>(Escape) Define numeric parameter, the digits are taken as a parameter
+to the next command.
+The commands that accept a parameter are <STRONG>^F</STRONG>, <STRONG>^B</STRONG>, <EM>erase</EM>, <STRONG>^C</STRONG>, <STRONG>^D</STRONG>, <STRONG>^K</STRONG>, <STRONG>^R</STRONG>,
+<STRONG>^P</STRONG>, <STRONG>^N</STRONG>, <STRONG>^]</STRONG>, <STRONG>M-.</STRONG>, <STRONG>M-^]</STRONG>, <STRONG>M-_</STRONG>, <STRONG>M-b</STRONG>, <STRONG>M-c</STRONG>, <STRONG>M-d</STRONG>, <STRONG>M-f</STRONG>, <STRONG>M-h</STRONG>, <STRONG>M-l </STRONG>and <STRONG>M-^H</STRONG>.
+<DT>
+<STRONG>M-</STRONG><EM>letter </EM>
+<DD>Soft-key &#045; Your alias list is searched for an alias by the name <STRONG>_</STRONG><EM>letter
+</EM>and if an alias of this name is defined, its value will be inserted on
+the input queue.
+The <EM>letter </EM>must not be one of the above meta-functions.
+<DT>
+<STRONG>M-[</STRONG><EM>letter </EM>
+<DD>Soft-key &#045; Your alias list is searched for an alias by the name <STRONG>__</STRONG><EM>letter
+</EM>and if an alias of this name is defined, its value will be inserted on
+the input queue.
+The can be used to program functions keys on many terminals.
+<STRONG><DT>
+M-.
+</STRONG><DD>The last word of the previous command is inserted on the line.
+If preceded by a numeric parameter, the value of this parameter determines
+which word to insert rather than the last word.
+<STRONG><DT>
+M-_ </STRONG>
+<DD>Same as <STRONG>M-.</STRONG>.
+<STRONG><DT>
+M-* </STRONG>
+<DD>Attempt file name generation on the current word.
+An asterisk is appended if the word doesn't match any file or contain any
+special pattern characters.
+<STRONG><DT>
+M-ESC </STRONG>
+<DD>Command or file name completion as described above.
+<STRONG><DT>
+M-= </STRONG>
+<DD>Command or file name listing as described above.
+<DT>
+<STRONG>^U </STRONG>
+<DD>Multiply parameter of next command by 4.
+<DT>
+<STRONG>&#092; </STRONG>
+<DD>Escape next character.
+Editing characters, the user's erase, kill and interrupt (normally <STRONG>^?</STRONG>)
+characters may be entered in a command line or in a search string if preceded
+by a <STRONG>&#092;</STRONG>.
+The <STRONG>&#092; </STRONG>removes the next character's editing features (if any).
+<STRONG><DT>
+^V </STRONG>
+<DD>Display version of the shell.
+<STRONG><DT>
+M-# </STRONG>
+<DD>If the line does not begin with a <STRONG>#</STRONG>, a <STRONG># </STRONG>is inserted at the beginning of
+the line and after each new-line, and the line is entered.
+This causes a comment to be inserted in the history file.
+If the line begins with a <STRONG>#</STRONG>, the <STRONG># </STRONG>is deleted and one <STRONG># </STRONG>after each new-line
+is also deleted.
+</DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Vi Editing Mode">Vi &nbsp;Editing &nbsp;Mode.
+&nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>There are two typing modes.
+Initially, when you enter a command you are in the <EM>input </EM>mode.
+To edit, the user enters <EM>control </EM>mode by typing ESC (<STRONG>033</STRONG>) and moves the
+cursor to the point needing correction and then inserts or deletes characters
+or words as needed.
+Most control commands accept an optional repeat <EM>count </EM>prior to the command.
+<P>
+When in <STRONG>vi </STRONG>mode on most systems, canonical processing is initially enabled
+and the command will be echoed again if the speed is 1200 baud or greater
+and it contains any control characters or less than one second has elapsed
+since the prompt was printed.
+The ESC character terminates canonical processing for the remainder of
+the command and the user can then modify the command line.
+This scheme has the advantages of canonical processing with the type-ahead
+echoing of raw mode.
+<P>
+If the option <STRONG>viraw </STRONG>is also set, the terminal will always have canonical
+processing disabled.
+This mode is implicit for systems that do not support two alternate end
+of line delimiters, and may be helpful for certain terminals.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Input Edit Commands">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Input Edit Commands &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><DL COMPACT>
+By default the editor is in input mode.
+<DL COMPACT><EM><DT>
+erase </EM>
+<DD>(User defined erase character as defined by the stty command, usually <STRONG>^H
+</STRONG>or <STRONG>#</STRONG>.) Delete previous character.
+<DT>
+<STRONG>^W </STRONG>
+<DD>Delete the previous blank separated word.
+On some systems the <STRONG>viraw</STRONG> option may be required for this to work.
+<EM><DT>
+eof </EM>
+<DD>As the first character of the line causes the shell to terminate unless
+the <STRONG>ignoreeof</STRONG> option is set.
+Otherwise this character is ignored.
+<DT>
+<STRONG>^V </STRONG>
+<DD>Escape next character.
+Editing characters and the user's erase or kill characters may be entered
+in a command line or in a search string if preceded by a <STRONG>^V</STRONG>.
+The <STRONG>^V </STRONG>removes the next character's editing features (if any).
+On some systems the <STRONG>viraw</STRONG> option may be required for this to work.
+<DT>
+<STRONG>&#092; </STRONG>
+<DD>Escape the next <EM>erase </EM>or <EM>kill </EM>character.
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><DT>
+<H3><A NAME="Motion Edit Commands">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Motion Edit Commands &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><DL COMPACT>
+These commands will move the cursor.
+<DL COMPACT>
+<DT>
+[<EM>count</EM>]<STRONG>l</STRONG> 
+<DD>Cursor forward (right) one character.
+<DT>
+[<EM>count</EM>]<STRONG>w</STRONG> 
+<DD>Cursor forward one alpha-numeric word.
+<DT>
+[<EM>count</EM>]<STRONG>W</STRONG> 
+<DD>Cursor to the beginning of the next word that follows a blank.
+<DT>
+[<EM>count</EM>]<STRONG>e</STRONG> 
+<DD>Cursor to end of word.
+<DT>
+[<EM>count</EM>]<STRONG>E</STRONG> 
+<DD>Cursor to end of the current blank delimited word.
+<DT>
+[<EM>count</EM>]<STRONG>h</STRONG> 
+<DD>Cursor backward (left) one character.
+<DT>
+[<EM>count</EM>]<STRONG>b</STRONG> 
+<DD>Cursor backward one word.
+<DT>
+[<EM>count</EM>]<STRONG>B</STRONG> 
+<DD>Cursor to preceding blank separated word.
+<DT>
+[<EM>count</EM>]<STRONG>|</STRONG> 
+<DD>Cursor to column <EM>count</EM>.
+<DT>
+[<EM>count</EM>]<STRONG>f</STRONG><EM>c</EM> 
+<DD>Find the next character <EM>c</EM> in the current line.
+<DT>
+[<EM>count</EM>]<STRONG>F</STRONG><EM>c</EM> 
+<DD>Find the previous character <EM>c</EM> in the current line.
+<DT>
+[<EM>count</EM>]<STRONG>t</STRONG><EM>c</EM> 
+<DD>Equivalent to <STRONG>f </STRONG>followed by <STRONG>h</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>T</STRONG><EM>c</EM> 
+<DD>Equivalent to <STRONG>F </STRONG>followed by <STRONG>l</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>;</STRONG> 
+<DD>Repeats <EM>count </EM>times, the last single character find command, <STRONG>f</STRONG>, <STRONG>F</STRONG>, <STRONG>t</STRONG>, or
+<STRONG>T</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>,</STRONG> 
+<DD>Reverses the last single character find command <EM>count </EM>times.
+<STRONG><DT>
+0 </STRONG>
+<DD>Cursor to start of line.
+<STRONG><DT>
+^ </STRONG>
+<DD>Cursor to first non-blank character in line.
+<STRONG><DT>
+$ </STRONG>
+<DD>Cursor to end of line.
+<STRONG><DT>
+% </STRONG>
+<DD>Moves to balancing <STRONG>(</STRONG>, <STRONG>)</STRONG>, <STRONG>{</STRONG>, <STRONG>}</STRONG>, <STRONG>[</STRONG>, or <STRONG>]</STRONG>.
+If cursor is not on one of the above characters, the remainder of the line
+is searched for the first occurrence of one of the above characters first.
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><DT>
+<H3><A NAME="Search Edit Commands">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Search Edit Commands &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><DL COMPACT>
+These commands access your command history.
+<DL COMPACT>
+<DT>
+[<EM>count</EM>]<STRONG>k</STRONG> 
+<DD>Fetch previous command.
+Each time <STRONG>k </STRONG>is entered the previous command back in time is accessed.
+<DT>
+[<EM>count</EM>]<STRONG>&#045;</STRONG> 
+<DD>Equivalent to <STRONG>k</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>j</STRONG> 
+<DD>Fetch next command.
+Each time <STRONG>j </STRONG>is entered the next command forward in time is accessed.
+<DT>
+[<EM>count</EM>]<STRONG>+</STRONG> 
+<DD>Equivalent to <STRONG>j</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>G</STRONG> 
+<DD>The command number <EM>count </EM>is fetched.
+The default is the least recent history command.
+<DT>
+<STRONG>/</STRONG><EM>string </EM>
+<DD>Search backward through history for a previous command containing <EM>string</EM>.
+<EM>String </EM>is terminated by a `RETURN' or `NEW&nbsp;LINE'.
+If string is preceded by a <STRONG>^</STRONG>, the matched line must begin with <EM>string</EM>.
+If <EM>string</EM> is null, the previous string will be used.
+<DT>
+<STRONG>?</STRONG><EM>string </EM>
+<DD>Same as <STRONG>/ </STRONG>except that search will be in the forward direction.
+<STRONG><DT>
+n </STRONG>
+<DD>Search for next match of the last pattern to <STRONG>/ </STRONG>or <STRONG>? </STRONG>commands.
+<STRONG><DT>
+N </STRONG>
+<DD>Search for next match of the last pattern to <STRONG>/ </STRONG>or <STRONG>?</STRONG>, but in reverse direction.
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><DT>
+<H3><A NAME="Text Modification Edit Commands">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text Modification Edit Commands &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><DL COMPACT>
+These commands will modify the line.
+<DL COMPACT><STRONG><DT>
+a </STRONG>
+<DD>Enter input mode and enter text after the current character.
+<STRONG><DT>
+A </STRONG>
+<DD>Append text to the end of the line.
+Equivalent to <STRONG>$a</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>c</STRONG><EM>motion</EM> 
+<DD><STRONG><DT>
+c</STRONG>[<EM>count</EM>]<EM>motion</EM> 
+<DD>Delete current character through the character that <EM>motion </EM>would move the
+cursor to and enter input mode.
+If <EM>motion</EM> is <STRONG>c</STRONG>, the entire line will be deleted and input mode entered.
+<STRONG><DT>
+C </STRONG>
+<DD>Delete the current character through the end of line and enter input mode.
+Equivalent to <STRONG>c$</STRONG>.
+<STRONG><DT>
+S </STRONG>
+<DD>Equivalent to <STRONG>cc</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>s</STRONG> 
+<DD>Replace characters under the cursor in input mode.
+<STRONG><DT>
+D </STRONG>
+<DD>Delete the current character through the end of line.
+Equivalent to <STRONG>d$</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>d</STRONG><EM>motion</EM> 
+<DD><STRONG><DT>
+d</STRONG>[<EM>count</EM>]<EM>motion</EM> 
+<DD>Delete current character through the character that <EM>motion </EM>would move to.
+If <EM>motion</EM> is <STRONG>d , </STRONG>the entire line will be deleted.
+<STRONG><DT>
+i </STRONG>
+<DD>Enter input mode and insert text before the current character.
+<STRONG><DT>
+I </STRONG>
+<DD>Insert text before the beginning of the line.
+Equivalent to <STRONG>0i</STRONG>.
+<DT>
+[<EM>count</EM>]<STRONG>P</STRONG> 
+<DD>Place the previous text modification before the cursor.
+<DT>
+[<EM>count</EM>]<STRONG>p</STRONG> 
+<DD>Place the previous text modification after the cursor.
+<STRONG><DT>
+R </STRONG>
+<DD>Enter input mode and replace characters on the screen with characters you
+type overlay fashion.
+<DT>
+[<EM>count</EM>]<STRONG>r</STRONG><EM>c</EM> 
+<DD>Replace the <EM>count </EM>character(s) starting at the current cursor position
+with <EM>c</EM>, and advance the cursor.
+<DT>
+[<EM>count</EM>]<STRONG>x</STRONG> 
+<DD>Delete current character.
+<DT>
+[<EM>count</EM>]<STRONG>X</STRONG> 
+<DD>Delete preceding character.
+<DT>
+[<EM>count</EM>]<STRONG>.</STRONG> 
+<DD>Repeat the previous text modification command.
+<DT>
+[<EM>count</EM>]<STRONG>~</STRONG> 
+<DD>Invert the case of the <EM>count </EM>character(s) starting at the current cursor
+position and advance the cursor.
+<DT>
+[<EM>count</EM>]<STRONG>_</STRONG> 
+<DD>Causes the <EM>count </EM>word of the previous command to be appended and input
+mode entered.
+The last word is used if <EM>count </EM>is omitted.
+<STRONG><DT>
+* </STRONG>
+<DD>Causes an <STRONG>* </STRONG>to be appended to the current word and file name generation
+attempted.
+If no match is found, it rings the bell.
+Otherwise, the word is replaced by the matching pattern and input mode
+is entered.
+<STRONG><DT>
+&#092; </STRONG>
+<DD>Command or file name completion as described above.
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><DT>
+<H3><A NAME="Other Edit Commands">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other Edit Commands &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><DL COMPACT>
+Miscellaneous commands.
+<DL COMPACT>
+<DT>
+[<EM>count</EM>]<STRONG>y</STRONG><EM>motion</EM> 
+<DD><STRONG><DT>
+y</STRONG>[<EM>count</EM>]<EM>motion</EM> 
+<DD>Yank current character through character that <EM>motion </EM>would move the cursor
+to and puts them into the delete buffer.
+The text and cursor are unchanged.
+<STRONG><DT>
+yy </STRONG>
+<DD>Yanks the entire line.
+<STRONG><DT>
+Y </STRONG>
+<DD>Yanks from current position to end of line.
+Equivalent to <STRONG>y$</STRONG>.
+<STRONG><DT>
+u </STRONG>
+<DD>Undo the last text modifying command.
+<STRONG><DT>
+U </STRONG>
+<DD>Undo all the text modifying commands performed on the line.
+<DT>
+[<EM>count</EM>]<STRONG>v</STRONG> 
+<DD>Returns the command <STRONG>hist &#045;e ${<FONT SIZE=-1>VISUAL</FONT>:&#045;${<FONT SIZE=-1>EDITOR</FONT>:&#045;vi}}</STRONG><EM> count </EM>in the input
+buffer.
+If <EM>count </EM>is omitted, then the current line is used.
+<DT>
+<STRONG>^L </STRONG>
+<DD>Line feed and print current line.
+Has effect only in control mode.
+<DT>
+<STRONG>^J </STRONG>
+<DD>(New&nbsp;line) Execute the current line, regardless of mode.
+<DT>
+<STRONG>^M </STRONG>
+<DD>(Return) Execute the current line, regardless of mode.
+<STRONG><DT>
+# </STRONG>
+<DD>If the first character of the command is a <STRONG>#</STRONG>, then this command deletes
+this <STRONG># </STRONG>and each <STRONG># </STRONG>that follows a newline.
+Otherwise, sends the line after inserting a <STRONG># </STRONG>in front of each line in
+the command.
+Useful for causing the current line to be inserted in the history as a
+comment and uncommenting previously commented commands in the history file.
+<STRONG><DT>
+= </STRONG>
+<DD>Command or file name listing as described above.
+<DT>
+<STRONG>@</STRONG><EM>letter </EM>
+<DD>Your alias list is searched for an alias by the name <STRONG>_</STRONG><EM>letter </EM>and if an
+alias of this name is defined, its value will be inserted on the input
+queue for processing.
+<DT>
+<STRONG>^V </STRONG>
+<DD>Display version of the shell.
+</DL>
+</DL>
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Built-in Commands">Built-in &nbsp;Commands.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>The following simple-commands are executed in the shell process.
+Input/Output redirection is permitted.
+Unless otherwise indicated, the output is written on file descriptor 1
+and the exit status, when there is no syntax error, is zero.
+Except for <STRONG>:</STRONG>, <STRONG>true</STRONG>, <STRONG>false</STRONG>, <STRONG>echo</STRONG>, <STRONG>command</STRONG>, <STRONG>newgrp</STRONG>, and <STRONG>login</STRONG>, all built-in
+commands accept <STRONG>&#045;&#045; </STRONG>to indicate end of options.
+They also interpret the option <STRONG>&#045;? </STRONG>as a help request and print a <EM>usage </EM>message
+on standard error.
+Commands that are preceded by one or two &#167; symbols are special built-in
+commands and are treated specially in the following ways: 
+<DL COMPACT>
+<DT>
+1.
+<DD>Variable assignment lists preceding the command remain in effect when the
+command completes.
+<DT>
+2.
+<DD>I/O redirections are processed after variable assignments.
+<DT>
+3.
+<DD>Errors cause a script that contains them to abort.
+<DT>
+4.
+<DD>They are not valid function names.
+<DT>
+5.
+<DD>Words following a command preceded by &#167;&#167; that are in the format of a variable
+assignment are expanded with the same rules as a variable assignment.
+This means that tilde substitution is performed after the <STRONG>= </STRONG>sign and field
+splitting and file name generation are not performed.
+<P>
+<DT>
+&#167; <STRONG>:</STRONG> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>The command only expands parameters.
+<P>
+<DT>
+&#167; <STRONG>&nbsp;.
+</STRONG><EM>name&nbsp;</EM><STRONG> [&nbsp; </STRONG><EM>arg&nbsp;</EM><STRONG> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD></STRONG>If <EM>name </EM>is a function defined with the <STRONG>function </STRONG><EM>name </EM>reserved word syntax,
+the function is executed in the current environment (as if it had been
+defined with the <EM>name</EM><STRONG>() </STRONG>syntax.) Otherwise if <EM>name </EM>refers to a file, the
+file is read in its entirety and the commands are executed in the current
+shell environment.
+The search path specified by <STRONG><FONT SIZE=-1>PATH </FONT></STRONG>is used to find the directory containing
+the file.
+If any arguments <EM>arg </EM>are given, they become the positional parameters while
+processing the <STRONG>.
+</STRONG>command and the original positional parameters are restored upon completion.
+Otherwise the positional parameters are unchanged.
+The exit status is the exit status of the last command executed.
+<P>
+<DT>
+&#167;&#167; <STRONG>alias</STRONG> [&nbsp; <STRONG>&#045;ptx</STRONG> &nbsp;] [&nbsp; <EM>name</EM>[&nbsp; <STRONG>=</STRONG><EM>value&nbsp;</EM>&nbsp;]&nbsp;].&nbsp;.&nbsp;.
+<DD><STRONG>alias </STRONG>with no arguments prints the list of aliases in the form <EM>name=value
+</EM>on standard output.
+The <STRONG>&#045;p </STRONG>option causes the word <STRONG>alias </STRONG>to be inserted before each one.
+When one or more arguments are given, an <EM>alias </EM>is defined for each <EM>name
+</EM>whose <EM>value </EM>is given.
+A trailing space in <EM>value </EM>causes the next word to be checked for alias
+substitution.
+The obsolete <STRONG>&#045;t </STRONG>option is used to set and list tracked aliases.
+The value of a tracked alias is the full pathname corresponding to the
+given <EM>name</EM>.
+The value becomes undefined when the value of <FONT SIZE=-1><STRONG>PATH </STRONG></FONT>is reset but the alias
+remains tracked.
+Without the <STRONG>&#045;t </STRONG>option, for each <EM>name </EM>in the argument list for which no
+<EM>value </EM>is given, the name and value of the alias is printed.
+The obsolete <STRONG>&#045;x </STRONG>option has no effect.
+The exit status is non-zero if a <EM>name </EM>is given, but no value, and no alias
+has been defined for the <EM>name&nbsp;</EM>.
+<STRONG><P>
+<DT>
+bg</STRONG> [&nbsp; <EM>job&nbsp;</EM>.&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>This command is only on systems that support job control.
+Puts each specified <EM>job </EM>into the background.
+The current job is put in the background if <EM>job </EM>is not specified.
+See <EM>Jobs </EM>for a description of the format of <EM>job</EM>.
+<P>
+<DT>
+&#167; <STRONG>break</STRONG> [&nbsp; <EM>n&nbsp;</EM> &nbsp;] 
+<DD>Exit from the enclosing <STRONG>for&nbsp;</STRONG>, <STRONG>while&nbsp;</STRONG>, <STRONG>until&nbsp;</STRONG>, or <STRONG>select </STRONG>loop, if any.
+If <EM>n </EM>is specified, then break <EM>n </EM>levels.
+<STRONG><P>
+<DT>
+builtin</STRONG> [&nbsp; <STRONG>&#045;ds</STRONG> &nbsp;] [&nbsp; <STRONG>&#045;f</STRONG> <EM>file&nbsp;</EM> &nbsp;][&nbsp;<EM>name&nbsp;</EM>.&nbsp;.&nbsp;.&nbsp;] 
+<DD>If <EM>name </EM>is not specified, and no <STRONG>&#045;f </STRONG>option is specified, the built-ins
+are printed on standard output.
+The <STRONG>&#045;s </STRONG>option prints only the special built-ins.
+Otherwise, each <EM>name </EM>represents the pathname whose basename is the name
+of the built-in.
+The entry point function name is determined by prepending <STRONG>b_ </STRONG>to the built-in
+name.
+Special built-ins cannot be bound to a pathname or deleted.
+The <STRONG>&#045;d </STRONG>option deletes each of the given built-ins.
+On systems that support dynamic loading, the <STRONG>&#045;f </STRONG>option names a shared library
+containing the code for built-ins.
+Once a library is loaded, its symbols become available for subsequent invocations
+of <STRONG>builtin</STRONG>.
+Multiple libraries can be specified with separate invocations of the <STRONG>builtin
+</STRONG>command.
+Libraries are searched in the reverse order in which they are specified.
+When a library is loaded, it looks for a function in the library whose
+name is <STRONG>lib_init() </STRONG>and invokes this function with an argument of <STRONG>0</STRONG>.
+<STRONG><P>
+<DT>
+cd</STRONG> [&nbsp; <STRONG>&#045;LP</STRONG> &nbsp;] [&nbsp; <EM>arg&nbsp;</EM> &nbsp;] 
+<DD><STRONG><DT>
+cd</STRONG> [&nbsp; <STRONG>&#045;LP</STRONG> &nbsp;] <EM>old&nbsp;</EM> <EM>new&nbsp;</EM> 
+<DD>This command can be in either of two forms.
+In the first form it changes the current directory to <EM>arg</EM>.
+If <EM>arg </EM>is <STRONG>&#045; </STRONG>the directory is changed to the previous directory.
+The shell variable <STRONG><FONT SIZE=-1>HOME </FONT></STRONG>is the default <EM>arg</EM>.
+The variable <FONT SIZE=-1><STRONG>PWD </STRONG></FONT>is set to the current directory.
+The shell variable <STRONG><FONT SIZE=-1>CDPATH </FONT></STRONG>defines the search path for the directory containing
+<EM>arg</EM>.
+Alternative directory names are separated by a colon (<STRONG>:</STRONG>).
+The default path is <STRONG>&lt;null&gt; </STRONG>(specifying the current directory).
+Note that the current directory is specified by a null path name, which
+can appear immediately after the equal sign or between the colon delimiters
+anywhere else in the path list.
+If <EM>arg </EM>begins with a <STRONG>/</STRONG> then the search path is not used.
+Otherwise, each directory in the path is searched for <EM>arg</EM>.
+<P>
+The second form of <STRONG>cd </STRONG>substitutes the string <EM>new </EM>for the string <EM>old </EM>in
+the current directory name, <FONT SIZE=-1><STRONG>PWD</STRONG>, </FONT>and tries to change to this new directory.
+<P>
+By default, symbolic link names are treated literally when finding the
+directory name.
+This is equivalent to the <STRONG>&#045;L </STRONG>option.
+The <STRONG>&#045;P </STRONG>option causes symbolic links to be resolved when determining the
+directory.
+The last instance of <STRONG>&#045;L </STRONG>or <STRONG>&#045;P </STRONG>on the command line determines which method
+is used.
+<P>
+The <STRONG>cd </STRONG>command may not be executed by <STRONG>rsh&nbsp;.
+</STRONG><STRONG><P>
+<DT>
+command</STRONG> [&nbsp; <STRONG>&#045;pvV</STRONG> &nbsp;] <EM>name&nbsp;</EM> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.&nbsp;] 
+<DD>Without the <STRONG>&#045;v </STRONG>or <STRONG>&#045;V </STRONG>options, <STRONG>command </STRONG>executes <EM>name </EM>with the arguments
+given by <EM>arg</EM>.
+The <STRONG>&#045;p </STRONG>option causes a default path to be searched rather than the one
+defined by the value of <FONT SIZE=-1><STRONG>PATH</STRONG>.
+</FONT>Functions will not be searched for when finding <EM>name</EM>.
+In addition, if <EM>name </EM>refers to a special built-in, none of the special
+properties associated with the leading daggers will be honored.
+(For example, the predefined alias <STRONG>redirect='command exec' </STRONG>prevents a script
+from terminating when an invalid redirection is given.) With the <STRONG>&#045;v </STRONG>option,
+<STRONG>command </STRONG>is equivalent to the built-in <STRONG>whence </STRONG>command described below.
+The <STRONG>&#045;V </STRONG>option causes <STRONG>command </STRONG>to act like <STRONG>whence &#045;v</STRONG>.
+<P>
+<DT>
+&#167; <STRONG>continue</STRONG> [&nbsp; <EM>n&nbsp;</EM> &nbsp;] 
+<DD>Resume the next iteration of the enclosing <STRONG>for&nbsp;</STRONG>, <STRONG>while&nbsp;</STRONG>, <STRONG>until&nbsp;</STRONG>, or <STRONG>select
+</STRONG>loop.
+If <EM>n </EM>is specified, then resume at the <EM>n</EM>-th enclosing loop.
+<STRONG><P>
+<DT>
+disown</STRONG> [&nbsp; <EM>job&nbsp;</EM>.&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>Causes the shell not to send a HUP signal to each given <EM>job</EM>, or all active
+jobs if <EM>job </EM>is omitted, when a login shell terminates.
+<STRONG><P>
+<DT>
+echo</STRONG> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>When the first <EM>arg </EM>does not begin with a &#045;, and none of the arguments contain
+a &#092;, then <STRONG>echo </STRONG>prints each of its arguments separated by a space and terminated
+by a new-line.
+Otherwise, the behavior of <STRONG>echo </STRONG>is system dependent and <STRONG>print </STRONG>or <STRONG>printf
+</STRONG>described below should be used.
+See <EM>echo</EM>(1) for usage and description.
+<P>
+<DT>
+&#167; <STRONG>eval</STRONG> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>The arguments are read as input to the shell and the resulting command(s)
+executed.
+<P>
+<DT>
+&#167; <STRONG>exec</STRONG> [&nbsp; <STRONG>&#045;c</STRONG> &nbsp;] [&nbsp; <STRONG>&#045;a</STRONG> <EM>name&nbsp;</EM>&nbsp;][&nbsp;<EM>arg&nbsp;</EM>.&nbsp;.&nbsp;.&nbsp;] 
+<DD>If <EM>arg </EM>is given, the command specified by the arguments is executed in
+place of this shell without creating a new process.
+The <STRONG>&#045;c </STRONG>option causes the environment to be cleared before applying variable
+assignments associated with the <STRONG>exec </STRONG>invocation.
+The <STRONG>&#045;a </STRONG>option causes <EM>name </EM>rather than the first <EM>arg</EM>, to become <STRONG>argv[0]
+</STRONG>for the new process.
+Input/output arguments may appear and affect the current process.
+If <EM>arg </EM>is not given, the effect of this command is to modify file descriptors
+as prescribed by the input/output redirection list.
+In this case, any file descriptor numbers greater than 2 that are opened
+with this mechanism are closed when invoking another program.
+<P>
+<DT>
+&#167; <STRONG><A NAME="exit">exit</A></STRONG>[&nbsp; <EM>n&nbsp;</EM> &nbsp;] 
+<DD>Causes the shell to exit with the exit status specified by <EM>n</EM>.
+The value will be the least significant 8 bits of the specified status.
+If <EM>n </EM>is omitted, then the exit status is that of the last command executed.
+An end-of-file will also cause the shell to exit except for a shell which
+has the <STRONG>ignoreeof </STRONG>option (see <A HREF="#set"><STRONG>set </STRONG></A>below) turned on.
+<P>
+<DT>
+&#167;&#167; <STRONG>export</STRONG> [&nbsp; <STRONG>&#045;p</STRONG> &nbsp;] [&nbsp; <EM>name&nbsp;</EM>[&nbsp;<STRONG>=</STRONG><EM>value&nbsp;</EM>&nbsp;] &nbsp;].&nbsp;.&nbsp;.
+<DD>If <EM>name </EM>is not given, the names and values of each variable with the export
+attribute are printed with the values quoted in a manner that allows them
+to be re-input.
+The <STRONG>&#045;p </STRONG>option causes the word <STRONG>export </STRONG>to be inserted before each one.
+Otherwise, the given <EM>name</EM>s are marked for automatic export to the <EM>environment
+</EM>of subsequently-executed commands.
+<STRONG><P>
+<DT>
+false</STRONG> 
+<DD>Does nothing, and exits 1.
+Used with <STRONG>until </STRONG>for infinite loops.
+<STRONG><P>
+<DT>
+fg</STRONG> [&nbsp; <EM>job&nbsp;</EM>.&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>This command is only on systems that support job control.
+Each <EM>job </EM>specified is brought to the foreground and waited for in the specified
+order.
+Otherwise, the current job is brought into the foreground.
+See <EM>Jobs </EM>for a description of the format of <EM>job</EM>.
+<STRONG><P>
+<DT>
+getconf</STRONG> [&nbsp; <EM>name&nbsp;</EM> [&nbsp; <EM>pathname&nbsp;</EM> &nbsp;] &nbsp;] 
+<DD>Prints the current value of the configuration parameter given by <EM>name</EM>.
+The configuration parameters are defined by the IEEE POSIX 1003.1 and IEEE
+POSIX 1003.2 standards.
+(See <EM>pathconf</EM>(2) and <EM>sysconf</EM>(2).) The <EM>pathname </EM>argument is required for
+parameters whose value depends on the location in the file system.
+If no arguments are given, <STRONG>getconf </STRONG>prints the names and values of the current
+configuration parameters.
+The pathname <STRONG>/ </STRONG>is used for each of the parameters that requires <EM>pathname</EM>.
+<STRONG><P>
+<DT>
+getopts</STRONG> [&nbsp; <STRONG>&nbsp;-a</STRONG> <EM>name&nbsp;</EM> &nbsp;] <EM>optstring vname&nbsp;</EM> [&nbsp;<EM>arg&nbsp;</EM>.&nbsp;.&nbsp;.&nbsp;] 
+<DD>Checks <EM>arg </EM>for legal options.
+If <EM>arg </EM>is omitted, the positional parameters are used.
+An option argument begins with a <STRONG>+ </STRONG>or a <STRONG>&#045;</STRONG>.
+An option not beginning with <STRONG>+ </STRONG>or <STRONG>&#045; </STRONG>or the argument <STRONG>&#045;&nbsp;&#045; </STRONG>ends the options.
+<EM>optstring </EM>contains the letters that <STRONG>getopts </STRONG>recognizes.
+If a letter is followed by a <STRONG>:</STRONG>, that option is expected to have an argument.
+The options can be separated from the argument by blanks.
+The option <STRONG>&#045;? </STRONG>causes <STRONG>getopts </STRONG>to generate a usage message on standard error.
+The <STRONG>&#045;a </STRONG>argument can be used to specify the name to use for the usage message,
+which defaults to <STRONG>$0</STRONG>.
+<STRONG><P>
+getopts </STRONG>places the next option letter it finds inside variable <EM>vname </EM>each
+time it is invoked.
+The option letter will be prepended with a <STRONG>+ </STRONG>when <EM>arg </EM>begins with a <STRONG>+</STRONG>.
+The index of the next <EM>arg </EM>is stored in <FONT SIZE=-1><STRONG>OPTIND</STRONG>.
+</FONT>The option argument, if any, gets stored in <FONT SIZE=-1><STRONG>OPTARG</STRONG>.
+</FONT><P>
+A leading <STRONG>: </STRONG>in <EM>optstring </EM>causes <STRONG>getopts </STRONG>to store the letter of an invalid
+option in <FONT SIZE=-1><STRONG>OPTARG</STRONG>, </FONT>and to set <EM>vname </EM>to <STRONG>? </STRONG>for an unknown option and to <STRONG>:
+</STRONG>when a required option is missing.
+Otherwise, <STRONG>getopts </STRONG>prints an error message.
+The exit status is non-zero when there are no more options.
+<P>
+There is no way to specify any of the options <STRONG>:</STRONG>, <STRONG>+</STRONG>, <STRONG>&#045;</STRONG>, <STRONG>?</STRONG>, <STRONG>[</STRONG>, and <STRONG>]</STRONG>.
+The option <STRONG># </STRONG>can only be specified as the first option.
+<STRONG><P>
+<DT>
+hist</STRONG> [&nbsp; <STRONG>&#045;e</STRONG> <EM>ename&nbsp;</EM> &nbsp;&nbsp;] [&nbsp; <STRONG>&#045;nlr&nbsp;</STRONG> &nbsp;][&nbsp;<EM>first&nbsp;</EM>[&nbsp;<EM>last&nbsp;</EM>&nbsp;]&nbsp;] 
+<DD><STRONG><DT>
+hist &#045;s </STRONG> [&nbsp; <EM>old</EM><STRONG>=</STRONG><EM>new&nbsp;</EM> &nbsp;] [&nbsp; <EM>command&nbsp;</EM>&nbsp;] 
+<DD>In the first form, a range of commands from <EM>first </EM>to <EM>last </EM>is selected from
+the last <FONT SIZE=-1><STRONG>HISTSIZE </STRONG></FONT>commands that were typed at the terminal.
+The arguments <EM>first </EM>and <EM>last </EM>may be specified as a number or as a string.
+A string is used to locate the most recent command starting with the given
+string.
+A negative number is used as an offset to the current command number.
+If the <STRONG>&#045;l </STRONG>option is selected, the commands are listed on standard output.
+Otherwise, the editor program <EM>ename </EM>is invoked on a file containing these
+keyboard commands.
+If <EM>ename </EM>is not supplied, then the value of the variable <FONT SIZE=-1><STRONG>HISTEDIT </STRONG></FONT>is used.
+If <FONT SIZE=-1><STRONG>HISTEDIT </STRONG></FONT>is not set, then <FONT SIZE=-1><STRONG>FCEDIT </STRONG></FONT>(default <STRONG>/bin/ed&nbsp;</STRONG>) is used as the editor.
+When editing is complete, the edited command(s) is executed if the changes
+have been saved.
+If <EM>last </EM>is not specified, then it will be set to <EM>first</EM>.
+If <EM>first </EM>is not specified, the default is the previous command for editing
+and &#045;16 for listing.
+The option <STRONG>&#045;r </STRONG>reverses the order of the commands and the option <STRONG>&#045;n </STRONG>suppresses
+command numbers when listing.
+In the second form, <EM>command </EM>is interpreted as <EM>first </EM>described above and
+defaults to the last command executed.
+The resulting command is executed after the optional substitution <EM>old&nbsp;</EM><STRONG>=</STRONG><EM>new&nbsp;</EM>
+is performed.
+<STRONG><P>
+<DT>
+jobs</STRONG> [&nbsp; <STRONG>&#045;lnp&nbsp;</STRONG> &nbsp;] [&nbsp; <EM>job&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>Lists information about each given job; or all active jobs if <EM>job </EM>is omitted.
+The <STRONG>&#045;l </STRONG>option lists process ids in addition to the normal information.
+The <STRONG>&#045;n </STRONG>option only displays jobs that have stopped or exited since last
+notified.
+The <STRONG>&#045;p </STRONG>option causes only the process group to be listed.
+See <EM>Jobs </EM>for a description of the format of <EM>job</EM>.
+<STRONG><P>
+<DT>
+kill</STRONG> [&nbsp; <STRONG>&#045;s</STRONG> <EM>signame&nbsp;</EM> &nbsp;] <EM>job&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD><STRONG><DT>
+kill</STRONG> [&nbsp; <STRONG>&#045;n</STRONG> <EM>signum&nbsp;</EM> &nbsp;] <EM>job&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD><STRONG><DT>
+kill</STRONG> <STRONG>&#045;l</STRONG> [&nbsp; <EM>sig&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>Sends either the TERM (terminate) signal or the specified signal to the
+specified jobs or processes.
+Signals are either given by number with the <STRONG>&#045;n </STRONG>option or by name with the
+<STRONG>&#045;s </STRONG>option (as given in <STRONG>&lt;signal.h&gt;</STRONG>, stripped of the prefix ``SIG'' with
+the exception that SIGCLD is named CHLD).
+For backward compatibility, the <STRONG>n </STRONG>and <STRONG>s </STRONG>can be omitted and the number or
+name placed immediately after the <STRONG>&#045;</STRONG>.
+If the signal being sent is TERM (terminate) or HUP (hangup), then the
+job or process will be sent a CONT (continue) signal if it is stopped.
+The argument <EM>job </EM>can be the process id of a process that is not a member
+of one of the active jobs.
+See <EM>Jobs </EM>for a description of the format of <EM>job</EM>.
+In the third form, <STRONG>kill &#045;l</STRONG>, if <EM>sig </EM>is not specified, the signal names are
+listed.
+Otherwise, for each <EM>sig </EM>that is a name, the corresponding signal number
+is listed.
+For each <EM>sig </EM>that is a number, the signal name corresponding to the least
+significant 8 bits of <EM>sig </EM>is listed.
+<STRONG><P>
+<DT>
+let</STRONG> <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>Each <EM>arg </EM>is a separate <EM>arithmetic expression </EM>to be evaluated.
+See <EM>Arithmetic Evaluation </EM>above, for a description of arithmetic expression
+evaluation.
+<P>
+The exit status is 0 if the value of the last expression is non-zero, and
+1 otherwise.
+<P>
+<DT>
+&#167; <STRONG>newgrp</STRONG> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>Equivalent to <STRONG>exec /bin/newgrp</STRONG><EM> arg&nbsp; </EM>.&nbsp;.&nbsp;.&nbsp;.
+<STRONG><P>
+<DT>
+print</STRONG> [&nbsp; <STRONG>&#045;Rnprs&nbsp;</STRONG> &nbsp;] [&nbsp; <STRONG>&#045;u</STRONG> <EM>unit&nbsp;</EM>&nbsp;] [&nbsp;<STRONG>&#045;f</STRONG><EM>format&nbsp;</EM>&nbsp;][&nbsp;<EM>arg&nbsp;</EM>.&nbsp;.&nbsp;.&nbsp;] 
+<DD>With no options or with option <STRONG>&#045; </STRONG>or <STRONG>&#045;&nbsp;&#045;</STRONG>, each <EM>arg </EM>is printed on standard
+output.
+The <STRONG>&#045;f </STRONG>option causes the arguments to be printed as described by <STRONG>printf</STRONG>.
+In this case, any <STRONG>n</STRONG>, <STRONG>r</STRONG>, <STRONG>R </STRONG>options are ignored.
+Otherwise, unless the <STRONG>&#045;R </STRONG>or <STRONG>&#045;r</STRONG>, are specified, the following escape conventions
+will be applied: <DL COMPACT><STRONG>
+<DT>
+&#092;a </STRONG>
+<DD>The alert character (ascii <STRONG>07</STRONG>).
+<STRONG><DT>
+&#092;b </STRONG>
+<DD>The backspace character (ascii <STRONG>010</STRONG>).
+<STRONG><DT>
+&#092;c </STRONG>
+<DD>Causes <STRONG>print </STRONG>to end without processing more arguments and not adding a
+new-line.
+<STRONG><DT>
+&#092;f </STRONG>
+<DD>The formfeed character (ascii <STRONG>014</STRONG>).
+<STRONG><DT>
+&#092;n </STRONG>
+<DD>The new-line character (ascii <STRONG>012</STRONG>).
+<STRONG><DT>
+&#092;r </STRONG>
+<DD>The carriage return character (ascii <STRONG>015</STRONG>).
+<STRONG><DT>
+&#092;t </STRONG>
+<DD>The tab character (ascii <STRONG>011</STRONG>).
+<STRONG><DT>
+&#092;v </STRONG>
+<DD>The vertical tab character (ascii <STRONG>013</STRONG>).
+<STRONG><DT>
+&#092;E </STRONG>
+<DD>The escape character (ascii <STRONG>033</STRONG>).
+<STRONG><DT>
+&#092;&#092; </STRONG>
+<DD>The backslash character &#092;.
+<DT>
+<STRONG>&#092;0</STRONG><EM>x </EM>
+<DD>The character defined by the 1, 2, or 3-digit octal string given by <EM>x</EM>.
+</DL>
+<P>
+The <STRONG>&#045;R </STRONG>option will print all subsequent arguments and options other than
+<STRONG>&#045;n</STRONG>.
+The <STRONG>&#045;p </STRONG>option causes the arguments to be written onto the pipe of the process
+spawned with <STRONG>|&amp; </STRONG>instead of standard output.
+The <STRONG>&#045;s </STRONG>option causes the arguments to be written onto the history file
+instead of standard output.
+The <STRONG>&#045;u </STRONG>option can be used to specify a one digit file descriptor unit number
+<EM>unit </EM>on which the output will be placed.
+The default is 1.
+If the option <STRONG>&#045;n </STRONG>is used, no <STRONG>new-line </STRONG>is added to the output.
+<STRONG><P>
+<DT>
+printf</STRONG> <EM>format&nbsp;</EM> [&nbsp; <EM>arg&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>The arguments <EM>arg </EM>are printed on standard output in accordance with the
+ANSI-C formatting rules associated with the format string <EM>format</EM>.
+If the number of arguments exceeds the number of format specifications,
+the <STRONG>format </STRONG>string is reused to format remaining arguments.
+The following extensions can also be used: 
+<DL COMPACT>
+<P>
+<DT>
+&#183; 
+<DD>A <STRONG>%b </STRONG>format can be used instead of <STRONG>%s </STRONG>to cause escape sequences in the
+corresponding <EM>arg </EM>to be expanded as described in <STRONG>print.
+</STRONG><P>
+<DT>
+&#183; 
+<DD>A <STRONG>%P </STRONG>format can be used instead of <STRONG>%s </STRONG>to cause <EM>arg </EM>to be interpreted as
+an extended regular expression and be printed as a shell pattern.
+<P>
+<DT>
+&#183; 
+<DD>A <STRONG>%q </STRONG>format can be used instead of <STRONG>%s </STRONG>to cause the resulting string to
+be quoted in a manner than can be reinput to the shell.
+<P>
+<DT>
+&#183; 
+<DD>The precision field of the <STRONG>%d </STRONG>format can be followed by a <STRONG>.
+</STRONG>and the output base.
+</DL>
+<STRONG><P>
+<DT>
+pwd</STRONG> [&nbsp; <STRONG>&#045;LP</STRONG> &nbsp;] 
+<DD>Outputs the value of the current working directory.
+The <STRONG>&#045;L </STRONG>option is the default; it prints the logical name of the current
+directory.
+If the <STRONG>&#045;P </STRONG>option is given, all symbolic links are resolved from the name.
+The last instance of <STRONG>&#045;L </STRONG>or <STRONG>&#045;P </STRONG>on the command line determines which method
+is used.
+<STRONG><P>
+<DT>
+read</STRONG> [&nbsp; <STRONG>&#045;Aprs&nbsp;</STRONG> &nbsp;] [&nbsp; <STRONG>&#045;d</STRONG> <EM>delim&nbsp;</EM>&nbsp;] [&nbsp;<STRONG>&#045;t</STRONG><EM>timeout&nbsp;</EM>&nbsp;][&nbsp;<STRONG>&#045;u</STRONG><EM>unit&nbsp;</EM>&nbsp;][&nbsp;<EM>vname</EM><STRONG>?</STRONG><EM>prompt&nbsp;</EM><STRONG>&nbsp;][&nbsp;</STRONG><EM>vname&nbsp;</EM><STRONG>.&nbsp;.&nbsp;.&nbsp;] 
+<DD></STRONG>The shell input mechanism.
+One line is read and is broken up into fields using the characters in <STRONG><FONT SIZE=-1>IFS
+</FONT></STRONG>as separators.
+The escape character, <STRONG>&#092;</STRONG>, is used to remove any special meaning for the
+next character and for line continuation.
+The <STRONG>&#045;d </STRONG>option causes the read to continue to the first character of <EM>delim
+</EM>rather than new-line.
+In raw mode, <STRONG>&#045;r, </STRONG>the <STRONG>&#092; </STRONG>character is not treated specially.
+The first field is assigned to the first <EM>vname</EM>, the second field to the
+second <EM>vname</EM>, etc., with leftover fields assigned to the last <EM>vname</EM>.
+The <STRONG>&#045;A </STRONG>option causes the variable <EM>vname </EM>to be unset and each field that
+is read to be stored in successive elements of the indexed array <EM>vname.
+</EM>The <STRONG>&#045;p </STRONG>option causes the input line to be taken from the input pipe of
+a process spawned by the shell using <STRONG>|&amp;</STRONG>.
+If the <STRONG>&#045;s </STRONG>option is present, the input will be saved as a command in the
+history file.
+The option <STRONG>&#045;u </STRONG>can be used to specify a one digit file descriptor unit <EM>unit
+</EM>to read from.
+The file descriptor can be opened with the <STRONG>exec </STRONG>special built-in command.
+The default value of unit <EM>n </EM>is 0.
+The option <STRONG>&#045;t </STRONG>is used to specify a timeout in seconds when reading from
+a terminal or pipe.
+If <EM>vname </EM>is omitted, then <FONT SIZE=-1><STRONG>REPLY </STRONG></FONT>is used as the default <EM>vname</EM>.
+An end-of-file with the <STRONG>&#045;p </STRONG>option causes cleanup for this process so that
+another can be spawned.
+If the first argument contains a <STRONG>?</STRONG>, the remainder of this word is used
+as a <EM>prompt </EM>on standard error when the shell is interactive.
+The exit status is 0 unless an end-of-file is encountered or <STRONG>read </STRONG>has timed
+out.
+<P>
+<DT>
+&#167;&#167; <STRONG>readonly</STRONG> [&nbsp; <STRONG>&#045;p</STRONG> &nbsp;] [&nbsp; <EM>vname</EM>[&nbsp;<STRONG>=</STRONG><EM>value&nbsp;</EM>&nbsp;] &nbsp;].&nbsp;.&nbsp;.
+<DD>If <EM>vname </EM>is not given, the names and values of each variable with the readonly
+attribute is printed with the values quoted in a manner that allows them
+to be re-inputted.
+The <STRONG>&#045;p </STRONG>option causes the word <STRONG>readonly </STRONG>to be inserted before each one.
+Otherwise, the given <EM>vname</EM>s are marked readonly and these names cannot
+be changed by subsequent assignment.
+<P>
+<DT>
+&#167; <STRONG>return</STRONG> [&nbsp; <EM>n&nbsp;</EM> &nbsp;] 
+<DD>Causes a shell <EM>function </EM>or <STRONG>&nbsp;.</STRONG> script to return to the invoking script with
+the exit status specified by <EM>n</EM>.
+The value will be the least significant 8 bits of the specified status.
+If <EM>n </EM>is omitted, then the return status is that of the last command executed.
+If <STRONG>return </STRONG>is invoked while not in a <EM>function </EM>or a <STRONG>&nbsp;.</STRONG> script, then it behaves
+the same as <STRONG>exit</STRONG>.
+<P>
+<DT>
+&#167; <STRONG><A NAME="set">set</A></STRONG>[&nbsp; <STRONG>&#177;Cabefhkmnopstuvx</STRONG> &nbsp;] [&nbsp; <STRONG>&#177;o</STRONG> [&nbsp;<EM>option&nbsp;</EM>&nbsp;]&nbsp;].&nbsp;.&nbsp;.[&nbsp;<STRONG>&#177;A</STRONG><EM>vname&nbsp;</EM>&nbsp;][&nbsp;<EM>arg&nbsp;</EM>.&nbsp;.&nbsp;.&nbsp;] 
+<DD>The options for this command have meaning as follows: <DL COMPACT><STRONG>
+<DT>
+&#045;A </STRONG>
+<DD>Array assignment.
+Unset the variable <EM>vname </EM>and assign values sequentially from the <EM>arg </EM>list.
+If <STRONG>+A </STRONG>is used, the variable <EM>vname </EM>is not unset first.
+<STRONG><DT>
+&#045;C </STRONG>
+<DD>Prevents redirection <STRONG>&gt; </STRONG>from truncating existing files.
+Files that are created are opened with the O_EXCL mode.
+Requires <STRONG>&gt;| </STRONG>to truncate a file when turned on.
+<STRONG><DT>
+&#045;a </STRONG>
+<DD>All subsequent variables that are defined are automatically exported.
+<STRONG><DT>
+&#045;b </STRONG>
+<DD>Prints job completion messages as soon as a background job changes state
+rather than waiting for the next prompt.
+<STRONG><DT>
+&#045;e </STRONG>
+<DD>If a command has a non-zero exit status, execute the <FONT SIZE=-1><STRONG>ERR </STRONG></FONT>trap, if set,
+and exit.
+This mode is disabled while reading profiles.
+<STRONG><DT>
+&#045;f </STRONG>
+<DD>Disables file name generation.
+<STRONG><DT>
+&#045;h </STRONG>
+<DD>Each command becomes a tracked alias when first encountered.
+<STRONG><DT>
+&#045;k </STRONG>
+<DD>(Obsolete).
+All variable assignment arguments are placed in the environment for a command,
+not just those that precede the command name.
+<STRONG><DT>
+&#045;m </STRONG>
+<DD>Background jobs will run in a separate process group and a line will print
+upon completion.
+The exit status of background jobs is reported in a completion message.
+On systems with job control, this option is turned on automatically for
+interactive shells.
+<STRONG><DT>
+&#045;n </STRONG>
+<DD>Read commands and check them for syntax errors, but do not execute them.
+Ignored for interactive shells.
+<STRONG><DT>
+&#045;o </STRONG>
+<DD>The following argument can be one of the following option names: <DL COMPACT><STRONG>
+<DT>
+allexport </STRONG>
+<DD>Same as <STRONG>&#045;a</STRONG>.
+<STRONG><DT>
+errexit </STRONG>
+<DD>Same as <STRONG>&#045;e</STRONG>.
+<STRONG><DT>
+bgnice </STRONG>
+<DD>All background jobs are run at a lower priority.
+This is the default mode.
+<STRONG><DT>
+emacs </STRONG>
+<DD>Puts you in an <EM>emacs </EM>style in-line editor for command entry.
+<STRONG><DT>
+gmacs </STRONG>
+<DD>Puts you in a <EM>gmacs </EM>style in-line editor for command entry.
+<STRONG><DT>
+ignoreeof </STRONG>
+<DD>The shell will not exit on end-of-file.
+The command <STRONG>exit </STRONG>must be used.
+<STRONG><DT>
+keyword </STRONG>
+<DD>Same as <STRONG>&#045;k</STRONG>.
+<STRONG><DT>
+markdirs </STRONG>
+<DD>All directory names resulting from file name generation have a trailing
+<STRONG>/ </STRONG>appended.
+<STRONG><DT>
+monitor </STRONG>
+<DD>Same as <STRONG>&#045;m</STRONG>.
+<STRONG><DT>
+noclobber </STRONG>
+<DD>Same as <STRONG>&#045;C</STRONG>.
+<STRONG><DT>
+noexec </STRONG>
+<DD>Same as <STRONG>&#045;n</STRONG>.
+<STRONG><DT>
+noglob </STRONG>
+<DD>Same as <STRONG>&#045;f</STRONG>.
+<STRONG><DT>
+nolog </STRONG>
+<DD>Do not save function definitions in the history file.
+<STRONG><DT>
+notify </STRONG>
+<DD>Same as <STRONG>&#045;b</STRONG>.
+<STRONG><DT>
+nounset </STRONG>
+<DD>Same as <STRONG>&#045;u</STRONG>.
+<STRONG><DT>
+privileged </STRONG>
+<DD>Same as <STRONG>&#045;p</STRONG>.
+<STRONG><DT>
+verbose </STRONG>
+<DD>Same as <STRONG>&#045;v</STRONG>.
+<STRONG><DT>
+trackall </STRONG>
+<DD>Same as <STRONG>&#045;h</STRONG>.
+<STRONG><DT>
+vi </STRONG>
+<DD>Puts you in insert mode of a <EM>vi </EM>style in-line editor until you hit the
+escape character <STRONG>033</STRONG>.
+This puts you in control mode.
+A return sends the line.
+<STRONG><DT>
+viraw </STRONG>
+<DD>Each character is processed as it is typed in <EM>vi </EM>mode.
+<STRONG><DT>
+xtrace </STRONG>
+<DD>Same as <STRONG>&#045;x</STRONG>.
+<DT>
+If no option name is supplied, then thecurrentoptionsettingsareprinted.
+<DD></DL>
+<STRONG><DT>
+&#045;p </STRONG>
+<DD>Disables processing of the <STRONG><FONT SIZE=-1>$HOME</FONT>/.profile </STRONG>file and uses the file <STRONG>/etc/suid_profile
+</STRONG>instead of the <FONT SIZE=-1><STRONG>ENV </STRONG></FONT>file.
+This mode is on whenever the effective uid (gid) is not equal to the real
+uid (gid).
+Turning this off causes the effective uid and gid to be set to the real
+uid and gid.
+<STRONG><DT>
+&#045;s </STRONG>
+<DD>Sort the positional parameters lexicographically.
+<STRONG><DT>
+&#045;t </STRONG>
+<DD>(Obsolete).
+Exit after reading and executing one command.
+<STRONG><DT>
+&#045;u </STRONG>
+<DD>Treat unset parameters as an error when substituting.
+<STRONG><DT>
+&#045;v </STRONG>
+<DD>Print shell input lines as they are read.
+<STRONG><DT>
+&#045;x </STRONG>
+<DD>Print commands and their arguments as they are executed.
+<STRONG><DT>
+&#045;&nbsp;&#045; </STRONG>
+<DD>Do not change any of the options; useful in setting <STRONG>$1 </STRONG>to a value beginning
+with <STRONG>&#045;</STRONG>.
+If no arguments follow this option then the positional parameters are unset.
+</DL><P>
+As an obsolete feature, if the first <EM>arg </EM>is <STRONG>&#045; </STRONG>then the <STRONG>&#045;x </STRONG>and <STRONG>&#045;v </STRONG>options
+are turned off and the next <EM>arg </EM>is treated as the first argument.
+Using <STRONG>+ </STRONG>rather than <STRONG>&#045; </STRONG>causes these options to be turned off.
+These options can also be used upon invocation of the shell.
+The current set of options may be found in <STRONG>$&#045;</STRONG>.
+Unless <STRONG>&#045;A </STRONG>is specified, the remaining arguments are positional parameters
+and are assigned, in order, to <STRONG>$1 </STRONG><STRONG>$2 </STRONG>.&nbsp;.&nbsp;.&nbsp;.
+If no arguments are given, then the names and values of all variables are
+printed on the standard output.
+<P>
+<DT>
+&#167; <STRONG>shift</STRONG> [&nbsp; <EM>n&nbsp;</EM> &nbsp;] 
+<DD>The positional parameters from <STRONG>$</STRONG><EM>n</EM><STRONG>+1</STRONG> .&nbsp;.&nbsp;.
+are renamed <STRONG>$1 </STRONG>.&nbsp;.&nbsp;.&nbsp; , default <EM>n </EM>is 1.
+The parameter <EM>n </EM>can be any arithmetic expression that evaluates to a non-negative
+number less than or equal to <STRONG>$#</STRONG>.
+<STRONG><P>
+<DT>
+sleep</STRONG> <EM>seconds&nbsp;</EM> 
+<DD>Suspends execution for the number of decimal seconds or fractions of a
+second given by <EM>seconds</EM>.
+<P>
+<DT>
+&#167; <STRONG>trap'</STRONG> [&nbsp; <STRONG>&#045;p</STRONG> &nbsp;] [&nbsp; <EM>action&nbsp;</EM> &nbsp;][&nbsp;<EM>sig&nbsp;</EM>&nbsp;].&nbsp;.&nbsp;.
+<DD>The <STRONG>&#045;p </STRONG>option causes the trap action associated with each trap as specified
+by the arguments to be printed with appropriate quoting.
+Otherwise, <EM>action </EM>will be processed as if it were an argument to <STRONG>eval </STRONG>when
+the shell receives signal(s) <EM>sig</EM>.
+Each <EM>sig </EM>can be given as a number or as the name of the signal.
+Trap commands are executed in order of signal number.
+Any attempt to set a trap on a signal that was ignored on entry to the
+current shell is ineffective.
+If <EM>action </EM>is omitted and the first <EM>sig </EM>is a number, or if <EM>action </EM>is <STRONG>&#045;</STRONG>,
+then the trap(s) for each <EM>sig </EM>are reset to their original values.
+If <EM>action </EM>is the null string then this signal is ignored by the shell and
+by the commands it invokes.
+If <EM>sig </EM>is <FONT SIZE=-1><STRONG>ERR </STRONG></FONT>then <EM>action </EM>will be executed whenever a command has a non-zero
+exit status.
+If <EM>sig </EM>is <FONT SIZE=-1><STRONG>DEBUG </STRONG></FONT>then <EM>action </EM>will be executed before each command.
+If <EM>sig </EM>is <STRONG>0 </STRONG>or <FONT SIZE=-1><STRONG>EXIT </STRONG></FONT>and the <STRONG>trap </STRONG>statement is executed inside the body
+of a function, then the command <EM>action </EM>is executed after the function completes.
+If <EM>sig </EM>is <STRONG>0 </STRONG>or <FONT SIZE=-1><STRONG>EXIT </STRONG></FONT>for a <STRONG>trap </STRONG>set outside any function then the command
+<EM>action </EM>is executed on exit from the shell.
+If <EM>sig </EM>is <FONT SIZE=-1><STRONG>KEYBD</STRONG>, </FONT>then <EM>action </EM>will be executed whenever a key is read while
+in <STRONG>emacs</STRONG>, <STRONG>gmacs</STRONG>, or <STRONG>vi </STRONG>mode.
+The <STRONG>trap </STRONG>command with no arguments prints a list of commands associated
+with each signal number.
+<STRONG><P>
+<DT>
+true</STRONG> 
+<DD>Does nothing, and exits 0.
+Used with <STRONG>while </STRONG>for infinite loops.
+<P>
+<DT>
+&#167;&#167; <STRONG>typeset</STRONG> [&nbsp; <STRONG>&#177;AHflnprtux&nbsp;</STRONG> &nbsp;] [&nbsp; <STRONG>&#177;EFLRZi[&nbsp;</STRONG><EM>n&nbsp;</EM><STRONG>&nbsp;] &nbsp;][&nbsp;</STRONG><EM>vname&nbsp;</EM><STRONG>[&nbsp;=</STRONG><EM>value&nbsp;</EM><STRONG>&nbsp;]&nbsp;&nbsp;].&nbsp;.&nbsp;.
+<DD></STRONG>Sets attributes and values for shell variables and functions.
+When invoked inside a function, a new instance of the variable <EM>vname </EM>is
+created.
+The variable's value and type are restored when the function completes.
+The following list of attributes may be specified: <DL COMPACT><STRONG>
+<DT>
+&#045;A </STRONG>
+<DD>Declares <EM>vname </EM>to be an associative array.
+Subscripts are strings rather than arithmetic expressions.
+<STRONG><DT>
+&#045;E </STRONG>
+<DD>Declares <EM>vname </EM>to be a double precision floating point number.
+If <EM>n </EM>is non-zero, it defines the number of significant figures that are
+used when expanding <EM>vname</EM>.
+Otherwise, ten significant figures will be used.
+<STRONG><DT>
+&#045;F </STRONG>
+<DD>Declares <EM>vname </EM>to be a double precision floating point number.
+If <EM>n </EM>is non-zero, it defines the number of places after the decimal point
+that are used when expanding <EM>vname</EM>.
+Otherwise ten places after the decimal point will be used.
+<STRONG><DT>
+&#045;H </STRONG>
+<DD>This option provides UNIX to host-name file mapping on non-UNIX machines.
+<STRONG><DT>
+&#045;L </STRONG>
+<DD>Left justify and remove leading blanks from <EM>value</EM>.
+If <EM>n </EM>is non-zero, it defines the width of the field, otherwise it is determined
+by the width of the value of first assignment.
+When the variable is assigned to, it is filled on the right with blanks
+or truncated, if necessary, to fit into the field.
+The <STRONG>&#045;R </STRONG>option is turned off.
+<STRONG><DT>
+&#045;R </STRONG>
+<DD>Right justify and fill with leading blanks.
+If <EM>n </EM>is non-zero, it defines the width of the field, otherwise it is determined
+by the width of the value of first assignment.
+The field is left filled with blanks or truncated from the end if the variable
+is reassigned.
+The <STRONG>&#045;L </STRONG>option is turned off.
+<STRONG><DT>
+&#045;Z </STRONG>
+<DD>Right justify and fill with leading zeros if the first non-blank character
+is a digit and the <STRONG>&#045;L </STRONG>option has not been set.
+Remove leading zeros if the <STRONG>&#045;L </STRONG>option is also set.
+If <EM>n </EM>is non-zero, it defines the width of the field, otherwise it is determined
+by the width of the value of first assignment.
+<STRONG><DT>
+&#045;f </STRONG>
+<DD>The names refer to function names rather than variable names.
+No assignments can be made and the only other valid options are <STRONG>&#045;t</STRONG>, <STRONG>&#045;u
+</STRONG>and <STRONG>&#045;x</STRONG>.
+The <STRONG>&#045;t </STRONG>option turns on execution tracing for this function.
+The <STRONG>&#045;u </STRONG>option causes this function to be marked undefined.
+The <FONT SIZE=-1><STRONG>FPATH </STRONG></FONT>variable will be searched to find the function definition when
+the function is referenced.
+<STRONG><DT>
+&#045;i </STRONG>
+<DD>Declares <EM>vname </EM>to be represented internally as integer.
+The right hand side of an assignment is evaluated as an arithmetic expression
+when assigning to an integer.
+If <EM>n </EM>is non-zero, it defines the output arithmetic base, otherwise the
+output base will be ten.
+<STRONG><DT>
+&#045;l </STRONG>
+<DD>All upper-case characters are converted to lower-case.
+The upper-case option, <STRONG>&#045;u</STRONG>, is turned off.
+<STRONG><DT>
+&#045;n </STRONG>
+<DD>Declares <EM>vname </EM>to be a reference to the variable whose name is defined
+by the value of variable <EM>vname</EM>.
+This is usually used to reference a variable inside a function whose name
+has been passed as an argument.
+<STRONG><DT>
+&#045;r </STRONG>
+<DD>The given <EM>vname</EM>s are marked readonly and these names cannot be changed
+by subsequent assignment.
+<STRONG><DT>
+&#045;t </STRONG>
+<DD>Tags the variables.
+Tags are user definable and have no special meaning to the shell.
+<STRONG><DT>
+&#045;u </STRONG>
+<DD>All lower-case characters are converted to upper-case.
+The lower-case option, <STRONG>&#045;l</STRONG>, is turned off.
+<STRONG><DT>
+&#045;x </STRONG>
+<DD>The given <EM>vname</EM>s are marked for automatic export to the <EM>environment </EM>of
+subsequently-executed commands.
+Variables whose names contain a <STRONG><FONT SIZE=+1>.</FONT></STRONG> cannot be exported.
+</DL><P>
+The <STRONG>&#045;i </STRONG>attribute cannot be specified along with <STRONG>&#045;R</STRONG>, <STRONG>&#045;L</STRONG>, <STRONG>&#045;Z</STRONG>, or <STRONG>&#045;f</STRONG>.
+<P>
+Using <STRONG>+ </STRONG>rather than <STRONG>&#045; </STRONG>causes these options to be turned off.
+If no <EM>vname </EM>arguments are given, a list of <EM>vnames </EM>(and optionally the <EM>values&nbsp;</EM>)
+of the <EM>variables </EM>is printed.
+(Using <STRONG>+ </STRONG>rather than <STRONG>&#045; </STRONG>keeps the values from being printed.) The <STRONG>&#045;p </STRONG>option
+causes <STRONG>typeset </STRONG>followed by the option letters to be printed before each
+name rather than the names of the options.
+If any option other than <STRONG>&#045;p </STRONG>is given, only those variables which have all
+of the given options are printed.
+Otherwise, the <EM>vname</EM>s and <EM>attributes </EM>of all <EM>variables </EM>are printed.
+<STRONG><P>
+<DT>
+ulimit</STRONG> [&nbsp; <STRONG>&#045;HSacdfmnpstv</STRONG> &nbsp;] [&nbsp; <EM>limit&nbsp;</EM> &nbsp;] 
+<DD>Set or display a resource limit.
+The available resource limits are listed below.
+Many systems do not support one or more of these limits.
+The limit for a specified resource is set when <EM>limit </EM>is specified.
+The value of <EM>limit </EM>can be a number in the unit specified below with each
+resource, or the value <STRONG>unlimited</STRONG>.
+The <STRONG>&#045;H </STRONG>and <STRONG>&#045;S </STRONG>options specify whether the hard limit or the soft limit
+for the given resource is set.
+A hard limit cannot be increased once it is set.
+A soft limit can be increased up to the value of the hard limit.
+If neither the <STRONG>H </STRONG>nor <STRONG>S </STRONG>options is specified, the limit applies to both.
+The current resource limit is printed when <EM>limit </EM>is omitted.
+In this case, the soft limit is printed unless <STRONG>H </STRONG>is specified.
+When more than one resource is specified, then the limit name and unit
+is printed before the value.
+<DL COMPACT><STRONG><DT>
+&#045;a </STRONG>
+<DD>Lists all of the current resource limits.
+<STRONG><DT>
+&#045;c </STRONG>
+<DD>The number of 512-byte blocks on the size of core dumps.
+<STRONG><DT>
+&#045;d </STRONG>
+<DD>The number of K-bytes on the size of the data area.
+<STRONG><DT>
+&#045;f </STRONG>
+<DD>The number of 512-byte blocks on files that can be written by the current
+process or by child processes (files of any size may be read).
+<STRONG><DT>
+&#045;m </STRONG>
+<DD>The number of K-bytes on the size of physical memory.
+<STRONG><DT>
+&#045;n </STRONG>
+<DD>The number of file descriptors plus 1.
+<STRONG><DT>
+&#045;p </STRONG>
+<DD>The number of 512-byte blocks for pipe buffering.
+<STRONG><DT>
+&#045;s </STRONG>
+<DD>The number of K-bytes on the size of the stack area.
+<STRONG><DT>
+&#045;t </STRONG>
+<DD>The number of CPU seconds to be used by each process.
+<STRONG><DT>
+&#045;v </STRONG>
+<DD>The number of K-bytes for virtual memory.
+</DL>
+<P>
+If no option is given, <STRONG>&#045;f </STRONG>is assumed.
+<STRONG><P>
+<DT>
+umask</STRONG> [&nbsp; <STRONG>&#045;S</STRONG> &nbsp;] [&nbsp; <EM>mask&nbsp;</EM> &nbsp;] 
+<DD>The user file-creation mask is set to <EM>mask </EM>(see <A HREF="umask(2)"><EM>umask</EM>(2)</A>).
+<EM>mask </EM>can either be an octal number or a symbolic value as described in
+<EM>chmod</EM>(1).
+If a symbolic value is given, the new umask value is the complement of
+the result of applying <EM>mask </EM>to the complement of the previous umask value.
+If <EM>mask </EM>is omitted, the current value of the mask is printed.
+The <STRONG>&#045;S </STRONG>option causes the mode to be printed as a symbolic value.
+Otherwise, the mask is printed in octal.
+<P>
+<DT>
+&#167; <STRONG>unalias</STRONG> [&nbsp; <STRONG>&#045;a</STRONG> &nbsp;] <EM>name&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>The aliases given by the list of <EM>name</EM>s are removed from the alias list.
+The <STRONG>&#045;a </STRONG>option causes all the aliases to be unset.
+<P>
+<DT>
+&#167;<STRONG>unset</STRONG> [&nbsp; <STRONG>&#045;fnv</STRONG> &nbsp;] <EM>vname&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>The variables given by the list of <EM>vname</EM>s are unassigned, i.e., their values
+and attributes are erased.
+Readonly variables cannot be unset.
+If the <STRONG>&#045;f </STRONG>option is set, then the names refer to <EM>function </EM>names.
+If the <STRONG>&#045;v </STRONG>option is set, then the names refer to <EM>variable </EM>names.
+The <STRONG>&#045;f </STRONG>option overrides <STRONG>&#045;v</STRONG>.
+If <STRONG>&#045;n </STRONG>is set and <EM>name </EM>is a name reference, then <EM>name </EM>will be unset rather
+than the variable that it references.
+The default is equivalent to <STRONG>&#045;v</STRONG>.
+Unsetting <FONT SIZE=-1><STRONG>LINENO</STRONG>, </FONT><FONT SIZE=-1><STRONG>MAILCHECK</STRONG>, </FONT><FONT SIZE=-1><STRONG>OPTARG</STRONG>, </FONT><FONT SIZE=-1><STRONG>OPTIND</STRONG>, </FONT><FONT SIZE=-1><STRONG>RANDOM</STRONG>, </FONT><FONT SIZE=-1><STRONG>SECONDS</STRONG>, </FONT><FONT SIZE=-1><STRONG>TMOUT</STRONG>, </FONT>and
+<FONT SIZE=-1><STRONG>_ </STRONG></FONT>removes their special meaning even if they are subsequently assigned
+to.
+<STRONG><P>
+<DT>
+wait</STRONG> [&nbsp; <EM>job&nbsp;</EM> .&nbsp;.&nbsp;.
+&nbsp;] 
+<DD>Wait for the specified <EM>job </EM>and report its termination status.
+If <EM>job </EM>is not given, then all currently active child processes are waited
+for.
+The exit status from this command is that of the last process waited for.
+See <EM>Jobs </EM>for a description of the format of <EM>job</EM>.
+<STRONG><P>
+<DT>
+whence</STRONG> [&nbsp; <STRONG>&#045;afpv</STRONG> &nbsp;] <EM>name&nbsp;</EM> .&nbsp;.&nbsp;.
+<DD>For each <EM>name</EM>, indicate how it would be interpreted if used as a command
+name.
+<P>
+The <STRONG>&#045;v </STRONG>option produces a more verbose report.
+The <STRONG>&#045;f </STRONG>options skips the search for functions.
+The <STRONG>&#045;p </STRONG>option does a path search for <EM>name </EM>even if name is an alias, a function,
+or a reserved word.
+The <STRONG>&#045;a </STRONG>option is similar to the <STRONG>&#045;v </STRONG>option but causes all interpretations
+of the given name to be reported.
+</DL><FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Invocation">Invocation.
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>If the shell is invoked by <EM>exec</EM>(2), and the first character of argument
+zero (<STRONG>$0</STRONG>) is <STRONG>&#045;</STRONG>, then the shell is assumed to be a <EM>login </EM>shell and commands
+are read from <STRONG>/etc/profile </STRONG>and then from either <STRONG>.profile </STRONG>in the current
+directory or <STRONG><FONT SIZE=-1>$HOME</FONT>/.profile</STRONG>, if either file exists.
+Next, for interactive shells, commands are read from the file named by
+performing parameter expansion, command substitution, and arithmetic substitution
+on the value of the environment variable <FONT SIZE=-1><STRONG>ENV </STRONG></FONT>if the file exists.
+If the <STRONG>&#045;s </STRONG>option is not present and <EM>arg </EM>is, then a path search is performed
+on the first <EM>arg </EM>to determine the name of the script to execute.
+The script <EM>arg </EM>must have read permission and any <EM>setuid </EM>and <EM>setgid </EM>settings
+will be ignored.
+If the script is not found on the path, <EM>arg </EM>is processed as if it named
+a built-in command or function.
+Commands are then read as described below; the following options are interpreted
+by the shell when it is invoked: 
+<DL COMPACT>
+<P>
+<DT>
+<STRONG>&#045;c </STRONG>
+<DD>If the <STRONG>&#045;c </STRONG>option is present, then commands are read from the first <EM>arg</EM>.
+Any remaining arguments become positional parameters starting at <STRONG>0</STRONG>.
+<STRONG><DT>
+&#045;s </STRONG>
+<DD>If the <STRONG>&#045;s </STRONG>option is present or if no arguments remain, then commands are
+read from the standard input.
+Shell output, except for the output of the <EM>special builtin-in commands
+</EM>listed above, is written to file descriptor 2.
+<STRONG><DT>
+&#045;i </STRONG>
+<DD>If the <STRONG>&#045;i </STRONG>option is present or if the shell input and output are attached
+to a terminal (as told by <EM>tcgetattr</EM>(2)), then this shell is <EM>interactive</EM>.
+In this case <FONT SIZE=-1>TERM</FONT> is ignored (so that <STRONG>kill 0</STRONG> does not kill an interactive
+shell) and <FONT SIZE=-1>INTR</FONT> is caught and ignored (so that <STRONG>wait </STRONG>is interruptible).
+In all cases, <FONT SIZE=-1>QUIT</FONT> is ignored by the shell.
+<STRONG><DT>
+&#045;r </STRONG>
+<DD>If the <STRONG>&#045;r </STRONG>option is present, the shell is a restricted shell.
+<STRONG><DT>
+&#045;D </STRONG>
+<DD>A list of all double quoted strings that are preceded by a <STRONG>$ </STRONG>will be printed
+on standard output and the shell will exit.
+This set of strings will be subject to language translation when the locale
+is not C or POSIX.
+No commands will be executed.
+<P>
+<DT>
+<STRONG>&#045;I</STRONG><EM> filename&nbsp; </EM>
+<DD>The <STRONG>&#045;R </STRONG><EM>filename </EM>option is used to generate a cross reference database that
+can be used by a separate utility to find definitions and references for
+variables and commands.
+</DL>
+<P>
+The remaining options and arguments are described under the <STRONG>set </STRONG>command
+above.
+An optional <STRONG>&#045; </STRONG>as the first argument is ignored.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="Rsh Only">Rsh &nbsp;Only.
+&nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT><EM>Rsh </EM>is used to set up login names and execution environments whose capabilities
+are more controlled than those of the standard shell.
+The actions of <STRONG>rsh </STRONG>are identical to those of <STRONG>sh&nbsp;</STRONG>, except that the following
+are disallowed: 
+<DL COMPACT>
+<BR>
+changing directory (see <A HREF="cd(1)"><EM>cd</EM>(1)</A>), <BR>
+setting or unsetting the value or attributes of <FONT SIZE=-1><STRONG>SHELL</STRONG>, </FONT><FONT SIZE=-1><STRONG>ENV</STRONG>, </FONT>or <FONT SIZE=-1><STRONG>PATH</STRONG></FONT><FONT SIZE=-2>0, </FONT><BR>
+specifying path or command names containing <STRONG>/</STRONG>, <BR>
+redirecting output (<STRONG>&gt;</STRONG>, <STRONG>&gt;|</STRONG>, <STRONG>&lt;&gt;</STRONG>, and <STRONG>&gt;&gt;</STRONG>).
+<BR>
+adding or deleting built-in commands.
+</DL><P>
+The restrictions above are enforced after <STRONG>.profile</STRONG> and the <FONT SIZE=-1><STRONG>ENV </STRONG></FONT>files are
+interpreted.
+<P>
+When a command to be executed is found to be a shell procedure, <STRONG>rsh </STRONG>invokes
+<EM>sh&nbsp; </EM>to execute it.
+Thus, it is possible to provide to the end-user shell procedures that have
+access to the full power of the standard shell, while imposing a limited
+menu of commands; this scheme assumes that the end-user does not have write
+and execute permissions in the same directory.
+<P>
+The net effect of these rules is that the writer of the <STRONG>.profile </STRONG>has complete
+control over user actions, by performing guaranteed setup actions and leaving
+the user in an appropriate directory (probably <EM>not </EM>the login directory).
+<P>
+The system administrator often sets up a directory of commands (e.g., <STRONG>/usr/rbin</STRONG>)
+that can be safely invoked by <STRONG>rsh</STRONG>.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="EXIT STATUS">EXIT &nbsp;STATUS &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>Errors detected by the shell, such as syntax errors, cause the shell to
+return a non-zero exit status.
+Otherwise, the shell returns the exit status of the last command executed
+(see also the <A HREF="#exit"><STRONG>exit </STRONG></A>command above).
+If the shell is being used non-interactively, then execution of the shell
+file is abandoned.
+Run time errors detected by the shell are reported by printing the command
+or function name and the error condition.
+If the line number that the error occurred on is greater than one, then
+the line number is also printed in square brackets (<STRONG>[]</STRONG>) after the command
+or function name.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="FILES">FILES &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>/etc/passwd <BR>
+/etc/profile <BR>
+/etc/suid_profile <FONT SIZE=-1><BR>
+$HOME</FONT>/<STRONG>.</STRONG>profile <BR>
+/tmp/sh* <BR>
+/dev/null <FONT SIZE=-1><STRONG>
+<P>
+<DT>
+<H3><A NAME="SEE ALSO">SEE &nbsp;ALSO &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>cat(1), cd(1), chmod(1), cut(1), echo(1), emacs(1), env(1), gmacs(1), newgrp(1),
+stty(1), test(1), umask(1), vi(1), dup(2), exec(2), fork(2), ioctl(2),
+lseek(2), paste(1), pathconf(2), pipe(2), sysconf(2), umask(2), ulimit(2),
+wait(2), rand(3), a.out(5), profile(5), environ(7).
+<P>
+Morris I.
+Bolsky and David G.
+Korn, <EM>The New KornShell Command and Programming Language</EM>, Prentice Hall,
+1995.
+<EM><P>
+POSIX &#045; Part 2: Shell and Utilities, </EM>IEEE Std 1003.2-1992, ISO/IEC 9945-2,
+IEEE, 1993.
+<FONT SIZE=-1><STRONG><P>
+<DT>
+<H3><A NAME="CAVEATS">CAVEATS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </A></H3>
+<DD></STRONG></FONT>If a command is executed, and then a command with the same name is installed
+in a directory in the search path before the directory where the original
+command was found, the shell will continue to <EM>exec </EM>the original command.
+Use the <STRONG>&#045;t </STRONG>option of the <STRONG>alias </STRONG>command to correct this situation.
+<P>
+Some very old shell scripts contain a <STRONG>^ </STRONG>as a synonym for the pipe character
+<STRONG>|</STRONG>.
+<P>
+Using the <STRONG>hist </STRONG>built-in command within a compound command will cause the
+whole command to disappear from the history file.
+<P>
+The built-in command <STRONG>&nbsp;.</STRONG> <EM>file&nbsp;</EM> reads the whole file before any commands
+are executed.
+Therefore, <STRONG>alias </STRONG>and <STRONG>unalias </STRONG>commands in the file will not apply to any
+commands defined in the file.
+<P>
+Traps are not processed while a job is waiting for a foreground process.
+Thus, a trap on <STRONG>CHLD </STRONG>won't be executed until the foreground job terminates.
+<P>
+It is a good idea to leave a space after the comma operator in arithmetic
+expressions to prevent the comma from being interpreted as the decimal
+point character in certain locales.
+</DL><HR>
+<H3><TABLE WIDTH=100%><TR><TH ALIGN=LEFT>&nbsp;Sun Release 4.0&nbsp;<TH ALIGN=CENTER>Last change:<TH ALIGN=RIGHT>1b</TABLE>
+</H3> 
+</BODY></HTML>

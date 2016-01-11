@@ -1,0 +1,27 @@
+NOTE regression tests for the ksh codex plugin
+
+UNIT ksh
+
+TEST 'aes + uu-mime'
+
+	EXEC -c 'builtin -f codex codex
+		p="open sesame"
+		q="close sesame"
+		for ((i=1; i<=10; i++))
+		do
+			e=$(codex -p "$p" ">aes>uu-mime" <<<"hello newman")
+			codex -p "$p" "<uu-mime<aes" <<<"$e"
+			e=$(codex -p "$q" ">aes>uu-mime" <<<"see ya")
+			codex -p "$q" "<uu-mime<aes" <<<"$e"
+		done'
+
+	EXEC -c 'builtin -f codex
+		p="open sesame"
+		q="close sesame"
+		for ((i=1; i<=10; i++))
+		do
+			e=$(codex -p "$p" ">aes>uu-mime" <<<"hello newman")
+			codex -p "$p" "<uu-mime<aes" <<<"$e"
+			e=$(codex -p "$q" ">aes>uu-mime" <<<"see ya")
+			codex -p "$q" "<uu-mime<aes" <<<"$e"
+		done'

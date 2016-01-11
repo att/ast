@@ -1,0 +1,12 @@
+codex.tst	snarf uuencode tests, add { rot13 iconv }
+
+recode uuencode to use -lcodex: meth->data may be exported by <uu.h>
+recode iconv to use -lcodex
+
+code-zip	combine { code-huff code-explode code-inflate }
+
+code-pzip	pzip[:partition-file-path]
+code-bzip	pzip[:partition-file-path]
+code-compress
+
+code-bx		snarf from libuu

@@ -1,0 +1,26 @@
+portable archive interchange change history
+
+08/11/88 fix delta checksum bug involving header <dev,ino>
+07/17/88 ----- first pax release -----
+07/15/88 convert to pax
+07/11/88 change putops(), addnumop(), addstrop() to *xop*()
+	 change end of medium handler
+06/22/88 call doupdate() rather than update()
+	 emty files are valid archives
+06/16/88 move *_header definition from cpio.h to cpio.c
+06/01/88 add delta checksum and drop delta verify entries
+05/24/88 use Phong's new delta/update interface
+05/11/88 add -z for -io
+05/10/88 complete libdelta additions for -z and -A options
+05/03/88 add `-z file' delta/translate option
+03/30/88 add dynamic buffer size
+03/29/88 add tar interpretation for cpio file args
+	 fix binary format file name output alignment bug
+12/22/87 add CPIO_EXTENDED extended field code
+12/08/87 recode for updated hash library interface
+12/01/87 fix link hash bug that linked unrelated files
+10/06/87 add `-e filter' file output filter option
+08/18/87 delete verbose obsolete option warning
+08/11/87 use standard cpio file types rather than local S_IFMT from sys/stat.h
+06/11/87 ----- first release -----
+05/01/87 first code

@@ -1,0 +1,6 @@
+05-06-14 uinit.c: trap "tkloop" only if it is defined
+04-03-31 uinit.c: unalias ksh "source" to uncover tcl builtin by same name
+03-01-02 Makefile: dynamic -lshell on CC.HOSTTYPE=*win*
+02-08-27 tkMain.c: wait loop recode to avoid WNOHANG cascade
+02-02-14 Makefile: shell:static because dll is -g => fix this situation
+01-01-01 separate -ltksh from tksh main

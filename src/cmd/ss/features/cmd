@@ -1,0 +1,4 @@
+hdr	nlist,utmpx
+lib	nlist
+sys	dk
+mem	nlist.n_name,nlist.n_type,nlist.n_value nlist.h

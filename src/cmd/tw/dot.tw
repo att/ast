@@ -1,0 +1,30 @@
+:
+# draw directory tree
+tw -P -e "
+begin:	printf('digraph tw { rankdir=LR\n');
+end:	printf('}\n');
+action:	if (type == LNK)
+	{
+		status = FOLLOW;
+		local = 1;
+	}
+	else
+	{
+		printf('n%d_%ld_%d [ shape= ', dev, ino, visit);
+		if (local) printf('diamond');
+		else if (type == NS) printf('plaintext');
+		else if (type == DIR) printf('ellipse');
+		else printf('box');
+		printf(' label=\"%s\" ]\n', name);
+		if (level > 0) printf('n%d_%ld_0 -> n%d_%ld_%d\n',
+				parent.dev, parent.ino, dev, ino, visit);
+		if (visit > level)
+		{
+			if (visit == level + 1)
+				printf('{ rank=same n%d_%ld_%d n%d_%ld_0 }\n',
+					dev, ino, dev, ino, visit);
+			printf('n%d_%ld_%d -> n%d_%ld_0 [ style=dotted ]\n',
+					dev, ino, dev, ino, visit);
+		}
+	}
+" "$@"

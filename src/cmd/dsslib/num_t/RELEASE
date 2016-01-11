@@ -1,0 +1,1 @@
+11-02-02 num_t.c: pow10 => pow_10 to avoid <math.h> clash

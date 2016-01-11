@@ -1,0 +1,7 @@
+08-06=09 sync with ksh93t api
+07-09-17 move from dsslib/sh and get working with ksh93s+
+07-05-09 update for lib_init(flags,context) context arg
+07-03-19 update nv_setref() calls
+04-02-29 fix bugs exposed by $(CC.EXPORT.DYNAMIC)
+04-02-14 add ksh93:command prereq for -lshell
+04-01-30 install as ksh plugin

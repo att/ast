@@ -1,0 +1,90 @@
+# regression tests for the seq utility
+
+UNIT seq
+
+TEST 'integer [first [incr]] last combinations'
+
+EXEC 10
+EXEC 5 10
+EXEC 1 2 10
+EXEC 10 5
+EXEC 10 -2 1
+EXEC -- -10 2 10
+EXEC 10 -2 -10
+
+TEST 'integer [first [incr]] last combinations with format'
+
+EXEC -f %0100.5f 10
+EXEC -f %0100.5f 5 10
+EXEC -f %0100.5f 1 2 10
+EXEC -f %0100.5f 10 5
+EXEC -f %0100.5f 10 -2 1
+EXEC -f %0100.5f -- -10 2 10
+EXEC -f %0100.5f 10 -2 -10
+
+TEST 'integer [first [incr]] last combinations with equal width'
+
+EXEC -w 10
+EXEC -w 5 10
+EXEC -w 1 2 10
+EXEC -w 1 2 11
+EXEC -w 10 5
+EXEC -w 10 -2 1
+EXEC -w -- -10 2 10
+EXEC -w 10 -2 -10
+EXEC -w 10.000000000000000000000000000000 -2 -10
+
+TEST 'integer [first [incr]] last combinations with separator'
+
+EXEC -s$';\n' 10
+EXEC -s$';\n' 5 10
+EXEC -s$';\n' 1 2 10
+EXEC -s$';\n' 10 5
+EXEC -s$';\n' 10 -2 1
+EXEC -s$';\n' -- -10 2 10
+EXEC -s$';\n' 10 -2 -10
+
+TEST 'floating [first [incr]] last combinations'
+
+EXEC 1.0
+EXEC 0.5 1.0
+EXEC 0.1 0.2 1.0
+EXEC 1.0 0.5
+EXEC 1.0 -0.2 0.1
+EXEC -- -1.0 0.2 1.0
+EXEC 1.0 -0.2 -1.0
+
+TEST 'floating [first [incr]] last combinations with format'
+
+EXEC -f %0100.5f 1.0
+EXEC -f %0100.5f 0.5 1.0
+EXEC -f %0100.5f 0.1 0.2 1.0
+EXEC -f %0100.5f 1.0 0.5
+EXEC -f %0100.5f 1.0 -0.2 0.1
+EXEC -f %0100.5f -- -1.0 0.2 1.0
+EXEC -f %0100.5f 1.0 -0.2 -1.0
+EXEC -f %0100.5f 1.0000000000000000 -0.2 -1.0
+
+TEST 'floating [first [incr]] last combinations with equal width'
+
+EXEC -w 1.0
+EXEC -w 0.5 1.0
+EXEC -w 0.1 0.2 1.0
+EXEC -w 1.0 0.5
+EXEC -w 1.0 -0.2 0.1
+EXEC -w -- -1.0 0.2 1.0
+EXEC -w 1.0 -0.2 -1.0
+EXEC -w 1.000000000000000 -0.2 -1.0
+
+TEST 'floating epsilon'
+
+EXEC -- -5.0e-99 1.0e-99 5.0e-99
+
+TEST 'diagnostics'
+
+EXEC
+EXEC 1 2 3 4
+EXEC -f
+EXEC -s
+EXEC -w10 10
+EXEC -f%g -w 10

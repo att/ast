@@ -1,0 +1,22 @@
+#!/bin/env sh
+: cygwin.i386 ldd -- how many ways does this confirm the windows bias?
+for f
+do	case $f in
+	*.exe)	;;
+	*)	f=$f.exe ;;
+	esac
+	p=$(type $f)
+	case $p in
+	*" not found"*)
+		;;
+	*)	p=${p##* }
+		case $p in
+		?*)	f=$p ;;
+		esac
+		;;
+	esac
+	cygcheck $(cygpath -aw $f) |
+	for w in $(sed -e 's/^[[:space:]]*//' -e '/^$/d' -e '/^Use /d')
+	do	cygpath -u "$w"
+	done
+done

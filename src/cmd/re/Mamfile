@@ -1,0 +1,496 @@
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+setv INSTALLROOT ../../..
+setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
+setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
+setv PACKAGEROOT ../../../../..
+setv AR ${mam_cc_AR} ${mam_cc_AR_ARFLAGS}
+setv ARFLAGS rc
+setv AS as
+setv ASFLAGS
+setv CC cc
+setv mam_cc_FLAGS
+setv CCFLAGS ${-debug-symbols?1?${mam_cc_DEBUG} -D_BLD_DEBUG?${mam_cc_OPTIMIZE}?}
+setv CCLDFLAGS ${-strip-symbols?1?${mam_cc_LD_STRIP}??}
+setv COTEMP $$
+setv CPIO cpio
+setv CPIOFLAGS
+setv CPP "${CC} -E"
+setv F77 f77
+setv HOSTCC ${CC}
+setv IGNORE
+setv LD ld
+setv LDFLAGS
+setv LEX lex
+setv LEXFLAGS
+setv LPR lpr
+setv LPRFLAGS
+setv M4FLAGS
+setv NMAKE nmake
+setv NMAKEFLAGS
+setv PR pr
+setv PRFLAGS
+setv SHELL /bin/sh
+setv SILENT
+setv TAR tar
+setv YACC yacc
+setv YACCFLAGS -d
+make ${PACKAGEROOT}/lib/package/ast.lic
+done ${PACKAGEROOT}/lib/package/ast.lic
+make install
+make ed
+make ed.o
+make ed.c
+make ${PACKAGE_ast_INCLUDE}/regex.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_api.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+make ${PACKAGE_ast_INCLUDE}/wctype.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_wctype.h implicit
+make ${PACKAGE_ast_INCLUDE}/endian.h implicit
+make ${PACKAGE_ast_INCLUDE}/bytesex.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_map.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_common.h dontcare
+done ${PACKAGE_ast_INCLUDE}/bytesex.h dontcare
+done ${PACKAGE_ast_INCLUDE}/endian.h dontcare
+make ${PACKAGE_ast_INCLUDE}/wchar.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+done ${PACKAGE_ast_INCLUDE}/wchar.h dontcare
+done ${PACKAGE_ast_INCLUDE}/ast_wctype.h dontcare
+done ${PACKAGE_ast_INCLUDE}/wctype.h dontcare
+make ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_stdio.h implicit
+make ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio_s.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
+make ${PACKAGE_ast_INCLUDE}/getopt.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_getopt.h implicit
+make ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/prototyped.h dontcare
+done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_limits.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_fcntl.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_fs.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_fs.h dontcare
+done ${PACKAGE_ast_INCLUDE}/ast_fcntl.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_getopt.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_sys.h implicit
+prev ${PACKAGE_ast_INCLUDE}/getopt.h implicit
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_sys.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_lib.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_lib.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_std.h dontcare
+done ${PACKAGE_ast_INCLUDE}/ast_stdio.h dontcare
+done ${PACKAGE_ast_INCLUDE}/stdio.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_wchar.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/regex.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+make ${PACKAGE_ast_INCLUDE}/sig.h implicit
+done ${PACKAGE_ast_INCLUDE}/sig.h
+make ${PACKAGE_ast_INCLUDE}/sfdisc.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
+make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfdisc.h
+make ${PACKAGE_ast_INCLUDE}/ls.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_mode.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_mode.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_fs.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ls.h
+make ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/option.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/option.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/error.h
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done ed.c
+meta ed.o %.c>%.o ed.c ed
+prev ed.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?re]"\" -c ed.c
+done ed.o generated
+bind -last
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o ed ed.o ${mam_libast}
+done ed generated
+make red
+prev ed
+exec - if silent test -f "red"
+exec - then rm -f red
+exec - fi
+exec - ln ed red
+done red generated
+make grep
+make grep.o
+make grep.c
+prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
+make ${PACKAGE_ast_INCLUDE}/fts.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_mode.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_fs.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/fts.h
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/ccode.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_ccode.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_ccode.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ccode.h
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done grep.c
+meta grep.o %.c>%.o grep.c grep
+prev grep.c
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?Doug McIlroy <doug@research.bell-labs.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?re]"\" -c grep.c
+done grep.o generated
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o grep grep.o ${mam_libast}
+done grep generated
+make egrep
+prev grep
+exec - if silent test -f "egrep"
+exec - then rm -f egrep
+exec - fi
+exec - ln grep egrep
+done egrep generated
+make fgrep
+prev grep
+exec - if silent test -f "fgrep"
+exec - then rm -f fgrep
+exec - fi
+exec - ln grep fgrep
+done fgrep generated
+make sed
+make sed0.o
+make sed0.c
+make sed.h implicit
+prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ccode.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done sed.h
+done sed0.c
+meta sed0.o %.c>%.o sed0.c sed0
+prev sed0.c
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?Doug McIlroy <doug@research.bell-labs.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?re]"\" -D_PACKAGE_ast -c sed0.c
+done sed0.o generated
+make sed1.o
+make sed1.c
+prev sed.h implicit
+done sed1.c
+meta sed1.o %.c>%.o sed1.c sed1
+prev sed1.c
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c sed1.c
+done sed1.o generated
+make sed2.o
+make sed2.c
+prev sed.h implicit
+done sed2.c
+meta sed2.o %.c>%.o sed2.c sed2
+prev sed2.c
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c sed2.c
+done sed2.o generated
+make sed3.o
+make sed3.c
+prev sed.h implicit
+done sed3.c
+meta sed3.o %.c>%.o sed3.c sed3
+prev sed3.c
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c sed3.c
+done sed3.o generated
+setv LICENSE -DLICENSE="since=1995,author=gsf+doug"
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o sed sed0.o sed1.o sed2.o sed3.o ${mam_libast}
+done sed generated
+make ${INSTALLROOT}/bin
+exec - if silent test ! -d ${INSTALLROOT}/bin
+exec - then mkdir -p ${INSTALLROOT}/bin
+exec - fi
+done ${INSTALLROOT}/bin generated
+make ${INSTALLROOT}/bin/ed
+prev ${INSTALLROOT}/bin
+prev ed
+exec - test '' = 'ed' || ${STDCMP} 2>/dev/null -s ed ${INSTALLROOT}/bin/ed || { ${STDMV} ${INSTALLROOT}/bin/ed ${INSTALLROOT}/bin/ed.old 2>/dev/null || true; ${STDCP} ed ${INSTALLROOT}/bin/ed ;}
+done ${INSTALLROOT}/bin/ed generated
+make ${INSTALLROOT}/bin/red
+prev ${INSTALLROOT}/bin/ed
+exec - if silent test -f "${INSTALLROOT}/bin/red"
+exec - then rm -f ${INSTALLROOT}/bin/red
+exec - fi
+exec - ln ${INSTALLROOT}/bin/ed ${INSTALLROOT}/bin/red
+done ${INSTALLROOT}/bin/red generated
+make ${INSTALLROOT}/bin/grep
+prev grep
+exec - test '' = 'grep' || ${STDCMP} 2>/dev/null -s grep ${INSTALLROOT}/bin/grep || { ${STDMV} ${INSTALLROOT}/bin/grep ${INSTALLROOT}/bin/grep.old 2>/dev/null || true; ${STDCP} grep ${INSTALLROOT}/bin/grep ;}
+done ${INSTALLROOT}/bin/grep generated
+make ${INSTALLROOT}/bin/egrep
+prev ${INSTALLROOT}/bin/grep
+exec - if silent test -f "${INSTALLROOT}/bin/egrep"
+exec - then rm -f ${INSTALLROOT}/bin/egrep
+exec - fi
+exec - ln ${INSTALLROOT}/bin/grep ${INSTALLROOT}/bin/egrep
+done ${INSTALLROOT}/bin/egrep generated
+make ${INSTALLROOT}/bin/fgrep
+prev ${INSTALLROOT}/bin/grep
+exec - if silent test -f "${INSTALLROOT}/bin/fgrep"
+exec - then rm -f ${INSTALLROOT}/bin/fgrep
+exec - fi
+exec - ln ${INSTALLROOT}/bin/grep ${INSTALLROOT}/bin/fgrep
+done ${INSTALLROOT}/bin/fgrep generated
+make ${INSTALLROOT}/bin/sed
+prev sed
+exec - test '' = 'sed' || ${STDCMP} 2>/dev/null -s sed ${INSTALLROOT}/bin/sed || { ${STDMV} ${INSTALLROOT}/bin/sed ${INSTALLROOT}/bin/sed.old 2>/dev/null || true; ${STDCP} sed ${INSTALLROOT}/bin/sed ;}
+done ${INSTALLROOT}/bin/sed generated
+done install virtual
+make test
+make test.ed
+prev ed
+make ed.tst
+done ed.tst
+exec - regress ed.tst ed
+done test.ed virtual
+make test.grep
+prev grep
+make grep.tst
+done grep.tst
+exec - regress grep.tst grep
+done test.grep virtual
+make test.sed
+prev sed
+make sed.tst
+done sed.tst
+exec - regress sed.tst sed
+done test.sed virtual
+make test.glob
+make testglob
+make testglob.o
+make testglob.c
+make ${PACKAGE_ast_INCLUDE}/glob.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/glob.h
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done testglob.c
+meta testglob.o %.c>%.o testglob.c testglob
+prev testglob.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testglob.c
+done testglob.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testglob testglob.o ${mam_libast}
+done testglob virtual
+make testglob.dat
+done testglob.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - for i in testglob.dat
+exec - do testglob -c < $i
+exec - done
+done test.glob virtual
+make test.fmt
+make testfmt
+make testfmt.o
+make testfmt.c
+prev ${PACKAGE_ast_INCLUDE}/sig.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done testfmt.c
+meta testfmt.o %.c>%.o testfmt.c testfmt
+prev testfmt.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testfmt.c
+done testfmt.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testfmt testfmt.o ${mam_libast}
+done testfmt virtual
+make testfmt.dat
+done testfmt.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - testfmt -c testfmt.dat
+done test.fmt virtual
+make test.fnmatch
+make testfnmatch
+make testfnmatch.o
+make testfnmatch.c
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+make ${PACKAGE_ast_INCLUDE}/fnmatch.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/fnmatch.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done testfnmatch.c
+meta testfnmatch.o %.c>%.o testfnmatch.c testfnmatch
+prev testfnmatch.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testfnmatch.c
+done testfnmatch.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testfnmatch testfnmatch.o ${mam_libast}
+done testfnmatch virtual
+make testfnmatch.dat
+done testfnmatch.dat
+make testregex.dat
+done testregex.dat
+make locale.dat
+done locale.dat
+make testmatch.dat
+done testmatch.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - testfnmatch -c testfnmatch.dat testregex.dat locale.dat testmatch.dat
+done test.fnmatch virtual
+make test.match
+make testmatch
+make testmatch.o
+make testmatch.c
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done testmatch.c
+meta testmatch.o %.c>%.o testmatch.c testmatch
+prev testmatch.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testmatch.c
+done testmatch.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testmatch testmatch.o ${mam_libast}
+done testmatch virtual
+prev testregex.dat
+prev locale.dat
+prev testmatch.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - testmatch -c testregex.dat locale.dat testmatch.dat
+done test.match virtual
+make test.oldmatch
+make testoldmatch
+make testoldmatch.o
+make testoldmatch.c
+prev testmatch.c implicit
+make ${INSTALLROOT}/src/lib/libast/astsa/strmatch.c implicit
+make ${PACKAGE_ast_INCLUDE}/hashkey.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/hashkey.h
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done ${INSTALLROOT}/src/lib/libast/astsa/strmatch.c
+done testoldmatch.c
+meta testoldmatch.o %.c>%.o testoldmatch.c testoldmatch
+prev testoldmatch.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testoldmatch.c
+done testoldmatch.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testoldmatch testoldmatch.o ${mam_libast}
+done testoldmatch virtual
+prev testregex.dat
+prev locale.dat
+prev testmatch.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - testoldmatch -c testregex.dat locale.dat testmatch.dat
+done test.oldmatch virtual
+make test.regex
+make testregex
+make testregex.o
+make testregex.c
+make ${PACKAGE_ast_INCLUDE}/stk.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/stk.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done testregex.c
+meta testregex.o %.c>%.o testregex.c testregex
+prev testregex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c testregex.c
+done testregex.o virtual
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o testregex testregex.o ${mam_libast}
+done testregex virtual
+prev testregex.dat
+prev locale.dat
+prev testmatch.dat
+make testsub.dat
+done testsub.dat
+make testdecomp.dat
+done testdecomp.dat
+make rxposix.dat
+done rxposix.dat
+make zero.dat
+done zero.dat
+make regex++.dat
+done regex++.dat
+make iso8859-1.dat
+done iso8859-1.dat
+make perl.dat
+done perl.dat
+make minimal.dat
+done minimal.dat
+make escape.dat
+done escape.dat
+make group.dat
+done group.dat
+make haskell.dat
+done haskell.dat
+make nullsubexpr.dat
+done nullsubexpr.dat
+make subexpr.dat
+done subexpr.dat
+make nested.dat
+done nested.dat
+make austin.dat
+done austin.dat
+make xopen.dat
+done xopen.dat
+make pcre-1.dat
+done pcre-1.dat
+make pcre-2.dat
+done pcre-2.dat
+make pcre-3.dat
+done pcre-3.dat
+make pcre-4.dat
+done pcre-4.dat
+make pcre-5.dat
+done pcre-5.dat
+make cut.dat
+done cut.dat
+make libtre.dat
+done libtre.dat
+make reg.dat
+done reg.dat
+make callout.dat
+done callout.dat
+make type.dat
+done type.dat
+make repetition.dat
+done repetition.dat
+make rightassoc.dat
+done rightassoc.dat
+make forcedassoc.dat
+done forcedassoc.dat
+make noop.dat
+done noop.dat
+exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
+exec - testregex -c testregex.dat locale.dat testmatch.dat testsub.dat testdecomp.dat rxposix.dat zero.dat regex++.dat iso8859-1.dat perl.dat minimal.dat escape.dat group.dat haskell.dat nullsubexpr.dat subexpr.dat nested.dat austin.dat xopen.dat pcre-1.dat pcre-2.dat pcre-3.dat pcre-4.dat pcre-5.dat cut.dat libtre.dat reg.dat callout.dat type.dat repetition.dat rightassoc.dat forcedassoc.dat noop.dat
+done test.regex virtual
+done test dontcare virtual

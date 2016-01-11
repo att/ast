@@ -1,0 +1,17 @@
+The nonstandard stuff could not be found in in the first pubslished versions
+of the program. The first version I am aware of, is a program called   0126136 
+SUGtar published at the Sun User Group meeting in december 1987, a different
+publishing of the same program which has been originally written by
+John Gilmore was called PDtar. In 1987 PDtar/SUGtar was implementing a true
+subset of the 1987 POSIX-1003 draft (missing only the long name splitting).
+
+FSF people then later added t_atime... making GNU tar non POSIX compliant.
+When FSF added the sparse file handling stuff, this was done in a way that
+even violates any tar document available since the late 1970's.
+
+GNU tar is not tar...
+                                                                          
+                                                                          
+                                                                          
+                                                                          
+                               

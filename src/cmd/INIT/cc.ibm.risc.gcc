@@ -1,0 +1,36 @@
+: cc wrapper for aix risc gcc : 2012-04-17 :
+
+hosttype=ibm.risc
+
+case $HOSTTYPE in
+$hosttype-64)
+	case " $* " in
+	*" -maix64 "*)	;;
+	*)		set -- -maix64 "$@" ;;
+	esac
+	;;
+*)	case " $* " in
+	*" -maix64 "*)	HOSTTYPE=$hosttype-64 ;;
+	*)		HOSTTYPE=$hosttype ;;
+	esac
+	;;
+esac
+
+case " $* " in
+*" -dumpmachine "*)
+	echo $HOSTTYPE
+	exit
+	;;
+esac
+
+cc=gcc
+ccflags=
+
+case " $@ " in
+*" -shared "*)      
+	ccflags="$ccflags -shared -Wl,-G -Wl,-berok"
+	;;
+*)	ccflags="-Wl,-brtl"
+	;;
+esac
+$cc $ccflags "$@"

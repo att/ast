@@ -1,0 +1,65 @@
+: sgi.mips3-o32 cc wrapper that generates mips3 o32 binaries : 2006-02-14 :
+
+HOSTTYPE=sgi.mips3-o32
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+cc=/usr/bin/cc
+debug=
+dynamic=-G0
+flags=
+ignore=1685,733,1048,1155,1171,1184,1209,1343,3169,3170,3433
+ldignore=15,84,85,13
+optimize=
+
+case $_AST_cc_OPTIONS in
+?*)	eval $_AST_cc_OPTIONS ;;
+esac
+case $ignore in
+?*)	ignore="-woff $ignore" ;;
+esac
+case $ldignore in
+?*)	ifs=$IFS
+	IFS=,
+	v=$ldignore
+	ldignore=
+	for i in $v
+	do	ldignore="$ldignore -Wl,-woff,$i"
+	done
+	IFS=$ifs
+	;;
+esac
+case $debug in
+?*)	integer n=0
+	for i
+	do	case $i in
+		-g*)	case $debug in
+			-)	continue ;;
+			esac
+			i=$debug
+			;;
+		esac
+		a[n++]=$i
+	done
+	set -- ${a[@]}
+	;;
+esac
+case $optimize in
+?*)	integer n=0
+	for i
+	do	case $i in
+		-O*)	case $optimize in
+			-)	continue ;;
+			esac
+			i=$optimize
+			;;
+		esac
+		a[n++]=$i
+	done
+	set -- ${a[@]}
+	;;
+esac
+
+$cc -o32 -mips3 $flags $dynamic $ldignore $ignore "$@"

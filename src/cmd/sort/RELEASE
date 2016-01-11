@@ -1,0 +1,71 @@
+10-08-11 main.c: use conformance(0,0) for "standard"
+10-05-25 main.c: handle mb -t
+10-05-11 main.c: add -p,--plugins=style -- common to all command swith plugins
+10-04-22 main.c: -C => -E, add posix --silent-check, -C
+10-04-11 main.c: drop -S,--unstable, handle --nostable, -[Sy]N => -zpN
+10-04-03 main.c: add locale reference to the sort order description
+09-12-09 main.c: add -h, --scaled|--human-readable
+08-04-24 main.c: add optget() 'n' option for -1 => -K1
+07-10-30 main.c: default insize == procsize -- worth ~25% time!
+07-10-30 sort.tst,testsort.sh: export LC_ALL=C
+07-01-25 main.c: v format size is max of all input files
+06-07-17 main.c: RS_POP before checking output
+06-07-17 main.c: handle empty file for record format data sample
+06-05-09 main.c: add path to record format determination message
+	 main.c: fix -o path to inherit -R% format from input
+	 sort.tst: fix -R% v format test
+06-04-19 main.c: fix minor merge file list bug
+06-01-21 testsort.sh: fix pure sum command search logic
+05-11-01 rec.c: add --count
+05-06-30 main.c: add -zbBUFSIZE for regression testing
+05-06-27 main.c: convert sftmp() etc. to rstmp*()
+05-06-24 sfopen.c: allow multiple io intercepts per program
+05-06-11 main.c: fix duplicate sfdcgzip() bug that corrupted input
+05-05-31 main.c: mv rslib() before key->input[] record format processing
+05-05-17 main.c: delay -l* => rslib() until all options parsed
+05-05-11 main.c: fix -R* parse, preserve output zip/record attributes
+04-12-01 main.c: fix -zI bug that only worked for 1 input file (sort#26)
+04-09-28 main.c: fix ERROR_USAGE logic
+04-08-11 main.c: add #intermediates to -Xdump, limit intermediates to 64
+04-07-22 main.c: acces() => eaccess()
+04-06-16 main.c: -R% -R- use recfmt() to sample for record format
+04-02-11 main.c: document the obsolescent -k reclen:fieldlen:offset
+	 sort.tst: add -k reclen:fieldlen:offset vs. -k .r -k .o.f tests
+03-11-11 main.c: fix sfread vs. sfreserve logic fooled by SFOPEN_INTERCEPT
+03-11-04 sfopen.c: add SFOPEN_INTERCEPT experiment 
+03-10-16 main.c: add RS_CAT check
+03-10-11 main.c: add RS_IGNORE checks, -R% to get size from path%lrecl
+	 sort.tst: add -R% tests
+03-09-06 main.c: add -Z, --zd, --zoned-decimal
+03-09-04 main.c: change -R to --record=format | --recfmt=format
+03-08-31 main.c: -l implemented by rslib()
+03-08-15 main.c: add -J, --shuffle=seed
+03-05-27 main.c: add -C, --codeset={a,e,i,o,n}, -p, --bcd, --packed-decimal
+03-05-23 main.c: add -R, --reclen=reclen
+03-03-11 testsort.sh: initialize $CC from :TEST: TESTCC state var
+03-03-07 Makefile: +lsort for now
+01-04-19 sort.tst: add -s tests
+00-03-09 main.c: fix infomation typo
+00-12-25 main.c: close input before final overwrite ops
+00-08-31 main.c: add -zcCHUNK to sort in chunks with merge disabled
+99-11-19 main.c: use rskeylist() for method usage
+99-11-11 main.c: unstable sort is the default for backwards compatibility
+99-08-11 main.c: fix usage[]
+99-06-07 main.c: add -o in any file position for backwards compatibility
+99-03-03 main.c: add long options
+	 sort.tst: add gnu tests; `b' is tricky
+99-01-11 fix buffer boundary bug that emitted `newline appended' on 4k systems
+98-03-17 add -zI -zO to zip input/output
+98-03-11 fix sfmove() error checks
+	 close output before rename
+97-12-07 -Td1:d2:...:dn works via pathtmp(0,p,"/TMP_PATH",0)
+	 pathtmp(0,0,"/cycle",0) could be used to control phase tmp files
+96-07-17 insize is much less aggressive -- must nail down reasonable proc mem
+	 fix bug that required 2 ^D for interactive input
+96-12-25 drop sfset(sfstdin,SF_SHARE,0)
+96-10-22 sfreserve tweaks
+	 multi-stage merge now keeps previous stages out until next stage
+	 sfreserve() only if 1 S_ISREG() input file
+96-10-17 increase merge file limit to (OPEN_MAX-16) where possible
+	 update testsort TEST=15 input file size to force multi-stage merge
+96-10-11 all regression tests pass for all methods

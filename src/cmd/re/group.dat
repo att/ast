@@ -1,0 +1,50 @@
+: perl group extension tests 2001-06-18
+
+E	(?(0)a|b)		a		ESUBREG
+Ex	SAME			a		(0,1)
+E	SAME			b		ESUBREG
+Ex	SAME			b		NOMATCH
+
+K	~((0)a|b)		a		(0,1)
+K	SAME			b		NOMATCH
+K	SAME			~((0)a|b)	(5,6)
+
+E	(?(1)a|b)		a		ESUBREG
+Ex	SAME			a		NOMATCH
+E	SAME			b		ESUBREG
+Ex	SAME			b		(0,1)
+
+K	~((1)a|b)		a		NOMATCH
+K	SAME			b		(0,1)
+K	SAME			~((1)a|b)	(7,8)
+
+E	(a)(?(1)a|b)		aa		(0,2)(0,1)
+E	SAME			ab		NOMATCH
+E	SAME			ba		NOMATCH
+E	SAME			bb		NOMATCH
+
+K	@(a)~((1)a|b)		aa		(0,2)(0,1)
+K	SAME			ab		NOMATCH
+K	SAME			ba		NOMATCH
+K	SAME			bb		NOMATCH
+
+E	((a)|(b))(?(2)a|b)	aa		(0,2)(0,1)(0,1)
+E	SAME			ab		NOMATCH
+E	SAME			ba		NOMATCH
+E	SAME			bb		(0,2)(0,1)(?,?)(0,1)
+
+E	((a)|(b))(?(3)a|b)	aa		NOMATCH
+E	SAME			ab		(0,2)(0,1)(0,1)
+E	SAME			ba		(0,2)(0,1)(?,?)(0,1)
+E	SAME			bb		NOMATCH
+
+Bi	^g.*style$		Grep-Style		(0,10)
+Ei	^g.*style$		Grep-Style		(0,10)
+E	(?+i)^e.*style$		Egrep-Style		(0,11)
+K	~(i)k*style		Ksh-Style		(0,9)
+K	~(Bi)grep-style		Grep-Style		(0,10)
+K	~(Bi)grep-style$	Grep-Style		(0,10)
+K	~(Bi)^grep-style$	Grep-Style		(0,10)
+K	~(Bi)g.*style$		Grep-Style		(0,10)
+K	~(Bi)^g.*style$		Grep-Style		(0,10)
+K	~(Ei)^e.*style$		Egrep-Style		(0,11)

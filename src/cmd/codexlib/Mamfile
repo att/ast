@@ -1,0 +1,7 @@
+info mam static
+note subcomponent level :MAKE: equivalent
+make install
+make all
+exec - ${MAMAKE} -r '*' ${MAMAKEARGS}
+done all virtual
+done install virtual

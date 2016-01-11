@@ -1,0 +1,158 @@
+: next.i386 cc wrapper for unix message and exit code semantics : 1995-05-09 :
+
+HOSTTYPE=next.i386
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+# 1995-05-09	-lposix termios.o waitpid.o setpgid.o *do* work
+# 1994-11-04	-posix has old redirection hole bug
+#		-D_POSIX_SOURCE requires <sys/dirent.h> manual fixes
+#		libexpr/exeval.c bombs -O, no -O ok
+
+command=cc
+cc="/bin/cc -D_POSIX_SOURCE"
+nooptimize="exeval"
+
+# first check $INSTALLROOT/botch
+
+case $INSTALLROOT in
+"")	echo "$command: INSTALLROOT: must be defined and exported" >&2; exit 1 ;;
+esac
+if	test ! -d $INSTALLROOT/botch -a -dryrun != "$1"
+then	if	mkdir $INSTALLROOT/botch
+	then	: ok to initialize
+	else	echo "$command: $INSTALLROOT/botch must be initialized by the owner of $INSTALLROOT" 2>&1
+		exit 1
+	fi
+	(
+		cd $INSTALLROOT/botch
+		dir=.
+		for i in lib . include sys
+		do	case $i in
+			.)	dir=.
+				;;
+			*)	case $i in
+				/*)	dir=$i ;;
+				*)	dir=$dir/$i ;;
+				esac
+				test -d $dir || mkdir $dir
+				;;
+			esac
+		done
+		if	test ! -f include/sys/dirent.h
+		then	echo "#include <dirent.h>" > tmp.c
+			header=`$cc -E tmp.c | sed -e '/^#[ 	]*1[ 	].*\/sys\/dirent\.h"/!d' -e 's/.*"\(.*\)".*/\1/'`
+			sed -e 's/[ 	]off_t[ 	][ 	]*d_off[ 	]*;//' $header > include/sys/dirent.h
+		fi
+		if	test ! -f lib/libbotch.a
+		then	lipo /usr/lib/libposix.a -thin i386 -output tmp.a
+			ar x tmp.a termios.o waitpid.o setpgid.o
+			ar cr lib/libbotch.a *.o
+			ranlib lib/libbotch.a
+		fi
+		rm -f *.[aco]
+	)
+fi
+
+# now slip in our args
+
+case $nooptimize in
+"")	nooptimize=.
+	;;
+*)	optimize=
+	for arg in $nooptimize
+	do	case $optimize in
+		?*)	optimize="$optimize|" ;;
+		esac
+		optimize="$optimize$arg.[ci]|*/$arg.[ci]"
+	done
+	nooptimize=$optimize
+	;;
+esac
+set . "$@" .
+noexec=
+library=
+local=
+optimize=
+verbose=
+while	:
+do	shift
+	arg=$1
+	shift
+	case $arg in
+	.)	break
+		;;
+	-[cES])	library=1
+		;;
+	-O)	optimize=1
+		;;
+	-v)	verbose=1
+		;;
+	-dryrun)noexec=1
+		verbose=1
+		;;
+	-I-)	case $local in
+		"")	local=1
+			set . "$@" -I$INSTALLROOT/botch/include -I- -I$INSTALLROOT/botch/include
+			;;
+		*)	set . "$@" -I- -I$INSTALLROOT/botch/include
+			;;
+		esac
+		continue
+		;;
+	-I*|*.[cChHiI]|*.[cChHiI][pPxX][pPxX])
+		case $optimize in
+		1)	eval	"
+				case \$arg in
+				$nooptimize)
+					optimize=0
+					;;
+				esac
+			"
+			;;
+		esac
+		case $local in
+		"")	local=1
+			set . "$@" -I$INSTALLROOT/botch/include "$arg"
+			continue
+			;;
+		esac
+		;;
+	-last|*/libast.a)
+		case $library in
+		"")	library=1
+			set . "$@" $INSTALLROOT/botch/lib/libbotch.a "$arg" $INSTALLROOT/botch/lib/libbotch.a
+			continue
+			;;
+		esac
+		;;
+	esac
+	set . "$@" "$arg"
+done
+case $library in
+"")	set . "$@" $INSTALLROOT/botch/lib/libbotch.a
+	shift
+	;;
+esac
+case $optimize in
+0)	set . "$@" .
+	while	:
+	do	shift
+		arg=$1
+		shift
+		case $arg in
+		.)	break ;;
+		-O)	set . "$@" ;;
+		*)	set . "$@" "$arg" ;;
+		esac
+	done
+	;;
+esac
+case $verbose in
+?*)	echo $cc "$@" ;;
+esac
+case $noexec in
+"")	$cc "$@" ;;
+esac

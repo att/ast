@@ -1,0 +1,4 @@
+12-02-14 vdelhdr.h,vdio.c: apply patch from philippe.bergheaud
+04-03-14 vdelta.h: #if !_DLL => #if !defined(_DLL) to handle empty value
+08/11/95 version 2.0 -- new delta layout but old update recognized
+04/24/95 back out of latest version -- incompatible deltas generated

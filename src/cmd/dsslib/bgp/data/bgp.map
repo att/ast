@@ -1,0 +1,77 @@
+<MAP>
+	<NAME>bgp_type</>
+	<DESCRIPTION>BGP packet type.</>
+	<IGNORECASE>1</>
+	<PART>
+		<ITEM>
+			<NAME>announce</>
+			<VALUE>A</>
+		</>
+		<ITEM>
+			<NAME>keepalive</>
+			<VALUE>K</>
+		</>
+		<ITEM>
+			<NAME>notification</>
+			<VALUE>N</>
+		</>
+		<ITEM>
+			<NAME>open_session</>
+			<VALUE>O</>
+		</>
+		<ITEM>
+			<NAME>state_change</>
+			<VALUE>S</>
+		</>
+		<ITEM>
+			<NAME>table</>
+			<VALUE>T</>
+		</>
+		<ITEM>
+			<NAME>update</>
+			<VALUE>U</>
+		</>
+		<ITEM>
+			<NAME>withdraw</>
+			<VALUE>W</>
+		</>
+	</>
+</>
+<MAP>
+	<NAME>bgp_origin</>
+	<DESCRIPTION>BGP packet origin.</>
+	<IGNORECASE>1</>
+	<PART>
+		<ITEM>
+			<NAME>EGP</>
+			<VALUE>e</>
+		</>
+		<ITEM>
+			<NAME>IGP</>
+			<VALUE>i</>
+		</>
+		<ITEM>
+			<NAME>INCOMPLETE</>
+			<VALUE>?</>
+		</>
+	</>
+</>
+<MAP>
+	<NAME>bgp_atomic</>
+	<DESCRIPTION>BGP atomic names.</>
+	<IGNORECASE>1</>
+	<PART>
+		<ITEM>
+			<NAME>NAG</>
+			<VALUE>0</>
+		</>
+		<ITEM>
+			<NAME>AG</>
+			<VALUE>1</>
+		</>
+		<ITEM>
+			<NAME>UNKNOWN</>
+			<VALUE>?</>
+		</>
+	</>
+</>

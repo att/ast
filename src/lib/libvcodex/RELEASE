@@ -1,0 +1,32 @@
+11-01-31 Makefile: use `...` instead of $( ... ) for bootstrap build
+10-06-01 sync with ast api 20100601
+09-08-19 vchufgroup.c: sync with kpv (new alg)
+09-06-22 sync with kpv, add vcgetfname(), vcwalkfname()
+09-03-12 vcstrip.c: add
+09-03-10 vcalias.c: add qnl
+09-02-24 vcalias.c: add rte
+09-02-24 vcsfio.c: ignore VC_EOF+ at end of header data
+09-02-02 vcsfxsort.c: fix suffix sort stack overflow bug
+08-12-07 sync with kpv 2008-11-04
+08-09-10 vcsfio.c: handle old binary method header
+08-07-23 vcodex.h: add __EXPORT__/__IMPORT__ extern attributes
+08-06-04 sync with kpv
+06-07-26 vcgetmeth.c,vcextract.c: handle CC_NATIVE!=CC_ASCII
+06-02-14 vcodex.h: add __EXPORT__ to plugin declaration
+06-02-08 vcsfio.c: simply magic logic by just peeking 4 byte magic
+06-01-24 move private builtin methods to private plugins
+06-01-16 Nmakefile: add PRIVATE for non-cpl methods
+06-01-13 vcgetmeth.c: fix "foo.arg" parse error
+05-10-25 vcsfio.c: fix header peek logic
+05-09-28 Vchuff/vchhdr.h: add type case to ARRAYMAKE()
+05-09-22 vcsfio.c: vczip command support functions for the masses
+05-09-16 vcodex.h,vcsfio.c: add vcsfcomp() stub for vczip getmethods()
+05-09-15 snarf from kpv, remerge _PACKAGE_ast
+05-08-23 vcodex.h,vcsfio.c: add sfdcvcodex() (1:pushed,0:not-needed,-1:error)
+05-08-22 vcsfio.c: peek initial header => no consumption on error
+05-06-30 vcsfio.c: change vcsfmeth() to return Vcsfmeth_t* and size
+05-06-29 vcodex.h: _PACKAGE_ast => <sfio.h>
+	 fix !__STD_C for ancient sun4
+	 change ident to char* (from unsigned char*) for pedantic cc
+	 Vcdelta/vcdtblinit.c: init { _Vcdtbl _Vcdindex } to avoid dyn common
+05-06-28 snarf from kpv

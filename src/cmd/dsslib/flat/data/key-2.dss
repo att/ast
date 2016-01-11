@@ -1,0 +1,34 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>keyed</>
+	<DESCRIPTION>keyed data test.</>
+	<PHYSICAL>
+		<DELIMITER>&space;</>
+		<CONTINUE>&space;</>
+		<TERMINATOR>&newline;</>
+	</>
+	<FIELD>
+		<NAME>location</>
+		<DESCRIPTION>Data location.</>
+		<TYPE>string</>
+	</>
+	<FIELD>
+		<NAME>id</>
+		<DESCRIPTION>Original ID.</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<KEY>
+				<NAME>id</>
+				<QUALIFICATION>location=="local"</>
+			</>
+		</>
+	</>
+	<FIELD>
+		<NAME>ID</>
+		<DESCRIPTION>Current ID.</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<KEY>id</>
+		</>
+	</>
+</>

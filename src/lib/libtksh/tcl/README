@@ -1,0 +1,51 @@
+This directory contains files copied from the Tcl distribution.
+There is no original code here.
+
+Unmodified files (originally from Tcl7.4)
+-----------------------------------------
+ regexp.c
+ tclAsync.c
+ tclCmdMZ.c
+ tclExpr.c
+ tclGet.c
+tclGlob.c
+ tclHash.c
+ tclLink.c
+ tclParse.c
+
+Modified files (originally from Tcl7.4)
+---------------------------------------
+ panic.c:	ifdef 0 around "include <stdlib.h>", includes ast to avoid
+		conflict
+ tclCmdAH.c:	changed line checking TCL_PLATFORM_MAC to assume not
+ tclCmdIL.c:	removed Tcl_InfoCmd
+ tclUtil.c:	Tcl_Splitlist, Tcl_ScanElement, Tcl_ConvertElement, Tcl_Merge
+		 renamed, Tcl_RegExp stuff ready to be #ifdefed out
+ tclInterp.c:	include ast.h first to avoid conflict
+
+Files Added for Tcl7.5 - Unmodified
+-----------------------------------
+ tclClock.c
+ tclDate.c
+ tclFHandle.c
+ tclLoad.c
+ tclLoadDl.c
+ tclNotify.c
+ tclPkg.c
+ tclPosixStr.c
+ tclPreserve.c
+ tclUnixTime.c
+
+Files Added for Tcl7.5 - Modified
+-----------------------------------
+ tclEvent.c:	Added field in After struct for interp type, used by AfterProc
+ tclIOCmd.c:	ifdefed out lines of code
+ tclIOUtil.c:	ifdefed out lines of code
+ tclUnixFile.c:	ifdefed out TclMatchFiles, 7.5 ifdef for TclCreateTempFile
+ tclUnixChan.c:	ifdefed out CreateSocket, CreateSocketAddress, Tcp funcs
+		TclGetAndDetachPids, PipeCloseProc
+ tclUnixNotfy.c:added support for UWIN
+
+Notes
+-----
+tclFileName.c not used, using tclGlob from tcl7.4 instead

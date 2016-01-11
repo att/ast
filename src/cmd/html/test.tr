@@ -1,0 +1,67 @@
+.ie 0 .tm "check WA, WE, IA, IE, LT sequence"
+.el .if 0 .ie !0 .tm "check TL, AU, AS, AE, MT sequence"
+.el .tm "check TL, AU, AS, AE, NS, NE, MT sequence"
+
+.if 1 \{.ie 1 \{
+.tm OK-1
+.tm OK-2\}
+.el\{
+.ie 1 \{
+.tm OK-3
+.tm OK-4\}
+.el\{
+.ie 1 \{
+.tm OK-5
+.tm OK-6 \}
+.el\{.if 1 \{
+.tm OK-7
+.tm OK-8 \\$1 \}\}\}\}\}
+
+.di >K
+.nf
+.ce
+This is a diversion/center test.
+And the end.
+.fi
+.di
+.sp
+THE MACRO
+.sp
+.>K
+.sp
+THE STRING
+.sp
+\*(>K
+
+.de>Z
+This is the macro/string test.
+..
+.sp
+THE MACRO
+.sp
+.>Z
+.sp
+THE STRING
+.sp
+\*(>Z
+.ev 1
+.ev
+.ev aaaa
+.ev
+.cp 0
+.open xx-stream tmp.tmp
+.write xx-stream .write stdout <EM>from write to stdout</EM>
+.write xx-stream .write stderr from write to stderr
+.close xx-stream
+.so tmp.tmp
+.sy rm tmp.tmp
+.ce 3
+center
+three
+lines
+.rj 4
+right
+justify
+four
+lines
+then the last line

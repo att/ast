@@ -1,0 +1,9 @@
+: sco.i386 cc wrapper with reasonable binary and namespace : 1998-02-04 :
+
+HOSTTYPE=sco.i386
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+/bin/cc -b elf -D_SVID3 "$@"

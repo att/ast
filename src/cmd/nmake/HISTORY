@@ -1,0 +1,1288 @@
+make change history
+
+12/01/93 3.0 release
+10/31/93 fix make.probe stdlib test for preroot systems
+	 instrument={insight,purify,sentinel,etc} instead of purify=1 
+	 fix VROOT,VOFFSET in 3d
+	 add :T=QV: to select defined variables
+	 fix pdp11 archive header swapping and alignment -- used by SCO!
+	 add break [n], continue [n]
+	 handle hp archive member name truncation at 14 rather than 15!
+10/11/93 5e inspired upgrade and beta fixes
+	 convert multiple metarule prereq pattern A%B to A$(%)B
+	 add .DONTCARE. pattern association to intercept don't know how to ...
+	 add :P=B: for physical binding
+	 -lm : .DONTCARE in makerules for systems that combine it with -lc
+	 fix :G=pat: to handle secondary targets
+	 fix unbind() to set rule.view=0
+09/30/93 bias unique() aliases towards shorter pathnames
+	 add .MAKEDONE to correspond with .MAKEINIT
+	 .SCAN.* state change causes rescan
+	 preserve matches :B:S: if no / in pattern
+	 purify=1 adds -g to CCFLAGS rather than replaces CCFLAGS with -g
+	 fix += interaction bugs between command line and makefile
+	 fix cancel bug that ignored top view state for lower view
+09/11/93 fix scan attribute propagation bug that ignored scanrules |OX|
+	 fix view+cancel+accept inconsistency where action always triggered
+	 add set option=<flag>,<name>[,<type>,<set>] for external options
+	 fix rebind/unbind bug that kept old bound name
+	 add arclean to [de]select .ARCLEAN files
+	 fix binding bug that didn't break it soon enough for r.status==UPDATE
+	 fix :A=.MAKE: bug that missed (internal.make.property&P_make)==0
+	 fix :P=L[*!]: bug that failed for non-3d views
+08/11/93 S|action| (start) and F|action| (finish) added to scan language
+	 O|options| now takes delimiter for scan language consistency
+	 all scan actions but [OQ] accept [AMR]
+	 |O*| sets scan match flags: X inhibits scan propagation
+	 no scan propagation for D_scanned files
+	 $(<r1 r2 ...) now supported
+	 { .ENTRIES .MEMBER .REGULAR .SCANNED } under user control
+	 :T=R<tmform-pattern>: added
+	 makefile prereq state atoms initialized as courtesy to query
+	 fix aliasing bug that skipped action trigger
+	 fix metarule bug that skipped %:%.x !!
+	 add .ACTIVE readonly attribute
+07/17/93 add -o regress=dir (-R dir) for regression output
+	 properly handle * in scanexec()
+	 handle archive member name truncation
+	 complete $(%) $(<<) etc. scan definitions
+	 change I|*|P to use M+function in scanrules
+	 fix `termination code' error checks and messages
+	 fix cancel bug that ignored implicit prereq event time
+	 -o option=-c[absx]name allows user option by flag declarations
+	 .TERMINAL .SOURCE dirs skipped for dir/base file binding
+	 MAKERULES name change forces reread, duh
+	 :LIBRARY: properly handles rhs -l*
+06/11/93 bindfile,makerule,getrule,hashlook optimizations via gprof,purify
+	 fix old bug that forced attribute names to start with .
+	 fix alias bug in expand.attribute() and variable.scanprereqs()
+	 .MAKE .FUNCTIONAL no longer gets .FOREGROUND by default
+	 :LIBRARY: CC.PIC check ignores case
+06/01/93 fix interrupt traps to honor critical regions via trap.c
+04/01/93 add s5r4 long member names to portarch scan
+	 add +l<lib> for selective static link
+	 fix probe_pic probe
+	 metarule for a/b tries a prefix before plain b on rhs
+	 optimize bindfile() for relative prefix searches
+03/01/93 change source() to handle modified prereqs before compile
+	 add optional timestamp to .BIND.% return value
+01/28/93 add :T=O[-][+][=data]: to complement :T=I[-]:
+	 fix attribute propagation bug when ()r in state but r not
+01/22/93 fix *.m[os] .BUILT tests (fixes :MAKE: clobber bugs)
+	 fix :cc: cancel bug that failed to propagate lower .o's to link
+	 fix `did not complete' bug that counted .MAKE status == UPDATE
+	 add T|pattern|Rmakefile-chunk to .SCAN
+	 .UNBIND on metarule drops chain for metarule
+	 fix attribute assignment in assertion parser (very old bug)
+01/18/93 3.0 beta release
+	 * portable, extensible and compact object format
+	 * makefile prereq code understandable
+	 * no MAKEBUFFERSIZE
+	 * MAKECONVERT for compile time makefile conversion
+01/15/93 switch to sfio write strings
+	 most buffer limits (especially MAKEBUFFERSIZE) eliminated
+	 :P=L*: returns all views of bound file
+01/11/93 fix C++ PTR makerules
+	 fix .FUNCTION -MAKE
+	 :O: returns token count, :O!: returns token strlen
+	 :H<=: lo to hi numeric sort, :H>=: hi to lo numeric sort
+12/25/92 switch to sfputu/sfgetu architecture independent object format
+	 old format (8/11/92 sequence 0,1,2) read but not written
+	 object files now 30-60% smaller due to sfputu and omitted fields
+	 object format now decoupled from the internal struct layout
+	 change rule.runtime from allocated pointer to direct field
+11/30/92 fine tune -I and -L generation
+	 handle `vpath /lib $(LIBDIR)'
+11/11/92 convert .ATTRIBUTE and .SCAN inconsistencies on statefile load
+	 warn about conflicting scan strategies
+	 don't drop .mo in virtual dot
+	 delay .ml drop in virtual dot until first sh action / touch
+10/12/92 allow multiple .INSERT/.APPEND
+	 fix clobber.install and list.install for $(CC.SO)
+	 fix scan looping bug for @
+10/01/92 fix bug in make() that lost original name for unalias()
+	 fix joint bug that failed to decrement rule.must in cancel()
+09/11/92 block on targets with .MAKE after prereqs
+08/11/92 add -o mamtrace=file for runtime mam trace
+	 unkown option now exits non-zero
+07/17/92 extend :PACKAGE: to handle X11, etc. with mam
+	 :operator: with .IGNORE does not expand args
+	 add editcontext() to edit operator error messages
+	 :M re match now uses egrep style patterns
+	 add ``begin @ % @ end'' multi-line scan match
+06/11/92 fix missing include bug that failed to recheck on next run
+06/01/92 add `print' statement and prompt only for isatty(stdin)
+	 update probe for typed $stdinclude dirs
+04/28/92 #pragma prototyped the source
+04/16/92 fix stdarg.h proto(1) courtesy by adding .TERMINAL
+04/01/92 2.3 release
+02/29/92 shared -l% are marked .IGNORE to avoid no-op ld
+	 warn on invalid variable name in assignment
+	 fix joint $(<) and $(^) bug
+	 fix $(!) bug that omitted explicit after build
+	 fix += cmd arg bug that ignored original value
+02/11/92 fix $(>) state test
+	 fix isstatevar() test
+	 fix frozen var bug that missed := and += on cmd line
+	 fix $(=) to generate == for V_scan vars
+	 add $(CCLD) for .o vs. a.out control
+	 add purify=1 control for easy purification
+11/11/91 try ccc -> .CCC on first arg at interpreter prompt
+	 fix metarule closure sequence error
+	 add :PACKAGE:
+	 fix BEFORE,AFTER command.c inconsistencies
+10/11/91 change over to feature command
+	 fix D_member|D_membertoo logic
+	 scan() now assigns .TERMINAL to .PFX.INCLUDE files (cannot generate)
+	 fix not in view 0 check to also check cancel time
+	 fix state.touch to work with state.exec
+	 '***' error messages now error level 2 (make: prefix)
+	 makerules tmp files use tmp=$COTEMP as base
+	 assertion operators now always have [lr]hs expanded before entry
+	 var definitions in load action can override import vars
+	 add CC.PIC, CC.SHARED, CC.SHARED.LIBRARY to probe
+09/11/91 parameterize makerules ancestor with ancestor_list and ancestor_source
+	 handle MAKEFILES=...$(PWD)... in :MAKE:
+08/11/91 add @ repeat op in scan patterns
+	 add C++ ptrepository makerules support
+	 make .DONE before state saved
+	 fix merge() to merge only if to.status==NOTYET or from.use
+	 fix makerules .ARCLEAN to not delete .TERMINAL's
+	 fix -g *.mk out of date with *.mo panic
+	 add X scan rule op to ignore line
+	 move queue() logic into trigger()
+	 fix state.exec==0 .BEFORE and .AFTER trace
+	 add :P=H[=suffix]: to generated short hash file names
+	 fix mam .ALWAYS expansions
+	 change .OPERATOR local vars to .*.
+	 add idempotent wrapper to y.tab.h generation
+	 move $ include from .SCAN.F to .SCAN.sql
+07/17/91 add metaclose() to fix metarule closure
+	 move secondary metarule search to metarule() -- nice encapsulation
+	 fix trigger() and queue() to properly handle non-action targets
+	 pass defined option=xxx options in $(-) and $(+)
+	 fix multiple target metarules by using joint
+	 fix :P=I: usage in makerules .DO.INSTALL
+	 finally implemented `A Case for Make' event time algorithm
+	 SEQUENCE=2 to handle event times
+	 fix freevar()-newvar() bug that did not clear value
+	 fix :T=G: to handle P_terminal
+	 delete .UNTOUCH, change .TOUCH to .REBIND
+	 .REBIND finally supports targets generated in .SOURCE dirs
+	 fix ignore,keepgoing,dontcare interactions
+	 add syntax check for local var declarations (i.e., no assignment)
+	 delete .MAKESCAN -- not used
+	 add _feature_ to Makeinstall.mk
+	 delete .PRECIOUS in liu of rule.state.event=0
+06/11/91 unknown :operator: attempt `include "operator"' before failing
+	 fix .ATTRIBUTE clash load bug by not doing free()
+	 fix functional recursion
+	 fix view bug that missed files under missing intermediate views
+05/11/91 add newfile(*.mo) in compile()
+	 fix :MAKE: to omit lhs on recursion
+	 change D_alias getrule() to makerule() -- may be dropped from .m[os]
+04/11/91 add :LIBRARY: $(LIBDIR)/lib/xxx, -lxxx .REQUIRE. support
+	 add .REQUIRE. pattern association for atom multiplexing
+	 :INSTALLDIR: now mkdir's to any depth
+	 fix '...', "...", /*...*/ interactions with #...\n
+04/01/91 add .LOCAL to separate CO_LOCAL from .ALWAYS
+	 replace P_noclear with P_local
+	 fix :MAKE: to use .VIEW instead of .
+03/11/91 add + to .BIND.% association
+	 add LDLIBRARIES to FEATURE/% in makerules
+02/11/91 pass scoped COATTRIBUTES to coexec()
+	 delete OPT_headerstate (-x), add OPT_expandview (-x)
+	 add :K=<pfx>: operator to break long lines
+	 remove P_target attr from internal.interpreter
+	 add ``$(ARSCAN|AR) $(ARSCANFLAGS|"tv")'' scan for unknown archives
+	 fix VPATH bug that omitted some nodes
+	 fix scan bug that dumped when given a 24K /*...*/ comment!
+01/31/91 minor fixes
+	 add aix archive format to archive.c (thanks to Jim Gentilesco)
+01/01/91 add package to makerules
+	 add more dirs to .SOURCE.mk initialization for user include support
+12/11/90 change $(v(a1 ... an)) to $(v a1 ... an)
+	 recursive functionals: args in $(%), `return value' for return
+	 add statetime(r,-1) to resolve makeafter() target
+	 add .FUNCTION pseudo-attribute to makerules
+	 .BIND.* and .MAMNAME. are now .FUNCTION
+	 .SCAN map arg match changed from $(.SCAN.) to $(%)
+	 add .ARPREVIOUS to fix $(AR) d bug in .ARCHIVE.o
+	 fix newvar() bug that clobbered import values
+	 fix frozen var checks again
+11/11/90 2.2 release
+	 in unbind() if r->uname putrule(r->name,0)
+	 active target prerequisites may be appended
+10/11/90 fix jobs bug that scheduled pending jobs after error with nokeepgoing
+	 switch over to libx/malloc
+	 .BIND.-l% with CC.PROFILE now checks libX-P.a and libP/libX.a
+	 fix OLDMAKE bug that omitted x=y args
+	 add cc- for making profile/debug versions
+	 change .ARCLEAN to exec immediately after main action
+10/01/90 add mips ar format out of date check
+	 fix :MAKE: one more time, concurrency -> recurse in makerules
+	 add $(v(a1 ... an)) functional var with args support
+	 add pathcheck() call for optional runtime validation
+08/11/90 fix .JOINT for .SCAN.* targets
+	 fix .JOINT state bug that built targets twice
+	 fix libx/hashnext() bug that mishandled hashput(t,n,0)
+	 add :T=SF.: to force rule, :T=SA: to get atom from staterule
+	 add :T=XSFA: to .SELECT. to get statrules w/o related atoms
+	 fix view bug that allowed target view to be higher than min prereq
+	 add I pattern attribute and property propagation to OM in scanmacro()
+	 add .M4.INCLUDE to .SCAN.m4 in Scanrules
+	 handle dangling rule.status==IMPLICIT in make()
+	 fix += n**2 malloc hog by expanding in chunks
+	 fix nostrictview mixed rel/abs dir cross product bug
+	 fix view dir alias bugs
+	 delay state.jobs=0 until final cleanup complete()
+	 move premature unparse() in finish()
+	 move .SAVEARGS from :MAKE: to .DO.MAKE in Makerules
+	 add "label=" args to coopen() and coexec()
+07/17/90 add * to .SCAN patterns
+	 guard against multiple push() in command.c
+	 drop -D-Lmake from MAKEPPFLAGS to fix makefile line syncs
+	 fix frozen bug that complained about global value changes
+	 fix scanexec() buffer bug that missed quote in first row,col
+06/01/90 add limit=n to limit :MAKE: recursion
+	 add fresolve() to rstat() for NFS-coshell workaround
+05/30/90 relax cross-product rhs absolute path restrictions
+05/11/90 fix $(...) mark bug
+05/01/90 coshell library sync
+	 action error now recorded in state
+04/11/90 numeric option arguments optional
+	 -S now takes optional view level arg
+	 makerules liblink control var changed to link=<pattern>
+	 MAKEIMPORT var preceded by ! can be overridden by global var def
+04/01/90 files linked to mode 0 ... are `opaque' in lower views
+	 add cancel() to undo actions by targets that don't change
+	 add :E: edit op to evaluate if expressions
+	 add :P=R: (again) to compute relative path from a to b
+	 add bindattribute() to uniformly propagate bind time attributes
+	 add maxview and fsview check to localview()
+	 add (CC) : (CPP) in .MAKEINIT
+	 fix prereqchange() check in make()
+	 fix $(^) expansion for files down view only
+	 allow relative pathnames in view names
+	 cancel() only if target newer than prereqs!
+	 .CLEAR implies .UNBIND
+03/28/90 fix comment error message line numbers
+	 add nested /* ... */ comment error message
+	 fix bind bug that missed .SOURCE* alias
+03/24/90 turn the bootstrap volume down another notch
+03/22/90 add :LIBRARY: and linklib to makerules
+	 add MAKE_OPTIONS check to makerules load
+	 set $(^) for top view too
+03/20/90 fix source() bug that eliminated some valid view components
+	 add source() call to atom prereq references in getval()
+	 fix ccprobe -tp -B probe
+	 add <prefix>cpp checks to ccprobe
+	 internal P_immediate actions always done
+	 move .VIEW init from initdynamic to initview()
+	 -L options generated in LDFLAGS for DYNAMIC -l args
+03/15/90 fix level>2 view state bug in staterule()
+	 fix .BIND. and bindfile() bug that missed makefile -l% == lib%.a
+	 .VIEW x .SOURCE cross product now done by bindfile()
+	 replace Makeinit.mk with char*init in version.c
+	 .VIEW marked readonly after level>0 assertion
+	 fix lockfile bug that unlinked valid foreign on exit
+03/01/90 add `-' as makerules synchronization atom
+	 fix frozen bug when new var in env but frozen not in env
+02/28/90 fix scanprereqs() bug that missed active implicit primary prereqs
+	 fix active frame bug that clobbered prev value for recursive targets
+02/26/90 fix .TERMINAL metaget() bug that blew the sccs example
+02/11/90 delete MAKESHELLTYPE, _make_, @, silent [-+]
+	 add .READ
+02/08/90 delete OPT_move (it never did work)
+02/07/90 add job frame context for make/expand/job consistency
+	 change :T=H: to :T=I[-]:, - doesn't expand file contents
+02/01/90 recode for libcoshell interface
+01/30/90 fix make() state.unwind bug that set KEEPGOING in enter()
+	 set PWD in case MAKESHELL doesn't
+	 change .SCAN @ to % for metarule consistency
+01/26/90 delete :E,:W,:T=[BM].:R->:T=R,:T=R->:R (non-tokenizing),:[EHJKUW] free
+01/22/90 add :L[<=>[pattern]] for base name generation on scanned dirs
+01/19/90 update CIA makerules for intermediate C++ support
+12/15/89 add test for empty statefiles
+	 replace $(+.) with $(.$(*:O=1))
+	 fix :P=U: bug for non-rules
+12/01/89 restore old job control signal handler command/costop()
+	 rework engine .JOINT
+	 fix += makefile interaction with cmd arg assignment during .mo compile
+	 fix local var bug that did not set local.length
+	 fix archive member not in . handling
+11/28/89 add :A<=.xxx.: for associate() tie-in
+	 add .INSTALL.<pattern> to makerules install
+	 don't mergestate() state vars
+11/11/89 global insert|append for non-targets too
+	 fix scanmacro() for m4 scan
+	 fix makerules LDLIBRARIES, .BIND.LIB.DYNAMIC., :JOINT:
+	 add archive member (A) to scan pattern language
+	 rule.archive&&rule.scan -> scan() rather than walkar()
+	 make .INTERPRETER for interactive interface
+	 .ERROR made for fatal errors, no exit if EXISTS
+	 fix statefile reference sticky property bug
+10/31/89 minor .VIRTUAL fixes in make()
+	 add .SCAN.F to makerules
+	 change readargs() to vecargs()
+10/18/89 add (CC.PROBE) prereq to (CC) related state vars in .MAKEINIT
+10/11/89 for loops no longer makerule() the vars
+	 external.sourcepath -> internal.source
+	 ----- minor sync release -----
+10/01/89 OPT_mismatch sets OPT_accept if no top level and low level mismatch
+	 fix scandir() bug that broke the dir<->atom name equivalence
+	 add :P=I=path: file equality test
+09/22/89 fix staterule()+accept+view bug that always touched statevars
+	 .BIND. -> .SOURCE. && .ALIAS. -> .BIND. for consistency
+	 add :P=G[-]: to generate sorted list of dir-scanned file names
+	 file top level loops ok
+09/11/89 rework scan.c -- .SCAN.* now defined in Makerules
+	 OPT_mismatch checked for lower view state files
+	 add D_index and SEQUENCE=1 for index atom load consistency
+08/30/89 add $(...) to expand to all atoms (could be a big list)
+08/24/89 replace makecc with ccc
+08/14/89 delete D_changed usage
+08/11/89 fix statevar bug in stateview() that let undefined vars override
+	 use lib/probe for runtime compiler probes
+	 clean up environment dependencies
+07/11/89 change makerules to key $(CC) info from full path
+	 add mkinfo to probe C compiler wrappers at user runtime
+07/04/89 use lower view files for !state.exec
+06/28/89 hack localrule() bugs -- cleanup when BINDINDEX enabled
+06/27/89 fix statetime()/rule.originalbind interaction bug
+	 canonicalize path in checkcurrent() for statetime()
+06/26/89 change makerules `-o ancestor' to `ancestor=3'
+	 delete :K=: and :U=: edit ops and ancestor()
+06/22/89 initial BINDINDEX code -- not enabled yet
+	 fix staterule() consistency bug
+06/11/89 fix include bugs, add include - for dontcare
+	 add .JOINT, change :JOINT: to use .JOINT
+	 fix load() attribute checks
+	 delete staterule(SOURCE,...)
+	 fix -l by .ALIAS.<pattern> and .BIND.<pattern> bindfile() hooks
+	 new object VERSION for .PFX.INCLUDE scan attribute
+06/02/89 OPT_keepgoing errors tracked and cause non-zero exit
+	 fix getstate() bug in scan.c that botched "\<newline> quotes
+06/01/89 special job control signal handling eliminated
+05/11/89 minor makerules fixes
+05/09/89 ``target :'' assertion sets rule.target
+05/02/89 fix :MAKE: to do dirs only once
+05/01/89 add trigraphs to c_scan()
+04/11/89 strictview cross-product marks must have multiple attribute
+04/04/89 change Makeinit VPATHVERIFY to VPATH_OPTIONS {verify[=n] [no]strict}
+	 delete state.override checks for rule.hasafter & rule.hasbefore
+03/30/89 preprocessor optional, only called if directive encountered
+	 C comments stripped by make parser
+03/28/89 avoid multiple prefix in c_scan()
+03/27/89 OPT_stream -> OPT_mam
+03/17/89 fine tune makerules OPT_stream support
+03/14/89 drop OPT_script, change OPT_stream to output generic shell
+03/07/89 allow metarule "" rhs to get something from nothing
+02/28/89 use bound name in `replaced by an older version' message
+02/27/89 propagate metarule rule.accept to matched target
+02/22/89 fix state.localview variable references with localvar()
+02/21/89 change .MAKESCAN to place file name in $(>)
+	 add rule.terminal checks to control metarule closure
+02/11/89 add some rule.originalbind checks
+	 add rule.runtime for run time info, 4-bytes spare
+02/01/89 add delete op to addprereq()
+	 metarule .CLEAR now prunes the intermediate prereq graph
+01/24/89 change compiled struct members for machine independence
+	 .mo and .ms now compatible for CHAR_BIT=8, sizeof(char*,long)=4
+	 change compile.c/setold() to use rule.status==OLDRULE
+	 fix .CROSS.COMPILE to redefine CC, etc. in env rather than cmd line
+	 close lockstate() window that left lock files hanging
+	 fix -l[rv] to not re-dump on interrupt
+	 new VERSION to handle struct changes
+	 add object sequence to allow small diffs between versions
+	 add OPT_strictview & -V for strict view interpretation
+01/20/89 new object VERSION to handle rule.state & rule.semaphore changes
+	 add tmp fix to make.c/update() to avoid clobbering lower view targets
+	 base rules must contain a null #rules directive
+	 base and global rules now compiled with -bcf
+	 restrict .CLEAN and .CLOBBER to top view
+01/18/89 replace rule.semcount with rule.semaphore==(semcount-1)
+	 change .NOIMPLICIT to .TERMINAL
+	 delete .NEGATE; add -<attribute>, +<attribute> assertion syntax
+	 change compile.c/setold() to pun on rule.attributes+rule.attribute
+	 add attributes to metarule pattern propagation
+	 add .SCAN.IGNORE to not scan and to ignore scan times of prereqs
+01/11/89 change .ATTRIBUTE.* to generalized metarule pattern propagation
+	 clean up metarule assertion parsing
+	 decouple $(MAKEPP) from $(CPP)
+	 ----- testing continues -----
+12/11/88 fix atomize() panic by using setold() in load()
+11/30/88 fix pathop() and attribute() alias references
+11/22/88 add state.buffersize and env MAKEBUFFERSIZE
+11/19/88 fix atomize() stray mark panic during invalidate()
+11/16/88 add .NEGATE assertion attribute and remove .NOIMPLICIT kluge
+11/11/88 make directive keywords must be C_SEP separated
+11/09/88 fix minor view bugs in :P=D: and Makeinit
+11/01/88 :D: returns ``.'' instead of empty string
+10/21/88 $(^) set only if $(<) covers another view
+10/11/88 fix staterule() bug that botched state view merging
+	 fix shquote() to pass `
+10/05/88 fix .IMPLICIT and .NOIMPLICIT merging
+09/30/88 fix metaget() to ignore status==UPDATE prereqs
+	 fix .TOUCH to bind before touching
+	 fix cosend() to add `trap 0 ERR' for ksh FOREGROUND actions
+09/20/88 fix :G: edit op using proper nonterminal metarule reference
+	 add hang test for cc list before ccinfo call in Makefile
+09/11/88 remove `warped from future' message
+09/09/88 add `:MKOLD: makefile' to makerules
+09/01/88 add ppdefault.h #assert's to Makeinstall.mk
+	 update Makerules .CIADB for new cia
+08/31/88 fix bug in $(+x) automatic variable dereference
+08/24/88 beta release
+08/18/88 update scanner in parse, add ++, --, +=, -= to set numeric options
+	 add OPT_frame for state.frameref
+	 fix :JOINT: using set frame++
+08/03/88 add metarule.c for metarule routines
+	 add ???O for original value if non-null
+	 add .TERMINAL for terminal match-anything metarules (in rule.regular)
+07/25/88 replace rule.link with active target stack frame
+	 add `%' metarule stem match (like other makes) -- `*' now obsolete
+07/22/88 switch rest of department over to latest version
+	 fix makerules :: bug that lost dir info from *.o prereqs
+07/17/88 first makefile `block' scanned for type info
+	 add .SCAN.NONE to inhibit scanning for some files
+07/08/88 fix null pointer dereference in localrule()
+07/07/88 change $(%) to $(#), reserve $(%) for metarule target `stem'
+	 clean up makebefore() and makeafter() calls
+	 fix bug in secondary() that saved invalid state time
+	 fix view bug in bindfile() that goofed on ..
+07/04/88 bind .mo files on .SOURCE.mk
+07/01/88 add OPT_writestate and decouple from OPT_override
+	 change OPT_ignorestate to OPT_readstate
+	 fix `has been replaced by an older version' warning test
+	 fix time test in bindfile() that allows archive .o files to stay 
+	 delete sql_scan and .SCAN.sql -- generic f_scan() does it now
+	 add quick makefile type check to #rules parse
+06/22/88 add OPT_filetype to enable automatic makefile type check
+	 update punt() to do a better job with external.old arguments
+06/21/88 delete "*.a : *.b : *.c" explicit intermediate metarules
+	 add "*.a *.b ... : *.c" auxiliary metarule targets
+	 add metarule transitive closure (`chaining')
+06/19/88 temper lockstate() on view by checking lock file uid
+06/18/88 fix bug in stateview() that didn't pass rule.attributes
+06/16/88 remove MAKEINCLUDE and MAKELIB from Makerules.mk
+	 add MAKELIB, maketype.sh and .MAKETYPE to Makeinstall.mk
+	 add generic include statement to f_scan()
+06/15/88 remove .COINIT because of execution ambigiuity
+06/14/88 convert to new libx strmatch()
+	 remove automatic .ALWAYS for $(MAKE) actions
+06/08/88 add ccinfo.sh to probe for c compiler wrapper info
+	 add `.READ : file ...' to bind and read file ...
+	 fix rule.scanned propagation in load()
+	 avoid merging old atoms in merge()
+	 add rootpath() to relieve hard coded path problems
+	 -o nowarn is now the default, more tests for state.warn
+06/01/88 convert to new hash library interface
+	 add MAKEIMPORT for explicit environment override of makefile vars
+	 lockstate() now checks lock files down the view
+	 invalid options produce warning rather than error exit
+	 update Makerules :INSTALL: to check needed directories
+	 fix sequencing bug in trigger() that bombed null action targets
+05/19/88 change .ARCHIVE and .OBJECT usage in Makerules
+	 fix shquote() to handle v9 sh {} botch; move C_SHELL to shquote()
+05/17/88 fix metarule state and state.tolerance checks in make()
+05/16/88 add $(?) for generating all prereqs with no selection
+05/11/88 move null trigger() before scan() in make()
+	 fix alternate binding for .LCL.INCLUDE files
+	 fix :MAKE: to handle .VIEW
+05/09/88 pass attributes for secondary bindings in bindfile()
+05/06/88 fix -o vardump core dump bug in dumpvar() call from setvar()
+	 add .ARUPDATE to .DO.INSTALL
+05/04/88 add :P=U: to return unbound path name
+05/03/88 check for MARK in expandvar()
+05/01/88 virtual state vars made when expanded
+04/30/88 canonicalize .SOURCE* names before scanning
+04/29/88 check for !r->statevar && r->state in staterule()
+	 virtual state atom time changes only by assignment value change
+04/28/88 fix bug in Makerules .LINT that botched generated .c intermediates
+	 fix :G: to accept suffix list as well as full names
+	 fix $(...::) infinite loop bug
+	 change %D%* to $("%")D%* in Makeinit for SCCS users
+04/26/88 redo Makerules :JOINT:
+	 update Makerules .CIABASE, rename to .CIADB
+04/22/88 remove install.prof from .SAVE. in Makerules
+04/19/88 add .ALL:.NULL to Makerules for common actions with no ::
+04/18/88 multi hard link files are not sync'd by statetime()
+04/14/88 update internal.making in maketop()
+04/11/88 ----- LC 2.0 beta release -----
+04/11/88 fix bug in enter() that executed action even if prereqs failed
+	 fix bug in Makerules.mk/.MAKEINIT that set CC without binding (CC)
+04/07/88 change makerules .SCRIPT to test if *.mk.sh was generated
+	 .MAKEINIT now part of user activities
+	 add $(MAKECC) to makerules for cc's with fixed cpp
+	 add vardef() for -o oldfile and -o script
+04/06/88 fix dynamic() unbounded recursion bug on indirect prereq references
+	 add #rules base rule directive consistency checks
+	 state.rules is base name of active base rules
+	 fix prereqchange() to check out of order rule.use prerequisites
+04/04/88 installed rules are now lower case by convention
+03/30/88 re-make() targets that were not scanned the first time around
+	 fix r->ignore time propagation bug in make()
+	 fix :JOINT: to check all lhs when one is updated
+	 add .APPEND* for symmetry with .INSERT* global prereqs
+	 add .NOIMPLICIT and rule.noimplicit to inhibit metarule application
+	 add .NOIMPLICT to makerules prereqs
+03/25/88 update makerules command actions .OLDFILE and .SCRIPT
+	 fix c_scan() and sql_scan() for non-terminated comments on include
+	 add output file pointer arg to dump routines
+03/24/88 add OPT_errorid for better recursive make tracing
+03/23/88 add alias consistency checks; fix internal.unbind to unalias
+03/22/88 makefile must exist; `-o file -' deleted
+	 1st line of 1st makefile: #rules "alternate-base-rules"
+	 base rules and global files not loaded until 1st line of 1st makefile
+	 delete OPT_rules; MAKERULES reset to actual rules name
+	 delete OPT_bypass and add OPT_base (-b)
+	 new options to compile base|global rules: -bc -f file
+	 .VIEW initialization moved from makerules to Makeinit.mk
+	 main() bootstrap re-ordered (again) -- args read before Makeinit.mk
+	 fix link bug for OPT_move
+03/18/88 fix bug in $(VAR1|VAR2...) implementation (there since the beginning!)
+	 expand external.* variables (except external.shell) before use
+	 fix bindfile() bug that improperly called bindalias()
+03/17/88 fix CON_for + CON_scan full match scan test
+	 insert . on .SOURCE.c in makerules to fix -I generation bug
+	 OPT_bypass and OPT_global now expanded in $(-)
+	 add state.bypass to decouple OPT_bypass from state.global
+	 OPT_rules omitted from non-global makefile same as setting to default
+03/16/88 add :P=S: edit op and fix .SELECT. in makerules
+	 fix :T=F: bug that let some non-files slip through
+03/14/88 fix bindalias() bug that caused alias loops
+03/10/88 delete `or first argument with .mk suffix'
+	 fix forcescan()
+02/29/88 ignore SIGPIPE after coshell forked
+	 clean up command.c comments
+	 clean up makerules .DO.INSTALL* again
+	 fix statetime() heuristic for hard link updates
+	 change makerules yacc action to move y.output to $(<:B:S=.grammar)
+	 add cia (C information abstractor) makerules support
+	 OPT_bypass not expanded in $(-), like OPT_global and OPT_file
+	 add :SAVE:, .GRIND and .GRINDEX to makerules
+	 support .MAKE : <semaphore>
+	 return -1 -> target FAILED, return 0 -> no time update
+	 add internal.args, internal.making, delete $(?) and OPT_main
+	 stomped bit field assigment/test bug in 3b20 compiler
+	 add :PACKAGE: to makerules
+02/26/88 clean up hardwired script
+	 add .DO.INSTALL.SAVE to .DO.INSTALL
+	 rule.ignore prereqs ignored in prereqchange() comparisons
+	 fix job control bug that deleted active targets on SIGTSTP
+	 delete internal.dump and OPT_dump
+	 add OPT_interrupt, set nointerrupt for multiple internal.interrupt
+	 make internal.debug to enter interactive input mode
+	 internal.debug immediate rule debug prints prereqs
+	 fix makerules archive delete bug
+	 clean up coshell message and job table tracing
+02/25/88 confine all external engine names to external.* and initrules()
+02/24/88 fix a few inappropriate free() calls
+	 fix stateview propagation of rule.build
+02/22/88 replace .SCAN.ifs with .SCAN.sql (awaiting formal sql syntax)
+	 add Makeinit.mk to localize engine initialization
+02/18/88 add parent prefix directory binding c_bind() to c_scan()
+02/11/88 add apply() and fapply() to replace cmdopen()
+	 fapply() .MAKEPP action for makefile preprocessing
+	 fapply() .MAKESCAN action for .SCAN.MAKESCAN scanning
+	 change makerules .LINT to use silent +
+02/10/88 fix internal.make inconsistency that cleared rule.make
+	 fix alias bug that improperly applied unalias()
+02/09/88 fix scan() bug that missed built files with OPT_accept
+	 add newbuffer() wrapper to expandvar()
+02/08/88 new VERSION: rule.synctime shared with rule.data and rule.uname
+	 reorganize attributes to take advantage of merge(*,*,[-1,0,1])
+	 add .USE .ATTRIBUTE to combine builtin and named attributes
+	 add changed attributes test to prereqchanged()
+	 .ACCEPT->attributes masks attributes that may change without update
+	 .IGNORE->attributes masks attributes that are not propagated
+	 .RETAIN->attributes masks attributes that are retained from .ms
+02/06/88 add .ATTRIBUTE<suffix> to generalize inherited suffix attributes
+	 modify merge() to do attribute propagation
+02/04/88 fix scan() bug that botched non-terminated quotes in directives
+	 properly set and test rule.triggered
+02/03/88 add multi level concurrency -- finally did it right
+02/01/88 fix makerules .VIEWINIT to set .VIEW iff in first node of VPATH
+	 fix makerules .ARCHIVE.o to delete unused archive members
+	 fix improper state prereqs clear for !state.scan in make()
+	 OPT_force no longer touches non-action state variables
+01/31/88 ----- limited alpha release -----
+01/27/88 fix bug that botched interrupt of last job
+	 fix state.oldfile '...' and "..." output bug
+01/26/88 demote 'alias has changed' and 'is also specified as' to message -2
+01/22/88 fix staterule() bug that omitted search for global view staterules
+01/20/88 fix OPT_accept to properly set staterule->built
+01/11/88 add state.localview for state.oldfile and state.script
+	 honor "..." in $("...")
+	 yet another coshell interface update, this time for SH_OLD
+01/07/88 add `<var> == <value>' to replace `set state ... set nostate'
+01/05/88 add sepcmp() to expand ops
+	 fix inappropriate .VIEW . dup warning
+01/04/88 tweak makerules :READONLY: scripts
+12/24/87 fix make() prereqchange() bug on newly promoted source files
+	 update yacc header rule in makerules
+12/22/87 fix internal.attribute compile bug in compile()
+	 change intermediate metarule to handle prereqs and action
+	 change yacc and lex metarules to use intermediate in makerules
+	 change .READONLY attribute to :READONLY: operator in makerules
+12/11/87 add :COMMAND: operator to makerules
+	 update Makefile for Genrules and makerules examples and docs
+	 OPT_global no longer expanded in $(-)
+	 fix staterule(SOURCE) bug that didn't track view changes
+	 add .UNKNOWN to do unknown command line target name translation
+	 add .DO.LEX++ lex.yy.c post edit for C++ in makerules
+	 change option parsing to meet getopt(3) standard
+	 `-bcfg file' is now `-bc -f file -g file' as per getopt(3)
+	 change OPT_made to OPT_main, delete state.notmade
+	 add internal.tmplist to avoid internal pointer munging by load()
+	 delay unknown command line option check until after makefiles read
+	 add .SEQUENTIAL for self and child actions in foreground
+12/08/87 add unalias() before update() calls in make()
+	 recode for updated hash library interface
+12/01/87 fix expand(var=...) trace message
+	 add OPT_mismatch to accept if state file mismatch
+	 use $(SHELL) before punting to /bin/sh
+	 change .GLOBAL to .INSERT
+	 add Version.mk for version stamp fine tuning
+	 state.reread changed to count, 2 levels allowed
+11/30/87 add .REPEAT to .ARCHIVE related .AFTER rules in makerules
+	 fix archive scan bug for port archives with no symbol directory
+11/22/87 fix BSD job control hang bug by ignoring SIG_IGN
+	 fix @.sh and _make_.sh bug that sent newline to stdout
+11/20/87 add MAKESHELLTYPE for ksh vs. old sh dependencies
+	 fix implicit suffix rule bug that botched a/x.y prereqs
+11/18/87 update makerules to properly use Makeinstall variables
+11/11/87 re-order MAKEPP -I options
+	 change OPT_skew to OPT_tolerance, add timecmp()
+11/10/87 fix state.rules checks and option handling in general
+11/05/87 add .SCAN.MAKESCAN for external perequisite scanning via $(MAKESCAN)
+	 add rule.internal to mark internal non-compile rules
+	 fix spurious core dumps by adding internal.readprereqs
+	 add rule.readonly to inhibit user mods
+11/04/87 add `set option=[*]name' to declare external boolean [string] options
+	 delete :T=<op>: operands that have been supplanted by :A=<attribute>:
+11/01/87 add :?: and :Y: conditional edit op
+	 state.scan=0 is the compiled default -- must be set in default rules
+	 change $(-) and $(+) to use named options
+	 delete .SET and change option storage in make object files
+	 add state.rules and OPT_rules for alternate standard rules support
+	 fix :M: bug that dumped core
+	 change makerules to use `ancestor' named option
+	 `set noancestor' is the makerules default
+	 `set noscan' is the make default
+10/29/87 fix state.forcescan checks with more than one view
+10/28/87 fix warped from future message by first checking rule.bound
+	 inhibit some file warning messages if state rule exists
+10/27/87 delete state.unique and OPT_unique - views make this obsolete
+	 add rule.alias and rule.aliaschanged to fix alias bug
+10/26/87 add MARK to properly handle "'s in conditional expressions
+	 delete error="...", trace="..." and warning="..." `options'
+	 add error and set to parse()
+10/23/87 fix constack[] overflow check in parse.c
+	 add unparse() to unwind parse stack on errors
+	 don't make .DONE or .INTERRUPT if state.compileonly
+	 fix fd handling in main() and coinit()
+10/22/87 remove OPT_implicit, state.implicit
+	 state.scan (+x) inhibits implicit file prereq scanning and checking
+10/21/87 treat "..." and <...> #include files the same in makefiles
+	 add :P=L[=n]: bound view level edit op
+	 close spurious open fd's before coshell exec
+10/20/87 fix $(*) bug for implicit targets with explicit source prereqs
+	 add OPT_warn (-w) to disable some source file warnings
+	 add rule.alias to handle different atoms binding to same atom
+10/17/87 remove `\' interpretation in expand() -> (...) must balance
+	 add $(<var>`<del>...<del>) top level alternate edit op delimiter
+	 change rule.fired -> rule.triggered, rule.generated -> rule.built
+	 change LOCALROOT -> INSTALLROOT
+10/16/87 fix :: op to enter explicit source prerequisites
+	 fix make() to check explicit source prerequisites for implicit rules
+10/15/87 fix bug that omitted tstate check for implicit rules in make()
+	 fix staterule() bug that omitted stateview() call
+10/14/87 fix OPT_oldfile bug with rule.make and rule.virtual targets
+10/11/87 change shell order to $MAKESHELL, ksh, /bin/sh
+10/09/87 add reason(fmt,...) for OPT_explain
+	 make rule.semcount a separate field
+10/06/87 fix .SOURCE directory aliasing bug using rule.uname
+	 handle interrupts before any calls to maketop() or make()
+	 X=a..c, $(X:B)=a, $(X:S)=..c
+10/02/87 fix .ACCEPT and .TOUCH
+	 add :JOINT: operator for joint (multiple) target generation
+10/01/87 add .SPECIAL to avoid setting .MAIN
+	 change $(var.$(CC)) to $(var.$(CC:B))
+09/30/87 add STDINCLUDE.$(compiler), change $(CCFLAGS.$(CC)) to $(ALTPP.$(CC))
+09/29/87 add :INSTALLDIR: to makerules
+	 update Makefile for alternate rules
+09/25/87 add `* : * : *' and rule.intermediate
+09/24/87 fix parentage() to properly list applied operators
+09/23/87 decouple state.ignore and state.keepgoing
+	 fix trap on ERR bug in foreground coshell
+	 coshell command and message trace bumped from level 3 to 8
+	 fix rule.statevar clobber in load()
+	 add rule.changed to note statevar prereq and action changes
+	 add @ non-tokenizing edit prefix operator
+	 pass job control signals (SIGTSTP,SIGTTIN,SIGTTOU) to shell
+09/18/87 fix state.touch bug from 09/11/87 batch change
+09/17/87 update lex and yacc implicit suffix rules
+09/16/87 add newfile() to add newly generated non-dot files to hash
+09/15/87 $(>) == $(*) for implicit suffix rule actions
+09/14/87 add $(MAKE:D) to .SOURCE.mk in hardwired script
+	 change state.builtin to state.global (builtin -> default)
+09/11/87 rule.target set only if actions or non-attribute prerequisites
+	 change rule.commands to rule.action and docommands() to doaction()
+	 delete rule.updated
+	 add rule.fired to properly set rule.generated
+	 call complete() before implicit suffix rule test
+	 use statetime() in place of rstat() in a few key routines
+	 update "::" in makerules to use .MULTIPLE for .ARCHIVE prereqs
+	 delete internal.prerequisites and .PREREQUISITES
+	 .FUNCTIONAL and .VIRTUAL no longer .IMMEDIATE
+	 .FILES. and .OUTPUT. now .FUNCTIONAL in makerules
+09/08/87 fix generated builtin rules makefile dependency bug 
+	 fix bug that omitted named attribute checks for rule.statevar
+09/03/87 change `dependency' terminology to `prerequisite'
+	 add .MULTIPLE attribute for multi prereq occurrences
+	 operator syntax forced to be `:<identifier>:'
+09/01/87 add :Z: op to expand in parent reference frame (cumulative)
+08/31/87 use unbound name in staterule()
+	 fix generated target state bug in scan()
+	 walkthrough and lint cleanup
+08/27/87 add :BUILD: and .GENSYM. to makerules
+	 fine tune .TOUCH
+08/26/87 fix state.keepgoing interaction with coshell
+	 state.readstate also controls view state files
+	 fix bug that allowed env var override compiling global makefiles
+08/25/87 fix bug in readfp() that didn't update rule pointer after load()
+	 fix <...> and "..." warnings in c_scan()
+	 fix expandops() bug that inappropriately left trailing blanks
+	 fix reread() to close open file descriptors
+08/24/87 don't automatically clear commands for immediate rules
+	 .ALWAYS for operator expands before application
+08/22/87 add .NOIMPLICIT `attribute' to disable implicit rules on target
+	 unwind make() to topmost dontcare target on errors
+08/21/87 add :MAKE: recursive make operator
+	 suppress `not updated' warning for directories
+	 move `recursive var' test to expandvar()
+08/20/87 fix immediate() to do dynamic() only if target selected
+	 change .CROSS.COMPILE to be makerules immediate rule
+	 fix bindrule() bug that choked on views with no state
+08/19/87 fix lockstate() for geteuid()==0
+	 add bintab to handle bound dir of files starting with ../
+08/18/87 fix staterule() bug that omitted r->scan generated files
+08/13/87 fix local var bug that inappropriatley set v->import
+	 fix :P=R: and :P=T: for degenerate cases
+	 fix .VIEWINIT interaction with -a makerules option
+08/11/87 adjust for new <re.h> library interface
+07/28/87 fix return to take expression arg
+	 add :INSTALL: operator to makerules for nice .DOINSTALL stuff
+07/24/87 optimize silent shell function to fork only on failure
+07/23/87 add .RETAIN for retained variables
+	 add `silent' and `silent -' for selective tracing
+07/22/87 add -o headerstate and -H to ignore state vars from headers
+07/17/87 loosen tight binding of :U: operator on .SOURCE.[ah]
+07/14/87 add r->view, state.view, state.maxview and .VIEW for state views
+07/10/87 add -[DIU]* command line options to makefile dependencies
+07/09/87 fix `a :: lib.a' makerules bug
+	 fix bindfile() bug that bound ../x -> x (if x already bound)
+	 add r->garbage and state file GC to compile.c
+07/08/87 use seterror() and remove err_* references
+	 change :Z=<op>: to :P=<op>: and add :P=D:
+	 change :I: to be simple path name intersection
+07/07/87 makefile dependencies fixed with time equality tests
+07/06/87 first attempt at return -- must reconcile with r->updated
+07/02/87 change :I=*: and :X=*: arg to be list to be expanded
+06/17/87 add :M=<RE>: for RE match version of :N=<sh-pattern>:
+	 fix :op: bug that removed too many backslashes
+06/15/87 add ifs_scan for #include "file" and {INCLUDE "file"
+	 call getstate() in scan even if !state.fullscan for comments
+06/05/87 fix bug in `local' that failed with more than one arg
+	 suppress `is also specified as' message if r->dontcare
+06/04/87 add :LINK: operator to makerules
+	 add r->dynamic to merge code in dynamic()
+06/03/87 order dependent options not included in $(-), i.e., -[bfg]
+	 add $(TMPDIR) to makerules
+06/01/87 fix msgfd allocation bug in coinit()
+	 use libx/regexp routines for :/old/new/: edit op
+05/26/87 fix interrupt() and finish() for recursive make signals
+04/27/87 update archive access for proper fseek()-ftell() interactions
+04/23/87 fix .CLEAR to not clear r->state if isstate(r->name)
+04/22/87 add time pointer arg to complete() for dep time propagation
+04/20/87 coinit() now uses any 0<=msgfd<=9 for coshell->make messages
+	 fix semantics for .VIRTUAL state vars
+	 fix '\n'->0 bug in recursive parse()
+04/17/87 add `local <var> ...' local var declarations for .MAKE actions
+	 add `.FUNCTIONAL : <var> ...' to make rule <var> on expansion
+04/16/87 fix bug that missed explicit .BEFORE deps for implicit rules
+	 add long integer arithmetic in if expressions
+	 delete test.c; add `let <expression>' to parser
+	 fix error staus propagation from dependencies to target
+04/15/87 ignore .USE rules in dependency change check
+	 :R: returns relative time in seconds
+04/10/87 fix state.oldfile to append " ; " to avoid generating ";;"
+	 add remtmp() to clean up temporary files during savestate()
+	 fix superfluous `frozen variable changed' bug in load()
+04/09/87 add r->semaphore and .SEMAPHORE for fine grain serialization
+	 variable names may now contain any characters
+	 `(x) = v' initializes a virtual state var -- no relation to $(x)
+	 add .EXPORT to mark additional name=value pairs for $(=)
+	 delete .LOAD for lack of use
+	 .CLEAR and .INSERT on active targets invalid
+04/08/87 change .SEARCH* to .SCAN* and search* to scan* for consistency
+04/03/87 fix bug in :A: edit op that botched non-rules for the != case
+	 fix bug in bindstate() that sometime returned 0 even if r->state!=0
+04/02/87 add r->entries to decouple r->bind from directory search
+	 add OPT_skew and state.skew to handle RFS time sk[r]ew botch
+04/01/87 fix parse bug that interpreted wrong keywords in skipped if blocks
+	 delete .NOTOUCH; add .IGNORE, .REPEAT and .VIRTUAL
+	 delete .IFPARENT and .POST; add .BEFORE and .AFTER (ifparent implied)
+	 delete .CLEANUP; add .ACCEPT (state.accept on per-rule basis)
+03/26/87 check for abnormal termination in exit status diagnostic
+	 OPT_builtin now turns off all previous OPT_global flags
+	 :A=attr: fixed to check for builtin as well as named attributes
+	 fix frozen var bug that omitted cmd line args from .mo file
+	 add .UNTOUCH as inverse of .TOUCH
+03/24/87 fix update() in make.c to properly update rule state
+03/23/87 change .FORCE to only force target once per make
+03/20/87 make .STATE an attribute
+	 fix `multiple commands for...' message for dynamic updates
+03/19/87 fix parser `\\n' bug for .MAKE scripts
+	 fix parser bug that appended bad immediate deps on special.dependencies
+03/18/87 delete obsolete -q and OPT_question
+03/16/87 fix .MAKE interaction with complete(); -j0 -> serialize on update
+03/11/87 update immediate() to properly handle .MAKE args and commands
+	 fix `x was not updated' warning and `...lags...' warning bug
+03/06/87 add :A: to return list of attributes for rule
+	 skip for loop with no pattern
+	 add `set +o monitor' to coshell startup
+03/05/87 update error(3) interface
+03/03/87 fix pp->cp->block bug in parse() push section
+	 add oldshell to command() for automatic Bourne shell compatibility
+03/02/87 change ROOT to LOCALROOT; change -lfmalloc to -lfaloc
+02/27/87 change finish() to use switch over if ladder
+	 change `stack cleanup commands' to `queue cleanup commands'
+02/26/87 fix bug in compvar() that took length of normalized value
+02/24/87 fix makefile dependency bug in parse
+02/05/87 delete state.work and `x is up to date' message
+02/04/87 change expand:shquote() to \\ quote all sh meta chars
+02/02/87 add state.script to support .SCRIPT
+01/30/87 add .SCRIPT to generate *.mk.sh bootstrap shell script
+01/29/87 fix invalidate() again; delete state.last; add r->synctime for r->state
+01/28/87 add state.last to fix call to invalidate(); add marks to invalidate()
+         modify depchange() to check for dependency re-orderings
+01/27/87 switch to libpp.a standalone passthrough preprocessor
+01/05/87 change `:' edit op separator missing error to warning
+         #include <> vs. "" warning only if !dontcare
+12/19/86 add :///G: suffix to inhibit tokenizing; required for ' ' in from part
+         use C_ID2 to check operator characters
+12/11/86 fix :T=G:
+	 fix CON_eval bug that did not pass along CON_skip in getline()
+         fix readline() to translate \\\n to \\n
+	 use dynamic arrays to construct makepp argv
+	 complain about no makefile for -c option
+12/08/86 update S support in makerules; do statetime(parent) only if r->post
+12/07/86 .SOURCE.mk used to bind all makefiles (default uses $(MAKERULESPATH))
+12/05/86 fix bug in $(-) portion of getval() that always returned null
+12/02/86 add .SHAR builtin target; clarify option argument parsing
+12/01/86 add ALTSOURCE & ALTDEPS to staterule() calls
+         	()<rule>		previous state of <rule>
+		(ALTSOURCE)<rule>	alternate dirs to search for <rule>
+		(ALTDEPS)<rule>		internal deps if <rule> generated
+	 add special.openfile & special.openfd to optimize rstat() & search()
+	 fix state.force to update targets with commands but no deps
+	 add .SEARCH.nroff to detect .so dependencies
+11/26/86 fix error() to gracefully handle long messages
+11/25/86 use getcwd() from libx; clarify parse expansion conditions
+11/24/86 add (.SEARCH)<rule> for state of generated .SEARCH rules
+         make() -> maketop(); make0() -> make()
+11/21/86 change `.SEARCH : var' to `.STATE : var'
+11/20/86 add parentage() to `don't know how to make' message in make0()
+11/19/86 change .UPDATED to .IFPARENT; add ifparent:1, hasifparent:1, haspost:1
+11/18/86 add rule merge to dynamic(); HOME no longer frozen by ::
+         `.SET : state' marks assigned vars as statevars until `.SET : nostate'
+         -R changed to -o reread
+11/14/86 working version finally generated
+11/07/86 change .OPTIONS to .SET
+11/06/86 add options by name
+11/01/86 add newbuffer() and freebuffer(); delete buf0, buf1 and buf2
+         delete prefix rules and all references to prefixes
+         add nested if, while, for and eval flow control blocks
+         replace gram.y and scan.c with parse.c and test.c
+10/31/86 ----- internal release -----
+10/31/86 big batch change:
+         add T=R expansion to replace ARUPDATE
+         add .COMPINIT to main() initilization sequence
+         add .MAKEPATHINIT to Makerules for makefile chain support
+         add .MAKEDEPS to replace .INTERNAL for makefile dependencies
+         add :U=(mark)dir: and :X=(mark)dir:
+         fix r->implicit check in implicit rule portion of make0()
+         fix cmd arg/compile omission on v->search variables in setvar()
+         fix compvar() to not compile cmd arg var definitions
+         add { :=+ } checks in scanner
+         fix attribute consistency checks in load()
+         fix `don't know how to make' check for state conflict
+         fix ** for MAKEPATH; add state.operator; fix state.question
+         .UNTOUCH -> .UNBIND; add .BIND; update Makerules
+         add static header in compile(); fix tstate check in make0()
+         relaxed r->search check in make0()
+         add .COMMAND.o, .ARCHIVE.o, .OBJECT, .DEFAULT<suffix>
+         .GLOBAL -> .GLOBAL.COMMAND, .GLOBAL.a -> .GLOBAL.ARCHIVE
+         .MATCHRULES -> .FORRULE, .MATCHVARS -> .FORVARS
+         add .DEPENDENCIES rule; add :G=<:; update .CLEAN and .CLOBBER
+         reverse op order to :N:, :G:; :T=F: does not expand symlinks
+         fix $_i_ and MAKEPATH sequencing in .CROSS.COMPILE
+         delete "very old" time
+         fix :: and :- ; delete $((<var>)) expansion; silence read warnings
+         add . to MAKEPATH; update cross()
+         add .UPDATED for .POST rules to be made only if target updated
+         r->precmds -> r->commands
+         delete ... syntax and r->poscmds; add .CLEANUP to stack til cleanup
+         fix INSTALL expansion of $(HOME) that froze HOME in :: operator
+         add $() to stop re-expansion at beginning of line
+         add ' quotes to getlin()
+         :T=P: if r->post, :T=U: if r->use
+         add $(~) to expand all target dependencies; :T=U: -> :T=X:
+         .NULL -> .COMMAND; r->null -> r->command
+         delete r->statedeps; all file targets now have corresponding rulestate
+         save precmds in state file and check for changes
+         add depchange() to check for changed dependencies
+         fixed r->search bound check in search()
+         retain special.target for dynamic() of r->use rules
+         expand -l notation in LDLIBRARIES
+         add .PARAMETER state var search to .PARAMETER files in search()
+         delete <file>(<var>) state vars -- use .PARAMETER state vars instead
+         change VERSION to string in compile()
+         .PARAMETER state variables are not expanded
+         add check to search() for added|deleted implicit dependencies
+         fix quote bug in getstate() that omitted some state vars
+         fix state.forcesearch to mark state vars with r->force at start
+         split RELEASE into BRANCH.RELEASE in compile.c
+         add canon() to intersect(), ancestor() & bsd_compatability to Makerules
+         use <error.h> and error() from libx
+         change -L to -K; "source has changed" error only if file found
+         add !isalnum() check for operators
+         switched malloc.c over to #include <fastmalloc.h>
+         add null pointer check in compvar(); fix delim check in cowait()
+         fix bindbase() and $(>) expansion for r->member rules
+         add utime() call to touch(); add :T=L: for archive (lib) members
+         add -a to Makerules to disable :U=include: and :U=lib: ops
+         delete unneeded "-l* : .DONTCARE" from :: operator definition
+         add time==0 check to rstat()
+         add BRANCH and RELEASE components to VERSION
+         add ".SOURCE.h : .INSERT ." to .MAKEINIT in Makerules
+         add state.user to note start of user activities (i.e. save state)
+         use hash rather than linear search for unique()
+         add .SEARCH; add statevar(), filevar() and varstate() to localize
+         add .VPATHINIT to Makerules for VPATH support
+         add :Z=R: and :Z=T[=s]: path name ops for VPATH support
+         do not remove symbolic link targets on interrupt
+         search attributes are inherited by dependencies; add :T=M: op
+         $(=) expands ARG_READ args; use hashalloc() & nohashalloc()
+         add :T=U<op>: for unbound rule typing
+         localize state var format to state.c; add rulestate()
+         check for polluted environment in readenv(); update isspecial()
+         allow :O[><=]=<n>: in expand1(); ALLOCATE() -> allocate()
+         fix !v loop in setopt(); check r->dontcare in scandeps()
+         delete "[]&" from C_TERMINAL; reset '|' in attributes()
+         expand <ret> in :T=<type>?<ret>: if true
+         delete state.autocompile; MAKERULESDIR -> MAKERULESPATH
+         .MAKEFILES -> MAKEFILES (var); vspecial() assumes : separated lists
+         optimized compile() and load() for state.compilestate
+         fix MSGFD dup2() bug in coinit() that closed good fd
+         add .ONOBJECT to Makerules for .CROSS.COMPILE support
+         add _make_ quit <exit-code>; add MAKECROSS for cross compilation
+         MAKERULES & MAKERULESDIR now `:' lists; add r->status=IMPLICIT
+         add MAKEEXCLUDE `:' list of excluded :U=<dir>: prefixes
+         fix multiple -g builtin rule checks; read env first
+         .IMMEDIATE implies .NOTOUCH -- clear deps if not .DONTCARE
+         add .IMMEDIATE -> make when read or loaded; matchscan() now recursive
+         add .OPTIONS : <var> for $(=)
+         .MATCHSCAN -> .MATCHRULES; add .MATCHVARS, .LOAD; DMAKERULESDIR
+         add -cfg to compile builtin rules; add // stop mark to :U=<dir>: op
+         fix token state bug in expand.c; fix implicit suffix check in make0()
+         fix sequencing in interrupt() and finish()
+         fix r->link bug in make.c; add symlink check to .DOINSTALL
+         add $(^) for alternate bound name of active r->current target
+         add clearlink() to compile() -- too many puns on r->link!
+         use bindfile() for state file; aim for position independent makefiles
+         delete INCLUDEDIR & LIBDIR, add MAKEINCLUDE & MAKELIB to Makerules
+         add | operator to edit matching; change VPATH -> MAKEPATH
+         add :U=<dir>: ancestor operator -- now catches .h and .a on VPATH
+         add $(TEST) and ** operator to Makerules; add r->force; VERSION=10
+         add state file locking; add :O=[<>=]<n>: component offset edit op
+         parameterize Makerules.mk using #if exists(x,$PATH); update finish()
+         delete configure.h -- put configuration switches in Makefile
+         fix r->status checks in make0()
+         fix .CLOBBER to also remove state file
+         ".UNTOUCH .TOUCH : dir" causes dir to be ignored in bindfile()
+         add freelist(), freerule(), freevar(), newlist(), newrule(), newvar()
+         update Makerules with .*. var names; merge code[] into ctype[]
+         general cleanup; re-evaluate warning messages; add istype() macro
+         delete r->touch; add r->status==TOUCH; VERSION=9
+         add implicit state vars to search(); add var->search:1; VERSION=8
+         update $(!) and $(&) to generate all deps; add special.freerules
+         add file system and local system sync checks; add $(-!xy!z...)
+         change "* : *" -> .NULL and "*.a : *" -> .ARCHIVE
+         add .IDENT target using $(MKIDENT) and $(!)
+         add /local and /usr/local checks to Makerules
+         add *.EXCLUDE in bindfile() to exclude suffixes from prefix binding
+         invert -u option; add option.c; reorganize rule.c, variable.c
+         change bindbase() to lazily search *.SOURCE*
+         use r->bound with binddir() for *.SOURCE* deps; add bindar()
+         delete search(); change finddeps() to search(); add m4_search()
+         delete :M: edit component
+         fix *.l and *.y rules for remote directory compatability
+         replace getdefine() with subcase of finddeps()
+         fix $(+...) bug in variable.c; put language dep searches in search.c
+         add .c, .f, .F and .r to searchtab[]; add readargs() to modify argv
+         use bindfile() for finding makefiles
+         add $(VPATH) to Makerules using .MATCHSCAN on .SOURCE*
+         delete $(SRCPATH); add .MATCHSCAN to scan and match all rules
+         add .SEARCH(file) to handle binding for #include "a.[!h]"
+         add ".SEARCH.x : .y .z" for .y and .z files to inherit .x search
+         add file dependency search strategies in searchtab[]; r->search:3
+         change r->prealways,r->posalways to r->always; delete r->fullsearch
+         change CCFLAGS definition to only expand required -I options
+         add :I=s: prefix intersection op; :I: and :X: now gen valid dirs
+         add $(!) to expand all source dependencies
+         add "[target]" to dumprule(); use .ATTRIBUTE->deps, not ->link
+         fix "* : *" bug in gram.y
+         ".SOURCE.h : $(INCLUDEDIR)" & ".SOURCE.a : $(LIBDIR)" -> Makerules
+         add "@ .UNTOUCH : *.h" to "*.c : *.y" rule
+         change release(sun) references to machine(sun)
+10/08/86 ----- gsf returns to labs -----
+09/30/86 ----- msf distributions -- vpath-nmake branches off -----
+02/01/86 ----- jes distributions -----
+08/30/85 ----- third distribution -----
+         last AT&T modifications by ulysses!gsf -- transfer to ulysses!make
+08/29/85 add -lx expansion to libx.a in ::, remove .SOURCE.a -> -L connection
+08/24/85 move strmatch() to libx.a
+08/21/85 fix sequencing in compile() to preserve .mo on error
+08/20/85 fix bug in make0() where odeps did not restore original r->deps
+         add CCFLAGS and F77FLAGS to "* : *"; "* : *.a" -> "*.a : *"
+08/11/85 in make0() generate x() if x->time > 0 (if x is an existing file)
+08/06/85 delete .SEARCH verifcation of 07/26/85 for now
+08/05/85 set $(MAKEFILE) to the name of the first makefile
+08/02/85 fix bug involving multiple operators in large makefiles
+         save original dependencies in make0(); fix r->compiled .ms bug
+08/01/85 commit to ksh -- check MAKESHELL before SHELL for non-ksh users
+07/31/85 nmake: nmake.1, nmake-intro.0, mkcv.1, mkold.1, mkold.sh
+         change all `make' references to `nmake' for AT&T Toolchest(TM)
+07/30/85 add man pages *.[1-9]* to .INSTALL; use BINDIR, ETCDIR, LIBDIR, MANDIR
+07/26/85 verify that .SEARCH files will be found by the preprocessor|compiler
+07/25/85 fix bug for .NULL targets with suffixes; add :F=format: operator
+         for make install check .INSTALL.x for command x
+         add ctags builtin action; check state var deps for *.sh targets
+         for "*.x : *.y", add both .x and .y to .SUFFIXES
+07/24/85 -k option makes "don't know how to make" a warning
+         do not expand $(-) with -o option on
+07/23/85 search x if "x : .SEARCH" and x dynamically generated; add SRCPATH
+         fix null dereference error in main.c for no makefile case
+07/11/85 ----- second distribution -----
+07/10/85 more make object checks; allow space before initial { in commands
+07/09/85 add .FOREGROUND to *.y rules to synchronize y.tab.h generation
+07/08/85 use v->oldvalue in compile.c to detect frozen variables
+         add invalidate() to invalidate targets with source dependencies
+07/07/85 state file for 'make x' with no makefile is 'x.ms'
+07/05/85 pass "*.x : *.y" dependencies to each implicit target
+         append .x to .SUFFIXES for "*.a : *.x"; update .LINT
+07/03/85 fix scanner to ignore "[ \t]*\n" lines in addition to "\n" lines
+07/02/85 allow += to modify command line variable definitions
+06/30/85 make \n a token in gettok(); delete :L: operator; $("\n") -> newline
+06/27/85 fix make clean|clobber to only remove files in . unless -m is set
+         fix default rules to support (CCFLAGS) as a state var dependency
+         save var values in oldtab for .mo when var defined on command line
+         allow .MAKEINIT rules to modify command line variable definitions
+         fix bug with multiple -f or any -g files; add -R recursion check
+         add user attributes, .ATTRIBUTE and $(:A=a|b) access
+         add consistency checks in cowait(); generalize builtin attributes
+         use rstat() [open(),fstat()] instead of stat() -- the same as cpp
+06/26/85 use unbound name in "source has changed" message
+06/24/85 fix $(..|"X") to allow editing on "X"
+06/22/85 update :: rule to properly handle ./* and ../* dependencies
+         invert meaning of -h -- search by default, -h turns off search
+06/21/85 reverse .MAKEFILES to "Makefile makefile"
+06/20/85 add "* : *.l" with -ll; ".SOURCE.h : /usr/include" handled
+         ".ms" is the default state file if there is no makefile
+06/19/85 handle `X+= Y' which was interpreted as `X+ = Y' producing a warning
+         eliminate some string duplications; re-use old variable value space
+         fix '\\' tokenizing in $(..); add "make print x" and .FILES.x
+         iteratively evaluate $(..) tokens in col 1; $$(..) -> $(..) and stops
+06/18/85 add $(:E=<msg>) and $(:W=<msg>) error|warning message hooks
+06/17/85 `x :: x.sh' properly handled using .IMPLICIT
+         .MAIN handled by rule name; special.main now .MAIN rule pointer
+06/11/85 add :T=t=pat:, :T=t!=pat: and :T=t?ret: edit forms
+06/10/85 fix wrong += frozen message; fix System V .LINT
+         clean up error messages in read.c; use $(SED) for .READONLY.*
+06/09/85 add automatic makefile dependency checking (no state vars -- sorry)
+06/07/85 add `.' to hide internal variables in Makerules.mk; update make.1
+         add .LPROF action for System V line count profiling
+         .NOTOUCH rules always made; .GLOBAL.x deps dynamically expanded
+         fix dumprule() to handle { } commands; move dumpcmd() to dump.c
+06/06/85 fix .CLEAR to reset r->dynamic and r->use; set r->link=0 in load()
+06/05/85 command line variable assignment ordered from left to right
+06/04/85 fix frozen var checks in compile() -- env was not handled properly
+06/01/85 ----- first distribution -----
+         add state.reading and v->frozen to warn about frozen vars
+         change argv[] stuff in main(), add $(=) $(?) hooks to argv[]
+05/30/85 add new .LINT, override check to precious()
+         add :T=T: operator for explicit targets, new .POST .NOTOUCH meaning
+05/28/85 add -O (state.override) and -M (state.nomade) options for lint
+05/21/85 fix placement of immediate() call in load()
+05/20/85 add "*.o : *.c" to ".c.o:" conversion syntax
+05/18/85 fix make0() interface to properly handle r->link
+05/03/85 update hash table interface
+05/02/85 add -k state.keepgoing option to continue with sibling deps on error
+         fix bug where .o ignored if not in .a but older than .a
+05/01/85 releases: 4.2 BSD, 5.2 System V, 8th Edition, uts
+         machines: vax, UN*X PC, 3B2, 3B20, power6
+04/25/85 -L -> -Wl,-L in Makerules.mk for system V; add buf check for +=
+         -A implies -S; fix .y and .l .READONLY rules for concurrency
+04/24/85 add $(s:G=<suf>) to expand components that can generate <suf> files
+04/19/85 properly handle case where file modify time is less than previous
+         remove alias compilations -- only unbound names in make objects
+         retain unbound rule names for compilation and file dep states
+04/16/85 move implicit prefix checks to bindfile()
+04/09/85 remove state.exact, put -x with state.implicit
+04/08/85 add C_VARIABLE to check makefile variable names
+04/05/85 switch to <generic.h>; add r->cmdspecial & r->fullsearch (unused)
+04/04/85 compile unbound rule names from akatab; fix -h, -x and -H options
+04/03/85 add :N!=<pattern>: edit op
+03/31/85 add state.accept -A to accept existing targets
+03/30/85 move chksrc() logic to bindfile(); add implicit r->current logic
+03/29/85 fix prefix rules -- they didn't work since 10/31/85 !!
+         add touchar() verification; add .MAKEFILES for default makefiles
+03/28/85 add .SOURCE.a to Makerules; add .[UN]TOUCH, remove _make_ [un]touch
+03/26/85 change <.h> to .SOURCE.h; fix .INIT bug; add .APPEND.x
+03/22/85 use .PARAMETER in make(); add CPPSCAN -T test code to state.c
+03/21/85 fix -t with -m option; add .PARAMETER file attribute
+03/20/85 fix sequencing in finish(); fix ar member exact time; fix ar .INSTALL
+03/19/85 only expand $(...) symbols; $$(...) expands to $(...)
+03/18/85 symbol names recursively expanded
+         add .USE attribute check by make0(); .READONLY is generic
+03/15/85 fix -s option; cmd opts take precedence
+03/12/85 change ignored functions to (void)
+03/11/85 update Makerules.mk
+03/09/85 fix bug when touching archive members with state var dependencies
+03/08/85 fix bug in make malloc() -- max was not in sync with brk
+         check for `first-arg'.mk if no makefiles found -- gobble arg if found
+         add .CURRENT and .SEARCH attributes; remove .ARCHIVES and .INCLUDES
+03/07/85 all files automatically preprocessed by MAKEPP
+03/06/85 add rules: target to make Makefile to compile and install Makerules
+03/04/85 make edit() delete one trailing `/'
+         add $(..:C@..) to add delimiter @ to substitute; allow any alpha option
+03/01/85 add r->attribute; add -c to force compile only; add .DONTCARE
+02/28/85 change bind() to return bound rule pointer; clarify $< $* $& usage
+02/25/85 clean up archive.c; kill alias bug in compile.c
+02/21/85 add .IMPLICIT attribute to force implicit dep checks; handle zombies
+02/20/85 fix signal handling for background jobs
+02/19/85 fix semantics of rules with state var deps; add compstate()
+02/18/85 use state.option instead of ON(OPTION); special.rule instead of r_rule
+02/14/85 add dump.c and read.c; compile rule aliases
+02/13/85 optimize expand() by adding a few subroutines
+         add compiled makefile.ms; atomize() to enforce one rule per name
+02/12/85 fix grammar; add :V: to substitute value without expanding
+         add += append assignment; add $@ and $# to operators; update Makerules
+02/11/85 add :T=x<pat>: to match shell <pat> on expanded value
+         .MAIN handling fixed; docompile() added to recursively set r->compiled
+02/08/85 always compile into makefile.mo; move .(makefile) to makefile.ms
+         add $& for list of explicit dependencies
+02/07/85 Install suplied for make bootstrap installation
+02/05/85 add compiler interface; builtin rules put in MAKERULES
+02/04/85 split files.c into bind.c, compile.c and state.c
+02/01/85 preprocess only if -p or if #preprocess first line in makefile
+         add malloc() optimized for little or no free() calls
+         add /*..*/ and //..\n comments to makefile
+         add #..\n comments to .(makefile) -- leaves room for version info
+01/30/85 add .ALL and .LINT builtin actions
+01/29/85 if makefile specified then try `.TARGET' if `target' not defined
+01/28/85 add any() replacing strpbrk(); gettok(), settok() replacing strtok()
+         add :X=<sym>: cross product substitution
+01/25/85 fix bug with strtok() and state vars -- strtok() modifies buffer!
+01/24/85 add OLDCPP switch to check for new and old CPP, use -N in new cpp
+01/23/85 add .OPERATOR attribute, change .ABBREV to "::", remove $(.ARG*)
+01/22/85 little fixes, clean up builtin[] and -l option
+01/21/85 put VPATH dependent stuff in .MAKEINIT
+         add immediate() to check rules with r->immediate when modified
+         add .UPDATE and .UCPIO, .UPRINT, .UTAR for update maintenance
+         add .MAKE attribute -- allows docmd() for all command lists
+01/18/85 $(-xy) == 1 if -x or -y option set, null otherwise
+01/17/85 remove shell file expansion in dep lists because of binding ambiguity
+         remove dir->entries -- not used because of shell expansion deletion
+         add .TAR, .INSTALL and .DOINSTALL builtin rules
+         add .NULL and "" rule for generating null suffix targets
+01/16/85 use parse1(.ABBREV) for interpreting :: input
+         add parse1(.MAKEINIT) to main() before make(.INIT)
+         add -g option to read in global makefile definitions
+01/15/85 unify variable edit forms: :N=<pattern>:T=<type>:
+         add :: abbreviation and associated abbrev[] rules
+         add ://..&../: notation to substitute form
+         add .CLEAN, .CLOBBER, .CPIO and .PRINT builtin actions
+         add $(+...) to access child dependencies in automatic variables
+01/14/85 expand() edit expressions in variable substitutions
+         change .y.o & .l.o rules to use .y.c and .l.c
+01/11/85 add r->dontcare -- no error if rule can't be made
+01/09/85 miscellaneous fixes to expand()
+01/07/85 add sys error message for DEBUG errors
+01/04/85 warn when #define state variable is inside a conditional
+         put bound state variable names in .(makefile)
+         -m option fixed
+01/01/85 "fourth generation make"
+12/18/84 keep -h files in .(makefile), only search when date changes
+         add $(x|y|z...) to expand first non-null value
+         add $(file(var)) to expand to #define value of var in file
+12/14/84 add -m (MOVE) to move targets to corresponding source dir
+12/11/84 add $@ [pre-commands] and $# [post-commands], $(X[rule]) for any rule
+12/10/84 miscellaneous changes to option handling, `-' prepended on $-
+         for automatic var x: $(xx) corresponds to parent target
+         fix getlin() to always expand first part of line that has `$(x)' in it
+         fix archive sequencing in bindfile()
+         change .y.o and .y.c to produce $(<:DBS=.h) instead of y.tab.h
+         add silent coshell function to not echo selected commands
+         add alias(); add .WAIT as an alias for .FOREGROUND
+         add .POST attribute; dependencies made after target is made
+12/08/84 change _message_ to _make_, `_make_ make' to `_make_ read'
+12/07/84 fix scan() method of handling {} command lists
+         echo `x is up to date' for x on command line and !x->target
+         don't include notouch, post or state dependencies in $< or $*
+         add line number argument to parse()
+         # is only comment char if preceded by space (or beginning of line)
+12/06/84 use bit states in gram.y
+         remove `(error)' from error messages, add .USE error check
+         move `# <line> <file>' interpreter from yylex() to getlin()
+12/05/84 make precious(.INTERNAL) always true
+12/04/84 fix expand() to count parentheses
+         change flags variable for command XX to XX-
+         change .NOJOB to .FOREGROUND and r->nojob to r->foreground
+         add FOREGROUND state to execute commands in foreground and block
+11/30/84 x := y evaluates y when makefile is read
+         cmd expansion delayed until job slot freed in cosend()
+         check VPATH to set -u and .INSERT onto .SOURCE (build emulation)
+         $(x/OLD/NEW/) substitutes NEW for OLD in each compnent of x's expansion
+11/29/84 add .INSERT to insert instead of append dependencies
+         add -u option (DUPLICATE) that allows duplicate files (build emulation)
+11/28/84 add Machine to file name components, (warning) for unknown component
+         add +option to turn option off
+11/27/84 interpret "dir/file" rule names correctly
+         add -h to search for #include header files
+11/20/84 use static buffers buf0 & buf1, watching out for recursion
+         some minor fixes and code consolidation
+11/19/84 remove -e, [export], setenv(); set proper var order in main()
+         description files now free format except for `...'
+         add {...} command list specification -- alternative to tabs
+         add quoted rule names to scan.c ("name")
+11/17/84 move make(.INIT) before special rule check
+         change .ORPHAN to .INTERNAL for clarity
+11/16/84 add <file>(<var>) state variables; state is value of `#define <var>'
+11/06/84 add coshell() and cowait() interface to co-shell
+11/01/84 initial state variable ideas, state file added
+10/31/84 ideas about generic hash table interface -- hash.h
+10/27/84 $(<), $(>) and $(*) defined
+         edit operators applied to each token in variable value
+10/25/84 edit operator syntax defined; add post commands, .INIT and .DONE
+10/19/84 code structure conversion -- "third generation make"
+10/11/84 .CLEAR dependency defined
+10/10/84 old make works on system5 and BSD; .MAIN added
+10/07/84 add shell as co-process; <.x> predecessor of .SOURCE.x
+10/05/84 add duplicate source message to old make
+10/03/84 add .SOURCE to old make
+09/19/84 first thoughts -- add mk script with cpp front end to old make

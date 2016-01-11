@@ -1,0 +1,23 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>quote</>
+	<DESCRIPTION>quote escape delimiter test</>
+	<PHYSICAL>
+		<ESCAPE>\\</>
+		<QUOTE>"</>
+	</>
+	<FIELD>
+		<NAME>s1</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>|</>
+		</>
+	</>
+	<FIELD>
+		<NAME>s2</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<DELIMITER>&newline;</>
+		</>
+	</>
+</>

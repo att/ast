@@ -1,0 +1,1054 @@
+NOTE regression tests for the jcl command
+
+UNIT jcl
+
+TEST 'basics'
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB    TEST                   job comment
+//SET1     SET    A=123,B=456,C=789      default values
+//STEP1    EXEC   PGM=IEBGENER           exec comment
+//SYSIN    DD     TEST.&A..&B..&C..TEST, dd comment
+//                LRECL=80               continuation comment
+//STEP2    EXEC   PGM=IEFBR14            pgm comment
+//SYSIN    DD     *
+here
+//*                                      comment comment
+//STEP3    EXEC   PGM=TEST               pgm comment
+!
+
+EXEC -nvw -m- <<'!'
+//NNNNNNNN JOB '#BOZO',CLASS=C,
+//      MSGCLASS=8,REGION=4096K
+//MMMMMMMM EXEC PGM=TEST
+//SYSIN    DD   DSN=IN,
+//            DISP=SHR                                   * XXX XXX XXXX
+//SYSOUT   DD   DSN=FOO$OUT,
+//            DISP=(NEW,CATLG),                          * YYYYYYYY
+//            DCB=(RECFM=FB,BLKSIZE=0,LRECL=74),UNIT=(DISK,16)
+//TEMP1    DD   DSN=FOO$TMP,
+//            DISP=(NEW,CATLG)                           * ZZZZZZZZ
+//TEMP2    DD   DSN='BAR TMP',
+//            DISP=(MOD,CATLG)                           * ZZZZZZZZ
+//SYSERR   DD   DSNAME=ERR
+!
+
+EXEC -nvw -m- <<'!'
+//NNNNNNNN JOB '#BOZO',CLASS=C,
+//      MSGCLASS=8,REGION=4096K
+//MMMMMMMM EXEC PGM=TEST
+//SYSIN    DD   DSN=IN,
+//            DISP=SHR                                   * XXX XXX XXXX
+//OUTPUT   DD   DSN=OUT,
+//            DISP=(MOD,CATLG),                          * YYYYYYYY
+//            DCB=(RECFM=FB,BLKSIZE=0,LRECL=74),UNIT=(DISK,16)
+//SYSERR   DD   DSNAME=ERR
+!
+
+TEST 'continuation'
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB
+//S1       EXEC PGM=TEST
+//D1       DD   DSNAME=SWITCH.LEVEL18.GROUP12,UNIT=3350,
+//         VOLUME=335023,SPACE=(TRK,(80,15)),DISP=(,PASS)
+//D2       DD   DSNAME=INDS,DISP=OLD,CHKPT=EOV,   MY INPUT DATA SET
+//         UNIT=SYSSQ,VOLUME=SER=(TAPE01,TAPE02,TAPE03)
+//S2       EXEC PGM=BILLING,COND.PAID=((20,LT),EVEN),
+//         COND.LATE=(60,GT,FIND),
+//         COND.BILL=((20,GE),(30,LT,CHGE))  THIS STATEMENT CALLS      X
+//         THE BILLING PROCEDURE AND SPECIFIES RETURN CODE TESTS       X
+//         FOR THREE PROCEDURE STEPS
+//*     10        20        30        40        50        60        70
+//*45678901234567890123456789012345678901234567890123456789012345678901234567890
+//S3       EXEC PGM=IEFBR14,PARM='THIS IS A LONG PARAMETER WITHIN APOST
+//              ROPHES, CONTINUED IN COLUMN 16 OF THE NEXT RECORD'
+!
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB
+//*     10        20        30        40        50        60        70
+//*45678901234567890123456789012345678901234567890123456789012345678901234567890
+// SET  AAA=                        XXXXXXXX YYYYYYY                  #
+// SET  BBB=bbb                     XXXXXXXX YYYYYYY                  #
+// SET  CCC=ccc                     XXXXXXXX YYYYYYY                   #
+// SET  DDD=ddd                     XXXXXXXX YYYYYYY                   #
+// SET  EEE=eee                     XXXXXXXX YYYYYYY                  #
+//      EXEC  PGM=ECHO,PARM=&AAA.&BBB.&CCC.&DDD.&EEE.
+!
+
+TEST 'quoting'
+
+EXEC -nvw -m- <<'!'
+//* TEST
+//TEST     PROC   A=,B='',C='''''c''''',D='o''''k',E=O''''''K
+//STEP     EXEC   PGM=TEST
+//SYSIN    DD     ':A=&A:B=&B:C=&C:D=&D:E=&E:&&A:&&Z:'
+!
+
+EXEC -nvw -m- <<'!'
+//TEST JOB
+//STEP     EXEC   PGM=TEST,PARM=('FILE=AAA,LIST=Y,,EMPTY')
+!
+
+EXEC -nvw -m- <<'!'
+//ABC JOB
+//    SET  VAR=value
+//PDQ EXEC PGM=XYZ,COND=(4,LT),
+//         PARM=('$SKIP=-1,VAR=&VAR')
+!
+
+TEST 'PROC variable scope'
+
+EXEC -nvw -m- <<'!'
+//EXAMPLE   PROC SYM1='What''''s up, Doc?',SYM2=(DEF),SYM3=&&&&TEMP1,
+//       SYM4='&&TEMP2',SYM5=&&TEMP3,TEMP3=TEMPNAME,
+//       SYM6=&TEMP3
+//S1        EXEC PGM=WTO,PARM='&SYM1',ACCT=&SYM2
+//DD1       DD   DSN=&SYM3,UNIT=SYSDA,SPACE=(TRK,(1,1))
+//DD2       DD   DSN=&SYM4,UNIT=SYSDA,SPACE=(TRK,(1,1))
+//DD3       DD   DSN=&SYM5,UNIT=SYSDA,SPACE=(TRK,(1,1))
+//DD4       DD   DSN=&SYM6,UNIT=SYSDA,SPACE=(TRK,(1,1))
+//          PEND
+!
+
+EXEC -nvw -m- <<'!'
+//TEST01   JOB    TEST
+//SET01    SET    A=A0,B=B0
+//*
+//STEP01   EXEC   PGM=TEST01
+//SYSIN    DD     TEST.&A..&B..&C..TEST01
+//*
+//PROC1    PROC   A=A1,C=C1
+//STEP11   EXEC   PROC=PROC2,A=A2,B=B2
+//STEP12   EXEC   PGM=TEST12
+//SYSIN    DD     TEST.&A..&B..&C..TEST12
+//         PEND
+//*
+//PROC2    PROC
+//STEP21   EXEC   PGM=TEST21
+//SYSIN    DD     TEST.&A..&B..&C..TEST21
+//         PEND
+//*
+//STEP02   EXEC   PROC=PROC1,A=,C=C4
+//*
+//STEP03   EXEC   PGM=TEST03
+//SYSIN    DD     TEST.&A..&B..&C..TEST02
+//*
+!
+
+TEST 'references'
+
+EXEC -nvw -m- <<'!'
+//JOB1    JOB   TEST
+//STEPA   EXEC  PGM=TEST
+//DD1     DD    DSNAME=REPORT
+//DD2     DD    DSN=TABLE
+//DD3     DD    DSNAME=*.DD1
+!
+
+EXEC -nvw -m- REF=X <<'!'
+//JOB5    JOB   TEST
+//AHA     EXEC  PGM=TEST,PARM=AHA
+//PROC1   PROC  N=1
+//PSTEP1  EXEC  PGM=TEST,PARM=01
+//DS1     DD    DSNAME=DATA1
+//PSTEP2  EXEC  PGM=TEST,PARM=02
+//DS2     DD    DSNAME=DATA2
+//        PEND
+//CALLER  EXEC  PROC=PROC1
+//REF1    DD    DSNAME=&REF..CALLER.PSTEP2.DS2
+//NEXT    EXEC  PGM=TEST,PARM=03
+//REF2    DD    DSNAME=&REF..CALLER.PSTEP1.DS1
+!
+
+EXEC -nvw -m- REF='*'
+
+EXEC -nvw -m- <<'!'
+//JOB2    JOB   TEST
+//STEP1   EXEC  PGM=TEST
+//DDA     DD    DSNAME=D58.POK.PUBS01
+//STEP2   EXEC  PGM=TEST
+//DDB     DD    DSNAME=*.STEP1.DDA
+!
+
+TEST 'nested procedure calls'
+
+EXEC -nvw -m- <<'!'
+//JOB1    JOB   NEST,TEST
+//C       PROC
+//CS1     EXEC  PGM=GHI
+//        PEND
+//B       PROC
+//BS1     EXEC  PROC=C
+//BS2     EXEC  PGM=DEF
+//        PEND
+//A       PROC
+//AS1     EXEC  PROC=B
+//AS2     EXEC  PGM=ABC
+//        PEND
+//STEP1   EXEC  PROC=A
+//STEP2   EXEC  PGM=JKL
+!
+
+EXEC -nvw -m- <<'!'
+//JOBA     JOB  ...
+//INSTREAM PROC LOC=POK
+//PSTEP    EXEC PGM=WRITER
+//DSA      DD   SYSOUT=A,DEST=&LOC
+//         PEND
+//CALLER   EXEC INSTREAM,LOC=NYC
+!
+
+EXEC -nvw -m- <<'!'
+//JOBB      JOB  ...
+//INSTREAM  PROC LOC=POK,NUMBER=3350
+//PSTEP     EXEC PGM=TEST
+//PIN       DD   DSNAME=REPORT,DISP=(OLD,KEEP),UNIT=&NUMBER
+//POUT      DD   SYSOUT=A,DEST=&LOC
+//          PEND
+//CALLER    EXEC PROC=INSTREAM,NUMBER=,LOC=STL
+//PSTEP.INDATA  DD   *
+(data)
+/*
+!
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB
+//TESTJCL   PROC
+//STEP1     EXEC  TESTJCL1
+//          PEND
+//TESTJCL1  PROC
+//STEP2     EXEC  PGM=IEFBR14,PARM=&PVAL
+//SYSUDUMP  DD    SYSOUT=A
+//          PEND
+//RUNIT     EXEC  TESTJCL,PVAL=EXEC0
+!
+
+TEST 'DD override'
+
+EXEC -nvw -m- <<'!'
+//JOB1    JOB
+//* Procedure C:
+//C       PROC
+//CS1     EXEC  PGM=CCC
+//CS1DD1  DD    DSNAME=A.B.C,DISP=SHR
+//CS1DD2  DD    SYSOUT=A
+//        PEND
+//* Procedure B:
+//B       PROC
+//BS1     EXEC  PROC=C
+//CS1.CS1DD1  DD  DSNAME=X.Y.Z       This statement is a valid
+//*                                  override of procedure C, stepCS1
+//*                                  for DD CS1DD1
+//*
+//CS1.CS1DD3  DD  SYSOUT=A           This statement is a valid
+//*                                  addition to procedure C, step CS1
+//BS2     EXEC  PGM=BBB
+//BS2DD1  DD    DSNAME=E,DISP=SHR
+//        PEND
+//* Procedure A:
+//A       PROC
+//AS1     EXEC  PROC=B
+//BS2.BS2DD2  DD  DSNAME=G,DISP=SHR  This statement is a valid
+//*                                  addition to procedure B, step BS2
+//AS2     EXEC  PGM=AAA
+//AS2DD1  DD    DSNAME=E,DISP=SHR
+//        PEND
+//* Job Stream:
+//STEP1   EXEC  PROC=A
+//AS2.AS2DD2  DD  DSNAME=G,DISP=SHR  This statement is a valid
+//*                                  addition to procedure A, step AS2
+//STEP2   EXEC  PGM=IEFBR14
+!
+
+EXEC -nvw -m- <<'!'
+//JOB1    JOB
+//CS1     EXEC  PGM=CCC
+//CS1DD1  DD    DSNAME=X.Y.Z,DISP=SHR
+//*
+//CS1DD2  DD    SYSOUT=A
+//CS1DD3  DD    SYSOUT=A
+//*
+//BS2     EXEC  PGM=BBB
+//BS2DD1  DD    DSNAME=E,DISP=SHR
+//BS2DD2  DD    DSNAME=G,DISP=SHR
+//*
+//AS2     EXEC  PGM=AAA
+//AS2DD1  DD    DSNAME=E,DISP=SHR
+//AS2DD2  DD    DSNAME=G,DISP=SHR
+//STEP2   EXEC  PGM=IEFBR14
+!
+
+EXEC -nvw -m- <<'!'
+//TEST    JOB VER=0
+//SUB     PROC VER=1
+//S1      EXEC  PGM=TEST
+//S1D1    DD    DSN=O1.&VER..DAT
+//S1D2    DD    DSN=O2.&VER..DAT
+//        PEND
+//MAIN1   EXEC  PROC=SUB
+//S1.S1D1 DD    DSN=N1.&VER..DAT
+//S1.S1D3 DD    DSN=N3.&VER..DAT
+!
+
+EXEC -nvw -m- <<'!'
+//TEST    JOB
+//SUB     PROC VER=1
+//S1      EXEC  PGM=TEST
+//S1D1    DD    DSN=O1.&VER..DAT
+//S1D2    DD    DSN=O2.&VER..DAT
+//        PEND
+//MAIN1   EXEC  PROC=SUB
+//S1.S1D1 DD    DSN=N1.&VER..DAT
+//S1.S1D3 DD    DSN=N3.&VER..DAT
+!
+
+TEST 'syntax'
+
+EXEC -nvw -m- <<'!'
+//TEST   JOB  BAD
+//SET1   SET  VAL1='ABC,',VAL2=DEF,NULLSYM=''
+//S1     EXEC PGM=IEFBR14,PARM=&VAL1
+//         TIME=30
+//S2     EXEC PGM=IEFBR14,PARM=&VAL2
+//         TIME=60
+//S3     EXEC PGM=IEFBR14,PARM=&VAL1
+//         &NULLSYM
+!
+
+EXEC -nvw -m- <<'!'
+//TEST JOB
+//     SET  QUOTE=''''
+//S1   EXEC PGM=IEFBR14,PARM=&QUOTE.ABC   DEF&QUOTE
+//DD1  DD   DUMMY
+!
+
+EXEC -nvw -m- <<'!'
+//TEST JOB  NOPARM
+//    SET  CONT=' ',T='(30,0)'
+//S1  EXEC PGM=IEFBR14&CONT.PARM='ABC  DEF',TIME=&T
+!
+
+EXEC -nvw -m- <<'!'
+//TEST JOB  PARM
+//    SET  CONT=',',T='(30,0)'
+//S1  EXEC PGM=IEFBR14&CONT.PARM='ABC  DEF',TIME=&T
+!
+
+EXEC -nvw -m- <<'!'
+//TEST  JOB  PARM
+//TPROC PROC
+//STEP1 EXEC PGM=IEFBR14,PARM=&INPUT&XXX
+//      PEND
+//STEP2 EXEC PROC=TPROC,XXX=VALUE
+!
+
+TEST 'substitution subterfuge'
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB
+//TESTPROC PROC A=IMB406,B=ABLE,C=3330,D=WXYZ1,
+//           E=OLD,F=TRK,G='10,10,1'
+//STEP     EXEC PGM=&A
+//DD1      DD   DSNAME=&B,UNIT=&C,VOLUME=SER=&D,DISP=&E,
+//           SPACE=(&F,(&G))
+//         PEND
+//CALLER1 EXEC PROC=TESTPROC,A=IEFBR14,B=BAKER,E=(NEW,KEEP)
+//CALLER2 EXEC PROC=TESTPROC,A=IEFBR14,B=,C=3350,D=,E=
+!
+
+TEST 'path prefix maps'
+
+DATA t.map <<'!'
+map	*.*.CCC.DDD		HIT-
+!
+
+EXEC -r -m- -m t.map AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+DATA t.map <<'!'
+set	%%CYCLE=123
+map	*.*.CCC.DDD		HIT-${%%CYCLE}.${JCL_AUTO_CYCLE}
+!
+
+EXEC -r -m- -m t.map AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+EXEC -r -m- -m t.map %%CYCLE=789 AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+EXPORT	JCL_AUTO_CYCLE=789
+
+EXEC -r -m- -m t.map AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+EXEC -i -r -m- -m t.map AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+DATA t.map <<'!'
+set	--import
+set	%%CYCLE=123
+map	*.*.CCC.DDD		HIT-${%%CYCLE}.${JCL_AUTO_CYCLE}
+!
+
+EXEC -r -m- -m t.map AAA.BBB.CCC.DDD02 P.D.CCC.DDD ..CCC.DDD.1 A.B.C.D
+
+DATA t.map <<'!'
+map	A.B.C		abc
+map	A.B		ab	%2
+map	A		a	%1
+map	""		x
+!
+
+EXEC -nvw -m- -m t.map <<'!'
+//TEST   JOB  MAP TEST
+//S1     EXEC PGM=IEFBR14
+//S1D1   DD   A.B.C.Z    abc.Z
+//S1D2   DD   A.B.Z      ab.Z
+//S1D3   DD   A.C.Z      a.C.Z
+//S1D4   DD   A.Z        a.Z
+//S1D5   DD   Z          Z
+//S1D6   DD   A.Z        a.Z
+//S1D7   DD   A.C.Z      a.C.Z
+//S1D8   DD   A.B.Z      ab.Z
+//S1D9   DD   A.B.C.Z    abc.Z
+!
+
+DATA t.map <<'!'
+map	A.B.C		abc
+map	A.B		ab	%2
+map	A		a	%1
+map	*		/dev/null
+!
+
+EXEC -nvw -m- -m t.map
+
+EXEC -nvw -m- -k <<'!'
+//TEST   JOB  TEST
+//S1     EXEC PGM=IEFBR14
+//S1D1   DD   DSN=A.B.C,DCB=(RECFM=FB,LRECL=123)
+//S1D2   DD   DSN=A.B.Q,DISP=(NEW,CATLG,CATLG),DCB=(RECFM=FB,LRECL=6001)
+//S2     EXEC PGM=IEFBR14
+//S2D1   DD   DSN=A.B.C
+!
+
+EXEC -nvw -m- -k -m t.map
+
+DATA k.map <<'!'
+set	--marklength
+map	A.B.C		abc
+map	A.B		ab	%2
+map	A		a	%1
+map	""		x
+!
+
+EXEC -nvw -m- -m k.map
+
+EXEC -nvw -m- -m k.map --nomarklength
+
+DATA q.map <<'!'
+set	--marklength
+map	A.B.Q		abq	.qz
+map	A.B.C		abc	%3.qz
+map	A.B		ab	%2
+map	A		a	%1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+DATA q.map <<'!'
+set	--marklength
+map	A.B.Q		abq	.qz
+map	A.B.C		abc	%v3.qz
+map	A.B		ab	%v2
+map	A		a	%v1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+DATA q.map <<'!'
+set	--marklength
+map	A.B.Q		abq	.qz
+map	A.B.C		abc.qz	%3
+map	A.B		ab	%2
+map	A		a	%1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+DATA q.map <<'!'
+set	--marklength
+map	A.B.Q		abq	.qz
+map	A.B.C		abc.qz	%v3
+map	A.B		ab	%v2
+map	A		a	%v1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+DATA q.map <<'!'
+set	--marklength
+suf	.qz
+map	A.B.Q		abq	.qz
+map	A.B.C		abc.qz	%3
+map	A.B		ab	%2
+map	A		a	%1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+DATA q.map <<'!'
+set	--marklength
+suf	.qz
+map	A.B.Q		abq	.qz
+map	A.B.C		abc.qz	%v3
+map	A.B		ab	%v2
+map	A		a	%v1
+map	""		x
+!
+
+EXEC -nvw -m- -m q.map
+
+EXEC -nvw -m- -k -m t.map <<'!'
+//TEST    JOB  TEST
+//SORT1   EXEC PGM=SORT
+//SYSOUT  DD SYSOUT=*
+//SYSIN   DD *
+ SORT FIELDS=COPY
+/*
+//SORTIN  DD   DSN=A.B.C,DCB=(RECFM=FB,LRECL=62)
+//        DD   DSN=A.B.C.X
+//        DD   DSN=A.B.C.Y
+//SORTOUT DD   DSN=A.B.C.Z,DCB=(*.SORTIN)
+!
+
+EXEC -nvw -m- -m k.map
+
+EXEC -nvw -m- -k -m t.map <<'!'
+//TEST    JOB  TEST
+//SORT1   EXEC PGM=SORT
+//SYSOUT  DD SYSOUT=*
+//SYSIN   DD *
+ SORT FIELDS=COPY
+/*
+//SORTIN  DD   DUMMY,DSN=A.B.C,DCB=(RECFM=FB,LRECL=62)
+//        DD   DSN=A.B.C.X
+//        DD   DSN=A.B.C.Y
+//SORTOUT DD   DSN=A.B.C.Z,DCB=(*.SORTIN)
+!
+
+EXEC -nvw -m- -m k.map
+
+DATA m.map <<'!'
+map	DFUB1IW.TPHR212.C040609.		${TESTROOT}/@data1/C040609/
+!
+
+EXEC -nvw -m- -m m.map <<'!'
+//TEST   JOB  MAP TEST
+//S1     EXEC PGM=IEFBR14
+//S1D1   DD   DFUB1IW.TPHR212.C040609.XIVAI01.FIIP1800    abc.Z
+!
+
+DATA n.map <<'!'
+map	DFUB1IW.TPHR212.C040609		${TESTROOT}/@data1/C040609'
+//TEST   JOB  MAP TEST
+//S1     EXEC PGM=IEFBR14
+//S1D1   DD   DFUB1IW.TPHR212.C040609.XIVAI01.FIIP1800    abc.Z
+!
+
+EXEC -nvw -m- -m n.map
+
+DATA p.map <<'!'
+set	--marklength
+map	A.B.C		abc		.qz
+map	*.E.F		${1}/E/F	%321
+map	*.*.I		${2}/${1}.I
+map	""		x
+!
+
+EXEC -nvw -m- -m p.map <<'!'
+//TEST    JOB  TEST
+//TEST1   EXEC PGM=TEST
+//TESTIN  DD   DSN=A.B.C,DCB=(RECFM=FB,LRECL=62)
+//        DD   DSN=A.B.C.X,DCB=(RECFM=VB,LRECL=123)
+//        DD   DSN=D.E.F.Y
+//        DD   DSN=G.H.I.Z
+!
+
+DATA v.map <<'!'
+set	--marklength
+map	*.*.*.*.X.	/X/${1}/${2}/${3}/${4}/
+map	*.*.*.*.Y	/Y/${1}/${2}/${3}/${4}
+map	*.*.*.*.*	/5/${1}/${2}/${3}/${4}/${5}
+map	*.*.*.*		/4/${1}/${2}/${3}/${4}
+map	*.*.*		/3/${1}/${2}/${3}
+map	*.*		/2/${1}/${2}
+map	*		/1/${1}
+!
+
+EXEC -nvw -m- -m v.map <<'!'
+//TEST    JOB  TEST
+//TEST1   EXEC PGM=TEST
+//TESTIN  DD   DSN=A.B.C.D.X.F
+//        DD   DSN=A.B.C.D.Y.F
+//        DD   DSN=A.B.C.D.E.F.G
+//        DD   DSN=A.B.C.D.E.F
+//        DD   DSN=A.B.C.D.E
+//        DD   DSN=A.B.C.D
+//        DD   DSN=A.B.C
+//        DD   DSN=A.B
+//        DD   DSN=A
+!
+
+DATA v.map <<'!'
+set	--marklength
+export	ROOT=/root
+set	DATA=${ROOT}/data
+map	*.*.*.*.XXXXXXX		${DATA}/${3}/${4}.XXXXXXX	%789.qz
+map	*.*.*.*.YYYYYYY		${DATA}/${3}/${4}.YYYYYYY	%v1234.qz
+map	*.*.QQQQQQQ.*.*		${DATA}/QQQQQQQ/${4}.${3}
+map	*.*.RRRRRRR.*.SSSSSSS	${DATA}/SSSSSSS/${3}/${2}/${1}
+map	*.*.ERROR.*		${DATA}/SSSSSSS/${4}
+map	*.*.*.*.*		${DATA}/${3}/${4}.${5}
+!
+
+EXEC -nvw -m- -m v.map <<'!'
+//TEST    JOB  TEST
+//TEST1   EXEC PGM=TEST
+//TESTIN  DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.XXXXXXX
+//        DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.YYYYYYY
+//        DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.ZZZZZZZ
+//        DD   DSN=AAAAAAA.BBBBBBB.RRRRRRR.FFFFFFF.SSSSSSS
+//        DD   DSN=AAAAAAA.BBBBBBB.ERROR.FFFFFFF.SSSSSSS
+//        DD   DSN=AAAAAAA.BBBBBBB.QQQQQQQ.DDDDDDD.EEEEEEE
+!
+
+DATA v.map <<'!'
+set	--marklength
+set	ROOT=/root
+set	DATA=${ROOT}/data
+map	*.*.*.*.XXXXXXX		${DATA}/${3}/${4}.XXXXXXX	%789.qz
+map	*.*.*.*.YYYYYYY		${DATA}/${3}/${4}.YYYYYYY	%v1234.qz
+map	*.*.QQQQQQQ.*.*		${DATA}/QQQQQQQ/${4}.${3}
+map	*.*.RRRRRRR.*.SSSSSSS	${DATA}/SSSSSSS/${3}/${2}/${1}
+map	*.*.ERROR.*		${DATA}/SSSSSSS/${4}
+map	*.*.*.*.*		${DATA}/${3}/${4}.${5}
+!
+
+EXEC -nvw -m- -m v.map
+
+EXEC -r -m- -m v.map \
+	AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.XXXXXXX \
+	AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.YYYYYYY \
+	AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.ZZZZZZZ \
+	AAAAAAA.BBBBBBB.RRRRRRR.FFFFFFF.SSSSSSS \
+	AAAAAAA.BBBBBBB.ERROR.FFFFFFF.SSSSSSS \
+	AAAAAAA.BBBBBBB.QQQQQQQ.DDDDDDD.EEEEEEE
+
+DATA e.map <<'!'
+set	--marklength
+map	XXXXXXX			xxxxxxx
+map	XXXXXXX.*		yyyyyyy/${1}
+map	XXXXXXX.*.*		yyyyyyy/${1}/${2}
+map	*.*.*.*.XXXXXXX		${3}/XXXXXXX
+map	*.*.*.*.XXXXXXX.*	${3}/YYYYYYY/${5}
+map	*.*.*.*.XXXXXXX.*.*	${3}/YYYYYYY/${5}/${6}
+map	*.*.XXXXXXX.*.YYYYYYY	${3}/YYYYYYY
+map	*.*.XXXXXXX.*.ZZZZZZZ	${3}/ZZZZZZZ
+!
+
+EXEC -nvw -m- -m e.map < /dev/null
+
+DATA a.map <<'!'
+map	*.BBBBBBB.*        	dir/${1}/${2}
+map	*.ZZZZZZZ/*        	pds/${1}/${2}
+!
+
+EXEC -nvw -m- -m a.map <<'!'
+//TEST    JOB  TEST
+//TEST1   EXEC PGM=TEST
+//TESTIN  DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC
+//        DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.XXXXXXX
+//        DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.YYYYYYY
+//        DD   DSN=AAAAAAA.BBBBBBB.CCCCCCC.DDDDDDD.ZZZZZZZ
+//        DD   DSN=AAAAAAA.BBBBBBB.RRRRRRR.FFFFFFF.SSSSSSS
+//        DD   DSN=AAAAAAA.BBBBBBB.ERROR.FFFFFFF.SSSSSSS
+//        DD   DSN=AAAAAAA.BBBBBBB.QQQQQQQ.DDDDDDD.EEEEEEE
+//        DD   DSN=AAAAAAA.ZZZZZZZ(CCCCCCC)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(CCCCCCC.DDDDDDD.XXXXXXX)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(CCCCCCC.DDDDDDD.YYYYYYY)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(CCCCCCC.DDDDDDD.ZZZZZZZ)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(RRRRRRR.FFFFFFF.SSSSSSS)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(ERROR.FFFFFFF.SSSSSSS)
+//        DD   DSN=AAAAAAA.ZZZZZZZ(QQQQQQQ.DDDDDDD.EEEEEEE)
+!
+
+TEST 'syntax round II'
+
+EXEC -nvw -m- -k <<'!'
+//TEST    JOB  TEST
+//SORT1   EXEC PGM=SORT
+//SYSIN   DD *
+ SORT FIELDS=COPY
+!
+
+EXEC -nvw -m- -k <<'!'
+//TEST    JOB  TEST
+//STEP01  EXEC PGM=HAL9000
+//HAL_IN  DD DSN=A.B.C.D
+//        DD DSN=A.B.C.E
+!
+
+EXEC -nvw -m- -k <<'!'
+//TEST    JOB  TEST
+//STEP01  EXEC PGM=HAL9000
+//HAL.IN  DD DSN=A.B.C.D
+//        DD DSN=A.B.C.E
+!
+
+TEST 'IF/ELSE/ENDIF'
+
+EXEC -nvw -m- -k <<'!'
+//TEST  JOB   TEST
+//      SET   ?RC?=2
+//      IF    (RC LT 4) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-1
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-1
+//      ENDIF
+//      IF    (RC < 4) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-2
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-2
+//      ENDIF
+//      SET   ?RC?=16
+//      IF    (RC LT 4) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-3
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-3
+//      ENDIF
+//      IF    (RC < 4) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-4
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-4
+//      ENDIF
+//      SET   ?RC?=2
+//      IF    (RC LT 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-5
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-5
+//      ENDIF
+//      IF    (RC < 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-6
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-6
+//      ENDIF
+//      SET   ?RC?=16
+//      IF    (RC LT 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-7
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-7
+//      ENDIF
+//      IF    (RC < 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-8
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-8
+//      ENDIF
+//      SET   ?RC?=2
+//      IF    (RC LT 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-9
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-9
+//      ENDIF
+//      IF    ((RC LT 4 & RC LT 12) | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-10
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-10
+//      ENDIF
+//      SET   ?RC?=16
+//      IF    (RC LT 4 | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-11
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-11
+//      ENDIF
+//      IF    ((RC LT 4 & RC LT 12) | RC = 16) THEN
+//      EXEC  PGM=ECHO,PARM=TRUE-12
+//      ELSE
+//      EXEC  PGM=ECHO,PARM=FALSE-12
+//      ENDIF
+!
+
+EXEC -nvw -m- -k <<'!'
+//TEST  JOB   TEST
+//      SET  ?ABEND?=1
+//STEP1 EXEC PGM=TRUE
+//      IF  (ABEND | STEP1.RC > 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-1
+//      ENDIF
+//      IF  (ABEND OR STEP1.RC GT 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-2
+//      ENDIF
+//      SET  ?RC?=6
+//      IF  (RC > 4 & RC < 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-3
+//      ENDIF
+//      IF  (RC GT 4 AND RC LT 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-4
+//      ENDIF
+!
+
+EXEC -nvw -m- -k <<'!'
+//TEST  JOB   TEST
+//      SET  ?ABEND?=0
+//STEP1 EXEC PGM=TRUE
+//      IF  (ABEND | STEP1.RC > 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-1
+//      ENDIF
+//      IF  (ABEND OR STEP1.RC GT 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-2
+//      ENDIF
+//      SET  ?RC?=2
+//      IF  (RC > 4 & RC < 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-3
+//      ENDIF
+//      IF  (RC GT 4 AND RC LT 8) THEN
+//      EXEC PGM=ECHO,PARM=TRUE-4
+//      ENDIF
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (ABEND | STEP1.RC > 8) THEN
+//TRUE      EXEC  PGM=ERROR
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (!ABEND & STEP1.RC < 8) THEN
+//TRUE      EXEC  PGM=OK
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (ABEND | STEP1.RC > 8) THEN
+//TRUE      EXEC  PGM=ERROR
+//          ELSE
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (!ABEND & STEP1.RC < 8) THEN
+//TRUE      EXEC  PGM=OK
+//          ELSE
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (ABEND | STEP1.RC > 8) THEN
+//TRUE      EXEC  PGM=ERROR
+//          ELSE
+//YES       EXEC  PGM=TRUE
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k <<'!'
+//JOBA      JOB   TEST
+//STEP1     EXEC  PGM=BEFORE
+//IFBAD     IF  (!ABEND & STEP1.RC < 8) THEN
+//TRUE      EXEC  PGM=OK
+//          ELSE
+//          EXEC  PGM=TRUE
+//IFBADEND  ENDIF
+//NEXTSTEP  EXEC  PGM=AFTER
+!
+
+EXEC -nvw -m- -k RC=3 <<'!'
+//TEST JOB   TEST
+//     SET ?RC?=&RC
+//     EXEC  PGM=ECHO,PARM=1
+//      IF  (RC > 5) THEN
+//       IF  (RC > 7) THEN
+//        EXEC  PGM=ECHO,PARM=2
+//       ELSE
+//        EXEC  PGM=ECHO,PARM=3
+//       ENDIF
+//      ELSE
+//       IF  (RC > 3) THEN
+//        EXEC  PGM=ECHO,PARM=4
+//       ELSE
+//        EXEC  PGM=ECHO,PARM=5
+//       ENDIF
+//      ENDIF
+//     EXEC  PGM=ECHO,PARM=(E,O,F)
+!
+
+EXEC -nvw -m- -k RC=5
+
+EXEC -nvw -m- -k RC=7
+
+EXEC -nvw -m- -k RC=9
+
+TEST 'INCLUDE'
+
+DATA include.jcl <<'!'
+//SYSOUT2  DD      DSN=A
+!
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB   TEST
+//LIBSRCH  JCLLIB  ORDER=TEST.SYSOUT.JCL
+//STEP1    EXEC    PGM=OUTRTN
+//OUTPUT1  INCLUDE MEMBER=include.jcl
+//STEP2    EXEC    PGM=IEFBR14
+!
+
+DATA include.jcl <<'!'
+//SYSOUT2  DD      DSN=A
+!
+
+EXEC -nvw -m- <<'!'
+//TEST     JOB   TEST
+//LIBSRCH  JCLLIB  ORDER=(TEST.SYSOUT.JCL,MY.JCL.NOT.YOURS)
+//STEP1    EXEC    PGM=OUTRTN
+//OUTPUT1  INCLUDE MEMBER=include.jcl
+//STEP2    EXEC    PGM=IEFBR14
+!
+
+TEST 'DD'
+
+EXEC -nvw -m- <<'!'
+//SPACY     PROC SYM1='What''''s up, Doc?',SYM2=(DEF),SYM3=&&&&TEMP1,
+//       SYM4='&&TEMP2',SYM5=TEMP3,
+//       SYM6=TEMP4
+//S1        EXEC PGM=WTO,PARM='&SYM1',ACCT=&SYM2
+//DD1       DD   DSN=&SYM3,UNIT=SYSDA,
+//               SPACE=(TRK,(1,,1),2),DISP=(NEW,KEEP)
+//DD2       DD   DSN=&SYM4,UNIT=SYSDA,
+//               SPACE=(TRK,(1,,1),2),DISP=(OLD,DELETE)
+//DD3       DD   DSN=&SYM5,UNIT=SYSDA,
+//               SPACE=(TRK,(1,,1),2),DISP=MOD
+//DD4       DD   DSN=&SYM6,UNIT=SYSDA,
+//               SPACE=(TRK,(1,,1),2),DISP=NEW
+//          PEND
+!
+
+TEST 'OUTPUT'
+
+EXEC -nvw -m- <<'!'
+//TESTOUT PROC    OUTTEST
+//OUT1    OUTPUT  DEST=STLNODE.WMSMITH
+//OUT2    OUTPUT  CONTROL=DOUBLE
+//TEST    EXEC    PGM=TEST
+//DS      DD      SYSOUT=C,OUTPUT=(*.OUT1,*.OUT2)
+!
+
+EXEC -nsvw -m-
+
+TEST 'delayed references'
+
+EXEC -nvw -m- <<'!'
+//JOB1    JOB   TEST
+//STEPA   EXEC  PGM=TEST
+//DD1     DD    DSNAME=REPORT
+//DD2     DD    DSN=TABLE
+//DD3     DD    DSNAME=*.DD1
+//DD4     DD    DDNAME=DD1
+!
+
+EXEC -nvw -m- <<'!'
+//JOB1     JOB  TEST
+//STEP1    EXEC PGM=IEBGENER
+//SYSPRINT DD   SYSOUT=*
+//SYSUT1   DD   DDNAME=INPUT
+//INPUT    DD   DSN=TSTDATA1,DISP=SHR
+//         DD   DSN=TSTDATA2,DISP=SHR
+//SYSUT2   DD   SYSOUT=*
+//SYSIN    DD   DUMMY
+!
+
+EXEC -nvw -m- <<'!'
+//JOB1     JOB  TEST
+//TPROC    PROC
+//S1       EXEC PGM=PROG1
+//DD1      DD   DDNAME=INPUT
+//DD2      DD   DSN=MYDSN2,DISP=SHR
+//DD3      DD   DSN=MYDSN3,DISP=SHR
+//S2       EXEC PGM=PROG2
+//DDA      DD   DDNAME=INPUT
+//DDB      DD   DSN=MINE2,DISP=SHR
+//DDC      DD   DSN=MINE3,DISP=SHR
+//         PEND
+//STEP1    EXEC TPROC
+//INPUT    DD   DSN=MYDSN1,DISP=SHR
+//         DD   DSN=MYDSN4,DISP=SHR
+//S2.INPUT DD   DSN=MINE1,DISP=SHR
+//         DD   DSN=MINE4,DISP=SHR
+!
+
+EXEC -nvw -m- <<'!'
+//JOB1     JOB  TEST
+//TPROC    PROC
+//S1       EXEC PGM=PROG1
+//DD1      DD   DDNAME=INPUT
+//DD2      DD   DSN=MYDSN2,DISP=SHR
+//DD3      DD   DSN=MYDSN3,DISP=SHR
+//S2       EXEC PGM=PROG2
+//DDA      DD   SUBSYS=(BLSR,'DDNAME=INPUT')
+//DDB      DD   DSN=MINE2,DISP=SHR
+//DDC      DD   DSN=MINE3,DISP=SHR
+//         PEND
+//STEP1    EXEC TPROC
+//INPUT    DD   DSN=MYDSN1,DISP=SHR
+//         DD   DSN=MYDSN4,DISP=SHR
+//S2.INPUT DD   DSN=MINE1,DISP=SHR
+//         DD   DSN=MINE4,DISP=SHR
+!
+
+TEST 'control-m auto edit expansion'
+
+EXEC -d4 -n -m- -O 1998-06-03 <<'!'
+//EJ%%ODATE JOB (0,15)
+//          EXEC PGM=ACCOUNTS,DAY=%%ODAY,MONTH=%%OMONTH
+!
+
+EXEC -d4 -n -m- <<'!'
+//J1       JOB TEST
+//*  %%SET %%A  = 1
+//*  %%SET %%B  = 2
+//*  %%SET %%A2 = 100
+//P1       EXEC PGM=P1,A=%%A,B=%%B,AB=%%A%%B,A.B=%%A.%%B
+!
+
+EXEC -d4 -n -m- -O 2000-09-24 <<'!'
+//J1       JOB    TEST
+//S1       EXEC   PGM=T1,$OYEAR=%%$OYEAR,OYEAR=%%OYEAR,
+//                OMONTH=%%OMONTH,ODAY=%%ODAY,OWDAY=%%OWDAY
+//* %%SET  %%BACKUP_UNIT = TAPE
+//F1       DD %%BACKUP_UNIT
+//* %%SET  %%BACKUP_UNIT_%%OWDAY = EE%%OMONTH.%%ODAY
+//F2       DD %%BACKUP_UNIT_%%OWDAY
+//F3       DD %%BACKUP_UNIT_7
+!
+
+TEST 'parsalyze this'
+
+EXEC -nvw -m- <<'!'
+//TEST    JOB (0,15)
+//TEST01  EXEC PGM=TEST02,PARM=('(12345,'' '',''TEST03'',FOO BAR)')
+//TEST04  EXEC PGM=TEST05,PARM=('FOO = ''BAR'';')
+!

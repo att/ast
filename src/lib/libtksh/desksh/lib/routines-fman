@@ -1,0 +1,54 @@
+# File Manager 
+# This actually loads the file manager, sets up variables, and reads in various files.
+
+. $DESKSH_ROOT/routines-utilities
+. $DESKSH_ROOT/routines-menu-file
+. $DESKSH_ROOT/routines-menu-util
+. $DESKSH_ROOT/routines-menu-help
+. $DESKSH_ROOT/routines-pman
+. $DESKSH_ROOT/routines-windows
+. $DESKSH_ROOT/routines-file-browser
+
+typeset FileName="" Location="" Directory=""
+typeset FileName1="" FileName2=""
+typeset filemode=""
+typeset Time=$(date)
+typeset WhoId=$(id -nu)
+typeset Characters=0 Words=0 Lines=0
+typeset Number_Lines=5
+typeset Information=""
+typeset Button_Info=""
+typeset w=""
+typeset show_cmd=1
+typeset show_toolbar=1
+typeset Man_Page=""
+typeset fn=""
+
+image create photo gcopy -file $DESKSH_IMGS/copy.gif
+image create photo gedit -file $DESKSH_IMGS/edit.gif
+image create photo gtools2 -file $DESKSH_IMGS/tools2.gif
+image create photo gexit -file $DESKSH_IMGS/exit.gif
+image create photo gconst -file $DESKSH_IMGS/const.gif
+image create photo gkey -file $DESKSH_IMGS/key.gif
+image create photo gexec -file $DESKSH_IMGS/exec.gif
+image create photo gwrite -file $DESKSH_IMGS/write.gif
+image create photo gtools -file $DESKSH_IMGS/tools.gif
+image create photo gmove -file $DESKSH_IMGS/move.gif
+image create photo gtrash -file $DESKSH_IMGS/trash.gif
+image create photo gblocks -file $DESKSH_IMGS/blocks.gif
+image create photo gsearch -file $DESKSH_IMGS/search.gif
+
+function f_manager
+{
+   w=$(toplevel .filemanager -bd 4 -class FileMan)
+   wm title $w "File Manager"
+   raise $w
+
+   after 1000 update_date_time $w
+   after 5000 update_listing $w
+
+   create_menu $w 
+   create_button_bar $w
+   create_directory_listing $w
+}
+

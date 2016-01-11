@@ -1,0 +1,26 @@
+sys	resource
+lib	getrlimit
+
+tst - output{
+	main()
+	{	int	charbits;
+
+		for(charbits = 1;; ++charbits)
+			if(((1<<charbits)-1) == (unsigned char)(~0))
+				break;
+
+		printf("#ifndef CHAR_BIT\n");
+		printf("#define CHAR_BIT\t%d\n",charbits);
+		printf("#endif\n");
+
+		printf("#ifndef SIZEOF_LONG\n");
+		printf("#define SIZEOF_LONG\t%d\n",sizeof(long));
+		printf("#endif\n");
+
+		printf("#ifndef SIZEOF_INT\n");
+		printf("#define SIZEOF_INT\t%d\n",sizeof(int));
+		printf("#endif\n");
+
+		return 0;
+	}
+}end

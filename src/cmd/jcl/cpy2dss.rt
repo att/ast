@@ -1,0 +1,1280 @@
+NOTE tests for the cpy2dss command
+
+UNIT cpy2dss
+
+TEST 'basics'
+
+EXEC --regress <<'!'
+       01 TEST.
+         10 TEST-FIELD-01 PIC X(8).
+         10 TEST-FIELD-02 PIC X(8).
+         05 TEST-FIELD-03 PIC S9(3)V     COMP-3.
+         05 TEST-FIELD-04 PIC S9(8)V     COMP-3.
+         05 TEST-FIELD-05 PIC S9(3)V     COMP-3.
+         10 TEST-FIELD-06 PIC X(10).
+         10 TEST-FIELD-07 PIC X(10).
+         10 TEST-FIELD-08 PIC X(1).
+         10 TEST-FIELD-09 PIC X(8).
+         10 TEST-FIELD-10 PIC X(5).
+         10 TEST-FIELD-11 PIC X(1).
+         10 TEST-FIELD-12 PIC X(1).
+         10 TEST-FIELD-13 PIC X(1).
+         10 TEST-FIELD-14 PIC X(8).
+         10 TEST-FIELD-15 PIC X(1).
+         10 TEST-FIELD-16 PIC X(8).
+         10 TEST-FIELD-17 PIC S9(2)V9(13) COMP-3.
+         10 TEST-FIELD-18 PIC X(8).
+         10 TEST-FIELD-19 PIC X(8).
+         10 TEST-FIELD-20 PIC X(1).
+         10 TEST-FIELD-21 PIC X(1).
+         10 TEST-FIELD-22 PIC X(10).
+         10 TEST-FIELD-23 PIC X(3).
+         10 TEST-FIELD-24 PIC X(1).
+         10 TEST-FIELD-25 PIC X(3).
+         10 TEST-FIELD-26 PIC X(26).
+         10 TEST-FIELD-27.
+           49 TEST-FIELD-27-01 PIC S9(4) COMP-5.
+           49 TEST-FIELD-27-02 PIC X(55).
+!
+
+EXEC --regress --comp=5:1
+
+EXEC --regress --variable --terminator='&#21;'
+
+EXEC --regress --variable
+
+EXEC --regress --text --reclen=123
+
+EXEC --regress --bytemask
+
+EXEC --regress --offsets
+
+TEST 'embedded variable length'
+
+EXEC --regress <<'!'
+       01 TEST.
+          10 TEST-FIELD-01 PIC X(4).
+          10 TEST-FIELD-02.
+            49 TEST-FIELD-02-SIZE PIC S9(4) COMP-5.
+            49 TEST-FIELD-02-DATA PIC X(32700).
+          10 TEST-FIELD-03 PIC X(4).
+!
+
+EXEC --regress --reclen=256
+
+EXEC --regress --reclen=256 --text
+
+EXEC --regress --text
+
+EXEC --regress --reclen=256 --text --variable
+
+EXEC --regress --text --variable
+
+TEST 'unions'
+
+EXEC --regress <<'!'
+       01  TEST-B29-B23-B55.
+           03  TEST-B74-B55-B36            PIC S9(4)     COMP
+                                                       VALUE ZEROES.
+           03  TEST-B23-C069-B33.
+               06  TEST-C068-B23-C069-C002.
+                   09  TEST-D0018-B37-B08.
+                       12  TEST-C007-A4    PIC X(10)   VALUE SPACES.
+                       12  TEST-C037-A5    PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C037-B14-A12-B28.
+                       12  TEST-C036-B07-C003
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-B07-C003-C076
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-B14-A1     PIC X(2)    VALUE SPACES.
+                   09  TEST-B37-B23-B55-C076
+                                           PIC X       VALUE SPACES.
+                   09  TEST-A13-B59-C069-B42
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-B56-C003-A5    PIC X(38)   VALUE SPACES.
+                   09  TEST-B12-A13-B59-C040
+                                           PIC S9(3)     COMP
+                                                       VALUE ZEROES.
+                   09  TEST-D0023-B23-B55-C076
+                                           PIC X       VALUE SPACES.
+                   09  TEST-C065-B28-B58-A1
+                                           PIC S9(5)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-B61-B01-C037-B28.
+                       12  TEST-B27-B61-B01-C037
+                                           PIC X(13)   VALUE SPACES.
+                       12  TEST-B57-B61-B01-C037
+                                           PIC X(13)   VALUE SPACES.
+                       12  TEST-C078-C055-B26
+                                           PIC X       VALUE SPACES.
+                   09  TEST-B23-C058-C069-B28.
+                       12  TEST-C058-D0024-C069-B28.
+                       15  TEST-C037-D0024-B33
+                                           PIC X(80)   VALUE SPACES.
+                       12  TEST-C058-C069-B28.
+                       15  TEST-C036-C069-B28
+                           OCCURS 5 TIMES
+                           INDEXED BY  TEST-C059-C069-C040.
+                       18  FILLER          PIC X(50) VALUE D0031.
+                   09  TEST-C065-A7-B28-B58-A1
+                                           PIC S9(5)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-B23-D0028-C069-B28.
+                       12  TEST-D0030-C069-B28.
+                       15  TEST-C036-C069-B28
+                           OCCURS 5 TIMES
+                           INDEXED BY  TEST-D0028-C069-C040.
+                       18  FILLER          PIC X(50) VALUE D0031.
+               06  TEST-B23-B59-B58-A3     PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+           03  TEST-B23-B12-C002-B28.
+               06  TEST-B31-B12-C002.
+                   09  TEST-B06-A5.
+                       12  TEST-C042-B06-A5.
+                       15  TEST-C028-E00006-A1
+                                           PIC X(8)    VALUE SPACES.
+                       15  TEST-B55-B58-B42
+                                           PIC 9(8)    VALUE ZEROES.
+                       15  TEST-B29-B58-B42
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-B06-B58-B42
+                                           PIC S9(4)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C071-B06-A5.
+                       15  TEST-C067-A4    PIC X(10)   VALUE SPACES.
+                       15  TEST-C067-B58-B42
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       15  TEST-B60-B64    PIC X(3)    VALUE SPACES.
+                   09  TEST-B06-C076       PIC X(3)    VALUE SPACES.
+                   09  TEST-D0026-C076     PIC X(2)    VALUE SPACES.
+                   09  TEST-C006-C075-A1   PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-A2-B32         PIC X       VALUE SPACES.
+                   09  TEST-A6-B55-C076-A1 PIC X(2)    VALUE 'D'.
+                   09  TEST-B39-A16-C065-B32
+                                           PIC X       VALUE SPACES.
+                   09  TEST-D0005-A10-C066  PIC X(6)    VALUE SPACES.
+                   09  TEST-C007-B13-B11-B32
+                                           PIC X       VALUE SPACES.
+                   09  TEST-B06-C018-C041-E00003.
+                       12  TEST-C006-C066-A5.
+                       15  TEST-B42-B28.
+                       18  TEST-C052-C066-C076-A1
+                                           PIC X       VALUE SPACES.
+                       18  TEST-C036-C066-B42-B28.
+                       21  TEST-C036-C066-B42
+                                           PIC X(35)   VALUE SPACES.
+                       18  TEST-B41-C066-B42-B28
+                           REDEFINES TEST-C036-C066-B42-B28.
+                       21  TEST-B43        PIC X(3).
+                       21  TEST-B50        PIC X(3).
+                       21  TEST-C046-B42   PIC X(4).
+                       21  FILLER          PIC X(25).
+                       18  TEST-D0017-C066-B42-B28
+                           REDEFINES TEST-C036-C066-B42-B28.
+                       21  TEST-D0017-B42-B36
+                                           PIC X(2).
+                       21  TEST-D0017-B42-B28.
+                       24  TEST-D0017-B42-B52
+                                           PIC X(10).
+                       24  TEST-D0017-B42-B53
+                                           PIC X(6).
+                       21  FILLER          PIC X(17).
+                       18  TEST-B43-B50-B42-B28
+                           REDEFINES TEST-C036-C066-B42-B28.
+                       21  TEST-C054-B43-B50
+                                           PIC X(6).
+                       21  FILLER          PIC X(29).
+                       15  TEST-C006-C066-B60-B42-B28
+                           REDEFINES TEST-B42-B28.
+                       18  TEST-C006-C052-C066-B70
+                                           PIC X.
+                       18  TEST-C006-C066-B42-B28.
+                       21  TEST-C006-B43   PIC X(3).
+                       21  TEST-C006-B50   PIC X(3).
+                       21  TEST-C006-C046-B42
+                                           PIC X(4).
+                       21  FILLER          PIC X(25).
+                       18  TEST-C006-B41-B42-B28
+                           REDEFINES TEST-C006-C066-B42-B28.
+                       21  TEST-C006-B42-B41
+                                           PIC X(10).
+                       21  FILLER          PIC X(25).
+                       18  TEST-C006-D0017-C066-B42-B28
+                           REDEFINES TEST-C006-C066-B42-B28.
+                       21  TEST-D0017-B42-B36
+                                           PIC X(2).
+                       21  TEST-C006-D0017-B42-B28.
+                       24  FILLER          PIC X(16).
+                       21  FILLER          PIC X(17).
+                       18  TEST-C006-D0022-B42-B28
+                           REDEFINES TEST-C006-C066-B42-B28.
+                       21  TEST-C006-C066-D0004-A5
+                                           PIC X(30).
+                       21  TEST-D0004-C048-A1
+                                           PIC X(4).
+                       12  TEST-C071-C037-A12-A5
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C037-B14-A12-A5
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C066-C003-A5
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C037-A12-A5 PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-D0027-C003 PIC X(4)    VALUE SPACES.
+                       12  TEST-B63-C001-C039
+                                           PIC 9(13)   VALUE ZEROES.
+                       12  TEST-B34-A1     PIC X(2)    VALUE SPACES.
+                       12  TEST-D0020-C073-A1
+                                           PIC X(2)
+                           OCCURS 2 TIMES
+                           VALUE SPACES.
+                   09  TEST-C018-C003-A5   PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-B06-C060-D0033.
+                       12  TEST-C060-C053-A1
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-C060-COMPNT-A1
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-C043-C060-C041-B66.
+                       15  TEST-C043-C060-C041-B28
+                           OCCURS 5 TIMES.
+                       18  TEST-C043-C060-C076-A1
+                                           PIC X       VALUE SPACES.
+                       18  TEST-C043-C060-B35-A1
+                                           PIC X(4)    VALUE SPACES.
+                       12  TEST-C060-C006-A5
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-C006-C026-A1
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-C006-C026-B09-A1
+                                           PIC X       VALUE SPACES.
+                       12  TEST-B48-E00006 PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C062-D0033-B75-B42
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C041-C051-B28.
+                       12  TEST-C036-D0013 PIC S9(17)     COMP-3
+                           OCCURS 6 TIMES
+                           INDEXED BY  TEST-D0013-B30
+                           VALUE ZEROES.
+                       12  TEST-C036-B54   PIC S9(15)V9(2)  COMP-3
+                           OCCURS 5 TIMES
+                           INDEXED BY  TEST-B54-B30
+                           VALUE ZEROES.
+                       12  TEST-C036-B03   PIC S9(8)V9(7)  COMP-3
+                           OCCURS 7 TIMES
+                           INDEXED BY  TEST-B03-B30
+                           VALUE ZEROES.
+                   09  TEST-B31-C020-B28.
+                       12  TEST-D0015-A16-A4
+                                           PIC X(10)   VALUE SPACES.
+                       12  TEST-B06-B62-A4 PIC X(10)   VALUE SPACES.
+                       12  TEST-B06-B21-A4 PIC X(10)   VALUE SPACES.
+                   09  TEST-B71-A1         PIC X(5)    VALUE SPACES.
+                   09  TEST-B12-E00002-C019.
+                       12  TEST-E00009-A14-D0007-A1
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-D0034-A14-D0007-A1
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-E00009-C045
+                                           PIC X(3)    VALUE SPACES.
+                       12  TEST-D0034-C045 PIC X(3)    VALUE SPACES.
+                       12  TEST-B08-A5     PIC X(4)    VALUE SPACES.
+                   09  TEST-C061-B32       PIC X       VALUE SPACES.
+                   09  TEST-E00007-D0005-A10-C066
+                                           PIC X(5)    VALUE SPACES.
+                   09  TEST-E00008-C011    PIC S9(6)V9(2)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C044-D0019-A1  PIC X       VALUE SPACES.
+                   09  TEST-D0012-C076     PIC X       VALUE SPACES.
+                   09  TEST-D0012-C027-B32 PIC X       VALUE SPACES.
+                   09  TEST-C010-D0013-B54-C002.
+                       12  TEST-C009-D0013-C064
+                                           PIC S9(10)V9(5)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-F000003-D0013-C064
+                                           PIC S9(10)V9(5)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-D0014-B54  PIC S9(7)V9(3)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C038-C009-C005-B54
+                                           PIC S9(7)V9(2)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-E00004-B03     PIC S9(8)V9(7)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C072-C011-B32  PIC X       VALUE SPACES.
+                   09  TEST-E00005-C056-B28.
+                       12  TEST-E00005-C024
+                                           PIC S9(4)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C056-B42   PIC X(9)    VALUE SPACES.
+                   09  TEST-B31-B65-B28.
+                       12  TEST-A15-B65-B09-A1
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-D0016-E00012.
+                       15  TEST-B65-D0001-B32
+                                           PIC X       VALUE SPACES.
+                       15  TEST-B65-D0019-A1-B28.
+                       18  TEST-B41-A1     PIC X(2)    VALUE SPACES.
+                       18  TEST-D0032-A1   PIC X(2)    VALUE SPACES.
+                       18  TEST-C015-A1    PIC X(3)    VALUE SPACES.
+                       18  TEST-C012-A1    PIC X(4)    VALUE SPACES.
+                       18  TEST-F000005-A1 PIC X(2)    VALUE SPACES.
+                       15  TEST-B44-B32    PIC X       VALUE SPACES.
+                       15  TEST-B65-B22    PIC X(5)    VALUE SPACES.
+                       15  TEST-C076-A10-C001
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-COMPLNC-C075-A1
+                                           PIC X       VALUE SPACES.
+                       15  TEST-C066-B28   PIC X       VALUE SPACES.
+                       15  TEST-B04-F000001-B07
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-C033-A10-C011
+                                           PIC X       VALUE SPACES.
+                       15  TEST-C011-C076-A1
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-F000006-B65-C008
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-C047-B40-B74
+                                           PIC 9(7)    VALUE ZEROES.
+                       15  TEST-C047-C066-D0006-A5
+                                           PIC 9(8)    VALUE ZEROES.
+                       15  TEST-B65-B42-B02-D0021
+                                           PIC 9(7)    VALUE ZEROES.
+                       15  TEST-B65-E00002 PIC X(2)    VALUE SPACES.
+                       15  TEST-B65-C021   PIC X       VALUE SPACES.
+                       15  TEST-B24-B65-C030
+                                           PIC X       VALUE SPACES.
+                       15  TEST-C074-B65-A1
+                                           PIC X       VALUE SPACES.
+                       12  TEST-D0016-F000004.
+                       15  TEST-C060-C026-A1
+                                           PIC X(10)   VALUE SPACES.
+                       15  TEST-D0035-C063-A1
+                                           PIC X(4)    VALUE SPACES.
+                       15  TEST-B65-D0002-B28.
+                       18  TEST-F000002-B65-D0002
+                                           PIC X       VALUE SPACES.
+                       18  TEST-D0032-B65-D0002
+                                           PIC X       VALUE SPACES.
+                       18  TEST-C012-B65-D0002
+                                           PIC X       VALUE SPACES.
+                       18  TEST-E00001-B65-D0002
+                                           PIC X       VALUE SPACES.
+                       18  TEST-F000005-B65-D0002
+                                           PIC X       VALUE SPACES.
+                       15  TEST-C060-B73-A1
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-C060-C016-B03
+                                           PIC S9(11)V9(4)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C075-C076  PIC X(4)    VALUE SPACES.
+                       12  TEST-C063-C076  PIC X(4)    VALUE SPACES.
+                       12  TEST-B68-B65-B03
+                                           PIC S9(11)V9(7)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-B42-A10-OCCURS
+                                           PIC S9(4)     COMP
+                                                       VALUE 0.
+               06  TEST-B05-B12-C002.
+                   09  TEST-C037-D0024-B33 PIC X(80)   VALUE SPACES.
+                   09  TEST-C060-D0033-C023.
+                       12  TEST-C060-C031-C023
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-C060-C076-C023
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-C011-B28   PIC X(30)   VALUE SPACES.
+                       12  TEST-B02-C076-C023
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-C013-A10-D0003-C023
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-C035           PIC S9(10)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-D0018-D0009-B61-A1
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C066-B42-B35   PIC X(30)   VALUE SPACES.
+                   09  TEST-D0018-D0009-C023
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-C066-C003-A5   PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-D0012-B49-B45  PIC S9(2)V9(13)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C001-B28-C011-B32
+                                           PIC X       VALUE SPACES.
+                   09  TEST-B12-C037-A12-C023
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-B12-B10-A5     PIC X(6)    VALUE SPACES.
+                   09  TEST-B73-C011-A1    PIC X(2)    VALUE 'D'.
+               06  TEST-B23-B12-C002.
+                   09  TEST-D0025-C037-B38-B42
+                                           PIC S9(2)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-E00010-C037-A12-A5
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C037-A12-B58-B42
+                                           PIC S9(6)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C034-C065-B28-A1
+                                           PIC X(6)    VALUE SPACES.
+                   09  TEST-C034-D0029-B28-A1
+                                           PIC X(5)    VALUE SPACES.
+                   09  TEST-C065-B28-B09-A1
+                                           PIC X       VALUE SPACES.
+                   09  TEST-D0010-A5       PIC X(8)    VALUE SPACES.
+                   09  TEST-C065-A11-C025-A1
+                                           PIC X       VALUE SPACES.
+                   09  TEST-A13-B72-B23-B32 PIC X
+                       OCCURS 2 TIMES
+                       VALUE SPACES.
+                   09  TEST-C022-C060-B35-B28.
+                       12  TEST-C043-C060-B35-B58
+                                           PIC S9(2)     COMP-3
+                           OCCURS 5 TIMES
+                           VALUE ZEROES.
+                       12  TEST-C043-C060-B35-B15
+                                           PIC X(40)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-C043-C060-B35-B16
+                                           PIC X(30)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-C043-C060-B35-B17
+                                           PIC X(25)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-C043-C060-B35-B18
+                                           PIC X(25)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-C043-C060-B35-B19
+                                           PIC X(20)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                   09  TEST-C022-C006-C075-B28.
+                       12  TEST-C006-C075-B58
+                                           PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-C006-C075-C023-B46
+                                           PIC X(40)   VALUE SPACES.
+                       12  TEST-C006-C075-C023-B69
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-C006-C075-C023-D0036
+                                           PIC X(25)   VALUE SPACES.
+                       12  TEST-C006-C075-C023-C032
+                                           PIC X(25)   VALUE SPACES.
+                       12  TEST-C006-C075-C023-C029
+                                           PIC X(20)   VALUE SPACES.
+                   09  TEST-B67-C023       PIC X(45)   VALUE SPACES.
+                   09  TEST-C062-B51-A1-C023
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-A14-D0007-C023  PIC X(25)   VALUE SPACES.
+                   09  TEST-D0020-C073     PIC X
+                       OCCURS 2 TIMES
+                       VALUE SPACES.
+                   09  TEST-C009-B20-B29-A1
+                                           PIC X       VALUE SPACES.
+                   09  TEST-B25-A1         PIC X(7)    VALUE SPACES.
+                   09  TEST-B71-A9         PIC X(15)   VALUE SPACES.
+                   09  TEST-D0020-C023-B28
+                       OCCURS 2 TIMES.
+                       12  TEST-D0020-C023-B46
+                                           PIC X(55)   VALUE SPACES.
+                       12  TEST-D0020-C023-B69
+                                           PIC X(110)  VALUE SPACES.
+                   09  TEST-D0008-C009-B02-B42
+                                           PIC X(23)   VALUE SPACES.
+                   09  TEST-D0008-C009-C023
+                                           PIC X(25)   VALUE SPACES.
+           03  TEST-B29-B23-C017-B28.
+               06  TEST-B29-B23-C017-C002.
+                   09  TEST-C037-A5        PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-C037-B14-A12-B28.
+                       12  TEST-C036-B07-C003
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-B07-C003-C076
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-B14-A1     PIC X(2)    VALUE SPACES.
+                   09  TEST-D0026-C076     PIC X(2)    VALUE SPACES.
+                   09  TEST-C006-C050      PIC X       VALUE SPACES.
+                   09  TEST-C049-C018-B28-A1
+                                           PIC X(4)    VALUE SPACES.
+                   09  TEST-C007-D0011-A1  PIC S9(2)     COMP-3
+                                                       VALUE 0.
+                   09  TEST-B63-D0011-A5   PIC S9(4)     COMP
+                                                       VALUE ZEROES.
+                   09  TEST-C006-E00011    PIC S9(1)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-B14-C070-A1    PIC X       VALUE SPACES.
+                   09  TEST-C004-A1        PIC X       VALUE SPACES.
+                   09  TEST-C057-B47-A8    PIC X(21)   VALUE SPACES.
+                   09  TEST-C043-C018-B42  PIC X(16)   VALUE SPACES.
+                   09  TEST-C014-C001-B42  PIC X(8)    VALUE SPACES.
+!
+
+EXEC --regress --bytemask
+
+EXEC --regress --offsets
+
+EXEC --regress --offsets --keep
+
+TEST 'multiple REDEFINES'
+
+EXEC --regress --offsets <<'!'
+       01  TEST-0000-000-001.
+      ******************************************************************
+      *                                                                *
+      * YADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYADAYA *
+      *                                                                *
+      ******************************************************************
+           03  TEST-000-000-002            PIC S9(4)     COMP
+                                                       VALUE ZEROES.
+           03  TEST-000-0000-003.
+               06  TEST-0000-000-0000-0004.
+                   09  TEST-00000-000-005.
+                       12  TEST-0000-06    PIC X(10)   VALUE SPACES.
+                       12  TEST-0000-07    PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-000-00-008.
+                       12  TEST-0000-000-0009
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-000-0000-0010
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-000-29     PIC X(2)    VALUE SPACES.
+                   09  TEST-000-000-000-0031
+                                           PIC X       VALUE SPACES.
+                   09  TEST-00-000-0000-036
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-0000-37    PIC X(38)   VALUE SPACES.
+                   09  TEST-000-00-000-038
+                                           PIC S9(3)     COMP
+                                                       VALUE ZEROES.
+                   09  TEST-00000-000-000-0039
+                                           PIC X       VALUE SPACES.
+                   09  TEST-0000-000-000-42
+                                           PIC S9(5)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-000-0000-043.
+                       12  TEST-000-000-000-0044
+                                           PIC X(13)   VALUE SPACES.
+                       12  TEST-000-000-000-0045
+                                           PIC X(13)   VALUE SPACES.
+                       12  TEST-0000-0000-046
+                                           PIC X       VALUE SPACES.
+                   09  TEST-000-0000-0000-047.
+                       12  TEST-0000-00000-0000-048.
+                       15  TEST-0000-00000-049
+                                           PIC X(80)   VALUE SPACES.
+                       12  TEST-0000-0000-050.
+                       15  TEST-0000-0000-051
+                           OCCURS 5 TIMES
+                           INDEXED BY TEST-0000-0000-052.
+                       18  FILLER          PIC X(50) VALUE SPACE.
+                   09  TEST-0000-00-000-000-053
+                                           PIC S9(5)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-00000-0000-054.
+                       12  TEST-00000-0000-056.
+                       15  TEST-0000-0000-057
+                           OCCURS 5 TIMES
+                           INDEXED BY TEST-00000-0000-058.
+                       18  FILLER          PIC X(50) VALUE SPACE.
+               06  TEST-000-000-000-059     PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+           03  TEST-000-000-0000-060.
+               06  TEST-000-000-0061.
+                   09  TEST-000-062.
+                       12  TEST-0000-000-63.
+                       15  TEST-0000-000000-64
+                                           PIC X(8)    VALUE SPACES.
+                       15  TEST-000-000-065
+                                           PIC 9(8)    VALUE ZEROES.
+                       15  TEST-000-000-066
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-000-000-067
+                                           PIC S9(4)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-000-68.
+                       15  TEST-0000-00    PIC X(10)   VALUE SPACES.
+                       15  TEST-0000-000-069
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       15  TEST-000-070    PIC X(3)    VALUE SPACES.
+                   09  TEST-000-0071       PIC X(3)    VALUE SPACES.
+                   09  TEST-00000-0072     PIC X(2)    VALUE SPACES.
+                   09  TEST-0000-0000-73   PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00-074         PIC X       VALUE SPACES.
+                   09  TEST-00-000-0000-75 PIC X(2)    VALUE 'D'.
+                   09  TEST-000-00-0000-076
+                                           PIC X       VALUE SPACES.
+                   09  TEST-00000-00-0077  PIC X(6)    VALUE SPACES.
+                   09  TEST-0000-000-000-078
+                                           PIC X       VALUE SPACES.
+                   09  TEST-000-0000-0000-000079.
+                       12  TEST-0000-0000-80.
+                       15  TEST-999-002.
+                       18  TEST-0000-0000-0000-81
+                                           PIC X       VALUE SPACES.
+                       18  TEST-9999-0000-000-004.
+                       21  TEST-0000-0000-082
+                                           PIC X(35)   VALUE SPACES.
+                       18  TEST-000-0000-000-083
+                           REDEFINES TEST-9999-0000-000-004.
+                       21  TEST-084        PIC X(3).
+                       21  TEST-085        PIC X(3).
+                       21  TEST-0000-086   PIC X(4).
+                       21  FILLER          PIC X(25).
+                       18  TEST-00000-0000-000-087
+                           REDEFINES TEST-9999-0000-000-004.
+                       21  TEST-00000-000-088
+                                           PIC X(2).
+                       21  TEST-00000-000-089.
+                       24  TEST-00000-000-090
+                                           PIC X(10).
+                       24  TEST-00000-000-091
+                                           PIC X(6).
+                       21  FILLER          PIC X(17).
+                       18  TEST-000-000-000-092
+                           REDEFINES TEST-9999-0000-000-004.
+                       21  TEST-0000-000-093
+                                           PIC X(6).
+                       21  FILLER          PIC X(29).
+                       15  TEST-0000-0000-000-000-094
+                           REDEFINES TEST-999-002.
+                       18  TEST-0000-0000-0000-095
+                                           PIC X.
+                       18  TEST-9999-0000-000-005.
+                       21  TEST-0000-096   PIC X(3).
+                       21  TEST-0000-097   PIC X(3).
+                       21  TEST-0000-0000-098
+                                           PIC X(4).
+                       21  FILLER          PIC X(25).
+                       18  TEST-0000-000-000-099
+                           REDEFINES TEST-9999-0000-000-005.
+                       21  TEST-0000-000-100
+                                           PIC X(10).
+                       21  FILLER          PIC X(25).
+                       18  TEST-0000-00000-0000-000-101
+                           REDEFINES TEST-9999-0000-000-005.
+                       21  TEST-00000-000-102
+                                           PIC X(2).
+                       21  TEST-0000-00000-000-103.
+                       24  FILLER          PIC X(16).
+                       21  FILLER          PIC X(17).
+                       18  TEST-0000-00000-000-104
+                           REDEFINES TEST-9999-0000-000-005.
+                       21  TEST-0000-0000-0000-105
+                                           PIC X(30).
+                       21  TEST-00000-000-106
+                                           PIC X(4).
+                       12  TEST-0000-0000-0-107
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-000-0-108
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-000-109
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-0-110 PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-00000-0111 PIC X(4)    VALUE SPACES.
+                       12  TEST-000-0000-0112
+                                           PIC 9(13)   VALUE ZEROES.
+                       12  TEST-00-113     PIC X(2)    VALUE SPACES.
+                       12  TEST-00000-000-114
+                                           PIC X(2)
+                           OCCURS 2 TIMES
+                           VALUE SPACES.
+                   09  TEST-0000-000-115   PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-0000-00116.
+                       12  TEST-0000-000-117
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-0000-00000-118
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-0000-0000-0000-119.
+                       15  TEST-0000-0000-0000-120
+                           OCCURS 5 TIMES.
+                       18  TEST-0000-0000-000-121
+                                           PIC X       VALUE SPACES.
+                       18  TEST-0000-0000-00-122
+                                           PIC X(4)    VALUE SPACES.
+                       12  TEST-0000-000-123
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-0000-000-124
+                                           PIC X(8)    VALUE SPACES.
+                       12  TEST-0000-0000-00-125
+                                           PIC X       VALUE SPACES.
+                       12  TEST-000-000126 PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-00000-000-127
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-0000-128.
+                       12  TEST-0000-00129 PIC S9(17)     COMP-3
+                           OCCURS 6 TIMES
+                           INDEXED BY TEST-00000-130
+                           VALUE ZEROES.
+                       12  TEST-0000-131   PIC S9(15)V9(2)  COMP-3
+                           OCCURS 5 TIMES
+                           INDEXED BY TEST-000-132
+                           VALUE ZEROES.
+                       12  TEST-0000-133   PIC S9(8)V9(7)  COMP-3
+                           OCCURS 7 TIMES
+                           INDEXED BY TEST-000-134
+                           VALUE ZEROES.
+                   09  TEST-000-0000-135.
+                       12  TEST-00000-0-136
+                                           PIC X(10)   VALUE SPACES.
+                       12  TEST-000-00-137 PIC X(10)   VALUE SPACES.
+                       12  TEST-000-00-138 PIC X(10)   VALUE SPACES.
+                   09  TEST-00-139         PIC X(5)    VALUE SPACES.
+                   09  TEST-000-00000-0140.
+                       12  TEST-000000-00-0000-141
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-00000-00-0000-142
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-000000-0143
+                                           PIC X(3)    VALUE SPACES.
+                       12  TEST-00000-0144 PIC X(3)    VALUE SPACES.
+                       12  TEST-00-145     PIC X(4)    VALUE SPACES.
+                   09  TEST-0000-146       PIC X       VALUE SPACES.
+                   09  TEST-000000-00000-00-0146
+                                           PIC X(5)    VALUE SPACES.
+                   09  TEST-000000-0147    PIC S9(6)V9(2)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-0000-148  PIC X       VALUE SPACES.
+                   09  TEST-00000-0149     PIC X       VALUE SPACES.
+                   09  TEST-00000-0000-150 PIC X       VALUE SPACES.
+                   09  TEST-0000-00000-000-0151.
+                       12  TEST-0000-00000-0152
+                                           PIC S9(10)V9(5)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000000-00000-0153
+                                           PIC S9(10)V9(5)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-00000-154  PIC S9(7)V9(3)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-0000-0000-155
+                                           PIC S9(7)V9(2)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000000-156     PIC S9(8)V9(7)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-0000-157  PIC X       VALUE SPACES.
+                   09  TEST-000000-0000-158.
+                       12  TEST-000000-0159
+                                           PIC S9(4)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-160   PIC X(9)    VALUE SPACES.
+                   09  TEST-000-000-161.
+                       12  TEST-00-000-00-162
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-00000-000163.
+                       15  TEST-000-00000-164
+                                           PIC X       VALUE SPACES.
+                       15  TEST-000-00000-00-165.
+                       18  TEST-00-166     PIC X(2)    VALUE SPACES.
+                       18  TEST-0000-167   PIC X(2)    VALUE SPACES.
+                       18  TEST-000-168    PIC X(3)    VALUE SPACES.
+                       18  TEST-000-169    PIC X(4)    VALUE SPACES.
+                       18  TEST-000000-170 PIC X(2)    VALUE SPACES.
+                       15  TEST-000-171    PIC X       VALUE SPACES.
+                       15  TEST-000-172    PIC X(5)    VALUE SPACES.
+                       15  TEST-0000-00-0173
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-0000000-000-174
+                                           PIC X       VALUE SPACES.
+                       15  TEST-0000-175   PIC X       VALUE SPACES.
+                       15  TEST-000-0000000-176
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-0000-00-0177
+                                           PIC X       VALUE SPACES.
+                       15  TEST-0000-000-178
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-0000000-000-0179
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-0000-000-180
+                                           PIC 9(7)    VALUE ZEROES.
+                       15  TEST-0000-0000-0000-181
+                                           PIC 9(8)    VALUE ZEROES.
+                       15  TEST-000-000-000-00182
+                                           PIC 9(7)    VALUE ZEROES.
+                       15  TEST-000-000183 PIC X(2)    VALUE SPACES.
+                       15  TEST-000-0184   PIC X       VALUE SPACES.
+                       15  TEST-000-000-185
+                                           PIC X       VALUE SPACES.
+                       15  TEST-0000-00-186
+                                           PIC X       VALUE SPACES.
+                       12  TEST-00000-0000187.
+                       15  TEST-0000-000-188
+                                           PIC X(10)   VALUE SPACES.
+                       15  TEST-00000-000-189
+                                           PIC X(4)    VALUE SPACES.
+                       15  TEST-000-00000-190.
+                       18  TEST-0000000-000-00191
+                                           PIC X       VALUE SPACES.
+                       18  TEST-00000-000-00192
+                                           PIC X       VALUE SPACES.
+                       18  TEST-0000-000-00193
+                                           PIC X       VALUE SPACES.
+                       18  TEST-000000-000-00194
+                                           PIC X       VALUE SPACES.
+                       18  TEST-0000000-000-00195
+                                           PIC X       VALUE SPACES.
+                       15  TEST-0000-00-196
+                                           PIC X(2)    VALUE SPACES.
+                       15  TEST-0000-0000-197
+                                           PIC S9(11)V9(4)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-0198  PIC X(4)    VALUE SPACES.
+                       12  TEST-0000-0199  PIC X(4)    VALUE SPACES.
+                       12  TEST-000-000-200
+                                           PIC S9(11)V9(7)  COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-000-00-000201
+                                           PIC S9(4)     COMP
+                                                       VALUE 0.
+               06  TEST-000-000-0202.
+                   09  TEST-0000-00000-203 PIC X(80)   VALUE SPACES.
+                   09  TEST-0000-00000-0204.
+                       12  TEST-0000-0000-0205
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-0000-0000-0206
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-0000-207   PIC X(30)   VALUE SPACES.
+                       12  TEST-000-0000-0208
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-0000-00-00000-0209
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-0210           PIC S9(10)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00000-00000-00-211
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-000-212   PIC X(30)   VALUE SPACES.
+                   09  TEST-00000-00000-0213
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-0000-000-214   PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00000-000-215  PIC S9(2)V9(13)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-000-0000-216
+                                           PIC X       VALUE SPACES.
+                   09  TEST-000-0000-00-0217
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-000-00-218     PIC X(6)    VALUE SPACES.
+                   09  TEST-000-000-219    PIC X(2)    VALUE 'D'.
+               06  TEST-000-000-0227.
+                   09  TEST-00000-0000-000-228
+                                           PIC S9(2)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000000-0000-0-229
+                                           PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-00-000-231
+                                           PIC S9(6)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-0000-00-233
+                                           PIC X(6)    VALUE SPACES.
+                   09  TEST-0000-00000-00-234
+                                           PIC X(5)    VALUE SPACES.
+                   09  TEST-0000-000-00-235
+                                           PIC X       VALUE SPACES.
+                   09  TEST-0000-236       PIC X(8)    VALUE SPACES.
+                   09  TEST-0000-00-000-237
+                                           PIC X       VALUE SPACES.
+                   09  TEST-00-000-000-238 PIC X
+                       OCCURS 2 TIMES
+                       VALUE SPACES.
+                   09  TEST-0000-0000-000-239.
+                       12  TEST-0000-0000-000-240
+                                           PIC S9(2)     COMP-3
+                           OCCURS 5 TIMES
+                           VALUE ZEROES.
+                       12  TEST-0000-0000-000-241
+                                           PIC X(40)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-0000-0000-000-242
+                                           PIC X(30)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-0000-0000-000-243
+                                           PIC X(25)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-0000-0000-000-244
+                                           PIC X(25)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                       12  TEST-0000-0000-000-245
+                                           PIC X(20)
+                           OCCURS 5 TIMES
+                           VALUE SPACES.
+                   09  TEST-0000-0000-0000-246.
+                       12  TEST-0000-0000-257
+                                           PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                       12  TEST-0000-0000-0000-248
+                                           PIC X(40)   VALUE SPACES.
+                       12  TEST-0000-0000-0000-249
+                                           PIC X(30)   VALUE SPACES.
+                       12  TEST-0000-0000-0000-00250
+                                           PIC X(25)   VALUE SPACES.
+                       12  TEST-0000-0000-0000-0251
+                                           PIC X(25)   VALUE SPACES.
+                       12  TEST-0000-0000-0000-0252
+                                           PIC X(20)   VALUE SPACES.
+                   09  TEST-000-0253       PIC X(45)   VALUE SPACES.
+                   09  TEST-0000-000-00-0254
+                                           PIC X(30)   VALUE SPACES.
+                   09  TEST-00-00000-0255  PIC X(25)   VALUE SPACES.
+                   09  TEST-00000-0256     PIC X
+                       OCCURS 2 TIMES
+                       VALUE SPACES.
+                   09  TEST-0000-000-00-256
+                                           PIC X       VALUE SPACES.
+                   09  TEST-00-257         PIC X(7)    VALUE SPACES.
+                   09  TEST-00-258         PIC X(15)   VALUE SPACES.
+                   09  TEST-00000-0000-259
+                       OCCURS 2 TIMES.
+                       12  TEST-00000-0000-260
+                                           PIC X(55)   VALUE SPACES.
+                       12  TEST-00000-0000-261
+                                           PIC X(110)  VALUE SPACES.
+                   09  TEST-00000-0000-000-262
+                                           PIC X(23)   VALUE SPACES.
+                   09  TEST-00000-0000-0263
+                                           PIC X(25)   VALUE SPACES.
+           03  TEST-0000-000-0000-264.
+               06  TEST-0000-000-0000-0265.
+                   09  TEST-00000-000-266  PIC S9(2)V9(13)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-00-000-267.
+                       12  TEST-999-002.
+                       15  TEST-0000-0000-000-268
+                                           PIC X       VALUE SPACES.
+                       15  TEST-9999-0000-000-004.
+                       18  TEST-0000-0000-269
+                                           PIC X(35)   VALUE SPACES.
+                       15  TEST-000-0000-000-270
+                           REDEFINES TEST-9999-0000-000-004.
+                       18  TEST-271        PIC X(3).
+                       18  TEST-272        PIC X(3).
+                       18  TEST-0000-273   PIC X(4).
+                       18  FILLER          PIC X(25).
+                       15  TEST-00000-0000-000-274
+                           REDEFINES TEST-9999-0000-000-004.
+                       18  TEST-00000-000-275
+                                           PIC X(2).
+                       18  TEST-00000-000-276.
+                       21  TEST-00000-000-277
+                                           PIC X(10).
+                       21  TEST-00000-000-278
+                                           PIC X(6).
+                       18  FILLER          PIC X(17).
+                       15  TEST-000-000-000-279
+                           REDEFINES TEST-9999-0000-000-004.
+                       18  TEST-0000-000-280
+                                           PIC X(6).
+                       18  FILLER          PIC X(29).
+                       12  TEST-000-00-000-000-281
+                           REDEFINES TEST-999-002.
+                       15  TEST-0000-0000-0000-282
+                                           PIC X.
+                       15  TEST-999-00-0000-000-003.
+                       18  TEST-00-283     PIC X(3).
+                       18  TEST-00-284     PIC X(3).
+                       18  TEST-00-0000-285
+                                           PIC X(4).
+                       18  FILLER          PIC X(25).
+                       15  TEST-000-00-000-000-286
+                           REDEFINES TEST-999-00-0000-000-003.
+                       18  FILLER          PIC X(35).
+                       15  TEST-000-00-00000-0000-000-287
+                           REDEFINES TEST-999-00-0000-000-003.
+                       18  TEST-00000-000-288
+                                           PIC X(2).
+                       18  TEST-000-00-00000-000-289.
+                       21  FILLER          PIC X(16).
+                       18  FILLER          PIC X(17).
+                       12  TEST-000-00-00000-000-290
+                           REDEFINES TEST-999-002.
+                       15  TEST-000-00-0000-291
+                                           PIC X(30).
+                       15  TEST-00000-000-292
+                                           PIC X(4).
+                       15  FILLER          PIC X(2).
+                   09  TEST-00000-000-293  PIC X(8)    VALUE SPACES.
+                   09  TEST-00000-0000-000-294
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00000-00000-295
+                                           PIC S9(3)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00000-000-296  PIC X(4)    VALUE SPACES.
+                   09  TEST-00000-0000-00297
+                                           PIC X       VALUE SPACES.
+                   09  TEST-00000-000-298  PIC X       VALUE SPACES.
+                   09  TEST-00000-0000-00-299
+                                           PIC X(10)   VALUE SPACES.
+                   09  TEST-00000-0000-00-300
+                                           PIC X(10)   VALUE SPACES.
+                   09  TEST-000-0000-000301.
+                       12  TEST-000-00-0000-302
+                                           PIC X       VALUE SPACES.
+                       12  TEST-000-000-303
+                                           PIC X       VALUE SPACES.
+                       12  TEST-000-0000-000-304
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-000-305    PIC 9(5)    VALUE ZEROES.
+                       12  TEST-000-000-00-306
+                                           PIC X(10)   VALUE SPACES.
+                       12  TEST-0000-00000-307
+                                           PIC X       VALUE 'N'.
+                   09  TEST-000000-0000-308
+                                           PIC S9(2)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000000-000-309 PIC S9(9)V9(4)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-0000-310  PIC X       VALUE SPACES.
+                   09  TEST-0000-311       PIC X       VALUE SPACES.
+                   09  TEST-0000-000-0-312 PIC S9(13)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-000-313   PIC X(10)   VALUE SPACES.
+                   09  TEST-0000-000-314   PIC X       VALUE SPACES.
+                   09  TEST-000-000-315    PIC X       VALUE SPACES.
+                   09  TEST-00000-000-316  PIC S9(8)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-00000-317      PIC X       VALUE 'N'.
+                   09  TEST-00000-318      PIC X       VALUE SPACES.
+                   09  TEST-0000-000-0000-0000-319
+                                           PIC X(8)    VALUE SPACES.
+                   09  TEST-0000000-320    PIC X(2)    VALUE SPACES.
+                   09  TEST-000-321        PIC S9(8)V9(5)  COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-999-0000-1     PIC X(25)   VALUE SPACES.
+                   09  TEST-00-00000-322
+                       REDEFINES TEST-999-0000-1.
+                       12  TEST-000000-000323
+                                           PIC X(2).
+                       12  TEST-0000000-000-00324
+                                           PIC 9(7)V9(2).
+                       12  FILLER          PIC X(14).
+                   09  TEST-000-0-325      PIC S9(9)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-000-0000-00000-326.
+                       12  TEST-000-327    PIC X(2)    VALUE SPACES.
+                       12  TEST-000-328    PIC X(2)    VALUE SPACES.
+                       12  TEST-0000-00329 PIC X(2)    VALUE SPACES.
+                   09  TEST-000-0000-0000-330.
+                       12  TEST-0000-00-331
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-000-000-332
+                                           PIC X(2)    VALUE SPACES.
+                       12  TEST-000-0333   PIC X       VALUE SPACES.
+                       12  TEST-000000-0334
+                                           PIC X(3)    VALUE SPACES.
+                   09  TEST-0000000-000-335.
+                       12  TEST-0000000-336
+                                           PIC X       VALUE SPACES.
+                       12  TEST-0000-365   PIC X(2)    VALUE SPACES.
+                   09  TEST-0000000-00337  PIC X(2)    VALUE SPACES.
+                   09  TEST-000000-000000-338
+                                           PIC 9(10)   VALUE ZEROES.
+                   09  TEST-00000-0000-339 PIC X       VALUE SPACES.
+                   09  TEST-000-340        PIC X(5)    VALUE SPACES.
+                   09  TEST-000-341        PIC X(5)    VALUE SPACES.
+                   09  TEST-000-342        PIC X(5)    VALUE SPACES.
+                   09  TEST-0000-000-343   PIC X(8)    VALUE SPACES.
+                   09  TEST-00000-0000-345 PIC X(8)    VALUE SPACES.
+                   09  TEST-000000-356     PIC X       VALUE SPACES.
+                   09  TEST-000-347        PIC X       VALUE SPACES.
+                   09  TEST-0000-000-348   PIC X       VALUE SPACES.
+                   09  TEST-000-0000-000-349
+                                           PIC X(5)    VALUE SPACES.
+                   09  TEST-000-000-0350   PIC X(8)    VALUE SPACES.
+                   09  TEST-000-000-0351   PIC X(8)    VALUE SPACES.
+                   09  TEST-00-0000-352    PIC X(2)    VALUE SPACES.
+                   09  TEST-00-00000-0353  PIC X(2)    VALUE SPACES.
+                   09  TEST-0000-0000-00-354
+                                           PIC X(4)    VALUE SPACES.
+                   09  TEST-00000-0000-355 PIC X       VALUE SPACES.
+                   09  TEST-0000-00000-0000-356
+                                           PIC X       VALUE SPACES.
+                   09  TEST-000000-0000-357
+                                           PIC X(2)    VALUE SPACES.
+                   09  TEST-000-358        PIC X       VALUE SPACES.
+                   09  TEST-00-0000-000-359
+                                           PIC X(2)    VALUE SPACES.
+               06  TEST-00000-000-0000-0360.
+                   09  TEST-00000-0000-0361
+                                           PIC X(50)   VALUE SPACES.
+                   09  TEST-00000-0000-00-362
+                                           PIC X(10)   VALUE SPACES.
+                   09  TEST-0000-000-000-363
+                                           PIC S9(4)     COMP-3
+                                                       VALUE ZEROES.
+                   09  TEST-0000-000-364   PIC S9(3)V9(12)  COMP-3
+                                                       VALUE ZEROES.
+!
+
+TEST 'SYNC alignment'
+
+EXEC --regress --offsets <<'!'
+       01 TEST.
+          05  FLAG PIC X.
+          05  STAT PIC 9(8) COMP SYNC.
+          05  CHAR PIC X.
+          05  NUMB PIC 9(2) COMP SYNC.
+          05  LAST PIC X.
+!
+
+EXEC --regress
+
+TEST 'variations on a PIC'
+
+EXEC --regress <<'!'
+       01  WS-RECURING-REC.                                             00040920
+           03  WS-RECURING-TEN-BYTES          PIC 9(10).                00040930
+           03  WS-RECURING-TWO-BYTES          PIC X(02)   VALUE '01'.   00040940
+           03  WS-RECURING-DTL-ID             PIC X       VALUE '5'.    00040950
+           03  WS-RECURING-REC-TYPE-CD        PIC X(2)    VALUE '29'.   00040960
+           03  WS-RECURING-HIER-KEY-GRP .                               00040970
+               05  WS-RECURING-HIER-ID    PIC S9(13)  COMP-3            00040980
+                                                      VALUE ZEROES.     00040990
+               05  WS-RECURING-HIER-PT-ID PIC S9(13)  COMP-3            00041000
+                                                      VALUE ZEROES.     00041010
+               05  WS-RECURING-HIER-LVL-NBR                             00041020
+                                          PIC S9(2)   COMP-3            00041030
+                                                      VALUE ZEROES.     00041040
+               05  WS-RECURING-HIER-PRORD-KEY                           00041050
+                                          PIC X(80)   VALUE SPACES.     00041060
+               05  WS-RECURING-HIER-PT-SEQ-NBR                          00041070
+                                          PIC S9(6)   COMP-3            00041080
+                                                      VALUE ZEROES.     00041090
+               05  WS-RECURING-BUS-ARGT   PIC S9(13)  COMP-3            00041100
+                                                      VALUE ZEROES.     00041110
+           03  WS-RECURING-REC-GRP.                                     00041120
+                   10  WS-RECURING-SVCARRID   PIC X(55)   VALUE SPACES. 00041130
+                   10  WS-RECURING-PFAMFK     PIC 9(04)   VALUE ZEROES. 00041140
+                   10  WS-RECURING-PTYPFK     PIC 9(04)   VALUE ZEROES. 00041150
+                   10  WS-RECURING-CHGGFK     PIC 9(04)   VALUE ZEROES. 00041160
+                   10  WS-RECURING-TRANFK     PIC 9(08)   VALUE ZEROES. 00041170
+                   10  WS-RECURING-CHGDESC    PIC X(30)   VALUE SPACES. 00041180
+                   10  WS-RECURING-QUANTITY  PIC 9(11).999 VALUE ZEROES.00041190
+                   10  WS-RECURING-UNITPRICE  PIC -9(8).99 VALUE ZEROES.00041200
+                   10  WS-RECURING-REGELIGCHG PIC -9(8).99 VALUE ZEROES.00041210
+                   10  WS-RECURING-PREDSCCHG  PIC -9(8).99 VALUE ZEROES.00041220
+                   10  WS-RECURING-DSCAMOUNT  PIC -9(8).99 VALUE ZEROES.00041230
+                   10  WS-RECURING-TAXAMOUNT  PIC -9(8).99 VALUE ZEROES.00041240
+                   10  WS-RECURING-FROM-DATE  PIC 9(8)    VALUE ZEROES. 00041250
+                   10  WS-RECURING-TO-DATE    PIC 9(8)    VALUE ZEROES. 00041260
+                   10  WS-RECURING-LEGEND1FK  PIC X(02)   VALUE SPACES. 00041270
+                   10  WS-RECURING-LEGEND2FK  PIC X(02)   VALUE SPACES. 00041280
+                   10  WS-RECURING-GIRN       PIC 9(10)   VALUE ZEROES. 00041290
+                   10 WS-RECURING-WW-CIRCT      PIC X(30).              00041300
+                   10 WS-RECURING-EXCH-RATE  PIC -9(3).9(6).            00041310
+                   10 WS-RECURING-CURRENCY-NM   PIC X(30).              00041320
+                   10 WS-RECURING-ATTCO-1-CITY  PIC X(27).              00041330
+                   10 WS-RECURING-ATTCO-1-STATE PIC X(02).              00041340
+                   10 WS-RECURING-ATTCO-2-CITY  PIC X(27).              00041350
+                   10 WS-RECURING-ATTCO-2-STATE PIC X(02).              00041360
+                   10 WS-RECURING-DIST-IN-CHNL  PIC 9(05).              00041370
+                   10 WS-RECURING-CUST-NM       PIC X(27).              00041380
+                   10 WS-RECURING-INTER-CORP-CD PIC X(01).              00041390
+                   10 WS-RECURING-PL-CNTRY-CD-1 PIC X(02).              00041400
+                   10 WS-RECURING-PL-CNTRY-CD-2 PIC X(02).              00041410
+                   10 WS-RECURING-BIT-STA-DT      PIC X(8)              00041420
+                                                          VALUE SPACES. 00041430
+                   10 WS-RECURING-CPI-CANC-DT     PIC X(8)              00041440
+                                                          VALUE SPACES. 00041450
+                   10 WS-RECURING-CONTRACT-NBR    PIC X(8)              00041460
+                         VALUE SPACES.                                  00041470
+                   10 WS-RECURING-CHRG-CLSS-TEXT  PIC X(45)             00041480
+                         VALUE SPACES.                                  00041490
+                   10 WS-RECURING-CHRG-CLSS-SORT-CD PIC X(2)            00041500
+                         VALUE SPACES.                                  00041510
+                   10 WS-RECURING-CHRG-CLSS-DESC   PIC X(45)            00041520
+                         VALUE SPACES.                                  00041530
+                   10 WS-RECURING-DISC-PLAN-NAME-1 PIC X(50)            00041540
+                         VALUE SPACES.                                  00041550
+                   10 WS-RECURING-DISC-PCT-OFF-1   PIC 9(3).9(2)        00041560
+                         VALUE ZERO.                                    00041570
+                   10 WS-RECURING-DISC-PLAN-NAME-2 PIC X(50)            00041580
+                         VALUE SPACES.                                  00041590
+                   10 WS-RECURING-DISC-PCT-OFF-2   PIC 9(3).9(2)        00041600
+                         VALUE ZERO.                                    00041610
+                   10 WS-RECURING-DISC-PLAN-NAME-3 PIC X(50)            00041620
+                         VALUE SPACES.                                  00041630
+                   10 WS-RECURING-DISC-PCT-OFF-3   PIC 9(3).9(2)        00041640
+                         VALUE ZERO.                                    00041650
+                   10 WS-RECURING-DISC-PLAN-NAME-4 PIC X(50)            00041660
+                         VALUE SPACES.                                  00041670
+                   10 WS-RECURING-DISC-PCT-OFF-4   PIC 9(3).9(2)        00041680
+                         VALUE ZERO.                                    00041690
+                   10 WS-RECURING-DISC-PLAN-NAME-5 PIC X(50)            00041700
+                         VALUE SPACES.                                  00041710
+                   10 WS-RECURING-DISC-PCT-OFF-5   PIC 9(3).9(2)        00041720
+                         VALUE ZERO.                                    00041730
+                   10 WS-RECURING-DISC-PLAN-NAME-6 PIC X(50)            00041740
+                         VALUE SPACES.                                  00041750
+                   10 WS-RECURING-DISC-PCT-OFF-6   PIC 9(3).9(2)        00041760
+                         VALUE ZERO.                                    00041770
+                   10 WS-RECURING-DISC-PLAN-NAME-7 PIC X(50)            00041780
+                         VALUE SPACES.                                  00041790
+                   10 WS-RECURING-DISC-PCT-OFF-7   PIC 9(3).9(2)        00041800
+                         VALUE ZERO.                                    00041810
+                   10 WS-RECURING-VPN-NAME-2              PIC X(25)     00041820
+                         VALUE SPACES.                                  00041830
+                   10 WS-RECURING-UEBILL-VPN-NBR-2        PIC X(9)      00041840
+                         VALUE SPACES.                                  00041850
+                   10 WS-RECURING-VPN-RGN-CD-1            PIC X(8)      00041860
+                         VALUE SPACES.                                  00041870
+                   10 WS-RECURING-VPN-RGN-NM-1            PIC X(25)     00041880
+                         VALUE SPACES.                                  00041890
+                   10 WS-RECURING-VPN-RGN-CD-2            PIC X(8)      00041900
+                         VALUE SPACES.                                  00041910
+                   10 WS-RECURING-VPN-RGN-NM-2            PIC X(25)     00041920
+                         VALUE SPACES.                                  00041930
+                   10 WS-RECURING-PLAN-CHNG-CD            PIC X         00041940
+                         VALUE SPACES.                                  00041950
+                   10 WS-RECURING-CHRG-ALLOC-PC           PIC 9(2).9(4) 00041960
+                         VALUE ZERO.                                    00041970
+                   10 WS-RECURING-NO-PORTS                PIC 9(4)      00041980
+                         VALUE ZERO.                                    00041990
+P3301              10  WS-RECURING-RSRVTN-DESC-TX         PIC X(30)     00042000
+P3301                                                     VALUE SPACES. 00042010
+P3301              10  WS-RECURING-CHRG-TYPE-CD           PIC X(2)      00042020
+P3301                                                     VALUE SPACES. 00042030
+P2779              10  WS-RECURING-SIID                   PIC X(16)     00042040
+P2779                                                     VALUE SPACES. 00042050
+P2975              10 WS-RECURING-CKL-NUM       PIC X(04) VALUE SPACES. 00042060
+                   10  WS-RECURING-VPN-NAME-1              PIC X(25)    00042070
+                                                           VALUE SPACES.00042080
+                   10 WS-RECURING-UEBILL-VPN-NBR-1        PIC X(9)      00042090
+                         VALUE SPACES.                                  00042100
+                   10 WS-RECURING-PLAN-CHNG-MSG-TXT       PIC X(40)     00042110
+                         VALUE SPACES.                                  00042120
+                   10 FILLER                    PIC X(02).              00042130
+      *     R0304 P2780 TML START                                       00042140
+!

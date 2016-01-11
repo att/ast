@@ -1,0 +1,51 @@
+: compare pzip partitions and gzip on test.dat
+
+integer rep=1 null=0
+
+dat=test.dat
+
+while	:
+do	case $1 in
+	-\?)		print -u2 "Usage: $0 [-] [reps] [data] [partition-file ...]"; exit 2 ;;
+	-)		null=1 ;;
+	gzip|*.prt|'')	break ;;
+	+([0-9]))	rep=$1 ;;
+	*)		dat=$1 ;;
+	esac
+	shift
+done
+case $# in
+0)	set -- gzip best.prt test*.prt ;;
+esac
+
+exec 2>&1
+
+tmp=/tmp/pz$$
+mkdir $tmp || exit
+trap 'code=$?; trap 0 1 2; rm -rf $tmp; exit $code' 0 1 2
+case $null in
+1)	ln -s /dev/null $tmp/u ;;
+esac
+sep=
+while	((rep-- > 0))
+do	for method
+	do	case $sep in
+		"")	sep=1 ;;
+		*)	print ;;
+		esac
+		case $method in
+		*.prt)	print "pzip -p $method $(wc -c $dat):"
+			time pzip -p $method < $dat > $tmp/z
+			print
+			wc -c $tmp/z
+			time pzip < $tmp/z > $tmp/u
+			;;
+		gzip)	print "gzip $(wc -c $dat):"
+			time gzip < $dat > $tmp/z
+			print
+			wc -c $tmp/z
+			time gunzip < $tmp/z > $tmp/u
+			;;
+		esac
+	done
+done

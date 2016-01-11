@@ -1,0 +1,34 @@
+: perl cut tests 2002-06-05
+
+E	((?>a*))*		aaaaa		(0,5)(0,5)
+E	SAME			aabbaa		(0,2)(0,2)
+E	(?>a*)b			abab		(0,2)
+E	((?>a*)b)		abab		(0,2)(0,2)
+E	((?>a*)b)?		abab		(0,2)(0,2)
+E	((?>a*)b){0,1}		abab		(0,2)(0,2)
+E	((?>a*)b){1}		abab		(0,2)(0,2)
+E	((?>a*)b){0,2}		abab		(0,4)(2,4)
+E	((?>a*)b){1,2}		abab		(0,4)(2,4)
+E	((?>a*)b){2}		abab		(0,4)(2,4)
+E	((?>a*)b)*		abab		(0,4)(2,4)
+E	((?>a*)b)+		abab		(0,4)(2,4)
+
+E	(?>a*)			aaaaa		(0,5)
+E	SAME			aabbaa		(0,2)
+E	((?>a*)*)		aaaaa		(0,5)(0,5)
+E	SAME			aabbaa		(0,2)(0,2)
+E	((?>a*?))*		aaaaa		(0,0)(0,0)
+E	SAME			aabbaa		(0,0)(0,0)
+E	((?>a*?)*)		aaaaa		(0,0)(0,0)
+E	SAME			aabbaa		(0,0)(0,0)
+
+E	((.*)b)*		ababa		(0,4)(0,4)(0,3)
+E	((.*?)b)*		ababa		(0,4)(2,4)(2,3)
+
+E	(?>a*)a			aaaaa		NOMATCH
+E	((?>a*)|a*)a		aaaaa		(0,5)(0,4)
+
+E	(a+|b+|c+)*(c)		aaabbbbccccd	(0,11)(7,10)(10,11)
+E	(?>a+|b+|c+)*(c)	aaabbbbccccd	(0,8)(7,8)
+E	(a+|b+|c+)*(d)		aaabbbbccccd	(0,12)(7,11)(11,12)
+E	(?>a+|b+|c+)*(d)	aaabbbbccccd	(0,12)(11,12)

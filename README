@@ -1,0 +1,29 @@
+This is a package root directory $PACKAGEROOT. Source and binary
+packages in this directory tree are controlled by the command
+
+	bin/package
+
+Binary files may be in this directory or in the install root directory
+
+	INSTALLROOT=$PACKAGEROOT/arch/`bin/package`
+
+For more information run
+
+	bin/package help
+
+Many of the packaged commands self-document via the --man and --html
+options; those that do have no separate man page.
+
+Each package is covered by one of the license files
+
+	lib/package/LICENSES/<license>
+
+where <license> is the license type for the package.  At the top
+of each license file is a URL; the license covers all software that
+refers to this URL. For details run
+
+	bin/package license [<package>]
+
+Any archives, distributions or packages made from source or
+binaries covered by license(s) must contain the corresponding
+license file(s).

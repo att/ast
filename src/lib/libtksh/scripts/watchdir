@@ -1,0 +1,52 @@
+# Tksh Demo
+# Jeff Korn
+#
+# This script keeps track of visited directories and shows the files
+# in the current directory.   You can double-click on files and 
+# directories.  The script should be used interactively, so to run:
+#	$ tksh
+#	$ . scripts/watchdir
+
+function winsetup
+{
+	pack $(frame .f)
+	frame .f.dirname -relief raised -bd 1
+	pack .f.dirname -side top -fill x
+	pack $(frame .f.ls) $(frame .f.dirs) -side left 
+	label .f.dirname.label -text "Current directory: "
+	label .f.dirname.pwd -textvariable PWD
+	pack .f.dirname.label .f.dirname.pwd -side left
+
+	scrollbar .f.ls.scroll -command ".f.ls.list yview"
+	listbox .f.ls.list -yscroll ".f.ls.scroll set" -width 20 -setgrid 1
+	pack $(label .f.ls.label -text "Directory Contents") -side top
+	pack .f.ls.list .f.ls.scroll -side left -fill y -expand 1
+
+	scrollbar .f.dirs.scroll -command ".f.dirs.list yview"
+	listbox .f.dirs.list -yscroll ".f.dirs.scroll set" -width 20 -setgrid 1
+	pack $(label .f.dirs.label -text "Visited Directories") -side top
+	pack .f.dirs.list .f.dirs.scroll -side left -fill y -expand 1
+	bind .f.dirs.list "<Double-1>" 'cd $(selection get)'
+	bind .f.ls.list "<Double-1>" 'tkfileselect $(selection get)'
+}
+
+function tkfileselect
+{
+	[[ -d "$1" ]] && tkcd "$1"
+	[[ -f "$1" ]] && ${EDITOR-${VISUAL-emacs}} "$1"
+}
+
+function tkcd
+{
+	cd $1 > /dev/null || return
+	.f.ls.list delete 0 end
+	set -o markdirs
+	.f.ls.list insert end .. *
+	[[ ${VisitedDir["$PWD"]} == "" ]] && .f.dirs.list insert end "$PWD"
+	VisitedDir["$PWD"]=1
+}
+
+typeset -A VisitedDir
+winsetup > /dev/null
+alias cd=tkcd
+tkcd .

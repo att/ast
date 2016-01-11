@@ -1,0 +1,4 @@
+08-03-15 don't do hdr=paxget;paxread;access hdr; -- doh
+08-03-15 seek to eof if central hdr hit after last entry
+03-12-26 convert to codex sum-crc
+03-12-24 move from pax source and convert to -lcodex

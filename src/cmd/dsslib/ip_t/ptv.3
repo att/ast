@@ -1,0 +1,118 @@
+.TH PTV 3
+.SH NAME
+\fBlibptv\fR \- arbitrary size prefix matching by intervals
+.de Tp
+.fl
+.ne 2
+.TP
+..
+.de Ss
+.fl
+.ne 2
+.SS "\\$1"
+..
+.de Cs
+.nf
+.ft C
+..
+.de Ce
+.ft 1
+.fi
+..
+.ta 1.0i 2.0i 3.0i 4.0i 5.0i
+.SH SYNOPSIS
+.Cs
+#include <ptv.h>
+.Ce
+.SH DESCRIPTION
+\fIlibptv\fP provides a set of functions to create and maintain
+collections of unlabelled prefix tables for arbitrary size unsigned big-endian integers.
+IPV6 addresses are modeled as 16 byte unsigned big-endian integers.
+Unlabelled prefixes are treated as intervals.
+Adjoining intervals are merged.
+An address matches the set of prefixes if it is contained on one of the intervals.
+Information on which prefix matches a particular address is not provided by the library.
+See
+.BR iv (3)
+for longest prefix matching on arbitary size unsigned big-endian integers.
+.P
+.B ptv
+provides functions that apply set operations on collections of prefix tables.
+These functions support questions like: does prefix table \fIP\fP match address \fIA\fP;
+does the union of prefix tables \fIP\fP and \fIQ\fP match address \fIA\fP;
+what set of addresses are matched by the intersection of prefix tables \fIP\fP and \fIQ\fP.
+.Ss "TYPES"
+.Ss "  Ptv_t"
+Prefix table handle containing these public members:
+.Ss "    Ptvcount_t entries"
+The number of prefixes in the table.
+.Ss "    int size"
+The address size in bytes.
+.Ss "    unsigned char* r[PTV_REGISTERS]"
+\fCPTV_REGISTERS\fP temporary address registers for address/prefix computations.
+\fCPTV_REGISTERS\fP is at least \fC6\fP.
+.Ss "  Ptvprefix_t"
+Prefix handle containing these public members:
+.Ss "    unsigned char* min"
+The minimum address in the prefix interval.
+.Ss "    unsigned char* max"
+The maximum address in the prefix interval.
+.Ss "    union { long number; void* pointer; } data"
+User defined data associated with the prefix.
+.Ss "  Ptvaddr_t"
+.L "unsigned char*"
+pointer to the significant prefix bytes in big-endian order.
+.Ss "  Ptvcount_t"
+Unsigned integral type for counting.
+.Ss "DISCIPLINE"
+The prefix table discipline specifies the API version and an optional user error message callback.
+.Cs
+typedef int (*Error_f)(void* meth, void* disc, int level, const char* format, ...);
+typedef struct Ptvdisc_s
+{
+  uint32_t  version;
+  Error_f   errorf;
+} Ptvdisc_t;
+.Ce
+.Ss "FUNCTIONS"
+.Ss "  void ptvinit(Ptvdisc_t* disc)"
+Initializes the discipline \fCdisc\fP with the implementation version
+and default values for all other members.
+.Ss "  Ptv_t* ptvopen(Ptvdisc_t* disc, int size)"
+This creates a new prefix table handle.
+\fCdisc\fP is a discipline structure.
+\fCsize\fP is the address size in bytes.
+\fCptvopen()\fP returns the new handle or \fC0\fP on failure.
+.Ss "  int ptvclose(Ptv_t* ptv)"
+This closes the prefix table handle \fCptv\fP.
+It returns \fC-1\fP on failure and \fC0\fP on success.
+.Ss "  Ptvprefix_t* ptvinsert(Ptv_t* ptv, unsigned char* min, unsigned char* max)"
+Inserts the prefix with minimum address \fCmin\fP and maximum address \fCmax\fP
+in the table \fCptv\fP.
+A pointer to the prefix is returned on success, \fC0\fP on failure.
+On success the \fCprefix\fP data member may be modified; this value is retained
+until the prefix is deleted or the table is closed.
+In particular, it may be recovered by \fCptvmatch()\fP, described below.
+.Ss "  int ptvdelete(Ptv_t* ptv, unsigned char* min, unsigned char* max)"
+Deletes the prefix with minimum address \fCmin\fP and maximum address \fCmax\fP
+from the table \fCptv\fP.
+\fC0\fP is returned if the prefix was found and deleted, otherwise \fC-1\fP is returned.
+.Ss "  Ptvprefix_t* ptvmatch(Ptv_t* ptv, unsigned char* addr)"
+Returns a pointer to the prefix for the longest prefix match of \fCaddr\fP
+on the table \fCptv\fP.
+\fC0\fP is returned if there is no match.
+.Ss "  unsigned char* ptvmin(int size, unsigned char* buf, unsigned char* addr, int bits)"
+Returns a pointer to the minimal address in \fCbuf\fP of \fCsize\fP bytes
+for the prefix \fCaddr\fP limited to \fCbits\fP bits.
+.Ss "  unsigned char* ptvmax(int size, unsigned char* buf, unsigned char* addr, int bits)"
+Returns a pointer to the maximal address in \fCbuf\fP of \fCsize\fP bytes
+for the prefix \fCaddr\fP limited to \fCbits\fP bits.
+.SH "IMPLEMENTATION NOTES"
+\fIlibptv\fP uses the CDT library for container data types and \fIfv(3)\fP for manipulating
+arbitrary size unsigned big-endian integers.
+.SH "SEE ALSO"
+\fBiv\fP(3), \fBcdt\fP(3), \fBfv\fP(3).
+.SH AUTHOR
+.nf
+Glenn Fowler <gsf@research.att.com>
+.fi

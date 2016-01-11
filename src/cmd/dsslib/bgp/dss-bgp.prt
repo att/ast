@@ -1,0 +1,13 @@
+# dss -x bgp -t fixed pzip partition
+# pin (AT&T Labs Research) 2001-12-05
+# row 1024 window 4194304 compression level 6
+
+1024	# high frequency 14
+
+88 85 84
+2 4
+7 6 5
+47
+69
+78
+86-87 89

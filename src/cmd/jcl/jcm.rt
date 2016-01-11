@@ -1,0 +1,76 @@
+NOTE regression tests for the jcm command
+
+UNIT jcm
+
+TEST 'basics'
+
+DATA t.jcm -n "\
+DDC1000  05 M        YYYYYYYYYYYY                                               \
+W           W        YYYYYYYYYYYY                                               \
+MI~PXWAITDC-UB-UBWMBMRG      J2599999999                9999                    \
+LMEMLIB.BASE                                                     305            \
+HWM: DUMMY JOB TO WAIT FOR ~DD-NAME FRAG SORTS                                  \
+VDUMMY                                       DC-UB                              \
+T%%RUNMODE=I                                                                    \
+T%%STREAM=*                                                                     \
+T%%JOBPREFX=~PX                                                                 \
+T%%INSTNC=~INSTNC8                                                              \
+T%%DDNAME=~DD-NAME                                                              \
+T%%CTN=~@                                                                       \
+T%%CYCL=~#                                                                      \
+ZMERGE   DOCLIB.BASE                                                    V300    \
+IDCJ-I~PS~FIN-OK-~@~#ODAT                                                       \
+QDCQ-WLB             0001XAQ-CTM-OK          0001                               \
+ODCJ-I~PXWAIT-OK-~@~#ODAT+                                                      \
+BYY10015Y                                                                       \
+R                                                             03                \
+C,,,,ANYSTEP          001C0000 K%%%RUNMODE=R                                    \
+C        ,,,,ANYSTEP          001EXERR %%%RUNMODE=R                             \
+C                                                                               \
+SNU-ECS           R45%%APPL %%JOBNAME NOTOK %%JOBCC %%ODATE %%TIME              \
+"
+
+EXEC -c t.jcm
+
+EXEC t.jcm
+
+TEST '--initialize=file'
+
+DATA u.ini <<'!'
+JCL_AUTO_PX = 98
+JCL_AUTO_EVEN = 2
+JCL_AUTO_ODD = 3
+!
+
+DATA u.jcm -n "\
+DDC1000  05 M        YYYYYYYYYYYY                                               \
+W           W        YYYYYYYYYYYY                                               \
+MI~PXWAITDC-UB-UBWMBMRG      J2599999999                9999                    \
+LMEMLIB.BASE                                                     305            \
+HWM: DUMMY JOB TO WAIT FOR ~DD-NAME FRAG SORTS                                  \
+VDUMMY                                       DC-UB                              \
+T%%RUNMODE=I                                                                    \
+T%%STREAM=*                                                                     \
+T%%INSTNC=~INSTNC8                                                              \
+T%%DDNAME=~DD-NAME                                                              \
+T%%CTN=~@                                                                       \
+T%%CYCL=~#                                                                      \
+T%%EVEN=~EVEN                                                                   \
+T%%ODD=~ODD                                                                     \
+ZMERGE   DOCLIB.BASE                                                    V300    \
+IDCJ-I~PS~FIN-OK-~@~#ODAT                                                       \
+QDCQ-WLB             0001XAQ-CTM-OK          0001                               \
+ODCJ-I~PXWAIT-OK-~@~#ODAT+                                                      \
+BYY10015Y                                                                       \
+R                                                             03                \
+C,,,,ANYSTEP          001C0000 K%%%RUNMODE=R                                    \
+C        ,,,,ANYSTEP          001EXERR %%%RUNMODE=R                             \
+C                                                                               \
+SNU-ECS           R45%%APPL %%JOBNAME NOTOK %%JOBCC %%ODATE %%TIME              \
+"
+
+EXEC -h u.jcm
+
+EXEC -i u.ini u.jcm
+
+EXEC -i u.ini -I 3 u.jcm

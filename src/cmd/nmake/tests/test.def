@@ -1,0 +1,22 @@
+# default nmake regress(1) definitions
+
+SET local
+
+UNIT nmake
+
+(vpath .) </dev/null >/dev/null 2>&1 && vpath - /#option/2d
+
+unset A
+unset COSHELL
+unset MAKERULES
+unset MAKERULESPATH
+unset MAKESKIP
+unset NPROC
+unset P
+unset VPATH
+
+export CC=cc
+export ERROR_OPTIONS='nosystem'
+export LANG=C LC_ALL=C
+export MAKE_OPTIONS='native-pp=-1 noprefix-include regress'
+export PS4='+ '

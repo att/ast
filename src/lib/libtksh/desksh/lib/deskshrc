@@ -1,0 +1,18 @@
+# default initialization file for desksh
+
+# where to find desksh files
+DESKSH_ROOT=$DESKSH_LIB
+
+# if you want to execute a version of tksh other than the first one in your
+# path.
+: ${TKSH:=~jkorn/tksh/build2/tksh}
+
+DESKSH_FUN=$DESKSH_ROOT
+
+DESKSH_SAVE_ENV=${ENV:-~/.env}
+
+DESKSH_UTIL_TKCDB=/home/charless/tkcdb
+
+DESKSH_IMGS=$DESKSH_ROOT/imgs
+DESKSH_PRINTCMD=lp
+

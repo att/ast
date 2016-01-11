@@ -1,0 +1,83 @@
+10-06-01 sync with ast api 20100601
+10-04-20 run.c: add timout arg to cowait()
+07-12-10 path.c: fix <size><suffix> ordering
+07-12-07 path.c: handle { '.' '/' } delimiters, '/' for pds
+07-12-03 jcl.h: add Jcl_t.flags JCL_GDG for data generations groups
+07-12-03 path.c: add data generations group logic
+07-11-21 run.c: fix USAGE computation
+07-04-09 Makefile: $(CC.PIC) to allow archive to be pulled into other dlls
+06-11-11 sym.c: export JCL_SYM_READONLY for exec and verbose
+06-11-11 add JCL_SYM_READONLY for command line name=value
+06-10-11 add sfstropen()/sfstruse() error checks
+06-08-14 run.c: fix coopen() to use COSHELL=pathshell()
+06-08-04 run.c: fix JOBNAME export
+06-08-04 run.c: use coshell instead of system()
+06-08-01 run.c: exit code is EXIT_STATUS(system(...))!
+06-05-18 RC cleanup
+06-05-17 libjcl.h,open.c,run.c: add JCL_EXEC SYS* redirection
+05-10-25 run.c: fix "+" file append mark placement to be first char
+	 parse.c: fix literal ' inside PARM=(...) list parse
+05-10-11 jcl.h: add JCL_DD_MARKED for paths with size marks
+05-09-15 run.c: drop "+" append mark on command arg files
+05-09-12 lib.c: add { %%BLANK[n] %%TIME }
+	 run.c: create output files if they don't exist
+05-09-09 run.c: use fmtquote() FMT_SHELL flag for [$`]
+05-08-29 jcl.h: add Jcl_t {date,odate,rdate} and control-m vars
+	 open.c: initialize Jcl_t {date,odate,rdate}
+	 lib.c: synthesize Jcl_t {date,odate,rdate} control-m vars
+	 parse.c: add '$' to control-m var id set
+05-06-11 run.c: 1 export per line for readability
+	 run.c: export STEP=step-name
+	 parse.c: fix SUBSYS=... file catenation bug
+	 parse.c: SPACE=n is not a reliable lrecl predictor
+05-02-14 sym.c: handle symbol redefinitions
+	 find.c: ${%%foo} => ${JCL_AUTO_FOO}
+	 jcl.h: fix JCL_CREATE/JCL_WARN bit value clash
+	 jcl.h: add JCL_IMPORT env var precedence over map definitions
+05-02-11 find.c: add expand() recursion check
+04-10-31 jcl.h,parse.c,run.c: add JCL_DD_ALIAS for postponed DD
+	 parse.c: handle DD SUBSYS=(name,'DDNAME=x')
+04-10-18 path.c: expand() "set" args
+04-10-17 run.c: add checkdir() to mkdir -p output dirs
+	 find.c: recursively expand set vars
+04-09-28 run.c: add more JCL_SUBDIR trace output
+04-09-21 jcl.h,run.c: add JCL_SUBDIR
+	 parse.c: add "JCL_AUTO_JOBNAME" to jclsym()
+	 parse.c: fix expression parse bugs
+	 uniq.c: trailing %% is not a file size mark
+04-09-20 run.c: add "export JCL_AUTO_JOBNAME=job"
+04-09-19 path.c: handle prefix match tail
+04-09-15 jcl.h: add Jcl_t.roflags
+	 path.c: add expand() for --include ${...} expand
+	 path.c: ${...} does lookup() then getenv() -- duh
+	 path.c: add *.X prefix match with ${1} ... subexprs
+	 path.c: add "export" and { JCL_SYM_EXPORT JCL_SYM_SET }
+04-08-11 jcl.h,find.c: add JCL_CREATE for jclfind() create
+04-08-08 path.c: provide default disc.{usage,optsetf}
+04-08-06 split cmd/jcl => lib/libjcl + cmd/jcl
+	 path.c: set options only if usage&optsetf are set
+04-06-14 run.c: clean up tmp files on exit
+04-06-06 jcl.h,parse.c: parse OUTPUT and DD OUTPUT=*
+04-05-31 jcl.h,jcl.tst: add JCL_DD_DIR for SPACE=(*(x,y,z)*)
+04-05-24 run.c: handle JCL_DISP_MOD by prefixing dd name with '+'
+04-05-20 cpy2dss.c: fix --variable to *also* emit <VARIABLE>1</>
+04-05-19 cpy2dss.c: fix --variable to emit terminator and width
+04-05-14 cpy2dss.c: add --terminator=char and --variable
+04-05-06 cpy2dss.c: handle nested structs and out of sync level indices
+04-05-04 cpy2dss.c: promote from test area
+04-02-29 parse.c: ignore %%.
+	 jclparm(): PARM=(' name=value') => name=value
+	 run.c: parms passed as one , separated arg
+	 run.c: map dd DSN=&FOO => ${TMPDIR:-/tmp}/job.$$.FOO
+04-02-11 lib.c,sym.c: fix short by one bugs in stash() and jclsym()
+04-01-30 fix '&variable' logic; JCL_LISTSCRIPTS lists INCLUDE paths too
+04-01-27 parse.c: fix off-by-one continuation logic
+04-01-14 run.c: fix std[3] => std[4] off-by-one declaration
+03-11-18 parse.c: add INCLUDE and JCLLIB, fix find search()
+03-11-17 find.c: only convert base name upper=>lower in search
+	 parse.c: add IF/ELSE/ENDIF
+03-10-30 fix DD SYSIN redirection, DD DUMMY
+03-10-16 set (recfm,lrecl) via marked() if not already set
+	 export DD catenations
+03-10-10 variable expansion by the book
+03-10-01 first code

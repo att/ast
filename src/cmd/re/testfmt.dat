@@ -1,0 +1,72 @@
+: fmtmatch(3) and fmtre(3) tests 2001-05-23
+
+# sanity
+
+E	a		*a*
+K	a		^a$
+K	*a		a$
+K	a*		^a
+K	*a*		a
+
+E	(abc)		*@(abc)*
+K	@(abc)		^(abc)$
+
+E	a*		**(a)*
+E	(abc)*		**(abc)*
+K	*(abc)		^(abc)*$
+
+E	a?		*?(a)*
+E	(abc)?		*?(abc)*
+K	?(abc)		^(abc)?$
+
+E	a+		*+(a)*
+E	(abc)+		*+(abc)*
+K	+(abc)		^(abc)+$
+
+E	a{1,2}		*{1,2}(a)*
+E	(abc){1,2}	*{1,2}(abc)*
+K	{1,2}(abc)	^(abc){1,2}$
+
+E	(abc)!		*!(abc)*
+K	!(abc)		^(abc)!$
+
+# nesting
+
+E	(a(p)+z)*	**(a+(p)z)*
+K	*(a+(p)z)	^(a(p)+z)*$
+
+E	(a(p)*|z)+	*+(a*(p)|z)*
+K	+(a*(p)|z)	^(a(p)*|z)+$
+
+E	(a(p)*&z)+	*+(a*(p)&z)*
+K	+(a*(p)&z)	^(a(p)*&z)+$
+
+# options
+
+E	(?i)(a)*	*~(i)*(a)*
+K	~(i)*(a)	^(?i)(a)*$
+
+E	(?-g:a*)b+	*~(-g:*(a))+(b)*
+K	~(-g)*(a)	^(?-g)(a)*$
+
+E	(?K)*(a)	**(a)*
+K	~(E)(a)*	^(a)*$
+
+# minimal match
+
+E	a*?b		**-(a)b*
+E	a+?b		*+-(a)b*
+E	a??b		*?-(a)b*
+E	a{1,2}?b	*{1,2}-(a)b*
+
+E	(a)*?b		**-(a)b*
+E	(a)+?b		*+-(a)b*
+E	(a)??b		*?-(a)b*
+E	(a){1,2}?b	*{1,2}-(a)b*
+
+K	*-(a)b		^(a)*?b$
+
+# great escapes
+
+E	\w*		**(\w)*
+K	*(\w)		^(\w)*$

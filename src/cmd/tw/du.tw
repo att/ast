@@ -1,0 +1,9 @@
+:
+# `du .' using tw
+tw -pP -e "
+action:
+	if (visit++ == 0)
+		parent.local += local + blocks;
+	else if (type == DIR)
+		printf('%d\t%s\n', local + blocks, path);
+" "$@"

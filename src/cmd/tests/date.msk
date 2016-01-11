@@ -1,0 +1,8 @@
+%m
+%A %B %d, %Y, %H:%M:%S
+%A
+%B
+%m/%d/%y %I %p
+%d,%m,%Y %H:%M
+at %A the %dst of %B in %Y
+run job at %I %p, %B %dnd

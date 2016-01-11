@@ -1,0 +1,27 @@
+07-01-25 sync.c: v format size is max of all input files
+06-10-11 ss.c: add sfstruse() error checks
+06-08-01 sync.c: handle %size.suffix mapping with multiple .'s
+06-07-17 ss.c: fix RS_POP event to unlock output sfreserve's
+06-05-22 sync.c,sort.tst: fix %size.suffix mapping
+05-10-19 sort.tst: add { INREC OUTREC E15 } tests
+05-09-12 ss.c: don't add V header to data that already has it
+	 ss.c: fix [n]{ABCX}['...'] field spec parse
+	 sync.c: fix %v* synthesis
+05-09-09 ss.c,sync.c: handle V format output
+05-08-23 ss.c,sync.c: add ssannounce()
+05-08-16 ss.c: fix listexpr() null dereference
+05-07-17 sync.c: default now stable
+05-06-16 sync.c: mark -o output file too
+05-06-15 sync.c: handle space separated MODS lib list
+05-06-14 sync.c: add checkmark() %* suffix search and Ss_t.format
+04-09-28 sync.c: handle { RS_TERMINATE RS_DELETE RS_ACCEPT RS_INSERT }
+04-09-17 ss.c: handle { MERGE SKIPREC STOPAFT }
+04-06-15 handle XSUM
+03-10-16 sort.tst: add RS_CAT and catenation tests
+03-10-11 sync.c,ss.c: add ssdd(), ssdrop() => ssio(), check ${SORTOFid}
+03-09-23 sync.c: update doc example
+03-09-21 ss.c: fix OUTREC default offset
+03-09-05 sync.c: add --junk=file
+03-09-03 ss.c: add CODE=codeset
+	 sync.c: add --codeset=codeset
+03-08-30 first release

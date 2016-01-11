@@ -1,0 +1,141 @@
+12-05-31 od,tr: errno!=EPIPE => !ERROR_PIPE(errno)
+12-02-28 pty.c: change --verbose[=level] to --debug=level
+12-02-11 what.c: fix boyer moore cut n paste bug -- thanks werner
+12-01-26 pty.c: fix --man docs
+10-04-22 dlls.c: fix --path to only list the path -- doh
+10-11-03 od.c: use is[w]print() for printable char check
+10-10-19 od.c: speed up inner loop
+10-09-15 od.c: fix (unsigned char*) (char*) mismatches
+10-09-08 tr.c: handle tr abc '[%*]xyz'
+10-08-04 dlls.c: add -l to list plugin version stamps
+10-06-21 pty.c: add 4 sec timeout for initial handshake -- fix me!!
+10-06-01 od.c: add -c locale checks (and undo some fmtesc() work), add ast -tC1
+10-04-12 pty: fix sfpoll() result read/write bug
+10-04-12 cat.rt: add -v tests
+10-04-11 cmp.rt: add
+10-04-01 pty: add --tty='stty-settings'
+10-03-23 tail.tst: add -f large initial offset test
+10-03-19 pty: add --dialogue
+10-03-15 pty: fix select() fd management
+10-03-07 tail.tst: add partial line -f test
+10-03-05 mktemp.rt: add
+09-09-24 uuencode,uudecode: use uumeth(0) to generate usage method list
+09-08-18 testtail.sh: add fifo tests
+09-08-01 join.tst: TEST 19 for empty field defref bug
+09-05-24 tail.tst: add r combinations
+09-03-31 features/pty,Makefile: add pty.h and -lutil refs for linux -- great, another util library
+09-02-14 join.tst: add a VSC test
+09-02-14 tail.tst: add some VSC tests
+09-02-02 mktemp: add
+09-02-02 tail.tst: update for -b[blocks], +cl, -cl
+09-01-30 pty.c: add <ast_time.h> (for fd_set!! on mvs.390)
+09-01-12 tr.tst: add tests for trailing '-' in source and/or destination sets
+09-01-03 mkfifo.rt: add
+08-10-15 rm.rt: add to test rm -f x x
+08-02-14 look.c: fix operand parse / diagnostic bugs
+08-01-30 expr.tst: add substr * 1 * tests
+07-09-21 cksum.tst: drop sha1, add -r compatibility
+07-02-23 cksum.tst: add -x tw tests
+07-02-07 cksum: handle std => libcmd move
+06-12-12 chmod.rt,mkdir.rt: add absolute mode tests
+06-11-15 cp.tst,ln.tst,mv.tst: add initial regression tests
+06-10-31 global edit to eliminate most non-const static data
+06-10-11 add sfstruse() error checks
+06-08-25 uniq.rt: add initial regression tests
+06-08-23 mkdir.tst: add -p final dir mode tests
+06-07-20 pty.c: add
+06-06-25 chmod.rt,mkdir.rt: add initial regression tests
+06-06-24 dlls.c: add --containing
+06-01-30 od.c: add -tb binary character format
+05-12-06 od.c: handle od() static split buffer overflow
+05-08-07 tr.c: fix a-b- and a-b-c
+05-03-07 od.c: handle -t ...z for --printable
+04-10-01 fmt.tst: update for --optget
+04-09-30 od.c: -v does not accept an offset operand
+04-08-08 uuencode.c: fix -x docs, add -b == --method=binhex
+04-07-22 look.c: access() => eaccess()
+04-07-01 pr.c: add -c and -v via sfio input discipline
+04-05-27 expr.tst: add string and `:' operator tests
+04-04-14 tr.c: char* => unsigned char* to avoid sign extension
+03-10-11 od.c: add --map=ccode, -tm, generate doc from tables
+03-09-18 tail.tst: add header and timeout tests
+03-07-28 expr.tst: add
+03-07-14 fmt.tst: add
+03-06-10 who.c: ctime() arg must be time_t* (linux.s390-64)
+03-05-21 asa.c,asa.tst: add
+03-05-15 join.tst: add -v2 tests
+03-04-05 nl.tst: generate test data file
+03-02-24 nl.c,nl.tst: add
+03-02-14 od.c,tr.c: no error message for EPIPE
+03-02-11 dlls.c: add Dllinfo_t.env
+02-11-14 what.c: stop on < to catch html/xml
+	 update cmdinit() calls for 4th flag arg
+02-09-11 dlls.c: add --base & --path
+02-09-05 pr.data: eliminate case ignorant file name clashes (for mac os X)
+02-08-30 dlls.c: exit 1 if no matching dll found
+02-08-28 od.c: check and report write errors -- ouch
+	 dlls.c: add --info
+02-08-23 dlls.c: add
+02-08-19 chown.tst: add chow regression tests
+02-04-15 look.c: add look.tst, fix hang
+02-03-24 uudecode,uuencode: sfopen "rt" for \r\n -- puke
+02-01-24 look.c: drop <strings.h> ref
+01-11-26 what.c: fix doc type, add --matched
+01-10-31 what.c: fix omitted file arg doc
+01-06-06 who.c: fix entry skip logic that listed too many entries
+01-05-31 Makefile: add PACKAGE_OPTIMIZE=space checks
+01-05-29 Makefile: if -lcmd is dll then BUILTINS linked to one a.out
+01-05-21 tr: regcollate() interface update
+01-04-17 date.tst: move from std
+01-04-01 uudecode: fix -o decode-file and add regression test
+01-03-39 uudecode: add --local for UU_LOCAL
+00-12-04 look: add
+00-12-01 what: add RCS ident(1) $Id:
+00-04-01 uuencode: umask 022 for consistent header comparisons
+00-02-14 fmt: move to libcmd
+00-01-06 pr: fix empty field in multi-col output
+99-11-19 pr: -t == -T
+99-10-01 strings: add --long-strings
+99-08-11 mime,strings: fix usage[]
+99-06-25 who: fix printing of data strings with no \0
+99-06-20 who: fix -i
+99-06-17 who: add
+99-06-11 pr: fix date failure logic
+99-06-08 expr.tst: add -- it needs more too
+99-05-21 paste.tst: add -- but it needs more
+99-05-01 mime,strings,what: long options
+99-04-28 uuencode,uudecode: long options, file arg interpretation fix
+99-03-17 od: --swap=0 for testing
+	 od: allow space and , in --format, --type==--format
+99-03-11 od: add -w number-per-line, long options
+	 strings: drop debug error(1) call
+99-03-01 tr: fixes for gnu tests, long options
+	 join.tst,tr.tst: add gnu tests
+	 cut.tst: create from gnu tests
+99-01-11 tail.tst
+98-12-25 od: fix cform() for fmtesc \"
+	 uuencode.tst: update for uulib/uu_encode fill bug fix
+98-11-11 uuencode.tst
+98-08-11 uuencode,uudecode: use <uu.h> and -luu
+98-07-01 strings: fix for default format!
+98-06-01 strings: fix offset format with I*
+98-05-29 join.tst: TEST 09
+98-05-18 what: change "%s%-*s" to "%s%-.*s" and fix buffer boundary bug
+98-03-01 tr: fix char class range bugs
+	 tr.tst: add
+97-10-01 strings: add -m for multibyte
+97-07-17 join: more tests in join.tst
+	 uudecode: ignore chars after counted limit
+	 uudecode: add binhex (decode only)
+	 uudecode: fix posix/ucb uu_decode()! time for uu.tst
+96-12-25 od: add od.tst
+	 od: off_t -> int_max
+96-11-28 uudecode: fix buffer boundary bug in qp_decode
+96-09-06 tr: fix [A-Z] [a-z] bug
+96-05-09 what: I don't know (third base)
+	 uuencode: add
+	 uudecode: add
+	 tr: add
+96-04-15 od: add
+95-10-11 grab b_* list from cmd.h
+	 add void* context 3rd arg to b_main()

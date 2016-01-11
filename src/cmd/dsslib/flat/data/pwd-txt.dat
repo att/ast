@@ -1,0 +1,18 @@
+root:*:0:0:Super-User:/:/bin/csh
+sysadm:*:0:0:System V Administration:/usr/admin:/bin/sh
+diag:*:0:996:Hardware Diagnostics:/usr/diags:/bin/csh
+daemon:*:1:1:daemons:/:/dev/null
+bin:*:2:2:System Tools Owner:/bin:/dev/null
+uucp:*:3:5:UUCP Owner:/usr/lib/uucp:/bin/csh
+sys:*:4:0:System Activity Owner:/var/adm:/bin/sh
+adm:*:5:3:Accounting Files Owner:/var/adm:/bin/sh
+aha::0:0::/:/bin/sh
+lp:*:9:9:Print Spooler Owner:/var/spool/lp:/bin/sh
+auditor:*:11:0:Audit Activity Owner:/auditor:/bin/sh
+ftp:*:112:112:File Transfer:/home/ftp:/dev/null
+demos:*:993:997:Demonstration User:/usr/demos:/bin/csh
+guest:*:998:998:Guest Account:/usr/people/guest:/bin/csh
+as:*:30001:30001:Alan Smithee:/home/as:/bin/ksh
+he::30002:30002:Hammond Egger:/home/he:/bin/ksh
+noaccess:*:60002:60002:uid no access:/dev/null:/dev/null
+nobody:*:60001:60001:original nobody uid:/dev/null:/dev/null

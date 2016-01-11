@@ -1,0 +1,144 @@
+cp Makeargs.debug Makeargs
+gdb --directory=$A/src/cmd/dss --directory=$A/src/lib/libdss --directory=$A/src/lib/libast $A/bin/dss core.*
+
+dss provides low level sequential ops that declarative sql typically decomposes to
+
+what happens when the stream hits the db
+
+CX_STRING|CX_SIZE a hack?
+
+convert foo text to binary and compress using the preferred method:
+
+	dss -x foo-txt '{flat foo-bin}|{compress}'
+
+sum f3..fn by f1 and f2
+
+	dss '{sum --by f1 --by f2 f3 ... fn}'
+
+dss -xfoo option to print canonical fixed record size
+
+dss flat add cdb sized records
+
+<DSS>
+	<FIELD>
+		<NAME>name</>
+		<CONSTRAINT>name</>
+		<CONSTRAINT>
+			<NAME></>
+			<MIN>min</>
+		</>
+	</>
+</>
+
+cx needs array support
+cxmap() should check for duplicate/clash values in item list
+and between parts if possible
+
+======================================================
+http://www.research.att.com/~griffin/bgpdump/README.txt
+
+field name aliases
+
+cxparse
+	, not handled right
+	; not handled right
+
+rfc 2280
+
+====================================================
+Proposal for prefix/address set manipulation
+====================================================
+
+We have two distinct types of sets : prefix sets 
+and address sets.  Prefix sets are sets of CIDR
+prefixes, while address sets are sets of IP addresses. 
+I'll use the following conventions: 
+
+A, B, C : prefix sets 
+
+X, Y, Z : address sets 
+
+Set operations
+==============
+Set operations defined on both (overloaded) 
+prefix and address sets.  Each must have 
+operands of the same type, and each preserves that type.  
+
+union : A+B, X+Y
+intersection : A&B, X&Y
+difference : A-B, X-Y
+
+The negation operator, ~X, is only defined on address sets. 
+
+[Note : we could define ~A in the obvious way, but the space 
+of all prefixes does not seem to be an interesting one.] 
+
+
+Constructors
+==================
+
+1) prefix_set {p1 p2 ... pn}   (n>=0, where each pi is a CIDR block) 
+2) address_set {a1 a2 ... an}   (n>=0, where each ai is an IP address) 
+
+
+Basic conversions
+=================
+
+addresses(A) = X 
+  X is the address set representing the IP addresses
+  covered by the prefixes in A. 
+
+prefixes(X) = A
+  A is the minimal prefix cover of the address space of X. 
+
+
+Operations on prefix sets
+=========================
+
+supernets(A) = B 
+  B is the subset of A that covers the same space 
+  (that is, addresses(supernets(A)) == addresses(A)), but no prefix 
+  of B is a subnet of another prefix of B. 
+
+longest(A, B) = C  
+  C is the subset of prefixes A which are the longest
+  matches for prefixes in B.  That is, p1 is in C iff 
+  p1 is in A and there exist p2 in B such that p1 "contains" p2
+  and there is no p3 in A such that p1 contains p3 and p3 contains p2. 
+  (Note : it could be that p1 == p2.) 
+
+Here are some useful abbreviations : 
+
+min_cover(A) = B 
+  B is the minimum prefix cover required to cover the same space
+  as covered by A.  
+  Is abbreviation for prefixes(addresses(A)). 
+
+shortest(A, B) = C 
+  C is the subset of prefixes A that are the shortest
+  matches for some prefix in B.  
+  An abbreviation for longest(supernets(A), B). 
+
+subnets(A) = B 
+  B is the set of prefixes in B that are properly 
+  contained in other prefixes of B. 
+  An abbreviation of A - supernets(A). 
+
+
+Operations for extracting prefix sets from BGP tables
+=====================================================
+
+  ... like current, except prefix sets get extracted ... 
+
+=================================================
+Some open questions. 
+=================================================
+
+0) Are there other basic operators required? 
+
+1) Should we add another set type : range set? 
+
+2) Do we want to have a set type : route set? 
+   This would be a set of BGP routes, perhaps 
+   with additional attributes (like timestamp, 
+   router name, AS of router).  

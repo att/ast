@@ -1,0 +1,108 @@
+12-05-04  update sh_sigcheck() => sh_sigcheck(0) -- eventually figure out Shell_t*
+10-06-01  sync with ast api 20100601
+08-08-08  src/list.c,src/tcleval.c: add temporary sh_eval(p,0x8000) hack
+07-03-19  src/var.c: use nv_setref() to initialize references
+06-09-19  src/shcompat.c: sysconf() => astconf()
+04-07-19  tcl/tclIOUtil.c: treat { O_RDONLY O_WRONLY O_RDWR } as values
+03-06-13  include/tclInt.h: disable #undef sprintf that masked its prototype
+03-04-05  src/var.c: fix off by 1 malloc() call -- for once not gsf's fault!!
+	  src/var.c: hack around nv_move() double-free bug -- needs better fix
+03-03-12  src/tcleval.c,src/tclIO.c: change sfslen() => sfvalue(f)
+02-08-27  tcl/tclNotify.c: XXX add sh_sigcheck() call -- to be cleaned up
+02-08-22  enable regex cache initialization
+02-06-25  include/nvextra.h: use an addaptable cheat for the namval offset
+02-03-17  update ksh private assoc array offsets -- should be a function call
+02-01-30  compensate for uts.390 lack of header guards for { select.h time.h }
+01-04-19  add HAVE_TIME_H HAVE_SYS_PARAM_H HAVE___FD_MASK tests to tclPort.h
+00-02-10  --- Release 7.6 ---
+00-02-10  Update README file
+00-02-09  Deleted unreferenced vars, dropped tcl 7.5 compatibility,
+	  added _PACKAGE_ast <tm.h> routines to tclUnixTime.c, added
+	  forward refs to the Tcl_LinkVar() Tcl_UnlinkVar() tk callbacks,
+	  changed Makefile library refs
+00-02-07  Modified shcompat.c and shcompat.h to handle
+          change to ksh93 where nvenv is now private.
+00-02-07  Included Tk4.2 in distribution to avoid
+          compatibility problems.  Modified Makefile.
+00-02-07  Using new packaging provided by gsf 
+97-06-24  src/tclIO.c proto tweaks [gsf]
+
+97-04-10  --- Release 7.6b1 ---
+97-04-09  tcl_open |command works
+97-04-09  Default interp mode is INTERP_TCL
+97-03-09  Combined tksh.c interp.c to init.c	
+97-03-09  Incorporated changes for Tcl 7.6
+97-03-09  waitevent sets interp type to tcl instead of having eval guess
+97-03-09  Inserted code to null terminate argv in InterpProc
+97-01-20  Integrated in tcl 7.5p1
+97-01-20  Integrated tclIO.c written on sfio
+97-01-20  using nmake makefile
+97-01-20  integrated changes for uwin
+96-09-04  Reorganization of directory
+96-09-04  Works with Tcl 7.5
+96-09-04  Doesn't work with Tcl 7.4, Tcl 7.4 (requires Tk4.0)
+96-09-04  Lots of new files, deleted files
+96-02-29  Tcl_RegExp*() changed to use posix regex
+96-02-29  Tcl_RegExp*() cache change to avoid copying
+96-02-29  Tcl_RegExpCompile arg 3 for case ignore match
+96-02-29  drop stdarg.h from :: src list
+96-02-29  drop malloc.h from tksh.h
+96-02-25  unset TK_LIBRARY in tk.ksh
+96-02-25  modifications to Makefile, config.sh and config.tcl:
+          make debug, make BASE=, removed debug option in interface
+96-02-25  setsub now creates a null subscript
+96-02-25  init.ksh sets argv0 & argv, uses discipline for env instead of trace
+96-02-25  bug in Tksh_ConvertList fixed (didn't check errors properly)
+96-02-25  Man page updated
+
+96-02-21  --- Release 1.0b2 ---
+96-02-21  New version of Tksh paper
+96-02-21  Man page updated
+96-02-21  ksh version of source accepts standard input ; uses sfio
+96-02-15  Tcl_EvalFile works with Tcl mode
+96-02-15  Result only printed if stdout is a string.
+96-02-13  Added sh_sigcheck to Tcl_TclEval, making it possible to stop an
+          infinite loop in a builtin.
+96-02-13  Traces turned off in subshell
+96-02-11  Added array data field in array discipline, used for array searches.
+          TkshMakeArray now called TkshArrayData, separate nv_makearray macro.
+	  Search ids allocated like tcl, using array data instead of hash table
+	  set.test would pass, except ordering of elements is different (5 fail)
+	  however, it meets specs.
+96-02-11  Cleaned up tksh.h a bit
+96-02-11  Added in .sh.result traced to interp->result
+96-02-11  Added builtin setlist
+96-02-08  Added Tcl_UpVar, Tcl_UpVar2 functions
+96-02-08  regexp.c used instead of shell patterns
+96-02-08  fixed bug in proc test (but now file crashes)
+96-02-08  changed behavior of "info commands" to strip off tcl_ so that
+	  info.test passes
+96-02-06  rewrote portions of var.c - now the code is a lot easier to follow.
+	  Set up to use the new NV_NODISC flag.  Two more trace tests pass.
+	  Note - only one unset disc is called after a function clears scope.
+96-02-06  Added pid command
+96-02-04  button.ksh invoke does not redirect stderr and stdout to /dev/null
+96-02-03  Moved TclOpen and TclRead from tk.c to tclunix.c
+96-02-03  File reorganization:
+	    New file varcmd.c which has commands associated with vars
+              (taken from tclcommand.c)
+	    tclcommand.c renamed commands.c, command.c renamed eval.c
+	    commands.c has tclinfo.c and tclsource.c
+96-02-03  Removed tcllist.c, tclstring.c and tclresult.c and put tclUtil.c
+	  into tcl directory (only a couple of changes necessary to tclUtil.c)
+96-02-03  Tcl_SetErrorCode.c remvoed from tclerr.c (in tclUtil.c)
+96-02-03  Makefile updated accordingly
+96-02-03  Fixed bug with bind : #! in bindscript was ignored
+96-02-02  Fixed up/down arrow key problem in tk library
+96-02-01  Removed printing of "after" for entry widgets
+96-02-01  Removed return in Tcl_UntraceVar (return void doesn't work for sgi)
+96-01-30  Added in checks to config.sh for -lsocket and -lnsl
+96-01-30  Added fixstrtod (used in libtk.a on Solaris)
+96-01-30  Moved "widget" to scripts directory and made symbolic link to it
+96-01-30  Created "tksh" directory for binaries
+96-01-29  Changed name of directory "kshmain" to "obsolete"
+96-01-29  Fixed ifdef 0 in tk.c
+96-01-29  tclinfo.c and interp.c use function TkshLibDir(), defined in tksh.c
+96-01-29  tksh_builtin_command sets sh.exitval to 1 on error
+
+96-01-25  --- Release 1.0b1 ---

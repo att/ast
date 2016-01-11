@@ -1,0 +1,17 @@
+#!./tksh
+# trap tkloop EXIT
+if [[ $tk_version == 3.6 ]]
+then
+	. $tk_library/demos/widget
+elif (( $tk_version < 4.2 ))
+then
+	alias bgerror=tkerror
+	source $tcl_library/init.tcl
+	tcl_lappend auto_path $tk_library
+	export tk_library=$(print "puts [set tk_library];exit 0" | ( wish4.0 || wish4.1 || wish ) 2> /dev/null)
+	source widget.tcl
+else
+	source $tk_library/demos/widget
+fi
+tkloop
+exit 0

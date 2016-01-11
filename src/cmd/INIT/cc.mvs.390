@@ -1,0 +1,279 @@
+: mvs.390 cc wrapper for unix message and exit code semantics : 2012-01-20 :
+
+HOSTTYPE=mvs.390
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+ar=ar
+cc=/bin/c89
+CC=/bin/c++
+ccflags="-D_ALL_SOURCE -Wc,dll"
+objmax=60
+tmpfiles=
+unbotch=
+
+# -n as *first* arg shows but does not do
+# -Wc,exportall => -Wl,dll
+# -Bdynamic => .c,.o dynamic
+# -Bstatic => .c,.o static
+# *.C => cc=$CC
+# *.cpp => cc=$CC
+# *.cxx => cc=$CC
+# no optimization until the optimizer is fixed:
+#	-O	dropped (no optimization)
+#	-0	dropped (no optimization)
+#	-1	-O (default level 1 optimization)
+#	-2	-2 (maximal level 2 optimization)
+
+let argc=0 cmp=0 dll=0 libc=0 dynamic=1 dynamic_objc=0 static_objc=0 relc=0 botched=0
+case $1 in
+-n)	exec=print
+	shift
+	;;
+*)	exec=
+	;;
+esac
+export _CC_ACCEPTABLE_RC=1
+export _C89_ACCEPTABLE_RC=$_CC_ACCEPTABLE_RC
+export _CXX_ACCEPTABLE_RC=$_CC_ACCEPTABLE_RC
+case " $* " in
+*.C" "*)let dll=2
+	cc=$CC
+	export _CXXSUFFIX=C
+	;;
+*.cpp" "*)let dll=2
+	cc=$CC
+	export _CXXSUFFIX=cpp
+	;;
+*.cxx" "*)let dll=2
+	cc=$CC
+	export _CXXSUFFIX=cxx
+	;;
+esac
+exe=
+xxx=
+while	:
+do	case $# in
+	0)	break ;;
+	esac
+	arg=$1
+	case $arg in
+	-1)	arg=-O
+		;;
+	-Bdynamic)
+		let dynamic=1
+		;;
+	-Bstatic)
+		let dynamic=0
+		;;
+	-c)	let cmp=1
+		;;
+	-D_ALL_SOURCE|-D_ALL_SOURCE=*)
+		arg=
+		;;
+	-D*[\ \(\)]*)
+		arg=${arg#-D}
+		botch_macro[botched]=${arg%%=*}
+		botch_value[botched]=${arg#*=}
+		let botched=botched+1
+		arg=
+		;;
+	-o)	argv[argc]=$arg
+		let argc=argc+1
+		shift
+		arg=$1
+		exe=$arg
+		rm -f "$exe"
+		;;
+	-[O0])	arg=
+		;;
+	-Wc,dll)arg=
+		;;
+	-Wc,exportall)
+		let dll=1
+		;;
+	-Wl,dll)arg=
+		let dll=1
+		;;
+	*.c)	if	[[ $botched != 0 ]]
+		then	src=$arg
+			arg=${arg##*/}
+			unbotch="$unbotch ${arg%.c}.o"
+			arg=__$arg
+			tmpfiles="$tmpfiles $arg"
+			{
+				while	[[ $botched != 0 ]]
+				do	let botched=botched-1
+					print -r -- "#define ${botch_macro[botched]} ${botch_value[botched]}"
+				done
+				cat $src
+			} > $arg
+		fi
+		;;
+	*.o)	if	test 0 != $dynamic
+		then	let dynamic_objc=dynamic_objc+1
+		else	let static_objc=static_objc+1
+		fi
+		;;
+	*.x)	a=${arg%.x}.a
+		if	test -f $a
+		then	argv[argc]=$a
+			let argc=argc+1
+			xxx=-Wl,dll
+			case $a in
+			ast.a|*/ast.a)
+				cc="$CC -u_ast_init"
+				;;
+			esac
+		fi
+		;;
+	esac
+	case $arg in
+	?*)	argv[argc]=$arg
+		let argc=argc+1
+		;;
+	esac
+	shift
+done
+
+tmp=/tmp/cc.${USER:-$LOGNAME}.$$.err
+tmpfiles="$tmp $tmpfiles"
+
+# if any dll .o's are in .a then a .x gets generated
+# but the native cc doesn't jcl for the .x
+# -Wl,dll does that, so we nuke the .x and keep the exe
+
+test 0 != $dll && xxx=
+case $xxx in
+?*)	case $exe in
+	?*)	a=${exe##*/}
+		a=${a%.*}
+		case $exe in
+		*/*)	tmpfiles="$tmpfiles ${exe%/*}/${a}.x" ;;
+		*)	tmpfiles="$tmpfiles ${a}.x" ;;
+		esac
+		;;
+	esac
+	;;
+esac
+if	test 0 != $dll
+then	if	test 0 != $cmp
+	then	xxx="-D_SHARE_EXT_VARS $xxx"
+	else	xxx="-Wl,dll $xxx"
+	fi
+fi
+set -- $xxx "${argv[@]}"
+
+# can't handle more than objmax .o's
+# -r into intermediates doesn't work, but the cat trick does
+# also, the runtime dll file must be executable but cc -Wl,dll forgets
+
+if	test 0 != $dll -a \( $dynamic_objc -ge $objmax -o 0 != $static_objc \)
+then	unset argv
+	argc=0 libc=0 dynamic=1 dynamic_objc=0 static_objc=0 endc=0
+	while	:
+	do	case $# in
+		0)	break ;;
+		esac
+		case $1 in
+		-Bdynamic)
+			let dynamic=1
+			;;
+		-Bstatic)
+			let dynamic=0
+			;;
+		*.o)	if	test 0 != $dynamic
+			then	dynamic_objv[dynamic_objc]=$1
+				let dynamic_objc=dynamic_objc+1
+			else	static_objv[static_objc]=$1
+				let static_objc=static_objc+1
+			fi
+			;;
+		-l*)	libv[libc]=$1
+			let libc=libc+1
+			;;
+		-o)	argv[argc]=$1
+			let argc=argc+1
+			shift
+			argv[argc]=$1
+			let argc=argc+1
+			exe=$1
+			;;
+		*)	argv[argc]=$1
+			let argc=argc+1
+			;;
+		esac
+		shift
+	done
+	if	test 0 != $static_objc
+	then	case $exe in
+		?*)	$exec $ar cr ${exe%.*}.a "${static_objv[@]}" ;;
+		esac
+	fi
+	if	test 0 != $dynamic_objc
+	then	cat=0.0.o
+		tmpfiles="$tmpfiles $cat"
+		cat "${dynamic_objv[@]}" > $cat || exit
+	else	cat=
+	fi
+	set -- "${argv[@]}" $cat "${libv[@]}"
+fi
+
+# grep through the warning/error messages to get the true exit code
+# some annoying messages are dropped while we're at it
+
+trap 'rm -f $tmpfiles' 0 1 2 15
+$exec $cc $ccflags "$@" 2> $tmp
+code=$?
+for i in $unbotch
+do	test -f __$i && mv __$i $i
+done
+typeset -l lc
+while	:
+do	if	read line
+	then	lc=$line
+		case $lc in
+		*'#include file'*'not found'*)
+			code=1
+			;;
+		*'#pragma ignored'*)
+			continue
+			;;
+		*'definition side file is not defined'*)
+			continue
+			;;
+		*'step ended with return code 4'*)
+			code=0
+			continue
+			;;
+		*'step ended with return code'*)
+			code=1
+			continue
+			;;
+		*'try again'*)
+			code=1
+			continue
+			;;
+		*'unknown preprocessing directive'*)
+			code=1
+			case $lc in
+			'warning '*)
+				set -- $line
+				shift
+				line=$*
+				;;
+			esac
+			;;
+		*'unresolved writable static references are detected'*)
+			test 0 != $dll && continue
+			;;
+		esac
+	else	case $code:$exe in
+		0:?*)	$exec chmod +x $exe ;;
+		esac
+		exit $code
+	fi
+	echo "$line" >&2
+done < $tmp

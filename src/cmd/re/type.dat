@@ -1,0 +1,53 @@
+: regex re type tests 2012-04-17
+
+E	(?E).*				foo		(0,3)
+E	(?E:.*)				foo		(0,3)
+E	(?E:foo)			foo		(0,3)
+
+E	(?i)foo				FOO		(0,3)
+E	(?i:foo)			FOO		(0,3)
+
+E	(?P).*				foo		(0,3)
+E	(?P:.*)				foo		(0,3)
+E	(?P:foo)			foo		(0,3)
+
+E	(?Pi)foo			FOO		(0,3)
+E	(?Pii:foo)			FOO		(0,3)
+
+E	(?i)foo(?-i)bar			FOObar		(0,6)
+E	(?i)foo(?-i)bar			FOOBAR		NOMATCH
+E	(?i:foo)bar			FOObar		(0,6)
+E	(?i:foo)bar			FOOBAR		NOMATCH
+
+E	(?E:he)(?E:..)(?Ei:o*)z		heckz		(0,5)
+E	(?E:he)(?E:..)(?Ei:o*)z		heckZ		NOMATCH
+E	(?E:he)(?E:..)(?Ei:o*)z		helloz		(0,6)
+E	(?E:he)(?E:..)(?Ei:o*)z		helloZ		NOMATCH
+E	(?E:he)(?E:..)(?Ei:o*)z		helloOz		(0,7)
+E	(?E:he)(?E:..)(?Ei:o*)z		helloOZ		NOMATCH
+
+K	~(E:he)~(E:..)~(Ei:o*)z		heckz		(0,5)
+K	~(E:he)~(E:..)~(Ei:o*)z		heckZ		NOMATCH
+K	~(E:he)~(E:..)~(Ei:o*)z		helloz		(0,6)
+K	~(E:he)~(E:..)~(Ei:o*)z		helloZ		NOMATCH
+K	~(E:he)~(E:..)~(Ei:o*)z		helloOz		(0,7)
+K	~(E:he)~(E:..)~(Ei:o*)z		helloOZ		NOMATCH
+
+K	~(E).*				foo		(0,3)
+K	~(E:.*)				foo		(0,3)
+K	~(E:foo)			foo		(0,3)
+
+K	~(P).*				foo		(0,3)
+K	~(P:.*)				foo		(0,3)
+K	~(P:foo)			foo		(0,3)
+
+K	~(i)foo				FOO		(0,3)
+K	~(i:foo)			FOO		(0,3)
+
+K	~(Pi)foo			FOO		(0,3)
+K	~(Pi:foo)			FOO		(0,3)
+
+K	~(i)foo~(-i)bar			FOObar		(0,6)
+K	~(i)foo~(-i)bar			FOOBAR		NOMATCH
+K	~(i:foo)bar			FOObar		(0,6)
+K	~(i:foo)bar			FOOBAR		NOMATCH

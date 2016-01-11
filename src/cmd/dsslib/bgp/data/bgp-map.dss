@@ -1,0 +1,48 @@
+<DSS>
+	<NAME>bgp-map</>
+	<DESCRIPTION>bgp with value maps</>
+	<IDENT>@(#)$Id: bgp-map (AT&T Labs Research) 2002-10-31 $</>
+	<METHOD>bgp</>
+	<#INCLUDE#>bgp.map</>
+	<FIELD>
+		<NAME>origin</>
+		<MAP>bgp_origin</>
+	</>
+	<FIELD>
+		<NAME>type</>
+		<MAP>bgp_type</>
+	</>
+	<FIELD>
+		<NAME>atomic</>
+		<MAP>bgp_atomic</>
+	</>
+	<#INCLUDE#>as.map</>
+	<FIELD>
+		<NAME>agg_as</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>cluster</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>community</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>dpa_as</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>dst_as</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>path</>
+		<MAP>as</>
+	</>
+	<FIELD>
+		<NAME>src_as</>
+		<MAP>as</>
+	</>
+</>

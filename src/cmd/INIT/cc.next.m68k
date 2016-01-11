@@ -1,0 +1,9 @@
+: next.m68k cc wrapper that enables posix : 2000-12-15 :
+
+HOSTTYPE=next.m68k
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+/bin/cc -posix -Xlinker -m "$@"

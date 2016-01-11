@@ -1,0 +1,18 @@
+if [[ $2 != "" ]]
+then
+	for d in $(tw -Pd ${1-lib} -e "(type == DIR)")
+	do
+		typeset firstdir=${d%/*}
+		printf '$(LIBDIR)%s%s:INSTALLDIR:' "$2" "${d#$firstdir}"
+		for f in $d/*
+		do	[[ -f $f ]] && printf ' \\\n\t%s' "$f"
+		done
+		printf $'\n\n'
+	done
+else
+	tw -d ${1-lib} -e "
+	begin:	printf('::	');
+	action:	if (type == REG)  printf('\\\\\\n	%s ', path);
+	end: printf('\\n');
+	"
+fi

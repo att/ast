@@ -1,0 +1,143 @@
+# read in the gui generation routines in here.
+typeset -f generate >/dev/null || . $DESKSH_FUN/generate
+
+if [[ $tk_version == "" ]]
+then
+	print -u2 "This script requires Tksh"
+	return
+fi
+
+set -o nolog
+
+directory_info=(	pack="dirname lists buttons"
+	buttons=(	pack="ok apply cancel"
+        	ok=( w=button t="Ok" c='directory_ok ${root} $directory_var_name' )
+		apply=( w=button t="Apply" c='directory_apply $directory_var_name' )
+		cancel=( w=button t="Cancel" c='directory_done ${root}' )
+		opts="-side left -expand 1 -padx 2 -pady 3"
+		eltopts="-relief raised -bd 3"		)
+	dirname=(	pack="label pwd"
+		label=( w=label t="Current directory: " )
+		pwd=( w=label v="PWD" )
+		opts=" -side left -fill both -expand 1"		)
+	lists=(	pack="dirs ls"
+		dirs=(	pack="label list scroll"
+			label=( w=label t="Subdirectories    " po="-side top")
+			scroll=( w=scrollbar c='${parwindow}.list yview' )
+			list=( w=listbox o='-yscroll "${parwindow}.scroll set" -setgrid 1' s='directory_dirlst=${window}' )
+			opts="-side left -fill y -expand 1"	)
+		ls=(	pack="label list scroll"
+			label=( w=label t="Directory Contents    " po="-side top")
+			scroll=( w=scrollbar c='${parwindow}.list yview' )
+			list=( w=listbox o='-yscroll "${parwindow}.scroll set" -setgrid 1' s='directory_lslst=${window}' )
+			opts="-side left -fill y -expand 1"	)
+		opts="-side left -fill both -expand 1"	)
+	opts="-side top -fill x"
+	noframe=true	)
+
+function directory_dialog
+# requires the name of a variable to be set.
+# optionally a message may be given as the title.
+{
+	directory_var_name=$1
+        typeset msg="${2-"Select a directory:"}"
+	directory_original=$PWD
+
+
+	# the element of randomness was introduced in case two dialog boxes
+	# need open at the same time.
+        typeset w=$(toplevel .dirselect$RANDOM -bd 4 -class Dirdialog)
+		
+        wm title $w "$msg"
+
+	generate $w directory_info
+	
+        bind $directory_dirlst "<Double-1>" "directory_change $w \"\$(selection get 2>/dev/null )\" $directory_lslst $directory_dirlst"
+
+	directory_change $w . $directory_lslst $directory_dirlst
+	unset directory_var_name directory_lslst directory_dirlst
+}
+
+function directory_ok
+{
+#	echo arguments to ok are $*
+	directory_apply $2
+	
+	directory_done $1
+}
+
+function directory_apply
+{
+#	echo Given nameref is $1
+	nameref var=$1
+	var=$PWD	
+}
+
+function directory_done
+{
+	typeset w=$1
+
+#	print Fileselect done: $PWD.
+
+	destroy $w
+#	wm withdraw $w
+	cd $directory_original
+}
+
+# I'd like to take all references to $list all out of here but
+# I'm having problems with multi word variables.
+function directory_buildlist
+{
+	typeset list=$1 kind=$2; shift; shift; typeset filespec=${*-*}
+	unset listnames
+
+	$list delete 0 end
+#	set -o markdirs
+
+	set +o noglob	
+	for dirent in . .. $filespec
+	do
+	    if [ $kind "$dirent" ]
+	    then
+		case $dirent in
+		.|./) 
+			listnames[${#listnames[@]}]=". (current directory)";;
+		..|../)
+			listnames[${#listnames[@]}]=".. (parrent directory)";;
+		*)
+			listnames[${#listnames[@]}]=$dirent;;
+		esac
+	    fi
+	done
+	set -o noglob	
+
+	$list insert end "${listnames[@]}"
+
+}
+
+# given window to update in and
+# directory to change to... may contain a leading quote character.
+function directory_change
+{
+	# sometimes a click is made but no directory is selected.
+	[[ "$2" == "" ]] && return
+
+	typeset w=$1 dest=${2//\'/}
+	dest=${dest%% *}
+#	echo $w and $dest going to $3
+
+#        if cd $dest > /dev/null 2>&1;
+        if cd $dest 2>&1;
+	then
+		set -o noglob
+		directory_buildlist $3 -f
+		directory_buildlist $4 -d
+	else
+#		echo Cannot!
+	fi
+}
+
+
+#wm withdraw .
+#directory_dialog
+#tkloop

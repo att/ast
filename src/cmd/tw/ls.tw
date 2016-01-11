@@ -1,0 +1,3 @@
+:
+# `ls -l .' using tw
+tw -e "sort:name;action:printf('%s %2d %-8s %-8s%8d %s %s\n',mode,nlink,uid,gid,size,mtime,path)" "$@"

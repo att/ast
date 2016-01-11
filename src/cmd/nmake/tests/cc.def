@@ -1,0 +1,199 @@
+# cc intercept scripts and default probe info
+
+INCLUDE test.def
+
+KEEP usrbin cc.probe pp.probe pkg-cobol.mk
+
+export ARFLAGS=cr PATH=$TWD/usrbin:$PATH
+export MAKE_OPTIONS="$MAKE_OPTIONS CC.PROBE=$TWD/cc.probe CC.PROBEPP=$TWD/pp.probe"
+
+TEST 00 'initialize cc intercepts'
+
+	cat > $TWD/cc.probe <<'!'
+CC.CC = cc
+CC.NATIVE = cc
+CC.EXECTYPE = regression.test
+CC.HOSTTYPE = regression.test
+CC.ALTPP.FLAGS =
+CC.ALTPP.ENV =
+CC.AR = ar
+CC.ARFLAGS =
+CC.DEBUG = -g
+CC.DIALECT = ANSI -L
+CC.DLL = -D_BLD_DLL -D_BLD_PIC
+CC.DLLBIG = -D_BLD_DLL -D_BLD_PIC
+CC.DLL.DEF = -D_BLD_DLL
+CC.DLL.DIR = $(LIBDIR)
+CC.DLL.LIBRARIES =
+CC.DLL.VARIANTS = regression.test.16:t16:-16 regression.test.64:t64:-64
+CC.DYNAMIC =
+CC.EXPORT.DYNAMIC =
+if LDSHARED
+CC.LD = ld
+else
+CC.LD = cc
+end
+CC.LD.DYNAMIC =
+CC.LD.LAZY =
+CC.LD.NOLAZY =
+CC.LD.ORIGIN =
+CC.LD.RECORD =
+CC.LD.NORECORD =
+CC.LD.RUNPATH = -Wl,-rpath,
+CC.LD.STATIC =
+CC.LD.STRIP = -Wl,-s
+CC.LIB.DLL = option
+CC.LIB.ALL = -all
+CC.LIB.UNDEF = -notall
+CC.MAKE.OPTIONS =
+CC.NM = rm
+CC.NMEDIT = -e '/[ 	]T[ 	][ 	]*[_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]/!d' -e 's/.*[ 	]T[ 	][ 	]*//'
+CC.NMFLAGS = -p
+CC.OPTIMIZE = -O
+CC.PIC = -D_BLD_PIC
+CC.PICBIG = -D_BLD_PIC
+CC.READONLY =
+CC.REPOSITORY =
+CC.SHARED = -shared
+CC.SHARED.LD = cc
+CC.SHARED.REGISTRY = -update_registry $(CC.SHARED.REGISTRY.PATH)
+CC.SHARED.REGISTRY.PATH = $(LIBDIR)/registry.ld
+CC.SHELLMAGIC =
+CC.SIZE = size
+CC.STATIC =
+CC.STDINCLUDE = /usr/include
+CC.STDLIB = /usr/lib /lib
+CC.STRICT =
+CC.STRIP = strip
+CC.STRIP.FLAGS = -f -s
+CC.PREFIX.ARCHIVE = lib
+CC.PREFIX.DYNAMIC =
+CC.PREFIX.SHARED = lib
+CC.PREFIX.SYMBOL =
+CC.SUFFIX.ARCHIVE = .a
+CC.SUFFIX.COMMAND =
+CC.SUFFIX.DYNAMIC =
+CC.SUFFIX.LD = .ld
+CC.SUFFIX.OBJECT = .o
+CC.SUFFIX.SHARED = .so
+CC.SUFFIX.SOURCE = .c
+CC.SUFFIX.STATIC =
+CC.WARN = -fullwarn
+CC.PREROOT =
+CC.UNIVERSE = att
+!
+
+	cat > $TWD/pp.probe <<'!'
+/* cc
+*/
+#pragma pp:predefined
+#define unix 1
+#define __unix 1
+#define __unix__ 1
+#pragma pp:nopredefined
+#pragma pp:builtin
+#define __SIZE_TYPE__ unsigned int
+#define __WCHAR_TYPE__ long int
+#define __WINT_TYPE__ unsigned int
+#define __BASE_FILE__
+#pragma pp:nobuiltin
+#define #hosttype(regression.test)
+#define #system(unix)
+#define #release(regression)
+#define #release(test)
+#define #version(1.0)
+#define #architecture(test)
+#define #model()
+#define #machine(test)
+#define #cpu(test)
+#define #addressing()
+#define #preroot()
+#define #universe(att)
+#define #dialect(ansi)
+#define #dialect(dynamic)
+#pragma pp:nocatliteral
+#pragma pp:pluscomment
+#pragma pp:splicespace
+#pragma pp:stringspan
+#pragma pp:spaceout
+#pragma pp:id "$"
+#pragma pp:linetype 2
+#pragma pp:headerexpandall
+#pragma pp:map "/#(pragma )?ident>/" "/#(pragma )?/###/"
+#pragma pp:map "/#(pragma )?import>/" "/#(pragma )?import(.*)/__STDPP__IMPORT__(\2)/"
+#macdef __STDPP__IMPORT__(x)
+#pragma pp:noallmultiple
+#include x
+#pragma pp:allmultiple
+#endmac
+#pragma pp:map "/#include_next>/" ",[^\<]*\<,#include <.../,"
+#pragma pp:map "/#pragma lint:/" ",#pragma lint:(.*),##/*\1*/,u"
+#pragma pp:map "/#(pragma )?sccs>/"
+!
+
+mkdir $TWD/usrbin
+
+cmd=$(whence cc 2>/dev/null)
+[[ $cmd ]] || cmd=gcc
+cat > $TWD/usrbin/cc <<!
+case " \$* " in
+*" -shared "*)
+	while	:
+	do	case \$# in
+		0|1)	break ;;
+		esac
+		case \$1 in
+		-o)	: > "\$2"
+			break
+			;;
+		esac
+		shift
+	done
+	;;
+*)	$cmd "\$@" 2>/dev/null
+	;;
+esac
+!
+chmod +x $TWD/usrbin/cc
+
+if ! whence ranlib >/dev/null 2>&1
+then	cat > $TWD/usrbin/ranlib <<'!'
+exit 0
+!
+	chmod +x $TWD/usrbin/ranlib
+fi
+
+cat > pkg-cobol.mk <<'!'
+/* a combination of pkg-cobol.mk + pkg-cobol-cobc.mk for testing */
+
+COBOL = cobc
+COBOLDIALECT =
+COBOLFLAGS = -static $(COBOLDIALECT) -C -O
+COBOLLIBRARIES = -lcob
+
+.SUFFIX.cob = .cob .COB .cbl .CBL
+.SUFFIX.HEADER.cob = .cpy .CPY
+
+.SCAN.cob : .SCAN
+	I|\T COPY % |M$$(.INCLUDE.SUFFIX. cob)|
+	I|\T \D COPY % |M$$(.INCLUDE.SUFFIX. cob)|
+
+$(.SUFFIX.cob:/^/.ATTRIBUTE.%/) : .SCAN.cob
+
+.SOURCE.%.SCAN.cob : . $$(*.SOURCE$$(.SUFFIX.HEADER.cob:O=1)) $$(*.SOURCE.cob) $$(*.SOURCE)
+
+.PROBE.INIT : .PKG.COBOL.INIT
+
+.PKG.COBOL.INIT : .MAKE .VIRTUAL .FORCE .AFTER
+	COBOLFLAGS &= $(COBOLFLAGS:VA:V) $$(.INCLUDE. cob -I)
+
+.COBOL.INIT : .MAKE .VIRTUAL .FORCE .IGNORE
+	$(COBOLLIBRARIES) : .DONTCARE
+	LDFLAGS += $$(!:A=.SCAN.cob|.SCAN.sqb:@?$$(CC.EXPORT.DYNAMIC)??)
+	LDLIBRARIES += $$(!:A=.SCAN.cob|.SCAN.sqb:@?$$(COBOLLIBRARIES)??)
+
+for .S. $(.SUFFIX.cob)
+	%.c %.c.h : %$(.S.) (COBOL) (COBOLDIALECT) (COBOLFLAGS) .COBOL.INIT
+		$(COBOL) $(COBOLFLAGS) $(>)
+end
+!

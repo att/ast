@@ -1,0 +1,56 @@
+: tabulate compare output
+
+format=$'%10s %12s %8s %8s\n'
+
+function elapsed
+{
+	integer ss=0 ds=0 h m s d
+	typeset t
+	for t
+	do	case $t in
+		*h*)	h=${t%h*}; t=${t#*h} ;;
+		*)	h=0 ;;
+		esac
+		case $t in
+		*m*)	m=${t%m*}; t=${t#*m} ;;
+		*)	m=0 ;;
+		esac
+		t=${t%s}
+		case $t in
+		*.*)	s=${t%.*}; t=${t#*.}; d=${t#*.} ;;
+		*)	s=$t d=0 ;;
+		esac
+		(( ss += (h * 60 + m) * 60 + s ))
+		(( ds += d ))
+	done
+	while (( ds >= 100 ))
+	do	(( ds -= 100 ))
+		(( ss += 1 ))
+	done
+	print -f $'%d.%02d\n' $ss $ds
+}
+
+while	read cmd opt part uncompress_size x
+do	case $cmd in
+	gzip)	method=gzip
+		uncompress_size=$opt
+		;;
+	pzip|rzip)
+		method=${part#*-}
+		method=${method%.*}
+		;;
+	*)	continue
+		;;
+	esac
+	read x
+	read x compress_real
+	read x compress_user
+	read x compress_sys
+	read x
+	read compress_size x
+	read x
+	read x uncompress_real
+	read x uncompress_user
+	read x uncompress_sys || break
+	print -f "$format" $method $compress_size $(elapsed $compress_user $compressed_sys) $(elapsed $uncompress_user $uncompress_sys)
+done

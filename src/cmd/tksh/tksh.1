@@ -1,0 +1,257 @@
+.\"
+.\" Tksh Man Page
+.\" Jeffrey Korn
+.\" Jan 10, 1996
+.\"
+.TH tksh 1
+.BS
+.SH NAME
+tksh \- Tcl/Tk extension for KornShell
+.SH SYNOPSIS
+.B ksh
+[
+.B \(+-abcefhikmnoprstuvxCD
+] [
+.B \-R
+file ] [
+.B \(+-o
+option ] .\|.\|. [
+.B \-
+] [ arg .\|.\|. ]
+.br
+.B tksh
+[
+.B \(+-abcefhikmnoprstuvxCD
+] [
+.B \-R
+file ] [
+.B \(+-o
+option ] .\|.\|. [
+.B \-
+] [ arg .\|.\|. ]
+.br
+.B tclksh
+[
+.B \(+-abcefhikmnoprstuvxCD
+] [
+.B \-R
+file ] [
+.B \(+-o
+option ] .\|.\|. [
+.B \-
+] [ arg .\|.\|. ]
+.br
+.SH DESCRIPTION
+.PP
+\fBTksh \fR is a version of KornShell with a set of additional builtin
+commands that provide ksh with the functionality of Tcl/Tk.  With Tksh,
+KornShell can be used to write graphical interface scripts with the Tk
+library.  Tksh can also interpret Tcl scripts for backward compatibility.
+.PP
+	Invoked as \fBksh\fR, Tksh will initialize neither Tcl nor Tk.
+.br
+	Invoked as \fBtksh\fR, Tksh will initialize both Tcl and Tk.
+.br
+	Invoked as \fBtclksh\fR, Tksh will initialize Tcl but not Tk.
+.SH "BUILTIN COMMANDS"
+.PP
+Invoked as \fBtclksh\fR, Tksh is initialized to be used
+with Tcl only (not Tk).  As a result, a set of builtin commands are
+added that provide Tcl functionality.  Tcl built-in commands are added,
+but their names begin with \fBtcl_\fR to avoid conflicts with ksh and
+UNIX commands.  In addition, the \fBsource\fR
+command is added, which can be used to interpret Tcl scripts.
+.PP
+Invoked as \fBtksh\fR, Tksh is initialized to be used
+with both Tcl and Tk.  This does everything that \fBtclksh\fR
+does, and initializes Tk as well.  Initializing Tk includes adding the
+set of Tk commands (their names are unmodified) and initializing
+a main window.
+.PP
+The following builtins are created when Tcl is initialized:
+.TP
+\fBtcl_\fIname\fR
+The equivalent to the Tcl command \fIname\fR.
+Currently supported commands:
+tcl_append tcl_array tcl_break tcl_case tcl_catch tcl_close tcl_concat
+tcl_continue tcl_eof tcl_error tcl_eval tcl_exec tcl_expr tcl_file tcl_flush
+tcl_for tcl_foreach tcl_format tcl_gets tcl_glob tcl_global tcl_if tcl_incr
+tcl_info tcl_join tcl_lappend tcl_lindex tcl_linsert tcl_list tcl_llength
+tcl_lrange tcl_lreplace tcl_lsearch tcl_lsort tcl_open tcl_pid tcl_proc
+tcl_puts tcl_read tcl_regexp tcl_regsub tcl_rename tcl_return tcl_scan tcl_seek
+tcl_set tcl_split tcl_string tcl_subst tcl_switch tcl_tell tcl_time tcl_trace
+tcl_unset tcl_uplevel tcl_upvar tcl_while.   See the Tcl manual pages
+for more information.
+.TP
+\fBsource\fR [file]
+The \fBsource\fR command can be used to read and interpret a Tcl script.
+If a file is specified, the file will be read and interpreted.  If it
+is not specified, standard input will be used.  \fBsource\fR is
+equivalent to \fB.\fR in ksh, but parses Tcl instead of shell.
+.IP
+When \fBsource\fR is used, commands read are first looked up
+as \fBtcl_\fR\fIname\fR (where \fIname\fR is the command name) and
+then as \fIname\fR in the builtin command table.  This way, Tcl
+scripts do not have to be modified to prepend \fBtcl_\fR to Tcl
+commands.
+.PP
+The following builtins are created when Tk is initialized:
+.PP
+.TP
+\fBtkloop\fR
+If Tk has been initialized, \fBtkloop\fR can be
+used to enter a Tk event loop.  This command must be used
+at the end of any Tk script to prevent ksh from exiting.
+\fBtkloop\fR returns when there are no more windows or exit
+has been called.
+.TP
+\fBTk commands\fR
+All Tk builtin commands (\fBbutton\fR, \fBpack\fR, \fBbind\fR, etc.).
+See the Tk manual pages for more information.
+.PP
+.SH "VARIABLES"
+Variables in ksh and Tcl/Tk share the same name space.  Any
+variable can have both ksh disciplines and Tcl traces set.
+In addition to the variable initialized by  Tcl/Tk (such as \fB$tcl_version\fR
+and \fB$tk_version\fR), Tksh defines the following:
+.TP
+\fB$tksh_version\fR
+This variable is initialized to the version
+of Tksh being used.  This variable can be used in the ksh
+\fBenvfile\fR to do any initialization specific to Tksh.
+.PP
+.SH "DIFFERENCES"
+The following differences should be noted with using Tcl or Tk commands
+with KornShell:
+.TP
+\fBQuoting\fR
+Arguments to Tcl/Tk commands should be quoted with shell syntax.
+.br
+Example:
+.br
+	\fBTcl\fR: bind <1> clickFunction
+.br
+	\fBKsh\fR: bind '<1>' clickFunction
+.TP
+\fBArrays\fR
+Tcl/Tk commands that specify the name of a variable
+that is an element of an array must use Tcl/Tk notation.  Thus,
+specifying the variable a[b] must be done as a(b) in a Tcl/Tk
+command.
+.br
+Example:
+.br
+	\fBTcl\fR: set foo(bar) "Hello" ; message .m -textvar foo(bar)
+.br
+	\fBKsh\fR: foo[bar]="Hello" ; message .m -textvar 'foo(bar)'
+.IP
+The \fBarray\fR command does not work the same way that it does in Tcl.
+Walking through an array does not guarantee that the indicies
+will be in sorted order.
+This will cause the \fBarray\fR test to fail, but the functionality
+is the same as in Tcl.
+.TP
+\fBLists\fR
+
+Tcl uses lists to deal with a collection of strings, whereas
+ksh usually uses arrays.  In ksh, a Tcl list can be represented as
+a string if the elements of the list
+are quoted in such a way that splitting the list in ksh (by processing
+the arguments) yields the elements of the list.
+For example, the Tcl list {a {b c} d} corresponds to 'a "b c" d' in
+Tksh.  By issuing the command "eval set -- 'a "b c" d'" we can obtain
+the list elements with $1, $2, $3, etc.
+.IP
+The Tcl builtin list commands (\fBlindex\fR. \fBllength\fR, etc.)
+operate on Tcl style lists only, and will not work with a ksh list.
+.IP
+A Tcl style list can be used in a shell script by using the built-in
+command \fBsetlist\fR [\fIarray-name\fR].  \fBsetlist\fR
+will convert a Tcl style list into the array \fIarray-name\fR or
+the positional parameters ($1, $2, etc.) if no array is specified.
+.TP
+\fBCommand strings\fR
+
+Some Tk commands take arguments that are strings to be interpreted.
+For example, the \fBbutton\fR command allows a string
+to be specified (with the -command option) that will be executed when
+the button is pressed.  Tksh needs to decide whether the string should
+be parsed as a Tcl command or a shell command.  Normally, Tksh will use
+the current mode of the parser, but this is not always desirable.  Therefore,
+the following rules are used to decide the parser of a command string:
+.RS
+.TP 4
+1)
+If a command string has as its first line "#!ksh", ksh will be used.
+If the first line is "#!tcl", Tcl will be used.
+.TP
+2)
+Otherwise, the string is parsed with the "current" parser.  This
+will be Tcl when the calling command is invoked from the Tcl parser
+(the current parser is set to Tcl during the source command).
+.TP
+3)
+Builtin commands have an associated parser with them.  Thus, if a
+Tcl proc is called from ksh, the parser will switch from ksh to
+Tcl.
+.TP
+4)
+Tksh replaces the Tk \fBbind\fR
+command (which binds a command string to a window event) with
+a modified version which automatically places the appropriate line to
+the beginning of the specified string (if one hasn't already been
+specified).
+.RE
+.TP
+\fBResults\fR
+In Tcl, commands return both a string and a completion code.  In
+ksh, commands return only a completion code.  The means by which
+strings are returned in ksh is by printing them to standard output.
+Thus, Tksh prints the contents of the result string to standard output
+upon successful completion of a Tcl command, and prints the result
+string to standard error otherwise.  This allows command substitution
+in ksh behave like it does in Tcl.  Since Tcl does not normally print the
+result of a command, Tksh only prints the result of a Tcl command if it
+is called inside command substitution.
+.SH "THE TCL LIBRARY"
+The environment variable \fB$TKSH_LIBRARY\fR is used to set the location
+of the Tksh libraries (there is a default value that has been compiled
+into Tksh).  This should \fInot\fR be the same directory as the Tcl
+library.  Tksh has its own set of initialization scripts.
+.SH "NOT IMPLEMENTED"
+The following features of Tcl are not yet implemented in Tksh:
+.TP 4
+1)
+Some of the functionality in the Tcl UNIX commands.  
+.TP
+2)
+The Tcl auto_path mechanism.
+.TP
+3)
+\fBtclFileTable\fR \- This is a global variable that is defined in Tcl
+and used in Tk.  Since ksh uses a different file table, this table is
+not supported.
+.SH "Tksh As a Ksh Extension"
+.PP
+If Tksh is compiled as a shared library, it can be dynamically
+loaded into ksh93.  In order to do this, the Tksh library must
+be in a directory in the \fB$LD_LIBRARY_PATH\fR variable.
+If it not, the command "\fBbuiltin -f \fItksh_library_name\fR"
+can be used.
+.PP
+There are two builtin commands that exist to initialize Tcl or
+Tk.  \fBtclinit\fR initializes only Tcl, and \fBtkinit\fR initializes
+Tcl and Tk.  To use either of these commands, the \fBbuiltin\fR
+command must be used (e.g., "\fBbuiltin tkinit\fR").
+.PP
+Tksh will not work well interactively as a shared library if you
+are using a version of ksh earlier than 93e.
+.SH "BUGS"
+Sometimes, invoking a Tcl proc from ksh using $(...) will crash when
+a variable with a discipline is changed.
+.SH "SEE ALSO"
+ksh(1),
+tclsh(1),
+wish(1)
+.br
+http://www.cs.princeton.edu/~jlk/tksh

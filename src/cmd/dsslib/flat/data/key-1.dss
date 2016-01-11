@@ -1,0 +1,31 @@
+<METHOD>flat</>
+<FLAT>
+	<NAME>keyed</>
+	<DESCRIPTION>keyed data test.</>
+	<PHYSICAL>
+		<DELIMITER>&space;</>
+		<CONTINUE>&space;</>
+		<TERMINATOR>&newline;</>
+	</>
+	<FIELD>
+		<NAME>time</>
+		<DESCRIPTION>HH:MM:SS since the beginning of the day.</>
+		<TYPE>string</>
+	</>
+	<FIELD>
+		<NAME>id</>
+		<DESCRIPTION>Original ID.</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<KEY>id</>
+		</>
+	</>
+	<FIELD>
+		<NAME>ID</>
+		<DESCRIPTION>Current ID.</>
+		<TYPE>string</>
+		<PHYSICAL>
+			<KEY>id</>
+		</>
+	</>
+</>

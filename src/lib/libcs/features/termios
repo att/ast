@@ -1,0 +1,2 @@
+hdr	termios
+lib	tcgetattr,tcsetattr

@@ -1,0 +1,6 @@
+09-04-15 codex.c: add --passfile=file
+08-05-08 codex.c: Codexdisc_t can't be on main()'s stack due to SF_ATEXIT
+06-08-23 codex.tst: add uu boundary and text tests
+04-01-11 doc update
+04-01-01 add --passphrase
+03-12-18 add to ast -- still working on relationship with { -lvcodex -lz -lbz }

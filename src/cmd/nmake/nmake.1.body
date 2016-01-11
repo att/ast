@@ -1,0 +1,2608 @@
+.\"
+.\" Glenn Fowler
+.\" AT&T Research
+.\"
+.\" @(#)nmake.1 (gsf@research.att.com) 2005-03-08
+.\"
+.ds nM nmake\"	`make' someday
+.ds uM NMAKE\"	upper case \*(nM
+.ds oM make\"	`omake' someday
+.fp 5 CW
+.de Af
+.ds ;G \\*(;G\\f\\$1\\$3\\f\\$2
+.if !\\$4 .Af \\$2 \\$1 "\\$4" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
+..
+.de aF
+.ie \\$3 .ft \\$1
+.el \{\
+.ds ;G \&
+.nr ;G \\n(.f
+.Af "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7" "\\$8" "\\$9"
+\\*(;G
+.ft \\n(;G \}
+..
+.de L
+.aF 5 \\n(.f "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de LR
+.aF 5 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de RL
+.aF 1 5 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6" "\\$7"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.SS Makefiles
+.I makefiles
+are the main source of input to
+.IR \*(nM .
+A makefile contains a sequence of assertions and variable assignments
+that describe target files and their prerequisites.
+All parsing is ordered from left to right, top to bottom.
+.PP
+At least one makefile must be specified.
+If no
+.B file
+options are present then
+.I \*(nM
+attempts to read, in order, one of
+.B Makefile
+or
+.BR makefile .
+The first line of the first makefile determines the base rules context.
+If it is of the form
+.EX
+rules [ "\fIbase-rules\fP" ]
+.EE
+then
+.I base-rules
+will be used rather than the default
+.IR makerules .
+If "\fIbase-rules\fP" is not specified then no base rules are used.
+Omitting
+.B rules
+is equivalent to specifying \fBrules "makerules"\fP.
+The actual base rules file, which must be a compiled global makefile,
+is found by changing the
+.I base-rules
+suffix to
+.B .mo
+and binding the resulting name using the directories of
+.B .SOURCE.mk
+(see
+.BR Binding ).
+The following makefile descriptions rely on
+.I \*(nM
+engine constructs and are independent of the base rules context.
+.PP
+If a makefile contains
+.IR cpp (1)
+directives then it is
+first passed through a modified ANSI
+.IR cpp .
+Directives and C-style comments are treated as usual, but
+.I cpp
+macros are only expanded on directive lines.
+.L #
+preceded by zero or more space characters
+.RB ( space
+or
+.BR tab )
+starting in
+column 1 is interpreted by
+.IR cpp ,
+otherwise text between
+.L #
+(preceded by at least one space character)
+and
+.B newline
+is treated as a comment by
+.IR \*(nM .
+Blank lines are uniformly ignored.
+.PP
+After all the makefiles have been read in, and before any command line
+targets are made, the collective makefile information
+is automatically
+.I compiled
+into a single
+.I \*(nM
+object file.
+The next time
+.I \*(nM
+executes this object file is read in place of the makefiles.
+The object file is automatically regenerated whenever
+the makefiles or their prerequisites (.e.g.,
+.B include
+dependencies) have changed.
+The
+.I \*(nM
+object file name is
+.IB base .mo
+where
+.I base
+is the base name of the first non-global makefile.
+For better performance makefiles specified by the
+.B global
+option should be precompiled
+.I \*(nM
+object files.
+Refer to the
+.B compile
+option below for more information.
+.SS Variables
+Variables are assigned by
+.EX
+variable = value
+.EE
+where
+.L variable
+may be any sequence of letters, digits, underscores and
+.BR dot s.
+Depending on the context (e.g.,
+.B :
+dependency, operator dependency, assignment, action),
+subsequent appearances of
+.L $(variable)
+expand to
+.L value
+and
+.L $$(variable)
+expands to
+.LR $(variable) ,
+otherwise
+.L $
+is passed untouched.
+.L value
+is not expanded until
+.L $(variable)
+is encountered (see
+.BR "Variable Editing" ).
+.L variable := value
+causes
+.L value
+to be expanded before assigning it to
+.L variable
+and
+.L variable += value
+appends the expanded
+.L value
+to the current value of
+.LR variable .
+.L variable == value
+assigns
+.L value
+to
+.L variable
+and also marks
+.L variable
+as a candidate implicit state variable prerequisite.
+.L variable &= value
+defines the hidden (auxiliary) value of
+.LR variable .
+The auxiliary value is not saved in the statefile.  The expansion of
+\f5variable\fP will include the primary and auxiliary values (see
+the :V edit operator of
+.BR "Variable Editing" ).
+.PP
+Variable assignments come from many sources.
+The precedence order (highest to lowest) is:
+.RS
+.TP 2i
+.PD 0
+.B automatic
+Variables maintained by
+.I \*(nM
+(see
+.BR "Automatic Variables" ).
+.TP
+.B dynamic
+Assignments done while building targets.
+.TP
+.B "command line"
+Assignments in command line \fIscripts\fP.
+.TP
+.B "import variables"
+Colon separated environment variable names listed in the value of the
+.B MAKEIMPORT
+variable (see \fBENVIRONMENT\fP).
+.TP
+.B makefile
+Normal makefile assignments.
+.TP
+.B environment
+Variables defined in the environment (see
+.IR env (1)).
+.TP
+.B "global makefile"
+Includes base rule assignments.
+.PD
+.RE
+.PP
+Variable names containing
+.B dot
+cannot conflict with environment variables set by the shell;
+such variables are typically used by the base rules.
+To avoid base rule conflicts users should not define upper case
+variable names with
+.B dot
+as both the first and last character.
+.SS Assertions
+.I assertions
+specify dependency relationships between targets and prerequisites
+and provide actions that may be executed to build targets
+that are out of date with their prerequisites.
+An individual assertion is a list of target atoms, a
+.I "dependency operator"
+(see
+.BR "Assertion Operators" ),
+and an ordered list of prerequisite atoms for the targets.
+Subsequent lines with an indentation level greater than
+the first target comprise the action.
+The target list, the prerequisite list and the action may be empty.
+Variables in the target and prerequisite lists are expanded
+when the assertion is read, whereas variables in the action
+are not expanded until the action is executed.
+For portability only
+.B tab
+characters should be used for action indentation.
+.PP
+A single assertion with multiple targets associates the prerequisite
+list and action with the targets as if each target were in a
+separate assertion.
+Single assertions are more efficient in that
+the storage used by the action is shared among the targets.
+.PP
+An atom may appear as a target in more than one assertion.
+Prerequisites from successive assertions are simply appended
+to the prerequisite list of the target, with the exception that
+duplicate prerequisites are deleted (from the right) at assertion time.
+Only one action may be specified per target.
+The collection of all assertions for a given target is called the
+.I rule
+for that target.
+Atom names containing the special characters
+.LR :,
+.LR #,
+.L =
+and
+.L +
+must be enclosed in double quotes.
+For example:
+.EX
+target : ":file1" file2
+	action
+.EE
+.SS Binding
+In the process of making a target atom
+.I \*(nM
+.I binds
+the atom to either a
+.IR file ,
+a
+.I "virtual atom"
+or a
+.IR "state variable" .
+This binding remains in effect for the entire
+.I \*(nM
+execution.
+.PP
+A
+.I "state variable"
+is an atom associated with an
+.I \*(nM
+variable that holds the variable value and the time
+the variable last changed.
+This information is retained in the
+.I statefile
+.IR base .ms
+where
+.I base
+is the base name of the first makefile.
+Statefiles are automatically generated and loaded using the
+.I \*(nM
+object file algorithms.
+The state variable atom for the
+.I \*(nM
+variable
+.I variable
+is
+.BI ( variable ) .
+For example:
+.EX
+x.o : (DEBUG)
+.EE
+specifies that
+.L x.o
+depends on the definition of the variable
+.LR DEBUG .
+The contents of the statefile can be listed by executing
+.EX
+\*(nM \-f \fIbase\fP.ms \-blr
+.EE
+.PP
+Atoms are bound to files using the prerequisites of the special
+.B .SOURCE
+and
+.BI .SOURCE .pattern
+atoms (see
+.BR "Special Atoms" ).
+The prerequisites of these atoms are ordered lists of directories
+to be scanned when searching for files.
+.PP
+A
+.I virtual
+atom binds neither to a file nor to a state variable.
+Virtual atoms are declared using the
+.B .VIRTUAL
+attribute.
+Virtual atom times are retained in the statefile.
+.SS Make Algorithm
+The steps taken to make a target atom are:
+.TP
+bind the atom
+An atom retains its binding until
+.I \*(nM
+exits unless it is explicitly unbound.
+.TP
+check if atom already made
+No work required for atoms that have already been made.
+If atom is active (action executing) then block until its action
+completes before returning.
+.TP
+check statefile consistency
+The current time, prerequisites and action are compared with those
+recorded in the statefile.
+Any differences force the target to be rebuilt.
+Notice that this type of rebuild may result in empty
+.B $(>)
+expansions in non-metarule actions.
+.TP
+check \fB.INSERT\fP and \fB.APPEND\fP
+Target prerequisites are modified according to these special atoms.
+.TP
+make explicit prerequisites
+The explicit prerequisites are (recursively) made from left to right.
+The most recent prerequisite time is saved.
+.TP
+make implicit prerequisites
+If the target has no explicit action and no explicit prerequisites
+and a metarule can be applied to generate the target then the
+metarule prerequisites are (recursively) made from left to right.
+Again the most recent prerequisite time is saved.
+.TP
+check if out of date
+If the most recent prerequisite is newer than the target or if the target
+information is not consistent with the statefile then the
+target action is triggered to build the target.
+.TP
+make scan prerequisites
+If the target atom is a file with a
+.BI .SCAN .x
+attribute (see \fBSpecial Atoms\fP) then the scan prerequisites
+are (recursively) made from left to right.
+The scan prerequisites are determined either from the statefile
+information (if consistent) or by reading the contents of the file
+using scan strategy
+.IR .x .
+The time noted for the target atom is the most recent of its own
+and all (recursively) of its scan prerequisite times.
+The scan prerequisites are saved in the statefile to avoid scanning
+during the next
+.I \*(nM
+execution.
+.TP
+sync statefile information
+When the target is built (action, if any, completed) its time, action
+and prerequisites are saved in the statefile in preparation for the next
+.I \*(nM
+execution.
+.SS Engine Control
+The global flow of control in the
+.I \*(nM
+engine is, in order:
+.TP
+read the args file
+The first file in
+.B $(MAKEARGS)
+(see \fBENVIRONMENT\fP) that exists in the current directory is read
+and the contents are inserted into the command line argument list.
+.TP
+read the command line arguments
+The \fIoptions\fP and command line \fIscript\fP arguments are parsed.
+.TP
+read the initialization script
+In addition to the variables listed in
+.B ENVIRONMENT
+section, the special atoms
+.B .VIEW
+and
+.B .SOURCE.mk
+are initialized.
+.TP
+read the base rules
+Determine which base rules are to be used (either user-defined or default)
+by checking the first line of the first explicit makefile for the \fBrules\fP
+statement.  The first explicit makefile is determined by first ckecking the
+command line for the \fB\-f\fP file option.  If the \fB\-f\fP option is not
+found, then the first file listed in \fB$(MAKEFILES)\fP (see \fBENVIRONMENT\fP)
+that exists is checked.  If the \fBrules\fP statement is not found in that
+file, then the default base fules,
+.B $(MAKERULES),
+(see \fBENVIRONMENT\fP) are used.
+.TP
+read the global makefiles
+.TP
+read the explicit makefiles
+If no
+.B file
+options are given then the files listed in
+.B $(MAKEFILES)
+(see \fBENVIRONMENT\fP) are used.
+.TP
+compile makefiles to form the \fInmake\fP object file
+If the \fInmake\fP object file is out of date with the input makefiles then the
+makefiles are recompiled.
+.TP
+read the statefile
+The statefile is loaded as an \fInmake\fP object file.
+.TP
+initialize \fB.ARGS\fP
+The prerequisites of
+.B .ARGS
+are set to the list of command line \fItargets\fP.
+.TP
+make \fB.MAKEINIT\fP if defined
+.TP
+make \fB.INIT\fP if defined
+.TP
+check \fB.ARGS\fP
+If
+.B .ARGS
+has no prerequisites then append the prerequisites of
+.B .MAIN
+onto
+.BR .ARGS .
+.TP
+make the prerequisites of \fB.ARGS\fP
+This constitutes the actions requested either on the command line or in the
+makefile, subject to the actions of
+.B .MAKEINIT
+and
+.BR .INIT .
+.TP
+make \fB.DONE\fP if defined
+.SS Programming Constructs
+Stuctured programming constructs may appear inside
+.B .MAKE
+actions or outside assertions.
+The construct keywords must be the first word on a line.
+Atom names matching any of the keywords must be quoted
+(when the first word on a line) to avoid conflicts.
+.PP
+Each
+.I expression
+may be a combination of arithmetic and string expressions where
+the string expression components must be quoted.
+"..." strings use shell pattern matching (.e.g.,
+"\fIstring\fP" == "\fIpattern\fP")
+whereas '...' strings use string equality.
+Empty strings evaluate to 0 in arithmetic expressions and non-empty
+strings evaluate to non-zero.
+Expression components may also contain optional variable assignments.
+All computations are done using signed long integers.
+.TP
+.BI error " level message"
+.I message
+is output as an
+.I \*(nM
+error message with severity level
+.IR level .
+.I level
+may be one of:
+.RS
+.TP
+.B "< 0"
+debug trace -- output only if
+.I level
+<=
+.BR debug .
+.TP
+.B 0
+information
+.TP
+.B 1
+warning
+.TP
+.B 2
+error -- no exit
+.TP
+.B ">= 3"
+error -- exit with code
+.RI ( level \-2)
+.RE
+.TP
+.B eval
+.PD 0
+.TP
+.B ...
+.TP
+.B end
+.PD
+The statements between
+.B eval
+and
+.B end
+are expanded an additional time.
+.B "eval ... end"
+pairs may nest to cause more than one additional expansion.
+.TP
+.B break
+Breaks out of the \fBfor\fP and \fBwhile\fP loops and resumes execution after
+the \fBend\fP statement.
+.TP
+\fBfor\fP \fIvariable\fP \fIpatterns\fP ...
+.PD 0
+.TP
+.B ...
+.TP
+.B end
+.PD
+The statements between
+.B for
+and
+.B end
+are executed with
+.I variable
+assigned to the name of each atom matching one of the shell
+.IR patterns .
+A
+.B break
+statement breaks out of the loop and resumes execution after the
+.B end
+statement.
+.TP
+.BI if " expression"
+.PD 0
+.TP
+.B ...
+.TP
+.BI elif " expression"
+.TP
+.B ...
+.TP
+.B else
+.TP
+.B ...
+.TP
+.B end
+.PD
+Nested
+.B if
+conditional construct.
+.TP
+\fBinclude\fP [ \- ] \fIpath\fP
+Include the file specified by \fIpath\fR.  If \fI\-\fR is present, then
+the file is optionally included (no warning is generated if the file is
+not found).
+.TP
+.BI let " variable = expression"
+Sets the value of
+.I variable
+to the numeric value of
+.IR expression .
+.TP
+.BI local " var1 var2 ..."
+Declares variables local to the current action.
+.TP
+\fBreturn\fP [ \fIexpression\fP ]
+Return from the action with results specified by
+.IR expression :
+.RS
+.TP
+.I omitted
+If
+.I expression
+is omitted then return as if the action completed normally.
+.TP
+.B \-1
+The action failed.
+.TP
+.B 0
+The target exists but has not been updated.
+.TP
+.B >0
+Set the target time to the value specified by expression.
+.RE
+.TP
+\fBset\fP [\fBno\fP]\fIname\fP=[\fIvalue\fP]
+Sets options using option-by-name format (see
+.BR OPTIONS ).
+.TP
+.BI while " expression"
+.PD 0
+.TP
+.B ...
+.TP
+.B end
+.PD
+.B while
+loop construct.
+A
+.B break
+statement breaks out of the loop and resumes execution after the
+.B end
+statement.
+.TP
+.BI print " message"
+Prints
+.IR message
+to the standard output.  (This is the same as \f3error\fP \f20 message\fP.)
+.TP
+\fBrules\fP ["\fIbase-rules\fP"]
+Determines the base rules context.  If the \fBrules\fP statement is specified,
+it must be the first line of the first makefile.  It will overwrite the
+context of the default base rules.  Omitting the \fBrules\fP statement is
+equivalent to specifying \fBrules "makerules"\fP.  The \fBrules\fP statement
+with no file name specified is a request that no base rules file is to be used.
+.SS Metarules
+Based on metarule patterns,
+.I \*(nM
+can infer prerequisites for files that have
+no explicit actions or prerequisites.
+The prototype metarule pattern is
+.IR prefix % suffix
+and is matched by any string containing the non-overlapping strings
+.I prefix
+at the beginning and
+.I suffix
+at the end.
+.B %
+matches the remaining characters and is called the
+.IR stem .
+.PP
+The following makefile specifies that
+.L program
+depends on two files
+.L a.o
+and
+.LR b.o ,
+and that they in turn depend on
+.I .c
+files and a common file
+.LR header.h .
+.EX
+program : a.o b.o
+	cc a.o b.o libx.a \-lm \-o program
+a.o : header.h a.c
+	cc \-c a.c
+b.o : header.h b.c
+	cc \-c b.c
+.EE
+.PP
+The
+.I metarule
+to create a file with suffix
+.I .s2
+that depends on a file (with the same
+.I base
+name) with suffix
+.I .s1
+is
+.LR "%.s2 : %.s1" .
+Any prerequisites following
+.L %.s1
+are transferred to each target when the metarule is applied.
+For example, a metarule for making optimized
+.I .o
+files from
+.I .c
+files is
+.EX
+%.o : %.c (CC) (CCFLAGS)
+	$(CC) $(CCFLAGS) \-c \-o $(<) $(>)
+.EE
+.PP
+Notice that the
+.I .o
+targets also depend on the values of the
+.L CC
+and
+.L CCFLAGS
+.I \*(nM
+variables.
+If the current target is
+.L a.o
+then
+.I \*(nM
+infers the following from the
+.L "%.o : %.c"
+metarule:
+.EX
+a.o : a.c (CC) (CCFLAGS)
+	cc \-O \-c \-o a.o a.c
+.EE
+In this case the
+.I stem
+is \f5a\fP, \f5$(CC)\fP and \f5$(CCFLAGS)\fP expand to \f5cc\fP and \f5\-O\fP,
+respectively.
+.PP
+Assuming the
+.L "%.o : %.c"
+metarule has been asserted,
+the example can be stated more briefly:
+.EX
+program : a.o b.o
+	$(CC) $(*) libx.a \-lm \-o $(<)
+a.o b.o : header.h
+.EE
+.PP
+Metarules are applied according to the order of the patterns
+listed as the prerequisites of the
+.B .METARULE
+atom.
+Pattern order is significant; the first possible name for which both
+a file and a metarule exist is inferred.
+.PP
+Metarules are chained as necessary.
+Given the metarules
+.L "%.z : %.m"
+and
+.L "%.m : %.a"
+and the source file
+.BR x.a ,
+the target file
+.B x.z
+will be generated by first applying
+.L "%.m : %.a"
+to
+.B x.a
+to build
+.BR x.m ,
+and then applying
+.L "%.z : %.m"
+to
+.B x.m
+to build
+.BR x.z .
+.PP
+Metarules with the
+.B %
+target pattern are called
+.B unconstrained
+metarules and are subject to additional constraints that control
+metarule chaining.
+.I unconstrained
+metarules with the
+.B .TERMINAL
+attribute are applied only when the prerequisite pattern matches
+an existing file.
+Otherwise an
+.I unconstrained
+metarule is applied only if there exists no other metarule
+(other than a
+.I unconstrained
+metarule)
+for which the target pattern matches the current target.
+For example
+.EX
+% : .TERMINAL RCS/%,v
+	$(CO) $(COFLAGS) $(>)
+.EE
+is a metarule that generates source files from RCS version files in the
+.B RCS
+subdirectory.
+.SS Variable Editing
+Edit operators allow variable values to be tested and
+modified during expansion.
+The expansion syntax is:
+.EX
+$(\fIvariable\fP[:[@]\fIop\fP[\fIsep arg\fP]]...)
+.EE
+The operator groups, each preceded by
+.BR : ,
+are applied in order from left to right to each space
+separated token in the expanded variable
+.IR value .
+The operator groups form a token pipeline where the output
+.RI ( returned
+or
+.I selected
+tokens)
+of any operator group becomes the input for the next operator group.
+.B newline
+is treated as a separate token.
+\fB"\fP, \fB'\fP and \e quote
+space characters, but they are considered part of the token
+and are not removed.
+If
+.B @
+immediately precedes an \fIop\fR, then the entire
+.I value
+is treated as a single token for that operator.
+.I sep
+is usually
+.BR = ,
+but, where appropriate, some operators support
+.B !=
+and the arithmetic comparisons
+.BR < ,
+.BR <= ,
+.BR >=
+and
+.BR > .
+.PP
+The expansion algorithm first expands the variable name
+.I variable
+to determine the value to be edited.
+This value and the operator expressions ([:[@]\fIop\fP[\fIsep arg\fP]]...) are
+then expanded before the edit operators are applied.
+The ultimate expansion is formed by applying each operator to each token,
+separating adjacent results by a single
+.B space
+character.
+.PP
+.RI $( var1 " | " var2 ...)
+expands the value of the first (left to right)
+.RB non- null
+valued variable.
+If the last variable name is enclosed in
+\fB"\|"\fP
+then this string is used as the value if all preceding variables
+have
+.B null
+values.
+The standard
+.B \e
+character constants are interpreted within the string.
+.PP
+Some operators
+.I select
+tokens by simply returning the token value as the result; non-selected
+tokens produce
+.B null
+(the empty string).
+The operators are:
+.TP
+\fBA\fP[\fIsep\fP \fIexpression\fP]
+Selects tokens having one or more attributes or prerequisites listed in
+\fIexpression\fP.  The tokens are treated as atoms.  In case of
+\fIexpression\fP being a space or vertical bar separated list of \fIattributes\fP, if \fIsep\fP is [\|!\|]=, then atoms that [\fI\|do not\|\fR] have any of
+the listed
+.I attributes
+are [\fI\|not\|\fR] selected
+(see
+.BR "Special Atoms" ).
+\fIAttributes\fP defined through
+.B .ATTRIBUTE
+special atom may also be used.
+If \fIsep\fP is <, then the pattern association rule
+for the rule inferred from the input token and the pattern association
+rule base name specified in \fIattribute1\fR of \fIexpression\fP is returned
+(ex. $("stdio.h":A<.SOURCE.) would give .SOURCE.%.LCL.INCLUDE).
+.B A
+alone expands to the list of applicable user-defined attributes.
+.TP
+.PD 0
+\fBB\fP[=\fIbase\fP]
+.TP
+\fBD\fP[=\fIdirectory\fP]
+.TP
+\fBS\fP[=\fIsuffix\fP]
+.PD
+As stated previously, the edit operators form token pipelines.  The file
+component edit operators (\fB:D:B:S\fP) are the exception to the rule;
+they do not form token pipelines because
+.I \*(nM
+treats the file component edit operators as a group (although separated by
+\fB:\fP).  Each is applied as a single edit operation.
+Pathnames are partitioned into three (possibly
+.BR null )
+components.
+.I directory
+includes all characters up to but not including the last
+.BR / .
+.I base
+includes all characters after the last
+.B /
+up to but not including the last
+.BR . .
+.I suffix
+includes all characters from the last
+.B .
+on.
+Multiple
+.BR . 's
+are treated as a single
+.B .
+and if
+.B .
+is the first character after the last
+.B /
+and is the only
+.B .
+then it is included in
+.I base
+rather than
+.IR suffix .
+If the pipeline result is desired, extra \fB:\fP must be specified (e.g.,
+\fB:D::B\fP will apply \fB:B\fP edit operation to the result of \fB:D\fP
+edit operation).
+.TP
+.BI C <del>old<del>new<del> [G]
+Similar to the
+.IR ed (1)
+substitute command.
+Substitutes the first occurrence of the string
+.I old
+with the string
+.I new
+in each token.
+A trailing
+.B G
+causes all occurrences of
+.I old
+to be substituted.
+.I <del>
+may be any delimiter character.
+.B C/
+may be abbreviated as
+.BR / .
+.TP
+.BI E
+Evaluates the complete input string as a logical, string, or
+integer expression.
+.TP
+.BI F =format
+Converts tokens according to
+.IR format .
+.I format
+may be a concatenation of the following:
+.RS
+.TP
+.B L
+The token is converted to lower case.
+.TP
+.B U
+The token is converted to upper case.
+.TP
+.B V
+The token is converted to the valid
+.I \*(nM
+variable name.
+.TP
+\fB%\fP[\-][\fIn\fP][.\fIm\fP]\fIc\fP
+.IR printf (3)
+style formatting.
+Only the
+.IR s ,
+.IR d ,
+.IR o ,
+.I x
+and
+.I u
+conversions are supported.
+.RE
+.TP
+.BI G =pattern
+Selects token files that can build (generate) files
+that match the metarule pattern
+.I pattern
+using the metarules.
+For example, a token
+.BI x .y
+is selected if a metarule
+.BI % .s " : %.y"
+has been asserted.
+.TP
+\fBH\fR [\fIsep\fP][\fBU\fR]
+Heap sorts the tokens in ascending (if \fIsep\fP is < or default) or
+descending (if \fIsep\fP is >) order.  <= \fIsep\fP will give low to high
+numeric sort, and >= \fIsep\fP will give high to low numeric sort.  If
+.B U
+is specified, the sort is unique (the duplicates are removed).
+.TP
+.BI I =list
+.I list
+is expanded and directory tokens in
+.I variable
+that also appear in the expanded value of
+.I list
+are selected.
+Each selected directory will appear at most once in the return value.
+The directory path names are canonicalized before comparison.
+.TP
+\fBK\fP=\fIpfx\fP
+Splits long lines like
+.IR xargs(1)
+into a number of tokens, applying optional \fIpfx\fP to each token.
+.TP
+\fBL\fR [\fIsep\fP [\fI<pattern\fR>]]
+Each token is treated as a directory name.  For each token, the list of
+all files in the specified directories which match the
+optional \fIpattern\fR are returned.  \fIsep\fP may be <= or >= and is used
+to specify that the list should be sorted in ascending or descending order
+respectively.  The default order is unsorted.
+.TP
+\fBM\fP[\|!\|]=\fIpattern\fP
+Selects tokens
+.RI [ \|not\| ]
+matching the
+.IR egrep (1)
+style regular expression
+.IR pattern .
+.TP
+\fBN\fP[\|!\|]=\fIpattern\fP
+Selects tokens
+.RI [ \|not\| ]
+matching the
+.IR sh (1)
+file match expression
+.IR pattern .
+Multiple patterns separated by
+.B |
+denotes the inclusive or of the individual patterns.
+.TP
+\fBO\fP[\|!\|]\fP|\fR[\fI<relop><n>\fP]
+Each token is numbered by its left to right position, starting with 1.
+Tokens with positions satisfying the integer expression
+.I "position relop n"
+are selected.
+.I relop
+may be one of
+.BR < ,
+.BR <= ,
+.BR = ,
+.BR != ,
+.BR >=
+or
+.BR > .
+If
+.B O
+is specified alone, the output is the number count of tokens,
+.B O!
+gives the string length of each token.
+.TP
+\fBP\fP[\|!\|]=\fIop\fP
+Treats the tokens as file path names and applies the path name operator
+.IR op .
+.I op
+may be:
+.RS
+.TP
+.B A
+Returns the absolute path name for specified files.
+.TP
+.B C
+Returns the canonicalized path name.
+.BR . 's
+and redundant
+.BR / 's
+are removed (unless
+.B .
+is the only remaining character).
+Each
+.B ..
+cancels the path name component to its left (unless that component is also
+.BR .. );
+.B .. 's
+are moved to the front of the name.
+.B /..
+forms are preserved in deference to some remote file system implementations.
+.TP
+.B D
+For each token that is a bound atom, the directory where the
+atom was bound is returned.
+.TP
+\fBH\fP[=\fIsuffix\fP]
+Generates 9 character hash file name (or up to 14 character hash file name if
+.I suffix
+is used - takes first 5 characters in \fIsuffix\fP if it is greater than 5
+characters) for the given token.
+.TP
+\fBI\fR=\fIfile\fR
+Selects tokens which are existing files and which have the same device
+and inode numbers as \fIfile\fR.  If
+.B P!=I=\fIfile\fR
+is used, then those tokens which are existing files and are not the same
+file as \fIfile\fR are returned.
+.TP
+\fBL\fR[\fI<relop>level\fP]
+Selects tokens that are atoms bound in the level 0
+.RI [ <relop>level ]
+view.
+Views are defined using the
+.B .VIEW
+special atom.
+.I relop
+may be one of
+.BR < ,
+.BR <= ,
+.BR = ,
+.BR != ,
+.BR >=
+or
+.BR > .
+.TP
+.B L*
+Returns all the views of a bound file.
+.TP
+.B L!
+Returns the first occurrence of a bound file from all the views.
+.TP
+\fBP\fR=\fIlang\fR
+Returns the pathname for the probe information file for the language specified
+by \fIlang\fR and the language processor specified in the input token.
+.TP
+.B R
+For each token, treated as a directory path name,
+a path name that leads to the (possibly relative) root
+of the token is returned.
+The return value is either
+.B .
+or a path name consisting of
+.B ..
+components.
+.TP
+.B S
+The bound name for each token that is bound to a file within a subdirectory
+of its view is returned.
+.TP
+.B U
+The unbound name for each token is returned.
+.TP
+.B V
+Returns the view directory path name of the makefile for each token that is an
+atom bound to a file (see \fB.VIEW\fP special atom).
+.TP
+.B X
+Returns each token that is the path name of an existing file.
+The tokens are not bound.
+.RE
+.TP
+.B Q
+Each token is quoted for literal interpretation by
+.IR sh (1).
+.TP
+.B R
+Each token is parsed as a makefile, each in a separate context.
+.B null
+is returned.
+.TP
+.PD 0
+.BI T =type
+.TP
+.BI T =type ? return
+.PD
+The tokens are bound to atoms (unless stated otherwise) and are
+operated on according to
+.IR type .
+.BI ? return
+replaces the default
+.RB non- null
+return value with the expanded value of
+.I return
+for selected atoms and
+.B null
+otherwise.
+.I return
+is only expanded
+(a
+.I second
+expansion: the operators have already been expanded once)
+if the test succeeds.
+If
+.I type
+is preceded by
+.BR X ,
+then no binding is done.
+.I type
+may be one of:
+.RS
+.TP
+.B A
+Returns the archive update action for each atom with the
+.B .ARCHIVE
+attribute.
+If the returned action is
+.BR non- null
+then it must be executed for any archive that
+has been modified or copied before the archive is
+used by the compilers or loaders
+(e.g.,
+.IR ranlib (1)
+on BSD-based systems).
+.TP
+.B D
+The
+.IR cc (1)
+style definition of each token that binds to a state variable is returned.
+Given:
+.EX
+DEBUG =
+TEST = 1
+SIZE = 13
+STATEVARS = (DEBUG) (TEST) (SIZE)
+.EE
+.TP
+\&
+.L $(STATEVARS:T=D)
+expands to
+.LR "-DTEST -DSIZE=13" .
+.TP
+.B E
+Similar to
+.B T=D
+except that the expanded definitions are
+.IR name = value
+pairs.
+Given the above example,
+.L $(STATEVARS:T=E)
+expands to
+.LR "DEBUG= TEST=1 SIZE=13" .
+.TP
+.B F
+Each atom that binds to a file is selected.
+The bound atom name is returned.
+.TP
+.B G
+Each atom bound to a file that has been built (generated) is selected.
+The bound atom name is returned.
+.TP
+.B I[\-]
+Each input token is the name of an input file to be read. The contents
+of all the files are returned (including any newlines).
+A \- following the
+.B I
+inhibits the expansion of variable names in the file.
+.TP
+.B M
+Generates the parentage chain of each active token.
+.TP
+.B N
+If the unbound value of
+.I variable
+is
+.B null
+then
+.B 1
+is returned, otherwise
+.B null
+is returned.
+.TP
+\fBO\fP[\fImode\fP][=\fItext\fP]
+Each input token is the name of the file to be written according
+to the specified
+.I mode .
+If no \fImode\fP is specified, \fItext\fP overrides the contents of
+each file.
+By default, the new line separator is attached to the end of the
+.I text.
+This edit operator is the complement to
+.B :T=I[\-].
+.I mode
+may be:
+.RS
+.TP
+.B +
+Appends
+.I text.
+.TP
+.B \-
+Does not put the new line separator at the end of
+.I text.
+.RE
+.TP
+.B P
+Each atom that binds to a file and is also not a symbolic link is selected.
+The bound atom name is returned.
+If symbolic links
+.RI ( link (2))
+are not implemented then
+.B :T=P:
+is equivalent to
+.BR :T=F: .
+.TP
+.B Q
+Each atom that exists is selected.
+.TP
+.B R
+Each token is treated as an atom and the relative time
+(number of seconds since the Epoch) of each atom is returned.
+.TP
+\fBS\fP[\fIconv\fP[\fIdata\fP]]
+Converts each atom to a new atom type specified by
+.I conv
+and
+.I data
+.RB ( null
+is returned when the conversion specifies an undefined atom).
+.I conv
+may be:
+.RS
+.TP
+.B A
+Given the internal name for a state rule, convert it to the original name.
+.TP
+.B F
+Forces creation of a new atom.  Used in conjunction with the other
+conversion operators.
+.TP
+.B M
+Returns the metarule name that generates files matching the metarule pattern
+.I data
+from files matching the metarule pattern named by each token.
+.TP
+.B P
+Returns the alternate prerequisite state atom.
+.TP
+.B R
+Returns the primary state atom.
+This is the default when
+.I conv
+is omitted.
+.TP
+.B V
+Returns the state variable atom for each token that names a variable.
+.RE
+.TP
+.B T
+The format for this operator is \fBT\fR\fIrelop\fR\fBT\fR\fIatom\fR.
+A comparison is done between the time associated with \fIatom\fR
+and the times associated with the atoms in the token list.
+The tokens whose times are \fIrelop atom\fP are returned.  \fIrelop\fP
+can be <, >, =, <=, >=, or !=.  If \fIatom\fP is not specified, it defaults
+to the current target.  For example,
+.EX
+$(*:T>T)
+.EE
+lists the prerequisites whose times are newer than the time for the current
+target.
+.TP
+.B U
+Returns the atom or variable name for each state atom token.
+.TP
+.B V
+If the unbound value of
+.I variable
+is
+.RB non- null
+then
+.B 1
+is returned, otherwise
+.B null
+is returned.
+.TP
+.B W
+If a type operator is forcing a file to be bound, and the \fBW\fR
+operator is applied, do not wait for the bind to complete.
+.TP
+.B X
+Binding should not be done.  Used in conjunction with other type edit
+operators.
+.RE
+.TP
+\fBV\fP[\fItype\fP]
+The
+.I value
+of
+.I variable
+is used without expansion.  \fItype\fP may be:
+.RS
+.TP
+.B A
+Expands to the auxiliary (assigned to
+.I variable
+with
+.L &=
+assignment operator)
+.I value
+of
+.I variable
+(see
+.BR Variables ).
+.TP
+.B P
+Expands to the primary
+.I value
+of
+.I variable.
+.RE
+.TP
+.BI X =list
+The directory cross product of the tokens in
+.I variable
+and the tokens in the expanded value of
+.I list
+is returned.
+The first
+.B .
+.I lhs
+operand produces a
+.B .
+in the cross product.
+All
+.I rhs
+absolute path (rooted at
+.BR / )
+operands are collected, in order, after all other products have been
+computed, regardless of the
+.I lhs
+operands.
+.TP
+.BI Y <del>non-null<del>null<del>
+If
+.I value
+is \fBnull\fP then
+.I null
+is expanded and returned, otherwise
+.I non-null
+is expanded and returned.
+.I <del>
+may be any delimiter character.
+.B Y?
+may be abbreviated as
+.BR ? .
+.PP
+To illustrate some of the above operators:
+.EX
+FILES = a.h b.h c.h x.c y.c z.c
+HEADERS = $(FILES:N=*.h)
+
+$(HEADERS:/^/-I/)       \(->   -Ia.h -Ib.h -Ic.h
+$(FILES:N=*.c:/ /:/G)   \(->   x.c:y.c:z.c
+.EE
+.SS Automatic Variables
+The following variables are automatically defined and updated by
+.IR \*(nM :
+.TP
+.B $(\-)
+The current option settings suitable for use on
+.I \*(nM
+command lines.
+The options are listed using the
+.B \-o
+option-by-name style and only those option settings different from the
+default are listed.
+.TP
+.BI $(\- option )
+.B 1
+if the named
+.I option
+is set and non-zero, otherwise
+.BR null .
+.TP
+.B $(\+)
+The current option settings suitable for use by
+.BR set .
+Only those option settings different from the default are listed.
+.TP
+.BI $(\+ option )
+The current setting for the named \fIoption\fP, suitable for use by
+\fBset\fP.
+.TP
+.B $(=)
+The list of command line \fIscript\fP arguments and
+assignments for variables that are prerequisites of
+the atom
+.BR .EXPORT .
+.TP
+.B $(<)
+The current target name.
+.TP
+.B $(>)
+The list of all explicit file prerequisites of the current target that are out
+of date with the target.
+.B $(>)
+is always
+.RB non- null
+for triggered metarule actions but otherwise
+may be
+.B null
+(even if the current target action has triggered).
+.TP
+.B $(%)
+The
+.I stem
+of the current metarule match, or the arguments of a function
+(see \fB\.FUNCTION\fP in \fBSpecial Atoms\fP).
+.TP
+.B $(*)
+The list of all explicit file prerequisites of the current target.
+.TP
+.B $(~)
+The list of all explicit prerequisites of the current target.
+.TP
+.B $(&)
+The list of all implicit and explicit state variable
+prerequisites of the current target.
+Implicit state variable prerequisites are generated by the
+language dependent scan.
+.TP
+.B $(!)
+The list of all implicit and explicit file prerequisites of the current target.
+Implicit file prerequisites are generated by the language dependent scan.
+.TP
+.B $(?)
+The list of all prerequisites of the current target.  This includes
+all implicit and explicit state variable and file prerequisites.
+.TP
+.B $(#)
+If the current target is a state variable then
+.B $(#)
+is the state variable value, otherwise it is the unbound atom name.
+.TP
+.B $(@)
+The action for the current target.
+.TP
+.B $(^)
+If the current target has been bound to a
+file in other than the top view then
+.B $(^)
+is set to the original (lower view) binding and
+.B $(<)
+is set to new (top view) binding, otherwise
+.B $(^)
+is
+.BR null .
+.TP
+.B "$(. . .)"
+Represents all the atoms, rules and state variables used when making .MAKEINIT.
+.PP
+Each repeated occurrence of the automatic variable name character
+in the variable expansion causes the
+.I parent
+of the current target to be used as a reference.
+For example,
+.B $(<<)
+is the name of the parent of the current target and
+.B $(**)
+is the list of all its prerequisites.
+.BI $(c atom )
+references information for
+.I atom
+instead of the current target.
+Notice that
+.BR .IGNORE ,
+.BR .STATE ,
+.B .USE
+and
+.B .VIRTUAL
+atoms are not included in
+.BR $(<) ,
+.BR $(>) ,
+.BR $(*) ,
+or
+.B $(!)
+automatic variable expansions.
+.SS Assertion Operators
+Assertion operators provide fine control over makefile assertions.
+Each operator is an atom whose action is executed whenever the
+atom appears as an operator in an assertion.
+Assertion operators are defined by assertions:
+.EX
+":\fIoperator\fP:" : .OPERATOR
+	\fIaction\fP
+.EE
+where the operator name syntax is
+.B ::
+and
+.BI : identifier : .
+and the operator name must be quoted in its defining assertion.
+An operator is activated by an assertion of the form:
+.EX
+\fIlhs\fP  :\fIoperator\fP:  \fIrhs\fP
+	\fIcommands\fP
+.EE
+The operator action is executed with
+.B $(<)
+set to
+.IR lhs ,
+.B $(>)
+set to
+.IR rhs ,
+and
+.B $(@)
+set to
+.IR commands .
+No variable expansion is done on
+.IR lhs ,
+.IR rhs ,
+or
+.IR commands .
+.SS Special Atoms
+The Special Atoms defined by
+.I \*(nM
+all have the form .ID, where "ID" is any string of capital letters, dots, or
+numbers.  Users can define their own Special Atoms, which do not have to begin
+with dot (.).
+.I \*(nM's
+Special Atoms.
+The following atoms are special to
+.I \*(nM
+and fall into one or more of these types, depending on the context:
+.RS
+.TP
+.PD 0
+.I "action rule"
+Action used for
+.I \*(nM
+control.
+.TP
+.I "assertion attribute"
+Provides fine control over
+.B :
+dependency operator assertions.
+.TP
+.I "dynamic attribute"
+Assigned to target atoms by listing attribute names as prerequisites
+in assertions.
+Dynamic atom attributes may be tested using the
+.BI :A= attribute :
+edit operator.
+.TP
+.I "dynamic list"
+Prerequisites are used to control
+.I \*(nM
+actions.
+.TP
+.I "immediate rule"
+Invokes an
+.I \*(nM
+action when appearing as a target in assertions
+.I "at assertion time".
+The prerequisites and actions are cleared after the assertion.
+.TP
+.I "pattern association rule"
+The meaning of the attribute is applied to the atoms matching
+the specified \fIpattern\fR.  \fIpattern\fR is given in one of the
+following formats: string match (SOURCE.%.c, .BIND.-l%),
+suffix match (.SOURCE.c), or attribute match (.INSERT.%.ARCHIVE).
+.TP
+.I "readonly attribute"
+Maintained by
+.I \*(nM
+and may not be explicitly assigned.
+.TP
+.I "readonly list"
+Prerequisites maintained by
+.IR \*(nM .
+.TP
+.I "sequence atom"
+Sequence atoms are made at specific times during
+.I \*(nM
+execution and are ignored if not specified.
+Sequence atom shell actions are always executed in the foreground.
+Assert intermediate rules (with actions)
+and append these to the sequence atom prerequisite list
+to avoid attribute or base and global rule clashes.
+.PD
+.RE
+The special atoms are:
+.TP
+.BI .ACCEPT "\|\|\s-1[dynamic\|attribute]\s+1"
+Only file prerequisites can make
+.B .ACCEPT
+atoms out of date.
+.TP
+.BI .ACCEPT "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisite atoms are accepted as being up to date.
+However, subsequent file prerequisites may make the atoms out of date.
+.TP
+.BI .AFTER "\|\|\s-1[dynamic\|attribute]\s+1"
+.B .AFTER
+prerequisites are made after the action for the target atom has completed.
+.TP
+.BI .ALWAYS "\|\|\s-1[dynamic\|attribute]\s+1"
+The
+.B noexec
+option inhibits the execution of shell actions.
+However, shell actions for
+.B .ALWAYS
+targets are executed even with
+.B noexec
+on.
+.TP
+.BI .APPEND ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+The prerequisites of
+.BI .APPEND .pattern
+are appended to the prerequisite list of each target atom which matches
+\fIpattern\fR
+immediately before the target prerequisites are made.
+Notice that
+.I pattern
+must be
+.B %.ARCHIVE
+for
+.B .ARCHIVE
+targets
+and
+.B %.COMMAND
+for
+.B .COMMAND
+targets.
+.TP
+.BI .ARCHIVE "\|\|\s-1[dynamic\|attribute]\s+1"
+Target atoms with the
+.B .ARCHIVE
+attribute are treated as archives (see
+.IR ar (1)).
+Binding a
+.B .ARCHIVE
+target atom also binds the archive members to the target.
+.B .ARCHIVE
+may be used as a pseudo-suffix for
+.B .APPEND
+and
+.BR .INSERT .
+.TP
+.BI .ARGS "\|\|\s-1[dynamic\|list]\s+1"
+The prerequisites of
+.B .ARGS
+are the command line target arguments.
+If, after making the
+.B .INIT
+sequence atom
+.B .ARGS
+has no prerequisites then the prerequisites of
+.B .MAIN
+are copied to
+.BR .ARGS .
+As each prerequisite of
+.B .ARGS
+is made it is removed from the
+.B .ARGS
+prerequisite list.
+.TP
+.BI .ATTRIBUTE "\|\|\s-1[dynamic\|attribute]\s+1"
+Marks the target as a named attribute.
+Named attributes may be tested using the
+.BI :A= attribute :
+edit operator.
+A maximum of 32 named attributes may be defined.
+The prerequisites of
+.B .ATTRIBUTE
+constitute the list of all named attributes.
+.TP
+.BI .ATTRIBUTE ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+When an atom which matches \fI.pattern\fR is bound, it inherits the
+attributes of \fB.ATTRIBUTE\fR\fI.pattern\fR.
+.TP
+.BI .BEFORE "\|\|\s-1[dynamic\|attribute]\s+1"
+.B .BEFORE
+prerequisites are made just before the action for the target atom is executed.
+.TP
+.BI .BIND "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisite atoms are bound.
+.TP
+.BI .BIND ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+Specifies binding rules to be used when an atom cannot be bound using
+the normal rules.  The return value is new binding.
+.TP
+.BI .BOUND "\|\|\s-1[readonly\|attribute]\s+1"
+Marks bound atoms.
+.TP
+.BI .BUILT "\|\|\s-1[readonly\|attribute]\s+1"
+Marks state rule atoms corresponding to atoms that have been built.
+.TP
+.BI .CLEAR "\|\|\s-1[assertion\|attribute]\s+1"
+Clears the attributes, prerequisites and action for the
+targets in the assertion.
+.TP
+.BI .COMMAND "\|\|\s-1[dynamic\|attribute]\s+1"
+Marks target atoms that bind to executable command files.
+.B .COMMAND
+may be used as a pseudo-suffix for
+.B .APPEND
+and
+.BR .INSERT .
+.TP
+.BI .COMPINIT "\|\|\s-1[sequence\|atom]\s+1"
+This atom is made when the input makefiles are (re)compiled, just before the
+make object file is written.
+.TP
+.BI .DEBUG "\|\|\s-1[immediate\|rule / action\|rule]\s+1"
+.B .DEBUG
+is an alias for
+.B .QUERY
+(see
+.BR .QUERY ).
+.TP
+.BI .DONE "\|\|\s-1[sequence\|atom]\s+1"
+This is the last atom made before
+.I \*(nM
+terminates execution.
+.TP
+.BI .DONTCARE "\|\|\s-1[dynamic\|attribute]\s+1"
+If a
+.B .DONTCARE
+target cannot be made
+.I \*(nM
+continues as if it existed, otherwise
+an error is issued and
+.I \*(nM
+either discontinues work on the target parent and siblings if
+.B keepgoing
+is on or it terminates processing and exits.
+.TP
+.BI .ENTRIES "\|\|\s-1[readonly\|attribute]\s+1"
+Marks scanned directory or archive atoms that have entries (members).
+.TP
+.BI .ERROR "\|\|\s-1[sequence\|atom]\s+1"
+This atom is executed when an error is encountered and the compile option
+is off.  If the
+.B .ERROR
+make action block returns 0 (default), control returns to the point after
+the error.
+If the action block returns -1, then the error processing continues.
+.TP
+.BI .EXISTS "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms that have been successfully made.
+.TP
+.BI .EXPORT "\|\|\s-1[dynamic\|list]\s+1"
+The prerequisites are treated as
+.I variable
+names to be included in
+.B $(=)
+automatic variable expansions.
+.TP
+.BI .FAILED "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms that have been unsuccessfully made.
+.TP
+.BI .FILE "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms bound to existing files.
+.TP
+.BI .FORCE "\|\|\s-1[dynamic\|attribute]\s+1"
+An atom with this attribute is always out of date the first time it
+is made during a single
+.I \*(nM
+execution.
+.TP
+.BI .FOREGROUND "\|\|\s-1[dynamic\|attribute]\s+1"
+The target action blocks until all other actions have completed.
+Normally
+.I \*(nM
+makes future prerequisites while concurrent actions are being executed,
+however, a
+.B .FOREGROUND
+target causes
+.I \*(nM
+to block until the corresponding action completes.
+.TP
+.BI .FUNCTION "\|\|\s-1[dynamic\|attribute]\s+1"
+A compound .USE attribute used in the default base rules composed
+from .USE .ATTRIBUTE .MAKE .FUNCTIONAL .VIRTUAL .FORCE .REPEAT dynamic attributes.
+.TP
+.BI .FUNCTIONAL "\|\|\s-1[dynamic\|attribute]\s+1"
+A functional atom is associated with a variable by the same name.
+Each time the variable is expanded the corresponding
+atom is made before the variable value is determined.  For example,
+.EX
+src : .MAKE .FUNCTIONAL
+return $(*.SOURCE:L<=*.c)
+.EE
+In this example, \f5$(src)\fP evaluates to all the .c files in the directories
+specified as prerequisites of \fB.SOURCE\fP (listed in the ascending order).
+Also, \fB.FUNCTIONAL\fP special atom provides argument support.
+For example,
+.EX
+V : .MAKE .FUNCTIONAL
+return $(%:T=F)
+.EE
+one can call it by $(V a1 ... an), where a1 ... an is the list of
+arguments that can be referenced by \f5$(%)\fP.
+.TP
+.BI .GLOBALFILES "\|\|\s-1[readonly\|list]\s+1"
+The prerequisites are the list of global makefiles specified by the
+.B global
+option.
+.TP
+.BI .IGNORE "\|\|\s-1[dynamic\|attribute]\s+1"
+Prevents any parent targets from becoming out of date with the target,
+even if the target has just been built.
+This allows initialization sequences to be specified for individual atoms:
+.EX
+main : init header
+	echo "executed if header is newer than main"
+init : .IGNORE
+	echo "always executed for main"
+.EE
+.TP
+.BI .IMMEDIATE "\|\|\s-1[dynamic\|attribute]\s+1"
+An atom with this attribute is made immediately after each
+assertion of the atom.
+.TP
+.BI .IMMEDIATE "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisites and action are made each time this atom is asserted.
+.TP
+.BI .IMPLICIT "\|\|\s-1[dynamic\|attribute]\s+1"
+This target attribute causes the implicit metarules to be applied
+even if there is no action but prerequisites have been specified for the target.
+Otherwise the implicit metarules are only applied to targets with
+no explicit actions and prerequisites.
+This attribute turns the
+.B .TERMINAL
+attribute off at assertion time.
+.TP
+.BI .INIT "\|\|\s-1[sequence\|atom]\s+1"
+Made after the
+.B .MAKEINIT
+sequence atom.
+.TP
+.BI .INSERT "\|\|\s-1[assertion\|attribute]\s+1"
+Causes the prerequisites to be inserted before
+rather than appended to the target prerequisite list.
+.TP
+.BI .INSERT ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+The prerequisites of
+.BI .INSERT .pattern
+are inserted onto the prerequisite list of each target atom
+which matches \fI.pattern\fR immediately before the
+target prerequisites are made.  Notice that \fI.pattern\fR
+must be
+.B .ARCHIVE
+for
+.B .ARCHIVE
+targets
+and
+.B .COMMAND
+for
+.B .COMMAND
+targets.
+.TP
+.BI .INTERNAL "\|\|\s-1[readonly\|list]\s+1"
+This atom is used internally and appears here for completeness.
+.TP
+.BI .INTERRUPT "\|\|\s-1[sequence\|atom]\s+1"
+This atom is made when an interrupt signal is caught.
+The engine state may become corrupted by actions triggered while
+.B .INTERRUPT
+is active.
+If the interrupt occurs while
+.B .QUERY
+is being made and
+.B "set nointerrupt"
+is executed by
+.B .INTERRUPT
+then after
+.B .INTERRUPT
+is made
+.I \*(nM
+continues from the point where the interrupt occurred,
+otherwise
+.I \*(nM
+exits with non-zero status.
+.TP
+.BI .JOINT "\|\|\s-1[dynamic\|attribute]\s+1"
+The action causes all targets on the left hand side to be jointly
+built with respect to the prerequisites on the right.
+.TP
+.BI .LOCAL "\|\|\s-1[dynamic\|attribute]\s+1"
+An atom with this attribute is made on the local machine after each
+assertion of the atom when the coshell is active, no-op otherwise (see
+\fIcoshell\fP(1)).
+.TP
+.BI .LOCAL "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisites and action are made on the local machine each time
+this atom is asserted when the coshell is active, no-op otherwise (see
+\fIcoshell\fP(1)).
+.TP
+.BI .MAIN "\|\|\s-1[dynamic\|list]\s+1"
+If, after the
+.B .INIT
+target has been made,
+.B .ARGS
+has no prerequisites then the prerequisites of
+.B .MAIN
+are appended onto
+.BR .ARGS .
+If not explicitly asserted in the input makefiles then
+the first prerequisite of
+.B .MAIN
+is set to be the first target in the input makefile that is neither
+a special atom nor a metarule.
+.TP
+.BI .MAKE "\|\|\s-1[dynamic\|attribute]\s+1"
+Causes the target action to be read by
+.I \*(nM
+rather than executed by the shell.
+Such actions are always read, even with
+.B noexec
+on.
+.TP
+.BI .MAKE "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisites and action are made each time this atom is asserted.
+.TP
+.BI .MAKEDONE "\|\|\s-1[sequence\|atom]\s+1"
+Made after the \fB.DONE\fP sequence atom.
+.TP
+.BI .MAKEFILES "\|\|\s-1[readonly\|list]\s+1"
+The prerequisites are the list of makefiles specified by the
+.B file
+option.
+.TP
+.BI .MAKEINIT "\|\|\s-1[sequence\|atom]\s+1"
+This target is made just after the statefile has been loaded.
+The base rules typically use this atom to initialize the
+.I \*(nM
+engine.
+For this reason the user should not redefine the
+.B .MAKEINIT
+action or attributes.
+However, it is safe to insert or append prerequisites onto
+.BR .MAKEINIT .
+.TP
+.BI .MAKING "\|\|\s-1[readonly\|attribute]\s+1"
+Marks each atom whose action is executing.
+.TP
+.BI .MEMBER "\|\|\s-1[readonly\|attribute]\s+1"
+Marks an atom that is a member of a bound archive.
+.TP
+.BI .METARULE "\|\|\s-1[readonly\|list]\s+1"
+The ordered list of LHS metarule patterns for all asserted metarules
+excluding the
+.B %
+match-all metarules.
+This list determines the metarule application order.
+.TP
+.BI .MULTIPLE "\|\|\s-1[dynamic\|attribute]\s+1"
+Normally each assertion removes duplicate prerequisites from the end
+of the target atom prerequisites list.
+.B .MULTIPLE
+atoms are allowed to appear more than one in a prerequisite list.
+.TP
+.BI .NOTYET "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms that have not been made.
+.TP
+.BI .NULL "\|\|\s-1[assertion\|attribute]\s+1"
+Assigns the null action to the target atoms.
+Used when an action must be present, usually to force source files
+with prerequisites to be accepted.
+.TP
+.BI .OPERATOR "\|\|\s-1[dynamic\|attribute]\s+1"
+This attribute marks the target as an
+.I operator
+to be applied when reading makefiles.
+Assertion operator names must match either
+.B ::
+or
+.BI : identifier : .
+.TP
+.BI .PARAMETER "\|\|\s-1[dynamic\|attribute]\s+1"
+.\" Marks the target as a
+.\" .I parameter
+.\" file.
+.\" A
+.\" .I parameter
+.\" file only contains definitions (i.e.,
+.\" .B #define
+.\" definitions), comments and
+.\" .B #include
+.\" statements to other files.
+.\" The modify time of a
+.\" .I parameter
+.\" file is ignored when determining the update status of corresponding targets.
+State variables with the
+.B .PARAMETER
+attribute are not expanded by the
+.B :T=D:
+and
+.B :T=E:
+edit operators.
+.TP
+.BI .QUERY "\|\|\s-1[immediate\|rule]\s+1"
+Full atom and state information is listed for each prerequisite.
+.TP
+.BI .QUERY "\|\|\s-1[action\|rule]\s+1"
+Making
+.B .QUERY
+places
+.I \*(nM
+in an interactive loop.
+Input entered at the
+.B make>
+prompt may be any valid makefile input.
+However, parsing readahead requires that a blank line follow
+an interactive assertion before it takes effect.
+If a list of atoms is entered without an assertion or assignment operator
+then the atoms are listed as if they were prerequisites of the
+.B .QUERY
+.IR "immediate rule" .
+The interactive loop is exited by entering \fBcontrol-D\fP (or \fBquit\fP)
+from the keyboard.
+The assertion
+.B ".INTERRUPT : .QUERY"
+causes the interactive loop to be entered on interrupts.
+The interactive loop can also be invoked by specifying the
+.B .QUERY
+Special Atom on the command line.  The following command line will invoke the
+interactive loop:
+.sp .25
+\f5$ nmake -f nmake_filename .QUERY\fP
+.sp .25
+or, more commonly,
+.sp .25
+\f5$ nmake -f nmake_filename query\fP
+.TP
+.BI .READ "\|\|\s-1[dynamic\|attribute]\s+1"
+The standard output of the action is read and
+interpreted as nmake statements.
+.TP
+.BI .REBIND "\|\|\s-1[immediate\|rule]\s+1"
+Each prerequisite is unbound and bound again as if it had already been made.
+.TP
+.BI .REGULAR "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms that are bound to regular files.
+.TP
+.BI .REPEAT "\|\|\s-1[dynamic\|attribute]\s+1"
+By default an atom is made at most once per
+.I \*(nM
+invocation.
+.B .REPEAT
+marks atoms that are to be made repeatedly.
+.B .FORCE
+is required to force the action to be triggered each time the atom is made.
+.TP
+.BI .REQUIRE ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+Modifies the binding algorithm to allow a bound atom to map to a list of
+bound atoms.  For example:
+.EX
+\&.REQUIRE.\-lcs : .FUNCTION
+return \-lcs \-lnsl \-lsocket
+.EE
+will return the entire list specified above every time \f5\-lcs\fP is called:
+.EX
+\-lcs \(-> \-lcs \-lnsl \-lsocket
+.EE
+.TP
+.BI .RETAIN "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisites are variable names whose values are to be retained
+in the statefile.
+.TP
+.BI .SCAN "\|\|\s-1[dynamic\|attribute]\s+1"
+Used for defining scanning rules for a project specific language that
+are not defined in the default base rules (see \fImakerules\fP(1) for
+the complete list of defined scan strategies).
+.TP
+.BI .SCAN ".x\|\|\s-1[dynamic\|attribute]\s+1"
+Marks an atom (when bound to a file) to be scanned
+for implicit prerequisites using the
+.I .x
+scan strategy.
+.BI .ATTRIBUTE .pattern " : .SCAN" .x
+is asserted for each of the scan strategies listed in \fImakerules\fP(1).
+.TP
+.BI .SCAN.NULL "\|\|\s-1[dynamic\|attribute]\s+1"
+Inhibits scanning.
+Used to override
+.BI .ATTRIBUTE .pattern
+scan strategies.
+.TP
+.BI .SCAN.STATE "\|\|\s-1[dynamic\|attribute]\s+1"
+Marks candidate state variables for scanning.
+.TP
+.BI .SCAN.IGNORE "\|\|\s-1[dynamic\|attribute]\s+1"
+No-op scan strategies.
+.TP
+.BI .SCANNED "\|\|\s-1[readonly\|attribute]\s+1"
+Marks archive and directory atoms that have been scanned for members
+(implicit prerequisites) and records this information in the \fIstatefile\fP.
+The \fB.SCANNED\fP attribute may be removed from the \fIstatefile\fP with
+\fB\-SCANNED\fP assertion, thus causing \fInmake\fP to rescan the file being
+scanned at a later time.  For example,
+.EX
+t :: t.c
+t.c : -SCANNED
+.EE
+\f5t.c\fP file is being scanned by \fInmake\fP using \fB.SCAN.c\fP scan
+strategy and it is marked with \fB.SCANNED\fP attribute.  \f5t.c : -SCANNED\fP
+nullifies this action.
+.TP
+.BI .SEMAPHORE "\|\|\s-1[dynamic\|attribute]\s+1"
+Limits the number of executing shell actions for target atoms having the same
+.B .SEMAPHORE
+prerequisite.
+Each
+.B .SEMAPHORE
+within an assertion increments the semaphore count by 1.
+The maximum semaphore count is 7.
+The following example makes the shell actions for a and b mutually exclusive.
+.EX
+set jobs=10
+all : a b
+\&.sema : .SEMAPHORE
+a b : .sema
+	action
+.EE
+.TP
+.BI .SOURCE "\|\|\s-1[dynamic\|list]\s+1"
+The prerequisites of
+.B .SOURCE
+are directories to be scanned when searching for files.
+The (left to right) directory order is important; the first directory
+containing the file is used.
+The directory
+.B .
+is always searched first.
+.TP
+.BI .SOURCE ".pattern\|\|\s-1[pattern\|association\|rule]\s+1"
+The prerequisites of
+.BI .SOURCE .pattern
+are directories to be scanned when searching for files which match suffix
+.IR .pattern .
+If the file is not found then the directories specified by the
+prerequisites of
+.B .SOURCE
+are checked.
+The (left to right) directory order is important; the first directory
+containing the file is used.
+The directory
+.B .
+is always searched first.
+The implicit dependency scan strategy
+(see
+.BR .SCAN )
+may augment or override the default
+.B .SOURCE
+search for individual atoms.
+.TP
+.BI .SPECIAL "\|\|\s-1[assertion\|attribute]\s+1"
+Target atoms in the assertion are not appended to the prerequisites of
+.B .MAIN
+and multiple action diagnostics are inhibited.
+.TP
+.BI .STATE "\|\|\s-1[dynamic\|attribute]\s+1"
+.RB Non- .STATEVAR
+atoms with this attribute are treated as state variables with no
+implied connection to an
+.I \*(nM
+variable.
+.TP
+.BI .STATE "\|\|\s-1[immediate\|rule]\s+1"
+The prerequisites are variable names that are marked as
+candidate implicit state variable prerequisites (see
+.BR Variables ).
+.TP
+.BI .STATERULE "\|\|\s-1[readonly\|attribute]\s+1"
+Marks internal state rule atoms that
+are used to store state information.
+.TP
+.BI .STATEVAR "\|\|\s-1[readonly\|attribute]\s+1"
+Marks state variable atoms.
+.TP
+.BI .TARGET "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms that appeared as the target of an assertion.
+.TP
+.BI .TERMINAL "\|\|\s-1[dynamic\|attribute]\s+1"
+This attribute allows only
+.B .TERMINAL
+metarules to be applied to the target.
+Otherwise metarules are applied to targets with
+no explicit actions and prerequisites.
+This attribute turns the
+.B .IMPLICIT
+attribute off at assertion time.
+For metarule assertions,
+.B .TERMINAL
+marks
+.B unconstrained
+metarules that may be applied only to
+.B .TERMINAL
+targets or non-generated source files.  \fB.TERMINAL\fP attribute may
+also be applied to directories that do not have subdirectories.
+If a \fB.SOURCE\fP directory has \fB.TERMINAL\fP attribute, \fInmake\fP will
+not search that directory for subdirectories.  This can be used as an
+optimization technique when there are many \fB.SOURCE\fP directories that
+do not have subdirectories and there are many files with the directory
+prefixes (saves on unnecessary filename look-ups).
+.TP
+.BI .TMPLIST "\|\|\s-1[readonly\|list]\s+1"
+This atom is used internally and appears here for completeness.
+.TP
+.BI .TRIGGERED "\|\|\s-1[readonly\|attribute]\s+1"
+Marks atoms whose actions have triggered during the current
+.I \*(nM
+execution.
+.TP
+.BI .UNBIND "\|\|\s-1[immediate\|rule]\s+1"
+Each prerequisite is unbound as if it had not been bound.
+.TP
+.BI .USE "\|\|\s-1[dynamic\|attribute]\s+1"
+Marks the target as a
+.B .USE
+atom.
+Any target having a
+.B .USE
+atom as a prerequisite will be built using the
+.B .USE
+atom action and attributes.
+The leftmost
+.B .USE
+prerequisite takes precedence.
+.TP
+.BI .VIEW "\|\|\s-1[readonly\|list]\s+1"
+The prerequisites are view directory path names.
+.B .
+is by default the first view directory.
+A view directory is a directory from which
+.I \*(nM
+could be executed.
+.B .VIEW
+is initialized from the
+.B MAKEPATH
+and
+.B VPATH
+environment variables.
+.TP
+.BI .VIRTUAL "\|\|\s-1[dynamic\|attribute]\s+1"
+A
+.B .VIRTUAL
+atom never binds to a file.
+.B .VIRTUAL
+atom times are saved in the statefile.
+.TP
+.BI "\-" "\|\|\s-1[dynamic\|list]\s+1"
+Used to control synchronization when making a list of prerequisites.
+A \fB\-\fR in a prerequisite list causes \*(nM to wait until the
+preceding prerequisite's actions are complete before continuing.
+.SS Command Execution
+Each shell
+action is sent as a unit to
+.I sh
+via
+.IR coshell (3).
+.I sh
+echos commands within actions as they are executed unless the
+.B silent
+option is on.
+Since actions are sent as a unit,
+special shell constructs
+.RB ( case ,
+.BR if ,
+.BR for ,
+.BR while )
+may cross
+.B newline
+boundaries without
+.B newline
+escapes.
+.PP
+Commands within actions returning nonzero status (see
+.IR intro (1))
+cause
+.I \*(nM
+to stop unless the
+.B ignore
+or
+.B keepgoing
+option is on.
+.PP
+.I \*(nM
+works only with
+.BR Bourne -based
+shells such as
+.IR sh (1)
+and
+.IR ksh (1).
+.I \*(nM
+is optimized to work with
+.IR ksh (1).
+.B COSHELL
+environment variable
+must point to either
+.IR ksh ,
+.IR sh ,
+or
+the network shell server
+.IR coshell (1).
+.SS Special Commands
+.TP
+.BI ignore " shell-command"
+Causes the exit status of
+.I shell-command
+to be ignored.
+.TP
+.BI silent " shell-command"
+Prevents
+.I shell-command
+from being printed by the shell, if possible.
+.B silent
+must precede
+.B ignore
+if both are to be used.
+.B "set +x"
+prevents subsequent commands from being printed by the shell up to
+and including the next
+.BR "set \-x" .
+.SS Jobs
+The
+.B jobs
+option allows
+.I \*(nM
+to build many targets concurrently.
+The builds are synchronized using the target dependency graph.
+Actions for targets with the
+.B .FOREGROUND
+attribute block until all other jobs have completed.
+Prerequisites with the
+.B .SEMAPHORE
+attribute are used for mutual exclusion.
+.PP
+All actions should be written with concurrency in mind.
+Most problems occur when commands generate files with fixed names,
+such as
+.IR yacc (1)
+and
+.IR lex (1).
+.SS Conventions
+.I \*(nM
+attributes match the regular expression
+.BR .[.A-Z][.A-Z0-9]* .
+User attributes match the regular expression
+.BR .[.A-Z][.a-z0-9]* .
+Intermediate targets match the regular expression
+.BR .[.a-z][.a-z0-9]* .
+Use $COTEMP (see
+.BR ENVIRONMENT )
+to generate temporary file names.
+To avoid conflicts with the base rules the user should not define upper case
+atom or variable names with
+.B .
+as the first character.
+.SH ENVIRONMENT
+The file names and directories used by the
+.I \*(nM
+engine are parameterized using variables.
+.SS Engine Variables
+These variables are assigned default values by the
+.I \*(nM
+engine itself.
+Some of the values are determined at installation time while others
+are determined by each invocation environment.
+.TP
+.B COTEMP
+The
+.B COTEMP
+environment variable is generated and set to a different value for each
+shell command.  It is 10 characters long and can be used for temporary file
+names, so names of the form
+.EX
+<pfx>$COTEMP<sfx>
+.EE
+will be upto 14 characters to satisfy the system V file name length
+restriction.
+.TP
+.B MAKE
+The path name of the current
+.I \*(nM
+program suitable for use as a shell command or in an
+.IR execvp (3)
+system call.
+.TP
+.BI MAKEARGS= Makeargs : makeargs
+A colon separated list of the candidate argument file names.
+.TP
+.B MAKEFILE
+The name of the first makefile.
+.TP
+.BI MAKEFILES= Makefile : makefile
+A colon separated list of candidate implicit makefile names.
+.TP
+.B MAKELIB
+The directory for
+.I \*(nM
+related files, e.g., base rules.
+.TP
+.BI MAKEPP= $(MAKELIB)/../cpp
+The name of the (deprecated) makefile preprocessor.
+.TP
+.BI MAKERULES= makerules
+The name of the default base rules.
+The base rules file must be a compiled make object file
+and is named by changing the suffix in
+.B $(MAKERULES)
+to
+.B .mo
+and binding the result using the directories in
+.BR .SOURCE.mk .
+.I makerules
+may be an absolute path name.
+.TP
+.BI MAKERULESPATH= $(LOCALRULESPATH):$(MAKELIB):/usr/local/lib/make:/usr/lib/make
+Used to initialize
+.BR .SOURCE.mk .
+All makefiles, including compiled make object files and files included
+by makefiles, are bound using the directories in
+.BR .SOURCE.mk .
+.TP
+.B MAKEVERSION
+The
+.I \*(nM
+engine version stamp.
+.TP
+.B OLDMAKE
+Executed via
+.IR execvp (3)
+when the first input makefile is not a valid
+.I \*(nM
+makefile.
+.TP
+.B PWD
+The absolute pathname of the current directory.
+.SS Uninitialized Variables
+These variables have
+.B null
+default values and are used only when defined.
+.TP
+.B COSHELL
+The name of the shell used to execute shell actions.
+.IR execvp (3)
+is used to execute the shell.
+If
+.B COSHELL
+is not defined, then
+.BR ksh ,
+.BR sh ,
+and
+.B /bin/sh
+are tried in order.
+.TP
+.BR MAKECONVERT
+A space separated pair of the build tool script (other than \fInmake\fP)
+and the conversion tool.  Used for compile time makefile conversion.
+For example:
+.EX
+export MAKECONVERT='Make.src "nmakegen $(>)"'
+.EE
+.TP
+.B MAKEIMPORT
+A colon separated list of environment variable names, the values of which
+override any makefile variable assignments.
+.TP
+.B MAKEPATH
+A colon separated list of directory names from which
+.I \*(nM
+could be run on the current makefile.
+These directories are used by the initialization script to initialize the
+.B .VIEW
+special atom.
+.B .
+is always the first view by default.
+.TP
+.B NPROC
+The maximum number of coshell processes that are to be executed
+simultaneously (the environment variable equivalent of -j).
+.TP
+.B VOFFSET
+.B VOFFSET
+is set to the path that goes from the viewpath node root to the current
+working directory.
+.TP
+.B VPATH
+A colon separated list of viewpath node names.
+The node names are converted to
+.B MAKEPATH
+directories that are used by the initialization script to initialize the
+.B .VIEW
+special atom.
+.B VPATH
+is ignored if
+.I \*(nM
+is not executing within the first viewpath node.
+.TP
+.B VROOT
+.B VROOT
+is set to the relative path that gets from the current working directory
+to the viewpath node root.

@@ -1,0 +1,468 @@
+# A whole wrapper around tksh, made to simplify specification of larger
+# interfaces without requring reference to nasty large window path names.
+
+# generate creates a whole window hierarchy under the given root, based
+# on a format structure that is best explained by example.
+
+set -o nolog
+
+
+function find_print
+{
+	print -f"%q " "$@"
+	print -f$'\n'
+}
+
+function find_printeval
+{
+	print -f$'+ '
+	print -f"%q " "$@"
+	print -f$'\n'
+
+	eval \"\$@\"
+}
+
+
+function generate
+{
+	[[ $tk_version == "" ]] && typeset find_print=find_print
+
+#	set -x
+	typeset window=$1
+	typeset parwindow=${1%.*}
+	typeset myname=$2
+	nameref myformat=$myname
+	if [[ $myformat == "" ]]
+	then
+		print -u2 ${!myformat}=\"$myformat\" for some reason.
+		print -u2 ${!window}=$window
+
+		return
+	fi
+
+	if [[ ${myformat} != \(* ]]
+	then  # it is an indirection
+#		echo take it deeper with $myname because $myformat
+		typeset myname=${myformat}
+		typeset +n myformat
+		typeset -n myformat=$myname
+	fi
+	nameref myparent=${myname%.*} # my parent is me without the last element
+	typeset root=${3:-$window}
+	typeset childvars=$4
+	[[ $childvars != "" ]] && eval typeset $childvars
+
+	eval typeset thesevars=\"${myformat.vars}\"
+	[[ ${window//*./} == "menubar" ]] && thesevars="createmenu=true $thesevars"
+
+	if [[ "${myformat.pack[@]}" != "" ]]
+	then 
+#		[[ $childvars != "" ]] && print -u2 propagating $childvars to children
+
+
+		if [[ $thesevars != "" ]] 
+		then
+			eval typeset $thesevars
+#			print -u2 adding $thesevars to vars of children
+			childvars="$thesevars $childvars"
+		fi
+
+
+
+#		print -u2 recursing + framing $window, rooted at $root
+
+		typeset framecmd=${myformat.framecmd:-frame}
+		if [[ ${myformat.noframe} != "true" && $window != "" ]] 
+		then
+			$find_print $framecmd $window ${myparent.eltopts} ${myformat.fopts}
+		fi
+
+		myformat.win="$window"
+
+
+		typeset children=""
+
+		typeset field
+		for field in ${myformat.pack[@]}
+		do
+
+#			print -u2 $field
+			typeset notpack=0
+			if [[ $field == !* ]] && field=${field:1} 
+			then
+				notpack=1
+			else
+				typeset +n chformat
+				typeset -n chformat=${!myformat}.$field
+			fi
+
+			typeset child=$window.$field
+
+			generate $child "${!myformat}.$field" $root "$childvars"
+#			print -n -u2 $field
+
+			if [[ $notpack == "0" ]] 
+			then
+				if [[ ${chformat.po} == "" ]] 
+				then
+					children="$children $child"
+				else
+					$find_print pack $child ${chformat.po}
+				fi
+#			else
+#				print -u2 Not being packed.
+			fi			
+
+		done
+
+#		print -u2 I $window have $children
+
+		if [[ $children != "" ]] 
+		then
+			$find_print pack $children ${myformat.opts}
+		fi
+
+		if [[ ${myformat.sets} != "" ]] 
+		then
+			eval typeset expr=\"${myformat.sets}\"
+#			print -u2 higher node setting \"$expr\"
+			eval $expr
+			[[ $find_print != "" ]] && $find_print $expr
+		fi
+
+	else
+
+		if [[ ${myformat.s} != "" ]] 
+		then
+			eval typeset expr=\"${myformat.s}\"
+#			print -u2 leaf node setting \"$expr\"
+			eval $expr
+			[[ $find_print != "" ]] && $find_print $expr
+		fi
+
+		unset argarray
+		typeset argarray
+
+		typeset what=${myformat.w}
+		typeset addname=""
+		[[ ${what} == tksh_* ]] && addname=${!myformat}
+#		typeset createmenu=false
+#		[[ ${what} == menu_* ]] && what=${what#menu_} && typeset createmenu=true
+
+
+		typeset realself=$window
+
+
+		typeset -A parsedopts
+		parsedopts=( [t]="-text" [v]="-textvar" [c]="-command"
+				[k]="-variable" [l]="-label" [u]="-value" )
+
+		for optid in "${!parsedopts[@]}"
+		do
+			typeset +n thisopt
+			typeset -n thisopt=myformat.$optid
+			if [[ $thisopt != "" ]] 
+			then
+				argarray[${#argarray[@]}]="${parsedopts[$optid]}"
+				eval argarray[${#argarray[@]}]\=\"$thisopt\"
+			fi
+		done
+
+
+
+
+		if [[ $createmenu == "true" && ${myformat.p[@]} != "" ]]
+		then
+
+			#if the widget is a descendent of a frame, give the menu a new name
+			[[ ${myparent.pack} != "" ]] && realself=${realself}.menu 
+
+#			print -u2 adding menu line for ${realself}
+			argarray[${#argarray[@]}]="-menu"
+			argarray[${#argarray[@]}]="${realself}"
+		fi
+
+		if [[ ${myparent.pack} != "" || ${what} == tksh_* ]] 
+		then	
+			# we got here through a frame, or we're a tksh_ procedure
+			eval $find_print $what $window $addname ${myparent.eltopts} ${myformat.o} \"\${argarray[@]}\"
+		else	
+			# we got here through a menu.
+			eval $find_print ${parwindow} add $what ${myparent.eltopts} ${myformat.o} \"\${argarray[@]}\"
+		fi
+
+		if [[ $createmenu == "true" && ${myformat.p[@]} != "" ]]
+		then
+			$find_print menu $realself
+		fi
+
+
+		set +x
+
+#		print -u2 I am supposed to be ${window} but I am ${realself}.
+
+		for field in ${myformat.p[@]}
+		do
+#			print -u2 First field is \"$field\"
+			typeset child=$realself.$field
+			generate $child "$myname.$field" $root "$childvars"
+		done
+
+	fi
+
+}
+
+
+function unpack {
+	nameref info=$1; shift
+	typeset widgets=$1; shift
+
+	if [[ $1 != .* ]] 
+	then
+#		print -u2 "Using normal unpack information. $widgets"
+		
+		typeset path=${info.win}
+
+		nameref pack=info.pack
+
+
+
+		[[ $path != .* ]] && print -u2 "error: window not set up right. (not $path)" \
+				  && return
+
+		typeset newopts="$@"
+	
+		typeset opts=${newopts:-${info.opts}}
+#		print -u2 options are $opts
+
+
+		for widget in $widgets
+		do
+#			print -u2 We are un packing -- $widget from the list \"${pack[@]}\"
+			for index in ${!pack[@]}
+			do
+				if [[ ${pack[index]} == $widget ]] 
+				then 
+					pack[index]=\!${pack[index]}
+					pack forget $path.$widget
+#					print -u2 Unpacked $path.$widget
+				fi
+			done
+		done
+
+
+	else
+#		print -u2 "Using generated unpack information."
+
+		typeset path=$1
+
+		shift
+
+		for widget in $widgets
+		do
+			pack forget $path.$widget
+#			print -u2 Unpacked $path.$widget
+		done
+
+	fi
+
+}
+
+function repack {
+#	print -u2 repack called with arguments $@
+	nameref info=$1
+	shift
+	typeset widgets=$1; shift
+
+	if [[ $1 != .* ]] 
+	then
+#		print -u2 "Using normal pack information.  $widgets"
+		
+		typeset path=${info.win}
+
+		nameref pack=info.pack
+	else
+#		print -u2 "Using generated pack information."
+
+		typeset path=$1
+
+		shift
+
+		wininfo=( $(pack slaves $path) )
+#		print -u2 Window information on $path is: ${#wininfo[@]} entries "${wininfo[@]}"
+
+#		echo Our information is at ${!info}
+#		echo which has ${!find_tree.adv.querybar.fixed.*} ....
+
+		pack=( "${info.pack[@]//!/}" )
+
+#		print -u2 What is $pack "${pack[@]}" and what is second "${pack[1]}"
+
+		typeset packlist=:
+
+		for win in "${wininfo[@]}"
+		do
+			if [[ $win == ${path}.* ]] 
+			then 
+				packlist=${packlist}${win#${path}.}:
+			fi
+		done
+
+#		print -u2 $packlist
+	
+		for win in "${!pack[@]}"
+		do
+#			print -u2 ":${pack[$win]//!/}:"
+			[[ $packlist != *:${pack[$win]}:* ]] \
+				&& pack[$win]=!${pack[$win]}
+		done
+
+#		print -u2 What is "${pack[@]}" and what is second "${pack[1]}"
+
+	fi
+
+
+	[[ $path != .* ]] && print -u2 "error: window not set up right. (not $path)" \
+			  && return
+
+	typeset newopts="$@"
+
+	typeset opts=${newopts:-${info.opts}}
+#	print -u2 options are $opts
+
+
+	for widget in $widgets
+	do
+#	print -u2 We are repacking -- $widget into the list \"${pack[@]}\"
+
+	typeset trypack=0
+	for index in ${!pack[@]}
+	do
+		if [[ $trypack == "1" ]]
+		then
+#			print -u2 Trying to pack $widget before $index -- ${pack[index]}
+
+			if [[ ${pack[index]} != !* ]]
+			then
+#				print -u2 Packing $path.$widget before $path.${pack[$index]} && trypack=2
+
+				pack $path.$widget -before $path.${pack[$index]} $opts
+
+				break
+			fi
+				
+		else
+			if [[ ${pack[index]} == ?(\!)$widget ]] 
+			then
+				trypack=1
+				if [[ ${pack[index]} != !* ]] 
+				then 
+					print -u2 error: already packed ${pack[index]}
+					break 2
+				fi
+				pack[index]=${pack[$index]:1}
+			fi
+		fi
+	done
+
+	[[ $trypack == 1 ]] && pack $path.$widget $opts
+
+	[[ $trypack == 0 ]] && print -u2 error: $widget not in pack list. \
+			    && return
+
+#	print -u2 We packed $widget into the list \"${pack[@]}\"
+	done
+}
+
+function packonly {
+#	print -u2 packonly called with arguments $@
+	nameref info=$1;shift
+	typeset widget=$1; shift
+
+#	print -u2 "Using normal pack information.  $widgets"
+	typeset path=${info.win}
+	nameref pack=info.pack
+
+	[[ $path != .* ]] && print -u2 "error: window not set up right. (not $path)" \
+			  && return
+
+#	print -u2 We have this packed: ${pack[@]}
+#	print -u2 We will unpack: ${pack[*]//!/}
+	unpack ${!info} "${pack[*]//!/}"
+
+	repack ${!info} $widget
+
+}
+
+function tksh_opt_menu {
+#	print -u2 Option menu options are -- $@ --
+	typeset w=$1; shift		# window name
+	typeset n=$1; shift		# variable path
+	nameref vtmp=$n.value
+#	print -u2 $vtmp
+#	eval print -u2 $vtmp
+	eval nameref val\=$vtmp	# the variable to hold the final value.
+
+	nameref var=${!val}int	# the internal variable to display the label	
+
+	typeset nextvar=0
+	for param in "$@"
+	do
+#		print -u2 We were given $param
+		if [[ $param == -textvar ]]
+		then
+			nextvar=1
+		elif [[ $nextvar == 1 ]]
+		then
+			#only executed once -- right after -textvar.
+			typeset +n var
+			nameref var="$param"
+			nextvar=0
+		elif [[ $param == -default ]]
+		then
+			nextvar=2
+		elif [[ $nextvar == 2 ]]
+		then
+			#only executed once -- right after -default.
+#			print -u2 parsed default value $param
+			typeset defgiven="$param"
+			nextvar=0
+		else
+			params[${#params[@]}]="$param"
+		fi
+	done
+
+#	print -u2 We have ${#params[@]} extras that comprise: "${params[@]}" and var is ${!var}
+
+
+	menubutton	$w -textvar ${!var} -menu $w.menu "${params[@]}"
+	typeset m=$(menu $w.menu)
+	if [[ ${n.choices} == "" ]]
+	then	nameref choices=$n.names
+	else	nameref choices=$n.choices
+	fi
+	nameref names=$n.names
+	nameref values=$n.values
+	nameref default=$n.default
+	integer defint=$default 
+	[[ $defgiven != "" ]] && defint=$defgiven
+#	print -u2 "default value is $default given value is $defgiven integer is $defint"
+
+	var=${names[$defint]}
+	val=${values[$defint]}
+
+	for offset in "${!choices[@]}"
+	do
+
+		$m add command -label "${choices[$offset]}" -command "#!ksh
+			${!val}=\"${values[$offset]}\"; 
+			${!var}=\"${names[$offset]}\""
+
+
+	done
+
+}
+
+
+
+

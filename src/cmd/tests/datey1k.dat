@@ -1,0 +1,125 @@
+#
+# tmscan() test data for the C locale
+#
+
+SET			NOW			Fri Dec 31 23:00:00 EST 1999
+
+Mon			%a			Mon Jan  3 23:00:00 EST 2000
+Sun			%a			Sun Jan  2 23:00:00 EST 2000
+Fri			%a			Fri Dec 31 23:00:00 EST 1999
+September		%B			Fri Sep  1 23:00:00 EDT 2000
+January			%B			Sat Jan  1 23:00:00 EST 2000
+December		%B			Wed Dec  1 23:00:00 EST 1999
+Sep Mon			%b %a			Mon Sep  4 23:00:00 EDT 2000
+jan fri			%b %a			Fri Jan  7 23:00:00 EST 2000
+DEC MON			%b %a			Mon Dec  6 23:00:00 EST 1999
+Jan Wed 1989		%b %a %Y		Wed Jan  4 23:00:00 EST 1989
+Fri 9			%a %H			Fri Dec 31 09:00:00 EST 1999
+Feb 10:30		%b %H:%S		Tue Feb  1 10:00:30 EST 2000
+10:30			%H:%M			Sat Jan  1 10:30:00 EST 2000
+13:30			%H:%M			Sat Jan  1 13:30:00 EST 2000
+00 96059		%H %y%j			Wed Feb 28 00:00:00 EST 1996
+00 96060		%H %y%j			Thu Feb 29 00:00:00 EST 1996
+00 96061		%H %y%j			Fri Mar  1 00:00:00 EST 1996
+
+#
+# export DATEMSK=date.msk for the following
+#
+
+10/1/87 4 PM				NIL	Thu Oct  1 16:00:00 EDT 1987
+Friday					NIL	Fri Dec 31 23:00:00 EST 1999
+Friday September 18, 1987, 10:30:30	NIL	Fri Sep 18 10:30:30 EDT 1987
+24,9,1986 10:30				NIL	Wed Sep 24 10:30:00 EDT 1986
+at monday the 1st of december in 1986	NIL	Mon Dec  1 23:00:00 EST 1986
+run job at 3 PM, december 2nd		NIL	Thu Dec  2 15:00:00 EST 1999
+1/1/00 12 AM				NIL	Sat Jan  1 00:00:00 EST 2000
+
+#
+# the rest should kick in tmdate()
+#
+
+Sun Jul 17 7 AM 2005			NULL	Sun Jul 17 07:00:00 EDT 2005
+Sat Aug 11 2 PM 1979			NULL	Sat Aug 11 14:00:00 EDT 1979
+Fri Dec 31 11:03 PM 1999		NULL	Fri Dec 31 23:03:00 EST 1999
+Fri Dec 31 11:03 PM 1999 EST		NULL	Fri Dec 31 23:03:00 EST 1999
+Fri Dec 31 11:03 PM 1999 -0500		NULL	Fri Dec 31 23:03:00 EST 1999
+Fri Dec 31 11:03 PM 1999 EET		NULL	Fri Dec 31 16:03:00 EST 1999
+Fri Dec 31 11:03 PM 1999 +0200		NULL	Fri Dec 31 16:03:00 EST 1999
+midnight 96060				NULL	Thu Feb 29 00:00:00 EST 1996
+1999198					NULL	Sat Jul 17 00:00:00 EDT 1999
+1999-198				NULL	Sat Jul 17 23:00:00 EDT 1999
+2000199					NULL	Mon Jul 17 00:00:00 EDT 2000
+2000-199				NULL	Mon Jul 17 23:00:00 EDT 2000
+2002-08-11				NULL	Sun Aug 11 23:00:00 EDT 2002
+2002 08 11				NULL	Mon Dec  1 20:02:00 EST 2008
+01/Jan/2000:00:00:05 -0100		NULL	Fri Dec 31 20:00:05 EST 1999
+01/Jan/2000:00:00:05 +0100		NULL	Fri Dec 31 18:00:05 EST 1999
+
+#
+# a few leap year tests
+#
+
+1996-02-29 00:00:00			NULL	Thu Feb 29 00:00:00 EST 1996
+1998-02-29 00:00:00			NULL	Sun Mar  1 00:00:00 EST 1998
+2000-02-29 00:00:00			NULL	Tue Feb 29 00:00:00 EST 2000
+
+#
+# signed upper limit
+#
+
+,#2147483647				NULL	Mon Jan 18 22:14:07 EST 2038
+
+#
+# at command examples
+#
+
+2pm + 1 week				NULL	Mon Jan  3 14:00:00 EST 2000
+2pm next week				NULL	Mon Jan  3 14:00:00 EST 2000
+1800					NULL	Fri Dec 31 18:00:00 EST 1999
+0730 tomorrow				NULL	Sat Jan  1 07:30:00 EST 2000
+now + 1 hour				NULL	Sat Jan  1 00:00:00 EST 2000
+now + 3 hours				NULL	Sat Jan  1 02:00:00 EST 2000
++0 1 minute				NULL	Fri Dec 31 23:00:00 EST 1999
++1 1 minute				NULL	Fri Dec 31 23:01:00 EST 1999
++2 1 minute				NULL	Fri Dec 31 23:02:00 EST 1999
++ 5 hours 10 minutes			NULL	Sat Jan  1 04:10:00 EST 2000
+in 7 hours				NULL	Sat Jan  1 06:00:00 EST 2000
+in 7 days				NULL	Fri Jan  7 23:00:00 EST 2000
+0815AM Jan 24				NULL	Sun Jan 24 08:15:00 EST 1999
+8 : 15am jan24				NULL	Sun Jan 24 08:15:00 EST 1999
+now + 1day				NULL	Sat Jan  1 23:00:00 EST 2000
+1700 utc				NULL	Fri Dec 31 12:00:00 EST 1999
+2110 UCT+ 30minutes			NULL	Fri Dec 31 16:40:00 EST 1999
+1 min					NULL	Fri Dec 31 23:01:00 EST 1999
+next min				NULL	Fri Dec 31 23:01:00 EST 1999
+exact next min				NULL	Fri Dec 31 23:01:00 EST 1999
+2 min					NULL	Fri Dec 31 23:02:00 EST 1999
+next 2 min				NULL	Fri Dec 31 23:02:00 EST 1999
+exact next 2 min			NULL	Fri Dec 31 23:02:00 EST 1999
+1 hour					NULL	Sat Jan  1 00:00:00 EST 2000
+next hour				NULL	Sat Jan  1 00:00:00 EST 2000
+exact next hour				NULL	Sat Jan  1 00:00:00 EST 2000
+1 day					NULL	Sat Jan  1 23:00:00 EST 2000
+next day				NULL	Sat Jan  1 23:00:00 EST 2000
+exact next day				NULL	Sat Jan  1 23:00:00 EST 2000
+2 days					NULL	Sun Jan  2 23:00:00 EST 2000
+next 2 days				NULL	Sun Jan  2 23:00:00 EST 2000
+
+#
+# cron command examples
+#
+
+0 0 1,15 * 1				NULL	Mon May  1 00:00:00 EDT 2000
+0 0 * * 1				NULL	Mon Jan  3 00:00:00 EST 2000
+0 0 * * *				NULL	Sat Jan  1 00:00:00 EST 2000
+15 0 * * *				NULL	Sat Jan  1 00:15:00 EST 2000
+15 4 * * *				NULL	Sat Jan  1 04:15:00 EST 2000
+40 4 * * *				NULL	Sat Jan  1 04:40:00 EST 2000
+0 0 * * 1-5				NULL	Mon Jan  3 00:00:00 EST 2000
+0 0 * * 0,6				NULL	Sat Jan  1 00:00:00 EST 2000
+
+#
+# date command examples
+#
+
+10080045				NULL	Fri Oct  8 00:45:00 EDT 1999

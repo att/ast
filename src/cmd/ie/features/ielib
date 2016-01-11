@@ -1,0 +1,168 @@
+sys	bsdtty,fcntl,file,filio,ioctl,nttyio,times,termio,termios,unistd
+hdr	fcntl,sgtty,termio,termios,unistd
+
+lib	yp_get_default_domain -lnsl -lsun
+
+key	const =
+
+typ	pid_t = int
+typ	clock_t,off_t,time_t = long
+
+tst	compile{
+	#include <sys/file.h>
+	#if defined(O_CREAT) && defined(LOCK_EX)
+	int ok = 1;
+	#else
+	(
+	#endif
+}end fail{
+	echo "#undef	_sys_file"
+}end
+
+tst	output{
+	main()
+	{
+		if (sizeof(int*) == 2)
+			printf("#define INT16	1\n");
+		return 0;
+	}
+}end
+
+tst	output{
+	#include	<setjmp.h>
+	jmp_buf save;
+	main()
+	{
+		if(_setjmp(save))
+		{
+			printf("#define SETJMP	_setjmp\n");
+			printf("#define LONGJMP	_longjmp\n");
+			exit(0);
+		}
+		done();
+	}
+	done()
+	{
+		_longjmp(save,1);
+		exit(1);
+	}
+}end fail{
+	echo "#define SETJMP	setjmp"
+	echo "#define LONGJMP	longjmp"
+}end
+
+tst	FLOCK link{
+	#include <sys/file.h>
+	int main(argc,argv)
+	char *argv[];
+	{
+		int fd;
+		int r;
+		if(( fd = open(argv[1],0)) < 0)
+			return 1;
+		if(flock(fd,LOCK_NB|LOCK_EX)!=0)
+			return 2;
+		if(( fd = open(argv[1],0)) < 0)
+			return 3;
+		r = flock(fd,LOCK_NB|LOCK_EX);
+		return(r==0);
+	}
+}end
+
+tst	- -DTERMIOS - -DTERMIOS -DPTEM - -DTERMIOS -DSTREAM - -DTERMIOS -DSTREAM -DPTEM - -DTERMIOS -DJIOCTL - -DTERMIO - -DTERMIO -DPTEM - -DTERMIO -DSTREAM - -DTERMIO -DSTREAM -DPTEM - -DTERMIO -DJIOCTL - -DSGTTY - -DSGTTY -DPTEM - -DSGTTY -DSTREAM - -DSGTTY -DSTREAM -DPTEM - -DSGTTY -DJIOCTL output{
+	#include <sys/types.h>
+	#ifdef TERMIOS
+	#	include	<termios.h>
+	#endif
+	#ifdef TERMIO
+	#	include	<termio.h>
+	#endif
+	#ifdef SGTTY
+	#	include	<sgtty.h>
+	#endif
+	#ifdef STREAM
+	#	include	<sys/stream.h>
+	#endif
+	#ifdef PTEM
+	#	include	<sys/ptem.h>
+	#endif
+	#ifdef JIOCTL
+	#	include	<sys/jioctl.h>
+	#	define winsize		jwinsize
+	#	define ws_col		bytesx
+	#	define TIOCGWINSZ	JWINSIZE
+	#endif
+	main()
+	{
+		struct winsize size;
+		int fd = open("/dev/tty",0);
+		ioctl(fd, TIOCGWINSZ, &size);
+		printf("#define WINSIZE	1\n");
+	#ifdef JIOCTL
+		printf("#define _sys_jioctl	1\n");
+	#endif /* JIOCTL */
+	#ifdef PTEM
+		printf("#define _sys_ptem	1\n");
+	#endif /* PTEM */
+	#ifdef STREAM
+		printf("#define _sys_stream	1\n");
+	#endif /* STREAM */
+		return 0;
+	}
+}end
+
+tst	- -DS5 - -DS4 output{
+	#include <sys/types.h>
+	#include <sys/time.h>
+	main()
+	{
+		time_t t1,t2;
+	#ifdef S4
+		int milli = 2000;
+	#else
+		struct timeval timeloc;
+		timeloc.tv_sec = 2;
+		timeloc.tv_usec = 0;
+	#endif /* S4 */
+		time(&t1);
+	#ifdef S4
+		select(0,(fd_set*)0,(fd_set*)0,milli);
+	#else
+		select(0,(fd_set*)0,(fd_set*)0,(fd_set*)0,&timeloc);
+	#endif /* S4 */
+		time(&t2);
+		if(t2 > t1)
+		{
+	#ifdef S4
+			printf("#define _SELECT4_	1\n");
+	#else
+			printf("#define _SELECT5_	1\n");
+	#endif /* S4 */
+			return 0;
+		}
+		return 1;
+	}
+}end
+
+cat{
+	#if defined(__STDC__) || defined(__cplusplus)
+	#define PROTO			1
+	#else
+	#define void			int
+	#endif
+	#if _lib_yp_get_default_domain
+	#define YELLOWP			1
+	#endif
+	#include <sys/types.h>
+	#if _sys_times
+	#include <sys/times.h>
+	#define included_sys_times	1
+	#endif
+	#if _sys_time
+	#include <sys/time.h>
+	#define included_sys_time	1
+	#endif
+	#define VOID			void
+	#define SIG_NORESTART		1
+	#define NFILE			32
+}end

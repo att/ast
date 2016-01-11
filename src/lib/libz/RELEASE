@@ -1,0 +1,35 @@
+07-11-29 sfdcgzip.c: add seekf() for first buffer rewind
+07-06-11 rename ARCH macros to ZLIB_ARCH to cut down namespace pollution
+07-05-09 Makefile: :INSTALLPROTO: zconf.h for win32 <ast_*> post edit
+07-01-25 zlib.h,gzio.c: add gzbopen() to handle buffered unseekable data
+07-01-25 sfdcgzip.c: use gzbopen() to handle buffered unseekable data
+05-07-25 __MVS__ tweaks
+05-03-21 snarf and merge zlib 1.2.3, drop gzseek64() gztell64()
+05-05-11 sfdcgzip.c: change return value to [cgv], add vcunzip read check
+04-02-14 sfdcgzip.c,sfdclzw.c: add SFDCNEXT()/SFDCPREV() calls
+03-05-13 sfdcgzip.c,sfdclzw.c: add SF_DBUFFER exception, SF_SHARE+sfreserve()
+03-03-13 gzio.c: eliminate fixed gzprintf() buffer size via sfio string stream
+03-01-20 zlib.h,gzio.c: add gzreopen()
+02-09-11 zlib.h: move 64 bit counts to internal_state
+02-08-05 add z_off64_t, gzseek64() etc. to preserve old binary interface
+	 work around 2^32 file size limitations
+02-06-11 add uSize == unsigned _ast_intmax_t; fix header size check
+02-05-22 zconf.h: fix __32BIT__ logic
+02-03-11 infblock.c: apply double free patch
+02-03-09 gzio.c: add stream->fatal to mark fatal errors previously ignored
+	 sfdcgzip.c: fix exception return values and mark SF_ERROR on fatal
+02-01-30 minigzip.c: error() => mgzerror() to avoid ancient ld dup sym error
+	 minigzip.c: [uU] in executable base name => gunzip, otherwise gzip
+01-09-18 zconf.h: include <ast_std.h> for __IMPORT__ and __EXPORT__
+00-09-11 gzio: don't set verified=1 in check_header() for concatenation
+99-11-19 gzio: add missing _PACKAGE_ast
+99-09-11 sfdcgzip,sfdclzw: return 1 if discipline pushed
+99-08-11 gzio: fix gzread() z_err to keep Z_STREAM_END after check_header()
+99-07-17 sfdclzw: don't free disc on SF_CLOSE
+99-06-23 fix gzread/gzwrite to return -1 on error (fixes sfio disc loop)
+99-02-14 fix SFGZ_SETPOS to flush/sync for mode=='w' only
+99-02-04 add SF_CLOSE to output trailer before the underlying stream is closed!
+98-12-01 drop lzwWrite and lzwSeek in sfdclzw 
+98-11-01 pushed stream buffer size is SF_BUFSIZE
+98-10-01 add SFGZ_GETPOS and SFGZ_SETPOS
+98-03-19 sfgzip => sfdcgzip

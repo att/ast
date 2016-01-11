@@ -1,0 +1,31 @@
+:
+# draw directory tree
+tw -P -e "
+begin:	printf('.GR 7.5 10.0 fill\n');
+end:	printf('.GE\n');
+action:	if (type == LNK)
+	{
+		status = FOLLOW;
+		local = 1;
+	}
+	else
+	{
+		printf('draw n%d_%ld_%d as ', dev, ino, visit);
+		if (local) printf('Diamond');
+		else if (type == NS) printf('Plaintext');
+		else if (type == DIR) printf('Ellipse');
+		else printf('Box');
+		printf(' label \"%s\";\n', name);
+		if (level > 0) printf('edge from n%d_%ld_0 to n%d_%ld_%d;\n',
+				parent.dev, parent.ino, dev, ino, visit);
+		if (visit > level)
+		{
+			if (visit == level + 1)
+				printf('same rank n%d_%ld_%d n%d_%ld_0;\n',
+					dev, ino, dev, ino, visit);
+			printf('%sedge from n%d_%ld_%d to n%d_%ld_0 dotted;\n',
+					(visit > level + 1) ? '' : 'back',
+					dev, ino, dev, ino, visit);
+		}
+	}
+" "$@"

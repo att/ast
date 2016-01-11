@@ -1,0 +1,197 @@
+# File Manager -- Various Utilities
+
+function message_window # message
+{
+      toplevel .mw
+      wm title .mw "Message"
+      label .mw.msg -text "$1"
+      button .mw.ok -text " OK " -command "destroy .mw"
+      pack .mw.msg .mw.ok
+}
+
+function error_message_window # message
+{
+      toplevel .emw
+      wm title .emw "ERROR!"
+      label .emw.msg -text "$1"
+      button .emw.ok -text " OK " -command "destroy .emw"
+      pack .emw.msg .emw.ok
+}
+
+function window_message # window message
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "Message:"
+      label $w.f.label2 -text "$2"
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.label2 $w.f.ok
+      pack $w.f
+      tkwait variable test
+}
+
+function window_error_message # window message
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "ERROR:"
+      label $w.f.label2 -text "$2"
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.label2 $w.f.ok
+      pack $w.f
+}
+
+function update_date_time # window
+{
+     exist=$(winfo exists $1)
+     if ((exist==1))
+     then  Time=$(date)
+           after 1000 update_date_time $1
+     fi
+}
+
+function update_listing # window
+{
+     if [[ $filename == */ ]]
+     then filename=$PWD/
+     fi
+     exist=$(winfo exists $1)
+     if ((exist==1))
+     then directory_listing_update $1.files
+          after 5000 update_listing $1
+     fi
+}
+
+function run_command_multiple_output # command window_title
+{
+      toplevel .cf
+      wm title .cf "$2"
+
+      $1 |&
+      exec 4<&p
+
+      frame .cf.t
+      pack .cf.t
+
+      text .cf.t.text -relief raised -bd 2 -yscrollcommand ".cf.t.scroll set"
+      scrollbar .cf.t.scroll -command ".cf.t.text yview"
+      button .cf.ok -text " OK " -command "destroy .cf"
+      pack .cf.t.text .cf.t.scroll -side left -fill y
+      pack .cf.ok -side bottom -fill x
+
+      while read -ru4 line
+      do  .cf.t.text insert end "$line"
+          .cf.t.text insert end $'\n'
+      done
+      exec 4<&-
+}
+
+function display_man_page  
+{
+      run_command_multiple_output "man -c $Man_Page" "$Man_Page Manual Page"
+}
+
+function run_command_one_output # command title window
+{
+      typeset w=$3
+      typeset test=1
+
+      $1 |&
+      read -r -p line
+      
+      frame $w.c
+      label $w.c.title -text "$2"
+      label $w.c.msg -text "$line"
+      button $w.c.ok -text " OK " -command "test=2; destroy $w.c"
+      pack $w.c.title $w.c.msg $w.c.ok
+      pack $w.c
+      tkwait variable test
+}
+
+function ask_one_file_name # window
+{
+      typeset w=$1
+      typeset test=1
+
+      FileName=""
+      frame $w.f
+      label $w.f.label1 -text "File Name: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable FileName
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.entry1 $w.f.ok -side left
+      pack $w.f
+      tkwait variable test
+}
+
+function ask_two_file_names # window
+{
+      typeset w=$1
+      typeset test=1
+
+      FileName1=""
+      FileName2=""
+      frame $w.f
+      label $w.f.label -text "Enter Two Filenames"
+      label $w.f.label1 -text "File Name 1: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable FileName1
+      label $w.f.label2 -text "File Name 2: "
+      entry $w.f.entry2 -width 20 -relief sunken -bd 2 -textvariable FileName2
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label
+      pack $w.f.label1 $w.f.entry1
+      pack $w.f.label2 $w.f.entry2
+      pack $w.f.ok 
+      pack $w.f
+      tkwait variable test
+}
+
+function how_many_lines # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Number_Lines=""
+      frame $w.f
+      label $w.f.label1 -text "How Many Lines: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable Number_Lines
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.entry1 $w.f.ok -side left
+      pack $w.f
+      tkwait variable test
+}
+
+function ask_location # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Location=""
+      frame $w.f
+      label $w.f.label1 -text "New Location: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable Location 
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      button $w.f.fb -text " Browse " -command "file_browser"
+      pack $w.f.label1 $w.f.entry1 $w.f.ok $w.f.fb -side left
+      pack $w.f
+      tkwait variable test
+}
+
+function ask_directory # window
+{
+      typeset w=$1
+      typeset test=1
+
+      Directory=""
+      frame $w.f
+      label $w.f.label1 -text "New Directory Name: "
+      entry $w.f.entry1 -width 20 -relief sunken -bd 2 -textvariable Directory 
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1 $w.f.entry1 $w.f.ok -side left
+      pack $w.f
+      tkwait variable test
+}
+

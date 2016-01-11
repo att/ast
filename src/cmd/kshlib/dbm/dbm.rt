@@ -1,0 +1,70 @@
+NOTE regression tests for the ksh dbm plugin
+
+UNIT ksh
+
+TEST '--read, --write'
+
+	EXEC -c 'builtin -f dbm dbm_open dbm_get dbm_set dbm_close
+		set \
+			aaa	111 \
+			bbb	222 \
+			ccc	333 \
+			ppp	444 \
+			qqq	555 \
+			rrr	666 \
+			xxx	777 \
+			yyy	888 \
+			zzz	999
+		dbm_open --write tst.dbm
+		while	(( $# >= 2 ))
+		do	dbm_set "$1" "$2"
+			shift 2
+		done
+		dbm_close
+	'
+
+	EXEC -c 'builtin -f dbm dbm_open dbm_get dbm_set dbm_close
+		dbm_open --read tst.dbm
+		set -s -- $(
+			while	:
+			do	key=$(dbm_get)
+				[[ $key ]] || break
+				print -r -- "$key"
+			done
+		)
+		print -r "$@"
+		dbm_close
+	'
+
+	EXEC -c 'builtin -f dbm dbm_open dbm_get dbm_set dbm_close
+		dbm_open --read tst.dbm
+		set -s -- $(
+			while	:
+			do	key=$(dbm_get)
+				[[ $key ]] || break
+				print -r -- "$key"
+			done
+		)
+		for key
+		do	print -r -- "$key=$(dbm_get "$key")"
+		done
+		dbm_close
+	'
+
+	EXEC -c 'builtin -f dbm dbm_open dbm_get dbm_set dbm_close
+		dbm_open --read --write tst.dbm
+		set -s -- $(
+			while	:
+			do	key=$(dbm_get)
+				[[ $key ]] || break
+				print -r -- "$key"
+			done
+		)
+		for key
+		do	dbm_set "$key" "$(( $(dbm_get "$key") + 1000 ))"
+		done
+		for key
+		do	print -r -- "$key=$(dbm_get "$key")"
+		done
+		dbm_close
+	'

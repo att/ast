@@ -1,0 +1,472 @@
+.fp 5 CW
+.de L		\" literal font
+.ft 5
+.if !\\$1 \&\\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \f1
+..
+.de LR
+.}S 5 1 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de RL
+.}S 1 5 \& "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de EX		\" start example
+.ta 1i 2i 3i 4i 5i 6i
+.PP
+.RS 
+.PD 0
+.ft 5
+.nf
+..
+.de EE		\" end example
+.fi
+.ft
+.PD
+.RE
+.PP
+..
+.TH CS 3
+.SH NAME \" @(#)cs.3 (gsf@research.att.com) 01/01/92
+cs \- connect stream ipc support
+.SH SYNOPSIS
+.L "#include <cs.h>"
+.br
+.L "\-lcs \-last"
+.SH DESCRIPTION
+The
+.I cs
+routines support local and remote connect streams in the file system
+name space.
+This is a traditional alternative to the service/port database
+schemes used by the BSD derivatives and the streams-based alternatives in
+10th edition and s5r4.
+The interface presented here is the same for all systems that support
+sockets or streams.
+.PP
+Connect stream files allow unrelated processes to rendezvous.
+A server first creates a connect stream.
+Each client open of the connect stream received by the server presents a unique
+bi-directional pipe connection between the client and server.
+.PP
+Connect streams may be either
+.I local
+or
+.IR remote .
+Local connections support file descriptor exchange via
+.L cssend
+and
+.LR csrecv .
+.PP
+Connect stream names are of the form
+\fB/dev/\fP\fIproto\fP\fB/\fP\fIhost\fP\fB/\fP\fIservice\fP[/\fIoptions\fP
+.I proto
+is
+.B fdp
+for local streams and
+.B tcp
+or
+.B udp
+for remote streams.
+.I host
+is either a host name or an internet
+.I n.n.n.n
+address.
+.B local
+names the local host and
+.B share
+names any host on the local network that is running the service.
+.I service
+is either a service name or an integer port number.
+The
+.I options
+are
+.B /
+separated and further qualify the connect stream:
+.TP
+\fBuser\fP[=\fIuid\fP]
+restricts the connection to the current
+.RI [ uid ]
+user
+.TP
+\fBgroup\fP[=\fIgid\fP]
+restricts the connection to the current
+.RI [ gid ]
+group
+.TP
+.B other
+(default) specifies no user or group restrictions.
+.TP
+.B local
+causes a
+.B share
+service to be instantiated on the local host if it is not already running
+.TP
+.B remote
+causes the host address to be interpreted as remote -- mainly used to
+debug remote authentication
+.TP
+.B slave
+used service instantiation to disable the
+.L csdaemon
+background
+.L fork
+-- used by master servers to preserve the parent/child relationship
+.PP
+Other options are service dependent and are used to name different
+instantiations of the same service.
+.PP
+Most servers reside in the directory
+\fBlib\fP/\fBcs\fP/\fIproto\fP/\fIservice\fP.
+.B server
+is the name of the server executable.
+The file
+.B hosts
+lists the hosts on which the service can be automatically started
+(see
+.L csopen
+below).
+The first available host will be used.
+The special host name
+.B share
+is expanded to a list of the local network file servers.
+If 
+.B hosts
+is omitted then
+.B share
+is assumed.
+.PP
+The basic routines are:
+.PP
+.L "int csopen(const char* path, int flags)"
+.PP
+Open a unique connection to the process that created the connect stream
+.LR path .
+The other process must do a
+.L csrecv
+to complete the rendezvous.
+The connection file descriptor is returned,
+.L \-1
+on error.
+If the service is not running and the
+.B server
+and
+.B hosts
+files corresponding to the connect stream are located then the service HERE
+.PP
+.L "char* cspath(int fd)"
+.PP
+Return a pointer to an equivalent pathname for the open file descriptor
+.LR fd .
+.PP
+.L "int cspoll(int nfds, fd_set* rd, fd_set* wr, long ms)"
+.PP
+Poll the file descriptors
+.L 0
+through
+.L nfds\-1
+in
+.L rd
+for read events (data available for
+.L read
+or
+.LR csrecv )
+and
+.L wr
+for write events
+.RL ( write
+or
+.L cssend
+possible).
+.LR rd ( wr )
+may be 
+.L 0
+if read(write)
+events are not of interest.
+The number of file descriptors matching the requested events is returned,
+and
+.L rd
+and
+.L wr
+are modified to reflect the matched file descriptors.
+.L cspoll
+will timeout after
+.L ms
+milliseconds.
+If 
+.L ms
+is
+.L \-1
+then
+.L cspoll
+will block until one of the requested events occurs.
+.L 0
+is returned if no events occurred before the timeout,
+.L \-1
+on error.
+.L fd_set
+variables are manipulated by the following functions:
+.RS
+.TP
+.L "FD_NEW(fd_set* set)"
+Initialize
+.L set
+with no elements.
+.TP
+.L "FD_SET(int fd, fd_set* set)"
+Add 
+.L fd
+to
+.LR set .
+.TP
+.L "FD_CLR(int fd, fd_set* set)"
+Remove
+.L fd
+from
+.LR set .
+.TP
+.L "FD_TST(int fd, fd_set* set)"
+Return non-zero if
+.L fd
+is a member of
+.LR set .
+.RE
+.PP
+.L "int csrecv(int fd, CSID* id, int* fds, int nfds)"
+.PP
+Receive up to 
+.L nfds
+file descriptors from the stream
+.L fd
+and place them in the array pointed to by
+.LR fds .
+The number of received file descriptors is returned,
+.L \-1
+on error.
+.L csrecv
+is used under two circumstances:
+the first is
+to complete a rendezvous on a connect stream initiated by a
+.L csopen
+in another process; the second is to receive file descriptors
+on any stream initiated by a
+.L cssend
+in another process.
+For local streams
+.L id\->hid
+is set to 
+.L 0
+and
+.LR id\->pid ,
+.LR id\->uid ,
+and
+.LR id\->gid
+are set to the process id, user id and group id of the sending process.
+For remote streams
+.LR id\->hid
+is set to the internet address of the sending process and the remaining
+elements are undefined.
+In any event, only the uid and gid can currently be trusted.
+.PP
+.L "int cssend(int fd, int* fds, int nfds)"
+.PP
+Send
+.L nfds
+file descriptors pointed to by
+.L fds
+on the stream
+.LR fd .
+.L 0
+is returned on success,
+.L \-1
+on error.
+.L csrecv
+is used on the other side of
+.L fd
+to receive the file descriptors.
+.L cssend
+may return before
+.L csrecv
+completes on the other side.
+.PP
+The following routines provide portable interfaces for server
+related operations.
+.PP
+.L "unsigned long csaddr(char* name, int cache)"
+.PP
+Return the internet address for the host
+.LR name .
+If
+.L cache
+is greater than zero then intermediate information will be
+cached for subsequent
+.L csaddr
+requests.
+If
+.L cache
+is less than zero then the previous
+.L cached
+value is retained.
+Otherwise caching is turned off.
+.L 0
+is returned on error.
+.PP
+.L "int csdaemon()"
+.PP
+Fork into the background and drop the controlling terminal.
+.L 0 
+is returned on success,
+.L \-1
+on error.
+.PP
+.L "int csfdmax()"
+.PP
+Return the per-process maximum number of open file descriptors.
+At least
+.L 20
+will be returned.
+.PP
+.L "unsigned long csinet(char* path, unsigned short* port, int* prot)"
+.PP
+Parse the internet address and optional port number from the path name
+.L path
+and return the address.
+If
+.L port
+is non-zero then it is set to point to the port number.
+If omitted the default port number is
+.LR 0 .
+.L 0
+is returned on error.
+If 
+.L prot
+is non-zero then it is set to one of
+.L CS_TCP
+or
+.L CS_UDP
+depending on the protocol.
+.PP
+.L "char* csname()"
+.PP
+Return a pointer to the local host name.
+A non-null pointer is always returned.
+.PP
+.L "int csnote(char* name, CSSTAT* sp)"
+.PP
+Note a change to the host status for
+.LR name .
+This routine is used by the system status demon
+.IR ssd (8)
+and is the write counterpart of
+.LR csstat .
+See
+.L csstat
+below for a description of the
+.L CSSTAT
+members.
+The current working directory must be
+.L CS_STAT_DIR
+and the calling process must own the local host status file.
+.L 0
+is returned on success,
+.L \-1
+on error.
+.PP
+.L "char* csntoa(unsigned long addr)"
+.PP
+Return the
+.I n.n.n.n
+string address for
+.LR addr .
+.PP
+.L "int csstat(char* name, CSSTAT* sp)"
+.PP
+Return status information in
+.L sp
+for the host
+.LR name .
+The information is updated by the system status demon
+.IR ssd (8)
+using
+.LR csnote .
+Updates are on average every 
+.L CS_STAT_FREQ
+seconds.
+The update frequency is randomized to avoid synchronized update spikes
+from multiple hosts.
+A host is considered down if its status information is more than
+.L CS_STAT_DOWN
+seconds old.
+.L 0
+is returned on success,
+.L \-1
+on error.
+.L CSSTAT
+contains the following members:
+.RS
+.TP
+.L "long up"
+System uptime in seconds.
+If negative then the system has been down for at least
+.L \-up
+seconds.
+.TP
+.L "int load"
+The 1 minute system load average times 100.
+.TP
+.L "unsigned long idle"
+The minimum idle time in seconds for all users logged into the system.
+Keyboard strokes and mouse movement are included in the calculation.
+.TP 
+.L "int users"
+The number of users that have been active within the last 24 hours.
+.TP
+.L "int pctusr"
+The percentage of CPU time used by user and low priority processes.
+.TP
+.L "int pctsys"
+The percentage of CPU time used by the system itself.
+The cpu idle time is
+.LR 100\-(pctusr+pctsys) .
+.RE
+.SH CAVEATS
+Mounting streams in the file system and sending file descriptors
+between processes is tricky business.
+Most systems can be coaxed to panic with just the right sequence of events.
+This library has been written to narrow the panic windows, but there
+is still opportunity for crashes.
+For example (unless you are at a trade show):
+on s5r4, don't unlink a connect stream path while a server
+has it open; and on BSD don't kill a client while a 
+.L cssend
+is pending to a hung server until after the server has been killed.
+The latter can only happen if the server hangs after the
+.L cssend
+request has been initiated.
+.PP
+On some systems the
+.L cspoll
+millisecond timeout is rounded up to the nearest second.
+.PP
+For remote connect stream path names the
+.I service
+component, if it is not registered in the service table,
+is hashed to generate a 16 bit TCP port number above
+.L IPPORT_USERRESERVED
+[5000].
+The hashed port number for a given
+.I service
+will be the same on all systems.
+It is possible for two distinct paths to generate the same port number,
+but this is also the case for independently administered service tables.
+However, if port number clashes become a problem then a name service will be
+transparently slipped in to
+provide a 1-1 mapping between path names and port numbers.
+If
+.I service
+is
+.L 0
+for
+.L cscreat
+then the system generates a port number, usually below
+.LR IPPORT_USERRESERVED .
+.SH "SEE ALSO"
+ss(1), libx(3), ssd(8)

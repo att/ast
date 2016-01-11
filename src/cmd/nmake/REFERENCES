@@ -1,0 +1,61 @@
+.HU "References"
+.P
+.VL 6
+.LI "[Bour78]"
+S. R. Bourne,
+.IR "The UNIX Shell",
+AT&T Bell Laboratories Technical Journal,
+Vol. 57 No. 6 Part 2, pp. 1971-1990, July-August 1978.
+.LI "[CF88]"
+S. Cichinski and G. Fowler,
+.IR "Product Administration through SABLE and nmake" ,
+AT&T Technical Journal, Vol. 67 No. 4, pp. 59-70, July/August 1988.
+.LI "[EP84]"
+B. Erickson and J. F. Pellegrin,
+.IR "Build \- A Software Construction Tool" ,
+AT&T Bell Laboratories Technical Journal Vol. 63 No. 6 Part 2,
+pp. 1049-1059, July-August 1984.
+.LI "[Feld79]"
+S. I. Feldman,
+.IR "Make \- A Program for Maintaining Computer Programs" ,
+Software \- Practice and Experience, Vol. 9 No. 4, pp. 256-265, April 1979.
+.LI "[Fowl85]"
+G. S. Fowler,
+.IR "The Fourth Generation Make" ,
+USENIX Portland 1985 Summer Conference Proceedings, pp. 159-174, 1985.
+.LI "[Fowl90]
+G. S. Fowler,
+.IR "A Case for make" ,
+Software \- Practice and Experience,
+Vol. 20 No. S1, pp. 35-46, June 1990.
+.LI "[Fowl93]"
+G. S. Fowler,
+.IR "The Shell as a Service" ,
+USENIX Cincinati 1993 Summer Conference Proceedings, pp. 267-277, 1993.
+.LI "[Hume87]"
+A. G. Hume,
+.I "Mk: a successor to make" ,
+USENIX Phoenix 1987 Summer Conference Proceedings, pp. 445-457, 1987.
+.LI "[Korn83]"
+D. G. Korn,
+.IR "KSH \- A Shell Programming Language" ,
+USENIX Toronto 1983 Summer Conference Proceedings,
+pp. 191-202, 1983.
+.LI "[KK90]"
+D. G. Korn and E. Krell,
+.IR "A New Dimension for the Unix File System" ,
+Software \- Practice and Experience,
+Vol. 20 No. S1, pp. 19-33, June 1990.
+.LI "[Palk87]"
+R. Palkovic,
+.IR "SunPro: The Sun Programming Environment" ,
+M. Hall (ed.),
+A Sun Technical Report, Sun Microsystems, Inc., 67-86 (1987).
+.LI "[SM89]"
+R. M. Stallman and R. McGrath,
+.IR "GNU Make \- A Program for Directing Recompilation" ,
+Edition 0.1 Beta, March 1989.
+.LI "[SV84]"
+.IR "Augmented Version of Make" ,
+UNIX System V \- Release 2.0 Support Tools Guide, pp. 3.1-3.19, April 1984.
+.LE

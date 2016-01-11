@@ -1,0 +1,721 @@
+: transcribed from the tcl 8.3 Spencer reg tests 2005-06-06
+
+# Copyright (c) 1998, 1999 Henry Spencer.  All rights reserved.
+
+# basic sanity checks
+
+BE	abc		abc		(0,3)
+BE	abc		def		NOMATCH
+BE	abc		xyabxabce	(5,8)
+
+# basic syntax
+
+BE	NULL		a		ENULL
+BEz	NULL		a		(0,0)
+E	a|		a		ENULL
+Ez	a|		a		(0,1)
+E	a|b		a		(0,1)
+E	a|b		b		(0,1)
+E	a||b		b		ENULL
+Ez	a||b		b		(0,1)
+BE	ab		ab		(0,2)
+
+# parentheses
+
+E	(a)e		ae		(0,2)(0,1)
+E	(a)e		ae		(0,2)(0,1)
+B	\(a\)b		ab		(0,2)(0,1)
+E	a((b)c)		abc		(0,3)(1,3)(1,2)
+E	a(b)(c)		abc		(0,3)(1,2)(2,3)
+E	a(b		ab		EPAREN
+B	a\(b		ab		EPAREN
+
+# sigh, we blew it on the specs here... someday this will be fixed in POSIX,
+
+
+# but meanwhile, it's fixed in AEs
+
+E	a)b		a)b		(0,3)
+E	a)b		a)b		(0,3)
+B	a\)b		a)b		EPAREN
+E	a(?:b)c		abc		(0,3)
+E	a()b		ab		ENULL
+Ez	a()b		ab		(0,2)(1,1)
+E	a(?:)b		ab		(0,2)
+E	a(|b)c		ac		ENULL
+Ez	a(|b)c		ac		(0,2)(1,1)
+E	a(b|)c		abc		ENULL
+Ez	a(b|)c		abc		(0,3)(1,2)
+
+# simple one-char matching
+
+
+# general case of brackets done later
+
+BE	a.b		axb		(0,3)
+BEn$	a.b		a\nb		NOMATCH
+BE$	a.b		a\nb		(0,3)
+BE	a[bc]d		abd		(0,3)
+BE	a[bc]d		acd		(0,3)
+BE	a[bc]d		aed		NOMATCH
+BE	a[^bc]d		abd		NOMATCH
+BE	a[^bc]d		aed		(0,3)
+BE$	a[^bc]d		a\nd		(0,3)
+BEn$	a[^bc]d		a\nd		NOMATCH
+
+# context-dependent syntax
+
+
+# plus odds and ends
+
+B	fix		reg.dat		NOMATCH
+B	fix		reg.dat		NOMATCH
+E	fix		reg.dat		NOMATCH
+B	\(*\)		fix		NOMATCH
+B	\(*\)		a		NOMATCH
+E	(*)		fix		BADRPT
+B	^*		^		NOMATCH
+B	^*		fix		NOMATCH
+B	^*		a		NOMATCH
+B	^*		^*		NOMATCH
+E	^*		^		(0,0)
+B	\(^*\)		fix		NOMATCH
+B	\(^*\)		a		NOMATCH
+E	(^*)		fix		(0,0)(0,0)
+B	$*		$		(0,1)
+B	$*		a$z		(0,0)
+B	$*		fix		(0,0)
+B	$*		a*z		(0,0)
+B	$*		$*		(0,1)
+B	$*		a$*z		(0,0)
+E	$*		$		(0,0)
+BE	^b		^		NOMATCH
+BE	^b		^b		NOMATCH
+B	x^		x^		(0,2)
+E	x^		x^		NOMATCH
+Ebn$	^		x\nb		(2,2)
+En$	\n^		x\nb		(1,2)
+B	\(^b\)		^b		NOMATCH
+E	(^b)		^b		NOMATCH
+BE	x$		x		(0,1)
+B	\(x$\)		x		(0,1)(0,1)
+E	(x$)		x		(0,1)(0,1)
+B	x$y		x$y		(0,3)
+E	x$y		x$y		NOMATCH
+BE	x$y		xy		NOMATCH
+En$	x$\n		x\n		(0,2)
+E	+		x		BADRPT
+E	?		x		BADRPT
+
+# simple quantifiers
+
+BE	a*		aa		(0,2)
+BE	a*		b		(0,0)
+E	a+		aa		(0,2)
+E	a?b		ab		(0,2)
+E	a?b		zb		(1,2)
+E	a?b		b		(0,1)
+B	fix		reg.dat		NOMATCH
+E	fix		reg.dat		NOMATCH
+B	a**		aaa		(0,3)
+E	a**		aaa		(0,3)
+B	a**b		aab		(0,3)
+E	a**b		aab		(0,3)
+B	fix		reg.dat		NOMATCH
+E	fix		reg.dat		NOMATCH
+E	a++		aaa		BADRPT
+E	a?+		aaa		BADRPT
+E	a?*		aaa		(0,1)
+E	a+*		aaa		(0,3)
+E	a*+		aaa		BADRPT
+
+# braces
+
+E	a0		a1		NOMATCH
+E	a0		a1		NOMATCH
+E	a1		a0		NOMATCH
+E	a1		a2		NOMATCH
+E	a{257}		x		NOMATCH
+E	a{1000}		x		NOMATCH
+E	a{1		x		EBRACE
+E	a{1n}		x		BADBR
+B	a{b		a{b		(0,3)
+E	a{b		a{b		BADBR
+B	a{		a{		(0,2)
+E	a{		a{		EBRACE
+B	a\0b		a\1\b		BADESC
+B	a\{0,1		x		EBRACE
+E	a{0,1\		x		BADBR
+E	a{0}b		ab		(1,2)
+E	a0b		a0b		(0,3)
+E	a0b		a1b		NOMATCH
+E	a0b		a2b		NOMATCH
+E	a0b		a2b		NOMATCH
+E	a0b		ab		NOMATCH
+E	a1b		a1b		(0,3)
+E	a1b		a3b		NOMATCH
+E	a1b		a3b		NOMATCH
+E	a1b		ab		NOMATCH
+E	a2b		a3b		NOMATCH
+E	a2b		a3b		NOMATCH
+E	a2b		ab		NOMATCH
+E	a2b		ab		NOMATCH
+
+# brackets
+
+BE	a[bc]		ac		(0,2)
+BE	a[-]		a-		(0,2)
+BE	a[[.-.]]	a-		(0,2)
+BE	a[0-[.9.]]	a2		(0,2)
+BE	a[[=x=]]	ax		(0,2)
+BE	a[[=x=]]	ay		NOMATCH
+BE	a[[=x=]]	az		NOMATCH
+BE	a[0-[=x=]]	x		ERANGE
+BE	a[[:digit:]]	a0		(0,2)
+BE	a[[:woopsie:]]	x		ECTYPE
+BE	a[[:digit:]]	ab		NOMATCH
+BE	a[0-[:digit:]]	x		NOMATCH
+BE	[[:<:]]a	a		(0,1)
+BE	a[[:>:]]	a		(0,1)
+BE	a[[..]]b	x		ECOLLATE
+BE	a[[==]]b	x		ECOLLATE
+BE	a[[::]]b	x		ECTYPE
+BE	a[[.a		x		ECOLLATE
+BE	a[[=a		x		ECOLLATE
+BE	a[[:a		x		ECTYPE
+BE	a[		x		EBRACK
+BE	a[b		x		EBRACK
+BE	a[b-		x		EBRACK
+BE	a[b-c		x		EBRACK
+BE	a[b-c]		ab		(0,2)
+BE	a[b-b]		ab		(0,2)
+BE	a[1-2]		a2		(0,2)
+BE	a[c-b]		x		ERANGE
+BE	a[a-b-c]	x		ERANGE
+BE	a[--?]b		a?b		(0,3)
+BE	a[---]b		a-b		(0,3)
+BE	a[]b]c		a]c		(0,3)
+BE	a[]]b		a]b		(0,3)
+BE	a[[b]c		a[c		(0,3)
+BE	a[[b]c		abc		(0,3)
+
+B	a[\]]b		a]b		NOMATCH
+E	a[\]]b		a]b		NOMATCH
+B	a[\]]b		a\]b		(0,4)
+E	a[\]]b		a\]b		(0,4)
+B	a[\\]b		a\b		(0,3)
+E	a[\\]b		a\b		(0,3)
+E	a[\\]b		a\b		(0,3)
+B	a[\Z]b		a\b		(0,3)
+E	a[\Z]b		a\b		(0,3)
+
+Bv	a[\]]b		a]b		NOMATCH
+Ev	a[\]]b		a]b		NOMATCH
+Bv	a[\]]b		a\]b		(0,4)
+Ev	a[\]]b		a\]b		(0,4)
+Bv	a[\\]b		a\b		(0,3)
+Ev	a[\\]b		a\b		(0,3)
+Ev	a[\\]b		a\b		(0,3)
+Bv	a[\Z]b		a\b		(0,3)
+Ev	a[\Z]b		a\b		(0,3)
+
+BE	a[[\b]c		a[c		(0,3)
+BE	a[[\b]c		abc		(0,3)
+BE	a[[\\b]c	abc		(0,3)
+BE	a[[\Z]c		aZc		(0,3)
+BE	a[[\b]c		a\c		(0,3)
+BE	a[[\\b]c	a\c		(0,3)
+BE	a[[\b]*c	a[c		(0,3)
+BE	a[[\\b]*c	a[c		(0,3)
+BE	a[[\b]*c	a[bc		(0,4)
+BE	a[[\\b]*c	a[bc		(0,4)
+BE	a[[\b]*c	a[c		(0,3)
+BE	a[[\\b]*c	a[c		(0,3)
+BE	a[[\b]*c	ab[c		(0,4)
+BE	a[[\\b]*c	ab[c		(0,4)
+E$	a[\xfe-\a][\xff-	a\x02\xfb	ERANGE
+
+BEv	a[[\b]c		a[c		(0,3)
+BEv	a[[\b]c		abc		NOMATCH
+BEv	a[[\\b]c	abc		(0,3)
+BEv	a[[\Z]c		aZc		(0,3)
+BEv	a[[\b]c		a\c		NOMATCH
+BEv	a[[\\b]c	a\c		(0,3)
+BEv	a[[\b]*c	a[c		(0,3)
+BEv	a[[\\b]*c	a[c		(0,3)
+BEv	a[[\b]*c	a[bc		NOMATCH
+BEv	a[[\\b]*c	a[bc		(0,4)
+BEv	a[[\b]*c	a[c		(0,3)
+BEv	a[[\\b]*c	a[c		(0,3)
+BEv	a[[\b]*c	ab[c		NOMATCH
+BEv	a[[\\b]*c	ab[c		(0,4)
+E$v	a[\xfe-\a][\xff-	a\x02\xfb	ERANGE
+
+# anchors and newlines
+
+BE	^a		a		(0,1)
+BEb	^a		a		NOMATCH
+BE	^		a		(0,0)
+BE	a$		aba		(2,3)
+BEe	a$		a		NOMATCH
+BE	$		ab		(2,2)
+BEn	^a		a		(0,1)
+BEn$	^a		b\na		(2,3)
+BEnb$	^a		a\na		(2,3)
+BEn	a$		a		(0,1)
+BEn$	a$		a\nb		(0,1)
+BEn$	a$		a\na		(0,1)
+BEn$	b$		a\nb		(2,3)
+B	^^		a		NOMATCH
+B	^^		^		(0,1)
+E	^^		a		(0,0)
+E	^^		^		(0,0)
+B	$$		$		(0,1)
+E	$$		$		(1,1)
+B	$$		a		NOMATCH
+E	$$		a		(1,1)
+BE	^$		NULL		(0,0)
+BE	^$		a		NOMATCH
+BEn$	^$		a\n\nb		(2,2)
+B	$^		NULL		NOMATCH
+E	$^		NULL		(0,0)
+B	$^		$^		(0,2)
+E	$^		$^		NOMATCH
+E	\Aa		a		(0,1)
+B	\Aa		a		(0,1)
+Bn$	\\Aa		b\na		NOMATCH
+B	a\Z		a		(0,1)
+E	a\Z		a		(0,1)
+Bn$	a\\Z		a\nb		NOMATCH
+En$	a\\Z		a\nb		NOMATCH
+E	^*		x		(0,0)
+E	$*		x		(0,0)
+E	\A*		x		BADRPT
+E	\Z*		x		BADRPT
+
+# boundary constraints
+
+BE	[[:<:]]a	a		(0,1)
+BE	[[:<:]]a	-a		(1,2)
+BE	[[:<:]]a	ba		NOMATCH
+BE	a[[:>:]]	a		(0,1)
+BE	a[[:>:]]	a-		(0,1)
+BE	a[[:>:]]	ab		NOMATCH
+B	\<a		a		(0,1)
+B	\<a		ba		NOMATCH
+B	a\>		a		(0,1)
+B	a\>		ab		NOMATCH
+E	\ya		a		BADESC
+E	\ya		ba		BADESC
+E	a\y		a		BADESC
+E	a\y		ab		BADESC
+E	a\Y		ab		BADESC
+E	a\Y		a-		BADESC
+E	a\Y		a		BADESC
+E	-\Y		-a		BADESC
+E	-\Y		-%		BADESC
+E	\Y-		a-		BADESC
+E	fix		reg.dat		NOMATCH
+E	[[:>:]]*	x		BADRPT
+B	\<*		x		BADRPT
+B	\>*		x		BADRPT
+E	\y*		x		BADESC
+E	\Y*		x		BADESC
+E	\ma		a		BADESC
+E	\ma		ba		BADESC
+E	a\M		a		BADESC
+E	a\M		ab		BADESC
+E	\Ma		a		BADESC
+E	a\m		a		BADESC
+
+# character classes
+
+E	a\db		a0b		(0,3)
+E	a\db		axb		NOMATCH
+E	a\Db		a0b		NOMATCH
+E	a\Db		axb		(0,3)
+E$	a\\sb		a b		(0,3)
+E$	a\\sb		a\tb		(0,3)
+E$	a\\sb		a\nb		(0,3)
+E	a\sb		axb		NOMATCH
+E	a\Sb		axb		(0,3)
+E$	a\\Sb		a b		NOMATCH
+E	a\wb		axb		(0,3)
+E	a\wb		a-b		NOMATCH
+E	a\Wb		axb		NOMATCH
+E	a\Wb		a-b		(0,3)
+E	\y\w+z\y	adze-guz	BADESC
+
+E	a[\d]b		a1b		NOMATCH
+E$	a[\\s]b		a b		NOMATCH
+E	a[\w]b		axb		NOMATCH
+
+Ev	a[\d]b		a1b		(0,3)
+E$v	a[\\s]b		a b		(0,3)
+Ev	a[\w]b		axb		(0,3)
+
+# escapes
+
+BE$	a\\		x		EESCAPE
+E	a\<b		a<b		NOMATCH
+Ee	a\<b		a<b		NOMATCH
+B	a\wb		awb		(0,3)
+Ee	a\wb		awb		(0,3)
+E$	a\\ab		a\ab	(0,3)
+E$	a\\bb		a\bb		NOMATCH
+E	a\Bb		a\b		NOMATCH
+E$	a\\chb		a\bb		(0,3)
+E$	a\\cHb		a\bb		(0,3)
+E$	a\\e		a\e		(0,2)
+E$	a\\fb		a\fb		(0,3)
+E$	a\\nb		a\nb		(0,3)
+E$	a\\rb		a\rb		(0,3)
+E$	a\\tb		a\tb		(0,3)
+E$	a\\u0008x	a\bx		BADESC
+E	a\u008x		x		BADESC
+E$	a\\u00088x	a\b8x		BADESC
+E$	a\\U00000008x	a\bx		BADESC
+E	a\U0000008x	x		BADESC
+E$	a\\vb		a\vb		(0,3)
+E$	a\\x08x		a\bx		(0,3)
+E	a\xq		x		NOMATCH
+E$	a\\x0008x	a\bx		(0,3)
+E	a\z		x		NOMATCH
+E$	a\\010b		a\bb		(0,3)
+
+# back references
+
+
+# ugh
+
+E	a(b*)c\1	abbcbb		(0,6)(1,3)
+E$	a(b*)c\x01	ac		NOMATCH
+E	a(b*)c\1	abbcb		NOMATCH
+E	a(b*)\1		abbcbb		(0,3)(1,2)
+E	a(b|bb)\1	abbcbb		(0,3)(1,2)
+E	a([bc])\1	abb		(0,3)(1,2)
+E	a([bc])\1	abc		NOMATCH
+E	a([bc])\1	abcabb		(3,6)(4,5)
+E	a([bc])*\1	abc		NOMATCH
+E	a([bc])\1	abB		NOMATCH
+Ei	a([bc])\1	abB		(0,3)(1,2)
+E	a([bc])\1+	abbb		(0,4)(1,2)
+E	a([bc])\13	a([bc])\14	NOMATCH
+E	a([bc])\13	a([bc])\14	NOMATCH
+E	a([bc])\1*	abbb		(0,4)(1,2)
+E	a([bc])\1*	ab		(0,2)(1,2)
+E	a([bc])(\1*)	ab		(0,2)(1,2)(2,2)
+E	a((b)\1)	x		ESUBREG
+E	a(b)c\2		x		ESUBREG
+B	a\(b*\)c\1	abbcbb		(0,6)(1,3)
+
+# octal escapes vs back references
+
+
+# initial zero is always octal
+
+E$	a\\010b		a\bb		(0,3)
+E$	a\\0070b	a\a0b		(0,4)
+E$	a\\07b		a\ab		BADESC
+E$	a(b)(b)(b)(b)(b)(b)(b)(b)(b)(b)\\07c	abbbbbbbbbb\ac		BADESC
+
+# a single digit is always a backref
+
+E	a\7b		x		ESUBREG
+
+# otherwise it's a backref only if within range (barf!)
+
+E$	a\\10b		a\bb		ESUBREG
+E	a\101b		aAb		(0,3)
+E	a(b)(b)(b)(b)(b)(b)(b)(b)(b)(b)\10c	abbbbbbbbbbbc		NOMATCH
+
+# but we're fussy about border cases -- guys who want octal should use the zero
+
+E	a((((((((((b\10))))))))))c	x		ESUBREG
+
+# BREs don't have octal, EEs don't have backrefs
+
+E$	a\\12b		a\nb		ESUBREG
+B	a\12b		x		ESUBREG
+Ee	a\12b		a12b		ESUBREG
+
+# expanded syntax
+
+Ec	a b c		abc		(0,3)
+Ec$	a b #oops\nc\td	abcd		(0,4)
+Ec$	a\\ b\\\tc	a b\tc		(0,5)
+Ec$	a b\\#c		ab#c		BADESC
+Ec	a b[c d]e	ab e		(0,4)
+Ec	a b[c#d]e	ab#e		(0,4)
+Ec	a b[c#d]e	abde		(0,4)
+Bc	ab{ d		ab{d		(0,4)
+Ec	ab{ d		ab{d		BADBR
+Ec$	ab 1 c		ab 2 c		NOMATCH
+
+# misc syntax
+
+E	a(?#comment)b	ab		(0,2)
+
+# unmatchable Es
+
+E	a^b		ab		NOMATCH
+
+# case independence
+
+BEi	ab		Ab		(0,2)
+BEi	a[bc]		aC		(0,2)
+BEi	a[^bc]		aB		NOMATCH
+BEi	a[b-d]		aC		(0,2)
+BEi	a[^b-d]		aC		NOMATCH
+
+# directors and embedded options
+
+BE	fix		reg.dat		NOMATCH
+L	fix		reg.dat		NOMATCH
+B	***=a*b		a*b		NOMATCH
+E	***=a*b		a*b		BADRPT
+L	***=a*b		***=a*b		(0,7)
+B	***:\w+		ab		NOMATCH
+Ee	***:\w+		ab		BADRPT
+BE	***:***=a*b	x		BADRPT
+B	***:(?b)a+b	a+b		NOMATCH
+E	***:(?b)a+b	a+b		BADRPT
+E	(?b)a+b		a+b		BADRPT
+Ee	(?b)\w+		x		BADRPT
+B	(?b)\w+		(?b)w+		(0,6)
+Ei	(?c)a		a		BADRPT
+Ei	(?c)a		x		BADRPT
+E	(?e)\W+		WW		BADRPT
+E	(?i)a+		Aa		(0,2)
+E$	(?m)a.b		a\nb		NOMATCH
+E$	(?m)^b		a\nb		(2,3)
+E$	(?n)a.b		a\nb		BADRPT
+E$	(?n)^b		a\nb		BADRPT
+E$	(?p)a.b		a\nb		(0,3)
+E$	(?p)^b		a\nb		NOMATCH
+E	(?q)a+b		a+b		BADRPT
+En$	(?s)a.b		a\nb		(0,3)
+Ex$	(?t)a b		a b		BADRPT
+E$	(?w)a.b		a\nb		BADRPT
+E$	(?w)^b		a\nb		BADRPT
+E$	(?x)a b		ab		(0,2)
+E	(?z)ab		x		BADRPT
+E	(?ici)a+	Aa		BADRPT
+E	(?i)(?q)a+	x		BADRPT
+E	(?q)(?i)a+	(?i)a+	BADRPT
+E	(?qe)a+		a		BADRPT
+Ex$	(?q)a b		a b		BADRPT
+E$	(?qx)a b	a b		BADRPT
+E	(?qi)ab		Ab		BADRPT
+
+# capturing
+
+E	a(b)c		abc		(0,3)(1,2)
+E	a(?:b)c		xabc		(1,4)
+E	a((b))c		xabcy		(1,4)(2,3)(2,3)
+E	a(?:(b))c	abcy		(0,3)(1,2)
+E	a((?:b))c	abc		(0,3)(1,2)
+E	a(?:(?:b))c	abc		(0,3)
+E$	a(b)(0,)c	ac	NOMATCH
+E	a(b)c(d)e	abcde		(0,5)(1,2)(3,4)
+E	(b)c(d)e	bcde		(0,4)(0,1)(2,3)
+E	a(b)(d)e	abde		(0,4)(1,2)(2,3)
+E	a(b)c(d)	abcd		(0,4)(1,2)(3,4)
+E	(ab)(cd)	xabcdy		(1,5)(1,3)(3,5)
+E	a(b)?c		xabcy		(1,4)(2,3)
+E	a(b)?c		xacy	(1,3)(?,?)
+E	a(b)?c(d)?e	xabcdey		(1,6)(2,3)(4,5)
+E	a(b)?c(d)?e	xacdey	(1,5)(?,?)(3,4)
+E	a(b)?c(d)?e	xabcey	(1,5)(2,3)(?,?)
+E	a(b)?c(d)?e	xacey	(1,4)(?,?)(?,?)
+E	a(b)*c		xabcy		(1,4)(2,3)
+E	a(b)*c		xabbbcy	(1,6)(4,5)
+E	a(b)*c		xacy	(1,3)(?,?)
+E	a(b*)c		xabbbcy		(1,6)(2,5)
+E$	a(b*)c		xacy		(1,3)(2,2)
+E	a(b)+c		xacy		NOMATCH
+E	a(b)+c		xabcy		(1,4)(2,3)
+E	a(b)+c		xabbbcy	(1,6)(4,5)
+E	a(b+)c		xabbbcy		(1,6)(2,5)
+E$	a(b)2c		a(b)3c		NOMATCH
+E$	a(b)2c		a(b)3c		NOMATCH
+E$	a(b)2c		a(b)3c		NOMATCH
+E$	\\y(\\w+)\\y	-- abc-		BADESC
+E	a((b|c)d+)+	abacdbd		(2,7)(5,7)(5,6)
+E	(.*).*		abc		(0,3)(0,3)
+E$	(a*)*		bc		(0,0)(0,0)
+
+# multicharacter collating elements
+
+
+# again ugh
+
+{C	C
+
+BE	a[c]e		ace		(0,3)
+BE	a[c]h		ach		(0,3)
+BE	a[[.ch.]]	ach		ECOLLATE
+BE	a[[.ch.]]	ace		ECOLLATE
+BE	a[c[.ch.]]	ac		ECOLLATE
+BE	a[c[.ch.]]	ace		ECOLLATE
+BE	a[c[.ch.]]	ache		ECOLLATE
+BE	a[^c]e		ace		NOMATCH
+BE	a[^c]e		abe		(0,3)
+BE	a[^c]e		ache		NOMATCH
+BE	a[^[.ch.]]	ach		ECOLLATE
+BE	a[^[.ch.]]	ace		ECOLLATE
+BE	a[^[.ch.]]	ac		ECOLLATE
+BE	a[^[.ch.]]	abe		ECOLLATE
+BE	a[^c[.ch.]]	ach		ECOLLATE
+BE	a[^c[.ch.]]	ace		ECOLLATE
+BE	a[^c[.ch.]]	ac		ECOLLATE
+BE	a[^c[.ch.]]	abe		ECOLLATE
+BE	a[^b]		ac		(0,2)
+BE	a[^b]		ace		(0,2)
+BE	a[^b]		ach		(0,2)
+BE	a[^b]		abe		NOMATCH
+
+}
+
+# lookahead constraints
+
+E	a(?=b)b*	ab		(0,2)
+E	a(?=b)b*	a		NOMATCH
+E	a(?=b)b*(?=c)c*	abc		(0,3)
+E	a(?=b)b*(?=c)c*	ab		NOMATCH
+E	a(?!b)b*	ab		NOMATCH
+E	a(?!b)b*	a		(0,1)
+E	(?=b)b		b		(0,1)
+E	(?=b)b		a		NOMATCH
+
+# non-greedy quantifiers
+
+E	ab+?		abb		(0,2)
+E	ab+?c		abbc		(0,4)
+E	ab*?		abb		(0,1)
+E	ab*?c		abbc		(0,4)
+E	ab??		ab		(0,1)
+E	ab??c		abc		(0,3)
+E$	ab2?		ab4?		(0,2)
+E$	ab2?c		ab4?c		NOMATCH
+E	3z*		123zzzz456	(2,7)
+E	3z*?		123zzzz456	(2,3)
+E	z*4		123zzzz456	(3,8)
+E	z*?4		123zzzz456	(3,8)
+
+# mixed quantifiers
+
+
+# this is very incomplete as yet
+
+
+# should include |
+
+E	^(.*?)(a*)$	xyza		(0,4)(0,3)(3,4)
+E	^(.*?)(a*)$	xyzaa		(0,5)(0,3)(3,5)
+E$	^(.*?)(a*)$	xyz		(0,3)(0,3)(3,3)
+
+# tricky cases
+
+
+# attempts to trick the matcher into accepting a short match
+
+E	(week|wee)(night|knights)	weeknights	(0,10)(0,3)(3,10)
+E	a(bc*).*\1			abccbccb	(0,8)(1,2)
+E	a(b.[bc]*)+			abcbd		(0,5)(3,5)
+
+# implementation misc.
+
+
+# duplicate arcs are suppressed
+
+E	a(?:b|b)c	abc		(0,3)
+
+# make color/subcolor relationship go back and forth
+
+BE	[ab][ab][ab]	aba		(0,3)
+BE	[ab][ab][ab][ab][ab][ab][ab]	abababa		(0,7)
+
+# boundary busters etc.
+
+
+# color-descriptor allocation changes at 10
+
+BE	abcdefghijkl	abcdefghijkl		(0,12)
+
+# so does arc allocation
+
+E	a(?:b|c|d|e|f|g|h|i|j|k|l|m)n	agn	(0,3)
+
+# subexpression tracking also at 10
+
+E	a(((((((((((((b)))))))))))))c	abc	(0,3)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)(1,2)
+
+# state-set handling changes slightly at unsigned size (might be 64...)
+
+
+# (also stresses arc allocation)
+
+E$	ab1c		ab100c		NOMATCH
+E$	ab1c		ab100c		NOMATCH
+E$	ab1c		ab100c		NOMATCH
+
+# force small cache and bust it, several ways
+
+E	\w+abcdefgh			xyzabcdefgh		(0,11)
+E	\w+abcdefgh			xyzabcdefgh		(0,11)
+E	\w+abcdefghijklmnopqrst		xyzabcdefghijklmnopqrst	(0,23)
+E	\w+(abcdefgh)?			xyz			(0,3)(?,?)
+E	\w+(abcdefgh)?			xyzabcdefg		(0,10)(?,?)
+E	\w+(abcdefghijklmnopqrst)?	xyzabcdefghijklmnopqrs	(0,22)(?,?)
+
+# incomplete matches
+
+E$	def		abc		NOMATCH
+E$	bcd		abc		NOMATCH
+E$	abc		abab		NOMATCH
+E$	abc		abdab		NOMATCH
+E	abc		abc		(0,3)
+E	abc		abc		(0,3)
+E	abc		xyabc		(2,5)
+E	abc		xyabc		(2,5)
+E$	abc+		xyab		NOMATCH
+E	abc+		xyabc		(2,5)
+E	abc+		xyabc		(2,5)
+E	abc+		xyabcd		(2,5)
+E	abc+		xyabcd		(2,5)
+E	abc+		xyabcdd		(2,5)
+E	abc+		xyabcdd		(2,5)
+E$	abc+?		xyab		NOMATCH
+
+# the retain numbers in these two may look wrong, but they aren't
+
+E	abc+?		xyabc		(2,5)
+E	abc+?		xyabc		(2,5)
+E	abc+?		xyabcc		(2,5)
+E	abc+?		xyabcc		(2,5)
+E	abc+?		xyabcd		(2,5)
+E	abc+?		xyabcd		(2,5)
+E	abc+?		xyabcdd		(2,5)
+E	abc+?		xyabcdd		(2,5)
+E	abcd|bc		xyabc		(3,5)
+E	abcd|bc		xyabc		(3,5)
+En$	.*k		xx\nyyy		NOMATCH
+
+# misc. oddities and old bugs
+
+BE	fix		reg.dat		NOMATCH
+E	a?b*		abb		(0,3)
+E	a?b*		bb		(0,2)
+BE	a*b		aab		(0,3)
+BE	^a*b		aaaab		(0,5)
+BE	[0-6][1-2][0-3][0-6][1-6][0-6]	010010		(0,6)
+
+# temporary REG_BOSONLY kludge
+
+E	abc		abcd		(0,3)
+E	abc		xabcd		(1,4)
+
+# back to normal stuff
+
+E$	(?n)^(?![t#])\\S+	tk\n\n#\n#\nit0		BADRPT

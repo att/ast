@@ -1,0 +1,152 @@
+Notes on ast POSIX .2 implementations.
+
+None of the commands deal with locale other than what is supplied
+by the C library after setlocale(LC_ALL,"") is called.
+
+Command status:
+
+	C	completed
+	M	mostly implemented
+	N	not currently planned
+	P	planned
+	X	extern source
+
+Execution Environment Utilities:
+
+X	awk
+C	basename
+N	bc
+C	cat
+C	cd
+C	chgrp
+C	chmod
+C	chown
+P	cksum
+C	cmp
+C	comm
+C	command
+C	cp
+C	cut
+C	date		%E? and %O? locale formats not supported
+N	dd
+N	diff
+C	dirname
+C	echo
+C	ed
+C	env		src ready for ast?
+C	expr
+C	false
+C	find
+C	fold
+C	getconf
+C	getopts
+C	grep
+C	head
+C	id
+C	join
+C	kill
+C	ln
+N	locale
+N	localedef
+N	logger
+C	logname
+N	lp
+C	ls
+N	mailx
+C	mkdir
+C	mkfifo
+C	mv
+C	nohup
+M	od
+C	paste
+C	pathchk
+C	pax
+C	pr
+C	printf
+C	pwd
+C	read
+C	rm
+C	rmdir
+C	sed
+C	sh
+C	sleep
+C	sort
+M	stty		src ready for ast?
+C	tail
+C	tee
+C	test
+C	touch
+?	tr		omitted from gsf list
+C	true
+C	tty
+C	umask
+C	uname
+C	uniq
+C	wait
+C	wc
+M	xargs		gsf to do on top of tw
+
+User Portability Utilities Option:
+
+C	alias
+N	at
+N	batch
+C	bg
+N	crontab
+C	csplit
+N	ctags
+C	df
+C	du
+X	ex
+C	expand
+C	fc
+C	fg
+C	file
+C	jobs
+N	msg
+X	more
+N	newgrp
+N	nice
+N	nm
+N	patch
+N	ps
+N	renice
+C	split
+M	strings		src ready for ast?
+N	tabs
+N	talk
+M	tput		src ready for ast?
+C	time
+C	unalias
+C	unexpand
+M	uudecode	src ready for ast?
+M	uuencode	src ready for ast?
+X	vi
+N	who
+N	write
+
+Software Development Utilities Option:
+
+N	ar		pax can do some of the ops, but no ranlib
+N	make		nmake provides incompatible alternative
+N	strip
+
+
+C-language Development Utilities Option
+
+N	c89
+N	lex
+N	yacc
+
+Additional ast Specific Utilities:
+
+C	cql
+C	disown		src ready for ast? (and what is it)
+C	m4
+C	nmake
+C	pack
+C	print
+C	rev
+C	sum
+C	tw
+C	unpack

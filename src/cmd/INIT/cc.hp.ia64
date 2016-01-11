@@ -1,0 +1,13 @@
+: hp.ia64 cc wrapper for reasonable ansi C defaults : 2011-01-25 :
+
+[ /usr/bin/cc -ef /usr/ccs/bin/cc ] || exit 1
+
+: bundled cc -- really, in the face of gcc you ship a sub-par /usr/bin/cc? :
+
+HOSTTYPE=hp.ia64
+
+case " $* " in
+*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
+esac
+
+/usr/bin/cc -D_HPUX_SOURCE -D_INCLUDE__STDC_A1_SOURCE -D_INCLUDE_XOPEN_SOURCE_500 "$@"

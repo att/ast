@@ -1,0 +1,110 @@
+{\rtf1 \ansi \deff0
+{\*\comment generator: html2rtf (AT&T Labs Research) 04/01/97}
+{\fonttbl
+{\f0 \froman Times New Roman;}
+{\f1 \fmodern Line Printer;}
+{\f2 \froman Symbol;}
+{\f3 \fswiss Ariel;}
+}
+\fs24
+ {\*\comment generator: troff2html (AT&T Labs Research) 04/01/97 -mm}
+\par\pard\qc\li0\tx0\tx20000{\b\fs34 A\~Tour\~of\~the\~ast\~Commands\~and\~Libraries}{\b\fs30\line
+Glenn\~Fowler\line
+\line
+AT&T\~Labs\~-\~Research\line
+\line
+Murray\~Hill,\~NJ\~07974\line
+\line
+}\line
+
+ \par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.1Introduction} 1\~\~Introduction} \par\pard\li840\tx840\tx20000 The {\i ast
+ }commands and libraries were developed by the Software Engineering Research
+ Department ({\i aka }the Advanced Software [Technology] Department) at
+ AT&T Bell Laboratories, Murray Hill, NJ. The strength of {\i ast }is
+ how its individual components combine to form a cohesive computing environment
+ across UNIX\'ae and non-UNIX platforms. {\uldb FN577}{\v HTML2RTF.FN577}{\*\comment Cohesiveness*}\~[\~Footnote
+ test. \~]\~is maintained by well-defined library interfaces for algorithms
+ upon which the commands are built. In many cases a library implementation
+ was the driving force behind command implementations. \par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.2Motivation} 2\~\~Motivation}
+ \par\pard\li840\tx840\tx20000 Why should you consider using the {\i ast }software? After all, many
+ of the commands look like what's already in {\f1 /bin }and {\f1 /usr/local/gnu/bin}.
+ Although there is some replication, there are also some commands you won't
+ find anywhere else: {\i the }ksh93, nmake, the 3d filesystem, cia, and
+ yeast. \par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.3Installation} 3\~\~Installation}
+ \par\pard\li840\tx840\tx20000 The {\i ast }software installs in a single directory hierarchy, rooted
+ at {\f1 $INSTALLROOT}, usually {\f1 /usr/local/ast }or {\f1 /usr/add-on/ast}.
+ The top level {\f1 $INSTALLROOT }directories are: \line
+{\f1\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~bin\~\~\~\~\~\~executable\~binaries\~and\~scripts\~\line
+\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~fun\~\~\~\~\~\~}{\i ksh93}{\f1\~shell\~functions\~\~\~\line
+\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~lib\~\~\~\~\~\~libraries\~\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~lib/}{\i command}{\f1\~\~\~\~\~\~related\~files\~for\~}{\i command}{\f1\~\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~\~\~\~\~\~\~\~src/cmd/}{\i xxx}{\f1\~\~\~\~\~\~source\~for\~command\~}{\i xxx}{\f1\~\~\line
+\~\~\~\~\~\~\~\~\~\~\~\~src/lib/lib}{\i xxx}{\f1\~\~\~\~\~\~source\~for\~library\~}{\i xxx}{\f1\~\~\line
+}To
+ access the commands and related data files: \line
+{\f1\~\~\~\~\~\~\~\~export\~PATH=$INSTALLROOT/bin:$PATH\~\~\~\~\~\~\line
+}For
+ each {\i command }that has a related data file {\i file}, {\i file }is
+ found by searching {\f1 $PATH }for e.g., the magic file for the file command
+ is {\f1 ../lib/file/magic }on {\f1 $PATH}. If {\f1 $HOME/bin }is before
+ {\f1 $INSTALLROOT/bin }in {\f1 $PATH }then you can selectively override
+ standard {\i ast }related files by placing them in the directory This allows
+ executables to be built without hard-coded pathnames and also requires only
+ a change in {\f1 $PATH }when {\f1 $INSTALLROOT }changes. On systems with
+ shared libraries one of \line
+{\f1\~\~\~\~\~\~\~\~export\~LD_LIBRARY_PATH=$INSTALLROOT/lib:$LD_LIBRARY_PATH\~\~\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~export\~LIBPATH=$INSTALLROOT/lib:$LIBPATH\~\~\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~export\~LPATH=$INSTALLROOT/lib:$LPATH\~\~\~\~\line
+}is
+ required to locate the {\i ast }shared libraries. \par\pard\li840\tx840\tx20000\par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.4Exploration} 4\~\~Exploration}
+ \par\pard\li840\tx840\tx20000{\i tw }combines {\i find }and {\i xargs}. It provides C style expressions
+ on path names and elements of {\f1 struct stat}. To find suspicious executables:
+ \line
+{\f1\~\~\~\~\~\~\~\~tw\~-d\~/\~-e\~"uid=='root'\~&&\~(mode&'u+s')\~&&\~parent.uid!=uid"\~\~\~\~\~\line
+}to
+ change the owner of all of bozo's files: \line
+{\f1\~\~\~\~\~\~\~\~tw\~-d\~/\~-e\~"uid=='bozo'"\~chown\~clown:circus\~\~\~\~\~\line
+}{\i tw
+ }collects file pathname arguments up to the exec arg limit before it executes
+ the command. For paranoid users: \line
+{\f1\~\~\~\~\~\~\~\~tw\~chmod\~go-rwx\~\line
+}which
+ is equivalent to: \line
+{\f1\~\~\~\~\~\~\~\~chmod\~-R\~go-rwx\~\line
+}(Now
+ you don't need to add a {\f1 -R }option to your favorite commands.) To find
+ all source files that include {\f1 foo.h}: \line
+{\f1\~\~\~\~\~\~\~\~tw\~-e\~"name=='*.[chly]'"\~grep\~-l\~'^#.*include.*["<]foo.h[>"]'\~\~\~\line
+}{\i libast
+ }handles the magic number matching for the {\i file }command. The magic
+ file, {\f1 $INSTALLROOT/lib/file/magic}, is carefully constructed to give
+ the same output across all architectures: \line
+{\f1\~\~\~\~\~\~\~\~cd\~$HOME/arch\~\~\~\line
+\~\~\~\~\~\~\~\~file\~*/bin/cat\~\~\line
+}might
+ produce: \line
+{\f1\~\~\~\~\~\~\~\~att.i386/bin/cat:\~\~\~elf\~i386\~executable,\~32-bit,\~little-endian,\~..\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~bsd.i386/bin/cat:\~\~\~bsd\~386\~executable,\~compact,\~paged,\~pure,\~no..\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~hp.pa/bin/cat:\~\~\~\~\~\~hp\~pa-risc\~executable,\~shared,\~dynamically\~l..\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~sgi.mips2/bin/cat:\~\~elf\~mips\~executable,\~32-bit,\~dynamically\~lin..\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~sol.sun4/bin/cat:\~\~\~elf\~sparc\~executable,\~32-bit,\~dynamically\~li..\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~sun4/bin/cat:\~\~\~\~\~\~\~sun\~sparc\~executable,\~paged,\~dynamically\~lin..\~\~\~\~\~\~\line
+}{\i tw
+ }uses the same interface, making it easy to search for files based on
+ type, name and content. The following searches for executable scripts: \line
+{\f1\~\~\~\~\~\~\~\~tw\~-e\~"(mode&'+x')\~&&\~type!=DIR\~&&\~magic!='*executable*'"\~\~\~\~\~\~\~\line
+}The
+ {\i tw }algorithm efficiently detects file system loops, so following symbolic
+ links is not a problem. The same algorithm is used by all {\i ast }commands
+ that traverse directory hierarchies, and the following options to control
+ pathname resolution: {\f1\~\~\~\~\~\~\~\~-L\~(logical)\~\~\~\~\~\~\~\~\~follow\~symbolic\~links\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~-P\~(physical)\~\~\~\~\~\~\~\~don't\~follow\~symbolic\~links\~\~\~\~\~\~\~\~\line
+\~\~\~\~\~\~\~\~-H\~(metaphysical)\~\~\~\~-L\~for\~command\~line\~files,\~-P\~otherwise\~\~\~\~\line
+}The
+ {\i ksh93 }{\i getconf }builtin controls the default traversal mode: \line
+{\f1\~\~\~\~\~\~\~\~getconf\~PATH_RESOLVE\~-\~\{\~logical,\~physical,\~metaphysical\~\}\~\~\~\~\~\~\line
+}
+ \par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.5Configuration} 5\~\~Configuration} \par\pard\li840\tx840\tx20000\par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.6Compression} 6\~\~Compression}
+ \par\pard\li840\tx840\tx20000\par\pard\fi-560\li840\tx840\tx20000{\brdrt\brdrsh\par}{\b\fs32#{\footnote HTML2RTF.7Conclusion} 7\~\~Conclusion} \par\pard\li840\tx840\tx20000{\brdrt\brdrsh\par}\par\pard\li0\tx0\tx20000 April 18,
+ 1997 
+}

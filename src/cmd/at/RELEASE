@@ -1,0 +1,36 @@
+12-02-29 atd.c,atx.c: fix uid/gid sequencing for unix/winix compatibility
+10-06-01 sync with ast api 20100601
+10-03-19 atd.c,atx.c: each job in separate session
+06-10-11 add sfstruse() error checks
+06-09-19 atd.c: sysconf() => astconf()
+06-05-17 crontab.sh: handle empty or nonexistent crontab
+05-06-29 crontab.sh: fix (...) => @(...) syntax error
+02-02-14 atd: add strdup(argv[1]) to workaround argv[1]=>0 mystery
+01-06-18 crontab: clarify the command<=>job relationship
+01-03-28 atd: fix log file rollover infinite loop
+01-02-14 atd: monitor daemon and restart if it dies
+01-01-01 atd: add actual and expected info to atx log messages
+00-09-28 crontab: update USAGE
+00-06-16 atd,atx: use base 36 instead of 64 in job names (now just lower case)
+00-05-22 crontab: clarify crontab jobs w.r.t at(1)
+00-05-09 atd: ": LABEL; command" sets job label to LABEL
+	 atd: roll over log file to AT_LOG_FILE.old each month
+00-03-14 at,atd: add at.allow and at.deny checks; tweak uwin verifcations
+00-01-22 --- release 1.2 ---
+00-01-22 crontab: fix getopts check
+99-10-11 at,atd: fix job dictionary bugs
+99-08-11 at: fix usage for at+batch
+	 at.h: add AT_STRICT
+99-06-23 atd: fix job queue handle lookup that dropped jobs
+99-06-23 --- release 1.1 ---
+99-05-09 tweak uwin FAT checks -- how do you get FAT security?
+	 at,batch,crontab: long options
+99-04-01 crontab.sh: "..." path vars
+	 the official off-by-one bug of the millenium
+98-07-17 fix bad scanf base 64 format
+98-02-14 get it working
+	 add -A for admin commands (all entries, all queues)
+97-11-11 atd: use csread(CS_RESTART) to avoid SIGCHLD interrupts
+	 atd: add state.atxd in.atxd code for systems with incomplete chmod u+s 
+97-10-31 fix `at date ...' arg parse bug
+96-05-24 --- release 1.0 ---

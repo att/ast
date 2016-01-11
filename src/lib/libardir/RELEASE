@@ -1,0 +1,11 @@
+111-08-31 ar-omf.c: fix FILENAME #pragma prototyped incompatibility
+03-09-17 ardir.c: rewind initial peek to open position in case its /dev/stdin
+03-04-05 ar-port.c: fix bug that skipped initial long name entry
+	 ar-port.c: handle netbsd.i386 ' <long-index>' vs. '/<long-index>'
+03-02-05 ar-port.c: handle solaris TYPE_port variation
+03-01-30 ar-port.c: handle member name length == 16 (no terminator)
+02-10-20 ardir.c: add ardirlist()
+02-08-09 ardir.c: ardiropen() fails if !S_ISREG unless ARDIR_FORCE
+02-06-11 ar-port.c: handle 4.4BSD `#1/size' long names
+02-06-06 #ifndef EILSEQ => EINVAL
+02-05-07 first release

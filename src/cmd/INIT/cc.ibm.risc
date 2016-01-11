@@ -1,0 +1,63 @@
+: cc wrapper for aix risc xlc : 2012-04-17 :
+
+hosttype=ibm.risc
+
+case $HOSTTYPE in
+$hosttype-64)
+	case " $* " in
+	*" -q64 "*)	;;
+	*)		set -- -q64 "$@" ;;
+	esac
+	;;
+*)	case " $* " in
+	*" -q64 "*)	HOSTTYPE=$hosttype-64 ;;
+	*)		HOSTTYPE=$hosttype ;;
+	esac
+	;;
+esac
+
+case " $* " in
+*" -dumpmachine "*)
+	echo $HOSTTYPE
+	exit
+	;;
+esac
+
+bin=/usr/vac/bin
+cc=$bin/xlc
+
+ccflags="-brtl -qhalt=e -qsuppress=1506-224:1506-507"
+case " $@ " in
+*" -G "*)      
+	ccflags="$ccflags -berok"
+	;;
+esac
+if	test -x $bin/c99
+then	# the xlc optimizer vintage that supports c99 is flawed and causes the ast build to fail #
+	case " $* " in
+	*" -O "*)
+		set '' "$@" ''
+		shift
+		while	:
+		do	a=$1
+			shift
+			case $a in
+			'')	break ;;
+			-O)	;;
+			*)	set '' "$@" $a ;;
+			esac
+			shift
+		done
+		;;
+	esac
+	$cc $ccflags "$@"
+	code=$?
+else	export PATH=/bin:$PATH LIBPATH=/usr/lib:/lib
+	ccflags="$ccflags -blibpath:$LIBPATH"
+fi
+$cc $ccflags "$@"
+code=$?
+case $code in
+127|255)	code=1 ;;
+esac
+exit $code

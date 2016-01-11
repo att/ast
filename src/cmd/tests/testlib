@@ -1,0 +1,156 @@
+: library test harness :
+
+files=
+inc=
+lib=
+opt=
+src=
+unset=
+verbose=
+
+while	:
+do	case $1 in
+	--proc*=*)
+		opt="$opt -DN_PROC=${1#*=}"
+		;;
+	--thread*=*)
+		opt="$opt -DN_THREAD=${1#*=}"
+		;;
+	--timeout*=*)
+		opt="$opt -DTIMEOUT=${1#*=}"
+		;;
+	--v*|-v)
+		opt="$opt -DINFO"
+		exec 9>&2
+		shift
+		verbose=1
+		;;
+	*)	break
+		;;
+	esac
+	shift
+done
+case $# in
+[01])	echo "Usage: testlib [-v] library unit [cc-options] [*.h] [*.c]" >&2
+	exit 2
+	;;
+esac
+case $verbose in
+'')	exec 9>/dev/null
+	;;
+esac
+library=$1
+unit=$2
+shift 2
+while	:
+do	case $1 in
+	*.c)	files="$files $1"
+		;;
+	*/*.h)	inc="$inc -I${1%/*}"
+		case $1 in
+		*/*test.h)	src=${1%/*} ;;
+		esac
+		;;
+	*.h)	inc="$inc -I."
+		;;
+	-l*)	lib="$lib $1"
+		case $1 in
+		-lpthread)	unset='LD_PRELOAD= _RLD_LIST=' ;;
+		esac
+		;;
+	-*|*,*)	opt="$opt $1"
+		;;
+	*)	base=${1##*/}
+		case $base in
+		cc.*|*.cc)	break ;;
+		*.*)		lib="$lib $1" ;;
+		*)		break ;;
+		esac
+		;;
+	esac
+	shift
+done
+
+if	test -d $unit
+then	source=$unit
+else	case $src in
+	"")	src=${1%/*} ;;
+	esac
+	source=$src
+fi
+
+case $inc in
+"")	case $source in
+	?*)	inc=-I$source ;;
+	esac
+	;;
+esac
+case $lib in
+"")	lib=-l$library ;;
+esac
+case $files in
+"")	eval files='"' $source/*.c '"'
+	;;
+*)	list=$files
+	files=
+	for i in $list
+	do	case $i in
+		*/*)	;;
+		*)	i=$source/$i ;;
+		esac
+		files="$files $i"
+	done
+	;;
+esac
+
+case $# in
+0)	set cc ;;
+esac
+
+case $verbose in
+'')	trap 'rm -f t.exe t-*.exe xxx yyy zzz; exit 0' 0 1 2 13 15 ;;
+esac
+
+tests=0 errors=0 locked=0
+echo "TEST	$unit" >&2
+prev="make test"
+for file in $files
+do	(( tests = tests + 1 ))
+	test=${file%.c}
+	test=${test##*/}
+	printf "%-15s " $test >&2
+	test -f t.exe && {
+		rm -f t.exe || {
+			(( locked = locked + 1 ))
+			mv t.exe t-$locked.exe || {
+				echo previous $prev t.exe locked >&2
+				break 2
+			}
+		}
+	}
+	prev=$file
+	"$@" $opt $inc -o t.exe $file $lib >&9 2>&1
+	code=$?
+	rm -f ${test}.[oO]*
+	case $code in
+	0)	if	eval $unset ./t.exe
+		then	echo passed >&2
+			continue
+		fi
+		;;
+	*)	echo compile FAILED >&2
+		;;
+	esac
+	(( errors = errors + 1 ))
+done
+msg="TEST	$unit, $tests test"
+case $tests in
+1)	;;
+*)	msg=${msg}s ;;
+esac
+msg="$msg, $errors error"
+case $errors in
+1)	;;
+*)	msg=${msg}s ;;
+esac
+echo "$msg" >&2

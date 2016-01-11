@@ -1,0 +1,413 @@
+# Routines for Project Manager
+
+function p_create_directory_listing # window
+{
+	typeset olddir="$(pwd)" f="$(pwd)"
+	typeset w=$1
+        typeset filenum=$2
+
+	p_filename="$f"
+	p_update_window $w 
+	p_directory_listing_update $w
+
+	bind $w.files.file.list "<1>" \
+		"p_directory_listing_single_click %W %y $w; focus $w.sel.e"
+	bind $w.files.file.list "<Double-1>" \
+		"p_add_project_file %W %y $w; focus $w.sel.e"
+	bind $w.files.dir.list "<1>" \
+		"p_directory_listing_single_click %W %y $w; focus $w.sel.e"
+	bind $w.files.dir.list "<Double-1>" \
+		"p_directory_listing_double_click $w.files %y ; focus $w.sel.e"
+	bind $w.sel.e "<Return>" "p_directory_listing_update $w.files"
+
+	tkwait variable done
+	destroy $w
+	cd "$olddir"
+}
+
+function p_update_window # window 
+{
+	typeset w=$1 
+
+	frame $w.sel
+	entry $w.sel.e -textvariable p_filename
+
+        frame $w.binfo -relief raised -bd 2
+        label $w.binfo.all -textvar p_Button_Info
+
+        frame $w.proj -relief raised -bd 2
+ 
+	frame $w.files
+	frame $w.files.dir
+	frame $w.files.file
+	p_make_xy_scrollbar $w.files.dir
+	p_make_xy_scrollbar $w.files.file
+
+	pack $w.sel.e -fill x -expand 1
+	pack $w.files.dir $w.files.file -side left -fill both -expand 1
+	pack $w.sel $w.files -side top -fill both
+        pack $w.binfo.all
+        pack $w.binfo -side bottom -fill both
+        pack $w.proj -side bottom -fill both
+}
+
+function p_make_xy_scrollbar # widget
+{
+	typeset w=$1
+
+	listbox $w.list -yscrollcommand "$w.scroll set"
+	scrollbar $w.scroll -command "$w.list yview"
+	pack $w.list -side left -fill both -expand 1
+	pack $w.scroll -side left -fill y
+}
+
+function p_directory_listing_update # widget
+{
+	typeset dwidget=$1.files.dir.list fwidget=$1.files.file.list i w
+
+	if [[ -d $p_filename ]]
+	then	cd $p_filename > /dev/null 2>&1
+	else	cd $(dirname $p_filename) > /dev/null 2>&1
+	fi
+
+	$dwidget delete 0 end
+	$fwidget delete 0 end
+	$dwidget insert end ".. <parent directory>"
+	for i in *
+	do
+		w=$dwidget
+		[[ -f $i ]] && w=$fwidget
+		$w insert end $i
+	done
+}
+
+function p_directory_listing_single_click # widget point window
+{
+      p_filename=$(pwd)/$($1 get $($1 nearest $2))
+      p_filename=${p_filename%%" "*}
+}
+
+function p_add_project_file # widget point window 
+{
+      typeset fn=""
+      typeset w=$3
+
+      fn=$($1 get $($1 nearest $2))
+      fn=${fn%%" "*}
+
+      filenum=$((filenum + 1))
+      label $w.proj.$filenum -text "File #$filenum: $fn"
+      pack $w.proj.$filenum 
+      filelist[$filenum]=$fn
+}
+
+function p_add_library # window library
+{
+      typeset fn=$2
+      typeset w=$1
+
+      filenum=$((filenum + 1))
+      label $w.proj.$filenum -text "File (library) #$filenum: $fn"
+      pack $w.proj.$filenum 
+      filelist[$filenum]=$fn
+}
+
+function p_add_debug # window library
+{
+      typeset fn=$2
+      typeset w=$1
+
+      filenum=$((filenum + 1))
+      label $w.proj.$filenum -text "File (debug) #$filenum: $fn"
+      pack $w.proj.$filenum 
+      filelist[$filenum]=$fn
+}
+
+function p_directory_listing_double_click # widget point
+{
+	dir1=$($1.dir.list get $($1.dir.list nearest $2))
+        dir2=${dir1%%" "*}
+        cd $dir2
+        p_filename=$(pwd)/
+	p_directory_listing_update $1
+}
+
+function p_build_project # window
+{
+     integer i
+     typeset w=$1
+
+     makefilename="$projname.mk"
+
+     exec 4> $makefilename
+
+     print -ru4 -- "$projname :: \\"
+     for ((i = 1; i < $filenum; i++))
+     do print -ru4 -- "${filelist[i]} \\"
+     done
+     print -ru4 -- "${filelist[i]}"
+
+     exec 4<&-
+
+     p_directory_listing_update $1
+}
+
+function p_compile_project # window
+{
+     print "nmake -f $makefilename &"
+     nmake -f $makefilename &
+     p_directory_listing_update $1
+}
+
+function p_new_project # window
+{
+     typeset w=$1
+     typeset test=1
+
+     p_close_project $1
+
+     projname=""
+     label $w.proj.label1 -text "Project Name: "
+     entry $w.proj.entry1 -width 20 -relief sunken -bd 2 -textvariable projname
+     button $w.proj.ok -text " OK " -command "test=2"
+     pack $w.proj.label1 $w.proj.entry1 $w.proj.ok -side left
+     tkwait variable test
+
+     destroy $w.proj.label1 $w.proj.entry1 $w.proj.ok
+     label $w.proj.title -text "Project: $projname"
+     pack $w.proj.title
+     p_directory_listing_update $1
+}
+
+function p_open_project # window
+{
+     typeset w=$1
+     typeset temp=""
+     typeset i
+
+     p_close_project $w
+
+     exec 4< $p_filename
+
+     read -ru4 temp
+     projname=${temp%%" "*}
+     makefilename=$projname.mk
+     label $w.proj.title -text "Project: $projname"
+     pack $w.proj.title
+
+     while read -ru4 temp
+     do filenum=$((filenum + 1))
+        temp=${temp%%" "*}
+        if [[ $temp==-g ]]
+        then label $w.proj.$filenum -text "File (debug) #$filenum: $temp"
+        else if [[ $temp==-lm ]]
+             then label $w.proj.$filenum -text "File (library) #$filenum: $temp"
+             else label $w.proj.$filenum -text "File #$filenum: $temp"
+             fi
+        fi
+        pack $w.proj.$filenum 
+        filelist[$filenum]=$temp
+     done
+     exec 4<&-
+
+     p_directory_listing_update $1
+}
+
+function p_close_project # window
+{
+     typeset w=$1
+     typeset i e
+
+     e=$(winfo exists $w.proj.title)
+     if ((e == 1))
+     then destroy $w.proj.title
+     fi
+     if ((filenum > 0))
+     then
+          for ((i = 1; i <= $filenum; i++))
+          do destroy $w.proj.$i
+          done
+     fi
+     filenum=0
+     p_directory_listing_update $1
+}
+
+function p_edit_file # window
+{
+       if ((show_cmd==1))
+       then print "xterm -e $EDITOR $p_filename"
+       fi
+       xterm -e $EDITOR $p_filename
+       p_directory_listing_update $1
+}
+
+function p_run_file # window
+{
+       if ((show_cmd==1))
+       then print "xterm -e $p_filename"
+       fi
+       xterm -e $p_filename
+       p_directory_listing_update $1
+}
+
+function p_debug # window
+{
+       if ((show_cmd==1))
+       then print ". $DESKSH_UTIL_TKCDB/tkcdb $projname &"
+       fi
+       . $DESKSH_UTIL_TKCDB/tkcdb $projname 
+}
+
+function p_display_about # window
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "Project Manager -- a project manager for desksh"
+      label $w.f.label2 -text "Written by Charles Harless and Erik Wile"
+      label $w.f.label3 -text "AT&T Research Laboratories 1996"
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      pack $w.f.label1
+      pack $w.f.label2
+      pack $w.f.label3
+      pack $w.f.ok
+      pack $w.f
+      tkwait variable test
+}
+
+function p_display_help # window
+{
+      typeset w=$1
+      typeset test=1
+
+      frame $w.f
+      label $w.f.label1 -text "HELP ME!"
+      label $w.f.label2 -text "You can use the various menus or buttons to access"
+      label $w.f.label3 -text "the various functions available to the project manager."
+      label $w.f.label4 -text "Make sure you select a file in the file list"
+      label $w.f.label5 -text "before attempting to do a certain function."
+      label $w.f.label6 -text "For more information, check out the manual page."
+      button $w.f.ok -text " OK " -command "test=2; destroy $w.f"
+      button $w.f.man -text " Manual Page " -command "Man_Page="pman"; display_man_page"
+      pack $w.f.label1 
+      pack $w.f.label2 
+      pack $w.f.label3 
+      pack $w.f.label4 
+      pack $w.f.label5 
+      pack $w.f.label6 
+      pack $w.f.ok $w.f.man 
+      pack $w.f
+      tkwait variable test
+}
+
+function p_change_tool
+{
+     typeset w=$1
+
+     if ((p_show_toolbar==1))
+     then pack $w.bbar -after $w.mbar -fill x
+          pack $w.binfo -before $w.proj -side bottom -fill both
+     else pack forget $w.bbar
+          pack forget $w.binfo
+     fi
+}
+
+function p_create_menu # window
+{
+     typeset w=$1
+
+     frame $w.mbar -relief raised -bd 2
+     pack $w.mbar -side top -fill x
+     menubutton $w.mbar.file -text File -menu $w.mbar.file.menu
+     menubutton $w.mbar.proj -text Project -menu $w.mbar.proj.menu
+     menubutton $w.mbar.lib -text Libraries -menu $w.mbar.lib.menu
+     menubutton $w.mbar.opt -text Options -menu $w.mbar.opt.menu
+     menubutton $w.mbar.help -text Help -menu $w.mbar.help.menu
+     pack $w.mbar.file $w.mbar.proj $w.mbar.lib $w.mbar.opt -side left
+     pack $w.mbar.help -side right
+
+     menu $w.mbar.opt.menu
+     $w.mbar.opt.menu add checkbutton -label "Show Toolbar" -command "p_change_tool $w" -variable p_show_toolbar
+     $w.mbar.opt.menu add checkbutton -label "Show Commands" -variable p_show_cmd
+
+     menu $w.mbar.help.menu
+     $w.mbar.help.menu add command -label "About" -command "p_display_about $w"
+     $w.mbar.help.menu add command -label "Help" -command "p_display_help $w"
+
+     menu $w.mbar.file.menu
+     $w.mbar.file.menu add command -label "New Project" -command "p_new_project $w"
+     $w.mbar.file.menu add command -label "Open Project" -command "p_open_project $w"
+     $w.mbar.file.menu add command -label "Close Project" -command "p_close_project $w"
+     $w.mbar.file.menu add command -label "Edit File" -command "p_edit_file $w"
+     $w.mbar.file.menu add command -label "Run File" -command "p_run_file $w"
+     $w.mbar.file.menu add separator
+     $w.mbar.file.menu add command -label "Quit Project Manager" -command "destroy $w"
+
+     menu $w.mbar.proj.menu
+     $w.mbar.proj.menu add command -label "Build Project" -command "p_build_project $w"
+     $w.mbar.proj.menu add command -label "Compile Project" -command "p_compile_project $w"
+     $w.mbar.proj.menu add command -label "Debugger" -command "p_debug $w"
+
+     menu $w.mbar.lib.menu
+     $w.mbar.lib.menu add command -label "Math Library" -command "p_add_library $w -lm"
+     $w.mbar.lib.menu add command -label "Debugging Option" -command "p_add_debug $w -g"
+}
+
+function p_create_button_bar # window
+{
+     typeset w=$1
+
+     frame $w.bbar -relief raised -bd 2
+     pack $w.bbar -side top -fill x
+
+     button $w.bbar.cf -image gwrite -command "p_new_project $w"
+     button $w.bbar.ef -image gkey -command "p_open_project $w"
+     button $w.bbar.rf -image gtools2 -command "p_build_project $w"
+     button $w.bbar.mf -image gedit -command "p_edit_file $w"
+     button $w.bbar.cp -image gexec -command "p_run_file $w"
+     button $w.bbar.q  -image gexit -command "destroy $w"
+     button $w.bbar.pm -image gconst -command "p_compile_project $w"
+
+     pack $w.bbar.cf -side left
+     pack $w.bbar.ef -side left
+     pack $w.bbar.mf -side left
+     pack $w.bbar.cp -side left
+     pack $w.bbar.rf -side left
+     pack $w.bbar.pm -side left
+     pack $w.bbar.q -side left
+
+     bind $w.bbar.cf "<Enter>" 'p_Button_Info="Create New Project"'
+     bind $w.bbar.cf "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.ef "<Enter>" 'p_Button_Info="Open Project"'
+     bind $w.bbar.ef "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.rf "<Enter>" 'p_Button_Info="Build Project"'
+     bind $w.bbar.rf "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.mf "<Enter>" 'p_Button_Info="Edit File"'
+     bind $w.bbar.mf "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.cp "<Enter>" 'p_Button_Info="Run File"'
+     bind $w.bbar.cp "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.pm "<Enter>" 'p_Button_Info="Compile Project"'
+     bind $w.bbar.pm "<Leave>" 'p_Button_Info=""'
+     bind $w.bbar.q "<Enter>" 'p_Button_Info="Quit Project Manager"'
+     bind $w.bbar.q "<Leave>" 'p_Button_Info=""'
+}
+
+function p_manager
+{
+    typeset w=$(toplevel .projmanager -bd 4 -class ProjMan)
+    integer filenum=0
+    typeset filelist[]
+    typeset projname="" projfilename="" makefilename=""
+    typeset Button_Info=""
+    typeset p_filename=""
+    typeset p_show_cmd=1
+    typeset p_show_toolbar=1
+
+    wm title $w "Project Manager"
+    raise $w
+
+    p_create_menu $w
+    p_create_button_bar $w
+    p_create_directory_listing $w
+}

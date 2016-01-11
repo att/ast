@@ -1,0 +1,58 @@
+: tst "[ cmp | old | new ] item ..."
+
+HTML2RTF=${HTML2RTF:-html2rtf}
+TROFF2HTML=${TROFF2HTML:-troff2html}
+
+command=tst
+
+function error
+{
+	print -u2 $command: "$@"
+	exit 1
+}
+
+function usage
+{
+	print -u2 Usage: "$command [ cmp | new | old ] item ..."
+	exit 2
+}
+
+suffixes="html rtf"
+case $# in
+0|1)	usage ;;
+esac
+op=$1
+shift
+for item
+do	test -f $item || error $item: not found
+	base=${item%.*}
+	case $item in
+	*.[0-9]*)
+		macros=-man
+		;;
+	*)	macros=-mm
+		;;
+	esac
+	case $op in
+	cmp)	for suffix in $suffixes
+		do	for prefix in old new
+			do	test -f $prefix-$base.$suffix || error $prefix-$base.$suffix: not found
+			done
+			cmp -s new-$base.$suffix old-$base.$suffix || print -u2 $base $suffix output differs
+		done
+		;;
+	new)	prefix=$op
+		$TROFF2HTML $macros $item > $prefix-$base.html
+		$HTML2RTF $prefix-$base.html > $prefix-$base.rtf
+		;;
+	old)	for suffix in $suffixes
+		do	for prefix in old new
+			do	test -f $prefix-$base.$suffix || error $prefix-$base.$suffix: not found
+			done
+			mv new-$base.$suffix old-$base.$suffix
+		done
+		;;
+	*)	usage
+		;;
+	esac
+done

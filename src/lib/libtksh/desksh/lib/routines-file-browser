@@ -1,0 +1,94 @@
+# File Browser Routines
+# These routines allow a simple file browser to popup allowing the user to navigate and 
+# select a directory for use.
+
+function fb_create_directory_listing # window
+{
+	typeset olddir="$(pwd)" f="$(pwd)"
+	typeset w=$1
+
+	fn="$f"
+	fb_update_window $w 
+	fb_directory_listing_update $w.files
+
+	bind $w.files.file.list "<1>" \
+		"fb_directory_listing_single_click %W %y $w; focus $w.sel.e"
+	bind $w.files.dir.list "<1>" \
+		"fb_directory_listing_single_click %W %y $w; focus $w.sel.e"
+	bind $w.files.dir.list "<Double-1>" \
+		"fb_directory_listing_double_click $w.files %y ; focus $w.sel.e"
+	bind $w.sel.e "<Return>" "fb_directory_listing_update $w.files"
+
+	tkwait variable done
+	destroy $w
+     
+        Location=$fn
+
+}
+
+function fb_update_window # window 
+{
+	typeset w=$1 
+
+	frame $w.sel
+	entry $w.sel.e -textvariable fn
+
+        button $w.b -text "Return" -command "done=1"
+
+	frame $w.files
+	frame $w.files.dir
+	frame $w.files.file
+	make_xy_scrollbar $w.files.dir
+	make_xy_scrollbar $w.files.file
+
+	pack $w.sel.e -fill x -expand 1
+	pack $w.files.dir $w.files.file -side left -fill both
+	pack $w.sel $w.files -side top -fill both
+        pack $w.b -side bottom -fill both
+}
+
+function fb_directory_listing_update # widget
+{
+	typeset dwidget=$1.dir.list fwidget=$1.file.list i w
+
+	if [[ -d $fn ]]
+	then	cd $fn > /dev/null 2>&1
+	else	cd $(dirname $fn) > /dev/null 2>&1
+	fi
+
+	$dwidget delete 0 end
+	$fwidget delete 0 end
+	$dwidget insert end ".. <parent directory>"
+	for i in *
+	do
+		w=$dwidget
+		[[ -f $i ]] && w=$fwidget
+		$w insert end $i
+	done
+}
+
+function fb_directory_listing_single_click # widget point window
+{
+      fn=$(pwd)/$($1 get $($1 nearest $2))
+      fn=${fn%%" "*}
+}
+
+function fb_directory_listing_double_click # widget point
+{
+	dir1=$($1.dir.list get $($1.dir.list nearest $2))
+        dir2=${dir1%%" "*}
+        cd $dir2
+        fn=$(pwd)/
+	fb_directory_listing_update $1
+}
+
+function file_browser 
+{
+        typeset w=$(toplevel .filebrowser -bd 4 -class FileBrowser)
+
+        wm title $w "Simple File Browser"
+        raise $w
+
+        fb_create_directory_listing $w 
+}
+

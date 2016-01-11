@@ -1,0 +1,4 @@
+# limit pzip to gzip compression
+nopzip
+1
+0

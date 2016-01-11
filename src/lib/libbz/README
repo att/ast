@@ -1,0 +1,2 @@
+The ast distribution has split the -lbz src from the command.
+Please see $INSTALLROOT/src/cmd/bzip for license, copyright, and docs.

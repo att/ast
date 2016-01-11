@@ -1,0 +1,43 @@
+12-02-20 proto.c: bump version to match astlicense() { since start source } change
+12-02-14 protp.tst: update for libpp/ppproto.c fix
+12-01-01 proto.c: add epl to the license type list
+11-03-04 sear.sh: add { sear32.ico sear64.ico }, $(dirname -r lib/$COMMAND/...)
+11-02-02 Makefile: don't update ../INIT/proto.c if no change or if cpp hack failed
+10-10-10 sear.sh: retain .exe suffix in sear -- its dos on the other side!
+10-09-10 sear.sh: add --args=args
+10-08-22 sear.sh: ratz+sear now requires -ladvapi32
+10-01-20 changes.sh: avoid nmake variable expansions in sh!
+09-03-02 Makefile: eliminate master src paths from ../INIT/proto.c
+09-01-15 sear.sh: update for msvcrt.dll link
+08-11-15 sear.sh: add manifest logic
+06-12-04 proto.c: add utime() prototype
+06-06-28 proto.tst: add more externalize tests
+06-05-09 proto.c: add --externalize, -x
+06-05-09 proto.tst: add -x tests
+05-12-25 ratz.c: fix sear CreateDirectory(tmp) permissions
+05-09-16 proto.c: add <stdio.h> for standalone rename() prototype
+05-07-31 proto.c: finally trust __STDC__ headers
+05-05-11 since.sh: add
+04-10-24 sear.sh: note in docs that ratz options apply to sear .exe's
+04-10-22 proto.tst: add array arg prototype tests
+04-10-01 proto.c: add CPL docs
+04-09-24 sear.sh: add cc -c to avoid nativepp "ratz.c" message
+04-05-20 proto.tst: add `int fun __P((int));' test
+04-03-19 proto.c: add { .cpp .hpp }, fix standalone -c parse
+04-02-29 proto.tst: add -f -p option tests
+04-01-14 proto.c: add suffix-comment table
+04-02-11 proto.c: default comment style set to match file suffix
+03-06-21 proto.tst: add T_INVALID ? splice bug test
+02-07-31 sear.sh: make sure output files has a suffix
+02-03-12 proto.c: add type=free
+02-01-07 proto.tst: add TEST 05 -- no fix yet
+01-12-12 sear.sh: fix rc ICON path \ escapes
+01-10-31 sear.sh: add sear.ico
+01-10-16 sear.sh: _SEA_* => _SEAR_*
+01-10-05 sear.sh: rename from sea.sh
+01-09-11 sea.sh: add
+01-06-26 proto.tst: add another buffer boundary test (large of course)
+01-04-01 proto: preserve file mode for -r
+01-02-06 proto.tst: add (finally)
+99-11-19 add --license, --shell, --copy, --verbose
+99-08-11 long options

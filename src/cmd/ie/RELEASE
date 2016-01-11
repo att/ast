@@ -1,0 +1,10 @@
+05-02-01 ie.sh: IFS may be unset and { ash bsh } don't on startup -- wow
+04-07-26 ie.sh: update runtime docs
+04-07-23 Makefile: link with static ast libraries
+04-02-29 history.c: use pathtemp() instead of mktemp()
+01-04-25 vi.c: handle implementations with VEOL but not VEOL2
+00-02-14 ie: ie.sh script replaces ie fun
+	 ie: convert configure/* => features(ielib|options.sh)
+99-11-19 Makefile: fix sh_config.h for 2d -- eventually should use iffe
+98-03-11 workaraound for sgi dllnext() botches
+98-02-02 initial release snarfed from ksh88i source
