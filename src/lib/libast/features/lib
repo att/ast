@@ -451,7 +451,7 @@ tst	lib_memccpy string.h unistd.h stdlib.h fcntl.h signal.h sys/types.h sys/stat
 		srcbuf = (char*)mmap(NULL, siz, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
 		if (srcbuf == (caddr_t)0 || srcbuf == (caddr_t)(-1))
 			return 0;
-		addbuf i= mmap(srcbuf + siz, siz, PROT_NONE, MAP_PRIVATE, fd, 0);
+		addbuf = mmap(srcbuf + siz, siz, PROT_NONE, MAP_PRIVATE, fd, 0);
 		if (addbuf == (caddr_t)0 || addbuf == (caddr_t)(-1))
 			return 0;
 		for (i = 0; i < siz; i++)

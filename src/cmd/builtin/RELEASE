@@ -1,3 +1,4 @@
+16-01-06 added dummy code in builtin.c to keep the linker from optimizing it out
 14-02-06 grep.tst: add more --context=... tests
 13-12-05 ls.tst: move from src/cmd/std
 13-09-25 cksum.tst: adjust tests for gnu { md5 sha } text/binary indicator
