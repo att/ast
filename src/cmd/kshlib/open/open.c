@@ -280,7 +280,7 @@ static void genvalue(Sfio_t *out, Shclass_t *sp, int indent, Namval_t *npar)
 				if(array_elem(nv_arrayptr(np))==0)
 					isarray=2;
 				else
-					nv_putsub(np,(char*)0,ARRAY_SCAN);
+					nv_putsub(np,(char*)0,0,ARRAY_SCAN);
 			}
 			sfnputc(out,'\t',indent);
 			sfputr(out,fp->name,(isarray==2?'\n':'='));

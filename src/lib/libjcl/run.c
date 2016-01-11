@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -163,6 +163,8 @@ jclrun(Jcl_t* scope)
 	code = 0;
 	if (jcl->name && (!scope || !scope->scope || (scope->scope->flags & JCL_SCOPE)))
 	{
+		if (jcl->flags & (JCL_LISTJOBS|JCL_LISTSCRIPTS))
+			uniq(jcl->name, NiL, JCL_LISTJOBS, jcl->disc);
 		top = jcl;
 		if (!(jcl->flags & JCL_EXEC))
 		{
@@ -263,47 +265,59 @@ jclrun(Jcl_t* scope)
 			}
 			if (dd)
 			{
-				if (jcl->flags & JCL_EXEC)
-				{
-					if (!(s = getenv("TMPDIR")))
-						s = "/tmp";
-					sfprintf(jcl->vp, "%s/job.%s.%lu.", s, jcl->name, (unsigned long)getpid());
-				}
+				if (jcl->flags & JCL_SUBTMP)
+					sfprintf(jcl->vp, "tmp.%s.%lu.", jcl->main->name, (unsigned long)getpid());
 				else
-					sfprintf(jcl->vp, "${TMPDIR:-/tmp}/job.%s.$$.", jcl->name);
+				{
+					if (jcl->flags & JCL_EXEC)
+					{
+						if (!(s = getenv("TMPDIR")))
+							s = "/tmp";
+						sfprintf(jcl->vp, "%s/job.%s.%lu.", s, jcl->main->name, (unsigned long)getpid());
+					}
+					else
+						sfprintf(jcl->vp, "${TMPDIR:-/tmp}/job.%s.$$.", jcl->main->name);
+				}
 				if (!(s = sfstruse(jcl->vp)))
 					nospace(jcl, NiL);
 				jcl->tmp = stash(jcl, jcl->vm, s, 0);
-				if ((jcl->flags & (JCL_VERBOSE|JCL_EXEC)) == JCL_VERBOSE)
+				for (s = jcl->tmp; *s; s++)
+					if (*s == '@')
+						*s = '-';
+				if ((jcl->flags & (JCL_VERBOSE|JCL_EXEC|JCL_SUBTMP)) == JCL_VERBOSE)
 					sfprintf(sfstdout, "trap 'code=$?; rm -rf %s*; exit $code' 0 1 2\n", jcl->tmp);
 			}
 		}
 		jcl->steps++;
-		if (jcl->flags & (JCL_LISTEXEC|JCL_LISTINPUTS|JCL_LISTOUTPUTS|JCL_LISTPROGRAMS|JCL_LISTSCRIPTS))
+		if (jcl->flags & (JCL_LISTEXEC|JCL_LISTINPUTS|JCL_LISTJOBS|JCL_LISTOUTPUTS|JCL_LISTPROGRAMS|JCL_LISTSCRIPTS))
 		{
-			if (jcl->flags & JCL_LISTEXEC)
-				uniq(jcl->name, step->command, 0, jcl->disc);
-			else if (jcl->flags & (JCL_LISTINPUTS|JCL_LISTOUTPUTS))
+			if ((jcl->flags & JCL_LISTPROGRAMS) && (step->flags & JCL_PGM))
+				uniq(step->command, (jcl->flags & JCL_LISTPARMS) && step->parm ? step->parm : NiL, JCL_LISTPROGRAMS, jcl->disc);
+			else if ((jcl->flags & (JCL_LISTJOBS|JCL_LISTSCRIPTS)) && !(step->flags & JCL_PGM) && (s = jclfind(jcl, step->command, 0, 0, NiL)))
+				uniq(s, NiL, JCL_LISTSCRIPTS, jcl->disc);
+			else if (jcl->flags & JCL_LISTEXEC)
+				uniq(step->command, NiL, JCL_LISTEXEC, jcl->disc);
+			if (jcl->flags & (JCL_LISTINPUTS|JCL_LISTOUTPUTS))
 			{
 				for (dd = (Jcldd_t*)dtfirst(step->dd); dd; dd = (Jcldd_t*)dtnext(step->dd, dd))
 				{
-					flags = dd->disp[0] == JCL_DISP_NEW ? JCL_LISTOUTPUTS : JCL_LISTINPUTS;
+					flags = (dd->disp[0] == JCL_DISP_NEW || dd->disp[0] == JCL_DISP_MOD) ? JCL_LISTOUTPUTS : JCL_LISTINPUTS;
 					if (dd->path && *dd->path != '&')
-						uniq(dd->path, NiL, flags, jcl->disc);
+					{
+						if (jcl->flags & JCL_LISTDD)
+							uniq(dd->name, dd->path, flags, jcl->disc);
+						else
+							uniq(dd->path, NiL, flags, jcl->disc);
+					}
 					for (cat = dd->cat; cat; cat = cat->next)
 						if (*cat->path != '&')
-							uniq(cat->path, NiL, flags, jcl->disc);
+						{
+							if (jcl->flags & JCL_LISTDD)
+								uniq(dd->name, cat->path, flags, jcl->disc);
+							else
+								uniq(cat->path, NiL, flags, jcl->disc);
+						}
 				}
-			}
-			else if (jcl->flags & JCL_LISTPROGRAMS)
-			{
-				if (step->flags & JCL_PGM)
-					uniq(step->command, NiL, 0, jcl->disc);
-			}
-			else if (jcl->flags & JCL_LISTSCRIPTS)
-			{
-				if (!(step->flags & JCL_PGM) && (s = jclfind(jcl, step->command, 0, 0, NiL)))
-					uniq(s, NiL, 0, jcl->disc);
 			}
 		}
 		if (!jcleval(jcl, jcl->cond, code))
@@ -450,7 +464,7 @@ jclrun(Jcl_t* scope)
 				if (dd = std[3])
 					sfprintf(jcl->tp, " <<%s\n%s%s", fmtquote(dd->dlm, "'", "'", strlen(dd->dlm), 1), dd->here, dd->dlm);
 				sfprintf(jcl->tp, "\ncode=$?\n");
-				if (del)
+				if (del && !(jcl->flags & JCL_SUBTMP))
 				{
 					if (del & 1)
 					{
@@ -507,21 +521,21 @@ jclrun(Jcl_t* scope)
 				jcl->failed++;
 			else
 				jcl->passed++;
-			if (jclrc(jcl, step, code) < 0)
+			if (jclrc(jcl, step, code) < 0 && ((jcl->flags & JCL_EXEC) || !(jcl->flags & JCL_LIST)))
 				break;
 		}
 	}
  bad:
-	if (jcl->tmp && (jcl->flags & JCL_EXEC))
-	{
-		sfprintf(jcl->tp, "rm -rf %s*\n", jcl->tmp);
-		if (!(s = sfstruse(jcl->tp)))
-			nospace(jcl, NiL);
-		if (cj = coexec(co, s, CO_APPEND, redirect[0].file, redirect[1].file, NiL))
-			cowait(co, cj, -1);
-	}
 	if (jcl == top)
 	{
+		if (jcl->tmp && (jcl->flags & (JCL_EXEC|JCL_SUBTMP)) == JCL_EXEC)
+		{
+			sfprintf(jcl->tp, "rm -rf %s*\n", jcl->tmp);
+			if (!(s = sfstruse(jcl->tp)))
+				nospace(jcl, NiL);
+			if (cj = coexec(co, s, CO_APPEND, redirect[0].file, redirect[1].file, NiL))
+				cowait(co, cj, -1);
+		}
 		if (jcl->flags & JCL_GDG)
 		{
 			s = "gdgupdate";

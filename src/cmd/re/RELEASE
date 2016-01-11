@@ -1,3 +1,5 @@
+13-04-03 grep: move to lib/libcmd and cmd/builtin
+13-01-24 ed.c: splice => splicef to avoid gnu splice(2)
 12-06-25 test*.c: handle \u[U+...]
 12-06-23 testoldmatch.c: add tests for legacy astsa/strmatch.c
 12-05-07 grep.c: add case 'y': to *really* ignore --color

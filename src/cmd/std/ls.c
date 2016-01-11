@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1989-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1989-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -31,7 +31,7 @@
 #define TIME_LOCALE	"%c"
 
 static const char usage[] =
-"[-?\n@(#)$Id: ls (AT&T Research) 2012-04-20 $\n]"
+"[-?\n@(#)$Id: ls (AT&T Research) 2013-09-19 $\n]"
 USAGE_LICENSE
 "[+NAME?ls - list files and/or directories]"
 "[+DESCRIPTION?For each directory argument \bls\b lists the contents; for each"
@@ -413,6 +413,8 @@ printable(register char* s)
 	register char*	t;
 	register char*	p;
 	register int	c;
+	wchar_t		w;
+	Mbstate_t	q;
 
 	static char*	prdata;
 	static int	prsize;
@@ -439,8 +441,10 @@ printable(register char* s)
 		while (c = *s++)
 			*t++ = (iscntrl(c) || !isprint(c)) ? '?' : c;
 	else
-		for (p = s; c = mbchar(s);)
-			if (c < 0)
+	{
+		mbinit(&q);
+		for (p = s; c = mbchar(&w, s, MB_LEN_MAX, &q);)
+			if (mberrno(&q))
 			{
 				s++;
 				*t++ = '?';
@@ -450,6 +454,7 @@ printable(register char* s)
 			else
 				while (p < s)
 					*t++ = *p++;
+	}
 	if (state.lsflags & LS_QUOTE)
 		*t++ = '"';
 	*t = 0;
@@ -470,6 +475,7 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 	register Key_t*		kp;
 	List_t*			lp;
 	Time_t			t;
+	Mbstate_t		q;
 
 	static Sfio_t*		mp;
 	static const char	fmt_mode[] = "mode";
@@ -629,8 +635,7 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 					error(3, "out of space");
 			}
 			c = pathgetlink(dirnam, txtdata, txtsize);
-			if (c > 0)
-				s = PRINTABLE(txtdata);
+			s = (c > 0) ? PRINTABLE(txtdata) : "";
 		}
 		else
 			return 0;
@@ -754,11 +759,12 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 		if (mbwide())
 		{
 			register char*	p;
-			int		w;
+			wchar_t		w;
 			int		i;
 
-			for (p = s; w = mbchar(s); p = s)
-				if (w < 0)
+			mbinit(&q);
+			for (p = s; w = mbchar(&w, s, MB_LEN_MAX, &q); p = s)
+				if (mberrno(&q))
 					s++;
 				else if ((i = mbwidth(w)) >= 0)
 					state.adjust -= (s - p) + i - 2;
@@ -801,11 +807,6 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 static void
 pr(register List_t* lp, Ftw_t* ftw, register int fill)
 {
-	if (state.testsize)
-	{
-		ftw->statb.st_size <<= state.testsize;
-		ftw->statb.st_blocks = ftw->statb.st_size / LS_BLOCKSIZE;
-	}
 #ifdef S_ISLNK
 	/*
 	 * -H == --hairbrained
@@ -817,6 +818,11 @@ pr(register List_t* lp, Ftw_t* ftw, register int fill)
 	if (ftw->level == 0 && (state.ftwflags & (FTW_META|FTW_PHYSICAL)) == (FTW_META|FTW_PHYSICAL) && !(ftw->info & FTW_D) && !lstat(ftw->path ? ftw->path : ftw->name, &ftw->statb) && S_ISLNK(ftw->statb.st_mode))
 		ftw->info = FTW_SL;
 #endif
+	if (state.testsize && (ftw->info & FTW_F))
+	{
+		ftw->statb.st_size <<= state.testsize;
+		ftw->statb.st_blocks = ftw->statb.st_size / LS_BLOCKSIZE;
+	}
 	lp->ftw = ftw;
 	state.adjust = 0;
 	fill -= sfkeyprintf(sfstdout, lp, state.format, key, NiL) + state.adjust;
@@ -881,14 +887,20 @@ col(register List_t* lp, register Ftw_t* ftw, int length)
 					if (!mbwide())
 						w = p->namelen;
 					else
-						for (s = p->name, w = 0; i = mbchar(s);)
-							if (i < 0)
+					{
+						wchar_t		x;
+						Mbstate_t	q;
+
+						mbinit(&q);
+						for (s = p->name; w = mbchar(&x, s, MB_LEN_MAX, &q);)
+							if (mberrno(&q))
 							{
 								s++;
 								w++;
 							}
-							else if ((n = mbwidth(i)) > 0)
+							else if ((n = mbwidth(x)) > 0)
 								w += n;
+					}
 					w += a;
 					if ((n -= length + w) < 0)
 					{

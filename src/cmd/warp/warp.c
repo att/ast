@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1998-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1998-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -27,7 +27,9 @@
  * and the time progression factor
  */
 
-static const char id[] = "\n@(#)$Id: warp (AT&T Research) 2012-06-22 $\0\n";
+static const char id[] = "\n@(#)$Id: warp (AT&T Research) 2013-07-29 $\0\n";
+
+#define _AST_INTERCEPT_IMPLEMENT	2
 
 #if defined(_SCO_C_DIALECT) || defined(_SCO_ELF) || defined(_SCO_XPG_VERS)
 #define _NO_STATIC	1

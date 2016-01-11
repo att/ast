@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -578,7 +578,7 @@ lockstate(int set)
 		for (;;)
 		{
 			lockfile = file;
-			if ((fd = open(file, O_WRONLY|O_CREAT|O_TRUNC|O_EXCL|O_BINARY|O_cloexec, 0)) >= 0)
+			if ((fd = open(file, O_WRONLY|O_CREAT|O_TRUNC|O_EXCL|O_BINARY|O_CLOEXEC, 0)) >= 0)
 				break;
 			lockfile = 0;
 			if (stat(file, &st) < 0)

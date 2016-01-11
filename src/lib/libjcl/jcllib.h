@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -31,6 +31,8 @@
 
 #define IE_KEEP		01
 #define IE_SKIP		02
+
+#define JCL_LIST	(JCL_LISTAUTOEDITS|JCL_LISTEXEC|JCL_LISTINPUTS|JCL_LISTJOBS|JCL_LISTOUTPUTS|JCL_LISTPROGRAMS|JCL_LISTSCRIPTS|JCL_LISTVARIABLES)
 
 struct Dir_s; typedef struct Dir_s Dir_t;
 struct Dirlist_s; typedef struct Dirlist_s Dirlist_t;
@@ -100,6 +102,7 @@ typedef struct Push_s
 
 #define _JCL_PRIVATE_ \
 	Jcl_t*		scope; \
+	Jcl_t*		main; \
 	Jclstep_t	current; \
 	Jcldd_t*	lastdd; \
 	Sfio_t*		sp; \

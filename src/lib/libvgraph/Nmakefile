@@ -3,7 +3,7 @@
 CCFLAGS = $(CC.DLL) $(CC.OPTIMIZE)
 
 vgraph :LIBRARY: grhdr.h kpvdebug.h \
-	graph.c grbranching.c grfold.c grsearch.c
+	graph.c grbranching.c grfold.c
 
 $(INCLUDEDIR) :INSTALLDIR: vgraph.h
 

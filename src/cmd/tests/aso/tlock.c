@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -18,8 +18,6 @@
 *                                                                      *
 ***********************************************************************/
 #include	"terror.h"
-
-#include	<sys/mman.h>
 
 /* Test concurrency locking based on Atomic Scalar Operations
 **
@@ -132,33 +130,13 @@ static void workload(int pnum)
 
 tmain()
 {
-	ssize_t		k, z;
+	ssize_t		k;
 	Void_t		*addr;
-	int		zerof;
 	pid_t		pid;
 
-	taso(ASO_PROCESS);
-	if (!Tstall && !(asometh(0, 0)->type & ASO_INTRINSIC))
-	{
-		twarn("only ASO_INTRINSIC methods are tested by default");
-		texit(0);
-	}
 	tchild();
 
-	if((zerof = open("/dev/zero", O_RDWR)) < 0)
-		terror("Can't open /dev/zero");
-
-	/* get shared memory */
-	z = sizeof(*Nproc) + (N_PROC+1)*sizeof(pid_t) + sizeof(*Done) +
-		N_SLOT*sizeof(unsigned char) +
-		N_SLOT*sizeof(unsigned short) +
-		N_SLOT*sizeof(unsigned int);
-	addr = mmap(0,z,PROT_READ|PROT_WRITE,MAP_SHARED,zerof,0);
-	if(!addr || addr == (Void_t*)(-1))
-		terror("mmap failed");
-	memset(addr, 0, z);
-
-	Nproc = (unsigned int*)addr;
+	Nproc = (unsigned int*)tshared(sizeof(*Nproc) + (N_PROC+1)*sizeof(pid_t) + sizeof(*Done) + N_SLOT*sizeof(unsigned char) + N_SLOT*sizeof(unsigned short) + N_SLOT*sizeof(unsigned int));
 	Pid   = (pid_t*)(Nproc+1);
 	Done  = (unsigned int*)(Pid + (N_PROC+1)*sizeof(pid_t));
 	Lcki  = (unsigned int*)(Done + 1);

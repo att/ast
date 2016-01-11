@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -33,6 +33,7 @@ const struct shtable2 shtab_aliases[] =
 	"2d",		NV_NOFREE,		"set -f;_2d",
 #endif /* SHOPT_FS_3D */
 	"autoload",	NV_NOFREE,		"typeset -fu",
+	"bool",		NV_NOFREE|BLT_DCL,	"_Bool",
 	"command",	NV_NOFREE,		"command ",
 	"compound",	NV_NOFREE|BLT_DCL,	"typeset -C",
 	"fc",		NV_NOFREE,		"hist",

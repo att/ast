@@ -66,20 +66,30 @@ tst	pipe_socketpair note{ use socketpair() for peekable pipe() }end execute{
 		return(1);
 	}
 }end
-tst	socketpair_devfd note{ /dev/fd/N handles socketpair() }end execute{
+tst	socketpair_devfd -D_AST_INTERCEPT=0 note{ /proc/*/fd/N or /dev/fd/N handles socketpair() }end execute{
 	#include <ast.h>
 	#include <fs3d.h>
 	#include <sys/types.h>
 	#include <sys/socket.h>
+#if !defined(_fd_self_dir_fmt) && !defined(_fd_pid_dir_fmt)
+#define _fd_self_dir_fmt	"/dev/fd/%d%s%s"
+#endif
 	int main()
 	{
 		int		devfd;
 		int		n;
 		int		sfd[2];
+		char		buf[64];
 		fs3d(FS3D_OFF);
 		close(0);
-		open("/dev/null", O_RDONLY);
-		if ((n = open("/dev/fd/0", O_RDONLY)) < 0)
+		if (open("/dev/null", O_RDONLY) != 0)
+			return(1);
+#if defined(_fd_self_dir_fmt)
+		sfsprintf(buf, sizeof(buf), _fd_self_dir_fmt, 0, "", "");
+#else
+		sfsprintf(buf, sizeof(buf), _fd_pid_dir_fmt, getpid(), 0, "", "");
+#endif
+		if ((n = open(buf, O_RDONLY)) < 0)
 			return(1);
 		close(n);
 		if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0 ||
@@ -87,9 +97,10 @@ tst	socketpair_devfd note{ /dev/fd/N handles socketpair() }end execute{
 		    shutdown(sfd[1], 0) < 0)
 			return(1);
 		close(0);
-		dup(sfd[0]);
+		if (dup(sfd[0]) != 0)
+			return(1);
 		close(sfd[0]);
-		if ((n = open("/dev/fd/0", O_RDONLY)) < 0)
+		if (open(buf, O_RDONLY) < 0)
 			return(1);
 		return(0);
 	}

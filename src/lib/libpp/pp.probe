@@ -2,7 +2,7 @@
 # Glenn Fowler
 # AT&T Research
 #
-# @(#)pp.probe (AT&T Research) 2012-02-29
+# @(#)pp.probe (AT&T Research) 2013-09-03
 #
 # C probe for libpp
 #
@@ -514,7 +514,7 @@ echo "$predef" >> all.pp
 				;;
 			[\\/]*)	case " $x " in
 				*" $1 "*)	;;
-				*)		test -x $1 && x="$x $1" ;;
+				*)		test -f $1 && test -x $1 && x="$x $1" ;;
 				esac
 				;;
 			esac

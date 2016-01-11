@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -35,16 +35,13 @@ static char *Record2[] =
 
 static Vcchar_t	Data[1024];
 
-int main()
+MAIN()
 {
 	Vcodex_t	*tz, *uz;
 	Vcodex_t	*huf, *rle, *mtf;
 	Vcchar_t	*dt, *cmp;
 	ssize_t		nc, nu, n, k, r, dtsz1, dtsz2;
-	Vcmethod_t	*Vcrtable;
 
-	if(!(Vcrtable = vcgetmeth("rtable", 0)))
-		terror("rtable plugin not found");
 	/* construct first half of test data */
 	dtsz1 = 0;
 	for(k = 0, r = 0; r < 6; ++r, ++k)

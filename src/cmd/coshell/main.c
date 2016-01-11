@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -114,7 +114,7 @@ init(void* handle, int fdmax)
 		error(3, "out of space [con]");
 	state.con[0].type = POLL;
 	if ((n = getgroups(0, NiL)) <= 0)
-		n = NGROUPS_MAX;
+		n = getconf("NGROUPS_MAX");
 	if (!(state.gids = newof(0, gid_t, n + 2, 0)))
 		error(3, "out of space [gids]");
 	if ((n = getgroups(n, state.gids + 1)) < 0)

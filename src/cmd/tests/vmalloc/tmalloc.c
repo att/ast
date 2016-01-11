@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -39,11 +39,6 @@ tmain()
 	for(i = 0; i < 10; ++i)
 		if(!(addr[i] = vmalloc(vm,15)) )
 			terror("vmalloc failed");
-#ifdef DEBUG
-	for(i = 0; i < 10; ++i)
-		printf("size[%d]=%d\n",i,vmsize(vm,addr[i]));
-	printf("Extent=%d\n",vmsize(vm,NIL(Void_t*)));
-#endif
 
 	mem = 0;
 	if(posix_memalign(&mem, 3, 128) != EINVAL)

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -16,7 +16,7 @@
 *                                                                      *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -335,7 +335,14 @@ synthesize(register Feature_t* fp, const char* path, const char* value)
 		error(-6, "astconf synthesize name=%s path=%s value=%s fp=%p%s", fp->name, path, value, fp, state.synthesizing ? " SYNTHESIZING" : "");
 #endif
 	if (state.synthesizing)
+	{
+		if (fp && fp->op < 0 && value && *value)
+		{
+			n = strlen(value);
+			goto ok;
+		}
 		return null;
+	}
 	if (!state.data)
 	{
 		char*		se;
@@ -1151,7 +1158,7 @@ print(Sfio_t* sp, register Lookup_t* look, const char* name, const char* path, i
 		call = 0;
 		if (p->standard == CONF_AST)
 		{
-			if (streq(p->name, "RELEASE") && (i = open("/proc/version", O_RDONLY|O_cloexec)) >= 0)
+			if (streq(p->name, "RELEASE") && (i = open("/proc/version", O_RDONLY|O_CLOEXEC)) >= 0)
 			{
 				n = read(i, buf, sizeof(buf) - 1);
 				close(i);
@@ -1552,7 +1559,15 @@ astgetconf(const char* name, const char* path, const char* value, int flags, Err
 char*
 astconf(const char* name, const char* path, const char* value)
 {
+#if DEBUG_astconf
+	char*	r;
+
+	r = astgetconf(name, path, value, 0, 0);
+	error(-1, "astconf(%s,%s,%s) => '%s'", name, path, value, r);
+	return r;
+#else
 	return astgetconf(name, path, value, 0, 0);
+#endif
 }
 
 /*

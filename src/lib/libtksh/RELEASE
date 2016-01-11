@@ -1,3 +1,4 @@
+12-08-24  Makefile: shell:20120101
 12-05-04  update sh_sigcheck() => sh_sigcheck(0) -- eventually figure out Shell_t*
 10-06-01  sync with ast api 20100601
 08-08-08  src/list.c,src/tcleval.c: add temporary sh_eval(p,0x8000) hack

@@ -9,7 +9,7 @@ include astsa.omk
 CC = cc
 CFLAGS = $(IVSA_CFLAGS)
 
-IVSA_CFLAGS = $(ASTSA_CFLAGS) -DUSAGE_LICENSE='"[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <kpv@research.att.com>][-copyright?Copyright (c) 2000-'`date +%Y`' AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssip_t]"'
+IVSA_CFLAGS = $(ASTSA_CFLAGS) -DUSAGE_LICENSE='"[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2000-'`date +%Y`' AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssip_t]"'
 
 testiv : testiv.o libivsa.a libastsa.a
 	$(CC) $(CFLAGS) -o testiv $?
@@ -24,7 +24,7 @@ test : testiv
 	testiv -ip6 iv-ip6-prefix.dat iv-ip6-addr.dat > iv-ip6.tmp
 	@cmp -s iv-ip6.out iv-ip6.tmp || { echo 'test ip6 FAILED -- >: expected <: got'; diff  iv-ip6.tmp iv-ip6.out; }
 
-clobber : iv_clobber
+clean : iv_clean
 
-iv_clobber :
+iv_clean :
 	rm -f testiv iv-ip4.tmp iv-ip6.tmp

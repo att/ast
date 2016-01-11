@@ -1,0 +1,857 @@
+afi           1
+extended      0:24:2:50:4:5:6:8,8:9:10:12:12:13:14:16
+hopv4         0.24.2.49
+local         1573424
+message       2
+mvpn          ( originatorv4=0.22.2.46 rd=( as16=22 number=1442349 ) type=1 )
+origin        105
+path16        {24}
+safi          5
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:02
+time          2010-12-31+19:00:02
+tunnel        ( identifier=0,24,3,51,4,5,6,9 label=6147 type=6 )
+type          65
+valid         1
+
+afi           1
+extended      0:26:3:55:4:5:6:10,8:9:10:13:12:13:14:17
+hopv4         0.26.3.54
+local         1704757
+message       2
+mvpn          ( originatorv4=0.22.2.46 rd=( as16=22 number=1442349 ) type=1 )
+origin        105
+path16        {26}
+safi          5
+src_addrv4    0.2.2.7
+src_as16      3
+stamp         2010-12-31+19:00:03
+time          2010-12-31+19:00:03
+tunnel        ( identifier=0,26,4,56,4,5,6,11 label=6660 type=6 )
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:29:4:63:4:5:6:12,8:9:10:14:12:13:14:18
+hopv4         0.29.4.62
+local         1901629
+message       3
+mvpn          ( originatorv4=0.27.4.59 rd=( as16=27 number=1770554 ) type=1 )
+origin        105
+path16        {29}
+safi          5
+src_addrv4    0.11.2.25
+src_as16      12
+stamp         2010-12-31+19:00:05
+time          2010-12-31+19:00:05
+tunnel        ( identifier=0,29,5,64,4,5,6,13 label=7429 type=6 )
+type          65
+valid         1
+MESSAGE       1
+
+afi           1
+extended      0:31:5:68:4:5:6:14,8:9:10:15:12:13:14:19
+hopv4         0.31.5.67
+local         2032962
+message       3
+mvpn          ( originatorv4=0.27.4.59 rd=( as16=27 number=1770554 ) type=1 )
+origin        105
+path16        {31}
+safi          5
+src_addrv4    0.1.2.5
+src_as16      2
+stamp         2010-12-31+19:00:06
+time          2010-12-31+19:00:06
+tunnel        ( identifier=0,31,6,69,4,5,6,15 label=7942 type=6 )
+type          65
+valid         1
+MESSAGE       1
+PART          1
+
+afi           1
+extended      0:34:6:76:4:5:6:16,8:9:10:16:12:13:14:20
+hopv4         0.34.6.75
+local         2229834
+message       4
+mvpn          ( originatorv4=0.32.6.72 rd=( as16=32 number=2098759 ) type=1 )
+origin        105
+path16        {34}
+safi          5
+src_addrv4    0.20.2.43
+src_as16      21
+stamp         2010-12-31+19:00:08
+time          2010-12-31+19:00:08
+tunnel        ( identifier=0,34,7,77,4,5,6,17 label=8711 type=6 )
+type          65
+valid         1
+
+afi           1
+extended      0:36:7:81:4:5:6:18,8:9:10:17:12:13:14:21
+hopv4         0.36.7.80
+local         2361167
+message       4
+mvpn          ( originatorv4=0.32.6.72 rd=( as16=32 number=2098759 ) type=1 )
+origin        105
+path16        {36}
+safi          5
+src_addrv4    0.10.2.23
+src_as16      11
+stamp         2010-12-31+19:00:09
+time          2010-12-31+19:00:09
+tunnel        ( identifier=0,36,8,82,4,5,6,19 label=9224 type=6 )
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:39:8:89:4:5:6:20,8:9:10:18:12:13:14:22
+hopv4         0.39.8.88
+local         2558039
+message       5
+mvpn          ( originatorv4=0.37.8.85 rd=( as16=37 number=2426964 ) type=1 )
+origin        105
+path16        {39}
+safi          5
+src_addrv4    0.19.2.41
+src_as16      20
+stamp         2010-12-31+19:00:11
+time          2010-12-31+19:00:11
+tunnel        ( identifier=0,39,9,90,4,5,6,21 label=9993 type=6 )
+type          65
+valid         1
+MESSAGE       1
+
+afi           1
+extended      0:41:9:94:4:5:6:22,8:9:10:19:12:13:14:23
+hopv4         0.41.9.93
+local         2689372
+message       5
+mvpn          ( originatorv4=0.37.8.85 rd=( as16=37 number=2426964 ) type=1 )
+origin        105
+path16        {41}
+safi          5
+src_addrv4    0.9.2.21
+src_as16      10
+stamp         2010-12-31+19:00:12
+time          2010-12-31+19:00:12
+tunnel        ( identifier=0,41,10,95,4,5,6,23 label=10506 type=6 )
+type          65
+valid         1
+MESSAGE       1
+PART          1
+
+afi           1
+extended      0:44:10:102:4:5:6:24,8:9:10:20:12:13:14:24
+hopv4         0.44.10.101
+local         2886244
+message       6
+mvpn          ( originatorv4=0.42.10.98 rd=( as16=42 number=2755169 ) type=1 )
+origin        105
+path16        {44}
+safi          5
+src_addrv4    0.18.2.39
+src_as16      19
+stamp         2010-12-31+19:00:14
+time          2010-12-31+19:00:14
+tunnel        ( identifier=0,44,11,103,4,5,6,25 label=11275 type=6 )
+type          65
+valid         1
+
+afi           1
+extended      0:46:11:107:4:5:6:26,8:9:10:21:12:13:14:25
+hopv4         0.46.11.106
+local         3017577
+message       6
+mvpn          ( originatorv4=0.42.10.98 rd=( as16=42 number=2755169 ) type=1 )
+origin        105
+path16        {46}
+safi          5
+src_addrv4    0.8.2.19
+src_as16      9
+stamp         2010-12-31+19:00:15
+time          2010-12-31+19:00:15
+tunnel        ( identifier=0,46,12,108,4,5,6,27 label=11788 type=6 )
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:49:12:115:4:5:6:28,8:9:10:22:12:13:14:26
+hopv4         0.49.12.114
+local         3214449
+message       7
+mvpn          ( originatorv4=0.47.12.111 rd=( as16=47 number=3083374 ) type=1 )
+origin        105
+path16        {49}
+safi          5
+src_addrv4    0.17.2.37
+src_as16      18
+stamp         2010-12-31+19:00:17
+time          2010-12-31+19:00:17
+tunnel        ( identifier=0,49,13,116,4,5,6,29 label=12557 type=6 )
+type          65
+valid         1
+MESSAGE       1
+
+afi           1
+extended      0:51:13:120:4:5:6:30,8:9:10:23:12:13:14:27
+hopv4         0.51.13.119
+local         3345782
+message       7
+mvpn          ( originatorv4=0.47.12.111 rd=( as16=47 number=3083374 ) type=1 )
+origin        105
+path16        {51}
+safi          5
+src_addrv4    0.7.2.17
+src_as16      8
+stamp         2010-12-31+19:00:18
+time          2010-12-31+19:00:18
+tunnel        ( identifier=0,51,14,121,4,5,6,31 label=13070 type=6 )
+type          65
+valid         1
+MESSAGE       1
+PART          1
+
+afi           1
+extended      0:54:14:128:4:5:6:32,8:9:10:24:12:13:14:28
+hopv4         0.54.14.127
+local         3542654
+message       8
+mvpn          ( originatorv4=0.52.14.124 rd=( as16=52 number=3411579 ) type=1 )
+origin        105
+path16        {54}
+safi          5
+src_addrv4    0.16.2.35
+src_as16      17
+stamp         2010-12-31+19:00:20
+time          2010-12-31+19:00:20
+tunnel        ( identifier=0,54,15,129,4,5,6,33 label=13839 type=6 )
+type          65
+valid         1
+
+afi           1
+extended      0:56:15:133:4:5:6:34,8:9:10:25:12:13:14:29
+hopv4         0.56.15.132
+local         3673987
+message       8
+mvpn          ( originatorv4=0.52.14.124 rd=( as16=52 number=3411579 ) type=1 )
+origin        105
+path16        {56}
+safi          5
+src_addrv4    0.6.2.15
+src_as16      7
+stamp         2010-12-31+19:00:21
+time          2010-12-31+19:00:21
+tunnel        ( identifier=0,56,16,134,4,5,6,35 label=14352 type=6 )
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:59:16:141:4:5:6:36,8:9:10:26:12:13:14:30
+hopv4         0.59.16.140
+local         3870859
+message       9
+mvpn          ( originatorv4=0.57.16.137 rd=( as16=57 number=3739784 ) type=1 )
+origin        105
+path16        {59}
+safi          5
+src_addrv4    0.15.2.33
+src_as16      16
+stamp         2010-12-31+19:00:23
+time          2010-12-31+19:00:23
+tunnel        ( identifier=0,59,17,142,4,5,6,37 label=15121 type=6 )
+type          65
+valid         1
+MESSAGE       1
+
+afi           1
+extended      0:61:17:146:4:5:6:38,8:9:10:27:12:13:14:31
+hopv4         0.61.17.145
+local         4002192
+message       9
+mvpn          ( originatorv4=0.57.16.137 rd=( as16=57 number=3739784 ) type=1 )
+origin        105
+path16        {61}
+safi          5
+src_addrv4    0.5.2.13
+src_as16      6
+stamp         2010-12-31+19:00:24
+time          2010-12-31+19:00:24
+tunnel        ( identifier=0,61,18,147,4,5,6,39 label=15634 type=6 )
+type          65
+valid         1
+MESSAGE       1
+PART          1
+
+afi           1
+extended      0:64:18:154:4:5:6:40,8:9:10:28:12:13:14:32
+hopv4         0.64.18.153
+local         4199064
+message       10
+mvpn          ( originatorv4=0.62.18.150 rd=( as16=62 number=4067989 ) type=1 )
+origin        105
+path16        {64}
+safi          5
+src_addrv4    0.14.2.31
+src_as16      15
+stamp         2010-12-31+19:00:26
+time          2010-12-31+19:00:26
+tunnel        ( identifier=0,64,19,155,4,5,6,41 label=16403 type=6 )
+type          65
+valid         1
+
+afi           1
+extended      0:66:19:159:4:5:6:42,8:9:10:29:12:13:14:33
+hopv4         0.66.19.158
+local         4330397
+message       10
+mvpn          ( originatorv4=0.62.18.150 rd=( as16=62 number=4067989 ) type=1 )
+origin        105
+path16        {66}
+safi          5
+src_addrv4    0.4.2.11
+src_as16      5
+stamp         2010-12-31+19:00:27
+time          2010-12-31+19:00:27
+tunnel        ( identifier=0,66,20,160,4,5,6,43 label=16916 type=6 )
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:69:20:167:4:5:6:44,8:9:10:30:12:13:14:34
+hopv4         0.69.20.166
+local         4527269
+message       11
+mvpn          ( originatorv4=0.67.20.163 rd=( as16=67 number=4396194 ) type=1 )
+origin        105
+path16        {69}
+safi          5
+src_addrv4    0.13.2.29
+src_as16      14
+stamp         2010-12-31+19:00:29
+time          2010-12-31+19:00:29
+tunnel        ( identifier=0,69,21,168,4,5,6,45 label=17685 type=6 )
+type          65
+valid         1
+MESSAGE       1
+
+afi           1
+extended      0:71:21:172:4:5:6:46,8:9:10:31:12:13:14:35
+hopv4         0.71.21.171
+local         4658602
+message       11
+mvpn          ( originatorv4=0.67.20.163 rd=( as16=67 number=4396194 ) type=1 )
+origin        105
+path16        {71}
+safi          5
+src_addrv4    0.3.2.9
+src_as16      4
+stamp         2010-12-31+19:00:30
+time          2010-12-31+19:00:30
+tunnel        ( identifier=0,71,22,173,4,5,6,47 label=18198 type=6 )
+type          65
+valid         1
+MESSAGE       1
+PART          1
+
+afi           1
+extended      0:74:22:182:4:5:6:48,8:9:10:32:12:13:14:36
+hopv4         0.74.22.181
+local         4855476
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {74}
+safi          5
+src_addrv4    0.20.2.43
+src_as16      21
+stamp         2010-12-31+19:00:32
+time          2010-12-31+19:00:32
+type          65
+valid         1
+
+afi           1
+extended      0:76:22:186:4:5:6:49,8:9:10:33:12:13:14:37
+hopv4         0.76.22.185
+local         4986552
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {76}
+safi          5
+src_addrv4    0.19.2.41
+src_as16      20
+stamp         2010-12-31+19:00:33
+time          2010-12-31+19:00:33
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:78:22:190:4:5:6:50,8:9:10:34:12:13:14:38
+hopv4         0.78.22.189
+local         5117628
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {78}
+safi          5
+src_addrv4    0.18.2.39
+src_as16      19
+stamp         2010-12-31+19:00:34
+time          2010-12-31+19:00:34
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:80:22:194:4:5:6:51,8:9:10:35:12:13:14:39
+hopv4         0.80.22.193
+local         5248704
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {80}
+safi          5
+src_addrv4    0.17.2.37
+src_as16      18
+stamp         2010-12-31+19:00:35
+time          2010-12-31+19:00:35
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:82:22:198:4:5:6:52,8:9:10:36:12:13:14:40
+hopv4         0.82.22.197
+local         5379780
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {82}
+safi          5
+src_addrv4    0.16.2.35
+src_as16      17
+stamp         2010-12-31+19:00:36
+time          2010-12-31+19:00:36
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:84:22:202:4:5:6:53,8:9:10:37:12:13:14:41
+hopv4         0.84.22.201
+local         5510856
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {84}
+safi          5
+src_addrv4    0.15.2.33
+src_as16      16
+stamp         2010-12-31+19:00:37
+time          2010-12-31+19:00:37
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:86:22:206:4:5:6:54,8:9:10:38:12:13:14:42
+hopv4         0.86.22.205
+local         5641932
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {86}
+safi          5
+src_addrv4    0.14.2.31
+src_as16      15
+stamp         2010-12-31+19:00:38
+time          2010-12-31+19:00:38
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:88:22:210:4:5:6:55,8:9:10:39:12:13:14:43
+hopv4         0.88.22.209
+local         5773008
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {88}
+safi          5
+src_addrv4    0.13.2.29
+src_as16      14
+stamp         2010-12-31+19:00:39
+time          2010-12-31+19:00:39
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:90:22:214:4:5:6:56,8:9:10:40:12:13:14:44
+hopv4         0.90.22.213
+local         5904084
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {90}
+safi          5
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:40
+time          2010-12-31+19:00:40
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:92:22:218:4:5:6:57,8:9:10:41:12:13:14:45
+hopv4         0.92.22.217
+local         6035160
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {92}
+safi          5
+src_addrv4    0.11.2.25
+src_as16      12
+stamp         2010-12-31+19:00:41
+time          2010-12-31+19:00:41
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:94:22:222:4:5:6:58,8:9:10:42:12:13:14:46
+hopv4         0.94.22.221
+local         6166236
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {94}
+safi          5
+src_addrv4    0.10.2.23
+src_as16      11
+stamp         2010-12-31+19:00:42
+time          2010-12-31+19:00:42
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:96:22:226:4:5:6:59,8:9:10:43:12:13:14:47
+hopv4         0.96.22.225
+local         6297312
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {96}
+safi          5
+src_addrv4    0.9.2.21
+src_as16      10
+stamp         2010-12-31+19:00:43
+time          2010-12-31+19:00:43
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:98:22:230:4:5:6:60,8:9:10:44:12:13:14:48
+hopv4         0.98.22.229
+local         6428388
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {98}
+safi          5
+src_addrv4    0.8.2.19
+src_as16      9
+stamp         2010-12-31+19:00:44
+time          2010-12-31+19:00:44
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:100:22:234:4:5:6:61,8:9:10:45:12:13:14:49
+hopv4         0.100.22.233
+local         6559464
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {100}
+safi          5
+src_addrv4    0.7.2.17
+src_as16      8
+stamp         2010-12-31+19:00:45
+time          2010-12-31+19:00:45
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:102:22:238:4:5:6:62,8:9:10:46:12:13:14:50
+hopv4         0.102.22.237
+local         6690540
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {102}
+safi          5
+src_addrv4    0.6.2.15
+src_as16      7
+stamp         2010-12-31+19:00:46
+time          2010-12-31+19:00:46
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:104:22:242:4:5:6:63,8:9:10:47:12:13:14:51
+hopv4         0.104.22.241
+local         6821616
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {104}
+safi          5
+src_addrv4    0.5.2.13
+src_as16      6
+stamp         2010-12-31+19:00:47
+time          2010-12-31+19:00:47
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:106:22:246:4:5:6:64,8:9:10:48:12:13:14:52
+hopv4         0.106.22.245
+local         6952692
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {106}
+safi          5
+src_addrv4    0.4.2.11
+src_as16      5
+stamp         2010-12-31+19:00:48
+time          2010-12-31+19:00:48
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:108:22:250:4:5:6:65,8:9:10:49:12:13:14:53
+hopv4         0.108.22.249
+local         7083768
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {108}
+safi          5
+src_addrv4    0.3.2.9
+src_as16      4
+stamp         2010-12-31+19:00:49
+time          2010-12-31+19:00:49
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:110:22:254:4:5:6:66,8:9:10:50:12:13:14:54
+hopv4         0.110.22.253
+local         7214844
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {110}
+safi          5
+src_addrv4    0.2.2.7
+src_as16      3
+stamp         2010-12-31+19:00:50
+time          2010-12-31+19:00:50
+type          65
+valid         1
+PART          1
+
+afi           1
+extended      0:112:23:2:4:5:6:67,8:9:10:51:12:13:14:55
+hopv4         0.112.23.1
+local         7345920
+message       12
+mvpn          ( group_addrv4=0.72.22.178 rd=( as16=72 number=4724399 ) src_addrv4=0.72.22.177 src_as32=5808 type=7 )
+origin        105
+path16        {112}
+safi          5
+src_addrv4    0.1.2.5
+src_as16      2
+stamp         2010-12-31+19:00:51
+time          2010-12-31+19:00:51
+type          65
+valid         1
+PART          1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      8:117:23:6:4:5:6:68,8:9:10:52:12:13:14:56
+hopv6         875:1707:405:645:809:A35:C0D:E39
+label         1832
+labels        1832:1
+local         141891333
+message       13
+origin        63
+path16        2165
+prefixv6      102:304:506:708::/64
+rd            ( as16=115 number=7542532 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:53
+time          2010-12-31+19:00:53
+type          65
+valid         1
+MESSAGE       1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      16:122:23:11:4:5:6:70,8:9:10:54:12:13:14:58
+hopv6         107A:170C:405:647:809:A37:C0D:E3B
+label         34681
+labels        34681:1
+local         276436746
+message       14
+origin        63
+path16        4218
+prefixv6      90A:B0C:D0E:F10::/64
+rd            ( as16=2168 number=142087945 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:55
+time          2010-12-31+19:00:55
+type          65
+valid         1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      24:127:23:16:4:5:6:72,8:9:10:56:12:13:14:60
+hopv6         187F:1711:405:649:809:A39:C0D:E3D
+label         67530
+labels        67530:1
+local         410982159
+message       15
+origin        63
+path16        6271
+prefixv6      1112:1314:1516:1718::/64
+rd            ( as16=4221 number=276633358 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:57
+time          2010-12-31+19:00:57
+type          65
+valid         1
+MESSAGE       1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      32:132:23:21:4:5:6:74,8:9:10:58:12:13:14:62
+hopv6         2084:1716:405:64B:809:A3B:C0D:E3F
+label         100379
+labels        100379:1
+local         545527572
+message       16
+origin        63
+path16        8324
+prefixv6      191A:1B1C:1D1E:1F20::/64
+rd            ( as16=6274 number=411178771 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:00:59
+time          2010-12-31+19:00:59
+type          65
+valid         1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      40:137:23:26:4:5:6:76,8:9:10:60:12:13:14:64
+hopv6         2889:171B:405:64D:809:A3D:C0D:E41
+label         133228
+labels        133228:1
+local         680072985
+message       17
+origin        63
+path16        10377
+prefixv6      2122:2324:2526:2728::/64
+rd            ( as16=8327 number=545724184 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:01:01
+time          2010-12-31+19:01:01
+type          65
+valid         1
+MESSAGE       1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      48:142:23:31:4:5:6:78,8:9:10:62:12:13:14:66
+hopv6         308E:1720:405:64F:809:A3F:C0D:E43
+label         166077
+labels        166077:1
+local         814618398
+message       18
+origin        63
+path16        12430
+prefixv6      292A:2B2C:2D2E:2F30::/64
+rd            ( as16=10380 number=680269597 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:01:03
+time          2010-12-31+19:01:03
+type          65
+valid         1
+
+afi           2
+best          1
+bits          64
+bitsv6        64
+extended      56:147:23:36:4:5:6:80,8:9:10:64:12:13:14:68
+hopv6         3893:1725:405:651:809:A41:C0D:E45
+label         198926
+labels        198926:1
+local         949163811
+message       19
+origin        63
+path16        14483
+prefixv6      3132:3334:3536:3738::/64
+rd            ( as16=12433 number=814815010 )
+safi          128
+src_addrv4    0.12.2.27
+src_as16      13
+stamp         2010-12-31+19:01:05
+time          2010-12-31+19:01:05
+type          65
+valid         1
+MESSAGE       1
+

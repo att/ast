@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -30,6 +30,7 @@
 #define ast4_match	"ast4|32x4|tw"
 #define ast4_done	long_done
 #define ast4_scale	0
+#define ast4_flags	0
 
 typedef struct Ast4_sum_s
 {

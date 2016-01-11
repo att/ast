@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -1105,6 +1105,10 @@ scanmatch(List_t* p, register Action_t* a, Rule_t* r, char* b, char* s, int ifle
 				for (o = s; o = strchr(s, '\\'); *o++ = '/');
 			}
 #endif
+			if (!tmp)
+				tmp = sfstropen();
+			sfputr(tmp, s, 0);
+			s = sfstruse(tmp);
 			u = makerule(s);
 			if (u->status == UPDATE)
 			{

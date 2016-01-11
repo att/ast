@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -221,6 +221,12 @@ function foobar
 !
 chmod +x $tmp/foobar
 FPATH=$tmp
+cd $tmp
+print 'function zzz { return 0;}' > zzz
+PATH=$PATH:
+zzz  2> /dev/null || err_exit 'function not found in . when $PWD is in FPATH'
+PATH=${PATH%:}
+cd ~-
 autoload foobar
 if	[[ $(foobar 2>/dev/null) != foo ]]
 then	err_exit 'autoload not working'
@@ -1206,5 +1212,13 @@ foo  2> /dev/null
 rc=$?
 exp=$((256+$(kill -l TERM) ))
 [[  $rc == "$exp" ]] || err_exit "expected exitval $exp got $rc"
+
+$SHELL  <<- \EOF
+	fun() { shift 10 ;}
+	for i in a b
+	do	fun 2> /dev/null
+		[[ $i == b ]] && err_exit 'The bad shift did not terminated the loop'
+	done
+EOF
 
 exit $((Errors<125?Errors:125))

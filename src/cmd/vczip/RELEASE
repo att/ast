@@ -1,3 +1,4 @@
+13-05-09 kpv sync
 09-10-01 vczip.c: make discipline data static -- it may be accessed after main() returns
 09-07-04 vczip.c: first attempt to unify vcodex(--method) and codex(--transform)
 09-02-02 vczip.c: -u is now a flag (no optional arg)

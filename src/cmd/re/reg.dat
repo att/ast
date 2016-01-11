@@ -379,7 +379,6 @@ E	a\U0000008x	x		BADESC
 E$	a\\vb		a\vb		(0,3)
 E$	a\\x08x		a\bx		(0,3)
 E	a\xq		x		NOMATCH
-E$	a\\x0008x	a\bx		(0,3)
 E	a\z		x		NOMATCH
 E$	a\\010b		a\bb		(0,3)
 

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -18,11 +18,6 @@
 *                                                                      *
 ***********************************************************************/
 #include	"vmtest.h"
-
-/* This tests the sequential placement of blocks by Vmbest
-** and its effect on vmresize(). This test should be looked
-** at every time the allocation algorithm in Vmbest changes.
-*/
 
 tmain()
 {
@@ -41,9 +36,9 @@ tmain()
 		terror("vmalloc failed3");
 	vmfree(vm,dt[1]);
 	vmfree(vm,dt[2]);
-	if(vmresize(vm, dt[0], 60, 1) != dt[0])
+	if(!(dt[0] = vmresize(vm, dt[0], 60, VM_RSCOPY)) )
 		terror("bestresize did not extend correctly");
-	if(vmresize(vm, dt[0], 32, 1) != dt[0])
+	if(!(dt[0] = vmresize(vm, dt[0], 32, VM_RSCOPY)) )
 		terror("bestresize did not reduce correctly2");
 
 	if(!(dt[1] = vmalloc(vm, 16)) )
@@ -60,11 +55,11 @@ tmain()
 	vmfree(vm,dt[3]);
 	vmfree(vm,dt[4]);
 	vmfree(vm,dt[5]);
-	if(vmresize(vm,dt[1],80,0) != dt[1])
+	if(!(dt[1] = vmresize(vm,dt[1], 80, VM_RSCOPY)) )
 		terror("vmresize failed");
 	vmfree(vm,dt[1]);
 
-	if(vmresize(vm, dt[0], 120, 1) != dt[0])
+	if(!(dt[0] = vmresize(vm, dt[0], 120, VM_RSCOPY)) )
 		terror("vmresize did not extend correctly3");
 
 	texit(0);

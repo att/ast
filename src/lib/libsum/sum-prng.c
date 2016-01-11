@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -37,6 +37,7 @@
 #define prng_print	long_print
 #define prng_data	long_data
 #define prng_scale	0
+#define prng_flags	0
 
 typedef uint32_t Prngnum_t;
 

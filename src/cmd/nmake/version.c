@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -51,7 +51,6 @@ MAKERULES = makerules\n\
 MAKERULESPATH = $(LOCALRULESPATH):$(MAKELOCALPATH):$(PATH:/:/ /G:D:B=lib/make:@/ /:/G):$(MAKELIB):$(INSTALLROOT|HOME)/lib/make:/usr/local/lib/make:/usr/lib/make\n\
 OLDMAKE = $(PATH:/:/ /G:X=gmake make:P=X:O=1)\n\
 PPFLAGS = $(*.SOURCE.mk:/^/-I/) $(-:N=-[DU]*)\n\
-- : .MAKE .NULL .VIRTUAL .FORCE .REPEAT .FOREGROUND .IGNORE .MULTIPLE\n\
 .ORDER : nmake\n\
 ";
 

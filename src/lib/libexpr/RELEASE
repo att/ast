@@ -1,3 +1,4 @@
+12-09-16 exeval.c: one more scanf("%[... fix
 12-07-18 exgram.h,exeval.c: handle scanf("%[^\n]", &v) -- thanks Philippe
 11-08-25 exparse.y: fix "begin()" frame symbol table check
 11-06-30 extoken.c: enter LABEL: in the parent scope symbol table!

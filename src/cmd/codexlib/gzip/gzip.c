@@ -9,6 +9,7 @@
 #include <ctype.h>
 
 #define MINLEVEL	1
+#define DEFLEVEL	6
 #define MAXLEVEL	9
 
 #define X(x)		#x
@@ -44,7 +45,7 @@ gzip_open(Codex_t* p, char* const args[], Codexnum_t flags)
 	int			i;
 	int			v;
 	int			crc = 1;
-	int			level = MAXLEVEL;
+	int			level = DEFLEVEL;
 
 	i = 2;
 	while (s = args[i++])
@@ -149,7 +150,7 @@ Codexmeth_t	codex_gzip =
 {
 	"gzip",
 	"gzip compression. The first parameter is the compression level,"
-	" " S(MINLEVEL) ":least, " S(MAXLEVEL) ":most(default). nocrc disables crc checks.",
+	" " S(MINLEVEL) ":least, " S(MAXLEVEL) ":most, " S(DEFLEVEL) " is the default. nocrc disables crc checks.",
 	0,
 	CODEX_DECODE|CODEX_ENCODE|CODEX_COMPRESS,
 	0,

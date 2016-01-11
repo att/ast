@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -85,7 +85,9 @@
 
 typedef uintmax_t Sscount_t;
 
+#ifndef _SSEXIT_H
 typedef int (*Ssexit_f)(Rsobj_t*, Rsobj_t*, void**);
+#endif
 typedef int (*Ssintercept_f)(Ssexit_f, Rsobj_t*, Rsobj_t*, void**);
 
 struct Ssdisc_s; typedef struct Ssdisc_s Ssdisc_t;

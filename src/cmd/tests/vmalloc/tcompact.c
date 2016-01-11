@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -65,20 +65,14 @@ tmain()
 		if(vmfree(vm,addr[i]) < 0)
 			terror("can't free an element?");
 
-	if(!(addr[0] = vmalloc(vm,30)) )
+	if(!(addr[0] = vmalloc(vm,100)) )
 		terror("Can't alloc");
 
 	for(i = 0; i < 10; ++i)
-		addr[i] = vmalloc(vm,15);
+		addr[i] = vmalloc(vm,100);
 
-	if(vmresize(vm,addr[0],16,1) != addr[0])
+	if(vmresize(vm,addr[0],90,1) != addr[0])
 		terror("Location should not have changed");
-
-#ifdef DEBUG
-	for(i = 0; i < 10; ++i)
-		printf("size[%d]=%d\n",i,vmsize(vm,addr[i]));
-	printf("vmextent=%d\n",vmsize(vm,NIL(Void_t*)));
-#endif
 
 	texit(0);
 }

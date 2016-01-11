@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -525,7 +525,7 @@ update:
 			i -= count;
 			goto update;
 		case cntl('T') :
-			if ((sh_isoption(SH_EMACS))&& (eol!=i))
+			if ((sh_isoption(ep->ed->sh,SH_EMACS))&& (eol!=i))
 				i++;
 			if (i >= 2)
 			{
@@ -535,7 +535,7 @@ update:
 			}
 			else
 			{
-				if(sh_isoption(SH_EMACS))
+				if(sh_isoption(ep->ed->sh,SH_EMACS))
 					i--;
 				beep();
 				continue;
@@ -994,7 +994,10 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 		case '*':		/* filename expansion */
 		case '=':	/* escape = - list all matching file names */
 			ep->mark = cur;
-			if(ed_expand(ep->ed,(char*)out,&cur,&eol,i,count) < 0)
+			ch = i;
+			if(i=='\\' && ep->mark>0 && out[ep->mark-1]=='/')
+				i = '=';
+			if(ed_expand(ep->ed,(char*)out,&cur,&eol,ch,count) < 0)
 			{
 				if(ep->ed->e_tabcount==1)
 				{
@@ -1007,7 +1010,7 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 			else if(i=='=' || (i=='\\' && out[cur-1]=='/'))
 			{
 				draw(ep,REFRESH);
-				if(count>0)
+				if(count>0 || i=='\\')
 					ep->ed->e_tabcount=0;
 				else
 				{
@@ -1059,10 +1062,11 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 
 #ifdef _cmd_tput
 		case cntl('L'): /* clear screen */
-			sh_trap("tput clear", 0);
+			sh_trap(ep->ed->sh,"tput clear", 0);
 			draw(ep,REFRESH);
 			return(-1);
 #endif
+		case 'O':	/* after running top <ESC>O instead of <ESC>[ */
 		case '[':	/* feature not in book */
 			switch(i=ed_getchar(ep->ed,1))
 			{
@@ -1398,7 +1402,7 @@ static void draw(register Emacs_t *ep,Draw_t option)
 	*****************************************/
 	
 
-	i = *(logcursor-1);	/* last character inserted */
+	i = cur?*(logcursor-1):0;	/* last character inserted */
 #if SHOPT_EDPREDICT
 	if(option==FINAL)
 	{

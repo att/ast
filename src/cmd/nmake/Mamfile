@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -34,8 +34,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 make nmake
 make archive.o
@@ -88,6 +88,15 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
@@ -110,15 +119,25 @@ prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ls.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+make ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/option.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/option.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/error.h dontcare
 make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
-make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
-prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
-done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast.h dontcare
@@ -153,14 +172,7 @@ make ${PACKAGE_ast_INCLUDE}/coshell.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/coshell.h
-make ${PACKAGE_ast_INCLUDE}/error.h implicit
-make ${PACKAGE_ast_INCLUDE}/option.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/option.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/error.h
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 make ${PACKAGE_ast_INCLUDE}/namval.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/namval.h
@@ -314,7 +326,7 @@ prev make.h implicit
 done option.c
 meta option.o %.c>%.o option.c option
 prev option.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1984-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -D_PACKAGE_ast -c option.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1984-2013 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -D_PACKAGE_ast -c option.c
 done option.o generated
 make parse.o
 make parse.c
@@ -377,14 +389,14 @@ prev make.h implicit
 done variable.c
 meta variable.o %.c>%.o variable.c variable
 prev variable.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D__OBSOLETE__=20120101 -D_PACKAGE_ast -c variable.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D__OBSOLETE__=20130101 -D_PACKAGE_ast -c variable.c
 done variable.o generated
 make version.o
 make version.c
 done version.c
 meta version.o %.c>%.o version.c version
 prev version.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DIDNAME=\""make"\" -DSTAMP=\""\n@(#)\$Id: make (AT&T Research) 5.7 2012-06-20 \$\0\n"\" -c version.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DIDNAME=\""make"\" -DSTAMP=\""\n@(#)\$Id: make (AT&T Research) 5.7 2013-08-11 \$\0\n"\" -c version.c
 done version.o generated
 bind -lcoshell
 bind -lardir
@@ -641,99 +653,150 @@ done ${INSTALLROOT}/lib/make/makerules.mo virtual
 done install virtual
 make test
 make test.assert
-make assert.tst
-done assert.tst virtual
+make tests/assert.tst
+make tests/cc.def implicit
+make tests/test.def implicit
+done tests/test.def
+done tests/cc.def
+done tests/assert.tst
+exec - regress tests/assert.tst
 done test.assert virtual
 make test.assign
-make assign.tst
-done assign.tst virtual
+make tests/assign.tst
+prev tests/test.def implicit
+done tests/assign.tst
+exec - regress tests/assign.tst
 done test.assign virtual
 make test.attribute
-make attribute.tst
-done attribute.tst virtual
+make tests/attribute.tst
+prev tests/cc.def implicit
+done tests/attribute.tst
+exec - regress tests/attribute.tst
 done test.attribute virtual
 make test.automatic
-make automatic.tst
-done automatic.tst virtual
+make tests/automatic.tst
+prev tests/test.def implicit
+done tests/automatic.tst
+exec - regress tests/automatic.tst
 done test.automatic virtual
 make test.baserules
-make baserules.tst
-done baserules.tst virtual
+make tests/baserules.tst
+prev tests/test.def implicit
+done tests/baserules.tst
+exec - regress tests/baserules.tst
 done test.baserules virtual
 make test.common
-make common.tst
-done common.tst virtual
+make tests/common.tst
+prev tests/cc.def implicit
+done tests/common.tst
+exec - regress tests/common.tst
 done test.common virtual
 make test.diagnostics
-make diagnostics.tst
-done diagnostics.tst virtual
+make tests/diagnostics.tst
+prev tests/test.def implicit
+done tests/diagnostics.tst
+exec - regress tests/diagnostics.tst
 done test.diagnostics virtual
 make test.edit
-make edit.tst
-done edit.tst virtual
+make tests/edit.tst
+prev tests/test.def implicit
+done tests/edit.tst
+exec - regress tests/edit.tst
 done test.edit virtual
 make test.immediate
-make immediate.tst
-done immediate.tst virtual
+make tests/immediate.tst
+prev tests/test.def implicit
+done tests/immediate.tst
+exec - regress tests/immediate.tst
 done test.immediate virtual
 make test.implicit
-make implicit.tst
-done implicit.tst virtual
+make tests/implicit.tst
+prev tests/cc.def implicit
+done tests/implicit.tst
+exec - regress tests/implicit.tst
 done test.implicit virtual
 make test.internal
-make internal.tst
-done internal.tst virtual
+make tests/internal.tst
+prev tests/test.def implicit
+done tests/internal.tst
+exec - regress tests/internal.tst
 done test.internal virtual
 make test.interrupt
-make interrupt.tst
-done interrupt.tst virtual
+make tests/interrupt.tst
+prev tests/test.def implicit
+done tests/interrupt.tst
+exec - regress tests/interrupt.tst
 done test.interrupt virtual
 make test.metarule
-make metarule.tst
-done metarule.tst virtual
+make tests/metarule.tst
+prev tests/cc.def implicit
+done tests/metarule.tst
+exec - regress tests/metarule.tst
 done test.metarule virtual
 make test.option
-make option.tst
-done option.tst virtual
+make tests/option.tst
+prev tests/cc.def implicit
+done tests/option.tst
+exec - regress tests/option.tst
 done test.option virtual
 make test.panic
-make panic.tst
-done panic.tst virtual
+make tests/panic.tst
+prev tests/test.def implicit
+done tests/panic.tst
+exec - regress tests/panic.tst
 done test.panic virtual
 make test.prereq
-make prereq.tst
-done prereq.tst virtual
+make tests/prereq.tst
+prev tests/cc.def implicit
+done tests/prereq.tst
+exec - regress tests/prereq.tst
 done test.prereq virtual
 make test.quoting
-make quoting.tst
-done quoting.tst virtual
+make tests/quoting.tst
+prev tests/test.def implicit
+done tests/quoting.tst
+exec - regress tests/quoting.tst
 done test.quoting virtual
 make test.recurse
-make recurse.tst
-done recurse.tst virtual
+make tests/recurse.tst
+prev tests/test.def implicit
+done tests/recurse.tst
+exec - regress tests/recurse.tst
 done test.recurse virtual
 make test.scan
-make scan.tst
-done scan.tst virtual
+make tests/scan.tst
+prev tests/cc.def implicit
+done tests/scan.tst
+exec - regress tests/scan.tst
 done test.scan virtual
 make test.shell
-make shell.tst
-done shell.tst virtual
+make tests/shell.tst
+prev tests/test.def implicit
+done tests/shell.tst
+exec - regress tests/shell.tst
 done test.shell virtual
 make test.state
-make state.tst
-done state.tst virtual
+make tests/state.tst
+prev tests/cc.def implicit
+done tests/state.tst
+exec - regress tests/state.tst
 done test.state virtual
 make test.statement
-make statement.tst
-done statement.tst virtual
+make tests/statement.tst
+prev tests/cc.def implicit
+done tests/statement.tst
+exec - regress tests/statement.tst
 done test.statement virtual
 make test.syntax
-make syntax.tst
-done syntax.tst virtual
+make tests/syntax.tst
+prev tests/test.def implicit
+done tests/syntax.tst
+exec - regress tests/syntax.tst
 done test.syntax virtual
 make test.view
-make view.tst
-done view.tst virtual
+make tests/view.tst
+prev tests/cc.def implicit
+done tests/view.tst
+exec - regress tests/view.tst
 done test.view virtual
 done test dontcare virtual

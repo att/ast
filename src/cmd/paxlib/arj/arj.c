@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -79,7 +79,7 @@ arj_getprologue(Pax_t* pax, Paxformat_t* fp, register Paxarchive_t* ap, Paxfile_
 	ap->data = ar;
 	codexinit(&ar->codexdisc, pax->errorf);
 	r = -1;
-	if (!(ar->sum = codexnull()) || codex(ar->sum, NiL, SUM, 0, &ar->codexdisc, NiL) <= 0)
+	if (!(ar->sum = codexnull()) || codex(ar->sum, SUM, CODEX_DECODE, &ar->codexdisc, NiL) <= 0)
 	{
 		ar->sum = 0;
 		goto bad;
@@ -209,7 +209,7 @@ arj_getdata(Pax_t* pax, register Paxarchive_t* ap, register Paxfile_t* f, int fd
 		r = 1;
 	else if (sp = paxpart(pax, ap, f->st->st_size))
 	{
-		if (!*ar->method || (pop = codex(sp, NiL, ar->method, 0, &ar->codexdisc, NiL)) < 0)
+		if (!*ar->method || (pop = codex(sp, ar->method, CODEX_DECODE, &ar->codexdisc, NiL)) < 0)
 			(*pax->errorf)(NiL, pax, 2, "%s: %s: cannot decode method %d", ap->name, f->name, ar->index);
 		else
 		{
@@ -231,7 +231,7 @@ arj_getdata(Pax_t* pax, register Paxarchive_t* ap, register Paxfile_t* f, int fd
 				if (paxdata(pax, ap, f, fd, pax->buf, n))
 					break;
 			}
-			codexpop(sp, NiL, pop);
+			codexpop(sp, pop);
 		}
 	}
 	if (paxseek(pax, ap, pos, SEEK_SET, 0) != pos)

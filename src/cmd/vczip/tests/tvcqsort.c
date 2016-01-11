@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -29,7 +29,7 @@ int intcmp(Void_t* one, Void_t* two, Void_t* disc)
 	return i1 - i2;
 }
 
-int main()
+MAIN()
 {
 	int	i;
 

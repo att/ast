@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	<vclib.h>
+#include	"vchdr.h"
 
 /*	Various run-length-encoding methods.
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 typedef struct _rle_s	Rle_t;
@@ -48,12 +48,25 @@ struct _rle_s
 	Vcchar_t	run2;
 };
 
+#define RLERUN(_r, _c, _n) \
+	do {	switch(_n) \
+		{ default: memset(_r, _c, _n); _r += _n; break; \
+		  case 7: *_r++ = _c; \
+		  case 6: *_r++ = _c; \
+		  case 5: *_r++ = _c; \
+		  case 4: *_r++ = _c; \
+		  case 3: *_r++ = _c; \
+		  case 2: *_r++ = _c; \
+		  case 1: *_r++ = _c; \
+		} \
+	} while(0)
+
 /* arguments to select type of run length coder */
 static Vcmtarg_t _Rleargs[] =
-{	{ "0", "Run-length-encoding: 0-sequences only.", (Void_t*)rle0 },
-	{ "1", "Run-length-encoding: 0&1-sequences only.", (Void_t*)rle1 },
-	{ "2", "Run-length-encoding: Alphabet has only two letters.", (Void_t*)rle2 },
-	{  0 , "General run-length-encoding.", (Void_t*)rleg }
+{	{ "0", "Run-length-encoding: 0-sequences only", (Void_t*)rle0 },
+	{ "1", "Run-length-encoding: 0&1-sequences only", (Void_t*)rle1 },
+	{ "2", "Run-length-encoding: Alphabet has only two letters", (Void_t*)rle2 },
+	{  0 , "General run-length-encoding", (Void_t*)rleg }
 };
 
 /* Encoding 0-run's only. Useful for sequences undergone entropy reduction
@@ -110,12 +123,11 @@ int	encoding;
 			}
 			else if(c == 0 || c == RL_ZERO)
 			{	vcioinit(&io, dt-1, (enddt-dt)+1);
-				z = vcioget2(&io, 0, RL_ZERO); /**/DEBUG_PRINT(9,"%d\n",z);
+				z = vcioget2(&io, 0, RL_ZERO) + 1; /**/DEBUG_PRINT(9,"%d\n",z);
 				dt = vcionext(&io);
 				if(o+z > endo)
 					return -1;
-				for(; z >= 0; --z)
-					*o++ = 0;
+				RLERUN(o, 0, z);
 			}
 			else
 			{	if(o >= endo)
@@ -201,16 +213,12 @@ int	encoding;
 					rz = vcioget2(&io, 0, RL_ZERO);
 				else	rz = vcioget2(&io, 1, RL_ONE);
 				dt = vcionext(&io);
+				rz += 1;
 				if(o+rz > endo)
 					return -1;
 				if(c == 0 || c == RL_ZERO)
-				{	for(; rz >= 0; --rz)
-						*o++ = 0;
-				}
-				else
-				{	for(; rz >= 0; --rz)
-						*o++ = 1;
-				}
+					{ RLERUN(o, 0, rz); }
+				else	{ RLERUN(o, 1, rz); }
 			}
 			else
 			{	if(o >= endo)
@@ -288,7 +296,7 @@ Rle_t*	rle;
 int	encoding;
 #endif
 {
-	Vcchar_t	c, *chr, *run, *dt, *enddt, *endb, *nextb;
+	reg Vcchar_t	c, *dt, *enddt, *endb, *chr, *run;
 	ssize_t		r;
 	Vcio_t		io;
 
@@ -298,11 +306,13 @@ int	encoding;
 		/* set buffers for runs and data */
 		chr = rle->obuf;
 		run = rle->abuf;
-		for(; dt < endb; dt = nextb)
-		{	for(c = *dt, nextb = dt+1; nextb < endb; ++nextb)
-				if(*nextb != c)
+		while(dt < endb)
+		{	for(c = *dt, enddt = dt+1; enddt < endb; ++enddt)
+				if(*enddt != c)
 					break;
-			if((r = nextb-dt) >= 3 || c == RL_ESC)
+			r = enddt-dt; dt = enddt;
+
+			if(r >= 3 || c == RL_ESC)
 			{	/* in-line small cases here for speed */
 				if(r < (1<<7))
 					*run++ = r;
@@ -330,22 +340,26 @@ int	encoding;
 		return (rle->osiz = chr - rle->obuf) + (rle->asiz = run - rle->abuf);
 	}
 	else
-	{	dt = rle->obuf; enddt = rle->endo;
-		vcioinit(&io, rle->abuf, rle->asiz);
+	{	dt = rle->obuf; enddt = rle->endo; /* output data */
+		run = rle->abuf; /* buffer of encoded run lengths */
+
 		for(endb = (chr = rle->ibuf) + rle->isiz; chr < endb; )
-		{	if((c = *chr++) != RL_ESC)
+		{	if((c = *chr++) != RL_ESC) /* char coded in place */
 			{	if(dt >= enddt)
 					return -1;
 				*dt++ = c;
 			}
 			else
-			{	r = vciogetu(&io);
-				if(dt+r > enddt)
+			{	/* this is vciogetu() unrolled */
+				r = (c = *run++) & 127;
+				while(c&128)
+					r = (r<<7) | ((c = *run++) & 127);
+
+				if(r <= 0 || (dt+r) > enddt)
 					return -1;
-				if(r == 1)
-					*dt++ = RL_ESC;
-				else for(c = *chr++; r > 0; --r)
-					*dt++ = c;
+
+				c = r == 1 ? RL_ESC : *chr++;
+				RLERUN(dt, c, r);
 			}
 		}
 
@@ -570,11 +584,10 @@ Vcchar_t**	datap;	/* basis string for persistence	*/
 }
 
 #if __STD_C
-static Vcodex_t* rlerestore(Vcchar_t* data, ssize_t dtsz)
+static int rlerestore(Vcmtcode_t* mtcd)
 #else
-static Vcodex_t* rlerestore(data, dtsz)
-Vcchar_t*	data;	/* persistence data	*/
-ssize_t		dtsz;
+static int rlerestore(mtcd)
+Vcmtcode_t*	mtcd;
 #endif
 {
 	Vcmtarg_t	*arg;
@@ -582,11 +595,13 @@ ssize_t		dtsz;
 
 	for(arg = _Rleargs; arg->name; ++arg)
 	{	if(!(ident = vcstrcode(arg->name, buf, sizeof(buf))) )
-			return NIL(Vcodex_t*);
-		if(dtsz == strlen(ident) && strncmp(ident, (Void_t*)data, dtsz) == 0)
+			return -1;
+		if(mtcd->size == strlen(ident) &&
+		   strncmp(ident, (char*)mtcd->data, mtcd->size) == 0)
 			break;
 	}
-	return vcopen(0, Vcrle, (Void_t*)arg->name, 0, VC_DECODE);
+	mtcd->coder = vcopen(0, Vcrle, (Void_t*)arg->name, mtcd->coder, VC_DECODE);
+	return mtcd->coder ? 1 : -1;
 }
 
 #if __STD_C
@@ -636,9 +651,7 @@ Void_t*		params;
 	else if(type == VC_RESTORE)
 	{	if(!(mtcd = (Vcmtcode_t*)params) )
 			RETURN(-1);
-		if(!(mtcd->coder = rlerestore(mtcd->data, mtcd->size)) )
-			RETURN(-1);
-		return 1;
+		return rlerestore(mtcd) < 0 ? -1 : 1;
 	}
 
 	return 0;

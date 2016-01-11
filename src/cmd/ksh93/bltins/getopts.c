@@ -119,7 +119,7 @@ int	b_getopts(int argc,char *argv[],Shbltin_t *context)
 			return(2);
 		pp = (struct checkpt*)shp->jmplist;
 		pp->mode = SH_JMPERREXIT;
-		sh_exit(2);
+		sh_exit(shp,2);
 	}
         opt_info.disc = &disc.hdr;
 	switch(opt_info.index>=0 && opt_info.index<=argc?(opt_info.num= LONG_MIN,flag=optget(argv,options)):0)

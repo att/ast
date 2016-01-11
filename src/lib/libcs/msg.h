@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -124,6 +124,12 @@
 #define MSG_fstatfs	MSG_INIT(MSG_statfs,	00000531, MSG_VAR_FILE)
 #define MSG_fsync	MSG_INIT(MSG_sync,	00000031, MSG_VAR_FILE)
 #define MSG_ftruncate	MSG_INIT(MSG_truncate,	00000131, MSG_VAR_FILE)
+
+/* *at() variants */
+
+#define MSG_fstatat	MSG_INIT(MSG_stat,	00005311, MSG_VAR_FILE)
+#define MSG_openat	MSG_INIT(MSG_open,	00011231, MSG_VAR_FILE)
+#define MSG_unlinkat	MSG_INIT(MSG_remove,	00011231, 0)
 
 /* common ipc variants */
 

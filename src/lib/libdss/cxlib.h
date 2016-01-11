@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -29,6 +29,7 @@
 
 struct Cxtable_s;
 
+struct Cxbuf_s; typedef struct Cxbuf_s Cxbuf_t;
 struct Cxcompile_s; typedef struct Cxcompile_s Cxcompile_t;
 struct Cxdone_s; typedef struct Cxdone_s Cxdone_t;
 struct Cxinclude_s; typedef struct Cxinclude_s Cxinclude_t;
@@ -43,6 +44,8 @@ struct Cxinclude_s; typedef struct Cxinclude_s Cxinclude_t;
 	Cxcallout_f		getf; \
 	Cxcallout_f		returnf; \
 	Cxcallout_f		referencef; \
+	Cxbuf_t*		top; \
+	Cxbuf_t*		cvt; \
 	char*			ccbuf; \
 	char*			cvtbuf; \
 	size_t			ccsiz; \
@@ -52,6 +55,7 @@ struct Cxinclude_s; typedef struct Cxinclude_s Cxinclude_t;
 	int			jump; \
 	int			scoped; \
 	int			view; \
+	int			width; \
 	Sfio_t*			tp;
 
 #define _CX_CONSTRAINT_PRIVATE_ \
@@ -95,6 +99,8 @@ struct Cxinclude_s; typedef struct Cxinclude_s Cxinclude_t;
 #include <ctype.h>
 #include <error.h>
 
+#define CX_CVT		64
+
 #define CX_PAREN	(((CX_OPERATORS>>CX_ATTR)+1)<<CX_ATTR)
 #define CX_INTERNALS	(((CX_OPERATORS>>CX_ATTR)+2)<<CX_ATTR)
 
@@ -114,11 +120,19 @@ struct Cxinclude_s; typedef struct Cxinclude_s Cxinclude_t;
 #define CX_VIEW_variables	(1<<8)
 
 #define CXH			CX_HEADER_INIT
+#define CXS			CX_SCHEMA_INIT
 #define CXC(o,l,r,f,d)		CX_CALLOUT_INIT(o,l,r,f,d)
 #define CXF(n,t,f,p,d)		CX_FUNCTION_INIT(n,t,f,p,d)
 #define CXR(o,l,r,f,d)		CX_RECODE_INIT(o,l,r,f,d)
 #define CXT(n,b,e,i,m,d)	CX_TYPE_INIT(n,b,e,i,m,d)
 #define CXV(n,t,i,d)		CX_VARIABLE_INIT(n,t,i,d)
+
+struct Cxbuf_s
+{
+	Cxbuf_t*		next;
+	char*			data;
+	size_t			size;
+};
 
 struct Cxcompile_s
 {

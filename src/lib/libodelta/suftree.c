@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped

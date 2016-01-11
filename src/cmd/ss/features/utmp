@@ -1,0 +1,3 @@
+hdr	paths,utmpx
+mem	utmp.ut_host,utmp.ut_tv,utmp.ut_type,utmp.ut_user utmp.h
+mem	utmpx.ut_host,utmpx.ut_tv,utmpx.ut_type,utmpx.ut_user utmpx.h

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _VCHDR_H
@@ -83,7 +83,12 @@
 #define RL_ZERO		254	/* (0,RL_ZERO) codes 0-runs	*/
 #define RL_ONE		253	/* (1,RL_ONE) codes 1-runs	*/
 
+#define VCRAND()	(_Vcrand_ = _Vcrand_*16777617 + 3)
+#define VCRSEED(x)	(_Vcrand_ = (x))
+
 _BEGIN_EXTERNS_
+extern Vcuint32_t	_Vcrand_; /* Vcodex cheap RNG above	*/
+
 extern ssize_t		_vcrle2coder _ARG_((Vcodex_t*, ssize_t,
 					    Vcchar_t*, ssize_t,
 					    Vcchar_t*, ssize_t,

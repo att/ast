@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -117,7 +117,7 @@ main(int argc, char** argv)
 
 	if (argc <= 1)
 	{
-		printf("%u.%u.%u-%u.%u.%u-%u.%u.%u\n", FLT_DIG, -(FLT_MIN_10_EXP), FLT_MAX_10_EXP, DBL_DIG, -(DBL_MIN_10_EXP), DBL_MAX_10_EXP, LDBL_DIG, -(LDBL_MIN_10_EXP), LDBL_MAX_10_EXP);
+		printf("%u.%u.%u.%u-%u.%u.%u.%u-%u.%u.%u.%u\n", 8*sizeof(float), FLT_DIG, -(FLT_MIN_10_EXP), FLT_MAX_10_EXP, 8*sizeof(double), DBL_DIG, -(DBL_MIN_10_EXP), DBL_MAX_10_EXP, 8*sizeof(_ast_fltmax_t), LDBL_DIG, -(LDBL_MIN_10_EXP), LDBL_MAX_10_EXP);
 		return 0;
 	}
 	while (s = *++argv)

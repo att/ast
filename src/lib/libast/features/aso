@@ -1,4 +1,9 @@
-# ast atomic scalar operations feature tests
+set	prototyped
+
+cat{
+	#include <ast_common.h>
+	#define asointegralof(x)	(((char*)(x))-((char*)0))
+}end
 
 if	aso note{ gcc 4.1+ 64 bit memory atomic operations model }end link{
 		#include "FEATURE/common"
@@ -8,22 +13,32 @@ if	aso note{ gcc 4.1+ 64 bit memory atomic operations model }end link{
 			return __sync_fetch_and_add(&i,7);
 		}
 	}end && {
-		#define _aso_cas8(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc8(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec8(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_cas16(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc16(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec16(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_cas32(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc32(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec32(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_cas64(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc64(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec64(p)		__sync_fetch_and_sub(p,1)
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd8(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub8(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc8(p)		__sync_fetch_and_add(p,1)
+		#define asodec8(p)		__sync_fetch_and_sub(p,1)
+		#define asocas16(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd16(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub16(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc16(p)		__sync_fetch_and_add(p,1)
+		#define asodec16(p)		__sync_fetch_and_sub(p,1)
+		#define asocas32(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd32(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub32(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc32(p)		__sync_fetch_and_add(p,1)
+		#define asodec32(p)		__sync_fetch_and_sub(p,1)
+		#define asocas64(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd64(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub64(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc64(p)		__sync_fetch_and_add(p,1)
+		#define asodec64(p)		__sync_fetch_and_sub(p,1)
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,(uint64_t)o,(uint64_t)n))
+		#define asocasptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,asointegralof(o),asointegralof(n)))
 		#endif
 	}
 elif	aso note{ gcc 4.1+ 32 bit memory atomic operations model }end link{
@@ -34,16 +49,24 @@ elif	aso note{ gcc 4.1+ 32 bit memory atomic operations model }end link{
 			return __sync_fetch_and_add(&i,7);
 		}
 	}end && {
-		#define _aso_cas8(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc8(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec8(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_cas16(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc16(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec16(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_cas32(p,o,n)	__sync_val_compare_and_swap(p,o,n)
-		#define _aso_inc32(p)		__sync_fetch_and_add(p,1)
-		#define _aso_dec32(p)		__sync_fetch_and_sub(p,1)
-		#define _aso_casptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,(uint32_t)o,(uint32_t)n))
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd8(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub8(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc8(p)		__sync_fetch_and_add(p,1)
+		#define asodec8(p)		__sync_fetch_and_sub(p,1)
+		#define asocas16(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd16(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub16(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc16(p)		__sync_fetch_and_add(p,1)
+		#define asodec16(p)		__sync_fetch_and_sub(p,1)
+		#define asocas32(p,o,n)		__sync_val_compare_and_swap(p,o,n)
+		#define asoadd32(p,n)		__sync_fetch_and_add(p,n)
+		#define asosub32(p,n)		__sync_fetch_and_sub(p,n)
+		#define asoinc32(p)		__sync_fetch_and_add(p,1)
+		#define asodec32(p)		__sync_fetch_and_sub(p,1)
+		#define asocasptr(p,o,n)	((void*)__sync_val_compare_and_swap(p,asointegralof(o),asointegralof(n)))
 	}
 elif	aso note{ <atomic.h> atomic_cas_64 }end link{
 		#include "FEATURE/common"
@@ -52,26 +75,37 @@ elif	aso note{ <atomic.h> atomic_cas_64 }end link{
 		{
 			uint64_t i = 0;
 			uint32_t j = 1;
-			return atomic_cas_64(&i, 0, 1) != 0 || atomic_add_32_nv(&j, 1) != 1;
+			return atomic_cas_64(&i, 0, 1) != 0 || (atomic_add_32_nv(&j, 1) - 1) != 1;
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	atomic_cas_8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	atomic_cas_16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	atomic_cas_32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_cas64(p,o,n)	atomic_cas_64(p,o,n)
-		#define _aso_inc64(p)		(atomic_add_64_nv(p,1)-1)
-		#define _aso_dec64(p)		(atomic_add_64_nv(p,-1)+1)
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		atomic_cas_8(p,o,n)
+		#define asoadd8(p,n)		(atomic_add_8_nv(p,n)-(n))
+		#define asosub8(p,n)		(atomic_add_8_nv(p,(-(n))+(n))
+		#define asoinc8(p)		(atomic_add_8_nv(p,1)-1)
+		#define asodec8(p)		(atomic_add_8_nv(p,-1)+1)
+		#define asocas16(p,o,n)		atomic_cas_16(p,o,n)
+		#define asoadd16(p,n)		(atomic_add_16_nv(p,n)-(n))
+		#define asosub16(p,n)		(atomic_add_16_nv(p,-(n))+(n))
+		#define asoinc16(p)		(atomic_add_16_nv(p,1)-1)
+		#define asodec16(p)		(atomic_add_16_nv(p,-1)+1)
+		#define asocas32(p,o,n)		atomic_cas_32(p,o,n)
+		#define asoadd32(p,n)		(atomic_add_32_nv(p,n)-(n))
+		#define asosub32(p,n)		(atomic_add_32_nv(p,-(n))+(n))
+		#define asoinc32(p)		(atomic_add_32_nv(p,1)-1)
+		#define asodec32(p)		(atomic_add_32_nv(p,-1)+1)
+		#define asocas64(p,o,n)		atomic_cas_64(p,o,n)
+		#define asoadd64(p,n)		(atomic_add_64_nv(p,n)-(n))
+		#define asosub64(p,n)		(atomic_add_64_nv(p,-(n))+(n))
+		#define asoinc64(p)		(atomic_add_64_nv(p,1)-1)
+		#define asodec64(p)		(atomic_add_64_nv(p,-1)+1)
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocasptr(p,o,n)	((void*)atomic_cas_64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
 elif	aso note{ <atomic.h> atomic_cas_32 }end link{
@@ -84,16 +118,25 @@ elif	aso note{ <atomic.h> atomic_cas_32 }end link{
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	atomic_cas_8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	atomic_cas_16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	atomic_cas_32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		atomic_cas_8(p,o,n)
+		#define asoadd8(p,n)		(atomic_add_8_nv(p,n)-(n))
+		#define asosub8(p,n)		(atomic_add_8_nv(p,(-(n))+(n))
+		#define asoinc8(p)		(atomic_add_8_nv(p,1)-1)
+		#define asodec8(p)		(atomic_add_8_nv(p,-1)+1)
+		#define asocas16(p,o,n)		atomic_cas_16(p,o,n)
+		#define asoadd16(p,n)		(atomic_add_16_nv(p,n)-(n))
+		#define asosub16(p,n)		(atomic_add_16_nv(p,-(n))+(n))
+		#define asoinc16(p)		(atomic_add_16_nv(p,1)-1)
+		#define asodec16(p)		(atomic_add_16_nv(p,-1)+1)
+		#define asocas32(p,o,n)		atomic_cas_32(p,o,n)
+		#define asoadd32(p,n)		(atomic_add_32_nv(p,n)-(n))
+		#define asosub32(p,n)		(atomic_add_32_nv(p,-(n))+(n))
+		#define asoinc32(p)		(atomic_add_32_nv(p,1)-1)
+		#define asodec32(p)		(atomic_add_32_nv(p,-1)+1)
+		#define asocasptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 	}
 elif	aso -latomic note{ <atomic.h> atomic_cas_64 with -latomic }end link{
 		#include "FEATURE/common"
@@ -106,26 +149,37 @@ elif	aso -latomic note{ <atomic.h> atomic_cas_64 with -latomic }end link{
 		}
 	}end && {
 		#include <atomic.h>
-		#define _REQ_atomic
-		#define _aso_cas8(p,o,n)	atomic_cas_8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	atomic_cas_16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	atomic_cas_32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_cas64(p,o,n)	atomic_cas_64(p,o,n)
-		#define _aso_inc64(p)		(atomic_add_64_nv(p,1)-1)
-		#define _aso_dec64(p)		(atomic_add_64_nv(p,-1)+1)
+
+		#define _ASO_INTRINSIC		1
+		#define _REQ_atomic		1
+
+		#define asocas8(p,o,n)		atomic_cas_8(p,o,n)
+		#define asoadd8(p,n)		(atomic_add_8_nv(p,n)-(n))
+		#define asosub8(p,n)		(atomic_add_8_nv(p,(-(n))+(n))
+		#define asoinc8(p)		(atomic_add_8_nv(p,1)-1)
+		#define asodec8(p)		(atomic_add_8_nv(p,-1)+1)
+		#define asocas16(p,o,n)		atomic_cas_16(p,o,n)
+		#define asoadd16(p,n)		(atomic_add_16_nv(p,n)-(n))
+		#define asosub16(p,n)		(atomic_add_16_nv(p,-(n))+(n))
+		#define asoinc16(p)		(atomic_add_16_nv(p,1)-1)
+		#define asodec16(p)		(atomic_add_16_nv(p,-1)+1)
+		#define asocas32(p,o,n)		atomic_cas_32(p,o,n)
+		#define asoadd32(p,n)		(atomic_add_32_nv(p,n)-(n))
+		#define asosub32(p,n)		(atomic_add_32_nv(p,-(n))+(n))
+		#define asoinc32(p)		(atomic_add_32_nv(p,1)-1)
+		#define asodec32(p)		(atomic_add_32_nv(p,-1)+1)
+		#define asocas64(p,o,n)		atomic_cas_64(p,o,n)
+		#define asoadd64(p,n)		(atomic_add_64_nv(p,n)-(n))
+		#define asosub64(p,n)		(atomic_add_64_nv(p,-(n))+(n))
+		#define asoinc64(p)		(atomic_add_64_nv(p,1)-1)
+		#define asodec64(p)		(atomic_add_64_nv(p,-1)+1)
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocasptr(p,o,n)	((void*)atomic_cas_64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
-elif	aso note{ <atomic.h> atomic_cas_32 with -latomic }end link{
+elif	aso -latomic note{ <atomic.h> atomic_cas_32 with -latomic }end link{
 		#include "FEATURE/common"
 		#include <atomic.h>
 		int main()
@@ -135,17 +189,26 @@ elif	aso note{ <atomic.h> atomic_cas_32 with -latomic }end link{
 		}
 	}end && {
 		#include <atomic.h>
-		#define _REQ_atomic
-		#define _aso_cas8(p,o,n)	atomic_cas_8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	atomic_cas_16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	atomic_cas_32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_casptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+
+		#define _ASO_INTRINSIC		1
+		#define _REQ_atomic		1
+
+		#define asocas8(p,o,n)		atomic_cas_8(p,o,n)
+		#define asoadd8(p,n)		(atomic_add_8_nv(p,n)-(n))
+		#define asosub8(p,n)		(atomic_add_8_nv(p,(-(n))+(n))
+		#define asoinc8(p)		(atomic_add_8_nv(p,1)-1)
+		#define asodec8(p)		(atomic_add_8_nv(p,-1)+1)
+		#define asocas16(p,o,n)		atomic_cas_16(p,o,n)
+		#define asoadd16(p,n)		(atomic_add_16_nv(p,n)-(n))
+		#define asosub16(p,n)		(atomic_add_16_nv(p,-(n))+(n))
+		#define asoinc16(p)		(atomic_add_16_nv(p,1)-1)
+		#define asodec16(p)		(atomic_add_16_nv(p,-1)+1)
+		#define asocas32(p,o,n)		atomic_cas_32(p,o,n)
+		#define asoadd32(p,n)		(atomic_add_32_nv(p,n)-(n))
+		#define asosub32(p,n)		(atomic_add_32_nv(p,-(n))+(n))
+		#define asoinc32(p)		(atomic_add_32_nv(p,1)-1)
+		#define asodec32(p)		(atomic_add_32_nv(p,-1)+1)
+		#define asocasptr(p,o,n)	((void*)atomic_cas_32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 	}
 elif	aso note{ <atomic.h> cas64 }end link{
 		#include "FEATURE/common"
@@ -154,26 +217,37 @@ elif	aso note{ <atomic.h> cas64 }end link{
 		{
 			uint64_t i = 0;
 			uint32_t j = 1;
-			return cas64(&i, 0, 1) != 0 || (atomic_add_32_nv(&j, 1) - 1) != 1;
+			return cas64(&i, 0, 1) != 0 || atomic_add_32(&j, 1) != 1;
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	cas8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	cas16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_cas64(p,o,n)	cas64(p,o,n)
-		#define _aso_inc64(p)		(atomic_add_64_nv(p,1)-1)
-		#define _aso_dec64(p)		(atomic_add_64_nv(p,-1)+1)
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		cas8(p,o,n)
+		#define asoadd8(p,n)		atomic_add_8(p,n)
+		#define asosub8(p,n)		atomic_sub_8(p,n)
+		#define asoinc8(p)		atomic_add_8(p,1)
+		#define asodec8(p)		atomic_add_8(p,-1)
+		#define asocas16(p,o,n)		cas16(p,o,n)
+		#define asoadd16(p,n)		atomic_add_16(p,n)
+		#define asosub16(p,n)		atomic_sub_16(p,n)
+		#define asoinc16(p)		atomic_add_16(p,1)
+		#define asodec16(p)		atomic_add_16(p,-1)
+		#define asocas32(p,o,n)		cas32(p,o,n)
+		#define asoadd32(p,n)		atomic_add_32(p,n)
+		#define asosub32(p,n)		atomic_sub_32(p,n)
+		#define asoinc32(p)		atomic_add_32(p,1)
+		#define asodec32(p)		atomic_add_32(p,-1)
+		#define asocas64(p,o,n)		cas64(p,o,n)
+		#define asoadd64(p,n)		atomic_add_64(p,n)
+		#define asosub64(p,n)		atomic_sub_64(p,n)
+		#define asoinc64(p)		atomic_add_64(p,1)
+		#define asodec64(p)		atomic_add_64(p,-1)
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)cas64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocasptr(p,o,n)	((void*)cas64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)cas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
 elif	aso note{ <atomic.h> just cas64 }end link{
@@ -189,14 +263,17 @@ elif	aso note{ <atomic.h> just cas64 }end link{
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	cas8(p,o,n)
-		#define _aso_cas16(p,o,n)	cas16(p,o,n)
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_cas64(p,o,n)	cas64(p,o,n)
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		cas8(p,o,n)
+		#define asocas16(p,o,n)		cas16(p,o,n)
+		#define asocas32(p,o,n)		cas32(p,o,n)
+		#define asocas64(p,o,n)		cas64(p,o,n)
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)cas64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocasptr(p,o,n)	((void*)cas64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)cas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
 elif	aso note{ <atomic.h> cas32 }end link{
@@ -205,20 +282,29 @@ elif	aso note{ <atomic.h> cas32 }end link{
 		int main()
 		{
 			uint32_t i = 0;
-			return cas32(&i, 0, 1) != 0 || (atomic_add_32_nv(&i, 1) - 1) != 1;
+			return cas32(&i, 0, 1) != 0 || (atomic_add_32(&i, 1)) != 1;
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	cas8(p,o,n)
-		#define _aso_inc8(p)		(atomic_add_8_nv(p,1)-1)
-		#define _aso_dec8(p)		(atomic_add_8_nv(p,-1)+1)
-		#define _aso_cas16(p,o,n)	cas16(p,o,n)
-		#define _aso_inc16(p)		(atomic_add_16_nv(p,1)-1)
-		#define _aso_dec16(p)		(atomic_add_16_nv(p,-1)+1)
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_inc32(p)		(atomic_add_32_nv(p,1)-1)
-		#define _aso_dec32(p)		(atomic_add_32_nv(p,-1)+1)
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		cas8(p,o,n)
+		#define asoadd8(p,n)		atomic_add_8(p,n)
+		#define asosub8(p,n)		atomic_sub_8(p,n)
+		#define asoinc8(p)		atomic_add_8(p,1)
+		#define asodec8(p)		atomic_add_8(p,-1)
+		#define asocas16(p,o,n)		cas16(p,o,n)
+		#define asoadd16(p,n)		atomic_add_16(p,n)
+		#define asosub16(p,n)		atomic_sub_16(p,n)
+		#define asoinc16(p)		atomic_add_16(p,1)
+		#define asodec16(p)		atomic_add_16(p,-1)
+		#define asocas32(p,o,n)		cas32(p,o,n)
+		#define asoadd32(p,n)		atomic_add_32(p,n)
+		#define asosub32(p,n)		atomic_sub_32(p,n)
+		#define asoinc32(p)		atomic_add_32(p,1)
+		#define asodec32(p)		atomic_add_32(p,-1)
+		#define asocasptr(p,o,n)	((void*)cas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 	}
 elif	aso note{ <atomic.h> just cas32 }end link{
 		#include "FEATURE/common"
@@ -232,115 +318,74 @@ elif	aso note{ <atomic.h> just cas32 }end link{
 		}
 	}end && {
 		#include <atomic.h>
-		#define _aso_cas8(p,o,n)	cas8(p,o,n)
-		#define _aso_cas16(p,o,n)	cas16(p,o,n)
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas8(p,o,n)		cas8(p,o,n)
+		#define asocas16(p,o,n)		cas16(p,o,n)
+		#define asocas32(p,o,n)		cas32(p,o,n)
+		#define asocas64(p,o,n)		cas64(p,o,n)
+		#define asocasptr(p,o,n)	((void*)cas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 	}
 elif	aso note{ winix Interlocked }end link{
 		#include <windows.h>
 		int main()
 		{
 			LONG		i = 0;
-			LONGLONG	j = 0;
 			return InterlockedCompareExchange(&i, 1, 0) != 0 ||
-			       InterlockedIncrement(&i) != 1 ||
-			       InterlockedDecrement(&i) != 2;
+			       InterlockedExchangeAdd(&i,1) != 1 ||
+			       InterlockedExchangeAdd(&i,-1) != 2;
 		}
 	}end && {
 		#include <ast_windows.h>
-		#define _aso_cas32(p,o,n)	InterlockedCompareExchange((LONG volatile*)p,n,o)
-		#define _aso_inc32(p)		(InterlockedIncrement((LONG volatile*)p)-1)
-		#define _aso_dec32(p)		(InterlockedDecrement((LONG volatile*)p)+1)
+
+		#define _ASO_INTRINSIC		1
+		#define _ASO_Interlocked	1
+
+		#define asocas32(p,o,n)		InterlockedCompareExchange((LONG volatile*)(p),n,o)
+		#define asoadd32(p,n)		InterlockedExchangeAdd((LONG volatile*)(p),n)
+		#define asosub32(p,n)		InterlockedExchangeAdd((LONG volatile*)(p),-(n))
+		#define asoinc32(p)		InterlockedExchangeAdd((LONG volatile*)(p),1)
+		#define asodec32(p)		InterlockedExchangeAdd((LONG volatile*)(p),-1)
+
 		#if _X64
-		#define _aso_cas64(p,o,n)	InterlockedCompareExchange64((LONGLONG volatile*)p,n,o)
-		#define _aso_inc64(p)		(InterlockedIncrement64((LONGLONG volatile*)p)-1)
-		#define _aso_dec64(p)		(InterlockedDecrement64((LONGLONG volatile*)p)+1)
-		#define _aso_casptr(p,o,n)	((void*)InterlockedCompareExchange64((LONGLONG volatile*)p,(LONGLONG)n,(LONGLONG)o))
+
+		#define asocas64(p,o,n)		InterlockedCompareExchange64((LONGLONG volatile*)(p),n,o)
+		#define asoadd64(p,n)		InterlockedExchangeAdd64((LONGLONG volatile*)(p),n)
+		#define asosub64(p,n)		InterlockedExchangeAdd64((LONGLONG volatile*)(p),-(n))
+		#define asoinc64(p)		InterlockedExchangeAdd64((LONGLONG volatile*)(p),1)
+		#define asodec64(p)		InterlockedExchangeAdd64((LONGLONG volatile*)(p),-1)
+		#define asocasptr(p,o,n)	((void*)InterlockedCompareExchange64((LONGLONG volatile*)(p),asointegralof(n),asointegralof(o)))
+
 		#else
-		#if _BLD_posix
-		#include "dl.h"
-		typedef struct LL_s
-		{
-			LONG		a;
-			LONG		b;
-		} LL_t;
-		typedef union
-		{
-			LONGLONG	i;
-			LL_t		ll;
-		} LL_u;
 
-		#define _aso_cas64(p,o,n)	_aso_InterlockedCompareExchange64((LONGLONG volatile*)p,n,o)
-		static LONGLONG _aso_InterlockedCompareExchange64_init(LONGLONG volatile*, LONGLONG, LONGLONG);
 		typedef LONGLONG (*_aso_InterlockedCompareExchange64_f)(LONGLONG volatile*, LONGLONG, LONGLONG);
-		static _aso_InterlockedCompareExchange64_f _aso_InterlockedCompareExchange64 = _aso_InterlockedCompareExchange64_init;
-		static LONGLONG _aso_InterlockedCompareExchange64_32(LONGLONG volatile* p, LONGLONG o, LONGLONG n)
-		{
-			LL_t*		lp = (LL_t*)p;
-			LL_t*		op = (LL_t*)&o;
-			LL_t*		np = (LL_t*)&n;
-			LONGLONG	r;
+		typedef LONGLONG (*_aso_InterlockedExchangeAdd64_f)(LONGLONG volatile*, LONGLONG);
 
-			r = *p;
-			if (_aso_cas32(&lp->a, op->a, np->a) == op->a)
-			{
-				if (_aso_cas32(&lp->b, op->b, np->b) == op->b)
-					return o;
-				_aso_cas32(&lp->a, np->a, op->a);
-			}
-			return r;
-		}
-		static LONGLONG _aso_InterlockedCompareExchange64_init(LONGLONG volatile* p, LONGLONG o, LONGLONG n)
-		{
-			if (!(_aso_InterlockedCompareExchange64 = (_aso_InterlockedCompareExchange64_f)getsymbol(MODULE_kernel, "InterlockedCompareExchange64")))
-				_aso_InterlockedCompareExchange64 = _aso_InterlockedCompareExchange64_32;
-			return _aso_InterlockedCompareExchange64(p, o, n);
-		}
-
-		#define _aso_inc64(p)		(_aso_InterlockedIncrement64((LONGLONG volatile*)p)-1)
-		typedef LONGLONG (*_aso_InterlockedIncrement64_f)(LONGLONG volatile*);
-		static LONGLONG _aso_InterlockedIncrement64_init(LONGLONG volatile*);
-		static _aso_InterlockedIncrement64_f _aso_InterlockedIncrement64 = _aso_InterlockedIncrement64_init;
-		static LONGLONG _aso_InterlockedIncrement64_32(LONGLONG volatile* p)
-		{
-			LONGLONG	o;
-
-			do
-			{
-				o = *p;
-			} while (_aso_InterlockedCompareExchange64_32(p, o, o + 1) != o);
-			return o;
-		}
-		static LONGLONG _aso_InterlockedIncrement64_init(LONGLONG volatile* p)
-		{
-			if (!(_aso_InterlockedIncrement64 = (_aso_InterlockedIncrement64_f)getsymbol(MODULE_kernel, "InterlockedIncrement64")))
-				_aso_InterlockedIncrement64 = _aso_InterlockedIncrement64_32;
-			return _aso_InterlockedIncrement64(p);
-		}
-
-		#define _aso_dec64(p)		(_aso_InterlockedDecrement64((LONGLONG volatile*)p)+1)
-		typedef LONGLONG (*_aso_InterlockedDecrement64_f)(LONGLONG volatile*);
-		static LONGLONG _aso_InterlockedDecrement64_init(LONGLONG volatile*);
-		static _aso_InterlockedDecrement64_f _aso_InterlockedDecrement64 = _aso_InterlockedDecrement64_init;
-		static LONGLONG _aso_InterlockedDecrement64_32(LONGLONG volatile* p)
-		{
-			LONGLONG	o;
-
-			do
-			{
-				o = *p;
-			} while (_aso_InterlockedCompareExchange64_32(p, o, o - 1) != o);
-			return o;
-		}
-		static LONGLONG _aso_InterlockedDecrement64_init(LONGLONG volatile* p)
-		{
-			if (!(_aso_InterlockedDecrement64 = (_aso_InterlockedDecrement64_f)getsymbol(MODULE_kernel, "InterlockedDecrement64")))
-				_aso_InterlockedDecrement64 = _aso_InterlockedDecrement64_32;
-			return _aso_InterlockedDecrement64(p);
-		}
+		#if _BLD_aso && defined(__EXPORT__)
+		#define extern		extern __EXPORT__
 		#endif
-		#define _aso_casptr(p,o,n)	((void*)InterlockedCompareExchange((LONG volatile*)p,(LONG)n,(LONG)o))
+		#if !_BLD_aso && defined(__IMPORT__)
+		#define extern		extern __IMPORT__
+		#endif
+
+		extern _aso_InterlockedCompareExchange64_f	_aso_InterlockedCompareExchange64;
+		extern _aso_InterlockedExchangeAdd64_f		_aso_InterlockedExchangeAdd64;
+
+		#undef extern
+
+		#define asocas64(p,o,n)		_aso_InterlockedCompareExchange64((LONGLONG volatile*)(p),n,o)
+		#define asoadd64(p,n)		_aso_InterlockedExchangeAdd64((LONGLONG volatile*)(p),n)
+		#define asosub64(p,n)		_aso_InterlockedExchangeAdd64((LONGLONG volatile*)(p),-(n))
+		#define asoinc64(p)		_aso_InterlockedExchangeAdd64((LONGLONG volatile*)(p),1)
+		#define asodec64(p)		_aso_InterlockedExchangeAdd64((LONGLONG volatile*)(p),-1)
+
+		#if _ast_sizeof_pointer == 8
+		#define asocasptr(p,o,n)	((void*)_aso_InterlockedCompareExchange64((LONGLONG volatile*)(p),asointegralof(n),asointegralof(o)))
+		#else
+		#define asocasptr(p,o,n)	((void*)InterlockedCompareExchange((LONG volatile*)(p),asointegralof(n),asointegralof(o)))
+		#endif
+
 		#endif
 	}
 elif	aso note{ aix fetch and add }end link{
@@ -352,13 +397,21 @@ elif	aso note{ aix fetch and add }end link{
 		}
 	}end && {
 		#include <sys/atomic_op.h>
-		#define _aso_incint(p)		fetch_and_add((atomic_p)p,1)
-		#define _aso_decint(p)		fetch_and_add((atomic_p)p,-1)
-		#define _aso_casint(p,o,n)	(compare_and_swap((atomic_p)p,(int*)&o,(int)n) ? o : *p)
+
+		#define _ASO_INTRINSIC		1
+
+		#define asocas32(p,o,n)		(compare_and_swap((atomic_p)(p),(int*)&(o),(int)(n)) ? (o) : *(p))
+		#define asoadd32(p,n)		fetch_and_add((atomic_p)(p),n)
+		#define asosub32(p,n)		fetch_and_add((atomic_p)(p),-(n))
+		#define asoinc32(p)		fetch_and_add((atomic_p)(p),1)
+		#define asodec32(p)		fetch_and_add((atomic_p)(p),-1)
+		#if _ast_sizeof_long == 8
+		#define asocas64(p,o,n)		(compare_and_swap((atomic_p)(p),(long*)&(o),(long)(n)) ? (o) : *(p))
+		#endif
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	(compare_and_swaplp((atomic_l)p,(long*)&o,(long)n) ? o : *(void**)p)
+		#define asocasptr(p,o,n)	(compare_and_swaplp((atomic_l)(p),(long*)&o,(long)n) ? (o) : *(void**)(p))
 		#else
-		#define _aso_casptr(p,o,n)	(compare_and_swap((atomic_p)p,(int*)&o,(int)n) ? o : *(void**)p)
+		#define asocasptr(p,o,n)	(compare_and_swap((atomic_p)(p),(int*)&o,(int)(n)) ? (o) : *(void**)(p))
 		#endif
 	}
 elif	aso note{ mips compare and swap }end link{
@@ -368,8 +421,10 @@ elif	aso note{ mips compare and swap }end link{
 			return __compare_and_swap(&i, 0, 1) != 1;
 		}
 	}end && {
-		#define _aso_cas32(p,o,n)	(__compare_and_swap(p,o,n) ? o : *p)
-		#define _aso_casptr(p,o,n)	(__compare_and_swap((long*)p,(long)o,(long)n) ? o : *(void**)p)
+		#define _ASO_INTRINSIC		1
+
+		#define asocas32(p,o,n)		(__compare_and_swap((p),(o),(n)) ? (o) : *(p))
+		#define asocasptr(p,o,n)	(__compare_and_swap((long*)(p),asointegralof(o),asointegralof(n)) ? (o) : *(void**)(p))
 	}
 elif	aso note{ i386|i386-64 asm compare and swap }end link{
 		#include "FEATURE/common"
@@ -417,44 +472,15 @@ elif	aso note{ i386|i386-64 asm compare and swap }end link{
 			return cas32(&i, 0, 1) || cas64(&j, 0, 1);
 		}
 	}end && {
-		static uint32_t
-		cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
-		{
-			uint32_t	r;
-		
-			__asm__ __volatile__ (
-				"lock ; cmpxchg %3,%4"
-				: "=a"(r), "=m"(*p)
-				: "0"(o), "q"(n), "m"(*p)
-				: "memory", "cc"
-				);
-			return r;
-		}
+		#define _ASO_INTRINSIC		2
+		#define _ASO_i386		1
 
+		#define asocas32		_aso_cas32
 		#if _ast_sizeof_pointer == 8
-
-		static uint64_t
-		cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
-		{
-			uint64_t	r;
-		
-			__asm__ __volatile__ (
-				"lock ; cmpxchg %3,%4"
-				: "=a"(r), "=m"(*p)
-				: "0"(o), "q"(n), "m"(*p)
-				: "memory", "cc"
-				);
-			return r;
-		}
-		
-		#endif
-
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#if _ast_sizeof_pointer == 8
-		#define _aso_cas64(p,o,n)	cas64(p,o,n)
-		#define _aso_casptr(p,o,n)	((void*)cas64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocas64		_aso_cas64
+		#define asocasptr(p,o,n)	((void*)asocas64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)asocas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
 elif	aso note{ ia64 asm compare and swap }end link{
@@ -493,39 +519,12 @@ elif	aso note{ ia64 asm compare and swap }end link{
 			return cas32(&i, 0, 1) || cas64(&j, 0, 1);
 		}
 	}end && {
-		static uint32_t
-		cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
-		{
-			uint32_t	r;
+		#define _ASO_INTRINSIC		2
+		#define _ASO_ia64		1
 
-			__asm__ __volatile__ (
-				"zxt4 %3=%3 ;; mov ar.ccv=%3 ;; cmpxchg4.acq %0=%1,%2,ar.ccv"
-			        : "=r"(r), "+S"(*p)
-				: "r"(n), "r"(o) : "memory"
-				);
-			return r;
-		}
-
-		static uint64_t
-		cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
-		{
-			uint64_t	r;
-
-			__asm__ __volatile__ (
-				"mov ar.ccv=%3 ;; cmpxchg8.acq %0=%1,%2,ar.ccv"
-			        : "=r"(r), "+S"(*p)
-				: "r"(n), "r"(o) : "memory"
-				);
-			return r;
-		}
-
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_cas64(p,o,n)	cas64(p,o,n)
-		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)cas64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
-		#else
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
-		#endif
+		#define asocas32		_aso_cas32
+		#define asocas64		_aso_cas64
+		#define asocasptr(p,o,n)	((void*)asocas64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 	}
 elif	aso note{ ppc asm compare and swap }end link{
 		#include "FEATURE/common"
@@ -577,52 +576,141 @@ elif	aso note{ ppc asm compare and swap }end link{
 			return cas32(&i, 0, 1) || cas64(&j, 0, 1);
 		}
 	}end && {
-		static uint32_t
-		cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
-		{
-			int	r;
-		
-			__asm__ __volatile__ (
-				"0:	lwarx %0,0,%1 ;"
-				"	xor. %0,%3,%0;"
-				"	bne 1f;"
-				"	stwcx. %2,0,%1;"
-				"	bne- 0b;"
-				"1:"
-				: "=&r"(r)
-				: "r"(p), "r"(n), "r"(o)
-				: "cr0", "memory"
-				);
-			__asm__ __volatile__ ("isync" : : : "memory");
-			return r ? *p : o;
-		}
+		#define _ASO_INTRINSIC		2
+		#define _ASO_ppc		1
 
-		static uint64_t
-		cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
-		{
-			long	r;
-		
-			__asm__ __volatile__ (
-				"0:	ldarx %0,0,%1 ;"
-				"	xor. %0,%3,%0;"
-				"	bne 1f;"
-				"	stdcx. %2,0,%1;"
-				"	bne- 0b;"
-				"1:"
-				: "=&r"(r)
-				: "r"(p), "r"(n), "r"(o)
-				: "cr0", "memory"
-				);
-			__asm__ __volatile__ ("isync" : : : "memory");
-			return r ? *p : o;
-		}
-
-		#define _aso_cas32(p,o,n)	cas32(p,o,n)
-		#define _aso_cas64(p,o,n)	cas64(p,o,n)
+		#define asocas32		_aso_cas32
 		#if _ast_sizeof_pointer == 8
-		#define _aso_casptr(p,o,n)	((void*)cas64((uint64_t*)p,(uint64_t)o,(uint64_t)n))
+		#define asocas64		_aso_cas64
+		#define asocasptr(p,o,n)	((void*)asocas64((uint64_t*)(p),asointegralof(o),asointegralof(n)))
 		#else
-		#define _aso_casptr(p,o,n)	((void*)cas32((uint32_t*)p,(uint32_t)o,(uint32_t)n))
+		#define asocasptr(p,o,n)	((void*)asocas32((uint32_t*)(p),asointegralof(o),asointegralof(n)))
 		#endif
 	}
+else	aso note{ no intrinsic aso operations -- time to upgrade }end cat{
+		#define _ASO_INTRINSIC		0
+	}end
 endif
+
+cat{
+	#if _BLD_aso && defined(__EXPORT__)
+	#define extern	extern __EXPORT__
+	#endif
+	#if !_BLD_aso && defined(__IMPORT__)
+	#define extern	extern __IMPORT__
+	#endif
+
+	#ifndef asocas8
+	extern uint8_t			asocas8(uint8_t volatile*, int, int);
+	#endif
+	#ifndef asoget8
+	extern uint8_t			asoget8(uint8_t volatile*);
+	#endif
+	#ifndef asoadd8
+	extern uint8_t			asoadd8(uint8_t volatile*, int);
+	#endif
+	#ifndef asosub8
+	extern uint8_t			asosub8(uint8_t volatile*, int);
+	#endif
+	#ifndef asoinc8
+	extern uint8_t			asoinc8(uint8_t volatile*);
+	#endif
+	#ifndef asodec8
+	extern uint8_t			asodec8(uint8_t volatile*);
+	#endif
+	#ifndef asomin8
+	extern uint8_t			asomin8(uint8_t volatile*, int);
+	#endif
+	#ifndef asomax8
+	extern uint8_t			asomax8(uint8_t volatile*, int);
+	#endif
+
+	#ifndef asocas16
+	extern uint16_t			asocas16(uint16_t volatile*, int, int);
+	#endif
+	#ifndef asoget16
+	extern uint16_t			asoget16(uint16_t volatile*);
+	#endif
+	#ifndef asoadd16
+	extern uint16_t			asoadd16(uint16_t volatile*, int);
+	#endif
+	#ifndef asosub16
+	extern uint16_t			asosub16(uint16_t volatile*, int);
+	#endif
+	#ifndef asoinc16
+	extern uint16_t			asoinc16(uint16_t volatile*);
+	#endif
+	#ifndef asodec16
+	extern uint16_t			asodec16(uint16_t volatile*);
+	#endif
+	#ifndef asomin16
+	extern uint16_t			asomin16(uint16_t volatile*, int);
+	#endif
+	#ifndef asomax16
+	extern uint16_t			asomax16(uint16_t volatile*, int);
+	#endif
+
+	#if !defined(asocas32) || _ASO_INTRINSIC > 1
+	extern uint32_t			asocas32(uint32_t volatile*, uint32_t, uint32_t);
+	#endif
+	#ifndef asoget32
+	extern uint32_t			asoget32(uint32_t volatile*);
+	#endif
+	#ifndef asoadd32
+	extern uint32_t			asoadd32(uint32_t volatile*, uint32_t);
+	#endif
+	#ifndef asosub32
+	extern uint32_t			asosub32(uint32_t volatile*, uint32_t);
+	#endif
+	#ifndef asoinc32
+	extern uint32_t			asoinc32(uint32_t volatile*);
+	#endif
+	#ifndef asodec32
+	extern uint32_t			asodec32(uint32_t volatile*);
+	#endif
+	#ifndef asomin32
+	extern uint32_t			asomin32(uint32_t volatile*, uint32_t);
+	#endif
+	#ifndef asomax32
+	extern uint32_t			asomax32(uint32_t volatile*, uint32_t);
+	#endif
+
+	#ifdef _ast_int8_t
+
+	#if !defined(asocas64) || _ASO_INTRINSIC > 1
+	extern uint64_t			asocas64(uint64_t volatile*, uint64_t, uint64_t);
+	#endif
+	#ifndef asoget64
+	extern uint64_t			asoget64(uint64_t volatile*);
+	#endif
+	#ifndef asoadd64
+	extern uint64_t			asoadd64(uint64_t volatile*, uint64_t);
+	#endif
+	#ifndef asosub64
+	extern uint64_t			asosub64(uint64_t volatile*, uint64_t);
+	#endif
+	#ifndef asoinc64
+	extern uint64_t			asoinc64(uint64_t volatile*);
+	#endif
+	#ifndef asodec64
+	extern uint64_t			asodec64(uint64_t volatile*);
+	#endif
+	#ifndef asomin64
+	extern uint64_t			asomin64(uint64_t volatile*, uint64_t);
+	#endif
+	#ifndef asomax64
+	extern uint64_t			asomax64(uint64_t volatile*, uint64_t);
+	#endif
+
+	#endif
+
+	#ifndef asocasptr
+	extern void*			asocasptr(void volatile*, void*, void*);
+	#endif
+	#ifndef asogetptr
+	extern void*			asogetptr(void volatile*);
+	#endif
+
+	#undef	extern
+
+}end

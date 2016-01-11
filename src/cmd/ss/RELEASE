@@ -1,3 +1,4 @@
+13-03-21 ssd.c: work around stupid stupid stupid solaris 11 - hey guys, don't define _PATH_UTMP and it won't get used
 10-06-01 sync with ast api 20100601
 04-07-22 ssd.c: access() => eaccess()
 03-07-29 ssd.c,features/cmd: add utmpx support

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -320,7 +320,7 @@ zip_getdata(Pax_t* pax, register Paxarchive_t* ap, register Paxfile_t* f, int fd
 		r = 1;
 	else if (sp = paxpart(pax, ap, f->st->st_size))
 	{
-		if ((pop = codex(sp, NiL, ar->method, 0, &ar->codexdisc, NiL)) < 0)
+		if ((pop = codex(sp, ar->method, CODEX_DECODE, &ar->codexdisc, NiL)) < 0)
 			(*pax->errorf)(NiL, pax, 2, "%s: %s: cannot decode method %s", ap->name, f->name, ar->method);
 		else
 		{
@@ -342,7 +342,7 @@ zip_getdata(Pax_t* pax, register Paxarchive_t* ap, register Paxfile_t* f, int fd
 				if (paxdata(pax, ap, f, fd, pax->buf, n))
 					break;
 			}
-			codexpop(sp, NiL, pop);
+			codexpop(sp, pop);
 		}
 	}
 	if (paxseek(pax, ap, pos, SEEK_SET, 0) != pos)

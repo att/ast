@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1989-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1989-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -311,7 +311,7 @@ ccflags(register char* s, struct var* v)
 		default:
 			if (b != buf)
 				*b++ = ' ';
-			b = strcopy(b, s);
+			b = stpcpy(b, s);
 			break;
 		}
 		s = t;

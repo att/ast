@@ -30,6 +30,8 @@ function DATA
 			;;
 		b.dat)	print b
 			;;
+		i.dat)	print -n $'foo\nbar'
+			;;
 		esac > $f
 	done
 }
@@ -578,3 +580,26 @@ TEST 34 "no initial context"
 	EXEC	-0 -f -t 1 10.dat
 
 	EXEC	-0f -t 1 10.dat
+
+TEST 35 "incomplete line"
+
+	DO	DATA i.dat
+
+	EXEC -n -0 i.dat
+		OUTPUT -
+
+	EXEC -n +3 i.dat
+
+	EXEC -n -1 i.dat
+		OUTPUT -n - bar
+
+	EXEC -n +2 i.dat
+
+	EXEC -n -2 i.dat
+		OUTPUT -n - $'foo\nbar'
+
+	EXEC -n -3 i.dat
+
+	EXEC -n +0 i.dat
+
+	EXEC -n +1 i.dat

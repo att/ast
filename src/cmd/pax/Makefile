@@ -58,4 +58,5 @@ tar :: tar.sh LICENSE=since=1989,author=gsf+brussell
 	data/extract.pax \
 	data/base.pax data/base-1.pax data/base-2.pax \
 	data/delta.pax data/delta-1.pax data/delta-2.pax data/delta-3.pax \
-	data/delta-4.pax data/delta-5.pax data/delta-6.pax data/delta-7.pax
+	data/delta-4.pax data/delta-5.pax data/delta-6.pax data/delta-7.pax \
+	data/file-01.pax data/file-02.pax data/file-03.pax

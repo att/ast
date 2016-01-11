@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1989-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1989-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -672,7 +672,7 @@ setval(Expr_t* pgm, Exnode_t* node, Exid_t* sym, Exref_t* ref, void* env, int el
 static int
 matchval(Expr_t* pgm, Exnode_t* xstr, const char* str, Exnode_t* xpat, const char* pat, void* env, Exdisc_t* disc)
 {
-	return strgrpmatch(str, pat, NiL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT|((Ftw_t*)env)->ignorecase);
+	return strgrpmatch(str, pat, NiL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT|(env?((Ftw_t*)env)->ignorecase:0));
 }
 
 /*

@@ -436,6 +436,7 @@ static const sha2_word64 sha512_initial_hash_value[8] = {
 "
 #define sha256_match	"sha256|sha-256|SHA256|SHA-256"
 #define sha256_scale	0
+#define sha256_flags	SUM_INDICATOR
 
 #define sha256_padding	md5_pad
 
@@ -805,6 +806,7 @@ sha256_data(Sum_t* p, Sumdata_t* data)
 "
 #define sha512_match	"sha512|sha-512|SHA512|SHA-512"
 #define sha512_scale	0
+#define sha512_flags	SUM_INDICATOR
 
 #define sha512_padding	md5_pad
 
@@ -1166,6 +1168,7 @@ sha512_data(Sum_t* p, Sumdata_t* data)
 "
 #define sha384_match	"sha384|sha-384|SHA384|SHA-384"
 #define sha384_scale	0
+#define sha384_flags	SUM_INDICATOR
 #define sha384_block	sha512_block
 #define sha384_done	sha512_done
 

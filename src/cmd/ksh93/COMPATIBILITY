@@ -9,8 +9,10 @@ omitted features that are completely upward compatible.
 1.	Functions, defined with name() with ksh-93 are compatible with
 	the POSIX standard, not with ksh-88.  No local variables are
 	permitted, and there is no separate scope.  Functions defined
-	with the function name syntax, maintain compatibility.
-	This also affects function traces.
+	with the function name syntax, have local variables as in ksh-88
+	but are statically scoped as in C so that a function does not
+	automatically have access to local variables of the caller.
+	This change also affects function traces.
 
 2.	! is now a reserved word.  As a result, any command by that
 	name will no longer work with ksh-93.

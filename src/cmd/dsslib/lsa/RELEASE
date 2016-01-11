@@ -1,0 +1,7 @@
+12-02-29 add { lsag pmcoa } formats
+12-01-15 ospf_lsa.c: handle generic ip address type binding
+03-02-07 change "time" to "ns_t" and u_int64 in the canonical record
+03-01-31 update rtid doc
+03-01-23 update for void* => Dssrecord_t*
+02-12-17 propagate -ldss changes
+02-11-28 convert from sfprintf to errorf

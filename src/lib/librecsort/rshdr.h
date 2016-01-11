@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -34,10 +34,9 @@
 ** the below parameter also limits the max size of a record that can be
 ** processed in rsmerge().
 */
-#define RS_RESERVE	(128*1024)	/* for I/O reservation		*/
+#define RS_RESERVE	(256*1024)	/* for I/O reservation		*/
 
 #define _RS_PRIVATE_ \
-	Vmdisc_t	vmdisc;		/* vmalloc discipline		*/ \
 	unsigned long	events;		/* active events		*/ \
 	Void_t*		methdata;	/* private method data		*/ \
 	Vmalloc_t*	vm;		/* region to allocate temp data	*/ \

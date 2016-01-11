@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -44,6 +44,8 @@
 #define SS_EXIT_TERMINATE	16	/* terminate the sort		*/
 #define SS_EXIT_REPLACE		20	/* replace this record		*/
 
+#ifndef _SS_H
 typedef int (*Ssexit_f)(Rsobj_t*, Rsobj_t*, void**);
+#endif
 
 #endif

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	<vclib.h>
+#include	"vchdr.h"
 
 /*	Move-to-front transformers.
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 typedef ssize_t	(*Mtf_f)_ARG_((Vcchar_t*, Vcchar_t*, Vcchar_t*, int));
@@ -218,18 +218,17 @@ Vcchar_t**	datap;	/* basis string for persistence	*/
 	if(!(ident = (char*)vcbuffer(vc, NIL(Vcchar_t*), sizeof(int)*n+1, 0)) )
 		RETURN(-1);
 	if(!(ident = vcstrcode(arg->name, ident, sizeof(int)*n+1)) )
-		RETURN(-1); 
+		RETURN(-1);
 	if(datap)
 		*datap = (Void_t*)ident;
 	return n;
 }
 
 #if __STD_C
-static Vcodex_t* mtfrestore(Vcchar_t* data, ssize_t dtsz)
+static int mtfrestore(Vcmtcode_t* mtcd)
 #else
-static Vcodex_t* mtfrestore(data, dtsz)
-Vcchar_t*	data;	/* persistence data	*/
-ssize_t		dtsz;	/* its length		*/
+static int mtfrestore(mtcd)
+Vcmtcode_t*	mtcd;
 #endif
 {
 	Vcmtarg_t	*arg;
@@ -237,11 +236,13 @@ ssize_t		dtsz;	/* its length		*/
 
 	for(arg = _Mtfargs; arg->name; ++arg)
 	{	if(!(ident = vcstrcode(arg->name, buf, sizeof(buf))) )
-			return NIL(Vcodex_t*);
-		if(dtsz == strlen(ident) && strncmp(ident, (Void_t*)data, dtsz) == 0)
+			return -1;
+		if(mtcd->size == strlen(ident) &&
+		   strncmp(ident, (char*)mtcd->data, mtcd->size) == 0)
 			break;
 	}
-	return vcopen(0, Vcmtf, (Void_t*)arg->name, 0, VC_DECODE);
+	mtcd->coder = vcopen(0, Vcmtf, (Void_t*)arg->name, mtcd->coder, VC_DECODE);
+	return mtcd->coder ? 1 : -1;
 }
 
 #if __STD_C
@@ -272,17 +273,15 @@ Void_t*		params;
 	}
 	else if(type == VC_EXTRACT)
 	{	if(!(mtcd = (Vcmtcode_t*)params) )
-			RETURN(-1);
+			return -1;
 		if((mtcd->size = mtfextract(vc, &mtcd->data)) < 0 )
-			RETURN(-1);
+			return -1;
 		return 1;
 	}
 	else if(type == VC_RESTORE)
 	{	if(!(mtcd = (Vcmtcode_t*)params) )
-			RETURN(-1);
-		if(!(mtcd->coder = mtfrestore(mtcd->data, mtcd->size)) )
-			RETURN(-1);
-		return 1;
+			return -1;
+		return mtfrestore(mtcd) < 0 ? -1 : 1;
 	}
 
 	return 0;

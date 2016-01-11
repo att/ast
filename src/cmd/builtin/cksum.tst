@@ -836,354 +836,354 @@ RGqOg6Txig2D/21jLZfwXHUbSxorUV05p2jzrBIx3A==
 
 TEST 01 'old att algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x att
+	EXEC	--method=att
 		OUTPUT - $'0 0'
-	EXEC	-x att /dev/null
+	EXEC	--method=att /dev/null
 		OUTPUT - $'0 0 /dev/null'
-	EXEC	-x att xyz.dat zyx.dat
+	EXEC	--method=att xyz.dat zyx.dat
 		OUTPUT - $'393 1 xyz.dat\n393 1 zyx.dat'
-	EXEC	-x att -t xyz.dat zyx.dat
+	EXEC	--method=att --total xyz.dat zyx.dat
 		OUTPUT - $'0 1 2'
-	EXEC	-x att -t xyz.dat chars.dat
+	EXEC	--method=att --total xyz.dat chars.dat
 		OUTPUT - $'32265 1 2'
-	EXEC	-x att big.dat
+	EXEC	--method=att big.dat
 		OUTPUT - $'49851 96 big.dat'
-	EXEC	-x att chars.dat
+	EXEC	--method=att chars.dat
 		OUTPUT - $'32640 1 chars.dat'
-	EXEC	-x att zero.dat
+	EXEC	--method=att zero.dat
 		OUTPUT - $'0 1 zero.dat'
 
 TEST 02 'old bsd algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x bsd
+	EXEC	--method=bsd
 		OUTPUT - $'0 0'
-	EXEC	-x bsd /dev/null
+	EXEC	--method=bsd /dev/null
 		OUTPUT - $'0 0 /dev/null'
-	EXEC	-x bsd xyz.dat zyx.dat
+	EXEC	--method=bsd xyz.dat zyx.dat
 		OUTPUT - $'93 1 xyz.dat\n4188 1 zyx.dat'
-	EXEC	-x bsd -t xyz.dat zyx.dat
+	EXEC	--method=bsd --total xyz.dat zyx.dat
 		OUTPUT - $'4097 1 2'
-	EXEC	-x bsd -t xyz.dat chars.dat
+	EXEC	--method=bsd --total xyz.dat chars.dat
 		OUTPUT - $'605 1 2'
-	EXEC	-x bsd big.dat
+	EXEC	--method=bsd big.dat
 		OUTPUT - $'50647 48 big.dat'
-	EXEC	-x bsd chars.dat
+	EXEC	--method=bsd chars.dat
 		OUTPUT - $'512 1 chars.dat'
-	EXEC	-x bsd zero.dat
+	EXEC	--method=bsd zero.dat
 		OUTPUT - $'0 1 zero.dat'
 
 TEST 03 'ast memsum algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x ast
+	EXEC	--method=ast
 		OUTPUT - $'0 0'
-	EXEC	-x ast /dev/null
+	EXEC	--method=ast /dev/null
 		OUTPUT - $'0 0 /dev/null'
-	EXEC	-x ast xyz.dat zyx.dat
+	EXEC	--method=ast xyz.dat zyx.dat
 		OUTPUT - $'333665879 6 xyz.dat\n844468759 6 zyx.dat'
-	EXEC	-x ast -t xyz.dat zyx.dat
+	EXEC	--method=ast --total xyz.dat zyx.dat
 		OUTPUT - $'565625920 12 2'
-	EXEC	-x ast big.dat
+	EXEC	--method=ast big.dat
 		OUTPUT - $'2944469051 48896 big.dat'
-	EXEC	-x ast chars.dat
+	EXEC	--method=ast chars.dat
 		OUTPUT - $'2634217600 256 chars.dat'
-	EXEC	-x ast zero.dat
+	EXEC	--method=ast zero.dat
 		OUTPUT - $'2971255040 256 zero.dat'
 
 TEST 04 'zip crc algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x zip
+	EXEC	--method=zip
 		OUTPUT - $'0 0'
-	EXEC	-x zip /dev/null
+	EXEC	--method=zip /dev/null
 		OUTPUT - $'0 0 /dev/null'
-	EXEC	-x zip xyz.dat zyx.dat
+	EXEC	--method=zip xyz.dat zyx.dat
 		OUTPUT - $'849749004 6 xyz.dat\n1297672069 6 zyx.dat'
-	EXEC	-x zip -t xyz.dat zyx.dat
+	EXEC	--method=zip --total xyz.dat zyx.dat
 		OUTPUT - $'2147402633 12 2'
-	EXEC	-x zip big.dat
+	EXEC	--method=zip big.dat
 		OUTPUT - $'3652343079 48896 big.dat'
-	EXEC	-x zip chars.dat
+	EXEC	--method=zip chars.dat
 		OUTPUT - $'688229491 256 chars.dat'
-	EXEC	-x zip zero.dat
+	EXEC	--method=zip zero.dat
 		OUTPUT - $'227968344 256 zero.dat'
 
 TEST 05 'posix cksum algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x cksum
+	EXEC	--method=cksum
 		OUTPUT - $'4294967295 0'
-	EXEC	-x cksum /dev/null
+	EXEC	--method=cksum /dev/null
 		OUTPUT - $'4294967295 0 /dev/null'
-	EXEC	-x cksum xyz.dat zyx.dat
+	EXEC	--method=cksum xyz.dat zyx.dat
 		OUTPUT - $'2140995855 6 xyz.dat\n3800205347 6 zyx.dat'
-	EXEC	-x cksum -t xyz.dat zyx.dat
+	EXEC	--method=cksum --total xyz.dat zyx.dat
 		OUTPUT - $'2636089644 12 2'
-	EXEC	-x cksum big.dat
+	EXEC	--method=cksum big.dat
 		OUTPUT - $'528457989 48896 big.dat'
-	EXEC	-x cksum chars.dat
+	EXEC	--method=cksum chars.dat
 		OUTPUT - $'1313719201 256 chars.dat'
-	EXEC	-x cksum zero.dat
+	EXEC	--method=cksum zero.dat
 		OUTPUT - $'4215202376 256 zero.dat'
 
 TEST 06 'md5 message digest algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x md5
+	EXEC	--method=md5
 		INPUT -
 		OUTPUT - $'d41d8cd98f00b204e9800998ecf8427e'
-	EXEC	-x md5 /dev/null
-		OUTPUT - $'d41d8cd98f00b204e9800998ecf8427e /dev/null'
-	EXEC	-x md5 xyz.dat zyx.dat
-		OUTPUT - $'5c37d4d5cc8d74de8ed81fc394a56c0e xyz.dat\n30c4d234a30ae1665d3e63cbfac9ade9 zyx.dat'
-	EXEC	-x md5 -t xyz.dat zyx.dat
+	EXEC	--method=md5 /dev/null
+		OUTPUT - $'d41d8cd98f00b204e9800998ecf8427e */dev/null'
+	EXEC	--method=md5 xyz.dat zyx.dat
+		OUTPUT - $'5c37d4d5cc8d74de8ed81fc394a56c0e *xyz.dat\n30c4d234a30ae1665d3e63cbfac9ade9 *zyx.dat'
+	EXEC	--method=md5 --total xyz.dat zyx.dat
 		OUTPUT - $'6cf306e16f8795b8d3e67c086e6cc1e7'
-	EXEC	-x md5 big.dat
-		OUTPUT - $'4633277f9842941660fbd0a681b1e656 big.dat'
-	EXEC	-x md5 chars.dat
-		OUTPUT - $'e2c865db4162bed963bfaa9ef6ac18f0 chars.dat'
-	EXEC	-x md5 zero.dat
-		OUTPUT - $'348a9791dc41b89796ec3808b5b5262f zero.dat'
+	EXEC	--method=md5 big.dat
+		OUTPUT - $'4633277f9842941660fbd0a681b1e656 *big.dat'
+	EXEC	--method=md5 chars.dat
+		OUTPUT - $'e2c865db4162bed963bfaa9ef6ac18f0 *chars.dat'
+	EXEC	--method=md5 zero.dat
+		OUTPUT - $'348a9791dc41b89796ec3808b5b5262f *zero.dat'
 
 TEST 07 'text vs binary mode'
-	EXEC	-x posix
+	EXEC	--method=posix
 		INPUT -n - $'\r'
 		OUTPUT - $'3863691631 1'
-	EXEC	-x posix -T
-	EXEC	-x posix
+	EXEC	--method=posix --text
+	EXEC	--method=posix
 		INPUT -n - $'\n'
 		OUTPUT - $'3515105045 1'
-	EXEC	-x posix -T
-	EXEC	-x posix -T
+	EXEC	--method=posix --text
+	EXEC	--method=posix --text
 		INPUT -n - $'\r\n'
-	EXEC	-x posix
+	EXEC	--method=posix
 		OUTPUT - $'3568853871 2'
-	EXEC	-x posix
+	EXEC	--method=posix
 		INPUT -n - $'\r\r\n'
 		OUTPUT - $'2299211872 3'
-	EXEC	-x posix -T
+	EXEC	--method=posix --text
 		OUTPUT - $'3568853871 2'
-	EXEC	-x posix
+	EXEC	--method=posix
 		INPUT -n - $'\n\n'
 		OUTPUT - $'3518178554 2'
-	EXEC	-x posix -T
+	EXEC	--method=posix --text
 		INPUT -n - $'\r\n\r\n'
 
 TEST 08 'SHA-1 secure hash algorithm 1'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x sha1
+	EXEC	--method=sha1
 		INPUT -
 		OUTPUT - $'da39a3ee5e6b4b0d3255bfef95601890afd80709'
-	EXEC	-x sha1 /dev/null
-		OUTPUT - $'da39a3ee5e6b4b0d3255bfef95601890afd80709 /dev/null'
-	EXEC	-x sha1 xyz.dat zyx.dat
-		OUTPUT - $'83305e292107a8d1955ac0c0047912ff62c5d6dc xyz.dat\nf1bac0f6f8e8d09b07cbc04c2e70b1b606fb9dd5 zyx.dat'
-	EXEC	-x sha1 -t xyz.dat zyx.dat
+	EXEC	--method=sha1 /dev/null
+		OUTPUT - $'da39a3ee5e6b4b0d3255bfef95601890afd80709 */dev/null'
+	EXEC	--method=sha1 xyz.dat zyx.dat
+		OUTPUT - $'83305e292107a8d1955ac0c0047912ff62c5d6dc *xyz.dat\nf1bac0f6f8e8d09b07cbc04c2e70b1b606fb9dd5 *zyx.dat'
+	EXEC	--method=sha1 --total xyz.dat zyx.dat
 		OUTPUT - $'728a9edfd9ef784a9291008c2a09a349643e4b09'
-	EXEC	-x sha1 big.dat
-		OUTPUT - $'d3e7a9584187f017342dd759bc8f3061b74c5faf big.dat'
-	EXEC	-x sha1 chars.dat
-		OUTPUT - $'4916d6bdb7f78e6803698cab32d1586ea457dfc8 chars.dat'
-	EXEC	-x sha1 zero.dat
-		OUTPUT - $'b376885ac8452b6cbf9ced81b1080bfd570d9b91 zero.dat'
-	EXEC	-x sha1
+	EXEC	--method=sha1 big.dat
+		OUTPUT - $'d3e7a9584187f017342dd759bc8f3061b74c5faf *big.dat'
+	EXEC	--method=sha1 chars.dat
+		OUTPUT - $'4916d6bdb7f78e6803698cab32d1586ea457dfc8 *chars.dat'
+	EXEC	--method=sha1 zero.dat
+		OUTPUT - $'b376885ac8452b6cbf9ced81b1080bfd570d9b91 *zero.dat'
+	EXEC	--method=sha1
 		INPUT -n - $'abc'
 		OUTPUT - $'a9993e364706816aba3e25717850c26c9cd0d89d'
-	EXEC	-x sha1
+	EXEC	--method=sha1
 		INPUT -n - $'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
 		OUTPUT - $'84983e441c3bd26ebaae4aa1f95129e5e54670f1'
 
 TEST 09 'SHA-256 secure hash algorithm'
 	DO	DATA aes.dat big.dat chars.dat gettysburg.dat qwerty.dat r1.dat r2.dat xyz.dat zyx.dat zero.dat z320.dat z447.dat z640.dat z1079.dat z2175.dat z12271.dat z16384.dat
 
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -
 		OUTPUT - $'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-	EXEC	-x SHA-256 /dev/null
-		OUTPUT - $'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 /dev/null'
-	EXEC	-x SHA-256 xyz.dat zyx.dat
-		OUTPUT - $'81884b5f2cb68edc6286363dcc4699a913a2d5ba05818d0fdc43ba68bb990bd8 xyz.dat\n9c49771c064bd4fd1e0118f38fcf88c519c38370bcddcf7444fe6593f74005de zyx.dat'
-	EXEC	-x SHA-256 -t xyz.dat zyx.dat
+	EXEC	--method=SHA-256 /dev/null
+		OUTPUT - $'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 */dev/null'
+	EXEC	--method=SHA-256 xyz.dat zyx.dat
+		OUTPUT - $'81884b5f2cb68edc6286363dcc4699a913a2d5ba05818d0fdc43ba68bb990bd8 *xyz.dat\n9c49771c064bd4fd1e0118f38fcf88c519c38370bcddcf7444fe6593f74005de *zyx.dat'
+	EXEC	--method=SHA-256 --total xyz.dat zyx.dat
 		OUTPUT - $'1dc13c432afd5a217c872ece4389116c0a6156cab95c427b98bddffb4cd90e06'
-	EXEC	-x SHA-256 big.dat
-		OUTPUT - $'6cdce0d273f964e529fc3f90db732abb5c70b63a3a43151a2498bb41a23f2dff big.dat'
-	EXEC	-x SHA-256 chars.dat
-		OUTPUT - $'40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880 chars.dat'
-	EXEC	-x SHA-256 zero.dat
-		OUTPUT - $'5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1 zero.dat'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256 big.dat
+		OUTPUT - $'6cdce0d273f964e529fc3f90db732abb5c70b63a3a43151a2498bb41a23f2dff *big.dat'
+	EXEC	--method=SHA-256 chars.dat
+		OUTPUT - $'40aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880 *chars.dat'
+	EXEC	--method=SHA-256 zero.dat
+		OUTPUT - $'5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1 *zero.dat'
+	EXEC	--method=SHA-256
 		INPUT -n - $'abc'
 		OUTPUT - $'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -n - $'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
 		OUTPUT - $'248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -n - $'abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu'
 		OUTPUT - $'cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1'
-	EXEC	-x SHA-256 gettysburg.dat
-		OUTPUT - $'4d25fccf8752ce470a58cd21d90939b7eb25f3fa418dd2da4c38288ea561e600 gettysburg.dat'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256 gettysburg.dat
+		OUTPUT - $'4d25fccf8752ce470a58cd21d90939b7eb25f3fa418dd2da4c38288ea561e600 *gettysburg.dat'
+	EXEC	--method=SHA-256
 		INPUT -n - $'This is exactly 64 bytes long, not counting the terminating byte'
 		OUTPUT - $'ab64eff7e88e2e46165e29f2bce41826bd4c7b3552f6b382a9e7d3af47c245f8'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -n - $'For this sample, this 63-byte string will be used as input data'
 		OUTPUT - $'f08a78cbbaee082b052ae0708f32fa1e50c5c421aa772ba5dbb406a2ea6be342'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -n - $'And this textual data, astonishing as it may appear, is exactly 128 bytes in length, as are both SHA-384 and SHA-512 block sizes'
 		OUTPUT - $'0ab803344830f92089494fb635ad00d76164ad6e57012b237722df0d7ad26896'
-	EXEC	-x SHA-256
+	EXEC	--method=SHA-256
 		INPUT -n - $'By hashing data that is one byte less than a multiple of a hash block length (like this 127-byte string), bugs may be revealed.'
 		OUTPUT - $'e4326d0459653d7d3514674d713e74dc3df11ed4d30b4013fd327fdb9e394c26'
-	EXEC	-x SHA-256 z320.dat
-		OUTPUT - $'a7f001d996dd25af402d03b5f61aef950565949c1a6ad5004efa730328d2dbf3 z320.dat'
-	EXEC	-x SHA-256 z447.dat
-		OUTPUT - $'6dcd63a07b0922cc3a9b3315b158478681cc32543b0a4180abe58a73c5e14cc2 z447.dat'
-	EXEC	-x SHA-256 z640.dat
-		OUTPUT - $'af6ebfde7d93d5badb6cde6287ecc2061c1cafc5b1c1217cd984fbcdb9c61aaa z640.dat'
-	EXEC	-x SHA-256 z2175.dat
-		OUTPUT - $'8ff59c6d33c5a991088bc44dd38f037eb5ad5630c91071a221ad6943e872ac29 z2175.dat'
-	EXEC	-x SHA-256 z16384.dat
-		OUTPUT - $'1818e87564e0c50974ecaabbb2eb4ca2f6cc820234b51861e2590be625f1f703 z16384.dat'
-	EXEC	-x SHA-256 qwerty.dat
-		OUTPUT - $'5e3dfe0cc98fd1c2de2a9d2fd893446da43d290f2512200c515416313cdf3192 qwerty.dat'
-	EXEC	-x SHA-256 aes.dat
-		OUTPUT - $'80fced5a97176a5009207cd119551b42c5b51ceb445230d02ecc2663bbfb483a aes.dat'
-	EXEC	-x SHA-256 z12271.dat
-		OUTPUT - $'88ee6ada861083094f4c64b373657e178d88ef0a4674fce6e4e1d84e3b176afb z12271.dat'
-	EXEC	-x SHA-256 z1079.dat
-		OUTPUT - $'5a2e925a7f8399fa63a20a1524ae83a7e3c48452f9af4df493c8c51311b04520 z1079.dat'
+	EXEC	--method=SHA-256 z320.dat
+		OUTPUT - $'a7f001d996dd25af402d03b5f61aef950565949c1a6ad5004efa730328d2dbf3 *z320.dat'
+	EXEC	--method=SHA-256 z447.dat
+		OUTPUT - $'6dcd63a07b0922cc3a9b3315b158478681cc32543b0a4180abe58a73c5e14cc2 *z447.dat'
+	EXEC	--method=SHA-256 z640.dat
+		OUTPUT - $'af6ebfde7d93d5badb6cde6287ecc2061c1cafc5b1c1217cd984fbcdb9c61aaa *z640.dat'
+	EXEC	--method=SHA-256 z2175.dat
+		OUTPUT - $'8ff59c6d33c5a991088bc44dd38f037eb5ad5630c91071a221ad6943e872ac29 *z2175.dat'
+	EXEC	--method=SHA-256 z16384.dat
+		OUTPUT - $'1818e87564e0c50974ecaabbb2eb4ca2f6cc820234b51861e2590be625f1f703 *z16384.dat'
+	EXEC	--method=SHA-256 qwerty.dat
+		OUTPUT - $'5e3dfe0cc98fd1c2de2a9d2fd893446da43d290f2512200c515416313cdf3192 *qwerty.dat'
+	EXEC	--method=SHA-256 aes.dat
+		OUTPUT - $'80fced5a97176a5009207cd119551b42c5b51ceb445230d02ecc2663bbfb483a *aes.dat'
+	EXEC	--method=SHA-256 z12271.dat
+		OUTPUT - $'88ee6ada861083094f4c64b373657e178d88ef0a4674fce6e4e1d84e3b176afb *z12271.dat'
+	EXEC	--method=SHA-256 z1079.dat
+		OUTPUT - $'5a2e925a7f8399fa63a20a1524ae83a7e3c48452f9af4df493c8c51311b04520 *z1079.dat'
 
 TEST 10 'SHA-384 secure hash algorithm'
 	DO	DATA aes.dat big.dat chars.dat gettysburg.dat qwerty.dat r1.dat r2.dat xyz.dat zyx.dat zero.dat z320.dat z447.dat z640.dat z1079.dat z2175.dat z12271.dat z16384.dat
 
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -
 		OUTPUT - $'38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b'
-	EXEC	-x SHA-384 /dev/null
-		OUTPUT - $'38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b /dev/null'
-	EXEC	-x SHA-384 xyz.dat zyx.dat
-		OUTPUT - $'69ee1ce2ab4336efe6ef44c42b88d54978b0d8e15f5745a3e4c2a636c51b2e7cd27f14c9a99a56a695c63f05b01f8807 xyz.dat\n2a2a803235971c4bd86019e2370c77a16a7461ab44cef3fa374bc5720836ba46834192dc1e9557f926dee3d70f9f39fb zyx.dat'
-	EXEC	-x SHA-384 -t xyz.dat zyx.dat
+	EXEC	--method=SHA-384 /dev/null
+		OUTPUT - $'38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b */dev/null'
+	EXEC	--method=SHA-384 xyz.dat zyx.dat
+		OUTPUT - $'69ee1ce2ab4336efe6ef44c42b88d54978b0d8e15f5745a3e4c2a636c51b2e7cd27f14c9a99a56a695c63f05b01f8807 *xyz.dat\n2a2a803235971c4bd86019e2370c77a16a7461ab44cef3fa374bc5720836ba46834192dc1e9557f926dee3d70f9f39fb *zyx.dat'
+	EXEC	--method=SHA-384 --total xyz.dat zyx.dat
 		OUTPUT - $'43c49cd09ed42aa43e8f5d261c84a2e812c4b94a1b99b659d3896344cd2d943a513e8615b70f015fb318dcd2bf80b1fc'
-	EXEC	-x SHA-384 big.dat
-		OUTPUT - $'0a5aa14305020b93c982af350fba28dfbbe9ffe1e8691a179de30d899a24a9314fbe50eeb527ec379aaadc94c8f5bff6 big.dat'
-	EXEC	-x SHA-384 chars.dat
-		OUTPUT - $'ffdaebff65ed05cf400f0221c4ccfb4b2104fb6a51f87e40be6c4309386bfdec2892e9179b34632331a59592737db5c5 chars.dat'
-	EXEC	-x SHA-384 zero.dat
-		OUTPUT - $'983980373213482dd5c9a5a424db89418e3344c459fa31a356e42eaa28544ca01b9839f6593c9e5d79fd439b5da6ebef zero.dat'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384 big.dat
+		OUTPUT - $'0a5aa14305020b93c982af350fba28dfbbe9ffe1e8691a179de30d899a24a9314fbe50eeb527ec379aaadc94c8f5bff6 *big.dat'
+	EXEC	--method=SHA-384 chars.dat
+		OUTPUT - $'ffdaebff65ed05cf400f0221c4ccfb4b2104fb6a51f87e40be6c4309386bfdec2892e9179b34632331a59592737db5c5 *chars.dat'
+	EXEC	--method=SHA-384 zero.dat
+		OUTPUT - $'983980373213482dd5c9a5a424db89418e3344c459fa31a356e42eaa28544ca01b9839f6593c9e5d79fd439b5da6ebef *zero.dat'
+	EXEC	--method=SHA-384
 		INPUT -n - $'abc'
 		OUTPUT - $'cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -n - $'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
 		OUTPUT - $'3391fdddfc8dc7393707a65b1b4709397cf8b1d162af05abfe8f450de5f36bc6b0455a8520bc4e6f5fe95b1fe3c8452b'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -n - $'abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu'
 		OUTPUT - $'09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa08086e3b0f712fcc7c71a557e2db966c3e9fa91746039'
-	EXEC	-x SHA-384 gettysburg.dat
-		OUTPUT - $'69cc75b95280bdd9e154e743903e37b1205aa382e92e051b1f48a6db9d0203f8a17c1762d46887037275606932d3381e gettysburg.dat'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384 gettysburg.dat
+		OUTPUT - $'69cc75b95280bdd9e154e743903e37b1205aa382e92e051b1f48a6db9d0203f8a17c1762d46887037275606932d3381e *gettysburg.dat'
+	EXEC	--method=SHA-384
 		INPUT -n - $'This is exactly 64 bytes long, not counting the terminating byte'
 		OUTPUT - $'e28e35e25a1874908bf0958bb088b69f3d742a753c86993e9f4b1c4c21988f958bd1fe0315b195aca7b061213ac2a9bd'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -n - $'For this sample, this 63-byte string will be used as input data'
 		OUTPUT - $'37b49ef3d08de53e9bd018b0630067bd43d09c427d06b05812f48531bce7d2a698ee2d1ed1ffed46fd4c3b9f38a8a557'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -n - $'And this textual data, astonishing as it may appear, is exactly 128 bytes in length, as are both SHA-384 and SHA-512 block sizes'
 		OUTPUT - $'e3e3602f4d90c935321d788f722071a8809f4f09366f2825cd85da97ccd2955eb6b8245974402aa64789ed45293e94ba'
-	EXEC	-x SHA-384
+	EXEC	--method=SHA-384
 		INPUT -n - $'By hashing data that is one byte less than a multiple of a hash block length (like this 127-byte string), bugs may be revealed.'
 		OUTPUT - $'1ca650f38480fa9dfb5729636bec4a935ebc1cd4c0055ee50cad2aa627e066871044fd8e6fdb80edf10b85df15ba7aab'
-	EXEC	-x SHA-384 z320.dat
-		OUTPUT - $'b8261ddcd7df7b3969a516b72550de6fbf0e394a4a7bb2bbc60ec603c2ceff643c5bf62bc6dcbfa5beb54b62d750b969 z320.dat'
-	EXEC	-x SHA-384 z447.dat
-		OUTPUT - $'548e4e9a1ff57f469ed47b023bf5279dfb4d4ca08c65051e3a5c41fab84479a205496276906008b4b3c5b0970b2f5446 z447.dat'
-	EXEC	-x SHA-384 z640.dat
-		OUTPUT - $'c6fec3a3278dd6b5afc8c0971d32d38faf5802f1a21527c32563b32a1ac340656b433b44fe2648aa2232206f4301193a z640.dat'
-	EXEC	-x SHA-384 z2175.dat
-		OUTPUT - $'92dca5655229b3c34796a227ff1809e273499adc2830149481224e0f54ff4483bd49834d4865e508ef53d4cd22b703ce z2175.dat'
-	EXEC	-x SHA-384 z16384.dat
-		OUTPUT - $'310fbb2027bdb7042f0e09e7b092e9ada506649510a7aa029825c8e8019e9c30749d723f2de1bd8c043d8d89d3748c2f z16384.dat'
-	EXEC	-x SHA-384 qwerty.dat
-		OUTPUT - $'0d5e45317bc7997cb9c8a23bad9bac9170d5bc81789b51af6bcd74ace379fd649a2b48cb56c4cb4ec1477e6933329e0e qwerty.dat'
-	EXEC	-x SHA-384 aes.dat
-		OUTPUT - $'aa1e77c094e5ce6db81a1add4c095201d020b7f8885a4333218da3b799b9fc42f00d60cd438a1724ae03bd7b515b739b aes.dat'
-	EXEC	-x SHA-384 z12271.dat
-		OUTPUT - $'78cc6402a29eb984b8f8f888ab0102cabe7c06f0b9570e3d8d744c969db14397f58ecd14e70f324bf12d8dd4cd1ad3b2 z12271.dat'
-	EXEC	-x SHA-384 z1079.dat
-		OUTPUT - $'72ec26cc742bc5fb1ef82541c9cadcf01a15c8104650d305f24ec8b006d7428e8ebe2bb320a465dbdd5c6326bbd8c9ad z1079.dat'
+	EXEC	--method=SHA-384 z320.dat
+		OUTPUT - $'b8261ddcd7df7b3969a516b72550de6fbf0e394a4a7bb2bbc60ec603c2ceff643c5bf62bc6dcbfa5beb54b62d750b969 *z320.dat'
+	EXEC	--method=SHA-384 z447.dat
+		OUTPUT - $'548e4e9a1ff57f469ed47b023bf5279dfb4d4ca08c65051e3a5c41fab84479a205496276906008b4b3c5b0970b2f5446 *z447.dat'
+	EXEC	--method=SHA-384 z640.dat
+		OUTPUT - $'c6fec3a3278dd6b5afc8c0971d32d38faf5802f1a21527c32563b32a1ac340656b433b44fe2648aa2232206f4301193a *z640.dat'
+	EXEC	--method=SHA-384 z2175.dat
+		OUTPUT - $'92dca5655229b3c34796a227ff1809e273499adc2830149481224e0f54ff4483bd49834d4865e508ef53d4cd22b703ce *z2175.dat'
+	EXEC	--method=SHA-384 z16384.dat
+		OUTPUT - $'310fbb2027bdb7042f0e09e7b092e9ada506649510a7aa029825c8e8019e9c30749d723f2de1bd8c043d8d89d3748c2f *z16384.dat'
+	EXEC	--method=SHA-384 qwerty.dat
+		OUTPUT - $'0d5e45317bc7997cb9c8a23bad9bac9170d5bc81789b51af6bcd74ace379fd649a2b48cb56c4cb4ec1477e6933329e0e *qwerty.dat'
+	EXEC	--method=SHA-384 aes.dat
+		OUTPUT - $'aa1e77c094e5ce6db81a1add4c095201d020b7f8885a4333218da3b799b9fc42f00d60cd438a1724ae03bd7b515b739b *aes.dat'
+	EXEC	--method=SHA-384 z12271.dat
+		OUTPUT - $'78cc6402a29eb984b8f8f888ab0102cabe7c06f0b9570e3d8d744c969db14397f58ecd14e70f324bf12d8dd4cd1ad3b2 *z12271.dat'
+	EXEC	--method=SHA-384 z1079.dat
+		OUTPUT - $'72ec26cc742bc5fb1ef82541c9cadcf01a15c8104650d305f24ec8b006d7428e8ebe2bb320a465dbdd5c6326bbd8c9ad *z1079.dat'
 
 TEST 11 'SHA-512 secure hash algorithm'
 	DO	DATA aes.dat big.dat chars.dat gettysburg.dat qwerty.dat r1.dat r2.dat xyz.dat zyx.dat zero.dat z320.dat z447.dat z640.dat z1079.dat z2175.dat z12271.dat z16384.dat
 
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -
 		OUTPUT - $'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e'
-	EXEC	-x SHA-512 /dev/null
-		OUTPUT - $'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e /dev/null'
-	EXEC	-x SHA-512 xyz.dat zyx.dat
-		OUTPUT - $'bd4f98333e7adec90b6e3e292f7a6386a509b443dbb374fb705b9354552b4d438fc31023b5b853f0a88e670c89392b05044f4b9b4dea3593fc871c82afe65891 xyz.dat\n25bd08f694f4ac12441f2e526e017556ca6f22ddf38cbe0519f24381697ebcaa9a44002fe759677d7271a24342359329a9a626444d7cfed9128e76bfbea95782 zyx.dat'
-	EXEC	-x SHA-512 -t xyz.dat zyx.dat
+	EXEC	--method=SHA-512 /dev/null
+		OUTPUT - $'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e */dev/null'
+	EXEC	--method=SHA-512 xyz.dat zyx.dat
+		OUTPUT - $'bd4f98333e7adec90b6e3e292f7a6386a509b443dbb374fb705b9354552b4d438fc31023b5b853f0a88e670c89392b05044f4b9b4dea3593fc871c82afe65891 *xyz.dat\n25bd08f694f4ac12441f2e526e017556ca6f22ddf38cbe0519f24381697ebcaa9a44002fe759677d7271a24342359329a9a626444d7cfed9128e76bfbea95782 *zyx.dat'
+	EXEC	--method=SHA-512 --total xyz.dat zyx.dat
 		OUTPUT - $'98f290c5aa8e72db4f71107b417b16d06f66969e283fcafe69a9d0d53c55f1e91587100c52e1348ddaffc54fcb0cb82cade96ddf0096cb4aee096a3d114f0f13'
-	EXEC	-x SHA-512 big.dat
-		OUTPUT - $'8dad61d786372cb82cdc1440a8e52062f2ce322d865eb6aca388a90c327e16297b5c041d8316cee2b36123c4b6c7eb0a7d8c483ddc92fcb1c7bfc5093630198f big.dat'
-	EXEC	-x SHA-512 chars.dat
-		OUTPUT - $'1e7b80bc8edc552c8feeb2780e111477e5bc70465fac1a77b29b35980c3f0ce4a036a6c9462036824bd56801e62af7e9feba5c22ed8a5af877bf7de117dcac6d chars.dat'
-	EXEC	-x SHA-512 zero.dat
-		OUTPUT - $'693f95d58383a6162d2aab49eb60395dcc4bb22295120caf3f21e3039003230b287c566a03c7a0ca5accaed2133c700b1cb3f82edf8adcbddc92b4f9fb9910c6 zero.dat'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512 big.dat
+		OUTPUT - $'8dad61d786372cb82cdc1440a8e52062f2ce322d865eb6aca388a90c327e16297b5c041d8316cee2b36123c4b6c7eb0a7d8c483ddc92fcb1c7bfc5093630198f *big.dat'
+	EXEC	--method=SHA-512 chars.dat
+		OUTPUT - $'1e7b80bc8edc552c8feeb2780e111477e5bc70465fac1a77b29b35980c3f0ce4a036a6c9462036824bd56801e62af7e9feba5c22ed8a5af877bf7de117dcac6d *chars.dat'
+	EXEC	--method=SHA-512 zero.dat
+		OUTPUT - $'693f95d58383a6162d2aab49eb60395dcc4bb22295120caf3f21e3039003230b287c566a03c7a0ca5accaed2133c700b1cb3f82edf8adcbddc92b4f9fb9910c6 *zero.dat'
+	EXEC	--method=SHA-512
 		INPUT -n - $'abc'
 		OUTPUT - $'ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -n - $'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
 		OUTPUT - $'204a8fc6dda82f0a0ced7beb8e08a41657c16ef468b228a8279be331a703c33596fd15c13b1b07f9aa1d3bea57789ca031ad85c7a71dd70354ec631238ca3445'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -n - $'abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu'
 		OUTPUT - $'8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909'
-	EXEC	-x SHA-512 gettysburg.dat
-		OUTPUT - $'23450737795d2f6a13aa61adcca0df5eef6df8d8db2b42cd2ca8f783734217a73e9cabc3c9b8a8602f8aeaeb34562b6b1286846060f9809b90286b3555751f09 gettysburg.dat'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512 gettysburg.dat
+		OUTPUT - $'23450737795d2f6a13aa61adcca0df5eef6df8d8db2b42cd2ca8f783734217a73e9cabc3c9b8a8602f8aeaeb34562b6b1286846060f9809b90286b3555751f09 *gettysburg.dat'
+	EXEC	--method=SHA-512
 		INPUT -n - $'This is exactly 64 bytes long, not counting the terminating byte'
 		OUTPUT - $'70aefeaa0e7ac4f8fe17532d7185a289bee3b428d950c14fa8b713ca09814a387d245870e007a80ad97c369d193e41701aa07f3221d15f0e65a1ff970cedf030'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -n - $'For this sample, this 63-byte string will be used as input data'
 		OUTPUT - $'b3de4afbc516d2478fe9b518d063bda6c8dd65fc38402dd81d1eb7364e72fb6e6663cf6d2771c8f5a6da09601712fb3d2a36c6ffea3e28b0818b05b0a8660766'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -n - $'And this textual data, astonishing as it may appear, is exactly 128 bytes in length, as are both SHA-512 and SHA-512 block sizes'
 		OUTPUT - $'faf543e1b3082b2ec9a5233510bfc2a88ca227a326d0b91ff7a333b5b731db51e8f147bb8fbde237706b26d838d8cf683896000363a7c94decad8484cacfa0a5'
-	EXEC	-x SHA-512
+	EXEC	--method=SHA-512
 		INPUT -n - $'By hashing data that is one byte less than a multiple of a hash block length (like this 127-byte string), bugs may be revealed.'
 		OUTPUT - $'d399507bbf5f2d0da51db1ff1fc51c1c9ff1de0937e00d01693b240e84fcc3400601429f45c297acc6e8fcf1e4e4abe9ff21a54a0d3d88888f298971bd206cd5'
-	EXEC	-x SHA-512 z320.dat
-		OUTPUT - $'caf970d3638e21053173a638c4b94d6d1ff87bc47b58f8ee928fbe9e245c23abf81019e45bf017ecc8610e5e0b95e3b025ccd611a772ca4fb3dfba26f0859725 z320.dat'
-	EXEC	-x SHA-512 z447.dat
-		OUTPUT - $'ee5d07460183b130687c977e9f8d43110989b0864b18fe6ee00a53dec5eda111f3aaa3bac7ab8dae26ed545a4de33ed45190f18fa0c327c44642ab9424265330 z447.dat'
-	EXEC	-x SHA-512 z640.dat
-		OUTPUT - $'73ffeb67716c3495fbc33f2d62fe08e2616706a5599881c7e67e9ef2b68f4988ea8b3b604ba87e50b07962692705c420fa31a00be41d6aaa9f3b11eafe9cf49b z640.dat'
-	EXEC	-x SHA-512 z2175.dat
-		OUTPUT - $'0e928db6207282bfb498ee871202f2337f4074f3a1f5055a24f08e912ac118f8101832cdb9c2f702976e629183db9bacfdd7b086c800687c3599f15de7f7b9dd z2175.dat'
-	EXEC	-x SHA-512 z16384.dat
-		OUTPUT - $'a001636f3ff1ce34f432f8e8f7785b78be84318beb8485a406650a8b243c419f7db6435cf6bf3000c6524adb5b52bad01afb76b3ceff701331e18b85b0e4cbd3 z16384.dat'
-	EXEC	-x SHA-512 qwerty.dat
-		OUTPUT - $'735bd6bebfe6f8070d70069105bc761f35ed1ac3742f2e372fdc14d2a51898e6153ccaff9073324130abdc451c730dc5dab5a0452487b1171c4dd97f92e267b7 qwerty.dat'
-	EXEC	-x SHA-512 aes.dat
-		OUTPUT - $'fae25ec70bcb3bbdef9698b9d579da49db68318dbdf18c021d1f76aaceff962838873235597e7cce0c68aabc610e0deb79b13a01c302abc108e459ddfbe9bee8 aes.dat'
-	EXEC	-x SHA-512 z12271.dat
-		OUTPUT - $'211bec83fbca249c53668802b857a9889428dc5120f34b3eac1603f13d1b47965c387b39ef6af15b3a44c5e7b6bbb6c1096a677dc98fc8f472737540a332f378 z12271.dat'
-	EXEC	-x SHA-512 z1079.dat
-		OUTPUT - $'ebad464e6d9f1df7e8aadff69f52db40a001b253fbf65a018f29974dcc7fbf8e58b69e247975fbadb4153d7289357c9b6212752d0ab67dd3d9bbc0bb908aa98c z1079.dat'
+	EXEC	--method=SHA-512 z320.dat
+		OUTPUT - $'caf970d3638e21053173a638c4b94d6d1ff87bc47b58f8ee928fbe9e245c23abf81019e45bf017ecc8610e5e0b95e3b025ccd611a772ca4fb3dfba26f0859725 *z320.dat'
+	EXEC	--method=SHA-512 z447.dat
+		OUTPUT - $'ee5d07460183b130687c977e9f8d43110989b0864b18fe6ee00a53dec5eda111f3aaa3bac7ab8dae26ed545a4de33ed45190f18fa0c327c44642ab9424265330 *z447.dat'
+	EXEC	--method=SHA-512 z640.dat
+		OUTPUT - $'73ffeb67716c3495fbc33f2d62fe08e2616706a5599881c7e67e9ef2b68f4988ea8b3b604ba87e50b07962692705c420fa31a00be41d6aaa9f3b11eafe9cf49b *z640.dat'
+	EXEC	--method=SHA-512 z2175.dat
+		OUTPUT - $'0e928db6207282bfb498ee871202f2337f4074f3a1f5055a24f08e912ac118f8101832cdb9c2f702976e629183db9bacfdd7b086c800687c3599f15de7f7b9dd *z2175.dat'
+	EXEC	--method=SHA-512 z16384.dat
+		OUTPUT - $'a001636f3ff1ce34f432f8e8f7785b78be84318beb8485a406650a8b243c419f7db6435cf6bf3000c6524adb5b52bad01afb76b3ceff701331e18b85b0e4cbd3 *z16384.dat'
+	EXEC	--method=SHA-512 qwerty.dat
+		OUTPUT - $'735bd6bebfe6f8070d70069105bc761f35ed1ac3742f2e372fdc14d2a51898e6153ccaff9073324130abdc451c730dc5dab5a0452487b1171c4dd97f92e267b7 *qwerty.dat'
+	EXEC	--method=SHA-512 aes.dat
+		OUTPUT - $'fae25ec70bcb3bbdef9698b9d579da49db68318dbdf18c021d1f76aaceff962838873235597e7cce0c68aabc610e0deb79b13a01c302abc108e459ddfbe9bee8 *aes.dat'
+	EXEC	--method=SHA-512 z12271.dat
+		OUTPUT - $'211bec83fbca249c53668802b857a9889428dc5120f34b3eac1603f13d1b47965c387b39ef6af15b3a44c5e7b6bbb6c1096a677dc98fc8f472737540a332f378 *z12271.dat'
+	EXEC	--method=SHA-512 z1079.dat
+		OUTPUT - $'ebad464e6d9f1df7e8aadff69f52db40a001b253fbf65a018f29974dcc7fbf8e58b69e247975fbadb4153d7289357c9b6212752d0ab67dd3d9bbc0bb908aa98c *z1079.dat'
 
 TEST 12 'tw 32x4 memsum algorithm'
 	DO	DATA big.dat chars.dat xyz.dat zyx.dat zero.dat
-	EXEC	-x tw
+	EXEC	--method=tw
 		OUTPUT - $'000000000000000000000000'
-	EXEC	-x tw /dev/null
+	EXEC	--method=tw /dev/null
 		OUTPUT - $'000000000000000000000000 /dev/null'
-	EXEC	-x tw xyz.dat zyx.dat
+	EXEC	--method=tw xyz.dat zyx.dat
 		OUTPUT - $'0jURpn1vP@As2kmq0L2YHh5b xyz.dat\n0Olp8n1@3o7s08fz3L1QPghH zyx.dat'
-	EXEC	-x tw -t xyz.dat zyx.dat
+	EXEC	--method=tw --total xyz.dat zyx.dat
 		OUTPUT - $'0jURpn1vP@As2kmq0L2YHh5b'
-	EXEC	-x tw big.dat
+	EXEC	--method=tw big.dat
 		OUTPUT - $'2LwgwX1jngxw3f8M@X3jys8b big.dat'
-	EXEC	-x tw chars.dat
+	EXEC	--method=tw chars.dat
 		OUTPUT - $'2t0Ly00mL@E01UvwO01fOoO0 chars.dat'
-	EXEC	-x tw zero.dat
+	EXEC	--method=tw zero.dat
 		OUTPUT - $'2N6s402zI@800vNTk01gUZQ0 zero.dat'
 
 TEST 13 'solaris -r algorithm'
@@ -1194,7 +1194,7 @@ TEST 13 'solaris -r algorithm'
 		OUTPUT - $'00000      0 /dev/null'
 	EXEC	-r xyz.dat zyx.dat
 		OUTPUT - $'00093      1 xyz.dat\n04188      1 zyx.dat'
-	EXEC	-r -t xyz.dat zyx.dat
+	EXEC	-r --total xyz.dat zyx.dat
 		OUTPUT - $'04097      1      2'
 	EXEC	-r big.dat
 		OUTPUT - $'50647     96 big.dat'

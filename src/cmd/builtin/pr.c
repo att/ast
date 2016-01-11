@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -26,7 +26,7 @@
  */
 
 static const char usage[] =
-"[-n?\n@(#)$Id: pr (AT&T Research) 2004-07-01 $\n]"
+"[-n?\n@(#)$Id: pr (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?pr - print files]"
 "[+DESCRIPTION?\bpr\b formats and prints files to the standard output."
@@ -140,6 +140,7 @@ typedef struct _pr_
 	size_t	siz;
 	unsigned char *map;
 	}	control;
+	Mbstate_t q;
 } Pr_t;
 
 /*
@@ -566,7 +567,7 @@ c_read(Sfio_t* fp, void* buf, size_t n, Sfdisc_t* dp)
 	}
 	while (pp->control.cur < pp->control.end && s < e)
 	{
-		if ((c = mbsize(pp->control.cur)) > 1)
+		if ((c = mbsize(pp->control.cur, e - s, &pp->q)) > 1)
 		{
 			if (c > (e - s))
 				break;
@@ -616,7 +617,7 @@ v_read(Sfio_t* fp, void* buf, size_t n, Sfdisc_t* dp)
 	}
 	while (pp->control.cur < pp->control.end && s < e)
 	{
-		if ((c = mbsize(pp->control.cur)) > 1)
+		if ((c = mbsize(pp->control.cur, e - s, &pp->q)) > 1)
 		{
 			if (c > (e - s))
 				break;

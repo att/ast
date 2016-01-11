@@ -6,7 +6,7 @@ vczip :: vcodex.1 vczip.c -lvcodex -lcodex
 
 vcunzip :LINK: vczip
 
-:TEST: vczip
+:TEST: vczip vcama vcrtable vctable vcxml
 
 vcodex :TEST: testvcodex vctest.h terror.h +lvcodex +last \
 	tio.c tvcbwt.c tvcbwzip.c tvccrypt.c tvcdelta.c \

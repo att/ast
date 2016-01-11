@@ -53,7 +53,7 @@ No
 .BI auto this ,
 .BI config that
 or
-.IB foo tool
+.BI foo tool
 commands, no makefile generation, no
 .LR "make depend" ,
 no separate manifests;

@@ -1,3 +1,4 @@
+12-08-24 Makefile: shell:20120101
 05-06-14 uinit.c: trap "tkloop" only if it is defined
 04-03-31 uinit.c: unalias ksh "source" to uncover tcl builtin by same name
 03-01-02 Makefile: dynamic -lshell on CC.HOSTTYPE=*win*

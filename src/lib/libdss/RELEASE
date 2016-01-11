@@ -1,3 +1,11 @@
+13-08-11 strcopy() => stpcpy()
+13-04-08 cxopen.c: fix cxmembers() bug that referenced data.string instead of data.string.data (dumped on be 32 bit)
+13-04-08 cxopen.c: fix cxcast() ref to use ref data instead of original record!
+13-03-10 dssopen.c: move default dss suffix from dssfind() to loadtags()
+12-09-04 cxcomp.c: type identifiers only in non-compound var constructs
+12-08-15 cx.h,cxopen.c: add cxmembers() default externalf for struct types
+12-08-11 cxcomp.c: add logical cast for naked non-numeric variable expression
+12-08-01 dssprintf.c: change --all to only list fields with non-default values
 12-06-15 dssopt.c: fix bug that failed to provide closing ]
 12-05-31 dssopt.c: handle optegt() style descriptions
 12-05-15 cx.h: add CX_DEPRECATED

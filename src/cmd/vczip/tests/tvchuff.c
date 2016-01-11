@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
@@ -40,7 +40,8 @@ static int Freq[256] =
  10,  0,  0,  1,  4,  0,  2,  0,  6,  1,  0,  1,  2,  0,  0, 10
 };
 
-int main()
+
+MAIN()
 {
 	char		*tar, *cmp, *t, *b, *endb;
 	Vcodex_t	*vch, *vcu;

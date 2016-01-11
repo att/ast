@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -25,7 +25,7 @@
 
 /* Test concurrency by volleying objects between two dictionaries. */
 
-#define N_THREADS	16	/* #players	*/
+#define N_THREADS	8	/* #players	*/
 #define N_OBJ		100000	/* #objects	*/
 
 /* an object to be bounced back and forth */
@@ -68,7 +68,7 @@ static Dt_t* opendictionary(Mydisc_t* dc)
 	Dt_t		*dt;
 
 	/* create region to allocate memory from */
-	if(!(vm = vmopen(Vmdcsystem, Vmbest, VM_SHARE)) )
+	if(!(vm = vmopen(Vmdcsystem, Vmbest, 0)) )
 		terror("Couldn't create vmalloc region");
 
 	/* discipline for objects identified by their decimal values */
@@ -141,7 +141,6 @@ tmain()
 	Obj_t		*o, *list[2], obj;
 
 	topts();
-	taso(ASO_THREAD);
 
 	/* create two dictionaries to volley objects back and forth */
 	for(n = 0; n < 2; ++n)

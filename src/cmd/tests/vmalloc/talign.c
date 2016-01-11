@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -19,7 +19,7 @@
 ***********************************************************************/
 #include	"vmtest.h"
 
-static char Mem[13*1024];
+static char Mem[1024*1024];
 
 #if __STD_C
 static Void_t* alignmem(Vmalloc_t* vm, Void_t* ca, size_t cs, size_t ns, Vmdisc_t* dc)
@@ -32,7 +32,7 @@ size_t		ns;
 Vmdisc_t*	dc;
 #endif
 {
-	return (Void_t*)Mem;
+	return ns <= sizeof(Mem) ? (Void_t*)Mem : (Void_t*)0;
 }
 
 static Vmdisc_t Disc = { alignmem, NIL(Vmexcept_f), 10*1024};
@@ -81,7 +81,7 @@ tmain()
 
 	if(!(vm = vmopen(Vmdcheap,Vmbest,0)) )
 		terror("Opening region2");
-	for(i = 0; i < 100; ++i)
+	for(i = 0; i < 10; ++i)
 	{	for(j = 0; j < 10; ++j)
 			if(!(data = vmalloc(vm,17)) )
 				terror("vmalloc failed");
@@ -94,7 +94,7 @@ tmain()
 
 	if(!(vm = vmopen(Vmdcheap,Vmdebug,0)) )
 		terror("Opening region2");
-	for(i = 0; i < 100; ++i)
+	for(i = 0; i < 10; ++i)
 	{	for(j = 0; j < 10; ++j)
 			if(!(data = vmalloc(vm,17)) )
 				terror("vmalloc failed");

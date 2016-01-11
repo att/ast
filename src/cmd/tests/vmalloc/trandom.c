@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -19,7 +19,7 @@
 ***********************************************************************/
 #include	"vmtest.h"
 
-#define RAND()		random()
+#define RAND()		trandom()
 
 typedef struct _obj_s	Obj_t;
 struct _obj_s
@@ -33,7 +33,7 @@ static Obj_t		Obj[N_OBJ], *List[N_OBJ+1];
 
 #define Z_HUGE		5000		/* huge block size increment	*/
 #define Z_BIG		10000		/* size range of large objects	*/
-#define Z_MED		100		/* size range of medium objects	*/
+#define Z_MED		1000		/* size range of medium objects	*/
 #define Z_TINY		10		/* size range of small objects	*/
 
 #define ALLOCSIZE()	(RAND()%100 == 0 ? (RAND()%Z_BIG + Z_BIG/2 ) : \
@@ -48,7 +48,7 @@ static Obj_t		Obj[N_OBJ], *List[N_OBJ+1];
 #define TIME(nk,kk,zz)	((nk = kk + (RAND() % TMRANGE(zz)) + 1), \
 			 (nk = nk <= kk ? kk+1 : nk > N_OBJ ? N_OBJ : nk ) )
 
-#define COMPACT(kk)	((kk % (N_OBJ/5000)) == 0 ? 1 : 0)
+#define STAT(kk)	((kk % (N_OBJ/10)) == 0 ? 1 : 0)
 #define RESIZE(kk)	((kk % (N_OBJ/500)) == 0 ? 1 : 0)
 
 tmain()
@@ -82,19 +82,11 @@ tmain()
 			}
 		}
 
-		if(COMPACT(k)) /* global compaction */
+		if(STAT(k))
 		{	if(vmstat(Vmregion, &sb) < 0)
 				terror("Vmstat failed");
 			tinfo("Arena: busy=(%u,%u) free=(%u,%u) extent=%u #segs=%d",
-				sb.n_busy,sb.s_busy, sb.n_free,sb.s_free,
-				sb.extent, sb.n_seg);
-			if(vmcompact(Vmregion) < 0 )
-				terror("Vmcompact failed");
-			if(vmstat(Vmregion, &sb) < 0)
-				terror("Vmstat failed");
-			tinfo("Compact: busy=(%u,%u) free=(%u,%u) extent=%u #segs=%d",
-				sb.n_busy,sb.s_busy, sb.n_free,sb.s_free,
-				sb.extent, sb.n_seg);
+				sb.n_busy,sb.s_busy, sb.n_free,sb.s_free, sb.extent, sb.n_seg);
 		}
 
 		if(RESIZE(k)) /* make the huge block bigger */
@@ -116,13 +108,7 @@ tmain()
 
 	if(vmstat(Vmregion, &sb) < 0)
 		terror("Vmstat failed");
-	tinfo("Full: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d\n",
-		sb.n_busy, sb.s_busy, sb.n_free, sb.s_free, sb.extent, sb.n_seg);
-	if(vmcompact(Vmregion) < 0 )
-		terror("Vmcompact failed");
-	if(vmstat(Vmregion, &sb) < 0)
-		terror("Vmstat failed");
-	tinfo("Compact: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d\n",
+	tinfo("After simulation loop: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d",
 		sb.n_busy, sb.s_busy, sb.n_free, sb.s_free, sb.extent, sb.n_seg);
 
 	/* now free all left-overs */
@@ -132,20 +118,14 @@ tmain()
 
 	if(vmstat(Vmregion, &sb) < 0)
 		terror("Vmstat failed");
-	tinfo("Free: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d\n",
-		sb.n_busy, sb.s_busy, sb.n_free, sb.s_free, sb.extent, sb.n_seg);
-	if(vmcompact(Vmregion) < 0 )
-		terror("Vmcompact failed2");
-	if(vmstat(Vmregion, &sb) < 0)
-		terror("Vmstat failed");
-	tinfo("Compact: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d\n",
+	tinfo("After freeing all: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d",
 		sb.n_busy, sb.s_busy, sb.n_free, sb.s_free, sb.extent, sb.n_seg);
 
 	if(!(huge = vmalloc(Vmregion, 10)))
 		terror("Vmalloc failed");
 	if(vmstat(Vmregion, &sb) < 0)
 		terror("Vmstat failed");
-	tinfo("Small: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d\n",
+	tinfo("Allocating a small block: Busy=(%u,%u) Free=(%u,%u) Extent=%u #segs=%d",
 		sb.n_busy, sb.s_busy, sb.n_free, sb.s_free, sb.extent, sb.n_seg);
 
 	texit(0);

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -119,15 +119,18 @@ csclient(Cs_t* cs, int fd, const char* service, const char* prompt, char** argv,
 				{
 					if (!*argv)
 					{
-						argv = 0;
-						fds[0].fd = 0;
 						if (flags & CS_CLIENT_ARGV)
 						{
 							if (done++)
 								return 0;
 							timeout = 500;
 						}
-						fds[0].events = CS_POLL_READ;
+						else
+						{
+							argv = 0;
+							fds[0].fd = 0;
+							fds[0].events = CS_POLL_READ;
+						}
 						continue;
 					}
 					if (!tmp && !(tmp = sfstropen()))

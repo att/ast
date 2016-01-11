@@ -1496,13 +1496,10 @@ TEST 02 'embedded variable length'
  </>
  <FIELD>
   <NAME>TEST_FIELD_02</>
-  <FIELD>
-   <NAME>TEST_FIELD_02_DATA</>
-   <TYPE>string</>
-   <PHYSICAL>
-    <CODESET>ascii</>
-    <DELIMITER>|</>
-   </>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <DELIMITER>|</>
   </>
  </>
  <FIELD>
@@ -1536,13 +1533,10 @@ TEST 02 'embedded variable length'
  </>
  <FIELD>
   <NAME>TEST_FIELD_02</>
-  <FIELD>
-   <NAME>TEST_FIELD_02_DATA</>
-   <TYPE>string</>
-   <PHYSICAL>
-    <CODESET>ascii</>
-    <DELIMITER>|</>
-   </>
+  <TYPE>string</>
+  <PHYSICAL>
+   <CODESET>ascii</>
+   <DELIMITER>|</>
   </>
  </>
  <FIELD>

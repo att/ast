@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,47 +14,67 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
 #include	"vctest.h"
 
-typedef Vcchar_t	Matrix_t[16][8];
+#include	<vctable.h>
+
+typedef Vcchar_t	Matrix_t[24][8];
 
 static Matrix_t Mt =
-{	'a', '0', 'u', 'd', 'i', 'e', 'a', 'b',
-	'a', '1', 'v', 'd', 'j', 'e', 'b', 'c',
-	'b', '0', 'x', 'd', 'i', 'e', 'c', 'd',
-	'b', '1', 'y', 'd', 'j', 'e', 'd', 'e',
+{	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+	'a', '1', 'v', 'd', 'i', 'e', '1', 'a',
+	'b', '0', 'x', 'd', 'j', 'e', '0', 'b',
+	'b', '1', 'y', 'd', 'j', 'e', '1', 'b',
 
-	'b', '2', 'z', 'd', 'i', 'e', 'e', 'f',
-	'a', '0', 'u', 'd', 'j', 'e', 'f', 'g',
-	'a', '2', 'w', 'd', 'i', 'e', 'g', 'h',
-	'b', '1', 'y', 'd', 'j', 'e', 'h', 'i',
+	'b', '2', 'z', 'd', 'j', 'e', '2', 'b',
+	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+	'a', '2', 'w', 'd', 'i', 'e', '2', 'a',
+	'b', '1', 'y', 'd', 'j', 'e', '1', 'b',
 
-	'a', '0', 'u', 'd', 'i', 'e', 'i', 'j',
-	'a', '1', 'v', 'd', 'j', 'e', 'j', 'k',
-	'a', '2', 'w', 'd', 'i', 'e', 'k', 'l',
-	'b', '0', 'x', 'd', 'j', 'e', 'l', 'm',
+	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+	'a', '1', 'v', 'd', 'i', 'e', '1', 'a',
+	'a', '2', 'w', 'd', 'i', 'e', '2', 'a',
+	'b', '0', 'x', 'd', 'j', 'e', '0', 'b',
 
-	'b', '1', 'y', 'd', 'i', 'e', 'm', 'n',
-	'b', '2', 'z', 'd', 'j', 'e', 'n', 'o',
-	'b', '1', 'y', 'd', 'i', 'e', 'o', 'p',
-	'a', '0', 'u', 'd', 'j', 'e', 'p', 'q'
+	'b', '1', 'y', 'd', 'j', 'e', '1', 'b',
+	'b', '2', 'z', 'd', 'j', 'e', '2', 'b',
+	'b', '1', 'y', 'd', 'j', 'e', '1', 'b',
+	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+
+	'b', '2', 'z', 'd', 'j', 'e', '2', 'b',
+	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+	'a', '2', 'w', 'd', 'i', 'e', '2', 'a',
+	'b', '1', 'y', 'd', 'j', 'e', '1', 'b',
+
+	'a', '0', 'u', 'd', 'i', 'e', '0', 'a',
+	'a', '1', 'v', 'd', 'i', 'e', '1', 'a',
+	'a', '2', 'w', 'd', 'i', 'e', '2', 'a',
+	'b', '0', 'x', 'd', 'j', 'e', '0', 'b',
 };
 
-int main()
+MAIN()
 {
 	Vcodex_t	*tz, *uz;
 	Vcodex_t	*huf, *rle, *mtf;
 	Vcchar_t	*mt, *cmp, *tstr;
 	Vcchar_t	store[2*sizeof(Mt)];
 	ssize_t		nc, nu, n;
-	Vcmethod_t	*Vctable;
+	Vctblplan_t	*plan;
 
-	if(!(Vctable = vcgetmeth("table", 0)))
-		terror("table plugin not found");
+	if(!(plan = vctblmakeplan(Mt, sizeof(Mt), sizeof(Mt[0]), VCTBL_RLE)) )
+		terror("Vctable: can't make compression plan");
+	tmesg("\tTable: size=%d, ", sizeof(Mt) );
+	tmesg("ncols=%d\n", plan->ncols);
+	tmesg("\tTranform plan:\n");
+	for(n = 0; n < plan->ncols; ++n)
+	{	tmesg("\t\t%2d: ", plan->trans[n].index);
+		tmesg("%2d ", plan->trans[n].pred1);
+		tmesg("%2d\n", plan->trans[n].pred2);
+	}
 
 	if(!(huf = vcopen(0, Vchuffgroup, 0, 0, VC_ENCODE)) )
 		terror("Can't open Vchuffgroup handle to compress");
@@ -81,6 +101,10 @@ int main()
 
 	if(memcmp(mt, Mt, nu) != 0)
 		terror("Vctable: results did not match");
+
+	if((nc = vcapply(huf, Mt, sizeof(Mt), &cmp)) <= 0 )
+		terror("Vchuffgroup: fail transforming");
+	twarn("Vchuffgroup: rawsz=%d cmpsz=%d\n", sizeof(Mt), nc);
 
 	exit(0);
 }

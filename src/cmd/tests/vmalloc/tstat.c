@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -38,7 +38,7 @@ tmain()
 	if(vmstat(vm,&st) < 0 )
 		terror("vmstat failed12");
 	if(st.n_busy != 0 || st.s_busy > 0 )
-		terror("Wrong statistics12");
+		terror("Wrong statistics12 -- n_busy=%zu s_busy=%zu", st.n_busy, st.s_busy);
 	vmclose(vm);
 
 	if(!(vm = vmopen(Vmdcheap,Vmpool,0)) )
@@ -47,8 +47,8 @@ tmain()
 		terror("vmalloc failed2");
 	if(vmstat(vm,&st) < 0 )
 		terror("vmstat failed21");
-	if(st.n_busy != 1 || st.s_busy != 13 )
-		terror("Wrong statistics2");
+	if(st.n_busy != 1 || st.s_busy != 16 )
+		terror("Wrong statistics2 -- n_busy=%zu s_busy=%zu", st.n_busy, st.s_busy);
 	if(vmfree(vm,addr) < 0)
 		terror("vmfree failed2");
 	if(vmstat(vm,&st) < 0 )
@@ -79,7 +79,7 @@ tmain()
 		terror("vmalloc failed4");
 	if(vmstat(vm,&st) < 0 )
 		terror("vmstat failed41");
-	if(st.n_busy != 1 || st.s_busy != 123 )
+	if(st.n_busy != 1 || st.s_busy < 123 )
 		terror("Wrong statistics4");
 	if(vmfree(vm,addr) < 0)
 		terror("vmfree failed4");

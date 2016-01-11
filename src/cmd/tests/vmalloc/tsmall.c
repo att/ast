@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1999-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1999-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -49,10 +49,7 @@ tmain()
 
 	if(vmfree(vm, addr[4]) < 0)
 		terror("vmfree failed");
-	vmdbcheck(vm);
 
-	if(vmcompact(vm) < 0)
-		terror("vmcompact failed");
 	if(vmdbcheck(vm) < 0)
 		terror("vmdbcheck failed");
 

@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -34,8 +34,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 make cs
 make libcs.a archive
@@ -87,8 +87,14 @@ done ${PACKAGE_ast_INCLUDE}/endian.h dontcare
 make stropts.h implicit
 done stropts.h dontcare virtual
 prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+make ${PACKAGE_ast_INCLUDE}/sys/socket.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_socket.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_socket.h dontcare
+done ${PACKAGE_ast_INCLUDE}/sys/socket.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/sys/socket.h implicit
 prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sys/socket.h implicit
 make cs_lib.h implicit
 make FEATURE/lib
 meta FEATURE/lib features/%>FEATURE/% features/lib lib
@@ -101,11 +107,23 @@ done FEATURE/lib generated
 exec - cmp 2>/dev/null -s FEATURE/lib cs_lib.h || { rm -f cs_lib.h; silent test -d . || mkdir .; cp FEATURE/lib cs_lib.h; }
 done cs_lib.h dontcare generated
 make ${PACKAGE_ast_INCLUDE}/ast_tty.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_ioctl.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_ioctl.h dontcare
 done ${PACKAGE_ast_INCLUDE}/ast_tty.h dontcare
 make ${PACKAGE_ast_INCLUDE}/tok.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_api.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+make ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/option.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+make ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/prototyped.h dontcare
+done ${PACKAGE_ast_INCLUDE}/option.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/error.h dontcare
 make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
@@ -131,8 +149,7 @@ prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_wchar.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-make ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/prototyped.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/regex.h dontcare
 make ${PACKAGE_ast_INCLUDE}/getopt.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_getopt.h implicit
@@ -141,6 +158,15 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
@@ -159,11 +185,12 @@ prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_std.h dontcare
 done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
-make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
-prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
-done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast.h dontcare
@@ -172,14 +199,7 @@ done ${PACKAGE_ast_INCLUDE}/tok.h dontcare
 make ${PACKAGE_ast_INCLUDE}/sig.h implicit
 done ${PACKAGE_ast_INCLUDE}/sig.h dontcare
 make ${PACKAGE_ast_INCLUDE}/debug.h implicit
-make ${PACKAGE_ast_INCLUDE}/error.h implicit
-make ${PACKAGE_ast_INCLUDE}/option.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/option.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/error.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/debug.h dontcare
@@ -204,6 +224,7 @@ make ast_cs.h implicit
 make FEATURE/cs
 meta FEATURE/cs features/%.c>FEATURE/% features/cs.c cs
 make features/cs.c
+prev ${PACKAGE_ast_INCLUDE}/sys/socket.h implicit
 prev FEATURE/lib implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done features/cs.c
@@ -404,6 +425,7 @@ done cspath.o generated
 make cspeek.o
 make cspeek.c
 prev stropts.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sys/socket.h implicit
 prev cslib.h implicit
 done cspeek.c
 meta cspeek.o %.c>%.o cspeek.c cspeek
@@ -482,7 +504,7 @@ done csslib.h
 done css.c
 meta css.o %.c>%.o css.c css
 prev css.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D_BLD_cs -D_PACKAGE_ast -c css.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DDEBUG -D_PACKAGE_ast -D_BLD_cs -c css.c
 done css.o generated
 make csserve.o
 make csserve.c
@@ -539,7 +561,7 @@ done msglib.h
 done msgblast.c
 meta msgblast.o %.c>%.o msgblast.c msgblast
 prev msgblast.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgblast.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgblast.c
 done msgblast.o generated
 make msgbuf.o
 make msgbuf.c
@@ -547,7 +569,7 @@ prev msglib.h implicit
 done msgbuf.c
 meta msgbuf.o %.c>%.o msgbuf.c msgbuf
 prev msgbuf.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgbuf.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgbuf.c
 done msgbuf.o generated
 make msggetmask.o
 make msggetmask.c
@@ -555,7 +577,7 @@ prev msglib.h implicit
 done msggetmask.c
 meta msggetmask.o %.c>%.o msggetmask.c msggetmask
 prev msggetmask.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msggetmask.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msggetmask.c
 done msggetmask.o generated
 make msgindex.o
 make msgindex.c
@@ -563,7 +585,7 @@ prev msglib.h implicit
 done msgindex.c
 meta msgindex.o %.c>%.o msgindex.c msgindex
 prev msgindex.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgindex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgindex.c
 done msgindex.o generated
 make msginfo.o
 make msginfo.c
@@ -571,7 +593,7 @@ prev msglib.h implicit
 done msginfo.c
 meta msginfo.o %.c>%.o msginfo.c msginfo
 prev msginfo.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msginfo.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msginfo.c
 done msginfo.o generated
 make msglist.o
 make msglist.c
@@ -598,7 +620,7 @@ prev msglib.h implicit
 done msgname.c
 meta msgname.o %.c>%.o msgname.c msgname
 prev msgname.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgname.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgname.c
 done msgname.o generated
 make msgread.o
 make msgread.c
@@ -615,7 +637,7 @@ prev msglib.h implicit
 done msgrecv.c
 meta msgrecv.o %.c>%.o msgrecv.c msgrecv
 prev msgrecv.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgrecv.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgrecv.c
 done msgrecv.o generated
 make msgsend.o
 make msgsend.c
@@ -632,7 +654,7 @@ prev msglib.h implicit
 done msgsetmask.c
 meta msgsetmask.o %.c>%.o msgsetmask.c msgsetmask
 prev msgsetmask.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_BLD_cs -D_PACKAGE_ast -c msgsetmask.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_cs -c msgsetmask.c
 done msgsetmask.o generated
 make msguser.o
 make msguser.c

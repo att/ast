@@ -12,22 +12,26 @@ standalone commands and libraries using X/Open interfaces.
 .P
 To get better performance and functionality, consider using any of
 the full-featured ast-* packages at
-.DS
+.EX
 .xx link="http://www.research.att.com/sw/download/"
-.DE
+.EE
 .P
+If you already have non-standalone ast installed then you don't
+need any of the astsa apis.
+.P
+If you already have non-standalone versions of any of
+.EX
+ aso cdt sfio vmalloc
+.EE
+installed then run this with the api args you already have before
+running the first make:
+.EX
+ ./astsastd [ aso ] [ cdt ] [ sfio ] [ vmalloc ]
+.EE
 astsa.omk is an old make makefile that builds the headers and objects
 and defines these variables for use in other makefiles
-.VL 12
-.LI
-.B ASTSA_GEN
-point -I to these
-.LI
-.B ASTSA_HDRS
-point -I to these
-.LI
-.B AST_OBJS
-link against these
-.LE
+.EX
+ ASTSA_OPTIMIZE	``-O'' by default
+.EE
 The astsa files may be combined in a single directory with other ast
 standalone packages.

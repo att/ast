@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1996-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1996-2012 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -29,13 +29,13 @@
 # .xx ref="URL\tMIME-TYPE"	head link hint
 
 command=mm2twiki
-version='mm2twiki (AT&T Research) 2010-05-28' # NOTE: repeated in USAGE
+version='mm2twiki (AT&T Research) 2012-08-15' # NOTE: repeated in USAGE
 LC_NUMERIC=C
 case $(getopts '[-][123:xyz]' opt --xyz 2>/dev/null; echo 0$opt) in
 0123)	ARGV0="-a $command"
 	USAGE=$'
 [-?
-@(#)$Id: mm2twiki (at&t research) 2010-05-28 $
+@(#)$Id: mm2twiki (at&t research) 2012-08-15 $
 ]
 '$USAGE_LICENSE$'
 [+NAME?mm2twiki - convert mm/man subset to twiki markups]
@@ -45,10 +45,41 @@ case $(getopts '[-][123:xyz]' opt --xyz 2>/dev/null; echo 0$opt) in
 	standard input is read.  \adir\a operands and directory components
 	of \afile\a operands are added to the included file search list.
 	The default \btwiki\b markup style is [\aop\a]]\adata\a[/\aop\a]].]
+[+?The \b\.sh\b request, which executes \bksh\b(1) script fragments, is ignored
+    unless the \bHTMLPATH\b environment variable is defined. \bPATH=$HTMLPATH\b
+    is exported before the shell is executed.]
+[f:frame?Ignored for compatibility with \bmm2html\b(1).]:[name]
+[g:global-index?Ignored for compatibility with \bmm2html\b(1).html\b for framed HTML.]
+[h:html?Read html options from \afile\a. Unknown options are silently
+    ignored. See the \b.xx\b request below for a description of the
+    options. The file pathname may be followed by URL style \aname=value\a
+    pairs that are evaluated as if they came from
+    \afile.\a]:[file[??name=value;...]]]
+[l:license?Read license identification options from \afile\a. Unknown
+    options are silently ignored. See the \b.xx\b request below for a
+    description of the options. The file pathname may be followed by URL
+    style \aname=value\a pairs that are evaluated as if they came from
+[f:frame?Ignored for compatibility with \bmm2html\b(1).]:[name]
+[g:global-index?Ignored for compatibility with \bmm2html\b(1).html\b for framed HTML.]
+[h:html?Read html options from \afile\a. Unknown options are silently
+    ignored. See the \b.xx\b request below for a description of the
+    options. The file pathname may be followed by URL style \aname=value\a
+    pairs that are evaluated as if they came from
+    \afile.\a]:[file[??name=value;...]]]
+[l:license?Read license identification options from \afile\a. Unknown
+    options are silently ignored. See the \b.xx\b request below for a
+    description of the options. The file pathname may be followed by URL
+    style \aname=value\a pairs that are evaluated as if they came from
+    \afile\a.]:[file[??name=value;...]]]
+[o:option?Sets a space or \b,\b separated list of \b--license\b
+    options. Option values with embedded spaces must be
+    quoted.]:[[no]]name=value]
+[t:top?Ignored for compatibility with \bmm2html\b(1).]
+[x:index?Ignored for compatibility with \bmm2html\b(1).]
 
 [ file ... ]
 
-[+SEE ALSO?\bmm2html\b(1)]
+[+SEE ALSO?\bmm2html\b(1), \bmm2foswiki\b(1)]
 '
 	;;
 *)	ARGV0=""
@@ -109,6 +140,52 @@ primary=".BL|.LI|.IX"
 top=
 vg_ps=20
 
+function options
+{
+	typeset i o q v
+	IFS="${IFS},"
+	set $OPTARG
+	IFS=$ifs
+	for i
+	do	case $q in
+		'')	o=${i%%=*}
+			v=${i#*=}
+			case $v in
+			\'*)	q=\'; v=${v#?}; continue ;;
+			\"*)	q=\"; v=${v#?}; continue ;;
+			esac
+			;;
+		*)	v="$v $i"
+			case $i in
+			*$q)	v=${v%?} ;;
+			*)	continue ;;
+			esac
+			;;
+		esac
+		case $o in
+		no*)	o=${o#no}
+			unset $o
+			;;
+		*)	case $v in
+			"")	v=1 ;;
+			esac
+			case $o in
+			*.*|[ABCDEFGHIJKLMNOPQRSTUVWXYZ]*)
+				eval $o="'$v'"
+				;;
+			*)	eval license.$o="'$v'"
+				;;
+			esac
+			;;
+		esac
+		set[$o]=1
+	done
+}
+
+if	[[ -f $HOME/.2html ]]
+then	. $HOME/.2html
+fi
+
 usage()
 {
 	OPTIND=0
@@ -118,7 +195,37 @@ usage()
 
 while	getopts $ARGV0 "$USAGE" OPT
 do	case $OPT in
-	*)	usage ;;
+	f)	: ignored :
+		;;
+	g)	: ignored :
+		;;
+	h)	case $OPTARG in
+		*\?*)	. ${OPTARG%%\?*} || exit 1
+			eval "html+=( ${OPTARG#*\?} )"
+			;;
+		*)	. $OPTARG || exit 1
+			;;
+		esac
+		;;
+	l)	case $OPTARG in
+		*\?*)	. ${OPTARG%%\?*} || exit 1
+			eval "license+=( ${OPTARG#*\?} )"
+			;;
+		*)	path=$PATH
+			[[ $OPTARG == */* ]] && PATH=${OPTARG%/*}:$PATH
+			. $OPTARG || exit 1
+			PATH=$path
+			;;
+		esac
+		;;
+	o)	options "$OPTARG"
+		;;
+	t)	: ignored :
+		;;
+	x)	: ignored :
+		;;
+	*)	usage
+		;;
 	esac
 done
 shift OPTIND-1
@@ -133,6 +240,20 @@ case $# in
 *)	x=
 	;;
 esac
+
+if	[[ ! ${html.http} && ${html.host} ]]
+then	html.http=${html.host}/
+fi
+if	[[ ${html.http} && ${html.http} != *:://* ]]
+then	html.http=http://${html.http}
+fi
+html.http=${html.http%/}
+if	[[ ! ${html.man} ]]
+then	html.man=../man
+fi
+if	[[ ${html.man} && ${html.man} != */ ]]
+then	html.man=${html.man}/
+fi
 
 ds[Cr]='&#169;'
 ds[Dt]=$(date -f "%B %d, %Y" $x)
@@ -252,7 +373,7 @@ function space
 function flush
 {
 	if	[[ $fill ]]
-	then	print -r -- "${fill#?}" | fmt -w80
+	then	print -r -- "${fill#?}"
 		fill=
 		spaced=0
 	fi
@@ -310,9 +431,8 @@ function getline
 		do	IFS= read -r -u$fd a || {
 				if	(( so > 0 ))
 				then	eval exec $fd'>&-'
-					if	(( ( fd = --so + soff ) == soff ))
-					then	(( fd = 0 ))
-					fi
+					(( so-- ))
+					fd=${so_fd[so]}
 					file=${so_file[so]}
 					line=${so_line[so]}
 					continue
@@ -461,7 +581,7 @@ function getline
 					+([\-+0123456789])=+([\-+0123456789]))
 						;;
 					[0123456789]*[0123456789])
-						(( n = $x ))
+						(( n = x ))
 						;;
 					esac
 					case ${text[0]} in
@@ -489,7 +609,8 @@ function getline
 			.so)	x=${text[1]}
 				for d in "${dirs[@]}"
 				do	if	[[ -f "$d$x" ]]
-					then	(( fd = so + soff ))
+					then	so_fd[so]=$fd
+						(( fd = so + soff ))
 						tmp=/tmp/m2h$$
 						getfiles "$d$x" > $tmp
 						eval exec $fd'< $tmp'
@@ -561,6 +682,9 @@ function getline
 								esac
 								;;
 							esac
+							if	[[ ! $pfx && $url != *://* ]]
+							then	url=${html.http}$url
+							fi
 							nam=href
 							data="${data}[[$pfx$url][$txt]]"
 							;;
@@ -600,7 +724,7 @@ function getline
 						esac
 						case $macros in
 						man)	set -A text -- "[[../man$n/$1.html][$1]]$y$x" ;;
-						*)	set -A text -- "[[${html.man:=../man}/man$n/$1.html][$1]]$y$x" ;;
+						*)	set -A text -- "[[${html.http}${html.man}man$n/$1.html][$1]]$y$x" ;;
 						esac
 						break
 						;;
@@ -835,7 +959,7 @@ do	getline || {
 			case $macros:$op in
 			mm:.RS)	
 				Rf="\\u[$reference]\\d"
-				references="$references$nl[list][$reference][/list]"
+				references="$references${nl}[list][$reference][/list]"
 				while	getline
 				do	case $1 in
 					.RF)	break ;;
@@ -904,7 +1028,7 @@ do	getline || {
 			(( pp = lists ))
 			end=
 			case ${mm.title} in
-			?*)	beg="$beg[size=$size_big][color=blue]"
+			?*)	beg="${beg}[size=$size_big][color=blue]"
 				end="[/color][/size]$end"
 				space
 				putop "$beg ${mm.title} $end"
@@ -1084,7 +1208,7 @@ do	getline || {
 				putop "</verbatim>"
 			fi
 			if [[ $fg ]]
-			then	putop "[color=blue]$fg[/color]"
+			then	putop "[color=blue]${fg}[/color]"
 			fi
 			indent=${indent#$inch}
 			;;
@@ -1160,10 +1284,10 @@ do	getline || {
 				then	getline
 				fi
 				case $* in
-				'['*']'[[:alpnum:]]*)	putopn "[*]$* " ;;
+				'['*']'[[:alnum:]]*)	putopn "[*]$* " ;;
 				'['*)			putopn "[*]$*: " ;;
 				'')			putopn "[*] " ;;
-				[[:alpnum:]]*)		putopn "[*][b]$*[/b] " ;;
+				[[:alnum:]]*)		putopn "[*][b]$*[/b] " ;;
 				*)			putopn "[*][b]$*[/b]: " ;;
 				esac
 			else	warning "$op: no current list"
@@ -1213,7 +1337,7 @@ do	getline || {
 			;;
 		.PM)	case ${html.company} in
 			'')	pm= ;;
-			*)	pm="${html.company//\&/&amp\;} " ;;
+			*)	pm="${html.company//\&/\&amp\;} " ;;
 			esac
 			case $1 in
 			'')	pm= ;;
@@ -1358,7 +1482,8 @@ do	getline || {
 			;;
 		.sh)	case $HTMLPATH in
 			'')	;;
-			*)	(( fd = so + soff ))
+			*)	so_fd[so]=$fd
+				(( fd = so + soff ))
 				file=/tmp/m2h$$
 				path=$PATH
 				eval PATH=$HTMLPATH "$*" > $file

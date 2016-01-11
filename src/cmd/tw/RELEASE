@@ -1,3 +1,6 @@
+13-08-26 expr.c: fix null pointer deref in matchval() -- thanks Philippe
+13-08-02 find: add { -show -delete } for gnu/sol compatibility
+13-04-03 xargs: move to lib/libcmd and cmd/builtin
 12-04-11 find,tw,xargs: update to cmdopen() discipline api
 12-02-29 find.c: fix ``! -type f'' vs ``! -type f -print'' bug
 11-10-31 tw.c: handle -lexpr X2I change -- scary

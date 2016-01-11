@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -58,7 +58,7 @@ editcontext(register char* beg, register char* cur)
 
 	static char	buf[EXBUF];
 
-	s = strcopy(buf, ">>>");
+	s = stpcpy(buf, ">>>");
 	strncpy(s, beg, cur - beg);
 	s += strlen(s);
 	strcpy(s, "<<<");
@@ -155,7 +155,7 @@ expandops(register char* xp, register char* ed, int del)
 			}
 			*xp++ = DEL;
 			*xp++ = ' ';
-			xp = strcopy(xp, val);
+			xp = stpcpy(xp, val);
 			if (!sep)
 				delimited = -1;
 			continue;
@@ -360,7 +360,7 @@ expandops(register char* xp, register char* ed, int del)
 		{
 		case '$':
 			val--;
-			xp = strcopy(xp, val);
+			xp = stpcpy(xp, val);
 			error(1, "%s: expand result may need conversion too", val);
 			continue;
 		case 'B':
@@ -405,7 +405,7 @@ expandops(register char* xp, register char* ed, int del)
 			sep = 0;
 			if (dir == DELETE)
 			{
-				xp = strcopy(xp, "nodirectory");
+				xp = stpcpy(xp, "nodirectory");
 				sep = 1;
 			}
 			else
@@ -426,7 +426,7 @@ expandops(register char* xp, register char* ed, int del)
 					*xp++ = ' ';
 				}
 				else sep = 1;
-				xp = strcopy(xp, "nobase");
+				xp = stpcpy(xp, "nobase");
 			}
 			else
 			{
@@ -452,7 +452,7 @@ expandops(register char* xp, register char* ed, int del)
 					*xp++ = ' ';
 				}
 				else sep = 1;
-				xp = strcopy(xp, "nosuffix");
+				xp = stpcpy(xp, "nosuffix");
 			}
 			else
 			{
@@ -499,7 +499,7 @@ expandops(register char* xp, register char* ed, int del)
 				}
 			}
 			if (sep == NE)
-				xp = strcopy(xp, "! ");
+				xp = stpcpy(xp, "! ");
 			if (!op) break;
 			if (val == DELETE || val == KEEP)
 			{
@@ -585,7 +585,7 @@ expandops(register char* xp, register char* ed, int del)
 						else if (!(qual & ED_NOBIND))
 						{
 							bound = 1;
-							xp = strcopy(xp, "bind");
+							xp = stpcpy(xp, "bind");
 							if (qual & ED_NOWAIT)
 								xp += sfsprintf(xp, EXBUF, " %snowait", state.longflag);
 							if (streq(mp->name, "bind"))
@@ -593,7 +593,7 @@ expandops(register char* xp, register char* ed, int del)
 							xp += sfsprintf(xp, EXBUF, " %c ", DEL);
 						}
 					}
-					xp = strcopy(xp, mp->name);
+					xp = stpcpy(xp, mp->name);
 					if (qual & ED_FORCE)
 						xp += sfsprintf(xp, EXBUF, " %sforce", state.longflag);
 					if (fp = mp->options)
@@ -618,8 +618,8 @@ expandops(register char* xp, register char* ed, int del)
 											val++;
 									}
 									*xp++ = ' ';
-									xp = strcopy(xp, state.longflag);
-									xp = strcopy(xp, fp->name);
+									xp = stpcpy(xp, state.longflag);
+									xp = stpcpy(xp, fp->name);
 								}
 							}
 						}
@@ -651,7 +651,7 @@ expandops(register char* xp, register char* ed, int del)
 							*xp++ = ' ';
 						}
 						if (op != 'P' || arg != 'P')
-							xp = strcopy(xp, val);
+							xp = stpcpy(xp, val);
 						else
 						{
 							while (c = *val++)
@@ -666,17 +666,17 @@ expandops(register char* xp, register char* ed, int del)
 			{
 				if (zp)
 				{
-					xp = strcopy(xp, zp->name);
+					xp = stpcpy(xp, zp->name);
 					if (*val)
 					{
 						*xp++ = ' ';
-						xp = strcopy(xp, val);
+						xp = stpcpy(xp, val);
 					}
 				}
 				else
 				{
 					error(2, "%c: operator not matched", op);
-					xp = strcopy(xp, ">>>HUH<<<");
+					xp = stpcpy(xp, ">>>HUH<<<");
 				}
 			}
 			break;
@@ -705,13 +705,13 @@ expandvar(register char* xp, register char* v)
 		return(expand(xp, v - 1));
 	case '-':
 	case '+':
-		xp = strcopy(xp, "option ");
+		xp = stpcpy(xp, "option ");
 		if (c == '+')
 			xp += sfsprintf(xp, EXBUF, "%sset ", state.longflag);
 		xp = expand(xp, v);
 		break;
 	case '=':
-		xp = strcopy(xp, "makeargs");
+		xp = stpcpy(xp, "makeargs");
 		break;
 	case '#':
 		s = "argc";
@@ -753,7 +753,7 @@ expandvar(register char* xp, register char* v)
 		while (*v == c)
 		{
 			v++;
-			xp = strcopy(xp, "parent ");
+			xp = stpcpy(xp, "parent ");
 		}
 		for (;;)
 		{
@@ -763,7 +763,7 @@ expandvar(register char* xp, register char* v)
 				xp--;
 				break;
 			case ' ':
-				xp = strcopy(xp, state.longflag);
+				xp = stpcpy(xp, state.longflag);
 				continue;
 			default:
 				continue;
@@ -779,7 +779,7 @@ expandvar(register char* xp, register char* v)
 	case '.':
 		if (v[0] != '.' || v[1] != '.')
 			goto normal;
-		xp = strcopy(xp, "rules");
+		xp = stpcpy(xp, "rules");
 		break;
 	default:
 		if (!isalnum(c))
@@ -815,7 +815,7 @@ expand(register char* xp, register char* a)
 
 	debug((-4, "expand(`%s')", a));
 	if (!(s = strchr(a, '$')))
-		return(strcopy(xp, a));
+		return(stpcpy(xp, a));
 	strncpy(xp, a, s - a);
 	xp += s - a;
 	a = s;
@@ -895,20 +895,20 @@ expand(register char* xp, register char* a)
 				{
 					*ed = 0;
 					if (!vp) xp += sfsprintf(xp, EXBUF, "value ");
-					xp = strcopy(xp, state.longflag);
+					xp = stpcpy(xp, state.longflag);
 					switch (*(ed + 2))
 					{
 					case 'A':
 						ed += 3;
-						xp = strcopy(xp, "auxiliary ");
+						xp = stpcpy(xp, "auxiliary ");
 						break;
 					case 'P':
 						ed += 3;
-						xp = strcopy(xp, "primary ");
+						xp = stpcpy(xp, "primary ");
 						break;
 					default:
 						ed += 2;
-						xp = strcopy(xp, "literal ");
+						xp = stpcpy(xp, "literal ");
 						break;
 					}
 					if (ed == (a - 1))
@@ -924,7 +924,7 @@ expand(register char* xp, register char* a)
 						*ed = 0;
 						if (vp)
 						{
-							xp = strcopy(xp, varbuf);
+							xp = stpcpy(xp, varbuf);
 							if (var) *xp++ = ' ';
 						}
 						if (var) xp = expandvar(xp, var);
@@ -941,7 +941,7 @@ expand(register char* xp, register char* a)
 					*(a - 1) = 0;
 					if (vp)
 					{
-						xp = strcopy(xp, varbuf);
+						xp = stpcpy(xp, varbuf);
 						if (var) *xp++ = ' ';
 					}
 					if (var) xp = expandvar(xp, var);

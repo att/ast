@@ -34,16 +34,10 @@ tst	output{
 		printf("#include <%s>	/* the native iconv.h */\n", _nxt_iconv_str);
 	#endif
 		printf("\n");
-		printf("#define ICONV_VERSION		20110111L\n");
+		printf("#define ICONV_VERSION		20121001L\n");
 		printf("\n");
 		printf("#define ICONV_FATAL		0x02\n");
 		printf("#define ICONV_OMIT		0x04\n");
-		printf("\n");
-		printf("#define CC_ICONV		(-1)\n");
-		printf("#define CC_UCS			(-2)\n");
-		printf("#define CC_SCU			(-3)\n");
-		printf("#define CC_UTF			(-4)\n");
-		printf("#define CC_UME			(-5)\n");
 		printf("\n");
 	#if _lib_iconv_open
 		lib = "_ast_";
@@ -74,6 +68,7 @@ tst	output{
 	#endif
 		printf("\n");
 		printf("typedef int (*Iconv_error_f)(void*, void*, int, ...);\n");
+		printf("typedef int (*Iconv_checksig_f)(void*);\n");
 		printf("\n");
 		printf("typedef struct Iconv_disc_s\n");
 		printf("{\n");
@@ -82,6 +77,8 @@ tst	output{
 		printf("	size_t			errors;\n");
 		printf("	uint32_t		flags;\n");
 		printf("	int			fill;\n");
+		printf("	void*			handle;\n");
+		printf("	Iconv_checksig_f	checksig;\n");
 		printf("} Iconv_disc_t;\n");
 		printf("\n");
 		printf("typedef Ccmap_t %siconv_list_t;\n", lib);

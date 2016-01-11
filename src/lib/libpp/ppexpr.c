@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1986-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1986-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -79,15 +79,20 @@ exists(int op, char* pred, register char* args)
 					c = 1;
 					goto done;
 				}
-				if ((c = pplex()) != ',') break;
+				if ((c = pplex()) != ',')
+					break;
 			}
-			if (c) error(1, "%s: \"...\" arguments expected", pred);
+			if (c)
+				error(1, "%s: \"...\" arguments expected", pred);
 			strcpy(pp.path, file);
 			message((-2, "%s: %s not found", pred, file));
 			c = 0;
 		}
-		else c = ppsearch(file, type, SEARCH_EXISTS) >= 0;
+		else
+			c = ppsearch(file, type, SEARCH_EXISTS) >= 0;
 	}
+	else if (op == X_EXISTS_NEXT)
+		c = ppsearch(file, type, SEARCH_EXISTS|SEARCH_NEXT) >= 0;
 	else
 	{
 		register struct ppfile*	fp;
@@ -169,6 +174,7 @@ predicate(int warn)
 	{
 	case X_DEFINED:
 	case X_EXISTS:
+	case X_EXISTS_NEXT:
 	case X_INCLUDED:
 	case X_MATCH:
 	case X_NOTICED:
@@ -230,6 +236,7 @@ predicate(int warn)
 		}
 		break;
 	case X_EXISTS:
+	case X_EXISTS_NEXT:
 	case X_INCLUDED:
 		return exists(index, pred, args);
 	case X_MATCH:

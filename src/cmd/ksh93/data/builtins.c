@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -26,27 +26,33 @@
 #include	"ulimit.h"
 #include	"name.h"
 #include	"version.h"
+
+/* use Bltin() for builtins that do not accept -- options */
+
 #if KSHELL
 #   include	"builtins.h"
 #   include	"jobs.h"
 #   include	"FEATURE/cmds"
 #   define	bltin(x)	(b_##x)
-    /* The following is for builtins that do not accept -- options */
 #   define	Bltin(x)	(B_##x)
 #else
-#   define bltin(x)	0
+#   define	bltin(x)	0
+#   define	Bltin(x)	0
 #endif
 
 #ifndef SHOPT_CMDLIB_DIR
 #   define SHOPT_CMDLIB_DIR	SH_CMDLIB_DIR
-#else
-#   ifndef SHOPT_CMDLIB_HDR
-#	define SHOPT_CMDLIB_HDR	<cmdlist.h>
-#   endif
+#endif
+#ifndef SHOPT_CMDLIB_HDR
+#   define SHOPT_CMDLIB_HDR	<cmdlist.h>
 #endif
 
-#define Q(f)		#f	/* libpp cpp workaround -- fixed 2005-04-11 */
-#define CMDLIST(f)	SH_CMDLIB_DIR "/" Q(f), NV_BLTIN|NV_BLTINOPT|NV_NOFREE, bltin(f),
+#if _AST_VERSION < 20121001L
+#define CMDLIST(f)	SHOPT_CMDLIB_DIR "/" #f, NV_BLTIN|NV_BLTINOPT|NV_NOFREE, b_##f,
+#else
+#define CMDLIST(f,d)	d "/" #f, NV_BLTIN|NV_BLTINOPT|NV_NOFREE|BLT_DISABLE, b_##f, \
+			SH_CMDLIB_DIR "/" #f, NV_BLTIN|NV_BLTINOPT|NV_NOFREE, b_##f,
+#endif
 
 #undef	basename
 #undef	dirname
@@ -72,6 +78,7 @@ const struct shtable3 shtab_builtins[] =
 	"export",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(readonly),
 	".",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(dot_cmd),
 	"return",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return),
+	"enum",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(enum),
 #if SHOPT_BASH
 	"local",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
 #endif
@@ -80,7 +87,6 @@ const struct shtable3 shtab_builtins[] =
 #endif	/* _bin_newgrp || _usr_bin_newgrp */
 	"alias",	NV_BLTIN|BLT_SPC,		bltin(alias),
 	"hash",		NV_BLTIN|BLT_SPC,		bltin(alias),
-	"enum",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(enum),
 	"eval",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_EXIT,bltin(eval),
 	"exit",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return),
 	"fc",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(hist),
@@ -91,11 +97,7 @@ const struct shtable3 shtab_builtins[] =
 	"unalias",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unalias),
 	"unset",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unset),
 	"builtin",	NV_BLTIN,			bltin(builtin),
-#if SHOPT_ECHOPRINT
-	"echo",		NV_BLTIN|BLT_ENV,		bltin(print),
-#else
 	"echo",		NV_BLTIN|BLT_ENV,		Bltin(echo),
-#endif /* SHOPT_ECHOPRINT */
 #ifdef JOBS
 #   ifdef SIGTSTP
 	"bg",		NV_BLTIN|BLT_ENV,		bltin(bg),
@@ -109,6 +111,13 @@ const struct shtable3 shtab_builtins[] =
 #endif	/* JOBS */
 	"false",	NV_BLTIN|BLT_ENV,		bltin(false),
 	"getopts",	NV_BLTIN|BLT_ENV,		bltin(getopts),
+#if 0
+	"mkservice",	NV_BLTIN|BLT_ENV,		bltin(mkservice),
+	"eloop",	NV_BLTIN|BLT_ENV,		bltin(eloop),
+#endif
+#if SHOPT_POLL
+	"poll",		NV_BLTIN|BLT_ENV,		bltin(poll),
+#endif
 	"print",	NV_BLTIN|BLT_ENV,		bltin(print),
 	"printf",	NV_BLTIN|BLT_ENV,		bltin(printf),
 	"pwd",		NV_BLTIN,			bltin(pwd),
@@ -226,9 +235,7 @@ const char sh_set[] =
 		"compatibility mode only. On by default in interactive "
 		"shells.]"
 #endif
-#if SHOPT_HISTEXPAND
 		"[+histexpand?Equivalent to \b-H\b.]"
-#endif
 		"[+ignoreeof?Prevents an interactive shell from exiting on "
 			"reading an end-of-file.]"
 		"[+keyword?Equivalent to \b-k\b.]"
@@ -299,9 +306,7 @@ const char sh_set[] =
 	"\bnoclobber\b option.]"
 "[G?Causes \b**\b by itself to also match all sub-directories during pathname "
 	"expansion.]"
-#if SHOPT_HISTEXPAND
    "[H?Enable \b!\b-style history expansion similar to \bcsh\b.]"
-#endif
 ;
 
 const char sh_optbreak[] =
@@ -384,7 +389,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optbuiltin[] =
-"[-1c?\n@(#)$Id: builtin (AT&T Research) 2010-08-04 $\n]"
+"[-1c?\n@(#)$Id: builtin (AT&T Research) 2012-07-12 $\n]"
 USAGE_LICENSE
 "[+NAME?builtin - add, delete, or display shell built-ins]"
 "[+DESCRIPTION?\bbuiltin\b can be used to add, delete, or display "
@@ -427,6 +432,9 @@ USAGE_LICENSE
     "searched in the reverse order in which they are specified.]"
 "[l?List the library base name, plugin YYYYMMDD version stamp, and full "
     "path for \b-f\b\alib\a on one line on the standard output.]"
+"[p?Causes the output to be in a form of \bbuiltin\b commands that can be "
+	"used as input to the shell to recreate the current set of "
+	"builtins.]"
 "[s?Display only the special built-ins.]"
 "\n"
 "\n[pathname ...]\n"
@@ -440,7 +448,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optcd[] =
-"[-1c?\n@(#)$Id: cd (AT&T Research) 1999-06-05 $\n]"
+"[-1c?\n@(#)$Id: cd (AT&T Research) 2013-08-18 $\n]"
 USAGE_LICENSE
 "[+NAME?cd - change working directory ]"
 "[+DESCRIPTION?\bcd\b changes the current working directory of the "
@@ -476,11 +484,15 @@ USAGE_LICENSE
 	"\bPATH_RESOLVE\b.  If \bPATH_RESOLVE\b is \bphysical\b, "
 	"then the behavior will be as if \b-P\b were specified.  Otherwise, "
 	"the behavior will be as if  \b-L\b were specified.]"
+"[f?The directory path is relative to the open file descriptor \adirfd\a.]#[dirfd]"
 "[L?Handle each pathname component \b..\b in a logical fashion by moving "
 	"up one level by name in the present working directory.]"
 "[P?The present working directory is first converted to an absolute pathname "
 	"that does not contain symbolic link components and symbolic name "
 	"components are expanded in the resulting directory name.]"
+"[@?Change into the hidden attribute directory of \adirectory\a which may also be "
+	"a file. \bCDPATH\b is ignored. Hidden attribute directories are file "
+	"system and operating system specific.]"
 "\n"
 "\n[directory]\n"
 "old new\n"
@@ -560,9 +572,7 @@ USAGE_LICENSE
 "[+SEE ALSO?\bcommand\b(1), \bksh\b(1)]"
 ;
 
-#ifndef ECHOPRINT
-    const char sh_optecho[]	= " [-n] [arg...]";
-#endif /* !ECHOPRINT */
+const char sh_optecho[]	= " [-n] [arg...]";
 
 const char sh_opteval[] =
 "[-1c?\n@(#)$Id: eval (AT&T Research) 1999-07-07 $\n]"
@@ -977,10 +987,8 @@ USAGE_LICENSE
 "[l?List the commands rather than editing and reexecuting them.]"
 "[N]#[num?Start at \anum\a commands back.]" 
 "[n?Suppress the command numbers when the commands are listed.]"
-#if SHOPT_HISTEXPAND
 "[p?Writes the result of history expansion for each operand to standard "
 	"output.  All other options are ignored.]"
-#endif
 "[r?Reverse the order of the commands.]"
 "[s?Reexecute the command without invoking an editor.  In this case "
 	"an operand of the form \aold\a\b=\b\anew\a can be specified "
@@ -1001,7 +1009,7 @@ USAGE_LICENSE
 ;
 
 const char sh_optkill[]	 = 
-"[-1c?\n@(#)$Id: kill (AT&T Research) 2012-04-13 $\n]"
+"[-1c?\n@(#)$Id: kill (AT&T Research) 2012-07-05 $\n]"
 USAGE_LICENSE
 "[+NAME?kill - terminate or signal process]"
 "[+DESCRIPTION?With the first form in which \b-l\b is not specified, "
@@ -1021,6 +1029,15 @@ _JOB_
 "[l?List signal names or signal numbers rather than sending signals as "
 	"described above.  "
 	"The \b-n\b and \b-s\b options cannot be specified.]"
+"[q]#[n?On systems that support \asigqueue\a(2), send a queued signal with "
+	"message number than can only be as large as a signed integer.  The "
+	"value is stored in the int portion of the value field."
+	"The \ajob\a must be specified as a positive number. "
+	"On systems that do not support \asigqueue\a(2), a signal "
+	"is sent without the message number \an\a and will not be queued.]"
+"[Q]#[n?The same as \b-q\b except that the message number \an\a is stored in "
+	"the pointer portion of the value field and therefore can be a large "
+	"unsigned integer.]"
 "[L?Same as \b-l\b except that of no argument is specified the signals will "
 	"be listed in menu format as with select compound command.]"
 "[n]#[signum?Specify a signal number to send.  Signal numbers are not "
@@ -1046,9 +1063,10 @@ _JOB_
 	"[+0?At least one matching process was found for each \ajob\a "
 	"operand, and the specified signal was successfully sent to at "
 	"least one matching process.]"
-	"[+>0?An error occurred.]"
+	"[+>0?An error occurred.  A value of \b2\b is returned when \b-q\b is "
+	"used and it fails with the error EAGAIN.]"
 "}"
-"[+SEE ALSO?\bps\b(1), \bjobs\b(1), \bkill\b(2), \bsignal\b(2)]"
+"[+SEE ALSO?\bps\b(1), \bjobs\b(1), \bkill\b(2), \bsignal\b(2), \bsigqueue\b(2)]"
 ;
 
 const char sh_optlet[]	=
@@ -1109,6 +1127,8 @@ USAGE_LICENSE
 "[f]:[format?Write the \astring\a arguments using the format string "
 	"\aformat\a and do not append a new-line.  See \bprintf\b for "
 	"details on how to specify \aformat\a.]"
+"[j?Treat each \astring\a as a variable name and write the value in JSON "
+	"format.  Only valid for compound variables Cannot be used with \b-f\b.]"
 "[p?Write to the current co-process instead of standard output.]"
 "[r?Do not process \b\\\b sequences in each \astring\a operand as described "
 	"above.]"
@@ -1160,7 +1180,8 @@ USAGE_LICENSE
 		" suitable as a field in a \b.csv\b format file.]"
 	"[+%B?Treat the argument as a variable name and output the value "
 		"without converting it to a string.  This is most useful for "
-		"variables of type \b-b\b.]"
+		"variables of type \b-b\b.  The \bB\b can be preceded by "
+		" \b(json)\b to output variables in JSON format.]"
 	"[+%H?Output \astring\a with characters \b<\b, \b&\b, \b>\b, "
 		"\b\"\b, and non-printable characters properly escaped for "
 		"use in HTML and XML documents.  The alternate flag \b#\b "
@@ -1172,7 +1193,8 @@ USAGE_LICENSE
 	"[+%T?Treat \astring\a as a date/time string and format it.  The "
 		"\bT\b can be preceded by \b(\b\adformat\a\b)\b, where "
 		"\adformat\a is a date format as defined by the \bdate\b "
-		"command.]"
+		"command.  Values given as digits are interpreted the same way "
+		"they are by the \btouch\b command.]"
 	"[+%Z?Output a byte whose value is \b0\b.]"
 	"\fextra\f"
 "}"
@@ -1197,8 +1219,16 @@ USAGE_LICENSE
 		"the collating element \aname\a.]"
 	"[+-?The escape sequence \b\\x{\b\ahex\a\b}\b expands to the "
 		"character corresponding to the hexidecimal value \ahex\a.]"
-	"[+-?The escape sequence \b\\u{\b\ahex\a\b}\b expands to the unicode "
-		"character corresponding to the hexidecimal value \ahex\a.]"
+	"[+-?The escape sequence \b\\u[\b\ahex\a\b]]\b or "
+		"\b\\u{\b\ahex\a\b}\b expands to the UTF-32 character "
+		"corresponding to the unicode code point defined "
+		"by the hexidecimal value \ahex\a. If the code point is "
+		"not available in the current locale the escape sequence "
+		"is treated as a literal sequence of characters.]"
+	"[+-?The escape sequence \b\\w[\b\ahex\a\b]]\b or "
+		"\b\\w{\b\ahex\a\b}\b expands to the character "
+		"corresponding to the (wchar_t) code point defined "
+		"by the hexidecimal value \ahex\a in the current locale.]"
 	"[+-?The format modifier flag \b=\b can be used to center a field to "
 		"a specified width.]"
 	"[+-?The format modifier flag \bL\b can be used with the \bc\b and "
@@ -1233,7 +1263,7 @@ USAGE_LICENSE
 	"[+0?Successful completion.]"
 	"[+>0?An error occurred.]"
 "}"
-"[+SEE ALSO?\bdate\b(1), \bprint\b(1), \bread\b(1)]"
+"[+SEE ALSO?\bdate\b(1), \bprint\b(1), \bread\b(1), \btouch\b(1)]"
 ;
 
 const char sh_optpwd[] =
@@ -1290,7 +1320,7 @@ USAGE_LICENSE
 	"can be created.]"
 "[r?Do not treat \b\\\b specially when processing the input line.]"
 "[s?Save a copy of the input as an entry in the shell history file.]"
-"[S?Treat the input as if it was saved from a spreasheet in csv format.]"
+"[S?Treat the input as if it was saved from a spreadsheet in csv format.]"
 "[u]#[fd:=0?Read from file descriptor number \afd\a instead of standard input.]"
 "[t]:[timeout?Specify a timeout \atimeout\a in seconds when reading from "
 	"a terminal or pipe.]"
@@ -1450,7 +1480,7 @@ USAGE_LICENSE
 "[+SEE ALSO?\bset\b(1), \bbuiltin\b(1)]"
 ;
 const char sh_optset[] =
-"+[-1c?\n@(#)$Id: set (AT&T Research) 1999-09-28 $\n]"
+"+[-1c?\n@(#)$Id: set (AT&T Research) 2013-04-25 $\n]"
 USAGE_LICENSE
 "[+NAME?set - set/unset options and positional parameters]"
 "[+DESCRIPTION?\bset\b sets or unsets options and positional parameters.  "
@@ -1474,6 +1504,11 @@ USAGE_LICENSE
 "[A]:[name?Assign the arguments sequentially to the array named by \aname\a "
 	"starting at subscript 0 rather than to the positional parameters.]"
 "\fabc\f"
+"[K:keys]:[keylist?When used with \b-s\b and \b-A\b and without \aarg\a, it "
+	"specifes the sorting paramaters.  For compound arrays and for arrays "
+	"of types it consists of a comma separated list of keys. Each key can "
+	"be followed by \b:n\b for numerical sort and/or \b:r\b for reverse "
+	"order.  The \b:n\b and/or \b:r\b can be used for arrays of elements.]"
 "[06:default?Restore all non-command line options to the default settings.]"
 "[07:state?List the current option state in the form of a \bset\b command "
 	"that can be executed to restore the state.]"
@@ -1521,10 +1556,11 @@ USAGE_LICENSE
 	"by \aduration\a or until a \bSIGALRM\b signal is received. "
 	"\aduration\a may be one of the following:]"
 "{"
-	"[+integer?The number of seconds to sleep.]"
 	"[+floating point?The number of seconds to sleep. The actual "
 		"granularity depends on the underlying system, normally "
-		"around 1 millisecond.]"
+		"around 1 millisecond. This can be followed by \bs\b for "
+		"seconds, \bm\b for minutes, \bh\b for hours, or \bd\b for "
+		"days.]"
 	"[+P\an\a\bY\b\an\a\bM\b\an\a\bDT\b\an\a\bH\b\an\a\bM\b\an\a\bS?An ISO 8601 duration "
 		"where at least one of the duration parts must be specified.]"
 	"[+P\an\a\bW?An ISO 8601 duration specifying \an\a weeks.]"
@@ -1548,7 +1584,7 @@ USAGE_LICENSE
 ;
 
 const char sh_opttrap[] =
-"[-1c?\n@(#)$Id: trap (AT&T Research) 1999-07-17 $\n]"
+"[-1c?\n@(#)$Id: trap (AT&T Research) 2012-07-05 $\n]"
 USAGE_LICENSE
 "[+NAME?trap - trap signals and conditions]"
 "[+DESCRIPTION?\btrap\b is a special built-in that defines actions to be "
@@ -1587,6 +1623,7 @@ USAGE_LICENSE
 	"non-zero exit status, but does not terminate the invoking shell.]"
 "[+?If no \aaction\a or \acondition\as are specified then all the current "
 	"trap settings are written to standard output.]" 
+"[a?append the current trap setting to the specified \aaction\a.]"
 "[p?Causes the current traps to be output in a format that can be processed "
 	"as input to the shell to recreate the current traps.]"
 "\n"
@@ -1601,7 +1638,7 @@ USAGE_LICENSE
 ;
 
 const char sh_opttypeset[] =
-"+[-1c?\n@(#)$Id: typeset (AT&T Research) 2010-12-08 $\n]"
+"+[-1c?\n@(#)$Id: typeset (AT&T Research) 2013-05-21 $\n]"
 USAGE_LICENSE
 "[+NAME?\f?\f - declare or display variables with attributes]"
 "[+DESCRIPTION?Without the \b-f\b option, \b\f?\f\b sets, unsets, "
@@ -1639,20 +1676,19 @@ USAGE_LICENSE
 "[+?\b\f?\f\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.]"
-#if 1
 "[a]:?[type?Indexed array.  This is the default. If \b[\b\atype\a\b]]\b is "
     "specified, each subscript is interpreted as a value of type \atype\a.]"
-#else
-"[a?Indexed array. this is the default.]"
-#endif
 "[b?Each \aname\a may contain binary data.  Its value is the mime "
 	"base64 encoding of the data. It can be used with \b-Z\b, "
 	"to specify fixed sized fields.]"
+"[c?Copy.  The value is the name of a variable whose value will be "
+	"copied to \aname\a.  The orignal variable will be unchanged.  Cannot "
+	"be used with any other options.]"
 "[f?Each of the options and \aname\as refers to a function.]"
 "[i]#?[base:=10?An integer. \abase\a represents the arithmetic base "
 	"from 2 to 64.]"
 "[l?Without \b-i\b, sets character mapping to \btolower\b. When used "
-	"with \b-i\b, \b-E\b, or \b-F\b indicates long variant.]"
+	"with \b-i\b, \b-E\b, \b-F\b, or  \b-X\b indicates long variant.]"
 "[m?Move.  The value is the name of a variable whose value will be "
 	"moved to \aname\a.  The orignal variable will be unset.  Cannot be "
 	"used with any other options.]"
@@ -1663,7 +1699,8 @@ USAGE_LICENSE
 	"shell to recreate the attributes for variables.]"
 "[r?Enables readonly.  Once enabled it cannot be disabled.  See "
 	"\breadonly\b(1).]"
-"[s?Used with \b-i\b to restrict integer size to short.]"
+"[s?Used with \b-i\b to restrict integer size to short integer or with "
+	"\b-E\b ,\b-F\b, or \b-X\b to represent a float.]"
 "[t?When used with \b-f\b, enables tracing for each of the specified "
 	"functions.  Otherwise, \b-t\b is a user defined attribute and "
 	"has no meaning to the shell.]"
@@ -1679,10 +1716,10 @@ USAGE_LICENSE
 "[C?Compound variable.  Each \aname\a will be a compound variable.  If "
 	"\avalue\a names a compound variable it will be copied to \aname\a. "
 	"Otherwise if the variable already exists, it will first be unset.]"
-"[E]#?[n:=10?Floating point number represented in scientific notation. "
+"[E]#?[n:=\avar\a.DIG?Floating point number represented in scientific notation. "
 	"\an\a specifies the number of significant figures when the "
 	"value is expanded.]"
-"[F]#?[n:=10?Floating point.  \an\a is the number of places after the "
+"[F]#?[n:=\avar\a.DIG?Floating point.  \an\a is the number of places after the "
 	"decimal point when the value is expanded.]"
 "[H?Hostname mapping.  Each \aname\a holds a native pathname.  Assigning a "
 	"UNIX format pathname will cause it to be converted to a pathname "
@@ -1702,7 +1739,6 @@ USAGE_LICENSE
 	"notation.  \an\a specifies the number of significant figures when the "
 	"value is expanded.]"
 
-#ifdef SHOPT_TYPEDEF
 "[h]:[string?Used within a type definition to provide a help string  "
 	"for variable \aname\a.  Otherwise, it is ignored.]"
 "[S?Used with a type definition to indicate that the variable is shared by "
@@ -1710,7 +1746,6 @@ USAGE_LICENSE
 	"with the \bfunction\b reserved word, the specified variables "
 	"will have function static scope.  Otherwise, the variable is "
 	"unset prior to processing the assignment list.]"
-#endif
 "[T]:?[tname?\atname\a is the name of a type name given to each \aname\a.]"
 "[Z]#?[n?Zero fill.  If \an\a is given it represents the field width.]"
 "\n"
@@ -1787,7 +1822,9 @@ USAGE_LICENSE
 "}"
 "[+SEE ALSO?\bchmod\b(1)]"
 ;
-const char sh_optuniverse[]	= " [name]";
+#ifdef _cmd_universe
+   const char sh_optuniverse[]	= " [name]";
+#endif /* _cmd_universe */
 const char sh_optunset[] =
 "[-1c?\n@(#)$Id: unset (AT&T Research) 1999-07-07 $\n]"
 USAGE_LICENSE

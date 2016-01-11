@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -64,7 +64,7 @@ jclopen(Jcl_t* scope, const char* file, unsigned long flags, Jcldisc_t* disc)
 	jcl->vx = vs;
 	jcl->disc = disc;
 	jcl->flags = flags & JCL_INHERIT;
-	jcl->scope = scope;
+	jcl->main = (jcl->scope = scope) && scope->main->name ? scope->main : jcl;
 	jcl->step = &jcl->current;
 	for (i = 0; i < elementsof(redirect); i++)
 		jcl->redirect[i] = dup(redirect[i].fd);
@@ -186,8 +186,8 @@ jclpush(register Jcl_t* jcl, Sfio_t* sp, const char* file, long line)
 	error_info.line = 0;
 	ip->prev = jcl->include;
 	jcl->include = ip;
-	if (file && (jcl->flags & JCL_LISTSCRIPTS))
-		uniq(file, NiL, 0, jcl->disc);
+	if (file && (jcl->flags & (JCL_LISTJOBS|JCL_LISTSCRIPTS)))
+		uniq(file, NiL, JCL_LISTSCRIPTS, jcl->disc);
 	return 0;
 }
 

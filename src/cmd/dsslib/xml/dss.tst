@@ -2,7 +2,7 @@
 
 TITLE + xml
 
-export TZ=EST5EDT LC_ALL=C
+export TZ=EST5EDT LC_ALL=C.UTF-8
 
 VIEW data
 
@@ -260,108 +260,108 @@ http://www.nandemoyashop.com/
 http://d.hatena.ne.jp/ashr10/'
 
 	EXEC -I$data -x xml '(delete==0&&html::ref(source)!="web")|{print "%((time_t)created_at:%K)s|%(html::ref(source))s"}' test.json
-		OUTPUT - $'2010-04-19+17:52:00|http://www.facebook.com/twitter
-2010-04-19+17:52:00|http://www.ning.com
-2010-04-19+17:52:00|http://www.tweetdeck.com/
-2010-04-19+17:52:00|http://movatwitter.jp/
-2010-04-19+17:52:00|http://lab.r246.jp/twicca/
-2010-04-19+17:52:00|http://www.trinketsoftware.com/Twikini
-2010-04-19+17:52:00|http://www.tweetdeck.com/
-2010-04-19+17:52:01|http://ubertwitter.com
-2010-04-19+17:52:01|http://www.tweetdeck.com
-2010-04-19+17:52:01|http://www.google.com/support/youtube/bin/answer.py?hl=en&answer=164577
-2010-04-19+17:52:01|http://www.tweetdeck.com
-2010-04-19+17:52:01|http://twitterrific.com
-2010-04-19+17:52:01|http://www.stone.com/Twittelator
-2010-04-19+17:52:01|http://movatwitter.jp/
-2010-04-19+17:52:01|http://www.atebits.com/
-2010-04-19+17:52:01|http://cotweet.com/?utm_source=sp1
-2010-04-19+17:52:01|http://blackberry.com/twitter
-2010-04-19+17:52:01|http://www.tweetdeck.com
-2010-04-19+17:52:01|http://m.twitter.com/
-2010-04-19+17:52:01|http://mobile.twitter.com
-2010-04-19+17:52:02|http://apiwiki.twitter.com/
-2010-04-19+17:52:02|http://www.seesmic.com/
-2010-04-19+17:52:02|http://www.ping.fm/
-2010-04-19+17:52:02|http://www.atebits.com/
-2010-04-19+17:52:02|http://apiwiki.twitter.com/
-2010-04-19+17:52:02|http://www.facebook.com/twitter
-2010-04-19+17:52:02|http://apiwiki.twitter.com/
-2010-04-19+17:52:02|http://www.mixero.com
-2010-04-19+17:52:03|http://www.tweetdeck.com
-2010-04-19+17:52:03|http://www.tweetdeck.com/
-2010-04-19+17:52:03|http://www.icq.com/download/icq/
-2010-04-19+17:52:03|http://dabr.co.uk
-2010-04-19+17:52:03|http://echofon.com/
-2010-04-19+17:52:03|http://echofon.com/
-2010-04-19+17:52:03|http://www.tweetdeck.com
-2010-04-19+17:52:03|http://dabr.co.uk
-2010-04-19+17:52:03|http://www.tweetdeck.com
-2010-04-19+17:52:03|http://echofon.com/
-2010-04-19+17:52:03|http://www.tweetdeck.com
-2010-04-19+17:52:03|/devices
-2010-04-19+17:52:04|http://echofon.com/
-2010-04-19+17:52:04|http://blackberry.com/twitter
-2010-04-19+17:52:04|http://code.google.com/p/pocketwit/
-2010-04-19+17:52:04|http://apiwiki.twitter.com/
-2010-04-19+17:52:04|http://www.sdn-project.net/labo/Nazrin_bot.php
-2010-04-19+17:52:04|http://www.tweetdeck.com/
-2010-04-19+17:52:04|http://itweet.net/
-2010-04-19+17:52:04|http://echofon.com/
-2010-04-19+17:52:04|http://www.nandemoyashop.com/
-2010-04-19+17:52:04|http://d.hatena.ne.jp/ashr10/'
+		OUTPUT - $'2010-04-19+13:52:00|http://www.facebook.com/twitter
+2010-04-19+13:52:00|http://www.ning.com
+2010-04-19+13:52:00|http://www.tweetdeck.com/
+2010-04-19+13:52:00|http://movatwitter.jp/
+2010-04-19+13:52:00|http://lab.r246.jp/twicca/
+2010-04-19+13:52:00|http://www.trinketsoftware.com/Twikini
+2010-04-19+13:52:00|http://www.tweetdeck.com/
+2010-04-19+13:52:01|http://ubertwitter.com
+2010-04-19+13:52:01|http://www.tweetdeck.com
+2010-04-19+13:52:01|http://www.google.com/support/youtube/bin/answer.py?hl=en&answer=164577
+2010-04-19+13:52:01|http://www.tweetdeck.com
+2010-04-19+13:52:01|http://twitterrific.com
+2010-04-19+13:52:01|http://www.stone.com/Twittelator
+2010-04-19+13:52:01|http://movatwitter.jp/
+2010-04-19+13:52:01|http://www.atebits.com/
+2010-04-19+13:52:01|http://cotweet.com/?utm_source=sp1
+2010-04-19+13:52:01|http://blackberry.com/twitter
+2010-04-19+13:52:01|http://www.tweetdeck.com
+2010-04-19+13:52:01|http://m.twitter.com/
+2010-04-19+13:52:01|http://mobile.twitter.com
+2010-04-19+13:52:02|http://apiwiki.twitter.com/
+2010-04-19+13:52:02|http://www.seesmic.com/
+2010-04-19+13:52:02|http://www.ping.fm/
+2010-04-19+13:52:02|http://www.atebits.com/
+2010-04-19+13:52:02|http://apiwiki.twitter.com/
+2010-04-19+13:52:02|http://www.facebook.com/twitter
+2010-04-19+13:52:02|http://apiwiki.twitter.com/
+2010-04-19+13:52:02|http://www.mixero.com
+2010-04-19+13:52:03|http://www.tweetdeck.com
+2010-04-19+13:52:03|http://www.tweetdeck.com/
+2010-04-19+13:52:03|http://www.icq.com/download/icq/
+2010-04-19+13:52:03|http://dabr.co.uk
+2010-04-19+13:52:03|http://echofon.com/
+2010-04-19+13:52:03|http://echofon.com/
+2010-04-19+13:52:03|http://www.tweetdeck.com
+2010-04-19+13:52:03|http://dabr.co.uk
+2010-04-19+13:52:03|http://www.tweetdeck.com
+2010-04-19+13:52:03|http://echofon.com/
+2010-04-19+13:52:03|http://www.tweetdeck.com
+2010-04-19+13:52:03|/devices
+2010-04-19+13:52:04|http://echofon.com/
+2010-04-19+13:52:04|http://blackberry.com/twitter
+2010-04-19+13:52:04|http://code.google.com/p/pocketwit/
+2010-04-19+13:52:04|http://apiwiki.twitter.com/
+2010-04-19+13:52:04|http://www.sdn-project.net/labo/Nazrin_bot.php
+2010-04-19+13:52:04|http://www.tweetdeck.com/
+2010-04-19+13:52:04|http://itweet.net/
+2010-04-19+13:52:04|http://echofon.com/
+2010-04-19+13:52:04|http://www.nandemoyashop.com/
+2010-04-19+13:52:04|http://d.hatena.ne.jp/ashr10/'
 
 	EXEC -I$data -x xml '(delete==0&&html::ref(source)!="web")|{print "%((time_t)html::ref(created_at):%K)s"}' test.json
-		OUTPUT - $'2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:00
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:01
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:02
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:03
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04
-2010-04-19+17:52:04'
+		OUTPUT - $'2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:00
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:01
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:02
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:03
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04
+2010-04-19+13:52:04'
 
 	EXEC -I$data -x xml '{print "%(id)s"}' array.json
 		OUTPUT - $'12467877002\n12467876900\n12467876803\n12467877101'
@@ -373,7 +373,7 @@ http://d.hatena.ne.jp/ashr10/'
 12467877101|12467877101|12467877101'
 
 	EXEC -I$data -x xml::'<METHOD>xml</><XML><LIBRARY>time_t</><FIELD><NAME>created_at</><TYPE>time_t</></><FIELD><NAME>id</><TYPE>unsigned long</></></>' '(delete==0)|{print "%(created_at:%K)s|%(user.id)u|%(id)Lu"}' array.json                      
-		OUTPUT - $'2010-04-19+17:52:06|66982026|12467877002
-2010-04-19+17:52:06|123977409|12467876900
-2010-04-19+17:52:06|77241389|12467876803
-2010-04-19+17:52:06|37663378|12467877101'
+		OUTPUT - $'2010-04-19+13:52:06|66982026|12467877002
+2010-04-19+13:52:06|123977409|12467876900
+2010-04-19+13:52:06|77241389|12467876803
+2010-04-19+13:52:06|37663378|12467877101'

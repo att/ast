@@ -144,7 +144,7 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 					i *= unit;
 				else if((i=strton(limit,&last,NiL,0))==INFINITY || *last)
 				{
-					if((i=sh_strnum(limit,&last,2))==INFINITY || *last)
+					if((i=sh_strnum(shp,limit,&last,2))==INFINITY || *last)
 						errormsg(SH_DICT,ERROR_system(1),e_number,limit);
 					i *= unit;
 				}

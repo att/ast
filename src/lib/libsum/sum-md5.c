@@ -32,6 +32,7 @@
 #define md5_options	"[+(version)?md5 (RSA Data Security, Inc. MD5 Message-Digest, 1991-2) 1996-02-29]"
 #define md5_match	"md5|MD5"
 #define md5_scale	0
+#define md5_flags	SUM_INDICATOR
 
 typedef uint32_t UINT4;
 

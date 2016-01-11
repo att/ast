@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,11 +14,12 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                 Glenn Fowler <gsf@research.att.com>                  *
 *                                                                      *
 ***********************************************************************/
 #include	"vctest.h"
+
 #include	<vcrdb.h>
 
 /* Test the suite of functions for dealing with relational data
@@ -71,10 +72,10 @@ Vcchar_t	Data[N_RECORDS*60 + 1];	/* (#fields=6) * (maxLength=9) + (Separators=6)
 #define LENGTH(maxn)	((trandom() % (maxn)) + 1)
 #endif
 
-int main()
+MAIN()
 {
 	ssize_t		e, k, r, n, dtsz;
-	Vcrdsepar_t	sep[3];
+	Vcrdformat_t	*fmt;
 	Vcrdinfo_t	info;
 	Vcrdtable_t	*tbl, *tst;
 	Vcrdplan_t	*plan;
@@ -82,10 +83,7 @@ int main()
 	Vcchar_t	test[sizeof(Data)];
 	Vcchar_t	*endt, *dedt;
 	Vcodex_t	*envc, *devc, *encd, *decd, *entbl, *detbl, *enbwt, *debwt;
-	Vcmethod_t	*Vcrdb, *Vctable;
 
-	if (!(Vcrdb = vcgetmeth("rdb", 0)) || !(Vctable = vcgetmeth("table", 0)))
-		terror("rdb plugin not found");
 	/* generate a random set of records */
 	for(k = 0, r = 0; r < N_RECORDS; ++r)
 	{	/* fill in fields 0 and 1 */
@@ -111,16 +109,16 @@ int main()
 	}
 	Data[dtsz = k] = 0;
 
-	/* see if vcrdsepar() computes the correct separators fsep and rsep */
-	if((r = vcrdsepar(sep, sizeof(sep)/sizeof(sep[0]), Data, dtsz, -1)) <= 0)
-		terror("vcrdsepar(): Failed to compute separators rv=%d", r);
-	if(sep[0].fsep != FSEP || sep[0].rsep != RSEP)
+	/* see if vcrdformat() computes the correct separators fsep and rsep */
+	if(!(fmt = vcrdformat(Data, dtsz, 0, 0, 0)) )
+		terror("vcrdformat(): Failed to compute format");
+	if(fmt->fsep != FSEP || fmt->rsep != RSEP)
 		twarn("Unexpected separators found");
 
 	/* construct table */
 	memset(&info, 0, sizeof(info));
-	info.fsep = sep[0].fsep;
-	info.rsep = sep[0].rsep;
+	info.fsep = fmt->fsep;
+	info.rsep = fmt->rsep;
 	if(!(tbl = vcrdparse(&info, Data, dtsz, 0)) )
 		terror("vcrdparse(): Can't construct table");
 	if(tbl->fldn != 6 || tbl->recn != N_RECORDS)
@@ -167,16 +165,14 @@ int main()
 		terror("vcrdextract(): extracted data were bad");
 
 	/* test transformation plan making */
-	if(!(plan = vcrdmakeplan(tbl, 0)) )
+	if(!(plan = vcrdmakeplan(tbl, VCRD_MATCH)) )
 		terror("vcrdmakeplan() failed");
 	if(plan->fldn != tbl->fldn)
 		terror("vcrdmakeplan(): wrong number of field %d", plan->fldn);
-	if(plan->pred[1] != 0)
-		terror("vcrdmakeplan(): fields 0 did not predict field 1.");
-	if(plan->pred[3] != 2)
-		terror("vcrdmakeplan(): fields 2 did not predict field 3.");
-	if(plan->pred[5] != 4)
-		terror("vcrdmakeplan(): fields 4 did not predict field 5.");
+	if(plan->pred[0] == 0 && plan->pred[1] == 1 &&
+	   plan->pred[2] == 2 && plan->pred[3] == 3 &&
+	   plan->pred[4] == 4 && plan->pred[5] == 5 )
+		terror("vcrdmakeplan(): Trivial transform plan!");
 
 	/* test transformation plan execution */
 	if(vcrdexecplan(tbl, plan, VC_ENCODE) < 0)
@@ -305,8 +301,8 @@ int main()
 	/* test transformation of records with missing fields */
 	strcpy((char*)test, "1.2.3.4\na.b\n5.6.7.8\nc.d.\n"); k = strlen((char*)test);
 
-	if(!(envc = vcopen(0, Vcrdb, "fsep=[.]", entbl, VC_ENCODE)) ||
-	   !(devc = vcopen(0, Vcrdb, "fsep=[.]", detbl, VC_DECODE)) )
+	if(!(envc = vcopen(0, Vcrdb, "fsep=[.].rsep=[\\012]", entbl, VC_ENCODE)) ||
+	   !(devc = vcopen(0, Vcrdb, "fsep=[.].rsep=[\\012]", detbl, VC_DECODE)) )
 		terror("vcopen(): can't open Vcrdb handles");
 	if((e = vcapply(envc, test, k, &endt)) <= 0 )
 		terror("vcapply(): fail to encode");
@@ -315,8 +311,8 @@ int main()
 	if(memcmp(test, dedt, k) != 0)
 		terror("Data do not match");
 
-	if(!(envc = vcopen(0, Vcrdb, "pad.fsep=[.]", entbl, VC_ENCODE)) ||
-	   !(devc = vcopen(0, Vcrdb, "pad.fsep=[.]", detbl, VC_DECODE)) )
+	if(!(envc = vcopen(0, Vcrdb, "pad.fsep=[.].rsep=[\\012]", entbl, VC_ENCODE)) ||
+	   !(devc = vcopen(0, Vcrdb, "pad.fsep=[.].rsep=[\\012]", detbl, VC_DECODE)) )
 		terror("vcopen(): can't open Vcrdb handles");
 	if((e = vcapply(envc, test, k, &endt)) <= 0 )
 		terror("vcapply(): fail to encode");

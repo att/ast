@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchhdr.h"
@@ -156,12 +156,12 @@ size_t		dtsz;	/* size of above data buffer		*/
 	for(i = 0; i < 2; i += 1)
 	{	vcioinit(&io, data, dtsz);
 		if(i == 0) /* try the current coding first */
-		{	if((nl = vciogetu(&io)) > nsym)
-				continue; /* likely old data */
+		{	if((nl = vciogetu(&io)) > nsym || nl < 0 /* nl is a signed int */)
+				continue; /* restart to do the below case */
 		}
-		else /* could be the old buggy coding */
+		else /* must be the old buggy coding noted above */
 		{	if((nl = vciogetc(&io)) == 0)
-				nl = 256; /* fix a simple wrap-around */
+				nl = 256; /* fix a simple byte wrap-around value */
 		}
 
 		vciosetb(&io, b, n, VC_DECODE);

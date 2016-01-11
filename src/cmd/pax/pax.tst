@@ -12,7 +12,7 @@ dateformat='%(mtime:time=%Y-%m-%d/%H:%M:%S)s %(path)s'
 modeformat='%(mtime:time=%K)s %(mode)s %(mode:case:-*:%(size)u:*:0)s %(path)s'
 testformat='%(mtime:time=%K)s %(mode)s %(mode:case:-*:%(size)u:*:0)8s %(path)s%(linkop:case:?*: %(linkop)s %(linkpath)s)s'
 
-chmod_u_s=$(touch t; chmod +s t; t=$(ls --format "%(mode)s" t); rm t; [[ $t == *S* ]] && print ok)
+chmod_u_s=$(touch t; chmod +s t; t=$(ls --format "%(mode)s" t); rm -f t; [[ $t == *S* ]] && print ok)
 
 VIEW data
 
@@ -658,7 +658,7 @@ TEST 08 'all in one test (ustar-all-quicktest.tar from the star tests)'
 	EXEC --nosummary --listformat="$testformat"
 		SAME INPUT $data/star-test.dat
 
-	IF 'touch t; chmod +t t; t=$(ls --format "%(mode)s" t); rm t; [[ $t == *T ]]'
+	IF 'touch t; chmod +t t; t=$(ls --format "%(mode)s" t); rm -f t; [[ $t == *T ]]'
 
 	EXEC --nosummary -rvf $data/star-test.dat
 		INPUT -
