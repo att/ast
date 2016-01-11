@@ -1,3 +1,0 @@
-regression tests are in the tests directory
-	nmake test
-runs the tests

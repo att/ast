@@ -1,1 +1,0 @@
-elflook -L "$@" | sed -e '/^NEEDED:/!d' -e 's/.*: *//'
