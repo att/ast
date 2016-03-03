@@ -1209,6 +1209,61 @@ int job_kill(register struct process *pw,register int sig)
 }
 
 /*
+ * Similar to job_kill, but dedicated to SIGHUP handling when session is
+ * being disconnected.
+ */
+int
+job_hup(struct process *pw, int sig)
+{
+	struct process	*px;
+	pid_t	pid;
+	int	r;
+
+	if (pw->p_pgrp == 0 || (pw->p_flag & P_DISOWN))
+		return (0);
+
+#if SHOPT_COSHELL
+	if(pw->p_cojob) {
+		job_lock();
+		r = cokill(pw->p_cojob->coshell,pw->p_cojob,sig);
+		job_unlock();
+		return (r);
+	}
+#endif /* SHOPT_COSHELL */
+
+	job_lock();
+	if (pw->p_pgrp != 0) {
+		int	palive = 0;
+
+		for (px = pw; px != NULL; px = px->p_nxtproc) {
+			if ((px->p_flag & P_DONE) == 0) {
+				palive = 1;
+				break;
+			}
+		}
+		/*
+		 * If all the processes have been dead, there is no guarantee
+		 * that the p_pgrp is still the valid process group that we
+		 * made, ie pid may have been recycled and same p_pgrp may
+		 * have been assigned to unrelated processes.
+		 */
+		if (palive) {
+			if (killpg(pw->p_pgrp, SIGHUP) >= 0)
+				job_unstop(pw);
+		}
+	}
+	for (; pw != NULL && pw->p_pgrp == 0; pw = pw->p_nxtproc) {
+		if (pw->p_flag & P_DONE)
+			continue;
+		if (kill(pw->p_pid, SIGHUP) >= 0)
+			(void) kill(pw->p_pid, SIGCONT);
+		pw = pw->p_nxtproc;
+	}
+	job_unlock();
+	return(0);
+}
+
+/*
  * Get process structure from first letters of jobname
  *
  */
