@@ -635,7 +635,7 @@ void sh_done(void *ptr, register int sig)
 #endif
 #ifdef JOBS
 	if((sh_isoption(SH_INTERACTIVE) && shp->login_sh) || (!sh_isoption(SH_INTERACTIVE) && (sig==SIGHUP)))
-		job_walk(sfstderr,job_terminate,SIGHUP,NIL(char**));
+		job_walk(sfstderr,job_hup,SIGHUP,NIL(char**));
 #endif	/* JOBS */
 	job_close(shp);
 	if(nv_search("VMTRACE", shp->var_tree,0))
