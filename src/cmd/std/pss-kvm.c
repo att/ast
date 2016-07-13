@@ -43,6 +43,9 @@ NoN(pss_kvm)
 #if _sys_proc
 #include <sys/proc.h>
 #endif
+#if _sys_user
+#include <sys/user.h>
+#endif
 #include <sys/sysctl.h>
 #include <sys/tty.h>
 
