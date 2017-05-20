@@ -1471,8 +1471,13 @@ int	sh_redirect(Shell_t *shp,struct ionod *iop, int flag)
 							fd = r;
 							sh_close(fn);
 						}
+						/* fd points to valid file descriptor */
+						sh_iosave(shp,fd,indx,tname?fname:(trunc?Empty:0));
 					}
-					sh_iosave(shp,fn,indx,tname?fname:(trunc?Empty:0));
+					else
+					{
+						sh_iosave(shp,fn,indx,tname?fname:(trunc?Empty:0));
+					}
 				}
 				else if(!vex && flag!=3 && sh_subsavefd(fn))
 					sh_iosave(shp,fn,indx|IOSUBSHELL,tname?fname:0);
