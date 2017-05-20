@@ -150,56 +150,12 @@ extern void fcrestore(Fcin_t *fp)
 	_Fcin = *fp;
 }
 
-/* for testing purposes with small buffers */
-#if defined(IOBSIZE) && (IOBSIZE < 2*MB_LEN_MAX)
-#   undef MB_LEN_MAX
-#   define MB_LEN_MAX	(IOBSIZE/2)
-#endif
-
-struct Extra
-{
-	unsigned char	buff[2*MB_LEN_MAX];
-	unsigned char	*next;
-};
-
 int _fcmbget(short *len)
 {
-	static struct Extra	extra;
-	register int		i, c, n;
-	if(_Fcin.fcleft)
-	{
-		if((c = mbsize(extra.next)) < 0)
-			c = 1;
-		if((_Fcin.fcleft -= c) <=0)
-		{
-			_Fcin.fcptr = (unsigned char*)fcfirst() - _Fcin.fcleft; 
-			_Fcin.fcleft = 0;
-		}
-		*len = c;
-		if(c==1)
-			c = *extra.next++;
-		else if(c==0)
-			_Fcin.fcleft = 0;
-		else
-			c = mbchar(extra.next);
-		return(c);
-	}
+	register int		c;
 	switch(*len = mbsize(_Fcin.fcptr))
 	{
 	    case -1:
-		if(_Fcin._fcfile && (n=(_Fcin.fclast-_Fcin.fcptr)) < MB_LEN_MAX)
-		{
-			memcpy(extra.buff, _Fcin.fcptr, n);
-			_Fcin.fcptr = _Fcin.fclast;
-			for(i=n; i < MB_LEN_MAX+n; i++)
-			{
-				if((extra.buff[i] = fcgetc(c))==0)
-					break;
-			}
-			_Fcin.fcleft = n;
-			extra.next = extra.buff;
-			return(fcmbget(len));
-		}
 		*len = 1;
 		/* fall through */
 	    case 0:
