@@ -1641,8 +1641,9 @@ tryagain:
 					if(shp->comsub && !(shp->fdstatus[1]&IONOSEEK))
 					{
 						unpipe = iousepipe(shp);
-						sh_subfork();
 					}
+
+					sh_subfork();
 				}
 			}
 			no_fork = !ntflag && !(type&(FAMP|FPOU)) && !shp->subshell &&
