@@ -1231,7 +1231,7 @@ retry1:
 		{
 			d=fcget();
 			fcseek(-1);
-			if(!strchr(":+-?=",d))
+			if(!(d && strchr(":+-?=",d)))
 				errormsg(SH_DICT,ERROR_exit(1),e_notset,ltos(c));
 		}
 		break;
