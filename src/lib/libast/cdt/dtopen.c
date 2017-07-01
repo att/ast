@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,17 +14,17 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"dthdr.h"
-static char*     Version = "\n@(#)$Id: cdt (AT&T Labs - Research) 2011-11-11 $\0\n";
+static char*     Version = "\n@(#)$Id: cdt (AT&T Labs - Research) 2013-05-01 $\0\n";
 
 /* 	Make a new dictionary
 **
-**	Written by Kiem-Phong Vo (5/25/96)
+**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 /* map operation bits from the 2005 version to the current version */
@@ -152,26 +152,4 @@ void _dtfree(Dt_t* dt, Dtlink_t* l, int type)
 
 	if(disc->link < 0) /* free holder */
 		(void)(*dt->memoryf)(dt, (Void_t*)l, 0, disc);
-}
-
-int dtuserlock(Dt_t* dt, unsigned int key, int type)
-{
-	if(type > 0)
-		return asolock(&dt->data->user.lock, key, ASO_LOCK);
-	else if(type < 0)
-		return asolock(&dt->data->user.lock, key, ASO_UNLOCK);
-	else	return asolock(&dt->data->user.lock, key, ASO_TRYLOCK);
-}
-
-Void_t* dtuserdata(Dt_t* dt, Void_t* data, unsigned int key)
-{
-	if(key == 0)
-		return dt->data->user.data;
-	else if(dtuserlock(dt, key, 1) < 0 )
-		return NIL(Void_t*);
-	else
-	{	dt->data->user.data = data;
-		dtuserlock(dt, key, -1);
-		return data;
-	}
 }

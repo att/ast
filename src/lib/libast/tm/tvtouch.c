@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -95,6 +95,7 @@ tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, cons
 #if _lib_utimets || _lib_utimensat
 	struct timespec	ts[2];
 #endif
+#if !_lib_utimets
 #if _lib_utimes
 	struct timeval	am[2];
 #else
@@ -102,6 +103,7 @@ tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, cons
 	struct utimbuf	am;
 #else
 	time_t		am[2];
+#endif
 #endif
 #endif
 
@@ -147,7 +149,7 @@ tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, cons
 			return -1;
 		umask(mode = umask(0));
 		mode = (~mode) & (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-		if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC|O_cloexec, mode)) < 0)
+		if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, mode)) < 0)
 			return -1;
 		close(fd);
 		errno = oerrno;
@@ -251,7 +253,7 @@ tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, cons
 			errno = EINVAL;
 			return -1;
 		}
-		if ((fd = open(path, O_RDWR|O_cloexec)) >= 0)
+		if ((fd = open(path, O_RDWR|O_CLOEXEC)) >= 0)
 		{
 			char	c;
 
@@ -271,7 +273,7 @@ tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, cons
 		return -1;
 	umask(mode = umask(0));
 	mode = (~mode) & (S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC|O_cloexec, mode)) < 0)
+	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, mode)) < 0)
 		return -1;
 	close(fd);
 	errno = oerrno;

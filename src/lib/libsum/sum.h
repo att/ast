@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -35,8 +35,11 @@
 #define SUM_SCALE	(1<<1)		/* traditional size scale	*/
 #define SUM_TOTAL	(1<<2)		/* print totals since sumopen	*/
 #define SUM_LEGACY	(1<<3)		/* legacy field widths		*/
+#define SUM_INDICATOR	(1<<4)		/* text=' ' binary='*' indicator*/
 
-#define _SUM_PUBLIC_	const char*	name;
+#define _SUM_PUBLIC_	\
+	const char*	name;		/* method name			*/ \
+	unsigned int	flags;		/* SUM_* flag defaults		*/
 
 typedef struct Sumdata_s
 {

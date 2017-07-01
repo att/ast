@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -92,7 +92,7 @@ Sfdisc_t*	disc;
 			{	f->endb = f->next = f->endr = f->data;
 				f->mode &= ~SF_SYNCED;
 			}
-#ifdef MAP_TYPE
+#if _mmap_worthy
 			if((f->bits&SF_MMAP) && f->data)
 			{	SFMUNMAP(f, f->data, f->endb-f->data);
 				f->data = NIL(uchar*);
@@ -132,7 +132,7 @@ Sfdisc_t*	disc;
 			}
 		}
 
-#ifdef MAP_TYPE
+#if _mmap_worthy
 		if(f->bits&SF_MMAP)
 		{	reg ssize_t	a, round;
 			sfstat_t	st;
@@ -166,8 +166,14 @@ Sfdisc_t*	disc;
 			}
 
 			/* map minimal requirement */
-			if(r > (round = (1 + (n+a)/f->size)*f->size) )
-				r = round;
+			if(_Sfmaxm != (size_t)SF_UNBOUND)
+			{	if(_Sfmaxm)
+				{	if(r > _Sfmaxm)
+						r = _Sfmaxm;
+				}
+				else if(r > (round = (1 + (n+a)/f->size)*f->size) )
+					r = round;
+			}
 
 			if(f->data)
 				SFMUNMAP(f, f->data, f->endb-f->data);

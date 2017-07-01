@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -26,7 +26,6 @@
 #include	<ast.h>
 #include	<ast_wchar.h>
 #include	"defs.h"
-#include	<stak.h>
 #include	<ccode.h>
 #include	"shtable.h"
 #include	"lexstates.h"
@@ -42,9 +41,9 @@
 
 
 /*
- *  Table lookup routine
- *  <table> is searched for string <sp> and corresponding value is returned
- *  This is only used for small tables and is used to save non-sharable memory 
+ * Table lookup routine
+ * <table> is searched for string <sp> and corresponding value is returned
+ * This is only used for small tables and is used to save non-sharable memory 
  */
 
 const Shtable_t *sh_locate(register const char *sp,const Shtable_t *table,int size)
@@ -66,7 +65,7 @@ const Shtable_t *sh_locate(register const char *sp,const Shtable_t *table,int si
 }
 
 /*
- *  shtab_options lookup routine
+ * shtab_options lookup routine
  */
 
 #define sep(c)		((c)=='-'||(c)=='_')
@@ -172,7 +171,7 @@ int sh_lookopt(register const char *sp, int *invert)
  * look for the substring <oldsp> in <string> and replace with <newsp>
  * The new string is put on top of the stack
  */
-char *sh_substitute(const char *string,const char *oldsp,char *newsp)
+char *sh_substitute(Shell_t *shp,const char *string,const char *oldsp,char *newsp)
 /*@
 	assume string!=NULL && oldsp!=NULL && newsp!=NULL;
 	return x satisfying x==NULL ||
@@ -182,7 +181,7 @@ char *sh_substitute(const char *string,const char *oldsp,char *newsp)
 	register const char *sp = string;
 	register const char *cp;
 	const char *savesp = 0;
-	stakseek(0);
+	stkseek(shp->stk,0);
 	if(*sp==0)
 		return((char*)0);
 	if(*(cp=oldsp) == 0)
@@ -202,12 +201,12 @@ char *sh_substitute(const char *string,const char *oldsp,char *newsp)
 				sp++;
 			while(c-- > 0)
 #endif /* SHOPT_MULTIBYTE */
-			stakputc(*sp++);
+			sfputc(shp->stk,*sp++);
 		}
 		if(*sp == 0)
 			return((char*)0);
 		savesp = sp;
-	        for(;*cp;cp++)
+		for(;*cp;cp++)
 		{
 			if(*cp != *sp++)
 				break;
@@ -223,10 +222,10 @@ char *sh_substitute(const char *string,const char *oldsp,char *newsp)
 
 found:
 	/* copy new */
-	stakputs(newsp);
+	sfputr(shp->stk,newsp,-1);
 	/* copy rest of string */
-	stakputs(sp);
-	return(stakfreeze(1));
+	sfputr(shp->stk,sp,-1);
+	return(stkfreeze(shp->stk,1));
 }
 
 /*
@@ -237,7 +236,7 @@ found:
 void	sh_trim(register char *sp)
 /*@
 	assume sp!=NULL;
-	promise  strlen(in sp) <= in strlen(sp);
+	promise strlen(in sp) <= in strlen(sp);
 @*/
 {
 	register char *dp;
@@ -329,18 +328,28 @@ static char	*sh_fmtcsv(const char *string)
  * print <str> quoting chars so that it can be read by the shell
  * puts null terminated result on stack, but doesn't freeze it
  */
-char	*sh_fmtq(const char *string)
+char *sh_fmtstr(const char *string, int quote)
 {
 	register const char *cp = string, *op;
-	register int c, state;
+	register int c, state, type=quote;
 	int offset;
+#if SHOPT_MULTIBYTE
+	bool	lc_unicodeliterals;
+#endif
 	if(!cp)
 		return((char*)0);
 	offset = staktell();
+	mbinit();
 	state = ((c= mbchar(cp))==0);
-	if(isaletter(c))
+#if SHOPT_MULTIBYTE
+	lc_unicodeliterals = quote=='u' ? 1 : quote=='U' ? 0 : !!(ast.locale.set & AST_LC_unicodeliterals);
+#endif
+	if(quote=='"')
+		goto skip;
+	quote = '\'';
+	if(isaletter(c) && (!lc_unicodeliterals || c<=0x7f))
 	{
-		while((c=mbchar(cp)),isaname(c));
+		while((c=mbchar(cp)), isaname(c) && (!lc_unicodeliterals || c<=0x7f));
 		if(c==0)
 			return((char*)string);
 		if(c=='=')
@@ -355,14 +364,17 @@ char	*sh_fmtq(const char *string)
 			c = mbchar(cp);
 		}
 	}
-	if(c==0 || c=='#' || c=='~')
+	if(c==0 || c=='#' || c=='~' || (type=='[' && (c=='@' || c=='!')))
+	{
+skip:
 		state = 1;
+	}
 	for(;c;c= mbchar(cp))
 	{
 #if SHOPT_MULTIBYTE
-		if(c=='\'' || c>=128 || c<0 || !iswprint(c)) 
+		if(c==quote || c>=128 || c<0 || !iswprint(c)) 
 #else
-		if(c=='\'' || !isprint(c))
+		if(c==quote || !isprint(c))
 #endif /* SHOPT_MULTIBYTE */
 			state = 2;
 		else if(c==']' || c=='=' || (c!=':' && c<=0x7f && (c=sh_lexstates[ST_NORM][c]) && c!=S_EPAT))
@@ -371,18 +383,25 @@ char	*sh_fmtq(const char *string)
 	if(state<2)
 	{
 		if(state==1)
-			stakputc('\'');
+			stakputc(quote);
 		if(c = --cp - string)
 			stakwrite(string,c);
 		if(state==1)
-			stakputc('\'');
+			stakputc(quote);
 	}
 	else
 	{
-		int isbyte=0;
-		stakwrite("$'",2);
+#if SHOPT_MULTIBYTE
+		int	lc_specifier = (ast.locale.set & AST_LC_utf8) ? 'u' : 'w';
+		bool	widebyte;
+#endif
+		if(quote=='"')
+			stakputc('"');
+		else
+			stakwrite("$'",2);
 		cp = string;
 #if SHOPT_MULTIBYTE
+		mbinit();
 		while(op = cp, c= mbchar(cp))
 #else
 		while(op = cp, c= *(unsigned char*)cp++)
@@ -412,23 +431,83 @@ char	*sh_fmtq(const char *string)
 			    case '\a':
 				c = 'a';
 				break;
-			    case '\\':	case '\'':
+			    case '\\':
 				break;
+			    case '"':  case '\'':
+				if(c==quote)
+					break;
 			    default:
 #if SHOPT_MULTIBYTE
-				isbyte = 0;
 				if(c<0)
 				{
 					c = *((unsigned char *)op);
 					cp = op+1;
-					isbyte = 1;
+					widebyte = 1;
 				}
-				if(mbwide() && ((cp-op)>1))
+				else
+					widebyte = 0;
+
+				/*
+				 * If we convert the data to Unicode we want
+				 * to produce portable ASCII-only output and
+				 * therefore convert all non-ASCII (e.g.
+				 * |c > 127|) characters to \u[] sequences.
+				 *
+				 * Note that this requires to pass all data
+				 * through |wcstoutf32s()| to handle
+				 * "extended" single-byte locales like
+				 * "en_US.ISO8859-15" or "ru_RU.koi8r"
+				 * that may produce "widebytes"
+				 *
+				 * If we do not convert to Unicode we only
+				 * convert the non-printable characters to
+				 * locale-specific \w[] sequences.
+				 *
+				 * Be *VERY* careful with the logic below -
+				 * some single-byte locale implementations
+				 * have wchar_t values > 127 but can return
+				 * bytes, too
+				 */
+
+				if(!widebyte)
 				{
-					sfprintf(staksp,"\\u[%x]",c);
-					continue;
+					if(lc_unicodeliterals)
+					{
+						wchar_t		wc = c;
+						uint32_t	uc = 0;
+
+						/*
+						 * posix doesn't play the iswrune() game for utf8 locales
+						 * also, empty strings on error with no diagnostic just isn't right
+						 * so source wchars that have no utf32 counterpart are emitted
+						 * as \\w[HEX] => and that's a detectable error under lc_unicodeliterals
+						 */
+
+						if(lc_specifier=='u')
+							uc = c;
+						else if(wcstoutf32s(&uc, &wc, 1) < 0)
+						{
+							sfprintf(staksp,"\\\\w[%lx]", (unsigned long)c);
+							continue;
+						}
+
+						/*
+						 * we assume that all locales have ASCII
+						 * as their base character set
+						 */
+						if(!iswprint(c) || uc > 127)
+						{
+							sfprintf(staksp,"\\u[%lx]", (unsigned long)uc);
+							continue;
+						}
+					}
+					else if(mbwide() && !iswprint(c))
+					{
+						sfprintf(staksp,"\\%c[%x]", lc_specifier, c);
+						continue;
+					}
 				}
-				else if(!iswprint(c) || isbyte)
+				if(widebyte || !iswprint(c))
 #else
 				if(!isprint(c))
 #endif
@@ -447,20 +526,30 @@ char	*sh_fmtq(const char *string)
 			else
 				stakwrite(op, cp-op);
 		}
-		stakputc('\'');
+		stakputc(quote);
 	}
 	stakputc(0);
 	return(stakptr(offset));
 }
 
+char	*sh_fmtq(const char *string)
+{
+	return(sh_fmtstr(string,'\''));
+}
+
+char	*sh_fmtj(const char *string)
+{
+	return(sh_fmtstr(string,'"'));
+}
+
 /*
  * print <str> quoting chars so that it can be read by the shell
  * puts null terminated result on stack, but doesn't freeze it
- * single!=0 limits quoting to '...'
+ * flags is a bitmask of SFFMT_* flags
  * fold>0 prints raw newlines and inserts appropriately
  * escaped newlines every (fold-x) chars
  */
-char	*sh_fmtqf(const char *string, int single, int fold)
+char	*sh_fmtqf(const char *string, int flags, int fold)
 {
 	register const char *cp = string;
 	register const char *bp;
@@ -469,16 +558,17 @@ char	*sh_fmtqf(const char *string, int single, int fold)
 	register int n;
 	register int q;
 	register int a;
+	int single;
 	int offset;
 
+	if(flags&SFFMT_ALTER)
+		return sh_fmtcsv(cp);
 	if (--fold < 8)
 		fold = 0;
-	if(single)
-		return sh_fmtcsv(cp);
 	if (!cp || !*cp || !fold || fold && strlen(string) < fold)
-		return sh_fmtq(cp);
+		return sh_fmtstr(cp,(flags&SFFMT_ZERO) ? 'U' : (flags&SFFMT_SIGN) ? 'u' : '\'');
 	offset = staktell();
-	single = single ? 1 : 3;
+	single = 3;
 	c = mbchar(string);
 	a = isaletter(c) ? '=' : 0;
 	vp = cp + 1;
@@ -525,29 +615,29 @@ char	*sh_fmtqf(const char *string, int single, int fold)
 			{
 				switch (c)
 				{
-		    		case ('a'==97?'\033':39):
+				case ('a'==97?'\033':39):
 					c = 'E';
 					break;
-		    		case '\n':
+				case '\n':
 					q = 0;
 					n = fold - 1;
 					break;
-		    		case '\r':
+				case '\r':
 					c = 'r';
 					break;
-		    		case '\t':
+				case '\t':
 					c = 't';
 					break;
-		    		case '\f':
+				case '\f':
 					c = 'f';
 					break;
-		    		case '\b':
+				case '\b':
 					c = 'b';
 					break;
-		    		case '\a':
+				case '\a':
 					c = 'a';
 					break;
-		    		case '\\':
+				case '\\':
 					if (*cp == 'n')
 					{
 						c = '\n';
@@ -557,7 +647,7 @@ char	*sh_fmtqf(const char *string, int single, int fold)
 					}
 				case '\'':
 					break;
-		    		default:
+				default:
 #if SHOPT_MULTIBYTE
 					if(!iswprint(c))
 #else
@@ -663,12 +753,12 @@ char	*sh_fmtqf(const char *string, int single, int fold)
 }
 
 #if SHOPT_MULTIBYTE
-	int sh_strchr(const char *string, register const char *dp)
+	int sh_strchr(const char *string, register const char *dp, size_t size)
 	{
 		wchar_t c, d;
 		register const char *cp=string;
 		mbinit();
-		d = mbchar(dp); 
+		d = mbnchar(dp,size); 
 		mbinit();
 		while(c = mbchar(cp))
 		{
@@ -730,7 +820,7 @@ char *sh_checkid(char *str, char *last)
 	return(last);
 }
 
-#if	_AST_VERSION  <= 20000317L
+#if	_AST_VERSION <= 20000317L
 char *fmtident(const char *string)
 {
 	return((char*)string);

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -34,66 +34,68 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: pax (AT&T Research) 2012-05-25 $\n]"
+"[-?\n@(#)$Id: pax (AT&T Research) 2013-06-24 $\n]"
 USAGE_LICENSE
 "[+NAME?pax - read, write, and list file archives]"
-"[+DESCRIPTION?The pax command reads, writes, and lists archive files in"
-"	various formats. There are four operation modes controlled by"
-"	combinations of the -\br\b and -\bw\b options.]"
-"[+?\bpax -w\b writes the files and directories named by the \apathname\a"
-"	arguments to the standard output together with pathname and status"
-"	information.  A directory \apathname\a argument refers to the files and"
-"	(recursively) subdirectories of that directory.  If no \apathname\a"
-"	arguments are given then the standard input is read to get a list of"
-"	pathnames to copy, one pathname per line.  In this case only those"
-"	pathnames appearing on the standard input are copied.]"
-"[+?\bpax -r\b reads the standard input that is assumed to be the result of a"
-"	previous \bpax -w\b command.  Only member files with names"
-"	that match any of the \apattern\a arguments are selected.  Matching"
-"	is done before any \b-i\b or \b-s\b options are applied.  A"
-"	\apattern\a is given in the name-generating notation of \bsh\b(1),"
-"	except that the \b/\b character is also matched.  The default if no"
-"	\apattern\a is given is \b*\b which selects all files.  The selected"
-"	files are conditionally created and copied relative to the current"
-"	directory tree, subject to the options described below.  By default the"
-"	owner and group of selected files will be that of the current user, and"
-"	the permissions and modify times will be the same as those in the"
-"	archive.]"
-"[+?\bpax -rw\b reads the files and directories named in the \apathname\a"
-"	arguments and copies them to the destination \adirectory\a."
-"	A directory \apathname\a argument refers to the files and (recursively)"
-"	subdirectories of that directory.  If no \apathname\a arguments are"
-"	given then the standard input is read to get a list of pathnames to"
-"	copy, one pathname per l, lineine.  In this case only those pathnames"
-"	appearing on the standard input are copied.  \adirectory\a must exist"
-"	before the copy.]"
-"[+?\bpax\b (\b-r\b and \b-w\b omitted) reads the standard input that is"
-"	assumed to be the result of a previous \bpax -w\b command and lists"
-"	table of contents of the selected member files on the standard output.]"
-"[+?The standard archive formats are automatically detected on input."
-"	The default output archive format is \b\fdefault\f\b, but may be"
-"	overridden by the \b-x\b option described below. \bpax\b archives may"
-"	be concatenated to combine multiple volumes on a single tape or file."
-"	This is accomplished by forcing any format prescribed pad data to be"
-"	null bytes.  Hard links are not maintained between volumes, and delta"
-"	and base archives cannot be multi-volume.]"
-"[+?A single archive may span many files/devices.  The second and"
-"	subsequent file names are prompted for on the terminal input.  The"
-"	response may be:]{"
-"		[+!command?Execute \acommand\a via \bsystem\b(3) and prompt"
-"			again for file name.]"
-"		[+EOF?Terminate processing and exit.]"
-"		[+CR?An empty input line retains the previous file name.]"
-"		[+pathname?The file name for the next archive part.]"
-"}"
-"[+?\bgetconf PATH_RESOLVE\b determines how symbolic links are handled. This"
-"	can be explicitly overridden by the \b--logical\b, \b--metaphysical\b,"
-"	and \b--physical\b options below. \bPATH_RESOLVE\b can be one of:]{"
-"		[+logical?Follow all symbolic links.]"
-"		[+metaphysical?Follow command argument symbolic links,"
-"			otherwise don't follow.]"
-"		[+physical?Don't follow symbolic links.]"
-"}"
+"[+DESCRIPTION?The pax command reads, writes, and lists archive files in "
+    "various formats. There are four operation modes controlled by "
+    "combinations of the -\br\b and -\bw\b options.]"
+"[+?\bpax -w\b writes the files and directories named by the "
+    "\apathname\a arguments to the standard output together with pathname "
+    "and status information. A directory \apathname\a argument refers to the "
+    "files and (recursively) subdirectories of that directory. If no "
+    "\apathname\a arguments are given then the standard input is read to get "
+    "a list of pathnames to copy, one pathname per line. In this case only "
+    "those pathnames appearing on the standard input are copied.]"
+"[+?\bpax -r\b reads the standard input that is assumed to be the result "
+    "of a previous \bpax -w\b command. Only member files with names that "
+    "match any of the \apattern\a arguments are selected. Matching is done "
+    "before any \b-i\b or \b-s\b options are applied. A \apattern\a is given "
+    "in the name-generating notation of \bsh\b(1), except that the \b/\b "
+    "character is also matched. The default if no \apattern\a is given is "
+    "\b*\b which selects all files. The selected files are conditionally "
+    "created and copied relative to the current directory tree, subject to "
+    "the options described below. By default the owner and group of selected "
+    "files will be that of the current user, and the permissions and modify "
+    "times will be the same as those in the archive.]"
+"[+?\bpax -rw\b reads the files and directories named in the "
+    "\apathname\a arguments and copies them to the destination "
+    "\adirectory\a. A directory \apathname\a argument refers to the files "
+    "and (recursively) subdirectories of that directory. If no \apathname\a "
+    "arguments are given then the standard input is read to get a list of "
+    "pathnames to copy, one pathname per l, lineine. In this case only those "
+    "pathnames appearing on the standard input are copied. \adirectory\a "
+    "must exist before the copy.]"
+"[+?\bpax\b (\b-r\b and \b-w\b omitted) reads the standard input that is "
+    "assumed to be the result of a previous \bpax -w\b command and lists "
+    "table of contents of the selected member files on the standard output.]"
+"[+?The standard archive formats and compression methods are "
+    "automatically detected on input. The default output archive format is "
+    "\b\fdefault\f\b, but may be overridden by the \b-x\b option described "
+    "below. \bpax\b archives may be concatenated to combine multiple volumes "
+    "on a single tape or file. This is accomplished by forcing any format "
+    "prescribed pad data to be null bytes. Hard links are not maintained "
+    "between volumes, and delta and base archives cannot be multi-volume.]"
+"[+?A single archive may span many files/devices. The second and "
+    "subsequent file names are prompted for on the terminal input. The "
+    "response may be:]"
+    "{"
+        "[+!command?Execute \acommand\a via \bsystem\b(3) and prompt "
+            "again for file name.]"
+        "[+EOF?Terminate processing and exit.]"
+        "[+CR?An empty input line retains the previous file name.]"
+        "[+pathname?The file name for the next archive part.]"
+    "}"
+"[+?\bgetconf PATH_RESOLVE\b determines how symbolic links are handled. "
+    "This can be explicitly overridden by the \b--logical\b, "
+    "\b--metaphysical\b, and \b--physical\b options below. \bPATH_RESOLVE\b "
+    "can be one of:]"
+    "{"
+        "[+logical?Follow all symbolic links.]"
+        "[+metaphysical?Follow command argument symbolic links, "
+            "otherwise don't follow.]"
+        "[+physical?Don't follow symbolic links.]"
+    "}"
 ;
 
 /* state.usage is generated at runtime from usage+options+usage2 */
@@ -104,27 +106,26 @@ static const char usage2[] =
 "[ pattern ... ]\n"
 "[ pathname ... directory ]\n"
 "\n"
-"[+DIAGNOSTICS?The number of files, blocks, and optionally the number"
-"	of volumes and media parts are listed on the standard error."
-"	For -\bv\b the input archive formats are also listed on the"
-"	standard error.]"
-"[+EXAMPLES]{"
-"	[+pax -w -t 1m .?Copies the contents of the current directory to"
-"		tape drive 1, medium density.]"
-"	[+mkdir newdir; cd olddir; pax -rw . newdir?Copies the"
-"		\aolddir\a directory hierarchy to \anewdir\a.]"
-"}"
-"[+SEE ALSO?\bar\b(1), \bcpio\b(1), \bfind\b(1), \bgetconf\b(1), \bgzip\b(1),"
-"	\bksh\b(1), \bratz\b(1), \bstar\b(1), \btar\b(1), \btw\b(1),"
-"	\bfsync\b(2), \blibdelta\b(3), \bcpio\b(5), \btar\b(5)]"
-"[+BUGS?Special privileges may be required to copy special files."
-"	Some archive formats have hard upper limits on member string, numeric"
-"	and data sizes. Attribute values larger than the standard min-max"
-"	values may cause additional header or embedded data records to be"
-"	output for some formats; these records are ignored by old versions"
-"	of \bcpio\b(1) and \btar\b(1). \b--format=pax\b avoids size and"
-"	portability limitations \abut\a requires a working reader on the"
-"	receiving side.]"
+"[+DIAGNOSTICS?The number of files, blocks, and optionally the number of "
+    "volumes and media parts are listed on the standard error. For -\bv\b "
+    "the input archive formats are also listed on the standard error.]"
+"[+EXAMPLES]"
+    "{"
+        "[+pax -w -t 1m .?Copies the contents of the current directory "
+            "to tape drive 1, medium density.]"
+        "[+mkdir newdir; cd olddir; pax -rw . newdir?Copies the "
+            "\aolddir\a directory hierarchy to \anewdir\a.]"
+    "}"
+"[+SEE ALSO?\bar\b(1), \bcpio\b(1), \bfind\b(1), \bgetconf\b(1), "
+    "\bgzip\b(1), \bksh\b(1), \bratz\b(1), \bstar\b(1), \btar\b(1), "
+    "\btw\b(1), \bfsync\b(2), \blibdelta\b(3), \bcpio\b(5), \btar\b(5)]"
+"[+BUGS?Special privileges may be required to copy special files. Some "
+    "archive formats have hard upper limits on member string, numeric and "
+    "data sizes. Attribute values larger than the standard min-max values "
+    "may cause additional header or embedded data records to be output for "
+    "some formats; these records are ignored by old versions of \bcpio\b(1) "
+    "and \btar\b(1). \b--format=pax\b avoids size and portability "
+    "limitations \abut\a requires a working reader on the receiving side.]"
 ;
 
 #include "pax.h"
@@ -298,7 +299,7 @@ action(const char* command, int pattern)
 	fp->re = re;
 	fp->argv = (char**)(fp + 1);
 	fp->command = (char*)(fp->argv + n);
-	s = strcopy(fp->command, command) + 1;
+	s = stpcpy(fp->command, command) + 1;
 	strcpy(s, command);
 	fp->argv[0] = s;
 	q = 0;
@@ -1096,7 +1097,7 @@ setoptions(char* line, size_t hdr, char** argv, char* usage, Archive_t* ap, int 
 					state.modtime = 1;
 					state.owner = 1;
 					state.modemask = 0;
-					state.chmod = 1;
+					state.modekeep = 1;
 					continue;
 				case 'm':
 					state.modtime = 0;
@@ -1106,7 +1107,7 @@ setoptions(char* line, size_t hdr, char** argv, char* usage, Archive_t* ap, int 
 					continue;
 				case 'p':
 					state.modemask &= (S_ISUID|S_ISGID);
-					state.chmod = 1;
+					state.modekeep = 1;
 					continue;
 				case 's':
 					state.modemask &= ~(S_ISUID|S_ISGID);

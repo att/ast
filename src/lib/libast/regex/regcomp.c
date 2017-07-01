@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -131,6 +131,8 @@ typedef struct Cenv_s
 	regdisc_t*	disc;		/* user discipline		*/
 	unsigned char*	map;		/* external to native ccode map	*/
 	unsigned char*	MAP;		/* fold and/or map		*/
+	Mbstate_t	q;		/* pattern mb state		*/
+	int		i;		/* macro tmp int		*/
 } Cenv_t;
 
 /*
@@ -923,7 +925,7 @@ token(register Cenv_t* env)
 	if (env->token.push)
 		return env->token.lex;
 	env->token.att = env->token.esc = 0;
-	if ((env->token.len = MBSIZE(env->cursor)) > 1)
+	if ((env->token.len = MBSIZE(env, env->cursor)) > 1)
 		return env->token.lex = C_MB;
 	env->token.lex = 0;
 	for (;;)
@@ -976,7 +978,7 @@ token(register Cenv_t* env)
 				if (c)
 				{
 					env->token.esc = env->token.len;
-					env->token.len += MBSIZE(env->cursor + 1);
+					env->token.len += MBSIZE(env, env->cursor + 1);
 					return c;
 				}
 				return '\\';
@@ -985,7 +987,7 @@ token(register Cenv_t* env)
 			return T_BAD;
 		}
 		env->token.esc = env->token.len;
-		env->token.len += MBSIZE(env->cursor + 1);
+		env->token.len += MBSIZE(env, env->cursor + 1);
 		if (env->delimiter && c == 'n')
 			return '\n';
 		else if (c == env->delimiter)
@@ -1029,7 +1031,7 @@ token(register Cenv_t* env)
 }
 
 static Celt_t*
-col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, int ew, int ec)
+col(Cenv_t* env, Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, int ew, int ec)
 {
 	register char*		s;
 	register unsigned char*	k;
@@ -1038,6 +1040,8 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 	register int		cc;
 	int			bt;
 	int			et;
+	wchar_t			w;
+	Mbstate_t		q;
 	Ckey_t			key;
 
 	cc = 0;
@@ -1067,7 +1071,7 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 			s = (char*)bp;
 			if (ic)
 			{
-				c = mbchar(s);
+				c = mbtchar(&w, s, MB_LEN_MAX, &env->q);
 				if (iswupper(c))
 				{
 					c = towlower(c);
@@ -1082,7 +1086,8 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 			if (cc > 0)
 			{
 				cc = -1;
-				k += mbconv((char*)k, c);
+				mbtinit(&q);
+				k += mbtconv((char*)k, c, &q);
 			}
 			else
 				for (e = k + bw; k < e; *k++ = *s++);
@@ -1092,7 +1097,8 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 		if (ep)
 		{
 			k = key;
-			c = mbchar(k);
+			mbtinit(&env->q);
+			c = mbtchar(&w, k, MB_LEN_MAX, &env->q);
 			if (iswupper(c))
 				bt = COLL_range_uc;
 			else if (iswlower(c))
@@ -1123,7 +1129,8 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 				s = (char*)ep;
 				if (ic)
 				{
-					c = mbchar(s);
+					mbtinit(&env->q);
+					c = mbtchar(&w, s, MB_LEN_MAX, &env->q);
 					if (iswupper(c))
 					{
 						c = towlower(c);
@@ -1138,7 +1145,8 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 				if (cc > 0)
 				{
 					cc = -1;
-					k += mbconv((char*)k, c);
+					mbtinit(&q);
+					k += mbtconv((char*)k, c, &q);
 				}
 				else
 					for (e = k + ew; k < e; *k++ = *s++);
@@ -1146,7 +1154,7 @@ col(Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, in
 			*k = 0;
 			mbxfrm(ce->end, key, COLL_KEY_MAX);
 			k = key;
-			c = mbchar(k);
+			c = mbtchar(&w, k, MB_LEN_MAX, &env->q);
 			if (iswupper(c))
 				et = COLL_range_uc;
 			else if (iswlower(c))
@@ -1183,6 +1191,7 @@ bra(Cenv_t* env)
 	unsigned char*	begin;
 	unsigned char*	s;
 	regclass_t	f;
+	Mbstate_t	q;
 	unsigned char	buf[4 * (COLL_KEY_MAX + 1)];
 #if _PACKAGE_ast
 	int		ic;
@@ -1200,10 +1209,10 @@ bra(Cenv_t* env)
 	else
 		neg = 0;
 	first = env->cursor;
-	start = first + MBSIZE(first);
+	start = first + MBSIZE(env, first);
 	if (*env->cursor == 0 || *(env->cursor + 1) == 0 || *env->cursor == env->terminator || *(env->cursor + 1) == env->terminator || (env->flags & REG_ESCAPE) && (*env->cursor == env->delimiter || *env->cursor != '\\' && *(env->cursor + 1) == env->delimiter))
 		goto error;
-	begin = env->cursor + MBSIZE(env->cursor);
+	begin = env->cursor + MBSIZE(env, env->cursor);
 
 	/*
 	 * inrange: 0=no, 1=possibly, 2=definitely
@@ -1214,7 +1223,7 @@ bra(Cenv_t* env)
 	{
 		if (!(c = *env->cursor) || c == env->terminator || c == env->delimiter && (env->flags & REG_ESCAPE))
 			goto error;
-		env->cursor += (w = MBSIZE(env->cursor));
+		env->cursor += (w = MBSIZE(env, env->cursor));
 		if (c == '\\' && ((env->flags & REG_CLASS_ESCAPE) || *env->cursor == env->delimiter && (env->flags & REG_ESCAPE)))
 		{
 			if (*env->cursor)
@@ -1482,7 +1491,7 @@ bra(Cenv_t* env)
 				if ((c = *env->cursor) == 0 || c == env->terminator || (env->flags & REG_ESCAPE) && c == env->delimiter)
 					goto error;
 				pp = env->cursor;
-				env->cursor += (w = MBSIZE(env->cursor));
+				env->cursor += (w = MBSIZE(env, env->cursor));
 				if (c == '\\' && ((env->flags & REG_CLASS_ESCAPE) || *env->cursor == env->delimiter && (env->flags & REG_ESCAPE)))
 				{
 					if (*env->cursor)
@@ -1515,7 +1524,8 @@ bra(Cenv_t* env)
 								if (env->token.len > 1 || w >= 0 && w < T_META)
 								{
 									c = w;
-									w = mbconv(mbc, c);
+									mbtinit(&q);
+									w = mbtconv(mbc, c, &q);
 									pp = (unsigned char*)mbc;
 									env->cursor += env->token.len;
 								}
@@ -1534,9 +1544,9 @@ bra(Cenv_t* env)
 					}
 					if (inrange != 0)
 					{
-						ce = col(ce, ic, rp, rw, rc, NiL, 0, 0);
+						ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
 						if (inrange == 2)
-							ce = col(ce, ic, NiL, 1, '-', NiL, 0, 0);
+							ce = col(env, ce, ic, NiL, 1, '-', NiL, 0, 0);
 					}
 					break;
 				}
@@ -1564,7 +1574,7 @@ bra(Cenv_t* env)
 						if (env->flags & REG_REGEXP)
 							goto complicated_normal;
 						if (inrange == 1)
-							ce = col(ce, ic, rp, rw, rc, NiL, 0, 0);
+							ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
 						if (!(f = regclass((char*)env->cursor, (char**)&env->cursor)))
 						{
 							if (env->cursor == start && (c = *(env->cursor + 1)) && *(env->cursor + 2) == ':' && *(env->cursor + 3) == ']' && *(env->cursor + 4) == ']')
@@ -1602,7 +1612,7 @@ bra(Cenv_t* env)
 						if (inrange == 2)
 							goto erange;
 						if (inrange == 1)
-							ce = col(ce, ic, rp, rw, rc, NiL, 0, 0);
+							ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
 						pp = (unsigned char*)cb[inrange];
 						rp = env->cursor + 1;
 						if ((rw = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)pp, COLL_KEY_MAX, &wc)) < 0)
@@ -1613,7 +1623,8 @@ bra(Cenv_t* env)
 							if (iswupper(wc))
 							{
 								wc = towlower(wc);
-								rw = mbconv((char*)pp, wc);
+								mbtinit(&q);
+								rw = mbtconv((char*)pp, wc, &q);
 								c = 'u';
 							}
 							else if (iswlower(wc))
@@ -1666,7 +1677,8 @@ bra(Cenv_t* env)
 								wc = towupper(wc);
 								c = 'U';
 							}
-							rw = mbconv((char*)pp, wc);
+							mbtinit(&q);
+							rw = mbtconv((char*)pp, wc, &q);
 							i = 0;
 						}
 						inrange = 0;
@@ -1690,7 +1702,7 @@ bra(Cenv_t* env)
 			singleton:
 				if (inrange == 2)
 				{
-					ce = col(ce, ic, rp, rw, rc, pp, w, c);
+					ce = col(env, ce, ic, rp, rw, rc, pp, w, c);
 					if (strcmp((char*)ce->beg, (char*)ce->end) > 0)
 					{
 						if (env->type < SRE && !(env->flags & (REG_LENIENT|REG_REGEXP)))
@@ -1703,7 +1715,7 @@ bra(Cenv_t* env)
 					inrange = env->type >= SRE || (env->flags & (REG_LENIENT|REG_REGEXP));
 				}
 				else if (inrange == 1)
-					ce = col(ce, ic, rp, rw, rc, NiL, 0, 0);
+					ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
 				else
 					inrange = 1;
 				rp = pp;
@@ -2097,7 +2109,7 @@ grp(Cenv_t* env, int parno)
 			switch (c)
 			{
 			case ')':
-				if (!(env->flags & REG_LITERAL))
+				if (!(env->flags & (REG_LITERAL|REG_SHELL)))
 				{
 					env->error = REG_BADRPT;
 					return 0;
@@ -2530,7 +2542,7 @@ grp(Cenv_t* env, int parno)
 	}
 	c = token(env);
 	env->parnest--;
-	if (c != T_CLOSE && (!(env->flags & REG_LITERAL) || c != ')'))
+	if (c != T_CLOSE && (c != ')' || !(env->flags & (REG_LITERAL|REG_SHELL))))
 	{
 		env->error = REG_EPAREN;
 		goto nope;
@@ -2590,7 +2602,9 @@ seq(Cenv_t* env)
 	int		x;
 	int		parno;
 	int		type;
+	wchar_t		w;
 	regflags_t	flags;
+	Mbstate_t	q;
 	unsigned char*	s;
 	unsigned char*	p;
 	unsigned char*	t;
@@ -2611,12 +2625,13 @@ seq(Cenv_t* env)
 			}
 			else if (c == C_ESC || (env->flags & REG_ICASE))
 			{
-				c = (c == C_ESC) ? env->token.lex : mbchar(p);
+				c = (c == C_ESC) ? env->token.lex : mbtchar(&w, p, MB_LEN_MAX, &env->q);
 				if (env->flags & REG_ICASE)
 					c = towupper(c);
 				if ((&buf[sizeof(buf)] - s) < MB_CUR_MAX)
 					break;
-				if ((n = mbconv((char*)s, c)) < 0)
+				mbtinit(&q);
+				if ((n = mbtconv((char*)s, c, &q)) < 0)
 					*s++ = c;
 				else if (n)
 					s += n;
@@ -3269,6 +3284,8 @@ regcomp(regex_t* p, const char* pattern, regflags_t flags)
 	if (!(p->env = (Env_t*)alloc(disc, 0, sizeof(Env_t))))
 		return fatal(disc, REG_ESPACE, pattern);
 	memset(p->env, 0, sizeof(*p->env));
+	if (!(p->env->mst = stkopen(STK_SMALL|STK_NULL)))
+		return fatal(disc, REG_ESPACE, pattern);
 	memset(&env, 0, sizeof(env));
 	env.regex = p;
 	env.flags = flags;
@@ -3391,7 +3408,7 @@ regcomp(regex_t* p, const char* pattern, regflags_t flags)
 		p->re_nsub /= 2;
 	if (env.flags & REG_DELIMITED)
 	{
-		p->re_npat = env.cursor - env.pattern + 1;
+		p->re_npat = env.cursor - (unsigned char*)pattern + 1;
 		if (*env.cursor == env.delimiter)
 			p->re_npat++;
 		else if (env.flags & REG_MUSTDELIM)

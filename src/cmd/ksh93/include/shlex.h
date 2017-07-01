@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -49,8 +49,11 @@ typedef struct  _shlex_
 	char		comp_assign;	/* in compound assignment */
 	char		comsub;		/* parsing command substitution */
 	char		noreserv;	/* reserved works not legal */
+	char		typed;		/* possible type definition on PATH */
 	int		inlineno;	/* saved value of sh.inlineno */
 	int		firstline;	/* saved value of sh.st.firstline */
+	int		assignlevel;	/* nesting level for assignment */
+	short		fundepth;	/* nesting level for functions */
 #if SHOPT_KIA
 	Sfio_t		*kiafile;	/* kia output file */
 	Sfio_t		*kiatmp;	/* kia reference file */
@@ -133,17 +136,6 @@ typedef struct  _shlex_
 
 #define SH_COMPASSIGN	010	/* allow compound assignments only */
 
-#if 0
-typedef struct  _shlex_
-{
-	struct shlex_t		_shlex;
-#ifdef  _SHLEX_PRIVATE
-	_SHLEX_PRIVATE
-#endif
-} Lex_t;
-
-#define	shlex			(((Lex_t*)(sh.lex_context))->_shlex)
-#endif
 extern const char		e_unexpected[];
 extern const char		e_unmatched[];
 extern const char		e_endoffile[];

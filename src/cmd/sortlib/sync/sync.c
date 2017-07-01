@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -24,7 +24,7 @@
  */
 
 static const char usage[] =
-"[-1lp0s5P?\n@(#)$Id: dfsort (AT&T Research) 2007-01-25 $\n]"
+"[-1lp0s5P?\n@(#)$Id: dfsort (AT&T Research) 2013-02-21 $\n]"
 USAGE_LICENSE
 "[+PLUGIN?sync - IBM dfsort discipline]"
 "[+DESCRIPTION?The \bsync\b \bsort\b(1) discipline applies an IBM \bDFSORT\b"
@@ -166,6 +166,8 @@ dfsort(Rs_t* rs, int op, Void_t* data, Void_t* arg, Rsdisc_t* disc)
 	case RS_OPEN:
 		if ((rs->type & RS_IGNORE) && (disc->events & (RS_SUMMARY|RS_WRITE)))
 			rs->type &= ~RS_IGNORE;
+		if (ss->readexit)
+			rs->type |= RS_MORE;
 		if (ssannounce(ss, rs))
 			return -1;
 		return ss->initexit ? CALLOUT(ss, ss->initexit, NiL, NiL) : 0;
@@ -193,7 +195,7 @@ dfsort(Rs_t* rs, int op, Void_t* data, Void_t* arg, Rsdisc_t* disc)
 		fp = ss->file;
 		if (!ss->readexit)
 			c = (ss->copy || !fp->next && (rs->type & RS_IGNORE)) ? RS_DELETE : RS_ACCEPT;
-		else if ((c = CALLOUT(ss, ss->readexit, rp, NiL)) < 0 || c == RS_DELETE)
+		else if ((c = CALLOUT(ss, ss->readexit, rp, (Rsobj_t*)arg)) < 0 || c == RS_DELETE)
 			return c;
 		if (ss->stop)
 			ss->stop--;
@@ -455,6 +457,8 @@ rs_disc(Rskey_t* key, const char* options)
 	}
 	if (!ss && !(ss = ssopen(NiL, ssdisc)))
 		goto drop;
+	if (!ss->file->group->name)
+		ss->file->group->name = key->output;
 	if (ss->merge)
 	{
 		key->merge = 1;
@@ -496,7 +500,7 @@ rs_disc(Rskey_t* key, const char* options)
 				if (strneq(s, SS_DD_IN, sizeof(SS_DD_IN) - 1) && (p = getenv(sfprints("%-.*s", t - s, s))))
 				{
 					v[n++] = u;
-					u = strcopy(u, p) + 1;
+					u = stpcpy(u, p) + 1;
 				}
 				if (!*t)
 					break;

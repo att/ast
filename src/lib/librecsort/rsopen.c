@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*                     Phong Vo <phongvo@gmail.com>                     *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #include	"rskeyhdr.h"
@@ -25,7 +25,7 @@
 **	Written by Kiem-Phong Vo (07/08/96)
 */
 
-static const char id[] = "\n@(#)$Id: recsort library (AT&T Research) 2011-10-11 $\0\n";
+static const char id[] = "\n@(#)$Id: recsort library (AT&T Research) 2013-02-13 $\0\n";
 
 #if __STD_C
 Rs_t* rsnew(Rsdisc_t* disc)
@@ -53,18 +53,12 @@ Rskey_t*	key;	/* key coder state			*/
 #endif
 {
 	Rsdisc_t*	disc;
+	Vmdisc_t*	vmdisc;
 	ssize_t		round;
 
 	if((round = c_max) > 0)
 		round /= 4;
-	rs->vmdisc.memoryf = Vmdcheap->memoryf;
-	rs->vmdisc.exceptf = Vmdcheap->exceptf;
-	if(!(rs->vm = (Vmalloc_t*)vmopen(&rs->vmdisc, Vmbest, 0)) )
-	{	vmfree(Vmheap,(void*)rs);
-		return -1;
-	}
-	rs->vmdisc.round = round <= 0 ? RS_RESERVE : round;
-	if(!(rs->vm = (Vmalloc_t*)vmopen(&rs->vmdisc, Vmbest, 0)) )
+	if(!(vmdisc = vmdcderive(Vmheap, round, 0)) || !(rs->vm = vmopen(vmdisc, Vmbest, 0)))
 	{	vmfree(Vmheap,(void*)rs);
 		return -1;
 	}

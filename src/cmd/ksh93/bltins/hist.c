@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,7 +33,7 @@
 
 #define HIST_RECURSE	5
 
-static void hist_subst(const char*, int fd, char*);
+static void hist_subst(Shell_t *shp,const char*, int fd, char*);
 
 #if 0
     /* for the benefit of the dictionary generator */
@@ -190,7 +190,7 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 	{
 		if(!(fname=pathtmp(NIL(char*),0,0,NIL(int*))))
 			errormsg(SH_DICT,ERROR_exit(1),e_create,"");
-		if((fdo=open(fname,O_CREAT|O_RDWR,S_IRUSR|S_IWUSR)) < 0)
+		if((fdo=open(fname,O_CREAT|O_RDWR,S_IRUSR|S_IWUSR|O_cloexec)) < 0)
 			errormsg(SH_DICT,ERROR_system(1),e_create,fname);
 		outfile= sfnew(NIL(Sfio_t*),shp->outbuff,IOBSIZE,fdo,SF_WRITE);
 		arg = "\n";
@@ -220,47 +220,25 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 		if(*arg!='/')
 			errormsg(SH_DICT,ERROR_exit(1),"ed not found set FCEDIT");
 	}
-#ifdef apollo
-	/*
-	 * Code to support the FC using the pad editor.
-	 * Exampled of how to use: HISTEDIT=pad
-	 */
-	if (strcmp (arg, "pad") == 0)
-	{
-		extern int pad_create(char*);
-		sh_close(fdo);
-		fdo = pad_create(fname);
-		pad_wait(fdo);
-		unlink(fname);
-		strcat(fname, ".bak");
-		unlink(fname);
-		lseek(fdo,(off_t)0,SEEK_SET);
-	}
-	else
-	{
-#endif /* apollo */
 	if(*arg != '-')
 	{
 		char *com[3];
 		com[0] =  arg;
 		com[1] =  fname;
 		com[2] = 0;
-		error_info.errors = sh_eval(sh_sfeval(com),0);
+		error_info.errors = sh_eval(shp,sh_sfeval(com),0);
 	}
 	fdo = sh_chkopen(fname);
 	unlink(fname);
 	free((void*)fname);
-#ifdef apollo
-	}
-#endif /* apollo */
 	/* don't history fc itself unless forked */
 	error_info.flags |= ERROR_SILENT;
-	if(!sh_isstate(SH_FORKED))
+	if(!sh_isstate(shp,SH_FORKED))
 		hist_cancel(hp);
-	sh_onstate(SH_HISTORY);
-	sh_onstate(SH_VERBOSE);	/* echo lines as read */
+	sh_onstate(shp,SH_HISTORY);
+	sh_onstate(shp,SH_VERBOSE);	/* echo lines as read */
 	if(replace)
-		hist_subst(error_info.id,fdo,replace);
+		hist_subst(shp,error_info.id,fdo,replace);
 	else if(error_info.errors == 0)
 	{
 		char buff[IOBSIZE+1];
@@ -268,15 +246,15 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 		/* read in and run the command */
 		if(shp->hist_depth++ > HIST_RECURSE)
 			errormsg(SH_DICT,ERROR_exit(1),e_toodeep,"history");
-		sh_eval(iop,1);
+		sh_eval(shp,iop,1);
 		shp->hist_depth--;
 	}
 	else
 	{
 		sh_close(fdo);
-		if(!sh_isoption(SH_VERBOSE))
-			sh_offstate(SH_VERBOSE);
-		sh_offstate(SH_HISTORY);
+		if(!sh_isoption(shp,SH_VERBOSE))
+			sh_offstate(shp,SH_VERBOSE);
+		sh_offstate(shp,SH_HISTORY);
 	}
 	return(shp->exitval);
 }
@@ -287,7 +265,7 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
  * execute the command with the string old replaced by new
  */
 
-static void hist_subst(const char *command,int fd,char *replace)
+static void hist_subst(Shell_t *shp,const char *command,int fd,char *replace)
 {
 	register char *newp=replace;
 	register char *sp;
@@ -304,9 +282,9 @@ static void hist_subst(const char *command,int fd,char *replace)
 		return;
 	string[c] = 0;
 	*newp++ =  0;
-	if((sp=sh_substitute(string,replace,newp))==0)
+	if((sp=sh_substitute(shp,string,replace,newp))==0)
 		errormsg(SH_DICT,ERROR_exit(1),e_subst,command);
 	*(newp-1) =  '=';
-	sh_eval(sfopen(NIL(Sfio_t*),sp,"s"),1);
+	sh_eval(shp,sfopen(NIL(Sfio_t*),sp,"s"),1);
 }
 

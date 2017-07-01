@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
 static const char usage[] =
-"[-?\n@(#)pty (AT&T Research) 2012-06-11\n]"
+"[-?\n@(#)pty (AT&T Research) 2013-05-22\n]"
 USAGE_LICENSE
 "[+NAME?pty - create pseudo terminal and run command]"
 "[+DESCRIPTION?\bpty\b creates a pseudo pty and then runs \bcommand\b "
@@ -222,7 +222,7 @@ mkpty(int* master, int* slave)
 	 */
 
 	alarm(4);
-	if (tcgetattr(STDERR_FILENO, &tty) >= 0)
+	if (tcgetattr(sffileno(sfstderr), &tty) >= 0)
 		ttyp = &tty;
 	else
 	{
@@ -230,7 +230,7 @@ mkpty(int* master, int* slave)
 		error(-1, "unable to get standard error terminal attributes");
 	}
 #ifdef TIOCGWINSZ
-	if (ioctl(STDERR_FILENO, TIOCGWINSZ, &win) >= 0)
+	if (ioctl(sffileno(sfstderr), TIOCGWINSZ, &win) >= 0)
 		winp = &win;
 	else
 	{
@@ -317,9 +317,13 @@ process(Sfio_t* mp, Sfio_t* lp, int delay, int timeout)
 	char*		s;
 	Sfio_t*		ip;
 	Sfio_t*		sps[2];
+	struct stat	dst;
+	struct stat	fst;
 
 	ip = sfstdin;
-	for (;;)
+	if (!fstat(sffileno(ip), &dst) && !stat("/dev/null", &fst) && dst.st_dev == fst.st_dev && dst.st_ino == fst.st_ino)
+		ip = 0;
+	do
 	{
 		i = 0;
 		t = timeout;
@@ -336,39 +340,39 @@ process(Sfio_t* mp, Sfio_t* lp, int delay, int timeout)
 		{
 			if (n < 0)
 				error(ERROR_SYSTEM|2, "poll failed");
-			if (t < 0)
-				break;
+			break;
 		}
-		else
-			for (i = 0; i < n; i++)
+		for (i = t = 0; i < n; i++)
+		{
+			if (!(sfvalue(sps[i]) & SF_READ))
+				/*skip*/;
+			else if (sps[i] == mp)
 			{
-				if (!(sfvalue(sps[i]) & SF_READ))
-					/*skip*/;
-				else if (sps[i] == mp)
+				t++;
+				if (!(s = (char*)sfreserve(mp, SF_UNBOUND, -1)))
 				{
-					if (!(s = (char*)sfreserve(mp, SF_UNBOUND, -1)))
-					{
-						sfclose(mp);
-						mp = 0;
-					}
-					else if ((r = sfvalue(mp)) > 0 && (sfwrite(sfstdout, s, r) != r || sfsync(sfstdout)))
-					{
-						error(ERROR_SYSTEM|2, "output write failed");
-						goto done;
-					}
+					sfclose(mp);
+					mp = 0;
 				}
-				else
+				else if ((r = sfvalue(mp)) > 0 && (sfwrite(sfstdout, s, r) != r || sfsync(sfstdout)))
 				{
-					if (!(s = sfgetr(ip, '\n', 1)))
-						ip = 0;
-					else if (sfputr(mp, s, '\r') < 0 || sfsync(mp))
-					{
-						error(ERROR_SYSTEM|2, "write failed");
-						goto done;
-					}
+					error(ERROR_SYSTEM|2, "output write failed");
+					goto done;
 				}
 			}
-	}
+			else
+			{
+				t++;
+				if (!(s = sfgetr(ip, '\n', 1)))
+					ip = 0;
+				else if (sfputr(mp, s, '\r') < 0 || sfsync(mp))
+				{
+					error(ERROR_SYSTEM|2, "write failed");
+					goto done;
+				}
+			}
+		}
+	} while (t);
  done:
 	if (mp)
 		sfclose(mp);

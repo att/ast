@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -28,7 +28,7 @@
  */
 
 #ifndef _AST_H
-#define _AST_H
+#define _AST_H		1
 
 #ifndef _AST_STD_H
 #include <ast_std.h>
@@ -107,23 +107,47 @@ struct _sfio_s;
 #define ASTCONF_AST		0x2000
 
 /*
- * pathcanon() flags
+ * pathcanon()/pathdev() flags and info
  */
 
-#define PATH_PHYSICAL	01
-#define PATH_DOTDOT	02
-#define PATH_EXISTS	04
-#define PATH_VERIFIED(n) (((n)&01777)<<5)
+#define PATH_PHYSICAL		0x001
+#define PATH_DOTDOT		0x002
+#define PATH_EXISTS		0x004
+#define PATH_DEV		0x008
+#define PATH_ABSOLUTE		0x010	/* NOTE: shared with pathaccess() below */
+#define PATH_CANON		0x020
+#define PATH_DROP_HEAD_SLASH2	0x040
+#define PATH_DROP_TAIL_SLASH	0x080
+#define PATH_EXCEPT_LAST	0x100
+#define PATH_VERIFIED(n)	(((n)&0xfffff)<<12)
+#define PATH_GET_VERIFIED(n)	(((n)>>12)&0xfffff)
+
+typedef struct Pathpart_s
+{
+	unsigned short	offset;
+	unsigned short	size;
+} Pathpart_t;
+
+typedef struct Pathdev_s
+{
+	int		fd;
+	int		oflags;
+	pid_t		pid;
+	Pathpart_t	prot;
+	Pathpart_t	host;
+	Pathpart_t	port;
+	Pathpart_t	path;
+} Pathdev_t;
 
 /*
  * pathaccess() flags
  */
 
-#define PATH_READ	004
-#define PATH_WRITE	002
-#define PATH_EXECUTE	001
-#define	PATH_REGULAR	010
-#define PATH_ABSOLUTE	020
+#define PATH_READ	0x04
+#define PATH_WRITE	0x02
+#define PATH_EXECUTE	0x01
+#define	PATH_REGULAR	0x08
+/* NOTE: PATH_ABSOLUTE shared with pathcanon()/pathdev() above */
 
 /*
  * touch() flags
@@ -148,11 +172,12 @@ typedef struct
  * strgrpmatch() flags
  */
 
-#define STR_MAXIMAL	01		/* maximal match		*/
-#define STR_LEFT	02		/* implicit left anchor		*/
-#define STR_RIGHT	04		/* implicit right anchor	*/
-#define STR_ICASE	010		/* ignore case			*/
-#define STR_GROUP	020		/* (|&) inside [@|&](...) only	*/
+#define STR_MAXIMAL	0x01		/* maximal match		*/
+#define STR_LEFT	0x02		/* implicit left anchor		*/
+#define STR_RIGHT	0x04		/* implicit right anchor	*/
+#define STR_ICASE	0x08		/* ignore case			*/
+#define STR_GROUP	0x10		/* (|&) inside [@|&](...) only	*/
+#define STR_INT		0x20		/* deprecated int* match array	*/
 
 /*
  * fmtquote() flags
@@ -178,28 +203,29 @@ typedef struct
  * multibyte macros
  */
 
-#define mbmax()		(ast.mb_cur_max)
-#define mberr()		(ast.tmp_int<0)
+#define mbmax()			(ast.mb_cur_max)
 
-#define mbcoll()	(ast.mb_xfrm!=0)
-#define mbwide()	(mbmax()>1)
+#define mbcoll()		(ast.mb_xfrm!=0)
+#define mbwide()		(mbmax()>1)
 
-#define mb2wc(w,p,n)	(*ast.mb_towc)(&w,(char*)p,n)
-#define mbchar(p)	(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),mbmax()))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
-#define mbnchar(p,n)	(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),n))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
-#define mbinit()	(mbwide()?(*ast.mb_towc)((wchar_t*)0,(char*)0,mbmax()):0)
-#define mbsize(p)	(mbwide()?(*ast.mb_len)((char*)(p),mbmax()):((p),1))
-#define mbnsize(p,n)	(mbwide()?(*ast.mb_len)((char*)(p),n):((p),1))
-#define mbconv(s,w)	(ast.mb_conv?(*ast.mb_conv)(s,w):((*(s)=(w)),1))
-#define mbwidth(w)	(ast.mb_width?(*ast.mb_width)(w):1)
-#define mbxfrm(t,f,n)	(mbcoll()?(*ast.mb_xfrm)((char*)(t),(char*)(f),n):0)
-#define mbalpha(w)	(ast.mb_alpha?(*ast.mb_alpha)(w):isalpha((w)&0xff))
+#define mbwidth(w)		(ast.mb_width?(*ast.mb_width)(w):1)
+#define mbxfrm(t,f,n)		(mbcoll()?(*ast.mb_xfrm)((char*)(t),(char*)(f),n):0)
+#define mbalpha(w)		(ast.mb_alpha?(*ast.mb_alpha)(w):isalpha((w)&0xff))
+
+#define mbsrtowcs(w,s,n,q)	(*ast._ast_mbsrtowcs)((s),(w),(n),(mbstate_t*)(q))
+#define wcsrtombs(s,w,n,q)	(*ast._ast_wcsrtombs)((s),(w),(n),(mbstate_t*)(q))
+
+/* the converse does not always hold! */
+#define utf32invalid(u)	((u)>0x0010FFFF||(u)>=0x0000D800&&(u)<=0x0000DFFF||(u)>=0xFFFE&&(u)<=0xFFFF)
+
+#define UTF8_LEN_MAX		6	/* UTF-8 only uses 5 */
 
 /*
  * common macros
  */
 
 #define elementsof(x)	(sizeof(x)/sizeof(x[0]))
+#define getconf(x)	strtol(astconf((x),NiL,NiL),NiL,0)
 #define integralof(x)	(((char*)(x))-((char*)0))
 #define newof(p,t,n,x)	((p)?(t*)realloc((char*)(p),sizeof(t)*(n)+(x)):(t*)calloc(1,sizeof(t)*(n)+(x)))
 #define oldof(p,t,n,x)	((p)?(t*)realloc((char*)(p),sizeof(t)*(n)+(x)):(t*)malloc(sizeof(t)*(n)+(x)))
@@ -235,11 +261,15 @@ typedef struct
 
 #define NOT_USED(x)	NoP(x)
 
-typedef int (*Error_f)(void*, void*, int, ...);
-
 typedef int (*Ast_confdisc_f)(const char*, const char*, const char*);
 typedef int (*Strcmp_context_f)(const char*, const char*, void*);
 typedef int (*Strcmp_f)(const char*, const char*);
+
+#include <ast_errorf.h>
+
+#ifndef _VMALLOC_H
+struct Vmdisc_s;
+#endif
 
 #if _BLD_ast && defined(__EXPORT__)
 #define extern		__EXPORT__
@@ -260,6 +290,7 @@ extern int		chresc(const char*, char**);
 extern int		chrexp(const char*, char**, int*, int);
 extern int		chrtoi(const char*);
 extern char*		conformance(const char*, size_t);
+extern ssize_t		debug_printf(int, const char*, ...);
 extern int		eaccess(const char*, int);
 extern char*		fmtbase(intmax_t, int, int);
 #define fmtbasell(a,b,c) fmtbase(a,b,c) /* until 2014-01-01 */
@@ -288,6 +319,7 @@ extern char*		fmtuid(int);
 extern char*		fmtversion(unsigned long);
 extern void*		memdup(const void*, size_t);
 extern void		memfatal(void);
+extern int		memfatal_20130509(struct Vmdisc_s*);
 extern unsigned int	memhash(const void*, int);
 extern unsigned long	memsum(const void*, int, unsigned long);
 extern char*		pathaccess(char*, const char*, const char*, const char*, int);
@@ -299,6 +331,7 @@ extern char*		pathcat(char*, const char*, int, const char*, const char*);
 extern char*		pathcat_20100601(const char*, int, const char*, const char*, char*, size_t);
 extern int		pathcd(const char*, const char*);
 extern int		pathcheck(const char*, const char*, Pathcheck_t*);
+extern char*		pathdev(int, const char*, char*, size_t, int, Pathdev_t*);
 extern int		pathexists(char*, int);
 extern char*		pathfind(const char*, const char*, const char*, char*, size_t);
 extern int		pathgetlink(const char*, char*, int);
@@ -306,6 +339,7 @@ extern int		pathinclude(const char*);
 extern char*		pathkey(char*, char*, const char*, const char*, const char*);
 extern char*		pathkey_20100601(const char*, const char*, const char*, char*, size_t, char*, size_t);
 extern size_t		pathnative(const char*, char*, size_t);
+extern int		pathopen(int, const char*, char*, size_t, int, int, mode_t);
 extern char*		pathpath(char*, const char*, const char*, int);
 extern char*		pathpath_20100601(const char*, const char*, int, char*, size_t);
 extern size_t		pathposix(const char*, char*, size_t);
@@ -318,6 +352,8 @@ extern int		pathsetlink(const char*, const char*);
 extern char*		pathshell(void);
 extern char*		pathtemp(char*, size_t, const char*, const char*, int*);
 extern char*		pathtmp(char*, const char*, const char*, int*);
+extern ssize_t		qpencode(const void*, size_t, void**, void*, size_t, void**);
+extern ssize_t		qpdecode(const void*, size_t, void**, void*, size_t, void**);
 extern char*		setenviron(const char*);
 extern int		stracmp(const char*, const char*);
 extern char*		strcopy(char*, const char*);
@@ -329,6 +365,7 @@ extern long		strexpr(const char*, char**, long(*)(const char*, char**, void*), v
 extern int		strgid(const char*);
 extern int		strgrpmatch(const char*, const char*, int*, int, int);
 extern int		strgrpmatch_20120528(const char*, const char*, ssize_t*, int, int);
+extern int		strngrpmatch(const char*, size_t, const char*, ssize_t*, int, int);
 extern unsigned int	strhash(const char*);
 extern void*		strlook(const void*, size_t, const char*);
 extern int		strmatch(const char*, const char*);
@@ -350,7 +387,8 @@ extern int		strpcmp(const char*, const char*);
 extern int		strperm(const char*, char**, int);
 extern void*		strpsearch(const void*, size_t, size_t, const char*, char**);
 extern void*		strsearch(const void*, size_t, size_t, Strcmp_f, const char*, void*);
-extern void		strsort(char**, int, int(*)(const char*, const char*));
+extern void		strsort(char**, int, Strcmp_f);
+extern void		strsort_r(char**, size_t, Strcmp_context_f, void*);
 extern char*		strsubmatch(const char*, const char*, int);
 extern unsigned long	strsum(const char*, unsigned long);
 extern char*		strtape(const char*, char**);
@@ -360,7 +398,16 @@ extern intmax_t		strtonll(const char*, char**, char*, int);
 extern int		struid(const char*);
 extern int		struniq(char**, int);
 extern int		strvcmp(const char*, const char*);
-extern int		wc2utf8(char*, uint32_t);
+
+extern size_t		utf32toutf8(char*, uint32_t);
+extern size_t		utf8toutf32(uint32_t*, const char*, size_t);
+extern size_t		utf8toutf32v(uint32_t*, const char*);
+extern size_t		utf8towc(wchar_t*, const char*, size_t);
+
+extern ssize_t		utf32stowcs(wchar_t*, uint32_t*, size_t);
+extern ssize_t		wcstoutf32s(uint32_t*, wchar_t*, size_t);
+
+extern size_t		ast_mbrchar(wchar_t*, const char*, size_t, Mbstate_t*);
 
 #undef			extern
 
@@ -374,23 +421,39 @@ extern int		wc2utf8(char*, uint32_t);
 extern char**		environ;
 #endif
 
-/*
- * really handy malloc()/free() (__FILE__,__LINE__,__FUNCTION__) tracing
- * make with VMDEBUG==1 or debug=1 or CCFLAGS=$(CC.DEBUG)
- * VMDEBUG==0 disables
- * at runtime export VMALLOC_OPTIONS per vmalloc.3
- * to list originating call locations
- */
+#include <ast_debug.h>
 
-#if !_std_malloc && !defined(VMFL) && !defined(_VMHDR_H) && \
-	(VMDEBUG || !defined(VMDEBUG) && _BLD_DEBUG)
+#include <ast_api.h>
 
-#define VMFL	1
-#include <vmalloc.h>
+/* api specific mb/wc macros */
+
+#if ASTAPI(20130913)
+
+#define mbsinit(q)		(*(q)=ast._ast_mbstate_init.mb_state)
+#define mbinit(q)		(*(q)=ast._ast_mbstate_init)
+#define mberrno(q)		((q)->mb_errno)
+#define mbsize(s,n,q)		(*ast._ast_mbrlen)((char*)(s),(n),(mbstate_t*)(q))
+#define mbchar(w,s,n,q)		(((s)+=(ast_mbrchar)((wchar_t*)(w),(char*)(s),(n),(q))),(*(w)))
+#define mbconv(s,w,q)		(*ast._ast_wcrtomb)((s),(w),(mbstate_t*)(q))
+
+#define mbtinit(q)		(mbwide()?(mbinit(q),0):0)
+#define mbtsize(s,n,q)		(mbwide()?mbsize((s),(n),(q)):(!!*(s)))
+#define mbtchar(w,s,n,q)	(mbwide()?mbchar((w),(s),(n),(q)):(*(unsigned char*)(s++)))
+#define mbtconv(s,w,q)		(mbwide()?mbconv((s),(w),(q)):((*(s)=(w)),1))
+
+#else
+
+#define mb2wc(w,p,n)		(*ast.mb_towc)(&(w),(char*)(p),(n))
+#define mbchar(p)		(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),mbmax()))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
+#define mbnchar(p,n)		(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),n))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
+#define mbinit()		(mbwide()?(*ast.mb_towc)((wchar_t*)0,(char*)0,mbmax()):0)
+#define mbsize(p)		(mbwide()?(*ast.mb_len)((char*)(p),mbmax()):((p),1))
+#define mbnsize(p,n)		(mbwide()?(*ast.mb_len)((char*)(p),n):((p),1))
+#define mbconv(s,w)		(ast.mb_conv?(*ast.mb_conv)(s,w):((*(s)=(w)),1))
 
 #endif
 
-#include <ast_api.h>
+/* generic plugin version support */
 
 #undef	AST_PLUGIN_VERSION
 #define AST_PLUGIN_VERSION(v)	((v)>AST_VERSION?(v):AST_VERSION)

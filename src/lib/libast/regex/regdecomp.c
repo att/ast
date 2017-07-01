@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -69,7 +69,7 @@ detrie(Trie_node_t* x, Sfio_t* sp, char* b, char* p, char* e, int delimiter)
 }
 
 static int
-decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
+decomp(register Rex_t* e, Rex_t* parent, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 {
 	Rex_t*		q;
 	unsigned char*	s;
@@ -91,10 +91,10 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 		switch (e->type)
 		{
 		case REX_ALT:
-			if (decomp(e->re.group.expr.binary.left, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.binary.left, e, sp, type, delimiter, flags))
 				return 1;
 			sfputc(sp, '|');
-			if (e->re.group.expr.binary.right && decomp(e->re.group.expr.binary.right, sp, type, delimiter, flags))
+			if (e->re.group.expr.binary.right && decomp(e->re.group.expr.binary.right, e, sp, type, delimiter, flags))
 				return 1;
 			break;
 		case REX_BACK:
@@ -140,11 +140,13 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 					sfputc(sp, '?');
 				else
 					c = 0;
+				if (e->re.group.expr.rex && e->re.group.expr.rex->type == REX_GROUP)
+					c = 0;
 			}
 			switch (e->type)
 			{
 			case REX_REP:
-				if (decomp(e->re.group.expr.rex, sp, type, delimiter, flags))
+				if (decomp(e->re.group.expr.rex, e, sp, type, delimiter, flags))
 					return 1;
 				break;
 			case REX_CLASS:
@@ -321,7 +323,7 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 		case REX_NEG:
 			if (type >= SRE)
 				sfprintf(sp, "!(");
-			if (decomp(e->re.group.expr.rex, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.rex, e, sp, type, delimiter, flags))
 				return 1;
 			if (type >= SRE)
 				sfputc(sp, ')');
@@ -329,17 +331,17 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 				sfputc(sp, '!');
 			break;
 		case REX_CONJ:
-			if (decomp(e->re.group.expr.binary.left, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.binary.left, e, sp, type, delimiter, flags))
 				return 1;
 			sfputc(sp, '&');
-			if (decomp(e->re.group.expr.binary.right, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.binary.right, e, sp, type, delimiter, flags))
 				return 1;
 			break;
 		case REX_GROUP:
-			if (type >= SRE)
+			if (type >= SRE && parent->type != REX_REP)
 				sfputc(sp, '@');
 			meta(sp, '(', type, 1, delimiter);
-			if (decomp(e->re.group.expr.rex, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.rex, e, sp, type, delimiter, flags))
 				return 1;
 			meta(sp, ')', type, 1, delimiter);
 			break;
@@ -349,22 +351,22 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 		case REX_GROUP_BEHIND_NOT:
 			meta(sp, '(', type, 1, delimiter);
 			sfputc(sp, '?');
-			if (decomp(e->re.group.expr.rex, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.rex, e, sp, type, delimiter, flags))
 				return 1;
 			meta(sp, ')', type, 1, delimiter);
 			break;
 		case REX_GROUP_COND:
 			meta(sp, '(', type, 1, delimiter);
 			sfputc(sp, '?');
-			if (e->re.group.expr.binary.left && decomp(e->re.group.expr.binary.left, sp, type, delimiter, flags))
+			if (e->re.group.expr.binary.left && decomp(e->re.group.expr.binary.left, e, sp, type, delimiter, flags))
 				return 1;
 			if (q = e->re.group.expr.binary.right)
 			{
 				sfputc(sp, ':');
-				if (q->re.group.expr.binary.left && decomp(q->re.group.expr.binary.left, sp, type, delimiter, flags))
+				if (q->re.group.expr.binary.left && decomp(q->re.group.expr.binary.left, q, sp, type, delimiter, flags))
 					return 1;
 				sfputc(sp, ':');
-				if (q->re.group.expr.binary.right && decomp(q->re.group.expr.binary.right, sp, type, delimiter, flags))
+				if (q->re.group.expr.binary.right && decomp(q->re.group.expr.binary.right, q, sp, type, delimiter, flags))
 					return 1;
 			}
 			meta(sp, ')', type, 1, delimiter);
@@ -372,7 +374,7 @@ decomp(register Rex_t* e, Sfio_t* sp, int type, int delimiter, regflags_t flags)
 		case REX_GROUP_CUT:
 			meta(sp, '(', type, 1, delimiter);
 			sfputc(sp, '?');
-			if (decomp(e->re.group.expr.rex, sp, type, delimiter, flags))
+			if (decomp(e->re.group.expr.rex, e, sp, type, delimiter, flags))
 				return 1;
 			meta(sp, ')', type, 1, delimiter);
 			break;
@@ -429,7 +431,7 @@ regdecomp(regex_t* p, regflags_t flags, char* buf, size_t n)
 	}
 	else
 		delimiter = -1;
-	if (decomp(p->env->rex, sp, type, delimiter, flags))
+	if (decomp(p->env->rex, p->env->rex, sp, type, delimiter, flags))
 		r = 0;
 	else
 	{

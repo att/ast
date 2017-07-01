@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -89,6 +89,7 @@ vfwscanf(Sfio_t* f, const wchar_t* fmt, va_list args)
 {
 	size_t	n;
 	int	v;
+	int	d;
 	Sfio_t*	t;
 	Wide_t*	w;
 	char	buf[1024];
@@ -99,7 +100,8 @@ vfwscanf(Sfio_t* f, const wchar_t* fmt, va_list args)
 	n = wcstombs(NiL, fmt, 0);
 	if (w = newof(0, Wide_t, 1, n))
 	{
-		if (t = sfnew(NiL, buf, sizeof(buf), OPEN_MAX+1, SF_READ))
+		d = dup(0);
+		if (t = sfnew(NiL, buf, sizeof(buf), d, SF_READ))
 		{
 			w->sfdisc.exceptf = wideexcept;
 			w->sfdisc.readf = wideread;
@@ -122,6 +124,7 @@ vfwscanf(Sfio_t* f, const wchar_t* fmt, va_list args)
 			free(w);
 			v = -1;
 		}
+		close(d);
 	}
 	else
 		v = -1;

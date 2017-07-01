@@ -14,23 +14,27 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
 static const char usage[] =
-"[-?\n@(#)$Id: mktemp (AT&T Research) 2010-03-05 $\n]"
+"[-?\n@(#)$Id: mktemp (AT&T Research) 2012-12-12 $\n]"
 USAGE_LICENSE
 "[+NAME?mktemp - make temporary file or directory]"
 "[+DESCRIPTION?\bmktemp\b creates a temporary file with optional base "
-    "name prefix \aprefix\a. If \aprefix\a is omitted then \btmp_\b is used "
-    "and \b--tmp\b is implied. If \aprefix\a contains a directory prefix "
-    "then that directory overrides any of the directories described below. A "
-    "temporary file will have mode \brw-------\b and a temporary directory "
-    "will have mode \brwx------\b, subject to \bumask\b(1). Generated paths "
-    "have these attributes:]"
+    "name prefix \aprefix\a. If \aprefix\a is omitted then \btmp\b is used "
+    "and \b--tmp\b is implied. A consecutive string of trailing X's in "
+    "\aprefix\a is replaced by a pseudorandom combination of [0-9a-zA-Z]]"
+    "characters, otherwise the first 5 characters of \aprefix\a is catenated "
+    "with a pseudorandom string to construct a file name component of 14 "
+    "characters. If \adirectory\a is specified or if \aprefix\a contains a "
+    "directory prefix then that directory overrides any of the directories "
+    "described below. A temporary file will have mode \brw-------\b and a "
+    "temporary directory will have mode \brwx------\b, subject to "
+    "\bumask\b(1). Generated paths have these attributes:]"
     "{"
         "[+*?Lower case to avoid clashes on case ignorant filesystems.]"
         "[+*?Pseudo-random part to deter denial of service attacks.]"
@@ -41,9 +45,9 @@ USAGE_LICENSE
     "by the pseudo-random part. If there are no \bX\b's then the "
     "pseudo-random part is appended to the prefix.]"
 "[d:directory?Create a directory instead of a regular file.]"
-"[m:mode]:[mode?Set the mode of the created temporary to \amode\a. "
+"[m:mode?Set the mode of the created temporary to \amode\a. "
     "\amode\a is symbolic or octal mode as in \bchmod\b(1). Relative modes "
-    "assume an initial mode of \bu=rwx\b.]"
+    "assume an initial mode of \bu=rwx\b.]:[mode]"
 "[p:default?Use \adirectory\a if the \bTMPDIR\b environment variable is "
     "not defined. Implies \b--tmp\b.]:[directory]"
 "[q:quiet?Suppress file and directory error diagnostics.]"
@@ -55,7 +59,7 @@ USAGE_LICENSE
 "[u:unsafe|dry-run?Check for file/directory existence but do not create. "
     "Use this for testing only.]"
 "\n"
-"\n[ prefix ]\n"
+"\n[ prefix [ directory ] ]\n"
 "\n"
 "[+SEE ALSO?\bmkdir\b(1), \bpathtemp\b(3), \bmktemp\b(3)]"
 ;
@@ -70,6 +74,8 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 	mode_t		mask;
 	int		fd;
 	int		i;
+	int		directory = 0;
+	int		list = 1;
 	int		quiet = 0;
 	int		unsafe = 0;
 	int*		fdp = &fd;
@@ -84,7 +90,7 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 		switch (optget(argv, usage))
 		{
 		case 'd':
-			fdp = 0;
+			directory = 1;
 			continue;
 		case 'm':
 			mode = strperm(pfx = opt_info.arg, &opt_info.arg, S_IRWXU);
@@ -121,19 +127,24 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 		break;
 	}
 	argv += opt_info.index;
-	if (error_info.errors || (pfx = *argv++) && *argv)
+	if (error_info.errors || (pfx = *argv) && *++argv && *(argv + 1))
 		error(ERROR_usage(2), "%s", optusage(NiL));
-	mask = umask(0);
-	if (!mode)
-		mode = (fdp ? (S_IRUSR|S_IWUSR) : S_IRWXU) & ~mask;
-	umask(~mode & (S_IRWXU|S_IRWXG|S_IRWXO));
 	if (!pfx)
 	{
-		pfx = "tmp_";
+		pfx = "tmp";
 		if (dir && !*dir)
 			dir = 0;
 	}
-	if (t = strrchr(pfx, '/'))
+	if (*argv)
+	{
+		dir = *argv;
+		if (*pfx == '/')
+		{
+			fdp = 0;
+			list = 0;
+		}
+	}
+	else if (t = strrchr(pfx, '/'))
 	{
 		i = ++t - pfx;
 		dir = fmtbuf(i);
@@ -141,29 +152,36 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 		dir[i] = 0;
 		pfx = t;
 	}
-	for (;;)
+	if (directory)
 	{
-		if (!pathtemp(path, sizeof(path), dir, pfx, fdp))
-		{
-			if (quiet)
-				error_info.errors++;
-			else
-				error(ERROR_SYSTEM|2, "cannot create temporary path");
-			break;
-		}
-		if (fdp || unsafe || !mkdir(path, mode))
-		{
-			if (fdp)
-				close(*fdp);
-			sfputr(sfstdout, path, '\n');
-			break;
-		}
-		if (sh_checksig(context))
-		{
-			error_info.errors++;
-			break;
-		}
+		i = strlen(pfx);
+		t = pfx;
+		pfx = fmtbuf(i + 2);
+		memcpy(pfx, t, i);
+		pfx[i] = '/';
+		pfx[i+1] = 0;
 	}
-	umask(mask);
+	if (fdp)
+	{
+		mask = umask(0);
+		if (!mode)
+			mode = (fdp ? (S_IRUSR|S_IWUSR) : S_IRWXU) & ~mask;
+		if (directory)
+			mode |= S_IXUSR;
+		umask(~mode & (S_IRWXU|S_IRWXG|S_IRWXO));
+	}
+	if (pathtemp(path, sizeof(path), dir, pfx, fdp))
+	{
+		if (fdp)
+			close(*fdp);
+		if (list)
+			sfputr(sfstdout, path, '\n');
+	}
+	else if (quiet)
+		error_info.errors++;
+	else
+		error(ERROR_SYSTEM|2, "cannot create temporary path");
+	if (fdp)
+		umask(mask);
 	return error_info.errors != 0;
 }

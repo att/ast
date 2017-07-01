@@ -1,3 +1,7 @@
+13-08-11 flat.c: strcopy() => stpcpy()
+13-03-11 flat.c: fix <RECORD><WIDTH> vs <SIZE> logic
+13-03-01 flat.c: fix flatten txt string => bin size+string
+12-11-29 flat.c: implement var length format records on output
 10-11-12 flat.c: eliminate strict-aliasing puns
 08-08-30 flat.c: work around macos cc struct copy bug
 07-06-05 flat.c: <COUNT>*</> => <COUNT>0</> => 0 or more

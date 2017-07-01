@@ -54,6 +54,10 @@
 			<NAME>INCOMPLETE</>
 			<VALUE>?</>
 		</>
+		<ITEM>
+			<NAME>UNSET</>
+			<VALUE>0</>
+		</>
 	</>
 </>
 <MAP>

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -53,8 +53,7 @@ hashscan(register Hash_table_t* tab, register int flags)
 	if (!(pos = newof(0, Hash_position_t, 1, 0))) return(0);
 	pos->tab = tab->root->last.table = tab;
 	pos->bucket = &empty;
-	pos->slot = tab->table - 1;
-	pos->limit = tab->table + tab->size;
+	pos->slot = 0;
 	if (tab->scope && !(flags & HASH_NOSCOPE))
 	{
 		pos->flags = HASH_SCOPE;
@@ -96,16 +95,16 @@ hashnext(register Hash_position_t* pos)
 		{
 			do
 			{
-				if (++pos->slot >= pos->limit)
+				if (pos->slot >= pos->tab->size)
 				{
 					pos->tab->frozen--;
 					if (!pos->flags || !pos->tab->scope) return(0);
 					pos->tab = pos->tab->scope;
 					pos->tab->root->last.table = pos->tab;
-					pos->limit = (pos->slot = pos->tab->table) + pos->tab->size;
+					pos->slot = 0;
 					pos->tab->frozen++;
 				}
-			} while (!(b = *pos->slot));
+			} while (!(b = pos->tab->table[pos->slot++]));
 		}
 		if (!(b->hash & HASH_DELETED) && (!(pos->tab->flags & HASH_VALUE) || b->value) && (!pos->flags || !(b->hash & (HASH_HIDDEN|HASH_HIDES)))) break;
 		if (b->hash & HASH_HIDES)

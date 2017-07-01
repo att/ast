@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _CDTLIB_H
@@ -24,7 +24,7 @@
 
 /*	cdt library/method implementation header
 **	this header is exported to the method libraries
-**	Written by Kiem-Phong Vo (5/25/96)
+**	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 #if _PACKAGE_ast
@@ -58,9 +58,9 @@
 /* This struct holds private method data created on DT_OPEN */
 struct _dtdata_s
 {	unsigned int	lock;	/* general dictionary lock	*/
-	Dtuser_t	user;	/* application's data		*/
 	unsigned int	type;	/* method type, control flags	*/
 	ssize_t		size;	/* number of objects		*/
+	Dtuser_t	user;	/* application's data		*/
 	Dt_t		dict;	/* when DT_INDATA is requested	*/
 };
 
@@ -123,7 +123,7 @@ typedef struct _dtlib_s
 #endif /* _BLD_cdt */
 
 /* these macros lock/unlock dictionaries. DTRETURN substitutes for "return" */
-#define DTSETLOCK(dt)		(((dt)->data->type&DT_SHARE) ? asolock(&(dt)->data->lock,1,ASO_SPINLOCK) : 0 )
+#define DTSETLOCK(dt)		(((dt)->data->type&DT_SHARE) ? asolock(&(dt)->data->lock,1,ASO_LOCK) : 0 )
 #define DTCLRLOCK(dt)		(((dt)->data->type&DT_SHARE) ? asolock(&(dt)->data->lock,1,ASO_UNLOCK) : 0 )
 #define DTRETURN(ob,rv)		do { (ob) = (rv); goto dt_return; } while(0)
 #define DTERROR(dt, mesg) 	(!((dt)->disc && (dt)->disc->eventf) ? 0 : \
@@ -178,6 +178,7 @@ extern Void_t*		malloc _ARG_((size_t));
 extern Void_t*		realloc _ARG_((Void_t*, size_t));
 extern void		free _ARG_((Void_t*));
 #endif
+
 _END_EXTERNS_
 
 #endif /* _CDTLIB_H */

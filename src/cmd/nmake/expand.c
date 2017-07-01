@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -50,8 +50,6 @@
 #define SORT_reverse	((SORT_MASK+1)<<3)
 #define SORT_sort	((SORT_MASK+1)<<4)
 #define SORT_uniq	((SORT_MASK+1)<<5)
-
-typedef int (*Cmp_f)(const char*, const char*);
 
 static const regflags_t	submap[] =
 {
@@ -137,7 +135,7 @@ istrvcmp(const char* a, const char* b)
 	return strvcmp(b, a);
 }
 
-static Cmp_f		sort_cmp[] =
+static Strcmp_f		sort_cmp[] =
 {
 	strcmp,
 	istrcmp,
@@ -155,10 +153,10 @@ static Cmp_f		sort_cmp[] =
  * return sort comparison function for SORT_* flags
  */
 
-static Cmp_f
+static Strcmp_f
 sortcmpf(int flags)
 {
-	Cmp_f	f;
+	Strcmp_f	f;
 
 	if ((flags &= SORT_MASK) >= elementsof(sort_cmp))
 		flags &= SORT_invert;
@@ -952,7 +950,7 @@ sort(Sfio_t* xp, register char* s, int flags)
 	char*		tok;
 	long		n;
 	Sfio_t*		vec;
-	Cmp_f		cmp;
+	Strcmp_f	cmp;
 
 	vec = sfstropen();
 	tok = tokopen(s, 0);
@@ -2434,6 +2432,11 @@ token(Sfio_t* xp, char* s, register char* p, int sep)
 				break;
 			}
 			break;
+		case 'Z':
+			if (*++ops == '=')
+				ops++;
+			sfputr(xp, timefmt(ops, tmxdate(s, NiL, CURTIME)), -1);
+			return;
 		default:
 			tst = 0;
 			break;

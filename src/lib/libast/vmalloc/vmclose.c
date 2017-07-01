@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(_UWIN) && defined(_BLD_ast)
@@ -29,8 +29,9 @@ void _STUB_vmclose(){}
 
 /*	Close down a region.
 **
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+**	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
+
 #if __STD_C
 int vmclose(Vmalloc_t* vm)
 #else
@@ -38,49 +39,38 @@ int vmclose(vm)
 Vmalloc_t*	vm;
 #endif
 {
-	Seg_t		*seg, *vmseg, *next;
-	Vmalloc_t	*v, *last;
-	Vmdata_t*	vd = vm->data;
-	Vmdisc_t*	disc = vm->disc;
-	int		mode, rv = 0;
+	int		mode;
+	Seg_t		*seg, *next;
+	Vmhold_t	*vh;
+	Vmdata_t	*vmdt = vm->data;
+	Vmdisc_t	*disc = vm->disc;
+	int		rv = 0;
 
-	if(vm == Vmheap) /* the heap is never freed */
+	if(!vm || vm == Vmheap) /* the heap is never freed */
 		return -1;
 
-	if(vm->disc->exceptf && /* announcing closing event */
-	   (rv = (*vm->disc->exceptf)(vm,VM_CLOSE,(Void_t*)1,vm->disc)) < 0 )
+	/* announce closing event */
+	if(disc->exceptf && (rv = (*disc->exceptf)(vm, VM_CLOSE, (Void_t*)1, disc)) < 0 )
 		return -1;
 
-	mode = vd->mode; /* remember this in case it gets destroyed below */
+	if(vm->meth.eventf) /* let method clean up */
+		(*vm->meth.eventf)(vm, VM_CLOSE, NIL(Void_t*));
 
-	if((mode&VM_MTPROFILE) && _Vmpfclose)
-		(*_Vmpfclose)(vm);
-
-	/* remove from linked list of regions */
-	_vmlock(NIL(Vmalloc_t*), 1);
-	for(last = Vmheap, v = last->next; v; last = v, v = v->next)
-	{	if(v == vm)
-		{	last->next = v->next;
+	/* remove from list of regions */
+	for(vh = _Vmhold; vh; vh = vh->next)
+		if(asocasptr(&vh->vm, vm, NIL(Vmalloc_t*)) == vm)
 			break;
+
+	mode = vmdt->mode; /* remember this in case it gets destroyed below */
+	if(rv == 0 ) /* memory obtained from discipline can be deallocated */
+	{	for(seg = vmdt->seg; seg; seg = next)
+		{	next = seg->next; 
+			(void)(*disc->memoryf)(vm, seg->base, seg->size, 0, disc);
 		}
 	}
-	_vmlock(NIL(Vmalloc_t*), 0);
 
-	if(rv == 0) /* deallocate memory obtained from the system */
-	{	/* lock-free because alzheimer can cause deadlocks :) */
-		vmseg = NIL(Seg_t*);
-		for(seg = vd->seg; seg; seg = next)
-		{	next = seg->next;
-			if(seg->extent == seg->size) /* root segment */
-				vmseg = seg; /* don't free this yet */
-			else	(*disc->memoryf)(vm,seg->addr,seg->extent,0,disc);
-		}
-		if(vmseg) /* now safe to free root segment */
-			(*disc->memoryf)(vm,vmseg->addr,vmseg->extent,0,disc);
-	}
-
-	if(disc->exceptf) /* finalizing closing */
-		(void)(*disc->exceptf)(vm, VM_ENDCLOSE, (Void_t*)0, disc);
+	if(disc->exceptf) /* the 3rd argument tells if vm might have been destroyed */
+		(void)(*disc->exceptf)(vm, VM_ENDCLOSE, VMCAST(Void_t*, mode&VM_MEMORYF), disc);
 
 	if(!(mode & VM_MEMORYF) )
 		vmfree(Vmheap,vm);

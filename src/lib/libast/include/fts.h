@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -40,21 +40,21 @@
  * fts_open flags
  */
 
-#define FTS_LOGICAL	0	/* logical traversal, follow symlinks	*/
-#define FTS_META	(1<<0)	/* follow top dir symlinks even if phys	*/
-#define FTS_NOCHDIR	(1<<1)	/* don't chdir				*/
-#define FTS_NOPOSTORDER	(1<<2)	/* no postorder visits			*/
-#define FTS_NOPREORDER	(1<<3)	/* no preorder visits			*/
-#define FTS_NOSEEDOTDIR	(1<<11)	/* never retain leading . dir		*/
-#define FTS_NOSTAT	(1<<4)	/* don't stat children			*/
-#define FTS_ONEPATH	(1<<5)	/* pathnames arg is one const char*	*/
-#define FTS_PHYSICAL	(1<<6)	/* physical traversal, don't follow	*/
-#define FTS_SEEDOT	(1<<7)	/* return . and ..			*/
-#define FTS_SEEDOTDIR	(1<<10)	/* always retain leading . dir		*/
-#define FTS_TOP		(1<<8)	/* don't traverse subdirectories	*/
-#define FTS_XDEV	(1<<9)	/* don't cross mount points		*/
-
-#define FTS_USER	(1<<12)	/* first user flag bit			*/
+#define FTS_LOGICAL	0		/* logical traversal, follow symlinks	*/
+#define FTS_META	0x00000001	/* follow top dir symlinks even if phys	*/
+#define FTS_NOCHDIR	0x00000002	/* don't chdir				*/
+#define FTS_NOPOSTORDER	0x00000004	/* no postorder visits			*/
+#define FTS_NOPREORDER	0x00000008	/* no preorder visits			*/
+#define FTS_NOSEEDOTDIR	0x00000800	/* never retain leading . dir		*/
+#define FTS_NOSTAT	0x00000010	/* don't stat children			*/
+#define FTS_ONEPATH	0x00000020	/* pathnames arg is one const char*	*/
+#define FTS_PHYSICAL	0x00000040	/* physical traversal, don't follow	*/
+#define FTS_SEEDOT	0x00000080	/* return . and ..			*/
+#define FTS_SEEDOTDIR	0x00000400	/* always retain leading . dir		*/
+#define FTS_TOP		0x00000100	/* don't traverse subdirectories	*/
+#define FTS_XDEV	0x00000200	/* don't cross mount points		*/
+#define FTS_WALK	0x00001000	/* 8 ftwalk() compatibility flag bits	*/
+#define FTS_XATTR	0x00100000	/* traverse extended attributes too	*/
 
 #define FTS_COMFOLLOW	FTS_META
 
@@ -64,18 +64,20 @@
 
 #define FTS_DEFAULT	0	/* ok, someone must have wanted this	*/
 
-#define FTS_NS		(1<<0)	/* stat failed				*/
-#define FTS_F		(1<<1)	/* file - not directory or symbolic link*/
-#define FTS_SL		(1<<2)	/* symbolic link			*/
-#define FTS_D		(1<<3)	/* directory - pre-order visit		*/
+#define FTS_NS		0x0001	/* stat failed				*/
+#define FTS_F		0x0002	/* file - not directory or symbolic link*/
+#define FTS_SL		0x0004	/* symbolic link			*/
+#define FTS_D		0x0008	/* directory - pre-order visit		*/
 
-#define FTS_C		(1<<4)	/* causes cycle				*/
-#define FTS_ERR		(1<<5)	/* some other error			*/
-#define FTS_DD		(1<<6)	/* . or ..				*/
-#define FTS_NR		(1<<7)	/* cannot read				*/
-#define FTS_NX		(1<<8)	/* cannot search			*/
-#define FTS_OK		(1<<9)	/* no info but otherwise ok		*/
-#define FTS_P		(1<<10)	/* post-order visit			*/
+#define FTS_C		0x0010	/* causes cycle				*/
+#define FTS_ERR		0x0020	/* some other error			*/
+#define FTS_DD		0x0040	/* . or ..				*/
+#define FTS_NR		0x0080	/* cannot read				*/
+#define FTS_NX		0x0100	/* cannot search			*/
+#define FTS_OK		0x0200	/* no info but otherwise ok		*/
+#define FTS_P		0x0400	/* post-order visit			*/
+#define FTS_XR		0x0800	/* xattr dir				*/
+#define FTS_XC		0x1000	/* xattr child				*/
 
 #define FTS_DC		(FTS_D|FTS_C)	/* dir - would cause cycle	*/
 #define FTS_DNR		(FTS_D|FTS_NR)	/* dir - no read permission	*/
@@ -94,10 +96,10 @@
 #define FTS_SKIP	FTS_NOSTAT	/* skip FTS_D directory		*/
 #define FTS_STAT	FTS_PHYSICAL	/* stat() done by user		*/
 
-typedef struct Fts FTS;
-typedef struct Ftsent FTSENT;
+typedef struct Fts_s FTS;
+typedef struct Ftsent_s FTSENT;
 
-struct Ftsent
+struct Ftsent_s
 {
 	char*		fts_accpath;	/* path relative to .		*/
 	char*		fts_name;	/* file name			*/
@@ -126,6 +128,7 @@ struct Ftsent
 	size_t		fts_namelen;	/* strlen(fts_name)		*/
 	size_t		fts_pathlen;	/* strlen(fts_path)		*/
 	ssize_t		fts_level;	/* file tree depth, 0 at top	*/
+	int		fts_dirfd;	/* containing directory fd	*/
 
 #ifdef _FTSENT_PRIVATE_
 	_FTSENT_PRIVATE_
@@ -133,7 +136,7 @@ struct Ftsent
 
 };
 
-struct Fts
+struct Fts_s
 {
 	int		fts_errno;	/* last errno			*/
 	void*		fts_handle;	/* user defined handle		*/
@@ -154,6 +157,7 @@ extern int	fts_flags(void);
 extern int	fts_local(FTSENT*);
 extern int	fts_notify(int(*)(FTS*, FTSENT*, void*), void*);
 extern FTS*	fts_open(char* const*, int, int(*)(FTSENT* const*, FTSENT* const*));
+extern FTS*	fts_openat(int, char* const*, int, int(*)(FTSENT* const*, FTSENT* const*));
 extern FTSENT*	fts_read(FTS*);
 extern int	fts_set(FTS*, FTSENT*, int);
 

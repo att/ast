@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -742,9 +742,9 @@ glob(const char* pattern, int flags, int (*errfn)(const char*, int), register gl
 	ap->gl_next = 0;
 	ap->gl_flags = 0;
 	ap->gl_begin = ap->gl_path + gp->gl_extra;
-	pat = strcopy(ap->gl_begin, pattern + optlen);
+	pat = stpcpy(ap->gl_begin, pattern + optlen);
 	if (suflen)
-		pat = strcopy(pat, gp->gl_suffix);
+		pat = stpcpy(pat, gp->gl_suffix);
 	if (optlen)
 		strlcpy(gp->gl_pat = gp->gl_opt = pat + 1, pattern, optlen);
 	else
@@ -767,7 +767,7 @@ glob(const char* pattern, int flags, int (*errfn)(const char*, int), register gl
 			gp->gl_pathc++;
 			top->gl_next = gp->gl_match;
 			gp->gl_match = top;
-			strcopy(top->gl_path + gp->gl_extra, nocheck);
+			stpcpy(top->gl_path + gp->gl_extra, nocheck);
 		}
 		else
 			gp->gl_error = GLOB_NOMATCH;

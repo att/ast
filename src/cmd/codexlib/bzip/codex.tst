@@ -8,12 +8,12 @@ KEEP '*.dat'
 
 TEST 01 'basics'
 
-	EXEC	'>bzip'
+	EXEC	-e bzip
 		INPUT - 'aaaa bbbb cccc aaaa cccc bbbb zzzz aaaa'
 		MOVE OUTPUT c.dat
 	EXEC	-i
 		SAME INPUT c.dat
 		OUTPUT - bzip
-	EXEC	'<bzip'
+	EXEC	-d bzip
 		OUTPUT - 'aaaa bbbb cccc aaaa cccc bbbb zzzz aaaa'
 	EXEC	-d

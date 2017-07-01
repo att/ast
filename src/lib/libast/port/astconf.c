@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -305,6 +305,49 @@ static State_t	state = { "getconf", "_AST_FEATURES", "CONFORMANCE = standard", "
 static char*	feature(Feature_t*, const char*, const char*, const char*, unsigned int, Error_f);
 
 /*
+ * private ast pathconf() intercept with special /dev/ file checks on path for fpathconf()
+ */
+
+static intmax_t
+ast_pathconf(const char* path, int op, int* err)
+{
+#if _lib_pathconf
+	Pathdev_t	dev;
+	char		buf[PATH_MAX];
+	intmax_t	v;
+	int		olderrno;
+
+	olderrno = errno;
+	if (!pathdev(AT_FDCWD, path, buf, sizeof(buf), PATH_DEV, &dev))
+	{
+		errno = 0;
+		v = pathconf(path, op);
+	}
+	else if (dev.fd < 0)
+	{
+		errno = 0;
+		v = pathconf(buf, op);
+	}
+	else
+	{
+#if _lib_fpathconf
+		errno = 0;
+		v = fpathconf(dev.fd, op);
+#else
+		v = -1;
+		errno = EINVAL;
+#endif
+	}
+	if (v != -1 || !(*err = errno))
+		errno = olderrno;
+	return v;
+#else
+	*err = ENOSYS;
+	return -1;
+#endif
+}
+
+/*
  * return fmtbuf() copy of s
  */
 
@@ -335,7 +378,14 @@ synthesize(register Feature_t* fp, const char* path, const char* value)
 		error(-6, "astconf synthesize name=%s path=%s value=%s fp=%p%s", fp->name, path, value, fp, state.synthesizing ? " SYNTHESIZING" : "");
 #endif
 	if (state.synthesizing)
+	{
+		if (fp && fp->op < 0 && value && *value)
+		{
+			n = strlen(value);
+			goto ok;
+		}
 		return null;
+	}
 	if (!state.data)
 	{
 		char*		se;
@@ -705,17 +755,20 @@ format(register Feature_t* fp, const char* path, const char* value, unsigned int
 			register char*	s;
 			register char*	e;
 			intmax_t	v;
+			unsigned long	b;
+			int		err;
 
 			/*
 			 * _PC_PATH_ATTRIBUTES is a bitmap for 'a' to 'z'
 			 */
 
-			if ((v = pathconf(path, _PC_PATH_ATTRIBUTES)) == -1L)
+			v = ast_pathconf(path, _PC_PATH_ATTRIBUTES, &err);
+			if (err)
 				return 0;
 			s = fp->value;
 			e = s + sizeof(fp->value) - 1;
-			for (n = 'a'; n <= 'z'; n++)
-				if (v & (1 << (n - 'a')))
+			for (n = 'a', b = 1; n <= 'z'; n++, b <<= 1)
+				if (v & b)
 				{
 					*s++ = n;
 					if (s >= e)
@@ -1110,9 +1163,10 @@ print(Sfio_t* sp, register Lookup_t* look, const char* name, const char* path, i
 		goto predef;
 #endif
 	case CONF_pathconf:
-		call = "pathconf";
 #if _lib_pathconf
-		if ((v = pathconf(path, p->op)) < 0)
+		call = "pathconf";
+		v = ast_pathconf(path, p->op, &n);
+		if (n)
 			defined = 0;
 		break;
 #else
@@ -1151,7 +1205,7 @@ print(Sfio_t* sp, register Lookup_t* look, const char* name, const char* path, i
 		call = 0;
 		if (p->standard == CONF_AST)
 		{
-			if (streq(p->name, "RELEASE") && (i = open("/proc/version", O_RDONLY|O_cloexec)) >= 0)
+			if (streq(p->name, "RELEASE") && (i = open("/proc/version", O_RDONLY|O_CLOEXEC)) >= 0)
 			{
 				n = read(i, buf, sizeof(buf) - 1);
 				close(i);
@@ -1552,7 +1606,15 @@ astgetconf(const char* name, const char* path, const char* value, int flags, Err
 char*
 astconf(const char* name, const char* path, const char* value)
 {
+#if DEBUG_astconf
+	char*	r;
+
+	r = astgetconf(name, path, value, 0, 0);
+	error(-1, "astconf(%s,%s,%s) => '%s'", name, path, value, r);
+	return r;
+#else
 	return astgetconf(name, path, value, 0, 0);
+#endif
 }
 
 /*

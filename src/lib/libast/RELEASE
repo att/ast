@@ -1,3 +1,133 @@
+16-01-08 features/lib: fixed syntax error in tst for memccpy that caused the system memccpy to never be used
+14-05-12 features/lib: mmap() error return may be ((caaddr_t)0) or ((caaddr_t)-1)
+14-05-09 misc/optget.c: save opt_info state in case infof callout munges it
+14-04-15 misc/spawnvex.c: fix nil pointer deref
+14-04-15 sfio/sfcvt.c: fix flot bug that printed |x|<1 as 0
+14-01-14 tm/strptime.c: add %t
+13-12-06 vmalloc: default to VMALLOC_OPTIONS=check=nosegment; turn on to enable overbooking checks
+13-12-01 port/astconf.c: add pathdev() intercept to pathconf() for fpathconf()
+13-12-01 comp/conf.tab: add PC { ACL SATTR XATTR } ops
+13-12-01 port/intercept.c: fix remove() intercept to handle directories
+13-11-20 sfio/sfcvt.c: drop [L]DBL_DIG limit checks -- what good are they?
+13-11-20 features/libpath.sh: widen net for ubuntu /lib64
+13-11-17 setlocale.c,utf32toutf8.c,utf8toutf32.c: handle nul byte/wchar_t and nil pointer cases (fixes the tr mem bug)
+13-11-14 features/*: fix tests that reference private argv[1] to handle iffe(1) argv[1]==tmp-file-name
+13-11-11 path/pathcanon.c,path/pathopen.c: fix O_XATTR errno logic, handle "/" path O_XATTR
+13-11-01 features/map.c: map-libc: add ast <error.h> symbols
+13-09-27 path/pathcanon.c: fix buffer clobber bug between pathdev() and fgetcwd()
+13-09-27 path/pathopen.c: handle easy O_XATTR case for /dev/fd open() semantics
+13-09-25 include/ast_std.h,comp/setlocale.c: AST_LC_unicode => AST_LC_unicodeliterals, LC_OPTIONS=...unicodeliterals...
+13-09-25 include/ast_std.h,comp/setlocale.c: AST_LC_native LC_OPTIONS=...native... to bypass ast unicode iswalpha/wcwidth tables
+13-09-25 comp/eaccess.c: resolve <ast_map.h> vs <ast_intercept.h> conflict -- _ast_eaccess wins
+13-09-18 include/ast_std.h,ast.h: api>=20130913 add Mbstate_t and { mb*() wc*() } macros with Mbstate_t* last arg
+13-09-18 path/pathcanon.c: handle more flags for /dev/file/flags@...@path and do flag name lookup from table
+13-09-16 include/ast.h: add PATH_EXCEPT_LAST for readlink(1) --canonicalize
+13-09-16 path/pathcanon.c: handle PATH_EXCEPT_LAST
+13-09-12 misc/fgetcwd.c: fix stat corruption bug on systems without fdopendir()
+13-09-12 path/pathcanon.c: fix bug that added extra / when fgetcwd() returned /
+13-09-09 comp/setlocale.c,port/codeset.c: consistent handling of US-ASCII + conformance(0,0) across all os's
+13-09-09 string/utf8towc.c,string/wctoutf8.c: add { utf8toutf32() utf8towc() wctoutf8() }
+13-09-07 include/ast_std.c,comp/setlocale.c,string/stresc.c: add ast.byte_max for single byte locales
+13-09-06 comp/iconv.c: add sfclrerr() to iconv_move() if all input chars not consumed
+13-09-06 port/codeset.h,port/codeset.c: internal api for retrieving locale codeset names
+13-09-04 string/chresc.c,stresc.c: add \w[hex] support -- thanks Roland
+13-09-04 string/utf32stowcs.c,string/wcstoutf32s.c: add -- thanks Roland
+13-09-04 sfio/sfsetbuf.c: fix bug where SF_GETR mode was not cleared causing subsequent memory corruption
+13-09-04 vmalloc/vmopen.c,vmdcsystem.c,vmstat.c: temporarily set vm->meth.meth=0 to disable vmstat() during init
+13-09-04 port/intercept.c: include <ast_standards.h> to ensure fdopendir() prototype if _lib_fdopendir
+13-09-04 include/ast_std.h,comp/setlocale.c: add LC_OPTIONS=unicode and AST_LC_unicode
+13-09-01 path/pathcanon.c: O_* flags dev path: /dev/file/flags@flag[,flag...]@[/]path
+13-09-01 path/pathcanon.c: limit NAMED_XATTR paths to /dev/file/xattr@canonical-path//@//[remainder]
+13-08-29 cdt/dtstrhash.c: change sign-bit hitting fnv constants to hex to silence unsigned warnings
+13-08-26 features/float: fix (FLT|DBL|LDBL)_*_(MIN|MAX) algorithm to not use exact powers of 2!!
+13-08-24 include/fts.h,misc/fts.c: make preparations for FTS.fts_dirfd, fdopendir(), fgetcwd(), openat(), fstatat()
+13-08-23 path/pathcanon.c: add PATH_DROP_LEAD_SLASH2 and PATH_DROP_TAIL_SLASH to unify ast c14n
+13-08-23 features/float: add (FLT|DBL|LDBL)_EPSILON logic
+13-08-22 features/lib,include/ast_std.h,comp/qsort.c,comp/qsort_r.c: add { qsort qsort_r } from Bentley/McIlroy code
+13-08-22 misc/getcwd.c: now a wrapper call to fgetcwd(AT_FDCWD)
+13-08-21 regex/regdecomp.c: fix REG_SHELL decompilation bug
+13-08-21 regex/regcomp.c: fix REG_SHELL ~(A)(...) parse bug that didn't treat second ')' as closing paren
+13-08-20 misc/fgetcwd.c: add, inspired by olga
+13-08-17 path/pathcanon.c: /dev/file/flag[,flag...]:[/]path for relative and absolute paths
+13-08-17 port/intercept.c: move pathdev() intercepts to ast_*at() and make ast_*[!at]() call ast_*at() counterpart
+13-08-15 features/lib,features/dirent,port/intercept.c: add ast_opendir() and fdopendir() tests
+13-08-14 features/atdev: additional support for comp/at.c emulation on frankenstein systems
+13-08-11 features/lib: add `lib fdatasync,fssync,sync' tests
+13-08-11 features/fcntl.c: another round for { O_DIRECTORY O_SEARCH }, stabilize ast extension values
+13-08-11 port/intercept.c: add RATIFY() to check for paths with embeded directory fd refs
+13-08-11 convert strcopy() usage to stpcpy(); strncopy() will not change
+13-08-08 path/pathcanon.c: add PATH_ABSOLUTE to canonicalize relative path to absolute (rooted) path
+13-08-08 comp/resolvepath.c: now a veneer to pathdev+PATH_ABSOLUTE...
+13-08-08 string/stpcpy.c,string/stpncpy.c: add { stpcpy() stpncpy() } emulations
+13-08-08 include/ast.h,path/pathcanon.c: add { /dev/file@flag1,.../path /dev/file@flag1,..././path } to pathdev
+13-08-08 port/intercept.c: handle O_ASYNC anomalies in ast_openat()
+13-08-07 sfio.h,sftmp.c: add SF_TMPFILE notification for sftmp() switch from buf to file
+13-08-07 include/ast.h: add getconf("string") macro using astconf()
+13-08-07 features/fcntl.c: add more macro guards to cover diffs between iffe time and compile time
+13-08-07 features/limits.c: { _POSIX_NAME_MAX _POSIX_PATH_MAX } failsafes for systems (like darwin) that omit them
+13-08-06 tm/tvsleep.c: fix interrupted select() remaining time logic
+13-08-06 path/pathopen.c,pathdev.c: handle /dev/fd/ dir pseudo stat
+13-08-05 vmalloc/malloc.c: add VMALLOC_OPTIONS=usage => VM_usage
+13-08-01 path/pathopen.c: fix /dev/fd/<fd>/trailing-path bug that missed trailing-path
+13-07-31 features/lib: add setregid
+13-07-29 vmalloc/vmdcsystem.c: add EINTR restart checks for system getmemory
+13-07-25 add ast/sys/socket.h => ast_socket.h => ../include/sys/socket.h for intercepts
+13-07-22 pathopen.c: fix PATH_DEV logic to preserve ksh sh_open() semantics
+13-07-19 fix features/fcntl.c to keep track of highest bit in o_local
+13-07-18 incorporate roland mainz' solaris compatibility and hugepage patches
+13-07-18 include/vmalloc.h: restore Vmethod_t callout function order for backwards binary compatibility
+13-07-17 port/intercept.c: ast_openat(fd,0,...) => openat(fd,".",...)
+13-07-16 string/chresc.c: limit \xH \xHH to 2 hex digits (\u and \U handle wide chars now)
+13-06-28 intercept.c: add AST_SERIAL_always, in particular for AST_SERIAL_RESTART
+13-06-25 intercept.c: add syscall intercepts to unify { *at() restart pathopen() }
+13-06-25 pathopen.c: low level physical/logical/special path open using pathdev()
+13-06-24 pathcanon.c: add pathdev() for  { /dev/... /proc/... } parse
+13-06-19 vmbest.c: fix strict-aliasing warnings
+13-06-19 debug.h,debug.c: add debug_printf(fd,fmt,...), debug_vprintf(fd,fmt,ap), debug_snprintf(buf,siz,fmt,ap)
+13-06-18 features/lib: fix lib *64 tests to reference related headers
+13-06-18 malloc.c: add VMALLOC_OPTIONS=debug for debug trace vs verbose trace
+13-06-18 reg[nr]exec.c: fix file size < min boyer-moore match uninitialized data ref
+13-06-17 vmalloc: harden code to handle signal storm -- almost working save one workaround
+13-06-10 sfsetbuf.c: update SFIO_OPTIONS parse to model VMALLOC_OPTIONS
+13-06-10 SFIO_OPTIONS: add _Sfmaxm maxm=size 0:legacy-min-req -1:unlimited otherwise: page rounded limit
+13-06-10 sfrd.c: change map minimal requirement logic to use _Sfmaxm
+13-06-10 sfrd.c: add SFTEST_map_minimal, disabled by default for _ast_sizeof_pointer>=8
+13-06-07 vmalloc: split global initialization into lazy components
+13-06-01 vmalloc: getenv("VMALLOC_OPTIONS") is the only env control
+13-05-31 regex/regnexec.c: fix stkstd iterference by using private env->mst
+13-05-30 vmalloc/vmmaddress.c: fix leaky shmid in _vmpagesize()
+13-05-28 vmalloc/vmdebug.c: add free() delay list to avoid deadlock
+13-05-28 include/ast_errorf.h: split out for low level disc/meth libs
+13-05-24 string/strsort.c: add strsort_r() for Strcmp_context_f
+13-05-22 string/fmtbuf.c: add thread-safe logic
+13-05-21 misc/optget.c: add the D "DATA" section
+13-05-09 { aso cdt vmalloc } kpv sync
+13-05-05 include/ast.h: _AST_PROFILE_NEWOF for debugging newof() vs oldof()
+13-05-01 misc/spawnvex.c: some cc's don't like switch(intmax_t)
+13-04-18 comp/iconv.c: fix some truly rotten code in iconv_move() -- how did it work at all?
+13-04-01 misc/spawnvex.c: fix omitted SPAWN_frame case that caused EINVAL
+13-03-11 sfio/sfflsbuf.c: memcpy() => memmove() ouch
+13-03-11 path/pathfind.c: type=="" => type=0
+13-03-07 features/(dirent|lib|sys): handle opendir64 => DIR64
+13-03-07 vmalloc/vmmopen.c: disable some #include that _PACKAGE_ast already does
+13-02-14 misc/optget.c: -Wall cleanup -- thanks werner
+13-01-03 string/stropt.c: fix off-by-one comparison bug - happy new year
+12-11-15 misc/spawnvex.c: add SPAWN_frame and SPAWN_FRAME
+12-11-10 tm/tmxdate.c: handle yyyymmddThhmmss.nnnnnnnnn[-+]hhmm
+12-10-17 comp/conf.tab: add PC MIN_HOLE_SIZE
+12-10-16 spawnvex.c: spawnvex_open(SPAWN_EXEC) => posix_spawn() exit ENOENT=126 ENOEXEC=127 ok
+12-10-15 hash/hashlib.h,hash/hashscan.c: fix *ancient* hashscan() bug that didn't handle hashsize() during scan
+12-10-12 misc/spawnvex.c,features/sys: spawnvex() finally working for spawn variants
+12-09-27 regex/reglib.h: fix superfluous mask in bit test macros that limited values to 256 bits (now unlimited)
+12-09-26 comp/iconv.c: fix UTF-16 <=> UCS-2 mixup
+12-09-26 string/qp.c: add { qpdecode() qpencode() }
+12-09-24 sfio: use #if _mmap_worthy instead of obsolete #ifdef MAP_TYPE
+12-09-14 tminit.c: for UTC zone with no native name use getenv("TZ")
+12-09-13 tmzone.c,tmxdate.c: handle [ZY][EW]n[ABC]? tz notation
+12-09-11 spawnvex: add generalized spawnveg() replacement
+12-07-31 cdt: sync with kpv
+12-07-31 error.h: add { Error_write_f, void* handle } for sh_exit()
+12-07-30 astsa: update to handle installation that already have { aso cdt sfio vmalloc }
 12-07-25 pathprobe.c: fix read() loop to handle EINTR
 12-06-28 vmalloc/malloc.c: use sbrk() unless VMALLOC_OPTIONS=mmap or asoinit(0,0,0)!=0 (workaround until next malloc update)
 12-06-28 aso/aso.c: asoinit(0,0,0): 0: no specific init, 1: app initialized

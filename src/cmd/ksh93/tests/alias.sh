@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -98,5 +98,9 @@ fi
 ( alias p:r=print) 2> /dev/null || err_exit 'alias with : in name fails'
 
 unalias no_such_alias &&  err_exit 'unalias should return non-zero for unknown alias'
+
+for i in compound float integer nameref
+do	[[ $i=$(whence $i) == "$(alias $i)" ]] || err_exit "whence $i not matching $(alias $i)"
+done
 
 exit $((Errors<125?Errors:125))

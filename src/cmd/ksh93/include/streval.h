@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -68,6 +68,11 @@
 #   define LDBL_DIG DBL_DIG
 #endif
 
+#define TYPE_U	1
+#define TYPE_F	2
+#define TYPE_D	3
+#define TYPE_LD	4
+
 struct lval
 {
 	Shell_t		*shp;
@@ -82,7 +87,9 @@ struct lval
 	short		emode;
 	short		level;
 	short		elen;
+	char		nextop;
 	char		eflag;
+	char		userfn;
 	char		isfloat;
 };
 
@@ -170,6 +177,9 @@ typedef struct _arith_
 #define A_ASSIGNOP	55
 #define A_ENUM		56
 #define A_ASSIGNOP1	57
+#define A_CALL1V	58
+#define A_CALL2V	59
+#define A_CALL3V	60
 
 
 /* define error messages */

@@ -27,8 +27,6 @@ $(.SUFFIX.cob:/^/.ATTRIBUTE.%/) : .SCAN.cob
 
 .SOURCE.%.SCAN.cob : . $$(*.SOURCE$$(.SUFFIX.HEADER.cob:O=1)) $$(*.SOURCE.cob) $$(*.SOURCE)
 
-.PROBE.INIT : .PKG.COBOL.INIT
-
 .PKG.COBOL.INIT : .MAKE .VIRTUAL .FORCE .AFTER
 	local F
 	if ! "$(PATH:/:/ /G:X=$(COBOL):P=X)"
@@ -41,4 +39,11 @@ $(.SUFFIX.cob:/^/.ATTRIBUTE.%/) : .SCAN.cob
 	COBOLFLAGS &= $(COBOLFLAGS:VA:V) $$(.INCLUDE. cob -I)
 	if "$(-debug-symbols)" && ! "$(COBOLFLAGS:N=$(CC.DEBUG)|-g)"
 		COBOLFLAGS := $(COBOLFLAGS:V:N!=$(CC.OPTIMIZE)|-O*)
+	end
+
+.PKG.COBOL.TEST : .MAKE .VIRTUAL .FORCE .IMMEDIATE
+	if "$(".PROBE.INIT":A=.TRIGGERED)"
+		make .PKG.COBOL.INIT
+	else
+		.PROBE.INIT : .PKG.COBOL.INIT
 	end

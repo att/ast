@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -26,6 +26,8 @@
 #include "format.h"
 
 #undef	SOKTYPE
+
+#define TARTYPE         (-1)
 
 #define PAX		1
 #define OLD		2
@@ -346,6 +348,7 @@ extend(Archive_t* ap, File_t* f, int type)
 	switch (type)
 	{
 	case EXTTYPE:
+	case TARTYPE:
 		sp = ap->tmp.extended;
 		fmt = state.header.extended;
 		lev = 7;
@@ -462,26 +465,31 @@ extend(Archive_t* ap, File_t* f, int type)
 						sfsprintf(s = num, sizeof(num), "%ld", vp->number);
 					break;
 				}
-				if (s)
+				if (s && type != TARTYPE)
 					putkey(ap, sp, op, s, 0);
 			}
 		}
 		hashdone(pos);
 	}
-	if (type == EXTTYPE)
-	{
-		if ((split = tar_longname(ap, f)) < 0 || !portable(ap, f->name))
-			putkey(ap, sp, &options[OPT_path], f->name, 0);
-		if (f->linkpath && (tar_longlink(ap, f) < 0 || !portable(ap, f->linkpath)))
-			putkey(ap, sp, &options[OPT_linkpath], f->linkpath, 0);
-	}
-	else
-		split = 0;
-	if (n = sfstrtell(sp))
-	{
-		if (!(s = sfstruse(sp)))
-			nospace();
-		synthesize(ap, f, headname(ap, f, fmt), type, s, n);
+        if (type == TARTYPE)
+                split = 0;
+        else
+        {
+		if (type == EXTTYPE)
+		{
+			if ((split = tar_longname(ap, f)) < 0 || !portable(ap, f->name))
+				putkey(ap, sp, &options[OPT_path], f->name, 0);
+			if (f->linkpath && (tar_longlink(ap, f) < 0 || !portable(ap, f->linkpath)))
+				putkey(ap, sp, &options[OPT_linkpath], f->linkpath, 0);
+		}
+		else
+			split = 0;
+		if (type && (n = sfstrtell(sp)))
+		{
+			if (!(s = sfstruse(sp)))
+				nospace();
+			synthesize(ap, f, headname(ap, f, fmt), type, s, n);
+		}
 	}
 	return split;
 }
@@ -768,12 +776,14 @@ tar_putheader(Pax_t* pax, Archive_t* ap, register File_t* f)
 	if (f->extended)
 		i = 0;
 	else
+        {
 		switch (ap->format->variant)
 		{
 		case PAX:
 			i = extend(ap, f, EXTTYPE);
 			break;
 		case TAR:
+			(void)extend(ap, f, TARTYPE);
 			if ((i = tar_longname(ap, f)) < 0)
 			{
 				if (state.strict)
@@ -794,6 +804,7 @@ tar_putheader(Pax_t* pax, Archive_t* ap, register File_t* f)
 			}
 			break;
 		case OLD:
+			(void)extend(ap, f, TARTYPE);
 			if ((i = tar_longname(ap, f)) || tar_longlink(ap, f))
 			{
 				ap->entry--;
@@ -801,6 +812,7 @@ tar_putheader(Pax_t* pax, Archive_t* ap, register File_t* f)
 			}
 			break;
 		}
+        }
 	if (state.complete)
 		complete(ap, f, (ap->format->variant == PAX ? 4 : 1) * TAR_HEADER);
 	memzero(&tar->header, TAR_HEADER);

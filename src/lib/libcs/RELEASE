@@ -1,3 +1,5 @@
+13-08-07 csopen.c: NGROUPS_MAX => getconf("NGROUPS_MAX")
+12-08-21 msg.h: add MSG_openat
 10-06-01 sync with ast api 20100601
 10-04-12 Makefile: defer share and local generation to first use
 08-04-09 csopen.c: fix mkmount() path cleanup

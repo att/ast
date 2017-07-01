@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1989-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1989-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -47,7 +47,7 @@
  */
 
 static const char usage1[] =
-"[-1p1?@(#)$Id: find (AT&T Research) 2012-04-11 $\n]"
+"[-1p1?@(#)$Id: find (AT&T Research) 2013-08-02 $\n]"
 USAGE_LICENSE
 "[+NAME?find - find files]"
 "[+DESCRIPTION?\bfind\b recursively descends the directory hierarchy for each"
@@ -115,6 +115,8 @@ static const char usage2[] =
  * retain the order
  */
 
+#undef	CMIN
+#undef	CTIME
 #undef	NOGROUP
 #undef	NOUSER
 
@@ -133,7 +135,7 @@ enum Command
 	DAYSTART, MAXDEPTH, MINDEPTH, NOLEAF, EMPTY,
 	ILNAME, INAME, IPATH,
 	IREGEX, LNAME, PATH, REGEX, USED, XTYPE, CHOP,
-	LEVEL, TEST, CODES
+	LEVEL, TEST, CODES, DELETE, SHOW
 };
 
 #define Unary		(1<<0)
@@ -201,6 +203,7 @@ struct Node_s
 	Node_t*		next;
 	const char*	name;
 	enum Command	action;
+	const Args_t*	op;
 	Item_t		first;
 	Item_t		second;
 	Item_t		third;
@@ -227,6 +230,7 @@ struct State_s
 	int		icase;
 	int		primary;
 	int		reverse;
+	int		show;
 	int		silent;
 	enum Command	sortkey;
 	Magic_t*	magic;
@@ -276,13 +280,18 @@ static const Args_t	commands[] =
 "comma",	COMMA,		Op,		0,	0,	0,
 	"Equivalent to `,'. Joins two expressions; the status of the first"
 	" is ignored.",
-"cpio",		CPIO,		Unary|Stat,	1,	0,	0,
+"cpio",		CPIO,		File|Stat,	1,	"archive",	0,
 	"File is written as a binary format \bcpio\b(1) file entry.",
 "ctime",	CTIME,		Num|Stat,	0,	"days",	0,
 	"File status changed \adays\a days ago.",
 "daystart",	AMIN,		Unary|Stat,	0,	0,	0,
 	"Measure times (-amin -atime -cmin -ctime -mmin -mtime) from the"
 	" beginning of today. The default is 24 hours ago.",
+"delete",	DELETE,		Unary|Stat,	1,	0,	0,
+	"Delete the file. If deletion fails a message is written to the"
+	" standard error, \bfind\b continues, but its exit staus will be"
+	" non-zero. Implies \b-depth\b. Warning: '\bfind -delete\b' is"
+	" equivalent to '\brm -r .\b'; use \b-show\b to debug.",
 "depth",	POST,		Unary,		0,	0,	0,
 	"Process directory contents before the directory itself.",
 "empty",	EMPTY,		Unary|Stat,	0,	0,	0,
@@ -368,7 +377,7 @@ static const Args_t	commands[] =
 	"File was modified \adays\a days ago.",
 "name",		NAME,		Str,		0,	"pattern",	0,
 	"File base name (no directory components) matches \apattern\a.",
-"ncpio",	NCPIO,		Unary|Stat,	1,	0,		0,
+"ncpio",	NCPIO,		File|Stat,	1,	"archive",	0,
 	"File is written as a character format \bcpio\b(1) file entry.",
 "newer",	NEWER,		Str|Stat,	0,	"file",	0,
 	"File was modified more recently than \afile\a.",
@@ -460,6 +469,9 @@ static const Args_t	commands[] =
 	" i.e., leading ^ and traling $ are implied.",
 "reverse",	REVERSE,	Unary,		0,	0,	0,
 	"Reverse the \b-sort\b sense.",
+"show",		SHOW,		Unary,		0,	0,	0,
+	"Show actions on the standard output but do not execute. For example,"
+	" use \b-show\b to test \b-delete\b.",
 "silent",	SILENT,		Unary,		0,	0,	0,
 	"Do not warn about inaccessible directories or symbolic link loops.",
 "size",		SIZE,		Num|Stat|Unit,	0,	"number[bcgkm]]", 0,
@@ -892,6 +904,7 @@ compile(State_t* state, char** argv, register Node_t* np, int nested)
 		np->next = 0;
 		np->name = argp->name;
 		np->action = argp->action;
+		np->op = argp;
 		np->second.i = 0; 
 		np->third.u = 0; 
 		if (argp->type & Stat)
@@ -914,7 +927,7 @@ compile(State_t* state, char** argv, register Node_t* np, int nested)
 				switch (argp->type & ~(Stat|Unit))
 				{
 				case File:
-					if (streq(b, "/dev/stdout") || streq(b, "/dev/fd/1"))
+					if (state->show || streq(b, "/dev/stdout") || streq(b, "/dev/fd/1"))
 						np->first.fp = state->output;
 					else if (!(np->first.fp = sfopen(NiL, b, "w")))
 					{
@@ -1021,6 +1034,9 @@ compile(State_t* state, char** argv, register Node_t* np, int nested)
 			goto ignore;
 		case REVERSE:
 			state->reverse = 1;
+			goto ignore;
+		case SHOW:
+			state->show = 1;
 			goto ignore;
 		case SILENT:
 			state->silent = 1;
@@ -1206,22 +1222,16 @@ compile(State_t* state, char** argv, register Node_t* np, int nested)
 				 * set up cpio
 				 */
 
-				if ((fd = open(b, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)) < 0)
+				state->output = np->first.fp;
+				if (!state->show)
 				{
-					error(ERROR_SYSTEM|2, "%s: cannot create", b);
-					return -1;
-				}
-				ops[0] = PROC_FD_DUP(fd, 1, PROC_FD_PARENT|PROC_FD_CHILD);
-				ops[1] = 0;
-				if (!(state->proc = procopen("cpio", com, NiL, ops, PROC_WRITE)))
-				{
-					error(ERROR_SYSTEM|2, "cpio: cannot exec");
-					return -1;
-				}
-				if (!(state->output = sfnew(NiL, NiL, -1, state->proc->wfd, SF_WRITE)))
-				{
-					error(ERROR_SYSTEM|2, "cpio: cannot write");
-					return -1;
+					ops[0] = PROC_FD_DUP(sffileno(state->output), 1, PROC_FD_PARENT|PROC_FD_CHILD);
+					ops[1] = 0;
+					if (!(state->proc = procopen("cpio", com, NiL, ops, PROC_WRITE)))
+					{
+						error(ERROR_SYSTEM|2, "cpio: cannot exec");
+						return -1;
+					}
 				}
 				state->walkflags &= ~FTS_NOPOSTORDER;
 				np->action = PRINT;
@@ -1273,6 +1283,9 @@ compile(State_t* state, char** argv, register Node_t* np, int nested)
 			if (state->sortkey == IGNORE)
 				state->sortkey = NAME;
 			np->action = LS;
+			break;
+		case DELETE:
+			state->walkflags &= ~FTS_NOPOSTORDER;
 			break;
 		case NEWER:
 		case ANEWER:
@@ -1646,6 +1659,20 @@ execute(State_t* state, FTSENT* ent)
 		case LEVEL:
 			u = ent->fts_level;
 			goto num;
+		case DELETE:
+			if (S_ISDIR(ent->fts_statp->st_mode))
+			{
+				if (!streq(ent->fts_path, ".") && rmdir(ent->fts_accpath))
+					error(ERROR_SYSTEM|2, "%s: cannot delete directory", ent->fts_path);
+			}
+			else if (remove(ent->fts_accpath))
+				error(ERROR_SYSTEM|2, "%s: cannot delete file", ent->fts_path);
+			val = 1;
+			break;
+		case SHOW:
+			sfprintf(sfstdout, "%s %s\n", np->name, ent->fts_path);
+			val = 1;
+			break;
 		default:
 			error(2, "internal error: %s: action not implemented", np->name);
 			return -1;
@@ -1739,6 +1766,7 @@ main(int argc, char** argv)
 	register char**			op;
 	register Find_t*		fp;
 	register const Args_t*		ap;
+	Node_t*				np;
 	int				r;
 	Sort_f				sort;
 	Finddisc_t			disc;
@@ -1845,6 +1873,10 @@ main(int argc, char** argv)
 			state.nextnode->second.i = '\n';
 			state.nextnode->next = 0;
 		}
+		if (state.show)
+			for (np = state.topnode; np; np = np->next)
+				if (np->op->primary)
+					np->action = SHOW;
 		fp = 0;
 		if (state.sortkey != IGNORE)
 			sort = order;

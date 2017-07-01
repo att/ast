@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -26,7 +26,7 @@
  */
 
 static const char usage[] =
-"[-n?\n@(#)$Id: uniq (AT&T Research) 2009-11-28 $\n]"
+"[-n?\n@(#)$Id: uniq (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?uniq - Report or filter out repeated lines in a file]"
 "[+DESCRIPTION?\buniq\b reads the input, compares adjacent lines, and "
@@ -84,10 +84,13 @@ typedef int (*Compare_f)(const char*, const char*, size_t);
 
 static int uniq(Sfio_t *fdin, Sfio_t *fdout, int fields, int chars, int width, int mode, int* all, Compare_f compare)
 {
-	register int n, f, outsize=0, mb = mbwide();
-	register char *cp, *ep, *mp, *bufp, *outp;
-	char *orecp, *sbufp=0, *outbuff;
-	int reclen,oreclen= -1,count=0,cwidth=0,sep,next;
+	register int	n, f, outsize=0, mb = mbwide();
+	register char	*cp, *ep, *mp, *bufp, *outp;
+	char		*orecp, *sbufp=0, *outbuff;
+	int		reclen,oreclen= -1,count=0,cwidth=0,sep,next;
+	Mbstate_t	q;
+	wchar_t		w;
+
 	if(mode&C_FLAG)
 		cwidth = CWIDTH+1;
 	while(1)
@@ -118,7 +121,7 @@ static int uniq(Sfio_t *fdin, Sfio_t *fdout, int fields, int chars, int width, i
 			{
 				if (mb)
 					for (f = chars; f; f--)
-						mbchar(cp);
+						mbchar(&w, cp, MB_LEN_MAX, &q);
 				else
 					cp += chars;
 			}
@@ -136,7 +139,7 @@ static int uniq(Sfio_t *fdin, Sfio_t *fdout, int fields, int chars, int width, i
 					while (reclen < width && mp < ep)
 					{
 						reclen++;
-						mbchar(mp);
+						mbchar(&w, mp, MB_LEN_MAX, &q);
 					}
 					reclen = mp - cp;
 				}

@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,7 +33,7 @@
  */
 
 int
-regexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match, regflags_t flags)
+regexec_20120528(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match, regflags_t flags)
 {
 	if (flags & REG_STARTEND)
 	{

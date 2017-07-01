@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -102,5 +102,89 @@ false
 [[ $(run $foo) ==  'global prog abc' ]] || err_exit 'global binary on PATH failed'
 false
 [[ $(.x.runxrun) ==  'xfun local bar' ]] || err_exit 'namespace function on FPATH failed'
+
+namespace sp1
+{
+	compound -a c=( [4]=( bool b=true) )
+}
+exp=$'(\n\t[4]=(\n\t\t_Bool b=true\n\t)\n)'
+[[ $(print -v .sp1.c) == "$exp" ]] || err_exit 'print -v .sp1.c where sp1 is a namespace and c a compound variable not correct'
+
+namespace com.foo
+{
+	compound container=(compound -a a; integer i=2)
+	exp=$(print -v container)
+}
+[[ $(print -v .com.foo.container) == "${.com.foo.exp}" ]] || err_exit 'compound variables defined in a namespace not expanded the same outside and inside'
+
+namespace a.b
+{
+	typeset -T x_t=(
+		integer i=5
+		function pi { printf "%d\n" $((_.i+_.i)); }
+	)
+}
+.a.b.x_t var
+[[ $(var.pi) == 10 ]] || print -u2 'discipline functions for types in namespace not working'
+
+namespace com.foo.test1
+{
+	typeset -T x_t=(
+		integer i=9
+		function pr { printf "%d/%d\n" _.i _.__.j ; }
+	)
+	typeset -T y_t=( x_t x ; integer j=5 )
+}
+.com.foo.test1.y_t v
+[[ $(v.x.pr) == 9/5 ]] || err_exit  '_.__ not working with nested types in a namespace'
+
+namespace a.b
+{
+	function f1 { print OK ; }
+	function f2 { f1 ; }
+	[[ $(f2) == OK ]] 2> /dev/null || err_exit 'function defined in namespace not found when referenced by another function in the namespace'
+}
+
+namespace org.terror
+{
+	typeset -T x_t=(
+		function method_a { print xxx; }
+	)
+	function main
+	{
+		x_t x1
+		x_t x2=(
+			function method_a { print yyy; }
+		)
+		x1.method_a
+    		x2.method_a
+	}
+	[[ $(main 2> /dev/null)  == $'xxx\nyyy' ]] || err_exit 'discipline override type defined in namespace not working'
+}
+
+namespace a.b
+{
+	function f
+	{
+		integer i=1
+		typeset s=abcd
+		[[ $(print "${s:i++:1}") == b ]] || err_exit 'binding function local variables in functions defined in namespace not working'
+	}
+	f
+}
+
+namespace a.b
+{
+	typeset -T y_t=(
+		integer i=9
+		function px { p "${_.i}"; }
+	)
+        function p { printf "%q\n" "$1" ;}
+	y_t x
+	[[ $(x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type not found from within a namespace'
+}
+[[ $(.a.b.x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type no
+t found from outside a.b namespace'
+
 
 exit $((Errors<125?Errors:125))

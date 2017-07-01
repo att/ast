@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -44,6 +44,7 @@ const Shtable_t shtab_options[] =
 #endif
 	"bgnice",			SH_BGNICE,
 	"braceexpand",			SH_BRACEEXPAND,
+	bashopt("nocaseglob",		SH_NOCASEGLOB)
 	bashopt("cdable_vars",		SH_CDABLE_VARS)
 	bashopt("cdspell",		SH_CDSPELL)
 	bashopt("checkhash",		SH_CHECKHASH)
@@ -51,6 +52,7 @@ const Shtable_t shtab_options[] =
 	"noclobber",			SH_NOCLOBBER,
 	bashopt("dotglob",		SH_DOTGLOB)
 	"emacs",			SH_EMACS,
+	bashopt("empty_cmd_completion", SH_NOEMPTYCMDCOMPL)
 	"errexit",			SH_ERREXIT,
 	"noexec",			SH_NOEXEC,
 	bashopt("execfail",		SH_EXECFAIL)
@@ -61,11 +63,7 @@ const Shtable_t shtab_options[] =
 	"gmacs",			SH_GMACS,
 	bashextra("hashall",		SH_TRACKALL)
 	bashopt("histappend",		SH_HISTAPPEND)
-#if SHOPT_HISTEXPAND
 	"histexpand",			SH_HISTEXPAND,
-#else
-	bashextra("histexpand",		SH_HISTEXPAND)
-#endif
 	bashextra("history",		SH_HISTORY2)
 	bashopt("histreedit",		SH_HISTREEDIT)
 	bashopt("histverify",		SH_HISTVERIFY)
@@ -76,6 +74,7 @@ const Shtable_t shtab_options[] =
 	bashextra("interactive_comments",	SH_INTERACTIVE_COMM)
 	"keyword",			SH_KEYWORD,
 	"letoctal",			SH_LETOCTAL,
+	bashopt("lastpipe",		SH_LASTPIPE)
 	bashopt("lithist",		SH_LITHIST)
 	"nolog",			SH_NOLOG,
 	"login_shell",			SH_LOGIN_SHELL|SH_COMMANDLINE,
@@ -83,8 +82,6 @@ const Shtable_t shtab_options[] =
 	"markdirs",			SH_MARKDIRS,
 	"monitor",			SH_MONITOR,
 	"multiline",			SH_MULTILINE,
-	bashopt("no_empty_cmd_completion", SH_NOEMPTYCMDCOMPL)
-	bashopt("nocaseglob",		SH_NOCASEGLOB)
 	"notify",			SH_NOTIFY,
 	bashopt("nullglob",		SH_NULLGLOB)
 	bashextra("onecmd",		SH_TFLAG)
@@ -129,6 +126,7 @@ const Shtable_t shtab_attributes[] =
 	{"-ttagged",	NV_TAGGED},
 	{"-Aassociative array",	NV_ARRAY},
 	{"-aindexed array",	NV_ARRAY},
+	{"-sshort",	(NV_DOUBLE|NV_SHORT)},
 	{"-llong",	(NV_DOUBLE|NV_LONG)},
 	{"-Eexponential",(NV_DOUBLE|NV_EXPNOTE)},
 	{"-Xhexfloat",	(NV_DOUBLE|NV_HEXFLOAT)},

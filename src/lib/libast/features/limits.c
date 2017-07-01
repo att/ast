@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -41,14 +41,14 @@ __STDPP__directive pragma pp:hide getpagesize getdtablesize
 /*
  * we'd like as many symbols as possible defined
  * the standards push the vendors the other way
- * but don't provide guard that lets everything through
+ * but don't provide guards that lets everything through
  * so each vendor adds their own guard
  * many now include something like <standards.h> to
  * get it straight in one place -- <sys/types.h> should
  * kick that in
  */
 
-#include "FEATURE/standards"
+#include "FEATURE/standards"	/* iffe --include-first */
 #include "FEATURE/lib"
 
 #ifdef __sun
@@ -333,6 +333,14 @@ int main()
 
 #include "conflim.h"
 
+	printf("\n");
+
+	printf("#ifndef _POSIX_NAME_MAX\n");
+	printf("#define _POSIX_NAME_MAX		14\n");
+	printf("#endif\n");
+	printf("#ifndef _POSIX_PATH_MAX\n");
+	printf("#define _POSIX_PATH_MAX		256\n");
+	printf("#endif\n");
 	printf("\n");
 
 	return 0;

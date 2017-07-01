@@ -13,12 +13,12 @@ dt	{ float:left; clear:both; }
 dd	{ margin-left:3em; }
 </STYLE>
 </HEAD>
-<BODY bgcolor=white link=slateblue vlink=teal >
+<BODY bgcolor='#ffffff' >
 <TABLE border=0 align=center width=96%>
 <TBODY><TR><TD valign=top align=left>
 <!--INDEX--><!--/INDEX-->
 <P>
-<P><CENTER><FONT color=red><FONT face=courier><H3><A name="INIT package">INIT package</A></H3></FONT></FONT></CENTER>
+<P><CENTER><H3><A name="INIT package">INIT package</A></H3></CENTER>
 The INIT package is required by all but the standalone
 and self extracting archive packages. It contains
 the package command, support scripts, and utilities.
@@ -27,7 +27,7 @@ source packages, and generates new package tarballs.
 Components in this package:
 <P>
 <P></P><TABLE border=0 frame=void rules=none width=100%><TBODY><TR><TD>
-<TABLE align=center bgcolor=papayawhip border=0 bordercolor=white cellpadding=2 cellspacing=2 width=99% >
+<TABLE align=center border=0 bordercolor='#ffffff' cellpadding=0 cellspacing=0 frame=void rules=none width=99% >
 <TBODY>
 <TR><TD align=left>
 INIT</TD></TR>
@@ -45,16 +45,41 @@ A recent
 <A href="#release change log">release change log</A>
 is also included.
 <P>
-<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="release change log">release change log</A></H3></FONT></FONT></CENTER>
+<P><HR><CENTER><H3><A name="release change log">release change log</A></H3></CENTER>
 <PRE>
 
 All recorded changes follow.
 
 </PRE>
 <P>
-<P><HR><CENTER><FONT color=red><FONT face=courier><H3><A name="INIT changes">INIT changes</A></H3></FONT></FONT></CENTER>
+<P><HR><CENTER><H3><A name="INIT changes">INIT changes</A></H3></CENTER>
 <PRE>
 
+13-12-05 Makefile,package.sh: add BIN=1 to .paths for ast -lcmd builtins
+13-11-15 package.sh: fix rebuild logic to handle in-place no-map-libc &lt;=&gt; map-libc
+13-11-14 iffe.sh: handle "opt no-name" (specifically for "opt no-map-libc" =&gt; _opt_map_libc default)
+13-11-07 cc.darwin*: target 10.3 =&gt; 10.7
+13-10-30 iffe.sh: fix lcl|nxt logic to work for multi-arch style implementations
+13-09-25 iffe.sh: add _${API}_API_IMPLEMENT guards for implementation code
+13-08-11 iffe.sh: executed blocks now have a single argument that is a tmp file prefix
+13-08-11 iffe.sh: fix intrinsic function test to rule out type names
+13-07-17 iffe.sh: add '^#include.*iffe --include-first' for *.c feature test macro initialization
+13-07-17 package.sh: refix 13-06-17 fix to check both $CC and $CCFLAGS
+13-06-24 add -lsocket =&gt; -lsocket -lnsl for systems that don't have it in -lc
+13-06-17 package.sh: fix host type logic to handle -m32/-m64 almost cross-compile
+13-05-21 C+probe: add ksh-2013-05-21 `...` hang workaround -- FIXME
+13-05-17 package.sh: package make should continue if ksh fails to build
+13-05-17 make.probe: fix CC.DIALECT+=EXPORT=DLL logic
+13-05-13 MAPLIB.mk: workaround ppcc+bash not handling '-o t t.c'
+13-05-01 package.sh: add ``results path old'' for *.out.*
+13-03-20 make.probe: add CC.NM.NMFLAGS for stupid stupid stupid aix -Xany 
+13-03-06 handle incompletely defined types e.g. "typ DIR dirent.h" 
+12-12-05 C+probe: elide */tmp/* and */probe&#0091;0-9&#0093;* from stdinclude
+12-10-25 ditto.sh: set DITTO_OPTIONS=dst=1 in destination read script
+12-09-27 package.sh: fix admin log total logic
+12-09-18 cc.ibm.risc: fix -O disable logic that ate next arg
+12-09-11 make.probe: fix sunos cc/CC CC.STDLIB probe
+12-08-24 iffe.sh: add ``api n1 = n2''
 12-07-17 iffe.sh: add C code NOTE("...") to ammend --verbose output
 12-06-26 iffe.sh: fix "npt foo" to handle function-like macro foo()
 12-06-20 package.sh: use $KSH for rt in "results test"
@@ -996,7 +1021,7 @@ All recorded changes follow.
 <TR>
 <TD align=left></TD>
 <TD align=center></TD>
-<TD align=right>August 07, 2012</TD>
+<TD align=right>January 05, 2015</TD>
 </TR>
 </TABLE>
 <P>

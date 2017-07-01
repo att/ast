@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -185,7 +185,7 @@ static const char paren_chars[] = "([{)]}";   /* for % command */
 static void	cursor(Vi_t*, int);
 static void	del_line(Vi_t*,int);
 static int	getcount(Vi_t*,int);
-static void	getline(Vi_t*,int);
+static void	vigetline(Vi_t*,int);
 static int	getrchar(Vi_t*);
 static int	mvcursor(Vi_t*,int);
 static void	pr_string(Vi_t*,const char*);
@@ -226,7 +226,7 @@ int ed_viread(void *context, int fd, register char *shbuf, int nchar, int reedit
 #if SHOPT_RAWONLY
 #   define viraw	1
 #else
-	int viraw = (sh_isoption(SH_VIRAW) || ed->sh->st.trap[SH_KEYTRAP]);
+	int viraw = (sh_isoption(ed->sh,SH_VIRAW) || ed->sh->st.trap[SH_KEYTRAP]);
 #   ifndef FIORDCHK
 	clock_t oldtime, newtime;
 	struct tms dummy;
@@ -582,11 +582,11 @@ int ed_viread(void *context, int fd, register char *shbuf, int nchar, int reedit
 		refresh(vp,INPUT);
 	}
 	if(viraw)
-		getline(vp,APPEND);
+		vigetline(vp,APPEND);
 	else if(last_virt>=0 && virtual[last_virt]==term_char)
-		getline(vp,APPEND);
+		vigetline(vp,APPEND);
 	else
-		getline(vp,ESC);
+		vigetline(vp,ESC);
 	if(vp->ed->e_multiline)
 		cursor(vp, last_phys);
 	/*** add a new line if user typed unescaped \n ***/
@@ -595,7 +595,7 @@ int ed_viread(void *context, int fd, register char *shbuf, int nchar, int reedit
 	if(ed->e_nlist)
 	{
 		ed->e_nlist = 0;
-		stakset(ed->e_stkptr,ed->e_stkoff);
+		stkset(ed->sh->stk,ed->e_stkptr,ed->e_stkoff);
 	}
 	if( vp->addnl )
 	{
@@ -1052,7 +1052,7 @@ static int cntlmode(Vi_t *vp)
 			if(lookahead)
 			{
 				ed_ungetchar(vp->ed,c=ed_getchar(vp->ed,1));
-				if(c=='[')
+				if(c=='[' || c=='O')
 				{
 					vp->repeat = 1;
 					continue;
@@ -1359,7 +1359,7 @@ static int getcount(register Vi_t *vp,register int c)
  *
 }*/
 
-static void getline(register Vi_t* vp,register int mode)
+static void vigetline(register Vi_t* vp,register int mode)
 {
 	register int c;
 	register int tmp;
@@ -1402,7 +1402,7 @@ static void getline(register Vi_t* vp,register int mode)
 		switch( c )
 		{
 		case ESC:		/** enter control mode **/
-			if(!sh_isoption(SH_VI))
+			if(!sh_isoption(vp->ed->sh,SH_VI))
 			{
 				append(vp,c, mode);
 				break;
@@ -1460,7 +1460,7 @@ static void getline(register Vi_t* vp,register int mode)
 				/*** treat as backspace ***/
 
 		case '\b':		/** backspace **/
-			if( virtual[cur_virt] == '\\' )
+			if(cur_virt>=0 && virtual[cur_virt] == '\\')
 			{
 				cdelete(vp,1, BAD);
 				append(vp,usrerase, mode);
@@ -1541,7 +1541,7 @@ static void getline(register Vi_t* vp,register int mode)
 			return;
 
 		case '\t':		/** command completion **/
-			if(mode!=SEARCH && last_virt>=0 && (vp->ed->e_tabcount|| !isblank(cur_virt)) && vp->ed->sh->nextprompt)
+			if(mode!=SEARCH && (last_virt>=0||vp->ed->e_tabcount) && vp->ed->sh->nextprompt)
 			{
 				if(virtual[cur_virt]=='\\')
 				{
@@ -1556,11 +1556,17 @@ static void getline(register Vi_t* vp,register int mode)
 				}
 				else if(vp->ed->e_tabcount==1)
 				{
+					if(last_virt==0)
+#if 1
+						cur_virt = --last_virt;
+#endif
 					ed_ungetchar(vp->ed,'=');
 					goto escape;
 				}
 				vp->ed->e_tabcount = 0;
 			}
+			else
+				vp->ed->e_tabcount = 1;
 			/* FALL THRU*/
 		default:
 			if( mode == REPLACE )
@@ -1624,6 +1630,7 @@ static int mvcursor(register Vi_t* vp,register int motion)
 		tcur_virt = last_virt;
 		break;
 
+	case 'O':
 	case '[':
 		switch(motion=getcount(vp,ed_getchar(vp->ed,-1)))
 		{
@@ -1890,7 +1897,7 @@ static void refresh(register Vi_t* vp, int mode)
 	}
 	v = cur_virt;
 #if SHOPT_EDPREDICT
-	if(mode==INPUT && v>0 && virtual[0]=='#' && v==last_virt && virtual[v]!='*' && sh_isoption(SH_VI))
+	if(mode==INPUT && v>0 && virtual[0]=='#' && v==last_virt && virtual[v]!='*' && sh_isoption(vp->ed->sh,SH_VI))
 	{
 		int		n;
 		virtual[last_virt+1] = 0;
@@ -2229,7 +2236,7 @@ static int search(register Vi_t* vp,register int mode)
 		append(vp,mode, APPEND);
 		refresh(vp,INPUT);
 		first_virt = 1;
-		getline(vp,SEARCH);
+		vigetline(vp,SEARCH);
 		first_virt = 0;
 		virtual[last_virt + 1] = '\0';	/*** make null terminated ***/
 		vp->direction = mode=='/' ? -1 : 1;
@@ -2391,6 +2398,7 @@ static int textmod(register Vi_t *vp,register int c, int mode)
 	register genchar *p = vp->lastline;
 	register int trepeat = vp->repeat;
 	genchar *savep;
+	int	ch;
 
 	if(mode && (fold(vp->lastmotion)=='F' || fold(vp->lastmotion)=='T')) 
 		vp->lastmotion = ';';
@@ -2421,7 +2429,10 @@ addin:
 		++last_virt;
 		mode = cur_virt-1;
 		virtual[last_virt] = 0;
-		if(ed_expand(vp->ed,(char*)virtual, &cur_virt, &last_virt, c, vp->repeat_set?vp->repeat:-1)<0)
+		ch = c;
+		if(mode>=0 && c=='\\' && virtual[mode+1]=='/')
+			c = '=';
+		if(ed_expand(vp->ed,(char*)virtual, &cur_virt, &last_virt, ch, vp->repeat_set?vp->repeat:-1)<0)
 		{
 			if(vp->ed->e_tabcount)
 			{
@@ -2433,9 +2444,8 @@ addin:
 			last_virt = i;
 			ed_ringbell();
 		}
-		else if((c=='=' || (c=='\\'&&virtual[i]=='/')) && !vp->repeat_set)
+		else if((c=='=' || (c=='\\'&&virtual[last_virt]=='/')) && !vp->repeat_set)
 		{
-			last_virt = i;
 			vp->nonewline++;
 			ed_ungetchar(vp->ed,cntl('L'));
 			return(GOOD);
@@ -2445,7 +2455,7 @@ addin:
 			--cur_virt;
 			--last_virt;
 			vp->ocur_virt = MAXCHAR;
-			if(c=='=' || (mode<cur_virt && (virtual[cur_virt]==' ' || virtual[cur_virt]=='/')))
+			if(c=='=' || (mode<cur_virt && virtual[cur_virt]=='/'))
 				vp->ed->e_tabcount = 0;
 			return(APPEND);
 		}

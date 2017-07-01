@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	<vclib.h>
+#include	"vchdr.h"
 
 /*	Burrows-Wheeler transform.
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 #if __STD_C
@@ -35,10 +35,11 @@ Void_t**	out;
 #endif
 {
 	Vcsfx_t		*sfx;
-	ssize_t		hd, sp, sz, *idx, *endidx;
+	ssize_t		sz;
+	Vcinx_t		hd, sp, *idx, k;
 	Vcio_t		io;
 	Vcchar_t	*dt, *output, *bw;
-	ssize_t		rv = -1;
+	Vcinx_t		rv = -1;
 
 	if(size == 0)
 		return 0;
@@ -46,12 +47,13 @@ Void_t**	out;
 	/* compute suffix array */
 	if(!(sfx = vcsfxsort(data,size)) )
 		RETURN(-1);
+	idx = sfx->idx;
 
 	/* compute the location of the sentinel */
-	for(endidx = (idx = sfx->idx)+size; idx < endidx; ++idx)
-		if(*idx == 0)
+	for(sp = 0; sp < size; ++sp)
+		if(idx[sp] == 0)
 			break;
-	sp = idx - sfx->idx;
+	/**/DEBUG_ASSERT(sp < size);
 
 	hd = vcsizeu(sp); /* encoding size of the 0th position after sorting */
 	sz = size + 1; /* size of transformed data */
@@ -60,12 +62,17 @@ Void_t**	out;
 
 	/* compute the transform */
 	dt = (Vcchar_t*)data; bw = output;
-	for(idx = sfx->idx; idx < endidx; ++idx, ++bw)
-	{	if(*idx == 0) /* special coding of the 0th position */
-			*bw = idx == sfx->idx ? 0 : *(bw-1);
-		else	*bw = dt[*idx - 1];
+	for(k = 0; k < size; ++k)
+	{	if(idx[k] == 0) /* special coding of the 0th position */
+		{	/**/DEBUG_ASSERT(k == sp);
+			bw[k] = k == 0 ? 0 : bw[k-1];
+		}
+		else
+		{	/**/DEBUG_ASSERT(idx[k] < size);
+			bw[k] = dt[idx[k] - 1];
+		}
 	}
-	*bw = dt[size-1];
+	bw[size] = dt[size-1];
 
 	/* filter data thru the continuation coder */
 	dt = output;
@@ -99,9 +106,9 @@ size_t		size;
 Void_t**	out;
 #endif
 {
-	ssize_t		n, sp, sz;
-	Vcchar_t	*dt, *output, *o;
-	ssize_t		base[256], *offset;
+	ssize_t		n, k, b, sp, sz;
+	Vcchar_t	*dt, *output;
+	ssize_t		base[256], *pick;
 	Vcio_t		io;
 
 	if(size == 0)
@@ -128,33 +135,31 @@ Void_t**	out;
 	if(!(output = vcbuffer(vc, NIL(Vcchar_t*), sz, 0)) )
 		RETURN(-1);
 
-	if(!(offset = (ssize_t*)malloc((sz+1)*sizeof(ssize_t))) )
+	if(!(pick = (ssize_t*)malloc((sz+1)*sizeof(ssize_t))) )
 		RETURN(-1);
 
-	/* base and offset vector for bytes */
-	for(n = 0; n < 256; ++n)
-		base[n] = 0;
+	for(k = 0; k < 256; ++k)
+		base[k] = 0;
 	for(n = 0; n <= sz; ++n)
 	{	if(n == sp)
-			offset[n] = 0;
-		else
-		{	offset[n] = base[dt[n]];
-			base[dt[n]] += 1;
-		}
-	}
-	for(sp = 0, n = 0; n < 256; ++n)
-	{	ssize_t	c = base[n];
-		base[n] = sp;
-		sp += c;
+			continue;
+		pick[n] = base[dt[n]];
+		base[dt[n]] += 1;
 	}
 
-	/* now invert the transform */
-	for(n = sz, o = output+sz-1; o >= output; --o)
-	{	*o = dt[n];
-		n = base[*o] + offset[n];
+	for(b = 0, n = 0; n < 256; ++n)
+	{	k = base[n];
+		base[n] = b;
+		b += k;
 	}
 
-	free(offset);
+	/* construct string from right to left */
+	for(n = sz, k = sz-1; k >= 0; --k)
+	{	output[k] = dt[n];
+		n = base[dt[n]] + pick[n]; /**/DEBUG_ASSERT(n != sp || k == 0);
+	}
+
+	free(pick);
 	vcbuffer(vc, dt, -1, -1);
 
 	if(out)
@@ -168,9 +173,9 @@ Vcmethod_t _Vcbwt =
 	vcunbwt,
 	0,
 	"bwt", "Burrows-Wheeler transform.",
-	"[-version?bwt (AT&T Research) 2003-01-01]" USAGE_LICENSE,
+	"[-?\n@(#)$Id: vcodex-bwt (AT&T Research) 2009-02-22 $\n]" USAGE_LICENSE,
 	NIL(Vcmtarg_t*),
-	4*1024*1024,
+	2*1024*1024,
 	0
 };
 

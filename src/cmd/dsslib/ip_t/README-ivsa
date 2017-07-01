@@ -1,5 +1,6 @@
 ipv6 address longest prefix match using an interval dictionary
-use this until the lpm(1) retrie implementation handles ipv6 addresses
+
+Use this until the lpm(1) retrie implementation handles ipv6 addresses.
 
 	Glenn Fowler
 	Information and Software Systems Research
@@ -8,7 +9,7 @@ use this until the lpm(1) retrie implementation handles ipv6 addresses
 This directory contains the standalone code for ipv6 address longest
 prefix match using an interval dictionary. ivsa requires the ast
 standalone astsa source package.  Read this package and astsa in the
-same directory and run this to build libivsa.a:
+same directory, read README-astsa, and then run this to build libivsa.a:
 
 	make -f ivsa.omk
 

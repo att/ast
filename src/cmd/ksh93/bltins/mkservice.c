@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -115,6 +115,7 @@ typedef struct Service_s Service_t;
 struct Service_s
 {
 	Namfun_t	fun;
+	Shell_t		*sh;
 	short		fd;
 	int		refcount;
 	int		(*acceptf)(Service_t*,int);
@@ -210,11 +211,12 @@ static void process_stream(Sfio_t* iop)
 				
 static int waitnotify(int fd, long timeout, int rw)
 {
+	Shell_t	*shp = sh_getinterp();
 	Sfio_t *special=0, **pstream;
 	register int	i;
 
 	if (fd >= 0)
-		special = sh_fd2sfio(fd);
+		special = sh_fd2sfio(shp,fd);
 	while(1)
 	{
 		pstream = poll_list;
@@ -225,7 +227,7 @@ static int waitnotify(int fd, long timeout, int rw)
 		for(i=0; i < npoll; i++)
 		{
 			if(service_list[file_list[i]])
-				*pstream++ = sh_fd2sfio(file_list[i]);
+				*pstream++ = sh_fd2sfio(shp,file_list[i]);
 		}
 #if 1
 		for(i=0; i < pstream-poll_list; i++)
@@ -260,8 +262,9 @@ static int waitnotify(int fd, long timeout, int rw)
 	}
 }
 
-static int service_init(void)
+static int service_init(Service_t *sp)
 {
+	int n=20;
 	file_list =  newof(NULL,short,n,0);
 	poll_list =  newof(NULL,Sfio_t*,n,0);
 	service_list =  newof(NULL,Service_t*,n,0);
@@ -274,13 +277,14 @@ void service_add(Service_t *sp)
 {
 	static int init;
 	if (!init)
-		init = service_init();
+		init = service_init(sp);
 	service_list[sp->fd] = sp;
 	file_list[npoll++] = sp->fd;
 }
 
 static int Accept(register Service_t *sp, int accept_fd)
 {
+	Shell_t	*shp = sp->sh;
 	register Namval_t*	nq = sp->disc[ACCEPT];
 	int			fd;
 
@@ -296,7 +300,7 @@ static int Accept(register Service_t *sp, int accept_fd)
 			av[1] = buff;
 			av[2] = 0;
 			sfsprintf(buff, sizeof(buff), "%d", fd);
-			if (sh_fun(nq, sp->node, av))
+			if (sh_fun(shp,nq, sp->node, av))
 			{
 				close(fd);
 				return -1;
@@ -324,7 +328,7 @@ static int Action(Service_t *sp, int fd, int close)
 		av[1] = buff;
 		av[2] = 0;
 		sfsprintf(buff, sizeof(buff), "%d", fd);
-		r=sh_fun(nq, sp->node, av);
+		r=sh_fun(sp->sh,nq, sp->node, av);
 	}
 	sfsync(NiL);
 	return r > 0 ? -1 : 1;
@@ -374,6 +378,7 @@ static char* setdisc(Namval_t* np, const char* event, Namval_t* action, Namfun_t
 
 static void putval(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 {
+	Shell_t	*shp = sh_ptr(np);
 	register Service_t* sp = (Service_t*)fp;
 	if (!val)
 		fp = nv_stack(np, NiL);
@@ -381,7 +386,7 @@ static void putval(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	if (!val)
 	{
 		register int i;
-		for(i=0; i< sh.lim.open_max; i++)
+		for(i=0; i< shp->gd->lim.open_max; i++)
 		{
 			if(service_list[i]==sp)
 			{
@@ -411,9 +416,9 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 	register Namval_t*	np;
 	register Service_t*	sp;
 	register int		fd;
+	register Shell_t*	shp = context->shp;
 
 	NOT_USED(argc);
-	NOT_USED(context);
 	for (;;)
 	{
 		switch (optget(argv, mkservice_usage))
@@ -436,6 +441,7 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 		error(ERROR_exit(1), "out of space");
 	sp->acceptf = Accept;
 	sp->actionf = Action;
+	sp->sh = shp;
 	sp->errorf = Error;
 	sp->refcount = 1;
 	sp->context = context;
@@ -450,7 +456,7 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 		close(fd);
 	else
 		sp->fd = fd;
-	np = nv_open(var,sh.var_tree,NV_ARRAY|NV_VARNAME|NV_NOASSIGN);
+	np = nv_open(var,shp->var_tree,NV_ARRAY|NV_VARNAME|NV_NOASSIGN);
 	sp->node = np;
 	nv_putval(np, path, 0); 
 	nv_stack(np, (Namfun_t*)sp);
@@ -460,9 +466,9 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 
 int	b_eloop(int argc, char** argv, Shbltin_t *context)
 {
+	Shell_t	*shp = context->shp;
 	register long	timeout = -1;
 	NOT_USED(argc);
-	NOT_USED(context);
 	for (;;)
 	{
 		switch (optget(argv, eloop_usage))

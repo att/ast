@@ -1,0 +1,82 @@
+: ksh strmatch tests 2013-11-25
+
+K	@(a|b)			(a|b)			(1,2)(1,2)
+K	@(a|b)			c			NOMATCH
+K	(a|b)			(a|b)			(1,2)(1,2)
+K	(a|b)			c			NOMATCH
+K	(a|b)			(a|b)			(1,2)(1,2)
+K	a|b			a			(0,1)
+K	a|b			c			NOMATCH
+K	a|b			a|b			(0,1)
+
+Ko	@(a|b)			(a|b)			(1,2)(1,2)
+Ko	@(a|b)			c			NOMATCH
+Ko	(a|b)			(a|b)			(0,5)
+Ko	(a|b)			c			NOMATCH
+Ko	(a|b)			(a|b)			(0,5)
+Ko	a|b			a			NOMATCH
+Ko	a|b			c			NOMATCH
+Ko	a|b			a|b			(0,3)
+
+K	~(E)([$]|#)		a$z			(1,2)(1,2)
+K	~(E)([$]|#)		a#z			(1,2)(1,2)
+K	~(Elr)([$]|#)		a$z			NOMATCH
+K	~(Elr)([$]|#)		a#z			NOMATCH
+K	~(E)([$]|#)		a$			(1,2)(1,2)
+K	~(E)([$]|#)		a#			(1,2)(1,2)
+K	~(Elr)([$]|#)		a$			NOMATCH
+K	~(Elr)([$]|#)		a#			NOMATCH
+K	~(E)([$]|#)		$z			(0,1)(0,1)
+K	~(E)([$]|#)		#z			(0,1)(0,1)
+K	~(Elr)([$]|#)		$z			NOMATCH
+K	~(Elr)([$]|#)		#z			NOMATCH
+K	~(E)([$]|#)		$			(0,1)(0,1)
+K	~(E)([$]|#)		#			(0,1)(0,1)
+K	~(Elr)([$]|#)		$			(0,1)(0,1)
+K	~(Elr)([$]|#)		#			(0,1)(0,1)
+
+K	~(E)(\$|#)		a$z			(1,2)(1,2)
+K	~(E)(\$|#)		a#z			(1,2)(1,2)
+K	~(Elr)(\$|#)		a$z			NOMATCH
+K	~(Elr)(\$|#)		a#z			NOMATCH
+K	~(E)(\$|#)		a$			(1,2)(1,2)
+K	~(E)(\$|#)		a#			(1,2)(1,2)
+K	~(Elr)(\$|#)		a$			NOMATCH
+K	~(Elr)(\$|#)		a#			NOMATCH
+K	~(E)(\$|#)		$z			(0,1)(0,1)
+K	~(E)(\$|#)		#z			(0,1)(0,1)
+K	~(Elr)(\$|#)		$z			NOMATCH
+K	~(Elr)(\$|#)		#z			NOMATCH
+K	~(E)(\$|#)		$			(0,1)(0,1)
+K	~(E)(\$|#)		#			(0,1)(0,1)
+K	~(Elr)(\$|#)		$			(0,1)(0,1)
+K	~(Elr)(\$|#)		#			(0,1)(0,1)
+
+# negation test that uncovered regex/reglib.h bit*() macro bug
+
+K	!(*/*):@(*)		a:/x		(0,4)(0,1)(2,4)
+K	!(*/*):@(*)		a:/xxxxxxxx	(0,11)(0,1)(2,11)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxx	(0,19)(0,1)(2,19)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,35)(0,1)(2,35)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,67)(0,1)(2,67)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 	(0,132)(0,1)(2,132)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,232)(0,1)(2,232)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,233)(0,1)(2,233)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,234)(0,1)(2,234)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,235)(0,1)(2,235)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,236)(0,1)(2,236)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,246)(0,1)(2,246)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,256)(0,1)(2,256)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,257)(0,1)(2,257)
+K	!(*/*):@(*)		a:/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	(0,258)(0,1)(2,258)
+
+Ka	@(+(.|?)&!(.|..))	arch		(0,4)(0,4)(0,4)(0,4)
+Kad	@(+(.|?)&!(.|..))	arch		(0,4)(0,4)(0,4)(0,4)
+Ka	@(+(.|?)&!(.|..))	.profile	(0,8)(0,8)(0,8)(0,8)
+Kad	@(+(.|?)&!(.|..))	.profile	(0,8)(0,8)(0,8)(0,8)
+Ka	@(+(.|?)&!(.|..))	.		NOMATCH
+Kad	@(+(.|?)&!(.|..))	.		NOMATCH
+Ka	@(+(.|?)&!(.|..))	..		NOMATCH
+Kad	@(+(.|?)&!(.|..))	..		NOMATCH
+Ka	@(+(.|?)&!(.|..))	...		(0,3)(0,3)(0,3)(0,3)
+Kad	@(+(.|?)&!(.|..))	...		(0,3)(0,3)(0,3)(0,3)

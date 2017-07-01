@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -43,6 +43,7 @@
 #define PATH_SKIP		0020
 #define PATH_BUILTIN_LIB	0040
 #define PATH_STD_DIR		0100	/* directory is on  $(getconf PATH) */
+#define PATH_BIN		0200	/* path behaves like /bin for builtins */
 
 #define PATH_OFFSET	2		/* path offset for path_join */
 #define MAXDEPTH	(sizeof(char*)==2?64:1024) /* maximum recursion depth*/
@@ -54,6 +55,7 @@ typedef struct pathcomp
 {
 	struct pathcomp *next;
 	int		refcount;
+	int		fd;
 	dev_t		dev;
 	ino_t		ino;
 	time_t		mtime;
@@ -75,6 +77,7 @@ extern void		path_newdir(Shell_t*,Pathcomp_t*);
 extern Pathcomp_t	*path_dirfind(Pathcomp_t*,const char*,int);
 extern Pathcomp_t	*path_unsetfpath(Shell_t*);
 extern Pathcomp_t	*path_addpath(Shell_t*,Pathcomp_t*,const char*,int);
+extern bool		path_cmdlib(Shell_t*, const char*, bool);
 extern Pathcomp_t	*path_dup(Pathcomp_t*);
 extern void		path_delete(Pathcomp_t*);
 extern void 		path_alias(Namval_t*,Pathcomp_t*);
@@ -92,7 +95,7 @@ extern Pathcomp_t 	*path_get(Shell_t*,const char*);
 #undef extern
 extern char 		*path_pwd(Shell_t*,int);
 extern Pathcomp_t	*path_nextcomp(Shell_t*,Pathcomp_t*,const char*,Pathcomp_t*);
-extern int		path_search(Shell_t*,const char*,Pathcomp_t**,int);
+extern bool		path_search(Shell_t*,const char*,Pathcomp_t**,int);
 extern char		*path_relative(Shell_t*,const char*);
 extern int		path_complete(Shell_t*,const char*, const char*,struct argnod**);
 #if SHOPT_BRACEPAT

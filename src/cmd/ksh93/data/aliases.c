@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,6 +33,7 @@ const struct shtable2 shtab_aliases[] =
 	"2d",		NV_NOFREE,		"set -f;_2d",
 #endif /* SHOPT_FS_3D */
 	"autoload",	NV_NOFREE,		"typeset -fu",
+	"bool",		NV_NOFREE|BLT_DCL,	"_Bool",
 	"command",	NV_NOFREE,		"command ",
 	"compound",	NV_NOFREE|BLT_DCL,	"typeset -C",
 	"fc",		NV_NOFREE,		"hist",
@@ -45,7 +46,6 @@ const struct shtable2 shtab_aliases[] =
 	"nohup",	NV_NOFREE,		"nohup ",
 	"r",		NV_NOFREE,		"hist -s",
 	"redirect",	NV_NOFREE,		"command exec",
-	"source",	NV_NOFREE,		"command .",
 #ifdef SIGTSTP
 	"stop",		NV_NOFREE,		"kill -s STOP",
 	"suspend", 	NV_NOFREE,		"kill -s STOP $$",

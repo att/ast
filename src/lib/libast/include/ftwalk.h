@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -47,7 +47,7 @@
 #define _fts_statb	statb
 
 #define FTSENT		Ftw_t			/* <fts.h> internal	*/
-#define Ftsent		FTW			/* <fts.h> internal	*/
+#define Ftsent_s	FTW			/* <fts.h> internal	*/
 
 #define _FTSENT_LOCAL_PRIVATE_			/* <fts.h> internal	*/ \
 	union								   \
@@ -63,7 +63,7 @@
  */
 
 #define FTW_CANON	FTS_CANON
-#define FTW_CHILDREN	(FTS_USER<<0)
+#define FTW_CHILDREN	(FTS_WALK<<0)
 #define FTW_DELAY	FTS_NOSTAT
 #define FTW_DOT		FTS_NOCHDIR
 #define FTW_META	FTS_META
@@ -71,11 +71,12 @@
 #define FTW_MULTIPLE	FTS_ONEPATH
 #define FTW_NOSEEDOTDIR	FTS_NOSEEDOTDIR
 #define FTW_PHYSICAL	FTS_PHYSICAL
-#define FTW_POST	(FTS_USER<<1)
+#define FTW_POST	(FTS_WALK<<1)
 #define FTW_SEEDOTDIR	FTS_SEEDOTDIR
 #define FTW_TOP		FTS_TOP
-#define FTW_TWICE	(FTS_USER<<2)
-#define FTW_USER	(FTS_USER<<3)
+#define FTW_TWICE	(FTS_WALK<<2)
+#define FTW_USER	(FTS_WALK<<3)
+#define FTW_XATTR	FTS_XATTR
 
 /*
  * Ftw_t.info type bits

@@ -2,6 +2,8 @@
 
 KEEP "*.dat"
 
+export LC_ALL=C
+
 function DATA
 {
 	typeset f
@@ -73,7 +75,7 @@ TEST 01 'simple translation'
 	EXEC	'[a-b]' 'z'
 		OUTPUT - $'zzcxyz'
 	EXEC	'[abc]' '[AB-]'
-		OUTPUT - $'ABCxyz'
+		OUTPUT - $'ABBxyz'
 	EXEC	AAA XYZ
 		INPUT - $'ABCXYZ'
 		OUTPUT - $'ZBCXYZ'
@@ -93,7 +95,7 @@ TEST 01 'simple translation'
 	EXEC	'[A-B]' 'Z'
 		OUTPUT - $'ZZCXYZ'
 	EXEC	'[ABC]' '[ab-]'
-		OUTPUT - $'abcXYZ'
+		OUTPUT - $'abbXYZ'
 	EXEC	'[ab-]' '[ABC]'
 		INPUT - $'abcxyz'
 		OUTPUT -
@@ -322,7 +324,10 @@ TEST 10	'ranges and classes'
 		OUTPUT - $'xyz'
 	EXEC	'[:*3][:digit:]' 'a-m'
 		INPUT - $':1239'
-		OUTPUT - $'cefgm'
+		OUTPUT - $'aefgm'
+	EXEC	':*3[:digit:]' 'a-m'
+		INPUT - $':1239'
+		OUTPUT - $'aefgm'
 	EXEC	'a[b*512]c' '1[x*]2'
 		INPUT - $'abc'
 		OUTPUT - $'1x2'
@@ -369,3 +374,21 @@ TEST 13 'unlucky char sign extension?'
 	EXEC	$'\x8d' $'\n'
 		INPUT -n - $'x\x8d'
 		OUTPUT - $'x'
+
+TEST 14 'multibyte basics'
+	EXPORT	LC_CTYPE=C.UTF-8
+	export	LC_CTYPE=C.UTF-8
+	EXEC	-c $'[:alpha:]\n' 'X'
+		INPUT - $'\u[20ac]\u[20ac]'
+		OUTPUT - $'XX'
+	EXEC	-C $'[:alpha:]\n' 'X'
+	EXEC	-cq $'[:alpha:]\n' 'X'
+		INPUT - $'\u[20ac]\xac\u[20ac]'
+		OUTPUT - $'X\xacX'
+	EXEC	-Cq $'[:alpha:]\n' 'X'
+	EXEC	-c $'[:alpha:]\n' 'X'
+		INPUT - $'\u[20ac]\xac\u[20ac]'
+		OUTPUT - $'X\xacX'
+		ERROR - $'tr: line 1: \\xac: invalid multibyte character byte'
+		EXIT	1
+	EXEC	-C $'[:alpha:]\n' 'X'

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -56,6 +56,8 @@ fmtquote(const char* as, const char* qb, const char* qe, size_t n, int flags)
 	register int		spaced;
 	register int		doublequote;
 	register int		singlequote;
+	Mbstate_t		q;
+	wchar_t			w;
 	int			shell;
 	char*			f;
 	char*			buf;
@@ -87,12 +89,13 @@ fmtquote(const char* as, const char* qb, const char* qe, size_t n, int flags)
 		doublequote = 1;
 	f = b;
 	escaped = spaced = !!(flags & FMT_ALWAYS);
+	mbtinit(&q);
 	while (s < e)
 	{
-		if ((m = mbsize(s)) > 1 && (s + m) <= e)
+		if ((m = mbtsize(s, MB_LEN_MAX, &q)) > 1 && (s + m) <= e)
 		{
 #if _hdr_wchar && _hdr_wctype
-			c = mbchar(s);
+			c = mbchar(&w, s, MB_LEN_MAX, &q);
 			if (!spaced && !escaped && (iswspace(c) || iswcntrl(c)))
 				spaced = 1;
 			s -= m;

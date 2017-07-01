@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,13 +14,13 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
 
 static const char usage[] =
-"[-?\n@(#)$Id: jcm (AT&T Research) 2006-08-16 $\n]"
+"[-1s1I?\n@(#)$Id: jcm (AT&T Research) 2013-02-13 $\n]"
 USAGE_LICENSE
 "[+NAME?jcm - job control-M deck converter]"
 "[+DESCRIPTION?\bjcm\b converts the control-M job scheduler decks named by"
@@ -40,9 +40,7 @@ USAGE_LICENSE
 "[l:lowercase?Convert job and library names to lower case.]"
 "[p:portable?Convert event names for \b/bin/make\b portability.]"
 "[v:verbose?Enable verbose tracing.]"
-"[T:test?Implementation-specific test and tracing bitmask.]#[test-mask]{"
-"	[+0x0010?List `-' OUT dependents (these are marked for delete).]"
-"}"
+"[T:test?Implementation-specific test and tracing bitmask.]#[test-mask]"
 "\n"
 "\n[ file ... ]\n"
 "\n"
@@ -138,7 +136,8 @@ struct Jcmevent_s
 	int		mark;
 	char		date[5];
 	Jcmlist_t*	reqs;
-	Jcmlist_t*	deps;
+	Jcmlist_t*	raise;
+	Jcmlist_t*	clear;
 	Jcmjob_t*	job;
 	char		name[1];
 };
@@ -505,14 +504,15 @@ append(Jcmlist_t* list, Jcmevent_t* event)
 }
 
 static void
-assert(register Jcmjob_t* job, register Jcmlist_t* reqs, register Jcmlist_t* deps, Jcmevent_t* group)
+assert(register Jcmjob_t* job, register Jcmlist_t* reqs, register Jcmlist_t* raise, register Jcmlist_t* clear, Jcmevent_t* group)
 {
 	register Jcmevent_t*	event;
 
 	event = getevent(job ? sfprints("JOB-%s", job->name) : NiL, NiL, 1, 1, 0);
 	event->job = job;
 	event->reqs = reqs;
-	event->deps = deps;
+	event->raise = raise;
+	event->clear = clear;
 	if (group)
 		group->reqs = append(group->reqs, event);
 }
@@ -589,9 +589,9 @@ dump(Sfio_t* sp, register Jcmevent_t* event)
 	sfprintf(sp, "%s : .VIRTUAL", event->name);
 	if (event->job)
 	{
-		if (event->job->overlib && streq(event->job->overlib->name, "DUMMY"))
+		if (event->job->memlib == state.dummy || event->job->overlib == state.dummy)
 		{
-			sfprintf(sp, " .DO.NOTHING");
+			sfprintf(sp, " .FOREGROUND .DO.NOTHING");
 			for (p = event->reqs; p; p = p->next)
 				sfprintf(sp, " %s", p->event->name);
 		}
@@ -613,15 +613,24 @@ dump(Sfio_t* sp, register Jcmevent_t* event)
 	else
 		for (p = event->reqs; p; p = p->next)
 			sfprintf(sp, " %s", p->event->name);
-	if (event->deps)
-		for (p = event->deps; p; p = p->next)
+	if (event->raise)
+		for (p = event->raise; p; p = p->next)
 			sfprintf(sp, " %s.RAISE", p->event->name);
+	if (event->clear)
+		for (p = event->clear; p; p = p->next)
+			sfprintf(sp, " %s.CLEAR", p->event->name);
 	sfprintf(sp, "\n");
-	if (event->deps)
+	if (event->raise)
 	{
-		for (p = event->deps; p; p = p->next)
+		for (p = event->raise; p; p = p->next)
 			sfprintf(sp, "%s.RAISE ", p->event->name);
 		sfprintf(sp, ": .AFTER .EVENT.RAISE\n");
+	}
+	if (event->clear)
+	{
+		for (p = event->clear; p; p = p->next)
+			sfprintf(sp, "%s.CLEAR ", p->event->name);
+		sfprintf(sp, ": .AFTER .EVENT.CLEAR\n");
 	}
 	for (p = event->reqs; p; p = p->next)
 		if (!p->event->mark)
@@ -635,11 +644,11 @@ main(int argc, char** argv)
 	register char*		s;
 	register char*		t;
 	register Jcmcard_t*	cp;
-	register Jcmevent_t*	appl;
-	register Jcmevent_t*	base;
+	register Jcmevent_t*	ep;
 	register Jcmevent_t*	group;
 	register Jcmjob_t*	job;
-	register Jcmlist_t*	deps;
+	register Jcmlist_t*	clear;
+	register Jcmlist_t*	raise;
 	register Jcmlist_t*	reqs;
 	Jcmcard_t*		firstcard;
 	Jcmcard_t*		lastcard;
@@ -740,8 +749,10 @@ main(int argc, char** argv)
 			error(ERROR_SYSTEM|2, "%s: cannot read", file);
 			continue;
 		}
-		else if (state.cards || state.verbose)
+		else if (state.cards)
 			sfprintf(sfstdout, "=== %s ===\n", file);
+		else if (state.verbose)
+			sfprintf(sfstderr, "=== %s ===\n", file);
 		n = sfgetc(sp);
 		sfungetc(sp, n);
 		map = isupper(n) ? (unsigned char*)0 : ccmap(CC_EBCDIC_O, CC_NATIVE);
@@ -751,12 +762,6 @@ main(int argc, char** argv)
 		firstcard = lastcard = 0;
 		while (s = card(sp, map))
 		{
-			if (state.cards || state.verbose)
-			{
-				sfprintf(sfstdout, "%s\n", s);
-				if (state.cards)
-					continue;
-			}
 			if (*s == 'T' && (t = strchr(s + 3, '=')) && *++t == '~')
 				setvar(t + 1, NiL, 0);
 			if (!(cp = vmnewof(state.vm, 0, Jcmcard_t, 1, strlen(s))))
@@ -769,19 +774,19 @@ main(int argc, char** argv)
 		}
 		if (cp = firstcard)
 		{
-			appl = base = group = 0;
+			group = state.all;
 			job = 0;
-			deps = reqs = 0;
-			cp = firstcard;
+			reqs = raise = clear = 0;
 			do
 			{
 				s = cp->data;
-				if (state.cards || state.verbose)
+				if (state.cards)
 				{
 					sfprintf(sfstdout, "%s\n", s);
-					if (state.cards)
-						continue;
+					continue;
 				}
+				if (state.verbose)
+					sfprintf(sfstderr, "%s\n", s);
 				switch (s[0])
 				{
 				case 'B':
@@ -800,7 +805,7 @@ main(int argc, char** argv)
 					/* XXX: event relationships */
 					break;
 				case 'G':
-					/* XXX: group info */
+					/* XXX: group */
 					break;
 				case 'H':
 					if (state.comment)
@@ -825,25 +830,28 @@ main(int argc, char** argv)
 						job->memlib = getlib(s+1);
 					break;
 				case 'M':
-					if (job || deps || reqs)
-						assert(job, reqs, deps, group);
-					deps = reqs = 0;
-					appl = getevent(s+9, 0, 0, 0, 0);
-					state.all->reqs = append(state.all->reqs, appl);
+					if (job || reqs || raise || clear)
+						assert(job, reqs, raise, clear, group);
+					reqs = raise = clear = 0;
+					job = getjob(s+1);
+					job->relationship = s[64];
 					if (s[60] == 'G')
 					{
-						base = appl;
-						group = getevent(s+1, NiL, 1, 0, 0);
-						appl->reqs = append(appl->reqs, group);
-						job = 0;
+						ep = getevent(job->name, NiL, 1, 1, 0);
+						group->reqs = append(group->reqs, ep);
+						group = ep;
 					}
-					else
+					else if (group == state.all)
 					{
-						group = appl;
-						job = getjob(s+1);
-						job->relationship = s[64];
-						if (base && base != appl)
-							appl->reqs = append(appl->reqs, base);
+						if (s = strrchr(file, '/'))
+							s++;
+						else
+							s = file;
+						if (t = strrchr(s, '.'))
+							s = sfprints("%-.*s", t - s, s);
+						ep = getevent(s, NiL, 1, 1, 0);
+						group->reqs = append(group->reqs, ep);
+						group = ep;
 					}
 					break;
 				case 'N':
@@ -853,17 +861,11 @@ main(int argc, char** argv)
 				case 'O':
 					if (job)
 					{
-						if (*(s + 4) == '-')
-						{
-							job->name = stash(parameterize(state.tmp, s+5, s+13, 0, 0));
-							if (t = strchr(job->name, '-'))
-								*t = 0;
-							if (state.lowercase)
-								lower(job->name);
-						}
 						for (s++; *s; s += 25)
-							if ((state.test & 0x0010) || s[24] != '-')
-								deps = append(deps, getevent(s, s+20, 0, 0, 0));
+							if (s[24] == '-')
+								clear = append(clear, getevent(s, s+20, 0, 0, 0));
+							else
+								raise = append(raise, getevent(s, s+20, 0, 0, 0));
 					}
 					break;
 				case 'Q':
@@ -957,13 +959,16 @@ main(int argc, char** argv)
 						job->doclib = getlib(s+9);
 					}
 					break;
+				case '0':
+					/* XXX: job modification owner/date */
+					break;
 				default:
 					error(1, "%c: unknown op", s[0]);
 					break;
 				}
 			} while (cp = cp->next);
-			if (job || deps || reqs)
-				assert(job, reqs, deps, group);
+			if (job || reqs || raise || clear)
+				assert(job, reqs, raise, clear, group);
 		}
 		if (sp != sfstdin)
 			sfclose(sp);

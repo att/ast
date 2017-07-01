@@ -1,3 +1,6 @@
+13-08-11 strcopy() => stpcpy()
+13-02-13 sync.c: set RS_MORE for (*readexit)()
+13-02-11 ss.c: allow SUM FIELDS=(NONE) for SUM FIELDS=NONE
 07-01-25 sync.c: v format size is max of all input files
 06-10-11 ss.c: add sfstruse() error checks
 06-08-01 sync.c: handle %size.suffix mapping with multiple .'s

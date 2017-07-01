@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -146,6 +146,7 @@ print world
 chmod +x script
 [[ $( $SHELL ./script) == $'hello\nworld' ]] || err_exit 'closing 3 & 4 causes script to fail'
 cd ~- || err_exit "cd back failed"
+cd $tmp || { err_exit "cd $tmp failed"; exit ; }
 ( exec  > '' ) 2> /dev/null  && err_exit '> "" does not fail'
 unset x
 ( exec > ${x} ) 2> /dev/null && err_exit '> $x, where x null does not fail'
@@ -295,7 +296,7 @@ $SHELL -c 'exec 3>; /dev/null'  2> /dev/null && err_exit '>; with exec should be
 $SHELL -c ': 3>; /dev/null'  2> /dev/null || err_exit '>; not working with at all'
 print hello > $tmp/1
 if	! $SHELL -c "false >; $tmp/1"  2> /dev/null
-then	let 1;[[ $(<$tmp/1) == hello ]] || err_exit '>; not preserving file on failure'
+then	[[ $(<$tmp/1) == hello ]] || err_exit '>; not preserving file on failure'
 fi
 if	! $SHELL -c "sed -e 's/hello/hello world/' $tmp/1" >; $tmp/1  2> /dev/null
 then	[[ $(<$tmp/1) == 'hello world' ]] || err_exit '>; not updating file on success'
@@ -472,6 +473,9 @@ print hello there world > $tmp/foobar
 $SHELL -c "sed  -e 's/there //' $tmp/foobar  >; $tmp/foobar"
 [[ $(<$tmp/foobar) == 'hello world' ]] || err_exit '>; redirection not working with -c on a simple command'
 
+chmod -w $tmp/foobar
+(: >; $tmp/foobar) 2> /dev/null && '>; should fail for a file without write permission'
+
 rm -f "$tmp/junk"
 for	(( i=1; i < 50; i++ ))
 do      out=$(/bin/ls "$tmp/junk" 2>/dev/null)
@@ -495,5 +499,21 @@ done	{n}< /dev/null
 
 n=$( exec {n}< /dev/null; print -r -- $n)
 [[ -r /dev/fd/$n ]] && err_exit "file descriptor n=$n left open after subshell"
+
+print hello > $tmp/foo
+redirect {fd}< $tmp
+[[ $(< ~{fd}/foo) == hello ]] 2> /dev/null || err_exit '~{fd}/foo not working'
+[[ $(< ~{$fd}/foo) == hello ]] 2> /dev/null || err_exit "~{$fd}/foo not working"
+{ cd /dev/fd/$fd/ ;} 2> /dev/null || err_exit "Cannot cd to /dev/fd/$fd/"
+
+(
+	Errors=0
+	redirect {n}> $tmp/foo; print foobar >&{n} > $tmp/foo
+	[[ $(<$tmp/foo) == foobar ]] || err_exit '>& {n} not working for write'
+	{ got=$( redirect {n}< $tmp/foo; cat <&{n} ) ;} 2> /dev/null
+	[[ $got == foobar ]] || err_exit  ' <& {n} not working for read'
+	exit $((Errors))
+) & wait $!
+((Errors += $?))
 
 exit $((Errors<125?Errors:125))

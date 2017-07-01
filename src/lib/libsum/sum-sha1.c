@@ -19,6 +19,7 @@
 			 [+(author)?Steve Reid <steve@edmweb.com>]"
 #define sha1_match	"sha1|SHA1|sha-1|SHA-1"
 #define sha1_scale	0
+#define sha1_flags	SUM_INDICATOR
 
 #define sha1_padding	md5_pad
 

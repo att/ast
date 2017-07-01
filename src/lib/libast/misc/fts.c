@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -34,9 +34,9 @@
 #include <fs3d.h>
 #include <ls.h>
 
-struct Ftsent;
+struct Ftsent_s;
 
-typedef int (*Compar_f)(struct Ftsent* const*, struct Ftsent* const*);
+typedef int (*Compar_f)(struct Ftsent_s* const*, struct Ftsent_s* const*);
 typedef int (*Stat_f)(const char*, struct stat*);
 
 #define _fts_status	status
@@ -948,7 +948,7 @@ fts_read(register FTS* fts)
 					if (!(fts->dir = opendir(fts->name)))
 						f->fts_info = FTS_DNX;
 					fts->base[fts->baselen] = 0;
-					if (!fts->dir && !(fts->dir = opendir(fts->name)))
+					if (!fts->dir && (access(fts->name, R_OK) || !(fts->dir = opendir(fts->name))))
 						f->fts_info = FTS_DNR;
 				}
 			}
@@ -1444,7 +1444,11 @@ fts_read(register FTS* fts)
 int
 fts_set(register FTS* fts, register FTSENT* f, int status)
 {
-	if (fts || !f || f->fts->current != f)
+#if 0
+	if (fts || !f || !f->fts || f->fts->current != f)
+#else
+	if (fts || !f)
+#endif
 		return -1;
 	switch (status)
 	{
@@ -1457,12 +1461,15 @@ fts_set(register FTS* fts, register FTSENT* f, int status)
 	case FTS_NOPOSTORDER:
 		break;
 	case FTS_SKIP:
+#if 0
 		if ((f->fts_info & (FTS_D|FTS_P)) != FTS_D)
 			return -1;
+#endif
 		break;
 	default:
 		return -1;
 	}
+	error(-1, "AHA fts_set %s status %d => %d", f->fts_name, f->status, status);
 	f->status = status;
 	return 0;
 }

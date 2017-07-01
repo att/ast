@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
-#include	<shell.h>
+#include	<defs.h>
 
 static const char enum_usage[] =
-"[-?@(#)$Id: enum (AT&T Research) 2008-01-08 $\n]"
+"[-?@(#)$Id: enum (AT&T Research) 2013-04-29 $\n]"
 USAGE_LICENSE
 "[+NAME?enum - create an enumeration type]"
 "[+DESCRIPTION?\benum\b is a declaration command that creates an enumeration "
@@ -29,7 +29,15 @@ USAGE_LICENSE
     "array variable \atypename\a.]"
 "[+?If the list of \avalue\as is omitted, then \atypename\a must name an "
     "indexed array variable with at least two elements.]" 
+"[+?When an enumeration variable is used in arithmetic expression, its value "
+	"is the index into the array that defined it starting from index 0. "
+	"Enumeration strings can be used in an arithmetic expression when "
+	"comparing against an enumeration variable.]"
+"[+?The enum \b_Bool\b exists by default with values \btrue\b and \bfalse\b. "
+	"The predefined alias \bbool\b is defined as \b_Bool\b.]"
 "[i:ignorecase?The values are case insensitive.]"
+"[p?Writes the enums to standard output.  If \atypename\a is omitted then all "
+	"\benum\bs are written.]"
 "\n"
 "\n\atypename\a[\b=(\b \avalue\a ... \b)\b]\n"
 "\n"
@@ -89,8 +97,9 @@ USAGE_LICENSE
 struct Enum
 {
 	Namfun_t	hdr;
-	short		nelem;
-	short		iflag;
+	char		node[NV_MINSZ+sizeof(char*)];
+	int64_t		nelem;
+	bool		iflag;
 	const char	*values[1];
 };
 
@@ -103,11 +112,7 @@ static int enuminfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *fp)
 	np = *(Namval_t**)(fp+1);
 	ep = (struct Enum*)np->nvfun;
 	if(strcmp(str,"default")==0)
-#if 0
-		sfprintf(out,"\b%s\b%c",ep->values[0],0);
-#else
 		sfprintf(out,"\b%s\b",ep->values[0]);
-#endif
 	else if(strcmp(str,"case")==0)
 	{
 		if(ep->iflag)
@@ -133,7 +138,7 @@ static void put_enum(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 	struct Enum 		*ep = (struct Enum*)fp;
 	register const char	*v;
 	unsigned short		i=0, n;
-	if(!val)
+	if(!val && !(flags&NV_INTEGER))
 	{
 		nv_putv(np, val, flags,fp);
 		nv_disc(np,&ep->hdr,NV_POP);
@@ -168,18 +173,90 @@ static char* get_enum(register Namval_t* np, Namfun_t *fp)
 	static char buff[6];
 	struct Enum *ep = (struct Enum*)fp;
 	long n = nv_getn(np,fp);
+	if(nv_isattr(np,NV_NOTSET)==NV_NOTSET)
+		return("");
 	if(n < ep->nelem)
 		return((char*)ep->values[n]);
 	sfsprintf(buff,sizeof(buff),"%u%c",n,0);
 	return(buff);
 }
 
+
 static Sfdouble_t get_nenum(register Namval_t* np, Namfun_t *fp)
 {
 	return(nv_getn(np,fp));
 }
 
-const Namdisc_t ENUM_disc        = {  0, put_enum, get_enum, get_nenum, 0,0,clone_enum };
+static Namval_t* create_enum(Namval_t *np, const char *name, int flags, Namfun_t *fp)
+{
+	struct Enum	*ep = (struct Enum*)fp;
+	Namval_t	*mp; 
+	const char	*v;
+	int		i,n;
+	mp = nv_namptr(ep->node,0);
+	mp->nvenv = (char*)np;
+	for(i=0;v=ep->values[i];i++)
+	{
+		if(ep->iflag)
+			n = strcasecmp(v,name);
+		else
+			n = strcmp(v,name);
+		if(n==0)
+		{
+			mp->nvalue.s = i;
+			mp->nvname = (char*)v;
+			fp->last = (char*)(name+strlen(name));
+			return(mp);
+		}
+	}
+	if(strcmp(name,"MAX")==0 || strcmp(name,"MIN")==0 || strcmp(name,"DIG")==0)
+	{
+			if(name[2]=='X')
+				i--;
+			else if(name[2]=='G')
+				i = i<100?(i<10?1:2):(i<1000?3:4);
+			else
+				i = 0;
+			mp->nvalue.s = i;
+			mp->nvname = (char*)name;
+			fp->last = (char*)(name+strlen(name));
+			return(mp);
+	}
+	error(ERROR_exit(1), "%s:  invalid enum constant for %s",name,nv_name(np));
+	return(mp);
+}
+
+const Namdisc_t ENUM_disc        = {  0, put_enum, get_enum, get_nenum, 0,create_enum,clone_enum };
+
+static int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp)
+{
+	Namval_t	*mp;
+	Dt_t		*dp=0;
+	char		nvtype[sizeof(NV_CLASS)];
+	struct Enum	*ep;
+	int		i;
+	if(!tp)
+	{
+		strcpy(nvtype,NV_CLASS);
+		if(!(mp = nv_open(nvtype, shp->var_tree,NV_NOADD|NV_VARNAME)))
+			return(0);
+		dp  =   nv_dict(mp);
+		tp = (Namval_t*)dtfirst(dp);
+	}
+	while(tp)
+	{
+		if(!tp->nvfun || !(ep=(struct Enum *)nv_hasdisc(tp,&ENUM_disc)))
+			continue;
+		sfprintf(iop,"enum %s%s=(\n",(ep->iflag?"-i ":""),tp->nvname);
+		for(i=0; i <ep->nelem ; i++)
+			sfprintf(iop,"\t%s\n",ep->values[i]);
+		sfprintf(iop,")\n");
+		if(!dp)
+			break;
+		tp = (Namval_t*)dtnext(dp,tp);
+	}
+	return(0);
+}
 
 #ifdef STANDALONE
 static int enum_create(int argc, char** argv, Shbltin_t *context)
@@ -187,8 +264,10 @@ static int enum_create(int argc, char** argv, Shbltin_t *context)
 int b_enum(int argc, char** argv, Shbltin_t *context)
 #endif
 {
-	int			sz,i,n,iflag = 0;
-	Namval_t		*np, *tp;
+	bool			pflag=false, iflag=false;
+	int			i,n;
+	ssize_t			sz = -1;
+	Namval_t		*np, *tp, *mp;
 	Namarr_t		*ap;
 	char			*cp,*sp;
 	struct Enum		*ep;
@@ -203,8 +282,11 @@ int b_enum(int argc, char** argv, Shbltin_t *context)
 	{
 		switch (optget(argv, enum_usage))
 		{
+		case 'p':
+			pflag = true;
+			continue;
 		case 'i':
-			iflag = 'i';
+			iflag = true;
 			continue;
 		case '?':
 			error(ERROR_USAGE|4, "%s", opt_info.arg);
@@ -216,24 +298,31 @@ int b_enum(int argc, char** argv, Shbltin_t *context)
 		break;
 	}
 	argv += opt_info.index;
-	if (error_info.errors || !*argv || *(argv + 1))
+	if (error_info.errors)
 	{
 		error(ERROR_USAGE|2, "%s", optusage(NiL));
 		return 1;
 	}
+	if(!*argv)
+		sh_outenum(shp,sfstdout,(Namval_t*)0);
 	while(cp = *argv++)
 	{
-		if(!(np = nv_open(cp, (void*)0, NV_VARNAME|NV_NOADD))  || !(ap=nv_arrayptr(np)) || ap->fun || (sz=ap->nelem&(((1L<<ARRAY_BITS)-1))) < 2)
+		if(!(np = nv_open(cp, shp->var_tree, NV_VARNAME|NV_NOADD))  || !(ap=nv_arrayptr(np)) || ap->fun || (sz=ap->nelem) < 2)
 			error(ERROR_exit(1), "%s must name an array  containing at least two elements",cp);
-		n = staktell();
-		sfprintf(stkstd,"%s.%s%c",NV_CLASS,np->nvname,0);
-		tp = nv_open(stakptr(n), shp->var_tree, NV_VARNAME);
-		stakseek(n);
+		n = stktell(shp->stk);
+		sfprintf(shp->stk,"%s.%s%c",NV_CLASS,np->nvname,0);
+		tp = nv_open(stkptr(shp->stk,n), shp->var_tree, NV_VARNAME);
+		if(pflag)
+		{
+			sh_outenum(shp,sfstdout,tp);
+			continue;
+		}
+		stkseek(shp->stk,n);
 		n = sz;
 		i = 0;
 		nv_onattr(tp, NV_UINT16);
 		nv_putval(tp, (char*)&i, NV_INTEGER);
-		nv_putsub(np, (char*)0, ARRAY_SCAN);
+		nv_putsub(np, (char*)0, 0L, ARRAY_SCAN);
 		do
 		{
 			sz += strlen(nv_getval(np));
@@ -242,10 +331,14 @@ int b_enum(int argc, char** argv, Shbltin_t *context)
 		sz += n*sizeof(char*);
 		if(!(ep = newof(0,struct Enum,1,sz)))
 			error(ERROR_system(1), "out of space");
+		mp = nv_namptr(ep->node,0);
+		mp->nvshell = shp;
+		nv_setsize(mp,10);
+		nv_onattr(mp, NV_UINT16);
 		ep->iflag = iflag;
 		ep->nelem = n;
 		cp = (char*)&ep->values[n+1];
-		nv_putsub(np, (char*)0, ARRAY_SCAN);
+		nv_putsub(np, (char*)0, 0L, ARRAY_SCAN);
 		ep->values[n] = 0;
 		i = 0;
 		do
@@ -266,7 +359,9 @@ int b_enum(int argc, char** argv, Shbltin_t *context)
 		optdisc.opt.infof = enuminfo;
 		optdisc.np = tp;
 		nv_addtype(tp, enum_type, &optdisc.opt, sizeof(optdisc)); 
+		nv_onattr(np,NV_LTOU|NV_UTOL);
 	}
+	nv_open(0,shp->var_tree,0);
 	return error_info.errors != 0;
 }
 
@@ -277,7 +372,7 @@ void lib_init(int flag, void* context)
 	Namval_t	*mp,*bp;
 	if(flag)
 		return;
-	bp = sh_addbuiltin("Enum", enum_create, (void*)0); 
+	bp = sh_addbuiltin(shp,"Enum", enum_create, (void*)0); 
 	mp = nv_search("typeset",shp->bltin_tree,0);
 	nv_onattr(bp,nv_isattr(mp,NV_PUBLIC));
 }

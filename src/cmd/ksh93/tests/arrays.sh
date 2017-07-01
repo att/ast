@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -525,6 +525,7 @@ typeset -m 'a[0]=a[1]'
 typeset -m 'a[1]=j'
 [[ ${a[@]} == 'bb aa cc' ]] || err_exit 'moving associative array elements not working'
 unset a j
+[[ $(typeset -p a) ]] && err_exit 'unset associative array after typeset -m not working'
 
 z=(a b c)
 unset x
@@ -666,5 +667,89 @@ arr5=(foo bar)
 typeset -A Foo
 Foo=( [a]=AA;[b]=BB)
 [[ ${Foo[a]} == AA ]] || err_exit 'Fooa[a] is {Foo[a]} not AA' 
+
+$SHELL 2> /dev/null  <<- \+++ || err_exit '${ar[${a}..${b}]} not working'
+	typeset -a ar=([0]=a [1]=b [2]=c)
+	integer a=1 b=2 
+	[[ ${ar[${a}..${b}]} == 'b c' ]]
++++
+
+unset A
+integer -A A
+(( A[a] ))
+[[ ${!A[@]} ]] &&  err_exit '(( A[a] )) should not create element a of A'
+
+got=$($SHELL 2> /dev/null -c 'integer n=0; read  a[n++]<<<foo;read  a[n++]<<<bar;typeset -p a')
+exitval=$?
+(( exitval == 0))  || err_exit "read a[n++] has bad exit value $exitval"
+[[ $got == 'typeset -a a=(foo bar)' ]] || err_exit "read a[n++] yields '$got', but should get 'typeset -a a=(foo bar)'"
+
+integer -a ar
+ar+=( 4 )
+ar+=( 5 6  )
+exp=$'(\n\t4\n\t5\n\t6\n)'
+[[ $(print -v ar) == "$exp" ]] || err_exit 'print -v not working for integer arrays'
+
+unset ar b
+IFS=$'\n' read -rd '' -A ar <<< $'a\nb\nc\nd\ne\nf'
+b=(a b c d e f '')
+[[ $(print -v ar) == "$(print -v b)" ]] || err_exit 'read -d"" with IFS=\n not working'
+
+$SHELL 2> /dev/null -c 'a=(foo bar); [[ $(typeset -a) == *"a=("*")"* ]]' || err_exit '"typeset -a" not working' 
+
+ar=(9 11 6 3.5 22)
+set -s -A ar
+[[ $(typeset -p ar) == *'(11 22 3.5 6 9)' ]] || err_exit 'set -s -A ar failed'
+set -s -Aar -K:n
+[[ $(typeset -p ar) == *'(3.5 6 9 11 22)' ]] || err_exit 'set -s -A -Kn ar failed'
+set -s -Aar -K:r
+[[ $(typeset -p ar) == *'(9 6 3.5 22 11)' ]] || err_exit 'set -s -A -Kr ar failed'
+set -s -Aar -K:nr
+[[ $(typeset -p ar) == *'(22 11 9 6 3.5)' ]] || err_exit 'set -s -A -Knr ar failed'
+unset ar[3]
+set -s -Aar
+[[ $(typeset -p ar) == *'(11 22 3.5 9)' ]] || err_exit 'set -s -A ar failed with elemet 3 deleted'
+
+typeset -A ar=( ["@"]=1 ["*"]=2 ["!"]=3 ["$"]=4 ["|"]=5 ["'"]=6 ["&"]=7 ["#"]=8 ["["]=9 ["]"]=10 )
+exp="typeset -A ar=(['!']=3 ['#']=8 ['\$']=4 ['&']=7 [\$'\'']=6 ['*']=2 ['@']=1 ['[']=9 [']']=10 ['|']=5)"
+[[ $(typeset -p ar) == "$exp" ]] || err_exit 'associative array quoting error'
+
+unset ar
+ar=(foo bar bam)
+ar=()
+[[ $(typeset -p ar) == 'typeset -a ar' ]] || err_exit 'ar=() does not preserve index array type'
+
+unset ar
+typeset -A ar=([0]=foo [1]=bar [2]=bam)
+ar=()
+[[ $(typeset -p ar) == 'typeset -A ar=()' ]] || err_exit 'ar=() does not preserve associative array type'
+
+unset ar
+typeset -CA ar
+ar[1]=(foo=1; bar=2)
+ar[3]=(foo=3; bar=4)
+ar=()
+[[ $(typeset -p ar) == 'typeset -C -A ar=()' ]] || err_exit 'ar=()  does not preserve -C attribute'
+
+unset ar
+ar=(foo bar bam)
+ar=()
+[[ $(typeset -p ar) == 'typeset -a ar' ]] || err_exit 'ar=() for index array should preserve index array type'
+
+unset ar
+typeset -A ar=([1]=foo [3]=bar)
+ar=()
+[[ $(typeset -p ar) == 'typeset -A ar=()' ]] || err_exit 'ar=() for associative array should preserve index array type'
+
+unset ar
+integer -a ar=( 2 3 4 )
+ar=()
+[[ $(typeset -p ar) == 'typeset -a -l -i ar' ]] || err_exit 'ar=() for index array should preserve attributes'
+
+unset ar
+integer -a ar=( 2 3 4 )
+integer -A ar=([1]=9 [3]=12)
+ar=()
+[[ $(typeset -p ar) == 'typeset -A -l -i ar=()' ]] || err_exit 'ar=() for associative array should preserve attributes'
 
 exit $((Errors<125?Errors:125))

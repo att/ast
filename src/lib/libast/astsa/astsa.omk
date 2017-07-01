@@ -1,76 +1,45 @@
 #
 # standalone mini libast old make makefile
 #
+# if you already have non-standalone ast then
+# you don't need any of the astsa apis
+#
+# if you already have non-standalone versions of any of
+#	aso cdt sfio vmalloc
+# then run this with the api args you already have
+# before running the first make
+#	./astsastd [ aso ] [ cdt ] [ sfio ] [ vmalloc ]
+#
 
 CC = cc
 CFLAGS = $(ASTSA_CFLAGS)
 
+ASTSA_DEFS = -D_PACKAGE_astsa
 ASTSA_OPTIMIZE = -O
-ASTSA_CFLAGS = $(ASTSA_OPTIMIZE) -D_PACKAGE_astsa -I.
+ASTSA_CFLAGS = $(ASTSA_OPTIMIZE) $(ASTSA_DEFS) -I.
 
-ASTSA_GEN = \
-	ast_sa.h
+ASTSA_AST_OBJ = \
+	ast.o chresc.o error.o fmtbuf.o fmtip4.o fmtip6.o optget.o \
+	qsort.o strcopy.o strdup.o strmatch.o strtoip4.o strtoip6.o
 
-ASTSA_BLD = \
-	dthdr.h
+ASTSA_ASO_OBJ = \
+	aso.o
 
-ASTSA_HDRS = \
-	ast.h \
-	ast_common.h \
-	ccode.h \
-	cdt.h \
-	debug.h \
-	error.h \
-	hashkey.h \
-	hashpart.h \
-	ip6.h \
-	magicid.h \
-	option.h \
-	optlib.h \
-	prototyped.h \
-	sfstr.h \
-	times.h \
-	vmalloc.h
+ASTSA_CDT_OBJ = \
+	dtclose.o dtdisc.o dthash.o dtlist.o dtmethod.o \
+	dtnew.o dtopen.o dtstrhash.o dttree.o dtview.o dtwalk.o
 
-ASTSA_SRCS = \
-	aso.c \
-	ast.c \
-	chresc.c \
-	error.c \
-	fmtbuf.c \
-	fmtip4.c \
-	fmtip6.c \
-	optget.c \
-	sfstr.c \
-	strcopy.c \
-	strdup.c \
-	strmatch.c \
-	strtoip4.c \
-	strtoip6.c \
-	vmalloc.c \
-	dtclose.c \
-	dtdisc.c \
-	dthash.c \
-	dtlist.c \
-	dtmethod.c \
-	dtnew.c \
-	dtopen.c \
-	dtstrhash.c \
-	dttree.c \
-	dtview.c \
-	dtwalk.c
+ASTSA_SFIO_OBJ = \
+	sfstr.o
 
-ASTSA_MANIFEST = \
-	README astsa.omk mkast_sa \
-	$(ASTSA_BLD) $(ASTSA_HDRS) $(ASTSA_SRCS)
+ASTSA_VMALLOC_OBJ = \
+	vmalloc.o
+
+ASTSA_OBJ = $(ASTSA_AST_OBJ) $(ASTSA_ASO_OBJ) $(ASTSA_CDT_OBJ) $(ASTSA_SFIO_OBJ) $(ASTSA_VMALLOC_OBJ)
 
 astsa : ast_sa.h libastsa.a
 
-libastsa.a : aso.o ast.o chresc.o error.o fmtbuf.o fmtip4.o fmtip6.o optget.o \
-		sfstr.o strcopy.o strdup.o strmatch.o strtoip4.o strtoip6.o \
-		vmalloc.o \
-		dtclose.o dtdisc.o dthash.o dtlist.o dtmethod.o \
-		dtopen.o dtstrhash.o dttree.o dtview.o dtwalk.o
+libastsa.a : $(ASTSA_OBJ)
 	ar cr libastsa.a $?
 
 ast_sa.h : mkast_sa

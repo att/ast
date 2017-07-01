@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -36,6 +36,12 @@ NoN(eaccess)
 
 #else
 
+#undef	eaccess
+
+#undef	_def_map_ast
+
+#include <ast_map.h>
+
 #if defined(__EXPORT__)
 #define extern	__EXPORT__
 #endif
@@ -43,16 +49,17 @@ NoN(eaccess)
 extern int
 eaccess(const char* path, register int flags)
 {
-#ifdef EFF_ONLY_OK
+#if _lib_faccessat && defined(AT_FDCWD) && defined(AT_EACCESS)
+	return faccessat(AT_FDCWD, path, flags, AT_EACCESS);
+#elif defined(EFF_ONLY_OK)
 	return access(path, flags|EFF_ONLY_OK);
-#else
-#if _lib_euidaccess
+#elif _lib_euidaccess
 	return euidaccess(path, flags);
 #else
 	register int	mode;
 	struct stat	st;
 
-	static int	init;
+	static int	init = 0;
 	static uid_t	ruid;
 	static uid_t	euid;
 	static gid_t	rgid;
@@ -109,7 +116,17 @@ eaccess(const char* path, register int flags)
 		if (ngroups == -2)
 		{
 			if ((ngroups = getgroups(0, (gid_t*)0)) <= 0)
+			{
+#if defined(NGROUPS_MAX)
 				ngroups = NGROUPS_MAX;
+#elif defined(_SC_NGROUPS_MAX)
+				ngroups = (int)sysconf(_SC_NGROUPS_MAX);
+#elif defined(_POSIX_NGROUPS_MAX)
+				ngroups = _POSIX_NGROUPS_MAX;
+#else
+				ngroups = 32;
+#endif
+			}
 			if (!(groups = newof(0, gid_t, ngroups + 1, 0)))
 				ngroups = -1;
 			else
@@ -132,7 +149,6 @@ eaccess(const char* path, register int flags)
  nope:
 	errno = EACCES;
 	return -1;
-#endif
 #endif
 }
 

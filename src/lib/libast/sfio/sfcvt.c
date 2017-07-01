@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if __STDC__
@@ -96,6 +96,8 @@ static int neg0d(double f)
 #define CVT_DBL_MAXINT	SF_MAXLONG
 #endif
 #endif
+
+#define CVT_DIG_MPY	4
 
 #if __STD_C
 char* _sfcvt(Void_t* vp, char* buf, size_t size, int n_digit,
@@ -266,8 +268,18 @@ int		format;		/* conversion format		*/
 		/* remaining number of digits to compute; add 1 for later rounding */
 		n = (((format&SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt+1) - n;
 		if(n_digit > 0)
-		{	if(n_digit > LDBL_DIG)
-				n_digit = LDBL_DIG;
+		{
+#if 0
+			static int	dig = 0;
+			
+			if (!dig && (!(t = getenv("_AST_LDBL_DIG")) || !(dig = atoi(t))))
+				dig = LDBL_DIG;
+			if (n_digit > dig)
+				n_digit = dig;
+#else
+			if (n_digit > CVT_DIG_MPY*LDBL_DIG)
+				n_digit = CVT_DIG_MPY*LDBL_DIG;
+#endif
 			n += n_digit;
 		}
 
@@ -438,8 +450,18 @@ int		format;		/* conversion format		*/
 		/* remaining number of digits to compute; add 1 for later rounding */
 		n = (((format&SFFMT_EFORMAT) || *decpt <= 0) ? 1 : *decpt+1) - n;
 		if(n_digit > 0)
-		{	if(n_digit > DBL_DIG)
-				n_digit = DBL_DIG;
+		{
+#if 0
+			static int	dig = 0;
+			
+			if (!dig && (!(t = getenv("_AST_DBL_DIG")) || !(dig = atoi(t))))
+				dig = DBL_DIG;
+			if (n_digit > dig)
+				n_digit = dig;
+#else
+			if (n_digit > CVT_DIG_MPY*DBL_DIG)
+				n_digit = CVT_DIG_MPY*DBL_DIG;
+#endif
 			n += n_digit;
 		}
 
@@ -491,7 +513,8 @@ int		format;		/* conversion format		*/
 				*decpt += 1;
 				if(!(format&SFFMT_EFORMAT))
 				{	/* add one more 0 for %f precision */
-					ep[-1] = '0';
+					if (ep - sp > 1)
+						ep[-1] = '0';
 					ep += 1;
 				}
 			}

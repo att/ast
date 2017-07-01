@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -29,7 +29,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: paste (AT&T Research) 2010-06-12 $\n]"
+"[-?\n@(#)$Id: paste (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?paste - merge lines of files]"
 "[+DESCRIPTION?\bpaste\b concatenates the corresponding lines of a "
@@ -181,6 +181,8 @@ b_paste(int argc, char** argv, Shbltin_t* context)
 	Delim_t			*mp;
 	int			dlen, dsiz;
 	char			defdelim[2];
+	Mbstate_t		q;
+	wchar_t			w;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	delim = 0;
@@ -221,9 +223,10 @@ b_paste(int argc, char** argv, Shbltin_t* context)
 		cp = delim;
 		ep = delim + dlen;
 		dlen = 0;
+		mbinit(&q);
 		while (cp < ep)
 		{
-			mbchar(cp);
+			mbchar(&w, cp, MB_LEN_MAX, &q);
 			dlen++;
 		}
 		if(dlen < dsiz)
@@ -238,7 +241,7 @@ b_paste(int argc, char** argv, Shbltin_t* context)
 			while (cp < ep)
 			{
 				mp[dlen].chr = cp;
-				mbchar(cp);
+				mbchar(&w, cp, MB_LEN_MAX, &q);
 				mp[dlen].len = cp - mp[dlen].chr;
 				dlen++;
 			}

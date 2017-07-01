@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -104,7 +104,7 @@ static Jobstate_t	jobs;
  */
 
 static void
-accept(register Rule_t* r)
+acceptrule(register Rule_t* r)
 {
 	if (r->property & P_state)
 	{
@@ -661,11 +661,11 @@ execute(register Joblist_t* job)
 			}
 			if (!(job->target->property & (P_attribute|P_virtual)))
 			{
-				accept(job->target);
+				acceptrule(job->target);
 				if ((job->target->property & (P_joint|P_target)) == (P_joint|P_target))
 					for (p = job->target->prereqs->rule->prereqs; p; p = p->next)
 						if (p->rule != job->target)
-							accept(p->rule);
+							acceptrule(p->rule);
 			}
 		}
 		else if (*t && (!state.silent || state.mam.regress))
@@ -681,10 +681,6 @@ execute(register Joblist_t* job)
 		}
 		if (!state.coshell)
 		{
-#if !O_cloexec
-			if (internal.openfile)
-				fcntl(internal.openfd, F_SETFD, FD_CLOEXEC);
-#endif
 			sp = sfstropen();
 			sfprintf(sp, "label=%s", idname);
 			expand(sp, " $(" CO_ENV_OPTIONS ")");
@@ -748,15 +744,6 @@ execute(register Joblist_t* job)
 			dumpaction(state.mam.out, MAMNAME(job->target), t, NiL);
 		if (r = getrule(external.makerun))
 			maketop(r, P_dontcare|P_foreground, NiL);
-#if _WINIX
-		if (internal.openfile)
-#else
-		if ((state.test & 0x00020000) && internal.openfile)
-#endif
-		{
-			internal.openfile = 0;
-			close(internal.openfd);
-		}
 		if (!(job->cojob = coexec(state.coshell, t, job->flags, state.tmpfile, NiL, sfstruse(att))))
 			error(3, "%s: cannot send action to coshell", job->target->name);
 		job->cojob->local = (void*)job;
@@ -1251,7 +1238,7 @@ complete(register Rule_t* r, register List_t* p, Time_t* tm, Flags_t flags)
 	}
 	else
 	{
-		if (p && streq(p->rule->name, "-"))
+		if (p && p->rule == internal.serialize)
 		{
 			p = p->next;
 			check = 1;
@@ -1346,6 +1333,24 @@ drop(void)
 }
 
 /*
+ * serialize all pending prereqs
+ */
+
+static void
+serial(Rule_t* r, register List_t* p)
+{
+	while (p && p->rule != internal.serialize && copending(state.coshell) > cojobs(state.coshell))
+	{
+		if (p->rule->prereqs)
+			serial(NiL, p->rule->prereqs);
+		complete(p->rule, NiL, NiL, 0);
+		if (p->rule == r)
+			break;
+		p = p->next;
+	}
+}
+
+/*
  * trigger action to build r
  * a contains the action attributes
  *
@@ -1400,6 +1405,8 @@ trigger(register Rule_t* r, Rule_t* a, char* action, Flags_t flags)
 
 		n = (flags & CO_FOREGROUND) ? 0 : (state.jobs - 1);
 		while ((cozombie(state.coshell) || cojobs(state.coshell) > n) && block(0));
+		if ((flags & CO_FOREGROUND) && r->active && r->active->parent && r->active->parent->prereqs && copending(state.coshell) > cojobs(state.coshell))
+			serial(r, r->active->parent->prereqs);
 	}
 	prereqs = r->prereqs;
 	if (r->active && r->active->primary)

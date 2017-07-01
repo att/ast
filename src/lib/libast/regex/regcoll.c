@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -49,13 +49,15 @@ regcollate(register const char* s, char** e, char* buf, size_t size, wchar_t* wc
 	int				r;
 	int				term;
 	wchar_t				w;
+	Mbstate_t			q;
 	char				xfm[256];
 	char				tmp[sizeof(xfm)];
 
 	if (size < 2 || (term = *s) != '.' && term != '=' || !*++s || *s == term && *(s + 1) == ']')
 		goto nope;
 	t = s;
-	w = mbchar(s);
+	mbtinit(&q);
+	w = mbtchar(&w, s, MB_LEN_MAX, &q);
 	if ((r = (s - t)) > 1)
 	{
 		if (*s++ != term || *s++ != ']')

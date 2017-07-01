@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -28,7 +28,7 @@
 #include "colib.h"
 
 char	coident[] = "\
-# @(#)$Id: libcoshell (AT&T Research) 2012-02-22 $\n\
+# @(#)$Id: libcoshell (AT&T Research) 2012-12-01 $\n\
 %s=%d\n\
 { { (eval 'function fun { trap \":\" 0; return 1; }; trap \"exit 0\" 0; fun; exit 1') && PATH= print -u$%s ksh; } || { times && echo bsh >&$%s; } || { echo osh >&$%s; }; } >/dev/null 2>&1\n\
 ";

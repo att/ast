@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -660,5 +660,16 @@ d="${v/~(E)b{2,4}/dummy}"
 [[ ${.sh.match} == bbb ]] || err_exit '.sh.match wrong after ${s/~(E)b{2,4}/dummy}'
 [[ $d == adummyc ]] || err_exit '${s/~(E)b{2,4}/dummy} not working'
 
+x=1234
+: "${x//~(X)([012])|([345])/}"
+[[ ${.sh.match[1][600..602]} ]] && err_exit '${.sh.match[0][600:602]} is not the emptry string'
+
+: "${x//~(X)([012])|([345])/}"
+x=$(print -v .sh.match)
+compound co
+typeset -m co.array=.sh.match
+[[ $x == "$(print -v co.array)" ]] || err_exit 'typeset -m for .sh.match to compound variable not working'
+#: "${x//~(X)([345])|([012])/}"
+[[ $x == "$(print -v co.array)" ]] || err_exit 'typeset -m for .sh.match to compound variable not working2'
 
 exit $((Errors<125?Errors:125))

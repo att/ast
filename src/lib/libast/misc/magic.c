@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -409,6 +409,8 @@ vcdecomp(char* b, char* e, unsigned char* m, unsigned char* x)
 	{
 		if (i)
 			i = 0;
+		else if (b >= e)
+			break;
 		else
 			*b++ = '^';
 		if (m < (x - 1) && !*(m + 1))
@@ -886,7 +888,7 @@ ckmagic(register Magic_t* mp, const char* file, char* buf, char* end, struct sta
 					t++;
 				e = "application/x-ms-";
 				ep->mime = vmnewof(mp->vm, ep->mime, char, strlen(t), strlen(e));
-				e = strcopy(ep->mime, e);
+				e = stpcpy(ep->mime, e);
 				while ((c = *t++) && c != '.' && c != ' ')
 					*e++ = isupper(c) ? tolower(c) : c;
 				*e = 0;

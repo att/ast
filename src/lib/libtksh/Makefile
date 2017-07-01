@@ -1,4 +1,4 @@
-:PACKAGE: - X11 tcl:install ast
+:PACKAGE: - X11 tcl:install shell:20120101 ast
 
 ID			=	tksh
 LIB			=	tcl

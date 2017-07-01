@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,9 +33,9 @@
  */
 
 int
-regrexec(const regex_t* p, const char* s, size_t len, size_t nmatch, regmatch_t* match, regflags_t flags, int sep, void* handle, regrecord_t record)
+regrexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, regmatch_t* match, regflags_t flags, int sep, void* handle, regrecord_t record)
 {
-	register unsigned char*	buf = (unsigned char*)s;
+	register unsigned char*	buf;
 	register unsigned char*	beg;
 	register unsigned char*	l;
 	register unsigned char*	r;
@@ -72,7 +72,8 @@ regrexec(const regex_t* p, const char* s, size_t len, size_t nmatch, regmatch_t*
 	index = leftlen++;
 	for (;;)
 	{
-		while ((index += skip[buf[index]]) < mid);
+		while (index < mid)
+			index += skip[buf[index]];
 		if (index < HIT)
 			goto impossible;
 		index -= HIT;

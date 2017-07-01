@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -51,11 +51,17 @@
 
 /* _CX_HEADER_.flags */
 
-#define CX_NORMALIZED	0x0001
-#define CX_INITIALIZED	0x0002
-#define CX_REFERENCED	0x0004
-#define CX_DEPRECATED	0x0008
-#define CX_IGNORECASE	0x0100
+#define CX_NORMALIZED	0x00000001
+#define CX_INITIALIZED	0x00000002
+#define CX_REFERENCED	0x00000004
+#define CX_DEPRECATED	0x00000008
+#define CX_VISITED	0x00000010
+#define CX_IGNORECASE	0x00000020
+#define CX_SCHEMA	0x00000040
+
+/* Cxmember_t.flags */
+
+#define CX_VIRTUAL	0x0001
 
 /* Cxpart_t.flags */
 
@@ -70,6 +76,7 @@
 #define CX_reference	4
 #define CX_buffer	5		/* allocated separately		*/
 #define CX_type		6
+#define CX_bool		7
 
 /* Cxformat_t.flags */
 
@@ -156,6 +163,7 @@
 	((d)?(d):((d)=(f)&&(f)->details?(f)->details:(t)->format.details?(t)->format.details:(v)))
 
 #define CX_HEADER_INIT	{{0},0}
+#define CX_SCHEMA_INIT	{{0},CX_SCHEMA}
 #define CX_CALLOUT_INIT(op,type1,type2,callout,description) \
 	{0,description,CX_HEADER_INIT,op,(Cxtype_t*)type1,(Cxtype_t*)type2,callout},
 #define CX_FUNCTION_INIT(name,type,function,prototype,description) \
@@ -168,7 +176,9 @@
 	{name,description,CX_HEADER_INIT,0,(Cxtype_t*)type,0,index},
 
 #define cxrepresentation(t)	((t)->representation)
+#define cxisbool(t)		(cxrepresentation(t)==CX_bool)
 #define cxisbuffer(t)		(cxrepresentation(t)==CX_buffer)
+#define cxislogical(t)		(cxrepresentation(t)==CX_bool||cxrepresentation(t)==CX_number)
 #define cxisnumber(t)		(cxrepresentation(t)==CX_number)
 #define cxisstring(t)		(cxrepresentation(t)==CX_string)
 #define cxisvoid(t)		(cxrepresentation(t)==CX_void)
@@ -223,7 +233,7 @@ struct Cxop_s				/* callout/recode op		*/
 
 #define _CX_HEADER_LINK_ \
 	Dtlink_t	link;		/* dictionary link		*/ \
-	uint16_t	flags;		/* CX_INITIALIZED|CX_REFERENCED	*/ \
+	uint16_t	flags;		/* cx header flags		*/ \
 	uint16_t	index;		/* member index			*/
 
 #define _CX_NAME_HEADER_ \
@@ -455,6 +465,7 @@ struct Cxmember_s			/* type member info		*/
 	Cxcallout_f	getf;		/* get member value		*/
 	Cxcallout_f	setf;		/* set member value		*/
 	Dt_t*		members;	/* Cxvariable_t member dict	*/
+	Cxflags_t	flags;		/* CX_* member flags		*/
 };
 
 struct Cxtype_s				/* type info			*/
@@ -576,6 +587,7 @@ struct Cxstate_s			/* cx library global state	*/
 	Dt_t*		constraints;	/* Cxconstraint_t dictionary	*/
 	Dt_t*		edits;		/* Cxedit_t dictionary		*/
 	Dt_t*		variables;	/* Cxvariable_t dictionary	*/
+	Cxtype_t*	type_bool;	/* bool fundamental type	*/
 	Cxtype_t*	type_buffer;	/* buffer fundamental type	*/
 	Cxtype_t*	type_number;	/* number fundamental type	*/
 	Cxtype_t*	type_reference;	/* reference fundamental type	*/
@@ -641,6 +653,7 @@ extern int		cxlist(Cx_t*, Cxexpr_t*, Sfio_t*);
 extern int		cxfree(Cx_t*, Cxexpr_t*);
 extern int		cxcast(Cx_t*, Cxoperand_t*, Cxvariable_t*, Cxtype_t*, void*, const char*);
 extern size_t		cxsizeof(Cx_t*, Cxvariable_t*, Cxtype_t*, Cxvalue_t*);
+extern ssize_t		cxmembers(Cx_t*, Cxtype_t*, const char*, Cxformat_t*, Cxvalue_t*, char*, size_t, Cxdisc_t*);
 
 extern char*		cxcontext(Cx_t*);
 extern char*		cxlocation(Cx_t*, void*);

@@ -5,15 +5,16 @@
 message_set=3
 
 contributor+=(
-	[gsf]="Glenn Fowler <gsf@research.att.com>"
-	[dgk]="David Korn <dgk@research.att.com>"
-	[kpv]="Phong Vo <kpv@research.att.com>"
+	[gsf]="Glenn Fowler <glenn.s.fowler@gmail.com>"
+	[dgk]="David Korn <dgkorn@gmail.com>"
+	[kpv]="Phong Vo <phongvo@gmail.com>"
 
 	[aedgar]="Adam Edgar <aedgar@research.att.com>"
 	[alb]="Adam Buchsbaum <alb@adambuchsbaum.com>"
 	[ashaikh]="Aman Shaikh <ashaikh@research.att.com>"
 	[bala]="Bala Krishnamurthy <bala@research.att.com>"
 	[brussell]="Brian Russell <brussell@research.att.com>"
+	[car]="Chris Rath <car@research.att.com>"
 	[chen]="Robin Chen <chen@research.att.com>"
 	[dfwc]="Don Caldwell <dfwc@research.att.com>"
 	[ek]="Lefty Koutsofios <ek@research.att.com>"
@@ -23,6 +24,7 @@ contributor+=(
 	[jlk]="Jeff Korn <@google.com>"
 	[kfisher]="Kathleen Fisher <kfisher@research.att.com>"
 	[kwc]="Ken Church <@microsoft.com>"
+	[roland]="Roland Mainz <roland.mainz@nrubsig.org>"
 
 	[bwk]="Brian Kernigham <bwk@research.bell-labs.com>"
 	[dmr]="Dennis Ritchie <dmr@research.bell-labs.com>"

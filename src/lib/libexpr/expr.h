@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1989-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1989-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -43,12 +43,17 @@
  * bison -pPREFIX misses YYSTYPE
  */
 
+// modified ifdefs to deal with different versions of yacc / bison
 #if defined(YYSTYPE) || defined(YYBISON)
 #define EXSTYPE		YYSTYPE
 #else
 #include <exparse.h>
 #if defined(YYSTYPE) || defined(yystype)
-#define EXSTYPE		YYSTYPE
+#define EXSTYPE         YYSTYPE
+#else
+#if defined(YYSTYPE) || defined(YYSTYPE_IS_DECLARED)
+#define EXSTYPE         YYSTYPE
+#endif
 #endif
 #endif
 

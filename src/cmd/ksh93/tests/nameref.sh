@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -563,7 +563,7 @@ nameref l4=l[4]
 printf "( typeset -a ar=( 1\n2\n) b=1 )\n" | read -C l4
 [[ $(print -v l) == "$exp" ]] || err_exit  'nameref l4=l[4] not working with associative array read'
 
-exp=$'(\n\t[9]=(\n\t\tfish=4\n\t)\n)'
+exp=$'(\n\t[9]=(\n\t\ttypeset -i fish=4\n\t)\n)'
 function add_eval
 {
 	nameref pos=$1
@@ -590,6 +590,7 @@ function do_local_throughnameref
 	[[ $(print -v tr) == "$exp" ]] || err_exit 'do_local_throughnameref failed'
 }
 compound -A global_tree
+let 1
 do_global_throughnameref
 do_local_throughnameref
 do_local_plain
@@ -603,6 +604,7 @@ function read_c
 }
 print "( typeset -i x=36 ) " | read_c ar[5][9][2]
 exp=$'(\n\t[5]=(\n\t\t[9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
+exp=$'(\n\ttypeset -a [5]=(\n\t\ttypeset -a [9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
 [[ $(print -v ar) == "$exp" ]] || err_exit 'read into nameref of global array instance from within a function fails'
 
 function read_c
@@ -615,7 +617,7 @@ function main
 	compound -a ar
 	nameref nar=ar
 	print "( typeset -i x=36 ) " | read_c nar[5][9][2]
-	exp=$'(\n\t[5]=(\n\t\t[9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
+	exp=$'(\n\ttypeset -a [5]=(\n\t\ttypeset -a [9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
 	[[ $(print -v nar) == "$exp" ]] || err_exit 'read from a nameref variable from calling scope fails'
 }
 main
@@ -693,5 +695,58 @@ typeset -n ref='arr[2]'
 [[ $(typeset -p ref) == *'arr[2]'* ]] || err_exit 'typeset -p ref when ref is a reference to an index array element is wrong'
 
 $SHELL  2> /dev/null -c 'function x { nameref lv=gg ; compound -A lv.c=( [4]=( x=1 )) ; } ; compound gg ; x' || err_exit 'compound array assignment with nameref in a function failed'
+
+unset one bar baz arr val vv
+one=1 bar=2 baz=3
+arr=(one bar baz)
+nameref vv
+val=$(
+	for vv in "${arr[@]}"
+	do	print -n -- "$vv"
+	done
+)
+[[ $val == 123 ]] || err_exit 'optimization bug with for loops with references'
+
+function setref
+{
+	nameref obj=$1
+	obj=foo
+}
+function foo
+{
+	typeset -S static
+	compound v
+	setref v.s 2> /dev/null
+	[[ ${v.s} == foo ]] || err_exit  'nameref to v.s cannot failed when called from function with static variables ans v.s does not exist'
+}
+foo
+
+val=$($SHELL 2> /dev/null <<- \EOF
+	(sleep 2;kill -9 $$) &
+	typeset -a ar=( 2 3 4 )
+	function fn
+	{
+		nameref n=$1
+		print -- "$n"
+	}
+	function main
+	{
+		integer i
+		for ((i=0 ; i < ${#ar[@]} ;))
+		do fn ar[i++]
+		done
+	}
+	main
+EOF
+) || err_exit  'nameref n=ar[i++] hangs'
+[[ $val == $'2\n3\n4' ]] || err_exit 'nameref n=ar[i++] gives wrong value'
+
+#name references in name spaces
+namespace sp1
+{
+	compound -a c=( [4][16]=( bool -a b=( [4][3]=true [4][5]=false ) ) )
+}
+nameref n=.sp1.c[4][16]
+[[ ${n.b[4][@]} == "${.sp1.c[4][16].b[4][@]}" ]] || err_exit 'name references to variables in name spaces not working'
 
 exit $((Errors<125?Errors:125))

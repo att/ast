@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -67,7 +67,7 @@ typedef struct State_s
 static State_t		state;
 
 static const char usage[] =
-"[-?\n@(#)$Id: libjcl (AT&T Research) 2007-12-10 $\n]"
+"[-?\n@(#)$Id: libjcl (AT&T Research) 2013-06-27 $\n]"
 "[i:import]"
 "[I:include]:[directory]"
 "[k:marklength]"
@@ -374,12 +374,14 @@ jclmap(Jcl_t* jcl, const char* file, Jcldisc_t* disc)
 	register char*		t;
 	char*			op;
 	char*			arg[32];
+	char*			nv[32];
 	char*			ofile;
 	char*			tail;
 	long			oline;
 	int			c;
 	int			n;
 	int			k;
+	int			v;
 	int			dontcare;
 	Opt_t			opt;
 	char			buf[PATH_MAX];
@@ -532,9 +534,9 @@ jclmap(Jcl_t* jcl, const char* file, Jcldisc_t* disc)
 				memcpy(mp->prefix = (char*)(mp + 1), s, n);
 				s = mp->prefix + n;
 				*s++ = 0;
-				s = strcopy(mp->map = s, arg[1]);
+				s = stpcpy(mp->map = s, arg[1]);
 				if (tail)
-					s = strcopy(mp->tail = s + 1, tail);
+					s = stpcpy(mp->tail = s + 1, tail);
 				if (arg[2])
 					strcpy(mp->suffix = s + 1, arg[2]);
 				else
@@ -560,14 +562,16 @@ jclmap(Jcl_t* jcl, const char* file, Jcldisc_t* disc)
 				opt = opt_info;
 				n = 0;
 				while (s = arg[n++])
+				{
+					s = expand(jcl, s, JCL_SYM_EXPORT|JCL_SYM_SET);
 					if (*s == '-' || *s == '+')
-					{
-						s = expand(jcl, s, JCL_SYM_EXPORT|JCL_SYM_SET);
 						while (c = optstr(s, use))
 							(*set)(jcl, c, disc);
-					}
-					else if (!jclsym(jcl, s, NiL, JCL_SYM_SET) && disc->errorf)
-						(*disc->errorf)(NiL, disc, 1, "%s: invalid assignment", s);
+					else if (tokscan(s, NiL, " %v ", nv, elementsof(nv)) >= 1)
+						for (v = 0; s = nv[v]; v++)
+							if (!jclsym(jcl, s, NiL, JCL_SYM_SET) && disc->errorf)
+								(*disc->errorf)(NiL, disc, 1, "%s: invalid assignment", s);
+				}
 				opt_info = opt;
 				jcl->roflags &= ~JCL_MAPPED;
 			}

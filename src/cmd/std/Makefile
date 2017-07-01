@@ -16,11 +16,7 @@ du :: du.c
 
 file :: file.c
 
-iconv :: iconv.c
-
 locale :: locale.c
-
-ls :: ls.c
 
 mesg :: mesg.c LICENSE=since=1995,author=dgk
 
@@ -52,6 +48,6 @@ expand :LINK: unexpand
 
 yes :: yes.sh LICENSE=since=2007,author=dgk
 
-:TEST: csplit dd locale ls seq touch tsort
+:TEST: csplit dd locale seq touch tsort
 
 :: y2k.dat

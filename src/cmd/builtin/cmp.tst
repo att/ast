@@ -1,4 +1,4 @@
-# : : generated from cmp.rt by mktest : : #
+# : : generated from /home/gsf/src/cmd/builtin/cmp.rt by mktest : : #
 
 UNIT cmp
 
@@ -6,8 +6,8 @@ TEST 01 basics
 
 	EXEC	i j
 		INPUT -n -
-		INPUT i $'a\211b\311c\tdIe'
-		INPUT j $'a\212b\312c\ndJe'
+		INPUT i $'a\x89b\xc9c\tdIe'
+		INPUT j $'a\x8ab\xcac\ndJe'
 		OUTPUT - 'i j differ: char 2, line 1'
 		ERROR -n -
 		EXIT 1

@@ -1,3 +1,41 @@
+14-02-06 context.c: fix -B0 bug that added superfluous --
+14-01-26 grep.c: add { -An -Bn } for gnu compatibility
+13-12-05 ls.c: move from src/cmd/std
+13-12-01 getconf.c: add -f<fd>, --descriptor=<fd> for fpathconf()
+13-12-01 rm.c: fix --directory logic; could really use unlinkat(d,p,AT_REMOVE)
+13-11-18 wclib.c: fix multibyte buffer boundary side buffer logic
+13-10-31 Makefile: use test instead of [[ ... ]] for mamfile portability -- doh
+13-09-25 shasum.c: add sha*sum variants
+13-09-25 cksum.c: handle SUM_INDICATOR per-method { '*'(binary) ' '(text) } read mode indicator
+13-09-25 cksum.c: fix --header to include "text" when --text specified
+13-09-25 cksum.c: { -T, --text && -t, --total } => { -t, --text && -T, --total } for gnu compatibility
+13-09-22 realpath.c,readlink.c: add based on ast::pathdev()
+13-09-22 sync.c: add roland's changes + --sfsync
+13-09-19 xarrrrghs.c: halfscore d's be walkin' t'plank t'day: fix run() to work for context==0
+13-09-19 head.c,tail.c: count incomplete lines too
+13-09-19 do not check for command when /bin/echo implied
+13-09-13 cat.c,cmdext.h,cmdlist.h,cut.c,join.c,od.c,paste.c,rev.c,tr.c,uniq.c,wc.c,wc.h,wclib.c: Mbstate_t update
+13-08-11 join.c: drop setlocale() call already done by optget()
+13-08-11 strcopy() => stpcpy()
+13-07-17 tr.c: finally handle ``tr -Cd "[=e=]" <<<"1e2é3"''-- how about a posix equivalence class api
+13-07-16 cp.c: limit st_size>0 logic to S_ISREG() files
+13-05-01 vmstate.c: update for new vmalloc snarf
+13-04-22 grep.c: add first draft of context.c to handle -C
+13-04-03 grep.c: fix --highlight to highlight all matches on each line
+13-04-03 grep.c: add -o, --only-matching to list matching parts, each part on a separate line
+13-02-14 Makefile: add { cmdext.h cmdlist.h } force rebuild -- must do this better
+13-02-07 grep.c: drop b_pgrep() but retain p*grep argv[0] check
+12-12-12 mktemp.c: fix doc literal [...] => [...]]
+12-11-21 wc.c,wclib.c: add --invalid-bytes, -X and fix invalid byte logic
+12-10-25 xargs.c: drop bogus "out of space" diagnostic for "command not found"
+12-10-24 tr.c: move from src/cmd/builtin
+12-10-24 grep.c: change -S,--strict to -p.--strict|lenient, add -K,--ksh-regexp -S,--sh-regexp
+12-10-19 od.c: move from src/cmd/builtin
+12-10-15 iconv.c: use sh_run() for /usr/bin/iconv -l
+12-10-03 cmdlist.h: _AST_VERSION>=20121001 => CMDLIST(command,"directory")
+12-10-03 grep.c,xargs.c: move from src/cmd/kshlib/cmdtst
+12-10-03 iconv.c: move from src/cmd/std
+12-09-27 tail.c: fix bug that exited tail -f on tvsleep() error (who cares if it returned sooner)
 12-06-25 getconf.c: don't defer to native getconf if we are it -- doh
 12-06-19 tail.c: be nice and use sh_sigcheck() and tvsleep() to verify interrupts
 12-05-31 cat,head,tee: use errno==EPIPE => ERROR_PIPE(errno)

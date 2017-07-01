@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -25,3 +25,8 @@
  */
 
 #include <cmd.h>
+
+// added to prevent the linker from optimizing this whole file out
+int _foo_bar (void) {
+    sfprintf (sfstderr, "");
+}

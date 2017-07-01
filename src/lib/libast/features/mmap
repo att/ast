@@ -26,29 +26,13 @@ tst	lib_mmap note{ standard mmap interface that works }end execute{
 	#endif
 	{
 		caddr_t		mm;
-		char		*t, *u, *f;
+		char		*file;
 		int		i, fd, okfixed;
-		char		file[1024], buf[MAPSIZE];
+		char		buf[MAPSIZE];
 		struct tms	stm, etm;
 		clock_t		rdtm, mmtm;
 
-		/* create data file in a local fs if possible */
-		t = file;
-		if (access(f = "/tmp", 0) == 0 ||
-		    access(f = "/usr/tmp", 0) == 0)
-		{
-			while (*t = *f++)
-				t++;
-			*t++ = '/';
-		}
-		u = t;
-		f = argv[0];
-		while (*t = *f++)
-			if (*t == '/')
-				t = u;
-			else if (*t != '.')
-				t++;
-		*t++ = '.'; *t++ = 'D'; *t = 0;
+		file = argv[1];
 		if ((fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666)) < 0)
 			return 1;
 
@@ -219,16 +203,27 @@ tst	mmap_devzero note{ use mmap on /dev/zero to get raw memory }end execute{
 	}
 }end
 
-tst	note{ mmap is worth using }end output{
+tst	-D_LARGEFILE64_SOURCE note{ mmap is worth using }end output{
 	#if !_lib_mmap
 	(
 	#endif
 	#include <unistd.h>
 	#include <fcntl.h>
+	#include <string.h>
 	#include <sys/types.h>
 	#include <sys/mman.h>
 	#include <sys/stat.h>
 	#include <sys/times.h>
+
+	#if _lib_mmap64
+	#undef	mmap
+	#define mmap	mmap64
+	#endif
+
+	#if _lib_munmap64
+	#undef	munmap
+	#define munmap	munmap64
+	#endif
 	
 	#define MAPSIZE (64*1024)
 	#define BUFSIZE	(MAPSIZE/8)
@@ -247,17 +242,13 @@ tst	note{ mmap is worth using }end output{
 	#endif
 	{
 		caddr_t		mm;
-		char		*t, *f;
+		char		*file, *t;
 		int		i, fd, k, run;
-		char		file[1024], buf[MAPSIZE];
+		char		buf[MAPSIZE];
 		struct tms	stm, etm;
 		clock_t		rdtm, mmtm;
 	
-		/* create data file */
-		f = argv[0]; t = file;
-		while (*t = *f++)
-			t++;
-		*t++ = '.'; *t++ = 'D'; *t = 0;
+		file = argv[1];
 		if ((fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0666)) < 0)
 			return 1;
 	
@@ -313,12 +304,12 @@ tst	note{ mmap is worth using }end output{
 		remove(file);
 	
 		if(4*mmtm <= 3*rdtm)
-			printf("#define _mmap_worthy	2	/* mmap is great */\n");
+			printf("#define _mmap_worthy	2	/* mmap outperforms read on 64Ki buffers -- use it */\n");
 		else if(4*mmtm <= 5*rdtm)
-			printf("#define _mmap_worthy	1	/* mmap is good */\n");
-	
+			printf("#define _mmap_worthy	2	/* mmap is slightly better than read on 64Ki buffers -- use it */\n");
 		else
-			return 1;
+			printf("#define _mmap_worthy	2	/* mmap worse than read on 64Ki buffers -- use it anyway */\n");
+
 		return 0;
 	}
 }end

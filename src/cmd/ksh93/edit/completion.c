@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -35,31 +35,31 @@
 #define mbchar(p)       (*(unsigned char*)p++)
 #endif
 
-static char *fmtx(const char *string)
+static char *fmtx(Shell_t *shp,const char *string)
 {
 	register const char	*cp = string;
 	register int	 	n,c;
 	unsigned char 		*state = (unsigned char*)sh_lexstates[2]; 
-	int offset = staktell();
+	int offset = stktell(shp->stk);
 	if(*cp=='#' || *cp=='~')
-		stakputc('\\');
+		sfputc(shp->stk,'\\');
 	while((c=mbchar(cp)),(c>UCHAR_MAX)||(n=state[c])==0 || n==S_EPAT);
 	if(n==S_EOF && *string!='#')
 		return((char*)string);
-	stakwrite(string,--cp-string);
+	sfwrite(shp->stk,string,--cp-string);
 	for(string=cp;c=mbchar(cp);string=cp)
 	{
 		if((n=cp-string)==1)
 		{
 			if((n=state[c]) && n!=S_EPAT)
-				stakputc('\\');
-			stakputc(c);
+				sfputc(shp->stk,'\\');
+			sfputc(shp->stk,c);
 		}
 		else
-			stakwrite(string,n);
+			sfwrite(shp->stk,string,n);
 	}
-	stakputc(0);
-	return(stakptr(offset));
+	sfputc(shp->stk,0);
+	return(stkptr(shp->stk,offset));
 }
 
 static int charcmp(int a, int b, int nocase)
@@ -192,8 +192,53 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type)
 	}
 	if(inquote && *bp==inquote)
 		*type = *bp++;
+	else
+	{
+		if(*cp==0 && cp[-1]==' ')
+			return(cp);
+	}
 	return(bp);
 }
+
+#if SHOPT_COMPLETE
+static char **prog_complete(Dt_t *dict, char *line, char *word, int cur)
+{
+	char *cp = line, *cmd, c, **com=0;
+	struct Complete *pcp;
+	while(isspace(*cp) || *cp=='#')
+		cp++;
+	if(*cp && cp<word)
+	{
+		cmd = cp;
+		while(*cp && !isspace(*cp))
+			cp++;
+		c = *cp;
+		*cp = 0;
+		pcp = dtmatch(dict,cmd);
+		if(!pcp && (cmd=strrchr(cmd,'/')))
+			pcp = dtmatch(dict,++cmd);
+		*cp= c;
+		if(!pcp)
+			pcp = dtmatch(dict," D");
+	}
+	else
+		pcp = dtmatch(dict," E");
+	if(pcp)
+	{
+		Stk_t *stkp = pcp->sh->stk;
+		char *savptr = stkfreeze(stkp,0);
+		int offset = stktell(stkp);
+		com = ed_pcomplete(pcp, line, word, cur);
+		if(com && com[1])
+			stkfreeze(stkp,1);
+		else if(savptr==stkptr(stkp,0))
+			stkseek(stkp,offset);
+		else
+			stkset(stkp,savptr,offset);
+	}
+	return(com);
+}
+#endif /* SHOPT_COMPLETE */
 
 /*
  * file name generation for edit modes
@@ -210,9 +255,11 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	struct argnod	*ap;
 	register char	*out;
 	char 		*av[2], *begin , *dir=0;
-	int		addstar=0, rval=0, var=0, strip=1;
-	int 		nomarkdirs = !sh_isoption(SH_MARKDIRS);
-	sh_onstate(SH_FCOMPLETE);
+	int		addstar=0, rval=0, var=0, strip=1,narg=0;
+	int 		nomarkdirs = !sh_isoption(ep->sh,SH_MARKDIRS);
+	Shell_t		*shp=ep->sh;
+	char		**com=0;
+	sh_onstate(shp,SH_FCOMPLETE);
 	if(ep->e_nlist)
 	{
 		if(mode=='=' && count>0)
@@ -225,12 +272,12 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		}
 		else
 		{
-			stakset(ep->e_stkptr,ep->e_stkoff);
+			stkset(shp->stk,ep->e_stkptr,ep->e_stkoff);
 			ep->e_nlist = 0;
 		}
 	}
-	comptr = (struct comnod*)stakalloc(sizeof(struct comnod));
-	ap = (struct argnod*)stakseek(ARGVAL);
+	comptr = (struct comnod*)stkalloc(shp->stk,sizeof(struct comnod));
+	ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
 #if SHOPT_MULTIBYTE
 	{
 		register int c = *cur;
@@ -239,17 +286,19 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		cp = (genchar *)outbuff + *cur;
 		c = *cp;
 		*cp = 0;
-		*cur = ed_external((genchar*)outbuff,(char*)stakptr(0));
+		*cur = ed_external((genchar*)outbuff,(char*)stkptr(shp->stk,0));
 		*cp = c;
 		*eol = ed_external((genchar*)outbuff,outbuff);
 	}
 #endif /* SHOPT_MULTIBYTE */
-	out = outbuff + *cur + (sh_isoption(SH_VI)!=0);
+	out = outbuff + *cur + (sh_isoption(shp,SH_VI)!=0);
+#if 0
 	if(out[-1]=='"' || out[-1]=='\'')
 	{
-		rval = -(sh_isoption(SH_VI)!=0);
+		rval = -(sh_isoption(shp,SH_VI)!=0);
 		goto done;
 	}
+#endif
 	comptr->comtyp = COMSCAN;
 	comptr->comarg = ap;
 	ap->argflag = (ARG_MAC|ARG_EXP);
@@ -258,15 +307,28 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	{
 		register int c;
 		char *last = out;
+		Namval_t *np = nv_search("COMP_KEY",shp->var_tree,0);
+		if(np)
+			np->nvalue.s = '\t';
+		if(np = nv_search("COMP_TYPE",shp->var_tree,0))
+			np->nvalue.s = (mode=='\\'?'\t':'?');
 		c =  *(unsigned char*)out;
 		var = mode;
 		begin = out = find_begin(outbuff,last,0,&var);
+#if SHOPT_COMPLETE
+		if(ep->compdict && mode!='?' && (com = prog_complete(ep->compdict,outbuff,out,*cur)))
+		{
+			char **av;
+			for(av=com; *av; av++);
+			narg = av-com;
+		}
+#endif /* SHOPT_COMPLETE */
 		/* addstar set to zero if * should not be added */
 		if(var=='$')
 		{
-			stakputs("${!");
-			stakwrite(out,last-out);
-			stakputs("@}");
+			sfwrite(shp->stk,"${!",3);
+			sfwrite(shp->stk,out,last-out);
+			sfwrite(shp->stk,"$@}",2);
 			out = last;
 		}
 		else
@@ -275,6 +337,8 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 			while(out < last)
 			{
 				c = *(unsigned char*)out;
+				if(c==0)
+					break;
 				if(isexp(c))
 					addstar = 0;
 				if (c == '/')
@@ -283,7 +347,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 						strip = 0;
 					dir = out+1;
 				}
-				stakputc(c);
+				sfputc(shp->stk,c);
 				out++;
 			}
 		}
@@ -293,22 +357,21 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 			addstar = '*';
 		if(*begin=='~' && !strchr(begin,'/'))
 			addstar = 0;
-		stakputc(addstar);
-		ap = (struct argnod*)stakfreeze(1);
+		sfputc(shp->stk,addstar);
+		ap = (struct argnod*)stkfreeze(shp->stk,1);
 	}
 	if(mode!='*')
-		sh_onoption(SH_MARKDIRS);
+		sh_onoption(shp,SH_MARKDIRS);
 	{
-		register char	**com;
 		char		*cp=begin, *left=0, *saveout=".";
-		int	 	nocase=0,narg,cmd_completion=0;
+		int	 	nocase=0,cmd_completion=0;
 		register 	int size='x';
 		while(cp>outbuff && ((size=cp[-1])==' ' || size=='\t'))
 			cp--;
-		if(!var && !strchr(ap->argval,'/') && (((cp==outbuff&&ep->sh->nextprompt==1) || (strchr(";&|(",size)) && (cp==outbuff+1||size=='('||cp[-2]!='>') && *begin!='~' )))
+		if(!var && !strchr(ap->argval,'/') && (((cp==outbuff&&shp->nextprompt==1) || (strchr(";&|(",size)) && (cp==outbuff+1||size=='('||cp[-2]!='>') && *begin!='~' )))
 		{
 			cmd_completion=1;
-			sh_onstate(SH_COMPLETE);
+			sh_onstate(shp,SH_COMPLETE);
 		}
 		if(ep->e_nlist)
 		{
@@ -319,14 +382,15 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		}
 		else
 		{
-			com = sh_argbuild(ep->sh,&narg,comptr,0);
+			if(!com)
+				com = sh_argbuild(shp,&narg,comptr,0);
 			/* special handling for leading quotes */
 			if(begin>outbuff && (begin[-1]=='"' || begin[-1]=='\''))
 			begin--;
 		}
-		sh_offstate(SH_COMPLETE);
+		sh_offstate(shp,SH_COMPLETE);
                 /* allow a search to be aborted */
-		if(ep->sh->trapnote&SH_SIGSET)
+		if(shp->trapnote&SH_SIGSET)
 		{
 			rval = -1;
 			goto done;
@@ -349,7 +413,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 					*ptrcom = path_basename(*ptrcom);
 			}
 			sfputc(sfstderr,'\n');
-			sh_menu(sfstderr,narg,com);
+			sh_menu(shp,sfstderr,narg,com);
 			sfsync(sfstderr);
 			ep->e_nlist = narg;
 			ep->e_clist = com;
@@ -379,7 +443,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 			{
 				char **savcom = com;
 				while (*com)
-					size += strlen(cp=fmtx(*com++));
+					size += strlen(cp=fmtx(shp,*com++));
 				com = savcom;
 			}
 		}
@@ -391,7 +455,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		}
 		/* save remainder of the buffer */
 		if(*out)
-			left=stakcopy(out);
+			left=stkcopy(shp->stk,out);
 		if(cmd_completion && mode=='\\')
 			out = strcopy(begin,path_basename(cp= *com++));
 		else if(mode=='*')
@@ -406,7 +470,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 				var = 0;
 			}
 			else
-				out = strcopy(begin,fmtx(*com));
+				out = strcopy(begin,fmtx(shp,*com));
 			com++;
 		}
 		else
@@ -431,12 +495,12 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 					Namval_t *np;
 					/* add as tracked alias */
 					Pathcomp_t *pp;
-					if(*cp=='/' && (pp=path_dirfind(ep->sh->pathlist,cp,'/')) && (np=nv_search(begin,ep->sh->track_tree,NV_ADD)))
+					if(*cp=='/' && (pp=path_dirfind(shp->pathlist,cp,'/')) && (np=nv_search(begin,shp->track_tree,NV_ADD)))
 						path_alias(np,pp);
 					out = strcopy(begin,cp);
 				}
 				/* add quotes if necessary */
-				if((cp=fmtx(begin))!=begin)
+				if((cp=fmtx(shp,begin))!=begin)
 					out = strcopy(begin,cp);
 				if(var=='$' && begin[-1]=='{')
 					*out = '}';
@@ -444,13 +508,13 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 					*out = ' ';
 				*++out = 0;
 			}
-			else if((cp=fmtx(begin))!=begin)
+			else if((cp=fmtx(shp,begin))!=begin)
 			{
 				out = strcopy(begin,cp);
 				if(out[-1] =='"' || out[-1]=='\'')
 					  *--out = 0;
 			}
-			if(*begin==0)
+			if(*begin==0 && begin[-1]!=' ')
 				ed_ringbell();
 		}
 		else
@@ -458,7 +522,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 			while (*com)
 			{
 				*out++  = ' ';
-				out = strcopy(out,fmtx(*com++));
+				out = strcopy(out,fmtx(shp,*com++));
 			}
 		}
 		if(ep->e_nlist)
@@ -483,11 +547,11 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		*eol = (out-outbuff);
 	}
  done:
-	sh_offstate(SH_FCOMPLETE);
+	sh_offstate(shp,SH_FCOMPLETE);
 	if(!ep->e_nlist)
-		stakset(ep->e_stkptr,ep->e_stkoff);
+		stkset(shp->stk,ep->e_stkptr,ep->e_stkoff);
 	if(nomarkdirs)
-		sh_offoption(SH_MARKDIRS);
+		sh_offoption(shp,SH_MARKDIRS);
 #if SHOPT_MULTIBYTE
 	{
 		register int c,n=0;
@@ -564,11 +628,11 @@ int ed_fulledit(Edit_t *ep)
 		ed_external(ep->e_inbuf, (char *)ep->e_inbuf);
 #endif /* SHOPT_MULTIBYTE */
 		sfwrite(shgd->hist_ptr->histfp,(char*)ep->e_inbuf,ep->e_eol+1);
-		sh_onstate(SH_HISTORY);
+		sh_onstate(ep->sh,SH_HISTORY);
 		hist_flush(shgd->hist_ptr);
 	}
 	cp = strcopy((char*)ep->e_inbuf,e_runvi);
 	cp = strcopy(cp, fmtbase((long)ep->e_hline,10,0));
-	ep->e_eol = ((unsigned char*)cp - (unsigned char*)ep->e_inbuf)-(sh_isoption(SH_VI)!=0);
+	ep->e_eol = ((unsigned char*)cp - (unsigned char*)ep->e_inbuf)-(sh_isoption(ep->sh,SH_VI)!=0);
 	return(0);
 }

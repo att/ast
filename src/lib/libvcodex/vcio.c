@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
@@ -24,7 +24,7 @@
 **	Some of these are stolen from the Sfio library and modified 
 **	to deal only with memory buffers.
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 /* base-128 unsigned coding */
@@ -134,7 +134,7 @@ Vcint_t	max;
 	ptr = io->next;
 	v = *ptr++;
 	while((max >>= 8) > 0)
-		v = (v <<= 8) | *ptr++;
+		v = (v << 8) | *ptr++;
 	io->next = ptr;
 
 	return v;

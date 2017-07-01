@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -38,7 +38,7 @@ service(register Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t*
 	int		i;
 	int		j;
 	int		fds[2];
-	long		ops[4];
+	long		ops[5];
 	char*		s;
 	char**		a;
 
@@ -63,10 +63,10 @@ service(register Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t*
 				fds[i] = j;
 			}
 	cs->fd = fds[1];
+	fcntl(cs->fd, F_SETFD, FD_CLOEXEC);
 	ops[0] = PROC_FD_DUP(fds[0], 0, PROC_FD_PARENT);
-	ops[1] = PROC_FD_CLOSE(fds[1], PROC_FD_CHILD);
-	ops[2] = PROC_FD_DUP(co->gsmfd, 1, 0);
-	ops[3] = 0;
+	ops[1] = PROC_FD_DUP(co->gsmfd, 1, PROC_FD_CHILD);
+	ops[2] = 0;
 	if (!(proc = procopen(cs->path, cs->argv, NiL, ops, PROC_DAEMON|PROC_IGNORE)))
 	{
 		errormsg(state.lib, ERROR_LIBRARY|ERROR_SYSTEM|2, "%s: cannot connect to %s service", cs->path, cs->name);
@@ -74,7 +74,6 @@ service(register Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t*
 		close(fds[1]);	
 		return 0;
 	}
-	fcntl(cs->fd, F_SETFD, FD_CLOEXEC);
 	cs->pid = proc->pid;
 	procfree(proc);
 	sfprintf(sp, "id=%d info\n", cj->id);
@@ -134,6 +133,7 @@ request(register Coshell_t* co, Cojob_t* cj, Coservice_t* cs, const char* action
 	cj->pid = 0;
 	cj->status = 0;
 	cj->local = 0;
+	cj->flags |= CO_SERVICE;
 	cj->service = cs;
 	co->svc_outstanding++;
 	co->svc_running++;

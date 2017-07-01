@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -80,12 +80,12 @@ USAGE_LICENSE
 "[S:silent|status?No output for \b--check\b; 0 exit status means all sums"
 "	matched, non-0 means at least one sum failed to match. Ignored for"
 "	\b--permissions\b.]"
-"[t:total?List only the total checksum and block count of all files."
+"[t:text?Read files in text mode (i.e., treat \b\\r\\n\b as \b\\n\b).]"
+"[T:total?List only the total checksum and block count of all files."
 "	\b--all\b \b--total\b lists each checksum and the total. The"
 "	total checksum and block count may be different from the checksum"
 "	and block count of the catenation of all files due to partial"
 "	blocks that may occur when the files are treated separately.]"
-"[T:text?Read files in text mode (i.e., treat \b\\r\\n\b as \b\\n\b).]"
 "[w!:warn?Warn about invalid \b--check\b lines.]"
 "[x:method|algorithm?Specifies the checksum \amethod\a to"
 "	apply. Parenthesized method options are readonly implementation"
@@ -133,7 +133,7 @@ typedef struct State_s			/* program state		*/
 	int		silent;		/* silent check, 0 exit if ok	*/
 	int		(*sort)(FTSENT* const*, FTSENT* const*);
 	Sum_t*		sum;		/* sum method			*/
-	int		text;		/* \r\n == \n			*/
+	bool		text;		/* \r\n == \n			*/
 	int		total;		/* list totals only		*/
 	uid_t		uid;		/* caller uid			*/
 	int		warn;		/* invalid check line warnings	*/
@@ -177,11 +177,13 @@ closefile(Sfio_t* sp)
 static void
 pr(State_t* state, Sfio_t* op, Sfio_t* ip, char* file, int perm, struct stat* st, Sfio_t* check)
 {
-	register char*	p;
-	register char*	r;
-	register char*	e;
-	register int	peek;
-	struct stat	ss;
+	register char*		p;
+	register char*		r;
+	register char*		e;
+	register int		peek;
+	struct stat		ss;
+
+	static const char*	indicator[] = { "*", " " };
 
 	if (check)
 	{
@@ -244,7 +246,7 @@ pr(State_t* state, Sfio_t* op, Sfio_t* ip, char* file, int perm, struct stat* st
 						(st->st_gid != state->gid && ((st->st_mode & S_ISGID) || (st->st_mode & S_IRGRP) && !(st->st_mode & S_IROTH) || (st->st_mode & S_IXGRP) && !(st->st_mode & S_IXOTH))) ? fmtgid(st->st_gid) : "-");
 			}
 			if (ip != sfstdin)
-				sfprintf(op, " %s", file);
+				sfprintf(op, " %s%s", (state->sum->flags & SUM_INDICATOR) ? indicator[state->text] : "",  file);
 			sfputc(op, '\n');
 		}
 	}
@@ -264,6 +266,7 @@ verify(State_t* state, register char* s, char* check, Sfio_t* rp)
 	int		mode;
 	int		uid;
 	int		gid;
+	bool		text;
 	Sfio_t*		sp;
 	struct stat	st;
 
@@ -274,6 +277,20 @@ verify(State_t* state, register char* s, char* check, Sfio_t* rp)
 		if ((t - s) > 10 || !(file = strchr(t + 1, ' ')))
 			file = t;
 		*file++ = 0;
+		if (!(state->sum->flags & SUM_INDICATOR))
+			text = state->text;
+		else if (*file == '*')
+		{
+			file++;
+			text = 0;
+		}
+		else if (*file == ' ')
+		{
+			file++;
+			text = 1;
+		}
+		else
+			text = state->text;
 		attr = 0;
 		if ((mode = strtol(file, &e, 8)) && *e == ' ' && (e - file) == 4)
 		{
@@ -303,7 +320,7 @@ verify(State_t* state, register char* s, char* check, Sfio_t* rp)
 				}
 			}
 		}
-		if (sp = openfile(file, "rb"))
+		if (sp = openfile(file, text ? "rt" : "rb"))
 		{
 			pr(state, rp, sp, file, -1, NiL, NiL);
 			if (!(t = sfstruse(rp)))
@@ -394,6 +411,10 @@ verify(State_t* state, register char* s, char* check, Sfio_t* rp)
 	}
 	else if (streq(s, "permissions"))
 		state->haveperm = 1;
+	else if (streq(s, "text"))
+		state->text = 1;
+	else if (streq(s, "binary"))
+		state->text = 0;
 	else
 		error(1, "%s: %s: unknown option", check, s);
 }
@@ -503,6 +524,9 @@ b_cksum(int argc, register char** argv, Shbltin_t* context)
 			state.silent = opt_info.num;
 			continue;
 		case 't':
+			state.text = 1;
+			continue;
+		case 'T':
 			state.total = 1;
 			continue;
 		case 'w':
@@ -523,9 +547,6 @@ b_cksum(int argc, register char** argv, Shbltin_t* context)
 			flags &= ~FTS_META;
 			flags |= FTS_PHYSICAL;
 			logical = 0;
-			continue;
-		case 'T':
-			state.text = 1;
 			continue;
 		case '?':
 			error(ERROR_USAGE|4, "%s", opt_info.arg);
@@ -569,6 +590,8 @@ b_cksum(int argc, register char** argv, Shbltin_t* context)
 		sfprintf(sfstdout, "method=%s\n", state.sum->name);
 		if (state.permissions)
 			sfprintf(sfstdout, "permissions\n");
+		if (state.text)
+			sfprintf(sfstdout, "text\n");
 	}
 	if (state.list)
 	{
@@ -628,5 +651,7 @@ b_cksum(int argc, register char** argv, Shbltin_t* context)
 		sfputc(sfstdout, '\n');
 	}
 	sumclose(state.sum);
+	if (state.check)
+		sfclose(state.check);
 	return error_info.errors != 0;
 }

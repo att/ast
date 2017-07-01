@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,7 +31,7 @@
 #include <fcntl.h>
 
 static const char usage[] =
-"[-?\n@(#)$Id: cat (AT&T Research) 2012-05-31 $\n]"
+"[-?\n@(#)$Id: cat (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?cat - concatenate files]"
 "[+DESCRIPTION?\bcat\b copies each \afile\a in sequence to the standard"
@@ -137,6 +137,7 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 	int			m;
 	int			any;
 	int			header;
+	Mbstate_t		q;
 
 	unsigned char		meta[3];
 	unsigned char		tmp[32];
@@ -148,7 +149,8 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 	header = flags & (B_FLAG|N_FLAG);
 	line = 1;
 	states[0] = T_ENDBUF;
-	raw = !mbwide();
+	if (!(raw = !mbwide()))
+		mbinit(&q);
 	for (;;)
 	{
 		cur = cp;
@@ -160,7 +162,8 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 				while (!(n = states[*cp++]));
 				if (n < T_CONTROL)
 					break;
-				if ((m = mbsize(pp = cp - 1)) > 1)
+				pp = cp - 1;
+				if ((m = mbsize(pp, MB_LEN_MAX, &q)) > 1)
 					cp += m - 1;
 				else
 				{
@@ -173,7 +176,7 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 								*end = last;
 								last = -1;
 								c = end - pp + 1;
-								if ((m = mbsize(pp)) == c)
+								if ((m = mbsize(pp, MB_LEN_MAX, &q)) == c)
 								{
 									any = 1;
 									if (header)
@@ -210,7 +213,7 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 									if ((n = end - cp + 1) >= (sizeof(tmp) - c))
 										n = sizeof(tmp) - c - 1;
 									memcpy(tmp + c, cp, n);
-									if ((m = mbsize(tmp)) >= c)
+									if ((m = mbsize(tmp, MB_LEN_MAX, &q)) >= c)
 									{
 										any = 1;
 										if (header)

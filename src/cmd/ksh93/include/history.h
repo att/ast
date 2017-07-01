@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -68,8 +68,6 @@ extern int		hist_match(History_t*,off_t, char*, int*);
 extern off_t		hist_tell(History_t*,int);
 extern off_t		hist_seek(History_t*,int);
 extern char 		*hist_word(char*, int, int);
-#if SHOPT_ESH
-    extern Histloc_t	hist_locate(History_t*,int, int, int);
-#endif	/* SHOPT_ESH */
+extern Histloc_t	hist_locate(History_t*,int, int, int);
 
 #endif /* HIST_VERSION */

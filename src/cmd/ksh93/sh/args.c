@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -32,6 +32,7 @@
 #include	"builtins.h"
 #include	"terminal.h"
 #include	"edit.h"
+#include	"jobs.h"
 #include	"FEATURE/poll"
 #if SHOPT_KIA
 #   include	"shlex.h"
@@ -47,16 +48,13 @@
 #else
 #   define BASHOPT
 #endif
-#if SHOPT_HISTEXPAND
-#   define HFLAG        "H"
-#else
-#   define HFLAG        ""
-#endif
+#define HFLAG        "H"
 
 #define SORT		1
 #define PRINT		2
 
 static	char		*null;
+static  pid_t		*procsub;
 
 /* The following order is determined by sh_optset */
 static  const char optksh[] =  PFSHOPT BASHOPT "DircabefhkmnpstuvxBCGEl" HFLAG;
@@ -72,10 +70,7 @@ static const int flagval[]  =
 	SH_ALLEXPORT, SH_NOTIFY, SH_ERREXIT, SH_NOGLOB, SH_TRACKALL,
 	SH_KEYWORD, SH_MONITOR, SH_NOEXEC, SH_PRIVILEGED, SH_SFLAG, SH_TFLAG,
 	SH_NOUNSET, SH_VERBOSE,  SH_XTRACE, SH_BRACEEXPAND, SH_NOCLOBBER,
-	SH_GLOBSTARS, SH_RC, SH_LOGIN_SHELL,
-#if SHOPT_HISTEXPAND
-        SH_HISTEXPAND,
-#endif
+	SH_GLOBSTARS, SH_RC, SH_LOGIN_SHELL, SH_HISTEXPAND,
 	0 
 };
 
@@ -95,6 +90,116 @@ typedef struct _arg_
 static int 		arg_expand(Shell_t*,struct argnod*,struct argnod**,int);
 static void 		sh_argset(Arg_t*, char *[]);
 
+#define SORT_numeric	01
+#define SORT_reverse	02
+struct Node
+{
+	union	Value 	vp;
+	int		index;
+	unsigned char	bits;
+	Namval_t	*nodes[1];
+};
+
+struct Sort
+{
+	Shell_t		*shp;
+	Namval_t	*np;
+	union Value	*vp;
+	Dt_t		*root;
+	int		cur;
+	int		nelem;
+	char		*flags;
+	char		*name;
+	struct Node	*nodes;
+	struct Node	**nptrs;
+	char		*keys[1];
+};
+
+static struct Sort *Sp;
+
+static int arraysort(const char *s1, const char *s2)
+{
+	struct Sort *sp = Sp;
+	Shell_t	*shp = sp->shp;
+	int r=0, cur=sp->cur;
+	Namval_t *np1, *np2;
+	Namfun_t	fun;
+	char		*cp;
+	memset(&fun,0,sizeof(Namfun_t));
+	if(!(np1 = ((struct Node*)s1)->nodes[sp->cur]))
+	{
+		sfprintf(shp->strbuf,"%s[%i].%s%c",sp->name,((struct Node*)s1)->index,sp->keys[sp->cur],0);
+		cp = sfstruse(shp->strbuf);
+		np1 = nv_create(cp,sp->root,NV_VARNAME|NV_NOFAIL|NV_NOADD|NV_NOSCOPE,&fun);
+		((struct Node*)s1)->nodes[sp->cur] = np1;
+	}
+	if(!(np2 = ((struct Node*)s2)->nodes[sp->cur]))
+	{
+		sfprintf( shp->strbuf,"%s[%i].%s%c",sp->name,((struct Node*)s2)->index,sp->keys[sp->cur],0);
+		cp = sfstruse(shp->strbuf);
+		np2 = nv_create(cp,sp->root,NV_VARNAME|NV_NOFAIL|NV_NOADD|NV_NOSCOPE,&fun);
+		((struct Node*)s2)->nodes[sp->cur] = np2;
+	}
+	if(sp->flags[sp->cur]&SORT_numeric)
+	{
+		Sfdouble_t d1 = np1?nv_getnum(np1):0;
+		Sfdouble_t d2 = np2?nv_getnum(np2):0;
+		if(d2<d1)
+			r = 1;
+		else if(d2>d1)
+			r = -1;
+	}
+	else if(np1 && np2)
+	{
+		char *sp1 = nv_getval(np1);
+		char *sp2 = nv_getval(np2);
+		r = strcoll(sp1,sp2);
+		
+	}
+	else if(np1)
+		r = 1;
+	else if(np2)
+		r = -1;
+	if(sp->flags[sp->cur]&SORT_reverse)
+		r = -r;
+	if(r==0 && sp->keys[++sp->cur])
+		r = arraysort(s1,s2);
+	sp->cur = cur;
+	return(r);
+}
+
+static int alphasort(const char *s1, const char *s2)
+{
+	struct Sort	*sp = Sp;
+	int		r = 0;
+	char		*sp1, *sp2;
+	nv_putsub(sp->np, NULL,((struct Node*)s1)->index,0);
+	sp1 = nv_getval(sp->np);
+	nv_putsub(sp->np, NULL,((struct Node*)s2)->index,0);
+	sp2 = nv_getval(sp->np);
+	r = strcoll(sp1,sp2);
+	if(sp->flags[0]&SORT_reverse)
+		r = -r;
+	return(r);
+}
+
+static int numsort(const char *s1, const char *s2)
+{
+	struct Sort	*sp = Sp;
+	Sfdouble_t	d1,d2;
+	int		r=0;
+	nv_putsub(sp->np, NULL,((struct Node*)s1)->index,0);
+	d1 = nv_getnum(sp->np);
+	nv_putsub(sp->np, NULL,((struct Node*)s2)->index,0);
+	d2 = nv_getnum(sp->np);
+	if(d2<d1)
+		r = 1;
+	else if(d2>d1)
+		r = -1;
+	if(sp->flags[0]&SORT_reverse)
+		r = -r;
+	return(r);
+}
 
 /* ======== option handling	======== */
 
@@ -108,19 +213,20 @@ void *sh_argopen(Shell_t *shp)
 
 static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 {
+	Shell_t *shp = sh_getinterp();
 #if SHOPT_BASH
 	extern const char sh_bash1[], sh_bash2[];
 	if(strcmp(s,"bash1")==0) 
 	{
-		if(sh_isoption(SH_BASH))
+		if(sh_isoption(shp,SH_BASH))
 			sfputr(sp,sh_bash1,-1);
 	}
 	else if(strcmp(s,"bash2")==0)
 	{
-		if(sh_isoption(SH_BASH))
+		if(sh_isoption(shp,SH_BASH))
 			sfputr(sp,sh_bash2,-1);
 	}
-	else if(*s==':' && sh_isoption(SH_BASH))
+	else if(*s==':' && sh_isoption(shp,SH_BASH))
 		sfputr(sp,s,-1);
 	else
 #endif
@@ -142,12 +248,13 @@ int sh_argopts(int argc,register char *argv[], void *context)
 	register Arg_t	*ap = (Arg_t*)(shp->arg_context);
 	Lex_t		*lp = (Lex_t*)(shp->lex_context);
 	Shopt_t		newflags;
-	int setflag=0, action=0, trace=(int)sh_isoption(SH_XTRACE);
+	int setflag=0, action=0, trace=(int)sh_isoption(shp,SH_XTRACE);
 	Namval_t *np = NIL(Namval_t*);
-	const char *cp;
-	int verbose,f;
+	const char *sp;
+	char *keylist=0;
+	int verbose,f,unsetnp=0;
 	Optdisc_t disc;
-	newflags=ap->sh->options;
+	newflags=shp->options;
 	memset(&disc, 0, sizeof(disc));
 	disc.version = OPT_VERSION;
 	disc.infof = infof;
@@ -164,13 +271,16 @@ int sh_argopts(int argc,register char *argv[], void *context)
 		switch(n)
 		{
 	 	    case 'A':
-			np = nv_open(opt_info.arg,ap->sh->var_tree,NV_NOASSIGN|NV_ARRAY|NV_VARNAME);
+			np = nv_open(opt_info.arg,shp->var_tree,NV_NOASSIGN|NV_ARRAY|NV_VARNAME);
 			if(f)
-				nv_unset(np);
+				unsetnp=1;
+			continue;
+	 	    case 'K':
+			keylist = opt_info.arg;
 			continue;
 #if SHOPT_BASH
 		    case 'O':	/* shopt options, only in bash mode */
-			if(!sh_isoption(SH_BASH))
+			if(!sh_isoption(shp,SH_BASH))
 				errormsg(SH_DICT,ERROR_exit(1), e_option, opt_info.name);
 #endif
 		    case 'o':	/* set options */
@@ -183,14 +293,14 @@ int sh_argopts(int argc,register char *argv[], void *context)
 				 */
 				verbose = (f?PRINT_VERBOSE:PRINT_NO_HEADER)|
 					  (n=='O'?PRINT_SHOPT:0)|
-					  (sh_isoption(SH_BASH)?PRINT_ALL|PRINT_NO_HEADER:0)|
+					  (sh_isoption(shp,SH_BASH)?PRINT_ALL|PRINT_NO_HEADER:0)|
 					  ((opt_info.arg&&(!*opt_info.arg||*opt_info.arg=='-'))?(PRINT_TABLE|PRINT_NO_HEADER):0);
 				continue;
 			}
 			o = sh_lookopt(opt_info.arg,&f);
 			if(o<=0
-				|| (!sh_isoption(SH_BASH) && (o&SH_BASHEXTRA))
-				|| ((!sh_isoption(SH_BASH) || n=='o') && (o&SH_BASHOPT))
+				|| (!sh_isoption(shp,SH_BASH) && (o&SH_BASHEXTRA))
+				|| ((!sh_isoption(shp,SH_BASH) || n=='o') && (o&SH_BASHOPT))
 
 				|| (setflag && (o&SH_COMMANDLINE)))
 			{
@@ -198,12 +308,12 @@ int sh_argopts(int argc,register char *argv[], void *context)
 				error_info.errors++;
 			}
 			o &= 0xff;
-			if(sh_isoption(SH_RESTRICTED) && !f && o==SH_RESTRICTED)
+			if(sh_isoption(shp,SH_RESTRICTED) && !f && o==SH_RESTRICTED)
 				errormsg(SH_DICT,ERROR_exit(1), e_restricted, opt_info.arg);
 			break;
 #if SHOPT_BASH
 		    case -1:	/* --rcfile */
-			ap->sh->gd->rcfile = opt_info.arg;
+			shp->gd->rcfile = opt_info.arg;
 			continue;
 		    case -2:	/* --noediting */
 			if (!f)
@@ -222,11 +332,11 @@ int sh_argopts(int argc,register char *argv[], void *context)
 			goto skip;
 		    case -5:	/* --version */
 			sfputr(sfstdout, "ksh bash emulation, version ",-1);
-			np = nv_open("BASH_VERSION",ap->sh->var_tree,0);
+			np = nv_open("BASH_VERSION",shp->var_tree,0);
 			sfputr(sfstdout, nv_getval(np),-1);
-			np = nv_open("MACHTYPE",ap->sh->var_tree,0);
+			np = nv_open("MACHTYPE",shp->var_tree,0);
 			sfprintf(sfstdout, " (%s)\n", nv_getval(np));
-			sh_exit(0);
+			sh_exit(shp,0);
 #endif
 		    case -6:	/* --default */
 			{
@@ -244,9 +354,9 @@ int sh_argopts(int argc,register char *argv[], void *context)
 			goto skip;
 		    case 'T':
 			if (opt_info.num)
-				ap->sh->test |= opt_info.num;
+				shp->test |= opt_info.num;
 			else
-				ap->sh->test = 0;
+				shp->test = 0;
 		    	continue;
 		    case 's':
 			if(setflag)
@@ -273,8 +383,8 @@ int sh_argopts(int argc,register char *argv[], void *context)
 #endif /* SHOPT_REGRESS */
 		    skip:
 		    default:
-			if(cp=strchr(optksh,n))
-				o = flagval[cp-optksh];
+			if(sp=strchr(optksh,n))
+				o = flagval[sp-optksh];
 			break;
 		    case ':':
 			if(opt_info.name[0]=='-'&&opt_info.name[1]=='-')
@@ -298,7 +408,7 @@ int sh_argopts(int argc,register char *argv[], void *context)
 				off_option(&newflags,SH_GMACS);
 			}
 			on_option(&newflags,o);
-			off_option(&ap->sh->offoptions,o);
+			off_option(&shp->offoptions,o);
 		}
 		else
 		{
@@ -306,13 +416,13 @@ int sh_argopts(int argc,register char *argv[], void *context)
 				trace = 0;
 			off_option(&newflags,o);
 			if(setflag==0)
-				on_option(&ap->sh->offoptions,o);
+				on_option(&shp->offoptions,o);
 		}
 	}
 	if(error_info.errors)
 		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage(NIL(char*)));
 	/* check for '-' or '+' argument */
-	if((cp=argv[opt_info.index]) && cp[1]==0 && (*cp=='+' || *cp=='-') &&
+	if((sp=argv[opt_info.index]) && sp[1]==0 && (*sp=='+' || *sp=='-') &&
 		strcmp(argv[opt_info.index-1],"--"))
 	{
 		opt_info.index++;
@@ -325,27 +435,136 @@ int sh_argopts(int argc,register char *argv[], void *context)
 	argc -= opt_info.index;
 	argv += opt_info.index;
 	if(action==PRINT)
-		sh_printopts(newflags,verbose,0);
+		sh_printopts(shp,newflags,verbose,0);
 	if(setflag)
 	{
 		if(action==SORT)
 		{
+			int	(*sortfn)(const char*,const char*) = strcoll;
+			Namarr_t	*arp;
+			union Value	*args;
+			unsigned char	*bits;
 			if(argc>0)
-				strsort(argv,argc,strcoll);
+				strsort(argv,argc,sortfn);
+			else if(np && (arp=nv_arrayptr(np)) && (args = nv_aivec(np,&bits)))
+			{
+				struct Sort	*sp;
+				char		*cp;
+				int		i, c, keys=0;
+				size_t		nodesize;
+				if(keylist)
+				{
+					for(cp=keylist;c= *cp; cp++)
+					{
+						if(c==',')
+							keys++;
+					}
+					keys++;
+				}
+				else
+					keylist = Empty;
+				arp->nelem = nv_aipack(arp);;
+				cp = nv_name(np);
+				c = strlen(cp);
+				nodesize = sizeof(struct Node)+(keys-1)*sizeof(Namval_t*);
+				sp = (struct Sort*)malloc(sizeof(struct Sort)+strlen(keylist)+(sizeof(char*)+1)*keys+(arp->nelem+1)*(nodesize+sizeof(void*))+c+3);
+				sp->shp = shp;
+				sp->np = np;
+				if(!(sp->root = shp->last_root))
+					sp->root = shp->var_tree;
+				sp->vp = args;
+				sp->cur = 0;
+				sp->nodes = (struct Node*)&sp->keys[keys+2];
+				memset(sp->nodes, 0, arp->nelem*nodesize);
+				sp->nptrs = (struct Node**)((char*)sp->nodes+arp->nelem*nodesize);
+				sp->flags = (char*)&sp->nptrs[arp->nelem+1];
+				memset(sp->flags,0,keys+1);
+				sp->name = sp->flags + keys+1;
+				memcpy(sp->name,cp,c+1);
+				sp->keys[0] = sp->name+c+1;
+				strcpy(sp->keys[0],keylist);
+				cp = (char*)sp->nodes;
+				for(c=0; c < arp->nelem; c++)
+				{
+					if(keylist!=Empty && *keylist!=':')
+					{
+						((struct Node*)cp)->index = strtol(args[c].np->nvname,NULL,10);
+						((struct Node*)cp)->bits = bits[c];
+					}
+					else
+						((struct Node*)cp)->index = c;
+					((struct Node*)cp)->vp = args[c];
+					sp->nptrs[c] = (struct Node*)cp;
+					cp += nodesize;
+				}
+				if(!(cp = sp->keys[0]))
+					cp = keylist;
+				for(keys=0;c= *cp; cp++)
+				{
+					if(c==',')
+					{
+						*cp++ = 0;
+						sp->keys[++keys] = cp;
+						sp->flags[keys] = 0;
+					}
+					else if(c==':')
+					{
+					again:
+						*cp++ = 0;
+						if((c= *cp) == 'r')
+						{
+							sp->flags[keys] |= SORT_reverse; 
+							c = cp[1];
+						}
+						else if(c=='n')
+						{
+							sp->flags[keys] |= SORT_numeric; 
+							c = cp[1];
+						}
+						if(c=='n' || c=='r')
+							goto again;
+						 
+					}
+				}
+				sp->keys[++keys] = 0;
+				Sp = sp;
+				if(sp->keys[0] && *sp->keys[0])
+					sortfn = arraysort;
+				else if(sp->flags[0]&SORT_numeric)
+					sortfn = numsort;
+				else
+					sortfn = alphasort;
+				strsort((char**)sp->nptrs,arp->nelem,sortfn);
+				cp = (char*)sp->nodes;
+				for(c=0; c < arp->nelem; c++)
+				{
+					i = (char*)sp->nptrs[c]-(char*)&sp->nodes[0];
+					if(i/nodesize !=c)
+					{
+						args[c] = ((struct Node*)(cp+i))->vp;
+						bits[c] = ((struct Node*)(cp+i))->bits;
+					}
+				}
+				free(sp);
+				nv_close(np);
+				np = 0;
+			}
 			else
-				strsort(ap->sh->st.dolv+1,ap->sh->st.dolc,strcoll);
+				strsort(shp->st.dolv+1,shp->st.dolc,sortfn);
 		}
 		if(np)
 		{
+			if(unsetnp)
+				nv_unset(np);
 			nv_setvec(np,0,argc,argv);
 			nv_close(np);
 		}
-		else if(argc>0 || ((cp=argv[-1]) && strcmp(cp,"--")==0))
+		else if(argc>0 || ((sp=argv[-1]) && strcmp(sp,"--")==0))
 			sh_argset(ap,argv-1);
 	}
 	else if(is_option(&newflags,SH_CFLAG))
 	{
-		if(!(ap->sh->comdiv = *argv++))
+		if(!(shp->comdiv = *argv++))
 		{
 			errormsg(SH_DICT,2,e_cneedsarg);
 			errormsg(SH_DICT,ERROR_usage(2),optusage(NIL(char*)));
@@ -355,7 +574,7 @@ int sh_argopts(int argc,register char *argv[], void *context)
 	/* handling SH_INTERACTIVE and SH_PRIVILEGED has been moved to
 	 * sh_applyopts(), so that the code can be reused from b_shopt(), too
 	 */
-	sh_applyopts(ap->sh,newflags);
+	sh_applyopts(shp,newflags);
 #if SHOPT_KIA
 	if(ap->kiafile)
 	{
@@ -385,11 +604,11 @@ int sh_argopts(int argc,register char *argv[], void *context)
 void sh_applyopts(Shell_t* shp,Shopt_t newflags)
 {
 	/* cannot set -n for interactive shells since there is no way out */
-	if(sh_isoption(SH_INTERACTIVE))
+	if(sh_isoption(shp,SH_INTERACTIVE))
 		off_option(&newflags,SH_NOEXEC);
 	if(is_option(&newflags,SH_PRIVILEGED))
 		on_option(&newflags,SH_NOUSRPROFILE);
-	if(!sh_isstate(SH_INIT) && is_option(&newflags,SH_PRIVILEGED) != sh_isoption(SH_PRIVILEGED) || sh_isstate(SH_INIT) && is_option(&((Arg_t*)shp->arg_context)->sh->offoptions,SH_PRIVILEGED) && shp->gd->userid!=shp->gd->euserid)
+	if(!sh_isstate(shp,SH_INIT) && is_option(&newflags,SH_PRIVILEGED) != sh_isoption(shp,SH_PRIVILEGED) || sh_isstate(shp,SH_INIT) && is_option(&((Arg_t*)shp->arg_context)->sh->offoptions,SH_PRIVILEGED) && shp->gd->userid!=shp->gd->euserid)
 	{
 		if(!is_option(&newflags,SH_PRIVILEGED))
 		{
@@ -416,23 +635,23 @@ void sh_applyopts(Shell_t* shp,Shopt_t newflags)
 	on_option(&newflags,SH_LITHIST);
 	on_option(&newflags,SH_NOEMPTYCMDCOMPL);
 
-	if(!is_option(&newflags,SH_XPG_ECHO) && sh_isoption(SH_XPG_ECHO))
+	if(!is_option(&newflags,SH_XPG_ECHO) && sh_isoption(shp,SH_XPG_ECHO))
 		astconf("UNIVERSE", 0, "ucb");
-	if(is_option(&newflags,SH_XPG_ECHO) && !sh_isoption(SH_XPG_ECHO))
+	if(is_option(&newflags,SH_XPG_ECHO) && !sh_isoption(shp,SH_XPG_ECHO))
 		astconf("UNIVERSE", 0, "att");
-	if(!is_option(&newflags,SH_PHYSICAL) && sh_isoption(SH_PHYSICAL))
+	if(!is_option(&newflags,SH_PHYSICAL) && sh_isoption(shp,SH_PHYSICAL))
 		astconf("PATH_RESOLVE", 0, "metaphysical");
-	if(is_option(&newflags,SH_PHYSICAL) && !sh_isoption(SH_PHYSICAL))
+	if(is_option(&newflags,SH_PHYSICAL) && !sh_isoption(shp,SH_PHYSICAL))
 		astconf("PATH_RESOLVE", 0, "physical");
-	if(is_option(&newflags,SH_HISTORY2) && !sh_isoption(SH_HISTORY2))
+	if(is_option(&newflags,SH_HISTORY2) && !sh_isoption(shp,SH_HISTORY2))
 	{
-		sh_onstate(SH_HISTORY);
-                sh_onoption(SH_HISTORY);
+		sh_onstate(shp,SH_HISTORY);
+                sh_onoption(shp,SH_HISTORY);
 	}
-	if(!is_option(&newflags,SH_HISTORY2) && sh_isoption(SH_HISTORY2))
+	if(!is_option(&newflags,SH_HISTORY2) && sh_isoption(shp,SH_HISTORY2))
 	{
-		sh_offstate(SH_HISTORY);
-		sh_offoption(SH_HISTORY);
+		sh_offstate(shp,SH_HISTORY);
+		sh_offoption(shp,SH_HISTORY);
 	}
 #endif
 	shp->options = newflags;
@@ -441,15 +660,16 @@ void sh_applyopts(Shell_t* shp,Shopt_t newflags)
 /*
  * returns the value of $-
  */
-char *sh_argdolminus(void* context)
+char *sh_argdolminus(void *context)
 {
-	register Arg_t *ap = (Arg_t*)context;
+	Shell_t	*shp = (Shell_t*)context;
+	register Arg_t *ap = (Arg_t*)shp->arg_context;
 	register const char *cp=optksh;
 	register char *flagp=ap->flagadr;
 	while(cp< &optksh[NUM_OPTS])
 	{
 		int n = flagval[cp-optksh];
-		if(sh_isoption(n))
+		if(sh_isoption(shp,n))
 			*flagp++ = *cp;
 		cp++;
 	}
@@ -520,7 +740,8 @@ struct dolnod *sh_argcreate(register char *argv[])
 {
 	register struct dolnod *dp;
 	register char **pp=argv, *sp;
-	register int 	size=0,n;
+	register int 	n;
+	register size_t size=0;
 	/* count args and number of bytes of arglist */
 	while(sp= *pp++)
 		size += strlen(sp);
@@ -586,7 +807,7 @@ struct dolnod *sh_arguse(Shell_t* shp)
  *  if mode is inclusive or of PRINT_*
  *  if <mask> is set, only options with this mask value are displayed
  */
-void sh_printopts(Shopt_t oflags,register int mode, Shopt_t *mask)
+void sh_printopts(Shell_t *shp,Shopt_t oflags,register int mode, Shopt_t *mask)
 {
 	register const Shtable_t *tp;
 	const char *name;
@@ -596,7 +817,7 @@ void sh_printopts(Shopt_t oflags,register int mode, Shopt_t *mask)
 		sfputr(sfstdout,sh_translate(e_heading),'\n');
 	if(mode&PRINT_TABLE)
 	{
-		int	w;
+		size_t	w;
 		int	c;
 		int	r;
 		int	i;
@@ -655,7 +876,7 @@ void sh_printopts(Shopt_t oflags,register int mode, Shopt_t *mask)
 	{
 		if(mask && !is_option(mask,value&0xff))
 			continue;
-		if(sh_isoption(SH_BASH))
+		if(sh_isoption(shp,SH_BASH))
 		{
 			if (!(mode&PRINT_SHOPT) != !(value&SH_BASHOPT))
 				continue;
@@ -717,6 +938,7 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 			return(ap->dolval+ap->dolbot);
 		}
 		shp->lastpath = 0;
+		procsub = shp->procsub;
 		*nargs = 0;
 		if(ac)
 		{
@@ -737,6 +959,8 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 			}
 			argp = arghead;
 		}
+		if(procsub)
+			*procsub = 0;
 	}
 	{
 		register char	**comargn;
@@ -782,8 +1006,9 @@ struct argnod *sh_argprocsub(Shell_t *shp,struct argnod *argp)
 {
 	/* argument of the form <(cmd) or >(cmd) */
 	register struct argnod *ap;
-	int monitor, fd, pv[3];
+	int nn, monitor, fd, pv[3];
 	int subshell = shp->subshell;
+	pid_t pid0;
 	ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
 	ap->argflag |= ARG_MAKE;
 	ap->argflag &= ~ARG_RAW;
@@ -794,33 +1019,56 @@ struct argnod *sh_argprocsub(Shell_t *shp,struct argnod *argp)
 	sfwrite(shp->stk,e_devfdNN,8);
 	pv[2] = 0;
 	sh_pipe(pv);
+	sfputr(shp->stk,fmtbase((long)pv[fd],10,0),0);
 #else
 	pv[0] = -1;
 	shp->fifo = pathtemp(0,0,0,"ksh.fifo",0);
 	mkfifo(shp->fifo,S_IRUSR|S_IWUSR);
 	sfputr(shp->stk,shp->fifo,0);
 #endif /* SHOPT_DEVFD */
-	sfputr(shp->stk,fmtbase((long)pv[fd],10,0),0);
 	ap = (struct argnod*)stkfreeze(shp->stk,0);
 	shp->inpipe = shp->outpipe = 0;
-	if(monitor = (sh_isstate(SH_MONITOR)!=0))
-		sh_offstate(SH_MONITOR);
+	if(monitor = (sh_isstate(shp,SH_MONITOR)!=0))
+		sh_offstate(shp,SH_MONITOR);
 	shp->subshell = 0;
+#if SHOPT_DEVFD
+#    ifdef SPAWN_cwd
+	if(shp->vex || (shp->vex = (void*)spawnvex_open(0)))
+		spawnvex_add((Spawnvex_t*)shp->vex,pv[fd],pv[fd],0,0);
+	else
+#    endif /* SPAWN_cwd */
+		fcntl(pv[fd],F_SETFD,0);
+	shp->fdstatus[pv[fd]] &= ~IOCLEX;
+#endif /* SHOPT_DEVFD */
+	pid0=shp->procsub?*shp->procsub:0; 
 	if(fd)
 	{
+		if(!shp->procsub)
+			shp->procsub = procsub = newof(0,pid_t,shp->nprocsub=4,0);
+		else if((nn=procsub-shp->procsub) >= shp->nprocsub)
+		{
+			shp->nprocsub += 3;
+			shp->procsub = newof(shp->procsub,pid_t,shp->nprocsub,0);
+			procsub = shp->procsub + nn;
+		}
+		if(pid0)
+			*shp->procsub = 0;
 		shp->inpipe = pv;
-		sh_exec((Shnode_t*)argp->argchn.ap,(int)sh_isstate(SH_ERREXIT));
+		sh_exec(shp,(Shnode_t*)argp->argchn.ap,(int)sh_isstate(shp,SH_ERREXIT));
+		if(pid0)
+			*shp->procsub = pid0;
+		*procsub++ = job.lastpost;
 	}
 	else
 	{
 		shp->outpipe = pv;
-		sh_exec((Shnode_t*)argp->argchn.ap,(int)sh_isstate(SH_ERREXIT));
+		sh_exec(shp,(Shnode_t*)argp->argchn.ap,(int)sh_isstate(shp,SH_ERREXIT));
 	}
 	shp->subshell = subshell;
 	if(monitor)
-		sh_onstate(SH_MONITOR);
+		sh_onstate(shp,SH_MONITOR);
 #if SHOPT_DEVFD
-	close(pv[1-fd]);
+	sh_close(pv[1-fd]);
 	sh_iosave(shp,-pv[fd], shp->topfd, (char*)0);
 #else
 	free(shp->fifo);

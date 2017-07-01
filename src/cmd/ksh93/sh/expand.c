@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -37,7 +37,6 @@
 #endif /* KSHELL */
 #include	<glob.h>
 #include	<ls.h>
-#include	<stak.h>
 #include	<ast_dir.h>
 #include	"io.h"
 #include	"path.h"
@@ -50,7 +49,7 @@
 #   define argbegin	argnxt.cp
     static	const char	*sufstr;
     static	int		suflen;
-    static int scantree(Dt_t*,const char*, struct argnod**);
+    static int scantree(Shell_t*,Dt_t*,const char*, struct argnod**);
 #else
 #   define sh_sigcheck(sig)	(0)
 #   define sh_access		access
@@ -103,25 +102,25 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 	sh_stats(STAT_GLOBS);
 	memset(gp,0,sizeof(gdata));
 	flags = GLOB_GROUP|GLOB_AUGMENTED|GLOB_NOCHECK|GLOB_NOSORT|GLOB_STACK|GLOB_LIST|GLOB_DISC;
-	if(sh_isoption(SH_MARKDIRS))
+	if(sh_isoption(shp,SH_MARKDIRS))
 		flags |= GLOB_MARK;
-	if(sh_isoption(SH_GLOBSTARS))
+	if(sh_isoption(shp,SH_GLOBSTARS))
 		flags |= GLOB_STARSTAR;
 #if SHOPT_BASH
 #if 0
-	if(sh_isoption(SH_BASH) && !sh_isoption(SH_EXTGLOB))
+	if(sh_isoption(shp,SH_BASH) && !sh_isoption(shp,SH_EXTGLOB))
 		flags &= ~GLOB_AUGMENTED;
 #endif
-	if(sh_isoption(SH_NULLGLOB))
+	if(sh_isoption(shp,SH_NULLGLOB))
 		flags &= ~GLOB_NOCHECK;
-	if(sh_isoption(SH_NOCASEGLOB))
+	if(sh_isoption(shp,SH_NOCASEGLOB))
 		flags |= GLOB_ICASE;
 #endif
-	if(sh_isstate(SH_COMPLETE))
+	if(sh_isstate(shp,SH_COMPLETE))
 	{
 #if KSHELL
-		extra += scantree(shp->alias_tree,pattern,arghead); 
-		extra += scantree(shp->fun_tree,pattern,arghead); 
+		extra += scantree(shp,shp->alias_tree,pattern,arghead); 
+		extra += scantree(shp,shp->fun_tree,pattern,arghead); 
 #   if GLOB_VERSION >= 20010916L
 		gp->gl_nextdir = nextdir;
 #   endif
@@ -130,9 +129,9 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 		flags &= ~GLOB_NOCHECK;
 	}
 #if SHOPT_BASH
-	if(off = staktell())
-		sp = stakfreeze(0);
-	if(sh_isoption(SH_BASH))
+	if(off = stktell(shp->stk))
+		sp = stkfreeze(shp->stk,0);
+	if(sh_isoption(shp,SH_BASH))
 	{
 		/*
 		 * For bash, FIGNORE is a colon separated list of suffixes to
@@ -141,7 +140,7 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 		 * instead of being an augmented shell pattern.
 		 * Generate shell patterns out of those here.
 		 */
-		if(sh_isstate(SH_FCOMPLETE))
+		if(sh_isstate(shp,SH_FCOMPLETE))
 			cp=nv_getval(sh_scoped(shp,FIGNORENOD));
 		else
 		{
@@ -153,11 +152,11 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 		if(cp)
 		{
 			flags |= GLOB_AUGMENTED;
-			stakputs("@(");
-			if(!sh_isstate(SH_FCOMPLETE))
+			sfputr(shp->stk,"@(",-1);
+			if(!sh_isstate(shp,SH_FCOMPLETE))
 			{
-				stakputs(cp);
-				for(cp=stakptr(off); *cp; cp++)
+				sfputr(shp->stk,cp,-1);
+				for(cp=stkptr(shp->stk,off); *cp; cp++)
 					if(*cp == ':')
 						*cp='|';
 			}
@@ -168,19 +167,19 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 					cp2=cp;
 				do
 				{
-					stakputc('*');
-					stakputs(cp2);
+					sfputc(shp->stk,'*');
+					sfputr(shp->stk,cp2,-1);
 					if(cp2 = strtok(NULL, ":"))
 					{
 						*(cp2-1)=':';
-						stakputc('|');
+						sfputc(shp->stk,'|');
 					}
 				} while(cp2);
 			}
-			stakputc(')');
-			gp->gl_fignore = stakfreeze(1);
+			sfputc(shp->stk,')');
+			gp->gl_fignore = stkfreeze(shp->stk,1);
 		}
-		else if(!sh_isstate(SH_FCOMPLETE) && sh_isoption(SH_DOTGLOB))
+		else if(!sh_isstate(shp,SH_FCOMPLETE) && sh_isoption(shp,SH_DOTGLOB))
 			gp->gl_fignore = "";
 	}
 	else
@@ -195,9 +194,9 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 	glob(pattern, flags, 0, gp);
 #if SHOPT_BASH
 	if(off)
-		stakset(sp,off);
+		stkset(shp->stk,sp,off);
 	else
-		stakseek(0);
+		stkseek(shp->stk,0);
 #endif
 	sh_sigcheck(shp);
 	for(ap= (struct argnod*)gp->gl_list; ap; ap = ap->argnxt.ap)
@@ -216,7 +215,7 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 /*
  * scan tree and add each name that matches the given pattern
  */
-static int scantree(Dt_t *tree, const char *pattern, struct argnod **arghead)
+static int scantree(Shell_t *shp,Dt_t *tree, const char *pattern, struct argnod **arghead)
 {
 	register Namval_t *np;
 	register struct argnod *ap;
@@ -227,9 +226,9 @@ static int scantree(Dt_t *tree, const char *pattern, struct argnod **arghead)
 	{
 		if(strmatch(cp=nv_name(np),pattern))
 		{
-			ap = (struct argnod*)stakseek(ARGVAL);
-			stakputs(cp);
-			ap = (struct argnod*)stakfreeze(1);
+			ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
+			sfputr(shp->stk,cp,-1);
+			ap = (struct argnod*)stkfreeze(shp->stk,1);
 			ap->argbegin = NIL(char*);
 			ap->argchn.ap = *arghead;
 			ap->argflag = ARG_RAW|ARG_MAKE;
@@ -249,7 +248,7 @@ static int scantree(Dt_t *tree, const char *pattern, struct argnod **arghead)
 int path_complete(Shell_t *shp,const char *name,register const char *suffix, struct argnod **arghead)
 {
 	sufstr = suffix;
-	suflen = strlen(suffix);
+	suflen = (int)strlen(suffix);
 	return(path_expand(shp,name,arghead));
 }
 
@@ -278,6 +277,8 @@ int path_generate(Shell_t *shp,struct argnod *todo, struct argnod **arghead)
 	char comma, range=0;
 	int first, last, incr, count = 0;
 	char tmp[32], end[1];
+	if(!sh_isoption(shp,SH_BRACEEXPAND))
+		return(path_expand(shp,todo->argval,arghead));
 	todo->argchn.ap = 0;
 again:
 	apin = ap = todo;
@@ -387,7 +388,7 @@ again:
 			for(; ap; ap=apin)
 			{
 				apin = ap->argchn.ap;
-				if(!sh_isoption(SH_NOGLOB))
+				if(!sh_isoption(shp,SH_NOGLOB))
 					brace=path_expand(shp,ap->argval,arghead);
 				else
 				{
@@ -450,13 +451,13 @@ endloop1:
 		brace = *cp;
 		*cp = 0;
 		sh_sigcheck(shp);
-		ap = (struct argnod*)stakseek(ARGVAL);
+		ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
 		ap->argflag = ARG_RAW;
 		ap->argchn.ap = todo;
-		stakputs(apin->argval);
-		stakputs(pat);
-		stakputs(rescan);
-		todo = ap = (struct argnod*)stakfreeze(1);
+		sfputr(shp->stk,apin->argval,-1);
+		sfputr(shp->stk,pat,-1);
+		sfputr(shp->stk,rescan,-1);
+		todo = ap = (struct argnod*)stkfreeze(shp->stk,1);
 		if(brace == '}')
 			break;
 		if(!range)

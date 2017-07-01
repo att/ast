@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _CDT_H
@@ -24,14 +24,14 @@
 
 /*	Public interface for the dictionary library
 **
-**      Written by Kiem-Phong Vo
+**      Written by Kiem-Phong Vo, phongvo@gmail.com
 */
 
 #ifndef CDT_VERSION
 #ifdef _API_ast
 #define CDT_VERSION		_API_ast
 #else
-#define CDT_VERSION		20111111L
+#define CDT_VERSION		20130509L
 #endif /*_AST_api*/
 #endif /*CDT_VERSION*/
 #ifndef AST_PLUGIN_VERSION
@@ -162,8 +162,10 @@ struct _dtstat_s
 	ssize_t		space;	/* memory usage of data structure	*/
 	ssize_t		mlev;	/* max #levels in tree or hash table	*/
 	ssize_t		msize;	/* max #defined elts in below arrays	*/
+	ssize_t		tslot;	/* # of slots in top level hash table	*/
 	ssize_t		lsize[DT_MAXSIZE]; /* #objects by level		*/
 	ssize_t		tsize[DT_MAXSIZE]; /* #tables by level		*/
+	char		mesg[1024]; /* digest of top level statistics	*/
 };
 
 /* supported storage methods */
@@ -181,8 +183,8 @@ struct _dtstat_s
 #define DT_ORDERED	(DT_OSET|DT_OBAG)
 
 /* asserts to dtdisc() to improve performance when changing disciplines */
-#define DT_SAMECMP	0000000001 /* compare functions are equivalent	*/
-#define DT_SAMEHASH	0000000002 /* hash functions are equivalent	*/
+#define DT_SAMECMP	00000000001 /* compare functions are equivalent	*/
+#define DT_SAMEHASH	00000000002 /* hash functions are equivalent	*/
 
 /* operation types */
 #define DT_INSERT	0000000001 /* insert object if not found	*/
@@ -199,7 +201,11 @@ struct _dtstat_s
 #define DT_ATLEAST	0000040000 /* find the least elt >= object	*/
 #define DT_ATMOST	0000100000 /* find the biggest elt <= object	*/
 #define DT_REMOVE	0002000000 /* remove a specific object		*/
-#define DT_TOANNOUNCE	(DT_INSERT|DT_DELETE|DT_SEARCH|DT_NEXT|DT_PREV|DT_FIRST|DT_LAST|DT_MATCH|DT_ATTACH|DT_DETACH|DT_APPEND|DT_ATLEAST|DT_ATMOST|DT_REMOVE)
+#define DT_INSTALL      0004000000 /* install a new object		*/
+#define DT_STEP		0010000000 /* step to next element in loop	*/
+#define DT_START	0020000000 /* start an iterative loop		*/
+#define DT_STOP		0040000000 /* end an iterative loop		*/
+#define DT_TOANNOUNCE	(DT_INSERT|DT_DELETE|DT_SEARCH|DT_NEXT|DT_PREV|DT_FIRST|DT_LAST|DT_MATCH|DT_ATTACH|DT_DETACH|DT_APPEND|DT_ATLEAST|DT_ATMOST|DT_REMOVE|DT_INSTALL|DT_STEP|DT_START|DT_STOP)
 
 #define DT_RELINK	0000002000 /* re-inserting (dtdisc,dtmethod...)	*/
 #define DT_FLATTEN	0000000040 /* flatten objects into a list	*/
@@ -216,6 +222,7 @@ struct _dtstat_s
 				   /* the actual event will be this bit */
 				   /* combined with the operation bit	*/
 #define DT_OPTIMIZE	0100000000 /* optimizing data structure		*/
+#define DT_USER		0200000000 /* an announcement on user's behalf	*/
 
 /* events for discipline and method event-handling functions */
 #define DT_OPEN		1	/* a dictionary is being opened		*/
@@ -228,12 +235,15 @@ struct _dtstat_s
 #define DT_ERROR	0xbad	/* announcing an error			*/
 
 _BEGIN_EXTERNS_	/* data structures and functions */
+
+#if _PACKAGE_ast /* Microsoft import/export dll stuffs */
 #if _BLD_cdt && defined(__EXPORT__)
 #define extern	__EXPORT__
 #endif
 #if !_BLD_cdt && defined(__IMPORT__)
 #define extern	__IMPORT__
 #endif
+#endif /*_PACKAGE_ast*/
 
 extern Dtmethod_t* 	Dtset;
 extern Dtmethod_t* 	Dtbag;
@@ -243,30 +253,18 @@ extern Dtmethod_t*	Dtlist;
 extern Dtmethod_t*	Dtstack;
 extern Dtmethod_t*	Dtqueue;
 extern Dtmethod_t*	Dtdeque;
-
-#if _PACKAGE_ast /* dtplugin() for proprietary and non-standard methods -- requires -ldll */
-
-#define dtplugin(name)	((Dtmethod_t*)dllmeth("cdt", name, CDT_PLUGIN_VERSION))
-
-#define Dtrhbag		dtplugin("rehash:Dtrhbag")
-#define Dtrhset		dtplugin("rehash:Dtrhset")
-
-#else
-
-#if CDTPROPRIETARY
-
 extern Dtmethod_t*	Dtrhset;
 extern Dtmethod_t*	Dtrhbag;
 
-#endif /*CDTPROPRIETARY*/
+#if _PACKAGE_ast /* dtplugin() for proprietary and non-standard method plugins -- requires -ldll */
+
+#define dtplugin(name)	((Dtmethod_t*)dllmeth("cdt", name, CDT_PLUGIN_VERSION))
+
+#if 0
+#define Dtrhbag		dtplugin("rehash:Dtrhbag")
+#endif
 
 #endif /*_PACKAGE_ast*/
-
-#undef extern
-
-#if _BLD_cdt && defined(__EXPORT__)
-#define extern	__EXPORT__
-#endif
 
 extern Dt_t*		dtopen _ARG_((Dtdisc_t*, Dtmethod_t*));
 extern int		dtclose _ARG_((Dt_t*));
@@ -275,9 +273,11 @@ extern Dtdisc_t*	dtdisc _ARG_((Dt_t* dt, Dtdisc_t*, int));
 extern Dtmethod_t*	dtmethod _ARG_((Dt_t*, Dtmethod_t*));
 extern int		dtwalk _ARG_((Dt_t*, int(*)(Dt_t*,Void_t*,Void_t*), Void_t*));
 extern int		dtcustomize _ARG_((Dt_t*, int, int));
-extern unsigned int	dtstrhash _ARG_((unsigned int, Void_t*, ssize_t));
+extern unsigned int	dtstrhash _ARG_((unsigned int, char*, int));
 extern int		dtuserlock _ARG_((Dt_t*, unsigned int, int));
-extern Void_t*		dtuserdata _ARG_((Dt_t*, Void_t*, unsigned int));
+extern Void_t*		dtuserdata _ARG_((Dt_t*, Void_t*, int));
+extern int		dtuserevent _ARG_((Dt_t*, int, Void_t*));
+extern ssize_t		dtstat _ARG_((Dt_t*, Dtstat_t*));
 
 /* deal with upward binary compatibility (operation bit translation, etc.) */
 extern Dt_t*		_dtopen _ARG_((Dtdisc_t*, Dtmethod_t*, unsigned long));
@@ -316,7 +316,7 @@ _END_EXTERNS_
 					  strcmp((char*)(k1), ((char*)k2)) )
 
 #define _DTHSH(dt,ky,dc) ((dc)->hashf   ? (*(dc)->hashf)((dt), (ky), (dc)) : \
-					  dtstrhash(0, (ky), (dc)->size) )
+					  dtstrhash(0, (char*)(ky), (int)(dc)->size) )
 
 #define dtvnext(d)	(_DT(d)->view)
 #define dtvcount(d)	(_DT(d)->nview)
@@ -334,6 +334,7 @@ _END_EXTERNS_
 #define dtsearch(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_SEARCH)
 #define dtmatch(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_MATCH)
 #define dtinsert(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_INSERT)
+#define dtinstall(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_INSTALL)
 #define dtappend(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_APPEND)
 #define dtdelete(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_DELETE)
 #define dtremove(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_REMOVE)
@@ -341,14 +342,18 @@ _END_EXTERNS_
 #define dtdetach(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_DETACH)
 #define dtclear(d)	(*(_DT(d)->searchf))((d),(Void_t*)(0),DT_CLEAR)
 
+#define dtstart(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_START)
+#define dtstep(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_STEP)
+#define dtstop(d,o)	(*(_DT(d)->searchf))((d),(Void_t*)(o),DT_STOP)
+
 #define dtflatten(d)	(Dtlink_t*)(*(_DT(d)->searchf))((d),(Void_t*)(0),DT_FLATTEN)
 #define dtextract(d)	(Dtlink_t*)(*(_DT(d)->searchf))((d),(Void_t*)(0),DT_EXTRACT)
 #define dtrestore(d,l)	(Dtlink_t*)(*(_DT(d)->searchf))((d),(Void_t*)(l),DT_RESTORE)
 
-#define dtstat(d,s)	(ssize_t)(*(_DT(d)->searchf))((d),(Void_t*)(s),DT_STAT)
 #define dtsize(d)	(ssize_t)(*(_DT(d)->searchf))((d),(Void_t*)(0),DT_STAT)
 
-#define DT_PRIME	17109811 /* 2#00000001 00000101 00010011 00110011 */
-#define dtcharhash(h,c) (((unsigned int)(h) + (unsigned int)(c)) * DT_PRIME )
+/* this is for backward compatibility - will be removed someday */
+#define DT_prime	17109811 /* 2#00000001 00000101 00010011 00110011 */
+#define dtcharhash(h,c) (((unsigned int)(h) + (unsigned int)(c)) * DT_prime )
 
 #endif /* _CDT_H */

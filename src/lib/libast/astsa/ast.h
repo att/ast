@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -30,7 +30,12 @@
 #include <ast_sa.h>
 #include <ast_common.h>
 
+#if _PACKAGE_sfio
+#include <sfio.h>
+#else
 #include <stdio.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -48,6 +53,8 @@
 #define STR_GROUP	020		/* (|&) inside [@|&](...) only	*/
 
 typedef int (*Error_f)(void*, void*, int, ...);
+typedef int (*Qsortcmp_f)(const void*, const void*);
+typedef int (*Qsortcmp_r_f)(const void*, const void*, void*);
 
 typedef struct
 {
@@ -115,6 +122,8 @@ typedef struct
 #define strton(s,t,b,f)		strtol(s,t,0)
 #define strtonll(s,t,b,f)	strtoll(s,t,0)
 
+#if !_PACKAGE_sfio
+
 #define Sfio_t		FILE
 
 #define sfstdin		stdin
@@ -142,13 +151,18 @@ typedef struct
 
 #include <sfstr.h>
 
+extern char*		sfgetr(Sfio_t*, int, int);
+
+#endif
+
 extern _Ast_info_t	ast;
 
 extern int		astwinsize(int, int*, int*);
 extern int		chresc(const char*, char**);
 extern char*		fmtbuf(size_t);
 extern char*		fmtip4(uint32_t, int);
-extern char*		sfgetr(Sfio_t*, int, int);
+#define	qsort		_ast_qsort
+extern void		qsort(void*, size_t, size_t, Qsortcmp_f);
 extern char*		strcopy(char*, const char*);
 extern int		strmatch(const char*, const char*);
 extern int		strtoip4(const char*, char**, uint32_t*, unsigned char*);

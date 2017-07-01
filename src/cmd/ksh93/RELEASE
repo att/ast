@@ -1,29 +1,658 @@
-12-08-01  --- Release ksh93u+ ---
-12-08-01  A bug that ignored interrupts for some builtins (e.g. cmdtst::grep) 
-	  that read from stdin has been fixed.
-12-08-01  A bug that interpreted "cd .foo" as "cd foo" has been fixed.
-12-07-30  Added automatic restart for EINTR for ioctl, tcgetattr, and tcsetattr.
-12-07-23  A scoping error with namrefs to compound associative arrays has
+14-12-24  --- Release ksh93v- ---
+14-12-24  A bug which occurred when the undocumented alarm builtin received an
+	  alarm timeout while in the read builtin has been fixed.
+14-12-24  A bug in the startup of interactive restricted ksh which give a 
+	  restricted error message for redirection to /dev/null has been fixed.
+14-12-24  A bug in which the output from builtin --? was garbled has been fixed.
+14-12-24  The SIGINFO signal has been added to DARWIN.
+14-12-23  A bug in which job control was being disabled by using `...` command
+	  substitution has been fixed.
+14-12-22  Some patches for compilation on Darwin have been added.
+14-12-02  The requirement that unquoted { and } must match inside string with
+	  ${name op string} has been removed (at least for now). 
+14-11-26  A bug in which hitting interrup while a PS1.get function was executing
+	  could cause in infinite loop has been fixed.
+14-11-25 +If tab completion for a command name that is an alias is attempted,
+	  it will use the completion for the command it is aliased to.
+14-11-24  Two bugs with programmable completion have been fixed.
+14-11-24  A parser bug with line continuation after the =~ operator with
+          [[...]] has been fixed.
+14-11-20  A fix in read for some multibyte locales such as shift JIS has been
+	  made.
+14-11-02  Merged in changes from Apple for Mac/OS.
+14-10-29  Several bugs in the read -m json builtin have been made.
+14-09-29  A bug which allowed builtin -d to delete a special built-in has been
+	  fixed.
+14-09-24 +When listing jobs, the shell now shows the directory that the job
+	  was started from when it was not started from the current working
+	  directory.
+14-09-09  A bug in which `` command substitutions could hang with large output
+	  has been fixed.
+14-09-02  A bug in the test and [...] command for arithmetic operations when one
+	  of the operands was a variable.
+14-08-28  a bug which could cause a core dump when unsetting a function that is 
+	  in the active call chain has been fixed.
+14-08-22  A bug in which a command substitution of a function that fails, does 
+	  not cause an assigment command to fail has been fixed
+14-08-05  A bug in which print -s would fail with bad file unit number has
 	  been fixed.
-12-07-20  A bug where builtin -d /path/foo deleted foo has been fixed.
-12-07-18  A bug in which /dev/stdout did not work in command substitution on
-	  some systems has been fixed.
+14-07-22  A bug in which a non-zero exit status not last element of a pipeline
+	  could cause the pipeline to fail when pipefail is off has been fixed.
+14-07-21 +A -m method option has been added to read to read compound variables
+	  using a specified method. Currently only methods ksh and json are
+	  implemented.  -m ksh is equivalent to -C. 
+14-07-18 +In bash mode, the last element of a pipe is run in a subshell unless
+	  the option lastpipe is on.
+14-07-15  Fixed a bug in which json format output with 'print -j' had a comma
+	  after the last element.
+14-07-11 +Added -t flag and -P flag to whence and type for bash compaiblity.
+14-07-11 +Added -p flag to alias to output aliases for re-input.
+14-07-10  In bash mode x=() creates an empty index array instead of an empty
+	  compound variable.
+14-07-01  Some ifdefs were added so that ksh93 compiles with SHOPT_COMPLETE
+	  disabled.
+14-06-30 +The variable COMP_WORDBREAKS for programmable completion.
+14-06-25  A bug on some systems in which cd to a directory without execute
+	  permission would not fail has been fixed.
+14-06-25 +The BASH_SOURCE variable was added when ksh is run in bash mode.
+14-06-25 +The -D and -E options have been added to the complete builtin.
+14-06-19  References to dgk@research.att.com were deleted.
+14-06-19 +The -l flag to trap and the -p flag to umask were added as in bash.
+14-06-17 +In bash mode ${!parameter} is treated like ${$parameter}.
+14-06-17  Fixed a bug in which eval inside a dot script invoked by a profile file
+	  terminated the dot script prematurely after running the eval command.
+14-06-16 +Added parameter expansion operator ${$parameter} for variables and
+	  positional parameters.
+14-06-06  Added -a option to read which is equivalent to -A.
+14-06-05  Fixed a bug in builtin -p.
+14-06-05 +Added -n option to builtin to disable builtins.
+14-06-04  Fixed a couple of file completion bugs.
+14-06-02 +When compiled with the SHOPT_BASH and run with the name bash,
+	  the shell now uses dynamic scoping for name() and function name. 
+	  In addition the builtins declare and local are supported.
+	  The SHOPT_BASH option is on by default in the Makefile.
+	  More work remains with the bash compatibility option.
+14-05-25  Fixed a bug in vi command completion in which tab did not work
+	  after a space.
+14-05-25 +Replaced the -p option for read with -p prompt.  For backword
+	  compatibility, if a coprocess is running and prompt begins with -
+	  or is a valid variable name, -p causes the read from a pipe.
+14-05-25 +Modified the -u option for read and print so that it accepts the
+	  option argument p to indicate the coprocess file descriptor.
+14-05-08  A bug in the option parser which could cause 'X -a v=((...)...) to
+	  core dump has been fixed. 
+14-05-07  A change to improve the performance of appending an element to an
+	  array has been fixed.
+14-05-02 +A compilation option to add programmable completion with the two
+	  new builtins, complete and compgen has been added.  It should behave
+	  the same as it does with bash.  Please try this out and report any
+	  problems you find.  Use compgen --man and complete --man to get the
+	  man pages.  Use the bash documentation for now for information about
+	  programmable completion.  The compilation is on by default for now.
+14-04-05  A bug in which type name starting with the letter a, did not
+	  allow instances to be created has been fixed.
+14-04-03  A bug which caused a syntax error when a here-doc was embedded
+	  in `` command substitution has been fixed.
+14-03-31  A bug in `` command substition of a pipeline which could cause
+	  memory problems has been fixed.
+14-03-25  A bug in which the assignment A=() when A is an index array of types
+	  did not eliminate the zero-th element has been fixed.
+14-03-24  A bug in which the braceexpand option was ignored when noglob was
+	  on has been fixed.
+14-03-17  A bug in which a timer alarm during a built-in could cause a core
+	  dump has been fixed.
+14-03-03  A bug in which creating an empty array of a type variable with
+	  required fields has been fixed
+14-02-12  A bug which occurs in an interactive shell when a file is opened as
+	  file descriptor 3 for reading which causes a subsequent read
+	  command to fail to read a line from the file  has been fixed.
+14-02-06  The description of .sh.match in the sh.1 man page was fixed.
+14-02-05  A typeset -p bug for an associative array of types has been fixed.
+14-01-29  A process substitution bug which caused a process to hang has been
+	  fixed.
+14-01-27  Another bug in which extended regular expressions give with the =~
+	  operator in [[...]] gave syntax errors with multiple (...){...} has
+	  been fixed.
+14-01-23  The value of errno is now saved and restored during shell interrupt
+	  handlers.
+14-01-21  A bug in which a read from a script invoked with set -m could stop
+	  when trying to read, and cause the parent to try to restart which
+	  causes a loop has been fixed.
+14-01-20  A bug in the right shift operator in arithmetic expressions when the
+	  shift count is greated then the number of bits in a long integer has
+	  been fixed.
+14-01-20  Another memory leak which occured for functions defined in subshells
+	  has been fixed.
+14-01-14  Fixed a memory leak which occurred for local variables in a function
+	  that is invoked by a subshell.
+14-01-10  [[...]] now supports hexidecimal constants with aritmetic operators.
+14-01-09  A bug which could cause a core dump with nested subshells and
+	  functions has been fixed.
+14-01-09  A second bug in which appending to an empty array of types does
+	  starts with element 1 rather than 0 has been fixed.
+14-01-06  A bug which could cause a core dump when KSH_VERSION is exported in
+	  the envirnment has been fixed.  KSH_VERSION is a name reference to
+	  .sh.version.
+14-01-06  Fixed a bug that could cause a core dump wiith large prompts.
+14-01-06  A bug in which appending to an empty array of types does starts with
+	  element 1 rather than 0 has been fixed.
+14-01-02  A bug in which set -o nounset can trigger unset errors when reading
+	  function definitions has been fixed.
+13-12-31  The documente feature that state that unset a type subvariable that
+	  is readonly is required to be specified when creating an type instance
+	  now works.  The man page generated with typename --man now lists these
+	  fields as required fields.
+13-12-31  A bug in which extended regular expressions give with the =~ operator
+	  in [[...]] gave syntax errors with (...){...} has been fixed.
+13-12-30  A bug in the left shift operator in arithmetic expressions when the
+	  shift count is greated then the number of bits in a long integer has
+	  been fixed.
+13-12-05  If cd is invoked with no arguments and HOME is unset, it attempts to
+	  find the home directory and use that.  Otherwise an error occurs.
+13-12-04  A bug in the handling of $(<file) when contained in a subshell has
+	  been fixed.
+13-12-03  A bug in /bin/cd on Solaris which could cause a core dump has
+	  been fixed.
+13-11-25  The math functions nextafter and nexttowards now work when called
+	  different floating point types.
+13-11-22  Fixed bugs in support for f, d, and l suffices for floating point
+	  constants.
+13-11-14 +Added -f fd option to pwd to display the directory corresponding to
+	  file descriptor fd.
+13-11-12  A bug in [[...]] in which $? is not preserved while expanding the
+	  right hand side of a binary expression has been fixed.
+13-11-11  A bug in [[...]] in which [[ 1<2 ]] is a syntax error has been fixed.
+13-10-08  The shell arithmetic now recognized suffices f,F, l, and L for
+	  floating point constants.
+13-10-07  The shell now prints an error message on standard error when a
+	  job specified with %job does not exist.
+13-10-04  A bug in the value of i.MAX inside an arithmetic expression when the
+	  variable i is unsigned long has been fixed.
+13-09-23  A bug in which a compound assignment to a type, [(T_t x=(i=2)] where
+	  type T_t is defined in FPATH would fail with a syntx error has been
+	  fixed
+13-09-16  A bug in which a 0 value for variable in arithmetic expression inside
+	  a function fails when set -u has been set has been fixed.
+13-09-16  A bug which could cause a core dump when generating the man page
+	  for user defined types containing compound variables has been fixed.
+13-09-16  A bug in the handling of array instances of type variables in an
+	  arithmetic expression has been fixed.
+13-09-13 +The signal .sh.value variable is now a compound variable with the name
+	  value.q for sending a signal with -q and value.Q for sending a value
+	  with -Q.
+13-09-13  A bug in $(...) command substitution that corrupted a trailing
+          multibyte character in non-UTF-8 locales has been fixed.
+13-09-13  Eliminted extranesous output of standard error when ksh is invoked
+	  with the -v (verbose) option.
+13-09-10  A bug in finding a function defined inside a type that was defined
+	  in a namespace has been fixed.
+13-09-10  A bug in the binding of function local variables inside arithmeitc
+	  expression inside namespaces was fixed.
+13-09-10 +A -Q option was added to kill to pass integers as large as pointers.
+	  The -q option now only accepts integers as large as typeset -i. 
+13-09-09  A bug in command substitution has been fixed.
+13-09-09  Qualified print format "%([no]unicode)q" added to prefer \u[...]
+	  over \w[...] and override LC_OPTIONS=unicode.
+13-09-04 +\w[hex] locale-specific code point literals have been added.
+13-09-04 +The float(f) math function was added.
+13-09-04 +The int(f) math function was fixed to return 0 for floating point
+	  numbers larger than the maximum integer.
+13-09-04  A bug in which assigning a compound indexed array a value of () did
+	  not preserve the -C attribute has been fixed.
+13-09-04  kill -q can now pass numbers as large as typeset -li and
+	  .sh.sig.value is typeset -i rather than a compound variable.
+13-09-04  kill -q yields the processor and returns 2 when siqueue fails with
+	  EAGAIN and yield.
+13-09-03  A bug in which $((x.xxx)) where x is a floating point variable and
+	  xxx is not one of the known extensions yields a random value has
+	  been fixed.  It now is unset which has value 0 when set -u is off.
+13-09-03  A bug in overriding discipline functions for types defined in
+	  namespaces has been fixed.
+13-09-03  A bug which on some systems caused a core dump for large <<< here
+	  documents has been fixed.
+13-08-27 +enum constants can have .DIG, .MAX, or .MIN sub-variables.
+13-08-26 +Floating variables can be following by DIG, MAX, MIN, EPSILON, 
+	  INT_MAX, INT_MIN, or MAX_10_EXP to give values correspong to
+ 	  the floating type of the variable.
+13-08-26 +Integer variables can be followed by .DIG, .MAX, or .MIN in
+	  arithmetic expression so give the values corresponding to that
+	  integer type.
+13-08-26 +Added 12 math constants such as E, PI, and SQRT2.
+13-08-23  Documented __ in sh.1 man page.
+13-08-22  Fixed __ to work in nested types.
+13-08-22  A bug in which print -v .sh.stats did not work within a namespace
+	  has been fixed.
+13-08-21  enumeration subvariables introduce in 13-07-30 can now be used
+	  with enum arrays and reference to enum array elements.
+13-08-20  A bug in arithemtic with variables used in an arithmetic expression
+	  inside a namespace has been fixed.
+13-08-19  A bug in which compound variables created in a namespace did not
+	  display correctly outside of the namespace has been fixed. 
+13-08-19 +The variable .sh.pwdfd which expands to the file descriptor number
+	  corresponding to $PWD has been added.
+13-08-15  A bug in which copying the .sh.stats and .sh.siginfo variables
+	  gave values that could vary has been fixed.
+13-08-14  A bug in which unknow starup options, for example ksh --foobarbla
+	  would cause the shell to core dump has been fied.
+13-08-14  A bug in which {n}<&0 did not work after <<< string hs been fixed.
+13-08-12  A bug in which background jobs where not removed after the
+	  user was notified about completion has been fixed.
+13-08-11  A bug in which subscripts were evaluated twice for subscripts
+	  on the left hand side of assignments make by typeset has been fixed.
+13-08-11 +namespace was modified so that namespace names can be a compound
+	  variable rather than just an identifier and namespace are no
+	  longer nested.
+13-08-07  typeset -p (and print -v) now display the short attribute for
+	  typeset -sF and typeset -sE.
+13-08-06 +You can now use the redirection <& {n} whic is the same as <& $n.
+13-08-05  Fix a bug in which read -C could reference uninitialized memory.
+13-07-31  Fixed a bug with index arrays of short integer types in arrays
+	  inside types that could lead to a core dump.
+13-07-30  Fixed a bug with short integer arithemtic that could lead to a
+	  core dump.
+13-07-30 +An experimental change to each enumeration variable have subvariables
+	  for each enumeration constant.  ${enum.name} will expand to the
+	  numerical value of the enumeration name associatied with enum.
+13-07-30 +An experimental change to allow ${foo.__} to expand to the parent
+	  node for foo, or foo if foo doesn't have a parent.  There are now
+	  regression tests for .__ yet.
+13-07-26  Fixed a memory leak bug with `...`.
+13-07-24  A bug in which += assignments did not work for environment variables
+	  specified for non-special builtin commands has been fixed.
+13-07-24  The _ variable is new set as a reference to the type inside
+	  discipline functions for non-type variables in the type.
+13-07-23  A bug in the arithmetic assignment to an enum using a ?: operator
+	  with the nounset option has been fixed.
+13-07-22  The .sh.sig variable has been modified to treat .sh.value as a
+	  compound variable containing int and ptr.
+13-07-18  Assignments of the type name=(...) to array variables now preserve
+	  the array type and the variable type if any.
+13-07-18  If a PATH ends in ., and you are in the current directory and this
+	  directory is in FPATH, ksh now treats this a a function directory.
+13-07-17  ${!.sh.sig@]} now expands to all the .sh.sig. variables.
+13-07-17  A bug in which a fatal error such as invalid shift in a function
+	  defined with f() did not terminate the script when the f was
+	  invoked with a redirection has been fixed.
+13-07-17  A timing bug in $(...) which could cause the return value to be
+	  127 has been fixed.
+13-07-16  A bug in which references to compound variables inside a namespace
+	  was not working has been fixed.
+13-07-15  Running a function f that assigns to .sh.value no longer outputs the
+	  value of .sh.value when invoked via ${ f;}.
+13-07-15  Fixed a bug in which bool -A a=( [2]=true [4]=false ) caused the
+	  number of elements to show up as 4 rather than 2.
+13-07-11  Eliminated two references to uninitialized memory.
+13-07-10  A memory leak with using aliases has been fixed.
+13-07-09  A memory leak with autoload functions has been fixed.
+13-07-08  When using kill -q to send a signal, a CONT signal is not sent to
+	  wake the process if it is sleeping after sending the signal.
+13-07-08  Fixed a namespace bug in which print -v did not work for printing
+	  a compound array of a namespace variable.
+13-07-02  A bug in which trap '' TTOU could cause the shell to go into an
+	  infinite loop has been fixed.
+13-06-25  ksh93 uses the new ast system call intercepts to restart interrupted 
+	  signals.
+13-06-21  A -f nn option has been added to cd to change to a directory
+	  relative to a file descriptor of an open directory.  cd -f nn
+	  is equivalent to cd ~{nn}.
+13-06-20  A bug in which  ${IFS+abc} did not expand to abc when IFS is
+	  unset has been fixed.
+13-06-18  A bug on some systems with arithmentic expressions containing
+	  x**y has been fixed.
+13-06-13  Changes made for reliable delivery of queued signals.
+13-06-12  The character '@' in an associative array subscript is not quoted
+	  when displayed on output so that it will be a valid subscript on
+	  input.
+13-06-06  In accordance with the standard set -u now causes failures for
+	  unset positional parameres.
+13-06-05  Several changes to handle queued signals have been made.
+13-06-04  A bug with the arithmetic expression $((2**63 / -1)) on some
+	  systems has been fixed.
+13-05-31  Fix a bug in job completion when trying to make a selection after
+	  hitting <TAB> on an empty directory.
+13-05-30  A bug with set -m in a script wich could cause the script to hang
+	  has been fixed.
+13-05-30  Two bugs related to the processing of a nameref foo=$1 where $1
+	  is of the form arr[subscript] where subscript is an arithmetic
+	  expression has been fixed.
+13-05-29  ksh93 now intercepts the LC_TIME variable.
+13-05-29  A bug in which builtin -d date did not delete the date builtin has
+	  been fixed. 
+13-05-29  namespace commands are no longer allowed inside function definitions
+	  and now generate a syntax error.
+13-05-28  Fixed bugs in typeset -c for copying attributes for simple variables.
+13-05-28  Fixed two bug for typeset -c and typeset -m for variable .sh.match.
+13-05-28 +Added -j option to print (and %(json)B format specifier to printf)
+	  which will print a compound shell variable in JSON format.  This is
+	  expermental.  Let me know if I got things wrong.
+13-05-23  A bug for enumeration types in which unset elements of an array
+	  expanded to the default enum name rather than to the empty string
+	  has been fixed
+13-05-23  A bug in which set -u did not fail for unset array elements of
+	  an array of short ints (typeset -is) has been fixed.
+13-05-22 +Added -c option to typeset which is similar to typeset -m except
+	  that the variable is copied rather than moved.  This is experimental
+	  and there are known bugs.  If it can't be made reliable it will
+	  not be added.
+13-05-20  Fixed a bug in which running script < file, where script did
+	  reads generated output the the terminal in error has been fixed.
+13-05-20  Updated documentation for typeset -s and typeset -l for integer
+	  and floating point types.
+13-05-17  A bug in the ${b[i}} when b is an enumeration variable whose
+	  value corresponds to the 0'th element.
+13-05-17  A bug in which set -o nounset caused ((boold=true)) to fail has
+	  been fixed.
+13-05-16  A bug in which a nameref to a compound sub-variable that does
+	  not exit failed when called from a function with static variables
+	  has been fixed.
+13-05-15 +The set -s -Aarray sort option added on 13-04-25 now works for
+	  sorting an indexed array of type instances.
+13-05-15  A bug in which ${!foo*} did not contain foo when $foo exists
+	  has been fixed.
+13-05-15  typeset -m foo=bar now generates an error when set -o nounset is
+	  on and variable bar is unset.
+13-05-14  A bug in which bar was not empty after typeset -m foo=bar has
+	  been fixed.
+13-05-13  A bug in which the exit trap could be executed twice with ${...;}
+	  has been fixed.
+13-05-10  Added more documentation with enum --man.
+13-05-10  With print -v for with nested compound variables, the output contains
+	  typeset -C for sub-variabes that are compound assignments.
+13-05-10  Reduced the number of warning when running gcc with -Wshadow option.
+13-05-09  Updated man page to mention _Bool enumeration and bool preset alias.
+13-05-08  Modified the code to that CHLD traps are delayed when a trap from
+	  another signal is being modified.
+13-05-08  Added a ksh -n options that suggests that x=$((expr)) be replaced by
+	  ((x=expr))>
+13-05-07  A bug in which typeset -p and print -v did not display elements that
+	  were compound variables without any sub-variables has been fixed.
+13-05-06  Fixed a bug with typeset -m when varaible is a name reference to
+	  a local variable from a calling function.
+13-05-06  A bug in which shcomp failed to compile some scrips that defined
+	  enums has been fixed.
+13-05-03  Fixed a bug with typeset -m a[i]=a[j] when a is a numeric array type.
+13-05-02  Fixed another typeset -m but form moving types containing compound
+	  variables.
+13-05-02  Fixed another typeset -m bug for moving a compound variable contained
+	  in a type variable.
+13-05-01  Fixed two bugs additional bugs related to typeset -m for compound
+	  variables.
+13-05-01 +Increased to maximum number of enumeration elements from 32K to
+	  2G.
+13-04-30  A bug in which typeset -m did not preserve attributes has been fixed.
+13-04-30  A bug with with read -C var when var contained index array subscripts
+	  that caused side effects on evaluation has been fixed.
+13-04-29  A bug in defining and using multi-dimensional types and enums has
+	  been fixed.
+13-04-25  A bug which caused iffe to fail on some systems has been fixed.
+13-04-25 +The -K option has been added to set to sort indexed arrays of
+	  compound elements based on a list of keys.
+13-04-18  Fixed a bug with process substitution on systems that don't support
+	  /dev/fd.
+13-04-18  Added serialization to processing of CHLD traps.
+13-04-17  A bug in arithmetic in which x[i].foo in a loop would not be
+	  re-evalued when subscript i changed value has been fixed.
+13-04-15  Fixed a couple of problems with regression tests.
+13-04-15  ksh now waits for background jobs started in functions contained
+	  in command substitution.
+13-04-11  Made code changes based on warning from the "clang" tool.
+13-04-11  Fixed two core dumps on some architectures related to uninitialzed
+	  data.
+13-04-10  ksh now waits for background jobs started in $() and ${...;} to
+	  complete as it did in ksh93u+.
+13-04-10  A bug in which x=\\x; case x in $x) echo yes;; *) echo no; esac
+	  printed yes has been fixed.  It should print no.
+13-04-08 +ksh now sets .sh.sig.pid and .sh.sig.status for CHLD traps.  The 
+	  .sh.sig.status can be one of exited, killed, dumped, stopped or
+	  continued.
+13-04-08 +The CHLD trap is now triggered with STOP and CONT signals.
+13-04-05  A bug in which a command with one or more >(...) process substitution
+	  arguments did not wait for all >(...) to complete before running the
+	  next command has been fixed.
+13-04-04  A bug in which monitor mode was not working for scripts has been
+	  fixed.
+13-04-04  A bug in which an unset variable error with set -u on did not
+	  terminate the current script has been fixed.
+13-04-03  The shell now uses mmap() on systems that suppport it for
+	  command substitution.
+13-04-03 +Functions that are used in brace group command substitution ${ ... }
+	  can assign the result to .sh.value instead of writing to standard
+	  out with the same result, but faster.
+13-04-02  A bug in the handling of string files in a type that is a member
+	  of another type has been fixed/
+13-04-02  A bug in cd ../.foobar, where ../.foobar exists, has been fixed.
+13-03-29  A bug in which read -r -d delim ignored -r has been fixed.
+13-03-28  A bug in which the KEYBD trap did not work correctly lines that
+	  are continued  has been fixed.
+13-03-28  read with line delimiter 0 and field separator \n did not split on
+	  '\n' and has been fixed.
+13-03-28  A bug in which "typeset -a" could cause a core dump has been fixed.
+13-03-27 +The variable .sh.sig containing siginfo information is no set during
+	  a SIGCHLD trap.
+13-03-26  A bug resulting from one of the memory leak bugs fixed on 13-03-15
+	  has been fixed.
+13-03-22  A bug in displaying indexed arrays of types in a compound variable
+	  has been fixed.
+13-03-22  A bug in which typeset -T did not display subtype names correctly
+	  do to a caching problem has been fixed.
+13-03-21  A bug in which ${...PATH=...} command substitution did not preserve 
+	  path bindings has been fixed.
+13-03-20  The exit value from the expansion of the PS1 prompt no longer affects
+	  the exit status of the shell.
+13-03-20  A fork bomb which could occur when a job was stopped in a shell with
+	  monitor mode, but not a job control shell has been fixed.
+13-03-19  A new patch to replace the patch removed on 13-03-06 for non utf8
+	  locales in command substitution has been added.
+13-03-17  A bug with print -v for an array of integer or floats has been fixed.
+13-03-15  Two memory leaks related to arrays created in functions has been
+	  fixed.
+13-03-14  A bug in reading an instance of an indexed array variable has been
+	  fixed.
+13-03-12  Initialized a variable in sh/macro.c that had been uninitialized.
+13-03-12  Fixed a bug that could cause a core dump with associative arrays 
+	  used withing types.
+13-03-12  Empty fields and empty arrays as type elements are not displayed
+	  when expanding a type instance.
+13-03-11  The trap command now blocks signals that have traps until the
+	  trap command completes.
+13-03-11  Signals that have traps that occur while processing a trap are
+	  deferred until the trap command completes.
+13-03-10  A bug in the expansion of a compound variable containing nested
+          types that contains arrays has been fixed.
+13-03-06  The patch made on 13-02-07 to handle non utf8 locales has been
+	  removed (for now) because it broke a utf8 locale script. 
+13-03-05  A bug in which ${!var*} to not expand correctly when it was at
+	  the beginning of a script for after a call to enum has been fixed.
+13-03-05  A bug in the expansion of a compound variable containing nested
+	  types has been fixed.
+13-03-04  A bug in the for loop optimizer which could falsely treat typeset -b
+	  as loop invariants  has been fixed.
+13-02-27  The exit value from expanding the PS[1-4] prompts no longer affect
+	  the exit status of the shell when you exit with EOF.
+13-02-22  'kill %' caused the shell to core dump.  This has been fixed.
+13-02-21  The 12-01-16 bug fix prevented .sh.match from being used in the
+	  replacement string.  The previous code was restored and a different
+	  fix which prevented .sh.match from being computed for nested
+	  replacement has been used instead.  
+13-02-20  Fixed two bugs related to reading compound variables with
+	  read -C that contain sub-elemects that are type variables.
+13-02-19  Fixed a bug introduced on 13-01-17 when adding the feature of
+	  allowing math functions to pass arrays as arguments.
+13-02-13  A bug in which hitting interrupt with reading from a terminal
+	  sent the interrupt to the current process rather than the current
+	  process group has been fixed.
+13-02-13  A bug in which x.name and x[0].name were not treated the same
+	  has been fixed.
+13-02-08 +The -p option was added to enum to display the values that are
+	  valid for the enum.
+13-02-07 +A preset alias named bool which is an alias for an enum
+	  named _Bool which has values true and false has been added.
+13-02-07  A bug in the processing of multibyte characters in non utf8 locales
+	  in command substitution has been fixed.
+13-02-05  Fixed emacs tab completion bug in which typing <tab><tab> in a
+	  directory with one element that contained an element of one entry
+	  did not expand to both names.
+13-02-24  Increased the maximum level of recursion for evaluating variables
+	  inside arithmetic expressions from 9 to 1024.
+13-02-24  Added exp10 math function.
+13-01-31  A bug in integer division which occured for numbers between INT_MAX
+	  and UINT_MAX has been fixed.
+13-01-31  A bug in the parser that did not allow for redirections with
+	  ((...)) arithmetic statements has been fixed.
+13-01-17 +User define math functions introduced on 10-03-24 now allow passing
+	  arrays as arguments.
+13-01-10 +ksh now treats ESC-O-letter the same as ESC-[-letter in vi and emacs
+	  edit modes.
+12-12-10  A bug with enumerations types when declaring an indexed array of
+	  an enumeration type has been fixed.
+12-11-30  A bug in which whence or type on a preset alias did not output the
+	  value has been fixed.
+12-11-28  Assigning an element of an indexed array as an empty array now
+	  correctly displays this with typeset -p.
+12-11-28  typeset -p of an array variable whose 0 element was an array variable
+	  with no elements did not output correctly and has been fixed.
+12-11-20  Numerous changes related to new algorithm for shell redirections
+	  using the spawnvex() library.  Not yet used in all cases.
+12-11-14  A bug with caused by using spawnvex*() functions for redirections
+	  of simple commands with here-documents has been fixed.
+12-11-12  A memory leak which occured while doing path search has been fixed.
+12-10-24  A bug which caused the shell to report a syntax error when a
+	  command substitution appeared on the line that started a here
+	  document has been fixed.
+12-10-23  The shell now uses the new spawnvex*() functions for redirections
+	  of simple command that are not builtin.
+12-10-21  Here documents with $() and ${ } use larger buffers.
+12-10-21  Builtins now use mmap() for files that are opened for reading.
+12-10-18  A bug in which preceding a special builtin with command did not
+	  prevent assignments from remaining has been fixed.
+12-10-17  A bug in the self documentation for types which causes the field
+	  descriptors to be off by 1 has been fixed.
+12-10-17  An array bug which caused a regression test to fail has been fixed.
+12-10-16  A bug in the exit status for command substitution caused by no longer
+	  using pipes has been fixed.
+12-10-16  A bug in the self documentation for types with discipline functions
+	  led to an extra line containing -. and has been fixed.
+12-10-16  Fixed a bug with typeset -p that could cause a core dump.
+12-10-15  Fixed a bug in which unsigned long was used when unsigned long long
+	  was needed.
+12-10-15  Fixed a bug in which could cause long double data to not
+	  aligned correctly in types.
+12-10-09  A bug in which nested types were not able to invoke a discipline
+	  method defined by an embedded type has been fixed.
+12-10-09 +read -d '' now reads up to a NUL byte.
+12-10-04  libcmd builtins are statically linked into ksh93 and by default are
+	  bound to the path /opt/ast/bin whether this path exists or not.
+	  Changing the .sh.op_astbin variable changes the binding.
+12-10-02  Fixed a bug that could cause a core dump when unsetting type
+	  instances.
+12-10-02  Command substitution for using $() no longer uses a pipe and
+	  waits for the process to complete before finishing. 
+12-10-01  Updated man page for [[ s1 < s2 ]] and [[ s1 > s2 ]] to clearify
+	  that the string comparisons are based on the locale.
+12-10-01 +Added the variable SH_OPTIONS which consitst of name=value pairs.
+	  For defined options it assigned value to the variable .sh.op_name.
+12-10-02 +Add the variable .sh.op_astbin to define the directory where several
+	  shell builtins will be bound.
+12-09-28  Fixed a bug that caused core dumps when unsetting an array of types
+	  on some systems.
+12-09-28  Fixed a LINENO bug that causes function line numbers to be wrong on
+	  some 32 bit systems.
+12-09-24  The LINENO variable can now handle scripts with more than 2147483647
+	  lines.
+12-09-24  The number of elements for an indexed array for a 64 bit architecture
+	  has been increased to 2147483647.
+12-09-21  A bug in which the output of a two dimensional sparse indexed array
+	  would cause the second subscript be treated as an associative
+	  array when read back in has been fixed. Elements that are sparse
+	  indexed arrays now are prefixed type "typeset -a".
+12-09-19  A bug in which running more that 32767 subshell could cause the
+	  shell to core dump has been fixed.
+12-09-19  A bug in which the freeing of a compound variable with types and
+	  arrays when leaving a function has been fixed.
+12-09-18  A bug in which compound -a for a type element did not display the
+	  -C attribute has been fixed.
+12-09-14  >; file now fails if the user does not have write permission on file. 
+12-09-13  Fixed a compilation problem with Solaris which does not have
+	  SOCK_CLEXEC.
+12-09-12  Moved from using libast spawnveg() to new libast spawnvex().
+12-09-12  Changed the default build to disable SHOPT_FIXEDARRAY.  
+12-09-11  Fixed two bugs related to name references to compound array
+	  variables.
+12-09-10 +Added ~{fd} expansion where fd is the number of an open file or
+	  a variable whose value is the number of an open file.
+12-09-10  Fixed a bug in typeset -m the .sh.match is being renamed.
+12-09-07  Fixed a bug in .sh.match code that coud cause the shell to quitely
+12-09-07  Modified the code to use bool instead of int in several places.
+12-09-05  Modified pipe and socketpair creating to create file descriptors
+	  with close-on-exec set.
+12-08-31  A bug in vi mode in which ~/tst/make/users/hv<TAB> did not expand
+	  correctly has been fixed.
+12-08-31  A bug that could cause a core dump after typeset -m var=.sh.match has
+	  been fixed.
+12-08-30  For an associative array A, $((A[sub])) no longer cause subscript sub
+	  to be created.
+12-08-29  A scoping error in setting the scope for a reference when the
+	  reference contained subscripts containing a variable from a different
+	  scope has been fixed.
+12-08-27  A number of changes to open files with close-on-exec has been made.
+12-08-24  A bug in which unsetting instance variables in a type could effect
+	  the value of that instance in other type instances has been fixed.
+12-08-23  A bug in which name references to compound variable array elements
+	  did not work correctly has been fixed.
+12-08-22  .sh.match now handles subpatterns that had no matches with
+	  ${var//pattern} correctly.
+12-08-21  A bug in setting .sh.match after ${var//pattern/string} when string
+	  is empty has been fixed.
+12-08-21  A bug in setting .sh.match after [[ string == pattern ]] has been
+	  fixed.
+12-08-21  The poll builtin from Roland Mainz has been added with the option
+	  SHOPT_POLL.
+12-08-21  A bug in which read -S did not handle "" inside double quotes has
+	  been fixed.
+12-08-21  A bug in which a compound variable defined in a type could not
+	  have elements added to it has been fixed.
+12-08-20  A bug in which creating a two dimemsional associative array could
+	  add an extra 0 element to the second subscript has been fixed.
+12-08-20  typeset -H foo no longer unsets foo when foo has been exported to
+	  the shell.
+12-08-20  A file descriptor for the current directory is now made available
+	  to built-ins in the context pointer.
+12-08-10  Rewrote .sh.match expansions fixing several bugs and improving
+	  performance.
+12-08-09  A bug in which assignments following a process substitution argument
+	  were treated as assignments rather than arguments has been fixed.
+12-08-07  Fixed a bug in which discipline functions define in a type from
+	  within a namespace where not being run in the namespace.
+12-08-07  .sh.match no longer gets set for patterns in PS4 during set -x.
+12-07-25  Each shell variable now contains a pointer to the shell pointer.
+12-07-20  <shell.h> interface updated to pass the shell interpreter pointer
+	  to most functions.
 12-07-17  A bug in which the restricted option set in a subshell prevented
-	  some variables from getting restored when the subshell completed
-	  has been fixed.
-12-07-09  A bug in which the directory is not restored after a subshell changes
-	  the name of the directory for subshells executed in the same process
-	  has been fixed.
+          some variables from getting restored when the subshell completed
+          has been fixed.
+12-07-16  The code was modified to do automatic retry for several system calls
+	  the fail with errno set to EINTR.
+12-07-12 +Added -q option was added to kill to send queued signals on systems
+	  that support sigqueue().
+12-07-12 +Added -p option to builtin to output builtins in a format that can
+	  be used to reinput.
 12-07-09  A bug in which file descriptors created with {n}< file were not being
 	  closed has been fixed.
 12-07-09  The 12-04-04 fix for cd .. was not correct causing cd /etc;cd .. to
 	  remain in /etc.  This has been fixed.
+12-07-05  Eliminated compile options and code for ECHOPRINT and OLDTERMIO.
+12-07-05  Eliminated compile options BGX, ESH, HISTEXPAND, TYPEDEF and VSH.
+	  They are the default.
 12-07-02  A bug in which builtin name did now work for builtins found in a
 	  library added by builtin -f lib has been fixed.
+12-07-02 +The -a option was added to trap to cause the current setting to be
+	  appended to the new trap setting rather than replacing it.
 12-07-02  A bug in the edit modes which <tab> after a directory did not refresh
-          the input line has been fixed.
+	  the input line has been fixed.
 12-07-02  A bug in which an exit status > 256 corresponding to a signal was
-          not returned by a function to indicate a signal exit has been fixed.
+	  not returned by a function to indicate a signal exit has been fixed.
+
+12-06-28  --- Release ksh93u+ ---
 12-06-28  Fix ulimit -a to list (Kibytes) instead of (kbytes).
 12-06-27  Fix unitialized data reference for <CR> as first char in --vi mode.
 12-06-26  The formatting of printf "%q" for multibyte locales has changed to
@@ -56,7 +685,7 @@
 	  could core dump has been fixed.
 12-06-06  A bug in which unset of an associative array of compound variables
 	  did not completely unset the variable has been fixed.
-12-06-06  A bug in which exporting left or right justfied fields could loose
+12-06-06  A bug in which exporting left or right justified fields could loose
 	  the field width has been fixed.
 12-06-06  A bug on Solaris11 in which >; did not work for /dev/null was fixed.
 12-06-05  A race condition which occured when stopping a builtin command
@@ -69,14 +698,14 @@
 	  directory if they are killed or stopped.
 12-06-04  A bug in handling \\ in read has been fixed.
 12-05-31  Use getrlimit64/setrlimit64 on systems that support it.
-12-05-31  Fix 64 bit big-endian arithmentic bug that mishandled nan and inf.
+12-05-31  Fix 64 bit big-endian arithmetic bug that mishandled nan and inf.
 12-05-31  Handle ECONNRESET like EPIPE.
 12-05-31  Change .paths parse to use only the last BUILTIN_LIB from the top
 	  and treat BUILTIN_LIB value as a ':' separated list of lib names.
 12-05-29  Fix BUILTIN_LIB binding bug that ignored subsequent lookups.
 12-05-29  shtests: --nocompile omits the compile test and --compile does only
 	  the compile test.
-12-05-25  A command subsitution containing a here-document that itself contains
+12-05-25  A command substitution containing a here-document that itself contains
 	  a here-document no longer hangs.
 12-05-24  When the redirection operatory >; is directed to a symlink, it now
 	  overwrites the file named by the link rather than the link.
@@ -137,7 +766,7 @@
 	  string when i was a valid subscript and j was <=0 rather than
 	  generating nothing has been fixed.
 12-04-17  A bug in which read -d delim from a terminal did not respond to
-	  interrupt and did not termrinate when the delimiter was entered
+	  interrupt and did not terminate when the delimiter was entered
 	  has been fixed.
 12-04-17  A bug in which a directory in PATH containing a .paths file that
 	  contains a line with FPATH=dir, where dir does not exist could
@@ -155,7 +784,7 @@
 12-04-09  A bug in which the leading 0 was stripped from $x, when $x contained
 	  a heximadecimal constant inside an arithmetic expression inside
 	  a for or while loop.
-12-04-06  Modified namespaces to hand variabes FPATH, PATH, and OPTIND that
+12-04-06  Modified namespaces to hand variables FPATH, PATH, and OPTIND that
 	  are defined in name spaces appropriately.  This also fixed OPTIND
 	  and OPTARG processing for functions.
 12-04-04  A bug in which cd .. fails when the current directory has been
@@ -243,7 +872,7 @@
 	  that caused a core dump has been fixed.
 12-02-08  A bug in which .sh.fun disciplines could be cleared after a
 	  function completes has been fixed.
-12-02-08  A bug in job control in which the foregroup process group was not
+12-02-08  A bug in job control in which the foreground process group was not
 	  set correctly after restarting a stopped pipeline has been fixed.
 12-02-07  A bug in which numbers with leading zeros could be treated as
 	  octal constants outside of ((...)) has been fixed.
@@ -261,7 +890,7 @@
 12-01-19  A memory leak which occured for a nested command subtiution has been
 	  fixed.
 12-01-17  A bug in which typeset -u PS1 could enable the uppercase attribute
-	  for some other variables, for exampe, HISTFILE has been fixed.
+	  for some other variables, for example, HISTFILE has been fixed.
 12-01-16  A bug in which .sh.match was not correct after a substring match when
 	  the replacement string contained a substring match has been fixed.
 12-01-12 +Files that are sourced from profile files are now read and executed
@@ -278,8 +907,8 @@
 	  arr was not unset before the assignment has been fixed. 
 11-12-20  A number of code changes were made based on the results of errors
 	  indicated by static code analysis.
-11-12-13  In vi edit mode a lteral <TAB> can now be entered by preceding it
-	  with a backshash.
+11-12-13  In vi edit mode a literal <TAB> can now be entered by preceding it
+	  with a backslash.
 11-12-13  When tab is entered for completion after a ' or ", the ' and "
 	  characters are no longer deleted.
 11-12-07  A bug in which a program in the current direcotry with a . in the
@@ -297,7 +926,7 @@
 	  quote argument in a form suitable for a field in a .csv format file.
 11-12-02 +A -S option was added to read to be able to read .csv format files.
 11-11-28  A bug in which redirection of standard error in a function called from
-	  command substitution caused standard error to be lost has ben fixed.
+	  command substitution caused standard error to be lost has been fixed.
 11-11-21  [[ (-n foo) ]] no longer requires a space before (.
 11-11-11  The readonly attribute for a variable now applies to compound
 	  assignments to that variable.
@@ -353,7 +982,7 @@
 	  jobs to complete has been fixed.
 11-06-09  A bug which caused the options.sh regression test to fail on OS390
 	  Linux has been fixed.  The bug could also have affected other systems.
-11-06-07 +A number of changes to support the still undocuments namespace option
+11-06-07 +A number of changes to support the still undocumented namespace option
 	  have been added.
 11-06-06  A bug in which command substitution of eval would hang when it  had
 	  standard error redirected to standard output has been fixed.
@@ -439,7 +1068,7 @@
 11-03-04 +The tilde expansion on windows has been modified to handle user
 	  names of the form domain/user so that ~domain/user now expands
 	  to the home directory of that domain user.
-11-03-03  A bug in which the width of the prompt was calculated incorectly
+11-03-03  A bug in which the width of the prompt was calculated incorrectly
 	  which cause the wrong line length for edit commands has been fixed.
 11-03-02  A bug in which a global variables set from within a function inside
 	  a subshell can leave side effects in parent shell has been fixed.
@@ -454,7 +1083,7 @@
 	  references defined and the script creates name references of the
 	  same name.
 11-02-21  The shell now fails with a syntax error when a here-document in a
-	  command substition is not completed before the closing ), for
+	  command substitution is not completed before the closing ), for
 	  example, $( foobar <<! )
 		here_doc
 	  !.
@@ -482,7 +1111,7 @@
 	  variables when the same array was referenced on the left and the
 	  right hand side with different indices has been fixed.
 11-01-10  A bug in which the output of time was lost when { time...;} 2>&1
-	  occurred inside command substition has been fixed.
+	  occurred inside command substitution has been fixed.
 11-01-07  [[ -v sh.match[i] ]] was returning false when sh.match[i] was set.
 11-01-05  Added and modified warning messages with sh -n.
 11-01-02  Fixed bugs with typeset -l/-u/-M and arrays.
@@ -557,7 +1186,7 @@
 	  when the type is initialized has been fixed.
 10-11-12  The sequences \< and \> are now preserved after patterns containing
 	  ~(E) in ${var/pattern/string} expansions.
-10-11-11  A bug in typeset -m when the variables were compound arrary instances
+10-11-11  A bug in typeset -m when the variables were compound array instances
 	  has been fixed.
 10-11-10  A bug in output of a compound variable with types containing types
 	  has been fixed.

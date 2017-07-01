@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -37,6 +37,14 @@ static void _sfoncef()
 	_Sfdone = 1;
 }
 
+#if _ast_sizeof_pointer < 8
+#define SF_MAXM_DEFAULT		(0)
+#else
+#define SF_MAXM_DEFAULT		(128*1024*1024)
+#endif
+
+#define SF_TEST_DEFAULT		(0)
+
 /* global variables used internally to the package */
 Sfextern_t _Sfextern =
 {	0,						/* _Sfpage	*/
@@ -56,7 +64,9 @@ Sfextern_t _Sfextern =
 	0,						/* _Sfdone	*/
 	&Sfonce,					/* _Sfonce	*/
 	_sfoncef,					/* _Sfoncef	*/
-	&Sfmutex					/* _Sfmutex	*/
+	&Sfmutex,					/* _Sfmutex	*/
+	SF_MAXM_DEFAULT,				/* _Sfmaxm	*/
+	SF_TEST_DEFAULT					/* _Sftest	*/
 };
 
 ssize_t	_Sfi = -1;		/* value for a few fast macro functions	*/

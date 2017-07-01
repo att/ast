@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -34,8 +34,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 make codex
 make libcodex.a archive
@@ -48,7 +48,7 @@ exec - {
 exec - case "" in
 exec - *?) echo " " ;;
 exec - esac
-exec - for i in codex dll ast
+exec - for i in codex vcodex dll ast
 exec - do case $i in
 exec - "codex"|codex)
 exec - ;;
@@ -59,8 +59,8 @@ exec - *-?*) echo "" $y ;;
 exec - esac
 exec - continue
 exec - elif test ! -f ${INSTALLROOT}/lib/lib$i.a
-exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
-exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' $x ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - then case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -L${INSTALLROOT}/lib ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
+exec - *$x*) case `{ ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o 1.${COTEMP}.x 1.${COTEMP}.o -l$i 2>&1 || echo '' "$x" ;} | sed -e 's/[][()+@?]/#/g' || :` in
 exec - *$x*) continue ;;
 exec - esac
 exec - ;;
@@ -75,31 +75,32 @@ exec - rm -f 1.${COTEMP}.*
 done codex.req generated
 make codex.o
 make codex.c
+make ${PACKAGE_ast_INCLUDE}/endian.h implicit
+make ${PACKAGE_ast_INCLUDE}/bytesex.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_map.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_common.h dontcare
+done ${PACKAGE_ast_INCLUDE}/bytesex.h dontcare
+done ${PACKAGE_ast_INCLUDE}/endian.h dontcare
 make ${PACKAGE_ast_INCLUDE}/namval.h implicit
 make ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/prototyped.h dontcare
 done ${PACKAGE_ast_INCLUDE}/namval.h
-make codex.h implicit
-make codexlib.h implicit
-make ${PACKAGE_ast_INCLUDE}/debug.h implicit
-make ${PACKAGE_ast_INCLUDE}/error.h implicit
-make ${PACKAGE_ast_INCLUDE}/option.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_api.h dontcare
-make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_map.h dontcare
-make ${PACKAGE_ast_INCLUDE}/endian.h implicit
-make ${PACKAGE_ast_INCLUDE}/bytesex.h implicit
+make ${PACKAGE_ast_INCLUDE}/vcodex.h implicit
+make ${PACKAGE_ast_INCLUDE}/vcwindow.h implicit
+done ${PACKAGE_ast_INCLUDE}/vcwindow.h dontcare
+make ${PACKAGE_ast_INCLUDE}/vcmethods.h implicit
+done ${PACKAGE_ast_INCLUDE}/vcmethods.h dontcare
+make ${PACKAGE_ast_INCLUDE}/cdt.h implicit
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
+prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-done ${PACKAGE_ast_INCLUDE}/bytesex.h dontcare
-done ${PACKAGE_ast_INCLUDE}/endian.h dontcare
-done ${PACKAGE_ast_INCLUDE}/ast_common.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 make ${PACKAGE_ast_INCLUDE}/regex.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_api.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
 make ${PACKAGE_ast_INCLUDE}/wctype.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_wctype.h implicit
@@ -129,6 +130,15 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
@@ -140,20 +150,38 @@ done ${PACKAGE_ast_INCLUDE}/ast_fcntl.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_getopt.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_sys.h implicit
 prev ${PACKAGE_ast_INCLUDE}/getopt.h implicit
-prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
-prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_sys.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_lib.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_lib.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_std.h dontcare
-done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
-make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
-prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+done ${PACKAGE_ast_INCLUDE}/cdt.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
-done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
+done ${PACKAGE_ast_INCLUDE}/vcodex.h
+make codex.h implicit
+make codexlib.h implicit
+make ${PACKAGE_ast_INCLUDE}/debug.h implicit
+make ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/option.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast.h dontcare
@@ -240,6 +268,8 @@ done codexnull.o generated
 make codexgetpass.o
 make codexgetpass.c
 make ${PACKAGE_ast_INCLUDE}/ast_tty.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_ioctl.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_ioctl.h dontcare
 done ${PACKAGE_ast_INCLUDE}/ast_tty.h
 make ${PACKAGE_ast_INCLUDE}/sig.h implicit
 done ${PACKAGE_ast_INCLUDE}/sig.h
@@ -265,13 +295,22 @@ meta codexsize.o %.c>%.o codexsize.c codexsize
 prev codexsize.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c codexsize.c
 done codexsize.o generated
+make codexoptinfo.o
+make codexoptinfo.c
+prev ${PACKAGE_ast_INCLUDE}/vcodex.h implicit
+prev codex.h implicit
+done codexoptinfo.c
+meta codexoptinfo.o %.c>%.o codexoptinfo.c codexoptinfo
+prev codexoptinfo.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c codexoptinfo.c
+done codexoptinfo.o generated
 make code-rot13.o
 make code-rot13.c
 prev codex.h implicit
 done code-rot13.c
 meta code-rot13.o %.c>%.o code-rot13.c code-rot13
 prev code-rot13.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c code-rot13.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-rot13.c
 done code-rot13.o generated
 make code-qp.o
 make code-qp.c
@@ -281,12 +320,11 @@ done ${PACKAGE_ast_INCLUDE}/ast_ccode.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ccode.h
-prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 prev codex.h implicit
 done code-qp.c
 meta code-qp.o %.c>%.o code-qp.c code-qp
 prev code-qp.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c code-qp.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-qp.c
 done code-qp.o generated
 make code-uu.o
 make code-uu.c
@@ -294,7 +332,7 @@ prev codex.h implicit
 done code-uu.c
 meta code-uu.o %.c>%.o code-uu.c code-uu
 prev code-uu.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c code-uu.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-uu.c
 done code-uu.o generated
 make code-iconv.o
 make code-iconv.c
@@ -308,9 +346,26 @@ prev codex.h implicit
 done code-iconv.c
 meta code-iconv.o %.c>%.o code-iconv.c code-iconv
 prev code-iconv.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c code-iconv.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?libcodex]"\" -D_PACKAGE_ast -D_BLD_codex -c code-iconv.c
 done code-iconv.o generated
-exec - ${AR} rc libcodex.a codex.o codexdata.o codexid.o codexlist.o codexcmp.o codexmeth.o codexadd.o codexnull.o codexgetpass.o codexpass.o codexsize.o code-rot13.o code-qp.o code-uu.o code-iconv.o
+make code-vcodex.o
+make code-vcodex.c
+prev ${PACKAGE_ast_INCLUDE}/ccode.h implicit
+make ${PACKAGE_ast_INCLUDE}/vclib.h implicit
+prev ${PACKAGE_ast_INCLUDE}/debug.h implicit
+make io.h implicit
+done io.h dontcare virtual
+prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
+prev ${PACKAGE_ast_INCLUDE}/vcodex.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done ${PACKAGE_ast_INCLUDE}/vclib.h
+prev codex.h implicit
+done code-vcodex.c
+meta code-vcodex.o %.c>%.o code-vcodex.c code-vcodex
+prev code-vcodex.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -D_BLD_codex -c code-vcodex.c
+done code-vcodex.o generated
+exec - ${AR} rc libcodex.a codex.o codexdata.o codexid.o codexlist.o codexcmp.o codexmeth.o codexadd.o codexnull.o codexgetpass.o codexpass.o codexsize.o codexoptinfo.o code-rot13.o code-qp.o code-uu.o code-iconv.o code-vcodex.o
 exec - (ranlib libcodex.a) >/dev/null 2>&1 || true
 done libcodex.a generated
 done codex virtual
@@ -344,7 +399,7 @@ done ${PACKAGE_ast_INCLUDE} generated
 make ${PACKAGE_ast_INCLUDE}/codex.h
 prev ${PACKAGE_ast_INCLUDE}
 prev codex.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=2003,author=gsf+dgk+kpv' codex.h > 1.${COTEMP}.x
+exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=2003,author=gsf' codex.h > 1.${COTEMP}.x
 exec - if cmp 2>/dev/null -s ${PACKAGE_ast_INCLUDE}/codex.h 1.${COTEMP}.x
 exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${PACKAGE_ast_INCLUDE}/codex.h

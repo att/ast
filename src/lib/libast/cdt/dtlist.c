@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,16 +14,16 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"dthdr.h"
 
 /*	List, Deque, Stack, Queue.
 **
-**	Written by Kiem-Phong Vo (05/25/96)
+**	Written by Kiem-Phong Vo, phongvo@gmail.com (05/25/96)
 */
 
 typedef struct _dtlist_s
@@ -142,9 +142,9 @@ int		type;
 }
 
 #if __STD_C
-static Void_t* liststat(Dt_t* dt, Dtstat_t* st)
+static Void_t* listat(Dt_t* dt, Dtstat_t* st)
 #else
-static Void_t* liststat(dt, st)
+static Void_t* listat(dt, st)
 Dt_t*		dt;
 Dtstat_t*	st;
 #endif
@@ -170,6 +170,7 @@ int	type;
 {
 	Dtlink_t	*r, *t, *h;
 	Void_t		*key, *o, *k;
+	Dtlink_t	**fngr = NIL(Dtlink_t**);
 	Dtdisc_t	*disc = dt->disc;
 	Dtlist_t	*list = (Dtlist_t*)dt->data;
 
@@ -186,7 +187,34 @@ int	type;
 	else if(type&DT_CLEAR)
 		DTRETURN(obj, lclear(dt));
 	else if(type&DT_STAT )
-		DTRETURN(obj, liststat(dt, (Dtstat_t*)obj));
+		DTRETURN(obj, listat(dt, (Dtstat_t*)obj));
+	else if(type&DT_START)
+	{	if(!(fngr = (Dtlink_t**)(*dt->memoryf)(dt, NIL(Void_t*), sizeof(Dtlink_t*), disc)) )
+			DTRETURN(obj, NIL(Void_t*));
+		if(!obj)
+		{	if(!list->link)
+			{	(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
+				DTRETURN(obj, NIL(Void_t*));
+			}
+			else
+			{	*fngr = list->link;
+				DTRETURN(obj, (Void_t*)fngr);
+			}
+		}
+		/* else: fall through to search for obj */
+	}
+	else if(type&DT_STEP)
+	{	if(!(fngr = (Dtlink_t**)obj) || !(r = *fngr) )
+			DTRETURN(obj, NIL(Void_t*));
+		obj = _DTOBJ(disc, r);
+		*fngr = r->_rght;
+		DTRETURN(obj,obj);
+	}
+	else if(type&DT_STOP)
+	{	if(obj) /* free allocated memory */
+			(void)(*dt->memoryf)(dt, obj, 0, disc);
+		DTRETURN(obj, NIL(Void_t*));
+	}
 
 	h = list->here; /* save finger to last search object */
 	list->here = NIL(Dtlink_t*);
@@ -202,8 +230,9 @@ int	type;
 	{	r = (Dtlink_t*)obj;
 		goto do_insert;
 	}
-	else if(type&(DT_INSERT|DT_APPEND|DT_ATTACH))
-	{	if(!(r = _dtmake(dt, obj, type)) )
+	else if(type&(DT_INSERT|DT_INSTALL|DT_APPEND|DT_ATTACH))
+	{ dt_insert:
+		if(!(r = _dtmake(dt, obj, type)) )
 			DTRETURN(obj, NIL(Void_t*));
 		dt->data->size += 1;
 
@@ -267,7 +296,7 @@ int	type;
 	else	key = _DTKEY(disc, obj);
 
 	/* try to find a matching object */
-	if(h && _DTOBJ(disc,h) == obj && (type & (DT_SEARCH|DT_NEXT|DT_PREV)) )
+	if(h && _DTOBJ(disc,h) == obj && (type & (DT_START|DT_SEARCH|DT_NEXT|DT_PREV)) )
 		r = h; /* match at the finger, no search needed */
 	else /* linear search through the list */
 	{	h = NIL(Dtlink_t*); /* track first/last obj with same key */
@@ -290,10 +319,20 @@ int	type;
 		}
 		r = h ? h : r;
 	}
-	if(!r)
-		DTRETURN(obj, NIL(Void_t*));
+	if(!r) /* not found */
+	{	if(type&DT_START)
+			(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
+		else if(type&DT_STEP)
+			*fngr = NIL(Dtlink_t*);
 
-	if(type&(DT_DELETE|DT_DETACH|DT_REMOVE))
+		DTRETURN(obj, NIL(Void_t*));
+	}
+
+	if(type&DT_START)
+	{	*fngr = list->here = r;
+		DTRETURN(obj, (Void_t*)fngr);
+	}
+	else if(type&(DT_DELETE|DT_DETACH|DT_REMOVE))
 	{ dt_delete:
 		if(r->_rght)
 			r->_rght->_left = r->_left;
@@ -310,14 +349,13 @@ int	type;
 
 		list->here = r == list->here ? r->_rght : NIL(Dtlink_t*);
 
-		obj = _DTOBJ(disc,r);
+		obj = _DTOBJ(disc, r);
 		_dtfree(dt, r, type);
 		dt->data->size -= 1;
 
 		DTRETURN(obj, obj);
 	}
-
-	if(type&DT_NEXT)
+	else if(type&DT_NEXT)
 		r = r->_rght;
 	else if(type&DT_PREV)
 		r = r == list->link ? NIL(Dtlink_t*) : r->_left;

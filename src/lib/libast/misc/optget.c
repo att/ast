@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -163,11 +163,11 @@ static const char	term_I_on[] =	{CC_esc,'[','1',';','4','m',0};
 
 static const Font_t	fonts[] =
 {
-	"",	"",	"",	"",	"",			"",
-	"</B>",	"<B>", "\\fP",	"\\fB",	&term_off[0],	&term_B_on[0],
-	"</I>",	"<I>", "\\fP",	"\\fI",	&term_off[0],	&term_I_on[0],
-	"",	"",	"",	"",	"",			"",
-	"</TT>","<TT>","\\fP",	"\\f5",	"",			"",
+	{ { "",		"" },	 { "",		"" },		{ "",		"" } },
+	{ { "</B>",	"<B>" }, { "\\fP",	"\\fB" },	{ &term_off[0],	&term_B_on[0] } },
+	{ { "</I>",	"<I>" }, { "\\fP",	"\\fI"},	{ &term_off[0],	&term_I_on[0] } },
+	{ { "",		"" },	 { "",		""},		{ "",		"" } },
+	{ { "</TT>",	"<TT>"}, { "\\fP",	"\\f5"},	{ "",		"" } },
 };
 
 static char		native[] = "";
@@ -214,102 +214,138 @@ static char		ID[] = "ast";
 
 static const List_t	help_head[] =
 {
-	'-',	0,
-		0,
-	'+',	C("NAME"),
-		C("options available to all \bast\b commands"),
-	'+',	C("DESCRIPTION"),
+	{
+	  '-',	0,
+		0
+	},
+	{
+	  '+',	C("NAME"),
+		C("options available to all \bast\b commands")
+	},
+	{
+	  '+',	C("DESCRIPTION"),
 		C("\b-?\b and \b--?\b* options are the same \
 for all \bast\b commands. For any \aitem\a below, if \b--\b\aitem\a is not \
 supported by a given command then it is equivalent to \b--\?\?\b\aitem\a. The \
 \b--\?\?\b form should be used for portability. All output is written to the \
-standard error."),
+standard error.")
+	},
 };
 
 static const Help_t	styles[] =
 {
-	C("about"),	"-",		STYLE_match,
-	Z("List all implementation info."),
-	C("api"),	"?api",		STYLE_api,
-	Z("List detailed info in program readable form."),
-	C("help"),	"",		-1,
-	Z("List detailed help option info."),
-	C("html"),	"?html",	STYLE_html,
-	Z("List detailed info in html."),
-	C("keys"),	"?keys",	STYLE_keys,
-	Z("List the usage translation key strings with C style escapes."),
-	C("long"),	"?long",	STYLE_long,
-	Z("List long option usage."),
-	C("man"),	"?man",		STYLE_man,
-	Z("List detailed info in displayed man page form."),
-	C("nroff"),	"?nroff",	STYLE_nroff,
-	Z("List detailed info in nroff."),
-	C("options"),	"?options",	STYLE_options,
-	Z("List short and long option details."),
-	C("posix"),	"?posix",	STYLE_posix,
-	Z("List posix getopt usage."),
-	C("short"),	"?short",	STYLE_short,
-	Z("List short option usage."),
-	C("usage"),	"?usage",	STYLE_usage,
-	Z("List the usage string with C style escapes."),
+	{
+	  C("about"),	"-",		STYLE_match,
+	  Z("List all implementation info.")
+	},
+	{
+	  C("api"),	"?api",		STYLE_api,
+	  Z("List detailed info in program readable form.")
+	},
+	{
+	  C("help"),	"",		-1,
+	  Z("List detailed help option info.")
+	},
+	{
+	  C("html"),	"?html",	STYLE_html,
+	  Z("List detailed info in html.")
+	},
+	{
+	  C("keys"),	"?keys",	STYLE_keys,
+	  Z("List the usage translation key strings with C style escapes.")
+	},
+	{
+	  C("long"),	"?long",	STYLE_long,
+	  Z("List long option usage.")
+	},
+	{
+	  C("man"),	"?man",		STYLE_man,
+	  Z("List detailed info in displayed man page form.")
+	},
+	{
+	  C("nroff"),	"?nroff",	STYLE_nroff,
+	  Z("List detailed info in nroff.")
+	},
+	{
+	  C("options"),	"?options",	STYLE_options,
+	  Z("List short and long option details.")
+	},
+	{
+	  C("posix"),	"?posix",	STYLE_posix,
+	  Z("List posix getopt usage.")
+	},
+	{
+	  C("short"),	"?short",	STYLE_short,
+	  Z("List short option usage.")
+	},
+	{
+	  C("usage"),	"?usage",	STYLE_usage,
+	  Z("List the usage string with C style escapes.")
+	},
 };
 
 static const List_t	help_tail[] =
 {
-	':',	C("\?\?-\alabel\a"),
-		C("List implementation info matching \alabel\a*."),
-	':',	C("\?\?\aname\a"),
-		C("Equivalent to \b--help=\b\aname\a."),
-	':',	C("\?\?"),
-		C("Equivalent to \b--\?\?options\b."),
-	':',	C("\?\?\?\?"),
-		C("Equivalent to \b--\?\?man\b."),
-	':',	C("\?\?\?\?\?\?"),
-		C("Equivalent to \b--\?\?help\b."),
-	':',	C("\?\?\?\?\?\?\aitem\a"),
+	{
+	  ':',	C("\?\?-\alabel\a"),
+		C("List implementation info matching \alabel\a*.")
+	},
+	{
+	  ':',	C("\?\?\aname\a"),
+		C("Equivalent to \b--help=\b\aname\a.")
+	},
+	{
+	  ':',	C("\?\?"),
+		C("Equivalent to \b--\?\?options\b.")
+	},
+	{
+	  ':',	C("\?\?\?\?"),
+		C("Equivalent to \b--\?\?man\b.")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?"),
+		C("Equivalent to \b--\?\?help\b.")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?\aitem\a"),
 		C("If the next argument is \b--\b\aoption\a then list \
 the \aoption\a output in the \aitem\a style. Otherwise print \
 \bversion=\b\an\a where \an\a>0 if \b--\?\?\b\aitem\a is supported, \b0\b \
-if not."),
-	':',	C("\?\?\?\?\?\?ESC"),
-		C("Emit escape codes even if output is not a terminal."),
-	':',	C("\?\?\?\?\?\?MAN[=\asection\a]]"),
+if not.")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?ESC"),
+		C("Emit escape codes even if output is not a terminal.")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?MAN[=\asection\a]]"),
 		C("List the \bman\b(1) section title for \asection\a [the \
-current command]]."),
-	':',	C("\?\?\?\?\?\?SECTION"),
-		C("List the \bman\b(1) section number for the current command."),
-	':',	C("\?\?\?\?\?\?TEST"),
-		C("Massage the output for regression testing."),
+current command]].")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?SECTION"),
+		C("List the \bman\b(1) section number for the current command.")
+	},
+	{
+	  ':',	C("\?\?\?\?\?\?TEST"),
+		C("Massage the output for regression testing.")
+	},
 };
 
 static const Attr_t	attrs[] =
 {
-	"flag",		OPT_flag,
-	"hidden",	OPT_hidden,
-	"ignorecase",	OPT_ignorecase,
-	"invert",	OPT_invert,
-	"listof",	OPT_listof,
-	"number",	OPT_number,
-	"oneof",	OPT_oneof,
-	"optional",	OPT_optional,
-	"string",	OPT_string,
+	{ "flag",	OPT_flag },
+	{ "hidden",	OPT_hidden },
+	{ "ignorecase",	OPT_ignorecase },
+	{ "invert",	OPT_invert },
+	{ "listof",	OPT_listof },
+	{ "number",	OPT_number },
+	{ "oneof",	OPT_oneof },
+	{ "optional",	OPT_optional },
+	{ "string",	OPT_string },
 };
 
 static const char	unknown[] = C("unknown option or attribute");
-
-static const char*	heading[] =
-{
-	C("INDEX"),
-	C("USER COMMANDS"),
-	C("SYSTEM LIBRARY"),
-	C("USER LIBRARY"),
-	C("FILE FORMATS"),
-	C("MISCELLANEOUS"),
-	C("GAMES and DEMOS"),
-	C("SPECIAL FILES"),
-	C("ADMINISTRATIVE COMMANDS"),
-	C("GUIs"),
-};
 
 /*
  * list of common man page strings
@@ -443,27 +479,27 @@ typedef struct Section_s
 
 static const Section_t	sections[] =
 {
-	"1M",	"MAKE ASSERTION OPERATORS AND RULES",
-	"1",	"USER COMMANDS",
-	"2",	"SYSTEM CALLS",
-	"3F",	"FORTRAN LIBRARY ROUTINES",
-	"3K",	"KERNEL VM LIBRARY FUNCTIONS",
-	"3L",	"LIGHTWEIGHT PROCESSES LIBRARY",
-	"3M",	"MATHEMATICAL LIBRARY",
-	"3N",	"NETWORK FUNCTIONS",
-	"3R",	"RPC SERVICES LIBRARY",
-	"3S",	"STANDARD I/O FUNCTIONS",
-	"3V",	"SYSTEM V LIBRARY",
-	"3",	"C LIBRARY FUNCTIONS",
-	"4F",	"PROTOCOL FAMILIES",
-	"4P",	"PROTOCOLS",
-	"4",	"DEVICES AND NETWORK INTERFACES",
-	"5P",	"PLUGINS",
-	"5",	"FILE FORMATS",
-	"6",	"GAMES AND DEMOS",
-	"7",	"PUBLIC FILES AND TABLES",
-	"8",	"ADMINISTRATIVE COMMANDS",
-	"L",	"LOCAL COMMANDS",
+	{ "1M",	"MAKE ASSERTION OPERATORS AND RULES" },
+	{ "1",	"USER COMMANDS" },
+	{ "2",	"SYSTEM CALLS" },
+	{ "3F",	"FORTRAN LIBRARY ROUTINES" },
+	{ "3K",	"KERNEL VM LIBRARY FUNCTIONS" },
+	{ "3L",	"LIGHTWEIGHT PROCESSES LIBRARY" },
+	{ "3M",	"MATHEMATICAL LIBRARY" },
+	{ "3N",	"NETWORK FUNCTIONS" },
+	{ "3R",	"RPC SERVICES LIBRARY" },
+	{ "3S",	"STANDARD I/O FUNCTIONS" },
+	{ "3V",	"SYSTEM V LIBRARY" },
+	{ "3",	"C LIBRARY FUNCTIONS" },
+	{ "4F",	"PROTOCOL FAMILIES" },
+	{ "4P",	"PROTOCOLS" },
+	{ "4",	"DEVICES AND NETWORK INTERFACES" },
+	{ "5P",	"PLUGINS" },
+	{ "5",	"FILE FORMATS" },
+	{ "6",	"GAMES AND DEMOS" },
+	{ "7",	"PUBLIC FILES AND TABLES" },
+	{ "8",	"ADMINISTRATIVE COMMANDS" },
+	{ "L",	"LOCAL COMMANDS" },
 };
 
 /*
@@ -486,6 +522,12 @@ secname(char* section)
 		case 'C':
 			s = "COMPATIBILITY ";
 			break;
+		case 'D':
+			s = "DATA ";
+			break;
+		case 'I':
+			s = "MAINFRAME ";
+			break;
 		case 'U':
 			s = "UWIN ";
 			break;
@@ -497,7 +539,7 @@ secname(char* section)
 			break;
 		}
 		if (s)
-			t = strcopy(t, s);
+			t = stpcpy(t, s);
 	}
 	s = 0;
 	for (i = 0; i < elementsof(sections); i++)
@@ -508,10 +550,10 @@ secname(char* section)
 		}
 	if (!s)
 	{
-		t = strcopy(t, "SECTION ");
+		t = stpcpy(t, "SECTION ");
 		s = section;
 	}
-	strcopy(t, s);
+	stpcpy(t, s);
 	return b;
 }
 
@@ -942,21 +984,23 @@ init(register char* s, Optpass_t* p)
 	char*		e;
 	int		l;
 
-	if (!state.localized)
-	{
-		state.localized = 1;
-#if !_PACKAGE_astsa
-		if (!ast.locale.serial)
-			setlocale(LC_ALL, "");
+#if _BLD_DEBUG
+	error(-2, "optget debug localized=%lu:%lu xp=%p", state.localized, ast.locale.serial, state.xp);
 #endif
+#if !_PACKAGE_astsa
+	if (!state.localized || state.localized != ast.locale.serial)
+	{
+		state.localized = ast.locale.serial;
+		setlocale(LC_ALL, "");
+	}
+#endif
+	if (!state.xp)
+	{
 		state.xp = sfstropen();
 		if (!map[OPT_FLAGS[0]])
 			for (n = 0, t = OPT_FLAGS; *t; t++)
 				map[*t] = ++n;
 	}
-#if _BLD_DEBUG
-	error(-2, "optget debug");
-#endif
 	p->oopts = s;
 	p->version = 0;
 	p->prefix = 2;
@@ -1216,10 +1260,25 @@ info(Push_t* psp, char* s, char* e, Sfio_t* ip, char* id)
 	register char*	b;
 	int		n;
 	Push_t*		tsp;
+	int		index;
+	int		offset;
+	int		num;
+	intmax_t	number;
+	char*		arg;
 
 	static Push_t	push;
 
+	index = opt_info.index;
+	offset = opt_info.offset;
+	num = opt_info.num;
+	number = opt_info.number;
+	arg = opt_info.arg;
 	b = expand(s, e, &s, ip, id);
+	opt_info.index = index;
+	opt_info.offset = offset;
+	opt_info.num = num;
+	opt_info.number = number;
+	opt_info.arg = arg;
 	n = strlen(b);
 	if (tsp = newof(0, Push_t, 1, n + 1))
 	{
@@ -4368,8 +4427,9 @@ optget(register char** argv, const char* oopts)
 
 	opt_info.assignment = 0;
 	num = 1;
-	w = v = 0;
-	x = 0;
+	no = nov = 0;
+	e = w = v = 0;
+	n = x = 0;
 	for (;;)
 	{
 		if (!opt_info.offset)
@@ -5214,7 +5274,7 @@ optget(register char** argv, const char* oopts)
 
 	if (opt_info.num != LONG_MIN)
 		opt_info.num = (long)(opt_info.number = num);
-	if ((n = *++s == '#') || *s == ':' || w && !nov && v && (optnumber(v, &e, NiL), n = !*e))
+	if ((n = (*++s == '#')) || *s == ':' || w && !nov && v && (optnumber(v, &e, NiL), n = !*e))
 	{
 		if (w)
 		{

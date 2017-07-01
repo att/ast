@@ -1,4 +1,4 @@
-: cc wrapper for aix risc xlc : 2012-04-17 :
+: cc wrapper for aix risc xlc : 2012-09-18 :
 
 hosttype=ibm.risc
 
@@ -44,9 +44,8 @@ then	# the xlc optimizer vintage that supports c99 is flawed and causes the ast 
 			case $a in
 			'')	break ;;
 			-O)	;;
-			*)	set '' "$@" $a ;;
+			*)	set '' "$@" $a; shift ;;
 			esac
-			shift
 		done
 		;;
 	esac

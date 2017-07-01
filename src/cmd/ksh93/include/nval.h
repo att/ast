@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -95,6 +95,7 @@ struct Namarray
 	void		*fixed;			/* for fixed sized arrays */
 	Dt_t		*table;			/* for subscripts */
 	void		*scope;			/* non-zerp when scoped */
+	int		flags;
 };
 
 /* The context pointer for declaration command */
@@ -113,7 +114,7 @@ struct Namval
 {
 	Dtlink_t	nvlink;		/* space for cdt links */
 	char		*nvname;	/* pointer to name of the node */
-#if _ast_sizeof_pointer == 8
+#if _ast_sizeof_pointer >= 8
 #   if _ast_intswap > 0
 	unsigned short	nvflag; 	/* attributes */
 	unsigned short	pad1;
@@ -131,6 +132,7 @@ struct Namval
 #else
 	Namfun_t	*nvfun;
 	char		*nvalue;
+	void		*nvshell;
 	char		*nvprivate;
 #endif /* _NV_PRIVATE */
 };
@@ -253,13 +255,14 @@ extern Namarr_t	*nv_setarray(Namval_t*,void*(*)(Namval_t*,const char*,int));
 extern int	nv_arraynsub(Namarr_t*);
 extern void	*nv_associative(Namval_t*,const char*,int);
 extern int	nv_aindex(Namval_t*);
-extern int	nv_nextsub(Namval_t*);
+extern bool	nv_nextsub(Namval_t*);
 extern char	*nv_getsub(Namval_t*);
 extern Namval_t	*nv_putsub(Namval_t*, char*, long);
+extern Namval_t	*nv_putsub_20120720(Namval_t*, char*,long,int);
 extern Namval_t	*nv_opensub(Namval_t*);
 
 /* name-value pair function prototypes */
-extern int		nv_adddisc(Namval_t*, const char**, Namval_t**);
+extern bool		nv_adddisc(Namval_t*, const char**, Namval_t**);
 extern int		nv_clone(Namval_t*, Namval_t*, int);
 extern void 		nv_close(Namval_t*);
 extern void		*nv_context(Namval_t*);
@@ -274,13 +277,14 @@ extern Namfun_t		*nv_hasdisc(Namval_t*, const Namdisc_t*);
 extern int		nv_isnull(Namval_t*);
 extern Namfun_t		*nv_isvtree(Namval_t*);
 extern Namval_t		*nv_lastdict(void);
+extern Namval_t		*nv_lastdict_20120720(void*);
 extern Namval_t		*nv_mkinttype(char*, size_t, int, const char*, Namdisc_t*);
 extern void 		nv_newattr(Namval_t*,unsigned,int);
 extern void 		nv_newtype(Namval_t*);
 extern Namval_t		*nv_open(const char*,Dt_t*,int);
 extern void 		nv_putval(Namval_t*,const char*,int);
 extern void 		nv_putv(Namval_t*,const char*,int,Namfun_t*);
-extern int		nv_rename(Namval_t*,int);
+extern bool		nv_rename(Namval_t*,int);
 extern int		nv_scan(Dt_t*,void(*)(Namval_t*,void*),void*,int,int);
 extern char 		*nv_setdisc(Namval_t*,const char*,Namval_t*,Namfun_t*);
 extern void		nv_setref(Namval_t*, Dt_t*,int);
@@ -318,5 +322,7 @@ extern const Namdisc_t	*nv_discfun(int);
 #   define nv_search(np,a,b)	nv_open(np,a,((b)?0:NV_NOADD))
 #   define settype	setdisc
 #endif
+
+#include	<nvapi.h>
 
 #endif /* NV_DEFAULT */

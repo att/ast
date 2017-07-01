@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -431,5 +431,93 @@ unset enda endb
 a
 [[ $endb ]] &&  err_exit 'TERM signal did not kill function b'
 [[ $enda == 1 ]] || err_exit 'TERM signal killed function a'
+
+got=$($SHELL <<- \EOF
+	trap 'print foo; kill -s USR2 $$; print bar' USR1
+
+	trap 'print USR2' USR2
+	kill -s USR1 $$
+EOF)
+[[ $got == $'foo\nbar\nUSR2' ]] || err_exit 'the trap command not blocking trapped signals until trap command completes'
+
+if      [[ ${SIG[RTMIN]} ]]
+then	compound -a rtar
+	function rttrap
+	{
+		integer v=${.sh.sig.value.q}
+		integer s=${#rtar[v][@]}
+		integer rtnum=$1
+		rtar[$v][$s]=(
+			integer pid=${.sh.sig.pid}
+			integer rtnum=$rtnum
+			typeset msg=${v}
+			)
+		return 0
+	}
+	trap 'rttrap 0' RTMIN
+	trap 'rttrap 1' RTMIN+1
+	trap 'rttrap 2' RTMIN+2
+	trap 'rttrap 3' RTMIN+3
+	trap 'rttrap 4' RTMIN+4
+	trap 'rttrap 5' RTMIN+5
+	trap 'rttrap 6' RTMIN+6
+	trap 'rttrap 7' RTMIN+7
+	typeset m # used in child processes
+	integer pid=$$ p i numchildren=64
+	( ( sleep 5; kill $$ 2> /dev/null) & ) &
+	for (( p=0 ; p < numchildren ; p++ ))
+	do	 {
+			sleep 1
+			for m in 'a' 'b' 'c' 'd' 'e' 'f'
+			do	print p=$p m=$m >> junk 
+				kill -q $((16#$m)) -s RTMIN+6 $pid
+				kill -q $((16#$m)) -s RTMIN+7 $pid
+				kill -q $((16#$m)) -s RTMIN+4 $pid
+				kill -q $((16#$m)) -s RTMIN+5 $pid
+				kill -q $((16#$m)) -s RTMIN+2 $pid
+				kill -q $((16#$m)) -s RTMIN+3 $pid
+				kill -q $((16#$m)) -s RTMIN   $pid
+				kill -q $((16#$m)) -s RTMIN+1 $pid
+			done
+		} &
+	done
+	while ! wait
+	do	 true
+	done
+	:
+	if 	(( ${#rtar[@]} != 6 ))
+	then	err_exit "got  ${#rtar[@]} different signals, expected 6"
+	fi
+	for (( i=0xa ; i <= 0xf; i++ ))
+	do	if 	(( ${#rtar[i][*]} != (numchildren*8) ))
+		then	err_exit  "got ${#rtar[$i][*]} signals with value $((i)) expected $((numchildren*8))"
+		fi
+	done
+	
+	SIG1=RTMIN+1 SIG2=RTMIN+2
+	compound a=(float i=0)
+	trap "((a.i+=.00001));(kill -q0 -$SIG2 $$) & :" $SIG1
+	trap '((a.i+=1))' $SIG2
+	for	((j=0;j<200;j++))
+	do	kill -q0 -s $SIG1 $$ &
+	done
+	while ! wait ; do true;done
+	exp='typeset -C a=(typeset -l -E i=200.002)'
+	got=$(typeset -p a)
+	[[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp" 
+fi
+
+float s=SECONDS
+(trap - INT; exec sleep 2) &  sleep .5;kill -sINT $!
+wait $!
+(( (SECONDS-s) < 1.8)) && err_exit "'trap - INT' causing trap to not be ignored"
+
+compound c=(compound -a car; integer cari=0)
+trap 'c.car[c.cari++]=.sh.sig' USR1
+kill -q4 -s USR1 $$
+kill -q5 -s USR1 $$
+(( c.car[0].value.q == 4 )) || err_exit "\${c.car[0].value.q} is  ${c.car[0].value.q} but should be 4"
+(( c.car[1].value.q == 5 )) || err_exit "\${c.car[1].value.q} is  ${c.car[1].value.q} but should be 5"
+[[ ${c.car[1].value.q} == 5 ]]
 
 exit $((Errors<125?Errors:125))

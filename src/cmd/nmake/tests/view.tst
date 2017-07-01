@@ -402,7 +402,7 @@ s2 done'
 		ERROR - $'s1:
 s1.0:
 + cd s2
-+ nmake --noexec \'--regress=message\' \'--native-pp=-1\' --noprefix-include'
++ nmake --noexec \'--regress=message\' \'--native-pp=-1\' --noprefix-include --novirtual'
 
 	EXPORT	VPATH=$TWD/top:$TWD/bot
 

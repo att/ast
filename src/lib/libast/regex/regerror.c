@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -25,7 +25,7 @@
  * posix regex error message handler
  */
 
-static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-05-31 $\0\n";
+static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-09-27 $\0\n";
 
 #include "reglib.h"
 

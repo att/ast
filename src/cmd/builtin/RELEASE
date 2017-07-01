@@ -1,3 +1,18 @@
+16-01-06 added dummy code in builtin.c to keep the linker from optimizing it out
+14-02-06 grep.tst: add more --context=... tests
+13-12-05 ls.tst: move from src/cmd/std
+13-09-25 cksum.tst: adjust tests for gnu { md5 sha } text/binary indicator
+13-09-22 readlink.rt,realpath.rt: add tests
+13-09-19 head.tst,tail.tst: add incomplete line tests
+13-09-13 pr.c: Mbstate_t update
+13-07-17 tr.tst: sync with src/lib/libcmd/tr.c
+13-05-22 pty.c: fix timeout logic
+13-04-22 grep.tst: add --context[=before,after] tests
+13-04-03 finally add grep and xargs
+13-03-21 who.c: work around stupid stupid stupid solaris 11 - hey guys, don't define _PATH_UTMP and it won't get used
+12-11-19 pty.c: change SFSTDERR_FILENO to sffileno(sfstderr)
+12-10-24 tr.c: move to src/lib/libcmd
+12-10-19 od.c: move to src/lib/libcmd
 12-05-31 od,tr: errno!=EPIPE => !ERROR_PIPE(errno)
 12-02-28 pty.c: change --verbose[=level] to --debug=level
 12-02-11 what.c: fix boyer moore cut n paste bug -- thanks werner

@@ -1,3 +1,9 @@
+13-03-04 jcl.c: add { --list=dd --list=parms }
+13-03-01 cpy2dss.c: COMP-5 => { be_t le_t } depends on _ast_intswap
+13-03-01 cpy2dss.c: --text --variable flattens db2 VARCHAR structs
+13-02-06 jcm.c: fix group and dummy job parse, handle event clear
+13-02-06 JCL.mk: add .EVENT.CLEAR
+13-01-23 cpy2dss.c: must check REC_V_INCLUSIVE() in recfmt
 07-12-07 jcl.rt: add prefix '/' delimiter tests
 07-06-06 JCL.mk: add USR1 USR2 interrupt handlers
 07-02-20 cpy2dss.c: handle POINTER, ignore IS

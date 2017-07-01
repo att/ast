@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -111,6 +111,7 @@ tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 	int		prec;
 	int		parts;
 	char*		arg;
+	char*		e;
 	char*		f;
 	const char*	oformat;
 	Tm_t*		tm;
@@ -469,12 +470,26 @@ tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 						p = tm_info.format[TM_RECENT];
 						goto push;
 					case 'z':	/* time zone nation code */
-						if (!(flags & TM_UTC))
+						if (arg)
+						{
+							if ((zp = tmzone(arg, &e, NiL, NiL)) && !*e)
+							{
+								tm->tm_zone = zp;
+								flags &= ~TM_UTC;
+							}
+						}
+						else if (!(flags & TM_UTC))
 						{
 							if ((zp = tm->tm_zone) != tm_info.local)
+							{
 								for (; zp >= tm_data.zone; zp--)
+								{
 									if (p = zp->type)
 										goto string;
+									if (zp->standard == zp->daylight)
+										break;
+								}
+							}
 							else if (p = zp->type)
 								goto string;
 						}
@@ -595,10 +610,14 @@ tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 			if (arg)
 			{
 				if ((zp = tmzone(arg, &f, 0, 0)) && !*f && tm->tm_zone != zp)
+				{
 					tm = tmxtm(tm, tmxtime(tm, tm->tm_zone->west + (tm->tm_isdst ? tm->tm_zone->dst : 0)), zp);
+					if (zp->west || zp->dst)
+						flags &= ~TM_UTC;
+				}
 				continue;
 			}
-			p = (flags & TM_UTC) ? tm_info.format[TM_UT] : tm->tm_isdst && tm->tm_zone->daylight ? tm->tm_zone->daylight : tm->tm_zone->standard;
+			p = (flags & TM_UTC) ? tm_info.local->standard : tm->tm_isdst && tm->tm_zone->daylight ? tm->tm_zone->daylight : tm->tm_zone->standard;
 			goto string;
 		case '=':	/* (AST) OBSOLETE use %([+-]flag...)Qo (old %=[=][+-]flag) */
 			for (arg = argbuf; *format == '=' || *format == '-' || *format == '+' || *format == '!'; format++)

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(_UWIN) && defined(_BLD_ast)
@@ -29,8 +29,21 @@ void _STUB_vmlast(){}
 
 /*	Allocation with freeing and reallocing of last allocated block only.
 **
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+**	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/1994, 03/30/2012.
 */
+
+#define KEY_LAST		1001
+#define LASTLOCK(lst,lcl)	((lcl) ? 0 : asolock(&(lst)->lock, KEY_LAST, ASO_LOCK) )
+#define LASTOPEN(lst,lcl)	((lcl) ? 0 : asolock(&(lst)->lock, KEY_LAST, ASO_UNLOCK) )
+
+typedef struct _vmlast_s
+{	Vmdata_t	vmdt;
+	unsigned int	lock;
+	Block_t*	blk;	/* allocate from this	*/
+	Vmuchar_t*	data;	/* start of free memory	*/
+	ssize_t		size;	/* size of free memory	*/
+	Vmuchar_t*	last;	/* last allocated block */
+} Vmlast_t;
 
 #if __STD_C
 static Void_t* lastalloc(Vmalloc_t* vm, size_t size, int local)
@@ -41,55 +54,53 @@ size_t		size;
 int		local;
 #endif
 {
-	Block_t		*tp, *next;
-	Seg_t		*seg, *last;
-	size_t		s;
-	Vmdata_t	*vd = vm->data;
-	size_t		orgsize = size;
+	Block_t		*blk;
+	size_t		sz, blksz;
+	size_t		origsz = size;
+	Vmlast_t	*last = (Vmlast_t*)vm->data;
 
-	SETLOCK(vm, local);
+	LASTLOCK(last, local);
 
 	size = size < ALIGN ? ALIGN : ROUND(size,ALIGN);
-	for(last = NIL(Seg_t*), seg = vd->seg; seg; last = seg, seg = seg->next)
-	{	if(!(tp = seg->free) || (SIZE(tp)+sizeof(Head_t)) < size)
-			continue;
-		if(last)
-		{	last->next = seg->next;
-			seg->next = vd->seg;
-			vd->seg = seg;
+
+	last->last = NIL(Vmuchar_t*); /* wipe record of last allocation */
+
+	if(last->size < size ) 
+	{	if((blk = last->blk) ) /* try extending in place */
+		{	blksz = SIZE(blk)&~BITS; 
+			sz = blksz + (size - last->size);
+			if((blk = (*_Vmsegalloc)(vm, blk, sz, VM_SEGALL|VM_SEGEXTEND)) )
+			{	/**/DEBUG_ASSERT(blk == last->blk);
+				/**/DEBUG_ASSERT((SIZE(blk)&~BITS) > blksz);
+				last->size += (SIZE(blk)&~BITS) - blksz;
+			}
 		}
-		goto got_block;
+		if(!blk ) /* try getting a new block */
+		{	if((blk = (*_Vmsegalloc)(vm, NIL(Block_t*), size, VM_SEGALL|VM_SEGEXTEND)) )
+			{	/**/DEBUG_ASSERT((SIZE(blk)&~BITS) >= size);
+				last->data = DATA(blk);
+				last->size = SIZE(blk)&~BITS;
+				last->blk  = blk;
+			}
+		}
 	}
 
-	/* there is no usable free space in region, try extending */
-	if((tp = (*_Vmextend)(vm,size,NIL(Vmsearch_f))) )
-	{	seg = SEG(tp);
-		goto got_block;
+	if(last->size >= size) /* allocate memory */
+	{	last->last = last->data;	
+		last->data += size;
+		last->size -= size;
 	}
-	else	goto done;
+	
+	if(last->last && !local && _Vmtrace)
+		(*_Vmtrace)(vm, NIL(Vmuchar_t*), last->last, origsz, 0);
 
-got_block:
-	if((s = SIZE(tp)) >= size)
-	{	next = (Block_t*)((Vmuchar_t*)tp+size);
-		SIZE(next) = s - size;
-		SEG(next) = seg;
-		seg->free = next;
-	}
-	else	seg->free = NIL(Block_t*);
+	LASTOPEN(last, local);
 
-	vd->free = seg->last = tp;
-
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm, NIL(Vmuchar_t*), (Vmuchar_t*)tp, orgsize, 0);
-
-done:
-	CLRLOCK(vm, local);
-
-	return (Void_t*)tp;
+	return (Void_t*)last->last;
 }
 
 #if __STD_C
-static int lastfree(Vmalloc_t* vm, reg Void_t* data, int local )
+static int lastfree(Vmalloc_t* vm, Void_t* data, int local )
 #else
 static int lastfree(vm, data, local)
 Vmalloc_t*	vm;
@@ -97,59 +108,47 @@ Void_t*		data;
 int		local;
 #endif
 {
-	Seg_t		*seg;
-	Block_t		*fp;
-	size_t		s;
-	Vmdata_t	*vd = vm->data;
+	ssize_t		size;
+	Vmlast_t	*last = (Vmlast_t*)vm->data;
 
 	if(!data)
 		return 0;
 
-	SETLOCK(vm, local);
+	LASTLOCK(last, local);
 
-	if(data != (Void_t*)vd->free)
-		data = NIL(Void_t*); /* signaling an error */
+	if(data != (Void_t*)last->last )
+		data = NIL(Void_t*);
 	else
-	{	seg = vd->seg;
-		if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		{	if(seg->free )
-				s = (Vmuchar_t*)(seg->free) - (Vmuchar_t*)data;
-			else	s = (Vmuchar_t*)BLOCK(seg->baddr) - (Vmuchar_t*)data;
-			(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), s, 0);
-		}
+	{	size = last->data - last->last;	/**/DEBUG_ASSERT(size > 0 && size%ALIGN == 0);
+		last->data -= size;
+		last->size += size;
+		last->last = NIL(Vmuchar_t*);
 
-		vd->free = NIL(Block_t*);
-		fp = (Block_t*)data;
-		SEG(fp)  = seg;
-		SIZE(fp) = ((Vmuchar_t*)BLOCK(seg->baddr) - (Vmuchar_t*)data) - sizeof(Head_t);
-		seg->free = fp;
-		seg->last = NIL(Block_t*);
+		if(!local && _Vmtrace)
+			(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), size, 0);
 	}
 
-	CLRLOCK(vm, local);
+	LASTOPEN(last, local);
 
 	return data ? 0 : -1;
 }
 
 #if __STD_C
-static Void_t* lastresize(Vmalloc_t* vm, reg Void_t* data, size_t size, int type, int local)
+static Void_t* lastresize(Vmalloc_t* vm, Void_t* data, size_t size, int type, int local)
 #else
 static Void_t* lastresize(vm, data, size, type, local )
 Vmalloc_t*	vm;
-reg Void_t*	data;
+Void_t*		data;
 size_t		size;
 int		type;
 int		local;
 #endif
 {
-	Block_t		*tp;
-	Seg_t		*seg;
-	ssize_t		s, ds;
-	Void_t		*addr;
-	size_t		oldsize = 0;
-	Void_t		*orgdata = data;
-	size_t		orgsize = size;
-	Vmdata_t	*vd = vm->data;
+	Block_t		*blk;
+	ssize_t		sz, oldz, blksz;
+	Void_t		*origdt = data;
+	size_t		origsz = size;
+	Vmlast_t	*last = (Vmlast_t*)vm->data;
 
 	if(!data)
 	{	data = lastalloc(vm, size, local);
@@ -157,200 +156,78 @@ int		local;
 			memset(data, 0, size);
 		return data;
 	}
-	if(size <= 0)
+	else if(size <= 0)
 	{	(void)lastfree(vm, data, local);
 		return NIL(Void_t*);
 	}
 
-	SETLOCK(vm, local);
+	LASTLOCK(last, local);
 
-	if(data == (Void_t*)vd->free)
-		seg = vd->seg;
+	if(data != (Void_t*)last->last )
+		data = NIL(Void_t*);
 	else
-	{	/* see if it was one of ours */
-		for(seg = vd->seg; seg; seg = seg->next)
-			if(data >= seg->addr && data < (Void_t*)seg->baddr)
-				break;
-		if(!seg || (VLONG(data)%ALIGN) != 0 ||
-		   (seg->last && (Vmuchar_t*)data > (Vmuchar_t*)seg->last) )
-		{	data = NIL(Void_t*);
-			goto done;
+	{	oldz = last->data - last->last; /**/DEBUG_ASSERT(oldz > 0 && oldz%ALIGN == 0);
+		size = ROUND(size, ALIGN);
+		if(size <= oldz) /* getting smaller */
+		{	sz = oldz - size;
+			last->data -= sz;
+			last->size += sz;
 		}
-	}
-
-	/* set 's' to be the current available space */
-	if(data != seg->last)
-	{	if(seg->last && (Vmuchar_t*)data < (Vmuchar_t*)seg->last)
-			oldsize = (Vmuchar_t*)seg->last - (Vmuchar_t*)data;
-		else	oldsize = (Vmuchar_t*)BLOCK(seg->baddr) - (Vmuchar_t*)data;
-		s = -1;
-	}
-	else
-	{	s = (Vmuchar_t*)BLOCK(seg->baddr) - (Vmuchar_t*)data;
-		if(!(tp = seg->free) )
-			oldsize = s;
-		else
-		{	oldsize = (Vmuchar_t*)tp - (Vmuchar_t*)data;
-			seg->free = NIL(Block_t*);
-		}
-	}
-
-	size = size < ALIGN ? ALIGN : ROUND(size,ALIGN);
-	if(s < 0 || (ssize_t)size > s)
-	{	if(s >= 0) /* amount to extend */
-		{	ds = size-s; ds = ROUND(ds,vd->incr);
-			addr = (*vm->disc->memoryf)(vm, seg->addr, seg->extent,
-						    seg->extent+ds, vm->disc);
-			if(addr == seg->addr)
-			{	s += ds;
-				seg->size += ds;
-				seg->extent += ds;
-				seg->baddr += ds;
-				SIZE(BLOCK(seg->baddr)) = BUSY;
+		else /* getting larger */
+		{	if((oldz + last->size) < size && (blk = last->blk) != NIL(Block_t*) )
+			{	/* try to extend in place */
+				blksz = SIZE(blk)&~BITS;
+				sz = blksz + size - (oldz + last->size);
+				if((blk = (*_Vmsegalloc)(vm, blk, sz, VM_SEGALL|VM_SEGEXTEND)) )
+				{	/**/DEBUG_ASSERT((SIZE(blk)&~BITS) >= sz);
+					/**/DEBUG_ASSERT(blk == last->blk);
+					last->size += (SIZE(blk)&~BITS) - blksz;
+				}
 			}
-			else	goto do_alloc;
-		}
-		else
-		{ do_alloc:
-			if(!(type&(VM_RSMOVE|VM_RSCOPY)) )
+
+			if((oldz + last->size) < size && (type&VM_RSMOVE) )
+			{	/* try to get new memory */
+				if((blk = (*_Vmsegalloc)(vm, NIL(Block_t*), size, VM_SEGALL|VM_SEGEXTEND)) )
+				{	/**/DEBUG_ASSERT((SIZE(blk)&~BITS) >= size);
+					last->size = SIZE(blk)&~BITS;
+					last->data = (Vmuchar_t*)DATA(blk);
+					last->last = NIL(Vmuchar_t*);
+					last->blk  = blk;
+				}
+			}
+
+			if((oldz + last->size) < size)
 				data = NIL(Void_t*);
 			else
-			{	tp = vd->free;
-				if(!(addr = KPVALLOC(vm,size,lastalloc)) )
-				{	vd->free = tp;
-					data = NIL(Void_t*);
-				}
-				else
-				{	if(type&VM_RSCOPY)
-					{	ds = oldsize < size ? oldsize : size;
-						memcpy(addr, data, ds);
-					}
+			{	if(data != (Void_t*)last->last)
+				{	/* block moved, reset location */
+					last->last = last->data;
+					last->data += oldz;
+					last->size -= oldz;
 
-					if(s >= 0 && seg != vd->seg)
-					{	tp = (Block_t*)data;
-						SEG(tp) = seg;
-						SIZE(tp) = s - sizeof(Head_t);
-						seg->free = tp;
-					}
+					if(type&VM_RSCOPY)
+						memcpy(last->last, data, oldz);
 
-					/* new block and size */
-					data = addr;
-					seg = vd->seg;
-					s = (Vmuchar_t*)BLOCK(seg->baddr) -
-					    (Vmuchar_t*)data;
-					seg->free = NIL(Block_t*);
+					data = (Void_t*)last->last;
 				}
+
+				if(type&VM_RSZERO)
+					memset(last->last+oldz, 0, size-oldz);
+
+				last->data += size-oldz;
+				last->size -= size-oldz;
 			}
 		}
-	}
+	}	
 
-	if(data)
-	{	if(s >= (ssize_t)(size+sizeof(Head_t)) )
-		{	tp = (Block_t*)((Vmuchar_t*)data + size);
-			SEG(tp) = seg;
-			SIZE(tp) = (s - size) - sizeof(Head_t);
-			seg->free = tp;
-		}
+	if(data && !local && _Vmtrace)
+		(*_Vmtrace)(vm, (Vmuchar_t*)origdt, (Vmuchar_t*)data, origsz, 0);
 
-		vd->free = seg->last = (Block_t*)data;
+	LASTOPEN(last, local);
 
-		if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-			(*_Vmtrace)(vm,(Vmuchar_t*)orgdata,(Vmuchar_t*)data,orgsize,0);
-
-		if((type&VM_RSZERO) && size > oldsize)
-			memset((Void_t*)((Vmuchar_t*)data + oldsize), 0, size-oldsize);
-	}
-
-done:	CLRLOCK(vm, local);
-
-	return data;
+	return (Void_t*)data;
 }
 
-
-#if __STD_C
-static long lastaddr(Vmalloc_t* vm, Void_t* addr, int local)
-#else
-static long lastaddr(vm, addr, local)
-Vmalloc_t*	vm;
-Void_t*		addr;
-int		local;
-#endif
-{
-	long		offset;
-	Vmdata_t	*vd = vm->data;
-
-	SETLOCK(vm, local);
-
-	if(!vd->free || addr < (Void_t*)vd->free || addr >= (Void_t*)vd->seg->baddr)
-		offset = -1L;
-	else	offset = (long)((Vmuchar_t*)addr - (Vmuchar_t*)vd->free);
-
-	CLRLOCK(vm, local);
-
-	return offset;
-}
-
-#if __STD_C
-static long lastsize(Vmalloc_t* vm, Void_t* addr, int local)
-#else
-static long lastsize(vm, addr, local)
-Vmalloc_t*	vm;
-Void_t*		addr;
-int		local;
-#endif
-{
-	long		size;
-	Vmdata_t	*vd = vm->data;
-
-	SETLOCK(vm, local);
-
-	if(!vd->free || addr != (Void_t*)vd->free )
-		size = -1L;
-	else if(vd->seg->free)
-		size = (long)((Vmuchar_t*)vd->seg->free - (Vmuchar_t*)addr);
-	else	size = (long)((Vmuchar_t*)vd->seg->baddr - (Vmuchar_t*)addr - sizeof(Head_t));
-
-	CLRLOCK(vm, local);
-
-	return size;
-}
-
-#if __STD_C
-static int lastcompact(Vmalloc_t* vm, int local)
-#else
-static int lastcompact(vm, local)
-Vmalloc_t*	vm;
-int		local;
-#endif
-{
-	ssize_t		s;
-	Block_t		*fp;
-	Seg_t		*seg, *next;
-	Vmdata_t	*vd = vm->data;
-
-	SETLOCK(vm, local);
-
-	for(seg = vd->seg; seg; seg = next)
-	{	next = seg->next;
-
-		if(!(fp = seg->free))
-			continue;
-
-		seg->free = NIL(Block_t*);
-		if(seg->size == (s = SIZE(fp)&~BITS))
-			s = seg->extent;
-		else	s += sizeof(Head_t);
-
-		if((*_Vmtruncate)(vm,seg,s,1) == s)
-			seg->free = fp;
-	}
-
-	if((vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm,(Vmuchar_t*)0,(Vmuchar_t*)0,0,0);
-
-	CLRLOCK(vm, local);
-	return 0;
-}
 
 #if __STD_C
 static Void_t* lastalign(Vmalloc_t* vm, size_t size, size_t align, int local)
@@ -363,61 +240,86 @@ int		local;
 #endif
 {
 	Vmuchar_t	*data;
-	Seg_t		*seg;
-	Block_t		*next;
-	size_t		s, orgsize = size, orgalign = align;
-	Vmdata_t	*vd = vm->data;
+	size_t		algn;
+	size_t		 orgsize = size, orgalign = align;
+	Vmlast_t	*last = (Vmlast_t*)vm->data;
 
 	if(size <= 0 || align <= 0)
 		return NIL(Void_t*);
 
-	SETLOCK(vm, local);
+	LASTLOCK(last, local);
 
-	size = size <= TINYSIZE ? TINYSIZE : ROUND(size,ALIGN);
-	align = MULTIPLE(align,ALIGN);
+	size = ROUND(size,ALIGN);
+	align = (*_Vmlcm)(align, 2*sizeof(Block_t));
 
-	s = size + align; 
-	if(!(data = (Vmuchar_t*)KPVALLOC(vm,s,lastalloc)) )
-		goto done;
-
-	/* find the segment containing this block */
-	for(seg = vd->seg; seg; seg = seg->next)
-		if(seg->last == (Block_t*)data)
-			break;
-	/**/ASSERT(seg);
-
-	/* get a suitably aligned address */
-	if((s = (size_t)(VLONG(data)%align)) != 0)
-		data += align-s; /**/ASSERT((VLONG(data)%align) == 0);
-
-	/* free the unused tail */
-	next = (Block_t*)(data+size);
-	if((s = (seg->baddr - (Vmuchar_t*)next)) >= sizeof(Block_t))
-	{	SEG(next) = seg;
-		SIZE(next) = s - sizeof(Head_t);
-		seg->free = next;
+	if((data = (Vmuchar_t*)KPVALLOC(vm, size + align, lastalloc)) )
+	{	if((algn = (size_t)(VMLONG(data)%align)) != 0)
+		{	/* move forward for required alignment */	
+			data += align - algn; /**/DEBUG_ASSERT((VMLONG(data)%align) == 0);
+			last->last = data;
+		}
 	}
 
-	vd->free = seg->last = (Block_t*)data;
+	if(data && !local && _Vmtrace)
+		(*_Vmtrace)(vm, NIL(Vmuchar_t*), data, orgsize, orgalign);
 
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm,NIL(Vmuchar_t*),data,orgsize,orgalign);
-
-done:
-	CLRLOCK(vm, local);
+	LASTOPEN(last, local);
 
 	return (Void_t*)data;
 }
 
+static int laststat(Vmalloc_t* vm, Vmstat_t* st, int local)
+{
+	Vmlast_t	*last = (Vmlast_t*)vm->data;
+
+	if(!st) /* just returning the lock state */
+		return last->lock ? 1 : 0;
+
+	LASTLOCK(last, local);
+
+	if(last->last)
+	{	st->n_busy = 1;
+		st->s_busy = last->data - last->last;
+	}
+	if(last->data)
+	{	st->n_free = 1;
+		st->s_free = last->size;
+	}
+
+	LASTOPEN(last, local);
+	return 0;
+}
+
+static int lastevent(Vmalloc_t* vm, int event, Void_t* arg)
+{
+	Vmlast_t	*last;
+
+	if(event == VM_OPEN ) /* return the size of Vmpool_t */
+	{	if(!arg)
+			return -1;
+		*((ssize_t*)arg) = sizeof(Vmlast_t);
+	}
+	else if(event == VM_ENDOPEN) /* start as if region was cleared */
+	{	if(!(last = (Vmlast_t*)vm->data) )
+			return -1;
+		last->lock = 0;
+		last->blk  = NIL(Block_t*);
+		last->data = NIL(Vmuchar_t*);
+		last->size = 0;
+		last->last = NIL(Vmuchar_t*);
+	}
+
+	return 0;
+}
+
 /* Public method for free-1 allocation */
 static Vmethod_t _Vmlast =
-{
-	lastalloc,
+{	lastalloc,
 	lastresize,
 	lastfree,
-	lastaddr,
-	lastsize,
-	lastcompact,
+	0,
+	laststat,
+	lastevent,
 	lastalign,
 	VM_MTLAST
 };

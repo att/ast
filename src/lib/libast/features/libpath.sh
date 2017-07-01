@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1985-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1985-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,16 +14,17 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
-#                  David Korn <dgk@research.att.com>                   #
-#                   Phong Vo <kpv@research.att.com>                    #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
+#                    David Korn <dgkorn@gmail.com>                     #
+#                     Phong Vo <phongvo@gmail.com>                     #
 #                                                                      #
 ########################################################################
 ok=0
 for i in \
 	-x /lib/ld.so /lib/ld-*.so /usr/lib/ld.so /lib/rld \
 	-f /usr/shlib/libc.so /shlib/libc.so /usr/lib/libc.so \
-	-r /usr/shlib/libc.so /shlib/libc.so
+	-r /usr/shlib/libc.so /shlib/libc.so \
+	-x /lib*/*ld*.so*
 do	case $i in
 	-*)	op=$i; continue ;;
 	esac

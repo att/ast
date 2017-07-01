@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
 
 /* Generalized block-move parsing of a pair of strings.
 **
-** Written by Kiem-Phong Vo (kpv@research.att.com)
+** Written by Kiem-Phong Vo
 */
 
 #define HMIN		3
@@ -439,14 +439,14 @@ static int sfxparse(vcpa)
 Vclzparse_t*	vcpa;
 #endif
 {
-	ssize_t		p, r, ad;
-	ssize_t		lp, lz, rp, rz, savp, savlp, savlz;
-	ssize_t		nsrc, nstr;
-	Vcsfxint_t	*inv, *idx;
+	Vcinx_t		p, r, ad;
+	Vcinx_t		lp, lz, rp, rz, savp, savlp, savlz;
+	Vcinx_t		nsrc, nstr;
+	Vcinx_t		*inv, *idx;
 	Vcchar_t	*s1, *s2, *ends, *str = NIL(Vcchar_t*);
 	Pair_t		pair;
 	Vcsfx_t		*sfx = NIL(Vcsfx_t*);
-	ssize_t		mmin = MMIN(vcpa);
+	Vcinx_t		mmin = MMIN(vcpa);
 	int		rv = -1;
 
 	/* catenate source and target strings into a superstring */

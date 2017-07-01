@@ -5,7 +5,8 @@
 COBOLFLAGS = $(COBOLDIALECT) $(-debug-symbols|"$(CCFLAGS:N=-g|$(CC.DEBUG))":?$(CC.DEBUG)?$(CC.OPTIMIZE)?)
 COBOLLIBRARIES = -lmfcob
 
-COBOL.PLUGIN.LIBRARIES = -lcobrts -lcobcrtn -lcobmisc
+COBOL.ARCH := $(HOSTTYPE:N=*-64*:+64)
+COBOL.PLUGIN.LIBRARIES := -lcobrts$(COBOL.ARCH) -lcobcrtn$(COBOL.ARCH) -lcobmisc$(COBOL.ARCH)
 
 if "$(COBDIR:P=X)"
 .SOURCE.h : $(COBDIR)/include
@@ -35,6 +36,7 @@ if .PACKAGE.cobol.option.always
 end
 
 .COBOL.INIT : .MAKE .VIRTUAL .FORCE .IGNORE
+	include - probe-mfcobc.mk
 	.CCLD.ORIGINAL := $(CCLD:V)
 	.CC.SHARED.LD.ORIGINAL := $(CC.SHARED.LD:V)
 	.CC.DYNAMIC.ORIGINAL := $(CC.DYNAMIC:V)
@@ -42,6 +44,7 @@ end
 	.CC.SHARED.ORIGINAL := $(CC.SHARED:V)
 	CCLD = $(.COBOL.LD. CCLD)
 	CC.SHARED.LD = $(.COBOL.LD. CC.SHARED.LD)
+	CCFLAGS += $(COBOL.CCFLAGS)
 	LDFLAGS += $$("$$(!:A=.SCAN.cob|.SCAN.sqb:O=1)$$(!:N=?(*/)libcob.h:O=1)":@?$$(COBOLFLAGS:N=-[lLsO]*) $$(CC.EXPORT.DYNAMIC)??)
 	LDLIBRARIES += $$("$$(!:A=.SCAN.cob|.SCAN.sqb:O=1)$$(!:N=?(*/)libcob.h:O=1)":@?$$(COBOLLIBRARIES)??)
 	$(COBOLLIBRARIES) : .DONTCARE
@@ -50,6 +53,21 @@ for .S. $(.SUFFIX.cob)
 	%.o : %$(.S.) (COBOL) (COBOLDIALECT) (COBOLFLAGS) .COBOL.INIT
 		$(COBOL) -c $(COBOLFLAGS) $(>)
 end
+
+.COBTRACE : .MAKE .LOCAL
+	COBOLFLAGS += -x
+
+":COBTRACE:" : .MAKE .OPERATOR
+	$(>:B:S=.o) : .COBTRACE
+
+":COBWATCH:" : .MAKE .OPERATOR
+	local T
+	T := $(<:@/ /,/G)
+	eval
+		.COBWATCH.$(T) : .MAKE .LOCAL
+			COBOLFLAGS += -w $(T)
+	end
+	$(>:B:S=.o) : .COBWATCH.$(T)
 
 OBJCOPY = objcopy
 OBJCOPYFLAGS =

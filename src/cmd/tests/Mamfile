@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -34,8 +34,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 exec - : only tests in this directory : nothing to install :
 done install virtual
@@ -92,6 +92,15 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ../../lib/libast/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ../../lib/libast/ast_wchar.h implicit
+make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
+prev ../../lib/libast/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
+done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
 make ../../lib/libast/ast_botch.h implicit
 done ../../lib/libast/ast_botch.h dontcare
 make ../../lib/libast/ast_limits.h implicit
@@ -115,15 +124,25 @@ done ../../lib/libast/ast_stdio.h
 done ${PACKAGE_ast_INCLUDE}/stdio.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ../../lib/libast/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+make ${PACKAGE_ast_INCLUDE}/error.h implicit
+make ${PACKAGE_ast_INCLUDE}/option.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/option.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/error.h dontcare
 make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ../../lib/libast/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
-make ${PACKAGE_ast_INCLUDE}/sfio.h implicit
-prev ${PACKAGE_ast_INCLUDE}/sfio_s.h implicit
-prev ../../lib/libast/ast_common.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
-done ${PACKAGE_ast_INCLUDE}/sfio.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast.h dontcare
@@ -150,14 +169,7 @@ make opt
 make opt.o
 make opt.c
 make ${PACKAGE_ast_INCLUDE}/debug.h implicit
-make ${PACKAGE_ast_INCLUDE}/error.h implicit
-make ${PACKAGE_ast_INCLUDE}/option.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/option.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/error.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/debug.h
@@ -168,9 +180,9 @@ done opt.c
 meta opt.o %.c>%.o opt.c opt
 prev opt.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c opt.c
-done opt.o virtual
+done opt.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o opt opt.o ${mam_libast}
-done opt virtual
+done opt generated
 make opt.tst
 done opt.tst
 exec - regress opt.tst opt
@@ -228,16 +240,21 @@ done test.strtof virtual
 make test.aso
 make testlib
 done testlib
-bind -ltaso
-make aso/taso.c
-make terror.h implicit
+make terror.h
 make ${PACKAGE_ast_INCLUDE}/aso.h implicit
+make ../../lib/libast/ast_aso.h implicit
+prev ../../lib/libast/ast_common.h implicit
+done ../../lib/libast/ast_aso.h dontcare
 prev ../../lib/libast/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/aso.h
 prev ../../lib/libast/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/stdio.h implicit
 done terror.h
+make ${mam_libpthread}
+done ${mam_libpthread} dontcare virtual
+make aso/taso.c
+prev terror.h implicit
 done aso/taso.c
 make aso/tlock.c
 prev terror.h implicit
@@ -250,7 +267,7 @@ prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 prev terror.h implicit
 done aso/tthread.c
 exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
-exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast aso ${mam_libtaso} aso/taso.c aso/tlock.c aso/tproc.c aso/tthread.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
+exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast aso terror.h ${mam_libast} aso/taso.c aso/tlock.c aso/tproc.c aso/tthread.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
 done test.aso virtual
 make test.base64
 make base64
@@ -269,6 +286,7 @@ exec - base64
 done test.base64 virtual
 make test.cdt
 prev testlib
+prev terror.h
 make cdt/dttest.h
 prev terror.h implicit
 make ${PACKAGE_ast_INCLUDE}/cdt.h implicit
@@ -277,6 +295,10 @@ prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 done ${PACKAGE_ast_INCLUDE}/cdt.h
 done cdt/dttest.h
 bind -ldll
+prev ${mam_libpthread}
+make cdt/tannounce.c
+prev cdt/dttest.h implicit
+done cdt/tannounce.c
 make cdt/tbags.c
 prev cdt/dttest.h implicit
 done cdt/tbags.c
@@ -286,6 +308,9 @@ done cdt/tdeque.c
 make cdt/tevent.c
 prev cdt/dttest.h implicit
 done cdt/tevent.c
+make cdt/tinstall.c
+prev cdt/dttest.h implicit
+done cdt/tinstall.c
 make cdt/tlist.c
 prev cdt/dttest.h implicit
 done cdt/tlist.c
@@ -319,6 +344,9 @@ done cdt/tstack.c
 make cdt/tstringset.c
 prev cdt/dttest.h implicit
 done cdt/tstringset.c
+make cdt/tuser.c
+prev cdt/dttest.h implicit
+done cdt/tuser.c
 make cdt/tview.c
 prev cdt/dttest.h implicit
 done cdt/tview.c
@@ -327,23 +355,20 @@ prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev cdt/dttest.h implicit
 done cdt/tvsafehash.c
 make cdt/tvsaferehash.c
-prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
-prev cdt/dttest.h implicit
+prev cdt/tvsafehash.c implicit
 done cdt/tvsaferehash.c
 make cdt/tvsafetree.c
-prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
-prev cdt/dttest.h implicit
+prev cdt/tvsafehash.c implicit
 done cdt/tvsafetree.c
-make cdt/tvsharemem.c
-prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
-prev cdt/dttest.h implicit
-done cdt/tvsharemem.c
 make cdt/tvthread.c
 prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev cdt/dttest.h implicit
 done cdt/tvthread.c
+make cdt/twalk.c
+prev cdt/dttest.h implicit
+done cdt/twalk.c
 exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
-exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast cdt cdt/dttest.h ${mam_libtaso} ${mam_libdll} cdt/tbags.c cdt/tdeque.c cdt/tevent.c cdt/tlist.c cdt/tobag.c cdt/tqueue.c cdt/trehash.c cdt/trhbags.c cdt/tsafehash.c cdt/tsafetree.c cdt/tsearch.c cdt/tshare.c cdt/tstack.c cdt/tstringset.c cdt/tview.c cdt/tvsafehash.c cdt/tvsaferehash.c cdt/tvsafetree.c cdt/tvsharemem.c cdt/tvthread.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
+exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast cdt terror.h cdt/dttest.h ${mam_libast} ${mam_libdll} cdt/tannounce.c cdt/tbags.c cdt/tdeque.c cdt/tevent.c cdt/tinstall.c cdt/tlist.c cdt/tobag.c cdt/tqueue.c cdt/trehash.c cdt/trhbags.c cdt/tsafehash.c cdt/tsafetree.c cdt/tsearch.c cdt/tshare.c cdt/tstack.c cdt/tstringset.c cdt/tuser.c cdt/tview.c cdt/tvsafehash.c cdt/tvsaferehash.c cdt/tvsafetree.c cdt/tvthread.c cdt/twalk.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
 done test.cdt virtual
 make test.date
 make date
@@ -386,6 +411,7 @@ exec - done
 done test.date virtual
 make test.sfio
 prev testlib
+prev terror.h
 make sfio/sftest.h
 prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
 prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
@@ -400,6 +426,7 @@ meta ../../lib/libast/FEATURE/sfio >FEATURE/% sfio
 exec - iffe -v -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' ref ${mam_cc_L+-L${INSTALLROOT}/lib} -I${PACKAGE_ast_INCLUDE} -I${INSTALLROOT}/include ${mam_libast} : def sfio
 done FEATURE/sfio generated
 done sfio/sftest.h
+prev ${mam_libpthread}
 make sfio/talarm.c
 prev sfio/sftest.h implicit
 done sfio/talarm.c
@@ -499,6 +526,10 @@ make sfio/tpkrd.c
 prev sfio/sftest.h implicit
 done sfio/tpkrd.c
 make sfio/tpoll.c
+make ${INSTALLROOT}/src/lib/libast/sys/socket.h implicit
+make ../../lib/libast/ast_socket.h implicit
+done ../../lib/libast/ast_socket.h dontcare
+done ${INSTALLROOT}/src/lib/libast/sys/socket.h dontcare
 prev sfio/sftest.h implicit
 done sfio/tpoll.c
 make sfio/tpool.c
@@ -621,19 +652,21 @@ make sfio/twrrd.c
 prev sfio/sftest.h implicit
 done sfio/twrrd.c
 exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
-exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast sfio sfio/sftest.h ${mam_libtaso} sfio/talarm.c sfio/talign.c sfio/tappend.c sfio/tatexit.c sfio/tbadargs.c sfio/tclose.c sfio/tdisc.c sfio/terrno.c sfio/texcept.c sfio/tflags.c sfio/tfmt.c sfio/tgetr.c sfio/thole.c sfio/tleak.c sfio/tlocale.c sfio/tlongdouble.c sfio/tmmap2read.c sfio/tmode.c sfio/tmove.c sfio/tmprdwr.c sfio/tmpread.c sfio/tmprocess.c sfio/tmtsafe.c sfio/tmultiple.c sfio/tmwrite.c sfio/tnoseek.c sfio/tnotify.c sfio/topen.c sfio/tpipe.c sfio/tpipemove.c sfio/tpkrd.c sfio/tpoll.c sfio/tpool.c sfio/tpopen.c sfio/tpopenrw.c sfio/tprintf.c sfio/tpublic.c sfio/tputgetc.c sfio/tputgetd.c sfio/tputgetl.c sfio/tputgetm.c sfio/tputgetr.c sfio/tputgetu.c sfio/trcrv.c sfio/treserve.c sfio/tresize.c sfio/tscanf.c sfio/tscanf1.c sfio/tseek.c sfio/tsetbuf.c sfio/tsetfd.c sfio/tsfstr.c sfio/tshare.c sfio/tsize.c sfio/tstack.c sfio/tstatus.c sfio/tstdio.c sfio/tstkpk.c sfio/tstring.c sfio/tswap.c sfio/tsync.c sfio/ttell.c sfio/ttmp.c sfio/ttmpfile.c sfio/tungetc.c sfio/twalk.c sfio/twc.c sfio/twchar.c sfio/twhole.c sfio/twrrd.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
+exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast sfio terror.h sfio/sftest.h ${mam_libast} sfio/talarm.c sfio/talign.c sfio/tappend.c sfio/tatexit.c sfio/tbadargs.c sfio/tclose.c sfio/tdisc.c sfio/terrno.c sfio/texcept.c sfio/tflags.c sfio/tfmt.c sfio/tgetr.c sfio/thole.c sfio/tleak.c sfio/tlocale.c sfio/tlongdouble.c sfio/tmmap2read.c sfio/tmode.c sfio/tmove.c sfio/tmprdwr.c sfio/tmpread.c sfio/tmprocess.c sfio/tmtsafe.c sfio/tmultiple.c sfio/tmwrite.c sfio/tnoseek.c sfio/tnotify.c sfio/topen.c sfio/tpipe.c sfio/tpipemove.c sfio/tpkrd.c sfio/tpoll.c sfio/tpool.c sfio/tpopen.c sfio/tpopenrw.c sfio/tprintf.c sfio/tpublic.c sfio/tputgetc.c sfio/tputgetd.c sfio/tputgetl.c sfio/tputgetm.c sfio/tputgetr.c sfio/tputgetu.c sfio/trcrv.c sfio/treserve.c sfio/tresize.c sfio/tscanf.c sfio/tscanf1.c sfio/tseek.c sfio/tsetbuf.c sfio/tsetfd.c sfio/tsfstr.c sfio/tshare.c sfio/tsize.c sfio/tstack.c sfio/tstatus.c sfio/tstdio.c sfio/tstkpk.c sfio/tstring.c sfio/tswap.c sfio/tsync.c sfio/ttell.c sfio/ttmp.c sfio/ttmpfile.c sfio/tungetc.c sfio/twalk.c sfio/twc.c sfio/twchar.c sfio/twhole.c sfio/twrrd.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
 done test.sfio virtual
 make test.vmalloc
 prev testlib
+prev terror.h
 make vmalloc/vmtest.h
 prev terror.h implicit
 make ${INSTALLROOT}/src/lib/libast/vmalloc/vmhdr.h implicit
-prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_windows.h implicit
 prev windows.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_windows.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/debug.h implicit
 prev ${PACKAGE_ast_INCLUDE}/aso.h implicit
+prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 make ../../lib/libast/FEATURE/vmalloc implicit
 meta ../../lib/libast/FEATURE/vmalloc >FEATURE/% vmalloc
 exec - iffe -v -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' ref ${mam_cc_L+-L${INSTALLROOT}/lib} -I${PACKAGE_ast_INCLUDE} -I${INSTALLROOT}/include ${mam_libast} : def vmalloc
@@ -642,24 +675,54 @@ prev ../../lib/libast/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done ${INSTALLROOT}/src/lib/libast/vmalloc/vmhdr.h
 done vmalloc/vmtest.h
+prev ${mam_libpthread}
 make vmalloc/talign.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/talign.c
+make vmalloc/tcache-scratch.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tcache-scratch.c
+make vmalloc/tcache-thrash.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tcache-thrash.c
 make vmalloc/tcompact.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tcompact.c
+make vmalloc/tcontent.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tcontent.c
+make vmalloc/tdcshare.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tdcshare.c
+make vmalloc/tdebug.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tdebug.c
 make vmalloc/tek.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tek.c
+make vmalloc/theap.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/theap.c
 make vmalloc/tlast.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tlast.c
 make vmalloc/tmalloc.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tmalloc.c
-make vmalloc/tmmopen.c
+make vmalloc/tmallocdebug.c
 prev vmalloc/vmtest.h implicit
-done vmalloc/tmmopen.c
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done vmalloc/tmallocdebug.c
+make vmalloc/tmmaddress.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tmmaddress.c
+make vmalloc/tmtmalloc.c
+prev terror.h implicit
+done vmalloc/tmtmalloc.c
+make vmalloc/tperform.c
+prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
+prev terror.h implicit
+done vmalloc/tperform.c
 make vmalloc/tpool.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tpool.c
@@ -673,21 +736,35 @@ make vmalloc/tresize.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tresize.c
 make vmalloc/tsafemalloc.c
-prev vmalloc/vmtest.h implicit
+prev ${INSTALLROOT}/src/lib/libast/vmalloc/vmhdr.h implicit
+prev terror.h implicit
 done vmalloc/tsafemalloc.c
+make vmalloc/tsegmented.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tsegmented.c
+make vmalloc/tsegwalk.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tsegwalk.c
 make vmalloc/tsharemem.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tsharemem.c
+make vmalloc/tsharesimple.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tsharesimple.c
+make vmalloc/tsignal.c
+prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
+prev terror.h implicit
+done vmalloc/tsignal.c
+make vmalloc/tsinglemem.c
+prev vmalloc/vmtest.h implicit
+done vmalloc/tsinglemem.c
 make vmalloc/tsmall.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tsmall.c
 make vmalloc/tstat.c
 prev vmalloc/vmtest.h implicit
 done vmalloc/tstat.c
-make vmalloc/twalk.c
-prev vmalloc/vmtest.h implicit
-done vmalloc/twalk.c
 exec - set +x; (ulimit -c 0) >/dev/null 2>&1 && ulimit -c 0; set -x
-exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast vmalloc vmalloc/vmtest.h ${mam_libtaso} vmalloc/talign.c vmalloc/tcompact.c vmalloc/tek.c vmalloc/tlast.c vmalloc/tmalloc.c vmalloc/tmmopen.c vmalloc/tpool.c vmalloc/trandom.c vmalloc/tregion.c vmalloc/tresize.c vmalloc/tsafemalloc.c vmalloc/tsharemem.c vmalloc/tsmall.c vmalloc/tstat.c vmalloc/twalk.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
+exec - set +x; testlib --proc=8 --thread=8 --timeout=1 ast vmalloc terror.h vmalloc/vmtest.h ${mam_libast} vmalloc/talign.c vmalloc/tcache-scratch.c vmalloc/tcache-thrash.c vmalloc/tcompact.c vmalloc/tcontent.c vmalloc/tdcshare.c vmalloc/tdebug.c vmalloc/tek.c vmalloc/theap.c vmalloc/tlast.c vmalloc/tmalloc.c vmalloc/tmallocdebug.c vmalloc/tmmaddress.c vmalloc/tmtmalloc.c vmalloc/tperform.c vmalloc/tpool.c vmalloc/trandom.c vmalloc/tregion.c vmalloc/tresize.c vmalloc/tsafemalloc.c vmalloc/tsegmented.c vmalloc/tsegwalk.c vmalloc/tsharemem.c vmalloc/tsharesimple.c vmalloc/tsignal.c vmalloc/tsinglemem.c vmalloc/tsmall.c vmalloc/tstat.c ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I../../lib/libast -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib}
 done test.vmalloc virtual
 done test dontcare virtual

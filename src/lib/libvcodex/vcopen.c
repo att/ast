@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,17 +14,19 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
 
-static char*	Version = "\r\n@(#)$Id: vcodex (AT&T Shannon Laboratory - Kiem-Phong Vo) 2008-11-04 $\r\n";
+static char*	Version = "\r\n@(#)$Id: vcodex (AT&T Shannon Laboratory - Kiem-Phong Vo) 2013-08-07 $\r\n";
 
 /*	Open a handle for data coding
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
+
+Vcuint32_t	_Vcrand_ = 0xdeadbeef; /* part of Vcodex's cheap RNG VCRAND() */
 
 #if __STD_C
 Vcodex_t* vcopen(Vcdisc_t* disc, Vcmethod_t* meth, Void_t* init,
@@ -58,6 +60,7 @@ int		flags;	/* control flags		*/
 	vc->meth = meth;
 	vc->coder = coder;
 	vc->flags = flags & VC_FLAGS;
+	vc->errorf = 0;
 
 	if(disc && disc->eventf && (*disc->eventf)(vc, VC_OPENING, NIL(Void_t*), disc) < 0)
 	{	free(vc);
@@ -112,7 +115,6 @@ int	type;	/* VC_ENCODE, VC_DECODE	*/
 		{	if(sp <= stack)
 				break;
 			sp--;
-			spec - sp->spec;
 			continue;
 		}
 		for(m = 0; meth[m]; ++m)
@@ -148,7 +150,7 @@ int	type;	/* VC_ENCODE, VC_DECODE	*/
 
 	vc = NIL(Vcodex_t*);
 	for(mt = list; mt; mt = mt->next)
-	{	if(!(coder = vcopen(0, mt->vcmt, (Void_t*)mt->args, vc, type|VC_CLOSECODER)) )
+	{	if(!(coder = vcopen(NIL(Vcdisc_t*), mt->vcmt, (Void_t*)mt->args, vc, type|VC_CLOSECODER)) )
 		{	vcclose(vc);
 			vc = NIL(Vcodex_t*);
 			goto done;

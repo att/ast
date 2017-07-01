@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -53,8 +53,7 @@ typedef struct				/* root local pointers		*/
 #define _HASH_POSITION_PRIVATE_ \
 	Hash_table_t*	tab;		/* table pointer		*/ \
 	int		flags;		/* scan flags			*/ \
-	Hash_bucket_t**	slot;		/* table slot			*/ \
-	Hash_bucket_t**	limit;		/* slot limit			*/
+	size_t		slot;		/* table slot			*/
 
 #define _HASH_LAST_PRIVATE_ \
 	const char*	name;		/* last lookup name		*/ \

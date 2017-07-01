@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -436,10 +436,11 @@ Option_t		options[] =
 	"format",
 	'x',
 	OPT_format,
-	"The archive format. Formats are automatically detected on read. A\
-	basic, compress and delta format may be combined, separated by \b:\b.\
-	Each format may be followed by =\bdetails\b; details are format\
-	specific. The supported formats are:",
+	"The archive format. Formats and compression methods are automatically\
+	detected on read. A basic, compress and delta format may be combined,\
+	separated by \b:\b. Each format may be followed by =\bdetails\b; details\
+	are format specific. \bt\b\acompress\a is shorthand for \btar\b:\acompress\a.\
+	The supported formats are:",
 	"format:=" FMT_DEFAULT,
 	"\fformats\f",
 },

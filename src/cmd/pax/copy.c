@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -360,7 +360,7 @@ copyinout(Ftw_t* ftw)
 	{
 		s = f->name;
 		f->name = stash(&state.out->path.copy, NiL, state.pwdlen + f->namesize);
-		strcpy(strcopy(f->name, state.pwd), s + (*s == '/'));
+		strcpy(stpcpy(f->name, state.pwd), s + (*s == '/'));
 		if ((wfd = openout(state.out, f)) >= 0)
 		{
 			if ((rfd = openin(state.out, f)) >= 0)
@@ -402,7 +402,7 @@ copyinout(Ftw_t* ftw)
 						break;
 					if ((data = lseek(rfd, hole, SEEK_DATA)) < hole)
 					{
-						if ((data = lseek(rfd, -1, SEEK_END)) < 0 || lseek(wfd, data, SEEK_SET) != data || write(wfd, "", 1) != 1)
+						if ((data = lseek(rfd, -1, SEEK_END)) < 0 || (data + 1) > hole && (lseek(wfd, data, SEEK_SET) != data || write(wfd, "", 1) != 1))
 							error(ERROR_SYSTEM|2, "%s: write error", f->name);
 						state.out->io->count += 1;
 						break;

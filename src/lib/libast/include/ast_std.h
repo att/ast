@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -69,12 +69,36 @@ struct _sfio_s;
 #include <ast_limits.h>
 #include <ast_botch.h>
 
+/*
+ * <stdio.h> and <wchar.h> are entangled on some systems
+ * and this make <stdio.h> pop up in weird places
+ * this dance works around those places
+ */
+
 #ifdef	_SKIP_SFSTDIO_H
 #undef	_SKIP_SFSTDIO_H
 #else
 #undef	_SFSTDIO_H
 #undef	FILE
 #endif
+
+#ifndef FILE
+#ifndef _SFIO_H
+struct _sfio_s;
+#endif
+#define FILE		struct _sfio_s
+#ifndef	__FILE_typedef
+#define __FILE_typedef	1
+#endif
+#ifndef _FILEDEFED
+#define _FILEDEFED	1
+#endif
+#endif
+
+#if _AST_H
+#include <sfio.h>	/* moved from <ast.h> because mbstate_t entangled with <stdio.h> on some systems */
+#endif
+#include <ast_wchar.h>
 
 /* locale stuff */
 
@@ -158,6 +182,9 @@ extern char*		strerror(int);
 #define AST_LC_LANG		255
 
 #define AST_LC_internal		1
+#define AST_LC_native		(1L<<23)
+#define AST_LC_unicodeliterals	(1L<<24)
+#define AST_LC_utf8		(1L<<25)
 #define AST_LC_test		(1L<<26)
 #define AST_LC_setenv		(1L<<27)
 #define AST_LC_find		(1L<<28)
@@ -220,6 +247,12 @@ extern char*		strerror(int);
 #define strcoll		strcmp
 #endif
 
+typedef struct Mbstate_s
+{
+	mbstate_t	mb_state;
+	int		mb_errno;
+} Mbstate_t;
+
 typedef struct
 {
 
@@ -255,7 +288,21 @@ typedef struct
 
 	int		(*mb_alpha)(wchar_t);
 
-	char		pad[936 - sizeof(void*)];
+	int		pwd;
+	int		byte_max;
+
+	void*		mb_uc2wc;
+	void*		mb_wc2uc;
+
+	Mbstate_t	_ast_mbstate_init;
+
+	size_t		(*_ast_mbrlen)(const char*, size_t, mbstate_t*);
+	size_t		(*_ast_mbrtowc)(wchar_t*, const char*, size_t, mbstate_t*);
+	size_t		(*_ast_mbsrtowcs)(wchar_t*, const char**, size_t, mbstate_t*);
+	size_t		(*_ast_wcrtomb)(char*, wchar_t, mbstate_t*);
+	size_t		(*_ast_wcsrtombs)(char*, const wchar_t**, size_t, mbstate_t*);
+
+	char		pad[936 - sizeof(void*) - 2 * sizeof(int) - 8 * sizeof(void*) - sizeof(Mbstate_t)];
 
 } _Ast_info_t;
 
@@ -311,6 +358,18 @@ extern int		truncate64(const char*, off64_t);
 
 #endif
 
+typedef int (*Qsortcmp_f)(const void*, const void*);
+typedef int (*Qsortcmp_r_f)(const void*, const void*, void*);
+
+#if !defined(qsort) && !_lib_qsort
+#define	qsort		_ast_qsort
+extern void		qsort(void*, size_t, size_t, Qsortcmp_f);
+#endif
+#if !defined(qsort_r) && !_lib_qsort_r
+#define	qsort_r		_ast_qsort_r
+extern void		qsort_r(void*, size_t, size_t, Qsortcmp_r_f, void*);
+#endif
+
 #if !defined(remove)
 extern int		remove(const char*);
 #endif
@@ -344,6 +403,7 @@ extern int		_ast_getpgrp(void);
  * _AST_STD_I delays headers that require <ast_map.h>
  */
 
+#include <ast_intercept.h>
 #include <ast_map.h>
 
 #undef	_AST_STD_I

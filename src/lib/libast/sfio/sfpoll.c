@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -138,7 +138,7 @@ int		tm;	/* time in millisecs for select/poll	*/
 		while((np = SFPOLL(fds,m,tm)) < 0 )
 		{	if(errno == eintr || errno == EAGAIN)
 				errno = 0;
-			else	break;
+			else	goto report;
 		}
 		if(np > 0) /* poll succeeded */
 			np = c;
@@ -147,14 +147,14 @@ int		tm;	/* time in millisecs for select/poll	*/
 		{	f = fa[check[r]];
 
 			if((f->flags&SF_WRITE) && !WRREADY(f) )
-			{	if(fds[m].revents&POLLOUT)
+			{	if(fds[m].revents&(POLLOUT|POLLHUP|POLLERR))
 					status[check[r]] |= SF_WRITE;
 			}
 
 			if((f->flags&SF_READ)  && !RDREADY(f))
 			{	if((f->mode&SF_WRITE) && HASAUXFD(f))
 					m += 1;
-				if(fds[m].revents&POLLIN)
+				if(fds[m].revents&(POLLIN|POLLHUP|POLLERR))
 					status[check[r]] |= SF_READ;
 			}
 		}
@@ -200,7 +200,7 @@ int		tm;	/* time in millisecs for select/poll	*/
 		while((np = select(m+1,&rd,&wr,NIL(fd_set*),tmp)) < 0 )
 		{	if(errno == eintr)
 				errno = 0;
-			else	break;
+			else	goto report;
 		}
 		if(np > 0)
 			np = c;
@@ -227,6 +227,7 @@ int		tm;	/* time in millisecs for select/poll	*/
 	}
 #endif /*_lib_select*/
 
+ report:
 	for(r = c = 0; c < n; ++c)
 	{	if(status[c] == 0)
 			continue;

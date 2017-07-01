@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*                     Phong Vo <phongvo@gmail.com>                     *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #ifndef _RECSORT_H
@@ -170,28 +170,30 @@ struct _rs_s
 #define RS_NEXT		0		/* rsdisc() next		*/
 
 /* sort controls */
-#define RS_UNIQ		000001		/* remove duplicates		*/
-#define RS_REVERSE	000002		/* reverse sort order		*/
-#define RS_DATA		000004		/* sort by key, then by data	*/
-#define RS_IGNORE	000040		/* rswrite() will be ignored	*/
-#define RS_CAT		040000		/* just catenate input files	*/
+#define RS_UNIQ		0000001		/* remove duplicates		*/
+#define RS_REVERSE	0000002		/* reverse sort order		*/
+#define RS_DATA		0000004		/* sort by key, then by data	*/
+#define RS_IGNORE	0000040		/* rswrite() will be ignored	*/
+#define RS_CAT		0040000		/* just catenate input files	*/
+#define RS_MORE		0010000		/* RS_LAST on last rsprocess()	*/
+#define RS_LAST		0100000		/* the last rsprocess()		*/
 
 /* discipline data */
-#define RS_KSAMELEN	000010		/* key has fixed length		*/
-#define RS_DSAMELEN	000020		/* data has fixed length	*/
-#define RS_TYPES	040377
+#define RS_KSAMELEN	0000010		/* key has fixed length		*/
+#define RS_DSAMELEN	0000020		/* data has fixed length	*/
+#define RS_TYPES	0040377
 
 /* input/output control */
-#define RS_ITEXT	000100		/* input is plain text		*/
-#define RS_OTEXT	000200		/* output is plain text		*/
-#define RS_TEXT		000300
+#define RS_ITEXT	0000100		/* input is plain text		*/
+#define RS_OTEXT	0000200		/* output is plain text		*/
+#define RS_TEXT		0000300
 
 /* method type */
-#define RS_MTVERIFY	000400
-#define RS_MTRASP	001000
-#define RS_MTRADIX	002000
-#define RS_MTSPLAY	004000
-#define RS_MTCOPY	020000
+#define RS_MTVERIFY	0000400
+#define RS_MTRASP	0001000
+#define RS_MTRADIX	0002000
+#define RS_MTSPLAY	0004000
+#define RS_MTCOPY	0020000
 
 #define RSKEY_ERROR	000001		/* unrecoverable error		*/
 #define RSKEY_KEYS	000002		/* keys specified		*/

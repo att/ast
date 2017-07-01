@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -50,8 +50,10 @@ int	b_sleep(register int argc,char *argv[],Shbltin_t *context)
 	int sflag=0;
 	time_t tloc = 0;
 	char *last;
+	if(shp->subshell)
+		sh_subfork();
 	if(!(shp->sigflag[SIGALRM]&(SH_SIGFAULT|SH_SIGOFF)))
-		sh_sigtrap(SIGALRM);
+		sh_sigtrap(shp,SIGALRM);
 	while((argc = optget(argv,sh_optsleep))) switch(argc)
 	{
 		case 's':
@@ -86,10 +88,27 @@ int	b_sleep(register int argc,char *argv[],Shbltin_t *context)
 			}
 			else if(*last!='.' && *last!=',')
 			{
-				if(pp = sfprints("exact %s", cp))
-					ns = tmxdate(pp, &last, now);
-				if(*last && (pp = sfprints("p%s", cp)))
-					ns = tmxdate(pp, &last, now);
+				if(*last && last>cp && last[1]==0)
+				{
+					switch(*last)
+					{
+					    case 'd':
+						d *=24;
+					    case 'h':
+						d *=60;
+					    case 'm':
+						d *=60;
+					    case 's':
+						goto skip;
+					}
+				}
+				else
+				{
+					if(pp = sfprints("exact %s", cp))
+						ns = tmxdate(pp, &last, now);
+					if(*last && (pp = sfprints("p%s", cp)))
+						ns = tmxdate(pp, &last, now);
+				}
 			}
 			if(*last)
 				errormsg(SH_DICT,ERROR_exit(1),e_number,*argv);
@@ -133,103 +152,21 @@ static void completed(void * handle)
 	*expired = 1;
 }
 
-unsigned int sleep(unsigned int sec)
-{
-	Shell_t	*shp = sh_getinterp();
-	pid_t newpid, curpid=getpid();
-	void *tp;
-	char expired = 0;
-	shp->lastsig = 0;
-	tp = (void*)sh_timeradd(1000*sec, 0, completed, (void*)&expired);
-	do
-	{
-		if(!shp->gd->waitevent || (*shp->gd->waitevent)(-1,-1L,0)==0)
-			pause();
-		if(shp->sigflag[SIGALRM]&SH_SIGTRAP)
-			sh_timetraps(shp);
-		if((newpid=getpid()) != curpid)
-		{
-			curpid = newpid;
-			shp->lastsig = 0;
-			shp->trapnote &= ~SH_SIGSET;
-			if(expired)
-				expired = 0;
-			else
-				timerdel(tp);
-			tp = (void*)sh_timeradd(1000*sec, 0, completed, (void*)&expired);
-		}
-	}
-	while(!expired && shp->lastsig==0);
-	if(!expired)
-		timerdel(tp);
-	sh_sigcheck(shp);
-	return(0);
-}
-
 /*
  * delay execution for time <t>
  */
 
 void	sh_delay(double t)
 {
+	Shell_t *shp = sh_getinterp();
 	register int n = (int)t;
-	Shell_t	*shp = sh_getinterp();
-#ifdef _lib_poll
-	struct pollfd fd;
-	if(t<=0)
-		return;
-	else if(n > 30)
+	Tv_t ts,tx;
+	ts.tv_sec = n;
+	ts.tv_nsec = 1000000000*(t-(double)n);
+	while(tvsleep(&ts,&tx) < 0 && errno==EINTR)
 	{
-		sleep(n);
-		t -= n;
-	}
-	if(n=(int)(1000*t))
-	{
-		if(!shp->gd->waitevent || (*shp->gd->waitevent)(-1,(long)n,0)==0)
-			poll(&fd,0,n);
-	}
-#else
-#   if defined(_lib_select) && defined(_mem_tv_usec_timeval)
-	struct timeval timeloc;
-	if(t<=0)
-		return;
-	if(n=(int)(1000*t) && shp->gd->waitevent && (*shp->gd->waitevent)(-1,(long)n,0))
-		return;
-	n = (int)t;
-	timeloc.tv_sec = n;
-	timeloc.tv_usec = 1000000*(t-(double)n);
-	select(0,(fd_set*)0,(fd_set*)0,(fd_set*)0,&timeloc);
-#   else
-#	ifdef _lib_select
-		/* for 9th edition machines */
-		if(t<=0)
+		if(shp->trapnote&(SH_SIGSET|SH_SIGTRAP))
 			return;
-		if(n > 30)
-		{
-			sleep(n);
-			t -= n;
-		}
-		if(n=(int)(1000*t))
-		{
-			if(!shp->gd->waitevent || (*shp->gd->waitevent)(-1,(long)n,0)==0)
-				select(0,(fd_set*)0,(fd_set*)0,n);
-		}
-#	else
-		struct tms tt;
-		if(t<=0)
-			return;
-		sleep(n);
-		t -= n;
-		if(t)
-		{
-			clock_t begin = times(&tt);
-			if(begin==0)
-				return;
-			t *= shp->gd->lim.clk_tck;
-			n += (t+.5);
-			while((times(&tt)-begin) < n);
-		}
-#	endif
-#   endif
-#endif /* _lib_poll */
+		ts = tx;
+	}
 }

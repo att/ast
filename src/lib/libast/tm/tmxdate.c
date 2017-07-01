@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -135,7 +135,7 @@ powerize(Tm_t* tm, unsigned long p, unsigned long q, unsigned long u)
 		q *= 10;
 		t *= 10;
 	}
-	tm->tm_nsec += (int)(t % TMX_RESOLUTION);
+	tm->tm_nsec += (int)((unsigned long)t % TMX_RESOLUTION);
 	tm->tm_sec += (int)(t / TMX_RESOLUTION);
 }
 
@@ -228,12 +228,14 @@ tmxdate(register const char* s, char** e, Time_t now)
 		state &= (state & HOLD) ? ~(HOLD) : ~(EXACT|LAST|NEXT|THIS);
 		if ((set|state) & (YEAR|MONTH|DAY))
 			skip['/'] = 1;
-		message((-1, "AHA#%d state=" FFMT " set=" FFMT, __LINE__, FLAGS(state), FLAGS(set)));
+		while (isspace(*s))
+			s++;
+		message((-1, "AHA#%d state=" FFMT " set=" FFMT " '%s'", __LINE__, FLAGS(state), FLAGS(set), s));
 		for (;;)
 		{
 			if (*s == '.' || *s == '-' || *s == '+')
 			{
-				if (((set|state) & (YEAR|MONTH|HOUR|MINUTE|ZONE)) == (YEAR|MONTH|HOUR|MINUTE) && (i = tmgoff(s, &t, TM_LOCALZONE)) != TM_LOCALZONE)
+				if (((set|state) & (MONTH|HOUR|MINUTE|ZONE)) == (MONTH|HOUR|MINUTE) && (i = tmgoff(s, &t, TM_LOCALZONE)) != TM_LOCALZONE)
 				{
 					zone = i;
 					state |= ZONE;
@@ -518,12 +520,14 @@ tmxdate(register const char* s, char** e, Time_t now)
 		if (!(state & CRON))
 		{
 			/*
-			 * check for cron date
+			 * check for cron/iso date
 			 *
 			 *	min hour day-of-month month day-of-week
 			 *
 			 * if it's cron then determine the next time
 			 * that satisfies the specification
+			 *
+			 * if it's iso then its a point in time
 			 *
 			 * NOTE: the only spacing is ' '||'_'||';'
 			 */
@@ -765,7 +769,8 @@ tmxdate(register const char* s, char** e, Time_t now)
 					if (dig2(t, k) < 1 || k > 31)
 						break;
 					flags |= DAY;
-					goto save_yymmdd;
+					if (*t != 'T' && *t != 't' || !isdigit(*++t))
+						goto save_yymmdd;
 				}
 				n = strtol(s = t, &t, 0);
 				if ((t - s) < 2)
@@ -965,6 +970,12 @@ tmxdate(register const char* s, char** e, Time_t now)
 						tm->tm_year = m;
 						s = t;
 						set |= flags;
+						if ((*s == '-' || *s == '+') && (i = tmgoff(s, &t, TM_LOCALZONE)) != TM_LOCALZONE)
+						{
+							zone = i;
+							set |= ZONE;
+							s = t;
+						}
 						continue;
 					}
 					for (s = t; skip[*s]; s++);

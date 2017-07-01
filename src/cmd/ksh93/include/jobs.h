@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,6 +33,14 @@
 #   include	<signal.h>
 #endif /* !SIGINT */
 #include	"FEATURE/options"
+#include	"FEATURE/externs"
+#if	_hdr_aso
+#   include	<aso.h>
+#else
+#   define ASO_LOCK	1
+#   define ASO_UNLOCK	2
+#   define asolock(a,b,c)
+#endif /* _hdr_aso */
 
 #if SHOPT_COSHELL
 #   include	<coshell.h>
@@ -76,10 +84,12 @@ struct process
 	struct process *p_nxtjob;	/* next job structure */
 	struct process *p_nxtproc;	/* next process in current job */
 	Shell_t		*p_shp;		/* shell that posted the job */
+	char		*p_curdir;	/* current direcory at job start */
 #if SHOPT_COSHELL
 	Cojob_t		*p_cojob;	/* coshell job */
 #endif /* SHOPT_COSHELL */
 	int		*p_exitval;	/* place to store the exitval */
+	int		p_wstat;
 	pid_t		p_pid;		/* process id */
 	pid_t		p_pgrp;		/* process group */
 	pid_t		p_fgrp;		/* process group when stopped */
@@ -87,7 +97,7 @@ struct process
 	unsigned short	p_exit;		/* exit value or signal number */
 	unsigned short	p_exitmin;	/* minimum exit value for xargs */
 	unsigned short	p_flag;		/* flags - see below */
-	int		p_env;		/* subshell environment number */
+	long		p_env;		/* subshell environment number */
 #ifdef JOBS
 	off_t		p_name;		/* history file offset for command */
 	struct termios	p_stty;		/* terminal state for job */
@@ -103,14 +113,14 @@ struct jobs
 	pid_t		mypid;		/* process id of shell */
 	pid_t		mypgid;		/* process group id of shell */
 	pid_t		mytgid;		/* terminal group id of shell */
+	pid_t		lastpost;	/* last job posted */
 	int		curjobid;
 	unsigned int	in_critical;	/* >0 => in critical region */
 	int		savesig;	/* active signal */
 	int		numpost;	/* number of posted jobs */
-#ifdef SHOPT_BGX
 	int		numbjob;	/* number of background jobs */
-#endif /* SHOPT_BGX */
 	short		fd;		/* tty descriptor number */
+	short		maxjob;		/* must reap after maxjob if > 0 */
 #ifdef JOBS
 	int		suspend;	/* suspend character */
 	int		linedisc;	/* line dicipline */
@@ -119,6 +129,7 @@ struct jobs
 	char		waitsafe;	/* wait will not block */
 	char		waitall;	/* wait for all jobs in pipe */
 	char		toclear;	/* job table needs clearing */
+	int		asol;		/* used for asolock */
 	unsigned char	*freejobs;	/* free jobs numbers */
 #if SHOPT_COSHELL
 	struct cosh	*colist;	/* coshell job list */
@@ -130,36 +141,57 @@ struct jobs
 #define JOB_NFLAG	2
 #define JOB_PFLAG	4
 #define JOB_NLFLAG	8
+#define JOB_QFLAG	0x100
+#define JOB_QQFLAG	0x200
 
 extern struct jobs job;
 
 #ifdef JOBS
 
 #if !_std_malloc
-#include <vmalloc.h>
-#ifdef vmlocked
-#define vmbusy()	vmlocked(Vmregion)
-#else
-#if VMALLOC_VERSION >= 20070911L
-#define vmbusy()	(vmstat(0,0)!=0)
-#endif
-#endif
+#   include <vmalloc.h>
+#   ifdef vmlocked
+#	define vmbusy()	vmlocked(Vmregion)
+#   else
+#	if VMALLOC_VERSION >= 20130509L
+#	    define vmbusy()	(vmstat(Vmregion,0)!=0)
+#	else
+#	    if VMALLOC_VERSION >= 20070911L
+#		define vmbusy()	(vmstat(0,0)!=0)
+#	    endif
+#	endif
+#   endif
 #endif
 #ifndef vmbusy
-#define vmbusy()	0
+#   define vmbusy()	0
 #endif
+
+#if _hdr_aso
+
+#define job_lock()	asoincint(&job.in_critical)
+#define job_unlock()	\
+	do { \
+		int	_sig; \
+		if (asogetint(&job.in_critical) == 1 && (_sig = job.savesig) && !vmbusy()) \
+			job_reap(_sig); \
+		asodecint(&job.in_critical); \
+	} while(0)
+
+#else
 
 #define job_lock()	(job.in_critical++)
 #define job_unlock()	\
 	do { \
-		int	sig; \
-		if (!--job.in_critical && (sig = job.savesig)) \
+		int	_sig; \
+		if (!--job.in_critical && (_sig = job.savesig)) \
 		{ \
 			if (!job.in_critical++ && !vmbusy()) \
-				job_reap(sig); \
+				job_reap(_sig); \
 			job.in_critical--; \
 		} \
 	} while(0)
+
+#endif
 
 extern const char	e_jobusage[];
 extern const char	e_done[];
@@ -187,17 +219,15 @@ extern const char	e_signo[];
  * The following are defined in jobs.c
  */
 
-extern void	job_clear(void);
+extern void	job_clear(Shell_t*);
 extern void	job_bwait(char**);
-extern int	job_walk(Sfio_t*,int(*)(struct process*,int),int,char*[]);
+extern int	job_walk(Shell_t*,Sfio_t*,int(*)(struct process*,int),int,char*[]);
 extern int	job_kill(struct process*,int);
-extern int	job_wait(pid_t);
+extern bool	job_wait(pid_t);
 extern int	job_post(Shell_t*,pid_t,pid_t);
 extern void	*job_subsave(void);
-extern void	job_subrestore(void*);
-#ifdef SHOPT_BGX
+extern void	job_subrestore(Shell_t*,void*);
 extern void	job_chldtrap(Shell_t*, const char*,int);
-#endif /* SHOPT_BGX */
 #ifdef JOBS
 	extern void	job_init(Shell_t*,int);
 	extern int	job_close(Shell_t*);
@@ -205,7 +235,7 @@ extern void	job_chldtrap(Shell_t*, const char*,int);
 	extern int	job_terminate(struct process*,int);
 	extern int	job_switch(struct process*,int);
 	extern void	job_fork(pid_t);
-	extern int	job_reap(int);
+	extern bool	job_reap(int);
 #else
 #	define job_init(s,flag)
 #	define job_close(s)	(0)

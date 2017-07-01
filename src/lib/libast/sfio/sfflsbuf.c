@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -96,7 +96,7 @@ int	c;	/* if c>=0, c is also written out */
 		isall = SFISALL(f,isall);
 		if((w = SFWR(f,data,n,f->disc)) > 0)
 		{	if((n -= w) > 0) /* save unwritten data, then resume */
-				memcpy((char*)f->data,(char*)data+w,n);
+				memmove((char*)f->data,(char*)data+w,n);
 			written += w;
 			f->next = f->data+n;
 			if(c < 0 && (!isall || n == 0))

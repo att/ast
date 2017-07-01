@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -178,7 +178,7 @@ mark(const char* name, int recfm, size_t size, Jcldisc_t* disc)
 		nospace(NiL, disc);
 		return 0;
 	}
-	s = u->value = strcopy(u->name = (char*)(u + 1), name) + 1;
+	s = u->value = stpcpy(u->name = (char*)(u + 1), name) + 1;
 	u->size = size;
 	m -= suflen(name);
 	sfsprintf(s, n, "%-.*s%%%s%I*u%s", m, name, (recfm & JCL_RECFM_V) ? "v" : "", sizeof(size), size, name + m);
@@ -192,8 +192,18 @@ uniqcmp(Dt_t* dt, register void* a, register void* b, Dtdisc_t* disc)
 {
 	int	n;
 
-	if (!(n = strcmp(((Uniq_t*)a)->name, ((Uniq_t*)b)->name)) && ((Uniq_t*)a)->value)
-		n = strcmp(((Uniq_t*)a)->value, ((Uniq_t*)b)->value);
+	if (!(n = strcmp(((Uniq_t*)a)->name, ((Uniq_t*)b)->name)))
+	{
+		if (((Uniq_t*)a)->value)
+		{
+			if (((Uniq_t*)b)->value)
+				n = strcmp(((Uniq_t*)a)->value, ((Uniq_t*)b)->value);
+			else
+				n = 1;
+		}
+		else if (((Uniq_t*)b)->value)
+			n = -1;
+	}
 	return n;
 }
 
@@ -234,9 +244,9 @@ uniq(const char* name, const char* value, unsigned long flags, Jcldisc_t* disc)
 			return;
 		}
 		u->count = 1;
-		s = strcopy(u->name = (char*)(u + 1), name);
+		s = stpcpy(u->name = (char*)(u + 1), name);
 		if (value)
-			strcpy(u->value = s, value);
+			strcpy(u->value = s + 1, value);
 		dtinsert(state.uniq, u);
 	}
 	u->flags |= flags;
@@ -295,6 +305,44 @@ diff(const char* name, const char* value, Jcldisc_t* disc)
 	return 1;
 }
 
+typedef struct Label_s
+{
+	unsigned int	flag;
+	int		label;
+} Label_t;
+
+static const Label_t	label[] =
+{
+	{ JCL_LISTAUTOEDITS,	'A' },
+	{ JCL_LISTEXEC,		'E' },
+	{ JCL_LISTINPUTS,	'I' },
+	{ JCL_LISTJOBS,		'J' },
+	{ JCL_LISTOUTPUTS,	'O' },
+	{ JCL_LISTPROGRAMS,	'P' },
+	{ JCL_LISTSCRIPTS,	'S' },
+	{ JCL_LISTVARIABLES,	'V' },
+};
+
+static void
+stats(Sfio_t* sp, Uniq_t* u, int c, int h)
+{
+	register int		i;
+
+	if (h)
+	{
+		for (i = 0; i < elementsof(label); i++)
+			if (u->flags & label[i].flag)
+				sfputc(sp, label[i].label);
+		sfputc(sp, ' ');
+	}
+	sfprintf(sp, "%s", u->name);
+	if (u->value)
+		sfprintf(sp, " %s", u->value);
+	if (c)
+		sfprintf(sp, " %lu", u->count);
+	sfputc(sp, '\n');
+}
+
 /*
  * list uniq name [value] with optional count
  */
@@ -304,22 +352,27 @@ jclstats(Sfio_t* sp, unsigned long flags, Jcldisc_t* disc)
 {
 	register Uniq_t*	u;
 	register int		c;
+	register int		h;
 	register unsigned long	m;
 
 	if (state.uniq)
 	{
 		c = (flags & JCL_LISTCOUNTS) != 0;
-		m = flags & (JCL_LISTINPUTS|JCL_LISTOUTPUTS);
+		m = (flags & JCL_LIST);
+		h = m & (m - 1);
+		if (h && (m & (JCL_LISTJOBS|JCL_LISTSCRIPTS)))
+		{
+			for (u = (Uniq_t*)dtfirst(state.uniq); u; u = (Uniq_t*)dtnext(state.uniq, u))
+				if (u->flags & JCL_LISTJOBS)
+				{
+					u->flags &= ~JCL_LISTSCRIPTS;
+					stats(sp, u, c, h);
+				}
+			m &= ~JCL_LISTJOBS;
+		}
 		for (u = (Uniq_t*)dtfirst(state.uniq); u; u = (Uniq_t*)dtnext(state.uniq, u))
 			if (!m || (u->flags & m))
-			{
-				sfprintf(sp, "%s", u->name);
-				if (u->value)
-					sfprintf(sp, " %s", u->value);
-				if (c)
-					sfprintf(sp, " %lu", u->count);
-				sfputc(sp, '\n');
-			}
+				stats(sp, u, c, h);
 	}
 	if (sfsync(sp))
 	{

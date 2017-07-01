@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -26,10 +24,13 @@
  */
 
 static const char	id[] = "codex";
+static const char	vd[] = "vcodex";
 
 #include <sfio_t.h>
 #include <codex.h>
+#include <vcodex.h>
 #include <namval.h>
+#include <ctype.h>
 
 static int
 copy_close(Codex_t* code)
@@ -61,7 +62,7 @@ Codexstate_t	codexstate =
 	"codex",
 	codex_first,
 	{ CODEX_VERSION },
-	{ {0}, 0, 0, -1, 0, &codex_copy, 0},
+	{ {0}, 0, -1, 0, &codex_copy, 0},
 };
 
 static int
@@ -89,16 +90,12 @@ codex_except(Sfio_t* sp, int op, void* data, Sfdisc_t* disc)
 		}
 		if (op != SF_CLOSING)
 		{
-			if (code->meth->donef)
+			if (code->meth->donef && !(code->flags & CODEX_DONE))
 			{
+				code->flags |= CODEX_DONE;
 				SFDCNEXT(sp, f);
 				r = (*code->meth->donef)(code);
 				SFDCPREV(sp, f);
-			}
-			if (code->dp)
-			{
-				sfclose(code->dp);
-				code->dp = 0;
 			}
 			if (code->flags & CODEX_ACTIVE)
 				code->flags &= ~CODEX_ACTIVE;
@@ -204,7 +201,7 @@ trace_read(Sfio_t* f, void* buf, size_t n, Sfdisc_t* disc)
 	if (!meth->readf)
 		return 0;
 	r = (*meth->readf)(f, buf, n, disc);
-	sfprintf(sfstderr, "codex: %d: %s: read(%I*u,%s)=%I*d\n", CODEX(disc)->index, meth->name, sizeof(n), n, (CODEX(disc)->flags & CODEX_VERBOSE) ? fmtquote(buf, "\"", "\"", r, 0) : "''", sizeof(r), r, buf);
+	sfprintf(sfstderr, "codex: %d: %s: read(%I*u,%s)=%I*d\n", CODEX(disc)->index, meth->name, sizeof(n), n, !r ? "\"\"" : (CODEX(disc)->flags & CODEX_VERBOSE) ? fmtquote(buf, "\"", "\"", r, 0) : "''", sizeof(r), r, buf);
 	return r;
 }
 
@@ -391,10 +388,10 @@ setopt(void* a, const void* p, register int n, register const char* v)
 		switch (((Namval_t*)p)->value)
 		{
 		case OPT_TRACE:
-			codexstate.trace = n ? strdup(v) : (char*)0;
+			codexstate.trace = n ? strdup(*v ? v : "*") : (char*)0;
 			break;
 		case OPT_VERBOSE:
-			codexstate.verbose = n ? strdup(v) : (char*)0;
+			codexstate.verbose = n ? strdup(*v ? v : "*") : (char*)0;
 			break;
 		}
 	return 0;
@@ -409,8 +406,6 @@ save(Codexcache_t* cache, Codex_t* code, const char* name, int namelen, Codexnum
 			(*cache->code->meth->closef)(cache->code);
 		else if (cache->code->data)
 			free(cache->code->data);
-		if (cache->code->dp)
-			sfclose(cache->code->dp);
 		free(cache->code);
 	}
 	cache->code = code;
@@ -429,8 +424,10 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 	register char**		a;
 	register char*		s;
 	register char*		b;
+	register char*		d;
 	register int		c;
 	register int		q;
+	char*			g;
 	char*			v;
 	int			f;
 	int			namelen;
@@ -443,6 +440,7 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 	Codexmeth_t*		trace;
 	char*			arg[CODEX_ARGS];
 	char			can[CODEX_NAME+CODEX_ARGS];
+	char			dat[CODEX_NAME+CODEX_ARGS];
 
 	/*
 	 * check for matching inactive method in the cache
@@ -500,6 +498,7 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 		a = arg;
 		*a++ = (char*)s;
 		*a++ = b = can;
+		d = dat;
 		q = -1;
 		do
 		{
@@ -508,46 +507,76 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 				q = -1;
 			else if (c == '"' || c == '\'')
 				q = c;
-			else if (c == 0 || q < 0 && (c == '-' || c == '+'))
+			else if (c == 0 || q < 0 && (c == '-' || c == '+' || c == '.' && isupper(*s)))
 			{
-				*b++ = 0;
-				v = *(a - 1);
-				if (strneq(v, "PASSPHRASE=", 11))
+				if (c != '.')
+					*b++ = 0;
+				g = 0;
+				if (strneq(s, "PASSPHRASE=", 11))
 				{
-					disc->passphrase = v + 11;
-					b = v;
+					g = s + 11;
+					disc->passphrase = d;
 				}
-				else if (streq(v, "RETAIN"))
+				else if (strneq(s, "RETAIN", 6))
 				{
+					g = s + 6;
 					flags |= CODEX_RETAIN;
-					b = v;
 				}
-				else if (strneq(v, "SIZE=", 5))
+				else if (strneq(s, "SIZE=", 5))
+					size = strtoll(s + 5, &g, 0);
+				else if (strneq(s, "SOURCE=", 7))
 				{
-					size = strtoll(v + 5, NiL, 0);
-					b = v;
+					g = s + 7;
+					disc->source = d;
 				}
-				else if (strneq(v, "SOURCE=", 7))
+				else if (strneq(s, "TRACE", 5))
 				{
-					if (!(code->dp = sfopen(NiL, v + 7, "r")))
-					{
-						if (disc->errorf)
-							(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "%s: cannot read delta source", v + 7);
-						goto bad;
-					}
-					b = v;
-				}
-				else if (streq(v, "TRACE"))
-				{
+					g = s + 5;
 					flags |= CODEX_TRACE;
-					b = v;
 				}
-				else if (streq(v, "VERBOSE"))
+				else if (strneq(s, "VERBOSE", 7))
 				{
+					g = s + 7;
 					flags |= CODEX_VERBOSE;
-					b = v;
 				}
-				else
+				else if (strneq(s, "WINDOW=", 7))
+				{
+					g = s + 7;
+					disc->window = d;
+				}
+				if (g)
+				{
+					while (d < &dat[sizeof(dat)-1])
+					{
+						switch (f = *g++)
+						{
+						case 0:
+							break;
+						case '\'':
+						case '"':
+							if (q < 0)
+								q = f;
+							else
+								*d++ = f;
+							continue;
+						case '^':
+						case ',':
+						case '.':
+						case '-':
+						case '+':
+							if (q < 0)
+								break;
+							/*FALLTHROUGH*/
+						default:
+							*d++ = f;
+							continue;
+						}
+						break;
+					}
+					*d++ = 0;
+					s = g - 1;
+				}
+				if (c != '.')
 				{
 					if (a >= &arg[elementsof(arg)-1] || b >= &can[sizeof(can)-1])
 						break;
@@ -581,7 +610,7 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 				flags |= CODEX_VERBOSE;
 		}
 		if ((flags & (CODEX_TRACE|CODEX_VERBOSE)) && (trace = memdup(&codex_trace, sizeof(codex_trace))))
-			sfprintf(sfstderr, "codex: %d: %s: open(\"%s\",%s,%s)\n", code ? code->index : 0, meth->name, arg[0], (sp->_flags & SF_READ) ? "READ" : "WRITE", (deen & CODEX_DECODE) ? "DECODE" : "ENCODE");
+			sfprintf(sfstderr, "codex: %d: %s: open(\"%s\",%s,%s)\n", code ? code->index : 0, meth->name, arg[0], (sp->_flags & SF_WRITE) ? "WRITE" : "READ", (deen & CODEX_DECODE) ? "DECODE" : "ENCODE");
 		else
 			trace = 0;
 		if (!code)
@@ -618,26 +647,9 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 			if (strneq(v, "SIZE=", 5))
 				size = strtoll(v + 5, NiL, 0);
 			else if (strneq(v, "SOURCE=", 7))
-			{
-				v += 7;
-				if ((b - v) >= sizeof(can))
-				{
-					if (disc->errorf)
-						(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "%-.*s: cannot delta source pathname too long", b - v, v);
-					goto bad;
-				}
-				else
-				{
-					strncopy(can, v, b - v);
-					if (!(code->dp = sfopen(NiL, can, "r")))
-					{
-						if (disc->errorf)
-							(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "%s: cannot read delta source", can);
-						goto bad;
-					}
-				}
-			}
+				disc->source = v + 7;
 		}
+	code->flags &= ~CODEX_DONE;
 	if (cache)
 		code->flags |= CODEX_CACHED|CODEX_ACTIVE;
 	if (code->meth == &codex_copy)
@@ -671,7 +683,7 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 	return serial;
  bad:
 	c = -1;
-	codexpop(sp, NiL, serial);
+	codexpop(sp, serial);
  done:
 	if (code)
 	{
@@ -683,8 +695,6 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 				(*meth->closef)(code);
 			else if (code->data)
 				free(code->data);
-			if (code->dp)
-				sfclose(code->dp);
 			if (code->op)
 			{
 				sfswap(code->op, code->sp);
@@ -698,7 +708,7 @@ push(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmet
 }
 
 /*
- * recursively identify and push sfcode() disciplines
+ * recursively identify and push sfio disciplines
  * to decode the SF_READ stream ip
  *
  * return:
@@ -713,34 +723,57 @@ decodex(Sfio_t* ip, Codexnum_t flags, Codexdisc_t* disc)
 	register Codexmeth_t*	meth;
 	void*			hdr;
 	size_t			siz;
+	char*			s;
+	int			sep;
 	int			serial;
 	int			i;
-	char			buf[CODEX_NAME];
+	char			buf[4*1024];
 
 	sfset(ip, SF_SHARE|SF_PUBLIC, 0);
 	serial = 0;
+	if (disc->version >= 20090704L && disc->identify)
+	{
+		s = &buf[sizeof(buf)];
+		sep = 0;
+	}
+	else
+		s = 0;
 	for (;;)
 	{
 		siz = CODEX_IDENT;
-		if (!(hdr = sfreserve(ip, siz, 1)) && (!(siz = sfvalue(ip)) || !(hdr = sfreserve(ip, siz, 1))))
+		if (!(hdr = sfreserve(ip, siz, SF_LOCKR)) && (!(siz = sfvalue(ip)) || !(hdr = sfreserve(ip, siz, SF_LOCKR))))
 			break;
 		meth = codexid(hdr, siz, buf, sizeof(buf));
 		sfread(ip, hdr, 0);
 		if (!meth)
 			break;
-		if ((i = codex(ip, NiL, buf, flags, disc, meth)) < 0)
+		if ((i = codex(ip, buf, flags, disc, meth)) < 0)
 		{
 			if (serial)
-				codexpop(ip, NiL, serial);
+				codexpop(ip, serial);
 			return -1;
 		}
 		if (i)
 		{
 			serial = i;
-			if (disc->version >= 20090704L && disc->identify)
-				sfprintf(disc->identify, "<%s", meth->name);
+			if (s)
+			{
+				if (!sep)
+					sep = 1;
+				else if (s > buf)
+					*--s = '^';
+				if ((i = strlen(buf)) > (s - buf))
+					i = s - buf;
+				if (i > 0)
+				{
+					s -= i;
+					memcpy(s, buf, i);
+				}
+			}
 		}
 	}
+	if (s && (siz = &buf[sizeof(buf)] - s))
+		sfwrite(disc->identify, s, siz);
 	return serial;
 }
 
@@ -752,50 +785,82 @@ typedef struct Part_s
 } Part_t;
 
 /*
- * push the codex method composition name onto ip/op
+ * push the codex method composition name onto sp
  */
 
 int
-codex(Sfio_t* ip, Sfio_t* op, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmeth_t* meth)
+codex(Sfio_t* sp, const char* name, Codexnum_t flags, Codexdisc_t* disc, Codexmeth_t* meth)
 {
 	register char*		s;
 	register Part_t*	p;
 	register int		c;
 	register int		q;
+	int			n;
+	int			x;
+	int			y;
 	char*			m;
+	char*			t;
+	char*			u;
+	char*			v;
 	Part_t*			b;
 	Part_t*			e;
-	Codexnum_t		f;
-	Codexnum_t		decode;
-	Codexnum_t		encode;
-	int			invert;
-	Part_t			part[256];
+	Part_t			part[1024];
 
 	if (!codexstate.initialized)
 	{
 		codexstate.initialized = 1;
 		stropt(getenv("CODEX_OPTIONS"), options, sizeof(*options), setopt, NiL);
 	}
-	flags &= CODEX_INVERT|CODEX_RETAIN|CODEX_SERIAL|CODEX_TRACE|CODEX_VERBOSE;
+	flags &= CODEX_DECODE|CODEX_ENCODE|CODEX_RETAIN|CODEX_SERIAL|CODEX_TRACE|CODEX_VERBOSE;
 	if (!(flags & CODEX_SERIAL))
 	{
 		flags |= CODEX_SERIAL;
 		if (++codexstate.serial < 0)
 			codexstate.serial = 1;
 	}
+	switch (flags & (CODEX_DECODE|CODEX_ENCODE))
+	{
+	case CODEX_DECODE|CODEX_ENCODE:
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, 2, "CODEX_DECODE and CODEX_ENCODE are mutually exclusive");
+		return -1;
+		break;
+	case CODEX_DECODE:
+		if (!(sfset(sp, 0, 0) & SF_READ))
+		{
+			if (disc->errorf)
+				(*disc->errorf)(NiL, disc, 2, "CODEX_DECODE on non-readble stream");
+			return -1;
+		}
+		break;
+	case CODEX_ENCODE:
+		if (!(sfset(sp, 0, 0) & SF_WRITE))
+		{
+			if (disc->errorf)
+				(*disc->errorf)(NiL, disc, 2, "CODEX_DECODE on non-writable stream");
+			return -1;
+		}
+		break;
+	case 0:
+		if (sfset(sp, 0, 0) & SF_READ)
+			flags |= CODEX_DECODE;
+		else
+			flags |= CODEX_ENCODE;
+		break;
+	}
 	if (!disc)
 		disc = &codexstate.disc;
 	if (!(s = (char*)name) || !s[0] || s[0] == '-' && !s[1])
 	{
 		if (!meth)
-			return ip ? decodex(ip, flags, disc) : -1;
+			return (flags & CODEX_DECODE) ? decodex(sp, flags, disc) : -1;
 		s = (char*)(name = meth->name);
 	}
 
 	/*
 	 * split the method name into component parts
 	 * and verify that each part is a known method
-	 * CODEX_INVERT is dispatched here
+	 * vcodex parts accumulate into a single unit
 	 */
 
 	if (!(s = strdup(s)))
@@ -805,42 +870,17 @@ codex(Sfio_t* ip, Sfio_t* op, const char* name, Codexnum_t flags, Codexdisc_t* d
 		return -1;
 	}
 	m = s;
-	if (flags & CODEX_INVERT)
-	{
-		flags &= ~CODEX_INVERT;
-		invert = -1;
-		decode = CODEX_ENCODE;
-		encode = CODEX_DECODE;
-		b = &part[elementsof(part)-1];
-		e = &part[0];
-	}
-	else
-	{
-		invert = 1;
-		decode = CODEX_DECODE;
-		encode = CODEX_ENCODE;
-		b = &part[0];
-		e = &part[elementsof(part)-1];
-	}
-	p = b;
-	if (*s == '<')
-	{
-		s++;
-		p->flags = decode;
-	}
-	else if (*s == '>')
-	{
-		s++;
-		p->flags = encode;
-	}
-	else
-		p->flags = 0;
-	p->name = s;
+	p = b = &part[0];
+	e = &part[elementsof(part)-1];
+	p->flags = flags;
+	p->name = t = s;
 	q = 0;
+	u = 0;
+	v = 0;
 	do
 	{
 		if (!(c = *s++))
-			;
+			/* end of composition */;
 		else if (c == q)
 		{
 			q = 0;
@@ -853,24 +893,82 @@ codex(Sfio_t* ip, Sfio_t* op, const char* name, Codexnum_t flags, Codexdisc_t* d
 			q = c;
 			continue;
 		}
-		else if (c == '<')
-			f = decode;
-		else if (c == '>')
-			f = encode;
-		else if (c == '|' || c == '^')
-			f = 0;
+		else if (c == '^' || c == ',' || c == '|')
+			/* end of part */;
+		else if (c == '-' || c == '+' || c == '.' || c == '=')
+		{
+			if (!u)
+				u = s - 1;
+			continue;
+		}
 		else
 			continue;
 		*(s - 1) = 0;
-		if (codexcmp(p->name, "copy"))
+		if (codexcmp(t, "copy"))
 		{
+			if (u)
+			{
+				y = *u == '.' || *u == '=';
+				x = *u;
+				*u = 0;
+			}
+			else
+				y = 1;
+
+			/*
+			 * '.' arg separator differentiates vcodex method from codex method by same name
+			 */
+
+			y = y && (vcgetmeth(t, 0) || vcgetalias(t, NiL, 0));
+			if (u)
+			{
+				*u = x;
+				u = 0;
+			}
+			if (y)
+			{
+				if (v)
+					*(t - 1) = '^';
+				else
+					v = t;
+				if (c)
+				{
+					t = s;
+					continue;
+				}
+			}
+			if (v)
+			{
+				if (!(p->meth = codexmeth(vd)))
+				{
+					if (disc->errorf)
+						(*disc->errorf)(NiL, disc, 2, "%s: unknown method", p->name);
+					free(m);
+					return -1;
+				}
+				p->flags = flags;
+				p->name = v;
+				v = 0;
+				if (y && !c)
+					break;
+				if (p == e)
+				{
+					if (disc->errorf)
+						(*disc->errorf)(NiL, disc, 2, "%s: too many method components -- %d max", name, elementsof(part));
+					free(m);
+					return -1;
+				}
+				p++;
+				p->name = t;
+			}
 			if (!(p->meth = codexmeth(p->name)))
 			{
 				if (disc->errorf)
-					(*disc->errorf)(NiL, disc, 2, "%s: unknown coder", p->name);
+					(*disc->errorf)(NiL, disc, 2, "%s: unknown method", p->name);
 				free(m);
 				return -1;
 			}
+			p->flags = flags;
 			if (!c)
 				break;
 			if (p == e)
@@ -880,139 +978,63 @@ codex(Sfio_t* ip, Sfio_t* op, const char* name, Codexnum_t flags, Codexdisc_t* d
 				free(m);
 				return -1;
 			}
-			p += invert;
+			p++;
 		}
-		p->flags = f;
-		p->name = s;
+		p->name = t = s;
 	} while (c);
 	if (!*b->name)
 	{
 		free(m);
 		return 0;
 	}
-	if (invert < 0)
-	{
-		e = b;
-		b = p;
-	}
-	else
-		e = p;
+	e = p;
 
 	/*
-	 * assign CODEX_DECODE or CODEX_ENCODE to each part and
-	 * verfy that the method supports the assignment
-	 * vcodex methods give us some leeway here
-	 * otherwise CODEX_DECODE must be on the left and
-	 * CODEX_ENCODE must be on the right
-	 * CODEX_INVERT has already been handled in the previous loop
+	 * verify that the method for each part supports CODEX_DECODE or CODEX_ENCODE
 	 */
 
-	f = 0;
-	if (ip)
-		f |= CODEX_DECODE;
-	if (op)
-		f |= CODEX_ENCODE;
-	p = b;
-	for (;;)
-	{
-		if (p->flags == CODEX_ENCODE || p->flags != CODEX_DECODE && !(f & CODEX_DECODE))
-		{
-			p->flags = CODEX_ENCODE;
-			f &= ~CODEX_DECODE;
-		}
-		else
-			p->flags = CODEX_DECODE;
-		if (!(p->flags & p->meth->flags) || !p->meth->vcmeth && !(p->flags & f))
+	for (p = e; p >= b; p--)
+		if (!((p->flags & (CODEX_DECODE|CODEX_ENCODE)) & p->meth->flags))
 		{
 			if (disc->errorf)
 			{
 				if (e != &part[0])
-					(*disc->errorf)(NiL, disc, 2, "%s: %s: cannot %s", name, p->name, p->flags == CODEX_DECODE ? ERROR_translate(NiL, NiL, id, "decode") : ERROR_translate(NiL, NiL, id, "encode"));
+					(*disc->errorf)(NiL, disc, 2, "%s: %s: cannot %s", name, p->name, (p->flags & CODEX_DECODE) ? ERROR_translate(NiL, NiL, id, "decode") : ERROR_translate(NiL, NiL, id, "encode"));
 				else
-					(*disc->errorf)(NiL, disc, 2, "%s: cannot %s", p->name, p->flags == CODEX_DECODE ? ERROR_translate(NiL, NiL, id, "decode") : ERROR_translate(NiL, NiL, id, "encode"));
+					(*disc->errorf)(NiL, disc, 2, "%s: cannot %s", p->name, (p->flags & CODEX_DECODE) ? ERROR_translate(NiL, NiL, id, "decode") : ERROR_translate(NiL, NiL, id, "encode"));
 			}
 			free(m);
 			return -1;
 		}
-		if (p == e)
-			break;
-		p++;
-	}
-#if 0
-	p = b;
-	for (;;)
-	{
-		error(-1, "AHA codex [%d] %u %s \"%s\"", p - b, p->flags, p->meth->name, p->name);
-		if (p == e)
-			break;
-		p++;
-	}
-#endif
 
 	/*
-	 * input decode method sfio disciplines pushed from left to right
+	 * push the sfio disciplines
 	 */
 
-	p = b;
-	for (;;)
-	{
-		if (p->flags == CODEX_ENCODE)
-			break;
-		if (push(ip, p->name, CODEX_DECODE|flags, disc, p->meth) < 0)
+	for (p = e; p >= b; p--)
+		if (push(sp, p->name, flags, disc, p->meth) < 0)
 		{
 			free(m);
-			codexpop(ip, op, codexstate.serial);
+			codexpop(sp, codexstate.serial);
 			return -1;
 		}
-		if (p == e)
-			break;
-		p++;
-	}
-
-	/*
-	 * output encode method sfio disciplines pushed from right to left
-	 */
-
-	p = e;
-	for (;;)
-	{
-		if (p->flags == CODEX_DECODE)
-			break;
-		if (push(op, p->name, CODEX_ENCODE|flags, disc, p->meth) < 0)
-		{
-			free(m);
-			codexpop(ip, op, codexstate.serial);
-			return -1;
-		}
-		if (p == b)
-			break;
-		p--;
-	}
 	free(m);
 	return codexstate.serial;
 }
 
 /*
- * pop contiguous ip and op codex disciplines matching serial number
+ * pop contiguous sp codex disciplines matching serial number
  * serial==0 pops all contiguous codex disciplines
  */
 
 int
-codexpop(register Sfio_t* ip, register Sfio_t* op, int serial)
+codexpop(register Sfio_t* sp, int serial)
 {
 	int	pop;
 
 	pop = 0;
 	if (serial >= 0)
-	{
-		if (ip)
-			while (ip->disc && (ip->disc->exceptf == codex_except || ip->disc->exceptf == trace_except) && (!serial || CODEX(ip->disc)->serial == serial))
-				if (sfdisc(ip, SF_POPDISC))
-					pop++;
-		if (op)
-			while (op->disc && (op->disc->exceptf == codex_except || op->disc->exceptf == trace_except) && (!serial || CODEX(op->disc)->serial == serial))
-				if (sfdisc(op, SF_POPDISC))
-					pop++;
-	}
+		while (sp->disc && (sp->disc->exceptf == codex_except || sp->disc->exceptf == trace_except) && (!serial || CODEX(sp->disc)->serial == serial) && sfdisc(sp, SF_POPDISC))
+			pop++;
 	return pop;
 }

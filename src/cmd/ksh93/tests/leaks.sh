@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 builtin vmstate 2>/dev/null || exit 0
@@ -67,6 +67,11 @@ done
 
 data="(v=;sid=;di=;hi=;ti='1328244300';lv='o';id='172.3.161.178';var=(k='conn_num._total';u=;fr=;l='Number of Connections';n='22';t='number';))"
 read -C stat <<< "$data"
+for ((i=0; i < 1; i++))
+do	print -r -- "$data"
+done |	while read -u$n -C stat
+	do	:
+	done	{n}<&0-
 a=0$(vmstate --format='+%(size)u')
 for ((i=0; i < 500; i++))
 do	print -r -- "$data"

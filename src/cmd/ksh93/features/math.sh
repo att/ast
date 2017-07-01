@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,13 +14,13 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 : generate the ksh math builtin table
 : include math.tab
 
-# @(#)math.sh (AT&T Research) 2012-06-13
+# @(#)math.sh (AT&T Research) 2013-08-11
 
 command=$0
 iffeflags="-n -v"
@@ -54,13 +54,23 @@ ifs=$IFS
 libs=
 names=
 nums=
-while	read type args name aka
+while	read type mask args name aka
 do	case $type in
-	[fix])	names="$names $name"
+	[fix])	case $args in
+		[0123456789]*)
+			;;
+		*)	aka=$name
+			name=$args
+			args=$mask
+			mask=0
+			;;
+		esac
+		names="$names $name"
 		libs="$libs,$name"
 		case $_typ_long_double in
 		1)	libs="$libs,${name}l" ;;
 		esac
+		libs="$libs,${name}f"
 		for a in $aka
 		do	case $a in
 			'{'*)	break
@@ -75,6 +85,7 @@ do	case $type in
 					case $_typ_long_double in
 					1)	libs="$libs,${1}l" ;;
 					esac
+					libs="$libs,${1}f"
 					;;
 				esac
 				shift
@@ -91,7 +102,7 @@ do	case $type in
 				;;
 			esac
 		done
-		eval TYPE_$name='$type' ARGS_$name='$args' AKA_$name='$aka'
+		eval TYPE_$name='$type' MASK_$name='$mask' ARGS_$name='$args' AKA_$name='$aka'
 		;;
 	esac
 done
@@ -130,7 +141,6 @@ echo "#include <math.h>"
 case $_hdr_ieeefp in
 1)	echo "#include <ieeefp.h>" ;;
 esac
-echo
 
 : generate the intercept functions and table entries
 
@@ -139,11 +149,89 @@ nl='
 ht='	'
 tab=
 for name in $names
-do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name} aka='$'AKA_${name}
+do	eval x='$'_lib_${name}l y='$'_lib_${name} z='$'_lib_${name}f r='$'TYPE_${name} M='$'MASK_${name} a='$'ARGS_${name} aka='$'AKA_${name}
 	case $r in
 	i)	L=int R=1 ;;
 	x)	L=Sfdouble_t R=4 ;;
 	*)	L=Sfdouble_t R=0 ;;
+	esac
+	# some identifiers can't be functions in C but can in ksh #
+	case $name in
+	float|int)	x=0 y=1 ;;
+	esac
+	case $M in
+	0)	;;
+	*)	f=$name
+		case $x:$y:$z in
+		::)	;;
+		*)	tab="$tab$nl$ht\"\\${M}${R}${a}${f}\",$ht(Math_f)local_$f,"
+			code="${nl}static Sfdouble_t local_$f"
+			sep="("
+			for i in 1 2 3 4 5 6 7
+			do	code="${code}${sep}int type_${i}, Sfdouble_t arg_${i}"
+				case $i in
+				$a)	break ;;
+				esac
+				sep=", "
+			done
+			code="${code})${nl}{${nl}${ht}switch (type_1)${nl}${ht}{${nl}"
+			case $z in
+			1)	args=
+				argsep=
+				for i in 1 2 3 4 5 6 7
+				do	case $i:$M in
+					1:[13]|2:[23])
+						args="${args}${argsep}(float)arg_${i}"
+						;;
+					*)	args="${args}${argsep}arg_${i}"
+						;;
+					esac
+					case $i in
+					$a)	break ;;
+					esac
+					argsep=", "
+				done
+				code="${code}${ht}case 1: return ${f}f(${args});${nl}"
+				;;
+			esac
+			case $y in
+			1)	args=
+				argsep=
+				for i in 1 2 3 4 5 6 7
+				do	case $i:$M in
+					1:[13]|2:[23])
+						args="${args}${argsep}(double)arg_${i}"
+						;;
+					*)	args="${args}${argsep}arg_${i}"
+						;;
+					esac
+					case $i in
+					$a)	break ;;
+					esac
+					argsep=", "
+				done
+				code="${code}${ht}case 2: return ${f}(${args});${nl}"
+				;;
+			esac
+			case $z in
+			1)	args=
+				argsep=
+				for i in 1 2 3 4 5 6 7
+				do	args="${args}${argsep}arg_${i}"
+					case $i in
+					$a)	break ;;
+					esac
+					argsep=", "
+				done
+				code="${code}${ht}case 3: return ${f}l(${args});${nl}"
+				;;
+			esac
+			code="${code}${ht}}${nl}${ht}return 0;${nl}}"
+			echo "${code}"
+			;;
+		esac
+		continue
+		;;
 	esac
 	F=local_$name
 	case $x:$y in
@@ -153,7 +241,10 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 		;;
 	*:1)	f=${name}
 		t=double
-		local=$_typ_long_double
+		case $name in
+		float|int)	local=1 ;;
+		*)		local=$_typ_long_double ;;
+		esac
 		;;
 	*)	body=
 		for k in $aka
@@ -197,7 +288,7 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 				case $y in
 				'')	;;
 				*)	r=int R=1
-					echo "static $r $F(Sfdouble_t a1) { $r q = $f(a1); return $y; }"
+					echo "${nl}static $r $F(Sfdouble_t a1) { $r q = $f(a1); return $y; }"
 					tab="$tab$nl$ht\"\\0${R}${a}${name}\",$ht(Math_f)${F},"
 					break
 					;;
@@ -206,7 +297,7 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 			esac
 		done
 		case $body in
-		?*)	code="static $L $F("
+		?*)	code="${nl}static $L $F("
 			sep=
 			ta=
 			tc=
@@ -246,7 +337,7 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 	case $d:$m:$n in
 	1:*:*|*:1:*)
 		;;
-	*:*:1)	code="extern $r $f("
+	*:*:1)	code="${nl}extern $r $f("
 		sep=
 		for p in 1 2 3 4 5 6 7
 		do	case $p:$f in
@@ -265,7 +356,7 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 	case $local:$m:$n:$d in
 	1:*:*:*|*:1:*:*|*:*:1:)
 		args=
-		code="static $L local_$f("
+		code="${nl}static $L local_$f("
 		sep=
 		for p in 1 2 3 4 5 6 7 8 9
 		do	args="$args${sep}a$p"
@@ -279,7 +370,15 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 			esac
 			sep=","
 		done
-		code="$code){return $f($args);}"
+		code="$code)"
+
+		# catch functions not in the math lib here #
+
+		case $f in
+		float)	code="$code{return $args;}" ;;
+		int)	code="$code{return ($args < LDBL_LLONG_MIN || $args > LDBL_ULLONG_MAX) ? (Sfdouble_t)0 : ($args < 0) ? (Sfdouble_t)((Sflong_t)$args) : (Sfdouble_t)((Sfulong_t)$args);}" ;;
+		*)	code="$code{return $f($args);}" ;;
+		esac
 		echo "$code"
 		f=local_$f
 		;;
@@ -291,7 +390,7 @@ do	eval x='$'_lib_${name}l y='$'_lib_${name} r='$'TYPE_${name} a='$'ARGS_${name}
 		*=*)	continue
 			;;
 		esac
-		tab="$tab$nl$ht\"\\0${R}${a}${x}\",$ht(Math_f)$f,"
+		tab="$tab$nl$ht\"\\${M}${R}${a}${x}\",$ht(Math_f)$f,"
 	done
 done
 tab="$tab$nl$ht\"\",$ht$ht(Math_f)0"
@@ -299,9 +398,15 @@ tab="$tab$nl$ht\"\",$ht$ht(Math_f)0"
 cat <<!
 
 /*
- * first byte is two-digit octal number.  Last digit is number of args
- * first digit is 0 if return value is double, 1 for integer
+ * the first byte is a three-digit octal number <mask><return><argc>:
+ *
+ *	<mask>		typed arg bitmask counting from 1
+ *	<return>	function return type 0:double 1:integer
+ *	<argc>		number of args
+ *
+ * NOTE: swap <mask> and <return> to handle up to 3 typed args instead of just 2
  */
+
 const struct mathtab shtab_math[] =
 {$tab
 };

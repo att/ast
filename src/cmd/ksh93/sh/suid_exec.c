@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -286,6 +286,8 @@ static void error_exit(const char *message)
 }
 
 
+#ifndef eaccess
+
 /*
  * This version of access checks against effective uid and effective gid
  */
@@ -319,7 +321,7 @@ int eaccess(register const char *name, register int mode)
 				if((maxgroups=getgroups(0,groups)) < 0)
 				{
 					/* pre-POSIX system */
-					maxgroups=NGROUPS_MAX;
+					maxgroups=getconf("NGROUPS_MAX");
 				}
 			}
 			groups = (gid_t*)malloc((maxgroups+1)*sizeof(gid_t));
@@ -339,6 +341,8 @@ int eaccess(register const char *name, register int mode)
 	}
 	return(-1);
 }
+
+#endif
 
 #ifdef _lib_setreuid
 static void setids(int mode,int owner,int group)

@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1994-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1994-2012 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                 Glenn Fowler <gsf@research.att.com>                  #
+#               Glenn Fowler <glenn.s.fowler@gmail.com>                #
 #                                                                      #
 ########################################################################
 : replicate directory hierarchies
@@ -24,7 +24,7 @@ case `(getopts '[-][123:xyz]' opt --xyz; echo 0$opt) 2>/dev/null` in
 0123)	ARGV0="-a $COMMAND"
 	USAGE=$'
 [-?
-@(#)$Id: ditto (AT&T Labs Research) 2010-11-22 $
+@(#)$Id: ditto (AT&T Labs Research) 2012-10-25 $
 ]
 '$USAGE_LICENSE$'
 [+NAME?ditto - replicate directory hierarchies]
@@ -451,7 +451,7 @@ then
 	} | {
 		if [[ $dst_host ]]
 		then	
-			$remote $dst_user $dst_host "{ test ! -f .profile || . ./.profile ;} && { test -d \"$dst_dir\" || mkdir -p \"$dst_dir\" ;} && cd \"$dst_dir\" && gunzip | $pax $paxreadflags"
+			$remote $dst_user $dst_host "{ test ! -f .profile || { DITTO_OPTIONS=dst=1; . ./.profile ;} ;} && { test -d \"$dst_dir\" || mkdir -p \"$dst_dir\" ;} && cd \"$dst_dir\" && gunzip | $pax $paxreadflags"
 		else
 			( { test -d "$dst_dir" || mkdir -p "$dst_dir" ;} && cd "$dst_dir" && gunzip | $pax $paxreadflags )
 		fi

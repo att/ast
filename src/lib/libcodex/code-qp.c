@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -291,8 +289,7 @@ Codexmeth_t	codex_qp =
 {
 	"qp",
 	"quoted printable encoding.",
-	"[+(version)?codex-qp (AT&T Research) 1998-11-11]"
-	"[+(author)?Glenn Fowler <gsf@research.att.com>]",
+	"[-?\n@(#)$Id: codex-qp (AT&T Research) 1998-11-11 $\n]" USAGE_LICENSE,
 	CODEX_DECODE|CODEX_ENCODE|CODEX_UU,
 	0,
 	0,

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -27,7 +27,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: cut (AT&T Research) 2010-08-11 $\n]"
+"[-?\n@(#)$Id: cut (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?cut - cut out selected columns or fields of each line of a file]"
 "[+DESCRIPTION?\bcut\b bytes, characters, or character-delimited fields "
@@ -96,6 +96,7 @@ typedef struct Cut_s
 	int		reclen;
 	Delim_t		wdelim;
 	Delim_t		ldelim;
+	Mbstate_t	q;
 	unsigned char	space[UCHAR_MAX+1];
 	int		list[2];	/* NOTE: must be last member */
 } Cut_t;
@@ -285,7 +286,7 @@ cutcols(Cut_t* cut, Sfio_t* fdin, Sfio_t* fdout)
 				{
 					if (!(*s & 0x80))
 						z = 1;
-					else if ((z = mbnsize(s, w)) <= 0)
+					else if ((z = mbtsize(s, w, &cut->q)) <= 0)
 					{
 						if (s == bp && xx)
 						{
@@ -315,7 +316,7 @@ cutcols(Cut_t* cut, Sfio_t* fdin, Sfio_t* fdout)
 				while (w > 0 && ncol > 0)
 				{
 					ncol--;
-					if (!(*s & 0x80) || (z = mbnsize(s, w)) <= 0)
+					if (!(*s & 0x80) || (z = mbtsize(s, w, &cut->q)) <= 0)
 						z = 1;
 					s += z;
 					w -= z;
@@ -372,6 +373,7 @@ cutfields(Cut_t* cut, Sfio_t* fdin, Sfio_t* fdout)
 	register int nodelim, empty, inword=0;
 	register unsigned char *ep;
 	unsigned char *bp, *first;
+	char *tp;
 	int lastchar;
 	wchar_t w;
 	Sfio_t *fdtmp = 0;
@@ -412,68 +414,62 @@ cutfields(Cut_t* cut, Sfio_t* fdin, Sfio_t* fdout)
 							continue;
 						case SP_WIDE:
 							wp = --cp;
-							while ((c = mb2wc(w, cp, ep - cp)) <= 0)
+							while ((c = mbchar(&w, cp, ep - cp, &cut->q)), mberrno(&cut->q) == E2BIG)
 							{
-								/* mb char possibly spanning buffer boundary -- fun stuff */
-								if ((ep - cp) < mbmax())
-								{
-									int	i;
-									int	j;
-									int	k;
+								int	i;
+								int	j;
+								int	k;
 
-									if (lastchar != cut->eob)
-									{
-										*ep = lastchar;
-										if ((c = mb2wc(w, cp, ep - cp)) > 0)
-											break;
-									}
-									if (copy)
-									{
-										empty = 0;
-										if ((c = cp - copy) > 0 && sfwrite(fdout, (char*)copy, c) < 0)
-											goto failed;
-									}
-									for (i = 0; i <= (ep - cp); i++)
-										mb[i] = cp[i];
-									if (!(bp = (unsigned char*)sfreserve(fdin, SF_UNBOUND, -1)) || (c = sfvalue(fdin)) <= 0)
+								/* mb char spanning buffer boundary -- fun stuff */
+
+								cp = wp;
+								if (lastchar != cut->eob)
+								{
+									*ep = lastchar;
+									if ((c = mbchar(&w, cp, ep - cp + 1, &cut->q)), mberrno(&cut->q) != E2BIG)
+										break;
+								}
+								if (copy)
+								{
+									empty = 0;
+									if ((c = cp - copy) > 0 && sfwrite(fdout, (char*)copy, c) < 0)
 										goto failed;
-									cp = bp;
-									ep = cp + --c;
-									if ((lastchar = cp[c]) != cut->eob)
-										*ep = cut->eob;
-									j = i;
-									k = 0;
-									while (j < mbmax())
-										mb[j++] = cp[k++];
-									if ((c = mb2wc(w, (char*)mb, j)) <= 0)
-									{
-										c = i;
-										w = 0;
-									}
-									first = bp = cp += c - i;
-									if (copy)
-									{
-										copy = bp;
-										if (w == cut->ldelim.chr)
-											lastchar = cut->ldelim.chr;
-										else if (w != cut->wdelim.chr)
-										{
-											empty = 0;
-											if (sfwrite(fdout, (char*)mb, c) < 0)
-												goto failed;
-										}
-									}
-									c = 0;
+								}
+								for (i = 0; i <= (ep - cp); i++)
+									mb[i] = cp[i];
+								if (!(bp = (unsigned char*)sfreserve(fdin, SF_UNBOUND, -1)) || (c = sfvalue(fdin)) <= 0)
+									goto failed;
+								cp = bp;
+								ep = cp + --c;
+								if ((lastchar = cp[c]) != cut->eob)
+									*ep = cut->eob;
+								j = i;
+								k = 0;
+								while (j < mbmax())
+									mb[j++] = cp[k++];
+								tp = (char*)mb;
+								w = mbchar(&w, tp, j, &cut->q);
+								if (mberrno(&cut->q))
+								{
+									w = 0;
+									c = i;
 								}
 								else
+									c = tp - (char*)mb;
+								first = bp = cp += c - i;
+								if (copy)
 								{
-									w = *cp;
-									c = 1;
+									copy = bp;
+									if (w == cut->ldelim.chr)
+										lastchar = cut->ldelim.chr;
+									else if (w != cut->wdelim.chr)
+									{
+										empty = 0;
+										if (sfwrite(fdout, (char*)mb, c) < 0)
+											goto failed;
+									}
 								}
-								break;
 							}
-							cp += c;
-							c = w;
 							if (c == cut->wdelim.chr)
 							{
 								c = SP_WORD;
@@ -577,6 +573,8 @@ b_cut(int argc, char** argv, Shbltin_t* context)
 	Delim_t			wdelim;
 	Delim_t			ldelim;
 	size_t			reclen = 0;
+	wchar_t			w;
+	Mbstate_t		q;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	wdelim.chr = '\t';
@@ -606,7 +604,8 @@ b_cut(int argc, char** argv, Shbltin_t* context)
 			if (mbwide())
 			{
 				s = opt_info.arg;
-				ldelim.chr = mbchar(s);
+				mbinit(&q);
+				ldelim.chr = mbchar(&w, s, MB_LEN_MAX, &q);
 				if ((n = s - opt_info.arg) > 1)
 				{
 					ldelim.len = n;
@@ -621,7 +620,8 @@ b_cut(int argc, char** argv, Shbltin_t* context)
 			if (mbwide())
 			{
 				s = opt_info.arg;
-				wdelim.chr = mbchar(s);
+				mbinit(&q);
+				wdelim.chr = mbchar(&w, s, MB_LEN_MAX, &q);
 				if ((n = s - opt_info.arg) > 1)
 				{
 					wdelim.len = n;

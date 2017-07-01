@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(_UWIN) && defined(_BLD_ast)
@@ -27,136 +27,101 @@ void _STUB_vmpool(){}
 
 #include	"vmhdr.h"
 
-#define POOLFREE	0x55555555L	/* block free indicator	 */
-
 /*	Method for pool allocation.
 **	All elements in a pool have the same size.
-**	The following fields of Vmdata_t are used as:
-**		pool:	size of a block.
-**		free:	list of free blocks.
 **
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+**	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94, 06/22/2012.
 */
 
+/* data structures to keep pool elements */
+#define FOOBAR	0xf00ba5
+typedef struct _pool_s
+{	struct _pool_s*	next;	/* linked list		*/
+	unsigned int	foo;	/* free indicator	*/
+} Pool_t;
+
+typedef struct _vmpool_s
+{	Vmdata_t	vmdt;
+	ssize_t		size;	/* size of a block	*/
+	ssize_t		nblk;	/* total #blocks	*/
+	Pool_t*		free;	/* list of free blocks	*/
+} Vmpool_t;
+
+#define POOLSIZE(sz)	ROUND(ROUND((sz), sizeof(Pool_t)), ALIGN)
+
+#ifdef DEBUG
+static int	N_pool;	/* counter for Vmpool calls	*/
+#endif
+
 #if __STD_C
-static Void_t* poolalloc(Vmalloc_t* vm, reg size_t size, int local)
+static Void_t* poolalloc(Vmalloc_t* vm, size_t size, int local)
 #else
 static Void_t* poolalloc(vm, size, local )
 Vmalloc_t*	vm;
-reg size_t	size;
+size_t		size;
 int		local;
 #endif
 {
-	reg Block_t	*tp, *next;
-	reg size_t	s;
-	reg Seg_t	*seg;
-	reg Vmdata_t	*vd = vm->data;
+	Pool_t		*pl, *last, *list, *free;
+	Block_t		*blk;
+	Vmuchar_t	*dt, *enddt;
+	Vmpool_t	*pool = (Vmpool_t*)vm->data;
 
 	if(size <= 0)
 		return NIL(Void_t*);
 
-	if(size != vd->pool)
-	{	if(vd->pool <= 0)
-			vd->pool = size;
+	if(size != pool->size )
+	{	if(pool->size <= 0) /* first time */
+			pool->size = size;
 		else	return NIL(Void_t*);
 	}
 
-	SETLOCK(vm, local);
-
-	if((tp = vd->free) ) /* there is a ready free block */
-	{	vd->free = SEGLINK(tp);
-		goto done;
+	list = last = NIL(Pool_t*);
+	for(;;) /* grab the free list */
+	{	if(!(list = pool->free) )
+			break;
+		if(asocasptr(&pool->free, list, NIL(Block_t*)) == list)
+			break;
 	}
 
-	size = ROUND(size,ALIGN);
+	if(!list) /* need new memory */
+	{	size = POOLSIZE(pool->size);
+		if(!(blk = (*_Vmsegalloc)(vm, NIL(Block_t*), ROUND(2*size, pool->vmdt.incr), VM_SEGALL|VM_SEGEXTEND)) )
+			return NIL(Void_t*);
 
-	/* look thru all segments for a suitable free block */
-	for(tp = NIL(Block_t*), seg = vd->seg; seg; seg = seg->next)
-	{	if((tp = seg->free) &&
-		   (s = (SIZE(tp) & ~BITS) + sizeof(Head_t)) >= size )
-			goto got_blk;
-	}
-
-	if((tp = (*_Vmextend)(vm,ROUND(size,vd->incr),NIL(Vmsearch_f))) )
-	{	s = (SIZE(tp) & ~BITS) + sizeof(Head_t);
-		seg = SEG(tp);
-		goto got_blk;
-	}
-	else	goto done;
-
-got_blk: /* if get here, (tp, s, seg) must be well-defined */
-	next = (Block_t*)((Vmuchar_t*)tp+size);
-	if((s -= size) <= (size + sizeof(Head_t)) )
-	{	for(; s >= size; s -= size)
-		{	SIZE(next) = POOLFREE;
-			SEGLINK(next) = vd->free;
-			vd->free = next;
-			next = (Block_t*)((Vmuchar_t*)next + size);
+		dt = DATA(blk); enddt = dt + BDSZ(blk);
+		list = NIL(Pool_t*); last = (Pool_t*)dt;
+		for(; dt+size <= enddt; dt += size)
+		{	pl = (Pool_t*)dt;
+			pl->foo = FOOBAR;
+			pl->next = list; list = pl;
 		}
-		seg->free = NIL(Block_t*);
-	}
-	else
-	{	SIZE(next) = s - sizeof(Head_t);
-		SEG(next) = seg;
-		seg->free = next;
+		asoaddsize(&pool->nblk, BDSZ(blk)/size);
 	}
 
-done:
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace && tp)
-		(*_Vmtrace)(vm,NIL(Vmuchar_t*),(Vmuchar_t*)tp,vd->pool,0);
+	pl = list; /* grab 1 then reinsert the rest */
+	if((list = list->next) )
+	{	if(asocasptr(&pool->free, NIL(Block_t*), list) != NIL(Block_t*))
+		{	if(!last)
+				for(last = list;; last = last->next)
+					if(!last->next)
+						break;
+			for(;;)
+			{	last->next = free = pool->free;
+				if(asocasptr(&pool->free, free, list) == free)
+					break;
+			}
+		}
+	}
 
-	CLRLOCK(vm, local);
+	if(!local && pl && _Vmtrace)
+		(*_Vmtrace)(vm, NIL(Vmuchar_t*), (Vmuchar_t*)pl, pool->size, 0);
 
-	return (Void_t*)tp;
+	return (Void_t*)pl;
 }
 
 #if __STD_C
-static long pooladdr(Vmalloc_t* vm, reg Void_t* addr, int local)
-#else
-static long pooladdr(vm, addr, local)
-Vmalloc_t*	vm;
-reg Void_t*	addr;
-int		local;
-#endif
-{
-	Block_t		*bp, *tp;
-	Vmuchar_t	*laddr, *baddr;
-	size_t		size;
-	Seg_t		*seg;
-	long		offset;
-	Vmdata_t*	vd = vm->data;
-
-	SETLOCK(vm, local);
-
-	offset = -1L;
-	for(seg = vd->seg; seg; seg = seg->next)
-	{	laddr = (Vmuchar_t*)SEGBLOCK(seg);
-		baddr = seg->baddr-sizeof(Head_t);
-		if((Vmuchar_t*)addr < laddr || (Vmuchar_t*)addr >= baddr)
-			continue;
-
-		/* the block that has this address */
-		size = ROUND(vd->pool,ALIGN);
-		tp = (Block_t*)(laddr + (((Vmuchar_t*)addr-laddr)/size)*size );
-
-		/* see if this block has been freed */
-		if(SIZE(tp) == POOLFREE) /* may be a coincidence - make sure */
-			for(bp = vd->free; bp; bp = SEGLINK(bp))
-				if(bp == tp)
-					goto done;
-
-		offset = (Vmuchar_t*)addr - (Vmuchar_t*)tp;
-		goto done;
-	}
-
-done :
-	CLRLOCK(vm, local);
-
-	return offset;
-}
-
-#if __STD_C
-static int poolfree(reg Vmalloc_t* vm, reg Void_t* data, int local )
+static int poolfree(Vmalloc_t* vm, Void_t* data, int local )
 #else
 static int poolfree(vm, data, local)
 Vmalloc_t*	vm;
@@ -164,26 +129,24 @@ Void_t*		data;
 int		local;
 #endif
 {
-	Block_t		*bp;
-	Vmdata_t	*vd = vm->data;
+	Pool_t		*pl, *free;
+	Vmpool_t	*pool = (Vmpool_t*)vm->data;
 
 	if(!data)
 		return 0;
-	if(vd->pool <= 0)
+	if(pool->size <= 0)
 		return -1;
 
-	SETLOCK(vm, local);
-
-	/**/ASSERT(KPVADDR(vm, data, pooladdr) == 0);
-	bp = (Block_t*)data;
-	SIZE(bp) = POOLFREE;
-	SEGLINK(bp) = vd->free;
-	vd->free = bp;
-
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), vd->pool, 0);
-
-	CLRLOCK(vm, local);
+	pl = (Pool_t*)data;
+	pl->foo = FOOBAR;
+	for(;;)
+	{	pl->next = free = pool->free;
+		if(asocasptr(&pool->free, free, pl) == free)
+			break;
+	}
+		
+	if(!local && _Vmtrace)
+		(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), pool->size, 0);
 
 	return 0;
 }
@@ -199,8 +162,6 @@ int		type;
 int		local;
 #endif
 {
-	Vmdata_t	*vd = vm->data;
-
 	NOTUSED(type);
 
 	if(!data)
@@ -209,73 +170,11 @@ int		local;
 			memset(data, 0, size);
 		return data;
 	}
-	if(size == 0)
+	else if(size == 0)
 	{	(void)poolfree(vm, data, local);
 		return NIL(Void_t*);
 	}
-	if(size != vd->pool)
-		return NIL(Void_t*);
-
-	SETLOCK(vm, local);
-
-	/**/ASSERT(KPVADDR(vm, data, pooladdr) == 0);
-
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm, (Vmuchar_t*)data, (Vmuchar_t*)data, size, 0);
-
-	CLRLOCK(vm, local);
-
-	return data;
-}
-
-#if __STD_C
-static long poolsize(Vmalloc_t* vm, Void_t* addr, int local)
-#else
-static long poolsize(vm, addr, local)
-Vmalloc_t*	vm;
-Void_t*		addr;
-int		local;
-#endif
-{
-	return pooladdr(vm, addr, local) == 0 ? (long)vm->data->pool : -1L;
-}
-
-#if __STD_C
-static int poolcompact(Vmalloc_t* vm, int local)
-#else
-static int poolcompact(vm, local)
-Vmalloc_t*	vm;
-int		local;
-#endif
-{
-	ssize_t		s;
-	Block_t		*fp;
-	Seg_t		*seg, *next;
-	Vmdata_t	*vd = vm->data;
-
-	SETLOCK(vm, local);
-
-	for(seg = vd->seg; seg; seg = next)
-	{	next = seg->next;
-
-		if(!(fp = seg->free))
-			continue;
-
-		seg->free = NIL(Block_t*);
-		if(seg->size == (s = SIZE(fp)&~BITS))
-			s = seg->extent;
-		else	s += sizeof(Head_t);
-
-		if((*_Vmtruncate)(vm,seg,s,1) == s)
-			seg->free = fp;
-	}
-
-	if(!local && (vd->mode&VM_TRACE) && _Vmtrace)
-		(*_Vmtrace)(vm, (Vmuchar_t*)0, (Vmuchar_t*)0, 0, 0);
-
-	CLRLOCK(vm, local);
-
-	return 0;
+	else	return NIL(Void_t*);
 }
 
 #if __STD_C
@@ -294,15 +193,57 @@ int		local;
 	return NIL(Void_t*);
 }
 
+/* get statistics */
+static int poolstat(Vmalloc_t* vm, Vmstat_t* st, int local )
+{
+	size_t		size;
+	Pool_t		*pl;
+	Vmpool_t	*pool = (Vmpool_t*)vm->data;
+
+	if(!st) /* just checking lock state */
+		return 0;
+
+	if(pool->size <= 0 )
+		return -1;
+
+	size = ROUND(pool->size, ALIGN);
+
+	for(pl = pool->free; pl; pl = pl->next )
+		st->n_free += 1;
+	st->s_free = st->n_free * size;
+
+	st->n_busy = pool->nblk - st->n_free;
+	st->s_busy = st->n_busy * size;
+
+	return 0;
+}
+
+static int poolevent(Vmalloc_t* vm, int event, Void_t* arg)
+{
+	Vmpool_t	*pool;
+
+	if(event == VM_OPEN ) /* return the size of Vmpool_t */
+	{	if(!arg)
+			return -1;
+		*((ssize_t*)arg) = sizeof(Vmpool_t);
+	}
+	else if(event == VM_ENDOPEN) /* start as if region was cleared */
+	{	if(!(pool = (Vmpool_t*)vm->data) )
+			return -1;
+		pool->size = 0;
+		pool->free = NIL(Pool_t*);
+	}
+	return 0;
+}
+
 /* Public interface */
 static Vmethod_t _Vmpool =
-{
-	poolalloc,
+{	poolalloc,
 	poolresize,
 	poolfree,
-	pooladdr,
-	poolsize,
-	poolcompact,
+	0,
+	poolstat,
+	poolevent,
 	poolalign,
 	VM_MTPOOL
 };

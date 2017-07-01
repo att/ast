@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -79,6 +79,16 @@ Pt_t pp=( [one]=(  x=3 y=4) [two]=(  x=5 y=12) [three]=(y=2) )
 [[ ${@pp[1]} == Pt_t ]] || err_exit 'type of pp[1] is not Pt_t'
 unset pp
 done
+
+unset pt
+Pt_t -a pt=( (x=3 y=4) (x=5 y=7) (x=1 y=9) (x=0 y=11))
+set -s -Apt -Kx:n
+exp='Pt_t -a pt=((typeset -l -E x=0;typeset -l -E y=11) (typeset -l -E x=1;typeset -l -E y=9) (typeset -l -E x=3;typeset -l -E y=4) (typeset -l -E x=5;typeset -l -E y=7))'
+[[ $(typeset -p pt) == "$exp" ]] || err_exit 'sorting of points not working'
+set -s -Apt -Kx:rn
+exp='Pt_t -a pt=((typeset -l -E x=5;typeset -l -E y=7) (typeset -l -E x=3;typeset -l -E y=4) (typeset -l -E x=1;typeset -l -E y=9) (typeset -l -E x=0;typeset -l -E y=11))'
+[[ $(typeset -p pt) == "$exp" ]] || err_exit 'reverse sorting of points not working'
+
 # redefinition of point
 typeset -T Pt_t=(
 	Pt_t _=(x=3 y=6)
@@ -135,4 +145,3 @@ eval s="$r"
 eval "$(typeset -p s)"
 [[ $y == "$z" ]] || err_exit 'typeset -p z for type containing index of types is incorrect'
 
-exit $((Errors<125?Errors:125))

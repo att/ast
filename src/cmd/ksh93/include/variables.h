@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -67,45 +67,56 @@
 #define LCTYPENOD	(shgd->bltin_nodes+37)
 #define LCMSGNOD	(shgd->bltin_nodes+38)
 #define LCNUMNOD	(shgd->bltin_nodes+39)
-#define FIGNORENOD	(shgd->bltin_nodes+40)
-#define VERSIONNOD	(shgd->bltin_nodes+41)
-#define JOBMAXNOD	(shgd->bltin_nodes+42)
-#define DOTSHNOD	(shgd->bltin_nodes+43)
-#define ED_CHRNOD	(shgd->bltin_nodes+44)
-#define ED_COLNOD	(shgd->bltin_nodes+45)
-#define ED_TXTNOD	(shgd->bltin_nodes+46)
-#define ED_MODENOD	(shgd->bltin_nodes+47)
-#define SH_NAMENOD	(shgd->bltin_nodes+48)
-#define SH_SUBSCRNOD	(shgd->bltin_nodes+49)
-#define SH_VALNOD	(shgd->bltin_nodes+50)
-#define SH_VERSIONNOD	(shgd->bltin_nodes+51)
-#define SH_DOLLARNOD	(shgd->bltin_nodes+52)
-#define SH_MATCHNOD	(shgd->bltin_nodes+53)
-#define SH_COMMANDNOD	(shgd->bltin_nodes+54)
-#define SH_PATHNAMENOD	(shgd->bltin_nodes+55)
-#define SH_FUNNAMENOD	(shgd->bltin_nodes+56)
-#define SH_SUBSHELLNOD	(shgd->bltin_nodes+57)
-#define SH_LEVELNOD	(shgd->bltin_nodes+58)
-#define SH_LINENO	(shgd->bltin_nodes+59)
-#define SH_STATS	(shgd->bltin_nodes+60)
-#define SH_MATHNOD	(shgd->bltin_nodes+61)
-#define SH_JOBPOOL	(shgd->bltin_nodes+62)
-#define SHLVL		(shgd->bltin_nodes+63)
+#define LCTIMENOD	(shgd->bltin_nodes+40)
+#define FIGNORENOD	(shgd->bltin_nodes+41)
+#define VERSIONNOD	(shgd->bltin_nodes+42)
+#define JOBMAXNOD	(shgd->bltin_nodes+43)
+#define DOTSHNOD	(shgd->bltin_nodes+44)
+#define ED_CHRNOD	(shgd->bltin_nodes+45)
+#define ED_COLNOD	(shgd->bltin_nodes+46)
+#define ED_TXTNOD	(shgd->bltin_nodes+47)
+#define ED_MODENOD	(shgd->bltin_nodes+48)
+#define SH_NAMENOD	(shgd->bltin_nodes+49)
+#define SH_SUBSCRNOD	(shgd->bltin_nodes+50)
+#define SH_VALNOD	(shgd->bltin_nodes+51)
+#define SH_VERSIONNOD	(shgd->bltin_nodes+52)
+#define SH_DOLLARNOD	(shgd->bltin_nodes+53)
+#define SH_MATCHNOD	(shgd->bltin_nodes+54)
+#define SH_COMMANDNOD	(shgd->bltin_nodes+55)
+#define SH_PATHNAMENOD	(shgd->bltin_nodes+56)
+#define SH_FUNNAMENOD	(shgd->bltin_nodes+57)
+#define SH_SUBSHELLNOD	(shgd->bltin_nodes+58)
+#define SH_LEVELNOD	(shgd->bltin_nodes+59)
+#define SH_LINENO	(shgd->bltin_nodes+60)
+#define SH_STATS	(shgd->bltin_nodes+61)
+#define SH_MATHNOD	(shgd->bltin_nodes+62)
+#define SH_JOBPOOL	(shgd->bltin_nodes+63)
+#define SH_PGRP		(shgd->bltin_nodes+64)
+#define SH_PWDFD	(shgd->bltin_nodes+65)
+#define SH_SIG		(shgd->bltin_nodes+66)
+#define SH_ASTBIN	(shgd->bltin_nodes+67)
+#define OPTIONS		(shgd->bltin_nodes+68)
+#define SHLVL		(shgd->bltin_nodes+69)
+#define COMP_CWORD	(shgd->bltin_nodes+70)
+#define COMP_LINE	(shgd->bltin_nodes+71)
+#define COMP_POINT	(shgd->bltin_nodes+72)
+#define COMP_WORDS	(shgd->bltin_nodes+73)
+#define COMP_KEY	(shgd->bltin_nodes+74)
+#define COMPREPLY	(shgd->bltin_nodes+75)
+#define COMP_WORDBREAKS	(shgd->bltin_nodes+76)
+#define COMP_TAB	(shgd->bltin_nodes+77)
 #if SHOPT_FS_3D
-#   define VPATHNOD	(shgd->bltin_nodes+64)
+#   define VPATHNOD	(shgd->bltin_nodes+78)
 #   define NFS_3D	1
 #else
 #   define NFS_3D	0
 #endif /* SHOPT_FS_3D */
 #if SHOPT_VPIX
-#   define DOSPATHNOD	(shgd->bltin_nodes+64+NFS_3D)
-#   define VPIXNOD	(shgd->bltin_nodes+65+NFS_3D)
+#   define DOSPATHNOD	(shgd->bltin_nodes+78+NFS_3D)
+#   define VPIXNOD	(shgd->bltin_nodes+79+NFS_3D)
 #   define NVPIX	(NFS_3D+2)
 #else
 #   define NVPIX	NFS_3D
 #endif /* SHOPT_VPIX */
-#ifdef apollo
-#   define SYSTYPENOD	(shgd->bltin_nodes+63+NVPIX)
-#endif /* apollo */
 
 #endif /* SH_VALNOD */

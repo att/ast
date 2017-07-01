@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -61,7 +61,7 @@ export ENV=/.$env
 if	[[ ! -o privileged ]]
 then
 	got=$($SHELL -E -c : 2>/dev/null)
-	if	[[ $g ]]
+	if	[[ $got ]]
 	then
 		got=$(printf %q "$got")
 		err_exit "\$ENV file &>/dev/null does not redirect stdout -- expected '', got $got"
@@ -540,5 +540,35 @@ done
 print '. ./dotfile' > envfile
 print $'alias print=:\nprint foobar' > dotfile
 [[ $(ENV=$PWD/envfile $SHELL -i -c : 2>/dev/null) == foobar ]] && err_exit 'files source from profile does not process aliases correctly'
+
+# tests the set -m puts background jobs in separate process group
+Command=$Command LINENO=$LINENO $SHELL -m  <<- \EOF
+	Errors=0
+	function err_exit
+	{
+		print -u2 -n "\t"
+		print -u2 -r ${Command}[$LINENO]: "${@:1}"
+		((Errors++))
+	}
+	[[ $- == *m* ]] || err_exit '$- does not contain m when monitor mode specified'
+	float t=SECONDS
+	sleep 2 & pid=$!
+	kill -KILL -$pid 2> /dev/null || err_exit 'kill to background group failed'
+	wait 2> /dev/null
+	(( (SECONDS-t) > 1 )) && err_exit 'kill did not kill background sleep'
+	exit $Errors
+EOF
+((Errors+=$?))
+
+$SHELL 2> /dev/null <<- \EOF && err_exit 'unset variable with set -u on does not terminate script'
+	set -e -u -o pipefail
+	ls | while read file
+	do
+	    	files[${#files[*]}]=$fil
+	done
+	exit
+EOF
+
+[[ $($SHELL -vc : 2>&1) == : ]] || err_exit 'incorrect output with ksh -v' 
 
 exit $((Errors<125?Errors:125))

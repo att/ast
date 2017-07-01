@@ -1,3 +1,5 @@
+13-02-13 recsort.h: add { RS_MORE RS_LAST } for RS_READ event
+13-02-13 rsprocess.c: add RS_READ event RS_LAST logic
 12-05-28 rskey.c: fix unsigned comparison to 0
 11-10-11 recsort.h,rskeyopen.c: RSKEY_VERSION=20111011, add Rsdisc_t* argument
 11-09-27 rsopen.c,rsmerge.c: drop obsolete VM_TRUST

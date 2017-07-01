@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -53,7 +53,7 @@
 
 static char CURSOR_UP[20] = { ESC, '[', 'A', 0 };
 static char KILL_LINE[20] = { ESC, '[', 'J', 0 };
-
+static char *savelex;
 
 
 #if SHOPT_MULTIBYTE
@@ -111,11 +111,6 @@ static char KILL_LINE[20] = { ESC, '[', 'J', 0 };
 #define ECHOMODE	3
 #define	SYSERR	-1
 
-#if SHOPT_OLDTERMIO
-#   undef tcgetattr
-#   undef tcsetattr
-#endif /* SHOPT_OLDTERMIO */
-
 #ifdef RT
 #   define VENIX 1
 #endif	/* RT */
@@ -147,11 +142,9 @@ static char KILL_LINE[20] = { ESC, '[', 'J', 0 };
 #ifdef future
     static int compare(const char*, const char*, int);
 #endif  /* future */
-#if SHOPT_VSH || SHOPT_ESH
-#   define ttyparm	(ep->e_ttyparm)
-#   define nttyparm	(ep->e_nttyparm)
-    static const char bellchr[] = "\a";	/* bell char */
-#endif /* SHOPT_VSH || SHOPT_ESH */
+#define ttyparm	(ep->e_ttyparm)
+#define nttyparm	(ep->e_nttyparm)
+static const char bellchr[] = "\a";	/* bell char */
 
 
 /*
@@ -221,7 +214,6 @@ int tty_set(int fd, int action, struct termios *tty)
 	return(0);
 }
 
-#if SHOPT_ESH || SHOPT_VSH
 /*{	TTY_COOKED( fd )
  *
  *	This routine will set the tty in cooked mode.
@@ -232,6 +224,8 @@ int tty_set(int fd, int action, struct termios *tty)
 void tty_cooked(register int fd)
 {
 	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	if(ep->sh->st.trap[SH_KEYTRAP] && savelex)
+		memcpy(ep->sh->lex_context,savelex,ep->sh->lexsize);
 	ep->e_keytrap = 0;
 	if(ep->e_raw==0)
 		return;
@@ -592,22 +586,24 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 	register char *pp;
 	register char *last, *prev;
 	char *ppmax;
-	int myquote = 0, n;
+	int myquote = 0;
+	size_t n;
 	register int qlen = 1, qwid;
 	char inquote = 0;
 	ep->e_fd = fd;
-	ep->e_multiline = sh_isoption(SH_MULTILINE)!=0;
+	ep->e_multiline = sh_isoption(shp,SH_MULTILINE)!=0;
 #ifdef SIGWINCH
-	if(!(shp->sigflag[SIGWINCH]&SH_SIGFAULT))
+	if(shp->winch)
 	{
-		signal(SIGWINCH,sh_fault);
-		shp->sigflag[SIGWINCH] |= SH_SIGFAULT;
+		int rows=0, cols=0;
+		int32_t v;
+		astwinsize(2,&rows,&cols);
+		if(v = cols)
+			nv_putval(COLUMNS, (char*)&v, NV_INT32|NV_RDONLY);
+		if(v = rows)
+			nv_putval(LINES, (char*)&v, NV_INT32|NV_RDONLY);
+		shp->winch = 0;
 	}
-	pp = shp->st.trapcom[SIGWINCH];
-	shp->st.trapcom[SIGWINCH] = 0;
-	sh_fault(SIGWINCH);
-	shp->st.trapcom[SIGWINCH] = pp;
-	ep->sh->winch = 0;
 #endif
 #if SHOPT_EDPREDICT
 	ep->hlist = 0;
@@ -615,8 +611,8 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 	ep->hoff = 0;
 #endif /* SHOPT_EDPREDICT */
 #if KSHELL
-	ep->e_stkptr = stakptr(0);
-	ep->e_stkoff = staktell();
+	ep->e_stkptr = stkptr(shp->stk,0);
+	ep->e_stkoff = stktell(shp->stk);
 	if(!(last = shp->prompt))
 		last = "";
 	shp->prompt = 0;
@@ -634,7 +630,7 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 		ep->e_hismax = ep->e_hismin = ep->e_hloff = 0;
 	}
 	ep->e_hline = ep->e_hismax;
-	if(!sh_isoption(SH_VI) && !sh_isoption(SH_EMACS) && !sh_isoption(SH_GMACS))
+	if(!sh_isoption(shp,SH_VI) && !sh_isoption(shp,SH_EMACS) && !sh_isoption(shp,SH_GMACS))
 		ep->e_wsize = MAXLINE;
 	else
 		ep->e_wsize = ed_window()-2;
@@ -652,7 +648,8 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 			{
 				int skip=0;
 				ep->e_crlf = 0;
-				*pp++ = c;
+				if(pp < ppmax)
+					*pp++ = c;
 				for(n=1; c = *last++; n++)
 				{
 					if(pp < ppmax)
@@ -671,7 +668,6 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 				}
 				if(c==0 || c==ESC || c=='\r')
 					last--;
-				qlen += (n+1);
 				break;
 			}
 			case '\b':
@@ -764,7 +760,12 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 			ep->e_term = nv_search("TERM",shp->var_tree,0);
 		if(ep->e_term && (term=nv_getval(ep->e_term)) && strlen(term)<sizeof(ep->e_termname) && strcmp(term,ep->e_termname))
 		{
-			sh_trap(".sh.subscript=$(tput cuu1 2>/dev/null)",0);
+			bool r = sh_isoption(shp,SH_RESTRICTED);
+			if(r)
+				sh_offoption(shp,SH_RESTRICTED);
+			sh_trap(shp,".sh.subscript=$(tput cuu1 2>/dev/null)",0);
+			if(r)
+				sh_isoption(shp,SH_RESTRICTED);
 			if(pp=nv_getval(SH_SUBSCRNOD))
 				strncpy(CURSOR_UP,pp,sizeof(CURSOR_UP)-1);
 			nv_unset(SH_SUBSCRNOD);
@@ -782,6 +783,13 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 		while(n-- > 0)
 			ep->e_lbuf[n] = *pp++;
 		ep->e_default = 0;
+	}
+	if(ep->sh->st.trap[SH_KEYTRAP])
+	{
+		if(!savelex)
+			savelex = (char*)malloc(shp->lexsize);
+		if(savelex)
+			memcpy(savelex, ep->sh->lex_context, ep->sh->lexsize);
 	}
 }
 
@@ -822,14 +830,14 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit)
 		mode = 1;
 		size = -size;
 	}
-	sh_onstate(SH_TTYWAIT);
+	sh_onstate(shp,SH_TTYWAIT);
 	errno = EINTR;
 	shp->gd->waitevent = 0;
 	while(rv<0 && errno==EINTR)
 	{
 		if(shp->trapnote&(SH_SIGSET|SH_SIGTRAP))
 			goto done;
-		if(ep->sh->winch && sh_isstate(SH_INTERACTIVE) && (sh_isoption(SH_VI) || sh_isoption(SH_EMACS)))
+		if(ep->sh->winch && sh_isstate(shp,SH_INTERACTIVE) && (sh_isoption(shp,SH_VI) || sh_isoption(shp,SH_EMACS)))
 		{
 			Edpos_t	lastpos;
 			int	n, rows, newsize;
@@ -870,7 +878,7 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit)
 				buff[2] = 'a';
 				return(3);
 			}
-			if(sh_isoption(SH_EMACS) || sh_isoption(SH_VI))
+			if(sh_isoption(ep->sh,SH_EMACS) || sh_isoption(ep->sh,SH_VI))
 				buff[0] = cntl('L');
 			return(1);
 		}
@@ -920,7 +928,7 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit)
 		rv = read(fd,buff,rv>0?rv:1);
 done:
 	shp->gd->waitevent = waitevent;
-	sh_offstate(SH_TTYWAIT);
+	sh_offstate(shp,SH_TTYWAIT);
 	return(rv);
 }
 
@@ -952,7 +960,7 @@ static int putstack(Edit_t *ep,char string[], register int nbyte, int type)
 				/*** user break key ***/
 				ep->e_lookahead = 0;
 #	if KSHELL
-				sh_fault(SIGINT);
+				kill(getpid(),SIGINT);
 				siglongjmp(ep->e_env, UINTR);
 #	endif   /* KSHELL */
 			}
@@ -1010,7 +1018,7 @@ static int putstack(Edit_t *ep,char string[], register int nbyte, int type)
 			/*** user break key ***/
 			ep->e_lookahead = 0;
 #	if KSHELL
-			sh_fault(SIGINT);
+			kill(getpid(),SIGINT);
 			siglongjmp(ep->e_env, UINTR);
 #	endif	/* KSHELL */
 		}
@@ -1050,7 +1058,7 @@ int ed_getchar(register Edit_t *ep,int mode)
 		{
 			if(mode<=0 && -c == ep->e_intr)
 			{
-				sh_fault(SIGINT);
+				killpg(getpgrp(),SIGINT);
 				siglongjmp(ep->e_env, UINTR);
 			}
 			if(mode<=0 && ep->sh->st.trap[SH_KEYTRAP])
@@ -1342,7 +1350,7 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 			if(c=='\t')
 			{
 				c = dp-phys;
-				if(sh_isoption(SH_VI))
+				if(sh_isoption(ep->sh,SH_VI))
 					c += ep->e_plen;
 				c = TABSIZE - c%TABSIZE;
 				while(--c>0)
@@ -1355,7 +1363,7 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 				c = printchar(c);
 			}
 			/* in vi mode the cursor is at the last character */
-			if(curp == sp && sh_isoption(SH_VI))
+			if(curp == sp && sh_isoption(ep->sh,SH_VI))
 				r = dp - phys;
 		}
 		*dp++ = c;
@@ -1464,7 +1472,6 @@ int	ed_genlen(register const genchar *str)
 	while(*sp++);
 	return(sp-str-1);
 }
-#endif /* SHOPT_ESH || SHOPT_VSH */
 
 #ifdef future
 /*
@@ -1480,81 +1487,6 @@ static int compare(register const char *a,register const char *b,register int n)
 	return(1);
 }
 #endif
-
-#if SHOPT_OLDTERMIO
-
-#   include	<sys/termio.h>
-
-#ifndef ECHOCTL
-#   define ECHOCTL	0
-#endif /* !ECHOCTL */
-#define ott	ep->e_ott
-
-/*
- * For backward compatibility only
- * This version will use termios when possible, otherwise termio
- */
-
-int tcgetattr(int fd, struct termios *tt)
-{
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
-	register int r,i;
-	ep->e_tcgeta = 0;
-	ep->e_echoctl = (ECHOCTL!=0);
-	if((r=ioctl(fd,TCGETS,tt))>=0 ||  errno!=EINVAL)
-		return(r);
-	if((r=ioctl(fd,TCGETA,&ott)) >= 0)
-	{
-		tt->c_lflag = ott.c_lflag;
-		tt->c_oflag = ott.c_oflag;
-		tt->c_iflag = ott.c_iflag;
-		tt->c_cflag = ott.c_cflag;
-		for(i=0; i<NCC; i++)
-			tt->c_cc[i] = ott.c_cc[i];
-		ep->e_tcgeta++;
-		ep->e_echoctl = 0;
-	}
-	return(r);
-}
-
-int tcsetattr(int fd,int mode,struct termios *tt)
-{
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
-	register int r;
-	if(ep->e_tcgeta)
-	{
-		register int i;
-		ott.c_lflag = tt->c_lflag;
-		ott.c_oflag = tt->c_oflag;
-		ott.c_iflag = tt->c_iflag;
-		ott.c_cflag = tt->c_cflag;
-		for(i=0; i<NCC; i++)
-			ott.c_cc[i] = tt->c_cc[i];
-		if(tt->c_lflag&ECHOCTL)
-		{
-			ott.c_lflag &= ~(ECHOCTL|IEXTEN);
-			ott.c_iflag &= ~(IGNCR|ICRNL);
-			ott.c_iflag |= INLCR;
-			ott.c_cc[VEOF]= ESC;  /* ESC -> eof char */
-			ott.c_cc[VEOL] = '\r'; /* CR -> eol char */
-			ott.c_cc[VEOL2] = tt->c_cc[VEOF]; /* EOF -> eol char */
-		}
-		switch(mode)
-		{
-			case TCSANOW:
-				mode = TCSETA;
-				break;
-			case TCSADRAIN:
-				mode = TCSETAW;
-				break;
-			case TCSAFLUSH:
-				mode = TCSETAF;
-		}
-		return(ioctl(fd,mode,&ott));
-	}
-	return(ioctl(fd,mode,tt));
-}
-#endif /* SHOPT_OLDTERMIO */
 
 #if KSHELL
 /*
@@ -1586,7 +1518,7 @@ static int keytrap(Edit_t *ep,char *inbuff,register int insize, int bufsize, int
 	nv_putval(ED_TXTNOD,(char*)cp,NV_NOFREE);
 	nv_putval(ED_MODENOD,ep->e_vi_insert,NV_NOFREE);
 	savexit = shp->savexit;
-	sh_trap(shp->st.trap[SH_KEYTRAP],0);
+	sh_trap(shp,shp->st.trap[SH_KEYTRAP],0);
 	shp->savexit = savexit;
 	if((cp = nv_getval(ED_CHRNOD)) == inbuff)
 		nv_unset(ED_CHRNOD);
@@ -1594,7 +1526,7 @@ static int keytrap(Edit_t *ep,char *inbuff,register int insize, int bufsize, int
 	{
 		strncpy(inbuff,cp,bufsize);
 		inbuff[bufsize-1]='\0';
-		insize = strlen(inbuff);
+		insize = (int)strlen(inbuff);
 	}
 	else
 		insize = 0;
@@ -1676,7 +1608,7 @@ int ed_histgen(Edit_t *ep,const char *pattern)
 	hp = ep->sh->gd->hist_ptr;
 	if(*pattern=='#' && *++pattern=='#')
 		return(0);
-	cp = stakalloc(m=strlen(pattern)+6);
+	cp = stkalloc(ep->sh->stk,m=strlen(pattern)+6);
 	sfsprintf(cp,m,"@(%s)*%c",pattern,0);
 	if(ep->hlist)
 	{
@@ -1695,7 +1627,7 @@ int ed_histgen(Edit_t *ep,const char *pattern)
 				maxmatch = ep->e_cur;
 			return(ep->hmax=av-argv);
 		}
-		stakset(ep->e_stkptr,ep->e_stkoff);
+		stkset(ep->sh->stk,ep->e_stkptr,ep->e_stkoff);
 	}
 	if((m=strlen(cp)) >= sizeof(ep->hpat))
 		m = sizeof(ep->hpat)-1;
@@ -1714,7 +1646,7 @@ int ed_histgen(Edit_t *ep,const char *pattern)
 		if(strmatch(cp,pattern))
 		{
 			l = ed_histlencopy(cp,(char*)0);
-			mp = (Histmatch_t*)stakalloc(sizeof(Histmatch_t)+l);
+			mp = (Histmatch_t*)stkalloc(ep->sh->stk,sizeof(Histmatch_t)+l);
 			mp->next = mplast;
 			mplast = mp;
 			mp->len = l;
@@ -1728,7 +1660,7 @@ int ed_histgen(Edit_t *ep,const char *pattern)
 	if(ac>0)
 	{
 		l = ac;
-		argv = av  = (char**)stakalloc((ac+1)*sizeof(char*));
+		argv = av  = (char**)stkalloc(ep->sh->stk,(ac+1)*sizeof(char*));
 		for(mplast=0; l>=0 && (*av= (char*)mp); mplast=mp,mp=mp->next,av++)
 		{
 			l--;
@@ -1777,7 +1709,6 @@ void	ed_histlist(Edit_t *ep,int n)
 	}
 	else
 	{
-		stakset(ep->e_stkptr,ep->e_stkoff);
 		ep->hlist = 0;
 		ep->nhlist = 0;
 	}
@@ -1824,10 +1755,10 @@ void	*ed_open(Shell_t *shp)
 }
 
 #undef ioctl
-int	sh_ioctl(int fd, int cmd, void* val, int sz)
+int	sh_ioctl(int fd, int cmd, void* val,int sz)
 {
-	int r,err=errno;
-	if(sz == sizeof(void*))
+	int 		r,err=errno;
+	if(sizeof(val)==sizeof(void*))
 	{
 		while((r=ioctl(fd,cmd,val)) < 0 && errno==EINTR)
 			errno = err;
@@ -1851,7 +1782,7 @@ int	sh_ioctl(int fd, int cmd, void* val, int sz)
 
 #ifdef _lib_tcgetattr
 #   undef tcgetattr
-    sh_tcgetattr(int fd, struct termios *tty)
+    int sh_tcgetattr(int fd, struct termios *tty)
     {
 	int r,err = errno;
 	while((r=tcgetattr(fd,tty)) < 0 && errno==EINTR)
@@ -1860,7 +1791,7 @@ int	sh_ioctl(int fd, int cmd, void* val, int sz)
     }
 
 #   undef tcsetattr
-    sh_tcsetattr(int fd, int cmd, struct termios *tty)
+    int sh_tcsetattr(int fd, int cmd, struct termios *tty)
     {
 	int r,err = errno;
 	while((r=tcsetattr(fd,cmd,tty)) < 0 && errno==EINTR)

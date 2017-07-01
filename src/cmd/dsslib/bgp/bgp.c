@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -45,7 +45,7 @@ static const char usage[] =
 
 Dssformat_t*		bgp_formats = bgp_first_format;
 
-static Cxvariable_t fields[] =
+static Cxvariable_t bgp_fields[] =
 {
 CXV("afi",		"number",	BGP_afi,		"Announce address family identifier: 1:ipv4, 2:ipv6.")
 CXV("agg_addr",		"ipaddr_t",	BGP_agg_addr,		"Aggregator AS address.")
@@ -57,6 +57,7 @@ CXV("agg_addr32v6",	"ipv6addr_t",	BGP_agg_addr32v6,	"Aggregator AS32 ipv6 addres
 CXV("agg_as",		"as_t",		BGP_agg_as,		"Aggregator AS number.")
 CXV("agg_as16",		"as16_t",	BGP_agg_as16,		"Aggregator AS16 number.")
 CXV("agg_as32",		"as32_t",	BGP_agg_as32,		"Aggregator AS32 number.")
+CXV("aigp",		"aigp_t",	BGP_aigp,		"AIGP attributes.")
 CXV("atomic",		"number",	BGP_atomic,		"Atomic.")
 CXV("best",		"number",	BGP_best,		"Best route.")
 CXV("bits",		"number",	BGP_bits,		"Number of prefix mask bits.")
@@ -85,16 +86,15 @@ CXV("hopv4",		"ipv4addr_t",	BGP_hopv4,		"Next hop ipv4 address.")
 CXV("hopv6",		"ipv6addr_t",	BGP_hopv6,		"Next hop ipv6 address.")
 CXV("id",		"number",	BGP_id,			"Auxiliary id.")
 CXV("internal",		"number",	BGP_internal,		"Internal prefix.")
-CXV("key",		"bgp_t",	BGP_key,		"Route key NLRI.")
 CXV("label",		"number",	BGP_label,		"NLRI label.")
 CXV("labels",		"labels_t",	BGP_labels,		"NLRI label list; LHS is label, RHS is COS and end of stack bit.")
 CXV("local",		"number",	BGP_local,		"Local preference.")
 CXV("med",		"number",	BGP_med,		"Multi exit discriminator.")
 CXV("message",		"number",	BGP_message,		"Message group index.")
-CXV("mvpn",		"bgp_t",	BGP_mvpn,		"[Mcast vpn data using members of the main schema; access as \bmvpn\b.\amember\a:]{[+agg_addr?VPN_S_PMSI_A_D multicast address.][+key?Route key NLRI.][+originator?Originator ipv4 address.][+rd_addr?Route distinguisher address.][+rd_as?Route distinguisher AS number.][+rd_number?Route distinguisher assigned number.][+rd_type?Route distinguisher type.][+src_addr?Source address.][+src_as?Originator AS number.][+type?The route type index.]}")
+CXV("mvpn",		"mvpn_t",	BGP_mvpn,		"Mcast VPN data.")
 CXV("new_state",	"number",	BGP_new_state,		"STATE_CHANGE record new state.")
 CXV("old_state",	"number",	BGP_old_state,		"STATE_CHANGE record old state.")
-CXV("origin",		"number",	BGP_origin,		"Origin: 'i':igp, 'e':egp, '?':incomplete.")
+CXV("origin",		"number",	BGP_origin,		"Origin: 'i':igp, 'e':egp, '?':incomplete, '0':unset.")
 CXV("originator",	"ipv4addr_t",	BGP_originator,		"Originator ipv4 address.")
 CXV("path",		"aspath_t",	BGP_path,		"AS path.")
 CXV("path16",		"as16path_t",	BGP_path16,		"AS16 path.")
@@ -102,10 +102,7 @@ CXV("path32",		"as32path_t",	BGP_path32,		"AS32 path.")
 CXV("prefix",		"ipprefix_t",	BGP_prefix,		"Routing ddress prefix and length.")
 CXV("prefixv4",		"ipv4prefix_t",	BGP_prefixv4,		"ipv4 routing prefix and length.")
 CXV("prefixv6",		"ipv6prefix_t",	BGP_prefixv6,		"ipv6 routing prefix and length.")
-CXV("rd_addr",		"ipaddr_t",	BGP_rd_addr,		"NLRI route distinguisher address.")
-CXV("rd_as",		"as_t",		BGP_rd_as,		"NLRI route distinguisher AS number.")
-CXV("rd_number",	"number",	BGP_rd_number,		"NLRI route distinguisher assigned number.")
-CXV("rd_type",		"number",	BGP_rd_type,		"NLRI route distinguisher type.")
+CXV("rd",		"rd_t",		BGP_rd,			"Route distinguisher.")
 CXV("rib_failure",	"number",	BGP_rib_failure,	"RIB failure.")
 CXV("safi",		"number",	BGP_safi,		"Announce subsequent address family identifier bits: 1:unicast, 2:multicast, 4:MLPS-label, 5:MCAST-VPN, 128:MLPS-labeled-VPN.")
 CXV("slot",		"number",	BGP_slot,		"Slot.")
@@ -119,6 +116,7 @@ CXV("stale",		"number",	BGP_stale,		"Stale.")
 CXV("stamp",		"time_t",	BGP_stamp,		"Data time stamp.")
 CXV("suppressed",	"number",	BGP_suppressed,		"Suppressed prefix.")
 CXV("time",		"time_t",	BGP_time,		"Packet event time stamp.")
+CXV("tunnel",		"tunnel_t",	BGP_tunnel,		"PMSI tunnel attribute.")
 CXV("type",		"number",	BGP_type,		"Record type:: 'A':announce, 'K':keepalive, 'N':notification, 'O':open, 'S':state, 'T':table, 'W':withdraw.")
 CXV("unknown",		"string",	BGP_unknown,		"Unknown attributes in the form: \"<flag-i>:<type-i>:<size-i>:<hex-data-i>;...\".")
 CXV("usec",		"number",	BGP_usec,		"Packet event time stamp usec.")
@@ -136,15 +134,27 @@ CXD("path32_len",	"number",	BGP_path32_len,		"DEPRECATED -- use sizeof(path32). 
 {0}
 };
 
+static unsigned char	noipv6[MRT_BITS_IPV6 + 1];
+
 static int
-op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+bgp_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
-	Bgp_t*			bgp = BGPDATA(data);
-	Bgproute_t*		rp = (Bgproute_t*)DSSDATA(data);
+	Bgp_t*			bgp;
+	Bgproute_t*		rp;
 	Cxvariable_t*		vp = (Cxvariable_t*)pc->data.variable;
 
-	static unsigned char	noipv6[MRT_BITS_IPV6 + 1];
-
+	if (data)
+	{
+		bgp = BGPDATA(data);
+		rp = (Bgproute_t*)DSSDATA(data);
+	}
+	else if (rp = (Bgproute_t*)r->value.buffer.data)
+		bgp = (Bgp_t*)DSS(cx)->data;
+	else
+	{
+		memset(&r->value, 0, sizeof(r->value));
+		return 0;
+	}
 	switch (vp->index)
 	{
 	case BGP_afi:
@@ -202,6 +212,19 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 		break;
 	case BGP_agg_as32:
 		r->value.number = rp->agg_as32;
+		break;
+	case BGP_aigp:
+		if (rp->set & BGP_SET_aigp)
+		{
+			r->value.buffer.data = &rp->aigp;
+			r->value.buffer.size = sizeof(Bgpaigp_t);
+		}
+		else
+		{
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
+		}
+		r->value.buffer.elements = 0;
 		break;
 	case BGP_bits:
 		r->value.number = (rp->set & BGP_SET_prefixv6) ? rp->prefixv6[IP6BITS] : rp->bits;
@@ -335,7 +358,17 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 		r->value.number = rp->message;
 		break;
 	case BGP_mvpn:
-		r->value.number = !!(rp->set & BGP_SET_mvpn);
+		if (rp->mvpn)
+		{
+			r->value.buffer.data = rp->data + rp->mvpn;
+			r->value.buffer.size = sizeof(Bgpmvpn_t);
+		}
+		else
+		{
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
+		}
+		r->value.buffer.elements = 0;
 		break;
 	case BGP_new_state:
 		r->value.number = rp->type == BGP_TYPE_state_change ? rp->new_state : 0;
@@ -344,7 +377,7 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 		r->value.number = rp->type == BGP_TYPE_state_change ? rp->old_state : 0;
 		break;
 	case BGP_origin:
-		r->value.number = rp->origin ? rp->origin : '0';
+		r->value.number = rp->origin ? rp->origin : BGP_ORIGIN_unset;
 		break;
 	case BGP_originator:
 		if (rp->set & BGP_SET_originatorv6)
@@ -408,28 +441,18 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 		r->value.buffer.size = sizeof(rp->prefixv6);
 		r->value.buffer.elements = 0;
 		break;
-	case BGP_rd_addr:
-		if (rp->afi == MRT_AFI_IPV6)
+	case BGP_rd:
+		if (rp->set & BGP_SET_rd)
 		{
-			r->value.buffer.data = rp->rd_addr.v6;
-			r->value.buffer.size = sizeof(rp->rd_addr.v6);
-			r->value.buffer.elements = 0;
-			r->type = bgp->type_ipv6addr;
+			r->value.buffer.data = &rp->rd;
+			r->value.buffer.size = sizeof(Bgprd_t);
 		}
 		else
 		{
-			r->value.number = rp->rd_addr.v4;
-			r->type = bgp->type_ipv4addr;
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
 		}
-		break;
-	case BGP_rd_as:
-		r->value.number = rp->rd_as;
-		break;
-	case BGP_rd_number:
-		r->value.number = rp->rd_number;
-		break;
-	case BGP_rd_type:
-		r->value.number = rp->rd_type;
+		r->value.buffer.elements = 0;
 		break;
 	case BGP_safi:
 		r->value.number = rp->safi ? rp->safi : MRT_SAFI_NLRI_UCAST_FORWARD;
@@ -470,6 +493,19 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 		break;
 	case BGP_time:
 		r->value.number = rp->time ? rp->time : rp->stamp;
+		break;
+	case BGP_tunnel:
+		if (rp->tunnel)
+		{
+			r->value.buffer.data = rp->data + rp->tunnel;
+			r->value.buffer.size = sizeof(Bgptunnel_t);
+		}
+		else
+		{
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
+		}
+		r->value.buffer.elements = 0;
 		break;
 	case BGP_type:
 		r->value.number = rp->type;
@@ -513,36 +549,395 @@ op_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_
 	return 0;
 }
 
-static Cxcallout_t local_callouts[] =
-{
-CXC(CX_GET, "void", "void", op_get, 0)
-};
-
-static int
-bgp_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
-{
-	Cxvariable_t*	vp = (Cxvariable_t*)pc->data.variable;
-	void*		save;
-	int		i;
-
-	save = DSSRECORD(data)->data;
-	DSSRECORD(data)->data = &BGPDATA(data)->sub + (((Cxvariable_t*)pc->data.variable)->index == BGP_key);
-	i = op_get(cx, pc, r, a, b, data, disc);
-	DSSRECORD(data)->data = save;
-	return i;
-}
-
 static Cxmember_t	bgp_member =
 {
 	bgp_get,
 	0,
-	(Dt_t*)&fields[0]
+	(Dt_t*)&bgp_fields[0]
+};
+ 
+static Cxvariable_t aigp_fields[] =
+{
+CXV("aigp",		"values_t",	BGP_AIGP_aigp,		"AIGP TLV.")
+{0}
+};
+
+static int
+aigp_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	Bgproute_t*		rp;
+	Bgpaigp_t*		ap;
+
+	if (data)
+	{
+		rp = (Bgproute_t*)DSSDATA(data);
+		ap = &rp->aigp;
+	}
+	else
+	{
+		ap = (Bgpaigp_t*)r->value.buffer.data;
+		rp = (Bgproute_t*)((char*)ap - offsetof(Bgproute_t, aigp));
+	}
+	if (!ap)
+	{
+		memset(&r->value, 0, sizeof(r->value));
+		return 0;
+	}
+	switch (pc->data.variable->index)
+	{
+	case BGP_AIGP_aigp:
+		r->value.buffer.data = rp->data + ap->aigp.offset;
+		r->value.buffer.size = ap->aigp.size * sizeof(Bgpnum_t);
+		r->value.buffer.elements = 0;
+		break;
+	default:
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, 1, "aigp.%s index %d not implemented in get()", pc->data.variable->name, pc->data.variable->index);
+		return -1;
+	}
+	return 0;
+}
+
+static Cxmember_t	aigp_member =
+{
+	aigp_get,
+	0,
+	(Dt_t*)&aigp_fields[0]
+};
+
+static Cxvariable_t mvpn_fields[] =
+{
+CXV("group_addr",	"ipaddr_t",	BGP_MVPN_group_addr,		"Group address.")
+CXV("group_addrv4",	"ipv4addr_t",	BGP_MVPN_group_addrv4,		"Group ipv4 address.")
+CXV("group_addrv6",	"ipv6addr_t",	BGP_MVPN_group_addrv6,		"Group ipv6 address.")
+CXV("key",		"bgp_t",	BGP_MVPN_key,			"Route key NLRI.")
+CXV("originator",	"ipaddr_t",	BGP_MVPN_originator,		"Group address.")
+CXV("originatorv4",	"ipv4addr_t",	BGP_MVPN_originatorv4,		"Group ipv4 address.")
+CXV("originatorv6",	"ipv6addr_t",	BGP_MVPN_originatorv6,		"Group ipv6 address.")
+CXV("rd",		"rd_t",		BGP_MVPN_rd,			"Route distinguisher.")
+CXV("src_addr",		"ipaddr_t",	BGP_MVPN_src_addr,		"Source address.")
+CXV("src_addrv4",	"ipv4addr_t",	BGP_MVPN_src_addrv4,		"Source ipv4 address.")
+CXV("src_addrv6",	"ipv6addr_t",	BGP_MVPN_src_addrv6,		"Source ipv6 address.")
+CXV("src_as",		"as_t",		BGP_MVPN_src_as,		"Source AS number.")
+CXV("src_as16",		"as16_t",	BGP_MVPN_src_as16,		"Source AS16 number.")
+CXV("src_as32",		"as32_t",	BGP_MVPN_src_as32,		"Source AS32 number.")
+CXV("type",		"number",	BGP_MVPN_type,			"Route type.")
+{0}
+};
+
+static int
+mvpn_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	Bgp_t*			bgp;
+	Bgproute_t*		rp;
+	Bgpmvpn_t*		mp;
+
+	if (data)
+	{
+		bgp = BGPDATA(data);
+		rp = (Bgproute_t*)DSSDATA(data);
+		if (rp->mvpn)
+			mp = (Bgpmvpn_t*)&rp->data[rp->mvpn];
+		else
+			mp = 0;
+	}
+	else
+	{
+		bgp = (Bgp_t*)DSS(cx)->data;
+		rp = 0;
+		mp = (Bgpmvpn_t*)r->value.buffer.data;
+	}
+	if (!mp)
+	{
+		memset(&r->value, 0, sizeof(r->value));
+		return 0;
+	}
+	switch (pc->data.variable->index)
+	{
+	case BGP_MVPN_group_addr:
+		if (mp->set & BGP_MVPN_SET_group_addrv6)
+		{
+			r->value.buffer.data = mp->group_addr.v6;
+			r->value.buffer.size = sizeof(mp->group_addr.v6);
+			r->value.buffer.elements = 0;
+			r->type = bgp->type_ipv6addr;
+		}
+		else
+		{
+			r->value.number = mp->group_addr.v4;
+			r->type = bgp->type_ipv4addr;
+		}
+		break;
+	case BGP_MVPN_group_addrv4:
+		r->value.number = (mp->set & BGP_MVPN_SET_group_addrv6) ? 0 : mp->group_addr.v4;
+		break;
+	case BGP_MVPN_group_addrv6:
+		r->value.buffer.data = (mp->set & BGP_MVPN_SET_group_addrv6) ? mp->group_addr.v6 : noipv6;
+		r->value.buffer.size = sizeof(mp->group_addr.v6);
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_MVPN_key:
+		if (mp->key)
+		{
+			r->value.buffer.data = (char*)mp + mp->key;
+			r->value.buffer.size = sizeof(Bgproute_t);
+		}
+		else
+		{
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
+		}
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_MVPN_originator:
+		if (mp->set & BGP_MVPN_SET_originatorv6)
+		{
+			r->value.buffer.data = mp->originator.v6;
+			r->value.buffer.size = sizeof(mp->originator.v6);
+			r->value.buffer.elements = 0;
+			r->type = bgp->type_ipv6addr;
+		}
+		else
+		{
+			r->value.number = mp->originator.v4;
+			r->type = bgp->type_ipv4addr;
+		}
+		break;
+	case BGP_MVPN_originatorv4:
+		r->value.number = (mp->set & BGP_MVPN_SET_originatorv6) ? 0 : mp->originator.v4;
+		break;
+	case BGP_MVPN_originatorv6:
+		r->value.buffer.data = (mp->set & BGP_MVPN_SET_originatorv6) ? mp->originator.v6 : noipv6;
+		r->value.buffer.size = sizeof(mp->originator.v6);
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_MVPN_rd:
+		if (mp->set & BGP_MVPN_SET_rd)
+		{
+			r->value.buffer.data = &mp->rd;
+			r->value.buffer.size = sizeof(Bgprd_t);
+		}
+		else
+		{
+			r->value.buffer.data = 0;
+			r->value.buffer.size = 0;
+		}
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_MVPN_src_addr:
+		if (mp->set & BGP_MVPN_SET_src_addrv6)
+		{
+			r->value.buffer.data = mp->src_addr.v6;
+			r->value.buffer.size = sizeof(mp->src_addr.v6);
+			r->value.buffer.elements = 0;
+			r->type = bgp->type_ipv6addr;
+		}
+		else
+		{
+			r->value.number = mp->src_addr.v4;
+			r->type = bgp->type_ipv4addr;
+		}
+		break;
+	case BGP_MVPN_src_addrv4:
+		r->value.number = (mp->set & BGP_MVPN_SET_src_addrv6) ? 0 : mp->src_addr.v4;
+		break;
+	case BGP_MVPN_src_addrv6:
+		r->value.buffer.data = (mp->set & BGP_MVPN_SET_src_addrv6) ? mp->src_addr.v6 : noipv6;
+		r->value.buffer.size = sizeof(mp->src_addr.v6);
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_MVPN_src_as:
+		r->value.number = mp->src_as ? mp->src_as : mp->src_as32;
+		break;
+	case BGP_MVPN_src_as16:
+		r->value.number = mp->src_as;
+		break;
+	case BGP_MVPN_src_as32:
+		r->value.number = mp->src_as32;
+		break;
+	case BGP_MVPN_type:
+		r->value.number = mp->type;
+		break;
+	default:
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, ERROR_PANIC|3, "mvpn.%s index %d not implemented in mvpn_get()", pc->data.variable->name, pc->data.variable->index);
+		return -1;
+	}
+	return 0;
+}
+
+static Cxmember_t	mvpn_member =
+{
+	mvpn_get,
+	0,
+	(Dt_t*)&mvpn_fields[0]
+};
+
+static Cxvariable_t rd_fields[] =
+{
+CXV("addr",		"ipaddr_t",	BGP_RD_addr,		"Address.")
+CXV("addrv4",		"ipv4addr_t",	BGP_RD_addrv4,		"Ipv4 address.")
+CXV("addrv6",		"ipv6addr_t",	BGP_RD_addrv6,		"Ipv6 address.")
+CXV("as",		"as_t",		BGP_RD_as,		"AS number.")
+CXV("as16",		"as16_t",	BGP_RD_as16,		"AS16 number.")
+CXV("as32",		"as32_t",	BGP_RD_as32,		"AS32 number.")
+CXV("number",		"number",	BGP_RD_number,		"Assigned number.")
+CXV("type",		"number",	BGP_RD_type,		"Route type.")
+{0}
+};
+
+static int
+rd_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	Bgp_t*			bgp;
+	Bgproute_t*		rp;
+	Bgprd_t*		rd;
+
+	if (data)
+	{
+		bgp = BGPDATA(data);
+		rp = (Bgproute_t*)DSSDATA(data);
+		rd = &rp->rd;
+	}
+	else if (rd = (Bgprd_t*)r->value.buffer.data)
+	{
+		bgp = (Bgp_t*)DSS(cx)->data;
+		rp = 0;
+	}
+	else
+	{
+		memset(&r->value, 0, sizeof(r->value));
+		return 0;
+	}
+	switch (pc->data.variable->index)
+	{
+	case BGP_RD_addr:
+		if (rd->set & BGP_RD_SET_addrv6)
+		{
+			r->value.buffer.data = rd->addr.v6;
+			r->value.buffer.size = sizeof(rd->addr.v6);
+			r->value.buffer.elements = 0;
+			r->type = bgp->type_ipv6addr;
+		}
+		else
+		{
+			r->value.number = rd->addr.v4;
+			r->type = bgp->type_ipv4addr;
+		}
+		break;
+	case BGP_RD_addrv4:
+		r->value.number = (rd->set & BGP_RD_SET_addrv6) ? 0 : rd->addr.v4;
+		break;
+	case BGP_RD_addrv6:
+		r->value.buffer.data = (rd->set & BGP_RD_SET_addrv6) ? rd->addr.v6 : noipv6;
+		r->value.buffer.size = sizeof(rd->addr.v6);
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_RD_as:
+		r->value.number = rd->as ? rd->as : rd->as32;
+		break;
+	case BGP_RD_as16:
+		r->value.number = rd->as;
+		break;
+	case BGP_RD_as32:
+		r->value.number = rd->as32;
+		break;
+	case BGP_RD_number:
+		r->value.number = rd->number;
+		break;
+	case BGP_RD_type:
+		r->value.number = rd->type;
+		break;
+	default:
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, ERROR_PANIC|3, "rd.%s index %d not implemented in get()", pc->data.variable->name, pc->data.variable->index);
+		return -1;
+	}
+	return 0;
+}
+
+static Cxmember_t	rd_member =
+{
+	rd_get,
+	0,
+	(Dt_t*)&rd_fields[0]
+};
+
+static Cxvariable_t tunnel_fields[] =
+{
+CXV("flags",		"number",	BGP_TA_flags,		"Flags. 0x01: Leaf Information Required.")
+CXV("identifier",	"identifier_t",	BGP_TA_identifier,	"Identifier.")
+CXV("label",		"number",	BGP_TA_label,		"20 bit label.")
+CXV("type",		"number",	BGP_TA_type,		"Tunnel type.")
+{0}
+};
+
+static int
+tunnel_get(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	Bgproute_t*		rp;
+	Bgptunnel_t*		ta;
+
+	if (data)
+	{
+		rp = (Bgproute_t*)DSSDATA(data);
+		if (rp->tunnel)
+			ta = (Bgptunnel_t*)&rp->data[rp->tunnel];
+		else
+			ta = 0;
+	}
+	else
+		ta = (Bgptunnel_t*)r->value.buffer.data;
+	if (!ta)
+	{
+		memset(&r->value, 0, sizeof(r->value));
+		return 0;
+	}
+	switch (pc->data.variable->index)
+	{
+	case BGP_TA_flags:
+		r->value.number = ta->flags;
+		break;
+	case BGP_TA_identifier:
+		r->value.buffer.data = (char*)ta + ta->identifier.offset;
+		r->value.buffer.size = ta->identifier.size;
+		r->value.buffer.elements = 0;
+		break;
+	case BGP_TA_label:
+		r->value.number = ta->label;
+		break;
+	case BGP_TA_type:
+		r->value.number = ta->type;
+		break;
+	default:
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, 1, "ta.%s index %d not implemented in get()", pc->data.variable->name, pc->data.variable->index);
+		return -1;
+	}
+	return 0;
+}
+
+static Cxmember_t	tunnel_member =
+{
+	tunnel_get,
+	0,
+	(Dt_t*)&tunnel_fields[0]
 };
 
 static Cxtype_t	types[] =
 {
-	{ "bgp_t",	"BGP route data.", { { 0 }, CX_REFERENCED }, (Cxtype_t*)"number", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_UNSIGNED|CX_INTEGER, 4 }, 0, &bgp_member	},
+	/* NOTE bgp_t must be first */
+	{ "bgp_t",	"BGP route data.", CXS, (Cxtype_t*)"buffer", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_BUFFER, 4 }, 0, &bgp_member	},
+	{ "aigp_t",	"AIGP attributes.", CXH, (Cxtype_t*)"buffer", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_BUFFER, 4 }, 0, &aigp_member	},
+	{ "rd_t",	"Route distinguisher.", CXH, (Cxtype_t*)"buffer", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_BUFFER, 4 }, 0, &rd_member	},
+	{ "mvpn_t",	"Multicast VPN data.", CXH, (Cxtype_t*)"buffer", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_BUFFER, 4 }, 0, &mvpn_member	},
+	{ "tunnel_t",	"PMSI tunnel attribute.", CXH, (Cxtype_t*)"buffer", 0, 0, 0, 0, 0, 0, 0, { 0, 0, CX_BUFFER, 4 }, 0, &tunnel_member	},
 	{ 0 }
+};
+
+static Cxcallout_t local_callouts[] =
+{
+CXC(CX_GET,	"void",		"void",		bgp_get,		0)
 };
 
 /*
@@ -568,9 +963,10 @@ bgpmeth(const char* name, const char* options, const char* schema, Dssdisc_t* di
 		for (i = 0; i < elementsof(local_callouts); i++)
 			if (cxaddcallout(meth->cx, &local_callouts[i], disc))
 				return 0;
-		for (i = 0; fields[i].name; i++)
-			if (cxaddvariable(meth->cx, &fields[i], disc))
+		for (i = 0; bgp_fields[i].name; i++)
+			if (cxaddvariable(meth->cx, &bgp_fields[i], disc))
 				return 0;
+		types[0].member->members = meth->cx->fields;
 		for (fp = bgp_formats; fp; fp = fp->next)
 			dtinsert(meth->formats, fp);
 	}
@@ -677,7 +1073,7 @@ Dsslib_t dss_lib_bgp =
 {
 	"bgp",
 	"bgp method"
-	"[-1ls5Pp0?\n@(#)$Id: dss bgp method (AT&T Research) 2012-06-14 $\n]"
+	"[-1ls5Pp0?\n@(#)$Id: dss bgp method (AT&T Research) 2013-10-10 $\n]"
 	USAGE_LICENSE,
 	CXH,
 	&libraries[0],

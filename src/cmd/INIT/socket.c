@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1994-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1994-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,11 +14,11 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 /*
- * small test for -lnsl
+ * small test for -lsocket + -lnsl
  */
 
 #ifndef socket
@@ -26,8 +26,10 @@
 #include <sys/socket.h>
 #endif
 
+extern void*	gethostbyname();
+
 int
 main()
 {
-	return socket(0, 0, 0) < 0;
+	return socket(0, 0, 0) < 0 || gethostbyname(0) == 0;
 }

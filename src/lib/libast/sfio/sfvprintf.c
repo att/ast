@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -135,6 +135,7 @@ va_list	args;		/* arg list if !argf	*/
 #ifdef mbwidth
 	char*		osp;
 	int		n_w, wc;
+	wchar_t		tw;
 #endif
 #endif
 
@@ -709,7 +710,7 @@ loop_fmt :
 					{	if((size >= 0 && n >= size) ||
 						   (size <  0 && *wsp == 0) )
 							break;
-						if((n_s = wcrtomb(buf, *wsp, &mbs)) <= 0)
+						if((n_s = mbconv(buf, *wsp, &mbs)) <= 0)
 							break;
 #ifdef mbwidth
 						if(wc)
@@ -731,7 +732,8 @@ loop_fmt :
 				}
 #ifdef mbwidth
 				else if (wc)
-				{	w = 0;
+				{
+					w = 0;
 					SFMBCLR(&mbs);
 					ssp = sp;
 					for(;;)
@@ -739,7 +741,7 @@ loop_fmt :
 						   (size <  0 && *ssp == 0) )
 							break;
 						osp = ssp;
-						n = mbchar(osp);
+						n = mbchar(&tw, osp, MB_LEN_MAX, &mbs);
 						n_w = mbwidth(n);
 						if(precis >= 0 && (w+n_w) > precis )
 							break;
@@ -791,7 +793,8 @@ loop_fmt :
 						osp = sp;
 						while(n < 0)
 						{	ssp = sp;
-							if ((k = mbchar(sp)) <= 0)
+							k = mbchar(&tw, sp, MB_LEN_MAX, &mbs);
+							if (mberrno(&mbs))
 							{	sp = ssp;
 								break;
 							}
@@ -814,7 +817,7 @@ loop_fmt :
 				if(flags & SFFMT_LONG)
 				{	SFMBCLR(&mbs);
 					for(wsp = (wchar_t*)sp; w > 0; ++wsp, --w)
-					{	if((n_s = wcrtomb(buf, *wsp, &mbs)) <= 0)
+					{	if((n_s = mbconv(buf, *wsp, &mbs)) <= 0)
 							break;
 						sp = buf; SFwrite(f, sp, n_s);
 					}
@@ -871,7 +874,7 @@ loop_fmt :
 #if _has_multibyte
 				if(flags&SFFMT_LONG)
 				{	SFMBCLR(&mbs);
-					if((n_s = wcrtomb(buf, *wsp++, &mbs)) <= 0)
+					if((n_s = mbconv(buf, *wsp++, &mbs)) <= 0)
 						break;
 #ifdef mbwidth
 					if(wc)

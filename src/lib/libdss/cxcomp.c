@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -210,43 +210,43 @@ cxcodename(int code)
 		switch (name[i])
 		{
 		case 'C':
-			s = strcopy(s, "CALL");
+			s = stpcpy(s, "CALL");
 			break;
 		case 'D':
-			s = strcopy(s, "DEL");
+			s = stpcpy(s, "DEL");
 			break;
 		case 'G':
-			s = strcopy(s, "GET");
+			s = stpcpy(s, "GET");
 			break;
 		case 'J':
-			s = strcopy(s, "JMP");
+			s = stpcpy(s, "JMP");
 			break;
 		case 'L':
-			s = strcopy(s, "LOG");
+			s = stpcpy(s, "LOG");
 			break;
 		case 'R':
-			s = strcopy(s, "RET");
+			s = stpcpy(s, "RET");
 			break;
 		case 'S':
-			s = strcopy(s, code == CX_CAST ? "CAST" : (code & CX_X2) ? "==" : "SET");
+			s = stpcpy(s, code == CX_CAST ? "CAST" : (code & CX_X2) ? "==" : "SET");
 			break;
 		case 'e':
-			s = strcopy(s, "END");
+			s = stpcpy(s, "END");
 			break;
 		case 'n':
-			s = strcopy(s, "NUM");
+			s = stpcpy(s, "NUM");
 			break;
 		case 'p':
-			s = strcopy(s, "POP");
+			s = stpcpy(s, "POP");
 			break;
 		case 's':
-			s = strcopy(s, "STR");
+			s = stpcpy(s, "STR");
 			break;
 		case 't':
-			s = strcopy(s, "TST");
+			s = stpcpy(s, "TST");
 			break;
 		case '0':
-			s = strcopy(s, "NOP");
+			s = stpcpy(s, "NOP");
 			break;
 		case '~':
 			if (code == CX_NOMATCH)
@@ -291,7 +291,7 @@ cxcodetrace(Cx_t* cx, const char* fun, Cxinstruction_t* pc, unsigned int offset,
 			sfsprintf(val, sizeof(val), "  %s", ((Cxedit_t*)pc->data.pointer)->name);
 	}
 	else if (pc->type == cx->state->type_string)
-		sfsprintf(val, sizeof(val), "  \"%-.6s\"", pc->data.string);
+		sfsprintf(val, sizeof(val), "  \"%-.6s\"", pc->data.string.data);
 	else if (pc->type == cx->state->type_number)
 		sfsprintf(val, sizeof(val), "  %8.4Lf", pc->data.number);
 	else if (pc->type != cx->state->type_void)
@@ -552,6 +552,8 @@ variable(Cx_t* cx, Cxcompile_t* cc, int c, Cxtype_t* m, Cxtype_t** type)
 	Cxoperand_t	a;
 	Cxoperand_t	b;
 
+	if (type)
+		*type = 0;
 	if (identifier(cx, cc, c, &a))
 		return 0;
 	b.type = m;
@@ -563,7 +565,7 @@ variable(Cx_t* cx, Cxcompile_t* cc, int c, Cxtype_t* m, Cxtype_t** type)
 	else
 	{
 		a.refs = 0;
-		if (type && (*type = (Cxtype_t*)dtmatch(cx->types, a.value.string.data)) || (*cx->referencef)(cx, NiL, &r, &b, &a, NiL, cx->disc))
+		if (!m && type && (*type = (Cxtype_t*)dtmatch(cx->types, a.value.string.data)) || (*cx->referencef)(cx, NiL, &r, &b, &a, NiL, cx->disc))
 			return 0;
 	}
 	return r.value.variable;
@@ -636,7 +638,7 @@ code(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int op, int pp, Cxtype_t* type1,
 	static Cxformat_t	format;
 
 	x.op = op;
-	x.type = cx->table->comparison[op] ? cx->state->type_number : type1;
+	x.type = cx->table->logical[op] ? cx->state->type_bool : cx->table->comparison[op] ? cx->state->type_number : type1;
 	x.pp = pp;
 	if ((cc->pp += pp) > cc->depth)
 		cc->depth = cc->pp;
@@ -661,7 +663,7 @@ code(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int op, int pp, Cxtype_t* type1,
 		if (op != CX_REF)
 			type1 = type2 = i1->type;
 	}
-	else
+	else if (op != CX_END)
 	{
 		i1 = (Cxinstruction_t*)(sfstrseek(cc->xp, 0, SEEK_CUR) - 2 * sizeof(Cxinstruction_t));
 		i2 = i1 + 1;
@@ -683,6 +685,8 @@ code(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int op, int pp, Cxtype_t* type1,
 	if (x.callout)
 		goto done;
 	if (x.callout = cxcallout(cx, op, type1, type2, cx->disc))
+		goto done;
+	if (op == CX_CAST && (x.callout = cxcallout(cx, op, type1->fundamental, type2, cx->disc)))
 		goto done;
 	if (type1 == type2 || (op &CX_UNARY))
 	{
@@ -823,6 +827,8 @@ code(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int op, int pp, Cxtype_t* type1,
 		}
 	}
 	if (x.callout = cxcallout(cx, op, cx->state->type_void, cx->state->type_void, cx->disc))
+		goto done;
+	if (cxisbool(type1) && cxisnumber(type2) && (x.callout = cxcallout(cx, op, cx->state->type_bool, cx->state->type_bool, cx->disc)))
 		goto done;
 	if (cx->disc->errorf)
 		(*cx->disc->errorf)(cx, cx->disc, 2, "%s %s not supported [%d:%d] %p", cxcontext(cx), cxopname(op, type1, type2), cxrepresentation(type1), cxrepresentation(type2), cxcallout(cx, op, cx->state->type_string, cx->state->type_string, cx->disc));
@@ -980,7 +986,10 @@ parse(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int precedence, Cxvariable_t** 
 			if ((p = next(cx)) == c)
 			{
 				p = next(cx);
-				o |= CX_X2;
+				if (c == '!')
+					o = CX_LOG;
+				else
+					o |= CX_X2;
 				i++;
 			}
 			if (p == '~')
@@ -1128,20 +1137,24 @@ parse(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int precedence, Cxvariable_t** 
 			z = 0;
 			if (!(o & CX_UNARY) && cx->table->logical[o])
 			{
-				if (cc->type != cx->state->type_number && !code(cx, cc, expr, CX_LOG, 0, cc->type, cx->state->type_void, NiL, 0, NiL))
+				if (!cxislogical(cc->type) && !code(cx, cc, expr, CX_CAST, 0, cc->type, cx->state->type_bool, NiL, 0, NiL))
 					goto bad;
 				if (o == CX_ANDAND || o == CX_OROR)
 				{
 					z = sfstrtell(cc->xp);
-					if (!code(cx, cc, expr, (o == CX_ANDAND) ? CX_SC0 : CX_SC1, 0, cx->state->type_number, cx->state->type_void, NiL, 0, NiL))
+					if (!code(cx, cc, expr, (o == CX_ANDAND) ? CX_SC0 : CX_SC1, 0, cx->state->type_bool, cx->state->type_void, NiL, 0, NiL))
 						goto bad;
 				}
 			}
 			t = cc->type;
 			if (parse(cx, cc, expr, p, NiL) != cx->state->type_void || cx->error)
 				goto bad;
-			if (cx->table->logical[o] && cc->type != cx->state->type_number && !code(cx, cc, expr, CX_LOG, 0, cc->type, cx->state->type_void, NiL, 0, NiL))
-				goto bad;
+			if (cx->table->logical[o] && !cxislogical(cc->type))
+			{
+				if (!code(cx, cc, expr, CX_CAST, 0, cc->type, cx->state->type_bool, NiL, 0, NiL))
+					goto bad;
+				cc->type = cx->state->type_bool;
+			}
 			if (o != CX_SET && ((o & CX_UNARY) ? !code(cx, cc, expr, o, 0, cc->type, cx->state->type_void, NiL, 0, NiL) : !code(cx, cc, expr, o, -1, t, cc->type, NiL, 0, h)))
 				goto bad;
 			if (cx->table->comparison[o] || cx->table->logical[o])
@@ -1212,7 +1225,7 @@ parse(Cx_t* cx, Cxcompile_t* cc, Cxexpr_t* expr, int precedence, Cxvariable_t** 
 				goto bad;
 			x = 1;
 		}
-		else if ((cx->ctype[c] & CX_CTYPE_ALPHA) && c != '.')
+		else if (cx->ctype[c] & CX_CTYPE_ALPHA)
 		{
 			if (x)
 				goto operator_expected;
@@ -1641,19 +1654,22 @@ compile(Cx_t* cx, Cxcompile_t* cc, int balanced)
 	pos = sfstrtell(cc->xp);
 	if (parse(cx, cc, expr, 0, NiL) != cx->state->type_void || cx->error)
 		return 0;
-#if 0
-	/*
-	 * this is a failed attempt at a logical cast for naked variable tests
-	 */
-
+	if ((sfstrtell(cc->xp) - pos) >= sizeof(Cxinstruction_t))
 	{
 		Cxinstruction_t*	pc;
 
+		/*
+		 * logical cast for naked variable expression
+		 */
+
 		pc = (Cxinstruction_t*)(sfstrseek(cc->xp, 0, SEEK_CUR) - 1 * sizeof(Cxinstruction_t));
-		if (pc->op == CX_GET && !code(cx, cc, expr, CX_LOG, 0, pc->type, cx->state->type_void, NiL, 0, NiL))
-			return 0;
+		if (pc->op == CX_GET && !cxislogical(pc->type))
+		{
+			if (!code(cx, cc, expr, CX_CAST, 0, pc->type, cx->state->type_bool, NiL, 0, NiL))
+				return 0;
+			cc->type = cx->state->type_bool;
+		}
 	}
-#endif
 	if (!code(cx, cc, expr, CX_END, 0, cx->state->type_void, cx->state->type_void, NiL, 0, NiL))
 		return 0;
 	n = sfstrtell(cc->xp) - pos;

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(_UWIN) && defined(_BLD_ast)
@@ -40,7 +40,7 @@ void _STUB_malloc(){}
 extern int		atexit(void(*)(void));
 extern char*		getenv(const char*);
 
-#endif
+#endif /*_UWIN*/
 
 #include	"vmhdr.h"
 #include	<errno.h>
@@ -66,6 +66,14 @@ typedef struct ______mstats Mstats_t;
 #undef	realloc
 #define realloc		_ast_realloc
 
+#endif /*_UWIN*/
+
+/* If this code is to be used as native malloc then we won't have to worry about
+** freeing/resizing data allocated by some other malloc. As such, vmregion() can
+** be redefined to be Vmregion to bypass a superfluous computation.
+*/
+#if VM_NATIVE
+#define vmregion(d)	Vmregion
 #endif
 
 #if __STD_C
@@ -76,7 +84,7 @@ typedef struct ______mstats Mstats_t;
 #define F0(f,t0)		f()
 #define F1(f,t1,a1)		f(a1) t1 a1;
 #define F2(f,t1,a1,t2,a2)	f(a1, a2) t1 a1; t2 a2;
-#endif
+#endif /*__STD_C*/
 
 /*
  * define _AST_std_malloc=1 to force the standard malloc
@@ -88,30 +96,40 @@ typedef struct ______mstats Mstats_t;
 #define _AST_std_malloc	1
 #endif
 
-/*	malloc compatibility functions
+/*	Malloc compatibility functions
 **
-**	These are aware of debugging/profiling and are driven by the
-**	VMALLOC_OPTIONS environment variable which is a comma or space
-**	separated list of [no]name[=value] options:
+**	These can be used for debugging and are driven by the environment variable
+**	VMALLOC_OPTIONS, a space-separated list of [no]name[=value] options:
 **
 **	    abort	if Vmregion==Vmdebug then VM_DBABORT is set,
-**			otherwise _BLD_DEBUG enabled assertions abort()
+**			otherwise _BLD_debug enabled assertions abort()
 **			on failure
-**	    break	try sbrk() block allocator first
-**	    check	if Vmregion==Vmbest then the region is checked every op
-**	    free	disable addfreelist()
+**	    check=c	enable check c[:d...], prefix c with "no" to disable
+**			    region: vmbest-integrity (on by default _BLD_DEBUG)
+**			    segment: _vmchkmem() anon memory availability checks
+**	    debug	verbose debug trace to stderr
+**	    getmemory=f	enable f[:g..] getmemory() functions if supported, all by default
+**			    anon: mmap(MAP_ANON)
+**			    break|sbrk: sbrk()
+**			    native: native malloc()
+**			    safe: safe sbrk() emulation via mmap(MAP_ANON)
+**			    zero: mmap(/dev/zero)
 **	    keep	disable free -- if code works with this enabled then it
 **	    		probably accesses free'd data
 **	    method=m	sets Vmregion=m if not defined, m (Vm prefix optional)
-**			may be one of { best debug last profile }
-**	    mmap	try mmap() block allocator first
+**			    best:  best fit
+**			    debug: detailed verification checks 
+**			    last:  only last malloc() value can be freed
+**	    pagesize=n	sets memory allocation page size to n
 **	    period=n	sets Vmregion=Vmdebug if not defined, if
 **			Vmregion==Vmdebug the region is checked every n ops
-**	    profile=f	sets Vmregion=Vmprofile if not set, if
-**			Vmregion==Vmprofile then profile info printed to file f
+**	    segsize=n	sets memory allocation segment size to n
 **	    start=n	sets Vmregion=Vmdebug if not defined, if
 **			Vmregion==Vmdebug region checking starts after n ops
-**	    trace=f	enables tracing to file f
+**	    test=x	enable tests du jour in the range 0x0001..0x8000
+**	    trace=f	enable tracing to file f
+**	    usage	print region usage stats diagnotics on each system allocation
+**	    verbose	enable method and discipline initialization messages to stderr
 **	    warn=f	sets Vmregion=Vmdebug if not defined, if
 **			Vmregion==Vmdebug then warnings printed to file f
 **	    watch=a	sets Vmregion=Vmdebug if not defined, if
@@ -121,10 +139,7 @@ typedef struct ______mstats Mstats_t;
 **	the file descriptor n which must be open for writing. The pattern %p
 **	in a file name is replaced by the process ID.
 **
-**	VMALLOC_OPTIONS combines the features of these previously used env vars:
-**	    { VMCHECK VMDEBUG VMETHOD VMPROFILE VMTRACE }
-**
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+**	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
 
 #if _sys_stat
@@ -138,24 +153,452 @@ typedef struct ______mstats Mstats_t;
 #define CREAT_MODE	0644
 #endif
 
-static Vmulong_t	_Vmdbstart = 0;
-static Vmulong_t	_Vmdbcheck = 0;
-static Vmulong_t	_Vmdbtime = 0;
-static int		_Vmpffd = -1;
+static Vmulong_t	_Vmdbtime = 0;	/* clock counting malloc/free/realloc	*/
+static Vmulong_t	_Vmdbstart = 0;	/* start checking when time passes this	*/
+static Vmulong_t	_Vmdbcheck = 0;	/* check region periodically with this	*/
+
+#if __STD_C
+static Vmulong_t atou(char** sp)
+#else
+static Vmulong_t atou(sp)
+char**	sp;
+#endif
+{
+	char*		s = *sp;
+	Vmulong_t	v = 0;
+	int		b;
+
+	if(s[0] == '0' && (s[1] == 'x' || s[1] == 'X') )
+	{	for(s += 2; *s; ++s)
+		{	if(*s >= '0' && *s <= '9')
+				v = (v << 4) + (*s - '0');
+			else if(*s >= 'a' && *s <= 'f')
+				v = (v << 4) + (*s - 'a') + 10;
+			else if(*s >= 'A' && *s <= 'F')
+				v = (v << 4) + (*s - 'A') + 10;
+			else break;
+		}
+	}
+	else
+	{	for(; *s; ++s)
+		{	if(*s >= '0' && *s <= '9')
+				v = v*10 + (*s - '0');
+			else break;
+		}
+	}
+	switch (*s)
+	{
+	case 'k':
+	case 'K':
+		b = 10;
+		break;
+	case 'm':
+	case 'M':
+		b = 20;
+		break;
+	case 'g':
+	case 'G':
+		b = 30;
+		break;
+	case 't':
+	case 'T':
+		b = 40;
+		break;
+	case 'p':
+	case 'P':
+		b = 50;
+		break;
+	case 'e':
+	case 'E':
+		b = 60;
+		break;
+	default:
+		b = 0;
+		break;
+	}
+	if (b)
+	{	if (*++s == 'i' || *s == 'I')
+		{	if (*++s == 'b' || *s == 'B')
+				s++;
+			v <<= b;
+		}
+		else
+			for (b /= 10; b; b--)
+				v *= 1000;
+	}
+	*sp = s;
+	return v;
+}
+
+#if __STD_C
+static char* insertpid(char* begs, char* ends)
+#else
+static char* insertpid(begs,ends)
+char*	begs;
+char*	ends;
+#endif
+{	int	pid;
+	char*	s;
+
+	if((pid = getpid()) < 0)
+		return NIL(char*);
+
+	s = ends;
+	do
+	{	if(s == begs)
+			return NIL(char*);
+		*--s = '0' + pid%10;
+	} while((pid /= 10) > 0);
+	while(s < ends)
+		*begs++ = *s++;
+
+	return begs;
+}
+
+#if __STD_C
+static int createfile(char* file)
+#else
+static int createfile(file)
+char*	file;
+#endif
+{
+	char	buf[1024];
+	char	*next, *endb;
+	int	fd;
+
+	next = buf;
+	endb = buf + sizeof(buf);
+	while(*file)
+	{	if(*file == '%')
+		{	switch(file[1])
+			{
+			case 'p' :
+				if(!(next = insertpid(next,endb)) )
+					return -1;
+				file += 2;
+				break;
+			default :
+				goto copy;
+			}
+		}
+		else
+		{ copy:
+			*next++ = *file++;
+		}
+
+		if(next >= endb)
+			return -1;
+	}
+
+	*next = '\0';
+	file = buf;
+	if (*file == '&' && *(file += 1) || strncmp(file, "/dev/fd/", 8) == 0 && *(file += 8))
+	{
+		fd = fcntl((int)atou(&file), F_DUPFD_CLOEXEC, 0);
+#if F_DUPFD_CLOEXEC == F_DUPFD
+		if (fd >= 0)
+			SETCLOEXEC(fd);
+#endif
+	}
+	else if (*file)
+	{
+		fd = open(file, O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, CREAT_MODE);
+#if O_CLOEXEC == 0
+		if (fd >= 0)
+			SETCLOEXEC(fd);
+#endif
+	}
+	else
+		return -1;
+	return fd;
+}
+
+/* Initialize runtime options from the VMALLOC_OPTIONS env var.
+** This function is idempotent. Call at least once with boot==1
+** to initialize getmemory preferences (called by _vmstart() and
+** _vmheapinit()) and at least once with boot==2 to initialize heap
+** options (called by _vmstart()), or call with boot==3 to do both.
+*/
+void _vmoptions(int boot)
+{
+	char		*s, *t, *v;
+	Vmulong_t	n;
+	int		fd;
+	int		b;
+	int		c;
+	char		buf[1024];
+	char		*trace = NIL(char*);
+	Vmalloc_t	*vm = NIL(Vmalloc_t*);
+
+	static char*	options;
+
+	if (boot & 1)
+	{	if (_Vmassert & VM_GETMEMORY)
+			return;
+		options = getenv("VMALLOC_OPTIONS");
+	}
+	else if (!(_Vmassert & VM_GETMEMORY))
+		return;
+	if (options && options[0])
+	{	/* copy option string to a writable buffer */
+		for(s = &buf[0], t = options, v = &buf[sizeof(buf)-1]; s < v; ++s)
+			if((*s = *t++) == 0 )
+				break;
+		*s = 0;
+
+		for(s = buf;; )
+		{	/* skip blanks to option name */
+			while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
+				s++;
+			if (*(t = s) == 0)
+				break;
+
+			v = NIL(char*);
+			while (*s)
+			{	if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
+				{	*s++ = 0; /* end of name */
+					break;
+				}
+				else if (!v && *s == '=')
+				{	*s++ = 0; /* end of name */
+					if (*(v = s) == 0)
+						v = NIL(char*);
+				}
+				else	s++;
+			}
+			if (t[0] == 'n' && t[1] == 'o')
+				continue;
+			switch (t[0])
+			{
+			case 'a':		/* abort */
+				if (boot & 2)
+				{	if (!vm)
+						vm = vmopen(Vmdcsystem, Vmdebug, 0);
+					if (vm && vm->meth.meth == VM_MTDEBUG)
+						vmset(vm, VM_DBABORT, 1);
+					else	_Vmassert |= VM_abort;
+				}
+				break;
+			case 'c':		/* address/integrity checks */
+				if ((boot & 2) && v)
+					do
+					{
+						if (v[0] == 'n' && v[1] == 'o')
+						{
+							v += 2;
+							if (v[0] == '-')
+								v++;
+							c = 0;
+						}
+						else
+							c = 1;
+						switch (v[0])
+						{
+						case 'r':
+							b = VM_check_reg;
+							break;
+						case 's':
+							b = VM_check_seg;
+							break;
+						default:
+							b = 0;
+							break;
+						}
+						if (c)
+							_Vmassert |= b;
+						else
+							_Vmassert &= ~b;
+					} while ((v = strchr(v, ':')) && ++v);
+				break;
+			case 'd':		/* debug */
+				if (boot & 2)
+					_Vmassert |= VM_debug;
+				break;
+			case 'g':		/* getmemory() preference */
+				if ((boot & 1) && v)
+					do
+					{
+						if (v[0] == 'n' && v[1] == 'o')
+						{
+							v += 2;
+							if (v[0] == '-')
+								v++;
+							c = 0;
+						}
+						else
+							c = 1;
+						if (v[0] == 'm' && v[1] == 'm')
+							v++;
+						if (v[0] == 'm' && v[1] == 'a' && v[2] == 'p')
+							v += 3;
+						switch (v[0])
+						{
+						case 'a':
+							b = VM_anon;
+							break;
+						case 'b':
+							b = VM_break;
+							break;
+						case 'm':
+						case 'n':
+							b = VM_native;
+							break;
+						case 's':
+							switch (v[1])
+							{
+							case 'b':
+								b = VM_break;
+								break;
+							default:
+								b = VM_safe;
+								break;
+							}
+							break;
+						case 'z':
+							b = VM_zero;
+							break;
+						default:
+							b = 0;
+							break;
+						}
+						if (c)
+							_Vmassert |= b;
+						else
+							_Vmassert &= ~b;
+					} while ((v = strchr(v, ':')) && ++v);
+				break;
+			case 'k':		/* keep */
+				if (boot & 2)
+					_Vmassert |= VM_keep;
+				break;
+			case 'm':		/* method=<method> */
+				if ((boot & 2) && v && !vm)
+				{
+					if ((v[0] == 'V' || v[0] == 'v') && (v[1] == 'M' || v[1] == 'm'))
+						v += 2;
+					switch (v[0])
+					{
+					case 'b':
+						vm = Vmheap;
+						break;
+					case 'd':	/* debug */
+						vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						break;
+					case 'l':	/* last */
+						vm = vmopen(Vmdcsystem, Vmlast, 0);
+						break;
+					case 'p':	/* pool */
+						vm = vmopen(Vmdcsystem, Vmpool, 0);
+						break;
+					}
+				}
+				break;
+			case 'p':		/* pagesize=<size> period=<count> */
+				switch (t[1])
+				{
+				case 'a':
+					if (boot & 1)
+						_Vmpagesize = atou(&v);
+					break;
+				case 'e':
+					if (boot & 2)
+					{
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (v && vm && vm->meth.meth == VM_MTDEBUG)
+							_Vmdbcheck = atou(&v);
+					}
+					break;
+				}
+				break;
+			case 's':		/* segsize=<size> start=<count> */
+				switch (t[1])
+				{
+				case 'e':
+					if (boot & 1)
+						_Vmsegsize = atou(&v);
+					break;
+				case 't':
+					if (boot & 2)
+					{
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (v && vm && vm->meth.meth == VM_MTDEBUG)
+							_Vmdbstart = atou(&v);
+					}
+					break;
+				}
+				break;
+			case 't':		/* test || trace=<path> */
+				if (v)
+				{
+					if ((boot & 1) && t[1] == 'e')	/* test */
+						_Vmassert |= atou(&v) & VM_test;
+					if ((boot & 2) && t[1] == 'r')	/* trace=<path> */
+						trace = v;
+				}
+				break;
+			case 'u':		/* usage */
+				if (boot & 1)
+					_Vmassert |= VM_usage;
+				break;
+			case 'v':		/* verbose */
+				if (boot & 1)
+					_Vmassert |= VM_verbose;
+				break;
+			case 'w':
+				if ((boot & 2) && t[1] == 'a')
+				{	switch (t[2])
+					{
+					case 'r':	/* warn=<path> */
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (vm && vm->meth.meth == VM_MTDEBUG &&
+						    v && (fd = createfile(v)) >= 0 )
+							vmdebug(fd);
+						break;
+					case 't':	/* watch=<addr> */
+						if (!vm)
+							vm = vmopen(Vmdcsystem, Vmdebug, 0);
+						if (vm && vm->meth.meth == VM_MTDEBUG &&
+						    v && (n = atou(&v)) > 0 )
+							vmdbwatch((Void_t*)n);
+						break;
+					}
+				}
+				break;
+			}
+		}
+
+		if (vm) /* slip the new region in to drive malloc/free/realloc */
+		{	if (vm->meth.meth == VM_MTDEBUG && _Vmdbcheck == 0 )
+				_Vmdbcheck = 1;
+			Vmregion = vm;
+		}
+
+		/* enable tracing */
+		if (trace && (fd = createfile(trace)) >= 0)
+			vmtrace(fd);
+	}
+	if ((boot & 1) && !(_Vmassert & VM_GETMEMORY))
+		_Vmassert |= VM_GETMEMORY;
+}
 
 #if ( !_std_malloc || !_BLD_ast ) && !_AST_std_malloc
 
 #if !_map_malloc
-#undef calloc
-#undef cfree
-#undef free
-#undef mallinfo
-#undef malloc
-#undef mallopt
-#undef memalign
-#undef mstats
-#undef realloc
-#undef valloc
+
+#undef	calloc
+#undef	cfree
+#undef	free
+#undef	mallinfo
+#undef	malloc
+#undef	mallopt
+#undef	memalign
+#undef	posix_memalign
+#undef	mstats
+#undef	realloc
+#undef	valloc
 
 #if _malloc_hook
 
@@ -166,6 +609,7 @@ static int		_Vmpffd = -1;
 #undef	free
 #undef	malloc
 #undef	memalign
+#undef	posix_memalign
 #undef	realloc
 
 #define calloc		_ast_calloc
@@ -173,6 +617,7 @@ static int		_Vmpffd = -1;
 #define free		_ast_free
 #define malloc		_ast_malloc
 #define memalign	_ast_memalign
+#define posix_memalign	_ast_posix_memalign
 #define realloc		_ast_realloc
 
 #endif
@@ -230,431 +675,170 @@ lcl_getenv(const char* s)
 #define extern		extern __EXPORT__
 #endif
 
-static int		_Vmflinit = 0;
-#define VMFLINIT() \
-	{ if(!_Vmflinit)	vmflinit(); \
-	  if(_Vmdbcheck) \
-	  { if(_Vmdbtime < _Vmdbstart) _Vmdbtime += 1; \
-	    else if((_Vmdbtime += 1) < _Vmdbstart) _Vmdbtime = _Vmdbstart; \
-	    if(_Vmdbtime >= _Vmdbstart && (_Vmdbtime % _Vmdbcheck) == 0 && \
-	       Vmregion->meth.meth == VM_MTDEBUG) \
-		vmdbcheck(Vmregion); \
+/* not sure of all the implications -- 0 is conservative for now */
+#define USE_NATIVE	0	/* native free/realloc on non-vmalloc ptrs */
+
+#if USE_NATIVE
+static void*		native_realloc _ARG_((void*, size_t));
+static void		native_free _ARG_((void*));
+#endif
+
+#define VM_STARTING	1
+#define VM_STARTED	2
+static unsigned int	_Vmstart = 0;	/* calling _vmstart() just once		*/
+#define VMPROLOGUE(f) \
+	{ if(_Vmstart != VM_STARTED)	_vmstart(f); \
+	  if(_Vmdbcheck && Vmregion->meth.meth == VM_MTDEBUG) \
+	  { _Vmdbtime += 1; \
+	    if(_Vmdbtime >= _Vmdbstart && (_Vmdbtime % _Vmdbcheck) == 0 ) \
+		vmset(Vmregion, VM_DBCHECK, 1); \
 	  } \
 	}
+#define VMEPILOGUE(f) \
+	{ if(_Vmdbcheck && Vmregion->meth.meth == VM_MTDEBUG) \
+		vmset(Vmregion, VM_DBCHECK, 0); \
+	}
 
-#if __STD_C
-static int vmflinit(void)
-#else
-static int vmflinit()
-#endif
+static int _vmstart(int freeing)
 {
-	char*		file;
+	unsigned int	start;
+	char		*file;
 	int		line;
-	Void_t*		func;
+	Void_t		*func;
 
-	/* this must be done now to avoid any inadvertent recursion (more below) */
-	_Vmflinit = 1;
-	VMFLF(Vmregion,file,line,func);
+	_vmoptions(1);
 
-	/* if getenv() calls malloc(), the options may not affect the eventual region */
-	VMOPTIONS();
+	if (_Vmassert & VM_debug) debug_printf(2, "%s:%d: _Vmstart=%s\n", _Vmstart == 0 ? "UNINITIALIZED" : _Vmstart == VM_STARTING ? "STARTING" : _Vmstart == VM_STARTED ? "STARTED" : "ERROR" );
 
-	/* reset file and line number to correct values for the call */
-	Vmregion->file = file;
+	/* compete for the right to do initialization */
+	if((start = asocasint(&_Vmstart, 0, VM_STARTING)) == VM_STARTED )
+		return 0;
+	else if(start == VM_STARTING) /* wait until initialization is done */
+	{	asospindecl();
+		int	i = 0;
+
+		/*
+		 * we allow free() to be called by signal handlers and not deadlock
+		 * not so for *alloc()
+		 */
+
+		for(asospininit();; asospinnext())
+		{	if((start = asogetint(&_Vmstart)) == VM_STARTED)
+				return 0;
+			if(freeing && ++i >= 10)
+				return 0;
+		}
+	}
+
+	/* initialize the heap if not done yet */
+	if(_vmheapinit(NIL(Vmalloc_t*)) != Vmheap )
+	{	write(9, "vmalloc: panic: heap initialization error\n", 42);
+		return -1;
+	}
+	/**/DEBUG_ASSERT(Vmheap->data != NIL(Vmdata_t*));
+
+	/* setting options. note that Vmregion may change */
+	VMFLF(Vmregion, file, line, func);
+	_vmoptions(2);
+	Vmregion->file = file; /* reset values for the real call */
 	Vmregion->line = line;
 	Vmregion->func = func;
 
-	return 0;
-}
+	asocasint(&_Vmstart, VM_STARTING, VM_STARTED);
 
-/* use multiple regions to reduce blocking by concurrent threads  */
-#if _mem_mmap_anon || _mem_mmap_zero
-static Vmalloc_t	*Region[64];	/* list of concurrent regions	*/
-static unsigned int	Regmax = 64;	/* max number of regions	*/
-#else
-static Vmalloc_t*	Region[1];	/* list of concurrent regions	*/
-static unsigned int	Regmax = 0;
-#endif
-static unsigned int	Regnum = 0; 	/* current #concurrent regions	*/
-
-/* statistics */
-static unsigned int	Regopen = 0; 	/* #allocation calls opened	*/
-static unsigned int	Reglock = 0; 	/* #allocation calls locked	*/
-static unsigned int	Regprobe = 0; 	/* #probes to find a region	*/
-
-int setregmax(int regmax)
-{
-	int	oldmax = Regmax;
-
-	if(regmax >= Regnum && regmax <= sizeof(Region)/sizeof(Region[0]))
-		Regmax = regmax;
-
-	return oldmax;
-}
-
-/* return statistics */
-int _mallocstat(Vmstat_t* st)
-{
-	Vmstat_t	vmst;
-	int		k;
-
-	if(vmstat(Vmregion, st) < 0) /* add up all stats */
-		return -1;
-	for(k = 0; k < Regnum; ++k)
-	{	if(!Region[k])
-			continue;
-		if(vmstat(Region[k], &vmst) < 0 )
-			return -1;
-		st->n_busy += vmst.n_busy;
-		st->n_free += vmst.n_free;
-		st->s_busy += vmst.s_busy;
-		st->s_free += vmst.s_free;
-		st->m_busy += vmst.m_busy;
-		st->m_free += vmst.m_free;
-		st->n_seg  += vmst.n_seg;
-		st->extent += vmst.extent;
-	}
-
-	st->n_region = Regnum+1;
-	st->n_open = Regopen;
-	st->n_lock = Reglock;
-	st->n_probe = Regprobe;
+	if (_Vmassert & VM_verbose) debug_printf(2, "vmalloc: method=%s\n", Vmregion->meth.meth == VM_MTBEST ? "best" : Vmregion->meth.meth == VM_MTDEBUG ? "debug" : Vmregion->meth.meth == VM_MTLAST ? "last" : Vmregion->meth.meth == VM_MTPOOL ? "pool" : "unknown");
 
 	return 0;
 }
 
-/* find the region that a block was allocated from */
-static Vmalloc_t* regionof(Void_t* addr)
-{
-	int	k;
-
-#if USE_NATIVE
-#define CAUTIOUS	1
-#else
-#define CAUTIOUS	0
-#endif
-	if(CAUTIOUS || Vmregion->meth.meth != VM_MTBEST )
-	{	/* addr will not be dereferenced here */
-		if(vmaddr(Vmregion,addr) == 0 )
-			return Vmregion;
-		for(k = 0; k < Regnum; ++k)
-			if(Region[k] && vmaddr(Region[k], addr) == 0 )
-				return Region[k];
-		return NIL(Vmalloc_t*);
-	}
-	else
-	{	/* fast, but susceptible to bad data */
-		Vmdata_t *vd = SEG(BLOCK(addr))->vmdt;
-		if(Vmregion->data == vd )
-			return Vmregion;
-		for(k = 0; k < Regnum; ++k)
-			if(Region[k] && Region[k]->data == vd)
-				return Region[k];
-		return NIL(Vmalloc_t*);
-	}
-}
-
-/* manage a cache of free objects */
-typedef struct _regfree_s
-{	struct _regfree_s*	next;
-} Regfree_t;
-static Regfree_t	*Regfree;
-
-static void addfreelist(Regfree_t* data)
-{
-	unsigned int	k;
-	Regfree_t	*head;
-
-	for(k = 0;; ASOLOOP(k) )
-	{	data->next = head = Regfree;
-		if(asocasptr(&Regfree, head, data) == (Void_t*)head )
-			return;
-	}
-}
-
-static void clrfreelist()
-{
-	Regfree_t	*list, *next;
-	Vmalloc_t	*vm;
-
-	if(!(list = Regfree) )
-		return; /* nothing to do */
-
-	if(asocasptr(&Regfree, list, NIL(Regfree_t*)) != list )
-		return; /* somebody else is doing it */
-
-	for(; list; list = next)
-	{	next = list->next;
-		if(vm = regionof((Void_t*)list))
-		{	if(asocasint(&vm->data->lock, 0, 1) == 0) /* can free this now */
-			{	(void)(*vm->meth.freef)(vm, (Void_t*)list, 1);
-				vm->data->lock = 0;
-			}
-			else	addfreelist(list); /* ah well, back in the queue */
-		}
-	}
-}
-
-/* get a suitable region to allocate from */
-typedef struct _regdisc_s
-{	Vmdisc_t	disc;
-	char		slop[64]; /* to absorb any extra data in Vmdcsystem */
-} Regdisc_t;
-
-static int regexcept(Vmalloc_t* vm, int type, Void_t* data, Vmdisc_t* disc)
-{
-	if(type == VM_OPEN)
-	{	if(data) /* make vmopen allocate all memory using discipline */
-			*(Void_t**)data = data; /* just make it non-NULL */
-		return 0;
-	}
-	return 0;
-}
-
-static Vmalloc_t* getregion(int* local)
-{
-	Vmalloc_t		*vm;
-	int			p, pos;
-
-	static unsigned int	Rand = 0xdeadbeef; /* a cheap prng */
-#define RAND()			(Rand = Rand*16777617 + 3)
-
-	clrfreelist();
-
-	if(Regmax <= 0 )
-	{	/* uni-process/thread */
-		*local = 1;
-		Vmregion->data->lock = 1;
-		return Vmregion;
-	}
-	else if(asocasint(&Vmregion->data->lock, 0, 1) == 0 )
-	{	/* Vmregion is open, so use it */
-		*local = 1;
-		asoincint(&Regopen);
-		return Vmregion;
-	}
-
-	asoincint(&Regprobe); /* probe Region[] to find an open region */
-	if(Regnum == 0)
-		pos = 0;
-	else for(pos = p = RAND()%Regnum;; )
-	{	if(Region[p] && asocasint(&Region[p]->data->lock, 0, 1) == 0 )
-		{	*local = 1;
-			asoincint(&Regopen);
-			return Region[p];
-		}
-		if((p = (p+1)%Regnum) == pos )
-			break;
-	}
-
-	/* grab the next open slot for a new region */
-	while((p = Regnum) < Regmax)
-		if(asocasint(&Regnum, p, p+1) == p )
-			break;
-	if(p < Regmax) /* this slot is now ours */
-	{	static Regdisc_t	Regdisc;
-		if(!Regdisc.disc.exceptf) /* one time initialization */
-		{	GETPAGESIZE(_Vmpagesize);
-			memcpy(&Regdisc, Vmdcsystem, Vmdcsystem->size);
-			Regdisc.disc.round = ROUND(_Vmpagesize, 64*1024);
-			Regdisc.disc.exceptf = regexcept;
-		}
-
-		/**/ASSERT(Region[p] == NIL(Vmalloc_t*));
-		if((vm = vmopen(&Regdisc.disc, Vmbest, VM_SHARE)) != NIL(Vmalloc_t*) )
-		{	vm->data->lock = 1; /* lock new region now */
-			*local = 1;
-			asoincint(&Regopen);
-			return (Region[p] = vm);
-		}
-		else	Region[p] = Vmregion; /* better than nothing */
-	}
-
-	/* must return something */
-	vm = Region[pos] ? Region[pos] : Vmregion;
-	if(asocasint(&vm->data->lock, 0, 1) == 0)
-	{	*local = 1;
-		asoincint(&Regopen);
-	}
-	else
-	{	*local = 0;
-		asoincint(&Reglock);
-	}
-	return vm;
-}
-
-#if __STD_C
-extern Void_t* calloc(reg size_t n_obj, reg size_t s_obj)
-#else
-extern Void_t* calloc(n_obj, s_obj)
-reg size_t	n_obj;
-reg size_t	s_obj;
-#endif
+extern Void_t* calloc(size_t n_obj, size_t s_obj)
 {
 	Void_t		*addr;
-	Vmalloc_t	*vm;
-	int		local = 0;
-	VMFLINIT();
 
-	vm = getregion(&local);
-	addr = (*vm->meth.resizef)(vm, NIL(Void_t*), n_obj*s_obj, VM_RSZERO, local);
-	if(local)
-	{	/**/ASSERT(vm->data->lock == 1);
-		vm->data->lock = 0;
-	}
+	VMPROLOGUE(0); 
+	addr = (*Vmregion->meth.resizef)(Vmregion, NIL(Void_t*), n_obj*s_obj, VM_RSZERO, 0);
+	VMEPILOGUE(0); 
+
 	return VMRECORD(addr);
 }
 
-#if __STD_C
-extern Void_t* malloc(reg size_t size)
-#else
-extern Void_t* malloc(size)
-reg size_t	size;
-#endif
+extern Void_t* malloc(size_t size)
 {
 	Void_t		*addr;
-	Vmalloc_t	*vm;
-	int		local = 0;
-	VMFLINIT();
 
-	vm = getregion(&local);
-	addr = (*vm->meth.allocf)(vm, size, local);
-	if(local)
-	{	/**/ASSERT(vm->data->lock == 1);
-		vm->data->lock = 0;
-	}
+	VMPROLOGUE(0);
+	addr = (*Vmregion->meth.allocf)(Vmregion, size, 0);
+	VMEPILOGUE(0); 
+
 	return VMRECORD(addr);
 }
 
-#if __STD_C
-extern Void_t* realloc(reg Void_t* data, reg size_t size)
-#else
-extern Void_t* realloc(data,size)
-reg Void_t*	data;	/* block to be reallocated	*/
-reg size_t	size;	/* new size			*/
-#endif
+extern Void_t* realloc(Void_t* data, size_t size)
 {
-	ssize_t		copy;
 	Void_t		*addr;
 	Vmalloc_t	*vm;
-	VMFLINIT();
+
+	VMPROLOGUE(0);
 
 	if(!data)
 		return malloc(size);
-	else if((vm = regionof(data)) )
-	{	if(vm == Vmregion && vm != Vmheap) /* no multiple region usage here */
-		{	addr = (*vm->meth.resizef)(vm, data, size, VM_RSCOPY|VM_RSMOVE, 0);
-			return VMRECORD(addr);
-		}
-		if(asocasint(&vm->data->lock, 0, 1) == 0 ) /* region is open */
-		{	addr = (*vm->meth.resizef)(vm, data, size, VM_RSCOPY|VM_RSMOVE, 1);
-			vm->data->lock = 0;
-			return VMRECORD(addr);
-		}
-		else if(Regmax > 0 && Vmregion == Vmheap && (addr = malloc(size)) )
-		{	if((copy = SIZE(BLOCK(data))&~BITS) > size )
-				copy = size;	
-			memcpy(addr, data, copy);
-			addfreelist((Regfree_t*)data);
-			return VMRECORD(addr);
-		}
-		else /* this may block but it is the best that we can do now */
-		{	addr = (*vm->meth.resizef)(vm, data, size, VM_RSCOPY|VM_RSMOVE, 0);
-			return VMRECORD(addr);
-		}
-	}
+	else if((vm = vmregion(data)) )
+		addr = (*vm->meth.resizef)(vm, data, size, VM_RSCOPY|VM_RSMOVE, 0);
 	else /* not our data */
-	{
 #if USE_NATIVE
-#undef	realloc /* let the native realloc() take care of it */
-#if __STD_C
-		extern Void_t*	realloc(Void_t*, size_t);
-#else
-		extern Void_t*	realloc();
-#endif
-		return realloc(data, size);
+		addr = native_realloc(data, size);
 #else 
-		return NIL(Void_t*);
+		addr = NIL(Void_t*);
 #endif
-	}
+
+	VMEPILOGUE(0);
+	return VMRECORD(addr);
 }
 
-#if __STD_C
-extern void free(reg Void_t* data)
-#else
-extern void free(data)
-reg Void_t*	data;
-#endif
+extern void free(Void_t* data)
 {
 	Vmalloc_t	*vm;
-	VMFLINIT();
 
-	if(!data || (_Vmassert & VM_keep))
-		return;
-	else if((vm = regionof(data)) )
-	{	
-		if(vm == Vmregion && Vmregion != Vmheap || (_Vmassert & VM_free))
+	VMPROLOGUE(1);
+
+	if(data && !(_Vmassert & VM_keep))
+	{	if((vm = vmregion(data)) )
 			(void)(*vm->meth.freef)(vm, data, 0);
-		else	addfreelist((Regfree_t*)data);
-		return;
-	}
-	else /* not our data */
-	{
 #if USE_NATIVE
-#undef	free /* let the native free() take care of it */
-#if __STD_C
-		extern void	free(Void_t*);
-#else
-		extern void	free();
+		else /* not our data */
+			native_free(data);
 #endif
-		free(data);
-#endif
-		return;
 	}
+
+	VMEPILOGUE(1);
 }
 
-#if __STD_C
-extern void cfree(reg Void_t* data)
-#else
-extern void cfree(data)
-reg Void_t*	data;
-#endif
+extern void cfree(Void_t* data)
 {
 	free(data);
 }
 
-#if __STD_C
-extern Void_t* memalign(reg size_t align, reg size_t size)
-#else
-extern Void_t* memalign(align, size)
-reg size_t	align;
-reg size_t	size;
-#endif
+extern Void_t* memalign(size_t align, size_t size)
 {
 	Void_t		*addr;
-	Vmalloc_t	*vm;
-	int		local = 0;
-	VMFLINIT();
 
-	vm = getregion(&local);
+	VMPROLOGUE(0);
+
 	VMBLOCK
-	addr = (*vm->meth.alignf)(vm, size, align, local);
-	if(local)
-	{	/**/ASSERT(vm->data->lock == 1);
-		vm->data->lock = 0;
-	}
+	addr = (*Vmregion->meth.alignf)(Vmregion, size, align, 0);
 	VMUNBLOCK
+
+	VMEPILOGUE(0);
+
 	return VMRECORD(addr);
 }
 
-#if __STD_C
-extern int posix_memalign(reg Void_t **memptr, reg size_t align, reg size_t size)
-#else
-extern int posix_memalign(memptr, align, size)
-reg Void_t**	memptr;
-reg size_t	align;
-reg size_t	size;
-#endif
+extern Void_t* aligned_alloc(size_t align, size_t size)
+{
+	return memalign(align, ROUND(size,align));
+}
+
+extern int posix_memalign(Void_t **memptr, size_t align, size_t size)
 {
 	Void_t	*mem;
 
@@ -668,39 +852,35 @@ reg size_t	size;
 	return 0;
 }
 
-#if __STD_C
-extern Void_t* valloc(reg size_t size)
-#else
-extern Void_t* valloc(size)
-reg size_t	size;
-#endif
+extern Void_t* valloc(size_t size)
 {
-	VMFLINIT();
+	Void_t	*addr;
 
-	GETPAGESIZE(_Vmpagesize);
-	return VMRECORD(memalign(_Vmpagesize, size));
+	VMPROLOGUE(0);
+
+	VMPAGESIZE();
+	addr = memalign(_Vmpagesize, size);
+
+	VMEPILOGUE(0);
+
+	return VMRECORD(addr);
 }
 
-#if __STD_C
-extern Void_t* pvalloc(reg size_t size)
-#else
-extern Void_t* pvalloc(size)
-reg size_t	size;
-#endif
+extern Void_t* pvalloc(size_t size)
 {
-	VMFLINIT();
+	Void_t	*addr;
 
-	GETPAGESIZE(_Vmpagesize);
-	return VMRECORD(memalign(_Vmpagesize, ROUND(size,_Vmpagesize)) );
+	VMPROLOGUE(0);
+
+	VMPAGESIZE();
+	addr = memalign(_Vmpagesize, ROUND(size,_Vmpagesize));
+
+	VMEPILOGUE(0);
+	return VMRECORD(addr);
 }
 
 #if !_PACKAGE_ast
-#if __STD_C
 char* strdup(const char* s)
-#else
-char* strdup(s)
-char*	s;
-#endif
 {
 	char	*ns;
 	size_t	n;
@@ -720,25 +900,20 @@ char*	s;
 #ifndef _stk_down
 #define _stk_down	0
 #endif
-typedef struct _alloca_s	Alloca_t;
-union _alloca_u
+typedef struct Alloca_s	Alloca_t;
+union Alloca_u
 {	struct
 	{	char*		addr;
 		Alloca_t*	next;
 	} head;
 	char	array[ALIGN];
 };
-struct _alloca_s
-{	union _alloca_u	head;
+struct Alloca_s
+{	union Alloca_u	head;
 	Vmuchar_t	data[1];
 };
 
-#if __STD_C
 extern Void_t* alloca(size_t size)
-#else
-extern Void_t* alloca(size)
-size_t	size;
-#endif
 {	char		array[ALIGN];
 	char*		file;
 	int		line;
@@ -747,7 +922,7 @@ size_t	size;
 	Vmalloc_t	*vm;
 	static Alloca_t* Frame;
 
-	VMFLINIT();
+	VMPROLOGUE(0);
 
 	VMFLF(Vmregion,file,line,func); /* save info before freeing frames */
 
@@ -755,7 +930,7 @@ size_t	size;
 	{	if(( _stk_down && &array[0] > Frame->head.head.addr) ||
 		   (!_stk_down && &array[0] < Frame->head.head.addr) )
 		{	f = Frame; Frame = f->head.head.next;
-			if((vm = regionof(f)) )
+			if((vm = vmregion(f)) )
 				(void)(*vm->meth.freef)(vm, f, 0);
 			/* else: something bad happened. just keep going */
 		}
@@ -773,15 +948,15 @@ size_t	size;
 	f->head.head.next = Frame;
 	Frame = f;
 
+	VMEPILOGUE(0);
+
 	return (Void_t*)f->data;
 }
 #endif /*!_lib_alloca || _mal_alloca*/
 
 #if _map_malloc
 
-/* not sure of all the implications -- 0 is conservative for now */
-#define USE_NATIVE	0	/* native free/realloc on non-vmalloc ptrs */
-
+/* _ast_* versions of malloc & friends */
 #else
 
 #if _malloc_hook
@@ -823,7 +998,7 @@ static void vm_initialize_hook(void)
 	__realloc_hook = vm_realloc_hook;
 }
 
-void	(*__malloc_initialize_hook)(void) = vm_initialize_hook;
+typeof (__malloc_initialize_hook) __malloc_initialize_hook = vm_initialize_hook;
 
 #if 0 /* 2012-02-29 this may be needed to cover shared libs */
 
@@ -935,7 +1110,8 @@ int	cmd;
 int	value;
 #endif
 {
-	VMFLINIT();
+	VMPROLOGUE(0);
+	VMEPILOGUE(0);
 	return 0;
 }
 #endif /*_lib_mallopt*/
@@ -950,7 +1126,9 @@ extern Mallinfo_t mallinfo()
 	Vmstat_t	sb;
 	Mallinfo_t	mi;
 
-	VMFLINIT();
+	VMPROLOGUE(0);
+	VMEPILOGUE(0);
+
 	memset(&mi,0,sizeof(mi));
 	if(vmstat(Vmregion,&sb) >= 0)
 	{	mi.arena = sb.extent;
@@ -972,7 +1150,9 @@ extern Mstats_t mstats()
 	Vmstat_t	sb;
 	Mstats_t	ms;
 
-	VMFLINIT();
+	VMPROLOGUE(0);
+	VMEPILOGUE(0);
+
 	memset(&ms,0,sizeof(ms));
 	if(vmstat(Vmregion,&sb) >= 0)
 	{	ms.bytes_total = sb.extent;
@@ -995,8 +1175,6 @@ extern Mstats_t mstats()
  * even though there is no malloc override, still provide
  * _ast_* counterparts for object compatibility
  */
-
-#define setregmax(n)
 
 #undef	calloc
 extern Void_t*	calloc _ARG_((size_t, size_t));
@@ -1032,22 +1210,17 @@ extern Void_t*	valloc _ARG_((size_t));
 #define extern		__EXPORT__
 #endif
 
-#if !_malloc_hook
-
+extern Void_t*	F2(_ast_calloc, size_t,n, size_t,m) { return calloc(n, m); }
+extern Void_t	F1(_ast_cfree, Void_t*,p) { free(p); }
 extern Void_t	F1(_ast_free, Void_t*,p) { free(p); }
 extern Void_t*	F1(_ast_malloc, size_t,n) { return malloc(n); }
 #if _lib_memalign
 extern Void_t*	F2(_ast_memalign, size_t,a, size_t,n) { return memalign(a, n); }
 #endif
-extern Void_t*	F2(_ast_realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
-
-#endif
-
-extern Void_t*	F2(_ast_calloc, size_t,n, size_t,m) { return calloc(n, m); }
-extern Void_t	F1(_ast_cfree, Void_t*,p) { free(p); }
 #if _lib_pvalloc
 extern Void_t*	F1(_ast_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
+extern Void_t*	F2(_ast_realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
 #if _lib_valloc
 extern Void_t*	F1(_ast_valloc, size_t,n) { return valloc(n); }
 #endif
@@ -1070,11 +1243,7 @@ extern Void_t*	F1(_ast_valloc, size_t,n) { return valloc(n); }
 
 #if !_UWIN
 
-#if !_malloc_hook
-
 #include	<malloc.h>
-
-#endif
 
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
@@ -1103,345 +1272,6 @@ extern Mstats_t		F0(_ast_mstats, void) { return mstats(); }
 
 #endif /*!_std_malloc*/
 
-#if __STD_C
-static Vmulong_t atou(char** sp)
-#else
-static Vmulong_t atou(sp)
-char**	sp;
-#endif
-{
-	char*		s = *sp;
-	Vmulong_t	v = 0;
-
-	if(s[0] == '0' && (s[1] == 'x' || s[1] == 'X') )
-	{	for(s += 2; *s; ++s)
-		{	if(*s >= '0' && *s <= '9')
-				v = (v << 4) + (*s - '0');
-			else if(*s >= 'a' && *s <= 'f')
-				v = (v << 4) + (*s - 'a') + 10;
-			else if(*s >= 'A' && *s <= 'F')
-				v = (v << 4) + (*s - 'A') + 10;
-			else break;
-		}
-	}
-	else
-	{	for(; *s; ++s)
-		{	if(*s >= '0' && *s <= '9')
-				v = v*10 + (*s - '0');
-			else break;
-		}
-	}
-
-	*sp = s;
-	return v;
-}
-
-#if __STD_C
-static char* insertpid(char* begs, char* ends)
-#else
-static char* insertpid(begs,ends)
-char*	begs;
-char*	ends;
-#endif
-{	int	pid;
-	char*	s;
-
-	if((pid = getpid()) < 0)
-		return NIL(char*);
-
-	s = ends;
-	do
-	{	if(s == begs)
-			return NIL(char*);
-		*--s = '0' + pid%10;
-	} while((pid /= 10) > 0);
-	while(s < ends)
-		*begs++ = *s++;
-
-	return begs;
-}
-
-#define FD_PRIVATE	(3*OPEN_MAX/4)
-
-#if __STD_C
-int _vmfd(int fd)
-#else
-int _vmfd(fd)
-int	fd;
-#endif
-{
-	int	pd;
-
-	if (fd >= 0)
-	{
-		if (fd < FD_PRIVATE && (pd = fcntl(fd, F_DUPFD, FD_PRIVATE)) >= 0)
-		{
-			close(fd);
-			fd = pd;
-		}
-#ifdef FD_CLOEXEC
-		fcntl(fd,  F_SETFD, FD_CLOEXEC);
-#endif
-	}
-	return fd;
-}
-
-#if __STD_C
-static int createfile(char* file)
-#else
-static int createfile(file)
-char*	file;
-#endif
-{
-	char	buf[1024];
-	char	*next, *endb;
-	int	fd;
-
-	next = buf;
-	endb = buf + sizeof(buf);
-	while(*file)
-	{	if(*file == '%')
-		{	switch(file[1])
-			{
-			case 'p' :
-				if(!(next = insertpid(next,endb)) )
-					return -1;
-				file += 2;
-				break;
-			default :
-				goto copy;
-			}
-		}
-		else
-		{ copy:
-			*next++ = *file++;
-		}
-
-		if(next >= endb)
-			return -1;
-	}
-
-	*next = '\0';
-	file = buf;
-	if (*file == '&' && *(file += 1) || strncmp(file, "/dev/fd/", 8) == 0 && *(file += 8))
-		fd = dup((int)atou(&file));
-	else if (*file)
-	{
-#if _PACKAGE_ast
-		fd = open(file, O_WRONLY|O_CREAT|O_TRUNC, CREAT_MODE);
-#else
-		fd = creat(file, CREAT_MODE);
-#endif
-		fd = _vmfd(fd);
-	}
-	else
-		return -1;
-#if _PACKAGE_ast
-#ifdef FD_CLOEXEC
-	if (fd >= 0)
-		fcntl(fd, F_SETFD, FD_CLOEXEC);
-#endif
-#endif
-	return fd;
-}
-
-#if __STD_C
-static void pfprint(void)
-#else
-static void pfprint()
-#endif
-{
-	if(Vmregion->meth.meth == VM_MTPROFILE)
-		vmprofile(Vmregion,_Vmpffd);
-}
-
-/*
- * initialize runtime options from the VMALLOC_OPTIONS env var
- */
-
-#define COPY(t,e,f)	while ((*t = *f++) && t < e) t++
-
-#if __STD_C
-void _vmoptions(void)
-#else
-void _vmoptions()
-#endif
-{
-	Vmalloc_t*	vm = 0;
-	char*		trace = 0;
-	char*		s;
-	char*		t;
-	char*		v;
-	Vmulong_t	n;
-	int		fd;
-	char		buf[1024];
-
-	_Vmoptions = 1;
-	t = buf;
-	v = &buf[sizeof(buf)-1];
-	if (s = getenv("VMALLOC_OPTIONS"))
-		COPY(t, v, s);
-	if (t > buf)
-	{
-		*t = 0;
-		s = buf;
-		for (;;)
-		{
-			while (*s == ',' || *s == ' ' || *s == '\t' || *s == '\r' || *s == '\n')
-				s++;
-			if (!*(t = s))
-				break;
-			v = 0;
-			while (*s)
-				if (*s == ',' || *s == ' ' || *s == '\t' || *s == '\r' || *s == '\n')
-				{
-					*s++ = 0;
-					break;
-				}
-				else if (!v && *s == '=')
-				{
-					*s++ = 0;
-					if (!*(v = s))
-						v = 0;
-				}
-				else
-					s++;
-			if (t[0] == 'n' && t[1] == 'o')
-				continue;
-			switch (t[0])
-			{
-			case 'a':		/* abort */
-				if (!vm)
-					vm = vmopen(Vmdcsystem, Vmdebug, 0);
-				if (vm && vm->meth.meth == VM_MTDEBUG)
-					vmset(vm, VM_DBABORT, 1);
-				else
-					_Vmassert |= VM_abort;
-				break;
-			case 'b':		/* break */
-				_Vmassert |= VM_break;
-				break;
-			case 'c':		/* check */
-				_Vmassert |= VM_check;
-				break;
-			case 'f':		/* free */
-				_Vmassert |= VM_free;
-				break;
-			case 'k':		/* keep */
-				_Vmassert |= VM_keep;
-				break;
-			case 'm':
-				if (v)
-					switch (t[1])
-					{
-					case 'e': /* method=METHOD */
-						if (!vm)
-						{
-							if ((v[0] == 'V' || v[0] == 'v') && (v[1] == 'M' || v[1] == 'm'))
-								v += 2;
-							if (strcmp(v, "debug") == 0)
-								vm = vmopen(Vmdcsystem, Vmdebug, 0);
-							else if (strcmp(v, "profile") == 0)
-								vm = vmopen(Vmdcsystem, Vmprofile, 0);
-							else if (strcmp(v, "last") == 0)
-								vm = vmopen(Vmdcsystem, Vmlast, 0);
-							else if (strcmp(v, "best") == 0)
-								vm = Vmheap;
-						}
-						break;
-					case 'm': /* mmap */
-						_Vmassert |= VM_mmap;
-						break;
-					}
-				break;
-			case 'p':
-				if (v)
-					switch (t[1])
-					{
-					case 'e':	/* period=<count> */
-						if (!vm)
-							vm = vmopen(Vmdcsystem, Vmdebug, 0);
-						if (vm && vm->meth.meth == VM_MTDEBUG)
-							_Vmdbcheck = atou(&v);
-						break;
-					case 'r':	/* profile=<path> */
-						if (!vm)
-							vm = vmopen(Vmdcsystem, Vmprofile, 0);
-						if (v && vm && vm->meth.meth == VM_MTPROFILE)
-							_Vmpffd = createfile(v);
-						break;
-					}
-				break;
-			case 's':		/* start=<count> */
-				if (!vm)
-					vm = vmopen(Vmdcsystem, Vmdebug, 0);
-				if (v && vm && vm->meth.meth == VM_MTDEBUG)
-					_Vmdbstart = atou(&v);
-				break;
-			case 't':		/* trace=<path> */
-				trace = v;
-				break;
-			case 'w':
-				if (t[1] == 'a')
-					switch (t[2])
-					{
-					case 'r':	/* warn=<path> */
-						if (!vm)
-							vm = vmopen(Vmdcsystem, Vmdebug, 0);
-						if (v && vm && vm->meth.meth == VM_MTDEBUG && (fd = createfile(v)) >= 0)
-							vmdebug(fd);
-						break;
-					case 't':	/* watch=<addr> */
-						if (!vm)
-							vm = vmopen(Vmdcsystem, Vmdebug, 0);
-						if (v && vm && vm->meth.meth == VM_MTDEBUG && (n = atou(&v)) >= 0)
-							vmdbwatch((Void_t*)n);
-						break;
-					}
-				break;
-			}
-		}
-	}
-
-	/* slip in the new region now so that malloc() will work fine */
-
-	if (vm)
-	{
-		if (vm->meth.meth == VM_MTDEBUG)
-			_Vmdbcheck = 1;
-		Vmregion = vm;
-	}
-
-	/* enable tracing -- this currently disables multiple regions */
-
-	if (trace)
-	{
-		setregmax(0);
-		if ((fd = createfile(trace)) >= 0)
-		{
-			vmset(Vmregion, VM_TRACE, 1);
-			vmtrace(fd);
-		}
-	}
-	else if (Vmregion != Vmheap || asometh(0, 0)->type == ASO_SIGNAL)
-		setregmax(0);
-
-	/* make sure that profile data is output upon exiting */
-
-	if (vm && vm->meth.meth == VM_MTPROFILE)
-	{	
-		if (_Vmpffd < 0)
-			_Vmpffd = 2;
-		/* this may wind up calling malloc(), but region is ok now */
-		atexit(pfprint);
-	}
-	else if (_Vmpffd >= 0)
-	{	
-		close(_Vmpffd);
-		_Vmpffd = -1;
-	}
-}
-
 /*
  * ast semi-private workaround for system functions
  * that misbehave by passing bogus addresses to free()
@@ -1455,7 +1285,11 @@ void _vmoptions()
  *	(void)_vmkeep(r);
  */
 
-int
+#if defined(__EXPORT__)
+#define extern		__EXPORT__
+#endif
+
+extern int
 #if __STD_C
 _vmkeep(int v)
 #else
@@ -1472,5 +1306,29 @@ int	v;
 		_Vmassert &= ~VM_keep;
 	return r;
 }
+
+#undef	extern
+
+#if USE_NATIVE
+
+#undef	realloc
+
+extern void*	realloc(void*, size_t);
+
+static void*	native_realloc(void* p, size_t n)
+{
+	return realloc(p, n);
+}
+
+#undef	free
+
+extern void	free(void*);
+
+static void	native_free(void* p)
+{
+	free(p);
+}
+
+#endif
 
 #endif /*_UWIN*/

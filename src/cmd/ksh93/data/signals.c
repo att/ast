@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"defs.h"
@@ -69,7 +69,7 @@ const struct shtable2 shtab_signals[] =
 #   endif	/* SIGCLD */
 #else
 #   ifdef SIGCLD
-	"CLD",		VAL(SIGCLD,SH_SIGFAULT),			S("Death of Child"),
+	"CHLD",		VAL(SIGCLD,SH_SIGFAULT),			S("Death of Child"),
 #   endif	/* SIGCLD */
 #endif	/* SIGCHLD */
 #ifdef SIGCONT
@@ -102,6 +102,9 @@ const struct shtable2 shtab_signals[] =
 #endif /* SIGGRANT */
 	"HUP",		VAL(SIGHUP,SH_SIGDONE),				S("Hangup"),
 	"ILL",		VAL(SIGILL,SH_SIGDONE),				S("Illegal instruction"),
+#ifdef SIGINFO
+	"INFO",		VAL(SIGINFO,SH_SIGIGNORE),			S("Information request"),
+#endif /* SIGINFO */
 #ifdef JOBS
 	"INT",		VAL(SIGINT,SH_SIGINTERACTIVE),			S("Interrupt"),
 #else
@@ -245,3 +248,112 @@ const struct shtable2 shtab_signals[] =
 #endif	/* SIGRES */
 	"",	0,	0
 };
+
+#ifdef _lib_sigaction
+    const struct shtable4 shtab_siginfo_codes[] =
+    {
+	{ SIGCHLD,	CLD_EXITED,	"EXITED"	},
+	{ SIGCHLD,	CLD_DUMPED,	"DUMPED"	},
+	{ SIGCHLD,	CLD_KILLED,	"KILLED"	},
+#   ifdef CLD_STOPPED
+	{ SIGCHLD,	CLD_STOPPED,	"STOPPED"	},
+#   endif
+#   ifdef CLD_CONTINUED
+	{ SIGCHLD,	CLD_CONTINUED,	"CONTINUED"	},
+#   endif
+#   ifdef CLD_TRAPPED
+	{ SIGCHLD,	CLD_TRAPPED,	"TRAPPED"	},
+#   endif
+#ifdef SIGILL
+#	ifdef POLL_IN
+	    { SIGILL,	POLL_IN,	"IN"	},
+#	endif
+#	ifdef ILL_ILLOPC
+	    { SIGILL,	ILL_ILLOPC,	"ILLOPC"	},
+#	endif
+#	ifdef ILL_ILLOPN
+	    { SIGILL,	ILL_ILLOPN,	"ILLOP"	},
+#	endif
+#	ifdef ILL_ADR
+	    { SIGILL,	ILL_ADR,	"ADR"	},
+#	endif
+#	ifdef ILL_TRP
+	    { SIGILL,	ILL_TRP,	"TRP"	},
+#	endif
+#	ifdef ILL_PRVOPC
+	    { SIGILL,	ILL_PRVOPC,	"PRVOPC" },
+#	endif
+#	ifdef ILL_COPROC
+	    { SIGILL,	ILL_COPROC,	"COPROC"	},
+#	endif
+#	ifdef ILL_BADSTK
+	    { SIGILL,	ILL_BADSTK,	"BADSTK"	},
+#	endif
+#endif
+#ifdef SIGPOLL
+#	ifdef POLL_IN
+	    { SIGPOLL,	POLL_IN,	"IN"	},
+#	endif
+#	ifdef POLL_OUT
+	    { SIGPOLL,	POLL_OUT,	"OUT"	},
+#	endif
+#	ifdef POLL_MSG
+	    { SIGPOLL,	POLL_MSG,	"MSG"	},
+#	endif
+#	ifdef POLL_ERR
+	    { SIGPOLL,	POLL_ERR,	"ERR"	},
+#	endif
+#	ifdef POLL_PRI
+	    { SIGPOLL,	POLL_PRI,	"PRI"	},
+#	endif
+#	ifdef POLL_HUP
+	    { SIGPOLL,	POLL_HUP,	"HUP"	},
+#	endif
+#endif
+	/*
+	 * entries with sig==0 must be at the end of the list
+	 * to prevent possible clashes with signal-specific
+	 * codes
+	 */
+#   ifdef SI_USER
+	{ 0,		SI_USER,	"SI_USER"		},
+#   endif
+#   ifdef SI_QUEUE
+	{ 0,		SI_QUEUE,	"SI_QUEUE"		},
+#   endif
+#   ifdef SI_TIMER
+	{ 0,		SI_TIMER,	"SI_TIMER"		},
+#   endif
+#   ifdef SI_ASYNCIO
+	{ 0,		SI_ASYNCIO,	"SI_ASYNCIO"	},
+#   endif
+#   ifdef SI_MESGQ
+	{ 0,		SI_MESGQ,	"SI_MESGQ"		},
+#   endif
+#   ifdef SI_NOINFO
+	{ 0,		SI_NOINFO,	"SI_NOINFO"	},
+#   endif
+#   ifdef SI_DTRACE
+	{ 0,		SI_DTRACE,	"SI_DTRACE"	},
+#   endif
+#   ifdef SI_RCTL
+	{ 0,		SI_RCTL,	"SI_RCTL"		},
+#   endif
+#   ifdef SI_LWP
+	{ 0,		SI_LWP,		"SI_LWP"		},
+#   endif
+#   ifdef SI_KERNEL
+	{ 0,		SI_KERNEL,	"SI_KERNEL"	},
+#   endif
+#   ifdef SI_SIGIO
+	{ 0,		SI_SIGIO,	"SI_SIGIO"		},
+#   endif
+#   ifdef SI_TKILL
+	{ 0,		SI_TKILL,	"SI_TKILL"		},
+#   endif
+#   ifdef SI_ASYNCNL
+	{ 0,		SI_ASYNCNL,	"SI_ASYNCNL"	},
+#   endif
+	{ 0,		0,		NULL		}
+   };
+#endif /* _lib_sigaction */

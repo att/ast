@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -48,13 +48,13 @@ struct comnod
 	void		*comnamp;
 	void		*comnamq;
 	void		*comstate;
-	int		comline;
+	int64_t		comline;
 };
 
 #define COMBITS		4
 #define COMMSK		((1<<COMBITS)-1)
 #define COMSCAN		(01<<COMBITS)
-#define COMFIXED	(02<<COMBITS)
+#define COMFIXED	(04000<<COMBITS)
 
 struct slnod 	/* struct for link list of stacks */
 {
@@ -120,12 +120,14 @@ struct argnod
 #define ARG_QUOTED	0x20	/* word contained quote characters */
 #define ARG_MESSAGE	0x40	/* contains international string */
 #define ARG_APPEND	0x80	/* for += assignment */
+#define ARG_ARRAY	0x2	/* for typeset -a */
 /*  The following can be passed as options to sh_macexpand() */
 #define ARG_ARITH	0x100	/* arithmetic expansion */
 #define ARG_OPTIMIZE	0x200	/* try to optimize */
 #define ARG_NOGLOB	0x400	/* no file name expansion */
 #define ARG_LET		0x800	/* processing let command arguments */
 #define ARG_ARRAYOK	0x1000	/* $x[sub] ==> ${x[sub]} */
+#define ARG_CASE	0x2000  /* expanding case patterns */
 
 extern struct dolnod	*sh_argcreate(char*[]);
 extern char 		*sh_argdolminus(void*);

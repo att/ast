@@ -1,4 +1,5 @@
-08-06=09 sync with ksh93t api
+12-08-24  Makefile: shell:20120609
+08-06-09 sync with ksh93t api
 07-09-17 move from dsslib/sh and get working with ksh93s+
 07-05-09 update for lib_init(flags,context) context arg
 07-03-19 update nv_setref() calls

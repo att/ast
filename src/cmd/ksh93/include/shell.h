@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -27,23 +27,32 @@
  *
  */
 
-#define SH_VERSION	20071012
+#define SH_VERSION	20120720
 
 #include	<ast.h>
 #include	<cdt.h>
+#include	<stk.h>
 #ifdef _SH_PRIVATE
 #   include	"name.h"
 #else
 #   include	<nval.h>
 #endif /* _SH_PRIVATE */
+#if __STDC_VERSION__ >= 199901L
+#    include	<stdint.h>
+#endif
 
 #undef NOT_USED
-#define NOT_USED(x)	(&x,1)
+#define NOT_USED(x)	(&(x),1)
 
 /* options */
+#if __STDC_VERSION__ >= 199901L
+    typedef uint_fast64_t Shopt_t_data_t;
+#else
+    typedef unsigned int Shopt_t_data_t;
+#endif
 typedef struct
 {
-	unsigned long v[4];
+	Shopt_t_data_t v[(256/8)/sizeof(Shopt_t_data_t)];
 }
 Shopt_t;
 
@@ -123,7 +132,7 @@ typedef struct sh_scope
 	char		*cmdname;
 	char		*filename;
 	char		*funname;
-	int		lineno;
+	int64_t		lineno;
 	Dt_t		*var_tree;
 	struct sh_scope	*self;
 } Shscope_t;
@@ -145,6 +154,8 @@ struct Shell_s
 	unsigned char	trapnote;	/* set when trap/signal is pending */
 	char		shcomp;		/* set when runing shcomp */
 	short		subshell;	/* set for virtual subshell */
+	Stk_t		*stk;		/* stack poiter */
+	int		pwdfd;		/* file descriptor for pwd */
 #ifdef _SH_PRIVATE
 	_SH_PRIVATE
 #endif /* _SH_PRIVATE */
@@ -171,51 +182,74 @@ struct Shell_s
 #   endif /* _BLD_shell */
 #endif /* _DLL */
 
-extern Dt_t		*sh_bltin_tree(void);
-extern void		sh_subfork(void);
-extern Shell_t		*sh_init(int,char*[],Shinit_f);
-extern int		sh_reinit(char*[]);
-extern int 		sh_eval(Sfio_t*,int);
-extern void 		sh_delay(double);
-extern void		*sh_parse(Shell_t*, Sfio_t*,int);
-extern int 		sh_trap(const char*,int);
-extern int 		sh_fun(Namval_t*,Namval_t*, char*[]);
-extern int 		sh_funscope(int,char*[],int(*)(void*),void*,int);
-extern Sfio_t		*sh_iogetiop(int,int);
-extern int		sh_main(int, char*[], Shinit_f);
-extern int		sh_run(int, char*[]);
-extern void		sh_menu(Sfio_t*, int, char*[]);
-extern Namval_t		*sh_addbuiltin(const char*, int(*)(int, char*[],Shbltin_t*), void*);
-extern char		*sh_fmtq(const char*);
-extern char		*sh_fmtqf(const char*, int, int);
-extern Sfdouble_t	sh_strnum(const char*, char**, int);
 extern int		sh_access(const char*,int);
-extern int 		sh_close(int);
+extern Namval_t		*sh_addbuiltin(const char*, int(*)(int, char*[],Shbltin_t*), void*);
+extern Dt_t		*sh_bltin_tree(void);
 extern int		sh_chdir(const char*);
+extern int 		sh_close(int);
+extern void 		sh_delay(double);
 extern int 		sh_dup(int);
+extern int 		sh_eval(Sfio_t*,int);
+extern int		sh_exec(Shell_t*,const Shnode_t*,int);
 extern void 		sh_exit(int);
 extern int		sh_fchdir(int);
 extern int		sh_fcntl(int, int, ...);
 extern Sfio_t		*sh_fd2sfio(int);
 extern int		(*sh_fdnotify(int(*)(int,int)))(int,int);
+extern char		*sh_fmtq(const char*);
+extern char		*sh_fmtqf(const char*, int, int);
+extern int 		sh_fun(Namval_t*,Namval_t*, char*[]);
+extern int 		sh_funscope(int,char*[],int(*)(void*),void*,int);
 extern Shell_t		*sh_getinterp(void);
+extern Shscope_t	*sh_getscope(int,int);
+extern Shell_t		*sh_init(int,char*[],Shinit_f);
+extern Sfio_t		*sh_iogetiop(int,int);
+extern int		sh_main(int, char*[], Shinit_f);
+extern void		sh_menu(Sfio_t*, int, char*[]);
+extern void		sh_offoption(int);
+extern bool		sh_isoption(int);
+extern void		sh_onoption(int);
 extern int		sh_open(const char*, int, ...);
 extern int		sh_openmax(void);
+extern void		*sh_parse(Shell_t*, Sfio_t*,int);
 extern Sfio_t		*sh_pathopen(const char*);
-extern ssize_t 		sh_read(int, void*, size_t);
-extern ssize_t 		sh_write(int, const void*, size_t);
-extern off_t		sh_seek(int, off_t, int);
 extern int 		sh_pipe(int[]);
-extern mode_t 		sh_umask(mode_t);
-extern void		*sh_waitnotify(Shwait_f);
-extern Shscope_t	*sh_getscope(int,int);
+extern ssize_t 		sh_read(int, void*, size_t);
+extern int		sh_reinit(char*[]);
+extern int		sh_run(int, char*[]);
+extern off_t		sh_seek(int, off_t, int);
 extern Shscope_t	*sh_setscope(Shscope_t*);
 extern void		sh_sigcheck(Shell_t*);
-extern unsigned long	sh_isoption(int);
-extern unsigned long	sh_onoption(int);
-extern unsigned long	sh_offoption(int);
+extern int		sh_stat(const char*,struct stat*);
+extern Sfdouble_t	sh_strnum(const char*, char**, int);
+extern void		sh_subfork(void);
+extern int 		sh_trap(const char*,int);
+extern mode_t 		sh_umask(mode_t);
+extern void		*sh_waitnotify(Shwait_f);
 extern int 		sh_waitsafe(void);
-extern int		sh_exec(const Shnode_t*,int);
+extern ssize_t 		sh_write(int, const void*, size_t);
+
+extern Namval_t		*sh_addbuiltin_20120720(Shell_t*,const char*, int(*)(int, char*[],Shbltin_t*), void*);
+extern Dt_t		*sh_bltin_tree_20120720(Shell_t*);
+extern int 		sh_eval_20120720(Shell_t*,Sfio_t*,int);
+extern void 		sh_exit_20120720(Shell_t*,int);
+extern Sfio_t		*sh_fd2sfio_20120720(Shell_t*,int);
+extern int 		sh_fun_20120720(Shell_t*,Namval_t*,Namval_t*, char*[]);
+extern int 		sh_funscope_20120720(Shell_t*,int,char*[],int(*)(void*),void*,int);
+extern Shscope_t	*sh_getscope_20120720(Shell_t*,int,int);
+extern void		sh_offoption_20120720(Shell_t*,int);
+extern bool		sh_isoption_20120720(Shell_t*,int);
+extern void		sh_onoption_20120720(Shell_t*,int);
+extern void		sh_menu_20120720(Shell_t *,Sfio_t*, int, char*[]);
+extern Sfio_t		*sh_pathopen_20120720(Shell_t*,const char*);
+extern int		sh_reinit_20120720(Shell_t*,char*[]);
+extern int		sh_run_20120720(Shell_t*,int, char*[]);
+extern Shscope_t	*sh_setscope_20120720(Shell_t*,Shscope_t*);
+extern Sfdouble_t	sh_strnum_20120720(Shell_t*,const char*, char**,int);
+extern int 		sh_trap_20120720(Shell_t*,const char*,int);
+extern void		*sh_waitnotify_20120720(Shwait_f,void*);
+
+#define sh_ptr(np)	((np)->nvshell)
 
 /*
  * direct access to sh is obsolete, use sh_getinterp() instead
@@ -226,30 +260,73 @@ extern int		sh_exec(const Shnode_t*,int);
 	extern Shell_t sh;
 #endif
 
+#include	<shellapi.h>
+
 #ifdef _DLL
 #   undef extern
 #endif /* _DLL */
 
-#define chdir(a)	sh_chdir(a)
-#define fchdir(a)	sh_fchdir(a)
-#ifndef _SH_PRIVATE
-#   define access(a,b)	sh_access(a,b)
-#   define close(a)	sh_close(a)
-#   define exit(a)	sh_exit(a)
-#   define fcntl(a,b,c)	sh_fcntl(a,b,c)
-#   define pipe(a)	sh_pipe(a)
-#   define read(a,b,c)	sh_read(a,b,c)
-#   define write(a,b,c)	sh_write(a,b,c)
-#   define umask(a)	sh_umask(a)
-#   define dup		sh_dup
+#ifndef _AST_INTERCEPT
 #   if _lib_lseek64
-#	define open64	sh_open
-#	define lseek64	sh_seek
+#       undef  stat64
+#	define stat64(a,b)	sh_stat(a,b)	
 #   else
-#	define open	sh_open
-#	define lseek	sh_seek
+#       undef  stat
+#	define stat(a,b)	sh_stat(a,b)	
 #   endif
-#endif /* !_SH_PRIVATE */
+#endif /* !_AST_INTERCEPT */
+#ifndef _shtest_c
+#   ifndef _SH_PRIVATE
+#       undef  access
+#	define access(a,b)	sh_access(a,b)
+#   endif
+#endif /* !_shtest_c */
+#ifndef _shio_h
+#ifndef _AST_INTERCEPT
+#   undef  chdir
+#   define chdir(a)		sh_chdir(a)	
+#   undef  fchdir
+#   define fchdir(a)		sh_fchdir(a)
+#endif
+#   ifndef HIST_MAX
+#       if _lib_lseek64
+#           undef  open64
+#           define open64	sh_open
+#           undef  lseek64
+#           define lseek64(a,b,c)	sh_seek(a,b,c)
+#       else
+#           undef  open
+#           define open		sh_open
+#           undef  lseek
+#           define lseek(a,b,c)	sh_seek(a,b,c)
+#       endif
+#   endif
+#   ifndef _SH_PRIVATE
+#       undef  access
+#       define access(a,b)	sh_access(a,b)
+#       undef  close
+#       define close(a)		sh_close(a)
+#       if SHELLAPI(20120720)
+#           undef  exit
+#           define exit(a)	sh_exit(sh_getinterp(),a)
+#       else
+#           undef  exit
+#           define exit(a)	sh_exit(a)
+#       endif
+#       undef  fcntl
+#       define fcntl(a,b,c)	sh_fcntl(a,b,c)
+#       undef  pipe
+#       define pipe(a)		sh_pipe(a)
+#       undef  read
+#       define read(a,b,c)	sh_read(a,b,c)
+#       undef  write
+#       define write(a,b,c)	sh_write(a,b,c)
+#       undef  umask
+#       define umask(a)		sh_umask(a)
+#       undef  dup
+#       define dup		sh_dup
+#   endif /* !_SH_PRIVATE */
+#endif /* !_shio_h */
 
 #define SH_SIGSET	4
 #define SH_EXITSIG	0400	/* signal exit bit */

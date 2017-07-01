@@ -16,7 +16,7 @@ rules
  *	the flags for command $(XYZ) are $(XYZFLAGS)
  */
 
-.ID. = "@(#)$Id: Makerules (AT&T Research) 2012-06-08 $"
+.ID. = "@(#)$Id: Makerules (AT&T Research) 2013-10-17 $"
 
 .RULESVERSION. := $(MAKEVERSION:@/.* //:/-//G)
 
@@ -65,7 +65,7 @@ set option=';strip-symbols;b;-;Strip link-time static symbols from executables.'
 set option=';threads;b;-;Compile and link with thread options enabled. Not implemented yet.'
 set option=';variants;sv;-;Select only \bcc-\b\avariant\a directories matching \apattern\a.;pattern:!*'
 set option=';view-verify;n;-;Verify that all view root directories exist. If there are any missing directories then a \alevel\a diagnostic is printed.;level'
-set option=';virtual;b;-;Allow \b:MAKE:\b to \bmkdir\b(1) recursive directories that do not exist in the top view. On by default. If \b--novirtual\b is set then \b:MAKE:\b warns about but ignores virtual recursive directories.'
+set option=';virtual;b;-;Allow \b:MAKE:\b to \bmkdir\b(1) recursive directories that do not exist in the top view. On by default if VPATH contains more than one directory, otherwise off. If \b--novirtual\b is set then \b:MAKE:\b warns about but ignores virtual recursive directories.'
 
 /*
  * rule option defaults
@@ -87,7 +87,7 @@ set virtual:=1
 
 .OPTION.COMPATIBILITY : .MAKE .VIRTUAL .FORCE
 	local N O
-	if .MAKEVERSION. < 20121221
+	if .MAKEVERSION. < 20150101
 		O =
 		N =
 		if ! "$(-?clobber)" && "$("clobber":T=QV)"
@@ -195,11 +195,20 @@ set virtual:=1
 			end
 		end
 	end
-	if "$(-view-verify)" && ! "$(*.VIEW:O=2)"
-		error $(-view-verify) viewpath not set
+	if ! "$(*.VIEW:O=2)"
+		if "$(-view-verify)"
+			error $(-view-verify) viewpath not set
+		end
+		set --novirtual
 	end
 	if "$(-mam:N=(regress|static)*)"
-		.MAMROOT. := $(PWD:C@.*/src/@/src/@:C@/[^/]*@/..@G:C@/@@)
+		if "$(PWD)/" == "$(INSTALLROOT)/*"
+			.MAMROOT. := $(".":P=R=$(INSTALLROOT))
+		elif "$(PWD)/" == "$(PACKAGEROOT)/*"
+			.MAMROOT. := $(".":P=R=$(PACKAGEROOT))
+		else
+			.MAMROOT. := $(PWD:C@.*/src/@/src/@:C@/[^/]*@/..@G:C@/@@)
+		end
 		.MAKE : .MAM.LOAD
 	end
 	PAXFLAGS &= $$(MAKEPATH:C@:@ @G:N!=...*:C@.*@-s\@&/*\@\@@) $$(PWD:C@.*@-s\@&/*\@\@@)
@@ -451,7 +460,7 @@ NAWK = gawk
 else
 NAWK = awk
 end
-NM = $(CC.NM)
+NM = $(CC.NM) $(CC.NM.NMFLAGS)
 NMEDIT = $(CC.NMEDIT) -e '/^$(CC.PREFIX.SYMBOL)_STUB_/d' -e '/$(CC.PREFIX.SYMBOL)_already_defined$/d'
 NMFLAGS = $(CC.NMFLAGS)
 PACKAGE =
@@ -2102,7 +2111,7 @@ RECURSEROOT = .
 				T := $(T:/--//)
 			end
 			if T == "no*"
-				T := $(T:/no//}
+				T := $(T:/no//)
 				X = 0
 			else
 				X = 1
@@ -2183,6 +2192,9 @@ RECURSEROOT = .
 			X := $(.NO.INSTALL.)
 			.NO.INSTALL. := 1
 		end
+		if "$(A)" == "0"
+			:INSTALLDIR: $(L)
+		end
 		eval
 		$(L) :: $(>:V:N!=[-+][lL]*)
 			$(@:V)
@@ -2225,8 +2237,8 @@ RECURSEROOT = .
 							esac
 							continue
 						elif	test ! -f $$(LIBDIR)/$(CC.PREFIX.ARCHIVE)$i$(CC.SUFFIX.ARCHIVE)
-						then	case `{ $$(CC) $$(CCFLAGS) $$(*.SOURCE.%.ARCHIVE:$$(.CC.NOSTDLIB.):N=*/$(CC.PREFIX.ARCHIVE)*:P=L:/^/-L/) $$(LDFLAGS) -o 1.$(tmp).x 1.$(tmp)$(CC.SUFFIX.OBJECT) $(D) -l$i 2>&1 || echo '' $x ;} | $(SED) -e 's/[][()+@?]/#/g' || :` in
-							*$x*)	case `{ $$(CC) $$(CCFLAGS) $$(LDFLAGS) -o 1.$(tmp).x 1.$(tmp)$(CC.SUFFIX.OBJECT) $(D) -l$i 2>&1 || echo '' $x ;} | $(SED) -e 's/[][()+@?]/#/g' || :` in
+						then	case `{ $$(CC) $$(CCFLAGS) $$(*.SOURCE.%.ARCHIVE:$$(.CC.NOSTDLIB.):N=*/$(CC.PREFIX.ARCHIVE)*:P=L:/^/-L/) $$(LDFLAGS) -o 1.$(tmp).x 1.$(tmp)$(CC.SUFFIX.OBJECT) $(D) -l$i 2>&1 || echo '' "$x" ;} | $(SED) -e 's/[][()+@?]/#/g' || :` in
+							*$x*)	case `{ $$(CC) $$(CCFLAGS) $$(LDFLAGS) -o 1.$(tmp).x 1.$(tmp)$(CC.SUFFIX.OBJECT) $(D) -l$i 2>&1 || echo '' "$x" ;} | $(SED) -e 's/[][()+@?]/#/g' || :` in
 								*$x*) continue ;;
 								esac
 								;;
@@ -3353,12 +3365,11 @@ PACKAGES : .SPECIAL .FUNCTION
 			if "$(_PACKAGE_$(P))" == "0"
 				continue
 			end
-			I = pkg-$(P).mk
 			V := $(version)
 			this_install := $(install)
+			I = pkg-$(P).mk
 			while 1
 				if H = "$(I:T=F)"
-					.PACKAGE.$(P).rules := $(H)
 					break
 				elif "$(PACKAGE_$(P))$(PACKAGE_$(P)_INCLUDE)$(PACKAGE_$(P)_LIB)"
 					break
@@ -3373,9 +3384,6 @@ PACKAGES : .SPECIAL .FUNCTION
 				else
 					break
 				end
-			end
-			if ! "$(.PACKAGE.$(P).rules)"
-				.PACKAGE.$(P).rules := -
 			end
 			.PACKAGE.$(P).library := $(library)
 			.PACKAGE.$(P).private := $(private)
@@ -3521,8 +3529,13 @@ PACKAGES : .SPECIAL .FUNCTION
 						.PACKAGE.build += $(P)
 					end
 				end
-				if "$(H)"
-					include + "$(H)"
+				if ! "$(.PACKAGE.$(P).rules)"
+					if "$(H)"
+						.PACKAGE.$(P).rules := $(H)
+						include + "$(H)"
+					else
+						.PACKAGE.$(P).rules := -
+					end
 				end
 			end
 		end
@@ -4146,10 +4159,16 @@ PACKAGES : .SPECIAL .FUNCTION
 	if "$(-mam:N=dynamic*)"
 		.MAM.INSTALLROOT := $(INSTALLROOT:N=$(HOME):?$HOME?$(INSTALLROOT)?)
 		print -um setv INSTALLROOT $(.MAM.INSTALLROOT)
+		.MAM.PACKAGEROOT := $(PACKAGEROOT:N=$(HOME):?$HOME?$(PACKAGEROOT)?)
+		print -um setv PACKAGEROOT $(.MAM.PACKAGEROOT)
 	end
 	.MAMEDIT. =
 	if "$(INSTALLROOT:N=..*(/*))"
 		.MAMROOT. := $(INSTALLROOT)
+	elif "$(PWD)/" == "$(INSTALLROOT)/*"
+		.MAMROOT. := $(".":P=R=$(INSTALLROOT))
+	elif "$(PWD)/" == "$(PACKAGEROOT)/*"
+		.MAMROOT. := $(".":P=R=$(PACKAGEROOT))
 	else
 		.MAMROOT. := $(PWD:C@.*/src/@/src/@:C@/[^/]*@/..@G:C@/@@)
 	end
@@ -4284,7 +4303,9 @@ PACKAGES : .SPECIAL .FUNCTION
 		.CC.NOSTDLIB. := $(CC.STDLIB:N!=$(T4:@C@ @|@G):C@ @|@G:C@^@N!=@)
 	end
 	T3 = $(PACKAGE_PATH:/:/ /G) $(.PACKAGE.DIRS.) $(.PACKAGE.GLOBAL.)
-	.SOURCE.a : $(T3:X=lib:N!=$(.PACKAGE.stdlib:/ /|/G):T=F)
+	T3 := $(T3:X=lib:N!=$(.PACKAGE.stdlib:/ /|/G):T=F)
+	.SOURCE.a : $(T3)
+	/* not a good idea ! .SOURCE.h : $(T3:D:X=include:T=F) */
 	T3 =
 	if ! "$(CC.DIALECT:N=ANSI)"
 		stdarg.h : .SPECIAL .NULL .TERMINAL .DONTCARE .IGNORE /* courtesy to proto(1) */
@@ -5084,8 +5105,12 @@ end
 	if "$(-mam:N=static*)"
 		set noreadstate reread strictview
 		set readonly
+		if "$(PWD)/" == "$(INSTALLROOT)/*"
+			PACKAGEROOT = $(.MAMROOT.)/../..
+		else
+			PACKAGEROOT = $(.MAMROOT.)
+		end
 		INSTALLROOT = $(.MAMROOT.)
-		PACKAGEROOT = $(.MAMROOT.)/../..
 		set noreadonly
 		if "$(-mam:N=*,port*)"
 			if ! "$(-?prefix-include)"
@@ -5126,6 +5151,7 @@ end
 		CC.STATIC =
 		CC.SUFFIX.ARCHIVE = .a
 		CC.SUFFIX.DYNAMIC = ${mam_cc_SUFFIX_DYNAMIC}
+		CC.SUFFIX.OBJECT = ${mam_cc_SUFFIX_OBJECT}
 		CC.SUFFIX.SHARED = ${mam_cc_SUFFIX_SHARED}
 		_hosttype_ = ${mam_cc_HOSTTYPE}
 	end

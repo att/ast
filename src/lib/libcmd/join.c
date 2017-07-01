@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -28,7 +28,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: join (AT&T Research) 2009-12-10 $\n]"
+"[-?\n@(#)$Id: join (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?join - relational database operator]"
 "[+DESCRIPTION?\bjoin\b performs an \aequality join\a on the files \afile1\a "
@@ -160,6 +160,7 @@ typedef struct Join_s
 	char*		same;
 	int		samesize;
 	Shbltin_t*	context;
+	Mbstate_t	q;
 	File_t		file[2];
 } Join_t;
 
@@ -187,7 +188,6 @@ init(void)
 	register Join_t*	jp;
 	register int		i;
 
-	setlocale(LC_ALL, "");
 	if (jp = newof(0, Join_t, 1, 0))
 	{
 		if (jp->mb = mbwide())
@@ -301,6 +301,7 @@ getrec(Join_t* jp, int index, int discard)
 	register char*		cp;
 	register int		n;
 	char*			tp;
+	wchar_t			w;
 
 	if (sh_checksig(jp->context))
 		return 0;
@@ -343,7 +344,7 @@ getrec(Join_t* jp, int index, int discard)
 					break;
 				case S_WIDE:
 					tp = cp;
-					if (iswspace(mbchar(tp)))
+					if (iswspace(mbchar(&w, tp, MB_LEN_MAX, &jp->q)))
 					{
 						cp = tp;
 						break;
@@ -362,7 +363,7 @@ getrec(Join_t* jp, int index, int discard)
 							continue;
 						case S_WIDE:
 							tp = cp - 1;
-							if (iswspace(mbchar(tp)))
+							if (iswspace(mbchar(&w, tp, MB_LEN_MAX, &jp->q)))
 							{
 								cp = tp;
 								continue;
@@ -387,7 +388,7 @@ getrec(Join_t* jp, int index, int discard)
 						continue;
 					case S_WIDE:
 						cp--;
-						n = mbchar(cp);
+						n = mbchar(&w, cp, MB_LEN_MAX, &jp->q);
 						if (n == jp->delim)
 						{
 							n = S_DELIM;
@@ -427,7 +428,7 @@ getrec(Join_t* jp, int index, int discard)
 						continue;
 					case S_WIDE:
 						tp = cp - 1;
-						if (iswspace(mbchar(tp)))
+						if (iswspace(mbchar(&w, tp, MB_LEN_MAX, &jp->q)))
 						{
 							cp = tp;
 							continue;
@@ -464,6 +465,7 @@ outfield(Join_t* jp, int index, register int n, int last)
 	register int		size;
 	register Sfio_t*	iop = jp->outfile;
 	char*			tp;
+	wchar_t			w;
 
 	if (n < fp->nfields)
 	{
@@ -488,7 +490,7 @@ outfield(Join_t* jp, int index, register int n, int last)
 						continue;
 					case S_WIDE:
 						tp = cp - 1;
-						if (iswspace(mbchar(tp)))
+						if (iswspace(mbchar(&w, tp, MB_LEN_MAX, &jp->q)))
 						{
 							cp = tp;
 							continue;
@@ -819,10 +821,13 @@ b_join(int argc, char** argv, Shbltin_t* context)
 	register char*		cp;
 	register Join_t*	jp;
 	char*			e;
+	wchar_t			w;
+	Mbstate_t		q;
 
 #if !DEBUG_TRACE
 	cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY);
 #endif
+	setlocale(LC_ALL, "");
 	if (!(jp = init()))
 		error(ERROR_system(1),"out of space");
 	jp->context = context;
@@ -894,10 +899,11 @@ b_join(int argc, char** argv, Shbltin_t* context)
 			if (jp->mb)
 			{
 				cp = opt_info.arg;
-				jp->delim = mbchar(cp);
-				if ((n = cp - opt_info.arg) > 1)
+				mbinit(&q);
+				jp->delim = mbchar(&w, cp, MB_LEN_MAX, &q);
+				if (!mberrno(&q))
 				{
-					jp->delimlen = n;
+					jp->delimlen = cp - opt_info.arg;
 					jp->delimstr = opt_info.arg;
 					continue;
 				}

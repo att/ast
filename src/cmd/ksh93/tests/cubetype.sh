@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -51,6 +51,7 @@ typeset -T Box_t=(
 	float x=3
 )
 
+integer i
 for ((i=0; i < n; i++))
 do
 Box_t b=(name=box1)
@@ -105,7 +106,7 @@ typeset -T Cube_t=(
 	}
 	len()
 	{
-		print -r $((sqrt(_.x*_.x + _.y*_.y + _.z*_.z)))
+		print -r -- $((sqrt(_.x*_.x + _.y*_.y + _.z*_.z)))
 		(( _.count++))
 	}
 	float x=8
@@ -123,7 +124,7 @@ Box_t b=(name=box2)
 (( b.len == 5 )) || err_exit "b.len incorrect for box2 -- expected 5, got '$(( b.len ))'"
 (( b.count == 1 )) || err_exit "b.count incorrect -- expected 1, got '$(( b.count ))'"
 Cube_t c=(name=cube1)
-[[ $c == $'(\n\ttypeset -l -E x=8\n\ttypeset -l -E y=5\n\tcomvar=(\n\t\ttop=8\n\t\tbottom=9\n\t)\n\ttypeset -S -l -i count=1\n\ttypeset -a items=(\n\t\tfoo\n\t\tbar\n\t)\n\ttypeset -A colors=(\n\t\t[floor]=red\n\t\t[wall]=blue\n\t)\n\tname=cube1\n\ttypeset -L 6 status=INIT\n\ttypeset -l -E z=1\n)' ]] || err_exit '$c not correct'
+[[ $c == $'(\n\ttypeset -l -E x=8\n\ttypeset -l -E y=5\n\ttypeset -C comvar=(\n\t\ttop=8\n\t\tbottom=9\n\t)\n\ttypeset -S -l -i count=1\n\ttypeset -a items=(\n\t\tfoo\n\t\tbar\n\t)\n\ttypeset -A colors=(\n\t\t[floor]=red\n\t\t[wall]=blue\n\t)\n\tname=cube1\n\ttypeset -L 6 status=INIT\n\ttypeset -l -E z=1\n)' ]] || err_exit '$c not correct'
 [[ ${c.x} == 8 ]] || err_exit '${c.x} != 8'
 [[ ${c.depth} == 1 ]] || err_exit '${c.depth} != 1'
 [[ ${c.name} == cube1 ]] || err_exit '${c.name} != cube1 '

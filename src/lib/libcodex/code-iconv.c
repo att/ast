@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -223,7 +221,9 @@ cc_write(Sfio_t* sp, const void* buf, size_t n, Sfdisc_t* disc)
 static int
 cc_sync(Codex_t* p)
 {
-	mbinit();
+	State_t*	state = (State_t*)p->data;
+
+	(void)iconv(state->cvt, NiL, NiL, NiL, NiL);
 	return 0;
 }
 
@@ -235,8 +235,7 @@ Codexmeth_t	codex_iconv =
 	" destination codesets. One option specifies the decode source or"
 	" encode destination codeset; the implied second codeset defaults"
 	" to \bnative\b.",
-	"[+(version)?codex-iconv (AT&T Research) 2000-05-09]"
-	"[+(author)?Glenn Fowler <gsf@research.att.com>]",
+	"[-?\n@(#)$Id: codex-iconv (AT&T Research) 2000-05-09 $\n]" USAGE_LICENSE,
 	CODEX_DECODE|CODEX_ENCODE|CODEX_ICONV,
 	cc_options,
 	0,

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,14 +14,14 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
 
 /*	Managing buffered data for a handle. 
 **
-**	Written by Kiem-Phong Vo (kpv@research.att.com)
+**	Written by Kiem-Phong Vo
 */
 
 #if __STD_C
@@ -35,9 +35,9 @@ ssize_t		head;	/* head room in front of buffer 	*/
 #endif
 {
 	Vcbuffer_t	*b, *n;
-	/**/DEBUG_DECLARE(static ssize_t, Busy=0);
+	/**/DEBUG_DECLARE(static ssize_t, Busy=0)
 #ifdef VMFL
-	/**/DEBUG_DECLARE(Vmstat_t, statb); DEBUG_ASSERT(vmstat(Vmregion, &statb) >= 0);
+	/**/DEBUG_DECLARE(Vmstat_t, statb) DEBUG_ASSERT(vmstat(Vmregion, &statb) >= 0);
 #endif
 
 	if(!vc)

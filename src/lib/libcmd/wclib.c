@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -34,7 +34,6 @@
 
 #include <wchar.h>
 #include <wctype.h>
-#include <lc.h>
 
 #else
 
@@ -52,9 +51,9 @@
 #define eol(c)		((c)&WC_NL)
 #define mbc(c)		((c)&WC_MB)
 #define spc(c)		((c)&WC_SP)
-#define mb2wc(w,p,n)	(*ast.mb_towc)(&w,(char*)p,n)
 
-Wc_t* wc_init(int mode)
+Wc_t*
+wc_init(int mode)
 {
 	register int	n;
 	register int	w;
@@ -65,7 +64,7 @@ Wc_t* wc_init(int mode)
 	if (!mbwide())
 		wp->mb = 0;
 #if _hdr_wchar && _hdr_wctype && _lib_iswctype
-	else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8))
+	else if (!(mode & WC_NOUTF8) && (ast.locale.set & AST_LC_utf8))
 		wp->mb = 1;
 #endif
 	else
@@ -99,21 +98,22 @@ Wc_t* wc_init(int mode)
 	return wp;
 }
 
-static int invalid(const char *file, int nlines)
+static void
+invalid(const char *file, int byte, int nlines)
 {
 	error_info.file = (char*)file;
 	error_info.line = nlines;
-	error(ERROR_SYSTEM|1, "invalid multibyte character");
+	error(1, "0x%02x: invalid multibyte character byte", byte);
 	error_info.file = 0;
 	error_info.line = 0;
-	return nlines;
 }
 
 /*
  * handle utf space characters
  */
 
-static int chkstate(int state, register unsigned int c)
+static int
+chkstate(int state, register unsigned int c)
 {
 	switch(state)
 	{
@@ -159,7 +159,8 @@ static int chkstate(int state, register unsigned int c)
  * compute the line, word, and character count for file <fd>
  */
 
-int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
+int
+wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 {
 	register char*		type = wp->type;
 	register unsigned char*	cp;
@@ -167,44 +168,53 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 	register Sfoff_t	nchars;
 	register Sfoff_t	nwords;
 	register Sfoff_t	nlines;
+	register Sfoff_t	ninval;
 	register Sfoff_t	eline = -1;
 	register Sfoff_t	longest = 0;
 	register ssize_t	c;
 	register unsigned char*	endbuff;
 	register int		lasttype = WC_SP;
 	unsigned int		lastchar;
+	int			eof;
 	ssize_t			n;
 	ssize_t			o;
 	unsigned char*		buff;
+	unsigned char*		mp;
 	wchar_t			x;
 	unsigned char		side[32];
 
 	sfset(fd,SF_WRITE,1);
-	nlines = nwords = nchars = nbytes = 0;
+	nlines = nwords = nchars = nbytes = ninval = 0;
 	wp->longest = 0;
 	if (wp->mb < 0 && (wp->mode & (WC_MBYTE|WC_WORDS)))
 	{
+		eof = 0;
 		cp = buff = endbuff = 0;
 		for (;;)
 		{
-			if (cp >= endbuff || (n = mb2wc(x, cp, endbuff-cp)) < 0)
+			if ((o = endbuff - cp) <= 0 || (mbchar(&x, cp, o, &wp->q), mberrno(&wp->q)))
 			{
-				if ((o = endbuff-cp) < sizeof(side))
+				if (eof)
 				{
-					if (buff)
-					{
-						if (o)
-							memcpy(side, cp, o);
-						mbinit();
-					}
-					else
+					if (o <= 0)
+						break;
+					x = -1;
+				}
+				else if ((!o || mberrno(&wp->q) == E2BIG) && o < (ssize_t)sizeof(side))
+				{
+					if (!buff)
 						o = 0;
+					else if (o)
+						memcpy(side, cp, o);
 					cp = side + o;
 					if (!(buff = (unsigned char*)sfreserve(fd, SF_UNBOUND, 0)) || (n = sfvalue(fd)) <= 0)
 					{
 						if ((nchars - longest) > wp->longest)
 							wp->longest = nchars - longest;
-						break;
+						eof = 1;
+						endbuff = cp;
+						cp = side;
+						continue;
 					}
 					nbytes += n;
 					if ((c = sizeof(side) - o) > n)
@@ -213,25 +223,35 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 						memcpy(cp, buff, c);
 					endbuff = buff + n;
 					cp = side;
-					x = mbchar(cp);
+					x = mbchar(&x, cp, MB_LEN_MAX, &wp->q);
+					if (mberrno(&wp->q))
+						x = -1;
 					if ((cp-side) < o)
 					{
-						cp = buff;
 						nchars += (cp-side) - 1;
+						cp = buff;
 					}
 					else
 						cp = buff + (cp-side) - o;
 				}
 				else
-				{
-					cp++;
 					x = -1;
+				if (x == -1)
+				{
+					if (wp->mode & WC_INVAL)
+					{
+						ninval++;
+						nchars--;
+					}
+					if (eline != nlines)
+					{
+						if (!(wp->mode & (WC_INVAL|WC_QUIET)))
+							eline = nlines;
+						if (!(wp->mode & WC_QUIET))
+							invalid(file, *(cp - 1), nlines);
+					}
 				}
-				if (x == -1 && eline != nlines && !(wp->mode & WC_QUIET))
-					eline = invalid(file, nlines);
 			}
-			else
-				cp += n ? n : 1;
 			if (x == '\n')
 			{
 				if ((nchars - longest) > wp->longest)
@@ -399,32 +419,15 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 				if(mbc(c))
 				{
 				mbyte:
+					mp = cp - 1;
 					do
 					{
 						if(c&WC_ERR)
 							goto err;
-						if(skip && (c&7))
-							break;
-						if(!skip)
+						if(skip)
 						{
-							if(!(c&7))
-							{
-								skip=1;
+							if (c&7)
 								break;
-							}
-							skip = (c&7);
-							adjust += skip;
-							state = 0;
-							if(skip==2 && (cp[-1]&0xc)==0 && (state=(cp[-1]&0x3)))
-								oldc = *cp;
-							else if(xspace && cp[-1]==0xc2)
-							{
-								state = 8;
-								oldc = *cp;
-							}
-						}
-						else
-						{
 							skip--;
 							if(state && (state=chkstate(state,oldc)))
 							{
@@ -439,6 +442,24 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 								oldc = *cp;
 							}
 						}
+						else if(!(c&7))
+						{
+							skip=1;
+							break;
+						}
+						else
+						{
+							skip = (c&7);
+							adjust += skip;
+							state = 0;
+							if(skip==2 && (cp[-1]&0xc)==0 && (state=(cp[-1]&0x3)))
+								oldc = *cp;
+							else if(xspace && cp[-1]==0xc2)
+							{
+								state = 8;
+								oldc = *cp;
+							}
+						}
 					} while (mbc(c = type[*cp++]));
 					wasspace = 0;
 					if(skip)
@@ -446,12 +467,31 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 						if(eol(c) && (cp > endbuff))
 							goto eob;
 				err:
+						adjust = 0;
+						for (; mp < cp - 1; mp++)
+						{
+							nchars--;
+							ninval++;
+							if (eline != nlines)
+							{
+								if (!(wp->mode & (WC_INVAL|WC_QUIET)))
+									eline = nlines;
+								if (!(wp->mode & WC_QUIET))
+								{
+#ifdef EILSEQ
+									errno = EILSEQ;
+#endif
+									invalid(file, *mp, nlines);
+								}
+							}
+						}
 						skip = 0;
 						state = 0;
-						if(eline!=nlines && !(wp->mode & WC_QUIET))
-							eline = invalid(file, nlines);
-						while(mbc(c) && ((c|WC_ERR) || (c&7)==0)) 
+						while(mbc(c) && (c & (WC_ERR|7)) == WC_ERR)
+						{
+							ninval++;
 							c=type[*cp++];
+						}
 						if(eol(c) && (cp > endbuff))
 						{
 							c = WC_MB|WC_ERR;
@@ -500,6 +540,6 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 	wp->chars = nchars;
 	wp->words = nwords;
 	wp->lines = nlines;
+	wp->inval = ninval;
 	return 0;
 }
-

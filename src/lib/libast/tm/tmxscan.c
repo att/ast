@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -296,11 +296,15 @@ scan(register const char* s, char** e, const char* format, char** f, Time_t t, l
 				continue;
 			case 'n':
 				if (pedantic)
+				{
 					while (*s == '\n')
 						s++;
-				else
-					while (isspace(*s))
-						s++;
+					continue;
+				}
+				/*FALLTHROUGH*/
+			case 't':
+				while (isspace(*s))
+					s++;
 				continue;
 			case 'N':
 				NUMBER(9, 0, 999999999L);

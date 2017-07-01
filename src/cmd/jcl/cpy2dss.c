@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -24,52 +24,69 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: cpy2dss (AT&T Research) 2007-02-20 $\n]"
+"[-1s1I?\n@(#)$Id: cpy2dss (AT&T Research) 2013-03-01 $\n]"
 USAGE_LICENSE
 "[+NAME?cpy2dss - convert copybook to dss flat schema]"
-"[+DESCRIPTION?\bcpy2dss\b converts each copybook \afile\a operand to a"
-"	\bdss\b flat schema file on the standard output. If no \afile\a"
-"	operands are specified then the standard input is read.]"
-"[+?Duplicate structure and field names are disambiguated by appending"
-"	\b_\b\acount\a to the names, where \acount\a > 1. \bRENAMES\b"
-"	and level 88 fields are ignored.]"
-"[b:bytemask?Output a single line where each character represents the"
-"	type of the corresponding byte in the physical representation of"
-"	a copybook record, where \b0\b means \bPIC\b and \an\a means"
-"	\bCOMP-\b\an\a.]"
+"[+DESCRIPTION?\bcpy2dss\b converts each copybook \afile\a operand to a "
+    "\bdss\b flat schema file on the standard output. If no \afile\a "
+    "operands are specified then the standard input is read.]"
+"[+?Duplicate structure and field names are disambiguated by appending "
+    "\b_\b\acount\a to the names, where \acount\a > 1. \bRENAMES\b and level "
+    "88 fields are ignored.]"
+"[b:bytemask?Output a single line where each character represents the "
+    "type of the corresponding byte in the physical representation of a "
+    "copybook record, where \b0\b means \bPIC\b and \an\a means "
+    "\bCOMP-\b\an\a.]"
 "[c:codeset?Set the \bstring\b codeset name.]:[codeset:=ebcdic-m]"
 "[C:comp?Convert COMP-\afrom\a to COMP-\ato\a.]:[from::to]"
-"[d:delimiter?Set the \b--text\b field delimiter character. XML"
-"	&\aname\a; and #\adecimal\a; forms are accepted.]:[delimiter:=|]"
-"[D:terminator?Set the \b--text\b record terminator character. XML"
-"	&\aname\a; and #\adecimal\a; forms are"
-"	accepted.]:[terminator:=&newline;]"
-"[e:escape?Set the \b--text\b field escape character. XML"
-"	&\aname\a; and #\adecimal\a; forms are accepted.]:[delimiter:=\boff\b]"
-"[k:keep?Keep original names. Otherwise non-identifier characters are"
-"	converted to \b_\b.]"
+"[d:delimiter?Set the \b--text\b field delimiter character. XML "
+    "&\aname\a; and #\adecimal\a; forms are accepted.]:[delimiter:=|]"
+"[D:terminator?Set the \b--text\b record terminator character. XML "
+    "&\aname\a; and #\adecimal\a; forms are "
+    "accepted.]:[terminator:=&newline;]"
+"[e:escape?Set the \b--text\b field escape character. XML &\aname\a; and "
+    "#\adecimal\a; forms are accepted.]:[delimiter:=\boff\b]"
+"[k:keep?Keep original names. Otherwise non-identifier characters are "
+    "converted to \b_\b.]"
 "[l:little-endian|le?Little-endian binary integer encoding.]"
-"[o:offsets?Output the name, offset, size, number of elements and type"
-"	of each member, one per line, on the standard output. Scalar"
-"	fields have 0 elements.]"
-"[q:quote?Set the \b--text\b field quote begin character. If"
-"	\b--end-quote\b is not specified then it is the same as"
-"	\b--quote\b. XML &\aname\a; and #\adecimal\a; forms are"
-"	accepted.]:[quote:=\"]"
-"[Q:end-quote?Set the \b--text\b field quote end character. If"
-"	\b--quote\b is not specified then it is the same as"
-"	\b--end-quote\b. XML &\aname\a; and #\adecimal\a; forms are"
-"	accepted.]:[quote:=\"]"
-"[r:reclen|record-length?Sets the physical record format to be fixed"
-"	with a record length of \areclen\a bytes.]#[reclen]"
+"[o:offsets?Output the name, offset, size, number of elements and type "
+    "of each member, one per line, on the standard output. Scalar fields "
+    "have 0 elements.]"
+"[q:quote?Set the \b--text\b field quote begin character. If "
+    "\b--end-quote\b is not specified then it is the same as \b--quote\b. "
+    "XML &\aname\a; and #\adecimal\a; forms are accepted.]:[quote:=\"]"
+"[Q:end-quote?Set the \b--text\b field quote end character. If "
+    "\b--quote\b is not specified then it is the same as \b--end-quote\b. "
+    "XML &\aname\a; and #\adecimal\a; forms are accepted.]:[quote:=\"]"
+"[r:record|recfmt|reclen?Sets the record format to \aformat\a; newlines "
+    "will be treated as normal characters. The formats are:]:[format]"
+    "{"
+        "[+d[\aterminator\a]]?Variable length with record \aterminator\a "
+            "character, \b\\n\b by default.]"
+        "[+[f]]\areclen\a?Fixed record length \areclen\a.]"
+        "[+v[op...]]?Variable length. \bh4o0z2bi\b (4 byte IBM V format "
+            "descriptor) if \aop\a are omitted. \aop\a may be a combination "
+            "of:]"
+            "{"
+                "[+h\an\a?Header size is \an\a bytes (default 4).]"
+                "[+o\an\a?Size offset in header is \an\a bytes (default "
+                    "0).]"
+                "[+z\an\a?Size length is \an\a bytes (default "
+                    "min(\bh\b-\bo\b,2)).]"
+                "[+b?Size is big-endian (default).]"
+                "[+l?Size is little-endian (default \bb\b).]"
+                "[+i?Record length includes header (default).]"
+                "[+n?Record length does not include header (default "
+                    "\bi\b).]"
+            "}"
+    "}"
 "[s!:sized-struct?Check for embedded size/data structures.]"
-"[t:text?Generate a field-delimited newline-terminated text schema"
-"	using the local codeset.]"
+"[t:text?Generate a field-delimited newline-terminated text schema using "
+    "the local codeset.]"
 "[T:regress?Massage output for regression testing.]"
-"[v:variable?If \b--notext\b is on then records are variable length,"
-"	delimited by the \b--terminator\b character. If \b--text\b is"
-"	on then the size field \b--sized\b structures is omitted from"
-"	the output.]"
+"[v:variable?If \b--notext\b is on then records are variable length, "
+    "delimited by the \b--terminator\b character. If \b--text\b is on then "
+    "the size field \b--sized\b structures is omitted from the output.]"
 "\n"
 "\n[ file ... ]\n"
 "\n"
@@ -80,6 +97,7 @@ USAGE_LICENSE
 #include <ccode.h>
 #include <dt.h>
 #include <ls.h>
+#include <recfmt.h>
 #include <tm.h>
 #include <error.h>
 
@@ -156,6 +174,8 @@ static struct State_s
 	char*		quotebegin;
 	char*		quoteend;
 	char*		terminator;
+
+	Recfmt_t	record;
 
 	size_t		fixed;
 
@@ -604,6 +624,13 @@ typename(Cpyfield_t* field)
 	else
 		switch (field->comp)
 		{
+		case 5:
+#if _ast_intswap
+			type = "le_t";
+			break;
+#else
+			/*FALLTHROUGH*/
+#endif
 		case 1:
 			type = "be_t";
 			break;
@@ -612,9 +639,6 @@ typename(Cpyfield_t* field)
 			break;
 		case 3:
 			type = "bcd_t";
-			break;
-		case 5:
-			type = "le_t";
 			break;
 		default:
 			type = 0;
@@ -641,6 +665,7 @@ cpy2dss(const char* path, Sfio_t* ip, Sfio_t* op, Cpydisc_t* disc, time_t stamp)
 	int		i;
 	int		j;
 	int		lev;
+	int		sized;
 	int		skip;
 	int		structure;
 	int		width;
@@ -700,10 +725,24 @@ cpy2dss(const char* path, Sfio_t* ip, Sfio_t* op, Cpydisc_t* disc, time_t stamp)
 			sfprintf(op, "%s<DESCRIPTION>converted by %s from copybook %s</>\n", INDENT(lev + 1), error_info.id, path ? path : "standard input");
 			sfprintf(op, "%s<IDENT>@(#)$Id: %s (AT&T Research) %s $</>\n", INDENT(lev + 1), field->name, fmttime("%Y-%m-%d", stamp));
 			sfprintf(sfstdout, "%s<LIBRARY>num_t</>\n", INDENT(lev + 1));
-			if (state.fixed)
+			if (state.record && RECTYPE(state.record) != REC_delimited)
 			{
 				sfprintf(sfstdout, "%s<RECORD>\n", INDENT(lev + 1));
-				sfprintf(sfstdout, "%s<FIXED>%I*u</>\n", INDENT(lev + 2), sizeof(state.fixed), state.fixed);
+				switch (RECTYPE(state.record))
+				{
+				case REC_fixed:
+					sfprintf(sfstdout, "%s<FIXED>%I*u</>\n", INDENT(lev + 2), sizeof(state.fixed), state.fixed);
+					break;
+				case REC_variable:
+					if (i = REC_V_HEADER(state.record))
+						sfprintf(sfstdout, "%s<SIZE>%s%u</>\n", INDENT(lev + 3), REC_V_INCLUSIVE(state.record) ? "+" : "", i);
+					if (i = REC_V_LENGTH(state.record))
+						sfprintf(sfstdout, "%s<WIDTH>%u</>\n", INDENT(lev + 3), i);
+					if (i = REC_V_OFFSET(state.record))
+						sfprintf(sfstdout, "%s<OFFSET>%u</>\n", INDENT(lev + 3), i);
+					sfprintf(sfstdout, "%s<TYPE>%s</>\n", INDENT(lev + 3), REC_V_LITTLE(state.record) ? "le_t" : "be_t");
+					break;
+				}
 				sfprintf(sfstdout, "%s</>\n", INDENT(lev + 1));
 			}
 			if (state.text && (state.escape || state.quotebegin))
@@ -727,6 +766,7 @@ cpy2dss(const char* path, Sfio_t* ip, Sfio_t* op, Cpydisc_t* disc, time_t stamp)
 			break;
 		}
 		parent = 0;
+		sized = 0;
 		skip = 0;
 		structure = 1;
 		if (next = field->next)
@@ -796,11 +836,17 @@ cpy2dss(const char* path, Sfio_t* ip, Sfio_t* op, Cpydisc_t* disc, time_t stamp)
 					if (!memcmp(field->parent->name, field->name, i) && strmatch(field->name + i, "?(_)(siz|SIZ|LEN|len)*"))
 					{
 						skip = 1;
+						sized = field->level == 49;
 						continue;
 					}
 				}
-				sfprintf(op, "%s<FIELD>\n", INDENT(lev));
-				sfprintf(op, "%s<NAME>%s</>\n", INDENT(lev + 1), field->name);
+				if (sized)
+					lev--;
+				else
+				{
+					sfprintf(op, "%s<FIELD>\n", INDENT(lev));
+					sfprintf(op, "%s<NAME>%s</>\n", INDENT(lev + 1), field->name);
+				}
 				if (field->redefines)
 				{
 					sfprintf(op, "%s<UNION>%s</>\n", INDENT(lev + 1), field->redefines->name);
@@ -868,8 +914,12 @@ cpy2dss(const char* path, Sfio_t* ip, Sfio_t* op, Cpydisc_t* disc, time_t stamp)
 					}
 					if (state.text || state.variable && delimiter == state.terminator)
 						sfprintf(op, "%s<DELIMITER>%s</>\n", INDENT(lev + 2), delimiter);
-					sfprintf(op, "%s</>\n", INDENT(lev + 1));
+					if (sized)
+						lev++;
+					else
+						sfprintf(op, "%s</>\n", INDENT(lev + 1));
 				}
+				sized = 0;
 			}
 			else
 			{
@@ -973,6 +1023,7 @@ main(int argc, char** argv)
 	int		j;
 	Cpydisc_t	disc;
 	struct stat	st;
+	char		delimiter[2];
 
 	error_info.id = "cpy2dss";
 	state.codeset = "ebcdic-m";
@@ -1021,7 +1072,27 @@ main(int argc, char** argv)
 			state.output = CPY_OFFSETS;
 			continue;
 		case 'r':
-			state.fixed = opt_info.num;
+			state.record = recstr(opt_info.arg, &e);
+			if (*e)
+				error(2, "%s: invalid record format '%s'", opt_info.arg, e);
+			else
+				switch (RECTYPE(state.record))
+				{
+				case REC_delimited:
+					delimiter[0] = REC_D_DELIMITER(state.record);
+					delimiter[1] = 0;
+					state.delimiter = delimiter;
+					break;
+				case REC_fixed:
+					state.fixed = REC_F_SIZE(state.record);
+					break;
+				case REC_variable:
+					state.fixed = REC_V_SIZE(state.record);
+					break;
+				default:
+					error(2, "%s: record format not supported", opt_info.arg);
+					break;
+				}
 			continue;
 		case 's':
 			state.sized = opt_info.num;

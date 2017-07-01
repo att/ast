@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -257,7 +257,7 @@ set -- "${@-}"
 if	(( $# !=1 ))
 then	err_exit	'"${@-}" not expanding to null string'
 fi
-for i in : % + / 3b '**' '***' '@@' '{' '[' '}' !!  '*a' '$foo'
+for i in : % + / 3b '**' '***' '@@' '{' '[' '}' !!  '*a' '$$'
 do      (eval : \${"$i"} 2> /dev/null) && err_exit "\${$i} not an syntax error"
 done
 unset IFS
@@ -674,4 +674,28 @@ level=$($SHELL -c $'$SHELL -c \'print -r "$SHLVL"\'')
 $SHELL -c 'unset .sh' 2> /dev/null
 [[ $? == 1 ]] || err_exit 'unset .sh should return 1'
 
+x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
+[[ $x == 'foo '* ]] || err_exit 'foo not included in ${!foo*}' 
+
+[[ ${!.sh.sig@} == *.sh.sig.pid* ]]  ||  err_exit '.sh.sig.pid not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.status* ]]  ||  err_exit '.sh.sig.status not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.value.q* ]]  ||  err_exit '.sh.sig.value.q not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.value.Q* ]]  ||  err_exit '.sh.sig.value.Q not in ${!.sh.sig@]}'
+
+unset x
+integer x=1
+[[ $(x+=3 command eval echo \$x) == 4 ]] || err_exit '+= assignment for environment variables for command special_built-in not working'
+(( $x == 1 )) || err_exit 'environment not restored afer command special_builtin'
+[[ $(x+=3 eval echo \$x) == 4 ]] || err_exit '+= assignment for environment variables for built-ins not working'
+
+# tests for ${$parameter}
+set abc def
+abc=foo
+def=bar
+[[ ${$2:1:1} == a ]] || err_exit '${$2:1:1} not correct with $2=def and def=bar'
+OPTIND=2
+[[ ${$OPTIND:1:1} == e ]] || err_exit '${$OPTIND:1:1} not correct with OPTIND=2 and $2=def'
+
+
 exit $((Errors<125?Errors:125))
+

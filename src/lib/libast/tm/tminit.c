@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -380,6 +380,23 @@ tmlocal(void)
 				local.daylight = strdup(buf);
 			}
 		}
+	}
+	if (!*local.standard && !local.west && !local.dst && (s = getenv("TZ")))
+	{
+		if ((zp = tmzone(s, &t, NiL, NiL)) && !*t)
+		{
+			local.standard = strdup(zp->standard);
+			if (zp->daylight)
+				local.daylight = strdup(zp->daylight);
+			local.west = zp->west;
+			local.dst = zp->dst;
+		}
+		else
+			local.standard = strdup(s);
+		if (!local.standard)
+			local.standard = "";
+		if (!local.daylight)
+			local.daylight = "";
 	}
 
 	/*

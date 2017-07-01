@@ -1,6 +1,8 @@
-iff AST_API
+iff -
 
-ver ast 20111111
+ver ast 20131127
+
+api ast 20130509 memfatal
 
 api ast 20120528 regexec regnexec regrexec regsubexec strgrpmatch
 

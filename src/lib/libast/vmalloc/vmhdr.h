@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _VMHDR_H
@@ -27,29 +27,14 @@
 
 /*	Common types, and macros for vmalloc functions.
 **
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+**	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
-
-#ifndef __STD_C	/* this is normally in vmalloc.h but it's included late here */
-#ifdef __STDC__
-#define	__STD_C		1
-#else
-#if __cplusplus || c_plusplus
-#define __STD_C		1
-#else
-#define __STD_C		0
-#endif /*__cplusplus*/
-#endif /*__STDC__*/
-#endif /*__STD_C*/
 
 #if _PACKAGE_ast
 
 #if !_UWIN
 #define getpagesize		______getpagesize
 #define _npt_getpagesize	1
-#define brk			______brk
-#define sbrk			______sbrk
-#define _npt_sbrk		1
 #endif
 
 #include	<ast.h>
@@ -57,18 +42,31 @@
 #if _npt_getpagesize
 #undef				getpagesize
 #endif
-#if _npt_sbrk
-#undef				brk
-#undef				sbrk
-#endif
 
 #else
 
 #include	<ast_common.h>
+#include	<sys/types.h>
+#include	<unistd.h>
 
 #if !_UWIN
 #define _npt_getpagesize	1
-#define _npt_sbrk		1
+#endif
+
+#ifndef O_cloexec
+#ifdef O_CLOEXEC
+#define O_cloexec		O_CLOEXEC
+#else
+#define O_cloexec		0
+#endif
+#endif
+
+#ifndef F_dupfd_cloexec
+#ifdef F_DUPFD_CLOEXEC
+#define F_dupfd_cloexec		F_DUPFD_CLOEXEC
+#else
+#define F_dupfd_cloexec		F_DUPFD
+#endif
 #endif
 
 #undef free
@@ -78,9 +76,11 @@
 #endif /*_PACKAGE_ast*/
 
 #include	"FEATURE/vmalloc"
+#include	"vmalloc.h"
 
-#include	<aso.h>		/* atomic scalor operations		*/
+#include	<aso.h>		/* atomic scalar operations		*/
 #include	<setjmp.h>	/* use the type jmp_buf for alignment	*/
+#include	<debug.h>	/* DEBUG_ASSERT() and friends		*/
 
 /* extra information needed about methods to get memory from the system */
 #if defined(_WIN32)
@@ -94,23 +94,23 @@
 typedef unsigned char	Vmuchar_t;
 typedef unsigned long	Vmulong_t;
 
-typedef union _head_u	Head_t;
-typedef union _body_u	Body_t;
-typedef struct _block_s	Block_t;
-typedef struct _seg_s	Seg_t;
-typedef struct _pfobj_s	Pfobj_t;
+typedef union _head_u	Head_t;	/* the header of a memory block		*/
+typedef union _body_u	Body_t;	/* the body of a memory block when free	*/
+typedef struct _block_s	Block_t; /* the type of a memory block		*/
+typedef struct _seg_s	Seg_t;	/* the type of a raw memory segment	*/
 
 #define NIL(t)		((t)0)
-#define reg		register
 #if __STD_C
 #define NOTUSED(x)	(void)(x)
 #else
 #define NOTUSED(x)	(&x,1)
 #endif
 
+/* safe typecasting of scalar values */
+#define VMCAST(ty,x)	((ty)((Vmulong_t)(x)) )
 
 /* convert an address to an integral value */
-#define VLONG(addr)	((Vmulong_t)((Vmuchar_t*)((Vmulong_t)addr) - (Vmuchar_t*)0) )
+#define VMLONG(addr)	((Vmulong_t)(VMCAST(Vmuchar_t*, addr) - (Vmuchar_t*)0) )
 
 /* Round x up to a multiple of y. ROUND2 does powers-of-2 and ROUNDX does others */
 #define ROUND2(x,y)	(((x) + ((y)-1)) & ~((y)-1))
@@ -120,12 +120,26 @@ typedef struct _pfobj_s	Pfobj_t;
 /* compute a value that is a common multiple of x and y */
 #define MULTIPLE(x,y)	((x)%(y) == 0 ? (x) : (y)%(x) == 0 ? (y) : (y)*(x))
 
-#define VM_abort	0x0001	/* abort() on assertion failure		*/
-#define VM_break	0x0002	/* try sbrk() block allocator first	*/
-#define VM_check	0x0004	/* enable detailed checks		*/
-#define VM_free		0x0008	/* disable addfreelist()		*/
-#define VM_keep		0x0010	/* disable free()			*/
-#define VM_mmap		0x0020	/* try mmap() block allocator first	*/
+/* _Vmassert flags -- 0x0001..0x8000 reserved for test du jour via TEST=0x....	*/
+
+#define VM_test		0x0000ffff	/* any TEST set				*/
+
+#define VM_abort	0x00010000	/* abort() on assertion failure		*/
+#define VM_check_reg	0x00020000	/* enable region integrity checks	*/
+#define VM_check_seg	0x00040000	/* enable segment availability prechecks*/
+#define VM_debug	0x00080000	/* test=debug				*/
+#define VM_keep		0x00100000	/* disable free()			*/
+#define VM_pause	0x00200000	/* pause() on assertion failure		*/
+#define VM_usage	0x00400000	/* usage stats at each getmemory	*/
+#define VM_verbose	0x00800000	/* verbose messages to standard error	*/
+
+#define VM_anon		0x01000000	/* MAP_ANON block allocator		*/
+#define VM_break	0x02000000	/* sbrk() block allocator		*/
+#define VM_native	0x04000000	/* native malloc() block allocator	*/
+#define VM_safe		0x08000000	/* safe MAP_ANON emulation of sbrk()	*/
+#define VM_zero		0x10000000	/* /dev/zero block allocator		*/
+
+#define VM_GETMEMORY	(VM_anon|VM_break|VM_native|VM_safe|VM_zero)
 
 #if _UWIN
 #include <ast_windows.h>
@@ -136,137 +150,124 @@ typedef struct _pfobj_s	Pfobj_t;
 #define DEBUG		1
 #endif /*_BLD_DEBUG*/
 #endif /*DEBUG*/
-#if DEBUG
 extern void		_vmmessage _ARG_((const char*, long, const char*, long));
-#define MESSAGE(s)	_vmmessage(__FILE__,__LINE__,s,0)
-#define ABORT()		(_Vmassert & VM_abort)
-#define CHECK()		(_Vmassert & VM_check)
-#define ASSERT(p)	((p) ? 0 : (MESSAGE("Assertion failed"), ABORT() ? (abort(),0) : 0))
+#if DEBUG
+#define MESSAGE(s)	_vmmessage(__FILE__,__LINE__, (s), 0)
+#define PRINT(s,n)	_vmmessage(__FILE__,__LINE__, (s), (n))
+#define ABORT()		((_Vmassert & VM_abort) )
+#define PAUSE()		((_Vmassert & VM_pause) )
+#define ASSERT(p)	((p) ? 0 : (MESSAGE("Assertion failed"), \
+				    (ABORT() ? (abort(),0) : PAUSE() ? (pause(),0) : 0)) )
 #define COUNT(n)	((n) += 1)
+#define ACCOUNT(a,b)	((a) += (b))
+#define INITMEMORY(m,z)	((m) ? (memset((m), 'i', (z) > 2*ALIGN ? 2*ALIGN : (z)), 0) : 0 )
+#define SETBUSYMEM(m,z)	(memset(((char*)(m))+2*ALIGN, 'b', (z) <= 2*ALIGN ? 0 : ALIGN ) )
+#define CHKBUSYMEM(m,z)	(memcmp(((char*)(m))+2*ALIGN, "bbbbbbbb", (z) <= 2*ALIGN ? 0 : 8) == 0 ? 1 : 0 )
+#define SETFREEMEM(m,z)	(memset(((char*)(m))+2*ALIGN, 'f', (z) <= 2*ALIGN ? 0 : ALIGN ) )
+#define CHKFREEMEM(m,z)	(memcmp(((char*)(m))+2*ALIGN, "ffffffff", (z) <= 2*ALIGN ? 0 : 8) == 0 ? 1 : 0 )
+#define DEBUGDECL(_ty_,_ob_)	_ty_ _ob_;
 #else
 #define ABORT()		(0)
 #define ASSERT(p)
-#define CHECK()		(0)
 #define COUNT(n)
 #define MESSAGE(s)	(0)
+#define ACCOUNT(a,b)
+#define INITMEMORY(m,z)
+#define SETBUSYMEM(m,z)
+#define CHKBUSYMEM(m,z)
+#define SETFREEMEM(m,z)
+#define CHKFREEMEM(m,z)
+#define DEBUGDECL(_ty_,_ob_)
 #endif /*DEBUG*/
 
-#define VMPAGESIZE	8192
-#if _lib_getpagesize
-#define GETPAGESIZE(x)	((x) ? (x) : ((x)=getpagesize()) )
-#else
-#define GETPAGESIZE(x)	((x) = VMPAGESIZE)
-#endif
+#define VM_PAGESIZE	8192 /* default assumed page size */
+#define VMPAGESIZE()	(_Vmpagesize ? _Vmpagesize : _vmpagesize())
+#define VMBOUNDARIES()	(_Vmmemaddr ? 0 : _vmboundaries())
 
-/* Blocks are allocated such that their sizes are 0%(BITS+1)
-** This frees up enough low order bits to store state information
-*/
-#define BUSY		(01)	/* block is busy				*/
-#define PFREE		(02)	/* preceding block is free			*/
-#define JUNK		(04)	/* marked as freed but not yet processed	*/
-#define BITS		(07)	/* (BUSY|PFREE|JUNK)				*/
-#define ALIGNB		(8)	/* size must be a multiple of BITS+1		*/
+/* get file name and line number recorded in region */
+#define VMFLF(vm,fi,ln,fn)	((fi) = (vm)->file, (vm)->file = NIL(char*), \
+		 		 (ln) = (vm)->line, (vm)->line = 0 , \
+		 		 (fn) = (vm)->func, (vm)->func = NIL(Void_t*) )
 
-#define ISBITS(w)	((w) & BITS)
-#define CLRBITS(w)	((w) &= ~BITS)
-#define CPYBITS(w,f)	((w) |= ((f)&BITS) )
-
-#define ISBUSY(w)	((w) & BUSY)
-#define SETBUSY(w)	((w) |= BUSY)
-#define CLRBUSY(w)	((w) &= ~BUSY)
-
-#define ISPFREE(w)	((w) & PFREE)
-#define SETPFREE(w)	((w) |= PFREE)
-#define CLRPFREE(w)	((w) &= ~PFREE)
-
-#define ISJUNK(w)	((w) & JUNK)
-#define SETJUNK(w)	((w) |= JUNK)
-#define CLRJUNK(w)	((w) &= ~JUNK)
-
-#define OFFSET(t,e)	((size_t)(&(((t*)0)->e)) )
-
-#define VMETHOD(vd)	((vd)->mode&VM_METHODS)
-
-/* lock and unlock regions during concurrent accesses */
-#define SETLOCK(vm,l)	((l) ? 0 : _vmlock((vm), 1) )
-#define CLRLOCK(vm,l)	((l) ? 0 : _vmlock((vm), 0) )
-
-/* local calls */
+/* local recursive calls */
 #define KPVALLOC(vm,sz,func)		(func((vm),(sz),1) )
 #define KPVRESIZE(vm,dt,sz,mv,func)	(func((vm),(dt),(sz),(mv),1) )
 #define KPVFREE(vm,dt,func)		(func((vm),(dt),1) )
-#define KPVADDR(vm,addr,func)		(func((vm),(addr),1) )
-#define KPVSIZE(vm,addr,func)		(func((vm),(addr),1) )
-#define KPVCOMPACT(vm,func)		(func((vm),1) )
 #define KPVALIGN(vm,sz,al,func)		(func((vm),(sz),(al),1) )
 
-/* ALIGN is chosen so that a block can store all primitive types.
-** It should also be a multiple of ALIGNB==(BITS+1) so the size field
-** of Block_t will always be 0%(BITS+1) as noted above.
-** Of paramount importance is the ALIGNA macro below. If the local compile
-** environment is strange enough that the below method does not calculate
-** ALIGNA right, then the code below should be commented out and ALIGNA
-** redefined to the appropriate requirement.
+/* Block sizes will always be 0%(BITS+1) so the below bits will be free */
+#define BUSY		(0x1)	/* a normal (Vmbest) block is busy	*/
+#define PFREE		(0x2)	/* preceding normal block is free	*/
+#define SMALL		(0x4)	/* a segment block is busy		*/
+#define MARK		(0x8)	/* for marking usage (eg, beststat())	*/
+#define BITS		(BUSY|PFREE|SMALL|MARK)
+#define ALIGNB		(BITS+1) /* to guarantee blksize == 0%(BITS+1)	*/
+
+/* ALIGN is chosen for three conditions:
+** 1. Able to address all primitive types.
+** 2. A multiple of ALIGNB==(BITS+1) as discussed above.
+** 3. Large enough to cover two pointers. Note that on some machines
+**    a double value will be that large anyway.
+**
+** Of paramount importance is the ALIGNA macro below. If the compilation
+** environment is too strange to calculate ALIGNA right, then the below
+** code should be commented out and ALIGNA redefined as needed.
 */
 union _align_u
 {	char		c, *cp;
 	int		i, *ip;
 	long		l, *lp;
-	double		d, *dp, ***dppp[8];
+	double		d, *dp;
 	size_t		s, *sp;
 	void(*		fn)();
 	union _align_u*	align;
 	Head_t*		head;
 	Body_t*		body;
 	Block_t*	block;
-	Vmuchar_t	a[ALIGNB];
 	_ast_fltmax_t	ld, *ldp;
+	_ast_intmax_t	li, *lip;
+	Vmuchar_t	a[ALIGNB];
 	jmp_buf		jmp;
 };
 struct _a_s
 {	char		c;
 	union _align_u	a;
 };
+struct _two_s
+{	void*		one;
+	void*		two;
+};
 #define ALIGNA	(sizeof(struct _a_s) - sizeof(union _align_u))
-struct _align_s
-{	char	data[MULTIPLE(ALIGNA,ALIGNB)];
-};
-#undef	ALIGN	/* bsd sys/param.h defines this */
-#define ALIGN	sizeof(struct _align_s)
+#undef	ALIGN	/* Blocks will be aligned on both ALIGNA & ALIGNB */
+#define ALIGNAB	MULTIPLE(ALIGNA,ALIGNB)
+#define ALIGN	MULTIPLE(ALIGNAB, sizeof(struct _two_s))
 
-/* make sure that the head of a block is a multiple of ALIGN */
-struct _head_s
-{	union
-	{ Seg_t*	seg;	/* the containing segment	*/
-	  Block_t*	link;	/* possible link list usage	*/
-	  Pfobj_t*	pf;	/* profile structure pointer	*/
-	  char*		file;	/* for file name in Vmdebug	*/
-	} seg;
-	union
-	{ size_t	size;	/* size of data area in bytes	*/
-	  Block_t*	link;	/* possible link list usage	*/
-	  int		line;	/* for line number in Vmdebug	*/
-	} size;
+typedef union _word_u
+{	size_t		size;	/* to store a size_t	*/
+	unsigned int	intdt;	/* to store an integer	*/
+	Void_t*		ptrdt;	/* to store a pointer	*/
+} Word_t;
+
+struct _head_s /* a block header has two words */
+{	Word_t		one;
+	Word_t		two;
 };
-#define HEADSIZE	ROUND(sizeof(struct _head_s),ALIGN)
+#define HEADSIZE	ROUND(sizeof(struct _head_s), ALIGN)
 union _head_u
-{	Vmuchar_t	data[HEADSIZE];	/* to standardize size		*/
+{	Vmuchar_t	data[HEADSIZE];	/* to standardize size	*/
 	struct _head_s	head;
 };
 	
-/* now make sure that the body of a block is a multiple of ALIGN */
-struct _body_s
+struct _body_s /* Note that self is actually at end of block */
 {	Block_t*	link;	/* next in link list		*/
+	Block_t*	rght;	/* right child in free tree	*/
 	Block_t*	left;	/* left child in free tree	*/
-	Block_t*	right;	/* right child in free tree	*/
 	Block_t**	self;	/* self pointer when free	*/
 };
-#define BODYSIZE	ROUND(sizeof(struct _body_s),ALIGN)
-
+#define BODYSIZE	ROUND(sizeof(struct _body_s), ALIGN)
 union _body_u
-{	Vmuchar_t	data[BODYSIZE];	/* to standardize size		*/
+{	Vmuchar_t	data[BODYSIZE];	/* to standardize size	*/
 	struct _body_s	body;
-	Block_t*	self[1];
 };
 
 /* After all the songs and dances, we should now have:
@@ -275,47 +276,56 @@ union _body_u
 ** and	sizeof(Block_t) = sizeof(Head_t)+sizeof(Body_t)
 */
 struct _block_s
-{	Head_t	head;
-	Body_t	body;
+{	Head_t		head;
+	Body_t		body;
 };
 
-/* requirements for smallest block type */
-struct _tiny_s
-{	Block_t*	link;
-	Block_t*	self;
-};
-#define TINYSIZE	ROUND(sizeof(struct _tiny_s),ALIGN)
-#define S_TINY		1				/* # of tiny blocks	*/
-#define MAXTINY		(S_TINY*ALIGN + TINYSIZE)
-#define TLEFT(b)	((b)->head.head.seg.link)	/* instead of LEFT	*/
-#define TINIEST(b)	(SIZE(b) == TINYSIZE)		/* this type uses TLEFT	*/
+#define SEG(b)		((b)->head.head.one.ptrdt)	/* the containing segment	*/
+#define	SIZE(b)		((b)->head.head.two.size)	/* field containing block size	*/
+#define BDSZ(b)		(SIZE(b) & ~BITS)		/* naked size of block		*/
 
-#define DIV(x,y)	((y) == 8 ? ((x)>>3) : (x)/(y) )
-#define INDEX(s)	DIV((s)-TINYSIZE,ALIGN)
+#define PACK(b)		((b)->head.head.one.ptrdt)	/* the containing pack		*/
 
-/* small block types kept in separate caches for quick allocation */
-#define S_CACHE		6	/* # of types of small blocks to be cached	*/
-#define N_CACHE		32	/* on allocation, create this many at a time	*/
-#define MAXCACHE	(S_CACHE*ALIGN + TINYSIZE)
-#define C_INDEX(s)	(s < MAXCACHE ? INDEX(s) : S_CACHE)
+#define LINK(b)		((b)->body.body.link)		/* linked list 			*/
+#define LEFT(b)		((b)->body.body.left)		/* left child in splay tree	*/
+#define RGHT(b)		((b)->body.body.rght)		/* right child in splay tree	*/
 
-#define TINY(vd)	((vd)->tiny)
-#define CACHE(vd)	((vd)->cache)
+/* translating between a block and its data area */
+#define DATA(b)		((Void_t*)((b)->body.data) )
+#define BLOCK(d)	((Block_t*)((Vmuchar_t*)(d) - sizeof(Head_t)) )
 
-struct _vmdata_s /* core region data - could be in shared/persistent memory	*/
-{	unsigned int	lock;		/* lock status				*/
-	int		mode;		/* current mode for region		*/
-	size_t		incr;		/* allocate in multiple of this		*/
-	size_t		pool;		/* size	of an elt in a Vmpool region	*/
-	Seg_t*		seg;		/* list of segments			*/
-	Block_t*	free;		/* most recent free block		*/
-	Block_t*	wild;		/* wilderness block			*/
-	Block_t*	root;		/* root of free tree			*/
-	Block_t*	tiny[S_TINY];	/* small blocks				*/
-	Block_t*	cache[S_CACHE+1]; /* delayed free blocks		*/
-};
+/* when a block is free, its last word stores a pointer to itself.
+** in this way, a block can find its predecessor if the predecessor is free.
+*/
+#define SELF(b)		((Block_t**)((b)->body.data + BDSZ(b) - sizeof(Block_t*)) )
+#define PREV(b)		(*((Block_t**)(((Vmuchar_t*)(b)) - sizeof(Block_t*)) ) )
+#define NEXT(b)		((Block_t*)((b)->body.data + BDSZ(b)) )
 
-#include	"vmalloc.h"
+#if _ast_sizeof_pointer == 4
+#define SMENCODE(i)	((uint32_t)(i) << 24)		/* code index of a small block	*/
+#define SMDECODE(i)	((uint32_t)(i) >> 24)		/* code index of a small block	*/
+#define SMBITS		(BITS | SMENCODE(0xff))		/* bits not related to size	*/
+#else
+#define SMENCODE(i)	((uint64_t)(i) << 24)		/* code index of a small block	*/
+#define SMDECODE(i)	((uint64_t)(i) >> 24)		/* code index of a small block	*/
+#define SMBITS		(BITS | SMENCODE(0xffff))	/* bits not related to size	*/
+#endif
+
+#define SMINDEXB(b)	(SMDECODE(SIZE(b)))		/* get index of a small block	*/
+#define SMBDSZ(b)	(SIZE(b) & ~SMBITS) /* size of small block	*/
+#define TRUESIZE(z)	((z) & (((z)&SMALL) ? ~SMBITS : ~BITS) )
+#define TRUEBDSZ(b)	((SIZE(b)&SMALL) ? SMBDSZ(b) : BDSZ(b))
+#define TRUENEXT(b)	((Block_t*)((b)->body.data + TRUEBDSZ(b)) )
+
+/* the sentinel block at the end of a "segment block" */
+#define ENDB(sgb)	((Block_t*)((Vmuchar_t*)NEXT(sgb) - sizeof(Head_t)) )
+
+/* the start of allocatable memory in a segment */
+#define SEGDATA(sg)	((Vmuchar_t*)(sg) + ROUND(sizeof(Seg_t),ALIGN) )
+
+/* testing to see if "sg" is the root segment of a region */
+#define SEGROOT(sg)	((Vmuchar_t*)(sg)->vmdt >= (sg)->base && \
+			 (Vmuchar_t*)(sg)->vmdt < (Vmuchar_t*)(sg) )
 
 #if !_PACKAGE_ast
 /* we don't use these here and they interfere with some local names */
@@ -324,158 +334,99 @@ struct _vmdata_s /* core region data - could be in shared/persistent memory	*/
 #undef realloc
 #endif
 
-/* segment structure */
-struct _seg_s
-{	Vmdata_t*	vmdt;	/* the data region holding this	*/
-	Seg_t*		next;	/* next segment			*/
-	Void_t*		addr;	/* starting segment address	*/
-	size_t		extent;	/* extent of segment		*/
-	Vmuchar_t*	baddr;	/* bottom of usable memory	*/
-	size_t		size;	/* allocable size		*/
-	Block_t*	free;	/* recent free blocks		*/
-	Block_t*	last;	/* Vmlast last-allocated block	*/
+typedef struct _vmuser_s	Vmuser_t; /* structure for user's data	*/
+struct _vmuser_s
+{	Vmuser_t*		next;
+	unsigned int		dtid;	/* key to identify data item	*/
+	ssize_t			size;	/* size of data area		*/
+	Void_t*			data;	/* user data area		*/
 };
 
-/* starting block of a segment */
-#define SEGBLOCK(s)	((Block_t*)(((Vmuchar_t*)(s)) + ROUND(sizeof(Seg_t),ALIGN)))
+struct _seg_s /* a segment of raw memory obtained via Vmdisc_t.memoryf */
+{	Vmdata_t*		vmdt;	/* region holding this segment	*/
+	Vmuchar_t*		base;	/* true base address of segment	*/
+	size_t			size;	/* true size of segment		*/
+	int			iffy;	/* should not extend segment	*/
+	Block_t*		begb;	/* starting allocatable memory	*/
+	Block_t*		endb;	/* block at end of memory	*/
+	Seg_t*			next;	/* next segment in linked list	*/
+};
 
-/* short-hands for block data */
-#define SEG(b)		((b)->head.head.seg.seg)
-#define SEGLINK(b)	((b)->head.head.seg.link)
-#define	SIZE(b)		((b)->head.head.size.size)
-#define SIZELINK(b)	((b)->head.head.size.link)
-#define LINK(b)		((b)->body.body.link)
-#define LEFT(b)		((b)->body.body.left)
-#define RIGHT(b)	((b)->body.body.right)
+struct _free_s /* list of objects locked out by concurrent free() */
+{
+	struct _free_s*	next;
+};
+typedef struct _free_s Free_t;
 
-#define DATA(b)		((Void_t*)((b)->body.data) )
-#define BLOCK(d)	((Block_t*)((char*)(d) - sizeof(Head_t)) )
-#define SELF(b)		(b)->body.self[SIZE(b)/sizeof(Block_t*)-1]
-#define LAST(b)		(*((Block_t**)(((char*)(b)) - sizeof(Block_t*)) ) )
-#define NEXT(b)		((Block_t*)((b)->body.data + SIZE(b)) )
+struct Vmdata_s /* Vmdata_t: common region data */
+{	int			mode;	/* operation modes 		*/
+	unsigned int 		lock;	/* lock for segment management	*/
+	size_t			incr;	/* to round memory requests	*/
+	Seg_t*			seg;	/* list of raw memory segments	*/
+	Vmuchar_t*		segmin;	/* min address in all segments	*/
+	Vmuchar_t*		segmax;	/* max address in all segments	*/
+	Block_t*		free;	/* not allocated to method yet	*/
+	Vmuser_t*		user;	/* user data identified by key	*/
+	unsigned int 		ulck;	/* lock of user list for update	*/
+	unsigned int		dlck;	/* lock used by Vmdebug		*/
+	Free_t*			delay;	/* delayed free list		*/
+};
 
-/* functions to manipulate link lists of elts of the same size */
-#define SETLINK(b)	(RIGHT(b) =  (b) )
-#define ISLINK(b)	(RIGHT(b) == (b) )
-#define UNLINK(vd,b,i,t) \
-		((((t) = LINK(b)) ? (LEFT(t) = LEFT(b)) : NIL(Block_t*) ), \
-		 (((t) = LEFT(b)) ? (LINK(t) = LINK(b)) : (TINY(vd)[i] = LINK(b)) ) )
+typedef struct _vmhold_s	Vmhold_t; /* to hold open regions 	*/
+struct _vmhold_s
+{	Vmhold_t*		next;
+	Vmalloc_t*		vm;
+};
 
-/* delete a block from a link list or the free tree.
-** The test in the below macro is worth scratching your head a bit.
-** Even though tiny blocks (size < BODYSIZE) are kept in separate lists,
-** only the TINIEST ones require TLEFT(b) for the back link. Since this
-** destroys the SEG(b) pointer, it must be carefully restored in bestsearch().
-** Other tiny blocks have enough space to use the usual LEFT(b).
-** In this case, I have also carefully arranged so that RIGHT(b) and
-** SELF(b) can be overlapped and the test ISLINK() will go through.
-*/
-#define REMOVE(vd,b,i,t,func) \
-		((!TINIEST(b) && ISLINK(b)) ? UNLINK((vd),(b),(i),(t)) : \
-	 		func((vd),SIZE(b),(b)) )
-
-/* see if a block is the wilderness block */
-#define SEGWILD(b)	(((b)->body.data+SIZE(b)+sizeof(Head_t)) >= SEG(b)->baddr)
-#define VMWILD(vd,b)	(((b)->body.data+SIZE(b)+sizeof(Head_t)) >= vd->seg->baddr)
-
-#define VMFLF(vm,fi,ln,fn)	((fi) = (vm)->file, (vm)->file = NIL(char*), \
-		 		 (ln) = (vm)->line, (vm)->line = 0 , \
-		 		 (fn) = (vm)->func, (vm)->func = NIL(Void_t*) )
-
-/* The lay-out of a Vmprofile block is this:
-**	seg_ size ----data---- _pf_ size
-**	_________ ____________ _________
-**	seg_, size: header required by Vmbest.
-**	data:	actual data block.
-**	_pf_:	pointer to the corresponding Pfobj_t struct
-**	size:	the true size of the block.
-** So each block requires an extra Head_t.
-*/
-#define PF_EXTRA   sizeof(Head_t)
-#define PFDATA(d)  ((Head_t*)((Vmuchar_t*)(d)+(SIZE(BLOCK(d))&~BITS)-sizeof(Head_t)) )
-#define PFOBJ(d)   (PFDATA(d)->head.seg.pf)
-#define PFSIZE(d)  (PFDATA(d)->head.size.size)
-
-/* The lay-out of a block allocated by Vmdebug is this:
-**	seg_ size file size seg_ magi ----data---- --magi-- magi line
-**	--------- --------- --------- ------------ -------- ---------
-**	seg_,size: header required by Vmbest management.
-**	file:	the file where it was created.
-**	size:	the true byte count of the block
-**	seg_:	should be the same as the previous seg_.
-**		This allows the function vmregion() to work.
-**	magi:	magic bytes to detect overwrites.
-**	data:	the actual data block.
-**	magi:	more magic bytes.
-**	line:	the line number in the file where it was created.
-** So for each allocated block, we'll need 3 extra Head_t.
-*/
-
-/* convenient macros for accessing the above fields */
-#define DB_HEAD		(2*sizeof(Head_t))
-#define DB_TAIL		(2*sizeof(Head_t))
-#define DB_EXTRA	(DB_HEAD+DB_TAIL)
-#define DBBLOCK(d)	((Block_t*)((Vmuchar_t*)(d) - 3*sizeof(Head_t)) )
-#define DBBSIZE(d)	(SIZE(DBBLOCK(d)) & ~BITS)
-#define DBSEG(d)	(((Head_t*)((Vmuchar_t*)(d) - sizeof(Head_t)))->head.seg.seg )
-#define DBSIZE(d)	(((Head_t*)((Vmuchar_t*)(d) - 2*sizeof(Head_t)))->head.size.size )
-#define DBFILE(d)	(((Head_t*)((Vmuchar_t*)(d) - 2*sizeof(Head_t)))->head.seg.file )
-#define DBLN(d)		(((Head_t*)((Vmuchar_t*)DBBLOCK(d)+DBBSIZE(d)))->head.size.line )
-#define DBLINE(d)	(DBLN(d) < 0 ? -DBLN(d) : DBLN(d))
-
-/* forward/backward translation for addresses between Vmbest and Vmdebug */
-#define DB2BEST(d)	((Vmuchar_t*)(d) - 2*sizeof(Head_t))
-#define DB2DEBUG(b)	((Vmuchar_t*)(b) + 2*sizeof(Head_t))
-
-/* set file and line number, note that DBLN > 0 so that DBISBAD will work  */
-#define DBSETFL(d,f,l)	(DBFILE(d) = (f), DBLN(d) = (f) ? (l) : 1)
-
-/* set and test the state of known to be corrupted */
-#define DBSETBAD(d)	(DBLN(d) > 0 ? (DBLN(d) = -DBLN(d)) : -1)
-#define DBISBAD(d)	(DBLN(d) <= 0)
-
-#define DB_MAGIC	0255		/* 10101101	*/
-
-/* compute the bounds of the magic areas */
-#define DBHEAD(d,begp,endp) \
-		(((begp) = (Vmuchar_t*)(&DBSEG(d)) + sizeof(Seg_t*)), ((endp) = (d)) )
-#define DBTAIL(d,begp,endp) \
-		(((begp) = (Vmuchar_t*)(d)+DBSIZE(d)), ((endp) = (Vmuchar_t*)(&DBLN(d))) )
-
+#define VM_SEGEXTEND	(01)	/* physically extend memory as needed	*/
+#define VM_SEGALL	(02)	/* always return entire segment		*/
 
 /* external symbols for use inside vmalloc only */
-typedef Block_t*	(*Vmsearch_f)_ARG_((Vmdata_t*, size_t, Block_t*));
 typedef struct _vmextern_s
-{	Block_t*	(*vm_extend)_ARG_((Vmalloc_t*, size_t, Vmsearch_f ));
-	ssize_t		(*vm_truncate)_ARG_((Vmalloc_t*, Seg_t*, size_t, int));
-	size_t		vm_pagesize;
-	char*		(*vm_strcpy)_ARG_((char*, const char*, int));
-	char*		(*vm_itoa)_ARG_((Vmulong_t, int));
-	void		(*vm_trace)_ARG_((Vmalloc_t*,
-					  Vmuchar_t*, Vmuchar_t*, size_t, size_t));
-	void		(*vm_pfclose)_ARG_((Vmalloc_t*));
-	unsigned int	vm_lock;
-	int		vm_assert;
-	int		vm_options;
+{	Block_t*		(*vm_seginit)_ARG_((Vmdata_t*, Seg_t*, Vmuchar_t*, ssize_t, int));
+	Block_t*		(*vm_segalloc)_ARG_((Vmalloc_t*, Block_t*, ssize_t, int ));
+	void			(*vm_segfree)_ARG_((Vmalloc_t*, Block_t*));
+	char*			(*vm_strcpy)_ARG_((char*, const char*, int));
+	char*			(*vm_itoa)_ARG_((Vmulong_t, int));
+	ssize_t			(*vm_lcm)_ARG_((ssize_t, ssize_t));
+	void			(*vm_trace)_ARG_((Vmalloc_t*, Vmuchar_t*, Vmuchar_t*, size_t, size_t));
+	int			(*vm_chkmem)_ARG_((Vmuchar_t*, size_t));
+	Vmuchar_t*		vm_memmin;   /* address lower abound	*/ 
+	Vmuchar_t*		vm_memmax;   /* address upper abound	*/ 
+	Vmuchar_t*		vm_memaddr;  /* vmmaddress() memory	*/
+	Vmuchar_t*		vm_memsbrk;  /* Vmdcsystem's memory	*/
+	Vmhold_t*		vm_hold;     /* list to hold regions	*/
+	size_t			vm_pagesize; /* OS memory page size	*/
+	size_t			vm_segsize;  /* min segment size	*/
+	unsigned int 		vm_sbrklock; /* lock for sbrkmem	*/
+	unsigned int		vm_assert;   /* options for ASSERT() 	*/
 } Vmextern_t;
 
-#define _Vmextend	(_Vmextern.vm_extend)
-#define _Vmtruncate	(_Vmextern.vm_truncate)
-#define _Vmpagesize	(_Vmextern.vm_pagesize)
+#define _Vmseginit	(_Vmextern.vm_seginit)
+#define _Vmsegalloc	(_Vmextern.vm_segalloc)
+#define _Vmsegfree	(_Vmextern.vm_segfree)
 #define _Vmstrcpy	(_Vmextern.vm_strcpy)
 #define _Vmitoa		(_Vmextern.vm_itoa)
+#define _Vmlcm		(_Vmextern.vm_lcm)
 #define _Vmtrace	(_Vmextern.vm_trace)
-#define _Vmpfclose	(_Vmextern.vm_pfclose)
-#define _Vmlock		(_Vmextern.vm_lock)
+#define _Vmchkmem	(_Vmextern.vm_chkmem)
+#define _Vmmemmin	(_Vmextern.vm_memmin)
+#define _Vmmemmax	(_Vmextern.vm_memmax)
+#define _Vmmemaddr	(_Vmextern.vm_memaddr)
+#define _Vmmemsbrk	(_Vmextern.vm_memsbrk)
+#define _Vmpagesize	(_Vmextern.vm_pagesize)
+#define _Vmsegsize	(_Vmextern.vm_segsize)
+#define _Vmsbrklock	(_Vmextern.vm_sbrklock)
+#define _Vmhold		(_Vmextern.vm_hold)
 #define _Vmassert	(_Vmextern.vm_assert)
-#define _Vmoptions	(_Vmextern.vm_options)
 
-#define VMOPTIONS()     do { if (!_Vmoptions) { _vmoptions(); } } while (0)
-
-extern int		_vmbestcheck _ARG_((Vmdata_t*, Block_t*));
-extern int		_vmfd _ARG_((int));
-extern int		_vmlock _ARG_((Vmalloc_t*, int));
-extern void		_vmoptions _ARG_((void));
+extern Vmalloc_t*	_vmheapinit _ARG_((Vmalloc_t*)); /* initialize Vmheap	*/
+extern int		_vmheapbusy _ARG_((void)); /* initializing Vmheap	*/
+extern ssize_t		_vmpagesize _ARG_((void)); /* get system page size	*/
+extern int		_vmboundaries _ARG_((void)); /* get mem boundaries	*/
+extern Vmalloc_t*	_vmopen _ARG_((Vmalloc_t*, Vmdisc_t*, Vmethod_t*, int));
+extern void		_vmoptions _ARG_((int)); /* VMALLOC_OPTIONS preferences	*/
+extern int		_vmstat _ARG_((Vmalloc_t*, Vmstat_t*, size_t)); /* internal vmstat() */
 
 _BEGIN_EXTERNS_
 
@@ -485,10 +436,6 @@ extern Vmextern_t	_Vmextern;
 
 #if _npt_getpagesize
 extern int		getpagesize _ARG_((void));
-#endif
-#if _npt_sbrk
-extern int		brk _ARG_(( void* ));
-extern Void_t*		sbrk _ARG_(( ssize_t ));
 #endif
 
 #else

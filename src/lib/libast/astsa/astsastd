@@ -1,0 +1,46 @@
+mov=ast_common.h
+pkg=
+for std
+do	case $std in
+	aso)	pkg="$pkg aso"
+		ed - astsa.omk <<'!'
+/^ASTSA_OBJ = /s/ $(ASTSA_ASO_OBJ)//
+w
+q
+!
+		mov="$mov aso.h"
+		;;
+	cdt)	pkg="$pkg cdt"
+		ed - astsa.omk <<'!'
+/^ASTSA_OBJ = /s/ $(ASTSA_CDT_OBJ)//
+w
+q
+!
+		mov="$mov cdt.h cdtlib.h dthdr.h"
+		;;
+	sfio)	pkg="$pkg sfio"
+		ed - astsa.omk <<'!'
+/^ASTSA_OBJ = /s/ $(ASTSA_SFIO_OBJ)//
+w
+q
+!
+		mov="$mov sfstr.h"
+		;;
+	vmalloc)pkg="$pkg vmalloc"
+		ed - astsa.omk <<'!'
+/^ASTSA_OBJ = /s/ $(ASTSA_VMALLOC_OBJ)//
+w
+q
+!
+		mov="$mov vmalloc.h"
+	esac
+done
+for i in $pkg
+do	echo "#define _PACKAGE_$i	1"
+done > ast_sa_std.h
+mkdir -p sa
+for i in $mov
+do	if	test -f $i
+	then	mv $i sa
+	fi
+done

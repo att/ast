@@ -282,9 +282,10 @@ tst	- -DN=1 - -DN=2 - -DN=3 - -DN=4 - -DN=5 - -DN=6 - -DN=7 - -DN=8 - -DN=0 outp
 		}
 		printf("#define _ast_intmax_t		_ast_int%d_t\n", m);
 		if (m == sizeof(long))
-			printf("#define _ast_intmax_long		1\n");
+			printf("#define _ast_intmax_long	1\n");
 		printf("#define _ast_intswap		%d\n", w);
 		printf("\n");
+		printf("#define _ast_sizeof_intmax_t	%d	/* sizeof(intmax_t) */\n", m);
 		return 0;
 	}
 }end
@@ -313,6 +314,7 @@ tst	- output{
 		"int",		sizeof(int),		0,
 		"long",		sizeof(long),		0,
 		"size_t",	sizeof(size_t),		0,
+		"off_t",	sizeof(off_t),		0,
 		"pointer",	sizeof(void*),		COND * 4,
 		"float",	sizeof(float),		0,
 		"double",	sizeof(double),		0,
@@ -463,6 +465,75 @@ typ uintptr_t stdint.h inttypes.h no{
 	typedef unsigned _ast_int4_t uintptr_t;
 	#endif
 }end
+typ _Bool = uint8_t
+cat{
+	#if defined(_STDC_C99) || __STDC_VERSION__ >= 199901L
+	#include <stdbool.h>
+	#else
+	#define bool	_Bool
+	#define false	0
+	#define true	1
+	#endif
+}end
+if	tst key___thread -lpthread note{ __thread keyword exists and works with -lpthread }end execute{
+		#if defined(__APPLE__) || defined(__APPLE_CC__) || defined(__MACH__)
+		(	/* __thread does not work in dlls */
+		#endif
+		
+		#include	<pthread.h>
+
+		#define INITIAL		1
+		#define LOOP		100
+		
+		static __thread int	specific = INITIAL;
+		static int		global = 0;
+		
+		static void* worker(void* arg)
+		{
+			int	k;
+			int	v;
+			v = (int)(arg - 0);
+			for (k = 0; k < LOOP; ++k)
+			{	
+				specific += v;
+				usleep(1);
+			}
+			if (specific != (INITIAL + LOOP * v)) 
+				global = 1;
+			return 0;
+		}
+		int main()
+		{
+			pthread_t	th[2];
+		
+			if (pthread_create(&th[0], 0, worker, (void*)0 + 5) ||
+			    pthread_create(&th[1], 0, worker, (void*)0 + 7))
+			{
+				NOTE("pthread_create failed");
+				return 1;
+			}
+			pthread_join(th[0], 0);
+			pthread_join(th[1], 0);
+			if (global)
+			{
+				NOTE("__thread variable not thread specific");
+				return 1;
+			}
+			if (specific != INITIAL)
+			{
+				NOTE("main __thread variable changed by another thread");
+				return 1;
+			}
+			return 0;
+		}
+	}end
+elif	tst - note{ msvc __declspec(thread) works }end compile{
+		__declspec(thread) tls = 1;
+	}end
+else	cat{
+		#define __thread		/* __thread keyword does not exist or does not work with -lpthread */
+	}end
+endif
 
 tst	- -DTRY=1 - -DTRY=1 -Dvoid=char - -DTRY=2 - -DTRY=3 - -DTRY=4 output{
 	#if _STD_ && _hdr_stdarg

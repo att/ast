@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(_UWIN) && defined(_BLD_ast)
@@ -27,10 +27,9 @@ void _STUB_vmclear(){}
 
 #include	"vmhdr.h"
 
-/*	Clear out all allocated space.
-**
-**	Written by Kiem-Phong Vo, kpv@research.att.com, 01/16/94.
+/*	Clear a region.
 */
+
 #if __STD_C
 int vmclear(Vmalloc_t* vm)
 #else
@@ -39,47 +38,25 @@ Vmalloc_t*	vm;
 #endif
 {
 	Seg_t		*seg, *next;
-	Block_t		*tp;
-	size_t		size, s;
-	Vmdata_t	*vd = vm->data;
+	Vmdata_t	*vmdt = vm->data;
+	Vmdisc_t	*disc = vm->disc;
 
-	SETLOCK(vm, 0);
+	if(!vm || vm == Vmheap || (vmdt->mode&VM_MEMORYF)) /* the heap and VM_MEMORYF regions are never cleared */
+		return -1;
 
-	vd->free = vd->wild = NIL(Block_t*);
-	vd->pool = 0;
+	/* vm stays on the list of all regions so the seg list pointer is
+	** cleared just in case vmsegwalk() is called before _vmopen() finishes
+	*/
+	seg = vmdt->seg;
+	vmdt->seg = 0;
 
-	if(vd->mode&(VM_MTBEST|VM_MTDEBUG|VM_MTPROFILE) )
-	{	vd->root = NIL(Block_t*);
-		for(s = 0; s < S_TINY; ++s)
-			TINY(vd)[s] = NIL(Block_t*);
-		for(s = 0; s <= S_CACHE; ++s)
-			CACHE(vd)[s] = NIL(Block_t*);
+	/* memory obtained from discipline can be deallocated */
+	for(; seg; seg = next)
+	{	next = seg->next; 
+		(void)(*disc->memoryf)(vm, seg->base, seg->size, 0, disc);
 	}
 
-	for(seg = vd->seg; seg; seg = next)
-	{	next = seg->next;
-
-		tp = SEGBLOCK(seg);
-		size = seg->baddr - ((Vmuchar_t*)tp) - 2*sizeof(Head_t);
-
-		SEG(tp) = seg;
-		SIZE(tp) = size;
-		if((vd->mode&(VM_MTLAST|VM_MTPOOL)) )
-			seg->free = tp;
-		else
-		{	SIZE(tp) |= BUSY|JUNK;
-			LINK(tp) = CACHE(vd)[C_INDEX(SIZE(tp))];
-			CACHE(vd)[C_INDEX(SIZE(tp))] = tp;
-		}
-
-		tp = BLOCK(seg->baddr);
-		SEG(tp) = seg;
-		SIZE(tp) = BUSY;
-	}
-
-	CLRLOCK(vm, 0);
-
-	return 0;
+	return _vmopen(vm, vm->disc, &vm->meth, 0) ? 0 : -1;
 }
 
 #endif

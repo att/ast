@@ -47,7 +47,6 @@ $(LIBDIR)/make :INSTALLDIR: package.mk PROBE.mk TEST.mk WWW.mk \
 cc ld ldd :PACKAGE_INIT: mamake.c proto.c ratz.c release.c
 
 :: RELEASE hosttype.tst p.c hello.c \
-	ar.ibm.risc \
 	cc.specialize cc.pentium4 \
 	ldd.cygwin.i386 \
 	cc.darwin.i386 cc.darwin.i386-64 cc.darwin ldd.darwin \
@@ -89,7 +88,7 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 	then	N='$("\n")'
 		H=$(CC.HOSTTYPE)
 		P="$(-mam:??$(.GETCONF LIBPATH:/:/ /G:/,/ : /G:Q)?)"
-		b= f= h= l= n= p= u= B= L=
+		a= b= f= h= l= n= p= u= B= L=
 		set : $P
 		while	:
 		do	while	:
@@ -119,6 +118,8 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 						;;
 				$L)		l=$x
 						;;
+				*BIN=*)		a=$x
+						;;
 				*BUILTIN_LIB=*)	b=$x
 						;;
 				*FPATH=*)	f=$x
@@ -137,6 +138,11 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 		m=
 		case $p in
 		?*)	b=
+			;;
+		esac
+		case $a in
+		'')	a=BIN=1
+			m=1
 			;;
 		esac
 		case $b in
@@ -227,7 +233,7 @@ $(BINDIR)/.paths :INSTALL: (CC.DIALECT)
 		1)	case $u in
 			?*)	u=$N$u ;;
 			esac
-			echo "$h$N$p$N$f$N$l$u" > $(<)
+			echo "$h$N$a$N$p$N$f$N$l$u" > $(<)
 			;;
 		esac
 	fi
@@ -319,8 +325,6 @@ intl :MAPLIB: intl.c
 
 m :MAPLIB: m.c m2.c m3.c m4.c m5.c m6.c
 
-nsl :MAPLIB: nsl.c
-
 /*
  * what was sco smoking
  * almost all of gethost* are in -lnsl except gethostbyname which
@@ -328,7 +332,7 @@ nsl :MAPLIB: nsl.c
  * to do the -lnsl job
  */
 
-socket :MAPLIB: socket.c nsl.c
+socket socket - socket nsl :MAPLIB: socket.c
 
 /*
  * more substance abuse

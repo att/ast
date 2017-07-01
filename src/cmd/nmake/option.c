@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -2026,13 +2026,6 @@ punt(int old)
 		}
 
 		/*
-		 * delayed (unknown) options
-		 */
-
-		for (x = opt.delayed; x; x = x->next)
-			putptr(vec, x->option);
-
-		/*
 		 * makefile arguments
 		 */
 
@@ -2091,8 +2084,6 @@ punt(int old)
 
 	sfsync(sfstdout);
 	sfsync(sfstderr);
-	if (internal.openfile)
-		close(internal.openfd);
 
 	/*
 	 * start fresh

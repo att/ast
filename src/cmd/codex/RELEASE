@@ -1,3 +1,4 @@
+13-08-11 codex.c: add WINDOW=size to usage[]
 09-04-15 codex.c: add --passfile=file
 08-05-08 codex.c: Codexdisc_t can't be on main()'s stack due to SF_ATEXIT
 06-08-23 codex.tst: add uu boundary and text tests

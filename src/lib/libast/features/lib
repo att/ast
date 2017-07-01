@@ -3,7 +3,8 @@ ref	-D_def_map_ast=1
 cmd	universe
 
 hdr	dirent,direntry,filio,fmtmsg,fnmatch,jioctl,libgen,limits
-hdr	locale,ndir,nl_types,process,spawn,syslog,utime,vfork
+hdr	locale,ndir,nl_types,process,syslog,utime,vfork
+hdr	netdb,netinet/in
 hdr	wchar note{ <wchar.h> and isw*() really work }end execute{
 	#include <wchar.h>
 	int
@@ -17,29 +18,70 @@ hdr	wctype wchar.h
 
 dat	_tzname,tzname
 
+if	mac AT_FDCWD fcntl.h {
+}
+elif	mac AT_FDCWD -D_ATFILE_SOURCE fcntl.h {
+	#ifndef _ATFILE_SOURCE
+	#define _ATFILE_SOURCE 1
+	#endif
+}
+endif
+
 lib	BSDsetpgrp
 lib	_cleanup
 lib	atexit,bcopy,bzero,catclose,catgets,catopen,confstr,dirread,dup2
 lib	execlp,execve,execvp,execvpe
-lib	fchmod,fcntl,fmtmsg,fnmatch,fork,fsync
+lib	fchmod,fcntl,fdopendir,fmtmsg,fnmatch,fork
+lib	fsync,fdatasync,sync,syncfs
+lib	getaddrinfo netdb.h netinet/in.h -lsocket
 lib	getconf,getdents,getdirentries,getdtablesize,getdate
 lib	getgroups,gethostname,getlogin,getpagesize,getrlimit,getuniverse
 lib	getopt,getsubopt,getopt_long,getopt_long_only
 lib	glob,index,iswblank,iswctype,killpg,link,localeconv,madvise
+lib	htons,htonl sys/types.h sys/socket.h netinet/in.h
 lib	mbtowc,mbrtowc,memalign,memchr,memcpy,memdup,memmove,memset
 lib	mkdir,mkfifo,mktemp,mktime
-lib	mount,on_exit,onexit,opendir,pathconf
+lib	mount,on_exit,onexit,opendir,pathconf,fpathconf,pipe2,qsort,qsort_r
 lib	readlink,remove,rename,rewinddir,rindex,rmdir,setlocale
-lib	setpgid,setpgrp,setpgrp2,setreuid,setsid,setuid,sigaction
-lib	sigprocmask,sigsetmask,sigunblock,sigvec,socketpair
-lib	spawn,spawnve,spawnveg
+lib	setpgid,setpgrp,setpgrp2,setregid,setreuid,setsid,setuid,sigaction
+lib	sigprocmask,sigsetmask,sigunblock,sigvec
 lib	strchr,strcoll,strdup,strerror,strcasecmp,strncasecmp,strrchr,strstr
 lib	strmode,strxfrm,strftime,swab,symlink,sysconf,sysinfo,syslog
+lib	stpcpy,stpncpy,strlcat,strlcpy
 lib	telldir,tmpnam,tzset,universe,unlink,utime,wctype
 lib	ftruncate,truncate
-lib	creat64,fstat64,fstatvfs64,ftruncate64 -D_LARGEFILE64_SOURCE
-lib	lseek64,lstat64 -D_LARGEFILE64_SOURCE
-lib	open64,readdir64,stat64,statvfs64,truncate64 -D_LARGEFILE64_SOURCE
+lib	creat64,ftruncate64,lseek64,open64,truncate64 -D_LARGEFILE64_SOURCE fcntl.h unistd.h
+lib	fstat64,lstat64,stat64 -D_LARGEFILE64_SOURCE sys/stat.h
+lib	fstatvfs64,statvfs64 -D_LARGEFILE64_SOURCE sys/statvfs.h
+lib	fdopendir64,opendir64,readdir64,rewinddir64,seekdir64,telldir64,closedir64 -D_LARGEFILE64_SOURCE dirent.h
+lib	accept4,socketpair sys/socket.h
+
+lib	faccessat,fchmodat,fchownat,fstatat,linkat,mkdirat,mkfifoat,mknodat,openat,readlinkat,renameat,symlinkat,unlinkat -D_ATFILE_SOURCE fcntl.h unistd.h
+lib	fstatat64,openat64 -D_ATFILE_SOURCE -D_LARGEFILE64_SOURCE fcntl.h unistd.h sys/stat.h
+
+lib	lchmod note{ lchmod implemented }end execute{
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <errno.h>
+	int
+	main()
+	{
+		lchmod("No-FiLe", 0);
+		return errno != ENOENT;
+	}
+}end
+
+lib	lchown note{ lchown implemented }end execute{
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <errno.h>
+	int
+	main()
+	{
+		lchown("No-FiLe", 0, 0);
+		return errno != ENOENT;
+	}
+}end
 
 lib,npt	strtod,strtold,strtol,strtoll,strtoul,strtoull stdlib.h
 lib,npt	sigflag signal.h
@@ -48,13 +90,13 @@ mem	direct.d_reclen sys/types.h sys/dir.h
 mem	dirent.d_fileno,dirent.d_ino,dirent.d_namlen,dirent.d_off,dirent.d_reclen,dirent.d_type sys/types.h dirent.h
 mem	DIR sys/types.h - dirent.h - sys/dir.h
 mem	DIR.dd_fd sys/types.h - dirent.h - sys/dir.h
-mem	inheritance.pgroup spawn.h
+mem	flock.l_type fcntl.h
 
 sys	dir,filio,jioctl,localedef,ptem,resource
 sys	socket,stream,systeminfo,universe,vfork
 
 typ	ino64_t,off64_t -D_LARGEFILE64_SOURCE
-typ	struct.dirent64 -D_LARGEFILE64_SOURCE dirent.h
+typ	struct.dirent64,DIR64 -D_LARGEFILE64_SOURCE dirent.h
 
 tst	tst_errno note{ errno can be assigned }end link{
 	_BEGIN_EXTERNS_
@@ -205,8 +247,8 @@ tst	lib_vfork unistd.h stdlib.h vfork.h note{ vfork exists and it works }end exe
 	char**	argv;
 	{
 		int	status;
-		char*	cmd[3];
-		if (argv[1])
+		char*	cmd[4];
+		if (argv[2])
 			_exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
 		signal(SIGHUP, SIG_IGN);
 		switch (vfork())
@@ -215,8 +257,9 @@ tst	lib_vfork unistd.h stdlib.h vfork.h note{ vfork exists and it works }end exe
 			_exit(1);
 		case 0:
 			cmd[0] = argv[0];
-			cmd[1] = "test";
-			cmd[2] = 0;
+			cmd[1] = argv[1];
+			cmd[2] = "test";
+			cmd[3] = 0;
 			execv(cmd[0], cmd);
 			_exit(2);
 		}
@@ -238,146 +281,6 @@ tst	real_vfork note{ vfork child shares data with parent }end execute{
 		if (!vfork())
 			code = 0;
 		_exit(code);
-	}
-}end
-
-tst	lib_posix_spawn unistd.h stdlib.h spawn.h -Dfork=______fork note{ posix_spawn exists and it works and its worth using }end status{
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <sys/wait.h>
-	#include <spawn.h>
-	#include <signal.h>
-	#include <fcntl.h>
-	#include <string.h>
-	/* if it uses fork() why bother? */
-	#undef fork
-	pid_t fork _ARG_((void)) { NOTE("uses fork()"); return -1; }
-	pid_t _fork _ARG_((void)) { NOTE("uses _fork()"); return -1; }
-	pid_t __fork _ARG_((void)) { NOTE("uses __fork()"); return -1; }
-	int
-	main(argc, argv)
-	int	argc;
-	char**	argv;
-	{
-		char*			s;
-		pid_t			pid;
-		posix_spawnattr_t	attr;
-		int			n;
-		int			status;
-		char*			cmd[3];
-		char			tmp[1024];
-		if (argv[1])
-			_exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
-		signal(SIGHUP, SIG_IGN);
-		if (posix_spawnattr_init(&attr))
-		{
-			NOTE("posix_spawnattr_init() FAILED");
-			_exit(0);
-		}
-		if (posix_spawnattr_setpgroup(&attr, 0))
-		{
-			NOTE("posix_spawnattr_setpgroup() FAILED");
-			_exit(0);
-		}
-		if (posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP))
-		{
-			NOTE("posix_spawnattr_setflags() FAILED");
-			_exit(0);
-		}
-		/* first try an a.out and verify that SIGHUP is ignored */
-		cmd[0] = argv[0];
-		cmd[1] = "test";
-		cmd[2] = 0;
-		if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0))
-		{
-			NOTE("posix_spawn() FAILED");
-			_exit(0);
-		}
-		status = 1;
-		if (wait(&status) < 0)
-		{
-			NOTE("wait() FAILED");
-			_exit(0);
-		}
-		if (status != 0)
-		{
-			NOTE("SIGHUP ignored in parent not ignored in child");
-			_exit(0);
-		}
-		/* must return exec-type errors or its useless to us *unless* there is no [v]fork() */
-		n = strlen(cmd[0]);
-		if (n >= (sizeof(tmp) - 3))
-		{
-			NOTE("test executable path too long");
-			_exit(0);
-		}
-		strcpy(tmp, cmd[0]);
-		tmp[n] = '.';
-		tmp[n+1] = 's';
-		tmp[n+2] = 'h';
-		tmp[n+3] = 0;
-		if ((n = open(tmp, O_CREAT|O_WRONLY, S_IRWXU|S_IRWXG|S_IRWXO)) < 0 ||
-		    chmod(tmp, S_IRWXU|S_IRWXG|S_IRWXO) < 0 ||
-		    write(n, "exit 99\n", 8) != 8 ||
-		    close(n) < 0)
-		{
-			NOTE("test script create FAILED");
-			_exit(0);
-		}
-		cmd[0] = tmp;
-		n = 0; /* 0 means reject */
-		pid = -1;
-		if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0))
-		{
-			n = 2;
-			NOTE("ENOEXEC produces posix_spawn() error (BEST)");
-		}
-		else if (pid == -1)
-			NOTE("ENOEXEC returns pid == -1");
-		else if (wait(&status) != pid)
-			NOTE("ENOEXEC produces no child process");
-		else if (!WIFEXITED(status))
-			NOTE("ENOEXEC produces signal exit");
-		else
-		{
-			status = WEXITSTATUS(status);
-			if (status == 127)
-			{
-				n = 1;
-				NOTE("ENOEXEC produces exit status 127 (GOOD)");
-			}
-			else if (status == 99)
-				NOTE("ENOEXEC invokes sh");
-			else if (status == 0)
-				NOTE("ENOEXEC reports no error");
-		}
-		_exit(n);
- 	}
-}end
-
-tst	lib_spawn_mode unistd.h stdlib.h note{ first spawn arg is mode and it works }end execute{
-	#include <signal.h>
-	#include <process.h>
-	#ifndef P_NOWAIT
-	#define P_NOWAIT _P_NOWAIT
-	#endif
-	int
-	main(argc, argv)
-	int	argc;
-	char**	argv;
-	{
-		int	status;
-		char*	cmd[3];
-		if (argv[1])
-			_exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
-		signal(SIGHUP, SIG_IGN);
-		cmd[0] = argv[0];
-		cmd[1] = "test";
-		cmd[2] = 0;
-		if (spawnv(P_NOWAIT, cmd[0], cmd) < 0)
-			_exit(1);
-		status = 1;
-		_exit(wait(&status) < 0 || status != 0);
 	}
 }end
 
@@ -489,7 +392,8 @@ tst	lib_memccpy string.h unistd.h stdlib.h fcntl.h signal.h sys/types.h sys/stat
 			return 1;
 		}
 		m = n * (sizeof(x)-1);
-		if (!(b = mmap((void*)0, m, PROT_READ|PROT_WRITE, MAP_PRIVATE, d, (off_t)0)))
+		b = mmap((void*)0, m, PROT_READ|PROT_WRITE, MAP_PRIVATE, d, (off_t)0);
+		if (b == (caddr_t)0 || b == (caddr_t)(-1))
 		{
 			close(d);
 			return 1;
@@ -516,6 +420,7 @@ tst	lib_memccpy string.h unistd.h stdlib.h fcntl.h signal.h sys/types.h sys/stat
 		char	buf[1024];
 	#ifdef MAP_PRIVATE
 		char*	srcbuf;
+		char*	addbuf;
 		char*	dstbuf;
 		int	fd;
 		size_t	siz;
@@ -543,9 +448,11 @@ tst	lib_memccpy string.h unistd.h stdlib.h fcntl.h signal.h sys/types.h sys/stat
 			return 0;
 		if ((fd = open("/dev/zero", O_RDWR)) < 0)
 			return 0;
-		if (!(srcbuf = (char*)mmap(NULL, siz, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0)))
+		srcbuf = (char*)mmap(NULL, siz, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+		if (srcbuf == (caddr_t)0 || srcbuf == (caddr_t)(-1))
 			return 0;
-		if (!mmap(srcbuf + siz, siz, PROT_NONE, MAP_PRIVATE, fd, 0))
+		addbuf = mmap(srcbuf + siz, siz, PROT_NONE, MAP_PRIVATE, fd, 0);
+		if (addbuf == (caddr_t)0 || addbuf == (caddr_t)(-1))
 			return 0;
 		for (i = 0; i < siz; i++)
 			srcbuf[i] = 'x';
@@ -670,6 +577,62 @@ std	strtol note{ stuck with standard strtol }end nostatic{
 	#endif
 	_END_EXTERNS_
 	int main() { printf(""); return (atol("1") + strtol("1",(char**)0,0)) != 0; }
+}end
+
+tst	- note{ [ pid ] + fd + directory path format }end output{
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <fcntl.h>
+	int main()
+	{
+		int	oflags;
+		int	i;
+		int	cwd;
+		int	fd;
+		char	path[1024];
+
+		static const char* fmtself[] = { "/proc/self/fd/%d%s%s", "/dev/fd/%d%s%s" };
+
+		static const char* fmtpid[] =  { "/proc/%d/fd/%d%s%s" };
+
+		oflags = O_RDONLY;
+#ifdef O_SEARCH
+		oflags |= O_SEARCH;
+#endif
+		if ((cwd = open(".", oflags)) < 0)
+			return 1;
+		for (i = 0; i < sizeof(fmtself) / sizeof(fmtself[0]); i++)
+		{
+			sprintf(path, fmtself[i], cwd, "/", ".");
+			if ((fd = open(path, oflags)) >= 0)
+			{
+				close(fd);
+				printf("#define _fd_self_dir_fmt\t\"%s\"\n", fmtself[i]);
+				fflush(stdout);
+				break;
+			}
+		}
+		switch (fork())
+		{
+		case 0:
+			for (i = 0; i < sizeof(fmtpid) / sizeof(fmtpid[0]); i++)
+			{
+				sprintf(path, fmtpid[i], getppid(), cwd, "/", ".");
+				if ((fd = open(path, oflags)) >= 0)
+				{
+					close(fd);
+					printf("#define _fd_pid_dir_fmt\t\t\"%s\"\n", fmtpid[i]);
+					fflush(stdout);
+					break;
+				}
+			}
+			return 0;
+		case -1:
+			return 1;
+		}
+		wait((int*)0);
+		return 0;
+	}
 }end
 
 tst	- output{

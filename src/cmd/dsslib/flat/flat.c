@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -783,6 +783,7 @@ size_get(register Dssfile_t* file, register Size_t* z, Dssdisc_t* disc)
 	register char*		e;
 	register ssize_t	n;
 
+	error(-1, "AHA:flat#%d size_get size=%d width=%d reserve=%d", __LINE__, z->size, z->width, z->reserve);
 	if (!z->width)
 		return z->reserve;
 	if (!(b = (char*)sfreserve(file->io, z->reserve, z->add != 0)))
@@ -808,7 +809,7 @@ size_get(register Dssfile_t* file, register Size_t* z, Dssdisc_t* disc)
 		n = strntoul(s, z->width, NiL, z->base);
 		break;
 	case 'l':
-		n = swapget(3, s, z->width);
+		n = swapget(7, s, z->width);
 		break;
 	case 'm':
 		n = swapget(((Flat_t*)disc)->swap, s, z->width);
@@ -817,6 +818,46 @@ size_get(register Dssfile_t* file, register Size_t* z, Dssdisc_t* disc)
 	if (z->add)
 		sfread(file->io, b, 0);
 	return n;
+}
+
+/*
+ * put record/block size field
+ */
+
+static ssize_t
+size_put(register Dssfile_t* file, ssize_t n, register Size_t* z, Dssdisc_t* disc)
+{
+	register char*		s;
+
+	if (z->add)
+		n += z->size;
+	s = z->buf;
+	memset(s, 0, z->reserve);
+	s += z->offset;
+	switch (z->type)
+	{
+	case 'a':
+		sfsprintf(s, z->width, "%u", n);
+		break;
+	case 'b':
+		swapput(0, s, z->width, n);
+		break;
+	case 'd':
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, 2, "d type not supported");
+		return -1;
+	case 'e':
+		sfsprintf(s, z->width, "%u", n);
+		ccmapcpy(((Flat_t*)disc)->e2a, s, s, z->width);
+		break;
+	case 'l':
+		swapput(7, s, z->width, n);
+		break;
+	case 'm':
+		swapput(((Flat_t*)disc)->swap, s, z->width, n);
+		break;
+	}
+	return sfwrite(file->io, z->buf, z->size) == z->size ? 0 : -1;
 }
 
 /*
@@ -910,6 +951,7 @@ flatread(register Dssfile_t* file, register Dssrecord_t* record, Dssdisc_t* disc
 				}
 			}
 		}
+		error(-1, "AHA:flat#%d terminator=%d continuator=%d delimiter=%d fixed=%d record=%d", __LINE__, flat->terminator, flat->continuator, flat->delimiter, flat->fixed, flat->record ? flat->record->fixed : 0);
 		if (flat->terminator >= 0)
 		{
 			if (flat->continuator >= 0)
@@ -973,6 +1015,7 @@ flatread(register Dssfile_t* file, register Dssrecord_t* record, Dssdisc_t* disc
 		{
 			if (flat->record && (i = size_get(file, flat->record, disc)) <= 0)
 				break;
+			error(-1, "AHA:flat#%d size=%d", __LINE__, i);
 			if (!(s = (char*)sfreserve(file->io, i, flat->variable)) && (!flat->variable || !(i = sfvalue(file->io)) || !(s = (char*)sfreserve(file->io, i, flat->variable))))
 				break;
 		}
@@ -1015,6 +1058,7 @@ flatwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 {
 	register Record_t*	r = (Record_t*)record->data;
 	register Flat_t*	flat = r->flat;
+	register Sfio_t*	io;
 	register Field_t*	f;
 	register int		i;
 	register unsigned char*	s;
@@ -1026,6 +1070,7 @@ flatwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 
 	if (r == flat->current)
 		return sfwrite(file->io, r->image, r->siz) == r->siz ? 0 : -1;
+	io = flat->record ? flat->buf : file->io;
 	for (i = 0; i < r->nfields; i++)
 	{
 		f = r->fields[i].field;
@@ -1050,7 +1095,7 @@ flatwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 				if (f->physical.format.flags & CX_QUOTEALL)
 				{
 					q = 1;
-					sfputc(file->io, f->physical.format.quotebegin);
+					sfputc(io, f->physical.format.quotebegin);
 				}
 				else
 					q = 0;
@@ -1059,27 +1104,27 @@ flatwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 					{
 						if (f->physical.format.escape >= 0)
 						{
-							sfwrite(file->io, b, s - b);
-							sfputc(file->io, f->physical.format.escape);
-							sfputc(file->io, *s);
+							sfwrite(io, b, s - b);
+							sfputc(io, f->physical.format.escape);
+							sfputc(io, *s);
 						}
 						else if (*s == f->physical.format.delimiter)
 						{
 							if (q)
 								continue;
 							q = 1;
-							sfwrite(file->io, b, s - b);
-							sfputc(file->io, f->physical.format.quotebegin);
-							sfputc(file->io, *s);
+							sfwrite(io, b, s - b);
+							sfputc(io, f->physical.format.quotebegin);
+							sfputc(io, *s);
 						}
 						else
 						{
-							sfwrite(file->io, b, s - b + 1);
-							sfputc(file->io, *s);
+							sfwrite(io, b, s - b + 1);
+							sfputc(io, *s);
 							if (!q)
 							{
 								q = 1;
-								sfputc(file->io, *s);
+								sfputc(io, *s);
 							}
 						}
 						b = s + 1;
@@ -1087,19 +1132,26 @@ flatwrite(Dssfile_t* file, Dssrecord_t* record, Dssdisc_t* disc)
 				if (q && !(f->physical.format.flags & CX_QUOTEALL))
 				{
 					q = 0;
-					sfputc(file->io, f->physical.format.quoteend);
+					sfputc(io, f->physical.format.quoteend);
 				}
-				sfwrite(file->io, b, s - b);
+				sfwrite(io, b, s - b);
 				if (q)
-					sfputc(file->io, f->physical.format.quoteend);
+					sfputc(io, f->physical.format.quoteend);
 			}
 			else
-				sfwrite(file->io, flat->valbuf, n);
+				sfwrite(io, flat->valbuf, n);
 		}
 		else if (flat->emptyspace && f->physical.format.delimiter >= 0)
-			sfputc(file->io, ' ');
+			sfputc(io, ' ');
 		if (f->physical.format.delimiter >= 0)
-			sfputc(file->io, f->physical.format.delimiter);
+			sfputc(io, f->physical.format.delimiter);
+	}
+	if (flat->record)
+	{
+		n = sfstrtell(io);
+		sfstrseek(io, 0, SEEK_SET);
+		if (size_put(file, n, flat->record, disc) || sfwrite(file->io, sfstrbase(io), n) != n)
+			return -1;
 	}
 	return 0;
 }
@@ -2287,6 +2339,23 @@ flat_size_width_dat(Tag_t* tag, Tagframe_t* fp, const char* data, Tagdisc_t* dis
 }
 
 static int
+flat_size_size_dat(Tag_t* tag, Tagframe_t* fp, const char* data, Tagdisc_t* disc)
+{
+	char*	e;
+
+	((Size_t*)fp->prev->data)->size = strtoul(data, &e, 0);
+	if (*e)
+	{
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, 2, "%s: invalid number", data);
+		return -1;
+	}
+	if (*data == '+')
+		((Size_t*)fp->prev->data)->add = 1;
+	return 0;
+}
+
+static int
 flat_size_fixed_dat(Tag_t* tag, Tagframe_t* fp, const char* data, Tagdisc_t* disc)
 {
 	char*	e;
@@ -2351,7 +2420,7 @@ static Tags_t	tags_flat_size[] =
 			" by default. A + prefix specifies that the size"
 			" field total width must be added to the computed"
 			" size to determine the record length.",
-			0,0,flat_size_width_dat,0,
+			0,0,flat_size_size_dat,0,
 	"FIXED",	"Fixed record size.",
 			0,0,flat_size_fixed_dat,0,
 	0
@@ -2385,6 +2454,7 @@ flat_size_end(Tag_t* tag, Tagframe_t* fp, Tagdisc_t* disc)
 {
 	register Flat_t*	flat = (Flat_t*)disc;
 	register Size_t*	z = (Size_t*)fp->data;
+	int			n;
 
 	if (z->size < (z->offset + z->width))
 		z->size = z->offset + z->width;
@@ -2395,14 +2465,14 @@ flat_size_end(Tag_t* tag, Tagframe_t* fp, Tagdisc_t* disc)
 		if (z->reserve < z->size)
 			z->reserve = z->size;
 	}
+	if (!(z->buf = newof(0, char, z->reserve, 0)))
+	{
+		if (disc->errorf)
+			(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
+		return -1;
+	}
 	if (z->type == 'e')
 	{
-		if (!(z->buf = newof(0, char, z->reserve, 0)))
-		{
-			if (disc->errorf)
-				(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
-			return -1;
-		}
 		if (!flat->e2a)
 			flat->e2a = ccmap(CC_EBCDIC_O, CC_ASCII);
 	}
@@ -3255,7 +3325,7 @@ flatmeth(const char* name, const char* options, const char* schema, Dssdisc_t* d
 		flat->terminator = flat->lastfield->physical.format.delimiter;
 	if (flat->terminator < 0)
 		flat->continuator = -1;
-	else if (flat->continuator >= 0 && !(flat->buf = sfstropen()))
+	if ((flat->continuator >= 0 || flat->record) && !(flat->buf = sfstropen()))
 	{
 		if (disc->errorf)
 			(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
@@ -3343,6 +3413,8 @@ flatmeth(const char* name, const char* options, const char* schema, Dssdisc_t* d
 			}
 		}
 		flat->fixed = flat->record->reserve;
+		if (!flat->record->width)
+			flat->record->width = flat->record->size;
 	}
 	else if (!fixed)
 	{
@@ -3409,7 +3481,7 @@ flatopen(Dss_t* dss, Dssdisc_t* disc)
 			if (!isalpha(*p))
 				*p = '_';
 			t = a;
-			a = strcopy(a, flat->meth.name);
+			a = stpcpy(a, flat->meth.name);
 			*a++ = 0;
 			if (islower(*t))
 				*t = toupper(*t);
@@ -3768,6 +3840,22 @@ flatopen(Dss_t* dss, Dssdisc_t* disc)
 	return 0;
 }
 
+/*
+ * closef
+ */
+
+static int
+flatclose(Dss_t* dss, Dssdisc_t* disc)
+{
+	Flat_t*			flat = (Flat_t*)dss->meth->data;
+
+	if (!dss->meth || !(flat = (Flat_t*)dss->meth->data))
+		return -1;
+	if (flat->buf)
+		sfstrclose(flat->buf);
+	return 0;
+}
+
 static Dssmeth_t method =
 {
 	"flat",
@@ -3775,7 +3863,7 @@ static Dssmeth_t method =
 	CXH,
 	flatmeth,
 	flatopen,
-	0,
+	flatclose,
 	0,
 	0,
 	0,
@@ -3786,7 +3874,7 @@ static Dssmeth_t method =
 };
 
 static const char flatten_usage[] =
-"[-1ls5P?\n@(#)$Id: dss flatten query (AT&T Research) 2005-05-09 $\n]"
+"[-1ls5P?\n@(#)$Id: dss flatten query (AT&T Research) 2013-03-01 $\n]"
 USAGE_LICENSE
 "[+PLUGIN?\findex\f]"
 "[+DESCRIPTION?Flatten input data to match flat method \bschema\b.]"
@@ -3825,6 +3913,20 @@ flattenget(register Flatten_t* flatten, Cxvariable_t* var, void* data)
 			return &nullval;
 	}
 	return &flatten->value.value;
+}
+
+/*
+ * get source field size value
+ */
+
+static Cxvalue_t*
+flattensize(register Flatten_t* flatten, Cxvariable_t* var, void* data)
+{
+	Cxvalue_t*	val;
+
+	if ((val = flattenget(flatten, var, data)) != &nullval)
+		val->number = val->string.size;
+	return val;
 }
 
 /*
@@ -3954,7 +4056,14 @@ flatten_beg(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 	for (f = flatten->flat->fields; f; f = f->next)
 	{
 		f->flattengetf = flattenget;
-		if (!(f->flatten = (Cxvariable_t*)dtmatch(cx->variables, f->variable.name)))
+		if (!(g = (Field_t*)dtmatch(cx->variables, f->variable.name)) && f->structure.parent && (g = (Field_t*)dtmatch(cx->variables, f->structure.parent->name)))
+		{
+			if (cxisnumber(f->variable.type) && cxisstring(g->variable.type))
+				f->flattengetf = flattensize;
+			else if (!cxisstring(f->variable.type))
+				g = 0;
+		}
+		if (!(f->flatten = (Cxvariable_t*)g))
 		{
 			f->flattengetf = flattennull;
 			if (!cxisvoid(f->variable.type) && disc->errorf)
@@ -3967,7 +4076,7 @@ flatten_beg(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 			else if (cxisstring(f->variable.type) && cxisnumber(f->flatten->type))
 				f->flattengetf = flattennum2str;
 		}
-		if ((g = (Field_t*)dtmatch(cx->variables, f->variable.name)) && g->physical.format.code != f->physical.format.code && g->physical.format.code == CC_NATIVE)
+		if (g && g->physical.format.code != f->physical.format.code && g->physical.format.code == CC_NATIVE)
 			f->pam = ccmap(g->physical.format.code, f->physical.format.code);
 		if (fixed && (f->variable.format.flags & CX_BINARY) && (offset % f->physical.format.width))
 		{
@@ -4007,6 +4116,7 @@ flatten_act(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 {
 	register Flatten_t*	flatten = (Flatten_t*)expr->data;
 	register Field_t*	f;
+	register Sfio_t*	io;
 	register unsigned char*	s;
 	Cxvalue_t*		v;
 	unsigned char*		b;
@@ -4014,6 +4124,7 @@ flatten_act(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 	ssize_t			n;
 	int			q;
 
+	io = flatten->flat->record ? flatten->flat->buf : flatten->file->io;
 	for (f = flatten->flat->fields; f; f = f->next)
 	{
 		v = (*f->flattengetf)(flatten, f->flatten, data);
@@ -4039,7 +4150,7 @@ flatten_act(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 				if (f->physical.format.flags & CX_QUOTEALL)
 				{
 					q = 1;
-					sfputc(flatten->file->io, f->physical.format.quotebegin);
+					sfputc(io, f->physical.format.quotebegin);
 				}
 				else
 					q = 0;
@@ -4048,27 +4159,27 @@ flatten_act(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 					{
 						if (f->physical.format.escape >= 0)
 						{
-							sfwrite(flatten->file->io, b, s - b);
-							sfputc(flatten->file->io, f->physical.format.escape);
-							sfputc(flatten->file->io, *s);
+							sfwrite(io, b, s - b);
+							sfputc(io, f->physical.format.escape);
+							sfputc(io, *s);
 						}
 						else if (*s == f->physical.format.delimiter)
 						{
 							if (q)
 								continue;
 							q = 1;
-							sfwrite(flatten->file->io, b, s - b);
-							sfputc(flatten->file->io, f->physical.format.quotebegin);
-							sfputc(flatten->file->io, *s);
+							sfwrite(io, b, s - b);
+							sfputc(io, f->physical.format.quotebegin);
+							sfputc(io, *s);
 						}
 						else
 						{
-							sfwrite(flatten->file->io, b, s - b + 1);
-							sfputc(flatten->file->io, *s);
+							sfwrite(io, b, s - b + 1);
+							sfputc(io, *s);
 							if (!q)
 							{
 								q = 1;
-								sfputc(flatten->file->io, *s);
+								sfputc(io, *s);
 							}
 						}
 						b = s + 1;
@@ -4076,19 +4187,26 @@ flatten_act(Cx_t* cx, Cxexpr_t* expr, void* data, Cxdisc_t* disc)
 				if (q && !(f->physical.format.flags & CX_QUOTEALL))
 				{
 					q = 0;
-					sfputc(flatten->file->io, f->physical.format.quoteend);
+					sfputc(io, f->physical.format.quoteend);
 				}
-				sfwrite(flatten->file->io, b, s - b);
+				sfwrite(io, b, s - b);
 				if (q)
-					sfputc(flatten->file->io, f->physical.format.quoteend);
+					sfputc(io, f->physical.format.quoteend);
 			}
 			else
-				sfwrite(flatten->file->io, flatten->flat->valbuf, n);
+				sfwrite(io, flatten->flat->valbuf, n);
 		}
 		else if (flatten->emptyspace && f->physical.format.delimiter >= 0)
-			sfputc(flatten->file->io, ' ');
+			sfputc(io, ' ');
 		if (f->physical.format.delimiter >= 0)
-			sfputc(flatten->file->io, f->physical.format.delimiter);
+			sfputc(io, f->physical.format.delimiter);
+	}
+	if (flatten->flat->record)
+	{
+		n = sfstrtell(io);
+		sfstrseek(io, 0, SEEK_SET);
+		if (size_put(flatten->file, n, flatten->flat->record, disc) || sfwrite(flatten->file->io, sfstrbase(io), n) != n)
+			return -1;
 	}
 	return 0;
 }
@@ -4126,7 +4244,7 @@ Dsslib_t dss_lib_flat =
 {
 	"flat",
 	"flat method"
-	"[-1ls5Pp0?\n@(#)$Id: dss flat method (AT&T Research) 2011-08-19 $\n]"
+	"[-1ls5Pp0?\n@(#)$Id: dss flat method (AT&T Research) 2013-03-11 $\n]"
 	USAGE_LICENSE,
 	CXH,
 	0,

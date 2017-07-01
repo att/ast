@@ -169,6 +169,7 @@ extern Gralgo_t*	Grbranching;
 #endif
 
 extern ssize_t		grbranching _ARG_((Graph_t*));
+extern ssize_t		grbrgreedy _ARG_((Graph_t*));
 extern ssize_t		grbrweight _ARG_((Gredge_t*, ssize_t));
 
 #undef	extern

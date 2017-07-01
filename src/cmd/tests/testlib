@@ -5,11 +5,45 @@ inc=
 lib=
 opt=
 src=
+trace=
 unset=
 verbose=
 
 while	:
 do	case $1 in
+	--clean)
+		ipcs -m 2>/dev/null | {
+			user=${LOGNAME:-$USER}
+			style=UNKNOWN
+			while	read h1 h2 h3 h4 h5 h6 h7 h8 h9
+			do	case $h2 in
+				ID)	style=1
+					break
+					;;
+				shmid)	style=2
+					break
+					;;
+				esac
+			done
+			case $style in
+			1)	while	read t id key mode owner group
+				do	case $owner in
+					$user)	ipcrm -m $id ;;
+					esac
+				done
+				;;
+			2)	while	read key id owner mode
+				do	case $owner in
+					$user)	ipcrm -m $id ;;
+					esac
+				done
+				;;
+			esac
+		}
+		case $# in
+		1)	exit 0 ;;
+		esac
+		;;
 	--proc*=*)
 		opt="$opt -DN_PROC=${1#*=}"
 		;;
@@ -19,10 +53,12 @@ do	case $1 in
 	--timeout*=*)
 		opt="$opt -DTIMEOUT=${1#*=}"
 		;;
+	--trace=*)
+		trace=${1#*=}
+		;;
 	--v*|-v)
 		opt="$opt -DINFO"
 		exec 9>&2
-		shift
 		verbose=1
 		;;
 	*)	break
@@ -31,7 +67,7 @@ do	case $1 in
 	shift
 done
 case $# in
-[01])	echo "Usage: testlib [-v] library unit [cc-options] [*.h] [*.c]" >&2
+[01])	echo "Usage: testlib [ --clean --proc=NPROC --thread=NTHREAD --timeout=MSEC --verbose ] library unit [cc-options] [*.h] [*.c]" >&2
 	exit 2
 	;;
 esac
@@ -133,7 +169,7 @@ do	(( tests = tests + 1 ))
 	code=$?
 	rm -f ${test}.[oO]*
 	case $code in
-	0)	if	eval $unset ./t.exe
+	0)	if	eval $unset $trace ./t.exe
 		then	echo passed >&2
 			continue
 		fi

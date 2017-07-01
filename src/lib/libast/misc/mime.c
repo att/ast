@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -221,7 +221,7 @@ mimeset(Mime_t* mp, register char* s, unsigned long flags)
 						*t++ = 0;
 					tta = &cap->att;
 					tta->name = "default";
-					x = strcopy(tta->value = cap->data, v) + 1;
+					x = stpcpy(tta->value = cap->data, v) + 1;
 				}
 				else if (k)
 				{
@@ -229,8 +229,8 @@ mimeset(Mime_t* mp, register char* s, unsigned long flags)
 						*t++ = 0;
 					if (!(att = newof(0, Att_t, 1, 0)))
 						return -1;
-					x = strcopy(att->name = x, k) + 1;
-					x = strcopy(att->value = x, v) + 1;
+					x = stpcpy(att->name = x, k) + 1;
+					x = stpcpy(att->value = x, v) + 1;
 					tta = tta->next = att;
 					if (!strcasecmp(k, "test"))
 						cap->test = att->value;

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -27,7 +27,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: wc (AT&T Research) 2009-11-28 $\n]"
+"[-?\n@(#)$Id: wc (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?wc - print the number of bytes, words, and lines in files]"
 "[+DESCRIPTION?\bwc\b reads one or more input files and, by default, "
@@ -39,9 +39,9 @@ USAGE_LICENSE
 "[+?If more than one file is specified, \bwc\b writes a total count "
 	"for all of the named files with \btotal\b written instead "
 	"of the file name.]"
-"[+?By default, \bwc\b writes all three counts.  Options can specified "
-	"so that only certain counts are written.  The options \b-c\b "
-	"and \b-m\b are mutually exclusive.]"
+"[+?By default, \bwc\b writes all three counts.  The count options select "
+	"specific counts to be written.  The options \b--bytes\b "
+	"and \b--multibyte-chars\b are mutually exclusive.]"
 "[+?If no \afile\a is given, or if the \afile\a is \b-\b, \bwc\b "
         "reads from standard input and no filename is written to standard "
 	"output.  The start of the file is defined as the current offset.]"
@@ -49,6 +49,8 @@ USAGE_LICENSE
 "[w:words?List the word counts.]"
 "[c:bytes|chars:chars?List the byte counts.]"
 "[m|C:multibyte-chars?List the character counts.]"
+"[X:invalid-bytes?List the counts of bytes not constituting a valid "
+    "character. Implies \b--multibyte-chars\b.]"
 "[q:quiet?Suppress invalid multibyte character warnings.]"
 "[L:longest-line|max-line-length?List the longest line length; the newline,"
     "if any, is not counted in the length.]"
@@ -79,6 +81,8 @@ static void printout(register Wc_t *wp, register char *name,register int mode)
 		sfprintf(sfstdout," %7I*d",sizeof(wp->words),wp->words);
 	if (mode&WC_CHARS)
 		sfprintf(sfstdout," %7I*d",sizeof(wp->chars),wp->chars);
+	if (mode&WC_INVAL)
+		sfprintf(sfstdout," %7I*d",sizeof(wp->chars),wp->inval);
 	if (mode&WC_LONGEST)
 		sfprintf(sfstdout," %7I*d",sizeof(wp->chars),wp->longest);
 	if (name)
@@ -93,7 +97,7 @@ b_wc(int argc,register char **argv, Shbltin_t* context)
 	register int	mode=0, n;
 	register Wc_t	*wp;
 	Sfio_t		*fp;
-	Sfoff_t		tlines=0, twords=0, tchars=0;
+	Sfoff_t		tlines=0, twords=0, tchars=0, tinval=0;
 	struct stat	statb;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
@@ -117,6 +121,9 @@ b_wc(int argc,register char **argv, Shbltin_t* context)
 		case 'm':
 		case 'C':
 			mode |= WC_MBYTE;
+			continue;
+		case 'X':
+			mode |= WC_INVAL|WC_MBYTE;
 			continue;
 		case 'q':
 			mode |= WC_QUIET;
@@ -144,7 +151,7 @@ b_wc(int argc,register char **argv, Shbltin_t* context)
 			mode &= ~WC_MBYTE;
 		mode |= WC_CHARS;
 	}
-	if (!(mode&(WC_WORDS|WC_CHARS|WC_LINES|WC_MBYTE|WC_LONGEST)))
+	if (!(mode&(WC_WORDS|WC_CHARS|WC_LINES|WC_MBYTE|WC_INVAL|WC_LONGEST)))
 		mode |= (WC_WORDS|WC_CHARS|WC_LINES);
 	if (!(wp = wc_init(mode)))
 		error(3,"internal error");
@@ -162,8 +169,8 @@ b_wc(int argc,register char **argv, Shbltin_t* context)
 		}
 		if (cp)
 			n++;
-		if (!(mode&(WC_WORDS|WC_LINES|WC_MBYTE|WC_LONGEST)) && fstat(sffileno(fp),&statb)>=0
-			 && S_ISREG(statb.st_mode))
+		if (!(mode&(WC_WORDS|WC_LINES|WC_MBYTE|WC_INVAL|WC_LONGEST)) &&
+		    fstat(sffileno(fp),&statb)>=0 && S_ISREG(statb.st_mode))
 		{
 			wp->chars = statb.st_size - lseek(sffileno(fp),0L,1);
 			lseek(sffileno(fp),0L,2);
@@ -175,13 +182,15 @@ b_wc(int argc,register char **argv, Shbltin_t* context)
 		tchars += wp->chars;
 		twords += wp->words;
 		tlines += wp->lines;
+		tlines += wp->inval;
 		printout(wp,cp,mode);
 	} while (cp= *argv++);
 	if (n > 1)
 	{
-		wp->lines = tlines;
 		wp->chars = tchars;
 		wp->words = twords;
+		wp->lines = tlines;
+		wp->inval = tinval;
 		printout(wp,"total",mode);
 	}
 	return error_info.errors<ERRORMAX?error_info.errors:ERRORMAX;

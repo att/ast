@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,78 +31,83 @@
 #include <tm.h>
 
 static const char usage[] =
-"[-?\n@(#)$Id: jcl (AT&T Research) 2006-11-11 $\n]"
+"[-1s1I?\n@(#)$Id: jcl (AT&T Research) 2013-03-04 $\n]"
 USAGE_LICENSE
 "[+NAME?jcl - jcl deck interpreter]"
-"[+DESCRIPTION?\bjcl\b interprets the JCL decks named by the \afile\a"
-"	operands. The standard input is read if no \afile\a operands"
-"	are specified. If \b--map\b is not specified then"
-"	\b--map=" JCL_MAPFILE "\b is assumed. The \aname\a=\avalue\a"
-"	operands override any values specified JCL decks.]"
-"[+?control-M scheduler auto edit variable \b%%\b\aname\a values"
-"	may be initialized by exporting \b" JCL_AUTO "\b\aname\a=\avalue\a"
-"	or by \b%%\b\aname\a=\avalue\a on the command line.]"
-"[d:debug?Set the debug trace level. Higher levels produce more"
-"	output.]#[level]"
-"[g:global?Like \b--map\b=\afile\a except that the default "
-	JCL_MAPFILE ", if it exists, is still read after the command"
-"	line options are processed.]:[file]"
-"[i:import?Environment variable definitions take precedence over"
-"	corresponding \b--map\b file definitions.]"
-"[I:include?Search \adirectory\a for DSN names. More than one"
-"	\b--include\b option may be specified.]:[directory]"
-"[k:marklength?Mark fixed length record file names by appending"
-"	\b%\b\alrecl\a to the names.]"
-"[l:list?List all referenced \aitem\as. Only the last \b--list\b"
-"	\aitem\a is listed. \aitem\a may be:]:[item]{"
-"	[a:autoedit?List the %%\aname\a autoedit variables.]"
-"	[c:count?List the \aitem\a dup counts too.]"
-"	[e:exec?List the EXEC job and command names.]"
-"	[i:inputs?List the DD input data file paths.]"
-"	[o:outputs?List the DD output data file paths.]"
-"	[p:programs?List the EXEC PGM=\aprogram\a program names.]"
-"	[s:scripts?List the EXEC [PROC=]]\ascript\a script names.]"
-"	[v:variables?List the &\aname\a variables.]"
-"}"
-"[m:map?Read the dataset file path prefix map \afile\a. Each line in \afile\a"
-"	contains an operation followed by 0 or more space separated fields."
-"	\b#\b in the first column denotes a comment; comments and blank lines"
-"	are ignored. If \afile\a is \b-\b then \b/dev/null\b is assumed."
-"	If \afile\a is not found and contains no \b/\b then"
-"	\b../lib/jcl/\b\afile\a is searched for on \b$PATH\b. If no \b--map\b"
-"	option is specified then the default " JCL_MAPFILE ", if it exists,"
-"	is read after the command line options are processed. The operations"
-"	are:]:[file]{"
-"		[+export \aname\a=\avalue ...?Set export variable values."
-"			Export variable expansions are preserved in the"
-"			generated scripts.]"
-"		[+map \aprefix\a \amap\a [\asuffix\a]]?Dataset paths are"
-"			mapped by doing a longest prefix match on the"
-"			prefixes. The matching dataset prefix is replaced"
-"			by \amap\a, and \asuffix\a, if specified, is"
-"			appended. The prefix \b\"\"\b matches when no other"
-"			prefix matches. Leading \b*.\b and trailing \b.*\b"
-"			match any \b.\b-separated component. \b${\b\an\a\b}\b"
-"			in \amap\a expands to the component matched by the"
-"			\an\a-th \b*\b in \aprefix\a, counting from 1, left"
-"			to right.]"
-"		[+set --[no]]\aoption\a[=\avalue]] ...?Set command line options.]"
-"		[+set %%\aname\a=\avalue ...?Set auto edit variable values.]"
-"		[+set \aname\a=\avalue ...?Set variable values.]"
-"	}"
+"[+DESCRIPTION?\bjcl\b interprets the JCL decks named by the \afile\a "
+    "operands. The standard input is read if no \afile\a operands are "
+    "specified. If \b--map\b is not specified then \b--map=" JCL_MAPFILE "\b "
+    "is assumed. The \aname\a=\avalue\a operands override any values "
+    "specified JCL decks.]"
+"[+?control-M scheduler auto edit variable \b%%\b\aname\a values may be "
+    "initialized by exporting \b" JCL_AUTO "\b\aname\a=\avalue\a or by "
+    "\b%%\b\aname\a=\avalue\a on the command line.]"
+"[d:debug?Set the debug trace level. Higher levels produce more "
+    "output.]#[level]"
+"[g:global?Like \b--map\b=\afile\a except that the default " JCL_MAPFILE
+    ", if it exists, is still read after the command "
+    "line options are processed.]:[file]"
+"[i:import?Environment variable definitions take precedence over "
+    "corresponding \b--map\b file definitions.]"
+"[I:include?Search \adirectory\a for DSN names. More than one "
+    "\b--include\b option may be specified.]:[directory]"
+"[k:marklength?Mark fixed length record file names by appending "
+    "\b%\b\alrecl\a to the names.]"
+"[l:list?List the referenced \aitem\as. Multiple \b--list\b options may "
+    "be specified. \aitem\a may be:]:[item]"
+    "{"
+        "[a:autoedits?List the %%\aname\a autoedit variables.]"
+        "[c:counts?List the \aitem\a dup counts too.]"
+        "[d:dd?List the \add\a name for \binputs\b and \boutputs\b.]"
+        "[e:execs?List the EXEC job and command names.]"
+        "[i:inputs?List the DD input data file paths.]"
+        "[j:jobs?List main job names.]"
+        "[o:outputs?List the DD output data file paths.]"
+        "[p:programs?List the EXEC PGM=\aprogram\a program names.]"
+        "[P:parms?List the EXEC PGM=\aprogram\a PARMs.]"
+        "[s:scripts?List the EXEC [PROC=]]\ascript\a script names.]"
+        "[v:variables?List the &\aname\a variables.]"
+    "}"
+"[m:map?Read the dataset file path prefix map \afile\a. Each line in "
+    "\afile\a contains an operation followed by 0 or more space separated "
+    "fields. \b#\b in the first column denotes a comment; comments and blank "
+    "lines are ignored. If \afile\a is \b-\b then \b/dev/null\b is assumed. "
+    "If \afile\a is not found and contains no \b/\b then "
+    "\b../lib/jcl/\b\afile\a is searched for on \b$PATH\b. If no \b--map\b "
+    "option is specified then the default " JCL_MAPFILE ", if it exists, is "
+    "read after the command line options are processed. The operations "
+    "are:]:[file]"
+    "{"
+        "[+export \aname\a=\avalue ...?Set export variable values. "
+            "Export variable expansions are preserved in the generated "
+            "scripts.]"
+        "[+map \aprefix\a \amap\a [\asuffix\a]]?Dataset paths are mapped "
+            "by doing a longest prefix match on the prefixes. The matching "
+            "dataset prefix is replaced by \amap\a, and \asuffix\a, if "
+            "specified, is appended. The prefix \b\"\"\b matches when no "
+            "other prefix matches. Leading \b*.\b and trailing \b.*\b match "
+            "any \b.\b-separated component. \b${\b\an\a\b}\b in \amap\a "
+            "expands to the component matched by the \an\a-th \b*\b in "
+            "\aprefix\a, counting from 1, left to right.]"
+        "[+set --[no]]\aoption\a[=\avalue]] ...?Set command line "
+            "options.]"
+        "[+set %%\aname\a=\avalue ...?Set auto edit variable values.]"
+        "[+set \aname\a=\avalue ...?Set variable values.]"
+    "}"
 "[n!:exec?Enable command execution. \b--noexec\b disables.]"
 "[N:never?Disable all command and recursive script execution.]"
-"[p:parameterize?Parameterize simple &\aname\a variable references by"
-"	substituting the \bsh\b(1) equivalent ${\aname\a}.]"
-"[r:resolve?Resolve each operand as a path name using the \b--map\b files"
-"	and print the resulting path on the standard output, one path per line.]"
-"[s:subdir?Execute each job in a separate subdirectory named"
-"	\ajobname\a.\ayy-mm-dd.n\a]]. \an\a starts at \b1\b and"
-"	is incremeted by \b1\b for each run of \ajobname\a within"
-"	the same day.]"
-"[v:verbose?For \b--noexec\b the equivalent \bsh\b(1) script is listed"
-"	on the standard output. For \b--exec\b verbose execution output,"
-"	like start and completion times, is enabled.]"
+"[p:parameterize?Parameterize simple &\aname\a variable references by "
+    "substituting the \bsh\b(1) equivalent ${\aname\a}.]"
+"[r:resolve?Resolve each operand as a path name using the \b--map\b "
+    "files and print the resulting path on the standard output, one path per "
+    "line.]"
+"[s:subdir?Execute each job in a separate subdirectory named "
+    "\ajobname\a.\ayy-mm-dd.n\a]]. \an\a starts at \b1\b and is incremeted "
+    "by \b1\b for each run of \ajobname\a within the same day.]"
+"[t:subtmp?Place temporary files in \b.\b and do not remove on exit.]"
+"[v:verbose?For \b--noexec\b the equivalent \bsh\b(1) script is listed "
+    "on the standard output. For \b--exec\b verbose execution output, like "
+    "start and completion times, is enabled.]"
 "[w:warn?Enable verbose warning messages.]"
 "[x:trace?Enable command execution trace.]"
 "[O:odate?Set the control-M original date to \adate\a.]:[date:=now]"
@@ -111,9 +116,10 @@ USAGE_LICENSE
 "\n"
 "\n[ name=value ... ] [ file ... ]\n"
 "\n"
-"[+FILES]{"
-"	[+../lib/jcl/prefix?Default \b--map\b file, found on \b$PATH\b.]"
-"}"
+"[+FILES]"
+    "{"
+        "[+../lib/jcl/prefix?Default \b--map\b file, found on \b$PATH\b.]"
+    "}"
 "[+SEE ALSO?\bsh\b(1)]"
 ;
 
@@ -183,17 +189,26 @@ optset(Jcl_t* jcl, int c, Jcldisc_t* disc)
 		case 'c':
 			jcl->flags |= JCL_LISTCOUNTS;
 			break;
+		case 'd':
+			jcl->flags |= JCL_LISTDD;
+			break;
 		case 'e':
 			jcl->flags |= JCL_LISTEXEC;
 			break;
 		case 'i':
 			jcl->flags |= JCL_LISTINPUTS;
 			break;
+		case 'j':
+			jcl->flags |= JCL_LISTJOBS;
+			break;
 		case 'o':
 			jcl->flags |= JCL_LISTOUTPUTS;
 			break;
 		case 'p':
 			jcl->flags |= JCL_LISTPROGRAMS;
+			break;
+		case 'P':
+			jcl->flags |= JCL_LISTPARMS;
 			break;
 		case 's':
 			jcl->flags |= JCL_LISTSCRIPTS;
@@ -238,6 +253,9 @@ optset(Jcl_t* jcl, int c, Jcldisc_t* disc)
 	case 'S':
 		t = &jcl->disc->date;
 		goto date;
+	case 't':
+		f = JCL_SUBTMP;
+		break;
 	case 'v':
 		f = JCL_VERBOSE;
 		break;

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -217,20 +217,20 @@ getids(Sfio_t* sp, const char* name, register int flags)
 
 	if (flags & GG_FLAG)
 	{
-		static int	maxgroups;
+		static int	maxgroups = -1;
 
 		/*
 		 * get supplemental groups if required
 		 */
 
-		if (!maxgroups)
+		if (maxgroups < 0)
 		{
 			/*
 			 * first time
 			 */
 
 			if ((maxgroups = getgroups(0, groups)) <= 0)
-				maxgroups = NGROUPS_MAX;
+				maxgroups = getconf("NGROUPS_MAX");
 			if (!(groups = newof(0, gid_t, maxgroups + 1, 0)))
 				error(ERROR_exit(1), "out of space [group array]");
 		}

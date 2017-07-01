@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -41,6 +41,7 @@
 #define F_FLAG	010
 #define X_FLAG	020
 #define Q_FLAG	040
+#define T_FLAG	0100
 
 static int whence(Shell_t *,char**, int);
 
@@ -57,9 +58,9 @@ int	b_command(register int argc,char *argv[],Shbltin_t *context)
 	while((n = optget(argv,sh_optcommand))) switch(n)
 	{
 	    case 'p':
-		if(sh_isoption(SH_RESTRICTED))
+		if(sh_isoption(shp,SH_RESTRICTED))
 			 errormsg(SH_DICT,ERROR_exit(1),e_restricted,"-p");
-		sh_onstate(SH_DEFPATH);
+		sh_onstate(shp,SH_DEFPATH);
 		break;
 	    case 'v':
 		flags |= X_FLAG;
@@ -101,6 +102,9 @@ int	b_whence(int argc,char *argv[],Shbltin_t *context)
 		flags = V_FLAG;
 	while((n = optget(argv,sh_optwhence))) switch(n)
 	{
+	    case 't':
+		flags |= T_FLAG;
+		break;
 	    case 'a':
 		flags |= A_FLAG;
 		/* FALL THRU */
@@ -110,6 +114,7 @@ int	b_whence(int argc,char *argv[],Shbltin_t *context)
 	    case 'f':
 		flags |= F_FLAG;
 		break;
+	    case 'P':
 	    case 'p':
 		flags |= P_FLAG;
 		flags &= ~V_FLAG;
@@ -127,6 +132,8 @@ int	b_whence(int argc,char *argv[],Shbltin_t *context)
 	argv += opt_info.index;
 	if(error_info.errors || !*argv)
 		errormsg(SH_DICT,ERROR_usage(2),optusage((char*)0));
+	if(flags&T_FLAG)
+		flags &= ~V_FLAG;
 	return(whence(shp, argv, flags));
 }
 
@@ -158,7 +165,10 @@ static int whence(Shell_t *shp,char **argv, register int flags)
 		/* reserved words first */
 		if(sh_lookup(name,shtab_reserved))
 		{
-			sfprintf(sfstdout,"%s%s\n",name,(flags&V_FLAG)?sh_translate(is_reserved):"");
+			if(flags&T_FLAG)
+				sfprintf(sfstdout,"%s\n","keyword");
+			else
+				sfprintf(sfstdout,"%s%s\n",name,(flags&V_FLAG)?sh_translate(is_reserved):"");
 			if(!aflag)
 				continue;
 			aflag++;
@@ -176,7 +186,10 @@ static int whence(Shell_t *shp,char **argv, register int flags)
 					msg = sh_translate(is_alias);
 				sfprintf(sfstdout,msg,name);
 			}
-			sfputr(sfstdout,sh_fmtq(cp),'\n');
+			if(flags&T_FLAG)
+				sfputr(sfstdout,"alias",'\n');
+			else
+				sfputr(sfstdout,sh_fmtq(cp),'\n');
 			if(!aflag)
 				continue;
 			cp = 0;
@@ -190,30 +203,41 @@ static int whence(Shell_t *shp,char **argv, register int flags)
 			if(is_abuiltin(np) && nv_isnull(np))
 				goto search;
 			cp = "";
-			if(flags&V_FLAG)
+			if(flags&(V_FLAG|T_FLAG))
 			{
 				if(nv_isnull(np))
-					cp = sh_translate(is_ufunction);
+					cp = is_ufunction;
 				else if(is_abuiltin(np))
 				{
 					if(nv_isattr(np,BLT_SPC))
-						cp = sh_translate(is_spcbuiltin);
+						cp = is_spcbuiltin;
 					else
-						cp = sh_translate(is_builtin);
+						cp = is_builtin;
 				}
 				else
-					cp = sh_translate(is_function);
+					cp = is_function;
 			}
 			if(flags&Q_FLAG)
 				continue;
-			sfprintf(sfstdout,"%s%s\n",name,cp);
+			if(flags&T_FLAG)
+			{
+				if(cp==is_function || cp==is_ufunction)
+					cp = "function";
+				else  if(*name=='/')
+					cp = "file";
+				else
+					cp = "builtin";
+				sfputr(sfstdout,cp,'\n');
+			}
+			else
+				sfprintf(sfstdout,"%s%s\n",name,sh_translate(cp));
 			if(!aflag)
 				continue;
 			cp = 0;
 			aflag++;
 		}
 	search:
-		if(sh_isstate(SH_DEFPATH))
+		if(sh_isstate(shp,SH_DEFPATH))
 		{
 			cp=0;
 			notrack=1;
@@ -265,7 +289,10 @@ static int whence(Shell_t *shp,char **argv, register int flags)
 						msg = sh_translate(is_talias);
 					sfputr(sfstdout,msg,' ');
 				}
-				sfputr(sfstdout,sh_fmtq(cp),'\n');
+				if(flags&T_FLAG)
+					sfputr(sfstdout,"file",'\n');
+				else
+					sfputr(sfstdout,sh_fmtq(cp),'\n');
 				if(aflag)
 				{
 					if(aflag<=1)

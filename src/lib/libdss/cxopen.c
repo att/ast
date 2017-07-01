@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -38,6 +38,7 @@ typedef struct Type_s
 static Cxstate_t	state;
 static Cxtable_t	table;
 
+static const char	name_bool[] = "bool";
 static const char	name_buffer[] = "buffer";
 static const char	name_number[] = "number";
 static const char	name_pointer[] = "pointer";
@@ -226,6 +227,45 @@ number_internal(Cx_t* cx, Cxtype_t* type, const char* details, Cxformat_t* forma
 }
 
 /*
+ * default bool externalf
+ */
+
+static ssize_t
+bool_external(Cx_t* cx, Cxtype_t* type, const char* details, Cxformat_t* format, Cxvalue_t* value, char* buf, size_t size, Cxdisc_t* disc)
+{
+	return sfsprintf(buf, size, "%c", value->number ? '1' : '0');
+}
+
+/*
+ * default bool internalf
+ */
+
+static ssize_t
+bool_internal(Cx_t* cx, Cxtype_t* type, const char* details, Cxformat_t* format, Cxoperand_t* ret, const char* buf, size_t size, Vmalloc_t* vm, Cxdisc_t* disc)
+{
+	Cxunsigned_t	m;
+	char*		e;
+
+	if (size == 0)
+	{
+		ret->value.number = 0;
+		return 0;
+	}
+	ret->value.number = (Cxinteger_t)strntoull(buf, size, &e, format->base);
+	if (e != ((char*)buf + size) && *buf)
+	{
+		if (format && format->map && !cxstr2num(cx, format, buf, size, &m))
+		{
+			ret->value.number = (Cxinteger_t)m;
+			return size;
+		}
+		if (disc->errorf && !(cx->flags & CX_QUIET))
+			(*disc->errorf)(cx, disc, 1, "%s: invalid bool [(buf+size)=%p e=%p%s base=%d size=%d]", fmtquote(buf, NiL, NiL, size, 0), (char*)buf+size, e, (format && (format->flags & CX_UNSIGNED)) ? " unsigned" : "", format ? format->base : 0, size);
+	}
+	return e - (char*)buf;
+}
+
+/*
  * default string externalf
  */
 
@@ -380,10 +420,12 @@ BT(CX_number,	&name_number[0],   &state.type_number,	"An integral or floating po
 BT(CX_string,	&name_string[0],   &state.type_string,	"A string. The format details string specifies quoting and C style character escape processing: \bquote\b[=\achar\a] quotes string with \achar\a (\b\"\b) as the begin and end quote; \bendquote\b=\achar\a changes the \bquote\b end to \achar\a; \bshell\b[=\abeg\a] quotes using shell conventions and \abeg\a (\b$'\b) as the quote begin; \bopt\b performs \bquote\b and \bshell\b quoting only when necessary; \bescape\b assumes that escape processing has already been performed; \bwide\b does not escape characters with the bit 8 set; \bexpand\b=\amask\a expands escaped characters according to \amask\a which may be a \b,\b or \b|\b separated list of \ball\b: expand all escaped chars, \bchar\b expands 7 bit character escapes, \bline\b expands \b\\r\b and \b\\n\b escapes, \bwide\b expands wide character escapes, \bnocr\b eliminates \b\\r\b, and \bnonl\b eliminates \b\\n\b.", string_external, string_internal, &match_string)
 BT(CX_reference,&name_reference[0],&state.type_reference,"A referenced type.", 0,0,0)
 BT(CX_buffer,	&name_buffer[0],   &state.type_buffer,	"A separately allocated sized buffer. The external representation is a newline separated base64 mime encoding.", buffer_external, buffer_internal, 0)
+BT(CX_bool,	&name_bool[0],   &state.type_bool,	"An boolean value: 0==false, 1==true.", bool_external, bool_internal, 0)
 BT(CX_type,	&name_type[0],   &state.type_type_t,	"A type.", type_external, type_internal, 0)
 BT(CX_pointer,	&name_pointer[0],  0,			"A generic pointer.", 0,0,0)
 };
 
+#define CX_bool_t	((Cxtype_t*)&name_bool[0])
 #define CX_buffer_t	((Cxtype_t*)&name_buffer[0])
 #define CX_number_t	((Cxtype_t*)&name_number[0])
 #define CX_pointer_t	((Cxtype_t*)&name_pointer[0])
@@ -518,14 +560,14 @@ op_xor_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperan
 }
 
 static int
-op_andand_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+op_andand_L(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
 	r->value.number = a->value.number > 0 && b->value.number > 0;
 	return 0;
 }
 
 static int
-op_oror_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+op_oror_L(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
 	r->value.number = a->value.number > 0 || b->value.number > 0;
 	return 0;
@@ -546,7 +588,7 @@ op_rsh_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperan
 }
 
 static int
-op_inv_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+op_inv_L(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
 	r->value.number = (Cxnumber_t)(~((Cxinteger_t)a->value.number));
 	return 0;
@@ -560,7 +602,7 @@ op_log_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperan
 }
 
 static int
-op_not_N(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+op_not_L(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
 	r->value.number = b->value.number == 0.0;
 	return 0;
@@ -737,6 +779,13 @@ op_gt_B(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand
 }
 
 static int
+op_log_B(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	r->value.number = b->value.buffer.data && b->value.buffer.size;
+	return 0;
+}
+
+static int
 op_not_B(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
 {
 	r->value.number = b->value.buffer.size == 0;
@@ -765,6 +814,35 @@ op_cast_SN(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoper
 	r->value.number = strtod(b->value.string.data, &e);
 	if (*e && cx->disc->errorf)
 		(*cx->disc->errorf)(cx, cx->disc, 2, "%s: invalid number", b->value.string.data);
+	return 0;
+}
+
+static int
+op_cast_BL(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	r->value.number = b->value.buffer.data && b->value.buffer.size;
+	return 0;
+}
+
+static int
+op_cast_SL(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	r->value.number = b->value.string.data && b->value.string.size && *b->value.string.data;
+	return 0;
+}
+
+static int
+op_cast_BN(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	r->value.number = !!b->value.buffer.data;
+	return 0;
+}
+
+static int
+op_cast_BS(Cx_t* cx, Cxinstruction_t* pc, Cxoperand_t* r, Cxoperand_t* a, Cxoperand_t* b, void* data, Cxdisc_t* disc)
+{
+	r->value.string.data = b->value.buffer.data ? "1" : "0";
+	r->value.string.size = 1;
 	return 0;
 }
 
@@ -813,6 +891,8 @@ CXC(CX_NOP,	CX_void_t,	CX_void_t,	op_nop_V,	0)
 CXC(CX_POP,	CX_void_t,	CX_void_t,	op_nop_V,	0)
 CXC(CX_REF,	CX_reference_t,	CX_void_t,	op_const_V,	0)
 CXC(CX_REF,	CX_string_t,	CX_void_t,	op_ref_V,	0)
+CXC(CX_SC0,	CX_bool_t,	CX_void_t,	op_sc_V,	0)
+CXC(CX_SC1,	CX_bool_t,	CX_void_t,	op_sc_V,	0)
 CXC(CX_SC0,	CX_number_t,	CX_void_t,	op_sc_V,	0)
 CXC(CX_SC1,	CX_number_t,	CX_void_t,	op_sc_V,	0)
 CXC(CX_TST,	CX_void_t,	CX_void_t,	op_tst_V,	0)
@@ -831,15 +911,19 @@ CXC(CX_AND,	CX_number_t,	CX_number_t,	op_and_N,	0)
 CXC(CX_OR,	CX_number_t,	CX_number_t,	op_or_N,	0)
 CXC(CX_XOR,	CX_number_t,	CX_number_t,	op_xor_N,	0)
 
-CXC(CX_ANDAND,	CX_number_t,	CX_number_t,	op_andand_N,	0)
-CXC(CX_OROR,	CX_number_t,	CX_number_t,	op_oror_N,	0)
+CXC(CX_ANDAND,	CX_bool_t,	CX_bool_t,	op_andand_L,	0)
+CXC(CX_OROR,	CX_bool_t,	CX_bool_t,	op_oror_L,	0)
+CXC(CX_INV,	CX_bool_t,	CX_void_t,	op_inv_L,	0)
+CXC(CX_NOT,	CX_bool_t,	CX_void_t,	op_not_L,	0)
+
+CXC(CX_ANDAND,	CX_number_t,	CX_number_t,	op_andand_L,	0)
+CXC(CX_OROR,	CX_number_t,	CX_number_t,	op_oror_L,	0)
+CXC(CX_INV,	CX_number_t,	CX_void_t,	op_inv_L,	0)
+CXC(CX_NOT,	CX_number_t,	CX_void_t,	op_not_L,	0)
 
 CXC(CX_LSH,	CX_number_t,	CX_number_t,	op_lsh_N,	0)
 CXC(CX_RSH,	CX_number_t,	CX_number_t,	op_rsh_N,	0)
 
-CXC(CX_INV,	CX_number_t,	CX_void_t,	op_inv_N,	0)
-CXC(CX_LOG,	CX_number_t,	CX_void_t,	op_log_N,	0)
-CXC(CX_NOT,	CX_number_t,	CX_void_t,	op_not_N,	0)
 CXC(CX_UPLUS,	CX_number_t,	CX_void_t,	op_uplus_N,	0)
 CXC(CX_UMINUS,	CX_number_t,	CX_void_t,	op_uminus_N,	0)
 
@@ -850,16 +934,12 @@ CXC(CX_NE,	CX_number_t,	CX_number_t,	op_ne_N,	0)
 CXC(CX_GE,	CX_number_t,	CX_number_t,	op_ge_N,	0)
 CXC(CX_GT,	CX_number_t,	CX_number_t,	op_gt_N,	0)
 
-CXC(CX_LOG,	CX_string_t,	CX_void_t,	op_log_S,	0)
-
 CXC(CX_LT,	CX_string_t,	CX_string_t,	op_lt_S,	0)
 CXC(CX_LE,	CX_string_t,	CX_string_t,	op_le_S,	0)
 CXC(CX_EQ,	CX_string_t,	CX_string_t,	op_eq_S,	0)
 CXC(CX_NE,	CX_string_t,	CX_string_t,	op_ne_S,	0)
 CXC(CX_GE,	CX_string_t,	CX_string_t,	op_ge_S,	0)
 CXC(CX_GT,	CX_string_t,	CX_string_t,	op_gt_S,	0)
-
-CXC(CX_NOT,	CX_string_t,	CX_void_t,	op_not_S,	0)
 
 CXC(CX_LT,	CX_buffer_t,	CX_buffer_t,	op_lt_B,	0)
 CXC(CX_LE,	CX_buffer_t,	CX_buffer_t,	op_le_B,	0)
@@ -868,12 +948,14 @@ CXC(CX_NE,	CX_buffer_t,	CX_buffer_t,	op_ne_B,	0)
 CXC(CX_GE,	CX_buffer_t,	CX_buffer_t,	op_ge_B,	0)
 CXC(CX_GT,	CX_buffer_t,	CX_buffer_t,	op_gt_B,	0)
 
-CXC(CX_NOT,	CX_buffer_t,	CX_void_t,	op_not_B,	0)
-
 CXC(CX_EQ,	CX_type_t,	CX_type_t,	op_eq_T,	0)
 CXC(CX_NE,	CX_type_t,	CX_type_t,	op_ne_T,	0)
 
+CXC(CX_CAST,	CX_string_t,	CX_bool_t,	op_cast_SL,	0)
+CXC(CX_CAST,	CX_buffer_t,	CX_bool_t,	op_cast_BL,	0)
 CXC(CX_CAST,	CX_string_t,	CX_number_t,	op_cast_SN,	0)
+CXC(CX_CAST,	CX_buffer_t,	CX_number_t,	op_cast_BN,	0)
+CXC(CX_CAST,	CX_buffer_t,	CX_string_t,	op_cast_BS,	0)
 
 };
 
@@ -978,7 +1060,7 @@ cxopen(Cxflags_t flags, Cxflags_t test, Cxdisc_t* disc)
 			(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
 		return 0;
 	}
-	if (!(cx = vmnewof(vm, 0, Cx_t, 1, 0)) || !(cx->cvtbuf = vmnewof(vm, 0, char, cx->cvtsiz = 64, 0)))
+	if (!(cx = vmnewof(vm, 0, Cx_t, 1, 0)) || !(cx->cvtbuf = vmnewof(vm, 0, char, cx->cvtsiz = CX_CVT, 0)))
 	{
 		if (disc->errorf)
 			(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
@@ -1257,8 +1339,8 @@ cxaddtype(Cx_t* cx, register Cxtype_t* type, Cxdisc_t* disc)
 					(*disc->errorf)(NiL, disc, 2, "%s: no member table", type->name);
 				return -1;
 			}
-			if (type->header.flags & CX_REFERENCED)
-				type->member->members = cx ? cx->variables : state.variables;
+			if (type->header.flags & CX_SCHEMA)
+				type->header.flags |= CX_REFERENCED;
 			else if (!(type->member->members = cx ? dtnew(cx->vm, &state.namedisc, Dtoset) : dtopen(&state.namedisc, Dtoset)))
 			{
 				if (disc->errorf)
@@ -2144,12 +2226,15 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 	Cxreference_t*	ref;
 	Cxtype_t*	from;
 	unsigned char*	map;
+	Cxbuf_t*	cvt;
 	char*		s;
+	void*		d;
 	ssize_t		n;
 	Cxunsigned_t	m;
 	int		c;
 	Cxoperand_t	a;
 	Cxoperand_t	b;
+	Cxexternal_f	e;
 
 	x.callout = 0;
 	if (x.data.variable = var)
@@ -2184,7 +2269,7 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 					b.type = x.data.variable->type;
 					x.data.variable = ref->variable;
 					ret->type = x.data.variable->type;
-					if ((*ref->member->getf)(cx, &x, ret, &a, &b, data, cx->disc))
+					if ((*ref->member->getf)(cx, &x, ret, &a, &b, (ref->member->flags & CX_VIRTUAL) ? data : (void*)0, cx->disc))
 						return -1;
 				}
 			}
@@ -2206,7 +2291,7 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 	{
 		if (ret->value.string.size > cx->ccsiz)
 		{
-			n = roundof(ret->value.string.size + 1, 32);
+			n = roundof(ret->value.string.size + 1, CX_CVT);
 			if (!(cx->ccbuf = vmoldof(cx->vm, cx->ccbuf, char, n, 0)))
 			{
 				if (cx->disc->errorf)
@@ -2224,23 +2309,58 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 		{
 			if (!var || !cxisnumber(from) || !var->format.map || format || cxnum2str(cx, &var->format, (Cxinteger_t)ret->value.number, &s))
 			{
-				if (ret->type->externalf)
+				if (!(e = ret->type->externalf) && var && var->type->member)
+					e = cxmembers;
+				if (e)
 				{
-					while ((n = (*ret->type->externalf)(cx, ret->type, format, var ? &var->format : (Cxformat_t*)0, &ret->value, cx->cvtbuf, cx->cvtsiz, cx->disc)) > cx->cvtsiz)
+					if (!(cvt = cx->cvt))
 					{
-						n = roundof(n + 1, 32);
-						if (!(cx->cvtbuf = vmoldof(cx->vm, cx->cvtbuf, char, n, 0)))
+						if (!cx->top)
+						{
+							if (!(cx->top = vmnewof(cx->vm, 0, Cxbuf_t, 1, 0)) || !(cx->top->data = vmoldof(cx->vm, 0, char, CX_CVT, 0)))
+							{
+								if (cx->disc->errorf)
+									(*cx->disc->errorf)(NiL, cx->disc, ERROR_SYSTEM|2, "out of space");
+								return -1;
+							}
+							cx->top->size = CX_CVT;
+						}
+						cx->cvt = cx->top;
+					}
+					else
+					{
+						if (!cx->cvt->next)
+						{
+							if (!(cx->cvt->next = vmnewof(cx->vm, 0, Cxbuf_t, 1, 0)) || !(cx->cvt->next->data = vmoldof(cx->vm, 0, char, CX_CVT, 0)))
+							{
+								if (cx->disc->errorf)
+									(*cx->disc->errorf)(NiL, cx->disc, ERROR_SYSTEM|2, "out of space");
+								return -1;
+							}
+							cx->cvt->next->size = CX_CVT;
+						}
+						cx->cvt = cx->cvt->next;
+					}
+					while ((n = (*e)(cx, ret->type, format, var ? &var->format : (Cxformat_t*)0, &ret->value, cx->cvt->data, cx->cvt->size, cx->disc)) > cx->cvt->size)
+					{
+						n = roundof(n + 1, CX_CVT);
+						if (!(cx->cvt->data = vmoldof(cx->vm, cx->cvt->data, char, n, 0)))
 						{
 							if (cx->disc->errorf)
 								(*cx->disc->errorf)(NiL, cx->disc, ERROR_SYSTEM|2, "out of space");
+							cx->cvt = cvt;
 							return -1;
 						}
-						cx->cvtsiz = n;
+						cx->cvt->size = n;
 					}
 					if (n < 0)
+					{
+						cx->cvt = cvt;
 						return -1;
-					ret->value.string.data = cx->cvtbuf;
+					}
+					ret->value.string.data = cx->cvt->data;
 					ret->value.string.size = n;
+					cx->cvt = cvt;
 				}
 				else if (!cxisnumber(ret->type))
 					goto bad;
@@ -2250,6 +2370,8 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 			else
 				ret->value.string.size = strlen(ret->value.string.data = s);
 		}
+		else if (var && data)
+			goto bad;
 		else if (cxisnumber(type) && var && cxisstring(from) && var->format.map && !cxstr2num(cx, &var->format, val.value.string.data, val.value.string.size, &m))
 			ret->value.number = (Cxinteger_t)m;
 #if 0
@@ -2262,11 +2384,84 @@ cxcast(Cx_t* cx, Cxoperand_t* ret, Cxvariable_t* var, Cxtype_t* type, void* data
 	}
 	return 0;
  bad:
-	if ((x.callout = cxcallout(cx, CX_CAST, ret->type, type, cx->disc)) && !(*x.callout)(cx, &x, ret, NiL, &val, NiL, cx->disc))
+	if (((x.callout = cxcallout(cx, CX_CAST, ret->type, type, cx->disc)) || ret->type->fundamental && (x.callout = cxcallout(cx, CX_CAST, ret->type->fundamental, type, cx->disc))) && !(*x.callout)(cx, &x, ret, NiL, &val, data, cx->disc))
 		return 0;
 	if (cx->disc->errorf)
 		(*cx->disc->errorf)(cx, cx->disc, 2, "cannot cast %s to %s", ret->type->name, type->name);
 	return -1;
+}
+
+/*
+ * generic struct type externalf that lists defined members in ksh93u compound notation
+ */
+
+ssize_t
+cxmembers(Cx_t* cx, Cxtype_t* type, const char* details, Cxformat_t* format, Cxvalue_t* value, char* buf, size_t size, Cxdisc_t* disc)
+{
+	Cxvariable_t*		v;
+	unsigned char*		p;
+	unsigned char*		e;
+	char*			b;
+	char*			m;
+	char*			s;
+	size_t			n;
+	int			i;
+	Cxoperand_t		o;
+	Cxinstruction_t		x;
+
+	if (!type->member || !value->buffer.data)
+		return 0;
+	b = buf;
+	m = b + size;
+	b += sfsprintf(b, m - b, "( ");
+	for (v = (Cxvariable_t*)dtfirst(type->member->members); v; v = (Cxvariable_t*)dtnext(type->member->members, v))
+	{
+		if (!v->type->generic)
+		{
+			x.data.variable = v;
+			o.type = v->type;
+			o.value.buffer.data = value->buffer.data;
+			if (!type->member->getf(cx, &x, &o, NiL, NiL, NiL, disc))
+			{
+				switch (cxrepresentation(v->type))
+				{
+				case CX_buffer:
+					if (!o.value.buffer.size)
+						continue;
+					p = (unsigned char*)o.value.buffer.data;
+					e = p + o.value.buffer.size;
+					while (p < e && !*p)
+						p++;
+					if (p >= e)
+						continue;
+					break;
+				case CX_number:
+					if (!o.value.number)
+						continue;
+					break;
+				case CX_string:
+					if (!o.value.string.size)
+						continue;
+					break;
+				case CX_void:
+					continue;
+				}
+				if (!cxcast(cx, &o, v, cx->state->type_string, NiL, NiL))
+					b += sfsprintf(b, m > b ? m - b : 0, "%s=%s ", v->name, o.value.string.data);
+			}
+		}
+	}
+	if ((n = b - buf) <= 2)
+		n = 0;
+	else
+	{
+		b += sfsprintf(b, m > b ? m - b : 0, ")");
+		n++;
+		if (n >= size)
+			return n + 1;
+		*b = 0;
+	}
+	return n;
 }
 
 /*
@@ -2310,10 +2505,12 @@ initialize(Cxdisc_t* disc)
 		table.comparison[CX_GT] =	1;
 
 		table.logical[CX_ANDAND] =
+		table.logical[CX_LOG] =
 		table.logical[CX_OROR] =
 		table.logical[CX_NOT] =		1;
 
 		table.precedence[CX_INV] =
+		table.precedence[CX_LOG] =
 		table.precedence[CX_NOT] =
 		table.precedence[CX_UMINUS] =
 		table.precedence[CX_UPLUS] =	15;
@@ -2433,7 +2630,7 @@ cxcvt(register Cx_t* cx, const char* s, size_t n)
 {
 	if (cx->cvtsiz <= n || !cx->cvtbuf)
 	{
-		cx->cvtsiz = roundof(n + 1, 32);
+		cx->cvtsiz = roundof(n + 1, CX_CVT);
 		if (!(cx->cvtbuf = vmoldof(cx->vm, cx->cvtbuf, char, cx->cvtsiz, 0)))
 		{
 			if (cx->disc->errorf)

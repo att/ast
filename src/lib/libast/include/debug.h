@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -43,20 +43,21 @@
 
 #define DEBUG_BEGTIME()		debug_elapsed(1)
 #define DEBUG_GETTIME()		debug_elapsed(0)
-#define DEBUG_ASSERT(p)		((p) ? 0 : (debug_fatal(__FILE__, __LINE__),0))
+#define DEBUG_ASSERT(p)		((p) ? 0 : (debug_fatal(__FILE__, __LINE__, #p),0))
 #define DEBUG_COUNT(n)		((n) += 1)
 #define DEBUG_TALLY(c,n,v)	((c) ? ((n) += (v)) : (n))
 #define DEBUG_INCREASE(n)	((n) += 1)
 #define DEBUG_DECREASE(n)	((n) -= 1)
-#define DEBUG_DECLARE(t,v)	t v
+#define DEBUG_DECLARE(t,v)	t v;
 #define DEBUG_SET(n,v)		((n) = (v))
-#define DEBUG_PRINT(fd,s,v)	do {char _b[1024];write(fd,_b,sfsprintf(_b,sizeof(_b),s,v));} while(0)
+#define DEBUG_MESSAGE(m)	debug_printf(2,"%s:%d: %s\n",__FILE__,__LINE__,m)
+#define DEBUG_PRINT(fd,s,v)	debug_printf((fd),(s),(v))
 #define DEBUG_WRITE(fd,d,n)	write((fd),(d),(n))
 #define DEBUG_TEMP(temp)	(temp) /* debugging stuff that should be removed */
 #define DEBUG_BREAK		break
 #define DEBUG_CONTINUE		continue
-#define DEBUG_GOTO(label)	do { debug_fatal(__FILE__, __LINE__); goto label; } while(0)
-#define DEBUG_RETURN(x)		do { debug_fatal(__FILE__, __LINE__); return(x); } while(0)
+#define DEBUG_GOTO(label)	do { debug_printf(2, "%s:%d: goto %s\n", __FILE__, __LINE__, #label); goto label; } while(0)
+#define DEBUG_RETURN(x)		do { debug_printf(2, "%s:%d: return %s\n", __FILE__, __LINE__, #x); return(x); } while(0)
 
 #else
 
@@ -73,6 +74,7 @@
 #define DEBUG_DECREASE(n)
 #define DEBUG_DECLARE(t,v)
 #define DEBUG_SET(n,v)
+#define DEBUG_MESSAGE(s)
 #define DEBUG_PRINT(fd,s,v)
 #define DEBUG_WRITE(fd,d,n)
 #define DEBUG_TEMP(x)
@@ -101,7 +103,14 @@
 #endif
 
 extern double		debug_elapsed(int);
-extern void		debug_fatal(const char*, int);
+extern void		debug_indent(int);
+extern void		debug_fatal(const char*, int, const char*);
+#if 0 /* this prototype in <ast.h> for convenience */
+extern ssize_t		debug_printf(int, const char*, ...);
+#endif
+extern ssize_t		debug_sprintf(char*, size_t, const char*, ...);
+extern ssize_t		debug_vsprintf(char*, size_t, const char*, va_list);
+extern ssize_t		debug_vprintf(int, const char*, va_list);
 extern void		systrace(const char*);
 
 #undef	extern

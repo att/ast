@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -332,40 +332,6 @@ getfmt(Sfio_t* sp, void* vp, Sffmt_t* dp)
 }
 
 /*
- * this is the original interface
- */
-
-#undef	sfkeyprintf
-
-int
-sfkeyprintf(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup_t lookup, Sf_key_convert_t convert)
-{
-	register int	i;
-	int		r;
-	Fmt_t		fmt;
-
-	memset(&fmt, 0, sizeof(fmt));
-	fmt.fmt.version = SFIO_VERSION;
-	fmt.fmt.form = (char*)format;
-	fmt.fmt.extf = getfmt;
-	fmt.handle = handle;
-	fmt.lookup = lookup;
-	fmt.convert = convert;
-	r = sfprintf(sp, "%!", &fmt) - fmt.invisible;
-	for (i = 0; i < elementsof(fmt.tmp); i++)
-		if (fmt.tmp[i])
-			sfclose(fmt.tmp[i]);
-	for (i = 0; i < elementsof(fmt.re); i++)
-		if (fmt.re[i])
-			regfree(fmt.re[i]);
-	return r;
-}
-
-#undef	_AST_API_H
-
-#include <ast_api.h>
-
-/*
  * Sffmt_t* callback args
  */
 
@@ -388,5 +354,34 @@ sfkeyprintf_20000308(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup
 	for (i = 0; i < elementsof(fmt.tmp); i++)
 		if (fmt.tmp[i])
 			sfclose(fmt.tmp[i]);
+	return r;
+}
+
+#undef	sfkeyprintf
+#undef	_def_map_ast
+
+#include <ast_map.h>
+
+int
+sfkeyprintf(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup_t lookup, Sf_key_convert_t convert)
+{
+	register int	i;
+	int		r;
+	Fmt_t		fmt;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.fmt.version = SFIO_VERSION;
+	fmt.fmt.form = (char*)format;
+	fmt.fmt.extf = getfmt;
+	fmt.handle = handle;
+	fmt.lookup = lookup;
+	fmt.convert = convert;
+	r = sfprintf(sp, "%!", &fmt) - fmt.invisible;
+	for (i = 0; i < elementsof(fmt.tmp); i++)
+		if (fmt.tmp[i])
+			sfclose(fmt.tmp[i]);
+	for (i = 0; i < elementsof(fmt.re); i++)
+		if (fmt.re[i])
+			regfree(fmt.re[i]);
 	return r;
 }

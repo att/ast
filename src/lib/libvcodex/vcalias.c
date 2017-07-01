@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"vchdr.h"
@@ -40,18 +40,19 @@
 #ifndef PATH_MAX
 #define PATH_MAX	(4*1024)
 #endif
-#define ALIASES		"lib/vcodex/aliases"
-#define VCZIPRC		".vcziprc"
 
 typedef struct _vcalias_s	Vcalias_t;	
 struct _vcalias_s
 {	Vcalias_t*	next;
 	char*		name;	/* name of the alias			*/
 	char*		value;	/* what it should expand to		*/
+	char*		suff;	/* optional file name suffix		*/
 };	
 
-static char	*Dfltalias[] =
+static char*	Dfltalias[] =
 {	
+	"vczip = delta",
+	"vcdiff = delta.vcdiff",
 	"tv = ama,table,mtf,rle.0,huffgroup",
 	"tss7 = ss7,table,mtf,rle.0,huffpart",
 	"tnls = ama.nls,rtable,mtf,rle.0,huffgroup",
@@ -64,11 +65,14 @@ static char	*Dfltalias[] =
 	"qnl = ama.nl,transpose,rle,huffman",
 	"q = transpose,rle,huffman",
 	"netflow = netflow,mtf,rle.0,huffgroup",
+	"ietf = vcdiff",
 	"flatrdb = rdb,bwt,mtf,rle.0,huffgroup",
 	"fixedrdb = rdb.full,table,mtf,rle.0,huffgroup",
 	"dna = sieve.reverse.map=ATGCatgc,huffgroup",
 	"delta = sieve.delta,bwt,mtf,rle.0,huffgroup",
 	"b = bwt,mtf,rle.0,huffgroup",
+	". : bz : bzip",
+	". : gz : gzip",
 	0
 };
 
@@ -85,48 +89,67 @@ char*		s;	/* spec of new aliases	*/
 #endif
 {
 	Vcalias_t	*al, **list;
-	ssize_t		a, v, w, n;
+	ssize_t		n, i, a, b1, e1, b2, e2, b3, e3;
 
 	for(n = s ? strlen(s) : 0; n > 0; )
 	{	/* skip starting blanks */	
-		while(n > 0 && (isblank(*s) || *s == '\n') )
+		while(n > 0 && isspace(*s) )
 			{ s += 1; n -= 1; }
 
-		if(!isalnum(*s) ) /* invalid alias specification */
+		if(*s == '#' ) /* comment */
 			goto skip_line;
 
-		/* get the name */
-		for(a = 0; a < n; ++a)
-			if(!isalnum(s[a]))
-				break;
-
-		for(v = a; v < n; ++v)
-			if(!isblank(s[v]) )
-				break;
-		if(s[v] == '=')
+		/* token 1 */
+		for(i = 0; i < n && isspace(s[i]); ++i);
+		for(b1 = i; i < n && !isspace(s[i]); ++i);
+		for(e1 = i; i < n && isspace(s[i]); ++i);
+		if(i < n && s[i] == '=')
+		{
 			list = &Alias;
-		else if(s[v] == ':')
+			a = 1;
+		}
+		else if(i < n && s[i] == ':')
+		{
 			list = &Fname;
+			a = 0;
+		}
 		else
 			goto skip_line;
 
-		/* get the value */
-		for(v += 1; v < n; ++v)
-			if(!isblank(s[v]) )
-				break;
-		for(w = v; w < n; ++w)
-			if(isblank(s[w]) )
-				break;
-		if(w == v)
-			goto skip_line;
+		/* token 3 */
+		for(++i; i < n && isspace(s[i]); ++i);
+		for(b3 = i; i < n && !isspace(s[i]); ++i);
+		for(e3 = i; i < n && isspace(s[i]); ++i);
 
-		if(!(al = (Vcalias_t*)malloc(sizeof(Vcalias_t) + a+1 + (w-v)+1)) )
+		/* optional token 2 */
+		if(!a && i < n && s[i] == ':')
+		{	b2 = b3;
+			e2 = e3;
+			for(++i; i < n && isspace(s[i]); ++i);
+			for(b3 = i; i < n && !isspace(s[i]); ++i);
+			e3 = i;
+		}
+		else
+			b2 = e2 = 0;
+		if(e1 <= b1 || e3 <= b3)
+			goto skip_line;
+		if(!(al = (Vcalias_t*)malloc(sizeof(Vcalias_t) + e1-b1+1 + e3-b3+1 + e2-b2+1)) )
 			break;
 
 		al->name = (char*)(al+1);
-		al->value = al->name + a+1;
-		memcpy(al->name, s, a); al->name[a] = 0;
-		memcpy(al->value, s+v, w-v); al->value[w-v] = 0;
+		memcpy(al->name, s+b1, e1-b1);
+		al->name[e1-b1] = 0;
+		al->value = al->name + e1-b1+1;
+		memcpy(al->value, s+b3, e3-b3);
+		al->value[e3-b3] = 0;
+		if(e2 > b2)
+		{
+			al->suff = al->value + e3-b3+1;
+			memcpy(al->suff, s+b2, e2-b2);
+			al->suff[e2-b2] = 0;
+		}
+		else
+			al->suff = 0;
 		al->next = *list;
 		*list = al;
 
@@ -152,18 +175,16 @@ char**	dflt;	/* list of default aliases */
 	if(!Alias)
 	{
 #if _PACKAGE_ast /* AST alias convention */
-		if(pathpath(ALIASES, "",  PATH_REGULAR, file, sizeof(file)) && (sf = sfopen(0, file, "")) )
+		if(pathpath(VC_ALIASES, "",  PATH_REGULAR, file, sizeof(file)) && (sf = sfopen(0, file, "")) )
 		{	while((sp = sfgetr(sf, '\n', 1)) )
 				zipalias(sp);
 			sfclose(sf);
 		}
 #endif
-
-		/* $HOME/.vcziprc */ 
-		if((sp = getenv("HOME")) && (z = strlen(sp)) > 0 && (z+1+strlen(VCZIPRC)+1) <= PATH_MAX )
+		if((sp = getenv("HOME")) && (z = strlen(sp)) > 0 && (z+1+strlen(VC_ZIPRC)+1) <= PATH_MAX )
 		{	memcpy(file, sp, z);
 			sp[z] = '/';
-			strcpy(file+z+1, VCZIPRC);
+			strcpy(file+z+1, VC_ZIPRC);
 
 			if((sf = sfopen(0, file, "")) )
 			{	while((sp = sfgetr(sf, '\n', 1)) )
@@ -199,11 +220,10 @@ ssize_t		mtsz;	/* buffer size		*/
 		vcaddalias(NIL(char**));
 
 	if(!(alias = Alias) || !spec)
-		return spec;
+		return 0;
 
-	/* must be of the form xxx.yyy.zzz... only */
-	if(!(args = vcsubstring(spec, VC_METHSEP, name, sizeof(name), 0)) || *args != 0 )
-		return spec;
+	if(!(args = vcsubstring(spec, VC_METHSEP, name, sizeof(name), 0)))
+		return 0;
 
 	/* find the extent of the alias name */
 	for(n = 0; name[n]; ++n)
@@ -217,20 +237,20 @@ ssize_t		mtsz;	/* buffer size		*/
 		if(strcmp(alias->name, name) == 0)
 			break;
 	if(!alias)
-		return spec;
+		return 0;
 
-	if(!*args || !meth || !mtsz) /* no new arguments */
-		return alias->value;
+	if(!meth || !mtsz)
+		return spec;
 
 	/* copy the spec of the first transform to meth[] */
 	if(!(rest = vcsubstring(alias->value, VC_METHSEP, meth, mtsz, 0)) )
-		return spec;
+		return 0;
 
 	n = strlen(meth);
 	a = strlen(args);
 	r = strlen(rest);
 	if(n+1+a+1+r > mtsz) /* not enough room */
-		return spec;
+		return 0;
 
 	/* copy additional arguments */
 	meth[n] = VC_ARGSEP;
@@ -246,29 +266,64 @@ ssize_t		mtsz;	/* buffer size		*/
 
 /* match a file name */
 #if __STD_C
-char* vcgetfname(char* name, char* meth, ssize_t mtsz)
+int vcgetfname(char* name, char** meth, char** suff)
 #else
-char* vcgetfname(name, meth, mtsz)
-char*		name;	/* file name to match	*/
-char*		meth;	/* buffer for methods	*/
-ssize_t		mtsz;	/* buffer size		*/
+int vcgetfname(name, meth, suff)
+char*		name;	/* file name to match		*/
+char**		meth;	/* method pointer address	*/
+char**		suff;	/* suffix pointer address	*/
+#endif
+{
+	Vcalias_t	*al;
+	char		*s;
+
+	if (!Alias)
+		vcaddalias(NiL);
+
+	if (s = strrchr(name, '.'))
+		s++;
+	for (al = Fname; al; al = al->next)
+	{
+		if (al->suff && al->name[0] == '.' && al->name[1] == 0)
+		{
+			if (!s || strcmp(s, al->suff))
+				continue;
+		}
+		else if (fnmatch(al->name, name, FNM_PATHNAME))
+			continue;
+		if (meth)
+			*meth = al->value;
+		if (suff)
+			*suff = al->suff;
+		return 0;
+	}
+
+	return -1;
+}
+
+/* return the suffix for meth */
+#if __STD_C
+int vcgetsuff(char* meth, char** suff)
+#else
+int vcgetsuff(meth, suff)
+char*		meth;	/* method name to match		*/
+char**		suff;	/* suffix pointer address	*/
 #endif
 {
 	Vcalias_t	*al;
 
-	if(!Alias)
-		vcaddalias(NIL(char**));
+	if (!Alias)
+		vcaddalias(NiL);
 
-	for(al = Fname; al; al = al->next)
-		if(fnmatch(al->name, name, FNM_PATHNAME) == 0 )
+	for (al = Fname; al; al = al->next)
+		if (!strcmp(al->value, meth))
 		{
-			if(!meth || mtsz <= strlen(al->value))
-				break;
-			strcpy(meth, al->value);
-			return meth;
+			if (suff)
+				*suff = al->suff;
+			return 0;
 		}
 
-	return NIL(char*);
+	return -1;
 }
 
 /* walk an alias list */

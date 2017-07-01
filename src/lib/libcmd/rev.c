@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1992-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,7 +31,7 @@
  */
 
 static const char usage[] =
-"[-?\n@(#)$Id: rev (AT&T Research) 2007-11-29 $\n]"
+"[-?\n@(#)$Id: rev (AT&T Research) 2013-09-13 $\n]"
 USAGE_LICENSE
 "[+NAME?rev - reverse the characters or lines of one or more files]"
 "[+DESCRIPTION?\brev\b copies one or more files to standard output "
@@ -59,22 +59,28 @@ USAGE_LICENSE
  */
 static int rev_char(Sfio_t *in, Sfio_t *out)
 {
-	register int c;
-	register char *ep, *bp, *cp;
-	register wchar_t *wp, *xp;
-	register size_t n;
-	register size_t w;
+	register int		c;
+	register char		*ep, *bp, *cp;
+	register wchar_t	*wp, *xp;
+	register size_t		n;
+	register size_t		wz;
+	Mbstate_t		iq;
+	Mbstate_t		oq;
+	wchar_t			w;
+
 	if (mbwide())
 	{
+		mbinit(&iq);
+		mbinit(&oq);
 		wp = 0;
-		w = 0;
+		wz = 0;
 		while(cp = bp = sfgetr(in,'\n',0))
 		{
 			ep = bp + (n=sfvalue(in)) - 1;
-			if (n > w)
+			if (n > wz)
 			{
-				w = roundof(n + 1, 1024);
-				if (!(wp = newof(wp, wchar_t, w, 0)))
+				wz = roundof(n + 1, 1024);
+				if (!(wp = newof(wp, wchar_t, wz, 0)))
 				{
 					error(ERROR_SYSTEM|2, "out of space");
 					return 0;
@@ -82,10 +88,10 @@ static int rev_char(Sfio_t *in, Sfio_t *out)
 			}
 			xp = wp;
 			while (cp < ep)
-				*xp++ = mbchar(cp);
+				*xp++ = mbchar(&w, cp, MB_LEN_MAX, &iq);
 			cp = bp;
 			while (xp > wp)
-				cp += mbconv(cp, *--xp);
+				cp += mbconv(cp, *--xp, &oq);
 			*cp++ = '\n';
 			if (sfwrite(out, bp, cp - bp) < 0)
 			{

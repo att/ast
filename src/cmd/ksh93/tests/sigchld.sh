@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -74,6 +74,7 @@ then
 		trap "((running--))" CHLD
 		for ((i=0; i<JOBCOUNT; i++))
 		do	sleep 1 &
+			sleep .1
 			if	((++running > maxrunning))
 			then	((maxrunning=running))
 			fi
@@ -156,5 +157,47 @@ print 'set -o monitor;sleep .5 & sleep 1;jobs' > $tmp/foobar
 chmod +x $tmp/foobar
 x=$($SHELL  -c "echo | $tmp/foobar")
 [[ $x == *Done* ]] || err_exit 'SIGCHLD blocked for script at end of pipeline'
+
+tmpfile=$tmp/file
+$SHELL > $tmpfile <<- \EOF
+	trap 'printf "%d %d %s\n" .sh.sig.pid $! "${.sh.sig.code}"' CHLD
+	{
+		for ((i=0 ; i < 10 ; i++ )) ; do
+			sleep .4
+		done
+	} &
+	cpid=$!
+	sleep .2 &
+	print $cpid $!
+	sleep 1
+	kill -STOP $cpid
+	sleep 1
+	kill -CONT $cpid
+	sleep 1
+	wait
+EOF
+{
+	read xpid pid
+	for stat in EXITED STOPPED CONTINUED EXITED
+	do	read pid1 pid2 status  || { err_exit "line with stopped continued or exited expected";break;} 
+		[[ $pid1 == $pid ]] || err_exit ".sh.sig.pid=$pid1 should be $pid"
+		[[ $pid2 == $pid ]] ||  err_exit "\$!=$pid1 should be $pid"
+		[[ $status == $stat ]] || err_exit "status is $status, should be $stat"
+		pid=$xpid
+	done
+} <  $tmpfile
+
+typeset -A finished
+function sighandler_chld
+{
+	[[ ${finished[${.sh.sig.pid}]} ]] && { err_exit "${.sh.sig.pid} already finished and reaped"; trap '' CHLD;}
+	finished[${.sh.sig.pid}]=1
+}
+trap 'sighandler_chld' CHLD
+integer i 
+for (( i=0 ; i < 512 ; i++ ))
+do	sleep 0.1 &
+done
+wait
 
 exit $((Errors<125?Errors:125))

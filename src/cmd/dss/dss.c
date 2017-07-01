@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,7 +31,7 @@
 #include <error.h>
 
 static const char usage[] =
-"[-?\n@(#)$Id: dss (AT&T Research) 2011-09-11 $\n]"
+"[-?\n@(#)$Id: dss (AT&T Research) 2012-08-15 $\n]"
 USAGE_LICENSE
 "[+NAME?dss - scan a data stream and apply a select expression to each "
     "record]"
@@ -58,6 +58,9 @@ USAGE_LICENSE
     "expressions. Variables and function return values within expressions "
     "and \b{print}\b formats may be cast to another type using C style casts "
     "(\alib\a::\atype\a) and (\atype\a).]"
+"[+?The default output format for struct type values is \bksh93\b(1) "
+    "compound array notation with no embedded newlines: ( ... "
+    "\aname\a=\avalue\a ... \aname\a=( ... \aname\a=\avalue\a ... ) ... ).]"
 "[+?An expression of the form { \aquery\a [--\aoption\a...]] [\aarg\a...]] "
     "[> \aoutput\a]] } accesses the compiled \aquery\a defined in a "
     "\b--library\b dynamic library. { \aquery\a \b--man\b } lists the "
@@ -130,7 +133,7 @@ USAGE_LICENSE
             "b}' mrt.dat?Write the announce records from \bmrt.dat\b to the "
             "file \ba\b in the \btable\b format and all other records to the "
             "file \bb\b in the \bcisco\b format.]"
-        "[+dss -x foo-txt '{flat foo-bin}|{compress}' foo.txt > foo.bin?Convert "
+        "[+dss -x foo-txt '{flatten foo-bin}|{compress}' foo.txt > foo.bin?Convert "
             "the \bfoo-txt\b file \bfoo.txt\b to the \bfoo-bin\b \bflat\b "
             "method format file \bfoo.bin\b using the preferred compression "
             "method, where \bfoo-txt.dss\b and \bfoo-bin.dss\b are user "

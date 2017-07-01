@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -343,8 +343,41 @@ then	[[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || err_exit 'proc
 	cat '$tmp/scriptx 2>> /dev/null) == line1 ]] || err_exit '>() process substitution fails in for loop'
 	[[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
 		err_exit 'process substitution of compound commands not working'
+
+	builtin tee 2> /dev/null
+	for tee in "$(whence tee)" "$(whence -p tee)"
+	do	print xxx > $tmp/file
+		$tee  >(sleep 1;cat > $tmp/file) <<< "hello" > /dev/null
+		[[ $(< $tmp/file) != hello ]] && err_exit "process substitution does not wait for >() to complete with $tee"
+		print yyy > $tmp/file2
+		$tee >(cat > $tmp/file) >(sleep 1;cat > $tmp/file2) <<< "hello" > /dev/null
+		[[ $(< $tmp/file2) != hello ]] && err_exit "process substitution does not wait for second of two >() to complete with $tee"
+		print xxx > $tmp/file
+		$tee  >(sleep 1;cat > $tmp/file) >(cat > $tmp/file2) <<< "hello" > /dev/null
+		[[ $(< $tmp/file) != hello ]] && err_exit "process substitution does not wait for first of two >() to complete with $tee"
+	done
+	if	[[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd* ]]
+	then	exp='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
+		got=$( print <(print foo) v=bam <(print bar))
+		[[ $got == $exp ]] ||  err_exit 'assignments after command substitution not treated as arguments'
+	fi
+	{
+		producer() {
+			for	((i = 0; i < 20000; i++ ))
+			do	print xxxxx${i}xxxxx
+			done
+		}
+		consumer() {
+			while	read var
+			do	print ${var}
+			done < ${1}
+		}
+		consumer <(producer) >  /dev/null
+	} & pid=$!
+	( sleep 5 ; kill -HUP $pid) 2> /dev/null  &
+	wait $pid 2> /dev/null || err_exit  "process substitution hangs"
 fi
-[[ $($SHELL -r 'command -p :' 2>&1) == *restricted* ]]  || err_exit 'command -p not restricted'
+[[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || err_exit 'command -p not restricted'
 print cat >  $tmp/scriptx
 chmod +x $tmp/scriptx
 [[ $($SHELL -c "print foo | $tmp/scriptx ;:" 2> /dev/null ) == foo ]] || err_exit 'piping into script fails'
@@ -410,8 +443,16 @@ unset foo
 unset foo
 foo=$(false) > /dev/null && err_exit 'failed command substitution with redirection not returning false'
 expected=foreback
+got=`print -n fore; (sleep 2;print back)&`
+[[ $got == $expected ]] || err_exit "\`\`command substitution background process output error -- got '$got', expected '$expected'"
 got=$(print -n fore; (sleep 2;print back)&)
-[[ $got == $expected ]] || err_exit "command substitution background process output error -- got '$got', expected '$expected'"
+[[ $got == $expected ]] || err_exit "\$() command substitution background process output error -- got '$got', expected '$expected'"
+got=${ print -n fore; (sleep 2;print back)& }
+[[ $got == $expected ]] || err_exit "\${} command substitution background process output error -- got '$got', expected '$expected'"
+function abc { sleep 2; print back; }
+function abcd { abc & }
+got=$(print -n fore;abcd)
+[[ $got == $expected ]] || err_exit "\$() command substitution background with function process output error -- got '$got', expected '$expected'"
 
 binfalse=$(whence -p false)
 for false in false $binfalse

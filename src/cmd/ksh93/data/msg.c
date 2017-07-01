@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -59,6 +59,7 @@ const char e_number[]		= "%s: bad number";
 const char e_badlocale[]	= "%s: unknown locale";
 const char e_nullset[]		= "%s: parameter null";
 const char e_notset[]		= "%s: parameter not set";
+const char e_notset2[]		= "%s[%d]: parameter not set";
 const char e_noparent[]		= "%s: no parent";
 const char e_subst[]		= "%s: bad substitution";
 const char e_create[]		= "%s: cannot create";
@@ -79,7 +80,6 @@ const char e_exec[]		= "%s: cannot execute";
 const char e_pwd[]		= "cannot access parent directories";
 const char e_found[]		= "%s: not found";
 const char e_defined[]		= "%s: function not defined";
-const char e_nointerp[]		= "%s: interpreter not found";
 const char e_subscript[]	= "%s: subscript out of range";
 const char e_toodeep[]		= "%s: recursion too deep";
 const char e_access[]		= "permission denied";
@@ -142,9 +142,11 @@ const char is_talias[]		= "is a tracked alias for";
 const char is_function[]	= " is a function";
 const char is_ufunction[]	= " is an undefined function";
 #ifdef JOBS
-#   ifdef SIGTSTP
+#   ifdef NTTYDISC
 	const char e_newtty[]	= "Switching to new tty driver...";
 	const char e_oldtty[]	= "Reverting to old tty driver...";
+#   endif /*NTTYDISC */
+#   ifdef SIGTSTP
 	const char e_no_start[]	= "Cannot start job control";
 #   endif /*SIGTSTP */
     const char e_no_jctl[]	= "No job control";
@@ -176,6 +178,8 @@ const char e_signo[]		= "Signal %d";
 #endif /* SHOPT_FS_3D */
 
 /* string constants */
+const char e_astbin[]		= SH_CMDLIB_DIR;
+const char e_wordbreaks[]	= "\"'@><=;|&(:";
 const char e_heading[]		= "Current option settings";
 const char e_sptbnl[]		= " \t\n";
 const char e_tolower[]		= "tolower";

@@ -4,37 +4,23 @@ UNIT vczip
 
 SET pipe-input
 
-TEST 01 builtin methods
+function DATA
+{
+	typeset f
 
-	EXEC	-m rle.0,huffman
-		INPUT t.dat 'hello world'
-		SAME INPUT t.dat
-		COPY OUTPUT t.rz
-		IGNORE OUTPUT
+	for f
+	do	test -f $f && continue
+		case $f in
+		hello.dat)
+			echo 'hello world' > $f
+			;;
+		esac
+	done
+}
 
-	EXEC	-u
-		SAME INPUT t.rz
-		SAME OUTPUT t.dat
+TEST 01 builtin vcodex methods
 
-	EXEC	-m rle.0,huffman
-		SAME INPUT t.dat
-		COPY OUTPUT t.rz
-
-	EXEC	-u
-		SAME INPUT t.rz
-		SAME OUTPUT t.dat
-
-	EXEC	-m rle.0,huffman
-		SAME INPUT t.dat
-		COPY OUTPUT t.rz
-
-	EXEC	-u
-		SAME INPUT t.rz
-		SAME OUTPUT t.dat
-
-TEST 02 --method + --transform
-
-	EXEC	-m rle.0,huffman -t gzip
+	EXEC	-m rle,huffman
 		INPUT t.dat 'hello world'
 		SAME INPUT t.dat
 		COPY OUTPUT t.rz
@@ -45,28 +31,53 @@ TEST 02 --method + --transform
 		SAME OUTPUT t.dat
 
 	EXEC	-q
-		OUTPUT - '/dev/stdin: <gzip,rle=30,huffman'
+		SAME INPUT t.rz
+		OUTPUT - 'rle^huffman'
 
-	EXEC	-m rle.0,huffman -t gzip
+TEST 02 vcodex + codex methds
+
+	EXEC	-m rle^huffman^gzip
+		INPUT t.dat 'hello world'
 		SAME INPUT t.dat
-		COPY OUTPUT t.rz
+		COPY OUTPUT t.rhg
 		IGNORE OUTPUT
 
 	EXEC	-u
-		SAME INPUT t.rz
+		SAME INPUT t.rhg
 		SAME OUTPUT t.dat
 
 	EXEC	-q
-		OUTPUT - '/dev/stdin: <gzip,rle=30,huffman'
+		OUTPUT - 'rle^huffman^gzip'
 
-	EXEC	-m rle.0,huffman -t gzip
+	EXEC	-m rle^huffman^bzip
+		INPUT t.dat 'hello world'
 		SAME INPUT t.dat
-		COPY OUTPUT t.rz
+		COPY OUTPUT t.rhb
 		IGNORE OUTPUT
 
 	EXEC	-u
-		SAME INPUT t.rz
+		SAME INPUT t.rhb
 		SAME OUTPUT t.dat
 
 	EXEC	-q
-		OUTPUT - '/dev/stdin: <gzip,rle=30,huffman'
+		OUTPUT - 'rle^huffman^bzip'
+
+SET nopipe-input
+
+TEST 03 gzip file suffix semantics
+
+	EXEC	-m gzip t.dat
+		INPUT t.dat 'this is the data'
+		IGNORE OUTPUT
+
+	EXEC	-u t.dat.gz
+		INPUT -
+		OUTPUT t.dat 'this is the data'
+
+	EXEC	-m bzip u.dat
+		INPUT u.dat 'this is more data'
+		IGNORE OUTPUT
+
+	EXEC	-u u.dat.bz
+		INPUT -
+		OUTPUT u.dat 'this is more data'

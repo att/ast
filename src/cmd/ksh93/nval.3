@@ -61,7 +61,7 @@ void	nv_newattr(Namval_t *\fInp\fP, unsigned \fIflags\fP, int \fIsize\fP);
 unsigned nv_isarray(Namval_t *\fInp\fP);
 Namarr_t	*nv_setarray(Namval_t *\fInp\fP,void*(*\fIfun\fP)(Namval_t*,const char*,int));
 Namarr_t	*nv_arrayptr(Namval_t *\fInp\fP);
-Namval_t	*nv_putsub(Namval_t *\fInp\fP, char *\fIname\fP, long \fImode\fP);
+Namval_t	*nv_putsub(Namval_t *\fInp\fP, char *\fIname\fP, long \fIindex\fP, int *\fIflags\fP);
 Namval_t	*nv_opensub(Namval_t *\fInp\fP);
 void	nv_setvec(Namval_t *\fInp\fP, int \fIappend\fP, int \fIargc\fP, char *\fIargv\fP[]);
 char	*nv_getsub(Namval_t *\fInp\fP);
@@ -620,8 +620,9 @@ when the pointer is no longer needed.
 The \f5nv_putsub()\fP function is used to
 set the subscript for the next reference to \f5np\fP.
 If the \f5name\fP argument is not \f5NULL\fP,
-it defines the value of the next subscript. 
-The \f5mode\fP argument can contain one or more of the following flags:
+it defines the value of the next subscript,
+otherwise, \f5index\fP defines the subscript value.
+The \f5flags\fP argument can contain one or more of the following flags:
 .IP
 \f5ARRAY_ADD\fP:
 Add the subscript if not found.

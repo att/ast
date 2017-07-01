@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the BSD package               *
-*Copyright (c) 1978-2010 The Regents of the University of California an*
+*Copyright (c) 1978-2013 The Regents of the University of California an*
 *                                                                      *
 * Redistribution and use in source and binary forms, with or           *
 * without modification, are permitted provided that the following      *
@@ -230,7 +230,7 @@ main(int argc, char** argv)
 	register int	i;
 	int		sig;
 	char*		ef;
-	int		flags = 0;
+	int		flags = SIGN;
 	sig_t		prevint;
 	struct header	head;
 	struct list	options;
@@ -272,6 +272,7 @@ main(int argc, char** argv)
 			continue;
 		case 'F':
 			flags |= FOLLOWUP;
+			flags &= ~SIGN;
 			continue;
 		case 'H':
 			/*

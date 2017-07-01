@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -165,7 +165,7 @@ done
 
 $SHELL 2> /dev/null -c 'compound c;float -a c.ar;(( c.ar[2][3][3] = 5))' || 'multi-dimensional arrays in arithemtic expressions not working'
 
-expected='typeset -a -l -E c.ar=([2]=([3]=([3]=5) ) )'
+expected='typeset -a -l -E c.ar=(typeset -a [2]=(typeset -a [3]=([3]=5) ) )'
 unset c
 float c.ar
 c.ar[2][3][3]=5
@@ -214,11 +214,48 @@ typeset -i i=10 j=0
 {  y=$( echo ${arr[i][j]} ) ;} 2> /dev/null
 [[ $y == 10 ]] || err_exit '${arr[10][0] should be 10 '
 
-unset cx l
-compound cx
-typeset -a cx.ar[4][4]
-print -v cx > /dev/null
-print -v cx | read -C l 2> /dev/null || err_exit 'read -C fails from output of print -v'
-[[ ${cx%cx=} ==  "${l%l=}" ]] || err_exit 'print -v for compound variable with fixed 2d array not working'
+unset A
+typeset -A A
+typeset -A A[a]
+A[a][z]=1
+[[ ${!A[a][@]} == z ]] || err_exit 'A[a] should have only subscript z'
+
+typeset -a EMPTY_ARRAY=()
+typeset -a g_arr=()
+function initialize
+{
+    g_arr[0]=(11 22 33)
+    g_arr[1]=( "${EMPTY_ARRAY[@]}" )
+}
+initialize
+exp='typeset -a g_arr[0]=(11 22 33)'
+got=$(typeset -p g_arr[0])
+[[ $got == "$exp" ]] || err_exit "typeset -p g_arr[0] expeccted $exp got $got"
+exp='typeset -a g_arr[1]'
+got=$(typeset -p g_arr[1])
+[[ $got == "$exp" ]] || err_exit "typeset -p g_arr[1] expeccted $exp got $got"
+exp='typeset -a g_arr=((11 22 33)  () )'
+got=$(typeset -p g_arr)
+[[ $got == "$exp" ]] || err_exit "typeset -p g_arr expeccted $exp got $got"
+
+unset arr
+typeset -a arr
+typeset -a arr[0]=()
+exp='typeset -a arr[0]'
+got=$(typeset -p arr[0])
+[[ $got == "$exp" ]] || err_exit "arr[0] expected $exp got $got"
+exp='typeset -a arr=( () )'
+got=$(typeset -p arr)
+[[ $got == "$exp" ]] || err_exit "arr expected $exp got $got"
+
+unset foo
+typeset -A foo
+typeset -A foo[bar]
+foo[bar][x]=2
+(( foo[bar][x]++ ))
+[[ ${foo[bar][x]} == 3 ]] || err_ext 'subscrit gets added incorrectly to an associat array when ++ operator is called'
+
+
+
 
 exit $((Errors<125?Errors:125))

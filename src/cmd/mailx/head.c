@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the BSD package               *
-*Copyright (c) 1978-2011 The Regents of the University of California an*
+*Copyright (c) 1978-2013 The Regents of the University of California an*
 *                                                                      *
 * Redistribution and use in source and binary forms, with or           *
 * without modification, are permitted provided that the following      *
@@ -497,6 +497,15 @@ headget(register struct parse* pp)
 {
 	register char*			s;
 	register char*			t;
+#if _PACKAGE_ast
+	register char*			u;
+	register char*			v;
+	char*				e;
+	char*				h;
+	char*				d;
+	ssize_t				(*decode)(const void*, size_t, void**, void*, size_t, void**);
+	ssize_t				z;
+#endif
 	register int			n;
 	register const struct lab*	lp;
 	off_t				body;
@@ -620,6 +629,79 @@ headget(register struct parse* pp)
 			*s = 0;
 			if (!pp->ignore || !ignored(pp->ignore, pp->name) || (pp->flags & GMETOO) && streq(pp->name, "To") && ((pp->flags &= ~GMETOO), 1)) {
 				while (isspace(*++s));
+#if _PACKAGE_ast
+				if (state.var.convertheaders) {
+					t = state.tmp.head;
+					e = t + sizeof(state.tmp.head) - 1;
+					for (u = h = s; *u; u++)
+						if (*u == '=' && *(u + 1) == '?')
+						{
+							i = 0;
+							for (v = u + 2; *v; v++)
+								if (*v == '?')
+								{
+									if (*(v + 1) == '=')
+										break;
+									if (i == 0)
+									{
+										/* XXX UTF-8 for now */ if (strncasecmp(u + 2, "UTF-8", v - (u + 2))) break;
+										d = v;
+										i = *(v + 1);
+										if (i == 'B' || i == 'b')
+											decode = base64decode;
+										else if (i == 'Q' || i == 'q')
+											decode = qpdecode;
+										else
+											break;
+										if (*(v + 2) != '?')
+											break;
+										v += 2;
+										i = 1;
+									}
+									else
+									{
+										i = 2;
+										break;
+									}
+								}
+							if (*v && i == 1)
+							{
+								if (u - s)
+								{
+									if ((t + (u - s)) > e)
+										goto enough;
+									memcpy(t, s, u - s);
+									t += u - s;
+								}
+								if (*(v + 2) == '?')
+									u = v;
+								else
+									for (u = v + 1; isspace(*(u + 1)); u++);
+								s = u + 1;
+								*d = 0;
+								/* XXX must do iconv here too */
+								if ((z = (*decode)(d + 3, v - (d + 3), 0, t, 75, 0)) > 0)
+									t += z;
+							}
+						}
+				enough:
+					if (s != h)
+					{
+						if (u - s)
+						{
+							if ((t + (u - s)) <= e)
+							{
+								memcpy(t, s, u - s);
+								t += u - s;
+							}
+							else
+								note(WARNING, "header too large -- %zu max", sizeof(state.tmp.head));
+						}
+						*t = 0;
+						s = state.tmp.head;
+					}
+				}
+#endif
 				pp->data = s;
 				pp->type = 0;
 				if (pp->flags & GCOMPOSE) {

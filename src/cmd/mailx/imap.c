@@ -1652,30 +1652,6 @@ imapconnect(register Imap_t* imap)
 }
 
 /*
- * print message and fail on VM_BADADDR,VM_NOMEM
- */
-
-static int
-vmexcept(Vmalloc_t* region, int type, void* obj, Vmdisc_t* disc)
-{
-	Vmstat_t	st;
-
-	switch (type)
-	{
-	case VM_BADADDR:
-		note(ERROR, "imap: invalid pointer %p passed to free or realloc", obj);
-		imap_exit(1);
-		return -1;
-	case VM_NOMEM:
-		vmstat(region, &st);
-		note(ERROR, "imap: storage allocator out of space on %lu byte request ( region %lu segments %lu busy %lu:%lu:%lu free %lu:%lu:%lu )", (size_t)obj, st.extent, st.n_seg, st.n_busy, st.s_busy, st.m_busy, st.n_free, st.s_free, st.m_free);
-		imap_exit(1);
-		return -1;
-	}
-	return 0;
-}
-
-/*
  * initialize the IMAP service state
  */
 
@@ -1689,8 +1665,7 @@ imapinit(void)
 		note(ERROR|SYSTEM, "Out of space [imap]");
 		return 0;
 	}
-	imap->vmdisc = *Vmdcheap;
-	imap->vmdisc.exceptf = vmexcept;
+	memfatal(&imap->vmdisc);
 	if (!(imap->gm = vmopen(&imap->vmdisc, Vmlast, 0)) || !(imap->vm = vmopen(&imap->vmdisc, Vmlast, 0)))
 	{
 		note(ERROR|SYSTEM, "Out of space [imap state vm]");

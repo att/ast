@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -30,14 +30,9 @@
 #include <ast_tty.h>
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp:hide ioctl sleep
+__STDPP__directive pragma pp:hide sleep
 #else
-#define ioctl		______ioctl
 #define sleep		______sleep
-#endif
-
-#if _sys_ioctl
-#include <sys/ioctl.h>
 #endif
 
 #if defined(TIOCGWINSZ)
@@ -62,7 +57,6 @@ __STDPP__directive pragma pp:hide ioctl sleep
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp:nohide ioctl sleep
 #else
-#undef	ioctl
 #undef	sleep
 #endif
 
@@ -129,14 +123,15 @@ ttctl(register int fd, int op, void* tt)
 	{
 		for (fd = 0; fd <= 2; fd++)
 			if (!ioctl(fd, op, tt)) return(0);
-		if ((fd = open("/dev/tty", O_RDONLY|O_cloexec)) >= 0)
+		if ((fd = open("/dev/tty", O_RDONLY|O_CLOEXEC)) >= 0)
 		{
 			v = ioctl(fd, op, tt);
 			close(fd);
 			return(v);
 		}
 	}
-	else if (!ioctl(fd, op, tt)) return(0);
+	else if (!ioctl(fd, op, tt))
+		return(0);
 	return(-1);
 }
 

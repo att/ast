@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2011 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -365,5 +365,14 @@ set --
 ARGS=("$@")
 set -- "${ARGS[@]}"
 (( $# )) &&  err_exit 'set -- "${ARGS[@]}" for empty array should not produce arguments'
+
+x=\\x
+[[ x == $x ]] &&  err_exit " \$x='$x' should not match x"
+case x in
+$x) err_exit "case \$x='$x' should not match x";;
+esac
+
+unset IFS
+[[  ${IFS+abc} ]] && err_exit "testing for unset IFS not working"
 
 exit $((Errors<125?Errors:125))

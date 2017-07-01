@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2013 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -390,6 +390,14 @@ cat << END >/dev/null 2>&1
 ${.sh.version}
 END
 ) || err_exit '${.sh.xxx} variables causes cat not be found'
+
+path=$PATH
+PATH=/bin:/usr/bin
+if	[[ $(type date) == *builtin* ]]
+then	builtin -d date
+	[[ $(type date) == *builtin* ]] && err_exit 'builtin -d does not delete builtin'
+fi
+PATH=$path
 
 exit $((Errors<125?Errors:125))
 

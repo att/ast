@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _SFHDR_H
@@ -295,10 +295,6 @@
 
 #endif /*_PACKAGE_ast*/
 
-#if !_mmap_worthy
-#undef MAP_TYPE
-#endif
-
 #include	"FEATURE/float"
 
 #include	<errno.h>
@@ -312,11 +308,13 @@
 #define _has_multibyte		1
 
 #define SFMBMAX			mbmax()
-#define SFMBCPY(to,fr)		memcpy((to), (fr), sizeof(mbstate_t))
-#define SFMBCLR(mb)		memset((mb), 0,  sizeof(mbstate_t))
+#define SFMBCPY(to,fr)		(*(Mbstate_t*)(to) = *(fr))
+#define SFMBCLR(mb)		mbtinit(((Mbstate_t*)(mb)))
 #define SFMBSET(lhs,v)		(lhs = (v))
-#define SFMBLEN(s,mb)		mbsize(s)
-#define SFMBDCL(ms)		mbstate_t ms;
+#define SFMBLEN(s,mb)		mbtsize((s),MB_LEN_MAX,(mb))
+#define SFMBDCL(ms)		Mbstate_t ms;
+#define SFMBDCLP(ms)		Mbstate_t* ms;
+#define SFMBSTATE(f)		_sfmbstate(f)
 
 #else
 
@@ -346,6 +344,8 @@
 #define SFMBDCL(mb)
 #define SFMBLEN(s,mb)		mbrtowc(NIL(wchar_t*), (s), SFMBMAX, (mb) )
 #endif /*!_has_multibyte && _hdr_wchar && _lib_mbtowc && _lib_wctomb*/
+
+#define SFMBSTATE(f)		((Mbstate_t*)0)
 
 #ifdef MB_CUR_MAX
 #define SFMBMAX			MB_CUR_MAX
@@ -436,6 +436,7 @@
 
 
 /* functions for polling readiness of streams */
+#if !_lib_poll
 #if _lib_select
 #undef _lib_poll
 #if _sys_select
@@ -445,7 +446,8 @@
 #if _lib_poll_fd_1 || _lib_poll_fd_2
 #define _lib_poll	1
 #endif
-#endif /*_lib_select_*/
+#endif /*_lib_select*/
+#endif /*_lib_poll*/
 
 #if _lib_poll
 #include	<poll.h>
@@ -617,6 +619,13 @@
 #		define SETCLOEXEC(fd)
 #	endif /*FIOCLEX*/
 #endif /*F_SETFD*/
+
+#ifndef F_DUPFD_CLOEXEC
+#	define F_DUPFD_CLOEXEC		F_DUPFD
+#endif
+#ifndef O_CLOEXEC
+#	define O_CLOEXEC		0
+#endif
 
 #define SF_FD_CLOEXEC			0x0001
 
@@ -797,6 +806,8 @@ struct _fmtpos_s
 #define SFFMT_POINTER	020		/* %p,n,s,S		*/
 #define SFFMT_CLASS	040		/* %[			*/
 
+/* _Sftest SF_TEST_* bitmasks -- 0x0001..0x0080 are unnamed */
+
 /* local variables used across sf-functions */
 typedef void  (*Sfnotify_f)_ARG_((Sfio_t*, int, void*));
 #define _Sfpage		(_Sfextern.sf_page)
@@ -812,6 +823,8 @@ typedef void  (*Sfnotify_f)_ARG_((Sfio_t*, int, void*));
 #define _Sfonce		(_Sfextern.sf_once)
 #define _Sfoncef	(_Sfextern.sf_oncef)
 #define _Sfmutex	(_Sfextern.sf_mutex)
+#define _Sfmaxm		(_Sfextern.sf_maxm)
+#define _Sftest		(_Sfextern.sf_test)
 typedef struct _sfextern_s
 {	ssize_t			sf_page;
 	struct _sfpool_s	sf_pool;
@@ -826,6 +839,8 @@ typedef struct _sfextern_s
 	Vtonce_t*		sf_once;
 	void			(*sf_oncef)_ARG_((void));
 	Vtmutex_t*		sf_mutex;
+	size_t			sf_maxm;
+	unsigned long		sf_test;
 } Sfextern_t;
 
 /* get the real value of a byte in a coded long or ulong */
@@ -1183,6 +1198,7 @@ extern Sfrsrv_t*	_sfrsrv _ARG_((Sfio_t*, ssize_t));
 extern int		_sfsetpool _ARG_((Sfio_t*));
 extern char*		_sfcvt _ARG_((Void_t*,char*,size_t,int,int*,int*,int*,int));
 extern char**		_sfgetpath _ARG_((char*));
+extern Mbstate_t*	_sfmbstate _ARG_((Sfio_t*));
 
 #if _BLD_sfio && defined(__EXPORT__)
 #define extern		__EXPORT__

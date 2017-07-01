@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -89,18 +89,19 @@ pathfind(const char* name, const char* lib, const char* type, char* buf, size_t 
 	char			tmp[PATH_MAX];
 	struct stat		st;
 
-	if (((s = strrchr(name, '/')) || (s = (char*)name)) && strchr(s, '.'))
-		type = 0;
-
 	/*
 	 * always check the unadorned path first
 	 * this handles . and absolute paths
 	 */
 
-	if (regular(name, &st))
+	if (type && !*type || ((s = strrchr(name, '/')) || (s = (char*)name)) && strchr(s, '.'))
 	{
-		strncopy(buf, name, size);
-		return buf;
+		if (regular(name, &st))
+		{
+			strncopy(buf, name, size);
+			return buf;
+		}
+		type = 0;
 	}
 	if (type)
 	{

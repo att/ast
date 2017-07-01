@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -54,6 +54,8 @@
 #define IOSUBSHELL	0x8000	/* must be larger than any file descriptor */
 #define IOPICKFD	0x10000 /* file descriptor number was selected automatically */
 #define IOHERESTRING	0x20000 /* allow here documents to be string streams */
+#define IOSAVESTRING	0x40000 /* string file was saved */
+#define IOUSEVEX	0x80000 /* use spawnvex to save and restore  */
 
 /*
  * The remainder of this file is only used when compiled with shell
@@ -65,27 +67,30 @@
     struct ionod;
 #endif /* !ARG_RAW */
 
-extern int	sh_iocheckfd(Shell_t*,int);
+extern int	sh_iocheckfd(Shell_t*,int,int);
 extern void 	sh_ioinit(Shell_t*);
-extern int 	sh_iomovefd(int);
+extern int 	sh_iomovefd(Shell_t*,int);
 extern int	sh_iorenumber(Shell_t*,int,int);
 extern void 	sh_pclose(int[]);
-extern int	sh_rpipe(int[]);
+extern int 	sh_rpipe(int[]);
 extern void 	sh_iorestore(Shell_t*,int,int);
+extern void 	sh_vexrestore(Shell_t*,int);
+extern void 	sh_vexsave(Shell_t*,int,int,Spawnvex_f,void*);
 #if defined(__EXPORT__) && defined(_BLD_DLL) && defined(_BLD_shell) 
    __EXPORT__
 #endif
-extern Sfio_t 	*sh_iostream(Shell_t*,int);
+extern Sfio_t 	*sh_iostream(Shell_t*,int,int);
 extern int	sh_redirect(Shell_t*,struct ionod*,int);
 extern void 	sh_iosave(Shell_t *, int,int,char*);
-extern int 	sh_iovalidfd(Shell_t*, int);
-extern int 	sh_inuse(Shell_t*, int);
+extern bool 	sh_iovalidfd(Shell_t*, int);
+extern bool 	sh_inuse(Shell_t*, int);
 extern void 	sh_iounsave(Shell_t*);
+extern void	sh_iounpipe(Shell_t*);
 extern int	sh_chkopen(const char*);
 extern int	sh_ioaccess(int,int);
 extern int	sh_devtofd(const char*);
-extern int	sh_isdevfd(const char*);
-extern int	sh_source(Shell_t*, Sfio_t*, const char*);
+extern bool	sh_isdevfd(const char*);
+extern bool	sh_source(Shell_t*, Sfio_t*, const char*);
 
 /* the following are readonly */
 extern const char	e_pexists[];

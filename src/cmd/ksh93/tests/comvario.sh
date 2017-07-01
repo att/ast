@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,29 +14,9 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-########################################################################
-#                                                                      #
-#               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
-#                      and is licensed under the                       #
-#                 Eclipse Public License, Version 1.0                  #
-#                    by AT&T Intellectual Property                     #
-#                                                                      #
-#                A copy of the License is available at                 #
-#          http://www.eclipse.org/org/documents/epl-v10.html           #
-#         (with md5 checksum b35adb5213ca9657e911e9befb180842)         #
-#                                                                      #
-#              Information and Software Systems Research               #
-#                            AT&T Research                             #
-#                           Florham Park NJ                            #
-#                                                                      #
-#              Roland Mainz <roland.mainz@nrubsig.org>                 #
-#                                                                      #
-########################################################################
-
 # test setup
 function err_exit
 {
@@ -45,6 +25,10 @@ function err_exit
 	(( Errors++ ))
 }
 alias err_exit='err_exit $LINENO'
+
+tmp=$(mktemp -dt) || { err_exit mktemp -dt failed; exit 1; }
+trap "cd /; rm -rf $tmp" EXIT
+cd "$tmp"
 
 # "nounset" disabled for now
 #set -o nounset
@@ -681,6 +665,12 @@ test_read_type_crash
 test_read_C_into_array
 test_read_C_special_shell_keywords
 
+compound -a sar
+printf $'( i=1 )\n(i=2)' | while read -C sar[nsar++]
+do : 
+done
+exp='typeset -C -a sar=((i=1) (i=2))'
+[[ $(typeset -p sar) == "$exp" ]] || err_exit 'read -C foo[x++] not working'
 
 # tests done
 exit $((Errors<125?Errors:125))

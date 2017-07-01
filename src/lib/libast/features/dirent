@@ -139,6 +139,18 @@ cat <<!
 	#define	off_t		off64_t
 	#endif
 
+	#if _lib_opendir64
+	#define _ast_opendir	opendir64
+	#undef	opendir
+	#define opendir		_ast_opendir
+	#if _lib_fdopendir64
+	#undef	fdopendir
+	#define fdopendir	fdopendir64
+	#endif
+	#if _typ_DIR64 && !defined(DIR)
+	#define DIR		DIR64
+	#endif
+	#endif
 	#if _lib_readdir64 && _typ_struct_dirent64
 	#ifndef	dirent
 	#define dirent		dirent64
@@ -146,6 +158,18 @@ cat <<!
 	#ifndef	readdir
 	#define readdir		readdir64
 	#endif
+	#endif
+	#if _lib_rewinddir64 && !defined(rewinddir)
+	#define rewinddir	rewinddir64
+	#endif
+	#if _lib_seekdir64 && !defined(seekdir)
+	#define seekdir		seekdir64
+	#endif
+	#if _lib_telldir64 && !defined(telldir)
+	#define telldir		telldir64
+	#endif
+	#if _lib_closedir64 && !defined(closedir)
+	#define closedir	closedir64
 	#endif
 
 	#endif
@@ -273,3 +297,24 @@ elif ( _sys_dir ) {
 	#endif
 }
 endif
+
+cat{
+	#if _AST_INTERCEPT_IMPLEMENT < 2
+
+	#undef	opendir
+	#define opendir		ast_opendir
+
+	#endif
+
+	#if _AST_INTERCEPT_IMPLEMENT > 0
+
+	#if _BLD_ast && defined(__EXPORT__)
+	#define extern		__EXPORT__
+	#endif
+
+	extern DIR*	ast_opendir(const char*);
+
+	#undef extern
+
+	#endif
+}end

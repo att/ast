@@ -10,7 +10,6 @@ Use this until the
 .BR lpm (1)
 .B retrie
 implementation handles ipv6 addresses.
-The code is currently AT&T PROPRIETARY, so don't propagate this outside of AT&T. 
 .B ivsa
 requires the standalone
 .B astsa
@@ -18,14 +17,14 @@ source package.
 .P
 To build libivsa.a read this package and
 .B astsa
-in the same directory and run:
-.DS
-make -f ivsa.omk
-.DE
-and to build the test harness and test the library run:
-.DS
-make -f ivsa.omk test
-.DE
+in the same directory, read README-ast, and then run:
+.EX
+ make -f ivsa.omk
+.EE
+to build the test harness and test the library run:
+.EX
+ make -f ivsa.omk test
+.EE
 You may have to do some /bin/make plumbing on *.omk to get it to work
 on your system.
 If you already have the non-standalone libast installed
@@ -43,6 +42,6 @@ iv.3 is the api man page.  See testiv.c for example api usage.
 is a subset of the {
 .B "ast-base ast-dss"
 } packages at
-.DS
+.EX
 .xx link="http://www.research.att.com/sw/download/"
-.DE
+.EE

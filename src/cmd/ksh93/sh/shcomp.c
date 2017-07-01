@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 	if(cp= *argv)
 	{
 		argv++;
-		in = sh_pathopen(cp);
+		in = sh_pathopen(shp,cp);
 	}
 	else
 		in = sfstdin;
@@ -119,18 +119,19 @@ int main(int argc, char *argv[])
 		out = sfstdout;
 	if(dflag)
 	{
-		sh_onoption(SH_DICTIONARY);
-		sh_onoption(SH_NOEXEC);
+		sh_onoption(shp,SH_DICTIONARY);
+		sh_onoption(shp,SH_NOEXEC);
 	}
+	sh_trap(shp,"enum _Bool=(false true) ;",0);
 	if(nflag)
-		sh_onoption(SH_NOEXEC);
+		sh_onoption(shp,SH_NOEXEC);
 	if(vflag)
-		sh_onoption(SH_VERBOSE);
+		sh_onoption(shp,SH_VERBOSE);
 	if(!dflag)
 		sfwrite(out,header,sizeof(header));
 	shp->inlineno = 1;
 #if SHOPT_BRACEPAT
-        sh_onoption(SH_BRACEEXPAND);
+        sh_onoption(shp,SH_BRACEEXPAND);
 #endif
 	while(1)
 	{
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
 		if(t = (Shnode_t*)sh_parse(shp,in,0))
 		{
 			if((t->tre.tretyp&(COMMSK|COMSCAN))==0 && t->com.comnamp && strcmp(nv_name((Namval_t*)t->com.comnamp),"alias")==0)
-				sh_exec(t,0);
+				sh_exec(shp,t,0);
 			if(!dflag && sh_tdump(out,t) < 0)
 				errormsg(SH_DICT,ERROR_exit(1),"dump failed");
 		}

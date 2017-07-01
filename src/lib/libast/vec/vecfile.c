@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -45,7 +45,7 @@ vecfile(const char* file)
 	struct stat	st;
 
 	vec = 0;
-	if ((fd = open(file, O_RDONLY|O_cloexec)) >= 0)
+	if ((fd = open(file, O_RDONLY|O_CLOEXEC)) >= 0)
 	{
 		if (!fstat(fd, &st) && S_ISREG(st.st_mode) && (n = st.st_size) > 0 && (buf = newof(0, char, n + 1, 0)))
 		{
@@ -54,9 +54,10 @@ vecfile(const char* file)
 				buf[n] = 0;
 				vec = vecload(buf);
 			}
-			if (!vec) free(buf);
+			if (!vec)
+				free(buf);
 		}
 		close(fd);
 	}
-	return(vec);
+	return vec;
 }

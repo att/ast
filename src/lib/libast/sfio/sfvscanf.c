@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -215,7 +215,7 @@ Accept_t*	ac;
 		}
 		else
 		{ one_char:
-			if((n = mbrtowc(&fwc, form, ac->endf-form, &mbs)) > 1 &&
+			if((n = mbrtowc(&fwc, form, ac->endf-form, (mbstate_t*)&mbs)) > 1 &&
 			   wc == fwc )
 				return ac->yes;
 		}
@@ -389,7 +389,7 @@ loop_fmt:
 			else
 			{ match_1:
 #if _has_multibyte
-				if((n = (int)mbrtowc(&wc,form-1,SFMBMAX,&fmbs)) <= 0)
+				if((n = (int)mbrtowc(&wc,form-1,SFMBMAX,(mbstate_t*)&fmbs)) <= 0)
 					goto pop_fmt;
 				if(n > 1)
 				{	acc.wc = wc;

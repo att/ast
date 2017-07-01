@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -24,67 +24,38 @@
 #ifndef _ASO_H
 #define _ASO_H	1
 
-#define ASO_VERSION	20111111L
+#define ASO_VERSION	20130501L
 
 #include <ast_common.h>
+#include <ast_aso.h>
 
 /*
  * ast atomic scalar operations interface definitions
  */
 
-/* asometh() types (ordered mutually exclusive flags) */
-#define ASO_NEXT	(-1)
-#define ASO_SIGNAL	1
-#define ASO_THREAD	2
-#define ASO_PROCESS	4
-#define ASO_INTRINSIC	8
+/* types of locking operations done by asolock() */
+#define ASO_UNLOCK	(0001)	/* unlock a lock locked with a key	*/
+#define ASO_TRYLOCK	(0002)	/* try-locking, if failed, return	*/
+#define ASO_LOCK	(0004)	/* spin-locking, never fail!		*/
 
-/* asolock() operations */
-#define ASO_UNLOCK	0	/* unlock if key matches  		*/
-#define ASO_TRYLOCK	1	/* matched key means successful attempt	*/
-#define ASO_LOCK	2	/* matched key first, then spin-lock	*/
-#define ASO_SPINLOCK	3	/* no matching of key before locking	*/
+/* usable in a spin-loop to acquire resource */
+#define asospinrest()	asorelax(1<<18)
+#define asospindecl()	unsigned int _asor
+#define asospininit()	(_asor = 1<<17)
+#define asospinnext()	(asorelax(_asor <<= 1), _asor >= (1<<21) ? (asoyield(), asospininit()) : 0 )
 
-/* Asoerror_f types */
-#define ASO_EMETHOD	0	/* method specific error		*/
-#define ASO_EHUNG	1	/* asoloop() possibly hung		*/
-
-/* for internal use, but standardized for libs such as CDT and Vmalloc */
-#define ASO_RELAX	((1<<2)-1) /* cycles between spin-loop yield */
-#define ASOLOOP(k)	asoloop(++(k))
-
-#define ASODISC(d,e)	(memset(d,0,sizeof(*(d))),(d)->version=ASO_VERSION,(d)->errorf=(e))
-
-typedef int (*Asoerror_f)(int, const char*);
-typedef void* (*Asoinit_f)(void*, const char*);
-typedef ssize_t (*Asolock_f)(void*, ssize_t, void volatile*);
-
-typedef struct Asodisc_s
-{
-	uint32_t	version;
-	unsigned int	hung;
-	Asoerror_f	errorf;
-} Asodisc_t;
-
-typedef struct Asometh_s
-{
-	const char*	name;
-	int		type;
-	Asoinit_f	initf;
-	Asolock_f	lockf;
-	const char*	details;
-} Asometh_t;
-
-#if (_BLD_aso || _BLD_taso) && defined(__EXPORT__)
-#define extern	extern __EXPORT__
+#if _BLD_aso && defined(__EXPORT__)
+#undef __MANGLE__
+#define __MANGLE__ __LINKAGE__ __EXPORT__
 #endif
-#if !(_BLD_aso || _BLD_taso) && defined(__IMPORT__)
-#define extern	extern __IMPORT__
+#if !_BLD_aso && defined(__IMPORT__)
+#undef __MANGLE__
+#define __MANGLE__ __LINKAGE__ __IMPORT__
+#endif
 #endif
 
-extern Asometh_t*		asometh(int, void*);
-
-#undef	extern
+#undef __MANGLE__
+#define __MANGLE__ __LINKAGE__
 
 #if _BLD_aso && defined(__EXPORT__)
 #define extern	extern __EXPORT__
@@ -93,90 +64,119 @@ extern Asometh_t*		asometh(int, void*);
 #define extern	extern __IMPORT__
 #endif
 
-extern Asometh_t*		_asometh(int, void*);
-extern int			asoinit(const char*, Asometh_t*, Asodisc_t*);
+extern unsigned int		asoactivecpu(void);
 extern int			asolock(unsigned int volatile*, unsigned int, int);
-extern int			asoloop(uintmax_t);
 extern int			asorelax(long);
+extern int			asoyield(void);
+extern unsigned int		asothreadid(void);
 
-extern uint8_t			asocas8(uint8_t volatile*, int, int);
-extern uint8_t			asoget8(uint8_t volatile*);
-extern uint8_t			asoinc8(uint8_t volatile*);
-extern uint8_t			asodec8(uint8_t volatile*);
+#define asocaschar(p,o,n)	asocas8((uint8_t volatile*)p,o,n)
+#define asogetchar(p)		asoget8((uint8_t volatile*)p)
+#define asoaddchar(p,n)		asoadd8((uint8_t volatile*)p,n)
+#define asosubchar(p,n)		asosub8((uint8_t volatile*)p,n)
+#define asoincchar(p)		asoinc8((uint8_t volatile*)p)
+#define asodecchar(p)		asodec8((uint8_t volatile*)p)
+#define asominchar(p,n)		asomin8((uint8_t volatile*)p,n)
+#define asomaxchar(p,n)		asomax8((uint8_t volatile*)p,n)
 
-#define asocaschar(p,o,n)	asocas8(p,o,n)
-#define asogetchar(p)		asoget8(p)
-#define asoincchar(p)		asoinc8(p)
-#define asodecchar(p)		asodec8(p)
-
-extern uint16_t			asocas16(uint16_t volatile*, uint16_t, uint16_t);
-extern uint16_t			asoget16(uint16_t volatile*);
-extern uint16_t			asoinc16(uint16_t volatile*);
-extern uint16_t			asodec16(uint16_t volatile*);
-
-#define asocasshort(p,o,n)	asocas16(p,o,n)
-#define asogetshort(p)		asoget16(p)
-#define asoincshort(p)		asoinc16(p)
-#define asodecshort(p)		asodec16(p)
-
-extern uint32_t			asocas32(uint32_t volatile*, uint32_t, uint32_t);
-extern uint32_t			asoget32(uint32_t volatile*);
-extern uint32_t			asoinc32(uint32_t volatile*);
-extern uint32_t			asodec32(uint32_t volatile*);
+#define asocasshort(p,o,n)	asocas16((uint16_t volatile*)p,o,n)
+#define asogetshort(p)		asoget16((uint16_t volatile*)p)
+#define asoaddshort(p,n)	asoadd16((uint16_t volatile*)p,n)
+#define asosubshort(p,n)	asosub16((uint16_t volatile*)p,n)
+#define asoincshort(p)		asoinc16((uint16_t volatile*)p)
+#define asodecshort(p)		asodec16((uint16_t volatile*)p)
+#define asominshort(p,n)	asomin16((uint16_t volatile*)p,n)
+#define asomaxshort(p,n)	asomax16((uint16_t volatile*)p,n)
 
 #if _ast_sizeof_int == 4
 #define asocasint(p,o,n)	asocas32((uint32_t volatile*)p,o,n)
 #define asogetint(p)		asoget32((uint32_t volatile*)p)
+#define asoaddint(p,n)		asoadd32((uint32_t volatile*)p,n)
+#define asosubint(p,n)		asosub32((uint32_t volatile*)p,n)
 #define asoincint(p)		asoinc32((uint32_t volatile*)p)
 #define asodecint(p)		asodec32((uint32_t volatile*)p)
+#define asominint(p,n)		asomin32((uint32_t volatile*)p,n)
+#define asomaxint(p,n)		asomax32((uint32_t volatile*)p,n)
 #endif
 
 #if _ast_sizeof_long == 4
 #define asocaslong(p,o,n)	asocas32((uint32_t volatile*)p,o,n)
 #define asogetlong(p)		asoget32((uint32_t volatile*)p)
+#define asoaddlong(p,n)		asoadd32((uint32_t volatile*)p,n)
+#define asosublong(p,n)		asosub32((uint32_t volatile*)p,n)
 #define asoinclong(p)		asoinc32((uint32_t volatile*)p)
 #define asodeclong(p)		asodec32((uint32_t volatile*)p)
+#define asominlong(p,n)		asomin32((uint32_t volatile*)p,n)
+#define asomaxlong(p,n)		asomax32((uint32_t volatile*)p,n)
 #endif
 
 #if _ast_sizeof_size_t == 4
 #define asocassize(p,o,n)	asocas32((uint32_t volatile*)p,o,n)
 #define asogetsize(p)		asoget32((uint32_t volatile*)p)
+#define asoaddsize(p,n)		asoadd32((uint32_t volatile*)p,n)
+#define asosubsize(p,n)		asosub32((uint32_t volatile*)p,n)
 #define asoincsize(p)		asoinc32((uint32_t volatile*)p)
 #define asodecsize(p)		asodec32((uint32_t volatile*)p)
+#define asominsize(p,n)		asomin32((uint32_t volatile*)p,n)
+#define asomaxsize(p,n)		asomax32((uint32_t volatile*)p,n)
+#endif
+
+#if _ast_sizeof_off_t == 4
+#define asocasoff(p,o,n)	asocas32((uint32_t volatile*)p,o,n)
+#define asogetoff(p)		asoget32((uint32_t volatile*)p)
+#define asoaddoff(p,n)		asoadd32((uint32_t volatile*)p,n)
+#define asosuboff(p,n)		asosub32((uint32_t volatile*)p,n)
+#define asoincoff(p)		asoinc32((uint32_t volatile*)p)
+#define asodecoff(p)		asodec32((uint32_t volatile*)p)
+#define asominoff(p,n)		asomin32((uint32_t volatile*)p,n)
+#define asomaxoff(p,n)		asomax32((uint32_t volatile*)p,n)
 #endif
 
 #ifdef _ast_int8_t
 
-extern uint64_t			asocas64(uint64_t volatile*, uint64_t, uint64_t);
-extern uint64_t			asoget64(uint64_t volatile*);
-extern uint64_t			asoinc64(uint64_t volatile*);
-extern uint64_t			asodec64(uint64_t volatile*);
-
 #if _ast_sizeof_int == 8
 #define asocasint(p,o,n)	asocas64((uint64_t volatile*)p,o,n)
 #define asogetint(p)		asoget64((uint64_t volatile*)p)
+#define asoaddint(p,n)		asoadd64((uint64_t volatile*)p,n)
+#define asosubint(p,n)		asosub64((uint64_t volatile*)p,n)
 #define asoincint(p)		asoinc64((uint64_t volatile*)p)
 #define asodecint(p)		asodec64((uint64_t volatile*)p)
+#define asominint(p,n)		asomin64((uint64_t volatile*)p,n)
+#define asomaxint(p,n)		asomax64((uint64_t volatile*)p,n)
 #endif
 
 #if _ast_sizeof_long == 8
 #define asocaslong(p,o,n)	asocas64((uint64_t volatile*)p,o,n)
 #define asogetlong(p)		asoget64((uint64_t volatile*)p)
+#define asoaddlong(p,n)		asoadd64((uint64_t volatile*)p,n)
+#define asosublong(p,n)		asosub64((uint64_t volatile*)p,n)
 #define asoinclong(p)		asoinc64((uint64_t volatile*)p)
 #define asodeclong(p)		asodec64((uint64_t volatile*)p)
+#define asominlong(p,n)		asomin64((uint64_t volatile*)p,n)
+#define asomaxlong(p,n)		asomax64((uint64_t volatile*)p,n)
 #endif
 
 #if _ast_sizeof_size_t == 8
 #define asocassize(p,o,n)	asocas64((uint64_t volatile*)p,o,n)
 #define asogetsize(p)		asoget64((uint64_t volatile*)p)
+#define asoaddsize(p,n)		asoadd64((uint64_t volatile*)p,n)
+#define asosubsize(p,n)		asosub64((uint64_t volatile*)p,n)
 #define asoincsize(p)		asoinc64((uint64_t volatile*)p)
 #define asodecsize(p)		asodec64((uint64_t volatile*)p)
+#define asominsize(p,n)		asomin64((uint64_t volatile*)p,n)
+#define asomaxsize(p,n)		asomax64((uint64_t volatile*)p,n)
 #endif
 
+#if _ast_sizeof_off_t == 8
+#define asocasoff(p,o,n)	asocas64((uint64_t volatile*)p,o,n)
+#define asogetoff(p)		asoget64((uint64_t volatile*)p)
+#define asoaddoff(p,n)		asoadd64((uint64_t volatile*)p,n)
+#define asosuboff(p,n)		asosub64((uint64_t volatile*)p,n)
+#define asoincoff(p)		asoinc64((uint64_t volatile*)p)
+#define asodecoff(p)		asodec64((uint64_t volatile*)p)
+#define asominoff(p,n)		asomin64((uint64_t volatile*)p,n)
+#define asomaxoff(p,n)		asomax64((uint64_t volatile*)p,n)
 #endif
-
-extern void*			asocasptr(void volatile*, void*, void*);
-extern void*			asogetptr(void volatile*);
 
 #undef	extern
 

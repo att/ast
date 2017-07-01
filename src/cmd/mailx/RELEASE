@@ -1,3 +1,7 @@
+13-10-01 mailx: add autosign to auto sign new messages
+13-08-11 head.c: add header charset conversion buffer boundary checks
+13-08-11 add -o noconvertheaders to disable header charset conversion
+12-09-26 head.c handle =?UTF-8?[BQ]?...?=; other charsets later
 12-06-05 spam.c: fix insider() domain check that skipped pure domain with not host
 12-04-13 cmd1.c: fix empty list null pointer deref
 12-02-29 add headfake boolean option to fake 'From ' line in saved message

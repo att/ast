@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -104,7 +104,7 @@ Sfio_t*	f;
 
 	if(f->data && (!local || (f->flags&SF_STRING) || (f->bits&SF_MMAP) ) )
 	{	/* free buffer */
-#ifdef MAP_TYPE
+#if _mmap_worthy
 		if(f->bits&SF_MMAP)
 			SFMUNMAP(f,f->data,f->endb-f->data);
 		else

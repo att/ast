@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -26,9 +26,18 @@
  */
 
 #include <ast.h>
-#include <wchar.h>
 
 #define STUB	1
+
+#if !_lib_mbrlen
+#undef	STUB
+size_t
+mbrlen(const char*s, size_t n, mbstate_t* q)
+{
+	memset(q, 0, sizeof(*q));
+	return mblen(s, n);
+}
+#endif
 
 #if !_lib_mbtowc
 #undef	STUB
@@ -47,7 +56,6 @@ size_t
 mbrtowc(wchar_t* t, const char* s, size_t n, mbstate_t* q)
 {
 #if _lib_mbtowc
-#undef	STUB
 	memset(q, 0, sizeof(*q));
 	return mbtowc(t, s, n);
 #else
@@ -93,7 +101,6 @@ size_t
 wcrtomb(char* s, wchar_t c, mbstate_t* q)
 {
 #if _lib_wctomb
-#undef	STUB
 	memset(q, 0, sizeof(*q));
 	return wctomb(s, c);
 #else
@@ -131,6 +138,55 @@ wcstombs(char* t, register const wchar_t* s, size_t n)
 	else
 		while (p++, *s++);
 	return p - t;
+}
+#endif
+
+#if !_lib_wcsrtombs
+#undef	STUB
+size_t
+wcsrtombs(char* t, register const wchar_t* s, size_t n, mbstate_t* q)
+{
+	register char*		p = t;
+	register char*		e = t + n;
+
+	if (t)
+		while (p < e && (*p++ = *s++));
+	else
+		while (p++, *s++);
+	return p - t;
+}
+#endif
+
+#if !_lib_mbsrtowcs
+#undef	STUB
+#undef	mbsrtowcs
+size_t
+mbsrtowcs(wchar_t* w, const char** p, size_t n, mbstate_t* q)
+{
+#if _lib_mbstowcs
+	memset(q, 0, sizeof(*q));
+	return mbstowcs(w, p, n);
+#else
+	char*		s;
+	wchar_t*	b;
+	size_t		m;
+
+	s = *p;
+	b = w;
+	e = w + n;
+	while (w < e && (m = mbrtowc(w, s, e - s, q)) != (size_t)(-2))
+	{
+		if (m == (size_t)(-1))
+		{
+			*p = s;
+			return m;
+		}
+		s += m;
+		w++;
+	}
+	*p = s;
+	return w - b;
+#endif
 }
 #endif
 

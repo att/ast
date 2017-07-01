@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -34,8 +34,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 make banner
 make banner.o
@@ -103,6 +103,11 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
@@ -131,10 +136,17 @@ make ${PACKAGE_ast_INCLUDE}/error.h implicit
 make ${PACKAGE_ast_INCLUDE}/option.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
@@ -151,7 +163,7 @@ done banner.c
 meta banner.o %.c>%.o banner.c banner
 prev banner.c
 setv LICENSE -DLICENSE="since=1989,author=dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c banner.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c banner.c
 done banner.o generated
 bind -last
 setv LICENSE -DLICENSE="since=1989,author=dgk"
@@ -186,7 +198,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done dd.c
 meta dd.o %.c>%.o dd.c dd
 prev dd.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c dd.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c dd.c
 done dd.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o dd dd.o ${mam_libast}
 done dd generated
@@ -211,7 +223,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done df.c
 meta df.o %.c>%.o df.c df
 prev df.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c df.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c df.c
 done df.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o df df.o ${mam_libast}
 done df generated
@@ -231,7 +243,7 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done du.c
 meta du.o %.c>%.o du.c du
 prev du.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c du.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c du.c
 done du.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o du du.o ${mam_libast}
 done du generated
@@ -248,23 +260,10 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done file.c
 meta file.o %.c>%.o file.c file
 prev file.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c file.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c file.c
 done file.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o file file.o ${mam_libast}
 done file generated
-make iconv
-make iconv.o
-make iconv.c
-prev ${PACKAGE_ast_INCLUDE}/iconv.h implicit
-prev ${PACKAGE_ast_INCLUDE}/error.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-done iconv.c
-meta iconv.o %.c>%.o iconv.c iconv
-prev iconv.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c iconv.c
-done iconv.o generated
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o iconv iconv.o ${mam_libast}
-done iconv generated
 make locale
 make locale.o
 make locale.c
@@ -304,44 +303,10 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done locale.c
 meta locale.o %.c>%.o locale.c locale
 prev locale.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c locale.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c locale.c
 done locale.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o locale locale.o ${mam_libast}
 done locale generated
-make ls
-make ls.o
-make ls.c
-make ${PACKAGE_ast_INCLUDE}/fs3d.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_fs.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/fs3d.h
-make ${PACKAGE_ast_INCLUDE}/tmx.h implicit
-make ${PACKAGE_ast_INCLUDE}/tv.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-done ${PACKAGE_ast_INCLUDE}/tv.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/tm.h implicit
-done ${PACKAGE_ast_INCLUDE}/tmx.h
-make ${PACKAGE_ast_INCLUDE}/hash.h implicit
-make ${PACKAGE_ast_INCLUDE}/hashpart.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/hashpart.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/hash.h
-prev ${PACKAGE_ast_INCLUDE}/sfdisc.h implicit
-make ${PACKAGE_ast_INCLUDE}/ftwalk.h implicit
-prev ${PACKAGE_ast_INCLUDE}/fts.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/ftwalk.h
-prev ${PACKAGE_ast_INCLUDE}/error.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ls.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
-done ls.c
-meta ls.o %.c>%.o ls.c ls
-prev ls.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c ls.c
-done ls.o generated
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o ls ls.o ${mam_libast}
-done ls generated
 make mesg
 make mesg.o
 make mesg.c
@@ -351,7 +316,7 @@ done mesg.c
 meta mesg.o %.c>%.o mesg.c mesg
 prev mesg.c
 setv LICENSE -DLICENSE="since=1995,author=dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c mesg.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c mesg.c
 done mesg.o generated
 setv LICENSE -DLICENSE="since=1995,author=dgk"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o mesg mesg.o ${mam_libast}
@@ -375,7 +340,7 @@ done mount.c
 meta mount.o %.c>%.o mount.c mount
 prev mount.c
 setv LICENSE -DLICENSE="since=1998,author=gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1998-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c mount.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1998-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c mount.c
 done mount.o generated
 setv LICENSE -DLICENSE="since=1998,author=gsf"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o ast_mount mount.o ${mam_libast}
@@ -415,7 +380,7 @@ done ps.c
 meta ps.o %.c>%.o ps.c ps
 prev ps.c
 setv LICENSE -DLICENSE="since=1998,author=gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1998-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c ps.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1998-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c ps.c
 done ps.o generated
 make pss.o
 make pss.c
@@ -553,7 +518,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 197 in
+exec - "") case 193 in
 exec - 0) cp seq.sh seq
 exec - ;;
 exec - *) {
@@ -562,7 +527,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - seq.sh <<'!'
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2007-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - } > seq
 exec - ;;
@@ -570,7 +535,7 @@ exec - esac
 exec - ;;
 exec - *) cat - seq.sh > seq <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2007-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - ;;
 exec - esac
@@ -594,7 +559,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 197 in
+exec - "") case 193 in
 exec - 0) cp shar.sh shar
 exec - ;;
 exec - *) {
@@ -603,7 +568,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - shar.sh <<'!'
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1999-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1999-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - } > shar
 exec - ;;
@@ -611,7 +576,7 @@ exec - esac
 exec - ;;
 exec - *) cat - shar.sh > shar <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1999-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1999-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - ;;
 exec - esac
@@ -626,7 +591,7 @@ done split.c
 meta split.o %.c>%.o split.c split
 prev split.c
 setv LICENSE -DLICENSE="since=1995,author=dgk+gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c split.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c split.c
 done split.o generated
 setv LICENSE -DLICENSE="since=1995,author=dgk+gsf"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o split split.o ${mam_libast}
@@ -642,27 +607,37 @@ make touch
 make touch.o
 make touch.c
 prev ${PACKAGE_ast_INCLUDE}/error.h implicit
-prev ${PACKAGE_ast_INCLUDE}/tmx.h implicit
+make ${PACKAGE_ast_INCLUDE}/tmx.h implicit
+make ${PACKAGE_ast_INCLUDE}/tv.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
+done ${PACKAGE_ast_INCLUDE}/tv.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/tm.h implicit
+done ${PACKAGE_ast_INCLUDE}/tmx.h
 prev ${PACKAGE_ast_INCLUDE}/ls.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done touch.c
 meta touch.o %.c>%.o touch.c touch
 prev touch.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1989-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c touch.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1989-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c touch.c
 done touch.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o touch touch.o ${mam_libast}
 done touch generated
 make tsort
 make tsort.o
 make tsort.c
-prev ${PACKAGE_ast_INCLUDE}/hash.h implicit
+make ${PACKAGE_ast_INCLUDE}/hash.h implicit
+make ${PACKAGE_ast_INCLUDE}/hashpart.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/hashpart.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/hash.h
 prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 done tsort.c
 meta tsort.o %.c>%.o tsort.c tsort
 prev tsort.c
 setv LICENSE -DLICENSE="since=1995,author=dgk+gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c tsort.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c tsort.c
 done tsort.o generated
 setv LICENSE -DLICENSE="since=1995,author=dgk+gsf"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o tsort tsort.o ${mam_libast}
@@ -675,7 +650,7 @@ done unexpand.c
 meta unexpand.o %.c>%.o unexpand.c unexpand
 prev unexpand.c
 setv LICENSE -DLICENSE="since=1995,author=dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c unexpand.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"\" -c unexpand.c
 done unexpand.o generated
 setv LICENSE -DLICENSE="since=1995,author=dgk"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o unexpand unexpand.o ${mam_libast}
@@ -705,7 +680,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 197 in
+exec - "") case 193 in
 exec - 0) cp yes.sh yes
 exec - ;;
 exec - *) {
@@ -714,7 +689,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - yes.sh <<'!'
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2007-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - } > yes
 exec - ;;
@@ -722,7 +697,7 @@ exec - esac
 exec - ;;
 exec - *) cat - yes.sh > yes <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2007-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
+exec - USAGE_LICENSE="[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2007-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?std]"
 exec - !
 exec - ;;
 exec - esac
@@ -754,18 +729,10 @@ make ${INSTALLROOT}/bin/file
 prev file
 exec - test '' = 'file' || ${STDCMP} 2>/dev/null -s file ${INSTALLROOT}/bin/file || { ${STDMV} ${INSTALLROOT}/bin/file ${INSTALLROOT}/bin/file.old 2>/dev/null || true; ${STDCP} file ${INSTALLROOT}/bin/file ;}
 done ${INSTALLROOT}/bin/file generated
-make ${INSTALLROOT}/bin/iconv
-prev iconv
-exec - test '' = 'iconv' || ${STDCMP} 2>/dev/null -s iconv ${INSTALLROOT}/bin/iconv || { ${STDMV} ${INSTALLROOT}/bin/iconv ${INSTALLROOT}/bin/iconv.old 2>/dev/null || true; ${STDCP} iconv ${INSTALLROOT}/bin/iconv ;}
-done ${INSTALLROOT}/bin/iconv generated
 make ${INSTALLROOT}/bin/locale
 prev locale
 exec - test '' = 'locale' || ${STDCMP} 2>/dev/null -s locale ${INSTALLROOT}/bin/locale || { ${STDMV} ${INSTALLROOT}/bin/locale ${INSTALLROOT}/bin/locale.old 2>/dev/null || true; ${STDCP} locale ${INSTALLROOT}/bin/locale ;}
 done ${INSTALLROOT}/bin/locale generated
-make ${INSTALLROOT}/bin/ls
-prev ls
-exec - test '' = 'ls' || ${STDCMP} 2>/dev/null -s ls ${INSTALLROOT}/bin/ls || { ${STDMV} ${INSTALLROOT}/bin/ls ${INSTALLROOT}/bin/ls.old 2>/dev/null || true; ${STDCP} ls ${INSTALLROOT}/bin/ls ;}
-done ${INSTALLROOT}/bin/ls generated
 make ${INSTALLROOT}/bin/mesg
 prev mesg
 exec - test '' = 'mesg' || ${STDCMP} 2>/dev/null -s mesg ${INSTALLROOT}/bin/mesg || { ${STDMV} ${INSTALLROOT}/bin/mesg ${INSTALLROOT}/bin/mesg.old 2>/dev/null || true; ${STDCP} mesg ${INSTALLROOT}/bin/mesg ;}
@@ -846,12 +813,6 @@ make locale.tst
 done locale.tst
 exec - regress locale.tst locale
 done test.locale virtual
-make test.ls
-prev ls
-make ls.tst
-done ls.tst
-exec - regress ls.tst ls
-done test.ls virtual
 make test.seq
 prev seq
 make seq.tst

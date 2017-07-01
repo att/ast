@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -50,6 +50,15 @@ struct shtable3
 	int		(*sh_value)(int, char*[], Shbltin_t*);
 };
 
+#ifdef _lib_sigaction
+    struct shtable4
+    {
+	const int	sig;
+	const int	code;
+	const char	*str;
+    };
+#endif
+
 #define sh_lookup(name,value)	(sh_locate(name,(Shtable_t*)(value),sizeof(*(value)))->sh_number)
 extern const Shtable_t		shtab_testops[];
 extern const Shtable_t		shtab_options[];
@@ -58,6 +67,7 @@ extern const struct shtable2	shtab_variables[];
 extern const struct shtable2	shtab_aliases[];
 extern const struct shtable2	shtab_signals[];
 extern const struct shtable3	shtab_builtins[];
+extern const struct shtable4	shtab_siginfo_codes[];
 extern const Shtable_t		shtab_reserved[];
 extern const Shtable_t		*sh_locate(const char*, const Shtable_t*, int);
 extern int			sh_lookopt(const char*, int*);

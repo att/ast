@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -109,7 +109,7 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 		shp = logp->sh;
 	}
 	pp = (struct checkpt*)shp->jmplist;
-	if(sh_isoption(SH_RESTRICTED))
+	if(sh_isoption(shp,SH_RESTRICTED))
 		errormsg(SH_DICT,ERROR_exit(1),e_restricted,argv[0]);
 	else
         {
@@ -133,7 +133,7 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 				(*cp=0,np=nv_search(arg->argval,shp->var_tree,0)))
 			{
 				nv_onattr(np,NV_EXPORT);
-				sh_envput(shp->env,np);
+				sh_envput(shp,np);
 			}
 			if(cp)
 				*cp = '=';
@@ -148,7 +148,7 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 #endif /* JOBS */
 		/* force bad exec to terminate shell */
 		pp->mode = SH_JMPEXIT;
-		sh_sigreset(2);
+		sh_sigreset(shp,2);
 		sh_freeup(shp);
 		path_exec(shp,pname,argv,NIL(struct argnod*));
 		sh_done(shp,0);
@@ -198,8 +198,8 @@ int    b_eval(int argc,char *argv[], Shbltin_t *context)
 	argv += opt_info.index;
 	if(*argv && **argv)
 	{
-		sh_offstate(SH_MONITOR);
-		sh_eval(sh_sfeval(argv),0);
+		sh_offstate(shp,SH_MONITOR);
+		sh_eval(shp,sh_sfeval(argv),0);
 	}
 	return(shp->exitval);
 }
@@ -286,13 +286,13 @@ int    b_dot_cmd(register int n,char *argv[],Shbltin_t *context)
 	{
 		shp->dot_depth++;
 		if(np)
-			sh_exec((Shnode_t*)(nv_funtree(np)),sh_isstate(SH_ERREXIT));
+			sh_exec(shp,(Shnode_t*)(nv_funtree(np)),sh_isstate(shp,SH_ERREXIT));
 		else
 		{
 			buffer = malloc(IOBSIZE+1);
 			iop = sfnew(NIL(Sfio_t*),buffer,IOBSIZE,fd,SF_READ);
-			sh_offstate(SH_NOFORK);
-			sh_eval(iop,sh_isstate(SH_PROFILE)?SH_FUNEVAL:0);
+			sh_offstate(shp,SH_NOFORK);
+			sh_eval(shp,iop,sh_isstate(shp,SH_PROFILE)?SH_FUNEVAL:0);
 		}
 	}
 	sh_popcontext(shp,&buff);
@@ -414,15 +414,15 @@ int    b_bg(register int n,register char *argv[],Shbltin_t *context)
 	if(error_info.errors)
 		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage((char*)0));
 	argv += opt_info.index;
-	if(!sh_isoption(SH_MONITOR) || !job.jobcontrol)
+	if(!sh_isoption(shp,SH_MONITOR) || !job.jobcontrol)
 	{
-		if(sh_isstate(SH_INTERACTIVE))
+		if(sh_isstate(shp,SH_INTERACTIVE))
 			errormsg(SH_DICT,ERROR_exit(1),e_no_jctl);
 		return(1);
 	}
 	if(flag=='d' && *argv==0)
 		argv = (char**)0;
-	if(job_walk(sfstdout,job_switch,flag,argv))
+	if(job_walk(shp,sfstdout,job_switch,flag,argv))
 		errormsg(SH_DICT,ERROR_exit(1),e_no_job);
 	return(shp->exitval);
 }
@@ -454,7 +454,7 @@ int    b_jobs(register int n,char *argv[],Shbltin_t *context)
 		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage((char*)0));
 	if(*argv==0)
 		argv = (char**)0;
-	if(job_walk(sfstdout,job_list,flag,argv))
+	if(job_walk(shp,sfstdout,job_list,flag,argv))
 		errormsg(SH_DICT,ERROR_exit(1),e_no_job);
 	job_wait((pid_t)0);
 	return(shp->exitval);

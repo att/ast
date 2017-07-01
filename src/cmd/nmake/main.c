@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1984-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1984-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -188,7 +188,7 @@
  *	0x00004000 dump atom address with name
  *	0x00008000 force state file garbage collection
  *	0x00010000 alarm status trace
- *	0x00020000 close internal.openfd before job exec
+ *	0x00020000 unused
  *	0x00040000 set failed state|metarule event to staterule event
  *	0x00080000 replace ' ' with '?' instead of FILE_SPACE
  *	0x00100000 scan action trace
@@ -982,7 +982,7 @@ finish(int n)
 			Vmstat_t	vs;
 
 			vmstat(Vmheap, &vs);
-			error(0, "vm region %lu segments %lu busy %lu:%lu:%lu free %lu:%lu:%lu", vs.extent, vs.n_seg, vs.n_busy, vs.s_busy, vs.m_busy, vs.n_free, vs.s_free, vs.m_free);
+			error(0, "vm region %zu segments %zu busy %zu:%zu free %zu:%zu", vs.extent, vs.n_seg, vs.n_busy, vs.s_busy, vs.n_free, vs.s_free);
 		}
 		dump(sfstdout, error_info.trace <= -14);
 		/*FALLTHROUGH*/

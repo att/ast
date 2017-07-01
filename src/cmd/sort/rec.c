@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *              Doug McIlroy <doug@research.bell-labs.com>              *
 *                                                                      *
 ***********************************************************************/
@@ -35,7 +35,7 @@ USAGE_LICENSE
     "\afile\a operand is specified then a line containing the number of "
     "records and the sum of all record lengths is printed. If \afile\a is "
     "\b-\b then the standard input is read.]"
-"[c:count?COunt the number of records.]"
+"[c:count?Count the number of records.]"
 "[l:length?List the length of each record.]"
 "[r:reserve?List underlying sfreserve() sizes and offsets.]"
 

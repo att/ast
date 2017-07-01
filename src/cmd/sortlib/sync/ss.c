@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2003-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2003-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -36,7 +36,7 @@
 
 #define _SS_PRIVATE_ \
 	Sfio_t*		io; \
-	Sfio_t*		key; \
+	Sfio_t*		buf; \
 	Sfio_t*		xio; \
 	char*		xsum; \
 	unsigned char*	n2a; \
@@ -742,6 +742,12 @@ fields(Ss_t* ss, int tuple, int flags, size_t* zp)
 			if ((s = lex(ss)) != CP)
 				goto msg;
 			ss->copy = 1;
+			return 0;
+		}
+		else if ((flags & LEX_NONE) && streq(s, "NONE"))
+		{
+			if ((s = lex(ss)) != CP)
+				goto msg;
 			return 0;
 		}
 		else
@@ -1540,7 +1546,7 @@ ssopen(const char* file, Ssdisc_t* disc)
 	codeset(ss, disc->code);
 	oline = error_info.line;
 	ofile = error_info.file;
-	if (!(ss->key = sfstropen()))
+	if (!(ss->buf = sfstropen()))
 	{
 		if (ss->disc->errorf)
 			(*ss->disc->errorf)(NiL, ss->disc, ERROR_SYSTEM|2, "out of space");
@@ -1722,7 +1728,7 @@ ssopen(const char* file, Ssdisc_t* disc)
 					break;
 				else if (streq(s, "FIELDS"))
 				{
-					ss->sum = fields(ss, 2, 0, NiL);
+					ss->sum = fields(ss, 2, LEX_NONE, NiL);
 					ss->uniq = 1;
 				}
 				else if (streq(s, "FORMAT"))
@@ -1783,14 +1789,14 @@ sskey(Ss_t* ss, Ssfield_t* dp)
 
 	if (dp)
 	{
-		sfprintf(ss->key, ".%u.%u", dp->offset + 1, dp->size);
+		sfprintf(ss->buf, ".%u.%u", dp->offset + 1, dp->size);
 		switch (dp->type)
 		{
 		case SS_bcd:
-			sfprintf(ss->key, "p");
+			sfprintf(ss->buf, "p");
 			break;
 		case SS_zd:
-			sfprintf(ss->key, "Z");
+			sfprintf(ss->buf, "Z");
 			break;
 		case SS_AC_dec:
 		case SS_AC_oct:
@@ -1798,21 +1804,21 @@ sskey(Ss_t* ss, Ssfield_t* dp)
 		case SS_CH_dec:
 		case SS_CH_oct:
 		case SS_CH_hex:
-			sfprintf(ss->key, "n");
+			sfprintf(ss->buf, "n");
 			break;
 		case SS_AC_flt:
 		case SS_CH_flt:
-			sfprintf(ss->key, "g");
+			sfprintf(ss->buf, "g");
 			break;
 		}
 		if (dp->reverse)
-			sfprintf(ss->key, "r");
+			sfprintf(ss->buf, "r");
 	}
 	else if (ss->size)
-		sfprintf(ss->key, ".%u", ss->size);
+		sfprintf(ss->buf, ".%u", ss->size);
 	else
 		return 0;
-	if (!(s = sfstruse(ss->key)) && ss->disc->errorf)
+	if (!(s = sfstruse(ss->buf)) && ss->disc->errorf)
 		(*ss->disc->errorf)(NiL, ss->disc, ERROR_SYSTEM|2, "out of space");
 	return s;
 }
@@ -2460,8 +2466,8 @@ ssdd(const char* id, const char* name, Ssdisc_t* disc)
 		return -1;
 	}
 	dd->id = (char*)(dd + 1);
-	dd->name = strcopy(dd->id, id) + 1;
-	strcopy(dd->name, name);
+	dd->name = stpcpy(dd->id, id) + 1;
+	strcpy(dd->name, name);
 	dd->alt = dd->id + 3;
 	if (*dd->alt == '-' || *dd->alt == '_')
 		dd->alt++;
@@ -2673,8 +2679,8 @@ ssclose(Ss_t* ss)
 	}
 	if (ss->io && ss->io != sfstdin)
 		sfclose(ss->io);
-	if (ss->key)
-		sfstrclose(ss->key);
+	if (ss->buf)
+		sfstrclose(ss->buf);
 	vmclose(ss->vm);
 	return r;
 }

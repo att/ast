@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -108,6 +108,7 @@ lmd_data(Sum_t* p, Sumdata_t* data)
 #define md4_options	"[+(version)?md4 (solaris -lmd) 2005-07-26]"
 #define md4_match	"md4|MD4"
 #define md4_scale	0
+#define md4_flags	0
 #define md4_init	lmd_init
 #define md4_block	lmd_block
 #define md4_done	lmd_done
@@ -148,6 +149,7 @@ md4_open(const Method_t* method, const char* name)
 #define md5_options	"[+(version)?md5 (solaris -lmd) 2005-07-26]"
 #define md5_match	"md5|MD5"
 #define md5_scale	0
+#define md5_flags	SUM_INDICATOR
 #define md5_init	lmd_init
 #define md5_block	lmd_block
 #define md5_done	lmd_done
@@ -188,6 +190,7 @@ md5_open(const Method_t* method, const char* name)
 #define sha1_options	"[+(version)?sha1 (solaris -lmd) 2005-07-26]"
 #define sha1_match	"sha1|SHA1|sha-1|SHA-1"
 #define sha1_scale	0
+#define sha1_flags	SUM_INDICATOR
 #define sha1_init	lmd_init
 #define sha1_block	lmd_block
 #define sha1_done	lmd_done
@@ -229,6 +232,7 @@ sha1_open(const Method_t* method, const char* name)
 #define sha256_options	"[+(version)?sha256 (solaris -lmd) 2005-07-26]"
 #define sha256_match	"sha256|sha-256|SHA256|SHA-256"
 #define sha256_scale	0
+#define sha256_flags	SUM_INDICATOR
 #define sha256_init	lmd_init
 #define sha256_block	lmd_block
 #define sha256_done	lmd_done
@@ -263,6 +267,7 @@ sha256_open(const Method_t* method, const char* name)
 #define sha384_options	"[+(version)?sha384 (solaris -lmd) 2005-07-26]"
 #define sha384_match	"sha384|sha-384|SHA384|SHA-384"
 #define sha384_scale	0
+#define sha384_flags	SUM_INDICATOR
 #define sha384_init	lmd_init
 #define sha384_block	lmd_block
 #define sha384_done	lmd_done
@@ -297,6 +302,7 @@ sha384_open(const Method_t* method, const char* name)
 #define sha512_options	"[+(version)?sha512 (solaris -lmd) 2005-07-26]"
 #define sha512_match	"sha512|sha-512|SHA512|SHA-512"
 #define sha512_scale	0
+#define sha512_flags	SUM_INDICATOR
 #define sha512_init	lmd_init
 #define sha512_block	lmd_block
 #define sha512_done	lmd_done

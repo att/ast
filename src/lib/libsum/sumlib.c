@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -25,7 +25,7 @@
  * man this is sum library
  */
 
-static const char id[] = "\n@(#)$Id: sumlib (AT&T Research) 2009-09-28 $\0\n";
+static const char id[] = "\n@(#)$Id: sumlib (AT&T Research) 2013-09-25 $\0\n";
 
 #define _SUM_PRIVATE_	\
 			struct Method_s*	method;	\
@@ -52,6 +52,7 @@ typedef struct Method_s
 	int		(*print)(Sum_t*, Sfio_t*, int, size_t);
 	int		(*done)(Sum_t*);
 	int		scale;
+	unsigned int	flags;
 } Method_t;
 
 typedef struct Map_s
@@ -172,7 +173,7 @@ long_data(Sum_t* p, Sumdata_t* data)
  */
 
 #undef	METHOD		/* solaris <sys/localedef.h>! */
-#define METHOD(x)	x##_match,x##_description,x##_options,x##_open,x##_init,x##_block,x##_data,x##_print,x##_done,x##_scale
+#define METHOD(x)	x##_match,x##_description,x##_options,x##_open,x##_init,x##_block,x##_data,x##_print,x##_done,x##_scale,x##_flags
 
 static const Method_t	methods[] =
 {
@@ -273,7 +274,8 @@ match(register const char* s, register const char* p)
 Sum_t*
 sumopen(register const char* name)
 {
-	register int	n;
+	Sum_t*	sum;
+	int	n;
 
 	if (!name || !name[0] || name[0] == '-' && !name[1])
 		name = "default";
@@ -285,7 +287,11 @@ sumopen(register const char* name)
 		}
 	for (n = 0; n < elementsof(methods); n++)
 		if (match(name, methods[n].match))
-			return (*methods[n].open)(&methods[n], name);
+		{
+			if (sum = (*methods[n].open)(&methods[n], name))
+				sum->flags = methods[n].flags;
+			return sum;
+		}
 	return 0;
 }
 

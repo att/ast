@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 
@@ -204,7 +204,7 @@ static const char id[] = "\n@(#)$Id: proto (AT&T Research) 2012-04-14 $\000\n";
  
 #line 1 "../../lib/libpp/pplib.h"
    
-#line 108
+#line 109
 struct ppsymbol;
 struct ppindex;
 
@@ -415,11 +415,11 @@ extern __MANGLE__ void		pppragma __PROTO__((char*, char*, char*, char*, int));
 extern __MANGLE__ int		ppprintf __PROTO__((char*, ...));
 extern __MANGLE__ int		ppsync __PROTO__((void));
 
-#line 368 "../../lib/libpp/pplib.h"
+#line 369 "../../lib/libpp/pplib.h"
 
 #line 1 "../../lib/libpp/ppdef.h"
  
-#line 369 "../../lib/libpp/pplib.h"
+#line 370 "../../lib/libpp/pplib.h"
 
 #line 1 "../../lib/libpp/ppkey.h"
  
@@ -428,9 +428,9 @@ extern __MANGLE__ int		ppsync __PROTO__((void));
 #line 125
 extern __MANGLE__ struct ppkeyword	ppkey[];
 
-#line 370 "../../lib/libpp/pplib.h"
+#line 371 "../../lib/libpp/pplib.h"
   
-#line 683
+#line 684
 struct ppcontext			 
 {
 	struct ppdirs* lcldirs; struct ppdirs* stddirs; int flags; char* symtab;
@@ -463,7 +463,7 @@ struct ppsymkey
 	int		lex;		 
 };
 
-#line 729
+#line 730
 # ifdef __STDC__
 
 # include <stdlib.h>
@@ -497,7 +497,7 @@ extern __MANGLE__ int		write __PROTO__((int, const __V_*, int));
 
 # endif
 
-#line 802
+#line 803
 extern __MANGLE__ void		ppassert __PROTO__((int, char*, char*));
 extern __MANGLE__ void		ppbuiltin __PROTO__((void));
 extern __MANGLE__ int		ppcall __PROTO__((struct ppsymbol*, int));
@@ -1409,12 +1409,15 @@ strcopy __PARAM__((register char* s, register const char* t), (s, t)) __OTORP__(
 
 
 
+
+
+
 static void
 proto_error __PARAM__((char* iob, int level, char* msg, char* arg), (iob, level, msg, arg)) __OTORP__(char* iob; int level; char* msg; char* arg;){
 	register char*	p;
 	char		buf[1024];
 
-	p = strcopy(buf, "proto: ");
+	p = strcopy(( buf),( "proto: "));
 	if (iob)
 	{
 		register Proto_t*	proto = (Proto_t*)(iob - sizeof(Proto_t));
@@ -1424,20 +1427,20 @@ proto_error __PARAM__((char* iob, int level, char* msg, char* arg), (iob, level,
 			if (proto->file)
 			{
 				*p++ = '"';
-				p = strcopy(p, proto->file);
+				p = strcopy(( p),( proto->file));
 				*p++ = '"';
 				*p++ = ',';
 				*p++ = ' ';
 			}
-			p = strcopy(p, "line ");
+			p = strcopy(( p),( "line "));
 			p = number(p, proto->line);
 		}
 		else if (proto->file)
-			p = strcopy(p, proto->file);
+			p = strcopy(( p),( proto->file));
 	}
 	else
 	{
-		p = strcopy(p, msg);
+		p = strcopy(( p),( msg));
 		msg = arg;
 		arg = 0;
 	}
@@ -1447,12 +1450,12 @@ proto_error __PARAM__((char* iob, int level, char* msg, char* arg), (iob, level,
 		*p++ = ' ';
 	}
 	if (level == 1)
-		p = strcopy(p, "warning: ");
-	p = strcopy(p, msg);
+		p = strcopy(( p),( "warning: "));
+	p = strcopy(( p),( msg));
 	if (arg)
 	{
 		*p++ = ' ';
-		p = strcopy(p, arg);
+		p = strcopy(( p),( arg));
 	}
 	*p++ = '\n';
 	write(2, buf, p - buf);
@@ -2655,9 +2658,9 @@ astlicense __PARAM__((char* p, int size, char* file, char* options, int cc1, int
 		comment(&notice, &buf, ((char*)0), -1, 0);
 	return (*(( &buf)->nxt>=( &buf)->end?(( &buf)->nxt=( &buf)->end-1):( &buf)->nxt)=0,( &buf)->nxt-( &buf)->buf);
 }
-#line 336 "../../lib/libpp/ppproto.c"
+#line 339 "../../lib/libpp/ppproto.c"
  
-#line 348
+#line 351
 static char*
 linesync __PARAM__((register Proto_t* proto, register char* p, register long n), (proto, p, n)) __OTORP__(register Proto_t* proto; register char* p; register long n;){
 
@@ -2665,7 +2668,7 @@ linesync __PARAM__((register Proto_t* proto, register char* p, register long n),
 
 	{
 
-		p = strcopy(p, "\n#line ");
+		p = strcopy(( p),( "\n#line "));
 
 
 
@@ -2686,77 +2689,14 @@ init __PARAM__((Proto_t* proto, char* op, int flags), (proto, op, flags)) __OTOR
 
 	if (flags & (1L<<10))
 	{
-		op = strcopy(op, "\
-\n\
-#if !defined(__PROTO__)\n\
-#  if defined(__STDC__) || defined(__cplusplus) || defined(_proto) || defined(c_plusplus)\n\
-#    if defined(__cplusplus)\n\
-#      define __LINKAGE__	\"C\"\n\
-#    else\n\
-#      define __LINKAGE__\n\
-#    endif\n\
-#    define __STDARG__\n\
-#    define __PROTO__(x)	x\n\
-#    define __OTORP__(x)\n\
-#    define __PARAM__(n,o)	n\n\
-#    if !defined(__STDC__) && !defined(__cplusplus)\n\
-#      if !defined(c_plusplus)\n\
-#      	define const\n\
-#      endif\n\
-#      define signed\n\
-#      define void		int\n\
-#      define volatile\n\
-#      define __V_		char\n\
-#    else\n\
-#      define __V_		void\n\
-#    endif\n\
-#  else\n\
-#    define __PROTO__(x)	()\n\
-#    define __OTORP__(x)	x\n\
-#    define __PARAM__(n,o)	o\n\
-#    define __LINKAGE__\n\
-#    define __V_		char\n\
-#    define const\n\
-#    define signed\n\
-#    define void		int\n\
-#    define volatile\n\
-#  endif\n\
-#  define __MANGLE__	__LINKAGE__\n\
-#  if defined(__cplusplus) || defined(c_plusplus)\n\
-#    define __VARARG__	...\n\
-#  else\n\
-#    define __VARARG__\n\
-#  endif\n\
-#  if defined(__STDARG__)\n\
-#    define __VA_START__(p,a)	va_start(p,a)\n\
-#  else\n\
-#    define __VA_START__(p,a)	va_start(p)\n\
-#  endif\n\
-#  if !defined(__INLINE__)\n\
-#    if defined(__cplusplus)\n\
-#      define __INLINE__	extern __MANGLE__ inline\n\
-#    else\n\
-#      if defined(_WIN32) && !defined(__GNUC__)\n\
-#      	define __INLINE__	__inline\n\
-#      endif\n\
-#    endif\n\
-#  endif\n\
-#endif\n\
-#if !defined(__LINKAGE__)\n\
-#define __LINKAGE__		/* 2004-08-11 transition */\n\
-#endif\n\
-");
+		op = 
+#line 440
+strcopy(( op),( "\n#if !defined(__PROTO__)\n#  if defined(__STDC__) || defined(__cplusplus) || defined(_proto) || defined(c_plusplus)\n#    if defined(__cplusplus)\n#      define __LINKAGE__	\"C\"\n#    else\n#      define __LINKAGE__\n#    endif\n#    define __STDARG__\n#    define __PROTO__(x)	x\n#    define __OTORP__(x)\n#    define __PARAM__(n,o)	n\n#    if !defined(__STDC__) && !defined(__cplusplus)\n#      if !defined(c_plusplus)\n#      	define const\n#      endif\n#      define signed\n#      define void		int\n#      define volatile\n#      define __V_		char\n#    else\n#      define __V_		void\n#    endif\n#  else\n#    define __PROTO__(x)	()\n#    define __OTORP__(x)	x\n#    define __PARAM__(n,o)	o\n#    define __LINKAGE__\n#    define __V_		char\n#    define const\n#    define signed\n#    define void		int\n#    define volatile\n#  endif\n#  define __MANGLE__	__LINKAGE__\n#  if defined(__cplusplus) || defined(c_plusplus)\n#    define __VARARG__	...\n#  else\n#    define __VARARG__\n#  endif\n#  if defined(__STDARG__)\n#    define __VA_START__(p,a)	va_start(p,a)\n#  else\n#    define __VA_START__(p,a)	va_start(p)\n#  endif\n#  if !defined(__INLINE__)\n#    if defined(__cplusplus)\n#      define __INLINE__	extern __MANGLE__ inline\n#    else\n#      if defined(_WIN32) && !defined(__GNUC__)\n#      	define __INLINE__	__inline\n#      endif\n#    endif\n#  endif\n#endif\n#if !defined(__LINKAGE__)\n#define __LINKAGE__		/* 2004-08-11 transition */\n#endif\n"));
 	}
 	else
-		op = strcopy(op, "\
-\n\
-#if !defined(__PROTO__)\n\
-#include <prototyped.h>\n\
-#endif\n\
-#if !defined(__LINKAGE__)\n\
-#define __LINKAGE__		/* 2004-08-11 transition */\n\
-#endif\n\
-");
+		op = 
+#line 451
+strcopy(( op),( "\n#if !defined(__PROTO__)\n#include <prototyped.h>\n#endif\n#if !defined(__LINKAGE__)\n#define __LINKAGE__		/* 2004-08-11 transition */\n#endif\n"));
 	if (proto->package)
 	{
 		s = "\
@@ -2786,7 +2726,7 @@ init __PARAM__((Proto_t* proto, char* op, int flags), (proto, op, flags)) __OTOR
 				op--;
 				break;
 			case '%':
-				op = strcopy(op - 1, proto->package);
+				op = strcopy(( op - 1),( proto->package));
 				continue;
 			default:
 				continue;
@@ -2798,7 +2738,7 @@ init __PARAM__((Proto_t* proto, char* op, int flags), (proto, op, flags)) __OTOR
 }
 
  
-#line 422
+#line 492
 static char*
 nns __PARAM__((register char* s), (s)) __OTORP__(register char* s;){
 	while (*s == ' ' || *s == '\t' || *s == '\n')
@@ -2807,7 +2747,7 @@ nns __PARAM__((register char* s), (s)) __OTORP__(register char* s;){
 }
 
  
-#line 439
+#line 509
 static int
 directive __PARAM__((register char* s, int dir), (s, dir)) __OTORP__(register char* s; int dir;){
 	switch (*(s = nns(s)))
@@ -3165,9 +3105,9 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 				if (flags & (1L<<12))
 				{
 					*(ip - 1) = 0;
-					op = strcopy(om, "/* ");
-					op = strcopy(op, im);
-					op = strcopy(op, " */\n");
+					op = strcopy(( om),( "/* "));
+					op = strcopy(( op),( im));
+					op = strcopy(( op),( " */\n"));
 				}
 				flags &= ~((1L<<2)|(1L<<3)|(1L<<7)|(1L<<8)|(1L<<12)|(1L<<15)|(1L<<22)|(1L<<26));
 			}
@@ -3177,9 +3117,9 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 				if ((flags & ((1L<<2)|(1L<<22))) == ((1L<<2)|(1L<<22)))
 				{
 					*(ip - 1) = 0;
-					op = strcopy(om, "#if defined(__STDC__) || defined(__STDPP__)\n");
-					op = strcopy(op, im);
-					op = strcopy(op, "\n#else\n");
+					op = strcopy(( om),( "#if defined(__STDC__) || defined(__STDPP__)\n"));
+					op = strcopy(( op),( im));
+					op = strcopy(( op),( "\n#else\n"));
 					bp = ip;
 					ip = im;
 					*op++ = *ip++;
@@ -3190,7 +3130,7 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 							while (*--op == ' ' || *op == '\t');
 							if (*ip == '#')
 							{
-								op = strcopy(op + 1, "/**/");
+								op = strcopy(( op + 1),( "/**/"));
 								while (*++ip == ' ' || *ip == '\t');
 							}
 							else
@@ -3205,7 +3145,7 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 							}
 						}
 					ip = bp;
-					op = strcopy(op, "\n#endif\n");
+					op = strcopy(( op),( "\n#endif\n"));
 					op = linesync(proto, op, proto->line);
 				}
 				flags &= ~((1L<<2)|(1L<<3)|(1L<<7)|(1L<<8)|(1L<<15)|(1L<<17)|(1L<<22)|(1L<<23)|(1L<<25)|(1L<<26));
@@ -3280,7 +3220,7 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 				flags |= (1L<<23);
 				do{(proto->ip=ip);(proto->op=op);proto->flags&=~((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->flags|=flags&((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->call=call;}while(0);
 				line = proto->line;
-				op = strcopy(op - 6, "__INLINE__");
+				op = strcopy(( op - 6),( "__INLINE__"));
 				do{(proto->ip=ip);(proto->op=op);proto->flags&=~((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->flags|=flags&((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->call=call;}while(0);
 			}
 			break;
@@ -3551,15 +3491,9 @@ lex __PARAM__((register Proto_t* proto, register long flags), (proto, flags)) __
 							while (*++ip == ' ' || *ip == '\t');
 							if (*ip++ == '<' && *ip++ == 's' && *ip++ == 't' && *ip++ == 'd' && *ip++ == 'a' && *ip++ == 'r' && *ip++ == 'g' && *ip++ == '.' && *ip++ == 'h' && *ip++ == '>')
 							{
-								op = strcopy(op, "\
-if !defined(va_start)\n\
-#if defined(__STDARG__)\n\
-#include <stdarg.h>\n\
-#else\n\
-#include <varargs.h>\n\
-#endif\n\
-#endif\n\
-");
+								op = 
+#line 1262
+strcopy(( op),( "if !defined(va_start)\n#if defined(__STDARG__)\n#include <stdarg.h>\n#else\n#include <varargs.h>\n#endif\n#endif\n"));
 								op = linesync(proto, op, proto->line);
 								break;
 							}
@@ -3577,9 +3511,9 @@ if !defined(va_start)\n\
 								while (*++t == ' ' || *t == '\t');
 								if (*t == '_' && *(t + 1) == '_')
 								{
-									op = strcopy(op, "undef __MANGLE__\n");
+									op = strcopy(( op),( "undef __MANGLE__\n"));
 									op = linesync(proto, op, proto->line);
-									op = strcopy(op, "#define __MANGLE__ __LINKAGE__");
+									op = strcopy(( op),( "#define __MANGLE__ __LINKAGE__"));
 									break;
 								}
 							}
@@ -3592,9 +3526,9 @@ if !defined(va_start)\n\
 							while (*++ip == ' ' || *ip == '\t');
 							if (*ip == 'e' && *++ip == 'x' && *++ ip == 't' && *++ip == 'e' && *++ip == 'r' && *++ip == 'n' && (*++ip == ' ' || *ip == '\t' || *ip == '\n' || *ip == '\r'))
 							{
-								op = strcopy(op, "undef __MANGLE__\n");
+								op = strcopy(( op),( "undef __MANGLE__\n"));
 								op = linesync(proto, op, proto->line);
-								op = strcopy(op, "#define __MANGLE__ __LINKAGE__");
+								op = strcopy(( op),( "#define __MANGLE__ __LINKAGE__"));
 								break;
 							}
 							flags |= (1L<<2)|(1L<<15);
@@ -3621,7 +3555,7 @@ if !defined(va_start)\n\
 						if (args)
 						{
 							v = number(op, args < 0 ? -args : args);
-							v = strcopy(v, " argument actual/formal mismatch");
+							v = strcopy(( v),( " argument actual/formal mismatch"));
 							*v++ = ' ';
 							v = memcopy(v, im, ie - im);
 							*v = 0;
@@ -3728,9 +3662,9 @@ if !defined(va_start)\n\
 
 
 				if (op <= om)
-					op = strcopy(op, "int");
+					op = strcopy(( op),( "int"));
 				else if (*(op - 1) == ',')
-					op = strcopy(op, " int");
+					op = strcopy(( op),( " int"));
 
 				while (v < m)
 					(*op++=( *v++));
@@ -3788,7 +3722,7 @@ if !defined(va_start)\n\
 		else (*op++=( *ie++));
 	}
  
-						if (op <= om) op = strcopy(op, "void");
+						if (op <= om) op = strcopy(( op),( "void"));
 						(*op++=( ')'));
 						if (flags & (1L<<5))
 						{
@@ -3810,7 +3744,7 @@ if !defined(va_start)\n\
 				else if ((flags & ((1L<<15)|(1L<<19)|(1L<<23)|(1L<<25))) == ((1L<<15)|(1L<<25)))
 				{
 					line = proto->line;
-					op = strcopy(om, " __PARAM__(");
+					op = strcopy(( om),( " __PARAM__("));
 					op = memcopy(op, im, ie - im);
 					(*op++=( ','));
 					(*op++=( ' '));
@@ -3820,7 +3754,7 @@ if !defined(va_start)\n\
 					{
 						if ((vc = ie - im + 1) > sizeof(proto->variadic)) vc = sizeof(proto->variadic);
 						memcopy(proto->variadic, im, vc);
-						op = strcopy(op, "va_alist)) __OTORP__(va_dcl)\n{");
+						op = strcopy(( op),( "va_alist)) __OTORP__(va_dcl)\n{"));
 					}
 					else
 					{
@@ -3887,7 +3821,7 @@ if !defined(va_start)\n\
 					if (!(flags & (1L<<23)))
 					{
 						flags |= (1L<<23);
-						proto->op = strcopy(op, " __OTORP__(");
+						proto->op = strcopy(( op),( " __OTORP__("));
 						proto->ip = im + 1;
 						n = *(ie - 1);
 						*(ie - 1) = ';';
@@ -4018,7 +3952,7 @@ if !defined(va_start)\n\
 							else if (n == 10) memcopy(aom, "(__VARARG__))", 13);
 							else
 							{
-								ko = strcopy(aom, " __PROTO__(");
+								ko = strcopy(( aom),( " __PROTO__("));
 								ko = memcopy(ko, aim, aie - aim);
 								*ko = ')';
 								if (++ko >= om)
@@ -4047,17 +3981,17 @@ if !defined(va_start)\n\
 					else if (flags & (1L<<20))
 					{
 						op = om;
-						if (!(flags & (1L<<25))) op = strcopy(op, "(...)");
+						if (!(flags & (1L<<25))) op = strcopy(( op),( "(...)"));
 						else op = memcopy(op, im, ie - im);
 						(*op++=( c));
 					}
 					else
 					{
-						if (flags & (1L<<1)) op = strcopy(om, "()");
-						else if (!(flags & (1L<<25))) op = strcopy(om, "(__VARARG__)");
+						if (flags & (1L<<1)) op = strcopy(( om),( "()"));
+						else if (!(flags & (1L<<25))) op = strcopy(( om),( "(__VARARG__)"));
 						else
 						{
-							op = strcopy(om, " __PROTO__(");
+							op = strcopy(( om),( " __PROTO__("));
 							op = memcopy(op, im, ie - im);
 							(*op++=( ')'));
 						}
@@ -4107,12 +4041,12 @@ if !defined(va_start)\n\
 				flags |= (1L<<14);
 				if (!(flags & (1L<<19)) || proto->package)
 				{
-					op = strcopy(op, " __MANGLE__");
+					op = strcopy(( op),( " __MANGLE__"));
 					if (proto->package)
 					{
-						op = strcopy(op - 1, proto->package);
+						op = strcopy(( op - 1),( proto->package));
 						func = op + 1;
-						op = strcopy(op, "_DATA__");
+						op = strcopy(( op),( "_DATA__"));
 					}
 				}
 				else
@@ -4137,7 +4071,7 @@ if !defined(va_start)\n\
 			{
 				flags &= ~(1L<<15);
 				line = proto->line;
-				op = strcopy(op - 8, "__VA_START__");
+				op = strcopy(( op - 8),( "__VA_START__"));
 				do{(proto->ip=ip);(proto->op=op);proto->flags&=~((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->flags|=flags&((1L<<5)|(1L<<9)|(1L<<17)|(1L<<27)|(1L<<28));proto->call=call;}while(0);
 				for (;;)
 				{
@@ -4170,7 +4104,7 @@ if !defined(va_start)\n\
 					v = "ap";
 					n = 2;
 				}
-				op = strcopy(op, " __OTORP__(");
+				op = strcopy(( op),( " __OTORP__("));
 				proto->ip = proto->variadic;
 				proto->op = op;
 				flags &= ~(1L<<15);
@@ -4193,15 +4127,15 @@ if !defined(va_start)\n\
 								if (!(flags & (1L<<28)))
 								{
 									op = memcopy(op, m, e - m);
-									op = strcopy(op, " = ");
+									op = strcopy(( op),( " = "));
 								}
-								op = strcopy(op, "va_arg(");
+								op = strcopy(( op),( "va_arg("));
 								op = memcopy(op, v, n);
 								(*op++=( ','));
 								(*op++=( ' '));
 								if (m > bp) op = memcopy(op, bp, m - bp);
-								else op = strcopy(op, "int ");
-								if (group > 1) op = strcopy(op, ")()");
+								else op = strcopy(( op),( "int "));
+								if (group > 1) op = strcopy(( op),( ")()"));
 								else op = memcopy(op, e, proto->ip - e - 1);
 								(*op++=( ')'));
 								(*op++=( ';'));
@@ -4219,15 +4153,15 @@ if !defined(va_start)\n\
 								if (!(flags & (1L<<28)))
 								{
 									op = memcopy(op, m, e - m);
-									op = strcopy(op, " = ");
+									op = strcopy(( op),( " = "));
 								}
-								op = strcopy(op, "va_arg(");
+								op = strcopy(( op),( "va_arg("));
 								op = memcopy(op, v, n);
 								(*op++=( ','));
 								(*op++=( ' '));
 								if (m > bp) op = memcopy(op, bp, m - bp);
-								else op = strcopy(op, "int ");
-								if (group > 1) op = strcopy(op, ")()");
+								else op = strcopy(( op),( "int "));
+								if (group > 1) op = strcopy(( op),( ")()"));
 								else op = memcopy(op, e, proto->ip - e - 1);
 								(*op++=( ')'));
 								(*op++=( ';'));
@@ -4251,7 +4185,7 @@ if !defined(va_start)\n\
 					}
 					break;
 				}
-				op = strcopy(op, ")");
+				op = strcopy(( op),( ")"));
 				flags |= (1L<<28);
 				proto->line = line;
 				call = 0;
@@ -4328,7 +4262,7 @@ if !defined(va_start)\n\
 					while ((c = *--m) >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
 						*--t = c;
 					c = *t;
-					strcopy(m + 1, "(unsigned)");
+					strcopy(( m + 1),( "(unsigned)"));
 					*t = c;
 					break;
 				}
@@ -4418,7 +4352,7 @@ pppclose __PARAM__((char* iob), (iob)) __OTORP__(char* iob;){
 }
 
  
-#line 2055
+#line 2133
 char*
 pppopen __PARAM__((char* file, int fd, char* notice, char* options, char* package, char* comment, int flags), (file, fd, notice, options, package, comment, flags)) __OTORP__(char* file; int fd; char* notice; char* options; char* package; char* comment; int flags;){
 	register Proto_t*	proto;
@@ -4517,7 +4451,7 @@ pppopen __PARAM__((char* file, int fd, char* notice, char* options, char* packag
 	*(proto->ip + n) = 0;
 
  
-#line 2165
+#line 2243
 	if (!notice && !options || (comlen = astlicense(com, sizeof(com), ((char*)0), "type=check", proto->cc[0], proto->cc[1], proto->cc[2])) <= 0)
 		*com = 0;
 
@@ -4698,9 +4632,9 @@ pppopen __PARAM__((char* file, int fd, char* notice, char* options, char* packag
 			if (flags & (1<<0))
 			{
 				*proto->op++ = '#';
-				proto->op = strcopy(proto->op, "pragma");
+				proto->op = strcopy(( proto->op),( "pragma"));
 				*proto->op++ = ' ';
-				proto->op = strcopy(proto->op, pragmas[0].name);
+				proto->op = strcopy(( proto->op),( pragmas[0].name));
 				*proto->op++ = '\n';
 			}
 			else
@@ -4712,15 +4646,15 @@ pppopen __PARAM__((char* file, int fd, char* notice, char* options, char* packag
 		{
 			if (proto->flags & (1L<<29))
 			{
-				proto->op = strcopy(proto->op, "\n%{\n"+ !notice);
-				proto->op = strcopy(proto->op, "/* : : generated by proto : : */\n");
-				proto->op = strcopy(proto->op, "%}\n");
+				proto->op = strcopy(( proto->op),( "\n%{\n"+ !notice));
+				proto->op = strcopy(( proto->op),( "/* : : generated by proto : : */\n"));
+				proto->op = strcopy(( proto->op),( "%}\n"));
 			}
 			else
 			{
 				if (n || notice || options)
 					*proto->op++ = '\n';
-				proto->op = strcopy(proto->op, "/* : : generated by proto : : */\n");
+				proto->op = strcopy(( proto->op),( "/* : : generated by proto : : */\n"));
 				if (n)
 					proto->op = linesync(proto, proto->op, proto->line);
 				else if (proto->flags & ((1L<<10)|(1L<<11)))
@@ -4828,7 +4762,7 @@ pppread __PARAM__((char* iob), (iob)) __OTORP__(char* iob;){
 
 			lex(proto, proto->flags);
 			if ((proto->flags & ((1L<<4)|(1L<<16))) == (1L<<4))
-				proto->op = strcopy(proto->op, "/* NOTE: some constructs may not have been converted */\n");
+				proto->op = strcopy(( proto->op),( "/* NOTE: some constructs may not have been converted */\n"));
 		}
 		n = proto->op - proto->ob;
 		proto->op = proto->ob;

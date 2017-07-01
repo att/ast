@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #ifndef _SFIO_H
@@ -184,6 +184,7 @@ struct _sffmt_s
 #define SF_NEW		0	/* new stream				*/
 #define SF_SETFD	(-1)	/* about to set the file descriptor 	*/
 #define SF_MTACCESS	(-2)	/* starting a multi-threaded stream	*/
+#define SF_TMPFILE	(-3)	/* sftmp() switching from buf to file	*/
 
 #define SF_BUFSIZE	8192	/* default buffer size			*/
 #define SF_UNBOUND	(-1)	/* unbounded buffer size		*/
@@ -229,6 +230,7 @@ extern Sfio_t		_Sfstderr;
 
 extern Sfio_t*		sfnew _ARG_((Sfio_t*, Void_t*, size_t, int, int));
 extern Sfio_t*		sfopen _ARG_((Sfio_t*, const char*, const char*));
+extern Sfio_t*		sfopenat _ARG_((int, Sfio_t*, const char*, const char*));
 extern Sfio_t*		sfpopen _ARG_((Sfio_t*, const char*, const char*));
 extern Sfio_t*		sfstack _ARG_((Sfio_t*, Sfio_t*));
 extern Sfio_t*		sfswap _ARG_((Sfio_t*, Sfio_t*));
@@ -268,6 +270,8 @@ extern int		sfscanf _ARG_((Sfio_t*, const char*, ...));
 extern int		sfsscanf _ARG_((const char*, const char*, ...));
 extern int		sfvsscanf _ARG_((const char*, const char*, va_list));
 extern int		sfvscanf _ARG_((Sfio_t*, const char*, va_list));
+extern int		sfgetwc _ARG_((Sfio_t*));
+extern int		sfputwc _ARG_((Sfio_t*, int w));
 
 /* mutex locking for thread-safety */
 extern int		sfmutex _ARG_((Sfio_t*, int));

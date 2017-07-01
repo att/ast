@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -31,9 +31,6 @@
 
 #include	"FEATURE/options"
 #include        "FEATURE/locale"
-#if !SHOPT_VSH && !SHOPT_ESH
-#   define ed_winsize()	(SEARCHSIZE)
-#else
 
 #if !KSHELL
 #   include	<setjmp.h>
@@ -59,7 +56,7 @@
 #endif /* SHOPT_MULTIBYTE */
 
 #define TABSIZE	8
-#define PRSIZE	160
+#define PRSIZE	256
 #define MAXLINE	1024		/* longest edit line permitted */
 
 typedef struct _edit_pos
@@ -83,13 +80,18 @@ typedef struct Histmatch
 
 typedef struct edit
 {
-	sigjmp_buf e_env;
+	struct termios	e_ttyparm;      /* initial tty parameters */
+	struct termios	e_nttyparm;     /* raw tty parameters */
+	int	e_raw;		/* set when in raw mode or alt mode */
 	int	e_intr;
 	int	e_kill;
 	int	e_erase;
 	int	e_werase;
 	int	e_eof;
 	int	e_lnext;
+	int	e_fd;		/* file descriptor */
+	int	e_ttyspeed;	/* line speed, also indicates tty parms are valid */
+	sigjmp_buf e_env;
 	int	e_fchar;
 	int	e_plen;		/* length of prompt string */
 	char	e_crlf;		/* zero if cannot return to beginning of line */
@@ -100,7 +102,6 @@ typedef struct edit
 	int	e_hloff;	/* line number offset for command */
 	int	e_hismin;	/* minimum history line number */
 	int	e_hismax;	/* maximum history line number */
-	int	e_raw;		/* set when in raw mode or alt mode */
 	int	e_cur;		/* current line position */
 	int	e_eol;		/* end-of-line position */
 	int	e_pcur;		/* current physical line position */
@@ -123,18 +124,11 @@ typedef struct edit
 	genchar	*e_Ubuf;	/* temporary workspace buffer */
 	genchar	*e_physbuf;	/* temporary workspace buffer */
 	int	e_lbuf[LOOKAHEAD];/* pointer to look-ahead buffer */
-	int	e_fd;		/* file descriptor */
-	int	e_ttyspeed;	/* line speed, also indicates tty parms are valid */
 	int	e_tabcount;
 #ifdef _hdr_utime
 	ino_t	e_tty_ino;
 	dev_t	e_tty_dev;
 	char	*e_tty;
-#endif
-#if SHOPT_OLDTERMIO
-	char	e_echoctl;
-	char	e_tcgeta;
-	struct termio e_ott;
 #endif
 #if SHOPT_MULTIBYTE
 	int	e_curchar;
@@ -149,8 +143,6 @@ typedef struct edit
 #else
 	char	e_prbuff[PRSIZE]; /* prompt buffer */
 #endif /* KSHELL */
-	struct termios	e_ttyparm;      /* initial tty parameters */
-	struct termios	e_nttyparm;     /* raw tty parameters */
 	struct termios e_savetty;	/* saved terminal state */
 	int	e_savefd;	/* file descriptor for saved terminal state */
 	char	e_macro[4];	/* macro buffer */
@@ -176,7 +168,29 @@ typedef struct edit
 	char		hpat[40];
 	char		*hstak;
 #endif /* SHOPT_EDPREDICT */
+#if SHOPT_COMPLETE
+	Dt_t		*compdict;
+#endif /*SHOPT_COMPLETE */
 } Edit_t;
+
+#if SHOPT_COMPLETE
+struct Complete
+{
+	Dtlink_t	link;
+	Shell_t		*sh;
+	char		*name;
+	char		*prefix;
+	char		*suffix;
+	char		*globpat;
+	char		*wordlist;
+	char		*command;
+	char		*filter;
+	char		*fname;
+	Namval_t	*fun;
+	long		action;
+	int		options;
+};
+#endif /*SHOPT_COMPLETE */
 
 #undef MAXWINDOW
 #define MAXWINDOW	300	/* maximum width window */
@@ -230,6 +244,9 @@ extern int	ed_read(void*, int, char*, int, int);
 extern int	ed_emacsread(void*, int, char*, int, int);
 extern Edpos_t	ed_curpos(Edit_t*, genchar*, int, int, Edpos_t);
 extern int	ed_setcursor(Edit_t*, genchar*, int, int, int);
+#if SHOPT_COMPLETE
+extern char	**ed_pcomplete(struct Complete*, const char*, const char*,int);
+#endif /*SHOPT_COMPLETE */
 #if KSHELL
 	extern int	ed_macro(Edit_t*,int);
 	extern int	ed_expand(Edit_t*, char[],int*,int*,int,int);
@@ -254,8 +271,6 @@ extern const char	e_runvi[];
    extern const char	e_version[];
 #endif /* KSHELL */
 
-#if SHOPT_HISTEXPAND
-
 /* flags */
 
 #define	HIST_EVENT	0x1	/* event designator seen */
@@ -279,8 +294,6 @@ extern const char	e_runvi[];
 
 #define	HIST_FLAG_RETURN_MASK	(HIST_EVENT|HIST_PRINT|HIST_ERROR)
 
-extern int hist_expand(const char *, char **);
-#endif
+extern int hist_expand(Shell_t *shp,const char *, char **);
 
-#endif
 #endif

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1986-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1986-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -134,7 +134,7 @@ ppmapinclude(char* file, register char* s)
 				error(1, "%s: input file name required for %s ignore", file, dirname(INCLUDE));
 				return;
 			}
-			s = t = strcopy(pp.tmpbuf, error_info.file);
+			s = t = stpcpy(pp.tmpbuf, error_info.file);
 			c = *++file;
 			for (;;)
 			{
@@ -282,14 +282,13 @@ context(Sfio_t* sp, int level, int flags)
 {
 	static int	state;
 
-	NoP(level);
 	NoP(flags);
 	if (error_info.trace <= -10 && pp.state != state)
 	{
 		state = pp.state;
 		sfprintf(sp, " %s", ppstatestr(pp.state));
 	}
-	return 1;
+	return level;
 }
 #endif
 
@@ -697,7 +696,7 @@ ppop(int op, ...)
 				 * out of malloc is fatal
 				 */
 
-				memfatal();
+				memfatal(NiL);
 
 				/*
 				 * initialize the error message interface
@@ -994,6 +993,16 @@ ppop(int op, ...)
 					t = *s == '_' ? "" : "__";
 					sfprintf(sp, "#%s %s%s%s #(%s)\n" , dirname(DEFINE), t, s, t, s);
 				}
+			sfprintf(sp,
+"\
+#%s _has_include #%s\n\
+#%s _has_include_next #%s\n\
+"
+				, dirname(DEFINE)
+				, keyname(X_EXISTS)
+				, dirname(DEFINE)
+				, keyname(X_EXISTS_NEXT)
+				);
 			sfprintf(sp,
 "\
 #%s %s:no%s\n\

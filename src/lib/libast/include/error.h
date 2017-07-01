@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -103,6 +103,11 @@
 #define errorpush(p,f)	(*(p)=*ERROR_CONTEXT_BASE,*ERROR_CONTEXT_BASE=error_info.empty,error_info.context=(Error_context_t*)(p),error_info.flags=(f))
 #define errorpop(p)	(*ERROR_CONTEXT_BASE=*(p))
 
+typedef void (*Error_exit_f)(int);
+typedef void (*Error_exit_handle_f)(void*, int);
+typedef ssize_t (*Error_write_f)(int, const void*, size_t);
+typedef ssize_t (*Error_write_handle_f)(void*, int, const void*, size_t);
+
 typedef struct Error_info_s Error_info_t;
 typedef struct Error_context_s Error_context_t;
 
@@ -124,8 +129,8 @@ struct Error_info_s			/* error state			*/
 {
 	int	fd;			/* write(2) fd			*/
 
-	void	(*exit)(int);		/* error exit			*/
-	ssize_t	(*write)(int, const void*, size_t); /* error output	*/
+	Error_exit_f	exit;		/* error exit			*/
+	Error_write_f	write;		/* error output	*/
 
 	/* the rest are implicitly initialized				*/
 
@@ -151,6 +156,7 @@ struct Error_info_s			/* error state			*/
 	char*	(*translate)(const char*, const char*, const char*, const char*);	/* format translator */
 
 	const char*	catalog;	/* message catalog		*/
+	void*		handle;		/* user defined => Error_*_handle_f */
 };
 
 #ifndef errno
@@ -176,11 +182,8 @@ extern Error_info_t*	_error_infop_;
 
 extern void		error(int, ...);
 extern int		errormsg(const char*, int, ...);
-extern int		errorf(void*, void*, int, ...);
 extern void		errorv(const char*, int, va_list);
-#ifndef errorx
 extern char*		errorx(const char*, const char*, const char*, const char*);
-#endif
 extern Error_info_t*	errorctx(Error_info_t*, int, int);
 
 #undef	extern

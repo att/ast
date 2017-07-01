@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -25,7 +25,7 @@
  * coded for portability
  */
 
-static char id[] = "\n@(#)$Id: mamake (AT&T Research) 2011-08-31 $\0\n";
+static char id[] = "\n@(#)$Id: mamake (AT&T Research) 2013-07-24 $\0\n";
 
 #if _PACKAGE_ast
 
@@ -33,7 +33,7 @@ static char id[] = "\n@(#)$Id: mamake (AT&T Research) 2011-08-31 $\0\n";
 #include <error.h>
 
 static const char usage[] =
-"[-?\n@(#)$Id: mamake (AT&T Research) 2011-08-31 $\n]"
+"[-?\n@(#)$Id: mamake (AT&T Research) 2013-04-29 $\n]"
 USAGE_LICENSE
 "[+NAME?mamake - make abstract machine make]"
 "[+DESCRIPTION?\bmamake\b reads \amake abstract machine\a target and"
@@ -1018,7 +1018,7 @@ find(Buf_t* buf, char* file, struct stat* st)
  */
 
 static unsigned long
-bind(Rule_t* r)
+bindfile(Rule_t* r)
 {
 	char*		s;
 	Buf_t*		buf;
@@ -1562,7 +1562,7 @@ make(Rule_t* r)
 		state.active++;
 	if (*r->name)
 	{
-		z = bind(r);
+		z = bindfile(r);
 		state.indent++;
 		report(-1, r->name, "make", r->time);
 	}
@@ -1601,7 +1601,7 @@ make(Rule_t* r)
 					{
 						q = rule(expand(buf, t));
 						attributes(q, v);
-						x = bind(q);
+						x = bindfile(q);
 						if (z < x)
 							z = x;
 						if (q->flags & RULE_error)
@@ -1614,7 +1614,7 @@ make(Rule_t* r)
 			continue;
 		case KEY('d','o','n','e'):
 			q = rule(expand(buf, t));
-			if (q != r)
+			if (q != r && t[0] != '$')
 				report(2, "improper done statement", t, (unsigned long)0);
 			attributes(r, v);
 			if (cmd && state.active && (state.force || r->time < z || !r->time && !z))

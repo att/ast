@@ -3,7 +3,7 @@
 # Glenn Fowler
 # AT&T Research
 #
-# @(#)C probe (AT&T Research) 2012-02-29
+# @(#)C probe (AT&T Research) 2013-05-21
 #
 # probe [ -d ] c-compiler-path [ attributes ]
 #
@@ -438,36 +438,72 @@ done
 echo "" > flags.$src
 echo '#pragma pp:version' > libpp.$src
 
-if	test `realcppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppenv='realcppC=${ppcmd}'
-elif	test `cppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppenv='cppC=${ppcmd}'
-elif	test `_CPPNAME=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppenv='_CPPNAME=${ppcmd}'
-elif	test `_CPP=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppenv='_CPP=${ppcmd}'
-elif	test `$cc -Dprobe -E -%p+. flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1 && test `$cc -Dprobe -E -%p+. flags.$src | wc -l` -eq 1
-then	ppopt='-%p+${ppdir}'
-elif	test `$cc -Dprobe -E -Yp,. flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppopt='-Yp,${ppdir}'
-elif	test `$cc -Dprobe -E -Qpath $tmpdir flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppopt='-Qpath ${ppdir}'
-elif	test `$cc -Dprobe -E -tp -B./ flags.$src 2>err.out | tee cpp.out | grep -c '[-]Dprobe'` -eq 1 -a ! -s err.out
-then	ppopt='-tp -B${ppdir}/'
-elif	test `$cc -Dprobe -E -B./ flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppopt='-B${ppdir}/'
-elif	test `$cc -Dprobe -E -tp -h./ -B flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppopt='-tp -h${ppdir}/ -B'
-elif	test `$cc -Dprobe -E -t p,./cpp flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
-then	ppopt='-t p,${ppcmd}'
-else	{
-		eval set x $probe_verbose
-		shift
-		for o in "$@"
-		do	$cc -E $o flags.$src
-		done
-	} 2>&1 | sed -e "s/['\"]//g" > cpp.out
-fi
+# this works around a `...` hang in ksh-2013-05-20 -- to be solved another day #
+eval 'shell=$(echo modern)' >/dev/null 2>&1
+case $shell in
+modern)	if	test $(realcppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppenv='realcppC=${ppcmd}'
+	elif	test $(cppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppenv='cppC=${ppcmd}'
+	elif	test $(_CPPNAME=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppenv='_CPPNAME=${ppcmd}'
+	elif	test $(_CPP=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppenv='_CPP=${ppcmd}'
+	elif	test $($cc -Dprobe -E -%p+. flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1 && test `$cc -Dprobe -E -%p+. flags.$src | wc -l` -eq 1
+	then	ppopt='-%p+${ppdir}'
+	elif	test $($cc -Dprobe -E -Yp,. flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppopt='-Yp,${ppdir}'
+	elif	test $($cc -Dprobe -E -Qpath $tmpdir flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppopt='-Qpath ${ppdir}'
+	elif	test $($cc -Dprobe -E -tp -B./ flags.$src 2>err.out | tee cpp.out | grep -c '[-]Dprobe') -eq 1 -a ! -s err.out
+	then	ppopt='-tp -B${ppdir}/'
+	elif	test $($cc -Dprobe -E -B./ flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppopt='-B${ppdir}/'
+	elif	test $($cc -Dprobe -E -tp -h./ -B flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppopt='-tp -h${ppdir}/ -B'
+	elif	test $($cc -Dprobe -E -t p,./cpp flags.$src | tee cpp.out | grep -c '[-]Dprobe') -eq 1
+	then	ppopt='-t p,${ppcmd}'
+	else	{
+			eval set x $probe_verbose
+			shift
+			for o in "$@"
+			do	$cc -E $o flags.$src
+			done
+		} 2>&1 | sed -e "s/['\"]//g" > cpp.out
+	fi
+	;;
+*)	if	test `realcppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppenv='realcppC=${ppcmd}'
+	elif	test `cppC=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppenv='cppC=${ppcmd}'
+	elif	test `_CPPNAME=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppenv='_CPPNAME=${ppcmd}'
+	elif	test `_CPP=./cpp $cc -Dprobe -E flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppenv='_CPP=${ppcmd}'
+	elif	test `$cc -Dprobe -E -%p+. flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1 && test `$cc -Dprobe -E -%p+. flags.$src | wc -l` -eq 1
+	then	ppopt='-%p+${ppdir}'
+	elif	test `$cc -Dprobe -E -Yp,. flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppopt='-Yp,${ppdir}'
+	elif	test `$cc -Dprobe -E -Qpath $tmpdir flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppopt='-Qpath ${ppdir}'
+	elif	test `$cc -Dprobe -E -tp -B./ flags.$src 2>err.out | tee cpp.out | grep -c '[-]Dprobe'` -eq 1 -a ! -s err.out
+	then	ppopt='-tp -B${ppdir}/'
+	elif	test `$cc -Dprobe -E -B./ flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppopt='-B${ppdir}/'
+	elif	test `$cc -Dprobe -E -tp -h./ -B flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppopt='-tp -h${ppdir}/ -B'
+	elif	test `$cc -Dprobe -E -t p,./cpp flags.$src | tee cpp.out | grep -c '[-]Dprobe'` -eq 1
+	then	ppopt='-t p,${ppcmd}'
+	else	{
+			eval set x $probe_verbose
+			shift
+			for o in "$@"
+			do	$cc -E $o flags.$src
+			done
+		} 2>&1 | sed -e "s/['\"]//g" > cpp.out
+	fi
+	;;
+esac
 
 set x `sed -e 's,[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]:\\\\,/,g' -e 's,\\\\,/,g' cpp.out`
 def=
@@ -631,14 +667,19 @@ case $good in
 	for f in `cat include.out`
 	do	if	test -d "$f"
 		then	g=`echo $f | sed -e 's,[\\/][\\/]*[^\\/]*$,,'`
-			case " $stdinclude " in
-			*\ $f\ *|*\ $g\ *)
+			case /$g/ in
+			*/tmp/*|*/probe[0123456789]*)
 				;;
-			*)	stdinclude="$stdinclude $f"
-				case $f in
-				/usr/include)	usrinclude=$f ;;
+			*)	case " $stdinclude " in
+				*\ $f\ *|*\ $g\ *)
+					;;
+				*)	stdinclude="$stdinclude $f"
+					case $f in
+					/usr/include)	usrinclude=$f ;;
+					esac
+					bad=1
+					;;
 				esac
-				bad=1
 				;;
 			esac
 		fi

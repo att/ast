@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"sfhdr.h"
@@ -138,7 +138,7 @@ int		n;	/* current position in pool	*/
 			else	/* write failed, recover buffer then quit */
 			{	if(w > 0)
 				{	v -= w;
-					memcpy(head->data,(head->data+w),v);
+					memmove(head->data,(head->data+w),v);
 				}
 				head->next = head->data+v;
 				goto done;
@@ -147,7 +147,7 @@ int		n;	/* current position in pool	*/
 
 		/* move data from head to f */
 		if((head->data+k) != f->data )
-			memcpy(f->data,(head->data+k),v);
+			memmove(f->data,(head->data+k),v);
 		f->next = f->data+v;
 	}
 

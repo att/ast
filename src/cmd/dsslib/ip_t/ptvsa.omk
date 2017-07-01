@@ -7,9 +7,9 @@ ptvsa : astsa testptv
 include astsa.omk
 
 CC = cc
-CFLAGS = $(PVTSA_CFLAGS)
+CFLAGS = $(PTVSA_CFLAGS)
 
-PTVSA_CFLAGS = $(ASTSA_CFLAGS) -DIV64=0 -DUSAGE_LICENSE='"[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <kpv@research.att.com>][-copyright?Copyright (c) 2000-'`date +%Y`' AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssip_t]"'
+PTVSA_CFLAGS = $(ASTSA_CFLAGS) -DIV64=0 -DUSAGE_LICENSE='"[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 2000-'`date +%Y`' AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?dssip_t]"'
 
 testptv : testptv.o libptvsa.a libastsa.a
 	$(CC) $(CFLAGS) -o testptv $?
@@ -27,7 +27,7 @@ test : testptv
 	testptv ptv-prefix.dat ptv-addr.dat > testptv.tmp
 	@cmp -s testptv.out testptv.tmp || { echo 'test FAILED -- >: expected <: got'; diff  testptv.tmp testptv.out; }
 
-clobber : ptv_clobber
+clean : ptv_clean
 
-ptv_clobber :
-	rm -f testptv
+ptv_clean :
+	rm -f testptv testptv.tmp

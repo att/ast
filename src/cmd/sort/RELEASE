@@ -1,3 +1,7 @@
+13-09-19 main.c: convert to mb*(Mbstate_t) api
+13-05-17 sfopen.c: disable SFOPEN_INTERCEPT experiment -- better handled by plugins
+13-02-14 main.c: change "-o file" to not use sfstdout unless /dev/stdout (for user discipline functions)
+13-02-13 main.c: add { RS_MORE RS_LAST } logic for rsprocess()
 10-08-11 main.c: use conformance(0,0) for "standard"
 10-05-25 main.c: handle mb -t
 10-05-11 main.c: add -p,--plugins=style -- common to all command swith plugins

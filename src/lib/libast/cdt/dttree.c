@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #include	"dthdr.h"
@@ -26,7 +26,7 @@
 **	obj:	the object to look for.
 **	type:	search type.
 **
-**      Written by Kiem-Phong Vo (5/25/96)
+**      Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
 typedef struct _dttree_s
@@ -34,7 +34,7 @@ typedef struct _dttree_s
 	Dtlink_t*	root;	/* tree root */
 } Dttree_t;
 
-#ifdef CDT_DEBUG
+#ifdef _BLD_DEBUG
 int dttreeprint(Dt_t* dt, Dtlink_t* here, int lev, char* (*objprintf)(Void_t*) )
 {
 	int		k, rv;
@@ -87,8 +87,8 @@ int dttreeprint(Dt_t* dt, Dtlink_t* here, int lev, char* (*objprintf)(Void_t*) )
 Void_t* tfirstlast(Dt_t* dt, int type)
 #else
 Void_t* tfirstlast(dt, type)
-Dt_t*	dt;
-int	type;
+Dt_t*		dt;
+int		type;
 #endif
 {
 	Dtlink_t	*t, *root;
@@ -402,6 +402,7 @@ int		type;
 	int		cmp;
 	Void_t		*o, *k, *key;
 	Dtlink_t	*root, *t, *l, *r, *me, link;
+	Dtlink_t	**fngr = NIL(Dtlink_t**);
 	Dtdisc_t	*disc = dt->disc;
 	Dttree_t	*tree = (Dttree_t*)dt->data;
 
@@ -420,6 +421,33 @@ int		type;
 	else if(type&DT_STAT)
 	{	toptimize(dt); /* balance tree to avoid deep recursion */
 		DTRETURN(obj, tstat(dt, (Dtstat_t*)obj));
+	}
+	else if(type&DT_START)
+	{	if(!(fngr = (Dtlink_t**)(*dt->memoryf)(dt, NIL(Void_t*), sizeof(Dtlink_t*), disc)) )
+			DTRETURN(obj, NIL(Void_t*));
+		if(!obj)
+		{	if(!(obj = tfirstlast(dt, DT_FIRST)) )
+			{	(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
+				DTRETURN(obj, NIL(Void_t*));
+			}
+			else
+			{	*fngr = tree->root;
+				DTRETURN(obj, (Void_t*)fngr);
+			}
+		}
+		/* else: fall through to search for obj */
+	}
+	else if(type&DT_STEP)
+	{	if(!(fngr = (Dtlink_t**)obj) || !(l = *fngr) )
+			DTRETURN(obj, NIL(Void_t*));
+		obj = _DTOBJ(disc,l);
+		*fngr = NIL(Dtlink_t*);
+		/* fall through to search for obj */
+	}
+	else if(type&DT_STOP)
+	{	if(obj) /* free allocated memory for finger */
+			(void)(*dt->memoryf)(dt, obj, 0, disc);
+		DTRETURN(obj, NIL(Void_t*));
 	}
 
 	if(!obj) /* from here on, an object prototype is required */
@@ -512,14 +540,23 @@ int		type;
 				root = troot(dt, root, &link, obj, type);
 		}
 
-		if(type&(DT_SEARCH|DT_MATCH|DT_ATMOST|DT_ATLEAST))
+		if(type&(DT_START|DT_SEARCH|DT_MATCH|DT_ATMOST|DT_ATLEAST))
 		{ has_root: /* reconstitute the tree */
 			root->_left = link._rght;
 			root->_rght = link._left;
 			tree->root = root;
-			DTRETURN(obj, _DTOBJ(disc,root));
+
+			if(type&DT_START) /* walk is now well-defined */
+			{	*fngr = root;
+				DTRETURN(obj, (Void_t*)fngr);
+			}
+			else if(type&DT_STEP) /* return obj and set fngr to next */
+			{	*fngr = root;
+				DTRETURN(obj, obj);
+			}
+			else	DTRETURN(obj, _DTOBJ(disc,root));
 		}
-		else if(type&DT_NEXT)
+		else if(type&(DT_NEXT|DT_STEP))
 		{	root->_left = link._rght;
 			root->_rght = NIL(Dtlink_t*);
 			link._rght = root;
@@ -545,7 +582,14 @@ int		type;
 			}
 			else	goto no_root;
 		}
-		else if(type&DT_REMOVE) /* remove a particular element in the tree */
+		else if(type&(DT_DELETE|DT_DETACH))
+		{ dt_delete: /* remove an object from the dictionary */
+			obj = _DTOBJ(disc,root);
+			_dtfree(dt, root, type);
+			dt->data->size -= 1;
+			goto no_root;
+		}
+		else if(type&DT_REMOVE) /* remove a particular object */
 		{	if(_DTOBJ(disc,root) == obj)
 				goto dt_delete;
 			else
@@ -555,28 +599,32 @@ int		type;
 				DTRETURN(obj, NIL(Void_t*));
 			}
 		}
-		else if(type&(DT_DELETE|DT_DETACH))
-		{ dt_delete: /* remove an object from the dictionary */
-			obj = _DTOBJ(disc,root);
-			_dtfree(dt, root, type);
-			dt->data->size -= 1;
-			goto no_root;
-		}
 		else if(type&(DT_INSERT|DT_APPEND|DT_ATTACH))
 		{	if(dt->meth->type&DT_OSET)
-			{	type |= DT_SEARCH; /* for announcement */
+			{	type |= DT_MATCH; /* for announcement */
 				goto has_root;
 			}
-			else
+			else /* if(dt->meth->type&DT_OBAG) */
 			{	root->_left = NIL(Dtlink_t*);
 				root->_rght = link._left;
 				link._left = root;
 				goto dt_insert;
 			}
 		}
+		else if(type&DT_INSTALL)
+		{	/* remove old object before insert new one */
+			o = _DTOBJ(disc, root);
+			_dtfree(dt, root, DT_DELETE);
+			DTANNOUNCE(dt, o, DT_DELETE);
+			goto dt_insert;
+		}
 		else if(type&DT_RELINK) /* a duplicate */
 		{	if(dt->meth->type&DT_OSET)
+			{	/* remove object */
+				o = _DTOBJ(disc, me);
 				_dtfree(dt, me, DT_DELETE);
+				DTANNOUNCE(dt, o, DT_DELETE);
+			}
 			else
 			{	me->_left = NIL(Dtlink_t*);
 				me->_rght = link._left;
@@ -586,7 +634,7 @@ int		type;
 		}
 	}
 	else /* no matching object, tree has been split to LEFT&RIGHT subtrees */
-	{	if(type&(DT_SEARCH|DT_MATCH))
+	{	if(type&(DT_START|DT_SEARCH|DT_MATCH))
 		{ no_root: 
 			if(!(l = link._rght) ) /* no LEFT subtree */
 				tree->root = link._left; /* tree is RIGHT tree */
@@ -600,9 +648,13 @@ int		type;
 				tree->root = l; /* LEFT tree is now the entire tree */
 			}
 
-			if(type&(DT_DELETE|DT_DETACH|DT_REMOVE))
+			if(type&(DT_DELETE|DT_DETACH|DT_REMOVE|DT_STEP))
 				DTRETURN(obj, obj);
-			else	DTRETURN(obj, NIL(Void_t*));
+			else
+			{	if(type&DT_START) /* cannot start a walk from nowhere */
+					(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
+				DTRETURN(obj, NIL(Void_t*));
+			}
 		}
 		else if(type&(DT_NEXT|DT_ATLEAST) )
 			goto dt_next;
@@ -612,7 +664,7 @@ int		type;
 		{	obj = NIL(Void_t*);
 			goto no_root;
 		}
-		else if(type&(DT_INSERT|DT_APPEND|DT_ATTACH))
+		else if(type&(DT_INSERT|DT_APPEND|DT_ATTACH|DT_INSTALL))
 		{ dt_insert:
 			if(!(root = _dtmake(dt, obj, type)) )
 			{	obj = NIL(Void_t*);
@@ -667,27 +719,11 @@ static int treeevent(Dt_t* dt, int event, Void_t* arg)
 	else	return 0;
 }
 
-#if _UWIN
-
-Void_t* dtfinger(Dt_t* dt)
-{
-	return (dt && dt->meth && (dt->meth->type & DT_ORDERED)) ? (Void_t*)((Dttree_t*)dt->data)->root : NIL(Void_t*);
-}
-
-#endif
-
 /* make this method available */
 static Dtmethod_t	_Dtoset =  { dttree, DT_OSET, treeevent, "Dtoset" };
 static Dtmethod_t	_Dtobag =  { dttree, DT_OBAG, treeevent, "Dtobag" };
 __DEFINE__(Dtmethod_t*,Dtoset,&_Dtoset);
 __DEFINE__(Dtmethod_t*,Dtobag,&_Dtobag);
-
-/* backwards compatibility */
-#undef	Dttree
-#if defined(__EXPORT__)
-__EXPORT__
-#endif
-__DEFINE__(Dtmethod_t*,Dttree,&_Dtoset);
 
 #ifdef NoF
 NoF(dttree)

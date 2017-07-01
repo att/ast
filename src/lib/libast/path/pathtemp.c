@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -28,7 +28,7 @@
  *	[<dir>/][<pfx>]<bas>.<suf>
  *
  * length(<pfx>)<=5
- * length(<bas>)==3
+ * length(<bas>)==chars-to-make-BASE-length-name
  * length(<suf>)==3
  *
  *	pathtmp(a,b,c,d)	pathtemp(a,L_tmpnam,b,c,0)
@@ -44,6 +44,7 @@
  * if buf==0 then space is malloc'd
  * buf size is size
  * dir and pfx may be 0
+ * / as pfx trailing char creates a directory instead of a file
  * if pfx contains trailing X's then it is a mktemp(3) template
  * otherwise only first 5 chars of pfx are used
  * if fdp!=0 then the path is opened O_EXCL and *fdp is the open fd
@@ -60,6 +61,7 @@
  *		automatic	(default) cycled with each tmp file
  *		manual		cycled by application with dir=(nil)
  *		(nil)		cycle TMPPATH
+ *	/check		dir==0 disables access() check when fdp==0
  *	/prefix		dir specifies the default prefix (default ast)
  *	/private	private file/dir modes
  *	/public		public file/dir modes
@@ -73,8 +75,12 @@
 #include <ls.h>
 #include <tv.h>
 #include <tm.h>
+#include <error.h>
 
-#define ATTEMPT		10
+#define ATTEMPT		16
+
+#define BASE		14
+#define SUFF		3
 
 #define TMP_ENV		"TMPDIR"
 #define TMP_PATH_ENV	"TMPPATH"
@@ -83,15 +89,16 @@
 
 #define VALID(d)	(*(d)&&!eaccess(d,W_OK|X_OK))
 
-static struct
+static struct Tmp_s
 {
 	mode_t		mode;
 	char**		vec;
 	char**		dir;
-	uint32_t	key;
-	uint32_t	rng;
+	uintmax_t	key;
+	uintmax_t	rng;
 	pid_t		pid;
 	int		manual;
+	int		nocheck;
 	int		seed;
 	char*		pfx;
 	char*		tmpdir;
@@ -105,20 +112,28 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 	register char*		b;
 	register char*		s;
 	register char*		x;
-	uint32_t		key;
+	uintmax_t		key;
 	int			m;
 	int			n;
 	int			l;
 	int			r;
 	int			z;
 	int			attempt;
+	int			directory;
 	Tv_t			tv;
 	char			keybuf[16];
 
-	if (pfx && *pfx == '/')
+	if (pfx && pfx[0] == '/' && pfx[1])
 	{
 		pfx++;
-		if (streq(pfx, "cycle"))
+		if (dir && !*dir)
+			dir = 0;
+		if (streq(pfx, "check"))
+		{
+			tmp.nocheck = !dir;
+			return (char*)pfx;
+		}
+		else if (streq(pfx, "cycle"))
 		{
 			if (!dir)
 			{
@@ -149,7 +164,7 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 		}
 		else if (streq(pfx, "seed"))
 		{
-			tmp.key = (tmp.seed = (tmp.rng = dir ? (uint32_t)strtoul(dir, NiL, 0) : (uint32_t)1) != 0)? (uint32_t)0x63c63cd9L : 0;
+			tmp.key = (tmp.seed = (tmp.rng = dir ? (uintmax_t)strtoul(dir, NiL, 0) : (uintmax_t)1) != 0)? (uintmax_t)0x63c63cd9L : 0;
 			return (char*)pfx;
 		}
 		else if (streq(pfx, TMP_ENV))
@@ -239,6 +254,8 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 	if (!pfx && !(pfx = tmp.pfx))
 		pfx = "ast";
 	m = strlen(pfx);
+	if (directory = pfx[m - 1] == '/')
+		m--;
 	if (buf && dir && (buf == (char*)dir && (buf + strlen(buf) + 1) == (char*)pfx || buf == (char*)pfx && !*dir) && !strcmp((char*)pfx + m + 1, "XXXXX"))
 	{
 		d = (char*)dir;
@@ -254,18 +271,20 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 		l = r / 2;
 		r -= l;
 	}
-	else if (strchr(pfx, '.'))
+	else if ((x = strchr(pfx, '.')) && (x - pfx) < 5)
 	{
-		m = 5;
-		l = 3;
-		r = 3;
+		if (m > 5)
+			m = 5;
+		l = BASE - SUFF - m;
+		r = SUFF;
 	}
 	else
 	{
+		if (m > 5)
+			m = 5;
+		l = BASE - SUFF - m - 1;
+		r = SUFF;
 		z = '.';
-		m = 5;
-		l = 2;
-		r = 3;
 	}
 	x = b + len;
 	s = b;
@@ -297,9 +316,9 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 			 */
 
 			tmp.pid = getpid();
-			tmp.rng = (uint32_t)tmp.pid * ((uint32_t)time(NiL) ^ (((uint32_t)integralof(&attempt)) >> 3) ^ (((uint32_t)integralof(tmp.dir)) >> 3));
+			tmp.rng = (uintmax_t)tmp.pid * ((uintmax_t)time(NiL) ^ (((uintmax_t)integralof(&attempt)) >> 3) ^ (((uintmax_t)integralof(tmp.dir)) >> 3));
 			if (!tmp.key)
-				tmp.key = (tmp.rng >> 16) | ((tmp.rng & 0xffff) << 16);
+				tmp.key = (tmp.rng >> (sizeof(tmp.rng) * 4)) | ((tmp.rng & 0xffff) << (sizeof(tmp.rng) * 4));
 			tmp.rng ^= tmp.key;
 
 			/*
@@ -318,19 +337,48 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 		if (!tmp.seed)
 			tvgettime(&tv);
 		tmp.key = tmp.rng * key + tv.tv_nsec;
-		sfsprintf(keybuf, sizeof(keybuf), "%07.7.32I*u%07.7.32I*u", sizeof(key), key, sizeof(tmp.key), tmp.key);
+		sfsprintf(keybuf, sizeof(keybuf), "%07.7.62I*u%07.7.62I*u", sizeof(key), key, sizeof(tmp.key), tmp.key);
 		sfsprintf(s, len, "%-.*s%s%-.*s", l, keybuf, z ? "." : "", r, keybuf + sizeof(keybuf) / 2);
 		if (fdp)
 		{
-			if ((n = open(b, O_CREAT|O_RDWR|O_EXCL|O_TEMPORARY, tmp.mode)) >= 0)
+			if (directory)
+			{
+				if (!mkdir(b, tmp.mode|S_IXUSR))
+				{
+					if ((n = open(b, O_SEARCH)) >= 0)
+					{
+						*fdp = n;
+						return b;
+					}
+					rmdir(b);
+				}
+			}
+			else if ((n = open(b, O_CREAT|O_RDWR|O_EXCL|O_TEMPORARY, tmp.mode)) >= 0)
 			{
 				*fdp = n;
 				return b;
 			}
+			switch (errno)
+			{
+			case EACCES:
+				if (access(b, F_OK))
+					goto nope;
+				break;
+			case ENOTDIR:
+			case EROFS:
+				goto nope;
+			}
 		}
-		else if (access(b, F_OK))
+		else if (tmp.nocheck)
 			return b;
+		else if (access(b, F_OK))
+			switch (errno)
+			{
+			case ENOENT:
+				return b;
+			}
 	}
+ nope:
 	if (!buf)
 		free(b);
 	return 0;

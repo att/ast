@@ -6,6 +6,18 @@ the full-featured ast-* packages at
 
 	http://www.research.att.com/sw/download/
 
+If you already have non-standalone ast installed then you don't
+need any of the astsa apis.
+
+If you already have non-standalone versions of any of
+
+	aso cdt sfio vmalloc
+
+installed then run this with the api args you already have before
+running the first make:
+
+	./astsastd [ aso ] [ cdt ] [ sfio ] [ vmalloc ]
+
 astsa.omk is an old make makefile that builds the headers and objects
 and defines these variables for use in other makefiles
 

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1990-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1990-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -102,30 +102,79 @@ struct whod
 #define	CP_SYS		2
 #endif
 
+#include "FEATURE/utmp"
+
+#if _hdr_utmp
+#	include	<utmp.h>
+#endif
+
+#if _mem_ut_host_utmp && _mem_ut_type_utmp
+#	undef	_hdr_utmpx
+#endif
+
 #if _hdr_utmpx
-
-#include <utmpx.h>
-
-#define utmp		utmpx
-#define ut_name		ut_user
-
-#if	!defined(UTMP_FILE) && defined(UTMPX_FILE)
-#define UTMP_FILE	UTMPX_FILE
-#endif
-#if	!defined(UTMP_PATH) && defined(UTMPX_PATH)
-#define UTMP_PATH	UTMPX_PATH
-#endif
-#if	!defined(UTMP_PATHNAME) && defined(UTMPX_PATHNAME)
-#define UTMP_PATHNAME	UTMPX_PATHNAME
-#endif	
-#if	!defined(_PATH_UTMP) && defined(_PATH_UTMPX)
-#define _PATH_UTMP	_PATH_UTMPX
-#endif     
-
+#	include	<utmpx.h>
+#	undef	utmp
+#	define	utmp	utmpx
+#	undef	_mem_ut_host_utmp
+#	undef	_mem_ut_type_utmp
+#	if _mem_ut_tv_utmpx
+#		undef	ut_time
+#		define	ut_time	ut_tv.tv_sec
+#	endif
+#	if _mem_ut_user_utmpx && !defined(ut_name) && !defined(ut_user)
+#		define ut_name ut_user
+#	endif
+#	ifdef UTMPX_FILE
+#		define UTMP	UTMPX_FILE
+#	else
+#		if _hdr_paths
+#			include <paths.h>
+#		endif
+#		ifdef _PATH_UTMPX
+#			define UTMP	_PATH_UTMPX
+#		else
+#			ifdef UTMP_FILE
+#				define UTMP	UTMP_FILE
+#			else
+#				ifdef _PATH_UTMP
+#					define UTMP	_PATH_UTMP
+#				else
+#					ifdef UTMPX_PATHNAME
+#						define UTMP	UTMPX_PATHNAME
+#					else
+#						define UTMP	"/etc/utmpx"
+#					endif
+#				endif
+#			endif
+#		endif
+#	endif
 #else
-
-#include <utmp.h>
-
+#	undef	_mem_ut_host_utmpx
+#	undef	_mem_ut_type_utmpx
+#	if _mem_ut_tv_utmp
+#		undef	ut_time
+#		define	ut_time	ut_tv.tv_sec
+#	endif
+#	if ! _mem_ut_user_utmp && !defined(ut_name) && !defined(ut_user)
+#		define ut_user ut_name
+#	endif
+#	ifdef UTMP_FILE
+#		define UTMP	UTMP_FILE
+#	else
+#		if _hdr_paths
+#			include <paths.h>
+#		endif
+#		ifdef _PATH_UTMP
+#			define UTMP	_PATH_UTMP
+#		else
+#			ifdef UTMP_PATHNAME
+#				define UTMP	UTMP_PATHNAME
+#			else
+#				define UTMP	"/etc/utmp"
+#			endif
+#		endif
+#	endif
 #endif
 
 static char*		usrfiles[] =
@@ -141,9 +190,6 @@ static char*		usrfiles[] =
 #endif
 #ifdef	UTMP_PATHNAME
 	UTMP_PATHNAME,
-#endif
-#ifdef	_PATH_UTMP
-	_PATH_UTMP,
 #endif
 #if _hdr_utmpx
 	"/etc/utmpx",

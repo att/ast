@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*                     Phong Vo <phongvo@gmail.com>                     *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #include	"rshdr.h"

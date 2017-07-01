@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGEROOT ../../../../..
 setv AR ${mam_cc_AR} ${mam_cc_AR_ARFLAGS}
@@ -32,8 +32,8 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make install
 make hurl
 make hurl.sh
@@ -53,7 +53,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp hurl.sh hurl
 exec - ;;
 exec - *) {
@@ -62,7 +62,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - hurl.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > hurl
 exec - ;;
@@ -70,7 +70,7 @@ exec - esac
 exec - ;;
 exec - *) cat - hurl.sh > hurl <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2003-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -94,7 +94,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 225 in
+exec - "") case 226 in
 exec - 0) cp iffe.sh iffe
 exec - ;;
 exec - *) {
@@ -103,7 +103,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - iffe.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <kpv@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > iffe
 exec - ;;
@@ -111,7 +111,7 @@ exec - esac
 exec - ;;
 exec - *) cat - iffe.sh > iffe <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-author?Phong Vo <kpv@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?Phong Vo <phongvo@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -135,7 +135,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp mktest.sh mktest
 exec - ;;
 exec - *) {
@@ -144,7 +144,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - mktest.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2005-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2005-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > mktest
 exec - ;;
@@ -152,7 +152,7 @@ exec - esac
 exec - ;;
 exec - *) cat - mktest.sh > mktest <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2005-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2005-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -175,7 +175,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp package.sh package
 exec - ;;
 exec - *) {
@@ -184,7 +184,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - package.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > package
 exec - ;;
@@ -192,7 +192,7 @@ exec - esac
 exec - ;;
 exec - *) cat - package.sh > package <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -216,7 +216,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp regress.sh regress
 exec - ;;
 exec - *) {
@@ -225,7 +225,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - regress.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > regress
 exec - ;;
@@ -233,7 +233,7 @@ exec - esac
 exec - ;;
 exec - *) cat - regress.sh > regress <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1995-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1995-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -257,7 +257,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp rt.sh rt
 exec - ;;
 exec - *) {
@@ -266,7 +266,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - rt.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2005-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2005-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > rt
 exec - ;;
@@ -274,7 +274,7 @@ exec - esac
 exec - ;;
 exec - *) cat - rt.sh > rt <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2005-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2005-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -297,7 +297,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp crossexec.sh crossexec
 exec - ;;
 exec - *) {
@@ -306,7 +306,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - crossexec.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > crossexec
 exec - ;;
@@ -314,7 +314,7 @@ exec - esac
 exec - ;;
 exec - *) cat - crossexec.sh > crossexec <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -338,7 +338,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 232 in
+exec - "") case 236 in
 exec - 0) cp ditto.sh ditto
 exec - ;;
 exec - *) {
@@ -347,7 +347,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - ditto.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-author?Lefty Koutsofios <ek@research.att.com>][-copyright?Copyright (c) 2001-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?Lefty Koutsofios <ek@research.att.com>][-copyright?Copyright (c) 2001-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > ditto
 exec - ;;
@@ -355,7 +355,7 @@ exec - esac
 exec - ;;
 exec - *) cat - ditto.sh > ditto <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-author?Lefty Koutsofios <ek@research.att.com>][-copyright?Copyright (c) 2001-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?Lefty Koutsofios <ek@research.att.com>][-copyright?Copyright (c) 2001-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -379,7 +379,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp execrate.sh execrate
 exec - ;;
 exec - *) {
@@ -388,7 +388,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - execrate.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > execrate
 exec - ;;
@@ -396,7 +396,7 @@ exec - esac
 exec - ;;
 exec - *) cat - execrate.sh > execrate <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -419,7 +419,7 @@ exec - fi
 exec - ;;
 exec - esac
 exec - case '${mam_cc_SHELLMAGIC}' in
-exec - "") case 184 in
+exec - "") case 188 in
 exec - 0) cp filter.sh filter
 exec - ;;
 exec - *) {
@@ -428,7 +428,7 @@ exec - case $i in
 exec - '#!'*|*'||'*|':'*|'":"'*|"':'"*) echo "$i" ;;
 exec - esac
 exec - cat - filter.sh <<'!'
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - } > filter
 exec - ;;
@@ -436,7 +436,7 @@ exec - esac
 exec - ;;
 exec - *) cat - filter.sh > filter <<'!'
 exec - ${mam_cc_SHELLMAGIC}
-exec - USAGE_LICENSE="[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+exec - USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
 exec - !
 exec - ;;
 exec - esac
@@ -527,12 +527,20 @@ make mamake.o
 make mamake.c
 make shlib-compat.h implicit
 done shlib-compat.h dontcare virtual
+make bp-sym.h implicit
+done bp-sym.h dontcare virtual
+make pthread-functions.h implicit
+done pthread-functions.h dontcare virtual
+make tls.h implicit
+done tls.h dontcare virtual
+make lowlevellock.h implicit
+done lowlevellock.h dontcare virtual
 make ast.h implicit
 done ast.h dontcare virtual
 done mamake.c
 meta mamake.o %.c>%.o mamake.c mamake
 prev mamake.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -c mamake.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -c mamake.c
 done mamake.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o mamake mamake.o
 done mamake generated
@@ -578,7 +586,7 @@ prev ast.h implicit
 done release.c
 meta release.o %.c>%.o release.c release
 prev release.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 1994-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -c release.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"\" -c release.c
 done release.o generated
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} -o release release.o
 done release generated
@@ -773,22 +781,19 @@ make ${INSTALLROOT}/bin/filter
 prev filter
 exec - test '' = 'filter' || ${STDCMP} 2>/dev/null -s filter ${INSTALLROOT}/bin/filter || { ${STDMV} ${INSTALLROOT}/bin/filter ${INSTALLROOT}/bin/filter.old 2>/dev/null || true; ${STDCP} filter ${INSTALLROOT}/bin/filter ;}
 done ${INSTALLROOT}/bin/filter generated
-make ${PACKAGEROOT}/lib/package
+make ${INSTALLROOT}/lib/package
 exec - if test ! -d ${PACKAGEROOT}/lib/package
 exec - then mkdir -p ${PACKAGEROOT}/lib/package
 exec - fi
-done ${PACKAGEROOT}/lib/package generated
-make ${PACKAGEROOT}/lib/package/package.mk
-prev ${PACKAGEROOT}/lib/package
+done ${PACKAGEROOT}/lib/package
+make ${PACKAGEROOT}/lib/package
+done ${PACKAGEROOT}/lib/package
 make package.mk
 done package.mk
 exec - test '' = 'package.mk' || ${STDCMP} 2>/dev/null -s package.mk ${PACKAGEROOT}/lib/package/package.mk || { ${STDMV} ${PACKAGEROOT}/lib/package/package.mk ${PACKAGEROOT}/lib/package/package.mk.old 2>/dev/null || true; ${STDCP} package.mk ${PACKAGEROOT}/lib/package/package.mk ;}
-done ${PACKAGEROOT}/lib/package/package.mk generated
-make ${PACKAGEROOT}/lib/package/CONVERT.mk
 make CONVERT.mk
 done CONVERT.mk
 exec - test '' = 'CONVERT.mk' || ${STDCMP} 2>/dev/null -s CONVERT.mk ${PACKAGEROOT}/lib/package/CONVERT.mk || { ${STDMV} ${PACKAGEROOT}/lib/package/CONVERT.mk ${PACKAGEROOT}/lib/package/CONVERT.mk.old 2>/dev/null || true; ${STDCP} CONVERT.mk ${PACKAGEROOT}/lib/package/CONVERT.mk ;}
-done ${PACKAGEROOT}/lib/package/CONVERT.mk generated
 make ${INSTALLROOT}/lib/make
 exec - if test ! -d ${INSTALLROOT}/lib/make
 exec - then mkdir -p ${INSTALLROOT}/lib/make
@@ -863,7 +868,7 @@ exec - then N='
 exec - '
 exec - H=${mam_cc_HOSTTYPE}
 exec - P=""
-exec - b= f= h= l= n= p= u= B= L=
+exec - a= b= f= h= l= n= p= u= B= L=
 exec - set : $P
 exec - while :
 exec - do while :
@@ -893,6 +898,8 @@ exec - esac
 exec - ;;
 exec - $L) l=$x
 exec - ;;
+exec - *BIN=*) a=$x
+exec - ;;
 exec - *BUILTIN_LIB=*) b=$x
 exec - ;;
 exec - *FPATH=*) f=$x
@@ -911,6 +918,11 @@ exec - ifs=$IFS
 exec - m=
 exec - case $p in
 exec - ?*) b=
+exec - ;;
+exec - esac
+exec - case $a in
+exec - '') a=BIN=1
+exec - m=1
 exec - ;;
 exec - esac
 exec - case $b in
@@ -1001,7 +1013,7 @@ exec - case $m in
 exec - 1) case $u in
 exec - ?*) u=$N$u ;;
 exec - esac
-exec - echo "$h$N$p$N$f$N$l$u" > ${INSTALLROOT}/bin/.paths
+exec - echo "$h$N$a$N$p$N$f$N$l$u" > ${INSTALLROOT}/bin/.paths
 exec - ;;
 exec - esac
 exec - fi
@@ -1103,13 +1115,20 @@ make dl.c
 done dl.c
 exec - set -
 exec - r='-'
-exec - for i in dl.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' dl.c dl${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in dl -
 exec - do case $p in
-exec - -) if ${CC} -o dl.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o dl.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o dl.exe $obj $g
+exec - then ${CC} -o dl.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1121,9 +1140,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > dl.req
-exec - rm -f dl.exe dl
+exec - rm -f dl.exe dl${mam_cc_SUFFIX_OBJECT}
 done dl.req generated
 exec - test '' = 'dl.req' || ${STDCMP} 2>/dev/null -s dl.req ${INSTALLROOT}/lib/lib/dl || { ${STDMV} ${INSTALLROOT}/lib/lib/dl ${INSTALLROOT}/lib/lib/dl.old 2>/dev/null || true; ${STDCP} dl.req ${INSTALLROOT}/lib/lib/dl ;}
 done ${INSTALLROOT}/lib/lib/dl generated
@@ -1133,13 +1152,20 @@ make iconv.c
 done iconv.c
 exec - set -
 exec - r='-'
-exec - for i in iconv.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' iconv.c iconv${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in iconv -
 exec - do case $p in
-exec - -) if ${CC} -o iconv.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o iconv.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o iconv.exe $obj $g
+exec - then ${CC} -o iconv.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1151,9 +1177,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > iconv.req
-exec - rm -f iconv.exe iconv
+exec - rm -f iconv.exe iconv${mam_cc_SUFFIX_OBJECT}
 done iconv.req generated
 exec - test '' = 'iconv.req' || ${STDCMP} 2>/dev/null -s iconv.req ${INSTALLROOT}/lib/lib/iconv || { ${STDMV} ${INSTALLROOT}/lib/lib/iconv ${INSTALLROOT}/lib/lib/iconv.old 2>/dev/null || true; ${STDCP} iconv.req ${INSTALLROOT}/lib/lib/iconv ;}
 done ${INSTALLROOT}/lib/lib/iconv generated
@@ -1165,13 +1191,20 @@ make w2.c
 done w2.c
 exec - set -
 exec - r='-'
-exec - for i in w.c w2.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' w.c w${mam_cc_SUFFIX_OBJECT} w2.c w2${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in w -
 exec - do case $p in
-exec - -) if ${CC} -o w.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o w.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o w.exe $obj $g
+exec - then ${CC} -o w.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1183,9 +1216,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > w.req
-exec - rm -f w.exe w w2
+exec - rm -f w.exe w${mam_cc_SUFFIX_OBJECT} w2${mam_cc_SUFFIX_OBJECT}
 done w.req generated
 exec - test '' = 'w.req' || ${STDCMP} 2>/dev/null -s w.req ${INSTALLROOT}/lib/lib/w || { ${STDMV} ${INSTALLROOT}/lib/lib/w ${INSTALLROOT}/lib/lib/w.old 2>/dev/null || true; ${STDCP} w.req ${INSTALLROOT}/lib/lib/w ;}
 done ${INSTALLROOT}/lib/lib/w generated
@@ -1195,13 +1228,20 @@ make intl.c
 done intl.c
 exec - set -
 exec - r='-'
-exec - for i in intl.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' intl.c intl${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in intl -
 exec - do case $p in
-exec - -) if ${CC} -o intl.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o intl.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o intl.exe $obj $g
+exec - then ${CC} -o intl.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1213,9 +1253,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > intl.req
-exec - rm -f intl.exe intl
+exec - rm -f intl.exe intl${mam_cc_SUFFIX_OBJECT}
 done intl.req generated
 exec - test '' = 'intl.req' || ${STDCMP} 2>/dev/null -s intl.req ${INSTALLROOT}/lib/lib/intl || { ${STDMV} ${INSTALLROOT}/lib/lib/intl ${INSTALLROOT}/lib/lib/intl.old 2>/dev/null || true; ${STDCP} intl.req ${INSTALLROOT}/lib/lib/intl ;}
 done ${INSTALLROOT}/lib/lib/intl generated
@@ -1235,13 +1275,20 @@ make m6.c
 done m6.c
 exec - set -
 exec - r='-'
-exec - for i in m.c m2.c m3.c m4.c m5.c m6.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' m.c m${mam_cc_SUFFIX_OBJECT} m2.c m2${mam_cc_SUFFIX_OBJECT} m3.c m3${mam_cc_SUFFIX_OBJECT} m4.c m4${mam_cc_SUFFIX_OBJECT} m5.c m5${mam_cc_SUFFIX_OBJECT} m6.c m6${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in m -
 exec - do case $p in
-exec - -) if ${CC} -o m.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o m.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o m.exe $obj $g
+exec - then ${CC} -o m.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1253,56 +1300,32 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > m.req
-exec - rm -f m.exe m m2 m3 m4 m5 m6
+exec - rm -f m.exe m${mam_cc_SUFFIX_OBJECT} m2${mam_cc_SUFFIX_OBJECT} m3${mam_cc_SUFFIX_OBJECT} m4${mam_cc_SUFFIX_OBJECT} m5${mam_cc_SUFFIX_OBJECT} m6${mam_cc_SUFFIX_OBJECT}
 done m.req generated
 exec - test '' = 'm.req' || ${STDCMP} 2>/dev/null -s m.req ${INSTALLROOT}/lib/lib/m || { ${STDMV} ${INSTALLROOT}/lib/lib/m ${INSTALLROOT}/lib/lib/m.old 2>/dev/null || true; ${STDCP} m.req ${INSTALLROOT}/lib/lib/m ;}
 done ${INSTALLROOT}/lib/lib/m generated
-make ${INSTALLROOT}/lib/lib/nsl
-make nsl.req
-make nsl.c
-done nsl.c
-exec - set -
-exec - r='-'
-exec - for i in nsl.c
-exec - do if ${CC} -c $i > /dev/null
-exec - then g=
-exec - for p in nsl -
-exec - do case $p in
-exec - -) if ${CC} -o nsl.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o nsl.exe $i > /dev/null 2>&1 || {
-exec - r="$g"
-exec - break 2
-exec - }
-exec - fi
-exec - g=
-exec - ;;
-exec - *) g="$g -l$p"
-exec - ;;
-exec - esac
-exec - done
-exec - fi
-exec - done 2>/dev/null
-exec - echo " $r" > nsl.req
-exec - rm -f nsl.exe nsl
-done nsl.req generated
-exec - test '' = 'nsl.req' || ${STDCMP} 2>/dev/null -s nsl.req ${INSTALLROOT}/lib/lib/nsl || { ${STDMV} ${INSTALLROOT}/lib/lib/nsl ${INSTALLROOT}/lib/lib/nsl.old 2>/dev/null || true; ${STDCP} nsl.req ${INSTALLROOT}/lib/lib/nsl ;}
-done ${INSTALLROOT}/lib/lib/nsl generated
 make ${INSTALLROOT}/lib/lib/socket
 make socket.req
 make socket.c
 done socket.c
-prev nsl.c
 exec - set -
 exec - r='-'
-exec - for i in socket.c nsl.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' socket.c socket${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
-exec - for p in socket -
+exec - for p in socket - socket nsl -
 exec - do case $p in
-exec - -) if ${CC} -o socket.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o socket.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o socket.exe $obj $g
+exec - then ${CC} -o socket.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1314,9 +1337,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > socket.req
-exec - rm -f socket.exe socket nsl
+exec - rm -f socket.exe socket${mam_cc_SUFFIX_OBJECT}
 done socket.req generated
 exec - test '' = 'socket.req' || ${STDCMP} 2>/dev/null -s socket.req ${INSTALLROOT}/lib/lib/socket || { ${STDMV} ${INSTALLROOT}/lib/lib/socket ${INSTALLROOT}/lib/lib/socket.old 2>/dev/null || true; ${STDCP} socket.req ${INSTALLROOT}/lib/lib/socket ;}
 done ${INSTALLROOT}/lib/lib/socket generated
@@ -1331,18 +1354,23 @@ make gdbm-ndbm.h implicit
 done gdbm-ndbm.h dontcare virtual
 done gdbm1.c
 make gdbm2.c
-make ndbm.h implicit
-done ndbm.h dontcare virtual
 done gdbm2.c
 exec - set -
 exec - r='-'
-exec - for i in db.c gdbm.c gdbm1.c gdbm2.c
-exec - do if ${CC} -c $i > /dev/null
+exec - set '' '' db.c db${mam_cc_SUFFIX_OBJECT} gdbm.c gdbm${mam_cc_SUFFIX_OBJECT} gdbm1.c gdbm1${mam_cc_SUFFIX_OBJECT} gdbm2.c gdbm2${mam_cc_SUFFIX_OBJECT}
+exec - while :
+exec - do shift 2
+exec - case $# in
+exec - 0) break ;;
+exec - esac
+exec - src=$1
+exec - obj=$2
+exec - if ${CC} -c $src
 exec - then g=
 exec - for p in db - gdbm_compat - gdbm - ndbm - dbm -
 exec - do case $p in
-exec - -) if ${CC} -o dbm.exe $i $g > /dev/null 2>&1
-exec - then ${CC} -o dbm.exe $i > /dev/null 2>&1 || {
+exec - -) if ${CC} -o dbm.exe $obj $g
+exec - then ${CC} -o dbm.exe $obj || {
 exec - r="$g"
 exec - break 2
 exec - }
@@ -1354,9 +1382,9 @@ exec - ;;
 exec - esac
 exec - done
 exec - fi
-exec - done 2>/dev/null
+exec - done >/dev/null 2>&1
 exec - echo " $r" > dbm.req
-exec - rm -f dbm.exe db gdbm gdbm1 gdbm2
+exec - rm -f dbm.exe db${mam_cc_SUFFIX_OBJECT} gdbm${mam_cc_SUFFIX_OBJECT} gdbm1${mam_cc_SUFFIX_OBJECT} gdbm2${mam_cc_SUFFIX_OBJECT}
 done dbm.req generated
 exec - test '' = 'dbm.req' || ${STDCMP} 2>/dev/null -s dbm.req ${INSTALLROOT}/lib/lib/dbm || { ${STDMV} ${INSTALLROOT}/lib/lib/dbm ${INSTALLROOT}/lib/lib/dbm.old 2>/dev/null || true; ${STDCP} dbm.req ${INSTALLROOT}/lib/lib/dbm ;}
 done ${INSTALLROOT}/lib/lib/dbm generated

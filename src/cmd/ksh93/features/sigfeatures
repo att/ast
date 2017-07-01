@@ -1,7 +1,11 @@
-lib	sigblock,sigrelse,sigsetmask,sigprocmask,sigvec
-typ	sigset_t	ast.h signal.h
-mem	sigvec.sv_mask	signal.h
+lib	sigblock,sigrelse,sigsetmask,sigprocmask,sigvec,sigqueue,sigaction
+typ	sigset_t			ast.h signal.h
+mem	sigvec.sv_mask			signal.h
+mem	siginfo_t.si_value.sigval_int	signal.h
 cat{
+	#ifndef _lib_sigqueue
+	#   define sigqueue(sig,action,val)	kill(sig,action)
+	#endif
 	#ifndef _mem_sigvec_sv_mask
 	#   undef _lib_sigvec
 	#endif
@@ -31,6 +35,17 @@ cat{
 	#	endif /* _lib_sigrelse */
 	#    endif /* _lib_sigsetmask */
 	#endif /* _lib_sigprocmask */
+	#ifndef CLD_EXITED
+	#   define CLD_EXITED		1
+	#   define CLD_KILLED		2
+	#   define CLD_DUMPED		3
+	#   define CLD_STOPPED		4
+	#   define CLD_CONTINUED	5
+	#endif
+	#if _mem_si_value_sigval_int_siginfo_t
+	#   define sival_int	sigval_int
+	#   define sival_ptr	sigval_ptr
+	#endif
 }end
 tst	output{
 	#include <signal.h>

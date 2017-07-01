@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -314,7 +314,7 @@ then	err_exit 'display of unsigned integers in non-decimal bases wrong'
 fi
 $SHELL -c 'i=0;(( ofiles[i] != -1 && (ofiles[i] < mins || mins == -1) ));exit 0' 2> /dev/null || err_exit 'lexical error with arithemtic expression'
 $SHELL -c '(( +1 == 1))' 2> /dev/null || err_exit 'unary + not working'
-typeset -E20 val=123.01234567890
+typeset -E val=123.01234567890
 [[ $val == 123.0123456789 ]] || err_exit "rounding error val=$val"
 if	[[ $(print x$((10))=foo) != x10=foo ]]
 then	err_exit 'parsing error with x$((10))=foo'
@@ -675,7 +675,7 @@ x=([0]=3 [1]=6 [2]=12)
 (( x[2] == 4 )) || err_exit '(( x[2] /= x[0])) fails for associative array'
 
 got=$($SHELL 2> /dev/null -c 'compound -a x;compound -a x[0].y; integer -a x[0].y[0].z; (( x[0].y[0].z[2]=3 )); typeset -p x')
-exp='typeset -C -a x=((typeset -C -a y=( [0]=(typeset -a -l -i z=([2]=3);));))'
+exp='typeset -C -a x=((typeset -C -a y=( [0]=(typeset -a -l -i z=([2]=3);))))'
 [[ $got == "$exp" ]] || err_exit '(( x[0].y[0].z[2]=3 )) not working'
 
 unset x
@@ -761,5 +761,99 @@ unset v x
 x=0x1.0000000000000000000000000000p+6
 v=$(printf $'%.28a\n' 64)
 [[ $v == "$x" ]] || err_exit "'printf %.28a 64' failed -- expected '$x', got '$v'"
+
+# redirections with ((...)) should not cause a syntax error
+$SHELL 2>/dev/null -c '(($(echo 1+1 | tee /dev/fd/3))) >/dev/null 3>&1'
+((  $? )) && err_exit 'redirections with ((...))) yield a syntax error'
+
+(( (2 ** 63) ==  2*((2 ** 63)/2) )) || err_exit 'integer division with numbers near intmax not working'
+
+$SHELL -c '(( (2**63 / -1) == -(2**63) ))' || err_exit 'integer division with denominator -1 fails'
+
+# tests for math functions with array arguments
+function .sh.math.mean arr
+{
+	IFS=+
+	typeset var="${arr[*]}"
+	(( .sh.value =  ($var)/${#arr[@]} ))
+}
+function .sh.math.median arr
+{
+	set -s -A arr1 -- "${arr[@]}"
+	integer m=${#arr[@]}
+	((.sh.value = arr1[m/2] ))
+}
+function .sh.math.dotprod arr1 arr2
+{
+	integer m=${#arr1[@]} n=${#arr2[@]}
+	typeset x y
+	set -A  x -- ${arr1[@]}
+	set -A  y -- ${arr2[@]}
+	(( .sh.value=0 ))
+	(( m < n )) && ((n=m))
+	for ((m=0; m < n; m++))
+	do	((.sh.value += x[m]*y[m] ))
+	done
+}
+function .sh.math.norm arr
+{
+	((.sh.value = sqrt(dotprod(arr,arr)) ))
+}
+
+x=( 9.2 2 3 6.4 5)
+y=( 1 2 3)
+z=([zero]=9.2 [one]=2  [two]=3 [three]=6.4 [four]=5)
+[[ $((mean(x))) == 5.12 ]] || err_exit "mean of index array  is $((mean(x))) should be 5.12"
+[[ $((mean(z))) == 5.12 ]] || err_exit "mean of associative array  is $((mean(y))) should be 5.12"
+[[ $((median(x))) == 5 ]] || err_exit "median of index array  is $((median(x))) should be 5"
+[[ $((median(z))) == 5 ]] || err_exit "median of associative array  is $((median(y))) should be 5"
+[[ $((dotprod(x,y))) == 22.2 ]] || err_exit "dotprod of two index arrays  is $((dotprod(x,y))) should be 22.2"
+[[ $((dotprod(x,x))) == 163.6 ]] || err_exit "dotprod of two identical index arrays  is $((dotprod(x,x))) should be 163.6"
+[[ $((dotprod(z,y))) == 28.2 ]] || err_exit "dotprod of index and associative array  is $((dotprod(z,y))) should be 28.2"
+[[ $((dotprod(x,x))) == 163.6 ]] || err_exit "dotprod of two identical associaive arrays  is $((dotprod(z,z))) should be 163.6"
+[[ $((norm(x))) == $((sqrt(163.6))) ]] || err_exit "norm of index array  is $((norm(x))) should be 12.7906215642555855"
+[[ $((norm(z))) == $((sqrt(163.6))) ]] || err_exit "norm of associative array  is $((norm(z))) should be 12.7906215642555855"
+
+$SHELL -c 'for ((i = 0; i < 1023; i++)); do eval a$i=a$((i+1));done;a1023=999;print $((a0))' > /dev/null 2>&1 || err_exit 'arithmetic recursive evaluation too deep'
+
+integer count=0 i
+compound -a x=( (pid=1) (pid=2) )
+for	((i=0; i < 2; i++))
+do	(( x[i].pid == x[0].pid )) && ((count++))
+done
+(( count==1 )) || err_exit 'x[i].pid==x[0].pid should be true only once'
+	
+#bug with short integers that causes core dumps
+$SHELL 2> /dev/null <<- \EOF || err_exit 'short integer bug causing core dumps'
+	typeset -s -i -a t
+	typeset -s -i p
+	(( p=2**17 )) # tape start position
+	(( t[p]+=13))
+	while (( t[p] != 0 ))
+	do 	((t[p]-=1 , p+=1))
+	done
+	exit 0
+EOF
+
+float x
+((x.HOGWARDS_IN_THE_SKY ==0 )) || err_exit 'x.HOGWARDS_IN_THE_SKY is unknown and should have value 0'
+
+unset IFS i
+set -u
+float -a ar
+function f
+{
+	integer i=0 ar_i=0
+	for	(( i=0 ; i < 3 ; i++ ))
+	do	(( ar[ar_i++]=i))
+	done
+	printf "%q\n" "${ar[*]}"
+}
+[[ $(f) == "'0 1 2'" ]] 2> /dev/null || err_exit '0 value for variable in arithmetic expression inside function with set -u fails' 
+
+integer -u u=123
+(( u.MAX < (1<<31) ))  && err_exit '$((i.MAX)) not workng when i is unsigned int'
+
+[[ $(( (2**32) << 67 )) == 0 ]] || err_exit 'left shift count 67 is non-zero' 
 
 exit $((Errors<125?Errors:125))

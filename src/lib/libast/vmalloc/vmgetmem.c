@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,12 +14,12 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	<vmalloc.h>
+#include	<vmhdr.h>
 
 /*
  * vm open/close/resize - a handy default for discipline memory functions
@@ -43,9 +43,11 @@ size_t		size;
 #endif
 {
 	if (!vm)
-		return vmopen(Vmdcheap, Vmbest, 0);
+		return (Void_t*)vmopen(Vmdcheap, Vmbest, 0);
+
 	if (data || size)
 		return vmresize(vm, data, size, VM_RSMOVE|VM_RSCOPY|VM_RSZERO);
+
 	vmclose(vm);
-	return 0;
+	return NIL(Void_t*);
 }

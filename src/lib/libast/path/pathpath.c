@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -33,7 +33,7 @@
  * if path==0 then the space is malloc'd
  */
 
-#define _AST_API_H	1
+#define _AST_API_IMPLEMENT	1
 
 #include <ast.h>
 
@@ -43,7 +43,7 @@ pathpath(char* path, const char* p, const char* a, int mode)
 	return pathpath_20100601(p, a, mode, path, PATH_MAX);
 }
 
-#undef	_AST_API_H
+#undef	_AST_API_IMPLEMENT
 
 #include <ast_api.h>
 
@@ -103,7 +103,7 @@ pathpath_20100601(const char* p, const char* a, int mode, register char* path, s
 				cmd = strdup(s);
 			if (strlen(s) < (sizeof(buf) - 6))
 			{
-				s = strcopy(path, s);
+				s = stpcpy(path, s);
 				for (;;)
 				{
 					do if (s <= path) goto normal; while (*--s == '/');

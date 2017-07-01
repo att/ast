@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                   Phong Vo <kpv@research.att.com>                    *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*                     Phong Vo <phongvo@gmail.com>                     *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #include	"rshdr.h"
@@ -133,7 +133,7 @@ ssize_t	s_data;		/* data size		*/
 				r->keylen = keylen;
 
 				if(rs->events & RS_READ)
-				{	if((n = rsnotify(rs,RS_READ,r,(Void_t*)0,rs->disc))<0)
+				{	if((n = rsnotify(rs,RS_READ,r,(rs->type&RS_LAST)&&s_loop==datalen?(Void_t*)r:(Void_t*)0,rs->disc))<0)
 						return -1;
 					if(n == RS_DELETE)
 					{	RSFREE(rs, r);
@@ -232,7 +232,7 @@ ssize_t	s_data;		/* data size		*/
 				}
 				if(r->data != data || !(rs->events & RS_READ))
 					break;
-				if((n = rsnotify(rs,RS_READ,r,(Void_t*)0,rs->disc))<0)
+				if((n = rsnotify(rs,RS_READ,r,(rs->type&RS_LAST)&&s_loop==datalen?(Void_t*)r:(Void_t*)0,rs->disc))<0)
 					return -1;
 				if(n == RS_DELETE)
 				{	if(defkeyf && c_key)

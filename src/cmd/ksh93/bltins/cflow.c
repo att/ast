@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -25,8 +25,7 @@
  * exit [n]
  *
  *   David Korn
- *   AT&T Labs
- *   dgk@research.att.com
+ *   dgkorn@gmail.com
  *
  */
 
@@ -65,12 +64,12 @@ done:
 	pp->mode = (**argv=='e'?SH_JMPEXIT:SH_JMPFUN);
 	argv += opt_info.index;
 	n = (((arg= *argv)?(int)strtol(arg, (char**)0, 10):shp->oldexit));
-	if(n<0 || n==256 || n > SH_EXITMASK+shp->gd->sigmax+1)
+	if(n<0 || n==256 || n > SH_EXITMASK+shp->gd->sigmax)
 			n &= ((unsigned int)n)&SH_EXITMASK;
 	/* return outside of function, dotscript and profile is exit */
-	if(shp->fn_depth==0 && shp->dot_depth==0 && !sh_isstate(SH_PROFILE))
+	if(shp->fn_depth==0 && shp->dot_depth==0 && !sh_isstate(shp,SH_PROFILE))
 		pp->mode = SH_JMPEXIT;
-	sh_exit(shp->savexit=n);
+	sh_exit(shp,shp->savexit=n);
 	return(1);
 }
 

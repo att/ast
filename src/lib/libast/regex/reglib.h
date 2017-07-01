@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -69,7 +69,7 @@ typedef struct regsubop_s
 #define _AST_REGEX_DEBUG	1
 #endif
 
-#define MBSIZE(p)	((ast.tmp_int=mbsize(p))>0?ast.tmp_int:1)
+#define MBSIZE(e,p)	(((e)->i=mbtsize(p,MB_LEN_MAX,&(e)->q))>0?(e)->i:1)
 
 #undef	RE_DUP_MAX			/* posix puts this in limits.h!	*/
 #define RE_DUP_MAX	(INT_MAX/2-1)	/* 2*RE_DUP_MAX won't overflow	*/
@@ -172,9 +172,9 @@ typedef struct regsubop_s
 
 #define HIT		SSIZE_MAX
 
-#define bitclr(p,c)	((p)[((c)>>3)&037]&=(~(1<<((c)&07))))
-#define bitset(p,c)	((p)[((c)>>3)&037]|=(1<<((c)&07)))
-#define bittst(p,c)	((p)[((c)>>3)&037]&(1<<((c)&07)))
+#define bitclr(p,c)	((p)[(c)>>3]&=(~(1<<((c)&07))))
+#define bitset(p,c)	((p)[(c)>>3]|=(1<<((c)&07)))
+#define bittst(p,c)	((p)[(c)>>3]&(1<<((c)&07)))
 
 #define setadd(p,c)	bitset((p)->bits,c)
 #define setclr(p,c)	bitclr((p)->bits,c)
@@ -536,6 +536,7 @@ typedef struct reglib_s			/* library private regex_t info	*/
 	Vector_t*	bestpos;	/* ditto for best match		*/
 	regmatch_t*	match;		/* subexrs in current match 	*/
 	regmatch_t*	best;		/* ditto in best match yet	*/
+	Stk_t*		mst;		/* match stack			*/
 	Stk_pos_t	stk;		/* exec stack pos		*/
 	size_t		min;		/* minimum match length		*/
 	size_t		nsub;		/* internal re_nsub		*/
@@ -544,6 +545,9 @@ typedef struct reglib_s			/* library private regex_t info	*/
 	int		explicit;	/* explicit match on this char	*/
 	int		leading;	/* leading match on this char	*/
 	int		refs;		/* regcomp()+regdup() references*/
+	Mbstate_t	q;		/* pattern mb state		*/
+	Mbstate_t	s;		/* subject mb state		*/
+	int		i;		/* macro tmp int		*/
 	Rex_t		done;		/* the last continuation	*/
 	regstat_t	stats;		/* for regstat()		*/
 	unsigned char	fold[UCHAR_MAX+1]; /* REG_ICASE map		*/

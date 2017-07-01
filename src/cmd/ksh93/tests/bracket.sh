@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -349,5 +349,26 @@ unset var
 test ! ! ! 2> /dev/null || err_exit 'test ! ! ! should return 0'
 test ! ! x 2> /dev/null || err_exit 'test ! ! x should return 0'
 test ! ! '' 2> /dev/null && err_exit 'test ! ! "" should return non-zero'
+
+test ! = -o a  || err_exit 'test ! \( = -o a \) should return 0'
+test ! \( = -o a \)  || err_exit 'test ! \( = -o a \) should return 0'
+
+$SHELL 2> /dev/null -c '[[ 1<2 ]]' ||  err_exit '[[ 1<2 ]] not parsed correctly'
+
+false
+x=$( [[ -z $(printf $? >&2) && -z $(printf $? >&2) ]] 2>&1)
+[[ $x$? == 110 ]] || err_exit '$? not reserved when expanding [[...]]'
+
+$SHELL -c 2> /dev/null '[[ AATAAT =~ (AAT){2} ]]' || err_exit '[[ AATAAT =~ (AAT){2} ]] does not match'
+
+$SHELL -c 2> /dev/null '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]]' || err_exit '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]] does not match'
+
+[[ 0x10 -eq 16 ]] || err_exit 'heximal constants not working in [[...]]'
+
+[[ 010 -eq 10 ]] || err_exit '010 not 10 in [[...]]'
+
+x=10
+
+([[ x -eq 10 ]]) 2> /dev/null || err_exit 'x -eq 10 fails in [[...]] with x=10'
 
 exit $((Errors<125?Errors:125))

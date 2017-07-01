@@ -1,4 +1,4 @@
-info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2012-06-20
+info mam static 00000 1994-07-17 make (AT&T Research) 5.7 2013-08-11
 setv INSTALLROOT ../../..
 setv PACKAGE_ast_INCLUDE ${INSTALLROOT}/include/ast
 setv PACKAGE_ast_LIB ${INSTALLROOT}/lib
@@ -37,14 +37,14 @@ setv SILENT
 setv TAR tar
 setv YACC yacc
 setv YACCFLAGS -d
-make ${PACKAGEROOT}/lib/package/ast.lic
-done ${PACKAGEROOT}/lib/package/ast.lic
+make ${INSTALLROOT}/lib/package/ast.lic
+done ${INSTALLROOT}/lib/package/ast.lic
 make .INIT
 make ${PACKAGE_ast_INCLUDE}/cmdlist.h
 make ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/prototyped.h dontcare
 done ${PACKAGE_ast_INCLUDE}/cmdlist.h
-exec - sed -e '/^CMDLIST(.*)$/!d' -e 's/CMDLIST(\(.*\))/\1/' -e '/^getconf$/d' -e '/^ln$/d' -e '/^mv$/d' -e '/^md5sum$/d' -e '/^sum$/d' ${PACKAGE_ast_INCLUDE}/cmdlist.h
+exec - sed -e '/^CMDLIST(.*,.*)$/!d' -e 's/CMDLIST(\(.*\),.*)/\1/' -e '/^getconf$/d' -e '/^ln$/d' -e '/^mv$/d' -e '/^md5sum$/d' -e '/^sum$/d' ${PACKAGE_ast_INCLUDE}/cmdlist.h
 bind -lcmd
 done .INIT dontcare virtual
 make install
@@ -108,6 +108,11 @@ done ${PACKAGE_ast_INCLUDE}/ast_getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/getopt.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast_map.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_intercept.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_intercept.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_wchar.h implicit
+prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_botch.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_botch.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast_limits.h implicit
@@ -136,10 +141,17 @@ make ${PACKAGE_ast_INCLUDE}/error.h implicit
 make ${PACKAGE_ast_INCLUDE}/option.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_debug.h implicit
+prev ${PACKAGE_ast_INCLUDE}/error.h implicit
 make ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 done ${PACKAGE_ast_INCLUDE}/vmalloc.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_debug.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_errorf.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_errorf.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/sfio.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast_std.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
@@ -157,7 +169,7 @@ meta dlls.o %.c>%.o dlls.c dlls
 prev dlls.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_dlls"
 setv LICENSE -DLICENSE="since=2002,author=gsf"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_dlls -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-copyright?Copyright (c) 2002-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c dlls.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_dlls -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 2002-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c dlls.c
 done dlls.o generated
 bind -ldll
 bind -last
@@ -173,7 +185,7 @@ done look.c
 meta look.o %.c>%.o look.c look
 prev look.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_look"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_look -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c look.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_look -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c look.c
 done look.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_look"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o look look.o ${mam_libast} ${mam_libcmd}
@@ -197,7 +209,7 @@ done mime.c
 meta mime.o %.c>%.o mime.c mime
 prev mime.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_mime"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_mime -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c mime.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_mime -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c mime.c
 done mime.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_mime"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o mime mime.o ${mam_libast} ${mam_libcmd}
@@ -226,11 +238,12 @@ meta pty.o %.c>%.o pty.c pty
 prev pty.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pty"
 setv LICENSE -DLICENSE="since=2001,author=gsf+dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pty -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2001-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pty.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pty -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2001-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pty.c
 done pty.o generated
-bind -lutil dontcare
+make ${mam_libutil}
+done ${mam_libutil} dontcare virtual
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pty"
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L.} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pty pty.o ${mam_libutil} ${mam_libast} ${mam_libcmd}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pty pty.o ${mam_libast} ${mam_libcmd}
 done pty generated
 make nl
 make nl.o
@@ -242,7 +255,7 @@ meta nl.o %.c>%.o nl.c nl
 prev nl.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_nl"
 setv LICENSE -DLICENSE="since=2003,author=dgk"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DCMD_STANDALONE=b_nl -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 2003-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c nl.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DCMD_STANDALONE=b_nl -DUSAGE_LICENSE=\""[-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 2003-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c nl.c
 done nl.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_nl"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o nl nl.o ${mam_libast} ${mam_libcmd}
@@ -260,45 +273,6 @@ done asa.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_asa"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o asa asa.o ${mam_libast} ${mam_libcmd}
 done asa generated
-make od
-make od.o
-make od.c
-prev ${PACKAGE_ast_INCLUDE}/wctype.h implicit
-prev ${PACKAGE_ast_INCLUDE}/wchar.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_float.h implicit
-prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
-prev ${PACKAGE_ast_INCLUDE}/endian.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_float.h
-prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
-make ${PACKAGE_ast_INCLUDE}/iconv.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_iconv.h implicit
-make ${PACKAGE_ast_INCLUDE}/ccode.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_ccode.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_ccode.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/ccode.h dontcare
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_iconv.h
-done ${PACKAGE_ast_INCLUDE}/iconv.h
-prev ${PACKAGE_ast_INCLUDE}/ccode.h implicit
-make ${PACKAGE_ast_INCLUDE}/swap.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
-prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
-done ${PACKAGE_ast_INCLUDE}/swap.h
-make ${PACKAGE_ast_INCLUDE}/sig.h implicit
-done ${PACKAGE_ast_INCLUDE}/sig.h
-prev ${PACKAGE_ast_INCLUDE}/cmd.h implicit
-done od.c
-meta od.o %.c>%.o od.c od
-prev od.c
-setv CMD_STANDALONE -DCMD_STANDALONE="b_od"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_od -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c od.c
-done od.o generated
-setv CMD_STANDALONE -DCMD_STANDALONE="b_od"
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o od od.o ${mam_libast} ${mam_libcmd}
-done od generated
 make pr
 make pr.o
 make pr.c
@@ -312,13 +286,18 @@ prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/tm.h
 prev ${PACKAGE_ast_INCLUDE}/ls.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ccode.h implicit
+make ${PACKAGE_ast_INCLUDE}/ccode.h implicit
+make ${PACKAGE_ast_INCLUDE}/ast_ccode.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_ccode.h dontcare
+prev ${PACKAGE_ast_INCLUDE}/ast_common.h implicit
+prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
+done ${PACKAGE_ast_INCLUDE}/ccode.h
 prev ${PACKAGE_ast_INCLUDE}/cmd.h implicit
 done pr.c
 meta pr.o %.c>%.o pr.c pr
 prev pr.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pr"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pr -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pr.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_pr -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c pr.c
 done pr.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_pr"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o pr pr.o ${mam_libast} ${mam_libcmd}
@@ -331,26 +310,11 @@ done strings.c
 meta strings.o %.c>%.o strings.c strings
 prev strings.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_strings"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_strings -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c strings.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_strings -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c strings.c
 done strings.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_strings"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o strings strings.o ${mam_libast} ${mam_libcmd}
 done strings generated
-make tr
-make tr.o
-make tr.c
-prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
-prev ${PACKAGE_ast_INCLUDE}/error.h implicit
-prev ${PACKAGE_ast_INCLUDE}/cmd.h implicit
-done tr.c
-meta tr.o %.c>%.o tr.c tr
-prev tr.c
-setv CMD_STANDALONE -DCMD_STANDALONE="b_tr"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_tr -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c tr.c
-done tr.o generated
-setv CMD_STANDALONE -DCMD_STANDALONE="b_tr"
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o tr tr.o ${mam_libast} ${mam_libcmd}
-done tr generated
 make uudecode
 make uudecode.o
 make uudecode.c
@@ -365,7 +329,7 @@ done uudecode.c
 meta uudecode.o %.c>%.o uudecode.c uudecode
 prev uudecode.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uudecode"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uudecode.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uudecode.c
 done uudecode.o generated
 bind -luu
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uudecode"
@@ -382,7 +346,7 @@ done uuencode.c
 meta uuencode.o %.c>%.o uuencode.c uuencode
 prev uuencode.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uuencode"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uuencode.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c uuencode.c
 done uuencode.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_uuencode"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o uuencode uuencode.o ${mam_libuu} ${mam_libast} ${mam_libcmd}
@@ -395,7 +359,7 @@ done what.c
 meta what.o %.c>%.o what.c what
 prev what.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_what"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_what -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c what.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_what -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c what.c
 done what.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_what"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o what what.o ${mam_libast} ${mam_libcmd}
@@ -415,7 +379,7 @@ done who.c
 meta who.o %.c>%.o who.c who
 prev who.c
 setv CMD_STANDALONE -DCMD_STANDALONE="b_who"
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -DCMD_STANDALONE=b_who -D_PACKAGE_ast -DUSAGE_LICENSE=\""[-author?Glenn Fowler <gsf@research.att.com>][-author?David Korn <dgk@research.att.com>][-copyright?Copyright (c) 1992-2012 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c who.c
+exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -DERROR_CATALOG=\""builtin"\" -D_PACKAGE_ast -DCMD_STANDALONE=b_who -DUSAGE_LICENSE=\""[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-author?David Korn <dgkorn@gmail.com>][-copyright?Copyright (c) 1992-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html][--catalog?builtin]"\" -c who.c
 done who.o generated
 setv CMD_STANDALONE -DCMD_STANDALONE="b_who"
 exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o who who.o ${mam_libast} ${mam_libcmd}
@@ -480,10 +444,6 @@ make ${INSTALLROOT}/bin/asa
 prev asa
 exec - test '' = 'asa' || ${STDCMP} 2>/dev/null -s asa ${INSTALLROOT}/bin/asa || { ${STDMV} ${INSTALLROOT}/bin/asa ${INSTALLROOT}/bin/asa.old 2>/dev/null || true; ${STDCP} asa ${INSTALLROOT}/bin/asa ;}
 done ${INSTALLROOT}/bin/asa generated
-make ${INSTALLROOT}/bin/od
-prev od
-exec - test '' = 'od' || ${STDCMP} 2>/dev/null -s od ${INSTALLROOT}/bin/od || { ${STDMV} ${INSTALLROOT}/bin/od ${INSTALLROOT}/bin/od.old 2>/dev/null || true; ${STDCP} od ${INSTALLROOT}/bin/od ;}
-done ${INSTALLROOT}/bin/od generated
 make ${INSTALLROOT}/bin/pr
 prev pr
 exec - test '' = 'pr' || ${STDCMP} 2>/dev/null -s pr ${INSTALLROOT}/bin/pr || { ${STDMV} ${INSTALLROOT}/bin/pr ${INSTALLROOT}/bin/pr.old 2>/dev/null || true; ${STDCP} pr ${INSTALLROOT}/bin/pr ;}
@@ -492,10 +452,6 @@ make ${INSTALLROOT}/bin/strings
 prev strings
 exec - test '' = 'strings' || ${STDCMP} 2>/dev/null -s strings ${INSTALLROOT}/bin/strings || { ${STDMV} ${INSTALLROOT}/bin/strings ${INSTALLROOT}/bin/strings.old 2>/dev/null || true; ${STDCP} strings ${INSTALLROOT}/bin/strings ;}
 done ${INSTALLROOT}/bin/strings generated
-make ${INSTALLROOT}/bin/tr
-prev tr
-exec - test '' = 'tr' || ${STDCMP} 2>/dev/null -s tr ${INSTALLROOT}/bin/tr || { ${STDMV} ${INSTALLROOT}/bin/tr ${INSTALLROOT}/bin/tr.old 2>/dev/null || true; ${STDCP} tr ${INSTALLROOT}/bin/tr ;}
-done ${INSTALLROOT}/bin/tr generated
 make ${INSTALLROOT}/bin/uudecode
 prev uudecode
 exec - test '' = 'uudecode' || ${STDCMP} 2>/dev/null -s uudecode ${INSTALLROOT}/bin/uudecode || { ${STDMV} ${INSTALLROOT}/bin/uudecode ${INSTALLROOT}/bin/uudecode.old 2>/dev/null || true; ${STDCP} uudecode ${INSTALLROOT}/bin/uudecode ;}
@@ -599,6 +555,11 @@ make fmt.tst
 done fmt.tst
 exec - regress fmt.tst
 done test.fmt virtual
+make test.grep
+make grep.tst
+done grep.tst
+exec - regress grep.tst
+done test.grep virtual
 make test.head
 make head.tst
 meta head.tst %.rt>%.tst head.rt head
@@ -626,6 +587,11 @@ make look.tst
 done look.tst
 exec - regress look.tst look
 done test.look virtual
+make test.ls
+make ls.tst
+done ls.tst
+exec - regress ls.tst
+done test.ls virtual
 make test.mkdir
 make mkdir.tst
 meta mkdir.tst %.rt>%.tst mkdir.rt mkdir
@@ -671,16 +637,37 @@ done nl.tst
 exec - regress nl.tst nl
 done test.nl virtual
 make test.od
-prev od
 make od.tst
 done od.tst
-exec - regress od.tst od
+exec - regress od.tst
 done test.od virtual
 make test.paste
 make paste.tst
 done paste.tst
 exec - regress paste.tst
 done test.paste virtual
+make test.readlink
+make readlink.tst
+meta readlink.tst %.rt>%.tst readlink.rt readlink
+make readlink.rt
+done readlink.rt
+exec - if [[ "1" || "readlink.rt" -nt "readlink.tst" ]]
+exec - then mktest --style=regress readlink.rt > readlink.tst
+exec - fi
+done readlink.tst generated
+exec - regress readlink.tst
+done test.readlink virtual
+make test.realpath
+make realpath.tst
+meta realpath.tst %.rt>%.tst realpath.rt realpath
+make realpath.rt
+done realpath.rt
+exec - if [[ "1" || "realpath.rt" -nt "realpath.tst" ]]
+exec - then mktest --style=regress realpath.rt > realpath.tst
+exec - fi
+done realpath.tst generated
+exec - regress realpath.tst
+done test.realpath virtual
 make test.rm
 make rm.tst
 meta rm.tst %.rt>%.tst rm.rt rm
@@ -698,10 +685,9 @@ done tail.tst
 exec - regress tail.tst
 done test.tail virtual
 make test.tr
-prev tr
 make tr.tst
 done tr.tst
-exec - regress tr.tst tr
+exec - regress tr.tst
 done test.tr virtual
 make test.uniq
 make uniq.tst
@@ -731,4 +717,9 @@ exec - fi
 done wc.tst generated
 exec - regress wc.tst
 done test.wc virtual
+make test.xargs
+make xargs.tst
+done xargs.tst
+exec - regress xargs.tst
+done test.xargs virtual
 done test dontcare virtual

@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2012 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -30,13 +30,19 @@
 
 #include <dsslib.h>
 #include <tm.h>
+#include <align.h>
 
 #include "bgp.h"
+
+#ifndef truncof
+#define truncof(x,y)		((x)&~((y)-1))
+#endif
 
 #define BGPFILE(f)		((Bgp_t*)(f)->dss->data)
 #define BGPDATA(p)		BGPFILE(DSSRECORD(p)->file)
 
 #define BGP_FIXED		offsetof(Bgproute_t,data)
+#define BGP_PREFIX_FIXED	(offsetof(Bgproute_t,prefixv6)-offsetof(Bgproute_t,agg_addr32))
 
 typedef struct Prefix_s			/*  ip prefix			*/
 {
@@ -57,32 +63,70 @@ typedef struct Bgp_s			/* method handle		*/
 	Cxtype_t*	type_ipv6addr;
 	Cxtype_t*	type_ipv6prefix;
 	Cxtype_t*	type_label;
-	Bgproute_t	sub[2];
 } Bgp_t;
 
 #define BGP_METHOD_ANONYMIZE		0x0001
 
-#define BGPALLOC(r,o,t,p,m,v,e,d) \
+#define BGPVEC(s,r,t,p,m,v,e,d) \
 	do { \
 		if (m > (v)->maxsize) \
 		{ \
 			int	n; \
-			o = roundof(o, sizeof(t)); \
-			n = (o >= elementsof((r)->data)) ? \
+			(s)->size = roundof((s)->size, sizeof(t)); \
+			n = ((s)->size >= (s)->temp) ? \
 				0 : \
-				(elementsof((r)->data) - o) / sizeof(t); \
+				((s)->temp - (s)->size) / sizeof(t); \
 			if (m > n) \
 			{ \
 				if ((d)->errorf) \
 					(*(d)->errorf)(NiL, d, 1, "%s length %d truncated to %d", e, m, n); \
 				m = n; \
 			} \
-			(v)->offset = o; \
+			(v)->offset = (s)->size; \
 			(v)->maxsize = m; \
-			o += m * sizeof(t); \
+			(s)->size += m * sizeof(t); \
 		} \
 		(v)->size = m; \
 		p = (t*)((r)->data+(v)->offset); \
+	} while (0)
+
+#define BGPPERM(s,r,t,p,m,x,e,d) \
+	do { \
+		int	a; \
+		int	n; \
+		a = roundof((s)->size, sizeof(t)); \
+		n = m * sizeof(t) + x; \
+		if ((a + n) <= (s)->temp) \
+		{ \
+			(s)->size = a + n; \
+			memset((r)->data + a, 0, n); \
+			p = (t*)((r)->data + a); \
+		} \
+		else \
+		{ \
+			if ((d)->errorf) \
+				(*(d)->errorf)(NiL, d, 1, "out of space for %s size %d", e, n); \
+			p = 0; \
+		} \
+	} while (0)
+
+#define BGPTEMP(s,r,t,p,m,x,e,d) \
+	do { \
+		int	a; \
+		int	n; \
+		n = m * sizeof(t) + x; \
+		if ((a = (int)(s)->temp - n) >= 0) \
+		{ \
+			(s)->temp = truncof(a, ALIGN_BOUND1); \
+			memset((r)->data + (s)->temp, 0, n); \
+			p = (t*)((r)->data + (s)->temp); \
+		} \
+		else \
+		{ \
+			if ((d)->errorf) \
+				(*(d)->errorf)(NiL, d, 1, "out of space for %s size %d", e, n); \
+			p = 0; \
+		} \
 	} while (0)
 
 #define bgp_first_format	(&bgp_fixed_format)

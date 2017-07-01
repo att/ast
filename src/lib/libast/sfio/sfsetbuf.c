@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
@@ -62,40 +62,155 @@ struct stat
 
 #if SFSETLINEMODE
 
-static int sfsetlinemode()
-{	char*			astsfio;
-	char*			endw;
+#ifndef roundof
+#define roundof(x,y)		(((x)+(y)-1)&~((y)-1))
+#endif
+
+#define SF_TEST_read		0x01000
+
+static int sfsetlinemode(void)
+{	char*			s;
+	char*			t;
+	char*			v;
+	unsigned long		b;
+	size_t			z;
+	int			n;
+	int			m;
+	char			buf[1024];
 
 	static int		modes = -1;
-	static const char	sf_line[] = "SF_LINE";
-	static const char	sf_maxr[] = "SF_MAXR=";
-	static const char	sf_wcwidth[] = "SF_WCWIDTH";
 
-#define ISSEPAR(c)	((c) == ',' || (c) == ' ' || (c) == '\t')
-	if (modes < 0)
-	{	modes = 0;
-		if(astsfio = getenv("SFIO_OPTIONS"))
-		{	for(; *astsfio != 0; astsfio = endw)
-			{	while(ISSEPAR(*astsfio) )
-					++astsfio;
-				for(endw = astsfio; *endw && !ISSEPAR(*endw); ++endw)
-					;
-				if((endw-astsfio) > (sizeof(sf_line)-1) &&
-				   strncmp(astsfio,sf_line,sizeof(sf_line)-1) == 0)
-					modes |= SF_LINE;
-				else if((endw-astsfio) > (sizeof(sf_maxr)-1) &&
-				   strncmp(astsfio,sf_maxr,sizeof(sf_maxr)-1) == 0)
+	if(modes < 0)
+	{
+		modes = 0;
+		/* modeled after the VMALLOC_OPTIONS parser -- lax on the syntax */
+		if((t = getenv("SFIO_OPTIONS")) && t[0])
+		{	/* copy option string to a writable buffer */
+			for(s = &buf[0], v = &buf[sizeof(buf)-1]; s < v; ++s)
+				if((*s = *t++) == 0 )
+					break;
+			*s = 0;
+
+			for(s = buf;; )
+			{	/* skip blanks to option name */
+				while (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
+					s++;
+				if (*(t = s) == 0)
+					break;
+
+				v = NIL(char*);
+				while (*s)
+				{	if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
+					{	*s++ = 0; /* end of name */
+						break;
+					}
+					else if (!v && *s == '=')
+					{	*s++ = 0; /* end of name */
+						if (*(v = s) == 0)
+							v = NIL(char*);
+					}
+					else	s++;
+				}
+				if((t[0] == 'n' || t[0] == 'N') && (t[1] == 'o' || t[1] == 'O'))
+				{	t += 2;
+					n = 0;
+				}
+				else	n = 1;
+				if(t[0] == 'S' && t[1] == 'F')
+				{	t += 2;
+					if(t[0] == '_')
+						t += 1;
+				}
+				switch (t[0])
+				{
+				case 'L':		/* SF_LINE */
+				case 'l':
+					if(n)
+						modes |= SF_LINE;
+					else
+						modes &= ~SF_LINE;
+					break;
+				case 'M':		/* maxrec maxmap */
+				case 'm':
+					if(n && v)
 #if _PACKAGE_ast
-					_Sfmaxr = (ssize_t)strtonll(astsfio+sizeof(sf_maxr)-1,NiL,NiL,0);
+						z = (size_t)strtonll(v, NiL, NiL, 0);
 #else
-					_Sfmaxr = (ssize_t)strtol(astsfio+sizeof(sf_maxr)-1,NiL,0);
+						z = (size_t)strtol(v, NiL, 0);
 #endif
-				else if((endw-astsfio) > (sizeof(sf_wcwidth)-1) &&
-				   strncmp(astsfio,sf_wcwidth,sizeof(sf_wcwidth)-1) == 0)
-					modes |= SF_WCWIDTH;
+					else
+						z = 0;
+					for(;;)
+					{	switch(*++t)
+						{
+						case 0:
+							break;
+						case 'M':	/* max map */
+						case 'm':
+							if(z)
+							{
+								if(z != (size_t)SF_UNBOUND)
+									z = roundof(z, _Sfpage);
+								_Sfmaxm = z;
+								_Sftest &= ~SF_TEST_read;
+							}
+							else
+								_Sftest |= SF_TEST_read;
+							break;
+						case 'R':	/* max rec */
+						case 'r':
+							_Sfmaxr = z;
+							break;
+						default:
+							continue;
+						}
+						break;
+					}
+					break;
+				case 'T':
+				case 't':
+					if(v)
+						do
+						{
+							if (v[0] == 'n' && v[1] == 'o')
+							{
+								v += 2;
+								m = !n;
+							}
+							else
+								m = n;
+							switch (v[0])
+							{
+							default:
+								if(isdigit(v[0]))
+								{
+#if _PACKAGE_ast
+									b = strtonll(v, NiL, NiL, 0);
+#else
+									b = strtoul(v, NiL, 0);
+#endif
+								}
+								else	b = 0;
+								break;
+							}
+							if (m)
+								_Sftest |= b;
+							else
+								_Sftest &= ~b;
+						} while ((v = strchr(v, ',')) && ++v);
+					break;
+				case 'W':		/* SF_WCWIDTH */
+				case 'w':
+					if(n)
+						modes |= SF_WCWIDTH;
+					else
+						modes &= ~SF_WCWIDTH;
+					break;
+				}
 			}
 		}
 	}
+
 	return modes;
 }
 
@@ -187,10 +302,12 @@ size_t	size;	/* buffer size, -1 for default size */
 	okmmap = (buf || (f->flags&SF_STRING) || (f->flags&SF_RDWR) == SF_RDWR) ? 0 : 1;
 
 	/* save old buffer info */
-#ifdef MAP_TYPE
+#if _mmap_worthy
 	if(f->bits&SF_MMAP)
 	{	if(f->data)
-		{	SFMUNMAP(f,f->data,f->endb-f->data);
+		{	if(f->getr && (f->mode&SF_GETR) && f->next)
+				f->next[-1] = f->getr;
+			SFMUNMAP(f,f->data,f->endb-f->data);
 			f->data = NIL(uchar*);
 		}
 	} else
@@ -204,6 +321,8 @@ size_t	size;	/* buffer size, -1 for default size */
 
 	f->flags &= ~SF_MALLOC;
 	f->bits  &= ~SF_MMAP;
+	f->mode &= ~SF_GETR;
+	f->getr = 0;
 
 	/* pure read/string streams must have a valid string */
 	if((f->flags&(SF_RDWR|SF_STRING)) == SF_RDSTR &&
@@ -252,6 +371,15 @@ size_t	size;	/* buffer size, -1 for default size */
 			   (sysfcntlf((int)f->file,F_GETFL,0) & O_TEXT) )
 				okmmap = 0;
 #endif
+		}
+
+		/* set page size, this is also the desired default buffer size */
+		if(_Sfpage <= 0)
+		{
+#if _lib_getpagesize
+			if((_Sfpage = (size_t)getpagesize()) <= 0)
+#endif
+				_Sfpage = SF_PAGE;
 		}
 
 #if SFSETLINEMODE
@@ -308,18 +436,9 @@ size_t	size;	/* buffer size, -1 for default size */
 					(void)_sfpopen(f,-1,-1,1);
 			}
 		}
-
-		/* set page size, this is also the desired default buffer size */
-		if(_Sfpage <= 0)
-		{
-#if _lib_getpagesize
-			if((_Sfpage = (size_t)getpagesize()) <= 0)
-#endif
-				_Sfpage = SF_PAGE;
-		}
 	}
 
-#ifdef MAP_TYPE
+#if _mmap_worthy
 	if(okmmap && size && (f->mode&SF_READ) && f->extent >= 0 )
 	{	/* see if we can try memory mapping */
 		if(!disc)
@@ -327,7 +446,8 @@ size_t	size;	/* buffer size, -1 for default size */
 				if(disc->readf)
 					break;
 		if(!disc)
-		{	f->bits |= SF_MMAP;
+		{	if(!(_Sftest & SF_TEST_read))
+				f->bits |= SF_MMAP;
 			if(size == (size_t)SF_UNBOUND)
 			{	if(bufsize > _Sfpage)
 					size = bufsize * SF_NMAP;

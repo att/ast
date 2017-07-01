@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -75,6 +75,20 @@ main()
 	printf("#undef	eaccess\n");
 	printf("#define eaccess		_ast_eaccess\n");
 #endif
+	printf("#undef	error\n");
+	printf("#define error		_ast_error\n");
+	printf("#undef	error_break\n");
+	printf("#define error_break	_ast_error_break\n");
+	printf("#undef	errorctx\n");
+	printf("#define errorctx	_ast_errorctx\n");
+	printf("#undef	errorf\n");
+	printf("#define errorf		_ast_errorf\n");
+	printf("#undef	errormsg\n");
+	printf("#define errormsg	_ast_errormsg\n");
+	printf("#undef	errorv\n");
+	printf("#define errorv		_ast_errorv\n");
+	printf("#undef	errorx\n");
+	printf("#define errorx		_ast_errorx\n");
 #if !_lib_execvpe
 	printf("#undef	execvpe\n");
 	printf("#define execvpe		_ast_execvpe\n");
@@ -103,6 +117,9 @@ main()
 	printf("#undef	ftwflags\n");
 	printf("#define ftwflags	_ast_ftwflags\n");
 #if !_WINIX
+	printf("#undef	fgetcwd\n");
+	printf("#define fgetcwd		_ast_fgetcwd\n");
+	printf("extern char*		fgetcwd(int, char*, size_t);\n");
 	printf("#undef	getcwd\n");
 	printf("#define getcwd		_ast_getcwd\n");
 	printf("extern char*		getcwd(char*, size_t);\n");
@@ -318,12 +335,6 @@ main()
 	printf("#define strhash		_ast_strhash\n");
 	printf("#undef	strkey\n");
 	printf("#define strkey		_ast_strkey\n");
-	printf("#undef	strlcat\n");
-	printf("#define strlcat		_ast_strlcat\n");
-	printf("extern size_t		strlcat(char*, const char*, size_t);\n");
-	printf("#undef	strlcpy\n");
-	printf("#define strlcpy		_ast_strlcpy\n");
-	printf("extern size_t		strlcpy(char*, const char*, size_t);\n");
 	printf("#undef	strlook\n");
 	printf("#define strlook		_ast_strlook\n");
 	printf("#undef	strmatch\n");
@@ -338,6 +349,8 @@ main()
 	printf("#define strnacmp	_ast_strnacmp\n");
 	printf("#undef	strncopy\n");
 	printf("#define strncopy	_ast_strncopy\n");
+	printf("#undef	strngrpmatch\n");
+	printf("#define strngrpmatch	_ast_strngrpmatch\n");
 	printf("#undef	strntod\n");
 	printf("#define strntod		_ast_strntod\n");
 	printf("#undef	strntol\n");
@@ -364,6 +377,8 @@ main()
 	printf("#define strsearch	_ast_strsearch\n");
 	printf("#undef	strsort\n");
 	printf("#define strsort		_ast_strsort\n");
+	printf("#undef	strsort_r\n");
+	printf("#define strsort_r	_ast_strsort_r\n");
 	printf("#undef	strsubmatch\n");
 	printf("#define strsubmatch	_ast_strsubmatch\n");
 	printf("#undef	strsum\n");
@@ -436,6 +451,9 @@ main()
 	printf("#undef	mstats\n");
 	printf("#define mstats		_ast_mstats\n");
 #endif
+	printf("#undef	posix_memalign\n");
+	printf("#define posix_memalign	_ast_posix_memalign\n");
+	printf("extern int		posix_memalign(void**, size_t, size_t);\n");
 #if _lib_pvalloc
 	printf("#undef	pvalloc\n");
 	printf("#define pvalloc		_ast_pvalloc\n");

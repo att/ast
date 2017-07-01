@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1996-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1996-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,8 +14,8 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *              Doug McIlroy <doug@research.bell-labs.com>              *
 *                                                                      *
 ***********************************************************************/
@@ -37,7 +37,7 @@
  */
 
 static const char usage[] =
-"[-n?\n@(#)$Id: sort (AT&T Research) 2010-08-11 $\n]"
+"[-n?\n@(#)$Id: sort (AT&T Research) 2013-09-19 $\n]"
 USAGE_LICENSE
 "[+NAME?sort - sort and/or merge files]"
 "[+DESCRIPTION?\bsort\b sorts lines of all the \afiles\a together and "
@@ -237,6 +237,7 @@ USAGE_LICENSE
 #include <sfio_t.h>
 #include <ast.h>
 #include <error.h>
+#include <debug.h>
 #include <ctype.h>
 #include <fs3d.h>
 #include <ls.h>
@@ -480,6 +481,7 @@ parse(register Sort_t* sp, char** argv)
 	Lib_t*			lastlib = 0;
 	Lib_t*			lib;
 	Recfmt_t		r;
+	Mbstate_t		q;
 	int			obsolescent = 1;
 	char			opt[64];
 	Optdisc_t		optdisc;
@@ -536,7 +538,8 @@ parse(register Sort_t* sp, char** argv)
 		case 't':
 			if (key->tab[0])
 				error(1, "%s: %s conflicts with %s", opt_info.option, *opt_info.arg, key->tab);
-			if ((n = mbsize(opt_info.arg)) < 1)
+			mbtinit(&q);
+			if ((n = mbtsize(opt_info.arg, MB_LEN_MAX, &q)) < 1)
 			{
 				error(1, "%s: %s: invalid tab character", opt_info.option, opt_info.arg);
 				n = 0;
@@ -1133,8 +1136,9 @@ init(register Sort_t* sp, Rskeydisc_t* dp, char** argv)
 							else
 								s = ".";
 							if (sp->overwrite = pathtemp(NiL, 0, s, error_info.id, &n))
-								sp->op = sfnew(sfstdout, NiL, SF_UNBOUND, n, SF_WRITE);
-							if (t) *t = '/';
+								sp->op = sfnew(NiL, NiL, SF_UNBOUND, n, SF_WRITE);
+							if (t)
+								*t = '/';
 							if (!sp->op || fstat(n, &is))
 								error(ERROR_SYSTEM|3, "%s: cannot create overwrite file %s", key->output, sp->overwrite);
 							if (os.st_uid != is.st_uid || os.st_gid != is.st_gid)
@@ -1144,7 +1148,7 @@ init(register Sort_t* sp, Rskeydisc_t* dp, char** argv)
 					}
 			}
 		}
-		if (!sp->overwrite && !(sp->op = sfopen(sfstdout, key->output, "w")))
+		if (!sp->overwrite && !(sp->op = sfopen(NiL, key->output, "w")))
 			error(ERROR_SYSTEM|3, "%s: cannot write", key->output);
 	}
 	if (rsfilewrite(sp->rec, sp->op, key->output))
@@ -1313,13 +1317,14 @@ flush(register Sort_t* sp, register size_t r)
  */
 
 static int
-input(register Sort_t* sp, Sfio_t* ip, const char* name)
+input(register Sort_t* sp, Sfio_t* ip, const char* name, int last)
 {
 	register ssize_t	n;
 	register ssize_t	p;
 	register ssize_t	m;
 	register ssize_t	r;
 	size_t			z;
+	Sfoff_t			w;
 	char*			b;
 	int			c;
 	char			del[2];
@@ -1341,6 +1346,8 @@ input(register Sort_t* sp, Sfio_t* ip, const char* name)
 		else
 			sfsetbuf(ip, NiL, 0);
 	}
+	if (sp->map)
+		w = sfsize(ip);
 	r = sp->cur = roundof(sp->cur, sp->key->alignsize);
 	p = 0;
 	for (;;)
@@ -1353,7 +1360,16 @@ input(register Sort_t* sp, Sfio_t* ip, const char* name)
 				return -1;
 		}
 		if (!sp->map)
+		{
 			n = sfeof(ip) ? 0 : sfread(ip, sp->buf + sp->cur, sp->end - sp->cur);
+			if (last)
+			{
+				if ((c = sfgetc(ip)) == EOF)
+					sp->rec->type |= RS_LAST;
+				else
+					sfungetc(ip, c);
+			}
+		}
 		else
 		{
 			sp->buf = (char*)sfreserve(ip, m, SF_LOCKR);
@@ -1371,6 +1387,10 @@ input(register Sort_t* sp, Sfio_t* ip, const char* name)
 				if (!sp->buf && n > 0 && !(sp->buf = sfreserve(ip, n, SF_LOCKR)))
 					n = -1;
 			}
+			if (last && w == (sftell(ip) + n))
+				sp->rec->type |= RS_LAST;
+			if (sp->verbose)
+				error(0, "%s reserve %*d => %*d", error_info.id, sizeof(m), m, sizeof(n), n);
 		}
 		if (n <= 0)
 		{
@@ -1580,7 +1600,7 @@ jobs(register Sort_t* sp)
 				sp->files[i++] = 0;
 			if (sp->verbose)
 				error(0, "%s pos %12lld : len %10lld : buf %10lld : num %2d", error_info.id, (Sflong_t)jp->offset, (Sflong_t)jp->size, (Sflong_t)jp->chunk, jp->intermediates);
-			exit(input(sp, ip, file) < 0);
+			exit(input(sp, ip, file, 0) < 0);
 		}
 		if (rsfileclose(sp->rec, ip))
 			exit(1);
@@ -1668,7 +1688,10 @@ main(int argc, char** argv)
 {
 	register char*		s;
 	register Sfio_t*	fp;
+	char*			last;
 	char**			merge;
+	int			i;
+	struct stat		st;
 	Sort_t			sort;
 
 	error_info.id = "sort";
@@ -1699,6 +1722,12 @@ main(int argc, char** argv)
 		else if (sort.test & TEST_show)
 			exit(0);
 		else
+		{
+			last = 0;
+			if (!merge && (sort.rec->type & RS_MORE))
+				for (i = 0; s = sort.key->input[i]; i++)
+					if ((pathstdin(s) && !fstat(0, &st) || !stat(s, &st)) && st.st_size)
+						last = s;
 			while (s = *sort.key->input++)
 			{
 				fp = fileopen(&sort, s);
@@ -1716,7 +1745,7 @@ main(int argc, char** argv)
 					}
 					sort.files[sort.nfiles++] = fp;
 				}
-				else if (input(&sort, fp, s) < 0)
+				else if (input(&sort, fp, s, s == last) < 0)
 					break;
 				else if (fp != sfstdin && !sort.map)
 				{
@@ -1724,6 +1753,7 @@ main(int argc, char** argv)
 					fp = 0;
 				}
 			}
+		}
 		if (sort.nfiles)
 		{
 			if (sort.cur && flush(&sort, sort.cur) < 0)

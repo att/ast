@@ -1,7 +1,7 @@
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
-#          Copyright (c) 1982-2012 AT&T Intellectual Property          #
+#          Copyright (c) 1982-2014 AT&T Intellectual Property          #
 #                      and is licensed under the                       #
 #                 Eclipse Public License, Version 1.0                  #
 #                    by AT&T Intellectual Property                     #
@@ -14,7 +14,7 @@
 #                            AT&T Research                             #
 #                           Florham Park NJ                            #
 #                                                                      #
-#                  David Korn <dgk@research.att.com>                   #
+#                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
 function err_exit
@@ -519,14 +519,6 @@ print $'\nprint -r -- "${.sh.file} ${LINENO} ${.sh.lineno}"' > $tmpfile
 print -r -- "'xxx" > $tmpfile
 [[ $($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null) == ok ]] || err_exit 'syntax error in dot command affects next command'
 
-float sec=$SECONDS del=4
-exec 3>&2 2>/dev/null
-$SHELL -c "( sleep 1; kill -ALRM \$\$ ) & sleep $del" 2> /dev/null
-exitval=$?
-(( sec = SECONDS - sec ))
-exec 2>&3-
-(( exitval )) && err_exit "sleep doesn't exit 0 with ALRM interupt"
-(( sec > (del - 1) )) || err_exit "ALRM signal causes sleep to terminate prematurely -- expected 3 sec, got $sec"
 typeset -r z=3
 y=5
 for i in 123 z  %x a.b.c
@@ -618,6 +610,14 @@ then	(
 fi
 cd "$tmp"
 
+> foobar
+CDPATH= $SHELL 2> /dev/null -c 'cd foobar' && err_exit "cd to a regular file should fail"
+
+cd "$tmp"
+mkdir foo .bar
+cd foo
+cd ../.bar 2> /dev/null || err_exit 'cd ../.bar when ../.bar exists should not fail' 
+
 $SHELL +E -i <<- \! && err_exit 'interactive shell should not exit 0 after false'
 	false
 	exit
@@ -638,5 +638,153 @@ read baz <<< 'foo\\\\bar'
 
 : ~root
 [[ $(builtin) == *.sh.tilde* ]] &&  err_exit 'builtin contains .sh.tilde'
+
+IFS=',' read -S a b c <<<'foo,"""title"" data",bar'
+[[ $b == '"title" data' ]] || err_exit '"" inside "" not handled correctly with read -S'
+
+PATH=/bin:/usr/bin
+basename=$(whence -p basename)
+cmp=$(whence -p cmp)
+.sh.op_astbin=/opt/ast/bin
+PATH=/opt/ast/bin:$PATH
+PATH=/opt/ast/bin:/bin:/usr/bin
+[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || err_exit "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
+[[ $(whence basename) == /opt/ast/bin/basename ]] || err_exit "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename" 
+[[ $(whence cmp) == /opt/ast/bin/cmp ]] || err_exit "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp" 
+.sh.op_astbin=/bin
+SH_OPTIONS=astbin=/bin
+[[ ${SH_OPTIONS} == *astbin=/bin* ]] || err_exit "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
+[[ $(whence basename) == "$basename" ]] || err_exit "basename bound to $(whence basename) but should be bound to $basename" 
+[[ $(whence cmp) == "$cmp" ]] || err_exit "cmp bound to $(whence cmp) but should be bound to $cmp" 
+.sh.op_astbin=/opt/ast/bin
+[[ $(whence basename) == /opt/ast/bin/basename ]] || err_exit "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename" 
+[[ $(whence cmp) == /opt/ast/bin/cmp ]] || err_exit "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp" 
+PATH=/bin:/usr/bin:/opt/ast/bin
+[[ $(whence basename) == "$basename" ]] || err_exit "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH" 
+[[ $(whence cmp) == "$cmp" ]] || err_exit "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH" 
+
+unset y
+exp='outside f, 1, 2, 3, outside f'
+got=$(
+	f() {
+	    if [ -n "${_called_f+_}" ]; then
+	        for y; do
+	            printf '%s, ' "$y"
+	        done
+	    else
+	        _called_f= y= command eval '{ typeset +x y; } 2>/dev/null; f "$@"'
+	    fi
+	}
+	y='outside f'
+	printf "$y, "
+	f 1 2 3
+	echo "$y"
+)
+[[ $got == "$exp" ]] || err_exit 'assignments to "command special_built-in" leaving side effects.'
+
+{ $SHELL -c 'kill %' ;} 2> /dev/null
+[[ $? == 1 ]] || err_exit "'kill %' has wrong exit status"
+
+printf '\\\000' | read -r -d ''
+[[ $REPLY == $'\\' ]] || err_exit "read -r -d'' ignores -r"
+
+wait
+unset i
+integer i
+for (( i=0 ; i < 256 ; i++ ))
+do	sleep 2 &
+done
+while ! wait
+do	true
+done
+[[ $(jobs -l) ]] && err_exit 'jobs -l should not have any output'
+
+# tests with cd and ~{fd} 
+pwd=$PWD
+exec {fd}</dev
+if	cd ~{fd}
+then	[[ -r null ]] || err_exit 'cannot find "null" file in /dev'
+else	err_exit 'cannot cd to ~{fd} when fd is /dev'
+fi
+if	cd ~-
+then	[[ $PWD == "$pwd" ]] || err_exit "directory is $PWD, should be $pwd"
+else	err_exit "unable to cd ~- back to $pwd"
+fi
+if	cd /dev/fd/$fd/..
+then	[[ $(pwd -P) == '/' ]] || err_exit 'physical directory should be /'
+else	err_exit  "cd to /dev/fd/$fd/.. failed"
+fi
+pwd=$(pwd -P)
+if	cd bin
+then	[[ -x sh ]] || err_exit 'cannot find executable sh in bin'
+else	err_exit 'cd bin failed'
+fi
+if	cd ~-
+then	[[ $(pwd -P) == "$pwd" ]] || err_exit "directory is $PWD, should be $pwd"
+else	err_exit 'cd ~- failed'
+fi
+if	cd -f $fd
+then	[[ -r null ]] || err_exit 'cannot find "null" file in /dev'
+else	err_exit 'cannot cd to ~{fd} when fd is /dev'
+fi
+
+[[ $(pwd -f $fd) == /dev ]] || err_exit "pwd -f $fd should be /dev"
+
+$SHELL <<- \EOF
+	home=$HOME
+	unset HOME
+	cd 2> /dev/null
+	[[ $(pwd) == "$home" ]]
+EOF
+[[ $? == 0 ]] || err_exit 'cd with no arguments fails if HOME is unset'
+
+cd "$tmp"
+if	mkdir -p f1
+then	redirect {d}<f1
+	pwd=$(pwd)
+	( cd -f $d && [[ $(pwd) == "$pwd/f1" ]]) || err_exit '$(pwd) does not show new directory' 
+	[[ $(pwd) == "$pwd" ]] || err_exit '$(pwd) is not $pwd'
+	[[ $(/bin/pwd) == "$pwd" ]] || err_exit  '/bin/pwd is not "$pwd"'
+	[[ $(/bin/pwd) == "$(pwd)" ]] || err_exit  '/bin/pwd is not pwd'
+	cd "$pwd"
+	rmdir "$pwd/f1"
+fi
+
+$SHELL 2> /dev/null <<- \!!! || err_exit 'alarm during read causes core dump'
+	function input_feed
+	{
+		typeset i
+		for ((i=0; i<3 ; i++))
+		do	print hello,world
+			sleep .3
+		done
+	}
+	alarm -r alarm_handler +.1
+	function alarm_handler.alarm
+	{
+		print "goodbye world" | read arg1 arg2
+	}
+	
+	input_feed | while IFS=',' read arg1 arg2
+	do	:
+	done
+!!!
+# test for eval bug when called from . script in a startup file.
+print $'eval : foo\nprint ok' > $tmp/evalbug
+print ". $tmp/evalbug" >$tmp/envfile
+[[ $(ENV=$tmp/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || err_exit 'eval inside dot script called from profile file not working'
+
+# test cd to a directory that doesn't have execute permission
+if	mkdir -p $tmp/a/b
+then	chmod -x $tmp/a/b
+	cd $tmp/a/b 2> /dev/null && err_exit 'cd to directory without execute should fail'
+fi
+
+if	print -s 'print hello world' 2> /dev/null
+then	[[ $(history -1) == *'hello world'* ]] || err_exit 'history file does not can results of print -s'
+else	err_exit 'print -s fails'
+fi
+
+builtin  -d set 2> /dev/null && err_exit 'buitin -d allows special builtins to be deleted'
 
 exit $((Errors<125?Errors:125))

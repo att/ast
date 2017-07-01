@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -32,33 +32,35 @@
 
 #include <ast.h>
 #include <ctype.h>
-
 #include <ccode.h>
-#if !_PACKAGE_astsa
-#include <regex.h>
-#endif
 
 int
 chrexp(register const char* s, char** p, int* m, register int flags)
 {
-	register const char*	q;
+	register const char*	t;
 	register int		c;
 	const char*		e;
 	const char*		b;
 	char*			r;
 	int			n;
-	int			w;
+	int			x;
+	wchar_t			d;
+	Mbstate_t		q;
+	bool			u;
+	bool			w;
 
-	w = 0;
+	u = w = 0;
+	mbtinit(&q);
 	for (;;)
 	{
 		b = s;
-		switch (c = mbchar(s))
+		switch (c = mbtchar(&d, s, MB_LEN_MAX, &q))
 		{
 		case 0:
-			s--;
+			s = b;
 			break;
 		case '\\':
+			b = s;
 			switch (c = *s++)
 			{
 			case '0': case '1': case '2': case '3':
@@ -66,8 +68,8 @@ chrexp(register const char* s, char** p, int* m, register int flags)
 				if (!(flags & FMT_EXP_CHAR))
 					goto noexpand;
 				c -= '0';
-				q = s + 2;
-				while (s < q)
+				t = s + 2;
+				while (s < t)
 					switch (*s)
 					{
 					case '0': case '1': case '2': case '3':
@@ -75,7 +77,7 @@ chrexp(register const char* s, char** p, int* m, register int flags)
 						c = (c << 3) + *s++ - '0';
 						break;
 					default:
-						q = s;
+						t = s;
 						break;
 					}
 				break;
@@ -153,18 +155,27 @@ chrexp(register const char* s, char** p, int* m, register int flags)
 				c = CC_vt;
 				break;
 			case 'u':
+				u = 1;
+			case 'w':
+				t = s + 4;
+				goto wex;
 			case 'U':
+				u = 1;
+			case 'W':
+				t = s + 8;
+			wex:
+				if (!(flags & FMT_EXP_WIDE))
+					goto noexpand;
+				w = 1;
+				goto hex;
 			case 'x':
-				if (q = c == 'u' ? (s + 4) : c == 'U' ? (s + 8) : (char*)0)
-				{
-					if (!(flags & FMT_EXP_WIDE))
-						goto noexpand;
-					w = 1;
-				}
-				b = e = s;
+				t = s + 2;
+			hex:
+				e = s;
 				n = 0;
 				c = 0;
-				while (!e || !q || s < q)
+				x = 0;
+				while (!e || !t || s < t)
 				{
 					switch (*s)
 					{
@@ -187,47 +198,100 @@ chrexp(register const char* s, char** p, int* m, register int flags)
 							break;
 						e = 0;
 						s++;
-						if (w && *s == 'U' && *(s + 1) == '+')
+						if (w && (*s == 'U' || *s == 'W') && *(s + 1) == '+')
 							s += 2;
 						continue;
+					case '-':
+						if (e)
+							break;
+						if (*(s + 1) != '}' && *(s + 1) != ']')
+						{
+							if (!*(s + 1) || *(s + 2) != '}' && *(s + 2) != ']')
+								break;
+							x = *(unsigned char*)(s + 1);
+							s += 2;
+						}
+						else
+						{
+							x = -1;
+							s++;
+						}
+						/*FALLTHROUGH*/
 					case '}':
 					case ']':
 						if (!e)
-							s++;
+							e = ++s;
 						break;
 					default:
 						break;
 					}
 					break;
 				}
-				if (n <= 2 && !(flags & FMT_EXP_CHAR) || n > 2 && (w = 1) && !(flags & FMT_EXP_WIDE))
+				if (e)
 				{
-					c = '\\';
-					s = b;
+					if (n < 8 || n == 8 && c >= 0)
+					{
+						if (!w)
+						{
+							if (n > 2)
+							{
+								if (!(flags & FMT_EXP_WIDE))
+									goto noexpand;
+								w = 1;
+							}
+							else if (!(flags & FMT_EXP_CHAR))
+								goto noexpand;
+							else
+								break;
+						}
+						if (!mbwide())
+							w = 0;
+						if (c <= 0x7f)
+							break;
+						if (u)
+						{
+							uint32_t	i = c;
+							wchar_t		o;
+
+							if (!utf32invalid(i) && utf32stowcs(&o, &i, 1) > 0)
+							{
+								c = o;
+								break;
+							}
+						}
+						else if (w || c <= ast.byte_max)
+							break;
+					}
+					if (x)
+					{
+						c = x;
+						w = 0;
+						break;
+					}
 				}
-				break;
+				/*FALLTHROUGH*/
 			case 0:
-				s--;
-				break;
+				goto noexpand;
 			}
 			break;
 		default:
 			if ((s - b) > 1)
 				w = 1;
 			break;
+		noexpand:
+			s = b;
+			w = 0;
+			c = '\\';
+			break;
 		}
 		break;
 	}
- normal:
-	if (p)
-		*p = (char*)s;
+ done:
 	if (m)
 		*m = w;
+	if (p)
+		*p = (char*)s;
 	return c;
- noexpand:
-	c = '\\';
-	s--;
-	goto normal;
 }
 
 int

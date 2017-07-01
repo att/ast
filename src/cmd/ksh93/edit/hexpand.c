@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -35,16 +35,10 @@
 #include "defs.h"
 #include "edit.h"
 
-#if ! SHOPT_HISTEXPAND
-
-NoN(hexpand)
-
-#else
-
 static char *modifiers = "htrepqxs&";
 static int mod_flags[] = { 0, 0, 0, 0, HIST_PRINT, HIST_QUOTE, HIST_QUOTE|HIST_QUOTE_BR, 0, 0 };
 
-#define	DONE()	{flag |= HIST_ERROR; cp = 0; stakseek(0); goto done;}
+#define	DONE()	{flag |= HIST_ERROR; cp = 0; stkseek(shp->stk,0); goto done;}
 
 struct subst
 {
@@ -62,13 +56,13 @@ struct subst
  * - one char beyond the third delimiter
  */
 
-static char *parse_subst(const char *s, struct subst *sb)
+static char *parse_subst(Shell_t *shp,const char *s, struct subst *sb)
 {
 	char	*cp,del;
 	int	off,n = 0;
 
 	/* build the strings on the stack, mainly for '&' substition in "new" */
-	off = staktell();
+	off = stktell(shp->stk);
 
 	/* init "new" with empty string */
 	if(sb->str[1])
@@ -85,14 +79,14 @@ static char *parse_subst(const char *s, struct subst *sb)
 		if(*cp == del || *cp == '\n' || *cp == '\0')
 		{
 			/* delimiter or EOL */
-			if(staktell() != off)
+			if(stktell(shp->stk) != off)
 			{
 				/* dupe string on stack and rewind stack */
-				stakputc('\0');
+				sfputc(shp->stk,'\0');
 				if(sb->str[n])
 					free(sb->str[n]);
-				sb->str[n] = strdup(stakptr(off));
-				stakseek(off);
+				sb->str[n] = strdup(stkptr(shp->stk,off));
+				stkseek(shp->stk,off);
 			}
 			n++;
 
@@ -104,27 +98,27 @@ static char *parse_subst(const char *s, struct subst *sb)
 		{
 			if(*(cp+1) == del)	/* quote delimiter */
 			{
-				stakputc(del);
+				sfputc(shp->stk,del);
 				cp++;
 			}
 			else if(*(cp+1) == '&' && n == 1)
 			{		/* quote '&' only in "new" */
-				stakputc('&');
+				sfputc(shp->stk,'&');
 				cp++;
 			}
 			else
-				stakputc('\\');
+				sfputc(shp->stk,'\\');
 		}
 		else if(*cp == '&' && n == 1 && sb->str[0])
 			/* substitute '&' with "old" in "new" */
-			stakputs(sb->str[0]);
+			sfputr(shp->stk,sb->str[0],-1);
 		else
-			stakputc(*cp);
+			sfputc(shp->stk,*cp);
 		cp++;
 	}
 
 	/* rewind stack */
-	stakseek(off);
+	stkseek(shp->stk,off);
 
 	return cp;
 }
@@ -133,7 +127,7 @@ static char *parse_subst(const char *s, struct subst *sb)
  * history expansion main routine
  */
 
-int hist_expand(const char *ln, char **xp)
+int hist_expand(Shell_t *shp,const char *ln, char **xp)
 {
 	int	off,	/* stack offset */
 		q,	/* quotation flags */
@@ -164,7 +158,7 @@ int hist_expand(const char *ln, char **xp)
 	hc[0] = '!';
 	hc[1] = '^';
 	hc[2] = 0;
-	if((np = nv_open("histchars",sh.var_tree,0)) && (cp = nv_getval(np)))
+	if((np = nv_open("histchars",shp->var_tree,0)) && (cp = nv_getval(np)))
 	{
 		if(cp[0])
 		{
@@ -179,8 +173,8 @@ int hist_expand(const char *ln, char **xp)
 	}
 
 	/* save shell stack */
-	if(off = staktell())
-		sp = stakfreeze(0);
+	if(off = stktell(shp->stk))
+		sp = stkfreeze(shp->stk,0);
 
 	cp = (char*)ln;
 
@@ -191,21 +185,21 @@ int hist_expand(const char *ln, char **xp)
 		   || (*cp == hc[1] && cp != ln))
 		{
 			if(*cp == '\\')	/* skip escaped designators */
-				stakputc(*cp++);
+				sfputc(shp->stk,*cp++);
 			else if(*cp == '\'') /* skip quoted designators */
 			{
 				do
-					stakputc(*cp);				
+					sfputc(shp->stk,*cp);				
 				while(*++cp && *cp != '\'');
 			}
-			stakputc(*cp++);
+			sfputc(shp->stk,*cp++);
 			continue;
 		}
 
 		if(hc[2] && *cp == hc[2]) /* history comment designator, skip rest of line */
 		{
-			stakputc(*cp++);
-			stakputs(cp);
+			sfputc(shp->stk,*cp++);
+			sfputr(shp->stk,cp,-1);
 			DONE();
 		}
 
@@ -234,15 +228,15 @@ int hist_expand(const char *ln, char **xp)
 		case '\0':
 		case '=':
 		case '(':
-			stakputc(hc[0]);
+			sfputc(shp->stk,hc[0]);
 			continue;
 		case '#': /* the line up to current position */
 			flag |= HIST_HASH;
 			cp++;
-			n = staktell(); /* terminate string and dup */
-			stakputc('\0');
-			cc = strdup(stakptr(0));
-			stakseek(n); /* remove null byte again */
+			n = stktell(shp->stk); /* terminate string and dup */
+			sfputc(shp->stk,'\0');
+			cc = strdup(stkptr(shp->stk,0));
+			stkseek(shp->stk,n); /* remove null byte again */
 			ref = sfopen(ref, cc, "s"); /* open as file */
 			n = 0; /* skip history file referencing */
 			break;
@@ -588,7 +582,7 @@ getsel:
 					/* preset old with match from !?string? */
 					if(!sb.str[0] && wm)
 						sb.str[0] = strdup(sfsetbuf(wm, (Void_t*)1, 0));
-					cp = parse_subst(cp, &sb);
+					cp = parse_subst(shp, cp, &sb);
 				}
 
 				if(!sb.str[0] || !sb.str[1])
@@ -658,7 +652,7 @@ getsel:
 			sfseek(tmp, 0, SEEK_SET);
 
 			if(flag & HIST_QUOTE)
-				stakputc('\'');
+				sfputc(shp->stk,'\'');
 
 			while((c = sfgetc(tmp)) > 0)
 			{
@@ -678,29 +672,29 @@ getsel:
 
 					if(flag & HIST_QUOTE_BR)
 					{
-						stakputc('\'');
-						stakputc(c);
-						stakputc('\'');
+						sfputc(shp->stk,'\'');
+						sfputc(shp->stk,c);
+						sfputc(shp->stk,'\'');
 					}
 					else
-						stakputc(c);
+						sfputc(shp->stk,c);
 				}
 				else if((c == '\'') && (flag & HIST_QUOTE))
 				{
-					stakputc('\'');
-					stakputc('\\');
-					stakputc(c);
-					stakputc('\'');
+					sfputc(shp->stk,'\'');
+					sfputc(shp->stk,'\\');
+					sfputc(shp->stk,c);
+					sfputc(shp->stk,'\'');
 				}
 				else
-					stakputc(c);
+					sfputc(shp->stk,c);
 			}
 			if(flag & HIST_QUOTE)
-				stakputc('\'');
+				sfputc(shp->stk,'\'');
 		}
 	}
 
-	stakputc('\0');
+	sfputc(shp->stk,'\0');
 
 done:
 	if(cc && (flag&HIST_HASH))
@@ -712,14 +706,14 @@ done:
 	}
 
 	/* error? */
-	if(staktell() && !(flag & HIST_ERROR))
-		*xp = strdup(stakfreeze(1));
+	if(stktell(shp->stk) && !(flag & HIST_ERROR))
+		*xp = strdup(stkfreeze(shp->stk,1));
 
 	/* restore shell stack */
 	if(off)
-		stakset(sp,off);
+		stkset(shp->stk,sp,off);
 	else
-		stakseek(0);
+		stkseek(shp->stk,0);
 
 	/* drop temporary files */
 
@@ -731,4 +725,3 @@ done:
 	return (flag & HIST_ERROR ? HIST_ERROR : flag & HIST_FLAG_RETURN_MASK);
 }
 
-#endif

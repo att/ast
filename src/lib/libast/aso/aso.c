@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,9 +14,9 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                   Phong Vo <kpv@research.att.com>                    *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+*                    David Korn <dgkorn@gmail.com>                     *
+*                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -37,35 +37,11 @@ NoN(aso)
  * cas { 8 16 32 [64] } subset snarfed from the work by
  * Adam Edgar and Kiem-Phong Vo 2010-10-10
  *
- * lock methods and emulations by
+ * additional intrinsics and emulations by
  * Glenn Fowler 2011-11-11
- *
- * hopefully stable by 2012-12-12
  */
 
-#if !_PACKAGE_ast
-
-#if _UWIN
-
-extern ssize_t		sfsprintf(char*, size_t, const char*, ...);
-
-#else
-
-#include <stdio.h>
-
-#define sfsprintf	snprintf
-
-#endif
-
-#endif
-
-#if defined(_aso_casptr) && (defined(_aso_cas32) || defined(_aso_cas64))
-#define ASO_METHOD		(&_aso_meth_intrinsic)
-#define ASO_LOCKF		0
-#else
-#define ASO_METHOD		(&_aso_meth_signal)
-#define ASO_LOCKF		_aso_lock_signal
-#endif
+static const char	lib[] = "libast:aso";
 
 typedef union
 {
@@ -107,219 +83,237 @@ typedef union
 
 #endif
 
-typedef struct State_s
-{
-	Asometh_t*		meth;
-	Asolock_f		lockf;
-	Asoerror_f		errorf;
-	uintmax_t		hung;
-	unsigned int		hung2;
-	void*			data;
-	pid_t			pid;
-} State_t;
+#if !_ASO_INTRINSIC || defined(_ast_int8_t) && !defined(asocas64)
 
-static unsigned int		_aso_data_signal;
+/*
+ * used only when no cas intrinsic is available
+ * should work most of the time in a single threaded process 
+ * with no multi-process shared mem access and low freq signals
+ */
 
 static ssize_t
-_aso_lock_signal(void* data, ssize_t k, void volatile* p)
+lock(ssize_t k)
 {
+	static int	locked;
+
 	if (k >= 0)
 	{
-		_aso_data_signal--;
+		locked--;
 		return 0;
 	}
-	while (_aso_data_signal++)
-		_aso_data_signal--;
+	while (locked++)
+		locked--;
 	return 1;
 }
 
-static Asometh_t	_aso_meth_signal =    { "signal",    ASO_SIGNAL,    0, _aso_lock_signal };
-extern Asometh_t	_aso_meth_semaphore;
-extern Asometh_t	_aso_meth_fcntl;
-static Asometh_t	_aso_meth_intrinsic = { "intrinsic", ASO_INTRINSIC|ASO_PROCESS|ASO_THREAD|ASO_SIGNAL, 0, 0 };
-
-static Asometh_t*	method[] =
-{
-	&_aso_meth_signal,
-#if defined(_ast_int8_t) && defined(_aso_cas64) || !defined(_ast_int8_t) && defined(_aso_cas32)
-	&_aso_meth_intrinsic,
 #endif
-#if _aso_semaphore
-	&_aso_meth_semaphore,
+
+#if _ASO_Interlocked
+
+#if ( _BLD_posix || __CYGWIN__ ) && !_X64
+
+#if __CYGWIN__
+
+#include <dlfcn.h>
+
+#define MODULE_kernel	0
+#define getsymbol(m,s)	dlsym(m,s)
+
+#else
+
+#include "dl.h"
+
 #endif
-#if _aso_fcntl
-	&_aso_meth_fcntl,
-#endif
-};
 
-static State_t			state =
+typedef struct LL_s
 {
-	ASO_METHOD, ASO_LOCKF
-};
+	LONG		a;
+	LONG		b;
+} LL_t;
 
-static int
-asoerror(int type, const char* format, const char* a, const char* b, long n)
+typedef union
 {
-	char	buf[128];
+	LONGLONG	i;
+	LL_t		ll;
+} LL_u;
 
-	if (b)
-		sfsprintf(buf, sizeof(buf), format, a, b, n);
-	else if (a)
-		sfsprintf(buf, sizeof(buf), format, a, n);
-	else
-		sfsprintf(buf, sizeof(buf), format, n);
-	return state.errorf(type, buf);
-}
+static LONGLONG _aso_InterlockedCompareExchange64_init(LONGLONG volatile*, LONGLONG, LONGLONG);
 
-/*
- * if type!=0 return lock method for type with name details
- * else if name!=0 return lock method matching <name>[,<details>]
- * else return the current lock method
- * 0 returned on error
- *
- * the user visible asometh() calls this function
- * it allows, e.g., for -ltaso to provide an asometh() intercept
- * that prepends its ASO_THREAD methods ahead of the _asometh() methods
- */
+_aso_InterlockedCompareExchange64_f _aso_InterlockedCompareExchange64 = _aso_InterlockedCompareExchange64_init;
 
-Asometh_t*
-_asometh(int type, void* data)
+static LONGLONG _aso_InterlockedCompareExchange64_32(LONGLONG volatile* p, LONGLONG o, LONGLONG n)
 {
-	size_t		n;
-	int		i;
-	char*		e;
-	Asometh_t*	meth;
-	char*		name;
+	LL_t*		lp = (LL_t*)p;
+	LL_t*		op = (LL_t*)&o;
+	LL_t*		np = (LL_t*)&n;
+	LONGLONG	r;
 
-	if (type == ASO_NEXT)
+	r = *p;
+	if (asocas32(&lp->a, op->a, np->a) == op->a)
 	{
-		if (!(meth = (Asometh_t*)data))
-			return method[0];
-		for (i = 0; i < elementsof(method) - 1; i++)
-			if (meth == method[i])
-				return method[i+1];
-		return 0;
+		if (asocas32(&lp->b, op->b, np->b) == op->b)
+			return o;
+		asocas32(&lp->a, np->a, op->a);
 	}
-	if (type)
-	{
-		for (i = 0; i < elementsof(method); i++)
-			if (method[i]->type & type)
-			{
-				method[i]->details = (char*)data;
-				return method[i];
-			}
-		return 0;
-	}
-	if (!(name = (char*)data))
-		return state.meth;
-	n = (e = strchr(name, ',')) ? (e - name) : strlen(name);
-	for (i = 0; i < elementsof(method); i++)
-		if (strncmp(name, method[i]->name, n) == 0)
-		{
-			if (e)
-				method[i]->details = e + 1;
-			return method[i];
-		}
-	return 0;
-}
-
-/*
- * clean up lock method on exit
- */
-
-static void
-asoexit(void)
-{
-	if (state.meth && state.meth->initf && state.data && state.pid == getpid())
-	{
-		state.lockf = ASO_METHOD->lockf;
-		state.meth->initf(state.data, 0);
-		state.data = 0;
-	}
-}
-
-/*
- * initialize lock method
- */
-
-int
-asoinit(const char* details, Asometh_t* meth, Asodisc_t* disc)
-{
-	void*		data;
-
-	if (disc)
-	{
-		state.errorf = disc->errorf;
-		state.hung2 = disc->hung;
-		state.hung = 1;
-		state.hung <<= state.hung2;
-		state.hung--;
-	}
-	if (!meth)
-		return state.pid != 0;
-	if (!meth->lockf && !(meth->type & ASO_INTRINSIC))
-	{
-		if (state.errorf)
-			asoerror(ASO_EMETHOD, "%s method has no lock function", meth->name, 0, 0);
-		return -1;
-	}
-	state.lockf = ASO_METHOD->lockf;
-	if (state.meth && state.meth->initf && state.data)
-	{
-		state.meth->initf(state.data, 0);
-		state.data = 0;
-	}
-	if (!meth->initf)
-		data = 0;
-	else if (!(data = meth->initf(0, details ? details : meth->details)))
-	{
-		state.meth = ASO_METHOD;
-		if (state.errorf)
-			asoerror(ASO_EMETHOD, "%s method initialization failed -- reverting to the %s method", meth->name, state.meth->name, 0);
-		return -1;
-	}
-	state.meth = meth;
-	state.data = data;
-	state.lockf = meth->lockf;
-	if (!state.pid)
-	{
-		state.pid = getpid();
-		atexit(asoexit);
-	}
-	return 0;
-}
-
-/*
- * loop check for hung spin locks
- * and periodic relinquishing of the processor
- */
-
-int
-asoloop(uintmax_t rep)
-{
-	if (state.hung && !(rep & state.hung) && state.errorf)
-		return asoerror(ASO_EHUNG, "spin lock possibly hung after 2^%u attempts", 0, 0, state.hung2);
-	return (rep & ASO_RELAX) ? 0 : asorelax(1);
-}
-
-/*
- * error checking state.lockf() call
- */
-
-static ssize_t
-lock(void* data, ssize_t k, void volatile* p)
-{
-	ssize_t		r;
-
-	if ((r = state.lockf(data, k, p)) < 0 && state.errorf)
-		asoerror(ASO_EMETHOD, "%s method lock failed", state.meth->name, 0, 0);
 	return r;
 }
+
+static LONGLONG _aso_InterlockedCompareExchange64_init(LONGLONG volatile* p, LONGLONG o, LONGLONG n)
+{
+	if (!(_aso_InterlockedCompareExchange64 = (_aso_InterlockedCompareExchange64_f)getsymbol(MODULE_kernel, "InterlockedCompareExchange64")))
+		_aso_InterlockedCompareExchange64 = _aso_InterlockedCompareExchange64_32;
+	return _aso_InterlockedCompareExchange64(p, o, n);
+}
+
+static LONGLONG _aso_InterlockedExchangeAdd64_init(LONGLONG volatile*, LONGLONG);
+
+_aso_InterlockedExchangeAdd64_f _aso_InterlockedExchangeAdd64 = _aso_InterlockedExchangeAdd64_init;
+
+static LONGLONG _aso_InterlockedExchangeAdd64_32(LONGLONG volatile* p, LONGLONG n)
+{
+	LONGLONG	o;
+
+	do
+	{
+		o = *p;
+	} while (_aso_InterlockedCompareExchange64_32(p, o, o + n) != o);
+	return o;
+}
+
+static LONGLONG _aso_InterlockedExchangeAdd64_init(LONGLONG volatile* p, LONGLONG n)
+{
+	if (!(_aso_InterlockedExchangeAdd64 = (_aso_InterlockedExchangeAdd64_f)getsymbol(MODULE_kernel, "InterlockedExchangeAdd64")))
+		_aso_InterlockedExchangeAdd64 = _aso_InterlockedExchangeAdd64_32;
+	return _aso_InterlockedExchangeAdd64(p, n);
+}
+
+#endif
+
+#elif _ASO_i386
+
+uint32_t
+_aso_cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
+{
+	uint32_t	r;
+
+	__asm__ __volatile__ (
+		"lock ; cmpxchg %3,%4"
+		: "=a"(r), "=m"(*p)
+		: "0"(o), "q"(n), "m"(*p)
+		: "memory", "cc"
+		);
+	return r;
+}
+
+#if _ast_sizeof_pointer == 8
+
+uint64_t
+_aso_cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
+{
+	uint64_t	r;
+
+	__asm__ __volatile__ (
+		"lock ; cmpxchg %3,%4"
+		: "=a"(r), "=m"(*p)
+		: "0"(o), "q"(n), "m"(*p)
+		: "memory", "cc"
+		);
+	return r;
+}
+
+#endif
+
+#elif _ASO_ia64
+
+uint32_t
+_aso_cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
+{
+	int	r;
+
+	__asm__ __volatile__ (
+		"0:	lwarx %0,0,%1 ;"
+		"	xor. %0,%3,%0;"
+		"	bne 1f;"
+		"	stwcx. %2,0,%1;"
+		"	bne- 0b;"
+		"1:"
+		: "=&r"(r)
+		: "r"(p), "r"(n), "r"(o)
+		: "cr0", "memory"
+		);
+	__asm__ __volatile__ ("isync" : : : "memory");
+	return r ? *p : o;
+}
+
+uint64_t
+_aso_cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
+{
+	long	r;
+
+	__asm__ __volatile__ (
+		"0:	ldarx %0,0,%1 ;"
+		"	xor. %0,%3,%0;"
+		"	bne 1f;"
+		"	stdcx. %2,0,%1;"
+		"	bne- 0b;"
+		"1:"
+		: "=&r"(r)
+		: "r"(p), "r"(n), "r"(o)
+		: "cr0", "memory"
+		);
+	__asm__ __volatile__ ("isync" : : : "memory");
+	return r ? *p : o;
+}
+
+#elif _ASO_ppc
+
+uint32_t
+_aso_cas32(uint32_t volatile* p, uint32_t o, uint32_t n)
+{
+	int	r;
+
+	__asm__ __volatile__ (
+		"0:	lwarx %0,0,%1 ;"
+		"	xor. %0,%3,%0;"
+		"	bne 1f;"
+		"	stwcx. %2,0,%1;"
+		"	bne- 0b;"
+		"1:"
+		: "=&r"(r)
+		: "r"(p), "r"(n), "r"(o)
+		: "cr0", "memory"
+		);
+	__asm__ __volatile__ ("isync" : : : "memory");
+	return r ? *p : o;
+}
+
+uint64_t
+_aso_cas64(uint64_t volatile* p, uint64_t o, uint64_t n)
+{
+	long	r;
+
+	__asm__ __volatile__ (
+		"0:	ldarx %0,0,%1 ;"
+		"	xor. %0,%3,%0;"
+		"	bne 1f;"
+		"	stdcx. %2,0,%1;"
+		"	bne- 0b;"
+		"1:"
+		: "=&r"(r)
+		: "r"(p), "r"(n), "r"(o)
+		: "cr0", "memory"
+		);
+	__asm__ __volatile__ ("isync" : : : "memory");
+	return r ? *p : o;
+}
+
+#endif
 
 /*
  * sync and return "current" value
  */
 
+#ifndef asoget8
 uint8_t
 asoget8(uint8_t volatile* p)
 {
@@ -331,7 +325,9 @@ asoget8(uint8_t volatile* p)
 	} while (asocas8(p, o, o) != o);
 	return o;
 }
+#endif
 
+#ifndef asoget16
 uint16_t
 asoget16(uint16_t volatile* p)
 {
@@ -343,7 +339,9 @@ asoget16(uint16_t volatile* p)
 	} while (asocas16(p, o, o) != o);
 	return o;
 }
+#endif
 
+#ifndef asoget32
 uint32_t
 asoget32(uint32_t volatile* p)
 {
@@ -355,9 +353,11 @@ asoget32(uint32_t volatile* p)
 	} while (asocas32(p, o, o) != o);
 	return o;
 }
+#endif
 
 #ifdef _ast_int8_t
 
+#ifndef asoget64
 uint64_t
 asoget64(uint64_t volatile* p)
 {
@@ -369,9 +369,11 @@ asoget64(uint64_t volatile* p)
 	} while (asocas64(p, o, o) != o);
 	return o;
 }
+#endif
 
 #endif
 
+#ifndef asogetptr
 void*
 asogetptr(void volatile* p)
 {
@@ -380,115 +382,200 @@ asogetptr(void volatile* p)
 	do
 	{
 		o = *(void* volatile*)p;
-	} while (asocasptr(p, o, o) != o);
+	} while (asocasptr((void**)p, o, o) != o);
 	return o;
 }
+#endif
+
+/*
+ * add and return old value
+ */
+
+#ifndef asoadd8
+uint8_t
+asoadd8(uint8_t volatile* p, int n)
+{
+	int		o;
+
+	do
+	{
+		o = *p;
+	} while (asocas8(p, o, o + n) != o);
+	return o;
+}
+#endif
+
+#ifndef asoadd16
+uint16_t
+asoadd16(uint16_t volatile* p, int n)
+{
+	int		o;
+
+	do
+	{
+		o = *p;
+	} while (asocas16(p, o, o + n) != o);
+	return o;
+}
+#endif
+
+#ifndef asoadd32
+uint32_t
+asoadd32(uint32_t volatile* p, uint32_t n)
+{
+	uint32_t	o;
+
+	do
+	{
+		o = *p;
+	} while (asocas32(p, o, o + n) != o);
+	return o;
+}
+#endif
+
+#ifdef _ast_int8_t
+
+#ifndef asoadd64
+uint64_t
+asoadd64(uint64_t volatile* p, uint64_t n)
+{
+	uint64_t	o;
+
+	do
+	{
+		o = *p;
+	} while (asocas64(p, o, o + n) != o);
+	return o;
+}
+#endif
+
+#endif
+
+/*
+ * subtract and return old value
+ */
+
+#ifndef asosub8
+uint8_t
+asosub8(uint8_t volatile* p, int n)
+{
+	int		o;
+
+	do
+	{
+		o = *p;
+	} while (asocas8(p, o, o - n) != o);
+	return o;
+}
+#endif
+
+#ifndef asosub16
+uint16_t
+asosub16(uint16_t volatile* p, int n)
+{
+	int		o;
+
+	do
+	{
+		o = *p;
+	} while (asocas16(p, o, o - n) != o);
+	return o;
+}
+#endif
+
+#ifndef asosub32
+uint32_t
+asosub32(uint32_t volatile* p, uint32_t n)
+{
+	uint32_t	o;
+
+	do
+	{
+		o = *p;
+	} while (asocas32(p, o, o - n) != o);
+	return o;
+}
+#endif
+
+#ifdef _ast_int8_t
+
+#ifndef asosub64
+uint64_t
+asosub64(uint64_t volatile* p, uint64_t n)
+{
+	uint64_t	o;
+
+	do
+	{
+		o = *p;
+	} while (asocas64(p, o, o - n) != o);
+	return o;
+}
+#endif
+
+#endif
 
 /*
  * increment and return old value
  */
 
+#ifndef asoinc8
 uint8_t
 asoinc8(uint8_t volatile* p)
 {
-	ssize_t		k;
 	int		o;
 
-#if defined(_aso_inc8)
-	if (!state.lockf)
-		return _aso_inc8(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas8(p, o, o + 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)++;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas8(p, o, o + 1) != o);
 	return o;
 }
+#endif
 
+#ifndef asoinc16
 uint16_t
 asoinc16(uint16_t volatile* p)
 {
-	ssize_t		k;
 	int		o;
 
-#if defined(_aso_inc16)
-	if (!state.lockf)
-		return _aso_inc16(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas16(p, o, o + 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)++;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas16(p, o, o + 1) != o);
 	return o;
 }
+#endif
 
+#ifndef asoinc32
 uint32_t
 asoinc32(uint32_t volatile* p)
 {
-	ssize_t		k;
-	int		o;
+	uint32_t	o;
 
-#if defined(_aso_inc32)
-	if (!state.lockf)
-		return _aso_inc32(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas32(p, o, o + 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)++;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas32(p, o, o + 1) != o);
 	return o;
 }
+#endif
 
 #ifdef _ast_int8_t
 
+#ifndef asoinc64
 uint64_t
 asoinc64(uint64_t volatile* p)
 {
-	ssize_t		k;
 	uint64_t	o;
 
-#if defined(_aso_inc64)
-	if (!state.lockf)
-		return _aso_inc64(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas64(p, o, o + 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)++;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas64(p, o, o + 1) != o);
 	return o;
 }
+#endif
 
 #endif
 
@@ -496,107 +583,217 @@ asoinc64(uint64_t volatile* p)
  * decrement and return old value
  */
 
+#ifndef asodec8
 uint8_t
 asodec8(uint8_t volatile* p)
 {
-	ssize_t		k;
 	int		o;
 
-#if defined(_aso_dec8)
-	if (!state.lockf)
-		return _aso_dec8(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas8(p, o, o - 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)--;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas8(p, o, o - 1) != o);
 	return o;
 }
+#endif
 
+#ifndef asodec16
 uint16_t
 asodec16(uint16_t volatile* p)
 {
-	ssize_t		k;
 	int		o;
 
-#if defined(_aso_dec16)
-	if (!state.lockf)
-		return _aso_dec16(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas16(p, o, o - 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)--;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas16(p, o, o - 1) != o);
 	return o;
 }
+#endif
 
+#ifndef asodec32
 uint32_t
 asodec32(uint32_t volatile* p)
 {
-	ssize_t		k;
-	int		o;
+	uint32_t	o;
 
-#if defined(_aso_dec32)
-	if (!state.lockf)
-		return _aso_dec32(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas32(p, o, o - 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)--;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas32(p, o, o - 1) != o);
 	return o;
 }
+#endif
 
 #ifdef _ast_int8_t
 
+#ifndef asodec64
 uint64_t
 asodec64(uint64_t volatile* p)
 {
-	ssize_t		k;
 	uint64_t	o;
 
-#if defined(_aso_dec64)
-	if (!state.lockf)
-		return _aso_dec64(p);
-#else
-	if (!state.lockf)
+	do
 	{
-		do
-		{
-			o = *p;
-		} while (asocas64(p, o, o - 1) != o);
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
-	o = (*p)--;
-	lock(state.data, k, p);
+		o = *p;
+	} while (asocas64(p, o, o - 1) != o);
 	return o;
 }
+#endif
+
+#endif
+
+/*
+ * if *p <= n then return *p
+ * else *p = n and return n
+ */
+
+#ifndef asomin8
+uint8_t
+asomin8(uint8_t volatile* p, int n)
+{
+	int		o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) <= n)
+			return o;
+		if (asocas8(p, o, n) == o)
+			break;
+	}
+	return n;
+}
+#endif
+
+#ifndef asomin16
+uint16_t
+asomin16(uint16_t volatile* p, int n)
+{
+	int		o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) <= n)
+			return o;
+		if (asocas16(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
+
+#ifndef asomin32
+uint32_t
+asomin32(uint32_t volatile* p, uint32_t n)
+{
+	uint32_t	o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) <= n)
+			return o;
+		if (asocas32(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
+
+#ifdef _ast_int8_t
+
+#ifndef asomin64
+uint64_t
+asomin64(uint64_t volatile* p, uint64_t n)
+{
+	uint64_t	o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) <= n)
+			return o;
+		if (asocas64(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
+
+#endif
+
+/*
+ * if *p >= n then return *p
+ * else *p = n and return n
+ */
+
+#ifndef asomax8
+uint8_t
+asomax8(uint8_t volatile* p, int n)
+{
+	int		o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) >= n)
+			return o;
+		if (asocas8(p, o, n) == o)
+			break;
+	}
+	return n;
+}
+#endif
+
+#ifndef asomax16
+uint16_t
+asomax16(uint16_t volatile* p, int n)
+{
+	int		o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) >= n)
+			return o;
+		if (asocas16(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
+
+#ifndef asomax32
+uint32_t
+asomax32(uint32_t volatile* p, uint32_t n)
+{
+	uint32_t	o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) >= n)
+			return o;
+		if (asocas32(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
+
+#ifdef _ast_int8_t
+
+#ifndef asomax64
+uint64_t
+asomax64(uint64_t volatile* p, uint64_t n)
+{
+	uint64_t	o;
+
+	for (;; asospinrest())
+	{
+		if ((o = *p) >= n)
+			return o;
+		if (asocas64(p, o, n) == o)
+			break;
+	}
+	return o;
+}
+#endif
 
 #endif
 
@@ -604,241 +801,221 @@ asodec64(uint64_t volatile* p)
  * { 8 16 32 [64] } compare with old, swap with new if same, and return old value
  */
 
+#ifndef asocas8
 uint8_t
 asocas8(uint8_t volatile* p, int o, int n)
 {
+#if defined(asocas16)
+	U16_8_t		u;
+	U16_8_t		v;
+	U16_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U16_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas16(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#elif defined(asocas32)
+	U32_8_t		u;
+	U32_8_t		v;
+	U32_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U32_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas32(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#elif defined(asocas64)
+	U64_8_t		u;
+	U64_8_t		v;
+	U64_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U64_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas64(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#else
 	ssize_t		k;
 
-#if defined(_aso_cas8)
-	if (!state.lockf)
-		return _aso_cas8(p, o, n);
-#elif defined(_aso_cas16)
-	if (!state.lockf)
-	{
-		U16_8_t		u;
-		U16_8_t		v;
-		U16_8_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1));
-		a = (U16_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas16(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#elif defined(_aso_cas32)
-	if (!state.lockf)
-	{
-		U32_8_t		u;
-		U32_8_t		v;
-		U32_8_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1));
-		a = (U32_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas32(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#elif defined(_aso_cas64)
-	if (!state.lockf)
-	{
-		U64_8_t		u;
-		U64_8_t		v;
-		U64_8_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1));
-		a = (U64_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas64(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
+	k = lock(0);
 	if (*p == o)
 		*p = n;
 	else
 		o = *p;
-	lock(state.data, k, p);
+	lock(k);
 	return o;
+#endif
 }
+#endif
 
+#ifndef asocas16
 uint16_t
-asocas16(uint16_t volatile* p, uint16_t o, uint16_t n)
+asocas16(uint16_t volatile* p, int o, int n)
 {
+#if defined(asocas32)
+	U32_8_t		u;
+	U32_8_t		v;
+	U32_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U32_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas32(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#elif defined(asocas64)
+	U64_8_t		u;
+	U64_8_t		v;
+	U64_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U64_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas64(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#else
 	ssize_t		k;
 
-#if defined(_aso_cas16)
-	if (!state.lockf)
-		return _aso_cas16(p, o, n);
-#elif defined(_aso_cas32)
-	if (!state.lockf)
-	{
-		U32_16_t	u;
-		U32_16_t	v;
-		U32_16_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1)) / 2;
-		a = (U32_16_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas32(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#elif defined(_aso_cas64)
-	if (!state.lockf)
-	{
-		U64_16_t	u;
-		U64_16_t	v;
-		U64_16_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1)) / 2;
-		a = (U64_16_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas64(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
+	k = lock(0);
 	if (*p == o)
 		*p = n;
 	else
 		o = *p;
-	lock(state.data, k, p);
+	lock(k);
 	return o;
+#endif
 }
+#endif
 
+#ifndef asocas32
 uint32_t
 asocas32(uint32_t volatile* p, uint32_t o, uint32_t n)
 {
+#if defined(asocas64)
+	U64_8_t		u;
+	U64_8_t		v;
+	U64_8_t*	a;
+	int		s;
+	int		i;
+
+	s = (int)(integralof(p) & (sizeof(u.i) - 1));
+	a = (U64_8_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
+	for (;;)
+	{
+		u.i = a->i;
+		u.c[s] = o;
+		v.i = u.i;
+		v.c[s] = n;
+		if (asocas64(&a->i, u.i, v.i) == u.i)
+			break;
+		for (i = 0;; i++)
+			if (i >= elementsof(u.c))
+				return a->c[s];
+			else if (i != s && u.c[i] != a->c[i])
+				break;
+	}
+	return o;
+#else
 	ssize_t		k;
 
-#if defined(_aso_cas32)
-	if (!state.lockf)
-		return _aso_cas32(p, o, n);
-#elif defined(_aso_cas64)
-	if (!state.lockf)
-	{
-		U64_32_t	u;
-		U64_32_t	v;
-		U64_32_t*	a;
-		int		s;
-		int		i;
-
-		s = (int)(integralof(p) & (sizeof(u.i) - 1)) / 4;
-		a = (U64_32_t*)((char*)0 + (integralof(p) & ~(sizeof(u.i) - 1)));
-		for (;;)
-		{
-			u.i = a->i;
-			u.c[s] = o;
-			v.i = u.i;
-			v.c[s] = n;
-			if (_aso_cas64(&a->i, u.i, v.i) == u.i)
-				break;
-			for (i = 0;; i++)
-				if (i >= elementsof(u.c))
-					return a->c[s];
-				else if (i != s && u.c[i] != a->c[i])
-					break;
-		}
-		return o;
-	}
-#endif
-	k = lock(state.data, 0, p);
+	k = lock(0);
 	if (*p == o)
 		*p = n;
 	else
 		o = *p;
-	lock(state.data, k, p);
+	lock(k);
 	return o;
+#endif
 }
+#endif
 
 #ifdef _ast_int8_t
 
+#ifndef asocas64
 uint64_t
 asocas64(uint64_t volatile* p, uint64_t o, uint64_t n)
 {
 	ssize_t		k;
 
-#if defined(_aso_cas64)
-	if (!state.lockf)
-		return _aso_cas64(p, o, n);
-#endif
-	k = lock(state.data, 0, p);
+	k = lock(0);
 	if (*p == o)
 		*p = n;
 	else
 		o = *p;
-	lock(state.data, k, p);
+	lock(k);
 	return o;
 }
+#endif
 
 #endif
 
@@ -846,22 +1023,39 @@ asocas64(uint64_t volatile* p, uint64_t o, uint64_t n)
  * compare with old, swap with new if same, and return old value
  */
 
+#ifndef asocasptr
 void*
 asocasptr(void volatile* p, void* o, void* n)
 {
 	ssize_t		k;
 
-#if defined(_aso_casptr)
-	if (!state.lockf)
-		return _aso_casptr((void**)p, o, n);
-#endif
-	k = lock(state.data, 0, p);
+	k = lock(0);
 	if (*(void* volatile*)p == o)
 		*(void* volatile*)p = n;
 	else
 		o = *(void* volatile*)p;
-	lock(state.data, k, p);
+	lock(k);
 	return o;
 }
+#endif
+
+#if __OBSOLETE__ < 20160101
+
+#if defined(__EXPORT__)
+#define extern	extern __EXPORT__
+#endif
+
+extern int
+asoloop(unsigned int k)
+{
+	k = (k % 21) + 1;
+	if (k > 21 )
+		return asoyield();
+	return asorelax(1 << ((k % 21) + 1));
+}
+
+#undef	extern
+
+#endif
 
 #endif

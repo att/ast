@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1982-2011 AT&T Intellectual Property          *
+*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                  David Korn <dgk@research.att.com>                   *
+*                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -230,13 +230,9 @@ static const char sh_lexstate6[256] =
 	S_ERR,	S_SPC1,	S_ERR,	S_SPC1,	S_SPC2,	S_ERR,	S_ERR,	S_LIT,
 	S_PAR,	S_ERR,	S_SPC2,	S_ERR,	S_ERR,	S_SPC2,	S_ALP,	S_ERR,
 	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,	S_DIG,
-	S_DIG,	S_DIG,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_SPC2,
+	S_DIG,	S_DIG,	S_ERR,	S_ERR,	S_ERR,	S_SPC2,	S_ERR,	S_SPC2,
 
-#if SHOPT_TYPEDEF
 	S_SPC1,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
-#else
-	S_SPC2,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
-#endif
 	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
 	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,	S_ALP,
 	S_ALP,	S_ALP,	S_ALP,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ALP,
@@ -275,14 +271,14 @@ static const char sh_lexstate7[256] =
 	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,	S_ERR,
 
 	S_ERR,	S_ERR,	S_ERR,	S_MOD2,	S_ERR,	S_MOD2,	S_ERR,	S_ERR,
-	S_ERR,	S_ERR,	S_MOD1,	S_MOD1,	S_ERR,	S_MOD1,	S_DOT,	S_MOD2,
+	S_ERR,	S_ERR,	S_MOD1,	S_MOD1,	S_MOD2,	S_MOD1,	S_DOT,	S_MOD2,
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	S_MOD1,	S_ERR,	S_ERR,	S_MOD1,	S_ERR,	S_MOD1,
 
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
-	0,	0,	0,	S_BRACT,S_ESC,	S_ERR,	S_ERR,	0,
+	0,	0,	0,	S_BRACT,S_ESC,	S_ERR,	S_MOD2,	0,
 
 	S_ERR,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
@@ -394,6 +390,7 @@ const char e_lexsyntax3[]	= "syntax error at line %d: duplicate label %s";
 const char e_lexsyntax4[]	= "syntax error at line %d: invalid reference list";
 const char e_lexsyntax5[]	= "syntax error at line %d: `<<%s' here-document not contained within command substitution";
 const char e_lexwarnvar[]	= "line %d: variable expansion makes arithmetic evaluation less efficient";
+const char e_lexarithwarn[]	= "line %d: ((%.*s%s is more efficient than %s";
 const char e_lexlabignore[]	= "line %d: label %s ignored";
 const char e_lexlabunknown[]	= "line %d: %s unknown label";
 const char e_lexobsolete1[]	= "line %d: `...` obsolete, use $(...)";

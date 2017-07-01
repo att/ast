@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 2002-2011 AT&T Intellectual Property          *
+*          Copyright (c) 2002-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 /*
@@ -89,27 +89,34 @@
 
 #define GROUP_ATTR			(-1)
 
-#define MRT_ATTR_ORIGIN			1
-#define MRT_ATTR_AS_PATH		2
-#define MRT_ATTR_HOP			3
-#define MRT_ATTR_MED			4
-#define MRT_ATTR_LOCAL			5
-#define MRT_ATTR_ATOMIC			6
-#define MRT_ATTR_AGGREGATOR		7
-#define MRT_ATTR_COMMUNITY		8
-#define MRT_ATTR_ORIGINATOR		9
-#define MRT_ATTR_CLUSTER		10
-#define MRT_ATTR_DPA			11
-#define MRT_ATTR_ADVERTIZER		12
-#define MRT_ATTR_RCID_PATH		13
-#define MRT_ATTR_MP_REACH_NLRI		14
-#define MRT_ATTR_MP_UNREACH_NLRI	15
-#define MRT_ATTR_EXTENDED_COMMUNITY	16
-#define MRT_ATTR_AS32_PATH		17
-#define MRT_ATTR_AGGREGATOR32		18
-#define MRT_ATTR_CONNECTOR		20
-#define MRT_ATTR_PMSI_TUNNEL		22
-#define MRT_ATTR_SET			128
+#define MRT_ATTR_ORIGIN				1
+#define MRT_ATTR_AS_PATH			2
+#define MRT_ATTR_HOP				3
+#define MRT_ATTR_MED				4
+#define MRT_ATTR_LOCAL				5
+#define MRT_ATTR_ATOMIC				6
+#define MRT_ATTR_AGGREGATOR			7
+#define MRT_ATTR_COMMUNITY			8
+#define MRT_ATTR_ORIGINATOR			9
+#define MRT_ATTR_CLUSTER			10
+#define MRT_ATTR_DPA				11
+#define MRT_ATTR_ADVERTIZER			12
+#define MRT_ATTR_RCID_PATH			13
+#define MRT_ATTR_MP_REACH_NLRI			14
+#define MRT_ATTR_MP_UNREACH_NLRI		15
+#define MRT_ATTR_EXTENDED_COMMUNITY		16
+#define MRT_ATTR_AS32_PATH			17
+#define MRT_ATTR_AS32_AGGREGATOR		18
+#define MRT_ATTR_SSA_DEPRECATED			19
+#define MRT_ATTR_CONNECTOR_DEPRECATED		20
+#define MRT_ATTR_AS_PATHLIMIT_DEPRECATED	21
+#define MRT_ATTR_PMSI_TUNNEL			22
+#define MRT_ATTR_TUNNEL_ENCAPSULATION		23
+#define MRT_ATTR_TRAFFIC_ENGINEERING		24
+#define MRT_ATTR_EXTENDED_COMMUNITY_V6		25
+#define MRT_ATTR_AIGP				26
+#define MRT_ATTR_PE_DISTINGUISHER_LABELS	27
+#define MRT_ATTR_SET				128
 
 #define GROUP_AFI			(-2)
 

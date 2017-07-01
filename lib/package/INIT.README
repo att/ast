@@ -93,6 +93,31 @@ All recorded changes follow.
 
 :::::::: INIT ::::::::
 
+13-12-05 Makefile,package.sh: add BIN=1 to .paths for ast -lcmd builtins
+13-11-15 package.sh: fix rebuild logic to handle in-place no-map-libc <=> map-libc
+13-11-14 iffe.sh: handle "opt no-name" (specifically for "opt no-map-libc" => _opt_map_libc default)
+13-11-07 cc.darwin*: target 10.3 => 10.7
+13-10-30 iffe.sh: fix lcl|nxt logic to work for multi-arch style implementations
+13-09-25 iffe.sh: add _${API}_API_IMPLEMENT guards for implementation code
+13-08-11 iffe.sh: executed blocks now have a single argument that is a tmp file prefix
+13-08-11 iffe.sh: fix intrinsic function test to rule out type names
+13-07-17 iffe.sh: add '^#include.*iffe --include-first' for *.c feature test macro initialization
+13-07-17 package.sh: refix 13-06-17 fix to check both $CC and $CCFLAGS
+13-06-24 add -lsocket => -lsocket -lnsl for systems that don't have it in -lc
+13-06-17 package.sh: fix host type logic to handle -m32/-m64 almost cross-compile
+13-05-21 C+probe: add ksh-2013-05-21 `...` hang workaround -- FIXME
+13-05-17 package.sh: package make should continue if ksh fails to build
+13-05-17 make.probe: fix CC.DIALECT+=EXPORT=DLL logic
+13-05-13 MAPLIB.mk: workaround ppcc+bash not handling '-o t t.c'
+13-05-01 package.sh: add ``results path old'' for *.out.*
+13-03-20 make.probe: add CC.NM.NMFLAGS for stupid stupid stupid aix -Xany 
+13-03-06 handle incompletely defined types e.g. "typ DIR dirent.h" 
+12-12-05 C+probe: elide */tmp/* and */probe[0-9]* from stdinclude
+12-10-25 ditto.sh: set DITTO_OPTIONS=dst=1 in destination read script
+12-09-27 package.sh: fix admin log total logic
+12-09-18 cc.ibm.risc: fix -O disable logic that ate next arg
+12-09-11 make.probe: fix sunos cc/CC CC.STDLIB probe
+12-08-24 iffe.sh: add ``api n1 = n2''
 12-07-17 iffe.sh: add C code NOTE("...") to ammend --verbose output
 12-06-26 iffe.sh: fix "npt foo" to handle function-like macro foo()
 12-06-20 package.sh: use $KSH for rt in "results test"

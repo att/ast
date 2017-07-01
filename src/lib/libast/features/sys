@@ -30,7 +30,12 @@ print	#undef	_lib_lseek64
 print	#undef	_lib_lstat64
 print	#undef	_lib_mmap64
 print	#undef	_lib_open64
+print	#undef	_lib_opendir64
 print	#undef	_lib_readdir64
+print	#undef	_lib_rewinddir64
+print	#undef	_lib_seekdir64
+print	#undef	_lib_telldir64
+print	#undef	_lib_closedir64
 print	#undef	_lib_stat64
 print	#undef	_lib_statvfs64
 print	#undef	_lib_truncate64
@@ -155,6 +160,64 @@ define	X_OK		1
 define	W_OK		2
 define	R_OK		4
 
+lib spawnvex fail{
+	echo
+	echo "typedef struct Spawnvex_s"
+	echo "{"
+	echo "	unsigned int	cur;"
+	echo "	int		io;"
+	echo "#ifdef _SPAWNVEX_PRIVATE_"
+	echo "	_SPAWNVEX_PRIVATE_"
+	echo "#endif"
+	echo "} Spawnvex_t;"
+	echo
+	echo "typedef struct Spawnvex_noexec_s"
+	echo "{"
+	echo "	Spawnvex_t*	vex;		/* caller vex handle		*/"
+	echo "	void*		handle;		/* caller callback handle	*/"
+	echo "	const char* 	path;		/* spawnvex() path		*/"
+	echo "	char* const* 	argv;		/* spawnvex() argv		*/"
+	echo "	char* const* 	envv;		/* spawnvex() envv		*/"
+	echo "	unsigned int	flags;		/* SPAWN_(EXEC|FORK|VFORK)	*/"
+	echo "	int		msgfd;		/* if no return and >= 0 close	*/"
+	echo "} Spawnvex_noexec_t;"
+	echo
+	echo "typedef int (*Spawnvex_f)(void*, uintmax_t, uintmax_t);"
+	echo
+	echo "#define SPAWN_BACKGROUND	0x00001"
+	echo "#define SPAWN_CLEANUP		0x00002"
+	echo "#define SPAWN_DAEMON		0x00004"
+	echo "#define SPAWN_DEBUG		0x00008"
+	echo "#define SPAWN_EXEC		0x00010"
+	echo "#define SPAWN_FLUSH		0x00020"
+	echo "#define SPAWN_FOREGROUND	0x00040"
+	echo "#define SPAWN_FORK		0x00080"
+	echo "#define SPAWN_FRAME		0x00100"
+	echo "#define SPAWN_NOCALL		0x00200"
+	echo "#define SPAWN_ORPHAN		0x00400"
+	echo "#define SPAWN_OVERLAY		0x00800"
+	echo "#define SPAWN_READ		0x01000"
+	echo "#define SPAWN_RESET		0x02000"
+	echo "#define SPAWN_VFORK		0x04000"
+	echo "#define SPAWN_UNDO		0x08000"
+	echo "#define SPAWN_WRITE		0x10000"
+	echo "#define SPAWN_ZOMBIE		0x20000"
+	echo
+	echo "#define SPAWN_noop	(-1)"
+	echo
+	echo "#define SPAWN_cwd	(-2)"
+	echo "#define SPAWN_frame	(-3)"
+	echo "#define SPAWN_noexec	(-4)"
+	echo "#define SPAWN_pgrp	(-5)"
+	echo "#define SPAWN_resetids	(-6)"
+	echo "#define SPAWN_sid	(-7)"
+	echo "#define SPAWN_sigdef	(-8)"
+	echo "#define SPAWN_sigmask	(-9)"
+	echo "#define SPAWN_truncate	(-10)"
+	echo "#define SPAWN_umask	(-11)"
+	echo
+}end
+
 print	#if _BLD_ast && defined(__EXPORT__)
 print	#define extern	__EXPORT__
 print	#endif
@@ -163,7 +226,7 @@ extern	_exit		void		(int)
 extern	abort		void		(void)
 extern	abs		int		(int)
 extern	access		int		(const char*, int)
-extern	alarm		unsigned	(unsigned)
+extern	alarm		unsigned int	(unsigned int)
 extern	atexit		int		(void(*)(void))
 extern	atof		double		(const char*)
 extern	atoi		int		(const char*)
@@ -193,6 +256,7 @@ extern	fpathconf	long		(int, int)
 extern	free		void		(void*)
 extern	fsync		int		(int)
 extern	ftruncate	int		(int, off_t)
+extern	fgetcwd		char*		(int, char*, size_t)
 extern	getcwd		char*		(char*, size_t)
 extern	getegid		gid_t		(void)
 extern	getenv		char*		(const char*)
@@ -236,9 +300,17 @@ extern	setgid		int		(gid_t)
 extern	setpgid		int		(pid_t, pid_t)
 extern	setsid		pid_t		(void)
 extern	setuid		int		(uid_t)
-extern	sleep		unsigned		(unsigned int)
+extern	sleep		unsigned int	(unsigned int)
 extern	spawnveg	pid_t		(const char*, char* const[], char* const[], pid_t)
+extern	spawnvex	pid_t		(const char*, char* const[], char* const[], Spawnvex_t*)
+extern	spawnvex_open	Spawnvex_t*	(unsigned int)
+extern	spawnvex_add	int		(Spawnvex_t*, intmax_t, intmax_t, Spawnvex_f, void*)
+extern	spawnvex_apply	int		(Spawnvex_t*, int, int)
+extern	spawnvex_get	intmax_t	(Spawnvex_t*, int, int)
+extern	spawnvex_close	int		(Spawnvex_t*)
 extern	srand		void		(unsigned int)
+extern	stpcpy		char*		(char*, const char*)
+extern	stpncpy		char*		(char*, const char*, size_t)
 extern	strcasecmp	int		(const char*, const char*)
 extern	strcat		char*		(char*, const char*)
 extern	strchr		char*		(const char*, int)

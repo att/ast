@@ -1,7 +1,7 @@
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
-*          Copyright (c) 1987-2012 AT&T Intellectual Property          *
+*          Copyright (c) 1987-2013 AT&T Intellectual Property          *
 *                      and is licensed under the                       *
 *                 Eclipse Public License, Version 1.0                  *
 *                    by AT&T Intellectual Property                     *
@@ -14,7 +14,7 @@
 *                            AT&T Research                             *
 *                           Florham Park NJ                            *
 *                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
+*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
@@ -35,10 +35,6 @@
  */
 
 #include "nocomment.c"
-
-#if __STDC__
-#define chmod(a,b)	(error(-1,"%s#%d: chmod(%s,%05o)",__FILE__,__LINE__,a,b),chmod(a,b))
-#endif
 
 /*
  * return read file descriptor for filtered current input file
@@ -287,8 +283,8 @@ openout(register Archive_t* ap, register File_t* f)
 			error(1, "%s: already exists -- not overwritten", f->name);
 			return -1;
 		}
-		f->chmod = f->perm != (st.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) &&
-			(state.chmod || state.update || S_ISDIR(st.st_mode));
+		f->restoremode = f->perm != (st.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO)) &&
+			(state.modekeep || state.update || S_ISDIR(st.st_mode));
 		st.st_mode = modex(st.st_mode);
 	}
 	else
@@ -382,7 +378,7 @@ openout(register Archive_t* ap, register File_t* f)
 				if (!stat(state.tmp.buffer, &st))
 					break;
 			}
-		f->chmod = state.chmod || state.update;
+		f->restoremode = state.modekeep || state.update;
 	}
 	if (f->delta.op == DELTA_delete)
 	{
@@ -458,7 +454,7 @@ openout(register Archive_t* ap, register File_t* f)
 		}
 		updated = ap->updated;
 		setfile(ap, f);
-		if (!exists || f->chmod || state.update && ((c = tvcmp(tvmtime(&t1, f->st), tvmtime(&t2, &st))) > 0 || state.update == OPT_different && c))
+		if (!exists || f->restoremode || state.update && ((c = tvcmp(tvmtime(&t1, f->st), tvmtime(&t2, &st))) > 0 || state.update == OPT_different && c))
 		{
 			listentry(f);
 			fd = -1;
@@ -678,7 +674,7 @@ openout(register Archive_t* ap, register File_t* f)
 			}
 		}
 		if (perm != f->perm)
-			f->chmod = 1;
+			f->restoremode = 1;
 		else if ((exists & 0200) && chmod(f->name, f->perm))
 			error(ERROR_SYSTEM|1, "%s: cannot restore original mode %s", f->name, fmtperm(st.st_mode & S_IPERM));
 		return fd;
@@ -1178,26 +1174,31 @@ setfile(register Archive_t* ap, register File_t* f)
 		}
 #endif
 #if _lib_lchmod
-		if (f->chmod)
+		if (f->restoremode)
 		{
 			int		m;
 			struct stat	st;
 
-			if (lchmod(f->name, f->perm & state.modemask))
-				error(1, "%s: cannot chmod to %s", f->name, fmtmode(f->perm & state.modemask, 0) + 1);
-			else if (m = f->perm & (S_ISUID|S_ISGID|S_ISVTX))
+			if (lstat(f->name, &st))
+				error(1, "%s: not found", f->name);
+			else if ((f->perm ^ st.st_mode) & state.modemask & (S_ISUID|S_ISGID|S_ISVTX|S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH))
 			{
-				if (lstat(f->name, &st))
-					error(1, "%s: not found", f->name);
-				else if (m ^= (st.st_mode & (S_ISUID|S_ISGID|S_ISVTX)))
-					error(1, "%s: mode %s not set", f->name, fmtmode(m, 0) + 1);
+				if (lchmod(f->name, f->perm & state.modemask))
+					error(1, "%s: cannot chmod to %s", f->name, fmtmode(f->perm & state.modemask, 0) + 1);
+				else if (m = f->perm & (S_ISUID|S_ISGID|S_ISVTX))
+				{
+					if (lstat(f->name, &st))
+						error(1, "%s: not found", f->name);
+					else if (m ^= (st.st_mode & (S_ISUID|S_ISGID|S_ISVTX)))
+						error(1, "%s: mode %s not set", f->name, fmtmode(m, 0) + 1);
+				}
 			}
 		}
 #endif
 		ap->updated += updated;
 		return;
 	case X_IFDIR:
-		if (f->chmod || state.acctime || state.modtime || state.owner || (f->perm & S_IRWXU) != S_IRWXU)
+		if (f->restoremode || state.acctime || state.modtime || state.owner || (f->perm & S_IRWXU) != S_IRWXU)
 		{
 			if (!(p = newof(0, Post_t, 1, 0)))
 				error(3, "not enough space for file restoration info");
@@ -1208,12 +1209,12 @@ setfile(register Archive_t* ap, register File_t* f)
 			p->mode = f->perm;
 			if ((f->perm & S_IRWXU) != S_IRWXU)
 			{
-				p->chmod = 1;
+				p->restoremode = 1;
 				if (chmod(f->name, f->perm|S_IRWXU))
 					error(1, "%s: cannot chmod to %s", f->name, fmtmode(f->st->st_mode|X_IRWXU, 1) + 1);
 			}
 			else
-				p->chmod = f->chmod;
+				p->restoremode = f->restoremode;
 			hashput(state.restore, f->name, p);
 			ap->updated++;
 			return;
@@ -1228,7 +1229,7 @@ setfile(register Archive_t* ap, register File_t* f)
 	p->uid = f->st->st_uid;
 	p->gid = f->st->st_gid;
 	p->mode = f->perm;
-	p->chmod = f->chmod;
+	p->restoremode = f->restoremode;
 	restore(f->name, (char*)p, NiL);
 }
 
@@ -1267,7 +1268,7 @@ restore(register const char* name, char* ap, void* handle)
 		if (chown(name, p->uid, p->gid) < 0)
 			error(1, "%s: cannot chown to (%d,%d)", name, p->uid, p->gid);
 	}
-	if (p->chmod)
+	if (p->restoremode)
 	{
 		if (chmod(name, p->mode & state.modemask))
 			error(1, "%s: cannot chmod to %s", name, fmtmode(p->mode & state.modemask, 0) + 1);
