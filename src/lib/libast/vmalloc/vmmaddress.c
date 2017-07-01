@@ -19,12 +19,12 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	"vmhdr.h"
 #include	<sys/types.h>
 #include	<sys/shm.h>
 #include	<sys/ipc.h>
 #include	<signal.h>
 #include	<setjmp.h>
+#include	"vmhdr.h"
 
 #if _mem_mmap_anon
 #include	<sys/mman.h>
@@ -96,7 +96,7 @@ ssize_t _vmpagesize(void)
 		if ((_Vmpagesize = getpagesize()) <= 0)
 #endif
 			_Vmpagesize = VM_PAGESIZE;
-		_Vmpagesize = (*_Vmlcm)(_Vmpagesize, ALIGN);
+		_Vmpagesize = (*_Vmlcm)(_Vmpagesize, MEM_ALIGN);
 	}
 #if VMCHKMEM
 	_Vmchkmem = _vmchkmem; /* _vmchkmem() can check memory availability */
