@@ -19,12 +19,12 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#include	"vmhdr.h"
 #include	<sys/types.h>
 #include	<sys/shm.h>
 #include	<sys/ipc.h>
 #include	<signal.h>
 #include	<setjmp.h>
+#include	"vmhdr.h"
 
 #if _mem_mmap_anon
 #include	<sys/mman.h>

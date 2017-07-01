@@ -25,7 +25,6 @@ void _STUB_vmdcshare(){}
 
 #else
 
-#include	"vmhdr.h"
 #include	<sys/types.h>
 #include	<string.h>
 #if _hdr_unistd
@@ -39,6 +38,7 @@ void _STUB_vmdcshare(){}
 
 #include	<sys/shm.h>	/* shm headers		*/
 #include	<sys/ipc.h>
+#include	"vmhdr.h"
 
 /* Create a discipline to allocate based on mmap() or shmget().
 ** Both ways can be used for allocating shared memory across processes.
