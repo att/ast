@@ -2,6 +2,10 @@ sudo: required
 env:
     matrix:
         - OS_TYPE=fedora
+          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y procps-ng libX11-devel fuse-devel gdbm-devel; dnf groupinstall -y 'C Development Tools and Libraries'"
+
+        - OS_TYPE=opensuse
+          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
 
 services:
     - docker
@@ -10,13 +14,11 @@ before_install:
     - docker pull ${OS_TYPE}
 
 script:
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "cd /source;
-        dnf repolist;
-        dnf install -y procps-ng libX11-devel fuse-devel gdbm-devel;
-        dnf groupinstall -y 'C Development Tools and Libraries';
+    - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
+        ${INSTALL_REQUIREMENTS};
+        cd /source;
         export CCFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -P';
         export CC=gcc;
         ./bin/package;
-        ./bin/package make mamake || :;
         ./bin/package make -S 2>&1 | tee out.log ;
         grep -q 'error:' out.log && exit 1 || exit 0;"
