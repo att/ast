@@ -671,7 +671,7 @@ void sh_done(void *ptr, register int sig)
 	sfsync((Sfio_t*)sfstdin);
 	sfsync((Sfio_t*)shp->outpool);
 	sfsync((Sfio_t*)sfstdout);
-	if(savxit&SH_EXITSIG)
+	if((savxit&SH_EXITMASK) == shp->lastsig)
 		sig = savxit&SH_EXITMASK;
 	if(sig)
 	{
@@ -698,6 +698,12 @@ void sh_done(void *ptr, register int sig)
 #endif /* SHOPT_KIA */
 	if(shp->pwdfd >=0)
 		close(shp->pwdfd);
+
+	/* Return POSIX exit code if last process exits due to signal */
+	if (savxit & SH_EXITSIG) {
+		exit(128 + (savxit&SH_EXITMASK));
+	}
+
 	exit(savxit&SH_EXITMASK);
 }
 
