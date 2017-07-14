@@ -2118,6 +2118,7 @@ unsigned long kiaentity(Lex_t *lexp,const char *name,int len,int type,int first,
 		else
 			sfputr(stkp,name,0);
 	}
+	sfputc(stkp,'\0');
 	np = nv_search(stakptr(offset),lexp->entity_tree,NV_ADD);
 	stkseek(stkp,offset);
 	np->nvalue.i = pkind;
