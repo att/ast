@@ -26,7 +26,7 @@
 
 #include <cmd.h>
 
-// added to prevent the linker from optimizing this whole file out
+/* added to prevent the linker from optimizing this whole file out */
 int _foo_bar (void) {
     sfprintf (sfstderr, "");
 }
