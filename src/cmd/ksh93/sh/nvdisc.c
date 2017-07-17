@@ -1060,6 +1060,10 @@ Namval_t *nv_mkclone(Namval_t *mp)
 Namval_t *nv_search(const char *name, Dt_t *root, int mode)
 {
 	Shell_t *shp = dtuserdata(root,0,0);
+
+	if (!shp)
+		shp = &sh;
+
 	register Namval_t *np;
 	register Dt_t *dp = 0;
 	if(mode&HASH_NOSCOPE)
