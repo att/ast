@@ -3862,12 +3862,16 @@ extern void *hashlook(Dt_t *root, const char *name, int mode,int size)
 char *nv_name(register Namval_t *np)
 {
 	Shell_t	 *shp = sh_ptr(np);
-	register Namval_t *table;
-	register Namfun_t *fp;
+	register Namval_t *table = 0;
+	register Namfun_t *fp = 0;
 #if SHOPT_FIXEDARRAY
 	Namarr_t	*ap;
 #endif /* SHOPT_FIXEDARRAY */
 	char *cp;
+
+	if (!shp)
+		shp = sh_getinterp();
+
 	if(is_abuiltin(np) || is_afunction(np))
 	{
 #if SHOPT_NAMESPACE
