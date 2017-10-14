@@ -1,0 +1,40 @@
+# There are some patterns below we include reluctantly. They should be in an
+# individual's ~/.config/git/ignore file. For example, ".DS_Store" for people
+# working on MacOS. We include them to help ensure they don't added to the
+# project.
+
+# Files and file extensions that should never be checked in regardless of
+# which project directory they reside in.
+*.exe
+*.app
+*.out
+*.so
+*.dylib
+*.dll
+*.lai
+*.la
+*.a
+*.lib
+*.o
+*.obj
+*.lo
+*.slo
+*.d
+*.gch
+*.pch
+*.bak
+*.new
+*.orig
+*.log
+*.DS_Store
+*~
+*~HEAD
+.AppleDouble
+.LSOverride
+.Trash-*
+._*
+Desktop.ini
+
+# Artifacts of the build and test process that should not be committed.
+/lib/package/CONVERT.mk
+/arch/
