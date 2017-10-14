@@ -577,7 +577,11 @@ resetvar(register Var_t* p, char* v, int append)
 		p->value = newof(p->value, char, n + 1, 0);
 		p->length = n;
 	}
-	strcpy(p->value, v);
+	/*
+	 * The buffers may overlap so we can't use `strcpy()` since it has
+	 * undefined behavior in that case. See issue #42.
+	 */
+	memmove(p->value, v, n + 1);
 }
 
 /*

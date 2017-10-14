@@ -105,7 +105,12 @@ int		rc;	/* record separator.	*/
 			break;
 		}
 
-#if _lib_memccpy && !__ia64 /* these guys may never get it right */
+#if _lib_memccpy && !__ia64 && !defined(BSD) /* these guys may never get it right */
+		/*
+		 * Note that `ps`, and `s` may overlap. So this relies on
+		 * undefined behavior. See issue #42 where it is known to fail
+		 * on MacOS (and presumably other BSD variants).
+		 */
 		if((ps = (uchar*)memccpy(ps,s,'\0',p)) != NIL(uchar*))
 			ps -= 1;
 		else	ps  = f->next+p;
