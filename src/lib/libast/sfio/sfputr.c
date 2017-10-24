@@ -46,7 +46,7 @@ int		rc;	/* record separator.	*/
 
 	SFLOCK(f,0);
 
-	f->val = sn = -1; ss = (char*)s; 
+	f->val = sn = -1; ss = (char*)s;
 	for(w = 0; (*s || rc >= 0); )
 	{	/* need to communicate string size to exception handler */
 		if((f->flags&SF_STRING) && f->next >= f->endb )
@@ -105,21 +105,15 @@ int		rc;	/* record separator.	*/
 			break;
 		}
 
-#if _lib_memccpy && !__ia64 && !defined(BSD) /* these guys may never get it right */
 		/*
-		 * Note that `ps`, and `s` may overlap. So this relies on
-		 * undefined behavior. See issue #42 where it is known to fail
-		 * on MacOS (and presumably other BSD variants).
+		 * Do not replace the following block with `memccpy()`. The
+		 * `ps` and `s` buffers may overlap or even point to the same
+		 * buffer. See issue #42 and #78.
 		 */
-		if((ps = (uchar*)memccpy(ps,s,'\0',p)) != NIL(uchar*))
-			ps -= 1;
-		else	ps  = f->next+p;
-		s += ps - f->next;
-#else
 		for(; p > 0; --p, ++ps, ++s)
 			if((*ps = *s) == 0)
 				break;
-#endif
+
 		w += ps - f->next;
 		f->next = ps;
 	}
