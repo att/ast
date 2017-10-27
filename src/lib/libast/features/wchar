@@ -6,6 +6,7 @@ set	include .
 cat{
 	#ifndef _AST_WCHAR_H
 	#define _AST_WCHAR_H	1
+	#define _STDFILE_DECLARED
 }end
 
 lib	mbstowcs,wctomb,wcscmp,wcscoll,wcslen,wcstombs,wcsxfrm,wcwidth stdlib.h stdio.h wchar.h

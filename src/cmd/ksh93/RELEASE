@@ -1,4 +1,6 @@
-14-12-24  --- Release ksh93v- ---
+16-07-17  --- Release ksh93v- ---
+16-07-17  A fix to avoid "non-void function 'ls' should return a value" error.
+16-07-17  Some patches for compilation on FreeBSD have been added.
 14-12-24  A bug which occurred when the undocumented alarm builtin received an
 	  alarm timeout while in the read builtin has been fixed.
 14-12-24  A bug in the startup of interactive restricted ksh which give a 
