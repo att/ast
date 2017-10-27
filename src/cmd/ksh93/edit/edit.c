@@ -1048,7 +1048,10 @@ int ed_getchar(Edit_t *ep,int mode)
 		/* The while is necessary for reads of partial multbyte chars */
 		*ep->e_vi_insert = (mode==-2);
 		if((n=ed_read(ep,ep->e_fd,readin,-LOOKAHEAD,0)) > 0)
+		{
+			/* putstack is pushing negated characters on the stack */
 			n = putstack(ep,readin,n,1);
+		}
 		*ep->e_vi_insert = 0;
 	}
 	if(ep->e_lookahead)
@@ -1089,13 +1092,17 @@ int ed_getchar(Edit_t *ep,int mode)
 							break;
 					}
 				}
-				if(n=keytrap(ep,readin,n,LOOKAHEAD-n,mode))
-				{
-					putstack(ep,readin,n,0);
-					c = ep->e_lbuf[--ep->e_lookahead];
-				}
 				else
+				{
+					/* unnegate the character */
+					c = -c;
+				}
+
+				if(!keytrap(ep,readin,n,LOOKAHEAD-n,mode))
+				{
 					c = ed_getchar(ep,mode);
+				}
+
 				ep->e_keytrap = 0;
 			}
 			else
