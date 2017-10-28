@@ -14,7 +14,7 @@ CCFLAGS = $(CC.SUFFIX.DEBUG:+$(CC.DEBUG)) $(CC.OPTIMIZE) $(CC.DLL)
 
 IFFEFLAGS = -v -X ast -X std
 
-.SOURCE : aso cdt comp dir disc hash man misc obsolete path port preroot \
+.SOURCE : aso cdt comp disc hash man misc obsolete path port preroot \
 		regex sfio stdio string tm uwin vec vmalloc
 
 .SOURCE.h : include comp std cdt vmalloc
@@ -65,7 +65,6 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	swap.3 tab.3 tm.3 tmx.3 tok.3 touch.3 tv.3 vecargs.3 vmalloc.3 \
 	$(HEADERSRC) \
 	state.c intercept.c transition.c \
-	dirlib.h opendir.c readdir.c rewinddir.c seekdir.c telldir.c \
 	fgetcwd.c getcwd.c fastfind.c \
 	hashlib.h hashalloc.c hashdump.c hashfree.c hashlast.c \
 	hashlook.c hashscan.c hashsize.c hashview.c hashwalk.c \
@@ -128,7 +127,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	fakelink.h readlink.c symlink.c \
 	getpgrp.c setpgid.c setsid.c waitpid.c \
 	creat64.c at.c \
-	atexit.c getdents.c getwd.c dup2.c errno.c \
+	atexit.c getwd.c dup2.c errno.c \
 	getpreroot.c ispreroot.c realopen.c setpreroot.c \
 	getgroups.c mount.c system.c iblocks.c \
 	modedata.c tmdata.c \
