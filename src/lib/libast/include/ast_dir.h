@@ -40,11 +40,7 @@
 #endif
 #endif
 
-#if _BLD_ast
-#include "dirlib.h"
-#else
 #include <dirent.h>
-#endif
 
 #if _mem_d_fileno_dirent
 #define D_FILENO(d)		((d)->d_fileno)
