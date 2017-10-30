@@ -21,6 +21,53 @@
 #
 # @(#)ppcc (AT&T Research) 1997-02-14
 
+# Note: The following block of code is a hack to support building with `clang`
+# rather than `gcc`. To cause this hack to be used you must `export
+# USE_CLANG=yes` and `export CC=clang` before running `bin/package make`.
+#
+# This works around the inexplicable reason that this script is used when
+# `clang` is the compiler but not when `gcc` is the compiler. We do not want,
+# or need, all the magic separation of preprocessor from cc argument splitting
+# that happens below this block when compiling with `clang`. We do, however,
+# have to remove or modify some arguments that are not valid for the `clang`
+# LLVM front-end. Most notably, removing the `-I-` option.
+#
+# I would prefer to fix this in a manner that doesn't require this hack. But
+# I'd rather spend the time switching to a more modern, efficient, build
+# system like Meson or Cmake.
+if test -n "$USE_CLANG"
+then
+	# Ignore every arg up to and including the arg which introduces the
+	# arguments to be used to compile the source module. Note that `cc` is
+	# passed in when invoked via `bin/package build` but `clang` is passed
+	# in when invoked via `bin/package test ksh93`.
+	while test "$1" != 'cc' && test "$1" != 'clang'
+	do
+		shift 1
+	done
+	shift 1
+
+	# Filter the args used to compile the source module. We need to
+	# exclude (or perhaps modify) arguments that cause problems for clang.
+	args[0]=clang
+	integer ncc=1
+	while test $# -gt 0
+	do
+		case "$1" in
+			-I-)
+				;;
+			*)
+				args[ncc]="$1"
+				(( ncc = ncc + 1 ))
+				;;
+		esac
+		shift 1
+	done
+
+	# Now run `clang` to compile the source file.
+	exec "${args[@]}"
+fi
+
 case $-:$BASH_VERSION in
 *x*:[0123456789]*)	: bash set -x is broken :; set +ex; old=1 ;;
 *)			old= ;;
@@ -112,6 +159,8 @@ do	case $# in
 		*)	# ignore the rest for fore/back compatibility
 			;;
 		esac
+		;;
+	-W*)    break
 		;;
 	-*)	case $1 in
 		-*[!iklnvO]*)
