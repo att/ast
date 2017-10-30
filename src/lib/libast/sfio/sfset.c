@@ -41,7 +41,7 @@ int		set;
 	SFMTXENTER(f,0);
 
 	if(flags == 0 && set == 0)
-		SFMTXRETURN(f, (f->flags&SF_FLAGS));
+		SFMTXRETURN(f, (f->flags&SFIO_FLAGS));
 
 	if((oflags = (f->mode&SF_RDWR)) != (int)f->mode)
 	{	/* avoid sfsetbuf() isatty() call if user sets (SF_LINE|SF_WCWIDTH) */
@@ -57,7 +57,7 @@ int		set;
 			SFMTXRETURN(f, 0);
 	}
 	if(flags == 0)
-		SFMTXRETURN(f, (f->flags&SF_FLAGS));
+		SFMTXRETURN(f, (f->flags&SFIO_FLAGS));
 
 	SFLOCK(f,0);
 
@@ -95,5 +95,5 @@ int		set;
 		f->flags &= ~SF_PUBLIC;
 
 	SFOPEN(f,0);
-	SFMTXRETURN(f, (oflags&SF_FLAGS));
+	SFMTXRETURN(f, (oflags&SFIO_FLAGS));
 }

@@ -150,7 +150,7 @@ struct _sffmt_s
 #define SF_IOINTR	0040000	/* return on interrupts			*/
 #define SF_WCWIDTH	0100000	/* wcwidth display stream		*/
 
-#define SF_FLAGS	0177177	/* PUBLIC FLAGS PASSABLE TO SFNEW()	*/
+#define SFIO_FLAGS	0177177	/* PUBLIC FLAGS PASSABLE TO SFNEW()	*/
 #define SF_SETS		0177163	/* flags passable to sfset()		*/
 
 #ifndef _SF_NO_OBSOLETE

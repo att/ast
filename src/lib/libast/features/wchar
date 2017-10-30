@@ -52,6 +52,10 @@ endif
 run{
 cat <<!
 	#if _hdr_wchar && defined(_nxt_wchar)
+        /* This symbol is needed on FreeBSD to keep `FILE` from being defined as
+         * an incompatible type in the /usr/include/wchar.h header.
+         */
+        #define _STDFILE_DECLARED
 	#include ${_nxt_wchar-_nxt_wchar}	/* the native wchar.h */
 	#endif
 
