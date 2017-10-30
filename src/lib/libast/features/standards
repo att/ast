@@ -158,6 +158,22 @@ else tst note{ __EXTENSIONS__ works }end compile{
 	}
 endif
 
+if tst note{ __FreeBSD_version works }end compile{
+		#include <sys/param.h>
+		#if !defined(__FreeBSD_version)
+		(
+		#endif
+	}end {
+/*
+ * On FreeBSD we can't define these symbols since doing so causes
+ * problems such as some errno symbols (e.g., EILSEQ) not being visible.
+ */
+            #undef  _POSIX_SOURCE
+            #undef  _POSIX_C_SOURCE
+            #undef  _XOPEN_SOURCE
+	}
+endif
+
 if tst -D_ISOC99_SOURCE -lm note{ _ISOC99_SOURCE plays nice }end link{
 		#include <sys/types.h>
 		#include <sys/stat.h>

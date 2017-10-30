@@ -81,7 +81,7 @@ char*		mode;		/* mode of the stream */
 	{	SFMTXENTER(f, NIL(Sfio_t*));
 
 		if(f->mode&SF_INIT ) /* stream uninitialized, ok to set flags */
-		{	f->flags |= (sflags & (SF_FLAGS & ~SF_RDWR));
+		{	f->flags |= (sflags & (SFIO_FLAGS & ~SF_RDWR));
 
 			if((sflags &= SF_RDWR) != 0) /* reset read/write modes */
 			{	f->flags = (f->flags & ~SF_RDWR) | sflags;

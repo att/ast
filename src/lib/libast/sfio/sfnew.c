@@ -106,7 +106,7 @@ int	flags;	/* type of file stream */
 
 	/* stream type */
 	f->mode = (flags&SF_READ) ? SF_READ : SF_WRITE;
-	f->flags = (flags&SF_FLAGS) | (sflags&(SF_MALLOC|SF_STATIC));
+	f->flags = (flags&SFIO_FLAGS) | (sflags&(SF_MALLOC|SF_STATIC));
 	f->bits = (flags&SF_RDWR) == SF_RDWR ? SF_BOTH : 0;
 	f->file = file;
 	f->here = f->extent = 0;
