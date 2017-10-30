@@ -75,7 +75,7 @@
 	  (unsigned char*)(data),			/* endr		*/ \
 	  (unsigned char*)(data),			/* endb		*/ \
 	  (Sfio_t*)0,					/* push		*/ \
-	  (unsigned short)((type)&SF_FLAGS),		/* flags	*/ \
+	  (unsigned short)((type)&SFIO_FLAGS),		/* flags	*/ \
 	  (short)(file),				/* file		*/ \
 	  (unsigned char*)(data),			/* data		*/ \
 	  (ssize_t)(size),				/* size		*/ \
