@@ -34,6 +34,7 @@ const struct shtable2 shtab_aliases[] =
 #endif /* SHOPT_FS_3D */
 	"autoload",	NV_NOFREE,		"typeset -fu",
 	"bool",		NV_NOFREE|BLT_DCL,	"_Bool",
+	"class",	NV_NOFREE|BLT_DCL,	"typeset -T",
 	"command",	NV_NOFREE,		"command ",
 	"compound",	NV_NOFREE|BLT_DCL,	"typeset -C",
 	"fc",		NV_NOFREE,		"hist",
