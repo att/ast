@@ -217,7 +217,4 @@ cat{
 	#if _mmap_anon
 	#define _mem_mmap_anon	1
 	#endif
-	#if _mmap_devzero
-	#define _mem_mmap_zero	1
-	#endif
 }end

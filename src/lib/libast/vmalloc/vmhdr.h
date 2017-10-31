@@ -86,7 +86,7 @@
 #if defined(_WIN32)
 #define _mem_win32	1	/* use the VirtualAlloc interface	*/
 #endif
-#if !_mem_win32 && !_mem_sbrk && !_mem_mmap_anon && !_mem_mmap_zero
+#if !_mem_win32 && !_mem_sbrk && !_mem_mmap_anon
 #undef _std_malloc
 #define _std_malloc	1	/* use native malloc/free/realloc	*/
 #endif
