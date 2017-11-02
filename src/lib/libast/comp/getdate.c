@@ -31,8 +31,6 @@
 
 #undef	getdate
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #undef	_lib_getdate	/* we can pass X/Open */
 

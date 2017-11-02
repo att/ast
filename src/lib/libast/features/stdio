@@ -1,5 +1,4 @@
 set	prototyped
-ref	-D_def_map_ast=1
 iff	SFSTDIO
 cat{
 	#define __FILE_typedef	1

@@ -31,9 +31,7 @@
 
 #if !_UWIN
 
-#undef	_def_map_ast
 
-#include <ast_map.h>
 
 #endif
 

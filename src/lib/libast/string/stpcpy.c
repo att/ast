@@ -30,8 +30,6 @@
 
 #undef	stpcpy
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #if _lib_stpcpy
 

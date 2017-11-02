@@ -27,8 +27,6 @@
 
 #undef	remove
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #if _std_remove || !_lib_unlink
 

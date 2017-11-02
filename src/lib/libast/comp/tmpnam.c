@@ -31,8 +31,6 @@
 
 #undef	tmpnam
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #if defined(__EXPORT__)
 #define extern	__EXPORT__

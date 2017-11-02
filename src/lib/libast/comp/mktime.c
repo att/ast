@@ -31,8 +31,6 @@
 
 #undef	mktime
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #undef	_lib_mktime	/* we can pass X/Open */
 

@@ -358,9 +358,7 @@ sfkeyprintf_20000308(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup
 }
 
 #undef	sfkeyprintf
-#undef	_def_map_ast
 
-#include <ast_map.h>
 
 int
 sfkeyprintf(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup_t lookup, Sf_key_convert_t convert)
