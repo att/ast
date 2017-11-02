@@ -40,7 +40,7 @@ HEADERSRC = ast.h ast_debug.h ast_dir.h ast_errorf.h ast_getopt.h ast_ioctl.h \
 	$(HEADERSTD)
 
 HEADERGEN = align.h preroot.h sig.h tmx.h tv.h \
-	$(ID)_api.h $(ID)_aso.h $(ID)_botch.h $(ID)_ccode.h $(ID)_fcntl.h $(ID)_fddir.h \
+	$(ID)_api.h $(ID)_aso.h $(ID)_ccode.h $(ID)_fcntl.h $(ID)_fddir.h \
 	$(ID)_float.h $(ID)_fs.h $(ID)_lib.h $(ID)_map.h $(ID)_mmap.h $(ID)_mode.h \
 	$(ID)_ndbm.h $(ID)_param.h $(ID)_socket.h $(ID)_sys.h $(ID)_time.h $(ID)_time.h \
 	$(ID)_tty.h $(ID)_vfork.h $(ID)_wait.h $(ID)_limits.h $(ID)_standards.h $(ID)_sizeof.h \
