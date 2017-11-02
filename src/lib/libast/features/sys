@@ -1,6 +1,5 @@
 set	prototyped
 iff	AST_SYS
-ref	-D_def_map_ast
 
 print	#if __mips == 2 && !defined(_NO_LARGEFILE64_SOURCE)
 print	#define	_NO_LARGEFILE64_SOURCE	1
