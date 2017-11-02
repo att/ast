@@ -252,10 +252,6 @@ prev include/sfio_s.h implicit
 prev ast_common.h implicit
 prev include/ast_std.h implicit
 done include/sfio.h dontcare
-make ast_botch.h implicit
-make FEATURE/botch
-meta FEATURE/botch features/%.c>FEATURE/% features/botch.c botch
-make features/botch.c
 make FEATURE/sys implicit
 meta FEATURE/sys features/%>FEATURE/% features/sys sys
 make features/sys
@@ -266,11 +262,6 @@ prev std/endian.h implicit
 done FEATURE/sys generated
 prev FEATURE/lib implicit
 prev FEATURE/common implicit
-done features/botch.c
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd  ${LDFLAGS} ' run features/botch.c
-done FEATURE/botch generated
-exec - cmp 2>/dev/null -s FEATURE/botch ast_botch.h || { rm -f ast_botch.h; silent test -d . || mkdir .; ${STDCP} FEATURE/botch ast_botch.h; }
-done ast_botch.h dontcare generated
 prev ast_limits.h implicit
 make ast_fcntl.h implicit
 make FEATURE/fcntl
@@ -7272,14 +7263,6 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_aso.h
 exec - fi
 done ${INSTALLROOT}/include/ast/ast_aso.h generated
-make ${INSTALLROOT}/include/ast/ast_botch.h
-prev ast_botch.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_botch.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/ast_botch.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_botch.h
-exec - fi
-done ${INSTALLROOT}/include/ast/ast_botch.h generated
 make ${INSTALLROOT}/include/ast/ast_ccode.h
 prev ast_ccode.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_ccode.h > 1.${COTEMP}.x

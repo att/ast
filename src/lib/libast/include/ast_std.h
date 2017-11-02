@@ -67,7 +67,6 @@ struct _sfio_s;
 #include <ast_getopt.h>	/* <stdlib.h> does this */
 #include <ast_fcntl.h>
 #include <ast_limits.h>
-#include <ast_botch.h>
 
 /*
  * <stdio.h> and <wchar.h> are entangled on some systems
