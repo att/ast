@@ -26,8 +26,6 @@
 #include <ast.h>
 #include <ls.h>
 
-#include "FEATURE/hack"
-
 void _STUB_gross(){}
 
 #if _lcl_xstat
