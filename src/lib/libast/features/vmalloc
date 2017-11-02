@@ -6,7 +6,6 @@
 # repeating them here allows for single standalone and AST sources.
 #
 
-ref	-D_def_map_ast=1
 
 lib	atexit,getpagesize,mallinfo,mallopt,memalign,mstats
 lib	onexit,pvalloc,strdup,valloc,vmalloc

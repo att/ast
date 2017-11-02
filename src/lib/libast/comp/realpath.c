@@ -32,8 +32,6 @@
 #undef	realpath
 #undef	resolvepath
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 extern int		resolvepath(const char*, char*, size_t);
 

@@ -404,7 +404,6 @@ extern int		_ast_getpgrp(void);
  */
 
 #include <ast_intercept.h>
-#include <ast_map.h>
 
 #undef	_AST_STD_I
 

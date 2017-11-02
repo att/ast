@@ -31,8 +31,6 @@
 
 #undef	strftime
 
-#undef	_def_map_ast
-#include <ast_map.h>
 
 #undef	_lib_strftime	/* we can pass X/Open */
 
