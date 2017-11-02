@@ -3215,12 +3215,6 @@ make comp/gross_sgi.h implicit
 make locale_attr.h implicit
 done locale_attr.h dontcare virtual
 done comp/gross_sgi.h dontcare
-make FEATURE/hack implicit
-meta FEATURE/hack features/%>FEATURE/% features/hack hack
-make features/hack
-done features/hack
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/hack
-done FEATURE/hack generated
 prev include/ls.h implicit
 prev include/ast.h implicit
 done comp/gross.c
