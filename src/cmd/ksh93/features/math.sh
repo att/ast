@@ -31,6 +31,19 @@ table=/dev/null
 eval $1
 shift
 table=$1
+c_module=${table%.tab}.c
+
+# Check if we can use the prebuilt version of the math table module.
+
+eval `iffe $iffeflags - set cc $cc -lm -DTEST_LINKAGE : run $c_module`
+if test x"$use_math_c" = x1
+then
+	cat $c_module
+	exit 0
+fi
+
+# Apparently the system doesn't support all the usual functions provided by
+# libm so do the expensive probing to figure out what is supported.
 
 : check long double
 

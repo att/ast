@@ -1,3 +1,5 @@
+# If you modify this be sure to also modify /src/cmd/ksh93/data/math.c.
+#
 # <return type: i:integer f:floating-point> [<typed-arg-bitmask> <#floating-point-args> <function-name> [<alias> ...]
 # <function-name>l and <function-name>f variants are handled by features/math.sh
 # @(#)math.tab (AT&T Research) 2013-08-11
