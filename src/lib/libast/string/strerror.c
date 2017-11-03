@@ -30,8 +30,6 @@
 
 #include "lclib.h"
 
-#include "FEATURE/errno"
-
 #undef	strerror
 
 #if !defined(sys_errlist) && !_def_errno_sys_errlist
