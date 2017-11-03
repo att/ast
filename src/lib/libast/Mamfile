@@ -1146,8 +1146,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done pathnative.o generated
 make pathposix.o
 make path/pathposix.c
-make uwin.h implicit
-done uwin.h dontcare virtual
 prev include/ast.h implicit
 done path/pathposix.c
 meta pathposix.o %.c>%.o path/pathposix.c pathposix
@@ -5357,13 +5355,6 @@ done _flsbuf.o generated
 make _stdfun.o
 make stdio/_stdfun.c
 prev stdio/stdhdr.h implicit
-make FEATURE/uwin implicit
-meta FEATURE/uwin features/%>FEATURE/% features/uwin uwin
-make features/uwin
-done features/uwin
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/uwin
-done FEATURE/uwin dontcare generated
-prev uwin.h implicit
 prev include/ast_windows.h implicit
 prev include/ast.h implicit
 done stdio/_stdfun.c
@@ -6031,213 +6022,15 @@ meta vmuserdata.o %.c>%.o vmalloc/vmuserdata.c vmuserdata
 prev vmalloc/vmuserdata.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Ivmalloc -Iinclude -Istd -D_PACKAGE_ast -c vmalloc/vmuserdata.c
 done vmuserdata.o generated
-make a64l.o
-make uwin/a64l.c
-prev FEATURE/uwin implicit
-done uwin/a64l.c
-meta a64l.o %.c>%.o uwin/a64l.c a64l
-prev uwin/a64l.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Istd -c uwin/a64l.c
-done a64l.o generated
-make acosh.o
-make uwin/acosh.c
-make uwin/mathimpl.h implicit
-done uwin/mathimpl.h dontcare
-prev FEATURE/uwin implicit
-done uwin/acosh.c
-meta acosh.o %.c>%.o uwin/acosh.c acosh
-prev uwin/acosh.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/acosh.c
-done acosh.o generated
-make asinh.o
-make uwin/asinh.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/asinh.c
-meta asinh.o %.c>%.o uwin/asinh.c asinh
-prev uwin/asinh.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/asinh.c
-done asinh.o generated
-make atanh.o
-make uwin/atanh.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/atanh.c
-meta atanh.o %.c>%.o uwin/atanh.c atanh
-prev uwin/atanh.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/atanh.c
-done atanh.o generated
-make cbrt.o
-make uwin/cbrt.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/cbrt.c
-meta cbrt.o %.c>%.o uwin/cbrt.c cbrt
-prev uwin/cbrt.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/cbrt.c
-done cbrt.o generated
-make crypt.o
-make uwin/crypt.c
-prev std/stdio.h implicit
-prev FEATURE/uwin implicit
-done uwin/crypt.c
-meta crypt.o %.c>%.o uwin/crypt.c crypt
-prev uwin/crypt.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_ast -c uwin/crypt.c
-done crypt.o generated
-make erf.o
-make uwin/erf.c
-prev uwin/mathimpl.h implicit
-make ieee_libm.h implicit
-done ieee_libm.h dontcare virtual
-prev FEATURE/uwin implicit
-done uwin/erf.c
-meta erf.o %.c>%.o uwin/erf.c erf
-prev uwin/erf.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/erf.c
-done erf.o generated
-make err.o
-make uwin/err.c
-prev windows.h implicit
-prev include/error.h implicit
-prev include/ast.h implicit
-prev FEATURE/uwin implicit
-done uwin/err.c
-meta err.o %.c>%.o uwin/err.c err
-prev uwin/err.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_ast -c uwin/err.c
-done err.o generated
-make exp.o
-make uwin/exp.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/exp.c
-meta exp.o %.c>%.o uwin/exp.c exp
-prev uwin/exp.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/exp.c
-done exp.o generated
-make exp__E.o
-make uwin/exp__E.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/exp__E.c
-meta exp__E.o %.c>%.o uwin/exp__E.c exp__E
-prev uwin/exp__E.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/exp__E.c
-done exp__E.o generated
-make expm1.o
-make uwin/expm1.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/expm1.c
-meta expm1.o %.c>%.o uwin/expm1.c expm1
-prev uwin/expm1.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/expm1.c
-done expm1.o generated
-make gamma.o
-make uwin/gamma.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/gamma.c
-meta gamma.o %.c>%.o uwin/gamma.c gamma
-prev uwin/gamma.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/gamma.c
-done gamma.o generated
-make getpass.o
-make uwin/getpass.c
-prev include/ast.h implicit
-prev FEATURE/uwin implicit
-done uwin/getpass.c
-meta getpass.o %.c>%.o uwin/getpass.c getpass
-prev uwin/getpass.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_ast -c uwin/getpass.c
-done getpass.o generated
-make lgamma.o
-make uwin/lgamma.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/lgamma.c
-meta lgamma.o %.c>%.o uwin/lgamma.c lgamma
-prev uwin/lgamma.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/lgamma.c
-done lgamma.o generated
-make log.o
-make uwin/log.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/log.c
-meta log.o %.c>%.o uwin/log.c log
-prev uwin/log.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/log.c
-done log.o generated
-make log1p.o
-make uwin/log1p.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/log1p.c
-meta log1p.o %.c>%.o uwin/log1p.c log1p
-prev uwin/log1p.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/log1p.c
-done log1p.o generated
-make log__L.o
-make uwin/log__L.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/log__L.c
-meta log__L.o %.c>%.o uwin/log__L.c log__L
-prev uwin/log__L.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/log__L.c
-done log__L.o generated
-make rand48.o
-make uwin/rand48.c
-prev FEATURE/uwin implicit
-done uwin/rand48.c
-meta rand48.o %.c>%.o uwin/rand48.c rand48
-prev uwin/rand48.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Istd -c uwin/rand48.c
-done rand48.o generated
-make random.o
-make uwin/random.c
-prev FEATURE/uwin implicit
-done uwin/random.c
-meta random.o %.c>%.o uwin/random.c random
-prev uwin/random.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Istd -c uwin/random.c
-done random.o generated
-make rcmd.o
-make uwin/rcmd.c
 prev std/nl_types.h implicit
-make uwin/rlib.h implicit
 prev sys/socket.h implicit
 prev std/endian.h implicit
 prev std/stdio.h implicit
 prev std/stdio.h implicit
 prev sys/socket.h implicit
 prev include/ast_std.h implicit
-done uwin/rlib.h dontcare
-prev FEATURE/uwin implicit
-done uwin/rcmd.c
-meta rcmd.o %.c>%.o uwin/rcmd.c rcmd
-prev uwin/rcmd.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iuwin -Iinclude -Istd -D_PACKAGE_ast -c uwin/rcmd.c
-done rcmd.o generated
 make rint.o
-make uwin/rint.c
-prev FEATURE/uwin implicit
-done uwin/rint.c
-meta rint.o %.c>%.o uwin/rint.c rint
-prev uwin/rint.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Istd -c uwin/rint.c
-done rint.o generated
 make support.o
-make uwin/support.c
-prev uwin/mathimpl.h implicit
-prev FEATURE/uwin implicit
-done uwin/support.c
-meta support.o %.c>%.o uwin/support.c support
-prev uwin/support.c
-exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Iuwin -Istd -c uwin/support.c
-done support.o generated
 make sfstrtmp.o
 make disc/sfstrtmp.c
 prev include/ast.h implicit
@@ -6263,7 +6056,7 @@ exec - ${AR} rc libast.a fmtmatch.o fmtmode.o fmtnum.o fmtperm.o fmtre.o fmttime
 exec - ${AR} rc libast.a strtoull.o strton.o strtonll.o strntod.o strntold.o strnton.o strntonll.o strntol.o strntoll.o strntoul.o strntoull.o strcasecmp.o strncasecmp.o strerror.o mktemp.o tmpnam.o fsync.o execlp.o execve.o execvp.o execvpe.o spawnveg.o spawnvex.o qsort.o qsort_r.o vfork.o killpg.o hsearch.o tsearch.o getlogin.o putenv.o setenv.o unsetenv.o lstat.o statvfs.o eaccess.o gross.o omitted.o readlink.o symlink.o getpgrp.o setpgid.o setsid.o waitpid.o creat64.o at.o atexit.o getwd.o dup2.o errno.o getpreroot.o ispreroot.o realopen.o setpreroot.o getgroups.o mount.o system.o iblocks.o modedata.o tmdata.o memfatal.o sfkeyprintf.o sfdcdio.o sfdcdos.o sfdcfilter.o sfdcseekable.o sfdcslow.o sfdcsubstr.o sfdctee.o sfdcunion.o sfdcmore.o sfdcprefix.o codeset.o wc.o utf32toutf8.o utf8toutf32.o wcstoutf32s.o utf32stowcs.o basename.o closelog.o dirname.o fmtmsglib.o fnmatch.o ftw.o getdate.o getsubopt.o glob.o nftw.o openlog.o re_comp.o resolvepath.o realpath.o regcmp.o regexp.o setlogmask.o strftime.o strptime.o swab.o syslog.o tempnam.o
 exec - ${AR} rc libast.a wordexp.o mktime.o regalloc.o regclass.o regcoll.o regcomp.o regcache.o regdecomp.o regerror.o regexec.o regfatal.o reginit.o regnexec.o regsubcomp.o regsubexec.o regsub.o regrecord.o regrexec.o regstat.o dtclose.o dtdisc.o dthash.o dtlist.o dtmethod.o dtopen.o dtrehash.o dtstat.o dtstrhash.o dttree.o dtuser.o dtview.o dtwalk.o dtnew.o dtcomp.o sfclose.o sfclrlock.o sfdisc.o sfdlen.o sfexcept.o sfgetl.o sfgetu.o sfcvt.o sfecvt.o sffcvt.o sfextern.o sffilbuf.o sfflsbuf.o sfprints.o sfgetd.o sfgetr.o sfllen.o sfmode.o sfmove.o sfnew.o sfpkrd.o sfnotify.o sfnputc.o sfopen.o sfpeek.o sfpoll.o sfpool.o sfpopen.o sfprintf.o sfputd.o sfputl.o sfputr.o sfputu.o sfrd.o sfread.o sfreserve.o sfscanf.o sfseek.o sfset.o sfsetbuf.o sfsetfd.o sfsize.o sfsk.o sfstack.o sfstrtod.o sfsync.o sfswap.o sftable.o sftell.o sftmp.o sfungetc.o sfvprintf.o sfvscanf.o sfwr.o sfwrite.o sfpurge.o sfraise.o sfwalk.o sfgetm.o sfmutex.o sfputm.o sfresize.o sfgetwc.o sfputwc.o _sfclrerr.o _sfeof.o _sferror.o
 exec - ${AR} rc libast.a _sffileno.o _sfopen.o _sfstacked.o _sfvalue.o _sfgetc.o _sfgetl.o _sfgetl2.o _sfgetu.o _sfgetu2.o _sfdlen.o _sfllen.o _sfslen.o _sfulen.o _sfputc.o _sfputd.o _sfputl.o _sfputm.o _sfputu.o clearerr.o fclose.o fdopen.o feof.o ferror.o fflush.o fgetc.o fgetpos.o fgets.o fileno.o fopen.o fprintf.o fpurge.o fputc.o fputs.o fread.o freopen.o fscanf.o fseek.o fseeko.o fsetpos.o ftell.o ftello.o fwrite.o flockfile.o ftrylockfile.o funlockfile.o getc.o getchar.o getw.o pclose.o popen.o printf.o putc.o putchar.o puts.o putw.o rewind.o scanf.o setbuf.o setbuffer.o setlinebuf.o setvbuf.o snprintf.o sprintf.o sscanf.o asprintf.o vasprintf.o tmpfile.o ungetc.o vfprintf.o vfscanf.o vprintf.o vscanf.o vsnprintf.o vsprintf.o vsscanf.o _doprnt.o _doscan.o _filbuf.o _flsbuf.o _stdfun.o _stdopen.o _stdprintf.o _stdscanf.o _stdsprnt.o _stdvbuf.o _stdvsnprnt.o _stdvsprnt.o _stdvsscn.o fgetwc.o fwprintf.o putwchar.o vfwscanf.o wprintf.o fgetws.o fwscanf.o swprintf.o vswprintf.o wscanf.o fputwc.o getwc.o swscanf.o
-exec - ${AR} rc libast.a vswscanf.o fputws.o getwchar.o ungetwc.o vwprintf.o fwide.o putwc.o vfwprintf.o vwscanf.o stdio_c99.o fcloseall.o fmemopen.o getdelim.o getline.o frexp.o frexpl.o astcopy.o astconf.o astdynamic.o astlicense.o astquery.o astwinsize.o conftab.o aststatic.o getopt.o getoptl.o aso.o asoactivecpu.o asolock.o asorelax.o asothreadid.o asoyield.o malloc.o vmbest.o vmclear.o vmclose.o vmdcderive.o vmdcshare.o vmdcsystem.o vmdebug.o vmdisc.o vmexit.o vmgetmem.o vmlast.o vmmaddress.o vmopen.o vmpool.o vmsegment.o vmset.o vmstat.o vmstrdup.o vmtrace.o vmuserdata.o a64l.o acosh.o asinh.o atanh.o cbrt.o crypt.o erf.o err.o exp.o exp__E.o expm1.o gamma.o getpass.o lgamma.o log.o log1p.o log__L.o rand48.o random.o rcmd.o rint.o support.o sfstrtmp.o spawn.o
+exec - ${AR} rc libast.a vswscanf.o fputws.o getwchar.o ungetwc.o vwprintf.o fwide.o putwc.o vfwprintf.o vwscanf.o stdio_c99.o fcloseall.o fmemopen.o getdelim.o getline.o frexp.o frexpl.o astcopy.o astconf.o astdynamic.o astlicense.o astquery.o astwinsize.o conftab.o aststatic.o getopt.o getoptl.o aso.o asoactivecpu.o asolock.o asorelax.o asothreadid.o asoyield.o malloc.o vmbest.o vmclear.o vmclose.o vmdcderive.o vmdcshare.o vmdcsystem.o vmdebug.o vmdisc.o vmexit.o vmgetmem.o vmlast.o vmmaddress.o vmopen.o vmpool.o vmsegment.o vmset.o vmstat.o vmstrdup.o vmtrace.o vmuserdata.o sfstrtmp.o spawn.o
 exec - (ranlib libast.a) >/dev/null 2>&1 || true
 done libast.a generated
 done ast virtual

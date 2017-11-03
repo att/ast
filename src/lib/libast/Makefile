@@ -15,7 +15,7 @@ CCFLAGS = $(CC.SUFFIX.DEBUG:+$(CC.DEBUG)) $(CC.OPTIMIZE) $(CC.DLL)
 IFFEFLAGS = -v -X ast -X std
 
 .SOURCE : aso cdt comp disc hash man misc obsolete path port preroot \
-		regex sfio stdio string tm uwin vec vmalloc
+		regex sfio stdio string tm vec vmalloc
 
 .SOURCE.h : include comp std cdt vmalloc
 
@@ -206,11 +206,6 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	vmdcshare.c vmdcsystem.c vmdebug.c vmdisc.c vmexit.c vmgetmem.c \
 	vmlast.c vmmaddress.c vmopen.c vmpool.c vmsegment.c vmset.c vmstat.c \
 	vmstrdup.c vmtrace.c vmuserdata.c \
-	/* uwin */ \
-	mathimpl.h rlib.h \
-	a64l.c acosh.c asinh.c atanh.c cbrt.c crypt.c erf.c \
-	err.c exp.c exp__E.c expm1.c gamma.c getpass.c lgamma.c log.c log1p.c \
-	log__L.c rand48.c random.c rcmd.c rint.c support.c \
 	/* obsolete */ \
 	sfstrtmp.c spawn.c \
 	-lsocket -liconv -lw /* these should be pulled in by -lc */
