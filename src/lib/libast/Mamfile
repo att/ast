@@ -2976,12 +2976,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done strncasecmp.o generated
 make strerror.o
 make string/strerror.c
-make FEATURE/errno implicit
-meta FEATURE/errno features/%>FEATURE/% features/errno errno
-make features/errno
-done features/errno
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/errno
-done FEATURE/errno generated
 prev port/lclib.h implicit
 done string/strerror.c
 meta strerror.o %.c>%.o string/strerror.c strerror
