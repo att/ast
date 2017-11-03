@@ -17,8 +17,6 @@ __STDPP__directive pragma pp:hide utime utimes
 #include <error.h>
 #include <tm.h>
 
-#include "FEATURE/omitted"
-
 #undef	OMITTED
 
 #if _win32_botch
