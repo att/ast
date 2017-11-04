@@ -2,10 +2,10 @@ sudo: required
 env:
     matrix:
         - OS_TYPE=fedora
-          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y procps-ng libX11-devel fuse-devel gdbm-devel; dnf groupinstall -y 'C Development Tools and Libraries'"
+          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y sudo procps-ng libX11-devel fuse-devel gdbm-devel; dnf groupinstall -y 'C Development Tools and Libraries'"
 
         - OS_TYPE=opensuse
-          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
+          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
 
 services:
     - docker
@@ -15,11 +15,25 @@ before_install:
 
 script:
     - find \( -name \*.c -o -name \*.h \) -exec sh -c '! grep --color "^[[:space:]]*//" $@' find {} \+ && echo No line comments found...
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
-        ${INSTALL_REQUIREMENTS};
+    - echo > build.sh "set -e;
         cd /source;
         export CCFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -P';
         export CC=gcc;
         ./bin/package;
-        ./bin/package make -S 2>&1 | tee out.log ;
-        grep -q 'error:' out.log && exit 1 || exit 0;"
+        ./bin/package make ast-ksh 2>&1 | tee out.log;
+        grep -q 'error:' out.log && exit 1;
+        ln -s /usr/bin/cat arch/$(sh bin/package)/bin/;
+        ln -s /usr/bin/tee arch/$(sh bin/package)/bin/;
+        ln -s /usr/bin/chmod arch/$(sh bin/package)/bin/;
+        ulimit -n 1024;
+        export IS_RUNNING_TRAVIS=true;
+        ./bin/package test ksh93 2>&1 | tee test.log;
+        grep -q '^test [^ ]* failed' test.log && exit 1 || exit 0;"
+
+    - chmod a+x build.sh
+
+    - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
+        ${INSTALL_REQUIREMENTS};
+        useradd test;
+        chown -R test /source;
+        sudo -u test /source/build.sh"
