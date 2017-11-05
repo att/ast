@@ -123,7 +123,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	hsearch.c tsearch.c \
 	getlogin.c putenv.c setenv.c unsetenv.c \
 	lstat.c statvfs.c \
-	eaccess.c gross.c gross_sgi.h omitted.c \
+	gross.c gross_sgi.h omitted.c \
 	fakelink.h readlink.c symlink.c \
 	getpgrp.c setpgid.c setsid.c waitpid.c \
 	creat64.c at.c \
