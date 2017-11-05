@@ -731,15 +731,20 @@ fi
 [[ $(pwd -f $fd) == /dev ]] || err_exit "pwd -f $fd should be /dev"
 
 
-# Below test fails on OpenSUSE
-echo "TODO: Skipping test - 'cd with no arguments fails if HOME is unset'. It should be fixed later."
-#$SHELL <<- \EOF
-#	home=$HOME
-#	unset HOME
-#	cd 2> /dev/null
-#	[[ $(pwd) == "$home" ]]
-#EOF
-#[[ $? == 0 ]] || err_exit 'cd with no arguments fails if HOME is unset'
+# Below test fails on openSUSE
+if grep -q openSUSE /etc/os-release
+then
+	echo "TODO: Skipping test - 'cd with no arguments fails if HOME is unset'. It should be fixed later."
+else
+
+	$SHELL <<- \EOF
+		home=$HOME
+		unset HOME
+		cd 2> /dev/null
+		[[ $(pwd) == "$home" ]]
+	EOF
+	[[ $? == 0 ]] || err_exit 'cd with no arguments fails if HOME is unset'
+fi
 
 cd "$tmp"
 if	mkdir -p f1
