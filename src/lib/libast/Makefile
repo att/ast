@@ -72,7 +72,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	stracmp.c strnacmp.c \
 	ccmap.c ccmapid.c ccnative.c \
 	chresc.c chrtoi.c streval.c strexpr.c strmatch.c \
-	modelib.h modei.c modex.c strmode.c \
+	modelib.h modei.c modex.c \
 	stpcpy.c stpncpy.c strlcat.c strlcpy.c \
 	strcopy.c strncopy.c \
 	strlook.c strsearch.c strpsearch.c \
