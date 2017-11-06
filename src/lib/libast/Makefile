@@ -50,7 +50,7 @@ HEADEREXP = $(ID)_common.h
 
 HEADEROPT = fmtmsg.h libgen.h syslog.h
 
-HEADERSTD = dirent.h iconv.h nl_types.h stdio.h wchar.h wctype.h
+HEADERSTD = iconv.h nl_types.h stdio.h wchar.h wctype.h
 
 HEADERSYS = sys/socket.h
 
