@@ -332,7 +332,7 @@ done ast_nl_types.h generated
 prev ast_wchar.h
 prev ast_wctype.h
 exec - : clean up obsolete headers :
-exec - rm -rf dirent.h iconv.h nl_types.h stdio.h wchar.h wctype.h ast_hdr.h ast_types.h ast_unistd.h iffeio.h \
+exec - rm -rf iconv.h nl_types.h stdio.h wchar.h wctype.h ast_hdr.h ast_types.h ast_unistd.h iffeio.h \
 exec - ${INSTALLROOT}/include/ast/limits.h ${INSTALLROOT}/include/ast/unistd.h \
 exec - ${PACKAGEROOT}/src/lib/libast/std/limits.h
 exec - set -
@@ -424,20 +424,7 @@ done state.o generated
 make intercept.o
 make port/intercept.c
 prev sys/socket.h implicit
-make ast_dirent.h implicit
-make FEATURE/dirent
-meta FEATURE/dirent features/%>FEATURE/% features/dirent dirent
-make features/dirent
-done features/dirent
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/dirent
 prev include/ast_std.h implicit
-make std/dirent.h implicit
-prev ast_dirent.h implicit
-done std/dirent.h dontcare
-done FEATURE/dirent generated
-exec - cmp 2>/dev/null -s FEATURE/dirent ast_dirent.h || { rm -f ast_dirent.h; silent test -d . || mkdir .; ${STDCP} FEATURE/dirent ast_dirent.h; }
-prev include/ast_std.h implicit
-done ast_dirent.h dontcare generated
 prev include/ast_ioctl.h implicit
 prev include/error.h implicit
 make include/aso.h implicit
@@ -474,10 +461,8 @@ make ast_param.h implicit
 prev FEATURE/param
 exec - cmp 2>/dev/null -s FEATURE/param ast_param.h || { rm -f ast_param.h; silent test -d . || mkdir .; ${STDCP} FEATURE/param ast_param.h; }
 done ast_param.h dontcare generated
-prev std/dirent.h implicit
 make ndir.h implicit
 done ndir.h dontcare virtual
-prev std/dirent.h implicit
 make include/ls.h implicit
 make ast_mode.h implicit
 make FEATURE/mode
@@ -502,7 +487,6 @@ prev ast_fs.h implicit
 done include/fs3d.h dontcare
 prev include/error.h implicit
 make include/ast_dir.h implicit
-prev std/dirent.h implicit
 prev ast_lib.h implicit
 done include/ast_dir.h dontcare
 prev include/ast.h implicit
@@ -1591,7 +1575,6 @@ prev port/codeset.h implicit
 prev include/error.h implicit
 prev std/iconv.h implicit
 prev include/ccode.h implicit
-prev std/dirent.h implicit
 prev include/ast.h implicit
 done comp/iconv.c
 meta iconv.o %.c>%.o comp/iconv.c iconv
@@ -6921,14 +6904,6 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/aso.h
 exec - fi
 done ${INSTALLROOT}/include/ast/aso.h generated
-make ${INSTALLROOT}/include/ast/dirent.h
-prev std/dirent.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' std/dirent.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/dirent.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/dirent.h
-exec - fi
-done ${INSTALLROOT}/include/ast/dirent.h generated
 make ${INSTALLROOT}/include/ast/iconv.h
 prev std/iconv.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' std/iconv.h > 1.${COTEMP}.x
@@ -7204,14 +7179,6 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_sizeof.h
 exec - fi
 done ${INSTALLROOT}/include/ast/ast_sizeof.h generated
-make ${INSTALLROOT}/include/ast/ast_dirent.h
-prev ast_dirent.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_dirent.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/ast_dirent.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_dirent.h
-exec - fi
-done ${INSTALLROOT}/include/ast/ast_dirent.h generated
 make ${INSTALLROOT}/include/ast/ast_iconv.h
 prev ast_iconv.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_iconv.h > 1.${COTEMP}.x
