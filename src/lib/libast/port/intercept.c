@@ -30,7 +30,6 @@
 #include <aso.h>
 #include <error.h>
 #include <ast_ioctl.h>
-#include <ast_dirent.h>
 #include <sys/socket.h>
 
 static const char	dot[] = ".";
@@ -1001,24 +1000,4 @@ ast_socketpair(int domain, int type, int protocol, int fds[2])
 	SOCKTYPE(r, type, fds[0], fds[1]);
 
 	return r;
-}
-
-/* dirent intercepts */
-
-#ifdef _ast_opendir
-#define opendir		_ast_opendir
-#endif
-
-DIR*
-ast_opendir(const char* path)
-{
-#if _lib_fdopendir
-	int	fd;
-
-	if ((fd = ast_openat(LOCAL(pwd), path, O_RDONLY|O_NDELAY|O_DIRECTORY|O_CLOEXEC)) < 0)
-		return 0;
-	return fdopendir(fd);
-#else
-	return opendir(path);
-#endif
 }
