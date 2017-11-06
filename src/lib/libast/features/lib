@@ -45,7 +45,7 @@ lib	readlink,remove,rename,rewinddir,rindex,rmdir,setlocale
 lib	setpgid,setpgrp,setpgrp2,setregid,setreuid,setsid,setuid,sigaction
 lib	sigprocmask,sigsetmask,sigunblock,sigvec
 lib	strchr,strcoll,strdup,strerror,strcasecmp,strncasecmp,strrchr,strstr
-lib	strmode,strxfrm,strftime,swab,symlink,sysconf,sysinfo,syslog
+lib	strxfrm,strftime,swab,symlink,sysconf,sysinfo,syslog
 lib	stpcpy,stpncpy,strlcat,strlcpy
 lib	telldir,tmpnam,tzset,universe,unlink,utime,wctype
 lib	ftruncate,truncate
