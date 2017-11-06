@@ -2005,7 +2005,6 @@ struct _sfio_;
 #define streval\t\t_SYS_streval
 #define strgid\t\t_SYS_strgid
 #define strmatch\t_SYS_strmatch
-#define strmode\t\t_SYS_strmode
 #define stropt\t\t_SYS_stropt
 #define strperm\t\t_SYS_strperm
 #define strsignal\t_SYS_strsignal
@@ -2023,7 +2022,6 @@ struct _sfio_;
 #undef\tstreval
 #undef\tstrgid
 #undef\tstrmatch
-#undef\tstrmode
 #undef\tstropt
 #undef\tstrperm
 #undef\tstrsignal
@@ -2327,7 +2325,6 @@ extern int\t\tstresc(char*);
 extern long\t\tstreval(const char*, char**, long(*)(const char*, char**));
 extern int\t\tstrgid(const char*);
 extern int\t\tstrmatch(const char*, const char*);
-extern int\t\tstrmode(const char*);
 extern int\t\tstropt(const char*, char*, int, int(*)(char*, char*, int, const char*), char*);
 extern int\t\tstrperm(const char*, char**, int);
 extern char*\t\tstrsignal(int);
@@ -2380,7 +2377,6 @@ struct _sfio_;
 #define streval\t\t_SYS_streval
 #define strgid\t\t_SYS_strgid
 #define strmatch\t_SYS_strmatch
-#define strmode\t\t_SYS_strmode
 #define stropt\t\t_SYS_stropt
 #define strperm\t\t_SYS_strperm
 #define strsignal\t_SYS_strsignal
@@ -2398,7 +2394,6 @@ struct _sfio_;
 #undef\tstreval
 #undef\tstrgid
 #undef\tstrmatch
-#undef\tstrmode
 #undef\tstropt
 #undef\tstrperm
 #undef\tstrsignal
@@ -2702,7 +2697,6 @@ extern __MANGLE__ int\t\tstresc __PROTO__((char*));
 extern __MANGLE__ long\t\tstreval __PROTO__((const char*, char**, long(*)(const char*, char**)));
 extern __MANGLE__ int\t\tstrgid __PROTO__((const char*));
 extern __MANGLE__ int\t\tstrmatch __PROTO__((const char*, const char*));
-extern __MANGLE__ int\t\tstrmode __PROTO__((const char*));
 extern __MANGLE__ int\t\tstropt __PROTO__((const char*, char*, int, int(*)(char*, char*, int, const char*), char*));
 extern __MANGLE__ int\t\tstrperm __PROTO__((const char*, char**, int));
 extern __MANGLE__ char*\t\tstrsignal __PROTO__((int));
