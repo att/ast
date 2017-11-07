@@ -32,32 +32,18 @@
 
 #include "lclib.h"
 
-#include <ast_wchar.h>
+#include <wchar.h>
 #include <ctype.h>
 #include <mc.h>
 #include <namval.h>
 #include <iconv.h>
 #include <codeset.h>
-
-#if ( _lib_wcwidth || _lib_wctomb ) && _hdr_wctype
 #include <wctype.h>
-#endif
 
 #undef	mbsrtowcs
 #undef	wcsrtombs
-
-#if _lib_wcwidth
 #undef	wcwidth
-#else
-#define wcwidth			0
-#endif
-
-#if _lib_wctomb
 #undef	wctomb
-#else
-#define wctomb			0
-#endif
-
 #ifdef mblen
 #undef	mblen
 extern int		mblen(const char*, size_t);
@@ -565,8 +551,6 @@ set_collate(Lc_category_t* cp)
  * workaround the interesting sjis that translates unshifted 7 bit ascii!
  */
 
-#if _hdr_wchar && _typ_mbstate_t && _lib_mbrtowc
-
 #define mb_state	((mbstate_t*)&ast.pad[sizeof(ast.pad)-sizeof(mbstate_t)])
 
 static size_t
@@ -585,8 +569,6 @@ sjis_mbtowc(register wchar_t* p, register const char* s, size_t n)
 {
 	return (int)sjis_mbrtowc(p, s, n, mb_state);
 }
-
-#endif
 
 static int
 utf8_wctomb(char* u, wchar_t w)
@@ -2167,16 +2149,6 @@ utf8_alpha(wchar_t c)
 {
 	return !!(utf8_wam[(c >> 3) & 0x1fff] & (1 << (c & 0x7)));
 }
-
-#if !_hdr_wchar || !_lib_wctype || !_lib_iswctype
-#undef	iswalpha
-#define iswalpha	default_iswalpha
-static int
-iswalpha(wchar_t c)
-{
-	return c <= 0x7f ? isalpha(c) : 0;
-}
-#endif
 
 /*
  * grab one mb char from s max n bytes to w

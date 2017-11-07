@@ -30,10 +30,8 @@
 #include <ast.h>
 #include <ccode.h>
 #include <ctype.h>
-#if _hdr_wchar && _hdr_wctype
 #include <wchar.h>
 #include <wctype.h>
-#endif
 
 /*
  * quote string as of length n with qb...qe

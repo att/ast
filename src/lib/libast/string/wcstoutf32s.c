@@ -26,7 +26,7 @@
  */
 
 #include <ast.h>
-#include <ast_wchar.h>
+#include <wchar.h>
 #include <codeset.h>
 #include <error.h>
 #include <iconv.h>

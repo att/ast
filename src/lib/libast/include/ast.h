@@ -47,35 +47,6 @@
 #endif
 
 /*
- * workaround botched headers that assume <stdio.h>
- */
-
-#ifndef FILE
-#ifndef _SFIO_H
-struct _sfio_s;
-#endif
-#define FILE		struct _sfio_s
-#ifndef	__FILE_typedef
-#define __FILE_typedef	1
-#endif
-#ifndef	_FILE_DEFINED
-#define _FILE_DEFINED   1
-#endif
-#ifndef	_FILE_defined
-#define _FILE_defined   1
-#endif
-#ifndef _FILEDEFED
-#define _FILEDEFED	1
-#endif
-#ifndef __FILE_defined
-#define __FILE_defined  1
-#endif
-#ifndef ____FILE_defined
-#define ____FILE_defined  1
-#endif
-#endif
-
-/*
  * exit() support -- this matches shell exit codes
  */
 
@@ -475,6 +446,11 @@ extern char**		environ;
 #endif
 
 extern unsigned long	plugin_version(void);
+
+/* This is a workaround for issue discussed in https://github.com/att/ast/pull/107 */
+#include <wctype.h>
+#undef  iswalpha
+#define iswalpha(w)     (_ast_info.mb_alpha?(*_ast_info.mb_alpha)(w):isalpha(w))
 
 #undef	extern
 

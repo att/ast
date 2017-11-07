@@ -24,7 +24,6 @@
  */
 
 #include	"defs.h"
-#include	<ast_wchar.h>
 #include	"lexstates.h"
 #include	"path.h"
 #include	"io.h"

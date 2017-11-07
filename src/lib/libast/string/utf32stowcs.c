@@ -27,11 +27,11 @@
  */
 
 #include <ast.h>
-#include <ast_wchar.h>
 #include <ccode.h>
 #include <codeset.h>
 #include <error.h>
 #include <iconv.h>
+#include <wchar.h>
 
 ssize_t
 utf32stowcs(wchar_t* wchar, uint32_t* utf32, size_t n)

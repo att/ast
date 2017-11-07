@@ -44,24 +44,6 @@
 #endif
 #endif
 
-#ifdef	_SFSTDIO_H
-#define _SKIP_SFSTDIO_H
-#else
-#define _SFSTDIO_H
-#ifndef FILE
-#ifndef _SFIO_H
-struct _sfio_s;
-#endif
-#define FILE		struct _sfio_s
-#ifndef	__FILE_typedef
-#define __FILE_typedef	1
-#endif
-#ifndef _FILEDEFED
-#define _FILEDEFED	1
-#endif
-#endif
-#endif
-
 #include <ast_lib.h>
 #include <ast_sys.h>
 #include <ast_getopt.h>	/* <stdlib.h> does this */
@@ -74,30 +56,11 @@ struct _sfio_s;
  * this dance works around those places
  */
 
-#ifdef	_SKIP_SFSTDIO_H
-#undef	_SKIP_SFSTDIO_H
-#else
-#undef	_SFSTDIO_H
-#undef	FILE
-#endif
-
-#ifndef FILE
-#ifndef _SFIO_H
-struct _sfio_s;
-#endif
-#define FILE		struct _sfio_s
-#ifndef	__FILE_typedef
-#define __FILE_typedef	1
-#endif
-#ifndef _FILEDEFED
-#define _FILEDEFED	1
-#endif
-#endif
 
 #if _AST_H
 #include <sfio.h>	/* moved from <ast.h> because mbstate_t entangled with <stdio.h> on some systems */
 #endif
-#include <ast_wchar.h>
+#include <wchar.h>
 
 /* locale stuff */
 
@@ -315,29 +278,6 @@ typedef struct
 extern _Ast_info_t	_ast_info;
 
 #undef	extern
-
-/* largefile hackery -- ast uses the large versions by default */
-
-#if _typ_ino64_t
-#undef	ino_t
-#define ino_t		ino64_t
-#endif
-#if _typ_off64_t
-#undef	off_t
-#define off_t		off64_t
-#endif
-#if !defined(ftruncate) && _lib_ftruncate64
-#define ftruncate	ftruncate64
-extern int		ftruncate64(int, off64_t);
-#endif
-#if !defined(lseek) && _lib_lseek64
-#define lseek		lseek64
-extern off64_t		lseek64(int, off64_t, int);
-#endif
-#if !defined(truncate) && _lib_truncate64
-#define truncate	truncate64
-extern int		truncate64(const char*, off64_t);
-#endif
 
 /* direct macro access for bsd crossover */
 
