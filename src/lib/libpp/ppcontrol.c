@@ -186,7 +186,7 @@ macsym(int tok)
  */
 
 static char*
-getline(register char* p, char* x, int disable)
+pp_getline(register char* p, char* x, int disable)
 {
 	register int	c;
 	register char*	s;
@@ -506,7 +506,7 @@ ppcontrol(void)
 	p0 = p;
 	pp.mode |= EXPOSE;
 	pp.state |= HEADER;
-	p6 = getline(p, &pp.valbuf[MAXTOKEN], 0);
+	p6 = pp_getline(p, &pp.valbuf[MAXTOKEN], 0);
 	pp.state &= ~HEADER;
 	pp.mode &= ~EXPOSE;
 	if (!p6)
@@ -1598,7 +1598,7 @@ ppcontrol(void)
 			p0 = p;
 			if (pp.option & PRAGMAEXPAND)
 				pp.state &= ~DISABLE;
-			if (!(p6 = getline(p, &pp.valbuf[MAXTOKEN], !!(pp.option & PRAGMAEXPAND))))
+			if (!(p6 = pp_getline(p, &pp.valbuf[MAXTOKEN], !!(pp.option & PRAGMAEXPAND))))
 			{
 				*p0 = 0;
 				error(2, "%s: directive too long", pp.valbuf);

@@ -147,7 +147,7 @@ typedef struct Parseinfo_s		/* recursive parse state stack	*/
 } Parseinfo_t;
 
 /*
- * WARNING: getline() uses the first keyword char
+ * WARNING: parse_getline() uses the first keyword char
  */
 
 static Namval_t		controls[] =	/* control keywords		*/
@@ -901,7 +901,7 @@ readline(int lead)
  */
 
 static int
-getline(Sfio_t* sp, int lead, int term)
+parse_getline(Sfio_t* sp, int lead, int term)
 {
 	register int	c;
 	register char*	s;
@@ -1555,7 +1555,7 @@ statement(Sfio_t* sp, char** lhs, Rule_t** opr, char** rhs, char** act)
 	long		act_pos = -1;
 	long		lin_pos;
 
-	if (!getline(sp, 1, 0))
+	if (!parse_getline(sp, 1, 0))
 		return op;
 	*opr = 0;
 	b = s = sfstrbase(sp);
@@ -1761,7 +1761,7 @@ statement(Sfio_t* sp, char** lhs, Rule_t** opr, char** rhs, char** act)
 		while (nest)
 		{
 			lin_pos = sfstrtell(sp);
-			if (!getline(sp, -1, '\n'))
+			if (!parse_getline(sp, -1, '\n'))
 			{
 				error(2, "unbalanced {...} action");
 				break;
@@ -1864,7 +1864,7 @@ statement(Sfio_t* sp, char** lhs, Rule_t** opr, char** rhs, char** act)
 		}
 		act_pos = ++p - sfstrbase(sp);
 		sfstrseek(sp, act_pos, SEEK_SET);
-		while (getline(sp, 0, '\n'));
+		while (parse_getline(sp, 0, '\n'));
 		t = sfstrbase(sp) + act_pos;
 		s = sfstrseek(sp, 0, SEEK_CUR);
 		for (;;)
