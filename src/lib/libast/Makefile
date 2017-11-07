@@ -15,7 +15,7 @@ CCFLAGS = $(CC.SUFFIX.DEBUG:+$(CC.DEBUG)) $(CC.OPTIMIZE) $(CC.DLL)
 IFFEFLAGS = -v -X ast -X std
 
 .SOURCE : aso cdt comp disc hash man misc obsolete path port preroot \
-		regex sfio stdio string tm vec vmalloc
+		regex sfio string tm vec vmalloc
 
 .SOURCE.h : include comp std cdt vmalloc
 
@@ -50,7 +50,7 @@ HEADEREXP = $(ID)_common.h
 
 HEADEROPT = fmtmsg.h libgen.h syslog.h
 
-HEADERSTD = iconv.h nl_types.h stdio.h wchar.h wctype.h
+HEADERSTD = iconv.h nl_types.h
 
 HEADERSYS = sys/socket.h
 
@@ -169,30 +169,6 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	_sfgetc.c _sfgetl.c _sfgetl2.c _sfgetu.c _sfgetu2.c \
 	_sfdlen.c _sfllen.c _sfslen.c _sfulen.c \
 	_sfputc.c _sfputd.c _sfputl.c _sfputm.c _sfputu.c \
-	/* stdio */ \
-	clearerr.c fclose.c fdopen.c feof.c ferror.c fflush.c \
-	fgetc.c fgetpos.c fgets.c fileno.c fopen.c fprintf.c \
-	fpurge.c fputc.c fputs.c fread.c freopen.c fscanf.c \
-	fseek.c fseeko.c fsetpos.c ftell.c ftello.c fwrite.c \
-	flockfile.c ftrylockfile.c funlockfile.c \
-	getc.c getchar.c getw.c pclose.c popen.c printf.c \
-	putc.c putchar.c puts.c putw.c rewind.c scanf.c \
-	setbuf.c setbuffer.c setlinebuf.c setvbuf.c \
-	snprintf.c sprintf.c sscanf.c \
-	asprintf.c vasprintf.c \
-	stdio/tmpfile.c ungetc.c vfprintf.c vfscanf.c vprintf.c \
-	vscanf.c vsnprintf.c vsprintf.c vsscanf.c \
-	_doprnt.c _doscan.c _filbuf.c _flsbuf.c _stdfun.c \
-	_stdopen.c _stdprintf.c _stdscanf.c _stdsprnt.c \
-	_stdvbuf.c _stdvsnprnt.c _stdvsprnt.c _stdvsscn.c \
-	/* wchar stdio */ \
-	fgetwc.c fwprintf.c putwchar.c vfwscanf.c wprintf.c \
-	fgetws.c fwscanf.c swprintf.c vswprintf.c wscanf.c \
-	fputwc.c getwc.c swscanf.c vswscanf.c \
-	fputws.c getwchar.c ungetwc.c vwprintf.c \
-	fwide.c putwc.c vfwprintf.c vwscanf.c \
-	/* stdio extensions */ \
-	stdio_c99.c fcloseall.c fmemopen.c getdelim.c getline.c \
 	/* math */ \
 	frexp.c frexpl.c \
 	/* ast */ \
@@ -223,7 +199,6 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	CCFLAGS += -D_BLD_ast
 
 parameter	(_BLD_ast)
-virtual		ast/stdio.h
 
 		:NOPROTECT: sfprintf.c sfvprintf.c sfscanf.c sfvscanf.c
 
@@ -326,8 +301,8 @@ FEATURE/common : .SCAN.IGNORE
 .check.hdr : .IGNORE .VIRTUAL \
 		FEATURE/standards - FEATURE/lib - FEATURE/common - \
 		FEATURE/param - FEATURE/aso - \
-		ast_map.h - ast_limits.h - ast_stdio.h ast_nl_types.h - \
-		ast_wchar.h ast_wctype.h
+		ast_map.h - ast_limits.h - ast_nl_types.h
+		
 	: clean up obsolete headers :
 	$(RM) -rf $(HEADERSTD) ast_hdr.h ast_types.h ast_unistd.h iffeio.h \
 		$(INCLUDEDIR)/limits.h $(INCLUDEDIR)/unistd.h \

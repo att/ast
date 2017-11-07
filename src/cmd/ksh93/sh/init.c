@@ -48,39 +48,8 @@
 #include	"lexstates.h"
 #include	"version.h"
 
-#if _hdr_wctype
-#include	<ast_wchar.h>
+#include	<wchar.h>
 #include	<wctype.h>
-#endif
-#if !_typ_wctrans_t
-#undef	wctrans_t
-#define wctrans_t	sh_wctrans_t
-typedef long wctrans_t;
-#endif
-#if !_lib_wctrans
-#undef	wctrans
-#define wctrans		sh_wctrans
-static wctrans_t wctrans(const char *name)
-{
-	if(strcmp(name,e_tolower)==0)
-		return(1);
-	else if(strcmp(name,e_toupper)==0)
-		return(2);
-	return(0);
-}
-#endif
-#if !_lib_towctrans
-#undef	towctrans
-#define towctrans	sh_towctrans
-static int towctrans(int c, wctrans_t t)
-{
-	if(t==1 && isupper(c))
-		c = tolower(c);
-	else if(t==2 && islower(c))
-		c = toupper(c);
-	return(c);
-}
-#endif
 
 char e_version[]	= "\n@(#)$Id: Version "
 #if SHOPT_AUDIT

@@ -24,7 +24,7 @@
  */
 
 #include	<ast.h>
-#include	<ast_wchar.h>
+#include    <wchar.h>
 #include	"defs.h"
 #include	<ccode.h>
 #include	"shtable.h"

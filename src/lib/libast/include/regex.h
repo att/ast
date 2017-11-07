@@ -36,8 +36,8 @@
 #undef	regmatch_t
 
 #include <ast_common.h>
-#include <ast_wchar.h>
 #include <ast_api.h>
+#include <wchar.h>
 
 #define REG_VERSION	20100930L
 

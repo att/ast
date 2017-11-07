@@ -63,11 +63,6 @@
 
 #include "FEATURE/tty"
 
-#if _typ_off64_t
-#undef	off_t
-#define	off_t	off64_t
-#endif
-
 /*
  * some bit macros may in fact be bits
  */
@@ -556,10 +551,6 @@ main(int argc, char** argv)
 #endif
 	printf("\n");
 	printf("#include <ast_fs.h>\n");
-	printf("#if _typ_off64_t\n");
-	printf("#undef	off_t\n");
-	printf("#define	off_t		off64_t\n");
-	printf("#endif\n");
 	printf("#if _lib_fstat64\n");
 	printf("#define fstat		fstat64\n");
 	printf("#endif\n");
