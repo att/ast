@@ -234,17 +234,6 @@ make features/fs
 done features/fs
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/fs
 done FEATURE/fs generated
-make sys/socket.h implicit
-make ast_socket.h implicit
-make FEATURE/socket
-meta FEATURE/socket features/%>FEATURE/% features/socket socket
-make features/socket
-done features/socket
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/socket
-done FEATURE/socket generated
-exec - cmp 2>/dev/null -s FEATURE/socket ast_socket.h || { rm -f ast_socket.h; silent test -d . || mkdir .; ${STDCP} FEATURE/socket ast_socket.h; }
-done ast_socket.h dontcare generated
-done sys/socket.h dontcare
 prev FEATURE/lib implicit
 prev FEATURE/standards implicit
 done features/fcntl.c
@@ -289,7 +278,7 @@ exec - {
 exec - case "" in
 exec - *?) echo " " ;;
 exec - esac
-exec - for i in ast socket iconv w
+exec - for i in ast iconv w
 exec - do case $i in
 exec - "ast"|ast)
 exec - ;;
@@ -369,7 +358,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done state.o generated
 make intercept.o
 make port/intercept.c
-prev sys/socket.h implicit
 prev include/ast_std.h implicit
 prev include/ast_ioctl.h implicit
 prev include/error.h implicit
@@ -936,8 +924,6 @@ done pathcheck.o generated
 make pathopen.o
 make path/pathopen.c
 prev std/endian.h implicit
-prev sys/socket.h implicit
-prev sys/socket.h implicit
 prev include/error.h implicit
 prev include/ast.h implicit
 done path/pathopen.c
@@ -1553,7 +1539,6 @@ make sfio/sfhdr.h implicit
 prev port/lclib.h implicit
 make vfork.h implicit
 done vfork.h dontcare virtual
-prev sys/socket.h implicit
 make FEATURE/float implicit
 meta FEATURE/float features/%>FEATURE/% features/float float
 make features/float
@@ -2060,7 +2045,6 @@ done sigunblock.o generated
 make procopen.o
 make misc/procopen.c
 prev include/namval.h implicit
-prev sys/socket.h implicit
 prev ast_tty.h implicit
 prev include/ls.h implicit
 make misc/proclib.h implicit
@@ -2418,7 +2402,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done tvsettime.o generated
 make tvsleep.o
 make tm/tvsleep.c
-prev sys/socket.h implicit
 prev FEATURE/tvlib implicit
 prev include/error.h implicit
 prev include/tm.h implicit
@@ -3712,7 +3695,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done swab.o generated
 make syslog.o
 make comp/syslog.c
-prev sys/socket.h implicit
 prev include/ls.h implicit
 prev include/tm.h implicit
 prev include/error.h implicit
@@ -5093,9 +5075,7 @@ prev vmalloc/vmuserdata.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Ivmalloc -Iinclude -Istd -D_PACKAGE_ast -c vmalloc/vmuserdata.c
 done vmuserdata.o generated
 prev std/nl_types.h implicit
-prev sys/socket.h implicit
 prev std/endian.h implicit
-prev sys/socket.h implicit
 prev include/ast_std.h implicit
 make rint.o
 make support.o
@@ -5534,14 +5514,6 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_namval.h
 exec - fi
 done ${INSTALLROOT}/include/ast/ast_namval.h generated
-make ${INSTALLROOT}/include/ast/ast_socket.h
-prev ast_socket.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_socket.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/ast_socket.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_socket.h
-exec - fi
-done ${INSTALLROOT}/include/ast/ast_socket.h generated
 make ${INSTALLROOT}/include/ast/ast_std.h
 prev include/ast_std.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' include/ast_std.h > 1.${COTEMP}.x
@@ -6300,15 +6272,6 @@ exec - if silent test ! -d ${INSTALLROOT}/include/ast/sys
 exec - then mkdir -p ${INSTALLROOT}/include/ast/sys
 exec - fi
 done ${INSTALLROOT}/include/ast/sys generated
-make ${INSTALLROOT}/include/ast/sys/socket.h
-prev ${INSTALLROOT}/include/ast/sys
-prev sys/socket.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' sys/socket.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/sys/socket.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/sys/socket.h
-exec - fi
-done ${INSTALLROOT}/include/ast/sys/socket.h generated
 make ${INSTALLROOT}/lib/file
 exec - if silent test ! -d ${INSTALLROOT}/lib/file
 exec - then mkdir -p ${INSTALLROOT}/lib/file
