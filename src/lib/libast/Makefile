@@ -28,7 +28,7 @@ DEBUG ==
 __OBSOLETE__ == $("6 months ago":@F=%(%Y0101)T)
 
 HEADERSRC = ast.h ast_debug.h ast_dir.h ast_errorf.h ast_getopt.h ast_ioctl.h \
-	ast_intercept.h ast_namval.h ast_socket.h ast_std.h ast_windows.h \
+	ast_intercept.h ast_namval.h ast_std.h ast_windows.h \
 	ccode.h cdt.h cdtlib.h cmdarg.h debug.h dt.h error.h find.h ftw.h \
 	ftwalk.h fts.h fs3d.h getopt.h glob.h hash.h hashkey.h hashpart.h \
 	ip6.h lc.h ls.h magic.h mc.h mime.h mnt.h modecanon.h modex.h \
@@ -42,7 +42,7 @@ HEADERSRC = ast.h ast_debug.h ast_dir.h ast_errorf.h ast_getopt.h ast_ioctl.h \
 HEADERGEN = align.h preroot.h sig.h tmx.h tv.h \
 	$(ID)_api.h $(ID)_aso.h $(ID)_ccode.h $(ID)_fcntl.h $(ID)_fddir.h \
 	$(ID)_float.h $(ID)_fs.h $(ID)_lib.h $(ID)_map.h $(ID)_mmap.h $(ID)_mode.h \
-	$(ID)_ndbm.h $(ID)_param.h $(ID)_socket.h $(ID)_sys.h $(ID)_time.h $(ID)_time.h \
+	$(ID)_ndbm.h $(ID)_param.h $(ID)_sys.h $(ID)_time.h $(ID)_time.h \
 	$(ID)_tty.h $(ID)_vfork.h $(ID)_wait.h $(ID)_limits.h $(ID)_standards.h $(ID)_sizeof.h \
 	$(HEADERSTD:/^/$(ID)_/)
 
@@ -52,7 +52,7 @@ HEADEROPT = fmtmsg.h libgen.h syslog.h
 
 HEADERSTD = iconv.h nl_types.h
 
-HEADERSYS = sys/socket.h
+HEADERSYS = 
 
 $(ID) 5.4 :LIBRARY: README RELEASE \
 	LIBAST.3 aso.3 ast.3 astsa.3 cdt.3 chr.3 compat.3 error.3 \
