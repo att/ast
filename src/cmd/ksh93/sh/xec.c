@@ -134,6 +134,8 @@ static bool iousepipe(Shell_t *shp)
 		return(true);
 	}
 	subpipe[2] = sh_fcntl(fd,F_dupfd_cloexec,10);
+	if(subpipe[2] >= shp->gd->lim.open_max)
+		sh_iovalidfd(shp,subpipe[2]);
 	shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
 	while(close(fd)<0 && errno==EINTR)
 		errno = err;
