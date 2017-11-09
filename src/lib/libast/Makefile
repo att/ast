@@ -50,7 +50,7 @@ HEADEREXP = $(ID)_common.h
 
 HEADEROPT = fmtmsg.h libgen.h syslog.h
 
-HEADERSTD = iconv.h nl_types.h
+HEADERSTD = iconv.h
 
 HEADERSYS = 
 
@@ -89,7 +89,7 @@ $(ID) 5.4 :LIBRARY: README RELEASE \
 	magic.c mime.c mimetype.c signal.c sigflag.c systrace.c \
 	error.c errorf.c errormsg.c errorx.c \
 	localeconv.c setlocale.c translate.c \
-	catopen.c iconv.c lc.c lctab.c mc.c \
+	iconv.c lc.c lctab.c mc.c \
 	base64.c qp.c recfmt.c recstr.c reclen.c fmtrec.c \
 	fmtbase.c fmtbuf.c fmtclock.c fmtdev.c fmtelapsed.c fmterror.c \
 	fmtesc.c fmtfmt.c fmtfs.c fmtident.c fmtint.c fmtip4.c fmtip6.c fmtls.c \
@@ -301,7 +301,7 @@ FEATURE/common : .SCAN.IGNORE
 .check.hdr : .IGNORE .VIRTUAL \
 		FEATURE/standards - FEATURE/lib - FEATURE/common - \
 		FEATURE/param - FEATURE/aso - \
-		ast_map.h - ast_limits.h - ast_nl_types.h
+		ast_map.h - ast_limits.h
 		
 	: clean up obsolete headers :
 	$(RM) -rf $(HEADERSTD) ast_hdr.h ast_types.h ast_unistd.h iffeio.h \
