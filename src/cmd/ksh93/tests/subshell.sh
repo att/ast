@@ -720,4 +720,34 @@ then	(( size = 117*1024 ))
 	fi
 fi
 
+# ========================================
+# Test that variables exported in subshells don't affect the outer shell.
+# Regression test for issue #7.
+function proxy {
+    export MYVAR="blah"
+    child
+    unset MYVAR
+}
+
+function child {
+    echo "MYVAR=$MYVAR"
+}
+
+function test {
+        child
+        proxy
+        child
+}
+
+actual="$(test)"
+expected="\
+MYVAR=
+MYVAR=blah
+MYVAR="
+if [[ $actual != $expected ]]
+then
+    err_exit -u2 "exported vars in subshells not confined to the subshell: $actual"
+fi
+
+# ========================================
 exit $((Errors<125?Errors:125))
