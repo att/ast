@@ -32,7 +32,7 @@
 #include <iconv.h>
 #include <mc.h>
 #include <tm.h>
-#include <ast_nl_types.h>
+#include <nl_types.h>
 
 #include "lclib.h"
 
