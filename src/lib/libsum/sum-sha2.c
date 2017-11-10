@@ -64,7 +64,7 @@
 #define __undef__USE_BSD
 #define __USE_BSD
 #endif
-#include <endian.h>
+#include <sys/types.h>
 #ifdef	__undef__USE_BSD
 #undef	__undef__USE_BSD
 #undef	__USE_BSD

@@ -61,8 +61,6 @@ meta FEATURE/param features/%.sh>FEATURE/% features/param.sh param
 make features/param.sh
 done features/param.sh
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/param.sh
-make std/endian.h implicit
-make std/bytesex.h implicit
 make ast_common.h implicit
 prev FEATURE/common
 exec - sed '/define _def_map_ast/d' < FEATURE/common > 1.${COTEMP}.x
@@ -106,8 +104,6 @@ done FEATURE/map generated
 exec - cmp 2>/dev/null -s FEATURE/map ast_map.h || { rm -f ast_map.h; silent test -d . || mkdir .; ${STDCP} FEATURE/map ast_map.h; }
 done ast_map.h dontcare generated
 done ast_common.h dontcare generated
-done std/bytesex.h dontcare
-done std/endian.h dontcare
 done FEATURE/param generated
 make FEATURE/aso
 meta FEATURE/aso features/%>FEATURE/% features/aso aso
@@ -210,8 +206,6 @@ meta FEATURE/sys features/%>FEATURE/% features/sys sys
 make features/sys
 done features/sys
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/sys
-prev std/endian.h implicit
-prev std/endian.h implicit
 done FEATURE/sys generated
 prev FEATURE/lib implicit
 prev FEATURE/common implicit
@@ -295,8 +289,6 @@ exec - } > ast.req
 exec - rm -f 1.${COTEMP}.*
 make astmath.exe
 make port/astmath.c
-prev std/endian.h implicit
-prev std/endian.h implicit
 done port/astmath.c
 exec - X=1
 exec - for N in 1 2 3 4 5 6 8
@@ -444,7 +436,6 @@ prev include/vmalloc.h implicit
 prev include/regex.h implicit
 prev include/ls.h implicit
 prev include/error.h implicit
-prev std/endian.h implicit
 make include/cdt.h implicit
 prev ast_common.h implicit
 prev include/ast_std.h implicit
@@ -914,7 +905,6 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iinclude -Istd -D_PACKAGE_as
 done pathcheck.o generated
 make pathopen.o
 make path/pathopen.c
-prev std/endian.h implicit
 prev include/error.h implicit
 prev include/ast.h implicit
 done path/pathopen.c
@@ -1539,7 +1529,6 @@ prev ast_time.h implicit
 prev include/ast.h implicit
 make sfio/vthread.h implicit
 prev windows.h implicit
-prev std/endian.h implicit
 prev ast_common.h implicit
 done sfio/vthread.h dontcare
 make include/sfio_t.h implicit
@@ -5046,7 +5035,6 @@ meta vmuserdata.o %.c>%.o vmalloc/vmuserdata.c vmuserdata
 prev vmalloc/vmuserdata.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Ivmalloc -Iinclude -Istd -D_PACKAGE_ast -c vmalloc/vmuserdata.c
 done vmuserdata.o generated
-prev std/endian.h implicit
 prev include/ast_std.h implicit
 make rint.o
 make support.o
@@ -5920,22 +5908,6 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/wordexp.h
 exec - fi
 done ${INSTALLROOT}/include/ast/wordexp.h generated
-make ${INSTALLROOT}/include/ast/bytesex.h
-prev std/bytesex.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' std/bytesex.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/bytesex.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/bytesex.h
-exec - fi
-done ${INSTALLROOT}/include/ast/bytesex.h generated
-make ${INSTALLROOT}/include/ast/endian.h
-prev std/endian.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' std/endian.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/endian.h 1.${COTEMP}.x
-exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/endian.h
-exec - fi
-done ${INSTALLROOT}/include/ast/endian.h generated
 make ${INSTALLROOT}/include/ast/fnmatch.h
 prev comp/fnmatch.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' comp/fnmatch.h > 1.${COTEMP}.x
