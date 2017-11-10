@@ -36,7 +36,7 @@ HEADERSRC = ast.h ast_debug.h ast_dir.h ast_errorf.h ast_getopt.h ast_ioctl.h \
 	sfio.h sfio_s.h sfio_t.h sfdisc.h shcmd.h \
 	stack.h stak.h stk.h swap.h tar.h times.h tm.h tok.h \
 	usage.h vdb.h vecargs.h vmalloc.h wait.h wordexp.h \
-	bytesex.h endian.h fnmatch.h magicid.h fnv.h aso.h \
+	fnmatch.h magicid.h fnv.h aso.h \
 	$(HEADERSTD)
 
 HEADERGEN = align.h preroot.h sig.h tmx.h tv.h \
