@@ -511,21 +511,6 @@ main(int argc, char** argv)
 #ifndef	O_TEXT
 	printf("#define O_TEXT			0		/* %s */\n", ORIGIN_IGNORE);
 #endif
-#if !defined(SOCK_CLOEXEC) || !defined(SOCK_NONBLOCK)
-	printf("\n");
-#ifndef SOCK_CLOEXEC
-	printf("#ifndef SOCK_CLOEXEC\n");
-	printf("#define _ast_SOCK_CLOEXEC	1\n");
-	printf("#define SOCK_CLOEXEC		02000000 /* %s */\n", ORIGIN_EXTENSION);
-	printf("#endif\n");
-#endif
-#ifndef SOCK_NONBLOCK
-	printf("#ifndef SOCK_NONBLOCK\n");
-	printf("#define _ast_SOCK_NONBLOCK	1\n");
-	printf("#define SOCK_NONBLOCK		04000	/* %s */\n", ORIGIN_EXTENSION);
-	printf("#endif\n");
-#endif
-#endif
 
 	printf("\n");
 	printf("#define F_dupfd_cloexec		F_DUPFD_CLOEXEC /* OBSOLETE */\n");
