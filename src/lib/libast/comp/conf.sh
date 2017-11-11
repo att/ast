@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #

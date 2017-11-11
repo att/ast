@@ -19,6 +19,7 @@ script:
         cd /source;
         export CCFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -P';
         export CC=gcc;
+        ./bin/setup_cmds.sh;
         ./bin/package;
         ./bin/package make ast-ksh 2>&1 | tee out.log;
         grep -q 'error:' out.log && exit 1;
