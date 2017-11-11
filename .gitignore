@@ -38,3 +38,10 @@ Desktop.ini
 # Artifacts of the build and test process that should not be committed.
 /lib/package/CONVERT.mk
 /arch/
+src/lib/libast/features
+bin/conf
+bin/iffe
+bin/lcgen
+build/
+src/lib/libast/include/lc.h
+src/lib/libast/port/lctab.c
