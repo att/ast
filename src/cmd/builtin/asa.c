@@ -111,7 +111,7 @@ b_asa(int argc, char** argv, Shbltin_t* context)
 	register Sfio_t	*fp;
 	register int	n, reclen=0;
 
-	cmdinit(argc, argv, (void*)0, (const char*)0, 0);
+	cmdinit(argc, argv, (void*)0, ERROR_CATALOG, 0);
 	while (n = optget(argv, usage)) switch (n)
 	{
 	    case 'r':
