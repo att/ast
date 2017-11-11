@@ -414,7 +414,7 @@ S2F_function(str, end) char* str; char** end;
 			m = 0;
 			fraction = digits;
 		}
-		else if (c != thousand)
+		else if (c != thousand || (c == thousand && decimal == -1))
 			break;
 		else if (!(m = digits))
 		{
