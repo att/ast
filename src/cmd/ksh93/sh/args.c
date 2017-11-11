@@ -412,11 +412,12 @@ int sh_argopts(int argc,register char *argv[], void *context)
 		}
 		else
 		{
-			if(o==SH_XTRACE)
-				trace = 0;
+			if (o == SH_RESTRICTED && sh_isoption(shp, SH_RESTRICTED)) {
+				errormsg(SH_DICT, ERROR_exit(1), e_restricted, "r");
+			}
+			if (o == SH_XTRACE) trace = 0;
 			off_option(&newflags,o);
-			if(setflag==0)
-				on_option(&shp->offoptions,o);
+			if (setflag == 0) on_option(&shp->offoptions,o);
 		}
 	}
 	if(error_info.errors)
