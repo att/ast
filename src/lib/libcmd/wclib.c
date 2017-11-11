@@ -18,6 +18,9 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
+/*
+ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
+ */
 #pragma prototyped
 /*
  * David Korn
@@ -361,6 +364,8 @@ wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 		int		xspace;
 		int		wasspace = 1;
 		unsigned char*	start;
+		int             flagm = 0;
+
 
 		lastchar = 0;
 		start = (endbuff = side) + 1;
@@ -387,6 +392,7 @@ wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 			if(mbc(lasttype))
 			{
 				c = lasttype;
+				flagm = 1;
 				goto mbyte;
 			}
 			if(!lasttype && spc(type[*cp]))
@@ -452,6 +458,14 @@ wc_count(Wc_t *wp, Sfio_t *fd, const char* file)
 							skip = (c&7);
 							adjust += skip;
 							state = 0;
+							if (flagm == 1) {
+								flagm = 0;
+								oldc = *cp;
+								if (xspace && (iswspace(*cp) == 1)) {
+									state = 8;
+								}
+								continue;
+							}
 							if(skip==2 && (cp[-1]&0xc)==0 && (state=(cp[-1]&0x3)))
 								oldc = *cp;
 							else if(xspace && cp[-1]==0xc2)
