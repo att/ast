@@ -97,10 +97,10 @@ static int	(*fdnotify)(int,int);
 #      endif
 #      if _socketpair_shutdown_mode
 #	  undef pipe
-#         define pipe(v) ((socketpair(AF_UNIX,SOCK_STREAM|SOCK_CLOEXEC,0,v)<0||shutdown((v)[1],SHUT_RD)<0||fchmod((v)[1],S_IWUSR)<0||shutdown((v)[0],SHUT_WR)<0||fchmod((v)[0],S_IRUSR)<0)?(-1):0)
+#         define pipe(v) ((socketpair(AF_UNIX,SOCK_STREAM,0,v)<0||shutdown((v)[1],SHUT_RD)<0||fchmod((v)[1],S_IWUSR)<0||shutdown((v)[0],SHUT_WR)<0||fchmod((v)[0],S_IRUSR)<0)?(-1):0)
 #      else
 #	  undef pipe
-#         define pipe(v) ((socketpair(AF_UNIX,SOCK_STREAM|SOCK_CLOEXEC,0,v)<0||shutdown((v)[1],SHUT_RD)<0||shutdown((v)[0],SHUT_WR)<0)?(-1):0)
+#         define pipe(v) ((socketpair(AF_UNIX,SOCK_STREAM,0,v)<0||shutdown((v)[1],SHUT_RD)<0||shutdown((v)[0],SHUT_WR)<0)?(-1):0)
 #      endif
 #   endif
 #endif
@@ -627,18 +627,15 @@ int	sh_pipe(register int pv[])
 {
 	Shell_t *shp = sh_getinterp();
 	int fd[2];
-	if(pipe(fd)<0 || (pv[0]=fd[0])<0 || (pv[1]=fd[1])<0)
-		errormsg(SH_DICT,ERROR_system(1),e_pipe);
-#if _pipe_socketpair && !_stream_peek &&  SOCK_CLOEXEC==0
-	if(pv[0] >2)
-		fcntl(pv[0],F_SETFD,FD_CLOEXEC);
-	if(pv[1] >2)
-		fcntl(pv[1],F_SETFD,FD_CLOEXEC);
+	if(pipe(fd) < 0 || (pv[0] = fd[0]) < 0 || (pv[1] = fd[1]) < 0) {
+		errormsg(SH_DICT, ERROR_system(1), e_pipe);
+	}
+#if _pipe_socketpair && !_stream_peek
+	if (pv[0] > 2) fcntl(pv[0],F_SETFD,FD_CLOEXEC);
+	if (pv[1] > 2) fcntl(pv[1],F_SETFD,FD_CLOEXEC);
 #endif
-	if(pv[0]<=2)
-		pv[0] = sh_iomovefd(shp,pv[0]);
-	if(pv[1]<=2)
-		pv[1] = sh_iomovefd(shp,pv[1]);
+	if (pv[0] <= 2) pv[0] = sh_iomovefd(shp,pv[0]);
+	if (pv[1] <= 2) pv[1] = sh_iomovefd(shp,pv[1]);
 	shp->fdstatus[pv[0]] = IONOSEEK|IOREAD|IOCLEX;
 	shp->fdstatus[pv[1]] = IONOSEEK|IOWRITE|IOCLEX;
 	sh_subsavefd(pv[0]);
@@ -684,7 +681,8 @@ int	sh_rpipe(register int pv[])
 #if SHOPT_COSHELL
     int sh_coaccept(Shell_t *shp,int *pv,int out)
     {
-	int fd = accept4(pv[0],(struct sockaddr*)0,(socklen_t*)0,SOCK_CLOEXEC);
+	int fd = accept4(pv[0],(struct sockaddr*)0,(socklen_t*)0,0);
+	if (fd > 2) fcntl(fd,F_SETFD,FD_CLOEXEC);
 	sh_close(pv[0]);
 	pv[0] = -1;
 	if(fd<0)
@@ -693,9 +691,7 @@ int	sh_rpipe(register int pv[])
 		sh_close(fd);
 	else
 		pv[out] = sh_iomovefd(shp,fd);
-#if SOCK_CLEXEC==0
 	fcntl(pv[out],F_SETFD,FD_CLOEXEC);
-#endif
 	shp->fdstatus[pv[out]] = (out?IOWRITE:IOREAD);
 	shp->fdstatus[pv[out]] |= IONOSEEK|IOCLEX;
 	sh_subsavefd(pv[out]);
@@ -710,8 +706,10 @@ int	sh_rpipe(register int pv[])
 	int			r,port=20000;
 	struct sockaddr_in	sin;
 	socklen_t		slen;
-	if ((pv[out] = socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, 0)) < 0)
+	if ((pv[out] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		errormsg(SH_DICT,ERROR_system(1),e_pipe);
+	}
+	fcntl(pv[out], F_SETFD, FD_CLOEXEC);
 	do
 	{
 		sin.sin_family = AF_INET;

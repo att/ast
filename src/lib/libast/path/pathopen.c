@@ -339,12 +339,11 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 		
 				if (!(type = a->ai_socktype))
 					type = hint.ai_socktype;
-				if (oflags & O_CLOEXEC)
-					type |= SOCK_CLOEXEC;
 				if (!(prot = a->ai_protocol))
 					prot = hint.ai_protocol;
 				if ((fd = socket(a->ai_family, type, prot)) >= 0)
 				{
+					if (oflags & O_CLOEXEC) fcntl(fd,F_SETFD,FD_CLOEXEC);
 					if (server && !bind(fd, a->ai_addr, a->ai_addrlen) && !listen(fd, 5) || !server && !connect(fd, a->ai_addr, a->ai_addrlen))
 						goto done;
 					close(fd);
