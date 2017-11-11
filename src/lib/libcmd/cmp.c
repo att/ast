@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+ */
+
 /***********************************************************************
 *                                                                      *
 *               This software is part of the ast package               *
@@ -164,11 +168,17 @@ cmp(const char* file1, Sfio_t* f1, const char* file2, Sfio_t* f2, int flags, Sfo
 				return ret;
 			if (!(p1 = (unsigned char*)sfreserve(f1, SF_UNBOUND, 0)) || (c1 = sfvalue(f1)) <= 0)
 			{
+				if (sferror(f1)) {
+					error(ERROR_exit(2), "read error on %s", file1);
+				}
 				if ((e2 - p2) > 0 || sfreserve(f2, SF_UNBOUND, 0) && sfvalue(f2) > 0)
 				{
 					ret = 1;
 					if (!(flags & CMP_SILENT))
 						error(ERROR_exit(1), "EOF on %s", file1);
+				}
+				if (sferror(f2)) {
+					error(ERROR_exit(2), "read error on %s", file2);
 				}
 				return ret;
 			}
@@ -181,6 +191,9 @@ cmp(const char* file1, Sfio_t* f1, const char* file2, Sfio_t* f2, int flags, Sfo
 		{
 			if (!(p2 = (unsigned char*)sfreserve(f2, SF_UNBOUND, 0)) || (c2 = sfvalue(f2)) <= 0)
 			{
+				if (sferror(f2)) {
+					error(ERROR_exit(2), "read error on %s", file2);
+				}
 				if (!(flags & CMP_SILENT))
 					error(ERROR_exit(1), "EOF on %s", file2);
 				return 1;
