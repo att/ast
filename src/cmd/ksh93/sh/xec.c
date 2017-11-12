@@ -4222,14 +4222,10 @@ int sh_eval_20120720(Shell_t *shp,register Sfio_t *iop, int mode)
 	sh_popcontext(shp,buffp);
 	shp->binscript = binscript;
 	shp->comsub = comsub;
-	if(traceon)
-		sh_onoption(shp,SH_XTRACE);
-	if(lineno)
-		shp->inlineno = lineno;
-	if(io_save)
-		sfclose(io_save);
-	if((io_save=iosaved) == iop)
-		io_save = 0;
+	if (traceon) sh_onoption(shp,SH_XTRACE);
+	if (lineno) shp->inlineno = lineno;
+	if (io_save) sfclose(io_save);
+	io_save = iosaved == iop ? 0 : iosaved; /* io_save is static so assignment is meaningful. */
 	sh_freeup(shp);
 	shp->st.staklist = saveslp;
 	shp->fn_reset = 0;
