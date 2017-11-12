@@ -703,7 +703,7 @@ static char* get_lastarg(Namval_t* np, Namfun_t *fp)
 	char	*cp;
 	int	pid;
         if(sh_isstate(shp,SH_INIT) && (cp=shp->lastarg) && *cp=='*' && (pid=strtol(cp+1,&cp,10)) && *cp=='*')
-		nv_putval(np,(pid==shp->gd->ppid?cp+1:0),0);
+		nv_putval(np, cp + 1, 0);
 	return(shp->lastarg);
 }
 
