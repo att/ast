@@ -416,11 +416,6 @@ mntread(void* handle)
 			t = "sfs";
 			break;
 #endif
-#ifdef MNT_CACHEFS
-		case MNT_CACHEFS:
-			t = "cachefs";
-			break;
-#endif
 #ifdef MNT_NFS3
 		case MNT_NFS3:
 			t = "nfs3";
