@@ -605,7 +605,7 @@ static char *setdisc(register Namval_t* np,register const char *event,Namval_t *
 		action = vp->bltins[type];
 		vp->bltins[type] = 0;
 	}
-	return(action?(char*)action:"");
+	return((char*)action);
 }
 
 static void putdisc(Namval_t* np, const char* val, int flag, Namfun_t* fp)
