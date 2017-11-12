@@ -39,7 +39,7 @@ rmdir(const char* path)
 	struct stat	st;
 	char*		av[3];
 
-	static char*	cmd[] = { "/bin/rmdir", "/usr/5bin/rmdir", 0 };
+	static char*	cmd[] = { "/bin/rmdir", 0 };
 
 	if (stat(path, &st) < 0) return(-1);
 	if (!S_ISDIR(st.st_mode))
