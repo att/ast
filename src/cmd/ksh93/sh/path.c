@@ -566,7 +566,8 @@ static int	path_opentype(Shell_t *shp,const char *name, register Pathcomp_t *pp,
 			}
 		}
 	}
-	while( fd<0 && pp);
+	while (fd < 0 && pp);
+	sh_iovalidfd(shp, fd);
 	if(fd>=0 && (fd = sh_iomovefd(shp,fd)) > 0)
 	{
 		fcntl(fd,F_SETFD,FD_CLOEXEC);
