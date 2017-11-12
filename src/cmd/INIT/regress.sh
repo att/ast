@@ -1379,7 +1379,7 @@ esac
 export COLUMNS=80
 SOURCE=$PWD
 PATH=$SOURCE:${PATH#?(.):}
-PATH=${PATH%%:?(.)}:/usr/5bin:/bin:/usr/bin
+PATH=${PATH%%:?(.)}:/bin:/usr/bin
 UNIT=$1
 shift
 if	[[ -f $UNIT && ! -x $UNIT ]]

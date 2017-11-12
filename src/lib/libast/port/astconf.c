@@ -632,7 +632,7 @@ initialize(register Feature_t* fp, const char* path, const char* command, const 
 						}
 						if (fp->op == OP_universe)
 						{
-							if (strneq(p, "xpg", 3) || strneq(p, "5bin", 4))
+							if (strneq(p, "xpg", 3))
 							{
 								ok = 1;
 								break;
