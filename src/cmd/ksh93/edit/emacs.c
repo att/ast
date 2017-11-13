@@ -90,6 +90,7 @@ One line screen editor for any program
     static int	print(int);
     static int	_isword(int);
 #   define  isword(c)	_isword(out[c])
+#   define digit(c)	((c&~STRIP)==0 && isdigit(c))
 
 #else
 #   define gencpy(a,b)	strcpy((char*)(a),(char*)(b))
@@ -97,6 +98,7 @@ One line screen editor for any program
 #   define genlen(str)	strlen(str)
 #   define print(c)	isprint(c)
 #   define isword(c)	(isalnum(out[c]) || (out[c]=='_'))
+#   define digit(c)	isdigit(c)
 #endif /*SHOPT_MULTIBYTE */
 
 typedef struct _emacs_
@@ -317,7 +319,7 @@ int ed_emacsread(void *context, int fd,char *buff,int scend, int reedit)
 			count = 1;
 		adjust = -1;
 		i = cur;
-		if(c!='\t' && c!=ESC && !isdigit(c))
+		if(c!='\t' && c!=ESC && !digit(c))
 			ep->ed->e_tabcount = 0;
 		switch(c)
 		{
@@ -777,7 +779,7 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 	int digit,ch;
 	digit = 0;
 	value = 0;
-	while ((i=ed_getchar(ep->ed,0)),isdigit(i))
+	while ((i=ed_getchar(ep->ed,0)),digit(i))
 	{
 		value *= 10;
 		value += (i - '0');
@@ -1018,7 +1020,7 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
 				{
 					i=ed_getchar(ep->ed,0);
 					ed_ungetchar(ep->ed,i);
-					if(isdigit(i))
+					if(digit(i))
 						ed_ungetchar(ep->ed,ESC);
 				}
 			}
