@@ -148,6 +148,17 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 						shp->trapnote |= SH_SIGTRAP;
 					else
 						shp->trapnote = 0;
+
+				}
+				if(sig == SH_ERRTRAP)
+				{
+					if(clear)
+						shp->errtrap = 0;
+					else
+					{
+						if(!shp->fn_depth || shp->end_fn)
+							shp->errtrap = 1;
+					}
 				}
 				if(arg)
 					free(arg);
@@ -167,6 +178,8 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 			else if(clear)
 			{
 				sh_sigclear(shp,sig);
+  				if(sig == 0)
+  					shp->exittrap = 0;
 				if(dflag) 
 					signal(sig,SIG_DFL);
 			}
@@ -192,6 +205,11 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 				}
 				if(arg && arg != Empty)
 					free(arg);
+				if(sig == 0)
+				{
+					if(!shp->fn_depth || shp->end_fn)
+						shp->exittrap = 1;
+				}
 			}
 		}
 	}

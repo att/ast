@@ -490,6 +490,9 @@ static void	exfile(register Shell_t *shp, register Sfio_t *iop,register int fno)
 	error_info.line = 1;
 	shp->inlineno = 1;
 	shp->binscript = 0;
+	shp->exittrap = 0;
+	shp->errtrap = 0;
+	shp->end_fn = 0;
 	if(sfeof(iop))
 		goto eof_or_error;
 	/* command loop */

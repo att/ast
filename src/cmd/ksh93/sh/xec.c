@@ -978,6 +978,8 @@ int sh_exec(register Shell_t *shp,register const Shnode_t *t, int flags)
 		shp->exitval=0;
 		shp->lastsig = 0;
 		shp->lastpath = 0;
+		if(shp->exittrap || shp->errtrap)
+			execflg = 0;
 		switch(type&COMMSK)
 		{
 		    case TCOM:
@@ -4078,6 +4080,8 @@ int sh_funscope_20120720(Shell_t *shp,int argn, char *argv[],int(*fun)(void*),vo
 		nv_putval(SH_PATHNAMENOD,shp->st.filename,NV_NOFREE);
 		nv_putval(SH_FUNNAMENOD,shp->st.funname,NV_NOFREE);
 	}
+	if((execflg & sh_state(SH_NOFORK)))
+		shp->end_fn = 1;
 	jmpval = sigsetjmp(buffp->buff,0);
 	if(jmpval == 0)
 	{
@@ -4131,6 +4135,7 @@ int sh_funscope_20120720(Shell_t *shp,int argn, char *argv[],int(*fun)(void*),vo
 	shp->st = *prevscope;
 	shp->topscope = (Shscope_t*)prevscope;
 	nv_getval(sh_scoped(shp,IFSNOD));
+	shp->end_fn = 0;
 	if(nsig)
 		memcpy((char*)&shp->st.trapcom[0],savstak,nsig);
 	shp->trapnote=0;
