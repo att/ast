@@ -1758,6 +1758,9 @@ Shell_t *sh_init(register int argc,register char *argv[], Shinit_f userinit)
 #endif
 	if(shp->userinit=userinit)
 		(*userinit)(shp, 0);
+	shp->exittrap = 0;
+	shp->errtrap = 0;
+	shp->end_fn = 0;
 	return(shp);
 }
 
@@ -1858,6 +1861,9 @@ int sh_reinit_20120720(Shell_t *shp,char *argv[])
 	shp->inpipe = shp->outpipe = 0;
 	job_clear(shp);
 	job.in_critical = 0;
+	shp->exittrap = 0;
+	shp->errtrap = 0;
+	shp->end_fn = 0;
 	return(1);
 }
 #undef sh_reinit
