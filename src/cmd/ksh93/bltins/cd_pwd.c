@@ -304,7 +304,7 @@ success:
 	nv_scan(shp->track_tree,invalidate,(void*)0,NV_TAGGED,NV_TAGGED);
 	path_newdir(shp,shp->pathlist);
 	path_newdir(shp,shp->cdpathlist);
-	if(oldpwd)
+	if(oldpwd && (oldpwd!=e_dot))
 		free(oldpwd);
 	return(0);
 }
