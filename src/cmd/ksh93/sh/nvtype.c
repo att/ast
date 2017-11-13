@@ -1012,8 +1012,6 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes)
 	}
 	offset = roundof(offset,sizeof(char*));
 	nv_setsize(mp,offset);
-	if(nd)
-		nd++;
 	k = roundof(sizeof(Namtype_t)+nnodes*NV_MINSZ,sizeof(Sfdouble_t)) - (sizeof(Namtype_t)+nnodes*NV_MINSZ);
 	pp = newof(NiL, Namtype_t, 1, nnodes*NV_MINSZ + offset + size + (nnodes+nd)*sizeof(char*) + iref*sizeof(struct Namref)+k);
 	pp->fun.dsize = sizeof(Namtype_t)+nnodes*NV_MINSZ +offset+k;
