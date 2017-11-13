@@ -9,6 +9,7 @@
  * If you modify this by adding or removing functions be sure to also update
  * ./src/cmd/ksh93/data/math.tab
  */
+#include <limits.h>
 #include <stdio.h>
 #include <math.h>
 
