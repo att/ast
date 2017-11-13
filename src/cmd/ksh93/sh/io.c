@@ -66,9 +66,9 @@
 
 #ifndef ERROR_PIPE
 #ifdef ECONNRESET
-#define ERROR_PIPE(e)	((e)==EPIPE||(e)==ECONNRESET)
+#define ERROR_PIPE(e)	((e)==EPIPE||(e)==ECONNRESET||(e)==EIO)
 #else
-#define ERROR_PIPE(e)	((e)==EPIPE)
+#define ERROR_PIPE(e)	((e)==EPIPE||(e)==EIO)
 #endif
 #endif
 
