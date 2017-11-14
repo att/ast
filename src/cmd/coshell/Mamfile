@@ -250,7 +250,7 @@ done init.o generated
 bind -lcoshell
 bind -lcs
 bind -last
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o coshell.svc main.o job.o schedule.o shell.o command.o misc.o init.o ${mam_libcoshell} ${mam_libcs} ${mam_libast}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o coshell.svc main.o job.o schedule.o shell.o command.o misc.o init.o ${mam_libcoshell} ${mam_libast}
 done coshell.svc generated
 make event.svc
 make event.o
@@ -286,7 +286,7 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast 
 done event.o generated
 make ${mam_libdbm} archive
 done ${mam_libdbm} dontcare virtual
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o event.svc event.o ${mam_libcs} ${mam_libcs} ${mam_libast}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o event.svc event.o ${mam_libast}
 done event.svc generated
 make ${INSTALLROOT}/lib/cs
 exec - if silent test ! -d ${INSTALLROOT}/lib/cs

@@ -183,7 +183,7 @@ done at.o generated
 bind -lcoshell
 bind -lcs
 bind -last
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o ast_at at.o ${mam_libcoshell} ${mam_libcs} ${mam_libast}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o ast_at at.o ${mam_libcoshell} ${mam_libast}
 done ast_at generated
 make ast_batch
 prev ast_at
@@ -239,7 +239,7 @@ meta atd.o %.c>%.o atd.c atd
 prev atd.c
 exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -DDEBUG -c atd.c
 done atd.o generated
-exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o at.svc atd.o ${mam_libcs} ${mam_libast} ${mam_libcs} ${mam_libast}
+exec - ${CC} ${CCLDFLAGS} ${mam_cc_FLAGS} ${CCFLAGS} ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o at.svc atd.o ${mam_libast} ${mam_libast}
 done at.svc generated
 make ast_crontab
 make crontab.sh
