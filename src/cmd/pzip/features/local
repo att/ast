@@ -1,2 +1,0 @@
-hdr	tsp
-lib	tspopen tsp.h -ltsp
