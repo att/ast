@@ -45,4 +45,3 @@ bin/lcgen
 build/
 src/lib/libast/include/lc.h
 src/lib/libast/port/lctab.c
-bin/package
