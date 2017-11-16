@@ -15,7 +15,3 @@ chmod u+x "$bin_dir/iffe"
 
 cp "$base_dir/src/lib/libast/comp/conf.sh" "$bin_dir/conf"
 chmod u+x "$bin_dir/conf"
-
-echo "#!/usr/bin/env bash" > "$bin_dir/package"
-cat "$base_dir/src/cmd/INIT/package.sh" >> "$bin_dir/package"
-chmod u+x "$bin_dir/package"

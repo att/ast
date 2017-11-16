@@ -27,7 +27,7 @@
 
 #include "lclib.h"
 #include "lclang.h"
-#include "FEATURE/locale"
+#include "FEATURE/syslocale"
 
 #include <ctype.h>
 

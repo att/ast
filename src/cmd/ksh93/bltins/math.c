@@ -9,29 +9,11 @@
  * If you modify this by adding or removing functions be sure to also update
  * ./src/cmd/ksh93/data/math.tab
  */
-
-/* TODO 
- * In Meson build this file is not used and it has been moved under bltins directory
- * it should be removed when move to Meson is complete
- * */
-
 #include <limits.h>
 #include <stdio.h>
 #include <math.h>
+#include "streval.h"
 
-/*
- * The following definitions would be from
- *
- *   #include "streval.h"
- *
- * and related headers. However, I can't figure out how to make that work in the
- * context of the Nmake build tools when it tries to build this to determine if
- * all the libm functions can be linked in. Since the definitions are trivial
- * and won't be changed just duplicate them here.
- *
- * TODO: Remove these definitions after we've switch the build tool chain and
- * simplified the source.
- */
 #ifdef TEST_LINKAGE
 #undef Sfdouble_t
 #undef Sflong_t

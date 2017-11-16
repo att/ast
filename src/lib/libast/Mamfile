@@ -1470,12 +1470,12 @@ exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} -I. -Icomp -Iport -Iinclude -Istd -D_PAC
 done iconv.o generated
 make lc.o
 make port/lc.c
-make FEATURE/locale implicit
-meta FEATURE/locale features/%>FEATURE/% features/locale locale
-make features/locale
-done features/locale
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/locale
-done FEATURE/locale generated
+make FEATURE/syslocale implicit
+meta FEATURE/syslocale features/%>FEATURE/% features/syslocale syslocale
+make features/syslocale
+done features/syslocale
+exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/syslocale
+done FEATURE/syslocale generated
 make port/lclang.h implicit
 prev include/ast_windows.h implicit
 done port/lclang.h
