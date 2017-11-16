@@ -14,4 +14,8 @@ subdir('misc')
 subdir('tm')
 subdir('vmalloc')
 
-library('ast', files, include_directories : incdir)
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
+iconv_dep = cc.find_library('iconv', required : false)
+
+library('ast', files, include_directories : incdir, dependencies : [m_dep, iconv_dep])
