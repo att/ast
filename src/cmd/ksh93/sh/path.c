@@ -834,12 +834,16 @@ Pathcomp_t *path_absolute(Shell_t *shp,register const char *name, Pathcomp_t *pp
 					np=nv_search(bp,shp->bltin_tree,0);
 					memcpy(bp,save,4);
 				}
+
+/* TODO: Check if this code block should be used when SHOPT_DYNAMIC is off */
+#if SHOPT_DYNAMIC
 				if(np)
 				{
 					addr = (Shbltin_f)np->nvalue.bfp;
 					if(np = sh_addbuiltin(shp,stkptr(shp->stk,PATH_OFFSET),addr,NiL))
 						return(oldpp);
 				}
+#endif
 			}
 #if SHOPT_DYNAMIC
 			n = stktell(shp->stk);
