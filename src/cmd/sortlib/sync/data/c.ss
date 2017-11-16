@@ -1,3 +1,0 @@
- SORT FIELDS=COPY
-  OUTFIL FILES=01,
-         OUTREC=(1,3,4,A'\n')
