@@ -1,4 +1,0 @@
-hdr	paths,termios,termio,sgtty
-sys	termios,termio,ioctl,bsdtty,nttyio,filio
-lib	tcgetattr,tcgetpgrp termios.h
-lib	ftruncate,gethostname
