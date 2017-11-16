@@ -1,4 +1,6 @@
+#!/bin/sh
 USAGE_LICENSE="[-author?Glenn Fowler <glenn.s.fowler@gmail.com>][-copyright?Copyright (c) 1994-2015 AT&T Intellectual Property][-license?http://www.eclipse.org/org/documents/epl-v10.html]"
+#!/bin/sh
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
