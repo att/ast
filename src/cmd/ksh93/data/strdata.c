@@ -101,4 +101,6 @@ const char e_domain[]		= "%s: domain exception";
 const char e_singularity[]	= "%s: singularity exception";
 const char e_charconst[]	= "%s: invalid character constant";
 
+#if !MESON_BUILD
 #include	"FEATURE/math"
+#endif
