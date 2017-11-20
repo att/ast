@@ -40,4 +40,9 @@ subdir('sh')
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
 
-executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd, libcoshell], dependencies : [ m_dep ] )
+ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd, libcoshell], dependencies : [ m_dep ] )
+
+# TODO: Below command run all the tests sequentially
+# We should split out the tests and check if can run them in parallel
+# This command is run from build directory
+test('ksh93 tests', ksh93_exe, args: ['../bin/run_tests.sh'])
