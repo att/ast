@@ -1,7 +1,6 @@
 ksh93_files = [ ]
-ksh93_incdir = include_directories('include', 'features', '../../lib/libast/include/', '../../lib/libast/features/', '../../lib/libcmd/')
+ksh93_incdir = include_directories('include', 'features', '../../lib/libast/include/', '../../lib/libast/features/', '../../lib/libcmd/', '../../lib/libcoshell/')
 
-# Add -DSHOPT_COSHELL after writing meson configurations for libcoshell
 ksh93_c_args = [ '-DERROR_CATALOG=0' ]
 ksh93_c_args +=  [ '-DSHOPT_BRACEPAT' ]
 ksh93_c_args += [ '-DSHOPT_SUID_EXEC' ]
@@ -18,6 +17,7 @@ ksh93_c_args += [ '-D_PACKAGE_ast' ]
 ksh93_c_args += [ '-DSHOPT_FIXEDARRAY' ]
 ksh93_c_args += [ '-DSHOPT_MULTIBYTE' ]
 ksh93_c_args += [ '-DKSHELL' ]
+ksh93_c_args += [ '-DSHOPT_COSHELL' ]
 #ksh93_c_args += [ '-DSHOPT_DYNAMIC' ]
 ksh93_c_args += [ '-DERROR_CONTEXT_T=Error_context_t' ]
 ksh93_c_args += [ '-DUSAGE_LICENSE=""' ]
@@ -40,4 +40,4 @@ subdir('sh')
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
 
-executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd], dependencies : [ m_dep ] )
+executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd, libcoshell], dependencies : [ m_dep ] )
