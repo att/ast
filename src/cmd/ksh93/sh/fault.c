@@ -27,7 +27,8 @@
  */
 
 #include	"defs.h"
-#include	<fcin.h>
+#include	"aso.h"
+#include	"fcin.h"
 #include	"io.h"
 #include	"history.h"
 #include	"shlex.h"

@@ -29,8 +29,10 @@
  *  Revised January, 1992
  */
 
-#include	"defs.h"
 #include	<wait.h>
+
+#include	"defs.h"
+#include	"aso.h"
 #include	"io.h"
 #include	"jobs.h"
 #include	"history.h"
