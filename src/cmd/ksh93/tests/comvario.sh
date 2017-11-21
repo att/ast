@@ -26,7 +26,7 @@ function err_exit
 }
 alias err_exit='err_exit $LINENO'
 
-tmp=$(mktemp -dt) || { err_exit mktemp -dt failed; exit 1; }
+tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 cd "$tmp"
 
