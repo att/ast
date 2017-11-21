@@ -109,7 +109,7 @@ EOF
 done
 ' 2> /dev/null  || err_exit '100 empty here docs fails'
 {
-	print 'builtin -d cat
+	print '#builtin -d cat
 	cat <<- EOF'
 	for ((i=0; i < 100; i++))
 	do print XXXXXXXXXXXXXXXXXXXX
@@ -147,8 +147,7 @@ EOF) != $'#abc\nabc' ]]
 then	err_exit 'comments not preserved in here-documents'
 fi
 cat  > "$f" <<- '!!!!'
-	builtin cat
-	: << EOF
+	cat << EOF
 	$PWD
 	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -515,7 +514,7 @@ $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"
 ) > $f > /dev/null
 [[ $(<$f) == $'hello\nworld' ]] || err_exit 'nested here-document fails'
 
-builtin cat
+#cat
 exp='foo bar baz bork blah blarg'
 got=$(cat <<<"foo bar baz" 3<&0 <<<"$(</dev/fd/3) bork blah blarg")
 [[ $got == "$exp" ]] || '3<%0 not working when 0 is <<< here-doc'
