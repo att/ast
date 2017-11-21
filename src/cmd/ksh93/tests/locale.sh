@@ -30,7 +30,7 @@ integer Errors=0
 
 unset LANG ${!LC_*}
 
-tmp=$(mktemp -dt) || { err_exit mktemp -dt failed; exit 1; }
+tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 cd $tmp || exit
 

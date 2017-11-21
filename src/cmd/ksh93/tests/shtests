@@ -278,7 +278,7 @@ then	s=${SHELL:##*sh}
 fi
 if	(( compile ))
 then	if	whence $SHCOMP > /dev/null
-	then	tmp=$(mktemp -dt) || { echo mktemp -dt failed >&2; exit 1; }
+	then	tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { echo mktemp -dt failed >&2; exit 1; }
 		trap "cd /; rm -rf $tmp" EXIT
 	elif	(( compile > 1 ))
 	then	echo $0: --compile: $SHCOMP not found >&2
@@ -291,7 +291,7 @@ then	if	[[ -x $SHELL-g ]]
 	then	SHELL=$SHELL-g
 	fi
 	if	[[ ! $tmp ]]
-	then	tmp=$(mktemp -dt) || { echo mktemp -dt failed >&2; exit 1; }
+	then	tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { echo mktemp -dt failed >&2; exit 1; }
 		trap "cd /; rm -rf $tmp" EXIT
 	fi
 	valxml=$tmp/valgrind.xml
