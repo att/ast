@@ -42,7 +42,34 @@ m_dep = cc.find_library('m', required : false)
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd, libcoshell], dependencies : [ m_dep ] )
 
-# TODO: Below command run all the tests sequentially
-# We should split out the tests and check if can run them in parallel
-# This command is run from build directory
-test('ksh93 tests', ksh93_exe, args: ['../bin/run_tests.sh'])
+# TODO: Remove bin/run_tests.sh script
+#test('ksh93 tests', ksh93_exe, args: ['../bin/run_tests.sh'])
+
+test_dir = '../src/cmd/ksh93/tests/'
+
+# This variable is used by some tests while executing subtests
+shell_var = 'SHELL=' + ksh93_exe.full_path()
+
+# These are the default locales used by legacy test script
+# '' is POSIX locale
+locales = [ '', 'C.UTF-8' ]
+
+# Skipping builtin_poll.sh
+all_tests = [ 'alias.sh', 'append.sh', 'arith.sh', 'arrays.sh', 'arrays2.sh', 'attributes.sh', 'basic.sh', 'bracket.sh', 'builtins.sh', 'case.sh', 'comvar.sh', 'comvario.sh', 'coprocess.sh', 'cubetype.sh', 'directoryfd.sh', 'enum.sh', 'exit.sh', 'expand.sh', 'functions.sh', 'glob.sh', 'grep.sh', 'heredoc.sh', 'io.sh', 'leaks.sh', 'locale.sh', 'math.sh', 'nameref.sh', 'namespace.sh', 'options.sh', 'path.sh', 'pointtype.sh', 'pty.sh', 'quoting.sh', 'quoting2.sh', 'readcsv.sh', 'recttype.sh', 'restricted.sh', 'return.sh', 'select.sh', 'sh_match.sh', 'sigchld.sh', 'signal.sh', 'statics.sh', 'subshell.sh', 'substring.sh', 'tilde.sh', 'timetype.sh', 'treemove.sh', 'types.sh', 'variables.sh', 'vartree1.sh', 'vartree2.sh', 'wchar.sh' ]
+
+# The test cases are executed in parallel by default
+foreach testname: all_tests
+    test_path = join_paths(test_dir, testname)
+    # Strip out '.sh' from filename
+    # This makes it easy to execute tests by name. For e.g. meson test alias
+    # TODO: Consider tests with '.' in filename ?
+    testname = testname.split('.')[0]
+    foreach locale:locales
+        lang_var = 'LANG=' + locale
+        if locale == ''
+            test(testname, ksh93_exe, args: [test_path], env: [shell_var, lang_var])
+        else
+            test(testname + '(' + locale + ')', ksh93_exe, args: [test_path], env: [shell_var, lang_var])
+        endif
+    endforeach
+endforeach
