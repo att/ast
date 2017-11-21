@@ -126,7 +126,7 @@ function test_dirfd_basics1
 			'/proc/self/fd/${dirfd}/' \
 			'/dev/fd/${dirfd}/' \
 			'~{dirfd}/' ; do
-			cmd="builtin cat mkdir rmdir ; ${tst.cmd//\[dirfd\]/${devfd}} ; true"
+			cmd="${tst.cmd//\[dirfd\]/${devfd}} ; true"
 			testname="${0}/${tst.testname}/${cmd}"
 
 			mkdir 'tmp'

@@ -145,7 +145,7 @@ then	err_exit "leading : in path not working"
 fi
 (
 	PATH=$PWD:
-	builtin chmod
+	#builtin chmod
 	print 'print cannot execute' > noexec
 	chmod 644 noexec
 	if	[[ ! -x noexec ]]
@@ -244,7 +244,7 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
-builtin /bin/getconf
+#builtin /bin/getconf
 PATH=/bin
 PATH=$(getconf PATH)
 x=$(whence ls)
@@ -265,11 +265,11 @@ status=$($SHELL -c $'trap \'print $?\' ERR;/dev/null 2> /dev/null')
 
 # universe via PATH
 
-builtin getconf
-getconf UNIVERSE - att # override sticky default 'UNIVERSE = foo'
+#getconf
+#getconf UNIVERSE - att # override sticky default 'UNIVERSE = foo'
 
-[[ $(PATH=/usr/ucb/bin:/usr/bin echo -n ucb) == 'ucb' ]] || err_exit "ucb universe echo ignores -n option"
-[[ $(PATH=/usr/xpg/bin:/usr/bin echo -n att) == '-n att' ]] || err_exit "att universe echo does not ignore -n option"
+#[[ $(PATH=/usr/ucb/bin:/usr/bin echo -n ucb) == 'ucb' ]] || err_exit "ucb universe echo ignores -n option"
+#[[ $(PATH=/usr/xpg/bin:/usr/bin echo -n att) == '-n att' ]] || err_exit "att universe echo does not ignore -n option"
 
 PATH=$path
 

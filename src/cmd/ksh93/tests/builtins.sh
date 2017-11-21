@@ -32,7 +32,7 @@ tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 
 # test shell builtin commands
-builtin getconf
+#getconf
 : ${foo=bar} || err_exit ": failed"
 [[ $foo == bar ]] || err_exit ": side effects failed"
 set -- - foobar
@@ -541,10 +541,10 @@ $SHELL 2> /dev/null -c 'cd ""' && err_exit 'cd "" not producing an error'
 [[ $($SHELL 2> /dev/null -c 'cd "";print hi') != hi ]] && err_exit 'cd "" should not terminate script'
 
 bincat=$(whence -p cat)
-builtin cat
+cat
 out=$tmp/seq.out
 seq 11 >$out
-cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || err_exit "builtin cat differs from $bincat"
+cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || err_exit "cat differs from $bincat"
 
 [[ $($SHELL -c '{ printf %R "["; print ok;}' 2> /dev/null) == ok ]] || err_exit $'\'printf %R "["\' causes shell to abort'
 
