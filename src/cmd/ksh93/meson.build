@@ -42,10 +42,7 @@ m_dep = cc.find_library('m', required : false)
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args , include_directories: ksh93_incdir, link_with: [ libast, libcmd, libcoshell], dependencies : [ m_dep ] )
 
-# TODO: Remove bin/run_tests.sh script
-#test('ksh93 tests', ksh93_exe, args: ['../bin/run_tests.sh'])
-
-test_dir = '../src/cmd/ksh93/tests/'
+test_dir = join_paths(meson.current_source_dir(), 'tests')
 
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
