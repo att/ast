@@ -145,7 +145,7 @@ then	err_exit "leading : in path not working"
 fi
 (
 	PATH=$PWD:
-	#builtin chmod
+	builtin chmod
 	print 'print cannot execute' > noexec
 	chmod 644 noexec
 	if	[[ ! -x noexec ]]
@@ -244,7 +244,7 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
-#builtin /bin/getconf
+builtin /bin/getconf
 PATH=/bin
 PATH=$(getconf PATH)
 x=$(whence ls)

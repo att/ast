@@ -133,10 +133,10 @@ $SHELL -c '
 	done > in
 	> out
 	exec 1<> out
-	#cat
+	builtin cat
 	print -r -- "$(<in)"
 	cmp -s in out'  2> /dev/null
-[[ $? == 0 ]] || err_exit 'cat truncates files'
+[[ $? == 0 ]] || err_exit 'builtin cat truncates files'
 cat >| script <<-\!
 print hello
 ( exec 3<&- 4<&-)
