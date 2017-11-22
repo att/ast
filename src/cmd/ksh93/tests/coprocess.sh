@@ -49,7 +49,7 @@ function ping # id
 }
 
 bincat=$(whence -p cat)
-#cat
+builtin cat
 
 for cat in cat $bincat
 do

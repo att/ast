@@ -31,7 +31,7 @@ integer Errors=0 Error_fd=2
 tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 
-#getconf
+builtin getconf
 bincat=$(PATH=$(getconf PATH) whence -p cat)
 
 z=()
@@ -336,7 +336,7 @@ SUB=(
 	( BEG='${ '	END='; }'	)
 )
 CAT=(  cat  $bincat  )
-INS=(  ""  "cat; "  "builtin -d cat $bincat; "  ": > /dev/null; "  )
+INS=(  ""  "builtin cat; "  "builtin -d cat $bincat; "  ": > /dev/null; "  )
 APP=(  ""  "; :"  )
 TST=(
 	( CMD='print foo | $cat'			EXP=3		)

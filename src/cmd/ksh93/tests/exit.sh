@@ -40,7 +40,7 @@ function abspath
         print $newdir/$base
 }
 #test for proper exit of shell
-#getconf
+builtin getconf
 ABSHELL=$(abspath)
 cd $tmp || { err_exit "cd $tmp failed"; exit 1; }
 print exit 0 >.profile

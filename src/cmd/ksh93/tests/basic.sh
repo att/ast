@@ -187,7 +187,7 @@ fi
 echo 'TODO: Skipping test "builtin replaces standard input pipe"'
 #cat > $tmp/script <<\!
 #if	[[ -p /dev/fd/0 ]]
-#then	cat
+#then	builtin cat
 #	cat - > /dev/null
 #	[[ -p /dev/fd/0 ]] && print ok
 #else	print no
@@ -538,9 +538,9 @@ float sec=SECONDS
 (( (SECONDS-sec) < .7 ))  && err_exit '. script does not restore output redirection with eval'
 
 file=$tmp/foobar
-echo "TODO: Skipping call to cat"
+echo "TODO: Skipping call to builtin cat"
 
-#cat
+#builtin cat
 for ((n=0; n < 1000; n++))
 do
 	> $file
