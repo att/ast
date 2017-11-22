@@ -1033,33 +1033,34 @@ function foo
 	[[ $(< $tmp2) == $pid ]] || err_exit 'wrong pid for & job in function'
 }
 foo
-# make sure compiled functions work
-[[ $(tmp=$tmp $SHELL <<- \++++
-	cat > $tmp/functions <<- \EOF
-	 	function bar
-	 	{
-	 		print foo
-	 	}
-	 	function foobar
-	 	{
-	 		bar
-	 	}
-	EOF
-	${SHCOMP:-${SHELL%/*}/shcomp} $tmp/functions > $tmp/foobar
-	rm -f "$tmp/functions"
-	chmod +x $tmp/foobar
-	rm $tmp/!(dir|foobar)
-	FPATH=$tmp
-	PATH=$FPATH:$PATH
-	foobar
-++++
-) == foo ]] > /dev/null  || err_exit 'functions compiled with shcomp not working'
-# tests for compiled . scripts
-print $'print hello\nprint world' > $tmp/foo
-${SHCOMP:-${SHELL%/*}/shcomp} $tmp/foo > $tmp/foo.sh
-val=$(. $tmp/foo.sh)
-[[ $val ==  $'hello\nworld' ]] || err_exit "processing compiled dot files not working correctly val=$val"
-# test for functions in shell having side effects.
+echo 'TODO: Enable shcomp tests'
+## make sure compiled functions work
+#[[ $(tmp=$tmp $SHELL <<- \++++
+#	cat > $tmp/functions <<- \EOF
+#	 	function bar
+#	 	{
+#	 		print foo
+#	 	}
+#	 	function foobar
+#	 	{
+#	 		bar
+#	 	}
+#	EOF
+#	${SHCOMP:-${SHELL%/*}/shcomp} $tmp/functions > $tmp/foobar
+#	rm -f "$tmp/functions"
+#	chmod +x $tmp/foobar
+#	rm $tmp/!(dir|foobar)
+#	FPATH=$tmp
+#	PATH=$FPATH:$PATH
+#	foobar
+#++++
+#) == foo ]] > /dev/null  || err_exit 'functions compiled with shcomp not working'
+## tests for compiled . scripts
+#print $'print hello\nprint world' > $tmp/foo
+#${SHCOMP:-${SHELL%/*}/shcomp} $tmp/foo > $tmp/foo.sh
+#val=$(. $tmp/foo.sh)
+#[[ $val ==  $'hello\nworld' ]] || err_exit "processing compiled dot files not working correctly val=$val"
+## test for functions in shell having side effects.
 unset -f foo foobar bar
 cd "$tmp"
 FPATH=$PWD
