@@ -52,6 +52,7 @@ shell_var = 'SHELL=' + ksh93_exe.full_path()
 
 # These are the default locales used by legacy test script
 # '' is POSIX locale
+# TODO: Check how ksh code handles '' string while setting locales and explicitly set string to 'POSIX' here
 locales = [ '', 'C.UTF-8' ]
 
 # Skipping builtin_poll.sh
@@ -62,7 +63,7 @@ foreach testname: all_tests
     test_path = join_paths(test_dir, testname)
     # Strip out '.sh' from filename
     # This makes it easy to execute tests by name. For e.g. meson test alias
-    # TODO: Consider tests with '.' in filename ?
+    # Tests should not have '.' in filename
     testname = testname.split('.')[0]
     foreach locale:locales
         lang_var = 'LANG=' + locale
