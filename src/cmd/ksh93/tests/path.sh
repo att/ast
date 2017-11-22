@@ -263,14 +263,6 @@ status=$($SHELL -c $'trap \'print $?\' ERR;/xxx/a/b/c/d/e 2> /dev/null')
 status=$($SHELL -c $'trap \'print $?\' ERR;/dev/null 2> /dev/null')
 [[ $status == 126 ]] || err_exit "non executable command ERR trap exit status $status -- expected 126"
 
-# universe via PATH
-
-#getconf
-#getconf UNIVERSE - att # override sticky default 'UNIVERSE = foo'
-
-#[[ $(PATH=/usr/ucb/bin:/usr/bin echo -n ucb) == 'ucb' ]] || err_exit "ucb universe echo ignores -n option"
-#[[ $(PATH=/usr/xpg/bin:/usr/bin echo -n att) == '-n att' ]] || err_exit "att universe echo does not ignore -n option"
-
 PATH=$path
 
 scr=$tmp/script
