@@ -134,9 +134,9 @@ static int		nready;
 static int		ready;
 static int		(*covered_fdnotify)(int, int);
 
-static int fdclose(Service_t *sp, register int fd)
+static int fdclose(Service_t *sp, int fd)
 {
-	register int i;
+	int i;
 	service_list[fd] = 0;
 	if(sp->fd==fd)
 		sp->fd = -1;
@@ -160,7 +160,7 @@ static int fdnotify(int fd1, int fd2)
 		(*covered_fdnotify)(fd1, fd2);
 	if(fd2!=SH_FDCLOSE)
 	{
-		register int i;
+		int i;
 		service_list[fd2] = service_list[fd1];
 		service_list[fd1] = 0;
 		for(i=0; i < npoll; i++)
@@ -213,7 +213,7 @@ static int waitnotify(int fd, long timeout, int rw)
 {
 	Shell_t	*shp = sh_getinterp();
 	Sfio_t *special=0, **pstream;
-	register int	i;
+	int	i;
 
 	if (fd >= 0)
 		special = sh_fd2sfio(shp,fd);
@@ -282,10 +282,10 @@ void service_add(Service_t *sp)
 	file_list[npoll++] = sp->fd;
 }
 
-static int Accept(register Service_t *sp, int accept_fd)
+static int Accept(Service_t *sp, int accept_fd)
 {
 	Shell_t	*shp = sp->sh;
-	register Namval_t*	nq = sp->disc[ACCEPT];
+	Namval_t*	nq = sp->disc[ACCEPT];
 	int			fd;
 
 	fd = fcntl(accept_fd, F_DUPFD, 10);
@@ -313,7 +313,7 @@ static int Accept(register Service_t *sp, int accept_fd)
 
 static int Action(Service_t *sp, int fd, int close)
 {
-	register Namval_t*	nq;
+	Namval_t*	nq;
 	int			r=0;
 
 	if(close)
@@ -349,11 +349,11 @@ static int Error(Service_t *sp, int level, const char* arg, ...)
 
 static char* setdisc(Namval_t* np, const char* event, Namval_t* action, Namfun_t* fp)
 {
-	register Service_t*	sp = (Service_t*)fp;
-	register const char*	cp;
-	register int		i;
-	register int		n = strlen(event) - 1;
-	register Namval_t*	nq;
+	Service_t*	sp = (Service_t*)fp;
+	const char*	cp;
+	int		i;
+	int		n = strlen(event) - 1;
+	Namval_t*	nq;
 
 	for (i = 0; cp = disctab[i]; i++)
 	{
@@ -379,13 +379,13 @@ static char* setdisc(Namval_t* np, const char* event, Namval_t* action, Namfun_t
 static void putval(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 {
 	Shell_t	*shp = sh_ptr(np);
-	register Service_t* sp = (Service_t*)fp;
+	Service_t* sp = (Service_t*)fp;
 	if (!val)
 		fp = nv_stack(np, NiL);
 	nv_putv(np, val, flag, fp);
 	if (!val)
 	{
-		register int i;
+		int i;
 		for(i=0; i< shp->gd->lim.open_max; i++)
 		{
 			if(service_list[i]==sp)
@@ -411,12 +411,12 @@ static const Namdisc_t servdisc =
 
 int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 {
-	register char*		var;
-	register char*		path;
-	register Namval_t*	np;
-	register Service_t*	sp;
-	register int		fd;
-	register Shell_t*	shp = context->shp;
+	char*		var;
+	char*		path;
+	Namval_t*	np;
+	Service_t*	sp;
+	int		fd;
+	Shell_t*	shp = context->shp;
 
 	NOT_USED(argc);
 	for (;;)
@@ -467,7 +467,7 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 int	b_eloop(int argc, char** argv, Shbltin_t *context)
 {
 	Shell_t	*shp = context->shp;
-	register long	timeout = -1;
+	long	timeout = -1;
 	NOT_USED(argc);
 	for (;;)
 	{

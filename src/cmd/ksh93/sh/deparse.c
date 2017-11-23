@@ -72,9 +72,9 @@ void sh_deparse(Sfio_t *out, const Shnode_t *t,int tflags)
 /*
  * print script corresponding to shell tree <t>
  */
-static void p_tree(register const Shnode_t *t,register int tflags)
+static void p_tree(const Shnode_t *t,int tflags)
 {
-	register char *cp;
+	char *cp;
 	int save = end_line;
 	int needbrace = (tflags&NEED_BRACE);
 	tflags &= ~NEED_BRACE;
@@ -245,7 +245,7 @@ static void p_tree(register const Shnode_t *t,register int tflags)
 
 		case TARITH:
 		{
-			register struct argnod *ap = t->ar.arexpr;
+			struct argnod *ap = t->ar.arexpr;
 			if(begin_line && level)
 				sfnputc(outfile,'\t',level);
 			sfprintf(outfile,"(( %s ))%c",ap->argval,end_line);
@@ -364,7 +364,7 @@ static void p_tree(register const Shnode_t *t,register int tflags)
  */
 static void p_keyword(const char *word,int flag)
 {
-	register int sep;
+	int sep;
 	if(flag==END)
 		sep = end_line;
 	else if(*word=='[' || *word=='(')
@@ -384,10 +384,10 @@ static void p_keyword(const char *word,int flag)
 		level++;
 }
 
-static void p_arg(register const struct argnod *arg,register int endchar,int opts)
+static void p_arg(const struct argnod *arg,int endchar,int opts)
 {
-	register const char *cp;
-	register int flag;
+	const char *cp;
+	int flag;
 	do
 	{
 		if(!arg->argnxt.ap)
@@ -431,10 +431,10 @@ static void p_arg(register const struct argnod *arg,register int endchar,int opt
 	return;
 }
 
-static void p_redirect(register const struct ionod *iop)
+static void p_redirect(const struct ionod *iop)
 {
-	register char *cp;
-	register int iof,iof2;
+	char *cp;
+	int iof,iof2;
 	for(;iop;iop=iop->ionxt)
 	{
 		iof=iop->iofile;
@@ -512,9 +512,9 @@ static void p_redirect(register const struct ionod *iop)
 	return;
 }
 
-static void p_comarg(register const struct comnod *com)
+static void p_comarg(const struct comnod *com)
 {
-	register int flag = end_line;
+	int flag = end_line;
 	if(com->comtyp&FAMP)
 		sfwrite(outfile,"& ",2);
 	if(com->comarg || com->comio)
@@ -537,8 +537,8 @@ static void p_comarg(register const struct comnod *com)
 
 static void p_comlist(const struct dolnod *dol,int endchar)
 {
-	register char *cp, *const*argv;
-	register int flag = ' ', special;
+	char *cp, *const*argv;
+	int flag = ' ', special;
 	argv = dol->dolval+ARG_SPARE;
 	cp = *argv;
 	special = (*cp=='[' && cp[1]==0);
@@ -561,7 +561,7 @@ static void p_comlist(const struct dolnod *dol,int endchar)
 	return;
 }
 
-static void p_switch(register const struct regnod *reg)
+static void p_switch(const struct regnod *reg)
 {
 	if(level>1)
 		sfnputc(outfile,'\t',level-1);
@@ -583,7 +583,7 @@ static void p_switch(register const struct regnod *reg)
 /*
  * output here documents
  */
-static void here_body(register const struct ionod *iop)
+static void here_body(const struct ionod *iop)
 {
 	Sfio_t *infile;
 #ifdef xxx

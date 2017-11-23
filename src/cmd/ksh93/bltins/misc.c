@@ -60,7 +60,7 @@ struct login
 int    b_exec(int argc,char *argv[], Shbltin_t *context)
 {
 	struct login logdata;
-	register int n;
+	int n;
 	logdata.clear = 0;
 	logdata.arg0 = 0;
 	logdata.sh = context->shp;
@@ -89,7 +89,7 @@ int    b_exec(int argc,char *argv[], Shbltin_t *context)
 	return(0);
 }
 
-static void     noexport(register Namval_t* np, void *data)
+static void     noexport(Namval_t* np, void *data)
 {
 	NOT_USED(data);
 	nv_offattr(np,NV_EXPORT);
@@ -98,8 +98,8 @@ static void     noexport(register Namval_t* np, void *data)
 int    B_login(int argc,char *argv[],Shbltin_t *context)
 {
 	struct checkpt *pp;
-	register struct login *logp=0;
-	register Shell_t *shp;
+	struct login *logp=0;
+	Shell_t *shp;
 	const char *pname;
 	if(argc)
 		shp = context->shp;
@@ -113,9 +113,9 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 		errormsg(SH_DICT,ERROR_exit(1),e_restricted,argv[0]);
 	else
         {
-		register struct argnod *arg=shp->envlist;
-		register Namval_t* np;
-		register char *cp;
+		struct argnod *arg=shp->envlist;
+		Namval_t* np;
+		char *cp;
 		if(shp->subshell && !shp->subshare)
 			sh_subfork();
 		if(logp && logp->clear)
@@ -158,8 +158,8 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 
 int    b_let(int argc,char *argv[],Shbltin_t *context)
 {
-	register int r;
-	register char *arg;
+	int r;
+	char *arg;
 	Shell_t *shp = context->shp;
 	NOT_USED(argc);
 	while (r = optget(argv,sh_optlet)) switch (r)
@@ -181,8 +181,8 @@ int    b_let(int argc,char *argv[],Shbltin_t *context)
 
 int    b_eval(int argc,char *argv[], Shbltin_t *context)
 {
-	register int r;
-	register Shell_t *shp = context->shp;
+	int r;
+	Shell_t *shp = context->shp;
 	NOT_USED(argc);
 	while (r = optget(argv,sh_opteval)) switch (r)
 	{
@@ -204,12 +204,12 @@ int    b_eval(int argc,char *argv[], Shbltin_t *context)
 	return(shp->exitval);
 }
 
-int    b_dot_cmd(register int n,char *argv[],Shbltin_t *context)
+int    b_dot_cmd(int n,char *argv[],Shbltin_t *context)
 {
-	register char *script;
-	register Namval_t *np;
-	register int jmpval;
-	register Shell_t *shp = context->shp;
+	char *script;
+	Namval_t *np;
+	int jmpval;
+	Shell_t *shp = context->shp;
 	struct sh_scoped savst, *prevscope = shp->st.self;
 	char *filename=0, *buffer=0;
 	int	fd;
@@ -322,7 +322,7 @@ int    b_dot_cmd(register int n,char *argv[],Shbltin_t *context)
 /*
  * null, true  command
  */
-int    b_true(int argc,register char *argv[],Shbltin_t *context)
+int    b_true(int argc,char *argv[],Shbltin_t *context)
 {
 	NOT_USED(argc);
 	NOT_USED(argv[0]);
@@ -333,7 +333,7 @@ int    b_true(int argc,register char *argv[],Shbltin_t *context)
 /*
  * false  command
  */
-int    b_false(int argc,register char *argv[], Shbltin_t *context)
+int    b_false(int argc,char *argv[], Shbltin_t *context)
 {
 	NOT_USED(argc);
 	NOT_USED(argv[0]);
@@ -341,10 +341,10 @@ int    b_false(int argc,register char *argv[], Shbltin_t *context)
 	return(1);
 }
 
-int    b_shift(register int n, register char *argv[], Shbltin_t *context)
+int    b_shift(int n, char *argv[], Shbltin_t *context)
 {
-	register char *arg;
-	register Shell_t *shp = context->shp;
+	char *arg;
+	Shell_t *shp = context->shp;
 	while((n = optget(argv,sh_optshift))) switch(n)
 	{
 		case ':':
@@ -368,9 +368,9 @@ int    b_shift(register int n, register char *argv[], Shbltin_t *context)
 	return(0);
 }
 
-int    b_wait(int n,register char *argv[],Shbltin_t *context)
+int    b_wait(int n,char *argv[],Shbltin_t *context)
 {
-	register Shell_t *shp = context->shp;
+	Shell_t *shp = context->shp;
 	while((n = optget(argv,sh_optwait))) switch(n)
 	{
 		case ':':
@@ -393,11 +393,11 @@ int    b_wait(int n,register char *argv[],Shbltin_t *context)
 	int    b_fg(int n,char *argv[],Shbltin_t *context){}
 	int    b_disown(int n,char *argv[],Shbltin_t *context){}
 #   endif
-int    b_bg(register int n,register char *argv[],Shbltin_t *context)
+int    b_bg(int n,char *argv[],Shbltin_t *context)
 {
-	register int flag = **argv;
-	register Shell_t *shp = context->shp;
-	register const char *optstr = sh_optbg; 
+	int flag = **argv;
+	Shell_t *shp = context->shp;
+	const char *optstr = sh_optbg; 
 	if(*argv[0]=='f')
 		optstr = sh_optfg;
 	else if(*argv[0]=='d')
@@ -427,10 +427,10 @@ int    b_bg(register int n,register char *argv[],Shbltin_t *context)
 	return(shp->exitval);
 }
 
-int    b_jobs(register int n,char *argv[],Shbltin_t *context)
+int    b_jobs(int n,char *argv[],Shbltin_t *context)
 {
-	register int flag = 0;
-	register Shell_t *shp = context->shp;
+	int flag = 0;
+	Shell_t *shp = context->shp;
 	while((n = optget(argv,sh_optjobs))) switch(n)
 	{
 	    case 'l':
@@ -468,8 +468,8 @@ int    b_jobs(register int n,char *argv[],Shbltin_t *context)
  */
 int	b_universe(int argc, char *argv[],Shbltin_t *context)
 {
-	register char *arg;
-	register int n;
+	char *arg;
+	int n;
 	NOT_USED(context);
 	while((n = optget(argv,sh_optuniverse))) switch(n)
 	{
@@ -508,12 +508,12 @@ int	b_universe(int argc, char *argv[],Shbltin_t *context)
     /* for the dictionary generator */
     int	b_vmap(int argc,char *argv[], Shbltin_t *context){}
 #   endif
-    int	b_vpath(register int argc,char *argv[], Shbltin_t *context)
+    int	b_vpath(int argc,char *argv[], Shbltin_t *context)
     {
-	register int flag, n;
-	register const char *optstr; 
-	register char *vend; 
-	register Shell_t *shp = context->shp;
+	int flag, n;
+	const char *optstr; 
+	char *vend; 
+	Shell_t *shp = context->shp;
 	if(argv[0][1]=='p')
 	{
 		optstr = sh_optvpath;

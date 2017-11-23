@@ -55,13 +55,13 @@ static int		canexecute(Shell_t*,char*,int);
 static void		funload(Shell_t*,int,const char*);
 static void		exscript(Shell_t*,char*, char*[], char*const*);
 static bool		path_chkpaths(Shell_t*,Pathcomp_t*,Pathcomp_t*,Pathcomp_t*,int);
-static void		path_checkdup(Shell_t *shp,register Pathcomp_t*);
+static void		path_checkdup(Shell_t *shp,Pathcomp_t*);
 
 static const char	*std_path;
 
 static bool onstdpath(const char *name)
 {
-	register const char *cp = std_path, *sp;
+	const char *cp = std_path, *sp;
 	if(cp)
 		while(*cp)
 		{
@@ -183,7 +183,7 @@ static pid_t _spawnveg(Shell_t *shp,const char *path, char* const argv[], char* 
  */
 static pid_t path_xargs(Shell_t *shp,const char *path, char *argv[],char *const envp[], int spawn)
 {
-	register char *cp, **av, **xv;
+	char *cp, **av, **xv;
 	char **avlast= &argv[shp->xargmax], **saveargs=0;
 	char *const *ev;
 	size_t	size;
@@ -267,8 +267,8 @@ static pid_t path_xargs(Shell_t *shp,const char *path, char *argv[],char *const 
  */
 char *path_pwd(Shell_t *shp,int flag)
 {
-	register char *cp;
-	register int count = 0;
+	char *cp;
+	int count = 0;
 	if(shp->pwd)
 		return((char*)shp->pwd);
 	while(1) 
@@ -316,7 +316,7 @@ skip:
  */
 void  path_delete(Pathcomp_t *first)
 {
-	register Pathcomp_t *pp=first, *old=0, *ppnext;
+	Pathcomp_t *pp=first, *old=0, *ppnext;
 	while(pp)
 	{
 		ppnext = pp->next;
@@ -344,8 +344,8 @@ void  path_delete(Pathcomp_t *first)
  */
 static char *path_lib(Shell_t *shp,Pathcomp_t *pp, char *path)
 {
-	register char *last = strrchr(path,'/');
-	register int r;
+	char *last = strrchr(path,'/');
+	int r;
 	struct stat statb;
 	if(last)
 		*last = 0;
@@ -377,7 +377,7 @@ static char *path_lib(Shell_t *shp,Pathcomp_t *pp, char *path)
 }
 
 #if 0
-void path_dump(register Pathcomp_t *pp)
+void path_dump(Pathcomp_t *pp)
 {
 	sfprintf(sfstderr,"dump\n");
 	while(pp)
@@ -392,11 +392,11 @@ void path_dump(register Pathcomp_t *pp)
 /*
  * check for duplicate directories on PATH
  */
-static void path_checkdup(Shell_t *shp,register Pathcomp_t *pp)
+static void path_checkdup(Shell_t *shp,Pathcomp_t *pp)
 {
-	register char		*name = pp->name;
-	register Pathcomp_t	*oldpp,*first;
-	register int		flag=0;
+	char		*name = pp->name;
+	Pathcomp_t	*oldpp,*first;
+	int		flag=0;
 	struct stat 		statb;
 	int			fd = -1;
 #if SHOPT_ATFUN
@@ -442,7 +442,7 @@ static void path_checkdup(Shell_t *shp,register Pathcomp_t *pp)
  * if last is given, all paths that come before <last> are skipped
  * the next pathcomp is returned.
  */
-Pathcomp_t *path_nextcomp(Shell_t *shp,register Pathcomp_t *pp, const char *name, Pathcomp_t *last)
+Pathcomp_t *path_nextcomp(Shell_t *shp,Pathcomp_t *pp, const char *name, Pathcomp_t *last)
 {
 	Pathcomp_t	*ppnext;
 	stkseek(shp->stk,PATH_OFFSET);
@@ -515,9 +515,9 @@ static void path_init(Shell_t *shp)
 /*
  * returns that pathlist to search
  */
-Pathcomp_t *path_get(register Shell_t *shp,register const char *name)
+Pathcomp_t *path_get(Shell_t *shp,const char *name)
 {
-	register Pathcomp_t *pp=0;
+	Pathcomp_t *pp=0;
 	if(*name && strchr(name,'/'))
 		return(0);
 	if(!sh_isstate(shp,SH_DEFPATH))
@@ -537,9 +537,9 @@ Pathcomp_t *path_get(register Shell_t *shp,register const char *name)
 /*
  * open file corresponding to name using path give by <pp>
  */
-static int	path_opentype(Shell_t *shp,const char *name, register Pathcomp_t *pp, int fun)
+static int	path_opentype(Shell_t *shp,const char *name, Pathcomp_t *pp, int fun)
 {
-	register int fd= -1;
+	int fd= -1;
 	struct stat statb;
 	Pathcomp_t *oldpp;
 	if(!pp && !shp->pathlist)
@@ -579,7 +579,7 @@ static int	path_opentype(Shell_t *shp,const char *name, register Pathcomp_t *pp,
 /*
  * open file corresponding to name using path give by <pp>
  */
-int	path_open(Shell_t *shp,const char *name, register Pathcomp_t *pp)
+int	path_open(Shell_t *shp,const char *name, Pathcomp_t *pp)
 {
 	return(path_opentype(shp,name,pp,0));
 }
@@ -588,9 +588,9 @@ int	path_open(Shell_t *shp,const char *name, register Pathcomp_t *pp)
  * given a pathname return the base name
  */
 
-char	*path_basename(register const char *name)
+char	*path_basename(const char *name)
 {
-	register const char *start = name;
+	const char *start = name;
 	while (*name)
 		if ((*name++ == '/') && *name)	/* don't trim trailing / */
 			start = name;
@@ -690,10 +690,10 @@ static void funload(Shell_t *shp,int fno, const char *name)
  *    where it was found.
  */
 
-bool	path_search(Shell_t *shp,register const char *name,Pathcomp_t **oldpp, int flag)
+bool	path_search(Shell_t *shp,const char *name,Pathcomp_t **oldpp, int flag)
 {
-	register Namval_t *np;
-	register int fno;
+	Namval_t *np;
+	int fno;
 	Pathcomp_t *pp=0;
 	if(name && strchr(name,'/'))
 	{
@@ -764,9 +764,9 @@ bool	path_search(Shell_t *shp,register const char *name,Pathcomp_t **oldpp, int 
 
 static bool pwdinfpath(void)
 {
-	register const char *pwd = nv_getval(PWDNOD);
-	register const char *fpath = nv_getval(FPATHNOD);
-	register int n;
+	const char *pwd = nv_getval(PWDNOD);
+	const char *fpath = nv_getval(FPATHNOD);
+	int n;
 	if(!pwd || ! fpath)
 		return(false);
 	while(*fpath)
@@ -784,9 +784,9 @@ static bool pwdinfpath(void)
 /*
  * do a path search and find the full pathname of file name
  */
-Pathcomp_t *path_absolute(Shell_t *shp,register const char *name, Pathcomp_t *pp)
+Pathcomp_t *path_absolute(Shell_t *shp,const char *name, Pathcomp_t *pp)
 {
-	register int	f,isfun;
+	int	f,isfun;
 	int		noexec=0;
 	Pathcomp_t	*oldpp;
 	Namval_t	*np;
@@ -997,10 +997,10 @@ Pathcomp_t *path_absolute(Shell_t *shp,register const char *name, Pathcomp_t *pp
 #   endif /*S_EXEC */
 #endif /* S_IXUSR */
 
-static int canexecute(Shell_t *shp,register char *path, int isfun)
+static int canexecute(Shell_t *shp,char *path, int isfun)
 {
 	struct stat statb;
-	register int fd=0;
+	int fd=0;
 	path = path_relative(shp,path);
 	if(isfun)
 	{
@@ -1046,10 +1046,10 @@ err:
  * Return path relative to present working directory
  */
 
-char *path_relative(Shell_t *shp,register const char* file)
+char *path_relative(Shell_t *shp,const char* file)
 {
-	register const char *pwd;
-	register const char *fp = file;
+	const char *pwd;
+	const char *fp = file;
 	/* can't relpath when shp->pwd not set */
 	if(!(pwd=shp->pwd))
 		return((char*)fp);
@@ -1074,7 +1074,7 @@ char *path_relative(Shell_t *shp,register const char* file)
 	return((char*)file);
 }
 
-void	path_exec(Shell_t *shp,register const char *arg0,register char *argv[],struct argnod *local)
+void	path_exec(Shell_t *shp,const char *arg0,char *argv[],struct argnod *local)
 {
 	char **envp;
 	const char *opath;
@@ -1160,9 +1160,9 @@ static int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2)
 }
 #endif
 
-pid_t path_spawn(Shell_t *shp,const char *opath,register char **argv, char **envp, Pathcomp_t *libpath, int spawn)
+pid_t path_spawn(Shell_t *shp,const char *opath,char **argv, char **envp, Pathcomp_t *libpath, int spawn)
 {
-	register char *path;
+	char *path;
 	char **xp=0, *xval, *libenv = (libpath?libpath->lib:0); 
 	Namval_t*	np;
 	char		*s, *v;
@@ -1379,9 +1379,9 @@ retry:
  * Assume file is a Shell script and execute it.
  */
 
-static void exscript(Shell_t *shp,register char *path,register char *argv[],char *const*envp)
+static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 {
-	register Sfio_t *sp;
+	Sfio_t *sp;
 	path = path_relative(shp,path);
 	shp->comdiv=0;
 	shp->bckpid = 0;
@@ -1404,8 +1404,8 @@ static void exscript(Shell_t *shp,register char *path,register char *argv[],char
 	/* check if file cannot open for read or script is setuid/setgid  */
 	{
 		static char name[] = "/tmp/euidXXXXXXXXXX";
-		register int n;
-		register uid_t euserid;
+		int n;
+		uid_t euserid;
 		char *savet=0;
 		struct stat statb;
 		int err=0;
@@ -1548,9 +1548,9 @@ static void exscript(Shell_t *shp,register char *path,register char *argv[],char
      * Produce a pseudo-floating point representation
      * with 3 bits base-8 exponent, 13 bits fraction.
      */
-    static int compress(register time_t t)
+    static int compress(time_t t)
     {
-	register int exp = 0, rund = 0;
+	int exp = 0, rund = 0;
 
 	while (t >= 8192)
 	{
@@ -1579,12 +1579,12 @@ static void exscript(Shell_t *shp,register char *path,register char *argv[],char
  */
 static Pathcomp_t *path_addcomp(Shell_t *shp,Pathcomp_t *first, Pathcomp_t *old,const char *name, int flag)
 {
-	register Pathcomp_t *pp, *oldpp;
+	Pathcomp_t *pp, *oldpp;
 	int offset=stktell(shp->stk);
 	size_t len;
 	if(!(flag&PATH_BFPATH))
 	{
-		register const char *cp = name;
+		const char *cp = name;
 		while(*cp && *cp!=':')
 			sfputc(shp->stk,*cp++);
 		len = stktell(shp->stk)-offset;
@@ -1629,7 +1629,7 @@ static Pathcomp_t *path_addcomp(Shell_t *shp,Pathcomp_t *first, Pathcomp_t *old,
 
 bool path_cmdlib(Shell_t *shp, const char *dir, bool on)
 {
-	register Pathcomp_t *pp;
+	Pathcomp_t *pp;
 	for(pp=shp->pathlist; pp; pp = pp->next)
 	{
 		if(strcmp(pp->name,dir))
@@ -1725,9 +1725,9 @@ static bool path_chkpaths(Shell_t *shp,Pathcomp_t *first, Pathcomp_t* old,Pathco
 }
 
 
-Pathcomp_t *path_addpath(Shell_t *shp,Pathcomp_t *first, register const char *path,int type)
+Pathcomp_t *path_addpath(Shell_t *shp,Pathcomp_t *first, const char *path,int type)
 {
-	register const char *cp;
+	const char *cp;
 	Pathcomp_t *old=0;
 	int offset = stktell(shp->stk);
 	char *savptr;
@@ -1787,7 +1787,7 @@ Pathcomp_t *path_addpath(Shell_t *shp,Pathcomp_t *first, register const char *pa
  */
 Pathcomp_t *path_dup(Pathcomp_t *first)
 {
-	register Pathcomp_t *pp=first;
+	Pathcomp_t *pp=first;
 	while(pp)
 	{
 		pp->refcount++;
@@ -1801,7 +1801,7 @@ Pathcomp_t *path_dup(Pathcomp_t *first)
  */
 void path_newdir(Shell_t *shp,Pathcomp_t *first)
 {
-	register Pathcomp_t *pp=first, *next, *pq;
+	Pathcomp_t *pp=first, *next, *pq;
 	struct stat statb;
 	for(pp=first; pp; pp=pp->next)
 	{
@@ -1856,7 +1856,7 @@ void path_newdir(Shell_t *shp,Pathcomp_t *first)
 Pathcomp_t *path_unsetfpath(Shell_t *shp)
 {
 	Pathcomp_t	*first = (Pathcomp_t*)shp->pathlist;
-	register Pathcomp_t *pp=first, *old=0;
+	Pathcomp_t *pp=first, *old=0;
 	if(shp->fpathdict)
 	{
 		struct Ufunction  *rp, *rpnext;
@@ -1900,7 +1900,7 @@ Pathcomp_t *path_unsetfpath(Shell_t *shp)
 
 Pathcomp_t *path_dirfind(Pathcomp_t *first,const char *name,int c)
 {
-	register Pathcomp_t *pp=first;
+	Pathcomp_t *pp=first;
 	while(pp)
 	{
 		if(memcmp(name,pp->name,pp->len)==0 && name[pp->len]==c) 
@@ -1926,7 +1926,7 @@ static char *talias_get(Namval_t *np, Namfun_t *nvp)
 	return(ptr+PATH_OFFSET);
 }
 
-static void talias_put(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void talias_put(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	if(!val && np->nvalue.cp)
 	{
@@ -1943,7 +1943,7 @@ static Namfun_t  talias_init = { &talias_disc, 1 };
 /*
  *  set tracked alias node <np> to value <pp>
  */
-void path_alias(register Namval_t *np,register Pathcomp_t *pp)
+void path_alias(Namval_t *np,Pathcomp_t *pp)
 {
 	if(pp)
 	{

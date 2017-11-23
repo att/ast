@@ -140,8 +140,8 @@ static const Sfdisc_t alias_disc = { NULL, NULL, NULL, alias_exceptf, NULL };
 
 static void refvar(Lex_t *lp, int type)
 {
-	register Shell_t *shp = lp->sh;
-	register Stk_t	*stkp = shp->stk;
+	Shell_t *shp = lp->sh;
+	Stk_t	*stkp = shp->stk;
 	off_t off = (fcseek(0)-(type+1))-(lp->lexd.first?lp->lexd.first:fcfirst());
 	unsigned long r;
 	if(lp->lexd.first)
@@ -180,11 +180,11 @@ static void refvar(Lex_t *lp, int type)
  * This routine gets called when reading across a buffer boundary
  * If lexd.nocopy is off, then current token is saved on the stack
  */
-static void lex_advance(Sfio_t *iop, const char *buff, register int size, void *context)
+static void lex_advance(Sfio_t *iop, const char *buff, int size, void *context)
 {
-	register Lex_t		*lp = (Lex_t*)context;
-	register Shell_t	*shp = lp->sh;
-	register Sfio_t		*log= shp->funlog;
+	Lex_t		*lp = (Lex_t*)context;
+	Shell_t	*shp = lp->sh;
+	Sfio_t		*log= shp->funlog;
 	Stk_t			*stkp = shp->stk;
 #if KSHELL
 	/* write to history file and to stderr if necessary */
@@ -232,7 +232,7 @@ static void lex_advance(Sfio_t *iop, const char *buff, register int size, void *
  */
 static int lexfill(Lex_t *lp)
 {
-	register int c;
+	int c;
 	Lex_t savelex;
 	struct argnod *ap;
 	int aok,docextra;
@@ -293,10 +293,10 @@ extern int lextoken(Lex_t*);
 int sh_lex(Lex_t *lp)
 {
 	Shell_t *shp = lp->sh;
-	register int flag;
+	int flag;
 	char *quoted, *macro, *split, *expand; 
 	char tokstr[3];
-	register int tok = lextoken(lp);
+	int tok = lextoken(lp);
 	quoted = macro = split = expand = "";
 	if(tok==0 && (flag=lp->arg->argflag))
 	{
@@ -321,9 +321,9 @@ int sh_lex(Lex_t *lp)
  */
 int sh_lex(Lex_t* lp)
 {
-	register Shell_t *shp = lp->sh;
-	register const char	*state;
-	register int		n, c, mode=ST_BEGIN, wordflags=0;
+	Shell_t *shp = lp->sh;
+	const char	*state;
+	int		n, c, mode=ST_BEGIN, wordflags=0;
 	Stk_t			*stkp = shp->stk;
 	int		inlevel=lp->lexd.level, assignment=0, ingrave=0;
 	int		epatchar=0;
@@ -1581,10 +1581,10 @@ breakloop:
 /*
  * read to end of command substitution
  */
-static int comsub(register Lex_t *lp, int endtok)
+static int comsub(Lex_t *lp, int endtok)
 {
-	register int	n,c,count=1;
-	register int	line=lp->sh->inlineno;
+	int	n,c,count=1;
+	int	line=lp->sh->inlineno;
 	struct ionod	*inheredoc = lp->heredoc;
 	char *first,*cp=fcseek(0),word[5];
 	int off, messages=0, assignok=lp->assignok, csub;
@@ -1728,10 +1728,10 @@ done:
  * here-doc nested in $(...)
  * allocate ionode with delimiter filled in without disturbing stak
  */
-static void nested_here(register Lex_t *lp)
+static void nested_here(Lex_t *lp)
 {
-	register struct ionod	*iop;
-	register int		n=0,offset;
+	struct ionod	*iop;
+	int		n=0,offset;
 	struct argnod		*arg = lp->arg;
 	Stk_t			*stkp = lp->sh->stk;
 	char			*base;
@@ -1769,9 +1769,9 @@ static void nested_here(register Lex_t *lp)
  * if <copy> is non,zero, then the characters are copied to the stack
  * <state> is the initial lexical state
  */
-void sh_lexskip(Lex_t *lp,int close, register int copy, int  state)
+void sh_lexskip(Lex_t *lp,int close, int copy, int  state)
 {
-	register char	*cp;
+	char	*cp;
 	lp->lexd.nest = close;
 	lp->lexd.lex_state = state;
 	lp->lexd.noarg = 1;
@@ -1823,12 +1823,12 @@ void sh_lexskip(Lex_t *lp,int close, register int copy, int  state)
  * returns 1 for complete here-doc, 0 for EOF
  */
 
-static int here_copy(Lex_t *lp,register struct ionod *iop)
+static int here_copy(Lex_t *lp,struct ionod *iop)
 {
-	register const char	*state;
-	register int		c,n;
-	register char		*bufp,*cp;
-	register Sfio_t		*sp=lp->sh->heredocs, *funlog;
+	const char	*state;
+	int		c,n;
+	char		*bufp,*cp;
+	Sfio_t		*sp=lp->sh->heredocs, *funlog;
 	int			stripcol=0,stripflg, nsave, special=0;
 	if(funlog=lp->sh->funlog)
 	{
@@ -2082,7 +2082,7 @@ done:
 /*
  * generates string for given token
  */
-static char	*fmttoken(Lex_t *lp, register int sym, char *tok)
+static char	*fmttoken(Lex_t *lp, int sym, char *tok)
 {
 	int n=1;
 	if(sym < 0)
@@ -2093,7 +2093,7 @@ static char	*fmttoken(Lex_t *lp, register int sym, char *tok)
 		return(lp->arg->argval);
 	if(sym&SYMRES)
 	{
-		register const Shtable_t *tp=shtab_reserved;
+		const Shtable_t *tp=shtab_reserved;
 		while(tp->sh_number && tp->sh_number!=sym)
 			tp++;
 		return((char*)tp->sh_name);
@@ -2144,10 +2144,10 @@ static char	*fmttoken(Lex_t *lp, register int sym, char *tok)
 
 void	sh_syntax(Lex_t *lp)
 {
-	register Shell_t *shp = lp->sh;
-	register const char *cp = sh_translate(e_unexpected);
-	register char *tokstr;
-	register int tok = lp->token;
+	Shell_t *shp = lp->sh;
+	const char *cp = sh_translate(e_unexpected);
+	char *tokstr;
+	int tok = lp->token;
 	char tokbuf[3];
 	Sfio_t *sp;
 	if((tok==EOFSYM) && lp->lasttok)
@@ -2161,7 +2161,7 @@ void	sh_syntax(Lex_t *lp)
 	if((sp=fcfile()) || (shp->infd>=0 && (sp=shp->sftable[shp->infd])))
 	{
 		/* clear out any pending input */
-		register Sfio_t *top;
+		Sfio_t *top;
 		while(fcget()>0);
 		fcclose();
 		while(top=sfstack(sp,SF_POPSTACK))
@@ -2181,12 +2181,12 @@ void	sh_syntax(Lex_t *lp)
 		errormsg(SH_DICT,ERROR_exit(SYNBAD),e_lexsyntax2,tokstr,cp);
 }
 
-static char *stack_shift(Stk_t *stkp, register char *sp,char *dp)
+static char *stack_shift(Stk_t *stkp, char *sp,char *dp)
 {
-	register char *ep;
-	register int offset = stktell(stkp);
-	register int left = offset-(sp-stkptr(stkp,0));
-	register int shift = (dp+1-sp);
+	char *ep;
+	int offset = stktell(stkp);
+	int left = offset-(sp-stkptr(stkp,0));
+	int shift = (dp+1-sp);
 	offset += shift;
 	stkseek(stkp,offset);
 	sp = stkptr(stkp,offset);
@@ -2206,10 +2206,10 @@ static char *stack_shift(Stk_t *stkp, register char *sp,char *dp)
  */
 struct argnod *sh_endword(Shell_t *shp,int mode)
 {
-	register const char *state = sh_lexstates[ST_NESTED];
-	register size_t n;
-	register char *sp,*dp;
-	register int inquote=0, inlit=0; /* set within quoted strings */
+	const char *state = sh_lexstates[ST_NESTED];
+	size_t n;
+	char *sp,*dp;
+	int inquote=0, inlit=0; /* set within quoted strings */
 	struct argnod* argp=0;
 	char	*ep=0, *xp=0;
 	int bracket=0;
@@ -2486,9 +2486,9 @@ static int alias_exceptf(Sfio_t *iop,int type,void *data, Sfdisc_t *handle)
 static int alias_exceptf(Sfio_t *iop,int type,Sfdisc_t *handle)
 #endif
 {
-	register struct alias *ap = (struct alias*)handle;
-	register Namval_t *np;
-	register Lex_t	*lp;
+	struct alias *ap = (struct alias*)handle;
+	Namval_t *np;
+	Lex_t	*lp;
 	if(type==0 || type==SF_ATEXIT || !ap)
 		return(0);
 	lp = ap->lp;
@@ -2497,7 +2497,7 @@ static int alias_exceptf(Sfio_t *iop,int type,Sfdisc_t *handle)
 	{
 		if(type==SF_CLOSING)
 		{
-			register Sfdisc_t *dp = sfdisc(iop,SF_POPDISC);
+			Sfdisc_t *dp = sfdisc(iop,SF_POPDISC);
 			if(dp!=handle)
 				sfdisc(iop,dp);
 		}
@@ -2508,7 +2508,7 @@ static int alias_exceptf(Sfio_t *iop,int type,Sfdisc_t *handle)
 	if(ap->nextc)
 	{
 		/* if last character is a blank, then next work can be alias */
-		register int c = fcpeek(-1);
+		int c = fcpeek(-1);
 		if(isblank(c))
 			lp->aliasok = 1;
 		*ap->buf = ap->nextc;
@@ -2525,7 +2525,7 @@ done:
 
 static void setupalias(Lex_t *lp, const char *string,Namval_t *np)
 {
-	register Sfio_t *iop, *base;
+	Sfio_t *iop, *base;
 	struct alias *ap = (struct alias*)malloc(sizeof(struct alias));
 	ap->disc = alias_disc;
 	ap->lp = lp;

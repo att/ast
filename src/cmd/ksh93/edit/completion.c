@@ -36,8 +36,8 @@
 
 static char *fmtx(Shell_t *shp,const char *string)
 {
-	register const char	*cp = string;
-	register int	 	n,c;
+	const char	*cp = string;
+	int	 	n,c;
 	unsigned char 		*state = (unsigned char*)sh_lexstates[2]; 
 	int offset = stktell(shp->stk);
 	if(*cp=='#' || *cp=='~')
@@ -78,9 +78,9 @@ static int charcmp(int a, int b, int nocase)
  *  if <str> is equal to <newstr> returns  <str>+strlen(<str>)+1
  *  otherwise returns <str>+strlen(<str>)
  */
-static char *overlaid(register char *str,register const char *newstr,int nocase)
+static char *overlaid(char *str,const char *newstr,int nocase)
 {
-	register int c,d;
+	int c,d;
 	while((c= *(unsigned char *)str) && ((d= *(unsigned char*)newstr++),charcmp(c,d,nocase)))
 		str++;
 	if(*str)
@@ -96,8 +96,8 @@ static char *overlaid(register char *str,register const char *newstr,int nocase)
  */
 static char *find_begin(char outbuff[], char *last, int endchar, int *type)
 {
-	register char	*cp=outbuff, *bp, *xp;
-	register int 	c,inquote = 0, inassign=0;
+	char	*cp=outbuff, *bp, *xp;
+	int 	c,inquote = 0, inassign=0;
 	int		mode=*type;
 	bp = outbuff;
 	*type = 0;
@@ -252,7 +252,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 {
 	struct comnod	*comptr;
 	struct argnod	*ap;
-	register char	*out;
+	char	*out;
 	char 		*av[2], *begin , *dir=0;
 	int		addstar=0, rval=0, var=0, strip=1,narg=0;
 	int 		nomarkdirs = !sh_isoption(ep->sh,SH_MARKDIRS);
@@ -279,8 +279,8 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
 #if SHOPT_MULTIBYTE
 	{
-		register int c = *cur;
-		register genchar *cp;
+		int c = *cur;
+		genchar *cp;
 		/* adjust cur */
 		cp = (genchar *)outbuff + *cur;
 		c = *cp;
@@ -304,7 +304,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	ap->argnxt.ap = 0;
 	ap->argchn.cp = 0;
 	{
-		register int c;
+		int c;
 		char *last = out;
 		Namval_t *np = nv_search("COMP_KEY",shp->var_tree,0);
 		if(np)
@@ -364,7 +364,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	{
 		char		*cp=begin, *left=0, *saveout=".";
 		int	 	nocase=0,cmd_completion=0;
-		register 	int size='x';
+			int size='x';
 		while(cp>outbuff && ((size=cp[-1])==' ' || size=='\t'))
 			cp--;
 		if(!var && !strchr(ap->argval,'/') && (((cp==outbuff&&shp->nextprompt==1) || (strchr(";&|(",size)) && (cp==outbuff+1||size=='('||cp[-2]!='>') && *begin!='~' )))
@@ -406,7 +406,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		{
 			if (strip && !cmd_completion)
 			{
-				register char **ptrcom;
+				char **ptrcom;
 				for(ptrcom=com;*ptrcom;ptrcom++)
 					/* trim directory prefix */
 					*ptrcom = path_basename(*ptrcom);
@@ -553,7 +553,7 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		sh_offoption(shp,SH_MARKDIRS);
 #if SHOPT_MULTIBYTE
 	{
-		register int c,n=0;
+		int c,n=0;
 		/* first re-adjust cur */
 		c = outbuff[*cur];
 		outbuff[*cur] = 0;
@@ -572,9 +572,9 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
  * look for edit macro named _i
  * if found, puts the macro definition into lookahead buffer and returns 1
  */
-int ed_macro(Edit_t *ep, register int i)
+int ed_macro(Edit_t *ep, int i)
 {
-	register char *out;
+	char *out;
 	Namval_t *np;
 	genchar buff[LOOKAHEAD+1];
 	if(i != '@')
@@ -614,7 +614,7 @@ int ed_macro(Edit_t *ep, register int i)
  */
 int ed_fulledit(Edit_t *ep)
 {
-	register char *cp;
+	char *cp;
 	if(!shgd->hist_ptr)
 		return(-1);
 	/* use EDITOR on current command */

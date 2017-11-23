@@ -243,7 +243,7 @@ static int complete_info(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 
 static bool keywords(Sfio_t *out)
 {
-	register const Shtable_t *tp;
+	const Shtable_t *tp;
 	for(tp=shtab_reserved; *tp->sh_name; tp++)
 	{
 		if(sfputr(out,tp->sh_name,'\n')<0)
@@ -263,7 +263,7 @@ static bool evaluate(struct Complete *comp, Sfio_t *out, const char *str)
 static gen_wordlist(Sfio_t *iop, const char *word)
 {
 	const char *ifs = nv_getval(IFSNOD);
-	register char c, n=0;
+	char c, n=0;
 	while((c = *word) && strchr(ifs,c))
 		word++;
 	while(c = *word++)
@@ -610,7 +610,7 @@ static bool delete_and_add(const char *name, struct Complete *comp)
 
 static const char *lquote(struct Complete *cp, const char *str)
 {
-	register int c;
+	int c;
 	char	*sp;
 	Sfio_t	*stakp;
 	if(!(sp=strchr(str,'\'')))

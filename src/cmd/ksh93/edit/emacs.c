@@ -180,11 +180,11 @@ static void xcommands(Emacs_t*,int);
 int ed_emacsread(void *context, int fd,char *buff,int scend, int reedit)
 {
 	Edit_t *ed = (Edit_t*)context;
-	register int c;
-	register int i;
-	register genchar *out;
-	register int count;
-	register Emacs_t *ep = ed->e_emacs;
+	int c;
+	int i;
+	genchar *out;
+	int count;
+	Emacs_t *ep = ed->e_emacs;
 	int adjust,oadjust;
 	char backslash;
 	genchar *kptr;
@@ -742,8 +742,8 @@ process:
 
 static void show_info(Emacs_t *ep,const char *str)
 {
-	register genchar *out = drawbuff;
-	register int c;
+	genchar *out = drawbuff;
+	int c;
 	genchar string[LBUF];
 	int sav_cur = cur;
 	/* save current line */
@@ -765,17 +765,17 @@ static void show_info(Emacs_t *ep,const char *str)
 	draw(ep,UPDATE);
 }
 
-static void putstring(Emacs_t* ep,register char *sp)
+static void putstring(Emacs_t* ep,char *sp)
 {
-	register int c;
+	int c;
 	while (c= *sp++)
 		 putchar(ep->ed,c);
 }
 
 
-static int escape(register Emacs_t* ep,register genchar *out,int count)
+static int escape(Emacs_t* ep,genchar *out,int count)
 {
-	register int i,value;
+	int i,value;
 	int digit,ch;
 	digit = 0;
 	value = 0;
@@ -1148,9 +1148,9 @@ static int escape(register Emacs_t* ep,register genchar *out,int count)
  * This routine process all commands starting with ^X
  */
 
-static void xcommands(register Emacs_t *ep,int count)
+static void xcommands(Emacs_t *ep,int count)
 {
-        register int i = ed_getchar(ep->ed,0);
+        int i = ed_getchar(ep->ed,0);
 	NOT_USED(count);
         switch(i)
         {
@@ -1242,9 +1242,9 @@ static void search(Emacs_t* ep,genchar *out,int direction)
 #ifndef ESH_NFIRST
 	Histloc_t location;
 #endif
-	register int i,sl;
+	int i,sl;
 	genchar str_buff[LBUF];
-	register genchar *string = drawbuff;
+	genchar *string = drawbuff;
 	/* save current line */
 	int sav_cur = cur;
 	genncpy(str_buff,string,sizeof(str_buff)/sizeof(*str_buff));
@@ -1349,21 +1349,21 @@ restore:
 /* If 'first' assume screen is blank */
 /* Prompt is always kept on the screen */
 
-static void draw(register Emacs_t *ep,Draw_t option)
+static void draw(Emacs_t *ep,Draw_t option)
 {
 #define	NORMAL ' '
 #define	LOWER  '<'
 #define	BOTH   '*'
 #define	UPPER  '>'
 
-	register genchar *sptr;		/* Pointer within screen */
+	genchar *sptr;		/* Pointer within screen */
 	genchar nscreen[2*MAXLINE];	/* New entire screen */
 	genchar *ncursor;		/* New cursor */
-	register genchar *nptr;		/* Pointer to New screen */
+	genchar *nptr;		/* Pointer to New screen */
 	char  longline;			/* Line overflow */
 	genchar *logcursor;
 	genchar *nscend;		/* end of logical screen */
-	register int i;
+	int i;
 	
 	nptr = nscreen;
 	sptr = drawbuff;
@@ -1555,9 +1555,9 @@ static void draw(register Emacs_t *ep,Draw_t option)
  * cursor is set to reflect the change
  */
 
-static void setcursor(register Emacs_t *ep,register int newp,int c)
+static void setcursor(Emacs_t *ep,int newp,int c)
 {
-	register int oldp = ep->cursor - ep->screen;
+	int oldp = ep->cursor - ep->screen;
 	newp  = ed_setcursor(ep->ed, ep->screen, oldp, newp, 0);
 	if(c)
 	{
@@ -1569,12 +1569,12 @@ static void setcursor(register Emacs_t *ep,register int newp,int c)
 }
 
 #if SHOPT_MULTIBYTE
-static int print(register int c)
+static int print(int c)
 {
 	return((c&~STRIP)==0 && isprint(c));
 }
 
-static int _isword(register int c)
+static int _isword(int c)
 {
 	return((c&~STRIP) || isalnum(c) || c=='_');
 }

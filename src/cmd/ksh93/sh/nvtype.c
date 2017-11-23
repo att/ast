@@ -395,8 +395,8 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 {
 	Namtype_t		*dp, *pp=(Namtype_t*)fp;
 	Shell_t			*shp = (Shell_t*)np->nvshell;
-	register int		i;
-	register Namval_t	*nq, *nr;
+	int		i;
+	Namval_t	*nq, *nr;
 	size_t			size = fp->dsize;
 	int			save, offset=stktell(shp->stk);
 	char			*cp;
@@ -549,8 +549,8 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 static Namval_t *create_type(Namval_t *np,const char *name,int flag,Namfun_t *fp)
 {
 	Namtype_t		*dp = (Namtype_t*)fp;
-	register const char	*cp=name;
-	register int		i=0,n,r=0,s=0;
+	const char	*cp=name;
+	int		i=0,n,r=0,s=0;
 	Namval_t		*nq=0;
 	if(!name)
 		return(dp->parent);
@@ -654,7 +654,7 @@ static void put_type(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	}
 }
 
-static Namval_t *next_type(register Namval_t* np, Dt_t *root,Namfun_t *fp)
+static Namval_t *next_type(Namval_t* np, Dt_t *root,Namfun_t *fp)
 {
 	Namtype_t	*dp = (Namtype_t*)fp;
 	Namarr_t	*ap;
@@ -822,9 +822,9 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 
 static int std_disc(Namval_t *mp, Namtype_t *pp)
 {
-	register const char	*sp, *cp = strrchr(mp->nvname,'.');
-	register const char	**argv;
-	register int			i;
+	const char	*sp, *cp = strrchr(mp->nvname,'.');
+	const char	**argv;
+	int			i;
 	Namval_t		*np=0,*nq;
 	if(cp)
 		cp++;
@@ -1683,8 +1683,8 @@ void nv_mkstat(Shell_t *shp)
 
 static void write_indent(Sfio_t *out,char *str,int n,int indent)
 {
-	register int	c, first=1;
-	register char	*cp = str;
+	int	c, first=1;
+	char	*cp = str;
 	while(n-- && (c = *str++))
 	{
 		if(c=='\n')
