@@ -86,8 +86,8 @@ static int e3(struct test*);
 static int test_strmatch(Shell_t *shp,const char *str, const char *pat)
 {
 	int match[2*(MATCH_MAX+1)],n;
-	register int c, m=0;
-	register const char *cp=pat; 
+	int c, m=0;
+	const char *cp=pat; 
 	while(c = *cp++)
 	{
 		if(c=='(')
@@ -112,8 +112,8 @@ static int test_strmatch(Shell_t *shp,const char *str, const char *pat)
 int b_test(int argc, char *argv[],Shbltin_t *context)
 {
 	struct test tdata;
-	register char *cp = argv[0];
-	register int not;
+	char *cp = argv[0];
+	int not;
 	tdata.sh = context->shp;
 	tdata.av = argv;
 	tdata.ap = 1;
@@ -154,7 +154,7 @@ int b_test(int argc, char *argv[],Shbltin_t *context)
 			/* fall through */
 		case 4:
 		{
-			register int op = sh_lookup(cp=argv[2],shtab_testops);
+			int op = sh_lookup(cp=argv[2],shtab_testops);
 			if(op&TEST_BINOP)
 				break;
 			if(!op)
@@ -203,10 +203,10 @@ int b_test(int argc, char *argv[],Shbltin_t *context)
  * flag is 1 when in parenthesis
  * flag is 2 when evaluating -a 
  */
-static int expr(struct test *tp,register int flag)
+static int expr(struct test *tp,int flag)
 {
-	register int r;
-	register char *p;
+	int r;
+	char *p;
 	r = e3(tp);
 	while(tp->ap < tp->ac)
 	{
@@ -259,8 +259,8 @@ static char *nxtarg(struct test *tp,int mt)
 
 static int e3(struct test *tp)
 {
-	register char *arg, *cp;
-	register int op;
+	char *arg, *cp;
+	int op;
 	char *binop;
 	arg=nxtarg(tp,0);
 	if(arg && c_eq(arg, '!'))
@@ -319,7 +319,7 @@ skip:
 	return(test_binop(tp->sh,op,arg,cp));
 }
 
-int test_unop(Shell_t *shp,register int op,register const char *arg)
+int test_unop(Shell_t *shp,int op,const char *arg)
 {
 	struct stat statb;
 	int f;
@@ -334,7 +334,7 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 	    case 'V':
 #if SHOPT_FS_3D
 	    {
-		register int offset = stktell(shp->stk);
+		int offset = stktell(shp->stk);
 		if(stat(arg,&statb)<0 || !S_ISREG(statb.st_mode))
 			return(0);
 		/* add trailing / */
@@ -383,7 +383,7 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 	    case 'H':
 #ifdef S_ISCDF
 	    {
-		register int offset = stktell(shp->stk);
+		int offset = stktell(shp->stk);
 		if(test_stat(arg,&statb)>=0 && S_ISCDF(statb.st_mode))
 			return(1);
 		sfputr(shp->stk,arg,'+');
@@ -468,9 +468,9 @@ int test_unop(Shell_t *shp,register int op,register const char *arg)
 	}
 }
 
-int test_binop(Shell_t *shp,register int op,const char *left,const char *right)
+int test_binop(Shell_t *shp,int op,const char *left,const char *right)
 {
-	register double lnum,rnum;
+	double lnum,rnum;
 	if(op&TEST_ARITH)
 	{
 		if(*left=='0')
@@ -572,7 +572,7 @@ int test_inode(const char *file1,const char *file2)
  * The static buffer statb is shared with test_mode.
  */
 
-int sh_access(register const char *name, register int mode)
+int sh_access(const char *name, int mode)
 {
 	Shell_t	*shp = sh_getinterp();
 	struct stat statb;
@@ -627,7 +627,7 @@ skip:
 		{
 			static int maxgroups;
 			gid_t *groups; 
-			register int n;
+			int n;
 			if(maxgroups==0)
 			{
 				/* first time */
@@ -661,7 +661,7 @@ skip:
  * The mode bits are zero if the file doesn't exist.
  */
 
-static int test_mode(register const char *file)
+static int test_mode(const char *file)
 {
 	struct stat statb;
 	statb.st_mode = 0;

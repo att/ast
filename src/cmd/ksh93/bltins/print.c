@@ -111,7 +111,7 @@ int    B_echo(int argc, char *argv[],Shbltin_t *context)
 	/* This mess is because /bin/echo on BSD is different */
 	if(!prdata.sh->universe)
 	{
-		register char *universe;
+		char *universe;
 		if(universe=astconf("UNIVERSE",0,0))
 			bsd_univ = (strcmp(universe,"ucb")==0);
 		prdata.sh->universe = 1;
@@ -166,9 +166,9 @@ static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 
 int    b_print(int argc, char *argv[], Shbltin_t *context)
 {
-	register Sfio_t *outfile;
-	register int exitval=0,n, fd = 1;
-	register Shell_t *shp = context->shp;
+	Sfio_t *outfile;
+	int exitval=0,n, fd = 1;
+	Shell_t *shp = context->shp;
 	const char *options, *msg = e_file+4;
 	char *format = 0, *fmttype=0;
 	int sflag = 0, nflag=0, rflag=0, vflag=0;
@@ -396,8 +396,8 @@ printv:
 
 int sh_echolist(Shell_t *shp,Sfio_t *outfile, int raw, char *argv[])
 {
-	register char	*cp;
-	register int	n;
+	char	*cp;
+	int	n;
 	struct printf pdata;
 	pdata.cescape = 0;
 	pdata.err = 0;
@@ -422,8 +422,8 @@ int sh_echolist(Shell_t *shp,Sfio_t *outfile, int raw, char *argv[])
  */
 static char strformat(char *s)
 {
-        register char*  t;
-        register int    c;
+        char*  t;
+        int    c;
         char*           b;
         char*           p;
 #if SHOPT_MULTIBYTE && defined(FMT_EXP_WIDE)
@@ -480,7 +480,7 @@ static char strformat(char *s)
 
 static char *genformat(Shell_t * shp,char *format)
 {
-	register char *fp;
+	char *fp;
 	stkseek(shp->stk,0);
 	sfputr(shp->stk,preformat,-1);
 	sfputr(shp->stk,format,-1);
@@ -491,14 +491,14 @@ static char *genformat(Shell_t * shp,char *format)
 
 static char *fmthtml(Shell_t *shp,const char *string, int flags)
 {
-	register const char *cp = string;
-	register int c, offset = stktell(shp->stk);
+	const char *cp = string;
+	int c, offset = stktell(shp->stk);
 	if(!(flags&SFFMT_ALTER))
 	{
 		while(c= *(unsigned char*)cp++)
 		{
 #if SHOPT_MULTIBYTE
-			register int s;
+			int s;
 			if((s=mbsize(cp-1)) > 1)
 			{
 				cp += (s-1);
@@ -672,7 +672,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
 
 static int varname(const char *str, ssize_t n)
 {
-	register int c,dot=1,len=1;
+	int c,dot=1,len=1;
 	if(n < 0)
 	{
 		if(*str=='.')
@@ -711,7 +711,7 @@ static const char *mapformat(Sffmt_t *fe)
 static int extend(Sfio_t* sp, void* v, Sffmt_t* fe)
 {
 	char*		lastchar = "";
-	register int	neg = 0;
+	int	neg = 0;
 	Sfdouble_t	d;
 	Sfdouble_t	longmin = LDBL_LLONG_MIN;
 	Sfdouble_t	longmax = LDBL_LLONG_MAX;
@@ -721,7 +721,7 @@ static int extend(Sfio_t* sp, void* v, Sffmt_t* fe)
 	union types_t*	value = (union types_t*)v;
 	struct printf*	pp = (struct printf*)fe;
 	Shell_t		*shp = pp->sh;
-	register char*	argp = *pp->nextarg;
+	char*	argp = *pp->nextarg;
 	char		*w,*s;
 
 	if(fe->n_str>0 && (format=='T'||format=='Q') && varname(fe->t_str,fe->n_str) && (!argp || varname(argp,-1)))
@@ -1070,9 +1070,9 @@ static int extend(Sfio_t* sp, void* v, Sffmt_t* fe)
 
 static int fmtvecho(Shell_t *shp,const char *string, struct printf *pp)
 {
-	register const char *cp = string, *cpmax;
-	register int c;
-	register int offset = stktell(shp->stk);
+	const char *cp = string, *cpmax;
+	int c;
+	int offset = stktell(shp->stk);
 #if SHOPT_MULTIBYTE
 	int chlen;
 	if(mbwide())

@@ -209,7 +209,7 @@ static int		rand_shift;
 /*
  * Invalidate all path name bindings
  */
-static void rehash(register Namval_t *np,void *data)
+static void rehash(Namval_t *np,void *data)
 {
 	NOT_USED(data);
 	nv_onattr(np,NV_NOALIAS);
@@ -226,10 +226,10 @@ static char *nospace(int unused)
 }
 
 /* Trap for VISUAL and EDITOR variables */
-static void put_ed(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_ed(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
-	register const char *cp, *name=nv_name(np);
-	register int	newopt=0;
+	const char *cp, *name=nv_name(np);
+	int	newopt=0;
 	Shell_t *shp = sh_ptr(np);
 	if(*name=='E' && nv_getval(sh_scoped(shp,VISINOD)))
 		goto done;
@@ -255,7 +255,7 @@ done:
 }
 
 /* Trap for HISTFILE and HISTSIZE variables */
-static void put_history(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_history(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	Shell_t *shp = sh_ptr(np);
 	void 	*histopen = shp?shp->gd->hist_ptr:NULL;
@@ -288,7 +288,7 @@ static void put_optindex(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 		nv_disc(np,fp,NV_POP);
 }
 
-static Sfdouble_t nget_optindex(register Namval_t* np, Namfun_t *fp)
+static Sfdouble_t nget_optindex(Namval_t* np, Namfun_t *fp)
 {
 	return((Sfdouble_t)*np->nvalue.lp);
 }
@@ -304,7 +304,7 @@ static Namfun_t *clone_optindex(Namval_t* np, Namval_t *mp, int flags, Namfun_t 
 
 
 /* Trap for restricted variables FPATH, PATH, SHELL, ENV */
-static void put_restricted(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_restricted(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	Shell_t *shp = sh_ptr(np);
 	int	path_scoped = 0, fpath_scoped=0;
@@ -348,7 +348,7 @@ path_dump((Pathcomp_t*)shp->pathlist);
 	}
 }
 
-static void put_cdpath(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_cdpath(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	Pathcomp_t *pp;
 	Shell_t *shp = sh_ptr(np);
@@ -431,7 +431,7 @@ static void put_cdpath(register Namval_t* np,const char *val,int flags,Namfun_t 
 		lctype++;
 		if(ast.locale.set&(1<<AST_LC_CTYPE))
 		{
-			register int c;
+			int c;
 			char *state[4];
 			sh_lexstates[ST_BEGIN] = state[0] = (char*)malloc(4*(1<<CHAR_BIT));
 			memcpy(state[0],sh_lexrstates[ST_BEGIN],(1<<CHAR_BIT));
@@ -480,9 +480,9 @@ static void put_cdpath(register Namval_t* np,const char *val,int flags,Namfun_t 
 #endif /* _hdr_locale */
 
 /* Trap for IFS assignment and invalidates state table */
-static void put_ifs(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_ifs(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
-	register struct ifs *ifsp = (struct ifs*)fp;
+	struct ifs *ifsp = (struct ifs*)fp;
 	ifsp->ifsnp = 0;
 	if(!val)
 	{
@@ -507,12 +507,12 @@ static void put_ifs(register Namval_t* np,const char *val,int flags,Namfun_t *fp
  * This is the lookup function for IFS
  * It keeps the sh.ifstable up to date
  */
-static char* get_ifs(register Namval_t* np, Namfun_t *fp)
+static char* get_ifs(Namval_t* np, Namfun_t *fp)
 {
-	register struct ifs *ifsp = (struct ifs*)fp;
-	register char *cp, *value;
-	register int c,n;
-	register Shell_t *shp = sh_ptr(np);
+	struct ifs *ifsp = (struct ifs*)fp;
+	char *cp, *value;
+	int c,n;
+	Shell_t *shp = sh_ptr(np);
 	value = nv_getv(np,fp);
 	if(np!=ifsp->ifsnp)
 	{
@@ -565,7 +565,7 @@ static char* get_ifs(register Namval_t* np, Namfun_t *fp)
 #   define timeofday(a)
 #endif
 
-static void put_seconds(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_seconds(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	double d;
 	struct tms tp;
@@ -589,10 +589,10 @@ static void put_seconds(register Namval_t* np,const char *val,int flags,Namfun_t
 	*np->nvalue.dp = dtime(&tp)-d;
 }
 
-static char* get_seconds(register Namval_t* np, Namfun_t *fp)
+static char* get_seconds(Namval_t* np, Namfun_t *fp)
 {
 	Shell_t *shp = sh_ptr(np);
-	register int places = nv_size(np);
+	int places = nv_size(np);
 	struct tms tp;
 	double d, offset = (np->nvalue.dp?*np->nvalue.dp:0);
 	NOT_USED(fp);
@@ -602,7 +602,7 @@ static char* get_seconds(register Namval_t* np, Namfun_t *fp)
 	return(sfstruse(shp->strbuf));
 }
 
-static Sfdouble_t nget_seconds(register Namval_t* np, Namfun_t *fp)
+static Sfdouble_t nget_seconds(Namval_t* np, Namfun_t *fp)
 {
 	struct tms tp;
 	double offset = (np->nvalue.dp?*np->nvalue.dp:0);
@@ -614,10 +614,10 @@ static Sfdouble_t nget_seconds(register Namval_t* np, Namfun_t *fp)
 /*
  * These three functions are used to get and set the RANDOM variable
  */
-static void put_rand(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_rand(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	struct rand *rp = (struct rand*)fp;
-	register long n;
+	long n;
 	if(!val)
 	{
 		fp = nv_stack(np, NIL(Namfun_t*));
@@ -640,9 +640,9 @@ static void put_rand(register Namval_t* np,const char *val,int flags,Namfun_t *f
  * get random number in range of 0 - 2**15
  * never pick same number twice in a row
  */
-static Sfdouble_t nget_rand(register Namval_t* np, Namfun_t *fp)
+static Sfdouble_t nget_rand(Namval_t* np, Namfun_t *fp)
 {
-	register long cur, last= *np->nvalue.lp;
+	long cur, last= *np->nvalue.lp;
 	NOT_USED(fp);
 	do
 		cur = (rand()>>rand_shift)&RANDMASK;
@@ -651,9 +651,9 @@ static Sfdouble_t nget_rand(register Namval_t* np, Namfun_t *fp)
 	return((Sfdouble_t)cur);
 }
 
-static char* get_rand(register Namval_t* np, Namfun_t *fp)
+static char* get_rand(Namval_t* np, Namfun_t *fp)
 {
-	register long n = nget_rand(np,fp);
+	long n = nget_rand(np,fp);
 	return(fmtbase(n, 10, 0));
 }
 
@@ -674,7 +674,7 @@ static Sfdouble_t nget_lineno(Namval_t* np, Namfun_t *fp)
 
 static void put_lineno(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
-	register long n;
+	long n;
 	Shell_t *shp = sh_ptr(np);
 	if(!val)
 	{
@@ -691,9 +691,9 @@ static void put_lineno(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 	shp->st.firstline += nget_lineno(np,fp)+1-n;
 }
 
-static char* get_lineno(register Namval_t* np, Namfun_t *fp)
+static char* get_lineno(Namval_t* np, Namfun_t *fp)
 {
-	register long n = nget_lineno(np,fp);
+	long n = nget_lineno(np,fp);
 	return(fmtbase(n, 10, 0));
 }
 
@@ -786,11 +786,11 @@ static void put_astbin(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 }
 
 /* These two routines are for SH_OPTIONS */
-static void put_options(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_options(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	Shell_t		*shp = np->nvshell;
 	Namval_t	*mp;
-	register int	c,offset = stktell(shp->stk);
+	int	c,offset = stktell(shp->stk);
 	const char	*cp=val,*sp;
 	if(!cp)
 	{
@@ -817,11 +817,11 @@ static void put_options(register Namval_t* np,const char *val,int flags,Namfun_t
 	}
 }
 
-static char* get_options(register Namval_t* np, Namfun_t *fp)
+static char* get_options(Namval_t* np, Namfun_t *fp)
 {
 	Shell_t			*shp = np->nvshell;
-	register int		offset = stktell(shp->stk);
-	register char	const	*cp;
+	int		offset = stktell(shp->stk);
+	char	const	*cp;
 	sfputr(shp->stk,"astbin",'=');
 	if(!(cp = nv_getval(SH_ASTBIN)))
 		cp = "/bin";
@@ -832,7 +832,7 @@ static char* get_options(register Namval_t* np, Namfun_t *fp)
 	return((char*)np->nvalue.cp);
 }
 
-static int hasgetdisc(register Namfun_t *fp)
+static int hasgetdisc(Namfun_t *fp)
 {
         while(fp && !fp->disc->getnum && !fp->disc->getval)
                 fp = fp->next;
@@ -873,7 +873,7 @@ static void match2d(Shell_t *shp,struct match *mp)
 void sh_setmatch(Shell_t *shp,const char *v, int vsize, int nmatch, int match[],int index)
 {
 	struct match	*mp = &ip->SH_MATCH_init;
-	register int	i,n,x, savesub=shp->subshell;
+	int	i,n,x, savesub=shp->subshell;
 	Namarr_t	*ap = nv_arrayptr(SH_MATCHNOD);
 	Namval_t	*np;
 	if(shp->intrace)
@@ -995,7 +995,7 @@ void sh_setmatch(Shell_t *shp,const char *v, int vsize, int nmatch, int match[],
 
 #define array_scan(np)	((nv_arrayptr(np)->flags&ARRAY_SCAN))
 
-static char* get_match(register Namval_t* np, Namfun_t *fp)
+static char* get_match(Namval_t* np, Namfun_t *fp)
 {
 	struct match	*mp = (struct match*)fp;
 	int		sub,sub2=0,n,i =!mp->index;
@@ -1044,15 +1044,15 @@ static char *name_match(Namval_t *np, Namfun_t *fp)
 static const Namdisc_t SH_MATCH_disc  = { sizeof(struct match), 0, get_match,
 	0,0,0,0,name_match };
 
-static char* get_version(register Namval_t* np, Namfun_t *fp)
+static char* get_version(Namval_t* np, Namfun_t *fp)
 {
 	return(nv_getv(np,fp));
 }
 
-static Sfdouble_t nget_version(register Namval_t* np, Namfun_t *fp)
+static Sfdouble_t nget_version(Namval_t* np, Namfun_t *fp)
 {
-	register const char	*cp = e_version + strlen(e_version)-10;
-	register int		c;
+	const char	*cp = e_version + strlen(e_version)-10;
+	int		c;
 	Sflong_t		t = 0;
 	NOT_USED(fp);
 
@@ -1073,7 +1073,7 @@ static const Namdisc_t SH_VERSION_disc	= {  0, 0, get_version, nget_version };
      */
     static void vpath_set(char *str, int mode)
     {
-	register char *lastp, *oldp=str, *newp=strchr(oldp,':');
+	char *lastp, *oldp=str, *newp=strchr(oldp,':');
 	if(!shgd->lim.fs3d)
 		return;
 	while(newp)
@@ -1089,9 +1089,9 @@ static const Namdisc_t SH_VERSION_disc	= {  0, 0, get_version, nget_version };
     }
 
     /* catch vpath assignments */
-    static void put_vpath(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+    static void put_vpath(Namval_t* np,const char *val,int flags,Namfun_t *fp)
     {
-	register char *cp;
+	char *cp;
 	if(cp = nv_getval(np))
 		vpath_set(cp,0);
 	if(val)
@@ -1168,7 +1168,7 @@ static Namval_t *create_math(Namval_t *np,const char *name,int flag,Namfun_t *fp
 	return(nv_namptr(shp->mathnodes,name[3]-'1'));
 }
 
-static char* get_math(register Namval_t* np, Namfun_t *fp)
+static char* get_math(Namval_t* np, Namfun_t *fp)
 {
 	Shell_t		*shp = sh_ptr(np);
 	Namval_t	*mp,fake;
@@ -1245,7 +1245,7 @@ static const Namdisc_t SH_JOBPOOL_disc  = { 0, 0, 0, 0, setdisc_any, 0, };
 static int newconf(const char *name, const char *path, const char *value)
 {
 	Shell_t	*shp = sh_getinterp();
-	register char *arg;
+	char *arg;
 	if(!name)
 		setenviron(value);
 	else if(strcmp(name,"UNIVERSE")==0 && strcmp(astconf(name,0,0),value))
@@ -1265,8 +1265,8 @@ static int newconf(const char *name, const char *path, const char *value)
 #if	(CC_NATIVE != CC_ASCII)
     static void a2e(char *d, const char *s)
     {
-	register const unsigned char *t;
-	register int i;
+	const unsigned char *t;
+	int i;
 	t = CCMAP(CC_ASCII, CC_NATIVE);
 	for(i=0; i<(1<<CHAR_BIT); i++)
 		d[t[i]] = s[i];
@@ -1289,10 +1289,10 @@ static int newconf(const char *name, const char *path, const char *value)
  * return SH_TYPE_* bitmask for path
  * 0 for "not a shell"
  */
-int sh_type(register const char *path)
+int sh_type(const char *path)
 {
-	register const char*	s;
-	register int		t = 0;
+	const char*	s;
+	int		t = 0;
 	
 	if (s = (const char*)strrchr(path, '/'))
 	{
@@ -1402,11 +1402,11 @@ static const Namdisc_t modedisc =
 /*
  * initialize the shell
  */
-Shell_t *sh_init(register int argc,register char *argv[], Shinit_f userinit)
+Shell_t *sh_init(int argc,char *argv[], Shinit_f userinit)
 {
 	static int beenhere;
 	Shell_t	*shp;
-	register size_t n;
+	size_t n;
 	int type;
 	static char *login_files[2];
 #if AST_VERSION >= 20130509
@@ -1875,7 +1875,7 @@ int sh_reinit(char *argv[])
 /*
  * set when creating a local variable of this name
  */
-Namfun_t *nv_cover(register Namval_t *np)
+Namfun_t *nv_cover(Namval_t *np)
 {
 	if(np==IFSNOD || np==PATHNOD || np==SHELLNOD || np==FPATHNOD || np==CDPNOD || np==SECONDS || np==ENVNOD || np==LINENO)
 		return(np->nvfun);
@@ -1906,7 +1906,7 @@ struct Svars
 	int		current;
 };
 
-static Namval_t *next_svar(register Namval_t* np, Dt_t *root,Namfun_t *fp)
+static Namval_t *next_svar(Namval_t* np, Dt_t *root,Namfun_t *fp)
 {
 	struct Svars *sp = (struct Svars*)fp;
 	if(!root)
@@ -1919,8 +1919,8 @@ static Namval_t *next_svar(register Namval_t* np, Dt_t *root,Namfun_t *fp)
 static Namval_t *create_svar(Namval_t *np,const char *name,int flag,Namfun_t *fp)
 {
 	struct Svars		*sp = (struct Svars*)fp;
-	register const char	*cp=name;
-	register int		i=0,n;
+	const char	*cp=name;
+	int		i=0,n;
 	Namval_t		*nq=0;
 	Shell_t			*shp = sp->sh;
 	if(!name)
@@ -1949,7 +1949,7 @@ static Namfun_t *clone_svar(Namval_t* np,Namval_t *mp,int flags,Namfun_t *fp)
 {
 	Shell_t		*shp=(Shell_t*)np->nvshell;
 	struct Svars	*dp, *sp=(struct Svars*)fp;
-	register int	i;
+	int	i;
 	char		*cp;
 	Sfdouble_t	d;
 	dp = (struct Svars*)malloc(fp->dsize+sp->dsize+sizeof(void**));
@@ -2285,10 +2285,10 @@ static Init_t *nv_init(Shell_t *shp)
 
 static Dt_t *inittree(Shell_t *shp,const struct shtable2 *name_vals)
 {
-	register Namval_t *np;
-	register const struct shtable2 *tp;
-	register unsigned n = 0;
-	register Dt_t *treep;
+	Namval_t *np;
+	const struct shtable2 *tp;
+	unsigned n = 0;
+	Dt_t *treep;
 	Dt_t *base_treep, *dict;
 	for(tp=name_vals;*tp->sh_name;tp++)
 		n++;
@@ -2345,9 +2345,9 @@ static Dt_t *inittree(Shell_t *shp,const struct shtable2 *name_vals)
 
 static void env_init(Shell_t *shp)
 {
-	register char		*cp;
-	register Namval_t	*np,*mp;
-	register char		**ep=environ;
+	char		*cp;
+	Namval_t	*np,*mp;
+	char		**ep=environ;
 	char			*dp,*next=0;
 	int			nenv=0,k=0;
 	size_t			size=0;
@@ -2537,7 +2537,7 @@ struct Mapchar
 	int		lctype;
 };
 
-static void put_trans(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_trans(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	struct Mapchar *mp = (struct Mapchar*)fp;
 	int	c,offset = staktell(),off=offset;

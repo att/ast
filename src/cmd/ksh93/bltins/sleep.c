@@ -42,11 +42,11 @@
 #   undef _lib_poll
 #endif /* _lib_poll_notimer */
 
-int	b_sleep(register int argc,char *argv[],Shbltin_t *context)
+int	b_sleep(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *cp;
-	register double d=0;
-	register Shell_t *shp = context->shp;
+	char *cp;
+	double d=0;
+	Shell_t *shp = context->shp;
 	int sflag=0;
 	time_t tloc = 0;
 	char *last;
@@ -159,7 +159,7 @@ static void completed(void * handle)
 void	sh_delay(double t)
 {
 	Shell_t *shp = sh_getinterp();
-	register int n = (int)t;
+	int n = (int)t;
 	Tv_t ts,tx;
 	ts.tv_sec = n;
 	ts.tv_nsec = 1000000000*(t-(double)n);

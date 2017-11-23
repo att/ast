@@ -92,12 +92,12 @@ static char *nextdir(glob_t *gp, char *dir)
 int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
 {
 	glob_t gdata;
-	register struct argnod *ap;
-	register glob_t *gp= &gdata;
-	register int flags,extra=0;
+	struct argnod *ap;
+	glob_t *gp= &gdata;
+	int flags,extra=0;
 #if SHOPT_BASH
-	register int off;
-	register char *sp, *cp, *cp2;
+	int off;
+	char *sp, *cp, *cp2;
 #endif
 	sh_stats(STAT_GLOBS);
 	memset(gp,0,sizeof(gdata));
@@ -217,10 +217,10 @@ int path_expand(Shell_t *shp,const char *pattern, struct argnod **arghead)
  */
 static int scantree(Shell_t *shp,Dt_t *tree, const char *pattern, struct argnod **arghead)
 {
-	register Namval_t *np;
-	register struct argnod *ap;
-	register int nmatch=0;
-	register char *cp;
+	Namval_t *np;
+	struct argnod *ap;
+	int nmatch=0;
+	char *cp;
 	np = (Namval_t*)dtfirst(tree);
 	for(;np && !nv_isnull(np);(np = (Namval_t*)dtnext(tree,np)))
 	{
@@ -245,7 +245,7 @@ static int scantree(Shell_t *shp,Dt_t *tree, const char *pattern, struct argnod 
  * The number of matches is returned
  */
 
-int path_complete(Shell_t *shp,const char *name,register const char *suffix, struct argnod **arghead)
+int path_complete(Shell_t *shp,const char *name,const char *suffix, struct argnod **arghead)
 {
 	sufstr = suffix;
 	suflen = (int)strlen(suffix);
@@ -267,9 +267,9 @@ int path_generate(Shell_t *shp,struct argnod *todo, struct argnod **arghead)
 	return count satisfying count>=1;
 @*/
 {
-	register char *cp;
-	register int brace;
-	register struct argnod *ap;
+	char *cp;
+	int brace;
+	struct argnod *ap;
 	struct argnod *top = 0;
 	struct argnod *apin;
 	char *pat, *rescan;

@@ -64,7 +64,7 @@ static int outstring(Sfio_t *out, const char *string, int n)
 /*
  * print script corresponding to shell tree <t>
  */
-static int p_tree(register const Shnode_t *t)
+static int p_tree(const Shnode_t *t)
 {
 	if(!t)
 		return(sfputl(outfile,-1));
@@ -154,9 +154,9 @@ static int p_tree(register const Shnode_t *t)
 	return(-1);
 }
 
-static int p_arg(register const struct argnod *arg)
+static int p_arg(const struct argnod *arg)
 {
-	register ssize_t n;
+	ssize_t n;
 	struct fornod *fp;
 	while(arg)
 	{
@@ -188,7 +188,7 @@ static int p_arg(register const struct argnod *arg)
 	return(sfputu(outfile,0));
 }
 
-static int p_redirect(register const struct ionod *iop)
+static int p_redirect(const struct ionod *iop)
 {
 	while(iop)
 	{
@@ -213,7 +213,7 @@ static int p_redirect(register const struct ionod *iop)
 	return(sfputl(outfile,-1));
 }
 
-static int p_comarg(register const struct comnod *com)
+static int p_comarg(const struct comnod *com)
 {
 	p_redirect(com->comio);
 	p_arg(com->comset);
@@ -228,8 +228,8 @@ static int p_comarg(register const struct comnod *com)
 
 static int p_comlist(const struct dolnod *dol)
 {
-	register char *cp, *const*argv;
-	register int n;
+	char *cp, *const*argv;
+	int n;
 	argv = dol->dolval+ARG_SPARE;
 	while(cp = *argv)
 		argv++;
@@ -241,7 +241,7 @@ static int p_comlist(const struct dolnod *dol)
 	return(sfputu(outfile,0));
 }
 
-static int p_switch(register const struct regnod *reg)
+static int p_switch(const struct regnod *reg)
 {
 	while(reg)
 	{
@@ -253,9 +253,9 @@ static int p_switch(register const struct regnod *reg)
 	return(sfputl(outfile,-1));
 }
 
-static int p_string(register const char *string)
+static int p_string(const char *string)
 {
-	register size_t n=strlen(string);
+	size_t n=strlen(string);
 	if(sfputu(outfile,n+1)<0)
 		return(-1);
 	return(outstring(outfile,string,n));

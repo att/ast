@@ -372,11 +372,11 @@ static Namval_t	*check_limits(Shell_t *shp, char *cp)
 	return(0);
 }
 
-static Namval_t *scope(register Namval_t *np,register struct lval *lvalue,int assign)
+static Namval_t *scope(Namval_t *np,struct lval *lvalue,int assign)
 {
-	register int flag = lvalue->flag;
-	register char *sub=0, *cp=(char*)np;
-	register Namval_t *mp;
+	int flag = lvalue->flag;
+	char *sub=0, *cp=(char*)np;
+	Namval_t *mp;
 	Shell_t		*shp = lvalue->shp;
 	int	flags = HASH_NOSCOPE|HASH_SCOPE|HASH_BUCKET;
 	int	c=0,nosub = lvalue->nosub;
@@ -520,8 +520,8 @@ static Namval_t *scope(register Namval_t *np,register struct lval *lvalue,int as
 
 Math_f sh_mathstdfun(const char *fname, size_t fsize, short * nargs)
 {
-	register const struct mathtab *tp;
-	register char c = fname[0];
+	const struct mathtab *tp;
+	char c = fname[0];
 	for(tp=shtab_math; *tp->fname; tp++)
 	{
 		if(*tp->fname > c)
@@ -616,14 +616,14 @@ static Sfdouble_t number(const char* s, char** p, int b, struct lval* lvalue)
 static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdouble_t n)
 {
 	Shell_t		*shp = lvalue->shp;
-	register Sfdouble_t r= 0;
+	Sfdouble_t r= 0;
 	char *str = (char*)*ptr;
-	register char *cp;
+	char *cp;
 	switch(type)
 	{
 	    case ASSIGN:
 	    {
-		register Namval_t *np = (Namval_t*)(lvalue->value);
+		Namval_t *np = (Namval_t*)(lvalue->value);
 		np = scope(np,lvalue,1);
 		nv_putval(np, (char*)&n, NV_LDOUBLE);
 		if(lvalue->eflag)
@@ -635,15 +635,15 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 	    }
 	    case LOOKUP:
 	    {
-		register int c = *str;
-		register char *xp=str;
+		int c = *str;
+		char *xp=str;
 		lvalue->value = (char*)0;
 		if(c=='.')
 			str++;
 		c = mbchar(str);
 		if(isaletter(c))
 		{
-			register Namval_t *np=0;
+			Namval_t *np=0;
 			int dot=0;
 			while(1)
 			{
@@ -817,7 +817,7 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 	    }
 	    case VALUE:
 	    {
-		register Namval_t *np = (Namval_t*)(lvalue->value);
+		Namval_t *np = (Namval_t*)(lvalue->value);
 		Namarr_t *ap;
 		if(sh_isoption(shp,SH_NOEXEC))
 			return(0);
@@ -896,12 +896,12 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
 	return(r);
 }
 
-Sfdouble_t sh_arith(Shell_t *shp,register const char *str)
+Sfdouble_t sh_arith(Shell_t *shp,const char *str)
 {
 	return(sh_strnum(shp, str, (char**)0, 1));
 }
 
-void	*sh_arithcomp(Shell_t *shp,register char *str)
+void	*sh_arithcomp(Shell_t *shp,char *str)
 {
 	const char *ptr = str;
 	Arith_t *ep;
@@ -916,9 +916,9 @@ void	*sh_arithcomp(Shell_t *shp,register char *str)
  * ptr is set to the last character processed
  * if mode>0, an error will be fatal with value <mode>
  */
-Sfdouble_t sh_strnum_20120720(Shell_t *shp,register const char *str, char** ptr, int mode)
+Sfdouble_t sh_strnum_20120720(Shell_t *shp,const char *str, char** ptr, int mode)
 {
-	register Sfdouble_t d;
+	Sfdouble_t d;
 	char *last;
 	if(*str==0)
 	{
@@ -946,7 +946,7 @@ Sfdouble_t sh_strnum_20120720(Shell_t *shp,register const char *str, char** ptr,
 }
 
 #undef sh_strnum
-Sfdouble_t sh_strnum(register const char *str, char** ptr, int mode)
+Sfdouble_t sh_strnum(const char *str, char** ptr, int mode)
 {
 	return(sh_strnum_20120720(sh_getinterp(),str,ptr,mode));
 }

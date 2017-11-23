@@ -153,7 +153,7 @@ static const char bellchr[] = "\a";	/* bell char */
  */
 int tty_check(int fd)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	struct termios tty;
 	ep->e_savefd = -1;
 	return(tty_get(fd,&tty)==0);
@@ -165,9 +165,9 @@ int tty_check(int fd)
  *   is called again without an intervening tty_set()
  */
 
-int tty_get(register int fd, register struct termios *tty)
+int tty_get(int fd, struct termios *tty)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	if(fd == ep->e_savefd)
 		*tty = ep->e_savetty;
 	else
@@ -195,7 +195,7 @@ int tty_get(register int fd, register struct termios *tty)
 
 int tty_set(int fd, int action, struct termios *tty)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	if(fd >=0)
 	{
 #ifdef future
@@ -221,9 +221,9 @@ int tty_set(int fd, int action, struct termios *tty)
  *
 }*/
 
-void tty_cooked(register int fd)
+void tty_cooked(int fd)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	if(ep->sh->st.trap[SH_KEYTRAP] && savelex)
 		memcpy(ep->sh->lex_context,savelex,ep->sh->lexsize);
 	ep->e_keytrap = 0;
@@ -256,13 +256,13 @@ void tty_cooked(register int fd)
  *
 }*/
 
-int tty_raw(register int fd, int echomode)
+int tty_raw(int fd, int echomode)
 {
 	int echo = echomode;
 #ifdef L_MASK
 	struct ltchars lchars;
 #endif	/* L_MASK */
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	if(ep->e_raw==RAWMODE)
 		return(echo?-1:0);
 	else if(ep->e_raw==ECHOMODE)
@@ -384,9 +384,9 @@ int tty_raw(register int fd, int echomode)
  */
 
 #   ifdef TIOCGETC
-int tty_alt(register int fd)
+int tty_alt(int fd)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	int mask;
 	struct tchars ttychars;
 	switch(ep->e_raw)
@@ -432,9 +432,9 @@ int tty_alt(register int fd)
 #	    define IEXTEN	0
 #	endif /* IEXTEN */
 
-int tty_alt(register int fd)
+int tty_alt(int fd)
 {
-	register Edit_t *ep = (Edit_t*)(shgd->ed_context);
+	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	switch(ep->e_raw)
 	{
 	    case ECHOMODE:
@@ -508,7 +508,7 @@ int tty_alt(register int fd)
 int ed_window(void)
 {
 	int	rows,cols;
-	register char *cp = nv_getval(COLUMNS);
+	char *cp = nv_getval(COLUMNS);
 	if(cp)
 		cols = (int)strtol(cp, (char**)0, 10)-1;
 	else
@@ -532,8 +532,8 @@ int ed_window(void)
 
 void ed_flush(Edit_t *ep)
 {
-	register int n = ep->e_outptr-ep->e_outbase;
-	register int fd = ERRIO;
+	int n = ep->e_outptr-ep->e_outbase;
+	int fd = ERRIO;
 	if(n<=0)
 		return;
 	write(fd,ep->e_outbase,(unsigned)n);
@@ -553,7 +553,7 @@ void ed_ringbell(void)
  * send a carriage return line feed to the terminal
  */
 
-void ed_crlf(register Edit_t *ep)
+void ed_crlf(Edit_t *ep)
 {
 #ifdef cray
 	ed_putchar(ep,'\r');
@@ -580,15 +580,15 @@ void ed_crlf(register Edit_t *ep)
  *	    are not counted as part of the prompt length.
  */
 
-void	ed_setup(register Edit_t *ep, int fd, int reedit)
+void	ed_setup(Edit_t *ep, int fd, int reedit)
 {
 	Shell_t *shp = ep->sh;
-	register char *pp;
-	register char *last, *prev;
+	char *pp;
+	char *last, *prev;
 	char *ppmax;
 	int myquote = 0;
 	size_t n;
-	register int qlen = 1, qwid;
+	int qlen = 1, qwid;
 	char inquote = 0;
 	ep->e_fd = fd;
 	ep->e_multiline = sh_isoption(shp,SH_MULTILINE)!=0;
@@ -621,7 +621,7 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 #endif /* KSHELL */
 	if(shp->gd->hist_ptr)
 	{
-		register History_t *hp = shp->gd->hist_ptr;
+		History_t *hp = shp->gd->hist_ptr;
 		ep->e_hismax = hist_max(hp);
 		ep->e_hismin = hist_min(hp);
 	}
@@ -641,7 +641,7 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 	ppmax = pp+PRSIZE-1;
 	*pp++ = '\r';
 	{
-		register int c;
+		int c;
 		while(prev = last, c = mbchar(last)) switch(c)
 		{
 			case ESC:
@@ -726,7 +726,7 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 	*pp = 0;
 	if(!ep->e_multiline && (ep->e_wsize -= ep->e_plen) < 7)
 	{
-		register int shift = 7-ep->e_wsize;
+		int shift = 7-ep->e_wsize;
 		ep->e_wsize = 7;
 		pp = ep->e_prompt+1;
 		strcpy(pp,pp+shift);
@@ -793,14 +793,14 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
 	}
 }
 
-static void ed_putstring(register Edit_t *ep, const char *str)
+static void ed_putstring(Edit_t *ep, const char *str)
 {
-	register int c;
+	int c;
 	while(c = *str++)
 		ed_putchar(ep,c);
 }
 
-static void ed_nputchar(register Edit_t *ep, int n, int c)
+static void ed_nputchar(Edit_t *ep, int n, int c)
 {
 	while(n-->0)
 		ed_putchar(ep,c);
@@ -817,9 +817,9 @@ static void ed_nputchar(register Edit_t *ep, int n, int c)
  */
 int ed_read(void *context, int fd, char *buff, int size, int reedit)
 {
-	register Edit_t *ep = (Edit_t*)context;
-	register int rv= -1;
-	register int delim = ((ep->e_raw&RAWMODE)?nttyparm.c_cc[VEOL]:'\n');
+	Edit_t *ep = (Edit_t*)context;
+	int rv= -1;
+	int delim = ((ep->e_raw&RAWMODE)?nttyparm.c_cc[VEOL]:'\n');
 	Shell_t *shp = ep->sh;
 	int mode = -1;
 	int (*waitevent)(int,long,int) = shp->gd->waitevent;
@@ -939,9 +939,9 @@ done:
  *    onto the stack so that it can be checked for KEYTRAP
  * putstack() returns 1 except when in the middle of a multi-byte char
  */
-static int putstack(Edit_t *ep,char string[], register int nbyte, int type) 
+static int putstack(Edit_t *ep,char string[], int nbyte, int type) 
 {
-	register int c;
+	int c;
 #if SHOPT_MULTIBYTE
 	char *endp, *p=string;
 	int size, offset = ep->e_lookahead + nbyte;
@@ -1037,9 +1037,9 @@ static int putstack(Edit_t *ep,char string[], register int nbyte, int type)
  *   1		edit keys not mapped
  *   2		Next key is literal
  */
-int ed_getchar(register Edit_t *ep,int mode)
+int ed_getchar(Edit_t *ep,int mode)
 {
-	register int n, c;
+	int n, c;
 	char readin[LOOKAHEAD+1];
 	if(!ep->e_lookahead)
 	{
@@ -1112,7 +1112,7 @@ int ed_getchar(register Edit_t *ep,int mode)
 	return(c);
 }
 
-void ed_ungetchar(Edit_t *ep,register int c)
+void ed_ungetchar(Edit_t *ep,int c)
 {
 	if (ep->e_lookahead < LOOKAHEAD)
 		ep->e_lbuf[ep->e_lookahead++] = c;
@@ -1123,11 +1123,11 @@ void ed_ungetchar(Edit_t *ep,register int c)
  * put a character into the output buffer
  */
 
-void	ed_putchar(register Edit_t *ep,register int c)
+void	ed_putchar(Edit_t *ep,int c)
 {
 	char buf[8];
-	register char *dp = ep->e_outptr;
-	register int i,size=1;
+	char *dp = ep->e_outptr;
+	int i,size=1;
 	if(!dp)
 		return;
 	buf[0] = c;
@@ -1166,8 +1166,8 @@ void	ed_putchar(register Edit_t *ep,register int c)
  */
 Edpos_t ed_curpos(Edit_t *ep,genchar *phys, int off, int cur, Edpos_t curpos)
 {
-	register genchar *sp=phys;
-	register int c=1, col=ep->e_plen;
+	genchar *sp=phys;
+	int c=1, col=ep->e_plen;
 	Edpos_t pos;
 #if SHOPT_MULTIBYTE
 	char p[16];
@@ -1209,10 +1209,10 @@ Edpos_t ed_curpos(Edit_t *ep,genchar *phys, int off, int cur, Edpos_t curpos)
 	return(pos);
 }
 
-int ed_setcursor(register Edit_t *ep,genchar *physical,register int old,register int new,int first)
+int ed_setcursor(Edit_t *ep,genchar *physical,int old,int new,int first)
 {
 	static int oldline;
-	register int delta;
+	int delta;
 	int clear = 0;
 	Edpos_t newpos;
 
@@ -1314,9 +1314,9 @@ int ed_setcursor(register Edit_t *ep,genchar *physical,register int old,register
  */
 int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int poff)
 {
-	register genchar *sp = virt;
-	register genchar *dp = phys;
-	register int c;
+	genchar *sp = virt;
+	genchar *dp = phys;
+	int c;
 	genchar *curp = sp + cur;
 	genchar *dpmax = phys+MAXLINE;
 	int d, r;
@@ -1384,9 +1384,9 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 
 int	ed_internal(const char *src, genchar *dest)
 {
-	register const unsigned char *cp = (unsigned char *)src;
-	register int c;
-	register wchar_t *dp = (wchar_t*)dest;
+	const unsigned char *cp = (unsigned char *)src;
+	int c;
+	wchar_t *dp = (wchar_t*)dest;
 	if(dest == (genchar*)roundof(cp-(unsigned char*)0,sizeof(genchar)))
 	{
 		genchar buffer[MAXLINE];
@@ -1408,9 +1408,9 @@ int	ed_internal(const char *src, genchar *dest)
 
 int	ed_external(const genchar *src, char *dest)
 {
-	register genchar wc;
-	register int c,size;
-	register char *dp = dest;
+	genchar wc;
+	int c,size;
+	char *dp = dest;
 	char *dpmax = dp+sizeof(genchar)*MAXLINE-2;
 	if((char*)src == dp)
 	{
@@ -1453,7 +1453,7 @@ void	ed_gencpy(genchar *dp,const genchar *sp)
  * copy at most <n> items from <sp> to <dp>
  */
 
-void	ed_genncpy(register genchar *dp,register const genchar *sp, int n)
+void	ed_genncpy(genchar *dp,const genchar *sp, int n)
 {
 	dp = (genchar*)roundof((char*)dp-(char*)0,sizeof(genchar));
 	sp = (const genchar*)roundof((char*)sp-(char*)0,sizeof(genchar));
@@ -1465,9 +1465,9 @@ void	ed_genncpy(register genchar *dp,register const genchar *sp, int n)
  * find the string length of <str>
  */
 
-int	ed_genlen(register const genchar *str)
+int	ed_genlen(const genchar *str)
 {
-	register const genchar *sp = str;
+	const genchar *sp = str;
 	sp = (const genchar*)roundof((char*)sp-(char*)0,sizeof(genchar));
 	while(*sp++);
 	return(sp-str-1);
@@ -1477,7 +1477,7 @@ int	ed_genlen(register const genchar *str)
 /*
  * returns 1 when <n> bytes starting at <a> and <b> are equal
  */
-static int compare(register const char *a,register const char *b,register int n)
+static int compare(const char *a,const char *b,int n)
 {
 	while(n-->0)
 	{
@@ -1493,9 +1493,9 @@ static int compare(register const char *a,register const char *b,register int n)
  * Execute keyboard trap on given buffer <inbuff> of given size <isize>
  * <mode> < 0 for vi insert mode
  */
-static int keytrap(Edit_t *ep,char *inbuff,register int insize, int bufsize, int mode)
+static int keytrap(Edit_t *ep,char *inbuff,int insize, int bufsize, int mode)
 {
-	register char *cp;
+	char *cp;
 	int savexit;
 	Shell_t *shp = ep->sh;
 #if SHOPT_MULTIBYTE

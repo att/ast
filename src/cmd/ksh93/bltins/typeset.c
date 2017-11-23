@@ -88,7 +88,7 @@ static Namval_t *load_class(const char *name)
 #endif
 int    b_readonly(int argc,char *argv[],Shbltin_t *context)
 {
-	register int flag;
+	int flag;
 	char *command = argv[0];
 	struct tdata tdata;
 	NOT_USED(argc);
@@ -140,11 +140,11 @@ int    b_readonly(int argc,char *argv[],Shbltin_t *context)
 }
 
 
-int    b_alias(int argc,register char *argv[],Shbltin_t *context)
+int    b_alias(int argc,char *argv[],Shbltin_t *context)
 {
-	register unsigned flag = NV_NOARRAY|NV_NOSCOPE|NV_ASSIGN;
-	register Dt_t *troot;
-	register int n;
+	unsigned flag = NV_NOARRAY|NV_NOSCOPE|NV_ASSIGN;
+	Dt_t *troot;
+	int n;
 	struct tdata tdata;
 	NOT_USED(argc);
 	memset((void*)&tdata,0,sizeof(tdata));
@@ -213,9 +213,9 @@ int    b_alias(int argc,register char *argv[],Shbltin_t *context)
     /* for the dictionary generator */
     int    b_local(int argc,char *argv[],Shbltin_t *context){}
 #endif
-int    b_typeset(int argc,register char *argv[],Shbltin_t *context)
+int    b_typeset(int argc,char *argv[],Shbltin_t *context)
 {
-	register int	n, flag = NV_VARNAME|NV_ASSIGN;
+	int	n, flag = NV_VARNAME|NV_ASSIGN;
 	struct tdata	tdata;
 	const char	*optstring = sh_opttypeset;
 	Namdecl_t 	*ntp = (Namdecl_t*)context->ptr;
@@ -548,9 +548,9 @@ static void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp)
 	}
 }
 
-static int     setall(char **argv,register int flag,Dt_t *troot,struct tdata *tp)
+static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 {
-	register char *name;
+	char *name;
 	char *last = 0;
 	int nvflags=(flag&(NV_ARRAY|NV_NOARRAY|NV_VARNAME|NV_IDENT|NV_ASSIGN|NV_STATIC|NV_MOVE));
 	int r=0, ref=0, comvar=(flag&NV_COMVAR),iarray=(flag&NV_IARRAY);
@@ -579,8 +579,8 @@ static int     setall(char **argv,register int flag,Dt_t *troot,struct tdata *tp
 			nvflags |= (NV_NOREF|NV_NOADD|NV_NOFAIL);
 		while(name = *++argv)
 		{
-			register unsigned newflag;
-			register Namval_t *np;
+			unsigned newflag;
+			Namval_t *np;
 			Namarr_t	*ap;
 			Namval_t	*mp;
 			unsigned curflag;
@@ -938,8 +938,8 @@ static int		maxlib;
 
 int sh_addlib(Shell_t* shp, void* dll, char* name, Pathcomp_t* pp)
 {
-	register int	n;
-	register int	r;
+	int	n;
+	int	r;
 	Libinit_f	initfn;
 	Shbltin_t	*sp = &shp->bltindata;
 
@@ -975,7 +975,7 @@ int sh_addlib(Shell_t* shp, void* dll, char* name, Pathcomp_t* pp)
 
 Shbltin_f sh_getlib(Shell_t* shp, char* sym, Pathcomp_t* pp)
 {
-	register int	n;
+	int	n;
 
 	for (n = 0; n < nlib; n++)
 		if (liblist[n].ino == pp->ino && liblist[n].dev == pp->dev)
@@ -1003,9 +1003,9 @@ Shbltin_f sh_getlib(Shell_t* shp, char* name, Pathcomp_t* pp)
  */
 int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *arg=0, *name;
-	register int n, r=0, flag=0;
-	register Namval_t *np;
+	char *arg=0, *name;
+	int n, r=0, flag=0;
+	Namval_t *np;
 	long dlete=0;
 	struct tdata tdata;
 	Shbltin_f addr;
@@ -1173,7 +1173,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 	return(r);
 }
 
-int    b_set(int argc,register char *argv[],Shbltin_t *context)
+int    b_set(int argc,char *argv[],Shbltin_t *context)
 {
 	Shell_t *shp = context->shp;
 	struct tdata tdata;
@@ -1207,22 +1207,22 @@ int    b_set(int argc,register char *argv[],Shbltin_t *context)
  * Non-existent items being deleted give non-zero exit status
  */
 
-int    b_unalias(int argc,register char *argv[],Shbltin_t *context)
+int    b_unalias(int argc,char *argv[],Shbltin_t *context)
 {
 	Shell_t *shp = context->shp;
 	return(unall(argc,argv,shp->alias_tree,shp));
 }
 
-int    b_unset(int argc,register char *argv[],Shbltin_t *context)
+int    b_unset(int argc,char *argv[],Shbltin_t *context)
 {
 	Shell_t *shp = context->shp;
 	return(unall(argc,argv,shp->var_tree,shp));
 }
 
-static int unall(int argc, char **argv, register Dt_t *troot, Shell_t* shp)
+static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 {
-	register Namval_t *np;
-	register const char *name;
+	Namval_t *np;
+	const char *name;
 	volatile int r;
 	Dt_t	*dp;
 	int nflag=0,all=0,isfun,jmpval;
@@ -1342,9 +1342,9 @@ static int unall(int argc, char **argv, register Dt_t *troot, Shell_t* shp)
  * print out the name and value of a name-value pair <np>
  */
 
-static int print_namval(Sfio_t *file,register Namval_t *np,register int flag, struct tdata *tp)
+static int print_namval(Sfio_t *file,Namval_t *np,int flag, struct tdata *tp)
 {
-	register char *cp;
+	char *cp;
 	int	indent=tp->indent, outname=0, isfun;
 	sh_sigcheck(tp->sh);
 	if(flag)
@@ -1476,9 +1476,9 @@ static void	print_all(Sfio_t *file,Dt_t *root, struct tdata *tp)
 /*
  * print the attributes of name value pair give by <np>
  */
-static void	print_attribute(register Namval_t *np,void *data)
+static void	print_attribute(Namval_t *np,void *data)
 {
-	register struct tdata *dp = (struct tdata*)data;
+	struct tdata *dp = (struct tdata*)data;
 	nv_attribute(np,dp->outfile,dp->prefix,dp->aflag);
 }
 
@@ -1489,9 +1489,9 @@ static void	print_attribute(register Namval_t *np,void *data)
 
 static void print_scan(Sfio_t *file, int flag, Dt_t *root, int option,struct tdata *tp)
 {
-	register char **argv;
-	register Namval_t *np;
-	register int namec;
+	char **argv;
+	Namval_t *np;
+	int namec;
 	Namval_t *onp = 0;
 	char	*name=0;
 	size_t	len;

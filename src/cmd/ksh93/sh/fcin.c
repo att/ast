@@ -36,9 +36,9 @@ Fcin_t _Fcin = {0};
 /*
  * open stream <f> for fast character input
  */
-int	fcfopen(register Sfio_t* f)
+int	fcfopen(Sfio_t* f)
 {
-	register int	n;
+	int	n;
 	char		*buff;
 	Fcin_t		save;
 	errno = 0;
@@ -75,9 +75,9 @@ int	fcfopen(register Sfio_t* f)
  */
 int	fcfill(void)
 {
-	register int		n;
-	register Sfio_t	*f;
-	register unsigned char	*last=_Fcin.fclast, *ptr=_Fcin.fcptr;
+	int		n;
+	Sfio_t	*f;
+	unsigned char	*last=_Fcin.fclast, *ptr=_Fcin.fcptr;
 	if(!(f=fcfile()))
 	{
 		/* see whether pointer has passed null byte */
@@ -113,7 +113,7 @@ int	fcfill(void)
  */
 int fcclose(void)
 {
-	register unsigned char *ptr;
+	unsigned char *ptr;
 	if(_Fcin.fclast==0)
 		return(0);
 	if((ptr=_Fcin.fcptr)>_Fcin.fcbuff && *(ptr-1)==0)
@@ -152,7 +152,7 @@ extern void fcrestore(Fcin_t *fp)
 
 int _fcmbget(short *len)
 {
-	register int		c;
+	int		c;
 	switch(*len = mbsize(_Fcin.fcptr))
 	{
 	    case -1:

@@ -132,7 +132,7 @@ static History_t *hist_ptr;
     
     static int  acctinit(History_t *hp)
     {
-	register char *cp, *acctfile;
+	char *cp, *acctfile;
 	Namval_t *np = nv_search("ACCTFILE",((Shell_t*)hp->histshell)->var_tree,0);
 
 	if(!np || !(acctfile=nv_getval(np)))
@@ -227,13 +227,13 @@ static void hist_touch(void *handle)
 int  sh_histinit(void *sh_context)
 {
 	Shell_t *shp = (Shell_t*)sh_context;
-	register int fd;
-	register History_t *hp;
-	register char *histname;
+	int fd;
+	History_t *hp;
+	char *histname;
 	char *fname=0;
 	int histmask, maxlines, hist_start=0;
-	register char *cp;
-	register off_t hsize = 0;
+	char *cp;
+	off_t hsize = 0;
 
 	if(shgd->hist_ptr=hist_ptr)
 		return(1);
@@ -407,7 +407,7 @@ retry:
  * close the history file and free the space
  */
 
-void hist_close(register History_t *hp)
+void hist_close(History_t *hp)
 {
 	sfclose(hp->histfp);
 #if SHOPT_AUDIT
@@ -433,7 +433,7 @@ void hist_close(register History_t *hp)
 /*
  * check history file format to see if it begins with special byte
  */
-static int hist_check(register int fd)
+static int hist_check(int fd)
 {
 	unsigned char magic[2];
 	lseek(fd,(off_t)0,SEEK_SET);
@@ -457,9 +457,9 @@ static int hist_clean(int fd)
 
 static History_t* hist_trim(History_t *hp, int n)
 {
-	register char *cp;
-	register int incmd=1, c=0;
-	register History_t *hist_new, *hist_old = hp;
+	char *cp;
+	int incmd=1, c=0;
+	History_t *hist_new, *hist_old = hp;
 	char *buff, *endbuff, *tmpname=0;
 	off_t oldp,newp;
 	struct stat statb;
@@ -554,10 +554,10 @@ static History_t* hist_trim(History_t *hp, int n)
 /*
  * position history file at size and find next command number 
  */
-static int hist_nearend(History_t *hp, Sfio_t *iop, register off_t size)
+static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size)
 {
-        register unsigned char *cp, *endbuff;
-        register int n, incmd=1;
+        unsigned char *cp, *endbuff;
+        int n, incmd=1;
         unsigned char *buff, marker[4];
 	if(size <= 2L || sfseek(iop,size,SEEK_SET)<0)
 		goto begin;
@@ -621,11 +621,11 @@ begin:
  * the previous command.
  */
 
-void hist_eof(register History_t *hp)
+void hist_eof(History_t *hp)
 {
-	register char *cp,*first,*endbuff;
-	register int incmd = 0;
-	register off_t count = hp->histcnt;
+	char *cp,*first,*endbuff;
+	int incmd = 0;
+	off_t count = hp->histcnt;
 	int oldind,n,skip=0;
 	off_t last = sfseek(hp->histfp,(off_t)0,SEEK_END);
 	if(last < count)
@@ -747,9 +747,9 @@ again:
  * This routine will cause the previous command to be cancelled
  */
 
-void hist_cancel(register History_t *hp)
+void hist_cancel(History_t *hp)
 {
-	register int c;
+	int c;
 	if(!hp)
 		return;
 	sfputc(hp->histfp,HIST_UNDO);
@@ -764,9 +764,9 @@ void hist_cancel(register History_t *hp)
  * flush the current history command
  */
 
-void hist_flush(register History_t *hp)
+void hist_flush(History_t *hp)
 {
-	register char *buff;
+	char *buff;
 	if(hp)
 	{
 		if(buff=(char*)sfreserve(hp->histfp,0,SF_LOCKR))
@@ -793,15 +793,15 @@ void hist_flush(register History_t *hp)
  */
 
 #ifdef SF_BUFCONST
-static ssize_t hist_write(Sfio_t *iop,const void *buff,register size_t insize,Sfdisc_t* handle)
+static ssize_t hist_write(Sfio_t *iop,const void *buff,size_t insize,Sfdisc_t* handle)
 #else
-static int hist_write(Sfio_t *iop,const void *buff,register int insize,Sfdisc_t* handle)
+static int hist_write(Sfio_t *iop,const void *buff,int insize,Sfdisc_t* handle)
 #endif
 {
-	register History_t *hp = (History_t*)handle;
-	register char *bufptr = ((char*)buff)+insize;
-	register int c,size = insize;
-	register off_t cur;
+	History_t *hp = (History_t*)handle;
+	char *bufptr = ((char*)buff)+insize;
+	int c,size = insize;
+	off_t cur;
 	Shell_t *shp = hp->histshell;
 	int saved=0;
 	char saveptr[HIST_MARKSZ];
@@ -886,7 +886,7 @@ static int hist_write(Sfio_t *iop,const void *buff,register int insize,Sfdisc_t*
  * The buffer must be large enough to hold HIST_MARKSZ chars
  */
 
-static void hist_marker(register char *buff,register long cmdno)
+static void hist_marker(char *buff,long cmdno)
 {
 	*buff++ = HIST_CMDNO;
 	*buff++ = 0;
@@ -899,7 +899,7 @@ static void hist_marker(register char *buff,register long cmdno)
 /*
  * return byte offset in history file for command <n>
  */
-off_t hist_tell(register History_t *hp, int n)
+off_t hist_tell(History_t *hp, int n)
 {
 	return(hp->histcmds[hist_ind(hp,n)]);
 }
@@ -907,7 +907,7 @@ off_t hist_tell(register History_t *hp, int n)
 /*
  * seek to the position of command <n>
  */
-off_t hist_seek(register History_t *hp, int n)
+off_t hist_seek(History_t *hp, int n)
 {
 	return(sfseek(hp->histfp,hp->histcmds[hist_ind(hp,n)],SEEK_SET));
 }
@@ -918,10 +918,10 @@ off_t hist_seek(register History_t *hp, int n)
  * each new-line character is replaced with string <nl>.
  */
 
-void hist_list(register History_t *hp,Sfio_t *outfile, off_t offset,int last, char *nl)
+void hist_list(History_t *hp,Sfio_t *outfile, off_t offset,int last, char *nl)
 {
-	register int oldc=0;
-	register int c;
+	int oldc=0;
+	int c;
 	if(offset<0 || !hp)
 	{
 		sfputr(outfile,sh_translate(e_unknown),'\n');
@@ -949,9 +949,9 @@ void hist_list(register History_t *hp,Sfio_t *outfile, off_t offset,int last, ch
  * direction < 1 for backwards search
 */
 
-Histloc_t hist_find(register History_t*hp,char *string,register int index1,int flag,int direction)
+Histloc_t hist_find(History_t*hp,char *string,int index1,int flag,int direction)
 {
-	register int index2;
+	int index2;
 	off_t offset;
 	int *coffset=0;
 	Histloc_t location;
@@ -1009,10 +1009,10 @@ Histloc_t hist_find(register History_t*hp,char *string,register int index1,int f
  * returns the line number of the match if successful, otherwise -1
  */
 
-int hist_match(register History_t *hp,off_t offset,char *string,int *coffset)
+int hist_match(History_t *hp,off_t offset,char *string,int *coffset)
 {
-	register unsigned char *first, *cp;
-	register int m,n,c=1,line=0;
+	unsigned char *first, *cp;
+	int m,n,c=1,line=0;
 #if SHOPT_MULTIBYTE
 	mbinit();
 #endif /* SHOPT_MULTIBYTE */
@@ -1055,10 +1055,10 @@ int hist_match(register History_t *hp,off_t offset,char *string,int *coffset)
 
 int hist_copy(char *s1,int size,int command,int line)
 {
-	register int c;
-	register History_t *hp = shgd->hist_ptr;
-	register int count = 0;
-	register char *s1max = s1+size;
+	int c;
+	History_t *hp = shgd->hist_ptr;
+	int count = 0;
+	char *s1max = s1+size;
 	if(!hp)
 		return(-1);
 	hist_seek(hp,command);
@@ -1097,10 +1097,10 @@ int hist_copy(char *s1,int size,int command,int line)
 
 char *hist_word(char *string,int size,int word)
 {
-	register int c;
-	register char *s1 = string;
-	register unsigned char *cp = (unsigned char*)s1;
-	register int flag = 0;
+	int c;
+	char *s1 = string;
+	unsigned char *cp = (unsigned char*)s1;
+	int flag = 0;
 	History_t *hp = hist_ptr;
 	if(!hp)
 		return(NIL(char*));
@@ -1134,7 +1134,7 @@ char *hist_word(char *string,int size,int word)
  * compute the new command and line number.
  */
 
-Histloc_t hist_locate(History_t *hp,register int command,register int line,int lines)
+Histloc_t hist_locate(History_t *hp,int command,int line,int lines)
 {
 	Histloc_t next;
 	line += lines;
@@ -1145,7 +1145,7 @@ Histloc_t hist_locate(History_t *hp,register int command,register int line,int l
 	}
 	if(lines > 0)
 	{
-		register int count;
+		int count;
 		while(command <= hp->histind)
 		{
 			count = hist_copy(NIL(char*),0, command,-1);
@@ -1157,7 +1157,7 @@ Histloc_t hist_locate(History_t *hp,register int command,register int line,int l
 	}
 	else
 	{
-		register int least = (int)hp->histind-hp->histsize;
+		int least = (int)hp->histind-hp->histsize;
 		while(1)
 		{
 			if(line >=0)
@@ -1184,7 +1184,7 @@ static int hist_exceptf(Sfio_t* fp, int type, void *data, Sfdisc_t *handle)
 static int hist_exceptf(Sfio_t* fp, int type, Sfdisc_t *handle)
 #endif
 {
-	register int newfd,oldfd;
+	int newfd,oldfd;
 	History_t *hp = (History_t*)handle;
 	if(type==SF_WRITE)
 	{
@@ -1200,7 +1200,7 @@ static int hist_exceptf(Sfio_t* fp, int type, Sfdisc_t *handle)
 			close(newfd);
 			if(lseek(oldfd,(off_t)0,SEEK_END) < hp->histcnt)
 			{
-				register int index = hp->histind;
+				int index = hp->histind;
 				lseek(oldfd,(off_t)2,SEEK_SET);
 				hp->histcnt = 2;
 				hp->histind = 1;
