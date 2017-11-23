@@ -32,10 +32,10 @@
 #include <ast.h>
 
 char*
-fmtnum(register unsigned long n, int m)
+fmtnum(unsigned long n, int m)
 {
-	register int		i;
-	register unsigned long	r;
+	int		i;
+	unsigned long	r;
 	char*			buf;
 	int			z;
 

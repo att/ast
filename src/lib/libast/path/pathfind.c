@@ -53,7 +53,7 @@ static struct				/* directory list state		*/
 int
 pathinclude(const char* dir)
 {
-	register Dir_t*	dp;
+	Dir_t*	dp;
 	struct stat	st;
 
 	if (dir && *dir && !streq(dir, ".") && directory(dir, &st))
@@ -84,8 +84,8 @@ pathinclude(const char* dir)
 char*
 pathfind(const char* name, const char* lib, const char* type, char* buf, size_t size)
 {
-	register Dir_t*		dp;
-	register char*		s;
+	Dir_t*		dp;
+	char*		s;
 	char			tmp[PATH_MAX];
 	struct stat		st;
 

@@ -59,9 +59,9 @@ typedef struct Id_s
 char*
 fmtgid(int gid)
 {
-	register Id_t*		ip;
-	register char*		name;
-	register struct group*	gr;
+	Id_t*		ip;
+	char*		name;
+	struct group*	gr;
 	int			z;
 
 	static Dt_t*		dict;

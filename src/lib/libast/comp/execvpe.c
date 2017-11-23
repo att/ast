@@ -45,7 +45,7 @@ __EXPORT__ int execvpe(const char*, char* const[], char* const[]);
 extern int
 execvpe(const char* name, char* const argv[], char* const envv[])
 {
-	register const char*	path = name;
+	const char*	path = name;
 	char			buffer[PATH_MAX];
 
 	if (*path != '/' && !(path = pathpath(name, NULL, PATH_REGULAR|PATH_EXECUTE, buffer, sizeof(buffer))))
@@ -53,9 +53,9 @@ execvpe(const char* name, char* const argv[], char* const envv[])
 	execve(path, argv, envv);
 	if (errno == ENOEXEC)
 	{
-		register char**	newargv;
-		register char**	ov;
-		register char**	nv;
+		char**	newargv;
+		char**	ov;
+		char**	nv;
 
 		for (ov = (char**)argv; *ov++;);
 		if (newargv = newof(0, char*, ov + 1 - (char**)argv, 0))

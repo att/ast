@@ -31,7 +31,7 @@
 #include <ast.h>
 
 char*
-strtape(register const char* s, register char** e)
+strtape(const char* s, char** e)
 {
 	int		mtunit = '0';
 	int		mtdensity = 0;

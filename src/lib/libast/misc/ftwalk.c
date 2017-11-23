@@ -52,10 +52,10 @@ ftscompare(Ftw_t* const* pf1, Ftw_t* const* pf2)
 int
 ftwalk(const char* path, int (*userf)(Ftw_t*), int flags, int (*comparf)(Ftw_t*, Ftw_t*))
 {
-	register FTS*		f;
-	register FTSENT*	e;
-	register int		children;
-	register int		rv;
+	FTS*		f;
+	FTSENT*	e;
+	int		children;
+	int		rv;
 	int			oi;
 	int			ns;
 	int			os;

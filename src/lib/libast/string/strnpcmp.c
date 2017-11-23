@@ -28,9 +28,9 @@
  */
 
 int
-strnpcmp(register const char* a, register const char* b, size_t n)
+strnpcmp(const char* a, const char* b, size_t n)
 {
-	register const char*	e;
+	const char*	e;
 
 	e = a + n;
 	for (;;)

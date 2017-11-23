@@ -45,10 +45,10 @@ _vm_open(void)
 }
 
 int
-_vm_close(register Vmalloc_t* vp)
+_vm_close(Vmalloc_t* vp)
 {
-	register Vmchunk_t*	cp;
-	register Vmchunk_t*	np;
+	Vmchunk_t*	cp;
+	Vmchunk_t*	np;
 
 	if (!vp)
 		return -1;
@@ -63,7 +63,7 @@ _vm_close(register Vmalloc_t* vp)
 }
 
 void*
-_vm_resize(register Vmalloc_t* vp, void* o, unsigned long size)
+_vm_resize(Vmalloc_t* vp, void* o, unsigned long size)
 {
 	char*		p;
 	unsigned long	n;

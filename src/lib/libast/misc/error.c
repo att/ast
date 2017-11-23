@@ -129,7 +129,7 @@ static const Namval_t		options[] =
  */
 
 static int
-setopt(void* a, const void* p, register int n, register const char* v)
+setopt(void* a, const void* p, int n, const char* v)
 {
 	NoP(a);
 	if (p)
@@ -238,18 +238,18 @@ setopt(void* a, const void* p, register int n, register const char* v)
  */
 
 static void
-print(register Sfio_t* sp, register char* name, char* delim)
+print(Sfio_t* sp, char* name, char* delim)
 {
 	if (mbwide())
 		sfputr(sp, name, -1);
 	else
 	{
 #if CC_NATIVE != CC_ASCII
-		register int		c;
-		register unsigned char*	n2a;
-		register unsigned char*	a2n;
-		register int		aa;
-		register int		as;
+		int		c;
+		unsigned char*	n2a;
+		unsigned char*	a2n;
+		int		aa;
+		int		as;
 
 		n2a = ccmap(CC_NATIVE, CC_ASCII);
 		a2n = ccmap(CC_ASCII, CC_NATIVE);
@@ -272,7 +272,7 @@ print(register Sfio_t* sp, register char* name, char* delim)
 			sfputc(sp, c);
 		}
 #else
-		register int		c;
+		int		c;
 
 		while (c = *name++)
 		{
@@ -301,7 +301,7 @@ print(register Sfio_t* sp, register char* name, char* delim)
 #define CONTEXT(f,p)	(((f)&ERROR_PUSH)?((Error_context_t*)&(p)->context->context):((Error_context_t*)(p)))
 
 static void
-context(register Sfio_t* sp, register Error_context_t* cp)
+context(Sfio_t* sp, Error_context_t* cp)
 {
 	if (cp->context)
 		context(sp, CONTEXT(cp->flags, cp->context));
@@ -354,7 +354,7 @@ error(int level, ...)
 void
 errorv(const char* id, int level, va_list ap)
 {
-	register int	n;
+	int	n;
 	int		fd;
 	int		flags;
 	char*		s;

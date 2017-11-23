@@ -46,9 +46,9 @@
 char**
 vecload(char* buf)
 {
-	register char*	s;
-	register int	n;
-	register char**	p;
+	char*	s;
+	int	n;
+	char**	p;
 	char**		vec;
 
 	vec = 0;

@@ -61,7 +61,7 @@ static State_t	matchstate;
 static void
 flushcache(void)
 {
-	register int		i;
+	int		i;
 
 	for (i = matchstate.size; i--;)
 		if (matchstate.cache[i] && matchstate.cache[i]->keep)
@@ -78,8 +78,8 @@ flushcache(void)
 regex_t*
 regcache(const char* pattern, regflags_t reflags, int* status)
 {
-	register Cache_t*	cp;
-	register int		i;
+	Cache_t*	cp;
+	int		i;
 	char*			s;
 	int			empty;
 	int			unused;

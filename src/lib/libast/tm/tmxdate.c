@@ -70,7 +70,7 @@
  */
 
 static int
-range(register char* s, char** e, char* set, int lo, int hi)
+range(char* s, char** e, char* set, int lo, int hi)
 {
 	int	n;
 	int	m;
@@ -154,11 +154,11 @@ powerize(Tm_t* tm, unsigned long p, unsigned long q, unsigned long u)
  */
 
 Time_t
-tmxdate(register const char* s, char** e, Time_t now)
+tmxdate(const char* s, char** e, Time_t now)
 {
-	register Tm_t*	tm;
-	register long	n;
-	register int	w;
+	Tm_t*	tm;
+	long	n;
+	int	w;
 	unsigned long	set;
 	unsigned long	state;
 	unsigned long	flags;

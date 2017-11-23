@@ -52,16 +52,16 @@
 void*
 strpsearch(const void* tab, size_t num, size_t siz, const char* name, char** next)
 {
-	register char*		lo = (char*)tab;
-	register char*		hi = lo + (num - 1) * siz;
-	register char*		mid;
+	char*		lo = (char*)tab;
+	char*		hi = lo + (num - 1) * siz;
+	char*		mid;
 #if CC_NATIVE != CC_ASCII
-	register unsigned char*	m;
+	unsigned char*	m;
 #endif
-	register unsigned char*	s;
-	register unsigned char*	t;
-	register int		c;
-	register int		v;
+	unsigned char*	s;
+	unsigned char*	t;
+	int		c;
+	int		v;
 	int			sequential = 0;
 
 #if CC_NATIVE != CC_ASCII

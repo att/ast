@@ -50,7 +50,7 @@
 char*
 pathshell(void)
 {
-	register char*	sh;
+	char*	sh;
 	int		ru;
 	int		eu;
 	int		rg;

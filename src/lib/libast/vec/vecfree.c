@@ -38,7 +38,7 @@
  */
 
 void
-vecfree(register char** vec, int retain)
+vecfree(char** vec, int retain)
 {
 	if (vec)
 	{

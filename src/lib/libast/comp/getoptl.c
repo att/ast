@@ -41,9 +41,9 @@ static int			lastoptind;
 static int
 golly(int argc, char* const* argv, const char* optstring, const struct option* longopts, int* longindex, int flags)
 {
-	register char*			s;
-	register const struct option*	o;
-	register int			c;
+	char*			s;
+	const struct option*	o;
+	int			c;
 	char*				t;
 
 	if (!up || optstring != lastoptstring || longopts != lastlongopts)

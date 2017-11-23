@@ -131,15 +131,15 @@ static struct State_s
 
 static Link_t*
 #if defined(__STDC__) || defined(__cplusplus)
-enter(register Table_t* tab, register Link_t* v)
+enter(Table_t* tab, Link_t* v)
 #else
 enter(tab, v)
-register Table_t*	tab;
-register Link_t*	v;
+Table_t*	tab;
+Link_t*	v;
 #endif
 {
-	register Link_t*	x;
-	register Link_t*	p;
+	Link_t*	x;
+	Link_t*	p;
 
 	for (p = 0, x = tab->root; x; p = x, x = x->next)
 		if (!strcmp(x->code, v->code))
@@ -155,14 +155,14 @@ register Link_t*	v;
 
 static Link_t*
 #if defined(__STDC__) || defined(__cplusplus)
-lookup(register Table_t* tab, register char* s)
+lookup(Table_t* tab, char* s)
 #else
 lookup(tab, s)
-register Table_t*	tab;
-register char*		s;
+Table_t*	tab;
+char*		s;
 #endif
 {
-	register Link_t*	x;
+	Link_t*	x;
 
 	for (x = tab->root; x; x = x->next)
 		if (!strcmp(x->code, s))
@@ -172,14 +172,14 @@ register char*		s;
 
 static char*
 #if defined(__STDC__) || defined(__cplusplus)
-copy(char** p, register char* f)
+copy(char** p, char* f)
 #else
 copy(p, f)
 char**		p;
-register char*	f;
+char*	f;
 #endif
 {
-	register char*	t;
+	char*	t;
 	char*		b;
 
 	if (!f)
@@ -201,10 +201,10 @@ char*		p2;
 char*		p3;
 #endif
 {
-	register int	c;
-	register char*	s;
-	register char*	b;
-	register char*	e;
+	int	c;
+	char*	s;
+	char*	b;
+	char*	e;
 	int		i;
 	int		m;
 	int		n;
@@ -262,9 +262,9 @@ int		argc;
 char**		argv;
 #endif
 {
-	register char*		s;
-	register char**		vp;
-	register char**		ve;
+	char*		s;
+	char**		vp;
+	char**		ve;
 	Attribute_t*		ap;
 	Attribute_list_t*	al;
 	Attribute_list_t*	az;

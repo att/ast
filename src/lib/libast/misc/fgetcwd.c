@@ -62,8 +62,8 @@ NoN(fgetcwd)
 char*
 fgetcwd(int fd, char* buf, size_t len)
 {
-	register char*	p;
-	register char*	s;
+	char*	p;
+	char*	s;
 	DIR*		dirp = 0;
 	int		dd;
 	int		f = FS3D_OFF;

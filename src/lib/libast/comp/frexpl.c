@@ -51,7 +51,7 @@ static _ast_fltmax_t	pow2tab[LDBL_MAX_EXP + 1];
 static int
 init(void)
 {
-	register int		x;
+	int		x;
 	_ast_fltmax_t		g;
 
 	g = 1;
@@ -76,8 +76,8 @@ init(void)
 extern _ast_fltmax_t
 frexpl(_ast_fltmax_t f, int* p)
 {
-	register int		k;
-	register int		x;
+	int		k;
+	int		x;
 	_ast_fltmax_t		g;
 
 	INIT();
@@ -144,7 +144,7 @@ frexpl(_ast_fltmax_t f, int* p)
 #undef	ldexpl
 
 extern _ast_fltmax_t
-ldexpl(_ast_fltmax_t f, register int x)
+ldexpl(_ast_fltmax_t f, int x)
 {
 	INIT();
 	if (x < 0)

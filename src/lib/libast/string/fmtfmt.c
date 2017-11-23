@@ -49,7 +49,7 @@
 char*
 fmtfmt(const char* as)
 {
-	register char*	s = (char*)as;
+	char*	s = (char*)as;
 	char*		buf;
 	int		i;
 	int		c;

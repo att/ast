@@ -46,12 +46,12 @@ NoN(strstr)
 #endif
 
 extern char*
-strstr(register const char* s1, register const char* s2)
+strstr(const char* s1, const char* s2)
 {
-	register int		c1;
-	register int		c2;
-	register const char*	t1;
-	register const char*	t2;
+	int		c1;
+	int		c2;
+	const char*	t1;
+	const char*	t2;
 	
 	if (s2)
 	{

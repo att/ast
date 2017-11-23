@@ -34,7 +34,7 @@
  */
 
 static void
-dumpflags(register int flags)
+dumpflags(int flags)
 {
 	if (flags & HASH_ALLOCATE) sfprintf(sfstderr, "allocate ");
 	if (flags & HASH_BUCKET) sfprintf(sfstderr, "bucket ");
@@ -50,10 +50,10 @@ dumpflags(register int flags)
  */
 
 static void
-dumpbucket(register Hash_table_t* tab, int flags)
+dumpbucket(Hash_table_t* tab, int flags)
 {
-	register Hash_bucket_t**	sp;
-	register Hash_bucket_t*		b;
+	Hash_bucket_t**	sp;
+	Hash_bucket_t*		b;
 	Hash_bucket_t**			sx;
 	int				n;
 	unsigned char*			s;
@@ -101,7 +101,7 @@ dumpbucket(register Hash_table_t* tab, int flags)
  */
 
 static void
-dumptable(register Hash_table_t* tab, register int flags)
+dumptable(Hash_table_t* tab, int flags)
 {
 	Hash_table_t*	scope;
 	int		level;
@@ -131,9 +131,9 @@ dumptable(register Hash_table_t* tab, register int flags)
  */
 
 static void
-dumproot(register Hash_root_t* root, register int flags)
+dumproot(Hash_root_t* root, int flags)
 {
-	register Hash_table_t*	tab;
+	Hash_table_t*	tab;
 
 	sfprintf(sfstderr, "    root\n");
 	sfprintf(sfstderr, "        address:     0x%08lx\n", (unsigned long)root);
@@ -161,9 +161,9 @@ dumproot(register Hash_root_t* root, register int flags)
  */
 
 void
-hashdump(register Hash_table_t* tab, int flags)
+hashdump(Hash_table_t* tab, int flags)
 {
-	register Hash_root_t*	root;
+	Hash_root_t*	root;
 
 	sfprintf(sfstderr, "\nhash table information:\n\n");
 	if (tab) dumproot(tab->root, flags);

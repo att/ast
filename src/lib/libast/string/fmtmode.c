@@ -31,10 +31,10 @@
 #include "modelib.h"
 
 char*
-fmtmode(register int mode, int external)
+fmtmode(int mode, int external)
 {
-	register char*		s;
-	register struct modeop*	p;
+	char*		s;
+	struct modeop*	p;
 	char*			buf;
 
 	if (!external)

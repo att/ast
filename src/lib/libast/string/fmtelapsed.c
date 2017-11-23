@@ -29,9 +29,9 @@
 #include <ast.h>
 
 char*
-fmtelapsed(register unsigned long u, register int n)
+fmtelapsed(unsigned long u, int n)
 {
-	register unsigned long	t;
+	unsigned long	t;
 	char*			buf;
 	int			z;
 

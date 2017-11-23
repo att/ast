@@ -63,7 +63,7 @@ __STDPP__directive pragma pp:nohide ioctl sleep
 static int		ttctl(int, int, void*);
 
 void
-astwinsize(int fd, register int* rows, register int* cols)
+astwinsize(int fd, int* rows, int* cols)
 {
 #ifdef	TIOCGWINSZ
 #define NEED_ttctl
@@ -115,9 +115,9 @@ astwinsize(int fd, register int* rows, register int* cols)
  */
 
 static int
-ttctl(register int fd, int op, void* tt)
+ttctl(int fd, int op, void* tt)
 {
-	register int	v;
+	int	v;
 
 	if (fd < 0)
 	{

@@ -35,10 +35,10 @@ NoN(memchr)
  */
 
 void*
-memchr(const void* asp, register int c, size_t n)
+memchr(const void* asp, int c, size_t n)
 {
-	register const char*	sp = (char*)asp;
-	register const char*	ep = sp + n;
+	const char*	sp = (char*)asp;
+	const char*	ep = sp + n;
 
 	while (sp < ep)
 		if (*sp++ == c)

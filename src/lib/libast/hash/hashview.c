@@ -42,10 +42,10 @@
 Hash_table_t*
 hashview(Hash_table_t* top, Hash_table_t* bot)
 {
-	register Hash_bucket_t*		b;
-	register Hash_bucket_t*		p;
-	register Hash_bucket_t**	sp;
-	register Hash_bucket_t**	sx;
+	Hash_bucket_t*		b;
+	Hash_bucket_t*		p;
+	Hash_bucket_t**	sp;
+	Hash_bucket_t**	sx;
 
 	if (!top || top->frozen)
 		bot = 0;

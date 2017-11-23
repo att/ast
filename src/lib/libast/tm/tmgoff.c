@@ -42,9 +42,9 @@
  */
 
 int
-tmgoff(register const char* s, char** e, int d)
+tmgoff(const char* s, char** e, int d)
 {
-	register int	n = d;
+	int	n = d;
 	int		east;
 	const char*	t = s;
 

@@ -40,7 +40,7 @@
 #include <ctype.h>
 
 Recfmt_t
-recstr(register const char* s, char** e)
+recstr(const char* s, char** e)
 {
 	char*	t;
 	int	n;

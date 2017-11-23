@@ -43,13 +43,13 @@
  */
 
 int
-strtoip4(register const char* s, char** e, uint32_t* paddr, unsigned char* pbits)
+strtoip4(const char* s, char** e, uint32_t* paddr, unsigned char* pbits)
 {
-	register int		c;
-	register unsigned int	n;
-	register uint32_t	addr;
-	register int		part;
-	register unsigned char	bits;
+	int		c;
+	unsigned int	n;
+	uint32_t	addr;
+	int		part;
+	unsigned char	bits;
 	uint32_t		z;
 	int			old;
 	int			r;

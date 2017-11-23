@@ -30,7 +30,7 @@
 regstat_t*
 regstat(const regex_t* p)
 {
-	register Rex_t*	e;
+	Rex_t*	e;
 
 	p->env->stats.re_flags = p->env->flags;
 	p->env->stats.re_info = 0;

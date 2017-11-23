@@ -46,7 +46,7 @@ strchr(const char* s, int c)
 #else
 
 char*
-strchr(register const char* s, register int c)
+strchr(const char* s, int c)
 {
 	do if (*s == c) return((char*)s); while(*s++);
 	return(0);

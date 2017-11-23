@@ -60,7 +60,7 @@ typedef struct				/* expression handle		*/
  */
 
 static long
-seterror(register Expr_t* ex, char* msg)
+seterror(Expr_t* ex, char* msg)
 {
 	if (!ex->errmsg) ex->errmsg = msg;
 	ex->errchr = ex->nextchr;
@@ -73,11 +73,11 @@ seterror(register Expr_t* ex, char* msg)
  */
 
 static long
-expr(register Expr_t* ex, register int precedence)
+expr(Expr_t* ex, int precedence)
 {
-	register int	c;
-	register long	n;
-	register long	x;
+	int	c;
+	long	n;
+	long	x;
 	char*		pos;
 	int		operand = 1;
 

@@ -36,11 +36,11 @@ NoN(memccpy)
  */
 
 void*
-memccpy(void* as1, const void* as2, register int c, size_t n)
+memccpy(void* as1, const void* as2, int c, size_t n)
 {
-	register char*		s1 = (char*)as1;
-	register const char*	s2 = (char*)as2;
-	register const char*	ep = s2 + n;
+	char*		s1 = (char*)as1;
+	const char*	s2 = (char*)as2;
+	const char*	ep = s2 + n;
 
 	while (s2 < ep)
 		if ((*s1++ = *s2++) == c)

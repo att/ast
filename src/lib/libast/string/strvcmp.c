@@ -29,10 +29,10 @@
  */
 
 int
-strvcmp(register const char* a, register const char* b)
+strvcmp(const char* a, const char* b)
 {
-	register unsigned long	na;
-	register unsigned long	nb;
+	unsigned long	na;
+	unsigned long	nb;
 
 	for (;;)
 	{

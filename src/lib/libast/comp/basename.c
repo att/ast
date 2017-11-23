@@ -30,9 +30,9 @@
 #define extern	__EXPORT__
 #endif
 
-extern char *basename(register char *pathname)
+extern char *basename(char *pathname)
 {
-	register char *first, *last;
+	char *first, *last;
 	for(first=last=pathname; *last; last++);
 	/* back over trailing '/' */
 	if(last>first)

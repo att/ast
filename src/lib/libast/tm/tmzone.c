@@ -47,10 +47,10 @@
  */
 
 Tm_zone_t*
-tmzone(register const char* name, char** end, const char* type, int* dst)
+tmzone(const char* name, char** end, const char* type, int* dst)
 {
-	register Tm_zone_t*	zp;
-	register char*		p;
+	Tm_zone_t*	zp;
+	char*		p;
 	char*			e;
 	int			d;
 

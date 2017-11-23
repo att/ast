@@ -93,7 +93,7 @@ tst	vax_asm note{ register layout ok for vax string operations }end execute{
 	#ifndef vax
 		return absurd = -1;
 	#else
-		register int	r11, r10, r9, r8, r7, r6;
+		int	r11, r10, r9, r8, r7, r6;
 		r11 = r10 = r9 = r8 = r7 = r6 = -1;
 		asm("clrw	r11");
 		asm("clrw	r10");

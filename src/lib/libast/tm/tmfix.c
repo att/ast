@@ -42,10 +42,10 @@
  */
 
 Tm_t*
-tmfix(register Tm_t* tm)
+tmfix(Tm_t* tm)
 {
-	register int	n;
-	register int	w;
+	int	n;
+	int	w;
 	Tm_t*		p;
 	time_t		t;
 

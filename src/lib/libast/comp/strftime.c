@@ -47,7 +47,7 @@ NoN(strftime)
 extern size_t
 strftime(char* buf, size_t len, const char* format, const struct tm* tm)
 {
-	register char*	s;
+	char*	s;
 	time_t		t;
 	Tm_t		tl;
 

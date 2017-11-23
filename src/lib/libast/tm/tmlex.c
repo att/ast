@@ -45,11 +45,11 @@
  */
 
 int
-tmlex(register const char* s, char** e, char** tab, int ntab, char** suf, int nsuf)
+tmlex(const char* s, char** e, char** tab, int ntab, char** suf, int nsuf)
 {
-	register char**	p;
-	register char*	x;
-	register int	n;
+	char**	p;
+	char*	x;
+	int	n;
 
 	for (p = tab, n = ntab; n-- && (x = *p); p++)
 		if (*x && *x != '%' && tmword(s, e, x, suf, nsuf))

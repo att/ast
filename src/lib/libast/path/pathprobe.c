@@ -98,10 +98,10 @@ char*
 pathprobe_20100601(const char* lang, const char* tool, const char* aproc, int op, char* path, size_t pathsize, char* attr, size_t attrsize)
 {
 	char*		proc = (char*)aproc;
-	register char*	p;
-	register char*	k;
-	register char*	x;
-	register char**	ap;
+	char*	p;
+	char*	k;
+	char*	x;
+	char**	ap;
 	int		n;
 	int		v;
 	int		force;

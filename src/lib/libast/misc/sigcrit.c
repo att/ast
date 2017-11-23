@@ -95,7 +95,7 @@ interrupt(int sig)
 int
 sigcritical(int op)
 {
-	register int		i;
+	int		i;
 	static int		region;
 	static int		level;
 #if _lib_sigprocmask

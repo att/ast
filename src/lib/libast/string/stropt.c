@@ -55,10 +55,10 @@
 int
 stropt(const char* as, const void* tab, int siz, int(*f)(void*, const void*, int, const char*), void* a)
 {
-	register int	c;
-	register char*	s;
-	register char*	v;
-	register char*	t;
+	int	c;
+	char*	s;
+	char*	v;
+	char*	t;
 	char**		p;
 	char*		u;
 	char*		x;

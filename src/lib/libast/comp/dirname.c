@@ -30,9 +30,9 @@
 #define extern	__EXPORT__
 #endif
 
-extern char *dirname(register char *pathname)
+extern char *dirname(char *pathname)
 {
-	register char  *last;
+	char  *last;
 	/* go to end of path */
 	for(last=pathname; *last; last++);
 	/* back over trailing '/' */

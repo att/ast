@@ -39,10 +39,10 @@
 void*
 strsearch(const void* tab, size_t num, size_t siz, Strcmp_f comparf, const char* name, void* context)
 {
-	register char*		lo = (char*)tab;
-	register char*		hi = lo + (num - 1) * siz;
-	register char*		mid;
-	register int		v;
+	char*		lo = (char*)tab;
+	char*		hi = lo + (num - 1) * siz;
+	char*		mid;
+	int		v;
 
 	while (lo <= hi)
 	{

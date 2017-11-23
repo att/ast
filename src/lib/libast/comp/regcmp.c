@@ -48,7 +48,7 @@ __DEFINE__(char*, __loc1, 0);
 static void*
 block(void* handle, void* data, size_t size)
 {
-	register Regex_t*	re = (Regex_t*)handle;
+	Regex_t*	re = (Regex_t*)handle;
 
 	if (data || (size = roundof(size, ALIGN_BOUND2)) > (re->buf + re->size - re->cur))
 		return 0;
@@ -60,17 +60,17 @@ block(void* handle, void* data, size_t size)
 char*
 regcmp(const char* pattern, ...)
 {
-	register char*		s;
-	register Regex_t*	re;
-	register size_t		n;
-	register int		c;
-	register int		p;
+	char*		s;
+	Regex_t*	re;
+	size_t		n;
+	int		c;
+	int		p;
 	int			b;
 	int			e;
 	int			i;
 	int			j;
 	int			nsub;
-	register Sfio_t*	sp;
+	Sfio_t*	sp;
 	unsigned char		paren[128];
 	unsigned char		sub[SUB];
 	va_list			ap;
@@ -189,10 +189,10 @@ regcmp(const char* pattern, ...)
 char*
 regex(const char* handle, const char* subject, ...)
 {
-	register Regex_t*	re;
-	register int		n;
-	register int		i;
-	register int		k;
+	Regex_t*	re;
+	int		n;
+	int		i;
+	int		k;
 	char*			sub[SUB + 1];
 	regmatch_t		match[SUB + 1];
 	va_list			ap;

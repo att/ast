@@ -135,8 +135,8 @@ ccmaplist(Ccmap_t* mp)
 int
 ccmapid(const char* name)
 {
-	register const Ccmap_t*	mp;
-	register int		c;
+	const Ccmap_t*	mp;
+	int		c;
 	const Ccmap_t*		bp;
 	int			n;
 	ssize_t			sub[2];
@@ -162,9 +162,9 @@ ccmapid(const char* name)
  */
 
 char*
-ccmapname(register int id)
+ccmapname(int id)
 {
-	register const Ccmap_t*	mp;
+	const Ccmap_t*	mp;
 
 	for (mp = maps; mp->name; mp++)
 		if (id == mp->ccode)

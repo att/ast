@@ -118,7 +118,7 @@ gl_dirclose(glob_t* gp, void* handle)
 static int
 gl_type(glob_t* gp, const char* path, int flags)
 {
-	register int	type;
+	int	type;
 	struct stat	st;
 
 	if ((flags & GLOB_STARSTAR) ? (*gp->gl_lstat)(path, &st) : (*gp->gl_stat)(path, &st))
@@ -180,7 +180,7 @@ gl_nextdir(glob_t* gp, char* dir)
  */
 
 static int
-errorcheck(register glob_t* gp, const char* path)
+errorcheck(glob_t* gp, const char* path)
 {
 	int	r = 1;
 
@@ -198,10 +198,10 @@ errorcheck(register glob_t* gp, const char* path)
  */
 
 static void
-trim(register char* sp, register char* p1, int* n1, register char* p2, int* n2)
+trim(char* sp, char* p1, int* n1, char* p2, int* n2)
 {
-	register char*	dp = sp;
-	register int	c;
+	char*	dp = sp;
+	int	c;
 
 	if (p1)
 		*n1 = 0;
@@ -225,9 +225,9 @@ trim(register char* sp, register char* p1, int* n1, register char* p2, int* n2)
 }
 
 static void
-addmatch(register glob_t* gp, const char* dir, const char* pat, register const char* rescan, char* endslash, int meta)
+addmatch(glob_t* gp, const char* dir, const char* pat, const char* rescan, char* endslash, int meta)
 {
-	register globlist_t*	ap;
+	globlist_t*	ap;
 	int			offset;
 	int			type;
 
@@ -289,11 +289,11 @@ addmatch(register glob_t* gp, const char* dir, const char* pat, register const c
 static void
 glob_dir(glob_t* gp, globlist_t* ap, int re_flags)
 {
-	register char*		rescan;
-	register char*		prefix;
-	register char*		pat;
-	register char*		name;
-	register int		c;
+	char*		rescan;
+	char*		prefix;
+	char*		pat;
+	char*		name;
+	int		c;
 	char*			dirname;
 	void*			dirf;
 	char			first;
@@ -450,7 +450,7 @@ skip:
 		*(restore2 = rescan - 1) = 0;
 	if (rescan && !complete && (gp->gl_flags & GLOB_STARSTAR))
 	{
-		register char*	p = rescan;
+		char*	p = rescan;
 
 		while (p[0] == '*' && p[1] == '*' && (p[2] == '/'  || p[2]==0))
 		{
@@ -570,10 +570,10 @@ skip:
 }
 
 int
-glob(const char* pattern, int flags, int (*errfn)(const char*, int), register glob_t* gp)
+glob(const char* pattern, int flags, int (*errfn)(const char*, int), glob_t* gp)
 {
-	register globlist_t*	ap;
-	register char*		pat;
+	globlist_t*	ap;
+	char*		pat;
 	globlist_t*		top;
 	Stak_t*			oldstak;
 	char**			argv;

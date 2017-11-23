@@ -419,11 +419,11 @@ optstate(Opt_t* p)
  */
 
 static char*
-show(register char* s)
+show(char* s)
 {
-	register int	c;
-	register char*	t;
-	register char*	e;
+	int	c;
+	char*	t;
+	char*	e;
 
 	static char	buf[32];
 
@@ -562,9 +562,9 @@ secname(char* section)
  */
 
 static Push_t*
-pop(register Push_t* psp)
+pop(Push_t* psp)
 {
-	register Push_t*	tsp;
+	Push_t*	tsp;
 
 	while (tsp = psp)
 	{
@@ -579,9 +579,9 @@ pop(register Push_t* psp)
  */
 
 static char*
-next(register char* s, int version)
+next(char* s, int version)
 {
-	register char*	b;
+	char*	b;
 
 	while (*s == '\t' || *s == '\r' || version >= 1 && *s == ' ')
 		s++;
@@ -611,11 +611,11 @@ next(register char* s, int version)
  */
 
 static char*
-skip(register char* s, register int t1, register int t2, register int t3, register int n, register int b, int past, int version)
+skip(char* s, int t1, int t2, int t3, int n, int b, int past, int version)
 {
-	register int	c;
-	register int	on = n;
-	register int	ob = b;
+	int	c;
+	int	on = n;
+	int	ob = b;
 
 	if (version < 1)
 	{
@@ -700,7 +700,7 @@ skip(register char* s, register int t1, register int t2, register int t3, regist
  */
 
 static char*
-nest(register char* s)
+nest(char* s)
 {
 	int	n;
 
@@ -735,8 +735,8 @@ nest(register char* s)
 static int
 match(char* s, char* t, int version, const char* id, const char* catalog)
 {
-	register char*	w;
-	register char*	x;
+	char*	w;
+	char*	x;
 	char*		xw;
 	char*		ww;
 	int		n;
@@ -853,8 +853,8 @@ match(char* s, char* t, int version, const char* id, const char* catalog)
 static void*
 search(const void* tab, size_t num, size_t siz, char* s)
 {
-	register char*	p;
-	register char*	e;
+	char*	p;
+	char*	e;
 
 	for (e = (p = (char*)tab) + num * siz; p < e; p += siz)
 		if (match(s, *((char**)p), -1, NiL, NiL))
@@ -913,10 +913,10 @@ save(const char* ap, size_t az, const char* bp, size_t bz, const char* cp, size_
  */
 
 static char*
-expand(register char* s, register char* e, char** p, Sfio_t* ip, char* id)
+expand(char* s, char* e, char** p, Sfio_t* ip, char* id)
 {
-	register int	c;
-	register char*	b = s;
+	int	c;
+	char*	b = s;
 	int		n;
 
 	n = sfstrtell(ip);
@@ -958,7 +958,7 @@ expand(register char* s, register char* e, char** p, Sfio_t* ip, char* id)
 static void
 initdict(void)
 {
-	register int	n;
+	int	n;
 
 	state.vp = sfstropen();
 	state.msgdisc.key = offsetof(Msg_t, text);
@@ -974,13 +974,13 @@ initdict(void)
  */
 
 static int
-init(register char* s, Optpass_t* p)
+init(char* s, Optpass_t* p)
 {
-	register char*	t;
-	register char*	u;
-	register int	c;
-	register int	a;
-	register int	n;
+	char*	t;
+	char*	u;
+	int	c;
+	int	a;
+	int	n;
 	char*		e;
 	int		l;
 
@@ -1257,7 +1257,7 @@ font(int f, int style, int set)
 static Push_t*
 info(Push_t* psp, char* s, char* e, Sfio_t* ip, char* id)
 {
-	register char*	b;
+	char*	b;
 	int		n;
 	Push_t*		tsp;
 	int		index;
@@ -1347,11 +1347,11 @@ localize(Push_t* psp, char* s, char* e, int term, int n, Sfio_t* ip, int version
  */
 
 static int
-label(register Sfio_t* sp, int sep, register char* s, int about, int z, int level, int style, int f, Sfio_t* ip, int version, char* id, char* catalog)
+label(Sfio_t* sp, int sep, char* s, int about, int z, int level, int style, int f, Sfio_t* ip, int version, char* id, char* catalog)
 {
-	register int	c;
-	register char*	t;
-	register char*	e;
+	int	c;
+	char*	t;
+	char*	e;
 	int		ostyle;
 	int		a;
 	int		i;
@@ -1672,12 +1672,12 @@ label(register Sfio_t* sp, int sep, register char* s, int about, int z, int leve
  */
 
 static void
-args(register Sfio_t* sp, register char* p, register int n, int flags, int style, Sfio_t* ip, int version, char* id, char* catalog)
+args(Sfio_t* sp, char* p, int n, int flags, int style, Sfio_t* ip, int version, char* id, char* catalog)
 {
-	register int	i;
-	register char*	t;
-	register char*	o;
-	register char*	a = 0;
+	int	i;
+	char*	t;
+	char*	o;
+	char*	a = 0;
 	char*		b;
 	int		sep;
 
@@ -1751,7 +1751,7 @@ args(register Sfio_t* sp, register char* p, register int n, int flags, int style
 static int
 item(Sfio_t* sp, char* s, int about, int level, int style, Sfio_t* ip, int version, char* id, char* catalog, int* hflags)
 {
-	register char*	t;
+	char*	t;
 	int		n;
 	int		par;
 
@@ -1859,7 +1859,7 @@ item(Sfio_t* sp, char* s, int about, int level, int style, Sfio_t* ip, int versi
 static char*	textout(Sfio_t*, char*, char*, int, int, int, int, Sfio_t*, int, char*, char*, int*);
 
 static char*
-trace_textout(Sfio_t* sp, register char* p, char* conform, int conformlen, int style, int level, int bump, Sfio_t* ip, int version, char* id, char* catalog, int* hflags, int line)
+trace_textout(Sfio_t* sp, char* p, char* conform, int conformlen, int style, int level, int bump, Sfio_t* ip, int version, char* id, char* catalog, int* hflags, int line)
 {
 	static int	depth = 0;
 
@@ -1872,14 +1872,14 @@ trace_textout(Sfio_t* sp, register char* p, char* conform, int conformlen, int s
 #endif
 
 static char*
-textout(Sfio_t* sp, register char* s, char* conform, int conformlen, int style, int level, int bump, Sfio_t* ip, int version, char* id, char* catalog, int* hflags)
+textout(Sfio_t* sp, char* s, char* conform, int conformlen, int style, int level, int bump, Sfio_t* ip, int version, char* id, char* catalog, int* hflags)
 {
 #if _BLD_DEBUG
 #define textout(sp,s,conform,conformlen,style,level,bump,ip,version,id,catalog,hflags)	trace_textout(sp,s,conform,conformlen,style,level,bump,ip,version,id,catalog,hflags,__LINE__)
 #endif
-	register char*	t;
-	register int	c;
-	register int	n;
+	char*	t;
+	int	c;
+	int	n;
 	char*		w;
 	char*		q;
 	int		a;
@@ -2371,7 +2371,7 @@ textout(Sfio_t* sp, register char* s, char* conform, int conformlen, int style, 
  */
 
 static void
-list(Sfio_t* sp, register const List_t* lp)
+list(Sfio_t* sp, const List_t* lp)
 {
 	sfprintf(sp, "[%c", lp->type);
 	if (lp->name)
@@ -2403,11 +2403,11 @@ list(Sfio_t* sp, register const List_t* lp)
 char*
 opthelp(const char* oopts, const char* what)
 {
-	register Sfio_t*	sp;
-	register Sfio_t*	mp;
-	register int		c;
-	register char*		p;
-	register Indent_t*	ip;
+	Sfio_t*	sp;
+	Sfio_t*	mp;
+	int		c;
+	char*		p;
+	Indent_t*	ip;
 	char*			t;
 	char*			x;
 	char*			w;
@@ -4184,12 +4184,12 @@ optnumber(const char* s, char** t, int* e)
  */
 
 static int
-opterror(register char* p, int err, int version, char* id, char* catalog)
+opterror(char* p, int err, int version, char* id, char* catalog)
 {
-	register Sfio_t*	mp;
-	register Sfio_t*	tp;
-	register char*		s;
-	register int		c;
+	Sfio_t*	mp;
+	Sfio_t*	tp;
+	char*		s;
+	int		c;
 
 	if (opt_info.num != LONG_MIN)
 		opt_info.num = (long)(opt_info.number = 0);
@@ -4301,10 +4301,10 @@ opterror(register char* p, int err, int version, char* id, char* catalog)
  */
 
 int
-optget(register char** argv, const char* oopts)
+optget(char** argv, const char* oopts)
 {
-	register int	c;
-	register char*	s;
+	int	c;
+	char*	s;
 	char*		a;
 	char*		b;
 	char*		e;
@@ -5655,12 +5655,12 @@ optget(register char** argv, const char* oopts)
 int
 optstr(const char* str, const char* opts)
 {
-	register char*		s = (char*)str;
-	register Sfio_t*	mp;
-	register int		c;
-	register int		ql;
-	register int		qr;
-	register int		qc;
+	char*		s = (char*)str;
+	Sfio_t*	mp;
+	int		c;
+	int		ql;
+	int		qr;
+	int		qc;
 	int			v;
 	char*			e;
 

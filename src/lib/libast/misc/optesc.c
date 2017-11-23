@@ -32,10 +32,10 @@
 #include <ctype.h>
 
 int
-optesc(Sfio_t* sp, register const char* s, int esc)
+optesc(Sfio_t* sp, const char* s, int esc)
 {
-	register const char*	m;
-	register int		c;
+	const char*	m;
+	int		c;
 
 	if (*s == '[' && *(s + 1) == '+' && *(s + 2) == '?')
 	{

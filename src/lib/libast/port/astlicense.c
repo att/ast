@@ -207,10 +207,10 @@ typedef struct Notice_s
  */
 
 static int
-lookup(register const Item_t* item, const char* name, int size)
+lookup(const Item_t* item, const char* name, int size)
 {
-	register int	c;
-	register int	i;
+	int	c;
+	int	i;
 
 	c = name[0];
 	for (i = 0; item[i].data; i++)
@@ -225,7 +225,7 @@ lookup(register const Item_t* item, const char* name, int size)
  */
 
 static void
-copy(register Buffer_t* b, register char* s, int n)
+copy(Buffer_t* b, char* s, int n)
 {
 	if (n < 0)
 		n = strlen(s);
@@ -244,11 +244,11 @@ copy(register Buffer_t* b, register char* s, int n)
  */
 
 static void
-comment(Notice_t* notice, register Buffer_t* b, register char* s, register int n, int u)
+comment(Notice_t* notice, Buffer_t* b, char* s, int n, int u)
 {
-	register int	i;
-	register int	m;
-	register int	x;
+	int	i;
+	int	m;
+	int	x;
 	int		cc;
 
 	cc = notice->cc[1];
@@ -293,14 +293,14 @@ comment(Notice_t* notice, register Buffer_t* b, register char* s, register int n
  */
 
 static void
-expand(Notice_t* notice, register Buffer_t* b, const Item_t* item)
+expand(Notice_t* notice, Buffer_t* b, const Item_t* item)
 {
-	register char*	t;
-	register char*	e;
-	register int	q;
-	register char*	x;
-	register char*	z;
-	register int	c;
+	char*	t;
+	char*	e;
+	int	q;
+	char*	x;
+	char*	z;
+	int	c;
 	int		m;
 	int		i;
 	int		k;
@@ -372,10 +372,10 @@ expand(Notice_t* notice, register Buffer_t* b, const Item_t* item)
  */
 
 static void
-copyright(Notice_t* notice, register Buffer_t* b)
+copyright(Notice_t* notice, Buffer_t* b)
 {
-	register char*	x;
-	register char*	t;
+	char*	x;
+	char*	t;
 	time_t		clock;
 
 	copy(b, "Copyright (c) ", -1);
@@ -499,10 +499,10 @@ push(Stack_t* sp, char* file, char* parent, char* info, int size, Buffer_t* buf)
 int
 astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int cc3)
 {
-	register char*	s;
-	register char*	v;
-	register char*	x;
-	register int	c;
+	char*	s;
+	char*	v;
+	char*	x;
+	int	c;
 	int		i;
 	int		h;
 	int		k;

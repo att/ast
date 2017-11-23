@@ -91,7 +91,7 @@ static const Namval_t		options[] =
  */
 
 static int
-setopt(register void* a, register const void* p, register int n, const char* v)
+setopt(void* a, const void* p, int n, const char* v)
 {
 	NoP(v);
 	if (p)
@@ -240,7 +240,7 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 #endif
 #if _use_spawnveg
 	{
-		register Modify_t*	m;
+		Modify_t*	m;
 
 		if (!(m = newof(NiL, Modify_t, 1, 0)))
 			return -1;
@@ -326,8 +326,8 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 static void
 restore(Proc_t* proc)
 {
-	register Modify_t*	m;
-	register Modify_t*	p;
+	Modify_t*	m;
+	Modify_t*	p;
 	int			oerrno;
 
 	NoP(proc);
@@ -399,9 +399,9 @@ restore(Proc_t* proc)
 Proc_t*
 procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 {
-	register Proc_t*	proc = 0;
-	register int		procfd;
-	register char**		p;
+	Proc_t*	proc = 0;
+	int		procfd;
+	char**		p;
 	char**			v;
 	int			i;
 	int			forked = 0;

@@ -122,11 +122,11 @@ const Namval_t		log_severity[] =
  */
 
 static int
-str2inet(register char* s, char* prot, struct sockaddr_in* addr)
+str2inet(char* s, char* prot, struct sockaddr_in* addr)
 {
-	register int	c;
-	register int	v;
-	register int	n = 0;
+	int	c;
+	int	v;
+	int	n = 0;
 	unsigned long	a = 0;
 	unsigned short	p = 0;
 
@@ -250,9 +250,9 @@ sockopen(const char* path)
 void
 sendlog(const char* msg)
 {
-	register char*		s;
-	register Namval_t*	p;
-	register int		n;
+	char*		s;
+	Namval_t*	p;
+	int		n;
 
 	n = msg ? strlen(msg) : 0;
 	for (;;)
@@ -299,8 +299,8 @@ extend(Sfio_t* sp, void* vp, Sffmt_t* dp)
 void
 vsyslog(int priority, const char* format, va_list ap)
 {
-	register int	c;
-	register char*	s;
+	int	c;
+	char*	s;
 	Sfio_t*		sp;
 	Sffmt_t		fmt;
 	char		buf[16];

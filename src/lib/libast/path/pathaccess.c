@@ -47,7 +47,7 @@ pathaccess(char* path, const char* dirs, const char* a, const char* b, int mode)
 #include <ast_api.h>
 
 char*
-pathaccess_20100601(register const char* dirs, const char* a, const char* b, register int mode, register char* path, size_t size)
+pathaccess_20100601(const char* dirs, const char* a, const char* b, int mode, char* path, size_t size)
 {
 	int		sib = a && a[0] == '.' && a[1] == '.' && a[2] == 0;
 	int		sep = ':';

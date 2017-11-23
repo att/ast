@@ -72,10 +72,10 @@ static char	empty[1];
  */
 
 static char*
-lextok(register char* s, register int c, char** p, int* n)
+lextok(char* s, int c, char** p, int* n)
 {
-	register char*	t;
-	register int	q;
+	char*	t;
+	int	q;
 	char*		b;
 	char*		u;
 
@@ -178,10 +178,10 @@ lextok(register char* s, register int c, char** p, int* n)
  */
 
 int
-tokscan(register char* s, char** nxt, const char* fmt, ...)
+tokscan(char* s, char** nxt, const char* fmt, ...)
 {
-	register int	c;
-	register char*	f;
+	int	c;
+	char*	f;
 	int		num = 0;
 	char*		skip = 0;
 	int		q;

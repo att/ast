@@ -30,10 +30,10 @@ NoN(memmove)
 #else
 
 void*
-memmove(void* to, const void* from, register size_t n)
+memmove(void* to, const void* from, size_t n)
 {
-	register char*	out = (char*)to;
-	register char*	in = (char*)from;
+	char*	out = (char*)to;
+	char*	in = (char*)from;
 
 	if (n <= 0)	/* works if size_t is signed or not */
 		;

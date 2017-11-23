@@ -40,10 +40,10 @@
  */
 
 Tm_zone_t*
-tmtype(register const char* s, char** e)
+tmtype(const char* s, char** e)
 {
-	register Tm_zone_t*	zp;
-	register char*		t;
+	Tm_zone_t*	zp;
+	char*		t;
 
 	tmset(tm_info.zone);
 	zp = tm_info.local;

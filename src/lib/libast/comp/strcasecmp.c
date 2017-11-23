@@ -34,11 +34,11 @@ NoN(strcasecmp)
 #undef	strcasecmp
 
 int
-strcasecmp(register const char* a, register const char* b)
+strcasecmp(const char* a, const char* b)
 {
-	register int	ac;
-	register int	bc;
-	register int	d;
+	int	ac;
+	int	bc;
+	int	d;
 
 	for (;;)
 	{
