@@ -52,7 +52,7 @@ USAGE_LICENSE
 int
 b_logname(int argc, char** argv, Shbltin_t* context)
 {
-	register char*	logname;
+	char*	logname;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	for (;;)

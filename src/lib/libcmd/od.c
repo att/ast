@@ -314,7 +314,7 @@ static const Size_t	asize[] =
 static void
 aform(State_t* state, Format_t* fp, Sfio_t* op, unsigned char* u)
 {
-	register int		c = *u;
+	int		c = *u;
 
 	static const char	anames[] =
 		"nulsohstxetxeotenqackbel bs ht nl vt ff cr so si"
@@ -487,7 +487,7 @@ Cform(State_t* state, Format_t* fp, Sfio_t* op, unsigned char* u)
 static void
 mform(State_t* state, Format_t* fp, Sfio_t* op, unsigned char* u)
 {
-	register char*		s;
+	char*		s;
 	char			buf[2];
 
 	switch (buf[0] = ccmapchr(state->map, *u))
@@ -740,12 +740,12 @@ form_long_double(State_t* state, Format_t* fp, Sfio_t* op, unsigned char* u)
  */
 
 static void
-format(State_t* state, register char* t)
+format(State_t* state, char* t)
 {
-	register int		c;
-	register const Type_t*	tp;
-	register const Size_t*	zp;
-	register Format_t*	fp;
+	int		c;
+	const Type_t*	tp;
+	const Size_t*	zp;
+	Format_t*	fp;
 	const Size_t*		xp;
 	uintmax_t		m;
 	int			prec;
@@ -1012,9 +1012,9 @@ init(State_t* state, char*** p)
 static int
 block(State_t* state, Sfio_t* op, char* bp, char* ep, intmax_t base)
 {
-	register Format_t*	fp;
-	register unsigned char*	u;
-	register ssize_t	z;
+	Format_t*	fp;
+	unsigned char*	u;
+	ssize_t	z;
 	unsigned long		n;
 
 	if (!state->verbose)
@@ -1052,7 +1052,7 @@ block(State_t* state, Sfio_t* op, char* bp, char* ep, intmax_t base)
 			{
 				if (state->printable && fp == state->form)
 				{
-					register int	c;
+					int	c;
 					unsigned char*	v;
 					wchar_t		w;
 
@@ -1100,11 +1100,11 @@ block(State_t* state, Sfio_t* op, char* bp, char* ep, intmax_t base)
 static int
 od(State_t* state, char** files)
 {
-	register char*	s;
-	register char*	e;
-	register char*	x;
-	register char*	span = 0;
-	register int	c;
+	char*	s;
+	char*	e;
+	char*	x;
+	char*	span = 0;
+	int	c;
 	Sfio_t*		ip;
 	size_t		n;
 	size_t		m;
@@ -1261,7 +1261,7 @@ od(State_t* state, char** files)
 static int
 optsize(Sfio_t* sp, const Size_t* zp)
 {
-	register int	n;
+	int	n;
 
 	for (n = 0; zp->name; zp++)
 		if (zp->qual && (*zp->qual != zp->name || *(zp->qual + 1)))
@@ -1278,9 +1278,9 @@ optsize(Sfio_t* sp, const Size_t* zp)
 static int
 optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 {
-	register iconv_list_t*	ic;
-	register int		i;
-	register int		n;
+	iconv_list_t*	ic;
+	int		i;
+	int		n;
 
 	n = 0;
 	switch (*s)
@@ -1304,9 +1304,9 @@ optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 int
 b_od(int argc, char** argv, Shbltin_t* context)
 {
-	register int		n;
-	register char*		s;
-	register Format_t*	fp;
+	int		n;
+	char*		s;
+	Format_t*	fp;
 	char*			e;
 	int			per;
 	char			buf[4];

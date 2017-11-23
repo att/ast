@@ -26,31 +26,31 @@
 #include <cmd.h>
 
 int
-b_sha1sum(int argc, register char** argv, Shbltin_t* context)
+b_sha1sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }
 
 int
-b_sha2sum(int argc, register char** argv, Shbltin_t* context)
+b_sha2sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }
 
 int
-b_sha256sum(int argc, register char** argv, Shbltin_t* context)
+b_sha256sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }
 
 int
-b_sha384sum(int argc, register char** argv, Shbltin_t* context)
+b_sha384sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }
 
 int
-b_sha512sum(int argc, register char** argv, Shbltin_t* context)
+b_sha512sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }

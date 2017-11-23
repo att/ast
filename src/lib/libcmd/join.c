@@ -165,7 +165,7 @@ typedef struct Join_s
 } Join_t;
 
 static void
-done(register Join_t* jp)
+done(Join_t* jp)
 {
 	if (jp->file[0].iop && jp->file[0].iop != sfstdin)
 		sfclose(jp->file[0].iop);
@@ -185,8 +185,8 @@ done(register Join_t* jp)
 static Join_t*
 init(void)
 {
-	register Join_t*	jp;
-	register int		i;
+	Join_t*	jp;
+	int		i;
 
 	if (jp = newof(0, Join_t, 1, 0))
 	{
@@ -213,9 +213,9 @@ init(void)
 static int
 getolist(Join_t* jp, const char* first, char** arglist)
 {
-	register const char*	cp = first;
+	const char*	cp = first;
 	char**			argv = arglist;
-	register int		c;
+	int		c;
 	int*			outptr;
 	int*			outmax;
 	int			nfield = NFIELD;
@@ -294,12 +294,12 @@ getolist(Join_t* jp, const char* first, char** arglist)
 static unsigned char*
 getrec(Join_t* jp, int index, int discard)
 {
-	register unsigned char*	sp = jp->state;
-	register File_t*	fp = &jp->file[index];
-	register Field_t*	field = fp->fields;
-	register Field_t*	fieldmax = field + fp->maxfields;
-	register char*		cp;
-	register int		n;
+	unsigned char*	sp = jp->state;
+	File_t*	fp = &jp->file[index];
+	Field_t*	field = fp->fields;
+	Field_t*	fieldmax = field + fp->maxfields;
+	char*		cp;
+	int		n;
 	char*			tp;
 	wchar_t			w;
 
@@ -457,13 +457,13 @@ static unsigned char* u1;
  * print field <n> from file <index>
  */
 static int
-outfield(Join_t* jp, int index, register int n, int last)
+outfield(Join_t* jp, int index, int n, int last)
 {
-	register File_t*	fp = &jp->file[index];
-	register char*		cp;
-	register char*		cpmax;
-	register int		size;
-	register Sfio_t*	iop = jp->outfile;
+	File_t*	fp = &jp->file[index];
+	char*		cp;
+	char*		cpmax;
+	int		size;
+	Sfio_t*	iop = jp->outfile;
 	char*			tp;
 	wchar_t			w;
 
@@ -478,7 +478,7 @@ outfield(Join_t* jp, int index, register int n, int last)
 	{
 		if (cp && fp->spaces)
 		{
-			register unsigned char*	sp = jp->state;
+			unsigned char*	sp = jp->state;
 
 			/*eliminate leading spaces */
 			if (jp->mb)
@@ -549,13 +549,13 @@ static int i1,i2,i3;
 #endif
 
 static int
-outrec(register Join_t* jp, int mode)
+outrec(Join_t* jp, int mode)
 {
-	register File_t*	fp;
-	register int		i;
-	register int		j;
-	register int		k;
-	register int		n;
+	File_t*	fp;
+	int		i;
+	int		j;
+	int		k;
+	int		n;
 	int*			out;
 
 	if (mode < 0 && jp->file[0].hit++)
@@ -631,13 +631,13 @@ outrec(register Join_t* jp, int mode)
 static int
 join(Join_t* jp)
 {
-	register unsigned char*	cp1;
-	register unsigned char*	cp2;
-	register int		n1;
-	register int		n2;
-	register int		n;
-	register int		cmp;
-	register int		same;
+	unsigned char*	cp1;
+	unsigned char*	cp2;
+	int		n1;
+	int		n2;
+	int		n;
+	int		cmp;
+	int		same;
 	int			o2;
 	Sfoff_t			lo = -1;
 	Sfoff_t			hi = -1;
@@ -817,9 +817,9 @@ sfprintf(sfstdout, "[X#%d:%d,%p,%p,%d,%02o,%02o%s]", __LINE__, n, cp1, cp2, cmp,
 int
 b_join(int argc, char** argv, Shbltin_t* context)
 {
-	register int		n;
-	register char*		cp;
-	register Join_t*	jp;
+	int		n;
+	char*		cp;
+	Join_t*	jp;
 	char*			e;
 	wchar_t			w;
 	Mbstate_t		q;

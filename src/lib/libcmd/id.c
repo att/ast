@@ -100,11 +100,11 @@ USAGE_LICENSE
 
 #if _lib_fsid
 static void
-getfsids(Sfio_t* sp, const char* name, int flags, register int lastchar)
+getfsids(Sfio_t* sp, const char* name, int flags, int lastchar)
 {
-	register struct fsg*	fs;
-	register char*		s;
-	register char**		p;
+	struct fsg*	fs;
+	char*		s;
+	char**		p;
 	char**			x;
 
 	if (lastchar)
@@ -123,9 +123,9 @@ getfsids(Sfio_t* sp, const char* name, int flags, register int lastchar)
 				if (flags > 0) x = 0;
 				else
 				{
-					register char**		q;
-					register char*		t;
-					register int		n;
+					char**		q;
+					char*		t;
+					int		n;
 
 					n = 0;
 					q = p;
@@ -191,15 +191,15 @@ putid(Sfio_t* sp, int flags, const char* label, const char* name, long number)
 }
 
 static int
-getids(Sfio_t* sp, const char* name, register int flags)
+getids(Sfio_t* sp, const char* name, int flags)
 {
-	register struct passwd*	pw;
-	register struct group*	grp;
-	register int		i;
-	register int		j;
-	register int		k;
+	struct passwd*	pw;
+	struct group*	grp;
+	int		i;
+	int		j;
+	int		k;
 #if _lib_fsid
-	register struct fsg*	fs;
+	struct fsg*	fs;
 	const char*		fs_name;
 	int			fs_id;
 #endif
@@ -418,8 +418,8 @@ getids(Sfio_t* sp, const char* name, register int flags)
 int
 b_id(int argc, char** argv, Shbltin_t* context)
 {
-	register int	flags = 0;
-	register int	n;
+	int	flags = 0;
+	int	n;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	for (;;)

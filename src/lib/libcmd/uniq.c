@@ -84,8 +84,8 @@ typedef int (*Compare_f)(const char*, const char*, size_t);
 
 static int uniq(Sfio_t *fdin, Sfio_t *fdout, int fields, int chars, int width, int mode, int* all, Compare_f compare)
 {
-	register int	n, f, outsize=0, mb = mbwide();
-	register char	*cp, *ep, *mp, *bufp, *outp;
+	int	n, f, outsize=0, mb = mbwide();
+	char	*cp, *ep, *mp, *bufp, *outp;
 	char		*orecp, *sbufp=0, *outbuff;
 	int		reclen,oreclen= -1,count=0,cwidth=0,sep,next;
 	Mbstate_t	q;
@@ -248,8 +248,8 @@ static int uniq(Sfio_t *fdin, Sfio_t *fdout, int fields, int chars, int width, i
 int
 b_uniq(int argc, char** argv, Shbltin_t* context)
 {
-	register int mode=0;
-	register char *cp;
+	int mode=0;
+	char *cp;
 	int fields=0, chars=0, width=-1;
 	Sfio_t *fpin, *fpout;
 	int* all = 0;

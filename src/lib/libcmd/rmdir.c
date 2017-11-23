@@ -56,9 +56,9 @@ USAGE_LICENSE
 int
 b_rmdir(int argc, char** argv, Shbltin_t* context)
 {
-	register char*	dir;
-	register char*	end;
-	register int	n;
+	char*	dir;
+	char*	end;
+	int	n;
 	int		eflag = 0;
 	int		pflag = 0;
 	int		sflag = 0;

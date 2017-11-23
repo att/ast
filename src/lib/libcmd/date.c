@@ -257,7 +257,7 @@ settime(Shbltin_t* context, const char* cmd, Time_t now, int adjust, int network
  */
 
 static Time_t
-convert(register Fmt_t* f, char* s, Time_t now)
+convert(Fmt_t* f, char* s, Time_t now)
 {
 	char*	t;
 	char*	u;
@@ -274,11 +274,11 @@ convert(register Fmt_t* f, char* s, Time_t now)
 }
 
 int
-b_date(int argc, register char** argv, Shbltin_t* context)
+b_date(int argc, char** argv, Shbltin_t* context)
 {
-	register int	n;
-	register char*	s;
-	register Fmt_t*	f;
+	int	n;
+	char*	s;
+	Fmt_t*	f;
 	char*		t;
 	unsigned long	u;
 	Time_t		now;

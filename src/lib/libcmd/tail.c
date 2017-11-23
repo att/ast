@@ -151,14 +151,14 @@ static const char	header_fmt[] = "\n==> %s <==\n";
  */
 
 static Sfoff_t
-tailpos(register Sfio_t* fp, register Sfoff_t number, int delim)
+tailpos(Sfio_t* fp, Sfoff_t number, int delim)
 {
-	register size_t		n;
-	register Sfoff_t	offset;
-	register Sfoff_t	first;
-	register Sfoff_t	last;
-	register char*		s;
-	register char*		t;
+	size_t		n;
+	Sfoff_t	offset;
+	Sfoff_t	first;
+	Sfoff_t	last;
+	char*		s;
+	char*		t;
 	bool			incomplete;
 	struct stat		st;
 
@@ -212,11 +212,11 @@ tailpos(register Sfio_t* fp, register Sfoff_t number, int delim)
 static void
 pipetail(Sfio_t* infile, Sfio_t* outfile, Sfoff_t number, int delim)
 {
-	register Sfio_t*	out;
-	register Sfoff_t	n;
-	register Sfoff_t	nleft = number;
-	register size_t		a = 2 * SF_BUFSIZE;
-	register int		fno = 0;
+	Sfio_t*	out;
+	Sfoff_t	n;
+	Sfoff_t	nleft = number;
+	size_t		a = 2 * SF_BUFSIZE;
+	int		fno = 0;
 	Sfoff_t			offset[2];
 	Sfio_t*			tmp[2];
 
@@ -360,7 +360,7 @@ init(Tail_t* tp, Sfoff_t number, int delim, int flags, const char** format)
  */
 
 static intmax_t
-num(register const char* s, char** e, int* f, int o)
+num(const char* s, char** e, int* f, int o)
 {
 	intmax_t	number;
 	char*		t;
@@ -413,9 +413,9 @@ num(register const char* s, char** e, int* f, int o)
 int
 b_tail(int argc, char** argv, Shbltin_t* context)
 {
-	register Sfio_t*	ip;
-	register int		n;
-	register int		i;
+	Sfio_t*	ip;
+	int		n;
+	int		i;
 	int			delim;
 	int			flags = HEADERS|LINES;
 	int			blocks = 0;
@@ -432,9 +432,9 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 	ssize_t			z;
 	ssize_t			w;
 	Sfio_t*			op;
-	register Tail_t*	fp;
-	register Tail_t*	pp;
-	register Tail_t*	hp;
+	Tail_t*	fp;
+	Tail_t*	pp;
+	Tail_t*	hp;
 	Tail_t*			files;
 	Tv_t			tv;
 

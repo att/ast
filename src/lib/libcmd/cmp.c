@@ -148,13 +148,13 @@ pretty(Sfio_t *out, int o, int delim, int flags)
 static int
 cmp(const char* file1, Sfio_t* f1, const char* file2, Sfio_t* f2, int flags, Sfoff_t count, Sfoff_t differences)
 {
-	register int		c1;
-	register int		c2;
-	register unsigned char*	p1 = 0;
-	register unsigned char*	p2 = 0;
-	register Sfoff_t	lines = 1;
-	register unsigned char*	e1 = 0;
-	register unsigned char*	e2 = 0;
+	int		c1;
+	int		c2;
+	unsigned char*	p1 = 0;
+	unsigned char*	p2 = 0;
+	Sfoff_t	lines = 1;
+	unsigned char*	e1 = 0;
+	unsigned char*	e2 = 0;
 	Sfoff_t			pos = 0;
 	int			n1 = 0;
 	int			ret = 0;
@@ -258,7 +258,7 @@ cmp(const char* file1, Sfio_t* f1, const char* file2, Sfio_t* f2, int flags, Sfo
 }
 
 int
-b_cmp(int argc, register char** argv, Shbltin_t* context)
+b_cmp(int argc, char** argv, Shbltin_t* context)
 {
 	char*		s;
 	char*		e;

@@ -52,10 +52,10 @@ USAGE_LICENSE
 int
 b_mkfifo(int argc, char** argv, Shbltin_t* context)
 {
-	register char*	arg;
-	register mode_t mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
-	register mode_t	mask = 0;
-	register int	mflag = 0;
+	char*	arg;
+	mode_t mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH;
+	mode_t	mask = 0;
+	int	mflag = 0;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	for (;;)

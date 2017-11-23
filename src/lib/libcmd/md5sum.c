@@ -29,7 +29,7 @@
 #include <cmd.h>
 
 int
-b_md5sum(int argc, register char** argv, Shbltin_t* context)
+b_md5sum(int argc, char** argv, Shbltin_t* context)
 {
 	return b_cksum(argc, argv, context);
 }

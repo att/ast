@@ -143,7 +143,7 @@ struct utsname
 };
 
 int
-uname(register struct utsname* ut)
+uname(struct utsname* ut)
 {
 #ifdef HOSTTYPE
 	char*		sys = 0;
@@ -251,10 +251,10 @@ uname(register struct utsname* ut)
 int
 b_uname(int argc, char** argv, Shbltin_t* context)
 {
-	register long	flags = 0;
-	register int	sep = 0;
-	register int	n;
-	register char*	s;
+	long	flags = 0;
+	int	sep = 0;
+	int	n;
+	char*	s;
 	char*		t;
 	char*		e;
 	char*		sethost = 0;

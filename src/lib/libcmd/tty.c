@@ -56,9 +56,9 @@ USAGE_LICENSE
 int
 b_tty(int argc, char** argv, Shbltin_t* context)
 {
-	register int	sflag = 0;
-	register int	lflag = 0;
-	register char*	tty;
+	int	sflag = 0;
+	int	lflag = 0;
+	char*	tty;
 #if _mac_STWLINE
 	int		n;
 #endif

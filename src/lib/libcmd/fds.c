@@ -155,10 +155,10 @@ static const NV_t	family[] =
 int
 b_fds(int argc, char** argv, Shbltin_t* context)
 {
-	register char*		s;
-	register int		i;
-	register char*		m;
-	register char*		x;
+	char*		s;
+	int		i;
+	char*		m;
+	char*		x;
 	int			flags;
 	int			details;
 	int			open_max;

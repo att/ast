@@ -414,11 +414,11 @@ static Key_t	keys[] =
  */
 
 static char*
-printable(State_t* state, register char* s)
+printable(State_t* state, char* s)
 {
-	register char*	t;
-	register char*	p;
-	register int	c;
+	char*	t;
+	char*	p;
+	int	c;
 	wchar_t		w;
 	Mbstate_t	q;
 
@@ -472,14 +472,14 @@ printable(State_t* state, register char* s)
  */
 
 static int
-key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn)
+key(void* handle, Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn)
 {
 	State_t*		state= (State_t*)handle;
-	register FTSENT*		ent;
-	register struct stat*	st;
-	register char*		s = 0;
-	register Sflong_t	n = 0;
-	register Key_t*		kp;
+	FTSENT*		ent;
+	struct stat*	st;
+	char*		s = 0;
+	Sflong_t	n = 0;
+	Key_t*		kp;
 	Time_t			t;
 
 	static Sfio_t*		mp;
@@ -752,7 +752,7 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 		*ps = s;
 		if (mbwide())
 		{
-			register char*	p;
+			char*	p;
 			wchar_t		w;
 			Mbstate_t	q;
 			int		i;
@@ -803,7 +803,7 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
  */
 
 static void
-pr(State_t* state, FTSENT* ent, register int fill)
+pr(State_t* state, FTSENT* ent, int fill)
 {
 #ifdef S_ISLNK
 	/*
@@ -842,13 +842,13 @@ pr(State_t* state, FTSENT* ent, register int fill)
  */
 
 static void
-col(State_t* state, register FTSENT* ent, int length)
+col(State_t* state, FTSENT* ent, int length)
 {
-	register FTSENT*	p;
-	register int	i;
-	register int	n;
-	register int	files;
-	register char*	s;
+	FTSENT*	p;
+	int	i;
+	int	n;
+	int	files;
+	char*	s;
 	int		w;
 	int		a;
 
@@ -922,7 +922,7 @@ col(State_t* state, register FTSENT* ent, int length)
 		}
 		else
 		{
-			register FTSENT**	x;
+			FTSENT**	x;
 			int			c;
 			int			j;
 			int			k;
@@ -1045,13 +1045,13 @@ col(State_t* state, register FTSENT* ent, int length)
  */
 
 static int
-order_none(register FTSENT* f1, register FTSENT* f2)
+order_none(FTSENT* f1, FTSENT* f2)
 {
 	return 0;
 }
 
 static int
-order_blocks(register FTSENT* f1, register FTSENT* f2)
+order_blocks(FTSENT* f1, FTSENT* f2)
 {
 	if (f1->fts_statp->st_size < f2->fts_statp->st_size)
 		return 1;
@@ -1061,7 +1061,7 @@ order_blocks(register FTSENT* f1, register FTSENT* f2)
 }
 
 static int
-order_atime(register FTSENT* f1, register FTSENT* f2)
+order_atime(FTSENT* f1, FTSENT* f2)
 {
 	Time_t		t1;
 	Time_t		t2;
@@ -1076,7 +1076,7 @@ order_atime(register FTSENT* f1, register FTSENT* f2)
 }
 
 static int
-order_ctime(register FTSENT* f1, register FTSENT* f2)
+order_ctime(FTSENT* f1, FTSENT* f2)
 {
 	Time_t		t1;
 	Time_t		t2;
@@ -1091,7 +1091,7 @@ order_ctime(register FTSENT* f1, register FTSENT* f2)
 }
 
 static int
-order_mtime(register FTSENT* f1, register FTSENT* f2)
+order_mtime(FTSENT* f1, FTSENT* f2)
 {
 	Time_t		t1;
 	Time_t		t2;
@@ -1106,9 +1106,9 @@ order_mtime(register FTSENT* f1, register FTSENT* f2)
 }
 
 static int
-order_extension(register FTSENT* f1, register FTSENT* f2)
+order_extension(FTSENT* f1, FTSENT* f2)
 {
-	register int	n;
+	int	n;
 	char*		x1;
 	char*		x2;
 
@@ -1147,7 +1147,7 @@ order_name(FTSENT* f1, FTSENT* f2)
  */
 
 static int
-order(register FTSENT* const* f1, register FTSENT* const* f2)
+order(FTSENT* const* f1, FTSENT* const* f2)
 {
 	State_t*	state = (State_t*)(*f1)->fts->fts_handle;
 	int		n;
@@ -1171,10 +1171,10 @@ order(register FTSENT* const* f1, register FTSENT* const* f2)
  */
 
 static void
-dir(State_t* state, register FTSENT* ent)
+dir(State_t* state, FTSENT* ent)
 {
-	register FTSENT*	p;
-	register int		length;
+	FTSENT*	p;
+	int		length;
 	int			top = 0;
 
 	state->list.dirlen = ent->fts_namelen;
@@ -1252,7 +1252,7 @@ dir(State_t* state, register FTSENT* ent)
  */
 
 static int
-ls(State_t* state, register FTSENT* ent)
+ls(State_t* state, FTSENT* ent)
 {
 	if (!VISIBLE(state, ent))
 	{
@@ -1317,9 +1317,9 @@ ls(State_t* state, register FTSENT* ent)
 static int
 walk(const char* path, int (*userf)(State_t*, FTSENT*), int flags, int (*comparf)(FTSENT*const*, FTSENT*const*), State_t* state)
 {
-	register FTS*		f;
-	register FTSENT*	e;
-	register int		rv;
+	FTS*		f;
+	FTSENT*	e;
+	int		rv;
 	int			oi;
 	int			ns;
 	int			os;
@@ -1410,10 +1410,10 @@ walk(const char* path, int (*userf)(State_t*, FTSENT*), int flags, int (*comparf
 #define clr(s,f)	(opt_info.num?((s)->lsflags&=~(f)):((s)->lsflags|=(f)))
 
 int
-b_ls(int argc, register char** argv, Shbltin_t* context)
+b_ls(int argc, char** argv, Shbltin_t* context)
 {
-	register int	n;
-	register char*	s;
+	int	n;
+	char*	s;
 	char*		e;
 	FTS*		fts;
 	FTSENT*		ent;

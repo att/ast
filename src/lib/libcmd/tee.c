@@ -70,11 +70,11 @@ typedef struct Tee_s
 static ssize_t
 tee_write(Sfio_t* fp, const void* buf, size_t n, Sfdisc_t* handle)
 {
-	register const char*	bp;
-	register const char*	ep;
-	register int*		hp = ((Tee_t*)handle)->fd;
-	register int		fd = sffileno(fp);
-	register ssize_t	r;
+	const char*	bp;
+	const char*	ep;
+	int*		hp = ((Tee_t*)handle)->fd;
+	int		fd = sffileno(fp);
+	ssize_t	r;
 
 	do
 	{
@@ -91,10 +91,10 @@ tee_write(Sfio_t* fp, const void* buf, size_t n, Sfdisc_t* handle)
 }
 
 static void
-tee_cleanup(register Tee_t* tp)
+tee_cleanup(Tee_t* tp)
 {
-	register int*	hp;
-	register int	n;
+	int*	hp;
+	int	n;
 
 	if (tp)
 	{
@@ -107,12 +107,12 @@ tee_cleanup(register Tee_t* tp)
 }
 
 int
-b_tee(int argc, register char** argv, Shbltin_t* context)
+b_tee(int argc, char** argv, Shbltin_t* context)
 {
-	register Tee_t*		tp = 0;
-	register int		oflag = O_WRONLY|O_TRUNC|O_CREAT|O_BINARY|O_cloexec;
-	register int*		hp;
-	register char*		cp;
+	Tee_t*		tp = 0;
+	int		oflag = O_WRONLY|O_TRUNC|O_CREAT|O_BINARY|O_cloexec;
+	int*		hp;
+	char*		cp;
 	int			line;
 
 	if (argc <= 0)

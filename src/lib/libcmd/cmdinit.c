@@ -29,7 +29,7 @@
 int
 _cmd_init(int argc, char** argv, Shbltin_t* context, const char* catalog, int flags)
 {
-	register char*	cp;
+	char*	cp;
 
 	if (argc <= 0)
 		return -1;

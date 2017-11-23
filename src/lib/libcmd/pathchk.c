@@ -87,7 +87,7 @@ USAGE_LICENSE
  */ 
 static long mypathconf(const char *path, int op)
 {
-	register long			r;
+	long			r;
 
 	static const char* const	ops[] = { "NAME_MAX", "PATH_MAX" };
 
@@ -102,9 +102,9 @@ static long mypathconf(const char *path, int op)
  */
 static int pathchk(char* path, int mode)
 {
-	register char *cp=path, *cpold;
-	register int c;
-	register long r,name_max,path_max;
+	char *cp=path, *cpold;
+	int c;
+	long r,name_max,path_max;
 	char buf[2];
 
 	if(!*path)
@@ -230,8 +230,8 @@ static int pathchk(char* path, int mode)
 int
 b_pathchk(int argc, char** argv, Shbltin_t* context)
 {
-	register int	mode = 0;
-	register char*	s;
+	int	mode = 0;
+	char*	s;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	for (;;)

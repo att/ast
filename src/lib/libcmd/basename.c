@@ -66,10 +66,10 @@ USAGE_LICENSE
 
 #include <cmd.h>
 
-static void namebase(Sfio_t *outfile, register char *pathname, char *suffix)
+static void namebase(Sfio_t *outfile, char *pathname, char *suffix)
 {
-	register char *first, *last;
-	register int n=0;
+	char *first, *last;
+	int n=0;
 	for(first=last=pathname; *last; last++);
 	/* back over trailing '/' */
 	if(last>first)
@@ -99,7 +99,7 @@ static void namebase(Sfio_t *outfile, register char *pathname, char *suffix)
 }
 
 int
-b_basename(int argc, register char** argv, Shbltin_t* context)
+b_basename(int argc, char** argv, Shbltin_t* context)
 {
 	char*	string;
 	char*	suffix = 0;
