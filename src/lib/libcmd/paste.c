@@ -82,11 +82,11 @@ typedef struct Delim_s
  * to <out>
  */
 
-static int paste(int nstream,Sfio_t* streams[],Sfio_t *out, register const char *delim, int dsiz, int dlen, Delim_t* mp)
+static int paste(int nstream,Sfio_t* streams[],Sfio_t *out, const char *delim, int dsiz, int dlen, Delim_t* mp)
 {
-	register const char *cp;
-	register int d, n, i, z, more=1;
-	register Sfio_t *fp;
+	const char *cp;
+	int d, n, i, z, more=1;
+	Sfio_t *fp;
 	do
 	{
 		d = (dlen>0?0:-1);
@@ -126,7 +126,7 @@ static int paste(int nstream,Sfio_t* streams[],Sfio_t *out, register const char 
 			}
 			if(++n<nstream && more && d>=0)
 			{
-				register int c;
+				int c;
 				if(d >= dlen)
 					d = 0;
 				if(mp)
@@ -145,17 +145,17 @@ static int paste(int nstream,Sfio_t* streams[],Sfio_t *out, register const char 
 /*
  * Handles paste -s, for file <in> to file <out> using delimiters <delim>
  */
-static int spaste(Sfio_t *in,register Sfio_t* out,register const char *delim,int dsiz,int dlen,Delim_t* mp)
+static int spaste(Sfio_t *in,Sfio_t* out,const char *delim,int dsiz,int dlen,Delim_t* mp)
 {
-	register const char *cp;
-	register int d=0;
+	const char *cp;
+	int d=0;
 	if((cp = sfgetr(in,'\n',0)) && sfwrite(out,cp,sfvalue(in)-1) < 0)
 		return(-1);
 	while(cp=sfgetr(in, '\n',0)) 
 	{
 		if(dlen)
 		{
-			register int c;
+			int c;
 			if(d >= dlen)
 				d = 0;
 			if(mp)
@@ -174,9 +174,9 @@ static int spaste(Sfio_t *in,register Sfio_t* out,register const char *delim,int
 int
 b_paste(int argc, char** argv, Shbltin_t* context)
 {
-	register int		n, sflag=0;
-	register Sfio_t		*fp, **streams;
-	register char 		*cp, *delim;
+	int		n, sflag=0;
+	Sfio_t		*fp, **streams;
+	char 		*cp, *delim;
 	char			*ep;
 	Delim_t			*mp;
 	int			dlen, dsiz;

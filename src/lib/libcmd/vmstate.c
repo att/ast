@@ -67,8 +67,8 @@ typedef struct State_s
 static int
 key(void* handle, Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn)
 {
-	register State_t*	state = (State_t*)handle;
-	register char*		s;
+	State_t*	state = (State_t*)handle;
+	char*		s;
 
 	if (!(s = fp->t_str) || streq(s, "size"))
 		*pn = state->vs.extent;
@@ -140,7 +140,7 @@ visit(Vmalloc_t* vm, void* addr, size_t size, Vmdisc_t* disc, void* handle)
 int
 b_vmstate(int argc, char** argv, Shbltin_t* context)
 {
-	register int	i;
+	int	i;
 	State_t		state;
 
 	memset(&state, 0, sizeof(state));

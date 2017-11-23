@@ -63,9 +63,9 @@ USAGE_LICENSE
 
 #include <cmd.h>
 
-static void l_dirname(register Sfio_t *outfile, register const char *pathname)
+static void l_dirname(Sfio_t *outfile, const char *pathname)
 {
-	register const char  *last;
+	const char  *last;
 	/* go to end of path */
 	for(last=pathname; *last; last++);
 	/* back over trailing '/' */

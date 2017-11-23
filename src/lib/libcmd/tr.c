@@ -166,9 +166,9 @@ static const char*	typename[] = { "source", "destination" };
  */
 
 static int
-nextchar(register Tr_t* tr)
+nextchar(Tr_t* tr)
 {
-	register int	c;
+	int	c;
 	int		q;
 	unsigned char*	e;
 	regclass_t	f;
@@ -367,11 +367,11 @@ nextchar(register Tr_t* tr)
 static Tr_t*
 tropen(unsigned char* src, unsigned char* dst, unsigned int flags, Shbltin_t* context)
 {
-	register Tr_t*	tr;
-	register int	c;
-	register int	n;
-	register int	x;
-	register int	squeeze;
+	Tr_t*	tr;
+	int	c;
+	int	n;
+	int	x;
+	int	squeeze;
 	int		m;
 	size_t		z;
 	uint32_t*	set;
@@ -567,14 +567,14 @@ trclose(Tr_t* tr)
 static ssize_t
 trcopy(Tr_t* tr, Sfio_t* ip, Sfio_t* op, ssize_t ncopy)
 {
-	register int		c;
-	register int		oldc = -1;
-	register uint32_t*	code = tr->code;
-	register unsigned char*	inp = 0;
-	register unsigned char*	outp = 0;
-	register unsigned char*	inend;
-	register unsigned char*	outend = 0;
-	register ssize_t	nwrite = 0;
+	int		c;
+	int		oldc = -1;
+	uint32_t*	code = tr->code;
+	unsigned char*	inp = 0;
+	unsigned char*	outp = 0;
+	unsigned char*	inend;
+	unsigned char*	outend = 0;
+	ssize_t	nwrite = 0;
 	unsigned char*		inbuf = 0;
 	unsigned char*		outbuf = 0;
 
@@ -765,7 +765,7 @@ trcopy(Tr_t* tr, Sfio_t* ip, Sfio_t* op, ssize_t ncopy)
 int
 b_tr(int argc, char** argv, Shbltin_t* context)
 {
-	register unsigned int	flags = 0;
+	unsigned int	flags = 0;
 	Tr_t*			tr;
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);

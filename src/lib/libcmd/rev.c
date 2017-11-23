@@ -59,11 +59,11 @@ USAGE_LICENSE
  */
 static int rev_char(Sfio_t *in, Sfio_t *out)
 {
-	register int		c;
-	register char		*ep, *bp, *cp;
-	register wchar_t	*wp, *xp;
-	register size_t		n;
-	register size_t		wz;
+	int		c;
+	char		*ep, *bp, *cp;
+	wchar_t	*wp, *xp;
+	size_t		n;
+	size_t		wz;
 	Mbstate_t		iq;
 	Mbstate_t		oq;
 	wchar_t			w;
@@ -120,11 +120,11 @@ static int rev_char(Sfio_t *in, Sfio_t *out)
 }
 
 int
-b_rev(int argc, register char** argv, Shbltin_t* context)
+b_rev(int argc, char** argv, Shbltin_t* context)
 {
-	register Sfio_t *fp;
-	register char *cp;
-	register int n, line=0;
+	Sfio_t *fp;
+	char *cp;
+	int n, line=0;
 	NOT_USED(argc);
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);

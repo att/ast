@@ -157,12 +157,12 @@ extern int	lchmod(const char*, mode_t);
 int
 b_chmod(int argc, char** argv, Shbltin_t* context)
 {
-	register int	mode;
-	register int	force = 0;
-	register int	flags;
-	register char*	amode = 0;
-	register FTS*	fts;
-	register FTSENT*ent;
+	int	mode;
+	int	force = 0;
+	int	flags;
+	char*	amode = 0;
+	FTS*	fts;
+	FTSENT*ent;
 	char*		last;
 	int		(*chmodf)(const char*, mode_t);
 	int		logical = 1;

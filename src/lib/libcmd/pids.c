@@ -58,7 +58,7 @@ USAGE_LICENSE
 static int
 key(void* handle, Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn)
 {
-	register char*	s;
+	char*	s;
 	int		fd;
 	long		tid;
 

@@ -73,7 +73,7 @@ USAGE_LICENSE
 
 #define ERRORMAX	125
 
-static void printout(register Wc_t *wp, register char *name,register int mode)
+static void printout(Wc_t *wp, char *name,int mode)
 {
 	if (mode&WC_LINES)
 		sfprintf(sfstdout," %7I*d",sizeof(wp->lines),wp->lines);
@@ -91,11 +91,11 @@ static void printout(register Wc_t *wp, register char *name,register int mode)
 }
 
 int
-b_wc(int argc,register char **argv, Shbltin_t* context)
+b_wc(int argc,char **argv, Shbltin_t* context)
 {
-	register char	*cp;
-	register int	mode=0, n;
-	register Wc_t	*wp;
+	char	*cp;
+	int	mode=0, n;
+	Wc_t	*wp;
 	Sfio_t		*fp;
 	Sfoff_t		tlines=0, twords=0, tchars=0, tinval=0;
 	struct stat	statb;
