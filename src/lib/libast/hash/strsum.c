@@ -39,10 +39,10 @@
  */
 
 unsigned long
-strsum(const char* as, register unsigned long c)
+strsum(const char* as, unsigned long c)
 {
-	register const unsigned char*	s = (const unsigned char*)as;
-	register int			n;
+	const unsigned char*	s = (const unsigned char*)as;
+	int			n;
 
 	while (n = *s++) HASHPART(c, n);
 #if LONG_MAX > 2147483647

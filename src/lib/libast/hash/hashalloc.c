@@ -40,9 +40,9 @@ Hash_info_t	hash_info = { 0 };
 Hash_table_t*
 hashalloc(Hash_table_t* ref, ...)
 {
-	register Hash_table_t*	tab;
-	register Hash_table_t*	ret = 0;
-	register int		internal;
+	Hash_table_t*	tab;
+	Hash_table_t*	ret = 0;
+	int		internal;
 	int			n;
 	va_list			ap;
 	va_list			va[4];

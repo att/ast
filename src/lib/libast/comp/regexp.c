@@ -42,7 +42,7 @@ typedef struct
 static void*
 block(void* handle, void* data, size_t size)
 {
-	register Env_t*	env = (Env_t*)handle;
+	Env_t*	env = (Env_t*)handle;
 
 	if (data || (size = roundof(size, ALIGN_BOUND2)) > (env->buf + env->size - env->cur))
 		return 0;
@@ -54,8 +54,8 @@ block(void* handle, void* data, size_t size)
 int
 _re_comp(regexp_t* re, const char* pattern, char* handle, unsigned int size)
 {
-	register Env_t*	env = (Env_t*)handle;
-	register int	n;
+	Env_t*	env = (Env_t*)handle;
+	int	n;
 
 	if (size <= sizeof(Env_t))
 		return 50;
@@ -93,8 +93,8 @@ _re_comp(regexp_t* re, const char* pattern, char* handle, unsigned int size)
 int
 _re_exec(regexp_t* re, const char* subject, const char* handle, int anchor)
 {
-	register Env_t*	env = (Env_t*)handle;
-	register int	n;
+	Env_t*	env = (Env_t*)handle;
+	int	n;
 	regmatch_t	match[elementsof(re->re_braslist)+1];
 
 	if (regexec(&env->re, subject, elementsof(match), match, 0) || anchor && match[0].rm_so)

@@ -35,12 +35,12 @@
  */
 
 void
-hashsize(register Hash_table_t* tab, int size)
+hashsize(Hash_table_t* tab, int size)
 {
-	register Hash_bucket_t**	old_s;
-	register Hash_bucket_t**	new_s;
-	register Hash_bucket_t*		old_b;
-	register Hash_bucket_t*		new_b;
+	Hash_bucket_t**	old_s;
+	Hash_bucket_t**	new_s;
+	Hash_bucket_t*		old_b;
+	Hash_bucket_t*		new_b;
 	Hash_bucket_t**			old_sx;
 	unsigned int			index;
 	Hash_region_f			region;

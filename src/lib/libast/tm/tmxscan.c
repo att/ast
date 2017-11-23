@@ -71,9 +71,9 @@ typedef struct
  */
 
 static Time_t
-gen(register Tm_t* tm, register Set_t* set)
+gen(Tm_t* tm, Set_t* set)
 {
-	register int	n;
+	int	n;
 	int		z;
 	Time_t		t;
 
@@ -166,12 +166,12 @@ gen(register Tm_t* tm, register Set_t* set)
  */
 
 static Time_t
-scan(register const char* s, char** e, const char* format, char** f, Time_t t, long flags)
+scan(const char* s, char** e, const char* format, char** f, Time_t t, long flags)
 {
-	register int	d;
-	register int	n;
-	register char*	p;
-	register Tm_t*	tm;
+	int	d;
+	int	n;
+	char*	p;
+	Tm_t*	tm;
 	const char*	b;
 	char*		u;
 	char*		stack[4];
@@ -464,8 +464,8 @@ scan(register const char* s, char** e, const char* format, char** f, Time_t t, l
 Time_t
 tmxscan(const char* s, char** e, const char* format, char** f, Time_t t, long flags)
 {
-	register char*	v;
-	register char**	p;
+	char*	v;
+	char**	p;
 	char*		q;
 	char*		r;
 	Time_t		x;
@@ -478,8 +478,8 @@ tmxscan(const char* s, char** e, const char* format, char** f, Time_t t, long fl
 	{
 		if (!initialized)
 		{
-			register Sfio_t*	sp;
-			register int		n;
+			Sfio_t*	sp;
+			int		n;
 			off_t			m;
 
 			initialized = 1;

@@ -48,9 +48,9 @@ pathpath(char* path, const char* p, const char* a, int mode)
 #include <ast_api.h>
 
 char*
-pathpath_20100601(const char* p, const char* a, int mode, register char* path, size_t size)
+pathpath_20100601(const char* p, const char* a, int mode, char* path, size_t size)
 {
-	register char*	s;
+	char*	s;
 	char*		x;
 	char		buf[PATH_MAX];
 

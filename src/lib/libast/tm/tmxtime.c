@@ -43,11 +43,11 @@
  */
 
 Time_t
-tmxtime(register Tm_t* tm, int west)
+tmxtime(Tm_t* tm, int west)
 {
-	register Time_t		t;
-	register Tm_leap_t*	lp;
-	register int32_t	y;
+	Time_t		t;
+	Tm_leap_t*	lp;
+	int32_t	y;
 	int			n;
 	int			sec;
 	time_t			now;

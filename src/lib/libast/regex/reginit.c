@@ -391,7 +391,7 @@ State_t		state =
  */
 
 void*
-alloc(register regdisc_t* disc, void* p, size_t n)
+alloc(regdisc_t* disc, void* p, size_t n)
 {
 	if (disc->re_resizef)
 	{

@@ -28,7 +28,7 @@
  */
 
 int
-strpcmp(register const char* a, register const char* b)
+strpcmp(const char* a, const char* b)
 {
 	while (*a == *b)
 	{

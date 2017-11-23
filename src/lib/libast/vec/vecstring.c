@@ -37,8 +37,8 @@
 char**
 vecstring(const char* str)
 {
-	register char*	buf;
-	register char**	vec;
+	char*	buf;
+	char**	vec;
 
 	if (!str || !*str || !(buf = strdup(str))) vec = 0;
 	else if (!(vec = vecload(buf))) free(buf);

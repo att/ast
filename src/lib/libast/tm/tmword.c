@@ -41,9 +41,9 @@
  */
 
 int
-tmword(register const char* s, char** e, register const char* t, char** suf, int n)
+tmword(const char* s, char** e, const char* t, char** suf, int n)
 {
-	register int	c;
+	int	c;
 	const char*	b;
 
 	if (*s && *t)

@@ -59,9 +59,9 @@ typedef struct Id_s
 char*
 fmtuid(int uid)
 {
-	register Id_t*		ip;
-	register char*		name;
-	register struct passwd*	pw;
+	Id_t*		ip;
+	char*		name;
+	struct passwd*	pw;
 	int			z;
 
 	static Dt_t*		dict;

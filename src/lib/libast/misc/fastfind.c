@@ -115,10 +115,10 @@ static char*		findnames[] =
  */
 
 char*
-typefix(char* buf, size_t n, register const char* t)
+typefix(char* buf, size_t n, const char* t)
 {
-	register int	c;
-	register char*	b = buf;
+	int	c;
+	char*	b = buf;
 
 	if ((*t == 'x' || *t == 'X') && *(t + 1) == '-')
 		t += 2;
@@ -140,12 +140,12 @@ typefix(char* buf, size_t n, register const char* t)
 Find_t*
 findopen(const char* file, const char* pattern, const char* type, Finddisc_t* disc)
 {
-	register Find_t*	fp;
-	register char*		p;
-	register char*		s;
-	register char*		b;
-	register int		i; 
-	register int		j;
+	Find_t*	fp;
+	char*		p;
+	char*		s;
+	char*		b;
+	int		i; 
+	int		j;
 	char*			path;
 	int			brace = 0;
 	int			paren = 0;
@@ -676,16 +676,16 @@ findopen(const char* file, const char* pattern, const char* type, Finddisc_t* di
  */
 
 char*
-findread(register Find_t* fp)
+findread(Find_t* fp)
 {
-	register char*		p;
-	register char*		q;
-	register char*		s;
-	register char*		b;
-	register char*		e;
-	register int		c;
-	register int		n;
-	register int		m;
+	char*		p;
+	char*		q;
+	char*		s;
+	char*		b;
+	char*		e;
+	int		c;
+	int		n;
+	int		m;
 	int			ignorecase;
 	int			t;
 	unsigned char		w[4];
@@ -924,15 +924,15 @@ findread(register Find_t* fp)
  */
 
 int
-findwrite(register Find_t* fp, const char* path, size_t len, const char* type)
+findwrite(Find_t* fp, const char* path, size_t len, const char* type)
 {
-	register unsigned char*	s;
-	register unsigned char*	e;
-	register unsigned char*	p;
-	register int		n;
-	register int		d;
-	register Type_t*	x;
-	register unsigned long	u;
+	unsigned char*	s;
+	unsigned char*	e;
+	unsigned char*	p;
+	int		n;
+	int		d;
+	Type_t*	x;
+	unsigned long	u;
 
 	if (!fp->generate)
 		return -1;
@@ -1030,7 +1030,7 @@ findwrite(register Find_t* fp, const char* path, size_t len, const char* type)
  */
 
 static int
-finddone(register Find_t* fp)
+finddone(Find_t* fp)
 {
 	int	r;
 
@@ -1062,13 +1062,13 @@ finddone(register Find_t* fp)
  */
 
 static int
-findsync(register Find_t* fp)
+findsync(Find_t* fp)
 {
-	register char*		s;
-	register int		n;
-	register int		m;
-	register int		d;
-	register Type_t*	x;
+	char*		s;
+	int		n;
+	int		m;
+	int		d;
+	Type_t*	x;
 	char*			t;
 	int			b;
 	long			z;
@@ -1255,7 +1255,7 @@ findsync(register Find_t* fp)
  */
 
 int
-findclose(register Find_t* fp)
+findclose(Find_t* fp)
 {
 	int	n = 0;
 

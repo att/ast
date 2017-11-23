@@ -37,10 +37,10 @@
  */
 
 Tm_t*
-tmxtm(register Tm_t* tm, Time_t t, Tm_zone_t* zone)
+tmxtm(Tm_t* tm, Time_t t, Tm_zone_t* zone)
 {
-	register struct tm*	tp;
-	register Tm_leap_t*	lp;
+	struct tm*	tp;
+	Tm_leap_t*	lp;
 	Time_t			x;
 	time_t			now;
 	int			leapsec;

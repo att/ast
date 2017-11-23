@@ -29,11 +29,11 @@
 #include <hashkey.h>
 
 long
-strkey(register const char* s)
+strkey(const char* s)
 {
-	register long	x = 0;
-	register int	n = 0;
-	register int	c;
+	long	x = 0;
+	int	n = 0;
+	int	c;
 
 	while (n++ < HASHKEYMAX)
 	{

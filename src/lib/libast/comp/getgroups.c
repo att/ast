@@ -52,7 +52,7 @@ ast_getgroups(int len, gid_t* set)
 #undef	NGROUPS_MAX
 #define NGROUPS_MAX	1
 #endif
-	register int	i;
+	int	i;
 	int		big[NGROUPS_MAX];
 #else
 #undef	NGROUPS_MAX

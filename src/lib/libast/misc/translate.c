@@ -157,12 +157,12 @@ find(const char* locale, const char* catalog)
  */
 
 static Catalog_t*
-init(register char* s)
+init(char* s)
 {
-	register Catalog_t*	cp;
-	register int		n;
-	register int		m;
-	register int		set;
+	Catalog_t*	cp;
+	int		n;
+	int		m;
+	int		set;
 	nl_catd			d;
 
 	/*
@@ -228,8 +228,8 @@ init(register char* s)
 static Message_t*
 match(const char* cat, const char* msg)
 {
-	register char*	s;
-	register char*	t;
+	char*	s;
+	char*	t;
 	Catalog_t*	cp;
 	Message_t*	mp;
 	size_t		n;
@@ -294,7 +294,7 @@ match(const char* cat, const char* msg)
 char*
 translate(const char* loc, const char* cmd, const char* cat, const char* msg)
 {
-	register char*	r;
+	char*	r;
 	char*		t;
 	int		p;
 	int		oerrno;

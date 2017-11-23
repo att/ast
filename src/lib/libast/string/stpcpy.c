@@ -46,7 +46,7 @@ NoN(stpcpy)
  */
 
 extern char*
-stpcpy(register char* t, register const char* f)
+stpcpy(char* t, const char* f)
 {
 	if (!f)
 		return t;

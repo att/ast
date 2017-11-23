@@ -32,7 +32,7 @@
 #include <sig.h>
 
 char*
-fmtsignal(register int sig)
+fmtsignal(int sig)
 {
 	char*	buf;
 	int	z;

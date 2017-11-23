@@ -102,10 +102,10 @@ typedef struct
  */
 
 static char*
-gobble(Match_t* mp, register char* s, register int sub, int* g, int clear)
+gobble(Match_t* mp, char* s, int sub, int* g, int clear)
 {
-	register int	p = 0;
-	register char*	b = 0;
+	int	p = 0;
+	char*	b = 0;
 	int		c = 0;
 	int		n;
 
@@ -162,7 +162,7 @@ gobble(Match_t* mp, register char* s, register int sub, int* g, int clear)
 		}
 }
 
-static int	grpmatch(Match_t*, int, char*, register char*, char*, int);
+static int	grpmatch(Match_t*, int, char*, char*, char*, int);
 
 /*
  * match a single pattern
@@ -173,10 +173,10 @@ static int	grpmatch(Match_t*, int, char*, register char*, char*, int);
 static int
 onematch(Match_t* mp, int g, char* s, char* p, char* e, char* r, int flags)
 {
-	register int 	pc;
-	register int 	sc;
-	register int	n;
-	register int	icase;
+	int 	pc;
+	int 	sc;
+	int	n;
+	int	icase;
 	char*		olds;
 	char*		oldp;
 
@@ -520,9 +520,9 @@ onematch(Match_t* mp, int g, char* s, char* p, char* e, char* r, int flags)
  */
 
 static int
-grpmatch(Match_t* mp, int g, char* s, register char* p, char* e, int flags)
+grpmatch(Match_t* mp, int g, char* s, char* p, char* e, int flags)
 {
-	register char*	a;
+	char*	a;
 
 	do
 	{
@@ -546,8 +546,8 @@ grpmatch(Match_t* mp, int g, char* s, register char* p, char* e, int flags)
 int
 strgrpmatch(const char* b, const char* p, ssize_t* sub, int n, int flags)
 {
-	register int	i;
-	register char*	s;
+	int	i;
+	char*	s;
 	char*		e;
 	Match_t		match;
 

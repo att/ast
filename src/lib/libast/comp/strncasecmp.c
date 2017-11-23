@@ -34,12 +34,12 @@ NoN(strncasecmp)
 #undef	strncasecmp
 
 int
-strncasecmp(register const char* a, register const char* b, size_t n)
+strncasecmp(const char* a, const char* b, size_t n)
 {
-	register const char*	e;
-	register int		ac;
-	register int		bc;
-	register int		d;
+	const char*	e;
+	int		ac;
+	int		bc;
+	int		d;
 
 	e = a + n;
 	for (;;)

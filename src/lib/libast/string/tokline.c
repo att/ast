@@ -58,12 +58,12 @@ static int
 spliceline(Sfio_t* s, int op, void* val, Sfdisc_t* ad)
 {
 	Splice_t*	d = (Splice_t*)ad;
-	register char*	b;
-	register int	c;
-	register int	n;
-	register int	q;
-	register int	j;
-	register char*	e;
+	char*	b;
+	int	c;
+	int	n;
+	int	q;
+	int	j;
+	char*	e;
 	char*		buf;
 
 	NoP(val);

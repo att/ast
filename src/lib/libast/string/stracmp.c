@@ -39,11 +39,11 @@ NoN(stracmp)
 int
 stracmp(const char* aa, const char* ab)
 {
-	register unsigned char*	a;
-	register unsigned char*	b;
-	register unsigned char*	m;
-	register int		c;
-	register int		d;
+	unsigned char*	a;
+	unsigned char*	b;
+	unsigned char*	m;
+	int		c;
+	int		d;
 
 	if (!(m = ccmap(CC_NATIVE, CC_ASCII)))
 		return strcmp(aa, ab);

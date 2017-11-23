@@ -31,9 +31,9 @@
 #include <ls.h>
 
 char*
-fmtperm(register int perm)
+fmtperm(int perm)
 {
-	register char*	s;
+	char*	s;
 	char*		buf;
 
 	s = buf = fmtbuf(32);

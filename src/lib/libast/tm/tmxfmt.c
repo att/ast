@@ -42,7 +42,7 @@
  */
 
 static char*
-number(register char* s, register char* e, register long n, register int p, int w, int pad)
+number(char* s, char* e, long n, int p, int w, int pad)
 {
 	char*	b;
 
@@ -97,10 +97,10 @@ typedef struct Stack_s
 char*
 tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 {
-	register char*	cp;
-	register char*	ep;
-	register char*	p;
-	register int	n;
+	char*	cp;
+	char*	ep;
+	char*	p;
+	int	n;
 	int		c;
 	int		i;
 	int		flags;

@@ -85,7 +85,7 @@ extern int	utime(const char*, const time_t*);
 #endif
 
 int
-tvtouch(const char* path, register const Tv_t* av, register const Tv_t* mv, const Tv_t* cv, int flags)
+tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int flags)
 {
 	int		fd;
 	int		mode;

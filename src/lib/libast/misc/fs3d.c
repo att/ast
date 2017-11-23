@@ -37,10 +37,10 @@
 #include <fs3d.h>
 
 int
-fs3d(register int op)
+fs3d(int op)
 {
-	register int	cur;
-	register char*	v;
+	int	cur;
+	char*	v;
 	char		val[sizeof(FS3D_off) + 8];
 
 	static int	fsview;

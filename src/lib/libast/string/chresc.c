@@ -35,10 +35,10 @@
 #include <ccode.h>
 
 int
-chrexp(register const char* s, char** p, int* m, register int flags)
+chrexp(const char* s, char** p, int* m, int flags)
 {
-	register const char*	t;
-	register int		c;
+	const char*	t;
+	int		c;
 	const char*		e;
 	const char*		b;
 	char*			r;
@@ -295,7 +295,7 @@ chrexp(register const char* s, char** p, int* m, register int flags)
 }
 
 int
-chresc(register const char* s, char** p)
+chresc(const char* s, char** p)
 {
 	return chrexp(s, p, NiL, FMT_EXP_CHAR|FMT_EXP_LINE|FMT_EXP_WIDE);
 }

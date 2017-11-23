@@ -50,8 +50,8 @@ int
 optjoin(char** argv, ...)
 {
 	va_list			ap;
-	register Optpass_f	fun;
-	register Optpass_f	rep;
+	Optpass_f	fun;
+	Optpass_f	rep;
 	Optpass_f		err;
 	Optstate_t*		state;
 	int			r;

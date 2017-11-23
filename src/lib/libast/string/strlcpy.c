@@ -48,7 +48,7 @@ NoN(strlcpy)
 #endif
 
 extern size_t
-strlcpy(register char* s, register const char* t, register size_t n)
+strlcpy(char* s, const char* t, size_t n)
 {
 	const char*	o = t;
 

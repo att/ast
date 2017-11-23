@@ -32,9 +32,9 @@
  */
 
 static int
-subold(register Sfio_t* dp, const char* op, register const char* sp, size_t nmatch, register regmatch_t* match, register regflags_t flags, int sre)
+subold(Sfio_t* dp, const char* op, const char* sp, size_t nmatch, regmatch_t* match, regflags_t flags, int sre)
 {
-	register int	c;
+	int	c;
 	char*		s;
 	char*		e;
 	const char*	b;

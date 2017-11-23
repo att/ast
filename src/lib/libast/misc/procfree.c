@@ -31,7 +31,7 @@
 #include "proclib.h"
 
 int
-procfree(register Proc_t* p)
+procfree(Proc_t* p)
 {
 	if (!p)
 		return -1;

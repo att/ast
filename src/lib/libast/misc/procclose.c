@@ -31,7 +31,7 @@
 #include "proclib.h"
 
 int
-procclose(register Proc_t* p)
+procclose(Proc_t* p)
 {
 	int	pid;
 	int	flags = 0;

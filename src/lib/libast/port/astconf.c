@@ -365,13 +365,13 @@ buffer(char* s)
  */
 
 static char*
-synthesize(register Feature_t* fp, const char* path, const char* value)
+synthesize(Feature_t* fp, const char* path, const char* value)
 {
-	register char*		s;
-	register char*		d;
-	register char*		v;
-	register char*		p;
-	register int		n;
+	char*		s;
+	char*		d;
+	char*		v;
+	char*		p;
+	int		n;
 
 #if DEBUG_astconf
 	if (fp)
@@ -549,10 +549,10 @@ synthesize(register Feature_t* fp, const char* path, const char* value)
  */
 
 static void
-initialize(register Feature_t* fp, const char* path, const char* command, const char* succeed, const char* fail)
+initialize(Feature_t* fp, const char* path, const char* command, const char* succeed, const char* fail)
 {
-	register char*	p;
-	register int	ok = 1;
+	char*	p;
+	int	ok = 1;
 
 #if DEBUG_astconf
 	error(-6, "astconf initialize name=%s path=%s command=%s succeed=%s fail=%s fp=%p%s", fp->name, path, command, succeed, fail, fp, state.synthesizing ? " SYNTHESIZING" : "");
@@ -580,8 +580,8 @@ initialize(register Feature_t* fp, const char* path, const char* command, const 
 	default:
 		if (p = getenv("PATH"))
 		{
-			register int	r = 1;
-			register char*	d = p;
+			int	r = 1;
+			char*	d = p;
 			Sfio_t*		tmp;
 
 #if DEBUG_astconf
@@ -668,10 +668,10 @@ initialize(register Feature_t* fp, const char* path, const char* command, const 
  */
 
 static char*
-format(register Feature_t* fp, const char* path, const char* value, unsigned int flags, Error_f conferror)
+format(Feature_t* fp, const char* path, const char* value, unsigned int flags, Error_f conferror)
 {
-	register Feature_t*	sp;
-	register int		n;
+	Feature_t*	sp;
+	int		n;
 #if _UWIN && ( _X86_ || _X64_ )
 	struct stat		st;
 #else
@@ -752,8 +752,8 @@ format(register Feature_t* fp, const char* path, const char* value, unsigned int
 	case OP_path_attributes:
 #ifdef _PC_PATH_ATTRIBUTES
 		{
-			register char*	s;
-			register char*	e;
+			char*	s;
+			char*	e;
 			intmax_t	v;
 			unsigned long	b;
 			int		err;
@@ -862,9 +862,9 @@ format(register Feature_t* fp, const char* path, const char* value, unsigned int
  */
 
 static char*
-feature(register Feature_t* fp, const char* name, const char* path, const char* value, unsigned int flags, Error_f conferror)
+feature(Feature_t* fp, const char* name, const char* path, const char* value, unsigned int flags, Error_f conferror)
 {
-	register int		n;
+	int		n;
 
 	if (value && (streq(value, "-") || streq(value, "0")))
 		value = null;
@@ -915,13 +915,13 @@ feature(register Feature_t* fp, const char* name, const char* path, const char* 
  */
 
 static int
-lookup(register Lookup_t* look, const char* name, unsigned int flags)
+lookup(Lookup_t* look, const char* name, unsigned int flags)
 {
-	register Conf_t*	mid = (Conf_t*)conf;
-	register Conf_t*	lo = mid;
-	register Conf_t*	hi = mid + conf_elements;
-	register int		v;
-	register int		c;
+	Conf_t*	mid = (Conf_t*)conf;
+	Conf_t*	lo = mid;
+	Conf_t*	hi = mid + conf_elements;
+	int		v;
+	int		c;
 	char*			e;
 	const Prefix_t*		p;
 
@@ -1028,10 +1028,10 @@ lookup(register Lookup_t* look, const char* name, unsigned int flags)
  */
 
 static char*
-fmtlower(register const char* s)
+fmtlower(const char* s)
 {
-	register int	c;
-	register char*	t;
+	int	c;
+	char*	t;
 	char*		b;
 
 	b = t = fmtbuf(strlen(s) + 1);
@@ -1052,10 +1052,10 @@ fmtlower(register const char* s)
  */
 
 static char*
-print(Sfio_t* sp, register Lookup_t* look, const char* name, const char* path, int listflags, Error_f conferror)
+print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listflags, Error_f conferror)
 {
-	register Conf_t*	p = look->conf;
-	register unsigned int	flags = look->flags;
+	Conf_t*	p = look->conf;
+	unsigned int	flags = look->flags;
 	Feature_t*		fp;
 	char*			call;
 	char*			f;
@@ -1476,7 +1476,7 @@ nativeconf(Proc_t** pp, const char* operand)
 char*
 astgetconf(const char* name, const char* path, const char* value, int flags, Error_f conferror)
 {
-	register char*	s;
+	char*	s;
 	int		n;
 	Lookup_t	look;
 	Sfio_t*		tmp;

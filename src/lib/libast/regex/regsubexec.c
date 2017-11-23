@@ -68,11 +68,11 @@
  */
 
 static int
-sub(const regex_t* p, register regsub_t* b, const char* ss, register regsubop_t* op, size_t nmatch, register regmatch_t* match)
+sub(const regex_t* p, regsub_t* b, const char* ss, regsubop_t* op, size_t nmatch, regmatch_t* match)
 {
-	register char*	s;
-	register char*	e;
-	register int	c;
+	char*	s;
+	char*	e;
+	int	c;
 
 	for (;; op++)
 	{
@@ -147,8 +147,8 @@ sub(const regex_t* p, register regsub_t* b, const char* ss, register regsubop_t*
 int
 regsubexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match)
 {
-	register int		c;
-	register regsub_t*	b;
+	int		c;
+	regsub_t*	b;
 	const char*		e;
 	int			m;
 

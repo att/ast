@@ -43,10 +43,10 @@ pathrepl(char* path, const char* match, const char* replace)
 #include <ast_api.h>
 
 char*
-pathrepl_20100601(register char* path, size_t size, const char* match, register const char* replace)
+pathrepl_20100601(char* path, size_t size, const char* match, const char* replace)
 {
-	register const char*	m = match;
-	register const char*	r;
+	const char*	m = match;
+	const char*	r;
 	char*			t;
 
 	if (!match)
@@ -67,7 +67,7 @@ pathrepl_20100601(register char* path, size_t size, const char* match, register 
 			while (*m && *m++ == *path) path++;
 			if (!*m && *path == '/')
 			{
-				register char*	p;
+				char*	p;
 
 				p = t;
 				r = replace;
@@ -75,7 +75,7 @@ pathrepl_20100601(register char* path, size_t size, const char* match, register 
 				if (p < path) while (*p++ = *path++);
 				else if (*r && p >= path)
 				{
-					register char*	u;
+					char*	u;
 
 					t = path + strlen(path);
 					u = t + strlen(r);

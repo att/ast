@@ -36,11 +36,11 @@
  */
 
 void*
-swapmem(int op, const void* from, void* to, register size_t n)
+swapmem(int op, const void* from, void* to, size_t n)
 {
-	register char*	f = (char*)from;
-	register char*	t = (char*)to;
-	register int	c;
+	char*	f = (char*)from;
+	char*	t = (char*)to;
+	int	c;
 
 	switch (op & (n - 1))
 	{

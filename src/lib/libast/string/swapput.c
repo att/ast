@@ -37,7 +37,7 @@
 void*
 swapput(int op, void* b, int n, intmax_t v)
 {
-	register char*	p = (char*)b + n;
+	char*	p = (char*)b + n;
 
 	while (p > (char*)b)
 	{

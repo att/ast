@@ -35,16 +35,16 @@
 int
 regrexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, regmatch_t* match, regflags_t flags, int sep, void* handle, regrecord_t record)
 {
-	register unsigned char*	buf;
-	register unsigned char*	beg;
-	register unsigned char*	l;
-	register unsigned char*	r;
-	register unsigned char*	x;
-	register size_t*	skip;
-	register size_t*	fail;
-	register Bm_mask_t**	mask;
-	register size_t		index;
-	register ssize_t	n;
+	unsigned char*	buf;
+	unsigned char*	beg;
+	unsigned char*	l;
+	unsigned char*	r;
+	unsigned char*	x;
+	size_t*	skip;
+	size_t*	fail;
+	Bm_mask_t**	mask;
+	size_t		index;
+	ssize_t	n;
 	unsigned char*		end;
 	size_t			mid;
 	int			complete;

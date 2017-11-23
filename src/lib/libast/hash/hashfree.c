@@ -37,11 +37,11 @@
  */
 
 Hash_table_t*
-hashfree(register Hash_table_t* tab)
+hashfree(Hash_table_t* tab)
 {
-	register Hash_bucket_t**	sp;
-	register Hash_bucket_t*		b;
-	register Hash_bucket_t*		p;
+	Hash_bucket_t**	sp;
+	Hash_bucket_t*		b;
+	Hash_bucket_t*		p;
 	Hash_bucket_t**			sx;
 	Hash_root_t*			rp;
 	Hash_table_t*			tp;

@@ -33,8 +33,8 @@
 ssize_t
 reclen(Recfmt_t f, const void* b, size_t n)
 {
-	register unsigned char*	s = (unsigned char*)b;
-	register unsigned char*	e;
+	unsigned char*	s = (unsigned char*)b;
+	unsigned char*	e;
 	size_t			h;
 	size_t			z;
 

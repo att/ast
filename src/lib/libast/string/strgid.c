@@ -69,9 +69,9 @@ typedef struct Id_s
 int
 strgid(const char* name)
 {
-	register Id_t*		ip;
-	register struct group*	gr;
-	register struct passwd*	pw;
+	Id_t*		ip;
+	struct group*	gr;
+	struct passwd*	pw;
 	int			id;
 	char*			e;
 

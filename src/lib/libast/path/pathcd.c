@@ -63,9 +63,9 @@ vchdir(const char* path)
 int
 pathcd(const char* path, const char* home)
 {
-	register char*	p = (char*)path;
-	register char*	s;
-	register int	n;
+	char*	p = (char*)path;
+	char*	s;
+	int	n;
 	int		i;
 	int		r;
 

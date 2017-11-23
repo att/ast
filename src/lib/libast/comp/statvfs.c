@@ -64,7 +64,7 @@ NoN(statvfs)
 #endif
 
 static void
-us2v(register struct statfs* ufs, register struct stat* st, register struct statvfs* vfs)
+us2v(struct statfs* ufs, struct stat* st, struct statvfs* vfs)
 {
 	memset(vfs, 0, sizeof(*vfs));
 	vfs->f_bsize = vfs->f_frsize = ufs->f_bsize;
@@ -116,7 +116,7 @@ statvfs(const char* path, struct statvfs* vfs)
 #endif
 
 static void
-s2v(register struct stat* st, register struct statvfs* vfs)
+s2v(struct stat* st, struct statvfs* vfs)
 {
 	memset(vfs, 0, sizeof(*vfs));
 	vfs->f_bsize = vfs->f_frsize =

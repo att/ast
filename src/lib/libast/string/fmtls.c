@@ -49,9 +49,9 @@
  */
 
 char*
-fmtls(char* buf, const char* name, register struct stat* st, const char* info, const char* link, register int flags)
+fmtls(char* buf, const char* name, struct stat* st, const char* info, const char* link, int flags)
 {
-	register char*		s;
+	char*		s;
 	time_t			tm;
 	Sfoff_t			n;
 

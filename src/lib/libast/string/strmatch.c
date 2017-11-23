@@ -75,12 +75,12 @@ static struct State_s
  */
 
 int
-strngrpmatch(const char* b, size_t z, const char* p, ssize_t* sub, int n, register int flags)
+strngrpmatch(const char* b, size_t z, const char* p, ssize_t* sub, int n, int flags)
 {
-	register regex_t*	re;
-	register ssize_t*	end;
-	register int		i;
-	register regflags_t	reflags;
+	regex_t*	re;
+	ssize_t*	end;
+	int		i;
+	regflags_t	reflags;
 
 	/*
 	 * 0 and empty patterns are special

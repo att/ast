@@ -51,10 +51,10 @@ __STDPP__directive pragma pp:nohide strdup
 #endif
 
 extern char*
-strdup(register const char* s)
+strdup(const char* s)
 {
-	register char*	t;
-	register int	n;
+	char*	t;
+	int	n;
 
 	return (s && (t = oldof(0, char, n = strlen(s) + 1, 0))) ? (char*)memcpy(t, s, n) : (char*)0;
 }

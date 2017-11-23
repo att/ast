@@ -34,10 +34,10 @@ static const char id_stack[] = "\n@(#)$Id: stack (AT&T Bell Laboratories) 1984-0
  */
 
 STACK
-stackalloc(register int size, void* error)
+stackalloc(int size, void* error)
 {
-	register STACK			stack;
-	register struct stackblock	*b;
+	STACK			stack;
+	struct stackblock	*b;
 
 	if (size <= 0) size = 100;
 	if (!(stack = newof(0, struct stacktable, 1, 0))) return(0);
@@ -67,10 +67,10 @@ stackalloc(register int size, void* error)
  */
 
 void
-stackfree(register STACK stack)
+stackfree(STACK stack)
 {
-	register struct stackblock*	b;
-	register struct stackblock*	p;
+	struct stackblock*	b;
+	struct stackblock*	p;
 
 	b = stack->blocks;
 	while (p = b)
@@ -87,7 +87,7 @@ stackfree(register STACK stack)
  */
 
 void
-stackclear(register STACK stack)
+stackclear(STACK stack)
 {
 	stack->position.block = stack->blocks;
 	stack->position.index = -1;
@@ -98,7 +98,7 @@ stackclear(register STACK stack)
  */
 
 void*
-stackget(register STACK stack)
+stackget(STACK stack)
 {
 	if (stack->position.index < 0) return(stack->error);
 	else return(stack->position.block->stack[stack->position.index]);
@@ -109,9 +109,9 @@ stackget(register STACK stack)
  */
 
 int
-stackpush(register STACK stack, void* value)
+stackpush(STACK stack, void* value)
 {
-	register struct stackblock	*b;
+	struct stackblock	*b;
 
 	if (++stack->position.index >= stack->size)
 	{
@@ -139,7 +139,7 @@ stackpush(register STACK stack, void* value)
  */
 
 int
-stackpop(register STACK stack)
+stackpop(STACK stack)
 {
 	/*
 	 * return:
@@ -165,7 +165,7 @@ stackpop(register STACK stack)
  */
 
 void
-stacktell(register STACK stack, int set, STACKPOS* position)
+stacktell(STACK stack, int set, STACKPOS* position)
 {
 	if (set) stack->position = *position;
 	else *position = stack->position;

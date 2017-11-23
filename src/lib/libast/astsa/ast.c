@@ -43,8 +43,8 @@ astwinsize(int fd, int* lines, int* columns)
 char*
 sfgetr(Sfio_t* sp, int c, int z)
 {
-	register char*		s;
-	register char*		e;
+	char*		s;
+	char*		e;
 
 	static char*		buf;
 	static unsigned long	siz;

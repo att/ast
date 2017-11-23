@@ -96,9 +96,9 @@ struct zombie
 pid_t
 waitpid(pid_t pid, int* status, int flags)
 {
-	register struct zombie*	zp;
-	register struct zombie*	pp;
-	register int		p;
+	struct zombie*	zp;
+	struct zombie*	pp;
+	int		p;
 	int			s;
 #if !_lib_wait2 && !_lib_wait3
 #if !defined(SIGCLD)

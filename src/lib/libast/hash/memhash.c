@@ -36,9 +36,9 @@
 unsigned int
 memhash(const void* as, int n)
 {
-	register const unsigned char*	s = (const unsigned char*)as;
-	register const unsigned char*	e = s + n;
-	register unsigned int		c = 0;
+	const unsigned char*	s = (const unsigned char*)as;
+	const unsigned char*	e = s + n;
+	unsigned int		c = 0;
 
 	while (s < e) HASHPART(c, *s++);
 	return(c);

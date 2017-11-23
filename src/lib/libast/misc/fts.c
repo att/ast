@@ -174,10 +174,10 @@ static Notify_t*		notify;
  */
 
 static FTSENT*
-node(FTS* fts, FTSENT* parent, register char* name, register size_t namelen)
+node(FTS* fts, FTSENT* parent, char* name, size_t namelen)
 {
-	register FTSENT*	f;
-	register size_t		n;
+	FTSENT*	f;
+	size_t		n;
 
 	if (fts->free && namelen < MINNAME)
 	{
@@ -223,8 +223,8 @@ node(FTS* fts, FTSENT* parent, register char* name, register size_t namelen)
 static int
 statcmp(FTSENT* const* pf1, FTSENT* const* pf2)
 {
-	register const FTSENT*	f1 = *pf1;
-	register const FTSENT*	f2 = *pf2;
+	const FTSENT*	f1 = *pf1;
+	const FTSENT*	f2 = *pf2;
 
 	if (f1->statb.st_ino < f2->statb.st_ino)
 		return -1;
@@ -257,12 +257,12 @@ statcmp(FTSENT* const* pf1, FTSENT* const* pf2)
 static FTSENT*
 search(FTSENT* e, FTSENT* root, int(*comparf)(FTSENT* const*, FTSENT* const*), int insert)
 {
-	register int		cmp;
-	register FTSENT*	t;
-	register FTSENT*	left;
-	register FTSENT*	right;
-	register FTSENT*	lroot;
-	register FTSENT*	rroot;
+	int		cmp;
+	FTSENT*	t;
+	FTSENT*	left;
+	FTSENT*	right;
+	FTSENT*	lroot;
+	FTSENT*	rroot;
 
 	left = right = lroot = rroot = 0;
 	while (root)
@@ -343,11 +343,11 @@ search(FTSENT* e, FTSENT* root, int(*comparf)(FTSENT* const*, FTSENT* const*), i
  */
 
 static FTSENT*
-deleteroot(register FTSENT* root)
+deleteroot(FTSENT* root)
 {
-	register FTSENT*	t;
-	register FTSENT*	left;
-	register FTSENT*	right;
+	FTSENT*	t;
+	FTSENT*	left;
+	FTSENT*	right;
 
 	right = root->right;
 	if (!(left = root->left))
@@ -369,9 +369,9 @@ deleteroot(register FTSENT* root)
  */
 
 static void
-getlist(register FTSENT** top, register FTSENT** bot, register FTSENT* root)
+getlist(FTSENT** top, FTSENT** bot, FTSENT* root)
 {
-	register FTSENT*	stack = 0;
+	FTSENT*	stack = 0;
 
 	for (;;)
 	{
@@ -410,9 +410,9 @@ getlist(register FTSENT** top, register FTSENT** bot, register FTSENT* root)
  */
 
 static int
-setdir(register char* home, register char* path)
+setdir(char* home, char* path)
 {
-	register int	cdrv;
+	int	cdrv;
 
 	if (path[0] == '/')
 		cdrv = pathcd(path, NiL);
@@ -436,10 +436,10 @@ setdir(register char* home, register char* path)
  */
 
 static int
-setpdir(register char* home, register char* path, register char* base)
+setpdir(char* home, char* path, char* base)
 {
-	register int	c;
-	register int	cdrv;
+	int	c;
+	int	cdrv;
 
 	if (base > path)
 	{
@@ -459,11 +459,11 @@ setpdir(register char* home, register char* path, register char* base)
 static int
 popdirs(FTS* fts)
 {
-	register FTSENT*f;
-	register char*	s;
-	register char*	e;
+	FTSENT*f;
+	char*	s;
+	char*	e;
 #ifndef verify
-	register int	verify;
+	int	verify;
 #endif
 	struct stat	sb;
 	char		buf[PATH_MAX];
@@ -501,7 +501,7 @@ popdirs(FTS* fts)
  */
 
 static int
-info(FTS* fts, register FTSENT* f, const char* path, struct stat* sp, int flags)
+info(FTS* fts, FTSENT* f, const char* path, struct stat* sp, int flags)
 {
 	if (path)
 	{
@@ -587,12 +587,12 @@ info(FTS* fts, register FTSENT* f, const char* path, struct stat* sp, int flags)
  */
 
 static FTSENT*
-toplist(FTS* fts, register char* const* pathnames)
+toplist(FTS* fts, char* const* pathnames)
 {
-	register char*		path;
-	register FTSENT*	f;
-	register FTSENT*	top;
-	register FTSENT*	bot;
+	char*		path;
+	FTSENT*	f;
+	FTSENT*	top;
+	FTSENT*	bot;
 	int			physical;
 	int			metaphysical;
 	char*			s;
@@ -688,8 +688,8 @@ toplist(FTS* fts, register char* const* pathnames)
 static void
 order(FTS* fts)
 {
-	register FTSENT*	f;
-	register FTSENT*	root;
+	FTSENT*	f;
+	FTSENT*	root;
 	FTSENT*			top;
 	FTSENT*			bot;
 
@@ -707,11 +707,11 @@ order(FTS* fts)
  */
 
 static int
-resize(register FTS* fts, size_t inc)
+resize(FTS* fts, size_t inc)
 {
-	register char*	old;
-	register char*	newp;
-	register size_t	n_old;
+	char*	old;
+	char*	newp;
+	size_t	n_old;
 
 	/*
 	 * add space for "/." used in testing FTS_DNX
@@ -745,7 +745,7 @@ resize(register FTS* fts, size_t inc)
 FTS*
 fts_open(char* const* pathnames, int flags, int (*comparf)(FTSENT* const*, FTSENT* const*))
 {
-	register FTS*	fts;
+	FTS*	fts;
 
 	if (!(fts = newof(0, FTS, 1, sizeof(FTSENT))))
 		return 0;
@@ -822,11 +822,11 @@ fts_open(char* const* pathnames, int flags, int (*comparf)(FTSENT* const*, FTSEN
  */
 
 FTSENT*
-fts_read(register FTS* fts)
+fts_read(FTS* fts)
 {
-	register char*		s;
-	register int		n;
-	register FTSENT*	f;
+	char*		s;
+	int		n;
+	FTSENT*	f;
 	struct dirent*		d;
 	size_t			i;
 	FTSENT*			t;
@@ -1442,7 +1442,7 @@ fts_read(register FTS* fts)
  */
 
 int
-fts_set(register FTS* fts, register FTSENT* f, int status)
+fts_set(FTS* fts, FTSENT* f, int status)
 {
 #if 0
 	if (fts || !f || !f->fts || f->fts->current != f)
@@ -1479,9 +1479,9 @@ fts_set(register FTS* fts, register FTSENT* f, int status)
  */
 
 FTSENT*
-fts_children(register FTS* fts, int flags)
+fts_children(FTS* fts, int flags)
 {
-	register FTSENT*	f;
+	FTSENT*	f;
 
 	switch (fts->state)
 	{
@@ -1512,7 +1512,7 @@ fts_children(register FTS* fts, int flags)
 int
 fts_flags(void)
 {
-	register char*	s;
+	char*	s;
 	
 	s = astconf("PATH_RESOLVE", NiL, NiL);
 	if (streq(s, "logical"))
@@ -1543,10 +1543,10 @@ fts_local(FTSENT* ent)
  */
 
 int
-fts_close(register FTS* fts)
+fts_close(FTS* fts)
 {
-	register FTSENT*	f;
-	register FTSENT*	x;
+	FTSENT*	f;
+	FTSENT*	x;
 
 	if (fts->dir)
 		closedir(fts->dir);
@@ -1575,15 +1575,15 @@ fts_close(register FTS* fts)
 }
 
 /*
- * register function to be called for each fts_read() entry
- * context==0 => unregister notifyf
+ * function to be called for each fts_read() entry
+ * context==0 => unnotifyf
  */
 
 int
 fts_notify(Notify_f notifyf, void* context)
 {
-	register Notify_t*	np;
-	register Notify_t*	pp;
+	Notify_t*	np;
+	Notify_t*	pp;
 
 	if (context)
 	{

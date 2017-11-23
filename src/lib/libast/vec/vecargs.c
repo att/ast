@@ -42,10 +42,10 @@
  */
 
 int
-vecargs(register char** vec, int* argcp, char*** argvp)
+vecargs(char** vec, int* argcp, char*** argvp)
 {
-	register char**	argv;
-	register char**	oargv;
+	char**	argv;
+	char**	oargv;
 	char**		ovec;
 	char*		s;
 	int		num;

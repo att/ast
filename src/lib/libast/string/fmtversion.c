@@ -30,10 +30,10 @@
 #include <ast.h>
 
 char*
-fmtversion(register unsigned long v)
+fmtversion(unsigned long v)
 {
-	register char*	cur;
-	register char*	end;
+	char*	cur;
+	char*	end;
 	char*		buf;
 	int		n;
 

@@ -41,9 +41,9 @@
  */
 
 char*
-tmpoff(register char* s, size_t z, register const char* p, register int n, int d)
+tmpoff(char* s, size_t z, const char* p, int n, int d)
 {
-	register char*	e = s + z;
+	char*	e = s + z;
 
 	while (s < e && (*s = *p++))
 		s++;
