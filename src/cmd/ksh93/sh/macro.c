@@ -131,7 +131,7 @@ void *sh_macopen(Shell_t *shp)
 /*
  * perform only parameter substitution and catch failures
  */
-char *sh_mactry(Shell_t *shp,register char *string)
+char *sh_mactry(Shell_t *shp,char *string)
 {
 	if(string)
 	{
@@ -156,9 +156,9 @@ char *sh_mactry(Shell_t *shp,register char *string)
  * yields a single pathname.
  * If <mode> negative, than expansion rules for assignment are applied.
  */
-char *sh_mactrim(Shell_t *shp, char *str, register int mode)
+char *sh_mactrim(Shell_t *shp, char *str, int mode)
 {
-	register Mac_t	*mp = (Mac_t*)shp->mac_context;
+	Mac_t	*mp = (Mac_t*)shp->mac_context;
 	Stk_t		*stkp = shp->stk;
 	Mac_t		savemac;
 	savemac = *mp;
@@ -198,11 +198,11 @@ char *sh_mactrim(Shell_t *shp, char *str, register int mode)
 /*
  * Perform all the expansions on the argument <argp>
  */
-int sh_macexpand(Shell_t* shp, register struct argnod *argp, struct argnod **arghead,int flag)
+int sh_macexpand(Shell_t* shp, struct argnod *argp, struct argnod **arghead,int flag)
 {
-	register int	flags = argp->argflag;
-	register char	*str = argp->argval;
-	register Mac_t  *mp = (Mac_t*)shp->mac_context;
+	int	flags = argp->argflag;
+	char	*str = argp->argval;
+	Mac_t  *mp = (Mac_t*)shp->mac_context;
 	char		**saveargaddr = shp->argaddr;
 	Mac_t		savemac;
 	Stk_t		*stkp = shp->stk;
@@ -268,10 +268,10 @@ int sh_macexpand(Shell_t* shp, register struct argnod *argp, struct argnod **arg
  */
 void sh_machere(Shell_t *shp,Sfio_t *infile, Sfio_t *outfile, char *string)
 {
-	register int	c,n;
-	register const char	*state = sh_lexstates[ST_QUOTE];
-	register char	*cp;
-	register Mac_t	*mp = (Mac_t*)shp->mac_context;
+	int	c,n;
+	const char	*state = sh_lexstates[ST_QUOTE];
+	char	*cp;
+	Mac_t	*mp = (Mac_t*)shp->mac_context;
 	Lex_t		*lp = (Lex_t*)mp->shp->lex_context;
 	Fcin_t		save;
 	Mac_t		savemac;
@@ -411,9 +411,9 @@ void sh_machere(Shell_t *shp,Sfio_t *infile, Sfio_t *outfile, char *string)
 /*
  * expand argument but do not trim pattern characters
  */
-char *sh_macpat(Shell_t *shp,register struct argnod *arg, int flags)
+char *sh_macpat(Shell_t *shp,struct argnod *arg, int flags)
 {
-	register char *sp = arg->argval;
+	char *sp = arg->argval;
 	if((arg->argflag&ARG_RAW))
 		return(sp);
 	sh_stats(STAT_ARGEXPAND);
@@ -435,11 +435,11 @@ char *sh_macpat(Shell_t *shp,register struct argnod *arg, int flags)
 /*
  * Process the characters up to <endch> or end of input string 
  */
-static void copyto(register Mac_t *mp,int endch, int newquote)
+static void copyto(Mac_t *mp,int endch, int newquote)
 {
-	register int	c,n;
-	register const char	*state = sh_lexstates[ST_MACRO];
-	register char	*cp,*first;
+	int	c,n;
+	const char	*state = sh_lexstates[ST_MACRO];
+	char	*cp,*first;
 	Shell_t		*shp = mp->shp;
 	Lex_t		*lp = (Lex_t*)shp->lex_context;
 	int		tilde = -1;
@@ -862,10 +862,10 @@ done:
 /*
  * copy <str> to stack performing sub-expression substitutions
  */
-static void mac_substitute(Mac_t *mp, register char *cp,char *str,register int subexp[],int subsize)
+static void mac_substitute(Mac_t *mp, char *cp,char *str,int subexp[],int subsize)
 {
-	register int	c,n;
-	register char *first=fcseek(0);
+	int	c,n;
+	char *first=fcseek(0);
 	char		*ptr;
 	Mac_t		savemac;
 	Stk_t		*stkp = mp->shp->stk;
@@ -922,9 +922,9 @@ static void mac_substitute(Mac_t *mp, register char *cp,char *str,register int s
  */
 static char *getdolarg(Shell_t *shp, int n, int *size)
 {
-	register int c=S_DELIM, d=shp->ifstable['\\'];
-	register unsigned char *first,*last,*cp = (unsigned char*)shp->cur_line;
-	register int m=shp->offsets[0],delim=0;
+	int c=S_DELIM, d=shp->ifstable['\\'];
+	unsigned char *first,*last,*cp = (unsigned char*)shp->cur_line;
+	int m=shp->offsets[0],delim=0;
 	if(m==0)
 		return(0);
 	if(m<0)
@@ -978,7 +978,7 @@ static char *getdolarg(Shell_t *shp, int n, int *size)
 static char *prefix(Shell_t *shp, char *id)
 {
 	Namval_t *np;
-	register char *sub=0, *cp = strchr(id,'.');
+	char *sub=0, *cp = strchr(id,'.');
 	if(cp)
 	{
 		*cp = 0;
@@ -1103,11 +1103,11 @@ static char *nextname(Mac_t *mp,const char *prefix, int len)
  */
 static bool varsub(Mac_t *mp)
 {
-	register int	c;
-	register int	type=0; /* M_xxx */
-	register char	*v,*argp=0;
-	register Namval_t	*np = NIL(Namval_t*);
-	register int 	dolg=0, mode=0;
+	int	c;
+	int	type=0; /* M_xxx */
+	char	*v,*argp=0;
+	Namval_t	*np = NIL(Namval_t*);
+	int 	dolg=0, mode=0;
 	Lex_t		*lp = (Lex_t*)mp->shp->lex_context;
 	Namarr_t	*ap=0;
 	int		dolmax=0, vsize= -1, offset= -1, nulflg, replen=0, bysub=0;
@@ -2099,11 +2099,11 @@ nosub:
  * This routine handles command substitution
  * <type> is 0 for older `...` version
  */
-static void comsubst(Mac_t *mp,register Shnode_t* t, volatile int type)
+static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 {
 	Sfdouble_t		num;
-	register int		c;
-	register char		*str;
+	int		c;
+	char		*str;
 	Sfio_t			*sp;
 	Stk_t			*stkp = mp->shp->stk;
 	Fcin_t			save;
@@ -2208,7 +2208,7 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, volatile int type)
 		if(t->tre.tretyp==0 && !t->com.comarg && !t->com.comset)
 		{
 			/* special case $(<file) and $(<#file) */
-			register int fd;
+			int fd;
 			int r;
 			struct checkpt buff;
 			struct ionod *ip=0;
@@ -2274,7 +2274,7 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, volatile int type)
 	{
 #if SHOPT_CRNL
 		/* eliminate <cr> */
-		register char *dp;
+		char *dp;
 		char *buff = str;
 		while(c>1 && (*str !='\r'|| str[1]!='\n'))
 		{
@@ -2337,12 +2337,12 @@ static void comsubst(Mac_t *mp,register Shnode_t* t, volatile int type)
 /*
  * copy <str> onto the stack
  */
-static void mac_copy(register Mac_t *mp,register const char *str, register size_t size)
+static void mac_copy(Mac_t *mp,const char *str, size_t size)
 {
-	register char		*state;
-	register const char	*cp=str;
-	register const char	*ep=cp+size;
-	register int		c,n,nopat,len;
+	char		*state;
+	const char	*cp=str;
+	const char	*ep=cp+size;
+	int		c,n,nopat,len;
 	Stk_t			*stkp=mp->shp->stk;
 	int			oldpat = mp->pattern;
 	nopat = (mp->quote||(mp->assign==1)||mp->arith);
@@ -2556,10 +2556,10 @@ static void mac_copy(register Mac_t *mp,register const char *str, register size_
  * If field is null count field if <split> is non-zero
  * Do filename expansion of required
  */
-static void endfield(register Mac_t *mp,int split)
+static void endfield(Mac_t *mp,int split)
 {
-	register struct argnod	*argp;
-	register int		count=0;
+	struct argnod	*argp;
+	int		count=0;
 	Stk_t			*stkp = mp->shp->stk;
 	if(stktell(stkp) > ARGVAL || split)
 	{
@@ -2603,10 +2603,10 @@ static void endfield(register Mac_t *mp,int split)
  * Finds the right substring of STRING using the expression PAT
  * the longest substring is found when FLAG is set.
  */
-static int substring(register const char *string,size_t len,const char *pat,int match[], int flag)
+static int substring(const char *string,size_t len,const char *pat,int match[], int flag)
 {
-	register const char *sp=string;
-	register int size,nmatch,n;
+	const char *sp=string;
+	int size,nmatch,n;
 	int smatch[2*(MATCH_MAX+1)];
 	if(flag)
 	{
@@ -2648,8 +2648,8 @@ static int substring(register const char *string,size_t len,const char *pat,int 
 #if SHOPT_MULTIBYTE
 	static char	*lastchar(const char *string, const char *endstring)
 	{
-		register char *str = (char*)string;
-		register int c;
+		char *str = (char*)string;
+		int c;
 		mbinit();
 		while(*str)
 		{
@@ -2669,8 +2669,8 @@ static int	charlen(const char *string,int len)
 #if SHOPT_MULTIBYTE
 	if(mbwide())
 	{
-		register const char *str = string, *strmax=string+len;
-		register int n=0;
+		const char *str = string, *strmax=string+len;
+		int n=0;
 		mbinit();
 		if(len>0)
 		{
@@ -2707,7 +2707,7 @@ static int sh_btilde(int argc, char *argv[], Shbltin_t *context)
 /*
  * <offset> is byte offset for beginning of tilde string
  */
-static void tilde_expand2(Shell_t *shp, register int offset)
+static void tilde_expand2(Shell_t *shp, int offset)
 {
 	char		shtilde[10], *av[3], *ptr=stkfreeze(shp->stk,1);
 	Sfio_t		*iop, *save=sfstdout;
@@ -2759,12 +2759,12 @@ static void tilde_expand2(Shell_t *shp, register int offset)
  * If string doesn't start with ~ or ~... not found then 0 returned.
  */
                                                             
-static char *sh_tilde(Shell_t *shp,register const char *string)
+static char *sh_tilde(Shell_t *shp,const char *string)
 {
-	register char		*cp;
-	register int		c;
-	register struct passwd	*pw;
-	register Namval_t *np=0;
+	char		*cp;
+	int		c;
+	struct passwd	*pw;
+	Namval_t *np=0;
 	static Dt_t *logins_tree;
 	if(*string++!='~')
 		return(NIL(char*));
@@ -2878,7 +2878,7 @@ skip:
 /*
  * return values for special macros
  */
-static char *special(Shell_t *shp,register int c)
+static char *special(Shell_t *shp,int c)
 {
 	if(c!='$')
 		shp->argaddr = 0;
@@ -2938,8 +2938,8 @@ static void mac_error(Namval_t *np)
  */ 
 static char *mac_getstring(char *pattern)
 {
-	register char	*cp=pattern, *rep=0, *dp;
-	register int	c;
+	char	*cp=pattern, *rep=0, *dp;
+	int	c;
 	while(c = *cp++)
 	{
 		if(c==ESCAPE && (!rep || (*cp && strchr("&|()[]*?",*cp))))

@@ -57,8 +57,8 @@ Shnode_t *sh_trestore(Shell_t *shp,Sfio_t *in)
 static Shnode_t *r_tree(Shell_t *shp)
 {
 	long l = sfgetl(infile); 
-	register int type;
-	register Shnode_t *t=0;
+	int type;
+	Shnode_t *t=0;
 	if(l<0)
 		return(t);
 	type = l;
@@ -176,8 +176,8 @@ static Shnode_t *r_tree(Shell_t *shp)
 
 static struct argnod *r_arg(Shell_t *shp)
 {
-	register struct argnod *ap=0, *apold, *aptop=0;
-	register long l;
+	struct argnod *ap=0, *apold, *aptop=0;
+	long l;
 	Stk_t		*stkp=shp->stk;
 	while((l=sfgetu(infile))>0)
 	{
@@ -231,8 +231,8 @@ static struct argnod *r_arg(Shell_t *shp)
 
 static struct ionod *r_redirect(Shell_t* shp)
 {
-	register long l;
-	register struct ionod *iop=0, *iopold, *ioptop=0;
+	long l;
+	struct ionod *iop=0, *iopold, *ioptop=0;
 	while((l=sfgetl(infile))>=0)
 	{
 		iop = (struct ionod*)getnode(shp->stk,ionod);
@@ -299,9 +299,9 @@ static void r_comarg(Shell_t *shp,struct comnod *com)
 
 static struct dolnod *r_comlist(Shell_t *shp)
 {
-	register struct dolnod *dol=0;
-	register long l;
-	register char **argv;
+	struct dolnod *dol=0;
+	long l;
+	char **argv;
 	if((l=sfgetl(infile))>0)
 	{
 		dol = (struct dolnod*)stkalloc(shp->stk,sizeof(struct dolnod) + sizeof(char*)*(l+ARG_SPARE));
@@ -315,7 +315,7 @@ static struct dolnod *r_comlist(Shell_t *shp)
 
 static struct regnod *r_switch(Shell_t *shp)
 {
-	register long l;
+	long l;
 	struct regnod *reg=0,*regold,*regtop=0;
 	while((l=sfgetl(infile))>=0)
 	{
@@ -336,9 +336,9 @@ static struct regnod *r_switch(Shell_t *shp)
 
 static char *r_string(Stk_t *stkp)
 {
-	register Sfio_t *in = infile;
-	register unsigned long l = sfgetu(in);
-	register char *ptr;
+	Sfio_t *in = infile;
+	unsigned long l = sfgetu(in);
+	char *ptr;
 	if(l == 0)
 		return(NIL(char*));
 	ptr = stkalloc(stkp,(unsigned)l);

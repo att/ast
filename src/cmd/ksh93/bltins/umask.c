@@ -39,9 +39,9 @@
 
 int	b_umask(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *mask;
-	register int flag = 0;
-	register bool sflag=false, pflag=false;
+	char *mask;
+	int flag = 0;
+	bool sflag=false, pflag=false;
 	NOT_USED(context);
 	while((argc = optget(argv,sh_optumask))) switch(argc)
 	{
@@ -63,7 +63,7 @@ int	b_umask(int argc,char *argv[],Shbltin_t *context)
 	argv += opt_info.index;
 	if(mask = *argv)
 	{
-		register int c;	
+		int c;	
 		if(isdigit(*mask))
 		{
 			while(c = *mask++)

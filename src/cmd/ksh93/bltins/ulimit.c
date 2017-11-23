@@ -50,7 +50,7 @@
 
 static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 {
-	register const Limit_t*	tp;
+	const Limit_t*	tp;
 
 	for (tp = shtab_limits; tp->option; tp++)
 	{
@@ -67,9 +67,9 @@ static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 
 int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *limit;
-	register int mode=0, n;
-	register unsigned long hit = 0;
+	char *limit;
+	int mode=0, n;
+	unsigned long hit = 0;
 	Shell_t *shp = context->shp;
 #ifdef _lib_getrlimit
 	struct rlimit rlp;

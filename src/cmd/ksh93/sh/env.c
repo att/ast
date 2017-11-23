@@ -60,7 +60,7 @@ typedef  struct _env_
  */
 static int compare(Dt_t *dt, Void_t* key1, Void_t* key2, Dtdisc_t* disc)
 {
-	register int c,d;
+	int c,d;
 	const unsigned char *s1=(unsigned const char*)key1;
 	const unsigned char *s2=(unsigned const char*)key2; 
 	while((c= *s1++) && c!='=' && c==*s2) 
@@ -87,8 +87,8 @@ static Dtdisc_t env_disc =
  */
 char **env_get(Env_t* ep)
 {
-	register Evar_t *vp;
-	register int n=ep->extra;
+	Evar_t *vp;
+	int n=ep->extra;
 	if(ep->flags&ENV_VALID)
 		return(ep->env+n);
 	if(ep->count > ep->max)

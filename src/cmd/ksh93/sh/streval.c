@@ -168,10 +168,10 @@ static void array_args(Shell_t *shp, char *tp, int n)
 
 Sfdouble_t	arith_exec(Arith_t *ep)
 {
-	register Sfdouble_t num=0,*dp,*sp;
-	register unsigned char *cp = ep->code;
-	register int c,type=0;
-	register char *tp;
+	Sfdouble_t num=0,*dp,*sp;
+	unsigned char *cp = ep->code;
+	int c,type=0;
+	char *tp;
 	Sfdouble_t d, small_stack[SMALL_STACK+1],arg[9];
 	const char *ptr = "";
 	char	*lastval=0;
@@ -548,9 +548,9 @@ Sfdouble_t	arith_exec(Arith_t *ep)
 /*
  * This returns operator tokens or A_REG or A_NUM
  */
-static int gettok(register struct vars *vp)
+static int gettok(struct vars *vp)
 {
-	register int c,op;
+	int c,op;
 	vp->errchr = vp->nextchr;
 	while(1)
 	{
@@ -616,9 +616,9 @@ static int gettok(register struct vars *vp)
  * evaluate a subexpression with precedence
  */
 
-static bool expr(register struct vars *vp,register int precedence)
+static bool expr(struct vars *vp,int precedence)
 {
-	register int	c, op;
+	int	c, op;
 	int		invalid,wasop=0;
 	struct lval	lvalue,assignop;
 	const char	*pos;
@@ -957,7 +957,7 @@ again:
 Arith_t *arith_compile(Shell_t *shp,const char *string,char **last,Sfdouble_t(*fun)(const char**,struct lval*,int,Sfdouble_t),int emode)
 {
 	struct vars cur;
-	register Arith_t *ep;
+	Arith_t *ep;
 	int offset;
 	int nounset = sh_isoption(shp,SH_NOUNSET);
 	memset((void*)&cur,0,sizeof(cur));

@@ -150,7 +150,7 @@ USAGE_LICENSE
 
 /* GLOBIGNORE discipline. Turn on SH_DOTGLOB on set, turn off on unset. */
 
-static void put_globignore(register Namval_t* np, const char *val, int flags, Namfun_t *fp)
+static void put_globignore(Namval_t* np, const char *val, int flags, Namfun_t *fp)
 {
 	Shell_t *shp = np->nvshell;
 	if(val)
@@ -170,7 +170,7 @@ struct	funcname
 	Namfun_t	hdr;
 };
 
-static void put_funcname(register Namval_t* np,const char *val,int flags,Namfun_t *fp)
+static void put_funcname(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	/* bash silently returns with an error when FUNCNAME is set,
 	   unsetting FUNCNAME is allowed */
@@ -188,7 +188,7 @@ const Namdisc_t SH_FUNCNAME_disc  = { sizeof(struct funcname), put_funcname };
 
 /* shopt builtin */
 
-int     b_shopt(int argc,register char *argv[], Shbltin_t *extra)
+int     b_shopt(int argc,char *argv[], Shbltin_t *extra)
 {
         Shell_t *shp = extra->shp;
 	int n, f, ret=0;

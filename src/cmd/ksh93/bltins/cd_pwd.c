@@ -41,7 +41,7 @@
 /*
  * Invalidate path name bindings to relative paths
  */
-static void invalidate(register Namval_t *np,void *data)
+static void invalidate(Namval_t *np,void *data)
 {
 	Pathcomp_t *pp = (Pathcomp_t*)np->nvalue.cp;
 	NOT_USED(data);
@@ -70,10 +70,10 @@ int sh_diropenat(Shell_t *shp, int dir, const char *path)
 
 int	b_cd(int argc, char *argv[],Shbltin_t *context)
 {
-	register char *dir;
+	char *dir;
 	Pathcomp_t *cdpath = 0;
-	register const char *dp;
-	register Shell_t *shp = context->shp;
+	const char *dp;
+	Shell_t *shp = context->shp;
 	int saverrno=0;
 	int rval,i,j;
 	bool fflag=false, pflag=false, xattr=false;
@@ -198,7 +198,7 @@ int	b_cd(int argc, char *argv[],Shbltin_t *context)
 		}
 		if(!fflag && !pflag)
 		{
-			register char *cp;
+			char *cp;
 			stakseek(PATH_MAX+PATH_OFFSET);
 #if SHOPT_FS_3D
 			if(!(cp = pathcanon(stakptr(PATH_OFFSET),PATH_MAX,PATH_ABSOLUTE|PATH_DOTDOT|PATH_DROP_TAIL_SLASH)))
@@ -311,8 +311,8 @@ success:
 
 int	b_pwd(int argc, char *argv[],Shbltin_t *context)
 {
-	register char *cp, *dir;
-	register Shell_t *shp = context->shp;
+	char *cp, *dir;
+	Shell_t *shp = context->shp;
 	bool pflag = false;
 	int n,fd,ffd=-1;
 	NOT_USED(argc);

@@ -136,7 +136,7 @@ static Namfun_t *clone_enum(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 static void put_enum(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	struct Enum 		*ep = (struct Enum*)fp;
-	register const char	*v;
+	const char	*v;
 	unsigned short		i=0, n;
 	if(!val && !(flags&NV_INTEGER))
 	{
@@ -168,7 +168,7 @@ static void put_enum(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 		error(ERROR_exit(1), "%s:  invalid value %s",nv_name(np),val);
 }
 
-static char* get_enum(register Namval_t* np, Namfun_t *fp)
+static char* get_enum(Namval_t* np, Namfun_t *fp)
 {
 	static char buff[6];
 	struct Enum *ep = (struct Enum*)fp;
@@ -182,7 +182,7 @@ static char* get_enum(register Namval_t* np, Namfun_t *fp)
 }
 
 
-static Sfdouble_t get_nenum(register Namval_t* np, Namfun_t *fp)
+static Sfdouble_t get_nenum(Namval_t* np, Namfun_t *fp)
 {
 	return(nv_getn(np,fp));
 }

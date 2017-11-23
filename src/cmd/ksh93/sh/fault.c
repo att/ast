@@ -108,16 +108,16 @@ static int	notify_builtin(Shell_t *shp, int sig)
  * Most signals caught or ignored by the shell come here
 */
 #ifdef _lib_sigaction
-void	sh_fault(register int sig, siginfo_t *info, void *context)
+void	sh_fault(int sig, siginfo_t *info, void *context)
 #else
-void	sh_fault(register int sig)
+void	sh_fault(int sig)
 #endif
 {
 	int			saved_errno=errno; /* many platforms do not save/restore errno for signal handlers */
-	register Shell_t	*shp = sh_getinterp();
-	register int 		flag=0;
-	register char		*trap;
-	register struct checkpt	*pp = (struct checkpt*)shp->jmplist;
+	Shell_t	*shp = sh_getinterp();
+	int 		flag=0;
+	char		*trap;
+	struct checkpt	*pp = (struct checkpt*)shp->jmplist;
 	int	action=0;
 	if(sig==SIGCHLD)
 		sfprintf(sfstdout,"childsig\n");
@@ -259,8 +259,8 @@ done:
 void sh_siginit(void *ptr)
 {
 	Shell_t	*shp = (Shell_t*)ptr;
-	register int sig, n;
-	register const struct shtable2	*tp = shtab_signals;
+	int sig, n;
+	const struct shtable2	*tp = shtab_signals;
 	sig_begin();
 	/* find the largest signal number in the table */
 #if defined(SIGRTMIN) && defined(SIGRTMAX)
@@ -308,9 +308,9 @@ void sh_siginit(void *ptr)
 /*
  * Turn on trap handler for signal <sig>
  */
-void	sh_sigtrap(Shell_t *shp,register int sig)
+void	sh_sigtrap(Shell_t *shp,int sig)
 {
-	register int flag;
+	int flag;
 	void (*fun)(int);
 	shp->st.otrapcom = 0;
 	if(sig==0)
@@ -339,7 +339,7 @@ void	sh_sigtrap(Shell_t *shp,register int sig)
  */
 void	sh_sigdone(Shell_t *shp)
 {
-	register int 	flag, sig = shgd->sigmax;
+	int 	flag, sig = shgd->sigmax;
 	shp->sigflag[0] |= SH_SIGFAULT;
 	while(--sig>=0)
 	{
@@ -354,13 +354,13 @@ void	sh_sigdone(Shell_t *shp)
  * Free the trap strings if mode is non-zero
  * If mode>1 then ignored traps cause signal to be ignored 
  */
-void	sh_sigreset(Shell_t *shp,register int mode)
+void	sh_sigreset(Shell_t *shp,int mode)
 {
-	register char	*trap;
+	char	*trap;
 #ifdef SIGRTMIN
-	register int 	flag, sig=SIGRTMIN;
+	int 	flag, sig=SIGRTMIN;
 #else
-	register int 	flag, sig=shp->st.trapmax;
+	int 	flag, sig=shp->st.trapmax;
 #endif
 	while(sig-- > 0)
 	{
@@ -402,10 +402,10 @@ void	sh_sigreset(Shell_t *shp,register int mode)
 /*
  * free up trap if set and restore signal handler if modified
  */
-void	sh_sigclear(Shell_t *shp,register int sig)
+void	sh_sigclear(Shell_t *shp,int sig)
 {
-	register int flag = shp->sigflag[sig];
-	register char *trap;
+	int flag = shp->sigflag[sig];
+	char *trap;
 	shp->st.otrapcom=0;
 	if(!(flag&SH_SIGFAULT))
 		return;
@@ -425,8 +425,8 @@ void	sh_sigclear(Shell_t *shp,register int sig)
 
 void	sh_chktrap(Shell_t* shp)
 {
-	register int 	sig=shp->st.trapmax;
-	register char *trap;
+	int 	sig=shp->st.trapmax;
+	char *trap;
 	int count=0;
 	if(!(shp->trapnote&~SH_SIGIGNORE))
 		sig=0;
@@ -527,11 +527,11 @@ retry:
 /*
  * exit the current scope and jump to an earlier one based on pp->mode
  */
-void sh_exit_20120720(Shell_t *shp,register int xno)
+void sh_exit_20120720(Shell_t *shp,int xno)
 {
-	register struct checkpt	*pp = (struct checkpt*)shp->jmplist;
-	register int		sig=0;
-	register Sfio_t*	pool;
+	struct checkpt	*pp = (struct checkpt*)shp->jmplist;
+	int		sig=0;
+	Sfio_t*	pool;
 	shp->exitval=xno;
 	if(xno==SH_EXITSIG)
 		shp->exitval |= (sig=shp->lastsig);
@@ -609,10 +609,10 @@ void sh_exit_20120720(Shell_t *shp,register int xno)
 }
 
 #undef sh_exit
-void sh_exit(register int xno)
+void sh_exit(int xno)
 {
 	Shell_t *shp = sh_getinterp();
-	register struct checkpt *pp = (struct checkpt*)shp->jmplist;
+	struct checkpt *pp = (struct checkpt*)shp->jmplist;
 	if(pp && pp->mode == SH_JMPIO && xno!=ERROR_NOEXEC)
 		pp->mode = SH_JMPERREXIT;
 	sh_exit_20120720(shp,xno);
@@ -630,11 +630,11 @@ static void array_notify(Namval_t *np, void *data)
  * This is the exit routine for the shell
  */
 
-void sh_done(void *ptr, register int sig)
+void sh_done(void *ptr, int sig)
 {
 	Shell_t	*shp = (Shell_t*)ptr;
-	register char *t;
-	register int savxit = shp->exitval;
+	char *t;
+	int savxit = shp->exitval;
 	shp->trapnote = 0;
 	indone=1;
 	if(sig)
@@ -714,7 +714,7 @@ void sh_done(void *ptr, register int sig)
  */
 static char *sig_name(Shell_t *shp,int sig, char* buf, int pfx)
 {
-	register int	i;
+	int	i;
 
 	i = 0;
 	if(sig>shp->gd->sigruntime[SH_SIGRTMIN] && sig<shp->gd->sigruntime[SH_SIGRTMAX])
@@ -755,11 +755,11 @@ static const char trapfmt[] = "trap -- %s %s\n";
  * if <flag> is -1, then print all signal names in menu format
  * if <flag> is <-1, then print all traps
  */
-void sh_siglist(register Shell_t *shp,Sfio_t *iop,register int flag)
+void sh_siglist(Shell_t *shp,Sfio_t *iop,int flag)
 {
-	register const struct shtable2	*tp;
-	register int sig;
-	register char *sname;
+	const struct shtable2	*tp;
+	int sig;
+	char *sname;
 	char name[10];
 	const char *names[SH_TRAP];
 	const char *traps[SH_DEBUGTRAP+1];
@@ -792,7 +792,7 @@ void sh_siglist(register Shell_t *shp,Sfio_t *iop,register int flag)
 	else if(flag<-1)
 	{
 		/* print the traps */
-		register char *trap,**trapcom;
+		char *trap,**trapcom;
 		sig = shp->st.trapmax;
 		/* use parent traps if otrapcom is set (for $(trap)  */
 		trapcom = (shp->st.otrapcom?shp->st.otrapcom:shp->st.trapcom);

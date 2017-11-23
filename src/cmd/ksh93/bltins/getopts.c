@@ -55,10 +55,10 @@ static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 
 int	b_getopts(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *options=error_info.context->id;
-	register Namval_t *np;
-	register int flag, mode;
-	register Shell_t *shp = context->shp;
+	char *options=error_info.context->id;
+	Namval_t *np;
+	int flag, mode;
+	Shell_t *shp = context->shp;
 	char value[2], key[2];
 	int jmpval;
 	volatile int extended, r= -1;

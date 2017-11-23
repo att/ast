@@ -41,10 +41,10 @@ static void hist_subst(Shell_t *shp,const char*, int fd, char*);
 #endif
 int	b_hist(int argc,char *argv[], Shbltin_t *context)
 {
-	register History_t *hp;
-	register char *arg;
-	register int flag,fdo;
-	register Shell_t *shp = context->shp;
+	History_t *hp;
+	char *arg;
+	int flag,fdo;
+	Shell_t *shp = context->shp;
 	Sfio_t *outfile;
 	char *fname;
 	int range[2], incr, index2, indx= -1;
@@ -267,9 +267,9 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 
 static void hist_subst(Shell_t *shp,const char *command,int fd,char *replace)
 {
-	register char *newp=replace;
-	register char *sp;
-	register int c;
+	char *newp=replace;
+	char *sp;
+	int c;
 	off_t size;
 	char *string;
 	while(*++newp != '='); /* skip to '=' */

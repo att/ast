@@ -50,10 +50,10 @@ static int whence(Shell_t *,char**, int);
  * In this case return 0 when -v or -V or unknown option, otherwise
  *   the shift count to the command is returned
  */
-int	b_command(register int argc,char *argv[],Shbltin_t *context)
+int	b_command(int argc,char *argv[],Shbltin_t *context)
 {
-	register int n, flags=0;
-	register Shell_t *shp = context->shp;
+	int n, flags=0;
+	Shell_t *shp = context->shp;
 	opt_info.index = opt_info.offset = 0;
 	while((n = optget(argv,sh_optcommand))) switch(n)
 	{
@@ -95,8 +95,8 @@ int	b_command(register int argc,char *argv[],Shbltin_t *context)
  */
 int	b_whence(int argc,char *argv[],Shbltin_t *context)
 {
-	register int flags=0, n;
-	register Shell_t *shp = context->shp;
+	int flags=0, n;
+	Shell_t *shp = context->shp;
 	NOT_USED(argc);
 	if(*argv[0]=='t')
 		flags = V_FLAG;
@@ -137,13 +137,13 @@ int	b_whence(int argc,char *argv[],Shbltin_t *context)
 	return(whence(shp, argv, flags));
 }
 
-static int whence(Shell_t *shp,char **argv, register int flags)
+static int whence(Shell_t *shp,char **argv, int flags)
 {
-	register const char *name;
-	register Namval_t *np;
-	register const char *cp;
-	register int aflag,r=0;
-	register const char *msg;
+	const char *name;
+	Namval_t *np;
+	const char *cp;
+	int aflag,r=0;
+	const char *msg;
 	int	tofree;
 	Dt_t *root;
 	Namval_t *nq;
