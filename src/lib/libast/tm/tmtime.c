@@ -35,7 +35,7 @@
  */
 
 time_t
-tmtime(register Tm_t* tm, int west)
+tmtime(Tm_t* tm, int west)
 {
 	return tmxsec(tmxtime(tm, west));
 }

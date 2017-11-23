@@ -46,9 +46,9 @@ strrchr(const char* s, int c)
 #else
 
 char*
-strrchr(register const char* s, register int c)
+strrchr(const char* s, int c)
 {
-	register const char*	r;
+	const char*	r;
 
 	r = 0;
 	do if (*s == c) r = s; while(*s++);

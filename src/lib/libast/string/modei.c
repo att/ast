@@ -38,13 +38,13 @@
 #undef	modei
 
 int
-modei(register int x)
+modei(int x)
 {
 #if _S_IDPERM
 	return(x & X_IPERM);
 #else
-	register int	i;
-	register int	c;
+	int	i;
+	int	c;
 
 	i = 0;
 	for (c = 0; c < PERMLEN; c += 2)

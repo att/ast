@@ -50,7 +50,7 @@
  */
 
 int
-tvsleep(register const Tv_t* tv, register Tv_t* rv)
+tvsleep(const Tv_t* tv, Tv_t* rv)
 {
 
 #if _lib_nanosleep

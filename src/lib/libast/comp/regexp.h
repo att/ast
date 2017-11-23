@@ -76,9 +76,9 @@ extern char*	_re_read(regexp_t*, const char*, char*, const char*, int);
 regexp_t	_re_info;
 
 char*
-_re_read(register regexp_t* re, const char* instring, char* ep, const char* endbuf, int seof)
+_re_read(regexp_t* re, const char* instring, char* ep, const char* endbuf, int seof)
 {
-	register int		c;
+	int		c;
 
 	static const char*	prev;
 

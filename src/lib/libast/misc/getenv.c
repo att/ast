@@ -54,11 +54,11 @@ extern char**	environ;
 static char*
 default_getenv(const char* name)
 {
-	register char**		av;
-	register const char*	cp;
-	register const char*	sp;
-	register char		c0;
-	register char		c1;
+	char**		av;
+	const char*	cp;
+	const char*	sp;
+	char		c0;
+	char		c1;
 
 	av = environ;
 	if (!av || !name || !(c0 = *name))

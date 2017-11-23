@@ -32,15 +32,15 @@ void _STUB_vmstrdup(){}
  */
 
 #if __STD_C
-char* vmstrdup(Vmalloc_t* v, register const char* s)
+char* vmstrdup(Vmalloc_t* v, const char* s)
 #else
 char* vmstrdup(v, s)
 Vmalloc_t*	v;
-register char*	s;
+char*	s;
 #endif
 {
-	register char*	t;
-	register size_t	n;
+	char*	t;
+	size_t	n;
 
 	return (s && (t = vmalloc(v, n = strlen(s) + 1))) ? (char*)memcpy(t, s, n) : (char*)0;
 }

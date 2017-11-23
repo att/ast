@@ -29,7 +29,7 @@
  */
 
 char*
-fmtip4(register uint32_t addr, int bits)
+fmtip4(uint32_t addr, int bits)
 {
 	char*	buf;
 	int	z;

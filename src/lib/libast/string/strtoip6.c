@@ -43,13 +43,13 @@
 #define PFX		19
 
 int
-strtoip6(register const char* s, char** e, unsigned char* addr, unsigned char* bits)
+strtoip6(const char* s, char** e, unsigned char* addr, unsigned char* bits)
 {
-	register unsigned char*	b = addr;
-	register unsigned char*	x = b + IP6ADDR;
-	register unsigned char*	z;
-	register int		c;
-	register uint32_t	a;
+	unsigned char*	b = addr;
+	unsigned char*	x = b + IP6ADDR;
+	unsigned char*	z;
+	int		c;
+	uint32_t	a;
 
 	static unsigned char	lex[256];
 

@@ -163,7 +163,7 @@ lccategories(void)
  */
 
 Lc_info_t*
-lcinfo(register int category)
+lcinfo(int category)
 {
 	if ((category = lcindex(category, 0)) < 0)
 		return 0;
@@ -177,9 +177,9 @@ lcinfo(register int category)
  */
 
 static int
-match(const char* s, register const char* p, int minimum, int standard)
+match(const char* s, const char* p, int minimum, int standard)
 {
-	register const char*	t;
+	const char*	t;
 	const char*		x;
 	int			w;
 	int			z;
@@ -253,7 +253,7 @@ match(const char* s, register const char* p, int minimum, int standard)
  */
 
 static int
-match_charset(register const char* s, register const Lc_charset_t* cp)
+match_charset(const char* s, const Lc_charset_t* cp)
 {
 	return match(s, cp->code, 0, 1) || match(s, cp->alternates, 3, 1) || cp->ms && match(s, cp->ms, 0, 1);
 }
@@ -265,11 +265,11 @@ match_charset(register const char* s, register const Lc_charset_t* cp)
 static size_t
 canonical(const Lc_language_t* lp, const Lc_territory_t* tp, const Lc_charset_t* cp, const Lc_attribute_list_t* ap, unsigned long flags, char* buf, size_t siz)
 {
-	register int		c;
-	register int		u;
-	register char*		s;
-	register char*		e;
-	register const char*	t;
+	int		c;
+	int		u;
+	char*		s;
+	char*		e;
+	const char*	t;
 	char*			p;
 	char*			r;
 
@@ -418,10 +418,10 @@ lccanon(Lc_t* lc, unsigned long flags, char* buf, size_t siz)
 Lc_t*
 lcmake(const char* name)
 {
-	register int			c;
-	register char*			s;
-	register char*			e;
-	register const char*		t;
+	int			c;
+	char*			s;
+	char*			e;
+	const char*		t;
 	const char*			a;
 	char*				w;
 	char*				language_name;
@@ -832,7 +832,7 @@ typedef struct Lc_scan_s
 Lc_t*
 lcscan(Lc_t* lc)
 {
-	register Lc_scan_t*	ls;
+	Lc_scan_t*	ls;
 
 	if (!(ls = (Lc_scan_t*)lc))
 	{

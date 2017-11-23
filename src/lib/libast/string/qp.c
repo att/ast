@@ -41,11 +41,11 @@ static const char	hex[] = "0123456789ABCDEFabcdef";
 ssize_t
 qpencode(const void* fb, size_t fz, void** fn, void* tb, size_t tz, void** tn)
 {
-	register unsigned char*	fp;
-	register unsigned char*	tp;
-	register unsigned char*	fe;
-	register unsigned char*	te;
-	register int		c;
+	unsigned char*	fp;
+	unsigned char*	tp;
+	unsigned char*	fe;
+	unsigned char*	te;
+	int		c;
 
 	fp = (unsigned char*)fb;
 	fe = fp + fz;
@@ -88,11 +88,11 @@ qpencode(const void* fb, size_t fz, void** fn, void* tb, size_t tz, void** tn)
 ssize_t
 qpdecode(const void* fb, size_t fz, void** fn, void* tb, size_t tz, void** tn)
 {
-	register unsigned char*	fp;
-	register unsigned char*	tp;
-	register unsigned char*	fe;
-	register unsigned char*	te;
-	register int		c;
+	unsigned char*	fp;
+	unsigned char*	tp;
+	unsigned char*	fe;
+	unsigned char*	te;
+	int		c;
 
 	SFCVINIT();
 	fp = (unsigned char*)fb;

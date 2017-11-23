@@ -39,11 +39,11 @@
  */
 
 int
-regcollate(register const char* s, char** e, char* buf, size_t size, wchar_t* wc)
+regcollate(const char* s, char** e, char* buf, size_t size, wchar_t* wc)
 {
-	register int			c;
-	register char*			b;
-	register char*			x;
+	int			c;
+	char*			b;
+	char*			x;
 	const char*			t;
 	int				i;
 	int				r;

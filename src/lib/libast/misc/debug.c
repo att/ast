@@ -41,11 +41,11 @@ static int	indent = 0;
 #define VAUNSIGNED(a,n)	(((n)>SIZEOF(unsigned long))?va_arg(a,uint64_t):((n)?va_arg(a,unsigned long):va_arg(a,unsigned int)))
 
 ssize_t
-debug_vsprintf(char* buf, size_t siz, register const char* format, va_list ap)
+debug_vsprintf(char* buf, size_t siz, const char* format, va_list ap)
 {
-	register int		c;
-	register char*		p;
-	register char*		e;
+	int		c;
+	char*		p;
+	char*		e;
 	int64_t			n;
 	uint64_t		u;
 	int			w;

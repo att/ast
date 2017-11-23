@@ -184,10 +184,10 @@ static int Is_wc_16(int c) { return iswctype(c, ctype[CTYPES+15].wtype); }
 regclass_t
 regclass(const char* s, char** e)
 {
-	register Ctype_t*	cp;
-	register int		c;
-	register size_t		n;
-	register const char*	t;
+	Ctype_t*	cp;
+	int		c;
+	size_t		n;
+	const char*	t;
 	Ctype_t*		lc;
 	Ctype_t*		xp;
 	Ctype_t*		zp;
@@ -257,9 +257,9 @@ regclass(const char* s, char** e)
 int
 regaddclass(const char* name, regclass_t fun)
 {
-	register Ctype_t*	cp;
-	register Ctype_t*	np;
-	register size_t		n;
+	Ctype_t*	cp;
+	Ctype_t*	np;
+	size_t		n;
 
 	n = strlen(name);
 	for (cp = ctypes; cp; cp = cp->next)

@@ -40,15 +40,15 @@ struct list
  */
 static int	sh_unquote(char* string)
 {
-	register char *sp=string, *dp;
-	register int c;
+	char *sp=string, *dp;
+	int c;
 	while((c= *sp) && c!='\'')
 		sp++;
 	if(c==0)
 		return(sp-string);
 	if((dp=sp) > string && sp[-1]=='$')
 	{
-		register int n=stresc(sp+1);
+		int n=stresc(sp+1);
 		/* copy all but trailing ' */
 		while(--n>0)
 			*dp++ = *++sp;
@@ -62,11 +62,11 @@ static int	sh_unquote(char* string)
 	return(dp-string);
 }
 
-int	wordexp(const char *string, wordexp_t *wdarg, register int flags)
+int	wordexp(const char *string, wordexp_t *wdarg, int flags)
 {
-	register Sfio_t *iop;
-	register char *cp=(char*)string;
-	register int c,quoted=0,literal=0,ac=0;
+	Sfio_t *iop;
+	char *cp=(char*)string;
+	int c,quoted=0,literal=0,ac=0;
 	int offset;
 	char *savebase,**av;
 	if(offset=staktell())
@@ -198,7 +198,7 @@ err:
 /*
  * free fields in <wdarg>
  */
-int wordfree(register wordexp_t *wdarg)
+int wordfree(wordexp_t *wdarg)
 {
 	struct list *arg, *argnext;
 	if(wdarg->we_wordv)

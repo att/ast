@@ -32,7 +32,7 @@ static int	(*ftw_userf)(const char*, const struct stat*, int);
 static int
 ftw_user(Ftw_t* ftw)
 {
-	register int	n = ftw->info;
+	int	n = ftw->info;
 
 	if (n & (FTW_C|FTW_NX))
 		n = FTW_DNR;

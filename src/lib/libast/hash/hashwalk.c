@@ -34,10 +34,10 @@
  */
 
 int
-hashwalk(Hash_table_t* tab, int flags, register int (*walker)(const char*, char*, void*), void* handle)
+hashwalk(Hash_table_t* tab, int flags, int (*walker)(const char*, char*, void*), void* handle)
 {
-	register Hash_bucket_t*	b;
-	register int		v;
+	Hash_bucket_t*	b;
+	int		v;
 	Hash_position_t*	pos;
 
 	if (!(pos = hashscan(tab, flags)))

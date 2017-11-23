@@ -48,7 +48,7 @@ static struct
  */
 
 static int
-standardized(Lc_info_t* li, register char** b)
+standardized(Lc_info_t* li, char** b)
 {
 	if ((li->lc->language->flags & (LC_debug|LC_default)) || streq(li->lc->language->code, "en"))
 	{
@@ -65,11 +65,11 @@ standardized(Lc_info_t* li, register char** b)
  */
 
 static void
-fixup(Lc_info_t* li, register char** b)
+fixup(Lc_info_t* li, char** b)
 {
-	register char**		v;
-	register char**		e;
-	register int		n;
+	char**		v;
+	char**		e;
+	int		n;
 
 	static int		must[] =
 	{
@@ -188,12 +188,12 @@ static const Map_t map[] =
  */
 
 static char*
-word2posix(register char* f, register char* w, int alternate)
+word2posix(char* f, char* w, int alternate)
 {
-	register char*	r;
-	register int	c;
-	register int	p;
-	register int	n;
+	char*	r;
+	int	c;
+	int	p;
+	int	n;
 
 	while (*w)
 	{
@@ -341,12 +341,12 @@ word2posix(register char* f, register char* w, int alternate)
 static void
 native_lc_time(Lc_info_t* li)
 {
-	register char*	s;
-	register char*	t;
-	register char**	b;
-	register int	n;
-	register int	m;
-	register int	i;
+	char*	s;
+	char*	t;
+	char**	b;
+	int	n;
+	int	m;
+	int	i;
 	LCID		lcid;
 	int		nt;
 	int		ns;
@@ -512,11 +512,11 @@ static const Map_t map[] =
 static void
 native_lc_time(Lc_info_t* li)
 {
-	register char*	s;
-	register char*	t;
-	register char**	b;
-	register int	n;
-	register int	i;
+	char*	s;
+	char*	t;
+	char**	b;
+	int	n;
+	int	i;
 
 	n = 0;
 	for (i = 0; i < elementsof(map); i++)
@@ -553,10 +553,10 @@ native_lc_time(Lc_info_t* li)
 static void
 load(Lc_info_t* li)
 {
-	register char*		s;
-	register char**		b;
-	register char**		v;
-	register char**		e;
+	char*		s;
+	char**		b;
+	char**		v;
+	char**		e;
 	unsigned char*		u;
 	ssize_t			n;
 	iconv_t			cvt;

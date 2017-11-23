@@ -29,7 +29,7 @@
  */
 
 int
-tvcmp(register const Tv_t* a, register const Tv_t* b)
+tvcmp(const Tv_t* a, const Tv_t* b)
 {
 	if (a->tv_sec < b->tv_sec)
 		return -1;

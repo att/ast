@@ -63,7 +63,7 @@ extern void		_exit(int);
 int
 atexit(void (*func)(void))
 {
-	register struct list*	p;
+	struct list*	p;
 
 	if (!(p = newof(0, struct list, 1, 0))) return(-1);
 	p->func = func;
@@ -75,7 +75,7 @@ atexit(void (*func)(void))
 void
 _ast_atexit(void)
 {
-	register struct list*	p;
+	struct list*	p;
 
 	while (p = funclist)
 	{

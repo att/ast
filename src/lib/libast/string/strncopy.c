@@ -30,9 +30,9 @@
  */
 
 char*
-strncopy(register char* t, register const char* f, size_t n)
+strncopy(char* t, const char* f, size_t n)
 {
-	register char*	e = t + n - 1;
+	char*	e = t + n - 1;
 
 	do
 	{

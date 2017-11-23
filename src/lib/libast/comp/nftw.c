@@ -33,7 +33,7 @@ static int	(*nftw_userf)(const char*, const struct stat*, int, struct FTW*);
 static int
 nftw_user(Ftw_t* ftw)
 {
-	register int	n = ftw->info;
+	int	n = ftw->info;
 	struct FTW	nftw;
 	struct stat	st;
 

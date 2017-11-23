@@ -56,10 +56,10 @@ typedef struct Id_s
 char*
 fmtfs(struct stat* st)
 {
-	register Id_t*		ip;
-	register void*		mp;
-	register Mnt_t*		mnt;
-	register char*		s;
+	Id_t*		ip;
+	void*		mp;
+	Mnt_t*		mnt;
+	char*		s;
 	struct stat		rt;
 	char*			buf;
 

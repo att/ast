@@ -53,9 +53,9 @@ pathkey(char* key, char* attr, const char* lang, const char* tool, const char* p
 char*
 pathkey_20100601(const char* lang, const char* tool, const char* apath, char* key, size_t keysize, char* attr, size_t attrsize)
 {
-	register char*		path = (char*)apath;
-	register char*		s;
-	register char*		k;
+	char*		path = (char*)apath;
+	char*		s;
+	char*		k;
 	char*			t;
 	char*			flags;
 	char**			p;

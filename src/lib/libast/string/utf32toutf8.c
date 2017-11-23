@@ -50,9 +50,9 @@ static const Utf8_t	ops[] =
 };
 
 size_t
-utf32toutf8(register char* s, register uint32_t w)
+utf32toutf8(char* s, uint32_t w)
 {
-	register int	i;
+	int	i;
 	char*		b;
 	char		tmp[6];
 

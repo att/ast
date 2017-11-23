@@ -37,8 +37,8 @@
 intmax_t
 swapget(int op, const void* b, int n)
 {
-	register unsigned char*	p;
-	register unsigned char*	d;
+	unsigned char*	p;
+	unsigned char*	d;
 	intmax_t		v;
 	unsigned char		tmp[sizeof(intmax_t)];
 

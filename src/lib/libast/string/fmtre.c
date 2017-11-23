@@ -41,10 +41,10 @@ typedef struct Stack_s
 char*
 fmtre(const char* as)
 {
-	register char*		s = (char*)as;
-	register int		c;
-	register char*		t;
-	register Stack_t*	p;
+	char*		s = (char*)as;
+	int		c;
+	char*		t;
+	Stack_t*	p;
 	char*			x;
 	int			n;
 	int			end;

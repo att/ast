@@ -36,13 +36,13 @@
 #undef	modex
 
 int
-modex(register int i)
+modex(int i)
 {
 #if _S_IDPERM && _S_IDTYPE
 	return(i);
 #else
-	register int	x;
-	register int	c;
+	int	x;
+	int	c;
 
 	x = 0;
 #if _S_IDPERM

@@ -579,7 +579,7 @@ parsetrie(Env_t* env, Trie_node_t* x, Rex_t* rex, Rex_t* cont, unsigned char* s)
 }
 
 static int
-collelt(register Celt_t* ce, char* key, int c, int x)
+collelt(Celt_t* ce, char* key, int c, int x)
 {
 	Ckey_t	elt;
 
@@ -615,7 +615,7 @@ collelt(register Celt_t* ce, char* key, int c, int x)
 }
 
 static int
-collic(register Celt_t* ce, char* key, register char* nxt, int c, int x)
+collic(Celt_t* ce, char* key, char* nxt, int c, int x)
 {
 	Mbstate_t	q;
 
@@ -723,10 +723,10 @@ collmatch(Env_t* env, Rex_t* rex, unsigned char* s, unsigned char* e, unsigned c
 }
 
 static unsigned char*
-nestmatch(register unsigned char* s, register unsigned char* e, const unsigned short* type, register int co)
+nestmatch(unsigned char* s, unsigned char* e, const unsigned short* type, int co)
 {
-	register int	c;
-	register int	cc;
+	int	c;
+	int	cc;
 	unsigned int	n;
 	int		oc;
 
@@ -1861,8 +1861,8 @@ list(Env_t* env, Rex_t* rex)
 int
 regnexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, regmatch_t* match, regflags_t flags)
 {
-	register ssize_t	n;
-	register int		i;
+	ssize_t	n;
+	int		i;
 	int			j;
 	int			k;
 	int			m;
@@ -1919,12 +1919,12 @@ regnexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, re
 		}
 		else if (!(flags & REG_LEFT))
 		{
-			register unsigned char*	buf = (unsigned char*)s;
-			register size_t		index = e->re.bm.left + e->re.bm.size;
-			register size_t		mid = len - e->re.bm.right;
-			register size_t*	skip = e->re.bm.skip;
-			register size_t*	fail = e->re.bm.fail;
-			register Bm_mask_t**	mask = e->re.bm.mask;
+			unsigned char*	buf = (unsigned char*)s;
+			size_t		index = e->re.bm.left + e->re.bm.size;
+			size_t		mid = len - e->re.bm.right;
+			size_t*	skip = e->re.bm.skip;
+			size_t*	fail = e->re.bm.fail;
+			Bm_mask_t**	mask = e->re.bm.mask;
 			Bm_mask_t		m;
 			size_t			x;
 

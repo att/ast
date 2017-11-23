@@ -42,12 +42,12 @@ strnacmp(const char* a, const char* b, size_t n)
 #if CC_NATIVE == CC_ASCII
 	return strncmp(a, b, n);
 #else
-	register unsigned char*	ua = (unsigned char*)a;
-	register unsigned char*	ub = (unsigned char*)b;
-	register unsigned char*	ue;
-	register unsigned char*	m;
-	register int		c;
-	register int		d;
+	unsigned char*	ua = (unsigned char*)a;
+	unsigned char*	ub = (unsigned char*)b;
+	unsigned char*	ue;
+	unsigned char*	m;
+	int		c;
+	int		d;
 
 	m = ccmap(CC_NATIVE, CC_ASCII);
 	ue = ua + n;

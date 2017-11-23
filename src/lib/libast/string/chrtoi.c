@@ -30,11 +30,11 @@
 #include <ast.h>
 
 int
-chrtoi(register const char* s)
+chrtoi(const char* s)
 {
-	register int	c;
-	register int	n;
-	register int	x;
+	int	c;
+	int	n;
+	int	x;
 	char*		p;
 
 	c = 0;

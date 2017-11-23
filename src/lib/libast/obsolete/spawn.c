@@ -83,7 +83,7 @@ NoN(spawnvpe)
 extern pid_t
 spawnvpe(const char* name, char* const argv[], char* const envv[])
 {
-	register const char*	path = name;
+	const char*	path = name;
 	pid_t			pid;
 	char			buffer[PATH_MAX];
 
@@ -93,9 +93,9 @@ spawnvpe(const char* name, char* const argv[], char* const envv[])
 		return pid;
 	if (errno == ENOEXEC)
 	{
-		register char**	newargv;
-		register char**	ov;
-		register char**	nv;
+		char**	newargv;
+		char**	ov;
+		char**	nv;
 
 		for (ov = (char**)argv; *ov++;);
 		if (newargv = newof(0, char*, ov + 1 - (char**)argv, 0))

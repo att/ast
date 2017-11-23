@@ -69,7 +69,7 @@
 #endif
 
 off_t
-_iblocks(register struct stat* st)
+_iblocks(struct stat* st)
 {
 #if _mem_st_blocks_stat
 

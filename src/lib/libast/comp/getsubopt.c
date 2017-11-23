@@ -39,11 +39,11 @@ NoN(getsubopt)
 #include <error.h>
 
 extern int
-getsubopt(register char** op, char* const* tp, char** vp)
+getsubopt(char** op, char* const* tp, char** vp)
 {
-	register char*	b;
-	register char*	s;
-	register char*	v;
+	char*	b;
+	char*	s;
+	char*	v;
 
 	if (*(b = *op))
 	{

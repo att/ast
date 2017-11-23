@@ -34,9 +34,9 @@
 int
 struniq(char** argv, int n)
 {
-	register char**	ao;
-	register char**	an;
-	register char**	ae;
+	char**	ao;
+	char**	an;
+	char**	ae;
 
 	ao = an = argv;
 	ae = ao + n;

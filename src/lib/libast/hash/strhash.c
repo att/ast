@@ -36,9 +36,9 @@
 unsigned int
 strhash(const char* as)
 {
-	register const unsigned char*	s = (const unsigned char*)as;
-	register unsigned int		i = 0;
-	register unsigned int		c;
+	const unsigned char*	s = (const unsigned char*)as;
+	unsigned int		i = 0;
+	unsigned int		c;
 
 	while (c = *s++) HASHPART(i, c);
 	return(i);

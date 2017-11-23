@@ -55,10 +55,10 @@ pathcat(char* path, const char* dirs, int sep, const char* a, const char* b)
 #include <ast_api.h>
 
 char*
-pathcat_20100601(register const char* dirs, int sep, const char* a, register const char* b, char* path, size_t size)
+pathcat_20100601(const char* dirs, int sep, const char* a, const char* b, char* path, size_t size)
 {
-	register char*	s;
-	register char*	e;
+	char*	s;
+	char*	e;
 
 	s = path;
 	e = path + size;

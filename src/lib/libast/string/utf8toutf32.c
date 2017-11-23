@@ -65,11 +65,11 @@ static const signed char	utf8tab[256] =
 size_t
 utf8towc(wchar_t* wp, const char* str, size_t n)
 {
-	register unsigned char*	sp = (unsigned char*)str;
-	register int		m;
-	register int		i;
-	register int		c;
-	register wchar_t	w = 0;
+	unsigned char*	sp = (unsigned char*)str;
+	int		m;
+	int		i;
+	int		c;
+	wchar_t	w = 0;
 
 	if (!sp || !n)
 		goto nul;
@@ -128,7 +128,7 @@ utf8toutf32(uint32_t* up, const char* str, size_t n)
 size_t
 utf8toutf32v(uint32_t* up, const char* str)
 {
-	register unsigned char*	s = (unsigned char*)str;
+	unsigned char*	s = (unsigned char*)str;
 
 	switch (utf8tab[*s])
 	{

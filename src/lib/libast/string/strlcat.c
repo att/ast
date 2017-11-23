@@ -48,9 +48,9 @@ NoN(strlcat)
 #endif
 
 extern size_t
-strlcat(register char* s, register const char* t, register size_t n)
+strlcat(char* s, const char* t, size_t n)
 {
-	register size_t	m;
+	size_t	m;
 	const char*	o = t;
 
 	if (m = n)

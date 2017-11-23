@@ -52,9 +52,9 @@ static Tok_t*		freelist;
  */
 
 char*
-tokopen(register char* s, int f)
+tokopen(char* s, int f)
 {
-	register Tok_t*	p;
+	Tok_t*	p;
 
 	if (p = freelist)
 		freelist = freelist->ptr.nxt;
@@ -73,7 +73,7 @@ tokopen(register char* s, int f)
 void
 tokclose(char* u)
 {
-	register Tok_t*	p = (Tok_t*)u;
+	Tok_t*	p = (Tok_t*)u;
 
 	if (p->flg == FLG_RESTORE && *p->ptr.end != p->chr)
 		*p->ptr.end = p->chr;
@@ -91,11 +91,11 @@ tokclose(char* u)
 char*
 tokread(char* u)
 {
-	register Tok_t*	p = (Tok_t*)u;
-	register char*	s;
-	register char*	r;
-	register int	q;
-	register int	c;
+	Tok_t*	p = (Tok_t*)u;
+	char*	s;
+	char*	r;
+	int	q;
+	int	c;
 
 	/*
 	 * restore string on each call

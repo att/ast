@@ -171,10 +171,10 @@ extern ssize_t		_write(int, const void*, size_t);
 #endif
 
 static char*
-suffix(register const char* path)
+suffix(const char* path)
 {
-	register const char*	s = path + strlen(path);
-	register int		c;
+	const char*	s = path + strlen(path);
+	int		c;
 
 	while (s > path)
 		if ((c = *--s) == '.')
@@ -372,10 +372,10 @@ static int		convertinit;
 static const char*	convertvars[] = { "DOSPATHVARS", "PATH" };
 
 static int
-convert(register const char* d, const char* s)
+convert(const char* d, const char* s)
 {
-	register const char*	t;
-	register const char*	v;
+	const char*	t;
+	const char*	v;
 	int			i;
 
 	for (i = 0; i < elementsof(convertvars); i++)
@@ -402,10 +402,10 @@ convert(register const char* d, const char* s)
 uid_t
 getuid(void)
 {
-	register char*		d;
-	register char*		s;
-	register char*		t;
-	register char**		e;
+	char*		d;
+	char*		s;
+	char*		t;
+	char**		e;
 	int			n;
 	int			m;
 
@@ -433,9 +433,9 @@ getuid(void)
 static pid_t
 runve(int mode, const char* path, char* const* argv, char* const* envv)
 {
-	register char*	s;
-	register char**	p;
-	register char**	v;
+	char*	s;
+	char**	p;
+	char**	v;
 
 	void*		m1;
 	void*		m2;

@@ -39,10 +39,10 @@
  */
 
 unsigned long
-memsum(const void* ap, int n, register unsigned long c)
+memsum(const void* ap, int n, unsigned long c)
 {
-	register const unsigned char*	p = (const unsigned char*)ap;
-	register const unsigned char*	e = p + n;
+	const unsigned char*	p = (const unsigned char*)ap;
+	const unsigned char*	e = p + n;
 
 	while (p < e) HASHPART(c, *p++);
 #if LONG_MAX > 2147483647

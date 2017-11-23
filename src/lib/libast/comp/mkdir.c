@@ -36,7 +36,7 @@ NoN(mkdir)
 int
 mkdir(const char* path, mode_t mode)
 {
-	register int	n;
+	int	n;
 	char*		av[3];
 
 	static char*	cmd[] = { "/bin/mkdir", 0 };
