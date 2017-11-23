@@ -135,11 +135,11 @@ typedef struct Path_s
 int
 b_getconf(int argc, char** argv, Shbltin_t* context)
 {
-	register char*		name;
-	register char*		path;
-	register char*		value;
-	register const char*	s;
-	register const char*	t;
+	char*		name;
+	char*		path;
+	char*		value;
+	const char*	s;
+	const char*	t;
 	char*			pattern;
 	char*			native;
 	char*			cmd;

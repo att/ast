@@ -68,15 +68,15 @@ USAGE_LICENSE
 #include <cmd.h>
 
 int
-b_head(int argc, register char** argv, Shbltin_t* context)
+b_head(int argc, char** argv, Shbltin_t* context)
 {
 	static const char	header_fmt[] = "\n==> %s <==\n";
 
-	register Sfio_t*	fp;
-	register char*		cp;
-	register off_t		keep = 10;
-	register off_t		skip = 0;
-	register int		delim = '\n';
+	Sfio_t*	fp;
+	char*		cp;
+	off_t		keep = 10;
+	off_t		skip = 0;
+	int		delim = '\n';
 	off_t			moved;
 	int			header = 1;
 	char*			format = (char*)header_fmt+1;

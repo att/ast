@@ -119,12 +119,12 @@ run(int argc, char** argv, Cmddisc_t* disc)
 }
 
 int
-b_xargs(int argc, register char** argv, Shbltin_t* context)
+b_xargs(int argc, char** argv, Shbltin_t* context)
 {
-	register int		c;
-	register int		q;
-	register char*		s;
-	register Sfio_t*	sp;
+	int		c;
+	int		q;
+	char*		s;
+	Sfio_t*	sp;
 
 	int			argmax = 0;
 	char*			eof = "_";

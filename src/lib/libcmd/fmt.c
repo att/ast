@@ -78,7 +78,7 @@ typedef struct Fmt_s
 static void
 outline(Fmt_t* fp)
 {
-	register char*	cp = fp->outbuf;
+	char*	cp = fp->outbuf;
 	int		n = 0;
 	int		c;
 	int		d;
@@ -136,12 +136,12 @@ outline(Fmt_t* fp)
 static void
 split(Fmt_t* fp, char* buf, int splice)
 {
-	register char*	cp;
-	register char*	ep;
-	register char*	qp;
-	register int	c = 1;
-	register int	q = 0;
-	register int	n;
+	char*	cp;
+	char*	ep;
+	char*	qp;
+	int	c = 1;
+	int	q = 0;
+	int	n;
 	int		prefix;
 
 	for (ep = buf; *ep == ' '; ep++);
@@ -230,7 +230,7 @@ split(Fmt_t* fp, char* buf, int splice)
 static int
 dofmt(Fmt_t* fp)
 {
-	register int	c;
+	int	c;
 	int		b;
 	int		x;
 	int		splice;
@@ -564,7 +564,7 @@ dofmt(Fmt_t* fp)
 int
 b_fmt(int argc, char** argv, Shbltin_t* context)
 {
-	register int	n;
+	int	n;
 	char*		cp;
 	Fmt_t		fmt;
 	char		outbuf[8 * 1024];

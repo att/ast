@@ -177,10 +177,10 @@ closefile(Sfio_t* sp)
 static void
 pr(State_t* state, Sfio_t* op, Sfio_t* ip, char* file, int perm, struct stat* st, Sfio_t* check)
 {
-	register char*		p;
-	register char*		r;
-	register char*		e;
-	register int		peek;
+	char*		p;
+	char*		r;
+	char*		e;
+	int		peek;
 	struct stat		ss;
 
 	static const char*	indicator[] = { "*", " " };
@@ -257,9 +257,9 @@ pr(State_t* state, Sfio_t* op, Sfio_t* ip, char* file, int perm, struct stat* st
  */
 
 static void
-verify(State_t* state, register char* s, char* check, Sfio_t* rp)
+verify(State_t* state, char* s, char* check, Sfio_t* rp)
 {
-	register char*	t;
+	char*	t;
 	char*		e;
 	char*		file;
 	int		attr;
@@ -424,10 +424,10 @@ verify(State_t* state, register char* s, char* check, Sfio_t* rp)
  */
 
 static void
-list(State_t* state, register Sfio_t* lp)
+list(State_t* state, Sfio_t* lp)
 {
-	register char*		file;
-	register Sfio_t*	sp;
+	char*		file;
+	Sfio_t*	sp;
 
 	while (file = sfgetr(lp, '\n', 1))
 		if (sp = openfile(file, state->check ? "rt" : "rb"))
@@ -460,9 +460,9 @@ optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 }
 
 int
-b_cksum(int argc, register char** argv, Shbltin_t* context)
+b_cksum(int argc, char** argv, Shbltin_t* context)
 {
-	register int	flags;
+	int	flags;
 	char*		file;
 	char*		method;
 	Sfio_t*		sp;

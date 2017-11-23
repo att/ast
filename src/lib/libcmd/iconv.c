@@ -77,9 +77,9 @@ USAGE_LICENSE
 static int
 optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 {
-	register iconv_list_t*	ic;
-	register const char*	p;
-	register int		c;
+	iconv_list_t*	ic;
+	const char*	p;
+	int		c;
 
 	if (streq(s, "codesets"))
 		for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
@@ -115,8 +115,8 @@ static int
 listall(void* context)
 {
 	
-	register iconv_list_t*	ic;
-	register const char*	p;
+	iconv_list_t*	ic;
+	const char*	p;
 
 	sfprintf(sfstdout, "Patterns:\n\n");
 	for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
@@ -142,7 +142,7 @@ checksig(void* context)
 }
 
 int
-b_iconv(int argc, register char** argv, Shbltin_t* context)
+b_iconv(int argc, char** argv, Shbltin_t* context)
 {
 	char*		file;
 	char*		from;

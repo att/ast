@@ -152,11 +152,11 @@ extern int	lchown(const char*, uid_t, gid_t);
  */
 
 static void
-getids(register char* s, char** e, Key_t* key, int options)
+getids(char* s, char** e, Key_t* key, int options)
 {
-	register char*	t;
-	register int	n;
-	register int	m;
+	char*	t;
+	int	n;
+	int	m;
 	char*		z;
 	char		buf[64];
 
@@ -217,12 +217,12 @@ getids(register char* s, char** e, Key_t* key, int options)
 int
 b_chgrp(int argc, char** argv, Shbltin_t* context)
 {
-	register int	options = 0;
-	register char*	s;
-	register Map_t*	m;
-	register FTS*	fts;
-	register FTSENT*ent;
-	register int	i;
+	int	options = 0;
+	char*	s;
+	Map_t*	m;
+	FTS*	fts;
+	FTSENT*ent;
+	int	i;
 	Dt_t*		map = 0;
 	int		logical = 1;
 	int		flags;

@@ -101,10 +101,10 @@ typedef struct State_s			/* program state		*/
  */
 
 static int
-rm(State_t* state, register FTSENT* ent)
+rm(State_t* state, FTSENT* ent)
 {
-	register char*	path;
-	register int	n;
+	char*	path;
+	int	n;
 	int		v;
 	struct stat	st;
 
@@ -328,7 +328,7 @@ rm(State_t* state, register FTSENT* ent)
 }
 
 int
-b_rm(int argc, register char** argv, Shbltin_t* context)
+b_rm(int argc, char** argv, Shbltin_t* context)
 {
 	State_t		state;
 	FTS*		fts;

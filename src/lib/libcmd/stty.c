@@ -358,9 +358,9 @@ static const Tty_t Ttable[] =
 #define cntl(x)		(((x)=='?')?ccmapc(0177,CC_ASCII,CC_NATIVE):ccmapc(ccmapc(x,CC_NATIVE,CC_ASCII)&037,CC_ASCII,CC_NATIVE))
 #endif
 
-static void sane(register struct termios *sp)
+static void sane(struct termios *sp)
 {
-	register const Tty_t*	tp;
+	const Tty_t*	tp;
 
 	for (tp = Ttable; tp < &Ttable[elementsof(Ttable)]; tp++)
 		if (tp->flags & (SS|US))
@@ -404,7 +404,7 @@ static void sane(register struct termios *sp)
 
 static int gin(char *arg,struct termios *sp)
 {
-	register int i;
+	int i;
 	if(*arg++ != ':')
 		return(0);
 	sp->c_iflag = strtol(arg,&arg,16);
@@ -446,7 +446,7 @@ static int gin(char *arg,struct termios *sp)
 
 static void gout(struct termios *sp)
 {
-	register int i;
+	int i;
 	sfprintf(sfstdout,":%x",sp->c_iflag);
 	sfprintf(sfstdout,":%x",sp->c_oflag);
 	sfprintf(sfstdout,":%x",sp->c_cflag);
@@ -467,8 +467,8 @@ static void output(struct termios *sp, int flags)
 {
 	const Tty_t *tp;
 	struct termios tty;
-	register int delim = ' ';
-	register int i,off,off2;
+	int delim = ' ';
+	int i,off,off2;
 	char schar[2];
 	unsigned int ispeed = cfgetispeed(sp);
 	unsigned int ospeed = cfgetospeed(sp);
@@ -588,7 +588,7 @@ static void output(struct termios *sp, int flags)
 
 static const Tty_t *lookup(const char *name)
 {
-	register int i;
+	int i;
 	for(i=0; i < elementsof(Ttable); i++)
 	{
 		if(strcmp(Ttable[i].name,name)==0)
@@ -600,7 +600,7 @@ static const Tty_t *lookup(const char *name)
 
 static const Tty_t *getspeed(unsigned long val)
 {
-	register int i;
+	int i;
 	for(i=0; i < elementsof(Ttable); i++)
 	{
 		if(Ttable[i].type==SPEED && Ttable[i].mask==val)
@@ -609,7 +609,7 @@ static const Tty_t *getspeed(unsigned long val)
 	return(0);
 }
 
-static int gettchar(register const char *cp)
+static int gettchar(const char *cp)
 {
 	if(*cp==0)
 		return(-1);
@@ -633,7 +633,7 @@ static int gettchar(register const char *cp)
 static void set(char *argv[], struct termios *sp)
 {
 	const Tty_t *tp;
-	register int c,off;
+	int c,off;
 	char *cp;
 	char *ep;
 	while(cp = *argv++)
@@ -899,8 +899,8 @@ int
 b_stty(int argc, char** argv, Shbltin_t* context)
 {
 	struct termios		tty;
-	register int		n;
-	register int		flags = 0;
+	int		n;
+	int		flags = 0;
 	int			fd = 0;
 	const Tty_t*		tp;
 	Optdisc_t		disc;
