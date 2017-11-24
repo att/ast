@@ -44,8 +44,17 @@ ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args , include_direct
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 
+
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
+
+build_dir = meson.build_root()
+
+libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
+libcmd_build_dir = join_paths(build_dir, 'src', 'lib', 'libcmd')
+libcoshell_build_dir = join_paths(build_dir, 'src', 'lib', 'libcoshell')
+
+ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join([libast_build_dir, libcmd_build_dir, libcoshell_build_dir])
 
 # These are the default locales used by legacy test script
 # '' is POSIX locale
@@ -65,9 +74,9 @@ foreach testname: all_tests
     foreach locale:locales
         lang_var = 'LANG=' + locale
         if locale == ''
-            test(testname, ksh93_exe, args: [test_path], env: [shell_var, lang_var])
+            test(testname, ksh93_exe, args: [test_path], env: [shell_var, lang_var, ld_library_path])
         else
-            test(testname + '(' + locale + ')', ksh93_exe, args: [test_path], env: [shell_var, lang_var])
+            test(testname + '(' + locale + ')', ksh93_exe, args: [test_path], env: [shell_var, lang_var, ld_library_path])
         endif
     endforeach
 endforeach
