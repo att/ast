@@ -14,7 +14,6 @@ before_install:
     - docker pull ${OS_TYPE}
 
 script:
-    - find \( -name \*.c -o -name \*.h \) -exec sh -c '! grep --color "^[[:space:]]*//" $@' find {} \+ && echo No line comments found...
     - echo > build.sh "set -e;
         cd /source;
         export CCFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -P';

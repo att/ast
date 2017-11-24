@@ -1,0 +1,22 @@
+# Use the Google style with these modifications and a couple of others:
+#
+# 1) Lines can be up to 100 chars long rather than 80.
+# 2) Use a four space indent rather than two spaces.
+#
+Language: Cpp
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 4
+
+# The following directives override defaults established above.
+
+# We don't want OCLint pragmas to be reformatted.
+CommentPragmas: '^!OCLINT'
+
+# Allow slightly overlong lines.
+PenaltyExcessCharacter: 10
+
+# Don't try to infer the most common alignment of `&` and `*` by analyzing the
+# source file. Use right alignment; i.e., bind to the symbol not the type.
+DerivePointerAlignment: false
+PointerAlignment: Right
