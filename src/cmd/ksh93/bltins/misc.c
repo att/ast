@@ -218,6 +218,11 @@ int    b_dot_cmd(int n,char *argv[],Shbltin_t *context)
 	struct checkpt buff;
 	Sfio_t *iop=0;
 	short level;
+	Optdisc_t disc;
+	memset(&disc, 0, sizeof(disc));
+	disc.version = OPT_VERSION;
+	opt_info.disc = &disc;
+
 	while (n = optget(argv,sh_optdot)) switch (n)
 	{
 	    case ':':
