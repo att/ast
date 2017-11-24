@@ -910,10 +910,6 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 	return(r);
 }
 
-#if SHOPT_DYNAMIC
-
-typedef void (*Libinit_f)(int,void*);
-
 typedef struct Libcomp_s
 {
 	void*		dll;
@@ -923,10 +919,16 @@ typedef struct Libcomp_s
 	unsigned int	attr;
 } Libcomp_t;
 
-#define GROWLIB	4
-
 static Libcomp_t	*liblist;
 static int		nlib;
+
+#if SHOPT_DYNAMIC
+
+typedef void (*Libinit_f)(int,void*);
+
+
+#define GROWLIB	4
+
 static int		maxlib;
 
 /*
@@ -1102,7 +1104,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 		sh_addlib(tdata.sh,library,arg,NiL);
 	}
 	else
-/* TODO: Check if this code block should be used when SHOPT_DYNAMIC is off */
+#endif /* SHOPT_DYNAMIC */
 	if(*argv==0 && dlete!=1)
 	{
 		if(tdata.prefix)
@@ -1113,7 +1115,6 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 		print_scan(sfstdout, flag, tdata.sh->bltin_tree, 1, &tdata);
 		return(0);
 	}
-#endif /* SHOPT_DYNAMIC */
 	flag = stktell(stkp);
 	r = 0;
 	while(arg = *argv)
@@ -1129,29 +1130,29 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 		sfputr(stkp,name,0);
 		errmsg = 0;
 		addr = 0;
-
-/* TODO: Check if this code block should be used when SHOPT_DYNAMIC is off */
-#if SHOPT_DYNAMIC
 		if(dlete || liblist)
-
 			for(n=(nlib?nlib:dlete); --n>=0;)
 			{
+#if SHOPT_DYNAMIC
 				if(!dlete && !liblist[n].dll)
 					continue;
 				if(dlete || (addr = (Shbltin_f)dlllook(liblist[n].dll,stkptr(stkp,flag))))
+#else
 				if(dlete)
+#endif /* SHOPT_DYNAMIC */
 				{
 					if(np = sh_addbuiltin(tdata.sh,arg, addr,pointerof(dlete)))
 					{
 						if(dlete || nv_isattr(np,BLT_SPC))
 							errmsg = "restricted name";
+#if SHOPT_DYNAMIC
 						else
 							nv_onattr(np,liblist[n].attr);
+#endif /* SHOPT_DYNAMIC */
 					}
 					break;
 				}
 			}
-#endif /* SHOPT_DYNAMIC */
 		if(!addr && (np = nv_search(arg,context->shp->bltin_tree,0)))
 		{
 			if(nv_isattr(np,BLT_SPC))
