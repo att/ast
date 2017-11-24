@@ -41,10 +41,10 @@ static int	sig_number(Shell_t*,const char*);
 
 int	b_trap(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *arg = argv[1];
-	register int sig, clear;
-	register bool pflag=false, dflag=false, aflag=false, lflag=false;
-	register Shell_t *shp = context->shp;
+	char *arg = argv[1];
+	int sig, clear;
+	bool pflag=false, dflag=false, aflag=false, lflag=false;
+	Shell_t *shp = context->shp;
 	NOT_USED(argc);
 	while (sig = optget(argv, sh_opttrap)) switch (sig)
 	{
@@ -220,9 +220,9 @@ int	b_trap(int argc,char *argv[],Shbltin_t *context)
 
 int	b_kill(int argc,char *argv[],Shbltin_t *context)
 {
-	register char *signame;
-	register int sig=SIGTERM, flag=0, n;
-	register Shell_t *shp = context->shp;
+	char *signame;
+	int sig=SIGTERM, flag=0, n;
+	Shell_t *shp = context->shp;
 	int usemenu = 0;
 	NOT_USED(argc);
 	while((n = optget(argv,sh_optkill))) switch(n)
@@ -315,7 +315,7 @@ endopts:
 static int sig_number(Shell_t *shp,const char *string)
 {
 	const Shtable_t	*tp;
-	register int	n,o,sig=0;
+	int	n,o,sig=0;
 	char		*last, *name;
 	if(isdigit(*string))
 	{
@@ -325,7 +325,7 @@ static int sig_number(Shell_t *shp,const char *string)
 	}
 	else
 	{
-		register int c;
+		int c;
 		o = stktell(shp->stk);
 		do
 		{

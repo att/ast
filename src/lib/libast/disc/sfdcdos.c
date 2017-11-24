@@ -57,13 +57,13 @@ typedef struct _dosdisc
 } Dosdisc_t;
 
 #if __STD_C
-static void addmapping(register Dosdisc_t *dp)
+static void addmapping(Dosdisc_t *dp)
 #else
 static void addmapping(dp)
-register Dosdisc_t *dp;
+Dosdisc_t *dp;
 #endif
 {
-	register int n;
+	int n;
 	if((n=dp->maptop++)>=dp->mapsize)
 	{
 		dp->mapsize *= 2;
@@ -80,15 +80,15 @@ register Dosdisc_t *dp;
 }
 
 #if __STD_C
-static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, register int whence)
+static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, int whence)
 #else
 static struct map *getmapping(dp, offset, whence)
 Dosdisc_t *dp;
 Sfoff_t offset;
-register int whence;
+int whence;
 #endif
 {
-	register struct map *mp;
+	struct map *mp;
 	static struct map dummy;
 	if(offset <= dp->begin)
 	{
@@ -115,9 +115,9 @@ size_t size;
 Sfdisc_t* disc;
 #endif
 {
-	register Dosdisc_t *dp = (Dosdisc_t*)disc;
-	register char *cp = (char*)buff, *first, *cpmax;
-	register int n, count, m;
+	Dosdisc_t *dp = (Dosdisc_t*)disc;
+	char *cp = (char*)buff, *first, *cpmax;
+	int n, count, m;
 	if(dp->extra)
 	{
 		dp->extra=0;
@@ -227,17 +227,17 @@ done:
  *  otherwise, logical offset is converted to physical offset
  */
 #if __STD_C
-static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset,Sfio_t *iop,register int whence)
+static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset,Sfio_t *iop,int whence)
 #else
 static Sfoff_t cur_offset(dp, offset, iop, whence)
 Dosdisc_t *dp;
 Sfoff_t offset;
 Sfio_t *iop;
-register int whence;
+int whence;
 #endif
 {
-	register Sfoff_t n,m=0;
-	register char *cp;
+	Sfoff_t n,m=0;
+	char *cp;
 
 	if(whence==SEEK_CUR)
 	{
@@ -273,19 +273,19 @@ register int whence;
 }
 
 #if __STD_C
-static Sfoff_t dos_seek(Sfio_t *iop, Sfoff_t offset, register int whence, Sfdisc_t* disc)
+static Sfoff_t dos_seek(Sfio_t *iop, Sfoff_t offset, int whence, Sfdisc_t* disc)
 #else
 static Sfoff_t dos_seek(iop, offset, whence, disc)
 Sfio_t *iop;
 Sfoff_t offset;
-register int whence;
+int whence;
 Sfdisc_t* disc;
 #endif
 {
-	register Dosdisc_t *dp = (Dosdisc_t*)disc;
+	Dosdisc_t *dp = (Dosdisc_t*)disc;
 	struct map dummy, *mp=0;
 	Sfoff_t physical;
-	register int n,size;
+	int n,size;
 retry:
 	switch(whence)
 	{
@@ -373,7 +373,7 @@ void *arg;
 Sfdisc_t *disc;
 #endif
 {
-	register Dosdisc_t *dp = (Dosdisc_t*)disc;
+	Dosdisc_t *dp = (Dosdisc_t*)disc;
 	if(type==SF_DPOP || type==SF_FINAL)
 	{
 		if(dp->bsize>0)

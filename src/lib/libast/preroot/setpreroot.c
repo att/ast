@@ -33,10 +33,10 @@
 #include <option.h>
 
 void
-setpreroot(register char** argv, const char* dir)
+setpreroot(char** argv, const char* dir)
 {
-	register char*	s;
-	register char**	ap;
+	char*	s;
+	char**	ap;
 	int		argc;
 	char*		cmd;
 	char**		av;

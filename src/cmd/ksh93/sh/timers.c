@@ -46,7 +46,7 @@ static char time_state;
 
 static double getnow(void)
 {
-	register double now;
+	double now;
 #ifdef timeofday
 	struct timeval tp;
 	timeofday(&tp);
@@ -61,7 +61,7 @@ static double getnow(void)
 /*
  * set an alarm for <t> seconds
  */
-static double setalarm(register double t)
+static double setalarm(double t)
 {
 #if defined(_lib_setitimer) && defined(ITIMER_REAL)
 	struct itimerval tnew, told;
@@ -90,7 +90,7 @@ static void sigalrm(int sig, siginfo_t* info, void *context)
 static void sigalrm(int sig)
 #endif
 {
-	register Timer_t *tp, *tplast, *tpold, *tpnext;
+	Timer_t *tp, *tplast, *tpold, *tpnext;
 	double now;
 	static double left;
 #ifdef _lib_sigaction
@@ -192,7 +192,7 @@ static void oldalrm(void *handle)
 	
 void *sh_timeradd(unsigned long msec,int flags,void (*action)(void*),void *handle) 
 {
-	register Timer_t *tp;
+	Timer_t *tp;
 	double t;
 	Handler_t fn;
 	t = ((double)msec)/1000.;
@@ -242,7 +242,7 @@ void *sh_timeradd(unsigned long msec,int flags,void (*action)(void*),void *handl
  */
 void	timerdel(void *handle)
 {
-	register Timer_t *tp = (Timer_t*)handle;
+	Timer_t *tp = (Timer_t*)handle;
 	if(tp)
 		tp->action = 0;
 	else

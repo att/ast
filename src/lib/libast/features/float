@@ -289,8 +289,8 @@ tst	- note{ missing floating point limits }end output{
 	int
 	main()
 	{
-		register int		i;
-		register int		s;
+		int		i;
+		int		s;
 		float			f;
 		float			pf;
 		float			mf;
@@ -1091,8 +1091,8 @@ tst	- -DSCAN=1 - -lm -DSTRTO=1 - -DMAC=1 - -DDIV=1 - -DEXP=1 - -DADD=1 - -DMPY=1
 	int siz;
 	#endif
 	{
-		register unsigned char*	u = (unsigned char*)val;
-		register unsigned char*	e = u + siz;
+		unsigned char*	u = (unsigned char*)val;
+		unsigned char*	e = u + siz;
 	
 		printf("#define _ast_%s_%s_init\t0x%02x", typ, var, *u);
 		while (++u < e)

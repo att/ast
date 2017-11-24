@@ -28,7 +28,7 @@
  */
 
 char*
-strcopy(register char* s, register const char* t)
+strcopy(char* s, const char* t)
 {
 	if (!t)
 		return s;

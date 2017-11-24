@@ -38,9 +38,9 @@
 char**
 vecfile(const char* file)
 {
-	register int	n;
-	register char*	buf;
-	register char**	vec;
+	int	n;
+	char*	buf;
+	char**	vec;
 	int		fd;
 	struct stat	st;
 

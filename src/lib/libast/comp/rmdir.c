@@ -35,7 +35,7 @@ NoN(rmdir)
 int
 rmdir(const char* path)
 {
-	register int	n;
+	int	n;
 	struct stat	st;
 	char*		av[3];
 

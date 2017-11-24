@@ -289,9 +289,9 @@ extern char*		strsignal(int);
 int
 main()
 {
-	register int	i;
-	register int	j;
-	register int	k;
+	int	i;
+	int	j;
+	int	k;
 	int		m;
 	int		n;
 #if _lib_strsignal

@@ -224,21 +224,21 @@ S2I_function(a, e, base) const char* a; char** e; int base;
 #endif
 #endif
 {
-	register unsigned char*	s = (unsigned char*)a;
+	unsigned char*	s = (unsigned char*)a;
 #if S2I_size
-	register unsigned char*	z = s + size;
+	unsigned char*	z = s + size;
 #endif
-	register S2I_unumber	n;
-	register S2I_unumber	x;
-	register int		c;
-	register int		shift;
-	register unsigned char*	p;
-	register unsigned char*	cv;
+	S2I_unumber	n;
+	S2I_unumber	x;
+	int		c;
+	int		shift;
+	unsigned char*	p;
+	unsigned char*	cv;
 	unsigned char*		b;
 	unsigned char*		k;
 	S2I_unumber		v;
 #if S2I_multiplier
-	register int		base;
+	int		base;
 #endif
 	int			negative;
 	int			overflow = 0;

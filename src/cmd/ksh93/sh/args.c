@@ -241,11 +241,11 @@ static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
  *  The -o option is used to set option by name
  *  This routine returns the number of non-option arguments
  */
-int sh_argopts(int argc,register char *argv[], void *context)
+int sh_argopts(int argc,char *argv[], void *context)
 {
 	Shell_t		*shp = (Shell_t*)context;
-	register int	n,o;
-	register Arg_t	*ap = (Arg_t*)(shp->arg_context);
+	int	n,o;
+	Arg_t	*ap = (Arg_t*)(shp->arg_context);
 	Lex_t		*lp = (Lex_t*)(shp->lex_context);
 	Shopt_t		newflags;
 	int setflag=0, action=0, trace=(int)sh_isoption(shp,SH_XTRACE);
@@ -340,7 +340,7 @@ int sh_argopts(int argc,register char *argv[], void *context)
 #endif
 		    case -6:	/* --default */
 			{
-				register const Shtable_t *tp;
+				const Shtable_t *tp;
 				for(tp=shtab_options; o = tp->sh_number; tp++)
 					if(!(o&SH_COMMANDLINE) && is_option(&newflags,o&0xff))
 						off_option(&newflags,o&0xff);
@@ -664,9 +664,9 @@ void sh_applyopts(Shell_t* shp,Shopt_t newflags)
 char *sh_argdolminus(void *context)
 {
 	Shell_t	*shp = (Shell_t*)context;
-	register Arg_t *ap = (Arg_t*)shp->arg_context;
-	register const char *cp=optksh;
-	register char *flagp=ap->flagadr;
+	Arg_t *ap = (Arg_t*)shp->arg_context;
+	const char *cp=optksh;
+	char *flagp=ap->flagadr;
 	while(cp< &optksh[NUM_OPTS])
 	{
 		int n = flagval[cp-optksh];
@@ -701,9 +701,9 @@ static void sh_argset(Arg_t *ap,char *argv[])
  */
 struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk,int flag)
 {
-	register struct dolnod*	argr=blk;
-	register struct dolnod*	argblk;
-	register Arg_t *ap = (Arg_t*)shp->arg_context;
+	struct dolnod*	argr=blk;
+	struct dolnod*	argblk;
+	Arg_t *ap = (Arg_t*)shp->arg_context;
 	if(argblk=argr)
 	{
 		if((--argblk->dolrefcnt)==0)
@@ -737,12 +737,12 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk,int flag)
  * grab space for arglist and copy args
  * The strings are copied after the argment vector
  */
-struct dolnod *sh_argcreate(register char *argv[])
+struct dolnod *sh_argcreate(char *argv[])
 {
-	register struct dolnod *dp;
-	register char **pp=argv, *sp;
-	register int 	n;
-	register size_t size=0;
+	struct dolnod *dp;
+	char **pp=argv, *sp;
+	int 	n;
+	size_t size=0;
 	/* count args and number of bytes of arglist */
 	while(sp= *pp++)
 		size += strlen(sp);
@@ -767,8 +767,8 @@ struct dolnod *sh_argcreate(register char *argv[])
  */
 struct dolnod *sh_argnew(Shell_t *shp,char *argi[], struct dolnod **savargfor)
 {
-	register Arg_t *ap = (Arg_t*)shp->arg_context;
-	register struct dolnod *olddolh = ap->dolh;
+	Arg_t *ap = (Arg_t*)shp->arg_context;
+	struct dolnod *olddolh = ap->dolh;
 	*savargfor = ap->argfor;
 	ap->dolh = 0;
 	ap->argfor = 0;
@@ -781,7 +781,7 @@ struct dolnod *sh_argnew(Shell_t *shp,char *argi[], struct dolnod **savargfor)
  */
 void sh_argreset(Shell_t *shp,struct dolnod *blk, struct dolnod *afor)
 {
-	register Arg_t *ap = (Arg_t*)shp->arg_context;
+	Arg_t *ap = (Arg_t*)shp->arg_context;
 	while(ap->argfor=sh_argfree(shp,ap->argfor,0));
 	ap->argfor = afor;
 	if(ap->dolh = blk)
@@ -796,8 +796,8 @@ void sh_argreset(Shell_t *shp,struct dolnod *blk, struct dolnod *afor)
  */
 struct dolnod *sh_arguse(Shell_t* shp)
 {
-	register struct dolnod *dh;
-	register Arg_t *ap = (Arg_t*)shp->arg_context;
+	struct dolnod *dh;
+	Arg_t *ap = (Arg_t*)shp->arg_context;
 	if(dh=ap->dolh)
 		dh->dolrefcnt++;
 	return(dh);
@@ -808,9 +808,9 @@ struct dolnod *sh_arguse(Shell_t* shp)
  *  if mode is inclusive or of PRINT_*
  *  if <mask> is set, only options with this mask value are displayed
  */
-void sh_printopts(Shell_t *shp,Shopt_t oflags,register int mode, Shopt_t *mask)
+void sh_printopts(Shell_t *shp,Shopt_t oflags,int mode, Shopt_t *mask)
 {
-	register const Shtable_t *tp;
+	const Shtable_t *tp;
 	const char *name;
 	int on;
 	int value;
@@ -920,12 +920,12 @@ void sh_printopts(Shell_t *shp,Shopt_t oflags,register int mode, Shopt_t *mask)
  */
 char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag)
 {
-	register struct argnod	*argp;
+	struct argnod	*argp;
 	struct argnod *arghead=0;
 	shp->xargmin = 0;
 	{
-		register const struct comnod	*ac = comptr;
-		register int n;
+		const struct comnod	*ac = comptr;
+		int n;
 		/* see if the arguments have already been expanded */
 		if(!ac->comarg)
 		{
@@ -934,7 +934,7 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 		}
 		else if(!(ac->comtyp&COMSCAN))
 		{
-			register struct dolnod *ap = (struct dolnod*)ac->comarg;
+			struct dolnod *ap = (struct dolnod*)ac->comarg;
 			*nargs = ap->dolnum;
 			return(ap->dolval+ap->dolbot);
 		}
@@ -964,9 +964,9 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 			*procsub = 0;
 	}
 	{
-		register char	**comargn;
-		register int	argn;
-		register char	**comargm;
+		char	**comargn;
+		int	argn;
+		char	**comargm;
 		argn = *nargs;
 		/* allow room to prepend args */
 		argn += 1;
@@ -1006,7 +1006,7 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 struct argnod *sh_argprocsub(Shell_t *shp,struct argnod *argp)
 {
 	/* argument of the form <(cmd) or >(cmd) */
-	register struct argnod *ap;
+	struct argnod *ap;
 	int nn, monitor, fd, pv[3];
 	int subshell = shp->subshell;
 	pid_t pid0;
@@ -1079,9 +1079,9 @@ struct argnod *sh_argprocsub(Shell_t *shp,struct argnod *argp)
 }
 
 /* Argument expansion */
-static int arg_expand(Shell_t *shp,register struct argnod *argp, struct argnod **argchain,int flag)
+static int arg_expand(Shell_t *shp,struct argnod *argp, struct argnod **argchain,int flag)
 {
-	register int count = 0;
+	int count = 0;
 	argp->argflag &= ~ARG_MAKE;
 	if(*argp->argval==0 && (argp->argflag&ARG_EXP))
 	{

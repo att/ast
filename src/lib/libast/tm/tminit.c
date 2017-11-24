@@ -129,9 +129,9 @@ _tm_localtime(const time_t* t)
 static int
 tzwest(time_t* clock, int* isdst)
 {
-	register struct tm*	tp;
-	register int		n;
-	register int		m;
+	struct tm*	tp;
+	int		n;
+	int		m;
 	int			h;
 	time_t			epoch;
 
@@ -205,10 +205,10 @@ tmopt(void* a, const void* p, int n, const char* v)
 static void
 tmlocal(void)
 {
-	register Tm_zone_t*	zp;
-	register int		n;
-	register char*		s;
-	register char*		e;
+	Tm_zone_t*	zp;
+	int		n;
+	char*		s;
+	char*		e;
 	int			i;
 	int			m;
 	int			isdst;
@@ -456,7 +456,7 @@ tmlocal(void)
  */
 
 void
-tminit(register Tm_zone_t* zp)
+tminit(Tm_zone_t* zp)
 {
 	static uint32_t		serial = ~(uint32_t)0;
 

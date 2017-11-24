@@ -41,7 +41,7 @@ static struct
 char*
 re_comp(const char* pattern)
 {
-	register int	r;
+	int	r;
 
 	if (!pattern || !*pattern)
 	{

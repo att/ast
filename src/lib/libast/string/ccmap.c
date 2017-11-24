@@ -626,11 +626,11 @@ static Map_t*	maps;
 unsigned char*
 _ccmap(int i, int o)
 {
-	register unsigned char*	a;
-	register unsigned char*	m;
-	register unsigned char*	z;
-	register Map_t*		map;
-	register int		n;
+	unsigned char*	a;
+	unsigned char*	m;
+	unsigned char*	z;
+	Map_t*		map;
+	int		n;
 	int			op;
 
 	if (!i && !o)
@@ -678,11 +678,11 @@ _ccmap(int i, int o)
 }
 
 void*
-_ccmapcpy(register unsigned char* m, void* b, const void* a, size_t n)
+_ccmapcpy(unsigned char* m, void* b, const void* a, size_t n)
 {
-	register unsigned char*	ub;
-	register unsigned char*	ue;
-	register unsigned char*	ua;
+	unsigned char*	ub;
+	unsigned char*	ue;
+	unsigned char*	ua;
 
 	if (m)
 	{
@@ -698,10 +698,10 @@ _ccmapcpy(register unsigned char* m, void* b, const void* a, size_t n)
 }
 
 void*
-_ccmapstr(register unsigned char* m, void* b, size_t n)
+_ccmapstr(unsigned char* m, void* b, size_t n)
 {
-	register unsigned char*	s;
-	register unsigned char*	e;
+	unsigned char*	s;
+	unsigned char*	e;
 
 	if (m)
 		for (e = (s = (unsigned char*)b) + n; s < e; s++)
@@ -714,9 +714,9 @@ _ccmapstr(register unsigned char* m, void* b, size_t n)
 static void
 dump(int from, int to)
 {
-	register const unsigned char*	m;
-	register int			c;
-	register int			i;
+	const unsigned char*	m;
+	int			c;
+	int			i;
 
 	m = ccmap(from, to);
 	sfprintf(sfstdout, "\n /* %s => %s */\n\n", ccmapname(from), ccmapname(to));
@@ -733,7 +733,7 @@ dump(int from, int to)
 
 main(int argc, char** argv)
 {
-	register int			i;
+	int			i;
 
 	for (i = 1; i <= CC_MAPS; i++)
 	{

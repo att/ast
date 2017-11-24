@@ -83,11 +83,11 @@ typedef struct				/* root local pointers		*/
 #define HASH(r,n,h)	if (r->local->hash) h = r->namesize ? (*r->local->hash)(n, r->namesize) : (*r->local->hash)(n);\
 			else\
 			{\
-				register const char*	_hash_s1 = n;\
+				const char*	_hash_s1 = n;\
 				h = 0;\
 				if (r->namesize)\
 				{\
-					register const char*	_hash_s2 = _hash_s1 + r->namesize;\
+					const char*	_hash_s2 = _hash_s1 + r->namesize;\
 					while (_hash_s1 < _hash_s2) HASHPART(h, *_hash_s1++);\
 				}\
 				else while (*_hash_s1) HASHPART(h, *_hash_s1++);\

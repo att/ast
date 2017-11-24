@@ -42,11 +42,11 @@ typedef struct
 Recfmt_t
 recfmt(const void* buf, size_t size, off_t total)
 {
-	register unsigned char*		s;
-	register unsigned char*		t;
-	register Sample_t*		q;
-	register unsigned int*		h;
-	register unsigned int		i;
+	unsigned char*		s;
+	unsigned char*		t;
+	Sample_t*		q;
+	unsigned int*		h;
+	unsigned int		i;
 	unsigned int			j;
 	unsigned int			k;
 	unsigned int			n;

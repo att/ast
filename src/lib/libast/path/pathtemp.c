@@ -108,10 +108,10 @@ static struct Tmp_s
 char*
 pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 {
-	register char*		d;
-	register char*		b;
-	register char*		s;
-	register char*		x;
+	char*		d;
+	char*		b;
+	char*		s;
+	char*		x;
 	uintmax_t		key;
 	int			m;
 	int			n;
@@ -309,7 +309,7 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 	{
 		if (!tmp.rng || !tmp.seed && (attempt || tmp.pid != getpid()))
 		{	
-			register int	r;
+			int	r;
 
 			/*
 			 * get a quasi-random coefficient

@@ -94,10 +94,10 @@ cmdopen_20110505(char** argv, int argmax, int size, const char* argpat, int flag
 Cmdarg_t*
 cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_t* disc)
 {
-	register Cmdarg_t*	cmd;
-	register int		n;
-	register char**		p;
-	register char*		s;
+	Cmdarg_t*	cmd;
+	int		n;
+	char**		p;
+	char*		s;
 	char*			sh;
 	char*			exe;
 	int			c;
@@ -228,11 +228,11 @@ cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_
  */
 
 int
-cmdflush(register Cmdarg_t* cmd)
+cmdflush(Cmdarg_t* cmd)
 {
-	register char*	s;
-	register char**	p;
-	register int	n;
+	char*	s;
+	char**	p;
+	int	n;
 
 	if (cmd->flags & CMD_EMPTY)
 		cmd->flags &= ~CMD_EMPTY;
@@ -351,7 +351,7 @@ cmdflush(register Cmdarg_t* cmd)
  */
 
 int
-cmdarg(register Cmdarg_t* cmd, const char* file, register int len)
+cmdarg(Cmdarg_t* cmd, const char* file, int len)
 {
 	int	i;
 	int	r;

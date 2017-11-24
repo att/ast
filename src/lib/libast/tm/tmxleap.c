@@ -37,7 +37,7 @@
 Time_t
 tmxleap(Time_t t)
 {
-	register Tm_leap_t*	lp;
+	Tm_leap_t*	lp;
 	uint32_t		sec;
 
 	tmset(tm_info.zone);

@@ -218,7 +218,7 @@ static char	_win_maps[] = "/reg/local_machine/SOFTWARE/Classes/MIME/Database/Cha
 static int
 _win_codeset(const char* name)
 {
-	register char*	s;
+	char*	s;
 	char*		e;
 	int		n;
 	Sfio_t*		sp;
@@ -286,7 +286,7 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _win
  */
 
 static _ast_iconv_t
-_win_iconv_open(register Conv_t* cc, const char* t, const char* f)
+_win_iconv_open(Conv_t* cc, const char* t, const char* f)
 {
 #if DEBUG_TRACE
 if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _win_iconv_open f=%s t=%s\n", error_info.id, error_info.trace, __LINE__, f, t);
@@ -464,12 +464,12 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _win
  */
 
 int
-_ast_iconv_name(register const char* m, register char* b, size_t n)
+_ast_iconv_name(const char* m, char* b, size_t n)
 {
-	register const _ast_iconv_list_t*	cp;
+	const _ast_iconv_list_t*	cp;
 	const _ast_iconv_list_t*		bp;
-	register int				c;
-	register char*				e;
+	int				c;
+	char*				e;
 	int					cc;
 	ssize_t					sub[2];
 	char					buf[16];
@@ -592,13 +592,13 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast
 static size_t
 utf2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register unsigned char*		p;
-	register int			c;
-	register int			w;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	unsigned char*		p;
+	int			c;
+	int			w;
 	size_t				n;
 	int				e;
 
@@ -666,11 +666,11 @@ utf2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 bin2utf(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			c;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			c;
 	wchar_t				w;
 	size_t				n;
 	int				e;
@@ -753,9 +753,9 @@ static unsigned char		ume_m[UCHAR_MAX+1];
 static int
 umeinit(void)
 {
-	register const unsigned char*	s;
-	register int			i;
-	register int			c;
+	const unsigned char*	s;
+	int			i;
+	int			c;
 
 	if (!ume_d[ume_D[0]])
 	{
@@ -776,14 +776,14 @@ umeinit(void)
 static size_t
 ume2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register unsigned char*		p;
-	register int			s;
-	register int			c;
-	register int			w;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	unsigned char*		p;
+	int			s;
+	int			c;
+	int			w;
 	size_t				n;
 	int				e;
 
@@ -852,12 +852,12 @@ ume2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 bin2ume(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			c;
-	register int			s;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			c;
+	int			s;
 	wchar_t				w;
 	size_t				n;
 	int				e;
@@ -926,11 +926,11 @@ bin2ume(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 u16n2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			w;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			w;
 	size_t				n;
 	int				e;
 
@@ -971,11 +971,11 @@ u16n2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 bin2u16n(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			c;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			c;
 	wchar_t				w;
 	size_t				n;
 	int				e;
@@ -1017,11 +1017,11 @@ bin2u16n(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 u16s2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			w;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			w;
 	size_t				n;
 	int				e;
 
@@ -1062,11 +1062,11 @@ u16s2bin(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 static size_t
 bin2u16s(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
-	register unsigned char*		f;
-	register unsigned char*		fe;
-	register unsigned char*		t;
-	register unsigned char*		te;
-	register int			c;
+	unsigned char*		f;
+	unsigned char*		fe;
+	unsigned char*		t;
+	unsigned char*		te;
+	int			c;
 	wchar_t				w;
 	size_t				n;
 	int				e;
@@ -1154,7 +1154,7 @@ bin2u32s(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 _ast_iconv_t
 _ast_iconv_open(const char* t, const char* f)
 {
-	register Conv_t*	cc;
+	Conv_t*	cc;
 	int			fc;
 	int			tc;
 	int			i;
@@ -1415,11 +1415,11 @@ size_t
 _ast_iconv(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 {
 	Conv_t*				cc = (Conv_t*)cd;
-	register unsigned char*		f;
-	register unsigned char*		t;
-	register unsigned char*		e;
-	register const unsigned char*	m;
-	register size_t			n;
+	unsigned char*		f;
+	unsigned char*		t;
+	unsigned char*		e;
+	const unsigned char*	m;
+	size_t			n;
 	char*				b;
 	char*				tfb;
 	size_t				tfn;

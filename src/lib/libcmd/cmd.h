@@ -70,10 +70,10 @@ extern int CMD_STANDALONE(int, char**, Shbltin_t*);
  */
 
 static int
-cmdinit(int argc, register char** argv, Shbltin_t* context, const char* catalog, int flags)
+cmdinit(int argc, char** argv, Shbltin_t* context, const char* catalog, int flags)
 {
-	register char*	cp;
-	register char*	pp;
+	char*	cp;
+	char*	pp;
 
 	if (cp = strrchr(argv[0], '/'))
 		cp++;
@@ -96,8 +96,8 @@ int
 main(int argc, char** argv)
 {
 #if CMD_DYNAMIC
-	register char*	s;
-	register char*	t;
+	char*	s;
+	char*	t;
 	void*		dll;
 	Shbltin_f	fun;
 	char		buf[64];

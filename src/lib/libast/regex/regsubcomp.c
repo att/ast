@@ -40,10 +40,10 @@ static const regflags_t	submap[] =
 };
 
 int
-regsubflags(regex_t* p, register const char* s, char** e, int delim, register const regflags_t* map, int* pm, regflags_t* pf)
+regsubflags(regex_t* p, const char* s, char** e, int delim, const regflags_t* map, int* pm, regflags_t* pf)
 {
-	register int			c;
-	register const regflags_t*	m;
+	int			c;
+	const regflags_t*	m;
 	regflags_t			flags;
 	int				minmatch;
 	regdisc_t*			disc;
@@ -106,13 +106,13 @@ regsubflags(regex_t* p, register const char* s, char** e, int delim, register co
  */
 
 int
-regsubcomp(regex_t* p, register const char* s, const regflags_t* map, int minmatch, regflags_t flags)
+regsubcomp(regex_t* p, const char* s, const regflags_t* map, int minmatch, regflags_t flags)
 {
-	register regsub_t*	sub;
-	register int		c;
-	register int		d;
-	register char*		t;
-	register regsubop_t*	op;
+	regsub_t*	sub;
+	int		c;
+	int		d;
+	char*		t;
+	regsubop_t*	op;
 	char*			e;
 	const char*		r;
 	int			sre;

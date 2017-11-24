@@ -121,17 +121,17 @@ regress(Sfio_t* sp, ssize_t n, int f)
  */
 
 static int
-vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags)
+vcat(char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags)
 {
-	register unsigned char*	cp;
-	register unsigned char*	pp;
+	unsigned char*	cp;
+	unsigned char*	pp;
 	unsigned char*		cur;
 	unsigned char*		end;
 	unsigned char*		buf;
 	unsigned char*		nxt;
-	register int		n;
-	register int		line;
-	register int		raw;
+	int		n;
+	int		line;
+	int		raw;
 	int			last;
 	int			c;
 	int			m;
@@ -398,10 +398,10 @@ vcat(register char* states, Sfio_t* ip, Sfio_t* op, Reserve_f reserve, int flags
 int
 b_cat(int argc, char** argv, Shbltin_t* context)
 {
-	register int		n;
-	register int		flags = 0;
-	register char*		cp;
-	register Sfio_t*	fp;
+	int		n;
+	int		flags = 0;
+	char*		cp;
+	Sfio_t*	fp;
 	char*			mode;
 	Reserve_f		reserve = sfreserve;
 	int			att;

@@ -32,10 +32,10 @@
 #include <ast.h>
 
 int
-strexp(register char* s, int flags)
+strexp(char* s, int flags)
 {
-	register char*		t;
-	register int		c;
+	char*		t;
+	int		c;
 	char*			b;
 	char*			e;
 	int			w;
@@ -64,7 +64,7 @@ strexp(register char* s, int flags)
 }
 
 int
-stresc(register char* s)
+stresc(char* s)
 {
 	return strexp(s, FMT_EXP_CHAR|FMT_EXP_LINE|FMT_EXP_WIDE);
 }

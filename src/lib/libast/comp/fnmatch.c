@@ -50,10 +50,10 @@ static const Map_t	map[] =
 #endif
 
 extern int
-fnmatch(const char* pattern, const char* subject, register int flags)
+fnmatch(const char* pattern, const char* subject, int flags)
 {
-	register int		reflags = REG_SHELL|REG_LEFT;
-	register const Map_t*	mp;
+	int		reflags = REG_SHELL|REG_LEFT;
+	const Map_t*	mp;
 	regex_t			re;
 	regmatch_t		match;
 

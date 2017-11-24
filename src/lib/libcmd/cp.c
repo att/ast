@@ -233,11 +233,11 @@ preserve(State_t* state, const char* path, struct stat* ns, struct stat* os)
  */
 
 static int
-visit(State_t* state, register FTSENT* ent)
+visit(State_t* state, FTSENT* ent)
 {
-	register char*	base;
-	register int	n;
-	register int	len;
+	char*	base;
+	int	n;
+	int	len;
 	int		rm;
 	int		rfd;
 	int		wfd;
@@ -677,10 +677,10 @@ visit(State_t* state, register FTSENT* ent)
 }
 
 int
-b_cp(int argc, register char** argv, Shbltin_t* context)
+b_cp(int argc, char** argv, Shbltin_t* context)
 {
-	register char*	file;
-	register char*	s;
+	char*	file;
+	char*	s;
 	char**		v;
 	char*		backup_type;
 	FTS*		fts;

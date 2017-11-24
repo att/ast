@@ -84,11 +84,11 @@ cat > _ast_.c <<'!'
 	
 	main()
 	{
-		register int	t;
-		register int	s;
-		register int	m = 1;
-		register int	b = 1;
-		register int	w = 0;
+		int	t;
+		int	s;
+		int	m = 1;
+		int	b = 1;
+		int	w = 0;
 	
 	#ifdef _ast_int8_t
 		if (int_type[elementsof(int_type)-1].size <= 4)

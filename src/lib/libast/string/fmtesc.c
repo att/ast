@@ -45,15 +45,15 @@
 char*
 fmtquote(const char* as, const char* qb, const char* qe, size_t n, int flags)
 {
-	register unsigned char*	s = (unsigned char*)as;
-	register unsigned char*	e = s + n;
-	register char*		b;
-	register int		c;
-	register int		m;
-	register int		escaped;
-	register int		spaced;
-	register int		doublequote;
-	register int		singlequote;
+	unsigned char*	s = (unsigned char*)as;
+	unsigned char*	e = s + n;
+	char*		b;
+	int		c;
+	int		m;
+	int		escaped;
+	int		spaced;
+	int		doublequote;
+	int		singlequote;
 	Mbstate_t		q;
 	wchar_t			w;
 	int			shell;

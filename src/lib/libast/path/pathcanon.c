@@ -239,11 +239,11 @@ static const Oflags_t	oflags[] =
 char*
 pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_t* dev)
 {
-	register char*	p;
-	register char*	r;
-	register char*	s;
-	register char*	t;
-	register int	dots;
+	char*	p;
+	char*	r;
+	char*	s;
+	char*	t;
+	int	dots;
 	char*		v;
 	char*		x;
 	char*		y;

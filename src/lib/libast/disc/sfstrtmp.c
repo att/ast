@@ -45,7 +45,7 @@ NoN(sfstrtmp)
  */
 
 extern int
-sfstrtmp(register Sfio_t* f, int mode, void* buf, size_t siz)
+sfstrtmp(Sfio_t* f, int mode, void* buf, size_t siz)
 {
 	if (!(f->_flags & SF_STRING))
 		return -1;

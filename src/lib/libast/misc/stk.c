@@ -134,14 +134,14 @@ static char *overflow(int n)
  */
 static void stkinit(size_t size)
 {
-	register Sfio_t *sp;
+	Sfio_t *sp;
 	init = size;
 	sp = stkopen(0);
 	init = 1;
 	stkinstall(sp,overflow);
 }
 
-static int stkexcept(register Sfio_t *stream, int type, void* val, Sfdisc_t* dp)
+static int stkexcept(Sfio_t *stream, int type, void* val, Sfdisc_t* dp)
 {
 	NoP(dp);
 	NoP(val);
@@ -149,9 +149,9 @@ static int stkexcept(register Sfio_t *stream, int type, void* val, Sfdisc_t* dp)
 	{
 	    case SF_CLOSING:
 		{
-			register struct stk *sp = stream2stk(stream); 
-			register char *cp = sp->stkbase;
-			register struct frame *fp;
+			struct stk *sp = stream2stk(stream); 
+			char *cp = sp->stkbase;
+			struct frame *fp;
 			if(--sp->stkref<=0)
 			{
 				increment(delete);
@@ -212,12 +212,12 @@ static int stkexcept(register Sfio_t *stream, int type, void* val, Sfdisc_t* dp)
  */
 Sfio_t *stkopen(int flags)
 {
-	register size_t bsize;
-	register Sfio_t *stream;
-	register struct stk *sp;
-	register struct frame *fp;
-	register Sfdisc_t *dp;
-	register char *cp;
+	size_t bsize;
+	Sfio_t *stream;
+	struct stk *sp;
+	struct frame *fp;
+	Sfdisc_t *dp;
+	char *cp;
 	if(!(stream=newof((char*)0,Sfio_t, 1, sizeof(*dp)+sizeof(*sp))))
 		return(0);
 	increment(create);
@@ -263,7 +263,7 @@ Sfio_t *stkopen(int flags)
 Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow)
 {
 	Sfio_t *old;
-	register struct stk *sp;
+	struct stk *sp;
 	if(!init)
 	{
 		stkinit(1);
@@ -294,9 +294,9 @@ Sfio_t *stkinstall(Sfio_t *stream, _stk_overflow_ oflow)
 /*
  * increase the reference count on the given <stack>
  */
-int stklink(register Sfio_t* stream)
+int stklink(Sfio_t* stream)
 {
-	register struct stk *sp = stream2stk(stream);
+	struct stk *sp = stream2stk(stream);
 	return(sp->stkref++);
 }
 
@@ -308,7 +308,7 @@ int stklink(register Sfio_t* stream)
  */
 int stkclose(Sfio_t* stream)
 {
-	register struct stk *sp = stream2stk(stream); 
+	struct stk *sp = stream2stk(stream); 
 	if(sp->stkref>1)
 	{
 		sp->stkref--;
@@ -320,10 +320,10 @@ int stkclose(Sfio_t* stream)
 /*
  * returns 1 if <loc> is on this stack
  */
-int stkon(register Sfio_t * stream, register char* loc)
+int stkon(Sfio_t * stream, char* loc)
 {
-	register struct stk *sp = stream2stk(stream); 
-	register struct frame *fp;
+	struct stk *sp = stream2stk(stream); 
+	struct frame *fp;
 	for(fp=(struct frame*)sp->stkbase; fp; fp=(struct frame*)fp->prev)
 		if(loc>=((char*)(fp+1)) && loc< fp->end)
 			return(1);
@@ -335,12 +335,12 @@ int stkon(register Sfio_t * stream, register char* loc)
  * otherwise, the top of the stack is set to stkbot+<offset>
  *
  */
-char *stkset(register Sfio_t * stream, register char* loc, size_t offset)
+char *stkset(Sfio_t * stream, char* loc, size_t offset)
 {
-	register struct stk *sp = stream2stk(stream); 
-	register char *cp;
-	register struct frame *fp;
-	register int frames = 0;
+	struct stk *sp = stream2stk(stream); 
+	char *cp;
+	struct frame *fp;
+	int frames = 0;
 	int n;
 	if(!init)
 		stkinit(offset+1);
@@ -390,9 +390,9 @@ found:
 /*
  * allocate <n> bytes on the current stack
  */
-char *stkalloc(register Sfio_t *stream, register size_t n)
+char *stkalloc(Sfio_t *stream, size_t n)
 {
-	register unsigned char *old;
+	unsigned char *old;
 	if(!init)
 		stkinit(n);
 	increment(alloc);
@@ -407,7 +407,7 @@ char *stkalloc(register Sfio_t *stream, register size_t n)
 /*
  * begin a new stack word of at least <n> bytes
  */
-char *_stkseek(register Sfio_t *stream, register ssize_t n)
+char *_stkseek(Sfio_t *stream, ssize_t n)
 {
 	if(!init)
 		stkinit(n);
@@ -422,9 +422,9 @@ char *_stkseek(register Sfio_t *stream, register ssize_t n)
  * advance the stack to the current top
  * if extra is non-zero, first add a extra bytes and zero the first
  */
-char	*stkfreeze(register Sfio_t *stream, register size_t extra)
+char	*stkfreeze(Sfio_t *stream, size_t extra)
 {
-	register unsigned char *old, *top;
+	unsigned char *old, *top;
 	if(!init)
 		stkinit(extra);
 	old = stream->_data;
@@ -449,9 +449,9 @@ char	*stkfreeze(register Sfio_t *stream, register size_t extra)
  */
 char	*stkcopy(Sfio_t *stream, const char* str)
 {
-	register unsigned char *cp = (unsigned char*)str;
-	register size_t n;
-	register int off=stktell(stream);
+	unsigned char *cp = (unsigned char*)str;
+	size_t n;
+	int off=stktell(stream);
 	char buff[40], *tp=buff;
 	if(off)
 	{
@@ -495,13 +495,13 @@ char	*stkcopy(Sfio_t *stream, const char* str)
  * to the end is copied into the new stack frame
  */
 
-static char *stkgrow(register Sfio_t *stream, size_t size)
+static char *stkgrow(Sfio_t *stream, size_t size)
 {
-	register size_t n = size;
-	register struct stk *sp = stream2stk(stream);
-	register struct frame *fp= (struct frame*)sp->stkbase;
-	register char *cp, *dp=0;
-	register size_t m = stktell(stream);
+	size_t n = size;
+	struct stk *sp = stream2stk(stream);
+	struct frame *fp= (struct frame*)sp->stkbase;
+	char *cp, *dp=0;
+	size_t m = stktell(stream);
 	size_t endoff;
 	char *end=0;
 	int nn=0,add=1;

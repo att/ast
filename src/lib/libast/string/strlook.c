@@ -37,11 +37,11 @@
  */
 
 void*
-strlook(const void* tab, size_t siz, register const char* name)
+strlook(const void* tab, size_t siz, const char* name)
 {
-	register char*	t = (char*)tab;
-	register char*	s;
-	register int	c = *name;
+	char*	t = (char*)tab;
+	char*	s;
+	int	c = *name;
 
 	for (; s = *((char**)t); t += siz)
 		if (*s == c && !strcmp(s, name))

@@ -87,7 +87,7 @@ done:
 
 static Namval_t *create_tree(Namval_t *np,const char *name,int flag,Namfun_t *dp)
 {
-	register Namfun_t *fp=dp;
+	Namfun_t *fp=dp;
 	fp->dsize = 0;
 	while(fp=fp->next)
 	{
@@ -130,8 +130,8 @@ static const Namdisc_t treedisc =
 
 static char *nextdot(const char *str, void* context)
 {
-	register char *cp;
-	register int c;
+	char *cp;
+	int c;
 	if(*str=='.')
 		str++;
 	for(cp=(char*)str;c= *cp; cp++)
@@ -149,7 +149,7 @@ static char *nextdot(const char *str, void* context)
 
 static  Namfun_t *nextdisc(Namval_t *np)
 {
-	register Namfun_t *fp;
+	Namfun_t *fp;
 	if(nv_isref(np))
 		return(0);
         for(fp=np->nvfun;fp;fp=fp->next)
@@ -305,9 +305,9 @@ static Namval_t *nextnode(struct nvdir *dp)
 char *nv_dirnext(void *dir)
 {
 	Shell_t	*shp = 0;
-	register struct nvdir *save, *dp = (struct nvdir*)dir;
-	register Namval_t *np, *last_table;
-	register char *cp;
+	struct nvdir *save, *dp = (struct nvdir*)dir;
+	Namval_t *np, *last_table;
+	char *cp;
 	Namfun_t *nfp;
 	Namval_t *nq;
 	Namarr_t *ap = dp->table?nv_arrayptr(dp->table):0;
@@ -458,11 +458,11 @@ static void outtype(Namval_t *np, Namfun_t *fp, Sfio_t* out, const char *prefix)
 /*
  * print the attributes of name value pair give by <np>
  */
-void nv_attribute(register Namval_t *np,Sfio_t *out,char *prefix,int noname)
+void nv_attribute(Namval_t *np,Sfio_t *out,char *prefix,int noname)
 {
-	register const Shtable_t *tp;
-	register char *cp;
-	register unsigned val,mask,attr;
+	const Shtable_t *tp;
+	char *cp;
+	unsigned val,mask,attr;
 	char *ip=0;
 	Namfun_t *fp=0; 
 	Namval_t *typep=0;
@@ -822,8 +822,8 @@ static void outname(Shell_t *shp, Sfio_t *out, char *name, int len, bool json)
 
 static void outval(char *name, const char *vname, struct Walk *wp)
 {
-	register Namval_t *tp=0, *np, *nq, *last_table=wp->shp->last_table;
-        register Namfun_t *fp;
+	Namval_t *tp=0, *np, *nq, *last_table=wp->shp->last_table;
+        Namfun_t *fp;
 	int isarray=0, special=0,mode=0;
 	bool json = (wp->flags&NV_JSON);
 	Dt_t *root = wp->root?wp->root:wp->shp->var_base;
@@ -995,9 +995,9 @@ static void outval(char *name, const char *vname, struct Walk *wp)
  */
 static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp)
 {
-	register char *cp,*nextcp,*arg;
-	register Sfio_t *outfile = wp->out;
-	register int r;
+	char *cp,*nextcp,*arg;
+	Sfio_t *outfile = wp->out;
+	int r;
 	Shell_t *shp = wp->shp;
 	Namarr_t	*ap;
 	Namval_t	*np,*tp;
@@ -1195,7 +1195,7 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp)
 /*
  * walk the virtual tree and print or delete name-value pairs
  */
-static char *walk_tree(register Namval_t *np, Namval_t *xp, int flags)
+static char *walk_tree(Namval_t *np, Namval_t *xp, int flags)
 {
 	Shell_t		*shp = sh_ptr(np);
 	static Sfio_t *out;
@@ -1204,7 +1204,7 @@ static char *walk_tree(register Namval_t *np, Namval_t *xp, int flags)
 	Sfoff_t	off = 0;
 	int len, savtop = stktell(shp->stk);
 	char *savptr = stkfreeze(shp->stk,0);
-	register struct argnod *ap=0; 
+	struct argnod *ap=0; 
 	struct argnod *arglist=0;
 	char *name,*cp, **argv;
 	char *subscript=0;
@@ -1268,7 +1268,7 @@ static char *walk_tree(register Namval_t *np, Namval_t *xp, int flags)
 			shp->var_tree = dp;
 			if(nq && mq)
 			{
-				register struct nvdir *odir=0,*dp = (struct nvdir*)dir;
+				struct nvdir *odir=0,*dp = (struct nvdir*)dir;
 				char *nvenv = mq->nvenv;
 				if(dp->table==nq)
 				{
@@ -1340,7 +1340,7 @@ Namfun_t *nv_isvtree(Namval_t *np)
 /*
  * get discipline for compound initializations
  */
-char *nv_getvtree(register Namval_t *np, Namfun_t *fp)
+char *nv_getvtree(Namval_t *np, Namfun_t *fp)
 {
 #if 1
 	int flags=0, dsize=0;
@@ -1368,7 +1368,7 @@ char *nv_getvtree(register Namval_t *np, Namfun_t *fp)
 /*
  * put discipline for compound initializations
  */
-static void put_tree(register Namval_t *np, const char *val, int flags,Namfun_t *fp)
+static void put_tree(Namval_t *np, const char *val, int flags,Namfun_t *fp)
 {
 	struct Namarray *ap;
 	int nleft = 0;
@@ -1409,10 +1409,10 @@ static void put_tree(register Namval_t *np, const char *val, int flags,Namfun_t 
 /*
  * Insert discipline to cause $x to print current tree
  */
-void nv_setvtree(register Namval_t *np)
+void nv_setvtree(Namval_t *np)
 {
 	Shell_t	*shp = sh_ptr(np);
-	register Namfun_t *nfp;
+	Namfun_t *nfp;
 	if(shp->subshell)
 		sh_assignok(np,1);
 	if(nv_hasdisc(np, &treedisc))

@@ -146,7 +146,7 @@ typedef struct Cenv_s
 static Rex_t*
 node(Cenv_t* env, int type, int lo, int hi, size_t extra)
 {
-	register Rex_t*	e;
+	Rex_t*	e;
 
 	DEBUG_TEST(0x0800,(sfprintf(sfstdout, "%s:%d node(%d,%d,%d,%u)\n", file, line, type, lo, hi, sizeof(Rex_t) + extra)),(0));
 	if (e = (Rex_t*)alloc(env->disc, 0, sizeof(Rex_t) + extra))
@@ -230,7 +230,7 @@ drop(regdisc_t* disc, Rex_t* e)
  */
 
 static void
-mark(register Rex_t* e, int set)
+mark(Rex_t* e, int set)
 {
 	if (e && !e->marked)
 		do
@@ -363,10 +363,10 @@ cat(Cenv_t* env, Rex_t* e, Rex_t* f)
  */
 
 static int
-stats(register Cenv_t* env, register Rex_t* e)
+stats(Cenv_t* env, Rex_t* e)
 {
-	register unsigned long	n;
-	register unsigned long	m;
+	unsigned long	n;
+	unsigned long	m;
 	unsigned long		cm;
 	unsigned long		nm;
 	unsigned long		cn;
@@ -641,10 +641,10 @@ stats(register Cenv_t* env, register Rex_t* e)
 static int	token(Cenv_t*);
 
 static int
-magic(register Cenv_t* env, register int c, int escaped)
+magic(Cenv_t* env, int c, int escaped)
 {
-	register char*	sp;
-	register int	n;
+	char*	sp;
+	int	n;
 	int		o = c;
 	int		e = env->error;
 	int		l = env->token.len;
@@ -917,7 +917,7 @@ magic(register Cenv_t* env, register int c, int escaped)
 }
 
 static int
-token(register Cenv_t* env)
+token(Cenv_t* env)
 {
 	int	c;
 	int	posixkludge;
@@ -1033,11 +1033,11 @@ token(register Cenv_t* env)
 static Celt_t*
 col(Cenv_t* env, Celt_t* ce, int ic, unsigned char* bp, int bw, int bc, unsigned char* ep, int ew, int ec)
 {
-	register char*		s;
-	register unsigned char*	k;
-	register unsigned char*	e;
-	register int		c;
-	register int		cc;
+	char*		s;
+	unsigned char*	k;
+	unsigned char*	e;
+	int		c;
+	int		cc;
 	int			bt;
 	int			et;
 	wchar_t			w;
@@ -2018,7 +2018,7 @@ trie(Cenv_t* env, Rex_t* e, Rex_t* f)
 static Rex_t*		alt(Cenv_t*, int, int);
 
 static int
-chr(register Cenv_t* env, int* escaped)
+chr(Cenv_t* env, int* escaped)
 {
 	unsigned char*	p;
 	int		c;
@@ -2958,7 +2958,7 @@ alt(Cenv_t* env, int number, int cond)
  */
 
 static void
-bmstr(Cenv_t* env, register Rex_t* a, unsigned char* v, int n, Bm_mask_t b)
+bmstr(Cenv_t* env, Rex_t* a, unsigned char* v, int n, Bm_mask_t b)
 {
 	int	c;
 	int	m;

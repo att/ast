@@ -93,10 +93,10 @@ _mm_severity(void)
 
 	if (!severity)
 	{
-		register char*		s;
-		register MM_table_t*	p;
-		register int		n;
-		register int		c;
+		char*		s;
+		MM_table_t*	p;
+		int		n;
+		int		c;
 		char*			e;
 		MM_table_t*		q;
 
@@ -186,7 +186,7 @@ _mm_severity(void)
 }
 
 static char*
-display(register const MM_table_t* tab, int value, int mask)
+display(const MM_table_t* tab, int value, int mask)
 {
 	while (tab->name)
 	{
@@ -200,10 +200,10 @@ display(register const MM_table_t* tab, int value, int mask)
 int
 fmtmsg(long classification, const char* label, int severity, const char* text, const char* action, const char* tag)
 {
-	register int		c;
-	register char*		s;
-	register char*		t;
-	register MM_table_t*	p;
+	int		c;
+	char*		s;
+	char*		t;
+	MM_table_t*	p;
 	int			n;
 	int			m;
 	int			r;

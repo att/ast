@@ -32,9 +32,9 @@
 #include <lclib.h>
 
 char*
-fmtscale(register Sfulong_t n, int k)
+fmtscale(Sfulong_t n, int k)
 {
-	register Sfulong_t	m;
+	Sfulong_t	m;
 	int			r;
 	int			z;
 	const char*		u;

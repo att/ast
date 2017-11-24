@@ -204,9 +204,9 @@ static struct Method methods[] = {
 int	b_read(int argc,char *argv[], Shbltin_t *context)
 {
 	Sfdouble_t sec;
-	register char *name=0;
-	register int r, flags=0, fd=0;
-	register Shell_t *shp = context->shp;
+	char *name=0;
+	int r, flags=0, fd=0;
+	Shell_t *shp = context->shp;
 	ssize_t	len=0;
 	long timeout = 1000*shp->st.tmout;
 	int save_prompt, fixargs=context->invariant;
@@ -394,13 +394,13 @@ static void timedout(void *handle)
  *  <flags> is union of -A, -r, -s, and contains delimiter if not '\n'
  *  <timeout> is number of milli-seconds until timeout
  */
-int sh_readline(register Shell_t *shp,char **names, void *readfn, volatile int fd, int flags,ssize_t size,long timeout)
+int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int flags,ssize_t size,long timeout)
 {
-	register ssize_t	c;
-	register unsigned char	*cp;
-	register Namval_t	*np;
-	register char		*name, *val;
-	register Sfio_t		*iop;
+	ssize_t	c;
+	unsigned char	*cp;
+	Namval_t	*np;
+	char		*name, *val;
+	Sfio_t		*iop;
 	Namfun_t		*nfp;
 	char			*ifs;
 	unsigned char		*cpmax;
@@ -954,7 +954,7 @@ int sh_readline(register Shell_t *shp,char **names, void *readfn, volatile int f
 		if(!name && *val)
 		{
 			/* strip off trailing space delimiters */
-			register unsigned char	*vp = (unsigned char*)val + strlen(val);
+			unsigned char	*vp = (unsigned char*)val + strlen(val);
 			while(shp->ifstable[*--vp]==S_SPACE);
 			if(vp==del)
 			{

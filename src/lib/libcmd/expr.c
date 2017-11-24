@@ -184,12 +184,12 @@ static int expr_or(State_t*, Node_t*);
 
 static int getnode(State_t* state, Node_t *np)
 {
-	register char*	sp;
-	register char*	cp;
-	register int	i;
-	register int	j;
-	register int	k;
-	register int	tok;
+	char*	sp;
+	char*	cp;
+	int	i;
+	int	j;
+	int	k;
+	int	tok;
 	char*		ep;
 
 	if (!(cp = *state->arglist++))
@@ -293,7 +293,7 @@ static int getnode(State_t* state, Node_t *np)
 
 static int expr_cond(State_t* state, Node_t *np)
 {
-	register int	tok = getnode(state, np);
+	int	tok = getnode(state, np);
 
 	while (tok==':')
 	{
@@ -344,7 +344,7 @@ static int expr_cond(State_t* state, Node_t *np)
 
 static int expr_mult(State_t* state, Node_t *np)
 {
-	register int	tok = expr_cond(state, np);
+	int	tok = expr_cond(state, np);
 
 	while ((tok&~T_OP)==T_MULT)
 	{
@@ -373,7 +373,7 @@ static int expr_mult(State_t* state, Node_t *np)
 
 static int expr_add(State_t* state, Node_t *np)
 {
-	register int	tok = expr_mult(state, np);
+	int	tok = expr_mult(state, np);
 
 	while ((tok&~T_OP)==T_ADD)
 	{
@@ -393,12 +393,12 @@ static int expr_add(State_t* state, Node_t *np)
 
 static int expr_cmp(State_t* state, Node_t *np)
 {
-	register int	tok = expr_add(state, np);
+	int	tok = expr_add(state, np);
 
 	while ((tok&~T_OP)==T_CMP)
 	{
 		Node_t rp;
-		register char *left,*right;
+		char *left,*right;
 		char buff1[36],buff2[36];
 		int op = (tok&T_OP);
 		tok = expr_add(state, &rp);
@@ -461,7 +461,7 @@ static int expr_cmp(State_t* state, Node_t *np)
 
 static int expr_and(State_t* state, Node_t *np)
 {
-	register int	tok = expr_cmp(state, np);
+	int	tok = expr_cmp(state, np);
 	while (tok=='&')
 	{
 		Node_t rp;
@@ -477,7 +477,7 @@ static int expr_and(State_t* state, Node_t *np)
 
 static int expr_or(State_t* state, Node_t *np)
 {
-	register int	tok = expr_and(state, np);
+	int	tok = expr_and(state, np);
 	while (tok=='|')
 	{
 		Node_t rp;

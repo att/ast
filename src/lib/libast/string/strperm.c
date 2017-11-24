@@ -40,12 +40,12 @@
 #include <modex.h>
 
 int
-strperm(const char* aexpr, char** e, register int perm)
+strperm(const char* aexpr, char** e, int perm)
 {
-	register char*	expr = (char*)aexpr;
-	register int	c;
-	register int	typ;
-	register int	who;
+	char*	expr = (char*)aexpr;
+	int	c;
+	int	typ;
+	int	who;
 	int		num;
 	int		op;
 	int		mask;

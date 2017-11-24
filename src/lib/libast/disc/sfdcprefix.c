@@ -44,21 +44,21 @@ typedef struct
  */
 
 #if __STD_C
-static ssize_t pfxwrite(Sfio_t* f, const Void_t* buf, register size_t n, Sfdisc_t* dp)
+static ssize_t pfxwrite(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* dp)
 #else
 static ssize_t pfxwrite(f, buf, n, dp)
 Sfio_t* 	f;
 Void_t*		buf;
-register size_t	n;
+size_t	n;
 Sfdisc_t*	dp;
 #endif
 {
-	register Prefix_t*	pfx = (Prefix_t*)dp;
-	register char*		b;
-	register char*		s;
-	register char*		e;
-	register char*		t;
-	register ssize_t	w;
+	Prefix_t*	pfx = (Prefix_t*)dp;
+	char*		b;
+	char*		s;
+	char*		e;
+	char*		t;
+	ssize_t	w;
 	int			skip;
 
 	skip = 0;
@@ -118,8 +118,8 @@ Sfio_t*		f;
 char*		prefix;
 #endif
 {
-	register Prefix_t*	pfx;
-	register char*		s;
+	Prefix_t*	pfx;
+	char*		s;
 	size_t			n;
 
 	/*

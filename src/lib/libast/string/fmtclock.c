@@ -29,9 +29,9 @@
 #include <tm.h>
 
 char*
-fmtclock(register Sfulong_t t)
+fmtclock(Sfulong_t t)
 {
-	register int		u;
+	int		u;
 	char*			buf;
 	int			z;
 

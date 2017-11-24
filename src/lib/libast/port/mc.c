@@ -56,11 +56,11 @@
 char*
 mcfind(const char* locale, const char* catalog, int category, int nls, char* path, size_t size)
 {
-	register int		c;
-	register char*		s;
-	register char*		e;
-	register char*		p;
-	register const char*	v;
+	int		c;
+	char*		s;
+	char*		e;
+	char*		p;
+	const char*	v;
 	int			i;
 	int			first;
 	int			next;
@@ -207,11 +207,11 @@ mcfind(const char* locale, const char* catalog, int category, int nls, char* pat
  */
 
 Mc_t*
-mcopen(register Sfio_t* ip)
+mcopen(Sfio_t* ip)
 {
-	register Mc_t*		mc;
-	register char**		mp;
-	register char*		sp;
+	Mc_t*		mc;
+	char**		mp;
+	char*		sp;
 	Vmalloc_t*		vm;
 	char*			rp;
 	int			i;
@@ -342,7 +342,7 @@ mcopen(register Sfio_t* ip)
  */
 
 char*
-mcget(register Mc_t* mc, int set, int num, const char* msg)
+mcget(Mc_t* mc, int set, int num, const char* msg)
 {
 	char*		s;
 	size_t		n;
@@ -370,12 +370,12 @@ mcget(register Mc_t* mc, int set, int num, const char* msg)
  */
 
 int
-mcput(register Mc_t* mc, int set, int num, const char* msg)
+mcput(Mc_t* mc, int set, int num, const char* msg)
 {
-	register int		i;
-	register char*		s;
-	register Mcset_t*	sp;
-	register char**		mp;
+	int		i;
+	char*		s;
+	Mcset_t*	sp;
+	char**		mp;
 
 	/*
 	 * validate the arguments
@@ -510,13 +510,13 @@ mcput(register Mc_t* mc, int set, int num, const char* msg)
  */
 
 int
-mcdump(register Mc_t* mc, register Sfio_t* op)
+mcdump(Mc_t* mc, Sfio_t* op)
 {
-	register int		i;
-	register int		j;
-	register int		n;
-	register char*		s;
-	register Mcset_t*	sp;
+	int		i;
+	int		j;
+	int		n;
+	char*		s;
+	Mcset_t*	sp;
 
 	/*
 	 * write the magic
@@ -610,13 +610,13 @@ mcdump(register Mc_t* mc, register Sfio_t* op)
  */
 
 int
-mcindex(register const char* s, char** e, int* set, int* msg)
+mcindex(const char* s, char** e, int* set, int* msg)
 {
-	register int		c;
-	register int		m;
-	register int		n;
-	register int		r;
-	register unsigned char*	cv;
+	int		c;
+	int		m;
+	int		n;
+	int		r;
+	unsigned char*	cv;
 	char*			t;
 
 	m = 0;
@@ -662,7 +662,7 @@ mcindex(register const char* s, char** e, int* set, int* msg)
  */
 
 int
-mcclose(register Mc_t* mc)
+mcclose(Mc_t* mc)
 {
 	if (!mc)
 		return -1;

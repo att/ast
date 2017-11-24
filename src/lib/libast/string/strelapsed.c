@@ -35,10 +35,10 @@
 #include <ctype.h>
 
 unsigned long
-strelapsed(register const char* s, char** e, int n)
+strelapsed(const char* s, char** e, int n)
 {
-	register int		c;
-	register unsigned long	v;
+	int		c;
+	unsigned long	v;
 	unsigned long		t = 0;
 	int			f = 0;
 	int			p = 0;

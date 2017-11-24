@@ -69,7 +69,7 @@ static time_t	mailtime;
 static char	beenhere = 0;
 
 #ifdef _lib_sigvec
-    void clearsigmask(register int sig)
+    void clearsigmask(int sig)
     {
 	struct sigvec vec;
 	if(sigvec(sig,NIL(struct sigvec*),&vec)>=0 && vec.sv_mask)
@@ -120,10 +120,10 @@ bool sh_source(Shell_t *shp, Sfio_t *iop, const char *file)
 
 int sh_main(int ac, char *av[], Shinit_f userinit)
 {
-	register char	*name;
-	register int	fdin;
-	register Sfio_t  *iop;
-	register Shell_t *shp;
+	char	*name;
+	int	fdin;
+	Sfio_t  *iop;
+	Shell_t *shp;
 	struct stat	statb;
 	int 		i;	/* set for restricted shell */
 	bool		rshflag;	/* set for restricted shell */
@@ -392,7 +392,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit)
  * fdin is the input file descriptor 
  */
 
-static void	exfile(register Shell_t *shp, register Sfio_t *iop,register int fno)
+static void	exfile(Shell_t *shp, Sfio_t *iop,int fno)
 {
 	time_t curtime;
 	Shnode_t *t;
@@ -519,7 +519,7 @@ static void	exfile(register Shell_t *shp, register Sfio_t *iop,register int fno)
 		}
 		if(sh_isstate(shp,SH_INTERACTIVE) && !tdone)
 		{
-			register char *mail;
+			char *mail;
 #ifdef JOBS
 			sh_offstate(shp,SH_MONITOR);
 			if(sh_isoption(shp,SH_MONITOR))
@@ -645,8 +645,8 @@ done:
 /* prints out messages if files in list have been modified since last call */
 static void chkmail(Shell_t *shp, char *files)
 {
-	register char *cp,*sp,*qp;
-	register char save;
+	char *cp,*sp,*qp;
+	char save;
 	struct argnod *arglist=0;
 	int	offset = stktell(shp->stk);
 	char 	*savstak=stkptr(shp->stk,0);
@@ -743,7 +743,7 @@ static void fixargs(char **argv, int mode)
 #else
 	static char *buff;
 	static size_t command_len;
-	register char *cp;
+	char *cp;
 	int offset=0;
 	size_t size;
 #   ifdef PSTAT

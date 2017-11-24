@@ -40,11 +40,11 @@ int nv_compare(Dt_t* dict, Void_t *sp, Void_t *dp, Dtdisc_t *disc)
 /*
  * call the next getval function in the chain
  */
-char *nv_getv(Namval_t *np, register Namfun_t *nfp)
+char *nv_getv(Namval_t *np, Namfun_t *nfp)
 {
 	Shell_t	*shp = sh_ptr(np);
-	register Namfun_t	*fp;
-	register char *cp;
+	Namfun_t	*fp;
+	char *cp;
 	if((fp = nfp) != NIL(Namfun_t*) && !nv_local)
 		fp = nfp = nfp->next;
 	nv_local=0;
@@ -73,10 +73,10 @@ char *nv_getv(Namval_t *np, register Namfun_t *nfp)
 /*
  * call the next getnum function in the chain
  */
-Sfdouble_t nv_getn(Namval_t *np, register Namfun_t *nfp)
+Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp)
 {
-	register Namfun_t	*fp;
-	register Sfdouble_t	d=0;
+	Namfun_t	*fp;
+	Sfdouble_t	d=0;
 	Shell_t			*shp = sh_ptr(np);
 	char *str;
 	if((fp = nfp) != NIL(Namfun_t*) && !nv_local)
@@ -120,9 +120,9 @@ Sfdouble_t nv_getn(Namval_t *np, register Namfun_t *nfp)
 /*
  * call the next assign function in the chain
  */
-void nv_putv(Namval_t *np, const char *value, int flags, register Namfun_t *nfp)
+void nv_putv(Namval_t *np, const char *value, int flags, Namfun_t *nfp)
 {
-	register Namfun_t	*fp, *fpnext;
+	Namfun_t	*fp, *fpnext;
 	Namarr_t		*ap;
 	if((fp=nfp) != NIL(Namfun_t*) && !nv_local)
 		fp = nfp = nfp->next;
@@ -193,7 +193,7 @@ static struct blocked	*blist;
  */
 static struct blocked *block_info(Namval_t *np, struct blocked *pp)
 {
-	register struct blocked	*bp;
+	struct blocked	*bp;
 	void			*sub=0;
 	int			isub=0;
 	if(nv_isarray(np) && (isub=nv_aindex(np)) < 0)
@@ -225,9 +225,9 @@ static void block_done(struct blocked *bp)
 /*
  * free discipline if no more discipline functions
  */
-static void chktfree(register Namval_t *np, register struct vardisc *vp)
+static void chktfree(Namval_t *np, struct vardisc *vp)
 {
-	register int n;
+	int n;
 	for(n=0; n< sizeof(vp->disc)/sizeof(*vp->disc); n++)
 	{
 		if(vp->disc[n])
@@ -249,8 +249,8 @@ static void	assign(Namval_t *np,const char* val,int flags,Namfun_t *handle)
 {
 	Shell_t		*shp = sh_ptr(np);
 	int		type = (flags&NV_APPEND)?APPEND:ASSIGN;
-	register	struct vardisc *vp = (struct vardisc*)handle;
-	register	Namval_t *nq =  vp->disc[type];
+	struct vardisc *vp = (struct vardisc*)handle;
+	Namval_t *nq =  vp->disc[type];
 	struct blocked	block, *bp = block_info(np, &block);
 	Namval_t	node;
 	union Value	*up = np->nvalue.up;
@@ -304,7 +304,7 @@ static void	assign(Namval_t *np,const char* val,int flags,Namfun_t *handle)
 		np->nvalue.up = up;
 	if(val)
 	{
-		register char *cp;
+		char *cp;
 		Sfdouble_t d;
 		if(nv_isnull(SH_VALNOD))
 			cp=0;
@@ -374,10 +374,10 @@ done:
 static char*	lookup(Namval_t *np, int type, Sfdouble_t *dp,Namfun_t *handle)
 {
 	Shell_t			*shp = sh_ptr(np);
-	register struct vardisc	*vp = (struct vardisc*)handle;
+	struct vardisc	*vp = (struct vardisc*)handle;
 	struct blocked		block, *bp = block_info(np, &block);
-	register Namval_t	*nq = vp->disc[type];
-	register char		*cp=0;
+	Namval_t	*nq = vp->disc[type];
+	char		*cp=0;
 	Namval_t		node;
 	union Value		*up = np->nvalue.up;
 	if(nq && !isblocked(bp,type))
@@ -451,10 +451,10 @@ static Sfdouble_t lookupn(Namval_t *np, Namfun_t *handle)
  * If <event> is NULL, then return the event name after <action>
  * If <event> is NULL, and <action> is NULL, return the first event
  */
-char *nv_setdisc(register Namval_t* np,register const char *event,Namval_t *action,register Namfun_t *fp)
+char *nv_setdisc(Namval_t* np,const char *event,Namval_t *action,Namfun_t *fp)
 {
-	register struct vardisc *vp = (struct vardisc*)np->nvfun;
-	register int type;
+	struct vardisc *vp = (struct vardisc*)np->nvfun;
+	int type;
 	char *empty = "";
 	while(vp)
 	{
@@ -466,8 +466,8 @@ char *nv_setdisc(register Namval_t* np,register const char *event,Namval_t *acti
 		vp = 0;
 	if(np == (Namval_t*)fp)
 	{
-		register const char *name;
-		register int getname=0;
+		const char *name;
+		int getname=0;
 		/* top level call, check for get/set */
 		if(!event)
 		{
@@ -561,11 +561,11 @@ char *nv_setdisc(register Namval_t* np,register const char *event,Namval_t *acti
  * If <event> is NULL, then return the event name after <action>
  * If <event> is NULL, and <action> is NULL, return the first event
  */
-static char *setdisc(register Namval_t* np,register const char *event,Namval_t *action,register Namfun_t *fp)
+static char *setdisc(Namval_t* np,const char *event,Namval_t *action,Namfun_t *fp)
 {
-	register Nambfun_t *vp = (Nambfun_t*)fp;
-	register int type,getname=0;
-	register const char *name;
+	Nambfun_t *vp = (Nambfun_t*)fp;
+	int type,getname=0;
+	const char *name;
 	const char **discnames = vp->bnames;
 	/* top level call, check for discipline match */
 	if(!event)
@@ -614,11 +614,11 @@ static void putdisc(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	nv_putv(np,val,flag,fp);
 	if(!val && !(flag&NV_NOFREE))
 	{
-		register Nambfun_t *vp = (Nambfun_t*)fp;
-		register int i;
+		Nambfun_t *vp = (Nambfun_t*)fp;
+		int i;
 		for(i=0; vp->bnames[i]; i++)
 		{
-			register Namval_t *mp;
+			Namval_t *mp;
 			if((mp=vp->bltins[i]) && !nv_isattr(mp,NV_NOFREE))
 			{
 				if(is_abuiltin(mp))
@@ -639,10 +639,10 @@ static void putdisc(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 
 static const Namdisc_t Nv_bdisc	= {   0, putdisc, 0, 0, setdisc };
 
-Namfun_t *nv_clone_disc(register Namfun_t *fp, int flags)
+Namfun_t *nv_clone_disc(Namfun_t *fp, int flags)
 {
-	register Namfun_t	*nfp;
-	register int		size;
+	Namfun_t	*nfp;
+	int		size;
 	if(!fp->disc && !fp->next && (fp->nofree&1))
 		return(fp);
 	if(!(size=fp->dsize) && (!fp->disc || !(size=fp->disc->dsize)))
@@ -657,9 +657,9 @@ Namfun_t *nv_clone_disc(register Namfun_t *fp, int flags)
 
 bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs)
 {
-	register Nambfun_t *vp;
-	register int n=0;
-	register const char **av=names;
+	Nambfun_t *vp;
+	int n=0;
+	const char **av=names;
 	if(av)
 	{
 		while(*av++)
@@ -688,7 +688,7 @@ bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs)
  *    NV_POP:	 Delete <fp> from top of the stack
  *    NV_CLONE:  Replace fp with a copy created my malloc() and return it
  */
-Namfun_t *nv_disc(register Namval_t *np, register Namfun_t* fp, int mode)
+Namfun_t *nv_disc(Namval_t *np, Namfun_t* fp, int mode)
 {
 	Shell_t	*shp = sh_ptr(np);
 	Namfun_t *lp, **lpp;
@@ -778,7 +778,7 @@ Namfun_t *nv_disc(register Namval_t *np, register Namfun_t* fp, int mode)
  */
 Namfun_t *nv_hasdisc(Namval_t *np, const Namdisc_t *dp)
 {
-	register Namfun_t *fp;
+	Namfun_t *fp;
 	for(fp=np->nvfun; fp; fp = fp->next)
 	{
 		if(fp->disc== dp)
@@ -808,7 +808,7 @@ static const Namdisc_t notify_disc  = {  0, put_notify };
 
 bool nv_unsetnotify(Namval_t *np, char **addr)
 {
-	register Namfun_t *fp;
+	Namfun_t *fp;
 	for(fp=np->nvfun;fp;fp=fp->next)
 	{
 		if(fp->disc->putval==put_notify && ((struct notify*)fp)->ptr==addr)
@@ -836,8 +836,8 @@ bool nv_setnotify(Namval_t *np, char **addr)
 
 static void *newnode(const char *name)
 {
-	register size_t s;
-	register Namval_t *np = newof(0,Namval_t,1,s=strlen(name)+1);
+	size_t s;
+	Namval_t *np = newof(0,Namval_t,1,s=strlen(name)+1);
 	if(np)
 	{
 		np->nvname = (char*)np+sizeof(Namval_t);
@@ -849,9 +849,9 @@ static void *newnode(const char *name)
 /*
  * clone a numeric value
  */
-static void *num_clone(register Namval_t *np, void *val)
+static void *num_clone(Namval_t *np, void *val)
 {
-	register int size;
+	int size;
 	void *nval;
 	if(!val)
 		return(0);
@@ -886,7 +886,7 @@ static void *num_clone(register Namval_t *np, void *val)
 
 void clone_all_disc( Namval_t *np, Namval_t *mp, int flags)
 {
-	register Namfun_t *fp, **mfp = &mp->nvfun, *nfp, *fpnext;
+	Namfun_t *fp, **mfp = &mp->nvfun, *nfp, *fpnext;
 	for(fp=np->nvfun; fp;fp=fpnext)
 	{
 		fpnext = fp->next;
@@ -1064,8 +1064,8 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode)
 	if (!shp)
 		shp = &sh;
 
-	register Namval_t *np;
-	register Dt_t *dp = 0;
+	Namval_t *np;
+	Dt_t *dp = 0;
 	if(mode&HASH_NOSCOPE)
 		dp = dtview(root,0);
 	if(mode&HASH_BUCKET)
@@ -1090,7 +1090,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode)
 			root = nv_dict(shp->namespace);
 		else if(!dp && !(mode&HASH_NOSCOPE))
 		{
-			register Dt_t *next;
+			Dt_t *next;
 			while(next=dtvnext(root))
 				root = next;
 		}
@@ -1115,7 +1115,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 {
 	Shell_t		*shp = dtuserdata(root,0,0);
 	int		c,offset = stktell(shp->stk);
-	register char	*sp, *cp=0;
+	char	*sp, *cp=0;
 	Namval_t	*np, *nq;
 	char		*dname=0;
 	if(var)
@@ -1213,9 +1213,9 @@ done:
  */
 Namval_t *sh_addbuiltin_20120720(Shell_t* shp,const char *path, Shbltin_f bltin, void *extra)
 {
-	register const char	*name;
+	const char	*name;
 	char			*cp;
-	register Namval_t	*np, *nq=0;
+	Namval_t	*np, *nq=0;
 	int			offset=stktell(shp->stk);
 	if(extra==(void*)1)
 		name = path;
@@ -1303,7 +1303,7 @@ Namval_t *sh_addbuiltin(const char *path, Shbltin_f bltin, void *extra)
 }
 
 #undef nv_stack
-extern Namfun_t *nv_stack(register Namval_t *np, register Namfun_t* fp)
+extern Namfun_t *nv_stack(Namval_t *np, Namfun_t* fp)
 {
 	return(nv_disc(np,fp,0));
 }
@@ -1316,7 +1316,7 @@ struct table
 	Dt_t		*dict;
 };
 
-static Namval_t *next_table(register Namval_t* np, Dt_t *root,Namfun_t *fp)
+static Namval_t *next_table(Namval_t* np, Dt_t *root,Namfun_t *fp)
 {
 	struct table *tp = (struct table *)fp;
 	if(root)
@@ -1368,10 +1368,10 @@ static void delete_fun(Namval_t *np, void *data)
 	nv_delete(np,shp->fun_tree,NV_NOFREE);
 }
 
-static void put_table(register Namval_t* np, const char* val, int flags, Namfun_t* fp)
+static void put_table(Namval_t* np, const char* val, int flags, Namfun_t* fp)
 {
-	register Dt_t		*root = ((struct table*)fp)->dict;
-	register Namval_t	*nq, *mp;
+	Dt_t		*root = ((struct table*)fp)->dict;
+	Namval_t	*nq, *mp;
 	Namarr_t		*ap;
 	struct adata		data;
 	if(val)
@@ -1404,10 +1404,10 @@ static void put_table(register Namval_t* np, const char* val, int flags, Namfun_
  */
 static char *get_table(Namval_t *np, Namfun_t *fp)
 {
-	register Dt_t *root = ((struct table*)fp)->dict;
+	Dt_t *root = ((struct table*)fp)->dict;
 	static Sfio_t *out;
-	register int first=1;
-	register Dt_t *base = dtview(root,0);
+	int first=1;
+	Dt_t *base = dtview(root,0);
         if(out)
                 sfseek(out,(Sfoff_t)0,SEEK_SET);
         else
@@ -1521,7 +1521,7 @@ const Namdisc_t *nv_discfun(int which)
 
 bool nv_hasget(Namval_t *np)
 {
-	register Namfun_t	*fp;
+	Namfun_t	*fp;
 	for(fp=np->nvfun; fp; fp=fp->next)
 	{
 		if(!fp->disc || (!fp->disc->getnum && !fp->disc->getval))

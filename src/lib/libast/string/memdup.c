@@ -34,9 +34,9 @@ NoN(memdup)
  */
 
 void*
-memdup(register const void* s, register size_t n)
+memdup(const void* s, size_t n)
 {
-	register void*	t;
+	void*	t;
 
 	return((t = (void*)newof(0, char, n, 0)) ? memcpy(t, s, n) : 0);
 }

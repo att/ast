@@ -65,7 +65,7 @@ typedef struct
 #endif
 
 static void
-set(register Header_t* hp, const char* fs, const char* dir, const char* type, const char* options)
+set(Header_t* hp, const char* fs, const char* dir, const char* type, const char* options)
 {
 	const char*	x;
 
@@ -264,8 +264,8 @@ options[] =
 void*
 mntopen(const char* path, const char* mode)
 {
-	register Handle_t*	mp;
-	register int		n;
+	Handle_t*	mp;
+	int		n;
 
 	FIXARGS(path, mode, 0);
 #if _lib_getfsstat
@@ -294,10 +294,10 @@ mntopen(const char* path, const char* mode)
 Mnt_t*
 mntread(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
-	register int		i;
-	register int		n;
-	register unsigned long	flags;
+	Handle_t*	mp = (Handle_t*)handle;
+	int		i;
+	int		n;
+	unsigned long	flags;
 
 	if (mp->next < mp->last)
 	{
@@ -316,7 +316,7 @@ mntread(void* handle)
 int
 mntclose(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
+	Handle_t*	mp = (Handle_t*)handle;
 
 	if (!mp)
 		return -1;
@@ -354,7 +354,7 @@ typedef struct
 void*
 mntopen(const char* path, const char* mode)
 {
-	register Handle_t*	mp;
+	Handle_t*	mp;
 
 	FIXARGS(path, mode, 0);
 	if (!(mp = newof(0, Handle_t, 1, SIZE)))
@@ -371,10 +371,10 @@ mntopen(const char* path, const char* mode)
 Mnt_t*
 mntread(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
-	register char*		s;
-	register char*		t;
-	register char*		o;
+	Handle_t*	mp = (Handle_t*)handle;
+	char*		s;
+	char*		t;
+	char*		o;
 
 	if (mp->count > 0)
 	{
@@ -441,7 +441,7 @@ mntread(void* handle)
 int
 mntclose(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
+	Handle_t*	mp = (Handle_t*)handle;
 
 	if (!mp)
 		return -1;
@@ -533,7 +533,7 @@ typedef struct
 void*
 mntopen(const char* path, const char* mode)
 {
-	register Handle_t*	mp;
+	Handle_t*	mp;
 
 	FIXARGS(path, mode, MOUNTED);
 	if (!(mp = newof(0, Handle_t, 1, 0)))
@@ -549,8 +549,8 @@ mntopen(const char* path, const char* mode)
 Mnt_t*
 mntread(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
-	register struct mntent*	mnt;
+	Handle_t*	mp = (Handle_t*)handle;
+	struct mntent*	mnt;
 
 	if (mnt = getmntent(mp->fp))
 	{
@@ -563,7 +563,7 @@ mntread(void* handle)
 int
 mntclose(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
+	Handle_t*	mp = (Handle_t*)handle;
 
 	if (!mp)
 		return -1;
@@ -647,7 +647,7 @@ typedef struct
 void*
 mntopen(const char* path, const char* mode)
 {
-	register Handle_t*	mp;
+	Handle_t*	mp;
 
 	FIXARGS(path, mode, MOUNTED);
 	if (!(mp = newof(0, Handle_t, 1, 0)))
@@ -670,7 +670,7 @@ mntopen(const char* path, const char* mode)
 Mnt_t*
 mntread(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
+	Handle_t*	mp = (Handle_t*)handle;
 
 #if _lib_w_getmntent
 
@@ -707,12 +707,12 @@ mntread(void* handle)
 
 #else
 
-	register int		c;
-	register char*		s;
-	register char*		m;
-	register char*		b;
-	register int		q;
-	register int		x;
+	int		c;
+	char*		s;
+	char*		m;
+	char*		b;
+	int		q;
+	int		x;
 
  again:
 	q = 0;
@@ -781,7 +781,7 @@ mntread(void* handle)
 int
 mntclose(void* handle)
 {
-	register Handle_t*	mp = (Handle_t*)handle;
+	Handle_t*	mp = (Handle_t*)handle;
 
 	if (!mp)
 		return -1;

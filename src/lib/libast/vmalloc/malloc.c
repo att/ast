@@ -640,7 +640,7 @@ extern unsigned long	_record[2048];
 
 __inline Void_t* _vmrecord(Void_t* p)
 {
-	register unsigned long	v = ((unsigned long)p)>>16; 
+	unsigned long	v = ((unsigned long)p)>>16; 
 
 	_record[v>>5] |= 1<<((v&0x1f));
 	return p;

@@ -58,7 +58,7 @@ static void	trap_timeout(void*);
  */
 static void *time_add(struct tevent *item, void *list)
 {
-	register struct tevent *tp = (struct tevent*)list;
+	struct tevent *tp = (struct tevent*)list;
 	if(!tp || item->milli < tp->milli)
 	{
 		item->next = tp;
@@ -79,9 +79,9 @@ static void *time_add(struct tevent *item, void *list)
 /*
  * delete timeout item from current given list, delete timer
  */
-static 	void *time_delete(register struct tevent *item, void *list)
+static 	void *time_delete(struct tevent *item, void *list)
 {
-	register struct tevent *tp = (struct tevent*)list;
+	struct tevent *tp = (struct tevent*)list;
 	if(item==tp)
 		list = (void*)tp->next;
 	else
@@ -111,12 +111,12 @@ static Time_t getnow(void)
 
 static void	print_alarms(void *list)
 {
-	register struct tevent *tp = (struct tevent*)list;
+	struct tevent *tp = (struct tevent*)list;
 	while(tp)
 	{
 		if(tp->timeout)
 		{
-			register char *name = nv_name(tp->node);
+			char *name = nv_name(tp->node);
 			if(tp->flags&R_FLAG)
 			{
 				double d = tp->milli;
@@ -134,7 +134,7 @@ static void	print_alarms(void *list)
 
 static void	trap_timeout(void* handle)
 {
-	register struct tevent *tp = (struct tevent*)handle;
+	struct tevent *tp = (struct tevent*)handle;
 	tp->sh->trapnote |= SH_SIGALRM;
 	if(!(tp->flags&R_FLAG))
 		tp->timeout = 0;
@@ -146,8 +146,8 @@ static void	trap_timeout(void* handle)
 
 void	sh_timetraps(Shell_t *shp)
 {
-	register struct tevent *tp, *tpnext;
-	register struct tevent *tptop;
+	struct tevent *tp, *tpnext;
+	struct tevent *tptop;
 	char	ifstable[256];
 	Fcin_t  savefc;
 	shp->trapnote &= ~SH_SIGALRM;
@@ -189,7 +189,7 @@ void	sh_timetraps(Shell_t *shp)
 static char *setdisc(Namval_t *np, const char *event, Namval_t* action, Namfun_t
  *fp)
 {
-        register struct tevent *tp = (struct tevent*)fp;
+        struct tevent *tp = (struct tevent*)fp;
 	if(!event)
 		return(action?"":(char*)ALARM);
 	if(strcmp(event,ALARM)!=0)
@@ -266,10 +266,10 @@ static const Namdisc_t alarmdisc =
 
 int	b_alarm(int argc,char *argv[],Shbltin_t *context)
 {
-	register int n,rflag=0;
-	register Namval_t *np;
-	register struct tevent *tp;
-	register Shell_t *shp = context->shp;
+	int n,rflag=0;
+	Namval_t *np;
+	struct tevent *tp;
+	Shell_t *shp = context->shp;
 	while (n = optget(argv, sh_optalarm)) switch (n)
 	{
 	    case 'r':

@@ -30,9 +30,9 @@ NoN(memset)
 #else
 
 void*
-memset(void* asp, register int c, register size_t n)
+memset(void* asp, int c, size_t n)
 {
-	register char*	sp = (char*)asp;
+	char*	sp = (char*)asp;
 
 	while (n-- > 0)
 		*sp++ = c;

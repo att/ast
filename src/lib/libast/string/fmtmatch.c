@@ -33,11 +33,11 @@
 char*
 fmtmatch(const char* as)
 {
-	register char*	s = (char*)as;
-	register int	c;
-	register char*	t;
-	register char**	p;
-	register char*	b;
+	char*	s = (char*)as;
+	int	c;
+	char*	t;
+	char**	p;
+	char*	b;
 	char*		x;
 	char*		y;
 	char*		z;

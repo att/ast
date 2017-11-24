@@ -38,10 +38,10 @@ static char id[] = "\n@(#)$Id: mamstate (AT&T Bell Laboratories) 1989-06-26 $\0\
 
 main(argc, argv)
 int		argc;
-register char**	argv;
+char**	argv;
 {
-	register char*	s;
-	register int	c;
+	char*	s;
+	int	c;
 	long		ref;
 	struct stat	st;
 	char		buf[1024];

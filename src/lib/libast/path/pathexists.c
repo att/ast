@@ -48,11 +48,11 @@ typedef struct Tree_s
 int
 pathexists(char* path, int mode)
 {
-	register char*		s;
-	register char*		e;
-	register Tree_t*	p;
-	register Tree_t*	t;
-	register int		c;
+	char*		s;
+	char*		e;
+	Tree_t*	p;
+	Tree_t*	t;
+	int		c;
 	char*			ee;
 	int			cc;
 	int			x;

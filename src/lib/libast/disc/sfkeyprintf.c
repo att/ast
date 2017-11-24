@@ -72,13 +72,13 @@ typedef union
 #define initfield(f,s)	((f)->first = (f)->delimiter = *((f)->next = (s)))
 
 static char*
-getfield(register Field_t* f, int restore)
+getfield(Field_t* f, int restore)
 {
-	register char*	s;
-	register int	n;
-	register int	c;
-	register int	lp;
-	register int	rp;
+	char*	s;
+	int	n;
+	int	c;
+	int	lp;
+	int	rp;
 	char*		b;
 
 	if (!f->delimiter)
@@ -137,9 +137,9 @@ getfield(register Field_t* f, int restore)
 static int
 getfmt(Sfio_t* sp, void* vp, Sffmt_t* dp)
 {
-	register Fmt_t*	fp = (Fmt_t*)dp;
+	Fmt_t*	fp = (Fmt_t*)dp;
 	Value_t*	value = (Value_t*)vp;
-	register char*	v;
+	char*	v;
 	char*		t;
 	char*		b;
 	char*		a = 0;
@@ -338,7 +338,7 @@ getfmt(Sfio_t* sp, void* vp, Sffmt_t* dp)
 int
 sfkeyprintf_20000308(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup_t lookup, Sf_key_convert_t convert)
 {
-	register int	i;
+	int	i;
 	int		r;
 	Fmt_t		fmt;
 
@@ -363,7 +363,7 @@ sfkeyprintf_20000308(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup
 int
 sfkeyprintf(Sfio_t* sp, void* handle, const char* format, Sf_key_lookup_t lookup, Sf_key_convert_t convert)
 {
-	register int	i;
+	int	i;
 	int		r;
 	Fmt_t		fmt;
 

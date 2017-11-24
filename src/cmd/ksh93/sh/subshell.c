@@ -109,9 +109,9 @@ void	sh_subtmpfile(Shell_t *shp)
 {
 	if(sfset(sfstdout,0,0)&SF_STRING)
 	{
-		register int fd;
-		register struct checkpt	*pp = (struct checkpt*)shp->jmplist;
-		register struct subshell *sp = subshell_data->pipe;
+		int fd;
+		struct checkpt	*pp = (struct checkpt*)shp->jmplist;
+		struct subshell *sp = subshell_data->pipe;
 		/* save file descriptor 1 if open */
 		if((sp->tmpfd = fd = sh_fcntl(1,F_dupfd_cloexec,10)) >= 0)
 		{
@@ -171,7 +171,7 @@ void	sh_subtmpfile(Shell_t *shp)
  */
 void sh_subfork(void)
 {
-	register struct subshell *sp = subshell_data;
+	struct subshell *sp = subshell_data;
 	Shell_t	*shp = sp->shp;
 	long	curenv = shp->curenv;
 	int	comsub=shp->comsub;
@@ -224,10 +224,10 @@ void sh_subfork(void)
 	}
 }
 
-bool nv_subsaved(register Namval_t *np, int table)
+bool nv_subsaved(Namval_t *np, int table)
 {
-	register struct subshell	*sp;
-	register struct Link		*lp, *lpprev;
+	struct subshell	*sp;
+	struct Link		*lp, *lpprev;
 	for(sp = (struct subshell*)subshell_data; sp; sp=sp->prev)
 	{
 		lpprev = 0;
@@ -256,11 +256,11 @@ bool nv_subsaved(register Namval_t *np, int table)
  * layer created by the most recent subshell_fork if the
  * node hasn't already been copied
  */
-Namval_t *sh_assignok(register Namval_t *np,int add)
+Namval_t *sh_assignok(Namval_t *np,int add)
 {
-	register Namval_t	*mp;
-	register struct Link	*lp;
-	register struct subshell *sp = (struct subshell*)subshell_data;
+	Namval_t	*mp;
+	struct Link	*lp;
+	struct subshell *sp = (struct subshell*)subshell_data;
 	Shell_t			*shp;
 	Dt_t			*dp;
 	Namval_t		*mpnext;
@@ -328,8 +328,8 @@ Namval_t *sh_assignok(register Namval_t *np,int add)
  */
 static void nv_restore(struct subshell *sp)
 {
-	register struct Link *lp, *lq;
-	register Namval_t *mp, *np;
+	struct Link *lp, *lq;
+	Namval_t *mp, *np;
 	const char *save = sp->shpwd;
 	Namval_t	*mpnext;
 	int		flags,nofree;
@@ -399,7 +399,7 @@ static void nv_restore(struct subshell *sp)
  */
 Dt_t *sh_subaliastree(Shell_t *shp,int create)
 {
-	register struct subshell *sp = subshell_data;
+	struct subshell *sp = subshell_data;
 	if(!sp || shp->curenv==0)
 		return(shp->alias_tree);
 	if(!sp->salias && create)
@@ -418,7 +418,7 @@ Dt_t *sh_subaliastree(Shell_t *shp,int create)
  */
 Dt_t *sh_subfuntree(Shell_t *shp,int create)
 {
-	register struct subshell *sp = subshell_data;
+	struct subshell *sp = subshell_data;
 	if(!sp || shp->curenv==0)
 		return(shp->fun_tree);
 	if(!sp->sfun && create)
@@ -431,9 +431,9 @@ Dt_t *sh_subfuntree(Shell_t *shp,int create)
 	return(sp->shp->fun_tree);
 }
 
-static void table_unset(register Dt_t *root,int fun)
+static void table_unset(Dt_t *root,int fun)
 {
-	register Namval_t *np,*nq;
+	Namval_t *np,*nq;
 	int flag;
 	for(np=(Namval_t*)dtfirst(root);np;np=nq)
 	{
@@ -444,10 +444,10 @@ static void table_unset(register Dt_t *root,int fun)
 	}
 }
 
-int sh_subsavefd(register int fd)
+int sh_subsavefd(int fd)
 {
-	register struct subshell *sp = subshell_data;
-	register int old=0;
+	struct subshell *sp = subshell_data;
+	int old=0;
 	if(sp)
 	{
 		old = !(sp->fdsaved&(1<<fd));
@@ -458,7 +458,7 @@ int sh_subsavefd(register int fd)
 
 void sh_subjobcheck(pid_t pid)
 {
-	register struct subshell *sp = subshell_data;
+	struct subshell *sp = subshell_data;
 	while(sp)
 	{
 		if(sp->cpid==pid)
@@ -482,7 +482,7 @@ void sh_subjobcheck(pid_t pid)
 Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 {
 	struct subshell sub_data;
-	register struct subshell *sp = &sub_data;
+	struct subshell *sp = &sub_data;
 	int jmpval,nsig=0,duped=0;
 	long savecurenv = shp->curenv;
 	int savejobpgid = job.curpgid;

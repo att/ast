@@ -78,12 +78,12 @@ dec(char* s, char* p, int n)
 char*
 fmtip6(const unsigned char* addr, int bits)
 {
-	register const unsigned char*	a = addr;
-	register int			n = IP6ADDR;
-	register int			i;
-	register int			z;
-	register int			k;
-	register int			m;
+	const unsigned char*	a = addr;
+	int			n = IP6ADDR;
+	int			i;
+	int			z;
+	int			k;
+	int			m;
 	unsigned char			r[IP6ADDR];
 	char*				b;
 	char*				s;

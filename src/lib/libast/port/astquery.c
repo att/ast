@@ -43,8 +43,8 @@ int
 astquery(int quit, const char* format, ...)
 {
 	va_list		ap;
-	register int	n;
-	register int	c;
+	int	n;
+	int	c;
 	int		r;
 	Sfio_t*		ip;
 	Sfio_t*		op;

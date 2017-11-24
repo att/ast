@@ -35,7 +35,7 @@
  */
 
 time_t
-tmleap(register time_t* clock)
+tmleap(time_t* clock)
 {
 	return tmxsec(tmxleap(tmxclock(clock)));
 }

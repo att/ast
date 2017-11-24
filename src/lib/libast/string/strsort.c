@@ -36,10 +36,10 @@
 void
 strsort(char** argv, int n, Strcmp_f cmp)
 {
-	register int 	i;
-	register int 	j;
-	register int 	m;
-	register char**	ap;
+	int 	i;
+	int 	j;
+	int 	m;
+	char**	ap;
 	char*		s;
 	int 		k;
 
@@ -60,10 +60,10 @@ strsort(char** argv, int n, Strcmp_f cmp)
 void
 strsort_r(char** argv, size_t n, Strcmp_context_f cmp, void* handle)
 {
-	register size_t i;
-	register size_t j;
-	register size_t m;
-	register char**	ap;
+	size_t i;
+	size_t j;
+	size_t m;
+	char**	ap;
 	char*		s;
 	size_t 		k;
 

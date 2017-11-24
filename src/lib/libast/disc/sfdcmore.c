@@ -65,7 +65,7 @@ size_t		n;
 Sfdisc_t*	dp;
 #endif
 {
-	register More_t*	more = (More_t*)dp;
+	More_t*	more = (More_t*)dp;
 
 	more->match = 0;
 	more->row = 2;
@@ -88,7 +88,7 @@ char*		label;
 Sfdisc_t*	dp;
 #endif
 {
-	register int	r;
+	int	r;
 	int		n;
 
 #ifdef TCSADRAIN
@@ -130,7 +130,7 @@ Sfdisc_t*	dp;
 		write(wfd, "\r", 1);
 	}
 #else
-	register char*	s;
+	char*	s;
 
 	if (label && (n = strlen(label)))
 		sfwr(wp, label, n, dp);
@@ -144,21 +144,21 @@ Sfdisc_t*	dp;
  */
 
 #if __STD_C
-static ssize_t morewrite(Sfio_t* f, const Void_t* buf, register size_t n, Sfdisc_t* dp)
+static ssize_t morewrite(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* dp)
 #else
 static ssize_t morewrite(f, buf, n, dp)
 Sfio_t* 	f;
 Void_t*		buf;
-register size_t	n;
+size_t	n;
 Sfdisc_t*	dp;
 #endif
 {
-	register More_t*	more = (More_t*)dp;
-	register char*		b;
-	register char*		s;
-	register char*		e;
-	register ssize_t	w;
-	register int		r;
+	More_t*	more = (More_t*)dp;
+	char*		b;
+	char*		s;
+	char*		e;
+	ssize_t	w;
+	int		r;
 
 	if (!more->row)
 		return n;
@@ -266,7 +266,7 @@ Void_t*		data;
 Sfdisc_t*	dp;
 #endif
 {
-	register More_t*	more = (More_t*)dp;
+	More_t*	more = (More_t*)dp;
 
 	if (type == SF_FINAL || type == SF_DPOP)
 	{
@@ -309,7 +309,7 @@ int		rows;
 int		cols;
 #endif
 {
-	register More_t*	more;
+	More_t*	more;
 	size_t			n;
 
 	/*

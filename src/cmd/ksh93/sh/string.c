@@ -46,11 +46,11 @@
  * This is only used for small tables and is used to save non-sharable memory 
  */
 
-const Shtable_t *sh_locate(register const char *sp,const Shtable_t *table,int size)
+const Shtable_t *sh_locate(const char *sp,const Shtable_t *table,int size)
 {
-	register int			first;
-	register const Shtable_t	*tp;
-	register int			c;
+	int			first;
+	const Shtable_t	*tp;
+	int			c;
 	static const Shtable_t		empty = {0,0};
 	if(sp==0 || (first= *sp)==0)
 		return(&empty);
@@ -70,12 +70,12 @@ const Shtable_t *sh_locate(register const char *sp,const Shtable_t *table,int si
 
 #define sep(c)		((c)=='-'||(c)=='_')
 
-int sh_lookopt(register const char *sp, int *invert)
+int sh_lookopt(const char *sp, int *invert)
 {
-	register int			first;
-	register const Shtable_t	*tp;
-	register int			c;
-	register const char		*s, *t, *sw, *tw;
+	int			first;
+	const Shtable_t	*tp;
+	int			c;
+	const char		*s, *t, *sw, *tw;
 	int				amb;
 	int				hit;
 	int				inv;
@@ -178,8 +178,8 @@ char *sh_substitute(Shell_t *shp,const char *string,const char *oldsp,char *news
 		strlen(x)==(strlen(in string)+strlen(in newsp)-strlen(in oldsp));
 @*/
 {
-	register const char *sp = string;
-	register const char *cp;
+	const char *sp = string;
+	const char *cp;
 	const char *savesp = 0;
 	stkseek(shp->stk,0);
 	if(*sp==0)
@@ -233,14 +233,14 @@ found:
  * Remove escape characters from characters in <sp> and eliminate quoted nulls.
  */
 
-void	sh_trim(register char *sp)
+void	sh_trim(char *sp)
 /*@
 	assume sp!=NULL;
 	promise strlen(in sp) <= in strlen(sp);
 @*/
 {
-	register char *dp;
-	register int c;
+	char *dp;
+	int c;
 	if(sp)
 	{
 		dp = sp;
@@ -272,13 +272,13 @@ void	sh_trim(register char *sp)
  * <str1> and <str2> may point to the same place.
  */
 
-void sh_utol(register char const *str1,register char *str2)
+void sh_utol(char const *str1,char *str2)
 /*@
 	assume str1!=0 && str2!=0
 	return x satisfying strlen(in str1)==strlen(in str2);
 @*/ 
 {
-	register int c;
+	int c;
 	for(; c= *((unsigned char*)str1); str1++,str2++)
 	{
 		if(isupper(c))
@@ -294,8 +294,8 @@ void sh_utol(register char const *str1,register char *str2)
  */
 static char	*sh_fmtcsv(const char *string)
 {
-	register const char *cp = string;
-	register int c;
+	const char *cp = string;
+	int c;
 	int offset;
 	if(!cp)
 		return((char*)0);
@@ -330,8 +330,8 @@ static char	*sh_fmtcsv(const char *string)
  */
 char *sh_fmtstr(const char *string, int quote)
 {
-	register const char *cp = string, *op;
-	register int c, state, type=quote;
+	const char *cp = string, *op;
+	int c, state, type=quote;
 	int offset;
 #if SHOPT_MULTIBYTE
 	bool	lc_unicodeliterals;
@@ -551,13 +551,13 @@ char	*sh_fmtj(const char *string)
  */
 char	*sh_fmtqf(const char *string, int flags, int fold)
 {
-	register const char *cp = string;
-	register const char *bp;
-	register const char *vp;
-	register int c;
-	register int n;
-	register int q;
-	register int a;
+	const char *cp = string;
+	const char *bp;
+	const char *vp;
+	int c;
+	int n;
+	int q;
+	int a;
 	int single;
 	int offset;
 
@@ -753,10 +753,10 @@ char	*sh_fmtqf(const char *string, int flags, int fold)
 }
 
 #if SHOPT_MULTIBYTE
-	int sh_strchr(const char *string, register const char *dp, size_t size)
+	int sh_strchr(const char *string, const char *dp, size_t size)
 	{
 		wchar_t c, d;
-		register const char *cp=string;
+		const char *cp=string;
 		mbinit();
 		d = mbnchar(dp,size); 
 		mbinit();
@@ -791,9 +791,9 @@ const char *_sh_translate(const char *message)
  */
 char *sh_checkid(char *str, char *last)
 {
-	register unsigned char *cp = (unsigned char*)str;
-	register unsigned char *v = cp;
-	register int c;
+	unsigned char *cp = (unsigned char*)str;
+	unsigned char *v = cp;
+	int c;
 	if(c=mbchar(cp),isaletter(c))
 		while(c=mbchar(cp),isaname(c));
 	if(c==']' && (!last || ((char*)cp==last)))

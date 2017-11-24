@@ -64,8 +64,8 @@ typedef struct Id_s
 int
 struid(const char* name)
 {
-	register Id_t*		ip;
-	register struct passwd*	pw;
+	Id_t*		ip;
+	struct passwd*	pw;
 	int			id;
 	char*			e;
 

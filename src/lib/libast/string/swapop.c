@@ -39,8 +39,8 @@
 int
 swapop(const void* internal, const void* external, int size)
 {
-	register int	op;
-	register int	z;
+	int	op;
+	int	z;
 	char		tmp[sizeof(intmax_t)];
 
 	if ((z = size) < 0)

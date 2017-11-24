@@ -96,8 +96,8 @@ static struct stat statb;
 
 int main(int argc,char *argv[])
 {
-	register int m,n;
-	register char *p;
+	int m,n;
+	char *p;
 	struct stat statx;
 	int mode;
 	uid_t effuid;
@@ -250,7 +250,7 @@ exec:
  * return true of shell ends in sh of ksh
  */
 
-static int endsh(register const char *shell)
+static int endsh(const char *shell)
 {
 	while(*shell)
 		shell++;
@@ -268,7 +268,7 @@ static int endsh(register const char *shell)
  * return true of shell is in <dir> directory
  */
 
-static int in_dir(register const char *dir,register const char *shell)
+static int in_dir(const char *dir,const char *shell)
 {
 	while(*dir)
 	{
@@ -292,7 +292,7 @@ static void error_exit(const char *message)
  * This version of access checks against effective uid and effective gid
  */
 
-int eaccess(register const char *name, register int mode)
+int eaccess(const char *name, int mode)
 {	
 	struct stat statb;
 	if (stat(name, &statb) == 0)
@@ -314,7 +314,7 @@ int eaccess(register const char *name, register int mode)
 		{
 			static int maxgroups;
 			gid_t *groups=0; 
-			register int n;
+			int n;
 			if(maxgroups==0)
 			{
 				/* first time */
@@ -367,7 +367,7 @@ static void setids(int mode,int owner,int group)
 
 static void setids(int mode,uid_t owner,gid_t group)
 {
-	register int n,m;
+	int n,m;
 	int pv[2];
 
 	/*
@@ -478,8 +478,8 @@ static void setids(int mode,uid_t owner,gid_t group)
 
 static void maketemp(char *template)
 {
-	register char *cp = template;
-	register pid_t n = getpid();
+	char *cp = template;
+	pid_t n = getpid();
 	/* skip to end of string */
 	while(*++cp);
 	/* convert process id to string */
@@ -498,7 +498,7 @@ static void maketemp(char *template)
 static int mycopy(int fdi, int fdo)
 {
 	char buffer[BLKSIZE];
-	register int n;
+	int n;
 
 	while((n = read(fdi,buffer,BLKSIZE)) > 0)
 		if(write(fdo,buffer,n) != n)

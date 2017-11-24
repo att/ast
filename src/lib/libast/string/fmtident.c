@@ -34,8 +34,8 @@
 char*
 fmtident(const char* a)
 {
-	register char*	s = (char*)a;
-	register char*	t;
+	char*	s = (char*)a;
+	char*	t;
 	char*		buf;
 	int		i;
 
