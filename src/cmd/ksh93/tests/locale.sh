@@ -111,11 +111,11 @@ set -- $($SHELL -c "
 	unset LC_CTYPE
 	export LANG=$locale
 	export LC_ALL=C
-	command wc -C < $tmp/two_euro_chars.txt
+	command wc -m < $tmp/two_euro_chars.txt
 	unset LC_ALL
-	command wc -C < $tmp/two_euro_chars.txt
+	command wc -m < $tmp/two_euro_chars.txt
 	export LC_ALL=C
-	command wc -C < $tmp/two_euro_chars.txt
+	command wc -m < $tmp/two_euro_chars.txt
 ")
 got=$*
 [[ $got == $exp ]] || err_exit "command wc LC_ALL default failed -- expected '$exp', got '$got'"
@@ -342,8 +342,8 @@ then	LC_ALL=en_US.UTF-8
 	x=$(export LC_ALL=C.UTF-8; printf "hello\u[20ac]\xee world")
 	LC_ALL=C.UTF-8 eval $'[[ $(print -r -- "$x") == $\'hello\\u[20ac]\\xee world\' ]]' || err_exit '%q with unicode and non-unicode not working'
 	if	[[ $(whence od) ]]
-	then	got='68 65 6c 6c 6f e2 82 ac ee 20 77 6f 72 6c 64 0a'
-		[[ $(print -r -- "$x" | od -An -tx1) == "$got" ]] || err_exit "incorrect string from printf %q"
+	then	got=' 68 65 6c 6c 6f e2 82 ac ee 20 77 6f 72 6c 64 0a' # od command prepends a space in output
+		[[ $(print -r -- "$x" | command od -An -tx1) == "$got" ]] || err_exit "incorrect string from printf %q"
 	fi
 	
 fi
