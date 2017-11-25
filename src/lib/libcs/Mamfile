@@ -202,8 +202,8 @@ prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/debug.h dontcare
 make cs.h implicit
 make ${PACKAGE_ast_INCLUDE}/times.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_time.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_time.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_systime.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_systime.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/times.h dontcare

@@ -43,8 +43,8 @@ make open.o
 make open.c
 make ${PACKAGE_ast_INCLUDE}/tm.h implicit
 make ${PACKAGE_ast_INCLUDE}/times.h implicit
-make ${PACKAGE_ast_INCLUDE}/ast_time.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_time.h dontcare
+make ${PACKAGE_ast_INCLUDE}/ast_systime.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_systime.h dontcare
 make ${PACKAGE_ast_INCLUDE}/ast.h implicit
 make ${PACKAGE_ast_INCLUDE}/ast_api.h implicit
 done ${PACKAGE_ast_INCLUDE}/ast_api.h dontcare

@@ -376,8 +376,8 @@ make date.o
 make date.c
 make ${PACKAGE_ast_INCLUDE}/tm.h implicit
 make ${PACKAGE_ast_INCLUDE}/times.h implicit
-make ../../lib/libast/ast_time.h implicit
-done ../../lib/libast/ast_time.h dontcare
+make ../../lib/libast/ast_systime.h implicit
+done ../../lib/libast/ast_systime.h dontcare
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/times.h dontcare

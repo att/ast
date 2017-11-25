@@ -223,8 +223,8 @@ make features/pty
 done features/pty
 exec - iffe -v -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' ref ${mam_cc_L+-L${INSTALLROOT}/lib} -I${PACKAGE_ast_INCLUDE} -I${INSTALLROOT}/include ${mam_libast} ${mam_libcmd} : run features/pty
 done FEATURE/pty generated
-make ${PACKAGE_ast_INCLUDE}/ast_time.h implicit
-done ${PACKAGE_ast_INCLUDE}/ast_time.h
+make ${PACKAGE_ast_INCLUDE}/ast_systime.h implicit
+done ${PACKAGE_ast_INCLUDE}/ast_systime.h
 prev ${PACKAGE_ast_INCLUDE}/vmalloc.h implicit
 prev ${PACKAGE_ast_INCLUDE}/regex.h implicit
 make ${PACKAGE_ast_INCLUDE}/proc.h implicit
@@ -278,7 +278,7 @@ make pr.o
 make pr.c
 make ${PACKAGE_ast_INCLUDE}/tm.h implicit
 make ${PACKAGE_ast_INCLUDE}/times.h implicit
-prev ${PACKAGE_ast_INCLUDE}/ast_time.h implicit
+prev ${PACKAGE_ast_INCLUDE}/ast_systime.h implicit
 prev ${PACKAGE_ast_INCLUDE}/ast.h implicit
 prev ${PACKAGE_ast_INCLUDE}/prototyped.h implicit
 done ${PACKAGE_ast_INCLUDE}/times.h dontcare
