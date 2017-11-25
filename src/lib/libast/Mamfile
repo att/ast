@@ -884,15 +884,15 @@ done pathcanon.o generated
 make pathcheck.o
 make path/pathcheck.c
 make include/times.h implicit
-make ast_time.h implicit
-make FEATURE/time
-meta FEATURE/time features/%>FEATURE/% features/time time
-make features/time
-done features/time
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/time
-done FEATURE/time generated
-exec - cmp 2>/dev/null -s FEATURE/time ast_time.h || { rm -f ast_time.h; silent test -d . || mkdir .; ${STDCP} FEATURE/time ast_time.h; }
-done ast_time.h dontcare generated
+make ast_systime.h implicit
+make FEATURE/systime
+meta FEATURE/systime features/%>FEATURE/% features/systime systime
+make features/systime
+done features/systime
+exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/systime
+done FEATURE/systime generated
+exec - cmp 2>/dev/null -s FEATURE/systime ast_systime.h || { rm -f ast_systime.h; silent test -d . || mkdir .; ${STDCP} FEATURE/systime ast_systime.h; }
+done ast_systime.h dontcare generated
 prev include/ast.h implicit
 done include/times.h
 prev include/error.h implicit
@@ -1525,7 +1525,7 @@ prev FEATURE/tty
 exec - cmp 2>/dev/null -s FEATURE/tty ast_tty.h || { rm -f ast_tty.h; silent test -d . || mkdir .; ${STDCP} FEATURE/tty ast_tty.h; }
 prev include/ast_ioctl.h implicit
 done ast_tty.h dontcare generated
-prev ast_time.h implicit
+prev ast_systime.h implicit
 prev include/ast.h implicit
 make sfio/vthread.h implicit
 prev windows.h implicit
@@ -6122,14 +6122,14 @@ exec - then rm -f 1.${COTEMP}.x
 exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_sys.h
 exec - fi
 done ${INSTALLROOT}/include/ast/ast_sys.h generated
-make ${INSTALLROOT}/include/ast/ast_time.h
-prev ast_time.h
-exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_time.h > 1.${COTEMP}.x
-exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/ast_time.h 1.${COTEMP}.x
+make ${INSTALLROOT}/include/ast/ast_systime.h
+prev ast_systime.h
+exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_systime.h > 1.${COTEMP}.x
+exec - if cmp 2>/dev/null -s ${INSTALLROOT}/include/ast/ast_systime.h 1.${COTEMP}.x
 exec - then rm -f 1.${COTEMP}.x
-exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_time.h
+exec - else mv 1.${COTEMP}.x ${INSTALLROOT}/include/ast/ast_systime.h
 exec - fi
-done ${INSTALLROOT}/include/ast/ast_time.h generated
+done ${INSTALLROOT}/include/ast/ast_systime.h generated
 make ${INSTALLROOT}/include/ast/ast_tty.h
 prev ast_tty.h
 exec - proto -p -s -l ${PACKAGEROOT}/lib/package/ast.lic '-o since=1985,author=gsf+dgk+kpv' ast_tty.h > 1.${COTEMP}.x
