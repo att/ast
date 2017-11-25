@@ -82,7 +82,7 @@
 #if _PACKAGE_ast
 
 #include	<ast.h>
-#include	<ast_time.h>
+#include	<ast_systime.h>
 #include	<ast_tty.h>
 #include	<ls.h>
 

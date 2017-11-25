@@ -108,7 +108,7 @@ USAGE_LICENSE
 #include <ctype.h>
 #include <regex.h>
 #include <vmalloc.h>
-#include <ast_time.h>
+#include <ast_systime.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include "FEATURE/pty"
