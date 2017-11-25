@@ -92,7 +92,7 @@ stop(int sig)
  */
 
 static int
-setopt(void* handle, register const void* p, int n, const char* v)
+setopt(void* handle, const void* p, int n, const char* v)
 {
 	Coshell_t*	co = (Coshell_t*)handle;
 	Coservice_t*	cs;
@@ -148,9 +148,9 @@ setopt(void* handle, register const void* p, int n, const char* v)
 Coshell_t*
 coopen(const char* path, int flags, const char* attributes)
 {
-	register Coshell_t*	co;
-	register char*		s;
-	register int		i;
+	Coshell_t*	co;
+	char*		s;
+	int		i;
 	char*			t;
 	int			n;
 	Proc_t*			proc;

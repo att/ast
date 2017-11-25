@@ -126,12 +126,12 @@ cozombie(Coshell_t* co)
 }
 
 Cojob_t*
-cowait(register Coshell_t* co, Cojob_t* job, int timeout)
+cowait(Coshell_t* co, Cojob_t* job, int timeout)
 {
-	register char*		s;
-	register Cojob_t*	cj;
-	register Coservice_t*	cs;
-	register ssize_t	n;
+	char*		s;
+	Cojob_t*	cj;
+	Coservice_t*	cs;
+	ssize_t	n;
 	char*			b;
 	char*			e;
 	unsigned long		user;

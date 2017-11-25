@@ -116,7 +116,7 @@ putexport(Coshell_t* co, Sfio_t* sp, char* n, int old, int coex, int flags)
 char*
 coinitialize(Coshell_t* co, int flags)
 {
-	register char*	s;
+	char*	s;
 	int		n;
 	int		m;
 	int		old;
@@ -195,8 +195,8 @@ coinitialize(Coshell_t* co, int flags)
 			{
 				if (*s == '(')
 				{
-					register char**	ep = environ;
-					register char*	e;
+					char**	ep = environ;
+					char*	e;
 					char*		v;
 					char*		es;
 					char*		xs;

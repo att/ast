@@ -36,7 +36,7 @@
  */
 
 static int
-cokilljob(register Coshell_t* co, register Cojob_t* cj, int sig)
+cokilljob(Coshell_t* co, Cojob_t* cj, int sig)
 {
 	int	n;
 
@@ -70,7 +70,7 @@ cokilljob(register Coshell_t* co, register Cojob_t* cj, int sig)
  */
 
 static int
-cokillshell(register Coshell_t* co, register Cojob_t* cj, int sig)
+cokillshell(Coshell_t* co, Cojob_t* cj, int sig)
 {
 	int	n;
 
@@ -92,7 +92,7 @@ cokillshell(register Coshell_t* co, register Cojob_t* cj, int sig)
 }
 
 int
-cokill(register Coshell_t* co, register Cojob_t* cj, int sig)
+cokill(Coshell_t* co, Cojob_t* cj, int sig)
 {
 	int	any;
 	int	n;
