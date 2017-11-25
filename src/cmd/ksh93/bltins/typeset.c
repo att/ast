@@ -1005,7 +1005,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 {
 	register char *arg=0, *name;
 	register int n, r=0, flag=0;
-	register Namval_t *np;
+	register Namval_t *np = NULL;
 	long dlete=0;
 	struct tdata tdata;
 	Shbltin_f addr;
