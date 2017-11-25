@@ -31,7 +31,7 @@
 #include <ls.h>
 
 static Cojob_t*
-service(register Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t* sp)
+service(Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t* sp)
 {
 	Proc_t*		proc;
 	size_t		n;
@@ -102,7 +102,7 @@ service(register Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t*
 }
 
 static Cojob_t*
-request(register Coshell_t* co, Cojob_t* cj, Coservice_t* cs, const char* action, int flags)
+request(Coshell_t* co, Cojob_t* cj, Coservice_t* cs, const char* action, int flags)
 {
 	ssize_t		n;
 	ssize_t		i;
@@ -146,11 +146,11 @@ request(register Coshell_t* co, Cojob_t* cj, Coservice_t* cs, const char* action
 }
 
 Cojob_t*
-coexec(register Coshell_t* co, const char* action, int flags, const char* out, const char* err, const char* att)
+coexec(Coshell_t* co, const char* action, int flags, const char* out, const char* err, const char* att)
 {
-	register Cojob_t*	cj;
-	register Sfio_t*	sp;
-	register Coservice_t*	cs;
+	Cojob_t*	cj;
+	Sfio_t*	sp;
+	Coservice_t*	cs;
 	int			n;
 	int			i;
 	int			og;

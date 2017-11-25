@@ -32,9 +32,9 @@
 int
 coprocrun(const char* path, char** argv, int flags)
 {
-	register char*		s;
-	register char**		a;
-	register Sfio_t*	tmp;
+	char*		s;
+	char**		a;
+	Sfio_t*	tmp;
 	int			n;
 
 	if (!(a = argv))

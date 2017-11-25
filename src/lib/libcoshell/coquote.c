@@ -29,9 +29,9 @@
 #include "colib.h"
 
 void
-coquote(register Sfio_t* sp, register const char* s, int type)
+coquote(Sfio_t* sp, const char* s, int type)
 {
-	register int	c;
+	int	c;
 
 	if (type && (!state.type || !*state.type))
 		type = 0;
@@ -46,8 +46,8 @@ coquote(register Sfio_t* sp, register const char* s, int type)
 		}
 		else if (type && c == '/' && *s == *state.type)
 		{
-			register const char*	x = s;
-			register char*		t = state.type;
+			const char*	x = s;
+			char*		t = state.type;
 
 			while (*t && *t++ == *x) x++;
 			if (!*t && *x == '/')
