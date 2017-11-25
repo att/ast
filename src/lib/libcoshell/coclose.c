@@ -43,9 +43,9 @@ hung(int sig)
  */
 
 static int
-shut(register Coshell_t* co)
+shut(Coshell_t* co)
 {
-	register Coshell_t*	cs;
+	Coshell_t*	cs;
 	int			n;
 	int			status;
 	Coshell_t*		ps;
@@ -103,7 +103,7 @@ shut(register Coshell_t* co)
  */
 
 int
-coclose(register Coshell_t* co)
+coclose(Coshell_t* co)
 {
 	if (co)
 		return shut(co);

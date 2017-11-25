@@ -46,9 +46,9 @@ cosync(Coshell_t* co, const char* file, int fd, int mode)
 
 		if (file && *file)
 		{
-			register const char*	s;
-			register char*		t;
-			register char*		b;
+			const char*	s;
+			char*		t;
+			char*		b;
 			int			td;
 
 			/*
