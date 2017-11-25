@@ -4,7 +4,7 @@ lib	select,poll,socket
 lib	htons,htonl sys/types.h sys/socket.h netinet/in.h
 lib	getaddrinfo sys/types.h sys/socket.h netdb.h
 typ	fd_set sys/socket.h sys/select.h
-tst	pipe_socketpair note{ use socketpair() for peekable pipe() }end execute{
+tst	pipe_socketpair note{ use socketpair() for peekable pipe() }end compile{
 	#include <ast.h>
 	#include <signal.h>
 	#include <sys/types.h>
@@ -105,7 +105,6 @@ tst	socketpair_devfd -D_AST_INTERCEPT=0 note{ /proc/.../fd/N or /dev/fd/N handle
 	}
 }end
 tst	socketpair_shutdown_mode note{ fchmod() after socketpair() shutdown() }end execute{
-	#include <ast.h>
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <sys/socket.h>

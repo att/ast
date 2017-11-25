@@ -18,10 +18,16 @@ iffe_tests_2=( nvapi shellapi )
 
 iffe_tests_3=( nfsd acct execargs pstat )
 
+function cc_fun {
+    cc -D_BLD_ast -I../../../lib/libast/include/ -I../../../lib/libast/features/  "$@"
+}
+
+export -f cc_fun
+
 pushd "$base_dir/src/cmd/ksh93/features"
 
 for iffe_test in ${iffe_tests[@]}; do
-    iffe -v -X ast -X std -c 'cc' run $iffe_test
+    iffe -v -X ast -X std -c cc_fun run $iffe_test
 done
 
 for iffe_test in ${iffe_tests_2[@]}; do
