@@ -26,6 +26,11 @@
  *
  */
 
+#define _GNU_SOURCE 1
+#include <dlfcn.h>
+#include <execinfo.h>
+#include <stdio.h>
+
 #include	"defs.h"
 #include	"aso.h"
 #include	"fcin.h"
@@ -49,6 +54,38 @@ struct Siginfo
 
 static char	indone;
 static int	cursig = -1;
+
+/* Write a primitive backtrace to stderr. */
+void dump_backtrace(int max_frames, int skip_levels) {
+      void *callstack[128];
+      const int n_max_frames = sizeof(callstack) / sizeof(callstack[0]);
+      int n_frames = backtrace(callstack, n_max_frames);
+      char **symbols = backtrace_symbols(callstack, n_frames);
+
+      int i;
+      for (i = skip_levels; i < n_frames; i++) {
+	 Dl_info info;
+	 if (dladdr(callstack[i], &info) && info.dli_sname) {
+	       fprintf(stderr, "%-3d %s + %td\n", i - skip_levels,
+			info.dli_sname == NULL ? symbols[i] : info.dli_sname,
+			(char *)callstack[i] - (char *)info.dli_saddr);
+	 } else {
+	       fprintf(stderr, "%-3d %s\n", i - skip_levels, symbols[i]);
+	 }
+      }
+
+      free(symbols);
+}
+
+/* Default function for handling a SIGSEGV. It simply writes a backtrace to
+   stderr then terminates the process with prejudice. The primary purpose is to
+   help ensure we get some useful info when the shell dies due to dereferencing
+   an invalid address. */
+void handle_sigsegv(int signo) {
+   dump_backtrace(100, 0);
+   abort();
+}
+
 
 #if !_std_malloc
 #   include	<vmalloc.h>
@@ -119,6 +156,10 @@ void	sh_fault(int sig)
 	char		*trap;
 	struct checkpt	*pp = (struct checkpt*)shp->jmplist;
 	int	action=0;
+
+	if(sig==SIGSEGV) {
+	    dump_backtrace(100, 0);
+	}
 	if(sig==SIGCHLD)
 		sfprintf(sfstdout,"childsig\n");
 #ifdef SIGWINCH
@@ -303,6 +344,9 @@ void sh_siginit(void *ptr)
 				shp->gd->sigmsg[sig] = (char*)tp->sh_value;
 		}
 	}
+
+	/* Make sure we get some useful information if the shell receives a SIGSEGV. */
+	signal(SIGSEGV, handle_sigsegv);
 }
 
 /*
