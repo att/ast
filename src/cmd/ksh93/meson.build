@@ -44,14 +44,17 @@ cc = meson.get_compiler('c')
 # On some platforms the math functions (e.g., `sin()`) that we need are found in
 # libc, on others they are found in libm.
 m_dep = cc.find_library('m', required: false)
-# On some platforms the `backtrace()` and related functions are found in libc,
+# On some platforms `backtrace()` and related functions are found in libc,
 # on others they are found in libexecinfo.
 execinfo_dep = cc.find_library('execinfo', required: false)
+# On some platforms `dladdr()` and related functions are found in libc,
+# on others they are found in libdl.
+libdl_dep = cc.find_library('libdl', required : false)
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
-    link_with: [ libast, libcmd, libcoshell],
-    dependencies: [m_dep, execinfo_dep])
+    link_with: [libast, libcmd, libcoshell],
+    dependencies: [m_dep, execinfo_dep, libdl_dep])
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 
