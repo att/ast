@@ -1,4 +1,7 @@
 ksh93_files = [ ]
+# We use same set of files as ksh93 to compile shcomp, we should check if it can be modularized.
+shcomp_files = [ ]
+
 ksh93_incdir = include_directories('include', 'features', '../../lib/libast/include/', '../../lib/libast/features/', '../../lib/libcmd/', '../../lib/libcoshell/')
 
 ksh93_c_args = [ '-DERROR_CATALOG=0' ]
@@ -23,6 +26,29 @@ ksh93_c_args += [ '-DERROR_CONTEXT_T=Error_context_t' ]
 ksh93_c_args += [ '-DUSAGE_LICENSE=""' ]
 ksh93_c_args += [ '-D_API_ast=20130625' ]
 
+# TODO: -DSHOPT_DYNAMIC
+shcomp_c_args = [ '-DUSAGE_LICENSE=""' ]
+shcomp_c_args += [ '-DKSHELL' ]
+shcomp_c_args += [ '-DERROR_CATALOG="libshell"' ]
+shcomp_c_args += [ '-DSHOPT_STATS ' ]
+shcomp_c_args += [ '-DSHOPT_NAMESPACE' ]
+shcomp_c_args += [ '-DSHOPT_COSHELL' ] 
+shcomp_c_args += [ '-DSHOPT_PFSH' ] 
+shcomp_c_args += [ '-DSHOPT_BASH' ] 
+shcomp_c_args += [ '-D_BLD_shell' ] 
+shcomp_c_args += [ '-D_API_ast=20130625' ]
+shcomp_c_args += [ '-D_PACKAGE_ast' ] 
+shcomp_c_args += [ '-DERROR_CONTEXT_T=Error_context_t' ]
+shcomp_c_args += [ '-DSHOPT_FIXEDARRAY' ]
+shcomp_c_args += [ '-DSHOPT_MULTIBYTE' ]
+shcomp_c_args += [ '-DSHOPT_RAWONLY' ]
+shcomp_c_args += [ '-DSHOPT_SUID_EXEC' ]
+shcomp_c_args += [ '-DSHOPT_BRACEPAT' ]
+shcomp_c_args += [ '-DSHOPT_KIA' ]
+shcomp_c_args += [ '-DSHOPT_COMPLETE' ]
+shcomp_c_args += [ '-DSHOPT_POLL' ]
+shcomp_c_args += [ '-DSHOPT_OPTIMIZE' ]
+
 cpu = host_machine.cpu()
 system = host_machine.system()
 
@@ -31,6 +57,7 @@ system = host_machine.system()
 # 'i386-64-unknown-linux' on linux.
 bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
+shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 
 subdir('bltins')
 subdir('data')
@@ -47,6 +74,11 @@ libdl_dep = cc.find_library('libdl', required : false)
 execinfo_dep = cc.find_library('execinfo', required : false)
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args ,
+    include_directories: ksh93_incdir,
+    link_with: [ libast, libcmd, libcoshell],
+    dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
+
+shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
     include_directories: ksh93_incdir,
     link_with: [ libast, libcmd, libcoshell],
     dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
