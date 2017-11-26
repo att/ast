@@ -90,12 +90,6 @@ done features/mmap
 exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/mmap
 done FEATURE/mmap dontcare generated
 done FEATURE/vmalloc generated
-make FEATURE/options implicit
-meta FEATURE/options features/%>FEATURE/% features/options options
-make features/options
-done features/options
-exec - iffe -v -X ast -X std -c '${CC} ${mam_cc_FLAGS} ${CCFLAGS}   ${LDFLAGS} ' run features/options
-done FEATURE/options generated
 prev FEATURE/mmap implicit
 prev FEATURE/lib implicit
 done features/map.c
