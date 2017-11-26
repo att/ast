@@ -1,4 +1,7 @@
 ksh93_files = []
+# We use same set of files as ksh93 to compile shcomp, we should check if it
+# can be modularized.
+shcomp_files = [ ]
 ksh93_incdir = include_directories('include', 'features',
                                    '../../lib/libast/include/',
                                    '../../lib/libast/features/',
@@ -28,12 +31,34 @@ ksh93_c_args = ['-DERROR_CATALOG=0',
                 '-D_BLD_shell',
                 '-D_API_ast=20130625']
 
-# This yields 'x86_64-unknown-linux' which is different from nmake which yields
-# 'i386-64-unknown-linux' on linux.
+# TODO: -DSHOPT_DYNAMIC
+shcomp_c_args = ['-DUSAGE_LICENSE=""',
+                 '-DKSHELL',
+                 '-DERROR_CATALOG="libshell"',
+                 '-DSHOPT_STATS',
+                 '-DSHOPT_NAMESPACE',
+                 '-DSHOPT_COSHELL',
+                 '-DSHOPT_PFSH',
+                 '-DSHOPT_BASH',
+                 '-D_BLD_shell',
+                 '-D_API_ast=20130625',
+                 '-D_PACKAGE_ast',
+                 '-DERROR_CONTEXT_T=Error_context_t',
+                 '-DSHOPT_FIXEDARRAY',
+                 '-DSHOPT_MULTIBYTE',
+                 '-DSHOPT_RAWONLY',
+                 '-DSHOPT_SUID_EXEC',
+                 '-DSHOPT_BRACEPAT',
+                 '-DSHOPT_KIA',
+                 '-DSHOPT_COMPLETE',
+                 '-DSHOPT_POLL',
+                 '-DSHOPT_OPTIMIZE']
+
 cpu = host_machine.cpu()
 system = host_machine.system()
 bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
+shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 
 subdir('bltins')
 subdir('data')
@@ -55,6 +80,11 @@ ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
     link_with: [libast, libcmd, libcoshell],
     dependencies: [m_dep, execinfo_dep, libdl_dep])
+
+shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
+    include_directories: ksh93_incdir,
+    link_with: [ libast, libcmd, libcoshell],
+    dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 
