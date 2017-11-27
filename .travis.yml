@@ -2,11 +2,12 @@ sudo: required
 env:
     matrix:
         - OS_TYPE=fedora
-          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y sudo procps-ng libX11-devel fuse-devel gdbm-devel langpacks-zh_CN; dnf groupinstall -y 'C Development Tools and Libraries'"
+          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y meson sudo procps-ng libX11-devel fuse-devel gdbm-devel langpacks-zh_CN; dnf groupinstall -y 'C Development Tools and Libraries'"
+          MESON_TEST="meson test -t 6 -v"
 
         - OS_TYPE=opensuse
-          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
-
+          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y meson sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
+          MESON_TEST="mesontest -t 6 -v"
 services:
     - docker
 
@@ -16,20 +17,15 @@ before_install:
 script:
     - find \( -name \*.c -o -name \*.h \) -exec sh -c '! grep --color "^[[:space:]]*//" $@' find {} \+ && echo No line comments found...
     - echo > build.sh "set -e;
+        export CFLAGS='-O0 -ggdb3 -fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts -P';
         cd /source;
-        export CCFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -P';
-        export CC=gcc;
-        ./bin/setup_cmds.sh;
-        ./bin/package;
-        ./bin/package make ast-ksh 2>&1 | tee out.log;
-        grep -q 'error:' out.log && exit 1;
-        ln -s /usr/bin/cat arch/$(sh bin/package)/bin/;
-        ln -s /usr/bin/tee arch/$(sh bin/package)/bin/;
-        ln -s /usr/bin/chmod arch/$(sh bin/package)/bin/;
+        mkdir build;
+        cd build;
+        meson ..;
+        ninja;
         ulimit -n 1024;
-        export IS_RUNNING_TRAVIS=true;
-        ./bin/package test ksh93 2>&1 | tee test.log;
-        grep -q '^test [^ ]* failed' test.log && exit 1 || exit 0;"
+        ${MESON_TEST};
+        "
 
     - chmod a+x build.sh
 
