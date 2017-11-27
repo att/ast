@@ -1,4 +1,4 @@
-project('ksh93', 'c')
+project('ksh93', 'c', default_options: ['b_lundef=false'])
 run_command('bin/setup_cmds.sh')
 run_command('bin/libast_prereq.sh')
 run_command('bin/ksh93_prereq.sh')
