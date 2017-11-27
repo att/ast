@@ -109,46 +109,47 @@ locales = ['', 'C.UTF-8']
 
 shcomp_test_path = join_paths(test_dir, 'shcomptest')
 
-# Skipping builtin_poll.sh
-all_tests = ['alias.sh', 'append.sh', 'arith.sh', 'arrays.sh', 'arrays2.sh',
-             'attributes.sh', 'basic.sh', 'bracket.sh', 'builtins.sh',
-             'case.sh', 'comvar.sh', 'comvario.sh', 'coprocess.sh',
-             'cubetype.sh', 'directoryfd.sh', 'enum.sh', 'exit.sh', 'expand.sh',
-             'functions.sh', 'glob.sh', 'grep.sh', 'heredoc.sh', 'io.sh',
-             'leaks.sh', 'locale.sh', 'math.sh', 'nameref.sh', 'namespace.sh',
-             'options.sh', 'path.sh', 'pointtype.sh', 'pty.sh', 'quoting.sh',
-             'quoting2.sh', 'readcsv.sh', 'recttype.sh', 'restricted.sh',
-             'return.sh', 'select.sh', 'sh_match.sh', 'sigchld.sh', 'signal.sh',
-             'statics.sh', 'subshell.sh', 'substring.sh', 'tilde.sh',
-             'timetype.sh', 'treemove.sh', 'types.sh', 'variables.sh',
-             'vartree1.sh', 'vartree2.sh', 'wchar.sh']
+# Each entry in `all_tests` is an array of one or two elements. The first
+# element is the test name. The second is an optional timeout if the default
+# timeout of 30 seconds is too short. Try to keep the list sorted.
+default_timeout = 30
+# TODO: Fix and add `builtin_poll` to this list.
+all_tests = [
+    ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
+    ['basic', 90], ['bracket'], ['builtins'], ['case'], ['comvar'],
+    ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
+    ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'],
+    ['io'], ['leaks'], ['locale'], ['math'], ['nameref'], ['namespace'],
+    ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
+    ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
+    ['sh_match'], ['sigchld'], ['signal', 100], ['statics'], ['subshell', 60],
+    ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
+    ['variables'], ['vartree1'], ['vartree2'], ['wchar']
+]
 
-# This is a list of tests to be skipped because they are known to be broken.
+# This is a list of tests to be skipped because they are known to be broken when
+# compiled by `shcomp`.
 # TODO: Fix these tests.
 shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
 
 # The test cases are executed in parallel by default
-foreach testname: all_tests
-    test_path = join_paths(test_dir, testname)
-    # Strip out '.sh' from filename
-    # This makes it easy to execute tests by name. For e.g. meson test alias
-    # Tests should not have '.' in filename
-    testname = testname.split('.')[0]
-    foreach locale:locales
+foreach testspec : all_tests
+    testname = testspec[0]
+    timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
+    test_path = join_paths(test_dir, testname + '.sh')
+    foreach locale : locales
         lang_var = 'LANG=' + locale
-        if locale == ''
-            test(testname, ksh93_exe, args: [test_path],
-                 env: [shell_var, lang_var, ld_library_path])
-        else
-            test(testname + '(' + locale + ')', ksh93_exe, args: [test_path],
-                 env: [shell_var, lang_var, ld_library_path])
+        if locale != ''
+            locale = '(' + locale + ')'
         endif
+        test(testname + locale, ksh93_exe, timeout: timeout, args: [test_path],
+             env: [shell_var, lang_var, ld_library_path])
     endforeach
 
     # shcomp tests
     lang_var = 'LANG='
     if not shcomp_tests_to_skip.contains(testname)
-        test(testname + '(shcomp)', ksh93_exe,
+        test(testname + '(shcomp)', ksh93_exe, timeout: timeout,
              args: [ shcomp_test_path, test_path],
              env: [shell_var, lang_var, shcomp_var, ld_library_path])
     endif

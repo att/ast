@@ -3,11 +3,10 @@ env:
     matrix:
         - OS_TYPE=fedora
           INSTALL_REQUIREMENTS="dnf repolist; dnf install -y meson sudo procps-ng libX11-devel fuse-devel gdbm-devel langpacks-zh_CN; dnf groupinstall -y 'C Development Tools and Libraries'"
-          MESON_TEST="meson test -t 6 -v"
 
         - OS_TYPE=opensuse
-          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y meson sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel vim"
-          MESON_TEST="mesontest -t 6 -v"
+          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y meson sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel"
+
 services:
     - docker
 
@@ -21,10 +20,13 @@ script:
         cd /source;
         mkdir build;
         cd build;
+        echo ==== Configuring the build;
         meson ..;
+        echo ==== Building the code;
         ninja;
+        echo ==== Running unit tests;
         ulimit -n 1024;
-        ${MESON_TEST};
+        if ! meson test; then cat meson-logs/testlog.txt; exit 1; fi;
         "
 
     - chmod a+x build.sh
