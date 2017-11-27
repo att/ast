@@ -54,7 +54,13 @@ int	b_command(int argc,char *argv[],Shbltin_t *context)
 {
 	int n, flags=0;
 	Shell_t *shp = context->shp;
+	Optdisc_t disc;
+
+	memset(&disc, 0, sizeof(disc));
+	disc.version = OPT_VERSION;
+	opt_info.disc = &disc;
 	opt_info.index = opt_info.offset = 0;
+
 	while((n = optget(argv,sh_optcommand))) switch(n)
 	{
 	    case 'p':
