@@ -76,6 +76,8 @@ int main(int argc, char *argv[])
 	char *cp;
 	int n, nflag=0, vflag=0, dflag=0;
 	error_info.id = argv[0];
+
+	shp = sh_init(argc,argv,(Shinit_f)0);
 	while(n = optget(argv, usage )) switch(n)
 	{
 	    case 'D':
@@ -94,7 +96,6 @@ int main(int argc, char *argv[])
 		errormsg(SH_DICT,ERROR_usage(2),"%s",opt_info.arg);
 		break;
 	}
-	shp = sh_init(argc,argv,(Shinit_f)0);
 	shp->shcomp = 1;
 	argv += opt_info.index;
 	argc -= opt_info.index;
