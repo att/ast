@@ -145,5 +145,5 @@ foreach testname: all_tests
     lang_var = 'LANG='
     test(testname + '(shcomp)', ksh93_exe,
          args: [ shcomp_test_path, test_path],
-         env: [shell_var, lang_var, shcomp_var])
+         env: [shell_var, lang_var, shcomp_var, ld_library_path])
 endforeach
