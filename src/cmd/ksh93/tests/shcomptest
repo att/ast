@@ -1,0 +1,9 @@
+# Compile a test script through shcomp and run it through ksh93
+outfile=$(mktemp) 
+if $SHCOMP $1 > $outfile; then
+    $SHELL $outfile
+fi
+
+status=$?
+rm -f $outfile
+exit $status

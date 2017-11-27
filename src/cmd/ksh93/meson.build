@@ -1,4 +1,7 @@
 ksh93_files = [ ]
+# We use same set of files as ksh93 to compile shcomp, we should check if it can be modularized.
+shcomp_files = [ ]
+
 ksh93_incdir = include_directories('include', 'features', '../../lib/libast/include/', '../../lib/libast/features/', '../../lib/libcmd/', '../../lib/libcoshell/')
 
 ksh93_c_args = [ '-DERROR_CATALOG=0' ]
@@ -23,6 +26,29 @@ ksh93_c_args += [ '-DERROR_CONTEXT_T=Error_context_t' ]
 ksh93_c_args += [ '-DUSAGE_LICENSE=""' ]
 ksh93_c_args += [ '-D_API_ast=20130625' ]
 
+# TODO: -DSHOPT_DYNAMIC
+shcomp_c_args = [ '-DUSAGE_LICENSE=""' ]
+shcomp_c_args += [ '-DKSHELL' ]
+shcomp_c_args += [ '-DERROR_CATALOG="libshell"' ]
+shcomp_c_args += [ '-DSHOPT_STATS ' ]
+shcomp_c_args += [ '-DSHOPT_NAMESPACE' ]
+shcomp_c_args += [ '-DSHOPT_COSHELL' ] 
+shcomp_c_args += [ '-DSHOPT_PFSH' ] 
+shcomp_c_args += [ '-DSHOPT_BASH' ] 
+shcomp_c_args += [ '-D_BLD_shell' ] 
+shcomp_c_args += [ '-D_API_ast=20130625' ]
+shcomp_c_args += [ '-D_PACKAGE_ast' ] 
+shcomp_c_args += [ '-DERROR_CONTEXT_T=Error_context_t' ]
+shcomp_c_args += [ '-DSHOPT_FIXEDARRAY' ]
+shcomp_c_args += [ '-DSHOPT_MULTIBYTE' ]
+shcomp_c_args += [ '-DSHOPT_RAWONLY' ]
+shcomp_c_args += [ '-DSHOPT_SUID_EXEC' ]
+shcomp_c_args += [ '-DSHOPT_BRACEPAT' ]
+shcomp_c_args += [ '-DSHOPT_KIA' ]
+shcomp_c_args += [ '-DSHOPT_COMPLETE' ]
+shcomp_c_args += [ '-DSHOPT_POLL' ]
+shcomp_c_args += [ '-DSHOPT_OPTIMIZE' ]
+
 cpu = host_machine.cpu()
 system = host_machine.system()
 
@@ -31,6 +57,7 @@ system = host_machine.system()
 # 'i386-64-unknown-linux' on linux.
 bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
+shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 
 subdir('bltins')
 subdir('data')
@@ -41,24 +68,34 @@ cc = meson.get_compiler('c')
 # On some platforms the math functions (e.g., `sin()`) that we need are found in
 # libc, on others they are found in libm.
 m_dep = cc.find_library('m', required : false)
-# On some platforms the `backtrace()` and related functions are found in libc,
+# On some platforms the `backtrace()` and related functions are found in libdl,
 # on others they are found in libexecinfo.
+libdl_dep = cc.find_library('libdl', required : false)
 execinfo_dep = cc.find_library('execinfo', required : false)
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args ,
     include_directories: ksh93_incdir,
     link_with: [ libast, libcmd, libcoshell],
-    dependencies : [ m_dep, execinfo_dep ] )
+    dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
+
+shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
+    include_directories: ksh93_incdir,
+    link_with: [ libast, libcmd, libcoshell],
+    dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
 
+shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
+
 # These are the default locales used by legacy test script
 # '' is POSIX locale
 # TODO: Check how ksh code handles '' string while setting locales and explicitly set string to 'POSIX' here
 locales = [ '', 'C.UTF-8' ]
+
+shcomp_test_path = join_paths(test_dir, 'shcomptest')
 
 # Skipping builtin_poll.sh
 all_tests = [ 'alias.sh', 'append.sh', 'arith.sh', 'arrays.sh', 'arrays2.sh', 'attributes.sh', 'basic.sh', 'bracket.sh', 'builtins.sh', 'case.sh', 'comvar.sh', 'comvario.sh', 'coprocess.sh', 'cubetype.sh', 'directoryfd.sh', 'enum.sh', 'exit.sh', 'expand.sh', 'functions.sh', 'glob.sh', 'grep.sh', 'heredoc.sh', 'io.sh', 'leaks.sh', 'locale.sh', 'math.sh', 'nameref.sh', 'namespace.sh', 'options.sh', 'path.sh', 'pointtype.sh', 'pty.sh', 'quoting.sh', 'quoting2.sh', 'readcsv.sh', 'recttype.sh', 'restricted.sh', 'return.sh', 'select.sh', 'sh_match.sh', 'sigchld.sh', 'signal.sh', 'statics.sh', 'subshell.sh', 'substring.sh', 'tilde.sh', 'timetype.sh', 'treemove.sh', 'types.sh', 'variables.sh', 'vartree1.sh', 'vartree2.sh', 'wchar.sh' ]
@@ -78,4 +115,8 @@ foreach testname: all_tests
             test(testname + '(' + locale + ')', ksh93_exe, args: [test_path], env: [shell_var, lang_var])
         endif
     endforeach
+
+    # shcomp tests
+    lang_var = 'LANG='
+    test(testname + '(shcomp)', ksh93_exe, args: [ shcomp_test_path, test_path], env: [shell_var, lang_var, shcomp_var])
 endforeach
