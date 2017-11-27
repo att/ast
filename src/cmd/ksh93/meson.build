@@ -88,10 +88,14 @@ test_dir = join_paths(meson.current_source_dir(), 'tests')
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
 
+shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
+
 # These are the default locales used by legacy test script
 # '' is POSIX locale
 # TODO: Check how ksh code handles '' string while setting locales and explicitly set string to 'POSIX' here
 locales = [ '', 'C.UTF-8' ]
+
+shcomp_test_path = join_paths(test_dir, 'shcomptest')
 
 # Skipping builtin_poll.sh
 all_tests = [ 'alias.sh', 'append.sh', 'arith.sh', 'arrays.sh', 'arrays2.sh', 'attributes.sh', 'basic.sh', 'bracket.sh', 'builtins.sh', 'case.sh', 'comvar.sh', 'comvario.sh', 'coprocess.sh', 'cubetype.sh', 'directoryfd.sh', 'enum.sh', 'exit.sh', 'expand.sh', 'functions.sh', 'glob.sh', 'grep.sh', 'heredoc.sh', 'io.sh', 'leaks.sh', 'locale.sh', 'math.sh', 'nameref.sh', 'namespace.sh', 'options.sh', 'path.sh', 'pointtype.sh', 'pty.sh', 'quoting.sh', 'quoting2.sh', 'readcsv.sh', 'recttype.sh', 'restricted.sh', 'return.sh', 'select.sh', 'sh_match.sh', 'sigchld.sh', 'signal.sh', 'statics.sh', 'subshell.sh', 'substring.sh', 'tilde.sh', 'timetype.sh', 'treemove.sh', 'types.sh', 'variables.sh', 'vartree1.sh', 'vartree2.sh', 'wchar.sh' ]
@@ -111,4 +115,8 @@ foreach testname: all_tests
             test(testname + '(' + locale + ')', ksh93_exe, args: [test_path], env: [shell_var, lang_var])
         endif
     endforeach
+
+    # shcomp tests
+    lang_var = 'LANG='
+    test(testname + '(shcomp)', ksh93_exe, args: [ shcomp_test_path, test_path], env: [shell_var, lang_var, shcomp_var])
 endforeach
