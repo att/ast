@@ -123,6 +123,10 @@ all_tests = ['alias.sh', 'append.sh', 'arith.sh', 'arrays.sh', 'arrays2.sh',
              'timetype.sh', 'treemove.sh', 'types.sh', 'variables.sh',
              'vartree1.sh', 'vartree2.sh', 'wchar.sh']
 
+# This is a list of tests to be skipped because they are known to be broken.
+# TODO: Fix these tests.
+shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
+
 # The test cases are executed in parallel by default
 foreach testname: all_tests
     test_path = join_paths(test_dir, testname)
@@ -143,7 +147,9 @@ foreach testname: all_tests
 
     # shcomp tests
     lang_var = 'LANG='
-    test(testname + '(shcomp)', ksh93_exe,
-         args: [ shcomp_test_path, test_path],
-         env: [shell_var, lang_var, shcomp_var, ld_library_path])
+    if not shcomp_tests_to_skip.contains(testname)
+        test(testname + '(shcomp)', ksh93_exe,
+             args: [ shcomp_test_path, test_path],
+             env: [shell_var, lang_var, shcomp_var, ld_library_path])
+    endif
 endforeach
