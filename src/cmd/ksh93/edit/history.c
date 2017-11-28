@@ -310,6 +310,8 @@ retry:
 		sh_close(fd);
 		return(0);
 	}
+
+	memset(hp, 0, histmask*sizeof(off_t));
 	shgd->hist_ptr = hist_ptr = hp;
 	hp->histshell = (void*)shp;
 	hp->histsize = maxlines;
