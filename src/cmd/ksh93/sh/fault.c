@@ -59,7 +59,7 @@ static int	cursig = -1;
  * the code where you would like to understand the call sequence leading to
  * that point in the code. */
 void dump_backtrace(int max_frames, int skip_levels) {
-      char *text[512];
+      char text[512];
       void *callstack[128];
       const int n_max_frames = sizeof(callstack) / sizeof(callstack[0]);
       int n_frames = backtrace(callstack, n_max_frames);
