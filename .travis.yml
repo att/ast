@@ -17,6 +17,7 @@ before_install:
 script:
     - find \( -name \*.c -o -name \*.h \) -exec sh -c '! grep --color "^[[:space:]]*//" $@' find {} \+ && echo No line comments found...
     - echo > build.sh "set -e;
+        export CFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
         cd /source;
         mkdir build;
         cd build;
