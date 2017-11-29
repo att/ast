@@ -122,7 +122,7 @@ all_tests = [
     ['io'], ['leaks'], ['locale'], ['math'], ['nameref'], ['namespace'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld'], ['signal', 100], ['statics'], ['subshell', 60],
+    ['sh_match'], ['sigchld', 100], ['signal', 100], ['statics'], ['subshell', 60],
     ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['variables'], ['vartree1'], ['vartree2'], ['wchar']
 ]

@@ -16,6 +16,7 @@ before_install:
     - docker pull ${OS_TYPE}
 
 script:
+    # TODO: Check how to set MESON_TESTTHREADS dynamically
     - echo > build.sh "set -e;
         export CFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
         cd /source;
@@ -27,6 +28,7 @@ script:
         ninja;
         echo ==== Running unit tests;
         ulimit -n 1024;
+        export MESON_TESTTHREADS=16;
         if ! ${MESON_TEST}; then cat meson-logs/testlog.txt; exit 1; fi;
         "
 
