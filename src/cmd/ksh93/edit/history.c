@@ -311,13 +311,11 @@ retry:
 		return(0);
 	}
 
-	memset(hp, 0, histmask*sizeof(off_t));
 	shgd->hist_ptr = hist_ptr = hp;
 	hp->histshell = (void*)shp;
 	hp->histsize = maxlines;
 	hp->histmask = histmask;
 	hp->histfp= sfnew(NIL(Sfio_t*),hp->histbuff,HIST_BSIZE,fd,SF_READ|SF_WRITE|SF_APPENDWR|SF_SHARE);
-	memset((char*)hp->histcmds,0,sizeof(off_t)*(hp->histmask+1));
 	hp->histind = 1;
 	hp->histcmds[1] = 2;
 	hp->histcnt = 2;
