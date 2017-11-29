@@ -298,7 +298,7 @@ struct shared
 /* error exits from various parts of shell */
 #define	NIL(type)	((type)0)
 
-#define new_of(type,x)	((type*)malloc((unsigned)sizeof(type)+(x)))
+#define new_of(type,x)	((type*)calloc(sizeof(type)+(x), 1U))
 
 #define exitset(shp)	(shp->savexit=shp->exitval)
 
