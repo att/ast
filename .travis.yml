@@ -2,11 +2,11 @@ sudo: required
 env:
     matrix:
         - OS_TYPE=fedora
-          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y meson sudo procps-ng libX11-devel fuse-devel gdbm-devel langpacks-zh_CN; dnf groupinstall -y 'C Development Tools and Libraries'"
+          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y gcc meson sudo langpacks-zh_CN"
           MESON_TEST="meson test"
 
         - OS_TYPE=opensuse
-          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y meson sudo glibc-locale bind-utils bison flex gdbm-devel glibc-devel groff ncurses-devel procps psmisc pwdutils zlib-devel bind-libs libbz2-devel update-alternatives awk gcc libX11-devel"
+          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y gcc meson sudo glibc-locale glibc-devel"
           MESON_TEST="mesontest"
 
 services:
