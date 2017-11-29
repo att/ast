@@ -73,7 +73,7 @@ PATH=$p
 [[ $($SHELL -c 'print -r -- "$PATH"') == "$PATH" ]] || err_exit 'export PATH lost in subshell'
 cat > bug1 <<- EOF
 	print print ok > $tmp/ok
-	/bin/chmod 755 $tmp/ok
+	chmod 755 $tmp/ok
 	function a
 	{
 	        typeset -x PATH=$tmp
@@ -144,8 +144,9 @@ if	[[ $(PATH=:/usr/bin; date) != 'hello' ]]
 then	err_exit "leading : in path not working"
 fi
 (
-	PATH=$PWD:
-	builtin chmod
+ 	#TODO: Enable if chmod is a builtin
+	#PATH=$PWD:
+	#builtin chmod
 	print 'print cannot execute' > noexec
 	chmod 644 noexec
 	if	[[ ! -x noexec ]]
@@ -244,7 +245,7 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
-builtin /bin/getconf
+#builtin /bin/getconf
 PATH=/bin
 PATH=$(getconf PATH)
 x=$(whence ls)
