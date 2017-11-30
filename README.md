@@ -1,49 +1,57 @@
-KSH93
-===
+# KSH93
 
-This repository contains ksh93 and libraries required to build it. It is a 
-part of the AT&amp;T Software Technology (AST) toolkit from AT&amp;T Research.
+This repository contains the AT&amp;T Software Technology (AST) toolkit
+from AT&amp;T Research.  As of November 2017 the development focus has
+been shifted to the `ksh93` command and libraries required to build
+it. See below for details on which branches contain the full AST code.
 
-Building
-===
-Building ksh93 requires meson build system.
+## Building
 
-To build it, execute below command from root directory of sources:
+Building ksh93 requires the Meson build system.
+
+To build it, execute These commands from the project root directory:
 
 ```
 meson build
 ninja -C build
 ```
 
-Testing
-===
+## Testing
 
-Test cases can be run with:
+All test cases can be run with:
 
 ```
 meson test
 ```
 
-If your system has an older version of Meson then :
+If your system has an old version of Meson you may may need to run `mesontest`
+(notice the missing space).
+
+To run a specific unit test simply append it's name minute the `.sh` script
+suffix. For example,
 
 ```
-mesontest
+meson test builtins
 ```
 
-AST
-===
-Full AST source code is available under `2012-08-01-master` and `2016-01-10-beta`
-branches. These branches are kept under low maintenance.
+## Working with the full AST source
 
-It includes many tools and libraries, like KSH, NMAKE, SFIO, VMALLOC, VCODEX,
-etc. It also includes more efficient replacements for a lot of the POSIX tools.
-It was designed to be portable across many UNIX systems and also works
-under UWIN on Microsoft Windows (see UWIN repo on GitHub under att/uwin).
+Full AST source code is available under the `2012-08-01-master` and
+`2016-01-10-beta` branches (see below for more details). Bug fixes to
+these branches are welcome but they are otherwise under low maintenance.
+
+The full AST code includes many tools and libraries, like KSH, NMAKE, SFIO,
+VMALLOC, VCODEX, etc. It also includes more efficient replacements for a
+lot of the POSIX tools.  It was designed to be portable across many UNIX
+systems and also works under UWIN on Microsoft Windows (see UWIN repo on
+GitHub under att/uwin).
 
 This software is used to build itself, using NMAKE.
 After cloning this repo, cd to the top directory of it and run:
 
+```
 ./bin/package make
+```
 
 Almost all the tools in this package (including the bin/package script are
 self-documenting; run <tool> --man (or --html) for the man page for the tool.
@@ -52,10 +60,9 @@ self-documenting; run <tool> --man (or --html) for the man page for the tool.
 this repo is equivalent to downloading the INIT and ast-open packages and
 running: ./bin/package read on them).
 
-Branches
-========
+## Branches
 
-The `master` [branch](https://github.com/att/ast/commits/master) contains current development version of ksh93. It only contains source code for ksh93 and the libraries required to build it.
+The `master` [branch](https://github.com/att/ast/commits/master) contains the current development version of ksh93. It only contains source code for ksh93 and the libraries required to build it.
 
 The `2012-08-01-master` [branch](https://github.com/att/ast/commits/2012-08-01-master) contains the the last stable release of full AST source code. It contains one cherry-picked [change](https://github.com/att/ast/commit/e79c29295092fe2b2282d134e2b7cce32ec9dcac) to allow building on Linux.
 
