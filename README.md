@@ -27,7 +27,7 @@ meson test
 If your system has an old version of Meson you may need to run `mesontest`
 (notice the missing space).
 
-To run a specific unit test simply append it's name minus the `.sh` script
+To run a specific unit test simply append it's name minus the `.sh` extension 
 suffix. For example,
 
 ```
