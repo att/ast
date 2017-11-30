@@ -24,10 +24,10 @@ All test cases can be run with:
 meson test
 ```
 
-If your system has an old version of Meson you may may need to run `mesontest`
+If your system has an old version of Meson you may need to run `mesontest`
 (notice the missing space).
 
-To run a specific unit test simply append it's name minute the `.sh` script
+To run a specific unit test simply append it's name minus the `.sh` script
 suffix. For example,
 
 ```
