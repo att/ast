@@ -793,7 +793,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 {
 	int				i;
 	int				op;
-	unsigned int			flags;
+	unsigned int			flags = 0;
 	pid_t				pid;
 #if _lib_posix_spawn
 	int				arg;
