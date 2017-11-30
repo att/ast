@@ -247,7 +247,7 @@ y=$(whence rm)
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
 #builtin /bin/getconf
 PATH=/bin
-PATH=$(getconf PATH)
+PATH=$(/usr/bin/getconf PATH)
 x=$(whence ls)
 PATH=.:$PWD:${x%/ls}
 [[ $(whence ls) == "$x" ]] || err_exit 'PATH search bug when .:$PWD in path'
