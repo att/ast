@@ -132,7 +132,7 @@ print 'print notfound' >  $cmd
 chmod +x "$cmd"
 > foo
 chmod 755 foo
-for PATH in $path :$path $path: .:$path $path: $path:. $PWD::$path $PWD:.:$path $path:$PWD $path:.:$PWD
+for PATH in "$path" ":$path" "$path:" ".:$path" "$path:" "$path:." "$PWD::$path" "$PWD:.:$path" "$path:$PWD" "$path:.:$PWD"
 do
 #	print path=$PATH $(whence date)
 #	print path=$PATH $(whence "$cmd")
@@ -144,7 +144,7 @@ if	[[ $(PATH=:/usr/bin; date) != 'hello' ]]
 then	err_exit "leading : in path not working"
 fi
 (
- 	#TODO: Enable if chmod is a builtin
+	#TODO: Enable if chmod is a builtin
 	#PATH=$PWD:
 	#builtin chmod
 	print 'print cannot execute' > noexec
@@ -245,9 +245,12 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
+# TODO: If and when builtins are supported uncomment the next two lines and
+# remove the third.
 #builtin /bin/getconf
-PATH=/bin
-PATH=$(getconf PATH)
+#PATH=/bin
+PATH=$path
+PATH="$(getconf PATH)"
 x=$(whence ls)
 PATH=.:$PWD:${x%/ls}
 [[ $(whence ls) == "$x" ]] || err_exit 'PATH search bug when .:$PWD in path'
@@ -393,4 +396,3 @@ fi
 PATH=$path
 
 exit $((Errors<125?Errors:125))
-
