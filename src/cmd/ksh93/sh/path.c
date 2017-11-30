@@ -1687,8 +1687,9 @@ static bool path_chkpaths(Shell_t *shp,Pathcomp_t *first, Pathcomp_t* old,Pathco
 				if(first)
 				{
 					char *ptr = stkptr(shp->stk,offset+pp->len+1);
+					size_t len = strlen(ep);
 					if(ep)
-						strcpy(ptr,ep);
+						memmove(ptr,ep, len + 1);
 					path_addcomp(shp,first,old,stkptr(shp->stk,offset),PATH_FPATH|PATH_BFPATH);
 				}
 			}
