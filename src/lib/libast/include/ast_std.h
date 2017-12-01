@@ -331,10 +331,6 @@ extern int		rename(const char*, const char*);
 #define extern		__EXPORT__
 #endif
 
-#undef	getpgrp
-#define	getpgrp()	_ast_getpgrp()
-extern int		_ast_getpgrp(void);
-
 #undef	extern
 
 /*
