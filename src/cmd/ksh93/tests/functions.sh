@@ -1240,8 +1240,6 @@ function run_in_subshell
     tmpfile=$(mktemp)
     ls > $tmpfile
 
-    # Bug is not exhibited if choosing a higher-numbered file
-    # descriptor (e.g. 4).
     exec 3< $tmpfile
 
     exec 3<&-

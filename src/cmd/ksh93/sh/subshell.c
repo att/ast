@@ -697,7 +697,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 			}
 			if(iop && sffileno(iop)==1)
 			{
-				int fd=sfsetfd(iop,3);
+				int fd=sfsetfd(iop,safefdnumber(shp,3));
 				if(fd<0)
 				{
 					shp->toomany = 1;
