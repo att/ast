@@ -112,9 +112,6 @@ extern char*		getenv(const char*);
 #undef	setlocale
 #define setlocale	_ast_setlocale
 
-#undef	strerror
-#define strerror	_ast_strerror
-
 extern struct lconv*	localeconv(void);
 extern char*		setenviron(const char*);
 extern char*		setlocale(int, const char*);
