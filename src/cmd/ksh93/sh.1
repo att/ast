@@ -4419,13 +4419,9 @@ search for the command name.
 Alternative directory names are separated by
 a colon
 .RB ( : ).
-The default path is
-.B /bin:/usr/bin:
-(specifying
-.BR /bin ,
-.BR /usr/bin ,
-and the current directory
-in that order).
+The default path is equal to
+.BI getconf\ PATH
+output.
 The current directory can be specified by
 two or more adjacent colons, or by a colon
 at the beginning or end of the path list.
