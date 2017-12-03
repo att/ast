@@ -104,6 +104,7 @@ if	(( $($SHELL -c $'export LC_ALL='$locale$'; print -r "\342\202\254\342\202\254
 then	LC_ALL=$locale $SHELL -c b1=$'"\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254"; [[ ${b1:4:1} == w ]]' || err_exit 'multibyte ${var:offset:len} not working correctly'
 fi
 
+locale=en_US.UTF-8
 #$SHELL -c 'export LANG='$locale'; printf "\u[20ac]\u[20ac]" > $tmp/two_euro_chars.txt'
 printf $'\342\202\254\342\202\254' > $tmp/two_euro_chars.txt
 exp="6 2 6"
@@ -136,6 +137,8 @@ echo TODO: Enable when custom builtins of external commands is working.
 #[[ $got == $exp ]] || err_exit "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
 #
 # multibyte char straddling buffer boundary
+
+locale=C_EU.UTF-8
 
 {
 	unset i
@@ -191,6 +194,7 @@ do	exp=$1
 done
 
 # setocale(LC_ALL,"") after setlocale() initialization
+locale=en_US.UTF-8
 
 printf 'f1\357\274\240f2\n' > input1
 printf 't2\357\274\240f1\n' > input2
