@@ -1319,6 +1319,7 @@ int	sh_redirect(Shell_t *shp,struct ionod *iop, int flag)
 				if(flag==SH_SHOWME)
 					goto traceit;
 				fd=sh_chkopen(fname);
+				fd=sh_iomovefd(shp, fd);
 			}
 			else if(sh_isoption(shp,SH_RESTRICTED))
 				errormsg(SH_DICT,ERROR_exit(1),e_restricted,fname);
