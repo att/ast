@@ -1395,7 +1395,16 @@ void nv_delete(Namval_t* np, Dt_t *root, int flags)
 		if(dtdelete(root,np))
 		{
 			if(!(flags&NV_NOFREE) && ((flags&NV_FUNCTION) || !nv_subsaved(np,flags&NV_TABLE)))
+			{
+				Namarr_t	*ap;
+				if(nv_isarray(np) && np->nvfun && (ap=nv_arrayptr(np)) && array_assoc(ap)) {
+					while(nv_associative(np,0,NV_ANEXT))
+						nv_associative(np, 0, NV_ADELETE);
+					nv_associative(np, 0, NV_AFREE);
+					free((void*)np->nvfun);
+				}
 				free((void*)np);
+			}
 		}
 #if 0
 		else

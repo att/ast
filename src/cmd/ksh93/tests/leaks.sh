@@ -67,7 +67,7 @@ curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
 
 if [[ $init_vsz -lt $curr_vsz ]];
 then
-    err_exit "Memory leak on associate arrary"
+    err_exit "Memory leak on associative array"
 fi
 
 #TODO: Enable these tests when vmstate is a builtin
