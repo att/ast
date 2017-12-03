@@ -749,5 +749,18 @@ then
     err_exit -u2 "exported vars in subshells not confined to the subshell: $actual"
 fi
 
+TMPF=$(mktemp)
+echo ok >$TMPF
+errmsg=""
+export TMPF
+
+[ -n "$($SHELL -c 'echo $(<$TMPF)' <&-)" ] || errmsg="stdin $errmsg"
+[ -n "$($SHELL -c "$SHELL -c 'echo \$(<$TMPF) >&2' >&-" 2>&1)" ] || errmsg="stdout $errmsg"
+[ -n "$($SHELL -c 'echo $(<$TMPF)' 2>&-)" ] || errmsg="stderr $errmsg"
+
+rm -f $TMPF
+
+[[ -n "$errmsg" ]] && err_exit "\$(<file) empty when any of ${errmsg}is closed"
+
 # ========================================
 exit $((Errors<125?Errors:125))
