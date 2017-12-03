@@ -1382,9 +1382,11 @@ static void put_mode(Namval_t* np, const char* val, int flag, Namfun_t* nfp)
 				mode = *(double*)val;
 		}
 		else
+		{
 			mode = strperm(val, &last,0);
-		if(*last)
-			errormsg(SH_DICT,ERROR_exit(1),"%s: invalid mode string",val);
+			if(*last)
+				errormsg(SH_DICT,ERROR_exit(1),"%s: invalid mode string",val);
+		}
 		nv_putv(np,(char*)&mode,NV_INTEGER,nfp);
 	}
 	else
