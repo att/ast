@@ -454,7 +454,7 @@ static void	exfile(Shell_t *shp, Sfio_t *iop,int fno)
 		sfsync(shp->outpool);
 		shp->st.execbrk = shp->st.breakcnt = 0;
 		/* check for return from profile or env file */
-		if(sh_isstate(shp,SH_PROFILE) && (jmpval==SH_JMPFUN || jmpval==SH_JMPEXIT))
+		if(sh_isstate(shp,SH_PROFILE) && (jmpval==SH_JMPFUN || jmpval==SH_JMPEXIT || jmpval==SH_JMPERREXIT))
 		{
 			sh_setstate(shp,states);
 			goto done;
@@ -632,7 +632,7 @@ done:
 	}
 	if(jmpval == SH_JMPSCRIPT)
 		siglongjmp(*shp->jmplist,jmpval);
-	else if(jmpval == SH_JMPEXIT)
+	else if(jmpval == SH_JMPEXIT || jmpval == SH_JMPERREXIT)
 		sh_done(shp,0);
 	if(fno>0)
 		sh_close(fno);
