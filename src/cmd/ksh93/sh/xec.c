@@ -1202,7 +1202,7 @@ tryagain:
 			if((io||argn))
 			{
 				Shbltin_t *bp=0;
-				static char *argv[1];
+				static char *argv[2];
 				int tflags = 1;
 				if(np &&  nv_isattr(np,BLT_DCL))
 					tflags |= 2;
