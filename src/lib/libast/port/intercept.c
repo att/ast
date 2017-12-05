@@ -338,30 +338,6 @@ ast_mkdirat(int cwd, const char* path, mode_t mode)
 }
 
 int
-ast_mkfifoat(int cwd, const char* path, mode_t mode)
-{
-	int	r = -1;
-
-	PATHIFY(cwd, path, 1, 1);
-	RESTART(r, mkfifoat(cwd, path, mode));
-	PATHEND();
-
-	return r;
-}
-
-int
-ast_mknodat(int cwd, const char* path, mode_t mode, dev_t dev)
-{
-	int	r = -1;
-
-	PATHIFY(cwd, path, 1, 1);
-	RESTART(r, mknodat(cwd, path, mode, dev));
-	PATHEND();
-
-	return r;
-}
-
-int
 ast_openat(int cwd, const char* path, int flags, ...)
 {
 	int	r;
@@ -729,18 +705,6 @@ int
 ast_mkdir(const char* path, mode_t mode)
 {
 	return ast_mkdirat(LOCAL(pwd), path, mode);
-}
-
-int
-ast_mkfifo(const char* path, mode_t mode)
-{
-	return ast_mkfifoat(LOCAL(pwd), path, mode);
-}
-
-int
-ast_mknod(const char* path, mode_t mode, dev_t dev)
-{
-	return ast_mknodat(LOCAL(pwd), path, mode, dev);
 }
 
 int

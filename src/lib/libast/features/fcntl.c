@@ -582,12 +582,6 @@ main(int argc, char** argv)
 	printf("#if !_lib_mkdirat\n");
 	printf("extern int	mkdirat(int, const char*, mode_t);\n");
 	printf("#endif\n");
-	printf("#if !_lib_mkfifoat\n");
-	printf("extern int	mkfifoat(int, const char*, mode_t);\n");
-	printf("#endif\n");
-	printf("#if !_lib_mknodat\n");
-	printf("extern int	mknodat(int, const char*, mode_t, dev_t);\n");
-	printf("#endif\n");
 	printf("#if !_lib_openat\n");
 	printf("extern int	openat(int, const char*, int, ...);\n");
 	printf("#endif\n");

@@ -106,7 +106,6 @@ main(int argc, char** argv)
 		rmdir(dir_new);
 	printf("#define _fd_dir_mkdir	%d	/* mkdir(%s/new) %s */\n", r, fmt, res[r]);
 #endif
-#if !_lib_mknodat
 #if _lib_mknod
 	if (r = mknod(dev_new, S_IFREG, 0) >= 0)
 		unlink(dir_new);
@@ -114,8 +113,6 @@ main(int argc, char** argv)
 	r = 0;
 #endif
 	printf("#define _fd_dir_mknod	%d	/* mknod(%s/new) %s */\n", r, fmt, res[r]);
-#endif
-#if !_lib_mkfifoat
 #if _lib_mkfifo
 	if (r = mkfifo(dev_new, S_IRUSR|S_IWUSR|S_IXUSR) >= 0)
 		unlink(dir_new);
@@ -126,7 +123,6 @@ main(int argc, char** argv)
 	r = 0;
 #endif
 	printf("#define _fd_dir_mkfifo	%d	/* mkfifo(%s/new) %s */\n", r, fmt, res[r]);
-#endif
 #if !_lib_openat
 	if (r = (fd = open(dev_old, O_RDONLY)) >= 0)
 		close(fd);

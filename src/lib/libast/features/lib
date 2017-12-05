@@ -55,7 +55,7 @@ lib	fstatvfs64,statvfs64 -D_LARGEFILE64_SOURCE sys/statvfs.h
 lib	fdopendir64,opendir64,readdir64,rewinddir64,seekdir64,telldir64,closedir64 -D_LARGEFILE64_SOURCE dirent.h
 lib	accept4,socketpair sys/socket.h
 
-lib	faccessat,fchmodat,fchownat,fstatat,linkat,mkdirat,mkfifoat,mknodat,openat,readlinkat,renameat,symlinkat,unlinkat -D_ATFILE_SOURCE fcntl.h unistd.h
+lib	faccessat,fchmodat,fchownat,fstatat,linkat,mkdirat,openat,readlinkat,renameat,symlinkat,unlinkat -D_ATFILE_SOURCE fcntl.h unistd.h
 lib	fstatat64,openat64 -D_ATFILE_SOURCE -D_LARGEFILE64_SOURCE fcntl.h unistd.h sys/stat.h
 
 lib	lchmod note{ lchmod implemented }end execute{

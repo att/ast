@@ -64,12 +64,6 @@
 #undef	mkdirat
 #define mkdirat		ast_mkdirat
 
-#undef	mkfifoat
-#define mkfifoat	ast_mkfifoat
-
-#undef	mknodat
-#define mknodat		ast_mknodat
-
 #undef	openat
 #define openat		ast_openat
 
@@ -151,9 +145,6 @@
 #undef	mkdir
 #define mkdir		ast_mkdir
 
-#undef	mkfifo
-#define mkfifo		ast_mkfifo
-
 #undef	mknod
 #define mknod		ast_mknod
 
@@ -224,7 +215,6 @@ extern int		ast_lchmod(const char*, mode_t);
 extern int		ast_lchown(const char*, uid_t, gid_t);
 extern int		ast_link(const char*, const char*);
 extern int		ast_mkdir(const char*, mode_t);
-extern int		ast_mkfifo(const char*, mode_t);
 extern int		ast_mknod(const char*, mode_t, dev_t);
 extern int		ast_open(const char*, int, ...);
 extern int		ast_pipe(int[2]);
@@ -244,8 +234,6 @@ extern int		ast_fstatat(int, const char*, struct stat*, int);
 extern int		ast_linkat(int, const char*, int, const char*, int);
 extern int		ast_lstat(const char*, struct stat*);
 extern int		ast_mkdirat(int, const char*, mode_t);
-extern int		ast_mkfifoat(int, const char*, mode_t);
-extern int		ast_mknodat(int, const char*, mode_t, dev_t);
 extern int		ast_openat(int, const char*, int, ...);
 extern int		ast_renameat(int, const char*, int, const char*);
 extern ssize_t		ast_readlinkat(int, const char*, char*, size_t);
