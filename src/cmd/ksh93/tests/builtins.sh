@@ -303,9 +303,9 @@ then	err_exit "printf '%..*s' not working"
 fi
 [[ $(printf '%q\n') == '' ]] || err_exit 'printf "%q" with missing arguments'
 # we won't get hit by the one second boundary twice, right?
-[[ $(printf '%T\n' now) == "$(date)" ]] ||
-[[ $(printf '%T\n' now) == "$(date)" ]] ||
-err_exit 'printf "%T" now'
+[[ $(printf '%T\n' now | sed 's/GMT/UTC/') == "$(date)" ]] ||
+[[ $(printf '%T\n' now | sed 's/GMT/UTC/') == "$(date)" ]] ||
+err_exit 'printf "%T" now = '"$(printf '%T\n' now) != $(date)"
 behead()
 {
 	read line
