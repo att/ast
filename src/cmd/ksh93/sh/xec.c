@@ -2091,6 +2091,7 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				{
 					sh_exec(shp,t->par.partre,flags);
 					shp->st.trapcom[0]=0;
+					sh_offoption(SH_INTERACTIVE);
 					sh_done(shp,0);
 				}
 			}
