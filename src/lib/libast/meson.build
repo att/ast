@@ -24,4 +24,5 @@ iconv_dep = cc.find_library('iconv', required: false)
 libast = library('ast', libast_files,
                  include_directories: incdir,
                  c_args: ['-D_BLD_ast', '-D_API_ast=20130625'],
-                 dependencies: [m_dep, iconv_dep])
+                 dependencies: [m_dep, iconv_dep],
+                 install: true)

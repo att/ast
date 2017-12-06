@@ -79,12 +79,16 @@ libdl_dep = cc.find_library('libdl', required : false)
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
     link_with: [libast, libcmd, libcoshell],
-    dependencies: [m_dep, execinfo_dep, libdl_dep])
+    dependencies: [m_dep, execinfo_dep, libdl_dep],
+    install: true)
 
 shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
     include_directories: ksh93_incdir,
     link_with: [ libast, libcmd, libcoshell],
-    dependencies : [ m_dep, execinfo_dep, libdl_dep ] )
+    dependencies : [ m_dep, execinfo_dep, libdl_dep ],
+    install: true)
+
+install_man('ksh.1')
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
 
