@@ -1881,6 +1881,21 @@ void sh_vexsave(Shell_t *shp,int fn,int fd,Spawnvex_f vexfun, void *arg)
 	}
 }
 
+int safefdnumber(Shell_t* shp, int sfd)
+{
+	int fd;
+
+	for(fd=0; fd < shp->topfd; fd++, sfd++)
+	{
+		if ((filemap[fd].save_fd!=sfd) && (filemap[fd].orig_fd!=sfd) && ((fcntl(sfd, F_GETFD) != -1) || (errno != EBADF)))
+		{
+			break;
+		}
+	}
+
+	return sfd;
+}
+
 /*
  *  close all saved file descriptors
  */
