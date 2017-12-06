@@ -13,4 +13,5 @@ libcoshell_incdir = include_directories('../libast/include',
 libcoshell = library('coshell', libcoshell_files,
                      include_directories: libcoshell_incdir,
                      c_args: libcoshell_c_args,
-                     link_with: libast)
+                     link_with: libast,
+                     install: true)
