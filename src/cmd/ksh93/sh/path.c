@@ -34,7 +34,11 @@
 #include	"jobs.h"
 #include	"history.h"
 #include	"test.h"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
+
 #include	"FEATURE/externs"
 #if SHOPT_PFSH 
 #   ifdef _hdr_exec_attr

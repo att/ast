@@ -21,7 +21,11 @@
 
 #include	<ast.h>
 #include	"FEATURE/options"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
+
 #include	<shell.h>
 #include	"shtable.h"
 #include	"name.h"

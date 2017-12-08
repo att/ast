@@ -41,8 +41,10 @@
 #include	"history.h"
 #include	"builtins.h"
 #include	"variables.h"
-#include	"FEATURE/dynamic"
 
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
 struct tdata
 {
 	Shell_t 	*sh;

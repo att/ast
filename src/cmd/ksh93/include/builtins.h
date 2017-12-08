@@ -23,7 +23,11 @@
 
 #include	<option.h>
 #include	"FEATURE/options"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
+
 #include	"shtable.h"
 
 #define	SYSLOGIN	(shgd->bltin_cmds)
