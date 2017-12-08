@@ -31,7 +31,7 @@
 #include	"defs.h"
 
 #if !defined(SHOPT_SPAWN)
-#   if _UWIN || _use_spawnveg || !_lib_fork
+#   if _UWIN || _use_spawnveg
 #	define  SHOPT_SPAWN  1
 #   endif
 #endif /* !SHOPT_SPAWN */

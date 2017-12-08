@@ -33,14 +33,8 @@
 #   include	<signal.h>
 #endif /* !SIGINT */
 #include	"FEATURE/options"
-#include	"FEATURE/externs"
-#if	_hdr_aso
-#   include	<aso.h>
-#else
-#   define ASO_LOCK	1
-#   define ASO_UNLOCK	2
-#   define asolock(a,b,c)
-#endif /* _hdr_aso */
+
+#include	<aso.h>
 
 #if SHOPT_COSHELL
 #   include	<coshell.h>
@@ -166,8 +160,6 @@ extern struct jobs job;
 #   define vmbusy()	0
 #endif
 
-#if _hdr_aso
-
 #define job_lock()	asoincint(&job.in_critical)
 #define job_unlock()	\
 	do { \
@@ -176,22 +168,6 @@ extern struct jobs job;
 			job_reap(_sig); \
 		asodecint(&job.in_critical); \
 	} while(0)
-
-#else
-
-#define job_lock()	(job.in_critical++)
-#define job_unlock()	\
-	do { \
-		int	_sig; \
-		if (!--job.in_critical && (_sig = job.savesig)) \
-		{ \
-			if (!job.in_critical++ && !vmbusy()) \
-				job_reap(_sig); \
-			job.in_critical--; \
-		} \
-	} while(0)
-
-#endif
 
 extern const char	e_jobusage[];
 extern const char	e_done[];

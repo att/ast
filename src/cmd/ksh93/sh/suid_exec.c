@@ -48,7 +48,6 @@
  */
 
 #include	<ast.h>
-#include	"FEATURE/externs"
 #include	<ls.h>
 #include	<sig.h>
 #include	<error.h>
