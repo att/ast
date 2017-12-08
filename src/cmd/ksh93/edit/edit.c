@@ -116,18 +116,6 @@ static char *savelex;
 #endif	/* RT */
 
 
-#ifdef _hdr_sgtty
-#   ifdef TIOCGETP
-	static int l_mask;
-	static struct tchars l_ttychars;
-	static struct ltchars l_chars;
-	static  char  l_changed;	/* set if mode bits changed */
-#	define L_CHARS	4
-#	define T_CHARS	2
-#	define L_MASK	1
-#   endif /* TIOCGETP */
-#endif /* _hdr_sgtty */
-
 #if KSHELL
      static int keytrap(Edit_t *,char*, int, int, int);
 #else
@@ -231,18 +219,6 @@ void tty_cooked(int fd)
 		return;
 	if(fd < 0)
 		fd = ep->e_savefd;
-#ifdef L_MASK
-	/* restore flags */
-	if(l_changed&L_MASK)
-		ioctl(fd,TIOCLSET,&l_mask);
-	if(l_changed&T_CHARS)
-		/* restore alternate break character */
-		ioctl(fd,TIOCSETC,&l_ttychars);
-	if(l_changed&L_CHARS)
-		/* restore alternate break character */
-		ioctl(fd,TIOCSLTC,&l_chars);
-	l_changed = 0;
-#endif	/* L_MASK */
 	/*** don't do tty_set unless ttyparm has valid data ***/
 	if(tty_set(fd, TCSANOW, &ttyparm) == SYSERR)
 		return;
@@ -259,9 +235,6 @@ void tty_cooked(int fd)
 int tty_raw(int fd, int echomode)
 {
 	int echo = echomode;
-#ifdef L_MASK
-	struct ltchars lchars;
-#endif	/* L_MASK */
 	Edit_t *ep = (Edit_t*)(shgd->ed_context);
 	if(ep->e_raw==RAWMODE)
 		return(echo?-1:0);
@@ -299,18 +272,6 @@ int tty_raw(int fd, int echomode)
 	if( tty_set(fd, TCSADRAIN, &nttyparm) == SYSERR )
 		return(-1);
 	ep->e_ttyspeed = (ttyparm.sg_ospeed>=B1200?FAST:SLOW);
-#   ifdef TIOCGLTC
-	/* try to remove effect of ^V  and ^Y and ^O */
-	if(ioctl(fd,TIOCGLTC,&l_chars) != SYSERR)
-	{
-		lchars = l_chars;
-		lchars.t_lnextc = -1;
-		lchars.t_flushc = -1;
-		lchars.t_dsuspc = -1;	/* no delayed stop process signal */
-		if(ioctl(fd,TIOCSLTC,&lchars) != SYSERR)
-			l_changed |= L_CHARS;
-	}
-#   endif	/* TIOCGLTC */
 #else
 	if (!(ttyparm.c_lflag & ECHO ))
 	{
@@ -1780,7 +1741,6 @@ int	sh_ioctl(int fd, int cmd, void* val,int sz)
 	return(r);
 }
 
-#ifdef _lib_tcgetattr
 #   undef tcgetattr
     int sh_tcgetattr(int fd, struct termios *tty)
     {
@@ -1798,4 +1758,3 @@ int	sh_ioctl(int fd, int cmd, void* val,int sz)
 		errno = err;
 	return(r);
     }
-#endif

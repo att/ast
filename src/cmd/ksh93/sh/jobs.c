@@ -171,21 +171,6 @@ static struct back_save	bck;
 #ifdef SIGTSTP
     static void		job_unstop(struct process*);
     static void		job_fgrp(struct process*, int);
-#   ifndef _lib_tcgetpgrp
-#	ifdef TIOCGPGRP
-	   static int _i_;
-#	   define tcgetpgrp(a) (ioctl(a, TIOCGPGRP, &_i_)>=0?_i_:-1)	
-#	endif /* TIOCGPGRP */
-	int tcsetpgrp(int fd,pid_t pgrp)
-	{
-		int pgid = pgrp;
-#		ifdef TIOCGPGRP
-			return(ioctl(fd, TIOCSPGRP, &pgid));	
-#		else
-			return(-1);
-#		endif /* TIOCGPGRP */
-	}
-#   endif /* _lib_tcgetpgrp */
 #else
 #   define job_unstop(pw)
 #   undef CNSUSP
