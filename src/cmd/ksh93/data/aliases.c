@@ -21,7 +21,10 @@
 #include	"defs.h"
 #include	<signal.h>
 #include	"FEATURE/options"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
 
 /*
  * This is the table of built-in aliases.  These should be exported.

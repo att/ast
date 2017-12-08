@@ -23,7 +23,10 @@
 
 #include        <option.h>
 #include        "FEATURE/options"
-#include        "FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
 
 /* The following defines are coordinated with data in data/variables.c */
 

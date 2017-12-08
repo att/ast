@@ -43,7 +43,11 @@
 #include	"builtins.h"
 #include	"timeout.h"
 #include	"FEATURE/externs"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
+
 #include	"FEATURE/poll"
 
 #ifdef	FNDELAY

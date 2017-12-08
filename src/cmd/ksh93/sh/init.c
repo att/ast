@@ -42,7 +42,11 @@
 #include	"io.h"
 #include	"shlex.h"
 #include	"builtins.h"
-#include	"FEATURE/dynamic"
+
+#if SHOPT_DYNAMIC
+    #include    <dlldefs.h>
+#endif
+
 #include	"FEATURE/externs"
 #include	"lexstates.h"
 #include	"version.h"
