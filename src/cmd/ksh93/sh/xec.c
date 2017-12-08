@@ -3457,7 +3457,7 @@ static void sh_funct(Shell_t *shp,Namval_t *np,int argn, char *argv[],struct arg
 #endif
 	nv_putval(SH_PATHNAMENOD,shp->st.filename,NV_NOFREE);
 	shp->pipepid = pipepid;
-	np->nvalue.rp->running  -= 2;
+	if (np->nvalue.rp) np->nvalue.rp->running  -= 2;
 	if(np->nvalue.rp && np->nvalue.rp->running==1)
 	{
 		np->nvalue.rp->running = 0;
