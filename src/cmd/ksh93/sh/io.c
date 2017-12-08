@@ -1881,6 +1881,24 @@ void sh_vexsave(Shell_t *shp,int fn,int fd,Spawnvex_f vexfun, void *arg)
 	}
 }
 
+// Return the lowest numbered fd that is equal to or greater than the requested
+// `min_fd` and which is not currently in use.
+int sh_get_unused_fd(Shell_t* shp, int min_fd) {
+	int fd;
+
+	while (true) {
+	    if (fcntl(min_fd, F_GETFD) == -1) {
+		for(fd = 0; fd < shp->topfd; fd++) {
+		    if (filemap[fd].save_fd == min_fd || filemap[fd].orig_fd == min_fd) break;
+		}
+		if (fd == shp->topfd) break;
+	    }
+	    min_fd++;
+	}
+
+	return min_fd;
+}
+
 /*
  *  close all saved file descriptors
  */

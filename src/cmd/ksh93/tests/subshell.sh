@@ -750,4 +750,53 @@ then
 fi
 
 # ========================================
+# Test that closing file descriptors don't affect capturing the output of a
+# subshell. Regression test for issue #198.
+tmpfile=$(mktemp)
+expected='return value'
+
+function get_value {
+    case=$1
+    (( case >= 1 )) && exec 3< $tmpfile
+    (( case >= 2 )) && exec 4< $tmpfile
+    (( case >= 3 )) && exec 6< $tmpfile
+
+    # To trigger the bug we have to spawn an external command. Why is a
+    # mystery but not really relevant.
+    $(whence -p true)
+
+    (( case >= 1 )) && exec 3<&-
+    (( case >= 2 )) && exec 4<&-
+    (( case >= 3 )) && exec 6<&-
+
+    print $expected
+}
+
+actual=$(get_value 0)
+if [[ $actual != $expected ]]
+then
+    err_exit -u2 "failed to capture subshell output when closing fd: case 0"
+fi
+
+actual=$(get_value 1)
+if [[ $actual != $expected ]]
+then
+    err_exit -u2 "failed to capture subshell output when closing fd: case 1"
+fi
+
+actual=$(get_value 2)
+if [[ $actual != $expected ]]
+then
+    err_exit -u2 "failed to capture subshell output when closing fd: case 2"
+fi
+
+actual=$(get_value 3)
+if [[ $actual != $expected ]]
+then
+    err_exit -u2 "failed to capture subshell output when closing fd: case 3"
+fi
+
+rm $tmpfile
+
+# ========================================
 exit $((Errors<125?Errors:125))
