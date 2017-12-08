@@ -6,8 +6,6 @@
  * This assumes that all the functions in a typical UNIX libm library are
  * available.
  *
- * If you modify this by adding or removing functions be sure to also update
- * ./src/cmd/ksh93/data/math.tab
  */
 #include <limits.h>
 #include <stdio.h>
