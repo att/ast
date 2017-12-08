@@ -41,7 +41,6 @@
 #include	"history.h"
 #include	"edit.h"
 #include	"terminal.h"
-#include	"FEATURE/time"
 
 #ifdef ECHOCTL
 #   define echoctl	ECHOCTL
