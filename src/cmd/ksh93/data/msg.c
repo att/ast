@@ -39,8 +39,6 @@
 #include	"jobs.h"
 #include	"edit.h"
 
-#include	"FEATURE/cmds"
-
 /* error messages */
 const char e_timewarn[]		= "\r\n\ashell will timeout in 60 seconds due to inactivity";
 const char e_runvi[]		= "\\hist -e \"${VISUAL:-${EDITOR:-vi}}\" ";

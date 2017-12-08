@@ -32,7 +32,6 @@
 #if KSHELL
 #   include	"builtins.h"
 #   include	"jobs.h"
-#   include	"FEATURE/cmds"
 #   define	bltin(x)	(b_##x)
 #   define	Bltin(x)	(B_##x)
 #else
@@ -83,9 +82,9 @@ const struct shtable3 shtab_builtins[] =
 	"declare",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
 	"local",	NV_BLTIN|BLT_ENV|BLT_DCL,	bltin(typeset),
 #endif
-#if _bin_newgrp || _usr_bin_newgrp
+#if _cmd_newgrp
 	"newgrp",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login),
-#endif	/* _bin_newgrp || _usr_bin_newgrp */
+#endif	/* _cmd_newgrp */
 	"alias",	NV_BLTIN|BLT_SPC,		bltin(alias),
 	"hash",		NV_BLTIN|BLT_SPC,		bltin(alias),
 	"eval",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_EXIT,bltin(eval),

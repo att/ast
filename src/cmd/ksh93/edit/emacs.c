@@ -62,7 +62,6 @@ One line screen editor for any program
  */
 
 #include	<ast.h>
-#include	"FEATURE/cmds"
 #if KSHELL
 #   include	"defs.h"
 #else

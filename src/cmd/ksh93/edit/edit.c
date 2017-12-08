@@ -31,9 +31,10 @@
 #include	<errno.h>
 #include	<ccode.h>
 #include	"FEATURE/options"
-#include	"FEATURE/cmds"
-#include	<utime.h>
-#include	<ls.h>
+#ifdef _hdr_utime
+#   include	<utime.h>
+#   include	<ls.h>
+#endif
 
 #if KSHELL
 #   include	"defs.h"
