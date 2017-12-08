@@ -30,7 +30,6 @@
 #include	"path.h"
 #include	"lexstates.h"
 #include	"timeout.h"
-#include	"FEATURE/externs"
 #include	"streval.h"
 
 #define NVCACHE		8	/* must be a power of 2 */

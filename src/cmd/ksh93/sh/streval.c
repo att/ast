@@ -33,7 +33,6 @@
 #include	<ctype.h>
 #include	<error.h>
 #include	<stak.h>
-#include	"FEATURE/externs"
 #include	"defs.h"	/* for sh.decomma */
 
 #ifndef ERROR_dictionary
@@ -1030,16 +1029,6 @@ Sfdouble_t strval(Shell_t *shp,const char *s,char **end,Sfdouble_t(*conv)(const 
 	return(d);
 }
 
-#if _mem_name__exception
-#undef	_mem_name_exception
-#define	_mem_name_exception	1
-#undef	exception
-#define	exception		_exception
-#undef	matherr
-#endif
-
-#if _mem_name_exception
-
 #undef	error
 
 #if _BLD_shell && defined(__EXPORT__)
@@ -1085,5 +1074,3 @@ Sfdouble_t strval(Shell_t *shp,const char *s,char **end,Sfdouble_t(*conv)(const 
     }
 
 #undef	extern
-
-#endif /* _mem_name_exception */

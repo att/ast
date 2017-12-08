@@ -37,7 +37,6 @@
 #include	"terminal.h"
 #include	"test.h"
 #include	"builtins.h"
-#include	"FEATURE/externs"
 #include	"FEATURE/poll"
 #include	<tmx.h>
 

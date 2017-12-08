@@ -21,9 +21,7 @@
 
 #include	<shell.h>
 
-#include	"FEATURE/externs"
-
-#if defined(__sun) && _sys_mman && _lib_memcntl && defined(MHA_MAPSIZE_STACK) && defined(MC_HAT_ADVISE)
+#if defined(__sun) && _lib_memcntl && defined(MHA_MAPSIZE_STACK) && defined(MC_HAT_ADVISE)
 #   undef	VM_FLAGS	/* solaris vs vmalloc.h symbol clash */
 #   include	<sys/mman.h>
 #else
