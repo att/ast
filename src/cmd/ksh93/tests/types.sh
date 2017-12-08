@@ -945,5 +945,16 @@ $SHELL 2> /dev/null -c 'typeset -T a_t=(x=3 y=4); a_t b=(x=1)' || err_exit 'Cann
 
 $SHELL 2> /dev/null -c 'typeset -T X=(typeset x; function x.get { :; }); X -a xs=((x=yo) (x=jo)); [[ $(typeset -p xs) == "X -a xs=((x=yo) (x=jo))" ]]' || err_exit 'X -a xs=((v1) (v2)) where X is a type, not working'
 
+# -u converts string to uppercase
+typeset -u test_u=uppercase
+typeset -xu test_xu=uppercase
+typeset -txu test_txu=uppercase
+
+[[ $test_u != "UPPERCASE" ]] && err_exit "typeset -u failed"
+
+[[ $test_xu != "UPPERCASE" ]] &&  err_exit "typeset -xu failed"
+
+[[ $test_txu != "UPPERCASE" ]] && err_exit "typeset -txu failed"
+
 exit $((Errors<125?Errors:125))
 
