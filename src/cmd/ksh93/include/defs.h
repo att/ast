@@ -539,5 +539,6 @@ extern const char	e_dict[];
 #endif /* SHOPT_STATS */
 extern const Shtable_t shtab_siginfo[];
 
+#define timeofday(p)    gettimeofday(p,(struct timezone*)0)
 
 #endif

@@ -1482,7 +1482,6 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 
 #if SHOPT_ACCT
 #   include <sys/acct.h>
-#   include "FEATURE/time"
 
     static struct acct sabuf;
     static struct tms buffer;

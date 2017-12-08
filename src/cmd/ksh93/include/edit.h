@@ -125,11 +125,9 @@ typedef struct edit
 	genchar	*e_physbuf;	/* temporary workspace buffer */
 	int	e_lbuf[LOOKAHEAD];/* pointer to look-ahead buffer */
 	int	e_tabcount;
-#ifdef _hdr_utime
 	ino_t	e_tty_ino;
 	dev_t	e_tty_dev;
 	char	*e_tty;
-#endif
 #if SHOPT_MULTIBYTE
 	int	e_curchar;
 	int	e_cursize;

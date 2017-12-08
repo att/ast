@@ -33,7 +33,6 @@
 #include	<errno.h>
 #include	<tmx.h>
 #include	"builtins.h"
-#include	"FEATURE/time"
 #include	"FEATURE/poll"
 #ifdef _NEXT_SOURCE
 #   define sleep	_ast_sleep

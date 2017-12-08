@@ -24,7 +24,6 @@
  * This is for the ulimit built-in command
  */
 
-#include	"FEATURE/time"
 #include	"FEATURE/rlimits"
 #if defined(_sys_resource) && defined(_lib_getrlimit)
 #   include	<sys/resource.h>
