@@ -1202,7 +1202,7 @@ tryagain:
 			if((io||argn))
 			{
 				Shbltin_t *bp=0;
-				static char *argv[2];
+				static char *argv[2] = {NULL, NULL};
 				int tflags = 1;
 				if(np &&  nv_isattr(np,BLT_DCL))
 					tflags |= 2;
@@ -1210,7 +1210,7 @@ tryagain:
 				{
 					/* fake 'true' built-in */
 					np = SYSTRUE;
-					*argv = nv_name(np);
+					argv[0] = nv_name(np);
 					com = argv;
 				}
 				/* set +x doesn't echo */
