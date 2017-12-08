@@ -60,6 +60,30 @@ bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 
+
+newgrp = find_program('newgrp', required : false)
+ed = find_program('ed', required : false)
+tput = find_program('tput', required : false)
+
+if newgrp.found()
+    ksh93_c_args += [ '-D_cmd_newgrp=1' ]
+    shcomp_c_args += [ '-D_cmd_newgrp=1' ]
+endif
+
+if tput.found()
+    ksh93_c_args += [ '-D_cmd_tput=1' ]
+    shcomp_c_args += [ '-D_cmd_tput=1' ]
+endif
+
+if ed.found()
+    ksh93_c_args += [ '-D_pth_ed="' + ed.path() + '"' ]
+    shcomp_c_args += [ '-D_pth_ed="' + ed.path() + '"' ]
+else
+    ksh93_c_args += [ '-D_pth_ed="ed"' ]
+    shcomp_c_args += [ '-D_pth_ed="ed"' ]
+endif
+
+
 subdir('bltins')
 subdir('data')
 subdir('edit')

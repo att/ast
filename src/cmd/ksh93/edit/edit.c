@@ -32,7 +32,6 @@
 #include	<ccode.h>
 #include	"FEATURE/options"
 #include	"FEATURE/time"
-#include	"FEATURE/cmds"
 #ifdef _hdr_utime
 #   include	<utime.h>
 #   include	<ls.h>
