@@ -25,7 +25,8 @@
 #include	"fault.h"
 #include	"defs.h"
 #include	"FEATURE/sigfeatures"
-#include	"FEATURE/time"
+
+#include    <times.h>
 
 typedef struct _timer
 {
@@ -63,7 +64,6 @@ static double getnow(void)
  */
 static double setalarm(double t)
 {
-#if defined(_lib_setitimer) && defined(ITIMER_REAL)
 	struct itimerval tnew, told;
 	tnew.it_value.tv_sec = t;
 	tnew.it_value.tv_usec = 1.e6*(t- (double)tnew.it_value.tv_sec);
@@ -74,12 +74,6 @@ static double setalarm(double t)
 	if(setitimer(ITIMER_REAL,&tnew,&told) < 0)
 		errormsg(SH_DICT,ERROR_system(1),e_alarm);
 	t = told.it_value.tv_sec + 1.e-6*told.it_value.tv_usec;
-#else
-	unsigned seconds = (unsigned)t;
-	if(t && seconds<1)
-		seconds=1;
-	t = (double)alarm(seconds);
-#endif
 	return(t);
 }
 

@@ -36,10 +36,10 @@
 #include	"jobs.h"
 #include	"test.h"
 #include	"builtins.h"
-#include	"FEATURE/time"
 #include	"FEATURE/externs"
 #include	"FEATURE/locale"
 #include	"streval.h"
+#include    <times.h>
 
 #if !_std_malloc
 #   include	<vmalloc.h>

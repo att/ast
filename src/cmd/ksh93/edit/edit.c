@@ -31,12 +31,9 @@
 #include	<errno.h>
 #include	<ccode.h>
 #include	"FEATURE/options"
-#include	"FEATURE/time"
 #include	"FEATURE/cmds"
-#ifdef _hdr_utime
-#   include	<utime.h>
-#   include	<ls.h>
-#endif
+#include	<utime.h>
+#include	<ls.h>
 
 #if KSHELL
 #   include	"defs.h"
@@ -852,7 +849,6 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit)
 	}
 	if(rv < 0)
 	{
-#ifdef _hdr_utime
 #		define fixtime()	if(isdevtty)utime(ep->e_tty,&utimes)
 		int	isdevtty=0;
 		struct stat statb;
@@ -871,9 +867,6 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit)
 			utimes.modtime = statb.st_mtime;
 			isdevtty=1;
 		}
-#else
-#		define fixtime()
-#endif /* _hdr_utime */
 		while(1)
 		{
 			rv = read(fd,buff,size);

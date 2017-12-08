@@ -72,7 +72,6 @@
 
 #include	<ast.h>
 #include	<sfio.h>
-#include	"FEATURE/time"
 #include	<error.h>
 #include	<ls.h>
 #if KSHELL

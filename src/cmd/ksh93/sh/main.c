@@ -41,7 +41,6 @@
 #include	"shnodes.h"
 #include	"history.h"
 #include	"timeout.h"
-#include	"FEATURE/time"
 #include	"FEATURE/pstat"
 #include	"FEATURE/execargs"
 #include	"FEATURE/externs"

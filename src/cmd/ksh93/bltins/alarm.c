@@ -32,7 +32,6 @@
 #include	<stak.h>
 #include	<tmx.h>
 #include	"builtins.h"
-#include	"FEATURE/time"
 
 #define R_FLAG	1
 #define L_FLAG	2
