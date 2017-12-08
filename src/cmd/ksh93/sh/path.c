@@ -39,7 +39,6 @@
     #include    <dlldefs.h>
 #endif
 
-#include	"FEATURE/externs"
 #if SHOPT_PFSH 
 #   ifdef _hdr_exec_attr
 #	include	<exec_attr.h>
@@ -1311,7 +1310,6 @@ retry:
 		errno = ENOEXEC;
 		if(spawn)
 		{
-#ifdef _lib_fork
 			if(shp->subshell)
 				return(-1);
 			do
@@ -1330,9 +1328,6 @@ retry:
 			}
 #   endif /* SPAWN_cwd */
 			((struct checkpt*)shp->jmplist)->mode = SH_JMPEXIT;
-#else
-			return(-1);
-#endif
 		}
 		exscript(shp,path,argv,envp);
 	    case EACCES:

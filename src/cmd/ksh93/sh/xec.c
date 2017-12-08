@@ -36,7 +36,6 @@
 #include	"jobs.h"
 #include	"test.h"
 #include	"builtins.h"
-#include	"FEATURE/externs"
 #include	"FEATURE/locale"
 #include	"streval.h"
 #include    <times.h>
@@ -54,9 +53,7 @@
 #define SH_NTFORK	SH_TIMING
 #define NV_BLTPFSH	NV_ARRAY
 
-#if _lib_nice
-    extern int	nice(int);
-#endif /* _lib_nice */
+extern int	nice(int);
 #if SHOPT_SPAWN
     static pid_t sh_ntfork(Shell_t*,const Shnode_t*,char*[],int*,int);
 #endif /* SHOPT_SPAWN */
@@ -1730,16 +1727,13 @@ tryagain:
 				}
 #else
 #if SHOPT_SPAWN
-#   ifdef _lib_fork
+
 				if(com)
 					parent = sh_ntfork(shp,t,com,&jobid,ntflag);
 				else
 					parent = sh_fork(shp,type,&jobid);
-#   else
-				if((parent = sh_ntfork(shp,t,com,&jobid,ntflag))<=0)
-					break;
-#   endif /* _lib_fork */
-				if(parent<0)
+
+                if(parent<0)
 				{
 					if(shp->comsub==1 && usepipe && unpipe)
 						sh_iounpipe(shp);
@@ -1849,10 +1843,10 @@ tryagain:
 				}
 				sh_offstate(shp,SH_MONITOR);
 				/* pipe in or out */
-#ifdef _lib_nice
+
 				if((type&FAMP) && sh_isoption(shp,SH_BGNICE))
 					nice(4);
-#endif /* _lib_nice */
+
 #if !SHOPT_DEVFD
 				if(shp->fifo && (type&(FPIN|FPOU)))
 				{
@@ -3583,7 +3577,7 @@ static void coproc_init(Shell_t *shp, int pipes[])
 #if SHOPT_SPAWN
 
 
-#if SHOPT_AMP || !defined(_lib_fork)
+#if SHOPT_AMP
 
 /*
  * create a shell script consisting of t->fork.forktre and execute it
@@ -3659,7 +3653,7 @@ static int run_subshell(Shell_t *shp,const Shnode_t *t,pid_t grp)
 		errormsg(SH_DICT,ERROR_system(ERROR_NOEXEC),e_exec,arglist[0]);
 	return(pid);
 }
-#endif /* !_lib_fork */
+#endif /* SHOPT_AMP*/
 
 static void sigreset(Shell_t *shp,int mode)
 {
@@ -3701,7 +3695,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 		otype = savetype;
 		savetype=0;
 	}
-#   if SHOPT_AMP || !defined(_lib_fork)
+#   if SHOPT_AMP
 	if(!argv)
 	{
 		Shnode_t *tchild = t->fork.forktre;
@@ -3709,34 +3703,8 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 		otype = t->tre.tretyp;
 		savetype = otype;
 		spawnpid = 0;
-#	ifndef _lib_fork
-		if((tchild->tre.tretyp&COMMSK)==TCOM)
-		{
-			Namval_t *np = (Namval_t*)(tchild->com.comnamp);
-			if(np)
-			{
-				path = nv_name(np);
-				if(!nv_isattr(np,BLT_ENV))
-					np=0;
-				else if(strcmp(path,"echo")==0 || memcmp(path,"print",5)==0)
-					np=0;
-			}
-			else if(!tchild->com.comarg)
-				optimize=1;
-			else if(tchild->com.comtyp&COMSCAN)
-			{
-				if(tchild->com.comarg->argflag&ARG_RAW)
-					path = tchild->com.comarg->argval;
-				else
-					path = 0;
-			}
-			else
-				path = ((struct dolnod*)tchild->com.comarg)->dolval[ARG_SPARE];
-			if(!np && path && !nv_search(path,shp->fun_tree,0))
-				optimize=1;
-		}
-#	endif
-		sh_pushcontext(shp,buffp,SH_JMPIO);
+
+        sh_pushcontext(shp,buffp,SH_JMPIO);
 		jmpval = sigsetjmp(buffp->buff,0);
 		{
 			if((otype&FINT) && !sh_isstate(shp,SH_MONITOR))
@@ -3830,7 +3798,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 		shp->exitval = 0;
 		return(spawnpid);
 	}
-#   endif /* !_lib_fork */
+#   endif /* SHOPT_AMP */
 	sh_pushcontext(shp,buffp,SH_JMPCMD);
 	errorpush(&buffp->err,ERROR_SILENT);
 	jmpval = sigsetjmp(buffp->buff,0);
@@ -3986,16 +3954,6 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 	return(spawnpid);
 }
 
-#   ifdef _was_lib_fork
-#	define _lib_fork	1
-#   endif
-#   ifndef _lib_fork
-	pid_t fork(void)
-	{
-		errormsg(SH_DICT,ERROR_exit(3),e_notimp,"fork");
-		return(-1);
-	}
-#   endif /* _lib_fork */
 #endif /* SHOPT_SPAWN */
 
 /*

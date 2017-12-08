@@ -29,11 +29,12 @@
  *	 and has a separate executor
  */
 
-#include	"streval.h"
 #include	<ctype.h>
 #include	<error.h>
-#include	<stak.h>
-#include	"FEATURE/externs"
+#include	<math.h>
+
+#include	"streval.h"
+#include	"stak.h"
 #include	"defs.h"	/* for sh.decomma */
 
 #ifndef ERROR_dictionary
@@ -1029,61 +1030,3 @@ Sfdouble_t strval(Shell_t *shp,const char *s,char **end,Sfdouble_t(*conv)(const 
 	stkset(shp->stk,sp?sp:(char*)ep,offset);
 	return(d);
 }
-
-#if _mem_name__exception
-#undef	_mem_name_exception
-#define	_mem_name_exception	1
-#undef	exception
-#define	exception		_exception
-#undef	matherr
-#endif
-
-#if _mem_name_exception
-
-#undef	error
-
-#if _BLD_shell && defined(__EXPORT__)
-#define extern			__EXPORT__
-#endif
-
-#ifndef DOMAIN
-#define DOMAIN			_DOMAIN
-#endif
-#ifndef OVERFLOW
-#define OVERFLOW		_OVERFLOW
-#endif
-#ifndef SING
-#define SING			_SING
-#endif
-
-    extern int matherr(struct exception *ep)
-    {
-	const char *message;
-	switch(ep->type)
-	{
-#ifdef DOMAIN
-	    case DOMAIN:
-		message = ERROR_dictionary(e_domain);
-		break;
-#endif
-#ifdef OVERFLOW
-	    case OVERFLOW:
-		message = ERROR_dictionary(e_overflow);
-		break;
-#endif
-#ifdef SING
-	    case SING:
-		message = ERROR_dictionary(e_singularity);
-		break;
-#endif
-	    default:
-		return(1);
-	}
-	level=0;
-	errormsg(SH_DICT,ERROR_exit(1),message,ep->name);
-	return(0);
-    }
-
-#undef	extern
-
-#endif /* _mem_name_exception */

@@ -43,7 +43,6 @@
 #include	"timeout.h"
 #include	"FEATURE/pstat"
 #include	"FEATURE/execargs"
-#include	"FEATURE/externs"
 #ifdef	_hdr_nc
 #   include	<nc.h>
 #endif	/* _hdr_nc */
@@ -53,7 +52,7 @@
 /* These routines are referenced by this module */
 static void	exfile(Shell_t*, Sfio_t*,int);
 static void	chkmail(Shell_t *shp, char*);
-#if defined(_lib_fork) && !defined(_NEXT_SOURCE)
+#if !defined(_NEXT_SOURCE)
     static void	fixargs(char**,int);
 #else
 #   define fixargs(a,b)
@@ -730,7 +729,7 @@ static void chkmail(Shell_t *shp, char *files)
 #   define PSTAT	1
 #endif
 
-#if defined(_lib_fork) && !defined(_NEXT_SOURCE)
+#if !defined(_NEXT_SOURCE)
 /*
  * fix up command line for ps command
  * mode is 0 for initialization
@@ -798,4 +797,4 @@ static void fixargs(char **argv, int mode)
 #   endif /* PSTAT */
 #endif /* EXECARGS */
 }
-#endif /* _lib_fork */
+#endif /* _NEXT_SOURCE */

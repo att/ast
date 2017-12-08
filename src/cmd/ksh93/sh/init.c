@@ -47,7 +47,6 @@
     #include    <dlldefs.h>
 #endif
 
-#include	"FEATURE/externs"
 #include	"lexstates.h"
 #include	"version.h"
 

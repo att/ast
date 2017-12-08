@@ -42,7 +42,6 @@
 #include	"edit.h"
 #include	"builtins.h"
 #include	"timeout.h"
-#include	"FEATURE/externs"
 
 #if SHOPT_DYNAMIC
     #include    <dlldefs.h>
