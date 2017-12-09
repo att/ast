@@ -1187,20 +1187,14 @@ int job_kill(struct process *pw,int sig)
 #ifdef SIGTSTP
 	bool stopsig;
 #endif
-#if _lib_sigqueue
 	union sigval sig_val;
-#else
-	int sig_val = 0;
-#endif
 	if(pw==0)
 		goto error;
 	shp = pw->p_shp;
-#if _lib_sigqueue
 	if(sig&JOB_QQFLAG)
 		sig_val.sival_ptr = pointerof(shp->sigval);
 	else
 		sig_val.sival_int = (int)shp->sigval;
-#endif
 	sig &= ~(JOB_QFLAG|JOB_QQFLAG);
 #ifdef SIGTSTP
 	stopsig = (sig==SIGSTOP||sig==SIGTSTP||sig==SIGTTIN||sig==SIGTTOU);

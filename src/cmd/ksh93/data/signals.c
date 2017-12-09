@@ -249,7 +249,6 @@ const struct shtable2 shtab_signals[] =
 	"",	0,	0
 };
 
-#ifdef _lib_sigaction
     const struct shtable4 shtab_siginfo_codes[] =
     {
 	{ SIGCHLD,	CLD_EXITED,	"EXITED"	},
@@ -356,4 +355,3 @@ const struct shtable2 shtab_signals[] =
 #   endif
 	{ 0,		0,		NULL		}
    };
-#endif /* _lib_sigaction */
