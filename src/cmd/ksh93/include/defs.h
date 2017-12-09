@@ -540,4 +540,8 @@ extern const Shtable_t shtab_siginfo[];
 
 #define timeofday(p)    gettimeofday(p,(struct timezone*)0)
 
+/* TODO: Shall this be removed when we move to standard locale functions ? */
+static struct lconv *lp;
+#define GETDECIMAL(x)  (((lp=localeconv()) && lp->decimal_point && *lp->decimal_point) ?  *lp->decimal_point : '.' )
+
 #endif

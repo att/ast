@@ -36,7 +36,6 @@
 #include	"jobs.h"
 #include	"test.h"
 #include	"builtins.h"
-#include	"FEATURE/locale"
 #include	"streval.h"
 #include    <times.h>
 

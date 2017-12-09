@@ -31,9 +31,7 @@
 #include	"lexstates.h"
 #include	"national.h"
 
-#if _hdr_wctype
 #   include <wctype.h>
-#endif
 
 #if !_lib_iswprint && !defined(iswprint)
 #   define iswprint(c)		(((c)&~0377) || isprint(c))
