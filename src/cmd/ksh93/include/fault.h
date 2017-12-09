@@ -30,8 +30,6 @@
 #include	<setjmp.h>
 #include	<error.h>
 #include	<sfio.h>
-#include	"FEATURE/sigfeatures"
-
 
 #ifndef SIGWINCH
 #   ifdef SIGWIND

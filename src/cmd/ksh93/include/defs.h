@@ -540,4 +540,26 @@ extern const Shtable_t shtab_siginfo[];
 
 #define timeofday(p)    gettimeofday(p,(struct timezone*)0)
 
+/* sigqueue() is not available on macOS */
+#ifndef _lib_sigqueue
+    #define sigqueue(sig,action,val) kill(sig,action)
+#endif
+
+#    define sh_sigaction(s,action) do { sigset_t ss;\
+                sigemptyset(&ss); \
+                if(s) sigaddset(&ss,(s)); \
+                sigprocmask(action,&ss,0); \
+                }while(0)
+#    define sigrelease(s)   sh_sigaction(s,SIG_UNBLOCK)
+#    define sigblock(s)     sh_sigaction(s,SIG_BLOCK)
+#    define sig_begin()     sh_sigaction(0,SIG_SETMASK)
+
+#ifndef CLD_EXITED
+#   define CLD_EXITED       1
+#   define CLD_KILLED       2
+#   define CLD_DUMPED       3
+#   define CLD_STOPPED      4
+#   define CLD_CONTINUED    5
+#endif
+
 #endif

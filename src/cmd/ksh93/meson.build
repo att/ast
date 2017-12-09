@@ -100,6 +100,12 @@ execinfo_dep = cc.find_library('execinfo', required: false)
 # on others they are found in libdl.
 libdl_dep = cc.find_library('libdl', required : false)
 
+
+if cc.has_function('sigqueue', prefix: '#include <signal.h>')
+    ksh93_c_args += [ '-D_lib_sigqueue=1' ]
+    shcomp_c_args += [ '-D_lib_sigqueue=1' ]
+endif
+
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
     link_with: [libast, libcmd, libcoshell],
