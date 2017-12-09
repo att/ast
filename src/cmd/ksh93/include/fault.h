@@ -30,7 +30,6 @@
 #include	<setjmp.h>
 #include	<error.h>
 #include	<sfio.h>
-#include	"FEATURE/setjmp"
 #include	"FEATURE/sigfeatures"
 
 
