@@ -566,4 +566,11 @@ extern const Shtable_t shtab_siginfo[];
 static struct lconv *lp;
 #define GETDECIMAL(x)  (((lp=localeconv()) && lp->decimal_point && *lp->decimal_point) ?  *lp->decimal_point : '.' )
 
+/* 
+ * This defintion has been taken from iffe feature test for pipes
+ * TODO: Verfiy this assumption is safe.
+ */
+
+#define _pipe_socketpair    1   /* use socketpair() for peekable pipe() */
+
 #endif

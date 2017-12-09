@@ -33,7 +33,7 @@
 #include	"terminal.h"
 #include	"edit.h"
 #include	"jobs.h"
-#include	"FEATURE/poll"
+#include	<poll.h>
 #if SHOPT_KIA
 #   include	"shlex.h"
 #   include	"io.h"
@@ -999,7 +999,7 @@ char **sh_argbuild(Shell_t *shp,int *nargs, const struct comnod *comptr,int flag
 	}
 }
 
-#if _pipe_socketpair && !_socketpair_devfd
+#if _pipe_socketpair
 #   define sh_pipe(a)	sh_rpipe(a)
 #endif
 
