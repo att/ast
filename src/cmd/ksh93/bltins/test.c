@@ -37,7 +37,7 @@
 #include	"terminal.h"
 #include	"test.h"
 #include	"builtins.h"
-#include	"FEATURE/poll"
+#include	<poll.h>
 #include	<tmx.h>
 
 #if !_lib_setregid

@@ -47,7 +47,7 @@
     #include    <dlldefs.h>
 #endif
 
-#include	"FEATURE/poll"
+#include	<poll.h>
 
 #ifdef	FNDELAY
 #   ifdef EAGAIN
@@ -81,16 +81,9 @@
 static void	*timeout;
 static int	(*fdnotify)(int,int);
 
-#if defined(_lib_socket) && defined(_sys_socket) && defined(_hdr_netinet_in)
 #   include <sys/socket.h>
 #   include <netdb.h>
 #   include <netinet/in.h>
-#   if !defined(htons) && !_lib_htons
-#      define htons(x)	(x)
-#   endif
-#   if !defined(htonl) && !_lib_htonl
-#      define htonl(x)	(x)
-#   endif
 #   if _pipe_socketpair && !_stream_peek
 #      ifndef SHUT_RD
 #         define SHUT_RD         0
@@ -106,7 +99,6 @@ static int	(*fdnotify)(int,int);
 #         define pipe(v) ((socketpair(AF_UNIX,SOCK_STREAM,0,v)<0||shutdown((v)[1],SHUT_RD)<0||shutdown((v)[0],SHUT_WR)<0)?(-1):0)
 #      endif
 #   endif
-#endif
 
 struct fdsave
 {
