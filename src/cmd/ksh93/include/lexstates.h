@@ -79,30 +79,12 @@
 #define ST_QNEST	10
 #define ST_NONE		11
 
-#include "FEATURE/locale"
-
-#if _hdr_wchar
-#   include <wchar.h>
-#   if _hdr_wctype
-#       include <wctype.h>
-#       undef  isalpha
-#       define isalpha(x)      iswalpha(x)
-#       if defined(iswblank) || _lib_iswblank
-#           undef  isblank
-#           define isblank(x)      iswblank(x)
-#       else
-#           if _lib_wctype && _lib_iswctype
-#               define _lib_iswblank	-1
-#               undef  isblank
-#	        define isblank(x)	local_iswblank(x)
-	        extern int		local_iswblank(wchar_t);
-#           endif
-#       endif
-#   endif
-#endif
-#ifndef isblank
-#   define isblank(x)      ((x)==' '||(x)=='\t')
-#endif
+#include <wchar.h>
+#include <wctype.h>
+#undef  isalpha
+#define isalpha(x)      iswalpha(x)
+#undef  isblank
+#define isblank(x)      iswblank(x)
 
 #undef LEN
 #if SHOPT_MULTIBYTE
