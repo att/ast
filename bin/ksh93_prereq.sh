@@ -12,7 +12,7 @@ base_dir=`dirname "$bin_dir"`
 
 PATH=$bin_dir:$PATH
 
-iffe_tests=( locale  options poll  rlimits )
+iffe_tests=( locale  options poll )
 
 iffe_tests_2=( nvapi shellapi )
 

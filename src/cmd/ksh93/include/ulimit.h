@@ -24,40 +24,7 @@
  * This is for the ulimit built-in command
  */
 
-#include	"FEATURE/rlimits"
-#if defined(_sys_resource) && defined(_lib_getrlimit)
 #   include	<sys/resource.h>
-#   if !defined(RLIMIT_FSIZE) && defined(_sys_vlimit)
-	/* This handles hp/ux problem */ 
-#	include	<sys/vlimit.h>
-#	define RLIMIT_FSIZE	(LIM_FSIZE-1)
-#	define RLIMIT_DATA	(LIM_DATA-1)
-#	define RLIMIT_STACK	(LIM_STACK-1)
-#	define RLIMIT_CORE	(LIM_CORE-1)
-#	define RLIMIT_CPU	(LIM_CPU-1)
-#	ifdef LIM_MAXRSS
-#		define RLIMIT_RSS       (LIM_MAXRSS-1)
-#	endif /* LIM_MAXRSS */
-#   endif
-#   undef _lib_ulimit
-#else
-#   ifdef _sys_vlimit
-#	include	<sys/vlimit.h>
-#	undef _lib_ulimit
-#	define RLIMIT_FSIZE	LIM_FSIZE
-#	define RLIMIT_DATA	LIM_DATA
-#	define RLIMIT_STACK	LIM_STACK
-#	define RLIMIT_CORE	LIM_CORE
-#	define RLIMIT_CPU	LIM_CPU
-#	ifdef LIM_MAXRSS
-#		define RLIMIT_RSS       LIM_MAXRSS
-#	endif /* LIM_MAXRSS */
-#   else
-#	ifdef _lib_ulimit
-#	    define vlimit ulimit
-#	endif /* _lib_ulimit */
-#   endif /* _lib_vlimit */
-#endif
 
 #ifdef RLIM_INFINITY
 #   define INFINITY	RLIM_INFINITY
@@ -67,18 +34,11 @@
 #   endif /* INFINITY */
 #endif /* RLIM_INFINITY */
 
-#if defined(_lib_getrlimit) || defined(_lib_vlimit) || defined(_lib_ulimit)
 #   ifndef RLIMIT_VMEM
 #	ifdef RLIMIT_AS
 #	    define RLIMIT_VMEM RLIMIT_AS
 #	endif
 #   endif /* !RLIMIT_VMEM */
-#else
-#   define _no_ulimit
-#endif
-#ifndef _typ_rlim_t
-    typedef long rlim_t;
-#endif
 
 #if !defined(RLIMIT_NOFILE) && defined(RLIMIT_OFILE)
 #define RLIMIT_NOFILE	RLIMIT_OFILE
