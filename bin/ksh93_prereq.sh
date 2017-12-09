@@ -12,7 +12,7 @@ base_dir=`dirname "$bin_dir"`
 
 PATH=$bin_dir:$PATH
 
-iffe_tests=( externs  locale  options poll  rlimits  setjmp  sigfeatures )
+iffe_tests=( externs  locale  options poll  rlimits  sigfeatures )
 
 iffe_tests_2=( nvapi shellapi )
 

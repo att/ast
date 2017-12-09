@@ -38,7 +38,6 @@
 #   include	<ctype.h>
 #endif /* KSHELL */
 
-#include	"FEATURE/setjmp"
 #include	"terminal.h"
 
 #define STRIP		0377
