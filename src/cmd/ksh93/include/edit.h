@@ -30,7 +30,6 @@
 #define SEARCHSIZE	80
 
 #include	"FEATURE/options"
-#include        "FEATURE/locale"
 
 #if !KSHELL
 #   include	<setjmp.h>

@@ -562,4 +562,8 @@ extern const Shtable_t shtab_siginfo[];
 #   define CLD_CONTINUED    5
 #endif
 
+/* TODO: Shall this be removed when we move to standard locale functions ? */
+static struct lconv *lp;
+#define GETDECIMAL(x)  (((lp=localeconv()) && lp->decimal_point && *lp->decimal_point) ?  *lp->decimal_point : '.' )
+
 #endif

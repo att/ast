@@ -178,7 +178,6 @@ typedef struct _init_
 #if SHOPT_COSHELL
 	Namfun_t	SH_JOBPOOL_init;
 #endif /* SHOPT_COSHELL */
-#ifdef _hdr_locale
 	Namfun_t	LC_TIME_init;
 	Namfun_t	LC_TYPE_init;
 	Namfun_t	LC_NUM_init;
@@ -186,7 +185,6 @@ typedef struct _init_
 	Namfun_t	LC_MSG_init;
 	Namfun_t	LC_ALL_init;
 	Namfun_t	LANG_init;
-#endif /* _hdr_locale */
 	Namfun_t	OPTIONS_init;
 	Namfun_t	OPTastbin_init;
 } Init_t;
@@ -363,7 +361,6 @@ static void put_cdpath(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 		pp->shp = shp;
 }
 
-#ifdef _hdr_locale
     /*
      * This function needs to be modified to handle international
      * error message translations
@@ -479,7 +476,6 @@ static void put_cdpath(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 		error_info.translate = msg_translate;
 #endif
     }
-#endif /* _hdr_locale */
 
 /* Trap for IFS assignment and invalidates state table */
 static void put_ifs(Namval_t* np,const char *val,int flags,Namfun_t *fp)
@@ -1237,9 +1233,7 @@ static const Namdisc_t SH_JOBPOOL_disc  = { 0, 0, 0, 0, setdisc_any, 0, };
     static Namfun_t NSPACE_init	= {  &NSPACE_disc, 1};
 #endif /* SHOPT_NAMESPACE */
 
-#ifdef _hdr_locale
     static const Namdisc_t LC_disc	= {  sizeof(Namfun_t), put_lang };
-#endif /* _hdr_locale */
 
 /*
  * This function will get called whenever a configuration parameter changes
@@ -1883,10 +1877,8 @@ Namfun_t *nv_cover(Namval_t *np)
 {
 	if(np==IFSNOD || np==PATHNOD || np==SHELLNOD || np==FPATHNOD || np==CDPNOD || np==SECONDS || np==ENVNOD || np==LINENO)
 		return(np->nvfun);
-#ifdef _hdr_locale
 	if(np==LCALLNOD || np==LCTYPENOD || np==LCMSGNOD || np==LCCOLLNOD || np==LCNUMNOD || np==LANGNOD)
 		return(np->nvfun);
-#endif
 	 return(0);
 }
 
@@ -2197,7 +2189,6 @@ static Init_t *nv_init(Shell_t *shp)
 	ip->LINENO_init.nofree = 1;
 	ip->L_ARG_init.disc = &L_ARG_disc;
 	ip->L_ARG_init.nofree = 1;
-#ifdef _hdr_locale
 	ip->LC_TIME_init.disc = &LC_disc;
 	ip->LC_TIME_init.nofree = 1;
 	ip->LC_TYPE_init.disc = &LC_disc;
@@ -2212,7 +2203,6 @@ static Init_t *nv_init(Shell_t *shp)
 	ip->LC_ALL_init.nofree = 1;
 	ip->LANG_init.disc = &LC_disc;
 	ip->LANG_init.nofree = 1;
-#endif /* _hdr_locale */
 	ip->OPTIONS_init.disc = &OPTIONS_disc;
 	ip->OPTastbin_init.disc = &OPTastbin_disc;
 	nv_stack(IFSNOD, &ip->IFS_init.hdr);
@@ -2240,7 +2230,6 @@ static Init_t *nv_init(Shell_t *shp)
 	nv_stack(SH_VERSIONNOD, &ip->SH_VERSION_init);
 	nv_stack(OPTIONS, &ip->OPTIONS_init);
 	nv_stack(SH_ASTBIN, &ip->OPTastbin_init);
-#ifdef _hdr_locale
 	nv_stack(LCTIMENOD, &ip->LC_TIME_init);
 	nv_stack(LCTYPENOD, &ip->LC_TYPE_init);
 	nv_stack(LCALLNOD, &ip->LC_ALL_init);
@@ -2248,7 +2237,6 @@ static Init_t *nv_init(Shell_t *shp)
 	nv_stack(LCCOLLNOD, &ip->LC_COLL_init);
 	nv_stack(LCNUMNOD, &ip->LC_NUM_init);
 	nv_stack(LANGNOD, &ip->LANG_init);
-#endif /* _hdr_locale */
 	(PPIDNOD)->nvalue.idp = (&shp->gd->ppid);
 	(TMOUTNOD)->nvalue.lp = (&shp->st.tmout);
 	(MCHKNOD)->nvalue.lp = (&sh_mailchk);
