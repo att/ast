@@ -8,6 +8,11 @@ ksh93_incdir = include_directories('include', 'features',
                                    '../../lib/libcmd/',
                                    '../../lib/libcoshell/')
 
+subdir('bltins')
+subdir('data')
+subdir('edit')
+subdir('sh')
+
 # TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
 # build the libast libdll code.
 ksh93_c_args = ['-DERROR_CATALOG=0',
@@ -22,7 +27,6 @@ ksh93_c_args = ['-DERROR_CATALOG=0',
                 '-DSHOPT_MULTIBYTE',
                 '-DSHOPT_NAMESPACE',
                 '-DSHOPT_OPTIMIZE',
-                '-DSHOPT_PFSH',
                 '-DSHOPT_RAWONLY',
                 '-DSHOPT_STATS',
                 '-DSHOPT_SUID_EXEC',
@@ -38,7 +42,6 @@ shcomp_c_args = ['-DUSAGE_LICENSE=""',
                  '-DSHOPT_STATS',
                  '-DSHOPT_NAMESPACE',
                  '-DSHOPT_COSHELL',
-                 '-DSHOPT_PFSH',
                  '-DSHOPT_BASH',
                  '-D_BLD_shell',
                  '-D_API_ast=20130625',
@@ -59,7 +62,6 @@ system = host_machine.system()
 bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
-
 
 newgrp = find_program('newgrp', required : false)
 ed = find_program('ed', required : false)
@@ -83,11 +85,12 @@ else
     shcomp_c_args += [ '-D_pth_ed="ed"' ]
 endif
 
+shopt_devfd_result = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
 
-subdir('bltins')
-subdir('data')
-subdir('edit')
-subdir('sh')
+if shopt_devfd_result.returncode() == 0
+    ksh93_c_args += [ '-DSHOPT_DEVFD=1' ]
+    shcomp_c_args += [ '-DSHOPT_DEVFD=1' ]
+endif
 
 cc = meson.get_compiler('c')
 # On some platforms the math functions (e.g., `sin()`) that we need are found in

@@ -26,7 +26,6 @@
  *	These are the definitions for the lexical analyzer
  */
 
-#include	"FEATURE/options"
 #include	<nval.h>
 #include	"defs.h"
 
@@ -133,9 +132,7 @@ extern const char is_talias[];
 extern const char is_xalias[];
 extern const char is_function[];
 extern const char is_ufunction[];
-#ifdef SHELLMAGIC
-    extern const char e_prohibited[];
-#endif /* SHELLMAGIC */
+extern const char e_prohibited[];
 
 #if SHOPT_ACCT
 #   include	"FEATURE/acct"

@@ -21,7 +21,6 @@
 
 #include	<ast.h>
 
-#include	"FEATURE/options"
 #include	"lexstates.h"
 
 

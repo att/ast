@@ -29,7 +29,6 @@
 
 #define SEARCHSIZE	80
 
-#include	"FEATURE/options"
 
 #if !KSHELL
 #   include	<setjmp.h>
