@@ -34,8 +34,6 @@
 
 #include <ls.h>
 
-#include "FEATURE/nfsd"
-
 int
 cosync(Coshell_t* co, const char* file, int fd, int mode)
 {

@@ -16,8 +16,6 @@ iffe_tests=( options )
 
 iffe_tests_2=( nvapi shellapi )
 
-iffe_tests_3=( nfsd acct execargs pstat )
-
 function cc_fun {
     cc -D_BLD_ast -I../../../lib/libast/include/ -I../../../lib/libast/features/  "$@"
 }
@@ -33,10 +31,6 @@ done
 for iffe_test in ${iffe_tests_2[@]}; do
     iffe -v -X ast -X std -c 'cc' run $iffe_test
     cp "$base_dir/src/cmd/ksh93/features/FEATURE/$iffe_test" "$base_dir/src/cmd/ksh93/features/$iffe_test.h"
-done
-
-for iffe_test in ${iffe_tests_3[@]}; do
-    iffe -v -c 'cc' : def $iffe_test
 done
 
 # Generate a c source file for ksh93 bash compatiblity

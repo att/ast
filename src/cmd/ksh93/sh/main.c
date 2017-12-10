@@ -41,8 +41,6 @@
 #include	"shnodes.h"
 #include	"history.h"
 #include	"timeout.h"
-#include	"FEATURE/pstat"
-#include	"FEATURE/execargs"
 #ifdef	_hdr_nc
 #   include	<nc.h>
 #endif	/* _hdr_nc */
