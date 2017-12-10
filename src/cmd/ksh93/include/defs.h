@@ -31,7 +31,6 @@
 #include	<ast.h>
 #include	<sfio.h>
 #include	<error.h>
-#include	"FEATURE/options"
 #include	<cdt.h>
 #include	<history.h>
 #include	"fault.h"

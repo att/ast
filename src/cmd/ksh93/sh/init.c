@@ -1688,11 +1688,9 @@ Shell_t *sh_init(int argc,char *argv[], Shinit_f userinit)
 		else
 #endif /* SHOPT_P_SUID */
 			sh_onoption(shp,SH_PRIVILEGED);
-#ifdef SHELLMAGIC
 		/* careful of #! setuid scripts with name beginning with - */
 		if(shp->login_sh && argv[1] && strcmp(argv[0],argv[1])==0)
 			errormsg(SH_DICT,ERROR_exit(1),e_prohibited);
-#endif /*SHELLMAGIC*/
 	}
 	else
 		sh_offoption(shp,SH_PRIVILEGED);

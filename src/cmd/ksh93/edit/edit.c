@@ -30,7 +30,6 @@
 #include	<ast.h>
 #include	<errno.h>
 #include	<ccode.h>
-#include	"FEATURE/options"
 #ifdef _hdr_utime
 #   include	<utime.h>
 #   include	<ls.h>

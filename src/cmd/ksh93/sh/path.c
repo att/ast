@@ -1270,7 +1270,6 @@ pid_t path_spawn(Shell_t *shp,const char *opath,char **argv, char **envp, Pathco
 	sfsync(sfstderr);
 	sh_sigcheck(shp);
 	path = path_relative(shp,opath);
-#ifdef SHELLMAGIC
 	if(*path!='/' && path!=opath)
 	{
 		/*
@@ -1283,20 +1282,17 @@ pid_t path_spawn(Shell_t *shp,const char *opath,char **argv, char **envp, Pathco
 		strcpy(sp+2,path);
 		path = sp;
 	}
-#endif /* SHELLMAGIC */
 	if(spawn && !sh_isoption(shp,SH_PFSH))
 		pid = _spawnveg(shp,opath, &argv[0],envp, spawn>>1);
 	else
 		pid = path_pfexecve(shp,opath, &argv[0] ,envp,spawn);
 	if(xp)
 		*xp = xval;
-#ifdef SHELLMAGIC
 	if(*path=='.' && path!=opath)
 	{
 		free(path);
 		path = path_relative(shp,opath);
 	}
-#endif /* SHELLMAGIC */
 	if(pid>0)
 		return(pid);
 retry:
