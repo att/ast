@@ -23,12 +23,12 @@
 //   David Korn
 //   AT&T Labs
 //
-#include "defs.h"
-
 #define _GNU_SOURCE 1
 #include <dlfcn.h>
 #include <execinfo.h>
 #include <stdio.h>
+
+#include "defs.h"
 
 #include "aso.h"
 #include "builtins.h"
