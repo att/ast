@@ -91,13 +91,6 @@ const Shtable_t shtab_options[] =
 	"privileged",			SH_PRIVILEGED,
 #if SHOPT_BASH
 	"profile",			SH_LOGIN_SHELL|SH_COMMANDLINE,
-#   if SHOPT_PFSH
-	"pfsh",				SH_PFSH|SH_COMMANDLINE,
-#   endif
-#else
-#   if SHOPT_PFSH
-	"profile",			SH_PFSH|SH_COMMANDLINE,
-#   endif
 #endif
 	bashopt("progcomp",		SH_PROGCOMP)
 	bashopt("promptvars",		SH_PROMPTVARS)
