@@ -22,7 +22,6 @@
 #ifndef SYSDECLARE
 
 #include	<option.h>
-#include	"FEATURE/options"
 
 #if SHOPT_DYNAMIC
     #include    <dlldefs.h>

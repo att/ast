@@ -30,7 +30,6 @@
 #include	<stak.h>
 #include	<fcin.h>
 #include	<nval.h>
-#include	"FEATURE/options"
 
 #if KSHELL
 #   include	"defs.h"

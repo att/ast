@@ -26,7 +26,6 @@
  *	These are the definitions for the lexical analyzer
  */
 
-#include	"FEATURE/options"
 #include	<nval.h>
 #include	"defs.h"
 

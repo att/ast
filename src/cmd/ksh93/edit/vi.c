@@ -33,7 +33,6 @@
 #   include	"defs.h"
 #else
 #   include	<ast.h>
-#   include	"FEATURE/options"
 #   include	<ctype.h>
 #endif	/* KSHELL */
 #include	"io.h"

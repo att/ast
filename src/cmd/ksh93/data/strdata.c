@@ -23,7 +23,6 @@
  */
 
 #include	<ast_standards.h>
-#include	"FEATURE/options"
 #include	"streval.h"
 
 const unsigned char strval_precedence[35] =
