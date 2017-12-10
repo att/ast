@@ -26,7 +26,6 @@
  */
 
 #include	<cdt.h>
-#include	"FEATURE/options"
 #include	"shnodes.h"
 #include	"shtable.h"
 #include	"lexstates.h"

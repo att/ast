@@ -20,7 +20,6 @@
 #pragma prototyped
 #include	"defs.h"
 #include	<signal.h>
-#include	"FEATURE/options"
 
 #if SHOPT_DYNAMIC
     #include    <dlldefs.h>

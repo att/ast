@@ -31,7 +31,6 @@
 #include	<ast.h>
 #include	<sfio.h>
 #include	<error.h>
-#include	"FEATURE/options"
 #include	<cdt.h>
 #include	<history.h>
 #include	"fault.h"
@@ -572,5 +571,11 @@ static struct lconv *lp;
  */
 
 #define _pipe_socketpair    1   /* use socketpair() for peekable pipe() */
+
+/*
+ * SHELLMAGIC is enabled if operating system supports shebang
+ * TODO: Shall we remove this macro from sources ?
+ */
+#define SHELLMAGIC  1
 
 #endif
