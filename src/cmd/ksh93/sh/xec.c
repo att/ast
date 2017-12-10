@@ -1072,19 +1072,6 @@ int sh_exec(Shell_t *shp,const Shnode_t *t, int flags)
 #endif /* SHOPT_NAMESPACE */
 					np = dtsearch(shp->fun_tree,np);
 				}
-#if SHOPT_PFSH
-				if(sh_isoption(shp,SH_PFSH) && nv_isattr(np,NV_BLTINOPT) && !nv_isattr(np,NV_BLTPFSH)) 
-				{
-					if(path_xattr(shp,np->nvname,(char*)0))
-					{
-						dtdelete(shp->bltin_tree,np);
-						np = 0;
-					}
-					else
-						nv_onattr(np,NV_BLTPFSH);
-					
-				}
-#endif /* SHOPT_PFSH */
 			}
 			if(com0)
 			{

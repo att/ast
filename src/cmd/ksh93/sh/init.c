@@ -78,10 +78,6 @@ char e_version[]	= "\n@(#)$Id: Version "
 #define ATTRS		1
 			"M"
 #endif
-#if SHOPT_PFSH && _hdr_exec_attr
-#define ATTRS		1
-			"P"
-#endif
 #if SHOPT_REGRESS
 #define ATTRS		1
 			"R"
@@ -1324,14 +1320,6 @@ int sh_type(const char *path)
 		}
 		if (!(t & (SH_TYPE_PROFILE|SH_TYPE_RESTRICTED)))
 		{
-#if SHOPT_PFSH
-			if (*s == 'p' && *(s+1) == 'f')
-			{
-				s += 2;
-				t |= SH_TYPE_PROFILE;
-				continue;
-			}
-#endif
 			if (*s == 'r')
 			{
 				s++;
@@ -1600,11 +1588,6 @@ Shell_t *sh_init(int argc,char *argv[], Shinit_f userinit)
 		/* check for restricted shell */
 		if(type&SH_TYPE_RESTRICTED)
 			sh_onoption(shp,SH_RESTRICTED);
-#if SHOPT_PFSH
-		/* check for profile shell */
-		else if(type&SH_TYPE_PROFILE)
-			sh_onoption(shp,SH_PFSH);
-#endif
 #if SHOPT_BASH
 		/* check for invocation as bash */
 		if(type&SH_TYPE_BASH)
@@ -1666,15 +1649,6 @@ Shell_t *sh_init(int argc,char *argv[], Shinit_f userinit)
 			beenhere = 2;
 		}
 	}
-#if SHOPT_PFSH
-	if (sh_isoption(shp,SH_PFSH))
-	{
-		struct passwd *pw = getpwuid(shp->gd->userid);
-		if(pw)
-			shp->gd->user = strdup(pw->pw_name);
-		
-	}
-#endif
 	/* set[ug]id scripts require the -p flag */
 	if(shp->gd->userid!=shp->gd->euserid || shp->gd->groupid!=shp->gd->egroupid)
 	{

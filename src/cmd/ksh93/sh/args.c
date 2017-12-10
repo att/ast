@@ -38,11 +38,6 @@
 #   include	"shlex.h"
 #   include	"io.h"
 #endif /* SHOPT_KIA */
-#if SHOPT_PFSH
-#   define PFSHOPT	"P"
-#else
-#   define PFSHOPT
-#endif
 #if SHOPT_BASH
 #   define BASHOPT	"\374"
 #else
@@ -57,12 +52,9 @@ static	char		*null;
 static  pid_t		*procsub;
 
 /* The following order is determined by sh_optset */
-static  const char optksh[] =  PFSHOPT BASHOPT "DircabefhkmnpstuvxBCGEl" HFLAG;
+static  const char optksh[] =  BASHOPT "DircabefhkmnpstuvxBCGEl" HFLAG;
 static const int flagval[]  =
 {
-#if SHOPT_PFSH
-	SH_PFSH,
-#endif
 #if SHOPT_BASH
 	SH_POSIX,
 #endif

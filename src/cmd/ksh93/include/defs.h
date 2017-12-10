@@ -391,10 +391,6 @@ struct shared
 #   define PIPE_BUF		512
 #endif
 
-#if SHOPT_PFSH && ( !_lib_getexecuser || !_lib_free_execattr )
-#   undef SHOPT_PFSH
-#endif
-
 #define MATCH_MAX		64
 
 #define SH_READEVAL		0x4000	/* for sh_eval */
