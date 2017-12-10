@@ -135,15 +135,10 @@ extern const char is_ufunction[];
 extern const char e_prohibited[];
 
 #if SHOPT_ACCT
-#   include	"FEATURE/acct"
-#   ifdef	_sys_acct
 	extern void sh_accinit(void);
 	extern void sh_accbegin(const char*);
 	extern void sh_accend(void);
 	extern void sh_accsusp(void);
-#   else
-#	undef	SHOPT_ACCT
-#   endif	/* _sys_acct */
 #endif /* SHOPT_ACCT */
 
 #endif /*! PATH_OFFSET */
