@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script is used for feature detections that are required to build ksh93
+# This script is used for generating bash compatibility source file that is required to build ksh93
 set -x
 set -e
 
@@ -10,28 +10,7 @@ script_path=`realpath "$0"`
 bin_dir=`dirname "$script_path"`
 base_dir=`dirname "$bin_dir"`
 
-PATH=$bin_dir:$PATH
-
-iffe_tests=( )
-
-iffe_tests_2=( nvapi shellapi )
-
-function cc_fun {
-    cc -D_BLD_ast -I../../../lib/libast/include/ -I../../../lib/libast/features/  "$@"
-}
-
-export -f cc_fun
-
 pushd "$base_dir/src/cmd/ksh93/features"
-
-for iffe_test in ${iffe_tests[@]}; do
-    iffe -v -X ast -X std -c cc_fun run $iffe_test
-done
-
-for iffe_test in ${iffe_tests_2[@]}; do
-    iffe -v -X ast -X std -c 'cc' run $iffe_test
-    cp "$base_dir/src/cmd/ksh93/features/FEATURE/$iffe_test" "$base_dir/src/cmd/ksh93/features/$iffe_test.h"
-done
 
 # Generate a c source file for ksh93 bash compatiblity
 echo "const char bash_pre_rc[] = " > "$base_dir/src/cmd/ksh93/data/bash_pre_rc.c"

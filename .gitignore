@@ -47,5 +47,3 @@ src/lib/libast/include/lc.h
 src/lib/libast/port/lctab.c
 src/cmd/ksh93/data/bash_pre_rc.c
 src/cmd/ksh93/features/FEATURE/
-src/cmd/ksh93/features/nvapi.h
-src/cmd/ksh93/features/shellapi.h
