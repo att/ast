@@ -429,7 +429,9 @@ extern char**		environ;
 #define mbchar(p)		(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),mbmax()))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
 #define mbnchar(p,n)		(mbwide()?((ast.tmp_int=(*ast.mb_towc)(&ast.tmp_wchar,(char*)(p),n))>0?((p+=ast.tmp_int),ast.tmp_wchar):(p+=ast.mb_sync+1,ast.tmp_int)):(*(unsigned char*)(p++)))
 #define mbinit()		(mbwide()?(*ast.mb_towc)((wchar_t*)0,(char*)0,mbmax()):0)
-#define mbsize(p)		(mbwide()?(*ast.mb_len)((char*)(p),mbmax()):((p),1))
+// You cannot call this with a parameter that has side-effects (e.g.,
+// decrement/increment) because it won't occur if we're not in a wide locale.
+#define mbsize(p)		(mbwide()?(*ast.mb_len)((char*)(p),mbmax()):1)
 #define mbnsize(p,n)		(mbwide()?(*ast.mb_len)((char*)(p),n):((p),1))
 #define mbconv(s,w)		(ast.mb_conv?(*ast.mb_conv)(s,w):((*(s)=(w)),1))
 
