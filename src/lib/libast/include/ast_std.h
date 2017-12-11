@@ -94,18 +94,6 @@ struct lconv
 #define extern		__EXPORT__
 #endif
 
-#if !_UWIN /* for ast54 compatibility */
-
-#undef	getenv
-#define getenv		_ast_getenv
-
-#undef	setenviron
-#define setenviron	_ast_setenviron
-
-extern char*		getenv(const char*);
-
-#endif
-
 #undef	localeconv
 #define localeconv	_ast_localeconv
 
@@ -334,8 +322,6 @@ extern int		rename(const char*, const char*);
  * and finally, standard interfaces hijacked by ast
  * _AST_STD_I delays headers that require <ast_map.h>
  */
-
-#include <ast_intercept.h>
 
 #undef	_AST_STD_I
 

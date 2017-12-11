@@ -2886,21 +2886,18 @@ bool sh_isdevfd(const char *fd)
 	return(true);
 }
 
-#ifndef _AST_INTERCEPT
-
 int sh_fchdir(int fd)
 {
 	int r,err=errno;
-	while((r=fchdir(fd))<0 && errno==EINTR)
+	while(((r=fchdir(fd))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
 
-#undef chdir
 int sh_chdir(const char* dir)
 {
 	int r,err=errno;
-	while((r=chdir(dir))<0 && errno==EINTR)
+	while(((r=chdir(dir))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
@@ -2908,9 +2905,7 @@ int sh_chdir(const char* dir)
 int sh_stat(const char* path,struct stat *statb)
 {
 	int r,err=errno;
-	while((r=stat(path,statb))<0 && errno==EINTR)
+	while(((r=stat(path,statb))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
-
-#endif /* _AST_INTERCEPT */
