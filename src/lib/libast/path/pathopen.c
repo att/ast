@@ -179,7 +179,7 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 			{
 				if (flags & PATH_DEV)
 					return access(b, F_OK) ? -1 : 1;
-				return openat(AT_FDCWD, b, oflags|O_INTERCEPT, mode);
+				return openat(AT_FDCWD, b, oflags, mode);
 			}
 
 			/* check for auxilliary directory fd which must be closed before returning */
@@ -227,11 +227,11 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 			/* preserve open() semantics if possible */
 
 			if (oflags & (O_DIRECTORY|O_SEARCH|O_XATTR))
-				return openat(dev.fd, ".", oflags|O_INTERCEPT, mode);
+				return openat(dev.fd, ".", oflags, mode);
 #if O_XATTR
-			if ((f = openat(dev.fd, ".", O_INTERCEPT|O_RDONLY|O_XATTR)) >= 0)
+			if ((f = openat(dev.fd, ".", O_RDONLY|O_XATTR)) >= 0)
 			{
-				fd = openat(f, "..", oflags|O_INTERCEPT, mode);
+				fd = openat(f, "..", oflags, mode);
 				close(f);
 				return fd;
 			}
@@ -239,7 +239,7 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 
 			/* see if the filesystem groks .../[<pid>]/<fd>/... paths */
 
-			if ((!(oflags & O_CREAT) || !access(b, F_OK)) && (fd = openat(AT_FDCWD, b, oflags|O_INTERCEPT, mode)) >= 0)
+			if ((!(oflags & O_CREAT) || !access(b, F_OK)) && (fd = openat(AT_FDCWD, b, oflags, mode)) >= 0)
 				return fd;
 
 			/* stuck with dup semantics -- the best we can do at this point */
@@ -372,5 +372,5 @@ pathopen(int dfd, const char* path, char* canon, size_t size, int flags, int ofl
 		errno = ENODEV;
 		return -1;
 	}
-	return openat(dfd, b, oflags|dev.oflags|O_INTERCEPT, mode);
+	return openat(dfd, b, oflags|dev.oflags, mode);
 }

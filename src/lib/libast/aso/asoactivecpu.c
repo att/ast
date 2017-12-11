@@ -51,7 +51,7 @@ asoactivecpu(void)
 			int	fd;
 			char	buf[8*1024];
 		
-			if ((fd = open("/proc/stat", O_INTERCEPT|O_RDONLY)) >= 0)
+			if ((fd = open("/proc/stat", O_RDONLY)) >= 0)
 			{
 				if ((n = read(fd, buf, sizeof(buf) - 1)) > 0)
 				{

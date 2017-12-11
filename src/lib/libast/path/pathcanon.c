@@ -533,9 +533,9 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 						*r++ = *path == '/' ? '/' : '.';
 					}
 					*r = 0;
-					if ((dev->fd = openat(dfd, buf, O_INTERCEPT|O_RDONLY|O_NONBLOCK|O_CLOEXEC|dev->oflags)) < 0)
+					if ((dev->fd = openat(dfd, buf, O_RDONLY|O_NONBLOCK|O_CLOEXEC|(dev->oflags&~O_INTERCEPT)) < 0)
 						return 0;
-					if ((n = openat(dev->fd, ".", O_INTERCEPT|O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
+					if ((n = openat(dev->fd, ".", O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
 					{
 						close(dev->fd);
 						dev->fd = -1;
@@ -757,11 +757,11 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 					if (r == canon)
 						r++;
 					*r = 0;
-					dev->fd = openat(dfd, x, O_INTERCEPT|O_RDONLY|O_NONBLOCK|O_CLOEXEC|dev->oflags);
+					dev->fd = openat(dfd, x, O_RDONLY|O_NONBLOCK|O_CLOEXEC|(dev->oflags&~O_INTERCEPT));
 					*r = '/';
 					if (dev->fd < 0)
 						t = 0;
-					else if ((n = openat(dev->fd, ".", O_INTERCEPT|O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
+					else if ((n = openat(dev->fd, ".", O_RDONLY|O_XATTR|O_NONBLOCK)) < 0)
 					{
 						close(dev->fd);
 						dev->fd = -1;
