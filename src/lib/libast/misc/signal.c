@@ -52,7 +52,7 @@
 #define SV_INTERRUPT	SV_ABORT
 #endif
 
-#if !_std_signal && (_lib_sigaction && defined(SA_NOCLDSTOP) || _lib_sigvec && defined(SV_INTERRUPT))
+#if !_std_signal && (defined(SA_NOCLDSTOP) || _lib_sigvec && defined(SV_INTERRUPT))
 
 #if !defined(SA_NOCLDSTOP) || !defined(SA_INTERRUPT) && defined(SV_INTERRUPT)
 #undef	SA_INTERRUPT

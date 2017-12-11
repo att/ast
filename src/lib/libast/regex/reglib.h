@@ -180,15 +180,11 @@ typedef struct regsubop_s
 #define setclr(p,c)	bitclr((p)->bits,c)
 #define settst(p,c)	bittst((p)->bits,c)
 
-#if _hdr_wchar && _lib_wctype && _lib_iswctype
-
 #include <stdio.h> /* because <wchar.h> includes it and we generate it */
 #include <wchar.h>
-#if _hdr_wctype
 #include <wctype.h>
-#endif
 
-#if !defined(iswblank) && !_lib_iswblank
+#if !defined(iswblank)
 #define _need_iswblank	1
 #define iswblank(x)	_reg_iswblank(x)
 extern int		_reg_iswblank(wint_t);
@@ -200,53 +196,6 @@ extern int		_reg_iswblank(wint_t);
 
 #if !defined(towlower) && !_lib_towlower
 #define towlower(x)	tolower(x)
-#endif
-
-#else
-
-#undef	_lib_wctype
-
-#ifndef iswalnum
-#define iswalnum(x)	isalnum(x)
-#endif
-#ifndef iswalpha
-#define iswalpha(x)	isalpha(x)
-#endif
-#ifndef iswcntrl
-#define iswcntrl(x)	iscntrl(x)
-#endif
-#ifndef iswdigit
-#define iswdigit(x)	isdigit(x)
-#endif
-#ifndef iswgraph
-#define iswgraph(x)	isgraph(x)
-#endif
-#ifndef iswlower
-#define iswlower(x)	islower(x)
-#endif
-#ifndef iswprint
-#define iswprint(x)	isprint(x)
-#endif
-#ifndef iswpunct
-#define iswpunct(x)	ispunct(x)
-#endif
-#ifndef iswspace
-#define iswspace(x)	isspace(x)
-#endif
-#ifndef iswupper
-#define iswupper(x)	isupper(x)
-#endif
-#ifndef iswxdigit
-#define iswxdigit(x)	isxdigit(x)
-#endif
-
-#ifndef towlower
-#define towlower(x)	tolower(x)
-#endif
-#ifndef towupper
-#define towupper(x)	toupper(x)
-#endif
-
 #endif
 
 #ifndef	iswblank

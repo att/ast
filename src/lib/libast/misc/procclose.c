@@ -72,16 +72,7 @@ procclose(Proc_t* p)
 				if (p->sigquit != SIG_IGN)
 					signal(SIGQUIT, p->sigquit);
 #if defined(SIGCHLD)
-#if _lib_sigprocmask
 				sigprocmask(SIG_SETMASK, &p->mask, NiL);
-#else
-#if _lib_sigsetmask
-				sigsetmask(p->mask);
-#else
-				if (p->sigchld != SIG_DFL)
-					signal(SIGCHLD, p->sigchld);
-#endif
-#endif
 #endif
 			}
 			status = status == -1 ?

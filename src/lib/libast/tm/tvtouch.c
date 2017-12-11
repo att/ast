@@ -43,9 +43,7 @@ __STDPP__directive pragma pp:hide utime
 #include <times.h>
 #include <error.h>
 
-#if _hdr_utime && _lib_utime
 #include <utime.h>
-#endif
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp:nohide utime
@@ -53,13 +51,7 @@ __STDPP__directive pragma pp:nohide utime
 #undef	utime
 #endif
 
-#if _lib_utime
-#if _hdr_utime
 extern int	utime(const char*, const struct utimbuf*);
-#else
-extern int	utime(const char*, const time_t*);
-#endif
-#endif
 
 #define NS(n)		(((uint32_t)(n))<1000000000L?(n):0)
 

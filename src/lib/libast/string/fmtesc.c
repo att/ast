@@ -92,12 +92,10 @@ fmtquote(const char* as, const char* qb, const char* qe, size_t n, int flags)
 	{
 		if ((m = mbtsize(s, MB_LEN_MAX, &q)) > 1 && (s + m) <= e)
 		{
-#if _hdr_wchar && _hdr_wctype
 			c = mbchar(&w, s, MB_LEN_MAX, &q);
 			if (!spaced && !escaped && (iswspace(c) || iswcntrl(c)))
 				spaced = 1;
 			s -= m;
-#endif
 			while (m--)
 				*b++ = *s++;
 		}

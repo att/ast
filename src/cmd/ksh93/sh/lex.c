@@ -48,24 +48,6 @@
 #define SYNBAD		3	/* exit value for syntax errors */
 #define STACK_ARRAY	3	/* size of depth match stack growth */
 
-#if _lib_iswblank < 0	/* set in lexstates.h to enable this code */
-
-int
-local_iswblank(wchar_t wc)
-{
-	static int      initialized;
-	static wctype_t wt;
-
-	if (!initialized)
-	{
-		initialized = 1;
-		wt = wctype("blank");
-	}
-	return(iswctype(wc, wt));
-}
-
-#endif
-
 /*
  * This structure allows for arbitrary depth nesting of (...), {...}, [...]
  */

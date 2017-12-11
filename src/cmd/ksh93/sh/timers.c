@@ -77,23 +77,17 @@ static double setalarm(double t)
 }
 
 /* signal handler for alarm call */
-#ifdef _lib_sigaction
 static void sigalrm(int sig, siginfo_t* info, void *context)
-#else
-static void sigalrm(int sig)
-#endif
 {
 	Timer_t *tp, *tplast, *tpold, *tpnext;
 	double now;
 	static double left;
-#ifdef _lib_sigaction
 	Shell_t	*shp = sh_getinterp();
 	if(shp->st.trapcom[SIGALRM] && *shp->st.trapcom[SIGALRM])
 	{
 		shp->siginfo[SIGALRM] = malloc(sizeof(siginfo_t));
 		memcpy(shp->siginfo[SIGALRM],context,sizeof(siginfo_t));
 	}
-#endif
 	NOT_USED(sig);
 	left = 0;
 	if(time_state&SIGALRM_CALL)

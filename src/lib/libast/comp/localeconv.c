@@ -75,16 +75,6 @@ static struct lconv	default_lconv =
 	CHAR_MAX,
 };
 
-#if !_lib_localeconv
-
-struct lconv*
-localeconv(void)
-{
-	return &default_lconv;
-}
-
-#endif
-
 /*
  * localeconv() intercept
  */

@@ -31,14 +31,9 @@ NoN(sigunblock)
 
 #include <sig.h>
 
-#ifndef SIG_UNBLOCK
-#undef	_lib_sigprocmask
-#endif
-
 int
 sigunblock(int s)
 {
-#if _lib_sigprocmask
 	int		op;
 	sigset_t	mask;
 
@@ -50,14 +45,6 @@ sigunblock(int s)
 	}
 	else op = SIG_SETMASK;
 	return(sigprocmask(op, &mask, NiL));
-#else
-#if _lib_sigsetmask
-	return(sigsetmask(s ? (sigsetmask(0L) & ~sigmask(s)) : 0L));
-#else
-	NoP(s);
-	return(0);
-#endif
-#endif
 }
 
 #endif

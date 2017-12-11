@@ -49,7 +49,7 @@ __STDPP__directive pragma pp:hide getpagesize getdtablesize
  */
 
 #include "FEATURE/standards"	/* iffe --include-first */
-#include "FEATURE/lib"
+#include "ast_lib.h"
 
 #ifdef __sun
 #define _timespec	timespec
@@ -60,19 +60,15 @@ __STDPP__directive pragma pp:hide getpagesize getdtablesize
 #undef	_SGIAPI
 #define _SGIAPI		1
 
-#if _hdr_limits
 #include <limits.h>
-#endif
 
 #undef	_SGIAPI
 #define _SGIAPI		0
 
-#include "FEATURE/lib"
+#include "ast_lib.h"
 #include "FEATURE/common"
 
-#if _hdr_unistd
 #include <unistd.h>
-#endif
 
 #include <sys/param.h>
 #include <sys/stat.h>

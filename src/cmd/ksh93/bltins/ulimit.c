@@ -71,9 +71,7 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 	int mode=0, n;
 	unsigned long hit = 0;
 	Shell_t *shp = context->shp;
-#ifdef _lib_getrlimit
 	struct rlimit rlp;
-#endif /* _lib_getrlimit */
 	const Limit_t* tp;
 	char* conf;
 	int label, unit, nosupport;
@@ -153,7 +151,6 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 				errormsg(SH_DICT,ERROR_system(1),e_readonly,tp->name);
 			else
 			{
-#ifdef _lib_getrlimit
 				if(getrlimit(n,&rlp) <0)
 					errormsg(SH_DICT,ERROR_system(1),e_number,limit);
 				if(mode&HARD)
@@ -162,31 +159,18 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 					rlp.rlim_cur = i;
 				if(setrlimit(n,&rlp) <0)
 					errormsg(SH_DICT,ERROR_system(1),e_overlimit,limit);
-#else
-				if((i=vlimit(n,i)) < 0)
-					errormsg(SH_DICT,ERROR_system(1),e_number,limit);
-#endif /* _lib_getrlimit */
 			}
 		}
 		else
 		{
 			if(!nosupport)
 			{
-#ifdef  _lib_getrlimit
 				if(getrlimit(n,&rlp) <0)
 					errormsg(SH_DICT,ERROR_system(1),e_number,limit);
 				if(mode&HARD)
 					i = rlp.rlim_max;
 				if(mode&SOFT)
 					i = rlp.rlim_cur;
-#else
-#   ifdef _lib_ulimit
-				n--;
-#   endif /* _lib_ulimit */
-				i = -1;
-				if((i=vlimit(n,i)) < 0)
-					errormsg(SH_DICT,ERROR_system(1),e_number,limit);
-#endif /* _lib_getrlimit */
 			}
 			if(label)
 			{

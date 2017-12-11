@@ -50,10 +50,6 @@ typedef union _Spawnvex_u Spawnvex_u;
 #define ENOSYS	EINVAL
 #endif
 
-#ifndef O_CLOEXEC
-#undef	_lib_pipe2
-#endif
-
 #if DEBUG_spawn
 
 /*
@@ -87,48 +83,20 @@ struct inheritance
 static pid_t
 spawn(const char* path, int nmap, const int map[], const struct inheritance* inherit, char* const argv[], char* const envv[])
 {
-#if _lib_fork || _lib_vfork
 	pid_t			pid;
 	pid_t			pgid;
 	int			i;
 	int			n;
 	int			m;
-#if _real_vfork
 	volatile int		exec_errno;
 	volatile int* volatile	exec_errno_ptr;
-#else
-	int			j;
-	int			k;
-	int			msg[2];
-#endif
-#endif
 
-#if _lib_fork || _lib_vfork
 	pgid = inherit && (inherit->flags & SPAWN_SETGROUP) ? inherit->pgroup : -1;
 	n = errno;
-#if _real_vfork
 	exec_errno = 0;
 	exec_errno_ptr = &exec_errno;
-#else
-#if _lib_pipe2
-	if (pipe2(msg, O_CLOEXEC) < 0)
-		msg[0] = -1;
-#else
-	if (pipe(msg) < 0)
-		msg[0] = -1;
-	else
-	{
-		fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-		fcntl(msg[1], F_SETFD, FD_CLOEXEC);
-	}
-#endif
-#endif
 	sigcritical(SIG_REG_EXEC|SIG_REG_PROC);
-#if _lib_vfork
 	pid = vfork();
-#else
-	pid = fork();
-#endif
 	if (pid == -1)
 		n = errno;
 	else if (!pid)
@@ -136,14 +104,6 @@ spawn(const char* path, int nmap, const int map[], const struct inheritance* inh
 		sigcritical(0);
 		for (i = 0; i < nmap; i++)
 		{
-#if !_real_vfork
-			for (j = 0; j < elementsof(msg); j++)
-				if (i == msg[j] && (k = fcntl(i, F_DUPFD, 0)) >= 0)
-				{
-					fcntl(k, F_SETFD, FD_CLOEXEC);
-					msg[j] = k;
-				}
-#endif
 			if (map[i] == i)
 				fcntl(i, F_SETFD, 0);
 			else
@@ -156,56 +116,20 @@ spawn(const char* path, int nmap, const int map[], const struct inheritance* inh
 		if (pgid >= 0 && setpgid(0, pgid) < 0 && pgid && errno == EPERM)
 			setpgid(pgid, 0);
 		execve(path, argv, envv);
-#if _real_vfork
 		*exec_errno_ptr = errno;
-#else
-		if (msg[0] != -1)
-		{
-			m = errno;
-			write(msg[1], &m, sizeof(m));
-		}
-#endif
 		_exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
 	}
-#if _real_vfork
 	if (pid != -1 && (m = *exec_errno_ptr))
 	{
 		while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
 		pid = -1;
 		n = m;
 	}
-#else
-	if (msg[0] != -1)
-	{
-		close(msg[1]);
-		if (pid != -1)
-		{
-			m = 0;
-			while (read(msg[0], &m, sizeof(m)) == -1)
-				if (errno != EINTR)
-				{
-					m = errno;
-					break;
-				}
-			if (m)
-			{
-				while (waitpid(pid, &n, 0) && errno == EINTR);
-				pid = -1;
-				n = m;
-			}
-		}
-		close(msg[0]);
-	}
-#endif
 	sigcritical(0);
 	if (pgid >= 0 && setpgid(pid, pgid) < 0 && pgid && errno == EPERM)
 		setpgid(pid, pid);
 	errno = n;
 	return pid;
-#else
-	errno = ENOSYS;
-	return -1;
-#endif
 }
 
 #else
@@ -231,44 +155,18 @@ spawn(const char* path, int nmap, const int map[], const struct inheritance* inh
 static pid_t
 spawnve(int mode, const char* path, char* const argv[], char* const envv[])
 {
-#if _lib_fork || _lib_vfork
 	pid_t			pid;
 	int			i;
 	int			n;
 	int			m;
-#if _real_vfork
 	volatile int		exec_errno;
 	volatile int* volatile	exec_errno_ptr;
-#else
-	int			msg[2];
-#endif
-#endif
 
-#if _lib_fork || _lib_vfork
 	n = errno;
-#if _real_vfork
 	exec_errno = 0;
 	exec_errno_ptr = &exec_errno;
-#else
-#if _lib_pipe2
-	if (pipe2(msg, O_CLOEXEC) < 0)
-		msg[0] = -1;
-#else
-	if (pipe(msg) < 0)
-		msg[0] = -1;
-	else
-	{
-		fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-		fcntl(msg[1], F_SETFD, FD_CLOEXEC);
-	}
-#endif
-#endif
 	sigcritical(SIG_REG_EXEC|SIG_REG_PROC);
-#if _lib_vfork
 	pid = vfork();
-#else
-	pid = fork();
-#endif
 	if (pid == -1)
 		n = errno;
 	else if (!pid)
@@ -277,54 +175,18 @@ spawnve(int mode, const char* path, char* const argv[], char* const envv[])
 		if (mode == P_DETACH)
 			setpgid(0, 0);
 		execve(path, argv, envv);
-#if _real_vfork
 		*exec_errno_ptr = errno;
-#else
-		if (msg[0] != -1)
-		{
-			m = errno;
-			write(msg[1], &m, sizeof(m));
-		}
-#endif
 		_exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
 	}
-#if _real_vfork
 	if (pid != -1 && (m = *exec_errno_ptr))
 	{
 		while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
 		pid = -1;
 		n = m;
 	}
-#else
-	if (msg[0] != -1)
-	{
-		close(msg[1]);
-		if (pid != -1)
-		{
-			m = 0;
-			while (read(msg[0], &m, sizeof(m)) == -1)
-				if (errno != EINTR)
-				{
-					m = errno;
-					break;
-				}
-			if (m)
-			{
-				while (waitpid(pid, &n, 0) && errno == EINTR);
-				pid = -1;
-				n = m;
-			}
-		}
-		close(msg[0]);
-	}
-#endif
 	sigcritical(0);
 	errno = n;
 	return pid;
-#else
-	errno = ENOSYS;
-	return -1;
-#endif
 }
 
 #endif
@@ -993,9 +855,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 #else
 
 #if _lib_spawnve
-#if _lib_fork || _lib_vfork
 	if (!vex || !vex->cur && !vex->flags)
-#endif
 		return spawnve(path, argv, envv);
 #endif
 	if (vex && ((vex->set & (0
@@ -1014,33 +874,21 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 #endif
     ))
 	{
-#if _lib_fork || _lib_vfork
 		pid_t			pgid;
 		int			n;
 		int			m;
 		Spawnvex_noexec_t	nx;
 		int			msg[2];
-#if _real_vfork
 		volatile int		exec_errno;
 		volatile int* volatile	exec_errno_ptr;
-#endif
 
 		if (!envv)
 			envv = environ;
-#if _lib_vfork
-#if _lib_fork
 		if (!vex || !(vex->flags & SPAWN_FORK))
-#endif
 			nx.flags = SPAWN_VFORK;
-#if _lib_fork
 		else
-#endif
-#endif
-#if _lib_fork
 			nx.flags = SPAWN_FORK;
-#endif
 		n = errno;
-#if _real_vfork
 		if (nx.flags & SPAWN_VFORK)
 		{
 			exec_errno = 0;
@@ -1048,33 +896,14 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			msg[0] = msg[1] = -1;
 		}
 		else
-#endif
-#if _lib_pipe2
 		if (pipe2(msg, O_CLOEXEC) < 0)
 			msg[0] = msg[1] = -1;
-#else
-		if (pipe(msg) < 0)
-			msg[0] = msg[1] = -1;
-		else
-		{
-			fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-			fcntl(msg[1], F_SETFD, FD_CLOEXEC);
-		}
-#endif
 		if (!(flags & SPAWN_FOREGROUND))
 			sigcritical(SIG_REG_EXEC|SIG_REG_PROC);
-#if _lib_vfork
-#if _lib_fork
 		if (nx.flags & SPAWN_VFORK)
-#endif
 			pid = vfork();
-#if _lib_fork
 		else
-#endif
-#endif
-#if _lib_fork
 			pid = fork();
-#endif
 		if (pid == -1)
 			n = errno;
 		else if (!pid)
@@ -1112,11 +941,9 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 					errno = (*vex->op[i + 2].callback)(&nx, SPAWN_noexec, errno);
 				}
 			}
-#if _real_vfork
 			if (nx.flags & SPAWN_VFORK)
 				*exec_errno_ptr = errno;
 			else
-#endif
 			if (msg[1] != -1)
 			{
 				m = errno;
@@ -1124,7 +951,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			}
 			_exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
 		}
-#if _real_vfork
 		if ((nx.flags & SPAWN_VFORK) && pid != -1 && (m = *exec_errno_ptr))
 		{
 			while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
@@ -1132,7 +958,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			n = m;
 		}
 		else
-#endif
 		if (msg[0] != -1)
 		{
 			close(msg[1]);
@@ -1164,10 +989,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 		}
 		errno = n;
 		return pid;
-#else
-		errno = ENOSYS;
-		return -1;
-#endif
 	}
 	if (vex)
 	{

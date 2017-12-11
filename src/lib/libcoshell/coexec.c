@@ -244,13 +244,6 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 	}
 	else if (flags & CO_KSH)
 	{
-#if !_lib_fork && defined(_map_spawnve)
-		Sfio_t*	tp;
-
-		tp = sp;
-		if (!(sp = sfstropen()))
-			sp = tp;
-#endif
 		sfprintf(sp, "{\ntrap 'set %s$?; trap \"\" 0; IFS=\"\n\"; print -u$%s x %d $1 $(times); exit $1' 0 HUP INT QUIT TERM%s\n%s%s%s",
 			(flags & CO_SILENT) ? "" : "+x ",
 			CO_ENV_MSGFD,
@@ -292,30 +285,12 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 			else if (cj->err = pathtemp(NiL, 64, NiL, "coe", NiL))
 				sfprintf(sp, " 2>%s", cj->err);
 		}
-#if !_lib_fork && defined(_map_spawnve)
-		if (sp != tp)
-		{
-			sfprintf(tp, "%s -c '", state.sh);
-			if (!(s = costash(sp)))
-				return 0;
-			coquote(tp, s, 0);
-			sfprintf(tp, "'");
-			sfstrclose(sp);
-			sp = tp;
-		}
-#endif
 		sfprintf(sp, " &\nprint -u$%s j %d $!\n",
 			CO_ENV_MSGFD,
 			cj->id);
 	}
 	else
 	{
-#if !_lib_fork && defined(_map_spawnve)
-		Sfio_t*	tp;
-
-		tp = sp;
-		if (!(sp = sfstropen())) sp = tp;
-#endif
 		flags |= CO_IGNORE;
 		if (co->mode & CO_MODE_SEPARATE)
 		{
@@ -382,18 +357,6 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 					cj->id,
 					CO_ENV_MSGFD);
 		}
-#if !_lib_fork && defined(_map_spawnve)
-		if (sp != tp)
-		{
-			sfprintf(tp, "%s -c '", state.sh);
-			if (!(s = costash(sp)))
-				return 0;
-			coquote(tp, s, 0);
-			sfprintf(tp, "'");
-			sfstrclose(sp);
-			sp = tp;
-		}
-#endif
 		if (!(co->mode & CO_MODE_SEPARATE))
 			sfprintf(sp, " &\necho j %d $! >&$%s\n",
 				cj->id,

@@ -137,16 +137,13 @@ fgetcwd(int fd, char* buf, size_t len)
 	p = buf + len - 1;
 	*p = 0;
 	n = elementsof(env);
-#if !_lib_fdopendir
 	if ((dd = fd) != AT_FDCWD && fchdir(dd))
 		ERROR(errno);
-#endif
 	for (;;)
 	{
 		tmp = cur;
 		cur = par;
 		par = tmp;
-#if _lib_fdopendir
 		if ((dd = openat(fd, "..", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC)) < 0)
 			ERROR(errno);
 		if (fstat(dd, par))
@@ -162,21 +159,6 @@ fgetcwd(int fd, char* buf, size_t len)
 		if (!(dirp = fdopendir(dd)))
 			ERROR(errno);
 		fd = dd;
-#else
-		if (stat("..", par))
-			ERROR(errno);
-		if (par->st_dev == cur->st_dev && par->st_ino == cur->st_ino)
-		{
-			*--p = '/';
-			break;
-		}
-		if (chdir(".."))
-			ERROR(errno);
-		if (dirp)
-			closedir(dirp);
-		if (!(dirp = opendir(".")))
-			ERROR(errno);
-#endif
 #ifdef D_FILENO
 		if (par->st_dev == cur->st_dev)
 		{
@@ -244,10 +226,8 @@ fgetcwd(int fd, char* buf, size_t len)
 	if (env[0].path)
 		free(env[0].path);
 	env[0].path = strdup(buf);
-#if !_lib_fdopendir
 	if (dd != AT_FDCWD)
 		fchdir(dd);
-#endif
 	if (dirp)
 		closedir(dirp);
 	if (f != FS3D_OFF)
@@ -258,10 +238,8 @@ fgetcwd(int fd, char* buf, size_t len)
 		free(buf);
 	if (dirp)
 		closedir(dirp);
-#if !_lib_fdopendir
 	if (dd != AT_FDCWD)
 		fchdir(dd);
-#endif
 	if (f != FS3D_OFF)
 		fs3d(f);
 	return 0;

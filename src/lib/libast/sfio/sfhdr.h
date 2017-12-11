@@ -54,7 +54,7 @@
 #undef	_LARGEFILE_SOURCE
 #endif
 
-#if !_NO_LARGEFILE64_SOURCE && _typ_off64_t && _lib_lseek64 && _lib_stat64
+#if !_NO_LARGEFILE64_SOURCE
 #undef	_LARGEFILE64_SOURCE
 #undef	_LARGEFILE_SOURCE
 #undef	_FILE_OFFSET_BITS
@@ -84,20 +84,14 @@
 #include	<ls.h>
 
 /* ast always provides multibyte handling */
-#undef _hdr_wchar
-#undef _lib_mbrtowc
 #undef _lib_wcrtomb
-#define _hdr_wchar	1
-#define _lib_mbrtowc	1
 #define _lib_wcrtomb	1
 
 #if _mem_st_blksize_stat
 #define _stat_blksize	1
 #endif
 
-#if _lib_localeconv && _hdr_locale
 #define _lib_locale	1
-#endif
 
 #define sfoff_t		off_t
 #define sfstat_t	struct stat
@@ -126,24 +120,18 @@
 #undef  _hdr_stat
 #undef  _hdr_filio
 #undef  _sys_filio
-#undef  _lib_poll
 #undef  _stream_peek
-#undef  _socket_peek
 #undef  _hdr_vfork
 #undef  _sys_vfork
-#undef  _lib_vfork
 #undef  _hdr_values
 #undef  _hdr_math
-#undef  _sys_mman
 #undef  _hdr_mman
 #undef  _sys_ioctl
 #endif
 
 #include	<stdlib.h>
 
-#if _hdr_string
 #include	<string.h>
-#endif
 
 #include	<time.h>
 
@@ -166,15 +154,8 @@
 #include	<unistd.h>
 
 #if !_LARGEFILE64_SOURCE	/* turn off the *64 stuff */
-#undef	_typ_off64_t
 #undef	_typ_struct_stat64
-#undef	_lib_creat64
-#undef	_lib_open64
 #undef	_lib_close64
-#undef	_lib_stat64
-#undef	_lib_fstat64
-#undef	_lib_ftruncate64
-#undef	_lib_lseek64
 #undef	_lib_mmap64
 #undef	_lib_munmap64
 #endif /*!_LARGEFILE64_SOURCE */
@@ -182,41 +163,26 @@
 /* see if we can use memory mapping for io */
 #if _LARGEFILE64_SOURCE && !_lib_mmap64
 #undef _hdr_mman
-#undef _sys_mman
 #endif
 #if _hdr_mman
 #include	<mman.h>
 #endif
-#if _sys_mman
 #include	<sys/mman.h>
-#endif
 
 /* standardize system calls and types dealing with files */
-#if _typ_off64_t
-#define sfoff_t		off64_t
-#else
+//#if _typ_off64_t
+//#define sfoff_t		off64_t
+//#else
 #define sfoff_t		off_t
-#endif
+//#endif
 #if _typ_struct_stat64
 #define sfstat_t	struct stat64
 #else
 #define sfstat_t	struct stat
 #endif
-#if _lib_lseek64
-#define syslseekf	lseek64
-#else
 #define syslseekf	lseek
-#endif
-#if _lib_stat64
-#define sysstatf	stat64
-#else
 #define sysstatf	stat
-#endif
-#if _lib_fstat64
-#define sysfstatf	fstat64
-#else
 #define sysfstatf	fstat
-#endif
 #if _lib_mmap64
 #define sysmmapf	mmap64
 #else
@@ -227,34 +193,15 @@
 #else
 #define sysmunmapf	munmap
 #endif
-#if _lib_open64
-#define sysopenf	open64
-#else
 #define sysopenf	open
-#endif
-#if _lib_creat64
-#define syscreatf	creat64
-#else
 #define syscreatf	creat
-#endif
 #if _lib_close64
 #define sysclosef	close64
 #else
 #define sysclosef	close
 #endif
-#if _lib_ftruncate64
-#undef _lib_ftruncate
-#define _lib_ftruncate	1
-#define sysftruncatef	ftruncate64
-#endif
-#if !_lib_ftruncate64 && _lib_ftruncate
 #define sysftruncatef	ftruncate
-#endif
-#if _lib_remove
 #define sysremovef	remove
-#else
-#define sysremovef	unlink
-#endif
 
 #define sysreadf	read
 #define syswritef	write
@@ -287,7 +234,7 @@
 
 #else
 
-#if _hdr_wchar && _typ_mbstate_t && _lib_wcrtomb && _lib_mbrtowc
+#if _typ_mbstate_t && _lib_wcrtomb
 #define _has_multibyte		1	/* Xopen-compliant	*/
 #if _typ___va_list && !defined(__va_list)
 #define __va_list	va_list
@@ -298,9 +245,9 @@
 #define SFMBSET(lhs,v)		(lhs = (v))
 #define SFMBDCL(mb)		mbstate_t mb;
 #define SFMBLEN(s,mb)		mbrtowc(NIL(wchar_t*), (s), SFMBMAX, (mb) )
-#endif /*_hdr_wchar && _typ_mbstate_t && _lib_wcrtomb && _lib_mbrtowc*/
+#endif /*_typ_mbstate_t && _lib_wcrtomb */
 
-#if !_has_multibyte && _hdr_wchar && _lib_mbtowc && _lib_wctomb
+#if !_has_multibyte && _lib_wctomb
 #define _has_multibyte		2	/* no shift states	*/
 #include	<wchar.h>
 #undef mbrtowc
@@ -312,7 +259,7 @@
 #define SFMBSET(lhs,v)
 #define SFMBDCL(mb)
 #define SFMBLEN(s,mb)		mbrtowc(NIL(wchar_t*), (s), SFMBMAX, (mb) )
-#endif /*!_has_multibyte && _hdr_wchar && _lib_mbtowc && _lib_wctomb*/
+#endif /*!_has_multibyte && _lib_wctomb*/
 
 #define SFMBSTATE(f)		((Mbstate_t*)0)
 
@@ -405,36 +352,15 @@
 
 
 /* functions for polling readiness of streams */
-#if !_lib_poll
-#if _lib_select
-#undef _lib_poll
-#if _sys_select
-#include	<sys/select.h>
-#endif
-#else
-#if _lib_poll_fd_1 || _lib_poll_fd_2
-#define _lib_poll	1
-#endif
-#endif /*_lib_select*/
-#endif /*_lib_poll*/
-
-#if _lib_poll
 #include	<poll.h>
 
-#if _lib_poll_fd_1
 #define SFPOLL(pfd,n,tm)	poll((pfd),(ulong)(n),(tm))
-#else
-#define SFPOLL(pfd,n,tm)	poll((ulong)(n),(pfd),(tm))
-#endif
-#endif /*_lib_poll*/
 
 #if _stream_peek
 #include	<stropts.h>
 #endif
 
-#if _socket_peek
 #include	<sys/socket.h>
-#endif
 
 /* to test for executable access mode of a file */
 #ifndef X_OK
@@ -442,7 +368,7 @@
 #endif
 
 /* alternative process forking */
-#if _lib_vfork && !defined(fork) && !defined(__sparc) && !defined(__sparc__)
+#if !defined(fork) && !defined(__sparc) && !defined(__sparc__)
 #if _hdr_vfork
 #include	<vfork.h>
 #endif
@@ -845,7 +771,7 @@ typedef struct _sfextern_s
 #endif
 
 /* set/unset sequential states for mmap */
-#if _lib_madvise && defined(MADV_SEQUENTIAL) && defined(MADV_NORMAL)
+#if defined(MADV_SEQUENTIAL) && defined(MADV_NORMAL)
 #define SFMMSEQON(f,a,s) \
 		do { int oerrno = errno; \
 		     (void)madvise((caddr_t)(a),(size_t)(s),MADV_SEQUENTIAL); \
@@ -1120,16 +1046,9 @@ typedef struct _sftab_
 
 /* fast functions for memory copy and memory clear */
 #if _PACKAGE_ast
-#define memclear(s,n)	memzero(s,n)
-#else
-#if _lib_bcopy && !_lib_memcpy
-#define memcpy(to,fr,n)	bcopy((fr),(to),(n))
-#endif
-#if _lib_bzero && !_lib_memset
-#define memclear(s,n)	bzero((s),(n))
-#else
+//#define memclear(s,n)	memzero(s,n)
+//#else
 #define memclear(s,n)	memset((s),'\0',(n))
-#endif
 #endif /*_PACKAGE_ast*/
 
 /* note that MEMCPY advances the associated pointers */
@@ -1201,10 +1120,10 @@ extern int		errno;
 
 #if !_PACKAGE_ast
 
-#if _lib_bcopy && !_proto_bcopy
+#if !_proto_bcopy
 extern void	bcopy _ARG_((const void*, void*, size_t));
 #endif
-#if _lib_bzero && !_proto_bzero
+#if !_proto_bzero
 extern void	bzero _ARG_((void*, size_t));
 #endif
 
@@ -1214,17 +1133,11 @@ extern void	_exit _ARG_((int));
 typedef int(*	Onexit_f)_ARG_((void));
 extern Onexit_f	onexit _ARG_((Onexit_f));
 
-#if _lib_vfork && !_hdr_vfork && !_sys_vfork
+#if !_hdr_vfork && !_sys_vfork
 extern pid_t	vfork _ARG_((void));
 #endif /*_lib_vfork*/
 
-#if _lib_poll
-#if _lib_poll_fd_1
 extern int	poll _ARG_((struct pollfd*, ulong, int));
-#else
-extern int	poll _ARG_((ulong, struct pollfd*, int));
-#endif
-#endif /*_lib_poll*/
 
 #endif /* _PACKAGE_ast */
 

@@ -112,15 +112,11 @@ struct checkpt
 #define sh_popcontext(shp,bp)	(shp->jmplist=(bp)->prev, errorpop(&((bp)->err)))
 
 typedef void (*sh_sigfun_t)(int);
-#ifdef _lib_sigaction
-    extern  sh_sigfun_t sh_signal(int,sh_sigfun_t);
-    extern void 	sh_fault(int,siginfo_t*, void*);
-    extern void		sh_setsiginfo(siginfo_t*);
+extern  sh_sigfun_t sh_signal(int,sh_sigfun_t);
+extern void 	sh_fault(int,siginfo_t*, void*);
+extern void		sh_setsiginfo(siginfo_t*);
 #   undef signal
 #   define signal(a,b)	sh_signal(a,(sh_sigfun_t)(b))
-#else
-    extern void 	sh_fault(int);
-#endif
 
 extern void 	sh_done(void*,int);
 extern void	sh_siginit(void*);

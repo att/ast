@@ -178,50 +178,10 @@ lib	getfsstat_statvfs note{ getfsstat uses statvfs -- just in case it is confuse
 }end
 
 cat{
-	#if _sys_statvfs
 	#include <sys/statvfs.h>
 	#if !_mem_statvfs_f_basetype
 	#if _ary_f_reserved7
 	#define f_basetype	f_reserved7
-	#endif
-	#endif
-	#else
-	#define _mem_f_basetype_statvfs	1
-	#define _mem_f_frsize_statvfs	1
-	struct statvfs
-	{
-	unsigned long	f_bsize;	/* fundamental file system block size */
-	unsigned long	f_frsize;	/* fragment size */
-	unsigned long	f_blocks;	/* total # of blocks of f_frsize on fs */
-	unsigned long	f_bfree;	/* total # of free blocks of f_frsize */
-	unsigned long	f_bavail;	/* # of free blocks avail to non-superuser */
-	unsigned long	f_files;	/* total # of file nodes (inodes) */
-	unsigned long	f_ffree;	/* total # of free file nodes */
-	unsigned long	f_favail;	/* # of free nodes avail to non-superuser */
-	unsigned long	f_fsid;		/* file system id (dev for now) */
-	char		f_basetype[16]; /* target fs type name, null-terminated */
-	unsigned long	f_flag;		/* bit-mask of flags */
-	unsigned long	f_namemax;	/* maximum file name length */
-	char		f_fstr[32];	/* filesystem-specific string */
-	unsigned long	f_filler[16];	/* reserved for future expansion */
-	};
-	extern int	fstatvfs(int, struct statvfs*);
-	extern int	statvfs(const char*, struct statvfs*);
-	#endif
-	#if _typ_off64_t
-	#undef	off_t
-	#define off_t	off64_t
-	#endif
-	#if _lib_statvfs64 && !defined(statvfs)
-	#define statvfs		statvfs64
-	#if !defined(__USE_LARGEFILE64)
-	extern int		statvfs64(const char*, struct statvfs64*);
-	#endif
-	#endif
-	#if _lib_fstatvfs64 && !defined(fstatvfs)
-	#define fstatvfs	fstatvfs64
-	#if !defined(__USE_LARGEFILE64)
-	extern int		fstatvfs64(int, struct statvfs64*);
 	#endif
 	#endif
 }end

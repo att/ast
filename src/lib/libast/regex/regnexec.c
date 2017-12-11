@@ -669,9 +669,6 @@ collmatch(Env_t* env, Rex_t* rex, unsigned char* s, unsigned char* e, unsigned c
 		key[z] = 0;
 		t = s;
 		c = mbchar(&w, t, MB_LEN_MAX, &env->q);
-#if !_lib_wctype
-		c &= 0xff;
-#endif
 		x = 0;
 	}
 	else

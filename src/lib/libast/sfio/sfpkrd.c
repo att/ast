@@ -62,9 +62,6 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 #if !_stream_peek
 	t &= ~STREAM_PEEK;
 #endif
-#if !_socket_peek
-	t &= ~SOCKET_PEEK;
-#endif
 
 	for(ntry = 0; ntry < 2; ++ntry)
 	{
@@ -131,7 +128,6 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 			/* let select be interrupted instead of recv which autoresumes */
 			(t&SOCKET_PEEK) )
 		{	r = -2;
-#if _lib_poll
 			if(r == -2)
 			{
 				struct pollfd	po;
@@ -150,8 +146,6 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 				}
 				else	r = (po.revents&POLLIN) ? 1 : -1;
 			}
-#endif /*_lib_poll*/
-#if _lib_select
 			if(r == -2)
 			{
 #if _hpux_threads && vt_threaded
@@ -180,33 +174,8 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 				}
 				else	r = FD_ISSET(fd,&rd) ? 1 : -1;
 			}
-#endif /*_lib_select*/
 			if(r == -2)
 			{
-#if !_lib_poll && !_lib_select	/* both poll and select can't be used */
-#ifdef FIONREAD			/* quick and dirty check for availability */
-				long	nsec = tm < 0 ? 0 : (tm+999)/1000;
-				while(nsec > 0 && r < 0)
-				{	long	avail = -1;
-					if((r = ioctl(fd,FIONREAD,&avail)) < 0)
-					{	if(errno == EINTR)
-							return -1;
-						else if(errno == EAGAIN)
-						{	errno = 0;
-							continue;
-						}
-						else	/* ioctl failed completely */
-						{	r = -2;
-							break;
-						}
-					}
-					else	r = avail <= 0 ? -1 : (ssize_t)avail;
-
-					if(r < 0 && nsec-- > 0)
-						sleep(1);
-				}
-#endif
-#endif
 			}
 
 			if(r > 0)		/* there is data now */
@@ -220,7 +189,6 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 			break;
 		}
 
-#if _socket_peek
 		if(t&SOCKET_PEEK)
 		{
 #if __MACH__ && __APPLE__ /* check 10.4 recv(MSG_PEEK) bug that consumes pipe data */
@@ -282,7 +250,6 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 				}
 			}
 		}
-#endif
 	}
 
 	if(r < 0)

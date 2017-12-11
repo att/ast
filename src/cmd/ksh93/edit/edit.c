@@ -30,10 +30,8 @@
 #include	<ast.h>
 #include	<errno.h>
 #include	<ccode.h>
-#ifdef _hdr_utime
 #   include	<utime.h>
 #   include	<ls.h>
-#endif
 
 #if KSHELL
 #   include	"defs.h"

@@ -67,16 +67,7 @@
 static void error_exit(const char*);
 static int in_dir(const char*, const char*);
 static int endsh(const char*);
-#ifndef _lib_setregid
-#   undef _lib_setreuid
-#endif
-#ifndef _lib_setreuid
-    static void setids(int,uid_t,gid_t);
-    static int mycopy(int, int);
-    static void maketemp(char*);
-#else
-    static void setids(int,int,int);
-#endif /* _lib_setreuid */
+static void setids(int,int,int);
 
 static const char version[]	= "\n@(#)$Id: suid_exec "SH_RELEASE" $\n";
 static const char badopen[]	= "cannot open";
@@ -110,45 +101,6 @@ int main(int argc,char *argv[])
 	rgroupid = getgid();
 	egroupid = getegid();
 	p = argv[0];
-#ifndef _lib_setreuid
-	maketemp(tmpname);
-	if(strcmp(p,tmpname)==0)
-	{
-		/* At this point, the presumption is that we are the
-		 * version of THISPROG copied into /tmp, with the owner,
-		 * group, and setuid/gid bits correctly set.  This copy of
-		 * the program is executable by anyone, so we must be careful
-		 * not to allow just any invocation of it to succeed, since
-		 * it is setuid/gid.  Validate the proper execution by
-		 * examining the FDVERIFY file descriptor -- if it is owned
-		 * by root and is mode SPECIAL, then this is proof that it was
-		 * passed by a program with superuser privileges -- hence we
-		 * can presume legitimacy.  Otherwise, bail out, as we suspect
-		 * an impostor.
-		 */
-		if(fstat(FDVERIFY,&statb) < 0 || statb.st_uid != 0 ||
-		    (statb.st_mode & ~S_IFMT) != SPECIAL || close(FDVERIFY)<0)
-			error_exit(badexec);
-		/* This enables the grandchild to clean up /tmp file */
-		close(FDSYNC);
-		/* Make sure that this is a valid invocation of the clone.
-		 * Perhaps unnecessary, given FDVERIFY, but what the heck...
-		 */
-		if(stat(tmpname,&statb) < 0 || statb.st_nlink != 1 ||
-		    !S_ISREG(statb.st_mode))
-			error_exit(badexec);
-		if(ruserid != euserid &&
-		  ((statb.st_mode & S_ISUID) == 0 || statb.st_uid != euserid))
-			error_exit(badexec);
-		goto exec;
-	}
-	/* Make sure that this is the real setuid program, not the clone.
-	 * It is possible by clever hacking to get past this point in the
-	 * clone, but it doesn't do the hacker any good that I can see.
-	 */
-	if(euserid)
-		error_exit(badexec);
-#endif /* _lib_setreuid */
 	/* Open the script for reading first and then validate it.  This
 	 * prevents someone from pulling a switcheroo while we are validating.
 	 */
@@ -228,9 +180,6 @@ int main(int argc,char *argv[])
 		
 	if(mode)
 		setids(mode, effuid, effgid);
-#ifndef _lib_setreuid
-exec:
-#endif /* _lib_setreuid */
 	/* only use SHELL if file is in trusted directory and ends in sh */
 	shell = getenv("SHELL");
 	if(shell == 0 || !endsh(shell) || (
@@ -307,7 +256,6 @@ int eaccess(const char *name, int mode)
 			mode <<= 6;
 		else if(egroupid == statb.st_gid)
 			mode <<= 3;
-#ifdef _lib_getgroups
 		/* on some systems you can be in several groups */
 		else
 		{
@@ -334,7 +282,6 @@ int eaccess(const char *name, int mode)
 				}
 			}
 		}
-#endif /* _lib_getgroups */
 		if(statb.st_mode & mode)
 			return(0);
 	}
@@ -343,7 +290,6 @@ int eaccess(const char *name, int mode)
 
 #endif
 
-#ifdef _lib_setreuid
 static void setids(int mode,int owner,int group)
 {
 	if(mode & S_ISGID)
@@ -355,158 +301,3 @@ static void setids(int mode,int owner,int group)
 	 */
 	setreuid(ruserid,owner);
 }
-
-#else
-/*
- * This version of setids creats a /tmp file and copies itself into it.
- * The "clone" file is made executable with appropriate suid/sgid bits.
- * Finally, the clone is exec'ed.  This file is unlinked by a grandchild
- * of this program, who waits around until the text is free.
- */
-
-static void setids(int mode,uid_t owner,gid_t group)
-{
-	int n,m;
-	int pv[2];
-
-	/*
-	 * Create a token to pass to the new program for validation.
-	 * This token can only be procured by someone running with an
-	 * effective userid of root, and hence gives the clone a way to
-	 * certify that it was really invoked by THISPROG.  Someone who
-	 * is already root could spoof us, but why would they want to?
-	 *
-	 * Since we are root here, we must be careful:  What if someone
-	 * linked a valuable file to tmpname?
-	 */
-	unlink(tmpname);	/* should normally fail */
-#ifdef O_EXCL
-	if((n = open(tmpname, O_WRONLY | O_CREAT | O_EXCL, SPECIAL)) < 0 ||
-		unlink(tmpname) < 0)
-#else
-	if((n = open(tmpname, O_WRONLY | O_CREAT ,SPECIAL)) < 0 || unlink(tmpname) < 0)
-#endif
-		error_exit(badexec);
-	if(n != FDVERIFY)
-	{
-		close(FDVERIFY);
-		if(fcntl(n,F_DUPFD,FDVERIFY) != FDVERIFY)
-			error_exit(badexec);
-	}
-	mode |= S_IEXEC|(S_IEXEC>>3)|(S_IEXEC>>6);
-	/* create a pipe for synchronization */
-	if(pipe(pv) < 0)
-		error_exit(badexec);
-	if((n=fork()) == 0)
-	{	/* child */
-		close(FDVERIFY);
-		close(pv[1]);
-		if((n=fork()) == 0)
-		{	/* grandchild -- cleans up clone file */
-			signal(SIGHUP, SIG_IGN);
-			signal(SIGINT, SIG_IGN);
-			signal(SIGQUIT, SIG_IGN);
-			signal(SIGTERM, SIG_IGN);
-			read(pv[0],pv,1); /* wait for clone to close pipe */
-			while(unlink(tmpname) < 0 && errno == ETXTBSY)
-				sleep(1);
-			exit(0);
-	    	}
-		else if(n == -1)
-			exit(1);
-		else
-		{
-			/* Create a set[ug]id file that will become the clone. 
-			 * To make this atomic, without need for chown(), the
-			 * child takes on desired user and group.  The only
-			 * downsize of this that I can see is that it may
-			 * screw up some per- * user accounting.
-			 */
-			if((m = open(THISPROG, O_RDONLY)) < 0)
-				exit(1);
-			if((mode & S_ISGID) && setgid(group) < 0)
-				exit(1);
-			if((mode & S_ISUID) && owner && setuid(owner) < 0)
-				exit(1);
-#ifdef O_EXCL
-			if((n = open(tmpname,O_WRONLY|O_CREAT|O_TRUNC|O_EXCL, mode)) < 0)
-#else
-			unlink(tmpname);
-			if((n = open(tmpname,O_WRONLY|O_CREAT|O_TRUNC, mode)) < 0)
-#endif /* O_EXCL */
-				exit(1);
-			/* populate the clone */
-			m = mycopy(m,n);
-			if(chmod(tmpname,mode) <0)
-				exit(1);
-			exit(m);
-		}
-	}
-	else if(n == -1)
-		error_exit(badexec);
-	else
-	{
-		arglist[0] = (char*)tmpname;
-		close(pv[0]);
-		/* move write end of pipe into FDSYNC */
-		if(pv[1] != FDSYNC)
-		{
-			close(FDSYNC);
-			if(fcntl(pv[1],F_DUPFD,FDSYNC) != FDSYNC)
-				error_exit(badexec);
-		}
-		/* wait for child to die */
-		while((m = wait(0)) != n)
-			if(m == -1 && errno != EINTR)
-				break;
-		/* Kill any setuid status at this point.  That way, if the
-		 * clone is not setuid, we won't exec it as root.  Also, don't
-		 * neglect to consider that someone could have switched the
-		 * clone file on us.
-		 */
-		if(setuid(ruserid) < 0)
-			error_exit(badexec);
-		execv(tmpname,arglist);
-		error_exit(badexec);
-	}
-}
-
-/*
- * create a unique name into the <template>
- */
-
-static void maketemp(char *template)
-{
-	char *cp = template;
-	pid_t n = getpid();
-	/* skip to end of string */
-	while(*++cp);
-	/* convert process id to string */
-	while(n > 0)
-	{
-		*--cp = (n%10) + '0';
-		n /= 10;
-	}
-	
-}
-
-/*
- *  copy THISPROG into the open file number <fdo> and close <fdo>
- */
-
-static int mycopy(int fdi, int fdo)
-{
-	char buffer[BLKSIZE];
-	int n;
-
-	while((n = read(fdi,buffer,BLKSIZE)) > 0)
-		if(write(fdo,buffer,n) != n)
-			break;
-	close(fdi);
-	close(fdo);
-	return n;
-}
-
-#endif /* _lib_setreuid */
-
-

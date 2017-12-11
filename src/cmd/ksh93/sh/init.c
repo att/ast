@@ -1800,7 +1800,6 @@ static void stat_init(Shell_t *shp) {
 #define stat_init(x)
 #endif  // SHOPT_STATS
 
-#ifdef _lib_sigaction
 #define SIGNAME_MAX 32
 static void siginfo_init(Shell_t *shp) {
     struct Svars *sp;
@@ -1865,7 +1864,6 @@ void sh_setsiginfo(siginfo_t *sip) {
     nv_setsize(np, 10);
     np->nvalue.llp = (Sflong_t *)&(sip->si_value.sival_ptr);
 }
-#endif
 
 //
 // Initialize the shell name and alias table.
@@ -1994,9 +1992,7 @@ static Init_t *nv_init(Shell_t *shp) {
     nv_onattr(VERSIONNOD, NV_REF);
     math_init(shp);
     if (!shgd->stats) stat_init(shp);
-#ifdef _lib_sigaction
     siginfo_init(shp);
-#endif
     return ip;
 }
 

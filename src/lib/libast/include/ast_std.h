@@ -62,34 +62,6 @@
 #endif
 #include <wchar.h>
 
-/* locale stuff */
-
-#if !_hdr_locale
-
-struct lconv
-{
-	char*	decimal_point;
-	char*	thousands_sep;
-	char*	grouping;
-	char*	int_curr_symbol;
-	char*	currency_symbol;
-	char*	mon_decimal_point;
-	char*	mon_thousands_sep;
-	char*	mon_grouping;
-	char*	positive_sign;
-	char*	negative_sign;
-	char	int_frac_digits;
-	char	frac_digits;
-	char	p_cs_precedes;
-	char	p_sep_by_space;
-	char	n_cs_precedes;
-	char	n_sep_by_space;
-	char	p_sign_posn;
-	char	n_sign_posn;
-};
-
-#endif
-
 #if _BLD_ast && defined(__EXPORT__)
 #define extern		__EXPORT__
 #endif
@@ -200,11 +172,7 @@ extern char*		strerror(int);
 #undef	extern
 
 #undef	strcoll
-#if _std_strcoll
 #define strcoll		_ast_info.collate
-#else
-#define strcoll		strcmp
-#endif
 
 typedef struct Mbstate_s
 {
@@ -280,16 +248,8 @@ extern _Ast_info_t	_ast_info;
 
 #if !defined(__cplusplus)
 
-#if !defined(memcpy) && !defined(_lib_memcpy) && defined(_lib_bcopy)
-#define memcpy(t,f,n)	(bcopy(f,t,n),(t))
-#endif
-
 #if !defined(memzero) && !defined(_lib_memzero)
-#if defined(_lib_memset) || !defined(_lib_bzero)
-#define memzero(b,n)	memset(b,0,n)
-#else
 #define memzero(b,n)	(bzero(b,n),(b))
-#endif
 #endif
 
 #endif
@@ -297,11 +257,11 @@ extern _Ast_info_t	_ast_info;
 typedef int (*Qsortcmp_f)(const void*, const void*);
 typedef int (*Qsortcmp_r_f)(const void*, const void*, void*);
 
-#if !defined(qsort) && !_lib_qsort
+#if !defined(qsort)
 #define	qsort		_ast_qsort
 extern void		qsort(void*, size_t, size_t, Qsortcmp_f);
 #endif
-#if !defined(qsort_r) && !_lib_qsort_r
+#if !defined(qsort_r)
 #define	qsort_r		_ast_qsort_r
 extern void		qsort_r(void*, size_t, size_t, Qsortcmp_r_f, void*);
 #endif
@@ -312,14 +272,6 @@ extern int		remove(const char*);
 
 #if !defined(rename)
 extern int		rename(const char*, const char*);
-#endif
-
-#if !defined(strchr) && !defined(_lib_strchr) && defined(_lib_index)
-#define strchr(s,c)	index(s,c)
-#endif
-
-#if !defined(strrchr) && !defined(_lib_strrchr) && defined(_lib_rindex)
-#define strrchr(s,c)	rindex(s,c)
 #endif
 
 /* and now introducing prototypes botched by the standard(s) */

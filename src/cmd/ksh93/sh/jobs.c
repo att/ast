@@ -30,7 +30,6 @@
 #include "defs.h"
 
 #include <wait.h>
-
 #include "aso.h"
 #include "history.h"
 #include "io.h"
@@ -67,9 +66,7 @@ static struct jobsave *job_savelist;
 static int njob_savelist;
 static struct process *pwfg;
 static int jobfork;
-#ifdef _lib_sigaction
 static siginfo_t Siginfo;
-#endif /* _lib_sigaction */
 
 pid_t pid_fromstring(char *str) {
     pid_t pid;
@@ -318,11 +315,7 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
 //
 // This is the SIGCLD interrupt routine.
 //
-#ifdef _lib_sigaction
 static void job_waitsafe(int sig, siginfo_t *info, void *context)
-#else
-static void job_waitsafe(int sig)
-#endif
 {
     int saved_errno = errno;
     if (job.in_critical || vmbusy()) {
@@ -440,11 +433,9 @@ bool job_reap(int sig) {
         jp = 0;
         pw = job_bypid(pid);
         if (pw) pw->p_wstat = wstat;
-#ifdef _lib_sigaction
         if (shp->st.trapcom[SIGCHLD] && (WIFSTOPPED(wstat) || WIFCONTINUED(wstat))) {
             shp->sigflag[SIGCHLD] |= SH_SIGTRAP;
         }
-#endif // _lib_sigaction
         lastpid = pid;
         if (!pw) {
 #ifdef DEBUG
@@ -857,11 +848,7 @@ int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int 
     job_lock();
     pw = job.pwlist;
 #if SHOPT_COSHELL
-#ifdef _lib_sigaction
     job_waitsafe(SIGCHLD, (siginfo_t *)0, (void *)0);
-#else
-    job_waitsafe(SIGCHLD);
-#endif
 #endif // SHOPT_COSHELL
     if (jobs == NULL) {
         // Do all jobs.
