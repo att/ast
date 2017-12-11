@@ -33,24 +33,6 @@
 
 #include "tmlib.h"
 
-#ifndef tzname
-#	if defined(__DYNAMIC__)
-#		undef	_dat_tzname
-#		define	tzname		__DYNAMIC__(tzname)
-#	else
-#		if !_dat_tzname
-#			if _dat__tzname
-#				undef	_dat_tzname
-#				define _dat_tzname	1
-#				define tzname		_tzname
-#			endif
-#		endif
-#	endif
-#	if _dat_tzname && !defined(tzname)
-		extern char*		tzname[];
-#	endif
-#endif
-
 #define TM_type		(-1)
 
 static const Namval_t		options[] =
@@ -232,18 +214,14 @@ tmlocal(void)
 			TZ[0] = 0;
 			e = 0;
 		}
-#if _lib_tzset
 		tzset();
-#endif
 		if (environ != v)
 			environ = v;
 		else if (e)
 			environ[0] = e;
 	}
-#if _dat_tzname
 	local.standard = strdup(tzname[0]);
 	local.daylight = strdup(tzname[1]);
-#endif
 	tmlocale();
 
 	/*
@@ -281,7 +259,6 @@ tmlocal(void)
 	 * now get the time zone names
 	 */
 
-#if _dat_tzname
 	if (tzname[0])
 	{
 		/*
@@ -294,7 +271,6 @@ tmlocal(void)
 			local.daylight = strdup(tzname[1]);
 	}
 	else
-#endif
 	if ((s = getenv("TZNAME")) && *s && (s = strdup(s)))
 	{
 		/*

@@ -437,9 +437,7 @@ native_lc_time(Lc_info_t* li)
 
 #if _lib_nl_langinfo && _hdr_langinfo
 
-#if _hdr_nl_types
 #include <nl_types.h>
-#endif
 
 #include <langinfo.h>
 

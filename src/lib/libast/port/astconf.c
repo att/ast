@@ -50,25 +50,6 @@ static const char id[] = "\n@(#)$Id: getconf (AT&T Research) 2012-05-01 $\0\n";
 #define ASTCONF_system		0
 #endif
 
-#if _sys_systeminfo
-# if !_lib_sysinfo
-#   if _lib_systeminfo
-#     define _lib_sysinfo	1
-#     define sysinfo(a,b,c)	systeminfo(a,b,c)
-#   else
-#     if _lib_syscall && _sys_syscall
-#       include <sys/syscall.h>
-#       if defined(SYS_systeminfo)
-#         define _lib_sysinfo	1
-#         define sysinfo(a,b,c)	syscall(SYS_systeminfo,a,b,c)
-#       endif
-#     endif
-#   endif
-# endif
-#else
-# undef	_lib_sysinfo
-#endif
-
 #define CONF_ERROR	(CONF_USER<<0)
 #define CONF_READONLY	(CONF_USER<<1)
 #define CONF_ALLOC	(CONF_USER<<2)
@@ -310,7 +291,6 @@ static char*	feature(Feature_t*, const char*, const char*, const char*, unsigned
 static intmax_t
 ast_pathconf(const char* path, int op, int* err)
 {
-#if _lib_pathconf
 	Pathdev_t	dev;
 	char		buf[PATH_MAX];
 	intmax_t	v;
@@ -329,21 +309,12 @@ ast_pathconf(const char* path, int op, int* err)
 	}
 	else
 	{
-#if _lib_fpathconf
 		errno = 0;
 		v = fpathconf(dev.fd, op);
-#else
-		v = -1;
-		errno = EINVAL;
-#endif
 	}
 	if (v != -1 || !(*err = errno))
 		errno = olderrno;
 	return v;
-#else
-	*err = ENOSYS;
-	return -1;
-#endif
 }
 
 /*
@@ -1143,7 +1114,6 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 	{
 	case CONF_confstr:
 		call = "confstr";
-#if _lib_confstr
 		if (!(v = confstr(p->op, buf, sizeof(buf))))
 		{
 			defined = 0;
@@ -1158,31 +1128,19 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 		else
 			defined = 0;
 		break;
-#else
-		goto predef;
-#endif
 	case CONF_pathconf:
-#if _lib_pathconf
 		call = "pathconf";
 		v = ast_pathconf(path, p->op, &n);
 		if (n)
 			defined = 0;
 		break;
-#else
-		goto predef;
-#endif
 	case CONF_sysconf:
 		call = "sysconf";
-#if _lib_sysconf
 		if ((v = sysconf(p->op)) < 0)
 			defined = 0;
 		break;
-#else
-		goto predef;
-#endif
 	case CONF_sysinfo:
 		call = "sysinfo";
-#if _lib_sysinfo
 		if ((v = sysinfo(p->op, buf, sizeof(buf))) >= 0)
 		{
 			buf[sizeof(buf) - 1] = 0;
@@ -1191,9 +1149,6 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 		else
 			defined = 0;
 		break;
-#else
-		goto predef;
-#endif
 	default:
 		call = "synthesis";
 		errno = EINVAL;

@@ -32,13 +32,7 @@
 #define AT_FDCWD		(-100)
 #endif
 
-#if _lib_openat64
-#define sysopenatf		openat64
-#else
-#if _lib_openat
 #define sysopenatf		openat
-#endif
-#endif
 
 #if _BLD_sfio && defined(__EXPORT__)
 #define extern  __EXPORT__

@@ -41,23 +41,15 @@
  */
 
 #if _use_spawnveg
-#if _lib_fork
 #undef	_use_spawnveg
-#else
-#if _WINIX
-#define _lib_fork	1
-#endif
-#endif
 #endif
 
 #ifndef DEBUG_PROC
 #define DEBUG_PROC	1
 #endif
 
-#if _lib_socketpair
 #include <sys/types.h>
 #include <sys/socket.h>
-#endif
 
 Proc_t			proc_default = { -1 };
 
@@ -155,7 +147,6 @@ ignoresig(int sig)
 static int
 modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 {
-#if _lib_fork
 	if (forked)
 	{
 		int	i;
@@ -231,9 +222,6 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 #if _use_spawnveg
 	else
 #endif
-#else
-	NoP(forked);
-#endif
 #if _use_spawnveg
 	{
 		Modify_t*	m;
@@ -307,10 +295,8 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 		proc->mods = m->next;
 		free(m);
 	}
-#else
-	NoP(proc);
 #endif
-	return 0;
+    return 0;
 }
 
 #if _use_spawnveg
@@ -406,13 +392,8 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 	char			path[PATH_MAX];
 	char			env[PATH_MAX + 2];
 	int			pio[2];
-#if _lib_fork
 	int			pop[2];
-#endif
-#if !_pipe_rw && !_lib_socketpair
-	int			poi[2];
-#endif
-#if defined(SIGCHLD) && ( _lib_sigprocmask || _lib_sigsetmask )
+#if defined(SIGCHLD)
 	Sig_mask_t		mask;
 #endif
 #if _use_spawnveg
@@ -422,22 +403,13 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 	int			debug = PROC_OPT_EXEC;
 #endif
 
-#if _lib_fork
 	if (!argv && (flags & (PROC_ORPHAN|PROC_OVERLAY)))
-#else
-	if (!argv || (flags & PROC_ORPHAN))
-#endif
 	{
 		errno = ENOEXEC;
 		return 0;
 	}
 	pio[0] = pio[1] = -1;
-#if _lib_fork
 	pop[0] = pop[1] = -1;
-#endif
-#if !_pipe_rw && !_lib_socketpair
-	poi[0] = poi[1] = -1;
-#endif
 	if (cmd && (!*cmd || !pathpath(cmd, NiL, PATH_REGULAR|PATH_EXECUTE, path, sizeof(path))))
 		goto bad;
 	switch (flags & (PROC_READ|PROC_WRITE))
@@ -484,13 +456,8 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 #else
 		if (procfd > 1)
 		{
-#if _lib_socketpair
 			if (socketpair(AF_UNIX, SOCK_STREAM, 0, pio))
 				goto bad;
-#else
-			if (pipe(pio) || pipe(poi))
-				goto bad;
-#endif
 		}
 		else if (pipe(pio))
 			goto bad;
@@ -505,7 +472,6 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 	else if (argv && !(flags & PROC_ORPHAN))
 		proc->pid = 0;
 #endif
-#if _lib_fork
 	else
 	{
 		if (!(flags & PROC_FOREGROUND))
@@ -516,18 +482,9 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 			proc->sigint = signal(SIGINT, SIG_IGN);
 			proc->sigquit = signal(SIGQUIT, SIG_IGN);
 #if defined(SIGCHLD)
-#if _lib_sigprocmask
 			sigemptyset(&mask);
 			sigaddset(&mask, SIGCHLD);
 			sigprocmask(SIG_BLOCK, &mask, &proc->mask);
-#else
-#if _lib_sigsetmask
-			mask = sigmask(SIGCHLD);
-			proc->mask = sigblock(mask);
-#else
-			proc->sigchld = signal(SIGCHLD, SIG_DFL);
-#endif
-#endif
 #endif
 		}
 		if ((flags & PROC_ORPHAN) && pipe(pop))
@@ -548,23 +505,13 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 				signal(SIGQUIT, proc->sigquit);
 			}
 #if defined(SIGCHLD)
-#if _lib_sigprocmask
 			sigprocmask(SIG_SETMASK, &proc->mask, NiL);
-#else
-#if _lib_sigsetmask
-			sigsetmask(proc->mask);
-#else
-			if (proc->sigchld != SIG_IGN)
-				signal(SIGCHLD, SIG_DFL);
-#endif
-#endif
 #endif
 		}
 		else if (proc->pid == -1)
 			goto bad;
 		forked = 1;
 	}
-#endif
 	if (!proc->pid)
 	{
 #if _use_spawnveg
@@ -573,7 +520,6 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 
 		v = 0;
 #endif
-#if _lib_fork
 		if (flags & PROC_ORPHAN)
 		{
 			if (!(proc->pid = fork()))
@@ -588,10 +534,8 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 				_exit(EXIT_NOEXEC);
 			}
 		}
-#endif
 #if DEBUG_PROC
 		stropt(getenv(PROC_ENV_OPTIONS), options, sizeof(*options), setopt, &debug);
-#if _lib_fork
 		if (debug & PROC_OPT_TRACE)
 		{
 			if (!fork())
@@ -602,7 +546,6 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 			}
 			sleep(2);
 		}
-#endif
 #endif
 		if (flags & PROC_DAEMON)
 		{
@@ -647,15 +590,8 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 				goto cleanup;
 			if (modify(proc, forked, PROC_fd_dup|PROC_FD_CHILD, pio[1], 1))
 				goto cleanup;
-#if _pipe_rw || _lib_socketpair
 			if (modify(proc, forked, PROC_fd_dup, 1, 0))
 				goto cleanup;
-#else
-			if (modify(proc, forked, PROC_fd_dup|PROC_FD_CHILD, poi[0], 0))
-				goto cleanup;
-			if (poi[1] != 0 && modify(proc, forked, PROC_fd_dup|PROC_FD_CHILD, poi[1], PROC_ARG_NULL))
-				goto cleanup;
-#endif
 		}
 		else if (procfd >= 0)
 		{
@@ -680,12 +616,10 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 						goto cleanup;
 					break;
 				}
-#if _lib_fork
 		if (forked && (flags & PROC_ENVCLEAR))
 			environ = 0;
 #if _use_spawnveg
 		else
-#endif
 #endif
 #if _use_spawnveg
 		if (newenv)
@@ -715,10 +649,8 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 				if (!setenviron(*p++))
 					goto cleanup;
 		p = argv;
-#if _lib_fork
 		if (forked && !p)
 			return proc;
-#endif
 #if DEBUG_PROC
 		if (!(debug & PROC_OPT_EXEC) || (debug & PROC_OPT_VERBOSE))
 		{
@@ -808,18 +740,9 @@ sfsync(sfstderr);
 				proc->sigint = signal(SIGINT, SIG_IGN);
 				proc->sigquit = signal(SIGQUIT, SIG_IGN);
 #if defined(SIGCHLD)
-#if _lib_sigprocmask
 				sigemptyset(&mask);
 				sigaddset(&mask, SIGCHLD);
 				sigprocmask(SIG_BLOCK, &mask, &proc->mask);
-#else
-#if _lib_sigsetmask
-				mask = sigmask(SIGCHLD);
-				proc->mask = sigblock(mask);
-#else
-				proc->sigchld = signal(SIGCHLD, SIG_DFL);
-#endif
-#endif
 #endif
 			}
 		}
@@ -861,12 +784,7 @@ sfsync(sfstderr);
 				close(pio[0]);
 				break;
 			default:
-#if _pipe_rw || _lib_socketpair
 				proc->wfd = pio[0];
-#else
-				proc->wfd = poi[1];
-				close(poi[0]);
-#endif
 				/*FALLTHROUGH*/
 			case 1:
 				proc->rfd = pio[0];
@@ -897,16 +815,7 @@ sfsync(sfstderr);
 		if (proc->sigquit != SIG_IGN)
 			signal(SIGQUIT, proc->sigquit);
 #if defined(SIGCHLD)
-#if _lib_sigprocmask
 		sigprocmask(SIG_SETMASK, &proc->mask, NiL);
-#else
-#if _lib_sigsetmask
-		sigsetmask(proc->mask);
-#else
-		if (proc->sigchld != SIG_DFL)
-			signal(SIGCHLD, proc->sigchld);
-#endif
-#endif
 #endif
 	}
 	if ((flags & PROC_CLEANUP) && modv)
@@ -929,12 +838,6 @@ sfsync(sfstderr);
 		close(pop[0]);
 	if (pop[1] >= 0)
 		close(pop[1]);
-#if !_pipe_rw && !_lib_socketpair
-	if (poi[0] >= 0)
-		close(poi[0]);
-	if (poi[1] >= 0)
-		close(poi[1]);
-#endif
 	procfree(proc);
 	return 0;
 }

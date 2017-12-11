@@ -50,14 +50,12 @@ struct shtable3
 	int		(*sh_value)(int, char*[], Shbltin_t*);
 };
 
-#ifdef _lib_sigaction
-    struct shtable4
-    {
-	const int	sig;
-	const int	code;
-	const char	*str;
-    };
-#endif
+struct shtable4
+{
+const int	sig;
+const int	code;
+const char	*str;
+};
 
 #define sh_lookup(name,value)	(sh_locate(name,(Shtable_t*)(value),sizeof(*(value)))->sh_number)
 extern const Shtable_t		shtab_testops[];

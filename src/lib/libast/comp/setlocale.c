@@ -79,9 +79,6 @@ header(void)
 
 #include <ast_windows.h>
 
-#undef	_lib_setlocale
-#define _lib_setlocale		1
-
 #define setlocale(c,l)		native_setlocale(c,l)
 
 extern char*			uwin_setlocale(int, const char*);
@@ -176,17 +173,9 @@ native_setlocale(int category, const char* locale)
  * LC_COLLATE and LC_CTYPE native support
  */
 
-#if !_lib_mbtowc || MB_LEN_MAX <= 1
+#if MB_LEN_MAX <= 1
 #define mblen		0
 #define mbtowc		0
-#endif
-
-#if !_lib_strcoll
-#define	strcoll		0
-#endif
-
-#if !_lib_strxfrm
-#define	strxfrm		0
 #endif
 
 /*
@@ -2449,28 +2438,6 @@ setopt(void* a, const void* p, int n, const char* v)
 	}
 	return 0;
 }
-
-#if !_lib_setlocale
-
-#define setlocale(c,l)		default_setlocale(c,l)
-
-static char*
-default_setlocale(int category, const char* locale)
-{
-	Lc_t*		lc;
-
-	if (locale)
-	{
-		if (!(lc = lcmake(locale)) || !(lc->flags & LC_default))
-			return 0;
-		locales[0]->flags &= ~lc->flags;
-		locales[1]->flags &= ~lc->flags;
-		return lc->name;
-	}
-	return (locales[1]->flags & (1<<category)) ? locales[1]->name : locales[0]->name;
-}
-
-#endif
 
 #if !_UWIN
 

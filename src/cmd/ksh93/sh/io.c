@@ -581,9 +581,6 @@ int sh_pipe(int pv[]) {
 
 #ifndef pipe2
 #undef pipe
-#if !_lib_pipe2 || !defined(O_CLOEXEC)
-#define pipe2(a, b) pipe(a)
-#endif
 #endif
 //
 // Create a real pipe when pipe() is socketpair.
@@ -595,10 +592,6 @@ int sh_rpipe(int pv[]) {
     if (pipe2(fd, O_CLOEXEC) < 0 || (pv[0] = fd[0]) < 0 || (pv[1] = fd[1]) < 0) {
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
     }
-#if !_lib_pipe2 || !defined(O_CLOEXEC)
-    if (pv[0] > 2) fcntl(pv[0], F_SETFD, FD_CLOEXEC);
-    if (pv[1] > 2) fcntl(pv[1], F_SETFD, FD_CLOEXEC);
-#endif
     shp->fdstatus[pv[0]] = IONOSEEK | IOREAD | IOCLEX;
     shp->fdstatus[pv[1]] = IONOSEEK | IOWRITE | IOCLEX;
     if (pv[0] <= 2) pv[0] = sh_iomovefd(shp, pv[0]);
@@ -609,9 +602,6 @@ int sh_rpipe(int pv[]) {
 }
 
 #ifndef accept4
-#ifndef _lib_accept4
-#define accept4(a, b, c, d) accept(a, b, c)
-#endif
 #endif
 #if SHOPT_COSHELL
 int sh_coaccept(Shell_t *shp, int *pv, int out) {
@@ -1192,11 +1182,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         errormsg(SH_DICT, ERROR_system(1), ((o_mode & O_CREAT) ? e_create : e_open),
                                  fname);
                     if (perm > 0) {
-#if _lib_fchmod
                         fchmod(fd, perm);
-#else
-                        chmod(tname, perm);
-#endif
                     }
                 }
             }

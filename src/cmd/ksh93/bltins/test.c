@@ -40,9 +40,6 @@
 #include	<poll.h>
 #include	<tmx.h>
 
-#if !_lib_setregid
-#   undef _lib_setreuid
-#endif /* _lib_setregid */
 
 #ifdef S_ISSOCK
 #   if _pipe_socketpair
@@ -584,7 +581,6 @@ int sh_access(const char *name, int mode)
 		goto skip;
 	if(shp->gd->userid==shp->gd->euserid && shp->gd->groupid==shp->gd->egroupid)
 		return(access(name,mode));
-#ifdef _lib_setreuid
 	/* swap the real uid to effective, check access then restore */
 	/* first swap real and effective gid, if different */
 	if(shp->gd->groupid==shp->gd->euserid || setregid(shp->gd->egroupid,shp->gd->groupid)==0) 
@@ -603,7 +599,7 @@ int sh_access(const char *name, int mode)
 		else if(shp->gd->groupid!=shp->gd->egroupid)
 			setregid(shp->gd->groupid,shp->gd->egroupid);
 	}
-#endif /* _lib_setreuid */
+
 skip:
 	if(test_stat(name, &statb) == 0)
 	{
@@ -620,7 +616,6 @@ skip:
 			mode <<= 6;
 		else if(shp->gd->egroupid == statb.st_gid)
 			mode <<= 3;
-#ifdef _lib_getgroups
 		/* on some systems you can be in several groups */
 		else
 		{
@@ -647,7 +642,6 @@ skip:
 				}
 			}
 		}
-#   endif /* _lib_getgroups */
 		if(statb.st_mode & mode)
 			return(0);
 	}

@@ -31,7 +31,7 @@ void _STUB_vmexit(){}
 **	Any required functions for process exiting.
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (05/25/93).
 */
-#if _PACKAGE_ast || _lib_atexit
+#if _PACKAGE_ast
 
 void _STUB_vmexit(){}
 
@@ -93,7 +93,7 @@ int	type;
 	return type;
 }
 
-#endif	/* _lib_onexit || _lib_on_exit */
+#endif	/* _lib_onexit */
 
 #endif /*!PACKAGE_ast*/
 

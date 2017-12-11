@@ -67,12 +67,8 @@ Sfoff_t		size;
 	else
 	{	if(f->next > f->data)
 			SFSYNC(f);
-#if _lib_ftruncate
 		if(ftruncate(f->file, (sfoff_t)size) < 0)
 			SFMTXRETURN(f, -1);
-#else
-		SFMTXRETURN(f, -1);
-#endif
 	}
 
 	f->extent = size;

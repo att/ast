@@ -93,9 +93,7 @@ ssize_t _vmpagesize(void)
 {
 	if (_Vmpagesize <= 0)
 	{
-#if _lib_getpagesize
 		if ((_Vmpagesize = getpagesize()) <= 0)
-#endif
 			_Vmpagesize = VM_PAGESIZE;
 		_Vmpagesize = (*_Vmlcm)(_Vmpagesize, MEM_ALIGN);
 	}

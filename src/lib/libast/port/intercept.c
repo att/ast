@@ -740,32 +740,7 @@ int
 ast_pipe2(int fds[2], int flags)
 {
 	int	r;
-#if _lib_pipe2
 	RESTART(r, pipe2(fds, flags));
-#else
-	int	c;
-
-	RESTART(r, pipe(fds));
-	if ((flags & O_CLOEXEC) && r >= 0)
-	{
-		RESTART(c, fcntl(fds[0], F_SETFD, FD_CLOEXEC));
-		RESTART(c, fcntl(fds[1], F_SETFD, FD_CLOEXEC));
-	}
-#ifdef O_NONBLOCK
-	if (flags & O_NONBLOCK)
-	{
-		int	f;
-
-		RESTART(f, fcntl(fds[0], F_GETFL));
-		if (f >= 0)
-			RESTART(c, fcntl(fds[0], F_SETFL, f|O_NONBLOCK));
-		RESTART(f, fcntl(fds[1], F_GETFL));
-		if (f >= 0)
-			RESTART(c, fcntl(fds[1], F_SETFL, f|O_NONBLOCK));
-	}
-#endif
-#endif
-
 	return r;
 }
 
@@ -783,11 +758,6 @@ ast_remove(const char* path)
 	int	oerrno;
 
 	d = LOCAL(pwd);
-#if _lib_remove
-#undef	remove
-	if (d == AT_FDCWD || path && *path == '/')
-		return remove(path);
-#endif
 	oerrno = errno;
 	if (r = ast_unlinkat(LOCAL(pwd), path, 0))
 	{

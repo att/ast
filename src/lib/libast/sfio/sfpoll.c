@@ -101,7 +101,6 @@ int		tm;	/* time in millisecs for select/poll	*/
 	eintr = eintr == n ? -1 : EINTR;
 
 	np = -1;
-#if _lib_poll
 	if(c > 0)
 	{	struct pollfd*	fds;
 
@@ -161,9 +160,7 @@ int		tm;	/* time in millisecs for select/poll	*/
 
 		free((Void_t*)fds);
 	}
-#endif /*_lib_poll*/
 
-#if _lib_select
 	if(np < 0 && c > 0)
 	{	fd_set		rd, wr;
 		struct timeval	tmb, *tmp;
@@ -225,7 +222,6 @@ int		tm;	/* time in millisecs for select/poll	*/
 			}
 		}
 	}
-#endif /*_lib_select*/
 
  report:
 	for(r = c = 0; c < n; ++c)

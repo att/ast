@@ -1017,9 +1017,7 @@ extern Void_t*	F2(_calloc, size_t,n, size_t,m) { return calloc(n, m); }
 extern Void_t	F1(_cfree, Void_t*,p) { free(p); }
 extern Void_t	F1(_free, Void_t*,p) { free(p); }
 extern Void_t*	F1(_malloc, size_t,n) { return malloc(n); }
-#if _lib_memalign
 extern Void_t*	F2(_memalign, size_t,a, size_t,n) { return memalign(a, n); }
-#endif
 #if _lib_pvalloc
 extern Void_t*	F1(_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
@@ -1034,9 +1032,7 @@ extern Void_t*	F2(__calloc, size_t,n, size_t,m) { return calloc(n, m); }
 extern Void_t	F1(__cfree, Void_t*,p) { free(p); }
 extern Void_t	F1(__free, Void_t*,p) { free(p); }
 extern Void_t*	F1(__malloc, size_t,n) { return malloc(n); }
-#if _lib_memalign
 extern Void_t*	F2(__memalign, size_t,a, size_t,n) { return memalign(a, n); }
-#endif
 #if _lib_pvalloc
 extern Void_t*	F1(__pvalloc, size_t,n) { return pvalloc(n); }
 #endif
@@ -1051,9 +1047,7 @@ extern Void_t*	F2(__libc_calloc, size_t,n, size_t,m) { return calloc(n, m); }
 extern Void_t	F1(__libc_cfree, Void_t*,p) { free(p); }
 extern Void_t	F1(__libc_free, Void_t*,p) { free(p); }
 extern Void_t*	F1(__libc_malloc, size_t,n) { return malloc(n); }
-#if _lib_memalign
 extern Void_t*	F2(__libc_memalign, size_t,a, size_t,n) { return memalign(a, n); }
-#endif
 #if _lib_pvalloc
 extern Void_t*	F1(__libc_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
@@ -1186,10 +1180,8 @@ extern void	free _ARG_((Void_t*));
 #undef	malloc
 extern Void_t*	malloc _ARG_((size_t));
 
-#if _lib_memalign
 #undef	memalign
 extern Void_t*	memalign _ARG_((size_t, size_t));
-#endif
 
 #if _lib_pvalloc
 #undef	pvalloc
@@ -1212,9 +1204,7 @@ extern Void_t*	F2(_ast_calloc, size_t,n, size_t,m) { return calloc(n, m); }
 extern Void_t	F1(_ast_cfree, Void_t*,p) { free(p); }
 extern Void_t	F1(_ast_free, Void_t*,p) { free(p); }
 extern Void_t*	F1(_ast_malloc, size_t,n) { return malloc(n); }
-#if _lib_memalign
 extern Void_t*	F2(_ast_memalign, size_t,a, size_t,n) { return memalign(a, n); }
-#endif
 #if _lib_pvalloc
 extern Void_t*	F1(_ast_pvalloc, size_t,n) { return pvalloc(n); }
 #endif

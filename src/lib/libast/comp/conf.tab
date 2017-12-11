@@ -66,12 +66,7 @@ CHAR_MAX			C	XX 1 L
 CHAR_MIN			C	XX 1 L
 CHAR_TERM			POSIX	SC 2 FUW
 CHILD_MAX			POSIX	SC 1 CDLMUX	6	cc{
-	#if _lib_fork
 	#define child()		fork()
-	#else
-	#ifdef	_map_spawnve
-	#define spawnve		_map_spawnve
-	#endif
 	extern int		spawnve(const char*, char* const[], char* const[]);
 	static char*		cmd[] = { "/bin/echo", 0 };
 	#define child()		spawnve(cmd[0],cmd,(char**)0)
@@ -236,7 +231,7 @@ NAME_MAX			POSIX	PC 1 LMU	14	cc{
 	#ifdef MAXNAMLEN
 		printf("%d", MAXNAMLEN);
 	#else
-	#if !defined(remove) && (!_lib_remove || _lib_unlink)
+	#if !defined(remove)
 	#define remove		unlink
 	#endif
 		int	i;
@@ -278,7 +273,6 @@ NAME_MAX			POSIX	PC 1 LMU	14	cc{
 	#endif
 }
 NGROUPS_MAX			POSIX	SC 1 CDLMU	8	cc{
-	#if _lib_getgroups
 	int main()
 	{
 		int	n;
@@ -292,7 +286,6 @@ NGROUPS_MAX			POSIX	SC 1 CDLMU	8	cc{
 		printf("%d", n);
 		return 0;
 	}
-	#endif
 }
 NL_ARGMAX			XOPEN	XX 1 L		9
 NL_LANGMAX			XOPEN	XX 1 L		14
@@ -313,31 +306,12 @@ NSS_BUFLEN_PASSWD		C	QQ 1 L
 NUM_PROCESSORS			C	QQ 1 L
 NZERO				XOPEN	XX 1 L		20
 OPEN_MAX			POSIX	SC 1 CDLMUX	16	cc{
-	#if _lib_getdtablesize
 	extern int		getdtablesize(void);
 	int main()
 	{
 		printf("%d", getdtablesize());
 		return 0;
 	}
-	#else
-	int main()
-	{
-		int	i;
-		int	n;
-		int	v;
-		n = 0;
-		v = 2;
-		while ((i = dup(0)) >= 0)
-		{
-			if (!n) n = i;
-			if (i > v) v = i;
-		}
-		while (n <= v) close(n++);
-		printf("%d", v);
-		return 0;
-	}
-	#endif
 }
 OPEN_MAX_CEIL			AST	XX 1 L		OPEN_MAX
 OSREL_MAJ			C	QQ 1 L
@@ -353,13 +327,11 @@ PAGESIZE			POSIX	SC 1 MU		PAGESIZE PAGE_SIZE 4096	cc{
 		printf("%ld", 64*1024L);
 		return 0;
 	#else
-	#if _lib_getpagesize
 	#if _npt_getpagesize
 	extern size_t		getpagesize(void);
 	#endif
 		printf("%d", getpagesize());
 		return 0;
-	#endif
 	#else
 		return 1;
 	#endif
@@ -443,13 +415,6 @@ RE_DUP_MAX			POSIX	SC 2 LMN	255
 RTSIG_MAX			POSIX	SC 1 LMU	8
 SATTR_ENABLED			SUN	PC 1 0
 SAVED_IDS			POSIX	SC 1 FUW	cc{
-	#if _lib_setuid && !_lib_setreuid
-	int main()
-	{
-		printf("1");
-		return 0;
-	}
-	#endif
 }
 SCHAR_MAX			C	XX 1 L		127
 SCHAR_MIN			C	XX 1 L		-127

@@ -4,7 +4,7 @@ iff	AST_SYS
 print	#if __mips == 2 && !defined(_NO_LARGEFILE64_SOURCE)
 print	#define	_NO_LARGEFILE64_SOURCE	1
 print	#endif
-print	#if !defined(_NO_LARGEFILE64_SOURCE) && _typ_off64_t && _lib_lseek64 && _lib_stat64
+print	#if !defined(_NO_LARGEFILE64_SOURCE)
 print	#if !defined(_LARGEFILE64_SOURCE)
 print	#define _LARGEFILE64_SOURCE	1
 print	#endif
@@ -19,28 +19,21 @@ print	#undef	_LARGEFILE64_SOURCE
 print	#undef	_LARGEFILE_SOURCE
 print	#undef	_LARGE_FILE_API
 print	#undef	_typ_ino64_t
-print	#undef	_typ_off64_t
 print	#undef	_typ_struct_dirent64
 print	#undef	_lib_creat64
 print	#undef	_lib_fstat64
 print	#undef	_lib_fstatvfs64
 print	#undef	_lib_ftruncate64
-print	#undef	_lib_lseek64
 print	#undef	_lib_lstat64
 print	#undef	_lib_mmap64
 print	#undef	_lib_open64
 print	#undef	_lib_opendir64
-print	#undef	_lib_readdir64
 print	#undef	_lib_rewinddir64
 print	#undef	_lib_seekdir64
 print	#undef	_lib_telldir64
 print	#undef	_lib_closedir64
-print	#undef	_lib_stat64
 print	#undef	_lib_statvfs64
 print	#undef	_lib_truncate64
-print	#endif
-print	#if !_lib_readdir64
-print	#undef	_typ_ino64_t
 print	#endif
 
 print	#if defined(__STDC__) && !defined(__USE_FIXED_PROTOTYPES__)

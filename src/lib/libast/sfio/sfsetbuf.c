@@ -33,11 +33,9 @@ __STDPP__directive pragma pp:nohide getpagesize
 #undef	getpagesize
 #endif
 
-#if _lib_getpagesize
 _BEGIN_EXTERNS_
 extern int	getpagesize _ARG_((void));
 _END_EXTERNS_
-#endif
 
 /*	Set a (new) buffer for a stream.
 **	If size < 0, it is assigned a suitable value depending on the
@@ -365,9 +363,7 @@ size_t	size;	/* buffer size, -1 for default size */
 		/* set page size, this is also the desired default buffer size */
 		if(_Sfpage <= 0)
 		{
-#if _lib_getpagesize
 			if((_Sfpage = (size_t)getpagesize()) <= 0)
-#endif
 				_Sfpage = SF_PAGE;
 		}
 

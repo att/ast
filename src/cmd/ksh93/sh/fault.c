@@ -113,7 +113,6 @@ static int notify_builtin(Shell_t *shp, int sig) {
     return action;
 }
 
-#ifdef _lib_sigaction
 static void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
     if (info) {
         struct Siginfo *jp, *ip;
@@ -129,16 +128,11 @@ static void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
         }
     }
 }
-#endif
 
 //
 // Most signals caught or ignored by the shell come here.
 //
-#ifdef _lib_sigaction
 void sh_fault(int sig, siginfo_t *info, void *context)
-#else
-void sh_fault(int sig)
-#endif
 {
     int saved_errno = errno; // many platforms do not save/restore errno for signal handlers
     Shell_t *shp = sh_getinterp();
@@ -217,9 +211,7 @@ void sh_fault(int sig)
     }
     if (trap) {
         // Propogate signal to foreground group.
-#ifdef _lib_sigaction
         set_trapinfo(shp, sig, info);
-#endif
         if (sig == SIGHUP && job.curpgid) killpg(job.curpgid, SIGHUP);
         flag = SH_SIGTRAP;
     } else {
@@ -450,24 +442,20 @@ void sh_chktrap(Shell_t *shp) {
                     } while (asocasptr(&shp->siginfo[sig], ip, 0) != ip);
                 }
             again:
-#ifdef _lib_sigaction
                 if (ip) {
                     sh_setsiginfo(&ip->info);
                     ipnext = ip->next;
                 } else {
                     continue;
                 }
-#endif
                 cursig = sig;
                 sh_trap(shp, trap, 0);
                 count++;
-#ifdef _lib_sigaction
                 if (ip) {
                     free(ip);
                     ip = ipnext;
                     if (ip) goto again;
                 }
-#endif
                 if (shp->siginfo[sig]) goto retry;
                 cursig = -1;
             }
@@ -607,14 +595,10 @@ void sh_done(void *ptr, int sig) {
     if (sig) {
         // Generate fault termination code.
         if (RLIMIT_CORE != RLIMIT_UNKNOWN) {
-#ifdef _lib_getrlimit
             struct rlimit rlp;
             getrlimit(RLIMIT_CORE, &rlp);
             rlp.rlim_cur = 0;
             setrlimit(RLIMIT_CORE, &rlp);
-#else
-            vlimit(RLIMIT_CORE, 0);
-#endif
         }
         signal(sig, SIG_DFL);
         sigrelease(sig);
@@ -805,7 +789,6 @@ int sh_trap(const char *trap, int mode) {
     return sh_trap_20120720(shp, trap, mode);
 }
 
-#ifdef _lib_sigaction
 #undef signal
 sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     struct sigaction sigin, sigout;
@@ -821,4 +804,3 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     return (sh_sigfun_t)sigout.sa_sigaction;
 }
 
-#endif
