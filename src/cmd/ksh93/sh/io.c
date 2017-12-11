@@ -546,7 +546,11 @@ int sh_open(const char *path, int flags, ...)
 	if (flags == O_NONBLOCK)
 		return pathopen(AT_FDCWD, path, NiL, 0, PATH_DEV, flags, mode) > 0;
 #endif
-	fd = open(path, flags, mode);
+    /* Treat paths under /dev/fd specially. It is required for FreeBSD */
+    if (sh_isdevfd_prefix(path))
+		fd = pathopen(AT_FDCWD, path, NiL, 0, 0, flags, mode);
+	else
+		fd = open(path, flags, mode);
 #ifndef PATH_DEV
 	if (flags == O_NONBLOCK)
 	{
@@ -2885,6 +2889,14 @@ bool sh_isdevfd(const char *fd)
 	}
 	return(true);
 }
+
+bool sh_isdevfd_prefix(const char *fd)
+{
+	if(!fd || memcmp(fd,"/dev/fd/",8) || fd[8]==0)
+		return false;
+	return true;
+}
+
 
 int sh_fchdir(int fd)
 {
