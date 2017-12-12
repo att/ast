@@ -651,7 +651,7 @@ tst	- output{
 		printf("\n");
 	#endif
 
-	#if _lib_spawnveg || _lib_posix_spawn || _lib_spawn_mode || _lib_spawn && _hdr_spawn && _mem_pgroup_inheritance || _lib_vfork && _real_vfork
+	#if _lib_spawnveg || _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance || _lib_vfork && _real_vfork
 		printf("#if !_AST_no_spawnveg\n");
 		printf("#define _use_spawnveg	1\n");
 		printf("#endif\n");

@@ -46,8 +46,6 @@ typedef union _Spawnvex_u Spawnvex_u;
 #include <wait.h>
 #include <sig.h>
 
-#include "FEATURE/spawn"
-
 #ifndef ENOSYS
 #define ENOSYS	EINVAL
 #endif
@@ -65,11 +63,9 @@ typedef union _Spawnvex_u Spawnvex_u;
 #undef	_lib_spawn
 #undef	_lib_spawnve
 #undef	_lib_spawnvex
-#undef	_hdr_spawn
 #undef	_mem_pgroup_inheritance
 
 #define	_lib_spawn		1
-#define _hdr_spawn		1
 #define _mem_pgroup_inheritance	1
 
 #define SPAWN_FDCLOSED		(-1)
@@ -221,12 +217,10 @@ spawn(const char* path, int nmap, const int map[], const struct inheritance* inh
  * where spawnvex() must do a dup dance before and after calling spawn()
  */
 
-#undef	_lib_posix_spawn
 #undef	_lib_spawn
 #undef	_lib_spawnve
 #undef	_lib_spawnvex
 #undef	_lib_spawn_mode
-#undef	_hdr_spawn
 #undef	_mem_pgroup_inheritance
 
 #define	_lib_spawn_mode		1
@@ -372,37 +366,11 @@ union _Spawnvex_u
 
 #else
 
-#if _lib_spawn && _hdr_spawn && _mem_pgroup_inheritance
-
 #include <spawn.h>
 
-#else
-
-#if _lib_posix_spawn
-
-#include <spawn.h>
-
-#else
-
-#include <ast_tty.h>
-#include <ast_vfork.h>
-
-#if _lib_spawnve && _hdr_process
-#include <process.h>
-#if defined(P_NOWAIT) || defined(_P_NOWAIT)
-#undef	_lib_spawnve
-#endif
 #endif
 
-#if !_lib_vfork
-#undef	_real_vfork
-#endif
-
-#endif
-#endif
-#endif
-
-#if _lib_spawn_mode || _lib_spawn && _hdr_spawn && _mem_pgroup_inheritance
+#if _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance
 
 /*
  * slide fd out of the way so native spawn child process doesn't see it
@@ -795,15 +763,13 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 	int				op;
 	unsigned int			flags = 0;
 	pid_t				pid;
-#if _lib_posix_spawn
 	int				arg;
 	int				err;
 	int				fd;
 	posix_spawnattr_t		ax;
 	posix_spawn_file_actions_t	fx;
 	Spawnvex_t*			xev = 0;
-#endif
-#if _lib_spawn_mode || _lib_spawn && _hdr_spawn && _mem_pgroup_inheritance
+#if _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance
 	pid_t				pgid;
 	int				arg;
 	int				j;
@@ -821,7 +787,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 
 	if (vex && vex->debug >= 0)
 		error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\"", __LINE__, getpid(), vex, vex->cur, path);
-#if _lib_spawn_mode || _lib_spawn && _hdr_spawn && _mem_pgroup_inheritance
+#if _lib_spawn_mode || _lib_spawn && _mem_pgroup_inheritance
 	if (!envv)
 		envv = environ;
 	pid = -1;
@@ -1032,7 +998,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 #endif
 		return spawnve(path, argv, envv);
 #endif
-#if _lib_posix_spawn
 	if (vex && ((vex->set & (0
 #if !_lib_posix_spawnattr_setfchdir
 		|VEXFLAG(SPAWN_cwd)
@@ -1044,11 +1009,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 		|VEXFLAG(SPAWN_umask)
 #endif
 		))
-#if _lib_posix_spawn < 2
-		|| !(vex->flags & SPAWN_EXEC)
-#endif
 		))
-#endif
 	{
 #if _lib_fork || _lib_vfork
 		pid_t			pgid;
@@ -1205,7 +1166,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 		return -1;
 #endif
 	}
-#if _lib_posix_spawn
 	if (vex)
 	{
 		if (err = posix_spawnattr_init(&ax))
@@ -1313,19 +1273,16 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
  bad:
 	posix_spawnattr_destroy(&ax);
 	posix_spawn_file_actions_destroy(&fx);
-#if _lib_posix_spawn
 	if (xev)
 	{
 		spawnvex_apply(xev, 0, SPAWN_NOCALL);
 		spawnvex_close(xev);
 	}
-#endif
  nope:
 	errno = err;
 	if (vex && vex->debug >= 0)
 		error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" %8d posix_spawn FAILED", __LINE__, getpid(), vex, vex->cur, path, -1);
 	return -1;
-#endif
 #endif
 }
 
