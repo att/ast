@@ -1009,7 +1009,10 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 		|VEXFLAG(SPAWN_umask)
 #endif
 		))
-		))
+#if _lib_posix_spawn < 2
+        || !(vex->flags & SPAWN_EXEC)
+#endif
+    ))
 	{
 #if _lib_fork || _lib_vfork
 		pid_t			pgid;
