@@ -139,14 +139,11 @@ IO_TYPE				C	QQ 1 L
 IPV6				POSIX	SC 1 FUW
 IP_SECOPTS			C	QQ 1 L
 JOB_CONTROL			POSIX	SC 1 FUW	cc{
-	#include "FEATURE/wait"
-	#if _ok_wif
 	int main()
 	{
 		printf("1");
 		return 0;
 	}
-	#endif
 }
 KERNEL_CLIST			SCO	SC 1 0
 KERNEL_CLIST_MAX		SCO	SC 1 0

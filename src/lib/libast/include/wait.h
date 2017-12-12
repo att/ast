@@ -28,9 +28,7 @@
 #define _WAIT_H
 
 #include <ast.h>
-#include <ast_wait.h>
 
-#if _sys_wait
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp:hide wait waitpid
 #else
@@ -44,7 +42,6 @@ __STDPP__directive pragma pp:nohide wait waitpid
 #undef	wait
 #undef	waitpid
 #endif
-#endif
 
 #ifndef WNOHANG
 #define WNOHANG		1
@@ -52,16 +49,6 @@ __STDPP__directive pragma pp:nohide wait waitpid
 
 #ifndef WUNTRACED
 #define WUNTRACED	2
-#endif
-
-#if !_ok_wif
-#undef	WIFEXITED
-#undef	WEXITSTATUS
-#undef	WIFSIGNALED
-#undef	WTERMSIG
-#undef	WIFSTOPPED
-#undef	WSTOPSIG
-#undef	WTERMCORE
 #endif
 
 #ifndef WIFEXITED
