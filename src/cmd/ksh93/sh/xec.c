@@ -43,12 +43,6 @@
 #   include	<vmalloc.h>
 #endif
 
-#if     _lib_vfork
-#   include     <ast_vfork.h>
-#else
-#   define vfork()      fork()
-#endif
-
 #define SH_NTFORK	SH_TIMING
 #define NV_BLTPFSH	NV_ARRAY
 
