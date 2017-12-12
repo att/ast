@@ -82,7 +82,8 @@
 #if _PACKAGE_ast
 
 #include	<ast.h>
-#include	<ast_systime.h>
+#include <sys/time.h>                                      
+#include <time.h>                                          
 #include	<ast_tty.h>
 #include	<ls.h>
 
@@ -126,7 +127,6 @@
    are not needed and they may get in the way so we remove them here.
 */
 #if _SFBINARY_H
-#undef  _hdr_time
 #undef  _sys_time
 #undef  _sys_stat
 #undef  _hdr_stat
@@ -153,9 +153,7 @@
 #include	<string.h>
 #endif
 
-#if _hdr_time
 #include	<time.h>
-#endif
 #if _sys_time
 #include	<sys/time.h>
 #endif
