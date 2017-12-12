@@ -265,15 +265,6 @@ extern void		*sh_waitnotify_20120720(Shwait_f,void*);
 #   undef extern
 #endif /* _DLL */
 
-#ifndef _AST_INTERCEPT
-#   if _lib_lseek64
-#       undef  stat64
-#	define stat64(a,b)	sh_stat(a,b)	
-#   else
-#       undef  stat
-#	define stat(a,b)	sh_stat(a,b)	
-#   endif
-#endif /* !_AST_INTERCEPT */
 #ifndef _shtest_c
 #   ifndef _SH_PRIVATE
 #       undef  access
@@ -281,12 +272,6 @@ extern void		*sh_waitnotify_20120720(Shwait_f,void*);
 #   endif
 #endif /* !_shtest_c */
 #ifndef _shio_h
-#ifndef _AST_INTERCEPT
-#   undef  chdir
-#   define chdir(a)		sh_chdir(a)	
-#   undef  fchdir
-#   define fchdir(a)		sh_fchdir(a)
-#endif
 #   ifndef HIST_MAX
 #       if _lib_lseek64
 #           undef  open64

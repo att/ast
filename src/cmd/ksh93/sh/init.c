@@ -62,10 +62,6 @@ char e_version[]	= "\n@(#)$Id: Version "
 #define ATTRS		1
 			"B"
 #endif
-#if _AST_INTERCEPT
-#define ATTRS		1
-			"I"
-#endif
 #if SHOPT_COSHELL
 #define ATTRS		1
 			"J"
@@ -1707,7 +1703,6 @@ Shell_t *sh_init(int argc,char *argv[], Shinit_f userinit)
 #if _AST_VERSION >= 20080617L
 	shp->bltindata.shgetenv = sh_getenv;
 	shp->bltindata.shsetenv = sh_setenviron;
-	astintercept(&shp->bltindata,1);
 #endif
 #if 0
 #define NV_MKINTTYPE(x,y,z)	nv_mkinttype(#x,sizeof(x),(x)-1<0,(y),(Namdisc_t*)z);

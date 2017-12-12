@@ -546,7 +546,11 @@ int sh_open(const char *path, int flags, ...)
 	if (flags == O_NONBLOCK)
 		return pathopen(AT_FDCWD, path, NiL, 0, PATH_DEV, flags, mode) > 0;
 #endif
-	fd = open(path, flags, mode);
+    /* Treat paths under /dev/fd specially. It is required for FreeBSD */
+    if (sh_isdevfd_prefix(path))
+		fd = pathopen(AT_FDCWD, path, NiL, 0, 0, flags, mode);
+	else
+		fd = open(path, flags, mode);
 #ifndef PATH_DEV
 	if (flags == O_NONBLOCK)
 	{
@@ -2886,21 +2890,26 @@ bool sh_isdevfd(const char *fd)
 	return(true);
 }
 
-#ifndef _AST_INTERCEPT
+bool sh_isdevfd_prefix(const char *fd)
+{
+	if(!fd || memcmp(fd,"/dev/fd/",8) || fd[8]==0)
+		return false;
+	return true;
+}
+
 
 int sh_fchdir(int fd)
 {
 	int r,err=errno;
-	while((r=fchdir(fd))<0 && errno==EINTR)
+	while(((r=fchdir(fd))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
 
-#undef chdir
 int sh_chdir(const char* dir)
 {
 	int r,err=errno;
-	while((r=chdir(dir))<0 && errno==EINTR)
+	while(((r=chdir(dir))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
@@ -2908,9 +2917,7 @@ int sh_chdir(const char* dir)
 int sh_stat(const char* path,struct stat *statb)
 {
 	int r,err=errno;
-	while((r=stat(path,statb))<0 && errno==EINTR)
+	while(((r=stat(path,statb))<0) && (errno==EINTR))
 		errno = err;
 	return(r);
 }
-
-#endif /* _AST_INTERCEPT */
