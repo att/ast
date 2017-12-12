@@ -29,57 +29,10 @@
 
 #include <ast.h>
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp:hide wait waitpid
-#else
-#define wait		______wait
-#define waitpid		______waitpid
-#endif
 #include <sys/wait.h>
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp:nohide wait waitpid
-#else
-#undef	wait
-#undef	waitpid
-#endif
-
-#ifndef WNOHANG
-#define WNOHANG		1
-#endif
-
-#ifndef WUNTRACED
-#define WUNTRACED	2
-#endif
-
-#ifndef WIFEXITED
-#define WIFEXITED(x)	(!((x)&((1<<(EXIT_BITS-1))-1)))
-#endif
-
-#ifndef WEXITSTATUS
-#define WEXITSTATUS(x)	(((x)>>EXIT_BITS)&((1<<EXIT_BITS)-1))
-#endif
-
-#ifndef WIFSIGNALED
-#define WIFSIGNALED(x)	(((x)&((1<<(EXIT_BITS-1))-1))!=0)
-#endif
-
-#ifndef WTERMSIG
-#define WTERMSIG(x)	((x)&((1<<(EXIT_BITS-1))-1))
-#endif
-
-#ifndef WIFSTOPPED
-#define WIFSTOPPED(x)	(((x)&((1<<EXIT_BITS)-1))==((1<<(EXIT_BITS-1))-1))
-#endif
-
-#ifndef WSTOPSIG
-#define WSTOPSIG(x)	WEXITSTATUS(x)
-#endif
 
 #ifndef WTERMCORE
 #define WTERMCORE(x)	((x)&(1<<(EXIT_BITS-1)))
 #endif
-
-extern pid_t		wait(int*);
-extern pid_t		waitpid(pid_t, int*, int);
 
 #endif
