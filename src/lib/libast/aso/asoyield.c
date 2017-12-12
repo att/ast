@@ -29,20 +29,12 @@ NoN(asolock)
 
 #else
 
-#include "FEATURE/sched"
-
-#if _hdr_sched
 #include <sched.h>
-#endif
 
 int
 asoyield(void)
 {
-#if _lib_sched_yield
 	return sched_yield();
-#else
-	return asospinrest();
-#endif
 }
 
 #endif
