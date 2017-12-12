@@ -62,12 +62,8 @@
 #define _LARGEFILE_SOURCE	1	
 #endif
 
-#if _hdr_stdarg
 #include	<stdarg.h>
-#else
-#include	<varargs.h>
-#endif
-#include	"FEATURE/common"
+#include	<stdbool.h>
 #if !__STD_C
 #define const	
 #endif
@@ -127,8 +123,6 @@
    are not needed and they may get in the way so we remove them here.
 */
 #if _SFBINARY_H
-#undef  _sys_time
-#undef  _sys_stat
 #undef  _hdr_stat
 #undef  _hdr_filio
 #undef  _sys_filio
@@ -145,33 +139,15 @@
 #undef  _sys_ioctl
 #endif
 
-#if _hdr_stdlib
 #include	<stdlib.h>
-#endif
 
 #if _hdr_string
 #include	<string.h>
 #endif
 
 #include	<time.h>
-#if _sys_time
-#include	<sys/time.h>
-#endif
 
-#if _sys_stat
 #include	<sys/stat.h>
-#else
-#if _hdr_stat
-#include	<stat.h>
-#ifndef _sys_stat
-#define	_sys_stat	1
-#endif
-#endif
-#endif /*_sys_stat*/
-
-#ifndef _sys_stat
-#define _sys_stat	0
-#endif
 
 #include	<fcntl.h>
 
@@ -187,9 +163,7 @@
 #endif /*_FIOCLEX*/
 #endif /*F_SETFD*/
 
-#if _hdr_unistd
 #include	<unistd.h>
-#endif
 
 #if !_LARGEFILE64_SOURCE	/* turn off the *64 stuff */
 #undef	_typ_off64_t
@@ -1232,60 +1206,6 @@ extern Sfdouble_t	ldexpl _ARG_((Sfdouble_t, int));
 #endif
 
 #if !_PACKAGE_ast
-
-#if !__STDC__ && !_hdr_stdlib
-extern void	abort _ARG_((void));
-extern int	atexit _ARG_((void(*)(void)));
-extern char*	getenv _ARG_((const char*));
-extern void*	malloc _ARG_((size_t));
-extern void*	realloc _ARG_((void*, size_t));
-extern void	free _ARG_((void*));
-extern size_t	strlen _ARG_((const char*));
-extern char*	strcpy _ARG_((char*, const char*));
-
-extern Void_t*	memset _ARG_((void*, int, size_t));
-extern Void_t*	memchr _ARG_((const void*, int, size_t));
-extern Void_t*	memccpy _ARG_((void*, const void*, int, size_t));
-#ifndef memcpy
-extern Void_t*	memcpy _ARG_((void*, const void*, size_t));
-#endif
-#if !defined(strtod)
-extern double	strtod _ARG_((const char*, char**));
-#endif
-#if !defined(remove)
-extern int	sysremovef _ARG_((const char*));
-#endif
-#endif /* !__STDC__ && !_hdr_stdlib */
-
-#if !_hdr_unistd
-#if _proto_open && __cplusplus
-extern int	sysopenf _ARG_((const char*, int, ...));
-#endif
-extern int	sysclosef _ARG_((int));
-extern ssize_t	sysreadf _ARG_((int, void*, size_t));
-extern ssize_t	syswritef _ARG_((int, const void*, size_t));
-extern sfoff_t	syslseekf _ARG_((int, sfoff_t, int));
-extern int	sysdupf _ARG_((int));
-extern int	syspipef _ARG_((int*));
-extern int	sysaccessf _ARG_((const char*, int));
-extern int	sysremovef _ARG_((const char*));
-extern int	sysfstatf _ARG_((int, sfstat_t*));
-extern int	sysstatf _ARG_((const char*, sfstat_t*));
-
-extern int	isatty _ARG_((int));
-
-extern int	wait _ARG_((int*));
-extern uint	sleep _ARG_((uint));
-extern int	execl _ARG_((const char*, const char*,...));
-extern int	execv _ARG_((const char*, char**));
-#if !defined(fork)
-extern int	fork _ARG_((void));
-#endif
-#if _lib_unlink
-extern int	unlink _ARG_((const char*));
-#endif
-
-#endif /*_hdr_unistd*/
 
 #if _lib_bcopy && !_proto_bcopy
 extern void	bcopy _ARG_((const void*, void*, size_t));

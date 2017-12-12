@@ -31,15 +31,9 @@
 #define _END_EXTERNS_
 #define __STD_C		1
 
-#if _hdr_stdint
 #include <stdint.h>
-#else
-#include <inttypes.h>
-#endif
 
-#if _hdr_unistd
 #include <unistd.h>
-#endif
 
 #define _typ_int32_t	1
 #ifdef _ast_int8_t

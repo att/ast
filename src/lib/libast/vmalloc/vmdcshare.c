@@ -28,9 +28,7 @@ void _STUB_vmdcshare(){}
 #include	"vmhdr.h"
 #include	<sys/types.h>
 #include	<string.h>
-#if _hdr_unistd
 #include	<unistd.h>
-#endif
 
 #include	<sys/mman.h>	/* mmap() headers	*/
 #include	<sys/file.h>

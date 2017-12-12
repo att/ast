@@ -459,8 +459,6 @@ debug_indent(int n)
 		indent = 0;
 }
 
-#if _sys_times
-
 #include <times.h>
 #include <sys/resource.h>
 
@@ -478,13 +476,3 @@ debug_elapsed(int set)
 		return prev = tm;
 	return tm - prev;
 }
-
-#else
-
-double
-debug_elapsed(int set)
-{
-	return 0;
-}
-
-#endif

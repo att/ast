@@ -30,9 +30,7 @@
 
 #include <ast.h>
 #include <error.h>
-#if _sys_socket
 #include <sys/socket.h>
-#endif
 #if _hdr_netdb
 #include <netdb.h>
 #endif

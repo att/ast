@@ -47,17 +47,8 @@
 
 #if _typ_int64_t
 
-#ifdef _ast_LL
-
 #define FNV_INIT64	0xcbf29ce484222325LL
 #define FNV_MULT64	0x00000100000001b3LL
-
-#else
-
-#define FNV_INIT64	((int64_t)0xcbf29ce484222325)
-#define FNV_MULT64	((int64_t)0x00000100000001b3)
-
-#endif
 
 #define FNVINIT64(h)	(h = FNV_INIT64)
 #define FNVPART64(h,c)	(h = (h) * FNV_MULT64 ^ (c))

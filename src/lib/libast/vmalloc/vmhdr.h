@@ -440,27 +440,10 @@ extern int		getpagesize _ARG_((void));
 
 #else
 
-#if _hdr_unistd
 #include	<unistd.h>
-#else
-extern void		abort _ARG_(( void ));
-extern ssize_t		write _ARG_(( int, const void*, size_t ));
-extern int		getpagesize _ARG_((void));
-extern Void_t*		sbrk _ARG_((ssize_t));
-#endif
 
-#if !__STDC__ && !_hdr_stdlib
-extern size_t		strlen _ARG_(( const char* ));
-extern char*		strcpy _ARG_(( char*, const char* ));
-extern int		strcmp _ARG_(( const char*, const char* ));
-extern int		atexit _ARG_(( void(*)(void) ));
-extern char*		getenv _ARG_(( const char* ));
-extern Void_t*		memcpy _ARG_(( Void_t*, const Void_t*, size_t ));
-extern Void_t*		memset _ARG_(( Void_t*, int, size_t ));
-#else
 #include	<stdlib.h>
 #include	<string.h>
-#endif
 
 /* for vmexit.c */
 extern int		onexit _ARG_(( void(*)(void) ));
@@ -468,11 +451,6 @@ extern void		_exit _ARG_(( int ));
 extern void		_cleanup _ARG_(( void ));
 
 #endif /*_PACKAGE_ast*/
-
-/* for vmdcsbrk.c */
-#if !_typ_ssize_t
-typedef int		ssize_t;
-#endif
 
 _END_EXTERNS_
 
