@@ -46,12 +46,8 @@
 #if _hdr_fcntl
 #include <fcntl.h>
 #endif
-#if _hdr_unistd
 #include <unistd.h>
-#endif
-#if _sys_socket
 #include <sys/socket.h>
-#endif
 
 #include <sys/stat.h>
 

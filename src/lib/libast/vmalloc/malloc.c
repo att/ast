@@ -142,9 +142,7 @@ typedef struct ______mstats Mstats_t;
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
 
-#if _sys_stat
 #include	<sys/stat.h>
-#endif
 #include	<fcntl.h>
 
 #ifdef S_IRUSR

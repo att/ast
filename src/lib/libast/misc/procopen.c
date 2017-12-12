@@ -55,12 +55,8 @@
 #endif
 
 #if _lib_socketpair
-#if _sys_socket
 #include <sys/types.h>
 #include <sys/socket.h>
-#else
-#undef	_lib_socketpair
-#endif
 #endif
 
 Proc_t			proc_default = { -1 };

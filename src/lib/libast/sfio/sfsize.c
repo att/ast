@@ -56,14 +56,13 @@ Sfio_t*	f;
 		{	for(disc = f->disc; disc; disc = disc->disc)
 				if(disc->seekf)
 					break;
-			if(!_sys_stat || disc)
+			if(disc)
 			{	Sfoff_t	e;
 				if((e = SFSK(f,0,SEEK_END,disc)) >= 0)
 					f->extent = e;
 				if(SFSK(f,f->here,SEEK_SET,disc) != f->here)
 					f->here = SFSK(f,(Sfoff_t)0,SEEK_CUR,disc);
 			}
-#if _sys_stat
 			else
 			{	sfstat_t	st;
 				if(sysfstatf(f->file,&st) < 0)
@@ -71,7 +70,6 @@ Sfio_t*	f;
 				else if((f->extent = st.st_size) < f->here)
 					f->here = SFSK(f,(Sfoff_t)0,SEEK_CUR,disc);
 			}
-#endif
 		}
 
 		if((f->flags&(SF_SHARE|SF_PUBLIC)) == (SF_SHARE|SF_PUBLIC))

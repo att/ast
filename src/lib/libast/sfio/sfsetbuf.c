@@ -47,15 +47,6 @@ _END_EXTERNS_
 **	Written by Kiem-Phong Vo.
 */
 
-#if !_sys_stat
-struct stat
-{	int	st_mode;
-	int	st_size;
-};
-#undef sysfstatf
-#define sysfstatf(fd,st)	(-1)
-#endif /*_sys_stat*/
-
 #if _PACKAGE_ast && !defined(SFSETLINEMODE)
 #define SFSETLINEMODE		1
 #endif
@@ -337,7 +328,7 @@ size_t	size;	/* buffer size, -1 for default size */
 		st.st_mode = 0;
 
 		/* if has discipline, set size by discipline if possible */
-		if(!_sys_stat || disc)
+		if(disc)
 		{	if((f->here = SFSK(f,(Sfoff_t)0,SEEK_CUR,disc)) < 0)
 				goto unseekable;
 			else
@@ -354,7 +345,7 @@ size_t	size;	/* buffer size, -1 for default size */
 			f->here = -1;
 		else
 		{
-#if _sys_stat && _stat_blksize	/* preferred io block size */
+#if _stat_blksize	/* preferred io block size */
 			f->blksz = (size_t)st.st_blksize;
 #endif
 			bufsize = 64 * 1024;
@@ -407,7 +398,6 @@ size_t	size;	/* buffer size, -1 for default size */
 					/* set line mode for terminals */
 					if(!(f->flags&(SF_LINE|SF_WCWIDTH)) && isatty(f->file))
 						f->flags |= SF_LINE|SF_WCWIDTH;
-#if _sys_stat
 					else	/* special case /dev/null */
 					{	reg int	dev, ino;
 						static int null_checked, null_dev, null_ino;
@@ -425,7 +415,6 @@ size_t	size;	/* buffer size, -1 for default size */
 						if(null_checked >= 0 && dev == null_dev && ino == null_ino)
 							SFSETNULL(f);
 					}
-#endif
 					errno = oerrno;
 				}
 

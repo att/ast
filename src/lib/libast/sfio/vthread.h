@@ -46,7 +46,7 @@
 #endif
 #undef vt_threaded
 
-#if _may_use_threads && !defined(vt_threaded) && _hdr_pthread
+#if _may_use_threads && !defined(vt_threaded)
 #define vt_threaded		1
 #include			<pthread.h>
 typedef pthread_mutex_t		_vtmtx_t;
