@@ -5,6 +5,14 @@ incdir = include_directories('include', 'features', 'aso', 'cdt', 'comp',
 libast_c_args = ['-D_BLD_ast', '-D_API_ast=20130625']
 cc = meson.get_compiler('c')
 
+syslocale_result = run_command('features/syslocale.sh')
+
+syslocale_output = syslocale_result.stdout()
+
+if syslocale_result.returncode() == 0
+    libast_c_args += [ '-D_locale_utf8_str=' + syslocale_output ]
+endif
+
 subdir('aso')
 subdir('comp')
 subdir('cdt')
