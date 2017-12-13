@@ -673,7 +673,6 @@ cat{
 	#ifndef _AST_STD_H
 	#	define _def_map_ast	1
 	#	if !_def_map_ast
-	#		include <ast_map.h>
 	#	endif
 	#endif
 }end
