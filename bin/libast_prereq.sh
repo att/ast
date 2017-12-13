@@ -29,7 +29,7 @@ iffe_sh_tests=()
 
 iffe_sh_tests_2=('param.sh' )
 
-iffe_sh_tests_3=('libpath.sh' )
+iffe_sh_tests_3=('')
 
 pushd "$base_dir/src/lib/libast/features"
 

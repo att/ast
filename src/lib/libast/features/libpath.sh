@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
@@ -71,4 +72,6 @@ fi
 case $libpath in
 '')	libpath=bin ;;
 esac
-echo "#define CONF_LIBPATH	\"$libpath\""
+echo -n "\"$libpath\""
+
+exit 0
