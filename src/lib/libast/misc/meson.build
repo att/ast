@@ -3,7 +3,7 @@ libast_files += [
     'misc/debug.c', 'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
     'misc/errorx.c', 'misc/fastfind.c', 'misc/fgetcwd.c', 'misc/fmtrec.c',
     'misc/fs3d.c', 'misc/fts.c', 'misc/ftwalk.c', 'misc/ftwflags.c',
-    'misc/getcwd.c', 'misc/getenv.c', 'misc/glob.c', 'misc/magic.c',
+     'misc/getenv.c', 'misc/glob.c', 'misc/magic.c',
     'misc/mime.c', 'misc/mimetype.c', 'misc/optctx.c', 'misc/optesc.c',
     'misc/optget.c', 'misc/optjoin.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c', 'misc/procrun.c', 'misc/recfmt.c', 'misc/reclen.c',
