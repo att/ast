@@ -27,14 +27,11 @@ iffe_c_tests_3=('align.c')
 
 iffe_sh_tests=()
 
-iffe_sh_tests_2=('param.sh' )
+iffe_sh_tests_2=()
 
-iffe_sh_tests_3=('')
+iffe_sh_tests_3=()
 
 pushd "$base_dir/src/lib/libast/features"
-
-iffe -v -X ast -X std -c 'cc -D_BLD_DLL -D_BLD_ast' run param.sh
-mv "$base_dir/src/lib/libast/features/FEATURE/param.sh" "$base_dir/src/lib/libast/features/FEATURE/param"
 
 for iffe_test in ${iffe_tests[@]}; do
     iffe -v -X ast -X std -c 'cc -D_BLD_DLL -D_BLD_ast' run $iffe_test

@@ -36,7 +36,10 @@
 #undef	minor
 #undef	makedev
 #endif
-#include <ast_param.h>
+
+#include <sys/param.h>
+#include <sys/stat.h>
+
 #include <ls.h>
 
 #if !_mem_st_blocks_stat
