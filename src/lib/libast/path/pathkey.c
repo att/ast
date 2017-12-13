@@ -37,7 +37,6 @@
 #include <ast.h>
 #include <ctype.h>
 #include <fs3d.h>
-#include <preroot.h>
 #include <ls.h>
 
 char*

@@ -25,7 +25,7 @@ iffe_c_tests_2=('atdev.c' 'sfinit.c' 'signal.c')
 
 iffe_c_tests_3=('align.c')
 
-iffe_sh_tests=('preroot.sh'  'sig.sh')
+iffe_sh_tests=('sig.sh')
 
 iffe_sh_tests_2=('param.sh' )
 
