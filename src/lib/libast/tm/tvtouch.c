@@ -43,8 +43,6 @@ __STDPP__directive pragma pp:hide utime
 #include <times.h>
 #include <error.h>
 
-#include "FEATURE/tvlib"
-
 #if _hdr_utime && _lib_utime
 #include <utime.h>
 #endif
@@ -81,7 +79,6 @@ extern int	utime(const char*, const time_t*);
 #define TV_TOUCH_PHYSICAL	2
 
 #if !defined(UTIME_NOW) || !defined(UTIME_OMIT) || defined(__stub_utimensat)
-#undef	_lib_utimensat
 #endif
 
 int
@@ -92,23 +89,10 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 	int		oerrno;
 	struct stat	st;
 	Tv_t		now;
-#if _lib_utimets || _lib_utimensat
 	struct timespec	ts[2];
-#endif
-#if !_lib_utimets
-#if _lib_utimes
 	struct timeval	am[2];
-#else
-#if _hdr_utime
-	struct utimbuf	am;
-#else
-	time_t		am[2];
-#endif
-#endif
-#endif
 
 	oerrno = errno;
-#if _lib_utimensat
 	if (!av)
 	{
 		ts[0].tv_sec = 0;
@@ -157,7 +141,6 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 			return -1;
 		return 0;
 	}
-#endif
 	if ((av == TV_TOUCH_RETAIN || mv == TV_TOUCH_RETAIN) && stat(path, &st))
 	{
 		errno = oerrno;
@@ -203,7 +186,6 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 		return 0;
 	}
 #else
-#if _lib_utimes
 	if (av == TV_TOUCH_RETAIN)
 	{
 		am[0].tv_sec = st.st_atime;
@@ -231,21 +213,6 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 		errno = oerrno;
 		return 0;
 	}
-#else
-#if _lib_utime
-	am.actime = (av == TV_TOUCH_RETAIN) ? st.st_atime : av->tv_sec;
-	am.modtime = (mv == TV_TOUCH_RETAIN) ? st.st_mtime : mv->tv_sec;
-	if (!utime(path, &am))
-		return 0;
-#if _lib_utime_now
-	if (errno != ENOENT && av == (const Tv_t*)&now && mv == (const Tv_t*)&now && !utime(path, NiL))
-	{
-		errno = oerrno;
-		return 0;
-	}
-#endif
-#endif
-#endif
 	if (!access(path, F_OK))
 	{
 		if (av != (const Tv_t*)&now || mv != (const Tv_t*)&now)
@@ -282,16 +249,7 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 #if _lib_utimets
 	return utimets(path, ts);
 #else
-#if _lib_utimes
 	return utimes(path, am);
-#else
-#if _lib_utime
-	return utime(path, &am);
-#else
-	errno = EINVAL;
-	return -1;
-#endif
-#endif
 #endif
 
 }
