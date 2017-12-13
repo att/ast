@@ -25,8 +25,6 @@
 #include <tm.h>
 #include <error.h>
 
-#include "FEATURE/tvlib"
-
 /*
  * sleep for tv
  * non-zero exit if sleep did not complete
