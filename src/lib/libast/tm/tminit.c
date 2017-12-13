@@ -31,7 +31,7 @@
 #include <ctype.h>
 #include <namval.h>
 
-#include "FEATURE/tmlib"
+#include "tmlib.h"
 
 #ifndef tzname
 #	if defined(__DYNAMIC__)
@@ -86,8 +86,6 @@ __EXTERN__(Tm_info_t*, _tm_infop_);
 
 Tm_info_t*		_tm_infop_ = &_tm_info_;
 
-#if _tzset_environ
-
 static char	TZ[256];
 static char*	TE[2];
 
@@ -116,8 +114,6 @@ _tm_localtime(const time_t* t)
 	}
 	return r;
 }
-
-#endif
 
 /*
  * return minutes west of GMT for local time clock
@@ -219,7 +215,6 @@ tmlocal(void)
 
 	static Tm_zone_t	local;
 
-#if _tzset_environ
 	{
 		char**	v = environ;
 
@@ -237,17 +232,14 @@ tmlocal(void)
 			TZ[0] = 0;
 			e = 0;
 		}
-#endif
 #if _lib_tzset
 		tzset();
 #endif
-#if _tzset_environ
 		if (environ != v)
 			environ = v;
 		else if (e)
 			environ[0] = e;
 	}
-#endif
 #if _dat_tzname
 	local.standard = strdup(tzname[0]);
 	local.daylight = strdup(tzname[1]);

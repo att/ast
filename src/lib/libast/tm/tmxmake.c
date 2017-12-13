@@ -29,7 +29,7 @@
 
 #include <tmx.h>
 
-#include "FEATURE/tmlib"
+#include "tmlib.h"
 
 /*
  * return Tm_t for t

@@ -29,7 +29,7 @@
 
 #include <tmx.h>
 
-#include "FEATURE/tmlib"
+#include "tmlib.h"
 
 /*
  * convert Tm_t to Time_t
