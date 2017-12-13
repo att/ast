@@ -74,7 +74,8 @@ __STDPP__directive pragma pp:hide getpagesize getdtablesize
 #include <unistd.h>
 #endif
 
-#include "FEATURE/param"
+#include <sys/param.h>
+#include <sys/stat.h>
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp:nohide getpagesize getdtablesize
