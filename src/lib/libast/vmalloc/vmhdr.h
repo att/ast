@@ -53,19 +53,19 @@
 #define _npt_getpagesize	1
 #endif
 
-#ifndef O_cloexec
+#ifndef O_CLOEXEC
 #ifdef O_CLOEXEC
-#define O_cloexec		O_CLOEXEC
+#define O_CLOEXEC		O_CLOEXEC
 #else
-#define O_cloexec		0
+#define O_CLOEXEC		0
 #endif
 #endif
 
-#ifndef F_dupfd_cloexec
+#ifndef F_DUPFD_CLOEXEC
 #ifdef F_DUPFD_CLOEXEC
-#define F_dupfd_cloexec		F_DUPFD_CLOEXEC
+#define F_DUPFD_CLOEXEC		F_DUPFD_CLOEXEC
 #else
-#define F_dupfd_cloexec		F_DUPFD
+#define F_DUPFD_CLOEXEC		F_DUPFD
 #endif
 #endif
 

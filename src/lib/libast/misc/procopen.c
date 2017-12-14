@@ -255,12 +255,12 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 				if (arg2 != PROC_ARG_NULL)
 				{
 					m->arg.fd.child.flag = fcntl(arg2, F_GETFD, 0);
-					if ((m->save = fcntl(arg2, F_dupfd_cloexec, 3)) < 0)
+					if ((m->save = fcntl(arg2, F_DUPFD_CLOEXEC, 3)) < 0)
 					{
 						m->op = 0;
 						return -1;
 					}
-#if F_dupfd_cloexec == F_DUPFD
+#if F_DUPFD_CLOEXEC == F_DUPFD
 					fcntl(m->save, F_SETFD, FD_CLOEXEC);
 #endif
 					close(arg2);

@@ -339,7 +339,7 @@ static void path_checkdup(Shell_t *shp,Pathcomp_t *pp)
 	struct stat 		statb;
 	int			fd = -1;
 #if SHOPT_ATFUN
-	if((fd=open(name,O_search|O_cloexec))<0 || fstat(fd,&statb)<0 ||  !S_ISDIR(statb.st_mode))
+	if((fd=open(name,O_search|O_CLOEXEC))<0 || fstat(fd,&statb)<0 ||  !S_ISDIR(statb.st_mode))
 	
 #else
 	if(stat(name,&statb)<0 || !S_ISDIR(statb.st_mode))
@@ -495,7 +495,7 @@ static int	path_opentype(Shell_t *shp,const char *name, Pathcomp_t *pp, int fun)
 			oldpp = oldpp->next;
 		if(fun && (!oldpp || !(oldpp->flags&PATH_FPATH)))
 			continue;
-		if((fd = sh_open(path_relative(shp,stkptr(shp->stk,PATH_OFFSET)),O_RDONLY|O_cloexec,0)) >= 0)
+		if((fd = sh_open(path_relative(shp,stkptr(shp->stk,PATH_OFFSET)),O_RDONLY|O_CLOEXEC,0)) >= 0)
 		{
 			if(fstat(fd,&statb)<0 || S_ISDIR(statb.st_mode))
 			{
@@ -943,7 +943,7 @@ static int canexecute(Shell_t *shp,char *path, int isfun)
 	path = path_relative(shp,path);
 	if(isfun)
 	{
-		if((fd=open(path,O_RDONLY|O_cloexec,0))<0 || fstat(fd,&statb)<0)
+		if((fd=open(path,O_RDONLY|O_CLOEXEC,0))<0 || fstat(fd,&statb)<0)
 			goto err;
 	}
 	else if(stat(path,&statb) < 0)
@@ -1340,7 +1340,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		char *savet=0;
 		struct stat statb;
 		int err=0;
-		if((n=open(path,O_RDONLY|O_cloexec,0)) >= 0)
+		if((n=open(path,O_RDONLY|O_CLOEXEC,0)) >= 0)
 		{
 			/* move <n> if n=0,1,2 */
 			n = sh_iomovefd(shp,n);
@@ -1354,7 +1354,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		{
 			strncpy(name+9,fmtbase((long)getpid(),10,0),sizeof(name)-10);
 			/* create a suid open file with owner equal effective uid */
-			if((n=open(name,O_CREAT|O_TRUNC|O_WRONLY|O_cloexec,S_ISUID|S_IXUSR)) < 0)
+			if((n=open(name,O_CREAT|O_TRUNC|O_WRONLY|O_CLOEXEC,S_ISUID|S_IXUSR)) < 0)
 				goto fail;
 			unlink(name);
 			/* make sure that file has right owner */
@@ -1363,7 +1363,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 			if(n!=10)
 			{
 				sh_close(10);
-				fcntl(n, F_dupfd_cloexec, 10);
+				fcntl(n, F_DUPFD_CLOEXEC, 10);
 				sh_close(n);
 				n=10;
 			}
@@ -1380,7 +1380,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		/*
 		 *  The following code is just for compatibility
 		 */
-		if((n=open(path,O_RDONLY|O_cloexec,0)) < 0)
+		if((n=open(path,O_RDONLY|O_CLOEXEC,0)) < 0)
 			errormsg(SH_DICT,ERROR_system(ERROR_NOEXEC),e_exec,path);
 		if(savet)
 			*argv++ = savet;
@@ -1388,7 +1388,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		shp->infd = n;
 	}
 #else
-	if((shp->infd = sh_open(path,O_RDONLY|O_cloexec,0)) < 0)
+	if((shp->infd = sh_open(path,O_RDONLY|O_CLOEXEC,0)) < 0)
 		errormsg(SH_DICT,ERROR_system(ERROR_NOEXEC),e_exec,path);
 #endif
 	shp->infd = sh_iomovefd(shp,shp->infd);
@@ -1468,7 +1468,7 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		sabuf.ac_utime = compress(buffer.tms_utime + buffer.tms_cutime);
 		sabuf.ac_stime = compress(buffer.tms_stime + buffer.tms_cstime);
 		sabuf.ac_etime = compress( (time_t)(after-before));
-		fd = open( SHACCT , O_WRONLY | O_APPEND | O_CREAT|O_cloexec,RW_ALL);
+		fd = open( SHACCT , O_WRONLY | O_APPEND | O_CREAT|O_CLOEXEC,RW_ALL);
 		write(fd, (const char*)&sabuf, sizeof( sabuf ));
 		sh_close( fd);
 	}
@@ -1586,7 +1586,7 @@ static bool path_chkpaths(Shell_t *shp,Pathcomp_t *first, Pathcomp_t* old,Pathco
 	if(pp->len==1 && *stkptr(shp->stk,offset)=='/')
 		stkseek(shp->stk,offset);
 	sfputr(shp->stk,"/.paths",-1);
-	if((fd=open(stkptr(shp->stk,offset),O_RDONLY|O_cloexec))>=0)
+	if((fd=open(stkptr(shp->stk,offset),O_RDONLY|O_CLOEXEC))>=0)
 	{
 		fstat(fd,&statb);
 		n = statb.st_size;

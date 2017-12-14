@@ -509,8 +509,8 @@ main(int argc, char** argv)
 #endif
 
 	printf("\n");
-	printf("#define F_dupfd_cloexec		F_DUPFD_CLOEXEC /* OBSOLETE */\n");
-	printf("#define O_cloexec		O_CLOEXEC /* OBSOLETE*/\n");
+	printf("#define F_DUPFD_CLOEXEC		F_DUPFD_CLOEXEC /* OBSOLETE */\n");
+	printf("#define O_CLOEXEC		O_CLOEXEC /* OBSOLETE*/\n");
 #if !defined(AT_FDCWD) || !defined(AT_SYMLINK_NOFOLLOW) || !defined(AT_REMOVEDIR) || !defined(AT_SYMLINK_FOLLOW) || !defined(AT_EACCESS)
 	printf("\n");
 #ifndef AT_FDCWD

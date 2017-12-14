@@ -113,7 +113,7 @@ void	sh_subtmpfile(Shell_t *shp)
 		struct checkpt	*pp = (struct checkpt*)shp->jmplist;
 		struct subshell *sp = subshell_data->pipe;
 		/* save file descriptor 1 if open */
-		if((sp->tmpfd = fd = sh_fcntl(1,F_dupfd_cloexec,10)) >= 0)
+		if((sp->tmpfd = fd = sh_fcntl(1,F_DUPFD_CLOEXEC,10)) >= 0)
 		{
 			int err=errno;
 			shp->fdstatus[fd] = shp->fdstatus[1]|IOCLEX;
@@ -560,7 +560,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_t *t, volatile int flags, int comsub)
 	if(!comsub || !shp->subshare)
 	{
 		sp->shpwd = shp->pwd;
-		sp->shpwdfd=((shp->pwdfd >= 0))?sh_fcntl(shp->pwdfd, F_dupfd_cloexec, 10):-1;
+		sp->shpwdfd=((shp->pwdfd >= 0))?sh_fcntl(shp->pwdfd, F_DUPFD_CLOEXEC, 10):-1;
 #ifdef O_SEARCH
 		if(sp->shpwdfd<0)
 			errormsg(SH_DICT,ERROR_system(1), "Can't obtain directory fd.");
