@@ -38,7 +38,6 @@
 
 #include	<sfio_t.h>
 #include	<ast.h>
-#include	<align.h>
 #include	<stk.h>
 
 /*
