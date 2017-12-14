@@ -17,7 +17,7 @@ PATH=$bin_dir:$PATH
 # in a way that is compatible with legacy build system
 iffe_tests=( 'aso' 'ccode' 'common' 'float' 'fs' 'iconv' 'lib' 'mmap' 'prog' 'sfio' 'siglist' 'sizeof' 'standards' 'sys' 'tty' 'tv' 'vmalloc' )
 
-iffe_tests_2=( 'tv' 'tmx' )
+iffe_tests_2=( 'tv' )
 
 iffe_c_tests=('limits.c' )
 
