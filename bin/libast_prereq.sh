@@ -21,7 +21,7 @@ iffe_tests_2=( 'tv' 'tmx' )
 
 iffe_c_tests=('fcntl.c'  'limits.c'  'mode.c')
 
-iffe_c_tests_2=('atdev.c' 'sfinit.c' 'signal.c')
+iffe_c_tests_2=('sfinit.c' 'signal.c')
 
 iffe_c_tests_3=()
 
