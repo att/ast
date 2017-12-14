@@ -144,7 +144,6 @@ if align_bound_result.returncode() == 0
     # Ideally we should be able to print macro defintions in the test and just
     # use them here. This loop should be unnecessary.
     foreach element:align_bound_result_split
-        message(element)
         element_split = element.split('=')
         name = element_split[0]
         value = element_split[1]
