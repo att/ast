@@ -289,8 +289,8 @@ struct shared
 #include	"regress.h"
 
 #if !defined(F_DUPFD_CLOEXEC)
-#undef	F_dupfd_cloexec
-#define F_dupfd_cloexec		(-99)
+#undef	F_DUPFD_CLOEXEC
+#define F_DUPFD_CLOEXEC		(-99)
 #endif
 
 /* error exits from various parts of shell */

@@ -251,13 +251,13 @@ mkpty(int* master, int* slave)
 #endif
 	if ((*master = posix_openpt(O_RDWR)) < 0)
 		return -1;
-	if (grantpt(*master) || unlockpt(*master) || !(sname = ptsname(*master)) || (*slave = open(sname, O_RDWR|O_cloexec)) < 0)
+	if (grantpt(*master) || unlockpt(*master) || !(sname = ptsname(*master)) || (*slave = open(sname, O_RDWR|O_CLOEXEC)) < 0)
 	{
 		close(*master);
 		return -1;
 	}
 #else
-	if (!(sname = ptymopen(master)) || (*slave = open(sname, O_RDWR|O_cloexec)) < 0)
+	if (!(sname = ptymopen(master)) || (*slave = open(sname, O_RDWR|O_CLOEXEC)) < 0)
 		return -1;
 #endif
 #ifdef I_PUSH
@@ -276,7 +276,7 @@ mkpty(int* master, int* slave)
 		error(ERROR_warn(0), "unable to set pty window size");
 #endif
 	fcntl(*master, F_SETFD, FD_CLOEXEC);
-#if !O_cloexec
+#if !O_CLOEXEC
 	fcntl(*slave, F_SETFD, FD_CLOEXEC);
 #endif
 	alarm(0);

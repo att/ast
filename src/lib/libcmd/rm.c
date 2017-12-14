@@ -285,7 +285,7 @@ rm(State_t* state, FTSENT* ent)
 #if _lib_fsync
 		if (state->clobber && S_ISREG(ent->fts_statp->st_mode) && ent->fts_statp->st_size > 0)
 		{
-			if ((n = open(path, O_WRONLY|O_cloexec)) < 0)
+			if ((n = open(path, O_WRONLY|O_CLOEXEC)) < 0)
 				error(ERROR_SYSTEM|2, "%s: cannot clear data", ent->fts_path);
 			else
 			{

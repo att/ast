@@ -7,7 +7,6 @@ cc = meson.get_compiler('c')
 
 syslocale_result = run_command('features/syslocale.sh')
 
-
 if syslocale_result.returncode() == 0
     syslocale_output = syslocale_result.stdout()
     libast_c_args += [ '-D_locale_utf8_str=' + syslocale_output ]
@@ -15,13 +14,12 @@ endif
 
 libpath_result = run_command('features/libpath.sh')
 
-
 if libpath_result.returncode() == 0
     libpath_output = libpath_result.stdout()
     libast_c_args += [ '-DCONF_LIBPATH=' + libpath_output ]
 endif
 
-
+# TODO: Check if this test can be trimmed down in size
 align_bound_code = '''
 #include <stdio.h>
 #include <setjmp.h>

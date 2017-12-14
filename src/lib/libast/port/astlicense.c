@@ -36,11 +36,11 @@
 #include <time.h>
 #endif
 
-#ifndef O_cloexec
+#ifndef O_CLOEXEC
 #ifdef	O_CLOEXEC
-#define O_cloexec		0
+#define O_CLOEXEC		0
 #else
-#define O_cloexec		0
+#define O_CLOEXEC		0
 #endif
 #endif
 
@@ -453,7 +453,7 @@ push(Stack_t* sp, char* file, char* parent, char* info, int size, Buffer_t* buf)
 			file = path;
 		}
 	}
-	if ((i = open(file, O_RDONLY|O_cloexec)) < 0)
+	if ((i = open(file, O_RDONLY|O_CLOEXEC)) < 0)
 	{
 		/* this hack viewpath lookup works for default package setups */
 		if (file == path)
@@ -463,7 +463,7 @@ push(Stack_t* sp, char* file, char* parent, char* info, int size, Buffer_t* buf)
 					t = s;
 					for (s += 6; *s && *s != '/'; s++);
 					while (*t++ = *s++);
-					i = open(file, O_RDONLY|O_cloexec);
+					i = open(file, O_RDONLY|O_CLOEXEC);
 				}
 		if (i < 0)
 		{

@@ -408,7 +408,7 @@ int omfinsert(Ardir_t *ar, const char *name, int op)
 		n = (const char*)++suffix - name;
 	else
 		n = strlen(name);
-	if((fd=open(name,O_RDONLY|O_cloexec))>=0)
+	if((fd=open(name,O_RDONLY|O_CLOEXEC))>=0)
 	{
 		if(fstat(fd,&statb)>=0 && (m=is_omf(fd)))
 		{

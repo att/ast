@@ -125,7 +125,7 @@ static bool iousepipe(Shell_t *shp)
 		sh_close(subpipe[1]);
 		return(true);
 	}
-	subpipe[2] = sh_fcntl(fd,F_dupfd_cloexec,10);
+	subpipe[2] = sh_fcntl(fd,F_DUPFD_CLOEXEC,10);
 	sh_iovalidfd(shp, subpipe[2]);
 	shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
 	while(close(fd)<0 && errno==EINTR)
@@ -857,7 +857,7 @@ static int sh_coexec(Shell_t *shp,const Shnode_t *t, int filt)
 	sp = sfnew(NULL,NULL,SF_UNBOUND,fd,SF_READ);
 	while(close(0)<0 && errno==EINTR)
 		errno = err;
-	open(e_devnull,O_RDONLY|O_cloexec);
+	open(e_devnull,O_RDONLY|O_CLOEXEC);
 	shp->offsets[0] = -1;
 	shp->offsets[1] = 0;
 	*save = savein;
@@ -3537,7 +3537,7 @@ static void coproc_init(Shell_t *shp, int pipes[])
 		sh_pipe(shp->cpipe);
 		if((outfd=shp->cpipe[1]) < 10) 
 		{
-		        int fd=sh_fcntl(shp->cpipe[1],F_dupfd_cloexec,10);
+		        int fd=sh_fcntl(shp->cpipe[1],F_DUPFD_CLOEXEC,10);
 			if(fd>=10)
 			{
 			        shp->fdstatus[fd] = (shp->fdstatus[outfd]&~IOCLEX);

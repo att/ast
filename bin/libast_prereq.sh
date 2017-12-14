@@ -19,7 +19,7 @@ iffe_tests=( 'aso' 'ccode' 'common' 'float' 'fs' 'iconv' 'lib' 'mmap' 'prog' 'sf
 
 iffe_tests_2=( 'tv' 'tmx' )
 
-iffe_c_tests=('fcntl.c'  'limits.c' )
+iffe_c_tests=('limits.c' )
 
 iffe_c_tests_2=('sfinit.c' 'signal.c')
 

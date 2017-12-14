@@ -65,12 +65,12 @@ cosync(Coshell_t* co, const char* file, int fd, int mode)
 			t = b;
 			while (t < &tmp[sizeof(tmp) - 1] && (*t++ = *s++));
 			*t = 0;
-			if ((td = open(tmp, O_WRONLY|O_CREAT|O_TRUNC|O_cloexec, 0)) >= 0)
+			if ((td = open(tmp, O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0)) >= 0)
 				close(td);
 			unlink(tmp);
 			if (fd >= 0 && mode >= 0)
 			{
-				if ((td = open(file, mode|O_cloexec)) < 0)
+				if ((td = open(file, mode|O_CLOEXEC)) < 0)
 					return(-1);
 				close(fd);
 				dup2(td, fd);
@@ -85,7 +85,7 @@ cosync(Coshell_t* co, const char* file, int fd, int mode)
 
 			if (fd < 0)
 			{
-				if (!file || mode < 0 || (fd = open(file, O_RDONLY|O_cloexec)) < 0) return(-1);
+				if (!file || mode < 0 || (fd = open(file, O_RDONLY|O_CLOEXEC)) < 0) return(-1);
 				clean = 1;
 			}
 

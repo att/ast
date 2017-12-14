@@ -39,7 +39,7 @@ ardiropen(const char* file, Ardirmeth_t* meth, int flags)
 		return 0;
 	strcpy(ar->path = (char*)(ar + 1), file);
 	ar->flags = flags;
-	if (((ar->fd = open(file, (flags & ARDIR_CREATE) ? (O_CREAT|O_TRUNC|O_RDWR|O_BINARY|O_cloexec) : (flags & ARDIR_UPDATE) ? (O_RDWR|O_BINARY|O_cloexec) : (O_RDONLY|O_BINARY|O_cloexec))) < 0 || fstat(ar->fd, &ar->st) || !S_ISREG(ar->st.st_mode)) && (!meth || !(flags & ARDIR_FORCE)))
+	if (((ar->fd = open(file, (flags & ARDIR_CREATE) ? (O_CREAT|O_TRUNC|O_RDWR|O_BINARY|O_CLOEXEC) : (flags & ARDIR_UPDATE) ? (O_RDWR|O_BINARY|O_CLOEXEC) : (O_RDONLY|O_BINARY|O_CLOEXEC))) < 0 || fstat(ar->fd, &ar->st) || !S_ISREG(ar->st.st_mode)) && (!meth || !(flags & ARDIR_FORCE)))
 	{
 		ardirclose(ar);
 		return 0;
