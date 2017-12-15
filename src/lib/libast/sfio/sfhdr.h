@@ -264,7 +264,7 @@
 
 #endif /*_PACKAGE_ast*/
 
-#include	"FEATURE/float"
+#include	"ast_float.h"
 
 #include	<errno.h>
 #include	<ctype.h>
@@ -1192,16 +1192,10 @@ extern int		errno;
 #if _ast_fltmax_double
 #define frexpl		frexp
 #endif
-#if !_lib_frexpl
-extern Sfdouble_t	frexpl _ARG_((Sfdouble_t, int*));
-#endif
 #endif
 #ifndef ldexpl
 #if _ast_fltmax_double
 #define ldexpl		ldexp
-#endif
-#if !_lib_ldexpl
-extern Sfdouble_t	ldexpl _ARG_((Sfdouble_t, int));
 #endif
 #endif
 

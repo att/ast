@@ -24,7 +24,7 @@
  */
 
 #include "FEATURE/common"
-#include "FEATURE/float"
+#include "ast_float.h"
 
 int
 main()

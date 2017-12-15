@@ -157,6 +157,13 @@ if align_bound_result.returncode() == 0
     endforeach
 endif
 
+
+
+if not cc.has_function('isnanl', prefix : '#include<math.h>')
+    libast_c_args += [ '-Disnanl=isnan' ]
+endif
+
+
 subdir('aso')
 subdir('comp')
 subdir('cdt')
