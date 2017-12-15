@@ -37,40 +37,6 @@ static char		*Zero = "0";
 #define SF_ZERO		((_Sfi = 1), strlcpy(buf, Zero, size), buf)
 #define SF_INTPART	(SF_IDIGITS/2)
 
-#if !_lib_isnan
-#undef	isnan
-#undef	isnanl
-#if _lib_fpclassify
-#define isnan(n)	(fpclassify(n)==FP_NAN)
-#define isnanl(n)	(fpclassify(n)==FP_NAN)
-#else
-#define isnan(n)	(memcmp((void*)&n,(void*)&_Sfdnan,sizeof(n))==0)
-#define isnanl(n)	(memcmp((void*)&n,(void*)&_Sflnan,sizeof(n))==0)
-#endif
-#else
-#if !_lib_isnanl
-#undef	isnanl
-#define isnanl(n)	isnan(n)
-#endif
-#endif
-
-#if !_lib_signbit
-#if !_ast_fltmax_double
-static int neg0ld(Sfdouble_t f)
-{
-	Sfdouble_t	z = 0;
-	z = -z;
-	return !memcmp(&f, &z, sizeof(f));
-}
-#endif
-static int neg0d(double f)
-{
-	double		z = 0;
-	z = -z;
-	return !memcmp(&f, &z, sizeof(f));
-}
-#endif
-
 #if ULONG_DIG && ULONG_DIG < (DBL_DIG-1)
 #define CVT_LDBL_INT	long
 #define CVT_LDBL_MAXINT	LONG_MAX
@@ -131,44 +97,21 @@ int		format;		/* conversion format		*/
 
 		if(isnanl(f))
 		{	
-#if _lib_signbit
 			if (signbit(f))
-#else
-			if (f < 0)
-#endif
 				*sign = 1;
 			return SF_NAN;
 		}
-#if _lib_isinf
 		if (n = isinf(f))
 		{	
-#if _lib_signbit
 			if (signbit(f))
-#else
-			if (n < 0 || f < 0)
-#endif
 				*sign = 1;
 			return SF_INF;
 		}
-#endif
 # if _c99_in_the_wild
-#  if _lib_signbit
 		if (signbit(f))
-#  else
-#   if _lib_copysignl
-		if (copysignl(1.0, f) < 0.0)
-#   else
-#    if _lib_copysign
-		if (copysign(1.0, (double)f) < 0.0)
-#    else
-		if (f < 0.0)
-#    endif
-#   endif
-#  endif
 		{	f = -f;
 			*sign = 1;
 		}
-#  if _lib_fpclassify
 		switch (fpclassify(f))
 		{
 		case FP_INFINITE:
@@ -178,13 +121,8 @@ int		format;		/* conversion format		*/
 		case FP_ZERO:
 			return SF_ZERO;
 		}
-#  endif
 # else
-#  if _lib_signbit
 		if (signbit(f))
-#  else
-		if (f < 0.0 || f == 0.0 && neg0ld(f))
-#  endif
 		{	f = -f;
 			*sign = 1;
 		}
@@ -319,40 +257,21 @@ int		format;		/* conversion format		*/
 
 		if(isnan(f))
 		{	
-#if _lib_signbit
 			if (signbit(f))
-#else
-			if (f < 0)
-#endif
 				*sign = 1;
 			return SF_NAN;
 		}
-#if _lib_isinf
 		if (n = isinf(f))
 		{	
-#if _lib_signbit
 			if (signbit(f))
-#else
-			if (n < 0 || f < 0)
-#endif
 				*sign = 1;
 			return SF_INF;
 		}
-#endif
 #if _c99_in_the_wild
-# if _lib_signbit
 		if (signbit(f))
-# else
-#  if _lib_copysign
-		if (copysign(1.0, f) < 0.0)
-#  else
-		if (f < 0.0)
-#  endif
-# endif
 		{	f = -f;
 			*sign = 1;
 		}
-# if _lib_fpclassify
 		switch (fpclassify(f))
 		{
 		case FP_INFINITE:
@@ -362,13 +281,8 @@ int		format;		/* conversion format		*/
 		case FP_ZERO:
 			return SF_ZERO;
 		}
-# endif
 #else
-# if _lib_signbit
 		if (signbit(f))
-# else
-		if (f < 0.0 || f == 0.0 && neg0d(f))
-# endif
 		{	f = -f;
 			*sign = 1;
 		}

@@ -46,7 +46,7 @@
  */
 
 #include "sfhdr.h"
-#include "FEATURE/float"
+#include "ast_float.h"
 
 /*
  * the default is _sfdscan for standalone sfio compatibility
