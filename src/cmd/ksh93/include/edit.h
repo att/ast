@@ -41,16 +41,11 @@
 #define STRIP		0377
 #define LOOKAHEAD	80
 
-#if SHOPT_MULTIBYTE
-#   ifndef ESS_MAXCHAR
-#	include	"national.h"
-#   endif /* ESS_MAXCHAR */
-    typedef wchar_t genchar;
-#   define CHARSIZE	(sizeof(wchar_t)<=2?3:sizeof(wchar_t))
-#else
-    typedef char genchar;
-#   define CHARSIZE	1
-#endif /* SHOPT_MULTIBYTE */
+#ifndef ESS_MAXCHAR
+#include	"national.h"
+#endif /* ESS_MAXCHAR */
+typedef wchar_t genchar;
+#define CHARSIZE	(sizeof(wchar_t)<=2?3:sizeof(wchar_t))
 
 #define TABSIZE	8
 #define PRSIZE	256
@@ -125,10 +120,8 @@ typedef struct edit
 	ino_t	e_tty_ino;
 	dev_t	e_tty_dev;
 	char	*e_tty;
-#if SHOPT_MULTIBYTE
 	int	e_curchar;
 	int	e_cursize;
-#endif
 	int	*e_globals;	/* global variables */
 	genchar	*e_window;	/* display window  image */
 	char	e_inmacro;	/* processing macro expansion */
@@ -248,14 +241,12 @@ extern char	**ed_pcomplete(struct Complete*, const char*, const char*,int);
 	extern int	ed_fulledit(Edit_t*);
 	extern void	*ed_open(Shell_t*);
 #endif /* KSHELL */
-#   if SHOPT_MULTIBYTE
 	extern int ed_internal(const char*, genchar*);
 	extern int ed_external(const genchar*, char*);
 	extern void ed_gencpy(genchar*,const genchar*);
 	extern void ed_genncpy(genchar*,const genchar*,int);
 	extern int ed_genlen(const genchar*);
 	extern int ed_setwidth(const char*);
-#  endif /* SHOPT_MULTIBYTE */
 #if SHOPT_EDPREDICT
    extern int	ed_histgen(Edit_t*, const char*);
    extern void	ed_histlist(Edit_t*, int);

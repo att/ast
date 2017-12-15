@@ -81,24 +81,13 @@ One line screen editor for any program
 #define putchar(ed,c)	ed_putchar(ed,c)
 #define beep()		ed_ringbell()
 
-
-#if SHOPT_MULTIBYTE
-#   define gencpy(a,b)	ed_gencpy(a,b)
-#   define genncpy(a,b,n)	ed_genncpy(a,b,n)
-#   define genlen(str)	ed_genlen(str)
-    static int	print(int);
-    static int	_isword(int);
-#   define  isword(c)	_isword(out[c])
-#   define digit(c)	((c&~STRIP)==0 && isdigit(c))
-
-#else
-#   define gencpy(a,b)	strcpy((char*)(a),(char*)(b))
-#   define genncpy(a,b,n)	strncpy((char*)(a),(char*)(b),n)
-#   define genlen(str)	strlen(str)
-#   define print(c)	isprint(c)
-#   define isword(c)	(isalnum(out[c]) || (out[c]=='_'))
-#   define digit(c)	isdigit(c)
-#endif /*SHOPT_MULTIBYTE */
+#define gencpy(a,b)	ed_gencpy(a,b)
+#define genncpy(a,b,n)	ed_genncpy(a,b,n)
+#define genlen(str)	ed_genlen(str)
+static int	print(int);
+static int	_isword(int);
+#define  isword(c)	_isword(out[c])
+#define digit(c)	((c&~STRIP)==0 && isdigit(c))
 
 typedef struct _emacs_
 {
@@ -209,11 +198,9 @@ int ed_emacsread(void *context, int fd,char *buff,int scend, int reedit)
 	
 	ed_setup(ep->ed,fd,reedit);
 	out = (genchar*)buff;
-#if SHOPT_MULTIBYTE
 	out = (genchar*)roundof(buff-(char*)0,sizeof(genchar));
 	if(reedit)
 		ed_internal(buff,out);
-#endif /* SHOPT_MULTIBYTE */
 	if(!kstack)
 	{
 		kstack = (genchar*)malloc(CHARSIZE*MAXLINE);
@@ -269,9 +256,7 @@ int ed_emacsread(void *context, int fd,char *buff,int scend, int reedit)
 			hline = location.hist_command;
 			hloff = location.hist_line;
 			hist_copy((char*)kstack,MAXLINE, hline,hloff);
-#   if SHOPT_MULTIBYTE
 			ed_internal((char*)kstack,kstack);
-#   endif /* SHOPT_MULTIBYTE */
 			ed_ungetchar(ep->ed,cntl('Y'));
 		}
 #endif /* ESH_NFIRST */
@@ -480,11 +465,7 @@ int ed_emacsread(void *context, int fd,char *buff,int scend, int reedit)
 				if (cntlC)
 				{
 					c = out[i];
-#if SHOPT_MULTIBYTE
 					if((c&~STRIP)==0 && islower(c))
-#else
-					if(islower(c))
-#endif /* SHOPT_MULTIBYTE */
 					{
 						c += 'A' - 'a';
 						out[i] = c;
@@ -697,9 +678,7 @@ update:
 			cur = 0;
 			draw(ep,UPDATE);
 			hist_copy((char*)out,MAXLINE, hline,hloff);
-#if SHOPT_MULTIBYTE
 			ed_internal((char*)(out),out);
-#endif /* SHOPT_MULTIBYTE */
 		drawline:
 			eol = genlen(out);
 			cur = eol;
@@ -730,9 +709,7 @@ process:
 		out[eol] = '\0';
 		ed_crlf(ep->ed);
 	}
-#if SHOPT_MULTIBYTE
 	ed_external(out,buff);
-#endif /* SHOPT_MULTIBYTE */
 	i = (int)strlen(buff);
 	if (i)
 		return(i);
@@ -749,11 +726,7 @@ static void show_info(Emacs_t *ep,const char *str)
 	genncpy(string,out,sizeof(string)/sizeof(*string));
 	*out = 0;
 	cur = 0;
-#if SHOPT_MULTIBYTE
 	ed_internal(str,out);
-#else
-	gencpy(out,str);
-#endif	/* SHOPT_MULTIBYTE */
 	draw(ep,UPDATE);
 	c = ed_getchar(ep->ed,0);
 	if(c!=' ')
@@ -837,11 +810,7 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 				while (value-- > 0)
 				{
 					i = out[cur];
-#if SHOPT_MULTIBYTE
 					if((i&~STRIP)==0 && isupper(i))
-#else
-					if(isupper(i))
-#endif /* SHOPT_MULTIBYTE */
 					{
 						i += 'a' - 'A';
 						out[cur] = i;
@@ -1084,9 +1053,7 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 					{
 						out[cur] = 0;
 						gencpy((genchar*)lstring+1,out);
-#if SHOPT_MULTIBYTE
 						ed_external((genchar*)lstring+1,lstring+1);
-#endif /* SHOPT_MULTIBYTE */
 						*lstring = '^';
 						ep->prevdirection = -2;
 					}
@@ -1169,9 +1136,7 @@ static void xcommands(Emacs_t *ep,int count)
 				beep();
 			else
 			{
-#if SHOPT_MULTIBYTE
 				ed_internal((char*)drawbuff,drawbuff);
-#endif /* SHOPT_MULTIBYTE */
 				ed_ungetchar(ep->ed,'\n');
 			}
 			return;
@@ -1301,9 +1266,7 @@ static void search(Emacs_t* ep,genchar *out,int direction)
 		direction = -1;
 	if (i != 2)
 	{
-#if SHOPT_MULTIBYTE
 		ed_external(string,(char*)string);
-#endif /* SHOPT_MULTIBYTE */
 		strncpy(lstring,((char*)string)+2,SEARCHSIZE);
 		lstring[SEARCHSIZE-1] = 0;
 		ep->prevdirection = direction;
@@ -1321,9 +1284,7 @@ static void search(Emacs_t* ep,genchar *out,int direction)
 		hloff = location.hist_line;
 #endif /* ESH_NFIRST */
 		hist_copy((char*)out,MAXLINE, hline,hloff);
-#if SHOPT_MULTIBYTE
 		ed_internal((char*)out,out);
-#endif /* SHOPT_MULTIBYTE */
 		return;
 	}
 	if (i < 0)
@@ -1416,13 +1377,9 @@ static void draw(Emacs_t *ep,Draw_t option)
 	{
 		int		n;
 		drawbuff[cur+1]=0;
-#   if SHOPT_MULTIBYTE
 		ed_external(drawbuff,(char*)drawbuff);
-#   endif /*SHOPT_MULTIBYTE */
 		n = ed_histgen(ep->ed,(char*)drawbuff);
-#   if SHOPT_MULTIBYTE
 		ed_internal((char*)drawbuff,drawbuff);
-#   endif /*SHOPT_MULTIBYTE */
 		if(ep->ed->hlist)
 		{
 			ed_histlist(ep->ed,n);
@@ -1499,7 +1456,6 @@ static void draw(Emacs_t *ep,Draw_t option)
 		}
 		setcursor(ep,sptr-ep->screen,*nptr);
 		*sptr++ = *nptr++;
-#if SHOPT_MULTIBYTE
 		while(*nptr==MARKER)
 		{
 			if(*sptr=='\0')
@@ -1508,7 +1464,6 @@ static void draw(Emacs_t *ep,Draw_t option)
 			i--;
 			ep->cursor++;
 		}
-#endif /* SHOPT_MULTIBYTE */
 	}
 	if(ep->ed->e_multiline && option == REFRESH && ep->ed->e_nocrnl==0)
 		ed_setcursor(ep->ed, ep->screen, ep->cursor-ep->screen, ep->ed->e_peol, -1);
@@ -1567,7 +1522,6 @@ static void setcursor(Emacs_t *ep,int newp,int c)
 	return;
 }
 
-#if SHOPT_MULTIBYTE
 static int print(int c)
 {
 	return((c&~STRIP)==0 && isprint(c));
@@ -1577,4 +1531,3 @@ static int _isword(int c)
 {
 	return((c&~STRIP) || isalnum(c) || c=='_');
 }
-#endif /* SHOPT_MULTIBYTE */

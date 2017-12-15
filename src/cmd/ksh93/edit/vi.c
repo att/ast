@@ -53,35 +53,22 @@
 
 #define	MAXCHAR	MAXLINE-2		/* max char per line */
 
-#if SHOPT_MULTIBYTE
-#   include	"lexstates.h"
-#   define gencpy(a,b)	ed_gencpy(a,b)
-#   define genncpy(a,b,n)	ed_genncpy(a,b,n)
-#   define genlen(str)	ed_genlen(str)
-#   define digit(c)	((c&~STRIP)==0 && isdigit(c))
-#   define is_print(c)	((c&~STRIP) || isprint(c))
-#   if !_lib_iswprint && !defined(iswprint)
+#include	"lexstates.h"
+#define gencpy(a,b)	ed_gencpy(a,b)
+#define genncpy(a,b,n)	ed_genncpy(a,b,n)
+#define genlen(str)	ed_genlen(str)
+#define digit(c)	((c&~STRIP)==0 && isdigit(c))
+#define is_print(c)	((c&~STRIP) || isprint(c))
+#if !_lib_iswprint && !defined(iswprint)
 #	define iswprint(c)	((c&~0177) || isprint(c))
-#   endif
-    static int _isalph(int);
-    static int _ismetach(int);
-    static int _isblank(int);
-#   undef  isblank
-#   define isblank(v)	_isblank(virtual[v])
-#   define isalph(v)	_isalph(virtual[v])
-#   define ismetach(v)	_ismetach(virtual[v])
-#else
-    static genchar	_c;
-#   define gencpy(a,b)	strcpy((char*)(a),(char*)(b))
-#   define genncpy(a,b,n) strncpy((char*)(a),(char*)(b),n)
-#   define genlen(str)	strlen(str)
-#   define isalph(v)	((_c=virtual[v])=='_'||isalnum(_c))
-#   undef  isblank
-#   define isblank(v)	isspace(virtual[v])
-#   define ismetach(v)	ismeta(virtual[v])
-#   define digit(c)	isdigit(c)
-#   define is_print(c)	isprint(c)
-#endif	/* SHOPT_MULTIBYTE */
+#endif
+static int _isalph(int);
+static int _ismetach(int);
+static int _isblank(int);
+#undef  isblank
+#define isblank(v)	_isblank(virtual[v])
+#define isalph(v)	_isalph(virtual[v])
+#define ismetach(v)	_ismetach(virtual[v])
 
 #if ( 'a' == 97) /* ASCII? */
 #   define fold(c)	((c)&~040)	/* lower and uppercase equivalent */
@@ -124,9 +111,7 @@ typedef struct _vi_
 #else
 	int typeahead;		/* typeahead occurred */
 #endif	/* FIORDCHK */
-#if SHOPT_MULTIBYTE
 	int bigvi;
-#endif
 	Edit_t	*ed;		/* pointer to edit data */
 } Vi_t;
 
@@ -355,11 +340,9 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 	/*** Initialize some things ***/
 
 	virtual = (genchar*)shbuf;
-#if SHOPT_MULTIBYTE
 	virtual = (genchar*)roundof((char*)virtual-(char*)0,sizeof(genchar));
 	shbuf[i+1] = 0;
 	i = ed_internal(shbuf,virtual)-1;
-#endif /* SHOPT_MULTIBYTE */
 	globals = Globals;
 	cur_phys = i + 1;
 	cur_virt = i;
@@ -488,13 +471,9 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 			}
 			vp->last_cmd = 'i';
 			save_last(vp);
-#if SHOPT_MULTIBYTE
 			virtual[last_virt+1] = 0;
 			last_virt = ed_external(virtual,shbuf);
 			return(last_virt);
-#else
-			return(++last_virt);
-#endif /* SHOPT_MULTIBYTE */
 		}
 
 		/*** Line terminated with escape, or escaped eol/eof, ***/
@@ -510,13 +489,9 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 			if(esc_or_hang)
 				return(-1);
 			virtual[++last_virt] = '\n';
-#if SHOPT_MULTIBYTE
 			virtual[last_virt+1] = 0;
 			last_virt = ed_external(virtual,shbuf);
 			return(last_virt);
-#else
-			return(++last_virt);
-#endif /* SHOPT_MULTIBYTE */
 		}
 
 		if(echoctl) /*** for cntl-echo erase the ^[ ***/
@@ -602,7 +577,6 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 	}
 	if( ++last_virt >= 0 )
 	{
-#if SHOPT_MULTIBYTE
 		if(vp->bigvi)
 		{
 			vp->bigvi = 0;
@@ -613,7 +587,6 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 			virtual[last_virt] = 0;
 			last_virt = ed_external(virtual,shbuf);
 		}
-#endif /* SHOPT_MULTIBYTE */
 #if SHOPT_EDPREDICT
 		if(vp->ed->nhlist)
 			ed_histlist(vp->ed,0);
@@ -920,13 +893,9 @@ static int cntlmode(Vi_t *vp)
 			else
 			{
 				strcpy((char*)virtual,(char*)vp->u_space);
-#if SHOPT_MULTIBYTE
 				ed_internal((char*)vp->u_space,vp->u_space);
-#endif /* SHOPT_MULTIBYTE */
 			}
-#if SHOPT_MULTIBYTE
 			ed_internal((char*)virtual,virtual);
-#endif /* SHOPT_MULTIBYTE */
 			if((last_virt=genlen(virtual)-1) >= 0  && cur_virt == INVALID)
 				cur_virt = 0;
 #if SHOPT_EDPREDICT
@@ -1079,10 +1048,8 @@ static int cntlmode(Vi_t *vp)
 
 static void cursor(Vi_t *vp,int x)
 {
-#if SHOPT_MULTIBYTE
 	while(physical[x]==MARKER)
 		x++;
-#endif /* SHOPT_MULTIBYTE */
 	cur_phys = ed_setcursor(vp->ed, physical, cur_phys,x,vp->first_wind);
 }
 
@@ -1428,9 +1395,7 @@ static void vigetline(Vi_t* vp,int mode)
 				tmp = cntlmode(vp);
 				if( tmp == ENTER || tmp == BIGVI )
 				{
-#if SHOPT_MULTIBYTE
 					vp->bigvi = (tmp==BIGVI);
-#endif /* SHOPT_MULTIBYTE */
 					return;
 				}
 				if( tmp == INSERT )
@@ -1640,11 +1605,7 @@ static int mvcursor(Vi_t* vp,int motion)
 #endif /* SHOPT_EDPREDICT */
 			{
 				virtual[last_virt + 1] = '\0';
-#if SHOPT_MULTIBYTE
 				ed_external(virtual,lsearch+1);
-#else
-				strcpy(lsearch+1,virtual);
-#endif /* SHOPT_MULTIBYTE */
 				*lsearch = '^';
 				vp->direction = -2;
 				ed_ungetchar(vp->ed,'n');
@@ -1899,13 +1860,9 @@ static void refresh(Vi_t* vp, int mode)
 	{
 		int		n;
 		virtual[last_virt+1] = 0;
-#   if SHOPT_MULTIBYTE
 		ed_external(virtual,(char*)virtual);
-#   endif /* SHOPT_MULTIBYTE */
 		n = ed_histgen(vp->ed,(char*)virtual);
-#   if SHOPT_MULTIBYTE
 		ed_internal((char*)virtual,virtual);
-#   endif /* SHOPT_MULTIBYTE */
 		if(vp->ed->hlist)
 		{
 			ed_histlist(vp->ed,n);
@@ -2085,10 +2042,8 @@ static void replace(Vi_t *vp, int c, int increment)
 	if( vp->ocur_virt == INVALID || !is_print(c)
 		|| !is_print(virtual[cur_virt])
 		|| !is_print(vp->o_v_char)
-#if SHOPT_MULTIBYTE
 		|| !iswascii(c) || mbwidth(vp->o_v_char)>1
 		|| !iswascii(virtual[cur_virt])
-#endif /* SHOPT_MULTIBYTE */
 		|| (increment && (cur_window==w_size-1)
 			|| !is_print(virtual[cur_virt+1])) )
 	{
@@ -2204,17 +2159,13 @@ static int curline_search(Vi_t *vp, const char *string)
 {
 	size_t len=strlen(string);
 	const char *dp,*cp=string, *dpmax;
-#if SHOPT_MULTIBYTE
 	ed_external(vp->u_space,(char*)vp->u_space);
-#endif /* SHOPT_MULTIBYTE */
 	for(dp=(char*)vp->u_space,dpmax=dp+strlen(dp)-len; dp<=dpmax; dp++)
 	{
 		if(*dp==*cp && memcmp(cp,dp,len)==0)
 			return(dp-(char*)vp->u_space);
 	}
-#if SHOPT_MULTIBYTE
 	ed_internal((char*)vp->u_space,vp->u_space);
-#endif /* SHOPT_MULTIBYTE */
 	return(-1);
 }
 
@@ -2251,10 +2202,8 @@ static int search(Vi_t* vp,int mode)
 		/*** user wants repeat of last search ***/
 		del_line(vp,BAD);
 		strcpy( ((char*)virtual)+1, lsearch);
-#if SHOPT_MULTIBYTE
 		*((char*)virtual) = '/';
 		ed_internal((char*)virtual,virtual);
-#endif /* SHOPT_MULTIBYTE */
 	}
 
 	if( mode == 'N' )
@@ -2266,9 +2215,7 @@ static int search(Vi_t* vp,int mode)
 	/*** now search ***/
 
 	oldcurhline = curhline;
-#if SHOPT_MULTIBYTE
 	ed_external(virtual,(char*)virtual);
-#endif /* SHOPT_MULTIBYTE */
 	if(mode=='?' && (i=curline_search(vp,((char*)virtual)+1))>=0)
 	{
 		location.hist_command = curhline;
@@ -2320,10 +2267,8 @@ static void sync_cursor(Vi_t *vp)
 	{
 		/*** try to optimize search a little ***/
 		p = vp->ocur_phys + 1;
-#if SHOPT_MULTIBYTE
 		while(physical[p]==MARKER)
 			p++;
-#endif /* SHOPT_MULTIBYTE */
 		v = vp->ocur_virt + 1;
 	}
 	else
@@ -2333,7 +2278,6 @@ static void sync_cursor(Vi_t *vp)
 	}
 	for(; v <= last_virt; ++p, ++v)
 	{
-#if SHOPT_MULTIBYTE
 		int d;
 		c = virtual[v];
 		if((d = mbwidth(c)) > 1)
@@ -2342,10 +2286,6 @@ static void sync_cursor(Vi_t *vp)
 				p += (d-1);
 		}
 		else if(!iswprint(c))
-#else
-		c = virtual[v];
-		if(!isprint(c))
-#endif	/* SHOPT_MULTIBYTE */
 		{
 			if( c == '\t' )
 			{
@@ -2489,10 +2429,8 @@ addin:
 				ed_ringbell();
 				break;
 			}
-#if SHOPT_MULTIBYTE
 			ed_internal((char*)p,tmpbuf);
 			p = tmpbuf;
-#endif /* SHOPT_MULTIBYTE */
 			i = ' ';
 			do
 			{
@@ -2704,9 +2642,7 @@ yankeol:
 			{
 				i = cur_virt;
 				c = virtual[cur_virt];
-#if SHOPT_MULTIBYTE
 				if((c&~STRIP)==0)
-#endif /* SHOPT_MULTIBYTE */
 				if( isupper(c) )
 					c = tolower(c);
 				else if( islower(c) )
@@ -2726,7 +2662,6 @@ yankeol:
 }
 
 
-#if SHOPT_MULTIBYTE
     static int _isalph(int v)
     {
 #ifdef _lib_iswalnum
@@ -2746,8 +2681,6 @@ yankeol:
     {
 	return((v&~STRIP)==0 && ismeta(v));
     }
-
-#endif	/* SHOPT_MULTIBYTE */
 
 /*
  * get a character, after ^V processing

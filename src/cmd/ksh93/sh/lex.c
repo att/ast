@@ -327,9 +327,7 @@ int sh_lex(Lex_t* lp)
 	int		inlevel=lp->lexd.level, assignment=0, ingrave=0;
 	int		epatchar=0;
 	Sfio_t *sp;
-#if SHOPT_MULTIBYTE
 	LEN=1;
-#endif /* SHOPT_MULTIBYTE */
 	if(lp->lexd.paren)
 	{
 		lp->lexd.paren = 0;
@@ -1873,7 +1871,6 @@ static int here_copy(Lex_t *lp,struct ionod *iop)
 		if(n!=S_NL)
 		{
 			/* skip over regular characters */
-#if SHOPT_MULTIBYTE
 			do
 			{
 				if(fcleft()< MB_LEN_MAX && mbsize(fcseek(0))<0)
@@ -1883,8 +1880,6 @@ static int here_copy(Lex_t *lp,struct ionod *iop)
 					break;
 				}
 			}
-#endif /* SHOPT_MULTIBYTE */
-
 			while((n=STATE(state,c))==0);
 		}
 		if(n==S_EOF || !(c=fcget()))
@@ -1900,7 +1895,6 @@ static int here_copy(Lex_t *lp,struct ionod *iop)
 				if(!lp->lexd.dolparen && (c=sfwrite(sp,bufp,c))>0)
 					iop->iosize += c;
 			}
-#if SHOPT_MULTIBYTE
 			if(LEN==0)
 				LEN=1;
 			if(LEN < 0)
@@ -1910,7 +1904,6 @@ static int here_copy(Lex_t *lp,struct ionod *iop)
 				LEN += n;
 			}
 			else
-#endif /* SHOPT_MULTIBYTE */
 				c = lexfill(lp);
 			if(c<0)
 				break;
@@ -2215,7 +2208,6 @@ struct argnod *sh_endword(Shell_t *shp,int mode)
 	Stk_t		*stkp=shp->stk;
 	sfputc(stkp,0);
 	sp =  stkptr(stkp,ARGVAL);
-#if SHOPT_MULTIBYTE
 	if(mbwide())
 	{
 		do
@@ -2244,7 +2236,6 @@ struct argnod *sh_endword(Shell_t *shp,int mode)
 		while(n == 0);
 	}
 	else
-#endif /* SHOPT_MULTIBYTE */
 	while((n=state[*sp++])==0);
 	dp = sp;
 	if(mode<0)
@@ -2424,7 +2415,6 @@ struct argnod *sh_endword(Shell_t *shp,int mode)
 			}
 			break;
 		}
-#if SHOPT_MULTIBYTE
 		if(mbwide())
 		{
 			do
@@ -2454,7 +2444,6 @@ struct argnod *sh_endword(Shell_t *shp,int mode)
 			while(n == 0);
 		}
 		else
-#endif /* SHOPT_MULTIBYTE */
 		while((n=state[*dp++ = *sp++])==0);
 	}
 }

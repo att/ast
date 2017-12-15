@@ -43,11 +43,7 @@ typedef struct _fcin
 	Sfoff_t		fcoff;		/* offset for last read */
 } Fcin_t;
 
-#if SHOPT_MULTIBYTE
-#   define fcmbget(x)	(mbwide()?_fcmbget(x):fcget())
-#else
-#   define fcmbget(x)	(fcget())
-#endif
+#define fcmbget(x)	(mbwide()?_fcmbget(x):fcget())
 #define fcfile()	(_Fcin._fcfile)
 #define fcgetc(c)	(((c=fcget()) || (c=fcfill())), c)
 #define	fcget()		((int)(*_Fcin.fcptr++))

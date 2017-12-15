@@ -114,10 +114,6 @@ static void(*nullscan)(Namval_t*,void*);
 #   define _data        data
 #endif
 
-#if !SHOPT_MULTIBYTE
-#   define mbchar(p)       (*(unsigned char*)p++)
-#endif /* SHOPT_MULTIBYTE */
-
 /* ========	name value pair routines	======== */
 
 #include	"shnodes.h"
@@ -1693,12 +1689,10 @@ skip:
 	return(np);
 }
 
-#if SHOPT_MULTIBYTE
-    static int ja_size(char*, int, int);
-    static void ja_restore(void);
-    static char *savep;
-    static char savechars[8+1];
-#endif /* SHOPT_MULTIBYTE */
+static int ja_size(char*, int, int);
+static void ja_restore(void);
+static char *savep;
+static char savechars[8+1];
 
 /*
  * put value <string> into name-value node <np>.
@@ -1992,10 +1986,8 @@ void nv_putval(Namval_t *np, const char *string, int flags)
 	        	if((nv_isattr(np,NV_ZFILL)) && (nv_isattr(np,NV_LJUST)))
 				for(;*sp=='0';sp++);
 			size = nv_size(np);
-#if SHOPT_MULTIBYTE
 			if(size)
 				size = ja_size((char*)sp,size,nv_isattr(np,NV_RJUST|NV_ZFILL));
-#endif /* SHOPT_MULTIBYTE */
 		}
 		if(!up->cp || *up->cp==0)
 			flags &= ~NV_APPEND;
@@ -2120,11 +2112,9 @@ void nv_putval(Namval_t *np, const char *string, int flags)
 				cp = cp+size;
 				for (; dp < cp; *dp++ = ' ');
 			 }
-#if SHOPT_MULTIBYTE
 			/* restore original string */
 			if(savep)
 				ja_restore();
-#endif /* SHOPT_MULTIBYTE */
 		}
 		if(flags&NV_APPEND)
 			stkseek(shp->stk,offset);
@@ -2181,7 +2171,6 @@ static void rightjust(char *str, int size, int fill)
 	return;
 }
 
-#if SHOPT_MULTIBYTE
     /*
      * handle left and right justified fields for multi-byte chars
      * given physical size, return a logical size which reflects the
@@ -2242,7 +2231,6 @@ static void rightjust(char *str, int size, int fill)
 		*savep++ = *cp++;
 	savep = 0;
     }
-#endif /* SHOPT_MULTIBYTE */
 
 #ifndef _ENV_H
 static char *staknam(Shell_t *shp,Namval_t *np, char *value)

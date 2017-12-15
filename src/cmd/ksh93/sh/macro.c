@@ -46,13 +46,9 @@
 #include	"national.h"
 #include	"streval.h"
 
-#if SHOPT_MULTIBYTE
-#   undef isascii
-#   define isacii(c)	((c)<=UCHAR_MAX)
-#   include	<lc.h>
-#else
-#   define mbchar(p)       (*(unsigned char*)p++)
-#endif /* SHOPT_MULTIBYTE */
+#undef isascii
+#define isacii(c)	((c)<=UCHAR_MAX)
+#include	<lc.h>
 
 #if _WINIX
     static int Skip;
@@ -116,9 +112,7 @@ static void	endfield(Mac_t*,int);
 static void	mac_error(Namval_t*);
 static char	*mac_getstring(char*);
 static int	charlen(const char*,int);
-#if SHOPT_MULTIBYTE
-    static char	*lastchar(const char*,const char*);
-#endif /* SHOPT_MULTIBYTE */
+static char	*lastchar(const char*,const char*);
 
 void *sh_macopen(Shell_t *shp)
 {
@@ -293,7 +287,6 @@ void sh_machere(Shell_t *shp,Sfio_t *infile, Sfio_t *outfile, char *string)
 	cp = fcseek(0);
 	while(1)
 	{
-#if SHOPT_MULTIBYTE
 		if(mbwide())
 		{
 			do
@@ -315,7 +308,6 @@ void sh_machere(Shell_t *shp,Sfio_t *infile, Sfio_t *outfile, char *string)
 			while(n == 0);
 		}
 		else
-#endif /* SHOPT_MULTIBYTE */
 		while((n=state[*(unsigned char*)cp++])==0);
 		if(n==S_NL || n==S_QUOTE || n==S_RBRA)
 			continue;
@@ -462,7 +454,6 @@ static void copyto(Mac_t *mp,int endch, int newquote)
 		cp++;
 	while(1)
 	{
-#if SHOPT_MULTIBYTE
 		if(mbwide())
 		{
 			ssize_t len;
@@ -486,7 +477,6 @@ static void copyto(Mac_t *mp,int endch, int newquote)
 			c = (cp-len) - first;
 		}
 		else
-#endif /* SHOPT_MULTIBYTE */
 		{
 			while((n=state[*(unsigned char*)cp++])==0);
 			c = (cp-1) - first;
@@ -503,7 +493,6 @@ static void copyto(Mac_t *mp,int endch, int newquote)
 				c = chresc(cp,&addr);
 				cp = addr;
 				first = fcseek(cp-first);
-#if SHOPT_MULTIBYTE
 				if(c > UCHAR_MAX && mbwide())
 				{
 					int		i;
@@ -514,7 +503,6 @@ static void copyto(Mac_t *mp,int endch, int newquote)
 						sfputc(stkp,mb[i]);
 				}
 				else
-#endif /* SHOPT_MULTIBYTE */
 				sfputc(stkp,c);
 				if(c==ESCAPE && mp->pattern)
 					sfputc(stkp,ESCAPE);
@@ -1770,7 +1758,6 @@ retry1:
 				type = 0;
 			if(vsize < type)
 				v = 0;
-#if SHOPT_MULTIBYTE
 			else if(mbwide())
 			{
 				mbinit();
@@ -1778,7 +1765,6 @@ retry1:
 					mbchar(v);
 				c = ':';
 			}
-#endif /* SHOPT_MULTIBYTE */
 			else
 				v += type;
 			vsize = v?(int)strlen(v):0;
@@ -1802,7 +1788,6 @@ retry1:
 			}
 			else if(type < vsize)
 			{
-#if SHOPT_MULTIBYTE
 				if(mbwide())
 				{
 					char *vp = v;
@@ -1816,7 +1801,6 @@ retry1:
 					type = vp-v;
 					c = ':';
 				}
-#endif /* SHOPT_MULTIBYTE */
 				vsize = type;
 			}
 			else
@@ -2376,14 +2360,12 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 		/* insert \ before file expansion characters */
 		while(size-->0)
 		{
-#if SHOPT_MULTIBYTE
 			if((len=mbnsize(cp,ep-cp))>1)
 			{
 				cp += len;
 				size -= (len-1);
 				continue;
 			}
-#endif
 			c = state[n= *(unsigned char*)cp++];
 			if(mp->assign==3 && mp->pattern!=4)
 			{
@@ -2455,7 +2437,6 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 		while(size-->0)
 		{
 			n=state[c= *(unsigned char*)cp++];
-#if SHOPT_MULTIBYTE
 			if(n!=S_MBYTE && (len=mbnsize(cp-1,ep-cp+1))>1)
 			{
 				sfwrite(stkp,cp-1, len);
@@ -2463,7 +2444,6 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 				size -= len;
 				continue;
 			}
-#endif
 			if(n==S_ESC || n==S_EPAT)
 			{
 				/* don't allow extended patterns in this case */
@@ -2474,7 +2454,6 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 				mp->patfound = mp->pattern;
 			else if(n && mp->ifs)
 			{
-#if SHOPT_MULTIBYTE
 				if(n==S_MBYTE)
 				{
 					if(sh_strchr(mp->ifsp,cp-1,ep-cp+1)<0)
@@ -2486,12 +2465,10 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 					size -= n;
 					n= S_DELIM;
 				}
-#endif /* SHOPT_MULTIBYTE */
 				if(n==S_SPACE || n==S_NL)
 				{
 					while(size>0 && ((n=state[c= *(unsigned char*)cp++])==S_SPACE||n==S_NL))
 						size--;
-#if SHOPT_MULTIBYTE
 					if(n==S_MBYTE && sh_strchr(mp->ifsp,cp-1,ep-cp+1)>=0)
 					{
 						n = mbnsize(cp-1,ep-cp+1) - 1;
@@ -2502,7 +2479,6 @@ static void mac_copy(Mac_t *mp,const char *str, size_t size)
 						n=S_DELIM;
 					}
 					else
-#endif /* SHOPT_MULTIBYTE */
 					if(n==S_DELIM)
 						size--;
 				}
@@ -2624,10 +2600,8 @@ static int substring(const char *string,size_t len,const char *pat,int match[], 
 	sp += size;
 	while(sp>=string)
 	{
-#if SHOPT_MULTIBYTE
 		if(mbwide())
 			sp = lastchar(string,sp);
-#endif /* SHOPT_MULTIBYTE */
 		if(n=strgrpmatch(sp,pat,(ssize_t*)smatch,elementsof(smatch)/2,STR_RIGHT|STR_LEFT|STR_MAXIMAL|STR_INT))
 		{
 			nmatch = n;
@@ -2648,7 +2622,6 @@ static int substring(const char *string,size_t len,const char *pat,int match[], 
 	return(n);
 }
 
-#if SHOPT_MULTIBYTE
 	static char	*lastchar(const char *string, const char *endstring)
 	{
 		char *str = (char*)string;
@@ -2664,12 +2637,10 @@ static int substring(const char *string,size_t len,const char *pat,int match[], 
 		}
 		return(str);
 	}
-#endif /* SHOPT_MULTIBYTE */
 static int	charlen(const char *string,int len)
 {
 	if(!string)
 		return(0);
-#if SHOPT_MULTIBYTE
 	if(mbwide())
 	{
 		const char *str = string, *strmax=string+len;
@@ -2685,7 +2656,6 @@ static int	charlen(const char *string,int len)
 		return(n);
 	}
 	else
-#endif /* SHOPT_MULTIBYTE */
 	{
 		if(len<0)
 			return(strlen(string));

@@ -1012,9 +1012,7 @@ int hist_match(History_t *hp,off_t offset,char *string,int *coffset)
 {
 	unsigned char *first, *cp;
 	int m,n,c=1,line=0;
-#if SHOPT_MULTIBYTE
 	mbinit();
-#endif /* SHOPT_MULTIBYTE */
 	sfseek(hp->histfp,offset,SEEK_SET);
 	if(!(cp = first = (unsigned char*)sfgetr(hp->histfp,0,0)))
 		return(-1);
@@ -1032,10 +1030,8 @@ int hist_match(History_t *hp,off_t offset,char *string,int *coffset)
 			break;
 		if(*cp=='\n')
 			line++;
-#if SHOPT_MULTIBYTE
 		if((c=mbsize(cp)) < 0)
 			c = 1;
-#endif /* SHOPT_MULTIBYTE */
 		cp += c;
 		m -= c;
 	}

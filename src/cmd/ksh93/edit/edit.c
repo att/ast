@@ -53,13 +53,8 @@ static char KILL_LINE[20] = { ESC, '[', 'J', 0 };
 static char *savelex;
 
 
-#if SHOPT_MULTIBYTE
-#   define is_cntrl(c)	((c<=STRIP) && iscntrl(c))
-#   define is_print(c)	((c&~STRIP) || isprint(c))
-#else
-#   define is_cntrl(c)	iscntrl(c)
-#   define is_print(c)	isprint(c)
-#endif
+#define is_cntrl(c)	((c<=STRIP) && iscntrl(c))
+#define is_print(c)	((c&~STRIP) || isprint(c))
 
 #if	(CC_NATIVE == CC_ASCII)
 #   define printchar(c)	((c) ^ ('A'-cntl('A')))
@@ -896,7 +891,6 @@ done:
 static int putstack(Edit_t *ep,char string[], int nbyte, int type) 
 {
 	int c;
-#if SHOPT_MULTIBYTE
 	char *endp, *p=string;
 	int size, offset = ep->e_lookahead + nbyte;
 	*(endp = &p[nbyte]) = 0;
@@ -961,24 +955,6 @@ static int putstack(Edit_t *ep,char string[], int nbyte, int type)
 			ep->e_lbuf[ep->e_lookahead+size-offset] = ep->e_lbuf[ep->e_lookahead+size];
 	}
 	ep->e_lookahead += nbyte-offset;
-#else
-	while (nbyte > 0)
-	{
-		c = string[--nbyte] & STRIP;
-		ep->e_lbuf[ep->e_lookahead++] = (type?-c:c);
-#   ifndef CBREAK
-		if( c == '\0' )
-		{
-			/*** user break key ***/
-			ep->e_lookahead = 0;
-#	if KSHELL
-			kill(getpid(),SIGINT);
-			siglongjmp(ep->e_env, UINTR);
-#	endif	/* KSHELL */
-		}
-#   endif /* CBREAK */
-	}
-#endif /* SHOPT_MULTIBYTE */
 	return(1);
 }
 
@@ -1085,7 +1061,6 @@ void	ed_putchar(Edit_t *ep,int c)
 	if(!dp)
 		return;
 	buf[0] = c;
-#if SHOPT_MULTIBYTE
 	/* check for place holder */
 	if(c == MARKER)
 		return;
@@ -1100,7 +1075,6 @@ void	ed_putchar(Edit_t *ep,int c)
 		buf[0] = c;
 		size = 1;
 	}
-#endif	/* SHOPT_MULTIBYTE */
 	if (buf[0] == '_' && size==1)
 	{
 		*dp++ = ' ';
@@ -1123,9 +1097,7 @@ Edpos_t ed_curpos(Edit_t *ep,genchar *phys, int off, int cur, Edpos_t curpos)
 	genchar *sp=phys;
 	int c=1, col=ep->e_plen;
 	Edpos_t pos;
-#if SHOPT_MULTIBYTE
 	char p[16];
-#endif /* SHOPT_MULTIBYTE */
 	if(cur && off>=cur)
 	{
 		sp += cur; 
@@ -1146,11 +1118,7 @@ Edpos_t ed_curpos(Edit_t *ep,genchar *phys, int off, int cur, Edpos_t curpos)
 	{
 		if(c)
 			c = *sp++;
-#if SHOPT_MULTIBYTE
 		if(c && (mbconv(p, (wchar_t)c))==1 && p[0]=='\n')
-#else
-		if(c=='\n')
-#endif /* SHOPT_MULTIBYTE */
 			col = 0;
 		else
 			col++;
@@ -1280,7 +1248,6 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 	{
 		if(curp == sp)
 			r = dp - phys;
-#if SHOPT_MULTIBYTE
 		d = mbwidth((wchar_t)c);
 		if(d==1 && is_cntrl(c))
 			d = -1;
@@ -1296,9 +1263,6 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 			continue;
 		}
 		else
-#else
-		d = (is_cntrl(c)?-1:1);
-#endif	/* SHOPT_MULTIBYTE */
 		if(d<0)
 		{
 			if(c=='\t')
@@ -1329,7 +1293,6 @@ int ed_virt_to_phys(Edit_t *ep,genchar *virt,genchar *phys,int cur,int voff,int 
 	return(r);
 }
 
-#if SHOPT_MULTIBYTE
 /*
  * convert external representation <src> to an array of genchars <dest>
  * <src> and <dest> can be the same
@@ -1414,7 +1377,6 @@ void	ed_genncpy(genchar *dp,const genchar *sp, int n)
 	while(n-->0 && (*dp++ = *sp++));
 }
 
-#endif /* SHOPT_MULTIBYTE */
 /*
  * find the string length of <str>
  */
@@ -1452,12 +1414,8 @@ static int keytrap(Edit_t *ep,char *inbuff,int insize, int bufsize, int mode)
 	char *cp;
 	int savexit;
 	Shell_t *shp = ep->sh;
-#if SHOPT_MULTIBYTE
 	char buff[MAXLINE];
 	ed_external(ep->e_inbuf,cp=buff);
-#else
-	cp = ep->e_inbuf;
-#endif /* SHOPT_MULTIBYTE */
 	inbuff[insize] = 0;
 	ep->e_col = ep->e_cur;
 	if(mode== -2)

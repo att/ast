@@ -87,17 +87,9 @@
 #define isblank(x)      iswblank(x)
 
 #undef LEN
-#if SHOPT_MULTIBYTE
-#   define LEN		_Fcin.fclen
-#   define isaname(c)	((c)>0x7f?isalpha(c): sh_lexstates[ST_NAME][(c)]==0)
-#   define isaletter(c)	((c)>0x7f?isalpha(c): sh_lexstates[ST_DOL][(c)]==S_ALP && (c)!='.')
-#else
-#   undef mbwide
-#   define mbwide()	(0)
-#   define LEN		1
-#   define isaname(c)	(sh_lexstates[ST_NAME][c]==0)
-#   define isaletter(c)	(sh_lexstates[ST_DOL][c]==S_ALP && (c)!='.')
-#endif
+#define LEN		_Fcin.fclen
+#define isaname(c)	((c)>0x7f?isalpha(c): sh_lexstates[ST_NAME][(c)]==0)
+#define isaletter(c)	((c)>0x7f?isalpha(c): sh_lexstates[ST_DOL][(c)]==S_ALP && (c)!='.')
 #define STATE(s,c)	(s[mbwide()?((c=fcmbget(&LEN)),LEN>1?'a':c):(c=fcget())])
 #define isadigit(c)	(sh_lexstates[ST_DOL][c]==S_DIG)
 #define isastchar(c)	((c)=='@' || (c)=='*')

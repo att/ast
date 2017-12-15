@@ -72,10 +72,6 @@ char e_version[] =
 #define ATTRS 1
     "L"
 #endif
-#if SHOPT_MULTIBYTE
-#define ATTRS 1
-    "M"
-#endif
 #if SHOPT_REGRESS
 #define ATTRS 1
     "R"
@@ -474,19 +470,13 @@ static char *get_ifs(Namval_t *np, Namfun_t *fp) {
         memset(shp->ifstable, 0, (1 << CHAR_BIT));
         cp = value;
         if (cp) {
-#if SHOPT_MULTIBYTE
             while (n = mbsize(cp), c = *(unsigned char *)cp) {
-#else
-            while (c = *(unsigned char *)cp++) {
-#endif  // SHOPT_MULTIBYTE
-#if SHOPT_MULTIBYTE
                 cp++;
                 if (n > 1) {
                     cp += (n - 1);
                     shp->ifstable[c] = S_MBYTE;
                     continue;
                 }
-#endif  // SHOPT_MULTIBYTE
                 n = S_DELIM;
                 if (c == *cp) {
                     cp++;

@@ -632,7 +632,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 					if(f)
 						sfread(iop,cp,c);
 					cur += c;
-#if SHOPT_MULTIBYTE
 					if(!binary && mbwide())
 					{
 						int	x;
@@ -649,12 +648,9 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 						if((size -= x) > 0 && (up >= cur || z < 0) && ((flags & NN_FLAG) || z < 0 || m > c))
 							continue;
 					}
-#endif
 				}
-#if SHOPT_MULTIBYTE
 				if(!binary && mbwide() && (up == var || (flags & NN_FLAG) && size))
 					cur = var;
-#endif
 				*cur = 0;
 				if(c>=size || (flags&N_FLAG) || m==0)
 				{
@@ -719,32 +715,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 		if(flags&S_FLAG)
 			sfwrite(shp->gd->hist_ptr->histfp,(char*)cp,c);
 		c = shp->ifstable[*cp++];
-#if !SHOPT_MULTIBYTE
-		if(!name && (flags&R_FLAG)) /* special case single argument */
-		{
-			/* skip over leading blanks */
-			while(c==S_SPACE)
-				c = shp->ifstable[*cp++];
-			/* strip trailing delimiters */
-			if(cpmax[-1] == '\n')
-				cpmax--;
-			if(cpmax>cp)
-			{
-				while((c=shp->ifstable[*--cpmax])==S_DELIM || c==S_SPACE);
-				cpmax[1] = 0;
-			}
-			else
-				*cpmax =0;
-			if(nv_isattr(np, NV_RDONLY))
-			{
-				errormsg(SH_DICT,ERROR_warn(0),e_readonly, nv_name(np));
-				jmpval = 1;
-			}
-			else
-				nv_putval(np,(char*)cp-1,0);
-			goto done;
-		}
-#endif /* !SHOPT_MULTIBYTE */
 	}
 	else
 		c = S_NL;
@@ -757,7 +727,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 	{
 		switch(c)
 		{
-#if SHOPT_MULTIBYTE
 		   case S_MBYTE:
 			if(val==0)
 				val = (char*)(cp-1);
@@ -773,7 +742,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 			else
 				c = 0;
 			continue;
-#endif /*SHOPT_MULTIBYTE */
 		    case S_QUOTE:
 			c = shp->ifstable[*cp++];
 			if(inquote && c==S_QUOTE)
@@ -855,7 +823,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 			while((c=shp->ifstable[*cp++])==S_SPACE);
 			if(!val)
 				continue;
-#if SHOPT_MULTIBYTE
 			if(c==S_MBYTE)
 			{
 				if(sh_strchr(ifs,(char*)cp-1,cpmax-cp+1)>=0)
@@ -867,7 +834,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 				else
 					c = 0;
 			}
-#endif /* SHOPT_MULTIBYTE */
 			if(c!=S_DELIM)
 				break;
 			/* FALL THRU */

@@ -120,9 +120,7 @@ const struct shtable2 shtab_variables[] =
 #if SHOPT_FS_3D
 	"VPATH",	0,				(char*)0,
 #endif /* SHOPT_FS_3D */
-#if SHOPT_MULTIBYTE
 	"CSWIDTH",	0,				(char*)0,
-#endif /* SHOPT_MULTIBYTE */
 	"",	0,					(char*)0
 };
 

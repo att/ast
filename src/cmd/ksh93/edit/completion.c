@@ -30,10 +30,6 @@
 #include	"edit.h"
 #include	"history.h"
 
-#if !SHOPT_MULTIBYTE
-#define mbchar(p)       (*(unsigned char*)p++)
-#endif
-
 static char *fmtx(Shell_t *shp,const char *string)
 {
 	const char	*cp = string;
@@ -277,7 +273,6 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 	}
 	comptr = (struct comnod*)stkalloc(shp->stk,sizeof(struct comnod));
 	ap = (struct argnod*)stkseek(shp->stk,ARGVAL);
-#if SHOPT_MULTIBYTE
 	{
 		int c = *cur;
 		genchar *cp;
@@ -289,7 +284,6 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		*cp = c;
 		*eol = ed_external((genchar*)outbuff,outbuff);
 	}
-#endif /* SHOPT_MULTIBYTE */
 	out = outbuff + *cur + (sh_isoption(shp,SH_VI)!=0);
 #if 0
 	if(out[-1]=='"' || out[-1]=='\'')
@@ -551,7 +545,6 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		stkset(shp->stk,ep->e_stkptr,ep->e_stkoff);
 	if(nomarkdirs)
 		sh_offoption(shp,SH_MARKDIRS);
-#if SHOPT_MULTIBYTE
 	{
 		int c,n=0;
 		/* first re-adjust cur */
@@ -564,7 +557,6 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		outbuff[*eol+1] = 0;
 		*eol = ed_internal(outbuff,(genchar*)outbuff);
 	}
-#endif /* SHOPT_MULTIBYTE */
 	return(rval);
 }
 
@@ -586,7 +578,6 @@ int ed_macro(Edit_t *ep, int i)
 		ep->e_macro[2] = 0;
 	if (isalnum(i)&&(np=nv_search(ep->e_macro,ep->sh->alias_tree,HASH_SCOPE))&&(out=nv_getval(np)))
 	{
-#if SHOPT_MULTIBYTE
 		/* copy to buff in internal representation */
 		int c = 0;
 		if( strlen(out) > LOOKAHEAD )
@@ -597,11 +588,6 @@ int ed_macro(Edit_t *ep, int i)
 		i = ed_internal(out,buff);
 		if(c)
 			out[LOOKAHEAD] = c;
-#else
-		strncpy((char*)buff,out,LOOKAHEAD);
-		buff[LOOKAHEAD] = 0;
-		i = strlen((char*)buff);
-#endif /* SHOPT_MULTIBYTE */
 		while(i-- > 0)
 			ed_ungetchar(ep,buff[i]);
 		return(1);
@@ -622,10 +608,8 @@ int ed_fulledit(Edit_t *ep)
 	{
 		if(ep->e_eol<0)
 			return(-1);
-#if SHOPT_MULTIBYTE
 		ep->e_inbuf[ep->e_eol+1] = 0;
 		ed_external(ep->e_inbuf, (char *)ep->e_inbuf);
-#endif /* SHOPT_MULTIBYTE */
 		sfwrite(shgd->hist_ptr->histfp,(char*)ep->e_inbuf,ep->e_eol+1);
 		sh_onstate(ep->sh,SH_HISTORY);
 		hist_flush(shgd->hist_ptr);

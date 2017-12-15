@@ -184,21 +184,17 @@ char *sh_substitute(Shell_t *shp,const char *string,const char *oldsp,char *news
 		return((char*)0);
 	if(*(cp=oldsp) == 0)
 		goto found;
-#if SHOPT_MULTIBYTE
 	mbinit();
-#endif /* SHOPT_MULTIBYTE */
 	do
 	{
 	/* skip to first character which matches start of oldsp */
 		while(*sp && (savesp==sp || *sp != *cp))
 		{
-#if SHOPT_MULTIBYTE
 			/* skip a whole character at a time */
 			int c = mbsize(sp);
 			if(c < 0)
 				sp++;
 			while(c-- > 0)
-#endif /* SHOPT_MULTIBYTE */
 			sfputc(shp->stk,*sp++);
 		}
 		if(*sp == 0)
@@ -244,7 +240,6 @@ void	sh_trim(char *sp)
 		dp = sp;
 		while(c= *sp)
 		{
-#if SHOPT_MULTIBYTE
 			int len;
 			if(mbwide() && (len=mbsize(sp))>1)
 			{
@@ -253,7 +248,6 @@ void	sh_trim(char *sp)
 				sp += len;
 				continue;
 			}
-#endif /* SHOPT_MULTIBYTE */
 			sp++;
 			if(c == '\\')
 				c = *sp++;
@@ -331,17 +325,13 @@ char *sh_fmtstr(const char *string, int quote)
 	const char *cp = string, *op;
 	int c, state, type=quote;
 	int offset;
-#if SHOPT_MULTIBYTE
 	bool	lc_unicodeliterals;
-#endif
 	if(!cp)
 		return((char*)0);
 	offset = staktell();
 	mbinit();
 	state = ((c= mbchar(cp))==0);
-#if SHOPT_MULTIBYTE
 	lc_unicodeliterals = quote=='u' ? 1 : quote=='U' ? 0 : !!(ast.locale.set & AST_LC_unicodeliterals);
-#endif
 	if(quote=='"')
 		goto skip;
 	quote = '\'';
@@ -369,11 +359,7 @@ skip:
 	}
 	for(;c;c= mbchar(cp))
 	{
-#if SHOPT_MULTIBYTE
 		if(c==quote || c>=128 || c<0 || !iswprint(c)) 
-#else
-		if(c==quote || !isprint(c))
-#endif /* SHOPT_MULTIBYTE */
 			state = 2;
 		else if(c==']' || c=='=' || (c!=':' && c<=0x7f && (c=sh_lexstates[ST_NORM][c]) && c!=S_EPAT))
 			state |=1;
@@ -389,21 +375,15 @@ skip:
 	}
 	else
 	{
-#if SHOPT_MULTIBYTE
 		int	lc_specifier = (ast.locale.set & AST_LC_utf8) ? 'u' : 'w';
 		bool	widebyte;
-#endif
 		if(quote=='"')
 			stakputc('"');
 		else
 			stakwrite("$'",2);
 		cp = string;
-#if SHOPT_MULTIBYTE
 		mbinit();
 		while(op = cp, c= mbchar(cp))
-#else
-		while(op = cp, c= *(unsigned char*)cp++)
-#endif
 		{
 			state=1;
 			switch(c)
@@ -435,7 +415,6 @@ skip:
 				if(c==quote)
 					break;
 			    default:
-#if SHOPT_MULTIBYTE
 				if(c<0)
 				{
 					c = *((unsigned char *)op);
@@ -506,9 +485,6 @@ skip:
 					}
 				}
 				if(widebyte || !iswprint(c))
-#else
-				if(!isprint(c))
-#endif
 				{
 					sfprintf(staksp,"\\x%.2x",c);
 					continue;
@@ -579,13 +555,9 @@ char	*sh_fmtqf(const char *string, int flags, int fold)
 		{
 			if (a && !isaname(c))
 				a = 0;
-#if SHOPT_MULTIBYTE
 			if (c >= 0x200)
 				continue;
 			if (c == '\'' || !iswprint(c))
-#else
-			if (c == '\'' || !isprint(c))
-#endif /* SHOPT_MULTIBYTE */
 			{
 				q = single;
 				break;
@@ -646,11 +618,7 @@ char	*sh_fmtqf(const char *string, int flags, int fold)
 				case '\'':
 					break;
 				default:
-#if SHOPT_MULTIBYTE
 					if(!iswprint(c))
-#else
-					if(!isprint(c))
-#endif
 					{
 						if ((n -= 4) <= 0)
 						{
@@ -750,7 +718,6 @@ char	*sh_fmtqf(const char *string, int flags, int fold)
 	return(stakptr(offset));
 }
 
-#if SHOPT_MULTIBYTE
 	int sh_strchr(const char *string, const char *dp, size_t size)
 	{
 		wchar_t c, d;
@@ -767,7 +734,6 @@ char	*sh_fmtqf(const char *string, int flags, int fold)
 			return(cp-string);
 		return(-1);
 	}
-#endif /* SHOPT_MULTIBYTE */
 
 const char *_sh_translate(const char *message)
 {

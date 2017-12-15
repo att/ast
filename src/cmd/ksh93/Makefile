@@ -33,7 +33,6 @@ SHOPT_FILESCAN == 1		/* fast file scan */
 SHOPT_FIXEDARRAY == 1		/* fixed dimension indexed array */
 SHOPT_FS_3D == 			/* 3d file system */
 SHOPT_KIA == 1			/* shell information database generation */
-SHOPT_MULTIBYTE == 1		/* multibyte character handling */
 SHOPT_NAMESPACE == 1		/* allow namespaces */
 SHOPT_OPTIMIZE == 1		/* optimize loop invariants */
 SHOPT_PFSH == 1			/* solaris exec_attr(4) profile execution */

@@ -26,12 +26,8 @@
  *
  */
 
-#if SHOPT_MULTIBYTE
+#ifndef MARKER
+#define MARKER		0xdfff	/* Must be invalid character */
+#endif
 
-#   ifndef MARKER
-#	define MARKER		0xdfff	/* Must be invalid character */
-#   endif
-
-    extern int sh_strchr(const char*,const char*,size_t);
-
-#endif /* SHOPT_MULTIBYTE */
+extern int sh_strchr(const char*,const char*,size_t);

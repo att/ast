@@ -427,7 +427,7 @@ static char strformat(char *s)
         int    c;
         char*           b;
         char*           p;
-#if SHOPT_MULTIBYTE && defined(FMT_EXP_WIDE)
+#if defined(FMT_EXP_WIDE)
 	int		w;
 #endif
 
@@ -439,13 +439,12 @@ static char strformat(char *s)
                     case '\\':
 			if(*s==0)
 				break;
-#if SHOPT_MULTIBYTE && defined(FMT_EXP_WIDE)
+#if defined(FMT_EXP_WIDE)
                         c = chrexp(s - 1, &p, &w, FMT_EXP_CHAR|FMT_EXP_LINE|FMT_EXP_WIDE);
 #else
                         c = chresc(s - 1, &p);
 #endif
                         s = p;
-#if SHOPT_MULTIBYTE
 #if defined(FMT_EXP_WIDE)
 			if(c<0) /* conversion failed => empty string */
 				continue;
@@ -461,7 +460,6 @@ static char strformat(char *s)
 				continue;
 			}
 #endif /* FMT_EXP_WIDE */
-#endif /* SHOPT_MULTIBYTE */
 			if(c=='%')
 				*t++ = '%';
 			else if(c==0)
@@ -498,14 +496,12 @@ static char *fmthtml(Shell_t *shp,const char *string, int flags)
 	{
 		while(c= *(unsigned char*)cp++)
 		{
-#if SHOPT_MULTIBYTE
 			int s;
 			if((s=mbsize(cp-1)) > 1)
 			{
 				cp += (s-1);
 				continue;
 			}
-#endif /* SHOPT_MULTIBYTE */
 			if(c=='<')
 				sfputr(shp->stk,"&lt",';');
 			else if(c=='>')
@@ -682,12 +678,8 @@ static int varname(const char *str, ssize_t n)
 	}
 	for(;n > 0; n-=len)
 	{
-#ifdef SHOPT_MULTIBYTE
 		len = mbsize(str);
 		c = mbchar(str);
-#else
-		c = *(unsigned char*)str++;
-#endif
 		if(dot && !(isalpha(c)||c=='_'))
 			break;
 		else if(dot==0 && !(isalnum(c) || c=='_' || c == '.'))
@@ -1074,7 +1066,6 @@ static int fmtvecho(Shell_t *shp,const char *string, struct printf *pp)
 	const char *cp = string, *cpmax;
 	int c;
 	int offset = stktell(shp->stk);
-#if SHOPT_MULTIBYTE
 	int chlen;
 	if(mbwide())
 	{
@@ -1088,7 +1079,6 @@ static int fmtvecho(Shell_t *shp,const char *string, struct printf *pp)
 		}
 	}
 	else
-#endif /* SHOPT_MULTIBYTE */
 	while((c= *cp++) && (c!='\\'));
 	if(c==0)
 		return(-1);
@@ -1097,14 +1087,12 @@ static int fmtvecho(Shell_t *shp,const char *string, struct printf *pp)
 		sfwrite(shp->stk,(void*)string,c);
 	for(; c= *cp; cp++)
 	{
-#if SHOPT_MULTIBYTE
 		if (mbwide() && ((chlen = mbsize(cp)) > 1))
 		{
 			sfwrite(shp->stk,cp,chlen);
 			cp +=  (chlen-1);
 			continue;
 		}
-#endif /* SHOPT_MULTIBYTE */
 		if( c=='\\') switch(*++cp)
 		{
 			case 'E':
