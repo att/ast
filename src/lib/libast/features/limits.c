@@ -48,7 +48,7 @@ __STDPP__directive pragma pp:hide getpagesize getdtablesize
  * kick that in
  */
 
-#include "FEATURE/standards"	/* iffe --include-first */
+#include <ast_standards.h>	/* iffe --include-first */
 #include "ast_lib.h"
 
 #ifdef __sun
