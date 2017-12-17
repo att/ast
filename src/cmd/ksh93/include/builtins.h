@@ -117,9 +117,7 @@ extern int B_echo(int, char*[],Shbltin_t*);
     extern int b_mkservice(int, char*[],Shbltin_t*);
     extern int b_eloop(int, char*[],Shbltin_t*);
 #endif
-#if SHOPT_COMPLETE
-    extern int b_complete(int, char*[],Shbltin_t*);
-#endif /* SHOPT_COMPLETE */
+extern int b_complete(int, char*[],Shbltin_t*);
 
 #undef	extern
 

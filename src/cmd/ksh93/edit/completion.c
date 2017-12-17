@@ -195,7 +195,6 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type)
 	return(bp);
 }
 
-#if SHOPT_COMPLETE
 static char **prog_complete(Dt_t *dict, char *line, char *word, int cur)
 {
 	char *cp = line, *cmd, c, **com=0;
@@ -233,7 +232,6 @@ static char **prog_complete(Dt_t *dict, char *line, char *word, int cur)
 	}
 	return(com);
 }
-#endif /* SHOPT_COMPLETE */
 
 /*
  * file name generation for edit modes
@@ -308,14 +306,12 @@ int ed_expand(Edit_t *ep, char outbuff[],int *cur,int *eol,int mode, int count)
 		c =  *(unsigned char*)out;
 		var = mode;
 		begin = out = find_begin(outbuff,last,0,&var);
-#if SHOPT_COMPLETE
 		if(ep->compdict && mode!='?' && (com = prog_complete(ep->compdict,outbuff,out,*cur)))
 		{
 			char **av;
 			for(av=com; *av; av++);
 			narg = av-com;
 		}
-#endif /* SHOPT_COMPLETE */
 		/* addstar set to zero if * should not be added */
 		if(var=='$')
 		{
