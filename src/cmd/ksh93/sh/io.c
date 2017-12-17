@@ -604,11 +604,9 @@ int sh_rpipe(int pv[]) {
     return 0;
 }
 
-#ifndef accept4
-#endif
 #if SHOPT_COSHELL
 int sh_coaccept(Shell_t *shp, int *pv, int out) {
-    int fd = accept4(pv[0], (struct sockaddr *)0, (socklen_t *)0, 0);
+    int fd = accept(pv[0], NULL, NULL);
 
     if (fd > 2) fcntl(fd, F_SETFD, FD_CLOEXEC);
     sh_close(pv[0]);
