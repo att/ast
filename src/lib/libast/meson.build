@@ -165,6 +165,10 @@ if cc.has_function('sysinfo', prefix : '#include <sys/sysinfo.h>')
     libast_c_args += [ '-D_lib_sysinfo=1' ]
 endif
 
+if cc.has_function('pipe2', prefix : '#include <unistd.h>')
+    libast_c_args += [ '-D_lib_pipe2=1' ]
+endif
+
 if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
     libast_c_args += [ '-DSTAT_ST_MTIM=1' ]
 elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')

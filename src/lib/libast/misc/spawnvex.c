@@ -896,9 +896,19 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			msg[0] = msg[1] = -1;
 		}
 		else
-		if (pipe2(msg, O_CLOEXEC) < 0)
-			msg[0] = msg[1] = -1;
-		if (!(flags & SPAWN_FOREGROUND))
+ 		#if _lib_pipe2 
+ 		    if (pipe2(msg, O_CLOEXEC) < 0)
+			    msg[0] = msg[1] = -1;
+ 		#else
+			if (pipe(msg) < 0)
+				msg[0] = -1;
+			else
+			{
+				fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+				fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+			}
+ 		#endif
+ 		if (!(flags & SPAWN_FOREGROUND))
 			sigcritical(SIG_REG_EXEC|SIG_REG_PROC);
 		if (nx.flags & SPAWN_VFORK)
 			pid = vfork();
