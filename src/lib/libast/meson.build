@@ -157,12 +157,18 @@ if align_bound_result.returncode() == 0
     endforeach
 endif
 
-
-
 if not cc.has_function('isnanl', prefix : '#include<math.h>')
     libast_c_args += [ '-Disnanl=isnan' ]
 endif
 
+if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
+    libast_c_args += [ '-DSTAT_ST_MTIM=1' ]
+elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
+    # Under macOS modification time field is defined as mtimespec
+    libast_c_args += [ '-DSTAT_ST_MTIMESPEC=1' ]
+else
+    error('Can not determine modification time field in struct stat')
+endif
 
 subdir('aso')
 subdir('comp')

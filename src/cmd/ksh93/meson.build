@@ -146,6 +146,17 @@ if socketpair_shutdown_mode_result.returncode() == 0
     shcomp_c_args += [ '-D_socketpair_shutdown_mode=1' ]
 endif
 
+if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
+    ksh93_c_args += [ '-DSTAT_ST_MTIM=1' ]
+    shcomp_c_args += [ '-DSTAT_ST_MTIM=1' ]
+elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
+    # Under macOS modification time field is defined as mtimespec
+    ksh93_c_args += [ '-DSTAT_ST_MTIMESPEC=1' ]
+    shcomp_c_args += [ '-DSTAT_ST_MTIMESPEC=1' ]
+else
+    error('Can not determine modification time field in struct stat')
+endif
+
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
     link_with: [libast, libcmd, libcoshell],
