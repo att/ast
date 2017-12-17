@@ -580,7 +580,10 @@ int sh_pipe(int pv[]) {
 }
 
 #ifndef pipe2
-#undef pipe
+#   undef pipe
+#   if !_lib_pipe2
+#       define pipe2(a,b)	pipe(a)
+#   endif
 #endif
 //
 // Create a real pipe when pipe() is socketpair.
