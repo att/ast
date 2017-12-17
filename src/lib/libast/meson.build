@@ -161,6 +161,10 @@ if not cc.has_function('isnanl', prefix : '#include<math.h>')
     libast_c_args += [ '-Disnanl=isnan' ]
 endif
 
+if cc.has_function('sysinfo', prefix : '#include <sys/sysinfo.h>')
+    libast_c_args += [ '-D_lib_sysinfo=1' ]
+endif
+
 if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
     libast_c_args += [ '-DSTAT_ST_MTIM=1' ]
 elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
