@@ -605,6 +605,9 @@ int sh_rpipe(int pv[]) {
 }
 
 #ifndef accept4
+#ifndef _lib_accept4
+#define accept4(a, b, c, d) accept(a, b, c)
+#endif
 #endif
 #if SHOPT_COSHELL
 int sh_coaccept(Shell_t *shp, int *pv, int out) {
