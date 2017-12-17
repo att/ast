@@ -19,6 +19,13 @@ if libpath_result.returncode() == 0
     libast_c_args += [ '-DCONF_LIBPATH=' + libpath_output ]
 endif
 
+prog_result = run_command('features/prog.sh')
+
+if prog_result.returncode() == 0
+    prog_output = prog_result.stdout()
+    libast_c_args += [ '-D_PROC_PROG=' + prog_output ]
+endif
+
 # TODO: Check if this test can be trimmed down in size
 align_bound_code = '''
 #include <stdio.h>

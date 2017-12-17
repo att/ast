@@ -35,8 +35,7 @@
 #include <ctype.h>
 #endif
 
-#include "FEATURE/prog"
-
+/* TODO: Is it needed ? */
 #if _hdr_macho_o_dyld && _lib__NSGetExecutablePath
 #include <mach-o/dyld.h>
 #else
