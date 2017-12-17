@@ -1759,7 +1759,7 @@ void nv_putval(Namval_t *np, const char *string, int flags)
 #if SHOPT_FIXEDARRAY
 	if(np->nvalue.up && nv_isarray(np) && (ap=nv_arrayptr(np)) && !ap->fixed)
 #else
-	else if(np->nvalue.up && nv_isarray(np) && nv_arrayptr(np))
+	if(np->nvalue.up && nv_isarray(np) && nv_arrayptr(np))
 #endif /* SHOPT_FIXEDARRAY */
 		up = np->nvalue.up;
 	if(up && up->cp==Empty)

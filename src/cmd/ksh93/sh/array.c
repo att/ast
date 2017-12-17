@@ -280,8 +280,8 @@ static Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
                 int n = fp->ndim;
                 fp->curi = 0;
                 while (--n >= 0) fp->cur[n] = 0;
-            }
 #endif  // SHOPT_FIXEDARRAY
+            }
             else {
                 ap->cur = 0;
             }
