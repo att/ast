@@ -19,9 +19,16 @@ typedef struct Tv_s
 	uint32_t	tv_nsec;
 } Tv_t;
 
-#define ST_ATIME_NSEC_GET(st)	((st)->st_atim.tv_nsec)
-#define ST_CTIME_NSEC_GET(st)	((st)->st_ctim.tv_nsec)
-#define ST_MTIME_NSEC_GET(st)	((st)->st_mtim.tv_nsec)
+
+#if STAT_ST_MTIM
+    #define ST_ATIME_NSEC_GET(st)	((st)->st_atim.tv_nsec)
+    #define ST_CTIME_NSEC_GET(st)	((st)->st_ctim.tv_nsec)
+    #define ST_MTIME_NSEC_GET(st)	((st)->st_mtim.tv_nsec)
+#elif STAT_ST_MTIMESPEC
+    #define ST_ATIME_NSEC_GET(st)   ((st)->st_atimespec.tv_nsec)
+    #define ST_CTIME_NSEC_GET(st)   ((st)->st_ctimespec.tv_nsec)
+    #define ST_MTIME_NSEC_GET(st)   ((st)->st_mtimespec.tv_nsec)
+#endif
 
 #define ST_ATIME_NSEC_SET(st,n)	(ST_ATIME_NSEC_GET(st)=(n))
 #define ST_CTIME_NSEC_SET(st,n)	(ST_CTIME_NSEC_GET(st)=(n))
