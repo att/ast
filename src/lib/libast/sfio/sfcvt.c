@@ -20,7 +20,7 @@
 *                                                                      *
 ***********************************************************************/
 #if __STDC__
-#include	"FEATURE/standards"
+#include	<ast_standards.h>
 #endif
 #include	"sfhdr.h"
 
