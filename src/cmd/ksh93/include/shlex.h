@@ -53,7 +53,6 @@ typedef struct  _shlex_
 	int		firstline;	/* saved value of sh.st.firstline */
 	int		assignlevel;	/* nesting level for assignment */
 	short		fundepth;	/* nesting level for functions */
-#if SHOPT_KIA
 	Sfio_t		*kiafile;	/* kia output file */
 	Sfio_t		*kiatmp;	/* kia reference file */
 	unsigned long	script;		/* script entity number */
@@ -63,7 +62,6 @@ typedef struct  _shlex_
 	off_t		kiabegin;	/* offset of first entry */
 	char		*scriptname;	/* name of script file */
 	Dt_t		*entity_tree;	/* for entity ids */
-#endif /* SHOPT_KIA */
 #ifdef  _SHLEX_PRIVATE
 	_SHLEX_PRIVATE
 #endif
@@ -153,10 +151,7 @@ extern Shnode_t		*sh_dolparen(Lex_t*);
 extern Lex_t		*sh_lexopen(Lex_t*, Shell_t*, int);
 extern void 		sh_lexskip(Lex_t*,int,int,int);
 extern void 		sh_syntax(Lex_t*);
-#if SHOPT_KIA
-    extern int                  kiaclose(Lex_t *);
-    extern unsigned long        kiaentity(Lex_t*, const char*,int,int,int,int,unsigned long,int,int,const char*);
-#endif /* SHOPT_KIA */
-
+extern int                  kiaclose(Lex_t *);
+extern unsigned long        kiaentity(Lex_t*, const char*,int,int,int,int,unsigned long,int,int,const char*);
 
 #endif /* !NOTSYM */

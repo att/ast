@@ -84,9 +84,7 @@ struct lexdata
 	int		*lex_match;
 	int		lex_state;
 	int		docextra;
-#if SHOPT_KIA
 	off_t		kiaoff;
-#endif
 };
 
 #define _SHLEX_PRIVATE \
@@ -116,8 +114,6 @@ static void		nested_here(Lex_t*);
 static int		here_copy(Lex_t*, struct ionod*);
 static bool 		stack_grow(Lex_t*);
 static const Sfdisc_t alias_disc = { NULL, NULL, NULL, alias_exceptf, NULL };
-
-#if SHOPT_KIA
 
 static void refvar(Lex_t *lp, int type)
 {
@@ -155,7 +151,6 @@ static void refvar(Lex_t *lp, int type)
 	}
 	sfprintf(lp->kiatmp,"p;%..64d;v;%..64d;%d;%d;r;\n",lp->current,r,shp->inlineno,shp->inlineno);
 }
-#endif /* SHOPT_KIA */
 
 /*
  * This routine gets called when reading across a buffer boundary
@@ -196,9 +191,7 @@ static void lex_advance(Sfio_t *iop, const char *buff, int size, void *context)
 		buff = lp->lexd.first;
 		if(!lp->lexd.noarg)
 			lp->arg = (struct argnod*)stkseek(stkp,ARGVAL);
-#if SHOPT_KIA
 		lp->lexd.kiaoff += ARGVAL;
-#endif /* SHOPT_KIA */
 	}
 	if(size>0 && (lp->arg||lp->lexd.noarg))
 	{
@@ -842,12 +835,10 @@ int sh_lex(Lex_t* lp)
 				/* don't check syntax inside `` */
 				if(mode==ST_QUOTE && ingrave)
 					continue;
-#if SHOPT_KIA
 				if(lp->lexd.first)
 					lp->lexd.kiaoff = fcseek(0)-lp->lexd.first;
 				else
 					lp->lexd.kiaoff = stktell(stkp)+fcseek(0)-fcfirst();
-#endif /* SHOPT_KIA */
 				pushlevel(lp,'$',mode);
 				mode = ST_DOL;
 				continue;
@@ -872,10 +863,8 @@ int sh_lex(Lex_t* lp)
 				break;
 			case S_EDOL:
 				/* end $identifier */
-#if SHOPT_KIA
 				if(lp->kiafile)
 					refvar(lp,0);
-#endif /* SHOPT_KIA */
 				if(lp->lexd.warn && c==LBRACT && !lp->lex.intest && !lp->lexd.arith && oldmode(lp)!= ST_NESTED)
 					errormsg(SH_DICT,ERROR_warn(0),e_lexusebrace,shp->inlineno);
 				fcseek(-LEN);
@@ -1004,10 +993,8 @@ int sh_lex(Lex_t* lp)
 				}
 				/* FALL THRU */
 			case S_MOD2:
-#if SHOPT_KIA
 				if(lp->kiafile)
 					refvar(lp,1);
-#endif /* SHOPT_KIA */
 				if(c!=':' && fcgetc(n)>0)
 				{
 					if(n!=c)
@@ -2502,14 +2489,12 @@ static void setupalias(Lex_t *lp, const char *string,Namval_t *np)
 	ap->buf[1] = 0;
 	if(ap->np = np)
 	{
-#if SHOPT_KIA
 		if(lp->kiafile)
 		{
 			unsigned long r;
 			r=kiaentity(lp,nv_name(np),-1,'p',0,0,lp->current,'a',0,"");
 			sfprintf(lp->kiatmp,"p;%..64d;p;%..64d;%d;%d;e;\n",lp->current,r,lp->sh->inlineno,lp->sh->inlineno);
 		}
-#endif /* SHOPT_KIA */
 		if((ap->nextc=fcget())==0)
 			ap->nextc = ' ';
 	}

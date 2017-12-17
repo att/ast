@@ -1468,11 +1468,9 @@ USAGE_LICENSE
 #endif
 	"\b${ENV-$HOME/.kshrc}\b, if it exists, as a profile. "
 	"On by default for interactive shells; use \b+E\b to disable.]"
-#if SHOPT_KIA
 "[R]:[file?Do not execute the script, but create a cross reference database "
 	"in \afile\a that can be used a separate shell script browser.  The "
 	"-R option requires a script to be specified as the first operand.]"
-#endif /* SHOPT_KIA */
 #if SHOPT_REGRESS
 "[I:regress]:[intercept?Enable the regression test \aintercept\a. Must be "
 	"the first command line option(s).]"

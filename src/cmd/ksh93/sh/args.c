@@ -31,10 +31,8 @@
 #include "jobs.h"
 #include "path.h"
 #include "terminal.h"
-#if SHOPT_KIA
 #include "io.h"
 #include "shlex.h"
-#endif  // SHOPT_KIA
 #if SHOPT_BASH
 #define BASHOPT "\374"
 #else
@@ -67,9 +65,7 @@ typedef struct _arg_ {
     struct dolnod *argfor;  // linked list of blocks to be cleaned up
     struct dolnod *dolh;
     char flagadr[NUM_OPTS + 1];
-#if SHOPT_KIA
     char *kiafile;
-#endif  // SHOPT_KIA
 } Arg_t;
 
 static int arg_expand(Shell_t *, struct argnod *, struct argnod **, int);
@@ -352,7 +348,6 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 if (sp) o = flagval[sp - optksh];
                 break;
             }
-#if SHOPT_KIA
             case 'R': {
                 if (setflag) {
                     n = ':';
@@ -364,7 +359,6 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 if (sp) o = flagval[sp - optksh];
                 break;
             }
-#endif  // SHOPT_KIA
 #if SHOPT_REGRESS
             case 'I': {
                 continue;
@@ -536,7 +530,6 @@ int sh_argopts(int argc, char *argv[], void *context) {
     // Handling SH_INTERACTIVE and SH_PRIVILEGED has been moved to
     // sh_applyopts(), so that the code can be reused from b_shopt(), too.
     sh_applyopts(shp, newflags);
-#if SHOPT_KIA
     if (ap->kiafile) {
         if (!argv[0]) errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
         if (!(lp->kiafile = sfopen(NIL(Sfio_t *), ap->kiafile, "w+"))) {
@@ -554,7 +547,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         lp->current = lp->script;
         ap->kiafile = 0;
     }
-#endif  // SHOPT_KIA
+
     return argc;
 }
 

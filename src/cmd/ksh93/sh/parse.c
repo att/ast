@@ -92,7 +92,6 @@ static struct argnod	*label_last;
 
 #define getnode(type)	((Shnode_t*)stakalloc(sizeof(struct type)))
 
-#if SHOPT_KIA
 #include	"path.h"
 /*
  * write out entities for each item in the list
@@ -162,7 +161,6 @@ static unsigned long writedefs(Lex_t *lexp,struct argnod *arglist, int line, int
 	}
 	return(r);
 }
-#endif /* SHOPT_KIA */
 
 static void typeset_order(const char *str,int line)
 {
@@ -763,9 +761,7 @@ static Shnode_t *funct(Lex_t *lexp)
 	Sfoff_t	first, last;
 	struct functnod *volatile fp;
 	Sfio_t *iop;
-#if SHOPT_KIA
 	unsigned long current = lexp->current;
-#endif /* SHOPT_KIA */
 	int nargs=0,size=0,jmpval, saveloop=loop_level;
 	struct argnod *savelabel = label_last;
 	struct  checkpt buff;
@@ -808,10 +804,8 @@ static Shnode_t *funct(Lex_t *lexp)
 		}
 	}
 	t->funct.functnam= (char*)lexp->arg->argval;
-#if SHOPT_KIA
 	if(lexp->kiafile)
 		lexp->current = kiaentity(lexp,t->funct.functnam,-1,'p',-1,-1,lexp->script,'p',0,"");
-#endif /* SHOPT_KIA */
 	if(flag)
 	{
 		lexp->token = sh_lex(lexp);
@@ -922,9 +916,7 @@ static Shnode_t *funct(Lex_t *lexp)
 		slp->slptr =  stakinstall(savstak,0);
 		slp->slchild = shp->st.staklist;
 	}
-#if SHOPT_KIA
 	lexp->current = current;
-#endif /* SHOPT_KIA */
 	if(jmpval)
 	{
 		if(slp && slp->slptr)
@@ -945,10 +937,8 @@ static Shnode_t *funct(Lex_t *lexp)
 			fcseek(-1);
 		lexp->sh->funlog = 0;
 	}
-#if 	SHOPT_KIA
 	if(lexp->kiafile)
 		kiaentity(lexp,t->funct.functnam,-1,'p',t->funct.functline,shp->inlineno-1,lexp->current,'p',0,"");
-#endif /* SHOPT_KIA */
 	t->funct.functtyp |= opt_get;
 	opt_get = save_optget;
 	lexp->fundepth--;
@@ -1257,10 +1247,8 @@ static Shnode_t	*item(Lex_t *lexp,int flag)
 		}
 		t->for_.fornam=(char*) lexp->arg->argval;
 		t->for_.fortyp |= FLINENO;
-#if SHOPT_KIA
 		if(lexp->kiafile)
 			writedefs(lexp,lexp->arg,lexp->sh->inlineno,'v',NIL(struct argnod*));
-#endif /* SHOPT_KIA */
 		while((tok=sh_lex(lexp))==NL);
 		if(tok==INSYM)
 		{
@@ -1656,7 +1644,6 @@ static Shnode_t *simple(Lex_t *lexp,int flag, struct ionod *io)
 	t->comtyp = TCOM;
 	if(typed)
 		t->comtyp |= COMFIXED;
-#if SHOPT_KIA
 	if(lexp->kiafile && !(flag&SH_NOIO))
 	{
 		Namval_t *np=(Namval_t*)t->comnamp;
@@ -1685,7 +1672,6 @@ static Shnode_t *simple(Lex_t *lexp,int flag, struct ionod *io)
 			sfprintf(lexp->kiatmp,"p;%..64d;p;%..64d;%d;%d;d;\n",lexp->current,r,line,line);
 		}
 	}
-#endif /* SHOPT_KIA */
 	if(t->comnamp && (argp=t->comarg->argnxt.ap))
 	{ 
 		Namval_t *np=(Namval_t*)t->comnamp;
@@ -1865,7 +1851,6 @@ static struct ionod	*inout(Lex_t *lexp,struct ionod *lastio,int flag)
 	if(flag>0)
 		/* allow alias substitutions and parameter assignments */
 		lexp->aliasok = lexp->assignok = 1;
-#if SHOPT_KIA
 	if(lexp->kiafile)
 	{
 		int n = lexp->sh->inlineno-(lexp->token=='\n');
@@ -1875,7 +1860,6 @@ static struct ionod	*inout(Lex_t *lexp,struct ionod *lastio,int flag)
 			sfprintf(lexp->kiatmp,"p;%..64d;f;%..64d;%d;%d;%c;%d\n",lexp->current,r,n,n,(iof&IOPUT)?((iof&IOAPP)?'a':'w'):((iof&IODOC)?'h':'r'),iof&IOUFD);
 		}
 	}
-#endif /* SHOPT_KIA */
 	if(flag>=0)
 	{
 		struct ionod *ioq=iop;
@@ -2022,7 +2006,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 	    case TESTUNOP:
 		if(sh_lex(lexp))
 			sh_syntax(lexp);
-#if SHOPT_KIA
 		if(lexp->kiafile && !strchr("sntzoOG",num))
 		{
 			int line = lexp->sh->inlineno- (lexp->token==NL);
@@ -2030,7 +2013,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 			r=kiaentity(lexp,sh_argstr(lexp->arg),-1,'f',0,0,lexp->script,'t',0,"");
 			sfprintf(lexp->kiatmp,"p;%..64d;f;%..64d;%d;%d;t;\n",lexp->current,r,line,line);
 		}
-#endif /* SHOPT_KIA */
 		t = makelist(lexp,TTST|TTEST|TUNARY|(num<<TSHIFT),
 			(Shnode_t*)lexp->arg,(Shnode_t*)lexp->arg);
 		t->tst.tstline =  lexp->sh->inlineno;
@@ -2060,7 +2042,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 		}
 		else
 			sh_syntax(lexp);
-#if SHOPT_KIA
 		if(lexp->kiafile && (num==TEST_EF||num==TEST_NT||num==TEST_OT))
 		{
 			int line = lexp->sh->inlineno- (lexp->token==NL);
@@ -2068,7 +2049,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 			r=kiaentity(lexp,sh_argstr(lexp->arg),-1,'f',0,0,lexp->current,'t',0,"");
 			sfprintf(lexp->kiatmp,"p;%..64d;f;%..64d;%d;%d;t;\n",lexp->current,r,line,line);
 		}
-#endif /* SHOPT_KIA */
 		if(sh_lex(lexp))
 			sh_syntax(lexp);
 		if(num&TEST_PATTERN)
@@ -2081,7 +2061,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 		t->lst.lstlef = (Shnode_t*)arg;
 		t->lst.lstrit = (Shnode_t*)lexp->arg;
 		t->tst.tstline =  lexp->sh->inlineno;
-#if SHOPT_KIA
 		if(lexp->kiafile && (num==TEST_EF||num==TEST_NT||num==TEST_OT))
 		{
 			int line = lexp->sh->inlineno-(lexp->token==NL);
@@ -2089,7 +2068,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 			r=kiaentity(lexp,sh_argstr(lexp->arg),-1,'f',0,0,lexp->current,'t',0,"");
 			sfprintf(lexp->kiatmp,"p;%..64d;f;%..64d;%d;%d;t;\n",lexp->current,r,line,line);
 		}
-#endif /* SHOPT_KIA */
 		break;
 	    default:
 		return(0);
@@ -2098,7 +2076,6 @@ static Shnode_t *test_primary(Lex_t *lexp)
 	return(t);
 }
 
-#if SHOPT_KIA
 /*
  * return an entity checksum
  * The entity is created if it doesn't exist
@@ -2176,4 +2153,3 @@ int kiaclose(Lex_t *lexp)
 	}
 	return(sfclose(lexp->kiafile));
 }
-#endif /* SHOPT_KIA */

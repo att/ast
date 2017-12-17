@@ -605,9 +605,7 @@ void sh_done(void *ptr, int sig) {
         kill(getpid(), sig);
         pause();
     }
-#if SHOPT_KIA
     if (sh_isoption(shp, SH_NOEXEC)) kiaclose((Lex_t *)shp->lex_context);
-#endif // SHOPT_KIA
     if (shp->pwdfd >= 0) close(shp->pwdfd);
 
     // Return POSIX exit code if last process exits due to signal.
