@@ -1141,7 +1141,8 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 		break;
 	case CONF_sysinfo:
 		call = "sysinfo";
-		if ((v = sysinfo(p->op, buf, sizeof(buf))) >= 0)
+#if _lib_sysinfo
+        if ((v = sysinfo(p->op, buf, sizeof(buf))) >= 0)
 		{
 			buf[sizeof(buf) - 1] = 0;
 			s = (const char*)buf;
@@ -1149,7 +1150,10 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 		else
 			defined = 0;
 		break;
-	default:
+#else
+		goto predef;
+#endif
+    default:
 		call = "synthesis";
 		errno = EINVAL;
 		v = -1;
