@@ -143,7 +143,6 @@ const Shtable_t	shtab_siginfo[] =
 	"",			0
 };
 
-#ifdef SHOPT_STATS
 const Shtable_t shtab_stats[] =
 {
 	"arg_cachehits",	NV_RDONLY|NV_MINIMAL|NV_NOFREE|NV_INTEGER,
@@ -162,5 +161,3 @@ const Shtable_t shtab_stats[] =
 	"subshell",		NV_RDONLY|NV_MINIMAL|NV_NOFREE|NV_INTEGER,
 	"",			0
 };
-#endif /* SHOPT_STATS */
-

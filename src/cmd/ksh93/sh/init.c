@@ -1781,7 +1781,6 @@ static int svar_init(Shell_t *shp, Namval_t *pp, const Shtable_t *tab, size_t ex
     return nnodes;
 }
 
-#ifdef SHOPT_STATS
 static void stat_init(Shell_t *shp) {
     Namval_t *np;
     struct Svars *sp;
@@ -1796,9 +1795,6 @@ static void stat_init(Shell_t *shp) {
         np->nvalue.ip = &shgd->stats[i];
     }
 }
-#else
-#define stat_init(x)
-#endif  // SHOPT_STATS
 
 #define SIGNAME_MAX 32
 static void siginfo_init(Shell_t *shp) {

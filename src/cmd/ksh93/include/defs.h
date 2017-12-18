@@ -510,7 +510,6 @@ extern const char	e_dict[];
 #define PRINT_SHOPT	0x08	/* shopt -s|-u			*/
 #define PRINT_TABLE	0x10	/* table of all options		*/
 
-#ifdef SHOPT_STATS
     /* performance statistics */
 #   define	STAT_ARGHITS	0
 #   define	STAT_ARGEXPAND	1
@@ -528,9 +527,6 @@ extern const char	e_dict[];
 #   define	STAT_SUBSHELL	13
     extern const Shtable_t shtab_stats[];
 #   define sh_stats(x)	(shgd->stats[(x)]++)
-#else
-#   define sh_stats(x)
-#endif /* SHOPT_STATS */
 extern const Shtable_t shtab_siginfo[];
 
 #define timeofday(p)    gettimeofday(p,(struct timezone*)0)
