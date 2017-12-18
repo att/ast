@@ -185,6 +185,10 @@ else
     error('Can not determine modification time field in struct stat')
 endif
 
+if cc.has_header('mach-o/dyld.h')
+    libast_c_args += [ '-D_hdr_mach_o_dyld']
+endif
+
 subdir('aso')
 subdir('comp')
 subdir('cdt')
