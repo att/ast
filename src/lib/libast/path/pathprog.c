@@ -35,11 +35,8 @@
 #include <ctype.h>
 #endif
 
-/* TODO: Is it needed ? */
-#if _hdr_macho_o_dyld && _lib__NSGetExecutablePath
+#if _hdr_mach_o_dyld
 #include <mach-o/dyld.h>
-#else
-#undef	_lib__NSGetExecutablePath
 #endif
 
 static size_t
@@ -53,7 +50,7 @@ prog(const char* command, char* path, size_t size)
 	int		c;
 	int		q;
 #endif
-#if _lib__NSGetExecutablePath
+#if _hdr_mach_o_dyld
 	uint32_t	z;
 #endif
 
@@ -69,7 +66,7 @@ prog(const char* command, char* path, size_t size)
 	if ((s = (char*)getexecname()) && *s == '/')
 		goto found;
 #endif
-#if _lib__NSGetExecutablePath
+#if _hdr_mach_o_dyld
 	z = size;
 	if (!_NSGetExecutablePath(path, &z) && *path == '/')
 		return strlen(path);
