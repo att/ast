@@ -97,10 +97,8 @@ extern Pathcomp_t	*path_nextcomp(Shell_t*,Pathcomp_t*,const char*,Pathcomp_t*);
 extern bool		path_search(Shell_t*,const char*,Pathcomp_t**,int);
 extern char		*path_relative(Shell_t*,const char*);
 extern int		path_complete(Shell_t*,const char*, const char*,struct argnod**);
-#if SHOPT_BRACEPAT
-    extern int 		path_generate(Shell_t*,struct argnod*,struct argnod**);
-#endif /* SHOPT_BRACEPAT */
-    extern int		path_xattr(Shell_t*, const char*, char*);
+extern int 		path_generate(Shell_t*,struct argnod*,struct argnod**);
+extern int		path_xattr(Shell_t*, const char*, char*);
 
 /* builtin/plugin routines */
 extern int		sh_addlib(Shell_t*,void*,char*,Pathcomp_t*);

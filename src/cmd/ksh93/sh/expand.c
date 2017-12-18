@@ -38,10 +38,6 @@
 #include "io.h"
 #include "path.h"
 
-#if !SHOPT_BRACEPAT
-#define SHOPT_BRACEPAT 0
-#endif
-
 #if KSHELL
 #define argbegin argnxt.cp
 static const char *sufstr;
@@ -219,8 +215,6 @@ int path_complete(Shell_t *shp, const char *name, const char *suffix, struct arg
 }
 
 #endif
-
-#if SHOPT_BRACEPAT
 
 static int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) { return -1; }
 
@@ -412,5 +406,3 @@ endloop1:
     }
     goto again;
 }
-
-#endif  // SHOPT_BRACEPAT

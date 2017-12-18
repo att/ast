@@ -158,9 +158,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit)
 		nv_putval(PS4NOD,e_traceprompt,NV_RDONLY);
 	path_pwd(shp,1);
 	iop = (Sfio_t*)0;
-#if SHOPT_BRACEPAT
 	sh_onoption(shp,SH_BRACEEXPAND);
-#endif
 	if((beenhere++)==0)
 	{
 		sh_onstate(shp,SH_PROFILE);

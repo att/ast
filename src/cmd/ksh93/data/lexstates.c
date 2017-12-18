@@ -365,11 +365,7 @@ static const char sh_lexstate9[256] =
 	S_GRAVE,0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
-#if SHOPT_BRACEPAT
 	0,	0,	0,	S_BRACE,S_PAT,	S_ENDCH,0,	0
-#else
-	0,	0,	0,	0,	S_PAT,	S_ENDCH,0,	0
-#endif /* SHOPT_BRACEPAT */
 };
 
 const char *sh_lexrstates[ST_NONE] =

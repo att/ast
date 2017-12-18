@@ -301,9 +301,7 @@ const char sh_set[] =
 #if SHOPT_BASH
 	"\fbash1\f"
 #endif
-#if SHOPT_BRACEPAT
 "[B?Enable {...} group expansion. On by default.]"
-#endif
 "[C?Prevents existing regular files from being overwritten using the \b>\b "
 	"redirection operator.  The \b>|\b redirection overrides this "
 	"\bnoclobber\b option.]"
