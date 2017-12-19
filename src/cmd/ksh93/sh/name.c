@@ -2771,7 +2771,6 @@ static char *tableval(Dt_t *root)
 }
 #endif
 
-#if SHOPT_OPTIMIZE
 struct optimize
 {
 	Namfun_t	hdr;
@@ -2874,10 +2873,6 @@ void sh_optclear(Shell_t *shp, void *old)
 	shp->optlist = old;
 }
 
-#else
-#   define	optimize_clear(np,fp)
-#endif /* SHOPT_OPTIMIZE */
-
 /*
  *   Return a pointer to a character string that denotes the value
  *   of <np>.  If <np> refers to an array,  return a pointer to
@@ -2894,10 +2889,8 @@ char *nv_getval(Namval_t *np)
 	Shell_t *shp = sh_ptr(np);
 	union Value *up= &np->nvalue;
 	int numeric;
-#if SHOPT_OPTIMIZE
 	if(!nv_local && shp->argaddr)
 		nv_optimize(np);
-#endif /* SHOPT_OPTIMIZE */
 	if((!np->nvfun || !np->nvfun->disc) && !nv_isattr(np,NV_ARRAY|NV_INTEGER|NV_FUNCT|NV_REF))
 		goto done;
 	if(nv_isref(np))
@@ -3032,10 +3025,8 @@ Sfdouble_t nv_getnum(Namval_t *np)
 	union Value *up;
 	Sfdouble_t r=0;
 	char *str;
-#if SHOPT_OPTIMIZE
 	if(!nv_local && shp->argaddr)
 		nv_optimize(np);
-#endif /* SHOPT_OPTIMIZE */
 	if(nv_istable(np))
 		errormsg(SH_DICT,ERROR_exit(1),e_number,nv_name(np));
      	if(np->nvfun && np->nvfun->disc)
@@ -3804,7 +3795,6 @@ void nv_unref(Namval_t *np)
 	}
 	free((void*)np->nvalue.nrp);
 	np->nvalue.cp = strdup(nv_name(nq));
-#if SHOPT_OPTIMIZE
 	{
 		Namfun_t *fp;
 		for(fp=nq->nvfun; fp; fp = fp->next)
@@ -3816,7 +3806,6 @@ void nv_unref(Namval_t *np)
 			}
 		}
 	}
-#endif
 }
 
 /*

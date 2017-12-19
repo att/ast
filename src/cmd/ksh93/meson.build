@@ -22,7 +22,6 @@ ksh93_c_args = ['-DERROR_CATALOG=0',
                 '-DSHOPT_COSHELL',
                 '-DSHOPT_FIXEDARRAY=0',
                 '-DSHOPT_NAMESPACE',
-                '-DSHOPT_OPTIMIZE',
                 '-DSHOPT_SUID_EXEC',
                 '-DUSAGE_LICENSE=""',
                 '-D_PACKAGE_ast',
@@ -30,20 +29,19 @@ ksh93_c_args = ['-DERROR_CATALOG=0',
                 '-D_API_ast=20130625']
 
 # TODO: -DSHOPT_DYNAMIC
-shcomp_c_args = ['-DUSAGE_LICENSE=""',
-                 '-DKSHELL',
-                 '-DERROR_CATALOG="libshell"',
-                 '-DSHOPT_NAMESPACE',
-                 '-DSHOPT_COSHELL',
-                 '-DSHOPT_BASH',
-                 '-D_BLD_shell',
-                 '-D_API_ast=20130625',
-                 '-D_PACKAGE_ast',
+shcomp_c_args = ['-DERROR_CATALOG="libshell"',
                  '-DERROR_CONTEXT_T=Error_context_t',
+                 '-DKSHELL',
+                 '-DSHOPT_BASH',
+                 '-DSHOPT_COSHELL',
                  '-DSHOPT_FIXEDARRAY=0',
+                 '-DSHOPT_NAMESPACE',
                  '-DSHOPT_SUID_EXEC',
                  '-DSHOPT_POLL',
-                 '-DSHOPT_OPTIMIZE']
+                 '-DUSAGE_LICENSE=""',
+                 '-D_PACKAGE_ast',
+                 '-D_BLD_shell',
+                 '-D_API_ast=20130625']
 
 cpu = host_machine.cpu()
 system = host_machine.system()

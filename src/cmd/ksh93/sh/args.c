@@ -962,7 +962,6 @@ static int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argchai
         *argchain = ap;
         count++;
     } else if (!(argp->argflag & ARG_RAW)) {
-#if SHOPT_OPTIMIZE
         struct argnod *ap;
         sh_stats(STAT_ARGEXPAND);
         if (flag & ARG_OPTIMIZE) argp->argchn.ap = 0;
@@ -975,7 +974,6 @@ static int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argchai
             ap->argflag &= ~ARG_EXP;
             *argchain = ap;
         } else
-#endif  // SHOPT_OPTIMIZE
             count = sh_macexpand(shp, argp, argchain, flag);
     } else {
         argp->argchn.ap = *argchain;

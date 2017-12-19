@@ -1521,10 +1521,8 @@ retry1:
 		stkseek(stkp,offset);
 		if(ap)
 		{
-#if SHOPT_OPTIMIZE
 			if(mp->shp->argaddr)
 				nv_optimize(np);
-#endif
 			if(isastchar(mode) && array_elem(ap)> !c)
 				dolg = -1;
 			else

@@ -286,7 +286,6 @@ static int p_time(Shell_t *shp, Sfio_t *out, const char *format, clock_t *tm)
 	return(n);
 }
 
-#if SHOPT_OPTIMIZE
 /*
  * clear argument pointers that point into the stack
  */
@@ -405,11 +404,6 @@ static int p_switch(Shell_t *shp,struct regnod *reg)
 }
 #   define OPTIMIZE_FLAG	(ARG_OPTIMIZE)
 #   define OPTIMIZE		(flags&OPTIMIZE_FLAG)
-#else
-#   define OPTIMIZE_FLAG	(0)
-#   define OPTIMIZE		(0)
-#   define sh_tclear(x,y)
-#endif /* SHOPT_OPTIMIZE */
 
 static void out_pattern(Sfio_t *iop, const char *cp, int n)
 {
@@ -2297,7 +2291,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 #if SHOPT_COSHELL
 			int poolfiles;
 #endif /* SHOPT_COSHELL */
-#if SHOPT_OPTIMIZE
 			int  jmpval = ((struct checkpt*)shp->jmplist)->mode;
 			struct checkpt *buffp = (struct checkpt*)stkalloc(shp->stk,sizeof(struct checkpt));
 			void *optlist = shp->optlist;
@@ -2307,7 +2300,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			jmpval = sigsetjmp(buffp->buff,0);
 			if(jmpval)
 				goto endfor;
-#endif /* SHOPT_OPTIMIZE */
 			error_info.line = t->for_.forline-shp->st.firstline;
 			if(!(tp=t->for_.forlst))
 			{
@@ -2411,14 +2403,12 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			}
 			if(nameref)
 				nv_offattr(np,NV_TABLE);
-#if SHOPT_OPTIMIZE
 		endfor:
 			sh_popcontext(shp,buffp);
 			sh_tclear(shp,t->for_.fortre);
 			sh_optclear(shp,optlist);
 			if(jmpval)
 				siglongjmp(*shp->jmplist,jmpval);
-#endif /*SHOPT_OPTIMIZE */
 			if(shp->st.breakcnt>0)
 				shp->st.execbrk = (--shp->st.breakcnt !=0);
 			shp->st.loopcnt--;
@@ -2436,11 +2426,9 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			Sfio_t *iop=0;
 			int savein;
 #endif /*SHOPT_FILESCAN*/
-#if SHOPT_OPTIMIZE
 			int  jmpval = ((struct checkpt*)shp->jmplist)->mode;
 			struct checkpt *buffp = (struct checkpt*)stkalloc(shp->stk,sizeof(struct checkpt));
 			void *optlist = shp->optlist;
-#endif /* SHOPT_OPTIMIZE */
 #if SHOPT_COSHELL
 			if(shp->inpool)
 			{
@@ -2466,7 +2454,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				break;
 			}
 #endif /*SHOPT_COSHELL */
-#if SHOPT_OPTIMIZE
 			shp->optlist = 0;
 			sh_tclear(shp,t->wh.whtre);
 			sh_tclear(shp,t->wh.dotre);
@@ -2474,7 +2461,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			jmpval = sigsetjmp(buffp->buff,0);
 			if(jmpval)
 				goto endwhile;
-#endif /* SHOPT_OPTIMIZE */
 #if SHOPT_FILESCAN
 			if(type==TWH && tt->tre.tretyp==TCOM && !tt->com.comarg && tt->com.comio)
 			{
@@ -2509,7 +2495,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				shp->offsets[1] = 0;
 #endif /*SHOPT_FILESCAN */
 			}
-#if SHOPT_OPTIMIZE
 		endwhile:
 			sh_popcontext(shp,buffp);
 			sh_tclear(shp,t->wh.whtre);
@@ -2517,7 +2502,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			sh_optclear(shp,optlist);
 			if(jmpval)
 				siglongjmp(*shp->jmplist,jmpval);
-#endif /*SHOPT_OPTIMIZE */
 			if(shp->st.breakcnt>0)
 				shp->st.execbrk = (--shp->st.breakcnt !=0);
 			shp->st.loopcnt--;
