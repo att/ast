@@ -13,31 +13,39 @@ subdir('data')
 subdir('edit')
 subdir('sh')
 
+# These build time symbols are shared by ksh and shcomp.
+#
 # TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
 # build the libast libdll code.
-ksh93_c_args = ['-DERROR_CATALOG=0',
-                '-DERROR_CONTEXT_T=Error_context_t',
-                '-DKSHELL',
-                '-DSHOPT_BASH',
-                '-DSHOPT_COSHELL',
-                '-DSHOPT_FIXEDARRAY=0',
-                '-DUSAGE_LICENSE=""',
-                '-D_PACKAGE_ast',
-                '-D_BLD_shell',
-                '-D_API_ast=20130625']
+#
+# TODO: Figure out if '-DSHOPT_AUDIT' and '-DSHOPT_AUDITFILE="/etc/ksh_audit"'
+# should be added. They are defined in the legacy beta branch build.
+# See issue #240.
+shared_c_args = [
+    '-DUSAGE_LICENSE=""',
+    '-D_PACKAGE_ast',
+    '-D_BLD_shell',
+    '-D_API_ast=20130625',
+    '-DERROR_CONTEXT_T=Error_context_t',
+    '-DKSHELL',
+    '-DSHOPT_BASH',
+    '-DSHOPT_COSHELL',
+    '-DSHOPT_EDPREDICT',
+    '-DSHOPT_FILESCAN',
+    '-DSHOPT_FIXEDARRAY=0',
+    '-DSHOPT_POLL',
+]
 
-# TODO: -DSHOPT_DYNAMIC
-shcomp_c_args = ['-DERROR_CATALOG="libshell"',
-                 '-DERROR_CONTEXT_T=Error_context_t',
-                 '-DKSHELL',
-                 '-DSHOPT_BASH',
-                 '-DSHOPT_COSHELL',
-                 '-DSHOPT_FIXEDARRAY=0',
-                 '-DSHOPT_POLL',
-                 '-DUSAGE_LICENSE=""',
-                 '-D_PACKAGE_ast',
-                 '-D_BLD_shell',
-                 '-D_API_ast=20130625']
+# TODO: Figure out why there is a different definition of these symbols for
+# ksh93 versus shcomp and if there is a good reason add a comment why they are
+# defined differently.
+ksh93_c_args = shared_c_args + [
+    '-DERROR_CATALOG=0',
+]
+
+shcomp_c_args = shared_c_args + [
+    '-DERROR_CATALOG="libshell"',
+]
 
 cpu = host_machine.cpu()
 system = host_machine.system()
