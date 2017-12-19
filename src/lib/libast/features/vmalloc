@@ -208,7 +208,7 @@ tst	malloc_hook note{ gnu malloc hooks work }end execute{
 }end
 
 cat{
-	#include "FEATURE/mmap"
+	#include <ast_mmap.h>
 	#if _BLD_INSTRUMENT || cray || _UWIN && _BLD_ast
 	#undef	_map_malloc
 	#define _std_malloc	1	/* defer to standard malloc */

@@ -40,7 +40,7 @@
 #define _size		size
 #define _val		val
 
-#include	"FEATURE/mmap"
+#include	<ast_mmap.h>
 
 /* define va_list, etc. before including sfio_t.h (sfio.h) */
 #if !_PACKAGE_ast
@@ -154,14 +154,10 @@
 #if !_LARGEFILE64_SOURCE	/* turn off the *64 stuff */
 #undef	_typ_struct_stat64
 #undef	_lib_close64
-#undef	_lib_mmap64
 #undef	_lib_munmap64
 #endif /*!_LARGEFILE64_SOURCE */
 
 /* see if we can use memory mapping for io */
-#if _LARGEFILE64_SOURCE && !_lib_mmap64
-#undef _hdr_mman
-#endif
 #if _hdr_mman
 #include	<mman.h>
 #endif
@@ -181,11 +177,7 @@
 #define syslseekf	lseek
 #define sysstatf	stat
 #define sysfstatf	fstat
-#if _lib_mmap64
-#define sysmmapf	mmap64
-#else
 #define sysmmapf	mmap
-#endif
 #if _lib_munmap64
 #define sysmunmapf	munmap64
 #else
