@@ -190,9 +190,7 @@ int b_shopt(int argc, char *argv[], Shbltin_t *extra) {
     int setflag = 0, quietflag = 0, oflag = 0;
 
     memset(&opt, 0, sizeof(opt));
-#if SHOPT_RAWONLY
     on_option(&newflags, SH_VIRAW);
-#endif
     while ((n = optget(argv, sh_optshopt))) {
         switch (n) {
             case 'p': {

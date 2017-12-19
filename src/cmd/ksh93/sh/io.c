@@ -1834,13 +1834,7 @@ static ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handle) 
 
     if (sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_GMACS)) {
         readf = ed_emacsread;
-    } else
-#if SHOPT_RAWONLY
-        if (sh_isoption(shp, SH_VI) || ((SHOPT_RAWONLY - 0) && mbwide()))
-#else
-        if (sh_isoption(shp, SH_VI))
-#endif
-    {
+    } else if (sh_isoption(shp, SH_VI) || mbwide()) {
         readf = ed_viread;
     } else {
         readf = ed_read;

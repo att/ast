@@ -230,9 +230,6 @@ int tty_raw(int fd, int echomode)
 		return(echo?-1:0);
 	else if(ep->e_raw==ECHOMODE)
 		return(echo?0:-1);
-#if !SHOPT_RAWONLY
-	if(ep->e_raw != ALTMODE)
-#endif /* SHOPT_RAWONLY */
 	{
 		if(tty_get(fd,&ttyparm) == SYSERR)
 			return(-1);

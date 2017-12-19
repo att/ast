@@ -206,15 +206,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 	int Globals[9];			/* local global variables */
 	int esc_or_hang=0;		/* <ESC> or hangup */
 	char cntl_char=0;		/* TRUE if control character present */
-#if SHOPT_RAWONLY
 #   define viraw	1
-#else
-	int viraw = (sh_isoption(ed->sh,SH_VIRAW) || ed->sh->st.trap[SH_KEYTRAP]);
-#   ifndef FIORDCHK
-	clock_t oldtime, newtime;
-	struct tms dummy;
-#   endif /* FIORDCHK */
-#endif /* SHOPT_RAWONLY */
 	if(!vp)
 	{
 		ed->e_vi = vp =  newof(0,Vi_t,1,0);
@@ -229,109 +221,9 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 	ed_setup(vp->ed,fd, reedit);
 	shbuf[reedit] = 0;
 
-#if !SHOPT_RAWONLY
-	if(!viraw)
-	{
-		/*** Change the eol characters to '\r' and eof  ***/
-		/* in addition to '\n' and make eof an ESC	*/
-		if(tty_alt(ERRIO) < 0)
-			return(reexit?reedit:ed_read(context, fd, shbuf, nchar,0));
-
-#ifdef FIORDCHK
-		ioctl(fd,FIORDCHK,&vp->typeahead);
-#else
-		/* time the current line to determine typeahead */
-		oldtime = times(&dummy);
-#endif /* FIORDCHK */
-#if KSHELL
-		/* abort of interrupt has occurred */
-		if(ed->sh->trapnote&SH_SIGSET)
-			i = -1;
-		else
-#endif /* KSHELL */
-		/*** Read the line ***/
-		i = ed_read(context, fd, shbuf, nchar, 0);
-#ifndef FIORDCHK
-		newtime = times(&dummy);
-		vp->typeahead = ((newtime-oldtime) < NTICKS);
-#endif /* FIORDCHK */
-	    if(echoctl)
-	    {
-		if( i <= 0 )
-		{
-			/*** read error or eof typed ***/
-			tty_cooked(ERRIO);
-			return(i);
-		}
-		term_char = shbuf[--i];
-		if( term_char == '\r' )
-			term_char = '\n';
-		if( term_char=='\n' || term_char==ESC )
-			shbuf[i--] = '\0';
-		else
-			shbuf[i+1] = '\0';
-	    }
-	    else
-	    {
-		int c = shbuf[0];
-
-		/*** Save and remove the last character if its an eol, ***/
-		/* changing '\r' to '\n' */
-
-		if( i == 0 )
-		{
-			/*** ESC was typed as first char of line ***/
-			esc_or_hang = 1;
-			term_char = ESC;
-			shbuf[i--] = '\0';	/* null terminate line */
-		}
-		else if( i<0 || c==usreof )
-		{
-			/*** read error or eof typed ***/
-			tty_cooked(ERRIO);
-			if( c == usreof )
-				i = 0;
-			return(i);
-		}
-		else
-		{
-			term_char = shbuf[--i];
-			if( term_char == '\r' )
-				term_char = '\n';
-#if !defined(VEOL2) && !defined(ECHOCTL)
-			if(term_char=='\n')
-			{
-				tty_cooked(ERRIO);
-				return(i+1);
-			}
-#endif
-			if( term_char=='\n' || term_char==usreof )
-			{
-				/*** remove terminator & null terminate ***/
-				shbuf[i--] = '\0';
-			}
-			else
-			{
-				/** terminator was ESC, which is not xmitted **/
-				term_char = ESC;
-				shbuf[i+1] = '\0';
-			}
-		}
-	    }
-	}
-	else
-#endif /* SHOPT_RAWONLY */
 	{
 		/*** Set raw mode ***/
 
-#if !SHOPT_RAWONLY
-		if( editb.e_ttyspeed == 0 )
-		{
-			/*** never did TCGETA, so do it ***/
-			/* avoids problem if user does 'sh -o viraw' */
-			tty_alt(ERRIO);
-		}
-#endif /* SHOPT_RAWONLY */
 		if(tty_raw(ERRIO,0) < 0 )
 			return(reedit?reedit:ed_read(context, fd, shbuf, nchar,0));
 		i = last_virt-1;
