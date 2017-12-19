@@ -41,9 +41,7 @@ const Shtable_t shtab_reserved[] =
 		"function",	FUNCTSYM,
 		"if",		IFSYM,
 		"in",		INSYM,
-#if SHOPT_NAMESPACE
 		"namespace",	NSPACESYM,
-#endif /* SHOPT_NAMESPACE */
 		"select",	SELECTSYM,
 		"then",		THENSYM,
 		"time",		TIMESYM,

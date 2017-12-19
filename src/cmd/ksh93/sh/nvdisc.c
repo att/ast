@@ -1146,14 +1146,12 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 	{
 		if(!var)
 			return(0);
-#if SHOPT_NAMESPACE
 		if(shp->namespace)
 		{
 			sfprintf(shp->strbuf,"%s.%s%c",nv_name(shp->namespace),name,0);
 			if(np = nv_search(sfstruse(shp->strbuf),root,0))
 				return(np);
 		}
-#endif /*SHOPT_NAMESPACE */
 		return(nv_search(name,root,0));
 	}
 	sfputr(shp->stk,name,0);
@@ -1179,7 +1177,6 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 	if(c=='[')
 		nv_endsubscript(nq, cp,NV_NOADD,nq->nvshell);
 	stkseek(shp->stk,offset);
-#if SHOPT_NAMESPACE
 	if(nv_istable(nq))
 	{
 		Namval_t *nsp = shp->namespace;
@@ -1193,7 +1190,6 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 		stkseek(shp->stk,offset);
 		return(np);
 	}
-#endif /* SHOPT_NAMESPACE */
 	while(nv_isarray(nq) && !nv_isattr(nq,NV_MINIMAL|NV_EXPORT) && nq->nvenv && nv_isarray((Namval_t*)nq->nvenv))
 		nq = (Namval_t*)nq->nvenv;
 	return((Namval_t*)nv_setdisc(nq,dname,nq,(Namfun_t*)nq));
@@ -1531,7 +1527,6 @@ bool nv_hasget(Namval_t *np)
 	return(false);
 }
 
-#if SHOPT_NAMESPACE
 Namval_t *sh_fsearch(Shell_t *shp, const char *fname, int add)
 {
 	Stk_t	*stkp = shp->stk;
@@ -1541,4 +1536,3 @@ Namval_t *sh_fsearch(Shell_t *shp, const char *fname, int add)
 	fname = stkptr(stkp,offset);
 	return(nv_search(fname,sh_subfuntree(shp,add&NV_ADD),add));
 }
-#endif /* SHOPT_NAMESPACE */

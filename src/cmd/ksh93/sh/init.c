@@ -1078,7 +1078,6 @@ static const Namdisc_t SH_JOBPOOL_disc = {
 };
 #endif  // SHOPT_COSHELL
 
-#if SHOPT_NAMESPACE
 #if 0
 // TODO: Decide if this function serves a purpose.
 static char *get_nspace(Namval_t *np, Namfun_t *fp) {
@@ -1093,7 +1092,6 @@ static char *get_nspace(Namval_t *np, Namfun_t *fp) {
 static const Namdisc_t NSPACE_disc = {0, 0, get_nspace};
 static Namfun_t NSPACE_init = {&NSPACE_disc, 1};
 #endif
-#endif  // SHOPT_NAMESPACE
 
 static const Namdisc_t LC_disc = {sizeof(Namfun_t), put_lang};
 
@@ -1588,14 +1586,12 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     sh_offstate(shp, SH_INIT);
     memset(shp->st.trapcom, 0, (shp->st.trapmax + 1) * sizeof(char *));
     memset((void *)&opt, 0, sizeof(opt));
-#if SHOPT_NAMESPACE
     if (shp->namespace) {
         dp = nv_dict(shp->namespace);
         if (dp == shp->var_tree) shp->var_tree = dtview(dp, 0);
         _nv_unset(shp->namespace, NV_RDONLY);
         shp->namespace = 0;
     }
-#endif  // SHOPT_NAMESPACE
     if (sh_isoption(shp, SH_TRACKALL)) on_option(&opt, SH_TRACKALL);
     if (sh_isoption(shp, SH_EMACS)) on_option(&opt, SH_EMACS);
     if (sh_isoption(shp, SH_GMACS)) on_option(&opt, SH_GMACS);

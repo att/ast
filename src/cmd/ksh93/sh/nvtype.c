@@ -84,9 +84,7 @@ struct Namtype
 	Namval_t	*parent;
 	Namval_t	*bp;
 	Namval_t	*cp;
-#if SHOPT_NAMESPACE
 	Namval_t	*nsp;
-#endif /* SHOPT_NAMESPACE */
 	char		*nodes;
 	char		*data;
 	Namchld_t	childfun;
@@ -892,7 +890,6 @@ void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz)
 		name++;
 	else
 		name = np->nvname; 
-#if SHOPT_NAMESPACE
 	if(bp=(Namval_t*)shp->namespace)
 	{
 		Namtype_t *tp = (Namtype_t*)nv_hasdisc(np, &type_disc);
@@ -903,7 +900,6 @@ void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz)
 		sfprintf(shp->strbuf2,".%s.%s%c\n",nv_name(bp)+1,name,0);
 		name = sfstruse(shp->strbuf2);
 	}
-#endif /* SHOPT_NAMESPACE */
 	if((bp=nv_search(name,shp->fun_tree,NV_NOSCOPE)) && !bp->nvalue.ip)
 		nv_delete(bp,shp->fun_tree,0);
 	bp = sh_addbuiltin(shp,name, (Shbltin_f)mp->nvalue.bfp, (void*)cp); 

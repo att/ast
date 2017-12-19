@@ -1290,7 +1290,6 @@ static Shnode_t	*item(Lex_t *lexp,int flag)
 	    case FUNCTSYM:
 		return(funct(lexp));
 
-#if SHOPT_NAMESPACE
 	    case NSPACESYM:
 		if(lexp->fundepth)
 			sh_syntax(lexp);
@@ -1306,7 +1305,6 @@ static Shnode_t	*item(Lex_t *lexp,int flag)
 			sh_syntax(lexp);
 		t->funct.functtre = sh_cmd(lexp,RBRACE,SH_NL);
 		break;
-#endif /* SHOPT_NAMESPACE */
 
 	    /* while and until */
 	    case WHILESYM:

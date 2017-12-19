@@ -601,11 +601,9 @@ static void funload(Shell_t *shp,int fno, const char *name)
 	sh_eval(shp,sfnew(NIL(Sfio_t*),buff,IOBSIZE,fno,SF_READ),SH_FUNEVAL);
 	sh_close(fno);
 	shp->readscript = 0;
-#if SHOPT_NAMESPACE
 	if(shp->namespace)
 		np = sh_fsearch(shp,name,0);
 	else
-#endif /* SHOPT_NAMESPACE */
 		np = nv_search(name,shp->fun_tree,0);
 	if(!np || !np->nvalue.ip)
 		pname = stkcopy(shp->stk,shp->st.filename);

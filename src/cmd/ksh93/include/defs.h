@@ -465,9 +465,7 @@ extern int 		sh_whence(char**,int);
    extern int		sh_copipe(Shell_t*, int[], int);
    extern int		sh_coaccept(Shell_t*,int[],int);
 #endif /* SHOPT_COSHELL */
-#if SHOPT_NAMESPACE
-    extern Namval_t	*sh_fsearch(Shell_t*,const char *,int);
-#endif /* SHOPT_NAMESPACE */
+extern Namval_t	*sh_fsearch(Shell_t*,const char *,int);
 extern int		sh_diropenat(Shell_t*, int, const char*);
 
 #ifndef ERROR_dictionary

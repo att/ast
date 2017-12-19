@@ -36,11 +36,7 @@ static int infof(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 {
 	Shell_t	*shp = *(Shell_t**)(dp+1);
 	Stk_t	*stkp = shp->stk;
-#if SHOPT_NAMESPACE
 	if((shp->namespace && sh_fsearch(shp,s,0)) || nv_search(s,shp->fun_tree,0))
-#else
-	if(nv_search(s,shp->fun_tree,0))
-#endif /* SHOPT_NAMESPACE */
 	{
 		int savtop = stktell(stkp);
 		char *savptr = stkfreeze(stkp,0);

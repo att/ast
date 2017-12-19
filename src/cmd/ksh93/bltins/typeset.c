@@ -441,25 +441,21 @@ endargs:
 		if(!tdata.prefix)
 			return(sh_outtype(tdata.sh,sfstdout));
 		sfputr(stkp,NV_CLASS,-1);
-#if SHOPT_NAMESPACE
 		if(tdata.sh->namespace)
 		{
 			off = stktell(stkp)+1;
 			sfputr(stkp,nv_name(tdata.sh->namespace),'.');
 		}
 		else
-#endif /* SHOPT_NAMESPACE */
 		if(NV_CLASS[sizeof(NV_CLASS)-2]!='.')
 			sfputc(stkp,'.');
 		sfputr(stkp,tdata.prefix,0);
 		tdata.tp = nv_open(stkptr(stkp,offset),tdata.sh->var_tree,NV_VARNAME|NV_NOARRAY|NV_NOASSIGN);
-#if SHOPT_NAMESPACE
 		if(!tdata.tp && off)
 		{
 			*stkptr(stkp,off)=0;
 			tdata.tp = nv_open(stkptr(stkp,offset),tdata.sh->var_tree,NV_VARNAME|NV_NOARRAY|NV_NOASSIGN);
 		}
-#endif /* SHOPT_NAMESPACE */
 		stkseek(stkp,offset);
 		if(!tdata.tp)
 			errormsg(SH_DICT,ERROR_exit(1),"%s: unknown type",tdata.prefix);
@@ -600,11 +596,9 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 					/* Function names cannot be special builtin */
 					if((np=nv_search(name,shp->bltin_tree,0)) && nv_isattr(np,BLT_SPC))
 						errormsg(SH_DICT,ERROR_exit(1),e_badfun,name);
-#if SHOPT_NAMESPACE
 					if(shp->namespace)
 						np = sh_fsearch(shp,name,NV_ADD|HASH_NOSCOPE);
 					else
-#endif /* SHOPT_NAMESPACE */
 					np = nv_open(name,sh_subfuntree(shp,1),NV_NOARRAY|NV_IDENT|NV_NOSCOPE);
 				}
 				else 
@@ -614,12 +608,10 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 						sfprintf(shp->strbuf,"%s.%s%c",shp->prefix,name,0);
 						name = sfstruse(shp->strbuf);
 					}
-#if SHOPT_NAMESPACE
 					np = 0;
 					if(shp->namespace)
 						np = sh_fsearch(shp,name,HASH_NOSCOPE);
 					if(!np)
-#endif /* SHOPT_NAMESPACE */
 					if(np=nv_search(name,troot,0))
 					{
 						if(!is_afunction(np))
@@ -1281,11 +1273,9 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 		np = 0;
 		if(jmpval==0)
 		{
-#if SHOPT_NAMESPACE
 			if(shp->namespace && troot!=shp->var_tree)
 				np = sh_fsearch(shp,name,nflag?HASH_NOSCOPE:0);
 			if(!np)
-#endif /* SHOPT_NAMESPACE */
 			np=nv_open(name,troot,NV_NOADD|nflag);
 		}
 		else
