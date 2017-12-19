@@ -1054,13 +1054,7 @@ loop_fmt :
 					v = (int)((uchar)argv.i);
 				else
 				{
-#if _key_signed
 					v = (int)((signed char)argv.i);
-#else
-					if(argv.i < 0)
-						v = -((int)((char)(-argv.i)));
-					else	v =  ((int)((char)( argv.i)));
-#endif
 				}
 				goto int_cvt;
 			}

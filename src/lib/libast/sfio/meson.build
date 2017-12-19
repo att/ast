@@ -22,3 +22,20 @@ libast_files += [
     'sfio/sfvprintf.c', 'sfio/sfvscanf.c', 'sfio/sfwalk.c', 'sfio/sfwr.c',
     'sfio/sfwrite.c'
 ]
+
+# number of bits in pointer
+charptr_size = cc.sizeof('char*')
+int_size = cc.sizeof('int')
+long_size = cc.sizeof('long')
+
+libast_c_args += [ '-D_ptr_bits=@0@'.format(charptr_size*8) ]
+
+# voidptr is larger than int
+if charptr_size > int_size
+    libast_c_args += [ '-D_more_void_int=1' ]
+endif
+
+# long is larger than int
+if long_size > int_size
+    libast_c_args += [ '-D_more_long_int=1' ]
+endif

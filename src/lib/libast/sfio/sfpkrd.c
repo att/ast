@@ -22,9 +22,7 @@
 #include	"sfhdr.h"
 #if !_PACKAGE_ast
 #ifndef FIONREAD
-#if _sys_ioctl
 #include	<sys/ioctl.h>
-#endif
 #endif
 #endif
 
