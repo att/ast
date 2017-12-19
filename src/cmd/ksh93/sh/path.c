@@ -1231,10 +1231,8 @@ retry:
 	switch(shp->path_err = errno)
 	{
 	    case ENOEXEC:
-#if SHOPT_SUID_EXEC
 	    case EPERM:
 		/* some systems return EPERM if setuid bit is on */
-#endif
 		errno = ENOEXEC;
 		if(spawn)
 		{
@@ -1275,9 +1273,6 @@ retry:
 #ifdef ENAMETOOLONG
 	    case ENAMETOOLONG:
 #endif /* ENAMETOOLONG */
-#if !SHOPT_SUID_EXEC
-	    case EPERM:
-#endif
 		shp->path_err = errno;
 		return(-1);
 	    case ENOTDIR:
@@ -1327,7 +1322,6 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 		sh_close(shp->infd);
 	sh_setstate(shp,sh_state(SH_FORKED));
 	sfsync(sfstderr);
-#if SHOPT_SUID_EXEC
 	/* check if file cannot open for read or script is setuid/setgid  */
 	{
 		static char name[] = "/tmp/euidXXXXXXXXXX";
@@ -1383,10 +1377,6 @@ static void exscript(Shell_t *shp,char *path,char *argv[],char *const*envp)
 	openok:
 		shp->infd = n;
 	}
-#else
-	if((shp->infd = sh_open(path,O_RDONLY|O_CLOEXEC,0)) < 0)
-		errormsg(SH_DICT,ERROR_system(ERROR_NOEXEC),e_exec,path);
-#endif
 	shp->infd = sh_iomovefd(shp,shp->infd);
 #if SHOPT_ACCT
 	sh_accbegin(path) ;  /* reset accounting */
