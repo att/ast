@@ -32,14 +32,10 @@
 int
 pathstat(const char* path, struct stat* st)
 {
-#if _lib_lstat
 	int	oerrno;
 
 	oerrno = errno;
 	if (!stat(path, st)) return(0);
 	errno = oerrno;
 	return(lstat(path, st));
-#else
-	return(stat(path, st));
-#endif
 }

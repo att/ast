@@ -32,7 +32,7 @@
 #include <ls.h>
 #include <mnt.h>
 
-#include "FEATURE/fs"
+#include "ast_fs.h"
 
 #if _str_st_fstype
 

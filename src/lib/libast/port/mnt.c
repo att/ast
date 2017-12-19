@@ -451,15 +451,6 @@ mntclose(void* handle)
 
 #else
 
-#if !_lib_setmntent
-#undef	_lib_getmntent
-#if !_SCO_COFF && !_SCO_ELF && !_UTS
-#undef	_hdr_mnttab
-#endif
-#endif
-
-#if _lib_getmntent && ( _hdr_mntent || _sys_mntent && !_sys_mnttab )
-
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp:hide endmntent getmntent
 #else
@@ -468,10 +459,7 @@ __STDPP__directive pragma pp:hide endmntent getmntent
 #endif
 
 #include <stdio.h>
-#if _hdr_mntent
 #include <mntent.h>
-#else
-#include <sys/mntent.h>
 #endif
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
@@ -483,20 +471,6 @@ __STDPP__directive pragma pp:nohide endmntent getmntent
 
 extern int		endmntent(FILE*);
 extern struct mntent*	getmntent(FILE*);
-
-#else
-
-#undef	_lib_getmntent
-
-#if _hdr_mnttab
-#include <mnttab.h>
-#else
-#if _sys_mnttab
-#include <sys/mnttab.h>
-#endif
-#endif
-
-#endif
 
 #ifndef MOUNTED
 #ifdef	MNT_MNTTAB
@@ -515,8 +489,6 @@ extern struct mntent*	getmntent(FILE*);
 #define MOUNTED		"/etc/fstab"
 #define SEP		':'
 #endif
-
-#if _lib_getmntent
 
 typedef struct
 #if _mem_mnt_opts_mntent
@@ -571,228 +543,6 @@ mntclose(void* handle)
 	free(mp);
 	return 0;
 }
-
-#else
-
-#if _sys_mntent && _lib_w_getmntent
-
-#include <sys/mntent.h>
-
-#define mntent		w_mntent
-
-#define mnt_dir		mnt_mountpoint
-#define mnt_type	mnt_fstname
-
-#define MNTBUFSIZE	(sizeof(struct w_mnth)+16*sizeof(struct w_mntent))
-
-#if _mem_mnt_opts_w_mntent
-#define OPTIONS(p)	((p)->mnt_opts)
-#else
-#define OPTIONS(p)	NiL
-#endif
-
-#else
-
-#undef _lib_w_getmntent
-
-#define MNTBUFSIZE	sizeof(struct mntent)
-
-#if !_mem_mt_dev_mnttab || !_mem_mt_filsys_mnttab
-#undef	_hdr_mnttab
-#endif
-
-#if _hdr_mnttab
-
-#define mntent	mnttab
-
-#define mnt_fsname	mt_dev
-#define mnt_dir		mt_filsys
-#if _mem_mt_fstyp_mnttab
-#define mnt_type	mt_fstyp
-#endif
-
-#if _mem_mnt_opts_mnttab
-#define OPTIONS(p)	((p)->mnt_opts)
-#else
-#define OPTIONS(p)	NiL
-#endif
-
-#else
-
-struct mntent
-{
-	char	mnt_fsname[256];
-	char	mnt_dir[256];
-	char	mnt_type[32];
-	char	mnt_opts[64];
-};
-
-#define OPTIONS(p)	((p)->mnt_opts)
-
-#endif
-
-#endif
-
-typedef struct
-{
-	Header_t	hdr;
-	Sfio_t*		fp;
-	struct mntent*	mnt;
-#if _lib_w_getmntent
-	int		count;
-#endif
-	char		buf[MNTBUFSIZE];
-} Handle_t;
-
-void*
-mntopen(const char* path, const char* mode)
-{
-	Handle_t*	mp;
-
-	FIXARGS(path, mode, MOUNTED);
-	if (!(mp = newof(0, Handle_t, 1, 0)))
-		return 0;
-#if _lib_w_getmntent
-	if ((mp->count = w_getmntent(mp->buf, sizeof(mp->buf))) > 0)
-		mp->mnt = (struct mntent*)(((struct w_mnth*)mp->buf) + 1);
-	else
-#else
-	mp->mnt = (struct mntent*)mp->buf;
-	if (!(mp->fp = sfopen(NiL, path, mode)))
-#endif
-	{
-		free(mp);
-		return 0;
-	}
-	return (void*)mp;
-}
-
-Mnt_t*
-mntread(void* handle)
-{
-	Handle_t*	mp = (Handle_t*)handle;
-
-#if _lib_w_getmntent
-
-	if (mp->count-- <= 0)
-	{
-		if ((mp->count = w_getmntent(mp->buf, sizeof(mp->buf))) <= 0)
-			return 0;
-		mp->count--;
-		mp->mnt = (struct mntent*)(((struct w_mnth*)mp->buf) + 1);
-	}
-	set(&mp->hdr, mp->mnt->mnt_fsname, mp->mnt->mnt_dir, mp->mnt->mnt_type, OPTIONS(mp->mnt));
-	mp->mnt++;
-	return &mp->hdr.mnt;
-
-#else
-
-#if _hdr_mnttab
-
-	while (sfread(mp->fp, &mp->buf, sizeof(mp->buf)) == sizeof(mp->buf))
-		if (*mp->mnt->mnt_fsname && *mp->mnt->mnt_dir)
-		{
-#ifndef mnt_type
-			struct stat	st;
-
-			static char	typ[32];
-
-			set(&mp->hdr, mp->mnt->mnt_fsname, mp->mnt->mnt_dir, stat(mp->mnt->mnt_dir, &st) ? FS_default : strlcpy(typ, fmtfs(&st), sizeof(typ)), OPTIONS(mp->mnt));
-#else
-			set(&mp->hdr, mp->mnt->mnt_fsname, mp->mnt->mnt_dir, mp->mnt->mnt_type, OPTIONS(mp->mnt));
-#endif
-			return &mp->hdr.mnt;
-		}
-	return 0;
-
-#else
-
-	int		c;
-	char*		s;
-	char*		m;
-	char*		b;
-	int		q;
-	int		x;
-
- again:
-	q = 0;
-	x = 0;
-	b = s = mp->mnt->mnt_fsname;
-	m = s + sizeof(mp->mnt->mnt_fsname) - 1;
-	for (;;) switch (c = sfgetc(mp->fp))
-	{
-	case EOF:
-		return 0;
-	case '"':
-	case '\'':
-		if (q == c)
-			q = 0;
-		else if (!q)
-			q = c;
-		break;
-#ifdef SEP
-	case SEP:
-#else
-	case ' ':
-	case '\t':
-#endif
-		if (s != b && !q) switch (++x)
-		{
-		case 1:
-			*s = 0;
-			b = s = mp->mnt->mnt_dir;
-			m = s + sizeof(mp->mnt->mnt_dir) - 1;
-			break;
-		case 2:
-			*s = 0;
-			b = s = mp->mnt->mnt_type;
-			m = s + sizeof(mp->mnt->mnt_type) - 1;
-			break;
-		case 3:
-			*s = 0;
-			b = s = mp->mnt->mnt_opts;
-			m = s + sizeof(mp->mnt->mnt_opts) - 1;
-			break;
-		case 4:
-			*s = 0;
-			b = s = m = 0;
-			break;
-		}
-		break;
-	case '\n':
-		if (x >= 3)
-		{
-			set(&mp->hdr, mp->mnt->mnt_fsname, mp->mnt->mnt_dir, mp->mnt->mnt_type, OPTIONS(mp->mnt));
-			return &mp->hdr.mnt;
-		}
-		goto again;
-	default:
-		if (s < m)
-			*s++ = c;
-		break;
-	}
-
-#endif
-
-#endif
-
-}
-
-int
-mntclose(void* handle)
-{
-	Handle_t*	mp = (Handle_t*)handle;
-
-	if (!mp)
-		return -1;
-	sfclose(mp->fp);
-	free(mp);
-	return 0;
-}
-
-#endif
-
-#endif
 
 #endif
 
