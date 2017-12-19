@@ -40,7 +40,6 @@
 #define _size		size
 #define _val		val
 
-#include	"FEATURE/sfio"
 #include	"FEATURE/mmap"
 
 /* define va_list, etc. before including sfio_t.h (sfio.h) */
@@ -126,7 +125,6 @@
 #undef  _hdr_values
 #undef  _hdr_math
 #undef  _hdr_mman
-#undef  _sys_ioctl
 #endif
 
 #include	<stdlib.h>
