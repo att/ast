@@ -164,8 +164,14 @@ if align_bound_result.returncode() == 0
     endforeach
 endif
 
-if not cc.has_function('isnanl', prefix : '#include<math.h>')
+if not cc.has_function('isnanl', prefix: '#include <math.h>')
     libast_c_args += [ '-Disnanl=isnan' ]
+endif
+
+if cc.has_function('utimensat', prefix: '#include <sys/time.h>')
+    libast_c_args += [ '-D_lib_utimensat' ]
+elif cc.has_function('utimets', prefix: '#include <sys/time.h>')
+    libast_c_args += [ '-D_lib_utime' ]
 endif
 
 if cc.has_function('sysinfo', prefix : '#include <sys/sysinfo.h>')
