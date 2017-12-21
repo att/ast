@@ -12,8 +12,6 @@
 #endif
 #endif
 
-#include <ast_fs.h>
-
 #if _typ_off64_t
 #undef	off_t
 #ifdef __STDC__

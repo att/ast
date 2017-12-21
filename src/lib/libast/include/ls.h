@@ -31,7 +31,8 @@
 #define _LS_H
 
 #include <ast_std.h>
-#include <ast_fs.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <ast_mode.h>
 
 /*
