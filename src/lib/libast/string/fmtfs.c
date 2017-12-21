@@ -32,8 +32,6 @@
 #include <ls.h>
 #include <mnt.h>
 
-#include "ast_fs.h"
-
 #if _str_st_fstype
 
 char*
@@ -74,7 +72,7 @@ fmtfs(struct stat* st)
 	}
 	else if (ip = (Id_t*)dtmatch(dict, &st->st_dev))
 		return ip->name;
-	s = FS_default;
+	s = "unknown";
 	if (mp = mntopen(NiL, "r"))
 	{
 		while ((mnt = mntread(mp)) && (stat(mnt->dir, &rt) || rt.st_dev != st->st_dev));

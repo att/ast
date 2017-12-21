@@ -33,7 +33,6 @@
 #define _FTS_H
 
 #include <ast_std.h>
-#include <ast_fs.h>
 #include <ast_mode.h>
 
 /*

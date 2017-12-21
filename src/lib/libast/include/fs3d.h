@@ -30,8 +30,6 @@
 #ifndef _FS3D_H
 #define _FS3D_H
 
-#include <ast_fs.h>
-
 #if _int_st_spare1
 #define iview(p)	((p)->st_spare1)
 #define IVIEW(p,v)	((p)->st_spare1=(v))

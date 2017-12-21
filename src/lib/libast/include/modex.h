@@ -29,7 +29,6 @@
 #ifndef _MODEX_H
 #define _MODEX_H
 
-#include <ast_fs.h>
 #include <modecanon.h>
 
 #if _BLD_ast && defined(__EXPORT__)
