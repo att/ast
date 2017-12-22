@@ -19,7 +19,7 @@ iffe_tests=( 'common' 'aso' 'ccode' 'iconv' 'vmalloc' )
 
 iffe_tests_2=()
 
-iffe_c_tests=('limits.c' )
+iffe_c_tests=()
 
 iffe_c_tests_2=('sfinit.c' 'signal.c')
 

@@ -360,7 +360,7 @@ bool get_compound_revents(Shell_t *shp, const char *parrayname, struct pollstat 
 	}
 	fd = (int)nv_getnum(np);
 	nv_close(np);
-	if ((fd < -1) || (fd > OPEN_MAX))
+	if ((fd < -1) || (fd > strtol(astconf("OPEN_MAX", NiL, NiL), NiL, 0)))
 	{
 		errormsg(SH_DICT, ERROR_ERROR, "invalid pollfd %s[%s].fd %d", parrayname, subname, fd);
 		return false;
