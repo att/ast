@@ -24,6 +24,8 @@
  * ast function intercepts
  */
 
+#include <sys/stat.h>
+
 #if !defined(_AST_INTERCEPT) && !_BLD_ast && _API_ast && _API_ast < 20130625 /* <ast_api.h> not in scope yet */
 #define _AST_INTERCEPT			0
 #endif
