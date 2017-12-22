@@ -48,7 +48,6 @@
 #include <ast_sys.h>
 #include <ast_getopt.h>	/* <stdlib.h> does this */
 #include <ast_fcntl.h>
-#include <ast_limits.h>
 
 /*
  * <stdio.h> and <wchar.h> are entangled on some systems
