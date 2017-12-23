@@ -26,8 +26,7 @@ before_install:
 script:
     # TODO: Check how to set MESON_TESTTHREADS dynamically
     - echo > build.sh "set -e;
-        hostType=`bin/package`;
-        export CFLAGS="-D_PACKAGE_ast -DMESON_BUILD=1 -DHOSTTYPE=$hostType -fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts";
+        export CFLAGS='-D_PACKAGE_ast -DMESON_BUILD=1 -fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
         cd /source;
         mkdir build;
         cd build;
