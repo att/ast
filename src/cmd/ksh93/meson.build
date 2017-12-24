@@ -175,8 +175,12 @@ libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
 libcmd_build_dir = join_paths(build_dir, 'src', 'lib', 'libcmd')
 libcoshell_build_dir = join_paths(build_dir, 'src', 'lib', 'libcoshell')
 
-ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
-    [libast_build_dir, libcmd_build_dir, libcoshell_build_dir])
+if system == 'darwin'
+    ld_library_path = 'DYLD_FALLBACK_LIBRARY_PATH=src/lib'
+else
+    ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
+        [libast_build_dir, libcmd_build_dir, libcoshell_build_dir])
+endif
 
 # These are the default locales used by legacy test script.
 # The emptry string is POSIX locale.
