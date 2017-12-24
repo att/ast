@@ -37,7 +37,7 @@
 #include <ast_tty.h>
 
 /*
- * not quite ready for _use_spawnveg 
+ * not quite ready for _use_spawnveg
  */
 
 #if _use_spawnveg
@@ -51,7 +51,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-Proc_t			proc_default = { -1 };
+Proc_t	proc_default = { -1 };
 
 #if DEBUG_PROC
 
@@ -64,14 +64,14 @@ Proc_t			proc_default = { -1 };
 #define PROC_OPT_TRACE		(1<<2)
 #define PROC_OPT_VERBOSE	(1<<3)
 
-static const Namval_t		options[] =
+static const Namval_t	options[] =
 {
-	"debug",	PROC_OPT_VERBOSE,
-	"environment",	PROC_OPT_ENVIRONMENT,
-	"exec",		PROC_OPT_EXEC,
-	"trace",	PROC_OPT_TRACE,
-	"verbose",	PROC_OPT_VERBOSE,
-	0,		0
+	{ "debug",	PROC_OPT_VERBOSE },
+	{ "environment",	PROC_OPT_ENVIRONMENT },
+	{ "exec",		PROC_OPT_EXEC },
+	{ "trace",	PROC_OPT_TRACE },
+	{ "verbose",	PROC_OPT_VERBOSE },
+	{ NULL,		0 }
 };
 
 /*

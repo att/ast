@@ -36,7 +36,7 @@ USAGE_LICENSE
 	"the variable \aname\a is set to \avalue\a before the variable "
 	"is converted to \b\f?\f\b.]"
 "[+?If no \aname\as are specified then the names and values of all "
-	"variables of this type are written to standard output.]" 
+	"variables of this type are written to standard output.]"
 "[+?\b\f?\f\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.]"
@@ -382,7 +382,7 @@ static int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp,int f
 			nq->nvalue.cp = Empty;
 		else if(nq->nvalue.cp==Empty)
 			nv_offattr(nq,NV_NOFREE);
-	
+
 	}
 	if(fp)
 		nv_disc(nq, &dp->childfun.fun, NV_LAST);
@@ -411,7 +411,7 @@ static Namfun_t *clone_type(Namval_t* np, Namval_t *mp, int flags, Namfun_t *fp)
 	}
 	if(flags&NV_TYPE)
 		return(nv_clone_disc(fp,flags));
-	if(size==0 && (!fp->disc || (size=fp->disc->dsize)==0)) 
+	if(size==0 && (!fp->disc || (size=fp->disc->dsize)==0))
 		size = sizeof(Namfun_t);
 	dp = (Namtype_t*)malloc(size+pp->nref*sizeof(struct Namref));
 	if(pp->nref)
@@ -559,7 +559,7 @@ static Namval_t *create_type(Namval_t *np,const char *name,int flag,Namfun_t *fp
 	}
 	while((n=*cp++) && n != '=' && n != '+' && n!='[')
 	{
-		if(n=='.') 
+		if(n=='.')
 			r = (cp-1)-name;
 	}
 	n = (cp-1) -name;
@@ -617,7 +617,7 @@ static void put_type(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 {
 	Shell_t	*shp = sh_ptr(np);
 	Namval_t	*nq;
-	if(val && (nq=nv_open(val,shp->var_tree,NV_VARNAME|NV_ARRAY|NV_NOADD|NV_NOFAIL))) 
+	if(val && (nq=nv_open(val,shp->var_tree,NV_VARNAME|NV_ARRAY|NV_NOADD|NV_NOFAIL)))
 	{
 		Namfun_t  *pp;
 		if((pp=nv_hasdisc(nq,fp->disc)) && pp->type==fp->type)
@@ -696,7 +696,7 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 	int		i, offset=stktell(shp->stk);
 	size_t		n;
 	Sfio_t		*sp;
-	
+
 	np = *(Namval_t**)(od+1);
 	sfputr(shp->stk,NV_CLASS,'.');
 	sfputr(shp->stk,np->nvname,0);
@@ -834,7 +834,7 @@ static int std_disc(Namval_t *mp, Namtype_t *pp)
 			pp->cp = mp;
 		return(0);
 	}
-	for(argv=nv_discnames; sp=*argv; argv++) 
+	for(argv=nv_discnames; sp=*argv; argv++)
 	{
 		if(strcmp(cp,sp)==0)
 		{
@@ -889,7 +889,7 @@ void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz)
 	if(name=strrchr(np->nvname,'.'))
 		name++;
 	else
-		name = np->nvname; 
+		name = np->nvname;
 	if(bp=(Namval_t*)shp->namespace)
 	{
 		Namtype_t *tp = (Namtype_t*)nv_hasdisc(np, &type_disc);
@@ -902,7 +902,7 @@ void nv_addtype(Namval_t *np, const char *optstr, Optdisc_t *op, size_t optsz)
 	}
 	if((bp=nv_search(name,shp->fun_tree,NV_NOSCOPE)) && !bp->nvalue.ip)
 		nv_delete(bp,shp->fun_tree,0);
-	bp = sh_addbuiltin(shp,name, (Shbltin_f)mp->nvalue.bfp, (void*)cp); 
+	bp = sh_addbuiltin(shp,name, (Shbltin_f)mp->nvalue.bfp, (void*)cp);
 	nv_onattr(bp,nv_isattr(mp,NV_PUBLIC));
 	nv_onattr(np, NV_RDONLY);
 }
@@ -1084,7 +1084,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes)
 				sp = nv_getval(np);
 				if(nv_isvtree(np))
 					sfprintf(sfstderr,"initialization not implemented\n");
-				else if(sp) 
+				else if(sp)
 					nv_putval(nq,sp,0);
 				goto skip;
 			}
@@ -1521,11 +1521,11 @@ static Fields_t foo[]=
 	FIELD(blksize,),
 	FIELD(blocks,),
 #endif
-	0
-}; 
+	{ NULL, NULL, 0 }
+};
 
 
-Namval_t *nv_mkstruct(const char *name, int rsize, Fields_t *fields, void *context) 
+Namval_t *nv_mkstruct(const char *name, int rsize, Fields_t *fields, void *context)
 {
 	Shell_t	*shp = (Shell_t*)context;
 	Namval_t	*mp, *nq, *nr, *tp;
@@ -1630,7 +1630,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, Fields_t *fields, void *conte
 			if(strmatch(fp->type+7,"*-*u*")==0)
 				nv_onattr(nq,NV_UNSIGN);
 		}
-		
+
 	}
 	stkseek(shp->stk,offset);
 	nv_onattr(mp,NV_RDONLY|NV_NOFREE|NV_BINARY);
@@ -1826,7 +1826,7 @@ void nv_checkrequired(Namval_t *mp)
 		return;
 	if(mq = nv_type(mp))
 		dq=(Namtype_t*)nv_hasdisc(mq,&type_disc);
-	for(i=0; i < dp->numnodes; i++) 
+	for(i=0; i < dp->numnodes; i++)
 	{
 		if(dq)
 			nq = nv_namptr(dq->nodes,i);
