@@ -25,7 +25,9 @@
 //
 #define _GNU_SOURCE 1
 #include <dlfcn.h>
+#ifdef _hdr_execinfo
 #include <execinfo.h>
+#endif
 #include <stdio.h>
 
 #include "defs.h"
@@ -55,6 +57,7 @@ static int cursig = -1;
 // Write a primitive backtrace to stderr. This can be called from anyplace in
 // the code where you would like to understand the call sequence leading to
 // that point in the code.
+#ifdef _hdr_execinfo
 void dump_backtrace(int max_frames, int skip_levels) {
     char text[512];
     void *callstack[128];
@@ -78,6 +81,15 @@ void dump_backtrace(int max_frames, int skip_levels) {
 
     free(symbols);
 }
+
+#else  // _hdr_execinfo
+
+void dump_backtrace(int max_frames, int skip_levels) {
+    static char *msg = "Sorry, but dump_backtrace() does not work on your system.\n";
+    write(2, msg, strlen(msg));
+}
+
+#endif  // _hdr_execinfo
 
 // Default function for handling a SIGSEGV. It simply writes a backtrace to
 // stderr then terminates the process with prejudice. The primary purpose is to

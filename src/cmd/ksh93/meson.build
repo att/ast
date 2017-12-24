@@ -86,12 +86,17 @@ cc = meson.get_compiler('c')
 # On some platforms the math functions (e.g., `sin()`) that we need are found in
 # libc, on others they are found in libm.
 m_dep = cc.find_library('m', required: false)
-# On some platforms `backtrace()` and related functions are found in libc,
-# on others they are found in libexecinfo.
-execinfo_dep = cc.find_library('execinfo', required: false)
 # On some platforms `dladdr()` and related functions are found in libc,
 # on others they are found in libdl.
 libdl_dep = cc.find_library('libdl', required : false)
+
+# On some platforms `backtrace()` and related functions are found in libc,
+# on others they are found in libexecinfo.
+execinfo_dep = cc.find_library('execinfo', required: false)
+if cc.has_header('execinfo.h')
+    ksh93_c_args += [ '-D_hdr_execinfo']
+    shcomp_c_args += [ '-D_hdr_execinfo']
+endif
 
 
 if cc.has_function('sigqueue', prefix: '#include <signal.h>')
