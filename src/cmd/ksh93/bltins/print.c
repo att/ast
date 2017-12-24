@@ -73,14 +73,14 @@ struct printmap
 
 static const struct printmap  Pmap[] =
 {
-	3,	"csv",			"#q",
-	3,	"ere",			"R",
-	4,	"html",			"H",
-	17,	"nounicodeliterals",	"0q",
-	7,	"pattern",		"P",
-	15,	"unicodeliterals",	"+q",
-	3,	"url",			"#H",
-	0,	0,			0,
+	{  3,	"csv",			"#q" },
+	{  3,	"ere",			"R" },
+	{  4,	"html",			"H" },
+	{ 17,	"nounicodeliterals",	"0q" },
+	{  7,	"pattern",		"P" },
+	{ 15,	"unicodeliterals",	"+q" },
+	{  3,	"url",			"#H" },
+	{  0,	NULL,			NULL },
 };
 
 
@@ -584,7 +584,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
 			else
 			{
 				size =  sizeof(short);
-				number.i = (int)d; 
+				number.i = (int)d;
 			}
 		}
 #if 1
@@ -605,7 +605,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
 				break;
 		}
 		if(fp)
-			return (*fp->disc->writef)(np, iop, 0, fp); 		
+			return (*fp->disc->writef)(np, iop, 0, fp);
 		else
 		{
 			int n = nv_size(np);

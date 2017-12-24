@@ -35,15 +35,15 @@
 
 #define TM_type		(-1)
 
-static const Namval_t		options[] =
+static const Namval_t	options[] =
 {
-	"adjust",	TM_ADJUST,
-	"format",	TM_DEFAULT,
-	"leap",		TM_LEAP,
-	"subsecond",	TM_SUBSECOND,
-	"type",		TM_type,
-	"utc",		TM_UTC,
-	0,		0
+	{ "adjust",	TM_ADJUST },
+	{ "format",	TM_DEFAULT },
+	{ "leap",		TM_LEAP },
+	{ "subsecond",	TM_SUBSECOND },
+	{ "type",		TM_type },
+	{ "utc",		TM_UTC },
+	{ NULL,		0 }
 };
 
 /*

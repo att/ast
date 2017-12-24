@@ -34,25 +34,25 @@
 
 const Shtable_t shtab_testops[] =
 {
-		"!=",		TEST_SNE,
-		"-a",		TEST_AND,
-		"-ef",		TEST_EF,
-		"-eq",		TEST_EQ,
-		"-ge",		TEST_GE,
-		"-gt",		TEST_GT,
-		"-le",		TEST_LE,
-		"-lt",		TEST_LT,
-		"-ne",		TEST_NE,
-		"-nt",		TEST_NT,
-		"-o",		TEST_OR,
-		"-ot",		TEST_OT,
-		"=",		TEST_SEQ,
-		"==",		TEST_SEQ,
-		"=~",           TEST_REP,
-		"<",		TEST_SLT,
-		">",		TEST_SGT,
-		"]]",		TEST_END,
-		"",		0
+	{ "!=",		TEST_SNE },
+	{ "-a",		TEST_AND },
+	{ "-ef",		TEST_EF },
+	{ "-eq",		TEST_EQ },
+	{ "-ge",		TEST_GE },
+	{ "-gt",		TEST_GT },
+	{ "-le",		TEST_LE },
+	{ "-lt",		TEST_LT },
+	{ "-ne",		TEST_NE },
+	{ "-nt",		TEST_NT },
+	{ "-o",		TEST_OR },
+	{ "-ot",		TEST_OT },
+	{ "=",		TEST_SEQ },
+	{ "==",		TEST_SEQ },
+	{ "=~",		TEST_REP },
+	{ "<",		TEST_SLT },
+	{ ">",		TEST_SGT },
+	{ "]]",		TEST_END },
+	{ "",		0 }
 };
 
 const char sh_opttest[] =

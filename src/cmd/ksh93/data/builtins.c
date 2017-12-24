@@ -61,106 +61,106 @@
  */
 const struct shtable3 shtab_builtins[] =
 {
-	"login",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login),
-	"exec",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(exec),
-	"set",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(set),	
-	":",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(true),
-	"true",		NV_BLTIN|BLT_ENV,		bltin(true),
-	"command",	NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(command),
-	"cd",		NV_BLTIN|BLT_ENV,		bltin(cd),
-	"break",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(break),
-	"continue",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(break),
-	"typeset",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
-	"test",		NV_BLTIN|BLT_ENV,		bltin(test),
-	"[",		NV_BLTIN|BLT_ENV,		bltin(test),
-	"let",		NV_BLTIN|BLT_ENV,		bltin(let),
-	"export",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(readonly),
-	".",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(dot_cmd),
-	"return",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return),
-	"enum",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(enum),
+	{ "login",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login) },
+	{ "exec",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(exec) },
+	{ "set",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(set) },
+	{ ":",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(true) },
+	{ "true",		NV_BLTIN|BLT_ENV,		bltin(true) },
+	{ "command",	NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(command) },
+	{ "cd",		NV_BLTIN|BLT_ENV,		bltin(cd) },
+	{ "break",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(break) },
+	{ "continue",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(break) },
+	{ "typeset",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset) },
+	{ "test",		NV_BLTIN|BLT_ENV,		bltin(test) },
+	{ "[",		NV_BLTIN|BLT_ENV,		bltin(test) },
+	{ "let",		NV_BLTIN|BLT_ENV,		bltin(let) },
+	{ "export",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(readonly) },
+	{ ".",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(dot_cmd) },
+	{ "return",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return) },
+	{ "enum",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(enum) },
 #if SHOPT_BASH
-	"declare",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset),
-	"local",	NV_BLTIN|BLT_ENV|BLT_DCL,	bltin(typeset),
+	{ "declare",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(typeset) },
+	{ "local",	NV_BLTIN|BLT_ENV|BLT_DCL,	bltin(typeset) },
 #endif
 #if _cmd_newgrp
-	"newgrp",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login),
+	{ "newgrp",	NV_BLTIN|BLT_ENV|BLT_SPC,	Bltin(login) },
 #endif	/* _cmd_newgrp */
-	"alias",	NV_BLTIN|BLT_SPC,		bltin(alias),
-	"hash",		NV_BLTIN|BLT_SPC,		bltin(alias),
-	"eval",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_EXIT,bltin(eval),
-	"exit",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return),
-	"fc",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(hist),
-	"hist",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(hist),
-	"readonly",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(readonly),
-	"shift",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(shift),
-	"trap",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(trap),
-	"unalias",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unalias),
-	"unset",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unset),
-	"builtin",	NV_BLTIN,			bltin(builtin),
-	"echo",		NV_BLTIN|BLT_ENV,		Bltin(echo),
+	{ "alias",	NV_BLTIN|BLT_SPC,		bltin(alias) },
+	{ "hash",		NV_BLTIN|BLT_SPC,		bltin(alias) },
+	{ "eval",		NV_BLTIN|BLT_ENV|BLT_SPC|BLT_EXIT,bltin(eval) },
+	{ "exit",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(return) },
+	{ "fc",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(hist) },
+	{ "hist",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(hist) },
+	{ "readonly",	NV_BLTIN|BLT_ENV|BLT_SPC|BLT_DCL,bltin(readonly) },
+	{ "shift",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(shift) },
+	{ "trap",		NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(trap) },
+	{ "unalias",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unalias) },
+	{ "unset",	NV_BLTIN|BLT_ENV|BLT_SPC,	bltin(unset) },
+	{ "builtin",	NV_BLTIN,			bltin(builtin) },
+	{ "echo",		NV_BLTIN|BLT_ENV,		Bltin(echo) },
 #ifdef JOBS
 #   ifdef SIGTSTP
-	"bg",		NV_BLTIN|BLT_ENV,		bltin(bg),
-	"fg",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(bg),
-	"disown",	NV_BLTIN|BLT_ENV,		bltin(bg),
-	"kill",		NV_BLTIN|BLT_ENV,		bltin(kill),
+	{ "bg",		NV_BLTIN|BLT_ENV,		bltin(bg) },
+	{ "fg",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(bg) },
+	{ "disown",	NV_BLTIN|BLT_ENV,		bltin(bg) },
+	{ "kill",		NV_BLTIN|BLT_ENV,		bltin(kill) },
 #   else
-	"/bin/kill",	NV_BLTIN|BLT_ENV,		bltin(kill),
+	{ "/bin/kill",	NV_BLTIN|BLT_ENV,		bltin(kill) },
 #   endif	/* SIGTSTP */
-	"jobs",		NV_BLTIN|BLT_ENV,		bltin(jobs),
+	{ "jobs",		NV_BLTIN|BLT_ENV,		bltin(jobs) },
 #endif	/* JOBS */
-	"compgen",	NV_BLTIN,			bltin(complete),
-	"complete",	NV_BLTIN,			bltin(complete),
-	"false",	NV_BLTIN|BLT_ENV,		bltin(false),
-	"getopts",	NV_BLTIN|BLT_ENV,		bltin(getopts),
+	{ "compgen",	NV_BLTIN,			bltin(complete) },
+	{ "complete",	NV_BLTIN,			bltin(complete) },
+	{ "false",	NV_BLTIN|BLT_ENV,		bltin(false) },
+	{ "getopts",	NV_BLTIN|BLT_ENV,		bltin(getopts) },
 #if 0
-	"mkservice",	NV_BLTIN|BLT_ENV,		bltin(mkservice),
-	"eloop",	NV_BLTIN|BLT_ENV,		bltin(eloop),
+	{ "mkservice",	NV_BLTIN|BLT_ENV,		bltin(mkservice) },
+	{ "eloop",	NV_BLTIN|BLT_ENV,		bltin(eloop) },
 #endif
 #if SHOPT_POLL
-	"poll",		NV_BLTIN|BLT_ENV,		bltin(poll),
+	{ "poll",		NV_BLTIN|BLT_ENV,		bltin(poll) },
 #endif
-	"print",	NV_BLTIN|BLT_ENV,		bltin(print),
-	"printf",	NV_BLTIN|BLT_ENV,		bltin(printf),
-	"pwd",		NV_BLTIN,			bltin(pwd),
-	"read",		NV_BLTIN|BLT_ENV,		bltin(read),
-	"sleep",	NV_BLTIN,			bltin(sleep),
-	"alarm",	NV_BLTIN,			bltin(alarm),
-	"ulimit",	NV_BLTIN|BLT_ENV,		bltin(ulimit),
-	"umask",	NV_BLTIN|BLT_ENV,		bltin(umask),
+	{ "print",	NV_BLTIN|BLT_ENV,		bltin(print) },
+	{ "printf",	NV_BLTIN|BLT_ENV,		bltin(printf) },
+	{ "pwd",		NV_BLTIN,			bltin(pwd) },
+	{ "read",		NV_BLTIN|BLT_ENV,		bltin(read) },
+	{ "sleep",	NV_BLTIN,			bltin(sleep) },
+	{ "alarm",	NV_BLTIN,			bltin(alarm) },
+	{ "ulimit",	NV_BLTIN|BLT_ENV,		bltin(ulimit) },
+	{ "umask",	NV_BLTIN|BLT_ENV,		bltin(umask) },
 #ifdef _cmd_universe
-	"universe",	NV_BLTIN|BLT_ENV,		bltin(universe),
+	{ "universe",	NV_BLTIN|BLT_ENV,		bltin(universe) },
 #endif /* _cmd_universe */
 #if SHOPT_FS_3D
-	"vpath",	NV_BLTIN|BLT_ENV,		bltin(vpath),
-	"vmap",		NV_BLTIN|BLT_ENV,		bltin(vpath),
+	{ "vpath",	NV_BLTIN|BLT_ENV,		bltin(vpath) },
+	{ "vmap",		NV_BLTIN|BLT_ENV,		bltin(vpath) },
 #endif /* SHOPT_FS_3D */
-	"wait",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(wait),
-	"type",		NV_BLTIN|BLT_ENV,		bltin(whence),
-	"whence",	NV_BLTIN|BLT_ENV,		bltin(whence),
-	"source",	NV_BLTIN|BLT_ENV,		bltin(dot_cmd),
+	{ "wait",		NV_BLTIN|BLT_ENV|BLT_EXIT,	bltin(wait) },
+	{ "type",		NV_BLTIN|BLT_ENV,		bltin(whence) },
+	{ "whence",	NV_BLTIN|BLT_ENV,		bltin(whence) },
+	{ "source",	NV_BLTIN|BLT_ENV,		bltin(dot_cmd) },
 #ifdef SHOPT_CMDLIB_HDR
 #undef	mktemp		/* undo possible map-libc mktemp => _ast_mktemp */
 #include SHOPT_CMDLIB_HDR
 #else
-	CMDLIST(basename)
-	CMDLIST(chmod)
-	CMDLIST(dirname)
-	CMDLIST(getconf)
-	CMDLIST(head)
-	CMDLIST(mkdir)
-	CMDLIST(logname)
-	CMDLIST(cat)
-	CMDLIST(cmp)
-	CMDLIST(cut)
-	CMDLIST(uname)
-	CMDLIST(wc)
-	CMDLIST(sync)
+	{ CMDLIST(basename) },
+	{ CMDLIST(chmod) },
+	{ CMDLIST(dirname) },
+	{ CMDLIST(getconf) },
+	{ CMDLIST(head) },
+	{ CMDLIST(mkdir) },
+	{ CMDLIST(logname) },
+	{ CMDLIST(cat) },
+	{ CMDLIST(cmp) },
+	{ CMDLIST(cut) },
+	{ CMDLIST(uname) },
+	{ CMDLIST(wc) },
+	{ CMDLIST(sync) },
 #endif
 #if SHOPT_REGRESS
-	"__regress__",		NV_BLTIN|BLT_ENV,	bltin(__regress__),
+	{ "__regress__",		NV_BLTIN|BLT_ENV,	bltin(__regress__) },
 #endif
-	"",		0, 0 
+	{ "",		0, NULL }
 };
 
 #if SHOPT_COSHELL
@@ -332,7 +332,7 @@ const char sh_optcont[] =
 "[-1c?\n@(#)$Id: continue (AT&T Research) 1999-04-07 $\n]"
 USAGE_LICENSE
 "[+NAME?continue - continue execution at top of the loop]"
-"[+DESCRIPTION?\bcontinue\b is a shell special built-in that continues " 
+"[+DESCRIPTION?\bcontinue\b is a shell special built-in that continues "
 	"execution at the top of smallest enclosing enclosing \bfor\b, "
 	"\bselect\b, \bwhile\b, or \buntil\b loop, if any; or the top of "
 	"the \an\a-th enclosing loop if \an\a is specified.]"
@@ -364,7 +364,7 @@ USAGE_LICENSE
 	"each \aname\a that is specified, and \b=\b\avalue\a  is not "
 	"specified, the current value of the alias corresponding to "
 	"\aname\a is written to standard output.  If \b=\b\avalue\a is "
-	"specified, the alias \aname\a will be created or redefined.]" 
+	"specified, the alias \aname\a will be created or redefined.]"
 "[+?\balias\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.  An alias "
@@ -459,7 +459,7 @@ USAGE_LICENSE
 "[+?In the first form with one operand, if \adirectory\a begins with "
 	"\b/\b, or if the first component is \b.\b or \b..\b, the "
 	"directory will be changed to this directory.  If directory is \b-\b, "
-	"the directory will be changed to the last directory visited.  " 
+	"the directory will be changed to the last directory visited.  "
 	"Otherwise, if the \bCDPATH\b environment variable is set, \bcd\b "
 	"searches for \adirectory\a relative to each directory named in "
 	"the colon separated list of directories defined by \bCDPATH\b.  "
@@ -560,7 +560,7 @@ USAGE_LICENSE
 	"the script completes execution.]"
 "[+?When \aname\a refers to a file, the \bPATH\b variable is searched "
 	"for the file containing commands.  In this case execute permission "
-	"is not required for \aname\a.]" 
+	"is not required for \aname\a.]"
 "[+?If any \aarg\as are specified, these become the positional parameters "
 	"for the duration of the function or script and are restored "
 	"upon completion.]"
@@ -613,7 +613,7 @@ USAGE_LICENSE
 "[+?If no operands are specified, \bexec\b can be used to open or "
 	"close files, or to manipulate file descriptors from \b0\b to "
 	"\b9\b in the current shell environment using the standard "
-	"redirection mechanism available with all commands.  The " 
+	"redirection mechanism available with all commands.  The "
 	"close-on-exec flags will be set on file descriptor numbers "
 	"greater than \b2\b that are opened this way so that they "
 	"will be closed when another program is invoked.]"
@@ -665,7 +665,7 @@ USAGE_LICENSE
 	"If \b=\b\avalue\a is specified, the variable \aname\a is "
 	"set to \avalue\a.]"
 "[+?If no \aname\as are specified then the names and values of all "
-	"exported variables are written to standard output.]" 
+	"exported variables are written to standard output.]"
 "[+?\bexport\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.]"
@@ -868,7 +868,7 @@ _JOB_
 "[+EXIT STATUS?]{"
 	"[+0?If all background jobs are started.]"
 	"[+>0?If one more jobs does not exist or there are no background "
-		"jobs.]" 
+		"jobs.]"
 "}"
 
 "[+SEE ALSO?\bwait\b(1), \bfg\b(1), \bdisown\b(1), \bjobs\b(1)]"
@@ -947,7 +947,7 @@ _JOB_
 "[+SEE ALSO?\bwait\b(1), \bps\b(1), \bfg\b(1), \bbg\b(1)]"
 ;
 
-const char sh_opthist[]	= 
+const char sh_opthist[]	=
 "[-1cn?@(#)$Id: hist (AT&T Research) 2000-04-02 $\n]"
 USAGE_LICENSE
 "[+NAME?\f?\f - process command history list]"
@@ -990,7 +990,7 @@ USAGE_LICENSE
 	"command.   A value of \b-\b for \aeditor\a is equivalent to "
 	"specifiying the \b-s\b option.]"
 "[l?List the commands rather than editing and reexecuting them.]"
-"[N]#[num?Start at \anum\a commands back.]" 
+"[N]#[num?Start at \anum\a commands back.]"
 "[n?Suppress the command numbers when the commands are listed.]"
 "[p?Writes the result of history expansion for each operand to standard "
 	"output.  All other options are ignored.]"
@@ -1007,13 +1007,13 @@ USAGE_LICENSE
 	"the command that gets reexecuted.  Otherwise, it is one of the "
 	"following:]{"
 	"[+0?Successfully completion of the listing.]"
-	"[+>0?An error occurred.]" 
+	"[+>0?An error occurred.]"
 "}"
 
 "[+SEE ALSO?\bksh\b(1), \bsh\b(1), \bed\b(1)]"
 ;
 
-const char sh_optkill[]	 = 
+const char sh_optkill[]	 =
 "[-1c?\n@(#)$Id: kill (AT&T Research) 2012-07-05 $\n]"
 USAGE_LICENSE
 "[+NAME?kill - terminate or signal process]"
@@ -1102,7 +1102,7 @@ const char sh_optprint[] =
 USAGE_LICENSE
 "[+NAME?print - write arguments to standard output]"
 "[+DESCRIPTION?By default, \bprint\b writes each \astring\a operand to "
-	"standard output and appends a newline character.]"  
+	"standard output and appends a newline character.]"
 "[+?Unless, the \b-r\b or \b-f\b option is specified, each \b\\\b "
 	"character in each \astring\a operand is processed specially as "
 	"follows:]{"
@@ -1125,7 +1125,7 @@ USAGE_LICENSE
 	"operands than format specifiers, the format string is "
 	"reprocessed from the beginning.  If there are fewer \astring\a "
 	"operands than format specifiers, then outputting will end "
-	"at the first unneeded format specifier.]" 
+	"at the first unneeded format specifier.]"
 "[e?Unless \b-f\b is specified, process \b\\\b sequences in each \astring\a "
 	"operand as described above. This is the default behavior.]"
 "[n?Do not append a new-line character to the output.]"
@@ -1161,7 +1161,7 @@ const char sh_optprintf[] =
 USAGE_LICENSE
 "[+NAME?printf - write formatted output]"
 "[+DESCRIPTION?\bprintf\b writes each \astring\a operand to "
-	"standard output using \aformat\a to control the output format.]"  
+	"standard output using \aformat\a to control the output format.]"
 "[+?The \aformat\a operands supports the full range of ANSI C formatting "
 	"specifiers plus the following additional specifiers:]{"
 	"[+%b?Each character in the \astring\a operand is processed "
@@ -1374,7 +1374,7 @@ USAGE_LICENSE
 	"value must be specified when creating each instance of the type "
         "and the value is readonly for each instance.]"
 "[+?If no \aname\as are specified then the names and values of all "
-	"readonly variables are written to standard output.]" 
+	"readonly variables are written to standard output.]"
 "[+?\breadonly\b is built-in to the shell as a declaration command so that "
 	"field splitting and pathname expansion are not performed on "
 	"the arguments.  Tilde expansion occurs on \avalue\a.]"
@@ -1428,7 +1428,7 @@ USAGE_LICENSE
 "[+?The \b-s\b and \b-c\b options are mutually exclusive.  If the \b-c\b "
 	"option is specified, the first \aarg\a is the command-line string "
 	"and must be specified.  Any remaining \aarg\as will be used "
-	"to initialize \b$0\b and positional parameters.]" 
+	"to initialize \b$0\b and positional parameters.]"
 "[+?If the neither \b-s\b nor \b-c\b is specified, then the first \barg\b "
 	"will be the pathname of the file containing commands and \b$0\b "
 	"will be set to this value.  If there is no file with this pathname, "
@@ -1549,7 +1549,7 @@ USAGE_LICENSE
 	"positional parameters to the left by the number of places "
 	"defined by \an\a, or \b1\b if \an\a is omitted.  The number of "
 	"positional parameters remaining will be reduced by the "
-	"number of places that are shifted.]" 
+	"number of places that are shifted.]"
 "[+?If \an\a is given, it will be evaluated as an arithmetic expression "
 	"to determinate the number of places to shift.  It is an error "
 	"to shift more than the number of positional parameters or a "
@@ -1638,7 +1638,7 @@ USAGE_LICENSE
 	"the shell does not know about causes \btrap\b to exit with a "
 	"non-zero exit status, but does not terminate the invoking shell.]"
 "[+?If no \aaction\a or \acondition\as are specified then all the current "
-	"trap settings are written to standard output.]" 
+	"trap settings are written to standard output.]"
 "[a?append the current trap setting to the specified \aaction\a.]"
 "[p?Causes the current traps to be output in a format that can be processed "
 	"as input to the shell to recreate the current traps.]"
@@ -1930,11 +1930,11 @@ USAGE_LICENSE
 "[+NAME?whence - locate a command and describe its type]"
 "[+DESCRIPTION?Without \b-v\b, \bwhence\b writes on standard output an "
 	"absolute pathname, if any, corresponding to \aname\a based "
-	"on the complete search order that the shell uses.  If \aname\a "  
+	"on the complete search order that the shell uses.  If \aname\a "
 	"is not found, then no output is produced.]"
 "[+?If \b-v\b is specified, the output will also contain information "
 	"that indicates how the given \aname\a would be interpreted by "
-	"the shell in the current execution environment.]" 
+	"the shell in the current execution environment.]"
 "[P?Do not check to see if \aname\a is a reserved word, a built-in, "
 	"an alias, or a function.  This turns off the \b-v\b option.]"
 "[a?Displays all uses for each \aname\a rather than the first.]"

@@ -106,22 +106,22 @@ static struct State_s
 #define OPT_TIME	11
 #define OPT_TRACE	12
 
-static const Namval_t		options[] =
+static const Namval_t	options[] =
 {
-	"break",	OPT_BREAK,
-	"catalog",	OPT_CATALOG,
-	"core",		OPT_CORE,
-	"count",	OPT_COUNT,
-	"debug",	OPT_TRACE,
-	"fd",		OPT_FD,
-	"library",	OPT_LIBRARY,
-	"mask",		OPT_MASK,
-	"match",	OPT_MATCH,
-	"prefix",	OPT_PREFIX,
-	"system",	OPT_SYSTEM,
-	"time",		OPT_TIME,
-	"trace",	OPT_TRACE,
-	0,		0
+	{ "break",	OPT_BREAK },
+	{ "catalog",	OPT_CATALOG },
+	{ "core",		OPT_CORE },
+	{ "count",	OPT_COUNT },
+	{ "debug",	OPT_TRACE },
+	{ "fd",		OPT_FD },
+	{ "library",	OPT_LIBRARY },
+	{ "mask",		OPT_MASK },
+	{ "match",	OPT_MATCH },
+	{ "prefix",	OPT_PREFIX },
+	{ "system",	OPT_SYSTEM },
+	{ "time",		OPT_TIME },
+	{ "trace",	OPT_TRACE },
+	{ NULL,		0 }
 };
 
 /*
