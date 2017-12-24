@@ -25,7 +25,9 @@
 //
 #define _GNU_SOURCE 1
 #include <dlfcn.h>
+#ifdef _hdr_execinfo
 #include <execinfo.h>
+#endif
 #include <stdio.h>
 
 #include "defs.h"
@@ -56,6 +58,7 @@ static int cursig = -1;
 // the code where you would like to understand the call sequence leading to
 // that point in the code.
 void dump_backtrace(int max_frames, int skip_levels) {
+#ifdef _hdr_execinfo
     char text[512];
     void *callstack[128];
     const int n_max_frames = sizeof(callstack) / sizeof(callstack[0]);
@@ -77,6 +80,7 @@ void dump_backtrace(int max_frames, int skip_levels) {
     }
 
     free(symbols);
+#endif
 }
 
 // Default function for handling a SIGSEGV. It simply writes a backtrace to

@@ -99,6 +99,10 @@ if cc.has_function('sigqueue', prefix: '#include <signal.h>')
     shcomp_c_args += [ '-D_lib_sigqueue=1' ]
 endif
 
+if cc.has_header('execinfo.h')
+    ksh93_c_args += [ '-D_hdr_execinfo=1' ]
+    shcomp_c_args += [ '-D_hdr_execinfo=1' ]
+endif
 
 socketpair_shutdown_mode_test = '''
 	#include <sys/types.h>
