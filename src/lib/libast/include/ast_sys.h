@@ -45,7 +45,6 @@
 # include <sys/types.h>
 # include <stdint.h>
 # include <inttypes.h>
-# include <string.h>
 # include <unistd.h>
 # include <limits.h>
 # include <fcntl.h>
@@ -122,13 +121,10 @@ extern int	spawnvex_add(Spawnvex_t*, intmax_t, intmax_t, Spawnvex_f, void*);
 extern int	spawnvex_apply(Spawnvex_t*, int, int);
 extern intmax_t	spawnvex_get(Spawnvex_t*, int, int);
 extern int	spawnvex_close(Spawnvex_t*);
-# if defined(__DARWIN_C_LEVEL) && defined(__clang__)
-#  undef strlcat
-#  undef strlcpy
-# endif
 extern size_t	strlcat(char*, const char*, size_t);
 extern size_t	strlcpy(char*, const char*, size_t);
 extern void	swab(const void*, void*, ssize_t);
 # undef extern
 # include <stdarg.h>
+# include <string.h>
 #endif
