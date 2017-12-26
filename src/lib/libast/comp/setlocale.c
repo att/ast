@@ -2412,14 +2412,14 @@ typedef struct Unamval_s
 
 static const Unamval_t	options[] =
 {
-	"debug",		AST_LC_debug,
-	"find",			AST_LC_find,
-	"native",		AST_LC_native,
-	"setlocale",		AST_LC_setlocale,
-	"test",			AST_LC_test,
-	"translate",		AST_LC_translate,
-	"unicodeliterals",	AST_LC_unicodeliterals,
-	0,			0
+	{ "debug",		AST_LC_debug },
+	{ "find",			AST_LC_find },
+	{ "native",		AST_LC_native },
+	{ "setlocale",		AST_LC_setlocale },
+	{ "test",			AST_LC_test },
+	{ "translate",		AST_LC_translate },
+	{ "unicodeliterals",	AST_LC_unicodeliterals },
+	{ 0,			0 }
 };
 
 /*
@@ -2543,7 +2543,7 @@ single(int category, Lc_t* lc, unsigned int flags)
 			ast.locale.set &= ~(1<<category);
 		else
 			ast.locale.set |= (1<<category);
-		
+
 	}
 	else if (lc_categories[category].flags ^ flags)
 	{

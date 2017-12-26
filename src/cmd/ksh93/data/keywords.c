@@ -28,32 +28,31 @@
 
 const Shtable_t shtab_reserved[] =
 {
-		"!",		NOTSYM,
-		"[[",		BTESTSYM,
-		"case",		CASESYM,
-		"do",		DOSYM,
-		"done",		DONESYM,
-		"elif",		ELIFSYM,
-		"else",		ELSESYM,
-		"esac",		ESACSYM,
-		"fi",		FISYM,
-		"for",		FORSYM,
-		"function",	FUNCTSYM,
-		"if",		IFSYM,
-		"in",		INSYM,
-		"namespace",	NSPACESYM,
-		"select",	SELECTSYM,
-		"then",		THENSYM,
-		"time",		TIMESYM,
-		"until",	UNTILSYM,
-		"while",	WHILESYM,
-		"{",		LBRACE,
-		"}",		RBRACE,
-		"",		0,
+	{ "!",		NOTSYM },
+	{ "[[",		BTESTSYM },
+	{ "case",		CASESYM },
+	{ "do",		DOSYM },
+	{ "done",		DONESYM },
+	{ "elif",		ELIFSYM },
+	{ "else",		ELSESYM },
+	{ "esac",		ESACSYM },
+	{ "fi",		FISYM },
+	{ "for",		FORSYM },
+	{ "function",	FUNCTSYM },
+	{ "if",		IFSYM },
+	{ "in",		INSYM },
+	{ "namespace",	NSPACESYM },
+	{ "select",	SELECTSYM },
+	{ "then",		THENSYM },
+	{ "time",		TIMESYM },
+	{ "until",	UNTILSYM },
+	{ "while",	WHILESYM },
+	{ "{",		LBRACE },
+	{ "}",		RBRACE },
+	{ "",		0 }
 };
 
 const char	e_unexpected[]	= "unexpected";
 const char	e_unmatched[]	= "unmatched";
 const char	e_endoffile[]	= "end of file";
 const char	e_newline[]	= "newline";
-

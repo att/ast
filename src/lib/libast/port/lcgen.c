@@ -705,23 +705,24 @@ char**		argv;
 		if (cp->alternates)
 			fprintf(lf, "\"%s\",", cp->alternates);
 		else
-			fprintf(lf, "0,");
+			fprintf(lf, "NULL,");
 		if (cp->ms)
 			fprintf(lf, "\"%s\",", cp->ms);
 		else
-			fprintf(lf, "0");
-		fprintf(lf, "},\n");
+			fprintf(lf, "NULL,");
+		fprintf(lf, "0},\n");
 	}
-	fprintf(lf, "\t0\n};\n");
+	fprintf(lf, "{NULL,NULL,NULL,0}\n");
+	fprintf(lf, "};\n");
 	fprintf(lf, "\nconst Lc_language_t lc_languages[] =\n{\n");
-	fprintf(lf, "{\"C\",\"C\",\"POSIX\",&lc_charsets[0],LC_default,0,");
+	fprintf(lf, "{\"C\",\"C\",\"POSIX\",&lc_charsets[0],LC_default,0,{");
 	for (i = 0; i < language_attribute_max; i++)
 		fprintf(lf, "0,");
-	fprintf(lf, "},\n");
-	fprintf(lf, "{\"debug\",\"debug\",0,&lc_charsets[0],LC_debug,0,");
+	fprintf(lf, "}},\n");
+	fprintf(lf, "{\"debug\",\"debug\",0,&lc_charsets[0],LC_debug,0,{");
 	for (i = 0; i < language_attribute_max; i++)
 		fprintf(lf, "0,");
-	fprintf(lf, "},\n");
+	fprintf(lf, "}},\n");
 	for (lp = (Language_t*)state.language.root; lp; lp = (Language_t*)lp->link.next)
 	{
 		fprintf(lf, "{\"%s\",\"%s\",", lp->link.code, lp->name);
@@ -731,26 +732,32 @@ char**		argv;
 			fprintf(lf, "0,");
 		fprintf(lf, "&lc_charsets[%d],0,", lp->charset ? lp->charset->link.index : 0);
 		macro(lf, "LANG", lp->name, (char*)0);
-		for (i = 0, al = lp->attributes; al; al = al->next, i++)
-			fprintf(lf, "&attribute_%s[%d],", lp->link.code, al->attribute->link.index);
-		for (; i < language_attribute_max; i++)
-			fprintf(lf, "0,");
-		fprintf(lf, "\n},\n");
+		i = 0;
+		fprintf(lf, "{");
+		if (lp->attributes) {
+			for (al = lp->attributes; al; al = al->next, i++)
+				fprintf(lf, "&attribute_%s[%d],", lp->link.code, al->attribute->link.index);
+		} else {
+			for (; i < language_attribute_max; i++)
+				fprintf(lf, "0,");
+		}
+		fprintf(lf, "}\n},\n");
 	}
-	fprintf(lf, "\t0\n};\n");
+	fprintf(lf, "{NULL,NULL,NULL,0,0,0,{0,0}}\n");
+	fprintf(lf, "};\n");
 	fprintf(lf, "\nconst Lc_territory_t lc_territories[] =\n{\n");
-	fprintf(lf, "{\"C\",\"C\",LC_default,0,&lc_languages[0],");
-	for (i = 1; i < 2 * territory_language_max; i++)
-		fprintf(lf, "0,");
-	fprintf(lf, "},\n");
-	fprintf(lf, "{\"debug\",\"debug\",LC_debug,0,&lc_languages[1],");
-	for (i = 1; i < 2 * territory_language_max; i++)
-		fprintf(lf, "0,");
-	fprintf(lf, "},\n");
-	fprintf(lf, "{\"eu\",\"euro\",0,0,&lc_languages[0],");
-	for (i = 1; i < 2 * territory_language_max; i++)
-		fprintf(lf, "0,");
-	fprintf(lf, "},\n");
+	fprintf(lf, "{\"C\",\"C\",LC_default,0,{&lc_languages[0],0,0,0}\n");
+	fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
+	fprintf(lf, ",{0,0,0,0}\n");
+	fprintf(lf, "#endif\n},\n");
+	fprintf(lf, "{\"debug\",\"debug\",LC_debug,0,{&lc_languages[1],0,0,0}\n");
+	fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
+	fprintf(lf, ",{0,0,0,0}\n");
+	fprintf(lf, "#endif\n},\n");
+	fprintf(lf, "{\"eu\",\"euro\",0,0,{&lc_languages[0],0,0,0}\n");
+	fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
+	fprintf(lf, ",{0,0,0,0}\n");
+	fprintf(lf, "#endif\n},\n");
 	for (tp = (Territory_t*)state.territory.root; tp; tp = (Territory_t*)tp->link.next)
 	{
 		fprintf(lf, "{\"%s\",\"%s\",", tp->link.code, tp->name);
@@ -759,17 +766,25 @@ char**		argv;
 		else
 			fprintf(lf, "0,");
 		macro(lf, "CTRY", tp->name, (char*)0);
+		fprintf(lf, "{");
 		for (i = 0, ll = tp->languages; ll; ll = ll->next, i++)
 			fprintf(lf, "&lc_languages[%d],", ll->language->link.index);
 		for (; i < territory_language_max; i++)
 			fprintf(lf, "0,");
+		fprintf(lf, "}\n");
+		fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
+		fprintf(lf, ",{");
 		for (i = 0, ll = tp->languages; ll; ll = ll->next, i++)
 			macro(lf, "SUBLANG", ll->language->name, tp->name);
 		for (; i < territory_language_max; i++)
 			fprintf(lf, "0,");
-		fprintf(lf, "\n},\n");
+		fprintf(lf, "}\n#endif\n},\n");
 	}
-	fprintf(lf, "\t0\n};\n");
+	fprintf(lf, "{NULL,NULL,0,0,{0,0,0,0}\n");
+	fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
+	fprintf(lf, ",{0,0,0,0}\n");
+	fprintf(lf, "#endif\n}\n");
+	fprintf(lf, "};\n");
 	fprintf(lf, "\nconst Lc_map_t lc_maps[] =\n{\n");
 	for (mp = (Map_t*)state.map.root; mp; mp = (Map_t*)mp->link.next)
 	{
@@ -783,7 +798,8 @@ char**		argv;
 			fprintf(lf, "0");
 		fprintf(lf, "},\n");
 	}
-	fprintf(lf, "\t0\n};\n");
+	fprintf(lf, "{NULL,0,0,0,0}\n");
+	fprintf(lf, "};\n");
 	fclose(lf);
 	fprintf(hf, "\n#endif\n");
 	fclose(hf);

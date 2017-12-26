@@ -1098,7 +1098,7 @@ do	eval name=\"'$'CONF_name_$key\"
 						x=`./$tmp.sh 2>/dev/null`
 						;;
 					'')	case $conf_name in
-						SIZE_*|U*|*_MAX)	
+						SIZE_*|U*|*_MAX)
 							f="%${LL_format}u"
 							t="unsigned _ast_intmax_t"
 							;;
@@ -1358,7 +1358,7 @@ ${script}
 				;;
 			esac
 			;;
-		-*[2468])	
+		-*[2468])
 			case $shell in
 			ksh)	p=${conf_limit%?}
 				s=${conf_limit#$p}
@@ -1393,7 +1393,7 @@ ${script}
 				;;
 			esac
 			;;
-		-*[2468])	
+		-*[2468])
 			case $shell in
 			ksh)	p=${conf_minmax%?}
 				s=${conf_minmax#$p}
@@ -1582,14 +1582,14 @@ do	case $shell in
 	ksh)	len=${#standard} ;;
 	*)	len=`echo ${standard} | wc -c`; len=`expr $len - 1` ;;
 	esac
-	echo "	\"${standard}\",	${len},	CONF_${standard},	-1,"
+	echo "	{ \"${standard}\",	${len},	CONF_${standard},	-1 },"
 done
 cat <<!
-	"XX",		2,	CONF_POSIX,	CONF_nop,
-	"CS",		2,	CONF_POSIX,	CONF_confstr,
-	"PC",		2,	CONF_POSIX,	CONF_pathconf,
-	"SC",		2,	CONF_POSIX,	CONF_sysconf,
-	"SI",		2,	CONF_SVID,	CONF_sysinfo,
+	{ "XX",		2,	CONF_POSIX,	CONF_nop },
+	{ "CS",		2,	CONF_POSIX,	CONF_confstr },
+	{ "PC",		2,	CONF_POSIX,	CONF_pathconf },
+	{ "SC",		2,	CONF_POSIX,	CONF_sysconf },
+	{ "SI",		2,	CONF_SVID,	CONF_sysinfo },
 };
 
 const int	prefix_elements = (int)sizeof(prefix) / (int)sizeof(prefix[0]);

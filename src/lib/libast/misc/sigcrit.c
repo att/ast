@@ -37,27 +37,27 @@ static struct
 }
 signals[] =		/* held inside critical region	*/
 {
-	SIGINT,		SIG_REG_EXEC,
+	{ SIGINT,	SIG_REG_EXEC },
 #ifdef SIGPIPE
-	SIGPIPE,	SIG_REG_EXEC,
+	{ SIGPIPE,	SIG_REG_EXEC },
 #endif
 #ifdef SIGQUIT
-	SIGQUIT,	SIG_REG_EXEC,
+	{ SIGQUIT,	SIG_REG_EXEC },
 #endif
 #ifdef SIGHUP
-	SIGHUP,		SIG_REG_EXEC,
+	{ SIGHUP,	SIG_REG_EXEC },
 #endif
 #if defined(SIGCHLD) && ( !defined(SIGCLD) || SIGCHLD != SIGCLD )
-	SIGCHLD,	SIG_REG_PROC,
+	{ SIGCHLD,	SIG_REG_PROC },
 #endif
 #ifdef SIGTSTP
-	SIGTSTP,	SIG_REG_TERM,
+	{ SIGTSTP,	SIG_REG_TERM },
 #endif
 #ifdef SIGTTIN
-	SIGTTIN,	SIG_REG_TERM,
+	{ SIGTTIN,	SIG_REG_TERM },
 #endif
 #ifdef SIGTTOU
-	SIGTTOU,	SIG_REG_TERM,
+	{ SIGTTOU,	SIG_REG_TERM },
 #endif
 };
 

@@ -34,15 +34,15 @@
 
 static const Namval_t	options[] =
 {
-	"cross",	CO_CROSS,
-	"debug",	CO_DEBUG,
-	"devfd",	CO_DEVFD,
-	"ignore",	CO_IGNORE,
-	"orphan",	CO_ORPHAN,
-	"silent",	CO_SILENT,
-	"separate",	CO_SEPARATE,
-	"service",	CO_SERVICE,
-	0,		0
+	{ "cross",	CO_CROSS },
+	{ "debug",	CO_DEBUG },
+	{ "devfd",	CO_DEVFD },
+	{ "ignore",	CO_IGNORE },
+	{ "orphan",	CO_ORPHAN },
+	{ "silent",	CO_SILENT },
+	{ "separate",	CO_SEPARATE },
+	{ "service",	CO_SERVICE },
+	{ NULL,		0 }
 };
 
 Costate_t		state = { "libcoshell:coshell" };

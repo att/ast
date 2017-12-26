@@ -106,7 +106,7 @@ static int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out)
 		}
 		else if(state==1)
 		{
-			if(c=='"' && lastc != '\\') 
+			if(c=='"' && lastc != '\\')
 				state=2;
 			else if(state==1 && !isalnum(c) && c!='_')
 				isname = false;
@@ -196,9 +196,9 @@ static int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out)
 }
 
 static struct Method methods[] = {
-	"json",	json2sh,
-	"ksh",	0,
-	0,	0
+	{ "json",	json2sh },
+	{ "ksh",	NULL },
+	{ NULL,	NULL }
 };
 
 int	b_read(int argc,char *argv[], Shbltin_t *context)
@@ -326,7 +326,7 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		if(!methods[mindex].name)
 			errormsg(SH_DICT,ERROR_system(1),"%s method not supported",method);
 	}
-		
+
 	if(!((r=shp->fdstatus[fd])&IOREAD)  || !(r&(IOSEEK|IONOSEEK)))
 		r = sh_iocheckfd(shp,fd,fd);
 	if(fd<0 || !(r&IOREAD))

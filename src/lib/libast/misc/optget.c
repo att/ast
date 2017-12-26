@@ -147,9 +147,16 @@ typedef struct Indent_s
 	int		stop;		/* tab column position		*/
 } Indent_t;
 
-static Indent_t		indent[] =
+static Indent_t	indent[] =
 {
-	0,2,	4,10,	12,18,	20,26,	28,34,	36,42,	44,50,	0,0
+	{  0 }, {  2 },
+	{  4 }, { 10 },
+	{ 12 }, { 18 },
+	{ 20 }, { 26 },
+	{ 28 }, { 34 },
+	{ 36 }, { 42 },
+	{ 44 }, { 50 },
+	{  0 }, {  0 }
 };
 
 static const char*	end[] =
@@ -4160,7 +4167,7 @@ optusage(const char* opts)
  * 0x.* or <base>#* for alternate bases
  */
 
-static intmax_t     
+static intmax_t
 optnumber(const char* s, char** t, int* e)
 {
 	intmax_t	n;
