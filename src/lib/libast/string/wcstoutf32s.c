@@ -29,7 +29,7 @@
 #include <wchar.h>
 #include <codeset.h>
 #include <error.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 
 ssize_t
 wcstoutf32s(uint32_t* utf32, wchar_t* wchar, size_t n)

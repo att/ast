@@ -36,7 +36,7 @@
 #include <ctype.h>
 #include <mc.h>
 #include <namval.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 #include <codeset.h>
 #include <wctype.h>
 

@@ -30,7 +30,7 @@
 #include <ccode.h>
 #include <codeset.h>
 #include <error.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 #include <wchar.h>
 
 ssize_t

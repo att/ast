@@ -1,6 +1,6 @@
 libast_files = ['features/conftab.c']
 incdir = include_directories('include', 'features', 'aso', 'cdt', 'comp',
-                             'sfio', 'path', 'port', 'string', 'misc', 'std',
+                             'sfio', 'path', 'port', 'string', 'misc', 
                              'vmalloc', 'tm')
 libast_c_args = ['-D_BLD_ast', '-D_API_ast=20130625']
 cc = meson.get_compiler('c')
