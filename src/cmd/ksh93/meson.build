@@ -21,7 +21,7 @@ subdir('sh')
 # TODO: Figure out if '-DSHOPT_AUDIT' and '-DSHOPT_AUDITFILE="/etc/ksh_audit"'
 # should be added. They are defined in the legacy beta branch build.
 # See issue #240.
-shared_c_args = [
+shared_c_args += [
     '-DUSAGE_LICENSE=""',
     '-D_PACKAGE_ast',
     '-D_BLD_shell',
