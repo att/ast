@@ -29,7 +29,7 @@
 
 #include <ast.h>
 #include <cdt.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 #include <mc.h>
 #include <tm.h>
 #include <nl_types.h>

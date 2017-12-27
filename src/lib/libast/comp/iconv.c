@@ -37,7 +37,7 @@
 
 #include <ccode.h>
 #include <ctype.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 #include <error.h>
 #include <codeset.h>
 
