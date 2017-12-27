@@ -16,6 +16,10 @@ hosttype_cmd=run_command('bin/package')
 hosttype=hosttype_cmd.stdout().strip()
 
 add_project_arguments('-DHOSTTYPE="' + hosttype + '"', language: 'c')
+# Compiler arguments used by ksh93 and shcomp executables
+# aso feature tests need to modify this variable, so declaring it before
+# libast meson build file is processed
+shared_c_args = []
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libcoshell')

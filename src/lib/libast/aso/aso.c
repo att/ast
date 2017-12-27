@@ -22,7 +22,7 @@
 #pragma prototyped
 
 #include "asohdr.h"
-#include "FEATURE/aso"
+#include "ast_aso.h"
 
 #if defined(_UWIN) && defined(_BLD_ast)
 
