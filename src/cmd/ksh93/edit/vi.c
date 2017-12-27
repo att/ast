@@ -479,10 +479,8 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 			virtual[last_virt] = 0;
 			last_virt = ed_external(virtual,shbuf);
 		}
-#if SHOPT_EDPREDICT
 		if(vp->ed->nhlist)
 			ed_histlist(vp->ed,0);
-#endif /* SHOPT_EDPREDICT */
 		return(last_virt);
 	}
 	else
@@ -719,7 +717,6 @@ static int cntlmode(Vi_t *vp)
 
 		case 'j':		/** get next command **/
 		case '+':		/** get next command **/
-#if SHOPT_EDPREDICT
 			if(vp->ed->hlist)
 			{
 				if(vp->ed->hoff >= vp->ed->hmax)
@@ -727,7 +724,6 @@ static int cntlmode(Vi_t *vp)
 				vp->ed->hoff++;
 				goto hupdate;
 			}
-#endif /* SHOPT_EDPREDICT */
 			curhline += vp->repeat;
 			if( curhline > histmax )
 			{
@@ -748,7 +744,6 @@ static int cntlmode(Vi_t *vp)
 
 		case 'k':		/** get previous command **/
 		case '-':		/** get previous command **/
-#if SHOPT_EDPREDICT
 			if(vp->ed->hlist)
 			{
 				if(vp->ed->hoff == 0)
@@ -760,7 +755,6 @@ static int cntlmode(Vi_t *vp)
 				ed_ungetchar(vp->ed,cntl('L'));
 				continue;
 			}
-#endif /* SHOPT_EDPREDICT */
 			if( curhline == histmax )
 			{
 				vp->u_space = tmp_u_space;
@@ -790,7 +784,6 @@ static int cntlmode(Vi_t *vp)
 			ed_internal((char*)virtual,virtual);
 			if((last_virt=genlen(virtual)-1) >= 0  && cur_virt == INVALID)
 				cur_virt = 0;
-#if SHOPT_EDPREDICT
 			if(vp->ed->hlist)
 			{
 				ed_histlist(vp->ed,0);
@@ -800,7 +793,6 @@ static int cntlmode(Vi_t *vp)
 				vp->nonewline = 1;
 				cur_virt = 0;
 			}
-#endif /*SHOPT_EDPREDICT */
 			break;
 
 
@@ -885,7 +877,6 @@ static int cntlmode(Vi_t *vp)
 			}
 
 		case '\n':		/** send to shell **/
-#if SHOPT_EDPREDICT
 			if(!vp->ed->hlist)
 			return(ENTER);
 		case '\t':		/** bring choice to edit **/
@@ -897,9 +888,6 @@ static int cntlmode(Vi_t *vp)
 				goto newhist;
 			}
 			goto ringbell;
-#else
-			return(ENTER);
-#endif /* SHOPT_EDPREDICT */
 	        case ESC:
 			/* don't ring bell if next char is '[' */
 			if(!lookahead)
@@ -1490,11 +1478,7 @@ static int mvcursor(Vi_t* vp,int motion)
 		switch(motion=getcount(vp,ed_getchar(vp->ed,-1)))
 		{
 		    case 'A':
-#if SHOPT_EDPREDICT
 			if(!vp->ed->hlist && cur_virt>=0  && cur_virt<(SEARCHSIZE-2) && cur_virt == last_virt)
-#else
-			if(cur_virt>=0  && cur_virt<(SEARCHSIZE-2) && cur_virt == last_virt)
-#endif /* SHOPT_EDPREDICT */
 			{
 				virtual[last_virt + 1] = '\0';
 				ed_external(virtual,lsearch+1);
@@ -1747,7 +1731,6 @@ static void refresh(Vi_t* vp, int mode)
 			mode = TRANSLATE;
 	}
 	v = cur_virt;
-#if SHOPT_EDPREDICT
 	if(mode==INPUT && v>0 && virtual[0]=='#' && v==last_virt && virtual[v]!='*' && sh_isoption(vp->ed->sh,SH_VI))
 	{
 		int		n;
@@ -1767,7 +1750,6 @@ static void refresh(Vi_t* vp, int mode)
 	}
 	else if(mode==INPUT && v<=1 && vp->ed->hlist)
 		ed_histlist(vp->ed,0);
-#endif /* SHOPT_EDPREDICT */
 	if( v<vp->ocur_virt || vp->ocur_virt==INVALID
 		|| ( v==vp->ocur_virt
 			&& (!is_print(virtual[v]) || !is_print(vp->o_v_char))) )

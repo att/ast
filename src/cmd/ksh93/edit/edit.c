@@ -553,11 +553,9 @@ void	ed_setup(Edit_t *ep, int fd, int reedit)
 		shp->winch = 0;
 	}
 #endif
-#if SHOPT_EDPREDICT
 	ep->hlist = 0;
 	ep->nhlist = 0;
 	ep->hoff = 0;
-#endif /* SHOPT_EDPREDICT */
 #if KSHELL
 	ep->e_stkptr = stkptr(shp->stk,0);
 	ep->e_stkoff = stktell(shp->stk);
@@ -1442,7 +1440,6 @@ static int keytrap(Edit_t *ep,char *inbuff,int insize, int bufsize, int mode)
 }
 #endif /* KSHELL */
 
-#if SHOPT_EDPREDICT
 static int ed_sortdata(const char *s1, const char *s2)
 {
 	Histmatch_t *m1 = (Histmatch_t*)s1;
@@ -1651,7 +1648,6 @@ void	ed_histlist(Edit_t *ep,int n)
 	}
 	ed_flush(ep);
 }
-#endif /* SHOPT_EDPREDICT */
 
 void	*ed_open(Shell_t *shp)
 {

@@ -598,7 +598,6 @@ update:
 			search(ep,out,count);
 			goto drawline;
 		case cntl('P') :
-#if SHOPT_EDPREDICT
 			if(ep->ed->hlist)
 			{
 				if(ep->ed->hoff == 0)
@@ -609,7 +608,6 @@ update:
 				ep->ed->hoff--;
 				goto hupdate;
 			}
-#endif /* SHOPT_EDPREDICT */
                         if (count <= hloff)
                                 hloff -= count;
                         else
@@ -638,7 +636,6 @@ update:
 			c = '\n';
 			goto process;
 		case cntl('N') :
-#if SHOPT_EDPREDICT
 			if(ep->ed->hlist)
 			{
 				if(ep->ed->hoff >= ep->ed->hmax)
@@ -652,7 +649,6 @@ update:
 				draw(ep,REFRESH);
 				continue;
 			}
-#endif /* SHOPT_EDPREDICT */
 #ifdef ESH_NFIRST
 			hline = location.hist_command;	/* start at saved position */
 			hloff = location.hist_line;
@@ -935,7 +931,6 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 		}
 #if KSHELL
 
-#if SHOPT_EDPREDICT
 		case '\n':  case '\t':
 			if(!ep->ed->hlist)
 			{
@@ -944,10 +939,8 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 			}
 			if(ch=='\n')
 				ed_ungetchar(ep->ed,'\n');
-#endif /* SHOPT_EDPREDICT */
 		/* file name expansion */
 		case cntl('[') :	/* filename completion */
-#if SHOPT_EDPREDICT
 			if(ep->ed->hlist)
 			{
 				value += ep->ed->hoff;
@@ -961,7 +954,6 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 					return(value);
 				}
 			}
-#endif /* SHOPT_EDPREDICT */
 			i = '\\';
 		case '*':		/* filename expansion */
 		case '=':	/* escape = - list all matching file names */
@@ -1043,11 +1035,7 @@ static int escape(Emacs_t* ep,genchar *out,int count)
 			switch(i=ed_getchar(ep->ed,1))
 			{
 			    case 'A':
-#if SHOPT_EDPREDICT
 				if(!ep->ed->hlist && cur>0 && eol==cur && (cur<(SEARCHSIZE-2) || ep->prevdirection == -2))
-#else
-				if(cur>0 && eol==cur && (cur<(SEARCHSIZE-2) || ep->prevdirection == -2))
-#endif /* SHOPT_EDPREDICT */
 				{
 					if(ep->lastdraw==APPEND && ep->prevdirection != -2)
 					{
@@ -1367,7 +1355,6 @@ static void draw(Emacs_t *ep,Draw_t option)
 	
 
 	i = cur?*(logcursor-1):0;	/* last character inserted */
-#if SHOPT_EDPREDICT
 	if(option==FINAL)
 	{
 		if(ep->ed->hlist)
@@ -1390,7 +1377,6 @@ static void draw(Emacs_t *ep,Draw_t option)
 			ed_ringbell();
 
 		}
-#endif /* SHOPT_EDPREDICT */
 	
 	if ((option == APPEND)&&(ep->scvalid)&&(*logcursor == '\0')&&
 	    print(i)&&((ep->cursor-ep->screen)<(w_size-1)))
