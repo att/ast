@@ -168,9 +168,9 @@ if not cc.has_function('isnanl', prefix: '#include <math.h>')
     libast_c_args += [ '-Disnanl=isnan' ]
 endif
 
-if cc.has_function('utimensat', prefix: '#include <sys/time.h>')
+if cc.has_function('utimensat', prefix: '#include <sys/stat.h>')
     libast_c_args += [ '-D_lib_utimensat' ]
-elif cc.has_function('utimets', prefix: '#include <sys/time.h>')
+elif cc.has_function('utimets', prefix: '#include <sys/stat.h>')
     libast_c_args += [ '-D_lib_utimets' ]
 endif
 
