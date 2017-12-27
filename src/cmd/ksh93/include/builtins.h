@@ -110,9 +110,7 @@ extern int b_pwd(int, char*[],Shbltin_t*);
 extern int b_sleep(int, char*[],Shbltin_t*);
 extern int b_test(int, char*[],Shbltin_t*);
 extern int B_echo(int, char*[],Shbltin_t*);
-#if SHOPT_POLL
-    extern int b_poll(int, char*[],Shbltin_t*);
-#endif
+extern int b_poll(int, char*[],Shbltin_t*);
 #if 0
     extern int b_mkservice(int, char*[],Shbltin_t*);
     extern int b_eloop(int, char*[],Shbltin_t*);

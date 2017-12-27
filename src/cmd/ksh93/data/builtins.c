@@ -117,9 +117,7 @@ const struct shtable3 shtab_builtins[] =
 	{ "mkservice",	NV_BLTIN|BLT_ENV,		bltin(mkservice) },
 	{ "eloop",	NV_BLTIN|BLT_ENV,		bltin(eloop) },
 #endif
-#if SHOPT_POLL
 	{ "poll",		NV_BLTIN|BLT_ENV,		bltin(poll) },
-#endif
 	{ "print",	NV_BLTIN|BLT_ENV,		bltin(print) },
 	{ "printf",	NV_BLTIN|BLT_ENV,		bltin(printf) },
 	{ "pwd",		NV_BLTIN,			bltin(pwd) },
