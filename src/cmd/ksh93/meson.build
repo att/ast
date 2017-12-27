@@ -30,7 +30,6 @@ shared_c_args = [
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
-    '-DSHOPT_FILESCAN',
     '-DSHOPT_FIXEDARRAY=0',
     '-DSHOPT_POLL',
 ]

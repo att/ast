@@ -900,7 +900,6 @@ static void mac_substitute(Mac_t *mp, char *cp,char *str,int subexp[],int subsiz
 	free(ptr);
 }
 
-#if  SHOPT_FILESCAN
 #define	MAX_OFFSETS	 (sizeof(shp->offsets)/sizeof(shp->offsets[0]))
 #define MAX_ARGN	(32*1024)
 
@@ -958,7 +957,6 @@ static char *getdolarg(Shell_t *shp, int n, int *size)
 		*size = last-first;
 	return((char*)first);
 }
-#endif /* SHOPT_FILESCAN */
 
 /*
  * get the prefix after name reference resolution
@@ -1160,7 +1158,6 @@ retry1:
 		if(isastchar(c))
 		{
 			mode = c;
-#if  SHOPT_FILESCAN
 			if(mp->shp->cur_line)
 			{
 				dolmax = MAX_ARGN;
@@ -1172,7 +1169,6 @@ retry1:
 				}
 			}
 			else
-#endif  /* SHOPT_FILESCAN */
 			dolmax = mp->shp->st.dolc+1;
 			mp->atmode = (v && mp->quoted && c=='@');
 			dolg = (v!=0);
@@ -1201,13 +1197,11 @@ retry1:
 		idnum = c;
 		if(c==0)
 			v = special(mp->shp,c);
-#if  SHOPT_FILESCAN
 		else if(mp->shp->cur_line)
 		{
 			mp->shp->used_pos = 1;
 			v = getdolarg(mp->shp,c,&vsize);
 		}
-#endif  /* SHOPT_FILESCAN */
 		else if(c <= mp->shp->st.dolc)
 		{
 			mp->shp->used_pos = 1;
@@ -1321,14 +1315,12 @@ retry1:
 				flag |= NV_ASSIGN;
 			flag &= ~NV_NOADD;
 		}
-#if  SHOPT_FILESCAN
 		if(mp->shp->cur_line && *id=='R' && strcmp(id,"REPLY")==0)
 		{
 			mp->shp->argaddr=0;
 			np = REPLYNOD;
 		}
 		else
-#endif  /* SHOPT_FILESCAN */
 		{
 			if(mp->shp->argaddr)
 				flag &= ~NV_NOADD;
@@ -1390,11 +1382,7 @@ retry1:
 		{
 			if(nv_isattr(np,NV_NOFREE))
 				nv_offattr(np,NV_NOFREE);
-#if  SHOPT_FILESCAN
 			else if(np!=REPLYNOD  || !mp->shp->cur_line)
-#else
-			else
-#endif  /* SHOPT_FILESCAN */
 				np = 0;
 		}
 		ap = np?nv_arrayptr(np):0;
@@ -1478,10 +1466,8 @@ retry1:
 					nv_attribute(np,mp->shp->strbuf,"typeset",1);
 				v = sfstruse(mp->shp->strbuf);
 			}
-#if  SHOPT_FILESCAN
 			else if(mp->shp->cur_line && np==REPLYNOD)
 				v = mp->shp->cur_line;
-#endif  /* SHOPT_FILESCAN */
 			else if(type==M_TREE)
 				v = nv_getvtree(np,(Namfun_t*)0);
 			else
@@ -1595,14 +1581,12 @@ retry1:
 				c = charlen(v,vsize);
 			else if(dolg>0)
 			{
-#if  SHOPT_FILESCAN
 				if(mp->shp->cur_line)
 				{
 					getdolarg(mp->shp,MAX_ARGN,(int*)0);
 					c = mp->shp->offsets[0];
 				}
 				else
-#endif  /* SHOPT_FILESCAN */
 				c = mp->shp->st.dolc;
 			}
 			else if(dolg<0)
@@ -1709,14 +1693,12 @@ retry1:
 					type = 0;
 				if(type==0)
 					v = special(mp->shp,dolg=0);
-#if  SHOPT_FILESCAN
 				else if(mp->shp->cur_line)
 				{
 					v = getdolarg(mp->shp,dolg=type,&vsize);
 					if(!v)
 						dolmax = type;
 				}
-#endif  /* SHOPT_FILESCAN */
 				else if(type < dolmax)
 					v = mp->shp->st.dolv[dolg=type];
 				else
@@ -1955,7 +1937,6 @@ retry2:
 			{
 				if(++dolg >= dolmax)
 					break;
-#if  SHOPT_FILESCAN
 				if(mp->shp->cur_line)
 				{
 					if(!(v=getdolarg(mp->shp,dolg,&vsize)))
@@ -1965,7 +1946,6 @@ retry2:
 					}
 				}
 				else
-#endif  /* SHOPT_FILESCAN */
 				v = mp->shp->st.dolv[dolg];
 			}
 			else if(!np)
@@ -2855,13 +2835,11 @@ static char *special(Shell_t *shp,int c)
 	    case '*':
 		return(shp->st.dolc>0?shp->st.dolv[1]:NIL(char*));
 	    case '#':
-#if  SHOPT_FILESCAN
 		if(shp->cur_line)
 		{
 			getdolarg(shp,MAX_ARGN,(int*)0);
 			return(ltos(shp->offsets[0]));
 		}
-#endif  /* SHOPT_FILESCAN */
 		return(ltos(shp->st.dolc));
 	    case '!':
 		if(shp->bckpid)

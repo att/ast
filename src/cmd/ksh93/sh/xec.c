@@ -834,7 +834,6 @@ static int sh_coexec(Shell_t *shp,const Shnode_t *t, int filt)
 }
 #endif /*SHOPT_COSHELL*/
 
-#if SHOPT_FILESCAN
     static Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save)
     {
 	int err=errno,savein, fd = sh_redirect(shp,iop,3);
@@ -851,7 +850,6 @@ static int sh_coexec(Shell_t *shp,const Shnode_t *t, int filt)
 	*save = savein;
 	return(sp);
     }
-#endif /* SHOPT_FILESCAN */
 
 static Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp)
 {
@@ -2394,10 +2392,8 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			volatile int 	r=0;
 			int first = OPTIMIZE_FLAG;
 			Shnode_t *tt = t->wh.whtre;
-#if SHOPT_FILESCAN
 			Sfio_t *iop=0;
 			int savein;
-#endif /*SHOPT_FILESCAN*/
 			int  jmpval = ((struct checkpt*)shp->jmplist)->mode;
 			struct checkpt *buffp = (struct checkpt*)stkalloc(shp->stk,sizeof(struct checkpt));
 			void *optlist = shp->optlist;
@@ -2405,13 +2401,11 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			if(shp->inpool)
 			{
 				int poolfiles;
-#   if SHOPT_FILESCAN
 				if(type==TWH && tt->tre.tretyp==TCOM && !tt->com.comarg && tt->com.comio)
 				{
 					sh_redirect(shp,tt->com.comio,0);
 					break;
 				}
-#   endif /* SHOPT_FILESCAN */
 				sh_exec(shp,tt,0);
 				do
 				{
@@ -2433,25 +2427,21 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			jmpval = sigsetjmp(buffp->buff,0);
 			if(jmpval)
 				goto endwhile;
-#if SHOPT_FILESCAN
 			if(type==TWH && tt->tre.tretyp==TCOM && !tt->com.comarg && tt->com.comio)
 			{
 				iop = openstream(shp,tt->com.comio,&savein);
 				if(tt->com.comset)
 					sh_setlist(shp,tt->com.comset,NV_IDENT|NV_ASSIGN,0);
 			}
-#endif /*SHOPT_FILESCAN */
 			shp->st.loopcnt++;
 			while(shp->st.execbrk==0)
 			{
-#if SHOPT_FILESCAN
 				if(iop)
 				{
 					if(!(shp->cur_line=sfgetr(iop,'\n',SF_STRING)))
 						break;
 				}
 				else
-#endif /*SHOPT_FILESCAN */
 				if((sh_exec(shp,tt,first)==0)!=(type==TWH))
 					break;
 				r = sh_exec(shp,t->wh.dotre,first|errorflg);
@@ -2462,10 +2452,8 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 					sh_exec(shp,(Shnode_t*)t->wh.whinc,first);
 				first = 0;
 				errorflg &= ~OPTIMIZE_FLAG;
-#if SHOPT_FILESCAN
 				shp->offsets[0] = -1;
 				shp->offsets[1] = 0;
-#endif /*SHOPT_FILESCAN */
 			}
 		endwhile:
 			sh_popcontext(shp,buffp);
@@ -2478,7 +2466,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				shp->st.execbrk = (--shp->st.breakcnt !=0);
 			shp->st.loopcnt--;
 			shp->exitval= r;
-#if SHOPT_FILESCAN
 			if(iop)
 			{
 				int err=errno;
@@ -2488,7 +2475,6 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				dup(savein);
 				shp->cur_line = 0;
 			}
-#endif /*SHOPT_FILESCAN */
 			break;
 		    }
 		    case TARITH: /* (( expression )) */
