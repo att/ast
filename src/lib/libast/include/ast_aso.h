@@ -4,7 +4,7 @@
 #define _def_aso_features	1
 #define _sys_types	1	/* #include <sys/types.h> ok */
 #include <ast_common.h>
-#define asointegralof(x)	(((char*)(x))-((char*)0))
+#define asointegralof(x)	(void *)(((char *) (x)) - ((char *) 0))
 
 #if GCC_4_1PLUS_64_BIT_MEMORY_ATOMIC_OPERATIONS_MODEL
 /* gcc 4.1+ 64 bit memory atomic operations model */
