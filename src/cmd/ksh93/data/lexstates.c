@@ -30,11 +30,7 @@
 static const char sh_lexstate0[256] =
 {
 	S_EOF,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
-#if SHOPT_CRNL
-	S_REG,	0,	S_NLTOK,S_REG,	S_REG,	0,	S_REG,	S_REG,
-#else
 	S_REG,	0,	S_NLTOK,S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
-#endif /* SHOPT_CRNL */
 	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
 	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
 
@@ -77,11 +73,7 @@ static const char sh_lexstate0[256] =
 static const char sh_lexstate1[256] =
 {
 	S_EOF,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
-#if SHOPT_CRNL
-	S_REG,	S_BREAK,S_BREAK,S_REG,	S_REG,	S_BREAK,S_REG,	S_REG,
-#else
 	S_REG,	S_BREAK,S_BREAK,S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
-#endif /* SHOPT_CRNL */
 	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
 	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,	S_REG,
 
@@ -121,11 +113,7 @@ static const char sh_lexstate1[256] =
 static const char sh_lexstate2[256] =
 {
 	S_EOF,	0,	0,	0,	0,	0,	0,	0,
-#if SHOPT_CRNL
-	0,	S_BREAK,S_BREAK,0,	0,	S_BREAK,0,	0,
-#else
 	0,	S_BREAK,S_BREAK,0,	0,	0,	0,	0,
-#endif /* SHOPT_CRNL */
 	0,	0,	0,	0,	0,	0,	0,	0,
 	0,	0,	0,	0,	0,	0,	0,	0,
 

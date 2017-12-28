@@ -706,10 +706,6 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 	if(cp)
 	{
 		cpmax = cp + c;
-#if SHOPT_CRNL
-		if(delim=='\n' && c>=2 && cpmax[-2]=='\r')
-			cpmax--;
-#endif /* SHOPT_CRNL */
 		if(*(cpmax-1) != delim)
 			*(cpmax-1) = delim;
 		if(flags&S_FLAG)

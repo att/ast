@@ -561,16 +561,6 @@ int sh_lex(Lex_t *lp) {
                 // Check for \<new-line>.
                 fcgetc(n);
                 c = 2;
-#if SHOPT_CRNL
-                if (n == '\r') {
-                    if (fcgetc(n) == '\n') {
-                        c = 3;
-                    } else {
-                        n = '\r';
-                        fcseek(-LEN);
-                    }
-                }
-#endif  // SHOPT_CRNL
                 if (n == '\n') {
                     Sfio_t *sp;
                     struct argnod *ap;
@@ -1586,24 +1576,6 @@ void sh_lexskip(Lex_t *lp, int close, int copy, int state) {
     }
 }
 
-#if SHOPT_CRNL
-ssize_t _sfwrite(Sfio_t *sp, const Void_t *buff, size_t n) {
-    const char *cp = (const char *)buff, *next = cp, *ep = cp + n;
-    int m = 0, k;
-    while (next = (const char *)memchr(next, '\r', ep - next))
-        if (*++next == '\n') {
-            if (k = next - cp - 1) {
-                if ((k = sfwrite(sp, cp, k)) < 0) return (m > 0 ? m : -1);
-                m += k;
-            }
-            cp = next;
-        }
-    if ((k = sfwrite(sp, cp, ep - cp)) < 0) return (m > 0 ? m : -1);
-    return (m + k);
-}
-#define sfwrite _sfwrite
-#endif /* SHOPT_CRNL */
-
 //
 // Read in here-document from script. Quoted here documents, and here-documents
 // without special chars are noted with the IOQUOTE flag.
@@ -1685,9 +1657,6 @@ static int here_copy(Lex_t *lp, struct ionod *iop) {
             }
             if (c < 0) break;
             if (n == S_ESC) {
-#if SHOPT_CRNL
-                if (c == '\r' && (c = fcget()) != NL) fcseek(-LEN);
-#endif  // SHOPT_CRNL
                 if (c == NL) {
                     fcseek(1);
                 } else if (!lp->lexd.dolparen) {
@@ -1739,12 +1708,6 @@ static int here_copy(Lex_t *lp, struct ionod *iop) {
                             goto done;
                         }
                     }
-#if SHOPT_CRNL
-                    if (c == '\r' && (c = fcget()) != NL) {
-                        if (c) fcseek(-LEN);
-                        c = '\r';
-                    }
-#endif /* SHOPT_CRNL */
                     if (c == NL) lp->sh->inlineno++;
                     if (iop->iodelim[n] == 0 && (c == NL || c == RPAREN)) {
                         if (!lp->lexd.dolparen && (n = cp - bufp)) {
@@ -1770,18 +1733,6 @@ static int here_copy(Lex_t *lp, struct ionod *iop) {
             }
             case S_ESC: {
                 n = 1;
-#if SHOPT_CRNL
-                if (c == '\r') {
-                    fcseek(1);
-                    if (c = fcget()) fcseek(-LEN);
-                    if (c == NL)
-                        n = 2;
-                    else {
-                        special++;
-                        break;
-                    }
-                }
-#endif /* SHOPT_CRNL */
                 if (c == NL) {
                     /* new-line joining */
                     lp->sh->inlineno++;
@@ -2062,9 +2013,6 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                 break;
             }
             case S_ESC: {
-#if SHOPT_CRNL
-                if (*sp == '\r' && sp[1] == '\n') sp++;
-#endif /* SHOPT_CRNL */
                 if (inlit || mode > 0) {
                     if (mode < 0) {
                         if (dp >= sp) {
@@ -2077,9 +2025,6 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
                     break;
                 }
                 n = *sp;
-#if SHOPT_DOS
-                if (!(inquote & 1) && sh_lexstates[ST_NORM][n] == 0) break;
-#endif /* SHOPT_DOS */
                 if (!(inquote & 1) || (sh_lexstates[ST_QUOTE][n] && n != RBRACE)) {
                     if (n == '\n') {
                         dp--;

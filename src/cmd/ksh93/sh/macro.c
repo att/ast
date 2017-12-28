@@ -2237,31 +2237,6 @@ static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 	mp->shp->spid = 0;
 	while((str=(char*)sfreserve(sp,SF_UNBOUND,0)) && (c=bufsize=sfvalue(sp))>0)
 	{
-#if SHOPT_CRNL
-		/* eliminate <cr> */
-		char *dp;
-		char *buff = str;
-		while(c>1 && (*str !='\r'|| str[1]!='\n'))
-		{
-			c--;
-			str++;
-		}
-		dp = str;
-		while(c>1)
-		{
-			str++;
-			c--;
-			while(c>1 && (*str!='\r' || str[1]!='\n'))
-			{
-				c--;
-				*dp++ = *str++;
-			}
-		}
-		if(c)
-			*dp++ = *str++;
-		str = buff;
-		c = dp-str;
-#endif /* SHOPT_CRNL */
 		/* delay appending trailing new-lines */
 		for(nextnewlines=0; c>0 && str[c-1]=='\n'; c--, nextnewlines++);
 		if(c < 0)
