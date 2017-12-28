@@ -4996,6 +4996,11 @@ admin)	while	test ! -f $admin_db
 	;;
 
 clean|clobber)
+	case $INSTALLROOT in
+	$PACKAGEROOT)
+		INSTALLROOT=$INSTALLROOT/arch/$HOSTTYPE
+		;;
+	esac
 	cd $PACKAGEROOT
 	$exec rm -rf $INSTALLROOT
 	exit
