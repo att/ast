@@ -50,7 +50,7 @@ asoactivecpu(void)
 			ssize_t	n;
 			int	fd;
 			char	buf[8*1024];
-		
+
 			if ((fd = open("/proc/stat", O_INTERCEPT|O_RDONLY)) >= 0)
 			{
 				if ((n = read(fd, buf, sizeof(buf) - 1)) > 0)
@@ -59,9 +59,9 @@ asoactivecpu(void)
 					buf[n] = 0;
 					do
 					{
-						if (s[0] == 'c' && s[1] == 'p' && s[2] == 'u' && (s[3] == ' ' || s[3] >= '0' && s[3] <= '9'))
+						if (s[0] == 'c' && s[1] == 'p' && s[2] == 'u' && (s[3] == ' ' || (s[3] >= '0' && s[3] <= '9')))
 							_AsoCpuCount++;
-					} while ((s = strchr(s, '\n')) && ++s); 
+					} while ((s = strchr(s, '\n')) && ++s);
 				}
 				close(fd);
 			}
