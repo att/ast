@@ -523,20 +523,20 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast
 		else if (!(cp = (const _ast_iconv_list_t*)ccmaplist((_ast_iconv_list_t*)cp)))
 			cp = codes;
 	}
-	if (cp == bp)
+	if (bp != 0)
 	{
-		cc = cp->ccode;
-		if (cp->canon)
+		cc = bp->ccode;
+		if (bp->canon)
 		{
-			if (cp->index)
+			if (bp->index)
 			{
 				for (m += sub[1]; *m && !isalnum(*m); m++);
 				if (!isdigit(*m))
-					m = cp->index;
+					m = bp->index;
 			}
 			else
 				m = "1";
-			b += sfsprintf(b, e - b, cp->canon, m);
+			b += sfsprintf(b, e - b, bp->canon, m);
 			if (cc == CC_UTF && *m != '8')
 				cc = CC_ICONV;
 		}
