@@ -90,9 +90,9 @@ _lib_posix_spawn_test = '''
 		tmp[n+2] = 'h';
 		tmp[n+3] = 0;
 		if ((n = open(tmp, O_CREAT|O_WRONLY, S_IRWXU|S_IRWXG|S_IRWXO)) < 0 ||
-		    chmod(tmp, S_IRWXU|S_IRWXG|S_IRWXO) < 0 ||
-		    write(n, "exit 99\n", 8) != 8 ||
-		    close(n) < 0)
+                    chmod(tmp, S_IRWXU|S_IRWXG|S_IRWXO) < 0 ||
+                    write(n, "exit 99\n", 8) != 8 ||
+                    close(n) < 0)
 		{
 			printf("test script create FAILED");
 			_exit(0);
@@ -127,10 +127,11 @@ _lib_posix_spawn_test = '''
 				printf("ENOEXEC produces non-zero exit status");
 		}
 		_exit(n);
- 	}
+        }
 '''
 
 # This will output the test has failed, but that's how it was written
-_lib_posix_spawn_result = cc.run(_lib_posix_spawn_test, name: 'posix_spawn exists and it works and its worth using ')
+_lib_posix_spawn_result = cc.run(
+    _lib_posix_spawn_test, name: 'posix_spawn exists and it works and its worth using ')
 
 libast_c_args += [ '-D_lib_posix_spawn=@0@'.format(_lib_posix_spawn_result.returncode()) ]

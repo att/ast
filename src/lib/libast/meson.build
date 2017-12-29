@@ -1,6 +1,6 @@
 libast_files = ['features/conftab.c']
 incdir = include_directories('include', 'features', 'aso', 'cdt', 'comp',
-                             'sfio', 'path', 'port', 'string', 'misc', 
+                             'sfio', 'path', 'port', 'string', 'misc',
                              'vmalloc', 'tm')
 libast_c_args = ['-D_BLD_ast', '-D_API_ast=20130625']
 cc = meson.get_compiler('c')
@@ -111,9 +111,9 @@ main()
 	}
 #if _X86_ || _X64_
 	#if _X64
-	    printf("ALIGN_BOUND2=16 ");
+            printf("ALIGN_BOUND2=16 ");
 	#else
-	    printf("ALIGN_BOUND2=8 ");
+            printf("ALIGN_BOUND2=8 ");
 	#endif
 #else
 	printf("ALIGN_BOUND2=%d ", align2);
@@ -150,7 +150,7 @@ if align_bound_result.returncode() == 0
     # Meson escapes strings strangely and I could not get my head around it
     # Ideally we should be able to print macro defintions in the test and just
     # use them here. This loop should be unnecessary.
-    foreach element:align_bound_result_split
+    foreach element : align_bound_result_split
         element_split = element.split('=')
         name = element_split[0]
         value = element_split[1]
@@ -174,11 +174,11 @@ elif cc.has_function('utimets', prefix: '#include <sys/stat.h>')
     libast_c_args += [ '-D_lib_utimets' ]
 endif
 
-if cc.has_function('sysinfo', prefix : '#include <sys/sysinfo.h>')
+if cc.has_function('sysinfo', prefix: '#include <sys/sysinfo.h>')
     libast_c_args += [ '-D_lib_sysinfo=1' ]
 endif
 
-if cc.has_function('pipe2', prefix : '#include <unistd.h>')
+if cc.has_function('pipe2', prefix: '#include <unistd.h>')
     libast_c_args += [ '-D_lib_pipe2=1' ]
 endif
 
