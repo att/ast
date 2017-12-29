@@ -145,12 +145,6 @@ skip:
 	return(0);
 }
 
-static void completed(void * handle)
-{
-	char *expired = (char*)handle;
-	*expired = 1;
-}
-
 /*
  * delay execution for time <t>
  */
