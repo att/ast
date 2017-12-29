@@ -1379,39 +1379,6 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 }
 
 /*
- * return read stream to native getconf utility
- */
-
-static Sfio_t*
-nativeconf(Proc_t** pp, const char* operand)
-{
-#ifdef _pth_getconf
-	Sfio_t*		sp;
-	char*		cmd[3];
-	long		ops[2];
-
-#if DEBUG_astconf
-	error(-6, "astconf defer %s %s", _pth_getconf, operand);
-#endif
-	cmd[0] = (char*)state.id;
-	cmd[1] = (char*)operand;
-	cmd[2] = 0;
-	ops[0] = PROC_FD_DUP(open("/dev/null",O_WRONLY,0), 2, PROC_FD_CHILD);
-	ops[1] = 0;
-	if (*pp = procopen(_pth_getconf, cmd, environ, ops, PROC_READ))
-	{
-		if (sp = sfnew(NiL, NiL, SF_UNBOUND, (*pp)->rfd, SF_READ))
-		{
-			sfdisc(sp, SF_POPDISC);
-			return sp;
-		}
-		procclose(*pp);
-	}
-#endif
-	return 0;
-}
-
-/*
  * value==0 gets value for name
  * value!=0 sets value for name and returns previous value
  * path==0 implies path=="/"
@@ -1684,7 +1651,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 						sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), f, sizeof(prefix[look.standard].name), prefix[look.standard].name, look.section, call, 0, "N", s);
 					}
 					else if (flags & ASTCONF_parse)
-						sfprintf(sp, "%s %s - %s\n", state.id, f, s); 
+						sfprintf(sp, "%s %s - %s\n", state.id, f, s);
 					else
 						sfprintf(sp, "%s=%s\n", f, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 				}
@@ -1732,7 +1699,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 				sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), fp->name, sizeof(prefix[fp->standard].name), prefix[fp->standard].name, 1, call, 0, flg, s);
 			}
 			else if (flags & ASTCONF_parse)
-				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL)); 
+				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL));
 			else
 				sfprintf(sp, "%s=%s\n", (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 		}

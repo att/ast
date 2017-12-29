@@ -86,7 +86,7 @@ static const char *Action_eval[] =  {
 	"x'builtin'",
 	"xtypeset +x",
 	"xtypeset +f | sed -e 's/()//'",
-	"xsed -e 's/:.*//' /etc/group", 
+	"xsed -e 's/:.*//' /etc/group",
 	"",
 	"ygrep -v '^#' ${HOSTFILE:-/etc/hosts} | tr '\t ' '\n\n' | tr -s '\n' | cat",
 	"xjobs -l",
@@ -96,7 +96,7 @@ static const char *Action_eval[] =  {
 	"pprint interactive\nrestricted\nlogin_shell\n",
 	"xkill -l",
 	"xjobs -l | grep Stopped",
-	"xsed -e 's/:.*//' /etc/passwd", 
+	"xsed -e 's/:.*//' /etc/passwd",
 	"xtypeset + | grep -v '^[ {}]' | grep -v namespace",
 	0
 };
@@ -217,7 +217,7 @@ static char action(const char *list[],const char *str)
 {
 	const char *cp;
 	int n=0;
-	for(cp=list[0]; cp; cp=list[++n]) 
+	for(cp=list[0]; cp; cp=list[++n])
 	{
 		if(strcmp(cp+1,str)==0)
 			return(*cp);
@@ -252,13 +252,6 @@ static bool keywords(Sfio_t *out)
 	return(true);
 }
 
-static bool evaluate(struct Complete *comp, Sfio_t *out, const char *str)
-{
-	Sfio_t *in = sfopen((Sfio_t*)0,str,"s");
-	int n = sh_eval(comp->sh,in,0);
-	return(n==0);
-}
-
 /* write wordlist to stack splitting on IFS, one word per line */
 static gen_wordlist(Sfio_t *iop, const char *word)
 {
@@ -280,7 +273,7 @@ static gen_wordlist(Sfio_t *iop, const char *word)
 	}
 	if(n==0)
 		sfputc(iop,'\n');
-	
+
 }
 
 char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix, int index)
@@ -415,7 +408,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
 			nv_setvec(COMP_WORDS,0,n,av);
 			stkseek(shp->stk,0);
 			*cpsave = 0;
-			sfprintf(shp->stk,"%s \"%s\" \"%s\" \"%s\"\n\0",nv_name(comp->fun),comp->name,prefix,lastword); 
+			sfprintf(shp->stk,"%s \"%s\" \"%s\" \"%s\"\n\0",nv_name(comp->fun),comp->name,prefix,lastword);
 			*cpsave = csave;
 			sfputc(shp->stk,0);
 			str = stkptr(shp->stk,0);
@@ -535,7 +528,7 @@ again:
 	{
 		/* reserved space on stack and try again */
 		len = 3;
-		tlen = (c+1)*sizeof(char*)+len*c +1024; 
+		tlen = (c+1)*sizeof(char*)+len*c +1024;
 		stkseek(shp->stk,tlen);
 		complete = 2;
 		av = (char**)stkptr(shp->stk,0);
@@ -620,7 +613,7 @@ static const char *lquote(struct Complete *cp, const char *str)
 	sfputc(stakp,'$');
 	if(sp-str)
 		sfwrite(stakp,str,sp-str);
-	while(c = *sp++) 
+	while(c = *sp++)
 	{
 		if(c=='\'')
 			sfputc(stakp,'\\');

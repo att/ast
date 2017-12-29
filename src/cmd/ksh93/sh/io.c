@@ -164,12 +164,6 @@ struct Match {
     char *base;
 };
 
-static int matchf(void *handle, char *ptr, size_t size) {
-    struct Match *mp = (struct Match *)handle;
-    mp->offset += (ptr - mp->base);
-    return (1);
-}
-
 static struct fdsave *filemap;
 static short filemapsize;
 
