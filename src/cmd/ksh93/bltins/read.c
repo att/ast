@@ -114,7 +114,6 @@ static int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out)
 		}
 		else if(state==2)
 		{
-			char *last;
 			if(c==' ' || c == '\t')
 				continue;
 			if(c==':')

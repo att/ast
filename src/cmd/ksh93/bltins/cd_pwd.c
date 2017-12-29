@@ -112,8 +112,8 @@ int	b_cd(int argc, char *argv[],Shbltin_t *context)
 		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage((char*)0));
 	shp->pwd = path_pwd(shp,0);
 	oldpwd = (char*)shp->pwd;
-	opwdnod = (shp->subshell?sh_assignok(OLDPWDNOD,1):OLDPWDNOD); 
-	pwdnod = (shp->subshell?sh_assignok(PWDNOD,1):PWDNOD); 
+	opwdnod = (shp->subshell?sh_assignok(OLDPWDNOD,1):OLDPWDNOD);
+	pwdnod = (shp->subshell?sh_assignok(PWDNOD,1):PWDNOD);
 	if(dirfd!=shp->pwdfd && dir==0)
 		dir = (char*)e_dot;
 	if(argc==2)
@@ -311,10 +311,10 @@ success:
 
 int	b_pwd(int argc, char *argv[],Shbltin_t *context)
 {
-	char *cp, *dir;
+	char *cp;
 	Shell_t *shp = context->shp;
 	bool pflag = false;
-	int n,fd,ffd=-1;
+	int n, ffd = -1;
 	NOT_USED(argc);
 	while((n=optget(argv,sh_optpwd))) switch(n)
 	{

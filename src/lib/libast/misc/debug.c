@@ -59,7 +59,6 @@ debug_vsprintf(char* buf, size_t siz, const char* format, va_list ap)
 	char*			b;
 	char*			t;
 	void*			v;
-	wchar_t*		y;
 	char			num[32];
 	char			typ[32];
 
@@ -464,7 +463,7 @@ debug_indent(int n)
 
 double
 debug_elapsed(int set)
-{	
+{
 	double		tm;
 	struct rusage	ru;
 

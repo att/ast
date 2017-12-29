@@ -601,7 +601,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 					else
 					np = nv_open(name,sh_subfuntree(shp,1),NV_NOARRAY|NV_IDENT|NV_NOSCOPE);
 				}
-				else 
+				else
 				{
 					if(shp->prefix)
 					{
@@ -646,7 +646,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 						np = nv_search(stkptr(shp->stk,offset),troot,0);
 						stkseek(shp->stk,offset);
 					}
-					if(np && np->nvalue.cp) 
+					if(np && np->nvalue.cp)
 						np->nvalue.rp->help = tp->help;
 				}
 				continue;
@@ -674,7 +674,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 				_nv_unset(np,0);
 				ap->nelem--;
 			}
-			else if(iarray && ap && ap->fun) 
+			else if(iarray && ap && ap->fun)
 				errormsg(SH_DICT,ERROR_exit(1),"cannot change associative array %s to index array",nv_name(np));
 			else if( (iarray||(flag&NV_ARRAY)) && nv_isvtree(np) && !nv_type(np))
 				_nv_unset(np,NV_EXPORT);
@@ -704,7 +704,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 				if(comvar || (shp->last_root==shp->var_tree && ((tp->tp && tp->tp!=nv_type(np)) || (!shp->st.real_fun && (nvflags&NV_STATIC)) || (!(flag&(NV_EXPORT|NV_RDONLY)) && nv_isattr(np,(NV_EXPORT|NV_IMPORT))==(NV_EXPORT|NV_IMPORT)))))
 {
 				{
-					if((flag&(NV_HOST|NV_INTEGER))!=NV_HOST) 
+					if((flag&(NV_HOST|NV_INTEGER))!=NV_HOST)
 						_nv_unset(np,NV_EXPORT);
 				}
 }
@@ -805,7 +805,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 				{
 					if(!(flag&NV_RJUST))
 						newflag &= ~NV_RJUST;
-					
+
 					else if(!(flag&NV_LJUST))
 						newflag &= ~NV_LJUST;
 				}
@@ -1008,12 +1008,9 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 	struct tdata tdata;
 	Shbltin_f addr;
 	Stk_t	*stkp;
-	void *library=0;
 	char *errmsg;
 #ifdef SH_PLUGIN_VERSION
-	unsigned long ver;
 	int list = 0;
-	char path[1024];
 #endif
 	NOT_USED(argc);
 	memset(&tdata,0,sizeof(tdata));
@@ -1295,7 +1292,6 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 			isfun = is_afunction(np);
 			if(troot==shp->var_tree)
 			{
-				Namarr_t *ap;
 #if SHOPT_FIXEDARRAY
 				if((ap=nv_arrayptr(np)) && !ap->fixed  && name[strlen(name)-1]==']' && !nv_getsub(np))
 #else
@@ -1305,7 +1301,7 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 					r=1;
 					continue;
 				}
-					
+
 				if(shp->subshell)
 					np=sh_assignok(np,0);
 			}
@@ -1532,7 +1528,7 @@ static void print_scan(Sfio_t *file, int flag, Dt_t *root, int option,struct tda
 				}
 				else if((flag&NV_IARRAY))
 					continue;
-				
+
 			}
 			tp->scanmask = flag&~NV_NOSCOPE;
 			tp->scanroot = root;

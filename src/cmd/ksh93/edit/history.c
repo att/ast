@@ -52,9 +52,9 @@
 #if SHOPT_AUDIT
 #   define _HIST_AUDIT	Sfio_t	*auditfp; \
 			char	*tty; \
-			int	auditmask; 
+			int	auditmask;
 #else
-#   define _HIST_AUDIT 
+#   define _HIST_AUDIT
 #endif
 
 #define _HIST_PRIVATE \
@@ -118,17 +118,15 @@ static int	hist_clean(int);
     static int	hist_exceptf(Sfio_t*, int, Sfdisc_t*);
 #endif
 
-
 static int	histinit;
 static mode_t	histmode;
-static History_t *wasopen;
 static History_t *hist_ptr;
 
 #if SHOPT_ACCTFILE
     static int	acctfd;
     static char *logname;
 #   include <pwd.h>
-    
+
     static int  acctinit(History_t *hp)
     {
 	char *cp, *acctfile;
@@ -204,7 +202,7 @@ static int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t l
 done:
 	sh_close(fd);
 	return(r);
-	
+
 }
 #endif /*SHOPT_AUDIT*/
 
@@ -551,7 +549,7 @@ static History_t* hist_trim(History_t *hp, int n)
 }
 
 /*
- * position history file at size and find next command number 
+ * position history file at size and find next command number
  */
 static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size)
 {
@@ -801,7 +799,6 @@ static int hist_write(Sfio_t *iop,const void *buff,int insize,Sfdisc_t* handle)
 	char *bufptr = ((char*)buff)+insize;
 	int c,size = insize;
 	off_t cur;
-	Shell_t *shp = hp->histshell;
 	int saved=0;
 	char saveptr[HIST_MARKSZ];
 	if(!hp->histflush)
@@ -941,7 +938,7 @@ void hist_list(History_t *hp,Sfio_t *outfile, off_t offset,int last, char *nl)
 	}
 	return;
 }
-		 
+
 /*
  * find index for last line with given string
  * If flag==0 then line must begin with string
@@ -1063,7 +1060,7 @@ int hist_copy(char *s1,int size,int command,int line)
 		{
 			if(count++ ==line)
 				break;
-			else if(line >= 0)	
+			else if(line >= 0)
 				continue;
 		}
 		if(s1 && (line<0 || line==count))
@@ -1075,7 +1072,7 @@ int hist_copy(char *s1,int size,int command,int line)
 			}
 			*s1++ = c;
 		}
-			
+
 	}
 	sfseek(hp->histfp,(off_t)0,SEEK_END);
 	if(s1==0)

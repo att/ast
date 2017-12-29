@@ -28,8 +28,6 @@
  * mime/mailcap support library
  */
 
-static const char id[] = "\n@(#)$Id: mime library (AT&T Research) 2002-10-29 $\0\n";
-
 static const char lib[] = "libast:mime";
 
 #include "mimelib.h"

@@ -2202,7 +2202,6 @@ ast_wcsrtombs(char* s, const wchar_t** w, size_t n, mbstate_t* q)
 	char*		t;
 	const wchar_t*	p;
 	size_t		m;
-	size_t		i;
 	char		buf[32];
 
 	p = *w;
@@ -2794,7 +2793,6 @@ _ast_setlocale(int category, const char* locale)
 		if (!initialized)
 		{
 			char*	u;
-			char	tmp[256];
 
 			/*
 			 * initialize from the environment

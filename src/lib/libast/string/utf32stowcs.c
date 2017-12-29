@@ -120,8 +120,6 @@ utf32stowcs(wchar_t* wchar, uint32_t* utf32, size_t n)
 			inbuf = outbuf;
 			if (mbwide())
 			{
-				ssize_t	len;
-
 				mbinit(&q);
 				for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++)
 					if (mbchar(&wchar[i], outbuf, inbuf - outbuf, &q), mberrno(&q))

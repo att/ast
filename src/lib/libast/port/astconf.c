@@ -26,8 +26,6 @@
  * extended to allow some features to be set per-process
  */
 
-static const char id[] = "\n@(#)$Id: getconf (AT&T Research) 2012-05-01 $\0\n";
-
 #include "univlib.h"
 
 #include <ast.h>
@@ -1684,7 +1682,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 						sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), f, sizeof(prefix[look.standard].name), prefix[look.standard].name, look.section, call, 0, "N", s);
 					}
 					else if (flags & ASTCONF_parse)
-						sfprintf(sp, "%s %s - %s\n", state.id, f, s); 
+						sfprintf(sp, "%s %s - %s\n", state.id, f, s);
 					else
 						sfprintf(sp, "%s=%s\n", f, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 				}
@@ -1732,7 +1730,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 				sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), fp->name, sizeof(prefix[fp->standard].name), prefix[fp->standard].name, 1, call, 0, flg, s);
 			}
 			else if (flags & ASTCONF_parse)
-				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL)); 
+				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL));
 			else
 				sfprintf(sp, "%s=%s\n", (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 		}
