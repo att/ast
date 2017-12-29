@@ -286,7 +286,6 @@ chrexp(const char* s, char** p, int* m, int flags)
 		}
 		break;
 	}
- done:
 	if (m)
 		*m = w;
 	if (p)
