@@ -22,13 +22,6 @@
 #pragma prototyped
 
 #include "asohdr.h"
-
-#if !defined(_BLD_ast)
-
-NoN(asolock)
-
-#else
-
 #include <sched.h>
 
 int
@@ -36,5 +29,3 @@ asoyield(void)
 {
 	return sched_yield();
 }
-
-#endif

@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmdisc(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -51,5 +46,3 @@ Vmdisc_t*	disc;
 	}
 	return old;
 }
-
-#endif

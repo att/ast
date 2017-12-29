@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmdcshare(){}
-
-#else
 
 #include	"vmhdr.h"
 #include	<sys/types.h>
@@ -481,5 +476,3 @@ int		mode;	/*  1: keep memory segments		*/
 
 	return (Vmdisc_t*)mmdc;
 }
-
-#endif

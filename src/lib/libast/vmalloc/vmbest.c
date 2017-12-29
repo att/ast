@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmbest(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -1144,6 +1139,4 @@ __DEFINE__(Vmethod_t*, Vmbest, &_Vmbest);
 
 #ifdef NoF
 NoF(vmbest)
-#endif
-
 #endif

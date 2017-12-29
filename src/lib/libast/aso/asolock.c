@@ -23,12 +23,6 @@
 
 #include "asohdr.h"
 
-#if !defined(_BLD_ast)
-
-NoN(asolock)
-
-#else
-
 int
 asolock(unsigned int volatile* lock, unsigned int key, int type)
 {
@@ -44,5 +38,3 @@ asolock(unsigned int volatile* lock, unsigned int key, int type)
 	else /*if(type & ASO_UNLOCK)*/
 		return asocasint(lock, key, 0) == key ? 1 : -1;
 }
-
-#endif

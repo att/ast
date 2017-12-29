@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmdebug(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -696,6 +691,4 @@ __DEFINE__(Vmethod_t*,Vmdebug,&_Vmdebug);
 
 #ifdef NoF
 NoF(vmdebug)
-#endif
-
 #endif

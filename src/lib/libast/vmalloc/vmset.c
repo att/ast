@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmset(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -54,5 +49,3 @@ int		on;	/* >0 if turning on, else turning off	*/
 			return newm;
 	}
 }
-
-#endif

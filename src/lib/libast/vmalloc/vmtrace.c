@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmtrace(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -194,5 +189,3 @@ int	file;
 
 	return fd;
 }
-
-#endif

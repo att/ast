@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmprivate(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -516,5 +511,3 @@ Vmextern_t	_Vmextern =
 	0,									/* _Vmsbrklock	*/
 	0									/* _Vmassert	*/
 };
-
-#endif

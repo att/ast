@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_malloc(){}
-
-#else
 
 #include	"vmhdr.h"
 #include	<errno.h>
@@ -1246,7 +1241,5 @@ static void	native_free(void* p)
 {
 	free(p);
 }
-
-#endif
 
 #endif

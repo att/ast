@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if !defined(_BLD_ast)
-
-void _STUB_vmclear(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -58,5 +53,3 @@ Vmalloc_t*	vm;
 
 	return _vmopen(vm, vm->disc, &vm->meth, 0) ? 0 : -1;
 }
-
-#endif
