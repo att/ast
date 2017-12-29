@@ -31,8 +31,6 @@
 #include <error.h>
 #include <vmalloc.h>
 
-#include "FEATURE/vmalloc"
-
 #if _std_malloc
 
 void
