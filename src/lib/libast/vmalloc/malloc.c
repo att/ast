@@ -19,54 +19,9 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_malloc(){}
-
-#else
-
-#if _UWIN
-
-#define calloc		______calloc
-#define _ast_free	______free
-#define malloc		______malloc
-#define mallinfo	______mallinfo
-#define mallopt		______mallopt
-#define mstats		______mstats
-#define realloc		______realloc
-
-#define _STDLIB_H_	1
-
-extern int		atexit(void(*)(void));
-extern char*		getenv(const char*);
-
-#endif /*_UWIN*/
 
 #include	"vmhdr.h"
 #include	<errno.h>
-
-#if _UWIN
-
-#include	<malloc.h>
-
-#define _map_malloc	1
-#define _mal_alloca	1
-
-#undef	calloc
-#define calloc		_ast_calloc
-#undef	_ast_free
-#define free		_ast_free
-#undef	malloc
-#define malloc		_ast_malloc
-#undef	mallinfo
-typedef struct ______mallinfo Mallinfo_t;
-#undef	mallopt
-#undef	mstats
-typedef struct ______mstats Mstats_t;
-#undef	realloc
-#define realloc		_ast_realloc
-
-#endif /*_UWIN*/
 
 /* If this code is to be used as native malloc then we won't have to worry about
 ** freeing/resizing data allocated by some other malloc. As such, vmregion() can
@@ -118,7 +73,7 @@ typedef struct ______mstats Mstats_t;
 **	    		probably accesses free'd data
 **	    method=m	sets Vmregion=m if not defined, m (Vm prefix optional)
 **			    best:  best fit
-**			    debug: detailed verification checks 
+**			    debug: detailed verification checks
 **			    last:  only last malloc() value can be freed
 **	    pagesize=n	sets memory allocation page size to n
 **	    period=n	sets Vmregion=Vmdebug if not defined, if
@@ -626,26 +581,6 @@ void _vmoptions(int boot)
 
 #include <ast_windows.h>
 
-#if _UWIN
-
-#define VMRECORD(p)	_vmrecord(p)
-#define VMBLOCK		{ int _vmblock = _sigblock();
-#define VMUNBLOCK	_sigunblock(_vmblock); }
-
-extern int		_sigblock(void);
-extern void		_sigunblock(int);
-extern unsigned long	_record[2048];
-
-__inline Void_t* _vmrecord(Void_t* p)
-{
-	unsigned long	v = ((unsigned long)p)>>16; 
-
-	_record[v>>5] |= 1<<((v&0x1f));
-	return p;
-}
-
-#else
-
 #define getenv(s)	lcl_getenv(s)
 
 static char*
@@ -658,8 +593,6 @@ lcl_getenv(const char* s)
 		return 0;
 	return buf;
 }
-
-#endif /* _UWIN */
 
 #endif /* _WINIX */
 
@@ -753,9 +686,9 @@ extern Void_t* calloc(size_t n_obj, size_t s_obj)
 {
 	Void_t		*addr;
 
-	VMPROLOGUE(0); 
+	VMPROLOGUE(0);
 	addr = (*Vmregion->meth.resizef)(Vmregion, NIL(Void_t*), n_obj*s_obj, VM_RSZERO, 0);
-	VMEPILOGUE(0); 
+	VMEPILOGUE(0);
 
 	return VMRECORD(addr);
 }
@@ -766,7 +699,7 @@ extern Void_t* malloc(size_t size)
 
 	VMPROLOGUE(0);
 	addr = (*Vmregion->meth.allocf)(Vmregion, size, 0);
-	VMEPILOGUE(0); 
+	VMEPILOGUE(0);
 
 	return VMRECORD(addr);
 }
@@ -785,7 +718,7 @@ extern Void_t* realloc(Void_t* data, size_t size)
 	else /* not our data */
 #if USE_NATIVE
 		addr = native_realloc(data, size);
-#else 
+#else
 		addr = NIL(Void_t*);
 #endif
 
@@ -1080,14 +1013,10 @@ extern Void_t*	F1(__libc_valloc, size_t,n) { return valloc(n); }
 #undef	valloc
 #define valloc		______valloc
 
-#if !_UWIN
-
 #include	<malloc.h>
 
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
-
-#endif
 
 #if defined(__EXPORT__)
 #define extern		__EXPORT__
@@ -1229,14 +1158,10 @@ extern Void_t*	F1(_ast_valloc, size_t,n) { return valloc(n); }
 #define realloc		______realloc
 #define valloc		______valloc
 
-#if !_UWIN
-
 #include	<malloc.h>
 
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
-
-#endif
 
 #if defined(__EXPORT__)
 #define extern		__EXPORT__
@@ -1318,5 +1243,3 @@ static void	native_free(void* p)
 }
 
 #endif
-
-#endif /*_UWIN*/

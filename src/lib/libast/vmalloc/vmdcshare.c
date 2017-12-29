@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmdcshare(){}
-
-#else
 
 #include	"vmhdr.h"
 #include	<sys/types.h>
@@ -146,7 +141,7 @@ static Mmvm_t* mmfix(Mmvm_t* mmvm, Mmdisc_t* mmdc, int fd)
 	if(base != (Void_t*)mmvm) /* mmvm is not right yet */
 	{	/**/DEBUG_ASSERT(!base || (base && (VMLONG(base)%_Vmpagesize) == 0) );
 		if(mmdc->proj < 0)
-		{	munmap((Void_t*)mmvm, size); 
+		{	munmap((Void_t*)mmvm, size);
 			mmvm = (Mmvm_t*)mmap(base, size, (PROT_READ|PROT_WRITE), (MAP_FIXED|MAP_SHARED), fd, (off_t)0);
 		}
 		else
@@ -207,7 +202,7 @@ static int mminit(Mmdisc_t* mmdc)
 			goto done;
 		}
 	}
-	else 
+	else
 	{	/* make the key and get/create an id for the share mem segment */
 		if((mmdc->shmkey = mmkey(mmdc->name, mmdc->proj)) < 0 )
 			goto done;
@@ -241,13 +236,13 @@ static int mminit(Mmdisc_t* mmdc)
 		}
 		if(!base || !(mmvm = mmfix(mmvm, mmdc, fd)) )
 		{	/* remove any resource just created */
-			if(mmdc->proj >= 0) 
-				shmctl(mmdc->shmid, IPC_RMID, 0);	
+			if(mmdc->proj >= 0)
+				shmctl(mmdc->shmid, IPC_RMID, 0);
 			else	unlink(mmdc->name);
 			goto done;
 		}
 
-		mmdc->init = 1; 
+		mmdc->init = 1;
 		mmvm->base = base;
 		mmvm->size = size;
 		mmvm->busy = 0;
@@ -331,7 +326,7 @@ Mmdisc_t*	mmdc;
 		if(mmdc->mode&MM_REMOVE)
 			(void)unlink(mmdc->name);
 	}
-	else 
+	else
 	{	if(mmdc->mode&MM_DETACH)
 		{	if(mmvm->base )
 				(void)shmdt(mmvm->base);
@@ -481,5 +476,3 @@ int		mode;	/*  1: keep memory segments		*/
 
 	return (Vmdisc_t*)mmdc;
 }
-
-#endif

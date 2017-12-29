@@ -26,28 +26,19 @@
  * fun==SIG_DFL also unblocks signal
  */
 
-#if !_UWIN
-
 #undef	signal
 #define signal		______signal
-
-#endif
 
 #include <ast.h>
 #include <sig.h>
 
-#if !_UWIN
-
 #undef	signal
-
 
 #if defined(__EXPORT__)
 #define extern	__EXPORT__
 #endif
 
-#endif
-
-#if defined(SV_ABORT)                                         
+#if defined(SV_ABORT)
 #undef	SV_INTERRUPT
 #define SV_INTERRUPT	SV_ABORT
 #endif

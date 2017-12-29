@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmstrdup(){}
-
-#else
 
 #include "vmhdr.h"
 
@@ -44,5 +39,3 @@ char*	s;
 
 	return (s && (t = vmalloc(v, n = strlen(s) + 1))) ? (char*)memcpy(t, s, n) : (char*)0;
 }
-
-#endif

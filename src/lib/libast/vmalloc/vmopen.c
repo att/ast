@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmopen(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -199,7 +194,7 @@ int		mode;	/* type of region		*/
 				return NIL(Vmalloc_t*);
 			}
 			else	vh->vm = vm;
-			for(;;) 
+			for(;;)
 			{	vh->next = cvh = _Vmhold;
 				if(asocasptr(&_Vmhold, cvh, vh) == cvh)
 					break;
@@ -221,5 +216,3 @@ int		mode;	/* type of region		*/
 {
 	return _vmopen(NIL(Vmalloc_t*), disc, meth, mode);
 }
-
-#endif

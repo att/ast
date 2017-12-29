@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmexit(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -96,5 +91,3 @@ int	type;
 #endif	/* _lib_onexit */
 
 #endif /*!PACKAGE_ast*/
-
-#endif

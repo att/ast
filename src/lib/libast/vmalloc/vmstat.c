@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmstat(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -77,5 +72,3 @@ Vmstat_t*	st;
 	}
 	return _vmstat(vm, st, 0);
 }
-
-#endif

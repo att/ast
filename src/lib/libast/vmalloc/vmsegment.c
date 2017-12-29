@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmprivate(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -124,18 +119,18 @@ void vmclrlock(int all)
 	Vmhold_t	*vh;
 	Vmalloc_t	*vm;
 
-	threadid = all ? 0 : asothreadid(); 
+	threadid = all ? 0 : asothreadid();
 
 	if(threadid) /* release sbrklock */
 		asocasint(&_Vmsbrklock, threadid, 0); /* only if done by thread */
 	else while(_Vmsbrklock != 0) /* or in all cases */
 		asosubint(&_Vmsbrklock, _Vmsbrklock);
 
-	for(vh = _Vmhold; ; vh = vh->next) 
+	for(vh = _Vmhold; ; vh = vh->next)
 	{	if((vm = vh ? vh->vm : Vmheap) == NIL(Vmalloc_t*) )
 			continue;
 
-		if(threadid) 
+		if(threadid)
 		{	asocasint(&vm->data->lock, threadid, 0); /* lock on segments */
 			asocasint(&vm->data->ulck, threadid, 0); /* lock on user data */
 		}
@@ -153,7 +148,7 @@ void vmclrlock(int all)
 
 /* Walks all segments held in region "vm" or all regions if vm == NULL */
 int vmsegwalk(Vmalloc_t* vm, Vmseg_f segf, Void_t* handle)
-{	
+{
 	Vmhold_t	*vh;
 	Seg_t		*seg;
 	Vmalloc_t	*todo;
@@ -279,7 +274,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 		asolock(&vmdt->lock, key, ASO_LOCK);
 
 		if(blk) /* try extending an existing block in place */
-		{	_vmsegmerge(vmdt, blk); 
+		{	_vmsegmerge(vmdt, blk);
 			if(BDSZ(blk) >= size )
 				RETURN(blk);
 			if(NEXT(blk) != ((Seg_t*)SEG(blk))->endb )
@@ -298,12 +293,12 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 		if(!(type&VM_SEGEXTEND) ) /* no physical extension */
 			RETURN(blk = NIL(Block_t*));
 
-		if(blk) 
+		if(blk)
 		{	seg = SEG(blk);
 			/**/DEBUG_ASSERT((SIZE(blk)&BUSY) && NEXT(blk) == seg->endb);
 		}
 		else
-		{	seg = vmdt->seg; 
+		{	seg = vmdt->seg;
 			blk = seg->iffy ? NIL(Block_t*) : _vmfreelist(vmdt, (Void_t*)seg, DELETE_ENDB);
 			/**/DEBUG_ASSERT(!blk || (SEG(blk) == seg && NEXT(blk) == seg->endb));
 		}
@@ -361,17 +356,17 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 	}
 
 	if((sz = blk ? BDSZ(blk) : 0) < size ) /* must make a new segment */
-	{	if(blk) 
+	{	if(blk)
 		{	if(SIZE(blk)&BUSY ) /* unextensible busy block */
 				RETURN(blk = NIL(Block_t*));
 
-			_vmfreelist(vmdt, (Void_t*)blk, INSERT_BLOCK); 
+			_vmfreelist(vmdt, (Void_t*)blk, INSERT_BLOCK);
 			blk = NIL(Block_t*);
 		}
 
 		/* make sure that new segment size isn't too large to wrap around */
 		segsz = size + sizeof(Seg_t) + sizeof(Block_t) + Segunit;
-		if(segsz <= size || (segsz = ROUND(segsz,vmdt->incr)) <= size) 
+		if(segsz <= size || (segsz = ROUND(segsz,vmdt->incr)) <= size)
 			RETURN(blk = NIL(Block_t*)); /* did wrap around */
 
 		if(!(base = (Vmuchar_t*)(*disc->memoryf)(vm, NIL(Void_t*), 0, segsz, disc)) )
@@ -391,7 +386,7 @@ re_turn:
 	if(blk) /* keep any excess memory for future allocations */
 	{	sz = BDSZ(blk); /**/DEBUG_ASSERT(sz >= size );
 		if(!(type&VM_SEGALL) && (sz - size) > (Segunit + sizeof(Block_t)) )
-		{	/* make block of unused space */	
+		{	/* make block of unused space */
 			np = (Block_t*)((Vmuchar_t*)blk + size + sizeof(Head_t));
 			SEG(np) = SEG(blk);
 			SIZE(np) = sz - size - sizeof(Head_t); /**/DEBUG_ASSERT(BDSZ(np) >= Segunit);
@@ -516,5 +511,3 @@ Vmextern_t	_Vmextern =
 	0,									/* _Vmsbrklock	*/
 	0									/* _Vmassert	*/
 };
-
-#endif

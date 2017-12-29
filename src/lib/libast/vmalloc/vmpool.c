@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmpool(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -144,7 +139,7 @@ int		local;
 		if(asocasptr(&pool->free, free, pl) == free)
 			break;
 	}
-		
+
 	if(!local && _Vmtrace)
 		(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), pool->size, 0);
 
@@ -252,6 +247,4 @@ __DEFINE__(Vmethod_t*,Vmpool,&_Vmpool);
 
 #ifdef NoF
 NoF(vmpool)
-#endif
-
 #endif
