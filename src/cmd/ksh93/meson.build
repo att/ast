@@ -84,7 +84,7 @@ cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required: false)
 # On some platforms `dladdr()` and related functions are found in libc,
 # on others they are found in libdl.
-libdl_dep = cc.find_library('libdl', required : false)
+libdl_dep = cc.find_library('dl', required : false)
 
 # On some platforms `backtrace()` and related functions are found in libc,
 # on others they are found in libexecinfo.
