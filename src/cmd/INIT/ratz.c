@@ -93,7 +93,7 @@ static const char usage[] =
 
 #else
 
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && __CYGWIN__
 #define _WINIX		1
 #endif
 
@@ -181,7 +181,7 @@ static const char usage[] =
 #define z_off64_t	int64_t
 #endif
 #else
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && __CYGWIN__
 #define _WINIX		1
 #endif
 #endif
@@ -191,25 +191,9 @@ static const char usage[] =
 #define ZEXPORT
 #endif
 
-#if defined(__MSDOS__) && !defined(MSDOS)
-#  define MSDOS
-#endif
-#if (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
-#  define OS2
-#endif
-#if defined(_WINDOWS) && !defined(WINDOWS)
-#  define WINDOWS
-#endif
 #if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 #  ifndef WIN32
 #    define WIN32
-#  endif
-#endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
-#    ifndef SYS16BIT
-#      define SYS16BIT
-#    endif
 #  endif
 #endif
 
@@ -217,13 +201,6 @@ static const char usage[] =
  * Compile with -DMAXSEG_64K if the alloc function cannot allocate more
  * than 64k bytes at a time (needed on systems with 16-bit int).
  */
-#ifdef SYS16BIT
-#  define MAXSEG_64K
-#endif
-#ifdef MSDOS
-#  define UNALIGNED_OK
-#endif
-
 #ifdef __STDC_VERSION__
 #  ifndef STDC
 #    define STDC
@@ -240,10 +217,10 @@ static const char usage[] =
 #if !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
+#if !defined(STDC) && defined(WIN32)
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
+#if !defined(STDC) && defined(__HOS_AIX__)
 #  define STDC
 #endif
 
@@ -303,34 +280,7 @@ static const char usage[] =
 #  endif
 #endif
 
-/* The following definitions for FAR are needed only for MSDOS mixed
- * model programming (small or medium model with some far allocations).
- * This was tested only with MSC; for other MSDOS compilers you may have
- * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
- * just define FAR to be empty.
- */
-#ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
-     /* MSC small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef _MSC_VER
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
-     /* Turbo C small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef __BORLANDC__
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#endif
-
-#if defined(WINDOWS) || defined(WIN32)
+#if defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
     */
@@ -626,21 +576,6 @@ typedef unsigned long  ulg;
 
         /* target dependencies */
 
-#if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
-#  define OS_CODE  0x00
-#  if defined(__TURBOC__) || defined(__BORLANDC__)
-#    if(__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
-       /* Allow compilation with ANSI keywords only enabled */
-       void _Cdecl farfree( void *block );
-       void *_Cdecl farmalloc( unsigned long nbytes );
-#    else
-#      include <alloc.h>
-#    endif
-#  else /* MSC or DJGPP */
-#    include <malloc.h>
-#  endif
-#endif
-
 #ifdef AMIGA
 #  define OS_CODE  0x01
 #endif
@@ -653,13 +588,6 @@ typedef unsigned long  ulg;
 
 #if defined(ATARI) || defined(atarist)
 #  define OS_CODE  0x05
-#endif
-
-#ifdef OS2
-#  define OS_CODE  0x06
-#  ifdef M_I86
-     #include <malloc.h>
-#  endif
 #endif
 
 #if defined(MACOS) || defined(TARGET_OS_MAC)
@@ -726,11 +654,6 @@ typedef unsigned long  ulg;
 #  endif
 #endif
 #ifndef HAVE_VSNPRINTF
-#  ifdef MSDOS
-     /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
-        but for now we just assume it doesn't. */
-#    define NO_vsnprintf
-#  endif
 #  ifdef __TURBOC__
 #    define NO_vsnprintf
 #  endif
@@ -5156,7 +5079,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
