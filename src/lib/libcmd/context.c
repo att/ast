@@ -46,7 +46,6 @@ Context_t*
 context_open(Sfio_t* ip, size_t before, size_t after, Context_list_f listf, void* handle)
 {
 	Context_t*	cp;
-	int		j;
 
 	if (!(cp = newof(0, Context_t, 1, (before + after) * sizeof(Context_line_t))))
 		return 0;
@@ -70,7 +69,6 @@ context_line(Context_t* cp)
 	char*		e;
 	size_t		n;
 	size_t		m;
-	size_t		o;
 	ssize_t		r;
 
 	lp = &cp->line[cp->curline];
@@ -157,7 +155,6 @@ context_show(Context_t* cp)
 {
 	int	i;
 	int	j;
-	int	k;
 
 	j = cp->curline;
 	for (i = 0; i < cp->after; i++)
@@ -184,7 +181,6 @@ context_show(Context_t* cp)
 int
 context_close(Context_t* cp)
 {
-	int	i;
 	int	j;
 
 	for (j = 0; j < cp->total; j++)

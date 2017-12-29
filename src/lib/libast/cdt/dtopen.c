@@ -20,7 +20,6 @@
 *                                                                      *
 ***********************************************************************/
 #include	"dthdr.h"
-static char*     Version = "\n@(#)$Id: cdt (AT&T Labs - Research) 2013-05-01 $\0\n";
 
 /* 	Make a new dictionary
 **

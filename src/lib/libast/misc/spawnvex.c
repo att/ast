@@ -874,7 +874,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 #endif
     ))
 	{
-		pid_t			pgid;
 		int			n;
 		int			m;
 		Spawnvex_noexec_t	nx;
@@ -896,7 +895,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			msg[0] = msg[1] = -1;
 		}
 		else
- 		#if _lib_pipe2 
+ 		#if _lib_pipe2
  		    if (pipe2(msg, O_CLOEXEC) < 0)
 			    msg[0] = msg[1] = -1;
  		#else

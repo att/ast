@@ -470,7 +470,6 @@ int sh_open(const char *path, int flags, ...) {
     Sfio_t *sp;
     int fd;
     mode_t mode;
-    char *e;
     va_list ap;
 #if SHOPT_REGRESS
     char buf[PATH_MAX];

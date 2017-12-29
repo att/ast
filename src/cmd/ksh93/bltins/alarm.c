@@ -211,7 +211,7 @@ static void putval(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	struct tevent	*tp = (struct tevent*)fp;
 	double		d,x;
 	Shell_t		*shp = tp->sh;
-	char		*cp, *pp;
+	char		*pp;
 	if(val)
 	{
 		Time_t now = getnow();
