@@ -1544,7 +1544,6 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         }
     }
 
-skip:
     filemap[shp->topfd].tname = name;
     filemap[shp->topfd].subshell = (flag & IOSUBSHELL);
     filemap[shp->topfd].orig_fd = origfd;
