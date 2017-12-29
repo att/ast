@@ -433,31 +433,6 @@ typedef uLong FAR uLongf;
 #  define z_off_t long
 #endif
 
-#if defined(__OS400__)
-#  define NO_vsnprintf
-#endif
-
-#if defined(__MVS__)
-#  define NO_vsnprintf
-#endif
-
-/* MVS linker does not support external names larger than 8 bytes */
-#if defined(__MVS__)
-#   pragma map(deflateInit_,"DEIN")
-#   pragma map(deflateInit2_,"DEIN2")
-#   pragma map(deflateEnd,"DEEND")
-#   pragma map(deflateBound,"DEBND")
-#   pragma map(inflateInit_,"ININ")
-#   pragma map(inflateInit2_,"ININ2")
-#   pragma map(inflateEnd,"INEND")
-#   pragma map(inflateSync,"INSY")
-#   pragma map(inflateSetDictionary,"INSEDI")
-#   pragma map(compressBound,"CMBND")
-#   pragma map(inflate_table,"INTABL")
-#   pragma map(inflate_fast,"INFA")
-#   pragma map(inflate_copyright,"INCOPY")
-#endif
-
 #endif /* _ZCONF_H */
 
 #define ZLIB_VERSION "1.2.3"
@@ -3606,11 +3581,6 @@ typedef voidp gzFile;
 #  define Z_PRINTF_BUFSIZE 4096
 #endif
 
-#ifdef __MVS__
-#  pragma map (fdopen , "\174\174FDOPEN")
-   FILE *fdopen(int, const char *);
-#endif
-
 #if 0 && !_PACKAGE_ast
 #ifndef STDC
 extern voidp  malloc OF((uInt size));
@@ -5156,7 +5126,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
