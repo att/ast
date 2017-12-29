@@ -555,7 +555,9 @@ void _vmoptions(int boot)
 
 #if _malloc_hook
 
+#if !__FreeBSD__
 #include <malloc.h>
+#endif
 
 #undef	calloc
 #undef	cfree
@@ -827,7 +829,7 @@ char* strdup(const char* s)
 }
 #endif /* _PACKAGE_ast */
 
-#if !_lib_alloca || _mal_alloca
+#if _mal_alloca
 #ifndef _stk_down
 #define _stk_down	0
 #endif
@@ -955,9 +957,7 @@ extern Void_t*	F2(_memalign, size_t,a, size_t,n) { return memalign(a, n); }
 extern Void_t*	F1(_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
 extern Void_t*	F2(_realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
-#if _lib_valloc
 extern Void_t*	F1(_valloc, size_t,n) { return valloc(n); }
-#endif
 #endif
 
 #if _lib___malloc
@@ -970,9 +970,7 @@ extern Void_t*	F2(__memalign, size_t,a, size_t,n) { return memalign(a, n); }
 extern Void_t*	F1(__pvalloc, size_t,n) { return pvalloc(n); }
 #endif
 extern Void_t*	F2(__realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
-#if _lib_valloc
 extern Void_t*	F1(__valloc, size_t,n) { return valloc(n); }
-#endif
 #endif
 
 #if _lib___libc_malloc
@@ -985,9 +983,7 @@ extern Void_t*	F2(__libc_memalign, size_t,a, size_t,n) { return memalign(a, n); 
 extern Void_t*	F1(__libc_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
 extern Void_t*	F2(__libc_realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
-#if _lib_valloc
 extern Void_t*	F1(__libc_valloc, size_t,n) { return valloc(n); }
-#endif
 #endif
 
 #endif /* _malloc_hook */
@@ -1013,7 +1009,9 @@ extern Void_t*	F1(__libc_valloc, size_t,n) { return valloc(n); }
 #undef	valloc
 #define valloc		______valloc
 
-#include	<malloc.h>
+#if !__FreeBSD__
+#include <malloc.h>
+#endif
 
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
@@ -1120,10 +1118,8 @@ extern Void_t*	pvalloc _ARG_((size_t));
 #undef	realloc
 extern Void_t*	realloc _ARG_((Void_t*, size_t));
 
-#if _lib_valloc
 #undef	valloc
 extern Void_t*	valloc _ARG_((size_t));
-#endif
 
 #if defined(__EXPORT__)
 #define extern		__EXPORT__
@@ -1138,9 +1134,7 @@ extern Void_t*	F2(_ast_memalign, size_t,a, size_t,n) { return memalign(a, n); }
 extern Void_t*	F1(_ast_pvalloc, size_t,n) { return pvalloc(n); }
 #endif
 extern Void_t*	F2(_ast_realloc, Void_t*,p, size_t,n) { return realloc(p, n); }
-#if _lib_valloc
 extern Void_t*	F1(_ast_valloc, size_t,n) { return valloc(n); }
-#endif
 
 #undef	extern
 
@@ -1158,7 +1152,9 @@ extern Void_t*	F1(_ast_valloc, size_t,n) { return valloc(n); }
 #define realloc		______realloc
 #define valloc		______valloc
 
-#include	<malloc.h>
+#if !__FreeBSD__
+#include <malloc.h>
+#endif
 
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;

@@ -71,7 +71,6 @@
 
 #endif /*_PACKAGE_ast*/
 
-#include	"FEATURE/vmalloc"
 #include	"vmalloc.h"
 
 #include	<aso.h>		/* atomic scalar operations		*/
