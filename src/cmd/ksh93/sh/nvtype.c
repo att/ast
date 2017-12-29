@@ -222,10 +222,6 @@ static char *name_chtype(Namval_t *np, Namfun_t *fp)
 		sfprintf(shp->strbuf,"%s[%s].%s",cp,sub,np->nvname);
 	else
 		sfprintf(shp->strbuf,"%s.%s",cp,np->nvname);
-#if SHOPT_FIXEDARRAY
-	if((ap=nv_arrayptr(np)) && ap->fixed)
-		nv_arrfixed(np,shp->strbuf,1,(char*)0);
-#endif /* SHOPT_FIXEDARRAY */
 	shp->last_table = tp;
 	return(sfstruse(shp->strbuf));
 }

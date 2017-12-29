@@ -30,7 +30,6 @@ shared_c_args += [
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
-    '-DSHOPT_FIXEDARRAY=0',
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for

@@ -1391,11 +1391,7 @@ retry1:
 			if(mp->dotdot)
 			{
 				Namval_t *nq;
-#if SHOPT_FIXEDARRAY
-				if(ap && !ap->fixed && (nq=nv_opensub(np)))
-#else
 				if(ap && (nq=nv_opensub(np)))
-#endif /* SHOPT_FIXEDARRAY */
 					ap = nv_arrayptr(np=nq);
 				if(ap)
 				{

@@ -402,19 +402,11 @@ Namval_t **sh_setlist(Shell_t *shp,struct argnod *arg,int flags, Namval_t *typ)
 				if((flags&NV_STATIC) && !nv_isattr(np,NV_EXPORT) && !nv_isnull(np))
 					goto check_type;
 				ap=nv_arrayptr(np);
-#if SHOPT_FIXEDARRAY
-				if(ap && ap->fixed)
-					flags |= NV_FARRAY;
-#endif /* SHOPT_FIXEDARRAY */
 				if(sh_isoption(shp,SH_BASH) &&!array && !ap && !(flags&NV_COMVAR) && !np->nvfun && !tp->com.comset && !tp->com.comarg)
 					array = NV_IARRAY;
 				if(array && (!ap || !ap->hdr.type))
 				{
-#if SHOPT_FIXEDARRAY
-					if(!(arg->argflag&ARG_APPEND) && (!ap || !ap->fixed))
-#else
 					if(!(arg->argflag&ARG_APPEND))
-#endif /* SHOPT_FIXEDARRAY */
 						_nv_unset(np,NV_EXPORT);
 					if(array&NV_ARRAY)
 					{
@@ -445,11 +437,7 @@ Namval_t **sh_setlist(Shell_t *shp,struct argnod *arg,int flags, Namval_t *typ)
 					}
 					if(!(arg->argflag&ARG_APPEND))
 					{
-#if SHOPT_FIXEDARRAY
-						if(!nv_isarray(np) || ((ap=nv_arrayptr(np)) && !ap->fixed && (ap->nelem)))
-#else
 						if(!nv_isarray(np) || ((ap=nv_arrayptr(np)) && (ap->nelem)))
-#endif /* SHOPT_FIXEDARRAY */
 						{
 							if(ap)
 								ap->flags |= ARRAY_UNDEF;
@@ -944,9 +932,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 			shp->oldnp = np;
 			if(isref)
 			{
-#if SHOPT_FIXEDARRAY
-				int n=0,dim;
-#endif /* SHOPT_FIXEDARRAY */
 #if NVCACHE
 				nvcache.ok = 0;
 #endif
@@ -964,22 +949,9 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 					shp->last_root = root;
 					shp->last_table = nv_reftable(np);
 					sub = nv_refsub(np);
-#if SHOPT_FIXEDARRAY
-					n = nv_refindex(np);
-					dim = nv_refdimen(np);
-#endif /* SHOPT_FIXEDARRAY */
 					if(shp->oldnp = nv_refoldnp(np))
 						shp->oldnp = (Namval_t*)shp->oldnp->nvenv;
 					np = nv_refnode(np);
-#if SHOPT_FIXEDARRAY
-					if(n)
-					{
-						ap = nv_arrayptr(np);
-						ap->nelem = dim;
-						nv_putsub(np,(char*)0,n,0);
-					}
-					else
-#endif /* SHOPT_FIXEDARRAY */
 					if(sub && c!='.')
 						nv_putsub(np,sub,0L,0);
 					flags |= NV_NOSCOPE;
@@ -1005,15 +977,8 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 				}
 				if(np==nq)
 					flags &= ~(noscope?0:NV_NOSCOPE);
-#if SHOPT_FIXEDARRAY
-				else if(c || n)
-#else
 				else if(c)
-#endif /* SHOPT_FIXEDARRAY */
 				{
-#if SHOPT_FIXEDARRAY
-					static char null[1] = "";
-#endif /* SHOPT_FIXEDARRAY */
 					char *xp=0;
 					ssize_t	xlen;
 					c = (cp-sp);
@@ -1028,21 +993,12 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 						cp += xlen+1;
 					copy = strlen(cp);
 					dp->nofree |= 1;
-#if SHOPT_FIXEDARRAY
-					if(*sp==0)
-						name = cp;
-					else
-#endif /* SHOPT_FIXEDARRAY */
 						name = copystack(shp,cp,sp,sub);
 					sp = (char*)name + copy;
 					cp = sp+c;
 					c = *sp;
 					if(!noscope)
 						flags &= ~NV_NOSCOPE;
-#if SHOPT_FIXEDARRAY
-					if(c==0)
-						nv_endsubscript(np,null,NV_ADD,np->nvshell);
-#endif /* SHOPT_FIXEDARRAY */
 				}
 				flags |= NV_NOREF;
 				if(*cp==0 &&  nv_isnull(np) && !nv_isarray(np))
@@ -1062,9 +1018,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 				cp--;
 			do
 			{
-#if SHOPT_FIXEDARRAY
-				int fixed;
-#endif /* SHOPT_FIXEDARRAY */
 				if(!np)
 				{
 					if(!nq && !shp->namref_root && *sp=='[' && *cp==0 && cp[-1]==']')
@@ -1081,11 +1034,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 					return(np);
 				}
 				ap = nv_arrayptr(np);
-#if SHOPT_FIXEDARRAY
-				fixed = 0;
-				if(ap && ap->fixed)
-					fixed = 1;
-#endif /* SHOPT_FIXEDARRAY */
 				if(c=='[' || (c=='.' && nv_isarray(np)))
 				{
 					int n = 0;
@@ -1094,9 +1042,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 					if(c=='[')
 					{
 						Namval_t *table;
-#if SHOPT_FIXEDARRAY
-						ap = nv_arrayptr(np);
-#endif /* SHOPT_FIXEDARRAY */
 						n = mode|nv_isarray(np);
 						if(!mode && (flags&NV_ARRAY) && ((c=sp[1])=='*' || c=='@') && sp[2]==']')
 						{
@@ -1104,11 +1049,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 							dp->last = cp;
 							return(np);
 						}
-#if SHOPT_FIXEDARRAY
-						if(fixed)
-							flags |= NV_FARRAY;
-						else
-#endif /* SHOPT_FIXEDARRAY */
 						if((n&NV_ADD)&&(flags&NV_ARRAY))
 							n |= ARRAY_FILL;
 						if(flags&NV_ASSIGN)
@@ -1116,12 +1056,6 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 						table = shp->last_table;
 						cp = nv_endsubscript(np,sp,n|(flags&(NV_ASSIGN|NV_FARRAY)),np->nvshell);
 						shp->last_table = table;
-#if SHOPT_FIXEDARRAY
-						flags &= ~NV_FARRAY;
-						if(fixed)
-							flags &= ~NV_ARRAY;
-
-#endif /* SHOPT_FIXEDARRAY */
 #if 0
 						if(scan)
 							nv_putsub(np,NIL(char*),0,ARRAY_SCAN);
@@ -1179,11 +1113,7 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 					}
 					else if(c==0 && mode && (n=nv_aindex(np))>=0)
 						nv_putsub(np,(char*)0,n,0);
-#if SHOPT_FIXEDARRAY
-					else if(n==0 && !fixed && (c==0 || (c=='[' && !nv_isarray(np))))
-#else
 					else if(n==0 && (c==0 || (c=='[' && !nv_isarray(np))))
-#endif /* SHOPT_FIXEDARRAY */
 					{
 						/* subscript must be 0*/
 						cp[-1] = 0;
@@ -1251,11 +1181,7 @@ Namval_t *nv_create(const char *name,  Dt_t *root, int flags, Namfun_t *dp)
 						}
 					}
 				}
-#if SHOPT_FIXEDARRAY
-				else if(nv_isarray(np) && (!fixed || cp[-1]!=']'))
-#else
 				else if(nv_isarray(np))
-#endif /* SHOPT_FIXEDARRAY */
 				{
 					if(c==0 && (flags&NV_MOVE))
 						return(np);
@@ -1616,11 +1542,7 @@ skip:
 				}
 			}
 			isref = nv_isref(np);
-#if SHOPT_FIXEDARRAY
-			if(sh_isoption(shp,SH_XTRACE) && (ap=nv_arrayptr(np)) && !ap->fixed)
-#else
 			if(sh_isoption(shp,SH_XTRACE) && nv_isarray(np))
-#endif /* SHOPT_FIXEDARRAY */
 				sub = nv_getsub(np);
 			c = msg==e_aliname? 0: (append | (flags&NV_EXPORT));
 			if(isref)
@@ -1698,9 +1620,6 @@ void nv_putval(Namval_t *np, const char *string, int flags)
 	int size = 0;
 	int dot;
 	int	was_local = nv_local;
-#if SHOPT_FIXEDARRAY
-	Namarr_t	*ap;
-#endif /* SHOPT_FIXEDARRAY */
 	if((flags&NV_APPEND) && nv_isnull(np) && shp->var_tree->view)
 	{
 		Namval_t *mp = nv_search(np->nvname,shp->var_tree->view,0);
@@ -1741,11 +1660,7 @@ void nv_putval(Namval_t *np, const char *string, int flags)
 		return;
 	}
 	up= &np->nvalue;
-#if SHOPT_FIXEDARRAY
-	if(np->nvalue.up && nv_isarray(np) && (ap=nv_arrayptr(np)) && !ap->fixed)
-#else
 	if(np->nvalue.up && nv_isarray(np) && nv_arrayptr(np))
-#endif /* SHOPT_FIXEDARRAY */
 		up = np->nvalue.up;
 	if(up && up->cp==Empty)
 		up->cp = 0;
@@ -2585,9 +2500,6 @@ void	_nv_unset(Namval_t *np,int flags)
 {
 	Shell_t	*shp = sh_ptr(np);
 	union Value *up;
-#if SHOPT_FIXEDARRAY
-	Namarr_t	*ap;
-#endif /* SHOPT_FIXEDARRAY */
 	if(!(flags&NV_RDONLY) && nv_isattr (np,NV_RDONLY))
 		errormsg(SH_DICT,ERROR_exit(1),e_readonly, nv_name(np));
 	if(is_afunction(np) && np->nvalue.ip)
@@ -2667,11 +2579,7 @@ void	_nv_unset(Namval_t *np,int flags)
 		np->nvalue.cp = nv_isarray(np)?Empty:0;
 		goto done;
 	}
-#if SHOPT_FIXEDARRAY
-	else if(np->nvalue.up && nv_isarray(np) && (ap=nv_arrayptr(np)) && !ap->fixed)
-#else
 	else if(np->nvalue.up && nv_isarray(np) && nv_arrayptr(np))
-#endif /* SHOPT_FIXEDARRAY */
 		up = np->nvalue.up;
 	else if(nv_isref(np) && !nv_isattr(np,NV_EXPORT|NV_MINIMAL) && np->nvalue.nrp)
 	{
@@ -3119,15 +3027,6 @@ void nv_newattr (Namval_t *np, unsigned newatts, int size)
 	if(ap) /* add element to prevent array deletion */
 	{
 		ap->nelem++;
-#if SHOPT_FIXEDARRAY
-		if(ap->fixed)
-		{
-			nv_setsize(np,size);
-			np->nvflag &= NV_ARRAY;
-			np->nvflag |= newatts;
-			goto skip;
-		}
-#endif /* SHOPT_FIXEDARRAY */
 	}
 	do
 	{
@@ -3176,9 +3075,6 @@ void nv_newattr (Namval_t *np, unsigned newatts, int size)
 		}
 	}
 	while(ap && nv_nextsub(np));
-#if SHOPT_FIXEDARRAY
-skip:
-#endif /* SHOPT_FIXEDARRAY */
 	if(fp)
 		np->nvfun = fp;
 	if(ap)
@@ -3569,11 +3465,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags)
 	}
 	if(nq && !nv_isnull(nq))
 		last_table = shp->last_table;
-#if SHOPT_FIXEDARRAY
-	if(nq && ep && nv_isarray(nq) && !((ap=nv_arrayptr(nq)) && ap->fixed) && !nv_getsub(nq))
-#else
 	if(nq && ep && nv_isarray(nq) && !nv_getsub(nq))
-#endif /* SHOPT_FIXEDARRAY */
 	{
 		if(!nv_arrayptr(nq))
 		{
@@ -3599,11 +3491,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags)
 	shp->instance = 1;
 	if(nq && !ep && (ap=nv_arrayptr(nq)) && !(ap->flags&(ARRAY_UNDEF|ARRAY_SCAN)))
 		ep =  nv_getsub(nq);
-#if SHOPT_FIXEDARRAY
-	if(ep && !(ap && ap->fixed))
-#else
 	if(ep)
-#endif /* SHOPT_FIXEDARRAY */
 	{
 		/* cause subscript evaluation and return result */
 		if(nv_isarray(nq))
@@ -3630,11 +3518,6 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags)
 	np->nvalue.nrp->oldnp = shp->oldnp;
 	if(ep)
 	{
-#if SHOPT_FIXEDARRAY
-		if(ap && ap->fixed)
-			np->nvalue.nrp->curi = ARRAY_FIXED|nv_arrfixed(nq,(Sfio_t*)0,1,&np->nvalue.nrp->dim);
-		else
-#endif /* SHOPT_FIXEDARRAY */
 			np->nvalue.nrp->sub = strdup(ep);
 	}
 	np->nvalue.nrp->table = last_table;
@@ -3802,9 +3685,6 @@ char *nv_name(Namval_t *np)
 	Shell_t	 *shp = sh_ptr(np);
 	Namval_t *table = 0;
 	Namfun_t *fp = 0;
-#if SHOPT_FIXEDARRAY
-	Namarr_t	*ap;
-#endif /* SHOPT_FIXEDARRAY */
 	char *cp;
 
 	if (!shp)
@@ -3823,9 +3703,6 @@ char *nv_name(Namval_t *np)
 	}
 	if(!np->nvname)
 		goto skip;
-#if SHOPT_FIXEDARRAY
-	ap = nv_arrayptr(np);
-#endif /* SHOPT_FIXEDARRAY */
 	if(!nv_isattr(np,NV_MINIMAL|NV_EXPORT) && np->nvenv)
 	{
 		Namval_t *nq= shp->last_table, *mp= (Namval_t*)np->nvenv;
@@ -3858,13 +3735,7 @@ char *nv_name(Namval_t *np)
 	}
 	if(!(table=shp->last_table) || *np->nvname=='.' || table==shp->namespace || np==table)
 	{
-#if SHOPT_FIXEDARRAY
-		if(!ap || !ap->fixed || (ap->flags&ARRAY_UNDEF))
-			return(np->nvname);
-		table = 0;
-#else
 		return(np->nvname);
-#endif /* SHOPT_FIXEDARRAY */
 	}
 	if(table)
 	{
@@ -3873,10 +3744,6 @@ char *nv_name(Namval_t *np)
 	}
 	else
 		sfprintf(shp->strbuf,"%s",np->nvname);
-#if SHOPT_FIXEDARRAY
-	if(ap && ap->fixed)
-		nv_arrfixed(np,shp->strbuf,1,(char*)0);
-#endif /* SHOPT_FIXEDARRAY */
 	return(sfstruse(shp->strbuf));
 }
 

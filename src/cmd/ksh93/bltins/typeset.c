@@ -1285,11 +1285,7 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 			isfun = is_afunction(np);
 			if(troot==shp->var_tree)
 			{
-#if SHOPT_FIXEDARRAY
-				if((ap=nv_arrayptr(np)) && !ap->fixed  && name[strlen(name)-1]==']' && !nv_getsub(np))
-#else
 				if(nv_isarray(np) && name[strlen(name)-1]==']' && !nv_getsub(np))
-#endif /* SHOPT_FIXEDARRAY */
 				{
 					r=1;
 					continue;
