@@ -2722,38 +2722,6 @@ Namval_t *sh_scoped(Shell_t *shp, Namval_t *np)
 	return(dtsearch(shp->var_tree,np));
 }
 
-#if 1
-/*
- * return space separated list of names of variables in given tree
- */
-static char *tableval(Dt_t *root)
-{
-	static Sfio_t *out;
-	Namval_t *np;
-	int first=1;
-	Dt_t *base = dtview(root,0);
-        if(out)
-                sfseek(out,(Sfoff_t)0,SEEK_SET);
-        else
-                out =  sfnew((Sfio_t*)0,(char*)0,-1,-1,SF_WRITE|SF_STRING);
-	for(np=(Namval_t*)dtfirst(root);np;np=(Namval_t*)dtnext(root,np))
-	{
-                if(!nv_isnull(np) || np->nvfun || nv_isattr(np,~NV_NOFREE))
-		{
-			if(!first)
-				sfputc(out,' ');
-			else
-				first = 0;
-			sfputr(out,np->nvname,-1);
-		}
-	}
-	sfputc(out,0);
-	if(base)
-		dtview(root,base);
-	return((char*)out->_data);
-}
-#endif
-
 struct optimize
 {
 	Namfun_t	hdr;

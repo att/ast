@@ -63,7 +63,6 @@
 #	define iswprint(c)	((c&~0177) || isprint(c))
 #endif
 static int _isalph(int);
-static int _ismetach(int);
 static int _isblank(int);
 #undef  isblank
 #define isblank(v)	_isblank(virtual[v])
@@ -214,7 +213,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit)
 		vp->direction = -1;
 		vp->ed = ed;
 	}
-	
+
 	/*** setup prompt ***/
 
 	Prompt = prompt;
@@ -1094,7 +1093,7 @@ static void endword(Vi_t *vp, int nwords, int cmd)
 		if( !isblank(tcur_virt) && tcur_virt<=last_virt )
 			++tcur_virt;
 		while( isblank(tcur_virt) && tcur_virt<=last_virt )
-			++tcur_virt;	
+			++tcur_virt;
 		if( cmd == 'E' )
 		{
 			while( !isblank(tcur_virt) && tcur_virt<=last_virt )
@@ -1332,7 +1331,7 @@ static void vigetline(Vi_t* vp,int mode)
 			break;
 
 		case UWERASE:		/** delete back word **/
-			if( cur_virt > first_virt && 
+			if( cur_virt > first_virt &&
 				!isblank(cur_virt) &&
 				!ispunct(virtual[cur_virt]) &&
 				isblank(cur_virt-1) )
@@ -2212,7 +2211,7 @@ static int textmod(Vi_t *vp,int c, int mode)
 	genchar *savep;
 	int	ch;
 
-	if(mode && (fold(vp->lastmotion)=='F' || fold(vp->lastmotion)=='T')) 
+	if(mode && (fold(vp->lastmotion)=='F' || fold(vp->lastmotion)=='T'))
 		vp->lastmotion = ';';
 
 	if( fold(c) == 'P' )
@@ -2536,25 +2535,20 @@ yankeol:
 }
 
 
-    static int _isalph(int v)
-    {
+static int _isalph(int v)
+{
 #ifdef _lib_iswalnum
 	return(iswalnum(v) || v=='_');
 #else
 	return((v&~STRIP) || isalnum(v) || v=='_');
 #endif
-    }
+}
 
 
-    static int _isblank(int v)
-    {
+static int _isblank(int v)
+{
 	return((v&~STRIP)==0 && isspace(v));
-    }
-
-    static int _ismetach(int v)
-    {
-	return((v&~STRIP)==0 && ismeta(v));
-    }
+}
 
 /*
  * get a character, after ^V processing

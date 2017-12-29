@@ -252,13 +252,6 @@ static bool keywords(Sfio_t *out)
 	return(true);
 }
 
-static bool evaluate(struct Complete *comp, Sfio_t *out, const char *str)
-{
-	Sfio_t *in = sfopen((Sfio_t*)0,str,"s");
-	int n = sh_eval(comp->sh,in,0);
-	return(n==0);
-}
-
 /* write wordlist to stack splitting on IFS, one word per line */
 static gen_wordlist(Sfio_t *iop, const char *word)
 {

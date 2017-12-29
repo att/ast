@@ -1377,39 +1377,6 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 }
 
 /*
- * return read stream to native getconf utility
- */
-
-static Sfio_t*
-nativeconf(Proc_t** pp, const char* operand)
-{
-#ifdef _pth_getconf
-	Sfio_t*		sp;
-	char*		cmd[3];
-	long		ops[2];
-
-#if DEBUG_astconf
-	error(-6, "astconf defer %s %s", _pth_getconf, operand);
-#endif
-	cmd[0] = (char*)state.id;
-	cmd[1] = (char*)operand;
-	cmd[2] = 0;
-	ops[0] = PROC_FD_DUP(open("/dev/null",O_WRONLY,0), 2, PROC_FD_CHILD);
-	ops[1] = 0;
-	if (*pp = procopen(_pth_getconf, cmd, environ, ops, PROC_READ))
-	{
-		if (sp = sfnew(NiL, NiL, SF_UNBOUND, (*pp)->rfd, SF_READ))
-		{
-			sfdisc(sp, SF_POPDISC);
-			return sp;
-		}
-		procclose(*pp);
-	}
-#endif
-	return 0;
-}
-
-/*
  * value==0 gets value for name
  * value!=0 sets value for name and returns previous value
  * path==0 implies path=="/"

@@ -65,7 +65,6 @@ struct tdata
 	int		noref;
 };
 
-
 static int	print_namval(Sfio_t*, Namval_t*, int, struct tdata*);
 static void	print_attribute(Namval_t*,void*);
 static void	print_all(Sfio_t*, Dt_t*, struct tdata*);
@@ -74,12 +73,6 @@ static int	unall(int, char**, Dt_t*, Shell_t*);
 static int	setall(char**, int, Dt_t*, struct tdata*);
 static void	pushname(Namval_t*,void*);
 static void(*nullscan)(Namval_t*,void*);
-
-static Namval_t *load_class(const char *name)
-{
-	errormsg(SH_DICT,ERROR_exit(1),"%s: type not loadable",name);
-	return(0);
-}
 
 /*
  * Note export and readonly are the same
