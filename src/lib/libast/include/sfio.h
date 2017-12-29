@@ -214,10 +214,6 @@ extern Sfio_t*		sfstdin;
 extern Sfio_t*		sfstdout;
 extern Sfio_t*		sfstderr;
 
-#if _UWIN
-#undef	extern
-#endif
-
 extern Sfio_t		_Sfstdin;
 extern Sfio_t		_Sfstdout;
 extern Sfio_t		_Sfstderr;

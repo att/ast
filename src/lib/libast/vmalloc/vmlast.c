@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmlast(){}
 
@@ -65,9 +65,9 @@ int		local;
 
 	last->last = NIL(Vmuchar_t*); /* wipe record of last allocation */
 
-	if(last->size < size ) 
+	if(last->size < size )
 	{	if((blk = last->blk) ) /* try extending in place */
-		{	blksz = SIZE(blk)&~BITS; 
+		{	blksz = SIZE(blk)&~BITS;
 			sz = blksz + (size - last->size);
 			if((blk = (*_Vmsegalloc)(vm, blk, sz, VM_SEGALL|VM_SEGEXTEND)) )
 			{	/**/DEBUG_ASSERT(blk == last->blk);
@@ -86,11 +86,11 @@ int		local;
 	}
 
 	if(last->size >= size) /* allocate memory */
-	{	last->last = last->data;	
+	{	last->last = last->data;
 		last->data += size;
 		last->size -= size;
 	}
-	
+
 	if(last->last && !local && _Vmtrace)
 		(*_Vmtrace)(vm, NIL(Vmuchar_t*), last->last, origsz, 0);
 
@@ -218,7 +218,7 @@ int		local;
 				last->size -= size-oldz;
 			}
 		}
-	}	
+	}
 
 	if(data && !local && _Vmtrace)
 		(*_Vmtrace)(vm, (Vmuchar_t*)origdt, (Vmuchar_t*)data, origsz, 0);
@@ -254,7 +254,7 @@ int		local;
 
 	if((data = (Vmuchar_t*)KPVALLOC(vm, size + align, lastalloc)) )
 	{	if((algn = (size_t)(VMLONG(data)%align)) != 0)
-		{	/* move forward for required alignment */	
+		{	/* move forward for required alignment */
 			data += align - algn; /**/DEBUG_ASSERT((VMLONG(data)%align) == 0);
 			last->last = data;
 		}

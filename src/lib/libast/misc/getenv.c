@@ -21,13 +21,13 @@
 ***********************************************************************/
 #pragma prototyped
 
-#if _UWIN && __STDPP__
+#if __STDPP__
 __STDPP__directive pragma pp:hide getenv
 #endif
 
 #include "intercepts.h"
 
-#if _UWIN && __STDPP__
+#if __STDPP__
 __STDPP__directive pragma pp:nohide getenv
 #endif
 
@@ -45,7 +45,7 @@ Intercepts_t	intercepts
 		= { 0 };
 #endif
 
-#if _UWIN && !defined(getenv)
+#if !defined(getenv)
 
 #include <windows.h>
 
@@ -93,7 +93,7 @@ default_getenv(const char* name)
 extern char*
 getenv(const char* name)
 {
-#if _UWIN && !defined(getenv) /* for ast54 compatibility */
+#if !defined(getenv) /* for ast54 compatibility */
 	HANDLE		dll;
 
 	static char*	(*posix_getenv)(const char*);

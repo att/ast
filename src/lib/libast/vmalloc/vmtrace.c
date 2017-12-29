@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmtrace(){}
 
@@ -95,7 +95,7 @@ size_t		align;		/* alignment			*/
 		{	char*	f;
 			for(f = bufp + strlen(file); f > file; --f)
 				if(f[-1] == '/' || f[-1] == '\\')
-					break; 
+					break;
 			file = f;
 		}
 

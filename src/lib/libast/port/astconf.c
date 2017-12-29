@@ -642,11 +642,7 @@ format(Feature_t* fp, const char* path, const char* value, unsigned int flags, E
 {
 	Feature_t*	sp;
 	int		n;
-#if _UWIN && ( _X86_ || _X64_ )
-	struct stat		st;
-#else
 	static struct utsname	uts;
-#endif
 
 #if DEBUG_astconf
 	error(-6, "astconf format name=%s path=%s value=%s flags=%04x fp=%p%s", fp->name, path, value, flags, fp, state.synthesizing ? " SYNTHESIZING" : "");
@@ -659,31 +655,10 @@ format(Feature_t* fp, const char* path, const char* value, unsigned int flags, E
 	{
 
 	case OP_architecture:
-#if _UWIN && ( _X86_ || _X64_ )
-		if (!stat("/", &st))
-		{
-			if (st.st_ino == 64)
-			{
-				fp->value = "x64";
-				break;
-			}
-			if (st.st_ino == 32)
-			{
-				fp->value = "x86";
-				break;
-			}
-		}
-#if _X64_
-		fp->value = "x64";
-#else
-		fp->value = "x86";
-#endif
-#else
 		if (!uname(&uts))
 			return fp->value = uts.machine;
 		if (!(fp->value = getenv("HOSTNAME")))
 			fp->value = "unknown";
-#endif
 		break;
 
 	case OP_conformance:
@@ -1684,7 +1659,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 						sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), f, sizeof(prefix[look.standard].name), prefix[look.standard].name, look.section, call, 0, "N", s);
 					}
 					else if (flags & ASTCONF_parse)
-						sfprintf(sp, "%s %s - %s\n", state.id, f, s); 
+						sfprintf(sp, "%s %s - %s\n", state.id, f, s);
 					else
 						sfprintf(sp, "%s=%s\n", f, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 				}
@@ -1732,7 +1707,7 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 				sfprintf(sp, "%*s %*s %d %2s %4d %5s %s\n", sizeof(conf[0].name), fp->name, sizeof(prefix[fp->standard].name), prefix[fp->standard].name, 1, call, 0, flg, s);
 			}
 			else if (flags & ASTCONF_parse)
-				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL)); 
+				sfprintf(sp, "%s %s - %s\n", state.id, (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL));
 			else
 				sfprintf(sp, "%s=%s\n", (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name, (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
 		}

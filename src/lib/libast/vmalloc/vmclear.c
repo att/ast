@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmclear(){}
 
@@ -52,7 +52,7 @@ Vmalloc_t*	vm;
 
 	/* memory obtained from discipline can be deallocated */
 	for(; seg; seg = next)
-	{	next = seg->next; 
+	{	next = seg->next;
 		(void)(*disc->memoryf)(vm, seg->base, seg->size, 0, disc);
 	}
 

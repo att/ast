@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmclose(){}
 
@@ -64,7 +64,7 @@ Vmalloc_t*	vm;
 	mode = vmdt->mode; /* remember this in case it gets destroyed below */
 	if(rv == 0 ) /* memory obtained from discipline can be deallocated */
 	{	for(seg = vmdt->seg; seg; seg = next)
-		{	next = seg->next; 
+		{	next = seg->next;
 			(void)(*disc->memoryf)(vm, seg->base, seg->size, 0, disc);
 		}
 	}

@@ -18,7 +18,7 @@
 *                                                                      *
 ***********************************************************************/
 #pragma prototyped
-                  
+
 /*
  * Glenn Fowler
  * AT&T Research
@@ -870,11 +870,7 @@ csspoll(unsigned long ms, unsigned long flags)
 						goto reject;
 					*s = '/';
 					for (n = 0; n < elementsof(css->fid); n++)
-#if _UWIN
-						if (css->fid[n].dev == st.st_dev)
-#else
 						if (css->fid[n].dev == st.st_dev && css->fid[n].ino == st.st_ino)
-#endif
 							break;
 					if (n >= elementsof(css->fid))
 						goto reject;

@@ -29,12 +29,6 @@
 
 #include <ast.h>
 
-#if _UWIN
-
-NoN(fgetcwd)
-
-#else
-
 #include <ast_dir.h>
 #include <error.h>
 #include <fs3d.h>
@@ -47,7 +41,7 @@ NoN(fgetcwd)
 
 /*
  * return a pointer to the absolute path name of fd
- * fd must be an fd to a directory open for read 
+ * fd must be an fd to a directory open for read
  * the resulting path may be longer than PATH_MAX
  *
  * a few environment variables are checked before the search algorithm
@@ -244,5 +238,3 @@ fgetcwd(int fd, char* buf, size_t len)
 		fs3d(f);
 	return 0;
 }
-
-#endif

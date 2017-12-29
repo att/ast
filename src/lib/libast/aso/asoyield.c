@@ -23,7 +23,7 @@
 
 #include "asohdr.h"
 
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 NoN(asolock)
 

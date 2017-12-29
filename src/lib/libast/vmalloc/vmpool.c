@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmpool(){}
 
@@ -144,7 +144,7 @@ int		local;
 		if(asocasptr(&pool->free, free, pl) == free)
 			break;
 	}
-		
+
 	if(!local && _Vmtrace)
 		(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), pool->size, 0);
 

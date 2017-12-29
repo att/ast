@@ -32,15 +32,13 @@
 
 #if _PACKAGE_ast
 
-#if !_UWIN
 #define getpagesize		______getpagesize
 #define _npt_getpagesize	1
-#endif
 
 #include	<ast.h>
 
 #if _npt_getpagesize
-#undef				getpagesize
+#undef	getpagesize
 #endif
 
 #else
@@ -49,9 +47,7 @@
 #include	<sys/types.h>
 #include	<unistd.h>
 
-#if !_UWIN
 #define _npt_getpagesize	1
-#endif
 
 #ifndef O_CLOEXEC
 #ifdef O_CLOEXEC
@@ -141,7 +137,7 @@ typedef struct _seg_s	Seg_t;	/* the type of a raw memory segment	*/
 
 #define VM_GETMEMORY	(VM_anon|VM_break|VM_native|VM_safe|VM_zero)
 
-#if _UWIN
+#if __CYGWIN__
 #include <ast_windows.h>
 #endif
 
@@ -257,7 +253,7 @@ union _head_u
 {	Vmuchar_t	data[HEADSIZE];	/* to standardize size	*/
 	struct _head_s	head;
 };
-	
+
 struct _body_s /* Note that self is actually at end of block */
 {	Block_t*	link;	/* next in link list		*/
 	Block_t*	rght;	/* right child in free tree	*/
@@ -391,8 +387,8 @@ typedef struct _vmextern_s
 	ssize_t			(*vm_lcm)_ARG_((ssize_t, ssize_t));
 	void			(*vm_trace)_ARG_((Vmalloc_t*, Vmuchar_t*, Vmuchar_t*, size_t, size_t));
 	int			(*vm_chkmem)_ARG_((Vmuchar_t*, size_t));
-	Vmuchar_t*		vm_memmin;   /* address lower abound	*/ 
-	Vmuchar_t*		vm_memmax;   /* address upper abound	*/ 
+	Vmuchar_t*		vm_memmin;   /* address lower abound	*/
+	Vmuchar_t*		vm_memmax;   /* address upper abound	*/
 	Vmuchar_t*		vm_memaddr;  /* vmmaddress() memory	*/
 	Vmuchar_t*		vm_memsbrk;  /* Vmdcsystem's memory	*/
 	Vmhold_t*		vm_hold;     /* list to hold regions	*/

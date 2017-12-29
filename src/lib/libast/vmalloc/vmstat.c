@@ -19,7 +19,7 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 void _STUB_vmstat(){}
 
@@ -53,7 +53,7 @@ Vmstat_t*	st;
 	if(!vm->meth.meth)
 		rv = -1;
 	else if((rv = (*vm->meth.statf)(vm, st, extra != 0)) >= 0 )
-	{	
+	{
 		st->extent += extra;
 		debug_sprintf(st->mesg, sizeof(st->mesg), "region %p size=%zu segs=%zu packs=%zu busy=%zu%% cache=%zu/%zu", vm, st->extent, st->n_seg, st->n_pack, (st->s_busy * 100) / st->extent, st->s_cache, st->n_cache);
 		st->mode = vm->data->mode;

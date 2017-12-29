@@ -65,10 +65,6 @@ pathkey_20100601(const char* lang, const char* tool, const char* apath, char* ke
 	char*			env[elementsof(usr) + 3];
 	char*			ver[2];
 	char			tmp[PATH_MAX];
-#if _UWIN
-	struct stat		st;
-#endif
-
 	static char		let[] = "ABCDEFGHIJKLMNOP";
 
 	if (!key)
@@ -129,15 +125,6 @@ pathkey_20100601(const char* lang, const char* tool, const char* apath, char* ke
 #else
 		if ((k = getenv("VIRTUAL_ROOT")) && *k == '/')
 		{
-			n = memsum(k, strlen(k), n);
-			if (attr)
-				attr = stpcpy(attr, k);
-		}
-#endif
-#if _UWIN
-		if (!stat("/", &st) && st.st_ino == 64)
-		{
-			k = "/64";
 			n = memsum(k, strlen(k), n);
 			if (attr)
 				attr = stpcpy(attr, k);

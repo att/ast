@@ -24,7 +24,7 @@
 #include "asohdr.h"
 #include "ast_aso.h"
 
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 NoN(aso)
 
@@ -87,7 +87,7 @@ typedef union
 
 /*
  * used only when no cas intrinsic is available
- * should work most of the time in a single threaded process 
+ * should work most of the time in a single threaded process
  * with no multi-process shared mem access and low freq signals
  */
 

@@ -23,7 +23,7 @@
 
 #include "asohdr.h"
 
-#if defined(_UWIN) && defined(_BLD_ast)
+#if !defined(_BLD_ast)
 
 NoN(asolock)
 
@@ -32,7 +32,7 @@ NoN(asolock)
 int
 asolock(unsigned int volatile* lock, unsigned int key, int type)
 {
-	if (key == 0 ) 
+	if (key == 0 )
 		return -1;
 	else if (type & ASO_TRYLOCK)
 		return asocasint(lock, 0, key) == 0 ? 1 : -1;

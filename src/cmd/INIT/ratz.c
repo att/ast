@@ -93,7 +93,7 @@ static const char usage[] =
 
 #else
 
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && (__CYGWIN__)
 #define _WINIX		1
 #endif
 
@@ -181,7 +181,7 @@ static const char usage[] =
 #define z_off64_t	int64_t
 #endif
 #else
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && (__CYGWIN__)
 #define _WINIX		1
 #endif
 #endif
@@ -5156,7 +5156,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
