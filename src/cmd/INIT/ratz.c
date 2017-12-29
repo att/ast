@@ -363,18 +363,6 @@ static const char usage[] =
 #  endif
 #endif
 
-#if defined (__BEOS__)
-#  ifdef ZLIB_DLL
-#    ifdef ZLIB_INTERNAL
-#      define ZEXPORT   __declspec(dllexport)
-#      define ZEXPORTVA __declspec(dllexport)
-#    else
-#      define ZEXPORT   __declspec(dllimport)
-#      define ZEXPORTVA __declspec(dllimport)
-#    endif
-#  endif
-#endif
-
 #ifndef ZEXTERN
 #  define ZEXTERN extern
 #endif
@@ -685,10 +673,6 @@ typedef unsigned long  ulg;
 
 #ifdef __50SERIES /* Prime/PRIMOS */
 #  define OS_CODE  0x0f
-#endif
-
-#if defined(_BEOS_) || defined(RISCOS)
-#  define fdopen(fd,mode) NULL /* No fdopen() */
 #endif
 
 #if (defined(_MSC_VER) && (_MSC_VER > 600))
@@ -5156,7 +5140,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
