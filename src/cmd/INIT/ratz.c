@@ -641,10 +641,6 @@ typedef unsigned long  ulg;
 #  endif
 #endif
 
-#ifdef AMIGA
-#  define OS_CODE  0x01
-#endif
-
 #if defined(VAXC) || defined(VMS)
 #  define OS_CODE  0x02
 #  define F_OPEN(name, mode) \
@@ -5156,7 +5152,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
