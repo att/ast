@@ -736,9 +736,6 @@ typedef unsigned long  ulg;
 #      define vsnprintf _vsnprintf
 #    endif
 #  endif
-#  ifdef __SASC
-#    define NO_vsnprintf
-#  endif
 #endif
 #ifdef VMS
 #  define NO_vsnprintf
