@@ -93,7 +93,7 @@ static const char usage[] =
 
 #else
 
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && (__CYGWIN__)
 #define _WINIX		1
 #endif
 
@@ -181,7 +181,7 @@ static const char usage[] =
 #define z_off64_t	int64_t
 #endif
 #else
-#if !defined(_WINIX) && (_UWIN || __CYGWIN__ || __EMX__)
+#if !defined(_WINIX) && (__CYGWIN__)
 #define _WINIX		1
 #endif
 #endif
@@ -191,37 +191,10 @@ static const char usage[] =
 #define ZEXPORT
 #endif
 
-#if defined(__MSDOS__) && !defined(MSDOS)
-#  define MSDOS
-#endif
-#if (defined(OS_2) || defined(__OS2__)) && !defined(OS2)
-#  define OS2
-#endif
-#if defined(_WINDOWS) && !defined(WINDOWS)
-#  define WINDOWS
-#endif
 #if defined(_WIN32) || defined(_WIN32_WCE) || defined(__WIN32__)
 #  ifndef WIN32
 #    define WIN32
 #  endif
-#endif
-#if (defined(MSDOS) || defined(OS2) || defined(WINDOWS)) && !defined(WIN32)
-#  if !defined(__GNUC__) && !defined(__FLAT__) && !defined(__386__)
-#    ifndef SYS16BIT
-#      define SYS16BIT
-#    endif
-#  endif
-#endif
-
-/*
- * Compile with -DMAXSEG_64K if the alloc function cannot allocate more
- * than 64k bytes at a time (needed on systems with 16-bit int).
- */
-#ifdef SYS16BIT
-#  define MAXSEG_64K
-#endif
-#ifdef MSDOS
-#  define UNALIGNED_OK
 #endif
 
 #ifdef __STDC_VERSION__
@@ -240,10 +213,10 @@ static const char usage[] =
 #if !defined(STDC) && (defined(__GNUC__) || defined(__BORLANDC__))
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(MSDOS) || defined(WINDOWS) || defined(WIN32))
+#if !defined(STDC) && defined(WIN32)
 #  define STDC
 #endif
-#if !defined(STDC) && (defined(OS2) || defined(__HOS_AIX__))
+#if !defined(STDC) && defined(__HOS_AIX__)
 #  define STDC
 #endif
 
@@ -255,11 +228,6 @@ static const char usage[] =
 #  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
 #    define const       /* note: need a more gentle solution here */
 #  endif
-#endif
-
-/* Some Mac compilers merge all .h files incorrectly: */
-#if defined(__MWERKS__)||defined(applec)||defined(THINK_C)||defined(__SC__)
-#  define NO_DUMMY_DECL
 #endif
 
 /* Maximum value for memLevel in deflateInit2 */
@@ -303,34 +271,7 @@ static const char usage[] =
 #  endif
 #endif
 
-/* The following definitions for FAR are needed only for MSDOS mixed
- * model programming (small or medium model with some far allocations).
- * This was tested only with MSC; for other MSDOS compilers you may have
- * to define NO_MEMCPY in zutil.h.  If you don't need the mixed model,
- * just define FAR to be empty.
- */
-#ifdef SYS16BIT
-#  if defined(M_I86SM) || defined(M_I86MM)
-     /* MSC small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef _MSC_VER
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#  if (defined(__SMALL__) || defined(__MEDIUM__))
-     /* Turbo C small or medium model */
-#    define SMALL_MEDIUM
-#    ifdef __BORLANDC__
-#      define FAR _far
-#    else
-#      define FAR far
-#    endif
-#  endif
-#endif
-
-#if defined(WINDOWS) || defined(WIN32)
+#if defined(WIN32)
    /* If building or using zlib as a DLL, define ZLIB_DLL.
     * This is not mandatory, but it offers a little performance increase.
     */
@@ -359,18 +300,6 @@ static const char usage[] =
 #      define ZEXPORTVA WINAPIV
 #    else
 #      define ZEXPORTVA FAR CDECL
-#    endif
-#  endif
-#endif
-
-#if defined (__BEOS__)
-#  ifdef ZLIB_DLL
-#    ifdef ZLIB_INTERNAL
-#      define ZEXPORT   __declspec(dllexport)
-#      define ZEXPORTVA __declspec(dllexport)
-#    else
-#      define ZEXPORT   __declspec(dllimport)
-#      define ZEXPORTVA __declspec(dllimport)
 #    endif
 #  endif
 #endif
@@ -419,9 +348,6 @@ typedef uLong FAR uLongf;
 #if HAVE_UNISTD_H
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */
-#  ifdef VMS
-#    include <unixio.h>   /* for off_t */
-#  endif
 #  define z_off_t off_t
 #endif
 #ifndef SEEK_SET
@@ -626,69 +552,15 @@ typedef unsigned long  ulg;
 
         /* target dependencies */
 
-#if defined(MSDOS) || (defined(WINDOWS) && !defined(WIN32))
-#  define OS_CODE  0x00
-#  if defined(__TURBOC__) || defined(__BORLANDC__)
-#    if(__STDC__ == 1) && (defined(__LARGE__) || defined(__COMPACT__))
-       /* Allow compilation with ANSI keywords only enabled */
-       void _Cdecl farfree( void *block );
-       void *_Cdecl farmalloc( unsigned long nbytes );
-#    else
-#      include <alloc.h>
-#    endif
-#  else /* MSC or DJGPP */
-#    include <malloc.h>
-#  endif
-#endif
-
-#ifdef AMIGA
-#  define OS_CODE  0x01
-#endif
-
-#if defined(VAXC) || defined(VMS)
-#  define OS_CODE  0x02
-#  define F_OPEN(name, mode) \
-     fopen((name), (mode), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
-#endif
-
-#if defined(ATARI) || defined(atarist)
-#  define OS_CODE  0x05
-#endif
-
-#ifdef OS2
-#  define OS_CODE  0x06
-#  ifdef M_I86
-     #include <malloc.h>
-#  endif
-#endif
-
 #if defined(MACOS) || defined(TARGET_OS_MAC)
 #  define OS_CODE  0x07
-#  if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
-#    include <unix.h> /* for fdopen */
-#  else
-#    ifndef fdopen
-#      define fdopen(fd,mode) NULL /* No fdopen() */
-#    endif
-#  endif
-#endif
-
-#ifdef TOPS20
-#  define OS_CODE  0x0a
+#  include <stdio.h> /* for fdopen */
 #endif
 
 #ifdef WIN32
 #  ifndef __CYGWIN__  /* Cygwin is Unix, not Win32 */
 #    define OS_CODE  0x0b
 #  endif
-#endif
-
-#ifdef __50SERIES /* Prime/PRIMOS */
-#  define OS_CODE  0x0f
-#endif
-
-#if defined(_BEOS_) || defined(RISCOS)
-#  define fdopen(fd,mode) NULL /* No fdopen() */
 #endif
 
 #if (defined(_MSC_VER) && (_MSC_VER > 600))
@@ -715,7 +587,7 @@ typedef unsigned long  ulg;
 
          /* functions */
 
-#if defined(STDC99) || (defined(__TURBOC__) && __TURBOC__ >= 0x550)
+#if defined(STDC99)
 #  ifndef HAVE_VSNPRINTF
 #    define HAVE_VSNPRINTF
 #  endif
@@ -726,51 +598,21 @@ typedef unsigned long  ulg;
 #  endif
 #endif
 #ifndef HAVE_VSNPRINTF
-#  ifdef MSDOS
-     /* vsnprintf may exist on some MS-DOS compilers (DJGPP?),
-        but for now we just assume it doesn't. */
-#    define NO_vsnprintf
-#  endif
-#  ifdef __TURBOC__
-#    define NO_vsnprintf
-#  endif
 #  ifdef WIN32
      /* In Win32, vsnprintf is available as the "non-ANSI" _vsnprintf. */
 #    if !defined(vsnprintf) && !defined(NO_vsnprintf)
 #      define vsnprintf _vsnprintf
 #    endif
 #  endif
-#  ifdef __SASC
-#    define NO_vsnprintf
-#  endif
-#endif
-#ifdef VMS
-#  define NO_vsnprintf
 #endif
 
-#if defined(pyr)
-#  define NO_MEMCPY
-#endif
-#if defined(SMALL_MEDIUM) && !defined(_MSC_VER) && !defined(__SC__)
- /* Use our own functions for small and medium model with MSC <= 5.0.
-  * You may have to use the same strategy for Borland C (untested).
-  * The __SC__ check is for Symantec.
-  */
-#  define NO_MEMCPY
-#endif
 #if defined(STDC) && !defined(HAVE_MEMCPY) && !defined(NO_MEMCPY)
 #  define HAVE_MEMCPY
 #endif
 #ifdef HAVE_MEMCPY
-#  ifdef SMALL_MEDIUM /* MSDOS small or medium model */
-#    define zmemcpy _fmemcpy
-#    define zmemcmp _fmemcmp
-#    define zmemzero(dest, len) _fmemset(dest, 0, len)
-#  else
-#    define zmemcpy memcpy
-#    define zmemcmp memcmp
-#    define zmemzero(dest, len) memset(dest, 0, len)
-#  endif
+#  define zmemcpy memcpy
+#  define zmemcmp memcmp
+#  define zmemzero(dest, len) memset(dest, 0, len)
 #else
    extern void zmemcpy  OF((Bytef* dest, const Bytef* source, uInt len));
    extern int  zmemcmp  OF((const Bytef* s1, const Bytef* s2, uInt len));
@@ -850,113 +692,6 @@ void zmemzero(dest, len)
     } while (--len != 0);
 }
 #endif
-
-
-#ifdef SYS16BIT
-
-#ifdef __TURBOC__
-/* Turbo C in 16-bit mode */
-
-#  define MY_ZCALLOC
-
-/* Turbo C malloc() does not allow dynamic allocation of 64K bytes
- * and farmalloc(64K) returns a pointer with an offset of 8, so we
- * must fix the pointer. Warning: the pointer must be put back to its
- * original form in order to free it, use zcfree().
- */
-
-#define MAX_PTR 10
-/* 10*64K = 640K */
-
-local int next_ptr = 0;
-
-typedef struct ptr_table_s {
-    voidpf org_ptr;
-    voidpf new_ptr;
-} ptr_table;
-
-local ptr_table table[MAX_PTR];
-/* This table is used to remember the original form of pointers
- * to large buffers (64K). Such pointers are normalized with a zero offset.
- * Since MSDOS is not a preemptive multitasking OS, this table is not
- * protected from concurrent access. This hack doesn't work anyway on
- * a protected system like OS/2. Use Microsoft C instead.
- */
-
-voidpf zcalloc (voidpf opaque, unsigned items, unsigned size)
-{
-    voidpf buf = opaque; /* just to make some compilers happy */
-    ulg bsize = (ulg)items*size;
-
-    /* If we allocate less than 65520 bytes, we assume that farmalloc
-     * will return a usable pointer which doesn't have to be normalized.
-     */
-    if (bsize < 65520L) {
-        buf = farmalloc(bsize);
-        if (*(ush*)&buf != 0) return buf;
-    } else {
-        buf = farmalloc(bsize + 16L);
-    }
-    if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
-    table[next_ptr].org_ptr = buf;
-
-    /* Normalize the pointer to seg:0 */
-    *((ush*)&buf+1) += ((ush)((uch*)buf-0) + 15) >> 4;
-    *(ush*)&buf = 0;
-    table[next_ptr++].new_ptr = buf;
-    return buf;
-}
-
-void  zcfree (voidpf opaque, voidpf ptr)
-{
-    int n;
-    if (*(ush*)&ptr != 0) { /* object < 64K */
-        farfree(ptr);
-        return;
-    }
-    /* Find the original pointer */
-    for (n = 0; n < next_ptr; n++) {
-        if (ptr != table[n].new_ptr) continue;
-
-        farfree(table[n].org_ptr);
-        while (++n < next_ptr) {
-            table[n-1] = table[n];
-        }
-        next_ptr--;
-        return;
-    }
-    ptr = opaque; /* just to make some compilers happy */
-    Assert(0, "zcfree: ptr not found");
-}
-
-#endif /* __TURBOC__ */
-
-
-#ifdef M_I86
-/* Microsoft C in 16-bit mode */
-
-#  define MY_ZCALLOC
-
-#if (!defined(_MSC_VER) || (_MSC_VER <= 600))
-#  define _halloc  halloc
-#  define _hfree   hfree
-#endif
-
-voidpf zcalloc (voidpf opaque, unsigned items, unsigned size)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    return _halloc((long)items, size);
-}
-
-void  zcfree (voidpf opaque, voidpf ptr)
-{
-    if (opaque) opaque = 0; /* to make compiler happy */
-    _hfree(ptr);
-}
-
-#endif /* M_I86 */
-
-#endif /* SYS16BIT */
 
 
 #ifndef MY_ZCALLOC /* Any system without a special alloc function */
@@ -5156,7 +4891,7 @@ char**	argv;
 						break;
 					}
 					printf("%c", c);
-					m = 0400; 
+					m = 0400;
 					while (m)
 					{
 						printf("%c", (n & m) ? 'r' : '-');
