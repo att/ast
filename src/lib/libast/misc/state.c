@@ -21,8 +21,6 @@
 ***********************************************************************/
 #pragma prototyped
 
-static const char id[] = "\n@(#)$Id: ast (AT&T Research) 2013-11-26 $\0\n";
-
 #include <ast.h>
 
 #undef	strcmp

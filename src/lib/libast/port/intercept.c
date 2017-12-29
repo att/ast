@@ -575,7 +575,6 @@ ast_fcntl(int fd, int op, ...)
 	void*	p;
 	long	l;
 	int	r;
-	int	c;
 	va_list	ap;
 
 	va_start(ap, op);
@@ -710,7 +709,6 @@ ast_mkdir(const char* path, mode_t mode)
 int
 ast_open(const char* path, int flags, ...)
 {
-	int	r;
 	mode_t	mode;
 	va_list	ap;
 

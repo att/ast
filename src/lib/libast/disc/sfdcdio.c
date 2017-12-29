@@ -137,8 +137,6 @@ Void_t*		data;
 Sfdisc_t*	disc;
 #endif
 {
-	Direct_t*	di = (Direct_t*)disc;
-
 	if(type == SF_FINAL || type == SF_DPOP)
 	{
 #ifdef F_DIOINFO

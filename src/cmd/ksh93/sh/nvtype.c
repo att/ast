@@ -746,7 +746,7 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 			{
 				if(nv_isattr(bp->bltins[i],NV_OPTGET))
 					sfprintf(out,"\b%s.%s\b(3), ",np->nvname,bp->bnames[i]);
-                        }
+				}
 		}
 		return(0);
 	}
@@ -760,7 +760,7 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 			continue;
 		if(tp=nv_type(nq))
 		{
-			Namfun_t *pp = nv_hasdisc(nq,&type_disc);
+			nv_hasdisc(nq,&type_disc);
 			sfprintf(out,"\t[+%s?%s.\n",nq->nvname,tp->nvname);
 			n = strlen(nq->nvname);
 			while((cp=nv_namptr(dp->nodes,i+1)->nvname) && strncmp(cp,nq->nvname,n)==0 && cp[n]=='.')

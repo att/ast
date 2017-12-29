@@ -34,7 +34,7 @@
  *	if (flags&(PATH_DOTDOT|PATH_PHYSICAL)) then each .. checked for access
  *	if (flags&PATH_EXISTS) then path must exist at each component
  *	if (flags&PATH_VERIFIED(n)) then first n chars of path exist
- * 
+ *
  * longer pathname possible if (flags&PATH_PHYSICAL) involved
  * 0 returned on error and if (flags&(PATH_DOTDOT|PATH_EXISTS)) then canon
  * will contain the components following the failure point
@@ -246,7 +246,6 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 	int	dots;
 	char*		v;
 	char*		x;
-	char*		y;
 	char*		z;
 	char*		a;
 	char*		b;
@@ -257,8 +256,6 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 	int		oerrno;
 	int		inplace;
 	Pathdev_t	nodev;
-
-	static int	path_one_head_slash = -1;
 
 	oerrno = errno;
 	if (!dev)

@@ -81,7 +81,6 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 	int		oerrno;
 	struct stat	st;
 	Tv_t		now;
-	struct timespec	ts[2];
 	struct timeval	am[2];
 
 	oerrno = errno;
