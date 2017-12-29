@@ -222,10 +222,6 @@ static char *name_chtype(Namval_t *np, Namfun_t *fp)
 		sfprintf(shp->strbuf,"%s[%s].%s",cp,sub,np->nvname);
 	else
 		sfprintf(shp->strbuf,"%s.%s",cp,np->nvname);
-#if SHOPT_FIXEDARRAY
-	if((ap=nv_arrayptr(np)) && ap->fixed)
-		nv_arrfixed(np,shp->strbuf,1,(char*)0);
-#endif /* SHOPT_FIXEDARRAY */
 	shp->last_table = tp;
 	return(sfstruse(shp->strbuf));
 }
@@ -746,7 +742,7 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 			{
 				if(nv_isattr(bp->bltins[i],NV_OPTGET))
 					sfprintf(out,"\b%s.%s\b(3), ",np->nvname,bp->bnames[i]);
-                        }
+				}
 		}
 		return(0);
 	}
@@ -760,7 +756,7 @@ static int typeinfo(Opt_t* op, Sfio_t *out, const char *str, Optdisc_t *od)
 			continue;
 		if(tp=nv_type(nq))
 		{
-			Namfun_t *pp = nv_hasdisc(nq,&type_disc);
+			nv_hasdisc(nq,&type_disc);
 			sfprintf(out,"\t[+%s?%s.\n",nq->nvname,tp->nvname);
 			n = strlen(nq->nvname);
 			while((cp=nv_namptr(dp->nodes,i+1)->nvname) && strncmp(cp,nq->nvname,n)==0 && cp[n]=='.')

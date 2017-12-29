@@ -49,7 +49,7 @@ USAGE_LICENSE
 		"to be read from one of the active connections.  It is "
 		"called with the file descriptor number that has data "
 		"to be read.  If the function returns a non-zero "
-		"value, this connection will be closed.]" 
+		"value, this connection will be closed.]"
 	"[+close?This function is invoked when the connection is closed.]"
 	"}"
 "[+?If \avarname\a is unset, then all active connection, and the service "
@@ -208,7 +208,7 @@ static void process_stream(Sfio_t* iop)
 			close(fd);
 	}
 }
-				
+
 static int waitnotify(int fd, long timeout, int rw)
 {
 	Shell_t	*shp = sh_getinterp();
@@ -458,7 +458,7 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 		sp->fd = fd;
 	np = nv_open(var,shp->var_tree,NV_ARRAY|NV_VARNAME|NV_NOASSIGN);
 	sp->node = np;
-	nv_putval(np, path, 0); 
+	nv_putval(np, path, 0);
 	nv_stack(np, (Namfun_t*)sp);
 	service_add(sp);
 	return(0);
@@ -466,7 +466,6 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 
 int	b_eloop(int argc, char** argv, Shbltin_t *context)
 {
-	Shell_t	*shp = context->shp;
 	long	timeout = -1;
 	NOT_USED(argc);
 	for (;;)

@@ -280,44 +280,6 @@ restore(Spawnvex_t* vex, int i, int j, int fl)
 
 #endif
 
-/*
- * apply Spawnvex_t.flags
- */
-
-static void
-apply_flags(unsigned int flags)
-{
-	if (flags & SPAWN_DAEMON)
-	{
-#ifdef SIGHUP
-		signal(SIGHUP, SIG_IGN);
-#endif
-		signal(SIGTERM, SIG_IGN);
-#ifdef SIGTSTP
-		signal(SIGTSTP, SIG_IGN);
-#endif
-#ifdef SIGTTIN
-		signal(SIGTTIN, SIG_IGN);
-#endif
-#ifdef SIGTTOU
-		signal(SIGTTOU, SIG_IGN);
-#endif
-	}
-	if (flags & (SPAWN_BACKGROUND|SPAWN_DAEMON))
-	{
-		signal(SIGINT, SIG_IGN);
-#ifdef SIGQUIT
-		signal(SIGQUIT, SIG_IGN);
-#endif
-	}
-	if (flags & SPAWN_DAEMON)
-		setsid();
-#ifdef SIGCHLD
-	if (flags & SPAWN_ZOMBIE)
-		signal(SIGCHLD, SIG_IGN);
-#endif
-}
-
 Spawnvex_t*
 spawnvex_open(unsigned int flags)
 {
@@ -874,7 +836,6 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 #endif
     ))
 	{
-		pid_t			pgid;
 		int			n;
 		int			m;
 		Spawnvex_noexec_t	nx;
@@ -896,7 +857,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			msg[0] = msg[1] = -1;
 		}
 		else
- 		#if _lib_pipe2 
+ 		#if _lib_pipe2
  		    if (pipe2(msg, O_CLOEXEC) < 0)
 			    msg[0] = msg[1] = -1;
  		#else

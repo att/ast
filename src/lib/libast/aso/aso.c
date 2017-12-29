@@ -35,8 +35,6 @@
  * Glenn Fowler 2011-11-11
  */
 
-static const char	lib[] = "libast:aso";
-
 typedef union
 {
 	uint8_t			c[2];

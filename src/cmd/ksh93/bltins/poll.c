@@ -155,7 +155,7 @@ const char sh_optpoll[] =
 	"are available. A file descriptor for a socket that "
 	"is connecting asynchronously will indicate that it is ready "
 	"for writing, once a connection has been established.]"
- 
+
 "[+?Regular files always poll TRUE for reading and writing.]"
 
 "[e:eventarray]:[fdcount?Upon successful completion, an indexed array "
@@ -230,7 +230,7 @@ Namval_t *nv_open_fmt(Dt_t *dict, int flags, const char *namefmt, ...)
 	va_start(ap, namefmt);
 	vsnprintf(varnamebuff, sizeof(varnamebuff), namefmt, ap);
 	va_end(ap);
-	
+
 	return nv_open(varnamebuff, dict, flags);
 }
 
@@ -450,8 +450,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 	Sfio_t		*strstk		= NULL; /* stk object for memory allocations */
 	const char	*parrayname,		/* name of array with poll data */
 			*eventarrayname = NULL, /* name of array with indexes to results */
-			*subname,		/* current subscript */
-			*s;
+			*subname;		/* current subscript */
 	int		n;
 	nfds_t		numpollfd = 0;		/* number of entries to poll */
 	int		i,
@@ -460,9 +459,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 	char		buff[PATH_MAX*2+1];	/* fixme: theoretically enough to hold two variable names */
 	bool		ttyraw		= false;/* put ttys into raw more when polling */
 	bool		pollsfio	= true; /* should we ask sfio layer if it has data cached ? */
-	int		pi;			/* index for |pfnm| */
-	struct pollfd   *pollfd		= NULL,	/* data for poll(2) */
-			*currpollfd;		/* current |pollfd| we are working on */
+	struct pollfd   *pollfd		= NULL;	/* data for poll(2) */
 	struct pollstat *pollstat	= NULL,	/* context data from shell array */
 			*currps;		/* current |pollstat| we are working on */
 	int		retval		= 0;	/* return value of builtin */
@@ -471,7 +468,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 	{
 		case 't':
 			errno = 0;
-			timeout = strtod(opt_info.arg, (char **)NULL);	
+			timeout = strtod(opt_info.arg, (char **)NULL);
 			if (errno != 0)
 				errormsg(SH_DICT, ERROR_system(1), "%s: invalid timeout", opt_info.arg);
 
@@ -594,7 +591,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 		{
 			currps=&pollstat[i];
 			fd=pollfd[i].fd;
-			
+
 			currps->sfio.sfd=(fd>=0)?sh_fd2sfio(shp, fd):NULL;
 			currps->sfio.flags=0;
 			if (currps->sfio.sfd!=NULL)
@@ -681,7 +678,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 	 */
 	n = poll_loop(context, pollfd, numpollfd, timeout);
 
-	/* 
+	/*
 	 * ... and restore the tty's to "cooked" mode
 	 */
 	if (ttyraw)
@@ -726,7 +723,7 @@ int b_poll(int argc, char *argv[], Shbltin_t* context)
 			sh_trap(shp, buff, 0);
 		}
 	}
-	
+
 	goto done;
 
 done_error:
@@ -736,6 +733,6 @@ done:
 		nv_close(array_np);
 	if (strstk)
 		stkclose(strstk);
-	
+
 	return(retval);
 }

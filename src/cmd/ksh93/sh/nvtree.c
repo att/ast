@@ -375,7 +375,7 @@ char *nv_dirnext(void *dir)
 					else
 						root = (Dt_t*)np;
 					/* check for recursive walk */
-					for(save=dp; save;  save=save->prev) 
+					for(save=dp; save;  save=save->prev)
 					{
 						if(save->root==root)
 							break;
@@ -430,7 +430,7 @@ static void outtype(Namval_t *np, Namfun_t *fp, Sfio_t* out, const char *prefix)
 {
 	char *type=0;
 	Namval_t *tp = fp->type;
-	if(!tp && fp->disc && fp->disc->typef) 
+	if(!tp && fp->disc && fp->disc->typef)
 		tp = (*fp->disc->typef)(np,fp);
 	for(fp=fp->next;fp;fp=fp->next)
 	{
@@ -464,11 +464,8 @@ void nv_attribute(Namval_t *np,Sfio_t *out,char *prefix,int noname)
 	char *cp;
 	unsigned val,mask,attr;
 	char *ip=0;
-	Namfun_t *fp=0; 
+	Namfun_t *fp=0;
 	Namval_t *typep=0;
-#if SHOPT_FIXEDARRAY
-	int fixed=0;
-#endif /* SHOPT_FIXEDARRAY */
 	for(fp=np->nvfun;fp;fp=fp->next)
 	{
 		if((typep=fp->type) || (fp->disc && fp->disc->typef && (typep=(*fp->disc->typef)(np,fp))))
@@ -551,11 +548,6 @@ void nv_attribute(Namval_t *np,Sfio_t *out,char *prefix,int noname)
 						if(prefix && *prefix)
 							sfwrite(out,"-C ",3);
 					}
-#if SHOPT_FIXEDARRAY
-					if(ap && ap->fixed)
-						fixed++;
-					else
-#endif /* SHOPT_FIXEDARRAY */
 					if(ap && !array_assoc(ap) && (xp=(char**)(ap+1)) && *xp)
 						ip = nv_namptr(*xp,0)->nvname;
 				}
@@ -613,14 +605,6 @@ void nv_attribute(Namval_t *np,Sfio_t *out,char *prefix,int noname)
 			outtype(np,fp,out,prefix);
 		if(noname)
 			return;
-#if xSHOPT_FIXEDARRAY
-		if(fixed)
-		{
-			sfprintf(out,"%s",nv_name(np));
-			nv_arrfixed(np,out,0,(char*)0);
-			sfputc(out,';');
-		}
-#endif /* SHOPT_FIXEDARRAY */
 		sfputr(out,nv_name(np),'\n');
 	}
 }
@@ -913,7 +897,6 @@ static void outval(char *name, const char *vname, struct Walk *wp)
 		isarray=1;
 		if(array_elem(nv_arrayptr(np))==0)
 		{
-			Namval_t *mp;
 			isarray=2;
 			if(tp  && (last_table->nvname[0]!='_' || last_table->nvname[1]))
 				return;
@@ -950,20 +933,11 @@ static void outval(char *name, const char *vname, struct Walk *wp)
 	{
 		if(*name!='.')
 		{
-			Namarr_t *ap;
 			if(!json)
 				nv_attribute(np,wp->out,"typeset",'=');
-#if xSHOPT_FIXEDARRAY
-			if((ap=nv_arrayptr(np)) && ap->fixed)
-			{
-				sfprintf(wp->out,"%s",name);
-				nv_arrfixed(np,wp->out,0,(char*)0);
-				sfputc(wp->out,';');
-			}
-#endif /* SHOPT_FIXEDARRAY */
 		}
 		outname(wp->shp,wp->out,name,-1, json);
-		if((np->nvalue.cp && np->nvalue.cp!=Empty) || nv_isattr(np,~(NV_MINIMAL|NV_NOFREE)) || nv_isvtree(np))  
+		if((np->nvalue.cp && np->nvalue.cp!=Empty) || nv_isattr(np,~(NV_MINIMAL|NV_NOFREE)) || nv_isvtree(np))
 			if(!json)
 				sfputc(wp->out,(isarray==2?(wp->indent>=0?'\n':';'):'='));
 		if(isarray==2)
@@ -1005,7 +979,6 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp)
 	bool		json = (wp->flags&NV_JSON);
 	bool		array_parent = (wp->flags&NV_ARRAY);
 	char		endchar = json?'}':')';
-	char		**names;
 	wp->flags &= ~NV_ARRAY;
 	if(n==0)
 		m = strlen(prefix);
@@ -1097,7 +1070,7 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp)
 					continue;
 				if((wp->array = nv_isarray(np)) && (aq=nv_arrayptr(np)))
 					k = array_elem(aq);
-					
+
 				if(wp->indent>0)
 					sfnputc(outfile,'\t',wp->indent);
 				if(json)
@@ -1204,7 +1177,7 @@ static char *walk_tree(Namval_t *np, Namval_t *xp, int flags)
 	Sfoff_t	off = 0;
 	int len, savtop = stktell(shp->stk);
 	char *savptr = stkfreeze(shp->stk,0);
-	struct argnod *ap=0; 
+	struct argnod *ap=0;
 	struct argnod *arglist=0;
 	char *name,*cp, **argv;
 	char *subscript=0;
@@ -1272,7 +1245,7 @@ static char *walk_tree(Namval_t *np, Namval_t *xp, int flags)
 				char *nvenv = mq->nvenv;
 				if(dp->table==nq)
 				{
-					dp = dp->prev; 
+					dp = dp->prev;
 					odir = dir;
 					dir = dp;
 				}
@@ -1289,7 +1262,7 @@ static char *walk_tree(Namval_t *np, Namval_t *xp, int flags)
 		sfputr(shp->stk,cp,-1);
 		ap = (struct argnod*)stkfreeze(shp->stk,1);
 		ap->argflag = ARG_RAW;
-		ap->argchn.ap = arglist; 
+		ap->argchn.ap = arglist;
 		n++;
 		arglist = ap;
 	}

@@ -30,7 +30,6 @@ shared_c_args += [
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
-    '-DSHOPT_FIXEDARRAY=0',
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for
@@ -50,9 +49,9 @@ bash_machtype = cpu + '-unknown-'+ system
 ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
 
-newgrp = find_program('newgrp', required : false)
-ed = find_program('ed', required : false)
-tput = find_program('tput', required : false)
+newgrp = find_program('newgrp', required: false)
+ed = find_program('ed', required: false)
+tput = find_program('tput', required: false)
 
 if newgrp.found()
     ksh93_c_args += [ '-D_cmd_newgrp=1' ]
@@ -85,7 +84,7 @@ cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required: false)
 # On some platforms `dladdr()` and related functions are found in libc,
 # on others they are found in libdl.
-libdl_dep = cc.find_library('libdl', required : false)
+libdl_dep = cc.find_library('dl', required: false)
 
 # On some platforms `backtrace()` and related functions are found in libc,
 # on others they are found in libexecinfo.
@@ -103,37 +102,43 @@ endif
 
 
 socketpair_shutdown_mode_test = '''
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <sys/socket.h>
-	int main()
-	{
-		int		sfd[2];
-		struct stat	st0;
-		struct stat	st1;
-		if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0 ||
-		    shutdown(sfd[0], 1) < 0 ||
-		    shutdown(sfd[1], 0) < 0)
-			return(1);
-		if (fstat(sfd[0], &st0) < 0 || fstat(sfd[1], &st1) < 0)
-			return(1);
-		if ((st0.st_mode & (S_IRUSR|S_IWUSR)) == S_IRUSR &&
-		    (st1.st_mode & (S_IRUSR|S_IWUSR)) == S_IWUSR)
-			return(1);
-		if (fchmod(sfd[0], S_IRUSR) < 0 ||
-		    fstat(sfd[0], &st0) < 0 ||
-		    (st0.st_mode & (S_IRUSR|S_IWUSR)) != S_IRUSR)
-			return(1);
-		if (fchmod(sfd[1], S_IWUSR) < 0 ||
-		    fstat(sfd[1], &st1) < 0 ||
-		    (st1.st_mode & (S_IRUSR|S_IWUSR)) != S_IWUSR)
-			return(1);
-		return(0);
-	}
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <sys/socket.h>
+    int main() {
+        int sfd[2];
+        struct stat st0;
+        struct stat st1;
+        if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0 ||
+            shutdown(sfd[0], 1) < 0 ||
+            shutdown(sfd[1], 0) < 0) {
+                return 1;
+            }
+        if (fstat(sfd[0], &st0) < 0 || fstat(sfd[1], &st1) < 0) {
+            return 1;
+        }
+        if ((st0.st_mode & (S_IRUSR|S_IWUSR)) == S_IRUSR &&
+            (st1.st_mode & (S_IRUSR|S_IWUSR)) == S_IWUSR) {
+            return 1;
+        }
+        if (fchmod(sfd[0], S_IRUSR) < 0 ||
+            fstat(sfd[0], &st0) < 0 ||
+            (st0.st_mode & (S_IRUSR|S_IWUSR)) != S_IRUSR) {
+            return 1;
+        }
+        if (fchmod(sfd[1], S_IWUSR) < 0 ||
+            fstat(sfd[1], &st1) < 0 ||
+            (st1.st_mode & (S_IRUSR|S_IWUSR)) != S_IWUSR) {
+            return 1;
+        }
+        return 0;
+    }
 '''
 
 
-socketpair_shutdown_mode_result = cc.run(socketpair_shutdown_mode_test, name: 'fchmod() after socketpair() shutdown()')
+socketpair_shutdown_mode_result = cc.run(
+    socketpair_shutdown_mode_test,
+    name: 'fchmod() after socketpair() shutdown()')
 
 if socketpair_shutdown_mode_result.returncode() == 0
     ksh93_c_args += [ '-D_socketpair_shutdown_mode=1' ]
@@ -160,7 +165,7 @@ ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
 shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
     include_directories: ksh93_incdir,
     link_with: [ libast, libcmd, libcoshell],
-    dependencies : [ m_dep, execinfo_dep, libdl_dep ],
+    dependencies: [ m_dep, execinfo_dep, libdl_dep ],
     install: true)
 
 install_man('ksh.1')

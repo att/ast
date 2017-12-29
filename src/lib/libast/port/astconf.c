@@ -26,8 +26,6 @@
  * extended to allow some features to be set per-process
  */
 
-static const char id[] = "\n@(#)$Id: getconf (AT&T Research) 2012-05-01 $\0\n";
-
 #include "univlib.h"
 
 #include <ast.h>
@@ -1353,10 +1351,10 @@ print(Sfio_t* sp, Lookup_t* look, const char* name, const char* path, int listfl
 	return (listflags & ASTCONF_error) ? (char*)0 : null;
 }
 
+#ifdef _pth_getconf_a
 /*
  * return read stream to native getconf utility
  */
-
 static Sfio_t*
 nativeconf(Proc_t** pp, const char* operand)
 {
@@ -1385,6 +1383,7 @@ nativeconf(Proc_t** pp, const char* operand)
 #endif
 	return 0;
 }
+#endif  // #ifdef _pth_getconf_a
 
 /*
  * value==0 gets value for name

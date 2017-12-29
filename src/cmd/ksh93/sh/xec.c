@@ -58,7 +58,6 @@ static void	coproc_init(Shell_t*, int pipes[]);
 static void	*timeout;
 static char	nlock;
 static char	pipejob;
-static char	nopost;
 static int	restorefd;
 static int	restorevex;
 
@@ -329,7 +328,7 @@ static int sh_tclear(Shell_t *shp, Shnode_t *t)
 	{
 		case TTIME:
 		case TPAR:
-			return(sh_tclear(shp,t->par.partre)); 
+			return(sh_tclear(shp,t->par.partre));
 		case TCOM:
 			return(p_comarg(shp,(struct comnod*)t));
 		case TSETIO:
@@ -365,7 +364,7 @@ static int sh_tclear(Shell_t *shp, Shnode_t *t)
 			return(n+sh_tclear(shp,(Shnode_t*)t->funct.functargs));
 		case TTST:
 			if((t->tre.tretyp&TPAREN)==TPAREN)
-				return(sh_tclear(shp,t->lst.lstlef)); 
+				return(sh_tclear(shp,t->lst.lstlef));
 			else
 			{
 				n=p_arg(shp,&(t->lst.lstlef->arg),0);
@@ -460,7 +459,7 @@ struct Level
  * this is for a debugger but it hasn't been tested yet
  * if a debug script sets .sh.level it should set up the scope
  *  as if you were executing in that level
- */ 
+ */
 static void put_level(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 {
 	Shell_t		*shp = sh_ptr(np);
@@ -488,7 +487,7 @@ static void put_level(Namval_t* np,const char *val,int flags,Namfun_t *fp)
 	{
 		sh_setscope(shp,sp);
 		error_info.id = sp->cmdname;
-		
+
 	}
 }
 
@@ -865,7 +864,7 @@ static Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp)
 	}
 	if(!nsp && !onsp)
 		return(0);
-	if(onsp == nsp) 
+	if(onsp == nsp)
 		return(nsp);
 	if(onsp)
 	{
@@ -1001,7 +1000,7 @@ int sh_exec(Shell_t *shp,const Shnode_t *t, int flags)
 				np = 0;
 				if(!(com0= *(com+=n)))
 					break;
-				np = nv_bfsearch(com0, shp->bltin_tree, &nq, &cp); 
+				np = nv_bfsearch(com0, shp->bltin_tree, &nq, &cp);
 			}
 			if(shp->xargexit)
 			{
@@ -1052,7 +1051,7 @@ int sh_exec(Shell_t *shp,const Shnode_t *t, int flags)
 				if(!np && !strchr(com0,'/'))
 				{
 					Dt_t *root = command?shp->bltin_tree:shp->fun_tree;
-					np = nv_bfsearch(com0, root, &nq, &cp); 
+					np = nv_bfsearch(com0, root, &nq, &cp);
 					if(shp->namespace && !nq && !cp)
 						np = sh_fsearch(shp,com0,0);
 				}
@@ -1084,7 +1083,7 @@ tryagain:
 							sh_scope(shp,(struct argnod*)0,0);
 							shp->st.var_local = shp->var_tree;
 						}
-			
+
 					}
 #endif /* SHOPT_BASH */
 					if(np==SYSTYPESET ||  (np && np->nvalue.bfp==SYSTYPESET->nvalue.bfp))
@@ -1124,7 +1123,7 @@ tryagain:
 							else
 							shp->prefix = NV_CLASS;
 							flgs |= NV_TYPE;
-			
+
 						}
 						if((shp->fn_depth && !shp->prefix) || np==SYSLOCAL)
 							flgs |= NV_NOSCOPE;
@@ -1478,7 +1477,7 @@ tryagain:
 							else
 							np = nv_search(com0,shp->fun_tree,HASH_NOSCOPE);
 						}
-						
+
 						if(!np->nvalue.ip)
 						{
 							if(indx==1)
@@ -2779,7 +2778,7 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			{
 				static Dtdisc_t		_Rpdisc =
 				{
-				        offsetof(struct Ufunction,fname), -1, sizeof(struct Ufunction) 
+				        offsetof(struct Ufunction,fname), -1, sizeof(struct Ufunction)
 				};
 				struct functnod *fp;
 				struct comnod *ac = t->funct.functargs;
@@ -2915,7 +2914,7 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 				if(traceon)
 					sfwrite(sfstderr,e_tstend,4);
 			}
-			shp->exitval = ((!n)^negate); 
+			shp->exitval = ((!n)^negate);
 			if(!skipexitset)
 				exitset(shp);
 			break;
@@ -2935,7 +2934,7 @@ shp,SH_BASH) && !sh_isoption(shp,SH_LASTPIPE))
 			sh_timetraps(shp);
 		}
 		if(shp->trapnote || (shp->exitval && sh_isstate(shp,SH_ERREXIT)) &&
-			t && echeck) 
+			t && echeck)
 			sh_chktrap(shp);
 		/* set $_ */
 		if(mainloop && com0)
@@ -3031,7 +3030,7 @@ bool sh_trace(Shell_t *shp,char *argv[], int nl)
 			char *argv0 = *argv;
 			nl = (nl?'\n':-1);
 			/* don't quote [ and [[ */
-			if(*(cp=argv[0])=='[' && (!cp[1] || !cp[2]&&cp[1]=='['))  
+			if(*(cp=argv[0])=='[' && (!cp[1] || !cp[2]&&cp[1]=='['))
 			{
 				sfputr(sfstderr,cp,*++argv?' ':nl);
 				bracket = 1;
@@ -3288,14 +3287,14 @@ Sfdouble_t sh_mathfun(Shell_t *shp,void *fp, int nargs, Sfdouble_t *arg)
 	int		i;
 	np = (Namval_t*)fp;
 	funenv.node = np;
-	funenv.nref = nref; 
+	funenv.nref = nref;
 	funenv.env = 0;
 	memcpy(&node,SH_VALNOD,sizeof(node));
 	SH_VALNOD->nvfun = 0;
 	SH_VALNOD->nvenv = 0;
 	SH_VALNOD->nvflag = NV_LDOUBLE|NV_NOFREE;
 	SH_VALNOD->nvalue.ldp = 0;
-	for(i=0; i < nargs; i++)	
+	for(i=0; i < nargs; i++)
 	{
 		*nr++ = mp = nv_namptr(shp->mathnodes,i);
 		mp->nvalue.ldp = arg++;
@@ -3460,7 +3459,7 @@ int cmdrecurse(int argc, char* argv[], int ac, char* av[])
 }
 
 /*
- * set up pipe for cooperating process 
+ * set up pipe for cooperating process
  */
 static void coproc_init(Shell_t *shp, int pipes[])
 {
@@ -3473,7 +3472,7 @@ static void coproc_init(Shell_t *shp, int pipes[])
 		/* first co-process */
 		sh_pclose(shp->cpipe);
 		sh_pipe(shp->cpipe);
-		if((outfd=shp->cpipe[1]) < 10) 
+		if((outfd=shp->cpipe[1]) < 10)
 		{
 		        int fd=sh_fcntl(shp->cpipe[1],F_DUPFD_CLOEXEC,10);
 			if(fd>=10)
@@ -3604,7 +3603,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 	static int	savejobid;
 	struct checkpt	*buffp = (struct checkpt*)stkalloc(shp->stk,sizeof(struct checkpt));
 	int		otype=0, jmpval,jobfork=0, lineno=shp->st.firstline;
-	volatile int	jobwasset=0, scope=0, sigwasset=0;
+	volatile int	scope=0, sigwasset=0;
 	char		**arge, *path;
 	volatile pid_t	grp = 0;
 	Pathcomp_t	*pp;
@@ -3658,7 +3657,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 				sh_iorenumber(shp,sh_dup(shp->outpipe[1]),1);
 #endif
 			}
-	
+
 			if(t->fork.forkio)
 				sh_redirect(shp,t->fork.forkio,0);
 			if(optimize==0)
@@ -3743,7 +3742,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 			scope++;
 			sh_scope(shp,t->com.comset,0);
 		}
-		if(!strchr(path=argv[0],'/')) 
+		if(!strchr(path=argv[0],'/'))
 		{
 			Namval_t *np;
 			if((np=nv_search(path,shp->track_tree,0)) && !nv_isattr(np,NV_NOALIAS) && np->nvalue.cp)
@@ -3816,7 +3815,7 @@ static pid_t sh_ntfork(Shell_t *shp,const Shnode_t *t,char *argv[],int *jobid,in
 			argv[0] = argv[-1];
 		}
 	fail:
-		if(jobfork && spawnpid<0) 
+		if(jobfork && spawnpid<0)
 			job_fork(0);
 		if(spawnpid < 0) switch(errno=shp->path_err)
 		{

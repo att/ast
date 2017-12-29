@@ -81,12 +81,12 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 	int		oerrno;
 	struct stat	st;
 	Tv_t		now;
-	struct timespec	ts[2];
 	struct timeval	am[2];
 
 	oerrno = errno;
 
 #if _lib_utimensat
+	struct timespec ts[2];
 	if (!av)
 	{
 		ts[0].tv_sec = 0;
@@ -152,6 +152,7 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 			mv = (const Tv_t*)&now;
 	}
 #elif _lib_utimets
+	struct timespec ts[2];
 	if (av == TV_TOUCH_RETAIN)
 	{
 		ts[0].tv_sec = st.st_atime;

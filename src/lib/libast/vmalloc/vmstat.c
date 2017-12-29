@@ -36,8 +36,6 @@ Vmstat_t*	st;
 #endif
 {
 	Seg_t	*seg;
-	char	*bufp;
-	ssize_t	p;
 	int	rv;
 
 	memset(st, 0, sizeof(Vmstat_t));

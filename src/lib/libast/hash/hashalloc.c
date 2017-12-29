@@ -27,8 +27,6 @@
  * hash table library
  */
 
-static const char id_hash[] = "\n@(#)$Id: hash (AT&T Research) 1996-08-11 $\0\n";
-
 #include "hashlib.h"
 
 Hash_info_t	hash_info = { 0 };
@@ -95,7 +93,7 @@ hashalloc(Hash_table_t* ref, ...)
 	tab->size = HASHMINSIZE;
 	for (;;)
 	{
-		switch (n) 
+		switch (n)
 		{
 		case HASH_alloc:
 			if (ref) goto out;

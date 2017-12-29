@@ -145,8 +145,8 @@ char *sh_mactry(Shell_t *shp,char *string)
 
 /*
  * Perform parameter expansion, command substitution, and arithmetic
- * expansion on <str>. 
- * If <mode> greater than 1 file expansion is performed if the result 
+ * expansion on <str>.
+ * If <mode> greater than 1 file expansion is performed if the result
  * yields a single pathname.
  * If <mode> negative, than expansion rules for assignment are applied.
  */
@@ -249,7 +249,7 @@ int sh_macexpand(Shell_t* shp, struct argnod *argp, struct argnod **arghead,int 
 		endfield(mp,mp->quoted|mp->atmode);
 		flags = mp->fields;
 		if(flags==1 && shp->argaddr)
-			argp->argchn.ap = *arghead; 
+			argp->argchn.ap = *arghead;
 	}
 	shp->argaddr = saveargaddr;
 	*mp = savemac;
@@ -425,7 +425,7 @@ char *sh_macpat(Shell_t *shp,struct argnod *arg, int flags)
 }
 
 /*
- * Process the characters up to <endch> or end of input string 
+ * Process the characters up to <endch> or end of input string
  */
 static void copyto(Mac_t *mp,int endch, int newquote)
 {
@@ -542,7 +542,7 @@ static void copyto(Mac_t *mp,int endch, int newquote)
 						break;
 				}
 				/* followed by file expansion */
-				if(!mp->lit && (n==S_ESC || (!mp->quote && 
+				if(!mp->lit && (n==S_ESC || (!mp->quote &&
 					(n==S_PAT||n==S_ENDCH||n==S_SLASH||n==S_BRACT||*cp=='-'))))
 				{
 					cp += (n!=S_EOF);
@@ -1391,11 +1391,7 @@ retry1:
 			if(mp->dotdot)
 			{
 				Namval_t *nq;
-#if SHOPT_FIXEDARRAY
-				if(ap && !ap->fixed && (nq=nv_opensub(np)))
-#else
 				if(ap && (nq=nv_opensub(np)))
-#endif /* SHOPT_FIXEDARRAY */
 					ap = nv_arrayptr(np=nq);
 				if(ap)
 				{
@@ -1482,7 +1478,7 @@ retry1:
 				else
 					v = nv_getval(np);
 				mp->atmode = (v && mp->quoted && mode=='@');
-				/* special case --- ignore leading zeros */  
+				/* special case --- ignore leading zeros */
 				if((mp->let || (mp->arith&&nv_isattr(np,(NV_LJUST|NV_RJUST|NV_ZFILL)))) && !nv_isattr(np,NV_INTEGER) && (offset==0 || isspace(c) || strchr(",.+-*/=%&|^?!<>",c)))
 					mp->zeros = 1;
 			}
@@ -1515,7 +1511,7 @@ retry1:
 			{
 				ap->flags &= ~ARRAY_SCAN;
 				dolg = 0;
-		
+
 			}
 		}
 		break;
@@ -2076,7 +2072,6 @@ static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 	struct _mac_		savemac;
 	int			savtop = stktell(stkp);
 	char			*savptr = stkfreeze(stkp,0);
-	ssize_t                 len;
 	int			was_history = sh_isstate(mp->shp,SH_HISTORY);
 	int			was_verbose = sh_isstate(mp->shp,SH_VERBOSE);
 	int			was_interactive = sh_isstate(mp->shp,SH_INTERACTIVE);
@@ -2127,7 +2122,6 @@ static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 		}
 		else if(type==2 && t && (t->tre.tretyp&COMMSK)==0 && t->com.comarg)
 		{
-			Namval_t *np;
 			str = NULL;
 			if(!(t->com.comtyp&COMSCAN))
 			{
@@ -2180,7 +2174,7 @@ static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 			if(sp)
 				sfclose(sp);
 			sh_pushcontext(mp->shp,&buff,SH_JMPIO);
-			if((ip=t->tre.treio) && 
+			if((ip=t->tre.treio) &&
 				((ip->iofile&IOLSEEK) || !(ip->iofile&IOUFD)) &&
 				(r=sigsetjmp(buff.buff,0))==0)
 				fd = sh_redirect(mp->shp,ip,3);
@@ -2226,7 +2220,7 @@ static void comsubst(Mac_t *mp,Shnode_t* t, volatile int type)
 	sh_offstate(mp->shp,SH_INTERACTIVE);
 	if((foff = sfseek(sp,(Sfoff_t)0,SEEK_END)) > 0)
 	{
-		size_t soff = stktell(stkp); 
+		size_t soff = stktell(stkp);
 		sfseek(sp,(Sfoff_t)0,SEEK_SET);
 		stkseek(stkp,soff+foff+64);
 		stkseek(stkp,soff);
@@ -2625,7 +2619,7 @@ static int sh_btilde(int argc, char *argv[], Shbltin_t *context)
 	sfputr(sfstdout, cp, '\n');
 	return(0);
 }
- 
+
 /*
  * <offset> is byte offset for beginning of tilde string
  */
@@ -2680,7 +2674,7 @@ static void tilde_expand2(Shell_t *shp, int offset)
  * If ~name  is replaced with login directory of name.
  * If string doesn't start with ~ or ~... not found then 0 returned.
  */
-                                                            
+
 static char *sh_tilde(Shell_t *shp,const char *string)
 {
 	char		*cp;
@@ -2855,7 +2849,7 @@ static void mac_error(Namval_t *np)
  * Given pattern/string, replace / with 0 and return pointer to string
  * \ characters are stripped from string.  The \ are stripped in the
  * replacement string unless followed by a digit or \.
- */ 
+ */
 static char *mac_getstring(char *pattern)
 {
 	char	*cp=pattern, *rep=0, *dp;

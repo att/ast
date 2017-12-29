@@ -164,12 +164,6 @@ struct Match {
     char *base;
 };
 
-static int matchf(void *handle, char *ptr, size_t size) {
-    struct Match *mp = (struct Match *)handle;
-    mp->offset += (ptr - mp->base);
-    return (1);
-}
-
 static struct fdsave *filemap;
 static short filemapsize;
 
@@ -470,7 +464,6 @@ int sh_open(const char *path, int flags, ...) {
     Sfio_t *sp;
     int fd;
     mode_t mode;
-    char *e;
     va_list ap;
 #if SHOPT_REGRESS
     char buf[PATH_MAX];
@@ -1545,7 +1538,6 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         }
     }
 
-skip:
     filemap[shp->topfd].tname = name;
     filemap[shp->topfd].subshell = (flag & IOSUBSHELL);
     filemap[shp->topfd].orig_fd = origfd;

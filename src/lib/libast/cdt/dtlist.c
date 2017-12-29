@@ -231,7 +231,7 @@ int	type;
 		goto do_insert;
 	}
 	else if(type&(DT_INSERT|DT_INSTALL|DT_APPEND|DT_ATTACH))
-	{ dt_insert:
+	{
 		if(!(r = _dtmake(dt, obj, type)) )
 			DTRETURN(obj, NIL(Void_t*));
 		dt->data->size += 1;

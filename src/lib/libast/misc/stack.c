@@ -24,8 +24,6 @@
  * pointer stack routines
  */
 
-static const char id_stack[] = "\n@(#)$Id: stack (AT&T Bell Laboratories) 1984-05-01 $\0\n";
-
 #include <ast.h>
 #include <stack.h>
 

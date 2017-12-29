@@ -72,7 +72,6 @@ fgetcwd(int fd, char* buf, size_t len)
 	struct stat	curst;
 	struct stat	parst;
 	struct stat	tstst;
-	char		tst[PATH_MAX];
 
 	static struct
 	{
