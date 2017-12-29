@@ -523,7 +523,8 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast
 		else if (!(cp = (const _ast_iconv_list_t*)ccmaplist((_ast_iconv_list_t*)cp)))
 			cp = codes;
 	}
-	if (cp = bp)
+	cp = bp;
+	if (cp != 0)
 	{
 		cc = cp->ccode;
 		if (cp->canon)
@@ -759,11 +760,11 @@ umeinit(void)
 
 	if (!ume_d[ume_D[0]])
 	{
-		s = ume_D; 
-		while (c = *s++)
+		s = ume_D;
+		while ((c = *s++) != 0)
 			ume_d[c] = 1;
 		memset(ume_m, NOE, sizeof(ume_m));
-		for (i = 0; c = ume_M[i]; i++)
+		for (i = 0; (c = ume_M[i]) != 0; i++)
 			ume_m[c] = i;
 	}
 	return 0;
@@ -1165,9 +1166,11 @@ _ast_iconv_open(const char* t, const char* f)
 #if DEBUG_TRACE
 if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast_iconv_open f=%s t=%s\n", error_info.id, error_info.trace, __LINE__, f, t);
 #endif
-	if (!t || !*t || *t == '-' && !*(t + 1) || !strcasecmp(t, name_local) || !strcasecmp(t, name_native))
+	/* accept only name_Local or name_native, default to name_native in all other cases */
+	if (!t || (!strcasecmp(t, name_local) && !strcasecmp(t, name_native)))
 		t = name_native;
-	if (!f || !*f || *f == '-' && !*(f + 1) || !strcasecmp(t, name_local) || !strcasecmp(f, name_native))
+	/* accept only name_Local or name_native, default to name_native in all other cases */
+	if (!f || (!strcasecmp(f, name_local) && !strcasecmp(f, name_native)))
 		f = name_native;
 
 	/*
@@ -1185,7 +1188,7 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast
 #if DEBUG_TRACE
 if (error_info.trace <= DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast_iconv_open f=%s:%s:%d t=%s:%s:%d\n", error_info.id, error_info.trace, __LINE__, f, fr, fc, t, to, tc);
 #endif
-	if (fc != CC_ICONV && fc == tc || streq(fr, to))
+	if ((fc != CC_ICONV && fc == tc) || streq(fr, to))
 		return (iconv_t)(0);
 
 	/*
@@ -1389,7 +1392,7 @@ _ast_iconv_close(_ast_iconv_t cd)
 			 * close the oldest
 			 */
 
-			if (oc = freelist[i])
+			if (0 != (oc = freelist[i]))
 			{
 #if _lib_iconv_open
 				if (oc->cvt != (iconv_t)(-1))
@@ -1462,7 +1465,7 @@ _ast_iconv(_ast_iconv_t cd, char** fb, size_t* fn, char** tb, size_t* tn)
 			if ((*cc->from.fun)(cc->cvt, fb, fn, tb, tn) == (size_t)(-1))
 				return -1;
 			n -= *tn;
-			if (m = cc->to.map)
+			if (0 != (m = cc->to.map))
 			{
 				e = (unsigned char*)(*tb);
 				for (t = e - n; t < e; t++)
@@ -1790,7 +1793,8 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d icon
 				fn--;
 			}
 		}
-		if (i = fs - fb)
+		i = fs - fb;
+		if (i != 0)
 		{
 			if (n != SF_UNBOUND)
 			{
