@@ -9,6 +9,7 @@
 #define _lib_iconv	1	/* iconv() in default lib(s) */
 #include <ast_common.h>
 #include <ccode.h>
+#define LIBICONV_PLUG 1 /* prefer more recent GNU libiconv */
 #include <iconv.h>	/* the native iconv.h */
 
 #define ICONV_VERSION		20121001L
