@@ -810,10 +810,6 @@ void   zcfree  OF((voidpf opaque, voidpf ptr));
 #ifndef _ZUTIL_C
 #define _ZUTIL_C
 
-#if 0 && !_PACKAGE_ast && !defined(STDC)
-extern void exit OF((int));
-#endif
-
 #ifndef HAVE_MEMCPY
 
 void zmemcpy(dest, source, len)
@@ -960,14 +956,6 @@ void  zcfree (voidpf opaque, voidpf ptr)
 
 
 #ifndef MY_ZCALLOC /* Any system without a special alloc function */
-
-#if 0 && !_PACKAGE_ast
-#ifndef STDC
-extern voidp  malloc OF((uInt size));
-extern voidp  calloc OF((uInt items, uInt size));
-extern void   free   OF((voidpf ptr));
-#endif
-#endif
 
 voidpf zcalloc (opaque, items, size)
     voidpf opaque;
@@ -3609,13 +3597,6 @@ typedef voidp gzFile;
 #ifdef __MVS__
 #  pragma map (fdopen , "\174\174FDOPEN")
    FILE *fdopen(int, const char *);
-#endif
-
-#if 0 && !_PACKAGE_ast
-#ifndef STDC
-extern voidp  malloc OF((uInt size));
-extern void   free   OF((voidpf ptr));
-#endif
 #endif
 
 #define ALLOC(size) malloc(size)
