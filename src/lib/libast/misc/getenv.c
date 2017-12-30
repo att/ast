@@ -37,43 +37,6 @@ Intercepts_t	intercepts
 		= { 0 };
 #endif
 
-#if !defined(getenv)
-
-#include <windows.h>
-
-extern char**	environ;
-
-static char*
-default_getenv(const char* name)
-{
-	char**		av;
-	const char*	cp;
-	const char*	sp;
-	char		c0;
-	char		c1;
-
-	av = environ;
-	if (!av || !name || !(c0 = *name))
-		return 0;
-	if (!(c1 = *++name))
-		c1 = '=';
-	while (cp = *av++)
-	{
-		if (cp[0] != c0 || cp[1] != c1)
-			continue;
-		sp = name;
-		cp++;
-		while (*sp && *sp++ == *cp++);
-		if (*(sp-1) != *(cp-1))
-			continue;
-		if (*sp == 0 && *cp == '=')
-			return (char*)(cp+1);
-	}
-	return 0;
-}
-
-#endif
-
 /*
  * get name from the environment
  */
@@ -85,21 +48,6 @@ default_getenv(const char* name)
 extern char*
 getenv(const char* name)
 {
-#if !defined(getenv) /* for ast54 compatibility */
-	HANDLE		dll;
-
-	static char*	(*posix_getenv)(const char*);
-
-	if (!posix_getenv)
-	{
-		if (dll = GetModuleHandle("posix.dll"))
-			posix_getenv = (char*(*)(const char*))GetProcAddress(dll, "getenv");
-		if (!posix_getenv)
-			posix_getenv = default_getenv;
-	}
-	return intercepts.intercept_getenv ? (*intercepts.intercept_getenv)(name) : (*posix_getenv)(name);
-#else
 #undef	getenv
 	return intercepts.intercept_getenv ? (*intercepts.intercept_getenv)(name) : getenv(name);
-#endif
 }
