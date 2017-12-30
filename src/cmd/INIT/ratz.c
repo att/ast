@@ -645,12 +645,6 @@ typedef unsigned long  ulg;
 #  define OS_CODE  0x01
 #endif
 
-#if defined(VAXC) || defined(VMS)
-#  define OS_CODE  0x02
-#  define F_OPEN(name, mode) \
-     fopen((name), (mode), "mbc=60", "ctx=stm", "rfm=fix", "mrs=512")
-#endif
-
 #if defined(ATARI) || defined(atarist)
 #  define OS_CODE  0x05
 #endif
@@ -743,9 +737,6 @@ typedef unsigned long  ulg;
 #  ifdef __SASC
 #    define NO_vsnprintf
 #  endif
-#endif
-#ifdef VMS
-#  define NO_vsnprintf
 #endif
 
 #if defined(pyr)
