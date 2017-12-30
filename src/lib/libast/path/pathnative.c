@@ -33,18 +33,6 @@
 
 #include <ast.h>
 
-#if _UWIN
-
-extern int	uwin_path(const char*, char*, int);
-
-size_t
-pathnative(const char* path, char* buf, size_t siz)
-{
-	return uwin_path(path, buf, siz);
-}
-
-#else
-
 #if __CYGWIN__
 
 extern void	cygwin_conv_to_win32_path(const char*, char*);
@@ -69,44 +57,6 @@ pathnative(const char* path, char* buf, size_t siz)
 
 #else
 
-#if __EMX__
-
-size_t
-pathnative(const char* path, char* buf, size_t siz)
-{
-	char*		s;
-	size_t		n;
-
-	if (!_fullpath(buf, path, siz))
-	{
-		for (s = buf; *s; s++)
-			if (*s == '/')
-				*s = '\\';
-	}
-	else if ((n = strlen(path)) < siz && buf)
-		memcpy(buf, path, n + 1);
-	return n;
-}
-
-#else
-
-#if __INTERIX
-
-#include <interix/interix.h>
-
-size_t
-pathnative(const char* path, char* buf, size_t siz)
-{
-	*buf = 0;
-	if (path[1] == ':')
-		strlcpy(buf, path, siz);
-	else
-		unixpath2win(path, 0, buf, siz);
-	return strlen(buf);
-}
-
-#else
-
 size_t
 pathnative(const char* path, char* buf, size_t siz)
 {
@@ -116,11 +66,5 @@ pathnative(const char* path, char* buf, size_t siz)
 		memcpy(buf, path, n + 1);
 	return n;
 }
-
-#endif
-
-#endif
-
-#endif
 
 #endif

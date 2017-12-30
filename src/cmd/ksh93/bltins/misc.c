@@ -402,7 +402,7 @@ int    b_bg(int n,char *argv[],Shbltin_t *context)
 {
 	int flag = **argv;
 	Shell_t *shp = context->shp;
-	const char *optstr = sh_optbg; 
+	const char *optstr = sh_optbg;
 	if(*argv[0]=='f')
 		optstr = sh_optfg;
 	else if(*argv[0]=='d')
@@ -506,18 +506,15 @@ int	b_universe(int argc, char *argv[],Shbltin_t *context)
 #endif /* cmd_universe */
 
 #if SHOPT_FS_3D
-#if _UWIN
-#include <sys/mount.h>
-#endif
-#   if 0
+#if 0
     /* for the dictionary generator */
     int	b_vmap(int argc,char *argv[], Shbltin_t *context){}
-#   endif
+#endif
     int	b_vpath(int argc,char *argv[], Shbltin_t *context)
     {
 	int flag, n;
-	const char *optstr; 
-	char *vend; 
+	const char *optstr;
+	char *vend;
 	Shell_t *shp = context->shp;
 	if(argv[0][1]=='p')
 	{

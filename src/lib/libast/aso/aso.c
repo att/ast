@@ -24,12 +24,6 @@
 #include "asohdr.h"
 #include "ast_aso.h"
 
-#if defined(_UWIN) && defined(_BLD_ast)
-
-NoN(aso)
-
-#else
-
 /*
  * ast atomic scalar operations
  * AT&T Research
@@ -78,8 +72,6 @@ typedef union
 	uint32_t		c[2];
 	uint64_t		i;
 } U64_32_t;
-
-#endif
 
 #if !_ASO_INTRINSIC || defined(_ast_int8_t) && !defined(asocas64)
 

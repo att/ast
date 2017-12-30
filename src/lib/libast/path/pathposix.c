@@ -33,18 +33,6 @@
 
 #include <ast.h>
 
-#if _UWIN
-
-#include <uwin.h>
-
-size_t
-pathposix(const char* path, char* buf, size_t siz)
-{
-	return uwin_unpath(path, buf, siz);
-}
-
-#else
-
 #if __CYGWIN__
 
 extern void	cygwin_conv_to_posix_path(const char*, char*);
@@ -69,46 +57,6 @@ pathposix(const char* path, char* buf, size_t siz)
 
 #else
 
-#if __EMX__ && 0 /* show me the docs */
-
-size_t
-pathposix(const char* path, char* buf, size_t siz)
-{
-	char*		s;
-	size_t		n;
-
-	if (!_posixpath(buf, path, siz))
-	{
-		for (s = buf; *s; s++)
-			if (*s == '/')
-				*s = '\\';
-	}
-	else if ((n = strlen(path)) < siz && buf)
-		memcpy(buf, path, n + 1);
-	return n;
-}
-
-#else
-
-#if __INTERIX
-
-#include <interix/interix.h>
-
-size_t
-pathposix(const char* path, char *buf, size_t siz)
-{
-	static const char	pfx[] = "/dev/fs";
-
-	*buf = 0;
-	if (!strncasecmp(path, pfx, sizeof(pfx) - 1))
-		strlcpy(buf, path, siz);
-	else
-		winpath2unix(path, PATH_NONSTRICT, buf, siz);
-	return strlen(buf);
-}
-
-#else
-
 size_t
 pathposix(const char* path, char* buf, size_t siz)
 {
@@ -118,11 +66,5 @@ pathposix(const char* path, char* buf, size_t siz)
 		memcpy(buf, path, n + 1);
 	return n;
 }
-
-#endif
-
-#endif
-
-#endif
 
 #endif

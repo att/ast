@@ -19,11 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#if defined(_UWIN) && defined(_BLD_ast)
-
-void _STUB_vmdebug(){}
-
-#else
 
 #include	"vmhdr.h"
 
@@ -96,7 +91,7 @@ struct _dbfile_s
 	char		file[1];
 };
 static Dbfile_t*	Dbfile;
-	
+
 /* global watch list */
 #define S_WATCH	32
 static int	Dbnwatch;
@@ -113,7 +108,7 @@ static Void_t*	Dbwatch[S_WATCH];
 static int Dbinit = 0;
 #define DBINIT()	(Dbinit ? 0 : (dbinit(), Dbinit=1) )
 static void dbinit()
-{	int	fd;	
+{	int	fd;
 	if((fd = vmtrace(-1)) >= 0)
 		vmtrace(fd);
 }
@@ -416,7 +411,7 @@ int		local;
 		memset(DB2BEST(data), 0, DBBSIZE(data)); /* clear memory */
 
 		rv |= KPVFREE((vm), (Void_t*)DB2BEST(data), (*Vmbest->freef));
-	done:	
+	done:
 		if(!list && (rv || !(list = vm->data->delay) || asocasptr(&vm->data->delay, list, NIL(Free_t*)) != list))
 			break;
 		data = (void*)list;
@@ -534,7 +529,7 @@ Vmalloc_t*	vm;
 
 	rv = 0;
 	for(seg = vm->data->seg; seg; seg = seg->next)
-	{	sgb = (Block_t*)SEGDATA(seg); 
+	{	sgb = (Block_t*)SEGDATA(seg);
 		for(; sgb < seg->endb; sgb = NEXT(sgb) )
 		{	if(!(SIZE(sgb)&BUSY) )
 				continue;
@@ -596,7 +591,7 @@ Void_t*		addr;	/* address to insert	*/
 			if(Dbwatch[n] == addr)
 				break;
 		if(n < 0)	/* insert */
-		{	if(Dbnwatch == S_WATCH)	
+		{	if(Dbnwatch == S_WATCH)
 			{	/* delete left-most */
 				out = Dbwatch[0];
 				Dbnwatch -= 1;
@@ -669,7 +664,7 @@ ssize_t vmdbstat(Vmalloc_t* vm)
 ssize_t vmdbstat(vm)
 Vmalloc_t*	vm;
 #endif
-{	
+{
 	ssize_t		n;
 	Vmstat_t	st;
 
@@ -696,6 +691,4 @@ __DEFINE__(Vmethod_t*,Vmdebug,&_Vmdebug);
 
 #ifdef NoF
 NoF(vmdebug)
-#endif
-
 #endif

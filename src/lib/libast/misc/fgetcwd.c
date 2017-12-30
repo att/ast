@@ -29,12 +29,6 @@
 
 #include <ast.h>
 
-#if _UWIN
-
-NoN(fgetcwd)
-
-#else
-
 #include <ast_dir.h>
 #include <error.h>
 #include <fs3d.h>
@@ -243,5 +237,3 @@ fgetcwd(int fd, char* buf, size_t len)
 		fs3d(f);
 	return 0;
 }
-
-#endif

@@ -23,12 +23,6 @@
 
 #include "asohdr.h"
 
-#if defined(_UWIN) && defined(_BLD_ast)
-
-NoN(asorelax)
-
-#else
-
 #if _PACKAGE_ast
 #include <tv.h>
 #else
@@ -52,5 +46,3 @@ asorelax(long nsec)
 	return nanosleep(&ts, 0);
 #endif
 }
-
-#endif
