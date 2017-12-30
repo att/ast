@@ -21,15 +21,7 @@
 ***********************************************************************/
 #pragma prototyped
 
-#if __STDPP__
-__STDPP__directive pragma pp:hide getenv
-#endif
-
 #include "intercepts.h"
-
-#if __STDPP__
-__STDPP__directive pragma pp:nohide getenv
-#endif
 
 /*
  * NOTE: the "intercepts" definition is here instead of astintercept.c because some
