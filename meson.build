@@ -6,20 +6,21 @@ run_command('bin/ksh93_prereq.sh')
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
 
-# We should remove all #prototyped pragmas from headers
+# We should remove all #prototyped pragmas from headers.
 add_project_arguments('-Wno-unknown-pragmas', language: 'c')
 # We sure we have symbolic debug info in the compiled binaries so that our
 # `dump_backtrace()` function can provide some minimally useful information.
 add_project_arguments('-g', language: 'c')
 
-hosttype_cmd=run_command('bin/package')
+hosttype_cmd=run_command('bin/hosttype')
 hosttype=hosttype_cmd.stdout().strip()
-
 add_project_arguments('-DHOSTTYPE="' + hosttype + '"', language: 'c')
-# Compiler arguments used by ksh93 and shcomp executables
-# aso feature tests need to modify this variable, so declaring it before
-# libast meson build file is processed
+
+# Compiler arguments used by ksh93 and shcomp executables. The aso feature
+# tests need to modify this variable, so declaring it before libast meson
+# build file is processed.
 shared_c_args = []
+
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libcoshell')
