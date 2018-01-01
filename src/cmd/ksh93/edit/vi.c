@@ -2516,10 +2516,12 @@ yankeol:
 				i = cur_virt;
 				c = virtual[cur_virt];
 				if((c&~STRIP)==0)
-				if( isupper(c) )
-					c = tolower(c);
-				else if( islower(c) )
-					c = toupper(c);
+				{
+					if( isupper(c) )
+						c = tolower(c);
+					else if( islower(c) )
+						c = toupper(c);
+				}
 				replace(vp,c, 1);
 			}
 			return(GOOD);

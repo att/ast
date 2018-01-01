@@ -1176,6 +1176,7 @@ init(char* s, Optpass_t* p)
 	}
 	s = next(s, 0);
 	if (*s != '[')
+	{
 		for (t = s, a = 0; *t; t++)
 			if (!a && *t == '-')
 			{
@@ -1186,6 +1187,7 @@ init(char* s, Optpass_t* p)
 				a++;
 			else if (*t == ']')
 				a--;
+	}
 	if (!p->version && (t = strchr(s, '(')) && strchr(t, ')') && (state.cp || (state.cp = sfstropen())))
 	{
 		/*

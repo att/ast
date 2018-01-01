@@ -167,6 +167,7 @@ cowait(Coshell_t* co, Cojob_t* job, int timeout)
 		errormsg(state.lib, 2, "coshell %d zombie wait %lu timeout=%d outstanding=<%d,%d> running=<%d,%d>", co->index, serial, timeout, co->outstanding, co->svc_outstanding, co->running, co->svc_running);
 #endif
 		if ((co->outstanding + co->svc_outstanding) > (co->running + co->svc_running))
+		{
 			for (cj = co->jobs; cj; cj = cj->next)
 				if (cj->pid == CO_PID_ZOMBIE && (!job || cj == job))
 				{
@@ -187,6 +188,7 @@ cowait(Coshell_t* co, Cojob_t* job, int timeout)
 					cj->service = 0;
 					co->svc_running--;
 				}
+		}
 		if (co->running > 0)
 			active = 1;
 		else if (co->svc_running > 0)
