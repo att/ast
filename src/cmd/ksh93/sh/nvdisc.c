@@ -255,7 +255,7 @@ static void	assign(Namval_t *np,const char* val,int flags,Namfun_t *handle)
 	Namval_t	node;
 	union Value	*up = np->nvalue.up;
 	Namval_t	*tp, *nr;
-	if(val && (tp=nv_type(np)) && (nr=nv_open(val,shp->var_tree,NV_VARNAME|NV_ARRAY|NV_NOADD|NV_NOFAIL)) && tp==nv_type(nr)) 
+	if(val && (tp=nv_type(np)) && (nr=nv_open(val,shp->var_tree,NV_VARNAME|NV_ARRAY|NV_NOADD|NV_NOFAIL)) && tp==nv_type(nr))
 	{
 		char *sub = nv_getsub(np);
 		_nv_unset(np,0);
@@ -633,7 +633,7 @@ static void putdisc(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 		nv_disc(np,fp,NV_POP);
 		if(!(fp->nofree&1))
 			free((void*)fp);
-			
+
 	}
 }
 
@@ -675,7 +675,7 @@ bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs)
 	else while(n>=0)
 		vp->bltins[n--] = 0;
 	vp->fun.disc = &Nv_bdisc;
-	vp->bnames = names; 
+	vp->bnames = names;
 	nv_stack(np,&vp->fun);
 	return(true);
 }
@@ -952,11 +952,11 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags)
 	if(flags&NV_APPEND)
 		return(1);
 	if(nv_size(mp) == size)
-	        nv_setsize(mp,nv_size(np));
+		nv_setsize(mp,nv_size(np));
 	if(mp->nvflag == flag)
-	        mp->nvflag = (np->nvflag&~(NV_MINIMAL))|(mp->nvflag&NV_MINIMAL);
-		if(nv_isattr(np,NV_EXPORT))
-			mp->nvflag |= (np->nvflag&NV_MINIMAL);
+		mp->nvflag = (np->nvflag&~(NV_MINIMAL))|(mp->nvflag&NV_MINIMAL);
+	if(nv_isattr(np,NV_EXPORT))
+		mp->nvflag |= (np->nvflag&NV_MINIMAL);
 	if(mp->nvalue.cp==val && !nv_isattr(np,NV_INTEGER))
 	{
 		if(np->nvalue.cp && np->nvalue.cp!=Empty && (flags&NV_COMVAR) && !(flags&NV_MOVE))
@@ -964,7 +964,7 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags)
 			if(size)
 				mp->nvalue.cp = (char*)memdup(np->nvalue.cp,size);
 			else
-			        mp->nvalue.cp = strdup(np->nvalue.cp);
+				mp->nvalue.cp = strdup(np->nvalue.cp);
 			nv_offattr(mp,NV_NOFREE);
 		}
 		else if((np->nvfun || !nv_isattr(np,NV_ARRAY)) && !(mp->nvalue.cp = np->nvalue.cp))
@@ -1110,7 +1110,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode)
  * and var contains the poiner to the variable
  * if last==0 and first component of name is a reference, nv_bfsearch()
 	will return 0.
- */ 
+ */
 Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 {
 	Shell_t		*shp = dtuserdata(root,0,0);
@@ -1121,7 +1121,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 	if(var)
 		*var = 0;
 	/* check for . in the name before = */
-	for(sp=(char*)name+1; *sp; sp++) 
+	for(sp=(char*)name+1; *sp; sp++)
 	{
 		if(*sp=='=')
 			return(0);
@@ -1140,7 +1140,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 			cp = sp;
 		}
 		else if(*sp=='.')
-			cp = sp; 
+			cp = sp;
 	}
 	if(!cp)
 	{
@@ -1156,7 +1156,7 @@ Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last)
 	}
 	sfputr(shp->stk,name,0);
 	dname = cp+1;
-	cp = stkptr(shp->stk,offset) + (cp-name); 
+	cp = stkptr(shp->stk,offset) + (cp-name);
 	if(last)
 		*last = cp;
 	c = *cp;
