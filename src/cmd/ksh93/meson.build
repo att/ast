@@ -30,6 +30,11 @@ shared_c_args += [
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
+    '-D_ast_sizeof_int=@0@'.format(cc.sizeof('int')),
+    '-D_ast_sizeof_long=@0@'.format(cc.sizeof('long')),
+    '-D_ast_sizeof_size_t=@0@'.format(cc.sizeof('size_t')),
+    '-D_ast_sizeof_off_t=@0@'.format(cc.sizeof('off_t')),
+    '-D_ast_sizeof_pointer=@0@'.format(cc.sizeof('void*'))
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for

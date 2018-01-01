@@ -45,7 +45,6 @@
 				FNVPART(h, ((unsigned char*)s)[_i_++]); \
 			} while (0)
 
-#if _typ_int64_t
 
 #define FNV_INIT64	0xcbf29ce484222325LL
 #define FNV_MULT64	0x00000100000001b3LL
@@ -58,6 +57,5 @@
 				FNVPART64(h, ((unsigned char*)s)[_i_++]); \
 			} while (0)
 
-#endif
 
 #endif
