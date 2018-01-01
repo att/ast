@@ -68,7 +68,7 @@ USAGE_LICENSE
 ;
 
 #include <cmd.h>
-#include <iconv.h>
+#include <ast_iconv.h>
 
 /*
  * optget() info discipline function

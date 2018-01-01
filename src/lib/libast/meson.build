@@ -215,11 +215,14 @@ subdir('misc')
 subdir('tm')
 subdir('vmalloc')
 
-m_dep = cc.find_library('m', required: false)
-iconv_dep = cc.find_library('iconv', required: false)
+libm_dep = cc.find_library('m', required: false)
+libiconv_dep = cc.find_library('iconv', required: false)
+# On Cygwin the message catalog functions (e.g., `catopen()`) are in this
+# library.
+libcatgets_dep = cc.find_library('catgets', required: false)
 
 libast = library('ast', libast_files,
                  include_directories: incdir,
                  c_args: libast_c_args,
-                 dependencies: [m_dep, iconv_dep],
+                 dependencies: [libm_dep, libiconv_dep, libcatgets_dep],
                  install: true)
