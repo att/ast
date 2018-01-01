@@ -21,16 +21,22 @@ _lib_posix_spawn_test = '''
 	#include <signal.h>
 	#include <fcntl.h>
 	#include <string.h>
+	#include <stdio.h>
+
 	/* if it uses fork() why bother? */
 	#undef fork
 	pid_t fork (void) { printf("uses fork()"); return -1; }
 	pid_t _fork (void) { printf("uses _fork()"); return -1; }
 	pid_t __fork (void) { printf("uses __fork()"); return -1; }
-	int
-	main(argc, argv)
-	int	argc;
-	char**	argv;
-	{
+
+	int main(int argc, char **argv) {
+        #if __CYGWIN__
+            // Not only does it not work it causes the meson configure step to
+            // take tens or minutes to complete and results in a huge cascade
+            // of child processes.
+            printf("Cygwin doesn't have a working posix_spawn()\n");
+            _exit(0);
+        #else  // __CYGWIN__
 		char*			s;
 		pid_t			pid;
 		posix_spawnattr_t	attr;
@@ -43,17 +49,17 @@ _lib_posix_spawn_test = '''
 		signal(SIGHUP, SIG_IGN);
 		if (posix_spawnattr_init(&attr))
 		{
-			printf("posix_spawnattr_init() FAILED");
+			printf("posix_spawnattr_init() FAILED\n");
 			_exit(0);
 		}
 		if (posix_spawnattr_setpgroup(&attr, 0))
 		{
-			printf("posix_spawnattr_setpgroup() FAILED");
+			printf("posix_spawnattr_setpgroup() FAILED\n");
 			_exit(0);
 		}
 		if (posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP))
 		{
-			printf("posix_spawnattr_setflags() FAILED");
+			printf("posix_spawnattr_setflags() FAILED\n");
 			_exit(0);
 		}
 		/* first try an a.out and verify that SIGHUP is ignored */
@@ -63,25 +69,25 @@ _lib_posix_spawn_test = '''
 		cmd[3] = 0;
 		if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0))
 		{
-			printf("posix_spawn() FAILED");
+			printf("posix_spawn() FAILED\n");
 			_exit(0);
 		}
 		status = 1;
 		if (wait(&status) < 0)
 		{
-			printf("wait() FAILED");
+			printf("wait() FAILED\n");
 			_exit(0);
 		}
 		if (status != 0)
 		{
-			printf("SIGHUP ignored in parent not ignored in child");
+			printf("SIGHUP ignored in parent not ignored in child\n");
 			_exit(0);
 		}
 		/* must return exec-type errors or its useless to us *unless* there is no [v]fork() */
 		n = strlen(cmd[0]);
 		if (n >= (sizeof(tmp) - 3))
 		{
-			printf("test executable path too long");
+			printf("test executable path too long\n");
 			_exit(0);
 		}
 		strcpy(tmp, cmd[0]);
@@ -94,7 +100,7 @@ _lib_posix_spawn_test = '''
                     write(n, "exit 99\n", 8) != 8 ||
                     close(n) < 0)
 		{
-			printf("test script create FAILED");
+			printf("test script create FAILED\n");
 			_exit(0);
 		}
 		cmd[0] = tmp;
@@ -103,30 +109,31 @@ _lib_posix_spawn_test = '''
 		if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0))
 		{
 			n = 2;
-			printf("ENOEXEC produces posix_spawn() error (BEST)");
+			printf("ENOEXEC produces posix_spawn() error (BEST)\n");
 		}
 		else if (pid == -1)
-			printf("ENOEXEC returns pid == -1");
+			printf("ENOEXEC returns pid == -1\n");
 		else if (wait(&status) != pid)
-			printf("ENOEXEC produces no child process");
+			printf("ENOEXEC produces no child process\n");
 		else if (!WIFEXITED(status))
-			printf("ENOEXEC produces signal exit");
+			printf("ENOEXEC produces signal exit\n");
 		else
 		{
 			status = WEXITSTATUS(status);
 			if (status == 127)
 			{
 				n = 1;
-				printf("ENOEXEC produces exit status 127 (GOOD)");
+				printf("ENOEXEC produces exit status 127 (GOOD)\n");
 			}
 			else if (status == 99)
-				printf("ENOEXEC invokes sh");
+				printf("ENOEXEC invokes sh\n");
 			else if (status == 0)
-				printf("ENOEXEC reports no error");
+				printf("ENOEXEC reports no error\n");
 			else
-				printf("ENOEXEC produces non-zero exit status");
+				printf("ENOEXEC produces non-zero exit status\n");
 		}
 		_exit(n);
+        #endif  // __CYGWIN__
         }
 '''
 
