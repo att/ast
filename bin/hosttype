@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# Generate the value for the HOSTTYPE macro. This used to be done by the
+# legacy Nmake *bin/package* command. This implementation is considerably
+# simpler and does not perform some of the dubious transformations of the
+# original. Such as changing `x86_64` to `i386`.
+#
+# See issue #297.
+#
+echo $(uname -s).$(uname -m) | tr '[:upper:]' '[:lower:]'
