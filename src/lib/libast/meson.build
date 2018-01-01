@@ -195,6 +195,12 @@ if cc.has_header('mach-o/dyld.h')
     libast_c_args += [ '-D_hdr_mach_o_dyld']
 endif
 
+libast_c_args += [ '-D_ast_sizeof_int=@0@'.format(cc.sizeof('int')) ]
+libast_c_args += [ '-D_ast_sizeof_long=@0@'.format(cc.sizeof('long')) ]
+libast_c_args += [ '-D_ast_sizeof_size_t=@0@'.format(cc.sizeof('size_t')) ]
+libast_c_args += [ '-D_ast_sizeof_off_t=@0@'.format(cc.sizeof('off_t')) ]
+libast_c_args += [ '-D_ast_sizeof_pointer=@0@'.format(cc.sizeof('void*')) ]
+
 subdir('aso')
 subdir('comp')
 subdir('cdt')
