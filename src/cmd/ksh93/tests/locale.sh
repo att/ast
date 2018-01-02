@@ -349,8 +349,6 @@ then	LC_ALL=en_US.UTF-8
 	then	expected='68 65 6c 6c 6f e2 82 ac ee 20 77 6f 72 6c 64 0a'
 		actual=$(print -r -- "$x" | command od -An -tx1 |
 		         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
-		printf ".%s.\n" "$expected" >&2
-		printf ".%s.\n" "$actual" >&2
 		if [[ "$actual" != "$expected" ]]
 		then
 			err_exit $(echo 'incorrect string from printf %q:';
