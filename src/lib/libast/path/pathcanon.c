@@ -604,17 +604,17 @@ pathdev(int dfd, const char* path, char* canon, size_t size, int flags, Pathdev_
 	{
 		for (a = s + 2; *a == '/'; a++);
 #if NAMED_XATTR
-		if (!x && a[0] == '@' && a[1] == '/' && a[2] == '/')
-		{
-			if ((a - s) >= 4)
+			if (!x && a[0] == '@' && a[1] == '/' && a[2] == '/')
 			{
-				*t++ = *s++;
-				*t++ = *s++;
+				if ((a - s) >= 4)
+				{
+					*t++ = *s++;
+					*t++ = *s++;
+				}
 			}
-		}
-		else
+			else
 #endif
-			*t++ = *s++;
+				*t++ = *s++;
 	}
 #if NAMED_XATTR
 	z = 0;
