@@ -6,6 +6,11 @@ run_command('bin/ksh93_prereq.sh')
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
 
+# We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
+# than `c99` because the former enables language features we need. The latter
+# does that but also limits which APIs are available.
+add_project_arguments('-std=gnu99', language: 'c')
+
 # We should remove all #prototyped pragmas from headers.
 add_project_arguments('-Wno-unknown-pragmas', language: 'c')
 # We sure we have symbolic debug info in the compiled binaries so that our
