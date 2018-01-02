@@ -196,9 +196,9 @@ done
 # setocale(LC_ALL,"") after setlocale() initialization
 locale=en_US.UTF-8
 
-printf 'f1\357\274\240f2\n' > input1
-printf 't2\357\274\240f1\n' > input2
-printf '\357\274\240\n' > delim
+printf 'f1@f2\n' > input1
+printf 't2@f1\n' > input2
+printf '@' > delim
 print "export LC_ALL=$locale
 join -j1 1 -j2 2 -o 1.1 -t \$(cat delim) input1 input2 > out" > script
 $SHELL -c 'unset LANG ${!LC_*}; $SHELL ./script' ||
@@ -307,7 +307,7 @@ x=$"hello"
 	print 'cat << \\EOF'
 	for ((i=1; i < 164; i++))
 	do	print 123456789+123456789+123456789+123456789+123456789
-	done 
+	done
 	print $'next character is multibyte<2b|>c<3d|\>foo'
 	for ((i=1; i < 10; i++))
 	do	print 123456789+123456789+123456789+123456789+123456789
