@@ -13,10 +13,10 @@ IndentWidth: 4
 # We don't want OCLint pragmas to be reformatted.
 CommentPragmas: '^!OCLINT'
 
-# Allow slightly overlong lines.
-PenaltyExcessCharacter: 10
+# Do not allow slightly overlong lines.
+PenaltyExcessCharacter: 0
 
-# Don't try to infer the most common alignment of `&` and `*` by analyzing the
+# Do not try to infer the most common alignment of `&` and `*` by analyzing the
 # source file. Use right alignment; i.e., bind to the symbol not the type.
 DerivePointerAlignment: false
 PointerAlignment: Right
