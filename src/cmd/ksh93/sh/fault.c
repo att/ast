@@ -144,9 +144,8 @@ static void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
 //
 // Most signals caught or ignored by the shell come here.
 //
-void sh_fault(int sig, siginfo_t *info, void *context)
-{
-    int saved_errno = errno; // many platforms do not save/restore errno for signal handlers
+void sh_fault(int sig, siginfo_t *info, void *context) {
+    int saved_errno = errno;  // many platforms do not save/restore errno for signal handlers
     Shell_t *shp = sh_getinterp();
     int flag = 0;
     char *trap;
@@ -159,7 +158,7 @@ void sh_fault(int sig, siginfo_t *info, void *context)
     if (sig == SIGCHLD) sfprintf(sfstdout, "childsig\n");
 #ifdef SIGWINCH
     if (sig == SIGWINCH) shp->winch = 1;
-#endif // SIGWINCH
+#endif  // SIGWINCH
     trap = shp->st.trapcom[sig];
     if (sig == SIGBUS) {
         signal(sig, SIG_DFL);
@@ -238,7 +237,7 @@ void sh_fault(int sig, siginfo_t *info, void *context)
                 goto done;
             }
         }
-#endif // SIGTSTP
+#endif  // SIGTSTP
     }
     if (shp->bltinfun) action = notify_builtin(shp, sig);
     if (action > 0) goto done;
@@ -272,7 +271,7 @@ void sh_siginit(void *ptr) {
         shp->gd->sigruntime[SH_SIGRTMIN] = n;
         shp->gd->sigruntime[SH_SIGRTMAX] = sig;
     }
-#endif // SIGRTMIN && SIGRTMAX
+#endif  // SIGRTMIN && SIGRTMAX
     n = SIGTERM;
     while (*tp->sh_name) {
         sig = (tp->sh_number & ((1 << SH_SIGBITS) - 1));
@@ -534,11 +533,11 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
     // Unlock output pool.
     sh_offstate(shp, SH_NOTRACK);
     if (!(pool = sfpool(NIL(Sfio_t *), shp->outpool, SF_WRITE)))
-        pool = shp->outpool; // can't happen?
+        pool = shp->outpool;  // can't happen?
     sfclrlock(pool);
 #ifdef SIGPIPE
     if (shp->lastsig == SIGPIPE) sfpurge(pool);
-#endif // SIGPIPE
+#endif  // SIGPIPE
     sfclrlock(sfstdin);
     if (!pp) sh_done(shp, sig);
     shp->intrace = 0;
@@ -576,7 +575,7 @@ void sh_done(void *ptr, int sig) {
     if (sig) savxit = SH_EXITSIG | sig;
     if (shp->userinit) (*shp->userinit)(shp, -1);
     if (shp->st.trapcom && (t = shp->st.trapcom[0])) {
-        shp->st.trapcom[0] = 0; // should free but not long
+        shp->st.trapcom[0] = 0;  // should free but not long
         shp->oldexit = savxit;
         sh_trap(shp, t, 0);
         savxit = shp->exitval;
@@ -589,7 +588,7 @@ void sh_done(void *ptr, int sig) {
     sh_freeup(shp);
 #if SHOPT_ACCT
     sh_accend();
-#endif // SHOPT_ACCT
+#endif  // SHOPT_ACCT
     if (mbwide() || sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_VI) ||
         sh_isoption(shp, SH_GMACS))
         tty_cooked(-1);
@@ -597,7 +596,7 @@ void sh_done(void *ptr, int sig) {
     if ((sh_isoption(shp, SH_INTERACTIVE) && shp->login_sh) ||
         (!sh_isoption(shp, SH_INTERACTIVE) && (sig == SIGHUP)))
         job_walk(shp, sfstderr, job_terminate, SIGHUP, NIL(char **));
-#endif // JOBS
+#endif  // JOBS
     job_close(shp);
     if (shp->var_tree && nv_search("VMTRACE", shp->var_tree, 0)) strmatch((char *)0, (char *)0);
     sfsync((Sfio_t *)sfstdin);
@@ -813,4 +812,3 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     sigunblock(sig);
     return (sh_sigfun_t)sigout.sa_sigaction;
 }
-

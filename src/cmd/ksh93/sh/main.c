@@ -165,7 +165,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
             sh_onoption(shp, SH_BGNICE);
             sh_onoption(shp, SH_RC);
         }
-        if (!sh_isoption(shp, SH_RC) && (sh_isoption(shp, SH_BASH) && !sh_isoption(shp, SH_POSIX))) {
+        if (!sh_isoption(shp, SH_RC) &&
+            (sh_isoption(shp, SH_BASH) && !sh_isoption(shp, SH_POSIX))) {
             sh_onoption(shp, SH_RC);
         }
         for (i = 0; i < elementsof(shp->offoptions.v); i++) {
@@ -201,8 +202,9 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
 #if SHOPT_SYSRC
                     sh_source(shp, iop, e_bash_sysrc);
 #endif
-                    sh_source(shp, iop,
-                              shp->gd->rcfile ? shp->gd->rcfile : sh_mactry(shp, (char *)e_bash_rc));
+                    sh_source(
+                        shp, iop,
+                        shp->gd->rcfile ? shp->gd->rcfile : sh_mactry(shp, (char *)e_bash_rc));
                 } else
 #endif
                 {
@@ -266,7 +268,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     // Try to undo effect of solaris 2.5+ change for argv for setuid scripts.
                     //
                     if (shp->st.repl_index > 0) av[shp->st.repl_index] = shp->st.repl_arg;
-                    if (((type = sh_type(cp = av[0])) & SH_TYPE_SH) && (name = nv_getval(L_ARGNOD)) &&
+                    if (((type = sh_type(cp = av[0])) & SH_TYPE_SH) &&
+                        (name = nv_getval(L_ARGNOD)) &&
                         (!((type = sh_type(cp = name)) & SH_TYPE_SH))) {
                         av[0] = (type & SH_TYPE_LOGIN) ? cp : path_basename(cp);
                         // Exec to change $0 for ps.

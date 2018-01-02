@@ -526,7 +526,8 @@ bool job_reap(int sig) {
         sfprintf(sfstderr,
                  "ksh: job line %4d: reap pid=%d critical=%d job %d with pid %d flags=%o complete "
                  "with status=%x exit=%d\n",
-                 __LINE__, getpid(), job.in_critical, pw->p_job, pid, pw->p_flag, wstat, pw->p_exit);
+                 __LINE__, getpid(), job.in_critical, pw->p_job, pid, pw->p_flag, wstat,
+                 pw->p_exit);
         sfsync(sfstderr);
 #endif  // DEBUG
         // Only top-level process in job should have notify set.
@@ -836,7 +837,8 @@ void job_bwait(char **jobs) {
 //
 // Execute function <fun> for each job.
 //
-int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int arg, char *joblist[]) {
+int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int arg,
+             char *joblist[]) {
     struct process *pw;
     int r = 0;
     char *jobid, **jobs = joblist;

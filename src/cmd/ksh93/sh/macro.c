@@ -645,7 +645,8 @@ static void copyto(Mac_t *mp, int endch, int newquote) {
                 break;
             }
             case S_BRACT: {
-                if (mp->arith || (((mp->assign & 1) || endch == RBRACT) && !(mp->quote || mp->lit))) {
+                if (mp->arith ||
+                    (((mp->assign & 1) || endch == RBRACT) && !(mp->quote || mp->lit))) {
                     int offset = 0, oldpat = mp->pattern;
                     int oldarith = mp->arith, oldsub = mp->subcopy;
                     sfwrite(stkp, first, ++c);
@@ -1341,7 +1342,8 @@ retry1:
                     }
                     mp->atmode = (v && mp->quoted && mode == '@');
                     // Special case --- ignore leading zeros.
-                    if ((mp->let || (mp->arith && nv_isattr(np, (NV_LJUST | NV_RJUST | NV_ZFILL)))) &&
+                    if ((mp->let ||
+                         (mp->arith && nv_isattr(np, (NV_LJUST | NV_RJUST | NV_ZFILL)))) &&
                         !nv_isattr(np, NV_INTEGER) &&
                         (offset == 0 || isspace(c) || strchr(",.+-*/=%&|^?!<>", c)))
                         mp->zeros = 1;

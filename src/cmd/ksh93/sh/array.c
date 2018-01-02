@@ -155,8 +155,7 @@ static union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
         } else {
             return ((union Value *)((*arp->fun)(np, NIL(char *), 0)));
         }
-    }
-    else {
+    } else {
         if (ap->cur >= ap->maxi) errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
         up = &(ap->val[ap->cur]);
         nofree = array_isbit(ap->bits, ap->cur, ARRAY_NOFREE);
@@ -214,8 +213,7 @@ static Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
         } else {  // same as array[0]
             if (is_associative(ap)) {
                 (*ap->header.fun)(np, "0", flag == ARRAY_ASSIGN ? NV_AADD : 0);
-            }
-            else {
+            } else {
                 ap->cur = 0;
             }
         }
@@ -244,8 +242,7 @@ static Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
                 }
             }
         }
-    }
-    else {
+    } else {
         if (!(ap->header.flags & ARRAY_SCAN) && ap->cur >= ap->maxi) {
             ap = array_grow(np, ap, (int)ap->cur);
         }
@@ -519,11 +516,10 @@ static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *
             nv_offattr(np, NV_BINARY);
             up->cp = 0;
         }
-            if (nv_isarray(np))
-            np->nvalue.up = up;
+        if (nv_isarray(np)) np->nvalue.up = up;
         nv_putv(np, string, flags, &ap->hdr);
         if (nofree && !up->cp) up->cp = Empty;
-            if (!is_associative(ap)) {
+        if (!is_associative(ap)) {
             if (string) {
                 array_clrbit(aq->bits, aq->cur, ARRAY_NOFREE);
             } else if (mp == np) {
@@ -542,7 +538,7 @@ static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *
     }
     if (!string && !nv_isattr(np, NV_ARRAY)) {
         Namfun_t *nfp;
-            if (!is_associative(ap) && aq->xp) {
+        if (!is_associative(ap) && aq->xp) {
             _nv_unset(nv_namptr(aq->xp, 0), NV_RDONLY);
             free((void *)aq->xp);
         }
@@ -875,8 +871,7 @@ bool nv_nextsub(Namval_t *np) {
 Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
     Shell_t *shp = sh_ptr(np);
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
-        if (!ap || !ap->header.fun)
-    {
+    if (!ap || !ap->header.fun) {
         if (sp && sp != Empty) {
             if (ap && ap->xp && !strmatch(sp, "+([0-9])")) {
                 Namval_t *mp = nv_namptr(ap->xp, 0);
@@ -969,7 +964,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
     ap->header.flags &= ~ARRAY_UNDEF;
     if (!(flags & ARRAY_FILL)) ap->header.flags &= ~ARRAY_SCAN;
     ap->header.flags |= (flags & (ARRAY_SCAN | ARRAY_NOCHILD | ARRAY_UNDEF | ARRAY_NOSCOPE));
-        if (sp) {
+    if (sp) {
         if (flags & ARRAY_SETSUB) {
             (*ap->header.fun)(np, sp, NV_ASETSUB);
             return np;
@@ -1022,9 +1017,9 @@ char *nv_endsubscript(Namval_t *np, char *cp, int mode, void *context) {
         } else if (ap && cp[1] == '.' && (mode & NV_FARRAY)) {
             mode |= NV_ADD;
         }
-            nv_putsub(np, sp, 0,
-                      ((mode & NV_ADD) ? ARRAY_ADD : 0) |
-                          (cp[1] && (mode & NV_ADD) ? ARRAY_FILL : mode & ARRAY_FILL));
+        nv_putsub(np, sp, 0,
+                  ((mode & NV_ADD) ? ARRAY_ADD : 0) |
+                      (cp[1] && (mode & NV_ADD) ? ARRAY_FILL : mode & ARRAY_FILL));
         if (scan) ap->flags |= scan;
     }
     if (quoted) stkseek(shp->stk, count);
@@ -1038,9 +1033,7 @@ Namval_t *nv_opensub(Namval_t *np) {
     if (ap) {
         if (is_associative(ap)) {
             return ((Namval_t *)((*ap->header.fun)(np, NIL(char *), NV_ACURRENT)));
-        }
-            else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD))
-        {
+        } else if (array_isbit(ap->bits, ap->cur, ARRAY_CHILD)) {
             return ap->val[ap->cur].np;
         }
     }
@@ -1118,7 +1111,7 @@ int nv_aimax(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     int sub = -1;
 
-        if (!ap || is_associative(&ap->header)) {
+    if (!ap || is_associative(&ap->header)) {
         return -1;
     }
     sub = ap->maxi;
@@ -1198,7 +1191,8 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                     return (void *)ap;
                 }
             }
-            if ((ap->header.flags & ARRAY_NOSCOPE) && ap->header.scope && !dtvnext(ap->header.table)) {
+            if ((ap->header.flags & ARRAY_NOSCOPE) && ap->header.scope &&
+                !dtvnext(ap->header.table)) {
                 ap->header.table->view = (Dt_t *)ap->header.scope;
                 ap->header.scope = ap->header.table;
             }

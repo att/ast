@@ -42,15 +42,18 @@ extern const Namdisc_t ENUM_disc;
 static bool Varsubscript;
 static Sfdouble_t NaN, Inf, Fun;
 static Namval_t Infnod = {
-    {{NULL}, {NULL}}, "Inf",
+    {{NULL}, {NULL}},
+    "Inf",
 };
 
 static Namval_t NaNnod = {
-    {{NULL}, {NULL}}, "NaN",
+    {{NULL}, {NULL}},
+    "NaN",
 };
 
 static Namval_t FunNode = {
-    {{NULL}, {NULL}}, "?",
+    {{NULL}, {NULL}},
+    "?",
 };
 
 struct Mathconst {
@@ -125,34 +128,54 @@ typedef struct Fltconst_s {
 
 static const Intconst_t intconst[] = {
     {
-        "DIG", USHRT_DIG, USHRT_DIG, UINT_DIG, UINT_DIG,
+        "DIG",
+        USHRT_DIG,
+        USHRT_DIG,
+        UINT_DIG,
+        UINT_DIG,
 #ifdef LLONG_DIG
-        ULLONG_DIG, ULLONG_DIG,
+        ULLONG_DIG,
+        ULLONG_DIG,
 #else
-        ULONG_DIG, ULONG_DIG,
+        ULONG_DIG,
+        ULONG_DIG,
 #endif
     },
     {
-        "MAX", SHRT_MAX, USHRT_MAX, INT_MAX, UINT_MAX,
+        "MAX",
+        SHRT_MAX,
+        USHRT_MAX,
+        INT_MAX,
+        UINT_MAX,
 #ifdef LLONG_MAX
-        LLONG_MAX, ULLONG_MAX,
+        LLONG_MAX,
+        ULLONG_MAX,
 #else
-        LONG_MAX, ULONG_MAX,
+        LONG_MAX,
+        ULONG_MAX,
 #endif
     },
     {
-        "MIN", SHRT_MIN, 0, INT_MIN, 0,
+        "MIN",
+        SHRT_MIN,
+        0,
+        INT_MIN,
+        0,
 #ifdef LLONG_MIN
-        LLONG_MIN, 0,
+        LLONG_MIN,
+        0,
 #else
-        LONG_MIN, 0,
+        LONG_MIN,
+        0,
 #endif
     },
 };
 
 static const Fltconst_t fltconst[] = {
     {
-        "DIG", FLT_DIG, DBL_DIG,
+        "DIG",
+        FLT_DIG,
+        DBL_DIG,
 #ifdef LDBL_DIG
         LDBL_DIG,
 #else
@@ -160,7 +183,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "EPSILON", FLT_EPSILON, DBL_EPSILON,
+        "EPSILON",
+        FLT_EPSILON,
+        DBL_EPSILON,
 #ifdef LDBL_EPSILON
         LDBL_EPSILON,
 #else
@@ -168,7 +193,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "INT_MAX", FLT_INTMAX_MAX, DBL_INTMAX_MAX,
+        "INT_MAX",
+        FLT_INTMAX_MAX,
+        DBL_INTMAX_MAX,
 #ifdef LDBL_INTMAX_MAX
         LDBL_INTMAX_MAX,
 #else
@@ -176,7 +203,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "INT_MIN", FLT_INTMAX_MIN, DBL_INTMAX_MIN,
+        "INT_MIN",
+        FLT_INTMAX_MIN,
+        DBL_INTMAX_MIN,
 #ifdef LDBL_INTMAX_MIN
         LDBL_INTMAX_MIN,
 #else
@@ -184,7 +213,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MAX", FLT_MAX, DBL_MAX,
+        "MAX",
+        FLT_MAX,
+        DBL_MAX,
 #ifdef LDBL_MAX
         LDBL_MAX,
 #else
@@ -192,7 +223,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MAX_10_EXP", FLT_MAX_10_EXP, DBL_MAX_10_EXP,
+        "MAX_10_EXP",
+        FLT_MAX_10_EXP,
+        DBL_MAX_10_EXP,
 #ifdef LDBL_MAX_10_EXP
         LDBL_MAX_10_EXP,
 #else
@@ -200,7 +233,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MAX_EXP", FLT_MAX_EXP, DBL_MAX_EXP,
+        "MAX_EXP",
+        FLT_MAX_EXP,
+        DBL_MAX_EXP,
 #ifdef LDBL_MAX_EXP
         LDBL_MAX_EXP,
 #else
@@ -208,7 +243,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MIN", FLT_MIN, DBL_MIN,
+        "MIN",
+        FLT_MIN,
+        DBL_MIN,
 #ifdef LDBL_MIN
         LDBL_MIN,
 #else
@@ -216,7 +253,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MIN_10_EXP", FLT_MIN_10_EXP, DBL_MIN_10_EXP,
+        "MIN_10_EXP",
+        FLT_MIN_10_EXP,
+        DBL_MIN_10_EXP,
 #ifdef LDBL_MIN_10_EXP
         LDBL_MIN_10_EXP,
 #else
@@ -224,7 +263,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "MIN_EXP", FLT_MIN_EXP, DBL_MIN_EXP,
+        "MIN_EXP",
+        FLT_MIN_EXP,
+        DBL_MIN_EXP,
 #ifdef LDBL_MIN_EXP
         LDBL_MIN_EXP,
 #else
@@ -232,7 +273,9 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "UINT_MAX", FLT_UINTMAX_MAX, DBL_UINTMAX_MAX,
+        "UINT_MAX",
+        FLT_UINTMAX_MAX,
+        DBL_UINTMAX_MAX,
 #ifdef LDBL_UINTMAX_MAX
         LDBL_UINTMAX_MAX,
 #else
@@ -240,7 +283,10 @@ static const Fltconst_t fltconst[] = {
 #endif
     },
     {
-        "UINT_MIN", 0, 0, 0,
+        "UINT_MIN",
+        0,
+        0,
+        0,
     },
 };
 
@@ -365,8 +411,7 @@ static Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     while (nv_isref(np)) {
         sub = nv_refsub(np);
         np = nv_refnode(np);
-            if (sub)
-            nv_putsub(np, sub, 0, assign == NV_ASSIGN ? ARRAY_ADD : 0);
+        if (sub) nv_putsub(np, sub, 0, assign == NV_ASSIGN ? ARRAY_ADD : 0);
     }
     if (!nosub && flag) {
         int hasdot = 0;

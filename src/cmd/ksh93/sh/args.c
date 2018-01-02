@@ -28,11 +28,11 @@
 
 #include "builtins.h"
 #include "edit.h"
+#include "io.h"
 #include "jobs.h"
 #include "path.h"
-#include "terminal.h"
-#include "io.h"
 #include "shlex.h"
+#include "terminal.h"
 #if SHOPT_BASH
 #define BASHOPT "\374"
 #else
@@ -199,8 +199,8 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     } else
 #endif
         if (*s != ':') {
-            sfputr(sp, sh_set, -1);
-        }
+        sfputr(sp, sh_set, -1);
+    }
     return (1);
 }
 
@@ -403,8 +403,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NIL(char *)));
     // Check for '-' or '+' argument.
     sp = argv[opt_info.index];
-    if (sp && sp[1] == 0 && (*sp == '+' || *sp == '-') &&
-        strcmp(argv[opt_info.index - 1], "--")) {
+    if (sp && sp[1] == 0 && (*sp == '+' || *sp == '-') && strcmp(argv[opt_info.index - 1], "--")) {
         opt_info.index++;
         off_option(&newflags, SH_XTRACE);
         off_option(&newflags, SH_VERBOSE);
@@ -923,7 +922,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
             shp->procsub = procsub = newof(0, pid_t, shp->nprocsub = 4, 0);
         } else {
             nn = procsub - shp->procsub;
-            if (nn  >= shp->nprocsub) {
+            if (nn >= shp->nprocsub) {
                 shp->nprocsub += 3;
                 shp->procsub = newof(shp->procsub, pid_t, shp->nprocsub, 0);
                 procsub = shp->procsub + nn;

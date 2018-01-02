@@ -665,7 +665,8 @@ static void astbin_update(Shell_t *shp, const char *from, const char *to) {
     if (tobin) to = "/usr/bin";
     len = strlen(from);
     tolen = strlen(to);
-    for (np = (Namval_t *)dtfirst(shp->bltin_tree); np; np = (Namval_t *)dtnext(shp->bltin_tree, np)) {
+    for (np = (Namval_t *)dtfirst(shp->bltin_tree); np;
+         np = (Namval_t *)dtnext(shp->bltin_tree, np)) {
         flen = len;
         if (bin && memcmp(from + 4, np->nvname, len - 4) == 0) {
             flen -= 4;

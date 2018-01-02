@@ -87,8 +87,7 @@ int fcfill(void) {
         if (ptr > last) _Fcin.fcptr = ptr = last;
     }
     n = ptr - _Fcin.fcbuff;
-    if (n && _Fcin.fcfun)
-        (*_Fcin.fcfun)(f, (const char *)_Fcin.fcbuff, n, _Fcin.context);
+    if (n && _Fcin.fcfun) (*_Fcin.fcfun)(f, (const char *)_Fcin.fcbuff, n, _Fcin.context);
     sfread(f, (char *)_Fcin.fcbuff, n);
     _Fcin.fcoff += n;
     _Fcin._fcfile = 0;
@@ -145,9 +144,7 @@ int _fcmbget(short *len) {
             c = fcget();
             break;
         }
-        default: {
-            c = mbchar(_Fcin.fcptr);
-        }
+        default: { c = mbchar(_Fcin.fcptr); }
     }
     return c;
 }

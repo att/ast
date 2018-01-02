@@ -1112,7 +1112,8 @@ int sh_lex(Lex_t *lp) {
                 // Check for reserved word { or }.
                 if (lp->lex.reservok && state[n] == S_BREAK && isfirst) break;
                 if (sh_isoption(lp->sh, SH_BRACEEXPAND) && c == LBRACE && !assignment &&
-                    state[n] != S_BREAK && !lp->lex.incase && !lp->lex.intest && !lp->lex.skipword) {
+                    state[n] != S_BREAK && !lp->lex.incase && !lp->lex.intest &&
+                    !lp->lex.skipword) {
                     wordflags |= ARG_EXP;
                 }
                 if (c == RBRACE && n == LPAREN) goto epat;
