@@ -200,10 +200,10 @@ printf 'f1\357\274\240f2\n' > input1
 printf 't2\357\274\240f1\n' > input2
 printf '\357\274\240\n' > delim
 print "export LC_ALL=$locale
-join -j1 1 -j2 2 -o 1.1 -t \$(cat delim) input1 input2 > out" > script
+join -1 1 -2 2 -o 1.2,2.1 -t \$(cat delim) input1 input2 > out" > script
 $SHELL -c 'unset LANG ${!LC_*}; $SHELL ./script' ||
 err_exit "join test script failed -- exit code $?"
-exp="f1"
+exp=$(printf 'f2\357\274\240t2')
 got="$(<out)"
 [[ $got == "$exp" ]] || err_exit "LC_ALL test script failed -- expected '$exp', got '$got'"
 
@@ -347,8 +347,16 @@ then	LC_ALL=en_US.UTF-8
 	LC_ALL=C.UTF-8 eval $'[[ $(print -r -- "$x") == $\'hello\\u[20ac]\\xee world\' ]]' || err_exit '%q with unicode and non-unicode not working'
 	if	[[ $(whence od) ]]
 	then	expected='68 65 6c 6c 6f e2 82 ac ee 20 77 6f 72 6c 64 0a'
-		actual=$(print -r -- "$x" | command od -An -tx1 | sed -e 's/^ *//' -e 's/ *$//')
-		[[ "$actual" == "$expected" ]] || err_exit "incorrect string from printf %q"
+		actual=$(print -r -- "$x" | command od -An -tx1 |
+		         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
+		printf ".%s.\n" "$expected" >&2
+		printf ".%s.\n" "$actual" >&2
+		if [[ "$actual" != "$expected" ]]
+		then
+			err_exit $(echo 'incorrect string from printf %q:';
+			           echo "expected '$expected'";
+				   echo "actual   '$actual'")
+		fi
 	fi
 fi
 
