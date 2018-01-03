@@ -191,6 +191,7 @@ struct _sffmt_s
 
 /* namespace incursion workarounds -- migrate to the new names */
 #if !_mac_SF_APPEND
+#undef SF_APPEND_
 #define SF_APPEND	SF_APPENDWR	/* BSDI sys/stat.h		*/
 #endif
 #if !_mac_SF_CLOSE
