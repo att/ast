@@ -36,7 +36,9 @@
 #include <proc.h>
 #include <ls.h>
 #include <sys/utsname.h>
-
+#if _lib_sysinfo
+#  include <sys/sysinfo.h>
+#endif
 #include "conftab.h"
 
 #ifndef DEBUG_astconf
