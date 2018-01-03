@@ -25,6 +25,7 @@
  *   AT&T Labs
  *
  */
+#include <time.h>
 
 /*
  * Each command in the history file starts on an even byte is null terminated.

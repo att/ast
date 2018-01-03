@@ -31,6 +31,7 @@
 #include <ls.h>
 #include <sfio.h>
 #include <stak.h>
+#include <time.h>
 
 #include "history.h"
 #include "io.h"
