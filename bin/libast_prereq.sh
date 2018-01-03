@@ -6,29 +6,19 @@ set -e
 
 # This script is run from an unspecified directory so we have to determine directory paths
 # http://mesonbuild.com/Reference-manual.html#run_command
-if type realpath >/dev/null 2>&1
-then
-    script_path=`realpath "$0"`
-elif type grealpath >/dev/null 2>&1
-then
-    script_path=`grealpath "$0"`
-else
-    echo Sorry but your system does not have a realpath or grealpath command >&2
-    exit 1
-fi
-bin_dir=`dirname "$script_path"`
-base_dir=`dirname "$bin_dir"`
+
+bin_dir="$MESON_SOURCE_ROOT/bin"
 
 PATH=$bin_dir:$PATH
 
 c_tests=('sfinit.c' 'signal.c')
 
-mkdir $base_dir/src/lib/libast/features/FEATURE
-$base_dir/src/lib/libast/features/siglist.sh > $base_dir/src/lib/libast/features/FEATURE/siglist
+mkdir $MESON_SOURCE_ROOT/src/lib/libast/features/FEATURE
+$MESON_SOURCE_ROOT/src/lib/libast/features/siglist.sh > $MESON_SOURCE_ROOT/src/lib/libast/features/FEATURE/siglist
 
-pushd "$base_dir/src/lib/libast/features"
+pushd "$MESON_SOURCE_ROOT/src/lib/libast/features"
 
-"$bin_dir/conf" -v "$base_dir/src/lib/libast/comp/conf.tab" cc -I../include -D_BLD_DLL -D_BLD_ast
+"$bin_dir/conf" -v "$MESON_SOURCE_ROOT/src/lib/libast/comp/conf.tab" cc -I../include -D_BLD_DLL -D_BLD_ast
 
 for feature_test in ${c_tests[@]}; do
     name=$(echo "$feature_test" | cut -f1 -d.)
@@ -42,7 +32,7 @@ done
 
 popd
 
-pushd "$base_dir/"
-cc -o "$bin_dir/lcgen" "$base_dir/src/lib/libast/port/lcgen.c"
-"$bin_dir/lcgen" "$base_dir/src/lib/libast/include/lc.h" "$base_dir/src/lib/libast/port/lctab.c" < "$base_dir/src/lib/libast/port/lc.tab"
+pushd "$MESON_SOURCE_ROOT/"
+cc -o "$bin_dir/lcgen" "$MESON_SOURCE_ROOT/src/lib/libast/port/lcgen.c"
+"$bin_dir/lcgen" "$MESON_SOURCE_ROOT/src/lib/libast/include/lc.h" "$MESON_SOURCE_ROOT/src/lib/libast/port/lctab.c" < "$MESON_SOURCE_ROOT/src/lib/libast/port/lc.tab"
 popd
