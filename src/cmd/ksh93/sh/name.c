@@ -35,16 +35,6 @@ static Namval_t NullNode;
 static Dt_t *Refdict;
 static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *), sizeof(struct Namref)};
 
-#if !_lib_pathnative && _lib_uwin_path
-
-#define _lib_pathnative 1
-
-extern int uwin_path(const char *, char *, int);
-
-size_t pathnative(const char *path, char *buf, size_t siz) { return uwin_path(path, buf, siz); }
-
-#endif  // _lib_pathnative
-
 static void attstore(Namval_t *, void *);
 #ifndef _ENV_H
 static void pushnam(Namval_t *, void *);
