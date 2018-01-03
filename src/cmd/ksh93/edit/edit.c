@@ -28,6 +28,7 @@
  */
 
 #include	<ast.h>
+#include  <sys/ioctl.h>
 #include	<errno.h>
 #include	<ccode.h>
 #   include	<utime.h>
