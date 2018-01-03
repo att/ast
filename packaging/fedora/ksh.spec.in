@@ -1,0 +1,93 @@
+%global commit #COMMIT#
+%global shortcommit #SHORTCOMMIT#
+%global commitnum #COMMITNUM#
+
+Name:           ksh
+Summary:        The Original ATT Korn Shell
+URL:            http://www.kornshell.com/
+License:        EPL
+Version:        %(date +%Y%m%d)+git.%{commitnum}.%{shortcommit}
+Release:        0%{?dist}
+Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+#Source1:        kshcomp.conf
+#Source2:        kshrc.rhs
+#Source3:        dotkshrc
+
+BuildRequires:  meson
+BuildRequires:  gcc
+BuildRequires:  bison
+BuildRequires:  glibc-devel
+BuildRequires:  glibc-langpack-zh
+BuildRequires:  ed
+# regression test suite uses 'ps'
+BuildRequires:  %{_bindir}/ps
+Conflicts:      pdksh
+Requires:       coreutils, diffutils, chkconfig
+Requires(post): grep, coreutils, systemd-units
+Requires(postun): sed
+
+Provides:       /bin/ksh
+
+%description
+KSH-93 is the most recent version of the KornShell by David Korn of
+AT&T Bell Laboratories.
+KornShell is a shell programming language, which is upward compatible
+with "sh" (the Bourne Shell).
+
+%prep
+%autosetup -n ast-%{commit}
+
+%build
+%meson
+%meson_build
+
+%install
+%meson_install
+%__install -Dpm0644 -t %{buildroot}%{_mandir}/man1 arch/*/man/man1/ksh.1
+#__install -Dpm0644 -t %{buildroot}%{_sysconfdir}/binfmt.d %{S:1}
+#__install -Dpm0644 -t %{buildroot}%{_sysconfdir} %{S:2}
+#__install -Dpm0644 -t %{buildroot}%{_sysconfdir}/skel %{S:3}
+
+%post
+if [ ! -f /etc/shells ]; then
+        echo "/bin/ksh" > /etc/shells
+        echo "/usr/bin/ksh" >> /etc/shells
+else
+        if ! grep -q '^/bin/ksh$' /etc/shells ; then
+                echo "/bin/ksh" >> /etc/shells
+        fi
+        if ! grep -q '^/usr/bin/ksh$' /etc/shells ; then
+                echo "/usr/bin/ksh" >> /etc/shells
+        fi 
+fi
+
+/bin/systemctl try-restart systemd-binfmt.service >/dev/null 2>&1 || :
+
+%postun
+if [ ! -f /bin/ksh ]; then
+    sed -i '/^\/bin\/ksh$/ d' /etc/shells
+fi
+if [ ! -f /usr/bin/ksh ]; then
+    sed -i '/^\/usr\/bin\/ksh$/ d' /etc/shells
+fi
+
+%verifyscript
+echo -n "Looking for ksh in /etc/shells... "
+if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
+    echo "missing"
+    echo "ksh missing from /etc/shells" >&2
+else
+    echo "found"
+fi
+
+%files 
+%doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES 
+# LICENSE file is missing, temporarily?
+%{_bindir}/ksh
+%{_bindir}/shcomp
+%{_mandir}/man1/ksh.1*
+#config(noreplace) %{_sysconfdir}/skel/.kshrc
+#config(noreplace) %{_sysconfdir}/kshrc
+#config(noreplace) %{_sysconfdir}/binfmt.d/kshcomp.conf
+
+%changelog
