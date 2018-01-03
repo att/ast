@@ -190,8 +190,7 @@ struct _sffmt_s
 #define SF_UNBOUND	(-1)	/* unbounded buffer size		*/
 
 /* namespace incursion workarounds -- migrate to the new names */
-#if !_mac_SF_APPEND
-#undef SF_APPEND_
+#ifdef SF_APPEND
 #define SF_APPEND	SF_APPENDWR	/* BSDI sys/stat.h		*/
 #endif
 #if !_mac_SF_CLOSE
