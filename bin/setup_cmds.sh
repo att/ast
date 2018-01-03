@@ -5,7 +5,16 @@ set -e
 
 # This script is run from an unspecified directory so we have to determine directory paths
 # http://mesonbuild.com/Reference-manual.html#run_command
-script_path=`realpath "$0"`
+if type realpath >/dev/null 2>&1
+then
+    script_path=`realpath "$0"`
+elif type grealpath >/dev/null 2>&1
+then
+    script_path=`grealpath "$0"`
+else
+    echo Sorry but your system does not have a realpath or grealpath command >&2
+    exit 1
+fi
 bin_dir=`dirname "$script_path"`
 base_dir=`dirname "$bin_dir"`
 
