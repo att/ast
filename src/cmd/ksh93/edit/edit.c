@@ -46,6 +46,7 @@
 #include	"terminal.h"
 #include	"history.h"
 #include	"edit.h"
+#include	"times.h"
 
 static char CURSOR_UP[20] = { ESC, '[', 'A', 0 };
 static char KILL_LINE[20] = { ESC, '[', 'J', 0 };
