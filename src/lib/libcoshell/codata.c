@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1990-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1990-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -27,13 +27,15 @@
 
 #include "colib.h"
 
-char	coident[] = "\
+char coident[] =
+    "\
 # @(#)$Id: libcoshell (AT&T Research) 2012-12-01 $\n\
 %s=%d\n\
 { { (eval 'function fun { trap \":\" 0; return 1; }; trap \"exit 0\" 0; fun; exit 1') && PATH= print -u$%s ksh; } || { times && echo bsh >&$%s; } || { echo osh >&$%s; }; } >/dev/null 2>&1\n\
 ";
 
-char	cobinit[] = "\
+char cobinit[] =
+    "\
 if	(eval 'f() echo') >/dev/null 2>&1\n\
 then	eval 'ignore() {\n\
 		case $- in\n\
@@ -116,7 +118,8 @@ else	:\n\
 fi\n\
 ";
 
-char	cokinit[] = "\
+char cokinit[] =
+    "\
 set +o bgnice -o monitor\n\
 (wait $$; exit 0) 2>/dev/null || alias wait=:\n\
 alias ignore='ignore '\n\
@@ -158,12 +161,12 @@ function silent\n\
 typeset -xf ignore silent\n\
 ";
 
-char*	co_export[] =		/* default export var list		*/
-{
-	CO_ENV_EXPORT,		/* first				*/
-	CO_ENV_ATTRIBUTES,
-	CO_ENV_PROC,
-	"FPATH",
-	"VPATH",
-	0			/* last					*/
+char *co_export[] = /* default export var list		*/
+    {
+        CO_ENV_EXPORT, /* first				*/
+        CO_ENV_ATTRIBUTES,
+        CO_ENV_PROC,
+        "FPATH",
+        "VPATH",
+        0 /* last					*/
 };
