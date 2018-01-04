@@ -1,2 +1,0 @@
-: mac os10 ldd
-otool -L "$@"
