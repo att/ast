@@ -44,7 +44,7 @@ Dtmethod_t*	meth;
 
 	/* ask discipline if switching to new method is ok */
 	if(disc->eventf && (*disc->eventf)(dt,DT_METH,(Void_t*)meth,disc) < 0)
-		return NIL(Dtmethod_t*);
+		return NULL;
 
 	list = dtextract(dt); /* extract elements out of dictionary */
 
@@ -52,9 +52,9 @@ Dtmethod_t*	meth;
 	if(dt->searchf == oldmt->searchf) /* ie, not viewpathing */
 		dt->searchf = meth->searchf;
 	dt->meth = meth;
-	dt->data = NIL(Dtdata_t*);
-	if((*dt->meth->eventf)(dt, DT_OPEN, NIL(Void_t*)) < 0 )
-		newdt = NIL(Dtdata_t*);
+	dt->data = NULL;
+	if((*dt->meth->eventf)(dt, DT_OPEN, NULL) < 0 )
+		newdt = NULL;
 	else	newdt = dt->data;
 
 	/* see what need to be done to data of the old method */ 
@@ -63,7 +63,7 @@ Dtmethod_t*	meth;
 	dt->meth = oldmt;
 	dt->data = olddt;
 	if(newdt) /* switch was successful, remove old data */
-	{	(void)(*dt->meth->eventf)(dt, DT_CLOSE, NIL(Void_t*));
+	{	(void)(*dt->meth->eventf)(dt, DT_CLOSE, NULL);
 
 		if(dt->searchf == oldmt->searchf)
 			dt->searchf = meth->searchf;
@@ -74,7 +74,7 @@ Dtmethod_t*	meth;
 	}
 	else /* switch failed, restore dictionary to previous states */
 	{	dtrestore(dt, list); 
-		return NIL(Dtmethod_t*);
+		return NULL;
 	}
 }
 

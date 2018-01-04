@@ -63,7 +63,7 @@ Sfdisc_t*	disc;	/* discipline */
 				sfset(fi->filter,SF_READ,0);
 				close(sffileno(fi->filter));
 				sfset(fi->filter,SF_READ,1);
-				fi->next = fi->endb = NIL(char*);
+				fi->next = fi->endb = NULL;
 			}
 		}
 
@@ -120,10 +120,10 @@ Sfoff_t		addr;
 int		offset;
 Sfdisc_t*	disc;
 #endif
-{	f = NIL(Sfio_t*);
+{	f = NULL;
 	addr = 0;
 	offset = 0;
-	disc = NIL(Sfdisc_t*);
+	disc = NULL;
 	return (Sfoff_t)(-1);
 }
 
@@ -158,11 +158,11 @@ char*	cmd;	/* program to run as a filter	*/
 	reg Sfio_t*	filter;
 
 	/* open filter for read&write */
-	if(!(filter = sfpopen(NIL(Sfio_t*),cmd,"r+")) )
+	if(!(filter = sfpopen(NULL,cmd,"r+")) )
 		return -1;
 
 	/* unbuffered stream */
-	sfsetbuf(filter,NIL(Void_t*),0);
+	sfsetbuf(filter,NULL,0);
 
 	if(!(fi = (Filter_t*)malloc(sizeof(Filter_t))) )
 	{	sfclose(filter);

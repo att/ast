@@ -403,7 +403,7 @@ Sfio_t *f;
 	memset(dos,'\0',sizeof(Dosdisc_t));
 
 	dos->disc.readf = dos_read;
-	dos->disc.writef = NIL(Sfwrite_f);
+	dos->disc.writef = NULL;
 	dos->disc.seekf = dos_seek;
 	dos->disc.exceptf = dos_except;
 

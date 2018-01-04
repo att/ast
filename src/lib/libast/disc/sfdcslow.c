@@ -69,9 +69,9 @@ Sfio_t*	f;
 	if(!(disc = (Sfdisc_t*)malloc(sizeof(Sfdisc_t))) )
 		return(-1);
 
-	disc->readf = NIL(Sfread_f);
-	disc->writef = NIL(Sfwrite_f);
-	disc->seekf = NIL(Sfseek_f);
+	disc->readf = NULL;
+	disc->writef = NULL;
+	disc->seekf = NULL;
 	disc->exceptf = slowexcept;
 
 	if(sfdisc(f,disc) != disc)

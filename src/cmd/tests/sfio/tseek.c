@@ -131,7 +131,7 @@ tmain()
 		terror("sfseek public failed");
 
 	/* test to see if the buffering algorithm does the right thing */
-	if(!(f = sfopen(NIL(Sfio_t*),tstfile("sf", 0),"w")) )
+	if(!(f = sfopen(NULL,tstfile("sf", 0),"w")) )
 		terror("Opening test file to write");
 	for(i = 0; i < 8192; ++i)
 		if(sfputr(f,"123456789",'\n') != 10)
@@ -139,7 +139,7 @@ tmain()
 	if(!(f = sfopen(f,tstfile("sf", 0),"r")) )
 		terror("Opening test file to read");
 	sfdisc(f,&Disc);
-	sfsetbuf(f,NIL(Void_t*),8192);
+	sfsetbuf(f,NULL,8192);
 	for(i = 0; i < 8192; ++i)
 	{	sfseek(f, (Sfoff_t)(i*10), 0);
 		if(!(s = sfgetr(f, '\n', SF_STRING)) )
@@ -153,14 +153,14 @@ tmain()
 
 	/* test buffer alignment for read streams - from a Daytona case */
 	tmp = tstfile("sf", 0); /* create a small file of data */
-	if(!(f = sfopen(NIL(Sfio_t*), tmp, "w")) )
+	if(!(f = sfopen(NULL, tmp, "w")) )
 		terror("Opening to write");
 	for(i = 0; i < 500; ++i)
 		if(sfputr(f,"123456789",'\n') != 10)
 			terror("writing test data");
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tmp, "r")) )
+	if(!(f = sfopen(NULL, tmp, "r")) )
 		terror("Opening to read");
 	sfsetbuf(f, buf, 512);
 	if(sfseek(f, (Sfoff_t)2741, SEEK_SET) != (Sfoff_t)2741)

@@ -49,11 +49,11 @@ Vmalloc_t*	vm;
 		return -1;
 
 	if(vm->meth.eventf) /* let method clean up */
-		(*vm->meth.eventf)(vm, VM_CLOSE, NIL(Void_t*));
+		(*vm->meth.eventf)(vm, VM_CLOSE, NULL);
 
 	/* remove from list of regions */
 	for(vh = _Vmhold; vh; vh = vh->next)
-		if(asocasptr(&vh->vm, vm, NIL(Vmalloc_t*)) == vm)
+		if(asocasptr(&vh->vm, vm, NULL) == vm)
 			break;
 
 	mode = vmdt->mode; /* remember this in case it gets destroyed below */

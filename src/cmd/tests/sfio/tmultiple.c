@@ -35,7 +35,7 @@ tmain()
 				terror("Coprocess getr did not get Line3");
 		}
 		else	/* doing sfmove */
-		{	Sfio_t*	f = sfopen(NIL(Sfio_t*),NIL(char*),"swr");
+		{	Sfio_t*	f = sfopen(NULL,NULL,"swr");
 			if(!f)
 				terror("Can't open string stream");
 			if(sfmove(sfstdin,f,(Sfoff_t)2,'\n') != 2)

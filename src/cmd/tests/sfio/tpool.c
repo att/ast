@@ -34,7 +34,7 @@ Sfdisc_t*	disc;
 	S += n;
 	return n;
 }
-Sfdisc_t	Serialdc = {NIL(Sfread_f), writef, NIL(Sfseek_f), NIL(Sfexcept_f) };
+Sfdisc_t	Serialdc = {NULL, writef, NULL, NULL };
 
 tmain()
 {
@@ -54,7 +54,7 @@ tmain()
 	sfungetc(f4,'b');
 	sfpool(f1,f4,0);
 	sfungetc(f1,'a');
-	sfpool(f1,NIL(Sfio_t*),0);
+	sfpool(f1,NULL,0);
 
 	sfsetbuf(f2,poolbuf,sizeof(poolbuf));
 	sfsetbuf(f3,poolbuf,sizeof(poolbuf));
@@ -111,8 +111,8 @@ tmain()
 	sfsync(sfstderr);
 	if(strcmp(Serial,"1234") != 0)
 		terror("Pool not serializing output");
-	sfdisc(sfstdout,NIL(Sfdisc_t*));
-	sfdisc(sfstderr,NIL(Sfdisc_t*));
+	sfdisc(sfstdout,NULL);
+	sfdisc(sfstderr,NULL);
 
 	sfclose(sfstdout);
 	if(!(f1 = sfopen((Sfio_t*)0,tstfile("sf", 0),"r")))
@@ -120,9 +120,9 @@ tmain()
 	if(!sfpool(f1,sfstderr,0) )
 		terror("sfpool2");
 
-	if(!(f1 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) ||
-	   !(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 1), "w+")) ||
-	   !(f3 = sfopen(NIL(Sfio_t*), tstfile("sf", 2), "w+")) )
+	if(!(f1 = sfopen(NULL, tstfile("sf", 0), "w+")) ||
+	   !(f2 = sfopen(NULL, tstfile("sf", 1), "w+")) ||
+	   !(f3 = sfopen(NULL, tstfile("sf", 2), "w+")) )
 		terror("sfopen3");
 	if(sfpool(f1,f2,SF_SHARE) != f2)
 		terror("sfpool3 f1");
@@ -144,25 +144,25 @@ tmain()
 	if((os = sfreserve(f2,SF_UNBOUND,0)) )
 		terror("sfreserve should have failed on f2");
 
-	if(sfpool(NIL(Sfio_t*),f2,0) != f1)
+	if(sfpool(NULL,f2,0) != f1)
 		terror("Didn't get right pool head for f2");
 
 	if(sfread(f1,s,3) != 3)
 		terror("Wrong read on f1");
 
-	if(!(f = sfpool(f3,NIL(Sfio_t*),0)) )
+	if(!(f = sfpool(f3,NULL,0)) )
 		terror("sfpool to delete f3");
 	if(f != f1 && f != f2)
 		terror("sfpool delete did not return a stream from old pool");
 
-	if(sfpool(f1,NIL(Sfio_t*),0) != f2 )
+	if(sfpool(f1,NULL,0) != f2 )
 		terror("sfpool delete did not return a stream from pool");
 
-	if(sfpool(f1,NIL(Sfio_t*),0) != f1 )
+	if(sfpool(f1,NULL,0) != f1 )
 		terror("sfpool delete of a lone stream did not return self");
 
-	if(!(f1 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) ||
-	   !(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 1), "w")) )
+	if(!(f1 = sfopen(NULL, tstfile("sf", 0), "w+")) ||
+	   !(f2 = sfopen(NULL, tstfile("sf", 1), "w")) )
 		terror("sfopen4");
 	sfputc(f1,'a');
 	sfputc(f1,'b');

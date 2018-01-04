@@ -76,7 +76,7 @@ tmain()
 		texit(0);
         }
 
-	if(!(f = sfpopen(NIL(Sfio_t*),sfprints("%s -p",argv[0]),"r+")) )
+	if(!(f = sfpopen(NULL,sfprints("%s -p",argv[0]),"r+")) )
 		terror("Open coprocess");
 
 	if(sfwrite(f,"123\n",4) != 4)
@@ -106,7 +106,7 @@ tmain()
 	/* the below tests to see if stream position is correct when
 	   multiple disciplines are put on a stream.
 	*/
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")))
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")))
 		terror("Opening file to write");
 	sfdisc(f,&Disc1);
 	sfdisc(f,&Disc2);
@@ -121,7 +121,7 @@ tmain()
 	}
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")))
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r")))
 		terror("Opening file to read");
 	sfdisc(f,&Disc1);
 	sfdisc(f,&Disc2);
@@ -137,7 +137,7 @@ tmain()
 	}
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")))
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r")))
 		terror("Opening file to read");
 	Disc1.seekf = discseek; sfdisc(f,&Disc1);
 	Disc2.seekf = discseek; sfdisc(f,&Disc2);

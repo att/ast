@@ -28,7 +28,7 @@ tmain()
 
 	/* test file resizing */
 #if _lib_ftruncate
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Can't open file %s", tstfile("sf", 0));
 
 	for(i = 0; i < sizeof(buf); ++i)
@@ -40,7 +40,7 @@ tmain()
 
 	if(sfclose(f) < 0)
 		terror("Can't sync/close file");
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r+")) )
 		terror("Can't open file %s again", tstfile("sf", 0));
 	if(sfsize(f) != (s = 1024*sizeof(buf)) )
 		terror("Bad file size");
@@ -59,7 +59,7 @@ tmain()
 			terror("Bad data");
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r+")) )
 		terror("Can't open file %s again", tstfile("sf", 0));
 	if(sfsize(f) != s+sizeof(buf))
 		terror("Bad file size");
@@ -68,14 +68,14 @@ tmain()
 		terror("Can't resize file");
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r+")) )
 		terror("Can't open file %s again", tstfile("sf", 0));
 	if(sfsize(f) != s)
 		terror("Bad file size");
 #endif
 
 	/* test resizing string stream */
-	if(!(f = sfopen(NIL(Sfio_t*),  NIL(char*), "rws")) )
+	if(!(f = sfopen(NULL,  NULL, "rws")) )
 		terror("Can't open string stream");
 
 	for(i = 0; i < sizeof(buf); ++i)

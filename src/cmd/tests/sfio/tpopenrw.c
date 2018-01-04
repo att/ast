@@ -25,7 +25,7 @@ tmain()
 	char	buf[1024], *s;
 	int	n;
 #ifdef DEBUG
-	Sfio_t*	logf = sfopen(0,"LOG","a"); sfsetbuf(logf,NIL(Void_t*),0);
+	Sfio_t*	logf = sfopen(0,"LOG","a"); sfsetbuf(logf,NULL,0);
 #endif
 
 	alarm(10);
@@ -42,7 +42,7 @@ tmain()
 	}
 
 	/* make coprocess */
-	if(!(f = sfpopen(NIL(Sfio_t*), sfprints("%s -p",argv[0]), "r+")))
+	if(!(f = sfpopen(NULL, sfprints("%s -p",argv[0]), "r+")))
 		terror("Opening for read/write");
 	for(n = 0; n < 10; ++n)
 	{	sfsprintf(buf,sizeof(buf),"Line %d",n);

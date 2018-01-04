@@ -58,7 +58,7 @@ int		local;
 
 	size = size < MEM_ALIGN ? MEM_ALIGN : ROUND(size,MEM_ALIGN);
 
-	last->last = NIL(Vmuchar_t*); /* wipe record of last allocation */
+	last->last = NULL; /* wipe record of last allocation */
 
 	if(last->size < size )
 	{	if((blk = last->blk) ) /* try extending in place */
@@ -71,7 +71,7 @@ int		local;
 			}
 		}
 		if(!blk ) /* try getting a new block */
-		{	if((blk = (*_Vmsegalloc)(vm, NIL(Block_t*), size, VM_SEGALL|VM_SEGEXTEND)) )
+		{	if((blk = (*_Vmsegalloc)(vm, NULL, size, VM_SEGALL|VM_SEGEXTEND)) )
 			{	/**/DEBUG_ASSERT((SIZE(blk)&~BITS) >= size);
 				last->data = DATA(blk);
 				last->size = SIZE(blk)&~BITS;
@@ -87,7 +87,7 @@ int		local;
 	}
 
 	if(last->last && !local && _Vmtrace)
-		(*_Vmtrace)(vm, NIL(Vmuchar_t*), last->last, origsz, 0);
+		(*_Vmtrace)(vm, NULL, last->last, origsz, 0);
 
 	LASTOPEN(last, local);
 
@@ -112,15 +112,15 @@ int		local;
 	LASTLOCK(last, local);
 
 	if(data != (Void_t*)last->last )
-		data = NIL(Void_t*);
+		data = NULL;
 	else
 	{	size = last->data - last->last;	/**/DEBUG_ASSERT(size > 0 && size%MEM_ALIGN == 0);
 		last->data -= size;
 		last->size += size;
-		last->last = NIL(Vmuchar_t*);
+		last->last = NULL;
 
 		if(!local && _Vmtrace)
-			(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), size, 0);
+			(*_Vmtrace)(vm, (Vmuchar_t*)data, NULL, size, 0);
 	}
 
 	LASTOPEN(last, local);
@@ -153,13 +153,13 @@ int		local;
 	}
 	else if(size <= 0)
 	{	(void)lastfree(vm, data, local);
-		return NIL(Void_t*);
+		return NULL;
 	}
 
 	LASTLOCK(last, local);
 
 	if(data != (Void_t*)last->last )
-		data = NIL(Void_t*);
+		data = NULL;
 	else
 	{	oldz = last->data - last->last; /**/DEBUG_ASSERT(oldz > 0 && oldz%MEM_ALIGN == 0);
 		size = ROUND(size, MEM_ALIGN);
@@ -169,7 +169,7 @@ int		local;
 			last->size += sz;
 		}
 		else /* getting larger */
-		{	if((oldz + last->size) < size && (blk = last->blk) != NIL(Block_t*) )
+		{	if((oldz + last->size) < size && (blk = last->blk) != NULL )
 			{	/* try to extend in place */
 				blksz = SIZE(blk)&~BITS;
 				sz = blksz + size - (oldz + last->size);
@@ -182,17 +182,17 @@ int		local;
 
 			if((oldz + last->size) < size && (type&VM_RSMOVE) )
 			{	/* try to get new memory */
-				if((blk = (*_Vmsegalloc)(vm, NIL(Block_t*), size, VM_SEGALL|VM_SEGEXTEND)) )
+				if((blk = (*_Vmsegalloc)(vm, NULL, size, VM_SEGALL|VM_SEGEXTEND)) )
 				{	/**/DEBUG_ASSERT((SIZE(blk)&~BITS) >= size);
 					last->size = SIZE(blk)&~BITS;
 					last->data = (Vmuchar_t*)DATA(blk);
-					last->last = NIL(Vmuchar_t*);
+					last->last = NULL;
 					last->blk  = blk;
 				}
 			}
 
 			if((oldz + last->size) < size)
-				data = NIL(Void_t*);
+				data = NULL;
 			else
 			{	if(data != (Void_t*)last->last)
 				{	/* block moved, reset location */
@@ -240,7 +240,7 @@ int		local;
 	Vmlast_t	*last = (Vmlast_t*)vm->data;
 
 	if(size <= 0 || align <= 0)
-		return NIL(Void_t*);
+		return NULL;
 
 	LASTLOCK(last, local);
 
@@ -256,7 +256,7 @@ int		local;
 	}
 
 	if(data && !local && _Vmtrace)
-		(*_Vmtrace)(vm, NIL(Vmuchar_t*), data, orgsize, orgalign);
+		(*_Vmtrace)(vm, NULL, data, orgsize, orgalign);
 
 	LASTOPEN(last, local);
 
@@ -298,10 +298,10 @@ static int lastevent(Vmalloc_t* vm, int event, Void_t* arg)
 	{	if(!(last = (Vmlast_t*)vm->data) )
 			return -1;
 		last->lock = 0;
-		last->blk  = NIL(Block_t*);
-		last->data = NIL(Vmuchar_t*);
+		last->blk  = NULL;
+		last->data = NULL;
 		last->size = 0;
-		last->last = NIL(Vmuchar_t*);
+		last->last = NULL;
 	}
 
 	return 0;

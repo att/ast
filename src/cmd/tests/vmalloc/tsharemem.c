@@ -147,7 +147,7 @@ tmain()
 		return working(argv[k], argv[k+1], argv[k+2], size);
 
 	for(type = -1; type < 2; type += 2 ) /* -1 is mmap, 1 is shm */
-	{	vm = NIL(Vmalloc_t*);
+	{	vm = NULL;
 
 		tresource(-1, 0);
 

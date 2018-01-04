@@ -785,7 +785,7 @@ static void job_reset(struct process *pw) {
     if (sh_isoption(shp, SH_INTERACTIVE) && tcsetpgrp(job.fd, job.mypid) != 0) return;
 #endif  // SIGTSTP
     // Force the following tty_get() to do a tcgetattr() unless fg.
-    if (!(pw->p_flag & P_FG)) tty_set(-1, 0, NIL(struct termios *));
+    if (!(pw->p_flag & P_FG)) tty_set(-1, 0, NULL);
     if (pw && (pw->p_flag & P_SIGNALLED) && pw->p_exit != SIGHUP) {
         if (tty_get(job.fd, &pw->p_stty) == 0) pw->p_flag |= P_STTY;
         // Restore terminal state for job.
@@ -1006,7 +1006,7 @@ static struct process *job_bystring(char *ajob) {
     struct process *pw = job.pwlist;
     int c;
     const char *msg;
-    if (*ajob++ != '%') return (NIL(struct process *));
+    if (*ajob++ != '%') return (NULL);
     c = *ajob;
     if (isdigit(c)) {
         pw = job_byjid((int)strtol(ajob, (char **)0, 10));
@@ -1156,7 +1156,7 @@ static struct process *job_byname(char *name) {
     char *cp = name;
     int offset;
 
-    if (!shgd->hist_ptr) return (NIL(struct process *));
+    if (!shgd->hist_ptr) return (NULL);
     if (*cp == '?') cp++, flag = &offset;
     for (; pw; pw = pw->p_nxtjob) {
         if (hist_match(shgd->hist_ptr, pw->p_name, cp, flag) >= 0) {
@@ -1196,7 +1196,7 @@ void job_clear(Shell_t *shp) {
     }
     bck.list = 0;
     if (njob_savelist < NJOB_SAVELIST) init_savelist();
-    job.pwlist = NIL(struct process *);
+    job.pwlist = NULL;
     job.numpost = 0;
     job.numbjob = 0;
     job.waitall = 0;
@@ -1529,7 +1529,7 @@ bool job_wait(pid_t pid) {
             if (pw->p_pgrp == 0) pw->p_pgrp = pw->p_pid;
             job_reset(pw);
         }
-        tty_set(-1, 0, NIL(struct termios *));
+        tty_set(-1, 0, NULL);
     }
 done:
     if (!job.waitall && sh_isoption(shp, SH_PIPEFAIL)) return (nochild);

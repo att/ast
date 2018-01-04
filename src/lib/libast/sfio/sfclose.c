@@ -34,7 +34,7 @@ Sfio_t*	f;
 #endif
 {
 	reg int		local, ex, rv;
-	Void_t*		data = NIL(Void_t*);
+	Void_t*		data = NULL;
 	SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
 	SFMTXENTER(f, -1);
@@ -51,7 +51,7 @@ Sfio_t*	f;
 	while(f->push)
 	{	reg Sfio_t*	pop;
 
-		if(!(pop = (*_Sfstack)(f,NIL(Sfio_t*))) )
+		if(!(pop = (*_Sfstack)(f,NULL)) )
 			SFMTXRETURN(f,-1);
 
 		if(sfclose(pop) < 0)
@@ -62,7 +62,7 @@ Sfio_t*	f;
 
 	rv = 0;
 	if(f->disc == _Sfudisc)	/* closing the ungetc stream */
-		f->disc = NIL(Sfdisc_t*);
+		f->disc = NULL;
 	else if(f->file >= 0)	/* sync file pointer */
 	{	f->bits |= SF_ENDING;
 		rv = sfsync(f);
@@ -71,7 +71,7 @@ Sfio_t*	f;
 	SFLOCK(f,0);
 
 	/* raise discipline exceptions */
-	if(f->disc && (ex = SFRAISE(f,local ? SF_NEW : SF_CLOSING,NIL(Void_t*))) != 0)
+	if(f->disc && (ex = SFRAISE(f,local ? SF_NEW : SF_CLOSING,NULL)) != 0)
 		SFMTXRETURN(f,ex);
 
 	if(!local && f->pool)
@@ -99,7 +99,7 @@ Sfio_t*	f;
 			}
 			f->mode |= SF_LOCK;
 		}
-		f->pool = NIL(Sfpool_t*);
+		f->pool = NULL;
 	}
 
 	if(f->data && (!local || (f->flags&SF_STRING) || (f->bits&SF_MMAP) ) )
@@ -110,7 +110,7 @@ Sfio_t*	f;
 		if(f->flags&SF_MALLOC)
 			data = (Void_t*)f->data;
 
-		f->data = NIL(uchar*);
+		f->data = NULL;
 		f->size = -1;
 	}
 
@@ -138,7 +138,7 @@ Sfio_t*	f;
 	/* zap any associated auxiliary buffer */
 	if(f->rsrv)
 	{	free(f->rsrv);
-		f->rsrv = NIL(Sfrsrv_t*);
+		f->rsrv = NULL;
 	}
 
 	/* delete any associated sfpopen-data */
@@ -150,12 +150,12 @@ Sfio_t*	f;
 	{	(void)vtmtxclrlock(f->mutex);
 		if(f != sfstdin && f != sfstdout && f != sfstderr)
 		{	(void)vtmtxclose(f->mutex);
-			f->mutex = NIL(Vtmutex_t*);
+			f->mutex = NULL;
 		}
 	}
 
 	if(!local)
-	{	if(f->disc && (ex = SFRAISE(f,SF_FINAL,NIL(Void_t*))) != 0 )
+	{	if(f->disc && (ex = SFRAISE(f,SF_FINAL,NULL)) != 0 )
 		{	rv = ex;
 			goto done;
 		}
@@ -163,8 +163,8 @@ Sfio_t*	f;
 		if(!(f->flags&SF_STATIC) )
 			free(f);
 		else
-		{	f->disc = NIL(Sfdisc_t*);
-			f->stdio = NIL(Void_t*);
+		{	f->disc = NULL;
+			f->stdio = NULL;
 			f->mode = SF_AVAIL;
 		}
 	}

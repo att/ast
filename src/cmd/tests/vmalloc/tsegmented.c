@@ -36,15 +36,15 @@ static int	Segn = 0;
 static Void_t* segmem(Vmalloc_t* vm, Void_t* ca, size_t cs, size_t ns, Vmdisc_t* dc)
 {
 	if(ns > SEGZ)
-		return NIL(Void_t*);
+		return NULL;
 	else if(ca && cs > 0)
 		return ca;
 	else if(Segn >= SEGN)
-		return NIL(Void_t*);
+		return NULL;
 	else	return (Void_t*)Segm[Segn++];
 }
 
-static Vmdisc_t Disc = { segmem, NIL(Vmexcept_f), 1024};
+static Vmdisc_t Disc = { segmem, NULL, 1024};
 
 tmain()
 {

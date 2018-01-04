@@ -100,7 +100,7 @@ static Void_t* hclear(Dt_t* dt)
 	Dtlink_t	**t, **endt, *l, *next;
 	Dthash_t	*hash = (Dthash_t*)dt->data;
 
-	hash->here = NIL(Dtlink_t*);
+	hash->here = NULL;
 	hash->data.size = 0;
 
 	for(endt = (t = hash->htbl) + hash->tblz; t < endt; ++t)
@@ -108,10 +108,10 @@ static Void_t* hclear(Dt_t* dt)
 		{	next = l->_rght;
 			_dtfree(dt, l, DT_DELETE);
 		}
-		*t = NIL(Dtlink_t*);
+		*t = NULL;
 	}
 
-	return NIL(Void_t*);
+	return NULL;
 }
 
 static Void_t* hfirst(Dt_t* dt)
@@ -119,12 +119,12 @@ static Void_t* hfirst(Dt_t* dt)
 	Dtlink_t	**tbl, **endt, *lnk;
 	Dthash_t	*hash = (Dthash_t*)dt->data;
 
-	lnk = NIL(Dtlink_t*);
+	lnk = NULL;
 	for(endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl)
 		if((lnk = *tbl) )
 			break;
 	hash->here = lnk;
-	return lnk ? _DTOBJ(dt->disc, lnk) : NIL(Void_t*);
+	return lnk ? _DTOBJ(dt->disc, lnk) : NULL;
 }
 
 static Void_t* hnext(Dt_t* dt, Dtlink_t* lnk)
@@ -141,7 +141,7 @@ static Void_t* hnext(Dt_t* dt, Dtlink_t* lnk)
 	}
 
 	hash->here = next;
-	return next ? _DTOBJ(dt->disc, next) : NIL(Void_t*);
+	return next ? _DTOBJ(dt->disc, next) : NULL;
 }
 
 static Void_t* hflatten(Dt_t* dt, int type)
@@ -150,14 +150,14 @@ static Void_t* hflatten(Dt_t* dt, int type)
 	Dthash_t	*hash = (Dthash_t*)dt->data;
 
 	if(type == DT_FLATTEN || type == DT_EXTRACT)
-	{	head = tail = NIL(Dtlink_t*);
+	{	head = tail = NULL;
 		for(endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl)
 		{	for(lnk = *tbl; lnk; lnk = lnk->_rght)
 			{	if(tail)
 					tail = (tail->_rght = lnk);
 				else	head = tail = lnk;
 
-				*tbl = type == DT_FLATTEN ? tail : NIL(Dtlink_t*);
+				*tbl = type == DT_FLATTEN ? tail : NULL;
 			}
 		}
 
@@ -172,24 +172,24 @@ static Void_t* hflatten(Dt_t* dt, int type)
 	else /* restoring a previous flattened list */
 	{	head = hash->here;
 		for(endt = (tbl = hash->htbl) + hash->tblz; tbl < endt; ++tbl)
-		{	if(*tbl == NIL(Dtlink_t*))
+		{	if(*tbl == NULL)
 				continue;
 
 			/* find the tail of the list for this slot */
 			for(lnk = head; lnk && lnk != *tbl; lnk = lnk->_rght)
 				;
 			if(!lnk) /* something is seriously wrong */
-				return NIL(Void_t*);
+				return NULL;
 
 			*tbl = head; /* head of list for this slot */
 			head = lnk->_rght; /* head of next list */
-			lnk->_rght = NIL(Dtlink_t*);
+			lnk->_rght = NULL;
 		}
 
-		hash->here = NIL(Dtlink_t*);
+		hash->here = NULL;
 		hash->type &= ~H_FLATTEN;
 
-		return NIL(Void_t*);
+		return NULL;
 	}
 }
 
@@ -255,30 +255,30 @@ int	type;
 	Dtlink_t	*lnk, *pp, *ll, *p, *l, **tbl;
 	Void_t		*key, *k, *o;
 	uint		hsh;
-	Dtlink_t	**fngr = NIL(Dtlink_t**);
+	Dtlink_t	**fngr = NULL;
 	Dtdisc_t	*disc = dt->disc;
 	Dthash_t	*hash = (Dthash_t*)dt->data;
 
 	type = DTTYPE(dt,type); /* map type for upward compatibility */
 	if(!(type&DT_OPERATIONS) )
-		return NIL(Void_t*);
+		return NULL;
 
 	DTSETLOCK(dt);
 
 	if(!hash->htbl && htable(dt) < 0 ) /* initialize hash table */
-		DTRETURN(obj, NIL(Void_t*));
+		DTRETURN(obj, NULL);
 
 	if(hash->type&H_FLATTEN) /* restore flattened list */
 		hflatten(dt, 0);
 
 	if(type&(DT_START|DT_STEP|DT_STOP|DT_FIRST|DT_LAST|DT_CLEAR|DT_EXTRACT|DT_RESTORE|DT_FLATTEN|DT_STAT) )
 	{	if(type&DT_START)
-		{	if(!(fngr = (Dtlink_t**)(*dt->memoryf)(dt, NIL(Void_t*), sizeof(Dtlink_t*), disc)) )
-				DTRETURN(obj, NIL(Void_t*));
+		{	if(!(fngr = (Dtlink_t**)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t*), disc)) )
+				DTRETURN(obj, NULL);
 			if(!obj)
 			{	if(!(obj = hfirst(dt)) ) /* nothing to walk over */
 				{	(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
-					DTRETURN(obj, NIL(Void_t*));
+					DTRETURN(obj, NULL);
 				}
 				else
 				{	asoaddint(&hash->walk, 1); /* increase walk count */
@@ -290,16 +290,16 @@ int	type;
 		}
 		else if(type&DT_STEP)
 		{	if(!(fngr = (Dtlink_t**)obj) || !(lnk = *fngr) )
-				DTRETURN(obj, NIL(Void_t*));
+				DTRETURN(obj, NULL);
 			obj = _DTOBJ(disc,lnk);
-			*fngr = NIL(Dtlink_t*);
+			*fngr = NULL;
 			/* fall through to search for obj */
 		}
 		else if(type&DT_STOP)
 		{	if(obj) /* free allocated memory */
 				(void)(*dt->memoryf)(dt, obj, 0, disc);
 			asosubint(&hash->walk, 1); /* reduce walk count */
-			DTRETURN(obj, NIL(Void_t*));
+			DTRETURN(obj, NULL);
 		}
 		else if(type&(DT_FIRST|DT_LAST) )
 			DTRETURN(obj, hfirst(dt));
@@ -312,7 +312,7 @@ int	type;
 	}
 
 	lnk = hash->here; /* fingered object */
-	hash->here = NIL(Dtlink_t*);
+	hash->here = NULL;
 
 	if(lnk && obj == _DTOBJ(disc,lnk))
 	{	if(type&DT_SEARCH)
@@ -324,7 +324,7 @@ int	type;
 			DTRETURN(obj, (Void_t*)fngr);
 		}
 		else if(type&DT_STEP) /* return obj and set finger to next */
-		{	*fngr = hnext(dt, lnk) ? hash->here : NIL(Dtlink_t*);
+		{	*fngr = hnext(dt, lnk) ? hash->here : NULL;
 			DTRETURN(obj, obj);
 		}
 	}
@@ -335,18 +335,18 @@ int	type;
 		key = _DTKEY(disc,obj);
 	}
 	else 
-	{	lnk = NIL(Dtlink_t*);
+	{	lnk = NULL;
 		if((type&DT_MATCH) )
 		{	key = obj;
-			obj = NIL(Void_t*);
+			obj = NULL;
 		}
 		else	key = _DTKEY(disc,obj);
 	}
 	hsh = _DTHSH(dt,key,disc);
 
 	tbl = hash->htbl + (hsh & (hash->tblz-1));
-	pp = ll = NIL(Dtlink_t*); /* pp is the before, ll is the here */
-	for(p = NIL(Dtlink_t*), l = *tbl; l; p = l, l = l->_rght)
+	pp = ll = NULL; /* pp is the before, ll is the here */
+	for(p = NULL, l = *tbl; l; p = l, l = l->_rght)
 	{	if(hsh == l->_hash)
 		{	o = _DTOBJ(disc,l); k = _DTKEY(disc,o);
 			if(_DTCMP(dt, key, k, disc) != 0 )
@@ -373,7 +373,7 @@ int	type;
 			DTRETURN(obj, (Void_t*)fngr);
 		}
 		else if(type & DT_STEP) /* return obj and set finger to next */
-		{	*fngr = hnext(dt, ll) ? hash->here : NIL(Dtlink_t*);
+		{	*fngr = hnext(dt, ll) ? hash->here : NULL;
 			DTRETURN(obj, obj);
 		}
 		else if(type & (DT_NEXT|DT_PREV) )
@@ -390,7 +390,7 @@ int	type;
 		{	if(dt->meth->type&DT_BAG)
 				goto do_insert;
 			else if(!(lnk = _dtmake(dt, obj, type)) )
-				DTRETURN(obj, NIL(Void_t*) );
+				DTRETURN(obj, NULL );
 			else /* replace old object with new one */
 			{	if(pp) /* remove old object */
 					pp->_rght = ll->_rght;
@@ -424,8 +424,8 @@ int	type;
 		{	if(type&DT_START) /* cannot start a walk from nowhere */
 				(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
 			else if(type&DT_STEP)
-				*fngr = NIL(Dtlink_t*);
-			DTRETURN(obj, NIL(Void_t*));
+				*fngr = NULL;
+			DTRETURN(obj, NULL);
 		}
 
 	do_insert: /* inserting a new object */
@@ -436,7 +436,7 @@ int	type;
 
 		if(!lnk) /* inserting a new object */
 		{	if(!(lnk = _dtmake(dt, obj, type)) )
-				DTRETURN(obj, NIL(Void_t*));
+				DTRETURN(obj, NULL);
 			hash->data.size += 1;
 		}
 
@@ -476,7 +476,7 @@ static int hashevent(Dt_t* dt, int event, Void_t* arg)
 		if(hash->htbl)
 			(void)(*dt->memoryf)(dt, hash->htbl, 0, dt->disc);
 		(void)(*dt->memoryf)(dt, hash, 0, dt->disc);
-		dt->data = NIL(Dtdata_t*);
+		dt->data = NULL;
 		return 0;
 	}
 	else	return 0;

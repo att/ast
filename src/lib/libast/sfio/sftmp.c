@@ -72,7 +72,7 @@ Sfdisc_t*	disc;
 	if(type == SF_CLOSING)
 	{
 		(void)vtmtxlock(_Sfmutex);
-		for(last = NIL(File_t*), ff = File; ff; last = ff, ff = ff->next)
+		for(last = NULL, ff = File; ff; last = ff, ff = ff->next)
 			if(ff->f == f)
 				break;
 		if(ff)
@@ -105,13 +105,13 @@ static void _rmfiles()
 	(void)vtmtxlock(_Sfmutex);
 	for(ff = File; ff; ff = next)
 	{	next = ff->next;
-		_tmprmfile(ff->f, SF_CLOSING, NIL(Void_t*), ff->f->disc);
+		_tmprmfile(ff->f, SF_CLOSING, NULL, ff->f->disc);
 	}
 	(void)vtmtxunlock(_Sfmutex);
 }
 
 static Sfdisc_t	Rmdisc =
-	{ NIL(Sfread_f), NIL(Sfwrite_f), NIL(Sfseek_f), _tmprmfile, NIL(Sfdisc_t*) };
+	{ NULL, NULL, NULL, _tmprmfile, NULL };
 
 #endif /*_tmp_rmfail*/
 
@@ -160,7 +160,7 @@ char*	path;
 	reg int		n;
 
 	if(!(path = getenv(path)) )
-		return NIL(char**);
+		return NULL;
 
 	for(p = path, n = 0;;)	/* count number of directories */
 	{	while(*p == ':')
@@ -172,10 +172,10 @@ char*	path;
 			++p;
 	}
 	if(n == 0 || !(dirs = (char**)malloc((n+1)*sizeof(char*))) )
-		return NIL(char**);
+		return NULL;
 	if(!(p = (char*)malloc(strlen(path)+1)) )
 	{	free(dirs);
-		return NIL(char**);
+		return NULL;
 	}
 	strcpy(p,path);
 	for(n = 0;; ++n)
@@ -189,7 +189,7 @@ char*	path;
 		if(*p == ':')
 			*p++ = 0;
 	}
-	dirs[n] = NIL(char*);
+	dirs[n] = NULL;
 
 	return dirs;
 }
@@ -222,11 +222,11 @@ Sfio_t*	f;
 			file = TMPDFLT;
 		if(!(Tmppath[0] = (char*)malloc(strlen(file)+1)) )
 		{	free(Tmppath);
-			Tmppath = NIL(char**);
+			Tmppath = NULL;
 			return -1;
 		}
 		strcpy(Tmppath[0],file);
-		Tmppath[1] = NIL(char*);
+		Tmppath[1] = NULL;
 	}
 
 	/* set current directory to create this temp file */
@@ -241,7 +241,7 @@ Sfio_t*	f;
 		static ulong	Key, A;
 		if(A == 0 || t > 0)	/* get a quasi-random coefficient */
 		{	reg int	r;
-			A = (ulong)time(NIL(time_t*)) ^ (((ulong)(&t)) >> 3);
+			A = (ulong)time(NULL) ^ (((ulong)(&t)) >> 3);
 			if(Key == 0)
 				Key = (A >> 16) | ((A&0xffff)<<16);
 			A ^= Key;
@@ -304,7 +304,7 @@ Sfdisc_t*	disc;
 		return 0;
 
 	/* try to create the temp file */
-	SFCLEAR(&newf,NIL(Vtmutex_t*));
+	SFCLEAR(&newf,NULL);
 	newf.flags = SF_STATIC;
 	newf.mode = SF_AVAIL;
 
@@ -314,7 +314,7 @@ Sfdisc_t*	disc;
 	/* make sure that the notify function won't be called here since
 	   we are only interested in creating the file, not the stream */
 	_Sfnotify = 0;
-	sf = sfnew(&newf,NIL(Void_t*),(size_t)SF_UNBOUND,fd,SF_READ|SF_WRITE);
+	sf = sfnew(&newf,NULL,(size_t)SF_UNBOUND,fd,SF_READ|SF_WRITE);
 	_Sfnotify = notify;
 	if(!sf)
 		return -1;
@@ -322,7 +322,7 @@ Sfdisc_t*	disc;
 	if(newf.mutex) /* don't need a mutex for this stream */
 	{	(void)vtmtxclrlock(newf.mutex);
 		(void)vtmtxclose(newf.mutex);
-		newf.mutex = NIL(Vtmutex_t*);
+		newf.mutex = NULL;
 	}
 
 	/* make sure that new stream has the same mode */
@@ -356,12 +356,12 @@ Sfdisc_t*	disc;
 	}
 
 	/* announce change of status */
-	f->disc = NIL(Sfdisc_t*);
+	f->disc = NULL;
 	if(_Sfnotify)
 		(*_Sfnotify)(f, SF_TMPFILE, (void*)((long)f->file));
 
 	/* erase all traces of newf */
-	newf.data = newf.endb = newf.endr = newf.endw = NIL(uchar*);
+	newf.data = newf.endb = newf.endr = newf.endw = NULL;
 	newf.file = -1;
 	_Sfnotify = 0;
 	sfclose(&newf);
@@ -381,31 +381,31 @@ size_t	s;
 	int		rv;
 	Sfnotify_f	notify = _Sfnotify;
 	static Sfdisc_t	Tmpdisc = 
-			{ NIL(Sfread_f), NIL(Sfwrite_f), NIL(Sfseek_f), _tmpexcept,
+			{ NULL, NULL, NULL, _tmpexcept,
 #if _tmp_rmfail	
 			  &Rmdisc
 #else
-			NIL(Sfdisc_t*)
+			NULL
 #endif
 			};
 
 	/* start with a memory resident stream */
 	_Sfnotify = 0; /* local computation so no notification */
-	f = sfnew(NIL(Sfio_t*),NIL(char*),s,-1,SF_STRING|SF_READ|SF_WRITE);
+	f = sfnew(NULL,NULL,s,-1,SF_STRING|SF_READ|SF_WRITE);
 	_Sfnotify = notify;
 	if(!f)
-		return NIL(Sfio_t*);
+		return NULL;
 
 	if(s != (size_t)SF_UNBOUND)	/* set up a discipline for out-of-bound, etc. */
 		f->disc = &Tmpdisc;
 
 	if(s == 0) /* make the file now */
 	{	_Sfnotify = 0; /* local computation so no notification */
-		rv =  _tmpexcept(f,SF_DPOP,NIL(Void_t*),f->disc);
+		rv =  _tmpexcept(f,SF_DPOP,NULL,f->disc);
 		_Sfnotify = notify;
 		if(rv < 0)
 		{	sfclose(f);
-			return NIL(Sfio_t*);
+			return NULL;
 		}
 	}
 

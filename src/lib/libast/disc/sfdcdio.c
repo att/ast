@@ -99,7 +99,7 @@ size_t	bufsize;
 
 	di->disc.readf = dioread;
 	di->disc.writef = diowrite;
-	di->disc.seekf = NIL(Sfseek_f);
+	di->disc.seekf = NULL;
 	di->disc.exceptf = dioexcept;
 	di->cntl = cntl;
 	di->dio = dio;

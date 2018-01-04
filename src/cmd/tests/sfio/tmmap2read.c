@@ -71,7 +71,7 @@ tmain()
 	Success = 0;
 
 	/* our real work */
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w")) )
 		terror("Can't open to write");
 
 	for(n = 0; n < sizeof(buf); ++n)

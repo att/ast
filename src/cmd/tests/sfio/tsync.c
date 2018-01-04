@@ -35,7 +35,7 @@ Sfdisc_t*	disc;
 		Count += 1;
 	return 0;
 }
-Sfdisc_t	Disc = { NIL(Sfread_f), NIL(Sfwrite_f), NIL(Sfseek_f), except };
+Sfdisc_t	Disc = { NULL, NULL, NULL, except };
 
 /* this tests to see if data is written correctly */
 typedef struct _mydisc_s
@@ -124,14 +124,14 @@ tmain()
 	if(sfpurge(sfstdout) < 0)
 		terror("Purging stdout");
 
-	if(!(f1 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f1 = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Opening file to write");
-	if(!(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"r")) )
+	if(!(f2 = sfopen(NULL, tstfile("sf", 0),"r")) )
 		terror("Opening file to read");
 
 	sfset(f1,SF_IOCHECK,1);
 	sfdisc(f1,&Disc);
-	sfsetbuf(f1,NIL(char*),4);
+	sfsetbuf(f1,NULL,4);
 	if(Count != 1)
 		terror("No sfsync call?");
 
@@ -147,7 +147,7 @@ tmain()
 		terror("Did not get all data n=%d", n);
 	if(Count != 0)
 		terror("Should not have seen SF_SYNC yet");
-	sfsync(NIL(Sfio_t*));
+	sfsync(NULL);
 	if(Count != 1)
 		terror("Should have seen SF_SYNC");
 
@@ -161,7 +161,7 @@ tmain()
 	if(Count != 3)
 		terror("Bad SF_SYNC count=%d, expecting 3", Count);
 
-	sfdisc(f1,NIL(Sfdisc_t*));
+	sfdisc(f1,NULL);
 
 	sfseek(f2,(Sfoff_t)0,0);
 	sfgetc(f2);
@@ -177,10 +177,10 @@ tmain()
 		terror("Wrong lseek location %lld", off);
 
 	/* test to see if data is written correctly */
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")))
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w+")))
 		terror("Creating temp file");
 	sfdisc(f, &Mydisc.disc);
-	sfsetbuf(f, NIL(Void_t*), 95);
+	sfsetbuf(f, NULL, 95);
 	sfset(f, SF_IOCHECK, 1);
 
 	for(n = 0; n < 10; ++n)

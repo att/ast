@@ -2176,10 +2176,10 @@ static void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
     } else {
         ap->nextc = 0;
     }
-    iop = sfopen(NIL(Sfio_t *), (char *)string, "s");
+    iop = sfopen(NULL, (char *)string, "s");
     sfdisc(iop, &ap->disc);
     lp->lexd.nocopy++;
-    if (!(base = fcfile())) base = sfopen(NIL(Sfio_t *), fcseek(0), "s");
+    if (!(base = fcfile())) base = sfopen(NULL, fcseek(0), "s");
     fcclose();
     sfstack(base, iop);
     fcfopen(base);

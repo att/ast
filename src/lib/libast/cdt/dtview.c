@@ -47,7 +47,7 @@ reg int		type;
 	if(type&DT_NOVIEWPATH)
 		return (*(dt->meth->searchf))(dt,obj,type);
 
-	o = NIL(Void_t*);
+	o = NULL;
 
 	/* these ops look for the first appearance of an object of the right type */
 	if((type & (DT_MATCH|DT_SEARCH)) ||
@@ -61,10 +61,10 @@ reg int		type;
 
 	if(dt->meth->type & DT_ORDERED) /* ordered sets/bags */
 	{	if(!(type & (DT_FIRST|DT_LAST|DT_NEXT|DT_PREV|DT_ATLEAST|DT_ATMOST)) )
-			return NIL(Void_t*);
+			return NULL;
 
 		/* find the min/max element that satisfies the op requirement */
-		n = nky = NIL(Void_t*); p = NIL(Dt_t*);
+		n = nky = NULL; p = NULL;
 		for(d = dt; d; d = d->view)
 		{	if(!(o = (*d->meth->searchf)(d, obj, type)) )
 				continue;
@@ -90,7 +90,7 @@ reg int		type;
 
 	/* unordered collections */
 	if(!(type&(DT_NEXT|DT_PREV)) )
-		return NIL(Void_t*);
+		return NULL;
 
 	if(!dt->walk )
 	{	for(d = dt; d; d = d->view)
@@ -98,7 +98,7 @@ reg int		type;
 				break;
 		dt->walk = d;
 		if(!(obj = o) )
-			return NIL(Void_t*);
+			return NULL;
 	}
 
 	for(d = dt->walk, obj = (*d->meth->searchf)(d, obj, type);; )
@@ -113,10 +113,10 @@ reg int		type;
 		}
 
 		if(!(d = dt->walk = d->view) ) /* move on to next dictionary */
-			return NIL(Void_t*);
+			return NULL;
 		else if(type&DT_NEXT)
-			obj = (*(d->meth->searchf))(d,NIL(Void_t*),DT_FIRST);
-		else	obj = (*(d->meth->searchf))(d,NIL(Void_t*),DT_LAST);
+			obj = (*(d->meth->searchf))(d,NULL,DT_FIRST);
+		else	obj = (*(d->meth->searchf))(d,NULL,DT_LAST);
 	}
 }
 
@@ -131,17 +131,17 @@ reg Dt_t*	view;
 	reg Dt_t*	d;
 
 	if(view && view->meth != dt->meth) /* must use the same method */
-		return NIL(Dt_t*);
+		return NULL;
 
 	/* make sure there won't be a cycle */
 	for(d = view; d; d = d->view)
 		if(d == dt)
-			return NIL(Dt_t*);
+			return NULL;
 
 	/* no more viewing lower dictionary */
 	if((d = dt->view) )
 		d->nview -= 1;
-	dt->view = dt->walk = NIL(Dt_t*);
+	dt->view = dt->walk = NULL;
 
 	if(!view)
 	{	dt->searchf = dt->meth->searchf;

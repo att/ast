@@ -36,7 +36,7 @@ Vmdisc_t*	disc;
 {
 	if(caddr)
 	{	if(newsize != 0)
-			return NIL(Void_t*);
+			return NULL;
 		Release += 1;
 		vmfree(Vmheap,caddr);
 		return caddr;
@@ -44,7 +44,7 @@ Vmdisc_t*	disc;
 	return vmalloc(Vmheap,newsize);
 }
 
-Vmdisc_t	Disc = {memory, NIL(Vmexcept_f), 64};
+Vmdisc_t	Disc = {memory, NULL, 64};
 
 tmain()
 {

@@ -68,25 +68,25 @@ tmain()
 	TMESSAGE();
 
 	/* resize, then corrupt a byte in front */
-	if((addr[2] = realloc(addr[2],256)) == NIL(Void_t*))
+	if((addr[2] = realloc(addr[2],256)) == NULL)
 		terror("Failed resizing");
 	addr[2][BEFORE] = 0; /* corrupting a byte in front of addr[9] */
 	free(addr[2]);
 	TMESSAGE();
 
 	/* resize a non-existent block */
-	if(realloc((Void_t*)3, 256) != NIL(Void_t*) )
+	if(realloc((Void_t*)3, 256) != NULL )
 		terror("Resizing a nonexistent block succeeded");
 	TMESSAGE();
 
 	/* resize a freed block */
 	free(addr[3]);
-	if((addr[3] = realloc(addr[3],256)) != NIL(Void_t*))
+	if((addr[3] = realloc(addr[3],256)) != NULL)
 		terror("Resizing a free block succeeded");
 	TMESSAGE();
 
 	/* corrupting a byte in back */
-	if((addr[4] = realloc(addr[4],256)) == NIL(Void_t*))
+	if((addr[4] = realloc(addr[4],256)) == NULL)
 		terror("Failed resizing");
 	addr[4][256+AFTER] = 0;
 	free(addr[4]);

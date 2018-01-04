@@ -41,7 +41,7 @@ Vmdisc_t*	disc;
 	if(disc)
 	{	if(old->exceptf &&
 		   (*old->exceptf)(vm,VM_DISC,(Void_t*)disc,old) != 0 )
-			return NIL(Vmdisc_t*);
+			return NULL;
 		vm->disc = disc;
 	}
 	return old;

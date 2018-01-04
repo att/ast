@@ -41,9 +41,9 @@ reg Sfio_t*	f2;
 	int	f1pool, f2pool, f1mode, f2mode, f1flags, f2flags;
 
 	if(!f1 || (f1->mode&SF_AVAIL) || (SFFROZEN(f1) && (f1->mode&SF_PUSH)) )
-		return NIL(Sfio_t*);
+		return NULL;
 	if(f2 && SFFROZEN(f2) && (f2->mode&SF_PUSH) )
-		return NIL(Sfio_t*);
+		return NULL;
 	if(f1 == f2)
 		return f2;
 
@@ -59,15 +59,15 @@ reg Sfio_t*	f2;
 	else
 	{	f2 = f1->file == 0 ? sfstdin :
 		     f1->file == 1 ? sfstdout :
-		     f1->file == 2 ? sfstderr : NIL(Sfio_t*);
+		     f1->file == 2 ? sfstderr : NULL;
 		if((!f2 || !(f2->mode&SF_AVAIL)) )
 		{	if(!(f2 = (Sfio_t*)malloc(sizeof(Sfio_t))) )
 			{	f1->mode = f1mode;
 				SFOPEN(f1,0);
-				return NIL(Sfio_t*);
+				return NULL;
 			}
 
-			SFCLEAR(f2,NIL(Vtmutex_t*));
+			SFCLEAR(f2,NULL);
 		}
 		f2->mode = SF_AVAIL|SF_LOCK;
 		f2mode = SF_AVAIL;

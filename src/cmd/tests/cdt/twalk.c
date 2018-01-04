@@ -107,7 +107,7 @@ tmain()
 
 		/* construct the list of objects in walk order */
 		tresource(-1,0);
-		if(!(walk = dtstart(dt, NIL(Void_t*))) )
+		if(!(walk = dtstart(dt, NULL)) )
 			terror("%s: Can't open walk", name);
 		for(k = 0, o = dtstep(dt,walk); o; )
 		{	Ord[k++] = o;

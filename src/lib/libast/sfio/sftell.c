@@ -45,7 +45,7 @@ Sfio_t	*f;
 
 	/* throw away ungetc data */
 	if(f->disc == _Sfudisc)
-		(void)sfclose((*_Sfstack)(f,NIL(Sfio_t*)));
+		(void)sfclose((*_Sfstack)(f,NULL));
 
 	if(f->flags&SF_STRING)
 		SFMTXRETURN(f, (Sfoff_t)(f->next-f->data));

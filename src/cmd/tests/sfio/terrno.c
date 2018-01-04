@@ -29,9 +29,9 @@ tmain()
 	int	lseek_errno;
 	int	rv;
 
-	if(!(fw = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(fw = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Can't create temp file %s to write", tstfile("sf", 0));
-	if(!(fr = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")) )
+	if(!(fr = sfopen(NULL, tstfile("sf", 0), "r")) )
 		terror("Can't open temp file %s to read", tstfile("sf", 0));
 
 	sfseek(fr, (Sfoff_t)0, SEEK_END);
@@ -65,7 +65,7 @@ tmain()
 	if(pipe(fds) < 0)
 		terror("Can't create pipes");
 
-	if(!(fw = sfnew(fw, NIL(Void_t*), (size_t)SF_UNBOUND, fds[1], SF_WRITE)) )
+	if(!(fw = sfnew(fw, NULL, (size_t)SF_UNBOUND, fds[1], SF_WRITE)) )
 		terror("Can't create stream for pipe");
 
 	errno = 0;

@@ -54,7 +54,7 @@ tmain()
 	if(sfclose(f) < 0)
 		terror("sfclose");
 
-	if(!(f = sfpopen(NIL(Sfio_t*),sfprints("%s %s", argv[0], tstfile("sf", 0)),"r")))
+	if(!(f = sfpopen(NULL,sfprints("%s %s", argv[0], tstfile("sf", 0)),"r")))
 		terror("sfpopen");
 	if(sfgetc(f) != 'a')
 		terror("sfgetc4");
@@ -73,7 +73,7 @@ tmain()
 	if(sfclose(f) < 0)
 		terror("sfclose");
 
-	if(!(f = sfopen(NIL(Sfio_t*),tstfile("sf", 0),"a+")) )
+	if(!(f = sfopen(NULL,tstfile("sf", 0),"a+")) )
 		terror("sfopen2");
 	sfset(f,SF_READ,0);
 	if(!sfreserve(f,0,-1) )

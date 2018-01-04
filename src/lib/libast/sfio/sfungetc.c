@@ -43,7 +43,7 @@ Sfdisc_t	*disc;
 
 	/* close the unget stream */
 	if(type != SF_CLOSING)
-		(void)sfclose((*_Sfstack)(f,NIL(Sfio_t*)));
+		(void)sfclose((*_Sfstack)(f,NULL));
 
 	return 1;
 }
@@ -73,7 +73,7 @@ int		c;	/* the value to be pushed back */
 
 	/* make a string stream for unget characters */
 	if(f->disc != _Sfudisc)
-	{	if(!(uf = sfnew(NIL(Sfio_t*),NIL(char*),(size_t)SF_UNBOUND,
+	{	if(!(uf = sfnew(NULL,NULL,(size_t)SF_UNBOUND,
 				-1,SF_STRING|SF_READ)))
 		{	c = -1;
 			goto done;

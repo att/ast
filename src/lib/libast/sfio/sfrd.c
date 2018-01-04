@@ -94,7 +94,7 @@ Sfdisc_t*	disc;
 			}
 			if((f->bits&SF_MMAP) && f->data)
 			{	SFMUNMAP(f, f->data, f->endb-f->data);
-				f->data = NIL(uchar*);
+				f->data = NULL;
 			}
 			f->next = f->endb = f->endr = f->endw = f->data;
 		}
@@ -137,7 +137,7 @@ Sfdisc_t*	disc;
 			/* determine if we have to copy data to buffer */
 			if((uchar*)buf >= f->data && (uchar*)buf <= f->endb)
 			{	n += f->endb - f->next;
-				buf = NIL(char*);
+				buf = NULL;
 			}
 
 			/* actual seek location */
@@ -183,7 +183,7 @@ Sfdisc_t*	disc;
 				if(f->data && (caddr_t)f->data != (caddr_t)(-1))
 					break;
 				else
-				{	f->data = NIL(uchar*);
+				{	f->data = NULL;
 					if((r >>= 1) < (_Sfpage*SF_NMAP) ||
 					   (errno != EAGAIN && errno != ENOMEM) )
 						break;

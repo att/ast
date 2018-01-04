@@ -87,7 +87,7 @@ static int sfsetlinemode(void)
 				if (*(t = s) == 0)
 					break;
 
-				v = NIL(char*);
+				v = NULL;
 				while (*s)
 				{	if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
 					{	*s++ = 0; /* end of name */
@@ -96,7 +96,7 @@ static int sfsetlinemode(void)
 					else if (!v && *s == '=')
 					{	*s++ = 0; /* end of name */
 						if (*(v = s) == 0)
-							v = NIL(char*);
+							v = NULL;
 					}
 					else	s++;
 				}
@@ -218,13 +218,13 @@ size_t	size;	/* buffer size, -1 for default size */
 	ssize_t		bufsize, blksz;
 	Sfdisc_t*	disc;
 	sfstat_t	st;
-	uchar*		obuf = NIL(uchar*);
+	uchar*		obuf = NULL;
 	ssize_t		osize = 0;
 	SFMTXDECL(f);
 
 	SFONCE();
 
-	SFMTXENTER(f,NIL(Void_t*));
+	SFMTXENTER(f,NULL);
 
 	GETLOCAL(f,local);
 
@@ -236,16 +236,16 @@ size_t	size;	/* buffer size, -1 for default size */
 
 	/* cleanup actions already done, don't allow write buffering any more */
 	if(_Sfexiting && !(f->flags&SF_STRING) && (f->mode&SF_WRITE))
-	{	buf = NIL(Void_t*);
+	{	buf = NULL;
 		size = 0;
 	}
 
 	if((init = f->mode&SF_INIT) )
 	{	if(!f->pool && _sfsetpool(f) < 0)
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 	}
 	else if((f->mode&SF_RDWR) != SFMODE(f,local) && _sfmode(f,0,local) < 0)
-		SFMTXRETURN(f, NIL(Void_t*));
+		SFMTXRETURN(f, NULL);
 
 	if(init)
 		f->mode = (f->mode&SF_RDWR)|SF_LOCK;
@@ -255,12 +255,12 @@ size_t	size;	/* buffer size, -1 for default size */
 		/* make sure there is no hidden read data */
 		if(f->proc && (f->flags&SF_READ) && (f->mode&SF_WRITE) &&
 		   _sfmode(f,SF_READ,local) < 0)
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 
 		/* synchronize first */
 		SFLOCK(f,local); rv = SFSYNC(f); SFOPEN(f,local);
 		if(rv < 0)
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 
 		/* turn off the SF_SYNCED bit because buffer is changing */
 		f->mode &= ~SF_SYNCED;
@@ -279,7 +279,7 @@ size_t	size;	/* buffer size, -1 for default size */
 			goto done;
 		}
 		else /* initialize stream as if in the default case */
-		{	buf = NIL(Void_t*);
+		{	buf = NULL;
 			size = (size_t)SF_UNBOUND;
 		}
 	}
@@ -296,11 +296,11 @@ size_t	size;	/* buffer size, -1 for default size */
 		{	if(f->getr && (f->mode&SF_GETR) && f->next)
 				f->next[-1] = f->getr;
 			SFMUNMAP(f,f->data,f->endb-f->data);
-			f->data = NIL(uchar*);
+			f->data = NULL;
 		}
 	} else
 	if(f->data == f->tiny)
-	{	f->data = NIL(uchar*);
+	{	f->data = NULL;
 		f->size = 0;
 	}
 	obuf  = f->data;
@@ -456,7 +456,7 @@ setbuf:
 		else if((ssize_t)(size = _Sfpage) < bufsize)
 			size = bufsize;
 
-		buf = NIL(Void_t*);
+		buf = NULL;
 	}
 
 	sf_malloc = 0;
@@ -464,7 +464,7 @@ setbuf:
 	{	/* try to allocate a buffer */
 		if(obuf && size == (size_t)osize && init)
 		{	buf = (Void_t*)obuf;
-			obuf = NIL(uchar*);
+			obuf = NULL;
 			sf_malloc = (oflags&SF_MALLOC);
 		}
 		if(!buf)
@@ -504,7 +504,7 @@ setbuf:
 
 	if(obuf && (obuf != f->data) && (osize > 0) && (oflags&SF_MALLOC))
 	{	free((Void_t*)obuf);
-		obuf = NIL(uchar*);
+		obuf = NULL;
 	}
 
 done:

@@ -55,7 +55,7 @@ tmain()
 
 	sfnotify(notify);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) && Type != SF_NEW)
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")) && Type != SF_NEW)
 		terror("Notify did not announce SF_NEW event");
 	fd = sffileno(f);
 	close(fd+5);

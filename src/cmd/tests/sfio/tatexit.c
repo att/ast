@@ -23,7 +23,7 @@
 
 void ae()
 {
-	Sfio_t*	f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w");
+	Sfio_t*	f = sfopen(NULL, tstfile("sf", 0), "w");
 
 	if(!f)
 		terror("Can't create file");
@@ -45,7 +45,7 @@ char**	argv;
 	Sfio_t* f;
 
 	if(argc <= 1) /* atexit function registered after some sfio access */
-	{	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 1), "w")) )
+	{	if(!(f = sfopen(NULL, tstfile("sf", 1), "w")) )
 			terror("Can't create file");
 		if(sfwrite(f,"1234\n",5) != 5)
 			terror("Can't write to file");
@@ -57,7 +57,7 @@ char**	argv;
 	else /* atexit function registered before some sfio access */
 	{	atexit(ae);
 
-		if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 1), "w")) )
+		if(!(f = sfopen(NULL, tstfile("sf", 1), "w")) )
 			terror("Can't create file");
 		if(sfwrite(f,"1234\n",5) != 5)
 			terror("Can't write to file");

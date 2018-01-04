@@ -150,7 +150,7 @@ int    B_login(int argc,char *argv[],Shbltin_t *context)
 		pp->mode = SH_JMPEXIT;
 		sh_sigreset(shp,2);
 		sh_freeup(shp);
-		path_exec(shp,pname,argv,NIL(struct argnod*));
+		path_exec(shp,pname,argv,NULL);
 		sh_done(shp,0);
         }
 	return(1);
@@ -246,7 +246,7 @@ int    b_dot_cmd(int n,char *argv[],Shbltin_t *context)
 		{
 			if(!np->nvalue.ip)
 			{
-				path_search(shp,script,NIL(Pathcomp_t**),0);
+				path_search(shp,script,NULL,0);
 				if(np->nvalue.ip)
 				{
 					if(nv_isattr(np,NV_FPOSIX))
@@ -295,7 +295,7 @@ int    b_dot_cmd(int n,char *argv[],Shbltin_t *context)
 		else
 		{
 			buffer = malloc(IOBSIZE+1);
-			iop = sfnew(NIL(Sfio_t*),buffer,IOBSIZE,fd,SF_READ);
+			iop = sfnew(NULL,buffer,IOBSIZE,fd,SF_READ);
 			sh_offstate(shp,SH_NOFORK);
 			sh_eval(shp,iop,sh_isstate(shp,SH_PROFILE)?SH_FUNEVAL:0);
 		}

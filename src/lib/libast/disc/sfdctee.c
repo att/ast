@@ -86,8 +86,8 @@ Sfio_t*	tee;	/* stream to tee to	*/
 	if(!(te = (Tee_t*)malloc(sizeof(Tee_t))) )
 		return -1;
 
-	te->disc.readf = NIL(Sfread_f);
-	te->disc.seekf = NIL(Sfseek_f);
+	te->disc.readf = NULL;
+	te->disc.seekf = NULL;
 	te->disc.writef = teewrite;
 	te->disc.exceptf = teeexcept;
 	te->tee = tee;

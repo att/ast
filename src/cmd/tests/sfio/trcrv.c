@@ -32,7 +32,7 @@ Sfdisc_t* disc;
 	return sfrd(f,buf,n,disc);
 }
 
-Sfdisc_t Disc = {myread, NIL(Sfwrite_f), NIL(Sfseek_f), NIL(Sfexcept_f)};
+Sfdisc_t Disc = {myread, NULL, NULL, NULL};
 
 tmain()
 {
@@ -41,12 +41,12 @@ tmain()
 	if(pipe(fd) < 0)
 		terror("Can't open pipe");
 
-	if(sfnew(sfstdin,NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
+	if(sfnew(sfstdin,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
 		terror("Can't initialize sfstdin");
 	sfset(sfstdin,SF_SHARE,1);
 	sfdisc(sfstdin,&Disc);
 
-	if(sfnew(sfstdout,NIL(Void_t*),0,fd[1],SF_WRITE) != sfstdout)
+	if(sfnew(sfstdout,NULL,0,fd[1],SF_WRITE) != sfstdout)
 		terror("Can't initialize sfstdout");
 	sfputr(sfstdout,"111\n222\n333\n",-1);
 	sfsync(sfstdout);

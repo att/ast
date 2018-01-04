@@ -110,7 +110,7 @@ int	newfd;
 
 				if((f->bits&SF_MMAP) && f->data)
 				{	SFMUNMAP(f,f->data,f->endb-f->data);
-					f->data = NIL(uchar*);
+					f->data = NULL;
 				}
 
 				/* make stream appears uninitialized */

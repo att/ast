@@ -36,7 +36,7 @@ Sfoff_t p;
 {
 	if((f->bits&SF_MMAP) && f->data)
 	{	SFMUNMAP(f, f->data, f->endb-f->data);
-		f->data = NIL(uchar*);
+		f->data = NULL;
 	}
 	f->next = f->endr = f->endw = f->data;
 	f->endb = (f->mode&SF_WRITE) ? f->data+f->size : f->data;
@@ -102,7 +102,7 @@ int	type;	/* 0: from org, 1: from here, 2: from end */
 
 	/* throw away ungetc data */
 	if(f->disc == _Sfudisc)
-		(void)sfclose((*_Sfstack)(f,NIL(Sfio_t*)));
+		(void)sfclose((*_Sfstack)(f,NULL));
 
 	/* lock the stream for internal manipulations */
 	SFLOCK(f,local);

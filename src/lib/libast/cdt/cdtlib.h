@@ -41,7 +41,6 @@
 #include	"debug.h"
 
 /* short-hand notations */
-#define NIL(t)	((t)0)
 #define reg	register
 
 /* min #bits for a hash table. (1<<this) is table size */

@@ -59,7 +59,7 @@ tmain()
 	tinfo(buf);
 
 	/* resize, then corrupt a byte in front */
-	if((addr[2] = vmresize(vm,addr[2],256,VM_RSMOVE|VM_RSCOPY)) == NIL(Void_t*))
+	if((addr[2] = vmresize(vm,addr[2],256,VM_RSMOVE|VM_RSCOPY)) == NULL)
 		terror("Failed resizing");
 	addr[2][BEFORE] = 0; /* corrupting a byte in front of addr[9] */
 	if(vmfree(vm,addr[2]) < 0)
@@ -70,7 +70,7 @@ tmain()
 	tinfo(buf);
 
 	/* resize a non-existent block */
-	if(vmresize(vm, (Void_t*)3, 256, VM_RSMOVE|VM_RSCOPY) != NIL(Void_t*) )
+	if(vmresize(vm, (Void_t*)3, 256, VM_RSMOVE|VM_RSCOPY) != NULL )
 		terror("Resizing a nonexistent block succeeded");
 	if((n = read(pfd[0], buf, sizeof(buf))) <= 0)
 		terror("No corruption messages written");
@@ -79,7 +79,7 @@ tmain()
 
 	/* resize a freed block */
 	vmfree(vm, addr[3]);
-	if((addr[3] = vmresize(vm,addr[3],256,VM_RSMOVE|VM_RSCOPY)) != NIL(Void_t*))
+	if((addr[3] = vmresize(vm,addr[3],256,VM_RSMOVE|VM_RSCOPY)) != NULL)
 		terror("Resizing a free block succeeded");
 	if((n = read(pfd[0], buf, sizeof(buf))) <= 0)
 		terror("No corruption messages written");
@@ -87,7 +87,7 @@ tmain()
 	tinfo(buf);
 
 	/* corrupting a byte in back */
-	if((addr[4] = vmresize(vm,addr[4],256,VM_RSMOVE|VM_RSCOPY)) == NIL(Void_t*))
+	if((addr[4] = vmresize(vm,addr[4],256,VM_RSMOVE|VM_RSCOPY)) == NULL)
 		terror("Failed resizing");
 	addr[4][256+AFTER] = 0;
 	if(vmfree(vm,addr[4]) < 0)

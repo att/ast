@@ -58,5 +58,5 @@ ssize_t		size;	/* size of requested memory	*/
 
 	asolock(&vmdt->ulck, key, ASO_UNLOCK);
 
-	return u ? u->data : NIL(Void_t*);
+	return u ? u->data : NULL;
 }

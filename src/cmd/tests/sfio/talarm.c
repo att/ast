@@ -68,7 +68,7 @@ Sfdisc_t*	disc;
 	return -1;
 }
 
-Sfdisc_t Disc = {NIL(Sfread_f), NIL(Sfwrite_f), NIL(Sfseek_f), exceptf};
+Sfdisc_t Disc = {NULL, NULL, NULL, exceptf};
 
 tmain()
 {
@@ -78,7 +78,7 @@ tmain()
 
 	if(pipe(fd) < 0)
 		terror("Can't make pipe");
-	if(sfnew(sfstdin,NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
+	if(sfnew(sfstdin,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
 		terror("Can't renew stdin");
 	sfdisc(sfstdin,&Disc);
 	sfset(sfstdin,SF_SHARE,1);
@@ -106,7 +106,7 @@ tmain()
 
 	Buf[0] = 0;
 	Except = 1; /* testing return-on-interrupt feature */
-	sfdisc(sfstdin, NIL(Sfdisc_t*)); /* pop discipline		*/
+	sfdisc(sfstdin, NULL); /* pop discipline		*/
 	sfset(sfstdin, SF_IOINTR, 1);	/* set to return on interrupt	*/
 	signal(SIGALRM,alrmhandler);
 	if(write(fd[1],"0123456789",10) != 10)

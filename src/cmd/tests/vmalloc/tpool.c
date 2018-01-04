@@ -35,7 +35,7 @@ Vmdisc_t*	disc;
 {
 	if(caddr)
 	{	if(newsize != 0)
-			return NIL(Void_t*);
+			return NULL;
 		Release += 1;
 		free(caddr);
 		return caddr;
@@ -43,7 +43,7 @@ Vmdisc_t*	disc;
 	return vmalloc(Vmheap,newsize);
 }
 
-Vmdisc_t	Disc = {memory, NIL(Vmexcept_f), 64};
+Vmdisc_t	Disc = {memory, NULL, 64};
 
 tmain()
 {
@@ -67,7 +67,7 @@ tmain()
 	for(i = 0; i < 10; ++i)
 		addr[i] = vmalloc(vm,15);
 
-	if(vmresize(vm,addr[0],16,1) != NIL(Void_t*))
+	if(vmresize(vm,addr[0],16,1) != NULL)
 		terror("Resize to a different size succeeds?");
 
 	vmfree(vm,addr[0]);

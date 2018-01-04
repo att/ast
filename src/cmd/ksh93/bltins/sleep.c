@@ -136,7 +136,7 @@ skip:
 		if(sflag || tloc==0 || errno!=EINTR || shp->lastsig)
 			break;
 		sh_sigcheck(shp);
-		if(tloc < (now=time(NIL(time_t*))))
+		if(tloc < (now=time(NULL)))
 			break;
 		d = (double)(tloc-now);
 		if(shp->sigflag[SIGALRM]&SH_SIGTRAP)

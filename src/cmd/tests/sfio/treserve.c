@@ -77,7 +77,7 @@ tmain()
 	if(sfopen(sfstdout, tstfile("sf", 0),"w") != sfstdout)
 		terror("Opening file");
 
-	sfsetbuf(sfstdout,NIL(char*),0);
+	sfsetbuf(sfstdout,NULL,0);
 	if(!(s = sfreserve(sfstdout,0,SF_LOCKR)) )
 		terror("Could not lock stdout");
 	if(sfputc(sfstdout,'1') >= 0)
@@ -85,7 +85,7 @@ tmain()
 	if(sfwrite(sfstdout,s,0) != 0)
 		terror("stdout can't be unlocked");
 
-	sfsetbuf(sfstdout,NIL(char*),sizeof(buf)/2);
+	sfsetbuf(sfstdout,NULL,sizeof(buf)/2);
 
 	for(i = 0; i < sizeof(buf); ++i)
 		buf[i] = (i%26) + 'a';
@@ -106,7 +106,7 @@ tmain()
 
 	if(sfopen(sfstdin, tstfile("sf", 0),"r") != sfstdin)
 		terror("Opening file2");
-	sfsetbuf(sfstdin,NIL(char*),8*sizeof(buf));
+	sfsetbuf(sfstdin,NULL,8*sizeof(buf));
 	if(sfsize(sfstdin) != n)
 		terror("Wrong size for file");
 
@@ -134,7 +134,7 @@ tmain()
 		i += sfvalue(sfstdin);
 	if(i != n)
 		terror("Did not read data2");
-	sfsetbuf(sfstdin,NIL(Void_t*),(size_t)SF_UNBOUND);
+	sfsetbuf(sfstdin,NULL,(size_t)SF_UNBOUND);
 
 	if(sfopen(sfstdout, tstfile("sf", 0), "w") != sfstdout)
 		terror("Can't open to write");
@@ -148,7 +148,7 @@ tmain()
 
 	if(sfopen(sfstdin, tstfile("sf", 0), "r") != sfstdin)
 		terror("Opening to read");
-	sfsetbuf(sfstdin,NIL(Void_t*),8*1024);
+	sfsetbuf(sfstdin,NULL,8*1024);
 	if(!(s = sfreserve(sfstdin,16*sizeof(bigbuf),0)) )
 		terror("sfreserve failed");
 	for(i = 0; i < 16; ++i)
@@ -167,7 +167,7 @@ tmain()
 				terror("Wrong data2 i=%d k=%d",i,k);
 	}
 	if(!(s = sfreserve(sfstdin,16*sizeof(bigbuf),SF_LOCKR)) )
-	{	sfsetbuf(sfstdin,NIL(Void_t*),16*sizeof(bigbuf));
+	{	sfsetbuf(sfstdin,NULL,16*sizeof(bigbuf));
 		if(!(s = sfreserve(sfstdin,16*sizeof(bigbuf),SF_LOCKR)) )
 			terror("sfreserve failed2");
 	}
@@ -218,7 +218,7 @@ tmain()
 	close(fd[1]);
 
 	sfclose(sfstdin);
-	if(sfnew(sfstdin,NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
+	if(sfnew(sfstdin,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ) != sfstdin)
 		terror("Can't creat pipe stream");
 	if(!(s = sfgetr(sfstdin,'\n',1) ) ||
 	   strcmp(s,"abcdefghijklmnopqrstuvwxyz") != 0)
@@ -294,7 +294,7 @@ tmain()
 		sfwrite(f,bigbuf,sizeof(bigbuf));
 	sfseek(f,(Sfoff_t)0,0);
 	sfset(f,SF_WRITE,0);
-	sfsetbuf(f,NIL(Void_t*),4096);
+	sfsetbuf(f,NULL,4096);
 	if(!(s = sfreserve(f,SF_UNBOUND,SF_LOCKR)) )
 		terror("sfreserve failed 11");
 	if((n = sfvalue(f)) < 4096)

@@ -45,22 +45,22 @@ int	flags;	/* type of file stream */
 	SFONCE();	/* initialize mutexes */
 
 	if(!(flags&SF_RDWR))
-		return NIL(Sfio_t*);
+		return NULL;
 
 	sflags = 0;
 	if((f = oldf) )
 	{	if(flags&SF_EOF)
 		{	if(f != sfstdin && f != sfstdout && f != sfstderr)
-				f->mutex = NIL(Vtmutex_t*);
+				f->mutex = NULL;
 			SFCLEAR(f, f->mutex);
-			oldf = NIL(Sfio_t*);
+			oldf = NULL;
 		}
 		else if(f->mode&SF_AVAIL)
 		{	/* only allow SF_STATIC to be already closed */
 			if(!(f->flags&SF_STATIC) )
-				return NIL(Sfio_t*);
+				return NULL;
 			sflags = f->flags;
-			oldf = NIL(Sfio_t*);
+			oldf = NULL;
 		}
 		else
 		{	/* reopening an open stream, close it first */
@@ -68,12 +68,12 @@ int	flags;	/* type of file stream */
 
 			if(((f->mode&SF_RDWR) != f->mode && _sfmode(f,0,0) < 0) ||
 			   SFCLOSE(f) < 0 )
-				return NIL(Sfio_t*);
+				return NULL;
 
 			if(f->data && ((flags&SF_STRING) || size != (size_t)SF_UNBOUND) )
 			{	if(sflags&SF_MALLOC)
 					free((Void_t*)f->data);
-				f->data = NIL(uchar*);
+				f->data = NULL;
 			}
 			if(!f->data)
 				sflags &= ~SF_MALLOC;
@@ -89,20 +89,20 @@ int	flags;	/* type of file stream */
 				{	sflags = f->flags;
 					SFCLEAR(f, f->mutex);
 				}
-				else	f = NIL(Sfio_t*);
+				else	f = NULL;
 			}
 		}
 
 		if(!f)
 		{	if(!(f = (Sfio_t*)malloc(sizeof(Sfio_t))) )
-				return NIL(Sfio_t*);
-			SFCLEAR(f, NIL(Vtmutex_t*));
+				return NULL;
+			SFCLEAR(f, NULL);
 		}
 	}
 
 	/* create a mutex */
 	if(!f->mutex)
-		f->mutex = vtmtxopen(NIL(Vtmutex_t*), VT_INIT);
+		f->mutex = vtmtxopen(NULL, VT_INIT);
 
 	/* stream type */
 	f->mode = (flags&SF_READ) ? SF_READ : SF_WRITE;
@@ -115,7 +115,7 @@ int	flags;	/* type of file stream */
 	f->mode |= SF_INIT;
 	if(size != (size_t)SF_UNBOUND)
 	{	f->size = size;
-		f->data = size <= 0 ? NIL(uchar*) : (uchar*)buf;
+		f->data = size <= 0 ? NULL : (uchar*)buf;
 	}
 	f->endb = f->endr = f->endw = f->next = f->data;
 

@@ -121,10 +121,10 @@ tmain()
 	if(pipe(parent) < 0 || pipe(child) < 0)
 		terror("Making pipes for communications");
 
-	if(!(fw = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(fw = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Creating temp file");
 
-	if(!(fr = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")) )
+	if(!(fr = sfopen(NULL, tstfile("sf", 0), "r")) )
 		terror("Opening temp file to read");
 
 	disc.disc.readf = discread;

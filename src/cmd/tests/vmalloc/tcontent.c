@@ -41,10 +41,6 @@ static size_t		Largelf = 1000;	/* life of an allocated piece		*/
 static size_t		Maxbusy = 0;	/* size of max busy space at any time	*/
 static size_t		Curbusy = 0;	/* size of busy space at current time	*/
 
-#ifndef NIL
-#define	NIL(t)		((t)0)
-#endif
-
 /* define alignment requirement */
 typedef union type_u
 {	int		i, *ip;
@@ -106,7 +102,7 @@ extern int N_resize, N_alloc, N_free;
 				memset(up->data, CH_FREE, up->size);
 				free(up->data);
 				asosubsize(&Curbusy, up->size);
-				up->data = NIL(void*);
+				up->data = NULL;
 				up->size = 0;
 			}
 			else 

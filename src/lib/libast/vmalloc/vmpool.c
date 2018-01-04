@@ -63,29 +63,29 @@ int		local;
 	Vmpool_t	*pool = (Vmpool_t*)vm->data;
 
 	if(size <= 0)
-		return NIL(Void_t*);
+		return NULL;
 
 	if(size != pool->size )
 	{	if(pool->size <= 0) /* first time */
 			pool->size = size;
-		else	return NIL(Void_t*);
+		else	return NULL;
 	}
 
-	list = last = NIL(Pool_t*);
+	list = last = NULL;
 	for(;;) /* grab the free list */
 	{	if(!(list = pool->free) )
 			break;
-		if(asocasptr(&pool->free, list, NIL(Block_t*)) == list)
+		if(asocasptr(&pool->free, list, NULL) == list)
 			break;
 	}
 
 	if(!list) /* need new memory */
 	{	size = POOLSIZE(pool->size);
-		if(!(blk = (*_Vmsegalloc)(vm, NIL(Block_t*), ROUND(2*size, pool->vmdt.incr), VM_SEGALL|VM_SEGEXTEND)) )
-			return NIL(Void_t*);
+		if(!(blk = (*_Vmsegalloc)(vm, NULL, ROUND(2*size, pool->vmdt.incr), VM_SEGALL|VM_SEGEXTEND)) )
+			return NULL;
 
 		dt = DATA(blk); enddt = dt + BDSZ(blk);
-		list = NIL(Pool_t*); last = (Pool_t*)dt;
+		list = NULL; last = (Pool_t*)dt;
 		for(; dt+size <= enddt; dt += size)
 		{	pl = (Pool_t*)dt;
 			pl->foo = FOOBAR;
@@ -96,7 +96,7 @@ int		local;
 
 	pl = list; /* grab 1 then reinsert the rest */
 	if((list = list->next) )
-	{	if(asocasptr(&pool->free, NIL(Block_t*), list) != NIL(Block_t*))
+	{	if(asocasptr(&pool->free, NULL, list) != NULL)
 		{	if(!last)
 				for(last = list;; last = last->next)
 					if(!last->next)
@@ -110,7 +110,7 @@ int		local;
 	}
 
 	if(!local && pl && _Vmtrace)
-		(*_Vmtrace)(vm, NIL(Vmuchar_t*), (Vmuchar_t*)pl, pool->size, 0);
+		(*_Vmtrace)(vm, NULL, (Vmuchar_t*)pl, pool->size, 0);
 
 	return (Void_t*)pl;
 }
@@ -141,7 +141,7 @@ int		local;
 	}
 
 	if(!local && _Vmtrace)
-		(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), pool->size, 0);
+		(*_Vmtrace)(vm, (Vmuchar_t*)data, NULL, pool->size, 0);
 
 	return 0;
 }
@@ -167,9 +167,9 @@ int		local;
 	}
 	else if(size == 0)
 	{	(void)poolfree(vm, data, local);
-		return NIL(Void_t*);
+		return NULL;
 	}
-	else	return NIL(Void_t*);
+	else	return NULL;
 }
 
 #if __STD_C
@@ -185,7 +185,7 @@ int		local;
 	NOTUSED(vm);
 	NOTUSED(size);
 	NOTUSED(align);
-	return NIL(Void_t*);
+	return NULL;
 }
 
 /* get statistics */
@@ -226,7 +226,7 @@ static int poolevent(Vmalloc_t* vm, int event, Void_t* arg)
 	{	if(!(pool = (Vmpool_t*)vm->data) )
 			return -1;
 		pool->size = 0;
-		pool->free = NIL(Pool_t*);
+		pool->free = NULL;
 	}
 	return 0;
 }

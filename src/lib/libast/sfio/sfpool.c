@@ -72,14 +72,14 @@ reg int	mode;
 
 		if(!(p = (Sfpool_t*) malloc(sizeof(Sfpool_t))) )
 		{	POOLMTXUNLOCK(last);
-			return NIL(Sfpool_t*);
+			return NULL;
 		}
 
 		(void)vtmtxopen(&p->mutex, VT_INIT); /* initialize mutex */
 
 		p->mode = 0;
 		p->n_sf = 0;
-		p->next = NIL(Sfpool_t*);
+		p->next = NULL;
 		last->next = p;
 
 		POOLMTXUNLOCK(last);
@@ -181,7 +181,7 @@ int		n;	/* position in pool	*/
 	for(; n < p->n_sf; ++n)
 		p->sf[n] = p->sf[n+1];
 
-	f->pool = NIL(Sfpool_t*);
+	f->pool = NULL;
 	f->mode &= ~SF_POOL;
 
 	if(p->n_sf == 0 || p == &_Sfpool)
@@ -259,7 +259,7 @@ reg int		mode;
 
 	if(!f)	/* return head of pool of pf regardless of lock states */
 	{	if(!pf)
-			return NIL(Sfio_t*);
+			return NULL;
 		else if(!pf->pool || pf->pool == &_Sfpool)
 			return pf;
 		else	return pf->pool->sf[0];
@@ -269,10 +269,10 @@ reg int		mode;
 	{	SFMTXLOCK(f);
 		if((f->mode&SF_RDWR) != f->mode && _sfmode(f,0,0) < 0)
 		{	SFMTXUNLOCK(f);
-			return NIL(Sfio_t*);
+			return NULL;
 		}
 		if(f->disc == _Sfudisc)
-			(void)sfclose((*_Sfstack)(f,NIL(Sfio_t*)));
+			(void)sfclose((*_Sfstack)(f,NULL));
 	}
 	if(pf)
 	{	SFMTXLOCK(pf);
@@ -280,10 +280,10 @@ reg int		mode;
 		{	if(f)
 				SFMTXUNLOCK(f);
 			SFMTXUNLOCK(pf);
-			return NIL(Sfio_t*);
+			return NULL;
 		}
 		if(pf->disc == _Sfudisc)
-			(void)sfclose((*_Sfstack)(pf,NIL(Sfio_t*)));
+			(void)sfclose((*_Sfstack)(pf,NULL));
 	}
 
 	/* f already in the same pool with pf */
@@ -296,14 +296,14 @@ reg int		mode;
 	}
 
 	/* lock streams before internal manipulations */
-	rv = NIL(Sfio_t*);
+	rv = NULL;
 	SFLOCK(f,0);
 	if(pf)
 		SFLOCK(pf,0);
 
 	if(!pf)	/* deleting f from its current pool */
-	{	if((p = f->pool) != NIL(Sfpool_t*) && p != &_Sfpool)
-			for(k = 0; k < p->n_sf && pf == NIL(Sfio_t*); ++k)
+	{	if((p = f->pool) != NULL && p != &_Sfpool)
+			for(k = 0; k < p->n_sf && pf == NULL; ++k)
 				if(p->sf[k] != f) /* a stream != f represents the pool */
 					pf = p->sf[k];
 		if(!pf) /* already isolated */

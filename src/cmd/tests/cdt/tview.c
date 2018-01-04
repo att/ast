@@ -21,8 +21,8 @@
 
 Dtdisc_t Disc =
 	{ 0, sizeof(long), -1,
-	  newint, NIL(Dtfree_f), compare, hashint,
-	  NIL(Dtmemory_f), NIL(Dtevent_f)
+	  newint, NULL, compare, hashint,
+	  NULL, NULL
 	};
 
 static int Count, See[10];
@@ -75,7 +75,7 @@ tmain()
 	if((long)dtsearch(dt1,4L) != 4)
 		terror("Should find 4 here!");
 
-	dtwalk(dt1,visit,NIL(Void_t*));
+	dtwalk(dt1,visit,NULL);
 	if(Count != 6)
 		terror("Walk wrong length");
 	for(i = 1; i <= 6; ++i)

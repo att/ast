@@ -80,7 +80,7 @@ tmain()
 		terror("sfreserve2 returns the wrong pointer");
 	sfwrite(f,s,0);
 
-	if(sfsetbuf(f,NIL(Void_t*),(size_t)SF_UNBOUND) != buf)
+	if(sfsetbuf(f,NULL,(size_t)SF_UNBOUND) != buf)
 		terror("sfsetbuf didnot returns last buffer");
 
 	sfsetbuf(f,buf,sizeof(buf));

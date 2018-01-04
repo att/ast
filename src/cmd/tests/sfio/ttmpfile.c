@@ -40,7 +40,7 @@ tmain()
 		terror("Can't open temp file");
 	if(sffileno(f) >= 0)
 		terror("Attempt to create file detected");
-	sfdisc(f,NIL(Sfdisc_t*));
+	sfdisc(f,NULL);
 	if(sffileno(f) < 0)
 		terror("Real file wasn't created");
 	if(sfclose(f) < 0)

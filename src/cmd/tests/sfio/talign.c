@@ -46,7 +46,7 @@ tmain()
 	char*	s;
 	char	buf[1024], rbuf[128*1024];
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Opening to write");
 
 	for(i = 0; i < sizeof(buf); ++i)
@@ -57,7 +57,7 @@ tmain()
 			terror("Write error");
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r")) )
 		terror("Opening to read");
 	sfsetbuf(f,rbuf,sizeof(rbuf));
 

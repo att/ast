@@ -62,17 +62,17 @@ char*		mode;		/* mode of the stream */
 #else
 		errno = EINVAL;
 #endif
-		return NIL(Sfio_t*);
+		return NULL;
 	}
 #endif
 
 	/* get the control flags */
-	if((sflags = _sftype(mode,&oflags,&fflags,NIL(int*))) == 0)
-		return NIL(Sfio_t*);
+	if((sflags = _sftype(mode,&oflags,&fflags,NULL)) == 0)
+		return NULL;
 
 	/* changing the control flags */
 	if(f && !file && !((f->flags|sflags)&SF_STRING) )
-	{	SFMTXENTER(f, NIL(Sfio_t*));
+	{	SFMTXENTER(f, NULL);
 
 		if(f->mode&SF_INIT ) /* stream uninitialized, ok to set flags */
 		{	f->flags |= (sflags & (SFIO_FLAGS & ~SF_RDWR));
@@ -91,7 +91,7 @@ char*		mode;		/* mode of the stream */
 		}
 		else /* make sure there is no buffered data */
 		{	if(sfsync(f) < 0)
-				SFMTXRETURN(f,NIL(Sfio_t*));
+				SFMTXRETURN(f,NULL);
 		}
 
 		if(f->file >= 0 )
@@ -117,7 +117,7 @@ char*		mode;		/* mode of the stream */
 	}
 	else
 	{	if(!file)
-			return NIL(Sfio_t*);
+			return NULL;
 
 #if _has_oflags /* open the file */
 #ifdef sysopenatf
@@ -144,7 +144,7 @@ char*		mode;		/* mode of the stream */
 		if(fd >= 0)
 		{	if((oflags&(O_CREAT|O_EXCL)) == (O_CREAT|O_EXCL) )
 			{	CLOSE(fd);	/* error: file already exists */
-				return NIL(Sfio_t*);
+				return NULL;
 			}
 			if(oflags&O_TRUNC )	/* truncate file */
 			{	reg int	tf;
@@ -174,11 +174,11 @@ char*		mode;		/* mode of the stream */
 		}
 #endif
 		if(fd < 0)
-			return NIL(Sfio_t*);
+			return NULL;
 
 		/* we may have to reset the file descriptor to its old value */
 		oldfd = f ? f->file : -1;
-		if((f = sfnew(f,NIL(char*),(size_t)SF_UNBOUND,fd,sflags)) && oldfd >= 0)
+		if((f = sfnew(f,NULL,(size_t)SF_UNBOUND,fd,sflags)) && oldfd >= 0)
 			(void)sfsetfd(f,oldfd);
 	}
 

@@ -47,10 +47,6 @@ static size_t		Curbusy = 0;	/* size of busy space at current time	*/
 #define CH_MALLOC	03
 #define CH_RESIZE	05
 
-#ifndef NIL
-#define	NIL(t)		((t)0)
-#endif
-
 /* define alignment requirement */
 typedef union type_u
 {	int		i, *ip;
@@ -148,7 +144,7 @@ void* simulate(void* arg)
 				free(up->data);
 
 				asosubsize(&Curbusy, up->size);
-				up->data = NIL(void*);
+				up->data = NULL;
 				up->size = 0;
 			}
 			else 

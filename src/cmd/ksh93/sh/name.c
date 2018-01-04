@@ -381,7 +381,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                             sh_debug(shp, trap, name, (char *)0, argv, (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
                         }
                         if (traceon) {
-                            sh_trace(shp, NIL(char **), 0);
+                            sh_trace(shp, NULL, 0);
                             sfputr(sfstderr, name, n);
                             sfwrite(sfstderr, "=( ", 3);
                             while (cp = *argv++) sfputr(sfstderr, sh_fmtq(cp), ' ');
@@ -394,7 +394,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 if (tp->tre.tretyp == 0 && !tp->com.comset && !tp->com.comarg) {
                     if (!(arg->argflag & ARG_APPEND)) {
                         if (ap && ap->nelem > 0) {
-                            nv_putsub(np, NIL(char *), 0, ARRAY_SCAN);
+                            nv_putsub(np, NULL, 0, ARRAY_SCAN);
                             if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next && !nv_type(np)) {
                                 int nvflag = np->nvflag;
                                 int nvsize = np->nvsize;
@@ -540,7 +540,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 cp++;
             }
             if (traceon) {
-                sh_trace(shp, NIL(char **), 0);
+                sh_trace(shp, NULL, 0);
                 sh_outname(shp, sfstderr, name, -1);
                 if (sub) sfprintf(sfstderr, "[%s]", sh_fmtq(sub));
                 if (cp) {
@@ -875,7 +875,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             shp->last_table = table;
 #if 0
 						if(scan)
-							nv_putsub(np,NIL(char*),0,ARRAY_SCAN);
+							nv_putsub(np,NULL,0,ARRAY_SCAN);
 #endif
                         } else {
                             cp = sp;
@@ -973,7 +973,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         }
                     } else if (nv_isarray(np)) {
                         if (c == 0 && (flags & NV_MOVE)) return (np);
-                        nv_putsub(np, NIL(char *), 0, ARRAY_UNDEF);
+                        nv_putsub(np, NULL, 0, ARRAY_UNDEF);
                     }
                     nv_onattr(np, nofree);
                     nofree = 0;
@@ -991,7 +991,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             } else if (np = nq) {
                                 if ((c = *(sp = cp = dp->last = fp->last)) == 0) {
                                     if (nv_isarray(np) && sp[-1] != ']') {
-                                        nv_putsub(np, NIL(char *), 0, ARRAY_UNDEF);
+                                        nv_putsub(np, NULL, 0, ARRAY_UNDEF);
                                     }
                                     return np;
                                 }
@@ -1180,7 +1180,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
             sh_stats(STAT_NVHITS);
             np = xp->np;
             cp = (char *)name + xp->len;
-            if (nv_isarray(np) && !(flags & NV_MOVE)) nv_putsub(np, NIL(char *), 0, ARRAY_UNDEF);
+            if (nv_isarray(np) && !(flags & NV_MOVE)) nv_putsub(np, NULL, 0, ARRAY_UNDEF);
             shp->last_table = xp->last_table;
             shp->last_root = xp->last_root;
             goto nocache;
@@ -1928,7 +1928,7 @@ static int scanfilter(Dt_t *dict, void *arg, void *data) {
         }
         if (!np->nvalue.cp && !np->nvfun && !nv_isattr(np, ~NV_DEFAULT)) return (0);
         if (sp->scanfn) {
-            if (nv_isarray(np)) nv_putsub(np, NIL(char *), 0L, 0);
+            if (nv_isarray(np)) nv_putsub(np, NULL, 0L, 0);
             (*sp->scanfn)(np, sp->scandata);
         }
         sp->scancount++;
@@ -2001,7 +2001,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
     if (np == tp->sh->namespace) return;
     if (nv_isref(np)) nv_unref(np);
     if (nv_isattr(np, NV_EXPORT) && nv_isarray(np)) {
-        nv_putsub(np, NIL(char *), 0, 0);
+        nv_putsub(np, NULL, 0, 0);
         if (cp = nv_getval(np)) cp = strdup(cp);
     }
     if (nv_isattr(np, NV_EXPORT | NV_NOFREE)) {
@@ -2012,7 +2012,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
         }
         if (!cp) return;
     }
-    if (nv_isarray(np)) nv_putsub(np, NIL(char *), 0, ARRAY_UNDEF);
+    if (nv_isarray(np)) nv_putsub(np, NULL, 0, ARRAY_UNDEF);
     _nv_unset(np, NV_RDONLY);
     nv_setattr(np, 0);
     if (cp) {
@@ -2058,7 +2058,7 @@ static void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
             }
         }
         npnext = (Namval_t *)dtnext(root, np);
-        if (nv_arrayptr(np)) nv_putsub(np, NIL(char *), 0, ARRAY_SCAN);
+        if (nv_arrayptr(np)) nv_putsub(np, NULL, 0, ARRAY_SCAN);
         _nv_unset(np, flags);
         nv_delete(np, root, NV_TABLE);
     }
@@ -2095,7 +2095,7 @@ void _nv_unset(Namval_t *np, int flags) {
                 npv = nv_open(name, shp->var_tree, NV_NOARRAY | NV_VARNAME | NV_NOADD);
                 *cp++ = '.';
                 if (npv && npv != shp->namespace) {
-                    nv_setdisc(npv, cp, NIL(Namval_t *), (Namfun_t *)npv);
+                    nv_setdisc(npv, cp, NULL, (Namfun_t *)npv);
                 }
             }
             if (rp->fname && shp->fpathdict && (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
@@ -2134,7 +2134,7 @@ void _nv_unset(Namval_t *np, int flags) {
         if (!nv_local) {
             Dt_t *last_root = shp->last_root;
             nv_local = 1;
-            nv_putv(np, NIL(char *), flags, np->nvfun);
+            nv_putv(np, NULL, flags, np->nvfun);
             nv_local = 0;
             shp->last_root = last_root;
             return;
@@ -2510,7 +2510,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
         return;
     }
     // For an array, change all the elements.
-    if ((ap = nv_arrayptr(np)) && ap->nelem > 0) nv_putsub(np, NIL(char *), 0, ARRAY_SCAN);
+    if ((ap = nv_arrayptr(np)) && ap->nelem > 0) nv_putsub(np, NULL, 0, ARRAY_SCAN);
     oldsize = nv_size(np);
     oldatts = np->nvflag;
     if (fp) np->nvfun = 0;

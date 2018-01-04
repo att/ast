@@ -48,8 +48,8 @@ tmain()
 
 	if(pipe(fd) < 0)
 		terror("Can't open pipe");
-	if(!(fr = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
-	   !(fw = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
+	if(!(fr = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
+	   !(fw = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
 		terror("Can't open stream");
 	if(to)
 	{	signal(SIGALRM,alrmf);
@@ -70,8 +70,8 @@ tmain()
 
 	if(pipe(fd) < 0)
 		terror("Can't open pipe2");
-	if(!(fr = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
-	   !(fw = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
+	if(!(fr = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
+	   !(fw = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
 		terror("Can't open stream");
 	sfset(fr,SF_SHARE|SF_LINE,1);
 	sfset(fw,SF_SHARE,1);
@@ -125,7 +125,7 @@ tmain()
 	SYNC sfputc(sfstdout,0);
 	SYNC if(strcmp("222\n333\n",buf))
 		terror("sfmove got wrong data");
-	SYNC if(sfmove(fr,NIL(Sfio_t*),(Sfoff_t)1,'\n') != 1)
+	SYNC if(sfmove(fr,NULL,(Sfoff_t)1,'\n') != 1)
 		terror("sfmove failed");
 	if(to)
 		alarm(0);
@@ -145,7 +145,7 @@ tmain()
 	if(pipe(fd) < 0)
 		terror("Can't create pipe");
 	close(fd[0]);
-	if(!(fw = sfnew(NIL(Sfio_t*),NIL(Void_t*),sizeof(buf),fd[1],SF_WRITE)) )
+	if(!(fw = sfnew(NULL,NULL,sizeof(buf),fd[1],SF_WRITE)) )
 		terror("Can't open stream");
 	signal(SIGPIPE,SIG_IGN);
 

@@ -49,5 +49,5 @@ size_t		size;
 		return vmresize(vm, data, size, VM_RSMOVE|VM_RSCOPY|VM_RSZERO);
 
 	vmclose(vm);
-	return NIL(Void_t*);
+	return NULL;
 }

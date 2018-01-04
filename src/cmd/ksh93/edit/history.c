@@ -88,7 +88,6 @@
 
 #if !KSHELL
 #   define new_of(type,x)	((type*)calloc(sizeof(type)+(x), 1U))
-#   define NIL(type)		((type)0)
 #   define path_relative(s,x)	(s,x)
 #   ifdef __STDC__
 #	define nv_getval(s)	getenv(#s)
@@ -289,7 +288,7 @@ retry:
 		if(shgd->userid)
 #endif	/* KSHELL */
 		{
-			if(!(fname = pathtmp(NIL(char*),0,0,NIL(int*))))
+			if(!(fname = pathtmp(NULL,0,0,NULL)))
 				return(0);
 			fd = open(fname,O_BINARY|O_APPEND|O_CREAT|O_RDWR,S_IRUSR|S_IWUSR|O_CLOEXEC);
 		}
@@ -472,11 +471,11 @@ static History_t* hist_trim(History_t *hp, int n)
 		if(last = strrchr(name,'/'))
 		{
 			*last = 0;
-			pathtmp(tmpname,name,"hist",NIL(int*));
+			pathtmp(tmpname,name,"hist",NULL);
 			*last = '/';
 		}
 		else
-			pathtmp(tmpname,".","hist",NIL(int*));
+			pathtmp(tmpname,".","hist",NULL);
 		if(rename(name,tmpname) < 0)
 		{
 			free(tmpname);
@@ -842,7 +841,7 @@ static int hist_write(Sfio_t *iop,const void *buff,int insize,Sfdisc_t* handle)
 		offset = stktell(shp->stk);
 		sfputr(shp->stk,buff,-1);
 		stkseek(shp->stk,stktell(shp->stk) - 1);
-		timechars = sfprintf(shp->stk, "\t%s\t%x\n",logname,time(NIL(long *)));
+		timechars = sfprintf(shp->stk, "\t%s\t%x\n",logname,time(NULL));
 		lseek(acctfd, (off_t)0, SEEK_END);
 		write(acctfd, stkptr(shp->stk,offset), size - 2 + timechars);
 		stkseek(shp->stk,offset);
@@ -1096,7 +1095,7 @@ char *hist_word(char *string,int size,int word)
 	int flag = 0;
 	History_t *hp = hist_ptr;
 	if(!hp)
-		return(NIL(char*));
+		return(NULL);
 	hist_copy(string,size,(int)hp->histind-1,-1);
 	for(;c = *cp;cp++)
 	{
@@ -1141,7 +1140,7 @@ Histloc_t hist_locate(History_t *hp,int command,int line,int lines)
 		int count;
 		while(command <= hp->histind)
 		{
-			count = hist_copy(NIL(char*),0, command,-1);
+			count = hist_copy(NULL,0, command,-1);
 			if(count > line)
 				goto done;
 			line -= count;
@@ -1157,7 +1156,7 @@ Histloc_t hist_locate(History_t *hp,int command,int line,int lines)
 				goto done;
 			if(--command < least)
 				break;
-			line += hist_copy(NIL(char*),0, command,-1);
+			line += hist_copy(NULL,0, command,-1);
 		}
 		command = -1;
 	}

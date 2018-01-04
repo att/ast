@@ -41,7 +41,7 @@ tmain()
 	if(pipe(Fd) < 0)
 		terror("Can't make pipe");
 
-	if(sfnew(sfstdin,NIL(Void_t*),(size_t)SF_UNBOUND,Fd[0],SF_READ) != sfstdin)
+	if(sfnew(sfstdin,NULL,(size_t)SF_UNBOUND,Fd[0],SF_READ) != sfstdin)
 		terror("Can't renew stdin");
 	sfset(sfstdin,SF_SHARE,1);
 

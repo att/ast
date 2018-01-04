@@ -37,16 +37,16 @@ tmain()
 		texit(0);
 	}
 
-	if(!(str = sfopen(NIL(Sfio_t*),"abc","s")) )
+	if(!(str = sfopen(NULL,"abc","s")) )
 		terror("Opening string stream");
 
 	if(pipe(fd) < 0)
 		terror("pipe failed");
 
-	if(!(fr = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,
+	if(!(fr = sfnew(NULL,NULL,(size_t)SF_UNBOUND,
 			 fd[0],SF_READ)) )
 		terror("Opening read pipe stream");
-	if(!(fw = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,
+	if(!(fw = sfnew(NULL,NULL,(size_t)SF_UNBOUND,
 			 fd[1],SF_WRITE)) )
 		terror("Opening write pipe stream");
 
@@ -79,7 +79,7 @@ tmain()
 	if(pipe(fd) < 0)
 		terror("Can't create pipe");
 
-	if(!(fr = sfnew(fr,NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ)) )
+	if(!(fr = sfnew(fr,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ)) )
 		terror("Can't create stream");
 
 	if(write(fd[1],"0123456789",10) != 10)
@@ -117,9 +117,9 @@ tmain()
 #if _lib_socketpair
 	if(socketpair(AF_UNIX, SOCK_STREAM, 0, fd) != 0)
 		terror("socketpair failed");
-	if(!(f = sfnew(0,NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ|SF_WRITE)) )
+	if(!(f = sfnew(0,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ|SF_WRITE)) )
 		terror("Can't create stream with socket file descriptor");
-	if(!(g = sfnew(0,NIL(Void_t*),(size_t)SF_UNBOUND,fd[1],SF_READ|SF_WRITE)) )
+	if(!(g = sfnew(0,NULL,(size_t)SF_UNBOUND,fd[1],SF_READ|SF_WRITE)) )
 		terror("Can't create stream with socket file descriptor");
 
 	/* turn off write-capability for f */

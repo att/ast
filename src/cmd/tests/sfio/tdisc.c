@@ -155,7 +155,7 @@ tmain()
 	strcpy(u, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	n = strlen(l);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")))
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w+")))
 		terror("Creating temp file");
 	if((r = sfwrite(f,l,n)) != n)
 		terror("Writing data %d",r);
@@ -180,7 +180,7 @@ tmain()
 	}
 	sfclose(f);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w+")) )
 		terror("Opening file");
 	sfdisc(f,&Wdisc);
 	if(sfputr(f,low,'\n') < 0)
@@ -194,7 +194,7 @@ tmain()
 	sfclose(f);
 
 	/* read-once discipline */
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"r")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"r")) )
 		terror("Opening file");
 	sfdisc(f,&Odisc);
 	if(!(s = sfreserve(f,SF_UNBOUND,SF_LOCKR)) )
@@ -203,7 +203,7 @@ tmain()
 		terror("Wrong reserved length1");
 	sfread(f,s,3);
 
-	if(!(fs = sfopen(NIL(Sfio_t*),"abcdef","s")) )
+	if(!(fs = sfopen(NULL,"abcdef","s")) )
 		terror("String open failed");
 	sfstack(f,fs);
 	if(!(s = sfreserve(f,SF_UNBOUND,SF_LOCKR)) )
@@ -219,12 +219,12 @@ tmain()
 	sfclose(f);
 	sfclose(fs);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w")) )
 		terror("Opening file to write");
 	sfdisc(f,&Edisc);
 	if(sfwrite(f, "one", 3) != 3)
 		terror("Bad sfwrite");
-	if(sfwr(f, "two", 4, NIL(Sfdisc_t*)) != 4)
+	if(sfwr(f, "two", 4, NULL) != 4)
 		terror("Bad sfwr");
 	if(strcmp(External,"onetwo") != 0)
 		terror("Bad call of sfwr");

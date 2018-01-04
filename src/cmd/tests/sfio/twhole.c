@@ -50,7 +50,7 @@ tmain()
 	Count = 0;
 	Size = 52;
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Opening to write");
 	sfsetbuf(f,buf,sizeof(buf));
 	sfset(f,SF_WHOLE,1);
@@ -66,7 +66,7 @@ tmain()
 	Count = 0;
 	Size = 53;
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w")) )
 		terror("Opening to write");
 	sfsetbuf(f,buf,sizeof(buf));
 	sfset(f,SF_WHOLE,1);

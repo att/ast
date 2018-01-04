@@ -27,12 +27,12 @@ tmain()
 	char	buf[1024];
 	int	r, w;
 
-	if(!(f1 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f1 = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Can't open f1");
 	if(!(f1 = sfopen(f1, tstfile("sf", 0), "a+")) )
 		terror("Can't open f1");
 
-	if(!(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "a+")) )
+	if(!(f2 = sfopen(NULL, tstfile("sf", 0), "a+")) )
 		terror("Can't open f2");
 
 	if(sfwrite(f1,"012345678\n",10) != 10 || sfsync(f1) < 0)

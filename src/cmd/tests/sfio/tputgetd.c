@@ -25,7 +25,7 @@ tmain()
 	int	i, flag;
 	Sfio_t	*fp;
 
-	if(!(fp = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) )
+	if(!(fp = sfopen(NULL, tstfile("sf", 0), "w+")) )
 		terror("Can't open temp file");
 
 #define BEGV	(Sfdouble_t)(1e-10)

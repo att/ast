@@ -53,9 +53,9 @@ Sfio_t*	f2;	/* top of stack	*/
 	STKMTXLOCK(f1,f2);
 
 	if(f1 && (f1->mode&SF_RDWR) != f1->mode && _sfmode(f1,0,0) < 0)
-		STKMTXRETURN(f1,f2, NIL(Sfio_t*));
+		STKMTXRETURN(f1,f2, NULL);
 	if(f2 && (f2->mode&SF_RDWR) != f2->mode && _sfmode(f2,0,0) < 0)
-		STKMTXRETURN(f1,f2, NIL(Sfio_t*));
+		STKMTXRETURN(f1,f2, NULL);
 	if(!f1)
 		STKMTXRETURN(f1,f2, f2);
 
@@ -64,12 +64,12 @@ Sfio_t*	f2;	/* top of stack	*/
 
 	if(f2 == SF_POPSTACK)
 	{	if(!(f2 = f1->push))
-			STKMTXRETURN(f1,f2, NIL(Sfio_t*));
+			STKMTXRETURN(f1,f2, NULL);
 		f2->mode &= ~SF_PUSH;
 	}
 	else
 	{	if(f2->push)
-			STKMTXRETURN(f1,f2, NIL(Sfio_t*));
+			STKMTXRETURN(f1,f2, NULL);
 		if(f1->pool && f1->pool != &_Sfpool && f1->pool != f2->pool &&
 		   f1 == f1->pool->sf[0])
 		{	/* get something else to pool front since f1 will be locked */
@@ -104,7 +104,7 @@ Sfio_t*	f2;	/* top of stack	*/
 	else
 	{	/* unfreeze the just exposed stream */
 		f1->mode &= ~SF_PUSH;
-		f2->push = NIL(Sfio_t*);
+		f2->push = NULL;
 		rf = f2;
 	}
 

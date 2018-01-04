@@ -50,7 +50,7 @@ int	type;
 			return 0;
 
 		vtmtxlock(_Sfmutex);
-		f->mutex = vtmtxopen(NIL(Vtmutex_t*), VT_INIT);
+		f->mutex = vtmtxopen(NULL, VT_INIT);
 		vtmtxunlock(_Sfmutex);
 		if(!f->mutex)
 			return -1;

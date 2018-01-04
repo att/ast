@@ -33,10 +33,6 @@ static int		Life = 100;
 static size_t		Minsize = 100;
 static size_t		Maxsize = 1000;
 
-#ifndef NIL
-#define	NIL(t)		((t)0)
-#endif
-
 typedef struct _piece_s	Piece_t;
 struct _piece_s
 {	Piece_t*	next;
@@ -112,7 +108,7 @@ int simulate(Piece_t* list, size_t nalloc)
 				Allocing = 0;
 
 				nfree += 1;
-				up->data = NIL(void*);
+				up->data = NULL;
 				up->size = 0;
 			}
 			else

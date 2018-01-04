@@ -149,7 +149,7 @@ static Mmvm_t* mmfix(Mmvm_t* mmvm, Mmdisc_t* mmdc, int fd)
 			mmvm = (Mmvm_t*)shmat(mmdc->shmid, base, 0);
 		}
 		if(!mmvm || mmvm == (Mmvm_t*)(-1) )
-			mmvm = NIL(Mmvm_t*);
+			mmvm = NULL;
 	}
 
 	return mmvm;
@@ -162,7 +162,7 @@ static int mminit(Mmdisc_t* mmdc)
 	int		try;
 	int		fd = -1;
 	ssize_t		extent, size = 0;
-	Mmvm_t		*mmvm = NIL(Mmvm_t*);
+	Mmvm_t		*mmvm = NULL;
 	int		rv = -1;
 
 	if(mmdc->mmvm) /* already done this */
@@ -196,7 +196,7 @@ static int mminit(Mmdisc_t* mmdc)
 		}
 
 		/* map the file into memory */
-		mmvm = (Mmvm_t*)mmap(NIL(Void_t*), size, (PROT_READ|PROT_WRITE), MAP_SHARED, fd, (off_t)0);
+		mmvm = (Mmvm_t*)mmap(NULL, size, (PROT_READ|PROT_WRITE), MAP_SHARED, fd, (off_t)0);
 		if(!mmvm || mmvm == (Mmvm_t*)(-1) ) /* initial mapping failed */
 		{	/**/DEBUG_MESSAGE("vmdcshare: mmap() failed");
 			goto done;
@@ -212,7 +212,7 @@ static int mminit(Mmdisc_t* mmdc)
 		}
 
 		/* map the data segment into memory */
-		mmvm = (Mmvm_t*)shmat(mmdc->shmid, NIL(Void_t*), 0);
+		mmvm = (Mmvm_t*)shmat(mmdc->shmid, NULL, 0);
 		if(!mmvm || mmvm == (Mmvm_t*)(-1) ) /* initial mapping failed */
 		{	/**/DEBUG_MESSAGE("vmdcshare: attempt to attach memory failed");
 			shmctl(mmdc->shmid, IPC_RMID, 0);
@@ -230,7 +230,7 @@ static int mminit(Mmdisc_t* mmdc)
 #endif
 	/* all processes compete for the chore to initialize data */
 	if(asocasint(&mmvm->magic, 0, MM_JUST4US) == 0 ) /* lucky winner: us! */
-	{	if((base = vmmaddress(size)) != NIL(Void_t*))
+	{	if((base = vmmaddress(size)) != NULL)
 		{	mmvm->base = base; /* this will be the base of the map */
 			mmvm->size = size;
 		}
@@ -337,7 +337,7 @@ Mmdisc_t*	mmdc;
 		}
 	}
 
-	mmdc->mmvm = NIL(Mmvm_t*);
+	mmdc->mmvm = NULL;
 	return 0;
 }
 
@@ -357,7 +357,7 @@ Vmdisc_t*	disc;
 	Mmdisc_t	*mmdc = (Mmdisc_t*)disc;
 
 	if(!(mmvm = mmdc->mmvm) ) /* bad data */
-		return NIL(Void_t*);
+		return NULL;
 
 	/* this region allows only a single busy block! */
 	if(caddr) /* resizing/freeing an existing block */
@@ -365,14 +365,14 @@ Vmdisc_t*	disc;
 		{	mmvm->busy = nsize;
 			return MMDATA(mmvm);
 		}
-		else	return NIL(Void_t*);
+		else	return NULL;
 	}
 	else /* requesting a new block */
 	{	if(mmvm->busy == 0 )
 		{	mmvm->busy = nsize;
 			return MMDATA(mmvm);
 		}
-		else	return NIL(Void_t*);
+		else	return NULL;
 	}
 }
 
@@ -447,17 +447,17 @@ int		mode;	/*  1: keep memory segments		*/
 
 	if(!name || !name[0] )
 	{	/**/DEBUG_MESSAGE("vmdcshare: store name not given");
-		return NIL(Vmdisc_t*);
+		return NULL;
 	}
 	if(size <= 0 )
 	{	/**/DEBUG_MESSAGE("vmdcshare: store size <= 0");
-		return NIL(Vmdisc_t*);
+		return NULL;
 	}
 
 	/* create discipline structure for getting memory from mmap */
 	if(!(mmdc = vmalloc(Vmheap, sizeof(Mmdisc_t)+strlen(name))) )
 	{	/**/DEBUG_MESSAGE("vmdcshare: failed to allocate discipline ");
-		return NIL(Vmdisc_t*);
+		return NULL;
 	}
 
 	memset(mmdc, 0, sizeof(Mmdisc_t));
@@ -465,7 +465,7 @@ int		mode;	/*  1: keep memory segments		*/
 	mmdc->disc.exceptf = mmexcept;
 	mmdc->disc.round   = (size/4) > _Vmsegsize ? _Vmsegsize : size/4;
 	mmdc->disc.round   = ROUND(mmdc->disc.round, _Vmpagesize);
-	mmdc->mmvm = NIL(Mmvm_t*);
+	mmdc->mmvm = NULL;
 	mmdc->size = size;
 	mmdc->shmkey = -1;
 	mmdc->shmid = -1;

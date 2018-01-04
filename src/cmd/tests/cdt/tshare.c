@@ -77,7 +77,7 @@ Dtdisc_t* disc;
 
 Dtdisc_t Disc =
 	{ 0, sizeof(long), -1,
-	  newint, NIL(Dtfree_f), compare, hashint,
+	  newint, NULL, compare, hashint,
 	  memory, event
 	};
 

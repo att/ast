@@ -75,7 +75,7 @@ Sfdisc_t*	disc;
 	return 0;
 }
 
-Sfdisc_t	Disc = { readf, writef, NIL(Sfseek_f), exceptf, 0 };
+Sfdisc_t	Disc = { readf, writef, NULL, exceptf, 0 };
 
 tmain()
 {
@@ -84,9 +84,9 @@ tmain()
 	int	n;
 	int	fd[2];
 
-	if(!(f1 = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")) )
+	if(!(f1 = sfopen(NULL, tstfile("sf", 0),"w+")) )
 		terror("Opening file1");
-	if(!(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")) )
+	if(!(f2 = sfopen(NULL, tstfile("sf", 0),"w+")) )
 		terror("Opening file2");
 	Fclose = f2;
 	sfdisc(f1,&Disc);
@@ -116,7 +116,7 @@ tmain()
 	if(sffileno(sfstdin) != 0)
 		terror("Bad fd for stdin");
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w+")) )
 		terror("Opening file");
 	if(sfwrite(f,"0123456789",10) != 10)
 		terror("Write file");
@@ -186,7 +186,7 @@ tmain()
 	/* test to see if hidden read data still accessible */
 	if(pipe(fd) < 0)
 		terror("Can't create pipe");
-	if(!(f1 = sfnew(0, NIL(Void_t*), (size_t)SF_UNBOUND, fd[0], SF_READ|SF_WRITE)) )
+	if(!(f1 = sfnew(0, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ|SF_WRITE)) )
 		terror("Can't create stream");
 
 	if(write(fd[1],"0123",4) != 4)

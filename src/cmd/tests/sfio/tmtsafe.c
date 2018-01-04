@@ -127,7 +127,7 @@ do_inverted: /* get back to here when trying to make things fail */
 	else	tmesg("\tTesting unsafe streams: if hung, send INTR or QUIT.\n");
 
 	/* spin threads writing small chunks */
-	Sf = sfopen(NIL(Sfio_t*),tstfile("sf", 0), Inverted ? "w+" : "mw+");
+	Sf = sfopen(NULL,tstfile("sf", 0), Inverted ? "w+" : "mw+");
 
 	for(i = 0; i < 26; ++i)
 	{	if(!(thread[i] = vtopen(0, 0)) )

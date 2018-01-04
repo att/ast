@@ -55,7 +55,7 @@ size_t		align;		/* alignment			*/
 
 	if(oldaddr == (Vmuchar_t*)(-1)) /* printing busy blocks */
 	{	type = 0;
-		oldaddr = NIL(Vmuchar_t*);
+		oldaddr = NULL;
 	}
 	else
 	{	type = vd->mode&VM_METHODS;

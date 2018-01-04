@@ -215,7 +215,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     Lex_t *lp = (Lex_t *)(shp->lex_context);
     Shopt_t newflags;
     int setflag = 0, action = 0, trace = (int)sh_isoption(shp, SH_XTRACE);
-    Namval_t *np = NIL(Namval_t *);
+    Namval_t *np = NULL;
     const char *sp;
     char *keylist = 0;
     int verbose, f, unsetnp = 0;
@@ -400,7 +400,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
             if (setflag == 0) on_option(&shp->offoptions, o);
         }
     }
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NIL(char *)));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     // Check for '-' or '+' argument.
     sp = argv[opt_info.index];
     if (sp && sp[1] == 0 && (*sp == '+' || *sp == '-') && strcmp(argv[opt_info.index - 1], "--")) {
@@ -522,7 +522,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     } else if (is_option(&newflags, SH_CFLAG)) {
         if (!(shp->comdiv = *argv++)) {
             errormsg(SH_DICT, 2, e_cneedsarg);
-            errormsg(SH_DICT, ERROR_usage(2), optusage(NIL(char *)));
+            errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
         }
         argc--;
     }
@@ -531,7 +531,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
     sh_applyopts(shp, newflags);
     if (ap->kiafile) {
         if (!argv[0]) errormsg(SH_DICT, ERROR_usage(2), "-R requires scriptname");
-        if (!(lp->kiafile = sfopen(NIL(Sfio_t *), ap->kiafile, "w+"))) {
+        if (!(lp->kiafile = sfopen(NULL, ap->kiafile, "w+"))) {
             errormsg(SH_DICT, ERROR_system(3), e_create, ap->kiafile);
         }
         if (!(lp->kiatmp = sftmp(2 * SF_BUFSIZE))) errormsg(SH_DICT, ERROR_system(3), e_tmpcreate);
@@ -656,7 +656,7 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
                     for (argr = ap->argfor; argr; argr = argr->dolnxt) {
                         if (argr->dolnxt == argblk) break;
                     }
-                    if (!argr) return (NIL(struct dolnod *));
+                    if (!argr) return (NULL);
                     argr->dolnxt = argblk->dolnxt;
                     argr = argblk->dolnxt;
                 }

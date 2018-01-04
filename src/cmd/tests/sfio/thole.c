@@ -28,12 +28,12 @@ tmain()
 	int		k, n;
 	static char	buf[256*1024], b[256*1024];
 
-	if(!(null = sfopen(NIL(Sfio_t*),"/dev/null","w")) )
+	if(!(null = sfopen(NULL,"/dev/null","w")) )
 		terror("Opening /dev/null");
 
-	sfsetbuf(null,NIL(char*),(size_t)SF_UNBOUND);
+	sfsetbuf(null,NULL,(size_t)SF_UNBOUND);
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w+")) )
 		terror("Creating %s", tstfile("sf", 0));
 	sfwrite(f,"1234",4);
 	sfseek(f,(Sfoff_t)1,0);

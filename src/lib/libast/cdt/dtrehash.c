@@ -161,7 +161,7 @@ ssize_t		ppos;	/* position in parent table	*/
 	z = sizeof(Htbl_t) + (HSIZE(hash,lev)-1) * sizeof(Dtlink_t*);
 	if(!(tbl = (Htbl_t*)(*dt->memoryf)(dt, 0, z, dt->disc)) )
 	{	DTERROR(dt, "Error in allocating a hashtrie table");
-		return NIL(Htbl_t*);
+		return NULL;
 	}
 	memset(tbl, 0, z);
 	tbl->link._ptbl = (Dtlink_t*)ptbl;
@@ -188,7 +188,7 @@ int		type;
 	/* get the object off the table first */
 	/**/DEBUG_ASSERT(!share || hash->lock[lnk->_hash&hash->lmax] != 0);
 	/**/DEBUG_ASSERT(!share || hash->refn[lnk->_hash&hash->lmax] >= 1);
-	asocasptr(lnkp, lnk, NIL(Dtlink_t*) );
+	asocasptr(lnkp, lnk, NULL );
 
 	if(share) /* then wait until no more references to object */
 	{	uint *refn = hash->refn + (lnk->_hash & hash->lmax);
@@ -233,14 +233,14 @@ int	zap;	/* < 0: free all structures	*/
 
 	if(zap < 0 || (zap >= 0 && lev > 0) )
 	{	if((ptbl = (Htbl_t*)tbl->link._ptbl) )
-			ptbl->list[HVALUE(tbl->link._ppos)] = NIL(Dtlink_t*);
+			ptbl->list[HVALUE(tbl->link._ppos)] = NULL;
 		(*dt->memoryf)(dt, (Void_t*)tbl, 0, dt->disc);
 	}
 
 	if(lev == 0)
 		hash->data.size = 0;
 
-	return NIL(Void_t*);
+	return NULL;
 }
 
 #if __STD_C /* this constitutes the core of dtfirst() and dtlast() */
@@ -262,7 +262,7 @@ int	type;	/* operation type		*/
 	Hash_t		*hash = (Hash_t*)dt->data;
 	int		share = hash->data.type & DT_SHARE;
 
-	obj = NIL(Void_t*);
+	obj = NULL;
 	for(tblz = HSIZE(hash,lev); pos < tblz && !obj; ++pos)
 	{	if(lev == 0 || type != 0 ) /* type != 0 means not a recursion */
 			HCLSLOCK(dt, lev == 0 ? pos : hsh, DT_SEARCH, share);
@@ -316,7 +316,7 @@ int	type;	/* operation type		*/
 	{	if((obj = hfirst(dt, fngr, tbl, lev, pos+1, hsh, type)) )
 			return obj;
 		else if((lev -= 1) < 0 ) /* just did root table */
-			return NIL(Void_t*);
+			return NULL;
 		else /* back up to parent table */
 		{	pos = HVALUE(tbl->link._ppos);
 			tbl = (Htbl_t*)tbl->link._ptbl;
@@ -351,7 +351,7 @@ int		zap;	/* erase the location		*/
 				last = (last->_rght = t);
 			else	last = (*list = t);
 			if(zap) /* just clearing structure, not freeing object */
-				*lnkp = NIL(Dtlink_t*);
+				*lnkp = NULL;
 		}
 
 		if((t = asogetptr(tbl->list+p)) && HTABLE(t) )
@@ -362,7 +362,7 @@ int		zap;	/* erase the location		*/
 	}
 
 	if(last)
-		last->_rght = NIL(Dtlink_t*);
+		last->_rght = NULL;
 	return last;
 }
 
@@ -381,8 +381,8 @@ int		type;
 	Hash_t		*hash = (Hash_t*)dt->data;
 
 	if(type&(DT_EXTRACT|DT_FLATTEN) )
-	{	list = NIL(Dtlink_t*);
-		(void)hflatten(dt, &list, NIL(Dtlink_t*), hash->root, 0, (type&DT_EXTRACT) );
+	{	list = NULL;
+		(void)hflatten(dt, &list, NULL, hash->root, 0, (type&DT_EXTRACT) );
 	}
 	else /*if(type&DT_RESTORE)*/
 	{	hash->data.size = 0;
@@ -492,30 +492,30 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 
 	type = DTTYPE(dt,type); /* map type for upward compatibility */
 	if(!(type&DT_OPERATIONS) || !hash->root )
-		return NIL(Void_t*);
+		return NULL;
 
 	/* wipe cached data as they may become stale after these ops */
 	if(type&(H_INSERT|H_DELETE|DT_CLEAR) )
-		fngr->here = NIL(Dtlink_t*);
+		fngr->here = NULL;
 
 	/* operations not dealing with a particular object or walk-related */
 	if(type&(DT_START|DT_STEP|DT_STOP|DT_FIRST|DT_LAST|DT_CLEAR|DT_STAT|DT_EXTRACT|DT_RESTORE|DT_FLATTEN) )
 	{	if(type&DT_START) /* starting a walk */
-		{	if(!(fngr = (*dt->memoryf)(dt, NIL(Void_t*), sizeof(Fngr_t), disc)) )
-				return NIL(Void_t*);
+		{	if(!(fngr = (*dt->memoryf)(dt, NULL, sizeof(Fngr_t), disc)) )
+				return NULL;
 			if(!obj) /* start walk from the first element */
 			{	if(!(obj = hfirst(dt, fngr, hash->root, 0, 0, 0, type)) )
 					(*dt->memoryf)(dt, fngr, 0, disc);
-				return obj ? (Void_t*)fngr : NIL(Void_t*);
+				return obj ? (Void_t*)fngr : NULL;
 			}
 			/* else, search for obj below */
 		}
 		else if(type&DT_STEP ) /* take a step forward in a walk */
 		{	if(!(fngr = (Fngr_t*)obj) || !(lnk = fngr->here) )
-				return NIL(Void_t*);
+				return NULL;
 			obj = _DTOBJ(disc,lnk);
 			if(!hnext(dt, fngr, fngr->mtbl, fngr->mlev, fngr->mpos, lnk->_hash, type) )
-				fngr->here = NIL(Dtlink_t*); /* walk will end after this call */
+				fngr->here = NULL; /* walk will end after this call */
 
 			DTANNOUNCE(dt, obj, type);
 			return obj;
@@ -523,7 +523,7 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 		else if(type&DT_STOP) /* stop a walk */
 		{	if(obj) /* free associated memory */
 				(*dt->memoryf)(dt, obj, 0, disc);
-			return NIL(Void_t*);
+			return NULL;
 		}
 		else if(type&(DT_FIRST|DT_LAST))
 			return hfirst(dt, fngr, hash->root, 0, 0, 0, type);
@@ -536,7 +536,7 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 	}
 
 	if(!obj) /* from here on, a non-NULL object is needed */
-		return NIL(Void_t*);
+		return NULL;
 
 	/* optimization for fast walking of a dictionary */
 	if(!share && (type&(DT_NEXT|DT_PREV)) && (lnk = fngr->here) && obj == _DTOBJ(disc,lnk) &&
@@ -549,10 +549,10 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 		key = _DTKEY(disc,obj);
 	}
 	else
-	{	lnk = NIL(Dtlink_t*);
+	{	lnk = NULL;
 		if(type&DT_MATCH)
 		{	key = obj;
-			obj = NIL(Void_t*);
+			obj = NULL;
 		}
 		else	key = _DTKEY(disc,obj);
 	}
@@ -561,7 +561,7 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 
 	HCLSLOCK(dt, hsh, type, share); /* lock and reference counting */
 
-	opnt = NIL(Htbl_t*); opnp = oplv = -1; /* open space suitable for insertion */
+	opnt = NULL; opnp = oplv = -1; /* open space suitable for insertion */
 	for(tbl = hash->root, lev = 0;; )
 	{	hshp = HBASP(hash,lev,hsh); /* base location of object */
 		srch = HSRCH(hash,lev); /* number of search steps */
@@ -675,17 +675,17 @@ static Void_t* dthashtrie(Dt_t* dt, Void_t* obj, int type)
 		{	HCLSOPEN(dt, hsh, type, share);
 			if(type&DT_START) /* no matching object, no walk */
 			{	(void)(*dt->memoryf)(dt, (Void_t*)fngr, 0, disc);
-				return NIL(Void_t*);
+				return NULL;
 			}
 			else if(opnt) /* (opnt,opnp,oplv) is the last known matching obj */
 				return hnext(dt, fngr, opnt, oplv, opnp, hsh, type);
-			else	return NIL(Void_t*);
+			else	return NULL;
 		}
 		else if(type&H_INSERT)
 			goto do_insert; /* inserting a  new object */
 		else /* search/delete failed */
 		{	HCLSOPEN(dt, hsh, type, share);
-			return NIL(Void_t*);
+			return NULL;
 		}
 	}
 
@@ -694,7 +694,7 @@ do_insert: /**/DEBUG_ASSERT(tbl && hshp >= 0 && hshp < HSIZE(hash,lev) );
 	{	lev += 1;
 		if(!(opnt = htable(dt, lev, tbl, hshp)) )
 		{	HCLSOPEN(dt, hsh, type, share);
-			return NIL(Void_t*);
+			return NULL;
 		}
 		opnp = HBASP(hash,lev,hsh); /* new insert location */
 
@@ -707,13 +707,13 @@ do_insert: /**/DEBUG_ASSERT(tbl && hshp >= 0 && hshp < HSIZE(hash,lev) );
 		asoaddsize(&hash->data.size, 1);
 	if(lnk)
 	{	lnk->_hash = hsh; /* memoize hash for fast compares */
-		lnkp = HLNKP(opnt,opnp); /**/DEBUG_ASSERT(*lnkp == NIL(Dtlink_t*) );
-		asocasptr(lnkp, NIL(Dtlink_t*), lnk);
+		lnkp = HLNKP(opnt,opnp); /**/DEBUG_ASSERT(*lnkp == NULL );
+		asocasptr(lnkp, NULL, lnk);
 	}
 
 	DTANNOUNCE(dt, obj, type);
 	HCLSOPEN(dt, hsh, type, share);
-	return lnk ? _DTOBJ(disc,lnk) : NIL(Void_t*);
+	return lnk ? _DTOBJ(disc,lnk) : NULL;
 }
 
 static int hashevent(Dt_t* dt, int event, Void_t* arg)
@@ -757,9 +757,9 @@ static int hashevent(Dt_t* dt, int event, Void_t* arg)
 		}
 		hash->nlev = k; /* total number of levels for trie */
 
-		if(!(hash->root = htable(dt, 0, NIL(Htbl_t*), -1)) ) /* make root table */
+		if(!(hash->root = htable(dt, 0, NULL, -1)) ) /* make root table */
 		{	(void)(*dt->memoryf)(dt, hash, 0, disc);
-			dt->data = NIL(Dtdata_t*);
+			dt->data = NULL;
 			return -1;
 		}
 		else	return 1;
@@ -774,7 +774,7 @@ static int hashevent(Dt_t* dt, int event, Void_t* arg)
 		if(hash->refn) /* free the hazard table, if any */
 			(void)(*dt->memoryf)(dt, hash->refn, 0, disc);
 		(void)(*dt->memoryf)(dt, hash, 0, disc);
-		dt->data = NIL(Dtdata_t*);
+		dt->data = NULL;
 		return 0;
 	}
 	else if(event == DT_SHARE) /* turn on/off concurrency - return 1 on success */

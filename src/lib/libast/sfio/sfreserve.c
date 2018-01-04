@@ -41,7 +41,7 @@ int		type;	/* LOCKR: lock stream, LASTR: last record */
 	reg int		mode, local;
 	SFMTXDECL(f);
 
-	SFMTXENTER(f,NIL(Void_t*));
+	SFMTXENTER(f,NULL);
 
 	sz = size < 0 ? -size : size;
 
@@ -64,7 +64,7 @@ int		type;	/* LOCKR: lock stream, LASTR: last record */
 		}
 		else
 		{	_Sfi = f->val = -1;
-			data = NIL(Void_t*);
+			data = NULL;
 		}
 
 		SFMTXRETURN(f, data);
@@ -74,12 +74,12 @@ int		type;	/* LOCKR: lock stream, LASTR: last record */
 	{	if(type == 1 ) /* upward compatibility mode */
 			type = SF_LOCKR;
 		else if(type != SF_LOCKR)
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 	}
 
 	if(size == 0 && (type < 0 || type == SF_LOCKR) )
 	{	if((f->mode&SF_RDWR) != f->mode && _sfmode(f,0,0) < 0)
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 
 		SFLOCK(f,0);
 		if((n = f->endb - f->next) < 0)
@@ -96,7 +96,7 @@ int		type;	/* LOCKR: lock stream, LASTR: last record */
 			mode = SF_WRITE;
 		if((int)f->mode != mode && _sfmode(f,mode,local) < 0)
 		{	SFOPEN(f,0);
-			SFMTXRETURN(f, NIL(Void_t*));
+			SFMTXRETURN(f, NULL);
 		}
 
 		SFLOCK(f,local);
@@ -163,7 +163,7 @@ int		type;	/* LOCKR: lock stream, LASTR: last record */
 	}
 
 done:	/* compute the buffer to be returned */
-	data = NIL(Void_t*);
+	data = NULL;
 	if(size == 0 || n == 0)
 	{	if(n > 0) /* got data */
 			data = (Void_t*)f->next;

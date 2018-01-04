@@ -20,10 +20,6 @@
 #include	<stdio.h>
 #include	<ast_common.h>
 
-#ifndef NIL
-#define NIL(t)	((t)0)
-#endif
-
 #if _hdr_stdlib
 #include	<stdlib.h>
 #endif

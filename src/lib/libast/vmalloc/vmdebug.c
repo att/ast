@@ -273,9 +273,9 @@ int		line;	/* and line number			*/
 
 	/* find the file structure */
 	if(!file || !file[0])
-		db = NIL(Dbfile_t*);
+		db = NULL;
 	else
-	{	for(last = NIL(Dbfile_t*), db = Dbfile; db; last = db, db = db->next)
+	{	for(last = NULL, db = Dbfile; db; last = db, db = db->next)
 			if(strcmp(db->file,file) == 0)
 				break;
 		if(!db)
@@ -296,7 +296,7 @@ int		line;	/* and line number			*/
 	DBMARK(data) = DB_MARK;
 	DBSIZE(data) = size;
 
-	DBSETFL(data,(db ? db->file : NIL(char*)),line);
+	DBSETFL(data,(db ? db->file : NULL),line);
 
 	DBPACK(data) = PACK(DBBLOCK(data));
 
@@ -333,7 +333,7 @@ int		local;
 	sz = ROUND(size,MEM_ALIGN) + DB_EXTRA;
 	sz = sz >= sizeof(Body_t) ? sz : sizeof(Body_t);
 	if(!(data = (Vmuchar_t*)KPVALLOC(vm, sz, (*(Vmbest->allocf))) ) )
-	{	dbwarn(vm, NIL(Vmuchar_t*), DB_ALLOC, file, line, func, DB_ALLOC);
+	{	dbwarn(vm, NULL, DB_ALLOC, file, line, func, DB_ALLOC);
 		goto done;
 	}
 
@@ -342,7 +342,7 @@ int		local;
 
 	if(_Vmtrace)
 	{	vm->file = file; vm->line = line; vm->func = func;
-		(*_Vmtrace)(vm, NIL(Vmuchar_t*), data, size, 0);
+		(*_Vmtrace)(vm, NULL, data, size, 0);
 	}
 
 	if(Dbnwatch > 0 )
@@ -405,14 +405,14 @@ int		local;
 
 		if(_Vmtrace)
 		{	vm->file = file; vm->line = line; vm->func = func;
-			(*_Vmtrace)(vm, (Vmuchar_t*)data, NIL(Vmuchar_t*), DBSIZE(data), 0);
+			(*_Vmtrace)(vm, (Vmuchar_t*)data, NULL, DBSIZE(data), 0);
 		}
 
 		memset(DB2BEST(data), 0, DBBSIZE(data)); /* clear memory */
 
 		rv |= KPVFREE((vm), (Void_t*)DB2BEST(data), (*Vmbest->freef));
 	done:
-		if(!list && (rv || !(list = vm->data->delay) || asocasptr(&vm->data->delay, list, NIL(Free_t*)) != list))
+		if(!list && (rv || !(list = vm->data->delay) || asocasptr(&vm->data->delay, list, NULL) != list))
 			break;
 		data = (void*)list;
 		list = list->next;
@@ -440,7 +440,7 @@ int		local;
 	char		*file, *oldfile;
 	int		line, oldline;
 	Void_t		*func;
-	Vmuchar_t	*data = NIL(Vmuchar_t*);
+	Vmuchar_t	*data = NULL;
 	VMFLF(vm,file,line,func);
 
 	if(!addr)
@@ -451,7 +451,7 @@ int		local;
 	}
 	if(size == 0)
 	{	(void)dbfree(vm, addr, local);
-		return NIL(Void_t*);
+		return NULL;
 	}
 
 	asolock(&vm->data->dlck, KEY_DEBUG, ASO_LOCK);
@@ -482,7 +482,7 @@ int		local;
 	sz = sz >= sizeof(Body_t) ? sz : sizeof(Body_t);
 	data = (Vmuchar_t*)KPVRESIZE(vm, (Void_t*)data, sz, (type&~VM_RSZERO), (*(Vmbest->resizef)) );
 	if(!data) /* failed, reset data for old block */
-	{	dbwarn(vm, NIL(Vmuchar_t*), DB_ALLOC, file, line, func, DB_RESIZE);
+	{	dbwarn(vm, NULL, DB_ALLOC, file, line, func, DB_RESIZE);
 		dbsetinfo((Vmuchar_t*)addr, oldsize, oldfile, oldline);
 	}
 	else
@@ -520,7 +520,7 @@ Vmalloc_t*	vm;
 
 	/* check the meta-data of this region */
 	if(vm->data->mode & (VM_MTDEBUG|VM_MTBEST))
-	{	if((*vm->meth.eventf)(vm, VM_CHECKARENA, NIL(Void_t*)) < 0 )
+	{	if((*vm->meth.eventf)(vm, VM_CHECKARENA, NULL) < 0 )
 			return -1;
 		if(!(vm->data->mode&VM_MTDEBUG) )
 			return 0;
@@ -560,7 +560,7 @@ Vmalloc_t*	vm;
 				{	if(*begp == DB_MAGIC)
 						continue;
 				set_bad:
-					dbwarn(vm,data,begp-data,NIL(char*),0,0,DB_CHECK);
+					dbwarn(vm,data,begp-data,NULL,0,0,DB_CHECK);
 					DBSETBAD(data);
 					rv += 1;
 					break;
@@ -583,7 +583,7 @@ Void_t*		addr;	/* address to insert	*/
 	int		n;
 	Void_t*		out;
 
-	out = NIL(Void_t*);
+	out = NULL;
 	if(!addr)
 		Dbnwatch = 0;
 	else
@@ -623,7 +623,7 @@ int		local;
 	VMFLF(vm,file,line,func);
 
 	if(size <= 0 || align <= 0)
-		return NIL(Void_t*);
+		return NULL;
 
 	asolock(&vm->data->dlck, KEY_DEBUG, ASO_LOCK);
 
@@ -636,7 +636,7 @@ int		local;
 
 		if(_Vmtrace)
 		{	vm->file = file; vm->line = line; vm->func = func;
-			(*_Vmtrace)(vm,NIL(Vmuchar_t*),data,size,align);
+			(*_Vmtrace)(vm,NULL,data,size,align);
 		}
 	}
 

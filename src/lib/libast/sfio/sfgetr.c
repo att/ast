@@ -42,15 +42,15 @@ int		type;
 	Sfrsrv_t*	rsrv;
 	SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
-	SFMTXENTER(f, NIL(char*));
+	SFMTXENTER(f, NULL);
 
 	if(rc < 0 || (f->mode != SF_READ && _sfmode(f,SF_READ,0) < 0) )
-		SFMTXRETURN(f, NIL(char*));
+		SFMTXRETURN(f, NULL);
 	SFLOCK(f,0);
 
 	/* buffer to be returned */
-	rsrv = NIL(Sfrsrv_t*);
-	us = NIL(uchar*);
+	rsrv = NULL;
+	us = NULL;
 	un = 0;
 	found = 0;
 
@@ -79,7 +79,7 @@ int		type;
 
 			/* fill buffer the conventional way */
 			if(SFRPEEK(f,s,n) <= 0)
-			{	us = NIL(uchar*);
+			{	us = NULL;
 				goto done;
 			}
 			else
@@ -113,7 +113,7 @@ int		type;
 		n = s - f->next;
 
 		if(!found && (_Sfmaxr > 0 && un+n+1 >= _Sfmaxr || (f->flags&SF_STRING))) /* already exceed limit */
-		{	us = NIL(uchar*);
+		{	us = NULL;
 			goto done;
 		}
 
@@ -121,10 +121,10 @@ int		type;
 		if(!rsrv || rsrv->size < un+n+1)
 		{	if(rsrv)
 				rsrv->slen = un;
-			if((rsrv = _sfrsrv(f,un+n+1)) != NIL(Sfrsrv_t*))
+			if((rsrv = _sfrsrv(f,un+n+1)) != NULL)
 				us = rsrv->data;
 			else
-			{	us = NIL(uchar*);
+			{	us = NULL;
 				goto done;
 			}
 		}

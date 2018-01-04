@@ -77,7 +77,7 @@ static void _sfcleanup()
 	/* set this so that no more buffering is allowed for write streams */
 	_Sfexiting = 1001;
 
-	sfsync(NIL(Sfio_t*));
+	sfsync(NULL);
 
 	for(p = &_Sfpool; p; p = p->next)
 	{	for(n = 0; n < p->n_sf; ++n)
@@ -88,7 +88,7 @@ static void _sfcleanup()
 			SFMTXLOCK(f);
 
 			/* let application know that we are leaving */
-			(void)SFRAISE(f, SF_ATEXIT, NIL(Void_t*));
+			(void)SFRAISE(f, SF_ATEXIT, NULL);
 
 			if(f->flags&SF_STRING)
 				continue;
@@ -101,7 +101,7 @@ static void _sfcleanup()
 			if(f->data &&
 			   ((f->bits&SF_MMAP) ||
 			    ((f->mode&SF_WRITE) && f->next == f->data) ) )
-				(void)SFSETBUF(f,NIL(Void_t*),0);
+				(void)SFSETBUF(f,NULL,0);
 			f->mode |= pool;
 
 			SFMTXUNLOCK(f);
@@ -195,7 +195,7 @@ reg ssize_t	size;
 	if(rsrv && size > 0)
 		rsrv->slen = 0;
 
-	return size >= 0 ? rsrv : NIL(Sfrsrv_t*);
+	return size >= 0 ? rsrv : NULL;
 }
 
 #ifdef SIGPIPE
@@ -230,7 +230,7 @@ int		stdio;	/* stdio popen() does not reset SIGPIPE handler */
 
 	p->pid = pid;
 	p->size = p->ndata = 0;
-	p->rdata = NIL(uchar*);
+	p->rdata = NULL;
 	p->file = fd;
 	p->sigp = (!stdio && pid >= 0 && (f->flags&SF_WRITE)) ? 1 : 0;
 
@@ -262,7 +262,7 @@ reg Sfio_t*	f;	/* stream to close */
 
 	if(!(p = f->proc))
 		return -1;
-	f->proc = NIL(Sfproc_t*);
+	f->proc = NULL;
 
 	if(p->rdata)
 		free(p->rdata);
@@ -424,7 +424,7 @@ reg int		local;	/* a local call */
 		(*_Sfstdsync)(f);
 
 	if(f->disc == _Sfudisc && wanted == SF_WRITE &&
-	   sfclose((*_Sfstack)(f,NIL(Sfio_t*))) < 0 )
+	   sfclose((*_Sfstack)(f,NULL)) < 0 )
 	{	local = 1;
 		goto err_notify;
 	}
@@ -519,7 +519,7 @@ reg int		local;	/* a local call */
 			{
 				if((f->bits&SF_MMAP) && f->data)
 				{	SFMUNMAP(f,f->data,f->endb-f->data);
-					f->data = NIL(uchar*);
+					f->data = NULL;
 				}
 				f->endb = f->endr = f->endw = f->next = f->data;
 				f->here = addr;
@@ -569,7 +569,7 @@ reg int		local;	/* a local call */
 			(void)SFSETBUF(f,(Void_t*)f->tiny,(size_t)SF_UNBOUND);
 		}
 		if(f->data == f->tiny)
-		{	f->endb = f->data = f->next = NIL(uchar*);
+		{	f->endb = f->data = f->next = NULL;
 			f->size = 0;
 		}
 		else	f->endb = (f->next = f->data) + f->size;

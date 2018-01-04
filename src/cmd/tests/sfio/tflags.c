@@ -23,7 +23,7 @@ tmain()
 {
 	Sfio_t*	f;
 
-	if(!(f = sfopen(NIL(Sfio_t*),"ab","sr")) )
+	if(!(f = sfopen(NULL,"ab","sr")) )
 		terror("Can't open stream");
 	if(sfeof(f) || sferror(f))
 		terror("Can't be eof or error yet");
@@ -44,7 +44,7 @@ tmain()
 	if(sfeof(f))
 		terror("Shouldn't be eof any more");
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w+")) )
 		terror("Can't open stream2");
 	if(sfeof(f) || sferror(f))
 		terror("Can't be eof or error yet2");
@@ -69,7 +69,7 @@ tmain()
 	if(sfeof(f))
 		terror("Shouldn't be eof any more2");
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0),"w+")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0),"w+")) )
 		terror("Reopening %s", tstfile("sf", 0));
 	sfwrite(f,"1234567890",10);
 	sfseek(f,(Sfoff_t)0,0);

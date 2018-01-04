@@ -188,7 +188,7 @@ Sfoff_t	extent;	/* desired size */
 	else	sfseek(parent,here,SEEK_SET);
 	sfpurge(parent);
 
-	if (!(sp = f) && !(sp = sfnew(NIL(Sfio_t*), NIL(Void_t*), (size_t)SF_UNBOUND, dup(sffileno(parent)), parent->flags)))
+	if (!(sp = f) && !(sp = sfnew(NULL, NULL, (size_t)SF_UNBOUND, dup(sffileno(parent)), parent->flags)))
 		return 0;
 
 	if(!(su = (Subfile_t*)malloc(sizeof(Subfile_t))))

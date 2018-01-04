@@ -118,7 +118,7 @@ chk_stack:
 			SFOPEN(f,0);
 
 		/* pop and close */
-		pf = (*_Sfstack)(f,NIL(Sfio_t*));
+		pf = (*_Sfstack)(f,NULL);
 		if((ev = sfclose(pf)) < 0) /* can't close, restack */
 			(*_Sfstack)(f,pf);
 

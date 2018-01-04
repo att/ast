@@ -136,7 +136,7 @@ int _vmboundaries(void)
 		{ tmp = min; min = max; max = tmp; }
 
 	/* now attach a segment to see where it falls in the range */
-	if(!(shm = shmat(shmid, NIL(Void_t*), 0600)) || shm == (Vmuchar_t*)(-1) )
+	if(!(shm = shmat(shmid, NULL, 0600)) || shm == (Vmuchar_t*)(-1) )
 	{	/**/DEBUG_MESSAGE("shmat() failed first NULL attachment");
 		goto done;
 	}
@@ -190,7 +190,7 @@ int _vmboundaries(void)
 	_Vmmemmax = max;
 
 	_Vmmemaddr = max - z; /* address usable by vmmaddress() */
-	_Vmmemsbrk = NIL(Vmuchar_t*); /* address usable for sbrk() simulation */
+	_Vmmemsbrk = NULL; /* address usable for sbrk() simulation */
 
 #if _mem_mmap_anon /* see if we can simulate sbrk(): memory grows from low to high */
 	/* map two consecutive pages to see if they come out adjacent */
@@ -209,7 +209,7 @@ int _vmboundaries(void)
 		   shm < tmp ) /* mmap can be used but needs MAP_FIXED! */
 		{
 #if !VMCHKMEM
-			_Vmmemsbrk = NIL(Vmuchar_t*); /* no memory checking, must use sbrk() */
+			_Vmmemsbrk = NULL; /* no memory checking, must use sbrk() */
 #endif /*VMCHKMEM*/
 		}
 	}
@@ -231,5 +231,5 @@ Void_t* vmmaddress(size_t size)
 		for(size = ROUND(size, _Vmpagesize); (addr = (memaddr = _Vmmemaddr) - size) >= _Vmmemmin; )
 			if(asocasptr(&_Vmmemaddr, memaddr, addr) == memaddr && _vmchkmem(addr, size))
 				return addr;
-	return NIL(Void_t*);
+	return NULL;
 }

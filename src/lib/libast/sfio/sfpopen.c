@@ -90,7 +90,7 @@ char*	argcmd;
 	}
 	if(n == 0)
 		goto do_interp;
-	argv[n] = NIL(char*);
+	argv[n] = NULL;
 
 	/* get the command name */
 	cmd = argv[0];
@@ -124,7 +124,7 @@ do_interp:
 	for(s = interp+strlen(interp)-1; s >= interp; --s)
 		if(*s == '/')
 			break;
-	execl(interp, s+1, "-c", argcmd, NIL(char*));
+	execl(interp, s+1, "-c", argcmd, NULL);
 	_exit(EXIT_NOTFOUND);
 }
 
@@ -148,11 +148,11 @@ char*	mode;		/* mode of the stream */
 
 	if (!command || !command[0] || !mode)
 		return 0;
-	sflags = _sftype(mode, NIL(int*), NIL(int*), NIL(int*));
+	sflags = _sftype(mode, NULL, NULL, NULL);
 
 	if(f == (Sfio_t*)(-1))
 	{	/* stdio compatibility mode */
-		f = NIL(Sfio_t*);
+		f = NULL;
 		pflags = 1;
 	}
 	else	pflags = 0;
@@ -168,7 +168,7 @@ char*	mode;		/* mode of the stream */
 	av[3] = 0;
 	if (!(proc = procopen(0, av, 0, 0, flags)))
 		return 0;
-	if (!(f = sfnew(f, NIL(Void_t*), (size_t)SF_UNBOUND,
+	if (!(f = sfnew(f, NULL, (size_t)SF_UNBOUND,
 	       		(sflags&SF_READ) ? proc->rfd : proc->wfd, sflags|((sflags&SF_RDWR)?0:SF_READ))) ||
 	    _sfpopen(f, (sflags&SF_READ) ? proc->wfd : -1, proc->pid, pflags) < 0)
 	{
@@ -195,8 +195,8 @@ char*	mode;		/* mode of the stream */
 
 	/* sanity check */
 	if(!command || !command[0] || !mode)
-		return NIL(Sfio_t*);
-	sflags = _sftype(mode,NIL(int*),NIL(int*),NIL(int*));
+		return NULL;
+	sflags = _sftype(mode,NULL,NULL,NULL);
 
 	/* make pipes */
 	parent[0] = parent[1] = child[0] = child[1] = -1;
@@ -216,13 +216,13 @@ char*	mode;		/* mode of the stream */
 
 		if(f == (Sfio_t*)(-1))
 		{	/* stdio compatibility mode */
-			f = NIL(Sfio_t*);
+			f = NULL;
 			stdio = 1;
 		}
 		else	stdio = 0;
 
 		/* make the streams */
-		if(!(f = sfnew(f,NIL(Void_t*),(size_t)SF_UNBOUND,parent[pkeep],sflags|((sflags&SF_RDWR)?0:SF_READ))))
+		if(!(f = sfnew(f,NULL,(size_t)SF_UNBOUND,parent[pkeep],sflags|((sflags&SF_RDWR)?0:SF_READ))))
 			goto error;
 		if(sflags&SF_RDWR)
 		{	CLOSE(parent[!pkeep]);
@@ -256,7 +256,7 @@ char*	mode;		/* mode of the stream */
 		}
 
 		/* use sfsetfd to make these descriptors the std-ones */
-		SFCLEAR(&sf,NIL(Vtmutex_t*));
+		SFCLEAR(&sf,NULL);
 
 		/* must be careful so not to close something useful */
 		if((sflags&SF_RDWR) == SF_RDWR && pkeep == child[ckeep])
@@ -279,7 +279,7 @@ char*	mode;		/* mode of the stream */
 		}
 
 		execute(command);
-		return NIL(Sfio_t*);
+		return NULL;
 
 	case -1 :	/* error */
 	error:
@@ -287,7 +287,7 @@ char*	mode;		/* mode of the stream */
 			{ CLOSE(parent[0]); CLOSE(parent[1]); }
 		if(child[0] >= 0)
 			{ CLOSE(child[0]); CLOSE(child[1]); }
-		return NIL(Sfio_t*);
+		return NULL;
 	}
 #endif /*_PACKAGE_ast*/
 }

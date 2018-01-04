@@ -234,7 +234,7 @@
 #define SFMBCLR(mb)		memset((mb), 0,  sizeof(mbstate_t))
 #define SFMBSET(lhs,v)		(lhs = (v))
 #define SFMBDCL(mb)		mbstate_t mb;
-#define SFMBLEN(s,mb)		mbrtowc(NIL(wchar_t*), (s), SFMBMAX, (mb) )
+#define SFMBLEN(s,mb)		mbrtowc(NULL, (s), SFMBMAX, (mb) )
 #endif /*_typ_mbstate_t && _lib_wcrtomb */
 
 #if !_has_multibyte && _lib_wctomb
@@ -248,7 +248,7 @@
 #define SFMBCLR(mb)
 #define SFMBSET(lhs,v)
 #define SFMBDCL(mb)
-#define SFMBLEN(s,mb)		mbrtowc(NIL(wchar_t*), (s), SFMBMAX, (mb) )
+#define SFMBLEN(s,mb)		mbrtowc(NULL, (s), SFMBMAX, (mb) )
 #endif /*!_has_multibyte && _lib_wctomb*/
 
 #define SFMBSTATE(f)		((Mbstate_t*)0)
@@ -287,7 +287,7 @@
 #define SFMTXend(ff,_mf_) \
 	{	if((ff)->_flags&SF_MTSAFE) \
 		{	if(_Sfnotify) \
-				(*_Sfnotify)((_mf_), SF_MTACCESS, NIL(Void_t*) ); \
+				(*_Sfnotify)((_mf_), SF_MTACCESS, NULL ); \
 			sfmutex((ff), SFMTX_UNLOCK); \
 			(ff) = (_mf_); \
 		} \
@@ -429,7 +429,6 @@
 #endif
 
 /* short-hands */
-#define NIL(t)		((t)0)
 #define reg		register
 #ifndef uchar
 #define uchar		unsigned char
@@ -779,7 +778,7 @@ typedef struct _sfextern_s
 
 #define SFMUNMAP(f,a,s)		(sysmunmapf((caddr_t)(a),(size_t)(s)), \
 				 ((f)->endb = (f)->endr = (f)->endw = (f)->next = \
-				  (f)->data = NIL(uchar*)) )
+				  (f)->data = NULL) )
 
 /* safe closing function */
 #define CLOSE(f)	{ while(sysclosef(f) < 0 && errno == EINTR) errno = 0; }

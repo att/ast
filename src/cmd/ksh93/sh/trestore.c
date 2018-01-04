@@ -341,7 +341,7 @@ static char *r_string(Stk_t *stkp) {
     if (l == 0) return NULL;
     ptr = stkalloc(stkp, (unsigned)l);
     if (--l > 0) {
-        if (sfread(in, ptr, (size_t)l) != (size_t)l) return (NIL(char *));
+        if (sfread(in, ptr, (size_t)l) != (size_t)l) return (NULL);
         ccmaps(ptr, l, CC_ASCII, CC_NATIVE);
     }
     ptr[l] = 0;

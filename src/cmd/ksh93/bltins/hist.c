@@ -188,11 +188,11 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 	}
 	else
 	{
-		if(!(fname=pathtmp(NIL(char*),0,0,NIL(int*))))
+		if(!(fname=pathtmp(NULL,0,0,NULL)))
 			errormsg(SH_DICT,ERROR_exit(1),e_create,"");
 		if((fdo=open(fname,O_CREAT|O_RDWR,S_IRUSR|S_IWUSR|O_CLOEXEC)) < 0)
 			errormsg(SH_DICT,ERROR_system(1),e_create,fname);
-		outfile= sfnew(NIL(Sfio_t*),shp->outbuff,IOBSIZE,fdo,SF_WRITE);
+		outfile= sfnew(NULL,shp->outbuff,IOBSIZE,fdo,SF_WRITE);
 		arg = "\n";
 		nflag++;
 	}
@@ -242,7 +242,7 @@ int	b_hist(int argc,char *argv[], Shbltin_t *context)
 	else if(error_info.errors == 0)
 	{
 		char buff[IOBSIZE+1];
-		Sfio_t *iop = sfnew(NIL(Sfio_t*),buff,IOBSIZE,fdo,SF_READ);
+		Sfio_t *iop = sfnew(NULL,buff,IOBSIZE,fdo,SF_READ);
 		/* read in and run the command */
 		if(shp->hist_depth++ > HIST_RECURSE)
 			errormsg(SH_DICT,ERROR_exit(1),e_toodeep,"history");
@@ -285,6 +285,6 @@ static void hist_subst(Shell_t *shp,const char *command,int fd,char *replace)
 	if((sp=sh_substitute(shp,string,replace,newp))==0)
 		errormsg(SH_DICT,ERROR_exit(1),e_subst,command);
 	*(newp-1) =  '=';
-	sh_eval(shp,sfopen(NIL(Sfio_t*),sp,"s"),1);
+	sh_eval(shp,sfopen(NULL,sp,"s"),1);
 }
 

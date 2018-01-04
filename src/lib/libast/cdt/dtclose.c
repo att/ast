@@ -46,13 +46,13 @@ Dt_t*	dt;
 		return -1;
 
 	if(dt->view) /* turn off viewing at this point */
-		dtview(dt,NIL(Dt_t*));
+		dtview(dt,NULL);
 
 	type = dt->data->type; /* save before memory is freed */
 	memcpy(&pdt, dt, sizeof(Dt_t));
 
 	if(ev == 0 ) /* release all allocated data */
-	{	(void)(*(dt->meth->searchf))(dt,NIL(Void_t*),DT_CLEAR);
+	{	(void)(*(dt->meth->searchf))(dt,NULL,DT_CLEAR);
 		(void)(*dt->meth->eventf)(dt, DT_CLOSE, (Void_t*)0);
 		/**/DEBUG_ASSERT(!dt->data);
 	}

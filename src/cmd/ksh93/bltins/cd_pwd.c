@@ -349,7 +349,7 @@ int	b_pwd(int argc, char *argv[],Shbltin_t *context)
 	{
 #if SHOPT_FS_3D
 		int mc;
-		if(shp->gd->lim.fs3d && (mc = mount(e_dot,NIL(char*),FS3D_GET|FS3D_VIEW,0))>=0)
+		if(shp->gd->lim.fs3d && (mc = mount(e_dot,NULL,FS3D_GET|FS3D_VIEW,0))>=0)
 		{
 			cp = (char*)stakseek(++mc+PATH_MAX);
 			mount(e_dot,cp,FS3D_GET|FS3D_VIEW|FS3D_SIZE(mc),0);

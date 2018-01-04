@@ -101,7 +101,7 @@ tmain()
 	off_t	o;
 	int	i;
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Can't open file");
 	sfset(f,SF_IOCHECK,1);
 
@@ -114,7 +114,7 @@ tmain()
 		terror("Did not get push event");
 
 	/* this is to test sfraise(NULL,...) */
-	if(!(f2 = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w")) )
+	if(!(f2 = sfopen(NULL, tstfile("sf", 0), "w")) )
 		terror("Can't open file");
 	sfdisc(f2,&Disc);
 
@@ -124,7 +124,7 @@ tmain()
 	if(Sfn != 2)
 		terror("Didn't get right event count");
 
-	sfdisc(f,NIL(Sfdisc_t*));
+	sfdisc(f,NULL);
 	if(Type != SF_DPOP)
 		terror("Did not get pop event");
 
@@ -146,7 +146,7 @@ tmain()
 	if(Type != SF_FINAL)
 		terror("Did not get final event");
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "r")) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "r")) )
 		terror("Can't open file");
 	Disc2.readf = readfunc;
 	Disc2.exceptf = except3;

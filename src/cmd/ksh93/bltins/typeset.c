@@ -110,7 +110,7 @@ int    b_readonly(int argc,char *argv[],Shbltin_t *context)
 			return(2);
 	}
 	if(error_info.errors)
-		errormsg(SH_DICT,ERROR_usage(2),optusage(NIL(char*)));
+		errormsg(SH_DICT,ERROR_usage(2),optusage(NULL));
 	argv += (opt_info.index-1);
 	if(*command=='r')
 		flag = (NV_ASSIGN|NV_RDONLY|NV_VARNAME);
@@ -177,7 +177,7 @@ int    b_alias(int argc,char *argv[],Shbltin_t *context)
 			return(2);
 		}
 		if(error_info.errors)
-			errormsg(SH_DICT,ERROR_usage(2),"%s",optusage(NIL(char*)));
+			errormsg(SH_DICT,ERROR_usage(2),"%s",optusage(NULL));
 		argv += (opt_info.index-1);
 		if(flag&NV_TAGGED)
 		{
@@ -406,7 +406,7 @@ endargs:
 		flag |= NV_STATICF;
 	}
 	if(error_info.errors)
-		errormsg(SH_DICT,ERROR_usage(2),"%s", optusage(NIL(char*)));
+		errormsg(SH_DICT,ERROR_usage(2),"%s", optusage(NULL));
 	if(sizeof(char*)<8 && tdata.argnum > SHRT_MAX)
 		errormsg(SH_DICT,ERROR_exit(2),"option argument cannot be greater than %d",SHRT_MAX);
 	if(isfloat)
@@ -650,7 +650,7 @@ static int     setall(char **argv,int flag,Dt_t *troot,struct tdata *tp)
 			if(troot==shp->track_tree && tp->aflag=='-')
 			{
 				np = nv_search(name,troot,NV_ADD);
-				path_alias(np,path_absolute(shp,nv_name(np),NIL(Pathcomp_t*)));
+				path_alias(np,path_absolute(shp,nv_name(np),NULL));
 				continue;
 			}
 			if(shp->nodelist && (len=strlen(name)) && name[len-1]=='@')
@@ -1012,7 +1012,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 	tdata.sh = context->shp;
 	stkp = tdata.sh->stk;
 	if(!tdata.sh->pathlist)
-		path_absolute(tdata.sh,argv[0],NIL(Pathcomp_t*));
+		path_absolute(tdata.sh,argv[0],NULL);
 	while (n = optget(argv,sh_optbuiltin)) switch (n)
 	{
 	    case 's':
@@ -1050,7 +1050,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 	}
 	argv += opt_info.index;
 	if(error_info.errors)
-		errormsg(SH_DICT,ERROR_usage(2),"%s", optusage(NIL(char*)));
+		errormsg(SH_DICT,ERROR_usage(2),"%s", optusage(NULL));
 	if(arg || *argv)
 	{
 		if(sh_isoption(tdata.sh,SH_RESTRICTED))
@@ -1078,9 +1078,9 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 			sfprintf(sfstdout, "%s %08lu %s\n", arg, ver, path);
 #else
 #if (_AST_VERSION>=20040404)
-		if(!(library = dllplug(SH_ID,arg,NIL(char*),RTLD_LAZY,NIL(char*),0)))
+		if(!(library = dllplug(SH_ID,arg,NULL,RTLD_LAZY,NULL,0)))
 #else
-		if(!(library = dllfind(arg,NIL(char*),RTLD_LAZY,NIL(char*),0)))
+		if(!(library = dllfind(arg,NULL,RTLD_LAZY,NULL,0)))
 #endif
 		{
 			errormsg(SH_DICT,ERROR_exit(0),"%s: %s",arg,dlerror());
@@ -1245,7 +1245,7 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t* shp)
 	}
 	argv += opt_info.index;
 	if(error_info.errors || (*argv==0 &&!all))
-		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage(NIL(char*)));
+		errormsg(SH_DICT,ERROR_usage(2),"%s",optusage(NULL));
 	if(!troot)
 		return(1);
 	r = 0;

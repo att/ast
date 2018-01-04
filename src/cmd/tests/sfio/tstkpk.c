@@ -31,7 +31,7 @@ tmain()
 		terror("Making pipe");
 
 	strcpy(buf,"1234567890");
-	if(!(f = sfopen(NIL(Sfio_t*),buf,"s")))
+	if(!(f = sfopen(NULL,buf,"s")))
 		terror("Opening string stream");
 
 	if(!sfstack(f,sfstdin))

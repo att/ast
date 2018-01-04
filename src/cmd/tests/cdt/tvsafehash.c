@@ -93,7 +93,7 @@ static int mmevent(Dt_t* dt, int type, Void_t* data, Dtdisc_t* disc)
 	}
 	else if(type == DT_ENDOPEN)  /* at the end of a dictionary opening */
 	{	if(!asogetptr(&cdtdt->data)) /* save data area for future references */
-		{	asocasptr(&cdtdt->data, NIL(Void_t*), (Void_t*)dt->data);
+		{	asocasptr(&cdtdt->data, NULL, (Void_t*)dt->data);
 			return asogetptr(&cdtdt->data) == (Void_t*)dt->data ? 0 : -1;
 		}
 		else	return 0; /* data area existed */
@@ -102,7 +102,7 @@ static int mmevent(Dt_t* dt, int type, Void_t* data, Dtdisc_t* disc)
 		return 1; /* make sure no objects get deleted */
 	else if(type == DT_ENDCLOSE) /* at end of closing, close the memory region */
 	{	vmclose(mmdc->vm);
-		mmdc->vm = NIL(Vmalloc_t*);
+		mmdc->vm = NULL;
 		return 0; /* all done */
 	}
 	else	return 0;
@@ -196,11 +196,11 @@ static int pingpong(char* procnum)
 	/* open the shared dictionaries */
 	if(!(mapdt = opendictionary(num, pid, Mapstore, 1)) )
 		terror("Process[num=%d,pid=%d]: can't open dictionary for %s", num, pid, Mapstore);
-	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NIL(Dtdisc_t*), 0)) )
+	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NULL, 0)) )
 		terror("Process[num=%d,pid=%d]: can't get dictionary discipline", num, pid);
 	if(!(shmdt = opendictionary(num, pid, Shmstore, 1)) )
 		terror("Process[num=%d,pid=%d]: can't open dictionary for %s", num, pid, Shmstore);
-	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NIL(Dtdisc_t*), 0)) )
+	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NULL, 0)) )
 		terror("Process[num=%d,pid=%d]: can't get dictionary discipline", num, pid);
 
 	/* wait for all to get going first */
@@ -257,12 +257,12 @@ tmain()
 	tinfo("\tParent[pid=%d]: initializing shared dictionaries", ppid);
 	if(!(mapdt = opendictionary(0, ppid, Mapstore, -1)) )
 		terror("Parent[pid=%d]: Can't open dictionary for %s", ppid, Mapstore);
-	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NIL(Dtdisc_t*), 0)) )
+	if(!(mapdc = (Mmdisc_t*)dtdisc(mapdt, NULL, 0)) )
 		terror("Parent[pid=%d]: Can't get discipline for %s", ppid, Mapstore);
 
 	if(!(shmdt = opendictionary(0, ppid, Shmstore, -1)) )
 		terror("Parent[pid=%d]: Can't open dictionary for %s", ppid, Shmstore);
-	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NIL(Dtdisc_t*), 0)) )
+	if(!(shmdc = (Mmdisc_t*)dtdisc(shmdt, NULL, 0)) )
 		terror("Parent[pid=%d]: Can't get discipline for %s", ppid, Shmstore);
 
 	for(k = 0; k < N_OBJ; ++k)

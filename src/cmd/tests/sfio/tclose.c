@@ -36,7 +36,7 @@ Sfdisc_t* disc;
 	return 0;
 }
 
-static Sfdisc_t Wdisc = {NIL(Sfread_f), NIL(Sfwrite_f), NIL(Sfseek_f), except};
+static Sfdisc_t Wdisc = {NULL, NULL, NULL, except};
 
 tmain()
 {
@@ -67,9 +67,9 @@ tmain()
 	if(pipe(fd) < 0)
 		terror("Opening pipes");
 
-	if(!(w = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND, fd[1],SF_WRITE)) )
+	if(!(w = sfnew(NULL,NULL,(size_t)SF_UNBOUND, fd[1],SF_WRITE)) )
 		terror("Opening write stream");
-	if(!(r = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND, fd[0],SF_READ)) )
+	if(!(r = sfnew(NULL,NULL,(size_t)SF_UNBOUND, fd[0],SF_READ)) )
 		terror("Opening read stream");
 
 	sfdisc(w,&Wdisc);
@@ -95,7 +95,7 @@ tmain()
 		terror("Write exception did not get raised");
 
 	signal(SIGPIPE,SIG_DFL);
-	if((w = sfpopen(NIL(Sfio_t*), sfprints("%s %d", argv[0], N_STR), "w+")) )
+	if((w = sfpopen(NULL, sfprints("%s %d", argv[0], N_STR), "w+")) )
 	{	int	i;
 
 		if((handler = signal(SIGPIPE,SIG_IGN)) == SIG_DFL ||

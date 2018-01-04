@@ -48,18 +48,18 @@ static void _sfoncef()
 /* global variables used internally to the package */
 Sfextern_t _Sfextern =
 {	0,						/* _Sfpage	*/
-	{ NIL(Sfpool_t*), 0, 0, 0, NIL(Sfio_t**) },	/* _Sfpool	*/
-	NIL(int(*)_ARG_((Sfio_t*,int))),		/* _Sfpmove	*/
-	NIL(Sfio_t*(*)_ARG_((Sfio_t*, Sfio_t*))),	/* _Sfstack	*/
-	NIL(void(*)_ARG_((Sfio_t*, int, void*))),	/* _Sfnotify	*/
-	NIL(int(*)_ARG_((Sfio_t*))),			/* _Sfstdsync	*/
-	{ NIL(Sfread_f),				/* _Sfudisc	*/
-	  NIL(Sfwrite_f),
-	  NIL(Sfseek_f),
-	  NIL(Sfexcept_f),
-	  NIL(Sfdisc_t*)
+	{ NULL, 0, 0, 0, NULL },	/* _Sfpool	*/
+	NULL, /* _Sfpmove	*/
+	NULL,	/* _Sfstack	*/
+	NULL,	/* _Sfnotify	*/
+	NULL,	/* _Sfstdsync	*/
+	{ NULL,				/* _Sfudisc	*/
+	  NULL,
+	  NULL,
+	  NULL,
+	  NULL
 	},
-	NIL(void(*)_ARG_((void)) ),			/* _Sfcleanup	*/
+	NULL,			/* _Sfcleanup	*/
 	0,						/* _Sfexiting	*/
 	0,						/* _Sfdone	*/
 	&Sfonce,					/* _Sfonce	*/
@@ -85,12 +85,12 @@ static Vtmutex_t	_Sfmtxin, _Sfmtxout, _Sfmtxerr;
 #define SF_STDSAFE	(0)
 #endif
 
-Sfio_t	_Sfstdin  = SFNEW(NIL(char*),-1,0,
-			  (SF_READ |SF_STATIC|SF_STDSAFE),NIL(Sfdisc_t*),SFMTXIN);
-Sfio_t	_Sfstdout = SFNEW(NIL(char*),-1,1,
-			  (SF_WRITE|SF_STATIC|SF_STDSAFE),NIL(Sfdisc_t*),SFMTXOUT);
-Sfio_t	_Sfstderr = SFNEW(NIL(char*),-1,2,
-			  (SF_WRITE|SF_STATIC|SF_STDSAFE),NIL(Sfdisc_t*),SFMTXERR);
+Sfio_t	_Sfstdin  = SFNEW(NULL,-1,0,
+			  (SF_READ |SF_STATIC|SF_STDSAFE),NULL,SFMTXIN);
+Sfio_t	_Sfstdout = SFNEW(NULL,-1,1,
+			  (SF_WRITE|SF_STATIC|SF_STDSAFE),NULL,SFMTXOUT);
+Sfio_t	_Sfstderr = SFNEW(NULL,-1,2,
+			  (SF_WRITE|SF_STATIC|SF_STDSAFE),NULL,SFMTXERR);
 
 #undef	sfstdin
 #undef	sfstdout

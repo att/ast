@@ -161,7 +161,7 @@ int		flags;	/* SFFMT_LONG for wchar_t		*/
 		SFMBCLR(&mbs);
 	for(n = 1; *form != ']'; form += n)
 	{	if((c = *((uchar*)form)) == 0)
-			return NIL(char*);
+			return NULL;
 
 		if(*(form+1) == '-')
 		{	endc = *((uchar*)(form+2));
@@ -177,7 +177,7 @@ int		flags;	/* SFFMT_LONG for wchar_t		*/
 		{ one_char:
 #if _has_multibyte /* true multi-byte chars must be checked differently */
 			if((flags&SFFMT_LONG) && (n = (int)SFMBLEN(form,&mbs)) <= 0)
-				return NIL(char*);
+				return NULL;
 			if(n == 1)
 #endif
 				ac->ok[c] = ac->yes;
@@ -227,7 +227,7 @@ Accept_t*	ac;
 #if _has_multibyte == 1
 #define SFgetwc(sc,wc,fmt,ac,mbs)	_sfgetwc(sc,wc,fmt,ac,(Void_t*)(mbs))
 #else
-#define SFgetwc(sc,wc,fmt,ac,mbs)	_sfgetwc(sc,wc,fmt,ac,NIL(Void_t*))
+#define SFgetwc(sc,wc,fmt,ac,mbs)	_sfgetwc(sc,wc,fmt,ac,NULL)
 #endif
 
 #if __STD_C
@@ -360,10 +360,10 @@ va_list		args;
 
 	n_assign = n_input = 0; inp = -1;
 
-	fmstk = NIL(Fmt_t*);
-	ft = NIL(Sffmt_t*);
+	fmstk = NULL;
+	ft = NULL;
 
-	fp = NIL(Fmtpos_t*);
+	fp = NULL;
 	argn = -1;
 	oform = (char*)form;
 	va_copy(oargs,args);
@@ -431,8 +431,8 @@ loop_fmt:
 		/* matching some pattern */
 		base = 10; size = -1;
 		width = dot = 0;
-		t_str = NIL(char*); n_str = 0;
-		value = NIL(Void_t*);
+		t_str = NULL; n_str = 0;
+		value = NULL;
 		argp = -1;
 
 	loop_flags:	/* LOOP FOR FLAGS, WIDTH, BASE, TYPE */
@@ -445,7 +445,7 @@ loop_fmt:
 				{
 				case 0 :	/* not balanceable, retract */
 					form = t_str;
-					t_str = NIL(char*);
+					t_str = NULL;
 					n_str = 0;
 					goto loop_flags;
 				case LEFTP :	/* increasing nested level */
@@ -473,7 +473,7 @@ loop_fmt:
 						else if(ft && ft->extf )
 						{	FMTSET(ft, form,args,
 								LEFTP, 0, 0, 0,0,0,
-								NIL(char*),0);
+								NULL,0);
 							n = (*ft->extf)
 							      (f,(Void_t*)&argv,ft);
 							if(n < 0)
@@ -519,7 +519,7 @@ loop_fmt:
 					v = fp[n].argv.i;
 				else if(ft && ft->extf )
 				{	FMTSET(ft, form,args, '.',dot, 0, 0,0,0,
-						NIL(char*), 0);
+						NULL, 0);
 					if((*ft->extf)(f, (Void_t*)(&argv), ft) < 0)
 						goto pop_fmt;
 					if(ft->flags&SFFMT_VALUE)
@@ -572,7 +572,7 @@ loop_fmt:
 					size = fp[n].argv.i;
 				else if(ft && ft->extf )
 				{	FMTSET(ft, form,args, 'I',sizeof(int), 0, 0,0,0,
-						NIL(char*), 0);
+						NULL, 0);
 					if((*ft->extf)(f, (Void_t*)(&argv), ft) < 0)
 						goto pop_fmt;
 					if(ft->flags&SFFMT_VALUE)
@@ -734,11 +734,11 @@ loop_fmt:
 					form = ft->form; SFMBCLR(ft->mbs);
 					va_copy(args,ft->args);
 					argn = -1;
-					fp = NIL(Fmtpos_t*);
+					fp = NULL;
 					oform = (char*)form;
 					va_copy(oargs,args);
 				}
-				else	fm->form = NIL(char*);
+				else	fm->form = NULL;
 
 				fm->eventf = ft->eventf;
 				fm->next = fmstk;
@@ -1051,12 +1051,12 @@ loop_fmt:
 pop_fmt:
 	if(fp)
 	{	free(fp);
-		fp = NIL(Fmtpos_t*);
+		fp = NULL;
 	}
 	while((fm = fmstk) ) /* pop the format stack and continue */
 	{	if(fm->eventf)
 		{	if(!form || !form[0])
-				(*fm->eventf)(f,SF_FINAL,NIL(Void_t*),ft);
+				(*fm->eventf)(f,SF_FINAL,NULL,ft);
 			else if((*fm->eventf)(f,SF_DPOP,(Void_t*)form,ft) < 0)
 				goto loop_fmt;
 		}
@@ -1081,7 +1081,7 @@ done:
 		free(fp);
 	while((fm = fmstk) )
 	{	if(fm->eventf)
-			(*fm->eventf)(f,SF_FINAL,NIL(Void_t*),fm->ft);
+			(*fm->eventf)(f,SF_FINAL,NULL,fm->ft);
 		fmstk = fm->next;
 		free(fm);
 	}

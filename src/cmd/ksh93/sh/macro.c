@@ -392,7 +392,7 @@ char *sh_macpat(Shell_t *shp, struct argnod *arg, int flags) {
     sh_stats(STAT_ARGEXPAND);
     if (flags & ARG_OPTIMIZE) arg->argchn.ap = 0;
     if (!(sp = arg->argchn.cp)) {
-        sh_macexpand(shp, arg, NIL(struct argnod **), flags | ARG_ARRAYOK);
+        sh_macexpand(shp, arg, NULL, flags | ARG_ARRAYOK);
         sp = arg->argchn.cp;
         if (!(flags & ARG_OPTIMIZE) || !(arg->argflag & ARG_MAKE)) arg->argchn.cp = 0;
         arg->argflag &= ~ARG_MAKE;
@@ -422,7 +422,7 @@ static void copyto(Mac_t *mp, int endch, int newquote) {
     Stk_t *stkp = shp->stk;
     char *resume = 0;
 
-    mp->sp = NIL(Sfio_t *);
+    mp->sp = NULL;
     mp->quote = newquote;
     first = cp = fcseek(0);
     if (!mp->quote && *cp == '~' && cp[1] != LPAREN) tilde = stktell(stkp);
@@ -1010,7 +1010,7 @@ static bool varsub(Mac_t *mp) {
     int c;
     int type = 0; /* M_xxx */
     char *v, *argp = 0;
-    Namval_t *np = NIL(Namval_t *);
+    Namval_t *np = NULL;
     int dolg = 0, mode = 0;
     Lex_t *lp = (Lex_t *)mp->shp->lex_context;
     Namarr_t *ap = 0;
@@ -1281,7 +1281,7 @@ retry1:
                     }
                 } else if (ap && (isastchar(mode) || type == M_TREE) && !(ap->flags & ARRAY_SCAN) &&
                            type != M_SIZE) {
-                    nv_putsub(np, NIL(char *), 0, ARRAY_SCAN);
+                    nv_putsub(np, NULL, 0, ARRAY_SCAN);
                 }
                 if (!isbracechar(c)) {
                     goto nosub;
@@ -1539,7 +1539,7 @@ skip:
                 if (array_assoc(ap)) {
                     while (type-- > 0 && (v = 0, nv_nextsub(np))) v = nv_getval(np);
                 } else if (type > 0) {
-                    if (nv_putsub(np, NIL(char *), type, ARRAY_SCAN)) {
+                    if (nv_putsub(np, NULL, type, ARRAY_SCAN)) {
                         v = nv_getval(np);
                     } else {
                         v = 0;
@@ -1727,7 +1727,7 @@ retry2:
                 if (!(v = nextname(mp, id, dolmax))) break;
             } else {
                 if (dolmax && --dolmax <= 0) {
-                    nv_putsub(np, NIL(char *), 0, ARRAY_UNDEF);
+                    nv_putsub(np, NULL, 0, ARRAY_UNDEF);
                     break;
                 }
                 if (ap) ap->flags |= ARRAY_SCAN;
@@ -1898,7 +1898,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         sh_offstate(mp->shp, SH_HISTORY);
         sh_offstate(mp->shp, SH_VERBOSE);
         if (mp->sp) sfsync(mp->sp);  // flush before executing command
-        sp = sfnew(NIL(Sfio_t *), str, c, -1, SF_STRING | SF_READ);
+        sp = sfnew(NULL, str, c, -1, SF_STRING | SF_READ);
         c = mp->shp->inlineno;
         mp->shp->inlineno = error_info.line + mp->shp->st.firstline;
         t = (Shnode_t *)sh_parse(mp->shp, sp, SH_EOF | SH_NL);
@@ -1933,7 +1933,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             }
             if (!(sp = mp->shp->sftable[fd]) ||
                 (sffileno(sp) != fd && !(sfset(sp, 0, 0) & SF_STRING))) {
-                sp = sfnew(NIL(Sfio_t *), (char *)malloc(IOBSIZE + 1), IOBSIZE, fd,
+                sp = sfnew(NULL, (char *)malloc(IOBSIZE + 1), IOBSIZE, fd,
                            SF_READ | SF_MALLOC);
             }
             type = 3;
@@ -1942,14 +1942,14 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         }
         fcrestore(&save);
     } else {
-        sp = sfopen(NIL(Sfio_t *), "", "sr");
+        sp = sfopen(NULL, "", "sr");
     }
     sh_freeup(mp->shp);
     mp->shp->st.staklist = saveslp;
     if (was_history) sh_onstate(mp->shp, SH_HISTORY);
     if (was_verbose) sh_onstate(mp->shp, SH_VERBOSE);
 #else
-    sp = sfpopen(NIL(Sfio_t *), str, "r");
+    sp = sfpopen(NULL, str, "r");
 #endif
     *mp = savemac;
     np = sh_scoped(mp->shp, IFSNOD);
@@ -1958,7 +1958,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     stkset(stkp, savptr, savtop);
     newlines = 0;
     // Read command substitution output and put on stack or here-doc.
-    sfpool(sp, NIL(Sfio_t *), SF_WRITE);
+    sfpool(sp, NULL, SF_WRITE);
     sfset(sp, SF_WRITE | SF_PUBLIC | SF_SHARE, 0);
     sh_offstate(mp->shp, SH_INTERACTIVE);
     if ((foff = sfseek(sp, (Sfoff_t)0, SEEK_END)) > 0) {
@@ -2353,7 +2353,7 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
     Namval_t *np = 0;
     static Dt_t *logins_tree;
 
-    if (*string++ != '~') return NIL(char *);
+    if (*string++ != '~') return NULL;
     if ((c = *string) == 0) {
         if (!(cp = nv_getval(sh_scoped(shp, HOME)))) cp = getlogin();
         return cp;
@@ -2372,7 +2372,7 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
         int fd, offset = stktell(shp->stk);
         Spawnvex_t *vc = (Spawnvex_t *)shp->vex;
         if (!vc && (vc = spawnvex_open(0))) shp->vex = (void *)vc;
-        if (!(s2 = strchr(string++, '}'))) return NIL(char *);
+        if (!(s2 = strchr(string++, '}'))) return NULL;
         len = s2 - string;
         sfwrite(shp->stk, string, len + 1);
         s2 = stkptr(shp->stk, offset);
@@ -2380,14 +2380,14 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
         stkseek(shp->stk, offset);
         if (isdigit(*s2)) {
             fd = strtol(s2, &s2, 10);
-            if (*s2) return NIL(char *);
+            if (*s2) return NULL;
         } else {
             Namval_t *np = nv_open(s2, shp->var_tree, NV_VARNAME | NV_NOFAIL | NV_NOADD);
-            if (!np) return NIL(char *);
+            if (!np) return NULL;
             fd = (int)nv_getnum(np);
             nv_close(np);
         }
-        if (fd < 0) return NIL(char *);
+        if (fd < 0) return NULL;
 #ifdef _fd_pid_dir_fmt
         sfprintf(shp->stk, _fd_pid_dir_fmt, (long)getpid(), fd, "", "");
 #else
@@ -2422,7 +2422,7 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
     }
 #endif /* _WINIX */
     if (logins_tree && (np = nv_search(string, logins_tree, 0))) return nv_getval(np);
-    if (!(pw = getpwnam(string))) return NIL(char *);
+    if (!(pw = getpwnam(string))) return NULL;
 #if _WINIX
 skip:
 #endif /* _WINIX */
@@ -2447,7 +2447,7 @@ static char *special(Shell_t *shp, int c) {
     switch (c) {
         case '@':
         case '*': {
-            return shp->st.dolc > 0 ? shp->st.dolv[1] : NIL(char *);
+            return shp->st.dolc > 0 ? shp->st.dolv[1] : NULL;
         }
         case '#': {
             if (shp->cur_line) {
@@ -2484,7 +2484,7 @@ static char *special(Shell_t *shp, int c) {
             }
         }
     }
-    return NIL(char *);
+    return NULL;
 }
 
 //

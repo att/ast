@@ -194,12 +194,12 @@ char*	ends;
 	char*	s;
 
 	if((pid = getpid()) < 0)
-		return NIL(char*);
+		return NULL;
 
 	s = ends;
 	do
 	{	if(s == begs)
-			return NIL(char*);
+			return NULL;
 		*--s = '0' + pid%10;
 	} while((pid /= 10) > 0);
 	while(s < ends)
@@ -280,8 +280,8 @@ void _vmoptions(int boot)
 	int		b;
 	int		c;
 	char		buf[1024];
-	char		*trace = NIL(char*);
-	Vmalloc_t	*vm = NIL(Vmalloc_t*);
+	char		*trace = NULL;
+	Vmalloc_t	*vm = NULL;
 
 	static char*	options;
 
@@ -306,7 +306,7 @@ void _vmoptions(int boot)
 			if (*(t = s) == 0)
 				break;
 
-			v = NIL(char*);
+			v = NULL;
 			while (*s)
 			{	if (*s == ' ' || *s == '\t' || *s == '\r' || *s == '\n' || *s == ',')
 				{	*s++ = 0; /* end of name */
@@ -315,7 +315,7 @@ void _vmoptions(int boot)
 				else if (!v && *s == '=')
 				{	*s++ = 0; /* end of name */
 					if (*(v = s) == 0)
-						v = NIL(char*);
+						v = NULL;
 				}
 				else	s++;
 			}
@@ -664,11 +664,11 @@ static int _vmstart(int freeing)
 	}
 
 	/* initialize the heap if not done yet */
-	if(_vmheapinit(NIL(Vmalloc_t*)) != Vmheap )
+	if(_vmheapinit(NULL) != Vmheap )
 	{	write(9, "vmalloc: panic: heap initialization error\n", 42);
 		return -1;
 	}
-	/**/DEBUG_ASSERT(Vmheap->data != NIL(Vmdata_t*));
+	/**/DEBUG_ASSERT(Vmheap->data != NULL);
 
 	/* setting options. note that Vmregion may change */
 	VMFLF(Vmregion, file, line, func);
@@ -689,7 +689,7 @@ extern Void_t* calloc(size_t n_obj, size_t s_obj)
 	Void_t		*addr;
 
 	VMPROLOGUE(0);
-	addr = (*Vmregion->meth.resizef)(Vmregion, NIL(Void_t*), n_obj*s_obj, VM_RSZERO, 0);
+	addr = (*Vmregion->meth.resizef)(Vmregion, NULL, n_obj*s_obj, VM_RSZERO, 0);
 	VMEPILOGUE(0);
 
 	return VMRECORD(addr);
@@ -721,7 +721,7 @@ extern Void_t* realloc(Void_t* data, size_t size)
 #if USE_NATIVE
 		addr = native_realloc(data, size);
 #else
-		addr = NIL(Void_t*);
+		addr = NULL;
 #endif
 
 	VMEPILOGUE(0);
@@ -819,7 +819,7 @@ char* strdup(const char* s)
 	size_t	n;
 
 	if(!s)
-		return NIL(char*);
+		return NULL;
 	else
 	{	n = strlen(s);
 		if((ns = malloc(n+1)) )

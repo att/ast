@@ -45,7 +45,7 @@ Sfio_t*	f;
 		(void)(*f->disc->exceptf)(f,SF_PURGE,(Void_t*)((int)1),f->disc);
 
 	if(f->disc == _Sfudisc)
-		(void)sfclose((*_Sfstack)(f,NIL(Sfio_t*)));
+		(void)sfclose((*_Sfstack)(f,NULL));
 
 	/* cannot purge read string streams */
 	if((f->flags&SF_STRING) && (f->mode&SF_READ) )

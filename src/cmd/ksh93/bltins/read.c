@@ -337,7 +337,7 @@ int	b_read(int argc,char *argv[], Shbltin_t *context)
 		r = strlen(name)+1;
 	else
 		r = 0;
-	if(argc==fixargs && (rp=newof(NIL(struct read_save*),struct read_save,1,0)))
+	if(argc==fixargs && (rp=newof(NULL,struct read_save,1,0)))
 	{
 		context->data = (void*)rp;
 		rp->fd = fd;
@@ -445,7 +445,7 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 			nv_unset(np);
 			if((ap=nv_arrayptr(np)) && !ap->fun)
 				ap->nelem--;
-			nv_putsub(np,NIL(char*),0L,0);
+			nv_putsub(np,NULL,0L,0);
 		}
 		else if(flags&C_FLAG)
 		{
@@ -942,7 +942,7 @@ int sh_readline(Shell_t *shp,char **names, void *readfn, volatile int fd, int fl
 		}
 		if(array_index)
 		{
-			nv_putsub(np, NIL(char*), array_index++,0);
+			nv_putsub(np, NULL, array_index++,0);
 			if(c!=S_NL)
 				continue;
 			name = *++names;

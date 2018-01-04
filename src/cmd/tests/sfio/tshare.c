@@ -24,7 +24,7 @@ tmain()
 	char		buf[1024], *s;
 	Sfio_t*	f;
 
-	f = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,-1,SF_WRITE|SF_STRING);
+	f = sfnew(NULL,NULL,(size_t)SF_UNBOUND,-1,SF_WRITE|SF_STRING);
 	sfsetbuf(sfstdout,buf,sizeof(buf));
 	sfsetbuf(sfstderr,buf,sizeof(buf));
 	sfset(sfstdout,SF_SHARE,0);

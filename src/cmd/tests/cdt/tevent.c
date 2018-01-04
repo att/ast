@@ -60,13 +60,13 @@ static Void_t* memory(Dt_t* dt, Void_t* obj, size_t size, Dtdisc_t* disc)
 		return malloc(size);
 	else
 	{	free(obj);
-		return NIL(Void_t*);
+		return NULL;
 	}
 }
 
 Dtdisc_t Disc =
 {	0, sizeof(long), -1,
-  	newint, NIL(Dtfree_f), compare, hashint, memory, event
+  	newint, NULL, compare, hashint, memory, event
 };
 
 tmain()

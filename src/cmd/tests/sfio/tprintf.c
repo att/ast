@@ -236,8 +236,8 @@ va_dcl
 #endif
 	fe.form = form;
 	va_copy(fe.args,args);
-	fe.extf = NIL(Sffmtext_f);
-	fe.eventf = NIL(Sffmtevent_f);
+	fe.extf = NULL;
+	fe.eventf = NULL;
 	sfsprintf(buf,n,"%! %d %d",&fe,3,4);
 	va_end(args);
 }
@@ -253,7 +253,7 @@ tmain()
 	Sffmt_t		fe;
 	Sfio_t*		f;
 
-	f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+");
+	f = sfopen(NULL, tstfile("sf", 0), "w+");
 	sfsetbuf(f,buf1,10);
 	sfprintf(f,"%40s\n","0123456789");
 	sfsprintf(buf2,sizeof(buf2),"%40s","0123456789");
@@ -274,9 +274,9 @@ tmain()
 		terror("Failed testing $position with precision");
 
 	fe.version = SFIO_VERSION;
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = DOXSprint;
-	fe.eventf = NIL(Sffmtevent_f);
+	fe.eventf = NULL;
 
 	sfsprintf(buf1,sizeof(buf1),"%4d %4o %4x %4o %4x %s", 10, 11, 12, 11, 10, "abc");
 	sfsprintf(buf2,sizeof(buf2),"%!%2$4d %3$4O %4$4X %3$4O %2$4x %5$s", &fe);
@@ -290,29 +290,29 @@ tmain()
 		terror("%%f rounding wrong");
 
 	fe.version = SFIO_VERSION;
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = abprint;
-	fe.eventf = NIL(Sffmtevent_f);
+	fe.eventf = NULL;
 	sfsprintf(buf1,sizeof(buf1),"%%sX%%d%..4u %..4d9876543210",-1,-1);
 	sfsprintf(buf2,sizeof(buf2),"%!%%sX%%d%..4a %..4b%y%Yxxx",
 			&fe, -1, -1, "9876543210yyyy" );
 	if(strcmp(buf1,buf2) != 0)
 		terror("%%!: Extension function failed1");
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = intarg;
 	sfsprintf(buf1,sizeof(buf1),"%d %d%",1,2);
 	sfsprintf(buf2,sizeof(buf2),"%!%d %d%",&fe);
 	if(strcmp(buf1,buf2) != 0)
 		terror("%%!: Extension function failed2");
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	sfsprintf(buf1,sizeof(buf1),"%d %d%%",3,4);
 	sfsprintf(buf2,sizeof(buf2),"%!%d %d%%",&fe);
 	if(strcmp(buf1,buf2) != 0)
 		terror("%%!: Extension function failed3");
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = shortarg;
 	sfsprintf(buf1,sizeof(buf1),"%hu %ho %hi %hu %ho %hd", -2, -1, 0, 1, 2, 3);
 	sfsprintf(buf2,sizeof(buf2),"%!%u %o %i %u %o %d",&fe);
@@ -320,7 +320,7 @@ tmain()
 		terror("%%!: Extension function failed4");
 
 	/* test extf translation */
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = transarg;
 	sfsprintf(buf1,sizeof(buf1),"%d %o %f %s %c", -1, -1, -1., "s", 'c');
 	sfsprintf(buf2,sizeof(buf2),"%!%D %O %F %S %C",&fe, -1, -1, -1., "s", 'c');
@@ -336,13 +336,13 @@ tmain()
 	Coord.y = 7;
 	sfsprintf(buf1,sizeof(buf1),"%d %d",Coord.x,Coord.y);
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = coordprint;
 	sfsprintf(buf2,sizeof(buf2),"%!%(%d %d)c",&fe,&Coord);
 	if(strcmp(buf1,buf2) != 0)
 		terror("%%()c `%s' != `%s'", buf1, buf2);
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = nulprint;
 	buf2[0] = buf2[1] = buf2[2] = buf2[3] = buf2[4] = 3;
 	sfsprintf(buf2,sizeof(buf2),"%!\001%Z\002",&fe);
@@ -350,7 +350,7 @@ tmain()
 		terror("%%Z <1,0,2,0,3> != <%o,%o,%o,%o,%o>",
 			buf2[0], buf2[1], buf2[2], buf2[3], buf2[4]);
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = nulprint;
 	buf2[0] = buf2[1] = buf2[2] = buf2[3] = buf2[4] = 3;
 	sfsprintf(buf2,sizeof(buf2),"%!%c%Z%c",&fe,1,2);
@@ -358,7 +358,7 @@ tmain()
 		terror("%%Z <1,0,2,0,3> != <%o,%o,%o,%o,%o>",
 			buf2[0], buf2[1], buf2[2], buf2[3], buf2[4]);
 
-	fe.form = NIL(char*);
+	fe.form = NULL;
 	fe.extf = nulprint;
 	sfsprintf(buf2,sizeof(buf2),"%!%Y",&fe);
 	if(strcmp(buf2,"a:b:c"))
@@ -590,12 +590,12 @@ tmain()
 	}
 #endif
 
-	pnan = strtod("NaN", NIL(char));
-	nnan = strtod("-NaN", NIL(char));
-	pinf = strtod("Inf", NIL(char));
-	ninf = strtod("-Inf", NIL(char));
-	pnil = strtod("0.0", NIL(char));
-	nnil = strtod("-0.0", NIL(char));
+	pnan = strtod("NaN", NULL);
+	nnan = strtod("-NaN", NULL);
+	pinf = strtod("Inf", NULL);
+	ninf = strtod("-Inf", NULL);
+	pnil = strtod("0.0", NULL);
+	nnil = strtod("-0.0", NULL);
 	sfsprintf(buf1, sizeof(buf1), "%g %g %g %g %g %g", pnan, nnan, pinf, ninf, pnil, nnil);
 	if (strcmp(buf1, "nan -nan inf -inf 0 -0") != 0)
 		terror("double NaN Inf 0.0 error: %s", buf1);
@@ -606,12 +606,12 @@ tmain()
 	if (strcmp(buf1, "  nan  -nan   inf  -inf 00000 -0000") != 0)
 		terror("double NaN Inf 0.0 error: %s", buf1);
 
-	pnanl = strtold("NaN", NIL(char));
-	nnanl = strtold("-NaN", NIL(char));
-	pinfl = strtold("Inf", NIL(char));
-	ninfl = strtold("-Inf", NIL(char));
-	pnill = strtold("0.0", NIL(char));
-	nnill = strtold("-0.0", NIL(char));
+	pnanl = strtold("NaN", NULL);
+	nnanl = strtold("-NaN", NULL);
+	pinfl = strtold("Inf", NULL);
+	ninfl = strtold("-Inf", NULL);
+	pnill = strtold("0.0", NULL);
+	nnill = strtold("-0.0", NULL);
 	sfsprintf(buf1, sizeof(buf1), "%Lg %Lg %Lg %Lg %Lg %Lg", pnanl, nnanl, pinfl, ninfl, pnill, nnill);
 	if (strcmp(buf1, "nan -nan inf -inf 0 -0") != 0)
 		terror("long double NaN Inf 0.0 error: %s", buf1);

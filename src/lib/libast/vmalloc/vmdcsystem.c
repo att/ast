@@ -44,8 +44,8 @@ typedef struct Memdisc_s
 	{ \
 		a = (Void_t*)f; \
 		if (a == (Void_t*)(-1)) \
-			a = NIL(Void_t*); \
-	} while (a == NIL(Void_t*) && errno == EINTR)
+			a = NULL; \
+	} while (a == NULL && errno == EINTR)
 
 #define RESTARTSYS(r,f)	\
 	do \
@@ -56,7 +56,7 @@ typedef struct Memdisc_s
 #define GETMEMCHK(vm,caddr,csize,nsize,disc) \
 	/**/DEBUG_ASSERT(csize > 0 || nsize > 0); \
 	if((csize > 0 && !caddr) || (csize == 0 && nsize == 0)) \
-		return NIL(Void_t*)
+		return NULL
 
 #define GETMEMUSE(getmem,disc) \
 	if(_Vmassert & VM_verbose) debug_printf(2,"vmalloc: getmemory=%s\n",XTR(getmem)); \
@@ -139,7 +139,7 @@ static Void_t* win32mem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsize
 	{	(void)VirtualFree((LPVOID)caddr,0,MEM_RELEASE);
 		RETURN(vm, caddr, nsize);
 	}
-	else	return NIL(Void_t*);
+	else	return NULL;
 }
 #endif /* _mem_win32 */
 
@@ -154,11 +154,11 @@ static Void_t* sbrkmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsize,
 
 	GETMEMCHK(vm, caddr, csize, nsize, disc);
 	if((csize%_Vmpagesize) != 0)
-		return NIL(Void_t*); /* bad call! */
+		return NULL; /* bad call! */
 	else if((nsize = ROUND(nsize, _Vmpagesize)) == csize )
 		return caddr; /* nothing to do */
 	else if(nsize < csize) /* no memory reduction */
-		return NIL(Void_t*);
+		return NULL;
 
 	key = asothreadid(); /**/DEBUG_ASSERT(key > 0);
 	asolock(&_Vmsbrklock, key, ASO_LOCK);
@@ -168,13 +168,13 @@ static Void_t* sbrkmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsize,
 	if(csize > 0)
 	{	RESTARTMEM(newm, sbrk(0));
 		if(newm && newm != ((Vmuchar_t*)caddr + csize) )
-		{	newm = NIL(Void_t*); /* non-contiguous memory */
+		{	newm = NULL; /* non-contiguous memory */
 			goto bad;
 		}
 	}
 	RESTARTMEM(newm, sbrk(nsize));
 	if(newm && csize > 0 && newm != ((Vmuchar_t*)caddr + csize + nsize) )
-		newm = NIL(Void_t*); /* non-contiguous memory again */
+		newm = NULL; /* non-contiguous memory again */
 
  bad:
 	asolock(&_Vmsbrklock, key, ASO_UNLOCK);
@@ -194,25 +194,25 @@ static Void_t* safebrkmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsi
 
 	GETMEMCHK(vm, caddr, csize, nsize, disc);
 	if((csize%_Vmpagesize) != 0)
-		return NIL(Void_t*); /* bad call! */
+		return NULL; /* bad call! */
 	else if((nsize = ROUND(nsize, _Vmpagesize)) == csize )
 		return caddr; /* nothing to do */
 	else if(nsize < csize) /* no memory reduction */
-		return NIL(Void_t*);
+		return NULL;
 
 	key = asothreadid(); /**/DEBUG_ASSERT(key > 0);
 	asolock(&_Vmsbrklock, key, ASO_LOCK);
 
-	newm = NIL(Vmuchar_t*);
+	newm = NULL;
 	nsize -= csize; /* amount of new memory needed */
 
 	VMBOUNDARIES();
 	if(_Vmmemsbrk && _Vmmemsbrk < _Vmmemmax)
 	{	if(_Vmchkmem && (_Vmassert & VM_check_seg)) /* mmap must use MAP_FIXED (eg, solaris) */
 		{	for(;;) /* search for a mappable address */
-			{	newm = (*_Vmchkmem)(_Vmmemsbrk, nsize) ? _Vmmemsbrk : NIL(Vmuchar_t*);
+			{	newm = (*_Vmchkmem)(_Vmmemsbrk, nsize) ? _Vmmemsbrk : NULL;
 				if(csize > 0 && newm != ((Vmuchar_t*)caddr+csize) )
-				{	newm = NIL(Vmuchar_t*);
+				{	newm = NULL;
 					break;
 				}
 				else if(newm)
@@ -227,7 +227,7 @@ static Void_t* safebrkmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsi
 		if(newm)
 		{	if(csize > 0 && newm != ((Vmuchar_t*)caddr+csize)) /* new memory is not contiguous */
 			{	munmap((Void_t*)newm, nsize); /* remove it and wait for a call for new memory */
-				newm = NIL(Void_t*);
+				newm = NULL;
 			}
 			else	_Vmmemsbrk = newm+nsize;
 		}
@@ -245,7 +245,7 @@ static Void_t* mmapanonmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t ns
 	GETMEMCHK(vm, caddr, csize, nsize, disc);
 	if(csize == 0)
 	{	nsize = ROUND(nsize, _Vmpagesize);
-		RESTARTMEM(caddr, mmap(NIL(Void_t*), nsize, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0));
+		RESTARTMEM(caddr, mmap(NULL, nsize, PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0));
 		ADVISE(vm, caddr, nsize);
 		RETURN(vm, caddr, nsize);
 	}
@@ -253,7 +253,7 @@ static Void_t* mmapanonmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t ns
 	{	(void)munmap(caddr, csize);
 		RETURN(vm, caddr, nsize);
 	}
-	else	return NIL(Void_t*);
+	else	return NULL;
 }
 #endif /* _mem_mmap_anon */
 
@@ -269,7 +269,7 @@ static Void_t* mallocmem(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsiz
 	{	free(caddr);
 		RETURN(vm, caddr, nsize);
 	}
-	else	return NIL(Void_t*);
+	else	return NULL;
 }
 #endif
 
@@ -315,10 +315,10 @@ static Void_t* getmemory(Vmalloc_t* vm, Void_t* caddr, size_t csize, size_t nsiz
 #endif 
 	write(2, "vmalloc: panic: all memory allocation disciplines failed\n", 57);
 	abort();
-	return NIL(Void_t*);
+	return NULL;
 }
 
-static Memdisc_t _Vmdcsystem = { { getmemory, NIL(Vmexcept_f), 0*64*1024*1024, sizeof(Memdisc_t) }, FD_INIT, 0 };
+static Memdisc_t _Vmdcsystem = { { getmemory, NULL, 0*64*1024*1024, sizeof(Memdisc_t) }, FD_INIT, 0 };
 
 __DEFINE__(Vmdisc_t*,  Vmdcsystem, (Vmdisc_t*)(&_Vmdcsystem) );
 __DEFINE__(Vmdisc_t*,  Vmdcsbrk, (Vmdisc_t*)(&_Vmdcsystem) );
@@ -381,22 +381,22 @@ Vmalloc_t* _vmheapinit(Vmalloc_t* vm)
 	asocasint(&Init, HEAPINIT, heap == Vmheap ? HEAPDONE : 0);
 
 	if(vm == Vmheap && Init == HEAPDONE) /* initialize malloc/free/realloc interface */
-		free(NIL(Void_t*));
+		free(NULL);
 
 	return heap;
 }
 
 static Void_t* heapalloc(Vmalloc_t* vm, size_t size, int local)
-{	return (vm = _vmheapinit(vm)) ? (*vm->meth.allocf)(vm, size, local) : NIL(Void_t*);
+{	return (vm = _vmheapinit(vm)) ? (*vm->meth.allocf)(vm, size, local) : NULL;
 }
 static Void_t* heapresize(Vmalloc_t* vm, Void_t* obj, size_t size, int type, int local)
-{	return (vm = _vmheapinit(vm)) ? (*vm->meth.resizef)(vm, obj, size, type, local) : NIL(Void_t*);
+{	return (vm = _vmheapinit(vm)) ? (*vm->meth.resizef)(vm, obj, size, type, local) : NULL;
 }
 static int heapfree(Vmalloc_t* vm, Void_t* obj, int local)
 {	return (vm = _vmheapinit(vm)) ? (*vm->meth.freef)(vm, obj, local) : -1;
 }
 static Void_t* heapalign(Vmalloc_t* vm, size_t size, size_t align, int local)
-{	return (vm = _vmheapinit(vm)) ? (*vm->meth.alignf)(vm, size, align, local) : NIL(Void_t*);
+{	return (vm = _vmheapinit(vm)) ? (*vm->meth.alignf)(vm, size, align, local) : NULL;
 }
 static int heapstat(Vmalloc_t* vm, Vmstat_t* st, int local)
 {	return (vm = _vmheapinit(vm)) ? (*vm->meth.statf)(vm, st, local) : -1;
@@ -412,11 +412,11 @@ Vmalloc_t _Vmheap =
 		heapalign,
 		0  	/* method ID	*/
 	},
-	NIL(char*),	/* file	name	*/
+	NULL,	/* file	name	*/
 	0,		/* line number	*/
 	0,		/* function	*/
 	(Vmdisc_t*)(&_Vmdcsystem),
-	NIL(Vmdata_t*), /* see heapinit	*/
+	NULL, /* see heapinit	*/
 };
 
 __DEFINE__(Vmalloc_t*, Vmheap, &_Vmheap);

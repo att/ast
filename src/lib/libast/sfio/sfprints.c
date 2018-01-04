@@ -42,17 +42,17 @@ va_list	args;
 
 	if(!f) /* make a string stream to write into */
 	{	_Sfnotify = 0;
-		f = sfnew(NIL(Sfio_t*),NIL(char*),(size_t)SF_UNBOUND, -1,SF_WRITE|SF_STRING);
+		f = sfnew(NULL,NULL,(size_t)SF_UNBOUND, -1,SF_WRITE|SF_STRING);
 		_Sfnotify = notify;
 		if(!f)
-			return NIL(char*);
+			return NULL;
 	}
 
 	sfseek(f,(Sfoff_t)0,SEEK_SET);
 	rv = sfvprintf(f,form,args);
 
 	if(rv < 0 || sfputc(f,'\0') < 0)
-		return NIL(char*);
+		return NULL;
 
 	_Sfi = (f->next - f->data) - 1;
 	return (char*)f->data;

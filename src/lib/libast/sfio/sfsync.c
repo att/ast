@@ -98,7 +98,7 @@ reg Sfio_t*	f;	/* stream to be synchronized */
 	GETLOCAL(origf,local);
 
 	if(origf->disc == _Sfudisc)	/* throw away ungetc */
-		(void)sfclose((*_Sfstack)(origf,NIL(Sfio_t*)));
+		(void)sfclose((*_Sfstack)(origf,NULL));
 
 	rv = 0;
 

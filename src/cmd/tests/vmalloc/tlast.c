@@ -38,7 +38,7 @@ tmain()
 	if(vmfree(vm,addr[0]) >= 0)
 		terror("Free non-last element succeeds?");
 
-	if(vmresize(vm,addr[9],256,1) == NIL(Void_t*))
+	if(vmresize(vm,addr[9],256,1) == NULL)
 		terror("Resize last element does not succeed?");
 
 	texit(0);

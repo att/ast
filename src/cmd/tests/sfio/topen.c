@@ -30,13 +30,13 @@ tmain()
 		terror("Bad reopening of sfstdin");
 	sfclose(sfstdin);
 
-	if(!(f = sfopen(NIL(Sfio_t*),"123","s")) )
+	if(!(f = sfopen(NULL,"123","s")) )
 		terror("Opening a stream");
 	sfclose(f);
-	if(sfopen(f,"123","s") != NIL(Sfio_t*))
+	if(sfopen(f,"123","s") != NULL)
 		terror("can't reopen a closed stream!");
 
-	if(sfnew(&sf,NIL(char*),(size_t)SF_UNBOUND,0,SF_EOF|SF_READ) != &sf)
+	if(sfnew(&sf,NULL,(size_t)SF_UNBOUND,0,SF_EOF|SF_READ) != &sf)
 		terror("Did not open sf");
 	sfset(&sf,SF_STATIC,1);
 	if(!sfclose(&sf) || errno != EBADF)
@@ -46,7 +46,7 @@ tmain()
 
 	/* test for exclusive opens */
 	unlink(tstfile("sf", 0));
-	if(!(f = sfopen(NIL(Sfio_t*),tstfile("sf", 0),"wx") ) )
+	if(!(f = sfopen(NULL,tstfile("sf", 0),"wx") ) )
 		terror("sfopen failed");
 	if((f = sfopen(f,tstfile("sf", 0),"wx") ) )
 		terror("sfopen should not succeed here");

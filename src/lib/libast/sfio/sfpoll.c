@@ -187,14 +187,14 @@ int		tm;	/* time in millisecs for select/poll	*/
 			}
 		}
 		if(tm < 0)
-			tmp = NIL(struct timeval*);
+			tmp = NULL;
 		else
 		{	tmp = &tmb;
 			tmb.tv_sec = tm/SECOND;
 			tmb.tv_usec = (tm%SECOND)*SECOND;
 		}
 
-		while((np = select(m+1,&rd,&wr,NIL(fd_set*),tmp)) < 0 )
+		while((np = select(m+1,&rd,&wr,NULL,tmp)) < 0 )
 		{	if(errno == eintr)
 				errno = 0;
 			else	goto report;

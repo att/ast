@@ -41,11 +41,11 @@ Dtdisc_t* 	disc;	/* discipline			*/
 	if(addr)
 	{	if(size == 0)
 		{	free(addr);
-			return NIL(Void_t*);
+			return NULL;
 		}
 		else	return realloc(addr,size);
 	}
-	else	return size > 0 ? malloc(size) : NIL(Void_t*);
+	else	return size > 0 ? malloc(size) : NULL;
 }
 
 #if __STD_C
@@ -71,11 +71,11 @@ int		type;
 		return old;
 
 	if(old->eventf && (*old->eventf)(dt,DT_DISC,(Void_t*)disc,old) < 0)
-		return NIL(Dtdisc_t*);
+		return NULL;
 
 	if((type & (DT_SAMEHASH|DT_SAMECMP)) != (DT_SAMEHASH|DT_SAMECMP) )
 		list = dtextract(dt); /* grab the list of objects if any */
-	else	list = NIL(Dtlink_t*);
+	else	list = NULL;
 
 	dt->disc = disc;
 	if(!(dt->memoryf = disc->memoryf) )

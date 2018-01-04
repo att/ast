@@ -81,7 +81,7 @@ static Void_t* memory(Dt_t* dt, Void_t* addr, size_t size, Dtdisc_t* disc)
 	Disc_t	*dc = (Disc_t*)disc;
 
 	if(addr || size <= 0 ) /* no freeing */
-		return NIL(Void_t*);
+		return NULL;
 
 	for(k = 0;; asorelax(1<<k), k = (k+1)&07 )
 		if(asocasint(&dc->lock, 0, 1) == 0) /* get exclusive use first */
@@ -235,12 +235,12 @@ tmain()
 	Disc->disc.key     = DTOFFSET(Obj_t,str);
 	Disc->disc.size    = 0;
 	Disc->disc.link    = 0;
-	Disc->disc.makef   = NIL(Dtmake_f);
-	Disc->disc.freef   = NIL(Dtfree_f);
-	Disc->disc.comparf = NIL(Dtcompar_f);
-	Disc->disc.hashf   = NIL(Dthash_f);
+	Disc->disc.makef   = NULL;
+	Disc->disc.freef   = NULL;
+	Disc->disc.comparf = NULL;
+	Disc->disc.hashf   = NULL;
 	Disc->disc.memoryf = memory;
-	Disc->disc.eventf  = NIL(Dtevent_f);
+	Disc->disc.eventf  = NULL;
 	if(!(dt = dtopen(&Disc->disc, Dtoset)) )
 		terror("Cannot open dictionary");
 	if(dtcustomize(dt, DT_SHARE, 1) != DT_SHARE )

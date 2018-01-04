@@ -95,10 +95,6 @@ static Void_t		**Emp;		/* shared array of allocated blocks	*/
 static size_t		Maxbusy = 0;	/* size of max busy space at any time	*/
 static size_t		Curbusy = 0;	/* size of busy space at current time	*/
 
-#ifndef NIL
-#define	NIL(t)		((t)0)
-#endif
-
 /* 'Rand' is defined locally in each routine that uses it. In this way, the RNG
 ** runs exactly the same way for each thread. Makes it easy to debug stuff.
 */
@@ -200,7 +196,7 @@ void* simulate(void* arg)
 			{	free(up->data);
 
 				asosubsize(&Curbusy, up->size);
-				up->data = NIL(void*);
+				up->data = NULL;
 				up->size = 0;
 			}
 			else /* realloc: new size's range is [up->size/2, 2*up->size] */

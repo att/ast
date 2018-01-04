@@ -29,8 +29,8 @@ tmain()
 	if(pipe(fd) < 0)
 		terror("Can't open pipe");
 
-	if(!(fr = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
-	   !(fw = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
+	if(!(fr = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[0],SF_READ)) ||
+	   !(fw = sfnew(NULL,NULL,(size_t)SF_UNBOUND,fd[1],SF_WRITE)) )
 		terror("Can't open pipe streams");
 	sfset(fr,SF_SHARE,1);
 

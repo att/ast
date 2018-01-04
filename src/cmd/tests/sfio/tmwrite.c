@@ -52,11 +52,11 @@ tmain()
 		record[i][r] = '0'+i;
 
 	/* create file */
-	fr = sfopen(NIL(Sfio_t*),tstfile("sf", 0),"w+");
+	fr = sfopen(NULL,tstfile("sf", 0),"w+");
 
 	/* create records */
 	for(i = 0; i < N_WRITER; ++i)
-	{	fw[i] = sfopen(NIL(Sfio_t*),tstfile("sf", 0),"a");
+	{	fw[i] = sfopen(NULL,tstfile("sf", 0),"a");
 		count[i] = 0;
 	}
 

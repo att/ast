@@ -116,10 +116,10 @@ Sfdisc_t*	disc;
 	Sfwrite_f	owritef;
 	Sfseek_f	oseekf;
 	ssize_t		n;
-	Dccache_t	*dcca = NIL(Dccache_t*);
+	Dccache_t	*dcca = NULL;
 	SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
-	SFMTXENTER(f, NIL(Sfdisc_t*));
+	SFMTXENTER(f, NULL);
 
 	if((Sfio_t*)disc == f) /* special case to get the top discipline */
 		SFMTXRETURN(f,f->disc);
@@ -127,15 +127,15 @@ Sfdisc_t*	disc;
 	if((f->flags&SF_READ) && f->proc && (f->mode&SF_WRITE) )
 	{	/* make sure in read mode to check for read-ahead data */
 		if(_sfmode(f,SF_READ,0) < 0)
-			SFMTXRETURN(f, NIL(Sfdisc_t*));
+			SFMTXRETURN(f, NULL);
 	}
 	else
 	{	if((f->mode&SF_RDWR) != f->mode && _sfmode(f,0,0) < 0)
-			SFMTXRETURN(f, NIL(Sfdisc_t*));
+			SFMTXRETURN(f, NULL);
 	}
 
 	SFLOCK(f,0);
-	rdisc = NIL(Sfdisc_t*);
+	rdisc = NULL;
 
 	/* disallow popping while there is cached data */
 	if(!disc && f->disc && f->disc->disc && f->disc->disc->readf == _dccaread )
@@ -187,7 +187,7 @@ Sfdisc_t*	disc;
 	/* save old readf, writef, and seekf to see if stream need reinit */
 #define GETDISCF(func,iof,type) \
 	{ for(d = f->disc; d && !d->iof; d = d->disc) ; \
-	  func = d ? d->iof : NIL(type); \
+	  func = d ? d->iof : NULL; \
 	}
 	GETDISCF(oreadf,readf,Sfread_f);
 	GETDISCF(owritef,writef,Sfwrite_f);
@@ -238,7 +238,7 @@ Sfdisc_t*	disc;
 	if(!(f->flags&SF_STRING) )
 	{	/* this stream may have to be reinitialized */
 		reg int	reinit = 0;
-#define DISCF(dst,iof,type)	(dst ? dst->iof : NIL(type)) 
+#define DISCF(dst,iof,type)	(dst ? dst->iof : NULL) 
 #define REINIT(oiof,iof,type) \
 		if(!reinit) \
 		{	for(d = f->disc; d && !d->iof; d = d->disc) ; \
@@ -254,9 +254,9 @@ Sfdisc_t*	disc;
 		{	SETLOCAL(f);
 			f->bits &= ~SF_NULL;	/* turn off /dev/null handling */
 			if((f->bits&SF_MMAP) || (f->mode&SF_INIT))
-				sfsetbuf(f,NIL(Void_t*),(size_t)SF_UNBOUND);
+				sfsetbuf(f,NULL,(size_t)SF_UNBOUND);
 			else if(f->data == f->tiny)
-				sfsetbuf(f,NIL(Void_t*),0);
+				sfsetbuf(f,NULL,0);
 			else
 			{	int	flags = f->flags;
 				sfsetbuf(f,(Void_t*)f->data,f->size);

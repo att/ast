@@ -94,7 +94,6 @@ typedef union _body_u	Body_t;	/* the body of a memory block when free	*/
 typedef struct _block_s	Block_t; /* the type of a memory block		*/
 typedef struct _seg_s	Seg_t;	/* the type of a raw memory segment	*/
 
-#define NIL(t)		((t)0)
 #if __STD_C
 #define NOTUSED(x)	(void)(x)
 #else
@@ -176,9 +175,9 @@ extern void		_vmmessage _ARG_((const char*, long, const char*, long));
 #define VMBOUNDARIES()	(_Vmmemaddr ? 0 : _vmboundaries())
 
 /* get file name and line number recorded in region */
-#define VMFLF(vm,fi,ln,fn)	((fi) = (vm)->file, (vm)->file = NIL(char*), \
+#define VMFLF(vm,fi,ln,fn)	((fi) = (vm)->file, (vm)->file = NULL, \
 		 		 (ln) = (vm)->line, (vm)->line = 0 , \
-		 		 (fn) = (vm)->func, (vm)->func = NIL(Void_t*) )
+		 		 (fn) = (vm)->func, (vm)->func = NULL )
 
 /* local recursive calls */
 #define KPVALLOC(vm,sz,func)		(func((vm),(sz),1) )

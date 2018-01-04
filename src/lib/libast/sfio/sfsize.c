@@ -80,7 +80,7 @@ Sfio_t*	f;
 	{	/* buffered data is known to be invalid */
 		if((f->bits&SF_MMAP) && f->data)
 		{	SFMUNMAP(f,f->data,f->endb-f->data);
-			f->data = NIL(uchar*);
+			f->data = NULL;
 		}
 		f->next = f->endb = f->endr = f->endw = f->data;
 	}

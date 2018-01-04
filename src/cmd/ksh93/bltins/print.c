@@ -324,7 +324,7 @@ skip2:
 	{
 		sh_onstate(shp,SH_NOTRACK);
 		n = SF_WRITE|((n&IOREAD)?SF_READ:0);
-		shp->sftable[fd] = outfile = sfnew(NIL(Sfio_t*),shp->outbuff,IOBSIZE,fd,n);
+		shp->sftable[fd] = outfile = sfnew(NULL,shp->outbuff,IOBSIZE,fd,n);
 		sh_offstate(shp,SH_NOTRACK);
 		sfpool(outfile,shp->outpool,SF_WRITE);
 	}
@@ -342,7 +342,7 @@ printv:
 		pdata.hdr.extf = extend;
 		pdata.nextarg = argv;
 		sh_offstate(shp,SH_STOPOK);
-		pool=sfpool(sfstderr,NIL(Sfio_t*),SF_WRITE);
+		pool=sfpool(sfstderr,NULL,SF_WRITE);
 		do
 		{
 			if(shp->trapnote&SH_SIGSET)
@@ -1046,7 +1046,7 @@ static int extend(Sfio_t* sp, void* v, Sffmt_t* fe)
 			value->s = fmttmx(fe->t_str, value->ll);
 			fe->t_str[fe->n_str] = n;
 		}
-		else value->s = fmttmx(NIL(char*), value->ll);
+		else value->s = fmttmx(NULL, value->ll);
 		fe->fmt = 's';
 		fe->size = -1;
 		break;

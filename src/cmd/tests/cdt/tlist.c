@@ -21,8 +21,8 @@
 
 Dtdisc_t Disc =
 	{ 0, sizeof(long), -1,
-	  newint, NIL(Dtfree_f), compare, hashint,
-	  NIL(Dtmemory_f), NIL(Dtevent_f)
+	  newint, NULL, compare, hashint,
+	  NULL, NULL
 	};
 
 tmain()

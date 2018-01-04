@@ -48,10 +48,10 @@ unsigned long	version;
 	int		ev, type;
 
 	if(!disc || !meth)
-		return NIL(Dt_t*);
+		return NULL;
 
-	dt = NIL(Dt_t*);
-	data = NIL(Dtdata_t*);
+	dt = NULL;
+	data = NULL;
 	type = meth->type;
 
 	memset(&pdt, 0, sizeof(Dt_t));
@@ -61,12 +61,12 @@ unsigned long	version;
 
 	if(disc->eventf)
 	{	if((ev = (*disc->eventf)(&pdt,DT_OPEN,(Void_t*)(&data),disc)) < 0)
-			return NIL(Dt_t*); /* something bad happened */
+			return NULL; /* something bad happened */
 		else if(ev > 0)
 		{	if(data) /* shared data are being restored */
 			{	if((data->type & DT_METHODS) != meth->type)
 				{	DTERROR(&pdt, "Error in matching methods to restore dictionary");
-					return NIL(Dt_t*);
+					return NULL;
 				}
 				pdt.data = data;
 			}
@@ -78,17 +78,17 @@ unsigned long	version;
 	}
 
 	if(!pdt.data) /* allocate method-specific data */
-		if((*meth->eventf)(&pdt, DT_OPEN, NIL(Void_t*)) < 0 || !pdt.data )
-			return NIL(Dt_t*);
+		if((*meth->eventf)(&pdt, DT_OPEN, NULL) < 0 || !pdt.data )
+			return NULL;
 	pdt.data->type |= type;
 
 	/* now allocate/initialize the actual dictionary structure */
 	if(pdt.data->type&DT_INDATA)
 		dt = &pdt.data->dict;
 	else if(!(dt = (Dt_t*) malloc(sizeof(Dt_t))) )
-	{	(void)(*meth->eventf)(&pdt, DT_CLOSE, NIL(Void_t*));
+	{	(void)(*meth->eventf)(&pdt, DT_CLOSE, NULL);
 		DTERROR(&pdt, "Error in allocating a new dictionary");
-		return NIL(Dt_t*);
+		return NULL;
 	}
 
 	*dt = pdt;
@@ -125,13 +125,13 @@ Dtlink_t* _dtmake(Dt_t* dt, Void_t* obj, int type)
 
 	/* if obj is a prototype, make a real one */
 	if(!(type&DT_ATTACH) && disc->makef && !(obj = (*disc->makef)(dt, obj, disc)) )
-		return NIL(Dtlink_t*);
+		return NULL;
 
 	if(disc->link >= 0) /* holder is embedded in obj itself */
 		return _DTLNK(disc, obj);
 
 	/* create a holder to hold obj */
-	if((h = (Dthold_t*)(dt->memoryf)(dt, NIL(Void_t*), sizeof(Dthold_t), disc)) )
+	if((h = (Dthold_t*)(dt->memoryf)(dt, NULL, sizeof(Dthold_t), disc)) )
 		h->obj = obj;
 	else
 	{	DTERROR(dt, "Error in allocating an object holder");

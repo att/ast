@@ -30,7 +30,7 @@ static int event(Dt_t* dt, int type, Void_t* obj, Dtdisc_t* disc)
 
 Dtdisc_t Disc =
 {	0, sizeof(long), -1,
-  	newint, NIL(Dtfree_f), compare, hashint, NIL(Dtmemory_f), event
+  	newint, NULL, compare, hashint, NULL, event
 };
 
 tmain()

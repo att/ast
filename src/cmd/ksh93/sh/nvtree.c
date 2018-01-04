@@ -546,7 +546,7 @@ void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
     if (ap) {
         sfputc(out, json ? '[' : '(');
         if (array_elem(ap) == 0) return;
-        if (!(ap->flags & ARRAY_SCAN)) nv_putsub(np, NIL(char *), 0, ARRAY_SCAN);
+        if (!(ap->flags & ARRAY_SCAN)) nv_putsub(np, NULL, 0, ARRAY_SCAN);
         if (indent >= 0) {
             sfputc(out, '\n');
             tabs = 1;
@@ -749,7 +749,7 @@ static void outval(char *name, const char *vname, struct Walk *wp) {
             isarray = 2;
             if (tp && (last_table->nvname[0] != '_' || last_table->nvname[1])) return;
         } else {
-            nq = nv_putsub(np, NIL(char *), 0,
+            nq = nv_putsub(np, NULL, 0,
                            ARRAY_SCAN | (wp->out && !nv_type(np) ? ARRAY_NOCHILD : 0));
         }
     }
@@ -1161,7 +1161,7 @@ void nv_setvtree(Namval_t *np) {
 
     if (shp->subshell) sh_assignok(np, 1);
     if (nv_hasdisc(np, &treedisc)) return;
-    nfp = newof(NIL(void *), Namfun_t, 1, sizeof(void *));
+    nfp = newof(NULL, Namfun_t, 1, sizeof(void *));
     *(void **)(nfp + 1) = 0;
     nfp->disc = &treedisc;
     nfp->dsize = sizeof(Namfun_t);

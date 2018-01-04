@@ -45,11 +45,11 @@ Vmdisc_t*	disc;	/* discipline structure			*/
 	Drvdisc_t	*drvdc = (Drvdisc_t*)disc;
 
 	if(csize == 0 && nsize == 0)
-		return NIL(Void_t*);
+		return NULL;
 	else if(csize == 0)
 		return vmalloc(drvdc->vm, nsize);
 	else if(nsize == 0)
-		return vmfree(drvdc->vm, caddr) >= 0 ? caddr : NIL(Void_t*);
+		return vmfree(drvdc->vm, caddr) >= 0 ? caddr : NULL;
 	else	return vmresize(drvdc->vm, caddr, nsize, 0);
 }
 
@@ -73,7 +73,7 @@ Vmdisc_t* vmdcderive(Vmalloc_t* vm, ssize_t round, int heap)
 	Drvdisc_t	*drvdc;
 
 	if(!(drvdc= vmalloc(heap ? Vmheap : vm, sizeof(Drvdisc_t))) )
-		return NIL(Vmdisc_t*);
+		return NULL;
 	drvdc->disc.memoryf = drvgetmem;
 	drvdc->disc.exceptf = drvexcept;
 	drvdc->disc.round   = round;

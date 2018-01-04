@@ -26,7 +26,7 @@ tmain()
 	int	i, n;
 	char	buf[16*1024];
 
-	if(!(f = sfopen(NIL(Sfio_t*), tstfile("sf", 0), "w+") ) )
+	if(!(f = sfopen(NULL, tstfile("sf", 0), "w+") ) )
 		terror("Can't open file");
 
 	if(sfnputc(f,'a',1000) != 1000)
@@ -38,7 +38,7 @@ tmain()
 	if((n = (int)sfsize(f)) != 1000)
 		terror("Wrong size %d", n);
 
-	if(!(f2 = sfnew(NIL(Sfio_t*),NIL(Void_t*),(size_t)SF_UNBOUND,
+	if(!(f2 = sfnew(NULL,NULL,(size_t)SF_UNBOUND,
 			sffileno(f),SF_WRITE)) )
 		terror("Can't open stream");
 
@@ -57,7 +57,7 @@ tmain()
 	if((n = (int)sfsize(f)) != 2000)
 		terror("Wrong size4 %d", n);
 
-	if(!(f = sfopen(f,NIL(char*),"srw")) )
+	if(!(f = sfopen(f,NULL,"srw")) )
 		terror("Can't open string stream");
 
 	sfwrite(f,"0123456789",10);

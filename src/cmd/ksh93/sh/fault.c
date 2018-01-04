@@ -503,7 +503,7 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
         sh_offstate(shp, SH_STOPOK);
         shp->trapnote = 0;
         shp->forked = 1;
-        if (!shp->subshell && (sig = sh_fork(shp, 0, NIL(int *)))) {
+        if (!shp->subshell && (sig = sh_fork(shp, 0, NULL))) {
             job.curpgid = 0;
             job.parent = (pid_t)-1;
             job_wait(sig);
@@ -532,7 +532,7 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
 #endif /* SIGTSTP */
     // Unlock output pool.
     sh_offstate(shp, SH_NOTRACK);
-    if (!(pool = sfpool(NIL(Sfio_t *), shp->outpool, SF_WRITE)))
+    if (!(pool = sfpool(NULL, shp->outpool, SF_WRITE)))
         pool = shp->outpool;  // can't happen?
     sfclrlock(pool);
 #ifdef SIGPIPE
@@ -595,7 +595,7 @@ void sh_done(void *ptr, int sig) {
 #ifdef JOBS
     if ((sh_isoption(shp, SH_INTERACTIVE) && shp->login_sh) ||
         (!sh_isoption(shp, SH_INTERACTIVE) && (sig == SIGHUP)))
-        job_walk(shp, sfstderr, job_terminate, SIGHUP, NIL(char **));
+        job_walk(shp, sfstderr, job_terminate, SIGHUP, NULL);
 #endif  // JOBS
     job_close(shp);
     if (shp->var_tree && nv_search("VMTRACE", shp->var_tree, 0)) strmatch((char *)0, (char *)0);
@@ -763,7 +763,7 @@ int sh_trap_20120720(Shell_t *shp, const char *trap, int mode) {
             if (mode) {
                 sp = (Sfio_t *)trap;
             } else {
-                sp = sfopen(NIL(Sfio_t *), trap, "s");
+                sp = sfopen(NULL, trap, "s");
             }
             sh_eval(shp, sp, 0);
         }

@@ -47,7 +47,7 @@ Sfdisc_t*	disc;
 	if(*((char*)buf + n-1) != '\n')
 		terror("Not writing a whole record");
 
-	sf = sfnew(NIL(Sfio_t*),(Void_t*)buf,n,-1,SF_STRING|SF_READ);
+	sf = sfnew(NULL,(Void_t*)buf,n,-1,SF_STRING|SF_READ);
 	while((s = sfgetr(sf,'\n',0)) )
 	{	w = sfvalue(sf)-1;
 		if(s[0] != s[w-1]-1)
@@ -92,12 +92,12 @@ tmain()
 
 	/* create file */
 	file = tstfile("sf", 0);
-	if(!(f = sfopen(NIL(Sfio_t*),file,"w+")) )
+	if(!(f = sfopen(NULL,file,"w+")) )
 		terror("Opening temporary file %s", file);
 
 	/* open file for appending */
 	for(i = 0; i < N_PROC; ++i)
-		if(!(fa[i] = sfopen(NIL(Sfio_t*), file, "a")) )
+		if(!(fa[i] = sfopen(NULL, file, "a")) )
 			terror("Open %s to append", file);
 
 	/* fork processes */

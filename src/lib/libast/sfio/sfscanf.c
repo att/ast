@@ -66,7 +66,7 @@ va_list	args;
 		return -1;
 
 	/* make a fake stream */
-	SFCLEAR(&f,NIL(Vtmutex_t*));
+	SFCLEAR(&f,NULL);
 	f.flags = SF_STRING|SF_READ;
 	f.bits = SF_PRIVATE;
 	f.mode = SF_READ;

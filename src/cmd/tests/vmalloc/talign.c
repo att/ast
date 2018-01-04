@@ -35,7 +35,7 @@ Vmdisc_t*	dc;
 	return ns <= sizeof(Mem) ? (Void_t*)Mem : (Void_t*)0;
 }
 
-static Vmdisc_t Disc = { alignmem, NIL(Vmexcept_f), 10*1024};
+static Vmdisc_t Disc = { alignmem, NULL, 10*1024};
 
 tmain()
 {

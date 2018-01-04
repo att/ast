@@ -21,8 +21,8 @@
 
 Dtdisc_t Disc =
 	{ 0, sizeof(long), -1,
-	  newint, NIL(Dtfree_f), compare, hashint,
-	  NIL(Dtmemory_f), NIL(Dtevent_f)
+	  newint, NULL, compare, hashint,
+	  NULL, NULL
 	};
 
 tmain()
@@ -60,17 +60,17 @@ tmain()
 	if((long)dtprev(dt,1L) != 0)
 		terror("Dtqueue dtprev 1");
 
-	if((long)dtdelete(dt,NIL(Void_t*)) != 1)
+	if((long)dtdelete(dt,NULL) != 1)
 		terror("Dtqueue pop 1");
-	if((long)dtdelete(dt,NIL(Void_t*)) != 3)
+	if((long)dtdelete(dt,NULL) != 3)
 		terror("Dtqueue delete 3.1");
-	if((long)dtdelete(dt,NIL(Void_t*)) != 2)
+	if((long)dtdelete(dt,NULL) != 2)
 		terror("Dtqueue delete 2");
-	if((long)dtdelete(dt,NIL(Void_t*)) != 3)
+	if((long)dtdelete(dt,NULL) != 3)
 		terror("Dtqueue delete 3.2");
-	if((long)dtdelete(dt,NIL(Void_t*)) != 2)
+	if((long)dtdelete(dt,NULL) != 2)
 		terror("Dtqueue delete 2.1");
-	if((long)dtdelete(dt,NIL(Void_t*)) != 3)
+	if((long)dtdelete(dt,NULL) != 3)
 		terror("Dtqueue delete 3.3");
 
 	if(dtsize(dt) != 0)

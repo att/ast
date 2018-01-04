@@ -90,7 +90,7 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 				pbuf.flags = 0;
 				pbuf.ctlbuf.maxlen = -1;
 				pbuf.ctlbuf.len = 0;
-				pbuf.ctlbuf.buf = NIL(char*);
+				pbuf.ctlbuf.buf = NULL;
 				pbuf.databuf.maxlen = n;
 				pbuf.databuf.buf = buf;
 				pbuf.databuf.len = 0;
@@ -154,13 +154,13 @@ int	action;	/* >0: peeking, if rc>=0, get action records,
 				FD_ZERO(&rd);
 				FD_SET(fd,&rd);
 				if(tm < 0)
-					tmp = NIL(struct timeval*);
+					tmp = NULL;
 				else
 				{	tmp = &tmb;
 					tmb.tv_sec = tm/SECOND;
 					tmb.tv_usec = (tm%SECOND)*SECOND;
 				}
-				r = select(fd+1,&rd,NIL(fd_set*),NIL(fd_set*),tmp);
+				r = select(fd+1,&rd,NULL,NULL,tmp);
 				if(r < 0)
 				{	if(errno == EINTR)
 						return -1;

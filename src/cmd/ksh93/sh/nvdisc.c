@@ -38,7 +38,7 @@ char *nv_getv(Namval_t *np, Namfun_t *nfp) {
     Namfun_t *fp;
     char *cp;
 
-    if ((fp = nfp) != NIL(Namfun_t *) && !nv_local) fp = nfp = nfp->next;
+    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
     nv_local = 0;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
@@ -65,7 +65,7 @@ Sfdouble_t nv_getn(Namval_t *np, Namfun_t *nfp) {
     Shell_t *shp = sh_ptr(np);
     char *str;
 
-    if ((fp = nfp) != NIL(Namfun_t *) && !nv_local) fp = nfp = nfp->next;
+    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
     nv_local = 0;
     for (; fp; fp = fp->next) {
         if (!fp->disc || (!fp->disc->getnum && !fp->disc->getval)) continue;
@@ -101,7 +101,7 @@ void nv_putv(Namval_t *np, const char *value, int flags, Namfun_t *nfp) {
     Namfun_t *fp, *fpnext;
     Namarr_t *ap;
 
-    if ((fp = nfp) != NIL(Namfun_t *) && !nv_local) fp = nfp = nfp->next;
+    if ((fp = nfp) != NULL && !nv_local) fp = nfp = nfp->next;
     nv_local = 0;
     if (flags & NV_NODISC) fp = 0;
     for (; fp; fp = fpnext) {
@@ -197,7 +197,7 @@ static void chktfree(Namval_t *np, struct vardisc *vp) {
     if (n >= sizeof(vp->disc) / sizeof(*vp->disc)) {
         // No disc left so pop.
         Namfun_t *fp;
-        if ((fp = nv_stack(np, NIL(Namfun_t *))) && !(fp->nofree & 1)) free((void *)fp);
+        if ((fp = nv_stack(np, NULL)) && !(fp->nofree & 1)) free((void *)fp);
     }
 }
 
@@ -424,7 +424,7 @@ char *nv_setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp
     if (!vp) {
         Namdisc_t *dp;
         if (action == np) return ((char *)action);
-        if (!(vp = newof(NIL(struct vardisc *), struct vardisc, 1, sizeof(Namdisc_t)))) return (0);
+        if (!(vp = newof(NULL, struct vardisc, 1, sizeof(Namdisc_t)))) return (0);
         dp = (Namdisc_t *)(vp + 1);
         vp->fun.disc = dp;
         memset(dp, 0, sizeof(*dp));
@@ -531,7 +531,7 @@ Namfun_t *nv_clone_disc(Namfun_t *fp, int flags) {
 
     if (!fp->disc && !fp->next && (fp->nofree & 1)) return (fp);
     if (!(size = fp->dsize) && (!fp->disc || !(size = fp->disc->dsize))) size = sizeof(Namfun_t);
-    if (!(nfp = newof(NIL(Namfun_t *), Namfun_t, 1, size - sizeof(Namfun_t)))) return (0);
+    if (!(nfp = newof(NULL, Namfun_t, 1, size - sizeof(Namfun_t)))) return (0);
     memcpy(nfp, fp, size);
     nfp->nofree &= ~1;
     nfp->nofree |= (flags & NV_RDONLY) ? 1 : 0;
@@ -546,7 +546,7 @@ bool nv_adddisc(Namval_t *np, const char **names, Namval_t **funs) {
     if (av) {
         while (*av++) n++;
     }
-    if (!(vp = newof(NIL(Nambfun_t *), Nambfun_t, 1, n * sizeof(Namval_t *)))) return (false);
+    if (!(vp = newof(NULL, Nambfun_t, 1, n * sizeof(Namval_t *)))) return (false);
     vp->fun.dsize = sizeof(Nambfun_t) + n * sizeof(Namval_t *);
     vp->fun.nofree |= 2;
     vp->num = n;

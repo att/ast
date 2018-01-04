@@ -67,15 +67,15 @@ static char beenhere = 0;
 #ifdef _lib_sigvec
 void clearsigmask(int sig) {
     struct sigvec vec;
-    if (sigvec(sig, NIL(struct sigvec *), &vec) >= 0 && vec.sv_mask) {
+    if (sigvec(sig, NULL, &vec) >= 0 && vec.sv_mask) {
         vec.sv_mask = 0;
-        sigvec(sig, &vec, NIL(struct sigvec *));
+        sigvec(sig, &vec, NULL);
     }
 }
 #endif  // _lib_sigvec
 
 #ifdef PATH_BFPATH
-#define PATHCOMP NIL(Pathcomp_t *)
+#define PATHCOMP NULL
 #else
 #define PATHCOMP ""
 #endif
@@ -248,7 +248,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         // Open input file if specified.
         if (shp->comdiv) {
         shell_c:
-            iop = sfnew(NIL(Sfio_t *), shp->comdiv, strlen(shp->comdiv), 0, SF_STRING | SF_READ);
+            iop = sfnew(NULL, shp->comdiv, strlen(shp->comdiv), 0, SF_STRING | SF_READ);
         } else {
             name = error_info.id;
             error_info.id = shp->shname;
@@ -296,11 +296,11 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     sp = 0;
                     if (fdin < 0 && !strchr(name, '/')) {
 #ifdef PATH_BFPATH
-                        if (path_absolute(shp, name, NIL(Pathcomp_t *))) {
+                        if (path_absolute(shp, name, NULL)) {
                             sp = stkptr(shp->stk, PATH_OFFSET);
                         }
 #else
-                        sp = path_absolute(shp, name, NIL(char *));
+                        sp = path_absolute(shp, name, NULL);
 #endif
                         if (sp) {
                             if ((fdin = sh_open(sp, O_RDONLY, 0)) >= 0) {
@@ -446,7 +446,7 @@ static void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     while (1) {
         shp->nextprompt = 1;
         sh_freeup(shp);
-        stkset(shp->stk, NIL(char *), 0);
+        stkset(shp->stk, NULL, 0);
         sh_offstate(shp, SH_STOPOK);
         sh_offstate(shp, SH_ERREXIT);
         sh_offstate(shp, SH_VERBOSE);

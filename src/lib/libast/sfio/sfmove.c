@@ -45,7 +45,7 @@ reg int		rc;	/* record separator */
 	reg uchar	*endb;
 	reg int		direct;
 	Sfoff_t		n_move, sk, cur;
-	uchar		*rbuf = NIL(uchar*);
+	uchar		*rbuf = NULL;
 	ssize_t		rsize = 0;
 	SFMTXDECL(fr);	/* declare a shadow stream variable for from stream */
 	SFMTXDECL2(fw);	/* declare a shadow stream variable for to stream */

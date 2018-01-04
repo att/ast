@@ -123,7 +123,7 @@ tmain()
 				terror("%s: dtatleast (key=%d) but ord=%d > 0", name, o->key, o->ord);
 
 			n_obj = 0; /* test ordering */
-			for(p = NIL(Obj_t*), o = dtfirst(dt); o; p = o, o = dtnext(dt,o) )
+			for(p = NULL, o = dtfirst(dt); o; p = o, o = dtnext(dt,o) )
 			{	n_obj += 1;
 				if(p && p->ord > o->ord)
 					terror("%s: objects not ordered correctly p=%d > o=%d",
@@ -154,7 +154,7 @@ tmain()
 				terror("%s: dtatleast/dtprev count n_obj=%d != %d", name, n_obj, R_OBJ);
 
 			n_obj = 0; /* test linear order */
-			for(p = NIL(Obj_t*), o = dtfirst(dt); o; p = o, o = dtnext(dt,o) )
+			for(p = NULL, o = dtfirst(dt); o; p = o, o = dtnext(dt,o) )
 			{	n_obj += 1;
 				if(p && p->key > o->key)
 					terror("%s: objects not ordered correctly p=%d > o=%d",
@@ -206,11 +206,11 @@ tmain()
 			else	terror("%s: dtremove (key=%d,ord=%d) wrongly yielded (key=%d,ord=%d)",
 					name, obj->key, obj->ord, o->key, o->ord);
 
-			if((o = dtremove(dt, obj)) != NIL(Obj_t*) )
+			if((o = dtremove(dt, obj)) != NULL )
 				terror("%s: dtremove (key=%d,ord=%d) wrongly yielded (key=%d,ord=%d)",
 					name, obj->key, obj->ord, o->key, o->ord);
 
-			if((o = dtdelete(dt, obj)) != NIL(Obj_t*) )
+			if((o = dtdelete(dt, obj)) != NULL )
 				n_mid += 1;
 			else	terror("%s: dtdelete matching object to (key=%d,ord=%d) failed",
 					name, obj->key, obj->ord);

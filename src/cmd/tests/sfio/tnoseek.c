@@ -69,7 +69,7 @@ tmain()
 		terror("Can't write");
 	if(sfwrite(sfstdout,"123\n",4) != 4)
 		terror("Can't write");
-	if(sfdisc(sfstdout,NIL(Sfdisc_t*)) != &seekable)
+	if(sfdisc(sfstdout,NULL) != &seekable)
 		terror("Can't pop discipline");
 
 	if(buffer != buf || size != 8 || count != 1)

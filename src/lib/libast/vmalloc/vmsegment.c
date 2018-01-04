@@ -49,7 +49,7 @@ static isblock(Vmdata_t* vmdt, Block_t* blk)
 	Seg_t	*seg;
 	Block_t	*bp;
 
-	/**/DEBUG_ASSERT(blk != NIL(Block_t*)); /* find containing segment */
+	/**/DEBUG_ASSERT(blk != NULL); /* find containing segment */
 	for(seg = vmdt->seg; seg; seg = seg->next)
 		if(seg == SEG(blk) )
 			break;
@@ -95,12 +95,12 @@ static Block_t* _vmfreelist(Vmdata_t* vmdt, Void_t* arg, int type)
 	}
 	else /* some sort of deletion */
 	{	do
-		{	for(pb = NIL(Block_t*), bp = vmdt->free; bp; pb = bp, bp = LINK(bp) )
+		{	for(pb = NULL, bp = vmdt->free; bp; pb = bp, bp = LINK(bp) )
 				if((type == DELETE_BLOCK && bp == (Block_t*)arg) ||
 				   (type == DELETE_ENDB && NEXT(bp) == ((Seg_t*)arg)->endb) )
 					break;
 			if(!bp) /* none matches deletion requirement */
-				return NIL(Block_t*);
+				return NULL;
 
 			if(!pb) /* bp should be at head of list */
 				blk = asocasptr(&vmdt->free, bp, LINK(bp));
@@ -127,7 +127,7 @@ void vmclrlock(int all)
 		asosubint(&_Vmsbrklock, _Vmsbrklock);
 
 	for(vh = _Vmhold; ; vh = vh->next)
-	{	if((vm = vh ? vh->vm : Vmheap) == NIL(Vmalloc_t*) )
+	{	if((vm = vh ? vh->vm : Vmheap) == NULL )
 			continue;
 
 		if(threadid)
@@ -176,7 +176,7 @@ Void_t* vmsegfind(Vmalloc_t* vm, Void_t* addr)
 			   (Vmuchar_t*)addr <  ((Vmuchar_t*)seg->base + seg->size) )
 				return (Void_t*)seg->base;
 
-	return NIL(Void_t*);
+	return NULL;
 }
 
 /* lock-less seg initialization with containing region vmdt and actual memory [base,size] */
@@ -265,7 +265,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 	{	heisus = 1; /* we have met the enemy and he is us */
 		if(blk && (type&VM_SEGEXTEND) ) /* no physical extension when he is us */
 		{	if(_Vmassert & VM_debug) debug_printf(2, "%s:%d: VM_SEGEXTEND: %s\n", __FILE__, __LINE__, "we have met the enemy and he is us");
-			RETURN(blk = NIL(Block_t*));
+			RETURN(blk = NULL);
 		}
 		if(_Vmassert & VM_debug) debug_printf(2, "%s:%d: %s\n", __FILE__, __LINE__, "we have met the enemy and he is us");
 	}
@@ -278,7 +278,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 			if(BDSZ(blk) >= size )
 				RETURN(blk);
 			if(NEXT(blk) != ((Seg_t*)SEG(blk))->endb )
-				RETURN(blk = NIL(Block_t*));
+				RETURN(blk = NULL);
 		}
 		else /* see if anything available for requested size */
 		{	for(blk = vmdt->free; blk; blk = LINK(blk))
@@ -291,7 +291,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 		}
 
 		if(!(type&VM_SEGEXTEND) ) /* no physical extension */
-			RETURN(blk = NIL(Block_t*));
+			RETURN(blk = NULL);
 
 		if(blk)
 		{	seg = SEG(blk);
@@ -299,7 +299,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 		}
 		else
 		{	seg = vmdt->seg;
-			blk = seg->iffy ? NIL(Block_t*) : _vmfreelist(vmdt, (Void_t*)seg, DELETE_ENDB);
+			blk = seg->iffy ? NULL : _vmfreelist(vmdt, (Void_t*)seg, DELETE_ENDB);
 			/**/DEBUG_ASSERT(!blk || (SEG(blk) == seg && NEXT(blk) == seg->endb));
 		}
 
@@ -313,7 +313,7 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 				segsz = ROUND(segsz, vmdt->incr);
 				if((sz = segsz - seg->size) <= 0 ) /* wrapped around, not good! */
 				{	seg->iffy = 0;
-					RETURN(blk = NIL(Block_t*));
+					RETURN(blk = NULL);
 				}
 
 				/* Be careful with editing the below section of code. It was written to
@@ -358,21 +358,21 @@ static Block_t* _vmsegalloc(Vmalloc_t* vm, Block_t* blk, ssize_t size, int type)
 	if((sz = blk ? BDSZ(blk) : 0) < size ) /* must make a new segment */
 	{	if(blk)
 		{	if(SIZE(blk)&BUSY ) /* unextensible busy block */
-				RETURN(blk = NIL(Block_t*));
+				RETURN(blk = NULL);
 
 			_vmfreelist(vmdt, (Void_t*)blk, INSERT_BLOCK);
-			blk = NIL(Block_t*);
+			blk = NULL;
 		}
 
 		/* make sure that new segment size isn't too large to wrap around */
 		segsz = size + sizeof(Seg_t) + sizeof(Block_t) + Segunit;
 		if(segsz <= size || (segsz = ROUND(segsz,vmdt->incr)) <= size)
-			RETURN(blk = NIL(Block_t*)); /* did wrap around */
+			RETURN(blk = NULL); /* did wrap around */
 
-		if(!(base = (Vmuchar_t*)(*disc->memoryf)(vm, NIL(Void_t*), 0, segsz, disc)) )
+		if(!(base = (Vmuchar_t*)(*disc->memoryf)(vm, NULL, 0, segsz, disc)) )
 		{	if(disc->exceptf) /* announce that no more memory is available */
 				(void)(*disc->exceptf)(vm, VM_NOMEM, (Void_t*)segsz, disc);
-			RETURN(blk = NIL(Block_t*));
+			RETURN(blk = NULL);
 		}
 
 		/* segment must start at an aligned address */
@@ -499,8 +499,8 @@ Vmextern_t	_Vmextern =
 	_vmstrcpy,								/* _Vmstrcpy	*/
 	_vmitoa,								/* _Vmitoa	*/
 	_vmlcm,									/* _Vmlcm	*/
-	NIL(void(*)_ARG_((Vmalloc_t*, Vmuchar_t*,Vmuchar_t*,size_t,size_t))),	/* _Vmtrace	*/
-	NIL(int(*)_ARG_((Vmuchar_t*,size_t))),					/* _Vmchkmem	*/
+	NULL, /* _Vmtrace	*/
+	NULL, /* _Vmchkmem	*/
 	0,									/* _Vmmemmin	*/
 	0,									/* _Vmmemmax	*/
 	0,									/* _Vmmemaddr	*/
