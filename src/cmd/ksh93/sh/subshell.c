@@ -329,7 +329,7 @@ static void nv_restore(struct subshell *sp) {
         if (nv_isattr(mp, NV_EXPORT)) {
             char *name = nv_name(mp);
             sh_envput(sp->shp, mp);
-            if (*name == '_' && strcmp(name, "_AST_FEATURES") == 0) astconf(NiL, NiL, NiL);
+            if (*name == '_' && strcmp(name, "_AST_FEATURES") == 0) astconf(NULL, NULL, NULL);
         } else if (nv_isattr(np, NV_EXPORT)) {
             env_delete(sp->shp->env, nv_name(mp));
         }

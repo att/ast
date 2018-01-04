@@ -178,7 +178,7 @@ bool sh_iovalidfd(Shell_t *shp, int fd) {
 
     if (fd < 0) return false;
     if (fd < shp->gd->lim.open_max) return true;
-    max = strtol(astconf("OPEN_MAX", NiL, NiL), NiL, 0);
+    max = strtol(astconf("OPEN_MAX", NULL, NULL), NULL, 0);
     if (fd >= max) {
         errno = EBADF;
         return false;
@@ -222,7 +222,7 @@ void sh_ioinit(Shell_t *shp) {
     sh_iostream(shp, 1, 1);
     sh_iostream(shp, 2, 2);
     // All write steams are in the same pool and share outbuff.
-    shp->outpool = sfopen(NIL(Sfio_t *), NIL(char *), "sw");  // pool identifier
+    shp->outpool = sfopen(NULL, NULL, "sw");  // pool identifier
     shp->outbuff = (char *)malloc(IOBSIZE + 4);
     shp->errbuff = (char *)malloc(IOBSIZE / 4);
     sfsetbuf(sfstderr, shp->errbuff, IOBSIZE / 4);
@@ -262,7 +262,7 @@ static int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
                     active = 1;
                     ((struct checkpt *)shp->jmplist)->mode = 0;
                     sfpurge(iop);
-                    sfpool(iop, NIL(Sfio_t *), SF_WRITE);
+                    sfpool(iop, NULL, SF_WRITE);
                     errno = save;
                     errormsg(SH_DICT, ERROR_system(1), e_badwrite, sffileno(iop));
                     active = 0;
@@ -488,7 +488,7 @@ int sh_open(const char *path, int flags, ...) {
     }
 #endif
 #ifdef PATH_DEV
-    if (flags == O_NONBLOCK) return pathopen(AT_FDCWD, path, NiL, 0, PATH_DEV, flags, mode) > 0;
+    if (flags == O_NONBLOCK) return pathopen(AT_FDCWD, path, NULL, 0, PATH_DEV, flags, mode) > 0;
 #endif
     fd = open(path, flags, mode);
 #ifndef PATH_DEV
@@ -715,8 +715,8 @@ static Sfoff_t file_offset(Shell_t *shp, int fd, char *fname) {
     if (pp) nv_stack(pp, &endf.hdr);
     if (sp) sfsync(sp);
     off = sh_strnum(shp, fname, &cp, 0);
-    if (mp) nv_stack(mp, NiL);
-    if (pp) nv_stack(pp, NiL);
+    if (mp) nv_stack(mp, NULL);
+    if (pp) nv_stack(pp, NULL);
     return *cp ? (Sfoff_t)-1 : off;
 }
 
@@ -1056,7 +1056,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     } else if (sp = shp->sftable[dupfd]) {
                         char *tmpname;
                         if ((sfset(sp, 0, 0) & SF_STRING) &&
-                            (tmpname = pathtemp(NiL, NiL, NiL, "sf", &f))) {
+                            (tmpname = pathtemp(NULL, NULL, NULL, "sf", &f))) {
                             Sfoff_t last = sfseek(sp, (Sfoff_t)0, SEEK_END);
 
                             unlink(tmpname);
@@ -1094,7 +1094,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     r = (int)(sfseek(sp, (Sfoff_t)0, SEEK_END) - off);
                     sfseek(sp, off, SEEK_SET);
                     fd = shp->gd->lim.open_max - 1;
-                    shp->sftable[fd] = sfnew(NIL(Sfio_t *), cp, r, -1, SF_READ | SF_STRING);
+                    shp->sftable[fd] = sfnew(NULL, cp, r, -1, SF_READ | SF_STRING);
                     shp->fdstatus[fd] = shp->fdstatus[dupfd];
                 } else if (vex && toclose >= 0) {
                     indx = spawnvex_add(vp, dupfd, -1, 0, 0);
@@ -1556,7 +1556,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         if (!savestr) sfsync(sp);
         if (origfd <= 2) {
             // Copy standard stream to new stream.
-            sp = sfswap(sp, NIL(Sfio_t *));
+            sp = sfswap(sp, NULL);
             shp->sftable[savefd] = sp;
         } else {
             shp->sftable[origfd] = 0;
@@ -1910,7 +1910,7 @@ int sh_iocheckfd(Shell_t *shp, int fd, int fn) {
             null_dev = statb.st_dev;
         }
         if (tty_check(fd)) n |= IOTTY;
-        if (lseek(fd, NIL(off_t), SEEK_CUR) < 0) {
+        if (lseek(fd, NULL, SEEK_CUR) < 0) {
             n |= IONOSEEK;
 #ifdef S_ISSOCK
             if ((fstat(fd, &statb) >= 0) && S_ISSOCK(statb.st_mode)) {
@@ -2114,10 +2114,10 @@ Sfio_t *sh_sfeval(char *argv[]) {
     } else {
         cp = argv[0];
     }
-    iop = sfopen(NIL(Sfio_t *), (char *)cp, "s");
+    iop = sfopen(NULL, (char *)cp, "s");
     if (argv[1]) {
         struct eval *ep;
-        if (!(ep = new_of(struct eval, 0))) return (NIL(Sfio_t *));
+        if (!(ep = new_of(struct eval, 0))) return NULL;
         ep->disc = eval_disc;
         ep->argv = argv;
         ep->slen = -1;
@@ -2166,7 +2166,7 @@ static int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
 static Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
     struct subfile *disp;
 
-    if (sfseek(sp, offset, SEEK_SET) < 0) return (NIL(Sfio_t *));
+    if (sfseek(sp, offset, SEEK_SET) < 0) return NULL;
     if (!(disp = (struct subfile *)malloc(sizeof(struct subfile) + IOBSIZE + 1))) {
         return NULL;
     }
@@ -2174,7 +2174,7 @@ static Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
     disp->oldsp = sp;
     disp->offset = offset;
     disp->size = disp->left = size;
-    sp = sfnew(NIL(Sfio_t *), (char *)(disp + 1), IOBSIZE, PSEUDOFD, SF_READ);
+    sp = sfnew(NULL, (char *)(disp + 1), IOBSIZE, PSEUDOFD, SF_READ);
     sfdisc(sp, &disp->disc);
     return sp;
 }

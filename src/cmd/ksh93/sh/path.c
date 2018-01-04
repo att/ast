@@ -194,7 +194,7 @@ char *path_pwd(Shell_t *shp, int flag) {
                 break;
             }
             case 3: {
-                cp = getcwd(NIL(char *), 0);
+                cp = getcwd(NULL, 0);
                 if (cp) {
                     nv_offattr(PWDNOD, NV_NOFREE);
                     _nv_unset(PWDNOD, 0);
@@ -373,7 +373,7 @@ static void path_init(Shell_t *shp) {
     const char *val;
     Pathcomp_t *pp;
 
-    if (!std_path && !(std_path = astconf("PATH", NIL(char *), NIL(char *)))) std_path = e_defpath;
+    if (!std_path && !(std_path = astconf("PATH", NULL, NULL))) std_path = e_defpath;
     val = sh_scoped(shp, (PATHNOD))->nvalue.cp;
     if (val) {
         shp->pathlist = pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
@@ -510,7 +510,7 @@ static void funload(Shell_t *shp, int fno, const char *name) {
     shp->st.filename = pname;
     shp->funload = 1;
     error_info.line = 0;
-    sh_eval(shp, sfnew(NIL(Sfio_t *), buff, IOBSIZE, fno, SF_READ), SH_FUNEVAL);
+    sh_eval(shp, sfnew(NULL, buff, IOBSIZE, fno, SF_READ), SH_FUNEVAL);
     sh_close(fno);
     shp->readscript = 0;
     if (shp->namespace) {
@@ -570,7 +570,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
             sfputc(shp->stk, 0);
             return false;
         }
-        pp = path_absolute(shp, name, oldpp ? *oldpp : NIL(Pathcomp_t *));
+        pp = path_absolute(shp, name, oldpp ? *oldpp : NULL);
         if (oldpp) *oldpp = pp;
         if (!pp && (np = nv_search(name, shp->fun_tree, 0)) && np->nvalue.ip) return (true);
         if (!pp) *stkptr(shp->stk, PATH_OFFSET) = 0;
@@ -661,7 +661,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 #if SHOPT_DYNAMIC
                 if (np) {
                     addr = (Shbltin_f)np->nvalue.bfp;
-                    if (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NiL)) {
+                    if (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) {
                         return oldpp;
                     }
                 }
@@ -672,7 +672,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
             sfputr(shp->stk, "b_", -1);
             sfputr(shp->stk, name, 0);
             if ((addr = sh_getlib(shp, stkptr(shp->stk, n), oldpp)) &&
-                (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NiL)) &&
+                (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) &&
                 nv_isattr(np, NV_BLTINOPT)) {
                 shp->bltin_dir = 0;
                 return oldpp;
@@ -704,7 +704,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 }
                 if (!strcmp(cp, LIBCMD) &&
                     (addr = (Shbltin_f)dlllook((void *)0, stkptr(shp->stk, n))) &&
-                    (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NiL)) &&
+                    (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) &&
                     nv_isattr(np, NV_BLTINOPT)) {
                 found:
                     if (fp) free(fp);
@@ -712,14 +712,14 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     return oldpp;
                 }
 #ifdef SH_PLUGIN_VERSION
-                if (dll = dllplugin(SH_ID, stkptr(shp->stk, m), NiL, SH_PLUGIN_VERSION, NiL,
-                                    RTLD_LAZY, NiL, 0))
+                if (dll = dllplugin(SH_ID, stkptr(shp->stk, m), NULL, SH_PLUGIN_VERSION, NULL,
+                                    RTLD_LAZY, NULL, 0))
                     sh_addlib(shp, dll, stkptr(shp->stk, m), oldpp);
 #else
 #if (_AST_VERSION >= 20040404)
-                if (dll = dllplug(SH_ID, stkptr(shp->stk, m), NiL, RTLD_LAZY, NiL, 0))
+                if (dll = dllplug(SH_ID, stkptr(shp->stk, m), NULL, RTLD_LAZY, NULL, 0))
 #else
-                if (dll = dllfind(stkptr(shp->stk, m), NiL, RTLD_LAZY, NiL, 0))
+                if (dll = dllfind(stkptr(shp->stk, m), NULL, RTLD_LAZY, NULL, 0))
 #endif
                 {
                     // This detects the 2007-05-11 builtin context change and also the 2008-03-30
@@ -733,9 +733,9 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 }
 #endif
                 if (dll && (addr = (Shbltin_f)dlllook(dll, stkptr(shp->stk, n))) &&
-                    (!(np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), NiL, NiL)) ||
+                    (!(np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), NULL, NULL)) ||
                      np->nvalue.bfp != (Nambfp_f)addr) &&
-                    (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NiL))) {
+                    (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL))) {
                     np->nvenv = dll;
                     goto found;
                 }
@@ -879,8 +879,8 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
         pp = path_get(shp, arg0);
     }
     shp->path_err = ENOENT;
-    sfsync(NIL(Sfio_t *));
-    timerdel(NIL(void *));
+    sfsync(NULL);
+    timerdel(NULL);
     // Find first path that has a library component.
     while (pp && (pp->flags & PATH_SKIP)) pp = pp->next;
     if (pp || slash) do {
@@ -1234,7 +1234,7 @@ void sh_accsusp(void) {
 //
 void sh_accbegin(const char *cmdname) {
     if (SHACCT) {
-        sabuf.ac_btime = time(NIL(time_t *));
+        sabuf.ac_btime = time(NULL);
         before = times(&buffer);
         sabuf.ac_uid = getuid();
         sabuf.ac_gid = getgid();

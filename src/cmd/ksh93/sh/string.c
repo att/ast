@@ -92,7 +92,7 @@ int sh_lookopt(const char *sp, int *invert) {
             tw = t;
             for (;;) {
                 if (!*s || *s == '=') {
-                    if (*s == '=' && !strtol(s + 1, NiL, 0)) no = !no;
+                    if (*s == '=' && !strtol(s + 1, NULL, 0)) no = !no;
                     if (!*t) {
                         *invert ^= no;
                         return tp->sh_number;

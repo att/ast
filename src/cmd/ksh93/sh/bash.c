@@ -226,7 +226,7 @@ int b_shopt(int argc, char *argv[], Shbltin_t *extra) {
         }
     }
 
-    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NIL(char *)));
+    if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     argc -= opt_info.index;
     if (argc == 0) {
         // No args, -s => mask=current options, -u mask=~(current options) else mask=all bits.
@@ -296,7 +296,7 @@ void bash_init(Shell_t *shp, int mode) {
     if (mode > 0) goto reinit;
     if (mode < 0) {  // termination code
         if (sh_isoption(shp, SH_LOGIN_SHELL) && !sh_isoption(shp, SH_POSIX)) {
-            sh_source(shp, NiL, sh_mactry(shp, (char *)e_bash_logout));
+            sh_source(shp, NULL, sh_mactry(shp, (char *)e_bash_logout));
         }
         return;
     }

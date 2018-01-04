@@ -102,7 +102,7 @@ extern char **environ;
 #endif
 
 #ifndef getconf
-#define getconf(x) strtol(astconf(x, NiL, NiL), NiL, 0)
+#define getconf(x) strtol(astconf(x, NULL, NULL), NULL, 0)
 #endif
 
 struct seconds {
@@ -442,7 +442,7 @@ static void put_ifs(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     struct ifs *ifsp = (struct ifs *)fp;
     ifsp->ifsnp = 0;
     if (!val) {
-        fp = nv_stack(np, NIL(Namfun_t *));
+        fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) {
             free((void *)fp);
             fp = 0;
@@ -511,7 +511,7 @@ static void put_seconds(Namval_t *np, const char *val, int flags, Namfun_t *fp) 
     struct tms tp;
     if (!val) {
         nv_putv(np, val, flags, fp);
-        fp = nv_stack(np, NIL(Namfun_t *));
+        fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) free((void *)fp);
         return;
     }
@@ -554,7 +554,7 @@ static void put_rand(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     long n;
 
     if (!val) {
-        fp = nv_stack(np, NIL(Namfun_t *));
+        fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) free((void *)fp);
         _nv_unset(np, 0);
         return;
@@ -607,7 +607,7 @@ static void put_lineno(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     long n;
     Shell_t *shp = sh_ptr(np);
     if (!val) {
-        fp = nv_stack(np, NIL(Namfun_t *));
+        fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) free((void *)fp);
         _nv_unset(np, 0);
         return;
@@ -1240,7 +1240,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     static char *login_files[2];
 
 #if AST_VERSION >= 20130509
-    memfatal(NiL);
+    memfatal(NULL);
 #else
     memfatal();
 #endif
@@ -1349,7 +1349,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 
     // Initialize signal handling.
     sh_siginit(shp);
-    stakinstall(NIL(Stak_t *), nospace);
+    stakinstall(NULL, nospace);
     // Set up memory for name-value pairs.
     shp->init_context = nv_init(shp);
     // Read the environment.
@@ -1372,7 +1372,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         char buff[PATH_MAX + 1];
         shp->gd->shpath = 0;
 #if _AST_VERSION >= 20090202L
-        if ((n = pathprog(NiL, buff, sizeof(buff))) > 0 && n <= sizeof(buff)) {
+        if ((n = pathprog(NULL, buff, sizeof(buff))) > 0 && n <= sizeof(buff)) {
             shp->gd->shpath = strdup(buff);
         }
 #else
@@ -1446,7 +1446,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #if _lib_pathposix
                     char *p;
 
-                    if ((n = pathposix(name, NIL(char *), 0)) > 0 && (p = (char *)malloc(++n))) {
+                    if ((n = pathposix(name, NULL, 0)) > 0 && (p = (char *)malloc(++n))) {
                         pathposix(name, p, n);
                         name = p;
                     } else
@@ -1601,7 +1601,7 @@ int sh_reinit_20120720(Shell_t *shp, char *argv[]) {
     shp->options = opt;
     // Set up new args.
     if (argv) shp->arglist = sh_argcreate(argv);
-    if (shp->arglist) sh_argreset(shp, shp->arglist, NIL(struct dolnod *));
+    if (shp->arglist) sh_argreset(shp, shp->arglist, NULL);
     shp->envlist = 0;
     shp->curenv = 0;
     shp->shname = error_info.id = strdup(shp->st.dolv[0]);

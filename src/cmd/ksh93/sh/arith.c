@@ -651,14 +651,14 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
                     Varsubscript = false;
                     if ((cp[0] == 'i' || cp[0] == 'I') && (cp[1] == 'n' || cp[1] == 'N') &&
                         (cp[2] == 'f' || cp[2] == 'F') && cp[3] == 0) {
-                        Inf = strtold("Inf", NiL);
+                        Inf = strtold("Inf", NULL);
                         Infnod.nvalue.ldp = &Inf;
                         np = &Infnod;
                         np->nvshell = shp;
                         nv_onattr(np, NV_NOFREE | NV_LDOUBLE | NV_RDONLY);
                     } else if ((cp[0] == 'n' || cp[0] == 'N') && (cp[1] == 'a' || cp[1] == 'A') &&
                                (cp[2] == 'n' || cp[2] == 'N') && cp[3] == 0) {
-                        NaN = strtold("NaN", NiL);
+                        NaN = strtold("NaN", NULL);
                         NaNnod.nvalue.ldp = &NaN;
                         np = &NaNnod;
                         np->nvshell = shp;
@@ -781,7 +781,7 @@ static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdoubl
             return r;
         }
         case MESSAGE: {
-            sfsync(NIL(Sfio_t *));
+            sfsync(NULL);
 #if 0
 		if(warn)
 			errormsg(SH_DICT,ERROR_warn(0),lvalue->value,*ptr);
@@ -819,7 +819,7 @@ Sfdouble_t sh_strnum_20120720(Shell_t *shp, const char *str, char **ptr, int mod
         return 0;
     }
     errno = 0;
-    d = number(str, &last, shp->inarith ? 0 : 10, NiL);
+    d = number(str, &last, shp->inarith ? 0 : 10, NULL);
     if (*last) {
         if (*last != '.' || last[1] != '.') {
             d = strval(shp, str, &last, arith, mode);
