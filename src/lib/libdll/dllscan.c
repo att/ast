@@ -100,7 +100,7 @@ dllinfo(void)
 	if (!info.sibling)
 	{
 		info.sibling = info.sib;
-		if (*(s = astconf("LIBPATH", NiL, NiL)))
+		if (*(s = astconf("LIBPATH", NULL, NULL)))
 		{
 			while (*s == ':' || *s == ',')
 				s++;
@@ -132,7 +132,7 @@ dllinfo(void)
 						p = 0;
 					}
 					while (*s && *s++ != ',');
-					if (!*s || !p || !h && !*(h = astconf("HOSTTYPE", NiL, NiL)))
+					if (!*s || !p || !h && !*(h = astconf("HOSTTYPE", NULL, NULL)))
 						break;
 					if (pn >= sizeof(pat))
 						pn = sizeof(pat) - 1;
@@ -159,8 +159,8 @@ dllinfo(void)
 			info.sibling[1] = lib;
 		if (!info.env)
 			info.env = "LD_LIBRARY_PATH";
-		info.prefix = astconf("LIBPREFIX", NiL, NiL);
-		info.suffix = astconf("LIBSUFFIX", NiL, NiL);
+		info.prefix = astconf("LIBPREFIX", NULL, NULL);
+		info.suffix = astconf("LIBSUFFIX", NULL, NULL);
 		if (streq(info.suffix, ".dll"))
 			info.flags |= DLL_INFO_PREVER;
 		else
@@ -521,6 +521,6 @@ dllsread(register Dllscan_t* scan)
 		strcpy(scan->uniq->name, b);
 	scan->entry.name = b;
 	scan->entry.path = p;
-	errorf("dll", NiL, -1, "dllsread: %s bound to %s", b, p);
+	errorf("dll", NULL, -1, "dllsread: %s bound to %s", b, p);
 	return &scan->entry;
 }

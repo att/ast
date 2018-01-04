@@ -116,7 +116,7 @@ sigcritical(int op)
 		if (--level <= 0)
 		{
 			level = 0;
-			sigprocmask(SIG_SETMASK, &mask, NiL);
+			sigprocmask(SIG_SETMASK, &mask, NULL);
 		}
 		return level;
 	}

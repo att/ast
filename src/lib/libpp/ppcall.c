@@ -184,7 +184,7 @@ ppcall(register struct ppsymbol* sym, int tok)
 			for (p = pp.in->nextchr; isspace(*p); p++);
 			if ((c = *p) != '(' && c != '/' && c != 0 && c != MARK)
 				goto disable;
-			old_next = (c == MARK) ? pp.in->nextchr : NiL;
+			old_next = (c == MARK) ? pp.in->nextchr : NULL;
 			old_token = pp.token;
 			mp = pp.macp->next;
 			if ((pp.token = (char*)&mp->arg[mac->arity + 1]) > pp.maxmac)

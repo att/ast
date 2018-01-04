@@ -76,7 +76,7 @@ pathcanon(char* path, int flags)
 char*
 pathcanon_20100601(char* path, size_t size, int flags)
 {
-	return pathdev(AT_FDCWD, path, path, size, flags|PATH_CANON, NiL);
+	return pathdev(AT_FDCWD, path, path, size, flags|PATH_CANON, NULL);
 }
 
 #endif

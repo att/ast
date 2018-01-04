@@ -49,7 +49,7 @@ fmtrec(Recfmt_t f, int fs)
 			if (fs)
 				sfsprintf(s, e - s, "0x%02x", *(unsigned char*)del);
 			else
-				sfsprintf(s, e - s, "%s", fmtquote(del, NiL, NiL, 1, 0));
+				sfsprintf(s, e - s, "%s", fmtquote(del, NULL, NULL, 1, 0));
 		}
 		else
 			*s = 0;

@@ -153,7 +153,7 @@ decode(Sfio_t* ip)
 	name[i] = 0;
 	if (name[0] == '#')
 	{
-		switch (c = strtol(name + 1, NiL, 10))
+		switch (c = strtol(name + 1, NULL, 10))
 		{
 		case 91:
 			c = '[';
@@ -684,7 +684,7 @@ main(int argc, char** argv)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	(*convert)(sfstdin, sfstdout, flags);
 	return error_info.errors != 0;
 }

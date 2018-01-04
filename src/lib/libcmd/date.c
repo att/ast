@@ -230,7 +230,7 @@ settime(Shbltin_t* context, const char* cmd, Time_t now, int adjust, int network
 	if (!streq(cmd, s) && (!eaccess(s, X_OK) || !eaccess(s+=4, X_OK)))
 	{
 		*argv++ = s;
-		if (streq(astconf("UNIVERSE", NiL, NiL), "att"))
+		if (streq(astconf("UNIVERSE", NULL, NULL), "att"))
 		{
 			tmxfmt(buf, sizeof(buf), "%m%d%H" "%M%Y.%S", now);
 			if (adjust)
@@ -388,7 +388,7 @@ b_date(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	now = tmxgettime();
 	if (listzones)
 	{
@@ -436,7 +436,7 @@ b_date(int argc, char** argv, Shbltin_t* context)
 	else if (filetime)
 	{
 		if (!*argv)
-			error(ERROR_USAGE|4, "%s", optusage(NiL));
+			error(ERROR_USAGE|4, "%s", optusage(NULL));
 		n = argv[1] != 0;
 		while (s = *argv++)
 		{
@@ -476,7 +476,7 @@ b_date(int argc, char** argv, Shbltin_t* context)
 		if (s || (s = string))
 		{
 			if (*argv && string)
-				error(ERROR_USAGE|4, "%s", optusage(NiL));
+				error(ERROR_USAGE|4, "%s", optusage(NULL));
 			now = convert(fmts, s, now);
 			if (*argv && (s = *++argv))
 			{

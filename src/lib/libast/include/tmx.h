@@ -32,7 +32,7 @@ typedef uint32_t Tmxnsec_t;
 #define tmx2tv(t,v)	((v)->tv_nsec=tmxnsec(t),(v)->tv_sec=tmxsec(t))
 #define tv2tmx(v)	tmxsns((v)->tv_sec,(v)->tv_nsec)
 
-#define tmxclock(p)	tmxsns(((p)?*(p):time(NiL)),0)
+#define tmxclock(p)	tmxsns(((p)?*(p):time(NULL)),0)
 
 #define tmxgetatime(s)	tmxsns((s)->st_atime,ST_ATIME_NSEC_GET(s))
 #define tmxgetctime(s)	tmxsns((s)->st_ctime,ST_CTIME_NSEC_GET(s))

@@ -62,7 +62,7 @@ utf32stowcs(wchar_t* wchar, uint32_t* utf32, size_t n)
 			ast.mb_uc2wc = 0;
 		if (ast.mb_uc2wc == 0)
 			return -1;
-		(void)iconv(ast.mb_wc2uc, NiL, NiL, NiL, NiL);
+		(void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
 		if (n == 1)
 		{
 			char	tmp_in[UTF8_LEN_MAX+1];

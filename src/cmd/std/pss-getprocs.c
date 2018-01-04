@@ -87,7 +87,7 @@ getprocs_read(Pss_t* pss, Pss_id_t pid)
 	{
 		pss->pid = pid;
 		state->index = 0;
-		if ((state->count = getprocs(state->entry, sizeof(state->entry[0]), NiL, 0, &pss->pid, 1)) != 1)
+		if ((state->count = getprocs(state->entry, sizeof(state->entry[0]), NULL, 0, &pss->pid, 1)) != 1)
 			return -1;
 		state->last = 0;
 	}
@@ -97,7 +97,7 @@ getprocs_read(Pss_t* pss, Pss_id_t pid)
 			if (state->last)
 				return 0;
 			state->index = 0;
-			state->count = getprocs(state->entry, sizeof(state->entry[0]), NiL, 0, &pss->pid, elementsof(state->entry));
+			state->count = getprocs(state->entry, sizeof(state->entry[0]), NULL, 0, &pss->pid, elementsof(state->entry));
 			if (state->count < elementsof(state->entry))
 			{
 				state->last = 1;

@@ -77,9 +77,9 @@
 #define ppflushout()	do{if(pp.outp>pp.outbuf){PPWRITE(pp.outp-pp.outbuf);pp.outp=pp.outbuf;}}while(0)
 #define ppcheckout()	do{if(pp.outp>pp.oute){PPWRITE(PPBUFSIZ);if(pp.outbuf==pp.outb){pp.outbuf+=PPBUFSIZ;pp.oute+=PPBUFSIZ;}else{pp.outbuf-=PPBUFSIZ;memcpy(pp.outbuf,pp.oute,pp.outp-pp.oute);pp.oute-=PPBUFSIZ;pp.outp-=2*PPBUFSIZ;}}}while(0)
 
-#define ppsymget(t,n)	(struct ppsymbol*)hashlook(t,n,HASH_LOOKUP,NiL)
-#define ppsymref(t,n)	(struct ppsymbol*)hashlook(t,n,pp.truncate?HASH_LOOKUP:HASH_LOOKUP|HASH_INTERNAL,NiL)
-#define ppsymset(t,n)	(struct ppsymbol*)hashlook(t,n,HASH_CREATE|HASH_SIZE(sizeof(struct ppsymbol)),NiL)
+#define ppsymget(t,n)	(struct ppsymbol*)hashlook(t,n,HASH_LOOKUP,NULL)
+#define ppsymref(t,n)	(struct ppsymbol*)hashlook(t,n,pp.truncate?HASH_LOOKUP:HASH_LOOKUP|HASH_INTERNAL,NULL)
+#define ppsymset(t,n)	(struct ppsymbol*)hashlook(t,n,HASH_CREATE|HASH_SIZE(sizeof(struct ppsymbol)),NULL)
 
 #if CHAR_MIN < 0
 #define pptype		(ppctype-(CHAR_MIN))

@@ -244,7 +244,7 @@ expr(Expr_t* ex, int precedence)
 		default:
 			if (isspace(c)) continue;
 			pos = --ex->nextchr;
-			if (isdigit(c)) n = strton(ex->nextchr, &ex->nextchr, NiL, 0);
+			if (isdigit(c)) n = strton(ex->nextchr, &ex->nextchr, NULL, 0);
 			else if (ex->convert) n = (*ex->convert)(ex->nextchr, &ex->nextchr, ex->handle);
 			if (ex->nextchr == pos) error(ex, "syntax error");
 			goto gotoperand;
@@ -285,7 +285,7 @@ strexpr(const char* s, char** end, long(*convert)(const char*, char**, void*), v
 		seterror(&ex, "invalid use of :");
 	if (ex.errmsg)
 	{
-		if (convert) (*convert)(NiL, &ex.errmsg, handle);
+		if (convert) (*convert)(NULL, &ex.errmsg, handle);
 		ex.nextchr = ex.errchr;
 		n = 0;
 	}

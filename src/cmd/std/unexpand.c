@@ -108,7 +108,7 @@ static int *gettabs(const char *arg, int *ntab)
 		if(c==' ' || c=='\t' || c==',')
 			n++;
 	}
-	tablist = newof(NiL,int,n,0);
+	tablist = newof(NULL,int,n,0);
 	n=0;
 	while(1)
 	{
@@ -326,7 +326,7 @@ main(int argc, char** argv)
 	{
 		if (!cp || streq(cp,"-"))
 			fp = sfstdin;
-		else if (!(fp = sfopen(NiL, cp, "r")))
+		else if (!(fp = sfopen(NULL, cp, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", cp);
 			error_info.errors = 1;

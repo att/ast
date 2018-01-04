@@ -44,6 +44,6 @@ dlllook(void* dll, const char* name)
 		name = (const char*)buf;
 		addr = dlsym(dll, name);
 	}
-	errorf("dll", NiL, -1, "dlllook: %s addr %p", name, addr);
+	errorf("dll", NULL, -1, "dlllook: %s addr %p", name, addr);
 	return addr;
 }

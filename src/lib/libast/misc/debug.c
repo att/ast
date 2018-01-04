@@ -431,7 +431,7 @@ debug_fatal(const char* file, int line, const char* text)
 #ifdef SIG_BLOCK
 	sigset_t	ss;
 	sigfillset(&ss);
-	sigprocmask(SIG_BLOCK, &ss, NiL);
+	sigprocmask(SIG_BLOCK, &ss, NULL);
 #endif
 	debug_printf(2, "%s:%d: assertion failed: %s\n", file, line, text);
 	if (s = getenv("DEBUG_OPTIONS"))

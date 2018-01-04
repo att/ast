@@ -98,7 +98,7 @@ fgetcwd(int fd, char* buf, size_t len)
 		{
 			Pathdev_t	dev;
 
-			if ((!pathdev(AT_FDCWD, p, NiL, 0, PATH_DEV, &dev) || dev.fd < 0) && !stat(p, cur))
+			if ((!pathdev(AT_FDCWD, p, NULL, 0, PATH_DEV, &dev) || dev.fd < 0) && !stat(p, cur))
 			{
 				env[n].path = p;
 				env[n].dev = cur->st_dev;

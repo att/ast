@@ -85,7 +85,7 @@ csname(register Cs_t* state, unsigned long addr)
 {
 	register char*	s;
 
-	messagef((state->id, NiL, -8, "name(%s) call", csntoa(state, addr)));
+	messagef((state->id, NULL, -8, "name(%s) call", csntoa(state, addr)));
 #if CS_LIB_LOCAL
 	NoP(addr);
 #else
@@ -123,7 +123,7 @@ csname(register Cs_t* state, unsigned long addr)
 				return s;
 			}
 #endif
-			messagef((state->id, NiL, -1, "name: %s: gethostbyaddr error", csntoa(state, addr)));
+			messagef((state->id, NULL, -1, "name: %s: gethostbyaddr error", csntoa(state, addr)));
 			s = csntoa(state, addr);
 			return s;
 		}
@@ -166,7 +166,7 @@ csname(register Cs_t* state, unsigned long addr)
 #endif
 
 		{
-			messagef((state->id, NiL, -1, "name: %s: gethostname error", csntoa(state, addr)));
+			messagef((state->id, NULL, -1, "name: %s: gethostname error", csntoa(state, addr)));
 			strcpy(state->full, CS_HOST_LOCAL);
 		}
 		state->full[sizeof(state->full) - 1] = 0;

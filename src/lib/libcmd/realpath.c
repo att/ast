@@ -155,7 +155,7 @@ read_real_link_path_canon(int argc, char** argv, Shbltin_t* context, int readlin
 	argc -= opt_info.index;
 	argv += opt_info.index;
 	if (error_info.errors || oneoperand && (!argv[0] || argv[1]))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!(flags & PATH_CANON) && !readlink_mode)
 		flags |= PATH_CANON|PATH_EXISTS|PATH_EXCEPT_LAST;
 	if (file = *argv)
@@ -183,7 +183,7 @@ read_real_link_path_canon(int argc, char** argv, Shbltin_t* context, int readlin
 			path = file;
 		if ((flags & PATH_CANON) && path != fail)
 		{
-			if (pathdev(dirfd, path, canonbuf, sizeof(canonbuf), flags, NiL))
+			if (pathdev(dirfd, path, canonbuf, sizeof(canonbuf), flags, NULL))
 				path = canonbuf;
 			else
 			{

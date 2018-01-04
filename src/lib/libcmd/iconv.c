@@ -82,7 +82,7 @@ optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 	int		c;
 
 	if (streq(s, "codesets"))
-		for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
+		for (ic = iconv_list(NULL); ic; ic = iconv_list(ic))
 		{
 			sfputc(sp, '[');
 			sfputc(sp, '+');
@@ -119,7 +119,7 @@ listall(void* context)
 	const char*	p;
 
 	sfprintf(sfstdout, "Patterns:\n\n");
-	for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
+	for (ic = iconv_list(NULL); ic; ic = iconv_list(ic))
 		sfprintf(sfstdout, "  %s -- %s\n", ic->match, ic->desc);
 	p = "/usr/bin/iconv";
 	if (!access(p, X_OK) || !access(p += 4, X_OK))
@@ -216,7 +216,7 @@ b_iconv(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (list)
 		return listall(context);
 	if ((cvt = iconv_open(to, from)) == (iconv_t)(-1))
@@ -239,7 +239,7 @@ b_iconv(int argc, char** argv, Shbltin_t* context)
 			file = "/dev/stdin";
 			ip = sfstdin;
 		}
-		else if (!(ip = sfopen(NiL, file, "r")))
+		else if (!(ip = sfopen(NULL, file, "r")))
 		{
 			error(ERROR_SYSTEM|2, "%s: cannot open", file);
 			continue;

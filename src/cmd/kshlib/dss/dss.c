@@ -148,7 +148,7 @@ static int query(int argc, char *argv[], Shbltin_t *bp)
 		{
 			if(!(qp = cxquery(cx, dp->hdr.names[n], cx->disc)))
 				errormsg(SH_DICT,ERROR_exit(1),"%s: load method %s",argv[0]);
-			pp = newof(NiL,struct query,1,0);
+			pp = newof(NULL,struct query,1,0);
 			pp->index = n;
 			pp->next = dp->qp;
 			dp->qp = pp;
@@ -262,7 +262,7 @@ Cxvalue_t *get_child_common(Namval_t *np, Namfun_t *fp, Cxoperand_t *op)
 		in.data.variable = vp;
 		op->type = vp->type;
 		op->value.number = nv_getnum(pp->hdr.np);
-		if((*tp->member->getf)(pp->cx,&in,op,NiL,NiL,NiL,pp->cx->disc)==0)
+		if((*tp->member->getf)(pp->cx,&in,op,NULL,NULL,NULL,pp->cx->disc)==0)
 			return(&op->value);
 	}
 	return(0);
@@ -378,7 +378,7 @@ static void put_child(Namval_t* np, const char* val, int flags, Namfun_t* fp)
 	ret.type = vp->type;
 	ret.value.number = nv_getnum(pp->hdr.np);
 	op.value.number = nv_getn(np,fp);
-	if((*tp->member->setf)(pp->cx,&in, &ret,&op,NiL,NiL,pp->cx->disc)==0)
+	if((*tp->member->setf)(pp->cx,&in, &ret,&op,NULL,NULL,pp->cx->disc)==0)
 		nv_putval(pp->hdr.np,(char*)&ret.value.number,NV_INTEGER|NV_DOUBLE|NV_LONG|NV_NODISC);
 }
 
@@ -887,7 +887,7 @@ static void put_type(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	{
 		size_t	 size = strlen(val);
 		cop.type = tp->type;
-		if((*tp->type->internalf)(tp->cx, tp->type, NiL, NiL, &cop, val, size, Vmregion, &Dssdisc) <0)
+		if((*tp->type->internalf)(tp->cx, tp->type, NULL, NULL, &cop, val, size, Vmregion, &Dssdisc) <0)
 			errormsg(SH_DICT,ERROR_exit(1),"%s: cannot covert to type dss.%s",val,tp->type->name);
 		if(cxisnumber(cop.type))
 			nv_putv(np,(char*)&cop.value.number,flag|NV_LDOUBLE,fp);
@@ -953,7 +953,7 @@ static char* get_type(register Namval_t* np, Namfun_t *fp)
 		format = vp->format.details;
 	for(i=0; i < 2; i++)
 	{
-		n = (*tp->type->externalf)(tp->cx, tp->type, format, NiL, &cval, buf, buflen, &Dssdisc);
+		n = (*tp->type->externalf)(tp->cx, tp->type, format, NULL, &cval, buf, buflen, &Dssdisc);
 		if(n<buflen)
 			break;
 		buf = getbuf(n);
@@ -1546,7 +1546,7 @@ void lib_init(int flag, void* context)
 	Dssstate_t	*state;
 	Dsslib_t	*lib;
 	Namval_t	*np,*rp;
-	struct dsstype	*nfp = newof(NiL,struct dsstype,1,0);
+	struct dsstype	*nfp = newof(NULL,struct dsstype,1,0);
 	const char 	*name;
 	char 		**av,tmp[sizeof(NV_CLASS)+17];
 	int		level,i,len=0,n=0;
@@ -1570,7 +1570,7 @@ void lib_init(int flag, void* context)
 	{
 		char *cp;
 		n = 0;
-		for (lib = dsslib(NiL, DSS_VERBOSE, &Dssdisc); lib; lib = (Dsslib_t*)dtnext(state->cx->libraries, lib))
+		for (lib = dsslib(NULL, DSS_VERBOSE, &Dssdisc); lib; lib = (Dsslib_t*)dtnext(state->cx->libraries, lib))
 		{
 			int m;
 			if (!lib->queries)

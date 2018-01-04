@@ -101,7 +101,7 @@ Ast_global_t		ast_global =
 		} \
 		else if (p[0] == '.' && p[1] == 0 && 0) \
 			p = dot; \
-		else if ((oerrno = errno), !pathdev(d, p, NiL, 0, PATH_DEV, &dev)) \
+		else if ((oerrno = errno), !pathdev(d, p, NULL, 0, PATH_DEV, &dev)) \
 		{ \
 			if (errno != ENODEV) \
 				goto end; \
@@ -396,7 +396,7 @@ ast_openat(int cwd, const char* path, int flags, ...)
 #endif
 	}
 	else
-		RESTART(r, pathopen(cwd, path, NiL, 0, 0, flags|O_INTERCEPT, mode));
+		RESTART(r, pathopen(cwd, path, NULL, 0, 0, flags|O_INTERCEPT, mode));
 #if _ast_O_LOCAL && O_CLOEXEC >= _ast_O_LOCAL
 	if (o_cloexec && r >= 0)
 		RESTART(o_cloexec, fcntl(r, F_SETFD, FD_CLOEXEC));

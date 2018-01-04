@@ -315,7 +315,7 @@ mimeload(Mime_t* mp, const char* file, unsigned long flags)
 			if (!(s = sfstruse(mp->buf)))
 				return -1;
 		}
-		if (fp = tokline(s, SF_READ, NiL))
+		if (fp = tokline(s, SF_READ, NULL))
 		{
 			while (t = sfgetr(fp, '\n', 1))
 				if (mimeset(mp, t, flags))

@@ -193,7 +193,7 @@ mamscan(register struct mam* mp, const char* file)
 #endif
 
 	if (!file) input = sfstdin;
-	else if (!(input = sfopen(NiL, file, "r")))
+	else if (!(input = sfopen(NULL, file, "r")))
 	{
 		errorf(mp, mp, 2, "%s: cannot read", file);
 		return(-1);
@@ -211,7 +211,7 @@ mamscan(register struct mam* mp, const char* file)
 		if (tokscan(s, &s, " %s ", &op) != 1) continue;
 		if (isdigit(*op))
 		{
-			if (!(pp = getproc(mp, strtol(op, NiL, 10)))) return(-1);
+			if (!(pp = getproc(mp, strtol(op, NULL, 10)))) return(-1);
 			if (tokscan(s, &s, " %s ", &op) != 1) continue;
 		}
 		else pp = mp->main;
@@ -286,7 +286,7 @@ mamscan(register struct mam* mp, const char* file)
 		}
 		else if (streq(op, "bind"))
 		{
-			tokscan(s, NiL, " %s %lu %s ", &arg, &t, &val);
+			tokscan(s, NULL, " %s %lu %s ", &arg, &t, &val);
 			if (!(r = getrule(pp, arg)) && !(r = alias(pp, arg)))
 			{
 				errorf(mp, mp, 1, "%s: reference to undefined rule", arg);
@@ -297,7 +297,7 @@ mamscan(register struct mam* mp, const char* file)
 		}
 		else if (streq(op, "code"))
 		{
-			tokscan(s, NiL, " %s %d ", &arg, &n);
+			tokscan(s, NULL, " %s %d ", &arg, &n);
 			if (!(r = getrule(pp, arg)) && !(r = alias(pp, arg)))
 			{
 				errorf(mp, mp, 1, "%s: reference to undefined rule", arg);
@@ -310,13 +310,13 @@ mamscan(register struct mam* mp, const char* file)
 			tokscan(s, &s, " %s ", &arg);
 			if (streq(arg, "mam"))
 			{
-				tokscan(s, NiL, " %s ", &arg);
+				tokscan(s, NULL, " %s ", &arg);
 				if (mp->version) free(mp->version);
 				mp->version = strdup(arg);
 			}
 			else if (streq(arg, "start"))
 			{
-				tokscan(s, NiL, " %lu %d ", &pp->start, &n);
+				tokscan(s, NULL, " %lu %d ", &pp->start, &n);
 				if (!pp->pid) pp->pid = n;
 				else if (pp->parent = getproc(mp, n)) 
 				{
@@ -331,7 +331,7 @@ mamscan(register struct mam* mp, const char* file)
 			{
 				register struct frame*	fp;
 
-				tokscan(s, NiL, " %lu %d ", &pp->finish, &pp->status);
+				tokscan(s, NULL, " %lu %d ", &pp->finish, &pp->status);
 				if (pp->fp != pp->bp)
 					errorf(mp, mp, 1, "%s: not enough done ops", arg);
 				while (fp = pp->bp)
@@ -342,12 +342,12 @@ mamscan(register struct mam* mp, const char* file)
 			}
 			else if (streq(arg, "pwd"))
 			{
-				tokscan(s, NiL, " %s ", &val);
+				tokscan(s, NULL, " %s ", &val);
 				pp->pwd = strdup(val);
 			}
 			else if (streq(arg, "view"))
 			{
-				tokscan(s, NiL, " %s ", &val);
+				tokscan(s, NULL, " %s ", &val);
 				pp->view = strdup(val);
 			}
 			else errorf(mp, mp, 1, "%s: unknown %s attribute", arg, op);

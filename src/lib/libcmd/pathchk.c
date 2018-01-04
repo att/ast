@@ -92,7 +92,7 @@ static long mypathconf(const char *path, int op)
 	static const char* const	ops[] = { "NAME_MAX", "PATH_MAX" };
 
 	errno = 0;
-	if ((r = strtol(astconf(ops[op], path, NiL), NiL, 0)) < 0 && !errno)
+	if ((r = strtol(astconf(ops[op], path, NULL), NULL, 0)) < 0 && !errno)
 		return LONG_MAX;
 	return r;
 }
@@ -198,7 +198,7 @@ static int pathchk(char* path, int mode)
 	{
 		if((mode & PATH) && *cp == '-')
 		{
-			error(2,"%s: path component begins with '-'",path,fmtquote(buf, NiL, "'", 1, 0));
+			error(2,"%s: path component begins with '-'",path,fmtquote(buf, NULL, "'", 1, 0));
 			return -1;
 		}
 		while((c= *cp++) && c!='/')
@@ -206,7 +206,7 @@ static int pathchk(char* path, int mode)
 			{
 				buf[0] = c;
 				buf[1] = 0;
-				error(2,"%s: '%s' not in portable character set",path,fmtquote(buf, NiL, "'", 1, 0));
+				error(2,"%s: '%s' not in portable character set",path,fmtquote(buf, NULL, "'", 1, 0));
 				return -1;
 			}
 		if((cp-cpold) > name_max)
@@ -258,7 +258,7 @@ b_pathchk(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (!*argv || error_info.errors)
-		error(ERROR_usage(2),"%s", optusage(NiL));
+		error(ERROR_usage(2),"%s", optusage(NULL));
 	while (s = *argv++)
 		pathchk(s, mode);
 	return error_info.errors != 0;

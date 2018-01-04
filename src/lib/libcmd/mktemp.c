@@ -114,7 +114,7 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 			fdp = 0;
 			continue;
 		case 'R':
-			if (!pathtemp(NiL, 0, opt_info.arg, "/seed", NiL))
+			if (!pathtemp(NULL, 0, opt_info.arg, "/seed", NULL))
 				error(2, "%s: regression test initializtion failed", opt_info.arg);
 			continue;
 		case ':':
@@ -128,7 +128,7 @@ b_mktemp(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || (pfx = *argv) && *++argv && *(argv + 1))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!pfx)
 	{
 		pfx = "tmp";

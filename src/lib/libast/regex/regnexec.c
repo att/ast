@@ -32,7 +32,7 @@
 
 #define DEBUG_TEST(f,y,n)	((debug&(debug_flag=f))?(y):(n))
 #define DEBUG_CODE(f,y,n)	do if(debug&(f)){y}else{n} while(0)
-#define DEBUG_INIT()		do { char* t; if (!debug) { debug = 0x80000000; if (t = getenv("_AST_regex_exec_debug")) debug |= strtoul(t, NiL, 0); } } while (0)
+#define DEBUG_INIT()		do { char* t; if (!debug) { debug = 0x80000000; if (t = getenv("_AST_regex_exec_debug")) debug |= strtoul(t, NULL, 0); } } while (0)
 
 static unsigned long	debug;
 static unsigned long	debug_flag;
@@ -1228,7 +1228,7 @@ DEBUG_TEST(0x0200,(sfprintf(sfstdout,"AHA#%04d 0x%04x parse %s=>%s `%-.*s'\n", _
 		case REX_GROUP_AHEAD_CATCH:
 			return follow(env, rex, rex->re.rep_catch.cont, rex->re.rep_catch.beg);
 		case REX_GROUP_AHEAD_NOT:
-			r = parse(env, rex->re.group.expr.rex, NiL, s);
+			r = parse(env, rex->re.group.expr.rex, NULL, s);
 			if (r == NONE)
 				r = follow(env, rex, cont, s);
 			else if (r != BAD)
@@ -1872,7 +1872,7 @@ regnexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, re
 	if (!p || !(env = p->env))
 		return REG_BADPAT;
 	if (!s)
-		return fatal(env->disc, REG_BADPAT, NiL);
+		return fatal(env->disc, REG_BADPAT, NULL);
 	if (len < env->min)
 	{
 		DEBUG_TEST(0x0080,(sfprintf(sfstdout, "AHA#%04d REG_NOMATCH %d %d\n", __LINE__, len, env->min)),(0));
@@ -2026,7 +2026,7 @@ regnexec_20120528(const regex_t* p, const char* s, size_t len, size_t nmatch, re
 	stkold(env->mst, &env->stk);
 	env->stk.base = 0;
 	if (k > REG_NOMATCH)
-		fatal(p->env->disc, k, NiL);
+		fatal(p->env->disc, k, NULL);
 	return k;
 }
 
@@ -2092,5 +2092,5 @@ regnexec(const regex_t* p, const char* s, size_t len, size_t nmatch, oldregmatch
 		free(match);
 		return r;
 	}
-	return regnexec_20120528(p, s, len, 0, NiL, flags);
+	return regnexec_20120528(p, s, len, 0, NULL, flags);
 }

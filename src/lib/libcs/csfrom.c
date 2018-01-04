@@ -38,7 +38,7 @@ csfrom(register Cs_t* state, int fd, void* buf, size_t siz, Csaddr_t* addr)
 
 	if (read(fd, &udp, sizeof(udp)) != sizeof(udp))
 	{
-		messagef((state->id, NiL, -1, "from: %d: udp header read error", fd));
+		messagef((state->id, NULL, -1, "from: %d: udp header read error", fd));
 		return -1;
 	}
 	if (addr)
@@ -47,8 +47,8 @@ csfrom(register Cs_t* state, int fd, void* buf, size_t siz, Csaddr_t* addr)
 		addr->addr[1] = udp.port;
 		addr->addr[2] = 0;
 	}
-	if ((n = read(fd, buf, siz)) < 0) messagef((state->id, NiL, -1, "from: %d: udp data read error", fd));
-	else messagef((state->id, NiL, -8, "from(%d,*,%d) = %d, data = `%-.*s', addr = %s, port = %u", fd, siz, n, n, buf, csntoa(state, udp.host), udp.port));
+	if ((n = read(fd, buf, siz)) < 0) messagef((state->id, NULL, -1, "from: %d: udp data read error", fd));
+	else messagef((state->id, NULL, -8, "from(%d,*,%d) = %d, data = `%-.*s', addr = %s, port = %u", fd, siz, n, n, buf, csntoa(state, udp.host), udp.port));
 	return n;
 
 #else
@@ -62,7 +62,7 @@ csfrom(register Cs_t* state, int fd, void* buf, size_t siz, Csaddr_t* addr)
 	len = sizeof(nam);
 	if ((n = recvfrom(fd, buf, siz, 0, (struct sockaddr*)&nam, &len)) < 0)
 	{
-		messagef((state->id, NiL, -1, "from: %d: recvfrom error", fd));
+		messagef((state->id, NULL, -1, "from: %d: recvfrom error", fd));
 		return -1;
 	}
 	if (addr)
@@ -70,13 +70,13 @@ csfrom(register Cs_t* state, int fd, void* buf, size_t siz, Csaddr_t* addr)
 		addr->addr[0] = (unsigned long)nam.sin_addr.s_addr;
 		addr->addr[1] = (unsigned long)nam.sin_port;
 	}
-	messagef((state->id, NiL, -8, "from(%d,*,%d) = %d, data = `%-.*s', addr = %s, port = %u", fd, siz, n, n, buf, csntoa(state, (unsigned long)nam.sin_addr.s_addr), (unsigned long)nam.sin_port));
+	messagef((state->id, NULL, -8, "from(%d,*,%d) = %d, data = `%-.*s', addr = %s, port = %u", fd, siz, n, n, buf, csntoa(state, (unsigned long)nam.sin_addr.s_addr), (unsigned long)nam.sin_port));
 	return n;
 
 #else
 
 	errno = EINVAL;
-	messagef((state->id, NiL, -1, "from: %d: udp read not supported", fd));
+	messagef((state->id, NULL, -1, "from: %d: udp read not supported", fd));
 	return -1;
 
 #endif

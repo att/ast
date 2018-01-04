@@ -121,7 +121,7 @@ spawn(const char* path, int nmap, const int map[], const struct inheritance* inh
 	}
 	if (pid != -1 && (m = *exec_errno_ptr))
 	{
-		while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
+		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR);
 		pid = -1;
 		n = m;
 	}
@@ -180,7 +180,7 @@ spawnve(int mode, const char* path, char* const argv[], char* const envv[])
 	}
 	if (pid != -1 && (m = *exec_errno_ptr))
 	{
-		while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
+		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR);
 		pid = -1;
 		n = m;
 	}
@@ -336,7 +336,7 @@ spawnvex_add(Spawnvex_t* vex, intmax_t op, intmax_t arg, Spawnvex_f callback, vo
 			op++;
 	}
 	if (vex->debug > 0)
-		error(ERROR_OUTPUT, vex->debug, "spawnvex add %4d %8d %p %4d %4I*d %4I*d %p %p", __LINE__, getpid(), vex, vex->cur, sizeof(op), op / 2, sizeof(arg), arg, callback, callback ? handle : NiL);
+		error(ERROR_OUTPUT, vex->debug, "spawnvex add %4d %8d %p %4d %4I*d %4I*d %p %p", __LINE__, getpid(), vex, vex->cur, sizeof(op), op / 2, sizeof(arg), arg, callback, callback ? handle : NULL);
 	vex->op[vex->cur++].number = op;
 	vex->op[vex->cur++].number = arg;
 	if (callback)
@@ -404,7 +404,7 @@ spawnvex_apply(Spawnvex_t* vex, int cur, int flags)
 			}
 			op /= 2;
 			if (vex->debug >= 0)
-				error(ERROR_OUTPUT, vex->debug, "spawnvex app %4d %8d %p %4d %4I*d %4I*d %p %p", __LINE__, getpid(), vex, k, sizeof(op), op, sizeof(arg), arg, callback, callback ? handle : NiL);
+				error(ERROR_OUTPUT, vex->debug, "spawnvex app %4d %8d %p %4d %4I*d %4I*d %p %p", __LINE__, getpid(), vex, k, sizeof(op), op, sizeof(arg), arg, callback, callback ? handle : NULL);
 			if (!(flags & SPAWN_CLEANUP))
 			{
 				err = 0;
@@ -924,7 +924,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 		}
 		if ((nx.flags & SPAWN_VFORK) && pid != -1 && (m = *exec_errno_ptr))
 		{
-			while (waitpid(pid, NiL, 0) == -1 && errno == EINTR);
+			while (waitpid(pid, NULL, 0) == -1 && errno == EINTR);
 			pid = -1;
 			n = m;
 		}
@@ -1060,7 +1060,7 @@ spawnvex(const char* path, char* const argv[], char* const envv[], Spawnvex_t* v
 			spawnvex_apply(vex, 0, SPAWN_FRAME|SPAWN_CLEANUP);
 		VEXINIT(vex);
 	}
-	else if (err = posix_spawn(&pid, path, NiL, NiL, argv, envv ? envv : environ))
+	else if (err = posix_spawn(&pid, path, NULL, NULL, argv, envv ? envv : environ))
 		goto nope;
 	if (vex && vex->debug >= 0)
 		error(ERROR_OUTPUT, vex->debug, "spawnvex exe %4d %8d %p %4d \"%s\" %8d posix_spawn", __LINE__, getpid(), vex, vex->cur, path, pid);

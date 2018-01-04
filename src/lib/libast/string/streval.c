@@ -46,5 +46,5 @@ streval(const char* s, char** end, Old_convert_t convert)
 {
 	Handle_t	handle;
 
-	return((handle.convert = convert) ? strexpr(s, end, userconv, &handle) : strexpr(s, end, (Convert_t)0, NiL));
+	return((handle.convert = convert) ? strexpr(s, end, userconv, &handle) : strexpr(s, end, (Convert_t)0, NULL));
 }

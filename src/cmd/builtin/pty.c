@@ -300,7 +300,7 @@ runcmd(char** argv, int slave, int session)
 		ops[2] = PROC_FD_DUP(slave, 2, PROC_FD_CHILD);
 		ops[3] = 0;
 	}
-	return procopen(argv[0], argv, NiL, ops, 0);
+	return procopen(argv[0], argv, NULL, ops, 0);
 }
 
 /*
@@ -423,7 +423,7 @@ match(char* pattern, char* text, int must)
 		error(2, "%s: %s", pattern, buf);
 		return 0;
 	}
-	if (regexec(re, text, 0, NiL, 0))
+	if (regexec(re, text, 0, NULL, 0))
 	{
 		if (must)
 			error(2, "expected \"%s\", got \"%s\"", pattern, fmtesq(text, "\""));
@@ -1016,7 +1016,7 @@ b_pty(int argc, char** argv, Shbltin_t* context)
 		error(ERROR_exit(1), "command must be specified");
 	if (mkpty(&master, &slave) < 0)
 		error(ERROR_system(1), "unable to create pty");
-	if (!(mp = sfnew(NiL, 0, SF_UNBOUND, master, SF_READ|SF_WRITE)))
+	if (!(mp = sfnew(NULL, 0, SF_UNBOUND, master, SF_READ|SF_WRITE)))
 		error(ERROR_system(1), "cannot open master stream");
 	if (stty)
 	{
@@ -1044,7 +1044,7 @@ b_pty(int argc, char** argv, Shbltin_t* context)
 	}
 	if (!log)
 		lp = 0;
-	else if (!(lp = sfopen(NiL, log, "w")))
+	else if (!(lp = sfopen(NULL, log, "w")))
 		error(ERROR_system(1), "%s: cannot write", log);
 	if (!(proc = runcmd(argv, slave, session)))
 		error(ERROR_system(1), "unable run %s", argv[0]);

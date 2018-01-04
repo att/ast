@@ -179,12 +179,12 @@ struct csfdhdr				/* send/recv fd data header	*/
 
 #ifdef SIGPIPE
 #if _lib_sigblock
-#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { (h)->flags |= CS_PIPE_BLOCKED; sigblock(sigmask(SIGPIPE)); errorf((h)->id, NiL, -99, "protect"); } while (0)
+#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { (h)->flags |= CS_PIPE_BLOCKED; sigblock(sigmask(SIGPIPE)); errorf((h)->id, NULL, -99, "protect"); } while (0)
 #else
-#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { Handler_t f; (h)->flags |= CS_PIPE_BLOCKED; if ((f = signal(SIGPIPE, SIG_IGN)) != SIG_DFL) signal(SIGPIPE, f); errorf((h)->id, NiL, -99, "protect"); } while (0)
+#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { Handler_t f; (h)->flags |= CS_PIPE_BLOCKED; if ((f = signal(SIGPIPE, SIG_IGN)) != SIG_DFL) signal(SIGPIPE, f); errorf((h)->id, NULL, -99, "protect"); } while (0)
 #endif
 #else
-#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { (h)->flags |= CS_PIPE_BLOCKED; errorf((h)->id, NiL, -99, "protect"); } while (0)
+#define csprotect(h)	do if (!((h)->flags & CS_PIPE_BLOCKED)) { (h)->flags |= CS_PIPE_BLOCKED; errorf((h)->id, NULL, -99, "protect"); } while (0)
 #endif
 
 #define CS_SVC_INET	"inet."

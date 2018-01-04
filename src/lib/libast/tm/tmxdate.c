@@ -191,7 +191,7 @@ tmxdate(const char* s, char** e, Time_t now)
 	 */
 
 	debug((error(-1, "AHA tmxdate 2009-03-06")));
-	fix = tmxscan(s, &last, NiL, &t, now, 0);
+	fix = tmxscan(s, &last, NULL, &t, now, 0);
 	if (t && !*last)
 	{
 		if (e)
@@ -206,7 +206,7 @@ tmxdate(const char* s, char** e, Time_t now)
 	 * use now for defaults
 	 */
 
-	tm = tmxtm(&ts, now, NiL);
+	tm = tmxtm(&ts, now, NULL);
 	tm_info.date = tm->tm_zone;
 	day = -1;
 	dir = 0;
@@ -810,7 +810,7 @@ tmxdate(const char* s, char** e, Time_t now)
 					break;
 				goto save;
 			}
-			else if (f == -1 && isalpha(*t) && tmlex(t, &t, tm_info.format + TM_ORDINAL, TM_ORDINALS - TM_ORDINAL, NiL, 0) >= 0)
+			else if (f == -1 && isalpha(*t) && tmlex(t, &t, tm_info.format + TM_ORDINAL, TM_ORDINALS - TM_ORDINAL, NULL, 0) >= 0)
 			{
 				message((-1, "AHA#%d n=%d", __LINE__, n));
  ordinal:
@@ -838,7 +838,7 @@ tmxdate(const char* s, char** e, Time_t now)
 			{
 				for (u = t; isspace(*u); u++);
 				message((-1, "AHA#%d n=%d u=\"%s\"", __LINE__, n, u));
-				if ((j = tmlex(u, NiL, tm_info.format, TM_NFORM, tm_info.format + TM_SUFFIXES, TM_PARTS - TM_SUFFIXES)) >= 0 && tm_data.lex[j] == TM_PARTS)
+				if ((j = tmlex(u, NULL, tm_info.format, TM_NFORM, tm_info.format + TM_SUFFIXES, TM_PARTS - TM_SUFFIXES)) >= 0 && tm_data.lex[j] == TM_PARTS)
 					s = u;
 				else
 				{
@@ -1110,7 +1110,7 @@ tmxdate(const char* s, char** e, Time_t now)
 					q |= *s++;
 					if (isalpha(*s))
 					{
-						if (tmlex(s, &t, tm_info.format + TM_SUFFIXES, TM_PARTS - TM_SUFFIXES, NiL, 0) >= 0)
+						if (tmlex(s, &t, tm_info.format + TM_SUFFIXES, TM_PARTS - TM_SUFFIXES, NULL, 0) >= 0)
 							s = t;
 						if (isalpha(*s))
 						{
@@ -1308,7 +1308,7 @@ tmxdate(const char* s, char** e, Time_t now)
 							{
 								while (skip[*s])
 									s++;
-								if ((k = tmlex(s, &t, tm_info.format + TM_LAST, TM_NOISE - TM_LAST, NiL, 0)) >= 0)
+								if ((k = tmlex(s, &t, tm_info.format + TM_LAST, TM_NOISE - TM_LAST, NULL, 0)) >= 0)
 								{
 									s = t;
 									if (k <= 2)
@@ -1353,7 +1353,7 @@ tmxdate(const char* s, char** e, Time_t now)
 						while (isspace(*s))
 							s++;
 						message((-1, "AHA#%d disambiguate LAST s='%s'", __LINE__, s));
-						if ((k = tmlex(s, &t, tm_info.format + TM_NEXT, TM_EXACT - TM_NEXT, NiL, 0)) >= 0 || (k = tmlex(s, &t, tm_info.format + TM_PARTS + 3, 1, NiL, 0)) >= 0)
+						if ((k = tmlex(s, &t, tm_info.format + TM_NEXT, TM_EXACT - TM_NEXT, NULL, 0)) >= 0 || (k = tmlex(s, &t, tm_info.format + TM_PARTS + 3, 1, NULL, 0)) >= 0)
 						{
 							s = t;
 							if (state & LAST)
@@ -1462,7 +1462,7 @@ tmxdate(const char* s, char** e, Time_t now)
 							{
 								while (isspace(*s))
 									s++;
-								if (isdigit(*s) || tmlex(s, &t, tm_info.format, TM_DAY_ABBREV, NiL, 0) >= 0)
+								if (isdigit(*s) || tmlex(s, &t, tm_info.format, TM_DAY_ABBREV, NULL, 0) >= 0)
 								{
 									state &= ~(LAST|NEXT|THIS);
 									goto clear_hour;
@@ -1588,7 +1588,7 @@ tmxdate(const char* s, char** e, Time_t now)
 					break;
 				if (isalpha(*++s))
 				{
-					if ((i = tmlex(s, &t, tm_info.format, TM_DAY_ABBREV, NiL, 0)) < 0)
+					if ((i = tmlex(s, &t, tm_info.format, TM_DAY_ABBREV, NULL, 0)) < 0)
 						break;
 					if (i >= TM_MONTH)
 						i -= TM_MONTH;

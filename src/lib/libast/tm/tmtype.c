@@ -49,7 +49,7 @@ tmtype(const char* s, char** e)
 	zp = tm_info.local;
 	do
 	{
-		if ((t = zp->type) && tmword(s, e, t, NiL, 0)) return(zp);
+		if ((t = zp->type) && tmword(s, e, t, NULL, 0)) return(zp);
 		if (zp == tm_info.local) zp = tm_data.zone;
 		else zp++;
 	} while (zp->standard);

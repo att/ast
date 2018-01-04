@@ -374,7 +374,7 @@ static int dbm_create(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || !*argv || *(argv + 1))
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 1;
 	}
 	if(oflags==0)

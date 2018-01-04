@@ -104,7 +104,7 @@ b_setid(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || *argv)
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 2;
 	}
 #if _lib_setregid

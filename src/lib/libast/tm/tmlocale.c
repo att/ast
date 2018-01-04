@@ -572,7 +572,7 @@ load(Lc_info_t* li)
 	tm_info.format = tm_data.format;
 	if (!(tm_info.deformat = state.format))
 		tm_info.deformat = tm_info.format[TM_DEFAULT];
-	if (mcfind(NiL, NiL, LC_TIME, 0, path, sizeof(path)) && (sp = sfopen(NiL, path, "r")))
+	if (mcfind(NULL, NULL, LC_TIME, 0, path, sizeof(path)) && (sp = sfopen(NULL, path, "r")))
 	{
 		n = sfsize(sp);
 		tp = 0;
@@ -583,7 +583,7 @@ load(Lc_info_t* li)
 				if (tp = sfstropen())
 				{
 					sfread(sp, u, 3);
-					n = iconv_move(cvt, sp, tp, SF_UNBOUND, NiL);
+					n = iconv_move(cvt, sp, tp, SF_UNBOUND, NULL);
 				}
 				iconv_close(cvt);
 			}

@@ -37,7 +37,7 @@ cscontrol(register Cs_t* state, int fd)
 	struct strbuf	buf;
 
 	buf.maxlen = 0;
-	return putmsg(fd, NiL, &buf, RS_HIPRI);
+	return putmsg(fd, NULL, &buf, RS_HIPRI);
 #else
 	return write(fd, "", 1) == 1 ? 0 : -1;
 #endif

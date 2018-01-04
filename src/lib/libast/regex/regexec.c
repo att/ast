@@ -86,5 +86,5 @@ regexec(const regex_t* p, const char* s, size_t nmatch, oldregmatch_t* oldmatch,
 		free(match);
 		return r;
 	}
-	return regexec_20120528(p, s, 0, NiL, flags);
+	return regexec_20120528(p, s, 0, NULL, flags);
 }

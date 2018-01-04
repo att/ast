@@ -260,7 +260,7 @@ main(int argc, char** argv)
 			if (extra)
 			{
 				for (n = 0; n < ext; n += 2)
-					optget(NiL, extra[n]);
+					optget(NULL, extra[n]);
 				extra = 0;
 			}
 		}

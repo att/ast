@@ -223,7 +223,7 @@ fmtquote(const char* as, const char* qb, const char* qe, size_t n, int flags)
 char*
 fmtnesq(const char* as, const char* qs, size_t n)
 {
-	return fmtquote(as, NiL, qs, n, 0);
+	return fmtquote(as, NULL, qs, n, 0);
 }
 
 /*
@@ -233,7 +233,7 @@ fmtnesq(const char* as, const char* qs, size_t n)
 char*
 fmtesq(const char* as, const char* qs)
 {
-	return fmtquote(as, NiL, qs, strlen((char*)as), 0);
+	return fmtquote(as, NULL, qs, strlen((char*)as), 0);
 }
 
 /*
@@ -243,5 +243,5 @@ fmtesq(const char* as, const char* qs)
 char*
 fmtesc(const char* as)
 {
-	return fmtquote(as, NiL, NiL, strlen((char*)as), 0);
+	return fmtquote(as, NULL, NULL, strlen((char*)as), 0);
 }

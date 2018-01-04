@@ -160,7 +160,7 @@ static Move *makeAdd(char* beg, char* end, Move* last)
 {
 	register Move	*ip;
 
-	ip = newMove(DELTA_ADD,(long)(end-beg),(long)(beg-Btar),NiL);
+	ip = newMove(DELTA_ADD,(long)(end-beg),(long)(beg-Btar),NULL);
 	if(!ip)
 		return 0;
 
@@ -339,7 +339,7 @@ delta(char* src, long n_src, char* tar, long n_tar, int delfd)
 			cost_a = NBYTE(size) + size;
 			if(cost_m < cost_a)
 			{
-				moves = newMove(DELTA_MOVE,size,0L,NiL);
+				moves = newMove(DELTA_MOVE,size,0L,NULL);
 				if(!moves)
 					return -1;
 				n_src -= src-Bsrc;
@@ -360,7 +360,7 @@ delta(char* src, long n_src, char* tar, long n_tar, int delfd)
 			addr = sp+1-Bsrc;
 			if(chkMove(size,addr,0L) > 0)
 			{
-				last = newMove(DELTA_MOVE,size,addr,NiL);
+				last = newMove(DELTA_MOVE,size,addr,NULL);
 				if(!last)
 					return -1;
 				esrc = sp;
@@ -434,7 +434,7 @@ delta(char* src, long n_src, char* tar, long n_tar, int delfd)
 	/* release space use for string matching */
 	if(tree)
 		delsuftree(tree);
-	else	mtchstring(NiL,0L,NiL,0L,NiL);
+	else	mtchstring(NULL,0L,NULL,0L,NULL);
 
 	/* optimize move instructions */
 	if(moves)

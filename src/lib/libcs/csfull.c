@@ -35,7 +35,7 @@ csfull(register Cs_t* state, unsigned long addr)
 	state->flags |= CS_ADDR_FULL;
 	s = csname(state, addr);
 	state->flags &= ~CS_ADDR_FULL;
-	messagef((state->id, NiL, -8, "full(%s) = %s", csntoa(state, addr), s));
+	messagef((state->id, NULL, -8, "full(%s) = %s", csntoa(state, addr), s));
 	return s;
 }
 

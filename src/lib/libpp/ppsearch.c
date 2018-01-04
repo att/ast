@@ -143,12 +143,12 @@ search(register struct ppfile* fp, register struct ppdirs* dp, int type, int fla
 		(fp->flags & INC_BOUND(INC_LOCAL)) ? "LOCAL|" : "",
 		(fp->flags & INC_BOUND(INC_VENDOR)) ? "VENDOR|" : "",
 		(fp->flags & INC_BOUND(INC_STANDARD)) ? "STANDARD|" : "",
-		dp ? (dp->index == INC_PREFIX ? "pre" : dp->index == INC_LOCAL ? "lcl" : dp->index == INC_VENDOR ? "vnd" : "std") : NiL,
-		dp ? dp->name : NiL,
-		!(fp->flags & INC_MEMBER(INC_PREFIX)) && fp->bound[INC_PREFIX] ? fp->bound[INC_PREFIX]->name : NiL,
-		!(fp->flags & INC_MEMBER(INC_LOCAL)) && fp->bound[INC_LOCAL] ? fp->bound[INC_LOCAL]->name : NiL,
-		!(fp->flags & INC_MEMBER(INC_VENDOR)) && fp->bound[INC_VENDOR] ? fp->bound[INC_VENDOR]->name : NiL,
-		!(fp->flags & INC_MEMBER(INC_STANDARD)) && (xp = fp->bound[INC_STANDARD]) ? xp->name : NiL,
+		dp ? (dp->index == INC_PREFIX ? "pre" : dp->index == INC_LOCAL ? "lcl" : dp->index == INC_VENDOR ? "vnd" : "std") : NULL,
+		dp ? dp->name : NULL,
+		!(fp->flags & INC_MEMBER(INC_PREFIX)) && fp->bound[INC_PREFIX] ? fp->bound[INC_PREFIX]->name : NULL,
+		!(fp->flags & INC_MEMBER(INC_LOCAL)) && fp->bound[INC_LOCAL] ? fp->bound[INC_LOCAL]->name : NULL,
+		!(fp->flags & INC_MEMBER(INC_VENDOR)) && fp->bound[INC_VENDOR] ? fp->bound[INC_VENDOR]->name : NULL,
+		!(fp->flags & INC_MEMBER(INC_STANDARD)) && (xp = fp->bound[INC_STANDARD]) ? xp->name : NULL,
 		error_info.file
 		));
 	if (flags & SEARCH_HOSTED)
@@ -187,7 +187,7 @@ search(register struct ppfile* fp, register struct ppdirs* dp, int type, int fla
 				 * check for vdb header archive
 				 */
 
-				if (!(sp = sfopen(NiL, dp->name, "r")))
+				if (!(sp = sfopen(NULL, dp->name, "r")))
 				{
 					error(ERROR_SYSTEM|1, "%s: ignored -- cannot open", dp->name);
 					dp->type = 0;
@@ -268,8 +268,8 @@ search(register struct ppfile* fp, register struct ppdirs* dp, int type, int fla
 				if (!strneq(s, VDB_DIRECTORY, sizeof(VDB_DIRECTORY) - 1))
 					goto notvdb;
 				delimiter = s[VDB_OFFSET - 1];
-				off = strtol(s + VDB_OFFSET, NiL, 10) - sizeof(VDB_DIRECTORY);
-				siz = strtol(s + VDB_SIZE, NiL, 10);
+				off = strtol(s + VDB_OFFSET, NULL, 10) - sizeof(VDB_DIRECTORY);
+				siz = strtol(s + VDB_SIZE, NULL, 10);
 				if (sfseek(sp, off, SEEK_SET) != off)
 					goto notvdb;
 				if (!(s = sfreserve(sp, siz + 1, 0)))
@@ -292,7 +292,7 @@ search(register struct ppfile* fp, register struct ppdirs* dp, int type, int fla
 						ap = newof(0, struct ppmember, 1, 0);
 						ap->archive = dp;
 						ap->offset = strtol(t + 1, &t, 10);
-						ap->size = strtol(t + 1, NiL, 10);
+						ap->size = strtol(t + 1, NULL, 10);
 						xp = ppsetfile(s);
 						xp->flags |= INC_MEMBER(dp->index);
 						xp->bound[dp->index] = (struct ppfile*)ap;

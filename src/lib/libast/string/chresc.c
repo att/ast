@@ -296,5 +296,5 @@ chrexp(const char* s, char** p, int* m, int flags)
 int
 chresc(const char* s, char** p)
 {
-	return chrexp(s, p, NiL, FMT_EXP_CHAR|FMT_EXP_LINE|FMT_EXP_WIDE);
+	return chrexp(s, p, NULL, FMT_EXP_CHAR|FMT_EXP_LINE|FMT_EXP_WIDE);
 }

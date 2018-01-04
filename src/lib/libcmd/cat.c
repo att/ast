@@ -409,7 +409,7 @@ b_cat(int argc, char** argv, Shbltin_t* context)
 	char			states[UCHAR_MAX+1];
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
-	att = !strcmp(astconf("UNIVERSE", NiL, NiL), "att");
+	att = !strcmp(astconf("UNIVERSE", NULL, NULL), "att");
 	mode = "r";
 	for (;;)
 	{
@@ -477,7 +477,7 @@ b_cat(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	memset(states, 0, sizeof(states));
 	if (flags&V_FLAG)
 	{
@@ -514,7 +514,7 @@ b_cat(int argc, char** argv, Shbltin_t* context)
 		dovcat = 1;
 	}
 	if (flags&d_FLAG)
-		sfopen(sfstdout, NiL, "wt");
+		sfopen(sfstdout, NULL, "wt");
 	if (cp = *argv)
 		argv++;
 	do
@@ -523,9 +523,9 @@ b_cat(int argc, char** argv, Shbltin_t* context)
 		{
 			fp = sfstdin;
 			if (flags&D_FLAG)
-				sfopen(fp, NiL, mode);
+				sfopen(fp, NULL, mode);
 		}
-		else if (!(fp = sfopen(NiL, cp, mode)))
+		else if (!(fp = sfopen(NULL, cp, mode)))
 		{
 			if (!(flags&F_FLAG))
 				error(ERROR_system(0), "%s: cannot open", cp);
@@ -555,6 +555,6 @@ b_cat(int argc, char** argv, Shbltin_t* context)
 	if (sfsync(sfstdout))
 		error(ERROR_system(0), "write error");
 	if (flags&d_FLAG)
-		sfopen(sfstdout, NiL, "w");
+		sfopen(sfstdout, NULL, "w");
 	return error_info.errors;
 }

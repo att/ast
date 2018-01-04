@@ -471,7 +471,7 @@ ppop(int op, ...)
 		{
 #if COMPATIBLE
 			if (pp.initialized)
-				ppfsm(FSM_COMPATIBILITY, NiL);
+				ppfsm(FSM_COMPATIBILITY, NULL);
 #else
 			if (pp.state & COMPATIBILITY)
 				error(3, "preprocessor not compiled with compatibility dialect enabled [COMPATIBLE]");
@@ -487,7 +487,7 @@ ppop(int op, ...)
 			goto before;
 		pp.state |= COMPILE;
 		if (!pp.symtab)
-			pp.symtab = hashalloc(NiL, HASH_name, "symbols", 0);
+			pp.symtab = hashalloc(NULL, HASH_name, "symbols", 0);
 		if (kp = va_arg(ap, struct ppkeyword*))
 			for (; s = kp->name; kp++)
 		{
@@ -696,7 +696,7 @@ ppop(int op, ...)
 				 * out of malloc is fatal
 				 */
 
-				memfatal(NiL);
+				memfatal(NULL);
 
 				/*
 				 * initialize the error message interface
@@ -712,7 +712,7 @@ ppop(int op, ...)
 				 * initialize pplex tables
 				 */
 
-				ppfsm(FSM_INIT, NiL);
+				ppfsm(FSM_INIT, NULL);
 
 				/*
 				 * fixed macro stack size -- room for improvement
@@ -794,7 +794,7 @@ ppop(int op, ...)
 			 */
 
 			if (!pp.symtab)
-				pp.symtab = hashalloc(NiL, HASH_name, "symbols", 0);
+				pp.symtab = hashalloc(NULL, HASH_name, "symbols", 0);
 			if (!pp.dirtab)
 			{
 				pp.dirtab = hashalloc(REFONE, HASH_name, "directives", 0);
@@ -873,7 +873,7 @@ ppop(int op, ...)
 				if (ppsearch(pp.ppdefault, T_STRING, SEARCH_EXISTS) < 0)
 				{
 					free(pp.ppdefault);
-					if (!(pp.ppdefault = pathprobe("C", pp.pass, pp.probe ? pp.probe : PPPROBE, 0, pp.path, MAXTOKEN + 1, NiL, 0)))
+					if (!(pp.ppdefault = pathprobe("C", pp.pass, pp.probe ? pp.probe : PPPROBE, 0, pp.path, MAXTOKEN + 1, NULL, 0)))
 						error(1, "cannot determine default definitions for %s", pp.probe ? pp.probe : PPPROBE);
 				}
 				if (pp.probe)
@@ -1059,7 +1059,7 @@ ppop(int op, ...)
 				struct pplist*	preroot;
 
 				if ((preroot = (struct pplist*)hashget(pp.prdtab, "preroot")))
-					setpreroot(NiL, preroot->value);
+					setpreroot(NULL, preroot->value);
 #endif
 			}
 			if (pp.ignoresrc)
@@ -1071,16 +1071,16 @@ ppop(int op, ...)
 			if (pp.ignore)
 			{
 				if (*pp.ignore)
-					ppmapinclude(pp.ignore, NiL);
+					ppmapinclude(pp.ignore, NULL);
 				else
 					pp.ignore = 0;
 			}
 			if (pp.standalone)
 				pp.state |= STANDALONE;
 #if COMPATIBLE
-			ppfsm(FSM_COMPATIBILITY, NiL);
+			ppfsm(FSM_COMPATIBILITY, NULL);
 #endif
-			ppfsm(FSM_PLUSPLUS, NiL);
+			ppfsm(FSM_PLUSPLUS, NULL);
 			pp.initialized = 1;
 			if (pp.reset.on)
 			{
@@ -1095,10 +1095,10 @@ ppop(int op, ...)
 		{
 			if (pp.symtab)
 			{
-				hashwalk(pp.filtab, 0, unguard, NiL);
+				hashwalk(pp.filtab, 0, unguard, NULL);
 				hashfree(pp.symtab);
 			}
-			pp.symtab = hashalloc(NiL, HASH_name, "symbols", HASH_free, undefine, HASH_set, HASH_ALLOCATE|HASH_BUCKET, 0);
+			pp.symtab = hashalloc(NULL, HASH_name, "symbols", HASH_free, undefine, HASH_set, HASH_ALLOCATE|HASH_BUCKET, 0);
 			hashview(pp.symtab, pp.reset.symtab);
 			pp.ro_state = pp.reset.ro_state;
 			pp.ro_mode = pp.reset.ro_mode;
@@ -1183,7 +1183,7 @@ ppop(int op, ...)
 			else
 			{
 				*t = 'd';
-				if (!(pp.filedeps.sp = sfopen(NiL, s, "w")))
+				if (!(pp.filedeps.sp = sfopen(NULL, s, "w")))
 					error(ERROR_SYSTEM|3, "%s: cannot create", s);
 			}
 			*t = 'o';
@@ -1344,11 +1344,11 @@ ppop(int op, ...)
 		break;
 	case PP_PLUSCOMMENT:
 		if (ppset(&pp.option, PLUSCOMMENT, va_arg(ap, int)) && pp.initialized)
-			ppfsm(FSM_PLUSPLUS, NiL);
+			ppfsm(FSM_PLUSPLUS, NULL);
 		break;
 	case PP_PLUSPLUS:
 		if (ppset(&pp.option, PLUSPLUS, va_arg(ap, int)) && ppset(&pp.option, PLUSCOMMENT, va_arg(ap, int)) && pp.initialized)
-			ppfsm(FSM_PLUSPLUS, NiL);
+			ppfsm(FSM_PLUSPLUS, NULL);
 		break;
 	case PP_POOL:
 		if (pp.initialized)
@@ -1421,14 +1421,14 @@ ppop(int op, ...)
 			if (t)
 				*t = '_';
 			if (!(key = ppkeyget(pp.symtab, p)))
-				key = ppkeyset(pp.symtab, NiL);
+				key = ppkeyset(pp.symtab, NULL);
 			else if (!(key->sym.flags & SYM_LEX))
 			{
 				struct ppsymbol	tmp;
 
 				tmp = key->sym;
-				hashlook(pp.symtab, p, HASH_DELETE, NiL);
-				key = ppkeyset(pp.symtab, NiL);
+				hashlook(pp.symtab, p, HASH_DELETE, NULL);
+				key = ppkeyset(pp.symtab, NULL);
 				key->sym.flags = tmp.flags;
 				key->sym.macro = tmp.macro;
 				key->sym.value = tmp.value;
@@ -1453,7 +1453,7 @@ ppop(int op, ...)
 		pp.standalone = 1;
 		break;
 	case PP_STANDARD:
-		if ((pp.lastdir->next->name = ((p = va_arg(ap, char*)) && *p) ? p : NiL) && !stat(p, &st))
+		if ((pp.lastdir->next->name = ((p = va_arg(ap, char*)) && *p) ? p : NULL) && !stat(p, &st))
 			SAVEID(&pp.lastdir->next->id, &st);
 		for (dp = pp.firstdir; dp; dp = dp->next)
 			if (dp->name)
@@ -1514,7 +1514,7 @@ ppop(int op, ...)
 				else if (streq(p, "proto"))
 					n = TEST_noproto|TEST_INVERT;
 				else if (*p >= '0' && *p <= '9')
-					n = strtoul(p, NiL, 0);
+					n = strtoul(p, NULL, 0);
 				else
 				{
 					error(1, "%s: unknown test", p);
@@ -1559,14 +1559,14 @@ ppop(int op, ...)
 
 			pp.truncate = op;
 			tab = pp.symtab;
-			pp.symtab = hashalloc(NiL, HASH_set, tab ? HASH_ALLOCATE : 0, HASH_compare, trunccomp, HASH_hash, trunchash, HASH_name, "truncate", 0);
+			pp.symtab = hashalloc(NULL, HASH_set, tab ? HASH_ALLOCATE : 0, HASH_compare, trunccomp, HASH_hash, trunchash, HASH_name, "truncate", 0);
 			if (tab && (pos = hashscan(tab, 0)))
 			{
 				if (p = hashnext(pos))
 					do
 					{
 						b = hashnext(pos);
-						hashlook(pp.symtab, (char*)p, HASH_BUCKET|HASH_INSTALL, NiL);
+						hashlook(pp.symtab, (char*)p, HASH_BUCKET|HASH_INSTALL, NULL);
 					} while (p = b);
 				hashdone(pos);
 			}

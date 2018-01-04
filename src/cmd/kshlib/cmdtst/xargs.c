@@ -228,10 +228,10 @@ b_xargs(int argc, register char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (!(xargs.cmd = cmdopen(argv, argmax, size, insert, &xargs.disc)))
 		error(ERROR_SYSTEM|3, "out of space");
-	sfopen(sfstdin, NiL, "rt");
+	sfopen(sfstdin, NULL, "rt");
 	error_info.line = 1;
 	if (term >= 0)
 		while (!sh_checksig(context))

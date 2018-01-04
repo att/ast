@@ -185,7 +185,7 @@ regclass(const char* s, char** e)
 		if (n == cp->size && strneq(s, cp->name, n))
 			goto found;
 	xp = zp = 0;
-	lc = (Ctype_t*)setlocale(LC_CTYPE, NiL);
+	lc = (Ctype_t*)setlocale(LC_CTYPE, NULL);
 	for (cp = ctype; cp < &ctype[elementsof(ctype)]; cp++)
 	{
 		if (!zp)

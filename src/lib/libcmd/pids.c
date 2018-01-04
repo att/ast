@@ -115,10 +115,10 @@ b_pids(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || *argv)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (!format)
 		format = FORMAT;
-	sfkeyprintf(sfstdout, format, format, key, NiL);
+	sfkeyprintf(sfstdout, format, format, key, NULL);
 	sfprintf(sfstdout, "\n");
 	return 0;
 }

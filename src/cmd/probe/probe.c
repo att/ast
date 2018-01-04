@@ -220,7 +220,7 @@ verify(char* path, char* old, char* processor, int must)
 	Sfio_t*	of;
 
 	r = 0;
-	if (nf = sfopen(NiL, path, "r"))
+	if (nf = sfopen(NULL, path, "r"))
 	{
 		if ((ns = sfgetr(nf, '\n', 1)) && (nz = sfvalue(nf) - 1) > 0)
 		{
@@ -230,7 +230,7 @@ verify(char* path, char* old, char* processor, int must)
 			else
 				error(2, "%s: %s clashes with %s", path, processor, ns - nz);
 		}
-		if (r && old && sfseek(nf, 0L, 0) == 0 && (of = sfopen(NiL, old, "r")))
+		if (r && old && sfseek(nf, 0L, 0) == 0 && (of = sfopen(NULL, old, "r")))
 		{
 			for (;;)
 			{
@@ -356,7 +356,7 @@ main(int argc, char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(language = *argv++) || !(tool = *argv++) || !(processor = *argv++) || *argv)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (*processor != '/')
 	{
 		if (s = strchr(processor, ' '))
@@ -366,16 +366,16 @@ main(int argc, char** argv)
 			*(processor + n) = 0;
 		}
 		v = processor;
-		if (!(processor = pathpath(processor, NiL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, cmd, sizeof(cmd))))
+		if (!(processor = pathpath(processor, NULL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, cmd, sizeof(cmd))))
 			error(3, "%s: processor not found", v);
 		if (s)
 			strcpy(processor + strlen(processor), s);
 	}
 #if FS_PREROOT
-	if (path = getpreroot(NiL, processor))
-		setpreroot(NiL, path);
+	if (path = getpreroot(NULL, processor))
+		setpreroot(NULL, path);
 #endif
-	if (!(path = pathprobe(language, tool, processor, (options & TEST) ? -3 : -2, NiL, 0, attributes, sizeof(attributes))))
+	if (!(path = pathprobe(language, tool, processor, (options & TEST) ? -3 : -2, NULL, 0, attributes, sizeof(attributes))))
 		error(3, "cannot generate probe key");
 	if (stat(path, &ps))
 	{
@@ -422,7 +422,7 @@ main(int argc, char** argv)
 		*(script + n) = 0;
 		if (suid >= 0)
 			strcpy(base, key);
-		else if (!(path = pathprobe(language, tool, processor, -1, NiL, 0, attributes, sizeof(attributes))))
+		else if (!(path = pathprobe(language, tool, processor, -1, NULL, 0, attributes, sizeof(attributes))))
 			error(3, "cannot generate probe key");
 		else
 		{
@@ -510,7 +510,7 @@ main(int argc, char** argv)
 					signal(signals[n], SIG_IGN);
 			if (!(options & TEST))
 			{
-				if (!(fp = sfopen(NiL, tmp, "w")))
+				if (!(fp = sfopen(NULL, tmp, "w")))
 					error(ERROR_SYSTEM|3, "%s: cannot write", tmp);
 				chmod(tmp, S_IRUSR|S_IRGRP|S_IROTH);
 			}
@@ -524,9 +524,9 @@ main(int argc, char** argv)
 			n = 0;
 			cmdenvv[n++] = sentinel;
 			cmdenvv[n] = 0;
-			if (!(pp = procopen(script, cmdargv, cmdenvv, NiL, PROC_UID|PROC_GID|((options&TEST)?0:PROC_READ))))
+			if (!(pp = procopen(script, cmdargv, cmdenvv, NULL, PROC_UID|PROC_GID|((options&TEST)?0:PROC_READ))))
 				n = -1;
-			else if (!(options & TEST) && (!(pf = sfnew(NiL, NiL, SF_UNBOUND, pp->rfd, SF_READ)) || !(pp->rfd = -1) || sfmove(pf, fp, SF_UNBOUND, -1) < 0 || sfclose(pf) || sfclose(fp)))
+			else if (!(options & TEST) && (!(pf = sfnew(NULL, NULL, SF_UNBOUND, pp->rfd, SF_READ)) || !(pp->rfd = -1) || sfmove(pf, fp, SF_UNBOUND, -1) < 0 || sfclose(pf) || sfclose(fp)))
 				n = -2;
 			else
 				n = 0;
@@ -562,7 +562,7 @@ main(int argc, char** argv)
 							touch(path, ps.st_mtime, ps.st_mtime, 0);
 						}
 					}
-					else if (!verify(path, NiL, processor, 0))
+					else if (!verify(path, NULL, processor, 0))
 					{
 						n = -1;
 						error(ERROR_SYSTEM|2, "%s: cannot rename to %s", tmp, path);
@@ -590,7 +590,7 @@ main(int argc, char** argv)
 				{
 					if (!access(cmd, F_OK))
 						error(3, "%s: override already generated", cmd);
-					if (!(pf = sfopen(NiL, cmd, "w")))
+					if (!(pf = sfopen(NULL, cmd, "w")))
 					{
 						for (s = cmd + (*cmd == '/'); s = strchr(s, '/'); *s++ = '/')
 						{
@@ -598,10 +598,10 @@ main(int argc, char** argv)
 							if (access(cmd, F_OK) && mkdir(cmd, S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH))
 								error(ERROR_SYSTEM|3, "%s: cannot create override directory", cmd);
 						}
-						if (!(pf = sfopen(NiL, cmd, "w")))
+						if (!(pf = sfopen(NULL, cmd, "w")))
 							error(ERROR_SYSTEM|3, "%s: cannot write", cmd);
 					}
-					if (!(fp = sfopen(NiL, path, "r")))
+					if (!(fp = sfopen(NULL, path, "r")))
 						error(ERROR_SYSTEM|3, "%s: cannot read", path);
 					if (sfmove(fp, pf, SF_UNBOUND, -1) < 0 || sfclose(fp) || sfclose(pf))
 						error(ERROR_SYSTEM|3, "%s: copy error", cmd);
@@ -618,13 +618,13 @@ main(int argc, char** argv)
 				{
 					if (options & LIST)
 					{
-						if (!(fp = sfopen(NiL, path, "r")))
+						if (!(fp = sfopen(NULL, path, "r")))
 							error(ERROR_SYSTEM|3, "%s: cannot read", path);
 						sfmove(fp, sfstdout, SF_UNBOUND, -1);
 						sfclose(fp);
 					}
 					if (options & VERIFY)
-						verify(path, NiL, processor, 1);
+						verify(path, NULL, processor, 1);
 				}
 			}
 		}

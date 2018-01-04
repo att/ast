@@ -255,7 +255,7 @@ main(int argc, char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(catfile = *argv++))
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 
 	/*
 	 * set and list only need catfile
@@ -263,12 +263,12 @@ main(int argc, char** argv)
 
 	if (set)
 	{
-		sfprintf(sfstdout, "%d\n", mcindex(catfile, NiL, NiL, NiL));
+		sfprintf(sfstdout, "%d\n", mcindex(catfile, NULL, NULL, NULL));
 		return error_info.errors != 0;
 	}
 	else if (list)
 	{
-		if (!(sp = sfopen(NiL, catfile, "r")))
+		if (!(sp = sfopen(NULL, catfile, "r")))
 			error(ERROR_SYSTEM|3, "%s: cannot read catalog", catfile);
 		if (!(mc = mcopen(sp)))
 			error(ERROR_SYSTEM|3, "%s: catalog content error", catfile);
@@ -356,9 +356,9 @@ main(int argc, char** argv)
 
 	if (!(tp = sfstropen()))
 		error(ERROR_SYSTEM|3, "out of space [string stream]");
-	if (!(mp = sfopen(NiL, msgfile, "r")))
+	if (!(mp = sfopen(NULL, msgfile, "r")))
 		error(ERROR_SYSTEM|3, "%s: cannot read message file", msgfile);
-	sp = sfopen(NiL, catfile, "r");
+	sp = sfopen(NULL, catfile, "r");
 	if (!(mc = mcopen(sp)))
 		error(ERROR_SYSTEM|3, "%s: catalog content error", catfile);
 	if (sp)
@@ -388,10 +388,10 @@ main(int argc, char** argv)
 			{
 				while (isspace(*s))
 					s++;
-				num = (int)strtol(s, NiL, 0);
+				num = (int)strtol(s, NULL, 0);
 				if (num < mc->num && mc->set[num].num)
 					for (i = 1; i <= mc->set[num].num; i++)
-						mcput(mc, num, i, NiL);
+						mcput(mc, num, i, NULL);
 			}
 			else if (streq(t, "quote"))
 				q = *s ? *s : 0;
@@ -417,7 +417,7 @@ main(int argc, char** argv)
 				s = e;
 				if (!*s)
 				{
-					if (mcput(mc, set, num, NiL))
+					if (mcput(mc, set, num, NULL))
 						error(2, "(%d,%d): cannot delete message", set, num);
 				}
 				else if (isspace(*s++))
@@ -508,7 +508,7 @@ main(int argc, char** argv)
 	 * rename if no errors
 	 */
 
-	if (!(s = pathtemp(NiL, 0, "", error_info.id, NiL)) || !(sp = sfopen(NiL, s, "w")))
+	if (!(s = pathtemp(NULL, 0, "", error_info.id, NULL)) || !(sp = sfopen(NULL, s, "w")))
 		error(ERROR_SYSTEM|3, "%s: cannot write catalog file", catfile);
 	if (mcdump(mc, sp) || mcclose(mc) || sfclose(sp))
 	{

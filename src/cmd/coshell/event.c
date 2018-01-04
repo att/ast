@@ -272,7 +272,7 @@ log(State_t* state, Connection_t* con, int type, const char* format, ...)
 		if (!(s = sfstruse(state->tmp)))
 			error(ERROR_SYSTEM|3, "out of space");
 		if (type != 'I' && state->log && state->logf)
-			sfprintf(state->logf, "%s (%03d) %c %s\n", fmttime("%K", time(NiL)), con ? con->fd : 0, toupper(type), s);
+			sfprintf(state->logf, "%s (%03d) %c %s\n", fmttime("%K", time(NULL)), con ? con->fd : 0, toupper(type), s);
 		if (con && type != 'R' && type != 'S')
 		{
 			if (type != 'L' || !con->quiet)
@@ -423,7 +423,7 @@ apply(State_t* state, Connection_t* con, int id, int index, datum key, datum val
 	{
 	case REQ_clear:
 		dat->flags |= DATA_clear;
-		dat->time = time(NiL);
+		dat->time = time(NULL);
 		val.dptr = (void*)dat;
 		val.dsize = sizeof(*dat);
 		if (!(n = dbm_store(state->dbm, key, val, DBM_INSERT)) || n > 0 && !dbm_store(state->dbm, key, val, DBM_REPLACE))
@@ -452,7 +452,7 @@ apply(State_t* state, Connection_t* con, int id, int index, datum key, datum val
 		break;
 	case REQ_hold:
 		dat->flags |= DATA_hold;
-		dat->time = time(NiL);
+		dat->time = time(NULL);
 		val.dptr = (void*)dat;
 		val.dsize = sizeof(*dat);
 		if (!(n = dbm_store(state->dbm, key, val, DBM_INSERT)) || n > 0 && !dbm_store(state->dbm, key, val, DBM_REPLACE))
@@ -467,7 +467,7 @@ apply(State_t* state, Connection_t* con, int id, int index, datum key, datum val
 		break;
 	case REQ_raise:
 		dat->flags &= ~DATA_clear;
-		dat->time = time(NiL);
+		dat->time = time(NULL);
 		dat->raise++;
 		val.dptr = (void*)dat;
 		val.dsize = sizeof(*dat);
@@ -588,7 +588,7 @@ request(State_t* state, Connection_t* con, int id, int index, char** a, unsigned
 		{
 		rescan:
 			for (key = dbm_firstkey(state->dbm); key.dptr; key = dbm_nextkey(state->dbm))
-				if (EVENT(key.dptr) && !regexec(&re, key.dptr, 0, NiL, 0))
+				if (EVENT(key.dptr) && !regexec(&re, key.dptr, 0, NULL, 0))
 				{
 					val = dbm_fetch(state->dbm, key);
 					if (val.dsize > sizeof(dat))
@@ -629,7 +629,7 @@ date(State_t* state, Connection_t* con, const char* s)
 	}
 	else
 	{
-		t = tmdate(s, &e, NiL);
+		t = tmdate(s, &e, NULL);
 		if (*e)
 		{
 			log(state, con, 'E', "%s: invalid date/time", s);
@@ -680,7 +680,7 @@ actionf(register Css_t* css, register Cssfd_t* fp, Cssdisc_t* disc)
 		state->req[--n] = 0;
 		log(state, con, 'R', "%s", state->req);
 		con->code = 0;
-		if (tokscan(state->req, NiL, " %v ", state->cmd, elementsof(state->cmd) - 1) > 0)
+		if (tokscan(state->req, NULL, " %v ", state->cmd, elementsof(state->cmd) - 1) > 0)
 		{
 			id = -1;
 			for (q = state->cmd; (s = *q) && (isalpha(*s) || *s == '_'); q++)
@@ -689,10 +689,10 @@ actionf(register Css_t* css, register Cssfd_t* fp, Cssdisc_t* disc)
 				if (*s != '=')
 					break;
 				if ((s - *q) == 2 && *(s - 1) == 'd' && *(s - 2) == 'i')
-					id = (int)strtol(s + 1, NiL, 0);
+					id = (int)strtol(s + 1, NULL, 0);
 			}
 			s = *(a = q);
-			if (!(r = (Request_t*)strpsearch(requests, elementsof(requests), sizeof(requests[0]), s, NiL)))
+			if (!(r = (Request_t*)strpsearch(requests, elementsof(requests), sizeof(requests[0]), s, NULL)))
 				log(state, con, 'E', "%s: unknown request", s);
 			else
 			{
@@ -858,7 +858,7 @@ actionf(register Css_t* css, register Cssfd_t* fp, Cssdisc_t* disc)
 									break;
 								}
 						list:
-								if (EVENT(con->list.dptr) && (con->all || !regexec(&con->re, con->list.dptr, 0, NiL, 0)))
+								if (EVENT(con->list.dptr) && (con->all || !regexec(&con->re, con->list.dptr, 0, NULL, 0)))
 								{
 									val = dbm_fetch(state->dbm, con->list);
 									if (val.dsize > sizeof(data))
@@ -1100,7 +1100,7 @@ main(int argc, char** argv)
 		break;
 	}
 	if (error_info.errors || !(state.path = *(argv += opt_info.index)))
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 
 	/*
 	 * get the connect stream path
@@ -1154,7 +1154,7 @@ main(int argc, char** argv)
 			sfprintf(state.tmp, "%s.log", state.path);
 			if (!(s = sfstruse(state.tmp)))
 				error(ERROR_SYSTEM|3, "out of space");
-			if (state.logf = sfopen(NiL, s, "a"))
+			if (state.logf = sfopen(NULL, s, "a"))
 				sfset(state.logf, SF_LINE, 1);
 			else
 				error(ERROR_SYSTEM|2, "%s: cannot append log file", s);

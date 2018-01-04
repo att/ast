@@ -330,7 +330,7 @@ compile(State_t* state)
 	for (x = state->files.head; x; x = x->next)
 	{
 		s = x->string;
-		if (!(f = sfopen(NiL, s, "r")))
+		if (!(f = sfopen(NULL, s, "r")))
 		{
 			error(ERROR_SYSTEM|2, "%s: cannot open", s);
 			r = 2;
@@ -700,7 +700,7 @@ grep(char* id, int options, int argc, char** argv, Shbltin_t* context)
 	state.redisc.re_resizehandle = (void*)state.vm;
 	state.match = 1;
 	state.options = REG_FIRST|REG_NOSUB|REG_NULL|REG_DISCIPLINE|REG_MULTIPLE|options;
-	if (strcmp(astconf("CONFORMANCE", NiL, NiL), "standard"))
+	if (strcmp(astconf("CONFORMANCE", NULL, NULL), "standard"))
 		state.options |= REG_LENIENT;
 	error_info.id = id;
 	h = 0;
@@ -753,7 +753,7 @@ grep(char* id, int options, int argc, char** argv, Shbltin_t* context)
 			case 'b':
 			case 'm':
 				c = *s++;
-				state.buffer.size = strton(s, &s, NiL, 1);
+				state.buffer.size = strton(s, &s, NULL, 1);
 				if (c == 'b' && !(state.buffer.base = newof(0, char, state.buffer.size, 0)))
 				{
 					error(ERROR_SYSTEM|2, "out of space [test buffer]");
@@ -902,7 +902,7 @@ grep(char* id, int options, int argc, char** argv, Shbltin_t* context)
 		state.prefix = 0;
 	else if (!(flags & FTS_TOP) || argv[1])
 		state.prefix = 1;
-	if (!(fts = fts_open(argv, flags, NiL)))
+	if (!(fts = fts_open(argv, flags, NULL)))
 	{
 		error(ERROR_SYSTEM|2, "%s: not found", argv[0]);
 		r = 1;
@@ -912,7 +912,7 @@ grep(char* id, int options, int argc, char** argv, Shbltin_t* context)
 		switch (ent->fts_info)
 		{
 		case FTS_F:
-			if (f = sfopen(NiL, ent->fts_accpath, "r"))
+			if (f = sfopen(NULL, ent->fts_accpath, "r"))
 			{
 				r = execute(&state, f, ent->fts_path, context);
 				sfclose(f);

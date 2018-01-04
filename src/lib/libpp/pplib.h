@@ -449,7 +449,7 @@ struct pathid				/* physical file name and id	*/
 #define keyname(x)	ppkeyname(x,0)
 #define nextframe(m,p)	(m->next=m+(p-(char*)m+sizeof(struct ppmacstk)-1)/sizeof(struct ppmacstk)+1)
 #define popframe(m)	(m=m->prev)
-#define pptokchr(c)	pptokstr(NiL,(c))
+#define pptokchr(c)	pptokstr(NULL,(c))
 #define pushcontrol()	do { if (pp.control++ >= pp.maxcon) ppnest(); } while (0)
 #define pushframe(m)	(m->next->prev=m,m=m->next)
 #define setmode(m,v)	ppset(&pp.mode,m,v)
@@ -457,12 +457,12 @@ struct pathid				/* physical file name and id	*/
 #define setstate(m,v)	ppset(&pp.state,m,v)
 #define tracing		(error_info.trace<0)
 
-#define ppgetfile(x)	((struct ppfile*)hashlook(pp.filtab,x,HASH_LOOKUP,NiL))
-#define ppsetfile(x)	((struct ppfile*)hashlook(pp.filtab,x,HASH_CREATE|HASH_SIZE(sizeof(struct ppfile)),NiL))
+#define ppgetfile(x)	((struct ppfile*)hashlook(pp.filtab,x,HASH_LOOKUP,NULL))
+#define ppsetfile(x)	((struct ppfile*)hashlook(pp.filtab,x,HASH_CREATE|HASH_SIZE(sizeof(struct ppfile)),NULL))
 
-#define ppkeyget(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_LOOKUP,NiL)
-#define ppkeyref(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_LOOKUP|HASH_INTERNAL,NiL)
-#define ppkeyset(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_CREATE|HASH_SIZE(sizeof(struct ppsymkey)),NiL)
+#define ppkeyget(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_LOOKUP,NULL)
+#define ppkeyref(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_LOOKUP|HASH_INTERNAL,NULL)
+#define ppkeyset(t,n)	(struct ppsymkey*)hashlook(t,n,HASH_CREATE|HASH_SIZE(sizeof(struct ppsymkey)),NULL)
 
 #define MARK		'@'		/* internal mark		*/
 #define ARGOFFSET	'1'		/* macro arg mark offset	*/
@@ -592,7 +592,7 @@ struct pathid				/* physical file name and id	*/
 	} while (0)
 
 #define PUSH_FILE(f,d)	\
-	pppush(IN_FILE,f,NiL,d)
+	pppush(IN_FILE,f,NULL,d)
 
 #define PUSH_INIT(f,p)	\
 	pppush(IN_INIT,f,p,1)
@@ -658,7 +658,7 @@ struct pathid				/* physical file name and id	*/
 	} while (0)
 
 #define PUSH_RESCAN(p)	\
-	pppush(IN_RESCAN,NiL,p,0)
+	pppush(IN_RESCAN,NULL,p,0)
 
 #define PUSH_SQUOTE(p,n)	\
 	do \
@@ -735,10 +735,8 @@ struct ppsymkey				/* pun for SYM_KEYWORD lex val	*/
 #if PROTOMAIN && PROTO_STANDALONE
 
 #if defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)
-#define NiL		0
 #define NoP(x)		(&x,1)
 #else
-#define NiL		((char*)0)
 #define NoP(x)
 #endif
 

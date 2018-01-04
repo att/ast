@@ -332,7 +332,7 @@ int b___regress__(int argc, char** argv, Shbltin_t *context)
 		break;
 	}
 	if (error_info.errors || *(argv + opt_info.index))
-		errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NiL));
+		errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
 	return 0;
 }
 

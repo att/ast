@@ -37,5 +37,5 @@ tmxsleep(Time_t t)
 
 	tv.tv_sec = tmxsec(t);
 	tv.tv_nsec = tmxnsec(t);
-	return tvsleep(&tv, NiL);
+	return tvsleep(&tv, NULL);
 }

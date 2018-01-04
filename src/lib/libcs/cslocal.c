@@ -65,10 +65,10 @@ initiate(Cs_t* state, const char* svc, char* cmd)
 	av[2] = 0;
 	if ((pid = spawnveg(av[0], av, environ, 0)) == -1)
 	{
-		messagef((state->id, NiL, -1, "local: %s: cannot initiate %s", svc, cmd));
+		messagef((state->id, NULL, -1, "local: %s: cannot initiate %s", svc, cmd));
 		return -1;
 	}
-	while ((n = waitpid(pid, NiL, 0)) == -1 && errno == EINTR);
+	while ((n = waitpid(pid, NULL, 0)) == -1 && errno == EINTR);
 #ifdef SIGCHLD
 	if (fun != SIG_DFL)
 	{
@@ -104,7 +104,7 @@ cslocal(register Cs_t* state, const char* path)
 	int		n;
 #endif
 
-	messagef((state->id, NiL, -8, "local(%s) call", path));
+	messagef((state->id, NULL, -8, "local(%s) call", path));
 
 	/*
 	 * validate the path
@@ -113,14 +113,14 @@ cslocal(register Cs_t* state, const char* path)
 	p = (char*)path;
 	if (strncmp(p, DEVLOCAL, sizeof(DEVLOCAL) - 1))
 	{
-		messagef((state->id, NiL, -1, "local: %s: %s* expected", path, DEVLOCAL));
+		messagef((state->id, NULL, -1, "local: %s: %s* expected", path, DEVLOCAL));
 		goto sorry;
 	}
 	p += sizeof(DEVLOCAL) - 1;
 	for (t = p; *t && *t != '/'; t++);
 	if (!streq(t + 1, "user"))
 	{
-		messagef((state->id, NiL, -1, "local: %s: %s*/user expected", path, DEVLOCAL));
+		messagef((state->id, NULL, -1, "local: %s: %s*/user expected", path, DEVLOCAL));
 		goto sorry;
 	}
 
@@ -140,7 +140,7 @@ cslocal(register Cs_t* state, const char* path)
 		if (!eaccess(exe, X_OK) && !stat(exe, &st)) break;
 		if (!p)
 		{
-			messagef((state->id, NiL, -1, "local: %s: %s: cannot locate service on ../lib/cs/fdp", path, cmd));
+			messagef((state->id, NULL, -1, "local: %s: %s: cannot locate service on ../lib/cs/fdp", path, cmd));
 			goto sorry;
 		}
 	}
@@ -152,15 +152,15 @@ cslocal(register Cs_t* state, const char* path)
 	for (n = 0; (fd = open(tmp, O_RDWR)) < 0; n++)
 		if (n || errno == EACCES)
 		{
-			messagef((state->id, NiL, -1, "local: %s: %s: cannot open service", path, tmp));
+			messagef((state->id, NULL, -1, "local: %s: %s: cannot open service", path, tmp));
 			return -1;
 		}
 		else if (initiate(state, path, exe) < 0)
 		{
-			messagef((state->id, NiL, -1, "local: %s: %s: cannot initiate service %s", path, tmp, exe));
+			messagef((state->id, NULL, -1, "local: %s: %s: cannot initiate service %s", path, tmp, exe));
 			return -1;
 		}
-	messagef((state->id, NiL, -8, "local(%s) fd=%d server=%s stream=%s", path, fd, exe, tmp));
+	messagef((state->id, NULL, -8, "local(%s) fd=%d server=%s stream=%s", path, fd, exe, tmp));
 	return fd;
 
 #else
@@ -180,16 +180,16 @@ cslocal(register Cs_t* state, const char* path)
 		{
 			if (fd < 0 && (fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 			{
-				messagef((state->id, NiL, -1, "local: %s: AF_UNIX socket error", path));
+				messagef((state->id, NULL, -1, "local: %s: AF_UNIX socket error", path));
 				return -1;
 			}
 			if (!connect(fd, (struct sockaddr*)&nam, namlen))
 			{
 #if CS_LIB_SOCKET_RIGHTS
 				if (read(fd, cmd, 1) != 1)
-					messagef((state->id, NiL, -1, "local: %s: connect ack read error", path));
-				else if (cssend(state, fd, NiL, 0))
-					messagef((state->id, NiL, -1, "local: %s: connect authentication send error", path));
+					messagef((state->id, NULL, -1, "local: %s: connect ack read error", path));
+				else if (cssend(state, fd, NULL, 0))
+					messagef((state->id, NULL, -1, "local: %s: connect authentication send error", path));
 				else
 #endif
 				return fd;
@@ -198,7 +198,7 @@ cslocal(register Cs_t* state, const char* path)
 				fd = -1;
 #endif
 			}
-			else messagef((state->id, NiL, -1, "local: %s: connect error", path));
+			else messagef((state->id, NULL, -1, "local: %s: connect error", path));
 			if (errno != EACCES) errno = ENOENT;
 			if (n || errno == EACCES || initiate(state, path, exe) < 0)
 			{
@@ -206,7 +206,7 @@ cslocal(register Cs_t* state, const char* path)
 				return -1;
 			}
 			n = 1;
-			messagef((state->id, NiL, -1, "local: %s: connect retry", path));
+			messagef((state->id, NULL, -1, "local: %s: connect retry", path));
 		}
 	}
 

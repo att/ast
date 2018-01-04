@@ -164,7 +164,7 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 		}
 		else if (streq(pfx, "seed"))
 		{
-			tmp.key = (tmp.seed = (tmp.rng = dir ? (uintmax_t)strtoul(dir, NiL, 0) : (uintmax_t)1) != 0)? (uintmax_t)0x63c63cd9L : 0;
+			tmp.key = (tmp.seed = (tmp.rng = dir ? (uintmax_t)strtoul(dir, NULL, 0) : (uintmax_t)1) != 0)? (uintmax_t)0x63c63cd9L : 0;
 			return (char*)pfx;
 		}
 		else if (streq(pfx, TMP_ENV))
@@ -242,7 +242,7 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 			tmp.dir = tmp.vec;
 			d = *tmp.dir++;
 		}
-		if (!d && (!*(d = astconf("TMP", NiL, NiL)) || eaccess(d, W_OK|X_OK)) && eaccess(d = TMP1, W_OK|X_OK) && eaccess(d = TMP2, W_OK|X_OK))
+		if (!d && (!*(d = astconf("TMP", NULL, NULL)) || eaccess(d, W_OK|X_OK)) && eaccess(d = TMP1, W_OK|X_OK) && eaccess(d = TMP2, W_OK|X_OK))
 			return 0;
 	}
 	if (!len)
@@ -316,7 +316,7 @@ pathtemp(char* buf, size_t len, const char* dir, const char* pfx, int* fdp)
 			 */
 
 			tmp.pid = getpid();
-			tmp.rng = (uintmax_t)tmp.pid * ((uintmax_t)time(NiL) ^ (((uintmax_t)integralof(&attempt)) >> 3) ^ (((uintmax_t)integralof(tmp.dir)) >> 3));
+			tmp.rng = (uintmax_t)tmp.pid * ((uintmax_t)time(NULL) ^ (((uintmax_t)integralof(&attempt)) >> 3) ^ (((uintmax_t)integralof(tmp.dir)) >> 3));
 			if (!tmp.key)
 				tmp.key = (tmp.rng >> (sizeof(tmp.rng) * 4)) | ((tmp.rng & 0xffff) << (sizeof(tmp.rng) * 4));
 			tmp.rng ^= tmp.key;

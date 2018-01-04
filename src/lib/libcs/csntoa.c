@@ -38,11 +38,11 @@ csntoa(register Cs_t* state, unsigned long addr)
 	if ((!addr || p[0] == 127 && p[1] == 0 && p[2] == 0 && p[3] <= 1) && !state->ntoa[sizeof(state->ntoa)-1])
 	{
 		state->ntoa[sizeof(state->ntoa)-1] = 1;
-		addr = csaddr(state, NiL);
+		addr = csaddr(state, NULL);
 		state->ntoa[sizeof(state->ntoa)-1] = 0;
 	}
 	sfsprintf(state->ntoa, sizeof(state->ntoa), "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
-	messagef((state->id, NiL, -8, "ntoa(%s) call", state->ntoa));
+	messagef((state->id, NULL, -8, "ntoa(%s) call", state->ntoa));
 	return state->ntoa;
 }
 

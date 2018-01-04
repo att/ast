@@ -101,7 +101,7 @@ tsort(Sfio_t* ip)
 	Hash_table_t*		tab;
 	Hash_position_t*	pos;
 
-	if (!(tab = hashalloc(NiL, HASH_set, HASH_ALLOCATE, 0)))
+	if (!(tab = hashalloc(NULL, HASH_set, HASH_ALLOCATE, 0)))
 		error(ERROR_exit(1), "out of space [hash table]");
 	while (s = sfgetr(ip, '\n', 1))
 	{
@@ -168,10 +168,10 @@ main(int argc, char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!*argv || streq(*argv, "-") || streq(*argv, "/dev/stdin"))
 		ip = sfstdin;
-	else if (!(ip = sfopen(NiL, *argv, "r")))
+	else if (!(ip = sfopen(NULL, *argv, "r")))
 		error(ERROR_system(1), "%s cannot open", *argv);
 	tsort(ip);
 	if (ip != sfstdin)

@@ -68,7 +68,7 @@ nomalloc(Vmalloc_t* region, int type, void* obj, Vmdisc_t* disc)
 void
 memfatal(void)
 {
-	(void)memfatal_20130509(NiL);
+	(void)memfatal_20130509(NULL);
 }
 
 #undef	_AST_API_IMPLEMENT
@@ -85,7 +85,7 @@ memfatal_20130509(Vmdisc_t* disc)
 	if (!disc)
 	{
 		malloc(0);
-		if (!(disc = vmdisc(Vmregion, NiL)))
+		if (!(disc = vmdisc(Vmregion, NULL)))
 			return -1;
 	}
 	disc->exceptf = nomalloc;

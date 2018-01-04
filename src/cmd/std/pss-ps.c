@@ -71,7 +71,7 @@ ps_init(Pss_t* pss)
 			(*pss->disc->errorf)(pss, pss->disc, ERROR_SYSTEM|2, "out of space");
 		return -1;
 	}
-	state->now = (unsigned long)time(NiL) + 60;
+	state->now = (unsigned long)time(NULL) + 60;
 	if ((s = getenv("_AST_PSS_ps")) && *s == 'd')
 		state->debug = 1;
 	fields = 0;
@@ -152,7 +152,7 @@ ps_read(Pss_t* pss, Pss_id_t pid)
 			state->scan = 1;
 		if ((pss->disc->flags & PSS_VERBOSE) && pss->disc->errorf)
 			(*pss->disc->errorf)(pss, pss->disc, 0, "%s", pss->buf);
-		if (!(state->ps = sfpopen(NiL, pss->buf, "r")) || !sfgetr(state->ps, '\n', 0))
+		if (!(state->ps = sfpopen(NULL, pss->buf, "r")) || !sfgetr(state->ps, '\n', 0))
 			return -1;
 	}
 	return 1;
@@ -292,11 +292,11 @@ ps_part(register Pss_t* pss, register Pssent_t* pe)
 						break;
 				c = *s;
 				*s = 0;
-				pe->start = tmdate(t, &e, NiL);
+				pe->start = tmdate(t, &e, NULL);
 				if ((unsigned long)pe->start > state->now)
 				{
 					sfsprintf(pss->buf, sizeof(pss->buf), "last %s", t);
-					pe->start = tmdate(pss->buf, NiL, NiL);
+					pe->start = tmdate(pss->buf, NULL, NULL);
 				}
 				*s = c;
 				if (e > s)

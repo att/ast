@@ -300,7 +300,7 @@ findopen(const char* file, const char* pattern, const char* type, Finddisc_t* di
 			}
 			if (s)
 				*s = '/';
-			if (!(fp->fp = sfnew(NiL, NiL, (size_t)SF_UNBOUND, fd, SF_WRITE)))
+			if (!(fp->fp = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd, SF_WRITE)))
 			{
 				if (fp->disc->errorf)
 					(*fp->disc->errorf)(fp, fp->disc, ERROR_SYSTEM|2, "%s: cannot open tmp file", fp->encode.temp);
@@ -377,7 +377,7 @@ findopen(const char* file, const char* pattern, const char* type, Finddisc_t* di
 							for (k = 0; k < elementsof(findnames); k++)
 							{
 								sfsprintf(fp->decode.path, sizeof(fp->decode.path), "%s/%s", path, findnames[k]);
-								if (fp->fp = sfopen(NiL, fp->decode.path, "r"))
+								if (fp->fp = sfopen(NULL, fp->decode.path, "r"))
 								{
 									path = fp->decode.path;
 									break;
@@ -386,11 +386,11 @@ findopen(const char* file, const char* pattern, const char* type, Finddisc_t* di
 							if (fp->fp)
 								break;
 						}
-						else if (fp->fp = sfopen(NiL, path, "r"))
+						else if (fp->fp = sfopen(NULL, path, "r"))
 							break;
 					}
 				}
-				else if ((path = pathpath(path, "", PATH_REGULAR|PATH_READ, fp->decode.path, sizeof(fp->decode.path))) && (fp->fp = sfopen(NiL, path, "r")))
+				else if ((path = pathpath(path, "", PATH_REGULAR|PATH_READ, fp->decode.path, sizeof(fp->decode.path))) && (fp->fp = sfopen(NULL, path, "r")))
 					break;
 			}
 		if (!fp->fp)
@@ -883,7 +883,7 @@ findread(Find_t* fp)
 						if (!*e)
 						{
 							fp->decode.found = 1;
-							if (!fp->decode.match || strgrpmatch(fp->decode.path, fp->decode.pattern, NiL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT|ignorecase))
+							if (!fp->decode.match || strgrpmatch(fp->decode.path, fp->decode.pattern, NULL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT|ignorecase))
 							{
 								fp->decode.peek = c;
 								if (*p == '/')
@@ -895,7 +895,7 @@ findread(Find_t* fp)
 						}
 					}
 			}
-			else if (!fp->decode.match || !(n = regexec(&fp->decode.re, fp->decode.path, 0, NiL, 0)))
+			else if (!fp->decode.match || !(n = regexec(&fp->decode.re, fp->decode.path, 0, NULL, 0)))
 			{
 				fp->decode.peek = c;
 				if (*p == '/' && p > fp->decode.path)
@@ -1135,7 +1135,7 @@ findsync(Find_t* fp)
 				(*fp->disc->errorf)(fp, fp->disc, ERROR_SYSTEM|2, "cannot rewind tmp file");
 			return -1;
 		}
-		if (!(sp = sfopen(NiL, fp->encode.file, "w")))
+		if (!(sp = sfopen(NULL, fp->encode.file, "w")))
 			goto badcreate;
 
 		/*
@@ -1186,7 +1186,7 @@ findsync(Find_t* fp)
 	case FF_typ:
 		if (finddone(fp))
 			goto bad;
-		if (!(fp->fp = sfopen(NiL, fp->encode.temp, "r")))
+		if (!(fp->fp = sfopen(NULL, fp->encode.temp, "r")))
 		{
 			if (fp->disc->errorf)
 				(*fp->disc->errorf)(fp, fp->disc, ERROR_SYSTEM|2, "%s: cannot read tmp file", fp->encode.temp);
@@ -1198,7 +1198,7 @@ findsync(Find_t* fp)
 		 * commit the output file
 		 */
 
-		if (!(sp = sfopen(NiL, fp->encode.file, "w")))
+		if (!(sp = sfopen(NULL, fp->encode.file, "w")))
 			goto badcreate;
 
 		/*

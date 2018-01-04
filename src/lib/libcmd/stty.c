@@ -951,7 +951,7 @@ b_stty(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || (flags && *argv) || (flags&(flags-1)))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (tcgetattr(fd, &tty) < 0)
 		error(ERROR_system(1), "not a tty");
 	if (flags & T_FLAG)

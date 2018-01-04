@@ -514,7 +514,7 @@ key(void* handle, Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn)
 		kp->disable = 1;
 		if (!mp && !(mp = sfstropen()))
 			goto nospace;
-		sfkeyprintf(mp, handle, kp->macro, key, NiL);
+		sfkeyprintf(mp, handle, kp->macro, key, NULL);
 		if (!(s = sfstruse(mp)))
 			goto nospace;
 		kp->disable = 0;
@@ -823,7 +823,7 @@ pr(State_t* state, FTSENT* ent, int fill)
 	}
 	state->list.ent = ent;
 	state->adjust = 0;
-	fill -= sfkeyprintf(sfstdout, state, state->format, key, NiL) + state->adjust;
+	fill -= sfkeyprintf(sfstdout, state, state->format, key, NULL) + state->adjust;
 	if (!(state->lsflags & LS_COMMAS))
 	{
 		if (fill > 0)
@@ -854,7 +854,7 @@ col(State_t* state, FTSENT* ent, int length)
 
 	state->list.ent = ent;
 	if (keys[KEY_header].macro && ent->fts_level >= 0)
-		sfkeyprintf(sfstdout, state, keys[KEY_header].macro, key, NiL);
+		sfkeyprintf(sfstdout, state, keys[KEY_header].macro, key, NULL);
 	if ((files = state->list.count.files) > 0)
 	{
 		if (!(state->lsflags & LS_COLUMNS) || length <= 0)
@@ -867,7 +867,7 @@ col(State_t* state, FTSENT* ent, int length)
 			i = ent->fts_name[1];
 			ent->fts_name[1] = 0;
 			state->adjust = 2;
-			a = sfkeyprintf(state->tmp, state, state->format, key, NiL) - 1;
+			a = sfkeyprintf(state->tmp, state, state->format, key, NULL) - 1;
 			w = a + state->adjust + 1;
 			length += w;
 			sfstrseek(state->tmp, 0, SEEK_SET);
@@ -1037,7 +1037,7 @@ col(State_t* state, FTSENT* ent, int length)
 		}
 	}
 	if (keys[KEY_trailer].macro && ent->fts_level >= 0)
-		sfkeyprintf(sfstdout, state, keys[KEY_trailer].macro, key, NiL);
+		sfkeyprintf(sfstdout, state, keys[KEY_trailer].macro, key, NULL);
 }
 
 /*
@@ -1216,13 +1216,13 @@ dir(State_t* state, FTSENT* ent)
 			if (p->fts_namelen > length)
 				length = p->fts_namelen;
 			if (!(state->lsflags & LS_RECURSIVE))
-				fts_set(NiL, p, FTS_SKIP);
+				fts_set(NULL, p, FTS_SKIP);
 		}
 		else
 		{
 		invisible:
 			p->fts_number = INVISIBLE;
-			fts_set(NiL, p, FTS_SKIP);
+			fts_set(NULL, p, FTS_SKIP);
 		}
 	}
 	state->total.blocks += state->list.count.blocks;
@@ -1256,7 +1256,7 @@ ls(State_t* state, FTSENT* ent)
 {
 	if (!VISIBLE(state, ent))
 	{
-		fts_set(NiL, ent, FTS_SKIP);
+		fts_set(NULL, ent, FTS_SKIP);
 		return 0;
 	}
 	switch (ent->fts_info)
@@ -1278,7 +1278,7 @@ ls(State_t* state, FTSENT* ent)
 		return 1;
 	case FTS_DOT:
 		#if 0
-		fts_set(NiL, ent, FTS_SKIP);
+		fts_set(NULL, ent, FTS_SKIP);
 		/*FALLTHROUGH*/
 		#endif
 	case FTS_D:
@@ -1286,11 +1286,11 @@ ls(State_t* state, FTSENT* ent)
 		if ((state->lsflags & LS_DIRECTORY) && ent->fts_level >= 0)
 			break;
 		if (!(state->lsflags & LS_RECURSIVE))
-			fts_set(NiL, ent, FTS_SKIP);
+			fts_set(NULL, ent, FTS_SKIP);
 		else if (ent->fts_info == FTS_DNX)
 		{
 			error(2, "%s: cannot search directory", ent->fts_path, ent->fts_level);
-			fts_set(NiL, ent, FTS_SKIP);
+			fts_set(NULL, ent, FTS_SKIP);
 			if (ent->fts_level > 0 && !(state->lsflags & LS_NOSTAT))
 				return 0;
 		}
@@ -1299,7 +1299,7 @@ ls(State_t* state, FTSENT* ent)
 		dir(state, ent);
 		return 0;
 	}
-	fts_set(NiL, ent, FTS_SKIP);
+	fts_set(NULL, ent, FTS_SKIP);
 	if (ent->fts_level == 1)
 	{
 		memset(&state->list, 0, sizeof(state->list));
@@ -1463,7 +1463,7 @@ b_ls(int argc, char** argv, Shbltin_t* context)
 	else if (isatty(1))
 	{
 		state.lsflags |= LS_COLUMNS;
-		if (!strmatch(setlocale(LC_ALL, NiL), "*[Uu][Tt][Ff]?(-)8"))
+		if (!strmatch(setlocale(LC_ALL, NULL), "*[Uu][Tt][Ff]?(-)8"))
 			state.lsflags |= LS_PRINTABLE;
 	}
 	state.endflags = state.flags;
@@ -1606,14 +1606,14 @@ b_ls(int argc, char** argv, Shbltin_t* context)
 			switch (opt_info.num)
 			{
 			case -10:
-				if (!strcmp(setlocale(LC_TIME, NiL), "C"))
+				if (!strcmp(setlocale(LC_TIME, NULL), "C"))
 					break;
 				/*FALLTHROUGH*/
 			case 'i':
 				state.timefmt = TIME_ISO;
 				break;
 			case -11:
-				if (!strcmp(setlocale(LC_TIME, NiL), "C"))
+				if (!strcmp(setlocale(LC_TIME, NULL), "C"))
 					break;
 				/*FALLTHROUGH*/
 			case 'f':
@@ -1817,7 +1817,7 @@ b_ls(int argc, char** argv, Shbltin_t* context)
 			dump = 1;
 			break;
 		case -104:
-			state.testdate = tmdate(opt_info.arg, &e, NiL);
+			state.testdate = tmdate(opt_info.arg, &e, NULL);
 			if (*e)
 				error(3, "%s: invalid date string", opt_info.arg, opt_info.option);
 			break;
@@ -1840,7 +1840,7 @@ b_ls(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (state.lsflags == (lsflags|LS_TIME))
 		state.ftsflags |= FTS_SEEDOTDIR; /* keep configure happy */
 	if (state.lsflags & LS_DIRECTORY)
@@ -1927,7 +1927,7 @@ b_ls(int argc, char** argv, Shbltin_t* context)
 			state.lsflags |= LS_LABEL;
 		walk((char*)argv, ls, state.ftsflags, order, &state);
 		if (keys[KEY_summary].macro)
-			sfkeyprintf(sfstdout, NiL, keys[KEY_summary].macro, key, NiL);
+			sfkeyprintf(sfstdout, NULL, keys[KEY_summary].macro, key, NULL);
 	}
  done:
 	if (fmt)

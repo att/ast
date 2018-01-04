@@ -207,7 +207,7 @@ Sfio_t*	f;
 	int		fd;
 
 #if _PACKAGE_ast
-	if(!(file = pathtemp(NiL,PATH_MAX,NiL,"sf",&fd)))
+	if(!(file = pathtemp(NULL,PATH_MAX,NULL,"sf",&fd)))
 		return -1;
 	_rmtmp(f, file);
 	free(file);

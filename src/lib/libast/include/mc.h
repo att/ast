@@ -59,7 +59,7 @@
 
 #define MC_NLS		(1<<10)
 
-#define MC_MESSAGE_SET(s)	mcindex(s,NiL,NiL,NiL)
+#define MC_MESSAGE_SET(s)	mcindex(s,NULL,NULL,NULL)
 
 typedef struct Mcset_s
 {

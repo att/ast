@@ -133,7 +133,7 @@ pathprobe_20100601(const char* lang, const char* tool, const char* aproc, int op
 			strncopy(buf, proc, p - proc + 1);
 			proc = buf;
 		}
-		if (!(proc = pathpath(proc, NiL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, cmd, sizeof(cmd))))
+		if (!(proc = pathpath(proc, NULL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, cmd, sizeof(cmd))))
 			proc = (char*)aproc;
 		else if (p)
 		{
@@ -221,7 +221,7 @@ pathprobe_20100601(const char* lang, const char* tool, const char* aproc, int op
 			 * verify (<sep><name><sep><option><sep><value>)* header
 			 */
 
-			if (sp = sfopen(NiL, path, "r"))
+			if (sp = sfopen(NULL, path, "r"))
 			{
 				if (x = sfgetr(sp, '\n', 1))
 				{
@@ -252,7 +252,7 @@ pathprobe_20100601(const char* lang, const char* tool, const char* aproc, int op
 								*ap = 0;
 								ops[0] =  PROC_FD_DUP(1, 2, 0);
 								ops[1] = 0;
-								if (pp = procopen(proc, arg, NiL, ops, PROC_READ))
+								if (pp = procopen(proc, arg, NULL, ops, PROC_READ))
 								{
 									if ((v = x - e) >= sizeof(ver))
 										v = sizeof(ver) - 1;

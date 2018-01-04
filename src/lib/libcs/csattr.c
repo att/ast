@@ -50,8 +50,8 @@ load(register Cs_t* state)
 	register Hash_table_t*	tp;
 	int			c;
 
-	if (!(sp = csinfo(state, NiL, NiL))) return 0;
-	if (tp = hashalloc(NiL, HASH_set, HASH_ALLOCATE, HASH_name, "state->info", 0))
+	if (!(sp = csinfo(state, NULL, NULL))) return 0;
+	if (tp = hashalloc(NULL, HASH_set, HASH_ALLOCATE, HASH_name, "state->info", 0))
 		while (s = sfgetr(sp, '\n', 1))
 		{
 			while (isspace(*s)) s++;
@@ -61,7 +61,7 @@ load(register Cs_t* state)
 			{
 				c = *s;
 				*s++ = 0;
-				if (!(ip = (Info_t*)hashlook(tp, h, HASH_CREATE|HASH_SIZE(sizeof(Info_t)+strlen(s)+1), NiL)))
+				if (!(ip = (Info_t*)hashlook(tp, h, HASH_CREATE|HASH_SIZE(sizeof(Info_t)+strlen(s)+1), NULL)))
 				{
 					hashfree(tp);
 					tp = 0;
@@ -97,7 +97,7 @@ csattr(register Cs_t* state, const char* name, const char* attr)
 	static Hash_position_t*	pt;
 	static char		buf[256];
 
-	messagef((state->id, NiL, -8, "attr(%s,%s) call", name, attr));
+	messagef((state->id, NULL, -8, "attr(%s,%s) call", name, attr));
 	if (!tp && !(tp = load(state)))
 		return 0;
 	if (attr && (!*attr || *attr == '-' && !*(attr + 1)))
@@ -127,7 +127,7 @@ csattr(register Cs_t* state, const char* name, const char* attr)
 	{
 		if (streq(name, CS_HOST_LOCAL))
 			name = (const char*)csname(state, 0);
-		if (!(ip = (Info_t*)hashlook(tp, name, HASH_LOOKUP, NiL)))
+		if (!(ip = (Info_t*)hashlook(tp, name, HASH_LOOKUP, NULL)))
 			return 0;
 		if (attr)
 		{

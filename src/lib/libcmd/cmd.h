@@ -117,14 +117,14 @@ main(int argc, char** argv)
 		*t = 0;
 	for (;;)
 	{
-		if (dll = dlopen(NiL, RTLD_LAZY))
+		if (dll = dlopen(NULL, RTLD_LAZY))
 		{
 			if (fun = (Shbltin_f)dlsym(dll, buf + 1))
 				break;
 			if (fun = (Shbltin_f)dlsym(dll, buf))
 				break;
 		}
-		if (dll = dllplug(NiL, "cmd", NiL, RTLD_LAZY, NiL, 0))
+		if (dll = dllplug(NULL, "cmd", NULL, RTLD_LAZY, NULL, 0))
 		{
 			if (fun = (Shbltin_f)dlsym(dll, buf + 1))
 				break;
@@ -133,9 +133,9 @@ main(int argc, char** argv)
 		}
 		return 127;
 	}
-	return (*fun)(argc, argv, NiL);
+	return (*fun)(argc, argv, NULL);
 #else
-	return CMD_STANDALONE(argc, argv, NiL);
+	return CMD_STANDALONE(argc, argv, NULL);
 #endif
 }
 

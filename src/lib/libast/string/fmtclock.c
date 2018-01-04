@@ -42,7 +42,7 @@ fmtclock(Sfulong_t t)
 #ifdef CLOCKS_PER_SEC
 		clk_tck = CLOCKS_PER_SEC;
 #else
-		if (!(clk_tck = (unsigned int)strtoul(astconf("CLK_TCK", NiL, NiL), NiL, 10)))
+		if (!(clk_tck = (unsigned int)strtoul(astconf("CLK_TCK", NULL, NULL), NULL, 10)))
 			clk_tck = 60;
 #endif
 	}

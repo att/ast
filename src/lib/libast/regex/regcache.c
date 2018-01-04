@@ -121,7 +121,7 @@ regcache(const char* pattern, regflags_t reflags, int* status)
 	 * persistent setlocale() return values
 	 */
 
-	if ((s = setlocale(LC_CTYPE, NiL)) != matchstate.locale)
+	if ((s = setlocale(LC_CTYPE, NULL)) != matchstate.locale)
 	{
 		matchstate.locale = s;
 		flushcache();

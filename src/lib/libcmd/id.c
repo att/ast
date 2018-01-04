@@ -461,7 +461,7 @@ b_id(int argc, char** argv, Shbltin_t* context)
 	if (!power2(n))
 		error(2, "incompatible options selected");
 	if (error_info.errors || argc > 1)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!(flags & ~(N_FLAG|R_FLAG)))
 	{
 		if (flags & N_FLAG) flags |= O_FLAG;

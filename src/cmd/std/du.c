@@ -204,7 +204,7 @@ main(int argc, register char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	memset(&hit, 0, sizeof(hit));
 	memset(&disc, 0, sizeof(disc));
 	disc.key = offsetof(Hit_t, id);
@@ -219,7 +219,7 @@ main(int argc, register char** argv)
 		flags |= FTS_PHYSICAL;
 	multiple = argv[0] && argv[1];
 	dirs = logical || multiple;
-	if (!(fts = fts_open(argv, flags, NiL)))
+	if (!(fts = fts_open(argv, flags, NULL)))
 		error(ERROR_system(1), "%s: not found", argv[1]);
 	while (ent = fts_read(fts))
 	{
@@ -243,7 +243,7 @@ main(int argc, register char** argv)
 				hit.id.ino = st.st_ino;
 				if (dtsearch(dict, &hit))
 				{
-					fts_set(NiL, ent, FTS_SKIP);
+					fts_set(NULL, ent, FTS_SKIP);
 					continue;
 				}
 				if (s)
@@ -253,7 +253,7 @@ main(int argc, register char** argv)
 			hit.id.ino = ent->fts_statp->st_ino;
 			if (dirs && dtsearch(dict, &hit))
 			{
-				fts_set(NiL, ent, FTS_SKIP);
+				fts_set(NULL, ent, FTS_SKIP);
 				continue;
 			}
 		}
@@ -282,7 +282,7 @@ main(int argc, register char** argv)
 		case FTS_DNX:
 			if (!silent)
 				error(ERROR_SYSTEM|2, "%s: cannot search directory", ent->fts_path);
-			fts_set(NiL, ent, FTS_SKIP);
+			fts_set(NULL, ent, FTS_SKIP);
 			break;
 		case FTS_DP:
 			if (ent->fts_pointer)
@@ -294,7 +294,7 @@ main(int argc, register char** argv)
 		case FTS_SL:
 			if (logical)
 			{
-				fts_set(NiL, ent, FTS_FOLLOW);
+				fts_set(NULL, ent, FTS_FOLLOW);
 				continue;
 			}
 			/*FALLTHROUGH*/

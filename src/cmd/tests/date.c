@@ -41,14 +41,6 @@ static const char id[] = "\n@(#)$Id: testdate (AT&T Research) 2005-01-04 $\0\n";
 #include <stdlib.h>
 #endif
 
-#ifndef NiL
-#ifdef	__STDC__
-#define NiL		0
-#else
-#define NiL		(char*)0
-#endif
-#endif
-
 #ifndef elementsof
 #define elementsof(x)	(sizeof(x)/sizeof(x[0]))
 #endif
@@ -147,7 +139,7 @@ static void
 bad(char* comment, char* str, char* pat)
 {
 	sfprintf(sfstdout, "bad test case ");
-	report(comment, str, pat, NiL, 0);
+	report(comment, str, pat, NULL, 0);
 	exit(1);
 }
 
@@ -182,7 +174,7 @@ escape(char* s)
 			break;
 		case 'x':
 			if (!isxdigit(s[1]) || !isxdigit(s[2]))
-				bad("bad \\x\n", NiL, NiL);
+				bad("bad \\x\n", NULL, NULL);
 			*t = hex(*++s) << 4;
 			*t |= hex(*++s);
 			break;
@@ -208,7 +200,7 @@ sigunblock(int s)
 	}
 	else
 		op = SIG_SETMASK;
-	sigprocmask(op, &mask, NiL);
+	sigprocmask(op, &mask, NULL);
 #else
 #ifdef sigmask
 	sigsetmask(s ? (sigsetmask(0L) & ~sigmask(s)) : 0L);
@@ -279,7 +271,7 @@ main(int argc, char** argv)
 		signal(SIGBUS, gotcha);
 		signal(SIGSEGV, gotcha);
 	}
-	t_now = time(NiL);
+	t_now = time(NULL);
 	while (p = sfgetr(sfstdin, '\n', 1))
 	{
 		state.lineno++;
@@ -317,7 +309,7 @@ main(int argc, char** argv)
 				if (!*p)
 					break;
 				if (i >= elementsof(field))
-					bad("too many fields\n", NiL, NiL);
+					bad("too many fields\n", NULL, NULL);
 				field[i++] = p;
 				/*FALLTHROUGH*/
 			default:
@@ -329,7 +321,7 @@ main(int argc, char** argv)
 	/* interpret: */
 
 		if (i < 3)
-			bad("too few fields\n", NiL, NiL);
+			bad("too few fields\n", NULL, NULL);
 		while (i < elementsof(field))
 			field[i++] = 0;
 		if (str = field[0])
@@ -337,22 +329,22 @@ main(int argc, char** argv)
 		if (fmt = field[1])
 			escape(fmt);
 		if (!(ans = field[2]))
-			bad("NIL answer", NiL, NiL);
+			bad("NIL answer", NULL, NULL);
 		if (str)
 		{
 			if (streq(str, "SET"))
 			{
 				if (!fmt)
-					bad("NIL SET variable", NiL, NiL);
+					bad("NIL SET variable", NULL, NULL);
 				if (streq(fmt, "NOW"))
 				{
 					t_now = tmdate(ans, &e, &t_now);
 					if (*e)
-						bad("invalid NOW", ans, NiL);
-					sfprintf(sfstdout, "NOTE	base date is %s\n", fmttime(NiL, t_now));
+						bad("invalid NOW", ans, NULL);
+					sfprintf(sfstdout, "NOTE	base date is %s\n", fmttime(NULL, t_now));
 				}
 				else
-					bad("unknown SET variable", fmt, NiL);
+					bad("unknown SET variable", fmt, NULL);
 				continue;
 			}
 			if (streq(str, "FMT"))
@@ -360,16 +352,16 @@ main(int argc, char** argv)
 				str = 0;
 				if (!fmt)
 				{
-					bad("NIL format", NiL, NiL);
+					bad("NIL format", NULL, NULL);
 					continue;
 				}
 				t_now = tmdate(fmt, &e, &t_now);
 				if (*e)
-					bad("invalid NOW", fmt, NiL);
+					bad("invalid NOW", fmt, NULL);
 				if (fmt = ans)
 					escape(fmt);
 				if (!(ans = field[3]))
-					bad("NIL answer", NiL, NiL);
+					bad("NIL answer", NULL, NULL);
 			}
 		}
 		flags = 0;
@@ -382,17 +374,17 @@ main(int argc, char** argv)
 			s = fmttime(fmt, t_now);
 			escape(ans);
 			if (strcmp(s, ans))
-				report("FAILED", s, ans, NiL, 0);
+				report("FAILED", s, ans, NULL, 0);
 			continue;
 		}
 		t_ans = tmdate(ans, &e, &t_now);
 		if (*e)
-			report("answer FAILED", e, NiL, NiL, 0);
+			report("answer FAILED", e, NULL, NULL, 0);
 		s = fmttime("%k", t_ans);
 		if (strcmp(ans, s))
 		{
 			testno++;
-			report("FAILED", s, ans, NiL, 0);
+			report("FAILED", s, ans, NULL, 0);
 		}
 		else for (;;)
 		{
@@ -413,8 +405,8 @@ main(int argc, char** argv)
 				int	n;
 				char	tmp[128];
 
-				n = sfsprintf(tmp, sizeof(tmp), "\n\t[%s] expecting", fmttime(NiL, t_str));
-				sfsprintf(tmp + n, sizeof(tmp) - n, " [%s]", fmttime(NiL, t_ans));
+				n = sfsprintf(tmp, sizeof(tmp), "\n\t[%s] expecting", fmttime(NULL, t_str));
+				sfsprintf(tmp + n, sizeof(tmp) - n, " [%s]", fmttime(NULL, t_ans));
 				report("FAILED", str, fmt, tmp, flags);
 				break;
 			}

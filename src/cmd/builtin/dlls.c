@@ -121,7 +121,7 @@ b_dlls(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	r = 0;
 	if (flags & LIST_INFO)
 	{
@@ -153,7 +153,7 @@ b_dlls(int argc, char** argv, Shbltin_t* context)
 			if (arg[i] = *argv)
 				argv++;
 		if (only && !*argv)
-			error(ERROR_usage(2), "%s", optusage(NiL));
+			error(ERROR_usage(2), "%s", optusage(NULL));
 		r = 1;
 		for (;;)
 		{
@@ -167,7 +167,7 @@ b_dlls(int argc, char** argv, Shbltin_t* context)
 						if (!(flags & LIST_LONG))
 							dll = 0;
 						else if (dll = dlopen(dle->path, RTLD_LAZY))
-							ver = dllversion(dll, NiL);
+							ver = dllversion(dll, NULL);
 						else
 							ver = 0;
 						switch (flags)

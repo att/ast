@@ -154,7 +154,7 @@ type(Magic_t* mp, char* file, const char* pattern, register Magicdisc_t* disc)
 	struct stat	st;
 
 	sp = ((disc->flags & MAGIC_PHYSICAL) ? lstat(file, &st) : stat(file, &st)) ? (struct stat*)0 : &st;
-	fp = (sp && S_ISREG(sp->st_mode)) ? sfopen(NiL, file, "r") : (Sfio_t*)0;
+	fp = (sp && S_ISREG(sp->st_mode)) ? sfopen(NULL, file, "r") : (Sfio_t*)0;
 	s = magictype(mp, fp, file, sp);
 	if (fp)
 		sfclose(fp);
@@ -206,14 +206,14 @@ main(int argc, register char** argv)
 			disc.flags |= MAGIC_MIME;
 			continue;
 		case 'd':
-			if (magicload(mp, NiL, 0))
+			if (magicload(mp, NULL, 0))
 				error(3, "cannot load default magic file");
 			disc.flags |= MAGIC_LOAD;
 			continue;
 		case 'f':
 			if (streq(opt_info.arg, "-") || streq(opt_info.arg, "/dev/stdin") || streq(opt_info.arg, "/dev/fd/0"))
 				list = sfstdin;
-			else if (!(list = sfopen(NiL, opt_info.arg, "r")))
+			else if (!(list = sfopen(NULL, opt_info.arg, "r")))
 				error(3, "cannot open %s", opt_info.arg);
 			continue;
 		case 'i':
@@ -257,9 +257,9 @@ main(int argc, register char** argv)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	argv += opt_info.index;
-	if (!(disc.flags & MAGIC_LOAD) && magicload(mp, NiL, 0))
+	if (!(disc.flags & MAGIC_LOAD) && magicload(mp, NULL, 0))
 		error(3, "$%s,%s: cannot load default magic file", MAGIC_FILE_ENV, MAGIC_FILE);
 	if (disc.flags & MAGIC_LIST)
 	{

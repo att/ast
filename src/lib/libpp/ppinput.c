@@ -159,7 +159,7 @@ pppush(register int t, register char* s, register char* p, int n)
 				cur->flags |= IN_regular;
 			errno = 0;
 #if PROTOTYPE
-			if (!(pp.option & NOPROTO) && !(pp.test & TEST_noproto) && ((pp.state & (COMPATIBILITY|TRANSITION)) == COMPATIBILITY || (pp.option & PLUSPLUS) || (pp.mode & EXTERNALIZE)) && (cur->buffer = pppopen(NiL, cur->fd, NiL, NiL, NiL, NiL, (PROTO_HEADER|PROTO_RETAIN)|(((pp.mode & EXTERNALIZE) || (pp.option & PROTOTYPED)) ? PROTO_FORCE : PROTO_PASS)|((pp.mode & EXTERNALIZE) ? PROTO_EXTERNALIZE : 0)|((pp.mode & MARKC) ? PROTO_PLUSPLUS : 0))))
+			if (!(pp.option & NOPROTO) && !(pp.test & TEST_noproto) && ((pp.state & (COMPATIBILITY|TRANSITION)) == COMPATIBILITY || (pp.option & PLUSPLUS) || (pp.mode & EXTERNALIZE)) && (cur->buffer = pppopen(NULL, cur->fd, NULL, NULL, NULL, NULL, (PROTO_HEADER|PROTO_RETAIN)|(((pp.mode & EXTERNALIZE) || (pp.option & PROTOTYPED)) ? PROTO_FORCE : PROTO_PASS)|((pp.mode & EXTERNALIZE) ? PROTO_EXTERNALIZE : 0)|((pp.mode & MARKC) ? PROTO_PLUSPLUS : 0))))
 			{
 				*(p = cur->buffer - 1) = 0;
 				cur->buffer -= PPBAKSIZ;
@@ -221,7 +221,7 @@ pppush(register int t, register char* s, register char* p, int n)
 				(*pp.linesync)(error_info.line, error_info.file);
 #if ARCHIVE && CHECKPOINT
 			if (pp.member)
-				ppload(NiL);
+				ppload(NULL);
 #endif
 			if (pp.mode & MARKC)
 			{
@@ -410,7 +410,7 @@ ppdump(void)
 	 * output macro definitions
 	 */
 
-	hashwalk(pp.symtab, 0, dump, NiL);
+	hashwalk(pp.symtab, 0, dump, NULL);
 	ppputchar(0);
 
 	/*
@@ -497,14 +497,14 @@ ppload(register char* s)
 		file_offset = 0;
 		if (pp.in->fd >= 0)
 		{
-			if (!(sp = sfnew(NiL, NiL, SF_UNBOUND, pp.in->fd, SF_READ)))
+			if (!(sp = sfnew(NULL, NULL, SF_UNBOUND, pp.in->fd, SF_READ)))
 				error(3, "checkpoint read error");
 			file_size = sfseek(sp, 0L, SEEK_END);
 		}
 		else
 		{
 			file_size = pp.in->buflen;
-			if (!(sp = sfnew(NiL, pp.in->buffer + ((pp.in->flags & IN_static) ? 0 : PPBAKSIZ), file_size, -1, SF_READ|SF_STRING)))
+			if (!(sp = sfnew(NULL, pp.in->buffer + ((pp.in->flags & IN_static) ? 0 : PPBAKSIZ), file_size, -1, SF_READ|SF_STRING)))
 				error(3, "checkpoint read error");
 		}
 	}
@@ -521,7 +521,7 @@ ppload(register char* s)
 	if (!(t = sfreserve(sp, 22, 0)))
 		error(3, "checkpoint directory read error");
 	macro_offset = file_offset + strtol(t, &t, 10);
-	index_offset = file_offset + strtol(t + 1, NiL, 10);
+	index_offset = file_offset + strtol(t + 1, NULL, 10);
 
 	/*
 	 * read the include index

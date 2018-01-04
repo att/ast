@@ -54,7 +54,7 @@
 #define CONF_GLOBAL	(CONF_USER<<3)
 
 #define DEFAULT(o)	((state.std||!dynamic[o].ast)?dynamic[o].std:dynamic[o].ast)
-#define INITIALIZE()	do{if(!state.data)synthesize(NiL,NiL,NiL);}while(0)
+#define INITIALIZE()	do{if(!state.data)synthesize(NULL,NULL,NULL);}while(0)
 #define STANDARD(v)	(streq(v,"standard")||streq(v,"strict")||streq(v,"posix")||streq(v,"xopen"))
 
 #define MAXVAL		256
@@ -491,7 +491,7 @@ synthesize(Feature_t* fp, const char* path, const char* value)
 #endif
 	setenviron(state.data - state.prefix);
 	if (state.notify)
-		(*state.notify)(NiL, NiL, state.data - state.prefix);
+		(*state.notify)(NULL, NULL, state.data - state.prefix);
 	n = s - (char*)value - 1;
  ok:
 	if (!(fp->flags & CONF_ALLOC))
@@ -669,7 +669,7 @@ format(Feature_t* fp, const char* path, const char* value, unsigned int flags, E
 		if (state.synthesizing && value == (char*)fp->std)
 			fp->value = (char*)value;
 		else if (!synthesize(fp, path, value))
-			initialize(fp, path, NiL, fp->std, fp->value);
+			initialize(fp, path, NULL, fp->std, fp->value);
 #if DEBUG_astconf
 		error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value, fp->std, fp->ast, fp->value);
 #endif
@@ -726,7 +726,7 @@ format(Feature_t* fp, const char* path, const char* value, unsigned int flags, E
 		if (state.synthesizing && value == (char*)fp->std)
 			fp->value = (char*)value;
 		else if (!synthesize(fp, path, value))
-			initialize(fp, path, NiL, "logical", DEFAULT(OP_path_resolve));
+			initialize(fp, path, NULL, "logical", DEFAULT(OP_path_resolve));
 		break;
 
 	case OP_universe:
@@ -1373,7 +1373,7 @@ nativeconf(Proc_t** pp, const char* operand)
 	ops[1] = 0;
 	if (*pp = procopen(_pth_getconf, cmd, environ, ops, PROC_READ))
 	{
-		if (sp = sfnew(NiL, NiL, SF_UNBOUND, (*pp)->rfd, SF_READ))
+		if (sp = sfnew(NULL, NULL, SF_UNBOUND, (*pp)->rfd, SF_READ))
 		{
 			sfdisc(sp, SF_POPDISC);
 			return sp;
@@ -1393,11 +1393,11 @@ nativeconf(Proc_t** pp, const char* operand)
  * settable return values are in permanent store
  * non-settable return values copied to a tmp fmtbuf() buffer
  *
- *	if (streq(astgetconf("PATH_RESOLVE", NiL, NiL, 0, 0), "logical"))
+ *	if (streq(astgetconf("PATH_RESOLVE", NULL, NULL, 0, 0), "logical"))
  *		our_way();
  *
- *	universe = astgetconf("UNIVERSE", NiL, "att", 0, 0);
- *	astgetconf("UNIVERSE", NiL, universe, 0, 0);
+ *	universe = astgetconf("UNIVERSE", NULL, "att", 0, 0);
+ *	astgetconf("UNIVERSE", NULL, universe, 0, 0);
  *
  * if (flags&ASTCONF_error)!=0 then error return value is 0
  * otherwise 0 not returned
@@ -1460,7 +1460,7 @@ astgetconf(const char* name, const char* path, const char* value, int flags, Err
 				(*conferror)(&state, &state, 2, "%s: cannot set value", name);
 			return (flags & ASTCONF_error) ? (char*)0 : null;
 		}
-		return print(NiL, &look, name, path, flags, conferror);
+		return print(NULL, &look, name, path, flags, conferror);
 	}
 	if ((n = strlen(name)) > 3 && n < (ALT + 3))
 	{
@@ -1500,7 +1500,7 @@ astgetconf(const char* name, const char* path, const char* value, int flags, Err
 						(*conferror)(&state, &state, 2, "%s: cannot set value", altname);
 					return (flags & ASTCONF_error) ? (char*)0 : null;
 				}
-				return print(NiL, &altlook, altname, path, flags, conferror);
+				return print(NULL, &altlook, altname, path, flags, conferror);
 			}
 			for (s = altname; *s; s++)
 				if (isupper(*s))
@@ -1620,23 +1620,23 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 			{
 				if (flags & ASTCONF_matchcall)
 				{
-					if (regexec(&re, prefix[look.conf->call + CONF_call].name, 0, NiL, 0))
+					if (regexec(&re, prefix[look.conf->call + CONF_call].name, 0, NULL, 0))
 						continue;
 				}
 				else if (flags & ASTCONF_matchname)
 				{
-					if (regexec(&re, look.conf->name, 0, NiL, 0))
+					if (regexec(&re, look.conf->name, 0, NULL, 0))
 						continue;
 				}
 				else if (flags & ASTCONF_matchstandard)
 				{
-					if (regexec(&re, prefix[look.conf->standard].name, 0, NiL, 0))
+					if (regexec(&re, prefix[look.conf->standard].name, 0, NULL, 0))
 						continue;
 				}
 			}
 			look.standard = look.conf->standard;
 			look.section = look.conf->section;
-			print(sp, &look, NiL, path, flags, errorf);
+			print(sp, &look, NULL, path, flags, errorf);
 		}
 #ifdef _pth_getconf_a
 		if (pp = nativeconf(&proc, _pth_getconf_a))
@@ -1677,21 +1677,21 @@ astconflist(Sfio_t* sp, const char* path, int flags, const char* pattern)
 			{
 				if (flags & ASTCONF_matchcall)
 				{
-					if (regexec(&re, call, 0, NiL, 0))
+					if (regexec(&re, call, 0, NULL, 0))
 						continue;
 				}
 				else if (flags & ASTCONF_matchname)
 				{
-					if (regexec(&re, fp->name, 0, NiL, 0))
+					if (regexec(&re, fp->name, 0, NULL, 0))
 						continue;
 				}
 				else if (flags & ASTCONF_matchstandard)
 				{
-					if (regexec(&re, prefix[fp->standard].name, 0, NiL, 0))
+					if (regexec(&re, prefix[fp->standard].name, 0, NULL, 0))
 						continue;
 				}
 			}
-			if (!(s = feature(fp, 0, path, NiL, 0, 0)) || !*s)
+			if (!(s = feature(fp, 0, path, NULL, 0, 0)) || !*s)
 				s = "0";
 			if (flags & ASTCONF_table)
 			{

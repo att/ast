@@ -42,5 +42,5 @@ dllfind(const char* lib, const char* ver, int flags, char* path, size_t size)
 
 	if ((id = error_info.id) && (dll = dllplug(id, lib, ver, flags, path, size)))
 		return dll;
-	return dllplug(NiL, lib, ver, flags, path, size);
+	return dllplug(NULL, lib, ver, flags, path, size);
 }

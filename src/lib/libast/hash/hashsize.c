@@ -51,7 +51,7 @@ hashsize(Hash_table_t* tab, int size)
 		if (region = tab->root->local->region)
 		{
 			handle = tab->root->local->handle;
-			new_s = (Hash_bucket_t**)(*region)(handle, NiL, sizeof(Hash_bucket_t*) * size, 0);
+			new_s = (Hash_bucket_t**)(*region)(handle, NULL, sizeof(Hash_bucket_t*) * size, 0);
 		}
 		else new_s = newof(0, Hash_bucket_t*, size, 0);
 		if (!new_s) tab->flags |= HASH_FIXED;

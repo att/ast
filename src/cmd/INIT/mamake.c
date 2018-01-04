@@ -95,8 +95,6 @@ USAGE_LICENSE
 #define elementsof(x)	(sizeof(x)/sizeof(x[0]))
 #define newof(p,t,n,x)	((p)?(t*)realloc((char*)(p),sizeof(t)*(n)+(x)):(t*)calloc(1,sizeof(t)*(n)+(x)))
 
-#define NiL		((char*)0)
-
 #endif
 
 #include <stdio.h>
@@ -113,7 +111,7 @@ USAGE_LICENSE
 
 #define delimiter(c)	((c)==' '||(c)=='\t'||(c)=='\n'||(c)==';'||(c)=='('||(c)==')'||(c)=='`'||(c)=='|'||(c)=='&'||(c)=='=')
 
-#define add(b,c)	(((b)->nxt >= (b)->end) ? append(b, "") : NiL, *(b)->nxt++ = (c))
+#define add(b,c)	(((b)->nxt >= (b)->end) ? append(b, "") : NULL, *(b)->nxt++ = (c))
 #define get(b)		((b)->nxt-(b)->buf)
 #define set(b,o)	((b)->nxt=(b)->buf+(o))
 #define use(b)		(*(b)->nxt=0,(b)->nxt=(b)->buf)
@@ -383,7 +381,7 @@ buffer(void)
 	if (buf = state.old)
 		state.old = state.old->old;
 	else if (!(buf = newof(0, Buf_t, 1, 0)) || !(buf->buf = newof(0, char, CHUNK, 0)))
-		report(3, "out of space [buffer]", NiL, (unsigned long)0);
+		report(3, "out of space [buffer]", NULL, (unsigned long)0);
 	buf->end = buf->buf + CHUNK;
 	buf->nxt = buf->buf;
 	return buf;
@@ -415,7 +413,7 @@ appendn(Buf_t* buf, char* str, int n)
 		i = buf->nxt - buf->buf;
 		m = (((buf->end - buf->buf) + n + CHUNK + 1) / CHUNK) * CHUNK;
 		if (!(buf->buf = newof(buf->buf, char, m, 0)))
-			report(3, "out of space [buffer resize]", NiL, (unsigned long)0);
+			report(3, "out of space [buffer resize]", NULL, (unsigned long)0);
 		buf->end = buf->buf + m;
 		buf->nxt = buf->buf + i;
 	}
@@ -465,7 +463,7 @@ dictionary(void)
 	Dict_t*	dict;
 
 	if (!(dict = newof(0, Dict_t, 1, 0)))
-		report(3, "out of space [dictionary]", NiL, (unsigned long)0);
+		report(3, "out of space [dictionary]", NULL, (unsigned long)0);
 	return dict;
 }
 
@@ -603,7 +601,7 @@ rule(char* name)
 {
 	Rule_t*	r;
 
-	if (!(r = (Rule_t*)search(state.rules, name, NiL)))
+	if (!(r = (Rule_t*)search(state.rules, name, NULL)))
 	{
 		if (!(r = newof(0, Rule_t, 1, 0)))
 			report(3, "out of space [rule]", name, (unsigned long)0);
@@ -655,17 +653,17 @@ view(void)
 
 	if (stat(".", &st))
 		report(3, "cannot stat", ".", (unsigned long)0);
-	if ((s = (char*)search(state.vars, "PWD", NiL)) && !stat(s, &ts) &&
+	if ((s = (char*)search(state.vars, "PWD", NULL)) && !stat(s, &ts) &&
 	    ts.st_dev == st.st_dev && ts.st_ino == st.st_ino)
 		state.pwd = s;
 	if (!state.pwd)
 	{
 		if (!getcwd(buf, sizeof(buf) - 1))
-			report(3, "cannot determine PWD", NiL, (unsigned long)0);
+			report(3, "cannot determine PWD", NULL, (unsigned long)0);
 		state.pwd = duplicate(buf);
 		search(state.vars, "PWD", state.pwd);
 	}
-	if ((s = (char*)search(state.vars, "VPATH", NiL)) && *s)
+	if ((s = (char*)search(state.vars, "VPATH", NULL)) && *s)
 	{
 		zp = 0;
 		for (;;)
@@ -796,7 +794,7 @@ substitute(Buf_t* buf, register char* s)
 				*s = c;
 				continue;
 			}
-			v = (char*)search(state.vars, t, NiL);
+			v = (char*)search(state.vars, t, NULL);
 			if ((c == ':' || c == '=') && (!v || c == ':' && !*v))
 			{
 				append(buf, b);
@@ -1046,7 +1044,7 @@ pop(void)
 	int	r;
 
 	if (!state.sp)
-		report(3, "input stack underflow", NiL, (unsigned long)0);
+		report(3, "input stack underflow", NULL, (unsigned long)0);
 	if (!state.sp->fp || (state.sp->flags & STREAM_KEEP))
 		r = 0;
 	else if (state.sp->flags & STREAM_PIPE)
@@ -1074,7 +1072,7 @@ push(char* file, Stdio_t* fp, int flags)
 	if (!state.sp)
 		state.sp = state.streams;
 	else if (++state.sp >= &state.streams[elementsof(state.streams)])
-		report(3, "input stream stack overflow", NiL, (unsigned long)0);
+		report(3, "input stream stack overflow", NULL, (unsigned long)0);
 	if (state.sp->fp = fp)
 		state.sp->file = "pipeline";
 	else if (flags & STREAM_PIPE)
@@ -1119,7 +1117,7 @@ input(void)
 	char*	e;
 
 	if (!state.sp)
-		report(3, "no input file stream", NiL, (unsigned long)0);
+		report(3, "no input file stream", NULL, (unsigned long)0);
 	if (state.peek)
 		state.peek = 0;
 	else if (!fgets(state.input, sizeof(state.input), state.sp->fp))
@@ -1142,7 +1140,7 @@ execute(register char* s)
 	register int	c;
 	Buf_t*		buf;
 
-	if (!state.shell && (!(state.shell = (char*)search(state.vars, "SHELL", NiL)) || !strcmp(state.shell, sh)))
+	if (!state.shell && (!(state.shell = (char*)search(state.vars, "SHELL", NULL)) || !strcmp(state.shell, sh)))
 		state.shell = sh;
 	buf = buffer();
 	append(buf, state.shell);
@@ -1212,7 +1210,7 @@ run(Rule_t* r, register char* s)
 				append(buf, t);
 				continue;
 			}
-			if ((q = (Rule_t*)search(state.rules, t, NiL)) && q->path && !(q->flags & RULE_generated))
+			if ((q = (Rule_t*)search(state.rules, t, NULL)) && q->path && !(q->flags & RULE_generated))
 				append(buf, q->path);
 			else
 			{
@@ -1300,7 +1298,7 @@ path(Buf_t* buf, char* s, int must)
 	t = *e;
 	if ((x = status(buf, 0, s, &st)) && (st.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)))
 		return x;
-	if (!(p = (char*)search(state.vars, "PATH", NiL)))
+	if (!(p = (char*)search(state.vars, "PATH", NULL)))
 		report(3, "variable not defined", "PATH", (unsigned long)0);
 	do
 	{
@@ -1348,7 +1346,7 @@ probe(void)
 	static char	let[] = "ABCDEFGHIJKLMNOP";
 	static char	cmd[] = "mamprobe";
 
-	if (!(cc = (char*)search(state.vars, "CC", NiL)))
+	if (!(cc = (char*)search(state.vars, "CC", NULL)))
 		cc = "cc";
 	buf = buffer();
 	s = path(buf, cmd, 1);
@@ -1357,7 +1355,7 @@ probe(void)
 	s = cc = path(pro, cc, 1);
 	for (h = 0; *s; s++)
 		h = h * 0x63c63cd9L + *s + 0x9c39c33dL;
-	if (!(s = (char*)search(state.vars, "INSTALLROOT", NiL)))
+	if (!(s = (char*)search(state.vars, "INSTALLROOT", NULL)))
 		report(3, "variable must be defined", "INSTALLROOT", (unsigned long)0);
 	append(buf, s);
 	append(buf, "/lib/probe/C/mam/");
@@ -1443,8 +1441,8 @@ require(char* lib, int dontcare)
 	static int	dynamic = -1;
 
 	if (dynamic < 0)
-		dynamic = (s = search(state.vars, "mam_cc_L", NiL)) ? atoi(s) : 0;
-	if (!(r = search(state.vars, lib, NiL)))
+		dynamic = (s = search(state.vars, "mam_cc_L", NULL)) ? atoi(s) : 0;
+	if (!(r = search(state.vars, lib, NULL)))
 	{
 		buf = buffer();
 		tmp = buffer();
@@ -1453,10 +1451,10 @@ require(char* lib, int dontcare)
 		{
 			if (s)
 				append(buf, s);
-			if (r = search(state.vars, "mam_cc_PREFIX_ARCHIVE", NiL))
+			if (r = search(state.vars, "mam_cc_PREFIX_ARCHIVE", NULL))
 				append(buf, r);
 			append(buf, lib + 2);
-			if (r = search(state.vars, "mam_cc_SUFFIX_ARCHIVE", NiL))
+			if (r = search(state.vars, "mam_cc_SUFFIX_ARCHIVE", NULL))
 				append(buf, r);
 			r = expand(tmp, use(buf));
 			if (!stat(r, &st))
@@ -1470,10 +1468,10 @@ require(char* lib, int dontcare)
 			if (dynamic)
 			{
 				append(buf, s);
-				if (r = search(state.vars, "mam_cc_PREFIX_SHARED", NiL))
+				if (r = search(state.vars, "mam_cc_PREFIX_SHARED", NULL))
 					append(buf, r);
 				append(buf, lib + 2);
-				if (r = search(state.vars, "mam_cc_SUFFIX_SHARED", NiL))
+				if (r = search(state.vars, "mam_cc_SUFFIX_SHARED", NULL))
 					append(buf, r);
 				r = expand(tmp, use(buf));
 				if (!stat(r, &st))
@@ -1678,7 +1676,7 @@ make(Rule_t* r)
 			}
 			continue;
 		case KEY('s','e','t','v'):
-			if (!search(state.vars, t, NiL))
+			if (!search(state.vars, t, NULL))
 			{
 				if (*v == '"')
 				{
@@ -1892,7 +1890,7 @@ scan(Dict_item_t* item, void* handle)
 								k = 0;
 								break;
 							}
-					if (k && ((q = (Rule_t*)search(state.leaf, t, NiL)) && q != r || *t++ == 'l' && *t++ == 'i' && *t++ == 'b' && *t && (q = (Rule_t*)search(state.leaf, t, NiL)) && q != r))
+					if (k && ((q = (Rule_t*)search(state.leaf, t, NULL)) && q != r || *t++ == 'l' && *t++ == 'i' && *t++ == 'b' && *t && (q = (Rule_t*)search(state.leaf, t, NULL)) && q != r))
 					{
 						for (t = w = r->name; *w; w++)
 							if (*w == '/')
@@ -1921,7 +1919,7 @@ scan(Dict_item_t* item, void* handle)
 					 */
 
 					*(s - 3) = 0;
-					q = (Rule_t*)search(state.leaf, r->name, NiL);
+					q = (Rule_t*)search(state.leaf, r->name, NULL);
 					if (q && q != r)
 						cons(r, q);
 					for (t = w = r->name; *w; w++)
@@ -1929,7 +1927,7 @@ scan(Dict_item_t* item, void* handle)
 							t = w + 1;
 					append(buf, "lib");
 					append(buf, t);
-					q = (Rule_t*)search(state.leaf, use(buf), NiL);
+					q = (Rule_t*)search(state.leaf, use(buf), NULL);
 					if (q && q != r)
 						cons(r, q);
 					*(s - 3) = 'l';
@@ -1946,7 +1944,7 @@ scan(Dict_item_t* item, void* handle)
 					{
 						append(buf, "lib/lib");
 						appendn(buf, s, t - s);
-						q = (Rule_t*)search(state.leaf, use(buf), NiL);
+						q = (Rule_t*)search(state.leaf, use(buf), NULL);
 						if (q && q != r)
 							cons(r, q);
 					}
@@ -1968,7 +1966,7 @@ descend(Dict_item_t* item, void* handle)
 {
 	Rule_t*	r = (Rule_t*)item->value;
 
-	if (!state.active && (!(r->flags & RULE_active) || !(r = (Rule_t*)search(state.leaf, r->name, NiL))))
+	if (!state.active && (!(r->flags & RULE_active) || !(r = (Rule_t*)search(state.leaf, r->name, NULL))))
 		return 0;
 	return r->leaf && !(r->flags & RULE_made) ? update(r) : 0;
 }
@@ -1984,7 +1982,7 @@ active(Dict_item_t* item, void* handle)
 
 	if (r->flags & RULE_active)
 	{
-		if (r->leaf || search(state.leaf, r->name, NiL))
+		if (r->leaf || search(state.leaf, r->name, NULL))
 			state.active = 0;
 		else
 		{
@@ -2048,7 +2046,7 @@ recurse(char* pattern)
 	if (!state.active)
 	{
 		state.active = 1;
-		walk(state.rules, active, NiL);
+		walk(state.rules, active, NULL);
 	}
 	search(state.vars, "MAMAKEARGS", duplicate(use(state.opt) + 1));
 
@@ -2056,9 +2054,9 @@ recurse(char* pattern)
 	 * scan the makefile and descend
 	 */
 
-	walk(state.rules, scan, NiL);
+	walk(state.rules, scan, NULL);
 	state.view = 0;
-	walk(state.rules, descend, NiL);
+	walk(state.rules, descend, NULL);
 	return 0;
 }
 
@@ -2157,7 +2155,7 @@ main(int argc, char** argv)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	argv += opt_info.index;
 #else
 	while ((s = *++argv) && *s == '-')
@@ -2341,7 +2339,7 @@ main(int argc, char** argv)
 	 */
 
 	if (state.directory && chdir(state.directory))
-		report(3, "cannot change working directory", NiL, (unsigned long)0);
+		report(3, "cannot change working directory", NULL, (unsigned long)0);
 	view();
 
 	/*
@@ -2365,7 +2363,7 @@ main(int argc, char** argv)
 	 */
 
 	if (!state.active && !state.verified)
-		walk(state.rules, verify, NiL);
+		walk(state.rules, verify, NULL);
 
 	/*
 	 * done

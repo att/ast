@@ -358,7 +358,7 @@ mcget(Mc_t* mc, int set, int num, const char* msg)
 		sfstrseek(mc->tmp, p, SEEK_SET);
 	}
 	n = strlen(s) + 1;
-	iconv_write(mc->cvt, mc->tmp, &s, &n, NiL);
+	iconv_write(mc->cvt, mc->tmp, &s, &n, NULL);
 	return sfstrbase(mc->tmp) + p;
 }
 

@@ -124,10 +124,10 @@ b_sync(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || *argv)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (fsync_fd == -1 && syncfs_fd == -1)
 		do_sync = do_sfsync = 1;
-	if (do_sfsync && sfsync(NiL) < 0)
+	if (do_sfsync && sfsync(NULL) < 0)
 		error(ERROR_system(0), "sfsync(0) failed");
 	if (fsync_fd >= 0 && fsync(fsync_fd) < 0)
 		error(ERROR_system(0), "fsync(%d) failed", fsync_fd);

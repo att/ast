@@ -48,7 +48,7 @@ csread(Cs_t* state, int fd, void* buf, size_t size, int op)
 		op &= ~CS_RESTART;
 	p = (char*)buf;
 	e = p + size;
-	messagef((state->id, NiL, -9, "read(%d,%d,%s) before", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE"));
+	messagef((state->id, NULL, -9, "read(%d,%d,%s) before", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE"));
 	if (op == CS_LINE && size > 1)
 	{
 		if ((n = cspeek(state, fd, buf, size - 1)) > 0 && (p[n] = 0, e = strchr(p, '\n')))
@@ -62,7 +62,7 @@ csread(Cs_t* state, int fd, void* buf, size_t size, int op)
 			if (n <= 0 || p == (char*)buf || *(p - 1) != '\n')
 				goto bad;
 			n = p - (char*)buf;
-			messagef((state->id, NiL, -9, "read(%d,%d,%s) [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", n, n, buf));
+			messagef((state->id, NULL, -9, "read(%d,%d,%s) [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", n, n, buf));
 			return n;
 		}
 	}
@@ -74,7 +74,7 @@ csread(Cs_t* state, int fd, void* buf, size_t size, int op)
 				continue;
 			break;
 		}
-		messagef((state->id, NiL, -9, "read(%d,%d,%s) [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", n, n, p));
+		messagef((state->id, NULL, -9, "read(%d,%d,%s) [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", n, n, p));
 		p += n;
 		if (op == CS_LIMIT || op == CS_LINE && (*(p - 1) == '\n' || n > 1 && *(p - 1) == '\r' && *(p - 2) == '\n'))
 			return p - (char*)buf;
@@ -84,16 +84,16 @@ csread(Cs_t* state, int fd, void* buf, size_t size, int op)
 				return p - (char*)buf;
 			break;
 		}
-		messagef((state->id, NiL, -2, "read(%d,%d,%s) again [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", p - (char*)buf, p - (char*)buf, (char*)buf));
+		messagef((state->id, NULL, -2, "read(%d,%d,%s) again [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", p - (char*)buf, p - (char*)buf, (char*)buf));
 	}
  bad:
 	if (p != (char*)buf || n < 0)
 	{
 		errno = EINVAL;
-		messagef((state->id, NiL, -2, "read(%d,%d,%s) invalid record [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", p - (char*)buf, p - (char*)buf, (char*)buf));
+		messagef((state->id, NULL, -2, "read(%d,%d,%s) invalid record [%d] `%-.*s'", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE", p - (char*)buf, p - (char*)buf, (char*)buf));
 		return -1;
 	}
-	messagef((state->id, NiL, -2, "read(%d,%d,%s) eof", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE"));
+	messagef((state->id, NULL, -2, "read(%d,%d,%s) eof", fd, size, op == CS_EXACT ? "EXACT" : op == CS_LIMIT ? "LIMIT" : "LINE"));
 	return 0;
 }
 

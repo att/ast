@@ -40,7 +40,7 @@ pprefmac(char* name, int ref)
 	{
 		if ((pp.state & COMPILE) && pp.truncate && strlen(name) > pp.truncate)
 			name[pp.truncate] = 0;
-		sym = ppsymset(pp.symtab, NiL);
+		sym = ppsymset(pp.symtab, NULL);
 	}
 	if (sym && ref <= REF_NORMAL)
 	{
@@ -116,7 +116,7 @@ ppassert(int op, char* pred, char* args)
 		p = newof(0, struct pplist, 1, 0);
 		p->next = a;
 		p->value = strdup(args);
-		hashput(pp.prdtab, NiL, p);
+		hashput(pp.prdtab, NULL, p);
 	mark:
 		if ((pp.state & COMPILE) && pp.truncate) return;
 		if (sym = ppsymset(pp.symtab, pred))

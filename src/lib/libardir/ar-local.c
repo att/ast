@@ -75,7 +75,7 @@ localopen(Ardir_t* ar, char* buf, size_t n)
 		return -1;
 	ar->data = (void*)state;
 	cmd = sfprints("${ARDIR:-ar} ${ARDIRFLAGS:-tv} '%s' 2>/dev/null", ar->path);
-	if (!(state->sp = sfpopen(NiL, cmd, "r")) || (c = sfgetc(state->sp)) == EOF || sfungetc(state->sp, c) == EOF)
+	if (!(state->sp = sfpopen(NULL, cmd, "r")) || (c = sfgetc(state->sp)) == EOF || sfungetc(state->sp, c) == EOF)
 	{
 		localclose(ar);
 		return -1;
@@ -110,7 +110,7 @@ localnext(Ardir_t* ar)
 			{
 				if (isupper(*++s) && islower(s[1]) && islower(s[2]) && s[3] == ' ')
 				{
-					ar->dirent.mtime = tmdate(s, &e, NiL);
+					ar->dirent.mtime = tmdate(s, &e, NULL);
 					if (!*e)
 					{
 						if ((n = strlen(t)) > ar->truncate)
@@ -119,7 +119,7 @@ localnext(Ardir_t* ar)
 					}
 				}
 				else
-					ar->dirent.size = strtoul(s, NiL, 10);
+					ar->dirent.size = strtoul(s, NULL, 10);
 			}
 		ar->dirent.name = t;
 		ar->dirent.uid = ar->st.st_uid;

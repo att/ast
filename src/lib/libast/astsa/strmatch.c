@@ -211,7 +211,7 @@ onematch(Match_t* mp, int g, char* s, char* p, char* e, char* r, int flags)
 					return 0;
 				if (pc == '*' || pc == '?' || pc == '+' && oldp == r)
 				{
-					if (onematch(mp, g, s, p, e, NiL, flags))
+					if (onematch(mp, g, s, p, e, NULL, flags))
 						return 1;
 					if (!sc || !getsource(s, e))
 					{
@@ -305,7 +305,7 @@ onematch(Match_t* mp, int g, char* s, char* p, char* e, char* r, int flags)
 				p = oldp;
 				for (;;)
 				{
-					if ((n || pc == sc) && onematch(mp, g, olds, p, e, NiL, flags))
+					if ((n || pc == sc) && onematch(mp, g, olds, p, e, NULL, flags))
 						return 1;
 					if (!sc)
 						return 0;
@@ -526,7 +526,7 @@ grpmatch(Match_t* mp, int g, char* s, char* p, char* e, int flags)
 
 	do
 	{
-		for (a = p; onematch(mp, g, s, a, e, NiL, flags); a++)
+		for (a = p; onematch(mp, g, s, a, e, NULL, flags); a++)
 			if (*(a = mp->next_p) != '&')
 				return 1;
 	} while (p = gobble(mp, p, '|', &g, 1));
@@ -593,5 +593,5 @@ strgrpmatch(const char* b, const char* p, ssize_t* sub, int n, int flags)
 int
 strmatch(const char* s, const char* p)
 {
-	return strgrpmatch(s, p, NiL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT);
+	return strgrpmatch(s, p, NULL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT);
 }

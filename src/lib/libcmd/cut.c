@@ -665,11 +665,11 @@ b_cut(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s",optusage(NiL));
+		error(ERROR_usage(2), "%s",optusage(NULL));
 	if(!cp)
 	{
 		error(2, "b, c or f option must be specified");
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	}
 	if(!*cp)
 		error(3, "non-empty b, c or f option must be specified");
@@ -682,7 +682,7 @@ b_cut(int argc, char** argv, Shbltin_t* context)
 	{
 		if(!cp || streq(cp,"-"))
 			fp = sfstdin;
-		else if(!(fp = sfopen(NiL,cp,"r")))
+		else if(!(fp = sfopen(NULL,cp,"r")))
 		{
 			error(ERROR_system(0),"%s: cannot open",cp);
 			continue;

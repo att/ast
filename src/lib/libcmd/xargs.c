@@ -229,7 +229,7 @@ b_xargs(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (argv[0])
 	{
 		if (context)
@@ -247,13 +247,13 @@ b_xargs(int argc, char** argv, Shbltin_t* context)
 		{
 			char	buf[PATH_MAX];
 
-			if (!pathpath(argv[0], NiL, PATH_REGULAR|PATH_EXECUTE, buf, sizeof(buf)))
+			if (!pathpath(argv[0], NULL, PATH_REGULAR|PATH_EXECUTE, buf, sizeof(buf)))
 				error(3, "%s: command not found", argv[0]);
 		}
 	}
 	if (xargs.cmd = cmdopen(argv, argmax, size, insert, &xargs.disc))
 	{
-		sfopen(sfstdin, NiL, "rt");
+		sfopen(sfstdin, NULL, "rt");
 		error_info.line = 1;
 		if (term >= 0)
 			while (!sh_checksig(context))

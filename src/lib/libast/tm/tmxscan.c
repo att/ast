@@ -191,7 +191,7 @@ scan(const char* s, char** e, const char* format, char** f, Time_t t, long flags
 	b = s;
  again:
 	CLEAR(set);
-	tm = tmxtm(&ts, t, NiL);
+	tm = tmxtm(&ts, t, NULL);
 	pedantic = (flags & TM_PEDANTIC) != 0;
 	for (;;)
 	{
@@ -222,7 +222,7 @@ scan(const char* s, char** e, const char* format, char** f, Time_t t, long flags
 				lo = pedantic ? TM_DAY : TM_DAY_ABBREV;
 				hi = TM_TIME;
 			get_wday:
-				if ((n = tmlex(s, &u, tm_info.format + lo, hi - lo, NiL, 0)) < 0)
+				if ((n = tmlex(s, &u, tm_info.format + lo, hi - lo, NULL, 0)) < 0)
 					goto next;
 				s = u;
 				INDEX(TM_DAY_ABBREV, TM_DAY);
@@ -237,7 +237,7 @@ scan(const char* s, char** e, const char* format, char** f, Time_t t, long flags
 				lo = pedantic ? TM_MONTH : TM_MONTH_ABBREV;
 				hi = TM_DAY_ABBREV;
 			get_mon:
-				if ((n = tmlex(s, &u, tm_info.format + lo, hi - lo, NiL, 0)) < 0)
+				if ((n = tmlex(s, &u, tm_info.format + lo, hi - lo, NULL, 0)) < 0)
 					goto next;
 				s = u;
 				INDEX(TM_MONTH_ABBREV, TM_MONTH);
@@ -311,7 +311,7 @@ scan(const char* s, char** e, const char* format, char** f, Time_t t, long flags
 				set.nsec = n;
 				continue;
 			case 'p':
-				if ((n = tmlex(s, &u, tm_info.format + TM_MERIDIAN, TM_UT - TM_MERIDIAN, NiL, 0)) < 0)
+				if ((n = tmlex(s, &u, tm_info.format + TM_MERIDIAN, TM_UT - TM_MERIDIAN, NULL, 0)) < 0)
 					goto next;
 				set.meridian = n;
 				s = u;
@@ -483,7 +483,7 @@ tmxscan(const char* s, char** e, const char* format, char** f, Time_t t, long fl
 			off_t			m;
 
 			initialized = 1;
-			if ((v = getenv("DATEMSK")) && *v && (sp = sfopen(NiL, v, "r")))
+			if ((v = getenv("DATEMSK")) && *v && (sp = sfopen(NULL, v, "r")))
 			{
 				for (n = 1; sfgetr(sp, '\n', 0); n++);
 				m = sfseek(sp, 0L, SEEK_CUR);

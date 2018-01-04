@@ -123,9 +123,9 @@ static int sfsetlinemode(void)
 				case 'm':
 					if(n && v)
 #if _PACKAGE_ast
-						z = (size_t)strtonll(v, NiL, NiL, 0);
+						z = (size_t)strtonll(v, NULL, NULL, 0);
 #else
-						z = (size_t)strtol(v, NiL, 0);
+						z = (size_t)strtol(v, NULL, 0);
 #endif
 					else
 						z = 0;
@@ -174,9 +174,9 @@ static int sfsetlinemode(void)
 								if(isdigit(v[0]))
 								{
 #if _PACKAGE_ast
-									b = strtonll(v, NiL, NiL, 0);
+									b = strtonll(v, NULL, NULL, 0);
 #else
-									b = strtoul(v, NiL, 0);
+									b = strtoul(v, NULL, 0);
 #endif
 								}
 								else	b = 0;

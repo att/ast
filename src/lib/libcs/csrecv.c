@@ -128,7 +128,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 
 #endif
 
-	messagef((state->id, NiL, -8, "recv(%d,%d) call", fd, n));
+	messagef((state->id, NULL, -8, "recv(%d,%d) call", fd, n));
 	if (n < 1)
 	{
 		errno = EINVAL;
@@ -145,13 +145,13 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 	{
 		if ((fds[0] = tcp_accept(fd, &tcp)) < 0)
 		{
-			messagef((state->id, NiL, -1, "recv: %d: tcp accept error", fd));
+			messagef((state->id, NULL, -1, "recv: %d: tcp accept error", fd));
 			return -1;
 		}
 		id->hid = tcp.faddr;
 		return 1;
 	}
-	messagef((state->id, NiL, -1, "recv: %d: ioctl TCPGETADDR error", fd));
+	messagef((state->id, NULL, -1, "recv: %d: ioctl TCPGETADDR error", fd));
 
 #else
 
@@ -172,18 +172,18 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 #if CS_LIB_SOCKET_RIGHTS
 			if (write(fds[0], "", 1) != 1)
 			{
-				messagef((state->id, NiL, -1, "recv: %d: ping write error", fd));
+				messagef((state->id, NULL, -1, "recv: %d: ping write error", fd));
 				close(fds[0]);
 				return -1;
 			}
 			if (sockrecv(fds[0], id, rfd, 1) != 1)
 			{
-				messagef((state->id, NiL, -1, "recv: %d: sockrecv error", fd));
+				messagef((state->id, NULL, -1, "recv: %d: sockrecv error", fd));
 				goto eperm;
 			}
 			if (fstat(rfd[0], &st))
 			{
-				messagef((state->id, NiL, -1, "recv: %d: %d: authentication stat error", fd, rfd[0]));
+				messagef((state->id, NULL, -1, "recv: %d: %d: authentication stat error", fd, rfd[0]));
 			drop:
 				close(rfd[0]);
 			eperm:
@@ -193,7 +193,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 			}
 			if ((st.st_mode & CS_AUTH_MASK) != CS_AUTH_MODE)
 			{
-				messagef((state->id, NiL, -1, "recv: %d: %d: invalid authentication mode %04o", fd, rfd[0], st.st_mode & CS_AUTH_MASK));
+				messagef((state->id, NULL, -1, "recv: %d: %d: invalid authentication mode %04o", fd, rfd[0], st.st_mode & CS_AUTH_MASK));
 				goto drop;
 			}
 			close(rfd[0]);
@@ -215,7 +215,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 			id->hid = (unsigned long)nam.sin_addr.s_addr;
 		return 1;
 	}
-	messagef((state->id, NiL, -1, "recv: %d: accept error", fd));
+	messagef((state->id, NULL, -1, "recv: %d: accept error", fd));
 
 #endif
 
@@ -225,7 +225,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 
 	if (ioctl(fd, I_RECVFD, &rcv) < 0)
 	{
-		messagef((state->id, NiL, -1, "recv: %d: ioctl I_RECVFD error", fd));
+		messagef((state->id, NULL, -1, "recv: %d: ioctl I_RECVFD error", fd));
 		switch (errno)
 		{
 		case EIO:
@@ -243,20 +243,20 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 		if (m != sizeof(hdr))
 		{
 			errno = EINVAL;
-			messagef((state->id, NiL, -1, "recv: %d: hdr read error", fd));
+			messagef((state->id, NULL, -1, "recv: %d: hdr read error", fd));
 			return -1;
 		}
 		if (hdr.count <= 0)
 		{
 			errno = EINVAL;
-			messagef((state->id, NiL, -1, "recv: %d: invalid hdr count %d", fd, hdr.count));
+			messagef((state->id, NULL, -1, "recv: %d: invalid hdr count %d", fd, hdr.count));
 			return -1;
 		}
 		for (i = 0; i < hdr.count; i++)
 		{
 			if (ioctl(fd, I_RECVFD, &rcv) < 0)
 			{
-				messagef((state->id, NiL, -1, "recv: %d: ioctl I_RECVFD #%d error", fd, i + 1));
+				messagef((state->id, NULL, -1, "recv: %d: ioctl I_RECVFD #%d error", fd, i + 1));
 				while (--i >= 0) close(fds[i]);
 				return -1;
 			}
@@ -267,9 +267,9 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 
 #ifdef I_ACCEPT
 
-	else if (ioctl(rcv.fd, I_ACCEPT, NiL) < 0)
+	else if (ioctl(rcv.fd, I_ACCEPT, NULL) < 0)
 	{
-		messagef((state->id, NiL, -1, "recv: %d: ioctl I_ACCEPT error", fd));
+		messagef((state->id, NULL, -1, "recv: %d: ioctl I_ACCEPT error", fd));
 		close(rcv.fd);
 		return -1;
 	}
@@ -293,7 +293,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 
 	if ((i = sockrecv(fd, id, rfd, n + 1)) <= 1)
 	{
-		messagef((state->id, NiL, -1, "recv: %d: sockrecv error", fd));
+		messagef((state->id, NULL, -1, "recv: %d: sockrecv error", fd));
 	nope:
 		if (i >= 0)
 		{
@@ -304,12 +304,12 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 	}
 	if (fstat(rfd[0], &st))
 	{
-		messagef((state->id, NiL, -1, "recv: %d: %d: authentication stat error", fd, rfd[0]));
+		messagef((state->id, NULL, -1, "recv: %d: %d: authentication stat error", fd, rfd[0]));
 		goto nope;
 	}
 	if ((st.st_mode & CS_AUTH_MASK) != CS_AUTH_MODE)
 	{
-		messagef((state->id, NiL, -1, "recv: %d: %d: invalid authentication mode %04o", fd, rfd[0], st.st_mode & CS_AUTH_MASK));
+		messagef((state->id, NULL, -1, "recv: %d: %d: invalid authentication mode %04o", fd, rfd[0], st.st_mode & CS_AUTH_MASK));
 		goto nope;
 	}
 	close(rfd[0]);
@@ -331,13 +331,13 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 		s = state->temp;
 		if ((i = recv(fd, s, sizeof(state->temp), 0)) <= 0)
 		{
-			messagef((state->id, NiL, -1, "recv: %d: read error", fd));
+			messagef((state->id, NULL, -1, "recv: %d: read error", fd));
 			return -1;
 		}
 		if (i >= sizeof(state->temp))
 			i = sizeof(state->temp) - 1;
 		s[i] = 0;
-		messagef((state->id, NiL, -8, "recv: `%s'", s));
+		messagef((state->id, NULL, -8, "recv: `%s'", s));
 		pid = strtol(s, &s, 0);
 		i = strtol(s, &s, 0);
 		if (i < n)
@@ -366,7 +366,7 @@ csrecv(register Cs_t* state, int fd, Csid_t* id, int* fds, int n)
 				id->gid = getegid();
 			}
 		}
-		messagef((state->id, NiL, -8, "recv: %d fds", j));
+		messagef((state->id, NULL, -8, "recv: %d fds", j));
 		return j;
 	}
 	errno = EINVAL;

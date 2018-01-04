@@ -153,7 +153,7 @@ regsubexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match)
 	int			m;
 
 	if (!p->env->sub || (p->env->flags & REG_NOSUB) || !nmatch)
-		return fatal(p->env->disc, REG_BADPAT, NiL);
+		return fatal(p->env->disc, REG_BADPAT, NULL);
 	b = p->re_sub;
 	m = b->re_min;
 	b->re_cur = b->re_buf;
@@ -162,12 +162,12 @@ regsubexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match)
 	for (;;)
 	{
 		if (--m > 0)
-			PUTS(p, b, s, match->rm_eo, return fatal(p->env->disc, c, NiL));
+			PUTS(p, b, s, match->rm_eo, return fatal(p->env->disc, c, NULL));
 		else
 		{
-			PUTS(p, b, s, match->rm_so, return fatal(p->env->disc, c, NiL));
+			PUTS(p, b, s, match->rm_so, return fatal(p->env->disc, c, NULL));
 			if (!c && (c = sub(p, b, s, b->re_ops, nmatch, match)))
-				return fatal(p->env->disc, c, NiL);
+				return fatal(p->env->disc, c, NULL);
 		}
 		s += match->rm_eo;
 		if (m <= 0 && !(b->re_flags & REG_SUB_ALL) || !*s)
@@ -175,7 +175,7 @@ regsubexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match)
 		if (c = regnexec(p, s, e - s, nmatch, match, p->env->flags|(match->rm_so == match->rm_eo ? REG_ADVANCE : 0)))
 		{
 			if (c != REG_NOMATCH)
-				return fatal(p->env->disc, c, NiL);
+				return fatal(p->env->disc, c, NULL);
 			break;
 		}
 		if (!match->rm_so && !match->rm_eo && *s && m <= 1)
@@ -187,9 +187,9 @@ regsubexec(const regex_t* p, const char* s, size_t nmatch, regmatch_t* match)
 	while (s < e)
 	{
 		c = *s++;
-		PUTC(p, b, c, return fatal(p->env->disc, c, NiL));
+		PUTC(p, b, c, return fatal(p->env->disc, c, NULL));
 	}
-	NEED(p, b, 1, return fatal(p->env->disc, c, NiL));
+	NEED(p, b, 1, return fatal(p->env->disc, c, NULL));
 	*b->re_cur = 0;
 	b->re_len = b->re_cur - b->re_buf;
 	return 0;
@@ -233,5 +233,5 @@ regsubexec(const regex_t* p, const char* s, size_t nmatch, oldregmatch_t* oldmat
 		free(match);
 		return r;
 	}
-	return regsubexec_20120528(p, s, 0, NiL);
+	return regsubexec_20120528(p, s, 0, NULL);
 }

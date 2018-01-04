@@ -45,5 +45,5 @@ regfatalpat(regex_t* p, int level, int code, const char* pat)
 void
 regfatal(regex_t* p, int level, int code)
 {
-	regfatalpat(p, level, code, NiL);
+	regfatalpat(p, level, code, NULL);
 }

@@ -136,5 +136,5 @@ tmxmake(Time_t t)
 {
 	static Tm_t		ts;
 
-	return tmxtm(&ts, t, NiL);
+	return tmxtm(&ts, t, NULL);
 }

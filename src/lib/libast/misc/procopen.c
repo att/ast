@@ -179,7 +179,7 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 					close(i);
 			arg2 = -1;
 #ifdef TIOCSCTTY
-			if (ioctl(arg1, TIOCSCTTY, NiL) < 0)
+			if (ioctl(arg1, TIOCSCTTY, NULL) < 0)
 				return -1;
 #else
 			if (!(s = ttyname(arg1)))
@@ -226,7 +226,7 @@ modify(Proc_t* proc, int forked, int op, long arg1, long arg2)
 	{
 		Modify_t*	m;
 
-		if (!(m = newof(NiL, Modify_t, 1, 0)))
+		if (!(m = newof(NULL, Modify_t, 1, 0)))
 			return -1;
 		m->next = proc->mods;
 		proc->mods = m;
@@ -410,7 +410,7 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 	}
 	pio[0] = pio[1] = -1;
 	pop[0] = pop[1] = -1;
-	if (cmd && (!*cmd || !pathpath(cmd, NiL, PATH_REGULAR|PATH_EXECUTE, path, sizeof(path))))
+	if (cmd && (!*cmd || !pathpath(cmd, NULL, PATH_REGULAR|PATH_EXECUTE, path, sizeof(path))))
 		goto bad;
 	switch (flags & (PROC_READ|PROC_WRITE))
 	{
@@ -436,12 +436,12 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 	proc->rfd = -1;
 	proc->wfd = -1;
 	proc->flags = flags;
-	sfsync(NiL);
+	sfsync(NULL);
 	if (!envv && !(flags & (PROC_ENVCLEAR|PROC_PARANOID)))
 		envv = environ;
 	else if (environ && envv != (char**)environ && (envv || (flags & PROC_PARANOID) || argv && (environ[0][0] != '_' || environ[0][1] != '=')))
 	{
-		if (!setenviron(NiL))
+		if (!setenviron(NULL))
 			goto bad;
 #if _use_spawnveg
 		if (!(flags & PROC_ORPHAN))
@@ -505,7 +505,7 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 				signal(SIGQUIT, proc->sigquit);
 			}
 #if defined(SIGCHLD)
-			sigprocmask(SIG_SETMASK, &proc->mask, NiL);
+			sigprocmask(SIG_SETMASK, &proc->mask, NULL);
 #endif
 		}
 		else if (proc->pid == -1)
@@ -541,7 +541,7 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 			if (!fork())
 			{
 				sfsprintf(path, sizeof(path), "%d", getppid());
-				execlp("trace", "trace", "-p", path, NiL);
+				execlp("trace", "trace", "-p", path, NULL);
 				_exit(EXIT_NOTFOUND);
 			}
 			sleep(2);
@@ -642,7 +642,7 @@ procopen(const char* cmd, char** argv, char** envv, long* modv, int flags)
 			if (!setenviron(env))
 				goto cleanup;
 		}
-		if ((flags & PROC_PARANOID) && setenv("PATH", astconf("PATH", NiL, NiL), 1))
+		if ((flags & PROC_PARANOID) && setenv("PATH", astconf("PATH", NULL, NULL), 1))
 			goto cleanup;
 		if ((p = envv) && p != (char**)environ)
 			while (*p)
@@ -698,7 +698,7 @@ sfsync(sfstderr);
 			*p = path;
 			*--p = "sh";
 		}
-		strcpy(env + 2, (flags & PROC_PARANOID) ? astconf("SH", NiL, NiL) : pathshell());
+		strcpy(env + 2, (flags & PROC_PARANOID) ? astconf("SH", NULL, NULL) : pathshell());
 		if (forked || (flags & PROC_OVERLAY))
 			execve(env + 2, p, environ);
 #if _use_spawnveg
@@ -815,7 +815,7 @@ sfsync(sfstderr);
 		if (proc->sigquit != SIG_IGN)
 			signal(SIGQUIT, proc->sigquit);
 #if defined(SIGCHLD)
-		sigprocmask(SIG_SETMASK, &proc->mask, NiL);
+		sigprocmask(SIG_SETMASK, &proc->mask, NULL);
 #endif
 	}
 	if ((flags & PROC_CLEANUP) && modv)

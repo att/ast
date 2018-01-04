@@ -121,13 +121,13 @@ tmzone(const char* name, char** end, const char* type, int* dst)
 			p = zp->type;
 		if (!type || type == p || !p)
 		{
-			if (tmword(name, end, zp->standard, NiL, 0))
+			if (tmword(name, end, zp->standard, NULL, 0))
 			{
 				if (dst)
 					*dst = 0;
 				return zp;
 			}
-			if (zp->dst && zp->daylight && tmword(name, end, zp->daylight, NiL, 0))
+			if (zp->dst && zp->daylight && tmword(name, end, zp->daylight, NULL, 0))
 			{
 				if (dst)
 					*dst = zp->dst;

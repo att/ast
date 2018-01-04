@@ -39,7 +39,7 @@
 #define cs		_cs_info_
 #define Cs		(&cs)
 
-#define CSTIME()	(cs.time=(unsigned long)time(NiL))
+#define CSTIME()	(cs.time=(unsigned long)time(NULL))
 #define CSTOSS(n,c)	HASHPART(n,c)
 
 #define CS_LOCAL	(-1L)		/* local address		*/

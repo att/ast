@@ -140,7 +140,7 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 				/* an explicit suffix unit overrides the default */
 				if((i=strtol(limit,&last,0))!=INFINITY && !*last)
 					i *= unit;
-				else if((i=strton(limit,&last,NiL,0))==INFINITY || *last)
+				else if((i=strton(limit,&last,NULL,0))==INFINITY || *last)
 				{
 					if((i=sh_strnum(shp,limit,&last,2))==INFINITY || *last)
 						errormsg(SH_DICT,ERROR_system(1),e_number,limit);
@@ -182,7 +182,7 @@ int	b_ulimit(int argc,char *argv[],Shbltin_t *context)
 			}
 			if(nosupport)
 			{
-				if(!tp->conf || !*(conf = astconf(tp->conf, NiL, NiL)))
+				if(!tp->conf || !*(conf = astconf(tp->conf, NULL, NULL)))
 					conf = (char*)e_nosupport;
 				sfputr(sfstdout,conf,'\n');
 			}

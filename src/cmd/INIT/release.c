@@ -68,8 +68,6 @@ USAGE_LICENSE
 
 #define elementsof(x)	((int)(sizeof(x)/sizeof(x[0])))
 
-#define NiL		((char*)0)
-
 #endif
 
 #include <stdio.h>
@@ -244,7 +242,7 @@ main(int argc, char** argv)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	argv += opt_info.index;
 #else
 	while ((s = *++argv) && *s == '-' && *(s + 1))

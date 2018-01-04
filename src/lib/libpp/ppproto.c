@@ -1362,7 +1362,7 @@ if !defined(va_start)\n\
 							*v++ = ' ';
 							v = memcopy(v, im, ie - im);
 							*v = 0;
-							proto_error((char*)proto + sizeof(Proto_t), 2, op, NiL);
+							proto_error((char*)proto + sizeof(Proto_t), 2, op, NULL);
 						}
 						ip--;
 						/*UNDENT...*/
@@ -1513,7 +1513,7 @@ if !defined(va_start)\n\
 		else if (*ie == ')')
 		{
 			if (op > om && *(op - 1) == '(')
-				proto_error((char*)proto + sizeof(Proto_t), 1, "function pointer argument prototype omitted", NiL);
+				proto_error((char*)proto + sizeof(Proto_t), 1, "function pointer argument prototype omitted", NULL);
 			PUTCHR(*ie++);
 			while (*ie == ' ' || *ie == '\t' || *ie == '\n') ie++;
 		}
@@ -2277,7 +2277,7 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 	 */
 
 #if PROTOMAIN
-	if (!notice && !options || (comlen = astlicense(com, sizeof(com), NiL, "type=check", proto->cc[0], proto->cc[1], proto->cc[2])) <= 0)
+	if (!notice && !options || (comlen = astlicense(com, sizeof(com), NULL, "type=check", proto->cc[0], proto->cc[1], proto->cc[2])) <= 0)
 		*com = 0;
 #endif
 	hit = (notice || options) ? 0 : HIT_noticed;
@@ -2411,7 +2411,7 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 				if (proto->cc[0])
 				{
 					if ((comlen = astlicense(proto->op, proto->oz, notice, options, proto->cc[0], proto->cc[1], proto->cc[2])) < 0)
-						proto_error((char*)proto + sizeof(Proto_t), 1, proto->op, NiL);
+						proto_error((char*)proto + sizeof(Proto_t), 1, proto->op, NULL);
 					else
 						proto->op += comlen;
 				}
@@ -2428,7 +2428,7 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 	if (!(retain & PROTO_INITIALIZED))
 	{
 		retain |= PROTO_INITIALIZED;
-		ppfsm(FSM_INIT, NiL);
+		ppfsm(FSM_INIT, NULL);
 	}
 #endif
 	proto->line = 1;
@@ -2439,7 +2439,7 @@ pppopen(char* file, int fd, char* notice, char* options, char* package, char* co
 		if (notice || options)
 		{
 			if ((comlen = astlicense(proto->op, proto->oz, notice, options, proto->cc[0], proto->cc[1], proto->cc[2])) < 0)
-				proto_error((char*)proto + sizeof(Proto_t), 1, proto->op, NiL);
+				proto_error((char*)proto + sizeof(Proto_t), 1, proto->op, NULL);
 			else
 				proto->op += comlen;
 		}

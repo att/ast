@@ -45,19 +45,19 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 		if (!addr)
 		{
 			if ((fd = udp_datagram(port)) < 0)
-				messagef((state->id, NiL, -1, "bind: %s: udp_datagram error", type));
+				messagef((state->id, NULL, -1, "bind: %s: udp_datagram error", type));
 			return fd;
 		}
 		if (addr == CS_LOCAL) addr = 0;
 		if ((fd = udp_connect(0, addr, port)) < 0)
-			messagef((state->id, NiL, -1, "bind: %s: udp_connect error", type));
+			messagef((state->id, NULL, -1, "bind: %s: udp_connect error", type));
 		return fd;
 	}
 	else if (streq(type, "tcp"))
 	{
 		if ((fd = tcp_sock()) < 0)
 		{
-			messagef((state->id, NiL, -1, "bind: %s: tcp_sock error", type));
+			messagef((state->id, NULL, -1, "bind: %s: tcp_sock error", type));
 			return -1;
 		}
 		memzero(&tcp, sizeof(tcp));
@@ -69,7 +69,7 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 			state->port = tcp.lport;
 			return fd;
 		}
-		messagef((state->id, NiL, -1, "bind: %s %s error", type, addr ? "tcp_connect" : "tcp_listen"));
+		messagef((state->id, NULL, -1, "bind: %s %s error", type, addr ? "tcp_connect" : "tcp_listen"));
 		close(fd);
 	}
 
@@ -87,12 +87,12 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 	else if (streq(type, "udp")) sock = SOCK_DGRAM;
 	else
 	{
-		messagef((state->id, NiL, -1, "bind: %s: invalid type", type));
+		messagef((state->id, NULL, -1, "bind: %s: invalid type", type));
 		return -1;
 	}
 	if ((fd = socket(AF_INET, sock, 0)) < 0)
 	{
-		messagef((state->id, NiL, -1, "bind: %s: AF_INET socket error", type));
+		messagef((state->id, NULL, -1, "bind: %s: AF_INET socket error", type));
 		return -1;
 	}
 	memzero(&nam, sizeof(nam));
@@ -152,7 +152,7 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 			state->port = port;
 			return fd;
 		}
-		messagef((state->id, NiL, -1, "bind: %s: connect error", type));
+		messagef((state->id, NULL, -1, "bind: %s: connect error", type));
 		if (errno == EADDRNOTAVAIL || errno == ECONNREFUSED)
 			errno = ENOENT;
 	}
@@ -173,10 +173,10 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 				state->addr = nam.sin_addr.s_addr;
 				state->port = ntohs((unsigned short)nam.sin_port);
 			}
-			else messagef((state->id, NiL, -1, "bind: %s: getsockname error", type));
+			else messagef((state->id, NULL, -1, "bind: %s: getsockname error", type));
 			return fd;
 		}
-		messagef((state->id, NiL, -1, "bind: %s: bind error", type));
+		messagef((state->id, NULL, -1, "bind: %s: bind error", type));
 		if (errno == EADDRINUSE) errno = EEXIST;
 	}
 	close(fd);
@@ -184,7 +184,7 @@ portbind(register Cs_t* state, const char* type, unsigned long addr, unsigned in
 #else
 
 	errno = ENOTDIR;
-	messagef((state->id, NiL, -1, "bind: %s: not supported", type));
+	messagef((state->id, NULL, -1, "bind: %s: not supported", type));
 
 #endif
 
@@ -208,7 +208,7 @@ csbind(register Cs_t* state, const char* type, unsigned long addr, unsigned long
 {
 	int	fd;
 
-	messagef((state->id, NiL, -8, "bind(%s,%s,%u,%lu) call", type, csntoa(state, addr), port, clone));
+	messagef((state->id, NULL, -8, "bind(%s,%s,%u,%lu) call", type, csntoa(state, addr), port, clone));
 	if (port == CS_PORT_INVALID)
 		return -1;
 	if (port == CS_PORT_RESERVED)
@@ -218,7 +218,7 @@ csbind(register Cs_t* state, const char* type, unsigned long addr, unsigned long
 		if (addr)
 		{
 			errno = EROFS;
-			messagef((state->id, NiL, -1, "bind: %s: explicit reserved port invalid", csntoa(state, addr)));
+			messagef((state->id, NULL, -1, "bind: %s: explicit reserved port invalid", csntoa(state, addr)));
 			return -1;
 		}
 		port = last;
@@ -229,13 +229,13 @@ csbind(register Cs_t* state, const char* type, unsigned long addr, unsigned long
 			if (last == port)
 			{
 				errno = ENOSPC;
-				messagef((state->id, NiL, -1, "bind: no more reserved ports"));
+				messagef((state->id, NULL, -1, "bind: no more reserved ports"));
 				break;
 			}
 			if ((fd = portbind(state, type, 0L, last)) >= 0)
 				goto ok;
 		} while (errno != EACCES);
-		messagef((state->id, NiL, -1, "bind: reserved port allocation error"));
+		messagef((state->id, NULL, -1, "bind: reserved port allocation error"));
 		return -1;
 	}
 	if (port == CS_PORT_NORMAL && addr)
@@ -254,7 +254,7 @@ csbind(register Cs_t* state, const char* type, unsigned long addr, unsigned long
 		cswrite(state, fd, buf, n);
 	}
  ok:
-	messagef((state->id, NiL, -8, "bind(%s,%s,%u,%lu) = %d", type, csntoa(state, addr), port, clone, fd));
+	messagef((state->id, NULL, -8, "bind(%s,%s,%u,%lu) = %d", type, csntoa(state, addr), port, clone, fd));
 	return fd;
 }
 

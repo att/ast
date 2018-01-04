@@ -40,7 +40,7 @@ main(int argc, char** argv)
 	Sfio_t*		out;
 
 	NoP(argc);
-	if (dup(3) < 0 || !(out = sfnew(NiL, NiL, -1, 3, SF_WRITE)))
+	if (dup(3) < 0 || !(out = sfnew(NULL, NULL, -1, 3, SF_WRITE)))
 		out = sfstdout;
 	if (*++argv)
 	{

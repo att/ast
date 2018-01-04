@@ -177,16 +177,16 @@ b_comm(int argc, char *argv[], Shbltin_t* context)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if(error_info.errors || argc!=2)
-		error(ERROR_usage(2),"%s",optusage(NiL));
+		error(ERROR_usage(2),"%s",optusage(NULL));
 	cp = *argv++;
 	if(streq(cp,"-"))
 		f1 = sfstdin;
-	else if(!(f1 = sfopen(NiL, cp,"r")))
+	else if(!(f1 = sfopen(NULL, cp,"r")))
 		error(ERROR_system(1),"%s: cannot open",cp);
 	cp = *argv;
 	if(streq(cp,"-"))
 		f2 = sfstdin;
-	else if(!(f2 = sfopen(NiL, cp,"r")))
+	else if(!(f2 = sfopen(NULL, cp,"r")))
 		error(ERROR_system(1),"%s: cannot open",cp);
 	if(mode)
 	{

@@ -77,15 +77,15 @@ main(int argc, char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(loc = *argv++) || !(cmd = *argv++) || !(s = *argv++))
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (streq(s, "-"))
 		set = num = 0;
 	else
-		mcindex(s, NiL, &set, &num);
+		mcindex(s, NULL, &set, &num);
 	if (!(msg = *argv++))
 		msg = "";
 	else if (*argv)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (streq(loc, "-"))
 		loc = 0;
 	if (cat = strchr(cmd, ':'))
@@ -96,7 +96,7 @@ main(int argc, char** argv)
 			*--cat = ':';
 		error(3, "%s: cannot locate message catalog", cmd);
 	}
-	if (!(sp = sfopen(NiL, path, "r")))
+	if (!(sp = sfopen(NULL, path, "r")))
 		error(ERROR_SYSTEM|3, "%s: cannot read message catalog", path);
 	if (!(mc = mcopen(sp)))
 		error(3, "%s: invalid message catalog", path);

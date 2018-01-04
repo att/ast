@@ -127,7 +127,7 @@ kvm_init(Pss_t* pss)
 			(*pss->disc->errorf)(pss, pss->disc, ERROR_SYSTEM|2, "out of space");
 		return -1;
 	}
-	if (!(state->kd = kvm_open(NiL, NiL, 0, O_RDONLY, NiL)))
+	if (!(state->kd = kvm_open(NULL, NULL, 0, O_RDONLY, NULL)))
 	{
 		if (pss->disc->errorf)
 			(*pss->disc->errorf)(pss, pss->disc, ERROR_SYSTEM|1, "kvm open error");

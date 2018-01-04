@@ -153,7 +153,7 @@ setopt(void* a, const void* p, int n, const char* v)
 					error_state.breakpoint = ERROR_PANIC;
 					break;
 				default:
-					error_state.breakpoint = strtol(v, NiL, 0);
+					error_state.breakpoint = strtol(v, NULL, 0);
 					break;
 				}
 			else
@@ -169,12 +169,12 @@ setopt(void* a, const void* p, int n, const char* v)
 			break;
 		case OPT_COUNT:
 			if (n)
-				error_state.count = strtol(v, NiL, 0);
+				error_state.count = strtol(v, NULL, 0);
 			else
 				error_state.count = 0;
 			break;
 		case OPT_FD:
-			error_info.fd = n ? strtol(v, NiL, 0) : -1;
+			error_info.fd = n ? strtol(v, NULL, 0) : -1;
 			break;
 		case OPT_LIBRARY:
 			if (n)
@@ -184,7 +184,7 @@ setopt(void* a, const void* p, int n, const char* v)
 			break;
 		case OPT_MASK:
 			if (n)
-				error_info.mask = strtol(v, NiL, 0);
+				error_info.mask = strtol(v, NULL, 0);
 			else
 				error_info.mask = 0;
 			break;
@@ -225,7 +225,7 @@ setopt(void* a, const void* p, int n, const char* v)
 			break;
 		case OPT_TRACE:
 			if (n)
-				error_info.trace = -strtol(v, NiL, 0);
+				error_info.trace = -strtol(v, NULL, 0);
 			else
 				error_info.trace = 0;
 			break;
@@ -308,11 +308,11 @@ context(Sfio_t* sp, Error_context_t* cp)
 	if (!(cp->flags & ERROR_SILENT))
 	{
 		if (cp->id)
-			print(sp, cp->id, NiL);
+			print(sp, cp->id, NULL);
 		if (cp->line > ((cp->flags & ERROR_INTERACTIVE) != 0))
 		{
 			if (cp->file)
-				sfprintf(sp, ": \"%s\", %s %d", cp->file, ERROR_translate(NiL, NiL, ast.id, "line"), cp->line);
+				sfprintf(sp, ": \"%s\", %s %d", cp->file, ERROR_translate(NULL, NULL, ast.id, "line"), cp->line);
 			else
 				sfprintf(sp, "[%d]", cp->line);
 		}
@@ -329,14 +329,14 @@ error_break(void)
 {
 	char*	s;
 
-	if (error_state.tty || (error_state.tty = sfopen(NiL, "/dev/tty", "r+")))
+	if (error_state.tty || (error_state.tty = sfopen(NULL, "/dev/tty", "r+")))
 	{
 		sfprintf(error_state.tty, "error breakpoint: ");
 		if (s = sfgetr(error_state.tty, '\n', 1))
 		{
 			if (streq(s, "q") || streq(s, "quit"))
 				exit(0);
-			stropt(s, options, sizeof(*options), setopt, NiL);
+			stropt(s, options, sizeof(*options), setopt, NULL);
 		}
 	}
 }
@@ -347,7 +347,7 @@ error(int level, ...)
 	va_list	ap;
 
 	va_start(ap, level);
-	errorv(NiL, level, ap);
+	errorv(NULL, level, ap);
 	va_end(ap);
 }
 
@@ -374,7 +374,7 @@ errorv(const char* id, int level, va_list ap)
 	if (!error_info.init)
 	{
 		error_info.init = 1;
-		stropt(getenv("ERROR_OPTIONS"), options, sizeof(*options), setopt, NiL);
+		stropt(getenv("ERROR_OPTIONS"), options, sizeof(*options), setopt, NULL);
 	}
 	if (level > 0)
 	{
@@ -442,7 +442,7 @@ errorv(const char* id, int level, va_list ap)
 			if (flags & ERROR_NOID)
 				sfprintf(stkstd, "       ");
 			else
-				sfprintf(stkstd, "%s: ", ERROR_translate(NiL, NiL, ast.id, "Usage"));
+				sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "Usage"));
 			if (file || opt_info.argv && (file = opt_info.argv[0]))
 				print(stkstd, file, " ");
 		}
@@ -459,13 +459,13 @@ errorv(const char* id, int level, va_list ap)
 					sfprintf(stkstd, "[");
 					if (flags & ERROR_CATALOG)
 						sfprintf(stkstd, "%s %s%s",
-							catalog ? catalog : ERROR_translate(NiL, NiL, ast.id, "DEFAULT"),
-							ERROR_translate(NiL, NiL, ast.id, "catalog"),
+							catalog ? catalog : ERROR_translate(NULL, NULL, ast.id, "DEFAULT"),
+							ERROR_translate(NULL, NULL, ast.id, "catalog"),
 							(flags & ERROR_LIBRARY) ? ", " : "");
 					if (flags & ERROR_LIBRARY)
 						sfprintf(stkstd, "%s %s",
 							library,
-							ERROR_translate(NiL, NiL, ast.id, "library"));
+							ERROR_translate(NULL, NULL, ast.id, "library"));
 					sfprintf(stkstd, "]: ");
 				}
 			}
@@ -473,7 +473,7 @@ errorv(const char* id, int level, va_list ap)
 			{
 				if (error_info.file && *error_info.file)
 					sfprintf(stkstd, "\"%s\", ", error_info.file);
-				sfprintf(stkstd, "%s %d: ", ERROR_translate(NiL, NiL, ast.id, "line"), error_info.line);
+				sfprintf(stkstd, "%s %d: ", ERROR_translate(NULL, NULL, ast.id, "line"), error_info.line);
 			}
 		}
 #if !_PACKAGE_astsa
@@ -490,15 +490,15 @@ errorv(const char* id, int level, va_list ap)
 			flags &= ~ERROR_SYSTEM;
 			break;
 		case ERROR_WARNING:
-			sfprintf(stkstd, "%s: ", ERROR_translate(NiL, NiL, ast.id, "warning"));
+			sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "warning"));
 			break;
 		case ERROR_PANIC:
-			sfprintf(stkstd, "%s: ", ERROR_translate(NiL, NiL, ast.id, "panic"));
+			sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "panic"));
 			break;
 		default:
 			if (level < 0)
 			{
-				s = ERROR_translate(NiL, NiL, ast.id, "debug");
+				s = ERROR_translate(NULL, NULL, ast.id, "debug");
 				if (error_info.trace < -1)
 					sfprintf(stkstd, "%s%d:%s", s, level, level > -10 ? " " : "");
 				else
@@ -519,7 +519,7 @@ errorv(const char* id, int level, va_list ap)
 
 			file = va_arg(ap, char*);
 			line = va_arg(ap, int);
-			s = ERROR_translate(NiL, NiL, ast.id, "line");
+			s = ERROR_translate(NULL, NULL, ast.id, "line");
 			if (error_info.version)
 				sfprintf(stkstd, "(%s: \"%s\", %s %d) ", error_info.version, file, s, line);
 			else
@@ -528,7 +528,7 @@ errorv(const char* id, int level, va_list ap)
 		if (format || (format = va_arg(ap, char*)))
 		{
 			if (!(flags & ERROR_USAGE))
-				format = ERROR_translate(NiL, id, catalog, format);
+				format = ERROR_translate(NULL, id, catalog, format);
 			sfvprintf(stkstd, format, ap);
 		}
 		if (!(flags & ERROR_PROMPT))
@@ -587,7 +587,7 @@ errorv(const char* id, int level, va_list ap)
 	}
 	else
 		s = 0;
-	if (level >= error_state.breakpoint && error_state.breakpoint && (!error_state.match || !regexec(error_state.match, s ? s : format, 0, NiL, 0)) && (!error_state.count || !--error_state.count))
+	if (level >= error_state.breakpoint && error_state.breakpoint && (!error_state.match || !regexec(error_state.match, s ? s : format, 0, NULL, 0)) && (!error_state.count || !--error_state.count))
 	{
 		if (error_info.core)
 		{

@@ -591,7 +591,7 @@ key(void* handle, register Sffmt_t* fp, const char* arg, char** ps, Sflong_t* pn
 	if (kp->macro && !kp->disable)
 	{
 		kp->disable = 1;
-		sfkeyprintf(state.mac, handle, kp->macro, key, NiL);
+		sfkeyprintf(state.mac, handle, kp->macro, key, NULL);
 		if (!(s = sfstruse(state.mac)))
 			error(ERROR_SYSTEM|3, "out of space");
 		kp->disable = 0;
@@ -837,7 +837,7 @@ ps(Ps_t* pp)
 	pp->shown = 1;
 	if (state.format)
 	{
-		sfkeyprintf(sfstdout, pp, state.format, key, NiL);
+		sfkeyprintf(sfstdout, pp, state.format, key, NULL);
 		return;
 	}
 	pr = pp->ps;
@@ -1160,7 +1160,7 @@ head(void)
 	}
 	else
 	{
-		sfkeyprintf(state.heading ? sfstdout : state.wrk, NiL, state.format, key, NiL);
+		sfkeyprintf(state.heading ? sfstdout : state.wrk, NULL, state.format, key, NULL);
 		sfstrseek(state.wrk, 0, SEEK_SET);
 	}
 }
@@ -1448,9 +1448,9 @@ poppids(void)
 		state.pids = p->next;
 		if (i = p->argc)
 			while (--i >= 0)
-				addpid(NiL, p->argv[i]);
+				addpid(NULL, p->argv[i]);
 		else
-			addpid(NiL, (char*)p->argv);
+			addpid(NULL, (char*)p->argv);
 		free(p);
 	}
 	state.pssdisc.flags = flags;
@@ -1558,7 +1558,7 @@ main(int argc, register char** argv)
 			state.heading = opt_info.num;
 			continue;
 		case 'g':
-			addid(opt_info.arg, KEY_pgrp, NiL);
+			addid(opt_info.arg, KEY_pgrp, NULL);
 			continue;
 		case 'j':
 			addkey(FIELDS_j, 1);
@@ -1579,7 +1579,7 @@ main(int argc, register char** argv)
 			state.children = opt_info.num;
 			continue;
 		case 's':
-			addid(opt_info.arg, KEY_sid, NiL);
+			addid(opt_info.arg, KEY_sid, NULL);
 			continue;
 		case 't':
 			addid(opt_info.arg, KEY_tty, ttyid);
@@ -1660,7 +1660,7 @@ main(int argc, register char** argv)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (n)
 		state.tree = 0;
 	if (sfstrtell(fmt))
@@ -1702,7 +1702,7 @@ main(int argc, register char** argv)
 		}
 		poppids();
 		while (pe = pssread(state.pss, PSS_SCAN))
-			addpid(pe, NiL);
+			addpid(pe, NULL);
 		if (state.children || state.parents)
 			for (pp = (Ps_t*)dtfirst(state.byorder); pp; pp = (Ps_t*)dtnext(state.byorder, pp))
 				dtinsert(state.bypid, pp);

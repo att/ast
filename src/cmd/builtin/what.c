@@ -263,7 +263,7 @@ b_what(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (s = *argv)
 		argv++;
 	do
@@ -273,7 +273,7 @@ b_what(int argc, char** argv, Shbltin_t* context)
 			s = "/dev/stdin";
 			sp = sfstdin;
 		}
-		else if (!(sp = sfopen(NiL, s, "r")))
+		else if (!(sp = sfopen(NULL, s, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", s);
 			continue;

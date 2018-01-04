@@ -278,7 +278,7 @@ setfname(const char* prefix, char* format, int suflen, int low, int high)
 			if (len > flen)
 			{
 				*(cp - 1) = 0;
-				flen = (int)strtol(astconf("NAME_MAX", fp->fname, NiL), NiL, 0);
+				flen = (int)strtol(astconf("NAME_MAX", fp->fname, NULL), NULL, 0);
 				*(cp - 1) = '/';
 			}
 		}
@@ -286,7 +286,7 @@ setfname(const char* prefix, char* format, int suflen, int low, int high)
 		{
 			cp = fp->fname;
 			if (len > flen)
-				flen = (int)strtol(astconf("NAME_MAX", ".", NiL), NiL, 0);
+				flen = (int)strtol(astconf("NAME_MAX", ".", NULL), NULL, 0);
 		}
 		if (len > flen)
 			error(ERROR_exit(1), "%s: filename too long", prefix);
@@ -398,7 +398,7 @@ split(Sfio_t* in, struct fname* fp, struct op* op, int flags)
 			{
 				if (!(cp = getfname(fp)))
 					goto err;
-				if (!(out = sfopen(NiL, cp, "w")))
+				if (!(out = sfopen(NULL, cp, "w")))
 				{
 					fp->count--;
 					error(ERROR_SYSTEM|2, "%s: cannot create", cp);
@@ -437,7 +437,7 @@ split(Sfio_t* in, struct fname* fp, struct op* op, int flags)
 				}
 				while (s = sfgetr(in, delim, 1))
 				{
-					if (!(c = regexec(op->re, s, 0, NiL, 0)))
+					if (!(c = regexec(op->re, s, 0, NULL, 0)))
 						break;
 					lineno++;
 					if (c != REG_NOMATCH)
@@ -567,7 +567,7 @@ main(int argc, char** argv)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if (error_info.errors || !(flags & C_FLAG) && argc > 2 || (flags & C_FLAG) && argc < 2)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	cp = *argv++;
 	if (flags & C_FLAG)
 	{
@@ -616,7 +616,7 @@ main(int argc, char** argv)
 	}
 	if (!cp || streq(cp, "-"))
 		in = sfstdin;
-	else if (!(in = sfopen(NiL, cp, "r")))
+	else if (!(in = sfopen(NULL, cp, "r")))
 		error(ERROR_system(1), "%s: cannot open", cp);
 	n = split(in, fp, top, flags);
 	if (in != sfstdin)

@@ -137,7 +137,7 @@ find(const char* locale, const char* catalog)
 	{
 		if (locale == (const char*)lc_categories[AST_LC_MESSAGES].prev)
 			o = 0;
-		else if (o = setlocale(LC_MESSAGES, NiL))
+		else if (o = setlocale(LC_MESSAGES, NULL))
 		{
 			ast.locale.set |= AST_LC_internal;
 			setlocale(LC_MESSAGES, locale);

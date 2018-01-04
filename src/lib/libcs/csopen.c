@@ -97,7 +97,7 @@ mkmount(register Cs_t* state, int mode, int uid, int gid, char* endserv, char* e
 	if (endserv && !*endserv)
 		*endserv = '/';
 	*(state->control - 1) = '/';
-	messagef((state->id, NiL, -1, "mkmount: %s: cannot access physical mount directory", state->mount));
+	messagef((state->id, NULL, -1, "mkmount: %s: cannot access physical mount directory", state->mount));
 	return -1;
 }
 
@@ -169,31 +169,31 @@ initiate(register Cs_t* state, char* user, char* path, char* service, char* name
 	if (!(state->flags & CS_ADDR_SHARE))
 	{
 		sfsprintf(buf, sizeof(buf), "%s\n", state->host);
-		if (!(sp = tokline(buf, SF_STRING, NiL)))
+		if (!(sp = tokline(buf, SF_STRING, NULL)))
 			return -1;
 	}
 	else if (state->flags & CS_ADDR_LOCAL)
 	{
 		sfsprintf(buf, sizeof(buf), "%s\n", CS_HOST_LOCAL);
-		if (!(sp = tokline(buf, SF_STRING, NiL)))
+		if (!(sp = tokline(buf, SF_STRING, NULL)))
 			return -1;
 	}
 	else
 	{
 		strcpy(s, CS_SVC_HOSTS);
-		if (!(sp = tokline(service, SF_READ, NiL)))
+		if (!(sp = tokline(service, SF_READ, NULL)))
 		{
 			if (streq(state->host, CS_HOST_SHARE))
 				sfsprintf(buf, sizeof(buf), "%s\n%s\n", CS_HOST_SHARE, CS_HOST_LOCAL);
 			else
 				sfsprintf(buf, sizeof(buf), "%s\n%s\n%s\n", state->host, CS_HOST_SHARE, CS_HOST_LOCAL);
-			if (!(sp = tokline(buf, SF_STRING, NiL)))
+			if (!(sp = tokline(buf, SF_STRING, NULL)))
 				return -1;
 		}
 	}
 	sfsprintf(s, PATH_MAX - (s - service) - 1, "%s%s", name, CS_SVC_SUFFIX);
 	while (s = sfgetr(sp, '\n', 1))
-		if (tokscan(s, NiL, " %s ", &on) == 1)
+		if (tokscan(s, NULL, " %s ", &on) == 1)
 		{
 			if (streq(on, CS_HOST_LOCAL) || streq(on, local))
 			{
@@ -201,7 +201,7 @@ initiate(register Cs_t* state, char* user, char* path, char* service, char* name
 				av[0] = service;
 				av[1] = path;
 				av[2] = 0;
-				return procclose(procopen(av[0], av, NiL, NiL, PROC_PRIVELEGED|PROC_ZOMBIE)) < 0 ? -1 : 0;
+				return procclose(procopen(av[0], av, NULL, NULL, PROC_PRIVELEGED|PROC_ZOMBIE)) < 0 ? -1 : 0;
 			}
 			else if (!streq(on, CS_HOST_SHARE))
 			{
@@ -217,7 +217,7 @@ initiate(register Cs_t* state, char* user, char* path, char* service, char* name
 				ov[0] = PROC_FD_DUP(n, 0, 0);
 				ov[1] = PROC_FD_DUP(n, 1, PROC_FD_PARENT|PROC_FD_CHILD);
 				ov[2] = 0;
-				if (proc = procopen(av[0], av, NiL, ov, PROC_PRIVELEGED|PROC_ZOMBIE))
+				if (proc = procopen(av[0], av, NULL, ov, PROC_PRIVELEGED|PROC_ZOMBIE))
 				{
 					n = 1;
 					for (;;)
@@ -258,7 +258,7 @@ initiate(register Cs_t* state, char* user, char* path, char* service, char* name
 					}
 				}
 			}
-			else if (!sfstacked(sp) && (np = csinfo(state, on, NiL)))
+			else if (!sfstacked(sp) && (np = csinfo(state, on, NULL)))
 				sfstack(sp, np);
 		}
 	sfclose(sp);
@@ -308,7 +308,7 @@ agent(register Cs_t* state, const char* host, const char* user, const char* path
 	char		tmp[64];
 
 	remote(state, host, user, path, 1, av, fv);
-	if (!(proc = procopen(av[0], av, NiL, NiL, PROC_READ|PROC_WRITE|PROC_PRIVELEGED)))
+	if (!(proc = procopen(av[0], av, NULL, NULL, PROC_READ|PROC_WRITE|PROC_PRIVELEGED)))
 		goto sorry;
 	if ((m = csread(state, proc->rfd, buf, sizeof(buf), CS_LINE)) <= 1)
 		goto sorry;
@@ -379,7 +379,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 			remove(path);
 			if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, mode)) < 0)
 			{
-				messagef((state->id, NiL, -1, "open: %s: %s: creat %o error", state->path, path, mode));
+				messagef((state->id, NULL, -1, "open: %s: %s: creat %o error", state->path, path, mode));
 				return -1;
 			}
 			close(fd);
@@ -388,7 +388,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 		errno = n;
 		if (pipe(fds))
 		{
-			messagef((state->id, NiL, -1, "open: %s: pipe error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: pipe error", state->path, path));
 			return -1;
 		}
 
@@ -403,7 +403,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 #endif
 
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: %s error", state->path, path, n ? "connld" : "fattach"));
+			messagef((state->id, NULL, -1, "open: %s: %s: %s error", state->path, path, n ? "connld" : "fattach"));
 			close(fds[0]);
 			close(fds[1]);
 			errno = ENXIO;
@@ -424,12 +424,12 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 			}
 			else if ((op & CS_OPEN_TEST) || errno == EACCES)
 			{
-				messagef((state->id, NiL, -1, "open: %s: %s: open error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: open error", state->path, path));
 				return -1;
 			}
 			if (initiate(state, user, opath, tmp, serv))
 			{
-				messagef((state->id, NiL, -1, "open: %s: %s: service initiate error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: service initiate error", state->path, path));
 				return -1;
 			}
 			op = CS_OPEN_TEST;
@@ -444,7 +444,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 	char			c;
 	struct sockaddr_un	nam;
 
-	messagef((state->id, NiL, -8, "%s:%d state.path=`%s' state.mount=`%s' path=`%s' opath=`%s' user=`%s' serv=`%s'", __FILE__, __LINE__, state->path, state->mount, path, opath, user, serv));
+	messagef((state->id, NULL, -8, "%s:%d state.path=`%s' state.mount=`%s' path=`%s' opath=`%s' user=`%s' serv=`%s'", __FILE__, __LINE__, state->path, state->mount, path, opath, user, serv));
 	nam.sun_family = AF_UNIX;
 	strcpy(nam.sun_path, path);
 	namlen = sizeof(nam.sun_family) + strlen(path) + 1;
@@ -459,7 +459,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 		}
 		if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: AF_UNIX socket error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: AF_UNIX socket error", state->path, path));
 			return -1;
 		}
 		if (!connect(fd, (struct sockaddr*)&nam, namlen))
@@ -470,7 +470,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 				goto badcon;
 			}
 #if CS_LIB_SOCKET_RIGHTS
-			if (read(fd, &c, 1) == 1 && !cssend(state, fd, NiL, 0))
+			if (read(fd, &c, 1) == 1 && !cssend(state, fd, NULL, 0))
 				break;
 #else
 			break;
@@ -478,7 +478,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 		}
 		else
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: connect error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: connect error", state->path, path));
 			if (errno == EACCES)
 				goto badcon;
 			else if (errno == EADDRNOTAVAIL || errno == ECONNREFUSED)
@@ -493,7 +493,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 						break;
 					sleep(1);
 				}
-				if (pid > 0 && (s = strrchr(state->temp, '/')) && (pid = strtol(s + 1, NiL, 0)) > 0)
+				if (pid > 0 && (s = strrchr(state->temp, '/')) && (pid = strtol(s + 1, NULL, 0)) > 0)
 				{
 					if (!kill(pid, 0) || errno != ESRCH)
 					{
@@ -519,7 +519,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 		{
 			if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 			{
-				messagef((state->id, NiL, -1, "open: %s: %s: AF_UNIX socket error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: AF_UNIX socket error", state->path, path));
 				return -1;
 			}
 			if (!bind(fd, (struct sockaddr*)&nam, namlen))
@@ -527,7 +527,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 				chmod(path, mode);
 				if (listen(fd, 32))
 				{
-					messagef((state->id, NiL, -1, "open: %s: %s: listen error", state->path, path));
+					messagef((state->id, NULL, -1, "open: %s: %s: listen error", state->path, path));
 					n = errno;
 					remove(path);
 					errno = n;
@@ -536,7 +536,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 				break;
 			}
 			else
-				messagef((state->id, NiL, -1, "open: %s: %s: bind error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: bind error", state->path, path));
 			if (errno != EADDRINUSE || n && remove(path) && errno != ENOENT)
 				goto badcon;
 			close(fd);
@@ -545,7 +545,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 			return -1;
 		else if (!n && initiate(state, user, opath, tmp, serv))
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: service initiate error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: service initiate error", state->path, path));
 			return -1;
 		}
 		else
@@ -555,7 +555,7 @@ doattach(register Cs_t* state, const char* path, int op, int mode, char* user, c
 #else
 
 	errno = (op & CS_OPEN_CREATE) ? ENXIO : ENOENT;
-	messagef((state->id, NiL, -1, "open: %s: %s: not supported", state->path, path));
+	messagef((state->id, NULL, -1, "open: %s: %s: not supported", state->path, path));
 	fd = -1;
 
 #endif
@@ -638,7 +638,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 	csprotect(&cs);
 	if (op < 0)
 		op = CS_OPEN_TEST;
-	messagef((state->id, NiL, -8, "open(%s,%o) call", path, op));
+	messagef((state->id, NULL, -8, "open(%s,%o) call", path, op));
 
 	/*
 	 * blast out the parts
@@ -660,7 +660,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		 */
 
 		strcpy(tmp, buf);
-		if (tokscan(tmp, NiL, "/dev/%s/%s/%s", &type, NiL, &serv) == 3)
+		if (tokscan(tmp, NULL, "/dev/%s/%s/%s", &type, NULL, &serv) == 3)
 			sfsprintf(buf, sizeof(buf), "/dev/%s/%s/%s", type, csntoa(state, 0), serv);
 	}
 	path = buf;
@@ -681,21 +681,21 @@ csopen(register Cs_t* state, const char* apath, int op)
 		if (access(CS_PROC_FD_TST, F_OK))
 		{
 			errno = ENODEV;
-			messagef((state->id, NiL, -1, "open: %s: %s: not supported", state->path, s));
+			messagef((state->id, NULL, -1, "open: %s: %s: not supported", state->path, s));
 			return -1;
 		}
 #endif
 	}
 	else if (!streq(s, "tcp") && !streq(s, "udp"))
 	{
-		messagef((state->id, NiL, -1, "open: %s: %s: invalid type", state->path, s));
+		messagef((state->id, NULL, -1, "open: %s: %s: invalid type", state->path, s));
 		return -1;
 	}
 #if !( CS_LIB_SOCKET || CS_LIB_STREAM || CS_LIB_V10 )
 	else
 	{
 		errno = ENODEV;
-		messagef((state->id, NiL, -1, "open: %s: %s: not supported", state->path, s));
+		messagef((state->id, NULL, -1, "open: %s: %s: not supported", state->path, s));
 		return -1;
 	}
 #endif
@@ -788,7 +788,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		auth = 0;
 	strncpy(state->type, type, sizeof(state->type) - 1);
 	qual = (qual == state->qual) ? (char*)0 : state->qual;
-	messagef((state->id, NiL, -8, "open: type=%s host=%s serv=%s qual=%s", type, host, serv, qual));
+	messagef((state->id, NULL, -8, "open: type=%s host=%s serv=%s qual=%s", type, host, serv, qual));
 	if (host)
 	{
 		/*
@@ -822,7 +822,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 							s = tmp;
 							s[n - 1] = 0;
 							while (*s && *s++ != '\n');
-							messagef((state->id, NiL, -4, "%s error message `%s'", csvar(state, CS_VAR_PROXY, 0), s));
+							messagef((state->id, NULL, -4, "%s error message `%s'", csvar(state, CS_VAR_PROXY, 0), s));
 						}
 					}
 					close(fd);
@@ -900,7 +900,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 					gid_t*	groups;
 					int	g;
 
-					if ((g = getgroups(0, NiL)) <= 0)
+					if ((g = getgroups(0, NULL)) <= 0)
 						g = getconf("NGROUPS_MAX");
 					if (groups = newof(0, gid_t, g, 0))
 					{
@@ -968,7 +968,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 				state->control = 0;
 				if ((fd = csbind(state, type, addr, port, 0L)) >= 0)
 				{
-					if (mode != (S_IRWXU|S_IRWXG|S_IRWXO) && csauth(state, fd, NiL, NiL))
+					if (mode != (S_IRWXU|S_IRWXG|S_IRWXO) && csauth(state, fd, NULL, NULL))
 					{
 						close(fd);
 						return -1;
@@ -1007,7 +1007,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 	{
 		if (op & CS_OPEN_TRUST)
 		{
-			if (!pathaccess(csvar(state, CS_VAR_TRUST, 1), csvar(state, CS_VAR_SHARE, 1), NiL, PATH_EXECUTE, b, sizeof(state->mount) - (b - state->mount)))
+			if (!pathaccess(csvar(state, CS_VAR_TRUST, 1), csvar(state, CS_VAR_SHARE, 1), NULL, PATH_EXECUTE, b, sizeof(state->mount) - (b - state->mount)))
 				goto bad;
 		}
 		else if (!pathpath(csvar(state, CS_VAR_SHARE, 0), "", PATH_EXECUTE, b, sizeof(state->mount) - (b - state->mount)))
@@ -1027,11 +1027,11 @@ csopen(register Cs_t* state, const char* apath, int op)
 			close(nfd);
 		if ((fd = open(path, O_RDONLY)) < 0)
 		{
-			mkmount(state, S_IRWXU|S_IRWXG|S_IRWXO, -1, -1, NiL, NiL, NiL);
+			mkmount(state, S_IRWXU|S_IRWXG|S_IRWXO, -1, -1, NULL, NULL, NULL);
 			fd = open(path, O_RDONLY);
 		}
 		if (fd < 0)
-			messagef((state->id, NiL, -1, "open: %s: %s: open error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: open error", state->path, path));
 		return fd;
 	}
 	endtype = b;
@@ -1054,14 +1054,14 @@ csopen(register Cs_t* state, const char* apath, int op)
 			b += sfsprintf(b, sizeof(state->mount) - (b - path), "/0x%X.%X.%X.%X", a[0], a[1], a[2], a[3]);
 		}
 	}
-	messagef((state->id, NiL, -8, "%s:%d host=`%s' path=`%s'", __FILE__, __LINE__, host, path));
+	messagef((state->id, NULL, -8, "%s:%d host=`%s' path=`%s'", __FILE__, __LINE__, host, path));
 	if (!serv)
 	{
 		*(state->control = b + 1) = 0;
 		if (nfd >= 0)
 			close(nfd);
 		if ((fd = open(path, O_RDONLY)) < 0)
-			messagef((state->id, NiL, -1, "open: %s: %s: open error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: open error", state->path, path));
 		return fd;
 	}
 	endhost = b;
@@ -1124,7 +1124,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 	*b++ = '/';
 	*b = CS_MNT_STREAM;
 	strcpy(b + 1, CS_MNT_TAIL);
-	messagef((state->id, NiL, -8, "%s:%d %s", __FILE__, __LINE__, state->mount));
+	messagef((state->id, NULL, -8, "%s:%d %s", __FILE__, __LINE__, state->mount));
 	state->control = b;
 
 	/*
@@ -1141,7 +1141,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 	}
 	if (op & CS_OPEN_MOUNT)
 	{
-		messagef((state->id, NiL, -1, "open(%s,%o) = %d, mount = %s", state->path, op, state->mount));
+		messagef((state->id, NULL, -1, "open(%s,%o) = %d, mount = %s", state->path, op, state->mount));
 		return 0;
 	}
 	if (*type == 'f')
@@ -1159,7 +1159,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		 * {tcp,udp}
 		 */
 
-		messagef((state->id, NiL, -8, "%s:%d %s", __FILE__, __LINE__, state->mount));
+		messagef((state->id, NULL, -8, "%s:%d %s", __FILE__, __LINE__, state->mount));
 		if ((fd = reopen(state, path)) < 0)
 		{
 			/*
@@ -1168,7 +1168,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 
 			*(state->control + 1) = 0;
 			if ((fd = reopen(state, path)) < 0)
-				messagef((state->id, NiL, -1, "open: %s: %s: reopen error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: reopen error", state->path, path));
 			*(state->control + 1) = CS_MNT_TAIL[0];
 		}
 		if (op & CS_OPEN_CREATE)
@@ -1187,23 +1187,23 @@ csopen(register Cs_t* state, const char* apath, int op)
 			{
 				if (stat(path, &st))
 				{
-					messagef((state->id, NiL, -1, "open: %s: %s: creat error", state->path, path));
+					messagef((state->id, NULL, -1, "open: %s: %s: creat error", state->path, path));
 					goto unblock;
 				}
 				if ((CSTIME() - (unsigned long)st.st_ctime) < 2 * 60)
 				{
 					errno = EEXIST;
-					messagef((state->id, NiL, -1, "open: %s: %s: another server won the race", state->path, path));
+					messagef((state->id, NULL, -1, "open: %s: %s: another server won the race", state->path, path));
 					goto unblock;
 				}
 				if (remove(path))
 				{
-					messagef((state->id, NiL, -1, "open: %s: %s: remove error", state->path, path));
+					messagef((state->id, NULL, -1, "open: %s: %s: remove error", state->path, path));
 					goto unblock;
 				}
 				if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0)) < 0)
 				{
-					messagef((state->id, NiL, -1, "open: %s: %s: creat error", state->path, path));
+					messagef((state->id, NULL, -1, "open: %s: %s: creat error", state->path, path));
 					goto unblock;
 				}
 			}
@@ -1220,7 +1220,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 				remove(path);
 				if (pathsetlink(cspath(state, fd, 0), path))
 				{
-					messagef((state->id, NiL, -1, "open: %s: %s: link error", cspath(state, fd, 0), path));
+					messagef((state->id, NULL, -1, "open: %s: %s: link error", cspath(state, fd, 0), path));
 					close(fd);
 					fd = -1;
 				}
@@ -1235,7 +1235,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		}
 		else if (fd < 0 && ((op & CS_OPEN_TEST) || initiate(state, user, opath, tmp, serv) || (fd = reopen(state, path)) < 0))
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: reopen/initiate error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: reopen/initiate error", state->path, path));
 			return -1;
 		}
 		else if (!(op & CS_OPEN_AGENT))
@@ -1246,7 +1246,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 			if (n)
 			{
 				close(fd);
-				messagef((state->id, NiL, -1, "open: %s: %s: authentication error", state->path, path));
+				messagef((state->id, NULL, -1, "open: %s: %s: authentication error", state->path, path));
 				return -1;
 			}
 		}
@@ -1264,7 +1264,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		*state->control = CS_MNT_STREAM;
 		if (n)
 		{
-			messagef((state->id, NiL, -1, "open: %s: %s: stat error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: stat error", state->path, path));
 			close(fd);
 			return -1;
 		}
@@ -1272,7 +1272,7 @@ csopen(register Cs_t* state, const char* apath, int op)
 		{
 			close(fd);
 			errno = EPERM;
-			messagef((state->id, NiL, -1, "open: %s: %s: uid/gid error", state->path, path));
+			messagef((state->id, NULL, -1, "open: %s: %s: uid/gid error", state->path, path));
 			return -1;
 		}
 	}

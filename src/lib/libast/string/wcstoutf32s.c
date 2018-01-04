@@ -97,7 +97,7 @@ wcstoutf32s(uint32_t* utf32, wchar_t* wchar, size_t n)
 		inbytesleft = inbuf - inbuf_start;
 		inbuf = inbuf_start;
 		outbuf = outbuf_start;
-		(void)iconv(ast.mb_wc2uc, NiL, NiL, NiL, NiL);
+		(void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
 		if ((res = iconv((iconv_t)ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >= 0)
 		{
 			const char*	s;

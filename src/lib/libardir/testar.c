@@ -33,8 +33,8 @@ main(int argc, char** argv)
 	while (file = *++argv)
 	{
 		if (!strcmp(file, "-t") && *(argv + 1))
-			touch = strtol(*++argv, NiL, 0);
-		else if (dir = ardiropen(file, NiL, touch ? ARDIR_UPDATE : 0))
+			touch = strtol(*++argv, NULL, 0);
+		else if (dir = ardiropen(file, NULL, touch ? ARDIR_UPDATE : 0))
 		{
 			sfprintf(sfstdout, "%s: type=%s truncate=%d%s\n", file, dir->meth->name, dir->truncate, (dir->flags & ARDIR_RANLIB) ? " ranlib" : "");
 			while (ent = ardirnext(dir))

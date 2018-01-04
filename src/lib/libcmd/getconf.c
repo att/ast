@@ -163,7 +163,7 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 
 	cmdinit(argc, argv, context, ERROR_CATALOG, 0);
 	oargv = argv;
-	if (*(native = astconf("GETCONF", NiL, NiL)) != '/')
+	if (*(native = astconf("GETCONF", NULL, NULL)) != '/')
 		native = 0;
 	dev = 0;
 	flags = 0;
@@ -246,7 +246,7 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 		}
 	}
 	if (error_info.errors || !name && *argv)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!name)
 		astconflist(sfstdout, path, flags, pattern);
 	else
@@ -310,7 +310,7 @@ b_getconf(int argc, char** argv, Shbltin_t* context)
 	 */
 
 	e = std;
-	s = astconf("PATH", NiL, NiL); 
+	s = astconf("PATH", NULL, NULL); 
 	q = !stat(equiv[0].path, &st0) && !stat(equiv[1].path, &st1) && st0.st_ino == st1.st_ino && st0.st_dev == st1.st_dev;
 	m = 0;
 	do

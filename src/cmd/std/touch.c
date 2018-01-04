@@ -182,7 +182,7 @@ main(int argc, register char** argv)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !*argv)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (reference)
 	{
 		if (stat(reference, &st))

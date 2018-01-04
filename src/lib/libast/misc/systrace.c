@@ -60,7 +60,7 @@ systrace(const char* id)
 	ov[1] = 0;
 	sfsprintf(out, &buf[sizeof(buf)] - out, ".%d", getpid());
 	for (n = 0; n < elementsof(trace); n++)
-		if (!procfree(procopen(trace[n], av + 1, NiL, ov, PROC_ARGMOD|PROC_GID|PROC_UID|(n == (elementsof(trace) - 1) ? PROC_CLEANUP : 0))))
+		if (!procfree(procopen(trace[n], av + 1, NULL, ov, PROC_ARGMOD|PROC_GID|PROC_UID|(n == (elementsof(trace) - 1) ? PROC_CLEANUP : 0))))
 		{
 			sleep(1);
 			break;

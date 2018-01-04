@@ -231,7 +231,7 @@ _ast_iconv_name(const char* m, char* b, size_t n)
 	e = b + n - 1;
 	bp = 0;
 	n = 0;
-	cp = ccmaplist(NiL);
+	cp = ccmaplist(NULL);
 #if DEBUG_TRACE
 if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _ast_iconv_name m=\"%s\"\n", error_info.id, error_info.trace, __LINE__, m);
 #endif
@@ -948,7 +948,7 @@ if (error_info.trace <= DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d _as
 			 */
 
 			if (cc->cvt != (iconv_t)(-1))
-				iconv(cc->cvt, NiL, NiL, NiL, NiL);
+				iconv(cc->cvt, NULL, NULL, NULL, NULL);
 #endif
 			return cc;
 		}
@@ -1319,11 +1319,11 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d icon
 				break;
 			case EINVAL:
 				if (disc->errorf)
-					(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "incomplete multibyte sequence at offset %I*u", sizeof(fo), *fb - fo);
+					(*disc->errorf)(NULL, disc, ERROR_SYSTEM|2, "incomplete multibyte sequence at offset %I*u", sizeof(fo), *fb - fo);
 				goto bad;
 			default:
 				if (disc->errorf)
-					(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "invalid multibyte sequence at offset %I*u", sizeof(fo), *fb - fo);
+					(*disc->errorf)(NULL, disc, ERROR_SYSTEM|2, "invalid multibyte sequence at offset %I*u", sizeof(fo), *fb - fo);
 			bad:
 				disc->errors++;
 				if (!(disc->flags & ICONV_FATAL))
@@ -1512,7 +1512,7 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d icon
 				if (fl)
 				{
 					if (disc->errorf)
-						(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "incomplete multibyte sequence at offset %I*u", sizeof(ft), ft + (fo - fn));
+						(*disc->errorf)(NULL, disc, ERROR_SYSTEM|2, "incomplete multibyte sequence at offset %I*u", sizeof(ft), ft + (fo - fn));
 					goto bad;
 				}
 				ff = 1;
@@ -1520,7 +1520,7 @@ if (error_info.trace < DEBUG_TRACE) sfprintf(sfstderr, "%s: debug%d: AHA#%d icon
 			else
 			{
 				if (disc->errorf)
-					(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "invalid multibyte sequence at offset %I*u", sizeof(ft), ft + (fo - fn));
+					(*disc->errorf)(NULL, disc, ERROR_SYSTEM|2, "invalid multibyte sequence at offset %I*u", sizeof(ft), ft + (fo - fn));
 			bad:
 				disc->errors++;
 				if (disc->flags & ICONV_FATAL)
@@ -1580,7 +1580,7 @@ _ast_iconv_list_t*
 _ast_iconv_list(_ast_iconv_list_t* cp)
 {
 	if (!cp)
-		return ccmaplist(NiL);
+		return ccmaplist(NULL);
 	if (cp->ccode >= 0)
 		return (cp = ccmaplist(cp)) ? cp : (_ast_iconv_list_t*)codes;
 	return (++cp)->name ? cp : (_ast_iconv_list_t*)0;

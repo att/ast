@@ -118,7 +118,7 @@ USAGE_LICENSE
 #define TIMEOUT		(1<<10)
 #define VERBOSE		(1<<11)
 
-#define NOW		(unsigned long)time(NiL)
+#define NOW		(unsigned long)time(NULL)
 
 #define DEFAULT		10
 
@@ -250,7 +250,7 @@ pipetail(Sfio_t* infile, Sfio_t* outfile, Sfoff_t number, int delim)
 	{
 		sfseek(tmp[1], (Sfoff_t)0, SEEK_SET);
 		if ((n = number - nleft) > 0) 
-			sfmove(tmp[!fno], NiL, n, delim); 
+			sfmove(tmp[!fno], NULL, n, delim); 
 		if ((n = offset[!fno] - sftell(tmp[!fno])) > 0)
 			sfmove(tmp[!fno], outfile, n, -1); 
 	}
@@ -300,7 +300,7 @@ init(Tail_t* tp, Sfoff_t number, int delim, int flags, const char** format)
 			sfset(tp->sp, SF_SHARE, !(flags & FOLLOW));
 			if (number < -1)
 			{
-				sfmove(tp->sp, NiL, -number - 1, delim);
+				sfmove(tp->sp, NULL, -number - 1, delim);
 				offset = sfseek(tp->sp, (Sfoff_t)0, SEEK_CUR);
 			}
 			else
@@ -380,7 +380,7 @@ num(const char* s, char** e, int* f, int o)
 	while (*s == '0' && isdigit(*(s + 1)))
 		s++;
 	errno = 0;
-	number = strtonll(s, &t, NiL, 0);
+	number = strtonll(s, &t, NULL, 0);
 	if (t == s)
 		number = DEFAULT;
 	if (o && *t)
@@ -620,7 +620,7 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 		error(ERROR_warn(0), "--log ignored for --notimeout");
 	}
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (flags & FOLLOW)
 	{
 		if (!(fp = (Tail_t*)stakalloc(argc * sizeof(Tail_t))))
@@ -653,7 +653,7 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 		{
 			if (n)
 				n = 0;
-			else if (sh_checksig(context) || tvsleep(&tv, NiL) && sh_checksig(context))
+			else if (sh_checksig(context) || tvsleep(&tv, NULL) && sh_checksig(context))
 			{
 				error_info.errors++;
 				break;
@@ -706,7 +706,7 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 								goto done;
 							}
 							else
-								tvsleep(&tv, NiL);
+								tvsleep(&tv, NULL);
 						if (i && (fp->dev != st.st_dev || fp->ino != st.st_ino) && !init(fp, 0, 0, flags, &format))
 						{
 							if (!(flags & SILENT))
@@ -749,7 +749,7 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 				file = "/dev/stdin";
 				ip = sfstdin;
 			}
-			else if (!(ip = sfopen(NiL, file, "r")))
+			else if (!(ip = sfopen(NULL, file, "r")))
 			{
 				error(ERROR_system(0), "%s: cannot open", file);
 				continue;
@@ -762,7 +762,7 @@ b_tail(int argc, char** argv, Shbltin_t* context)
 			if (number < 0 || !number && (flags & POSITIVE))
 			{
 				sfset(ip, SF_SHARE, 1);
-				if (number < -1 && (moved = sfmove(ip, NiL, -(number + 1), delim)) >= 0 && delim >= 0 && moved < -(number + 1))
+				if (number < -1 && (moved = sfmove(ip, NULL, -(number + 1), delim)) >= 0 && delim >= 0 && moved < -(number + 1))
 					(void)sfgetr(ip, delim, SF_LASTR);
 				if (flags & REVERSE)
 					rev_line(ip, sfstdout, sfseek(ip, (Sfoff_t)0, SEEK_CUR));

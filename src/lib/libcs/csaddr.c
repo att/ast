@@ -53,12 +53,12 @@ realaddr(register Cs_t* state, const char* name)
 	register struct hostent*	hp;
 
 #endif
-	messagef((state->id, NiL, -8, "realaddr(%s) call", name));
+	messagef((state->id, NULL, -8, "realaddr(%s) call", name));
 	state->flags &= ~CS_ADDR_NUMERIC;
 	s = name;
 	if (streq(s, CS_HOST_LOCAL))
 	{
-		messagef((state->id, NiL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, local), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
+		messagef((state->id, NULL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, local), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
 		return local;
 	}
 
@@ -84,7 +84,7 @@ realaddr(register Cs_t* state, const char* name)
 	{
 		if (!addr.l || addr.c[0] == 127 && addr.c[1] == 0 && addr.c[2] == 0 && addr.c[3] <= 1)
 		{
-			addr.l = csaddr(state, NiL);
+			addr.l = csaddr(state, NULL);
 			if (local == CS_LOCAL)
 			{
 				addr.c[0] = 127;
@@ -97,7 +97,7 @@ realaddr(register Cs_t* state, const char* name)
 				addr.l = local;
 		}
 		state->flags |= CS_ADDR_NUMERIC;
-		messagef((state->id, NiL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, addr.l), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
+		messagef((state->id, NULL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, addr.l), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
 		return addr.l;
 	}
 
@@ -122,9 +122,9 @@ realaddr(register Cs_t* state, const char* name)
 		else
 			addr.l = local;
 	}
-	messagef((state->id, NiL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, addr.l), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
+	messagef((state->id, NULL, -8, "realaddr(%s) = %s, flags = |%s%s%s", name, csntoa(state, addr.l), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
 #else
-	messagef((state->id, NiL, -8, "realaddr(%s) not found", name));
+	messagef((state->id, NULL, -8, "realaddr(%s) not found", name));
 	addr.l = 0;
 #endif
 	return addr.l;
@@ -151,7 +151,7 @@ csaddr(register Cs_t* state, const char* aname)
 	long			flags = 0;
 	char*			user;
 
-	messagef((state->id, NiL, -8, "addr(%s) call", name));
+	messagef((state->id, NULL, -8, "addr(%s) call", name));
 	if (!local)
 	{
 #if CS_LIB_SOCKET
@@ -178,7 +178,7 @@ csaddr(register Cs_t* state, const char* aname)
 		{
 		case 0:
 			flags |= CS_ADDR_SHARE;
-			if (sp = csinfo(state, name, NiL))
+			if (sp = csinfo(state, name, NULL))
 			{
 				while (name = sfgetr(sp, '\n', 1))
 					if (addr = realaddr(state, name))
@@ -236,7 +236,7 @@ csaddr(register Cs_t* state, const char* aname)
 			}
 		}
 		*s = 0;
-		if (sp = csinfo(state, state->temp, NiL))
+		if (sp = csinfo(state, state->temp, NULL))
 		{
 			while (t = sfgetr(sp, '\n', 1))
 			{
@@ -269,7 +269,7 @@ csaddr(register Cs_t* state, const char* aname)
 			goto ok;
 		}
 	}
-	messagef((state->id, NiL, -1, "addr: %s: not found", aname));
+	messagef((state->id, NULL, -1, "addr: %s: not found", aname));
 	return 0;
  ok:
 	if (state->flags & CS_ADDR_NUMERIC)
@@ -306,7 +306,7 @@ csaddr(register Cs_t* state, const char* aname)
 	if (sp) sfclose(sp);
 	state->flags &= ~(CS_ADDR_LOCAL|CS_ADDR_NOW|CS_ADDR_REMOTE|CS_ADDR_SHARE|CS_DAEMON_SLAVE|CS_ADDR_TEST|CS_ADDR_TRUST);
 	state->flags |= flags;
-	messagef((state->id, NiL, -8, "addr(%s) = %s, flags = |%s%s%s", aname, csntoa(state, addr), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
+	messagef((state->id, NULL, -8, "addr(%s) = %s, flags = |%s%s%s", aname, csntoa(state, addr), (state->flags & CS_ADDR_LOCAL) ? "LOCAL|" : "", (state->flags & CS_ADDR_REMOTE) ? "REMOTE|" : "", (state->flags & CS_ADDR_SHARE) ? "SHARE|" : ""));
 	return addr;
 }
 

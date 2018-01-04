@@ -100,7 +100,7 @@ b_dbm_open(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || !*argv || *(argv + 1))
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 1;
 	}
 	switch (flags & (DB_READ|DB_WRITE))
@@ -164,7 +164,7 @@ b_dbm_close(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || *argv)
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 1;
 	}
 	if (!error_info.errors)
@@ -228,7 +228,7 @@ b_dbm_get(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || (key.dptr = *argv++) && *argv)
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 2;
 	}
 	r = 0;
@@ -315,7 +315,7 @@ b_dbm_set(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	if (error_info.errors || (key.dptr = *argv++) && (val.dptr = *argv++) && *argv)
 	{
-		error(ERROR_USAGE|2, "%s", optusage(NiL));
+		error(ERROR_USAGE|2, "%s", optusage(NULL));
 		return 1;
 	}
 	if (!error_info.errors)

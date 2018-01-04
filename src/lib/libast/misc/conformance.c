@@ -50,7 +50,7 @@ initconformance(void)
 	if (sp = sfstropen())
 	{
 		for (i = h = 0, j = 1; i < elementsof(conf); i++)
-			if (*(m = astconf(conf[i], NiL, NiL)) && (h |= (1<<i)) || !i && (m = "ast"))
+			if (*(m = astconf(conf[i], NULL, NULL)) && (h |= (1<<i)) || !i && (m = "ast"))
 			{
 				t = m;
 				while ((c = *m++) && c != '.')

@@ -87,7 +87,7 @@ error(int level, ...)
 	va_list	ap;
 
 	va_start(ap, level);
-	errorv(NiL, level, ap);
+	errorv(NULL, level, ap);
 	va_end(ap);
 }
 

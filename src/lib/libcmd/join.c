@@ -306,7 +306,7 @@ getrec(Join_t* jp, int index, int discard)
 	if (sh_checksig(jp->context))
 		return 0;
 	if (discard && fp->discard)
-		sfraise(fp->iop, SFSK_DISCARD, NiL);
+		sfraise(fp->iop, SFSK_DISCARD, NULL);
 	fp->spaces = 0;
 	fp->hit = 0;
 	if (!(cp = sfgetr(fp->iop, '\n', 0)))
@@ -933,7 +933,7 @@ b_join(int argc, char** argv, Shbltin_t* context)
 	if (error_info.errors || argc!=2)
 	{
 		done(jp);
-		error(ERROR_usage(2),"%s", optusage(NiL));
+		error(ERROR_usage(2),"%s", optusage(NULL));
 	}
 	jp->ooutmode = jp->outmode;
 	jp->file[0].name = cp = *argv++;
@@ -948,7 +948,7 @@ b_join(int argc, char** argv, Shbltin_t* context)
 		}
 		jp->file[0].iop = sfstdin;
 	}
-	else if (!(jp->file[0].iop = sfopen(NiL, cp, "r")))
+	else if (!(jp->file[0].iop = sfopen(NULL, cp, "r")))
 	{
 		done(jp);
 		error(ERROR_system(1),"%s: cannot open",cp);
@@ -965,7 +965,7 @@ b_join(int argc, char** argv, Shbltin_t* context)
 		}
 		jp->file[1].iop = sfstdin;
 	}
-	else if (!(jp->file[1].iop = sfopen(NiL, cp, "r")))
+	else if (!(jp->file[1].iop = sfopen(NULL, cp, "r")))
 	{
 		done(jp);
 		error(ERROR_system(1),"%s: cannot open",cp);

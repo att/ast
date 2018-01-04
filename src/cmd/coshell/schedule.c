@@ -167,10 +167,10 @@ search(int op, char* name, register Coattr_t* a, Coattr_t* d)
 			if (a->global.set & SETFILE)
 				return(info(op, a->global.file));
 			if (a->global.set & (SETBUSY|SETMAXIDLE|SETPERCPU|SETPERHOST|SETPERSERVER|SETPERUSER))
-				jobcheck(NiL);
+				jobcheck(NULL);
 		}
 		if ((op & (DEF|NEW)) && a->set && !(a->set & SETNAME))
-			return(info(op, NiL));
+			return(info(op, NULL));
 	}
 
 	/*
@@ -551,7 +551,7 @@ info(int op, char* file)
 			}
 			apath = file;
 		}
-		if (!(fp = sfopen(NiL, file, "r")))
+		if (!(fp = sfopen(NULL, file, "r")))
 		{
 			free(apath);
 			apath = 0;
@@ -567,7 +567,7 @@ info(int op, char* file)
 		message((-2, "%sscanning access info file %s", atime ? "re" : "", file));
 		atime = st.st_mtime;
 	}
-	else if (!(fp = csinfo(file, NiL)))
+	else if (!(fp = csinfo(file, NULL)))
 	{
 		error(ERROR_SYSTEM|2, "%s: not found", file ? file : "<local host info>");
 		return(0);
@@ -575,7 +575,7 @@ info(int op, char* file)
 	if ((op & NEW) && (sfset(fp, 0, 0) & SF_STRING))
 		op &= ~DEF;
 	while (s = sfgetr(fp, '\n', 1))
-		search(op, s, NiL, NiL);
+		search(op, s, NULL, NULL);
 	sfclose(fp);
 	return(state.shell);
 }

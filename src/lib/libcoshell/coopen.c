@@ -65,7 +65,7 @@ hung(int sig)
 static void
 clean(void)
 {
-	coclose(NiL);
+	coclose(NULL);
 }
 
 #ifdef SIGCONT
@@ -77,11 +77,11 @@ clean(void)
 static void
 stop(int sig)
 {
-	cokill(NiL, NiL, sig);
+	cokill(NULL, NULL, sig);
 	signal(sig, SIG_DFL);
 	sigunblock(sig);
 	kill(getpid(), sig);
-	cokill(NiL, NiL, SIGCONT);
+	cokill(NULL, NULL, SIGCONT);
 	signal(sig, stop);
 }
 
@@ -213,7 +213,7 @@ coopen(const char* path, int flags, const char* attributes)
 				}
 		co->cmdfd = pio[1];
 		co->gsmfd = pio[3];
-		if (!(co->msgfp = sfnew(NiL, NiL, 256, pio[2], SF_READ)))
+		if (!(co->msgfp = sfnew(NULL, NULL, 256, pio[2], SF_READ)))
 		{
 			errormsg(state.lib, ERROR_LIBRARY|ERROR_SYSTEM|2, "cannot allocate message stream");
 			goto bad;
@@ -232,7 +232,7 @@ coopen(const char* path, int flags, const char* attributes)
 	for (i = 0; i < elementsof(sh); i++)
 		if ((s = sh[i]) && *s && (s = strdup(s)))
 		{
-			if ((n = tokscan(s, NiL, " %v ", av, elementsof(av) - 1)) > 0)
+			if ((n = tokscan(s, NULL, " %v ", av, elementsof(av) - 1)) > 0)
 			{
 				if (t = strrchr(s = av[0], '/'))
 					av[0] = t + 1;
@@ -336,14 +336,14 @@ coopen(const char* path, int flags, const char* attributes)
 				s++;
 			}
 			if (!(co->mode & CO_MODE_INDIRECT))
-				wait(NiL);
+				wait(NULL);
 			break;
 		default:
 			goto nope;
 		}
 		if (s)
 		{
-			if (!(cj = coexec(co, s, 0, NiL, NiL, NiL)) || cowait(co, cj, -1) != cj)
+			if (!(cj = coexec(co, s, 0, NULL, NULL, NULL)) || cowait(co, cj, -1) != cj)
 			{
 				errormsg(state.lib, ERROR_LIBRARY|ERROR_SYSTEM|2, "initialization message exec error");
 				goto nope;

@@ -43,7 +43,7 @@ csdaemon(register Cs_t* state, int fds)
 	register int	i;
 	int		oerrno;
 
-	messagef((state->id, NiL, -8, "daemon(%o) call", fds));
+	messagef((state->id, NULL, -8, "daemon(%o) call", fds));
 	oerrno = errno;
 
 	/*
@@ -73,7 +73,7 @@ csdaemon(register Cs_t* state, int fds)
 		case -1:
 			return -1;
 		case 0:
-			systrace(NiL);
+			systrace(NULL);
 			break;
 		default:
 			/*
@@ -126,14 +126,14 @@ csdaemon(register Cs_t* state, int fds)
 	 * no command-relative relative root searching
 	 */
 
-	pathpath(NiL, "", 0, NiL, 0);
+	pathpath(NULL, "", 0, NULL, 0);
 
 	/*
 	 * we ignored a lot of errors to get here
 	 */
 
 	errno = oerrno;
-	messagef((state->id, NiL, -8, "daemon(%o) = 0", fds));
+	messagef((state->id, NULL, -8, "daemon(%o) = 0", fds));
 	return 0;
 }
 

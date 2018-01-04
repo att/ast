@@ -103,8 +103,8 @@ astwinsize(int fd, int* rows, int* cols)
 	{
 		char*		s;
 
-		if (rows) *rows = (s = getenv("LINES")) ? strtol(s, NiL, 0) : 0;
-		if (cols) *cols = (s = getenv("COLUMNS")) ? strtol(s, NiL, 0) : 0;
+		if (rows) *rows = (s = getenv("LINES")) ? strtol(s, NULL, 0) : 0;
+		if (cols) *cols = (s = getenv("COLUMNS")) ? strtol(s, NULL, 0) : 0;
 	}
 }
 

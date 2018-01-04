@@ -256,7 +256,7 @@ S2I_function(a, e, base) const char* a; char** e; int base;
 		static int	conformance = -1;
 
 		if (conformance < 0)
-			conformance = !strcmp(astconf("CONFORMANCE", NiL, NiL), "standard");
+			conformance = !strcmp(astconf("CONFORMANCE", NULL, NULL), "standard");
 		if (conformance)
 			base = 1;
 	}

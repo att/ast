@@ -89,7 +89,7 @@ strngrpmatch(const char* b, size_t z, const char* p, ssize_t* sub, int n, int fl
 	if (!p || !b)
 	{
 		if (!p && !b)
-			regcache(NiL, 0, NiL);
+			regcache(NULL, 0, NULL);
 		return 0;
 	}
 	if (!*p)
@@ -130,7 +130,7 @@ strngrpmatch(const char* b, size_t z, const char* p, ssize_t* sub, int n, int fl
 	}
 	if (!sub || n <= 0)
 		reflags |= REG_NOSUB;
-	if (!(re = regcache(p, reflags, NiL)))
+	if (!(re = regcache(p, reflags, NULL)))
 		return 0;
 	if (n > matchstate.nmatch)
 	{
@@ -180,7 +180,7 @@ strgrpmatch_20120528(const char* b, const char* p, ssize_t* sub, int n, int flag
 int
 strmatch(const char* s, const char* p)
 {
-	return strngrpmatch(s, strlen(s), p, NiL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT);
+	return strngrpmatch(s, strlen(s), p, NULL, 0, STR_MAXIMAL|STR_LEFT|STR_RIGHT);
 }
 
 /*

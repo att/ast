@@ -225,17 +225,17 @@ procfs_part(register Pss_t* pss, register Pssent_t* pe)
 			Sfio_t*		fp;
 
 			pss->boot = 1;
-			if (fp = sfopen(NiL, "/proc/stat", "r"))
+			if (fp = sfopen(NULL, "/proc/stat", "r"))
 			{
 				while (s = sfgetr(fp, '\n', 0))
 					if (strneq(s, "btime ", 6))
 					{
-						pss->boot = strtol(s + 6, NiL, 10);
+						pss->boot = strtol(s + 6, NULL, 10);
 						break;
 					}
 				sfclose(fp);
 			}
-			if (!(pss->hz = (int)strtol(astconf("CLK_TCK", NiL, NiL), NiL, 0)))
+			if (!(pss->hz = (int)strtol(astconf("CLK_TCK", NULL, NULL), NULL, 0)))
 				pss->hz = PR_HZ;
 		}
 		pr->pr_start = pss->boot + pr->pr_start / pss->hz;

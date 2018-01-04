@@ -341,7 +341,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || *argv && (flags || sethost) || sethost && flags)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (sethost)
 	{
 #if _lib_sethostname
@@ -356,7 +356,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 		error(ERROR_system(1), "%s: cannot set host name", sethost);
 	}
 	else if (list)
-		astconflist(sfstdout, NiL, ASTCONF_base|ASTCONF_defined|ASTCONF_lower|ASTCONF_quote|ASTCONF_matchcall, "CS|SI");
+		astconflist(sfstdout, NULL, ASTCONF_base|ASTCONF_defined|ASTCONF_lower|ASTCONF_quote|ASTCONF_matchcall, "CS|SI");
 	else if (*argv)
 	{
 		e = &buf[sizeof(buf)-1];
@@ -369,7 +369,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 			while (t < e && (n = *s++))
 				*t++ = islower(n) ? toupper(n) : n;
 			*t = 0;
-			sfprintf(sfstdout, "%s%c", *(t = astconf(buf, NiL, NiL)) ? t : *(t = astconf(buf+3, NiL, NiL)) ? t :  "unknown", *argv ? ' ' : '\n');
+			sfprintf(sfstdout, "%s%c", *(t = astconf(buf, NULL, NULL)) ? t : *(t = astconf(buf+3, NULL, NULL)) ? t :  "unknown", *argv ? ' ' : '\n');
 		}
 	}
 	else
@@ -394,13 +394,13 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 		output(OPT_machine, ut.machine, "machine");
 		if (flags & OPT_processor)
 		{
-			if (!*(s = astconf("ARCHITECTURE", NiL, NiL)))
+			if (!*(s = astconf("ARCHITECTURE", NULL, NULL)))
 				s = ut.machine;
 			output(OPT_processor, s, "processor");
 		}
 		if (flags & OPT_implementation)
 		{
-			if (!*(s = astconf("PLATFORM", NiL, NiL)) && !*(s = astconf("HW_NAME", NiL, NiL)))
+			if (!*(s = astconf("PLATFORM", NULL, NULL)) && !*(s = astconf("HW_NAME", NULL, NULL)))
 			{
 				if (t = strchr(hosttype, '.'))
 					t++;
@@ -412,7 +412,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 		}
 		if (flags & OPT_operating_system)
 		{
-			s = astconf("OPERATING_SYSTEM", NiL, NiL);
+			s = astconf("OPERATING_SYSTEM", NULL, NULL);
 			if (!*s)
 #ifdef _UNAME_os_DEFAULT
 				s = _UNAME_os_DEFAULT;
@@ -423,7 +423,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 		}
 		if (flags & OPT_extended_release)
 		{
-			s = astconf("RELEASE", NiL, NiL);
+			s = astconf("RELEASE", NULL, NULL);
 			output(OPT_extended_release, s, "extended-release");
 		}
 #if _mem_idnumber_utsname
@@ -431,7 +431,7 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 #else
 		if (flags & OPT_hostid)
 		{
-			if (!*(s = astconf("HW_SERIAL", NiL, NiL)))
+			if (!*(s = astconf("HW_SERIAL", NULL, NULL)))
 #if _lib_gethostid
 				sfsprintf(s = buf, sizeof(buf), "%08x", gethostid());
 #else
@@ -442,12 +442,12 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 #endif
 		if (flags & OPT_vendor)
 		{
-			s = astconf("HW_PROVIDER", NiL, NiL);
+			s = astconf("HW_PROVIDER", NULL, NULL);
 			output(OPT_vendor, s, "vendor");
 		}
 		if (flags & OPT_domain)
 		{
-			if (!*(s = astconf("SRPC_DOMAIN", NiL, NiL)))
+			if (!*(s = astconf("SRPC_DOMAIN", NULL, NULL)))
 #if _lib_getdomainname
 				getdomainname(s, sizeof(buf));
 #else
@@ -458,13 +458,13 @@ b_uname(int argc, char** argv, Shbltin_t* context)
 #if _mem_m_type_utsname
 		s = ut.m_type;
 #else
-		s = astconf("MACHINE", NiL, NiL);
+		s = astconf("MACHINE", NULL, NULL);
 #endif
 		output(OPT_machine_type, s, "m_type");
 #if _mem_base_rel_utsname
 		s = ut.base_rel;
 #else
-		s = astconf("BASE", NiL, NiL);
+		s = astconf("BASE", NULL, NULL);
 #endif
 		output(OPT_base, s, "base_rel");
 		if (flags & OPT_extra)

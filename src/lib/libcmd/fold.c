@@ -218,14 +218,14 @@ b_fold(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if(error_info.errors)
-		error(ERROR_usage(2),"%s", optusage(NiL));
+		error(ERROR_usage(2),"%s", optusage(NULL));
 	if(cp = *argv)
 		argv++;
 	do
 	{
 		if(!cp || streq(cp,"-"))
 			fp = sfstdin;
-		else if(!(fp = sfopen(NiL,cp,"r")))
+		else if(!(fp = sfopen(NULL,cp,"r")))
 		{
 			error(ERROR_system(0),"%s: cannot open",cp);
 			error_info.errors = 1;

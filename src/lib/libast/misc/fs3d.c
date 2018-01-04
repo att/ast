@@ -54,11 +54,11 @@ fs3d(int op)
 	 * get the current setting
 	 */
 
-	if (!fsview && (!getenv("LD_PRELOAD") || mount("", "", 0, NiL)))
+	if (!fsview && (!getenv("LD_PRELOAD") || mount("", "", 0, NULL)))
 		goto nope;
-	if (FS3D_op(op) == FS3D_OP_INIT && mount(FS3D_init, NiL, FS3D_VIEW, NiL))
+	if (FS3D_op(op) == FS3D_OP_INIT && mount(FS3D_init, NULL, FS3D_VIEW, NULL))
 		goto nope;
-	if (mount(on, val, FS3D_VIEW|FS3D_GET|FS3D_SIZE(sizeof(val)), NiL))
+	if (mount(on, val, FS3D_VIEW|FS3D_GET|FS3D_SIZE(sizeof(val)), NULL))
 		goto nope;
 	if (v = strchr(val, ' '))
 		v++;
@@ -67,7 +67,7 @@ fs3d(int op)
 	if (!strcmp(v, on))
 		cur = FS3D_ON;
 	else if (!strncmp(v, off, sizeof(off) - 1) && v[sizeof(off)] == '=')
-		cur = FS3D_LIMIT((int)strtol(v + sizeof(off) + 1, NiL, 0));
+		cur = FS3D_LIMIT((int)strtol(v + sizeof(off) + 1, NULL, 0));
 	else
 		cur = FS3D_OFF;
 	if (cur != op)
@@ -88,7 +88,7 @@ fs3d(int op)
 			v = 0;
 			break;
 		}
-		if (v && mount(v, NiL, FS3D_VIEW, NiL))
+		if (v && mount(v, NULL, FS3D_VIEW, NULL))
 			goto nope;
 	}
 	fsview = 1;

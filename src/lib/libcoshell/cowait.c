@@ -39,7 +39,7 @@ cat(Cojob_t* job, char** path, Sfio_t* op)
 {
 	Sfio_t*		sp;
 
-	if (sp = sfopen(NiL, *path, "r"))
+	if (sp = sfopen(NULL, *path, "r"))
 	{
 		sfmove(sp, op, SF_UNBOUND, -1);
 		sfclose(sp);
@@ -322,7 +322,7 @@ cowait(Coshell_t* co, Cojob_t* job, int timeout)
 				 */
 
 				n = cj->pid;
-				cj->pid = strtol(s, NiL, 10);
+				cj->pid = strtol(s, NULL, 10);
 				if (n == CO_PID_WARPED)
 					goto nuke;
 				break;

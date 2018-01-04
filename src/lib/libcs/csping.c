@@ -40,7 +40,7 @@ csping(register Cs_t* state, const char* name)
 	if ((fd = csopen(state, state->temp, 0)) < 0) return -1;
 	n = (cswrite(state, fd, M, N) != N || csread(state, fd, state->temp, N, CS_LINE) != N || strncmp(M, state->temp, N)) ? -1 : 0;
 	close(fd);
-	if (n) messagef((state->id, NiL, -1, "ping: %s: no contact", name));
+	if (n) messagef((state->id, NULL, -1, "ping: %s: no contact", name));
 	return n;
 }
 

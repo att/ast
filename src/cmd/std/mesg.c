@@ -104,6 +104,6 @@ main(int argc, char *argv[])
 	argv += opt_info.index;
 	n = 0;
 	if(error_info.errors || (*argv && (n= **argv) !='y' && n!='n'))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	return mesg(n);
 }

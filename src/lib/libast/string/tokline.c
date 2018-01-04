@@ -167,14 +167,14 @@ tokline(const char* arg, int flags, int* line)
 
 	if (!(d = newof(0, Splice_t, 1, 0)))
 		return 0;
-	if (!(s = sfopen(NiL, NiL, "s")))
+	if (!(s = sfopen(NULL, NULL, "s")))
 	{
 		free(d);
 		return 0;
 	}
 	if (!(flags & (SF_STRING|SF_READ)))
 		f = (Sfio_t*)arg;
-	else if (!(f = sfopen(NiL, arg, (flags & SF_STRING) ? "s" : "r")))
+	else if (!(f = sfopen(NULL, arg, (flags & SF_STRING) ? "s" : "r")))
 	{
 		free(d);
 		sfclose(s);

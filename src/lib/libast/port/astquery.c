@@ -62,11 +62,11 @@ astquery(int quit, const char* format, ...)
 		c = errno;
 		if (isatty(sffileno(sfstdin)))
 			rfp = sfstdin;
-		else if (!(rfp = sfopen(NiL, "/dev/tty", "r")))
+		else if (!(rfp = sfopen(NULL, "/dev/tty", "r")))
 			goto done;
 		if (isatty(sffileno(sfstderr)))
 			wfp = sfstderr;
-		else if (!(wfp = sfopen(NiL, "/dev/tty", "w")))
+		else if (!(wfp = sfopen(NULL, "/dev/tty", "w")))
 			goto done;
 		errno = c;
 	}

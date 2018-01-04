@@ -38,5 +38,5 @@ tmsleep(time_t sec, time_t nsec)
 
 	tv.tv_sec = sec;
 	tv.tv_nsec = nsec;
-	return tvsleep(&tv, NiL);
+	return tvsleep(&tv, NULL);
 }

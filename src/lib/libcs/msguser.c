@@ -306,7 +306,7 @@ msgvcall(int fd, unsigned long channel, unsigned long call, Msg_return_t* ret, v
 					msgputz(&b, e, p, m + 1);
 				}
 			}
-			msgputz(&b, e, NiL, 0);
+			msgputz(&b, e, NULL, 0);
 			continue;
 		}
 		break;
@@ -379,7 +379,7 @@ msgcall(int fd, unsigned long channel, unsigned long call, Msg_return_t* ret, ..
 	va_list	ap;
 
 	va_start(ap, ret);
-	n = msgvcall(fd, channel, call, ret, NiL, ap);
+	n = msgvcall(fd, channel, call, ret, NULL, ap);
 	va_end(ap);
 	return n;
 }
@@ -516,7 +516,7 @@ msgvreturn(int fd, unsigned long call, void** xp, va_list ap)
 #if _mem_f_basetype_statvfs
 				msggetz(&b, e, vp->f_basetype, sizeof(vp->f_basetype));
 #else
-				msggetz(&b, e, NiL, 0);
+				msggetz(&b, e, NULL, 0);
 #endif
 				vp->f_flag = msggetu(&b, e);
 				vp->f_namemax = msggetu(&b, e);
@@ -558,7 +558,7 @@ msgreturn(int fd, unsigned long call, ...)
 	va_list	ap;
 
 	va_start(ap, call);
-	n = msgvreturn(fd, call, NiL, ap);
+	n = msgvreturn(fd, call, NULL, ap);
 	va_end(ap);
 	return n;
 }

@@ -225,7 +225,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 				*e = cp;
 				c = *cp;
 				*cp = 0;
-				sp = search(GET, se, NiL, NiL);
+				sp = search(GET, se, NULL, NULL);
 				*cp = c;
 				if (!sp) return(0);
 				while (isspace(*cp)) cp++;
@@ -279,7 +279,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 						while (isalnum(*cp) || *cp == '_') cp++;
 						c = *cp;
 						*cp = 0;
-						tsp = search(GET, se, NiL, NiL);
+						tsp = search(GET, se, NULL, NULL);
 						*cp = c;
 						ee = cp;
 						if (tsp)
@@ -291,7 +291,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 								sb = *sb == 'n' ? tsp->name : tsp->type;
 								se = sb + strlen(sb);
 							}
-							else if (miscget(tsp, sb, 1, &sb, NiL))
+							else if (miscget(tsp, sb, 1, &sb, NULL))
 								for (se = sb; *se && !isspace(*se); se++);
 							else sb = se = "";
 							*st = c;
@@ -303,7 +303,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 			switch (x)
 			{
 			case HASHKEY4('b','i','a','s'):
-				return(osp ? osp->bias == sp->bias : op ? miscop(sp->bias, op, strton(cp, e, NiL, 100)) : sp->bias);
+				return(osp ? osp->bias == sp->bias : op ? miscop(sp->bias, op, strton(cp, e, NULL, 100)) : sp->bias);
 			case HASHKEY3('c','p','u'):
 				return(osp ? osp->cpu == sp->cpu : sp->cpu);
 			case HASHKEY3('d','a','y'):
@@ -340,7 +340,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 				return(osp ? osp->running == sp->running : sp->running);
 			case HASHKEY4('l','o','a','d'):
 				STATS(sp, osp);
-				return(osp ? (osp->stat.load / osp->scale) == (sp->stat.load / sp->scale) : op ? miscop(sp->stat.load / sp->scale, op, strton(cp, e, NiL, 100)) : sp->stat.load / sp->scale);
+				return(osp ? (osp->stat.load / osp->scale) == (sp->stat.load / sp->scale) : op ? miscop(sp->stat.load / sp->scale, op, strton(cp, e, NULL, 100)) : sp->stat.load / sp->scale);
 			case HASHKEY3('m','i','n'):
 				return(state.tm->tm_min);
 			case HASHKEY6('m','i','n','i','d','l'):
@@ -356,7 +356,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 			case HASHKEY4('o','p','e','n'):
 				return(osp ? (!osp->fd) == (!sp->fd) : sp->fd);
 			case HASHKEY6('r','a','t','i','n','g'):
-				return(osp ? osp->rating == sp->rating : op ? miscop(sp->rating, op, strton(cp, e, NiL, 100)) : sp->rating);
+				return(osp ? osp->rating == sp->rating : op ? miscop(sp->rating, op, strton(cp, e, NULL, 100)) : sp->rating);
 			case HASHKEY4('t','y','p','e'):
 				if (sb)
 				{
@@ -452,11 +452,11 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 						}
 						if (osp)
 						{
-							if (!miscget(osp, bp, 1, &bp, NiL)) return(0);
+							if (!miscget(osp, bp, 1, &bp, NULL)) return(0);
 							for (np = cp; *np && *np != ' '; np++);
 							return(!strncmp(bp, cp, np - cp));
 						}
-						set = strton(cp, &bp, NiL, 0);
+						set = strton(cp, &bp, NULL, 0);
 						if (*bp && *bp != ' ') set = 1;
 						return(set);
 					}
@@ -477,7 +477,7 @@ miscget(Coshell_t* sp, const char* as, int set, char** e, char* rep)
 						*e = ee;
 						return(misccmp("", op, sb, se));
 					}
-					if (osp) return(!miscget(osp, bp, 1, &bp, NiL));
+					if (osp) return(!miscget(osp, bp, 1, &bp, NULL));
 					return(0);
 				}
 				if (*cp++ == ' ') break;
@@ -603,7 +603,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				v = r;
 				m = v[n];
 				v[n] = 0;
-				sp = search(GET, v, NiL, NiL);
+				sp = search(GET, v, NULL, NULL);
 				v[n] = m;
 				if (!sp) continue;
 			}
@@ -623,13 +623,13 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				continue;
 			case HASHKEY4('b','i','a','s'):
 				p->set |= SETBIAS;
-				p->bias = sp ? sp->bias : strton(v, NiL, NiL, 100);
+				p->bias = sp ? sp->bias : strton(v, NULL, NULL, 100);
 				continue;
 			case HASHKEY4('b','u','s','y'):
 				if (!sp)
 				{
 					p->global.set |= SETBUSY;
-					p->global.busy = strelapsed(v, NiL, 1);
+					p->global.busy = strelapsed(v, NULL, 1);
 				}
 				continue;
 			case HASHKEY6('b','y','p','a','s','s'):
@@ -643,20 +643,20 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY3('c','p','u'):
-				if (p->cpu = sp ? sp->cpu : (int)strtol(v, NiL, 0)) p->set |= SETCPU;
+				if (p->cpu = sp ? sp->cpu : (int)strtol(v, NULL, 0)) p->set |= SETCPU;
 				continue;
 			case HASHKEY5('d','e','b','u','g'):
 				if (!sp)
 				{
 					p->global.set |= SETDEBUG;
-					p->global.debug = -strton(v, NiL, NiL, 0);
+					p->global.debug = -strton(v, NULL, NULL, 0);
 				}
 				continue;
 			case HASHKEY6('d','i','s','a','b','l'):
 				if (!sp)
 				{
 					p->global.set |= SETDISABLE;
-					p->global.disable = strelapsed(v, NiL, 1);
+					p->global.disable = strelapsed(v, NULL, 1);
 				}
 				continue;
 			case HASHKEY4('f','i','l','e'):
@@ -672,7 +672,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				if (!sp)
 				{
 					p->global.set |= SETGRACE;
-					p->global.grace = strelapsed(v, NiL, 1);
+					p->global.grace = strelapsed(v, NULL, 1);
 				}
 				continue;
 			case HASHKEY6('i','d','e','n','t','i'):
@@ -690,11 +690,11 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 			case HASHKEY4('i','d','l','e'):
 			case HASHKEY6('m','i','n','i','d','l'):
 				p->set |= SETIDLE;
-				p->idle = sp ? sp->idle : strelapsed(v, NiL, 1);
+				p->idle = sp ? sp->idle : strelapsed(v, NULL, 1);
 				continue;
 			case HASHKEY6('i','g','n','o','r','e'):
 				p->set |= SETIGNORE;
-				p->ignore = sp ? (sp->flags & IGN) : (int)strtol(v, NiL, 0);
+				p->ignore = sp ? (sp->flags & IGN) : (int)strtol(v, NULL, 0);
 				continue;
 			case HASHKEY5('l','a','b','e','l'):
 				if (!sp && n)
@@ -712,12 +712,12 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 			case HASHKEY6('m','a','x','i','d','l'):
 				if (!sp)
 				{
-					p->global.maxidle = (int)strtol(v, NiL, 0);
+					p->global.maxidle = (int)strtol(v, NULL, 0);
 					p->global.set |= SETMAXIDLE;
 				}
 				continue;
 			case HASHKEY6('m','a','x','l','o','a'):
-				if (!sp && (p->global.maxload = strton(v, NiL, NiL, 100)) >= 0)
+				if (!sp && (p->global.maxload = strton(v, NULL, NULL, 100)) >= 0)
 					p->global.set |= SETMAXLOAD;
 				continue;
 			case HASHKEY6('m','i','g','r','a','t'):
@@ -734,7 +734,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				copystring(p->name, sizeof(p->name), sp ? sp->name : v, sp ? 0 : n);
 				continue;
 			case HASHKEY6('p','e','r','c','p','u'):
-				if (!sp && (p->global.percpu = (int)strtol(v, NiL, 0)) > 0)
+				if (!sp && (p->global.percpu = (int)strtol(v, NULL, 0)) > 0)
 				{
 					if (p->global.percpu > (state.jobmax - state.job + 1))
 						p->global.percpu = state.jobmax - state.job + 1;
@@ -742,7 +742,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY6('p','e','r','h','o','s'):
-				if (!sp && (p->global.perhost = (int)strtol(v, NiL, 0)) > 0)
+				if (!sp && (p->global.perhost = (int)strtol(v, NULL, 0)) > 0)
 				{
 					if (p->global.perhost > (state.jobmax - state.job + 1))
 						p->global.perhost = state.jobmax - state.job + 1;
@@ -750,7 +750,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY6('p','e','r','s','e','r'):
-				if (!sp && (p->global.perserver = (int)strtol(v, NiL, 0)) >= 0)
+				if (!sp && (p->global.perserver = (int)strtol(v, NULL, 0)) >= 0)
 				{
 					if (p->global.perserver > (state.jobmax - state.job + 1))
 						p->global.perserver = state.jobmax - state.job + 1;
@@ -758,7 +758,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY6('p','e','r','u','s','e'):
-				if (!sp && (p->global.peruser = (int)strtol(v, NiL, 0)) > 0)
+				if (!sp && (p->global.peruser = (int)strtol(v, NULL, 0)) > 0)
 				{
 					if (p->global.peruser > (state.jobmax - state.job + 1))
 						p->global.peruser = state.jobmax - state.job + 1;
@@ -766,7 +766,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY4('p','o','o','l'):
-				if (!sp && (p->global.pool = (int)strtol(v, NiL, 0)) > 0)
+				if (!sp && (p->global.pool = (int)strtol(v, NULL, 0)) > 0)
 					p->global.set |= SETPOOL;
 				continue;
 			case HASHKEY6('p','r','o','f','i','l'):
@@ -779,7 +779,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY6('r','a','t','i','n','g'):
-				if (p->rating = sp ? sp->rating : strton(v, NiL, NiL, 100)) p->set |= SETRATING;
+				if (p->rating = sp ? sp->rating : strton(v, NULL, NULL, 100)) p->set |= SETRATING;
 				continue;
 			case HASHKEY6('r','e','m','o','t','e'):
 				if (p->set & SETNAME)
@@ -796,7 +796,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				}
 				continue;
 			case HASHKEY5('s','c','a','l','e'):
-				if (p->scale = sp ? sp->scale : (int)strtol(v, NiL, 0)) p->set |= SETSCALE;
+				if (p->scale = sp ? sp->scale : (int)strtol(v, NULL, 0)) p->set |= SETSCALE;
 				continue;
 			case HASHKEY6('s','c','h','e','d','u'):
 				if (!sp)
@@ -843,19 +843,19 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 					{
 					case HASHKEY4('i','d','l','e'):
 						p->global.set |= SETIDLE;
-						p->stat.idle = strelapsed(v, NiL, 1);
+						p->stat.idle = strelapsed(v, NULL, 1);
 						break;
 					case HASHKEY4('l','o','a','d'):
 						p->global.set |= SETLOAD;
-						p->stat.load = strton(v, NiL, NiL, 100);
+						p->stat.load = strton(v, NULL, NULL, 100);
 						break;
 					case HASHKEY6('u','p','d','a','t','e'):
 						p->global.set |= SETUPDATE;
-						p->stat.up = cs.time + strelapsed(v, NiL, 1);
+						p->stat.up = cs.time + strelapsed(v, NULL, 1);
 						break;
 					case HASHKEY5('u','s','e','r','s'):
 						p->global.set |= SETUSERS;
-						p->stat.users = strton(v, NiL, NiL, 0);
+						p->stat.users = strton(v, NULL, NULL, 0);
 						break;
 					}
 					continue;
@@ -872,7 +872,7 @@ attributes(register char* s, register Coattr_t* p, Coattr_t* d)
 				u = p->misc;
 			}
 			if (!sp) n = s - b - (*s != 0);
-			else if (miscget(sp, b, 1, &e, NiL))
+			else if (miscget(sp, b, 1, &e, NULL))
 			{
 				for (v = b = e; *b && *b != ' '; b++);
 				n = v - b;
@@ -930,7 +930,7 @@ misceval(const char* s, char** e, void* handle)
 		message((-3, "attribute: %s", *e));
 		return(0);
 	}
-	return(miscget((Coshell_t*)handle, s, 0, e, NiL));
+	return(miscget((Coshell_t*)handle, s, 0, e, NULL));
 }
 
 /*
@@ -940,7 +940,7 @@ misceval(const char* s, char** e, void* handle)
 int
 miscmatch(Coshell_t* sp, char* p)
 {
-	return(strexpr(p, NiL, misceval, sp) != 0);
+	return(strexpr(p, NULL, misceval, sp) != 0);
 }
 
 /*

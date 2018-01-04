@@ -173,7 +173,7 @@ pplint(char* head, char* comment, char* tail, int line)
 	{
 		strncopy(pp.token, comment, MAXTOKEN);
 		ppprintf("\n#%s %s:%s\n", dirname(PRAGMA), pp.pass, pp.token);
-		ppline(error_info.line, NiL);
+		ppline(error_info.line, NULL);
 	}
 }
 
@@ -234,7 +234,7 @@ ppargs(char** argv, int last)
 					ppop(PP_DEBUG, -n);
 					break;
 				case 'F':
-					ppop(PP_FILENAME, n ? s : NiL);
+					ppop(PP_FILENAME, n ? s : NULL);
 					goto hasarg;
 				case 'H':
 					ppop(PP_HOSTDIR, "-", n);

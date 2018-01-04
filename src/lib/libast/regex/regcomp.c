@@ -40,7 +40,7 @@
 
 #define DEBUG_TEST(f,y,n)	((debug&(debug_flag=f))?(y):(n))
 #define DEBUG_CODE(f,y,n)	do if(debug&(f)){y}else{n} while(0)
-#define DEBUG_INIT()		do { char* t; if (!debug) { debug = 0x80000000; if (t = getenv("_AST_regex_comp_debug")) debug |= strtoul(t, NiL, 0); } } while (0)
+#define DEBUG_INIT()		do { char* t; if (!debug) { debug = 0x80000000; if (t = getenv("_AST_regex_comp_debug")) debug |= strtoul(t, NULL, 0); } } while (0)
 
 static unsigned long	debug;
 static unsigned long	debug_flag;
@@ -1370,7 +1370,7 @@ bra(Cenv_t* env)
 					setadd(e->re.charclass, last);
 					elements++;
 				}
-				if ((c = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)buf, sizeof(buf), NiL)) < 0)
+				if ((c = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)buf, sizeof(buf), NULL)) < 0)
 					goto ecollate;
 				if (c > 1)
 					collate++;
@@ -1384,7 +1384,7 @@ bra(Cenv_t* env)
 			case '.':
 				if (env->flags & REG_REGEXP)
 					goto normal;
-				if ((c = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)buf, sizeof(buf), NiL)) < 0)
+				if ((c = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)buf, sizeof(buf), NULL)) < 0)
 					goto ecollate;
 				if (c > 1)
 					collate++;
@@ -1544,9 +1544,9 @@ bra(Cenv_t* env)
 					}
 					if (inrange != 0)
 					{
-						ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
+						ce = col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
 						if (inrange == 2)
-							ce = col(env, ce, ic, NiL, 1, '-', NiL, 0, 0);
+							ce = col(env, ce, ic, NULL, 1, '-', NULL, 0, 0);
 					}
 					break;
 				}
@@ -1574,7 +1574,7 @@ bra(Cenv_t* env)
 						if (env->flags & REG_REGEXP)
 							goto complicated_normal;
 						if (inrange == 1)
-							ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
+							ce = col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
 						if (!(f = regclass((char*)env->cursor, (char**)&env->cursor)))
 						{
 							if (env->cursor == start && (c = *(env->cursor + 1)) && *(env->cursor + 2) == ':' && *(env->cursor + 3) == ']' && *(env->cursor + 4) == ']')
@@ -1612,7 +1612,7 @@ bra(Cenv_t* env)
 						if (inrange == 2)
 							goto erange;
 						if (inrange == 1)
-							ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
+							ce = col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
 						pp = (unsigned char*)cb[inrange];
 						rp = env->cursor + 1;
 						if ((rw = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)pp, COLL_KEY_MAX, &wc)) < 0)
@@ -1688,7 +1688,7 @@ bra(Cenv_t* env)
 						if (env->flags & REG_REGEXP)
 							goto complicated_normal;
 						pp = (unsigned char*)cb[inrange];
-						if ((w = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)pp, COLL_KEY_MAX, NiL)) < 0)
+						if ((w = regcollate((char*)env->cursor, (char**)&env->cursor, (char*)pp, COLL_KEY_MAX, NULL)) < 0)
 							goto ecollate;
 						c = *pp;
 						break;
@@ -1715,7 +1715,7 @@ bra(Cenv_t* env)
 					inrange = env->type >= SRE || (env->flags & (REG_LENIENT|REG_REGEXP));
 				}
 				else if (inrange == 1)
-					ce = col(env, ce, ic, rp, rw, rc, NiL, 0, 0);
+					ce = col(env, ce, ic, rp, rw, rc, NULL, 0, 0);
 				else
 					inrange = 1;
 				rp = pp;
@@ -3476,7 +3476,7 @@ regcomb(regex_t* p, regex_t* q)
 	Cenv_t	env;
 
 	if (!e || !f)
-		return fatal(p->env->disc, REG_BADPAT, NiL);
+		return fatal(p->env->disc, REG_BADPAT, NULL);
 	if (p->env->separate || q->env->separate)
 		return REG_ESUBREG;
 	memset(&env, 0, sizeof(env));
@@ -3518,7 +3518,7 @@ regcomb(regex_t* p, regex_t* q)
 		h->next = 0;
 	}
 	if (!(g = trie(&env, f, e)))
-		return fatal(p->env->disc, REG_BADPAT, NiL);
+		return fatal(p->env->disc, REG_BADPAT, NULL);
 	p->env->rex = g;
 	if (!q->env->once)
 		p->env->once = 0;
@@ -3528,7 +3528,7 @@ regcomb(regex_t* p, regex_t* q)
 		if (!(e = node(&env, REX_BEG, 0, 0, 0)))
 		{
 			regfree(p);
-			return fatal(p->env->disc, REG_ESPACE, NiL);
+			return fatal(p->env->disc, REG_ESPACE, NULL);
 		}
 		e->next = p->env->rex;
 		p->env->rex = e;
@@ -3542,7 +3542,7 @@ regcomb(regex_t* p, regex_t* q)
 			if (!(e = node(&env, REX_END, 0, 0, 0)))
 			{
 				regfree(p);
-				return fatal(p->env->disc, REG_ESPACE, NiL);
+				return fatal(p->env->disc, REG_ESPACE, NULL);
 			}
 			f->next = e;
 		}
@@ -3553,12 +3553,12 @@ regcomb(regex_t* p, regex_t* q)
 	if (stats(&env, p->env->rex))
 	{
 		regfree(p);
-		return fatal(p->env->disc, env.error ? env.error : REG_ECOUNT, NiL);
+		return fatal(p->env->disc, env.error ? env.error : REG_ECOUNT, NULL);
 	}
 	if (special(&env, p))
 	{
 		regfree(p);
-		return fatal(p->env->disc, env.error ? env.error : REG_ESPACE, NiL);
+		return fatal(p->env->disc, env.error ? env.error : REG_ESPACE, NULL);
 	}
 	p->env->min = g->re.trie.min;
 	return 0;

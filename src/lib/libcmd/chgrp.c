@@ -334,7 +334,7 @@ b_chgrp(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if (error_info.errors || argc < 2)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	s = *argv;
 	if (options & OPT_LCHOWN)
 	{
@@ -348,7 +348,7 @@ b_chgrp(int argc, char** argv, Shbltin_t* context)
 	{
 		if (streq(s, "-"))
 			sp = sfstdin;
-		else if (!(sp = sfopen(NiL, s, "r")))
+		else if (!(sp = sfopen(NULL, s, "r")))
 			error(ERROR_exit(1), "%s: cannot read", s);
 		while (s = sfgetr(sp, '\n', 1))
 		{
@@ -361,7 +361,7 @@ b_chgrp(int argc, char** argv, Shbltin_t* context)
 				m->to.uid = m->to.gid = NOID;
 				dtinsert(map, m);
 			}
-			getids(t, NiL, &m->to, options);
+			getids(t, NULL, &m->to, options);
 		}
 		if (sp != sfstdin)
 			sfclose(sp);
@@ -369,7 +369,7 @@ b_chgrp(int argc, char** argv, Shbltin_t* context)
 	}
 	else if (!(options & (OPT_UID|OPT_GID)))
 	{
-		getids(s, NiL, &key, options);
+		getids(s, NULL, &key, options);
 		if ((uid = key.uid) != NOID)
 			options |= OPT_UID;
 		if ((gid = key.gid) != NOID)
@@ -390,7 +390,7 @@ b_chgrp(int argc, char** argv, Shbltin_t* context)
 		s = "";
 		break;
 	}
-	if (!(fts = fts_open(argv + 1, flags, NiL)))
+	if (!(fts = fts_open(argv + 1, flags, NULL)))
 		error(ERROR_system(1), "%s: not found", argv[1]);
 	while (!sh_checksig(context) && (ent = fts_read(fts)))
 		switch (ent->fts_info)

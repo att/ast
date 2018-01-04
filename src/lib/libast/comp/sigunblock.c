@@ -44,7 +44,7 @@ sigunblock(int s)
 		op = SIG_UNBLOCK;
 	}
 	else op = SIG_SETMASK;
-	return(sigprocmask(op, &mask, NiL));
+	return(sigprocmask(op, &mask, NULL));
 }
 
 #endif

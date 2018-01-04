@@ -33,7 +33,7 @@ ppprintf(char* format, ...)
 	va_list	ap;
 	Sfio_t*	sp;
 
-	if (!(sp = sfnew(NiL, pp.outp, MAXTOKEN, -1, SF_WRITE|SF_STRING)))
+	if (!(sp = sfnew(NULL, pp.outp, MAXTOKEN, -1, SF_WRITE|SF_STRING)))
 		error(3, "temporary buffer allocation error");
 	va_start(ap, format);
 	sfvprintf(sp, format, ap);

@@ -127,7 +127,7 @@ cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_
 		argc = 0;
 	for (p = environ; *p; p++)
 		n += sizeof(char**) + strlen(*p) + 1;
-	if ((x = strtol(astconf("ARG_MAX", NiL, NiL), NiL, 0)) <= 0)
+	if ((x = strtol(astconf("ARG_MAX", NULL, NULL), NULL, 0)) <= 0)
 		x = ARG_MAX;
 	if (size <= 0 || size > x)
 		size = x;
@@ -137,7 +137,7 @@ cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_
 	if (size < m)
 	{
 		if (disc->errorf)
-			(*disc->errorf)(NiL, sh, 2, "size must be at least %d", m);
+			(*disc->errorf)(NULL, sh, 2, "size must be at least %d", m);
 		return 0;
 	}
 	if ((m = x / 10) > 2048)
@@ -149,7 +149,7 @@ cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_
 	if (!(cmd = newof(0, Cmdarg_t, 1, n + m)))
 	{
 		if (disc->errorf)
-			(*disc->errorf)(NiL, sh, ERROR_SYSTEM|2, "out of space");
+			(*disc->errorf)(NULL, sh, ERROR_SYSTEM|2, "out of space");
 		return 0;
 	}
 	cmd->id = lib;
@@ -173,11 +173,11 @@ cmdopen_20120411(char** argv, int argmax, int size, const char* argpat, Cmddisc_
 	}
 	else if (!(disc->flags & CMD_CHECKED))
 	{
-		if (!pathpath(exe, NiL, PATH_REGULAR|PATH_EXECUTE, s, n + m))
+		if (!pathpath(exe, NULL, PATH_REGULAR|PATH_EXECUTE, s, n + m))
 		{
 			n = EXIT_NOTFOUND;
 			if (cmd->errorf)
-				(*cmd->errorf)(NiL, cmd, ERROR_SYSTEM|2, "%s: command not found", exe);
+				(*cmd->errorf)(NULL, cmd, ERROR_SYSTEM|2, "%s: command not found", exe);
 			if (disc->flags & CMD_EXIT)
 				(*error_info.exit)(n);
 			free(cmd);
@@ -241,7 +241,7 @@ cmdflush(Cmdarg_t* cmd)
 	if ((cmd->flags & CMD_MINIMUM) && cmd->argcount < cmd->argmax)
 	{
 		if (cmd->errorf)
-			(*cmd->errorf)(NiL, cmd, 2, "%d arg command would be too long", cmd->argcount);
+			(*cmd->errorf)(NULL, cmd, 2, "%d arg command would be too long", cmd->argcount);
 		return -1;
 	}
 	cmd->total.args += cmd->argcount;
@@ -296,7 +296,7 @@ cmdflush(Cmdarg_t* cmd)
 		if (b >= e)
 		{
 			if (cmd->errorf)
-				(*cmd->errorf)(NiL, cmd, 2, "%s: command too large after insert", a);
+				(*cmd->errorf)(NULL, cmd, 2, "%s: command too large after insert", a);
 			return -1;
 		}
 	}
@@ -327,7 +327,7 @@ cmdflush(Cmdarg_t* cmd)
 	{
 		n = EXIT_NOTFOUND - 1;
 		if (cmd->errorf)
-			(*cmd->errorf)(NiL, cmd, ERROR_SYSTEM|2, "%s: command exec error", *cmd->argv);
+			(*cmd->errorf)(NULL, cmd, ERROR_SYSTEM|2, "%s: command exec error", *cmd->argv);
 		if (cmd->flags & CMD_EXIT)
 			(*error_info.exit)(n);
 	}
@@ -364,7 +364,7 @@ cmdarg(Cmdarg_t* cmd, const char* file, int len)
 			if (cmd->nextarg == cmd->firstarg)
 			{
 				if (cmd->errorf)
-					(*cmd->errorf)(NiL, cmd, 2, "%s: path too long for exec args", file);
+					(*cmd->errorf)(NULL, cmd, 2, "%s: path too long for exec args", file);
 				return -1;
 			}
 			if (i = cmdflush(cmd))
@@ -399,7 +399,7 @@ cmdclose(Cmdarg_t* cmd)
 	if ((cmd->flags & CMD_EXACT) && cmd->argcount < cmd->argmax)
 	{
 		if (cmd->errorf)
-			(*cmd->errorf)(NiL, cmd, 2, "only %d arguments for last command", cmd->argcount);
+			(*cmd->errorf)(NULL, cmd, 2, "only %d arguments for last command", cmd->argcount);
 		n = -1;
 	}
 	else

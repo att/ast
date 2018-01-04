@@ -67,7 +67,7 @@ service(Coshell_t* co, Coservice_t* cs, Cojob_t* cj, int flags, Sfio_t* sp)
 	ops[0] = PROC_FD_DUP(fds[0], 0, PROC_FD_PARENT);
 	ops[1] = PROC_FD_DUP(co->gsmfd, 1, PROC_FD_CHILD);
 	ops[2] = 0;
-	if (!(proc = procopen(cs->path, cs->argv, NiL, ops, PROC_DAEMON|PROC_IGNORE)))
+	if (!(proc = procopen(cs->path, cs->argv, NULL, ops, PROC_DAEMON|PROC_IGNORE)))
 	{
 		errormsg(state.lib, ERROR_LIBRARY|ERROR_SYSTEM|2, "%s: cannot connect to %s service", cs->path, cs->name);
 		close(fds[0]);	
@@ -267,7 +267,7 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 			else
 				sfprintf(sp, " %s%s/%s", red, state.pwd, out);
 		}
-		else if ((flags & CO_SERIALIZE) && (cj->out = pathtemp(NiL, 64, NiL, "coo", NiL)))
+		else if ((flags & CO_SERIALIZE) && (cj->out = pathtemp(NULL, 64, NULL, "coo", NULL)))
 			sfprintf(sp, " >%s", cj->out);
 		if (err)
 		{
@@ -282,7 +282,7 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 		{
 			if (!out && !fstat(1, &sto) && !fstat(2, &ste) && sto.st_dev == ste.st_dev && sto.st_ino == ste.st_ino)
 				sfprintf(sp, " 2>&1");
-			else if (cj->err = pathtemp(NiL, 64, NiL, "coe", NiL))
+			else if (cj->err = pathtemp(NULL, 64, NULL, "coe", NULL))
 				sfprintf(sp, " 2>%s", cj->err);
 		}
 		sfprintf(sp, " &\nprint -u$%s j %d $!\n",
@@ -324,7 +324,7 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 			else
 				sfprintf(sp, " %s%s/%s", red, state.pwd, out);
 		}
-		else if ((flags & CO_SERIALIZE) && (cj->out = pathtemp(NiL, 64, NiL, "coo", NiL)))
+		else if ((flags & CO_SERIALIZE) && (cj->out = pathtemp(NULL, 64, NULL, "coo", NULL)))
 			sfprintf(sp, " >%s", cj->out);
 		if (err)
 		{
@@ -339,7 +339,7 @@ coexec(Coshell_t* co, const char* action, int flags, const char* out, const char
 		{
 			if (out)
 				sfprintf(sp, " 2>&1");
-			else if (cj->err = pathtemp(NiL, 64, NiL, "coe", NiL))
+			else if (cj->err = pathtemp(NULL, 64, NULL, "coe", NULL))
 				sfprintf(sp, " 2>%s", cj->err);
 		}
 		if (!(co->mode & CO_MODE_SEPARATE))

@@ -72,7 +72,7 @@ exists(int op, char* pred, register char* args)
 		{
 			while ((c = pplex()) == T_STRING)
 			{
-				if (pathaccess(pp.token, file, NiL, 0, pp.path, MAXTOKEN + 1))
+				if (pathaccess(pp.token, file, NULL, 0, pp.path, MAXTOKEN + 1))
 				{
 					pathcanon(pp.path, 0, 0);
 					message((-2, "%s: %s found", pred, pp.path));
@@ -131,7 +131,7 @@ compare(char* pred, char* args, int match)
 		goto bad;
 	if (!match)
 		c = strcmp(tmp, pp.token);
-	else if ((c = regcomp(&re, pp.token, REG_AUGMENTED|REG_LENIENT|REG_NULL)) || (c = regexec(&re, tmp, NiL, 0, 0)) && c != REG_NOMATCH)
+	else if ((c = regcomp(&re, pp.token, REG_AUGMENTED|REG_LENIENT|REG_NULL)) || (c = regexec(&re, tmp, NULL, 0, 0)) && c != REG_NOMATCH)
 		regfatal(&re, 4, c);
 	else
 	{
@@ -561,7 +561,7 @@ subexpr(register int precedence, int* pun)
 		case T_OCTAL_L:
 		case T_HEXADECIMAL:
 		case T_HEXADECIMAL_L:
-			n = strtoul(pp.token, NiL, 0);
+			n = strtoul(pp.token, NULL, 0);
 			if ((unsigned long)n > LONG_MAX) un |= 01;
 			goto gotoperand;
 		case T_WCHARCONST:

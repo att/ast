@@ -367,7 +367,7 @@ static int prline(register Pr_t *pp)
 	if(pp->pageskip > 0)
 	{
 		n = pp->pageskip*pp->pagelen;
-		if(sfmove(pp->infile, NiL, n, '\n')!=n)
+		if(sfmove(pp->infile, NULL, n, '\n')!=n)
 			return 0;
 	}
 	while(cp = sfgetr(pp->infile,'\n',0))
@@ -629,7 +629,7 @@ v_read(Sfio_t* fp, void* buf, size_t n, Sfdisc_t* dp)
 			c = *pp->control.cur++;
 			if ((iscntrl(c) || !isprint(c)) && c != '\t' && c != '\n' || c == '\\')
 			{
-				t = fmtquote(pp->control.cur - 1, NiL, NiL, 1, 0);
+				t = fmtquote(pp->control.cur - 1, NULL, NULL, 1, 0);
 				if (strlen(t) > (e - s))
 				{
 					pp->control.cur--;
@@ -788,7 +788,7 @@ b_pr(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if(error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	pp->outfile = sfstdout;
 	if(pp->pagelen<=(2*HDRSZ))
 		pp->flags |= T_FLAG;
@@ -867,7 +867,7 @@ b_pr(int argc, char** argv, Shbltin_t* context)
 		pp->filename = cp;
 		if(!cp || strcmp(cp,"-")==0)
 			fp = sfstdin;
-		else if(!(fp = sfopen(NiL,cp,"r")))
+		else if(!(fp = sfopen(NULL,cp,"r")))
 		{
 			if(!(pp->flags&R_FLAG))
 				error(ERROR_system(0),"%s: cannot open",cp);

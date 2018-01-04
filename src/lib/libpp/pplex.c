@@ -561,7 +561,7 @@ ppcpp(void)
 	{
 		c = 1;
 		sfprintf(sfstderr, "\n");
-		hashdump(NiL, (pp.test & TEST_hashdump) ? HASH_BUCKET : 0);
+		hashdump(NULL, (pp.test & TEST_hashdump) ? HASH_BUCKET : 0);
 	}
 	if (c) sfprintf(sfstderr, "\n");
 								/*INDENT*/
@@ -1561,7 +1561,7 @@ ppcpp(void)
 						}
 						else if ((pp.option & NOISE) && c == T_ID && strneq(tp, "__builtin_", 10))
 						{
-							hashlook(pp.symtab, tp, HASH_DELETE, NiL);
+							hashlook(pp.symtab, tp, HASH_DELETE, NULL);
 							pp.symbol = sym = (struct ppsymbol*)ppkeyset(pp.symtab, tp);
 							sym->flags |= SYM_KEYWORD;
 							c = ((struct ppsymkey*)sym)->lex = T_BUILTIN;
@@ -1732,7 +1732,7 @@ ppcpp(void)
 				{
 					*s = 0;
 					SYNC();
-					(*pp.pragma)(NiL, NiL, NiL, tp, 1);
+					(*pp.pragma)(NULL, NULL, NULL, tp, 1);
 					CACHE();
 				}
 				if (!c) BACKIN();
@@ -1758,7 +1758,7 @@ ppcpp(void)
 			{
 				*s = 0;
 				SYNC();
-				(*pp.pragma)(NiL, NiL, NiL, pp.valbuf, 1);
+				(*pp.pragma)(NULL, NULL, NULL, pp.valbuf, 1);
 				CACHE();
 			}
 			if (!c) BACKIN();
@@ -2391,7 +2391,7 @@ pool(void)
 	char*	ofile;
 
 	ppflushout();
-	if (!sfnew(sfstdin, NiL, SF_UNBOUND, pp.pool.input, SF_READ))
+	if (!sfnew(sfstdin, NULL, SF_UNBOUND, pp.pool.input, SF_READ))
 		error(ERROR_SYSTEM|3, "cannot dup pool input");
 
 	/*
@@ -2410,7 +2410,7 @@ pool(void)
 		if (!(ofile = strchr(ifile, ' ')))
 			error(3, "%s: pool output file expected", ifile);
 		*ofile++ = 0;
-		waitpid(0, NiL, WNOHANG);
+		waitpid(0, NULL, WNOHANG);
 		switch (fork())
 		{
 		case -1:
@@ -2440,7 +2440,7 @@ pool(void)
 			return;
 		}
 	}
-	while (wait(NiL) != -1);
+	while (wait(NULL) != -1);
 }
 
 #endif

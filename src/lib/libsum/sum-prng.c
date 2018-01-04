@@ -73,11 +73,11 @@ prng_open(const Method_t* method, const char* name)
 				v = s;
 		i = (v ? v : s) - t;
 		if (isdigit(*t) || v && strneq(t, "mpy", i) && (t = v + 1))
-			sum->mpy = strtoul(t, NiL, 0);
+			sum->mpy = strtoul(t, NULL, 0);
 		else if (strneq(t, "add", i))
-			sum->add = v ? strtoul(v + 1, NiL, 0) : ~sum->add;
+			sum->add = v ? strtoul(v + 1, NULL, 0) : ~sum->add;
 		else if (strneq(t, "init", i))
-			sum->init = v ? strtoul(v + 1, NiL, 0) : ~sum->init;
+			sum->init = v ? strtoul(v + 1, NULL, 0) : ~sum->init;
 		if (*s == '-')
 			s++;
 	}

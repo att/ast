@@ -98,7 +98,7 @@ is returned if
 has no configuration value.
 This simplifies the programming interface:
 .EX
-if (!strcmp(astconf("PATH_RESOLVE", NiL, NiL), "logical"))
+if (!strcmp(astconf("PATH_RESOLVE", NULL, NULL), "logical"))
 	/* the logical way ... */
 .EE
 If

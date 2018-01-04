@@ -114,7 +114,7 @@ rm(State_t* state, FTSENT* ent)
 			error(2, "%s: not found", ent->fts_path);
 	}
 	else if (state->fs3d && iview(ent->fts_statp))
-		fts_set(NiL, ent, FTS_SKIP);
+		fts_set(NULL, ent, FTS_SKIP);
 	else switch (ent->fts_info)
 	{
 	case FTS_DNR:
@@ -125,7 +125,7 @@ rm(State_t* state, FTSENT* ent)
 				break;
 			if (!chmod(ent->fts_name, (ent->fts_statp->st_mode & S_IPERM)|S_IRWXU))
 			{
-				fts_set(NiL, ent, FTS_AGAIN);
+				fts_set(NULL, ent, FTS_AGAIN);
 				break;
 			}
 			error_info.errors++;
@@ -134,7 +134,7 @@ rm(State_t* state, FTSENT* ent)
 			error(2, "%s: cannot %s directory", ent->fts_path, (ent->fts_info & FTS_NR) ? "read" : "search");
 		else
 			error_info.errors++;
-		fts_set(NiL, ent, FTS_SKIP);
+		fts_set(NULL, ent, FTS_SKIP);
 		nonempty(ent);
 		break;
 	case FTS_D:
@@ -142,7 +142,7 @@ rm(State_t* state, FTSENT* ent)
 		path = ent->fts_name;
 		if (path[0] == '.' && (!path[1] || path[1] == '.' && !path[2]) && (ent->fts_level > 0 || path[1]))
 		{
-			fts_set(NiL, ent, FTS_SKIP);
+			fts_set(NULL, ent, FTS_SKIP);
 			if (!state->force)
 				error(2, "%s: cannot remove", ent->fts_path);
 			else
@@ -151,7 +151,7 @@ rm(State_t* state, FTSENT* ent)
 		}
 		if (!state->recursive)
 		{
-			fts_set(NiL, ent, FTS_SKIP);
+			fts_set(NULL, ent, FTS_SKIP);
 			if (!state->directory)
 			{
 				error(2, "%s: directory", ent->fts_path);
@@ -176,7 +176,7 @@ rm(State_t* state, FTSENT* ent)
 					*s = '/';
 				}
 				if (v)
-					v = st.st_nlink <= 2 || st.st_ino == ent->fts_parent->fts_statp->st_ino && st.st_dev == ent->fts_parent->fts_statp->st_dev || strchr(astconf("PATH_ATTRIBUTES", path, NiL), 'l');
+					v = st.st_nlink <= 2 || st.st_ino == ent->fts_parent->fts_statp->st_ino && st.st_dev == ent->fts_parent->fts_statp->st_dev || strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'l');
 			}
 			else
 				v = 1;
@@ -188,7 +188,7 @@ rm(State_t* state, FTSENT* ent)
 						return -1;
 					if (v > 0)
 					{
-						fts_set(NiL, ent, FTS_SKIP);
+						fts_set(NULL, ent, FTS_SKIP);
 						nonempty(ent);
 					}
 				}
@@ -225,7 +225,7 @@ rm(State_t* state, FTSENT* ent)
 						if (ent->fts_info == FTS_DP && !beenhere(ent))
 						{
 							retry(ent);
-							fts_set(NiL, ent, FTS_AGAIN);
+							fts_set(NULL, ent, FTS_AGAIN);
 							break;
 						}
 						/*FALLTHROUGH*/
@@ -385,7 +385,7 @@ b_rm(int argc, char** argv, Shbltin_t* context)
 	if (*argv && streq(*argv, "-") && !streq(*(argv - 1), "--"))
 		argv++;
 	if (error_info.errors || !*argv && !state.force)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (!*argv)
 		return 0;
 
@@ -405,7 +405,7 @@ b_rm(int argc, char** argv, Shbltin_t* context)
 	}
 	else
 		set3d = 0;
-	if (fts = fts_open(argv, FTS_PHYSICAL, NiL))
+	if (fts = fts_open(argv, FTS_PHYSICAL, NULL))
 	{
 		while (!sh_checksig(context) && (ent = fts_read(fts)) && !rm(&state, ent));
 		fts_close(fts);

@@ -277,13 +277,13 @@ debug_wctomb(char* s, wchar_t c)
 static size_t
 debug_mbrlen(const char* s, size_t n, mbstate_t* q)
 {
-	return debug_mbrtowc(NiL, s, n, q);
+	return debug_mbrtowc(NULL, s, n, q);
 }
 
 static int
 debug_mblen(const char* s, size_t n)
 {
-	return debug_mbtowc(NiL, s, n);
+	return debug_mbtowc(NULL, s, n);
 }
 
 static int
@@ -2395,7 +2395,7 @@ single(int category, Lc_t* lc, unsigned int flags)
 		}
 	}
 	if (!lc && (!(lc_categories[category].flags & LC_setlocale) || !(lc = lc_categories[category].prev)) && !(lc = lc_all) && !(lc = lc_categories[category].prev) && !(lc = lang))
-		lc = lcmake(NiL);
+		lc = lcmake(NULL);
 	sys = 0;
 	if (locales[category] != lc)
 	{
@@ -2409,7 +2409,7 @@ single(int category, Lc_t* lc, unsigned int flags)
 				}
 		}
 		else if (lc->flags & (LC_debug|LC_local))
-			sys = setlocale(lc_categories[category].external, lcmake(NiL)->name);
+			sys = setlocale(lc_categories[category].external, lcmake(NULL)->name);
 		else if (!(sys = setlocale(lc_categories[category].external, lc->name)) &&
 			 (streq(lc->name, lc->code) || !(sys = setlocale(lc_categories[category].external, lc->code))) &&
 			 !streq(lc->code, lc->language->code))
@@ -2427,14 +2427,14 @@ single(int category, Lc_t* lc, unsigned int flags)
 			{
 				char	path[PATH_MAX];
 
-				if (mcfind(lc->code, NiL, LC_MESSAGES, 0, path, sizeof(path)))
+				if (mcfind(lc->code, NULL, LC_MESSAGES, 0, path, sizeof(path)))
 					lc->flags |= LC_local;
 				lc->flags |= LC_checked;
 			}
 			if (!(lc->flags & LC_local))
 				return 0;
 			if (lc_categories[category].external != -lc_categories[category].internal)
-				setlocale(lc_categories[category].external, lcmake(NiL)->name);
+				setlocale(lc_categories[category].external, lcmake(NULL)->name);
 		}
 		locales[category] = lc;
 		if (lc_categories[category].setf && (*lc_categories[category].setf)(&lc_categories[category]))
@@ -2462,7 +2462,7 @@ single(int category, Lc_t* lc, unsigned int flags)
 	if ((ast.locale.set & (AST_LC_debug|AST_LC_setlocale)) && !(ast.locale.set & AST_LC_internal))
 	{
 		header();
-		sfprintf(sfstderr, "locale set  %17s %16s %16s %16s", lc_categories[category].name, lc->name, sys, lc_categories[category].prev ? lc_categories[category].prev->name : NiL);
+		sfprintf(sfstderr, "locale set  %17s %16s %16s %16s", lc_categories[category].name, lc->name, sys, lc_categories[category].prev ? lc_categories[category].prev->name : NULL);
 		if (category == AST_LC_CTYPE)
 			sfprintf(sfstderr, " MB_CUR_MAX=%d%s%s%s%s%s"
 				, ast.mb_cur_max
@@ -2539,7 +2539,7 @@ composite(const char* s, int initialize)
 		if (!*s)
 		{
 			for (i = 0; i < k; i++)
-				single(stk[i], NiL, 0);
+				single(stk[i], NULL, 0);
 			return -1;
 		}
 		w = ++s;
@@ -2566,7 +2566,7 @@ composite(const char* s, int initialize)
 				if (!single(cat[i], p, 0))
 				{
 					for (i = 0; i < k; i++)
-						single(stk[i], NiL, 0);
+						single(stk[i], NULL, 0);
 					return -1;
 				}
 				stk[k++] = cat[i];
@@ -2593,7 +2593,7 @@ composite(const char* s, int initialize)
 			if (!single(n, p, 0))
 			{
 				for (i = 1; i < n; i++)
-					single(i, NiL, 0);
+					single(i, NULL, 0);
 				return -1;
 			}
 		}
@@ -2674,7 +2674,7 @@ _ast_setlocale(int category, const char* locale)
 	}
 	if (!ast.locale.serial++)
 	{
-		stropt(getenv("LC_OPTIONS"), options, sizeof(*options), setopt, NiL);
+		stropt(getenv("LC_OPTIONS"), options, sizeof(*options), setopt, NULL);
 		initialized = 0;
 	}
 	if ((ast.locale.set & (AST_LC_debug|AST_LC_setlocale)) && !(ast.locale.set & AST_LC_internal))
@@ -2735,7 +2735,7 @@ _ast_setlocale(int category, const char* locale)
 				if (!single(i, lc_all && !(lc_categories[i].flags & LC_setlocale) ? lc_all : lc_categories[i].prev, 0))
 				{
 					while (i--)
-						single(i, NiL, 0);
+						single(i, NULL, 0);
 					return 0;
 				}
 			if (ast.locale.set & AST_LC_debug)
@@ -2762,7 +2762,7 @@ _ast_setlocale(int category, const char* locale)
 					if (!single(i, lc_categories[i].prev, 0))
 					{
 						while (i--)
-							single(i, NiL, 0);
+							single(i, NULL, 0);
 						return 0;
 					}
 		}
@@ -2784,7 +2784,7 @@ _ast_setlocale(int category, const char* locale)
 			if (!single(i, lc_all && !(lc_categories[i].flags & LC_setlocale) ? lc_all : lc_categories[i].prev, 0))
 			{
 				while (i--)
-					single(i, NiL, 0);
+					single(i, NULL, 0);
 				return 0;
 			}
 	}

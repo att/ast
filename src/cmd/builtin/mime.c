@@ -84,13 +84,13 @@ b_mime(int argc, char** argv, Shbltin_t* context)
 	argc -= opt_info.index;
 	argv += opt_info.index;
 	if (error_info.errors || argc > 1 && argc < 3)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	disc.version = MIME_VERSION;
 	disc.flags = 0;
 	disc.errorf = errorf;
 	if (!(mp = mimeopen(&disc)))
 		error(ERROR_exit(1), "mime library error");
-	if (mimeload(mp, NiL, 0))
+	if (mimeload(mp, NULL, 0))
 	{
 		mimeclose(mp);
 		error(ERROR_exit(1), "mime load error");

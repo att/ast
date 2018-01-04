@@ -65,7 +65,7 @@ astcopy(int rfd, int wfd, off_t n)
 			if (pos >= st.st_size) return(0);
 			mapsize = st.st_size - pos;
 			if (mapsize > MAPSIZE) mapsize = (mapsize > n && n > 0) ? n : MAPSIZE;
-			if (mapsize >= BUFSIZ * 2 && (mapbuf = (char*)mmap(NiL, mapsize, PROT_READ, MAP_SHARED, rfd, pos)) != ((caddr_t)-1))
+			if (mapsize >= BUFSIZ * 2 && (mapbuf = (char*)mmap(NULL, mapsize, PROT_READ, MAP_SHARED, rfd, pos)) != ((caddr_t)-1))
 			{
 				if (write(wfd, mapbuf, mapsize) != mapsize || lseek(rfd, mapsize, 1) == ((off_t)-1)) return(-1);
 				munmap((caddr_t)mapbuf, mapsize);

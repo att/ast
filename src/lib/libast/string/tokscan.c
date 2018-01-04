@@ -39,7 +39,7 @@
  * message support for %s and %v data
  *
  *	(5:12345)		fixed length strings, ) may be \t
- *	(null)			NiL
+ *	(null)			NULL
  *
  * "..." and '...' may span \n, and \\n is the line splice
  * quoted '\r' translated to '\n'

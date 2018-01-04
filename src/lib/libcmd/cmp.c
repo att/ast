@@ -324,11 +324,11 @@ b_cmp(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(file1 = *argv++) || !(file2 = *argv++))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	n = 2;
 	if (streq(file1, "-"))
 		f1 = sfstdin;
-	else if (!(f1 = sfopen(NiL, file1, "r")))
+	else if (!(f1 = sfopen(NULL, file1, "r")))
 	{
 		if (!(flags & CMP_SILENT))
 			error(ERROR_system(0), "%s: cannot open", file1);
@@ -336,7 +336,7 @@ b_cmp(int argc, char** argv, Shbltin_t* context)
 	}
 	if (streq(file2, "-"))
 		f2 = sfstdin;
-	else if (!(f2 = sfopen(NiL, file2, "r")))
+	else if (!(f2 = sfopen(NULL, file2, "r")))
 	{
 		if (!(flags & CMP_SILENT))
 			error(ERROR_system(0), "%s: cannot open", file2);
@@ -361,7 +361,7 @@ b_cmp(int argc, char** argv, Shbltin_t* context)
 		}
 		if (*argv)
 		{
-			error(ERROR_usage(0), "%s", optusage(NiL));
+			error(ERROR_usage(0), "%s", optusage(NULL));
 			goto done;
 		}
 	}

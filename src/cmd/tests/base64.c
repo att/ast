@@ -49,14 +49,14 @@ main()
 		testno++;
 		if (i > 0)
 		{
-			l = base64encode(dat, i, NiL, buf, sizeof(buf), NiL);
+			l = base64encode(dat, i, NULL, buf, sizeof(buf), NULL);
 			if (l < 0 || l > sizeof(buf))
 			{
 				errors++;
 				sfprintf(sfstdout, "test %02d left buffer encode size %ld failed\n", testno, l);
 				continue;
 			}
-			t = base64decode(buf, l, NiL, tst, sizeof(tst), NiL);
+			t = base64decode(buf, l, NULL, tst, sizeof(tst), NULL);
 			if (t != i)
 			{
 				errors++;
@@ -72,14 +72,14 @@ main()
 		}
 		else
 			l = 0;
-		r = base64encode(dat + i, sizeof(dat) - i, NiL, buf + l, sizeof(buf) - l, NiL);
+		r = base64encode(dat + i, sizeof(dat) - i, NULL, buf + l, sizeof(buf) - l, NULL);
 		if (r < 0 || r > sizeof(buf) - l)
 		{
 			errors++;
 			sfprintf(sfstdout, "test %02d right buffer encode size %ld failed\n", testno, r);
 			continue;
 		}
-		t = base64decode(buf + l, r, NiL, tst, sizeof(tst), NiL);
+		t = base64decode(buf + l, r, NULL, tst, sizeof(tst), NULL);
 		if (t != (sizeof(dat) - i))
 		{
 			errors++;
@@ -92,7 +92,7 @@ main()
 			sfprintf(sfstdout, "test %02d right buffer decode failed\n", testno);
 			continue;
 		}
-		t = base64decode(buf, l + r, NiL, tst, sizeof(tst), NiL);
+		t = base64decode(buf, l + r, NULL, tst, sizeof(tst), NULL);
 		if (t != sizeof(dat))
 		{
 			errors++;
@@ -111,7 +111,7 @@ main()
 		testno++;
 		memset(tst, '*', sizeof(pat));
 		tst[sizeof(pat)-1] = 0;
-		t = base64decode(en, sizeof(en)-1, NiL, tst, r, NiL);
+		t = base64decode(en, sizeof(en)-1, NULL, tst, r, NULL);
 		if (t != (sizeof(de)-1))
 		{
 			sfprintf(sfstdout, "decode size %r failed, %r expected\n", t, sizeof(de)-1);

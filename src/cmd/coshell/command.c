@@ -67,7 +67,7 @@ cmdsend(int fd, int c, register char* s, register int n, int* code)
 		if (code) *code = EXIT_NOEXEC;
 		return(0);
 	}
-	if (code && (n = (int)strtol(s, NiL, 10))) *code = n;
+	if (code && (n = (int)strtol(s, NULL, 10))) *code = n;
 	if (state.indirect.con)
 	{
 		n = 0;
@@ -82,7 +82,7 @@ cmdsend(int fd, int c, register char* s, register int n, int* code)
 			for (m = 0; m < n; m++)
 				if (fds[m].status & CS_POLL_CONNECT)
 				{
-					if (n < elementsof(fds) && csrecv(fds[m].fd, NiL, &x, 1) == 1)
+					if (n < elementsof(fds) && csrecv(fds[m].fd, NULL, &x, 1) == 1)
 					{
 						svc.pass[x] = 0;
 						fds[n].fd = x;
@@ -103,7 +103,7 @@ cmdsend(int fd, int c, register char* s, register int n, int* code)
 						}
 					}
 					else if (csread(fds[m].fd, cmd, 7, CS_EXACT) == 7 && cmd[0] == '#')
-						svc.pass[fds[m].fd] = (int)strtol(cmd + 1, NiL, 10);
+						svc.pass[fds[m].fd] = (int)strtol(cmd + 1, NULL, 10);
 					else
 					{
 						close(fds[m].fd);
@@ -131,7 +131,7 @@ cmdkill(int fd, int sig)
 
 	n = sfsprintf(buf, sizeof(buf), "#%05d\nk 0 %d\n", 0, sig);
 	sfsprintf(buf, 7, "#%05d\n", n - 7);
-	cmdsend(fd, 'Q', buf, n, NiL);
+	cmdsend(fd, 'Q', buf, n, NULL);
 }
 
 /*
@@ -185,7 +185,7 @@ command(int fd, char** ap)
 #endif
 	if (state.indirect.con)
 	{
-		if (!(svc.pass = newof(0, int, (int)strtol(astconf("OPEN_MAX", NiL, NiL), NiL, 0), 0)))
+		if (!(svc.pass = newof(0, int, (int)strtol(astconf("OPEN_MAX", NULL, NULL), NULL, 0), 0)))
 			error(3, "out of space [pass]");
 		svc.pass[state.indirect.err] = 2;
 		svc.pass[state.indirect.out] = 1;
@@ -278,10 +278,10 @@ command(int fd, char** ap)
 				0,
 				1,
 				c == 'r' ? CO_SILENT : 0,
-				NiL,
-				NiL, 
-				NiL);
-			if (!att[0] || att[0] == '-' && !att[1]) sfprintf(state.string, " %s", NiL);
+				NULL,
+				NULL, 
+				NULL);
+			if (!att[0] || att[0] == '-' && !att[1]) sfprintf(state.string, " %s", NULL);
 			else sfprintf(state.string, " (%d:%s)", strlen(att), att);
 			arg = coinit(CO_SERVER);
 			sfprintf(state.string, " (%d:%s)", strlen(arg), arg);
@@ -388,7 +388,7 @@ server(int fd, int op, int sub, int arg, char* dat)
 		{
 			t = tokopen(dat, 1);
 			while (s = tokread(t))
-				if (!search(SET, s, NiL, NiL))
+				if (!search(SET, s, NULL, NULL))
 					error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: invalid host name", s);
 			tokclose(t);
 		}
@@ -399,7 +399,7 @@ server(int fd, int op, int sub, int arg, char* dat)
 			t = tokopen(dat, 1);
 			while (s = tokread(t))
 			{
-				if (!(sp = search(GET, s, NiL, NiL))) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: not found", s);
+				if (!(sp = search(GET, s, NULL, NULL))) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: not found", s);
 				else if (!sp->fd) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: host not open", s);
 				else shellclose(sp, con[fd].info.user.fds[2]);
 			}
@@ -629,7 +629,7 @@ server(int fd, int op, int sub, int arg, char* dat)
 	case 'l':
 		sv = state.shellv;
 		sp = state.shell;
-		if (dat && *dat) attributes(dat, &attr, NiL);
+		if (dat && *dat) attributes(dat, &attr, NULL);
 		else attr = con[fd].info.user.attr;
 		do
 		{
@@ -651,7 +651,7 @@ server(int fd, int op, int sub, int arg, char* dat)
 			t = tokopen(dat, 1);
 			while (s = tokread(t))
 			{
-				if (!(sp = search(NEW, s, NiL, NiL))) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: invalid host name", s);
+				if (!(sp = search(NEW, s, NULL, NULL))) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: invalid host name", s);
 				else if (sp->fd) error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "%s: host already open", s);
 				else shellopen(sp, con[fd].info.user.fds[2]);
 			}

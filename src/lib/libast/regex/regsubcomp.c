@@ -127,7 +127,7 @@ regsubcomp(regex_t* p, const char* s, const regflags_t* map, int minmatch, regfl
 	if (p->env->flags & REG_NOSUB)
 	{
 		regfree(p);
-		return fatal(disc, REG_BADPAT, NiL);
+		return fatal(disc, REG_BADPAT, NULL);
 	}
 	if (!(sub = (regsub_t*)alloc(p->env->disc, 0, sizeof(regsub_t) + strlen(s))) || !(sub->re_ops = (regsubop_t*)alloc(p->env->disc, 0, (nops = 8) * sizeof(regsubop_t))))
 	{
@@ -291,7 +291,7 @@ regsubcomp(regex_t* p, const char* s, const regflags_t* map, int minmatch, regfl
 				if (!(sub->re_ops = (regsubop_t*)alloc(p->env->disc, sub->re_ops, (nops *= 2) * sizeof(regsubop_t))))
 				{
 					regfree(p);
-					return fatal(disc, REG_ESPACE, NiL);
+					return fatal(disc, REG_ESPACE, NULL);
 				}
 				op = sub->re_ops + n;
 			}
@@ -327,7 +327,7 @@ regsubcomp(regex_t* p, const char* s, const regflags_t* map, int minmatch, regfl
 			if (!(sub->re_ops = (regsubop_t*)alloc(p->env->disc, sub->re_ops, (nops *= 2) * sizeof(regsubop_t))))
 			{
 				regfree(p);
-				return fatal(disc, REG_ESPACE, NiL);
+				return fatal(disc, REG_ESPACE, NULL);
 			}
 			op = sub->re_ops + n;
 		}
@@ -345,7 +345,7 @@ regsubcomp(regex_t* p, const char* s, const regflags_t* map, int minmatch, regfl
 		if (!(sub->re_ops = (regsubop_t*)alloc(p->env->disc, sub->re_ops, (nops *= 2) * sizeof(regsubop_t))))
 		{
 			regfree(p);
-			return fatal(disc, REG_ESPACE, NiL);
+			return fatal(disc, REG_ESPACE, NULL);
 		}
 		op = sub->re_ops + n;
 	}

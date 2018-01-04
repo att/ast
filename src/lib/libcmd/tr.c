@@ -202,7 +202,7 @@ nextchar(Tr_t* tr)
 			}
 			if (tr->iseq)
 			{
-				if ((c = mbtconv(buf, tr->prev, &tr->q)) <= 0 || regnexec(tr->iseq, buf, c, 0, NiL, 0))
+				if ((c = mbtconv(buf, tr->prev, &tr->q)) <= 0 || regnexec(tr->iseq, buf, c, 0, NULL, 0))
 					continue;
 			}
 			return (!tr->type || !tr->convert) ? tr->prev : tr->convert == 'l' ? towlower(tr->prev) : towupper(tr->prev);
@@ -803,7 +803,7 @@ b_tr(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (tr = tropen((unsigned char*)argv[0], (unsigned char*)argv[0] ? (unsigned char*)argv[1] : (unsigned char*)0, flags, context))
 	{
 		trcopy(tr, sfstdin, sfstdout, SF_UNBOUND);

@@ -63,7 +63,7 @@ pathexists(char* path, int mode)
 
 	t = &tree;
 	e = (c = *path) == '/' ? path + 1 : path;
-	cmp = strchr(astconf("PATH_ATTRIBUTES", path, NiL), 'c') ? strcasecmp : strcmp;
+	cmp = strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? strcasecmp : strcmp;
 	if ((ast.locale.set & (AST_LC_debug|AST_LC_find)) == (AST_LC_debug|AST_LC_find))
 		sfprintf(sfstderr, "locale test %s\n", path);
 	while (c)

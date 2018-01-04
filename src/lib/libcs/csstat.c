@@ -36,13 +36,13 @@ initiate(register Cs_t* state, const char* name, char* buf)
 
 	if (!pathpath(CS_STAT_DAEMON, "", PATH_REGULAR|PATH_EXECUTE, buf, PATH_MAX))
 	{
-		messagef((state->id, NiL, -1, "stat: %s: %s: cannot find stat daemon", name, CS_STAT_DAEMON));
+		messagef((state->id, NULL, -1, "stat: %s: %s: cannot find stat daemon", name, CS_STAT_DAEMON));
 		return -1;
 	}
 	av[0] = buf;
 	av[1] = (char*)name;
 	av[2] = 0;
-	procclose(procopen(av[0], av, NiL, NiL, 0));
+	procclose(procopen(av[0], av, NULL, NULL, 0));
 	return 0;
 }
 
@@ -60,7 +60,7 @@ csstat(register Cs_t* state, const char* name, register Csstat_t* sp)
 	static int		init;
 	static char*		dir;
 
-	messagef((state->id, NiL, -8, "stat(%s) call", name));
+	messagef((state->id, NULL, -8, "stat(%s) call", name));
 	CSTIME();
 	if (!name || streq(name, CS_HOST_LOCAL))
 		name = (const char*)csname(state, 0);
@@ -87,7 +87,7 @@ csstat(register Cs_t* state, const char* name, register Csstat_t* sp)
 			}
 			if (n)
 			{
-				messagef((state->id, NiL, -1, "stat: %s: %s: stat error", name, buf));
+				messagef((state->id, NULL, -1, "stat: %s: %s: stat error", name, buf));
 				return -1;
 			}
 		}

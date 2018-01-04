@@ -42,7 +42,7 @@ dllversion(void* dll, const char* path)
 	{
 		state.error = 1;
 		sfsprintf(state.errorbuf, sizeof(state.errorbuf), "plugin_version() not found");
-		errorf("dll", NiL, 1, "dllversion: %s: %s", path, state.errorbuf);
+		errorf("dll", NULL, 1, "dllversion: %s: %s", path, state.errorbuf);
 	}
 	return 0;
 }
@@ -76,10 +76,10 @@ dllcheck(void* dll, const char* path, unsigned long ver, unsigned long* cur)
 		{
 			state.error = 1;
 			sfsprintf(state.errorbuf, sizeof(state.errorbuf), "plugin version %lu older than caller %lu", v, ver);
-			errorf("dll", NiL, 1, "dllcheck: %s: %s", path, state.errorbuf);
+			errorf("dll", NULL, 1, "dllcheck: %s: %s", path, state.errorbuf);
 		}
 		return 0;
 	}
-	errorf("dll", NiL, -1, "dllversion: %s: %lu >= %lu", path, v, ver);
+	errorf("dll", NULL, -1, "dllversion: %s: %lu >= %lu", path, v, ver);
 	return 1;
 }

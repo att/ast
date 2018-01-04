@@ -47,18 +47,18 @@ cssend(register Cs_t* state, int fd, int* fds, int n)
 #if CS_LIB_STREAM
 		dat.buf = "";
 		dat.len = 0;
-		if (putmsg(fd, NiL, &dat, 0) < 0 || write(fd, &hdr, sizeof(hdr)) != sizeof(hdr))
+		if (putmsg(fd, NULL, &dat, 0) < 0 || write(fd, &hdr, sizeof(hdr)) != sizeof(hdr))
 #else
 		if (write(fd, &hdr, sizeof(hdr)) != sizeof(hdr))
 #endif
 		{
-			messagef((state->id, NiL, -1, "send: %d: hdr write error", fd));
+			messagef((state->id, NULL, -1, "send: %d: hdr write error", fd));
 			return -1;
 		}
 		for (i = 0; i < n; i++)
 			if (ioctl(fd, I_SENDFD, FDARG(fds[i])))
 			{
-				messagef((state->id, NiL, -1, "send: %d: ioctl I_SENDFD error", fd));
+				messagef((state->id, NULL, -1, "send: %d: ioctl I_SENDFD error", fd));
 				return -1;
 			}
 	}
@@ -99,22 +99,22 @@ cssend(register Cs_t* state, int fd, int* fds, int n)
 	s = csvar(state, CS_VAR_LOCAL, 0);
 	if (eaccess(s, X_OK) && (mkdir(s, S_IRWXU|S_IRWXG|S_IRWXO) || chmod(s, S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)))
 	{
-		messagef((state->id, NiL, -1, "send: %d: %s: invalid authentication directory ", fd, s));
+		messagef((state->id, NULL, -1, "send: %d: %s: invalid authentication directory ", fd, s));
 		return -1;
 	}
 	if (!(s = pathtemp(tmp, sizeof(tmp), s, "cs", 0)))
 	{
-		messagef((state->id, NiL, -1, "send: %d: authentication tmp file error", fd));
+		messagef((state->id, NULL, -1, "send: %d: authentication tmp file error", fd));
 		return -1;
 	}
 	if ((i = open(s, O_WRONLY|O_CREAT|O_TRUNC, CS_AUTH_MODE)) < 0 || chmod(s, CS_AUTH_MODE) < 0)
 	{
-		messagef((state->id, NiL, -1, "send: %d: %s: authentication file creat error", fd, s));
+		messagef((state->id, NULL, -1, "send: %d: %s: authentication file creat error", fd, s));
 		return -1;
 	}
 	if (remove(s))
 	{
-		messagef((state->id, NiL, -1, "send: %d: %s: authentication file remove error", fd, s));
+		messagef((state->id, NULL, -1, "send: %d: %s: authentication file remove error", fd, s));
 		close(i);
 		errno = EPERM;
 		return -1;
@@ -146,13 +146,13 @@ cssend(register Cs_t* state, int fd, int* fds, int n)
 #else
 	i = sendmsg(fd, &msg, 0) < 0 ? -1 : 0;
 #endif
-	if (i) messagef((state->id, NiL, -1, "send: %d: sendmsg error", fd));
+	if (i) messagef((state->id, NULL, -1, "send: %d: sendmsg error", fd));
 	close(ctl.fds[0]);
 	return i;
 
 #else
 
-	messagef((state->id, NiL, -8, "send(%d,%d) call", fd, n));
+	messagef((state->id, NULL, -8, "send(%d,%d) call", fd, n));
 	if (!access(CS_PROC_FD_TST, F_OK))
 	{
 		register int	i;
@@ -201,13 +201,13 @@ cssend(register Cs_t* state, int fd, int* fds, int n)
 			s += sfsprintf(s, sizeof(state->temp) - (s - state->temp), " %d", fds[i]);
 		s += sfsprintf(s, sizeof(state->temp) - (s - state->temp), "\n");
 		n = s - state->temp;
-		messagef((state->id, NiL, -8, "send(%d, %-*.*s) call", fd, n - 1, n - 1, state->temp));
+		messagef((state->id, NULL, -8, "send(%d, %-*.*s) call", fd, n - 1, n - 1, state->temp));
 		i = send(fd, state->temp, n, 0) == n ? 0 : -1;
-		if (i) messagef((state->id, NiL, -1, "send: %d: write error", fd));
+		if (i) messagef((state->id, NULL, -1, "send: %d: write error", fd));
 		return i;
 	}
 	errno = EINVAL;
-	messagef((state->id, NiL, -1, "send: %d: not supported", fd));
+	messagef((state->id, NULL, -1, "send: %d: not supported", fd));
 	return -1;
 
 #endif

@@ -153,9 +153,9 @@ openfile(const char* path, const char* mode)
 	if (!path || streq(path, "-") || streq(path, "/dev/stdin") || streq(path, "/dev/fd/0"))
 	{
 		sp = sfstdin;
-		sfopen(sp, NiL, mode);
+		sfopen(sp, NULL, mode);
 	}
-	else if (!(sp = sfopen(NiL, path, mode)))
+	else if (!(sp = sfopen(NULL, path, mode)))
 		error(ERROR_SYSTEM|2, "%s: cannot read", path);
 	return sp;
 }
@@ -322,7 +322,7 @@ verify(State_t* state, char* s, char* check, Sfio_t* rp)
 		}
 		if (sp = openfile(file, text ? "rt" : "rb"))
 		{
-			pr(state, rp, sp, file, -1, NiL, NiL);
+			pr(state, rp, sp, file, -1, NULL, NULL);
 			if (!(t = sfstruse(rp)))
 				error(ERROR_SYSTEM|3, "out of space");
 			if (!streq(s, t))
@@ -432,7 +432,7 @@ list(State_t* state, Sfio_t* lp)
 	while (file = sfgetr(lp, '\n', 1))
 		if (sp = openfile(file, state->check ? "rt" : "rb"))
 		{
-			pr(state, sfstdout, sp, file, state->permissions, NiL, state->check);
+			pr(state, sfstdout, sp, file, state->permissions, NULL, state->check);
 			closefile(sp);
 		}
 }
@@ -559,7 +559,7 @@ b_cksum(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 
 	/*
 	 * check the method
@@ -567,8 +567,8 @@ b_cksum(int argc, char** argv, Shbltin_t* context)
 
 	if (method && !(state.sum = sumopen(method)))
 		error(3, "%s: unknown checksum method", method);
-	if (!state.sum && !(state.sum = sumopen(error_info.id)) && !(state.sum = sumopen(astconf("UNIVERSE", NiL, NiL))))
-		state.sum = sumopen(NiL);
+	if (!state.sum && !(state.sum = sumopen(error_info.id)) && !(state.sum = sumopen(astconf("UNIVERSE", NULL, NULL))))
+		state.sum = sumopen(NULL);
 
 	/*
 	 * do it
@@ -604,14 +604,14 @@ b_cksum(int argc, char** argv, Shbltin_t* context)
 					closefile(sp);
 				}
 		}
-		else if (sp = openfile(NiL, "rt"))
+		else if (sp = openfile(NULL, "rt"))
 		{
 			list(&state, sp);
 			closefile(sp);
 		}
 	}
 	else if (!*argv && !state.recursive)
-		pr(&state, sfstdout, sfstdin, "/dev/stdin", state.permissions, NiL, state.check);
+		pr(&state, sfstdout, sfstdin, "/dev/stdin", state.permissions, NULL, state.check);
 	else if (!(fts = fts_open(argv, flags, state.sort)))
 		error(ERROR_system(1), "%s: not found", *argv);
 	else
@@ -621,7 +621,7 @@ b_cksum(int argc, char** argv, Shbltin_t* context)
 			{
 			case FTS_SL:
 				if (!(flags & FTS_PHYSICAL) || (flags & FTS_META) && ent->fts_level == 1)
-					fts_set(NiL, ent, FTS_FOLLOW);
+					fts_set(NULL, ent, FTS_FOLLOW);
 				break;
 			case FTS_F:
 				if (sp = openfile(ent->fts_accpath, "rb"))

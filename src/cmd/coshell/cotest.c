@@ -48,7 +48,7 @@ init(void)
 	message((-1, "init"));
 	state.toss = state.start = cs.time;
 	for (n = 0; n < 10; n++) TOSS;
-	state.fdtotal = (int)strtol(astconf("OPEN_MAX", NiL, NiL), NiL, 0);
+	state.fdtotal = (int)strtol(astconf("OPEN_MAX", NULL, NULL), NULL, 0);
 	if (!(state.con = newof(0, Connection_t, state.fdtotal, 0)))
 		error(3, "out of space [con]");
 	state.con[0].type = POLL;
@@ -62,8 +62,8 @@ init(void)
 
 	state.busy = BUSY;
 	state.grace = GRACE;
-	state.pool = ((s = getenv(CO_ENV_PROC)) && *s) ? (int)strtol(s, NiL, 0) : POOL;
-	if (!(state.home = search(DEF|NEW, csname(0), NiL, NiL)))
+	state.pool = ((s = getenv(CO_ENV_PROC)) && *s) ? (int)strtol(s, NULL, 0) : POOL;
+	if (!(state.home = search(DEF|NEW, csname(0), NULL, NULL)))
 		error(3, "cannot get local host address");
 	state.shell = state.shellnext = state.home;
 	message((-1, "local name is %s", state.home->name));
@@ -72,7 +72,7 @@ init(void)
 	 * load the local net configuration
 	 */
 
-	info(DEF|NEW, NiL);
+	info(DEF|NEW, NULL);
 
 	/*
 	 * bias the local host so it can generate more work
@@ -103,7 +103,7 @@ main(int argc, char** argv)
 		break;
 	case '?':
 	case ':':
-		attributes(s, &attr, NiL);
+		attributes(s, &attr, NULL);
 		sp = state.shell;
 		do
 		{
@@ -119,7 +119,7 @@ main(int argc, char** argv)
 		} while ((sp = sp->next) != state.shell);
 		break;
 	case '=':
-		if (!search(SET, s, NiL, NiL))
+		if (!search(SET, s, NULL, NULL))
 			error(2, "%s: invalid host name", s);
 		break;
 	default:

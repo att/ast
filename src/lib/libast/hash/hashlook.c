@@ -202,7 +202,7 @@ hashlook(Hash_table_t* tab, const char* name, long flags, const char* value)
 				return((char*)value);
 
 			case HASH_RENAME:
-				if (tab != top || tab->frozen || (b->hash & (HASH_KEEP|HASH_OPAQUED)) || hashlook(top, value, (flags&(HASH_HASHED|HASH_INTERNAL))|HASH_LOOKUP, NiL))
+				if (tab != top || tab->frozen || (b->hash & (HASH_KEEP|HASH_OPAQUED)) || hashlook(top, value, (flags&(HASH_HASHED|HASH_INTERNAL))|HASH_LOOKUP, NULL))
 					return(0);
 				name = (char*)b->name;
 				if (!(tab->flags & HASH_ALLOCATE)) b->name = (char*)value;
@@ -228,7 +228,7 @@ hashlook(Hash_table_t* tab, const char* name, long flags, const char* value)
 					else
 					{
 						 m++;
-						 if (!(t = tab->root->local->region ? (char*)(*tab->root->local->region)(tab->root->local->handle, NiL, m, 0) : (char*)malloc(m)))
+						 if (!(t = tab->root->local->region ? (char*)(*tab->root->local->region)(tab->root->local->handle, NULL, m, 0) : (char*)malloc(m)))
 							return(0);
 						b->name = strcpy(t, value);
 					}
@@ -306,7 +306,7 @@ hashlook(Hash_table_t* tab, const char* name, long flags, const char* value)
 			m = tab->root->namesize ? tab->root->namesize : strlen(name) + 1;
 			if (tab->root->local->region)
 			{
-				if (!(b = (Hash_bucket_t*)(*tab->root->local->region)(tab->root->local->handle, NiL, n + m, 0)))
+				if (!(b = (Hash_bucket_t*)(*tab->root->local->region)(tab->root->local->handle, NULL, n + m, 0)))
 					return(0);
 				memset(b, 0, n + m);
 			}
@@ -319,7 +319,7 @@ hashlook(Hash_table_t* tab, const char* name, long flags, const char* value)
 		{
 			if (tab->root->local->region)
 			{
-				if (!(b = (Hash_bucket_t*)(*tab->root->local->region)(tab->root->local->handle, NiL, n, 0)))
+				if (!(b = (Hash_bucket_t*)(*tab->root->local->region)(tab->root->local->handle, NULL, n, 0)))
 					return(0);
 				memset(b, 0, n);
 			}

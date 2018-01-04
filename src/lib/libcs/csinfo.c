@@ -37,7 +37,7 @@ csinfo(register Cs_t* state, const char* file, int* line)
 	char		tmp[PATH_MAX];
 	struct stat	st;
 
-	messagef((state->id, NiL, -8, "info(%s) call", file));
+	messagef((state->id, NULL, -8, "info(%s) call", file));
 	if (!file || streq(file, "-")) file = CS_SVC_INFO;
 	if (strmatch(file, "*[ \t\n=]*")) sp = tokline(file, SF_STRING, line);
 	else if (!strchr(file, '/') || stat(file, &st) || S_ISDIR(st.st_mode) || !(sp = tokline(file, SF_READ, line)))
@@ -50,7 +50,7 @@ csinfo(register Cs_t* state, const char* file, int* line)
 				break;
 			}
 		}
-	if (!sp) messagef((state->id, NiL, -1, "info: %s: not found", file));
+	if (!sp) messagef((state->id, NULL, -1, "info: %s: not found", file));
 	return sp;
 }
 

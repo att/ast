@@ -141,7 +141,7 @@ gl_type(glob_t* gp, const char* path, int flags)
 static int
 gl_attr(glob_t* gp, const char* path, int flags)
 {
-	return strchr(astconf("PATH_ATTRIBUTES", path, NiL), 'c') ? GLOB_ICASE : 0;
+	return strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? GLOB_ICASE : 0;
 }
 
 /*
@@ -341,7 +341,7 @@ again:
 			}
 			if (quote)
 			{
-				trim(ap->gl_begin, rescan, &t1, NiL, NiL);
+				trim(ap->gl_begin, rescan, &t1, NULL, NULL);
 				rescan -= t1;
 			}
 			if (!first && !*rescan && *(rescan - 2) == gp->gl_delim)
@@ -350,10 +350,10 @@ again:
 				c = (*gp->gl_type)(gp, prefix, 0);
 				*(rescan - 2) = gp->gl_delim;
 				if (c == GLOB_DIR)
-					addmatch(gp, NiL, prefix, NiL, rescan - 1, anymeta);
+					addmatch(gp, NULL, prefix, NULL, rescan - 1, anymeta);
 			}
 			else if ((anymeta || !(gp->gl_flags & GLOB_NOCHECK)) && (*gp->gl_type)(gp, prefix, 0))
-				addmatch(gp, NiL, prefix, NiL, NiL, anymeta);
+				addmatch(gp, NULL, prefix, NULL, NULL, anymeta);
 			return;
 		case '[':
 			if (!bracket)
@@ -530,16 +530,16 @@ skip:
 			{
 				if (notdir = (gp->gl_status & GLOB_NOTDIR))
 					gp->gl_status &= ~GLOB_NOTDIR;
-				if (ire && !regexec(ire, name, 0, NiL, 0))
+				if (ire && !regexec(ire, name, 0, NULL, 0))
 					continue;
 				if (matchdir && (name[0] != '.' || name[1] && (name[1] != '.' || name[2])) && !notdir)
-					addmatch(gp, prefix, name, matchdir, NiL, anymeta);
-				if (!regexec(pre, name, 0, NiL, 0))
+					addmatch(gp, prefix, name, matchdir, NULL, anymeta);
+				if (!regexec(pre, name, 0, NULL, 0))
 				{
 					if (!rescan || !notdir)
-						addmatch(gp, prefix, name, rescan, NiL, anymeta);
+						addmatch(gp, prefix, name, rescan, NULL, anymeta);
 					if (starstar==1 || (starstar==2 && !notdir))
-						addmatch(gp, prefix, name, starstar==2?"":NiL, NiL, anymeta);
+						addmatch(gp, prefix, name, starstar==2?"":NULL, NULL, anymeta);
 				}
 				errno = 0;
 			}

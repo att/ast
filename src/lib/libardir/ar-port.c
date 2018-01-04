@@ -140,7 +140,7 @@ portopen(Ardir_t* ar, char* buf, size_t n)
 	name = hdr->ar_name;
 	if (name[0] == '#' && name[1] == '1' && name[2] == TERM_port)
 	{
-		i = strtol(name + 3, NiL, 10);
+		i = strtol(name + 3, NULL, 10);
 		if (n < (MAGIC_SIZE + sizeof(Header_t) + i))
 			return -1;
 		name = (char*)(hdr + 1);
@@ -277,7 +277,7 @@ portnext(Ardir_t* ar)
 	ar->dirent.name = state->header.ar_name;
 	ar->dirent.name[sizeof(state->header.ar_name)] = 0;
 	if (state->names && (*ar->dirent.name == TERM_port || *ar->dirent.name == ' '))
-		ar->dirent.name = state->names + strtol(ar->dirent.name + 1, NiL, 10);
+		ar->dirent.name = state->names + strtol(ar->dirent.name + 1, NULL, 10);
 	if (ar_uid_gid(ar, state->header.ar_uid, &n))
 		return 0;
 	ar->dirent.uid = n;
@@ -300,7 +300,7 @@ portnext(Ardir_t* ar)
 	state->offset += n + (n & 01);
 	if (ar->dirent.name[0] == '#' && ar->dirent.name[1] == '1' && ar->dirent.name[2] == TERM_port)
 	{
-		n = strtol(ar->dirent.name + 3, NiL, 10);
+		n = strtol(ar->dirent.name + 3, NULL, 10);
 		ar->dirent.size -= n;
 		if ((n + 1) >= state->size)
 		{

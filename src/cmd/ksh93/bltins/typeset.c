@@ -1069,7 +1069,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 	if(arg)
 	{
 #ifdef SH_PLUGIN_VERSION
-		if(!(library = dllplugin(SH_ID, arg, NiL, SH_PLUGIN_VERSION, &ver, RTLD_LAZY, path, sizeof(path))))
+		if(!(library = dllplugin(SH_ID, arg, NULL, SH_PLUGIN_VERSION, &ver, RTLD_LAZY, path, sizeof(path))))
 		{
 			errormsg(SH_DICT,ERROR_exit(0),"%s: %s",arg,dllerror(0));
 			return(1);
@@ -1087,7 +1087,7 @@ int	b_builtin(int argc,char *argv[],Shbltin_t *context)
 			return(1);
 		}
 #endif
-		sh_addlib(tdata.sh,library,arg,NiL);
+		sh_addlib(tdata.sh,library,arg,NULL);
 	}
 	else
 #endif /* SHOPT_DYNAMIC */

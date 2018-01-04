@@ -36,9 +36,9 @@ cosystem(const char* cmd)
 
 	if (!cmd)
 		return !eaccess(pathshell(), X_OK);
-	if (!(co = coopen(NiL, CO_ANY, NiL)))
+	if (!(co = coopen(NULL, CO_ANY, NULL)))
 		return -1;
-	if (cj = coexec(co, cmd, CO_SILENT, NiL, NiL, NiL))
+	if (cj = coexec(co, cmd, CO_SILENT, NULL, NULL, NULL))
 		cj = cowait(co, cj, -1);
 	if (!cj)
 		return -1;

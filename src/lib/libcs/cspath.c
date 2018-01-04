@@ -149,7 +149,7 @@ cspath(register Cs_t* state, register int fd, int flags)
 		if (tcp.raddr) sfsprintf(state->path, sizeof(state->path), "/dev/tcp/%s/%d.%d", (flags & CS_PATH_NAME) ? csname(state, tcp.raddr) : csntoa(state, tcp.raddr), ntohs(tcp.rport), ntohs(tcp.lport));
 		else
 		{
-			if (!tcp.laddr) tcp.laddr = csaddr(state, NiL);
+			if (!tcp.laddr) tcp.laddr = csaddr(state, NULL);
 			sfsprintf(state->path, sizeof(state->path), "/dev/tcp/%s/%d", (flags & CS_PATH_NAME) ? csname(state, tcp.laddr) : csntoa(state, tcp.laddr), ntohs(tcp.lport));
 		}
 	}
@@ -174,12 +174,12 @@ cspath(register Cs_t* state, register int fd, int flags)
 		namlen = sizeof(rmt);
 		if (!getpeername(fd, (struct sockaddr*)&rmt, &namlen) && namlen == sizeof(rmt) && rmt.sin_family == AF_INET)
 		{
-			if (!rmt.sin_addr.s_addr) rmt.sin_addr.s_addr = csaddr(state, NiL);
+			if (!rmt.sin_addr.s_addr) rmt.sin_addr.s_addr = csaddr(state, NULL);
 			sfsprintf(state->path, sizeof(state->path), "/dev/%s/%s/%d.%d", s, (flags & CS_PATH_NAME) ? csname(state, (unsigned long)rmt.sin_addr.s_addr) : csntoa(state, (unsigned long)rmt.sin_addr.s_addr), ntohs((unsigned short)rmt.sin_port), ntohs((unsigned short)lcl.sin_port));
 		}
 		else
 		{
-			if (!lcl.sin_addr.s_addr) lcl.sin_addr.s_addr = csaddr(state, NiL);
+			if (!lcl.sin_addr.s_addr) lcl.sin_addr.s_addr = csaddr(state, NULL);
 			sfsprintf(state->path, sizeof(state->path), "/dev/%s/%s/%d", s, (flags & CS_PATH_NAME) ? csname(state, (unsigned long)lcl.sin_addr.s_addr) : csntoa(state, (unsigned long)lcl.sin_addr.s_addr), ntohs((unsigned short)lcl.sin_port));
 		}
 	}

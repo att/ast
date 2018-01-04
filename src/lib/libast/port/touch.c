@@ -70,5 +70,5 @@ touch(const char* path, time_t at, time_t mt, int flags)
 		mv.tv_nsec = 0;
 		mp = &mv;
 	}
-	return tvtouch(path, ap, mp, NiL, flags & 1);
+	return tvtouch(path, ap, mp, NULL, flags & 1);
 }

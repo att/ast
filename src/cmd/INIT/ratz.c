@@ -44,10 +44,6 @@ static const char usage[] =
 "[+SEE ALSO?\bgunzip\b(1), \bpackage\b(1), \bpax\b(1), \bsear\b(1), \btar\b(1)]"
 ;
 
-#else
-
-#define NiL		((char*)0)
-
 #endif
 
 #define METER_width	80
@@ -4808,7 +4804,7 @@ char**	argv;
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	argv += opt_info.index;
 #else
 	while ((s = *++argv) && *s == '-' && *(s + 1))

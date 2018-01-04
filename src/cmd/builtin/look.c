@@ -261,7 +261,7 @@ b_look(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(bp = *argv++))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (file = *argv)
 	{
 		argv++;
@@ -294,7 +294,7 @@ b_look(int argc, char** argv, Shbltin_t* context)
 	{
 		if (streq(file, "-") || streq(file, "/dev/stdin") || streq(file, "/dev/fd/0"))
 			fp = sfstdin;
-		else if (!(fp = sfopen(NiL, file, "r")))
+		else if (!(fp = sfopen(NULL, file, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", file);
 			continue;

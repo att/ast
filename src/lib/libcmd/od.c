@@ -510,7 +510,7 @@ mform(State_t* state, Format_t* fp, Sfio_t* op, unsigned char* u)
 		return;
 	}
 	if (isdigit(*(s + 1)))
-		sfprintf(op, "%02lx", strtol(s + 1, NiL, 8));
+		sfprintf(op, "%02lx", strtol(s + 1, NULL, 8));
 	else
 	{
 		sfputc(op, '\\');
@@ -781,7 +781,7 @@ format(State_t* state, char* t)
 		if (isdigit(*t))
 		{
 			c = 0;
-			n = (int)strton(t, &e, NiL, 1);
+			n = (int)strton(t, &e, NULL, 1);
 			t = e;
 		}
 		else
@@ -950,7 +950,7 @@ init(State_t* state, char*** p)
 			state->file = "/dev/stdin";
 			ip = sfstdin;
 		}
-		else if (!(ip = sfopen(NiL, state->file, "r")))
+		else if (!(ip = sfopen(NULL, state->file, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", state->file);
 			error_info.errors = 1;
@@ -1286,7 +1286,7 @@ optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 	switch (*s)
 	{
 	case 'c':
-		for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
+		for (ic = iconv_list(NULL); ic; ic = iconv_list(ic))
 			if (ic->ccode >= 0)
 				n += sfprintf(sp, "[%c:%s?%s]", ic->match[ic->match[0] == '('], ic->name, ic->desc);
 		break;
@@ -1372,7 +1372,7 @@ b_od(int argc, char** argv, Shbltin_t* context)
 			case 'b':
 			case 'm':
 				n = *s++;
-				state.buffer.size = strton(s, &e, NiL, 1);
+				state.buffer.size = strton(s, &e, NULL, 1);
 				if (n == 'b' && !(state.buffer.base = vmnewof(state.vm, 0, char, state.buffer.size, 0)))
 				{
 					error(ERROR_SYSTEM|2, "out of space");
@@ -1492,7 +1492,7 @@ b_od(int argc, char** argv, Shbltin_t* context)
 	if (error_info.errors)
 	{
 		vmclose(state.vm);
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	}
 	switch (n = *state.base)
 	{

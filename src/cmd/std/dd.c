@@ -500,7 +500,7 @@ main(int argc, char** argv)
 
 					sfputc(sp, ']');
 					sfputc(sp, '{');
-					for (ic = iconv_list(NiL); ic; ic = iconv_list(ic))
+					for (ic = iconv_list(NULL); ic; ic = iconv_list(ic))
 					{
 						sfputc(sp, '[');
 						sfputc(sp, '+');
@@ -549,7 +549,7 @@ main(int argc, char** argv)
 			{
 				if (e = strchr(v, ','))
 					*e = 0;
-				vp = (Operand_t*)strsearch(&state.conv_begin, &state.conv_end - &state.conv_begin + 1, sizeof(Operand_t), stracmp, v, NiL);
+				vp = (Operand_t*)strsearch(&state.conv_begin, &state.conv_end - &state.conv_begin + 1, sizeof(Operand_t), stracmp, v, NULL);
 				if (e)
 					*e++ = ',';
 				if (!vp)
@@ -564,7 +564,7 @@ main(int argc, char** argv)
 			c = 0;
 			for (;;)
 			{
-				n = strtonll(v, &e, NiL, 0);
+				n = strtonll(v, &e, NULL, 0);
 				if (n < 0)
 					error(3, "%s: %s must be >= 0", v, op->name);
 				if (!c)
@@ -590,7 +590,7 @@ main(int argc, char** argv)
 		}
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	error_info.exit = fini;
 	switch ((long)(state.conv.value.number & (A2E|A2I|A2N|A2O|E2A|I2A|N2A|O2A)))
 	{
@@ -698,23 +698,23 @@ main(int argc, char** argv)
 			fcntl(sffileno(sfstdin), F_SETFL, i & ~O_NONBLOCK);
 #endif
 	}
-	else if (!(state.in.fp = sfopen(NiL, s, "rb")))
+	else if (!(state.in.fp = sfopen(NULL, s, "rb")))
 		error(ERROR_SYSTEM|3, "%s: cannot read", s);
 	if (!(s = state.ofn.value.string))
 	{
 		state.ofn.value.string = "/dev/stdout";
 		state.out.fp = sfstdout;
 	}
-	else if (!(state.out.fp = sfopen(NiL, s, (state.conv.value.number & NOTRUNC) ? "a+b" : state.oseek.value.number ? "w+b" : "wb")))
+	else if (!(state.out.fp = sfopen(NULL, s, (state.conv.value.number & NOTRUNC) ? "a+b" : state.oseek.value.number ? "w+b" : "wb")))
 		error(ERROR_SYSTEM|3, "%s: cannot write", s);
 	if ((state.conv.value.number & ISPECIAL) || fstat(sffileno(state.in.fp), &st) || !S_ISREG(st.st_mode))
 		state.in.special = 1;
 	if (state.in.special && !(state.conv.value.number & BLOCK) && (n = state.ibs.value.number))
-		sfsetbuf(state.in.fp, NiL, n);
+		sfsetbuf(state.in.fp, NULL, n);
 	if ((state.conv.value.number & OSPECIAL) || fstat(sffileno(state.out.fp), &st) || !S_ISREG(st.st_mode))
 		state.out.special = 1;
 	if (state.out.special && !(state.conv.value.number & UNBLOCK) && (n = state.obs.value.number))
-		sfsetbuf(state.out.fp, NiL, n);
+		sfsetbuf(state.out.fp, NULL, n);
 	state.bs.value.number = state.ibs.value.number;
 	if (state.obs.value.number > state.bs.value.number)
 		state.bs.value.number = state.obs.value.number;

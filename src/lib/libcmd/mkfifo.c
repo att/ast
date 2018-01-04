@@ -79,7 +79,7 @@ b_mkfifo(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !*argv)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	mask = umask(0);
 	if (!mflag)
 	{

@@ -208,7 +208,7 @@ typedef struct
  */
 
 #define elementsof(x)	(sizeof(x)/sizeof(x[0]))
-#define getconf(x)	strtol(astconf((x),NiL,NiL),NiL,0)
+#define getconf(x)	strtol(astconf((x), NULL, NULL), NULL,0)
 #define integralof(x)	(((char*)(x))-((char*)0))
 #define newof(p,t,n,x)	((p)?(t*)realloc((char*)(p),sizeof(t)*(n)+(x)):(t*)calloc(1,sizeof(t)*(n)+(x)))
 #define oldof(p,t,n,x)	((p)?(t*)realloc((char*)(p),sizeof(t)*(n)+(x)):(t*)malloc(sizeof(t)*(n)+(x)))
@@ -221,10 +221,8 @@ typedef struct
 #define strsignal(s)	fmtsignal(s)
 
 #if defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)
-#define NiL		0
 #define NoP(x)		(void)(x)
 #else
-#define NiL		((char*)0)
 #define NoP(x)		(&x,1)
 #endif
 

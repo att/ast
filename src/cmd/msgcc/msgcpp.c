@@ -158,7 +158,7 @@ main(int argc, char** argv)
 		s = *argv;
 	error_info.id = s;
 	ppop(PP_DEFAULT, PPDEFAULT);
-	optjoin(argv, msgppargs, ppargs, NiL);
+	optjoin(argv, msgppargs, ppargs, NULL);
 	if (strlen(s) >= 5 && *(s + 3) != 'c')
 	{
 		ppop(PP_PLUSPLUS, 1);

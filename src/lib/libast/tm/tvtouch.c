@@ -175,7 +175,7 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 	}
 	if (!utimets(path, ts))
 		return 0;
-	if (errno != ENOENT && av == (const Tv_t*)&now && mv == (const Tv_t*)&now && !utimets(path, NiL))
+	if (errno != ENOENT && av == (const Tv_t*)&now && mv == (const Tv_t*)&now && !utimets(path, NULL))
 	{
 		errno = oerrno;
 		return 0;
@@ -203,7 +203,7 @@ tvtouch(const char* path, const Tv_t* av, const Tv_t* mv, const Tv_t* cv, int fl
 	}
 	if (!utimes(path, am))
 		return 0;
-	if (errno != ENOENT && av == (const Tv_t*)&now && mv == (const Tv_t*)&now && !utimes(path, NiL))
+	if (errno != ENOENT && av == (const Tv_t*)&now && mv == (const Tv_t*)&now && !utimes(path, NULL))
 	{
 		errno = oerrno;
 		return 0;

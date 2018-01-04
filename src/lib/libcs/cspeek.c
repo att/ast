@@ -71,7 +71,7 @@ cspeek(register Cs_t* state, int fd, void* buf, size_t siz)
 			if (n > 0) n = pk.databuf.len;
 			return n;
 		}
-		messagef((state->id, NiL, -1, "peek: %d: ioctl I_PEEK error", fd));
+		messagef((state->id, NULL, -1, "peek: %d: ioctl I_PEEK error", fd));
 		state->nostream = fd;
 	}
 #endif
@@ -83,11 +83,11 @@ cspeek(register Cs_t* state, int fd, void* buf, size_t siz)
 			state->nosocket = -1;
 			return n;
 		}
-		messagef((state->id, NiL, -1, "peek: %d: recv MSG_PEEK error", fd));
+		messagef((state->id, NULL, -1, "peek: %d: recv MSG_PEEK error", fd));
 		state->nosocket = fd;
 	}
 #endif
-	messagef((state->id, NiL, -1, "peek: %d: no peek", fd));
+	messagef((state->id, NULL, -1, "peek: %d: no peek", fd));
 	return -1;
 }
 

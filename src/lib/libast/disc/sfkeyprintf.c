@@ -222,17 +222,17 @@ getfmt(Sfio_t* sp, void* vp, Sffmt_t* dp)
 	case 'd':
 	case 'i':
 		fp->fmt.size = sizeof(Sflong_t);
-		value->q = (Sflong_t)(s ? strtoll(s, NiL, 0) : n);
+		value->q = (Sflong_t)(s ? strtoll(s, NULL, 0) : n);
 		break;
 	case 'o':
 	case 'u':
 	case 'x':
 		fp->fmt.size = sizeof(Sflong_t);
-		value->q = s ? (Sflong_t)strtoull(s, NiL, 0) : n;
+		value->q = s ? (Sflong_t)strtoull(s, NULL, 0) : n;
 		break;
 	case 'p':
 		if (s)
-			n = strtoll(s, NiL, 0);
+			n = strtoll(s, NULL, 0);
 		value->p = pointerof(n);
 		break;
 	case 'q':
@@ -291,7 +291,7 @@ getfmt(Sfio_t* sp, void* vp, Sffmt_t* dp)
 					if (regcomp(fp->re[x], f.next, REG_DELIMITED|REG_NULL))
 						break;
 					f.next += fp->re[x]->re_npat;
-					if (regsubcomp(fp->re[x], f.next, NiL, 0, 0))
+					if (regsubcomp(fp->re[x], f.next, NULL, 0, 0))
 						break;
 					f.next += fp->re[x]->re_npat;
 					if (!regexec(fp->re[x], s, elementsof(match), match, 0) && !regsubexec(fp->re[x], s, elementsof(match), match))

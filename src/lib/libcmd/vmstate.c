@@ -132,7 +132,7 @@ visit(Vmalloc_t* vm, void* addr, size_t size, Vmdisc_t* disc, void* handle)
 
 	vmstat(vm, &state->vs);
 	state->vm = vm;
-	sfkeyprintf(sfstdout, state, state->format, key, NiL);
+	sfkeyprintf(sfstdout, state, state->format, key, NULL);
 	sfprintf(sfstdout, "\n");
 	return 0;
 }
@@ -163,9 +163,9 @@ b_vmstate(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || *argv)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	if (!state.format)
 		state.format = FORMAT;
-	vmsegwalk(NiL, visit, &state);
+	vmsegwalk(NULL, visit, &state);
 	return 0;
 }

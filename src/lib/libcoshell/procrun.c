@@ -38,7 +38,7 @@ coprocrun(const char* path, char** argv, int flags)
 	int			n;
 
 	if (!(a = argv))
-		return procclose(procopen(path, a, NiL, NiL, PROC_FOREGROUND|PROC_GID|PROC_UID|flags));
+		return procclose(procopen(path, a, NULL, NULL, PROC_FOREGROUND|PROC_GID|PROC_UID|flags));
 	if (!(tmp = sfstropen()))
 		return -1;
 	sfputr(tmp, path ? path : "sh", -1);

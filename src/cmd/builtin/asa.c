@@ -133,7 +133,7 @@ b_asa(int argc, char** argv, Shbltin_t* context)
 	{
 		if (!cp || streq(cp,"-"))
 			fp = sfstdin;
-		else if (!(fp = sfopen(NiL, cp, "r")))
+		else if (!(fp = sfopen(NULL, cp, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", cp);
 			error_info.errors = 1;

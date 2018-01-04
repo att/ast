@@ -104,7 +104,7 @@ pathkey_20100601(const char* lang, const char* tool, const char* apath, char* ke
 		 * 3D
 		 */
 
-		if (!flags && fs3d(FS3D_TEST) && (c = mount(path, tmp, FS3D_GET|FS3D_ALL|FS3D_SIZE(PATH_MAX), NiL)) > 1 && c < PATH_MAX)
+		if (!flags && fs3d(FS3D_TEST) && (c = mount(path, tmp, FS3D_GET|FS3D_ALL|FS3D_SIZE(PATH_MAX), NULL)) > 1 && c < PATH_MAX)
 			path = tmp;
 
 		/*
@@ -120,7 +120,7 @@ pathkey_20100601(const char* lang, const char* tool, const char* apath, char* ke
 				k = s + 1;
 			n = memsum(k, strlen(k), n);
 		}
-		if (attr && (getpreroot(attr, path) || getpreroot(attr, NiL)))
+		if (attr && (getpreroot(attr, path) || getpreroot(attr, NULL)))
 			attr += strlen(attr);
 #else
 		if ((k = getenv("VIRTUAL_ROOT")) && *k == '/')
@@ -137,7 +137,7 @@ pathkey_20100601(const char* lang, const char* tool, const char* apath, char* ke
 
 		if (attr)
 			attr = stpcpy(attr, "' UNIVERSE='");
-		if (k = astconf("UNIVERSE", NiL, NiL))
+		if (k = astconf("UNIVERSE", NULL, NULL))
 		{
 			n = memsum(k, strlen(k), n);
 			if (attr)

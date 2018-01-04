@@ -307,7 +307,7 @@ static int Accept(Service_t *sp, int accept_fd)
 			}
 		}
 	}
-	sfsync(NiL);
+	sfsync(NULL);
 	return fd;
 }
 
@@ -330,7 +330,7 @@ static int Action(Service_t *sp, int fd, int close)
 		sfsprintf(buff, sizeof(buff), "%d", fd);
 		r=sh_fun(sp->sh,nq, sp->node, av);
 	}
-	sfsync(NiL);
+	sfsync(NULL);
 	return r > 0 ? -1 : 1;
 }
 
@@ -342,7 +342,7 @@ static int Error(Service_t *sp, int level, const char* arg, ...)
 	if(sp->node)
 		nv_unset(sp->node);
 	free((void*)sp);
-        errorv(NiL, ERROR_exit(1), ap);
+        errorv(NULL, ERROR_exit(1), ap);
         va_end(ap);
 	return 0;
 }
@@ -381,7 +381,7 @@ static void putval(Namval_t* np, const char* val, int flag, Namfun_t* fp)
 	Shell_t	*shp = sh_ptr(np);
 	Service_t* sp = (Service_t*)fp;
 	if (!val)
-		fp = nv_stack(np, NiL);
+		fp = nv_stack(np, NULL);
 	nv_putv(np, val, flag, fp);
 	if (!val)
 	{
@@ -436,7 +436,7 @@ int	b_mkservice(int argc, char** argv, Shbltin_t *context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !(var = *argv++) || !(path = *argv++) || *argv)
-		error(ERROR_usage(2), optusage(NiL));
+		error(ERROR_usage(2), optusage(NULL));
 	if (!(sp = newof(0, Service_t, 1, 0)))
 		error(ERROR_exit(1), "out of space");
 	sp->acceptf = Accept;
@@ -488,7 +488,7 @@ int	b_eloop(int argc, char** argv, Shbltin_t *context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors  || *argv)
-		error(ERROR_usage(2), optusage(NiL));
+		error(ERROR_usage(2), optusage(NULL));
 	while(1)
 	{
 		if(waitnotify(-1, timeout, 0)==0)

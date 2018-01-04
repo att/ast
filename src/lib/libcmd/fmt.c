@@ -608,7 +608,7 @@ b_fmt(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (isoption(&fmt, 'o'))
 		setoption(&fmt, 'c');
 	if (isoption(&fmt, 's'))
@@ -618,7 +618,7 @@ b_fmt(int argc, char** argv, Shbltin_t* context)
 	do {
 		if (!cp || streq(cp, "-"))
 			fmt.in = sfstdin;
-		else if (!(fmt.in = sfopen(NiL, cp, "r")))
+		else if (!(fmt.in = sfopen(NULL, cp, "r")))
 		{
 			error(ERROR_system(0), "%s: cannot open", cp);
 			error_info.errors = 1;

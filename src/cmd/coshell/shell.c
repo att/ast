@@ -100,7 +100,7 @@ shellopen(register Coshell_t* sp, int fd)
 			goto nospace;
 		av[3] = 0;
 		message((-2, "%s %s \"%s\"", sh, av[1], av[2]));
-		if (!(proc = procopen(sh, av, NiL, NiL, 0)))
+		if (!(proc = procopen(sh, av, NULL, NULL, 0)))
 		{
 			if (fd >= 0)
 				error(ERROR_OUTPUT|2, fd, "%s: cannot exec shell", sh);
@@ -183,7 +183,7 @@ shellclose(register Coshell_t* sp, int fd)
 				}
 				else jobkill(jp, SIGKILL);
 			}
-		if (sp->fd != -1) waitpid(-sp->fd, NiL, 0);
+		if (sp->fd != -1) waitpid(-sp->fd, NULL, 0);
 		sp->fd = 0;
 	}
 	else if (sp->fd > 0)
@@ -222,7 +222,7 @@ shellexec(Cojob_t* jp, char* msg, int fd)
 	attr.set = attr.global.set = 0;
 	con = state.con;
 	cmd = strdup(msg);
-	if (tokscan(msg, &end, "%s %d %d %s %s %s %s %s %s", NiL, &id, &flags, &pwd, &out, &err, &att, &env, &act) != 9)
+	if (tokscan(msg, &end, "%s %d %d %s %s %s %s %s %s", NULL, &id, &flags, &pwd, &out, &err, &att, &env, &act) != 9)
 	{
 		error(ERROR_OUTPUT|2, con[fd].info.user.fds[2], "invalid exec message");
 		goto noexec;
@@ -233,7 +233,7 @@ shellexec(Cojob_t* jp, char* msg, int fd)
 		 * find a shell slot
 		 */
 
-		if (cs.time > state.access) info(SET, NiL);
+		if (cs.time > state.access) info(SET, NULL);
 		if (sp == &state.wait) state.joblimit--;
 		if (state.running >= (state.perserver + state.jobwait) || con[fd].info.user.running >= state.peruser)
 		{

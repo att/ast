@@ -73,7 +73,7 @@ interrupt(int sig)
 static void
 done(void)
 {
-	cssclose(NiL);
+	cssclose(NULL);
 }
 
 /*
@@ -135,7 +135,7 @@ cssopen(const char* path, Cssdisc_t* disc)
 	if (!state.servers)
 	{
 		csprotect(&cs);
-		if ((n = (int)strtol(astconf("OPEN_MAX", NiL, NiL), NiL, 0)) < OPEN_MIN)
+		if ((n = (int)strtol(astconf("OPEN_MAX", NULL, NULL), NULL, 0)) < OPEN_MIN)
 			n = OPEN_MIN;
 		if (!(s = newof(0, char, n * (sizeof(Cssfd_t) + sizeof(Cspoll_t) + sizeof(Auth_t)), 0)))
 			return 0;
@@ -160,7 +160,7 @@ cssopen(const char* path, Cssdisc_t* disc)
 	n = n / 2 + 1;
 	css->next = state.servers;
 	state.servers = css;
-	if (!(css->state = csalloc(NiL)))
+	if (!(css->state = csalloc(NULL)))
 		goto bad;
 	css->service = (char*)(css + 1);
 	css->path = css->service + n;
@@ -170,7 +170,7 @@ cssopen(const char* path, Cssdisc_t* disc)
 	if (path && strchr(path, '/'))
 	{
 		strcpy(css->path, path);
-		if (tokscan(css->path, NiL, "/dev/%s/%s/%s", &s, NiL, &t) != 3)
+		if (tokscan(css->path, NULL, "/dev/%s/%s/%s", &s, NULL, &t) != 3)
 		{
 			if (css->disc->errorf)
 				(*css->disc->errorf)(css, css->disc, 3, "%s: invalid connect stream path", path);
@@ -287,7 +287,7 @@ cssopen(const char* path, Cssdisc_t* disc)
 			css->newkey = css->conkey & KEYMASK;
 			if (close(open(css->mount, O_WRONLY|O_CREAT|O_TRUNC, st.st_mode & (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))) ||
 			    chmod(css->mount, st.st_mode & (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) ||
-			    cschallenge(css->state, css->mount, NiL, &css->newkey))
+			    cschallenge(css->state, css->mount, NULL, &css->newkey))
 			{
 				if (css->disc->errorf)
 					(*css->disc->errorf)(css, css->disc, 3, "%s: cannot create service authentication file", css->mount);
@@ -532,11 +532,11 @@ cssfd(register Css_t* css, register int fd, unsigned long op)
 								{
 									flags |= O_NONBLOCK;
 									fcntl(fd, F_SETFL, flags);
-									messagef((state.main->id, NiL, -4, "cssfd: %d O_NONBLOCK", fd));
+									messagef((state.main->id, NULL, -4, "cssfd: %d O_NONBLOCK", fd));
 								}
 							}
 #endif
-							messagef((state.main->id, NiL, -4, "cssfd: %d CS_POLL_WRITE", fd));
+							messagef((state.main->id, NULL, -4, "cssfd: %d CS_POLL_WRITE", fd));
 						}
 					}
 					break;
@@ -563,9 +563,9 @@ cssfd(register Css_t* css, register int fd, unsigned long op)
  show:
 				if (error_info.trace <= -9)
 				{
-					errorf(state.main->id, NiL, -9, "cssfd: pending=%d polling=%d next=%d fd=%d op=0x%08lx", state.fdpending, state.fdpolling, state.fdnext, ofd, oop);
+					errorf(state.main->id, NULL, -9, "cssfd: pending=%d polling=%d next=%d fd=%d op=0x%08lx", state.fdpending, state.fdpolling, state.fdnext, ofd, oop);
  					for (n = 0; n < state.fdpolling; n++)
-						errorf(state.main->id, NiL, -9, "cssfd: index=%d fd=%d events=%06o actionf=%p", n, state.fdpoll[n].fd, state.fdpoll[n].events, state.fdinfo[state.fdpoll[n].fd].actionf);
+						errorf(state.main->id, NULL, -9, "cssfd: index=%d fd=%d events=%06o actionf=%p", n, state.fdpoll[n].fd, state.fdpoll[n].events, state.fdinfo[state.fdpoll[n].fd].actionf);
 				}
 #endif
 				return ip;
@@ -654,7 +654,7 @@ csspoll(unsigned long ms, unsigned long flags)
 						do TOSS(css->newkey); while (n--);
 						css->newkey &= KEYMASK;
 						*css->control = CS_MNT_AUTH;
-						if (cschallenge(css->state, css->mount, NiL, &css->newkey))
+						if (cschallenge(css->state, css->mount, NULL, &css->newkey))
 							css->newkey = css->oldkey;
 					}
 				for (pp = state.fdpoll; pp < state.fdpoll + state.fdpolling;)
@@ -750,7 +750,7 @@ csspoll(unsigned long ms, unsigned long flags)
 					}
 					if (css->disc->wakeup)
 					{
-						messagef((state.main->id, NiL, -4, "csspoll: pending=%d polling=%d z=%I*d wakeup=%I*d remain=%I*d", state.fdpending, state.fdpolling, sizeof(z), z, sizeof(css->disc->wakeup), css->disc->wakeup, sizeof(css->wakeup_remain), css->wakeup_remain));
+						messagef((state.main->id, NULL, -4, "csspoll: pending=%d polling=%d z=%I*d wakeup=%I*d remain=%I*d", state.fdpending, state.fdpolling, sizeof(z), z, sizeof(css->disc->wakeup), css->disc->wakeup, sizeof(css->wakeup_remain), css->wakeup_remain));
 						if (css->wakeup_remain <= z)
 						{
 							(*css->disc->exceptf)(css, CSS_WAKEUP, 0, css->disc);
@@ -792,7 +792,7 @@ csspoll(unsigned long ms, unsigned long flags)
 			}
 			pp = state.fdpoll + state.fdnext;
 			fd = pp->fd;
-			messagef((state.main->id, NiL, -9, "csspoll: pending=%d polling=%d next=%d fd=%d status=%06o", state.fdpending, state.fdpolling, state.fdnext, fd, pp->status));
+			messagef((state.main->id, NULL, -9, "csspoll: pending=%d polling=%d next=%d fd=%d status=%06o", state.fdpending, state.fdpolling, state.fdnext, fd, pp->status));
 			ip = state.fdinfo + fd;
 			css = ip->css;
 			status = pp->status & ~(CS_POLL_BEFORE|CS_POLL_USER);
@@ -814,7 +814,7 @@ csspoll(unsigned long ms, unsigned long flags)
 				if (csrecv(css->state, fd, &id, &fdnew, 1) == 1 &&
 					(ip = cssfd(css, fdnew, CS_POLL_READ)) &&
 					css->disc->acceptf &&
-					(fdnew = (*css->disc->acceptf)(css, ip, &id, NiL, css->disc)) != ip->fd)
+					(fdnew = (*css->disc->acceptf)(css, ip, &id, NULL, css->disc)) != ip->fd)
 						cssfd(css, ip->fd, fdnew >= 0 ? CS_POLL_CMD(fdnew, CS_POLL_MOVE) : CS_POLL_CLOSE);
 				break;
 			case CS_POLL_AUTH|CS_POLL_READ:
@@ -834,7 +834,7 @@ csspoll(unsigned long ms, unsigned long flags)
 							goto reject;
 						break;
 					default:
-						if (key <= CS_KEY_MAX || key != css->newkey && key != css->oldkey || tokscan(t, NiL, "%ld", &ap->id.pid) != 1)
+						if (key <= CS_KEY_MAX || key != css->newkey && key != css->oldkey || tokscan(t, NULL, "%ld", &ap->id.pid) != 1)
 							goto reject;
 						if (!(ap->seq = css->challenge))
 						{
@@ -921,7 +921,7 @@ csspoll(unsigned long ms, unsigned long flags)
 				/*FALLTHROUGH*/
 			case CS_POLL_READ:
 				ip->status = status;
-				messagef((state.main->id, NiL, -9, "csspoll: status=%06o fd=%d actionf=%p", status, fd, ip->actionf));
+				messagef((state.main->id, NULL, -9, "csspoll: status=%06o fd=%d actionf=%p", status, fd, ip->actionf));
 				if (!ip->actionf || (n = (*ip->actionf)(css, ip, css->disc)) == 0)
 				{
 					state.fdpending--;

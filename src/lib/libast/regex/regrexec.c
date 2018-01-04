@@ -178,5 +178,5 @@ regrexec(const regex_t* p, const char* s, size_t len, size_t nmatch, oldregmatch
 		free(match);
 		return r;
 	}
-	return regrexec_20120528(p, s, len, 0, NiL, flags, sep, handle, record);
+	return regrexec_20120528(p, s, len, 0, NULL, flags, sep, handle, record);
 }

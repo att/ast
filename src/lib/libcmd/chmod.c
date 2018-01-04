@@ -233,7 +233,7 @@ b_chmod(int argc, char** argv, Shbltin_t* context)
 	}
 	argv += opt_info.index;
 	if (error_info.errors || !*argv || !amode && !*(argv + 1))
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (chlink)
 	{
 		flags &= ~FTS_META;
@@ -257,7 +257,7 @@ b_chmod(int argc, char** argv, Shbltin_t* context)
 			error(ERROR_exit(1), "%s: invalid mode", amode);
 		}
 	}
-	if (!(fts = fts_open(argv, flags, NiL)))
+	if (!(fts = fts_open(argv, flags, NULL)))
 	{
 		if (ignore)
 			umask(ignore);

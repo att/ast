@@ -88,7 +88,7 @@ static void l_dirname(Sfio_t *outfile, const char *pathname)
 	{
 		while(pathname[2]=='/' && pathname<last)
 			pathname++;
-		if(last!=pathname && pathname[0]=='/' && pathname[1]=='/' && *astconf("PATH_LEADING_SLASHES",NiL,NiL)!='1')
+		if(last!=pathname && pathname[0]=='/' && pathname[1]=='/' && *astconf("PATH_LEADING_SLASHES",NULL,NULL)!='1')
 			pathname++;
 	}
 	sfwrite(outfile,pathname,last+1-pathname);
@@ -128,7 +128,7 @@ b_dirname(int argc, char** argv, Shbltin_t* context)
 	argv += opt_info.index;
 	argc -= opt_info.index;
 	if(error_info.errors || argc != 1)
-		error(ERROR_usage(2),"%s", optusage(NiL));
+		error(ERROR_usage(2),"%s", optusage(NULL));
 	if(!mode)
 		l_dirname(sfstdout,argv[0]);
 	else if(pathpath(argv[0], "", mode, buf, sizeof(buf)))

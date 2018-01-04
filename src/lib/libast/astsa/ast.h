@@ -105,10 +105,8 @@ typedef struct
 #endif
 
 #if defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)
-#define NiL			0
 #define NoP(x)			(void)(x)
 #else
-#define NiL			((char*)0)
 #define NoP(x)			(&x,1)
 #endif
 

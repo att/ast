@@ -258,5 +258,5 @@ jobdone(register Cojob_t* jp)
 		if (cswrite(state.con[jp->fd].info.user.fds[0], buf, n) != n)
 			drop(jp->fd);
 	}
-	if (state.joblimit) jobcheck(NiL);
+	if (state.joblimit) jobcheck(NULL);
 }

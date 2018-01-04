@@ -67,7 +67,7 @@ optinfo(Opt_t* op, Sfio_t* sp, const char* s, Optdisc_t* dp)
 	switch (*s)
 	{
 	case 'm':
-		for (mp = uumeth(NiL); mp->name; mp++)
+		for (mp = uumeth(NULL); mp->name; mp++)
 			sfprintf(sp, "[+%s|%s]", mp->name, mp->alias);
 		break;
 	}
@@ -150,18 +150,18 @@ main(int argc, register char** argv)
 		epath = *argv++;
 	}
 	if (error_info.errors || *argv)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if (!(meth = uumeth(encoding)))
 		error(ERROR_exit(1), "%s: unknown method", encoding);
 	if (uu = uuopen(&disc, meth))
 	{
 		if (!ipath)
 			ip = sfstdin;
-		else if (!(ip = sfopen(NiL, ipath, "rt")))
+		else if (!(ip = sfopen(NULL, ipath, "rt")))
 			error(ERROR_system(1), "%s: cannot read", ipath);
 		if (!opath)
 			op = sfstdout;
-		else if (!(op = sfopen(NiL, opath, "w")))
+		else if (!(op = sfopen(NULL, opath, "w")))
 			error(ERROR_system(1), "%s: cannot write", opath);
 		uuencode(uu, ip, op, SF_UNBOUND, epath);
 		uuclose(uu);

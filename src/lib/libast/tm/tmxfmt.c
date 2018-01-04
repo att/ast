@@ -124,7 +124,7 @@ tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 	char		fmt[32];
 
 	tmlocale();
-	tm = tmxtm(&ts, t, NiL);
+	tm = tmxtm(&ts, t, NULL);
 	if (!format || !*format)
 		format = tm_info.deformat;
 	oformat = format;
@@ -472,7 +472,7 @@ tmxfmt(char* buf, size_t len, const char* format, Time_t t)
 					case 'z':	/* time zone nation code */
 						if (arg)
 						{
-							if ((zp = tmzone(arg, &e, NiL, NiL)) && !*e)
+							if ((zp = tmzone(arg, &e, NULL, NULL)) && !*e)
 							{
 								tm->tm_zone = zp;
 								flags &= ~TM_UTC;

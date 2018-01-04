@@ -87,9 +87,9 @@ fatal(regdisc_t* disc, int code, const char* pattern)
 	if (disc->re_errorf)
 	{
 		if (pattern)
-			(*disc->re_errorf)(NiL, disc, disc->re_errorlevel, "regular expression: %s: %s", pattern, reg_error[code+1]);
+			(*disc->re_errorf)(NULL, disc, disc->re_errorlevel, "regular expression: %s: %s", pattern, reg_error[code+1]);
 		else
-			(*disc->re_errorf)(NiL, disc, disc->re_errorlevel, "regular expression: %s", reg_error[code+1]);
+			(*disc->re_errorf)(NULL, disc, disc->re_errorlevel, "regular expression: %s", reg_error[code+1]);
 	}
 	return code;
 }

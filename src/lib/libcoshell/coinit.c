@@ -143,7 +143,7 @@ coinitialize(Coshell_t* co, int flags)
 		co->init.pwd_ino = st.st_ino;
 		if (state.pwd)
 			free(state.pwd);
-		if (!(state.pwd = getcwd(NiL, 0)))
+		if (!(state.pwd = getcwd(NULL, 0)))
 		{
 			if (errno != EINVAL || !(state.pwd = newof(0, char, PATH_MAX, 0)))
 				return 0;
@@ -279,7 +279,7 @@ coinitialize(Coshell_t* co, int flags)
 			return 0;
 		}
 		t += n / 2;
-		if (!(flags & CO_CROSS) && !pathpath("ignore", NiL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, t, n / 2) && pathpath("bin/ignore", "", PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, t, n / 2))
+		if (!(flags & CO_CROSS) && !pathpath("ignore", NULL, PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, t, n / 2) && pathpath("bin/ignore", "", PATH_ABSOLUTE|PATH_REGULAR|PATH_EXECUTE, t, n / 2))
 		{
 			*strrchr(t, '/') = 0;
 			sfputc(sp, ':');
@@ -360,7 +360,7 @@ coinitialize(Coshell_t* co, int flags)
 				{
 					if (!(t = sfstrrsrv(sp, n)))
 						goto bad;
-					if ((m = mount(NiL, t, FS3D_GET|FS3D_ALL|FS3D_SIZE(n), NiL)) > 0)
+					if ((m = mount(NULL, t, FS3D_GET|FS3D_ALL|FS3D_SIZE(n), NULL)) > 0)
 						m = n;
 					else
 					{

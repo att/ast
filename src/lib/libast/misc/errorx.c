@@ -25,7 +25,7 @@
 
 /*
  * low level for ERROR_translate()
- * this fills in NiL arg defaults and calls error_info.translate
+ * this fills in NULL arg defaults and calls error_info.translate
  */
 
 char*

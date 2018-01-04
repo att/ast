@@ -180,7 +180,7 @@ msgblast(register Msg_call_t* msg)
 #if _mem_f_basetype_statvfs
 				msggetz(&b, e, fp->f_basetype, sizeof(fp->f_basetype));
 #else
-				msggetz(&b, e, NiL, 0);
+				msggetz(&b, e, NULL, 0);
 #endif
 				fp->f_flag = msggetu(&b, e);
 				fp->f_namemax = msggetu(&b, e);

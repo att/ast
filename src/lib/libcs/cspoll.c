@@ -101,17 +101,17 @@ cspoll(Cs_t* state, Cspoll_t* fds, int num, int ms)
 		rp = 0;
 	if (!(events & CS_POLL_CONTROL))
 		ep = 0;
-	messagef((state->id, NiL, -6, "poll: %s num=%d ms=%d sec=%d usec=%d", fmttime("%K", CSTIME()), num, ms, tp ? tp->tv_sec : 0, tp ? tp->tv_usec : 0));
+	messagef((state->id, NULL, -6, "poll: %s num=%d ms=%d sec=%d usec=%d", fmttime("%K", CSTIME()), num, ms, tp ? tp->tv_sec : 0, tp ? tp->tv_usec : 0));
 	num = select(width + 1, rp, wp, ep, tp);
 #else
 	if (!(events & (CS_POLL_READ|CS_POLL_CONTROL)))
 		rp = 0;
-	messagef((state->id, NiL, -6, "poll: %s num=%d ms=%d", fmttime("%K", CSTIME()), num, ms);
+	messagef((state->id, NULL, -6, "poll: %s num=%d ms=%d", fmttime("%K", CSTIME()), num, ms);
 	num = select(width + 1, rp, wp, ms);
 #endif
-	messagef((state->id, NiL, -6, "poll: %s num=%d", fmttime("%K", CSTIME()), num));
+	messagef((state->id, NULL, -6, "poll: %s num=%d", fmttime("%K", CSTIME()), num));
 	if (num < 0)
-		messagef((state->id, NiL, -1, "poll: select error"));
+		messagef((state->id, NULL, -1, "poll: select error"));
 	else
 		for (num = 0, pp = fds; pp < mp; pp++)
 		{
@@ -158,7 +158,7 @@ cspoll(Cs_t* state, Cspoll_t* fds, int num, int ms)
 	n = poll(fds, num, ms);
 #endif
 	if (n < 0)
-		messagef((state->id, NiL, -1, "poll: poll error"));
+		messagef((state->id, NULL, -1, "poll: poll error"));
 	else if (n > 0)
 	{
 		int		i;
@@ -177,7 +177,7 @@ cspoll(Cs_t* state, Cspoll_t* fds, int num, int ms)
 				{
 					int	f = RS_HIPRI;
 
-					if (getmsg(pp->fd, NiL, &buf, &f))
+					if (getmsg(pp->fd, NULL, &buf, &f))
 						pp->status &= ~CS_POLL_CONTROL;
 				}
 #endif
@@ -191,7 +191,7 @@ cspoll(Cs_t* state, Cspoll_t* fds, int num, int ms)
 #else
 
 	errno = EINVAL;
-	messagef((state->id, NiL, -1, "poll: not supported"));
+	messagef((state->id, NULL, -1, "poll: not supported"));
 	return -1;
 
 #endif

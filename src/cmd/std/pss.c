@@ -69,7 +69,7 @@ pssopen(Pssdisc_t* disc)
 	return pss;
  bad:
 	if (disc->errorf)
-		(*disc->errorf)(NiL, disc, ERROR_SYSTEM|2, "out of space");
+		(*disc->errorf)(NULL, disc, ERROR_SYSTEM|2, "out of space");
 	if (vm)
 		vmclose(vm);
 	return 0;

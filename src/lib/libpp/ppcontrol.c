@@ -102,7 +102,7 @@ assert(int op, char* pred, char* args)
 		p = newof(0, struct pplist, 1, 0);
 		p->next = a;
 		p->value = strdup(args);
-		hashput(pp.prdtab, NiL, p);
+		hashput(pp.prdtab, NULL, p);
 	mark:
 		if ((pp.state & COMPILE) && pp.truncate) return;
 		if (sym = ppsymset(pp.symtab, pred))
@@ -1324,7 +1324,7 @@ ppcontrol(void)
 				assert(directive, pp.tmpbuf, pp.args);
 				break;
 			case 0:
-				assert(directive, pp.tmpbuf, NiL);
+				assert(directive, pp.tmpbuf, NULL);
 				break;
 			default:
 				error(2, "invalid predicate argument list");
@@ -1462,7 +1462,7 @@ ppcontrol(void)
 			}
 		linesync:
 			n = error_info.line;
-			error_info.line = strtol(pp.token, NiL, 0);
+			error_info.line = strtol(pp.token, NULL, 0);
 			if (error_info.line == 0 && directive == LINE && (pp.state & STRICT) && !(pp.mode & HOSTED))
 				error(1, "#%s: line number should be > 0", dirname(LINE));
 			pp.state &= ~DISABLE;
@@ -1721,7 +1721,7 @@ ppcontrol(void)
 				ppop(PP_COMPATIBILITY, i0);
 				break;
 			case X_DEBUG:
-				error_info.trace = i0 ? (p ? -strtol(p, NiL, 0) : -1) : 0;
+				error_info.trace = i0 ? (p ? -strtol(p, NULL, 0) : -1) : 0;
 				break;
 			case X_ELSEIF:
 				setoption(ELSEIF, i0);
@@ -1835,7 +1835,7 @@ ppcontrol(void)
 				ppop(PP_LINEID, i0 ? p : (char*)0);
 				break;
 			case X_LINETYPE:
-				ppop(PP_LINETYPE, i0 ? (p ? strtol(p, NiL, 0) : 1) : 0);
+				ppop(PP_LINETYPE, i0 ? (p ? strtol(p, NULL, 0) : 1) : 0);
 				break;
 			case X_MACREF:
 				if (!p)
@@ -1852,10 +1852,10 @@ ppcontrol(void)
 					if (pp.macref && (s = strchr(p, ' ')))
 					{
 						*s++ = 0;
-						c = strtol(s, NiL, 0);
+						c = strtol(s, NULL, 0);
 						var.type = pp.truncate;
 						pp.truncate = PPTOKSIZ;
-						(*pp.macref)(pprefmac(p, REF_CREATE), error_info.file, error_info.line - (c == REF_NORMAL ? 2 : 1), c, (s = strchr(s, ' ')) ? strtol(s, NiL, 0) : 0L);
+						(*pp.macref)(pprefmac(p, REF_CREATE), error_info.file, error_info.line - (c == REF_NORMAL ? 2 : 1), c, (s = strchr(s, ' ')) ? strtol(s, NULL, 0) : 0L);
 						pp.truncate = var.type;
 					}
 					error_info.line -= 2;
@@ -1928,7 +1928,7 @@ ppcontrol(void)
 			edit = edit->next = newof(0, struct edit, 1, 0);
 		else
 			edit = map->edit = newof(0, struct edit, 1, 0);
-		if (!(i0 = regcomp(&edit->re, s, REG_AUGMENTED|REG_DELIMITED|REG_LENIENT|REG_NULL)) && !(i0 = regsubcomp(&edit->re, s += edit->re.re_npat, NiL, 0, 0)))
+		if (!(i0 = regcomp(&edit->re, s, REG_AUGMENTED|REG_DELIMITED|REG_LENIENT|REG_NULL)) && !(i0 = regsubcomp(&edit->re, s += edit->re.re_npat, NULL, 0, 0)))
 			s += edit->re.re_npat;
 		if (i0)
 			regfatal(&edit->re, 4, i0);
@@ -1950,7 +1950,7 @@ ppcontrol(void)
 				/*INDENT*/
 				break;
 			case X_MAPINCLUDE:
-				ppmapinclude(NiL, p5);
+				ppmapinclude(NULL, p5);
 				break;
 			case X_MODERN:
 				setoption(MODERN, i0);
@@ -2085,7 +2085,7 @@ ppcontrol(void)
 				if (pp.state & TRANSITION) ppop(PP_COMPATIBILITY, i0);
 				break;
 			case X_TRUNCATE:
-				ppop(PP_TRUNCATE, i0 ? (p ? strtol(p, NiL, 0) : TRUNCLENGTH) : 0);
+				ppop(PP_TRUNCATE, i0 ? (p ? strtol(p, NULL, 0) : TRUNCLENGTH) : 0);
 				break;
 			case X_VENDOR:
 				tokop(PP_VENDOR, p3, p, i0, TOKOP_UNSET|TOKOP_STRING|TOKOP_DUP);

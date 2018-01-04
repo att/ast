@@ -926,14 +926,14 @@ list_keyword(Sfio_t* sp, register Keyword_t* key, char* value, unsigned int flag
 			else
 				i = n = key->type;
 			if (state.all)
-				list_all(sp, NiL, flags);
+				list_all(sp, NULL, flags);
 			for (; i <= n; i++)
 			{
 				f = flags;
 				for (j = 0; j < elementsof(keywords); j++)
 					if (keywords[j].index == i)
 					{
-						list_keyword(sp, &keywords[j], NiL, f);
+						list_keyword(sp, &keywords[j], NULL, f);
 						f &= ~LC_category;
 					}
 			}
@@ -976,9 +976,9 @@ scan(Sfio_t* sp, Keyword_t* key, unsigned long flags)
 			break;
 		}
 		if (!key)
-			list_locale(sp, NiL, lc, flags);
+			list_locale(sp, NULL, lc, flags);
 		else if (setlocale(LC_ALL, lc->name))
-			list_keyword(sp, key, NiL, flags&~LC_quote);
+			list_keyword(sp, key, NULL, flags&~LC_quote);
 	}
 	return 0;
 }
@@ -1059,7 +1059,7 @@ main(int argc, char** argv)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_USAGE|4, "%s", optusage(NiL));
+		error(ERROR_USAGE|4, "%s", optusage(NULL));
 	argv += opt_info.index;
 	if (collate)
 	{
@@ -1067,7 +1067,7 @@ main(int argc, char** argv)
 		{
 			sfprintf(sfstdout, "%s", name);
 			sfsprintf(col, sizeof(col), ".%s.]", name);
-			if ((i = regcollate(col, NiL, buf, sizeof(buf), NiL)) < 0)
+			if ((i = regcollate(col, NULL, buf, sizeof(buf), NULL)) < 0)
 			{
 				sfprintf(sfstdout, "\tERROR\n");
 				continue;
@@ -1099,7 +1099,7 @@ main(int argc, char** argv)
 	}
 	if (composite)
 	{
-		sfprintf(sfstdout, "%s\n", setlocale(LC_ALL, NiL));
+		sfprintf(sfstdout, "%s\n", setlocale(LC_ALL, NULL));
 		return error_info.errors != 0;
 	}
 	if (transform)
@@ -1121,7 +1121,7 @@ main(int argc, char** argv)
 		{
 			if (!(flags & (LC_abbreviated|LC_qualified|LC_local|LC_verbose)))
 				flags |= LC_abbreviated;
-			return scan(sfstdout, NiL, flags);
+			return scan(sfstdout, NULL, flags);
 		}
 		if (!flags)
 		{
@@ -1129,17 +1129,17 @@ main(int argc, char** argv)
 			sfprintf(sfstdout, "%s=", name);
 			if (!(s = getenv("LANG")))
 				s = "POSIX";
-			sfprintf(sfstdout, "%s\n", fmtquote(s, "'", NiL, strlen(s), 0));
+			sfprintf(sfstdout, "%s\n", fmtquote(s, "'", NULL, strlen(s), 0));
 			value = getenv(state.categories[AST_LC_ALL].name);
 			for (i = 1; i < AST_LC_COUNT; i++)
 			{
-				s = setlocale(state.categories[i].external, NiL);
+				s = setlocale(state.categories[i].external, NULL);
 				sfprintf(sfstdout, "%s=%s\n", state.categories[i].name, fmtquote(s, "\"", "\"", strlen(s), (value || !getenv(state.categories[i].name)) ? FMT_ALWAYS : 0));
 			}
 			sfprintf(sfstdout, "%s=", state.categories[0].name);
 			if (value)
 			{
-				s = setlocale(state.categories[0].external, NiL);
+				s = setlocale(state.categories[0].external, NULL);
 				sfprintf(sfstdout, "%s", fmtquote(s, "\"", "\"", strlen(s), 0));
 			}
 			sfputc(sfstdout, '\n');
@@ -1188,6 +1188,6 @@ main(int argc, char** argv)
 			list_keyword(sfstdout, key, value, flags);
 	}
 	if (!error_info.errors && !state.output)
-		list_keyword(sfstdout, (Keyword_t*)dtmatch(state.dict, state.categories[0].name), NiL, flags);
+		list_keyword(sfstdout, (Keyword_t*)dtmatch(state.dict, state.categories[0].name), NULL, flags);
 	return error_info.errors != 0;
 }

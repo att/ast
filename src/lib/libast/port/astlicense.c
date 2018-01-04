@@ -106,10 +106,6 @@
 #define SIZ(b)			((b)->nxt-(b)->buf)
 #define END(b)			(*((b)->nxt>=(b)->end?((b)->nxt=(b)->end-1):(b)->nxt)=0,(b)->nxt-(b)->buf)
 
-#ifndef NiL
-#define NiL			((char*)0)
-#endif
-
 typedef struct Buffer_s
 {
 	char*		buf;
@@ -804,8 +800,8 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 	{
 		if (!notice.type)
 			notice.type = SPECIAL;
-		comment(&notice, &buf, NiL, 1, 0);
-		comment(&notice, &buf, NiL, 0, 0);
+		comment(&notice, &buf, NULL, 1, 0);
+		comment(&notice, &buf, NULL, 0, 0);
 		if (notice.item[PACKAGE].data)
 		{
 			copy(&tmp, "This software is part of the ", -1);
@@ -856,7 +852,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					expand(&notice, &tmp, &notice.item[COMPANY]);
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
 			}
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "A copy of the License is available at", 0);
 			if (notice.item[URL].data)
 			{
@@ -874,7 +870,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 				COMMENT(&notice, &buf, "http://www.eclipse.org/org/documents/epl-v10.html", 0);
 			else
 				COMMENT(&notice, &buf, "http://www.opensource.org/licenses/cpl", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else if (notice.type == OPEN)
 		{
@@ -911,7 +907,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					expand(&notice, &tmp, &notice.item[i]);
 				copy(&tmp, " Internet web site URL", -1);
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 				expand(&notice, &tmp, &notice.item[URL]);
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
 				if (notice.item[URLMD5].data)
@@ -921,7 +917,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					copy(&tmp, ")", -1);
 					comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
 				}
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			COMMENT(&notice, &buf, "If you have copied or used this software without agreeing", 0);
 			COMMENT(&notice, &buf, "to the terms of the license you are infringing on", 0);
@@ -935,45 +931,45 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 				PUT(&tmp, ' ');
 			copy(&tmp, "intellectual property rights.", -1);
 			comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else if (notice.type == GPL)
 		{
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "This is free software; you can redistribute it and/or", 0);
 			COMMENT(&notice, &buf, "modify it under the terms of the GNU General Public License", 0);
 			COMMENT(&notice, &buf, "as published by the Free Software Foundation;", 0);
 			COMMENT(&notice, &buf, "either version 2, or (at your option) any later version.", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "This software is distributed in the hope that it", 0);
 			COMMENT(&notice, &buf, "will be useful, but WITHOUT ANY WARRANTY;", 0);
 			COMMENT(&notice, &buf, "without even the implied warranty of MERCHANTABILITY", 0);
 			COMMENT(&notice, &buf, "or FITNESS FOR A PARTICULAR PURPOSE.", 0);
 			COMMENT(&notice, &buf, "See the GNU General Public License for more details.", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "You should have received a copy of the", 0);
 			COMMENT(&notice, &buf, "GNU General Public License", 0);
 			COMMENT(&notice, &buf, "along with this software (see the file COPYING.)", 0);
 			COMMENT(&notice, &buf, "If not, a copy is available at", 0);
 			COMMENT(&notice, &buf, "http://www.gnu.org/copyleft/gpl.html", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else if (notice.type == BSD)
 		{
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "Redistribution and use in source and binary forms, with or", -1);
 			COMMENT(&notice, &buf, "without modification, are permitted provided that the following", -1);
 			COMMENT(&notice, &buf, "conditions are met:", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "   1. Redistributions of source code must retain the above", -1);
 			COMMENT(&notice, &buf, "      copyright notice, this list of conditions and the", -1);
 			COMMENT(&notice, &buf, "      following disclaimer.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "   2. Redistributions in binary form must reproduce the above", -1);
 			COMMENT(&notice, &buf, "      copyright notice, this list of conditions and the", -1);
 			COMMENT(&notice, &buf, "      following disclaimer in the documentation and/or other", -1);
 			COMMENT(&notice, &buf, "      materials provided with the distribution.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			copy(&tmp, "   3. Neither the name of ", -1);
 			if (notice.item[i = PARENT].data || notice.item[i = CORPORATION].data || notice.item[i = COMPANY].data)
 				expand(&notice, &tmp, &notice.item[i]);
@@ -984,7 +980,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 			COMMENT(&notice, &buf, "      names of its contributors may be used to endorse or", -1);
 			COMMENT(&notice, &buf, "      promote products derived from this software without", -1);
 			COMMENT(&notice, &buf, "      specific prior written permission.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND", -1);
 			COMMENT(&notice, &buf, "CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES,", -1);
 			COMMENT(&notice, &buf, "INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF", -1);
@@ -998,36 +994,36 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 			COMMENT(&notice, &buf, "OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY", -1);
 			COMMENT(&notice, &buf, "OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE", -1);
 			COMMENT(&notice, &buf, "POSSIBILITY OF SUCH DAMAGE.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else if (notice.type == ZLIB)
 		{
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "This software is provided 'as-is', without any express or implied", -1);
 			COMMENT(&notice, &buf, "warranty. In no event will the authors be held liable for any", -1);
 			COMMENT(&notice, &buf, "damages arising from the use of this software.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "Permission is granted to anyone to use this software for any", -1);
 			COMMENT(&notice, &buf, "purpose, including commercial applications, and to alter it and", -1);
 			COMMENT(&notice, &buf, "redistribute it freely, subject to the following restrictions:", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, " 1. The origin of this software must not be misrepresented;", -1);
 			COMMENT(&notice, &buf, "    you must not claim that you wrote the original software. If", -1);
 			COMMENT(&notice, &buf, "    you use this software in a product, an acknowledgment in the", -1);
 			COMMENT(&notice, &buf, "    product documentation would be appreciated but is not", -1);
 			COMMENT(&notice, &buf, "    required.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, " 2. Altered source versions must be plainly marked as such,", -1);
 			COMMENT(&notice, &buf, "    and must not be misrepresented as being the original", -1);
 			COMMENT(&notice, &buf, "    software.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, " 3. This notice may not be removed or altered from any source", -1);
 			COMMENT(&notice, &buf, "    distribution.", -1);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else if (notice.type == MIT)
 		{
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "Permission is hereby granted, free of charge, to any person", 0);
 			COMMENT(&notice, &buf, "obtaining a copy of this software and associated", 0);
 			COMMENT(&notice, &buf, "documentation files (the \"Software\"), to deal in the", 0);
@@ -1036,11 +1032,11 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 			COMMENT(&notice, &buf, "sublicense, and/or sell copies of the Software, and to", 0);
 			COMMENT(&notice, &buf, "permit persons to whom the Software is furnished to do so,", 0);
 			COMMENT(&notice, &buf, "subject to the following conditions:", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "The above copyright notice and this permission notice shall", 0);
 			COMMENT(&notice, &buf, "be included in all copies or substantial portions of the", 0);
 			COMMENT(&notice, &buf, "Software.", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 			COMMENT(&notice, &buf, "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY", 0);
 			COMMENT(&notice, &buf, "KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE", 0);
 			COMMENT(&notice, &buf, "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR", 0);
@@ -1049,7 +1045,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 			COMMENT(&notice, &buf, "OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR", 0);
 			COMMENT(&notice, &buf, "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE", 0);
 			COMMENT(&notice, &buf, "SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.", 0);
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 		else
 		{
@@ -1064,7 +1060,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					i = -1;
 				copy(&tmp, "Proprietary", -1);
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), 1);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 				if (notice.item[URL].data)
 				{
 					copy(&tmp, "This is proprietary source code", -1);
@@ -1106,22 +1102,22 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					COMMENT(&notice, &buf, "and is not to be disclosed or used except in", 1);
 					COMMENT(&notice, &buf, "accordance with applicable agreements", 1);
 				}
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			else if (notice.type == NONEXCLUSIVE)
 			{
 				COMMENT(&notice, &buf, "For nonexclusive individual use", 1);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			else if (notice.type == NONCOMMERCIAL)
 			{
 				COMMENT(&notice, &buf, "For noncommercial use", 1);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			if (notice.type >= PROPRIETARY && !notice.item[URL].data)
 			{
 				COMMENT(&notice, &buf, "Unpublished & Not for Publication", 0);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			if (notice.item[URL].data)
 			{
@@ -1161,13 +1157,13 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					copy(&tmp, ")", -1);
 					comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
 				}
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 			else if (notice.type == PROPRIETARY)
 			{
 				COMMENT(&notice, &buf, "The copyright notice above does not evidence any", 0);
 				COMMENT(&notice, &buf, "actual or intended publication of such source code", 0);
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 			}
 		}
 		if (v = notice.item[NOTICE].data)
@@ -1191,7 +1187,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), h);
 			} while (v++ < x);
 			if (item.size)
-				comment(&notice, &buf, NiL, 0, 0);
+				comment(&notice, &buf, NULL, 0, 0);
 		}
 		if (notice.item[ORGANIZATION].data)
 		{
@@ -1212,7 +1208,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 				expand(&notice, &tmp, &notice.item[LOCATION]);
 				comment(&notice, &buf, BUF(&tmp), USE(&tmp), 0);
 			}
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 		}
 	}
 	if (v = notice.item[AUTHOR].data)
@@ -1249,7 +1245,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 						if (k < 0)
 						{
 							COMMENT(&notice, &buf, "CONTRIBUTORS", 0);
-							comment(&notice, &buf, NiL, 0, 0);
+							comment(&notice, &buf, NULL, 0, 0);
 						}
 						k = 1;
 						expand(&notice, &tmp, &notice.id[i].value);
@@ -1273,7 +1269,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 					if (k < 0)
 					{
 						COMMENT(&notice, &buf, "CONTRIBUTORS", 0);
-						comment(&notice, &buf, NiL, 0, 0);
+						comment(&notice, &buf, NULL, 0, 0);
 					}
 					k = 1;
 					expand(&notice, &tmp, &item);
@@ -1282,7 +1278,7 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 			}
 		}
 		if (k > 0)
-			comment(&notice, &buf, NiL, 0, 0);
+			comment(&notice, &buf, NULL, 0, 0);
 	}
 	if (notice.type == USAGE)
 	{
@@ -1298,6 +1294,6 @@ astlicense(char* p, int size, char* file, char* options, int cc1, int cc2, int c
 		PUT(&buf, '\n');
 	}
 	else
-		comment(&notice, &buf, NiL, -1, 0);
+		comment(&notice, &buf, NULL, -1, 0);
 	return END(&buf);
 }

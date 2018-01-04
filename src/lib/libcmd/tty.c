@@ -84,7 +84,7 @@ b_tty(int argc, char** argv, Shbltin_t* context)
 		break;
 	}
 	if(error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	if(!(tty=ttyname(0)))
 	{
 		tty = ERROR_translate(0, 0, 0, "not a tty");

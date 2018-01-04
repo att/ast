@@ -36,13 +36,13 @@ sigflag(int sig, int flags, int set)
 {
 	struct sigaction	sa;
 
-	if (sigaction(sig, NiL, &sa))
+	if (sigaction(sig, NULL, &sa))
 		return -1;
 	if (set)
 		sa.sa_flags |= flags;
 	else
 		sa.sa_flags &= ~flags;
-	return sigaction(sig, &sa, NiL);
+	return sigaction(sig, &sa, NULL);
 }
 
 #endif

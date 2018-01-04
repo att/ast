@@ -98,7 +98,7 @@ tee_cleanup(Tee_t* tp)
 
 	if (tp)
 	{
-		sfdisc(sfstdout, NiL);
+		sfdisc(sfstdout, NULL);
 		if (tp->line >= 0)
 			sfset(sfstdout, SF_LINE, tp->line);
 		for (hp = tp->fd; (n = *hp) >= 0; hp++)
@@ -154,7 +154,7 @@ b_tee(int argc, char** argv, Shbltin_t* context)
 		break;
 	}
 	if (error_info.errors)
-		error(ERROR_usage(2), "%s", optusage(NiL));
+		error(ERROR_usage(2), "%s", optusage(NULL));
 	argv += opt_info.index;
 	argc -= opt_info.index;
 #if _ANCIENT_BSD_COMPATIBILITY
