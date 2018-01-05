@@ -1,14 +1,14 @@
-#!/usr/bin/env bash
-
-# This script is used for generating bash compatibility source file that is required to build ksh93
-set -x
+#!/bin/sh
+# This script is used for generating bash compatibility source file that is
+# required to build ksh93.
+#
 set -e
-
-pushd "$MESON_SOURCE_ROOT/src/cmd/ksh93/features"
-
-# Generate a c source file for ksh93 bash compatiblity
-echo "const char bash_pre_rc[] = " > "$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.c"
-sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/'"'"'/\\'"'"'/g' -e 's/^[[:space:]]*\(.*\)$/\"\1\\n\"/' "$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.sh" >> "$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.c"
-echo ";" >> "$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.c"
-
-popd
+set -x
+cd "$MESON_SOURCE_ROOT/src/cmd/ksh93/features"
+src="$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.sh"
+dst="$MESON_SOURCE_ROOT/src/cmd/ksh93/data/bash_pre_rc.c"
+echo "const char bash_pre_rc[] = " > "$dst"
+sed -e 's/\\/\\\\/g' \
+    -e 's/"/\\"/g' -e 's/'"'"'/\\'"'"'/g' \
+    -e 's/^[[:space:]]*\(.*\)$/\"\1\\n\"/' "$src" >> "$dst"
+echo ';' >> "$dst"

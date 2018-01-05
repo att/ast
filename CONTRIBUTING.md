@@ -1,8 +1,9 @@
-# Guidelines For Developers
+# Guidelines for Developers
 
-This document provides guidelines for making changes to the AST Korn
-shell project. This includes rules for how to format the code, naming
-conventions, etcetera. Generally known as the style of the code. It
+This document provides guidelines for making changes to the AST Korn shell
+project. This includes assumptions you can make about environments where
+this project will be built. As well as rules for how to format the code,
+naming conventions, etcetera. Generally known as the style of the code. It
 also includes recommended best practices such as creating a Travis-CI
 account so you can verify your changes pass all the tests before making
 a pull-request.
@@ -10,13 +11,24 @@ a pull-request.
 See the bottom of this document for help on installing the linting and
 style reformatting tools discussed in the following sections.
 
-AST Korn shell source requires, and should limit the C features it
-uses, to those available in C99 (aka ISO/IEC 9899:1999). See
-[issue #145](https://github.com/att/ast/issues/145).
+AST Korn shell source requires, and should limit the features it uses,
+to a C compiler that provides those features available in C99 (aka ISO/IEC
+9899:1999). See [issue #145](https://github.com/att/ast/issues/145).
 
-Before introducing a new dependency, please make it optional with graceful
-failure if possible. Add any new dependencies to the README.md document
-under the *Running* and/or *Building* sections.
+When introducing a new dependency please make it optional with graceful
+failure if possible. Add any new dependencies to the README.md document under
+the *Running* and/or *Building* sections as well as in this document as
+appropriate.
+
+## Assumptions about what can be used
+
+Do not use anything other than */bin/sh* to run scripts executed by Meson's
+`run_command()` function. That is, any script run that way should begin
+with `#!/bin/sh`. Furthermore, do not assume that path is a synonym for
+`bash`. All scripts run during the Meson configuration and build steps
+should only use features known to be available in the Bourne shell. This
+makes it easier to bootstrap buildin `ksh` on systems, like OpenBSD,
+which do not install bash by default.
 
 ## Versioning
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 for sig in `/bin/kill -l 2>/dev/null`
 do	case $sig in
 	*[!A-Za-z0-9_]*|*MIN|*MAX)
@@ -9,3 +9,4 @@ do	case $sig in
 		;;
 	esac
 done
+exit 0

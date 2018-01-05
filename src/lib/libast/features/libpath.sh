@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
@@ -20,6 +20,8 @@
 #                     Phong Vo <phongvo@gmail.com>                     #
 #                                                                      #
 ########################################################################
+set -e
+set -x
 ok=0
 for i in \
 	-x /lib/ld.so /lib/ld-*.so /usr/lib/ld.so /lib/rld \
@@ -39,9 +41,9 @@ do	case $i in
 		break
 	fi
 done
-if	test "0" != "$ok"
+if	test "$ok" = "1"
 then	libpath=lib:LD_LIBRARY_PATH
-	case `package` in
+	case $("$MESON_SOURCE_ROOT/bin/hosttype") in
 	sgi.*)	if	test -d /lib32
 		then	libpath="lib32:LD_LIBRARYN32_PATH:sgi.mips3|sgi.*-n32,$libpath"
 		fi
@@ -61,7 +63,7 @@ elif	test -x /lib/dld.sl
 then	libpath=lib:SHLIB_PATH
 elif	test -x /usr/lib/dyld
 then	libpath=lib:DYLD_LIBRARY_PATH
-else	case `package` in
+else	case $("$MESON_SOURCE_ROOT/bin/hosttype") in
 	ibm.*|mvs.*)
 		libpath=lib:LIBPATH
 		;;
@@ -72,6 +74,6 @@ fi
 case $libpath in
 '')	libpath=bin ;;
 esac
-echo -n "\"$libpath\""
+echo "\"$libpath\""
 
 exit 0

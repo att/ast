@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
@@ -20,24 +20,23 @@
 #                     Phong Vo <phongvo@gmail.com>                     #
 #                                                                      #
 ########################################################################
-: generate getconf and limits info
 #
 # @(#)conf.sh (AT&T Research) 2011-08-26
 #
-# this script generates these files from the table file in the first arg
-# the remaining args are the C compiler name and flags
+# This script generates these files from the table file in the first arg
+# the remaining args are the C compiler name and flags:
 #
 #	conflim.h	supplemental limits.h definitions
 #	conftab.h	readonly string table definitions
 #	conftab.c	readonly string table data
 #
-# you may think it should be simpler
-# but you shall be confused anyway
-#
+# You may think it should be simpler but you shall be confused anyway.
 
-case $-:$BASH_VERSION in
-*x*:[0123456789]*)	: bash set -x is broken :; set +ex ;;
-esac
+# DO NOT add `set -x` to this script!
+# I repeat: DO NOT enable tracing of this script with `set -x`.
+#
+# Doing so will break the build if /bin/sh is bash. This seems to only apply to this script and not
+# any of the other scripts run during the build configuration phase.
 
 LC_ALL=C
 export LC_ALL
@@ -84,9 +83,6 @@ sym=[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_]*
 tmp=conf.tmp
 case $verbose:$debug$trace in
 1:?*)	echo "$command: debug=$debug trace=$trace keep_call=$keep_call keep_name=$keep_name" >&2 ;;
-esac
-case $trace in
-1)	PS4='+$LINENO+ '; set -x ;;
 esac
 
 case $# in
@@ -243,11 +239,15 @@ case $append$extra in
 						;;
 					*" -$f- "*)
 						;;
-					*)	if	iffe -n - hdr $f | grep _hdr_$f >/dev/null
-						then	hdr="$hdr $f"
-							headers=$headers$nl#include$sp'<'$1'>'
-						else	hdr="$hdr -$f-"
-						fi
+					*)	# We no longer build or use `iffe` to detect whether
+						# a given header is available. Too, not doing this
+						# appears to have no material effect on the build.
+
+						#if	iffe -n - hdr $f | grep _hdr_$f >/dev/null
+						#then	hdr="$hdr $f"
+						#	headers=$headers$nl#include$sp'<'$1'>'
+						#else	hdr="$hdr -$f-"
+						#fi
 						;;
 					esac
 					;;
@@ -395,7 +395,7 @@ case $debug in
 -d2)	exit ;;
 esac
 
-HOST=`package | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+HOST=`"$MESON_SOURCE_ROOT/bin/hosttype" | sed -e 's,[0123456789.].*,,' | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 case $HOST in
 '')	HOST=SYSTEM ;;
 esac

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 ifs=$IFS
 str=
 sys=
@@ -24,8 +24,8 @@ case $str in
 '')	str=$sys ;;
 esac
 case $str in
-'')	echo -n "0" ;;
-*)	echo -n "\"$str\"" ;;
+'')	echo "0" ;;
+*)	echo "\"$str\"" ;;
 esac
 
 exit 0

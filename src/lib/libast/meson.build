@@ -8,21 +8,21 @@ cc = meson.get_compiler('c')
 syslocale_result = run_command('features/syslocale.sh')
 
 if syslocale_result.returncode() == 0
-    syslocale_output = syslocale_result.stdout()
+    syslocale_output = syslocale_result.stdout().strip()
     libast_c_args += [ '-D_locale_utf8_str=' + syslocale_output ]
 endif
 
 libpath_result = run_command('features/libpath.sh')
 
 if libpath_result.returncode() == 0
-    libpath_output = libpath_result.stdout()
+    libpath_output = libpath_result.stdout().strip()
     libast_c_args += [ '-DCONF_LIBPATH=' + libpath_output ]
 endif
 
 prog_result = run_command('features/prog.sh')
 
 if prog_result.returncode() == 0
-    prog_output = prog_result.stdout()
+    prog_output = prog_result.stdout().strip()
     libast_c_args += [ '-D_PROC_PROG=' + prog_output ]
 endif
 
@@ -146,7 +146,7 @@ main()
 align_bound_result = cc.run(align_bound_code, name: 'align bound check')
 
 if align_bound_result.returncode() == 0
-    align_bound_result_split = align_bound_result.stdout().split(' ')
+    align_bound_result_split = align_bound_result.stdout().strip().split(' ')
     # Meson escapes strings strangely and I could not get my head around it
     # Ideally we should be able to print macro defintions in the test and just
     # use them here. This loop should be unnecessary.
