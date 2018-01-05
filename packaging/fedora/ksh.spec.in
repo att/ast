@@ -1,28 +1,25 @@
 %global commit #COMMIT#
 %global shortcommit #SHORTCOMMIT#
 %global commitnum #COMMITNUM#
+%global commitdate #COMMITDATE#
 
 Name:           ksh
 Summary:        The Original ATT Korn Shell
 URL:            http://www.kornshell.com/
 License:        EPL
-Version:        %(date +%Y%m%d)+git.%{commitnum}.%{shortcommit}
+Version:        %{commitdate}+git.%{commitnum}.%{shortcommit}
 Release:        0%{?dist}
 Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
-#Source1:        kshcomp.conf
-#Source2:        kshrc.rhs
-#Source3:        dotkshrc
+Source1:        kshcomp.conf
+Source2:        kshrc.rhs
+Source3:        dotkshrc
 
 BuildRequires:  meson
 BuildRequires:  gcc
-BuildRequires:  bison
 BuildRequires:  glibc-devel
 BuildRequires:  glibc-langpack-zh
 BuildRequires:  ed
-# regression test suite uses 'ps'
-BuildRequires:  %{_bindir}/ps
 Conflicts:      pdksh
-Requires:       coreutils, diffutils, chkconfig
 Requires(post): grep, coreutils, systemd-units
 Requires(postun): sed
 
@@ -43,10 +40,9 @@ with "sh" (the Bourne Shell).
 
 %install
 %meson_install
-%__install -Dpm0644 -t %{buildroot}%{_mandir}/man1 arch/*/man/man1/ksh.1
-#__install -Dpm0644 -t %{buildroot}%{_sysconfdir}/binfmt.d %{S:1}
-#__install -Dpm0644 -t %{buildroot}%{_sysconfdir} %{S:2}
-#__install -Dpm0644 -t %{buildroot}%{_sysconfdir}/skel %{S:3}
+install -p -D -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/binfmt.d/kshcomp.conf
+install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/kshrc
+install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/skel/.kshrc
 
 %post
 if [ ! -f /etc/shells ]; then
@@ -58,7 +54,7 @@ else
         fi
         if ! grep -q '^/usr/bin/ksh$' /etc/shells ; then
                 echo "/usr/bin/ksh" >> /etc/shells
-        fi 
+        fi
 fi
 
 /bin/systemctl try-restart systemd-binfmt.service >/dev/null 2>&1 || :
@@ -80,14 +76,17 @@ else
     echo "found"
 fi
 
-%files 
-%doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES 
+%files
+%doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
 # LICENSE file is missing, temporarily?
 %{_bindir}/ksh
 %{_bindir}/shcomp
+%{_libdir}/libast.so
+%{_libdir}/libcmd.so
+%{_libdir}/libcoshell.so
 %{_mandir}/man1/ksh.1*
-#config(noreplace) %{_sysconfdir}/skel/.kshrc
-#config(noreplace) %{_sysconfdir}/kshrc
-#config(noreplace) %{_sysconfdir}/binfmt.d/kshcomp.conf
+%config(noreplace) %{_sysconfdir}/skel/.kshrc
+%config(noreplace) %{_sysconfdir}/kshrc
+%config(noreplace) %{_sysconfdir}/binfmt.d/kshcomp.conf
 
 %changelog
