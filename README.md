@@ -2,45 +2,41 @@
 
 This repository contains the AT&amp;T Software Technology (AST) toolkit
 from AT&amp;T Research.  As of November 2017 the development focus has
-been shifted to the `ksh93` command and libraries required to build
-it. See below for details on which branches contain the full AST code.
+been shifted to the `ksh` (or `ksh93`) command and supporting code required
+to build it.
 
-## Building
+The non-ksh code of the AST project is no longer being actively
+maintained. If you are interested in the non-ksh code see below for
+details on which branches contain the full AST code base.
 
-Building ksh93 requires the Meson build system.
+## Building Korn shell
 
-To build it, execute These commands from the project root directory:
+Building ksh requires the [Meson](http://mesonbuild.com/) build system. To
+build ksh execute these commands from the project root directory:
 
 ```
 meson build
 ninja -C build
 ```
 
-## Testing
-
-All test cases can be run from `build` directory with:
-
-```
-meson test
-```
-
-If your system has an old version of Meson you may need to run `mesontest`
-(notice the missing space).
-
-To run a specific unit test simply append it's name minus the `.sh` extension 
-suffix. For example,
-
-```
-meson test builtins
-```
+You can add a `--prefix` flag followed by a path to the `meson build` command
+to specify where the binaries and libraries are installed. The default is
+*/usr/local*.
 
 ## Installing
 
-Ksh executable, helper libraries and man page can be installed from `build` directory with:
+The `ksh` executable, helper libraries and man page can be installed with:
 
 ```
-ninja install
+ninja -C build install
 ```
+
+## Contributing changes to the source code
+
+See the
+[contributing guidelines](https://github.com/att/ast/blob/contributing/CONTRIBUTING.md)
+for information about code style, unit tests, and other topics of interest
+to anyone who wants to modify the source.
 
 ## Working with the full AST source
 
@@ -49,7 +45,7 @@ Full AST source code is available under the `2012-08-01-master` and
 these branches are welcome but they are otherwise under low maintenance.
 
 The full AST code includes many tools and libraries, like KSH, NMAKE, SFIO,
-VMALLOC, VCODEX, etc. It also includes more efficient replacements for a
+VMALLOC, VCODEX, etc. It also includes efficient replacements for a
 lot of the POSIX tools.  It was designed to be portable across many UNIX
 systems and also works under UWIN on Microsoft Windows (see UWIN repo on
 GitHub under att/uwin).
@@ -70,10 +66,37 @@ running: ./bin/package read on them).
 
 ## Branches
 
-The `master` [branch](https://github.com/att/ast/commits/master) contains the current development version of ksh93. It only contains source code for ksh93 and the libraries required to build it.
+The `master` [branch](https://github.com/att/ast/commits/master) contains
+the current development version of ksh93. It only contains source code
+for ksh93 and the libraries required to build it.
 
-The `2012-08-01-master` [branch](https://github.com/att/ast/commits/2012-08-01-master) contains the the last stable release of full AST source code. It contains one cherry-picked [change](https://github.com/att/ast/commit/e79c29295092fe2b2282d134e2b7cce32ec9dcac) to allow building on Linux.
+The [2012-08-01-master branch](https://github.com/att/ast/commits/2012-08-01-master)
+contains the the last stable release of
+full AST source code. It contains one cherry-picked
+[change](https://github.com/att/ast/commit/e79c29295092fe2b2282d134e2b7cce32ec9dcac)
+to allow building on Linux.
 
-The `2016-01-10-beta` [branch](https://github.com/att/ast/commits/2016-01-10-beta) contains the last beta release of full AST source code plus a number of patches that were later added on top of it.
+The [2016-01-10-beta branch](https://github.com/att/ast/commits/2016-01-10-beta) contains
+the last beta release of full AST source code plus a number of patches
+that were later added on top of it. Changes for the legacy AST project are
+normally merged to this branch.
 
-The `gh-pages` [branch](https://github.com/att/ast/commits/gh-pages) will probably be removed. It contains files needed to generate the static [AST project page](https://att.github.io/ast/) hosted by Github. See https://help.github.com/articles/what-is-github-pages/ for more info.
+The [gh-pages branch](https://github.com/att/ast/commits/gh-pages)
+will probably be removed. It contains files needed to generate the static
+[AST project page](https://att.github.io/ast/) hosted by Github. See
+https://help.github.com/articles/what-is-github-pages/ for more info.
+
+## Contact Us
+
+The primary mechanism for interacting with this project is the [Github
+project](https://github.com/att/ast/) by opening issues and pull-requests
+and watching the project.
+
+TBD is setting up a public Gitter, IRC, and other channels for real-time
+communication.
+
+Archives of the legacy AST mailing lists (which is mostly
+about ksh) can be read at https://marc.info/?l=ast-developers and
+https://marc.info/?l=ast-users. These mailing lists now receive almost
+zero traffic. It no longer appears to be possible to subscribe to those
+mailing lists.
