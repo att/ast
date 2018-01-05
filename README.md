@@ -18,7 +18,7 @@ ninja -C build
 
 ## Testing
 
-All test cases can be run with:
+All test cases can be run from `build` directory with:
 
 ```
 meson test
@@ -32,6 +32,14 @@ suffix. For example,
 
 ```
 meson test builtins
+```
+
+## Installing
+
+Ksh executable, helper library and man page can be installed from `build` directory with:
+
+```
+ninja install
 ```
 
 ## Working with the full AST source
