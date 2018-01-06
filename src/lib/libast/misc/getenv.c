@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 
 #include "intercepts.h"
@@ -30,11 +30,11 @@
  * UWIN: no _ast_getenv macro map to maintain ast54 compatibility
  */
 
-Intercepts_t	intercepts
+Intercepts_t intercepts
 #if _BLD_3d
-		;
+    ;
 #else
-		= { 0 };
+    = {0};
 #endif
 
 /*
@@ -42,12 +42,10 @@ Intercepts_t	intercepts
  */
 
 #if defined(__EXPORT__) && defined(getenv)
-#define extern	__EXPORT__
+#define extern __EXPORT__
 #endif
 
-extern char*
-getenv(const char* name)
-{
-#undef	getenv
-	return intercepts.intercept_getenv ? (*intercepts.intercept_getenv)(name) : getenv(name);
+extern char *getenv(const char *name) {
+#undef getenv
+    return intercepts.intercept_getenv ? (*intercepts.intercept_getenv)(name) : getenv(name);
 }

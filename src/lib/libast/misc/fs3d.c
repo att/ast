@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -28,74 +28,65 @@
  * only active for non-shared 3d library
  */
 
-#define mount	______mount
+#define mount ______mount
 
 #include <ast.h>
 
-#undef	mount
+#undef mount
 
 #include <fs3d.h>
 
-int
-fs3d(int op)
-{
-	int	cur;
-	char*	v;
-	char		val[sizeof(FS3D_off) + 8];
+int fs3d(int op) {
+    int cur;
+    char *v;
+    char val[sizeof(FS3D_off) + 8];
 
-	static int	fsview;
-	static char	on[] = FS3D_on;
-	static char	off[] = FS3D_off;
+    static int fsview;
+    static char on[] = FS3D_on;
+    static char off[] = FS3D_off;
 
-	if (fsview < 0)
-		return 0;
+    if (fsview < 0) return 0;
 
-	/*
-	 * get the current setting
-	 */
+    /*
+     * get the current setting
+     */
 
-	if (!fsview && (!getenv("LD_PRELOAD") || mount("", "", 0, NULL)))
-		goto nope;
-	if (FS3D_op(op) == FS3D_OP_INIT && mount(FS3D_init, NULL, FS3D_VIEW, NULL))
-		goto nope;
-	if (mount(on, val, FS3D_VIEW|FS3D_GET|FS3D_SIZE(sizeof(val)), NULL))
-		goto nope;
-	if (v = strchr(val, ' '))
-		v++;
-	else
-		v = val;
-	if (!strcmp(v, on))
-		cur = FS3D_ON;
-	else if (!strncmp(v, off, sizeof(off) - 1) && v[sizeof(off)] == '=')
-		cur = FS3D_LIMIT((int)strtol(v + sizeof(off) + 1, NULL, 0));
-	else
-		cur = FS3D_OFF;
-	if (cur != op)
-	{
-		switch (FS3D_op(op))
-		{
-		case FS3D_OP_OFF:
-			v = off;
-			break;
-		case FS3D_OP_ON:
-			v = on;
-			break;
-		case FS3D_OP_LIMIT:
-			sfsprintf(val, sizeof(val), "%s=%d", off, FS3D_arg(op));
-			v = val;
-			break;
-		default:
-			v = 0;
-			break;
-		}
-		if (v && mount(v, NULL, FS3D_VIEW, NULL))
-			goto nope;
-	}
-	fsview = 1;
-	return cur;
- nope:
-	fsview = -1;
-	return 0;
+    if (!fsview && (!getenv("LD_PRELOAD") || mount("", "", 0, NULL))) goto nope;
+    if (FS3D_op(op) == FS3D_OP_INIT && mount(FS3D_init, NULL, FS3D_VIEW, NULL)) goto nope;
+    if (mount(on, val, FS3D_VIEW | FS3D_GET | FS3D_SIZE(sizeof(val)), NULL)) goto nope;
+    if (v = strchr(val, ' '))
+        v++;
+    else
+        v = val;
+    if (!strcmp(v, on))
+        cur = FS3D_ON;
+    else if (!strncmp(v, off, sizeof(off) - 1) && v[sizeof(off)] == '=')
+        cur = FS3D_LIMIT((int)strtol(v + sizeof(off) + 1, NULL, 0));
+    else
+        cur = FS3D_OFF;
+    if (cur != op) {
+        switch (FS3D_op(op)) {
+            case FS3D_OP_OFF:
+                v = off;
+                break;
+            case FS3D_OP_ON:
+                v = on;
+                break;
+            case FS3D_OP_LIMIT:
+                sfsprintf(val, sizeof(val), "%s=%d", off, FS3D_arg(op));
+                v = val;
+                break;
+            default:
+                v = 0;
+                break;
+        }
+        if (v && mount(v, NULL, FS3D_VIEW, NULL)) goto nope;
+    }
+    fsview = 1;
+    return cur;
+nope:
+    fsview = -1;
+    return 0;
 }
 
 /*
@@ -105,12 +96,10 @@ fs3d(int op)
  * (at least without some additional macro hackery
  */
 
-#undef	mount
+#undef mount
 
-extern int	mount(const char*, char*, int, void*);
+extern int mount(const char *, char *, int, void *);
 
-int
-fs3d_mount(const char* source, char* target, int flags, void* data)
-{
-	return mount(source, target, flags, data);
+int fs3d_mount(const char *source, char *target, int flags, void *data) {
+    return mount(source, target, flags, data);
 }

@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -30,34 +30,32 @@
 #include <ast.h>
 #include <sig.h>
 
-static struct
-{
-	int	sig;
-	int	op;
-}
-signals[] =		/* held inside critical region	*/
-{
-	{ SIGINT,	SIG_REG_EXEC },
+static struct {
+    int sig;
+    int op;
+} signals[] = /* held inside critical region	*/
+    {
+        {SIGINT, SIG_REG_EXEC},
 #ifdef SIGPIPE
-	{ SIGPIPE,	SIG_REG_EXEC },
+        {SIGPIPE, SIG_REG_EXEC},
 #endif
 #ifdef SIGQUIT
-	{ SIGQUIT,	SIG_REG_EXEC },
+        {SIGQUIT, SIG_REG_EXEC},
 #endif
 #ifdef SIGHUP
-	{ SIGHUP,	SIG_REG_EXEC },
+        {SIGHUP, SIG_REG_EXEC},
 #endif
-#if defined(SIGCHLD) && ( !defined(SIGCLD) || SIGCHLD != SIGCLD )
-	{ SIGCHLD,	SIG_REG_PROC },
+#if defined(SIGCHLD) && (!defined(SIGCLD) || SIGCHLD != SIGCLD)
+        {SIGCHLD, SIG_REG_PROC},
 #endif
 #ifdef SIGTSTP
-	{ SIGTSTP,	SIG_REG_TERM },
+        {SIGTSTP, SIG_REG_TERM},
 #endif
 #ifdef SIGTTIN
-	{ SIGTTIN,	SIG_REG_TERM },
+        {SIGTTIN, SIG_REG_TERM},
 #endif
 #ifdef SIGTTOU
-	{ SIGTTOU,	SIG_REG_TERM },
+        {SIGTTOU, SIG_REG_TERM},
 #endif
 };
 
@@ -71,53 +69,40 @@ signals[] =		/* held inside critical region	*/
  * signals[] held until region popped
  */
 
-int
-sigcritical(int op)
-{
-	int		i;
-	static int		region;
-	static int		level;
-	static sigset_t		mask;
-	sigset_t		nmask;
+int sigcritical(int op) {
+    int i;
+    static int region;
+    static int level;
+    static sigset_t mask;
+    sigset_t nmask;
 
-	if (op > 0)
-	{
-		if (!level++)
-		{
-			region = op;
-			if (op & SIG_REG_SET)
-				level--;
-			sigemptyset(&nmask);
-			for (i = 0; i < elementsof(signals); i++)
-				if (op & signals[i].op)
-					sigaddset(&nmask, signals[i].sig);
-			sigprocmask(SIG_BLOCK, &nmask, &mask);
-		}
-		return level;
-	}
-	else if (op < 0)
-	{
-		sigpending(&nmask);
-		for (i = 0; i < elementsof(signals); i++)
-			if (region & signals[i].op)
-			{
-				if (sigismember(&nmask, signals[i].sig))
-					return 1;
-			}
-		return 0;
-	}
-	else
-	{
-		/*
-		 * a vfork() may have intervened so we
-		 * allow apparent nesting mismatches
-		 */
+    if (op > 0) {
+        if (!level++) {
+            region = op;
+            if (op & SIG_REG_SET) level--;
+            sigemptyset(&nmask);
+            for (i = 0; i < elementsof(signals); i++)
+                if (op & signals[i].op) sigaddset(&nmask, signals[i].sig);
+            sigprocmask(SIG_BLOCK, &nmask, &mask);
+        }
+        return level;
+    } else if (op < 0) {
+        sigpending(&nmask);
+        for (i = 0; i < elementsof(signals); i++)
+            if (region & signals[i].op) {
+                if (sigismember(&nmask, signals[i].sig)) return 1;
+            }
+        return 0;
+    } else {
+        /*
+         * a vfork() may have intervened so we
+         * allow apparent nesting mismatches
+         */
 
-		if (--level <= 0)
-		{
-			level = 0;
-			sigprocmask(SIG_SETMASK, &mask, NULL);
-		}
-		return level;
-	}
+        if (--level <= 0) {
+            level = 0;
+            sigprocmask(SIG_SETMASK, &mask, NULL);
+        }
+        return level;
+    }
 }
