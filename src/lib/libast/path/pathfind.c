@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2013 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2013 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -31,46 +31,41 @@
 #include <error.h>
 #include <ls.h>
 
-#define directory(p,s)	(stat((p),(s))>=0&&S_ISDIR((s)->st_mode))
-#define regular(p,s)	(stat((p),(s))>=0&&(S_ISREG((s)->st_mode)||streq(p,"/dev/null")))
+#define directory(p, s) (stat((p), (s)) >= 0 && S_ISDIR((s)->st_mode))
+#define regular(p, s) (stat((p), (s)) >= 0 && (S_ISREG((s)->st_mode) || streq(p, "/dev/null")))
 
-typedef struct Dir_s			/* directory list element	*/
+typedef struct Dir_s /* directory list element	*/
 {
-	struct Dir_s*	next;		/* next in list			*/
-	char		dir[1];		/* directory path		*/
+    struct Dir_s *next; /* next in list			*/
+    char dir[1];        /* directory path		*/
 } Dir_t;
 
-static struct				/* directory list state		*/
+static struct /* directory list state		*/
 {
-	Dir_t*		head;		/* directory list head		*/
-	Dir_t*		tail;		/* directory list tail		*/
+    Dir_t *head; /* directory list head		*/
+    Dir_t *tail; /* directory list tail		*/
 } state;
 
 /*
  * append dir to pathfind() include list
  */
 
-int
-pathinclude(const char* dir)
-{
-	Dir_t*	dp;
-	struct stat	st;
+int pathinclude(const char *dir) {
+    Dir_t *dp;
+    struct stat st;
 
-	if (dir && *dir && !streq(dir, ".") && directory(dir, &st))
-	{
-		for (dp = state.head; dp; dp = dp->next)
-			if (streq(dir, dp->dir))
-				return 0;
-		if (!(dp = oldof(0, Dir_t, 1, strlen(dir))))
-			return -1;
-		strcpy(dp->dir, dir);
-		dp->next = 0;
-		if (state.tail)
-			state.tail = state.tail->next = dp;
-		else
-			state.head = state.tail = dp;
-	}
-	return 0;
+    if (dir && *dir && !streq(dir, ".") && directory(dir, &st)) {
+        for (dp = state.head; dp; dp = dp->next)
+            if (streq(dir, dp->dir)) return 0;
+        if (!(dp = oldof(0, Dir_t, 1, strlen(dir)))) return -1;
+        strcpy(dp->dir, dir);
+        dp->next = 0;
+        if (state.tail)
+            state.tail = state.tail->next = dp;
+        else
+            state.head = state.tail = dp;
+    }
+    return 0;
 }
 
 /*
@@ -81,89 +76,70 @@ pathinclude(const char* dir)
  * any *: prefix in lib is ignored (discipline library dictionary support)
  */
 
-char*
-pathfind(const char* name, const char* lib, const char* type, char* buf, size_t size)
-{
-	Dir_t*		dp;
-	char*		s;
-	char			tmp[PATH_MAX];
-	struct stat		st;
+char *pathfind(const char *name, const char *lib, const char *type, char *buf, size_t size) {
+    Dir_t *dp;
+    char *s;
+    char tmp[PATH_MAX];
+    struct stat st;
 
-	/*
-	 * always check the unadorned path first
-	 * this handles . and absolute paths
-	 */
+    /*
+     * always check the unadorned path first
+     * this handles . and absolute paths
+     */
 
-	if (type && !*type || ((s = strrchr(name, '/')) || (s = (char*)name)) && strchr(s, '.'))
-	{
-		if (regular(name, &st))
-		{
-			strncopy(buf, name, size);
-			return buf;
-		}
-		type = 0;
-	}
-	if (type)
-	{
-		sfsprintf(buf, size, "%s.%s", name, type);
-		if (regular(buf, &st))
-			return buf;
-	}
-	if (*name == '/')
-		return 0;
+    if (type && !*type || ((s = strrchr(name, '/')) || (s = (char *)name)) && strchr(s, '.')) {
+        if (regular(name, &st)) {
+            strncopy(buf, name, size);
+            return buf;
+        }
+        type = 0;
+    }
+    if (type) {
+        sfsprintf(buf, size, "%s.%s", name, type);
+        if (regular(buf, &st)) return buf;
+    }
+    if (*name == '/') return 0;
 
-	/*
-	 * check the directory of the including file
-	 * on the assumption that error_info.file is properly stacked
-	 */
+    /*
+     * check the directory of the including file
+     * on the assumption that error_info.file is properly stacked
+     */
 
-	if (error_info.file && (s = strrchr(error_info.file, '/')))
-	{
-		sfsprintf(buf, size, "%-.*s%s", s - error_info.file + 1, error_info.file, name);
-		if (regular(buf, &st))
-			return buf;
-		if (type)
-		{
-			sfsprintf(buf, size, "%-.*s%s%.s", s - error_info.file + 1, error_info.file, name, type);
-			if (regular(buf, &st))
-				return buf;
-		}
-	}
+    if (error_info.file && (s = strrchr(error_info.file, '/'))) {
+        sfsprintf(buf, size, "%-.*s%s", s - error_info.file + 1, error_info.file, name);
+        if (regular(buf, &st)) return buf;
+        if (type) {
+            sfsprintf(buf, size, "%-.*s%s%.s", s - error_info.file + 1, error_info.file, name,
+                      type);
+            if (regular(buf, &st)) return buf;
+        }
+    }
 
-	/*
-	 * check the include dir list
-	 */
+    /*
+     * check the include dir list
+     */
 
-	for (dp = state.head; dp; dp = dp->next)
-	{
-		sfsprintf(tmp, sizeof(tmp), "%s/%s", dp->dir, name);
-		if (pathpath(tmp, "", PATH_REGULAR, buf, size))
-			return buf;
-		if (type)
-		{
-			sfsprintf(tmp, sizeof(tmp), "%s/%s.%s", dp->dir, name, type);
-			if (pathpath(tmp, "", PATH_REGULAR, buf, size))
-				return buf;
-		}
-	}
+    for (dp = state.head; dp; dp = dp->next) {
+        sfsprintf(tmp, sizeof(tmp), "%s/%s", dp->dir, name);
+        if (pathpath(tmp, "", PATH_REGULAR, buf, size)) return buf;
+        if (type) {
+            sfsprintf(tmp, sizeof(tmp), "%s/%s.%s", dp->dir, name, type);
+            if (pathpath(tmp, "", PATH_REGULAR, buf, size)) return buf;
+        }
+    }
 
-	/*
-	 * finally a lib related search on PATH
-	 */
+    /*
+     * finally a lib related search on PATH
+     */
 
-	if (lib)
-	{
-		if (s = strrchr((char*)lib, ':'))
-			lib = (const char*)s + 1;
-		sfsprintf(tmp, sizeof(tmp), "lib/%s/%s", lib, name);
-		if (pathpath(tmp, "", PATH_REGULAR, buf, size))
-			return buf;
-		if (type)
-		{
-			sfsprintf(tmp, sizeof(tmp), "lib/%s/%s.%s", lib, name, type);
-			if (pathpath(tmp, "", PATH_REGULAR, buf, size))
-				return buf;
-		}
-	}
-	return 0;
+    if (lib) {
+        if (s = strrchr((char *)lib, ':')) lib = (const char *)s + 1;
+        sfsprintf(tmp, sizeof(tmp), "lib/%s/%s", lib, name);
+        if (pathpath(tmp, "", PATH_REGULAR, buf, size)) return buf;
+        if (type) {
+            sfsprintf(tmp, sizeof(tmp), "lib/%s/%s.%s", lib, name, type);
+            if (pathpath(tmp, "", PATH_REGULAR, buf, size)) return buf;
+        }
+    }
+    return 0;
 }

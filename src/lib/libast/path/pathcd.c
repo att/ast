@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * K. P. Vo
@@ -32,25 +32,22 @@
 
 #if DEBUG
 
-#undef	PATH_MAX
+#undef PATH_MAX
 
-#define PATH_MAX	16
+#define PATH_MAX 16
 
-static int
-vchdir(const char* path)
-{
-	int	n;
+static int vchdir(const char *path) {
+    int n;
 
-	if (strlen(path) >= PATH_MAX)
-	{
-		errno = ENAMETOOLONG;
-		n = -1;
-	}
-	else n = chdir(path);
-	return n;
+    if (strlen(path) >= PATH_MAX) {
+        errno = ENAMETOOLONG;
+        n = -1;
+    } else
+        n = chdir(path);
+    return n;
 }
 
-#define chdir(p)	vchdir(p)
+#define chdir(p) vchdir(p)
 
 #endif
 
@@ -60,83 +57,72 @@ vchdir(const char* path)
  * is called on intermediate chdir errors
  */
 
-int
-pathcd(const char* path, const char* home)
-{
-	char*	p = (char*)path;
-	char*	s;
-	int	n;
-	int		i;
-	int		r;
+int pathcd(const char *path, const char *home) {
+    char *p = (char *)path;
+    char *s;
+    int n;
+    int i;
+    int r;
 
-	r = 0;
-	for (;;)
-	{
-		/*
-		 * this should work 99% of the time
-		 */
+    r = 0;
+    for (;;) {
+        /*
+         * this should work 99% of the time
+         */
 
-		if (!chdir(p))
-			return r;
+        if (!chdir(p)) return r;
 
-		/*
-		 * chdir failed
-		 */
+        /*
+         * chdir failed
+         */
 
-		if ((n = strlen(p)) < PATH_MAX)
-			return -1;
+        if ((n = strlen(p)) < PATH_MAX) return -1;
 #ifdef ENAMETOOLONG
-		if (errno != ENAMETOOLONG)
-			return -1;
+        if (errno != ENAMETOOLONG) return -1;
 #endif
 
-		/*
-		 * path is too long -- copy so it can be modified in place
-		 */
+        /*
+         * path is too long -- copy so it can be modified in place
+         */
 
-		i = stktell(stkstd);
-		sfputr(stkstd, p, 0);
-		stkseek(stkstd, i);
-		p = stkptr(stkstd, i);
-		for (;;)
-		{
-			/*
-			 * get a short prefix component
-			 */
+        i = stktell(stkstd);
+        sfputr(stkstd, p, 0);
+        stkseek(stkstd, i);
+        p = stkptr(stkstd, i);
+        for (;;) {
+            /*
+             * get a short prefix component
+             */
 
-			s = p + PATH_MAX;
-			while (--s >= p && *s != '/');
-			if (s <= p)
-				break;
+            s = p + PATH_MAX;
+            while (--s >= p && *s != '/')
+                ;
+            if (s <= p) break;
 
-			/*
-			 * chdir to the prefix
-			 */
+            /*
+             * chdir to the prefix
+             */
 
-			*s++ = 0;
-			if (chdir(p))
-				break;
+            *s++ = 0;
+            if (chdir(p)) break;
 
-			/*
-			 * do the remainder
-			 */
+            /*
+             * do the remainder
+             */
 
-			if ((n -= s - p) < PATH_MAX)
-			{
-				if (chdir(s))
-					break;
-				return r;
-			}
-			p = s;
-		}
+            if ((n -= s - p) < PATH_MAX) {
+                if (chdir(s)) break;
+                return r;
+            }
+            p = s;
+        }
 
-		/*
-		 * try to recover back to home
-		 */
+        /*
+         * try to recover back to home
+         */
 
-		if (!(p = (char*)home))
-			return -1;
-		home = 0;
-		r = -1;
-	}
+        if (!(p = (char *)home)) return -1;
+        home = 0;
+        r = -1;
+    }
 }
