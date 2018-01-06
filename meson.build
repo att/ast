@@ -10,9 +10,7 @@ add_project_arguments('-DMESON_BUILD=1', language: 'c')
 # does that but also limits which APIs are available.
 add_project_arguments('-std=gnu99', language: 'c')
 
-# We should remove all #prototyped pragmas from headers.
-add_project_arguments('-Wno-unknown-pragmas', language: 'c')
-# We sure we have symbolic debug info in the compiled binaries so that our
+# Make sure we have symbolic debug info in the compiled binaries so that our
 # `dump_backtrace()` function can provide some minimally useful information.
 add_project_arguments('-g', language: 'c')
 
