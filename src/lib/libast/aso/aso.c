@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include "asohdr.h"
 #include "ast_aso.h"
 

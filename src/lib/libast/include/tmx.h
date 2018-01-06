@@ -1,5 +1,4 @@
 /* : : generated from tmx by iffe version 2013-11-14 : : */
-#pragma prototyped
 #ifndef _TMX_H
 #define _TMX_H 1
 /*

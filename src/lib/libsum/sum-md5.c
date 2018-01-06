@@ -1,5 +1,3 @@
-#pragma prototyped
-
 /*
  * md5
  */

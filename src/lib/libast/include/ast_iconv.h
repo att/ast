@@ -1,5 +1,4 @@
 /* : : generated from iconv by iffe version 2013-11-14 : : */
-#pragma prototyped
 #ifndef _def_iconv_features
 #define _def_iconv_features 1
 #define _sys_types 1       /* #include <sys/types.h> ok */

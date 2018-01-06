@@ -19,7 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * RE character class support
  */

@@ -18,7 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * -lcmd specific workaround to handle
  *	fts_namelen

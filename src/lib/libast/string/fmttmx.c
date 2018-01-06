@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include <tmx.h>
 #include <tv.h>
 

@@ -19,7 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * son of spawnveg()
  * more cooperative than posix_spawn()

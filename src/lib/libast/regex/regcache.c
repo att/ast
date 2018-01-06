@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * regcomp() regex_t cache
  * at&t research

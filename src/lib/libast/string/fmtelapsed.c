@@ -19,7 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * return pointer to formatted elapsed time for u 1/n secs
  * compatible with strelapsed()

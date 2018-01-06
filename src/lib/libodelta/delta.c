@@ -17,7 +17,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 #include "suftree.h"
 #include "update.h"
 

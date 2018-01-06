@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * signal that disables syscall restart on interrupt with clear signal mask
  * fun==SIG_DFL also unblocks signal

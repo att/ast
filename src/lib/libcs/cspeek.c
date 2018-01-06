@@ -17,8 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include "cslib.h"
 
 #if _socket_peek && !CS_LIB_SOCKET

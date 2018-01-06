@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * generic discipline/method error message function
  */

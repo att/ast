@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * ccmapchr(ccmap(CC_NATIVE,CC_ASCII),c) and strcmp
  */

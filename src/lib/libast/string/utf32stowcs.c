@@ -19,7 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * convert native utf-32 string to wide character string
  * Roland Mainz <roland.mainz@nrubsig.org>

@@ -17,7 +17,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 #ifndef _UPDATE_H
 #define _UPDATE_H
 

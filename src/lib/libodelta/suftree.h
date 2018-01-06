@@ -17,7 +17,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 #ifndef _SUFTREE_H
 #define _SUFTREE_H
 

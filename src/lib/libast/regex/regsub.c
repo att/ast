@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * OBSOLETE Sfio_t buffer interface -- use regsubcomp(),regsubexec()
  */

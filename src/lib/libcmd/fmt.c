@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char usage[] =
     "[-?\n@(#)$Id: fmt (AT&T Research) 2007-01-02 $\n]" USAGE_LICENSE
     "[+NAME?fmt - simple text formatter]"

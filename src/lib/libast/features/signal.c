@@ -19,7 +19,6 @@
 *                     Phong Vo <phongvo@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * Glenn Fowler
  * AT&T Research
@@ -326,7 +325,6 @@ main()
 		mapindex[j] = RANGE_MAX | RANGE_RT | n;
 	}
 #endif
-	printf("#pragma prototyped\n");
 	printf("#define SIG_MAX	%d\n", k);
 	printf("\n");
 	printf("static const char* const	sig_name[] =\n");

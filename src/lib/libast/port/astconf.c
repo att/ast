@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * string interface to confstr(),pathconf(),sysconf(),sysinfo()
  * extended to allow some features to be set per-process

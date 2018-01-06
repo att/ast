@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include <cmd.h>
 
 SHLIB(cmd)

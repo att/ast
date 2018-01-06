@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #ifndef _INTERCEPTS_H
 #define _INTERCEPTS_H 1
 

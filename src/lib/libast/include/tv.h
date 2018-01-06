@@ -1,5 +1,4 @@
 /* : : generated from tv by iffe version 2013-11-14 : : */
-#pragma prototyped
 #ifndef _TV_H
 #define _TV_H 1
 /*

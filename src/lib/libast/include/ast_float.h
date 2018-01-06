@@ -1,5 +1,4 @@
 /* : : generated from float by iffe version 2013-11-14 : : */
-#pragma prototyped
 #ifndef _def_float_features
 #define _def_float_features 1
 #include <ast_common.h>

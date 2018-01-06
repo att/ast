@@ -1,4 +1,3 @@
-#pragma prototyped
 /*
  * original code
  *

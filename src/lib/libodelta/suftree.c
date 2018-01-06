@@ -17,7 +17,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 #define _IN_SUF_TREE
 #include "suftree.h"
 

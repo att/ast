@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char usage[] =
     "[-?\n@(#)$Id: fds (AT&T Research) 2009-09-09 $\n]" USAGE_LICENSE
     "[+NAME?fds - list open file descriptor status]"

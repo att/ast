@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include <ast_standards.h>
 
 #define _AST_INTERCEPT_IMPLEMENT 2

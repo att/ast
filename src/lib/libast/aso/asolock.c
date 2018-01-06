@@ -19,8 +19,6 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include "asohdr.h"
 
 int asolock(unsigned int volatile *lock, unsigned int key, int type) {

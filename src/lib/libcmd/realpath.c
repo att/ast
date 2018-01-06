@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char usage[] =
     "[-?\n@(#)$Id: realpath (AT&T Research) 2013-12-06 $\n]" USAGE_LICENSE
     "[+NAME?realpath - print canonicalized path]"

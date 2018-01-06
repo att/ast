@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char usage[] =
     "[-?\n@(#)$Id: grep (AT&T Research) 2014-01-26 $\n]" USAGE_LICENSE
     "[--plugin?ksh]"

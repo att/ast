@@ -1,5 +1,4 @@
 /* : : generated from sys by iffe version 2013-11-14 : : */
-#pragma prototyped
 #ifndef _AST_SYS_H
 #define _AST_SYS_H 1
 #define _sys_types 1 /* #include <sys/types.h> ok */
