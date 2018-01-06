@@ -17,8 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
 #include	"defs.h"
 #include	"builtins.h"
 #include	"name.h"

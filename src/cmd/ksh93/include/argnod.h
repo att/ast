@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 #ifndef ARG_RAW
 /*
  *	struct to hold a word argument

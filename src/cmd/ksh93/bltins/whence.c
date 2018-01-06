@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * command [-pvVx] name [arg...]
  * whence [-afvp] name...

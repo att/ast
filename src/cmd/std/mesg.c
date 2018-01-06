@@ -17,7 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * mesg.c
  * Written by David Korn

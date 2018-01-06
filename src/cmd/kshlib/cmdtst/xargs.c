@@ -18,7 +18,6 @@
  *              Doug McIlroy <doug@research.bell-labs.com>              *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * Glenn Fowler
  * AT&T Research

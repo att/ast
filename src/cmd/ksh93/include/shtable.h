@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 #ifndef _SHTABLE_H
 
 /*

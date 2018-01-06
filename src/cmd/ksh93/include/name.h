@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 #ifndef _NV_PRIVATE
 /*
  * This is the implementation header file for name-value pairs

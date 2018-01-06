@@ -17,7 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * split.c
  * David Korn

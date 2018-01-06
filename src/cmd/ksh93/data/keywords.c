@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 #include	"shell.h"
 #include	"shlex.h"
 

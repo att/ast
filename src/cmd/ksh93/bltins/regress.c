@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * regression test intercept control
  * enable with SHOPT_REGRESS==1 in Makefile

@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * trap  [-p]  action sig...
  * kill  [-l] [sig...]

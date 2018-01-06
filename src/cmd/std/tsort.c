@@ -17,8 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char usage[] =
     "[-?\n@(#)$Id: tsort (AT&T Research) 2000-03-23 $\n]" USAGE_LICENSE
     "[+NAME?tsort - topological sort]"

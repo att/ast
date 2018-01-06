@@ -17,8 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
 /*
  * tables for the test builin [[...]] and [...]
  */

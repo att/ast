@@ -3774,8 +3774,6 @@ mconv(int *o, int f1, int f2)
 !
 			;;
 		g7.dat)	cat <<'!'
-#pragma prototyped
-
 #include "sed.h" /* define sed stuff */
 
 Text retemp;	/* holds a rewritten regex, without delimiter */

@@ -18,7 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * look for lines beginning with <prefix> in sorted a sorted file
  *

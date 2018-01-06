@@ -17,8 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
 #include	<ast.h>
 
 #if SHOPT_DYNAMIC

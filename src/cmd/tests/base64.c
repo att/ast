@@ -17,7 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * base64encode()/base64decode() tester
  */

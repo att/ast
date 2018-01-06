@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * echo [arg...]
  * print [-nrps] [-f format] [-u filenum] [arg...]

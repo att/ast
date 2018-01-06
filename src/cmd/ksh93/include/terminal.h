@@ -17,8 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
 #ifndef _terminal_
 #define _terminal_	1
 

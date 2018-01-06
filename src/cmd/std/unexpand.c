@@ -17,7 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * expand.c and unexpand.c
  * They can be linked together

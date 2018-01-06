@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /* Adapted for ksh by David Korn */
 /*+	VI.C			P.D. Sullivan
  *

@@ -17,8 +17,6 @@
 *               Roland Mainz <roland.mainz@nrubsig.org>                *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
 #include "defs.h"
 #include "variables.h"
 #include "lexstates.h"

@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * cd [-LP@] [-f dirfd] [dirname]
  * cd [-LP] [-f dirfd] [old] [new]

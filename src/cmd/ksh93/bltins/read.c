@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * read [-ACprs] [-q format] [-d delim] [-u filenum] [-t timeout] [-n n] [-N n] [name...]
  *

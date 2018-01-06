@@ -17,8 +17,6 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include <ast.h>
 #include <ctype.h>
 #include <debug.h>

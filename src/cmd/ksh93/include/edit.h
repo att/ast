@@ -17,7 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 #ifndef SEARCHSIZE
 /*
  *  edit.h -  common data structure for vi and emacs edit options

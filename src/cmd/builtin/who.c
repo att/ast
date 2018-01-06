@@ -18,7 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
 /*
  * who.c
  * Written by David Korn

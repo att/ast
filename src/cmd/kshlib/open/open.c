@@ -17,8 +17,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 static const char id[] = "\n@(#)$Id: open (AT&T Research) 1998-07-07 $\0\n";
 
 #include <option.h>

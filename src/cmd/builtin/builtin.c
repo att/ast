@@ -18,8 +18,6 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 /*
  * builtin main stub for -lcmd
  */

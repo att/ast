@@ -17,9 +17,6 @@
 *                    David Korn <dgkorn@gmail.com>                     *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
-
-
 #include	"defs.h"
 #include	"shtable.h"
 #include	<signal.h>

@@ -18,8 +18,6 @@
  *              Doug McIlroy <doug@research.bell-labs.com>              *
  *                                                                      *
  ***********************************************************************/
-#pragma prototyped
-
 #include <ast.h>
 #include <shcmd.h>
 
