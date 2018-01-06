@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -43,96 +43,80 @@
  * return pos for scan on table
  */
 
-Hash_position_t*
-hashscan(Hash_table_t* tab, int flags)
-{
-	Hash_position_t*	pos;
+Hash_position_t *hashscan(Hash_table_t *tab, int flags) {
+    Hash_position_t *pos;
 
-	static Hash_bucket_t		empty;
+    static Hash_bucket_t empty;
 
-	if (!(pos = newof(0, Hash_position_t, 1, 0))) return(0);
-	pos->tab = tab->root->last.table = tab;
-	pos->bucket = &empty;
-	pos->slot = 0;
-	if (tab->scope && !(flags & HASH_NOSCOPE))
-	{
-		pos->flags = HASH_SCOPE;
-		do
-		{
-			Hash_bucket_t*	b;
+    if (!(pos = newof(0, Hash_position_t, 1, 0))) return (0);
+    pos->tab = tab->root->last.table = tab;
+    pos->bucket = &empty;
+    pos->slot = 0;
+    if (tab->scope && !(flags & HASH_NOSCOPE)) {
+        pos->flags = HASH_SCOPE;
+        do {
+            Hash_bucket_t *b;
 
-			if (tab->frozen)
-			{
-				Hash_bucket_t**	sp = tab->table;
-				Hash_bucket_t**	sx = tab->table + tab->size;
+            if (tab->frozen) {
+                Hash_bucket_t **sp = tab->table;
+                Hash_bucket_t **sx = tab->table + tab->size;
 
-				while (sp < sx)
-					for (b = *sp++; b; b = b->next)
-						b->hash &= ~HASH_HIDDEN;
-			}
-		} while (tab = tab->scope);
-		tab = pos->tab;
-	}
-	else pos->flags = 0;
-	tab->frozen++;
-	return(pos);
+                while (sp < sx)
+                    for (b = *sp++; b; b = b->next) b->hash &= ~HASH_HIDDEN;
+            }
+        } while (tab = tab->scope);
+        tab = pos->tab;
+    } else
+        pos->flags = 0;
+    tab->frozen++;
+    return (pos);
 }
 
 /*
  * return next scan element
  */
 
-Hash_bucket_t*
-hashnext(Hash_position_t* pos)
-{
-	Hash_bucket_t*	b;
+Hash_bucket_t *hashnext(Hash_position_t *pos) {
+    Hash_bucket_t *b;
 
-	if (!pos) return(0);
-	b = pos->bucket;
-	for (;;)
-	{
-		if (!(b = b->next))
-		{
-			do
-			{
-				if (pos->slot >= pos->tab->size)
-				{
-					pos->tab->frozen--;
-					if (!pos->flags || !pos->tab->scope) return(0);
-					pos->tab = pos->tab->scope;
-					pos->tab->root->last.table = pos->tab;
-					pos->slot = 0;
-					pos->tab->frozen++;
-				}
-			} while (!(b = pos->tab->table[pos->slot++]));
-		}
-		if (!(b->hash & HASH_DELETED) && (!(pos->tab->flags & HASH_VALUE) || b->value) && (!pos->flags || !(b->hash & (HASH_HIDDEN|HASH_HIDES)))) break;
-		if (b->hash & HASH_HIDES)
-		{
-			Hash_bucket_t*	h = (Hash_bucket_t*)b->name;
+    if (!pos) return (0);
+    b = pos->bucket;
+    for (;;) {
+        if (!(b = b->next)) {
+            do {
+                if (pos->slot >= pos->tab->size) {
+                    pos->tab->frozen--;
+                    if (!pos->flags || !pos->tab->scope) return (0);
+                    pos->tab = pos->tab->scope;
+                    pos->tab->root->last.table = pos->tab;
+                    pos->slot = 0;
+                    pos->tab->frozen++;
+                }
+            } while (!(b = pos->tab->table[pos->slot++]));
+        }
+        if (!(b->hash & HASH_DELETED) && (!(pos->tab->flags & HASH_VALUE) || b->value) &&
+            (!pos->flags || !(b->hash & (HASH_HIDDEN | HASH_HIDES))))
+            break;
+        if (b->hash & HASH_HIDES) {
+            Hash_bucket_t *h = (Hash_bucket_t *)b->name;
 
-			if (!(h->hash & HASH_HIDDEN))
-			{
-				h->hash |= HASH_HIDDEN;
-				if (!(b->hash & HASH_DELETED)) break;
-			}
-		}
-		else b->hash &= ~HASH_HIDDEN;
-	}
-	return(pos->tab->root->last.bucket = pos->bucket = b);
+            if (!(h->hash & HASH_HIDDEN)) {
+                h->hash |= HASH_HIDDEN;
+                if (!(b->hash & HASH_DELETED)) break;
+            }
+        } else
+            b->hash &= ~HASH_HIDDEN;
+    }
+    return (pos->tab->root->last.bucket = pos->bucket = b);
 }
 
 /*
  * terminate scan
  */
 
-void
-hashdone(Hash_position_t* pos)
-{
-	if (pos)
-	{
-		if (pos->tab->frozen)
-			pos->tab->frozen--;
-		free(pos);
-	}
+void hashdone(Hash_position_t *pos) {
+    if (pos) {
+        if (pos->tab->frozen) pos->tab->frozen--;
+        free(pos);
+    }
 }
