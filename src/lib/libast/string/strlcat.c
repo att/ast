@@ -1,35 +1,34 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * strlcat implementation
  */
 
-#define strlcat		______strlcat
+#define strlcat ______strlcat
 
 #include <ast.h>
 
-#undef	strlcat
-
+#undef strlcat
 
 #if _lib_strlcat
 
@@ -44,38 +43,32 @@ NoN(strlcat)
  */
 
 #if defined(__EXPORT__)
-#define extern	__EXPORT__
+#define extern __EXPORT__
 #endif
 
-extern size_t
-strlcat(char* s, const char* t, size_t n)
-{
-	size_t	m;
-	const char*	o = t;
+extern size_t strlcat(char *s, const char *t, size_t n) {
+    size_t m;
+    const char *o = t;
 
-	if (m = n)
-	{
-		while (n && *s)
-		{
-			n--;
-			s++;
-		}
-		m -= n;
-		if (n)
-			do
-			{
-				if (!--n)
-				{
-					*s = 0;
-					break;
-				}
-			} while (*s++ = *t++);
-		else
-			*s = 0;
-	}
-	if (!n)
-		while (*t++);
-	return (t - o) + m - 1;
+    if (m = n) {
+        while (n && *s) {
+            n--;
+            s++;
+        }
+        m -= n;
+        if (n) do {
+                if (!--n) {
+                    *s = 0;
+                    break;
+                }
+            } while (*s++ = *t++);
+        else
+            *s = 0;
+    }
+    if (!n)
+        while (*t++)
+            ;
+    return (t - o) + m - 1;
 }
 
 #endif

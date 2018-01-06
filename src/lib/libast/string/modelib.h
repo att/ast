@@ -1,24 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1985-2011 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Glenn Fowler <glenn.s.fowler@gmail.com>                *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                     Phong Vo <phongvo@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1985-2011 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                     Phong Vo <phongvo@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #pragma prototyped
 /*
  * Glenn Fowler
@@ -34,22 +34,22 @@
 #include <ls.h>
 #include <modex.h>
 
-#define MODELEN	10
-#define PERMLEN	24
+#define MODELEN 10
+#define PERMLEN 24
 
-#define modetab	_mode_table_	/* data hiding				*/
-#define permmap	_mode_permmap_	/* data hiding				*/
+#define modetab _mode_table_   /* data hiding				*/
+#define permmap _mode_permmap_ /* data hiding				*/
 
-struct modeop			/* ops for each char in mode string	*/
+struct modeop /* ops for each char in mode string	*/
 {
-	int	mask1;		/* first mask				*/
-	int	shift1;		/* first shift count			*/
-	int	mask2;		/* second mask				*/
-	int	shift2;		/* second shift count			*/
-	char*	name;		/* mode char using mask/shift as index	*/
+    int mask1;  /* first mask				*/
+    int shift1; /* first shift count			*/
+    int mask2;  /* second mask				*/
+    int shift2; /* second shift count			*/
+    char *name; /* mode char using mask/shift as index	*/
 };
 
-extern struct modeop	modetab[];
-extern int		permmap[];
+extern struct modeop modetab[];
+extern int permmap[];
 
 #endif
