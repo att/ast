@@ -1454,9 +1454,7 @@ USAGE_LICENSE
 	"quoted strings preceded by a \b$\b.  These strings are needed for "
 	"localization of the script to different locales.]"
 "[E?Reads the file "
-#if SHOPT_SYSRC
 	"\b/etc/ksh.kshrc\b, if it exists, as a profile, followed by "
-#endif
 	"\b${ENV-$HOME/.kshrc}\b, if it exists, as a profile. "
 	"On by default for interactive shells; use \b+E\b to disable.]"
 "[R]:[file?Do not execute the script, but create a cross reference database "

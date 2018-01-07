@@ -200,9 +200,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                 sh_isoption(shp, SH_RC)) {
 #if SHOPT_BASH
                 if (sh_isoption(shp, SH_BASH) && !sh_isoption(shp, SH_POSIX)) {
-#if SHOPT_SYSRC
                     sh_source(shp, iop, e_bash_sysrc);
-#endif
                     sh_source(
                         shp, iop,
                         shp->gd->rcfile ? shp->gd->rcfile : sh_mactry(shp, (char *)e_bash_rc));
@@ -212,9 +210,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                     if (name = sh_mactry(shp, nv_getval(ENVNOD))) {
                         name = *name ? strdup(name) : (char *)0;
                     }
-#if SHOPT_SYSRC
                     if (!name || !strmatch(name, "?(.)/./*")) sh_source(shp, iop, e_sysrc);
-#endif
                     if (name) {
                         sh_source(shp, iop, name);
                         free(name);

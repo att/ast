@@ -116,13 +116,9 @@ extern const char	e_unknown[];
 extern const char	e_devnull[];
 extern const char	e_profile[];
 extern const char	e_sysprofile[];
-#if SHOPT_SYSRC
 extern const char	e_sysrc[];
-#endif
 #if SHOPT_BASH
-#if SHOPT_SYSRC
 extern const char	e_bash_sysrc[];
-#endif
 extern const char	e_bash_rc[];
 extern const char	e_bash_login[];
 extern const char	e_bash_logout[];
