@@ -57,6 +57,11 @@ After cloning this repo, cd to the top directory of it and run:
 ./bin/package make
 ```
 
+__NOTE__: That build command only applies to the legacy branches that include
+the entire AST source. It does not apply to the current `master` branch that
+is focused solely on the `ksh` command and uses the Meson build system.
+
+
 Almost all the tools in this package (including the bin/package script are
 self-documenting; run <tool> --man (or --html) for the man page for the tool.
 
@@ -85,6 +90,25 @@ The [gh-pages branch](https://github.com/att/ast/commits/gh-pages)
 will probably be removed. It contains files needed to generate the static
 [AST project page](https://att.github.io/ast/) hosted by Github. See
 https://help.github.com/articles/what-is-github-pages/ for more info.
+
+## Licensing
+
+This section needs more detail and clarity. The original `README` document
+said the following:
+
+> Each package is covered by one of the license files
+>
+>   lib/package/LICENSES/<license>
+>
+> where <license> is the license type for the package.  At the top
+> of each license file is a URL; the license covers all software that
+> refers to this URL. For details run
+>
+>   bin/package license [<package>]
+>
+> Any archives, distributions or packages made from source or
+> binaries covered by license(s) must contain the corresponding
+> license file(s).
 
 ## Contact Us
 
