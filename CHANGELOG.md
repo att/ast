@@ -14,10 +14,10 @@ None at this time.
 ## Notable non-backward compatible changes
 
 - Support for the UWIN environment has been removed (issue #284).
-- The `SHOPT_FIXEDARRAY` feature has been removed. This should not break any
-  existing uses of `ksh` since that feature is not believed to have been
-  enabled in any public release. It could break anyone who was building from
-  the source after its last stable release; version `93u+` (issue #234).
+- The experimental `SHOPT_FIXEDARRAY` feature has been removed. It is known to
+  have been enabled in some Fedora and RHEL builds. But because it was
+  experimental and undocumented this should not break any existing users of
+  `ksh` built with this feature enabled. (issue #234)
 
 ## Notable fixes and improvements
 
