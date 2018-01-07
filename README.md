@@ -116,7 +116,10 @@ The primary mechanism for interacting with this project is the [Github
 project](https://github.com/att/ast/) by opening issues and pull-requests
 and watching the project.
 
-TBD is setting up a public Gitter, IRC, and other channels for real-time
+### IRC
+Use `#ksh` channel on freenode to discuss about AT&T KornShell and related variants.
+
+TBD is setting up a public Gitter, and other channels for real-time
 communication.
 
 Archives of the legacy AST mailing lists (which is mostly
