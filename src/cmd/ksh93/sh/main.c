@@ -136,7 +136,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     fixargs(av, 0);
     shp = sh_init(ac, av, userinit);
     time(&mailtime);
-    if (rshflag = sh_isoption(shp, SH_RESTRICTED)) sh_offoption(shp, SH_RESTRICTED);
+    rshflag = sh_isoption(shp, SH_RESTRICTED);
+    if (rshflag) sh_offoption(shp, SH_RESTRICTED);
     if (sigsetjmp(*((sigjmp_buf *)shp->jmpbuffer), 0)) {
         // Begin script execution here.
         sh_reinit(shp, (char **)0);
@@ -207,9 +208,8 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                 } else
 #endif
                 {
-                    if (name = sh_mactry(shp, nv_getval(ENVNOD))) {
-                        name = *name ? strdup(name) : (char *)0;
-                    }
+                    name = sh_mactry(shp, nv_getval(ENVNOD));
+                    if (name) name = *name ? strdup(name) : (char *)0;
                     if (!name || !strmatch(name, "?(.)/./*")) sh_source(shp, iop, e_sysrc);
                     if (name) {
                         sh_source(shp, iop, name);
@@ -411,12 +411,13 @@ static void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
         }
         exitset(shp);
         // Skip over remaining input.
-        if (top = fcfile()) {
+        top = fcfile();
+        if (top) {
             while (fcget() > 0) {
                 ;  // empty loop
             }
             fcclose();
-            while (top = sfstack(iop, SF_POPSTACK)) sfclose(top);
+            while ((top = sfstack(iop, SF_POPSTACK))) sfclose(top);
         }
         // Make sure that we own the terminal.
 #ifdef SIGTSTP
@@ -659,9 +660,9 @@ static void fixargs(char **argv, int mode) {
 #else   // PSTAT
     if (mode == 0) {
         buff = argv[0];
-        while (cp = *argv++) command_len += strlen(cp) + 1;
+        while ((cp = *argv++)) command_len += strlen(cp) + 1;
         if (environ && *environ == buff + command_len) {
-            for (argv = environ; cp = *argv; cp++) {
+            for (argv = environ; (cp = *argv); cp++) {
                 if (command_len > CMD_LENGTH) {
                     command_len = CMD_LENGTH;
                     break;

@@ -160,7 +160,8 @@ char *sh_mactrim(Shell_t *shp, char *str, int mode) {
     if (mode < 0) mp->assign = -mode;
     mp->quoted = mp->lit = mp->split = mp->quote = 0;
     mp->sp = 0;
-    if (mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD))) {
+    mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD));
+    if (mp->ifsp) {
         mp->ifs = *mp->ifsp;
     } else {
         mp->ifs = ' ';
@@ -196,7 +197,8 @@ int sh_macexpand(Shell_t *shp, struct argnod *argp, struct argnod **arghead, int
 
     savemac = *mp;
     mp->sp = 0;
-    if (mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD))) {
+    mp->ifsp = nv_getval(sh_scoped(shp, IFSNOD));
+    if (mp->ifsp) {
         mp->ifs = *mp->ifsp;
     } else {
         mp->ifs = ' ';
@@ -297,7 +299,8 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
             }
         }
         if (n == S_NL || n == S_QUOTE || n == S_RBRA) continue;
-        if (c = (cp - 1) - fcseek(0)) sfwrite(outfile, fcseek(0), c);
+        c = (cp - 1) - fcseek(0);
+        if (c) sfwrite(outfile, fcseek(0), c);
         cp = fcseek(c + 1);
         switch (n) {
             case S_EOF: {
@@ -354,9 +357,8 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                         fcsave(&save2);
                         fcsopen(stkptr(stkp, offset));
                         varsub(mp);
-                        if (c = stktell(stkp) - offset2) {
-                            sfwrite(outfile, (char *)stkptr(stkp, offset2), c);
-                        }
+                        c = stktell(stkp) - offset2;
+                        if (c) sfwrite(outfile, (char *)stkptr(stkp, offset2), c);
                         fcrestore(&save2);
                         stkseek(stkp, offset);
                         break;
@@ -482,7 +484,8 @@ static void copyto(Mac_t *mp, int endch, int newquote) {
                 } else if (mp->split && endch && !mp->quote && !mp->lit) {
                     if (c) mac_copy(mp, first, c);
                     cp = fcseek(c + 2);
-                    if (c = cp[-1]) {
+                    c = cp[-1];
+                    if (c) {
                         sfputc(stkp, c);
                         if (c == ESCAPE) sfputc(stkp, ESCAPE);
                     } else {
@@ -497,7 +500,7 @@ static void copyto(Mac_t *mp, int endch, int newquote) {
                     // Preserve \digit for pattern matching. Also \alpha for extended patterns.
                     if (!mp->lit && !mp->quote) {
                         int nc = *(unsigned char *)cp;
-                        if ((n == S_DIG || ((paren + ere) && (sh_lexstates[ST_DOL][nc] == S_ALP) ||
+                        if ((n == S_DIG || (((paren + ere) && sh_lexstates[ST_DOL][nc] == S_ALP) ||
                                             nc == '<' || nc == '>'))) {
                             break;
                         }
@@ -826,7 +829,8 @@ static void mac_substitute(Mac_t *mp, char *cp, char *str, int subexp[], int sub
             break;
         }
     }
-    if (n = cp - first - 1) mac_copy(mp, first, n);
+    n = cp - first - 1;
+    if (n) mac_copy(mp, first, n);
     free(ptr);
 }
 
@@ -1134,7 +1138,7 @@ retry1:
                     } else {
                         sfwrite(stkp, fcseek(0) - LEN, LEN);
                     }
-                } while ((d = c, (c = fcmbget(&LEN)), isaname(c)) || type && c == '.');
+                } while ((d = c, (c = fcmbget(&LEN)), isaname(c)) || (type && c == '.'));
                 while (c == LBRACT && (type || mp->arrayok)) {
                     mp->shp->argaddr = 0;
                     if ((c = fcmbget(&LEN), isastchar(c)) && fcpeek(0) == RBRACT && d != '.') {
@@ -1614,7 +1618,7 @@ skip:
         if ((type == '/' || c == '/') && (repstr = mac_getstring(pattern))) {
             replen = (int)strlen(repstr);
         }
-        if (v || c == '/' && offset >= 0) stkseek(stkp, offset);
+        if (v || (c == '/' && offset >= 0)) stkseek(stkp, offset);
     }
     // Check for quoted @.
     if (mode == '@' && mp->quote && !v && c != '-') mp->quoted -= 2;
@@ -1911,9 +1915,10 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
         if (t->tre.tretyp == 0 && !t->com.comarg && !t->com.comset) {
             // Special case $(<file) and $(<#file).
             int fd;
-            int r;
+            int r = 0;
             struct checkpt buff;
             struct ionod *ip = 0;
+
             if (sp) sfclose(sp);
             sh_pushcontext(mp->shp, &buff, SH_JMPIO);
             if ((ip = t->tre.treio) && ((ip->iofile & IOLSEEK) || !(ip->iofile & IOUFD)) &&
@@ -1924,7 +1929,8 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             }
             sh_popcontext(mp->shp, &buff);
             if (r == 0 && ip && (ip->iofile & IOLSEEK)) {
-                if (sp = mp->shp->sftable[fd]) {
+                sp = mp->shp->sftable[fd];
+                if (sp) {
                     num = sftell(sp);
                 } else {
                     num = lseek(fd, (off_t)0, SEEK_CUR);
@@ -2039,7 +2045,8 @@ static void mac_copy(Mac_t *mp, const char *str, size_t size) {
         state = sh_lexstates[ST_MACRO];
         // Insert \ before file expansion characters.
         while (size-- > 0) {
-            if ((len = mbnsize(cp, ep - cp)) > 1) {
+            len = mbnsize(cp, ep - cp);
+            if (len > 1) {
                 cp += len;
                 size -= (len - 1);
                 continue;
@@ -2076,22 +2083,24 @@ static void mac_copy(Mac_t *mp, const char *str, size_t size) {
                 c = 0;
             }
             if (c) {
-                if (c = (cp - 1) - str) sfwrite(stkp, str, c);
+                c = (cp - 1) - str;
+                if (c) sfwrite(stkp, str, c);
                 sfputc(stkp, ESCAPE);
                 str = cp - 1;
             }
         }
-        if (c = cp - str) sfwrite(stkp, str, c);
+        c = cp - str;
+        if (c) sfwrite(stkp, str, c);
     } else if (!mp->quote && mp->split && (mp->ifs || mp->pattern)) {
         // Split words at ifs characters.
         state = mp->shp->ifstable;
         if (mp->pattern) {
             char *sp = "&|()";
-            while (c = *sp++) {
+            while ((c = *sp++)) {
                 if (state[c] == 0) state[c] = S_EPAT;
             }
             sp = "*?[{";
-            while (c = *sp++) {
+            while ((c = *sp++)) {
                 if (state[c] == 0) state[c] = S_PAT;
             }
             if (state[ESCAPE] == 0) state[ESCAPE] = S_ESC;
@@ -2150,11 +2159,11 @@ static void mac_copy(Mac_t *mp, const char *str, size_t size) {
         }
         if (mp->pattern) {
             cp = "&|()";
-            while (c = *cp++) {
+            while ((c = *cp++)) {
                 if (state[c] == S_EPAT) state[c] = 0;
             }
             cp = "*?[{";
-            while (c = *cp++) {
+            while ((c = *cp++)) {
                 if (state[c] == S_PAT) state[c] = 0;
             }
             if (mp->shp->ifstable[ESCAPE] == S_ESC) mp->shp->ifstable[ESCAPE] = 0;
@@ -2224,8 +2233,9 @@ static int substring(const char *string, size_t len, const char *pat, int match[
     int smatch[2 * (MATCH_MAX + 1)];
 
     if (flag) {
-        if (n = strngrpmatch(sp, len, pat, (ssize_t *)smatch, elementsof(smatch) / 2,
-                             STR_RIGHT | STR_MAXIMAL | STR_INT)) {
+        n = strngrpmatch(sp, len, pat, (ssize_t *)smatch, elementsof(smatch) / 2,
+                         STR_RIGHT | STR_MAXIMAL | STR_INT);
+        if (n) {
             memcpy(match, smatch, n * 2 * sizeof(smatch[0]));
             return n;
         }
@@ -2235,8 +2245,9 @@ static int substring(const char *string, size_t len, const char *pat, int match[
     sp += size;
     while (sp >= string) {
         if (mbwide()) sp = lastchar(string, sp);
-        if (n = strgrpmatch(sp, pat, (ssize_t *)smatch, elementsof(smatch) / 2,
-                            STR_RIGHT | STR_LEFT | STR_MAXIMAL | STR_INT)) {
+        n = strgrpmatch(sp, pat, (ssize_t *)smatch, elementsof(smatch) / 2,
+                        STR_RIGHT | STR_LEFT | STR_MAXIMAL | STR_INT);
+        if (n) {
             nmatch = n;
             memcpy(match, smatch, n * 2 * sizeof(smatch[0]));
             size = sp - string;
@@ -2327,7 +2338,8 @@ static void tilde_expand2(Shell_t *shp, int offset) {
     stkset(shp->stk, ptr, offset);
     sfseek(iop, (Sfoff_t)0, SEEK_SET);
     sfset(iop, SF_READ, 1);
-    if (ptr = sfreserve(iop, SF_UNBOUND, -1)) {
+    ptr = sfreserve(iop, SF_UNBOUND, -1);
+    if (ptr) {
         Sfoff_t n = sfvalue(iop);
         while (ptr[n - 1] == '\n') n--;
         if (n == 1 && fcpeek(0) == '/' && ptr[n - 1]) n--;
@@ -2430,7 +2442,8 @@ skip:
         logins_tree = dtopen(&_Nvdisc, Dtbag);
         dtuserdata(logins_tree, shp, 1);
     }
-    if (np = nv_search(string, logins_tree, NV_ADD)) {
+    np = nv_search(string, logins_tree, NV_ADD);
+    if (np) {
         c = shp->subshell;
         shp->subshell = 0;
         nv_putval(np, pw->pw_dir, 0);
@@ -2503,7 +2516,7 @@ static void mac_error(Namval_t *np) {
 static char *mac_getstring(char *pattern) {
     char *cp = pattern, *rep = 0, *dp;
     int c;
-    while (c = *cp++) {
+    while ((c = *cp++)) {
         if (c == ESCAPE && (!rep || (*cp && strchr("&|()[]*?", *cp)))) {
             c = *cp++;
         } else if (!rep && c == '/') {
