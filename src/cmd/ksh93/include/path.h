@@ -1,109 +1,107 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
+//
+// UNIX shell path handling interface.
+// Written by David Korn.
+// These are the definitions for the lexical analyzer.
+//
 #ifndef PATH_OFFSET
 
-/*
- *	UNIX shell path handling interface
- *	Written by David Korn
- *	These are the definitions for the lexical analyzer
- */
-
-#include	<nval.h>
-#include	"defs.h"
+#include <nval.h>
+#include "defs.h"
 
 #if !defined(SHOPT_SPAWN)
-#   if _use_spawnveg
-#	define  SHOPT_SPAWN  1
-#   endif
-#endif /* !SHOPT_SPAWN */
+#if _use_spawnveg
+#define SHOPT_SPAWN 1
+#endif
+#endif // !SHOPT_SPAWN
 
-#define PATH_PATH		0001
-#define PATH_FPATH		0002
-#define PATH_CDPATH		0004
-#define PATH_BFPATH		0010
-#define PATH_SKIP		0020
-#define PATH_BUILTIN_LIB	0040
-#define PATH_STD_DIR		0100	/* directory is on  $(getconf PATH) */
-#define PATH_BIN		0200	/* path behaves like /bin for builtins */
+#define PATH_PATH 0001
+#define PATH_FPATH 0002
+#define PATH_CDPATH 0004
+#define PATH_BFPATH 0010
+#define PATH_SKIP 0020
+#define PATH_BUILTIN_LIB 0040
+#define PATH_STD_DIR 0100 // directory is on  $(getconf PATH)
+#define PATH_BIN 0200     // path behaves like /bin for builtins
 
-#define PATH_OFFSET	2		/* path offset for path_join */
-#define MAXDEPTH	(sizeof(char*)==2?64:1024) /* maximum recursion depth*/
+#define PATH_OFFSET 2                              // path offset for path_join
+#define MAXDEPTH (sizeof(char *) == 2 ? 64 : 1024) // maximum recursion depth
 
-/*
- * path component structure for path searching
- */
-typedef struct pathcomp
-{
-	struct pathcomp *next;
-	int		refcount;
-	int		fd;
-	dev_t		dev;
-	ino_t		ino;
-	time_t		mtime;
-	char		*name;
-	char		*lib;
-	char		*bbuf;
-	char		*blib;
-	unsigned short	len;
-	unsigned short	flags;
-	Shell_t		*shp;
+//
+// Path component structure for path searching.
+//
+typedef struct pathcomp {
+    struct pathcomp *next;
+    int refcount;
+    int fd;
+    dev_t dev;
+    ino_t ino;
+    time_t mtime;
+    char *name;
+    char *lib;
+    char *bbuf;
+    char *blib;
+    unsigned short len;
+    unsigned short flags;
+    Shell_t *shp;
 } Pathcomp_t;
 
 #ifndef ARG_RAW
-    struct argnod;
-#endif /* !ARG_RAW */
+struct argnod;
+#endif // !ARG_RAW
 
-/* pathname handling routines */
-extern void		path_newdir(Shell_t*,Pathcomp_t*);
-extern Pathcomp_t	*path_dirfind(Pathcomp_t*,const char*,int);
-extern Pathcomp_t	*path_unsetfpath(Shell_t*);
-extern Pathcomp_t	*path_addpath(Shell_t*,Pathcomp_t*,const char*,int);
-extern bool		path_cmdlib(Shell_t*, const char*, bool);
-extern Pathcomp_t	*path_dup(Pathcomp_t*);
-extern void		path_delete(Pathcomp_t*);
-extern void 		path_alias(Namval_t*,Pathcomp_t*);
-extern Pathcomp_t 	*path_absolute(Shell_t*, const char*, Pathcomp_t*);
-extern char 		*path_basename(const char*);
-extern char 		*path_fullname(Shell_t*,const char*);
-extern int 		path_expand(Shell_t*,const char*, struct argnod**);
-extern void 		path_exec(Shell_t*,const char*,char*[],struct argnod*);
-extern pid_t		path_spawn(Shell_t*,const char*,char*[],char*[],Pathcomp_t*,int);
+// Pathname handling routines.
+extern void path_newdir(Shell_t *, Pathcomp_t *);
+extern Pathcomp_t *path_dirfind(Pathcomp_t *, const char *, int);
+extern Pathcomp_t *path_unsetfpath(Shell_t *);
+extern Pathcomp_t *path_addpath(Shell_t *, Pathcomp_t *, const char *, int);
+extern bool path_cmdlib(Shell_t *, const char *, bool);
+extern Pathcomp_t *path_dup(Pathcomp_t *);
+extern void path_delete(Pathcomp_t *);
+extern void path_alias(Namval_t *, Pathcomp_t *);
+extern Pathcomp_t *path_absolute(Shell_t *, const char *, Pathcomp_t *);
+extern char *path_basename(const char *);
+extern char *path_fullname(Shell_t *, const char *);
+extern int path_expand(Shell_t *, const char *, struct argnod **);
+extern void path_exec(Shell_t *, const char *, char *[], struct argnod *);
+extern pid_t path_spawn(Shell_t *, const char *, char *[], char *[], Pathcomp_t *, int);
 #if defined(__EXPORT__) && defined(_BLD_DLL) && defined(_BLD_shell)
-#   define extern __EXPORT__
+#define extern __EXPORT__
 #endif
-extern int		path_open(Shell_t*,const char*,Pathcomp_t*);
-extern Pathcomp_t 	*path_get(Shell_t*,const char*);
+extern int path_open(Shell_t *, const char *, Pathcomp_t *);
+extern Pathcomp_t *path_get(Shell_t *, const char *);
 #undef extern
-extern char 		*path_pwd(Shell_t*,int);
-extern Pathcomp_t	*path_nextcomp(Shell_t*,Pathcomp_t*,const char*,Pathcomp_t*);
-extern bool		path_search(Shell_t*,const char*,Pathcomp_t**,int);
-extern char		*path_relative(Shell_t*,const char*);
-extern int		path_complete(Shell_t*,const char*, const char*,struct argnod**);
-extern int 		path_generate(Shell_t*,struct argnod*,struct argnod**);
-extern int		path_xattr(Shell_t*, const char*, char*);
+extern char *path_pwd(Shell_t *, int);
+extern Pathcomp_t *path_nextcomp(Shell_t *, Pathcomp_t *, const char *, Pathcomp_t *);
+extern bool path_search(Shell_t *, const char *, Pathcomp_t **, int);
+extern char *path_relative(Shell_t *, const char *);
+extern int path_complete(Shell_t *, const char *, const char *, struct argnod **);
+extern int path_generate(Shell_t *, struct argnod *, struct argnod **);
+extern int path_xattr(Shell_t *, const char *, char *);
 
-/* builtin/plugin routines */
-extern int		sh_addlib(Shell_t*,void*,char*,Pathcomp_t*);
-extern Shbltin_f	sh_getlib(Shell_t*,char*,Pathcomp_t*);
+// Builtin/plugin routines.
+extern int sh_addlib(Shell_t *, void *, char *, Pathcomp_t *);
+extern Shbltin_f sh_getlib(Shell_t *, char *, Pathcomp_t *);
 
-/* constant strings needed for whence */
+// Constant strings needed for whence.
 extern const char e_timeformat[];
 extern const char e_badtformat[];
 extern const char e_dot[];
@@ -117,7 +115,7 @@ extern const char e_suidprofile[];
 extern const char e_sysprofile[];
 extern const char e_traceprompt[];
 extern const char e_crondir[];
-extern const char	e_suidexec[];
+extern const char e_suidexec[];
 extern const char is_alias[];
 extern const char is_builtin[];
 extern const char is_spcbuiltin[];
@@ -130,10 +128,10 @@ extern const char is_ufunction[];
 extern const char e_prohibited[];
 
 #if SHOPT_ACCT
-	extern void sh_accinit(void);
-	extern void sh_accbegin(const char*);
-	extern void sh_accend(void);
-	extern void sh_accsusp(void);
-#endif /* SHOPT_ACCT */
+extern void sh_accinit(void);
+extern void sh_accbegin(const char *);
+extern void sh_accend(void);
+extern void sh_accsusp(void);
+#endif // SHOPT_ACCT
 
-#endif /*! PATH_OFFSET */
+#endif // !PATH_OFFSET
