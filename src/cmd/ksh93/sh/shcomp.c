@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
         stakset((char *)0, 0);
         t = (Shnode_t *)sh_parse(shp, in, 0);
         if (t) {
-            if ((t->tre.tretyp & (COMMSK | COMSCAN)) == 0 && t->com.comnamp &&
+            if ((t->tre.tretyp & (COMMSK | COMSCAN)) == TCOM && t->com.comnamp &&
                 strcmp(nv_name((Namval_t *)t->com.comnamp), "alias") == 0) {
                 sh_exec(shp, t, 0);
             }

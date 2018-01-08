@@ -1877,7 +1877,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             mp->shp->st.staklist = saveslp;
             fcrestore(&save);
             return;
-        } else if (type == 2 && t && (t->tre.tretyp & COMMSK) == 0 && t->com.comarg) {
+        } else if (type == 2 && t && (t->tre.tretyp & COMMSK) == TCOM && t->com.comarg) {
             str = NULL;
             if (!(t->com.comtyp & COMSCAN)) {
                 struct dolnod *ap = (struct dolnod *)t->com.comarg;
@@ -1912,7 +1912,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
 #if KSHELL
     if (t) {
         fcsave(&save);
-        if (t->tre.tretyp == 0 && !t->com.comarg && !t->com.comset) {
+        if (t->tre.tretyp == TCOM && !t->com.comarg && !t->com.comset) {
             // Special case $(<file) and $(<#file).
             int fd;
             int r = 0;

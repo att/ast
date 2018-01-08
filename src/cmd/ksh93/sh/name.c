@@ -399,7 +399,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     goto check_type;
                 }
                 if ((tp->tre.tretyp & COMMSK) == TFUN) goto skip;
-                if (tp->tre.tretyp == 0 && !tp->com.comset && !tp->com.comarg) {
+                if (tp->tre.tretyp == TCOM && !tp->com.comset && !tp->com.comarg) {
                     if (!(arg->argflag & ARG_APPEND)) {
                         if (ap && ap->nelem > 0) {
                             nv_putsub(np, NULL, 0, ARRAY_SCAN);
@@ -522,7 +522,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 shp->prefix = prefix;
                 if (nv_isarray(np) && (mp = nv_opensub(np))) np = mp;
                 while (tp->tre.tretyp == TLST) {
-                    if (!tp->lst.lstlef || !tp->lst.lstlef->tre.tretyp == TCOM ||
+                    if (!tp->lst.lstlef || tp->lst.lstlef->tre.tretyp != TCOM ||
                         tp->lst.lstlef->com.comarg ||
                         (tp->lst.lstlef->com.comset &&
                          tp->lst.lstlef->com.comset->argval[0] != '[')) {

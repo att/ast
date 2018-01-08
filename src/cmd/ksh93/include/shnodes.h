@@ -48,24 +48,27 @@
 #define TSHIFT (COMBITS + 4)
 #define TNSPACE (TFUN | COMSCAN)
 
+// These values can be no larger than four bits per `COMBITS` and `COMMSK`.
+// They are the least significant four bits of the trenod.tretyp.
 #define TCOM 0
 #define TPAR 1
 #define TFIL 2
 #define TLST 3
 #define TIF 4
 #define TWH 5
-#define TUN (TWH | COMSCAN)
 #define TTST 6
 #define TSW 7
 #define TAND 8
 #define TORF 9
 #define TFORK 10
 #define TFOR 11
-#define TSELECT (TFOR | COMSCAN)
 #define TARITH 12
 #define TTIME 13
 #define TSETIO 14
 #define TFUN 15
+// These symbols are special-case variations of command types above.
+#define TUN (TWH | COMSCAN)
+#define TSELECT (TFOR | COMSCAN)
 
 // This node is a proforma for those that follow.
 struct trenod {

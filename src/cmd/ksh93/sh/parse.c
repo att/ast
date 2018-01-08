@@ -1195,7 +1195,7 @@ static Shnode_t *item(Lex_t *lexp, int flag) {
             label_list->argflag = loop_level;
             skipnl(lexp, flag);
             if (!(t = item(lexp, SH_NL))) sh_syntax(lexp);
-            tok = (t->tre.tretyp & (COMSCAN | COMSCAN - 1));
+            tok = (t->tre.tretyp & (COMSCAN | COMMSK));
             if (sh_isoption(lexp->sh, SH_NOEXEC) && tok != TWH && tok != TUN && tok != TFOR &&
                 tok != TSELECT) {
                 errormsg(SH_DICT, ERROR_warn(0), e_lexlabignore, label_list->argchn.len,
