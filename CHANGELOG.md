@@ -2,7 +2,7 @@
 
 Starting in June 2017 maintenance of the Korn shell (`ksh`) resumed with
 the merging of some fixes from Red Hat by Siteshwar Vashisht after he was
-granted commit privelege. In October 2017 Kurtis Rader noticed that `ksh`
+granted commit privilege. In October 2017 Kurtis Rader noticed that `ksh`
 had been open sourced and started contributing changes. This document
 was subsequently created to document the work being done. Whether the
 next stable version is considered a minor or major release is TBD.
