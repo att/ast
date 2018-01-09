@@ -27,7 +27,7 @@ Do not use anything other than */bin/sh* to run scripts executed by Meson's
 with `#!/bin/sh`. Furthermore, do not assume that path is a synonym for
 `bash`. All scripts run during the Meson configuration and build steps
 should only use features known to be available in the Bourne shell. This
-makes it easier to bootstrap buildin `ksh` on systems, like OpenBSD,
+makes it easier to bootstrap building `ksh` on systems, like OpenBSD,
 which do not install bash by default.
 
 ## Versioning
@@ -55,7 +55,7 @@ tool. You can find the IWYU project on
 To install the tool on OS X you'll need to add a
 [formula](https://github.com/jasonmp85/homebrew-iwyu) then install it:
 
-```
+```sh
 brew tap jasonmp85/iwyu
 brew install iwyu
 ```
@@ -64,7 +64,7 @@ On Ubuntu you can install it via `sudo apt-get install iwyu`.
 
 ## Lint Free Code
 
-Automated analysis tools like cppcheck and oclint can point out potential
+Automated analysis tools like `cppcheck` and `oclint` can point out potential
 bugs or code that is extremely hard to understand. They also help ensure
 the code has a consistent style and that it avoids patterns that tend to
 confuse people.
@@ -89,15 +89,15 @@ or whatever action is implied by the warning.
 ### Suppressing Lint Warnings
 
 Once in a while the lint tools emit a false positive warning. For example,
-cppcheck might suggest a memory leak is present when that is not the
-case. To suppress that cppcheck warning you should insert a line like
-the following immediately prior to the line cppcheck warned about:
+`cppcheck` might suggest a memory leak is present when that is not the
+case. To suppress that `cppcheck` warning you should insert a line like
+the following immediately prior to the line `cppcheck` warned about:
 
-```
+```c
 // cppcheck-suppress memleak // addr not really leaked
 ```
 
-Suppressing oclint warnings is more complicated
+Suppressing `oclint` warnings is more complicated
 to describe so I'll refer you to the
 [OCLint HowTo](http://docs.oclint.org/en/latest/howto/suppress.html#annotations)
 on the topic.
@@ -108,11 +108,11 @@ The following sections discuss the specific rules for the style that
 should be used when writing AST ksh code. To ensure your changes conform
 to the style rules you simply need to run
 
-```
+```sh
 bin/style
 ```
 
-before commiting your change. That will run `git-clang-format` to rewrite
+before committing your change. That will run `git-clang-format` to rewrite
 just the lines you're modifying.
 
 If you've already committed your changes that's okay since it will then
@@ -124,7 +124,7 @@ the style.
 
 If you want to check the style of the entire code base run
 
-```
+```sh
 bin/style all
 ```
 
@@ -153,7 +153,7 @@ TBD
 If you have a good reason for doing so you can tell `clang-format` to
 not reformat a block of code by enclosing it in comments like this:
 
-```
+```c
 // clang-format off
 code to ignore
 // clang-format on
@@ -199,7 +199,7 @@ be written as a sequence of sentences like you would in any document.
 
 1. All switch `case` blocks should be enclosed in braces. For example:
 
-        ```
+        ```c
         switch (x) {
             case 1: {
                 do_something();
@@ -219,7 +219,7 @@ block add an explicit comment: `// FALL THRU`.
 must put the blocks on separate lines enclosed in braces even if they
 would otherwise fit on the preceding control statement. For example:
 
-    ```
+    ```c
     if (a) {
         do_a();
     } else {
@@ -232,7 +232,7 @@ two statements on the same line if there is room. In that case omit the
 braces. Otherwise, even if the block is a single line it must be enclosed
 in braces. For example:
 
-        ```
+        ```c
         if (a || b) do_something();
         if (some_really_long_complex_condition_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx) {
             do_something();
@@ -242,7 +242,7 @@ in braces. For example:
         Never do this even though the C language allows it since it is an
         anti-pattern that leads to bugs:
 
-        ```
+        ```c
         if (some_really_long_complex_condition_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
             do_something();
 
@@ -257,7 +257,7 @@ in braces. For example:
 
 The source code for ksh includes a large collection of tests. If you
 are making any changes to ksh, running these tests is mandatory to
-make sure the behaviour remains consistent and regressions are not
+make sure the behavior remains consistent and regressions are not
 introduced. Even if you don't run the tests they will be run via the
 [Travis CI](https://travis-ci.org/att/ast) service.
 
@@ -279,16 +279,16 @@ To run a specific test include its name: `meson test types`.
 
 ### Testing with Valgrind
 
-The valgrind tool is invaluable for finding bugs that may only manifest in
+The `valgrind` tool is invaluable for finding bugs that may only manifest in
 specific situations due to the vagaries of memory management and the placement
-of variables, structures, etc. To run the tests under control of Valgrind do
+of variables, structures, etc. To run the tests under control of `valgrind` do
 this:
 
-```
+```sh
 meson test -t 10 --wrapper valgrind
 ```
 
-The `-t 10` is a multipler for test timeouts. A much larger multipler,
+The `-t 10` is a multiplier for test timeouts. A much larger multiplier,
 on the order of `-t 50`, might be needed if you're running the tests in
 a virtual machine or other environment with highly constrained resources.
 
@@ -296,9 +296,9 @@ a virtual machine or other environment with highly constrained resources.
 
 The Travis Continuous Integration services can be used to test your
 changes using multiple configurations. This is the same service that the
-AST Korrc/cmd/ksh93/data/bash_pre_rc.c shell project uses to ensure new
+AST src/cmd/ksh93/data/bash\_pre\_rc.c shell project uses to ensure new
 changes haven't broken anything. Thus it is a really good idea that you
-leverage Travis CI before making a pull-request to avoid embarrasment at
+leverage Travis CI before making a pull-request to avoid embarrassment at
 breaking the build.
 
 You will need to [fork the repository on GitHub](https://help.github.com/articles/fork-a-repo/).
@@ -307,7 +307,7 @@ Then setup Travis to test your changes before you make a pull-request:
 1. [Sign in to Travis CI](https://travis-ci.org/auth) with your GitHub
 account, accepting the GitHub access permissions confirmation.
 
-1. Once you're signed in, and your repositories are synchronised, go to your [profile page](https://travis-ci.org/profile) and enable the ast repository.
+1. Once you're signed in, and your repositories are synchronized, go to your [profile page](https://travis-ci.org/profile) and enable the ast repository.
 
 1. Push your changes to GitHub.
 
@@ -318,7 +318,7 @@ You'll find the configuration used to control Travis in the `.travis.yml` file.
 ### Git hooks
 
 Since developers sometimes forget to run the tests, it can be helpful to
-use git hooks (see githooks(5)) to automate it.
+use git hooks (see `githooks`(5)) to automate it.
 
 One possibility is a pre-push hook script like this one:
 
@@ -367,7 +367,7 @@ TBD
 
 To install the lint checkers on Mac OS X using HomeBrew:
 
-```
+```sh
 brew tap oclint/formulae
 brew install oclint
 brew install cppcheck
@@ -375,7 +375,7 @@ brew install cppcheck
 
 To install the lint checkers on Linux distros that use Apt:
 
-```
+```sh
 sudo apt-get install clang
 sudo apt-get install oclint
 sudo apt-get install cppcheck
@@ -385,20 +385,20 @@ sudo apt-get install cppcheck
 
 To install the reformatting tool on Mac OS X using HomeBrew:
 
-```
+```sh
 brew install clang-format
 ```
 
 To install the reformatting tool on Linux distros that use Apt:
 
-```
+```sh
 apt-cache install clang-format
 ```
 
 That will list the versions available. Pick the newest one available
 (3.9 for Ubuntu 16.10 as I write this) and install it:
 
-```
+```sh
 sudo apt-get install clang-format-3.9
 sudo ln -s /usr/bin/clang-format-3.9 /usr/bin/clang-format
 ```
