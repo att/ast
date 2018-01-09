@@ -31,6 +31,20 @@ The `ksh` executable, helper libraries and man page can be installed with:
 ninja -C build install
 ```
 
+## Getting KornShell
+
+### Linux
+Latest builds for Fedora can be found in [copr](https://copr.fedorainfracloud.org/coprs/g/ksh/latest/).
+
+TBD packages for other Linux distros.
+
+### Windows
+TBD
+
+### macOS
+TBD
+
+
 ## Contributing changes to the source code
 
 See the
