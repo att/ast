@@ -26,6 +26,10 @@
 #ifndef defs_h_defined
 #define defs_h_defined
 
+// Signal to the other public headers that they should expose private behavior used when building
+// the `ksh` command. Otherwise the assumption is they're being included to build a plugin.
+#define _SH_PRIVATE 1
+
 #include <ast.h>
 #include <cdt.h>
 #include <ctype.h>
@@ -134,148 +138,8 @@ struct shared {
     Shwait_f waitevent;
 };
 
-#define _SH_PRIVATE                                              \
-    struct shared *gd;   /* global data */                       \
-    struct sh_scoped st; /* scoped information */                \
-    Sfio_t *heredocs;    /* current here-doc temp file */        \
-    Sfio_t *funlog;      /* for logging function definitions */  \
-    int **fdptrs;        /* pointer to file numbers */           \
-    int savexit;                                                 \
-    char *lastarg;                                               \
-    char *lastpath;   /* last alsolute path found */             \
-    int path_err;     /* last error on path search */            \
-    Dt_t *track_tree; /* for tracked aliases*/                   \
-    Dt_t *var_base;   /* global level variables */               \
-    Dt_t *openmatch;                                             \
-    Dt_t *namref_root;                                           \
-    Namval_t *namespace;  /* current active namespace*/          \
-    Namval_t *last_table; /* last table used in last nv_open  */ \
-    Namval_t *prev_table; /* previous table used in nv_open  */  \
-    Namval_t *oldnp;      /* last valid parent node  */          \
-    Namval_t **nodelist;  /* for decl commands */                \
-    Sfio_t *outpool;      /* ouput stream pool */                \
-    long timeout;         /* read timeout */                     \
-    long curenv;          /* current subshell number */          \
-    long jobenv;          /* subshell number for jobs */         \
-    int infd;             /* input file descriptor */            \
-    short nextprompt;     /* next prompt is PS<nextprompt> */    \
-    short poolfiles;                                             \
-    Namval_t *posix_fun; /* points to last name() function */    \
-    char *outbuff;       /* pointer to output buffer */          \
-    char *errbuff;       /* pointer to stderr buffer */          \
-    char *prompt;        /* pointer to prompt string */          \
-    char *shname;        /* shell name */                        \
-    char *comdiv;        /* points to sh -c argument */          \
-    char *prefix;        /* prefix for compound assignment */    \
-    sigjmp_buf *jmplist; /* longjmp return stack */              \
-    char *fifo;          /* fifo name for process sub */         \
-    int oldexit;                                                 \
-    pid_t bckpid; /* background process id */                    \
-    pid_t cpid;                                                  \
-    pid_t spid; /* subshell process id */                        \
-    pid_t pipepid;                                               \
-    pid_t outpipepid;                                            \
-    pid_t *procsub; /* pids for >() argument */                  \
-    int nprocsub;   /* number of pids in procsub */              \
-    int topfd;                                                   \
-    int errorfd;                                                 \
-    int savesig;                                                 \
-    unsigned char *sigflag; /* pointer to signal states */       \
-    char intrap;                                                 \
-    char login_sh;                                               \
-    char lastbase;                                               \
-    char forked;                                                 \
-    char binscript;                                              \
-    char deftype;                                                \
-    char funload;                                                \
-    char used_pos; /* used postional parameter */                \
-    char universe;                                               \
-    char winch;                                                  \
-    char inarith;          /* set when in ((...)) */             \
-    char indebug;          /* set when in debug trap */          \
-    unsigned char ignsig;  /* ignored signal in subshell */      \
-    unsigned char lastsig; /* last signal received */            \
-    char pathinit;         /* pathinit called from subshell */   \
-    char comsub;           /* set when in $() comsub */          \
-    char subshare;         /* set when in ${..} comsub */        \
-    char toomany;          /* set when out of fd's */            \
-    char instance;         /* in set_instance */                 \
-    char decomma;          /* decimal_point=',' */               \
-    char redir0;           /* redirect of 0 */                   \
-    char intrace;          /* set when trace expands PS4 */      \
-    char *readscript;      /* set before reading a script */     \
-    int subdup;            /* bitmask for dups of 1 */           \
-    int *inpipe;           /* input pipe pointer */              \
-    int *outpipe;          /* output pipe pointer */             \
-    int cpipe[3];                                                \
-    int coutpipe;                                                \
-    int inuse_bits;                                              \
-    struct argnod *envlist;                                      \
-    struct dolnod *arglist;                                      \
-    int fn_depth;                                                \
-    int fn_reset;                                                \
-    int dot_depth;                                               \
-    int hist_depth;                                              \
-    int xargmin;                                                 \
-    int xargmax;                                                 \
-    int xargexit;                                                \
-    int nenv;                                                    \
-    int lexsize;                                                 \
-    Sflong_t sigval;                                             \
-    mode_t mask;                                                 \
-    Env_t *env;                                                  \
-    void *init_context;                                          \
-    void *mac_context;                                           \
-    void *lex_context;                                           \
-    void *arg_context;                                           \
-    void *job_context;                                           \
-    void *pathlist;                                              \
-    void *defpathlist;                                           \
-    void *cdpathlist;                                            \
-    char **argaddr;                                              \
-    void *optlist;                                               \
-    void **siginfo;                                              \
-    Spawnvex_t *vex;                                             \
-    Spawnvex_t *vexp;                                            \
-    struct sh_scoped global;                                     \
-    struct checkpt checkbase;                                    \
-    Shinit_f userinit;                                           \
-    Shbltin_f bltinfun;                                          \
-    Shbltin_t bltindata;                                         \
-    char *cur_line;                                              \
-    int offsets[10];                                             \
-    Sfio_t **sftable;                                            \
-    unsigned int *fdstatus;                                      \
-    const char *pwd;                                             \
-    void *jmpbuffer;                                             \
-    void *mktype;                                                \
-    Sfio_t *strbuf;                                              \
-    Sfio_t *strbuf2;                                             \
-    Dt_t *first_root;                                            \
-    Dt_t *prefix_root;                                           \
-    Dt_t *last_root;                                             \
-    Dt_t *prev_root;                                             \
-    Dt_t *fpathdict;                                             \
-    Dt_t *typedict;                                              \
-    Dt_t *inpool;                                                \
-    Dt_t *transdict;                                             \
-    char ifstable[256];                                          \
-    unsigned long test;                                          \
-    Shopt_t offoptions;                                          \
-    Shopt_t glob_options;                                        \
-    Namval_t *typeinit;                                          \
-    Namfun_t nvfun;                                              \
-    char *mathnodes;                                             \
-    void *coshell;                                               \
-    char *bltin_dir;                                             \
-    struct Regress_s *regress;                                   \
-    char exittrap;                                               \
-    char errtrap;                                                \
-    char end_fn;
-
-#include <shell.h>
-
 #include "regress.h"
+#include "shell.h"
 #include "shtable.h"
 
 #if !defined(F_DUPFD_CLOEXEC)

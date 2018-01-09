@@ -80,7 +80,7 @@ struct Shbltin_s {
 #if defined(SH_VERSION) || defined(_SH_PRIVATE)
 #undef Shell_t
 #undef Namval_t
-#else
+#else  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 #define sh_context(c) ((Shbltin_t *)(c))
 #define sh_run(c, ac, av) ((c) ? (*sh_context(c)->shrun)(ac, av) : -1)
 #define sh_system(c, str) ((c) ? (*sh_context(c)->shtrap)(str, 0) : system(str))
@@ -90,20 +90,20 @@ struct Shbltin_s {
     ((c) ? (*sh_context(c)->shbltin)(n, (Shbltin_f)(f), sh_context(p)) : 0)
 #if defined(SFIO_VERSION) || defined(_AST_H)
 #define LIB_INIT(c)
-#else
+#else  // defined(SFIO_VERSION) || defined(_AST_H)
 #define LIB_INIT(c) ((c) && (sh_context(c)->nosfio = 1))
-#endif
+#endif  // defined(SFIO_VERSION) || defined(_AST_H)
 #ifndef _CMD_H
 #ifndef ERROR_NOTIFY
 #define ERROR_NOTIFY 1
-#endif
+#endif  // ERROR_NOTIFY
 #define cmdinit(ac, av, c, cat, flg)                            \
     do {                                                        \
         if ((ac) <= 0) return (0);                              \
         (sh_context(c)->notify = ((flg)&ERROR_NOTIFY) ? 1 : 0); \
     } while (0)
-#endif
-#endif
+#endif  // !_CMD_H
+#endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
 #if _BLD_ast && defined(__EXPORT__)
 #define extern __EXPORT__
