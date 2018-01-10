@@ -59,8 +59,8 @@
 char *fgetcwd(int fd, char *buf, size_t len) {
     char *p;
     char *s;
-    DIR *dirp = 0;
-    int dd;
+    DIR *dirp = NULL;
+    int dd = 0;
     int f = FS3D_OFF;
     int n;
     int x;
@@ -118,13 +118,16 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     p = buf + len - 1;
     *p = 0;
     n = elementsof(env);
-    if ((dd = fd) != AT_FDCWD && fchdir(dd)) ERROR(errno);
+    dd = fd;
+    if (dd != AT_FDCWD && fchdir(dd)) ERROR(errno);
     for (;;) {
         tmp = cur;
         cur = par;
         par = tmp;
-        if ((dd = openat(fd, "..", O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC)) < 0)
+        dd = openat(fd, "..", O_RDONLY | O_NONBLOCK | O_DIRECTORY | O_CLOEXEC);
+        if (dd < 0) {
             ERROR(errno);
+        }
         if (fstat(dd, par)) ERROR(errno);
         if (par->st_dev == cur->st_dev && par->st_ino == cur->st_ino) {
             close(dd);
