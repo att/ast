@@ -19,9 +19,7 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#if __STDC__
 #include <ast_standards.h>
-#endif
 #include "sfhdr.h"
 
 /*	Convert a floating point value to ASCII.

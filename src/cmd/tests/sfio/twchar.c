@@ -39,7 +39,7 @@ tmain()
 
 	static char	tst[] = "hello-world";
 
-#if defined(__STDC__) && defined(_hdr_wchar)
+#if defined(_hdr_wchar)
 
 #if _PACKAGE_ast
 

@@ -35,10 +35,7 @@ static const char id[] = "\n@(#)$Id: testdate (AT&T Research) 2005-01-04 $\0\n";
 #include <setjmp.h>
 #include <signal.h>
 #include <tm.h>
-
-#ifdef __STDC__
 #include <stdlib.h>
-#endif
 
 #ifndef elementsof
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))

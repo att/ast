@@ -36,9 +36,6 @@
 #undef _lib_statvfs64
 #undef _lib_truncate64
 #endif
-#if defined(__STDC__) && !defined(__USE_FIXED_PROTOTYPES__)
-#define __USE_FIXED_PROTOTYPES__ 1 /* kick gcc out of the past */
-#endif
 #include <fcntl.h>
 #include <inttypes.h>
 #include <limits.h>

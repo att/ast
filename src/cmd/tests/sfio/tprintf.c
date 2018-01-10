@@ -582,13 +582,11 @@ tmain()
 		terror("%%#c formatting failed");
 
 	/* test printing of signed integer of length 1 */
-#if defined(__STDC__)
 	{	signed char	c = -1;
 		sfsprintf(buf1, sizeof(buf1), "%I1d", c);
 		if(strcmp(buf1, "-1") != 0)
 			terror("%%I1d formatting failed");
 	}
-#endif
 
 	pnan = strtod("NaN", NULL);
 	nnan = strtod("-NaN", NULL);

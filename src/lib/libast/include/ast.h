@@ -223,11 +223,7 @@ typedef struct {
 #define strneq(a, b, n) (*(a) == *(b) && !strncmp(a, b, n))
 #define strsignal(s) fmtsignal(s)
 
-#if defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)
 #define NoP(x) (void)(x)
-#else
-#define NoP(x) (&x, 1)
-#endif
 
 #if !defined(NoF)
 #define NoF(x) \

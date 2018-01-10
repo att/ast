@@ -36,10 +36,8 @@
 
 #include <ctype.h>
 #include <stdio.h>
-#ifdef __STDC__
 #include <stdlib.h>
 #include <string.h>
-#endif
 
 typedef struct Link_s {
     struct Link_s *next;
@@ -119,12 +117,7 @@ static struct State_s {
 #define newof(p, t, n, x) ((t *)malloc(sizeof(t) * (n) + (x)))
 
 static Link_t *
-#if defined(__STDC__) || defined(__cplusplus)
 enter(Table_t *tab, Link_t *v)
-#else
-    enter(tab, v) Table_t *tab;
-Link_t *v;
-#endif
 {
     Link_t *x;
     Link_t *p;
@@ -141,12 +134,7 @@ Link_t *v;
 }
 
 static Link_t *
-#if defined(__STDC__) || defined(__cplusplus)
 lookup(Table_t *tab, char *s)
-#else
-    lookup(tab, s) Table_t *tab;
-char *s;
-#endif
 {
     Link_t *x;
 
@@ -156,12 +144,7 @@ char *s;
 }
 
 static char *
-#if defined(__STDC__) || defined(__cplusplus)
 copy(char **p, char *f)
-#else
-    copy(p, f) char **p;
-char *f;
-#endif
 {
     char *t;
     char *b;
@@ -175,14 +158,7 @@ char *f;
 }
 
 static void
-#if defined(__STDC__) || defined(__cplusplus)
 macro(FILE *f, char *p1, char *p2, char *p3)
-#else
-    macro(f, p1, p2, p3) FILE *f;
-char *p1;
-char *p2;
-char *p3;
-#endif
 {
     int c;
     char *s;
@@ -227,12 +203,7 @@ char *p3;
     while (n-- > 0) fprintf(f, "#endif\n");
 }
 
-#if defined(__STDC__) || defined(__cplusplus)
 int main(int argc, char **argv)
-#else
-int main(argc, argv) int argc;
-char **argv;
-#endif
 {
     char *s;
     char **vp;

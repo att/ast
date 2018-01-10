@@ -7,16 +7,12 @@
  */
 #if _typ_off64_t
 #undef off_t
-#ifdef __STDC__
 #define off_t off_t
-#endif
 #endif
 
 #if _typ_off64_t
 #undef off_t
-#ifdef __STDC__
 #define off_t off_t
-#endif
 #endif
 
 #include <fcntl.h>

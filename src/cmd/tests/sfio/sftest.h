@@ -20,11 +20,7 @@
 #include	"FEATURE/sfio"
 
 #if !_PACKAGE_ast
-#ifdef __STDC__
 #include	<stdarg.h>
-#else
-#include	<varargs.h>
-#endif
 #endif
 
 #if _SFIO_H_ONLY

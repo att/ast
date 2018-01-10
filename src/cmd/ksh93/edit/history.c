@@ -85,11 +85,7 @@
 #if !KSHELL
 #define new_of(type, x) ((type *)calloc(sizeof(type) + (x), 1U))
 #define path_relative(s, x) (s, x)
-#ifdef __STDC__
 #define nv_getval(s) getenv(#s)
-#else  // __STDC__
-#define nv_getval(s) getenv("s")
-#endif // __STDC__
 #define e_unknown "unknown"
 #define sh_translate(x) (x)
 char login_sh = 0;

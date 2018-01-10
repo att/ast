@@ -102,11 +102,7 @@ typedef struct {
 #define offsetof(type, member) ((unsigned long)&(((type *)0)->member))
 #endif
 
-#if defined(__STDC__) || defined(__cplusplus) || defined(c_plusplus)
 #define NoP(x) (void)(x)
-#else
-#define NoP(x) (&x, 1)
-#endif
 
 #define conformance(a, b) "ast"
 #define fmtident(s) ((char *)(s) + 10)

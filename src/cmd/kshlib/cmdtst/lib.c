@@ -22,11 +22,7 @@
 #include <shcmd.h>
 
 #undef CMDLIST
-#if __STDC__
 #define CMDLIST(f) extern int b_##f(int, char **, Shbltin_t *);
-#else
-#define CMDLIST(f) extern int b_##f();
-#endif
 #include "cmdtstlist.h"
 
 void cmdtst_init(int flag, void *context) {
