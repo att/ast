@@ -264,9 +264,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                     sfputr(tmp, str, '\n');
                     break;
                 }
-                default: {
-                    break;
-                }
+                default: { break; }
             }
         }
     }

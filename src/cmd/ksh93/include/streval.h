@@ -105,15 +105,15 @@ typedef struct _arith_ {
     short emode;
     short elen;
 } Arith_t;
-#define ARITH_COMP 04      // set when compile separate from execute
-#define ARITH_ASSIGNOP 010 // set during assignment operators
+#define ARITH_COMP 04       // set when compile separate from execute
+#define ARITH_ASSIGNOP 010  // set during assignment operators
 
-#define MAXPREC 15    // maximum precision level
-#define SEQPOINT 0200 // sequence point
-#define NOASSIGN 0100 // assignment legal with this operator
-#define RASSOC 040    // right associative
-#define NOFLOAT 020   // illegal with floating point
-#define PRECMASK 017  // precision bit mask
+#define MAXPREC 15     // maximum precision level
+#define SEQPOINT 0200  // sequence point
+#define NOASSIGN 0100  // assignment legal with this operator
+#define RASSOC 040     // right associative
+#define NOFLOAT 020    // illegal with floating point
+#define PRECMASK 017   // precision bit mask
 
 #define A_EOF 1
 #define A_NEQ 2
@@ -209,4 +209,4 @@ extern Sfdouble_t strval(Shell_t *, const char *, char **,
 extern Arith_t *arith_compile(Shell_t *, const char *, char **,
                               Sfdouble_t (*)(const char **, struct lval *, int, Sfdouble_t), int);
 extern Sfdouble_t arith_exec(Arith_t *);
-#endif // !SEQPOINT
+#endif  // !SEQPOINT

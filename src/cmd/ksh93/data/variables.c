@@ -115,7 +115,7 @@ const struct shtable2 shtab_variables[] = {
     {"COMP_TYPE", NV_EXPORT | NV_INTEGER | NV_SHORT | NV_UNSIGN, NULL},
 #if SHOPT_FS_3D
     {"VPATH", 0, NULL},
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
     {"CSWIDTH", 0, NULL},
     {"", 0, NULL}};
 

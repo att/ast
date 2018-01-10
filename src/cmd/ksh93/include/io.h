@@ -26,7 +26,7 @@
 
 #ifndef IOBSIZE
 #define IOBSIZE (SF_BUFSIZE * sizeof(char *))
-#endif // IOBSIZE
+#endif  // IOBSIZE
 #define IOMAXTRY 20
 
 #ifndef SF_CLOSING
@@ -48,11 +48,11 @@
 #define IOCLEX 0100
 #define IOCLOSE (IOSEEK | IONOSEEK)
 
-#define IOSUBSHELL 0x8000    // must be larger than any file descriptor
-#define IOPICKFD 0x10000     // file descriptor number was selected automatically
-#define IOHERESTRING 0x20000 // allow here documents to be string streams
-#define IOSAVESTRING 0x40000 // string file was saved
-#define IOUSEVEX 0x80000     // use spawnvex to save and restore
+#define IOSUBSHELL 0x8000     // must be larger than any file descriptor
+#define IOPICKFD 0x10000      // file descriptor number was selected automatically
+#define IOHERESTRING 0x20000  // allow here documents to be string streams
+#define IOSAVESTRING 0x40000  // string file was saved
+#define IOUSEVEX 0x80000      // use spawnvex to save and restore
 
 //
 // The remainder of this file is only used when compiled with shell.
@@ -61,7 +61,7 @@
 
 #ifndef ARG_RAW
 struct ionod;
-#endif // !ARG_RAW
+#endif  // !ARG_RAW
 
 extern int sh_iocheckfd(Shell_t *, int, int);
 extern void sh_ioinit(Shell_t *);
@@ -124,4 +124,4 @@ extern const char e_bash_profile[];
 extern const char e_stdprompt[];
 extern const char e_supprompt[];
 extern const char e_ambiguous[];
-#endif // KSHELL
+#endif  // KSHELL

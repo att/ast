@@ -28,9 +28,9 @@
 //
 // These are the valid test operators.
 //
-#define TEST_ARITH 040    // arithmetic operators
-#define TEST_BINOP 0200   // binary operator
-#define TEST_PATTERN 0100 // turn off bit for pattern compares
+#define TEST_ARITH 040     // arithmetic operators
+#define TEST_BINOP 0200    // binary operator
+#define TEST_PATTERN 0100  // turn off bit for pattern compares
 
 #define TEST_NE (TEST_ARITH | 9)
 #define TEST_EQ (TEST_ARITH | 4)
@@ -64,4 +64,4 @@ extern const char e_badop[];
 extern const char e_tstbegin[];
 extern const char e_tstend[];
 
-#endif // TEST_ARITH
+#endif  // TEST_ARITH

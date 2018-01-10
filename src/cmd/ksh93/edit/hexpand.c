@@ -598,7 +598,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
     sfputc(shp->stk, '\0');
 
 done:
-    if (cc && (flag & HIST_HASH)) { // close !# temp file
+    if (cc && (flag & HIST_HASH)) {  // close !# temp file
         sfclose(ref);
         free(cc);
         cc = 0;

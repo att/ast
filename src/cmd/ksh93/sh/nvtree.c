@@ -749,8 +749,7 @@ static void outval(char *name, const char *vname, struct Walk *wp) {
             isarray = 2;
             if (tp && (last_table->nvname[0] != '_' || last_table->nvname[1])) return;
         } else {
-            nq = nv_putsub(np, NULL, 0,
-                           ARRAY_SCAN | (wp->out && !nv_type(np) ? ARRAY_NOCHILD : 0));
+            nq = nv_putsub(np, NULL, 0, ARRAY_SCAN | (wp->out && !nv_type(np) ? ARRAY_NOCHILD : 0));
         }
     }
     if (!wp->out) {

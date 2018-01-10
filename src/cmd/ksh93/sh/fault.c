@@ -532,8 +532,7 @@ void sh_exit_20120720(Shell_t *shp, int xno) {
 #endif /* SIGTSTP */
     // Unlock output pool.
     sh_offstate(shp, SH_NOTRACK);
-    if (!(pool = sfpool(NULL, shp->outpool, SF_WRITE)))
-        pool = shp->outpool;  // can't happen?
+    if (!(pool = sfpool(NULL, shp->outpool, SF_WRITE))) pool = shp->outpool;  // can't happen?
     sfclrlock(pool);
 #ifdef SIGPIPE
     if (shp->lastsig == SIGPIPE) sfpurge(pool);

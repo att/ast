@@ -63,12 +63,12 @@ struct slnod {  // struct for link list of stacks
 // This struct is use to hold $* lists and arrays.
 //
 struct dolnod {
-    int dolrefcnt;         // reference count
-    int dolmax;            // size of dolval array
-    int dolnum;            // number of elements
-    int dolbot;            // current first element
-    struct dolnod *dolnxt; // used when list are chained
-    char *dolval[1];       // array of value pointers
+    int dolrefcnt;          // reference count
+    int dolmax;             // size of dolval array
+    int dolnum;             // number of elements
+    int dolbot;             // current first element
+    struct dolnod *dolnxt;  // used when list are chained
+    char *dolval[1];        // array of value pointers
 };
 
 //
@@ -95,23 +95,23 @@ struct argnod {
 #define ARG_SPARE 1
 
 // Legal argument flags.
-#define ARG_RAW 0x1      // string needs no processing
-#define ARG_MAKE 0x2     // bit set during argument expansion
-#define ARG_COMSUB 0x2   // command sub
-#define ARG_MAC 0x4      // string needs macro expansion
-#define ARG_EXP 0x8      // string needs file expansion
-#define ARG_ASSIGN 0x10  // argument is an assignment
-#define ARG_QUOTED 0x20  // word contained quote characters
-#define ARG_MESSAGE 0x40 // contains international string
-#define ARG_APPEND 0x80  // for += assignment
-#define ARG_ARRAY 0x2    // for typeset -a
+#define ARG_RAW 0x1       // string needs no processing
+#define ARG_MAKE 0x2      // bit set during argument expansion
+#define ARG_COMSUB 0x2    // command sub
+#define ARG_MAC 0x4       // string needs macro expansion
+#define ARG_EXP 0x8       // string needs file expansion
+#define ARG_ASSIGN 0x10   // argument is an assignment
+#define ARG_QUOTED 0x20   // word contained quote characters
+#define ARG_MESSAGE 0x40  // contains international string
+#define ARG_APPEND 0x80   // for += assignment
+#define ARG_ARRAY 0x2     // for typeset -a
 // The following can be passed as options to sh_macexpand().
-#define ARG_ARITH 0x100    // arithmetic expansion
-#define ARG_OPTIMIZE 0x200 // try to optimize
-#define ARG_NOGLOB 0x400   // no file name expansion
-#define ARG_LET 0x800      // processing let command arguments
-#define ARG_ARRAYOK 0x1000 // $x[sub] ==> ${x[sub]}
-#define ARG_CASE 0x2000    // expanding case patterns
+#define ARG_ARITH 0x100     // arithmetic expansion
+#define ARG_OPTIMIZE 0x200  // try to optimize
+#define ARG_NOGLOB 0x400    // no file name expansion
+#define ARG_LET 0x800       // processing let command arguments
+#define ARG_ARRAYOK 0x1000  // $x[sub] ==> ${x[sub]}
+#define ARG_CASE 0x2000     // expanding case patterns
 
 extern struct dolnod *sh_argcreate(char *[]);
 extern char *sh_argdolminus(void *);
@@ -127,4 +127,4 @@ extern const char e_exec[];
 extern const char e_devfdNN[];
 extern const char e_devfdstd[];
 
-#endif // ARG_RAW
+#endif  // ARG_RAW

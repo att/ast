@@ -33,7 +33,8 @@ static char *savesub = 0;
 static char Null[1];
 static Namval_t NullNode;
 static Dt_t *Refdict;
-static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *), sizeof(struct Namref)};
+static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *),
+                            sizeof(struct Namref)};
 
 static void attstore(Namval_t *, void *);
 #ifndef _ENV_H
@@ -222,7 +223,8 @@ struct argnod *nv_onlist(struct argnod *arg, const char *name) {
     int len = strlen(name);
 
     for (; arg; arg = arg->argnxt.ap) {
-        if (*arg->argval == 0 && arg->argchn.ap && !(arg->argflag & ~(ARG_APPEND | ARG_QUOTED | ARG_MESSAGE))) {
+        if (*arg->argval == 0 && arg->argchn.ap &&
+            !(arg->argflag & ~(ARG_APPEND | ARG_QUOTED | ARG_MESSAGE))) {
             cp = ((struct fornod *)arg->argchn.ap)->fornam;
         } else {
             cp = arg->argval;
@@ -282,7 +284,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
             shp->prefix = prefix;
         } else {
             stkseek(shp->stk, 0);
-            if (*arg->argval == 0 && arg->argchn.ap && !(arg->argflag & ~(ARG_APPEND | ARG_QUOTED | ARG_MESSAGE | ARG_ARRAY))) {
+            if (*arg->argval == 0 && arg->argchn.ap &&
+                !(arg->argflag & ~(ARG_APPEND | ARG_QUOTED | ARG_MESSAGE | ARG_ARRAY))) {
                 int flag = (NV_VARNAME | NV_ARRAY | NV_ASSIGN);
                 int sub = 0;
                 struct fornod *fp = (struct fornod *)arg->argchn.ap;
@@ -313,9 +316,12 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 }
                 np = nv_open(cp, shp->var_tree, flag | NV_ASSIGN);
                 if (nlp) *nlp++ = np;
-                if ((arg->argflag & ARG_APPEND) && (tp->tre.tretyp & COMMSK) == TCOM && tp->com.comset && !nv_isvtree(np) &&
+                if ((arg->argflag & ARG_APPEND) && (tp->tre.tretyp & COMMSK) == TCOM &&
+                    tp->com.comset && !nv_isvtree(np) &&
                     (((ap = nv_arrayptr(np)) && !ap->fun && !nv_opensub(np)) ||
-                     (!ap && nv_isarray(np) && tp->com.comarg && !((mp = nv_search(tp->com.comarg->argval, shp->fun_tree, 0)) && nv_isattr(mp, BLT_DCL))))) {
+                     (!ap && nv_isarray(np) && tp->com.comarg &&
+                      !((mp = nv_search(tp->com.comarg->argval, shp->fun_tree, 0)) &&
+                        nv_isattr(mp, BLT_DCL))))) {
                     if (tp->com.comarg) {
                         struct argnod *ap = tp->com.comset;
                         while (ap->argnxt.ap) ap = ap->argnxt.ap;
@@ -338,8 +344,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     goto check_type;
                 }
                 ap = nv_arrayptr(np);
-                if (sh_isoption(shp, SH_BASH) && !array && !ap && !(flags & NV_COMVAR) && !np->nvfun &&
-                    !tp->com.comset && !tp->com.comarg) {
+                if (sh_isoption(shp, SH_BASH) && !array && !ap && !(flags & NV_COMVAR) &&
+                    !np->nvfun && !tp->com.comset && !tp->com.comarg) {
                     array = NV_IARRAY;
                 }
                 if (array && (!ap || !ap->hdr.type)) {
@@ -361,7 +367,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     Dt_t *last_root = shp->last_root;
                     char **argv = sh_argbuild(shp, &argc, &tp->com, 0);
                     shp->last_root = last_root;
-                    if (shp->mktype && shp->dot_depth == 0 && np == ((struct sh_type *)shp->mktype)->nodes[0]) {
+                    if (shp->mktype && shp->dot_depth == 0 &&
+                        np == ((struct sh_type *)shp->mktype)->nodes[0]) {
                         shp->mktype = 0;
                         errormsg(SH_DICT, ERROR_exit(1), "%s: not a known type name", argv[0]);
                     }
@@ -378,7 +385,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         char *name = nv_name(np);
                         if (arg->argflag & ARG_APPEND) n = '+';
                         if (trap) {
-                            sh_debug(shp, trap, name, (char *)0, argv, (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
+                            sh_debug(shp, trap, name, (char *)0, argv,
+                                     (arg->argflag & ARG_APPEND) | ARG_ASSIGN);
                         }
                         if (traceon) {
                             sh_trace(shp, NULL, 0);
@@ -395,7 +403,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                     if (!(arg->argflag & ARG_APPEND)) {
                         if (ap && ap->nelem > 0) {
                             nv_putsub(np, NULL, 0, ARRAY_SCAN);
-                            if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next && !nv_type(np)) {
+                            if (!ap->fun && !(ap->flags & ARRAY_TREE) && !np->nvfun->next &&
+                                !nv_type(np)) {
                                 int nvflag = np->nvflag;
                                 int nvsize = np->nvsize;
                                 _nv_unset(np, NV_EXPORT);
@@ -411,7 +420,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                                 }
                                 ap->nelem--;
                             }
-                        } else if (nv_isattr(np, NV_BINARY | NV_NOFREE | NV_RAW) != (NV_BINARY | NV_NOFREE | NV_RAW) && !nv_isarray(np)) {
+                        } else if (nv_isattr(np, NV_BINARY | NV_NOFREE | NV_RAW) !=
+                                       (NV_BINARY | NV_NOFREE | NV_RAW) &&
+                                   !nv_isarray(np)) {
                             _nv_unset(np, NV_EXPORT);
                         }
                     }
@@ -423,7 +434,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         if (prefix || nv_name(np)) cp = stkcopy(shp->stk, nv_name(np));
                         shp->prefix = cp;
                         if (tp->com.comset->argval[1] == '[') {
-                            if ((arg->argflag & ARG_APPEND) && (!nv_isarray(np) || (nv_aindex(np) >= 0))) {
+                            if ((arg->argflag & ARG_APPEND) &&
+                                (!nv_isarray(np) || (nv_aindex(np) >= 0))) {
                                 _nv_unset(np, 0);
                             }
                             if (!(array & NV_IARRAY) && !(tp->com.comset->argflag & ARG_MESSAGE)) {
@@ -450,18 +462,23 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                             if ((sub = nv_aimax(np)) < 0 && nv_arrayptr(np)) {
                                 errormsg(SH_DICT, ERROR_exit(1), e_badappend, nv_name(np));
                             }
-                            if (sub == 0 && nv_type(np) && (ap = nv_arrayptr(np)) && array_elem(ap) == 0) {
+                            if (sub == 0 && nv_type(np) && (ap = nv_arrayptr(np)) &&
+                                array_elem(ap) == 0) {
                                 nv_putsub(np, (char *)0, 0, ARRAY_ADD | ARRAY_FILL);
                             } else if (sub >= 0) {
                                 sub++;
                             }
                             if (nv_type(np)) {
                                 sfprintf(shp->strbuf, "%s[%d]\0", nv_name(np), sub);
-                                nq = nv_open(sfstruse(shp->strbuf), shp->var_tree, flags | NV_ARRAY);
+                                nq =
+                                    nv_open(sfstruse(shp->strbuf), shp->var_tree, flags | NV_ARRAY);
                             }
                         }
                         if (!nv_isnull(np) && np->nvalue.cp != Empty && !nv_isvtree(np)) sub = 1;
-                    } else if (((np->nvalue.cp && np->nvalue.cp != Empty) || nv_isvtree(np) || nv_arrayptr(np)) && !nv_type(np) && nv_isattr(np, NV_MINIMAL | NV_EXPORT) != NV_MINIMAL) {
+                    } else if (((np->nvalue.cp && np->nvalue.cp != Empty) || nv_isvtree(np) ||
+                                nv_arrayptr(np)) &&
+                               !nv_type(np) &&
+                               nv_isattr(np, NV_MINIMAL | NV_EXPORT) != NV_MINIMAL) {
                         _nv_unset(np, NV_EXPORT);
                         if (ap && ap->fun) nv_setarray(np, nv_associative);
                     }
@@ -482,7 +499,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 shp->last_table = 0;
                 if (shp->prefix) {
                     if (*shp->prefix == '_' && shp->prefix[1] == '.' && nv_isref(L_ARGNOD)) {
-                        sfprintf(stkstd, "%s%s", nv_name(L_ARGNOD->nvalue.nrp->np), shp->prefix + 1);
+                        sfprintf(stkstd, "%s%s", nv_name(L_ARGNOD->nvalue.nrp->np),
+                                 shp->prefix + 1);
                         shp->prefix = stkfreeze(stkstd, 1);
                     }
                     memset(&nr, 0, sizeof(nr));
@@ -506,12 +524,14 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 while (tp->tre.tretyp == TLST) {
                     if (!tp->lst.lstlef || !tp->lst.lstlef->tre.tretyp == TCOM ||
                         tp->lst.lstlef->com.comarg ||
-                        (tp->lst.lstlef->com.comset && tp->lst.lstlef->com.comset->argval[0] != '[')) {
+                        (tp->lst.lstlef->com.comset &&
+                         tp->lst.lstlef->com.comset->argval[0] != '[')) {
                         break;
                     }
                     tp = tp->lst.lstrit;
                 }
-                if (!nv_isarray(np) && !typ && (tp->com.comarg || !tp->com.comset || tp->com.comset->argval[0] != '[')) {
+                if (!nv_isarray(np) && !typ &&
+                    (tp->com.comarg || !tp->com.comset || tp->com.comset->argval[0] != '[')) {
                     nv_setvtree(np);
                     if (tp->com.comarg || tp->com.comset) np->nvfun->dsize = 0;
                 }
@@ -558,7 +578,8 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
         }
     check_type:
         if (maketype) {
-            nv_open(shtp.nodes[0]->nvname, shp->var_tree, NV_ASSIGN | NV_VARNAME | NV_NOADD | NV_NOFAIL);
+            nv_open(shtp.nodes[0]->nvname, shp->var_tree,
+                    NV_ASSIGN | NV_VARNAME | NV_NOADD | NV_NOFAIL);
             np = nv_mktype(shtp.nodes, shtp.numnodes);
             free(shtp.nodes);
             shp->mktype = shtp.previous;
@@ -749,9 +770,11 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             flags &= ~NV_NOSCOPE;
                             root = shp->last_root;
                         } else if (nq) {
-                            if (nv_isnull(np) && c != '.' && ((np->nvfun = nv_cover(nq)) || nq == OPTINDNOD)) {
+                            if (nv_isnull(np) && c != '.' &&
+                                ((np->nvfun = nv_cover(nq)) || nq == OPTINDNOD)) {
                                 np->nvname = nq->nvname;
-                                if (shp->namespace && nv_dict(shp->namespace) == shp->var_tree && nv_isattr(nq, NV_EXPORT)) {
+                                if (shp->namespace && nv_dict(shp->namespace) == shp->var_tree &&
+                                    nv_isattr(nq, NV_EXPORT)) {
                                     nv_onattr(np, NV_EXPORT);
                                 }
                                 if (nq == OPTINDNOD) {
@@ -772,7 +795,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 }
                 if (c) *sp = c;
                 top = 0;
-                if (np && !nv_isattr(np, NV_MINIMAL) && shp->oldnp && !np->nvenv && shp->oldnp != np && !(flags & NV_ARRAY))
+                if (np && !nv_isattr(np, NV_MINIMAL) && shp->oldnp && !np->nvenv &&
+                    shp->oldnp != np && !(flags & NV_ARRAY))
                     np->nvenv = (char *)shp->oldnp;
                 shp->oldnp = np;
                 if (isref) {
@@ -865,7 +889,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         if (c == '[') {
                             Namval_t *table;
                             n = mode | nv_isarray(np);
-                            if (!mode && (flags & NV_ARRAY) && ((c = sp[1]) == '*' || c == '@') && sp[2] == ']') {
+                            if (!mode && (flags & NV_ARRAY) && ((c = sp[1]) == '*' || c == '@') &&
+                                sp[2] == ']') {
                                 // Not implemented yet.
                                 dp->last = cp;
                                 return np;
@@ -873,7 +898,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             if ((n & NV_ADD) && (flags & NV_ARRAY)) n |= ARRAY_FILL;
                             if (flags & NV_ASSIGN) n |= NV_ADD | ARRAY_FILL;
                             table = shp->last_table;
-                            cp = nv_endsubscript(np, sp, n | (flags & (NV_ASSIGN | NV_FARRAY)), np->nvshell);
+                            cp = nv_endsubscript(np, sp, n | (flags & (NV_ASSIGN | NV_FARRAY)),
+                                                 np->nvshell);
                             shp->last_table = table;
 #if 0
 						if(scan)
@@ -882,7 +908,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                         } else {
                             cp = sp;
                         }
-                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) || (n & ARRAY_FILL) || ((ap || (flags & NV_ASSIGN)) && (flags & NV_ARRAY))) {
+                        if ((c = *cp) == '.' || (c == '[' && nv_isarray(np)) || (n & ARRAY_FILL) ||
+                            ((ap || (flags & NV_ASSIGN)) && (flags & NV_ARRAY))) {
                             int m = cp - sp;
                             sub = m ? nv_getsub(np) : 0;
                             if (!sub) {
@@ -1071,7 +1098,8 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
     }
     if (root) {
         if (dtdelete(root, np)) {
-            if (!(flags & NV_NOFREE) && ((flags & NV_FUNCTION) || !nv_subsaved(np, flags & NV_TABLE))) {
+            if (!(flags & NV_NOFREE) &&
+                ((flags & NV_FUNCTION) || !nv_subsaved(np, flags & NV_TABLE))) {
                 Namarr_t *ap;
                 if (nv_isarray(np) && np->nvfun && (ap = nv_arrayptr(np)) && array_assoc(ap)) {
                     while (nv_associative(np, 0, NV_ANEXT)) nv_associative(np, 0, NV_ADELETE);
@@ -1158,7 +1186,8 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
     c = *(unsigned char *)cp;
     if (root == shp->alias_tree) {
         msg = e_aliname;
-        while ((c = *(unsigned char *)cp++) && (c != '=') && (c != '/') && (c >= 0x200 || !(c = sh_lexstates[ST_NORM][c]) || c == S_EPAT || c == S_COLON)) {
+        while ((c = *(unsigned char *)cp++) && (c != '=') && (c != '/') &&
+               (c >= 0x200 || !(c = sh_lexstates[ST_NORM][c]) || c == S_EPAT || c == S_COLON)) {
             ;  // empty loop
         }
         if (shp->subshell && c == '=') root = sh_subaliastree(shp, 1);
@@ -1180,7 +1209,10 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
 #if NVCACHE
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
         if (xp->root != root) continue;
-        if ((*name != '_' || name[1] != '.') && *name == *xp->name && xp->namespace == shp->namespace && (flags & (NV_ARRAY | NV_NOSCOPE)) == xp->flags && memcmp(xp->name, name, xp->len) == 0 && (name[xp->len] == 0 || name[xp->len] == '=' || name[xp->len] == '+')) {
+        if ((*name != '_' || name[1] != '.') && *name == *xp->name &&
+            xp->namespace == shp->namespace && (flags & (NV_ARRAY | NV_NOSCOPE)) == xp->flags &&
+            memcmp(xp->name, name, xp->len) == 0 &&
+            (name[xp->len] == 0 || name[xp->len] == '=' || name[xp->len] == '+')) {
             sh_stats(STAT_NVHITS);
             np = xp->np;
             cp = (char *)name + xp->len;
@@ -1283,7 +1315,11 @@ skip:
                     mp = nv_opensub(np);
                     if (mp) {
                         np = mp;
-                    } else if (!array_assoc(ap) && (mp = nv_open(cp, shp->var_tree, NV_NOFAIL | NV_VARNAME | NV_NOARRAY | NV_NOASSIGN | NV_NOADD)) && nv_isvtree(np)) {
+                    } else if (!array_assoc(ap) &&
+                               (mp = nv_open(cp, shp->var_tree,
+                                             NV_NOFAIL | NV_VARNAME | NV_NOARRAY | NV_NOASSIGN |
+                                                 NV_NOADD)) &&
+                               nv_isvtree(np)) {
                         ap->flags |= ARRAY_TREE;
                         nv_putsub(np, (char *)0, nv_aindex(np), ARRAY_ADD);
                         np = nv_opensub(np);
@@ -1538,13 +1574,16 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 if (flags & NV_LONG) {
                     sfprintf(shp->strbuf, "%I*lu", sizeof(Sfulong_t), *((Sfulong_t *)sp));
                 } else {
-                    sfprintf(shp->strbuf, "%lu", (unsigned long)((flags & NV_SHORT) ? *((uint16_t *)sp) : *((uint32_t *)sp)));
+                    sfprintf(shp->strbuf, "%lu",
+                             (unsigned long)((flags & NV_SHORT) ? *((uint16_t *)sp)
+                                                                : *((uint32_t *)sp)));
                 }
             } else {
                 if (flags & NV_LONG) {
                     sfprintf(shp->strbuf, "%I*ld", sizeof(Sflong_t), *((Sflong_t *)sp));
                 } else {
-                    sfprintf(shp->strbuf, "%ld", (long)((flags & NV_SHORT) ? *((int16_t *)sp) : *((int32_t *)sp)));
+                    sfprintf(shp->strbuf, "%ld",
+                             (long)((flags & NV_SHORT) ? *((int16_t *)sp) : *((int32_t *)sp)));
                 }
             }
             sp = sfstruse(shp->strbuf);
@@ -1578,7 +1617,8 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             tofree = up->cp;
         }
         if (nv_isattr(np, NV_BINARY) && !(flags & NV_RAW)) tofree = 0;
-        if (nv_isattr(np, NV_LJUST | NV_RJUST) && nv_isattr(np, NV_LJUST | NV_RJUST) != (NV_LJUST | NV_RJUST)) {
+        if (nv_isattr(np, NV_LJUST | NV_RJUST) &&
+            nv_isattr(np, NV_LJUST | NV_RJUST) != (NV_LJUST | NV_RJUST)) {
             tofree = 0;
         }
         if (sp) {
@@ -1615,7 +1655,8 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             } else
 #endif  // (_AST_VERSION >= 20030127L)
             {
-                if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST && nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
+                if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
+                    nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
                     nv_setsize(np, size = dot);
                     tofree = up->cp;
                 } else if (size > dot) {
@@ -1794,7 +1835,8 @@ static void attstore(Namval_t *np, void *data) {
     int flag, c = ' ';
 
     if (!(nv_isattr(np, NV_EXPORT))) return;
-    flag = nv_isattr(np, NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
+    flag =
+        nv_isattr(np, NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
     sfputc(shp->stk, '=');
     if ((flag & NV_DOUBLE) == NV_DOUBLE) {
         // Export doubles as integers for ksh88 compatibility.
@@ -1846,7 +1888,8 @@ static void pushnam(Namval_t *np, void *data) {
     } else if ((value = nv_getval(np))) {
         *ap->argnam++ = staknam(ap->sh, np, value);
     }
-    if (nv_isattr(np, NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER)) {
+    if (nv_isattr(np,
+                  NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER)) {
         ap->attsize += (strlen(nv_name(np)) + 4);
     }
 }
@@ -1866,7 +1909,8 @@ char **sh_envgen(Shell_t *shp) {
     offset = stktell(shp->stk);
     sfputr(shp->stkme_envmarker, -1);
     tell = stktell(shp->stk);
-    nv_scan(shp->var_tree, attstore, (void *)shp, 0, (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
+    nv_scan(shp->var_tree, attstore, (void *)shp, 0,
+            (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
     if (tell == stktell(shp->stk)) {
         stkseek(shp->stk, offset);
     } else {
@@ -1895,7 +1939,8 @@ char **sh_envgen(Shell_t *shp) {
     nv_scan(shp->var_tree, pushnam, &data, NV_EXPORT, NV_EXPORT);
     *data.argnam = (char *)stkalloc(shp->stk, data.attsize);
     cp = data.attval = strcopy(*data.argnam, e_envmarker);
-    nv_scan(shp->var_tree, attstore, &data, 0, (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
+    nv_scan(shp->var_tree, attstore, &data, 0,
+            (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
     *data.attval = 0;
     if (cp != data.attval) data.argnam++;
     *data.argnam = 0;
@@ -1921,14 +1966,17 @@ static int scanfilter(Dt_t *dict, void *arg, void *data) {
     NOT_USED(dict);
     if (!is_abuiltin(np) && tp && tp->tp && nv_type(np) != tp->tp) return (0);
     if (sp->scanmask == NV_TABLE && nv_isvtree(np)) k = NV_TABLE;
-    if (sp->scanmask ? (k & sp->scanmask) == sp->scanflags : (!sp->scanflags || (k & sp->scanflags))) {
+    if (sp->scanmask ? (k & sp->scanmask) == sp->scanflags
+                     : (!sp->scanflags || (k & sp->scanflags))) {
         if (tp && tp->mapname) {
             if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
                 int n = strlen(tp->mapname);
-                if (memcmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' || strchr(&np->nvname[n + 1], '.')) {
+                if (memcmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' ||
+                    strchr(&np->nvname[n + 1], '.')) {
                     return 0;
                 }
-            } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) && (cp = (char *)nv_mapchar(np, 0)) && strcmp(cp, tp->mapname)) {
+            } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) &&
+                       (cp = (char *)nv_mapchar(np, 0)) && strcmp(cp, tp->mapname)) {
                 return 0;
             }
         }
@@ -2059,7 +2107,8 @@ static void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
         if (nv_isvtree(np)) {
             int len = strlen(np->nvname);
             npnext = (Namval_t *)dtnext(root, np);
-            while ((nq = npnext) && memcmp(np->nvname, nq->nvname, len) == 0 && nq->nvname[len] == '.') {
+            while ((nq = npnext) && memcmp(np->nvname, nq->nvname, len) == 0 &&
+                   nq->nvname[len] == '.') {
                 _nv_unset(nq, flags);
                 npnext = (Namval_t *)dtnext(root, nq);
                 nv_delete(nq, root, NV_TABLE);
@@ -2106,7 +2155,8 @@ void _nv_unset(Namval_t *np, int flags) {
                     nv_setdisc(npv, cp, NULL, (Namfun_t *)npv);
                 }
             }
-            if (rp->fname && shp->fpathdict && (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
+            if (rp->fname && shp->fpathdict &&
+                (rq = (struct Ufunction *)nv_search(rp->fname, shp->fpathdict, 0))) {
                 do {
                     if (rq->np != np) continue;
                     dtdelete(shp->fpathdict, rq);
@@ -2294,7 +2344,8 @@ char *nv_getval(Namval_t *np) {
     int numeric;
 
     if (!nv_local && shp->argaddr) nv_optimize(np);
-    if ((!np->nvfun || !np->nvfun->disc) && !nv_isattr(np, NV_ARRAY | NV_INTEGER | NV_FUNCT | NV_REF)) {
+    if ((!np->nvfun || !np->nvfun->disc) &&
+        !nv_isattr(np, NV_ARRAY | NV_INTEGER | NV_FUNCT | NV_REF)) {
         goto done;
     }
     if (nv_isref(np)) {
@@ -2396,7 +2447,8 @@ done:
         return cp;
     }
 #endif  // (_AST_VERSION >= 20030127L)
-    if (!nv_isattr(np, NV_LJUST | NV_RJUST) && (numeric = nv_size(np)) && up->cp && up->cp[numeric]) {
+    if (!nv_isattr(np, NV_LJUST | NV_RJUST) && (numeric = nv_size(np)) && up->cp &&
+        up->cp[numeric]) {
         char *cp = getbuf(numeric + 1);
         memcpy(cp, up->cp, numeric);
         cp[numeric] = 0;
@@ -2467,7 +2519,8 @@ Sfdouble_t nv_getnum(Namval_t *np) {
             }
         }
     } else if ((str = nv_getval(np)) && *str != 0) {
-        if (nv_isattr(np, NV_LJUST | NV_RJUST) || (*str == '0' && !(str[1] == 'x' || str[1] == 'X'))) {
+        if (nv_isattr(np, NV_LJUST | NV_RJUST) ||
+            (*str == '0' && !(str[1] == 'x' || str[1] == 'X'))) {
             while (*str == '0') str++;
         }
         r = sh_arith(shp, str);
@@ -2492,7 +2545,9 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
 
     newatts &= ~NV_NODISC;
     // Check for restrictions.
-    if (sh_isoption(shp, SH_RESTRICTED) && ((sp = nv_name(np)) == nv_name(PATHNOD) || sp == nv_name(SHELLNOD) || sp == nv_name(ENVNOD) || sp == nv_name(FPATHNOD))) {
+    if (sh_isoption(shp, SH_RESTRICTED) &&
+        ((sp = nv_name(np)) == nv_name(PATHNOD) || sp == nv_name(SHELLNOD) ||
+         sp == nv_name(ENVNOD) || sp == nv_name(FPATHNOD))) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, nv_name(np));
     }
     // Handle attributes that do not change data separately.
@@ -2550,7 +2605,8 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
                 if (!trans) _nv_unset(np, NV_RDONLY | NV_EXPORT);
                 if (ap) ap->flags |= ARRAY_SCAN;
             }
-            if (size == 0 && (newatts & NV_HOST) != NV_HOST && (newatts & (NV_LJUST | NV_RJUST | NV_ZFILL))) {
+            if (size == 0 && (newatts & NV_HOST) != NV_HOST &&
+                (newatts & (NV_LJUST | NV_RJUST | NV_ZFILL))) {
                 size = n;
             }
         } else if (!trans) {
@@ -2816,7 +2872,8 @@ bool nv_rename(Namval_t *np, int flags) {
         }
         mp->nvenv = nvenv;
         if (flags & NV_MOVE) {
-            if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)nr->nvenv) && (ap = nv_arrayptr(mp))) {
+            if (arraynr && !nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)nr->nvenv) &&
+                (ap = nv_arrayptr(mp))) {
                 nv_putsub(mp, nr->nvname, 0, 0);
                 _nv_unset(mp, 0);
             }
@@ -2824,7 +2881,8 @@ bool nv_rename(Namval_t *np, int flags) {
         }
     } else {
         if (flags & NV_MOVE) {
-            if (!nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)(nr->nvenv)) && (ap = nv_arrayptr(mp))) {
+            if (!nv_isattr(nr, NV_MINIMAL) && (mp = (Namval_t *)(nr->nvenv)) &&
+                (ap = nv_arrayptr(mp))) {
                 ap->nelem--;
             }
             if (!nv_isarray(np) && !nv_isarray(nr)) {
@@ -2866,9 +2924,11 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     shp->namref_root = hp;
     if ((nr = nv_open(cp, hp ? hp : shp->var_tree, flags | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
         nq = nr;
-    } else if (hpnext && dtvnext(hpnext) == shp->var_base && (nr = nv_open(cp, hpnext, flags | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
+    } else if (hpnext && dtvnext(hpnext) == shp->var_base &&
+               (nr = nv_open(cp, hpnext, flags | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
         nq = nr;
-    } else if ((openmatch = shp->openmatch) && hpnext == shp->var_base && (nr = nv_open(cp, hpnext, flags | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
+    } else if ((openmatch = shp->openmatch) && hpnext == shp->var_base &&
+               (nr = nv_open(cp, hpnext, flags | NV_NOSCOPE | NV_NOADD | NV_NOFAIL))) {
         nq = nr;
     }
     if (nq) {
@@ -3105,7 +3165,8 @@ char *nv_name(Namval_t *np) {
     if (!nv_isattr(np, NV_MINIMAL | NV_EXPORT) && np->nvenv) {
         Namval_t *nq = shp->last_table, *mp = (Namval_t *)np->nvenv;
         if (mp && (mp->nvname == NULL || *mp->nvname == 0)) mp = NULL;
-        if (mp && (!strchr(np->nvname, '.') || (np->nvfun && nv_type(mp)) || (nv_isarray(mp) && (cp = nv_getsub(mp)) && strcmp(np->nvname, cp) == 0))) {
+        if (mp && (!strchr(np->nvname, '.') || (np->nvfun && nv_type(mp)) ||
+                   (nv_isarray(mp) && (cp = nv_getsub(mp)) && strcmp(np->nvname, cp) == 0))) {
             if (np == shp->last_table) shp->last_table = 0;
             if (nv_isarray(mp)) {
                 sfprintf(shp->strbuf, "%s[%s]", nv_name(mp), np->nvname);
@@ -3126,7 +3187,8 @@ char *nv_name(Namval_t *np) {
                 return (*fp->disc->namef)(np, fp);
             }
     }
-    if (!(table = shp->last_table) || *np->nvname == '.' || table == shp->namespace || np == table) {
+    if (!(table = shp->last_table) || *np->nvname == '.' || table == shp->namespace ||
+        np == table) {
         return np->nvname;
     }
     if (table) {

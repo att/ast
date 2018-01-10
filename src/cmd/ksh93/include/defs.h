@@ -61,17 +61,17 @@ extern char *sh_setenviron(const char *);
 // Note that the first few fields have to be the same as for Shscoped_t in <shell.h>.
 //
 struct sh_scoped {
-    struct sh_scoped *prevst; // pointer to previous state
+    struct sh_scoped *prevst;  // pointer to previous state
     int dolc;
     char **dolv;
     char *cmdname;
     char *filename;
     char *funname;
     int64_t lineno;
-    Dt_t *save_tree;        // var_tree for calling function
-    struct sh_scoped *self; // pointer to copy of this scope
-    Dt_t *var_local;        // local level variables for name()
-    struct slnod *staklist; // link list of function stacks
+    Dt_t *save_tree;         // var_tree for calling function
+    struct sh_scoped *self;  // pointer to copy of this scope
+    Dt_t *var_local;         // local level variables for name()
+    struct slnod *staklist;  // link list of function stacks
     int states;
     int breakcnt;
     int execbrk;
@@ -79,7 +79,7 @@ struct sh_scoped {
     int firstline;
     int32_t optindex;
     int32_t optnum;
-    int32_t tmout; // value for TMOUT
+    int32_t tmout;  // value for TMOUT
     short optchar;
     short opterror;
     int ioset;
@@ -89,20 +89,20 @@ struct sh_scoped {
     char **trapcom;
     char **otrapcom;
     void *timetrap;
-    struct Ufunction *real_fun; // current 'function name' function
+    struct Ufunction *real_fun;  // current 'function name' function
     int repl_index;
     char *repl_arg;
 };
 
 struct limits {
-    long arg_max;                   // max arg+env exec() size
-    int open_max;                   // maximum number of file descriptors
-    int clk_tck;                    // number of ticks per second
-    int child_max;                  // maxumum number of children
-    int ngroups_max;                // maximum number of process groups
-    unsigned char posix_version;    // posix version number
-    unsigned char posix_jobcontrol; // non-zero for job control systems
-    unsigned char fs3d;             // non-zero for 3-d file system
+    long arg_max;                    // max arg+env exec() size
+    int open_max;                    // maximum number of file descriptors
+    int clk_tck;                     // number of ticks per second
+    int child_max;                   // maxumum number of children
+    int ngroups_max;                 // maximum number of process groups
+    unsigned char posix_version;     // posix version number
+    unsigned char posix_jobcontrol;  // non-zero for job control systems
+    unsigned char fs3d;              // non-zero for 3-d file system
 };
 
 #ifndef SH_wait_f_defined
@@ -161,21 +161,21 @@ struct shared {
 #endif
 
 // States. Low numbered states are same as options.
-#define SH_NOFORK 0     // set when fork not necessary
-#define SH_FORKED 7     // set when process has been forked
-#define SH_PROFILE 8    // set when processing profile
-#define SH_NOALIAS 9    // do not expand non-exported aliases
-#define SH_NOTRACK 10   // set to disable sftrack() function
-#define SH_STOPOK 11    // set for stopable builtins
-#define SH_GRACE 12     // set for timeout grace period
-#define SH_TIMING 13    // set while timing pipelines
-#define SH_DEFPATH 14   // set when using default path
-#define SH_INIT 15      // set when initializing the shell
-#define SH_TTYWAIT 16   // waiting for keyboard input
-#define SH_FCOMPLETE 17 // set for filename completion
-#define SH_PREINIT 18   // set with SH_INIT before parsing options
-#define SH_COMPLETE 19  // set for command completion
-#define SH_IOPROMPT 20  // set when prompting
+#define SH_NOFORK 0      // set when fork not necessary
+#define SH_FORKED 7      // set when process has been forked
+#define SH_PROFILE 8     // set when processing profile
+#define SH_NOALIAS 9     // do not expand non-exported aliases
+#define SH_NOTRACK 10    // set to disable sftrack() function
+#define SH_STOPOK 11     // set for stopable builtins
+#define SH_GRACE 12      // set for timeout grace period
+#define SH_TIMING 13     // set while timing pipelines
+#define SH_DEFPATH 14    // set when using default path
+#define SH_INIT 15       // set when initializing the shell
+#define SH_TTYWAIT 16    // waiting for keyboard input
+#define SH_FCOMPLETE 17  // set for filename completion
+#define SH_PREINIT 18    // set with SH_INIT before parsing options
+#define SH_COMPLETE 19   // set for command completion
+#define SH_IOPROMPT 20   // set when prompting
 
 #define SH_BASH 41
 #define SH_BRACEEXPAND 42
@@ -189,8 +189,8 @@ struct shared {
 #define SH_BASHEXTRA 0x200
 #define SH_BASHOPT 0x400
 
-#define SH_ID "ksh" // ksh id
-#define SH_STD "sh" // standard sh id
+#define SH_ID "ksh"  // ksh id
+#define SH_STD "sh"  // standard sh id
 
 // Defines for sh_type().
 #define SH_TYPE_SH 001
@@ -241,8 +241,8 @@ struct shared {
 
 #define MATCH_MAX 64
 
-#define SH_READEVAL 0x4000 // for sh_eval
-#define SH_FUNEVAL 0x10000 // for sh_eval for function load
+#define SH_READEVAL 0x4000  // for sh_eval
+#define SH_FUNEVAL 0x10000  // for sh_eval for function load
 
 extern struct shared *shgd;
 extern void sh_outname(Shell_t *, Sfio_t *, char *, int);
@@ -352,11 +352,11 @@ extern int32_t sh_mailchk;
 extern const char e_dict[];
 
 // sh_printopts() mode flags -- set --[no]option by default.
-#define PRINT_VERBOSE 0x01   // option on|off list
-#define PRINT_ALL 0x02       // list unset options too
-#define PRINT_NO_HEADER 0x04 // omit listing header
-#define PRINT_SHOPT 0x08     // shopt -s|-u
-#define PRINT_TABLE 0x10     // table of all options
+#define PRINT_VERBOSE 0x01    // option on|off list
+#define PRINT_ALL 0x02        // list unset options too
+#define PRINT_NO_HEADER 0x04  // omit listing header
+#define PRINT_SHOPT 0x08      // shopt -s|-u
+#define PRINT_TABLE 0x10      // table of all options
 
 // Performance statistics.
 #define STAT_ARGHITS 0
@@ -412,6 +412,6 @@ static struct lconv *lp;
 // This defintion has been taken from iffe feature test for pipes.
 // TODO: Verfiy this assumption is safe.
 //
-#define _pipe_socketpair 1 // use socketpair() for peekable pipe()
+#define _pipe_socketpair 1  // use socketpair() for peekable pipe()
 
 #endif

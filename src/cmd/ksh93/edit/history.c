@@ -35,14 +35,14 @@
 // character set.  It can understand version 0 format files.
 //
 #define HIST_MAX (sizeof(int) * HIST_BSIZE)
-#define HIST_BIG (0100000 - 1024) // 1K less than maximum short
-#define HIST_LINE 32              // typical length for history line
+#define HIST_BIG (0100000 - 1024)  // 1K less than maximum short
+#define HIST_LINE 32               // typical length for history line
 #define HIST_MARKSZ 6
 #define HIST_RECENT 600
-#define HIST_UNDO 0201  // invalidate previous command
-#define HIST_CMDNO 0202 // next 3 bytes give command number
-#define HIST_BSIZE 4096 // size of history file buffer
-#define HIST_DFLT 512   // default size of history list
+#define HIST_UNDO 0201   // invalidate previous command
+#define HIST_CMDNO 0202  // next 3 bytes give command number
+#define HIST_BSIZE 4096  // size of history file buffer
+#define HIST_DFLT 512    // default size of history list
 
 #if SHOPT_AUDIT
 #define _HIST_AUDIT  \
@@ -67,9 +67,9 @@
 #define hist_ind(hp, c) ((int)((c) & (hp)->histmask))
 
 #include <ast.h>
-#include <sfio.h>
 #include <error.h>
 #include <ls.h>
+#include <sfio.h>
 #if KSHELL
 #include "defs.h"
 
@@ -79,7 +79,7 @@
 #include "variables.h"
 #else  // KSHELL
 #include <ctype.h>
-#endif // KSHELL
+#endif  // KSHELL
 #include "history.h"
 
 #if !KSHELL
@@ -90,11 +90,11 @@
 #define sh_translate(x) (x)
 char login_sh = 0;
 char hist_fname[] = "/.history";
-#endif // KSHELL
+#endif  // KSHELL
 
 #ifndef O_BINARY
 #define O_BINARY 0
-#endif // O_BINARY
+#endif  // O_BINARY
 
 int _Hist = 0;
 static void hist_marker(char *, long);
@@ -105,7 +105,7 @@ static int hist_clean(int);
 #ifdef SF_BUFCONST
 static ssize_t hist_write(Sfio_t *, const void *, size_t, Sfdisc_t *);
 static int hist_exceptf(Sfio_t *, int, void *, Sfdisc_t *);
-#else  // SF_BUFCONST
+#else   // SF_BUFCONST
 static int hist_write(Sfio_t *, const void *, int, Sfdisc_t *);
 static int hist_exceptf(Sfio_t *, int, Sfdisc_t *);
 #endif  // SF_BUFCONST
@@ -155,7 +155,7 @@ static int acctinit(History_t *hp) {
     }
     return 1;
 }
-#endif // SHOPT_ACCTFILE
+#endif  // SHOPT_ACCTFILE
 
 #if SHOPT_AUDIT
 static int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t len) {
@@ -180,7 +180,7 @@ done:
     sh_close(fd);
     return r;
 }
-#endif // SHOPT_AUDIT
+#endif  // SHOPT_AUDIT
 
 static const unsigned char hist_stamp[2] = {HIST_UNDO, HIST_VERSION};
 static const Sfdisc_t hist_disc = {NULL, hist_write, NULL, hist_exceptf, NULL};
@@ -225,7 +225,7 @@ int sh_histinit(void *sh_context) {
             hist_free();
         }
     }
-#endif // future
+#endif  // future
 
 retry:
     cp = path_relative(shp, histname);
@@ -251,7 +251,7 @@ retry:
 #if KSHELL
         // Don't allow root a history_file in /tmp.
         if (shgd->userid)
-#endif // KSHELL
+#endif  // KSHELL
         {
             if (!(fname = pathtmp(NULL, 0, 0, NULL))) return 0;
             fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
@@ -294,7 +294,7 @@ retry:
         off_t mark, size = (HIST_MAX / 4) + maxlines * HIST_LINE;
         hp->histind = first = hist_nearend(hp, hp->histfp, hsize - size);
         histinit = 1;
-        hist_eof(hp); // this sets histind to last command
+        hist_eof(hp);  // this sets histind to last command
         if ((hist_start = (last = (int)hp->histind) - maxlines) <= 0) hist_start = 1;
         mark = hp->histmarker;
         while (first > hist_start) {
@@ -319,17 +319,17 @@ retry:
 #ifdef DEBUG
         sfprintf(sfstderr, "%d: hist_trim hsize=%d\n", getpid(), hsize);
         sfsync(sfstderr);
-#endif // DEBUG
+#endif  // DEBUG
         hp = hist_trim(hp, (int)hp->histind - maxlines);
     }
     sfdisc(hp->histfp, &hp->histdisc);
 #if KSHELL
     (HISTCUR)->nvalue.lp = (&hp->histind);
-#endif // KSHELL
+#endif  // KSHELL
     sh_timeradd(1000L * (HIST_RECENT - 30), 1, hist_touch, (void *)hp->histname);
 #if SHOPT_ACCTFILE
     if (sh_isstate(shp, SH_INTERACTIVE)) acctinit(hp);
-#endif // SHOPT_ACCTFILE
+#endif  // SHOPT_ACCTFILE
 #if SHOPT_AUDIT
     {
         char buff[SF_BUFSIZE];
@@ -366,7 +366,7 @@ void hist_close(History_t *hp) {
         if (hp->tty) free(hp->tty);
         sfclose(hp->auditfp);
     }
-#endif // SHOPT_AUDIT
+#endif  // SHOPT_AUDIT
     free((char *)hp);
     hist_ptr = 0;
     shgd->hist_ptr = 0;
@@ -375,7 +375,7 @@ void hist_close(History_t *hp) {
         sh_close(acctfd);
         acctfd = 0;
     }
-#endif // SHOPT_ACCTFILE
+#endif  // SHOPT_ACCTFILE
 }
 
 //
@@ -731,7 +731,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
                  buff, 0);
         sfsync(hp->auditfp);
     }
-#endif // SHOPT_AUDIT
+#endif  // SHOPT_AUDIT
 #if SHOPT_ACCTFILE
     if (acctfd) {
         int timechars, offset;
@@ -743,7 +743,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
         write(acctfd, stkptr(shp->stk, offset), size - 2 + timechars);
         stkseek(shp->stk, offset);
     }
-#endif // SHOPT_ACCTFILE
+#endif  // SHOPT_ACCTFILE
     if (size & 01) {
         size++;
         *bufptr++ = 0;
@@ -867,7 +867,7 @@ Histloc_t hist_find(History_t *hp, char *string, int index1, int flag, int direc
 #if KSHELL
         // Allow a search to be aborted.
         if (((Shell_t *)hp->histshell)->trapnote & SH_SIGSET) break;
-#endif // KSHELL
+#endif  // KSHELL
     }
     return location;
 }

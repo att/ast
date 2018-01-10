@@ -33,7 +33,7 @@
 #include "name.h"
 #else
 #include <nval.h>
-#endif // _SH_PRIVATE
+#endif  // _SH_PRIVATE
 #if __STDC_VERSION__ >= 199901L
 #include <stdint.h>
 #endif
@@ -65,11 +65,11 @@ union Shnode_u;
 typedef union Shnode_u Shnode_t;
 
 #define SH_CFLAG 0
-#define SH_HISTORY 1     // used also as a state
-#define SH_ERREXIT 2     // used also as a state
-#define SH_VERBOSE 3     // used also as a state
-#define SH_MONITOR 4     // used also as a state
-#define SH_INTERACTIVE 5 // used also as a state
+#define SH_HISTORY 1      // used also as a state
+#define SH_ERREXIT 2      // used also as a state
+#define SH_VERBOSE 3      // used also as a state
+#define SH_MONITOR 4      // used also as a state
+#define SH_INTERACTIVE 5  // used also as a state
 #define SH_RESTRICTED 6
 #define SH_XTRACE 7
 #define SH_KEYWORD 8
@@ -89,7 +89,7 @@ typedef union Shnode_u Shnode_t;
 #define SH_GMACS 24
 #define SH_EMACS 25
 #define SH_PRIVILEGED 26
-#define SH_SUBSHARE 27 // subshell shares state with parent
+#define SH_SUBSHARE 27  // subshell shares state with parent
 #define SH_NOLOG 28
 #define SH_NOTIFY 29
 #define SH_DICTIONARY 30
@@ -134,66 +134,66 @@ typedef struct sh_scope {
 // Saves the state of the shell.
 //
 struct Shell_s {
-    Shopt_t options;        // set -o options
-    Dt_t *var_tree;         // for shell variables
-    Dt_t *fun_tree;         // for shell functions
-    Dt_t *alias_tree;       // for alias names
-    Dt_t *bltin_tree;       // for builtin commands
-    Shscope_t *topscope;    // pointer to top-level scope
-    int inlineno;           // line number of current input file
-    int exitval;            // most recent exit value
-    unsigned char trapnote; // set when trap/signal is pending
-    char shcomp;            // set when runing shcomp
-    short subshell;         // set for virtual subshell
-    Stk_t *stk;             // stack poiter
-    int pwdfd;              // file descriptor for pwd
+    Shopt_t options;         // set -o options
+    Dt_t *var_tree;          // for shell variables
+    Dt_t *fun_tree;          // for shell functions
+    Dt_t *alias_tree;        // for alias names
+    Dt_t *bltin_tree;        // for builtin commands
+    Shscope_t *topscope;     // pointer to top-level scope
+    int inlineno;            // line number of current input file
+    int exitval;             // most recent exit value
+    unsigned char trapnote;  // set when trap/signal is pending
+    char shcomp;             // set when runing shcomp
+    short subshell;          // set for virtual subshell
+    Stk_t *stk;              // stack poiter
+    int pwdfd;               // file descriptor for pwd
 #ifdef _SH_PRIVATE
-    struct shared *gd;   // global data
-    struct sh_scoped st; // scoped information
-    Sfio_t *heredocs;    // current here-doc temp file
-    Sfio_t *funlog;      // for logging function definitions
-    int **fdptrs;        // pointer to file numbers
+    struct shared *gd;    // global data
+    struct sh_scoped st;  // scoped information
+    Sfio_t *heredocs;     // current here-doc temp file
+    Sfio_t *funlog;       // for logging function definitions
+    int **fdptrs;         // pointer to file numbers
     int savexit;
     char *lastarg;
-    char *lastpath;   // last alsolute path found
-    int path_err;     // last error on path search
-    Dt_t *track_tree; // for tracked aliases*/
-    Dt_t *var_base;   // global level variables
+    char *lastpath;    // last alsolute path found
+    int path_err;      // last error on path search
+    Dt_t *track_tree;  // for tracked aliases*/
+    Dt_t *var_base;    // global level variables
     Dt_t *openmatch;
     Dt_t *namref_root;
-    Namval_t *namespace;  // current active namespace*/
-    Namval_t *last_table; // last table used in last nv_open
-    Namval_t *prev_table; // previous table used in nv_open
-    Namval_t *oldnp;      // last valid parent node
-    Namval_t **nodelist;  // for decl commands
-    Sfio_t *outpool;      // ouput stream pool
-    long timeout;         // read timeout
-    long curenv;          // current subshell number
-    long jobenv;          // subshell number for jobs
-    int infd;             // input file descriptor
-    short nextprompt;     // next prompt is PS<nextprompt>
+    Namval_t *namespace;   // current active namespace*/
+    Namval_t *last_table;  // last table used in last nv_open
+    Namval_t *prev_table;  // previous table used in nv_open
+    Namval_t *oldnp;       // last valid parent node
+    Namval_t **nodelist;   // for decl commands
+    Sfio_t *outpool;       // ouput stream pool
+    long timeout;          // read timeout
+    long curenv;           // current subshell number
+    long jobenv;           // subshell number for jobs
+    int infd;              // input file descriptor
+    short nextprompt;      // next prompt is PS<nextprompt>
     short poolfiles;
-    Namval_t *posix_fun; // points to last name() function
-    char *outbuff;       // pointer to output buffer
-    char *errbuff;       // pointer to stderr buffer
-    char *prompt;        // pointer to prompt string
-    char *shname;        // shell name
-    char *comdiv;        // points to sh -c argument
-    char *prefix;        // prefix for compound assignment
-    sigjmp_buf *jmplist; // longjmp return stack
-    char *fifo;          // fifo name for process sub
+    Namval_t *posix_fun;  // points to last name() function
+    char *outbuff;        // pointer to output buffer
+    char *errbuff;        // pointer to stderr buffer
+    char *prompt;         // pointer to prompt string
+    char *shname;         // shell name
+    char *comdiv;         // points to sh -c argument
+    char *prefix;         // prefix for compound assignment
+    sigjmp_buf *jmplist;  // longjmp return stack
+    char *fifo;           // fifo name for process sub
     int oldexit;
-    pid_t bckpid; // background process id
+    pid_t bckpid;  // background process id
     pid_t cpid;
-    pid_t spid; // subshell process id
+    pid_t spid;  // subshell process id
     pid_t pipepid;
     pid_t outpipepid;
-    pid_t *procsub; // pids for >() argument
-    int nprocsub;   // number of pids in procsub
+    pid_t *procsub;  // pids for >() argument
+    int nprocsub;    // number of pids in procsub
     int topfd;
     int errorfd;
     int savesig;
-    unsigned char *sigflag; // pointer to signal states
+    unsigned char *sigflag;  // pointer to signal states
     char intrap;
     char login_sh;
     char lastbase;
@@ -201,25 +201,25 @@ struct Shell_s {
     char binscript;
     char deftype;
     char funload;
-    char used_pos; // used postional parameter
+    char used_pos;  // used postional parameter
     char universe;
     char winch;
-    char inarith;          // set when in ((...))
-    char indebug;          // set when in debug trap
-    unsigned char ignsig;  // ignored signal in subshell
-    unsigned char lastsig; // last signal received
-    char pathinit;         // pathinit called from subshell
-    char comsub;           // set when in $() comsub
-    char subshare;         // set when in ${..} comsub
-    char toomany;          // set when out of fd's
-    char instance;         // in set_instance
-    char decomma;          // decimal_point=','
-    char redir0;           // redirect of 0
-    char intrace;          // set when trace expands PS4
-    char *readscript;      // set before reading a script
-    int subdup;            // bitmask for dups of 1
-    int *inpipe;           // input pipe pointer
-    int *outpipe;          // output pipe pointer
+    char inarith;           // set when in ((...))
+    char indebug;           // set when in debug trap
+    unsigned char ignsig;   // ignored signal in subshell
+    unsigned char lastsig;  // last signal received
+    char pathinit;          // pathinit called from subshell
+    char comsub;            // set when in $() comsub
+    char subshare;          // set when in ${..} comsub
+    char toomany;           // set when out of fd's
+    char instance;          // in set_instance
+    char decomma;           // decimal_point=','
+    char redir0;            // redirect of 0
+    char intrace;           // set when trace expands PS4
+    char *readscript;       // set before reading a script
+    int subdup;             // bitmask for dups of 1
+    int *inpipe;            // input pipe pointer
+    int *outpipe;           // output pipe pointer
     int cpipe[3];
     int coutpipe;
     int inuse_bits;
@@ -285,12 +285,12 @@ struct Shell_s {
     char exittrap;
     char errtrap;
     char end_fn;
-#endif // _SH_PRIVATE
+#endif  // _SH_PRIVATE
 };
 
 // Flags for sh_parse.
-#define SH_NL 1  // treat new-lines as ;
-#define SH_EOF 2 // EOF causes syntax error
+#define SH_NL 1   // treat new-lines as ;
+#define SH_EOF 2  // EOF causes syntax error
 
 // Symbolic values for sh_iogetiop.
 #define SH_IOCOPROCESS (-2)
@@ -301,13 +301,13 @@ struct Shell_s {
 // Symbolic value for sh_fdnotify.
 #define SH_FDCLOSE (-1)
 
-#undef getenv // -lshell provides its own
+#undef getenv  // -lshell provides its own
 
 #if defined(__EXPORT__) && defined(_DLL)
 #ifdef _BLD_shell
 #define extern __EXPORT__
-#endif // _BLD_shell
-#endif // _DLL
+#endif  // _BLD_shell
+#endif  // _DLL
 
 extern int sh_access(const char *, int);
 extern Namval_t *sh_addbuiltin(const char *, int (*)(int, char *[], Shbltin_t *), void *);
@@ -392,7 +392,7 @@ extern Shell_t sh;
 
 #ifdef _DLL
 #undef extern
-#endif // _DLL
+#endif  // _DLL
 
 #ifndef _AST_INTERCEPT
 #if _lib_lseek64
@@ -402,13 +402,13 @@ extern Shell_t sh;
 #undef stat
 #define stat(a, b) sh_stat(a, b)
 #endif
-#endif // !_AST_INTERCEPT
+#endif  // !_AST_INTERCEPT
 #ifndef _shtest_c
 #ifndef _SH_PRIVATE
 #undef access
 #define access(a, b) sh_access(a, b)
 #endif
-#endif // !_shtest_c
+#endif  // !_shtest_c
 #ifndef _shio_h
 #ifndef _AST_INTERCEPT
 #undef chdir
@@ -453,12 +453,12 @@ extern Shell_t sh;
 #define umask(a) sh_umask(a)
 #undef dup
 #define dup sh_dup
-#endif // !_SH_PRIVATE
-#endif // !_shio_h
+#endif  // !_SH_PRIVATE
+#endif  // !_shio_h
 
 #define SH_SIGSET 4
-#define SH_EXITSIG 0400              // signal exit bit
-#define SH_EXITMASK (SH_EXITSIG - 1) // normal exit status bits
-#define SH_RUNPROG -1022             // needs to be negative and < 256
+#define SH_EXITSIG 0400               // signal exit bit
+#define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits
+#define SH_RUNPROG -1022              // needs to be negative and < 256
 
-#endif // SH_INTERACTIVE
+#endif  // SH_INTERACTIVE

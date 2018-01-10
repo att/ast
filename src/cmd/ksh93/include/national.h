@@ -24,7 +24,7 @@
 // AT&T Labs
 //
 #ifndef MARKER
-#define MARKER 0xdfff // must be invalid character
+#define MARKER 0xdfff  // must be invalid character
 #endif
 
 extern int sh_strchr(const char *, const char *, size_t);

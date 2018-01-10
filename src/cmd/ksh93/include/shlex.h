@@ -30,35 +30,35 @@
 #include "shtable.h"
 
 typedef struct _shlex_ {
-    Shell_t *sh;           // pointer to the interpreter
-    struct argnod *arg;    // current word
-    struct ionod *heredoc; // pending here document list
-    int token;             // current token number
-    int lastline;          // last line number
-    int lasttok;           // previous token number
-    int digits;            // numerical value with word token
-    int nonstandard;       // nonstandard construct in profile
-    char aliasok;          // on when alias is legal
-    char assignok;         // on when name=value is legal
-    char inexec;           // on when processing exec
-    char intypeset;        // on when processing typeset
-    char comp_assign;      // in compound assignment
-    char comsub;           // parsing command substitution
-    char noreserv;         // reserved works not legal
-    char typed;            // possible type definition on PATH
-    int inlineno;          // saved value of sh.inlineno
-    int firstline;         // saved value of sh.st.firstline
-    int assignlevel;       // nesting level for assignment
-    short fundepth;        // nesting level for functions
-    Sfio_t *kiafile;       // kia output file
-    Sfio_t *kiatmp;        // kia reference file
-    unsigned long script;  // script entity number
-    unsigned long fscript; // script file entity number
-    unsigned long current; // current entity number
-    unsigned long unknown; // <unknown> entity number
-    off_t kiabegin;        // offset of first entry
-    char *scriptname;      // name of script file
-    Dt_t *entity_tree;     // for entity ids
+    Shell_t *sh;            // pointer to the interpreter
+    struct argnod *arg;     // current word
+    struct ionod *heredoc;  // pending here document list
+    int token;              // current token number
+    int lastline;           // last line number
+    int lasttok;            // previous token number
+    int digits;             // numerical value with word token
+    int nonstandard;        // nonstandard construct in profile
+    char aliasok;           // on when alias is legal
+    char assignok;          // on when name=value is legal
+    char inexec;            // on when processing exec
+    char intypeset;         // on when processing typeset
+    char comp_assign;       // in compound assignment
+    char comsub;            // parsing command substitution
+    char noreserv;          // reserved works not legal
+    char typed;             // possible type definition on PATH
+    int inlineno;           // saved value of sh.inlineno
+    int firstline;          // saved value of sh.st.firstline
+    int assignlevel;        // nesting level for assignment
+    short fundepth;         // nesting level for functions
+    Sfio_t *kiafile;        // kia output file
+    Sfio_t *kiatmp;         // kia reference file
+    unsigned long script;   // script entity number
+    unsigned long fscript;  // script file entity number
+    unsigned long current;  // current entity number
+    unsigned long unknown;  // <unknown> entity number
+    off_t kiabegin;         // offset of first entry
+    char *scriptname;       // name of script file
+    Dt_t *entity_tree;      // for entity ids
 #ifdef _SHLEX_PRIVATE
     _SHLEX_PRIVATE
 #endif
@@ -67,7 +67,7 @@ typedef struct _shlex_ {
 // Symbols for parsing.
 #define NL '\n'
 #define NOTSYM '!'
-#define SYMRES 0400 // reserved word symbols
+#define SYMRES 0400  // reserved word symbols
 #define DOSYM (SYMRES | 01)
 #define FISYM (SYMRES | 02)
 #define ELIFSYM (SYMRES | 03)
@@ -86,7 +86,7 @@ typedef struct _shlex_ {
 #define TIMESYM (SYMRES | 020)
 #define NSPACESYM (SYMRES | 021)
 
-#define SYMREP 01000 // symbols for doubled characters
+#define SYMREP 01000  // symbols for doubled characters
 #define BREAKCASESYM (SYMREP | ';')
 #define ANDFSYM (SYMREP | '&')
 #define ORFSYM (SYMREP | '|')
@@ -97,12 +97,12 @@ typedef struct _shlex_ {
 #define ETESTSYM (SYMREP | ']')
 
 #define SYMMASK 0170000
-#define SYMPIPE 010000   // trailing '|'
-#define SYMLPAR 020000   // trailing LPAREN
-#define SYMAMP 040000    // trailing '&'
-#define SYMGT 0100000    // trailing '>'
-#define SYMSEMI 0110000  // trailing ';'
-#define SYMSHARP 0120000 // trailing '#'
+#define SYMPIPE 010000    // trailing '|'
+#define SYMLPAR 020000    // trailing LPAREN
+#define SYMAMP 040000     // trailing '&'
+#define SYMGT 0100000     // trailing '>'
+#define SYMSEMI 0110000   // trailing ';'
+#define SYMSHARP 0120000  // trailing '#'
 #define IOSEEKSYM (SYMSHARP | '<')
 #define IOMOV0SYM (SYMAMP | '<')
 #define IOMOV1SYM (SYMAMP | '>')
@@ -114,7 +114,7 @@ typedef struct _shlex_ {
 #define PIPESYM2 (SYMPIPE | '&')
 #define IPROCSYM (SYMLPAR | '<')
 #define OPROCSYM (SYMLPAR | '>')
-#define EOFSYM 04000 // end-of-file
+#define EOFSYM 04000  // end-of-file
 #define TESTUNOP 04001
 #define TESTBINOP 04002
 #define LABLSYM 04003
@@ -126,9 +126,9 @@ typedef struct _shlex_ {
 #define SH_ASSIGN 020
 #define SH_FUNDEF 040
 #define SH_ARRAY 0100
-#define SH_SEMI 0200 // semicolon after newline ok
+#define SH_SEMI 0200  // semicolon after newline ok
 
-#define SH_COMPASSIGN 010 // allow compound assignments only
+#define SH_COMPASSIGN 010  // allow compound assignments only
 
 extern const char e_unexpected[];
 extern const char e_unmatched[];
@@ -152,4 +152,4 @@ extern int kiaclose(Lex_t *);
 extern unsigned long kiaentity(Lex_t *, const char *, int, int, int, int, unsigned long, int, int,
                                const char *);
 
-#endif // !NOTSYM
+#endif  // !NOTSYM

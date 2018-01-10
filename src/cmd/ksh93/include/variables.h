@@ -109,13 +109,13 @@
 #define NFS_3D 1
 #else
 #define NFS_3D 0
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
 #if SHOPT_VPIX
 #define DOSPATHNOD (shgd->bltin_nodes + 78 + NFS_3D)
 #define VPIXNOD (shgd->bltin_nodes + 79 + NFS_3D)
 #define NVPIX (NFS_3D + 2)
 #else
 #define NVPIX NFS_3D
-#endif // SHOPT_VPIX
+#endif  // SHOPT_VPIX
 
-#endif // SH_VALNOD
+#endif  // SH_VALNOD

@@ -79,7 +79,7 @@ extern int b_jobs(int, char *[], Shbltin_t *);
 extern int b_kill(int, char *[], Shbltin_t *);
 #ifdef SIGTSTP
 extern int b_bg(int, char *[], Shbltin_t *);
-#endif // SIGTSTP
+#endif  // SIGTSTP
 #endif
 
 // The following utilities are built-in because of side-effects.
@@ -94,10 +94,10 @@ extern int b_ulimit(int, char *[], Shbltin_t *);
 extern int b_umask(int, char *[], Shbltin_t *);
 #ifdef _cmd_universe
 extern int b_universe(int, char *[], Shbltin_t *);
-#endif // _cmd_universe
+#endif  // _cmd_universe
 #if SHOPT_FS_3D
 extern int b_vpath(int, char *[], Shbltin_t *);
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
 extern int b_wait(int, char *[], Shbltin_t *);
 extern int b_whence(int, char *[], Shbltin_t *);
 
@@ -136,7 +136,7 @@ extern const char e_badname[];
 extern const char e_badsyntax[];
 #ifdef _cmd_universe
 extern const char e_nouniverse[];
-#endif // _cmd_universe
+#endif  // _cmd_universe
 extern const char e_histopen[];
 extern const char e_condition[];
 extern const char e_badrange[];
@@ -150,7 +150,7 @@ extern const char e_cantset[];
 extern const char e_cantget[];
 extern const char e_mapping[];
 extern const char e_versions[];
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
 
 // For option parsing.
 extern const char sh_set[];
@@ -164,7 +164,7 @@ extern const char sh_optcont[];
 extern const char sh_optdot[];
 #ifndef ECHOPRINT
 extern const char sh_optecho[];
-#endif // !ECHOPRINT
+#endif  // !ECHOPRINT
 extern const char sh_opteval[];
 extern const char sh_optexec[];
 extern const char sh_optexit[];
@@ -195,13 +195,13 @@ extern const char sh_optunalias[];
 extern const char sh_optwait[];
 #ifdef _cmd_universe
 extern const char sh_optuniverse[];
-#endif // _cmd_universe
+#endif  // _cmd_universe
 extern const char sh_optunset[];
 #if SHOPT_FS_3D
 extern const char sh_optvpath[];
 extern const char sh_optvmap[];
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
 extern const char sh_optwhence[];
-#endif // SYSDECLARE
+#endif  // SYSDECLARE
 
 extern const char e_dict[];

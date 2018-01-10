@@ -27,22 +27,22 @@
 #include "argnod.h"
 
 // Command tree for tretyp.
-#define FINT (02 << COMBITS)        // non-interruptable
-#define FAMP (04 << COMBITS)        // background
-#define FPIN (010 << COMBITS)       // input is a pipe
-#define FPOU (040 << COMBITS)       // output is a pipe
-#define FPCL (0100 << COMBITS)      // close the pipe
-#define FCOOP (0200 << COMBITS)     // cooperating process
-#define FSHOWME (0400 << COMBITS)   // set for showme commands
-#define FALTPIPE (02000 << COMBITS) // alternate pipes &|
-#define FPOSIX (02 << COMBITS)      // posix semantics function
-#define FLINENO (04 << COMBITS)     // for/case has line number
-#define FSHVALUE (0100 << COMBITS)  // function set .sh.value
-#define FOPTGET (0200 << COMBITS)   // function calls getopts
+#define FINT (02 << COMBITS)         // non-interruptable
+#define FAMP (04 << COMBITS)         // background
+#define FPIN (010 << COMBITS)        // input is a pipe
+#define FPOU (040 << COMBITS)        // output is a pipe
+#define FPCL (0100 << COMBITS)       // close the pipe
+#define FCOOP (0200 << COMBITS)      // cooperating process
+#define FSHOWME (0400 << COMBITS)    // set for showme commands
+#define FALTPIPE (02000 << COMBITS)  // alternate pipes &|
+#define FPOSIX (02 << COMBITS)       // posix semantics function
+#define FLINENO (04 << COMBITS)      // for/case has line number
+#define FSHVALUE (0100 << COMBITS)   // function set .sh.value
+#define FOPTGET (0200 << COMBITS)    // function calls getopts
 
-#define TNEGATE (01 << COMBITS) // ! inside [[...]]
-#define TBINARY (02 << COMBITS) // binary operator in [[...]]
-#define TUNARY (04 << COMBITS)  // unary operator in [[...]]
+#define TNEGATE (01 << COMBITS)  // ! inside [[...]]
+#define TBINARY (02 << COMBITS)  // binary operator in [[...]]
+#define TUNARY (04 << COMBITS)   // unary operator in [[...]]
 #define TTEST (010 << COMBITS)
 #define TPAREN (TBINARY | TUNARY)
 #define TSHIFT (COMBITS + 4)
@@ -152,23 +152,23 @@ struct arithnod {
 };
 
 // Types of ionodes stored in iofile.
-#define IOUFD 0x3f        // file descriptor number mask
-#define IOPUT 0x40        // > redirection operator
-#define IOAPP 0x80        // >> redirection operator
-#define IODOC 0x100       // << redirection operator
-#define IOMOV 0x200       // <& or >& operators
-#define IOCLOB 0x400      // noclobber bit
-#define IORDW 0x800       // <> redirection operator
-#define IORAW 0x1000      // no expansion needed for filename
-#define IOSTRG 0x2000     // here-document stored as incore string
-#define IOSTRIP 0x4000    // strip leading tabs for here-document
-#define IOQUOTE 0x8000    // here-document delimiter was quoted
-#define IOVNM 0x10000     // iovname field is non-zero
-#define IOLSEEK 0x20000   // seek operators <# or >#
-#define IOARITH 0x40000   // arithmetic seek <# ((expr))
-#define IOREWRITE 0x80000 // arithmetic seek <# ((expr))
-#define IOCOPY IOCLOB     // copy skipped lines onto standard output
-#define IOPROCSUB IOARITH // process substitution redirection
+#define IOUFD 0x3f         // file descriptor number mask
+#define IOPUT 0x40         // > redirection operator
+#define IOAPP 0x80         // >> redirection operator
+#define IODOC 0x100        // << redirection operator
+#define IOMOV 0x200        // <& or >& operators
+#define IOCLOB 0x400       // noclobber bit
+#define IORDW 0x800        // <> redirection operator
+#define IORAW 0x1000       // no expansion needed for filename
+#define IOSTRG 0x2000      // here-document stored as incore string
+#define IOSTRIP 0x4000     // strip leading tabs for here-document
+#define IOQUOTE 0x8000     // here-document delimiter was quoted
+#define IOVNM 0x10000      // iovname field is non-zero
+#define IOLSEEK 0x20000    // seek operators <# or >#
+#define IOARITH 0x40000    // arithmetic seek <# ((expr))
+#define IOREWRITE 0x80000  // arithmetic seek <# ((expr))
+#define IOCOPY IOCLOB      // copy skipped lines onto standard output
+#define IOPROCSUB IOARITH  // process substitution redirection
 
 union Shnode_u {
     struct argnod arg;
@@ -198,4 +198,4 @@ __EXPORT__
 extern int sh_tdump(Sfio_t *, const Shnode_t *);
 extern Shnode_t *sh_trestore(Shell_t *, Sfio_t *);
 
-#endif // _SHNODES_H
+#endif  // _SHNODES_H

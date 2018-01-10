@@ -21,7 +21,7 @@
 // UNIX shell
 // AT&T Labs
 //
-#define TGRACE 60 // grace period before termination
+#define TGRACE 60  // grace period before termination
 // The time_warn message contains this number.
 extern const char e_timeout[];
 extern const char e_timewarn[];

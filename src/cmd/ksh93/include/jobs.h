@@ -28,7 +28,7 @@
 #include <sfio.h>
 #ifndef SIGINT
 #include <signal.h>
-#endif // !SIGINT
+#endif  // !SIGINT
 
 #include <aso.h>
 
@@ -45,7 +45,7 @@ struct cosh {
 
 extern pid_t sh_copid(struct cosh *);
 extern char *sh_pid2str(Shell_t *, pid_t);
-#endif // SHOPT_COSHELL
+#endif  // SHOPT_COSHELL
 
 #undef JOBS
 #if defined(SIGCLD) && !defined(SIGCHLD)
@@ -59,8 +59,8 @@ extern char *sh_pid2str(Shell_t *, pid_t);
 extern int tty_ld, ntty_ld;
 #define OTTYDISC tty_ld
 #define NTTYDISC ntty_ld
-#endif // FIOLOOKLD
-#else  // SIGCHLD
+#endif  // FIOLOOKLD
+#else   // SIGCHLD
 #undef SIGTSTP
 #undef SH_MONITOR
 #define SH_MONITOR 0
@@ -69,58 +69,58 @@ extern int tty_ld, ntty_ld;
 #endif  // SIGCHLD
 
 struct process {
-    struct process *p_nxtjob;  // next job structure
-    struct process *p_nxtproc; // next process in current job
-    Shell_t *p_shp;            // shell that posted the job
-    char *p_curdir;            // current direcory at job start
+    struct process *p_nxtjob;   // next job structure
+    struct process *p_nxtproc;  // next process in current job
+    Shell_t *p_shp;             // shell that posted the job
+    char *p_curdir;             // current direcory at job start
 #if SHOPT_COSHELL
-    Cojob_t *p_cojob; // coshell job
-#endif                // SHOPT_COSHELL
-    int *p_exitval;   // place to store the exitval
+    Cojob_t *p_cojob;  // coshell job
+#endif                 // SHOPT_COSHELL
+    int *p_exitval;    // place to store the exitval
     int p_wstat;
-    pid_t p_pid;              // process id
-    pid_t p_pgrp;             // process group
-    pid_t p_fgrp;             // process group when stopped
-    short p_job;              // job number of process
-    unsigned short p_exit;    // exit value or signal number
-    unsigned short p_exitmin; // minimum exit value for xargs
-    unsigned short p_flag;    // flags - see below
-    long p_env;               // subshell environment number
+    pid_t p_pid;               // process id
+    pid_t p_pgrp;              // process group
+    pid_t p_fgrp;              // process group when stopped
+    short p_job;               // job number of process
+    unsigned short p_exit;     // exit value or signal number
+    unsigned short p_exitmin;  // minimum exit value for xargs
+    unsigned short p_flag;     // flags - see below
+    long p_env;                // subshell environment number
 #ifdef JOBS
-    off_t p_name;          // history file offset for command
-    struct termios p_stty; // terminal state for job
-#endif // JOBS
+    off_t p_name;           // history file offset for command
+    struct termios p_stty;  // terminal state for job
+#endif                      // JOBS
 };
 
 struct jobs {
-    struct process *pwlist; // head of process list
-    int *exitval;           // pipe exit values
-    pid_t curpgid;          // current process gid id
-    pid_t parent;           // set by fork()
-    pid_t mypid;            // process id of shell
-    pid_t mypgid;           // process group id of shell
-    pid_t mytgid;           // terminal group id of shell
-    pid_t lastpost;         // last job posted
+    struct process *pwlist;  // head of process list
+    int *exitval;            // pipe exit values
+    pid_t curpgid;           // current process gid id
+    pid_t parent;            // set by fork()
+    pid_t mypid;             // process id of shell
+    pid_t mypgid;            // process group id of shell
+    pid_t mytgid;            // terminal group id of shell
+    pid_t lastpost;          // last job posted
     int curjobid;
-    unsigned int in_critical; // >0 => in critical region
-    int savesig;              // active signal
-    int numpost;              // number of posted jobs
-    int numbjob;              // number of background jobs
-    short fd;                 // tty descriptor number
-    short maxjob;             // must reap after maxjob if > 0
+    unsigned int in_critical;  // >0 => in critical region
+    int savesig;               // active signal
+    int numpost;               // number of posted jobs
+    int numbjob;               // number of background jobs
+    short fd;                  // tty descriptor number
+    short maxjob;              // must reap after maxjob if > 0
 #ifdef JOBS
-    int suspend;             // suspend character
-    int linedisc;            // line dicipline
-#endif // JOBS
-    char jobcontrol;         // turned on for real job control
-    char waitsafe;           // wait will not block
-    char waitall;            // wait for all jobs in pipe
-    char toclear;            // job table needs clearing
-    int asol;                // used for asolock
-    unsigned char *freejobs; // free jobs numbers
+    int suspend;              // suspend character
+    int linedisc;             // line dicipline
+#endif                        // JOBS
+    char jobcontrol;          // turned on for real job control
+    char waitsafe;            // wait will not block
+    char waitall;             // wait for all jobs in pipe
+    char toclear;             // job table needs clearing
+    int asol;                 // used for asolock
+    unsigned char *freejobs;  // free jobs numbers
 #if SHOPT_COSHELL
-    struct cosh *colist; // coshell job list
-#endif  // SHOPT_COSHELL
+    struct cosh *colist;  // coshell job list
+#endif                    // SHOPT_COSHELL
 };
 
 // Flags for joblist.
@@ -176,12 +176,12 @@ extern const char e_no_jctl[];
 extern const char e_signo[];
 #ifdef SIGTSTP
 extern const char e_no_start[];
-#endif // SIGTSTP
+#endif  // SIGTSTP
 #ifdef NTTYDISC
 extern const char e_newtty[];
 extern const char e_oldtty[];
-#endif // NTTYDISC
-#endif // JOBS
+#endif  // NTTYDISC
+#endif  // JOBS
 
 //
 // The following are defined in jobs.c.
@@ -207,6 +207,6 @@ extern bool job_reap(int);
 #define job_init(s, flag)
 #define job_close(s) (0)
 #define job_fork(p)
-#endif // JOBS
+#endif  // JOBS
 
-#endif // !JOB_NFLAG
+#endif  // !JOB_NFLAG

@@ -62,4 +62,4 @@ extern const Shtable_t shtab_reserved[];
 extern const Shtable_t *sh_locate(const char *, const Shtable_t *, int);
 extern int sh_lookopt(const char *, int *);
 
-#endif // SH_TABLE_H
+#endif  // SH_TABLE_H

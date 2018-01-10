@@ -29,14 +29,14 @@
 #else
 #ifndef INFINITY
 #define INFINITY ((rlim_t)-1L)
-#endif // INFINITY
-#endif // RLIM_INFINITY
+#endif  // INFINITY
+#endif  // RLIM_INFINITY
 
 #ifndef RLIMIT_VMEM
 #ifdef RLIMIT_AS
 #define RLIMIT_VMEM RLIMIT_AS
 #endif
-#endif // !RLIMIT_VMEM
+#endif  // !RLIMIT_VMEM
 
 #if !defined(RLIMIT_NOFILE) && defined(RLIMIT_OFILE)
 #define RLIMIT_NOFILE RLIMIT_OFILE
@@ -127,4 +127,4 @@ extern const int shtab_units[];
 extern const char e_unlimited[];
 extern const char *e_units[];
 
-#endif // _ULIMIT_H
+#endif  // _ULIMIT_H

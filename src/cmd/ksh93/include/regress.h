@@ -60,6 +60,6 @@ extern char *sh_regress_etc(const char *, unsigned int, const char *);
 
 #define REGRESS(r, i, f)
 
-#endif // SHOPT_REGRESS
+#endif  // SHOPT_REGRESS
 
-#endif // _REGRESS_H
+#endif  // _REGRESS_H

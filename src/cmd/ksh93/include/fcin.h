@@ -27,16 +27,16 @@
 #include <sfio.h>
 
 typedef struct _fcin {
-    Sfio_t *_fcfile;                                    // input file pointer
-    unsigned char *fcbuff;                              // pointer to input buffer
-    unsigned char *fclast;                              // pointer to end of input buffer
-    unsigned char *fcptr;                               // pointer to next input char
-    unsigned char fcchar;                               // saved character
-    short fclen;                                        // last multibyte char len
-    void (*fcfun)(Sfio_t *, const char *, int, void *); // advance function
-    void *context;                                      // context pointer
-    int fcleft;                                         // for multibyte boundary
-    Sfoff_t fcoff;                                      // offset for last read
+    Sfio_t *_fcfile;                                     // input file pointer
+    unsigned char *fcbuff;                               // pointer to input buffer
+    unsigned char *fclast;                               // pointer to end of input buffer
+    unsigned char *fcptr;                                // pointer to next input char
+    unsigned char fcchar;                                // saved character
+    short fclen;                                         // last multibyte char len
+    void (*fcfun)(Sfio_t *, const char *, int, void *);  // advance function
+    void *context;                                       // context pointer
+    int fcleft;                                          // for multibyte boundary
+    Sfoff_t fcoff;                                       // offset for last read
 } Fcin_t;
 
 #define fcmbget(x) (mbwide() ? _fcmbget(x) : fcget())
@@ -60,6 +60,6 @@ extern int fcclose(void);
 void fcnotify(void (*)(Sfio_t *, const char *, int, void *), void *);
 extern int _fcmbget(short *);
 
-extern Fcin_t _Fcin; // used by macros
+extern Fcin_t _Fcin;  // used by macros
 
-#endif // fcgetc
+#endif  // fcgetc

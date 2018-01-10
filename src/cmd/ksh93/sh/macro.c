@@ -1939,8 +1939,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             }
             if (!(sp = mp->shp->sftable[fd]) ||
                 (sffileno(sp) != fd && !(sfset(sp, 0, 0) & SF_STRING))) {
-                sp = sfnew(NULL, (char *)malloc(IOBSIZE + 1), IOBSIZE, fd,
-                           SF_READ | SF_MALLOC);
+                sp = sfnew(NULL, (char *)malloc(IOBSIZE + 1), IOBSIZE, fd, SF_READ | SF_MALLOC);
             }
             type = 3;
         } else {

@@ -42,7 +42,7 @@
 #include <ctype.h>
 extern char ed_errbuf[];
 char e_version[] = "\n@(#)$Id: Editlib version 1993-12-28 r $\0\n";
-#endif // KSHELL
+#endif  // KSHELL
 #include "edit.h"
 #include "history.h"
 #include "io.h"
@@ -58,7 +58,7 @@ static char *savelex;
 
 #if (CC_NATIVE == CC_ASCII)
 #define printchar(c) ((c) ^ ('A' - cntl('A')))
-#else  // CC_NATIVE == CC_ASCII
+#else                  // CC_NATIVE == CC_ASCII
 static int printchar(int c) {
     switch (c) {
         case cntl('A'): {
@@ -148,9 +148,9 @@ static int printchar(int c) {
     }
     return '?';
 }
-#endif  // CC_NATIVE == CC_ASCII
-#define MINWINDOW 15  // minimum width window
-#define DFLTWINDOW 80 // default window width
+#endif                 // CC_NATIVE == CC_ASCII
+#define MINWINDOW 15   // minimum width window
+#define DFLTWINDOW 80  // default window width
 #define RAWMODE 1
 #define ALTMODE 2
 #define ECHOMODE 3
@@ -158,13 +158,13 @@ static int printchar(int c) {
 
 #ifdef RT
 #define VENIX 1
-#endif // RT
+#endif  // RT
 
 #if KSHELL
 static int keytrap(Edit_t *, char *, int, int, int);
-#else  // KSHELL
+#else   // KSHELL
 Edit_t editb;
-#endif // KSHELL
+#endif  // KSHELL
 
 #ifndef _POSIX_DISABLE
 #define _POSIX_DISABLE 0
@@ -172,10 +172,10 @@ Edit_t editb;
 
 #ifdef future
 static int compare(const char *, const char *, int);
-#endif // future
+#endif  // future
 #define ttyparm (ep->e_ttyparm)
 #define nttyparm (ep->e_nttyparm)
-static const char bellchr[] = "\a"; // bell char
+static const char bellchr[] = "\a";  // bell char
 
 //
 // This routine returns true if fd refers to a terminal. This should be equivalent to isatty.
@@ -257,8 +257,7 @@ int tty_raw(int fd, int echomode) {
 
     if (ep->e_raw == RAWMODE) {
         return echo ? -1 : 0;
-    }
-    else if (ep->e_raw == ECHOMODE) {
+    } else if (ep->e_raw == ECHOMODE) {
         return echo ? 0 : -1;
     }
     if (tty_get(fd, &ttyparm) == SYSERR) return -1;
@@ -272,9 +271,9 @@ int tty_raw(int fd, int echomode) {
     if (!echo) nttyparm.sg_flags &= ~(ECHO | TBDELAY);
 #ifdef CBREAK
     nttyparm.sg_flags |= CBREAK;
-#else // CBREAK
+#else   // CBREAK
     nttyparm.sg_flags |= RAW;
-#endif // CBREAK
+#endif  // CBREAK
     ep->e_erase = ttyparm.sg_erase;
     ep->e_kill = ttyparm.sg_kill;
     ep->e_eof = cntl('D');
@@ -289,15 +288,15 @@ int tty_raw(int fd, int echomode) {
     }
 #ifdef FLUSHO
     ttyparm.c_lflag &= ~FLUSHO;
-#endif // FLUSHO
+#endif  // FLUSHO
     nttyparm = ttyparm;
 #ifndef u370
     nttyparm.c_iflag &= ~(IGNPAR | PARMRK | INLCR | IGNCR | ICRNL);
     nttyparm.c_iflag |= BRKINT;
-#else // u370
+#else   // u370
     nttyparm.c_iflag &= ~(IGNBRK | PARMRK | INLCR | IGNCR | ICRNL | INPCK);
     nttyparm.c_iflag |= (BRKINT | IGNPAR);
-#endif // u370
+#endif  // u370
     if (echo) {
         nttyparm.c_lflag &= ~(ICANON);
     } else {
@@ -307,13 +306,13 @@ int tty_raw(int fd, int echomode) {
     nttyparm.c_cc[VMIN] = 1;
 #ifdef VREPRINT
     nttyparm.c_cc[VREPRINT] = _POSIX_DISABLE;
-#endif // VREPRINT
+#endif  // VREPRINT
 #ifdef VDISCARD
     nttyparm.c_cc[VDISCARD] = _POSIX_DISABLE;
-#endif // VDISCARD
+#endif  // VDISCARD
 #ifdef VDSUSP
     nttyparm.c_cc[VDSUSP] = _POSIX_DISABLE;
-#endif // VDSUSP
+#endif  // VDSUSP
 #ifdef VWERASE
     if (ttyparm.c_cc[VWERASE] == _POSIX_DISABLE) {
         ep->e_werase = cntl('W');
@@ -321,9 +320,9 @@ int tty_raw(int fd, int echomode) {
         ep->e_werase = nttyparm.c_cc[VWERASE];
     }
     nttyparm.c_cc[VWERASE] = _POSIX_DISABLE;
-#else // VWERASE
+#else   // VWERASE
     ep->e_werase = cntl('W');
-#endif // VWERASE
+#endif  // VWERASE
 #ifdef VLNEXT
     if (ttyparm.c_cc[VLNEXT] == _POSIX_DISABLE) {
         ep->e_lnext = cntl('V');
@@ -331,9 +330,9 @@ int tty_raw(int fd, int echomode) {
         ep->e_lnext = nttyparm.c_cc[VLNEXT];
     }
     nttyparm.c_cc[VLNEXT] = _POSIX_DISABLE;
-#else  // VLNEXT
+#else   // VLNEXT
     ep->e_lnext = cntl('V');
-#endif // VLNEXT
+#endif  // VLNEXT
     ep->e_intr = ttyparm.c_cc[VINTR];
     ep->e_eof = ttyparm.c_cc[VEOF];
     ep->e_erase = ttyparm.c_cc[VERASE];
@@ -389,10 +388,10 @@ int tty_alt(int fd) {
 #else  // TIOCGETC
 #ifndef PENDIN
 #define PENDIN 0
-#endif // PENDIN
+#endif  // PENDIN
 #ifndef IEXTEN
 #define IEXTEN 0
-#endif // IEXTEN
+#endif  // IEXTEN
 
 int tty_alt(int fd) {
     Edit_t *ep = (Edit_t *)(shgd->ed_context);
@@ -410,7 +409,7 @@ int tty_alt(int fd) {
     if ((tty_get(fd, &ttyparm) == SYSERR) || (!(ttyparm.c_lflag & ECHO))) return -1;
 #ifdef FLUSHO
     ttyparm.c_lflag &= ~FLUSHO;
-#endif // FLUSHO
+#endif  // FLUSHO
     nttyparm = ttyparm;
     ep->e_eof = ttyparm.c_cc[VEOF];
 #ifdef ECHOCTL
@@ -420,34 +419,34 @@ int tty_alt(int fd) {
 #else  // ECHOCTL
     // Switch VEOL2 and EOF, since EOF isn't echo'd by driver.
     nttyparm.c_lflag |= (ECHOE | ECHOK);
-    nttyparm.c_cc[VEOF] = ESC; // make ESC the eof char
+    nttyparm.c_cc[VEOF] = ESC;  // make ESC the eof char
 #ifdef VEOL2
     nttyparm.c_iflag &= ~(IGNCR | ICRNL);
     nttyparm.c_iflag |= INLCR;
-    nttyparm.c_cc[VEOL] = '\r';       // make CR an eol char
-    nttyparm.c_cc[VEOL2] = ep->e_eof; // make EOF an eol char
-#else  // VEOL2
-    nttyparm.c_cc[VEOL] = ep->e_eof; // make EOF an eol char
-#endif // VEOL2
-#endif // ECHOCTL
+    nttyparm.c_cc[VEOL] = '\r';        // make CR an eol char
+    nttyparm.c_cc[VEOL2] = ep->e_eof;  // make EOF an eol char
+#else   // VEOL2
+    nttyparm.c_cc[VEOL] = ep->e_eof;  // make EOF an eol char
+#endif  // VEOL2
+#endif  // ECHOCTL
 #ifdef VREPRINT
     nttyparm.c_cc[VREPRINT] = _POSIX_DISABLE;
-#endif // VREPRINT
+#endif  // VREPRINT
 #ifdef VDISCARD
     nttyparm.c_cc[VDISCARD] = _POSIX_DISABLE;
-#endif // VDISCARD
+#endif  // VDISCARD
 #ifdef VWERASE
     if (ttyparm.c_cc[VWERASE] == _POSIX_DISABLE) nttyparm.c_cc[VWERASE] = cntl('W');
     ep->e_werase = nttyparm.c_cc[VWERASE];
-#else  // VWERASE
+#else   // VWERASE
     ep->e_werase = cntl('W');
-#endif // VWERASE
+#endif  // VWERASE
 #ifdef VLNEXT
     if (ttyparm.c_cc[VLNEXT] == _POSIX_DISABLE) nttyparm.c_cc[VLNEXT] = cntl('V');
     ep->e_lnext = nttyparm.c_cc[VLNEXT];
-#else  // VLNEXT
+#else   // VLNEXT
     ep->e_lnext = cntl('V');
-#endif // VLNEXT
+#endif  // VLNEXT
     ep->e_erase = ttyparm.c_cc[VERASE];
     ep->e_kill = ttyparm.c_cc[VKILL];
     if (tty_set(fd, TCSADRAIN, &nttyparm) == SYSERR) return -1;
@@ -456,8 +455,8 @@ int tty_alt(int fd) {
     return 0;
 }
 
-#endif // TIOCGETC
-#endif // SHOPT_RAWONLY
+#endif  // TIOCGETC
+#endif  // SHOPT_RAWONLY
 
 //
 // Return the window size.
@@ -504,13 +503,13 @@ void ed_ringbell(void) { write(ERRIO, bellchr, 1); }
 void ed_crlf(Edit_t *ep) {
 #ifdef cray
     ed_putchar(ep, '\r');
-#endif // cray
+#endif  // cray
 #ifdef u370
     ed_putchar(ep, '\r');
-#endif // u370
+#endif  // u370
 #ifdef VENIX
     ed_putchar(ep, '\r');
-#endif // VENIX
+#endif  // VENIX
     ed_putchar(ep, '\n');
     ed_flush(ep);
 }
@@ -556,9 +555,9 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     ep->e_stkoff = stktell(shp->stk);
     if (!(last = shp->prompt)) last = "";
     shp->prompt = 0;
-#else // KSHELL
+#else   // KSHELL
     last = ep->e_prbuff;
-#endif // KSHELL
+#endif  // KSHELL
     if (shp->gd->hist_ptr) {
         History_t *hp = shp->gd->hist_ptr;
         ep->e_hismax = hist_max(hp);
@@ -608,26 +607,26 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                     break;
                 }
                 case '\r': {
-                    if (pp == (ep->e_prompt + 2)) { // quote char
+                    if (pp == (ep->e_prompt + 2)) {  // quote char
                         myquote = *(pp - 1);
                     }
                     // FALL THRU
                 }
-                case '\n': { // start again
+                case '\n': {  // start again
                     ep->e_crlf = 1;
                     qlen = 1;
                     inquote = 0;
                     pp = ep->e_prompt + 1;
                     break;
                 }
-                case '\t': { // expand tabs
+                case '\t': {  // expand tabs
                     while ((pp - ep->e_prompt) % TABSIZE) {
                         if (pp >= ppmax) break;
                         *pp++ = ' ';
                     }
                     break;
                 }
-                case '\a': { // cut out bells
+                case '\a': {  // cut out bells
                     break;
                 }
                 default: {
@@ -834,18 +833,18 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
         if (c < 0x80 && c != '<') {
             if (type) c = -c;
 #ifndef CBREAK
-            if (c == '\0') { // user break key
+            if (c == '\0') {  // user break key
                 ep->e_lookahead = 0;
 #if KSHELL
                 kill(getpid(), SIGINT);
                 siglongjmp(ep->e_env, UINTR);
-#endif // KSHELL
+#endif  // KSHELL
             }
-#endif // CBREAK
+#endif  // CBREAK
         } else {
         again:
             if ((c = mbchar(p)) >= 0) {
-                p--; // incremented below
+                p--;  // incremented below
                 if (type) c = -c;
             }
 #ifdef EILSEQ
@@ -885,7 +884,7 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
 //    0  normal command mode - key binding is in effect
 //    1  edit keys not mapped
 //    2  Next key is literal
- //
+//
 int ed_getchar(Edit_t *ep, int mode) {
     int n, c;
     char readin[LOOKAHEAD + 1];
@@ -1297,7 +1296,7 @@ static int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mode) 
     nv_unset(ED_TXTNOD);
     return insize;
 }
-#endif // KSHELL
+#endif  // KSHELL
 
 static int ed_sortdata(const char *s1, const char *s2) {
     Histmatch_t *m1 = (Histmatch_t *)s1;

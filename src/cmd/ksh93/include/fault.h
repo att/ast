@@ -40,28 +40,28 @@
 
 typedef void (*SH_SIGTYPE)(int, void (*)(int));
 
-#define SH_FORKLIM 16 // fork timeout interval
+#define SH_FORKLIM 16  // fork timeout interval
 
-#define SH_TRAP 0200   // bit for internal traps
-#define SH_ERRTRAP 0   // trap for non-zero exit status
-#define SH_KEYTRAP 1   // trap for keyboard event
-#define SH_DEBUGTRAP 4 // must be last internal trap
+#define SH_TRAP 0200    // bit for internal traps
+#define SH_ERRTRAP 0    // trap for non-zero exit status
+#define SH_KEYTRAP 1    // trap for keyboard event
+#define SH_DEBUGTRAP 4  // must be last internal trap
 
 #define SH_SIGBITS 8
-#define SH_SIGFAULT 1          // signal handler is sh_fault
-#define SH_SIGOFF 2            // signal handler is SIG_IGN
-#define SH_SIGSET 4            // pending signal
-#define SH_SIGTRAP 010         // pending trap
-#define SH_SIGDONE 020         // default is exit
-#define SH_SIGIGNORE 040       // default is ingore signal
-#define SH_SIGINTERACTIVE 0100 // handle interactive specially
-#define SH_SIGTSTP 0200        // tstp signal received
-#define SH_SIGALRM 0200        // timer alarm received
-#define SH_SIGTERM SH_SIGOFF   // term signal received
-#define SH_SIGRUNTIME 0400     // runtime value
+#define SH_SIGFAULT 1           // signal handler is sh_fault
+#define SH_SIGOFF 2             // signal handler is SIG_IGN
+#define SH_SIGSET 4             // pending signal
+#define SH_SIGTRAP 010          // pending trap
+#define SH_SIGDONE 020          // default is exit
+#define SH_SIGIGNORE 040        // default is ingore signal
+#define SH_SIGINTERACTIVE 0100  // handle interactive specially
+#define SH_SIGTSTP 0200         // tstp signal received
+#define SH_SIGALRM 0200         // timer alarm received
+#define SH_SIGTERM SH_SIGOFF    // term signal received
+#define SH_SIGRUNTIME 0400      // runtime value
 
-#define SH_SIGRTMIN 0 // sh.sigruntime[] index
-#define SH_SIGRTMAX 1 // sh.sigruntime[] index
+#define SH_SIGRTMIN 0  // sh.sigruntime[] index
+#define SH_SIGRTMAX 1  // sh.sigruntime[] index
 
 //
 // These are longjmp values.
@@ -117,4 +117,4 @@ extern void timerdel(void *);
 
 extern const char e_alarm[];
 
-#endif // !SH_SIGBITS
+#endif  // !SH_SIGBITS

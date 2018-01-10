@@ -31,7 +31,7 @@
 #if _use_spawnveg
 #define SHOPT_SPAWN 1
 #endif
-#endif // !SHOPT_SPAWN
+#endif  // !SHOPT_SPAWN
 
 #define PATH_PATH 0001
 #define PATH_FPATH 0002
@@ -39,11 +39,11 @@
 #define PATH_BFPATH 0010
 #define PATH_SKIP 0020
 #define PATH_BUILTIN_LIB 0040
-#define PATH_STD_DIR 0100 // directory is on  $(getconf PATH)
-#define PATH_BIN 0200     // path behaves like /bin for builtins
+#define PATH_STD_DIR 0100  // directory is on  $(getconf PATH)
+#define PATH_BIN 0200      // path behaves like /bin for builtins
 
-#define PATH_OFFSET 2                              // path offset for path_join
-#define MAXDEPTH (sizeof(char *) == 2 ? 64 : 1024) // maximum recursion depth
+#define PATH_OFFSET 2                               // path offset for path_join
+#define MAXDEPTH (sizeof(char *) == 2 ? 64 : 1024)  // maximum recursion depth
 
 //
 // Path component structure for path searching.
@@ -66,7 +66,7 @@ typedef struct pathcomp {
 
 #ifndef ARG_RAW
 struct argnod;
-#endif // !ARG_RAW
+#endif  // !ARG_RAW
 
 // Pathname handling routines.
 extern void path_newdir(Shell_t *, Pathcomp_t *);
@@ -132,6 +132,6 @@ extern void sh_accinit(void);
 extern void sh_accbegin(const char *);
 extern void sh_accend(void);
 extern void sh_accsusp(void);
-#endif // SHOPT_ACCT
+#endif  // SHOPT_ACCT
 
-#endif // !PATH_OFFSET
+#endif  // !PATH_OFFSET
