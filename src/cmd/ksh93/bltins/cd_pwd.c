@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2014 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 //
 // cd [-LP@] [-f dirfd] [dirname]
 // cd [-LP] [-f dirfd] [old] [new]
@@ -26,8 +26,8 @@
 //   dgkorn@gmail.com
 //
 //
-
 #include "defs.h"
+
 #include <error.h>
 #include <ls.h>
 #include <pwd.h>
@@ -54,7 +54,8 @@ int sh_diropenat(Shell_t *shp, int dir, const char *path) {
     fd = openat(dir, path, O_DIRECTORY | O_NONBLOCK | O_CLOEXEC);
     if (fd < 0) {
 #if O_SEARCH
-        if (errno != EACCES || (fd = openat(dir, path, O_SEARCH|O_DIRECTORY|O_NONBLOCK|O_CLOEXEC)) < 0) {
+        if (errno != EACCES ||
+            (fd = openat(dir, path, O_SEARCH | O_DIRECTORY | O_NONBLOCK | O_CLOEXEC)) < 0) {
 #endif
             return fd;
 #if O_SEARCH
@@ -80,6 +81,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     int dirfd = shp->pwdfd;
     int newdirfd;
     Namval_t *opwdnod, *pwdnod;
+
     if (sh_isoption(shp, SH_RESTRICTED)) errormsg(SH_DICT, ERROR_exit(1), e_restricted + 4);
     while ((rval = optget(argv, sh_optcd))) {
         switch (rval) {
@@ -114,8 +116,9 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     argc -= opt_info.index;
     dir = argv[0];
-    if (error_info.errors > 0 || argc > 2)
+    if (error_info.errors > 0 || argc > 2) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
+    }
     shp->pwd = path_pwd(shp, 0);
     oldpwd = (char *)shp->pwd;
     opwdnod = (shp->subshell ? sh_assignok(OLDPWDNOD, 1) : OLDPWDNOD);
@@ -144,7 +147,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     if (*dir != '/' && (dir[1] != ':'))
 #else
     if (dirfd == shp->pwdfd && *dir != '/')
-#endif // _WINIX
+#endif  // _WINIX
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
         if (!cdpath && (dp = sh_scoped(shp, CDPNOD)->nvalue.cp)) {
@@ -157,8 +160,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         if (!oldpwd) oldpwd = path_pwd(shp, 1);
     }
     if (dirfd == shp->pwdfd && *dir != '/') {
-        // check for leading ..
-
+        // Check for leading ..
         char *cp;
 
         j = sfprintf(shp->strbuf, "%s", dir);
@@ -180,7 +182,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             *stakptr(PATH_OFFSET + 1) = *stakptr(PATH_OFFSET);
             *stakptr(PATH_OFFSET) = '/';
         }
-#endif // _WINIX
+#endif  // _WINIX
         if (*stakptr(PATH_OFFSET) != '/' && dirfd == shp->pwdfd) {
             char *last = (char *)stakfreeze(1);
             stakseek(PATH_OFFSET);
@@ -194,14 +196,15 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             char *cp;
             stakseek(PATH_MAX + PATH_OFFSET);
 #if SHOPT_FS_3D
-            cp = pathcanon(stakptr(PATH_OFFSET), PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT | PATH_DROP_TAIL_SLASH);
+            cp = pathcanon(stakptr(PATH_OFFSET), PATH_MAX,
+                           PATH_ABSOLUTE | PATH_DOTDOT | PATH_DROP_TAIL_SLASH);
             if (!cp) continue;
-#else
+#else  // SHOPT_FS_3D
             cp = stakptr(PATH_OFFSET);
             if (*cp == '/') {
                 if (!pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
             }
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
         }
         rval = newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
         if (newdirfd >= 0) {
@@ -215,7 +218,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             sh_close(newdirfd);
         }
 #if !O_SEARCH
-        else if((rval=chdir(path_relative(shp,stakptr(PATH_OFFSET)))) >= 0 && shp->pwdfd >= 0)
+        else if ((rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)))) >= 0 && shp->pwdfd >= 0) {
             sh_close(shp->pwdfd);
             shp->pwdfd = AT_FDCWD;
         }
@@ -241,13 +244,13 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         }
 #endif
     }
-    // use absolute chdir() if relative chdir() fails
+    // Use absolute chdir() if relative chdir() fails.
     if (rval < 0) {
         if (saverrno) errno = saverrno;
         errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
     }
 success:
-    if (dir == nv_getval(opwdnod) || argc == 2) dp = dir; // print out directory for cd -
+    if (dir == nv_getval(opwdnod) || argc == 2) dp = dir;  // print out directory for cd -
     if (pflag) {
         dir = stakptr(PATH_OFFSET);
         dir = pathcanon(dir, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
@@ -265,7 +268,7 @@ success:
     }
     nv_putval(opwdnod, oldpwd, NV_RDONLY);
     i = j = (int)strlen(dir);
-    // delete trailing '/'
+    // Delete trailing '/'.
     while (--i > 0 && dir[i] == '/') {
         // //@// exposed here and in pathrelative() -- rats
         if (i >= 3 && (j - i) == 2 && dir[i - 1] == '@' && dir[i - 2] == '/' && dir[i - 3] == '/') {
@@ -290,6 +293,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     bool pflag = false;
     int n, ffd = -1;
     NOT_USED(argc);
+
     while ((n = optget(argv, sh_optpwd))) {
         switch (n) {
             case 'f': {
@@ -330,7 +334,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
             cp = (char *)stakseek(++mc + PATH_MAX);
             mount(e_dot, cp, FS3D_GET | FS3D_VIEW | FS3D_SIZE(mc), 0);
         } else
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D
         {
             cp = path_pwd(shp, 0);
             cp = strcpy(stakseek(strlen(cp) + PATH_MAX), cp);
