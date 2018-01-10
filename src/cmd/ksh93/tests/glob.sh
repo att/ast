@@ -17,10 +17,11 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -r $'\t'"${Command}[$1] ${@:2}"
-	((Errors++))
+    print -u2 -r $'\t'"${Command}[$1] ${@:2}"
+    ((Errors++))
 }
 alias err_exit='err_exit $LINENO'
 
@@ -32,59 +33,81 @@ trap "cd /; rm -rf $tmp" EXIT
 
 function test_glob
 {
-	typeset lineno expected drop arg got sep op val add del
-	lineno=$1
-	shift
-	if	[[ $1 == --* ]]
-	then	del=${1#--}
-		shift
-	fi
-	if	[[ $1 == ++* ]]
-	then	add=${1#++}
-		shift
-	fi
-	expected=$1
-	shift
-	if	(( contrary ))
-	then	if	[[ $expected == "<Beware> "* ]]
-		then	expected=${expected#"<Beware> "}
-			expected="$expected <Beware>"
-		fi
-		if	[[ $expected == *"<aXb> <abd>"* ]]
-		then	expected=${expected/"<aXb> <abd>"/"<abd> <aXb>"}
-		fi
-	fi
-	for arg
-	do	got="$got$sep<$arg>"
-		sep=" "
-	done
-	if	(( ignorant && aware ))
-	then	if	[[ $del ]]
-		then	got="<$del> $got"
-		fi
-		if	[[ $add ]]
-		then	expected="<$add> $expected"
-		fi
-	fi
-	if	[[ $got != "$expected" ]]
-	then	'err_exit' $lineno "glob -- expected '$expected', got '$got'"
-	fi
+    typeset lineno expected drop arg got sep op val add del
+    lineno=$1
+    shift
+    if  [[ $1 == --* ]]
+    then
+        del=${1#--}
+        shift
+    fi
+
+    if  [[ $1 == ++* ]]
+    then
+        add=${1#++}
+        shift
+    fi
+
+    expected=$1
+    shift
+    if  (( contrary ))
+    then
+        if  [[ $expected == "<Beware> "* ]]
+        then
+            expected=${expected#"<Beware> "}
+            expected="$expected <Beware>"
+        fi
+
+        if  [[ $expected == *"<aXb> <abd>"* ]]
+        then
+            expected=${expected/"<aXb> <abd>"/"<abd> <aXb>"}
+        fi
+
+    fi
+
+    for arg
+    do
+        got="$got$sep<$arg>"
+        sep=" "
+    done
+
+    if  (( ignorant && aware ))
+    then
+        if  [[ $del ]]
+        then
+            got="<$del> $got"
+        fi
+
+        if  [[ $add ]]
+        then
+            expected="<$add> $expected"
+        fi
+
+    fi
+
+    if  [[ $got != "$expected" ]]
+    then
+        'err_exit' $lineno "glob -- expected '$expected', got '$got'"
+    fi
+
 }
 alias test_glob='test_glob $LINENO'
 
 function test_case
 {
-	typeset lineno expected subject pattern got
-	lineno=$1 expected=$2 subject=$3 pattern=$4
-	eval "
-		case $subject in
-		$pattern)	got='<match>' ;;
-		*)		got='<nomatch>' ;;
-		esac
-	"
-	if	[[ $got != "$expected" ]]
-	then	'err_exit' $lineno "case $subject in $pattern) -- expected '$expected', got '$got'"
-	fi
+    typeset lineno expected subject pattern got
+    lineno=$1 expected=$2 subject=$3 pattern=$4
+    eval "
+        case $subject in
+        $pattern)    got='<match>' ;;
+        *)        got='<nomatch>' ;;
+        esac
+    "
+    if  [[ $got != "$expected" ]]
+    then
+        'err_exit' $lineno "case $subject in $pattern) -- expected '$expected', got '$got'"
+    fi
+
 }
 alias test_case='test_case $LINENO'
 
@@ -96,12 +119,12 @@ export LC_COLLATE=C
 touch B b
 set -- *
 case $* in
-'b B')	contrary=1 ;;
-b|B)	ignorant=1 ;;
+'b B')    contrary=1 ;;
+b|B)    ignorant=1 ;;
 esac
 set -- $(LC_ALL=C /bin/sh -c 'echo [a-c]')
 case $* in
-B)	aware=1 ;;
+B)    aware=1 ;;
 esac
 rm -rf *
 
@@ -111,27 +134,29 @@ mkdir bdir
 test_glob '<a> <abc> <abd> <abe> <X*>' a* X*
 test_glob '<a> <abc> <abd> <abe>' \a*
 
-if	( set --nullglob ) 2>/dev/null
+if  ( set --nullglob ) 2>/dev/null
 then
-	set --nullglob
+    set --nullglob
 
-	test_glob '<a> <abc> <abd> <abe>' a* X*
+    test_glob '<a> <abc> <abd> <abe>' a* X*
 
-	set --nonullglob
+    set --nonullglob
 fi
 
-if	( set --failglob ) 2>/dev/null
+
+if  ( set --failglob ) 2>/dev/null
 then
-	set --failglob
-	mkdir tmp
-	touch tmp/l1 tmp/l2 tmp/l3
+    set --failglob
+    mkdir tmp
+    touch tmp/l1 tmp/l2 tmp/l3
 
-	test_glob '' tmp/l[12] tmp/*4 tmp/*3
-	test_glob '' tmp/l[12] tmp/*4 tmp/*3
+    test_glob '' tmp/l[12] tmp/*4 tmp/*3
+    test_glob '' tmp/l[12] tmp/*4 tmp/*3
 
-	rm -r tmp
-	set --nofailglob
+    rm -r tmp
+    set --nofailglob
 fi
+
 
 test_glob '<bdir/>' b*/
 test_glob '<*>' \*
@@ -155,28 +180,29 @@ touch .x .y
 
 test_glob --Beware '<Beware> <d> <dd> <de>' [!a-c]*
 
-if	mkdir a\*b 2>/dev/null
+if  mkdir a\*b 2>/dev/null
 then
-	touch a\*b/ooo
+    touch a\*b/ooo
 
-	test_glob '<a*b/ooo>' a\*b/*
-	test_glob '<a*b/ooo>' a\*?/*
-	test_case '<match>' '!7' '*\!*'
-	test_case '<match>' 'r.*' '*.\*'
-	test_glob '<abc>' a[b]c
-	test_glob '<abc>' a["b"]c
-	test_glob '<abc>' a[\b]c
-	test_glob '<abc>' a?c
-	test_case '<match>' 'abc' 'a"b"c'
-	test_case '<match>' 'abc' 'a*c'
-	test_case '<nomatch>' 'abc' '"a?c"'
-	test_case '<nomatch>' 'abc' 'a\*c'
-	test_case '<nomatch>' 'abc' 'a\[b]c'
-	test_case '<match>' '"$undefined"' '""'
-	test_case '<match>' 'abc' 'a["\b"]c'
+    test_glob '<a*b/ooo>' a\*b/*
+    test_glob '<a*b/ooo>' a\*?/*
+    test_case '<match>' '!7' '*\!*'
+    test_case '<match>' 'r.*' '*.\*'
+    test_glob '<abc>' a[b]c
+    test_glob '<abc>' a["b"]c
+    test_glob '<abc>' a[\b]c
+    test_glob '<abc>' a?c
+    test_case '<match>' 'abc' 'a"b"c'
+    test_case '<match>' 'abc' 'a*c'
+    test_case '<nomatch>' 'abc' '"a?c"'
+    test_case '<nomatch>' 'abc' 'a\*c'
+    test_case '<nomatch>' 'abc' 'a\[b]c'
+    test_case '<match>' '"$undefined"' '""'
+    test_case '<match>' 'abc' 'a["\b"]c'
 
-	rm -rf mkdir a\*b
+    rm -rf mkdir a\*b
 fi
+
 
 mkdir man
 mkdir man/man1
@@ -237,34 +263,37 @@ test_case '<nomatch>' '[' '[abc'
 test_glob ++Beware '<b> <bb> <bcd> <bdir>' b*
 test_glob '<Beware> <b> <bb> <bcd> <bdir>' [bB]*
 
-if	( set --nocaseglob ) 2>/dev/null
+if  ( set --nocaseglob ) 2>/dev/null
 then
-	set --nocaseglob
+    set --nocaseglob
 
-	test_glob '<Beware> <b> <bb> <bcd> <bdir>' b*
-	test_glob '<Beware> <b> <bb> <bcd> <bdir>' [b]*
-	test_glob '<Beware> <b> <bb> <bcd> <bdir>' [bB]*
+    test_glob '<Beware> <b> <bb> <bcd> <bdir>' b*
+    test_glob '<Beware> <b> <bb> <bcd> <bdir>' [b]*
+    test_glob '<Beware> <b> <bb> <bcd> <bdir>' [bB]*
 
-	set --nonocaseglob
+    set --nonocaseglob
 fi
 
-if	( set -f ) 2>/dev/null
+
+if  ( set -f ) 2>/dev/null
 then
-	set -f
+    set -f
 
-	test_glob '<*>' *
+    test_glob '<*>' *
 
-	set +f
+    set +f
 fi
 
-if	( set --noglob ) 2>/dev/null
+
+if  ( set --noglob ) 2>/dev/null
 then
-	set --noglob
+    set --noglob
 
-	test_glob '<*>' *
+    test_glob '<*>' *
 
-	set --glob
+    set --glob
 fi
+
 
 FIGNORE='@(.*|*)'
 test_glob '<*>' *
@@ -284,30 +313,33 @@ test_glob '<man/man1/sh.1>' */man*/sh.*
 
 GLOBIGNORE='.*:*'
 set -- *
-if	[[ $1 == '*' ]]
+if  [[ $1 == '*' ]]
 then
-	GLOBIGNORE='.*:*c:*e:?'
-	test_glob '<>' *
+    GLOBIGNORE='.*:*c:*e:?'
+    test_glob '<>' *
 
-	GLOBIGNORE='.*:*b:*d:?'
-	test_glob '<>' *
+    GLOBIGNORE='.*:*b:*d:?'
+    test_glob '<>' *
 
-	unset GLOBIGNORE
-	test_glob '<>' *
-	test_glob '<man/man1/sh.1>' */man*/sh.*
+    unset GLOBIGNORE
+    test_glob '<>' *
+    test_glob '<man/man1/sh.1>' */man*/sh.*
 
-	GLOBIGNORE=
-	test_glob '<man/man1/sh.1>' */man*/sh.*
+    GLOBIGNORE=
+    test_glob '<man/man1/sh.1>' */man*/sh.*
 fi
+
 unset GLOBIGNORE
 
 function test_sub
 {
-	x='${subject'$2'}'
-	eval g=$x
-	if	[[ "$g" != "$3" ]]
-	then	'err_exit' $1 subject="'$subject' $x failed, expected '$3', got '$g'"
-	fi
+    x='${subject'$2'}'
+    eval g=$x
+    if  [[ "$g" != "$3" ]]
+    then
+        'err_exit' $1 subject="'$subject' $x failed, expected '$3', got '$g'"
+    fi
+
 }
 alias test_sub='test_sub $LINENO'
 
