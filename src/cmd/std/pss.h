@@ -31,22 +31,22 @@
 
 #define PSS_VERSION 20101201L
 
-#define PSS_ALL (1 << 0)       /* match all		*/
-#define PSS_ATTACHED (1 << 1)  /* match attached	*/
-#define PSS_DETACHED (1 << 2)  /* match detached	*/
-#define PSS_LEADER (1 << 3)    /* match group leaders	*/
-#define PSS_NOLEADER (1 << 4)  /* no group leaders	*/
-#define PSS_PS (1 << 5)        /* force the ps method	*/
-#define PSS_TTY (1 << 6)       /* match disc.tty	*/
-#define PSS_UID (1 << 7)       /* match disc.uid	*/
-#define PSS_UNMATCHED (1 << 8) /* return unmatched too	*/
-#define PSS_VERBOSE (1 << 9)   /* report all errors	*/
+#define PSS_ALL (1 << 0)        // match all
+#define PSS_ATTACHED (1 << 1)   // match attached
+#define PSS_DETACHED (1 << 2)   // match detached
+#define PSS_LEADER (1 << 3)     // match group leaders
+#define PSS_NOLEADER (1 << 4)   // no group leaders
+#define PSS_PS (1 << 5)         // force the ps method
+#define PSS_TTY (1 << 6)        // match disc.tty
+#define PSS_UID (1 << 7)        // match disc.uid
+#define PSS_UNMATCHED (1 << 8)  // return unmatched too
+#define PSS_VERBOSE (1 << 9)    // report all errors
 
-#define PSS_ANCESTOR (1 << 0) /* ancestor matched	*/
-#define PSS_CHILD (1 << 1)    /* on children chain	*/
-#define PSS_EXPLICIT (1 << 2) /* explicit		*/
-#define PSS_MATCHED (1 << 3)  /* matched		*/
-#define PSS_PARENT (1 << 4)   /* on parent chain	*/
+#define PSS_ANCESTOR (1 << 0)  // ancestor matched
+#define PSS_CHILD (1 << 1)     // on children chain
+#define PSS_EXPLICIT (1 << 2)  // explicit
+#define PSS_MATCHED (1 << 3)   // matched
+#define PSS_PARENT (1 << 4)    // on parent chain
 
 #define PSS_FLAGS 0xff
 #define PSS_NODEV ((Pss_dev_t)(-1))
@@ -87,7 +87,7 @@
      PSS_uid | PSS_wchan)
 #define PSS_match (PSS_gid | PSS_pgrp | PSS_sid | PSS_tty | PSS_uid)
 
-#undef hz /* who gets the prize for this?		*/
+#undef hz  // who gets the prize for this?
 
 typedef long Pss_dev_t;
 typedef long Pss_id_t;
@@ -148,20 +148,20 @@ typedef struct Pssmatch_s {
 } Pssmatch_t;
 
 typedef struct Pssdisc_s {
-    unsigned long version; /* interface version		*/
-    unsigned long fields;  /* PSS_[a-z]* field requests	*/
-    unsigned long flags;   /* PSS_[A-Z]* flags		*/
-    char *command;         /* caller command path		*/
-    Pss_dev_t tty;         /* PSS_TTY match value		*/
-    Pss_id_t uid;          /* PSS_UID match value		*/
-    Pssmatch_t *match;     /* match these fields		*/
-    Error_f errorf;        /* error function		*/
+    unsigned long version;  // interface version
+    unsigned long fields;   // PSS_[a-z]* field requests
+    unsigned long flags;    // PSS_[A-Z]* flags
+    char *command;          // caller command path
+    Pss_dev_t tty;          // PSS_TTY match value
+    Pss_id_t uid;           // PSS_UID match value
+    Pssmatch_t *match;      // match these fields
+    Error_f errorf;         // error function
 } Pssdisc_t;
 
 typedef struct Pssmeth_s {
-    const char *name;     /* method name			*/
-    const char *usage;    /* method usage			*/
-    unsigned long fields; /* supported fields		*/
+    const char *name;      // method name
+    const char *usage;     // method usage
+    unsigned long fields;  // supported fields
     int (*initf)(Pss_t *);
     int (*readf)(Pss_t *, Pss_id_t);
     int (*partf)(Pss_t *, Pssent_t *);
@@ -173,8 +173,8 @@ typedef struct Pssmeth_s {
 } Pssmeth_t;
 
 struct Pss_s {
-    const char *id;  /* library id string		*/
-    Pssmeth_t *meth; /* method			*/
+    const char *id;   // library id string
+    Pssmeth_t *meth;  // method
 
 #ifdef _PSS_PRIVATE_
     _PSS_PRIVATE_
