@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	let Errors+=1
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    let Errors+=1
 }
 alias err_exit='err_exit $LINENO'
 
@@ -30,48 +31,67 @@ integer Errors=0
 {
 x=abc
 x+=def ;} 2> /dev/null
-if	[[ $x != abcdef ]]
-then	err_exit 'abc+def != abcdef'
+
+if [[ $x != abcdef ]]
+then
+    err_exit 'abc+def != abcdef'
 fi
+
 integer i=3
 { i+=4;} 2> /dev/null
-if	(( i != 7 ))
-then	err_exit '3+4!=7'
+if (( i != 7 ))
+then
+    err_exit '3+4!=7'
 fi
+
 iarray=( one two three )
 { iarray+= (four five six) ;} 2> /dev/null
-if	[[ ${iarray[@]} != 'one two three four five six' ]]
-then	err_exit 'index array append fails'
+if [[ ${iarray[@]} != 'one two three four five six' ]]
+then
+    err_exit 'index array append fails'
 fi
+
 unset iarray
 iarray=one
 { iarray+= (four five six) ;} 2> /dev/null
-if	[[ ${iarray[@]} != 'one four five six' ]]
-then	err_exit 'index array append to scalar fails'
+if [[ ${iarray[@]} != 'one four five six' ]]
+then
+    err_exit 'index array append to scalar fails'
 fi
+
 typeset -A aarray
 aarray=( [1]=1 [3]=4 [xyz]=xyz )
 aarray+=( [2]=2 [3]=3 [foo]=bar )
-if	[[ ${aarray[3]} != 3 ]]
-then	err_exit 'associative array append fails'
+if [[ ${aarray[3]} != 3 ]]
+then
+    err_exit 'associative array append fails'
 fi
-if	[[ ${#aarray[@]} != 5 ]]
-then	err_exit 'number of elements of associative array append fails'
+
+if [[ ${#aarray[@]} != 5 ]]
+then
+    err_exit 'number of elements of associative array append fails'
 fi
+
 point=(x=1 y=2)
 point+=( y=3 z=4)
-if	[[ ${point.y} != 3 ]]
-then	err_exit 'compound append fails'
+if [[ ${point.y} != 3 ]]
+then
+    err_exit 'compound append fails'
 fi
-if	[[ ${point.x} != 1 ]]
-then	err_exit 'compound append to compound variable unsets existing variables'
+
+if [[ ${point.x} != 1 ]]
+then
+    err_exit 'compound append to compound variable unsets existing variables'
 fi
+
 unset foo
 foo=one
 foo+=(two)
-if	[[ ${foo[@]} != 'one two' ]]
-then	err_exit 'array append to non array variable fails'
+if [[ ${foo[@]} != 'one two' ]]
+then
+    err_exit 'array append to non array variable fails'
 fi
+
 unset foo
 foo[0]=(x=3)
 foo+=(x=4)
@@ -109,7 +129,7 @@ unset arr2
 exp='typeset -a arr2=(b\=c xxxxx)'
 typeset -a arr2
 {
-	arr2+=(b=c xxxxx)
+    arr2+=(b=c xxxxx)
 } 2> /dev/null
 [[ $(typeset -p arr2) == "$exp" ]] || err_exit 'append (b=c xxxxx) to index array not working'
 
@@ -118,6 +138,7 @@ Foo_t -a foo
 foo+=(x=1 y=2)
 foo+=(x=3 y=4)
 [[ ${!foo[@]} == '0 1' ]] || err_exit  'append to empty array of types not working'
+
 foo=()
 foo+=(x=1 y=2)
 foo+=(x=3 y=4)
