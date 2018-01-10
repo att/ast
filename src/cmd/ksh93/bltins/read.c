@@ -615,7 +615,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
         } else {
             nv_putval(np, var, 0);
-            if (var != buf) free((void *)var);
+            if (var != buf) free(var);
         }
         goto done;
     } else if ((cp = (unsigned char *)sfgetr(iop, delim, 0))) {

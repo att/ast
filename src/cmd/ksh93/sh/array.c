@@ -84,7 +84,7 @@ static bool array_unscope(Namval_t *np, Namarr_t *ap) {
     if (!ap->scope) return (false);
     if (is_associative(ap)) (*ap->fun)(np, NULL, NV_AFREE);
     fp = nv_disc(np, (Namfun_t *)ap, NV_POP);
-    if (fp && !(fp->nofree & 1)) free((void *)fp);
+    if (fp && !(fp->nofree & 1)) free(fp);
     nv_delete(np, NULL, 0);
     return true;
 }
@@ -318,7 +318,7 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
             sh_eval(shp, sh_sfeval(av), 0);
             shp->prefix = prefix;
             ap->flags |= ARRAY_SCAN;
-            free((void *)av[0]);
+            free(av[0]);
             if (xtrace) sh_onoption(shp, SH_XTRACE);
         }
         return true;
@@ -410,7 +410,7 @@ static Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp
 skip:
     if (sub) {
         if (!skipped) nv_putsub(np, sub, 0L, 0);
-        free((void *)sub);
+        free(sub);
     }
     aq->header.flags = ap->flags = flg;
     ap->nelem = aq->header.nelem;
@@ -540,11 +540,11 @@ static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *
         Namfun_t *nfp;
         if (!is_associative(ap) && aq->xp) {
             _nv_unset(nv_namptr(aq->xp, 0), NV_RDONLY);
-            free((void *)aq->xp);
+            free(aq->xp);
         }
         if ((nfp = nv_disc(np, (Namfun_t *)ap, NV_POP)) && !(nfp->nofree & 1)) {
             ap = 0;
-            free((void *)nfp);
+            free(nfp);
         }
         if (!nv_isnull(np)) {
             if (!np->nvfun) nv_onattr(np, NV_NOFREE);
@@ -564,7 +564,7 @@ static void array_copytree(Namval_t *np, Namval_t *mp) {
     Namfun_t *fp = nv_disc(np, NULL, NV_POP);
     nv_offattr(np, NV_ARRAY);
     nv_clone(np, mp, 0);
-    if (np->nvalue.cp && !nv_isattr(np, NV_NOFREE)) free((void *)np->nvalue.cp);
+    if (np->nvalue.cp && !nv_isattr(np, NV_NOFREE)) free(np->nvalue.cp);
     np->nvalue.cp = 0;
     np->nvalue.up = &mp->nvalue;
     fp->nofree &= ~1;
@@ -606,7 +606,7 @@ static struct index_array *array_grow(Namval_t *np, struct index_array *arp, int
         }
         memcpy(ap->bits, arp->bits, arp->maxi);
         array_setptr(np, arp, ap);
-        free((void *)arp);
+        free(arp);
     } else {
         int flags = 0;
         Namval_t *mp = 0;
@@ -725,7 +725,7 @@ static Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const cha
         }
         string_index = &numbuff[NUMSIZE];
     }
-    free((void *)save_ap);
+    free(save_ap);
     return ap;
 }
 
@@ -798,7 +798,7 @@ Namval_t *nv_arraychild(Namval_t *np, Namval_t *nq, int c) {
     nq->nvenv = (char *)np;
     nq->nvshell = np->nvshell;
     if ((fp = nq->nvfun) && fp->disc && fp->disc->setdisc && (fp = nv_disc(nq, fp, NV_POP))) {
-        free((void *)fp);
+        free(fp);
     }
     if (!ap->fun) {
         struct index_array *aq = (struct index_array *)ap;

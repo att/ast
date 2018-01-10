@@ -109,7 +109,7 @@ void nv_putv(Namval_t *np, const char *value, int flags, Namfun_t *nfp) {
         if (!fp->disc || !fp->disc->putval) {
             if (!value && (!(ap = nv_arrayptr(np)) || ap->nelem == 0)) {
                 if (fp->disc || !(fp->nofree & 1)) nv_disc(np, fp, NV_POP);
-                if (!(fp->nofree & 1)) free((void *)fp);
+                if (!(fp->nofree & 1)) free(fp);
             }
             continue;
         }
@@ -197,7 +197,7 @@ static void chktfree(Namval_t *np, struct vardisc *vp) {
     if (n >= sizeof(vp->disc) / sizeof(*vp->disc)) {
         // No disc left so pop.
         Namfun_t *fp;
-        if ((fp = nv_stack(np, NULL)) && !(fp->nofree & 1)) free((void *)fp);
+        if ((fp = nv_stack(np, NULL)) && !(fp->nofree & 1)) free(fp);
     }
 }
 
@@ -512,14 +512,14 @@ static void putdisc(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
             Namval_t *mp;
             if ((mp = vp->bltins[i]) && !nv_isattr(mp, NV_NOFREE)) {
                 if (is_abuiltin(mp)) {
-                    if (mp->nvfun && !nv_isattr(mp, NV_NOFREE)) free((void *)mp->nvfun);
+                    if (mp->nvfun && !nv_isattr(mp, NV_NOFREE)) free(mp->nvfun);
                     dtdelete(shp->bltin_tree, mp);
-                    free((void *)mp);
+                    free(mp);
                 }
             }
         }
         nv_disc(np, fp, NV_POP);
-        if (!(fp->nofree & 1)) free((void *)fp);
+        if (!(fp->nofree & 1)) free(fp);
     }
 }
 
@@ -853,7 +853,7 @@ static void clone_putv(Namval_t *np, const char *val, int flags, Namfun_t *handl
     Shell_t *shp = sh_ptr(np);
     Namfun_t *dp = nv_stack(np, (Namfun_t *)0);
     Namval_t *mp = np->nvalue.np;
-    if (!shp->subshell) free((void *)dp);
+    if (!shp->subshell) free(dp);
     if (val) nv_clone(mp, np, NV_NOFREE);
     np->nvalue.cp = 0;
     nv_putval(np, val, flags);
@@ -1021,7 +1021,7 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
             if (nv_isattr(np, BLT_SPC)) {
                 errormsg(SH_DICT, ERROR_exit(1), "Cannot delete: %s%s", name, is_spcbuiltin);
             }
-            if (np->nvfun && !nv_isattr(np, NV_NOFREE)) free((void *)np->nvfun);
+            if (np->nvfun && !nv_isattr(np, NV_NOFREE)) free(np->nvfun);
             dtdelete(shp->bltin_tree, np);
             return 0;
         } else if (extra == (void *)2) {

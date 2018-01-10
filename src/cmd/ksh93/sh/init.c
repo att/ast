@@ -396,7 +396,7 @@ static void put_lang(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 
     nv_putv(np, val, flags, fp);
     if (CC_NATIVE != CC_ASCII && (type == LC_ALL || type == LC_LANG || type == LC_CTYPE)) {
-        if (sh_lexstates[ST_BEGIN] != sh_lexrstates[ST_BEGIN]) free((void *)sh_lexstates[ST_BEGIN]);
+        if (sh_lexstates[ST_BEGIN] != sh_lexrstates[ST_BEGIN]) free(sh_lexstates[ST_BEGIN]);
         lctype++;
         if (ast.locale.set & (1 << AST_LC_CTYPE)) {
             int c;
@@ -444,7 +444,7 @@ static void put_ifs(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     if (!val) {
         fp = nv_stack(np, NULL);
         if (fp && !fp->nofree) {
-            free((void *)fp);
+            free(fp);
             fp = 0;
         }
     }
@@ -512,7 +512,7 @@ static void put_seconds(Namval_t *np, const char *val, int flags, Namfun_t *fp) 
     if (!val) {
         nv_putv(np, val, flags, fp);
         fp = nv_stack(np, NULL);
-        if (fp && !fp->nofree) free((void *)fp);
+        if (fp && !fp->nofree) free(fp);
         return;
     }
     if (!np->nvalue.dp) {
@@ -555,7 +555,7 @@ static void put_rand(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 
     if (!val) {
         fp = nv_stack(np, NULL);
-        if (fp && !fp->nofree) free((void *)fp);
+        if (fp && !fp->nofree) free(fp);
         _nv_unset(np, 0);
         return;
     }
@@ -608,7 +608,7 @@ static void put_lineno(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     if (!val) {
         fp = nv_stack(np, NULL);
-        if (fp && !fp->nofree) free((void *)fp);
+        if (fp && !fp->nofree) free(fp);
         _nv_unset(np, 0);
         return;
     }
@@ -645,7 +645,7 @@ static void put_lastarg(Namval_t *np, const char *val, int flags, Namfun_t *fp) 
     }
     if (val) val = strdup(val);
     if (shp->lastarg && !nv_isattr(np, NV_NOFREE)) {
-        free((void *)shp->lastarg);
+        free(shp->lastarg);
     } else {
         nv_offattr(np, NV_NOFREE);
     }
@@ -818,16 +818,16 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
             np = nv_namptr(mp->nodes, 0);
             for (i = 0; i < mp->nmatch; i++) {
                 if (np->nvfun && np->nvfun != &mp->hdr) {
-                    free((void *)np->nvfun);
+                    free(np->nvfun);
                     np->nvfun = 0;
                 }
                 np = nv_namptr(np + 1, 0);
             }
-            free((void *)mp->nodes);
+            free(mp->nodes);
             mp->nodes = 0;
         }
         mp->vlen = 0;
-        if (ap && ap->hdr.next != &mp->hdr) free((void *)ap);
+        if (ap && ap->hdr.next != &mp->hdr) free(ap);
         SH_MATCHNOD->nvalue.cp = 0;
         SH_MATCHNOD->nvfun = 0;
         if (!(mp->nmatch = nmatch) && !v) {
@@ -904,7 +904,7 @@ static char *get_match(Namval_t *np, Namfun_t *fp) {
     if (mp->val[mp->match[2 * sub + 1]] == 0) return (val);
     mp->index = i;
     if (mp->rval[i]) {
-        free((void *)mp->rval[i]);
+        free(mp->rval[i]);
         mp->rval[i] = 0;
     }
     mp->rval[i] = (char *)malloc(n + 1);
@@ -2209,7 +2209,7 @@ static void put_trans(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     } else {
         nv_putv(np, val, flags, fp);
         nv_disc(np, fp, NV_POP);
-        if (!(fp->nofree & 1)) free((void *)fp);
+        if (!(fp->nofree & 1)) free(fp);
         stakseek(offset);
         return;
     }
@@ -2233,7 +2233,7 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     if (mp) {
         if (strcmp(name, mp->name) == 0) return (&mp->hdr);
         nv_disc(np, &mp->hdr, NV_POP);
-        if (!(mp->hdr.nofree & 1)) free((void *)mp);
+        if (!(mp->hdr.nofree & 1)) free(mp);
     }
     mp = newof(0, struct Mapchar, 1, n);
     mp->trans = trans;

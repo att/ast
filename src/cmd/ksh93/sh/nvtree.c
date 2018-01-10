@@ -101,7 +101,7 @@ static Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp)
     dp = nv_clone_disc(fp, flags);
     if ((flags & NV_COMVAR) && !(flags & NV_RAW)) {
         walk_tree(np, mp, flags);
-        if ((flags & NV_MOVE) && !(fp->nofree & 1)) free((void *)fp);
+        if ((flags & NV_MOVE) && !(fp->nofree & 1)) free(fp);
     }
     return dp;
 }
@@ -708,7 +708,7 @@ static void outval(char *name, const char *vname, struct Walk *wp) {
         if (!wp->out) {
             fp = nv_stack(np, fp);
             fp = nv_stack(np, NULL);
-            if (fp) free((void *)fp);
+            if (fp) free(fp);
             np->nvfun = 0;
             if (!nv_isattr(np, NV_MINIMAL)) np->nvenv = 0;
             return;

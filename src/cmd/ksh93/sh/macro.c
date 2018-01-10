@@ -1755,7 +1755,7 @@ retry2:
                 }
             }
         }
-        if (arrmax) free((void *)arrmax);
+        if (arrmax) free(arrmax);
     } else if (argp) {
         if (c == '/' && replen > 0 && pattern && strmatch("", pattern)) {
             mac_substitute(mp, repstr, v, 0, 0);

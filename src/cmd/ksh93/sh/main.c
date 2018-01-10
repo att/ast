@@ -556,7 +556,7 @@ done:
         sh_done(shp, 0);
     }
     if (fno > 0) sh_close(fno);
-    if (shp->st.filename) free((void *)shp->st.filename);
+    if (shp->st.filename) free(shp->st.filename);
     shp->st.filename = 0;
 }
 

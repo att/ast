@@ -137,7 +137,7 @@ int _fcmbget(short *len) {
     switch (*len) {
         case -1: {
             *len = 1;
-            // fall through
+            // FALL THRU
         }
         case 0:
         case 1: {

@@ -560,7 +560,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
         if (maketype) {
             nv_open(shtp.nodes[0]->nvname, shp->var_tree, NV_ASSIGN | NV_VARNAME | NV_NOADD | NV_NOFAIL);
             np = nv_mktype(shtp.nodes, shtp.numnodes);
-            free((void *)shtp.nodes);
+            free(shtp.nodes);
             shp->mktype = shtp.previous;
             maketype = 0;
             if (shp->namespace) free(shp->prefix);
@@ -1076,9 +1076,9 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
                 if (nv_isarray(np) && np->nvfun && (ap = nv_arrayptr(np)) && array_assoc(ap)) {
                     while (nv_associative(np, 0, NV_ANEXT)) nv_associative(np, 0, NV_ADELETE);
                     nv_associative(np, 0, NV_AFREE);
-                    free((void *)np->nvfun);
+                    free(np->nvfun);
                 }
-                free((void *)np);
+                free(np);
             }
         }
 #if 0
@@ -1365,7 +1365,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
     if (flags & (NV_NOREF | NV_NOFREE)) {
         if (np->nvalue.cp && np->nvalue.cp != sp && !nv_isattr(np, NV_NOFREE)) {
-            free((void *)np->nvalue.cp);
+            free(np->nvalue.cp);
         }
         np->nvalue.cp = (char *)sp;
         nv_setattr(np, (flags & ~NV_RDONLY) | NV_NOFREE);
@@ -1590,7 +1590,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 int oldsize = (flags & NV_APPEND) ? nv_size(np) : 0;
                 if (flags & NV_RAW) {
                     if (tofree) {
-                        free((void *)tofree);
+                        free(tofree);
                         nv_offattr(np, NV_NOFREE);
                     }
                     up->cp = sp;
@@ -1678,7 +1678,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             if (savep) ja_restore();
         }
         if (flags & NV_APPEND) stkseek(shp->stk, offset);
-        if (tofree && tofree != Empty && tofree != Null) free((void *)tofree);
+        if (tofree && tofree != Empty && tofree != Null) free(tofree);
     }
     if (!was_local && ((flags & NV_EXPORT) || nv_isattr(np, NV_EXPORT))) sh_envput(shp, np);
     return;
@@ -2014,7 +2014,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
     if (nv_isattr(np, NV_EXPORT | NV_NOFREE)) {
         if (nv_isref(np) && np != VERSIONNOD) {
             nv_offattr(np, NV_NOFREE | NV_REF);
-            free((void *)np->nvalue.nrp);
+            free(np->nvalue.nrp);
             np->nvalue.cp = 0;
         }
         if (!cp) return;
@@ -2130,7 +2130,7 @@ void _nv_unset(Namval_t *np, int flags) {
             } else {
                 sfclose(slp->slptr);
             }
-            free((void *)np->nvalue.ip);
+            free(np->nvalue.ip);
             np->nvalue.ip = 0;
         }
         goto done;
@@ -2158,14 +2158,14 @@ void _nv_unset(Namval_t *np, int flags) {
     } else if (nv_isref(np) && !nv_isattr(np, NV_EXPORT | NV_MINIMAL) && np->nvalue.nrp) {
         if (np->nvalue.nrp->root) dtremove(Refdict, (void *)np->nvalue.nrp);
         if (np->nvalue.nrp->sub) free(np->nvalue.nrp->sub);
-        free((void *)np->nvalue.nrp);
+        free(np->nvalue.nrp);
         np->nvalue.cp = 0;
         up = 0;
     } else {
         up = &np->nvalue;
     }
     if (up && up->cp) {
-        if (up->cp != Empty && up->cp != Null && !nv_isattr(np, NV_NOFREE)) free((void *)up->cp);
+        if (up->cp != Empty && up->cp != Null && !nv_isattr(np, NV_NOFREE)) free(up->cp);
         up->cp = 0;
     }
 
@@ -2773,7 +2773,7 @@ bool nv_rename(Namval_t *np, int flags) {
     if (nr == np) {
         nv_putsub(np, (char *)0, index, 0);
         nv_putval(np, cp, 0);
-        free((void *)cp);
+        free(cp);
         return true;
     }
     if ((shp->prev_table = shp->last_table) && nv_isvtree(nr)) shp->prev_table = 0;
@@ -3037,7 +3037,7 @@ void nv_unref(Namval_t *np) {
         if (np->nvalue.nrp->sub) free(np->nvalue.nrp->sub);
         dtremove(Refdict, (void *)np->nvalue.nrp);
     }
-    free((void *)np->nvalue.nrp);
+    free(np->nvalue.nrp);
     np->nvalue.cp = strdup(nv_name(nq));
 
     for (Namfun_t *fp = nq->nvfun; fp; fp = fp->next) {

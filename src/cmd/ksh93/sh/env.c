@@ -75,7 +75,7 @@ char **env_get(Env_t *ep) {
 
     if (ep->flags & ENV_VALID) return ep->env + n;
     if (ep->count > ep->max) {
-        if (ep->flags & ENV_MALLOCED) free((void *)ep->env);
+        if (ep->flags & ENV_MALLOCED) free(ep->env);
         if (!(ep->env = (char **)malloc(sizeof(char *) * (ep->count + 1)))) return NULL;
         ep->flags |= ENV_MALLOCED;
         ep->max = ep->count;
@@ -102,7 +102,7 @@ int env_add(Env_t *ep, const char *str, int flags) {
     if (vp && strcmp(str, vp->un.ptr) == 0) return 1;
     if (flags & ENV_STRDUP) str = strdup(str);
     if (vp) {
-        if (vp->index & ENV_PMALLOC) free((void *)vp->un.ptr);
+        if (vp->index & ENV_PMALLOC) free(vp->un.ptr);
         vp->un.ptr = (char *)str;
         if (ep->env && (ep->flags & ENV_VALID)) ep->env[vp->index >> ENV_BITS] = vp->un.ptr;
     } else {
@@ -140,7 +140,7 @@ int env_delete(Env_t *ep, const char *str) {
 
     if (!vp) return 0;
     ep->flags &= ~ENV_VALID;
-    if (vp->index & ENV_PMALLOC) free((void *)vp->un.ptr);
+    if (vp->index & ENV_PMALLOC) free(vp->un.ptr);
     dtdelete(ep->dt, vp);
     vp->un.next = ep->freelist;
     ep->freelist = vp;
@@ -198,7 +198,7 @@ Env_t *env_open(char **envp, int extra) {
 void env_close(Env_t *ep) {
     Evar_t *vp, *vpnext, *top;
 
-    if (ep->env && (ep->flags & ENV_MALLOCED)) free((void *)ep->env);
+    if (ep->env && (ep->flags & ENV_MALLOCED)) free(ep->env);
     for (vp = (Evar_t *)dtfirst(ep->dt); vp; vp = vpnext) {
         vpnext = (Evar_t *)dtnext(ep->dt, vp);
         env_delete(ep, vp->un.ptr);
@@ -212,7 +212,7 @@ void env_close(Env_t *ep) {
     }
     for (vp = top; vp; vp = vpnext) {
         vpnext = vp->un.next;
-        free((void *)vp);
+        free(vp);
     }
     dtclose(ep->dt);
 }

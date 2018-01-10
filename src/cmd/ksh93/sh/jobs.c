@@ -1187,12 +1187,12 @@ void job_clear(Shell_t *shp) {
         while (pw) {
             px = pw;
             pw = pw->p_nxtproc;
-            free((void *)px);
+            free(px);
         }
     }
     for (jp = bck.list; jp; jp = jpnext) {
         jpnext = jp->next;
-        free((void *)jp);
+        free(jp);
     }
     bck.list = 0;
     if (njob_savelist < NJOB_SAVELIST) init_savelist();
@@ -1797,7 +1797,7 @@ again:
             jp->next = job_savelist;
             job_savelist = jp;
         } else {
-            free((void *)jp);
+            free(jp);
         }
     }
     return r;
@@ -1842,7 +1842,7 @@ void job_subrestore(Shell_t *shp, void *ptr) {
         job_unpost(shp, pw, 0);
     }
 
-    free((void *)bp);
+    free(bp);
     job_unlock();
 }
 

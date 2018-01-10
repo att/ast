@@ -177,7 +177,7 @@ static int look(Sfio_t *fp, char *prefix, char *maxprefix, int flags) {
             n = (*compare)(prefix, EXTRACT(flags, cp, buff, len), len);
             if (maxprefix && n > 0) n = 0;
         }
-        if (buff) free((void *)buff);
+        if (buff) free(buff);
     }
     return !found;
 }

@@ -153,15 +153,15 @@ static pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *cons
             if (shp->exitval > exitval) exitval = shp->exitval;
             if (saveargs) {
                 memcpy((void *)av, saveargs, n);
-                free((void *)saveargs);
+                free(saveargs);
                 saveargs = 0;
             }
         } else if (spawn /*&& !sh_isoption(shp,SH_PFSH)*/) {
             shp->xargexit = exitval;
-            if (saveargs) free((void *)saveargs);
+            if (saveargs) free(saveargs);
             return _spawnveg(shp, path, argv, envp, spawn >> 1);
         } else {
-            if (saveargs) free((void *)saveargs);
+            if (saveargs) free(saveargs);
             return path_pfexecve(shp, path, argv, envp, spawn);
         }
     }
@@ -225,10 +225,10 @@ void path_delete(Pathcomp_t *first) {
     while (pp) {
         ppnext = pp->next;
         if (--pp->refcount <= 0) {
-            if (pp->lib) free((void *)pp->lib);
-            if (pp->bbuf) free((void *)pp->bbuf);
+            if (pp->lib) free(pp->lib);
+            if (pp->bbuf) free(pp->bbuf);
             if (pp->fd) close(pp->fd);
-            free((void *)pp);
+            free(pp);
             if (old) old->next = ppnext;
         } else {
             old = pp;
@@ -523,7 +523,7 @@ static void funload(Shell_t *shp, int fno, const char *name) {
     } else {
         pname = 0;
     }
-    free((void *)shp->st.filename);
+    free(shp->st.filename);
     shp->funload = oldload;
     shp->st.filename = oldname;
     sh_setstate(shp, savestates);
@@ -1410,7 +1410,7 @@ static bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Path
                 if (!first) {
                     stkseek(shp->stk, 0);
                     sfputr(shp->stk, pp->lib, -1);
-                    free((void *)pp->lib);
+                    free(pp->lib);
                     return true;
                 }
             }
@@ -1496,7 +1496,7 @@ void path_newdir(Shell_t *shp, Pathcomp_t *first) {
         // Delete .paths component.
         if ((next = pp->next) && (next->flags & PATH_BFPATH)) {
             pp->next = next->next;
-            if (--next->refcount <= 0) free((void *)next);
+            if (--next->refcount <= 0) free(next);
         }
         if (stat(pp->name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
             pp->dev = 0;
@@ -1555,8 +1555,8 @@ Pathcomp_t *path_unsetfpath(Shell_t *shp) {
                 }
                 pp = pp->next;
                 if (--ppsave->refcount <= 0) {
-                    if (ppsave->lib) free((void *)ppsave->lib);
-                    free((void *)ppsave);
+                    if (ppsave->lib) free(ppsave->lib);
+                    free(ppsave);
                 }
                 continue;
             }
@@ -1595,7 +1595,7 @@ static char *talias_get(Namval_t *np, Namfun_t *nvp) {
 static void talias_put(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     if (!val && np->nvalue.cp) {
         Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
-        if (--pp->refcount <= 0) free((void *)pp);
+        if (--pp->refcount <= 0) free(pp);
     }
     nv_putv(np, val, flags, fp);
 }

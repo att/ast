@@ -227,7 +227,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'j': {
                 fmttype = "json";
-                //TODO: I think it should not fall through
+                // TODO: Should this FALL THRU?
             }
             case 'v': {
                 if (argc < 0) {
@@ -669,7 +669,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             }
             case 'q': {
                 format = 's';
-            // FALL THROUGH
+            // FALL THRU
             }
             case 's':
             case 'H':

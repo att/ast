@@ -324,9 +324,9 @@ Sfdisc_t *disc;
 {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     if (type == SF_DPOP || type == SF_FINAL) {
-        if (dp->bsize > 0) free((void *)dp->buff);
-        if (dp->mapsize) free((void *)dp->maptable);
-        free((void *)disc);
+        if (dp->bsize > 0) free(dp->buff);
+        if (dp->mapsize) free(dp->maptable);
+        free(disc);
     }
     return (0);
 }

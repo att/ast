@@ -64,7 +64,7 @@ static void put_time(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
         nv_putv(np, (char *)&t, NV_INTEGER, nfp);
     } else {
         nv_unset(dp->format);
-        free((void *)dp->format);
+        free(dp->format);
         nv_putv(np, val, flag, nfp);
     }
 }
@@ -282,8 +282,8 @@ static char *get_classval(Namval_t *np, Namfun_t *nfp) {
 static void put_classval(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
     walk_class(np, 1, (struct dcclass *)nfp);
     if (nfp = nv_stack(np, (Namfun_t *)0)) {
-        free((void *)nfp);
-        if (np->nvalue && !nv_isattr(np, NV_NOFREE)) free((void *)np->nvalue);
+        free(nfp);
+        if (np->nvalue && !nv_isattr(np, NV_NOFREE)) free(np->nvalue);
     }
     if (val) nv_putval(np, val, flag);
 }

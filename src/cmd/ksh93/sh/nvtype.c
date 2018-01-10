@@ -535,7 +535,7 @@ static void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
             }
         }
         nv_disc(np, fp, NV_POP);
-        if (!(fp->nofree & 1)) free((void *)fp);
+        if (!(fp->nofree & 1)) free(fp);
     }
 }
 
@@ -1089,7 +1089,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 } else if (nv_isattr(np, NV_LJUST | NV_RJUST)) {
                     memset((char *)nq->nvalue.cp, ' ', dsize);
                 }
-                if (!j) free((void *)np->nvalue.cp);
+                if (!j) free(np->nvalue.cp);
             }
             if (!nq->nvalue.cp && nq->nvfun == &pp->childfun.fun) {
                 if (nv_isattr(np, NV_ARRAY | NV_NOFREE) == (NV_ARRAY | NV_NOFREE)) {
@@ -1121,7 +1121,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         pp->names[nd] = 0;
         nv_adddisc(mp, (const char **)pp->names, mnodes);
     }
-    if (mnodes != nodes) free((void *)mnodes);
+    if (mnodes != nodes) free(mnodes);
     nv_newtype(mp);
     return mp;
 }
@@ -1266,7 +1266,7 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
         np->nvalue.up = 0;
         nv_clone(tp, np, flags | NV_NOFREE);
         if (np->nvalue.cp && np->nvalue.cp != Empty && !nv_isattr(np, NV_NOFREE)) {
-            free((void *)np->nvalue.cp);
+            free(np->nvalue.cp);
         }
         np->nvalue.up = 0;
         nofree = ap->hdr.nofree;

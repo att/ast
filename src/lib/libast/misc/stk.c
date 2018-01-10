@@ -328,7 +328,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
         if (fp->prev) {
             sp->stkbase = fp->prev;
             sp->stkend = ((struct frame *)(fp->prev))->end;
-            free((void *)fp);
+            free(fp);
         } else
             break;
         frames++;
@@ -421,7 +421,7 @@ char *stkcopy(Sfio_t *stream, const char *str) {
             memcpy(stream->_data, tp, off);
         }
     }
-    if (tp != buff) free((void *)tp);
+    if (tp != buff) free(tp);
     return ((char *)cp);
 }
 

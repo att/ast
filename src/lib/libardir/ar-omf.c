@@ -199,7 +199,7 @@ static void omfload(Ardir_t *ar, unsigned char *base, unsigned char *last, struc
     }
     while (tp) {
         tpnext = tp->next;
-        free((void *)tp);
+        free(tp);
         tp = tpnext;
     }
 }

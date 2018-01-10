@@ -199,7 +199,7 @@ bool sh_iovalidfd(Shell_t *shp, int fd) {
     shp->fdstatus = (unsigned int *)(&shp->fdptrs[n]);
     if (max) memcpy(shp->fdstatus, --fdstatus, max);
 
-    if (sftable) free((void *)sftable);
+    if (sftable) free(sftable);
 
     shp->sftable++;
     shp->fdptrs++;
@@ -242,7 +242,7 @@ static int outexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     static int active = 0;
 
     if (type == SF_DPOP || type == SF_FINAL) {
-        free((void *)handle);
+        free(handle);
     } else if (type == SF_WRITE && (*(ssize_t *)data) < 0 && sffileno(iop) != 2) {
         switch (errno) {
 #ifdef ECONNRESET
@@ -1730,7 +1730,7 @@ static int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     int n, fno;
     NOT_USED(handle);
 
-    if (type == SF_DPOP || type == SF_FINAL) free((void *)handle);
+    if (type == SF_DPOP || type == SF_FINAL) free(handle);
     if (type == SF_WRITE && ERROR_PIPE(errno)) {
         sfpurge(iop);
         return -1;
@@ -2025,7 +2025,7 @@ done:
 //
 static int pipeexcept(Sfio_t *iop, int mode, void *data, Sfdisc_t *handle) {
     if (mode == SF_DPOP || mode == SF_FINAL) {
-        free((void *)handle);
+        free(handle);
     } else if (mode == SF_WRITE && ERROR_PIPE(errno)) {
         sfpurge(iop);
         return -1;
@@ -2149,7 +2149,7 @@ static int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
         if (type == SF_CLOSING) {
             sfdisc(iop, SF_POPDISC);
         } else if (ep && (type == SF_DPOP || type == SF_FINAL)) {
-            free((void *)ep);
+            free(ep);
         }
         return 0;
     }
@@ -2215,7 +2215,7 @@ static int subexcept(Sfio_t *sp, int mode, void *data, Sfdisc_t *handle) {
         sfsetfd(sp, -1);
         return 0;
     } else if (disp && (mode == SF_DPOP || mode == SF_FINAL)) {
-        free((void *)disp);
+        free(disp);
         return 0;
     }
 #ifdef SF_ATEXIT

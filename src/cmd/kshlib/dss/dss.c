@@ -145,7 +145,7 @@ static int query(int argc, char *argv[], Shbltin_t *bp) {
             struct query *xp, **ppp = &dp->qp;
             while ((xp = *ppp) && xp != pp) ppp = &xp->next;
             if (xp) *ppp = pp->next;
-            free((void *)pp);
+            free(pp);
             return (0);
         }
         pp->expr.query = pp->query;
@@ -499,7 +499,7 @@ static Namval_t *create_parent(Namval_t *np, const char *name, int flag, Namfun_
 }
 
 static void dss_unset(Namval_t *np, struct parent *dp) {
-    if (dp->namelen) free((void *)dp->name);
+    if (dp->namelen) free(dp->name);
     if (!dp->hdr.np) {
         if (dp->dss)
             dssclose(dp->dss);
@@ -507,8 +507,8 @@ static void dss_unset(Namval_t *np, struct parent *dp) {
             cxclose(dp->cx);
     }
     nv_disc(np, &dp->hdr.fun, NV_POP);
-    if (dp->hdr.nodes) free((void *)dp->hdr.nodes);
-    if (!dp->hdr.fun.nofree & 1) free((void *)dp);
+    if (dp->hdr.nodes) free(dp->hdr.nodes);
+    if (!dp->hdr.fun.nofree & 1) free(dp);
 }
 
 static void put_parent(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
@@ -539,7 +539,7 @@ static int dss_except(Sfio_t *iop, int event, void *data, Sfdisc_t *fp) {
             if (nfp) (*nfp->disc->readf)(sp->np, (Sfio_t *)0, 0, nfp);
         }
         dssfclose(sp->fp);
-        free((void *)fp);
+        free(fp);
     }
     if (event != DSS_EVENT) return (0);
     *(Sfdisc_t **)data = fp;
@@ -736,7 +736,7 @@ static void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     if (!val) {
         nv_disc(np, fp, NV_POP);
         if (fp->nofree & ~1)
-            free((void *)fp);
+            free(fp);
         else {
             Namval_t *mp;
             int i;
@@ -744,10 +744,10 @@ static void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
                 if (mp = tp->bltins[i]) {
                     Shell_t *shp = sh_getinterp();
                     dtdelete(shp->bltin_tree, mp);
-                    free((void *)mp);
+                    free(mp);
                 }
             }
-            free((void *)fp);
+            free(fp);
         }
     }
 }

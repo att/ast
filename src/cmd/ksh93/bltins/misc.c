@@ -556,7 +556,7 @@ int b_vpath(int argc, char *argv[], Shbltin_t *context) {
         }
         default: {
             if ((argc & 1)) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
-            // FALLTHROUGH
+            // FALL THRU
         }
         case 2: {
             if (shp->subshell && !shp->subshare) sh_subfork();

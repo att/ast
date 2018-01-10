@@ -614,7 +614,7 @@ static void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long
     L_ARGNOD->nvfun = node->nvfun;
     if (nr->sub) {
         nv_putsub(nr->np, nr->sub, 0, mode);
-        free((void *)nr->sub);
+        free(nr->sub);
     }
     _nv_unset(SH_NAMENOD, 0);
     _nv_unset(SH_SUBSCRNOD, 0);
@@ -2417,7 +2417,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         rp->sdict = 0;
                     }
                     if (shp->funload) {
-                        if (!shp->fpathdict) free((void *)np->nvalue.rp);
+                        if (!shp->fpathdict) free(np->nvalue.rp);
                         np->nvalue.rp = 0;
                     }
                 }

@@ -660,7 +660,7 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
                     argr->dolnxt = argblk->dolnxt;
                     argr = argblk->dolnxt;
                 }
-                free((void *)argblk);
+                free(argblk);
             }
         }
     }

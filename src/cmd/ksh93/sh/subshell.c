@@ -171,7 +171,7 @@ void sh_subfork(void) {
         shp->curenv = curenv;
         // This is the parent part of the fork.
         if (sp->subpid == 0) sp->subpid = pid;
-        if (trap) free((void *)trap);
+        if (trap) free(trap);
         if (comsub == 1) {
             sh_close(sp->tmpfd);
             sp->tmpfd = -1;
@@ -678,7 +678,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
             shp->pwd = sp->pwd;
             if (PWDNOD->nvalue.cp == sp->shpwd) PWDNOD->nvalue.cp = sp->pwd;
         } else {
-            free((void *)sp->pwd);
+            free(sp->pwd);
             if (sp->shpwdfd >= 0) {
                 sh_close(sp->shpwdfd);
                 sp->shpwdfd = -1;

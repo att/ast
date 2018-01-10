@@ -182,10 +182,10 @@ static void *dbm_associative(register Namval_t *np, const char *sp, int mode) {
             if (ap->modified) dbm_put(ap);
             ap->cur = ap->pos = 0;
             if (ap->name) {
-                free((void *)ap->name);
+                free(ap->name);
                 ap->namlen = 0;
             }
-            if (ap->vallen) free((void *)ap->val);
+            if (ap->vallen) free(ap->val);
             ap->node.nvalue = 0;
             ap->node.nvsize = 0;
             dbm_close(ap->dbm);

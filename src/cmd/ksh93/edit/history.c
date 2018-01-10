@@ -317,7 +317,7 @@ retry:
     }
     if (fname) {
         unlink(fname);
-        free((void *)fname);
+        free(fname);
     }
     if (hist_clean(fd) && hist_start > 1 && hsize > HIST_MAX) {
 #ifdef DEBUG
@@ -367,7 +367,7 @@ void hist_close(History_t *hp) {
     sfclose(hp->histfp);
 #if SHOPT_AUDIT
     if (hp->auditfp) {
-        if (hp->tty) free((void *)hp->tty);
+        if (hp->tty) free(hp->tty);
         sfclose(hp->auditfp);
     }
 #endif // SHOPT_AUDIT

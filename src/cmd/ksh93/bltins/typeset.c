@@ -721,7 +721,7 @@ static int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     if (tp->aflag == '+') {
                         if (cp && strcmp(cp, tp->wctname) == 0) {
                             nv_disc(np, fp, NV_POP);
-                            if (!(fp->nofree & 1)) free((void *)fp);
+                            if (!(fp->nofree & 1)) free(fp);
                             nv_offattr(np, flag & (NV_LTOU | NV_UTOL));
                         }
                     } else if (!cp || strcmp(cp, tp->wctname)) {

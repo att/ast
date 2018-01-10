@@ -454,7 +454,7 @@ static bool delete_and_add(const char *name, struct Complete *comp) {
 
     if (compdict && (old = (struct Complete *)dtmatch(compdict, name))) {
         dtdelete(compdict, old);
-        free((void *)old);
+        free(old);
     } else if (comp && !compdict) {
         ((Edit_t *)(shgd->ed_context))->compdict = compdict = dtopen(&_Compdisc, Dtoset);
     }

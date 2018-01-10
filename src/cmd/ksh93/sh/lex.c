@@ -1758,7 +1758,7 @@ static int here_copy(Lex_t *lp, struct ionod *iop) {
 done:
     lp->sh->funlog = funlog;
     if (lp->lexd.dolparen) {
-        free((void *)iop);
+        free(iop);
     } else if (!special) {
         iop->iofile |= IOQUOTE;
     }
@@ -2139,7 +2139,7 @@ static int alias_exceptf(Sfio_t *iop, int type, Sfdisc_t *handle)
             Sfdisc_t *dp = sfdisc(iop, SF_POPDISC);
             if (dp != handle) sfdisc(iop, dp);
         } else if (type == SF_DPOP || type == SF_FINAL) {
-            free((void *)ap);
+            free(ap);
         }
         goto done;
     }
