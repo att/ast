@@ -487,19 +487,23 @@ int base;
                     break;
             }
             if (shift) {
-                if (S2I_valid(s)) switch (*s) {
+                if (S2I_valid(s)) {
+                    switch (*s) {
                         case 'i':
                         case 'I':
                             s++;
                             x = 0;
                             break;
                     }
-                if (S2I_valid(s)) switch (*s) {
+                }
+                if (S2I_valid(s)) {
+                    switch (*s) {
                         case 'b':
                         case 'B':
                             s++;
                             break;
                     }
+                }
                 if (x) {
                     v = 1;
                     for (shift /= 10; shift; shift--) {

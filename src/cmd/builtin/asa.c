@@ -101,7 +101,8 @@ int b_asa(int argc, char **argv, Shbltin_t *context) {
     register int n, reclen = 0;
 
     cmdinit(argc, argv, (void *)0, ERROR_CATALOG, 0);
-    while (n = optget(argv, usage)) switch (n) {
+    while (n = optget(argv, usage)) {
+        switch (n) {
             case 'r':
                 reclen = opt_info.num;
                 break;
@@ -112,6 +113,7 @@ int b_asa(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argv += opt_info.index;
     if (error_info.errors) error(ERROR_usage(2), "%s", optusage((char *)0));
     if (cp = *argv) argv++;

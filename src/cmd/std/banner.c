@@ -149,7 +149,8 @@ int main(int argc, char *argv[]) {
 
     NoP(argc);
     error_info.id = "banner";
-    while (n = optget(argv, usage)) switch (n) {
+    while (n = optget(argv, usage)) {
+        switch (n) {
             case 'd':
                 delim = opt_info.arg;
                 break;
@@ -163,6 +164,7 @@ int main(int argc, char *argv[]) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argv += opt_info.index;
     if (error_info.errors || !*argv) error(ERROR_usage(2), "%s", optusage((char *)0));
     sfset(sfstdout, SF_LINE, 0);

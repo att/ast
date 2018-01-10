@@ -52,7 +52,8 @@ ssize_t msgblast(register Msg_call_t *msg) {
         msg->ack.port = msggetu(&b, e);
     }
     at = msg->call >> MSG_ARG_CALL;
-    if (msg->call & MSG_VALUE) switch (at & ((1 << MSG_ARG_TYPE) - 1)) {
+    if (msg->call & MSG_VALUE) {
+        switch (at & ((1 << MSG_ARG_TYPE) - 1)) {
             case 0:
                 break;
             case MSG_ARG_file:
@@ -63,6 +64,7 @@ ssize_t msgblast(register Msg_call_t *msg) {
                 msg->ret.number = msggetu(&b, e);
                 break;
         }
+    }
     ap = msg->argv;
     while (ap < msg->argv + elementsof(msg->argv)) {
         switch ((at >>= MSG_ARG_TYPE) & ((1 << MSG_ARG_TYPE) - 1)) {
@@ -93,7 +95,8 @@ ssize_t msgblast(register Msg_call_t *msg) {
                 (ap++)->number = msggetu(&b, e);
                 continue;
             case MSG_ARG_output:
-                if (msg->call & MSG_VALUE) switch (MSG_CALL(msg->call)) {
+                if (msg->call & MSG_VALUE) {
+                    switch (MSG_CALL(msg->call)) {
                         case MSG_CALL(MSG_getdents):
                             (ap++)->pointer = (void *)(dp = (struct dirent *)vp);
                             while (n = msggetz(&b, e, dp->d_name, sizeof(dp->d_name))) {
@@ -181,8 +184,9 @@ ssize_t msgblast(register Msg_call_t *msg) {
                             if (e - b >= n) b += n;
                             break;
                     }
-                else
+                } else {
                     (ap++)->pointer = 0;
+                }
                 continue;
             case MSG_ARG_string:
                 if (n = msggetu(&b, e)) {

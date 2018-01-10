@@ -76,7 +76,8 @@ int astquery(int quit, const char *format, ...) {
     sfsync(sfstdout);
     sfvprintf(op, format, ap);
     sfsync(op);
-    for (n = c = sfgetc(ip);; c = sfgetc(ip)) switch (c) {
+    for (n = c = sfgetc(ip);; c = sfgetc(ip)) {
+        switch (c) {
             case EOF:
                 n = c;
                 /*FALLTHROUGH*/
@@ -96,6 +97,7 @@ int astquery(int quit, const char *format, ...) {
                 }
                 return 1;
         }
+    }
 done:
     va_end(ap);
     return r;

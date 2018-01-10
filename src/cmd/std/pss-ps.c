@@ -141,13 +141,14 @@ static unsigned long number(char *s, char **p, int base) {
 
     for (;;) {
         n = strtoul(s, &e, base);
-        if (*e && !isspace(*e)) switch (base) {
+        if (*e && !isspace(*e)) {
+            switch (base) {
                 case 8:
                     if (*e == '8' || *e == '9') {
                         base = 10;
                         continue;
                     }
-                    /*FALLTHROUGH*/
+                    // FALL THRU
                 case 10:
                     if (isxdigit(*e)) {
                         base = 16;
@@ -155,6 +156,7 @@ static unsigned long number(char *s, char **p, int base) {
                     }
                     break;
             }
+        }
         break;
     }
     while (*e && !isspace(*e)) e++;

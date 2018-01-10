@@ -247,7 +247,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
         if (ignore) umask(ignore);
         error(ERROR_system(1), "%s: not found", *argv);
     }
-    while (!sh_checksig(context) && (ent = fts_read(fts))) switch (ent->fts_info) {
+    while (!sh_checksig(context) && (ent = fts_read(fts))) {
+        switch (ent->fts_info) {
             case FTS_SL:
             case FTS_SLNONE:
                 if (chlink) {
@@ -291,6 +292,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
         }
+    }
     fts_close(fts);
     if (ignore) umask(ignore);
     return error_info.errors != 0;

@@ -104,7 +104,8 @@ static char *gobble(Match_t *mp, char *s, int sub, int *g, int clear) {
     int c = 0;
     int n;
 
-    for (;;) switch (mbgetchar(s)) {
+    for (;;) {
+        switch (mbgetchar(s)) {
             case '\\':
                 if (mbgetchar(s)) break;
                 /*FALLTHROUGH*/
@@ -142,6 +143,7 @@ static char *gobble(Match_t *mp, char *s, int sub, int *g, int clear) {
                 if (!b && !p && sub == '|') return s;
                 break;
         }
+    }
 }
 
 static int grpmatch(Match_t *, int, char *, char *, char *, int);

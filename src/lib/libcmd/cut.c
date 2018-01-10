@@ -145,7 +145,8 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
     cut->nlflag = (mode & C_NONEWLINE) != 0;
     cut->reclen = reclen;
     lp = cut->list;
-    for (;;) switch (c = *cp++) {
+    for (;;) {
+        switch (c = *cp++) {
             case ' ':
             case '\t':
                 while (*cp == ' ' || *cp == '\t') cp++;
@@ -211,6 +212,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
                 n = 10 * n + (c - '0');
                 break;
         }
+    }
     /* NOTREACHED */
 }
 

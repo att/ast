@@ -65,8 +65,9 @@ static void normal(char *s) {
         sfprintf(sfstdout, "NIL");
     else if (!*u)
         sfprintf(sfstdout, "NULL");
-    else
-        for (;;) switch (c = *u++) {
+    else {
+        for (;;) {
+            switch (c = *u++) {
                 case 0:
                     return;
                 case '\n':
@@ -85,6 +86,8 @@ static void normal(char *s) {
                         sfprintf(sfstdout, "\\x%02x", c);
                     break;
             }
+        }
+    }
 }
 
 static void report(char *comment, char *str, char *pat, char *rem, int flags) {

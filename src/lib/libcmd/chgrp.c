@@ -351,7 +351,8 @@ int b_chgrp(int argc, char **argv, Shbltin_t *context) {
             break;
     }
     if (!(fts = fts_open(argv + 1, flags, NULL))) error(ERROR_system(1), "%s: not found", argv[1]);
-    while (!sh_checksig(context) && (ent = fts_read(fts))) switch (ent->fts_info) {
+    while (!sh_checksig(context) && (ent = fts_read(fts))) {
+        switch (ent->fts_info) {
             case FTS_SL:
             case FTS_SLNONE:
                 if (options & OPT_LCHOWN) {
@@ -437,6 +438,7 @@ int b_chgrp(int argc, char **argv, Shbltin_t *context) {
                 if (!(options & OPT_FORCE)) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
         }
+    }
     fts_close(fts);
     if (map) dtclose(map);
     return error_info.errors != 0;

@@ -373,7 +373,8 @@ extern int b_open(int argc, char *argv[], Shbltin_t *context) {
     mode_t mode = 0666;
     long flags = 0;
     int fd = -1;
-    while (n = optget(argv, sh_optopen)) switch (n) {
+    while (n = optget(argv, sh_optopen)) {
+        switch (n) {
             case 'r':
             case 'i':
             case 'w':
@@ -407,6 +408,7 @@ extern int b_open(int argc, char *argv[], Shbltin_t *context) {
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argc -= opt_info.index;
     argv += opt_info.index;
     if (argc != 2) errormsg(SH_DICT, ERROR_usage(2), optusage((char *)0));

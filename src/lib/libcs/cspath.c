@@ -150,7 +150,8 @@ char *cspath(register Cs_t *state, register int fd, int flags) {
              lcl.sin_family == AF_INET) {
         s = "tcp";
 #ifdef SO_TYPE
-        if (!getsockopt(fd, SOL_SOCKET, SO_TYPE, (char *)&typ, &typlen)) switch (typ) {
+        if (!getsockopt(fd, SOL_SOCKET, SO_TYPE, (char *)&typ, &typlen)) {
+            switch (typ) {
                 case SOCK_DGRAM:
                     s = "udp";
                     break;
@@ -160,6 +161,7 @@ char *cspath(register Cs_t *state, register int fd, int flags) {
                     sfsprintf(s = num, sizeof(num), "%d.p", typ);
                     break;
             }
+        }
 #endif
         namlen = sizeof(rmt);
         if (!getpeername(fd, (struct sockaddr *)&rmt, &namlen) && namlen == sizeof(rmt) &&

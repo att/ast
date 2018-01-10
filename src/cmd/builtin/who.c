@@ -244,7 +244,8 @@ int b_who(int argc, char **argv, Shbltin_t *context) {
     Sfio_t *sp;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
-    while (n = optget(argv, usage)) switch (n) {
+    while (n = optget(argv, usage)) {
+        switch (n) {
             case 'm':
                 flags |= FLAG_M;
                 break;
@@ -271,6 +272,7 @@ int b_who(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argv += opt_info.index;
     argc -= opt_info.index;
     if (argc == 2) {

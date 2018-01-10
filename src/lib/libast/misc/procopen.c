@@ -503,8 +503,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[!procfd], PROC_ARG_NULL))
                 goto cleanup;
         }
-        if (modv)
-            for (i = 0; n = modv[i]; i++) switch (PROC_OP(n)) {
+        if (modv) {
+            for (i = 0; n = modv[i]; i++) {
+                switch (PROC_OP(n)) {
                     case PROC_fd_dup:
                     case PROC_fd_dup | PROC_FD_PARENT:
                     case PROC_fd_dup | PROC_FD_CHILD:
@@ -516,6 +517,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                         if (modify(proc, forked, PROC_OP(n), PROC_ARG(n, 1), 0)) goto cleanup;
                         break;
                 }
+            }
+        }
         if (forked && (flags & PROC_ENVCLEAR)) environ = 0;
 #if _use_spawnveg
         else
@@ -619,8 +622,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 sigprocmask(SIG_BLOCK, &mask, &proc->mask);
 #endif
             }
-        } else if (modv)
-            for (i = 0; n = modv[i]; i++) switch (PROC_OP(n)) {
+        } else if (modv) {
+            for (i = 0; n = modv[i]; i++) {
+                switch (PROC_OP(n)) {
                     case PROC_fd_dup | PROC_FD_PARENT:
                     case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
                         close(PROC_ARG(n, 1));
@@ -636,6 +640,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                         }
                         break;
                 }
+            }
+        }
         if (procfd >= 0) {
 #ifdef SIGPIPE
             if ((flags & (PROC_WRITE | PROC_IGNORE)) == (PROC_WRITE | PROC_IGNORE)) {
@@ -679,8 +685,9 @@ bad:
         sigprocmask(SIG_SETMASK, &proc->mask, NULL);
 #endif
     }
-    if ((flags & PROC_CLEANUP) && modv)
-        for (i = 0; n = modv[i]; i++) switch (PROC_OP(n)) {
+    if ((flags & PROC_CLEANUP) && modv) {
+        for (i = 0; n = modv[i]; i++) {
+            switch (PROC_OP(n)) {
                 case PROC_fd_dup:
                 case PROC_fd_dup | PROC_FD_PARENT:
                 case PROC_fd_dup | PROC_FD_CHILD:
@@ -688,6 +695,8 @@ bad:
                     if (PROC_ARG(n, 2) != PROC_ARG_NULL) close(PROC_ARG(n, 1));
                     break;
             }
+        }
+    }
     if (pio[0] >= 0) close(pio[0]);
     if (pio[1] >= 0) close(pio[1]);
     if (pop[0] >= 0) close(pop[0]);

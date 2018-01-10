@@ -182,7 +182,8 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
         s = empty;
     }
     f = (char *)fmt;
-    for (;;) switch (c = *f++) {
+    for (;;) {
+        switch (c = *f++) {
             case 0:
                 if (f = prv_f) {
                     prv_f = 0;
@@ -330,6 +331,7 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
                 }
                 break;
         }
+    }
 done:
     va_end(ap);
     if (*s == '\n') *s++ = 0;

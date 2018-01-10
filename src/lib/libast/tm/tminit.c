@@ -139,7 +139,8 @@ static int tmopt(void *a, const void *p, int n, const char *v) {
     Tm_zone_t *zp;
 
     NoP(a);
-    if (p) switch (((Namval_t *)p)->value) {
+    if (p) {
+        switch (((Namval_t *)p)->value) {
             case TM_DEFAULT:
                 tm_info.deformat =
                     (n && (n = strlen(v)) > 0 && (n < 2 || v[n - 2] != '%' || v[n - 1] != '?'))
@@ -157,6 +158,7 @@ static int tmopt(void *a, const void *p, int n, const char *v) {
                     tm_info.flags &= ~((Namval_t *)p)->value;
                 break;
         }
+    }
     return 0;
 }
 

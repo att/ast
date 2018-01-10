@@ -362,7 +362,8 @@ void debug_fatal(const char *file, int line, const char *text) {
     sigprocmask(SIG_BLOCK, &ss, NULL);
 #endif
     debug_printf(2, "%s:%d: assertion failed: %s\n", file, line, text);
-    if (s = getenv("DEBUG_OPTIONS")) switch (*s) {
+    if (s = getenv("DEBUG_OPTIONS")) {
+        switch (*s) {
             case 'p':
                 pause();
                 break;
@@ -370,6 +371,7 @@ void debug_fatal(const char *file, int line, const char *text) {
                 abort();
                 break;
         }
+    }
     exit(4);
 }
 

@@ -123,7 +123,8 @@ char *tokread(char *u) {
 
     r = s;
     q = 0;
-    for (;;) switch (c = *r++) {
+    for (;;) {
+        switch (c = *r++) {
             case '\n':
                 if (!q) {
                     if (s == (r - 1)) {
@@ -160,4 +161,5 @@ char *tokread(char *u) {
                     q = c;
                 break;
         }
+    }
 }

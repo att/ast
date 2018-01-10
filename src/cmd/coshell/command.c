@@ -394,7 +394,8 @@ void server(int fd, int op, int sub, int arg, char *dat) {
         case 'f':
             if (arg == NOARG) {
                 sfprintf(state.string, "CON  TYPE  INFO\n");
-                for (n = 0; n <= state.fdtotal; n++) switch (con[n].type) {
+                for (n = 0; n <= state.fdtotal; n++) {
+                    switch (con[n].type) {
                         case ANON:
                             sfprintf(state.string, "%3d  anon\n", n);
                             break;
@@ -457,6 +458,7 @@ void server(int fd, int op, int sub, int arg, char *dat) {
                                 sfprintf(state.string, "%3d  %s  error\n", n, t);
                             break;
                     }
+                }
             } else if (arg >= state.fdtotal || !con[arg].type)
                 error(ERROR_OUTPUT | 2, con[fd].info.user.fds[2], "cannot drop CON %d", arg);
             else

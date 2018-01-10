@@ -114,10 +114,12 @@ static const Namval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CAT
 
 static int setopt(void *a, const void *p, int n, const char *v) {
     NoP(a);
-    if (p) switch (((Namval_t *)p)->value) {
+    if (p) {
+        switch (((Namval_t *)p)->value) {
             case OPT_BREAK:
             case OPT_CORE:
-                if (n) switch (*v) {
+                if (n) {
+                    switch (*v) {
                         case 'e':
                         case 'E':
                             error_state.breakpoint = ERROR_ERROR;
@@ -134,8 +136,9 @@ static int setopt(void *a, const void *p, int n, const char *v) {
                             error_state.breakpoint = strtol(v, NULL, 0);
                             break;
                     }
-                else
+                } else {
                     error_state.breakpoint = 0;
+                }
                 if (((Namval_t *)p)->value == OPT_CORE) error_info.core = error_state.breakpoint;
                 break;
             case OPT_CATALOG:
@@ -202,6 +205,7 @@ static int setopt(void *a, const void *p, int n, const char *v) {
                     error_info.trace = 0;
                 break;
         }
+    }
     return 0;
 }
 

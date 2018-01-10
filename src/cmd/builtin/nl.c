@@ -199,7 +199,8 @@ int b_nl(int argc, char **argv, Shbltin_t *context) {
     nl.sep = "\t";
     nl.pflag = 0;
 
-    while (n = optget(argv, usage)) switch (n) {
+    while (n = optget(argv, usage)) {
+        switch (n) {
             case 'p':
                 nl.pflag |= 1;
                 break;
@@ -262,6 +263,7 @@ int b_nl(int argc, char **argv, Shbltin_t *context) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argv += opt_info.index;
     argc -= opt_info.index;
     if (argc > 1 || error_info.errors) error(ERROR_usage(2), "%s", optusage((char *)0));

@@ -68,7 +68,8 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                         if (!(flags & FMT_EXP_CHAR)) goto noexpand;
                         c -= '0';
                         t = s + 2;
-                        while (s < t) switch (*s) {
+                        while (s < t) {
+                            switch (*s) {
                                 case '0':
                                 case '1':
                                 case '2':
@@ -83,6 +84,7 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                                     t = s;
                                     break;
                             }
+                        }
                         break;
                     case 'a':
                         if (!(flags & FMT_EXP_CHAR)) goto noexpand;

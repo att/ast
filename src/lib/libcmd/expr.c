@@ -167,7 +167,8 @@ static int getnode(State_t *state, Node_t *np) {
     char *ep;
 
     if (!(cp = *state->arglist++)) error(ERROR_exit(2), "argument expected");
-    if (!state->standard) switch (cp[0]) {
+    if (!state->standard) {
+        switch (cp[0]) {
             case 'i':
                 if (cp[1] == 'n' && !strcmp(cp, "index")) {
                     if (!(cp = *state->arglist++)) error(ERROR_exit(2), "string argument expected");
@@ -221,6 +222,7 @@ static int getnode(State_t *state, Node_t *np) {
                 }
                 break;
         }
+    }
     if (*cp == '(' && cp[1] == 0) {
         tok = expr_or(state, np);
         if (tok != ')') error(ERROR_exit(2), "closing parenthesis missing");

@@ -526,7 +526,8 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
         }
     }
     s++;
-    if (rex->flags & REG_MINIMAL) switch (follow(env, rex, cont, s)) {
+    if (rex->flags & REG_MINIMAL) {
+        switch (follow(env, rex, cont, s)) {
             case BAD:
                 return BAD;
             case CUT:
@@ -535,7 +536,9 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
             case GOOD:
                 return BEST;
         }
-    if (x->son) switch (parsetrie(env, x->son, rex, cont, s)) {
+    }
+    if (x->son) {
+        switch (parsetrie(env, x->son, rex, cont, s)) {
             case BAD:
                 return BAD;
             case CUT:
@@ -550,9 +553,11 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
                 r = NONE;
                 break;
         }
-    else
+    } else {
         r = NONE;
-    if (!(rex->flags & REG_MINIMAL)) switch (follow(env, rex, cont, s)) {
+    }
+    if (!(rex->flags & REG_MINIMAL)) {
+        switch (follow(env, rex, cont, s)) {
             case BAD:
                 return BAD;
             case CUT:
@@ -562,6 +567,7 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
             case GOOD:
                 return GOOD;
         }
+    }
     return r;
 }
 
@@ -841,7 +847,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                             n = i;
                             break;
                         }
-                    for (s += n; n-- >= m; s--) switch (follow(env, rex, cont, s)) {
+                    for (s += n; n-- >= m; s--) {
+                        switch (follow(env, rex, cont, s)) {
                             case BAD:
                                 return BAD;
                             case CUT:
@@ -852,6 +859,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                 r = GOOD;
                                 break;
                         }
+                    }
                 } else {
                     for (e = s + m; s < e; s++)
                         if (!settst(rex->re.charclass, *s)) return r;
@@ -888,7 +896,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                         b[i] = t - s;
                         s = t;
                     }
-                    for (; i-- >= rex->lo; s -= b[i]) switch (follow(env, rex, cont, s)) {
+                    for (; i-- >= rex->lo; s -= b[i]) {
+                        switch (follow(env, rex, cont, s)) {
                             case BAD:
                                 stkpop(env->mst);
                                 return BAD;
@@ -902,6 +911,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                 r = GOOD;
                                 break;
                         }
+                    }
                     stkpop(env->mst);
                 } else {
                     for (i = 0; i < m && s < e; i++, s = t)
@@ -1000,7 +1010,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 r = NONE;
                 if (!(rex->flags & REG_MINIMAL)) {
                     if (!mbwide()) {
-                        for (s += n; n-- >= m; s--) switch (follow(env, rex, cont, s)) {
+                        for (s += n; n-- >= m; s--) {
+                            switch (follow(env, rex, cont, s)) {
                                 case BAD:
                                     return BAD;
                                 case CUT:
@@ -1011,6 +1022,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                     r = GOOD;
                                     break;
                             }
+                        }
                     } else {
                         if (!(b = (unsigned char *)stkpush(env->mst, n))) {
                             env->error = REG_ESPACE;
@@ -1018,7 +1030,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                         }
                         e = env->end;
                         for (i = 0; s < e && i < n && *s != c; i++) s += b[i] = MBSIZE(env, s);
-                        for (; i-- >= m; s -= b[i]) switch (follow(env, rex, cont, s)) {
+                        for (; i-- >= m; s -= b[i]) {
+                            switch (follow(env, rex, cont, s)) {
                                 case BAD:
                                     stkpop(env->mst);
                                     return BAD;
@@ -1032,12 +1045,14 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                     r = GOOD;
                                     break;
                             }
+                        }
                         stkpop(env->mst);
                     }
                 } else {
                     if (!mbwide()) {
                         e = s + n;
-                        for (s += m; s <= e; s++) switch (follow(env, rex, cont, s)) {
+                        for (s += m; s <= e; s++) {
+                            switch (follow(env, rex, cont, s)) {
                                 case BAD:
                                     return BAD;
                                 case CUT:
@@ -1046,6 +1061,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                 case GOOD:
                                     return BEST;
                             }
+                        }
                     } else {
                         e = env->end;
                         for (i = 0; s < e && i < m && *s != c; i++) s += MBSIZE(env, s);
@@ -1348,7 +1364,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                             for (i = 0; i < n; i++, s++)
                                 if (*s != c) break;
                         }
-                        for (; i-- >= m; s--) switch (follow(env, rex, cont, s)) {
+                        for (; i-- >= m; s--) {
+                            switch (follow(env, rex, cont, s)) {
                                 case BAD:
                                     return BAD;
                                 case BEST:
@@ -1359,6 +1376,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                     r = GOOD;
                                     break;
                             }
+                        }
                     } else {
                         if (!(b = (unsigned char *)stkpush(env->mst, n))) {
                             env->error = REG_ESPACE;
@@ -1380,7 +1398,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                 b[i] = t - s;
                             }
                         }
-                        for (; i-- >= m; s -= b[i]) switch (follow(env, rex, cont, s)) {
+                        for (; i-- >= m; s -= b[i]) {
+                            switch (follow(env, rex, cont, s)) {
                                 case BAD:
                                     stkpop(env->mst);
                                     return BAD;
@@ -1394,6 +1413,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                     r = GOOD;
                                     break;
                             }
+                        }
                         stkpop(env->mst);
                     }
                 } else {

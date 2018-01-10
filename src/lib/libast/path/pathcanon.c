@@ -526,7 +526,8 @@ again:
 #if NAMED_XATTR
     z = 0;
 #endif
-    while (t <= e) switch (*t++ = *s++) {
+    while (t <= e) {
+        switch (*t++ = *s++) {
             case '.':
                 dots++;
                 break;
@@ -688,6 +689,7 @@ again:
                 dots = 4;
                 break;
         }
+    }
 nope:
     if (canon) {
         if (inplace)

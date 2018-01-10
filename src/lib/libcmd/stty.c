@@ -388,7 +388,8 @@ static void sane(struct termios *sp) {
     const Tty_t *tp;
 
     for (tp = Ttable; tp < &Ttable[elementsof(Ttable)]; tp++)
-        if (tp->flags & (SS | US)) switch (tp->type) {
+        if (tp->flags & (SS | US)) {
+            switch (tp->type) {
                 case BIT:
                 case BITS:
                     switch (tp->field) {
@@ -422,6 +423,7 @@ static void sane(struct termios *sp) {
                     sp->c_cc[tp->mask] = cntl(tp->val);
                     break;
             }
+        }
 }
 
 static int gin(char *arg, struct termios *sp) {

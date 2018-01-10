@@ -92,7 +92,8 @@ char *fmtip6(const unsigned char *addr, int bits) {
             ;
         if ((r[k] = i - k) > r[m] || r[k] == r[m] && i >= (n - 1)) m = k;
     }
-    if (!m) switch (r[m]) {
+    if (!m) {
+        switch (r[m]) {
             case 0:
                 m = -1;
                 break;
@@ -116,6 +117,7 @@ char *fmtip6(const unsigned char *addr, int bits) {
                 }
                 break;
         }
+    }
     for (i = z; i < n; i++) {
         if (i == m) {
             *s++ = ':';

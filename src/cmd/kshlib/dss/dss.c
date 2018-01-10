@@ -1077,7 +1077,8 @@ static int listdss(int argc, char *argv[], Shbltin_t *bp) {
     char *name;
     Cxtype_t *tp;
     NOT_USED(argc);
-    while ((n = optget(argv, optlist))) switch (n) {
+    while ((n = optget(argv, optlist))) {
+        switch (n) {
             case 'm':
             case 'l':
             case 't':
@@ -1093,6 +1094,7 @@ static int listdss(int argc, char *argv[], Shbltin_t *bp) {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return (2);
         }
+    }
     argv += opt_info.index;
     if (error_info.errors || *argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     if (flags == 0) flags = fval('m') | fval('l') | fval('q') | fval('t');
@@ -1138,13 +1140,15 @@ static int loadlib(int argc, char *argv[], Shbltin_t *bp) {
     char *name;
     int n;
     NOT_USED(argc);
-    while ((n = optget(argv, optload))) switch (n) {
+    while ((n = optget(argv, optload))) {
+        switch (n) {
             case ':':
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
             case '?':
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return (2);
         }
+    }
     argv += opt_info.index;
     if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     while (name = *argv++)
@@ -1216,7 +1220,8 @@ static int match(int argc, char *argv[], Shbltin_t *bp) {
     disc.header = (Cxheader_t *)tp->type;
     disc.optdisc.infof = dssoptinfo;
     opt_info.disc = &disc.optdisc;
-    while ((n = optget(argv, optmatch))) switch (n) {
+    while ((n = optget(argv, optmatch))) {
+        switch (n) {
             case 'v':
                 flag = 'v';
                 break;
@@ -1227,6 +1232,7 @@ static int match(int argc, char *argv[], Shbltin_t *bp) {
                 opt_info.disc = 0;
                 return (2);
         }
+    }
     opt_info.disc = 0;
     argv += opt_info.index;
     if (error_info.errors || !(cp = *argv))

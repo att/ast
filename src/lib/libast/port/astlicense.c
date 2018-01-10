@@ -609,7 +609,8 @@ int astlicense(char *p, int size, char *file, char *options, int cc1, int cc2, i
                     }
                     return END(&buf);
                 } else {
-                    if (h == STYLE) switch (c = lookup(lic, v, s - v)) {
+                    if (h == STYLE) {
+                        switch (c = lookup(lic, v, s - v)) {
                             case NONE:
                                 return 0;
                             case TEST:
@@ -634,6 +635,7 @@ int astlicense(char *p, int size, char *file, char *options, int cc1, int cc2, i
                                 if (notice.item[STYLE].data != lic[NONE].data) h = -1;
                                 break;
                         }
+                    }
                     if (h >= 0) {
                         notice.item[h].data = (notice.item[h].size = s - v) ? v : (char *)0;
                         notice.item[h].quote = quote;

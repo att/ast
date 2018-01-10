@@ -53,7 +53,8 @@ void *asocasptr(void *p, void *o, void *n) {
 int asolock(unsigned int volatile *lock, unsigned int key, int type) {
     unsigned int k;
 
-    if (key) switch (type) {
+    if (key) {
+        switch (type) {
             case ASO_UNLOCK:
                 if (*lock != 0) {
                     if (*lock != key) return -1;
@@ -71,5 +72,6 @@ int asolock(unsigned int volatile *lock, unsigned int key, int type) {
                 *lock = key;
                 return 0;
         }
+    }
     return -1;
 }

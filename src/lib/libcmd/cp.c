@@ -201,7 +201,8 @@ static void preserve(State_t *state, const char *path, struct stat *ns, struct s
         error(ERROR_SYSTEM | 2, "%s: cannot reset access and modify times", path);
     if (state->preserve & PRESERVE_IDS) {
         n = ((ns->st_uid != os->st_uid) << 1) | (ns->st_gid != os->st_gid);
-        if (n && chown(state->path, os->st_uid, os->st_gid)) switch (n) {
+        if (n && chown(state->path, os->st_uid, os->st_gid)) {
+            switch (n) {
                 case 01:
                     error(ERROR_SYSTEM | 2, "%s: cannot reset group to %s", path,
                           fmtgid(os->st_gid));
@@ -215,6 +216,7 @@ static void preserve(State_t *state, const char *path, struct stat *ns, struct s
                           fmtuid(os->st_uid), fmtgid(os->st_gid));
                     break;
             }
+        }
     }
 }
 

@@ -749,7 +749,8 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 if (fe->n_str) {
                     const char *fp = mapformat(fe);
                     if (fp) {
-                        if (!isalpha(*fp)) switch (*fp++) {
+                        if (!isalpha(*fp)) {
+                            switch (*fp++) {
                                 case '#': {
                                     fe->flags |= SFFMT_ALTER;
                                     break;
@@ -763,6 +764,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                                     break;
                                 }
                             }
+                        }
                         format = *fp;
                     }
                 }

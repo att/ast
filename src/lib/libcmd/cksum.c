@@ -543,7 +543,8 @@ int b_cksum(int argc, char **argv, Shbltin_t *context) {
     else if (!(fts = fts_open(argv, flags, state.sort)))
         error(ERROR_system(1), "%s: not found", *argv);
     else {
-        while (!sh_checksig(context) && (ent = fts_read(fts))) switch (ent->fts_info) {
+        while (!sh_checksig(context) && (ent = fts_read(fts))) {
+            switch (ent->fts_info) {
                 case FTS_SL:
                     if (!(flags & FTS_PHYSICAL) || (flags & FTS_META) && ent->fts_level == 1)
                         fts_set(NULL, ent, FTS_FOLLOW);
@@ -568,6 +569,7 @@ int b_cksum(int argc, char **argv, Shbltin_t *context) {
                     error(ERROR_system(0), "%s: not found", ent->fts_path);
                     break;
             }
+        }
         fts_close(fts);
     }
     if (state.total) {

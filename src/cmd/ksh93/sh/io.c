@@ -2349,7 +2349,8 @@ int sh_fcntl(int fd, int op, ...) {
     arg = va_arg(ap, int);
     va_end(ap);
     newfd = fcntl(fd, op, arg);
-    if (newfd >= 0) switch (op) {
+    if (newfd >= 0) {
+        switch (op) {
             case F_DUPFD:
             case F_DUPFD_CLOEXEC: {
                 if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
@@ -2371,6 +2372,7 @@ int sh_fcntl(int fd, int op, ...) {
                 }
             }
         }
+    }
     return newfd;
 }
 

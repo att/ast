@@ -244,7 +244,8 @@ int msglist(Sfio_t *sp, register Msg_call_t *msg, int flags, unsigned long terse
         break;
     }
     r += sfprintf(sp, " )");
-    if (msg->call & MSG_VALUE) switch (MSG_ARG(msg->call, 0)) {
+    if (msg->call & MSG_VALUE) {
+        switch (MSG_ARG(msg->call, 0)) {
             case 0:
                 break;
             case MSG_ARG_file:
@@ -257,6 +258,7 @@ int msglist(Sfio_t *sp, register Msg_call_t *msg, int flags, unsigned long terse
                 r += sfprintf(sp, " = %ld", msg->ret.number);
                 break;
         }
+    }
     if (msg->call & MSG_ACK)
         r += sfprintf(sp, " + ack ( 0x%08x %lu %lu )", msg->ack.addr, msg->ack.port, msg->stamp);
     r += sfprintf(sp, "\n");

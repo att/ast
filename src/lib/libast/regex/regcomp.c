@@ -2288,7 +2288,8 @@ static Rex_t *seq(Cenv_t *env) {
             eat(env);
         }
         if (c == T_BAD) return 0;
-        if (s > buf) switch (c) {
+        if (s > buf) {
+            switch (c) {
                 case T_STAR:
                 case T_PLUS:
                 case T_LEFT:
@@ -2329,7 +2330,7 @@ static Rex_t *seq(Cenv_t *env) {
                     e->re.string.size = c;
                     return cat(env, e, seq(env));
             }
-        else if (c > T_BACK) {
+        } else if (c > T_BACK) {
             eat(env);
             c -= T_BACK;
             if (c > env->parno || !env->paren[c]) {

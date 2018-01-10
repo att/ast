@@ -63,7 +63,8 @@ int csdaemon(register Cs_t *state, int fds) {
 
     if (getppid() > 1) {
 #if _lib_fork
-        if (!(state->flags & CS_DAEMON_SLAVE)) switch (fork()) {
+        if (!(state->flags & CS_DAEMON_SLAVE)) {
+            switch (fork()) {
                 case -1:
                     return -1;
                 case 0:
@@ -77,6 +78,7 @@ int csdaemon(register Cs_t *state, int fds) {
                     sleep(2);
                     exit(0);
             }
+        }
 #endif
 
         /*

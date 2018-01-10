@@ -202,7 +202,8 @@ int *uflagp;
 
     /* construct the open flags */
     sflags = oflags = fflags = uflag = 0;
-    while (1) switch (*mode++) {
+    while (1) {
+        switch (*mode++) {
             case 'a':
                 sflags |= SF_WRITE | SF_APPENDWR;
                 oflags |= O_WRONLY | O_APPEND | O_CREAT;
@@ -265,4 +266,5 @@ int *uflagp;
                 if ((sflags & (SF_STRING | SF_RDWR)) == SF_STRING) sflags |= SF_READ;
                 return sflags;
         }
+    }
 }

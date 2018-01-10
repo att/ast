@@ -648,7 +648,8 @@ static int grep(char *id, int options, int argc, char **argv, Shbltin_t *context
     error_info.id = id;
     h = 0;
     fts = 0;
-    while (c = optget(argv, usage)) switch (c) {
+    while (c = optget(argv, usage)) {
+        switch (c) {
             case 'A':
                 if (opt_info.arg) {
                     state.after = (int)strtol(opt_info.arg, &s, 0);
@@ -815,6 +816,7 @@ static int grep(char *id, int options, int argc, char **argv, Shbltin_t *context
                 error(2, "%s: not implemented", opt_info.name);
                 goto done;
         }
+    }
     argv += opt_info.index;
     if ((state.options & REG_LITERAL) && (state.options & (REG_AUGMENTED | REG_EXTENDED))) {
         error(2, "-F and -A or -P or -X are incompatible");
@@ -854,7 +856,8 @@ static int grep(char *id, int options, int argc, char **argv, Shbltin_t *context
         r = 1;
         goto done;
     }
-    while (!sh_checksig(context) && (ent = fts_read(fts))) switch (ent->fts_info) {
+    while (!sh_checksig(context) && (ent = fts_read(fts))) {
+        switch (ent->fts_info) {
             case FTS_F:
                 if (f = sfopen(NULL, ent->fts_accpath, "r")) {
                     r = execute(&state, f, ent->fts_path, context);
@@ -879,6 +882,7 @@ static int grep(char *id, int options, int argc, char **argv, Shbltin_t *context
                 error(ERROR_SYSTEM | 2, "%s: cannot search directory", ent->fts_path);
                 break;
         }
+    }
 quit:
     if ((state.count & 2) && !state.query && !state.list) {
         Item_t *x;

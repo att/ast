@@ -253,7 +253,8 @@ int main(int argc, char **argv) {
         usage = expand_usage;
     else
         usage = unexpand_usage;
-    while (n = optget(argv, usage)) switch (n) {
+    while (n = optget(argv, usage)) {
+        switch (n) {
             case 't':
                 tablist = gettabs(opt_info.arg, &ntabs);
                 break;
@@ -274,6 +275,7 @@ int main(int argc, char **argv) {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
         }
+    }
     argv += opt_info.index;
     if (ntabs < 0)
         ntabs = 1;

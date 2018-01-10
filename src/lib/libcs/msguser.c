@@ -121,7 +121,8 @@ ssize_t msgvcall(int fd, unsigned long channel, unsigned long call, Msg_return_t
     }
     nv = 0;
     at = call >> MSG_ARG_CALL;
-    if (call & MSG_VALUE) switch (at & ((1 << MSG_ARG_TYPE) - 1)) {
+    if (call & MSG_VALUE) {
+        switch (at & ((1 << MSG_ARG_TYPE) - 1)) {
             case 0:
                 break;
             case MSG_ARG_file:
@@ -136,6 +137,7 @@ ssize_t msgvcall(int fd, unsigned long channel, unsigned long call, Msg_return_t
                 msgputu(&b, e, ret ? ret->number : 0);
                 break;
         }
+    }
     for (;;) {
         switch ((at >>= MSG_ARG_TYPE) & ((1 << MSG_ARG_TYPE) - 1)) {
             case MSG_ARG_array:
@@ -159,7 +161,8 @@ ssize_t msgvcall(int fd, unsigned long channel, unsigned long call, Msg_return_t
                 msgputu(&b, e, n);
                 continue;
             case MSG_ARG_output:
-                if (call & MSG_VALUE) switch (MSG_CALL(call)) {
+                if (call & MSG_VALUE) {
+                    switch (MSG_CALL(call)) {
                         case MSG_CALL(MSG_getdents):
                             dp = va_arg(ap, struct dirent *);
                             n = va_arg(ap, size_t);
@@ -247,8 +250,9 @@ ssize_t msgvcall(int fd, unsigned long channel, unsigned long call, Msg_return_t
                             msgputz(&b, e, p, n);
                             break;
                     }
-                else
+                } else {
                     va_arg(ap, char *);
+                }
                 continue;
             case MSG_ARG_string:
                 p = (xp && *xp) ? (char *)(*xp++) : va_arg(ap, char *);

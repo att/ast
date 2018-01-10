@@ -1299,7 +1299,8 @@ int b_od(int argc, char **argv, Shbltin_t *context) {
                         break;
                 }
                 if (s == buf) {
-                    if (isupper(n)) switch (*s++ = tolower(n)) {
+                    if (isupper(n)) {
+                        switch (*s++ = tolower(n)) {
                             case 'f':
                                 *s++ = 'D';
                                 break;
@@ -1307,7 +1308,7 @@ int b_od(int argc, char **argv, Shbltin_t *context) {
                                 *s++ = 'L';
                                 break;
                         }
-                    else
+                    } else {
                         switch (*s++ = n) {
                             case 'd':
                             case 'o':
@@ -1321,6 +1322,7 @@ int b_od(int argc, char **argv, Shbltin_t *context) {
                                 *s++ = 'F';
                                 break;
                         }
+                    }
                 }
                 *s = 0;
                 format(&state, buf);
