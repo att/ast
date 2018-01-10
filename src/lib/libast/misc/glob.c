@@ -26,14 +26,14 @@
  *	Glenn Fowler
  *	AT&T Research
  */
-
 #include <ast.h>
-#include <ls.h>
-#include <stak.h>
+
 #include <ast_dir.h>
 #include <ctype.h>
 #include <error.h>
+#include <ls.h>
 #include <regex.h>
+#include <stak.h>
 
 #define GLOB_MAGIC 0xaaaa0000
 

@@ -22,11 +22,11 @@
 /*
  * <debug.h> support
  */
-
 #include <ast.h>
+
 #include <aso.h>
-#include <error.h>
 #include <debug.h>
+#include <error.h>
 #include <sig.h>
 
 static int indent = 0;

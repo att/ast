@@ -27,8 +27,8 @@
  * esc == '?' or ':' also escaped
  */
 
-#include <optlib.h>
 #include <ctype.h>
+#include <optlib.h>
 
 int optesc(Sfio_t *sp, const char *s, int esc) {
     const char *m;

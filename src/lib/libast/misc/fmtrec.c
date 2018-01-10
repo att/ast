@@ -23,8 +23,8 @@
  * return the record format string given a format descriptor
  */
 
-#include <recfmt.h>
 #include <ctype.h>
+#include <recfmt.h>
 
 char *fmtrec(Recfmt_t f, int fs) {
     char *b;

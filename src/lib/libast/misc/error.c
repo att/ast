@@ -35,13 +35,13 @@
 
 #include "lclib.h"
 
-#include <ctype.h>
 #include <ccode.h>
+#include <ctype.h>
 #include <namval.h>
+#include <regex.h>
 #include <sig.h>
 #include <stk.h>
 #include <times.h>
-#include <regex.h>
 
 /*
  * 2007-03-19 move error_info from _error_info_ to (*_error_infop_)

@@ -24,9 +24,9 @@
  */
 
 #include <ast.h>
+#include <debug.h>
 #include <error.h>
 #include <proc.h>
-#include <debug.h>
 
 void systrace(const char *id) {
     int n;

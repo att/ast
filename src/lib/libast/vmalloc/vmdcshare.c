@@ -41,8 +41,9 @@
 */
 
 /* magic word signaling region is being initialized */
-#define MM_JUST4US ((unsigned int)(('P' << 24) | ('N' << 16) | ('B' << 8) | ('I'))) /* 1347306057 \
-                                                                                     */
+#define MM_JUST4US                                                                 \
+    ((unsigned int)(('P' << 24) | ('N' << 16) | ('B' << 8) | ('I'))) /* 1347306057 \
+                                                                      */
 
 /* magic word signaling file/segment is ready */
 #define MM_MAGIC ((unsigned int)(('P' << 24) | ('&' << 16) | ('N' << 8) | ('8'))) /* 1344687672 */

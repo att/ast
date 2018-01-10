@@ -25,6 +25,7 @@
 #if _PACKAGE_ast
 
 #include <ast.h>
+
 #include <error.h>
 
 #else
@@ -40,7 +41,8 @@
 #define integralof(x) (((char *)(x)) - ((char *)0))
 #endif
 #ifndef NoN
-#define NoN(x) void _STUB_##x() {}
+#define NoN(x) \
+    void _STUB_##x() {}
 #if !defined(_STUB_)
 #define _STUB_
 #endif

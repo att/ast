@@ -34,8 +34,8 @@
  *	  i|n header included/not-included in size (ibm V i (1))
  */
 
-#include <recfmt.h>
 #include <ctype.h>
+#include <recfmt.h>
 
 Recfmt_t recstr(const char *s, char **e) {
     char *t;

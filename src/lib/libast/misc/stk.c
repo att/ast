@@ -34,8 +34,8 @@
  *   dgk@research.att.com
  *
  */
+#include <sfio_t.h>  // must be first include for some reason
 
-#include <sfio_t.h>
 #include <ast.h>
 #include <stk.h>
 

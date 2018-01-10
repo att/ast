@@ -116,9 +116,7 @@ static struct State_s {
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))
 #define newof(p, t, n, x) ((t *)malloc(sizeof(t) * (n) + (x)))
 
-static Link_t *
-enter(Table_t *tab, Link_t *v)
-{
+static Link_t *enter(Table_t *tab, Link_t *v) {
     Link_t *x;
     Link_t *p;
 
@@ -133,9 +131,7 @@ enter(Table_t *tab, Link_t *v)
     return v;
 }
 
-static Link_t *
-lookup(Table_t *tab, char *s)
-{
+static Link_t *lookup(Table_t *tab, char *s) {
     Link_t *x;
 
     for (x = tab->root; x; x = x->next)
@@ -143,9 +139,7 @@ lookup(Table_t *tab, char *s)
     return 0;
 }
 
-static char *
-copy(char **p, char *f)
-{
+static char *copy(char **p, char *f) {
     char *t;
     char *b;
 
@@ -157,9 +151,7 @@ copy(char **p, char *f)
     return b;
 }
 
-static void
-macro(FILE *f, char *p1, char *p2, char *p3)
-{
+static void macro(FILE *f, char *p1, char *p2, char *p3) {
     int c;
     char *s;
     char *b;
@@ -203,8 +195,7 @@ macro(FILE *f, char *p1, char *p2, char *p3)
     while (n-- > 0) fprintf(f, "#endif\n");
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     char *s;
     char **vp;
     char **ve;

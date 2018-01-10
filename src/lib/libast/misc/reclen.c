@@ -25,8 +25,8 @@
  *  0 returned if more data is required
  */
 
-#include <recfmt.h>
 #include <ctype.h>
+#include <recfmt.h>
 
 ssize_t reclen(Recfmt_t f, const void *b, size_t n) {
     unsigned char *s = (unsigned char *)b;
