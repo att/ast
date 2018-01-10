@@ -1,23 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 2007-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*               Roland Mainz <roland.mainz@nrubsig.org>                *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 2007-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *               Roland Mainz <roland.mainz@nrubsig.org>                *
+ *                                                                      *
+ ***********************************************************************/
 #include "defs.h"
+
 #include <poll.h>
 #include <stdio.h>
 #include <stk.h>
@@ -275,7 +276,7 @@ struct pollstat {
         ssize_t flags;
     } sfio;
 
-    // 
+    //
     //  Bits in |eventvar_found| are POLL*-bits, set if matching
     //  ar[i].events.poll* var was found. We use this later to
     //  set the same ar[i].revents.poll* variable, regardless
@@ -395,11 +396,11 @@ static void set_compound_revents(Shell_t *shp, const char *parrayname, struct po
                  subname);
         return;
     }
-    nv_setvtree(np); // Make "revents" really a compound variable
+    nv_setvtree(np);  // Make "revents" really a compound variable
     nv_close(np);
 
     for (pi = 0; pfnm[pi].name != NULL; pi++) {
-        //  
+        //
         //  POLLHUP|POLLNVAL|POLLERR can always appear in |currpollfd->revents|
         //  even if we did not request them in |currpollfd->events|
         //
@@ -419,21 +420,21 @@ static void set_compound_revents(Shell_t *shp, const char *parrayname, struct po
 extern int b_poll(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = sh_contexttoshell(context);
     Namval_t *np, *array_np, *array_np_sub;
-    Sfio_t *strstk = NULL;      // stk object for memory allocations
-    const char *parrayname,     // name of array with poll data
-        *eventarrayname = NULL, // name of array with indexes to results
-        *subname;               // current subscript
+    Sfio_t *strstk = NULL;       // stk object for memory allocations
+    const char *parrayname,      // name of array with poll data
+        *eventarrayname = NULL,  // name of array with indexes to results
+        *subname;                // current subscript
     int n;
-    nfds_t numpollfd = 0; // number of entries to poll
+    nfds_t numpollfd = 0;  // number of entries to poll
     int i, j;
     double timeout = -1.;
-    char buff[PATH_MAX * 2 + 1];      // fixme: theoretically enough to hold two variable names ?
-    bool ttyraw = false;              // put ttys into raw more when polling
-    bool pollsfio = true;             // should we ask sfio layer if it has data cached ?
-    struct pollfd *pollfd = NULL;     // data for poll(2)
-    struct pollstat *pollstat = NULL, // context data from shell array
-        *currps;                      // current |pollstat| we are working on
-    int retval = 0;                   // return value of builtin
+    char buff[PATH_MAX * 2 + 1];       // fixme: theoretically enough to hold two variable names ?
+    bool ttyraw = false;               // put ttys into raw more when polling
+    bool pollsfio = true;              // should we ask sfio layer if it has data cached ?
+    struct pollfd *pollfd = NULL;      // data for poll(2)
+    struct pollstat *pollstat = NULL,  // context data from shell array
+        *currps;                       // current |pollstat| we are working on
+    int retval = 0;                    // return value of builtin
 
     while (n = optget(argv, sh_optpoll)) {
         switch (n) {
@@ -491,7 +492,7 @@ extern int b_poll(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_system(1), "variable %s is not an array", parrayname);
     }
 
-    // 
+    //
     //  Count number of array elememts. We need to do it "manually"
     //  to handle sparse indexed and associative arrays
     //

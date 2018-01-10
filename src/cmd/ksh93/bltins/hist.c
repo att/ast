@@ -1,23 +1,24 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #include "defs.h"
+
 #include <error.h>
 #include <ls.h>
 #include <stak.h>
@@ -35,7 +36,7 @@
 static void hist_subst(Shell_t *shp, const char *, int fd, char *);
 
 #if 0
-    // for the benefit of the dictionary generator 
+    // for the benefit of the dictionary generator
     int	b_fc(int argc,char *argv[], Shbltin_t *context){}
 #endif
 int b_hist(int argc, char *argv[], Shbltin_t *context) {
@@ -46,14 +47,15 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     Sfio_t *outfile;
     char *fname;
     int range[2], incr, index2, indx = -1;
-    char *edit = 0;    // name of editor
-    char *replace = 0; // replace old=new
+    char *edit = 0;     // name of editor
+    char *replace = 0;  // replace old=new
     int lflag = 0, nflag = 0, rflag = 0;
 #if SHOPT_HISTEXPAND
     int pflag = 0;
 #endif
     Histloc_t location;
     NOT_USED(argc);
+
     if (!sh_histinit((void *)shp)) errormsg(SH_DICT, ERROR_system(1), e_histopen);
     hp = shp->gd->hist_ptr;
     while ((flag = optget(argv, sh_opthist))) {
@@ -123,13 +125,13 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 #endif
     flag = indx;
     while (flag < 1 && (arg = argv[1])) {
-        // look for old=new argument
+        // Look for old=new argument.
         if (!replace && strchr(arg + 1, '=')) {
             replace = arg;
             argv++;
             continue;
         } else if (isdigit(*arg) || *arg == '-') {
-            // see if completely numeric
+            // See if completely numeric.
             do {
                 arg++;
             } while (isdigit(*arg));
@@ -141,7 +143,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                 continue;
             }
         }
-        // search for last line starting with string
+        // Search for last line starting with string.
         location = hist_find(hp, argv[1], hist_max(hp) - 1, 0, -1);
         if ((range[++flag] = location.hist_command) < 0) {
             errormsg(SH_DICT, ERROR_exit(1), e_found, argv[1]);
@@ -149,7 +151,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         argv++;
     }
     if (flag < 0) {
-        // set default starting range
+        // Set default starting range.
         if (lflag) {
             flag = hist_max(hp) - 16;
             if (flag < 1) flag = 1;
@@ -161,19 +163,19 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     }
     index2 = hist_min(hp);
     if (range[0] < index2) range[0] = index2;
-    // set default termination range
-    if (flag == 0) { 
+    // Set default termination range.
+    if (flag == 0) {
         range[1] = ((lflag && !edit) ? hist_max(hp) - 1 : range[0]);
     }
     if (range[1] >= (flag = (hist_max(hp) - !lflag))) {
         range[1] = flag;
     }
-    // check for valid ranges
+    // Check for valid ranges.
     if (range[1] < index2 || range[0] >= flag) {
         errormsg(SH_DICT, ERROR_exit(1), e_badrange, range[0], range[1]);
     }
     if (edit && *edit == '-' && range[0] != range[1]) errormsg(SH_DICT, ERROR_exit(1), e_eneedsarg);
-    // now list commands from range[rflag] to range[1-rflag]
+    // Now list commands from range[rflag] to range[1-rflag].
     incr = 1;
     flag = rflag > 0;
     if (range[1 - flag] < range[flag]) incr = -1;
@@ -221,17 +223,17 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     fdo = sh_chkopen(fname);
     unlink(fname);
     free(fname);
-    // don't history fc itself unless forked
+    // Don't history fc itself unless forked.
     error_info.flags |= ERROR_SILENT;
     if (!sh_isstate(shp, SH_FORKED)) hist_cancel(hp);
     sh_onstate(shp, SH_HISTORY);
-    sh_onstate(shp, SH_VERBOSE); // echo lines as read
+    sh_onstate(shp, SH_VERBOSE);  // echo lines as read
     if (replace) {
         hist_subst(shp, error_info.id, fdo, replace);
     } else if (error_info.errors == 0) {
         char buff[IOBSIZE + 1];
         Sfio_t *iop = sfnew(NULL, buff, IOBSIZE, fdo, SF_READ);
-        // read in and run the command
+        // Read in and run the command.
         if (shp->hist_depth++ > HIST_RECURSE) {
             errormsg(SH_DICT, ERROR_exit(1), e_toodeep, "history");
         }
@@ -246,20 +248,21 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 }
 
 //
-// given a file containing a command and a string of the form old=new,
-// execute the command with the string old replaced by new
+// Given a file containing a command and a string of the form old=new, execute the command with the
+// string old replaced by new.
 //
-
 static void hist_subst(Shell_t *shp, const char *command, int fd, char *replace) {
     char *newp = replace;
     char *sp;
     int c;
     off_t size;
     char *string;
-    while (*++newp != '=')
-        ; // skip to '='
+
+    while (*++newp != '=') {
+        ;  // skip to '='
+    }
     size = lseek(fd, (off_t)0, SEEK_END);
-    if ( size < 0) return;
+    if (size < 0) return;
     lseek(fd, (off_t)0, SEEK_SET);
     c = (int)size;
     string = stakalloc(c + 1);
@@ -267,7 +270,7 @@ static void hist_subst(Shell_t *shp, const char *command, int fd, char *replace)
     string[c] = 0;
     *newp++ = 0;
     sp = sh_substitute(shp, string, replace, newp);
-    if ( sp == 0) {
+    if (sp == 0) {
         errormsg(SH_DICT, ERROR_exit(1), e_subst, command);
     }
     *(newp - 1) = '=';

@@ -627,11 +627,11 @@ static int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (nv_isnull(np) && !nv_isarray(np) && nv_isattr(np, NV_NOFREE)) {
                 nv_offattr(np, NV_NOFREE);
             } else if (tp->tp && !nv_isattr(np, NV_MINIMAL | NV_EXPORT) &&
-                     (mp = (Namval_t *)np->nvenv) && (ap = nv_arrayptr(mp)) &&
-                     (ap->flags & ARRAY_TREE)) {
+                       (mp = (Namval_t *)np->nvenv) && (ap = nv_arrayptr(mp)) &&
+                       (ap->flags & ARRAY_TREE)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_typecompat, nv_name(np));
             } else if ((ap = nv_arrayptr(np)) && nv_aindex(np) > 0 && ap->nelem == 1 &&
-                     nv_getval(np) == Empty) {
+                       nv_getval(np) == Empty) {
                 ap->nelem++;
                 _nv_unset(np, 0);
                 ap->nelem--;
@@ -736,7 +736,7 @@ static int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 }
 #if SHOPT_BASH
                 if (flag & NV_EXPORT) nv_offattr(np, NV_IMPORT);
-#endif // SHOPT_BASH
+#endif  // SHOPT_BASH
                 newflag = curflag;
                 if (flag & ~NV_NOCHANGE) newflag &= NV_NOCHANGE;
                 newflag |= flag;
@@ -892,13 +892,13 @@ Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
     return 0;
 }
 
-#else // SHOPT_DYNAMIC
+#else  // SHOPT_DYNAMIC
 
 int sh_addlib(Shell_t *shp, void *library, char *name, Pathcomp_t *pp) { return 0; }
 
 Shbltin_f sh_getlib(Shell_t *shp, char *name, Pathcomp_t *pp) { return 0; }
 
-#endif // SHOPT_DYNAMIC
+#endif  // SHOPT_DYNAMIC
 
 //
 // Add change or list built-ins. Adding builtins requires dlopen() interface.
@@ -938,10 +938,10 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             case 'f': {
 #if SHOPT_DYNAMIC
                 arg = opt_info.arg;
-#else  // SHOPT_DYNAMIC
+#else   // SHOPT_DYNAMIC
                 errormsg(SH_DICT, 2, "adding built-ins not supported");
                 error_info.errors++;
-#endif // SHOPT_DYNAMIC
+#endif  // SHOPT_DYNAMIC
                 break;
             }
             case 'l': {
@@ -991,7 +991,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #else  // SH_PLUGIN_VERSION
 #if (_AST_VERSION >= 20040404)
         if (!(library = dllplug(SH_ID, arg, NULL, RTLD_LAZY, NULL, 0)))
-#else  // _AST_VERSION >= 20040404
+#else   // _AST_VERSION >= 20040404
         if (!(library = dllfind(arg, NULL, RTLD_LAZY, NULL, 0)))
 #endif  // _AST_VERSION >= 20040404
         {
@@ -1001,7 +1001,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #endif  // SH_PLUGIN_VERSION
         sh_addlib(tdata.sh, library, arg, NULL);
     } else
-#endif // SHOPT_DYNAMIC
+#endif  // SHOPT_DYNAMIC
     {
         if (*argv == 0 && dlete != 1) {
             if (tdata.prefix) {
@@ -1031,9 +1031,9 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #if SHOPT_DYNAMIC
                 if (!dlete && !liblist[n].dll) continue;
                 if (dlete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag))))
-#else  // SHOPT_DYNAMIC
+#else   // SHOPT_DYNAMIC
                 if (dlete)
-#endif // SHOPT_DYNAMIC
+#endif  // SHOPT_DYNAMIC
                 {
                     if (np = sh_addbuiltin(tdata.sh, arg, addr, pointerof(dlete))) {
                         if (dlete || nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
@@ -1042,7 +1042,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                     else {
                         nv_onattr(np, liblist[n].attr);
                     }
-#endif // SHOPT_DYNAMIC
+#endif  // SHOPT_DYNAMIC
                     break;
                 }
             }

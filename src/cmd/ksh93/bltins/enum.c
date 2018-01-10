@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2013 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2013 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 #include <defs.h>
 
 static const char enum_usage[] =
@@ -282,8 +282,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
     if (!*argv) sh_outenum(shp, sfstdout, (Namval_t *)0);
     while (cp = *argv++) {
         np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD);
-        if (!np || !(ap = nv_arrayptr(np)) ||
-            ap->fun || (sz = ap->nelem) < 2) {
+        if (!np || !(ap = nv_arrayptr(np)) || ap->fun || (sz = ap->nelem) < 2) {
             error(ERROR_exit(1), "%s must name an array  containing at least two elements", cp);
         }
         n = stktell(shp->stk);

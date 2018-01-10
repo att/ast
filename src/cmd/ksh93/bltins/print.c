@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2014 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 //
 // echo [arg...]
 // print [-nrps] [-f format] [-u filenum] [arg...]
@@ -25,8 +25,8 @@
 //   David Korn
 //   AT&T Labs
 //
-
 #include "defs.h"
+
 #include <ccode.h>
 #include <error.h>
 #include <tmx.h>
@@ -115,7 +115,7 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
             prdata.raw = 0;
             prdata.echon = 1;
         }
-#endif // SHOPT_ECHOE
+#endif  // SHOPT_ECHOE
         else {
             break;
         }
@@ -218,10 +218,9 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 } else if (!sh_iovalidfd(shp, fd)) {
                     fd = -1;
                 } else if (!(shp->inuse_bits & (1 << fd)) &&
-                         (sh_inuse(shp, fd) ||
-                          (shp->gd->hist_ptr && fd == sffileno(shp->gd->hist_ptr->histfp)))) {
-
-                            fd = -1;
+                           (sh_inuse(shp, fd) ||
+                            (shp->gd->hist_ptr && fd == sffileno(shp->gd->hist_ptr->histfp)))) {
+                    fd = -1;
                 }
                 break;
             }
@@ -428,7 +427,7 @@ static char strformat(char *s) {
                     t += mbconv(t, c);
                     continue;
                 }
-#endif // FMT_EXP_WIDE
+#endif  // FMT_EXP_WIDE
                 if (c == '%') {
                     *t++ = '%';
                 } else if (c == 0) {
@@ -669,7 +668,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             }
             case 'q': {
                 format = 's';
-            // FALL THRU
+                // FALL THRU
             }
             case 's':
             case 'H':
@@ -849,7 +848,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                             lastchar = "";
                         }
                         break;
-                   }
+                    }
                 }
                 if (neg) value->ll = -value->ll;
                 fe->size = sizeof(value->ll);
@@ -902,7 +901,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 fe->size = sizeof(value->ll);
                 errormsg(SH_DICT, ERROR_exit(1), e_formspec, format);
                 break;
-             }
+            }
         }
 
         if (format == '.') {
@@ -1028,7 +1027,7 @@ static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
         if (c == '\\') {
             switch (*++cp) {
                 case 'E': {
-                    c = ('a' == 97 ? '\033' : 39); // ASCII/EBCDIC
+                    c = ('a' == 97 ? '\033' : 39);  // ASCII/EBCDIC
                     break;
                 }
                 case 'a': {
@@ -1076,9 +1075,7 @@ static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
                         c |= (*cp - '0');
                     }
                 }
-                default: {
-                    cp--;
-                }
+                default: { cp--; }
             }
         }
         sfputc(shp->stk, c);

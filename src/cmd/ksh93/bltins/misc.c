@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 //
 // exec [arg...]
 // eval [arg...]
@@ -34,8 +34,8 @@
 //   AT&T Labs
 //
 //
-
 #include "defs.h"
+
 #include "builtins.h"
 #include "history.h"
 #include "io.h"
@@ -45,7 +45,7 @@
 #include "shnodes.h"
 #include "variables.h"
 
-#define DOTMAX MAXDEPTH // Maximum level of . nesting.
+#define DOTMAX MAXDEPTH  // Maximum level of . nesting.
 
 static void noexport(Namval_t *, void *);
 
@@ -125,8 +125,7 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
         }
         while (arg) {
             cp = strchr(arg->argval, '=');
-            if (cp &&
-                (*cp = 0, np = nv_search(arg->argval, shp->var_tree, 0))) {
+            if (cp && (*cp = 0, np = nv_search(arg->argval, shp->var_tree, 0))) {
                 nv_onattr(np, NV_EXPORT);
                 sh_envput(shp, np);
             }
@@ -137,7 +136,7 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
         if (logp && logp->arg0) argv[0] = logp->arg0;
 #ifdef JOBS
         if (job_close(shp) < 0) return 1;
-#endif // JOBS
+#endif  // JOBS
         // Force bad exec to terminate shell.
         pp->mode = SH_JMPEXIT;
         sh_sigreset(shp, 2);
@@ -489,7 +488,7 @@ int b_universe(int argc, char *argv[], Shbltin_t *context) {
     }
     return 0;
 }
-#endif // cmd_universe
+#endif  // cmd_universe
 
 #if SHOPT_FS_3D
 #if 0
@@ -571,4 +570,4 @@ failed:
              (flag & FS3D_VIEW) ? e_mapping : e_versions);
     return 1;
 }
-#endif // SHOPT_FS_3D
+#endif  // SHOPT_FS_3D

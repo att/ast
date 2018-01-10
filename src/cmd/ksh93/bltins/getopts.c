@@ -1,22 +1,22 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1982-2014 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                    David Korn <dgkorn@gmail.com>                     *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1982-2014 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                    David Korn <dgkorn@gmail.com>                     *
+ *                                                                      *
+ ***********************************************************************/
 //
 // getopts  optstring name [arg...]
 //
@@ -24,8 +24,8 @@
 //   dgkorn@gmail.com
 //
 //
-
 #include "defs.h"
+
 #include <error.h>
 #include <nval.h>
 #include "builtins.h"
@@ -159,9 +159,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
             opt_info.offset = 0;
             break;
         }
-        default: {
-            options = opt_info.option + (*opt_info.option != '+');
-        }
+        default: { options = opt_info.option + (*opt_info.option != '+'); }
     }
     if (r < 0) r = 0;
     error_info.context->flags &= ~ERROR_SILENT;
@@ -173,7 +171,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     if (opt_info.num == LONG_MIN) {
         nv_putval(np, opt_info.arg, NV_RDONLY);
     } else if (opt_info.arg && opt_info.num > 0 && isalpha((char)opt_info.num) &&
-             !isdigit(opt_info.arg[0]) && opt_info.arg[0] != '-' && opt_info.arg[0] != '+') {
+               !isdigit(opt_info.arg[0]) && opt_info.arg[0] != '-' && opt_info.arg[0] != '+') {
         key[0] = (char)opt_info.num;
         key[1] = 0;
         nv_putval(np, key, NV_RDONLY);
