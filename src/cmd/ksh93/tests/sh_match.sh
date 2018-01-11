@@ -46,12 +46,13 @@
 # This test module tests the .sh.match pattern matching facility
 #
 
-# test setup
+# Test setup
+
 function err_exit
 {
-	print -u2 -n '\t'
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	(( Errors++ ))
+    print -u2 -n '\t'
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    (( Errors++ ))
 }
 alias err_exit='err_exit $LINENO'
 
@@ -71,8 +72,9 @@ cd "${tmpdir}" || { err_exit "cd ${tmpdir} failed." ; exit $((Errors<125?Errors:
 # tests
 function test_xmlfragment1
 {
-	typeset -r testscript='test1_script.sh'
-cat >"${testscript}" <<-TEST1SCRIPT
+    typeset -r testscript='test1_script.sh'
+
+    cat >"${testscript}" <<-TEST1SCRIPT
 	# memory safeguards to prevent out-of-control memory consumption
 	ulimit -M \$(( 1024 * 1024 ))
 	ulimit -v \$(( 1024 * 1024 ))
@@ -158,6 +160,7 @@ cat >"${testscript}" <<-TEST1SCRIPT
 		else
 			printf "#difference between input and output found.\\n"
 		fi
+
 	
 		rm -f "\${tmpfile}"
 		return 0
@@ -171,7 +174,7 @@ cat >"${testscript}" <<-TEST1SCRIPT
 	rebuild_xml_and_verify xar "\$xmltext"
 TEST1SCRIPT
 
-cat >'testfile1.xml' <<-EOF
+    cat >'testfile1.xml' <<-EOF
 	<refentry>
 		<refentryinfo>
 			<title>&dhtitle;</title>
@@ -420,247 +423,252 @@ EOF
 # Note: Standalone '>' is valid XML text
 printf "%s" $'<h1 style=\'nice\' h="bar">> <oook:banana color="<yellow />"><oook:apple-mash color="<green />"><div style="some green"><illegal tag /><br /> a text </div>More [TEXT].<!-- a comment (<disabled>) --></h1>' >'testfile2.xml'
 
-	compound -r -a tests=(
-		(
-			file='testfile1.xml'
-			expected_output=$'9762 characters to process...\n#input and output OK (9763 characters).'
-		)
-		(
-			file='testfile2.xml'
-			expected_output=$'201 characters to process...\n#input and output OK (202 characters).'
-		)
-	)
-	compound out=( typeset stdout stderr ; integer res )
-	integer i
-	typeset expected_output
-	typeset testname
+    compound -r -a tests=(
+        (
+            file='testfile1.xml'
+            expected_output=$'9762 characters to process...\n#input and output OK (9763 characters).'
+        )
+        (
+            file='testfile2.xml'
+            expected_output=$'201 characters to process...\n#input and output OK (202 characters).'
+        )
+    )
+    compound out=( typeset stdout stderr ; integer res )
+    integer i
+    typeset expected_output
+    typeset testname
 
-	for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
-		nameref tst=tests[i]
-		testname="${0}/${i}/${tst.file}"
-		expected_output="${tst.expected_output}"
+    for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
+        nameref tst=tests[i]
+        testname="${0}/${i}/${tst.file}"
+        expected_output="${tst.expected_output}"
 
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset "${testscript}" "${tst.file}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset "${testscript}" "${tst.file}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-		[[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
-	done
+        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+    done
 
-	rm "${testscript}"
-	rm 'testfile1.xml'
-	rm 'testfile2.xml'
+    rm "${testscript}"
+    rm 'testfile1.xml'
+    rm 'testfile2.xml'
 
-	return 0
+    return 0
 }
 
 # test whether the [[ -v .sh.match[x][y] ]] operator works, try1
 function test_testop_v1
 {
-	compound out=( typeset stdout stderr ; integer res )
-	integer i
-	typeset testname
-	typeset expected_output
+    compound out=( typeset stdout stderr ; integer res )
+    integer i
+    typeset testname
+    typeset expected_output
 
-	compound -r -a tests=(
-		(
-			cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ;                   [[ -v .sh.match[2][3]   ]] || print "OK"'
-			expected_output='OK'
-		)
-		(
-			cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ; integer i=2 j=3 ; [[ -v .sh.match[$i][$j] ]] || print "OK"'
-			expected_output='OK'
-		)
-		(
-			cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ; integer i=2 j=3 ; [[ -v .sh.match[i][j]   ]] || print "OK"'
-			expected_output='OK'
-		)
-	)
+    compound -r -a tests=(
+        (
+            cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ;                   [[ -v .sh.match[2][3]   ]] || print "OK"'
+            expected_output='OK'
+        )
+        (
+            cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ; integer i=2 j=3 ; [[ -v .sh.match[$i][$j] ]] || print "OK"'
+            expected_output='OK'
+        )
+        (
+            cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}" ; integer i=2 j=3 ; [[ -v .sh.match[i][j]   ]] || print "OK"'
+            expected_output='OK'
+        )
+    )
 
-	for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
-		nameref tst=tests[i]
-		testname="${0}/${i}/${tst.cmd}"
-		expected_output="${tst.expected_output}"
+    for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
+        nameref tst=tests[i]
+        testname="${0}/${i}/${tst.cmd}"
+        expected_output="${tst.expected_output}"
 
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-		[[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
-	done
+        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+    done
 
-	return 0
+    return 0
 }
 
 # test whether the [[ -v .sh.match[x][y] ]] operator works, try2
 function test_testop_v2
 {
-	compound out=( typeset stdout stderr ; integer res )
-	integer i
-	integer j
-	integer j
-	typeset testname
-	typeset cmd
+    compound out=( typeset stdout stderr ; integer res )
+    integer i
+    integer j
+    integer j
+    typeset testname
+    typeset cmd
 
-	compound -r -a tests=(
-		(
-			cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}"'
-			integer y=6
-			expected_output_1d=$'[0]\n[1]\n[2]'
-			expected_output_2d=$'[0][0]\n[0][1]\n[0][2]\n[0][3]\n[0][4]\n[1][0]\n[1][1]\n[1][3]\n[2][2]\n[2][4]'
-		)
-		# FIXME: Add more hideous horror tests here
-	)
+    compound -r -a tests=(
+        (
+            cmd='s="aaa bbb 333 ccc 555" ; s="${s//~(E)([[:alpha:]]+)|([[:digit:]]+)/NOP}"'
+            integer y=6
+            expected_output_1d=$'[0]\n[1]\n[2]'
+            expected_output_2d=$'[0][0]\n[0][1]\n[0][2]\n[0][3]\n[0][4]\n[1][0]\n[1][1]\n[1][3]\n[2][2]\n[2][4]'
+        )
+        # FIXME: Add more hideous horror tests here
+    )
 
-	for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
-		nameref tst=tests[i]
+    for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
+        nameref tst=tests[i]
 
-		#
-		# test first dimension, by plain number
-		#
-		cmd="${tst.cmd}"
-		for (( j=0 ; j < tst.y ; j++ )) ; do
-			cmd+="; $( printf "[[ -v .sh.match[%d] ]] && print '[%d]'\n" j j )"
-		done
-		cmd+='; true'
+        #
+        # test first dimension, by plain number
+        #
+        cmd="${tst.cmd}"
+        for (( j=0 ; j < tst.y ; j++ )) ; do
+            cmd+="; $( printf "[[ -v .sh.match[%d] ]] && print '[%d]'\n" j j )"
+        done
+        cmd+='; true'
 
-		testname="${0}/${i}/plain_number_index_1d/${cmd}"
+        testname="${0}/${i}/plain_number_index_1d/${cmd}"
 
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-		[[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
-
-
-		#
-		# test second dimension, by plain number
-		#
-		cmd="${tst.cmd}"
-		for (( j=0 ; j < tst.y ; j++ )) ; do
-			for (( k=0 ; k < tst.y ; k++ )) ; do
-				cmd+="; $( printf "[[ -v .sh.match[%d][%d] ]] && print '[%d][%d]'\n" j k j k )"
-			done
-		done
-		cmd+='; true'
-
-		testname="${0}/${i}/plain_number_index_2d/${cmd}"
-
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-
-		[[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
-
-		#
-		# test first dimension, by variable index
-		#
-		cmd="${tst.cmd} ; integer i"
-		for (( j=0 ; j < tst.y ; j++ )) ; do
-			cmd+="; $( printf "(( i=%d )) ; [[ -v .sh.match[i] ]] && print '[%d]'\n" j j )"
-		done
-		cmd+='; true'
-
-		testname="${0}/${i}/variable_index_1d/${cmd}"
-
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-
-		[[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
 
 
-		#
-		# test second dimension, by variable index
-		#
-		cmd="${tst.cmd} ; integer i j"
-		for (( j=0 ; j < tst.y ; j++ )) ; do
-			for (( k=0 ; k < tst.y ; k++ )) ; do
-				cmd+="; $( printf "(( i=%d , j=%d )) ; [[ -v .sh.match[i][j] ]] && print '[%d][%d]'\n" j k j k )"
-			done
-		done
-		cmd+='; true'
+        #
+        # test second dimension, by plain number
+        #
+        cmd="${tst.cmd}"
+        for (( j=0 ; j < tst.y ; j++ )) ; do
+            for (( k=0 ; k < tst.y ; k++ )) ; do
+                cmd+="; $( printf "[[ -v .sh.match[%d][%d] ]] && print '[%d][%d]'\n" j k j k )"
+            done
+        done
+        cmd+='; true'
 
-		testname="${0}/${i}/variable_index_2d/${cmd}"
+        testname="${0}/${i}/plain_number_index_2d/${cmd}"
 
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-		[[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
 
-	done
+        #
+        # test first dimension, by variable index
+        #
+        cmd="${tst.cmd} ; integer i"
+        for (( j=0 ; j < tst.y ; j++ )) ; do
+            cmd+="; $( printf "(( i=%d )) ; [[ -v .sh.match[i] ]] && print '[%d]'\n" j j )"
+        done
+        cmd+='; true'
 
-	return 0
+        testname="${0}/${i}/variable_index_1d/${cmd}"
+
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+
+        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+
+
+        #
+        # test second dimension, by variable index
+        #
+        cmd="${tst.cmd} ; integer i j"
+        for (( j=0 ; j < tst.y ; j++ )) ; do
+            for (( k=0 ; k < tst.y ; k++ )) ; do
+                cmd+="; $( printf "(( i=%d , j=%d )) ; [[ -v .sh.match[i][j] ]] && print '[%d][%d]'\n" j k j k )"
+            done
+        done
+        cmd+='; true'
+
+        testname="${0}/${i}/variable_index_2d/${cmd}"
+
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+
+        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+
+    done
+
+    return 0
 }
 
 # test whether ${#.sh.match[0][@]} returns the right number of elements
 function test_num_elements1
 {
-	compound out=( typeset stdout stderr ; integer res )
-	integer i
-	typeset testname
-	typeset expected_output
+    compound out=( typeset stdout stderr ; integer res )
+    integer i
+    typeset testname
+    typeset expected_output
 
-	compound -r -a tests=(
-		(
-			cmd='s="a1a2a3" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
-			expected_output='num=6'
-		)
-		(
-			cmd='s="ababab" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
-			expected_output='num=6'
-		)
-		(
-			cmd='s="123456" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
-			expected_output='num=6'
-		)
-	)
+    compound -r -a tests=(
+        (
+            cmd='s="a1a2a3" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
+            expected_output='num=6'
+        )
+        (
+            cmd='s="ababab" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
+            expected_output='num=6'
+        )
+        (
+            cmd='s="123456" ; d="${s//~(E)([[:alpha:]])|([[:digit:]])/dummy}" ; printf "num=%d\n" "${#.sh.match[0][@]}"'
+            expected_output='num=6'
+        )
+    )
 
-	for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
-		nameref tst=tests[i]
-		testname="${0}/${i}/${tst.cmd}"
-		expected_output="${tst.expected_output}"
+    for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
+        nameref tst=tests[i]
+        testname="${0}/${i}/${tst.cmd}"
+        expected_output="${tst.expected_output}"
 
-		out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
+        out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-		[[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-		[[ "${out.stderr}" == ''		   ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-		(( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
-	done
+        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+    done
 
-	return 0
+    return 0
 }
 
 function test_nomatch
 {
-	integer j k
-	compound c
-	compound -a c.attrs
+    integer j k
+    compound c
+    compound -a c.attrs
 
-	attrdata=$' x=\'1\' y=\'2\' z="3" end="world"'
-	dummy="${attrdata//~(Ex-p)(?:
-		[[:space:]]+
-		( # four different types of name=value syntax
-			(?:([:_[:alnum:]-]+)=([^\"\'[:space:]]+?))|	#x='foo=bar huz=123'
-			(?:([:_[:alnum:]-]+)=\"([^\"]*?)\")|		#x='foo="ba=r o" huz=123'
-			(?:([:_[:alnum:]-]+)=\'([^\']*?)\')|		#x="foox huz=123"
-			(?:([:_[:alnum:]-]+))				#x="foox huz=123"
-		)
-		)/D}"
-	for (( j=0 ; j < ${#.sh.match[0][@]} ; j++ ))
-	do
-		if [[ -v .sh.match[2][j] && -v .sh.match[3][j] ]]
-		then	c.attrs+=( name="${.sh.match[2][j]}" value="${.sh.match[3][j]}" )
-		fi
-		if [[ -v .sh.match[4][j] && -v .sh.match[5][j] ]]
-		then	c.attrs+=( name="${.sh.match[4][j]}" value="${.sh.match[5][j]}" )
-		fi
-		if [[ -v .sh.match[6][j] && -v .sh.match[7][j] ]] ; then
-			c.attrs+=( name="${.sh.match[6][j]}" value="${.sh.match[7][j]}" )
-		fi
-	done
-	expect='(
+    attrdata=$' x=\'1\' y=\'2\' z="3" end="world"'
+    dummy="${attrdata//~(Ex-p)(?:
+        [[:space:]]+
+        ( # four different types of name=value syntax
+            (?:([:_[:alnum:]-]+)=([^\"\'[:space:]]+?))|    #x='foo=bar huz=123'
+            (?:([:_[:alnum:]-]+)=\"([^\"]*?)\")|        #x='foo="ba=r o" huz=123'
+            (?:([:_[:alnum:]-]+)=\'([^\']*?)\')|        #x="foox huz=123"
+            (?:([:_[:alnum:]-]+))                #x="foox huz=123"
+        )
+        )/D}"
+    for (( j=0 ; j < ${#.sh.match[0][@]} ; j++ ))
+    do
+        if [[ -v .sh.match[2][j] && -v .sh.match[3][j] ]]
+        then
+            c.attrs+=( name="${.sh.match[2][j]}" value="${.sh.match[3][j]}" )
+        fi
+
+        if [[ -v .sh.match[4][j] && -v .sh.match[5][j] ]]
+        then
+            c.attrs+=( name="${.sh.match[4][j]}" value="${.sh.match[5][j]}" )
+        fi
+
+        if [[ -v .sh.match[6][j] && -v .sh.match[7][j] ]] ; then
+            c.attrs+=( name="${.sh.match[6][j]}" value="${.sh.match[7][j]}" )
+        fi
+    done
+
+    expect='(
 	typeset -a attrs=(
 		[0]=(
 			name=x
@@ -680,8 +688,8 @@ function test_nomatch
 		)
 	)
 )'
-	got=$(print -v c)
-	[[ $got == "$expect" ]] || err_exit 'unset submatches not handled correctly'
+    got=$(print -v c)
+    [[ $got == "$expect" ]] || err_exit 'unset submatches not handled correctly'
 }
 
 # run tests
