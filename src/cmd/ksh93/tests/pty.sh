@@ -24,9 +24,9 @@
 
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	(( Errors++ ))
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    (( Errors++ ))
 }
 
 alias err_exit='err_exit $lineno'
@@ -39,44 +39,50 @@ whence -q pty || { lineno=$LINENO; err_exit "pty command not found -- tests skip
 bintrue=$(whence -p true)
 
 x=$( $SHELL <<- \EOF
-		trap 'exit 0' EXIT
-		bintrue=$(whence -p true)
-		set -o monitor
-		{
-			eval $'set -o vi\npty $bintrue'
-		} < /dev/null & pid=$!
-		#sleep 1
-		jobs
-		kill $$
-	EOF
+        trap 'exit 0' EXIT
+        bintrue=$(whence -p true)
+        set -o monitor
+        {
+            eval $'set -o vi\npty $bintrue'
+        } < /dev/null & pid=$!
+        #sleep 1
+        jobs
+        kill $$
+    EOF
 )
 [[ $x == *Stop* ]] && err_exit 'monitor mode enabled incorrectly causes job to stop'
 
-if	[[ -o xtrace ]]
-then	debug=--debug=1
-else	debug=
+if [[ -o xtrace ]]
+then
+    debug=--debug=1
+else
+    debug=
 fi
 
 function tst
 {
-	integer lineno=$1 offset
-	typeset text
+    integer lineno=$1 offset
+    typeset text
 
-	pty $debug --dialogue --messages='/dev/fd/1' $SHELL |
-	while	read -r text
-	do	if	[[ $text == *debug* ]]
-		then	print -u2 -r -- "$text"
-		else	offset=${text/*: line +([[:digit:]]):*/\1}
-			err_exit "${text/: line $offset:/: line $(( lineno + offset)):}"
-		fi
-	done
+    pty $debug --dialogue --messages='/dev/fd/1' $SHELL |
+    while read -r text
+    do
+        if [[ $text == *debug* ]]
+        then
+            print -u2 -r -- "$text"
+        else
+            offset=${text/*: line +([[:digit:]]):*/\1}
+            err_exit "${text/: line $offset:/: line $(( lineno + offset)):}"
+        fi
+    done
 }
 
 export PS1=':test-!: ' PS2='> ' PS4=': ' ENV= EXINIT= HISTFILE= TERM=dumb VISUAL=vi LC_ALL=C
 
-if	! pty $bintrue < /dev/null
-then	err_exit pty command hangs on $bintrue -- tests skipped
-	exit 0
+if ! pty $bintrue < /dev/null
+then
+    err_exit pty command hangs on $bintrue -- tests skipped
+    exit 0
 fi
 
 # err_exit #
