@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	(( Errors++ ))
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    (( Errors++ ))
 }
 alias err_exit='err_exit $LINENO'
 
@@ -36,49 +37,61 @@ cd $tmp || err_exit "cd $tmp failed"
 unset n s t
 typeset -A SIG
 for s in $(kill -l)
-do	if	! n=$(kill -l $s 2>/dev/null)
-	then	err_exit "'kill -l $s' failed"
-	elif	! t=$(kill -l $n 2>/dev/null)
-	then	err_exit "'kill -l $n' failed"
-	elif	[[ $s == ?(SIG)$t ]]
-	then	SIG[${s#SIG}]=1
-	elif	! m=$(kill -l $t 2>/dev/null)
-	then	err_exit "'kill -l $t' failed"
-	elif	[[ $m != $n ]]
-	then	err_exit "'kill -l $s' => $n, 'kill -l $n' => $t, kill -l $t => $m -- expected $n"
-	fi
+do
+    if ! n=$(kill -l $s 2>/dev/null)
+    then
+        err_exit "'kill -l $s' failed"
+    elif ! t=$(kill -l $n 2>/dev/null)
+    then
+        err_exit "'kill -l $n' failed"
+    elif [[ $s == ?(SIG)$t ]]
+    then
+        SIG[${s#SIG}]=1
+    elif ! m=$(kill -l $t 2>/dev/null)
+    then
+        err_exit "'kill -l $t' failed"
+    elif [[ $m != $n ]]
+    then
+        err_exit "'kill -l $s' => $n, 'kill -l $n' => $t, kill -l $t => $m -- expected $n"
+    fi
 done
 
 (
-	set --pipefail
-	{
-		$SHELL 2> out2 <<- \EOF
-			g=false
-			trap 'print -u2 PIPED; $g && exit 0;g=true' PIPE
-			while :
-			do 	print hello
-			done
-		EOF
-	} | head > /dev/null
-	(( $? == 0)) ||   err_exit "SIGPIPE with wrong error code $?"
-	[[ $(<out2) == $'PIPED\nPIPED' ]] || err_exit 'SIGPIPE output on standard error is not correct'
+    set --pipefail
+    {
+        $SHELL 2> out2 <<- \EOF
+		g=false
+		trap 'print -u2 PIPED; $g && exit 0;g=true' PIPE
+		while :
+		do
+			print hello
+		done
+	EOF
+    } | head > /dev/null
+    (( $? == 0)) ||   err_exit "SIGPIPE with wrong error code $?"
+    [[ $(<out2) == $'PIPED\nPIPED' ]] || err_exit 'SIGPIPE output on standard error is not correct'
 ) &
+
 cop=$!
 { sleep 4; kill $cop; } 2>/dev/null &
 spy=$!
-if	wait $cop 2>/dev/null
-then	kill $spy 2>/dev/null
-else	err_exit "pipe with --pipefail PIPE trap hangs"
+if wait $cop 2>/dev/null
+then
+    kill $spy 2>/dev/null
+else
+    err_exit "pipe with --pipefail PIPE trap hangs"
 fi
+
 wait
 rm -f out2
 
 [[ $( trap 'print -n got_child' SIGCHLD
-	sleep 2 &
-	for	((i=0; i < 4; i++))
-	do 	sleep .75
-		print -n $i
-	done) == 01got_child23 ]] || err_exit 'SIGCHLD not working'
+    sleep 2 &
+    for ((i=0; i < 4; i++))
+    do
+        sleep .75
+        print -n $i
+    done) == 01got_child23 ]] || err_exit 'SIGCHLD not working'
 
 # begin standalone SIGINT test generation
 
@@ -112,133 +125,140 @@ set -o monitor
 
 function gen
 {
-	typeset o t x d
-	for x in - x z
-	do	case $x in
-		[$1])	for t in - t
-			do	case $t in
-				[$1])	for d in - d
-					do	case $d in
-						[$1])	o="$o $x$t$d"
-						esac
-					done
-				esac
-			done
-		esac
-	done
-	echo '' $o
+    typeset o t x d
+    for x in - x z
+    do
+    case $x in
+        [$1])    for t in - t
+            do
+    case $t in
+                [$1])    for d in - d
+                    do
+    case $d in
+                        [$1])    o="$o $x$t$d"
+                        esac
+                    done
+                esac
+            done
+        esac
+    done
+    echo '' $o
 }
 
 case $1 in
--v)	v=v; shift ;;
--*v*)	v=v ;;
-*)	v= ;;
+-v)    v=v; shift ;;
+-*v*)    v=v ;;
+*)    v= ;;
 esac
 case $1 in
-*' '*)	o=$1; shift ;;
--*)	o=$(gen $1); shift ;;
-*)	o=$(gen -txd) ;;
+*' '*)    o=$1; shift ;;
+-*)    o=$(gen $1); shift ;;
+*)    o=$(gen -txd) ;;
 esac
 case $# in
-0)	set ksh bash ksh88 pdksh ash zsh ;;
+0)    set ksh bash ksh88 pdksh ash zsh ;;
 esac
 for f in $o
-do	case $# in
-	1)	;;
-	*)	echo ;;
-	esac
-	for sh
-	do	if	$sh -c 'exit 0' > /dev/null 2>&1
-		then	case $# in
-			1)	printf '%3s ' "$f" ;;
-			*)	printf '%16s %3s ' "$sh" "$f" ;;
-			esac
-			$sh tst-1 $v$f $sh > tst.out &
-			wait
-			echo $(cat tst.out)
-		fi
-	done
+do
+    case $# in
+    1)    ;;
+    *)    echo ;;
+    esac
+    for sh
+    do
+    if $sh -c 'exit 0' > /dev/null 2>&1
+        then
+    case $# in
+            1)    printf '%3s ' "$f" ;;
+            *)    printf '%16s %3s ' "$sh" "$f" ;;
+            esac
+            $sh tst-1 $v$f $sh > tst.out &
+            wait
+            echo $(cat tst.out)
+        fi
+
+    done
 done
 case $# in
-1)	;;
-*)	echo ;;
+1)    ;;
+*)    echo ;;
 esac
 !
 cat > tst-1 <<'!'
 exec 2>/dev/null
 case $1 in
-*v*)	echo 1-main ;;
+*v*)    echo 1-main ;;
 esac
 {
-	sleep 2
-	case $1 in
-	*v*)	echo "SIGINT" ;;
-	esac
-	kill -s INT 0
+    sleep 2
+    case $1 in
+    *v*)    echo "SIGINT" ;;
+    esac
+    kill -s INT 0
 } &
 case $1 in
-*t*)	trap '
-		echo 1-intr
-		trap - INT
-		# omitting the self kill exposes shells that deliver
-		# the SIGINT trap but exit 0 for -xt
-		# kill -s INT $$
-	' INT
-	;;
+*t*)    trap '
+        echo 1-intr
+        trap - INT
+        # omitting the self kill exposes shells that deliver
+        # the SIGINT trap but exit 0 for -xt
+        # kill -s INT $$
+    ' INT
+    ;;
 esac
 case $1 in
-*d*)	tst-2 $1 $2; status=$? ;;
-*)	$2 -c "tst-2 $1 $2"; status=$? ;;
+*d*)    tst-2 $1 $2; status=$? ;;
+*)    $2 -c "tst-2 $1 $2"; status=$? ;;
 esac
 printf '1-%04d\n' $status
 sleep 2
 !
 cat > tst-2 <<'!'
 case $1 in
-*z*)	trap '
-		echo 2-intr
-		exit 0
-	' INT
-	;;
-*x*)	trap '
-		echo 2-intr
-		exit
-	' INT
-	;;
-*t*)	trap '
-		echo 2-intr
-		trap - INT
-		kill -s INT $$
-	' INT
-	;;
+*z*)    trap '
+        echo 2-intr
+        exit 0
+    ' INT
+    ;;
+*x*)    trap '
+        echo 2-intr
+        exit
+    ' INT
+    ;;
+*t*)    trap '
+        echo 2-intr
+        trap - INT
+        kill -s INT $$
+    ' INT
+    ;;
 esac
 case $1 in
-*v*)	echo 2-main ;;
+*v*)    echo 2-main ;;
 esac
 case $1 in
-*d*)	tst-3 $1 $2; status=$? ;;
-*)	$2 -c "tst-3 $1 $2"; status=$? ;;
+*d*)    tst-3 $1 $2; status=$? ;;
+*)    $2 -c "tst-3 $1 $2"; status=$? ;;
 esac
 printf '2-%04d\n' $status
 !
 cat > tst-3 <<'!'
 case $1 in
-*[xz]*)	trap '
-		sleep 2
-		echo 3-intr
-		exit 0
-	' INT
-	;;
-*)	trap '
-		sleep 2
-		echo 3-intr
-		trap - INT
-		kill -s INT $$
-	' INT
-	;;
+*[xz]*)    trap '
+        sleep 2
+        echo 3-intr
+        exit 0
+    ' INT
+    ;;
+*)    trap '
+        sleep 2
+        echo 3-intr
+        trap - INT
+        kill -s INT $$
+    ' INT
+    ;;
 esac
 case $1 in
-*v*)	echo 3-main ;;
+*v*)    echo 3-main ;;
 esac
 sleep 5
 printf '3-%04d\n' $?
@@ -264,38 +284,45 @@ expected[ztd]="3-intr 2-intr 1-intr 1-0000"
 
 tst $SHELL > tst.got
 
-while	read ops out
-do	[[ $out == ${expected[$ops]} ]] || err_exit "interrupt $ops test failed -- expected '${expected[$ops]}', got '$out'"
+while read ops out
+do
+    [[ $out == ${expected[$ops]} ]] || err_exit "interrupt $ops test failed -- expected '${expected[$ops]}', got '$out'"
 done < tst.got
 
-if	[[ ${SIG[USR1]} ]]
-then	float s=$SECONDS
-	[[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell ignoring signal does not send signal to parent'
-	(( (SECONDS-s) < 4 )) && err_exit 'parent does not wait for child to complete before handling signal'
-	((s = SECONDS))
-	[[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "exit" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell catching signal does not send signal to parent'
-	(( SECONDS-s < 4 )) && err_exit 'parent completes early'
+if [[ ${SIG[USR1]} ]]
+then
+    float s=$SECONDS
+    [[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell ignoring signal does not send signal to parent'
+    (( (SECONDS-s) < 4 )) && err_exit 'parent does not wait for child to complete before handling signal'
+    ((s = SECONDS))
+    [[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "exit" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell catching signal does not send signal to parent'
+    (( SECONDS-s < 4 )) && err_exit 'parent completes early'
 fi
 
 yes=$(whence -p yes)
-if	[[ $yes ]]
-then	for exp in TERM VTALRM PIPE
-	do	if	[[ ${SIG[$exp]} ]]
-		then	{
-				$SHELL <<- EOF
-				foo() { return 0; }
-				trap foo EXIT
-				{ sleep 2; kill -$exp \$\$; sleep 3; kill -0 \$\$ && kill -KILL \$\$; } &
-				$yes |
-				while read yes
-				do	(/bin/date; sleep .1)
-				done > /dev/null
-				EOF
-    			} 2>> /dev/null
-    			got=$(kill -l $?)
-    			[[ $exp == $got ]] || err_exit "kill -$exp \$\$ failed, required termination by signal '$got'"
-		fi
-	done
+if [[ $yes ]]
+then
+    for exp in TERM VTALRM PIPE
+    do
+        if [[ ${SIG[$exp]} ]]
+        then
+            {
+                $SHELL <<- EOF
+		foo() { return 0; }
+		trap foo EXIT
+		{ sleep 2; kill -$exp \$\$; sleep 3; kill -0 \$\$ && kill -KILL \$\$; } &
+		$yes |
+		while read yes
+		do
+    			(/bin/date; sleep .1)
+		done > /dev/null
+		EOF
+            } 2>> /dev/null
+            got=$(kill -l $?)
+            [[ $exp == $got ]] || err_exit "kill -$exp \$\$ failed, required termination by signal '$got'"
+        fi
+
+    done
 fi
 
 SECONDS=0
@@ -367,14 +394,15 @@ trap -- - SIGBUS
 x=$(
     $SHELL  <<- \++EOF
 	set -o pipefail
-        foobar()
-        {
+	foobar()
+	{
 		for ((i=0; i < 10000; i++))
-		do	print abcdefghijklmnopqrstuvwxyz
+		do
+			print abcdefghijklmnopqrstuvwxyz
 		done | head > /dev/null
-        }
-        foobar
-        print ok
+	}
+	foobar
+	print ok
 	++EOF
 )
 [[ $x == ok ]] || err_exit 'SIGPIPE exit status causes PIPE signal to be propogaged'
@@ -389,41 +417,44 @@ EOF
 )
 [[ $x == $'1\nS1\nGNAW\n2' ]] || err_exit 'signal ignored in subshell not propagated to parent'
 
-if	[[ ${SIG[RTMIN]} ]]
-then	{
-	$SHELL <<- \EOF
-		trap : RTMIN
-		for ((i=0 ; i < 3 ; i++))
-		do	sleep 1
-			kill -RTMIN $$ 2> /dev/null
-		done &
-		wait
+if [[ ${SIG[RTMIN]} ]]
+then
+    {
+    $SHELL <<- \EOF
+	trap : RTMIN
+	for ((i=0 ; i < 3 ; i++))
+	do
+		sleep 1
+		kill -RTMIN $$ 2> /dev/null
+	done &
+	wait
 	EOF
-	} 2> /dev/null
-	[[ $? == 0 ]] && err_exit 'wait interrupted by caught signal should have non-zero exit status'
-	{
-	$SHELL <<- \EOF
-		for ((i=0 ; i < 3 ; i++))
-		do	sleep 1
-			kill -RTMIN $$ 2> /dev/null
-		done &
-		wait
+    } 2> /dev/null
+    [[ $? == 0 ]] && err_exit 'wait interrupted by caught signal should have non-zero exit status'
+    {
+    $SHELL <<- \EOF
+	for ((i=0 ; i < 3 ; i++))
+	do
+		sleep 1
+		kill -RTMIN $$ 2> /dev/null
+	done &
+	wait
 	EOF
-	} 2> /dev/null
-	[[ $(kill -l $?) == RTMIN ]] || err_exit 'wait interrupted by signal not caught should exit with the value of that signal+256'
+    } 2> /dev/null
+    [[ $(kill -l $?) == RTMIN ]] || err_exit 'wait interrupted by signal not caught should exit with the value of that signal+256'
 fi
 
 function b
 {
-	sleep 3
-	endb=1
+    sleep 3
+    endb=1
 }
 
 function a
 {
-	trap 'print int'  TERM
-	b
-	enda=1
+    trap 'print int'  TERM
+    b
+    enda=1
 }
 
 { /bin/sleep 1;kill -s TERM $$;}&
@@ -434,77 +465,85 @@ a
 
 got=$($SHELL <<- \EOF
 	trap 'print foo; kill -s USR2 $$; print bar' USR1
-
 	trap 'print USR2' USR2
 	kill -s USR1 $$
 EOF)
 [[ $got == $'foo\nbar\nUSR2' ]] || err_exit 'the trap command not blocking trapped signals until trap command completes'
 
-if      [[ ${SIG[RTMIN]} ]]
-then	compound -a rtar
-	function rttrap
-	{
-		integer v=${.sh.sig.value.q}
-		integer s=${#rtar[v][@]}
-		integer rtnum=$1
-		rtar[$v][$s]=(
-			integer pid=${.sh.sig.pid}
-			integer rtnum=$rtnum
-			typeset msg=${v}
-			)
-		return 0
-	}
-	trap 'rttrap 0' RTMIN
-	trap 'rttrap 1' RTMIN+1
-	trap 'rttrap 2' RTMIN+2
-	trap 'rttrap 3' RTMIN+3
-	trap 'rttrap 4' RTMIN+4
-	trap 'rttrap 5' RTMIN+5
-	trap 'rttrap 6' RTMIN+6
-	trap 'rttrap 7' RTMIN+7
-	typeset m # used in child processes
-	integer pid=$$ p i numchildren=64
-	( ( sleep 5; kill $$ 2> /dev/null) & ) &
-	for (( p=0 ; p < numchildren ; p++ ))
-	do	 {
-			sleep 1
-			for m in 'a' 'b' 'c' 'd' 'e' 'f'
-			do	print p=$p m=$m >> junk 
-				kill -q $((16#$m)) -s RTMIN+6 $pid
-				kill -q $((16#$m)) -s RTMIN+7 $pid
-				kill -q $((16#$m)) -s RTMIN+4 $pid
-				kill -q $((16#$m)) -s RTMIN+5 $pid
-				kill -q $((16#$m)) -s RTMIN+2 $pid
-				kill -q $((16#$m)) -s RTMIN+3 $pid
-				kill -q $((16#$m)) -s RTMIN   $pid
-				kill -q $((16#$m)) -s RTMIN+1 $pid
-			done
-		} &
-	done
-	while ! wait
-	do	 true
-	done
-	:
-	if 	(( ${#rtar[@]} != 6 ))
-	then	err_exit "got  ${#rtar[@]} different signals, expected 6"
-	fi
-	for (( i=0xa ; i <= 0xf; i++ ))
-	do	if 	(( ${#rtar[i][*]} != (numchildren*8) ))
-		then	err_exit  "got ${#rtar[$i][*]} signals with value $((i)) expected $((numchildren*8))"
-		fi
-	done
-	
-	SIG1=RTMIN+1 SIG2=RTMIN+2
-	compound a=(float i=0)
-	trap "((a.i+=.00001));(kill -q0 -$SIG2 $$) & :" $SIG1
-	trap '((a.i+=1))' $SIG2
-	for	((j=0;j<200;j++))
-	do	kill -q0 -s $SIG1 $$ &
-	done
-	while ! wait ; do true;done
-	exp='typeset -C a=(typeset -l -E i=200.002)'
-	got=$(typeset -p a)
-	[[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp" 
+if   [[ ${SIG[RTMIN]} ]]
+then
+    compound -a rtar
+    function rttrap
+    {
+        integer v=${.sh.sig.value.q}
+        integer s=${#rtar[v][@]}
+        integer rtnum=$1
+        rtar[$v][$s]=(
+            integer pid=${.sh.sig.pid}
+            integer rtnum=$rtnum
+            typeset msg=${v}
+            )
+        return 0
+    }
+    trap 'rttrap 0' RTMIN
+    trap 'rttrap 1' RTMIN+1
+    trap 'rttrap 2' RTMIN+2
+    trap 'rttrap 3' RTMIN+3
+    trap 'rttrap 4' RTMIN+4
+    trap 'rttrap 5' RTMIN+5
+    trap 'rttrap 6' RTMIN+6
+    trap 'rttrap 7' RTMIN+7
+    typeset m # used in child processes
+    integer pid=$$ p i numchildren=64
+    ( ( sleep 5; kill $$ 2> /dev/null) & ) &
+    for (( p=0 ; p < numchildren ; p++ ))
+    do
+     {
+            sleep 1
+            for m in 'a' 'b' 'c' 'd' 'e' 'f'
+            do
+    print p=$p m=$m >> junk 
+                kill -q $((16#$m)) -s RTMIN+6 $pid
+                kill -q $((16#$m)) -s RTMIN+7 $pid
+                kill -q $((16#$m)) -s RTMIN+4 $pid
+                kill -q $((16#$m)) -s RTMIN+5 $pid
+                kill -q $((16#$m)) -s RTMIN+2 $pid
+                kill -q $((16#$m)) -s RTMIN+3 $pid
+                kill -q $((16#$m)) -s RTMIN   $pid
+                kill -q $((16#$m)) -s RTMIN+1 $pid
+            done
+        } &
+    done
+    while ! wait
+    do
+        true
+    done
+    :
+    if  (( ${#rtar[@]} != 6 ))
+    then
+        err_exit "got  ${#rtar[@]} different signals, expected 6"
+    fi
+
+    for (( i=0xa ; i <= 0xf; i++ ))
+    do
+        if  (( ${#rtar[i][*]} != (numchildren*8) ))
+        then
+            err_exit  "got ${#rtar[$i][*]} signals with value $((i)) expected $((numchildren*8))"
+        fi
+    done
+    
+    SIG1=RTMIN+1 SIG2=RTMIN+2
+    compound a=(float i=0)
+    trap "((a.i+=.00001));(kill -q0 -$SIG2 $$) & :" $SIG1
+    trap '((a.i+=1))' $SIG2
+    for    ((j=0;j<200;j++))
+    do
+        kill -q0 -s $SIG1 $$ &
+    done
+    while ! wait ; do true;done
+    exp='typeset -C a=(typeset -l -E i=200.002)'
+    got=$(typeset -p a)
+    [[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp" 
 fi
 
 float s=SECONDS
