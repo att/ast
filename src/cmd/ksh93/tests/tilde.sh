@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r $Command: "$@"
-	let Errors+=1
+    print -u2 -n "\t"
+    print -u2 -r $Command: "$@"
+    let Errors+=1
 }
 alias err_exit='err_exit $LINENO'
 
@@ -31,65 +32,89 @@ integer Errors=0
 tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 
-if	$SHELL -c '[[ ~root == /* ]]'
-then	x=$(print -r -- ~root)
-	[[ $x == ~root ]] || err_exit '~user expanded in subshell prevent ~user from working'
+if $SHELL -c '[[ ~root == /* ]]'
+then
+    x=$(print -r -- ~root)
+    [[ $x == ~root ]] || err_exit '~user expanded in subshell prevent ~user from working'
 fi
 
 function home # id
 {
-	typeset IFS=: pwd=/etc/passwd
-	set -o noglob
-	if	[[ -f $pwd ]] && grep -c "^$1:" $pwd > /dev/null
-	then	set -- $(grep "^$1:" $pwd)
-		print -r -- "$6"
-	else	print .
-	fi
+    typeset IFS=: pwd=/etc/passwd
+    set -o noglob
+    if [[ -f $pwd ]] && grep -c "^$1:" $pwd > /dev/null
+    then
+    set -- $(grep "^$1:" $pwd)
+        print -r -- "$6"
+    else
+        print .
+    fi
 }
 
 OLDPWD=/bin
-if	[[ ~ != $HOME ]]
-then	err_exit '~' not $HOME
+if [[ ~ != $HOME ]]
+then
+    err_exit '~' not $HOME
 fi
+
 x=~
-if	[[ $x != $HOME ]]
-then	err_exit x=~ not $HOME
+if [[ $x != $HOME ]]
+then
+    err_exit x=~ not $HOME
 fi
+
 x=x:~
-if	[[ $x != x:$HOME ]]
-then	err_exit x=x:~ not x:$HOME
+if [[ $x != x:$HOME ]]
+then
+    err_exit x=x:~ not x:$HOME
 fi
-if	[[ ~+ != $PWD ]]
-then	err_exit '~' not $PWD
+
+if [[ ~+ != $PWD ]]
+then
+    err_exit '~' not $PWD
 fi
+
 x=~+
-if	[[ $x != $PWD ]]
-then	err_exit x=~+ not $PWD
+if [[ $x != $PWD ]]
+then
+    err_exit x=~+ not $PWD
 fi
-if	[[ ~- != $OLDPWD ]]
-then	err_exit '~' not $PWD
+
+if [[ ~- != $OLDPWD ]]
+then
+    err_exit '~' not $PWD
 fi
+
 x=~-
-if	[[ $x != $OLDPWD ]]
-then	err_exit x=~- not $OLDPWD
+if [[ $x != $OLDPWD ]]
+then
+    err_exit x=~- not $OLDPWD
 fi
+
 for u in root Administrator
-do	h=$(home $u)
-	if	[[ $h != . ]]
-	then	[[ ~$u -ef $h ]] || err_exit "~$u not $h"
-		x=~$u
-		[[ $x -ef $h ]] || x="~$u not $h"
-		break
-	fi
+do
+    h=$(home $u)
+    if [[ $h != . ]]
+    then
+        [[ ~$u -ef $h ]] || err_exit "~$u not $h"
+        x=~$u
+        [[ $x -ef $h ]] || x="~$u not $h"
+        break
+    fi
 done
+
 x=~g.r.emlin
-if	[[ $x != '~g.r.emlin' ]]
-then	err_exit "x=~g.r.emlin failed -- expected '~g.r.emlin', got '$x'"
+if [[ $x != '~g.r.emlin' ]]
+then
+    err_exit "x=~g.r.emlin failed -- expected '~g.r.emlin', got '$x'"
 fi
+
 x=~:~
-if	[[ $x != "$HOME:$HOME" ]]
-then	err_exit "x=~:~ failed, expected '$HOME:$HOME', got '$x'"
+if [[ $x != "$HOME:$HOME" ]]
+then
+    err_exit "x=~:~ failed, expected '$HOME:$HOME', got '$x'"
 fi
+
 HOME=/
 [[ ~ == / ]] || err_exit '~ should be /'
 [[ ~/foo == /foo ]] || err_exit '~/foo should be /foo when ~==/'
