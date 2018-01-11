@@ -35,10 +35,9 @@
 
 static void hist_subst(Shell_t *shp, const char *, int fd, char *);
 
-#if 0
-    // for the benefit of the dictionary generator
-    int	b_fc(int argc,char *argv[], Shbltin_t *context){}
-#endif
+//
+// Builtin `hist`.
+//
 int b_hist(int argc, char *argv[], Shbltin_t *context) {
     History_t *hp;
     char *arg;

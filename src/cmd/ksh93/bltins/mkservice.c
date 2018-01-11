@@ -146,7 +146,7 @@ static int fdnotify(int fd1, int fd2) {
                 return 0;
             }
         }
-    } else if (sp = service_list[fd1]) {
+    } else if ((sp = service_list[fd1])) {
         fdclose(sp, fd1);
         if (--sp->refcount == 0) nv_unset(sp->node);
     }
@@ -298,7 +298,7 @@ static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t
     int n = strlen(event) - 1;
     Namval_t *nq;
 
-    for (i = 0; cp = disctab[i]; i++) {
+    for (i = 0; (cp = disctab[i]); i++) {
         if (memcmp(event, cp, n)) continue;
         if (action == np) {
             action = sp->disc[i];
@@ -337,6 +337,9 @@ static void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
 
 static const Namdisc_t servdisc = {sizeof(Service_t), putval, 0, 0, setdisc};
 
+//
+// Builtin `mkservice`.
+//
 int b_mkservice(int argc, char **argv, Shbltin_t *context) {
     char *var;
     char *path;
@@ -397,6 +400,9 @@ int b_mkservice(int argc, char **argv, Shbltin_t *context) {
     return 0;
 }
 
+//
+// Builtin `eloop`.
+//
 int b_eloop(int argc, char **argv, Shbltin_t *context) {
     long timeout = -1;
     NOT_USED(argc);

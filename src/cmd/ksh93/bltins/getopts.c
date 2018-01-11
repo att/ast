@@ -46,6 +46,9 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     return 1;
 }
 
+//
+// Builtin `getopts`.
+//
 int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     char *options = error_info.context->id;
     Namval_t *np;
@@ -101,7 +104,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     mode = (*options == ':');
     if (mode) options++;
     extended =
-        *options == '\n' && *(options + 1) == '[' || *options == '[' && *(options + 1) == '-';
+        (*options == '\n' && *(options + 1) == '[') || (*options == '[' && *(options + 1) == '-');
     sh_pushcontext(shp, &buff, 1);
     jmpval = sigsetjmp(buff.buff, 0);
     if (jmpval) {

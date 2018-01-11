@@ -71,7 +71,7 @@ static const struct printmap Pmap[] = {
     {3, "csv", "#q"},    {3, "ere", "R"},
     {4, "html", "H"},    {17, "nounicodeliterals", "0q"},
     {7, "pattern", "P"}, {15, "unicodeliterals", "+q"},
-    {3, "url", "#H"},    {0, NULL, NULL},
+    {3, "url", "#H"},    {0, NULL, ""},
 };
 
 static int extend(Sfio_t *, void *, Sffmt_t *);
@@ -89,6 +89,9 @@ struct print {
 
 static char *nullarg[] = {0, 0};
 
+//
+// Builtin `echo`.
+//
 int B_echo(int argc, char *argv[], Shbltin_t *context) {
     static char bsd_univ;
     struct print prdata;
@@ -96,7 +99,7 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     prdata.raw = prdata.echon = 0;
     prdata.sh = context->shp;
     NOT_USED(argc);
-    // This mess is because /bin/echo on BSD is different
+    // This mess is because /bin/echo on BSD is different.
     if (!prdata.sh->universe) {
         char *universe;
         universe = astconf("UNIVERSE", 0, 0);
@@ -124,6 +127,9 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     return b_print(0, argv, (Shbltin_t *)&prdata);
 }
 
+//
+// Builtin `printf`.
+//
 int b_printf(int argc, char *argv[], Shbltin_t *context) {
     struct print prdata;
     NOT_USED(argc);
@@ -143,6 +149,8 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
 }
 
 //
+// Builtin `print`.
+//
 // argc==0 when called from echo
 // argc==-1 when called from printf
 //
@@ -155,6 +163,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     int sflag = 0, nflag = 0, rflag = 0, vflag = 0;
     Namval_t *vname = 0;
     Optdisc_t disc;
+
     memset(&disc, 0, sizeof(disc));
     disc.version = OPT_VERSION;
     disc.infof = infof;
@@ -190,7 +199,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 's': {
-                // print to history file
+                // Print to history file.
                 if (!sh_histinit((void *)shp)) errormsg(SH_DICT, ERROR_system(1), e_history);
                 outfile = shp->gd->hist_ptr->histfp;
                 fd = sffileno(outfile);
@@ -281,15 +290,17 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
     if (vflag && format) {
         errormsg(SH_DICT, ERROR_usage(2), "-%c and -f are mutually exclusive", vflag);
     }
+
 skip:
     if (format) format = genformat(shp, format);
-    // handle special case of '-' operand for print
+    // Handle special case of '-' operand for print.
     if (argc > 0 && *argv && strcmp(*argv, "-") == 0 && strcmp(argv[-1], "--")) argv++;
     if (vname) {
         if (!shp->strbuf2) shp->strbuf2 = sfstropen();
         outfile = shp->strbuf2;
         goto printv;
     }
+
 skip2:
     if (fd < 0) {
         errno = EBADF;
@@ -301,7 +312,7 @@ skip2:
     }
 
     if (!(n & IOWRITE)) {
-        // don't print error message for stdout for compatibility
+        // Don't print error message for stdout for compatibility.
         if (fd == 1) return 1;
         errormsg(SH_DICT, ERROR_system(1), msg);
     }
@@ -313,11 +324,12 @@ skip2:
         sh_offstate(shp, SH_NOTRACK);
         sfpool(outfile, shp->outpool, SF_WRITE);
     }
-    // turn off share to guarantee atomic writes for printf
+    // Turn off share to guarantee atomic writes for printf.
     n = sfset(outfile, SF_SHARE | SF_PUBLIC, 0);
+
 printv:
     if (format) {
-        // printf style print
+        // Printf style print.
         Sfio_t *pool;
         struct printf pdata;
         memset(&pdata, 0, sizeof(pdata));
@@ -344,7 +356,7 @@ printv:
             if (!nflag) sfputc(outfile, '\n');
         }
     } else {
-        // echo style print
+        // Echo style print.
         if (nflag && !argv[0]) {
             sfsync((Sfio_t *)0);
         } else if (sh_echolist(shp, outfile, rflag, argv) && !nflag) {
@@ -365,15 +377,15 @@ printv:
 }
 
 //
-// echo the argument list onto <outfile>
-// if <raw> is non-zero then \ is not a special character.
-// returns 0 for \c otherwise 1.
+// Echo the argument list onto <outfile>. If <raw> is non-zero then \ is not a special character.
 //
-
+// Returns 0 for \c otherwise 1.
+//
 int sh_echolist(Shell_t *shp, Sfio_t *outfile, int raw, char *argv[]) {
     char *cp;
     int n;
     struct printf pdata;
+
     pdata.cescape = 0;
     pdata.err = 0;
     while (!pdata.cescape && (cp = *argv++)) {
@@ -390,7 +402,7 @@ int sh_echolist(Shell_t *shp, Sfio_t *outfile, int raw, char *argv[]) {
 }
 
 //
-// modified version of stresc for generating formats
+// Modified version of stresc for generating formats.
 //
 static char strformat(char *s) {
     char *t;
@@ -413,7 +425,7 @@ static char strformat(char *s) {
 #endif
                 s = p;
 #if defined(FMT_EXP_WIDE)
-                // Conversion failed => empty string
+                // Conversion failed => empty string.
                 if (c < 0) {
                     continue;
                 }
@@ -422,7 +434,7 @@ static char strformat(char *s) {
                     t += mbconv(t, c);
                     continue;
                 }
-#else
+#else  // FMT_EXP_WIDE
                 if (c > UCHAR_MAX && mbwide()) {
                     t += mbconv(t, c);
                     continue;
@@ -459,7 +471,7 @@ static char *fmthtml(Shell_t *shp, const char *string, int flags) {
     const char *cp = string;
     int c, offset = stktell(shp->stk);
     if (!(flags & SFFMT_ALTER)) {
-        while (c = *(unsigned char *)cp++) {
+        while ((c = *(unsigned char *)cp++)) {
             int s;
             s = mbsize(cp - 1);
             if (s > 1) {
@@ -485,7 +497,7 @@ static char *fmthtml(Shell_t *shp, const char *string, int flags) {
             }
         }
     } else {
-        while (c = *(unsigned char *)cp++) {
+        while ((c = *(unsigned char *)cp++)) {
             if (strchr("!*'();@&+$,#[]<>~.\"{}|\\-`^% ", c) ||
                 (!isprint(c) && c != '\n' && c != '\r')) {
                 sfprintf(stkstd, "%%%02X", CCMAPC(c, CC_NATIVE, CC_ASCII));
@@ -505,6 +517,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
     Namval_t *np = nv_open(string, shp->var_tree, NV_VARNAME | NV_NOASSIGN | NV_NOADD);
     Namarr_t *ap;
     static union types_t number;
+
     if (!np || nv_isnull(np)) {
         if (sh_isoption(shp, SH_NOUNSET)) errormsg(SH_DICT, ERROR_exit(1), e_notset, string);
         return 0;
@@ -536,10 +549,10 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
         }
 #if 1
         return sfwrite(iop, (void *)&number, size);
-#else
+#else  // 1
         if (sz) *sz = size;
         return ((void *)&number);
-#endif
+#endif  // 1
     }
     if (nv_isattr(np, NV_BINARY))
 #if 1
@@ -590,14 +603,14 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
         size = strlen(cp);
         return sfwrite(iop, cp, size);
     }
-#else
-        nv_onattr(np, NV_RAW);
+#else  // 1
+    nv_onattr(np, NV_RAW);
     cp = nv_getval(np);
     if (nv_isattr(np, NV_BINARY)) nv_offattr(np, NV_RAW);
     if ((size = nv_size(np)) == 0) size = strlen(cp);
     if (sz) *sz = size;
     return ((void *)cp);
-#endif
+#endif  // 1
 }
 
 static int varname(const char *str, ssize_t n) {
@@ -616,7 +629,7 @@ static int varname(const char *str, ssize_t n) {
         }
         dot = (c == '.');
     }
-    return (n == 0);
+    return n == 0;
 }
 
 static const char *mapformat(Sffmt_t *fe) {
@@ -990,12 +1003,9 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
 }
 
 //
-// construct System V echo string out of <cp>
-// If there are not escape sequences, returns -1
-// Otherwise, puts null terminated result on stack, but doesn't freeze it
-// returns length of output.
+// Construct System V echo string out of <cp>. If there are not escape sequences, returns -1.
+// Otherwise, puts null terminated result on stack, but doesn't freeze it returns length of output.
 //
-
 static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     const char *cp = string, *cpmax;
     int c;
@@ -1004,7 +1014,7 @@ static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     if (mbwide()) {
         while (1) {
             chlen = mbsize(cp);
-            // Skip over multibyte characters
+            // Skip over multibyte characters.
             if (chlen > 1) {
                 cp += chlen;
             } else if ((c = *cp++) == 0 || c == '\\') {
@@ -1013,12 +1023,12 @@ static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
         }
     } else {
         while ((c = *cp++) && (c != '\\'))
-            ;
+            ;  // empty loop
     }
     if (c == 0) return -1;
     c = --cp - string;
     if (c > 0) sfwrite(shp->stk, (void *)string, c);
-    for (; c = *cp; cp++) {
+    for (; (c = *cp); cp++) {
         if (mbwide() && ((chlen = mbsize(cp)) > 1)) {
             sfwrite(shp->stk, cp, chlen);
             cp += (chlen - 1);

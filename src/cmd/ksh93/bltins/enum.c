@@ -109,7 +109,7 @@ static int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
     } else if (strcmp(str, "case") == 0) {
         if (ep->iflag) sfprintf(out, "not ");
     } else {
-        while (v = ep->values[n++]) {
+        while ((v = ep->values[n++])) {
             sfprintf(out, ", \b%s\b", v);
         }
     }
@@ -138,7 +138,7 @@ static void put_enum(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
         nv_putv(np, val, flags, fp);
         return;
     }
-    while (v = ep->values[i]) {
+    while ((v = ep->values[i])) {
         if (ep->iflag) {
             n = strcasecmp(v, val);
         } else {
@@ -173,7 +173,7 @@ static Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t
     int i, n;
     mp = nv_namptr(ep->node, 0);
     mp->nvenv = (char *)np;
-    for (i = 0; v = ep->values[i]; i++) {
+    for (i = 0; (v = ep->values[i]); i++) {
         if (ep->iflag) {
             n = strcasecmp(v, name);
         } else {
@@ -280,7 +280,7 @@ int b_enum(int argc, char **argv, Shbltin_t *context)
         return 1;
     }
     if (!*argv) sh_outenum(shp, sfstdout, (Namval_t *)0);
-    while (cp = *argv++) {
+    while ((cp = *argv++)) {
         np = nv_open(cp, shp->var_tree, NV_VARNAME | NV_NOADD);
         if (!np || !(ap = nv_arrayptr(np)) || ap->fun || (sz = ap->nelem) < 2) {
             error(ERROR_exit(1), "%s must name an array  containing at least two elements", cp);

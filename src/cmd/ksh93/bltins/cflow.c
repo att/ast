@@ -35,12 +35,8 @@
 #include "shnodes.h"
 
 //
-// return and exit
+// Builtins `return` and `exit`.
 //
-#if 0
-    // for the dictionary generator
-    int	b_exit(int n, char *argv[],Shbltin_t *context){}
-#endif
 int b_return(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
@@ -69,7 +65,7 @@ done:
     if (n < 0 || n == 256 || n > SH_EXITMASK + shp->gd->sigmax) {
         n &= ((unsigned int)n) & SH_EXITMASK;
     }
-    // return outside of function, dotscript and profile is exit
+    // Return outside of function, dotscript and profile is exit.
     if (shp->fn_depth == 0 && shp->dot_depth == 0 && !sh_isstate(shp, SH_PROFILE)) {
         pp->mode = SH_JMPEXIT;
     }
@@ -80,12 +76,8 @@ done:
 }
 
 //
-// break and continue
+// Builtins `break` and `continue`.
 //
-#if 0
-    // for the dictionary generator
-    int	b_continue(int n, char *argv[],Shbltin_t *context){}
-#endif
 int b_break(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     int cont = **argv == 'c';

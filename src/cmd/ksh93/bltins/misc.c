@@ -55,6 +55,9 @@ struct login {
     char *arg0;
 };
 
+//
+// Builtin `exec`.
+//
 int b_exec(int argc, char *argv[], Shbltin_t *context) {
     struct login logdata;
     int n;
@@ -62,7 +65,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     logdata.arg0 = 0;
     logdata.sh = context->shp;
     logdata.sh->st.ioset = 0;
-    while (n = optget(argv, sh_optexec)) {
+    while ((n = optget(argv, sh_optexec))) {
         switch (n) {
             case 'a': {
                 logdata.arg0 = opt_info.arg;
@@ -95,6 +98,9 @@ static void noexport(Namval_t *np, void *data) {
     nv_offattr(np, NV_EXPORT);
 }
 
+//
+// Builtin `login`.
+//
 int B_login(int argc, char *argv[], Shbltin_t *context) {
     struct checkpt *pp;
     struct login *logp = 0;
@@ -152,7 +158,7 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
     NOT_USED(argc);
-    while (r = optget(argv, sh_optlet)) {
+    while ((r = optget(argv, sh_optlet))) {
         switch (r) {
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
@@ -167,7 +173,7 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
 
     argv += opt_info.index;
     if (error_info.errors || !*argv) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
-    while (arg = *argv++) r = !sh_arith(shp, arg);
+    while ((arg = *argv++)) r = !sh_arith(shp, arg);
     return r;
 }
 
@@ -175,7 +181,7 @@ int b_eval(int argc, char *argv[], Shbltin_t *context) {
     int r;
     Shell_t *shp = context->shp;
     NOT_USED(argc);
-    while (r = optget(argv, sh_opteval)) {
+    while ((r = optget(argv, sh_opteval))) {
         switch (r) {
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
@@ -215,7 +221,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     disc.version = OPT_VERSION;
     opt_info.disc = &disc;
 
-    while (n = optget(argv, sh_optdot)) {
+    while ((n = optget(argv, sh_optdot))) {
         switch (n) {
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
@@ -307,7 +313,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
 }
 
 //
-// null, true  command
+// Builtins `:` and `true`.
 //
 int b_true(int argc, char *argv[], Shbltin_t *context) {
     NOT_USED(argc);
@@ -317,7 +323,7 @@ int b_true(int argc, char *argv[], Shbltin_t *context) {
 }
 
 //
-// false  command
+// Builtin `false`.
 //
 int b_false(int argc, char *argv[], Shbltin_t *context) {
     NOT_USED(argc);
@@ -326,6 +332,9 @@ int b_false(int argc, char *argv[], Shbltin_t *context) {
     return 1;
 }
 
+//
+// Builtin `shift`.
+//
 int b_shift(int n, char *argv[], Shbltin_t *context) {
     char *arg;
     Shell_t *shp = context->shp;
@@ -354,6 +363,9 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
     return 0;
 }
 
+//
+// Builtin `wait`.
+//
 int b_wait(int n, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     while ((n = optget(argv, sh_optwait))) {
@@ -376,11 +388,9 @@ int b_wait(int n, char *argv[], Shbltin_t *context) {
 }
 
 #ifdef JOBS
-#if 0
-    // For the dictionary generator.
-	int    b_fg(int n,char *argv[],Shbltin_t *context){}
-	int    b_disown(int n,char *argv[],Shbltin_t *context){}
-#endif
+//
+// Builtin `bg`.
+//
 int b_bg(int n, char *argv[], Shbltin_t *context) {
     int flag = **argv;
     Shell_t *shp = context->shp;
@@ -414,6 +424,9 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
     return shp->exitval;
 }
 
+//
+// Builtin `jobs`.
+//
 int b_jobs(int n, char *argv[], Shbltin_t *context) {
     int flag = 0;
     Shell_t *shp = context->shp;
@@ -449,7 +462,7 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
     job_wait((pid_t)0);
     return shp->exitval;
 }
-#endif
+#endif  // JOBS
 
 #ifdef _cmd_universe
 //
@@ -491,10 +504,6 @@ int b_universe(int argc, char *argv[], Shbltin_t *context) {
 #endif  // cmd_universe
 
 #if SHOPT_FS_3D
-#if 0
-    // For the dictionary generator.
-    int	b_vmap(int argc,char *argv[], Shbltin_t *context){}
-#endif
 int b_vpath(int argc, char *argv[], Shbltin_t *context) {
     int flag, n;
     const char *optstr;
@@ -565,6 +574,7 @@ int b_vpath(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     return 0;
+
 failed:
     errormsg(SH_DICT, ERROR_exit(1), (argc > 1) ? e_cantset : e_cantget,
              (flag & FS3D_VIEW) ? e_mapping : e_versions);

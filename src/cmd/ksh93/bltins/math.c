@@ -12,21 +12,6 @@
 #include <stdio.h>
 #include "streval.h"
 
-#ifdef TEST_LINKAGE
-#undef Sfdouble_t
-#undef Sflong_t
-#undef Sfulong_t
-
-#define Sfdouble_t long double
-#define Sflong_t long
-#define Sfulong_t unsigned long
-
-struct mathtab {
-    char fname[16];
-    Sfdouble_t (*fnptr)(Sfdouble_t, ...);
-};
-#endif
-
 typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 
 static int local_finite(Sfdouble_t a1) { return finite(a1); }
@@ -198,11 +183,3 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\001y1", (Math_f)local_y1},
                                      {"\002yn", (Math_f)local_yn},
                                      {"", (Math_f)0}};
-
-#ifdef TEST_LINKAGE
-int main() {
-#undef printf
-    printf("use_math_c=1\n");
-    return 0;
-}
-#endif

@@ -218,7 +218,7 @@ int b_alarm(int argc, char *argv[], Shbltin_t *context) {
     Namval_t *np;
     struct tevent *tp;
     Shell_t *shp = context->shp;
-    while (n = optget(argv, sh_optalarm)) {
+    while ((n = optget(argv, sh_optalarm))) {
         switch (n) {
             case 'r': {
                 rflag = R_FLAG;
