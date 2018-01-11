@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	(( Errors+=1 ))
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    (( Errors+=1 ))
 }
 alias err_exit='err_exit $LINENO'
 
@@ -29,19 +30,21 @@ Command=${0##*/}
 integer Errors=0
 
 typeset -T Time_t=(
-	integer .=-1
-	_='%F+%H:%M'
-	get()
-	{
-		if      (( _ < 0 ))
-		then	.sh.value=${ printf "%(${_._})T" now ;}
-		else	.sh.value=${ printf "%(${_._})T" "#$((_))" ;}
-		fi
-	}
-	set()
-	{
-		.sh.value=${ printf "%(%#)T" "${.sh.value}";}
-	}
+    integer .=-1
+    _='%F+%H:%M'
+    get()
+    {
+        if (( _ < 0 ))
+        then
+            .sh.value=${ printf "%(${_._})T" now ;}
+        else
+            .sh.value=${ printf "%(${_._})T" "#$((_))" ;}
+        fi
+    }
+    set()
+    {
+        .sh.value=${ printf "%(%#)T" "${.sh.value}";}
+    }
 )
 
 d=$(printf "%(%F+%H:%M)T" now)
