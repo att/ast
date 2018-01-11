@@ -26,13 +26,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com
 */
 
-#if __STD_C
 Void_t *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size)
-#else
-Void_t *vmuserdata(vm, dtid, size) Vmalloc_t *vm;
-unsigned int dtid; /* ID of the requested data	*/
-ssize_t size;      /* size of requested memory	*/
-#endif
 {
     unsigned int key;
     Vmuser_t *u;

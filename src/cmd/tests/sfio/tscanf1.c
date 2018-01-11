@@ -29,15 +29,7 @@ typedef struct _mydisc_s
 	Sfio_t*		f;
 } Mydisc_t;
 
-#if __STD_C
 static ssize_t oneread(Sfio_t* f, Void_t* buf, size_t size, Sfdisc_t* disc)
-#else
-static ssize_t oneread(f, buf, size, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		size;
-Sfdisc_t*	disc;
-#endif
 {
 	Mydisc_t	*dc = (Mydisc_t*)disc;
 

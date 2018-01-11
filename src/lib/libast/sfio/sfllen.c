@@ -25,11 +25,7 @@
 **
 **	Written by Kiem-Phong Vo
 */
-#if __STD_C
 int _sfllen(Sflong_t v)
-#else
-int _sfllen(v) Sflong_t v;
-#endif
 {
     if (v < 0) v = -(v + 1);
     v = (Sfulong_t)v >> SF_SBITS;

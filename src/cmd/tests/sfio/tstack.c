@@ -21,15 +21,7 @@
 
 static Sfio_t*	Fclose;
 
-#if __STD_C
 int exceptf(Sfio_t*f, int type, Void_t* data, Sfdisc_t* disc)
-#else
-int exceptf(f, type, data, disc)
-Sfio_t*		f;
-int		type;
-Void_t*		data;
-Sfdisc_t*	disc;
-#endif
 {
 	if(type == SF_CLOSING || type == SF_FINAL)
 	{	if(f != Fclose)
@@ -45,30 +37,14 @@ Sfdisc_t*	disc;
 	return 0;
 }
 
-#if __STD_C
 ssize_t readf(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t readf(f, buf, n, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	if((f->mode&SF_RDWR) == f->mode )
 		terror("Stream mode should be inaccessible in readf");
 	return 0;
 }
 
-#if __STD_C
 ssize_t writef(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t writef(f, buf, n, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	if((f->mode&SF_RDWR) == f->mode )
 		terror("Stream mode should be inaccessible in writef");

@@ -49,14 +49,7 @@ typedef struct Fmt_s
 } Fmt_t;
 
 static int
-#if __STD_C
 extf(Sfio_t* sp, Void_t* vp, Sffmt_t* dp)
-#else
-extf(sp, vp, dp)
-Sfio_t*		sp;
-Void_t*		vp;
-Sffmt_t*	dp;
-#endif
 {
 	register Fmt_t*		fmt = (Fmt_t*)dp;
 

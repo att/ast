@@ -43,26 +43,12 @@ typedef struct _union_s {
     File_t f[1];   /* array of streams	*/
 } Union_t;
 
-#if __STD_C
 static ssize_t unwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t unwrite(f, buf, n, disc) Sfio_t *f; /* stream involved */
-Void_t *buf;                                       /* buffer to read into */
-size_t n;                                          /* number of bytes to read */
-Sfdisc_t *disc;                                    /* discipline */
-#endif
 {
     return -1;
 }
 
-#if __STD_C
 static ssize_t unread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t unread(f, buf, n, disc) Sfio_t *f;  /* stream involved */
-Void_t *buf;                                       /* buffer to read into */
-size_t n;                                          /* number of bytes to read */
-Sfdisc_t *disc;                                    /* discipline */
-#endif
 {
     reg Union_t *un;
     reg ssize_t r, m;
@@ -84,14 +70,7 @@ Sfdisc_t *disc;                                    /* discipline */
     return n - m;
 }
 
-#if __STD_C
 static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
-#else
-static Sfoff_t unseek(f, addr, type, disc) Sfio_t *f;
-Sfoff_t addr;
-int type;
-Sfdisc_t *disc;
-#endif
 {
     reg Union_t *un;
     reg int i;
@@ -129,27 +108,14 @@ Sfdisc_t *disc;
 }
 
 /* on close, remove the discipline */
-#if __STD_C
 static int unexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-#else
-static int unexcept(f, type, data, disc) Sfio_t *f;
-int type;
-Void_t *data;
-Sfdisc_t *disc;
-#endif
 {
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
 
     return 0;
 }
 
-#if __STD_C
 int sfdcunion(Sfio_t *f, Sfio_t **array, int n)
-#else
-int sfdcunion(f, array, n) Sfio_t *f;
-Sfio_t **array;
-int n;
-#endif
 {
     reg Union_t *un;
     reg int i;

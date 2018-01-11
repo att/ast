@@ -47,27 +47,13 @@ typedef struct _dccache_s {
     uchar *endb;
 } Dccache_t;
 
-#if __STD_C
 static int _dccaexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
-#else
-static int _dccaexcept(f, type, val, disc) Sfio_t *f;
-int type;
-Void_t *val;
-Sfdisc_t *disc;
-#endif
 {
     if (disc && type == SF_FINAL) free(disc);
     return 0;
 }
 
-#if __STD_C
 static ssize_t _dccaread(Sfio_t *f, Void_t *buf, size_t size, Sfdisc_t *disc)
-#else
-static ssize_t _dccaread(f, buf, size, disc) Sfio_t *f;
-Void_t *buf;
-size_t size;
-Sfdisc_t *disc;
-#endif
 {
     ssize_t sz;
     Sfdisc_t *prev;
@@ -98,12 +84,7 @@ Sfdisc_t *disc;
     return sz;
 }
 
-#if __STD_C
 Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc)
-#else
-Sfdisc_t *sfdisc(f, disc) Sfio_t *f;
-Sfdisc_t *disc;
-#endif
 {
     Sfdisc_t *d, *rdisc;
     Sfread_f oreadf;

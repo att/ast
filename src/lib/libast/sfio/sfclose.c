@@ -26,11 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-#if __STD_C
 int sfclose(Sfio_t *f)
-#else
-int sfclose(f) Sfio_t *f;
-#endif
 {
     reg int local, ex, rv;
     Void_t *data = NULL;

@@ -21,15 +21,7 @@
 
 /* this tests to see if SF_SYNC is raised at the right time */
 static int	Count = 0;
-#if __STD_C
 static int except(Sfio_t* f, int type, Void_t* arg, Sfdisc_t* disc)
-#else
-static int except(f, type, arg, disc)
-Sfio_t*		f;
-int		type;
-Void_t*		arg;
-Sfdisc_t*	disc;
-#endif
 {
 	if(type == SF_SYNC && integralof(arg) == 1)
 		Count += 1;
@@ -43,30 +35,14 @@ typedef struct _mydisc_s
 	Sfdisc_t	disc;
 	int		sync;
 } Mydisc_t;
-#if __STD_C
 int event(Sfio_t* f, int type, Void_t* arg,  Sfdisc_t* disc)
-#else
-int event(f,type,arg,disc)
-Sfio_t*		f;
-int		type;
-Void_t*		arg;
-Sfdisc_t*	disc;
-#endif
 {
 	if(type == SF_SYNC)
 		((Mydisc_t*)disc)->sync = integralof(arg);
 	return 0;
 }
 
-#if __STD_C
 ssize_t newline(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t newline(f,buf,n,disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	size_t	i;
 	char*	s = (char*)buf;

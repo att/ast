@@ -19,13 +19,7 @@
 ***********************************************************************/
 #include	"sftest.h"
 
-#if __STD_C
 int walkf(Sfio_t* f, Void_t* cntp)
-#else
-int walkf(f, cntp)
-Sfio_t*	f;
-Void_t* cntp;
-#endif
 {
 	return (*((int*)cntp) += 1);
 }

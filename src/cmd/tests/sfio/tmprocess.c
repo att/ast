@@ -30,15 +30,7 @@
 #define N_REC	1000
 #define B_SIZE	256
 
-#if __STD_C
 static ssize_t inspect(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-static ssize_t inspect(f, buf, n, disc)
-Sfio_t*		f;
-Void_t* 	buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	int	w, k;
 	char*	s;

@@ -52,12 +52,7 @@
 #endif             /* _chr_ebcdic */
 #endif             /* _PACKAGE_ast */
 
-#if __STD_C
 static int chr2str(char *buf, int v)
-#else
-static int chr2str(buf, v) char *buf;
-int v;
-#endif
 {
     if (isprint(v) && v != '\\') {
         *buf++ = v;
@@ -109,13 +104,7 @@ int v;
 #define _sffmt_small 1
 #endif
 
-#if __STD_C
 int sfvprintf(Sfio_t *f, const char *form, va_list args)
-#else
-int sfvprintf(f, form, args) Sfio_t *f; /* file to print to	*/
-char *form;                             /* format to use	*/
-va_list args;                           /* arg list if !argf	*/
-#endif
 {
     int n, v, w, k, n_s, base, fmt, flags;
     Sflong_t lv;

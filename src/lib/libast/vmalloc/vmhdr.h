@@ -94,11 +94,7 @@ typedef union _body_u Body_t;    /* the body of a memory block when free	*/
 typedef struct _block_s Block_t; /* the type of a memory block		*/
 typedef struct _seg_s Seg_t;     /* the type of a raw memory segment	*/
 
-#if __STD_C
 #define NOTUSED(x) (void)(x)
-#else
-#define NOTUSED(x) (&x, 1)
-#endif
 
 /* safe typecasting of scalar values */
 #define VMCAST(ty, x) ((ty)((Vmulong_t)(x)))

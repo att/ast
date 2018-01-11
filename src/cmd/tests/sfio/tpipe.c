@@ -23,12 +23,7 @@ static int	line;
 
 #define SYNC	line = __LINE__;
 
-#if __STD_C
 void alrmf(int sig)
-#else
-void alrmf(sig)
-int	sig;
-#endif
 {
 	terror("blocked at line %d", line);
 }

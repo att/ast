@@ -26,13 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 ssize_t sfread(Sfio_t *f, Void_t *buf, size_t n)
-#else
-ssize_t sfread(f, buf, n) Sfio_t *f; /* read from this stream. 	*/
-Void_t *buf;                         /* buffer to read into		*/
-size_t n;                            /* number of bytes to be read. 	*/
-#endif
 {
     reg uchar *s, *begs;
     reg ssize_t r;

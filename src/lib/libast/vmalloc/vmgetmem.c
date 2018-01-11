@@ -33,13 +33,7 @@
  * Written by Glenn S. Fowler.
  */
 
-#if __STD_C
 Void_t *vmgetmem(Vmalloc_t *vm, Void_t *data, size_t size)
-#else
-Void_t *vmgetmem(vm, data, size) Vmalloc_t *vm;
-Void_t *data;
-size_t size;
-#endif
 {
     if (!vm) return (Void_t *)vmopen(Vmdcheap, Vmbest, 0);
 

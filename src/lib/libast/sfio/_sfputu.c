@@ -25,15 +25,10 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-
-#if __STD_C
-int _sfputu(Sfio_t *f, Sfulong_t v)
-#else
-int _sfputu(f, v) Sfio_t *f; /* write a portable ulong to this stream */
-Sfulong_t v;                 /* the unsigned value to be written */
-#endif
-{
 #define N_ARRAY (2 * sizeof(Sfulong_t))
+
+int _sfputu(Sfio_t *f, Sfulong_t v)
+{
     reg uchar *s, *ps;
     reg ssize_t n, p;
     uchar c[N_ARRAY];

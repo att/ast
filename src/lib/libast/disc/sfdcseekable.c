@@ -37,26 +37,12 @@ typedef struct _skable_s {
     int eof;         /* if eof has been reached */
 } Seek_t;
 
-#if __STD_C
 static ssize_t skwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t skwrite(f, buf, n, disc) Sfio_t *f; /* stream involved */
-Void_t *buf;                                       /* buffer to read into */
-size_t n;                                          /* number of bytes to read */
-Sfdisc_t *disc;                                    /* discipline */
-#endif
 {
     return (ssize_t)(-1);
 }
 
-#if __STD_C
 static ssize_t skread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t skread(f, buf, n, disc) Sfio_t *f;  /* stream involved */
-Void_t *buf;                                       /* buffer to read into */
-size_t n;                                          /* number of bytes to read */
-Sfdisc_t *disc;                                    /* discipline */
-#endif
 {
     Seek_t *sk;
     Sfio_t *sf;
@@ -89,14 +75,7 @@ Sfdisc_t *disc;                                    /* discipline */
     return r + w;
 }
 
-#if __STD_C
 static Sfoff_t skseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
-#else
-static Sfoff_t skseek(f, addr, type, disc) Sfio_t *f;
-Sfoff_t addr;
-int type;
-Sfdisc_t *disc;
-#endif
 {
     Seek_t *sk;
     Sfio_t *sf;
@@ -148,14 +127,7 @@ Sfdisc_t *disc;
 }
 
 /* on close, remove the discipline */
-#if __STD_C
 static int skexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-#else
-static int skexcept(f, type, data, disc) Sfio_t *f;
-int type;
-Void_t *data;
-Sfdisc_t *disc;
-#endif
 {
     Seek_t *sk;
 
@@ -177,11 +149,7 @@ Sfdisc_t *disc;
     return 0;
 }
 
-#if __STD_C
 int sfdcseekable(Sfio_t *f)
-#else
-int sfdcseekable(f) Sfio_t *f;
-#endif
 {
     reg Seek_t *sk;
 

@@ -36,24 +36,13 @@ typedef struct Sfmbstate_s {
     Mbstate_t mbs;
 } Sfmbstate_t;
 
-#if __STD_C
 static int _sfmbexcept(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc)
-#else
-static int _sfmbexcept(f, op, arg, disc) Sfio_t *f;
-int op;
-Void_t *arg;
-Sfdisc_t *disc;
-#endif
 {
     if (type == SF_DPOP || type == SF_FINAL) free(disc);
     return 0;
 }
 
-#if __STD_C
 Mbstate_t *_sfmbstate(Sfio_t *f)
-#else
-Mbstate_t *_sfmbstate(f) Sfio_t *f;
-#endif
 {
     Sfdisc_t *disc;
     Sfmbstate_t *mbs;
@@ -67,12 +56,7 @@ Mbstate_t *_sfmbstate(f) Sfio_t *f;
     return &mbs->mbs;
 }
 
-#if __STD_C
 int sfputwc(Sfio_t *f, int w)
-#else
-int sfputwc(f, w) Sfio_t *f; /* write a portable ulong to this stream */
-int w;                       /* the unsigned value to be written */
-#endif
 {
     reg uchar *s;
     reg char *b;

@@ -89,12 +89,7 @@ int dttreeprint(Dt_t *dt, Dtlink_t *here, int lev, char *(*objprintf)(Void_t *))
 #endif
 
 /* terminal object: DT_FIRST|DT_LAST */
-#if __STD_C
 Void_t *tfirstlast(Dt_t *dt, int type)
-#else
-Void_t *tfirstlast(dt, type) Dt_t *dt;
-int type;
-#endif
 {
     Dtlink_t *t, *root;
     Dtdisc_t *disc = dt->disc;
@@ -114,11 +109,7 @@ int type;
 }
 
 /* DT_CLEAR */
-#if __STD_C
 static Void_t *tclear(Dt_t *dt)
-#else
-static Void_t *tclear(dt) Dt_t *dt;
-#endif
 {
     Dtlink_t *root, *t;
     Dtdisc_t *disc = dt->disc;
@@ -139,13 +130,7 @@ static Void_t *tclear(dt) Dt_t *dt;
     return NULL;
 }
 
-#if __STD_C
 static Void_t *tlist(Dt_t *dt, Dtlink_t *list, int type)
-#else
-static Void_t *tlist(dt, list, type) Dt_t *dt;
-Dtlink_t *list;
-int type;
-#endif
 {
     Void_t *obj;
     Dtlink_t *last, *r, *t;
@@ -182,13 +167,7 @@ int type;
     return (Void_t *)list;
 }
 
-#if __STD_C /* compute tree depth and number of nodes */
 static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st)
-#else
-static ssize_t tsize(root, lev, st) Dtlink_t *root;
-ssize_t lev;
-Dtstat_t *st;
-#endif
 {
     ssize_t size, z;
 
@@ -221,12 +200,7 @@ Dtstat_t *st;
     return size;
 }
 
-#if __STD_C
 static Void_t *tstat(Dt_t *dt, Dtstat_t *st)
-#else
-static Void_t *tstat(dt, st) Dt_t *dt;
-Dtstat_t *st;
-#endif
 {
     ssize_t size;
     Dttree_t *tree = (Dttree_t *)dt->data;
@@ -244,12 +218,8 @@ Dtstat_t *st;
     }
 }
 
-#if __STD_C /* make a list into a balanced tree */
+/* make a list into a balanced tree */
 static Dtlink_t *tbalance(Dtlink_t *list, ssize_t size)
-#else
-static Dtlink_t *tbalance(list, size) Dtlink_t *list;
-ssize_t size;
-#endif
 {
     ssize_t n;
     Dtlink_t *l, *mid;
@@ -400,13 +370,7 @@ static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, Void_t *obj, in
     return root;
 }
 
-#if __STD_C
 static Void_t *dttree(Dt_t *dt, Void_t *obj, int type)
-#else
-static Void_t *dttree(dt, obj, type) Dt_t *dt;
-Void_t *obj;
-int type;
-#endif
 {
     int cmp;
     Void_t *o, *k, *key;

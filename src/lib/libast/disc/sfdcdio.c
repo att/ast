@@ -42,12 +42,7 @@ typedef struct _direct_s {
 /* convert a pointer to an int */
 #define P2I(p) (Sfulong_t)((char *)(p) - (char *)0)
 
-#if __STD_C
 int sfdcdio(Sfio_t *f, size_t bufsize)
-#else
-int sfdcdio(f, bufsize) Sfio_t *f;
-size_t bufsize;
-#endif
 {
 #ifndef F_DIOINFO
     return -1;

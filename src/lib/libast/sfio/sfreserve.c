@@ -26,13 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 Void_t *sfreserve(Sfio_t *f, ssize_t size, int type)
-#else
-Void_t *sfreserve(f, size, type) Sfio_t *f; /* file to peek */
-ssize_t size;                               /* size of peek */
-int type;                                   /* LOCKR: lock stream, LASTR: last record */
-#endif
 {
     reg ssize_t n, now, sz, iosz;
     reg Sfrsrv_t *rsrv;

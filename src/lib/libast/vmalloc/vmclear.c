@@ -25,11 +25,7 @@
 /*	Clear a region.
  */
 
-#if __STD_C
 int vmclear(Vmalloc_t *vm)
-#else
-int vmclear(vm) Vmalloc_t *vm;
-#endif
 {
     Seg_t *seg, *next;
     Vmdata_t *vmdt = vm->data;

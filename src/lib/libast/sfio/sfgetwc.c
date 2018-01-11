@@ -26,11 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-#if __STD_C
 int sfgetwc(Sfio_t *f)
-#else
-int sfgetwc(f) Sfio_t *f;
-#endif
 {
     uchar *s;
     char *e, *b;

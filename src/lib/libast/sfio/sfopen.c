@@ -28,25 +28,12 @@
 extern Sfio_t *_sfopen _ARG_((Sfio_t *, const char *, const char *));
 extern Sfio_t *_sfopenat _ARG_((int, Sfio_t *, const char *, const char *));
 
-#if __STD_C
 Sfio_t *sfopen(Sfio_t *f, const char *file, const char *mode)
-#else
-Sfio_t *sfopen(f, file, mode) Sfio_t *f;      /* old stream structure */
-char *file;                                   /* file/string to be opened */
-reg char *mode;                               /* mode of the stream */
-#endif
 {
     return _sfopen(f, file, mode);
 }
 
-#if __STD_C
 Sfio_t *sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode)
-#else
-Sfio_t *sfopenat(cwd, f, file, mode) int cwd; /* openat() cwd */
-Sfio_t *f;                                    /* old stream structure */
-char *file;                                   /* file/string to be opened */
-reg char *mode;                               /* mode of the stream */
-#endif
 {
     return _sfopenat(cwd, f, file, mode);
 }

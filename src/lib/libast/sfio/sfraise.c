@@ -26,12 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 static int _sfraiseall(int type, Void_t *data)
-#else
-static int _sfraiseall(type, data) int type; /* type of event	*/
-Void_t *data;                                /* associated data	*/
-#endif
 {
     Sfio_t *f;
     Sfpool_t *p, *next;
@@ -49,13 +44,7 @@ Void_t *data;                                /* associated data	*/
     return rv;
 }
 
-#if __STD_C
 int sfraise(Sfio_t *f, int type, Void_t *data)
-#else
-int sfraise(f, type, data) Sfio_t *f;        /* stream		*/
-int type;                                    /* type of event	*/
-Void_t *data;                                /* associated data	*/
-#endif
 {
     reg Sfdisc_t *disc, *next, *d;
     reg int local, rv;

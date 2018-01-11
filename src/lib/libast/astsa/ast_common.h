@@ -29,7 +29,6 @@
 #define _ARG_(x) x
 #define _BEGIN_EXTERNS_
 #define _END_EXTERNS_
-#define __STD_C 1
 
 #include <stdint.h>
 

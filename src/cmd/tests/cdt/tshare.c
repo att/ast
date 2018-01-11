@@ -24,15 +24,7 @@ static char	*Current = &Space[0];
 static int	Close = 0;
 static int	Free = 0;
 
-#if __STD_C
 static int event(Dt_t* dt, int type, Void_t* obj, Dtdisc_t* disc)
-#else
-static int event(dt, type, obj, disc)
-Dt_t*	dt;
-int	type;
-Void_t* obj;
-Dtdisc_t* disc;
-#endif
 {	if(type == DT_OPEN)
 	{	/* opening first dictionary */
 		if(obj)
@@ -53,15 +45,7 @@ Dtdisc_t* disc;
 	else	return 0;
 }
 
-#if __STD_C
 static Void_t* memory(Dt_t* dt, Void_t* buf, size_t size, Dtdisc_t* disc)
-#else
-static Void_t* memory(dt,buf,size,disc)
-Dt_t*	dt;
-Void_t* buf;
-size_t	size;
-Dtdisc_t* disc;
-#endif
 {
 	if(!buf)
 	{	size = ((size + sizeof(Void_t*)-1)/sizeof(Void_t*))*sizeof(Void_t*);

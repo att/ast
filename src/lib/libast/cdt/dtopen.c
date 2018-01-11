@@ -32,13 +32,7 @@ static int _dttype2005(Dt_t *dt, int type) {
     return type;
 }
 
-#if __STD_C
 Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version)
-#else
-Dt_t *_dtopen(disc, meth, version) Dtdisc_t *disc;
-Dtmethod_t *meth;
-unsigned long version;
-#endif
 {
     Dtdata_t *data;
     Dt_t *dt, pdt;
@@ -100,12 +94,7 @@ unsigned long version;
 }
 
 #undef dtopen /* deal with binary upward compatibility for op bits */
-#if __STD_C
 Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth)
-#else
-Dt_t *dtopen(disc, meth) Dtdisc_t *disc;
-Dtmethod_t *meth;
-#endif
 {
     return _dtopen(disc, meth, 20050420L);
 }

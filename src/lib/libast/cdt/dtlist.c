@@ -58,12 +58,7 @@ int dtlistprint(Dt_t *dt, Dtlink_t *here, char *(*objprintf)(Void_t *)) {
 #endif
 
 /* terminal objects: DT_FIRST|DT_LAST */
-#if __STD_C
 Void_t *lfirstlast(Dt_t *dt, int type)
-#else
-Void_t *lfirstlast(dt, type) Dt_t *dt;
-int type;
-#endif
 {
     Dtlink_t *lnk;
     Dtdisc_t *disc = dt->disc;
@@ -78,11 +73,7 @@ int type;
 }
 
 /* DT_CLEAR */
-#if __STD_C
 Void_t *lclear(Dt_t *dt)
-#else
-Void_t *lclear(dt) Dt_t *dt;
-#endif
 {
     Dtlink_t *lnk, *next;
     Dtdisc_t *disc = dt->disc;
@@ -103,13 +94,7 @@ Void_t *lclear(dt) Dt_t *dt;
 }
 
 /* DT_FLATTEN|DT_EXTRACT|DT_RESTORE */
-#if __STD_C
 Void_t *llist(Dt_t *dt, Dtlink_t *lnk, int type)
-#else
-Void_t *llist(dt, lnk, type) Dt_t *dt;
-Dtlink_t *lnk;
-int type;
-#endif
 {
     Dtlist_t *list = (Dtlist_t *)dt->data;
 
@@ -135,12 +120,7 @@ int type;
     return (Void_t *)lnk;
 }
 
-#if __STD_C
 static Void_t *listat(Dt_t *dt, Dtstat_t *st)
-#else
-static Void_t *listat(dt, st) Dt_t *dt;
-Dtstat_t *st;
-#endif
 {
     if (st) {
         memset(st, 0, sizeof(Dtstat_t));
@@ -153,13 +133,7 @@ Dtstat_t *st;
     return (Void_t *)dt->data->size;
 }
 
-#if __STD_C
 static Void_t *dtlist(Dt_t *dt, Void_t *obj, int type)
-#else
-static Void_t *dtlist(dt, obj, type) Dt_t *dt;
-Void_t *obj;
-int type;
-#endif
 {
     Dtlink_t *r, *t, *h;
     Void_t *key, *o, *k;
@@ -353,13 +327,7 @@ dt_return:
     return obj;
 }
 
-#if __STD_C
 static int listevent(Dt_t *dt, int event, Void_t *arg)
-#else
-static int listevent(dt, event, arg) Dt_t *dt;
-int event;
-Void_t *arg;
-#endif
 {
     Dtlist_t *list = (Dtlist_t *)dt->data;
 

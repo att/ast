@@ -26,11 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-#if __STD_C
 Sflong_t sfgetl(Sfio_t *f)
-#else
-Sflong_t sfgetl(f) Sfio_t *f;
-#endif
 {
     Sflong_t v;
     uchar *s, *ends, c;

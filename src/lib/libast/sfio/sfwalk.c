@@ -26,13 +26,7 @@
 ** Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 int sfwalk(Sfwalk_f walkf, Void_t *data, int type)
-#else
-int sfwalk(walkf, data, type) Sfwalk_f walkf; /* return <0: stop, >=0: continue	*/
-Void_t *data;
-int type; /* walk streams with all given flags	*/
-#endif
 {
     Sfpool_t *p;
     Sfio_t *f;

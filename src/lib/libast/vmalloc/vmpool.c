@@ -47,13 +47,7 @@ typedef struct _vmpool_s {
 static int N_pool; /* counter for Vmpool calls	*/
 #endif
 
-#if __STD_C
 static Void_t *poolalloc(Vmalloc_t *vm, size_t size, int local)
-#else
-static Void_t *poolalloc(vm, size, local) Vmalloc_t *vm;
-size_t size;
-int local;
-#endif
 {
     Pool_t *pl, *last, *list, *free;
     Block_t *blk;
@@ -114,13 +108,7 @@ int local;
     return (Void_t *)pl;
 }
 
-#if __STD_C
 static int poolfree(Vmalloc_t *vm, Void_t *data, int local)
-#else
-static int poolfree(vm, data, local) Vmalloc_t *vm;
-Void_t *data;
-int local;
-#endif
 {
     Pool_t *pl, *free;
     Vmpool_t *pool = (Vmpool_t *)vm->data;
@@ -140,15 +128,7 @@ int local;
     return 0;
 }
 
-#if __STD_C
 static Void_t *poolresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local)
-#else
-static Void_t *poolresize(vm, data, size, type, local) Vmalloc_t *vm;
-Void_t *data;
-size_t size;
-int type;
-int local;
-#endif
 {
     NOTUSED(type);
 
@@ -163,14 +143,7 @@ int local;
         return NULL;
 }
 
-#if __STD_C
 static Void_t *poolalign(Vmalloc_t *vm, size_t size, size_t align, int local)
-#else
-static Void_t *poolalign(vm, size, align, local) Vmalloc_t *vm;
-size_t size;
-size_t align;
-int local;
-#endif
 {
     NOTUSED(vm);
     NOTUSED(size);

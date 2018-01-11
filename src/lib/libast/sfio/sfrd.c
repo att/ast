@@ -28,11 +28,7 @@
 */
 
 /* synchronize unseekable write streams */
-#if __STD_C
 static void _sfwrsync(void)
-#else
-static void _sfwrsync()
-#endif
 {
     reg Sfpool_t *p;
     reg Sfio_t *f;
@@ -55,14 +51,7 @@ static void _sfwrsync()
     }
 }
 
-#if __STD_C
 ssize_t sfrd(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-ssize_t sfrd(f, buf, n, disc) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *disc;
-#endif
 {
     Sfoff_t r;
     reg Sfdisc_t *dc;

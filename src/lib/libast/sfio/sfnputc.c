@@ -26,13 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 ssize_t sfnputc(Sfio_t *f, int c, size_t n)
-#else
-ssize_t sfnputc(f, c, n) Sfio_t *f; /* file to write */
-int c;                              /* char to be written */
-size_t n;                           /* number of time to repeat */
-#endif
 {
     reg uchar *ps;
     reg ssize_t p, w;

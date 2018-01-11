@@ -25,14 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-#if __STD_C
 Sfoff_t sfsk(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
-#else
-Sfoff_t sfsk(f, addr, type, disc) Sfio_t *f;
-Sfoff_t addr;
-int type;
-Sfdisc_t *disc;
-#endif
 {
     Sfoff_t p;
     reg Sfdisc_t *dc;

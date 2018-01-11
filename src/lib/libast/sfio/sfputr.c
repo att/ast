@@ -25,13 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-#if __STD_C
 ssize_t sfputr(Sfio_t *f, const char *s, int rc)
-#else
-ssize_t sfputr(f, s, rc) Sfio_t *f; /* write to this stream	*/
-char *s;                            /* string to write	*/
-int rc;                             /* record separator.	*/
-#endif
 {
     ssize_t p, n, w, sn;
     uchar *ps;

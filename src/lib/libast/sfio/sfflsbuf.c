@@ -27,12 +27,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-#if __STD_C
 int _sfflsbuf(Sfio_t *f, int c)
-#else
-int _sfflsbuf(f, c) Sfio_t *f; /* write out the buffered content of this stream */
-int c;                         /* if c>=0, c is also written out */
-#endif
 {
     ssize_t n, w, written;
     uchar *data;

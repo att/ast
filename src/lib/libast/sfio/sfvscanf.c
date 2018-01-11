@@ -35,12 +35,7 @@
 #include "sfstrtof.h"
 
 /* refresh stream buffer - taking care of unseekable/share streams too */
-#if __STD_C
 static void _sfbuf(Sfio_t *f, int *peek)
-#else
-static void _sfbuf(f, peek) Sfio_t *f;
-int *peek;
-#endif
 {
     if (f->next >= f->endb) {
         if (*peek) /* try peeking for a share stream if possible */
@@ -76,12 +71,7 @@ typedef struct _scan_s {
     (inp = (sc)->inp, f = (sc)->f, (width = (ds) ? (sc)->width : width), d = (sc)->d, \
      endd = (sc)->endd, data = (sc)->data, peek = (sc)->peek, n_input = (sc)->n_input)
 
-#if __STD_C
 static int _scgetc(void *arg, int flag)
-#else
-static int _scgetc(arg, flag) void *arg;
-int flag;
-#endif
 {
     Scan_t *sc = (Scan_t *)arg;
 
@@ -130,13 +120,7 @@ typedef struct _accept_s {
 #endif
 } Accept_t;
 
-#if __STD_C
 static char *_sfsetclass(const char *form, Accept_t *ac, int flags)
-#else
-static char *_sfsetclass(form, ac, flags) char *form; /* format string			*/
-Accept_t *ac;                                         /* values of accepted characters	*/
-int flags;                                            /* SFFMT_LONG for wchar_t		*/
-#endif
 {
     int c, endc, n;
     SFMBDCL(mbs)
@@ -184,12 +168,7 @@ int flags;                                            /* SFFMT_LONG for wchar_t	
 }
 
 #if _has_multibyte
-#if __STD_C
 static int _sfwaccept(wchar_t wc, Accept_t *ac)
-#else
-static int _sfwaccept(wc, ac) wchar_t wc;
-Accept_t *ac;
-#endif
 {
     int endc, c, n;
     wchar_t fwc;
@@ -221,15 +200,7 @@ Accept_t *ac;
 #define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, NULL)
 #endif
 
-#if __STD_C
 static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, Void_t *mbs)
-#else
-static int _sfgetwc(sc, wc, fmt, ac, mbs) Scan_t *sc; /* the scanning handle		*/
-wchar_t *wc;                                          /* to return a scanned wchar_t	*/
-int fmt;                                              /* %s, %c, %[			*/
-Accept_t *ac;                                         /* accept handle for %[		*/
-Void_t *mbs;                                          /* multibyte parsing state	*/
-#endif
 {
     int n, v;
     char b[16]; /* assuming that SFMBMAX <= 16! */
@@ -283,13 +254,7 @@ no_match: /* this unget is lossy on a stream with small buffer */
 }
 #endif /*_has_multibyte*/
 
-#if __STD_C
 int sfvscanf(Sfio_t *f, reg const char *form, va_list args)
-#else
-int sfvscanf(f, form, args) Sfio_t *f;                /* file to be scanned */
-reg char *form;                                       /* scanning format */
-va_list args;
-#endif
 {
     reg int inp, shift, base, width;
     ssize_t size;

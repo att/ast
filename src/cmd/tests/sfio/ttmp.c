@@ -24,14 +24,7 @@ static Sfdisc_t	Disc;
 
 static char	Rec[] = "0";
 
-#if __STD_C
 void count(Sfio_t* f, int type, void* data)
-#else
-void count(f, type, data)
-Sfio_t* f;
-int type;
-void* data;
-#endif
 {
 	int	fd = integralof(data);
 

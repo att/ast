@@ -21,15 +21,7 @@
 
 static int	Write_error = 0;
 
-#if __STD_C
 static int except(Sfio_t* f, int type, Void_t* obj, Sfdisc_t* disc)
-#else
-static int except(f, type, obj, disc)
-Sfio_t*	f;
-int	type;
-Void_t* obj;
-Sfdisc_t* disc;
-#endif
 {
 	if(type == SF_WRITE)
 		Write_error = 1;

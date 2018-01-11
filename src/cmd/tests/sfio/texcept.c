@@ -22,16 +22,7 @@
 static int	Type;
 static int	Sfn;
 
-#if __STD_C
-static int except(Sfio_t* f, int type, Void_t* data, Sfdisc_t* disc)
-#else
-static int except(f, type, data, disc)
-Sfio_t*		f;
-int		type;
-Void_t*		data;
-Sfdisc_t*	disc;
-#endif
-{
+static int except(Sfio_t* f, int type, Void_t* data, Sfdisc_t* disc) {
 	switch(type)
 	{
 	case SF_WRITE :
@@ -49,42 +40,19 @@ Sfdisc_t*	disc;
 	return -1;
 }
 
-#if __STD_C
 static int except2(Sfio_t* f, int type, Void_t* data, Sfdisc_t* disc)
-#else
-static int except2(f, type, data, disc)
-Sfio_t*		f;
-int		type;
-Void_t*		data;
-Sfdisc_t*	disc;
-#endif
 {	return 0;
 }
 
-#if __STD_C
 static int except3(Sfio_t* f, int type, Void_t* data, Sfdisc_t* disc)
-#else
-static int except3(f, type, data, disc)
-Sfio_t*		f;
-int		type;
-Void_t*		data;
-Sfdisc_t*	disc;
-#endif
 {	if(type == SF_LOCKED)
 	{	Type = type;
 		return -1;
 	}
 	return 0;
 }
-#if __STD_C
+
 static ssize_t readfunc(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-static ssize_t readfunc(f, buf, n, disc)
-Sfio_t*	f;
-Void_t* buf;
-size_t	n;
-Sfdisc_t* disc;
-#endif
 {
 	if(sfgetc(f) >= 0)
 		terror("Can't access stream here!");

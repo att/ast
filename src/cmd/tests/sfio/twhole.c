@@ -22,15 +22,7 @@
 static int	Count;
 static int	Size;
 
-#if __STD_C
 ssize_t writef(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t writef(f,buf,n,disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	Count += 1;
 	if((n % Size) != 0)

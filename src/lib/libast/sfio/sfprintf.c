@@ -26,38 +26,19 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 int sfprintf(Sfio_t *f, const char *form, ...)
-#else
-int sfprintf(va_alist) va_dcl
-#endif
 {
     va_list args;
     reg int rv;
 
-#if __STD_C
     va_start(args, form);
-#else
-    reg Sfio_t *f;
-    reg char *form;
-    va_start(args);
-    f = va_arg(args, Sfio_t *);
-    form = va_arg(args, char *);
-#endif
     rv = sfvprintf(f, form, args);
 
     va_end(args);
     return rv;
 }
 
-#if __STD_C
 ssize_t sfvsprintf(char *s, size_t n, const char *form, va_list args)
-#else
-ssize_t sfvsprintf(s, n, form, args) char *s;
-size_t n;
-char *form;
-va_list args;
-#endif
 {
     Sfio_t *f;
     ssize_t rv;
@@ -86,26 +67,12 @@ va_list args;
     return rv;
 }
 
-#if __STD_C
 ssize_t sfsprintf(char *s, size_t n, const char *form, ...)
-#else
-ssize_t sfsprintf(va_alist) va_dcl
-#endif
 {
     va_list args;
     ssize_t rv;
 
-#if __STD_C
     va_start(args, form);
-#else
-    reg char *s;
-    reg size_t n;
-    reg char *form;
-    va_start(args);
-    s = va_arg(args, char *);
-    n = va_arg(args, size_t);
-    form = va_arg(args, char *);
-#endif
 
     rv = sfvsprintf(s, n, form, args);
     va_end(args);

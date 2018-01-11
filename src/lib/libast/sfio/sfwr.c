@@ -30,13 +30,7 @@
 */
 
 /* hole preserving writes */
-#if __STD_C
 static ssize_t sfoutput(Sfio_t *f, char *buf, size_t n)
-#else
-static ssize_t sfoutput(f, buf, n) Sfio_t *f;
-char *buf;
-size_t n;
-#endif
 {
     reg char *sp, *wbuf, *endbuf;
     reg ssize_t s, w, wr;
@@ -118,14 +112,7 @@ size_t n;
     return w > 0 ? w : -1;
 }
 
-#if __STD_C
 ssize_t sfwr(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-ssize_t sfwr(f, buf, n, disc) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *disc;
-#endif
 {
     reg ssize_t w;
     reg Sfdisc_t *dc;

@@ -31,17 +31,8 @@ static Vmuchar_t	*Buf, *Endbuf, *Avail;
 static int		Count = 0;
 static int		Walk = 0;
 
-#if __STD_C
 static Void_t*	memory(Vmalloc_t* vm, Void_t* caddr,
 		size_t oldsize, size_t newsize, Vmdisc_t* disc)
-#else
-static Void_t*	memory(vm, caddr, oldsize, newsize, disc)
-Vmalloc_t*	vm;
-Void_t*		caddr;
-size_t		oldsize;
-size_t		newsize;
-Vmdisc_t*	disc;
-#endif
 {
 	if(!Avail)
 	{	Avail = Buf = (Vmuchar_t*)(&Algn[0]);
@@ -70,15 +61,7 @@ static int except(Vmalloc_t* vm, int type, Void_t* data, Vmdisc_t* disc)
 
 static Vmdisc_t	Disc = {memory, except, 64};
 
-#if __STD_C
 static int walk(Vmalloc_t* vm, Void_t* addr, size_t size, Vmdisc_t* disc, Void_t* handle)
-#else
-static int walk(vm, addr, size, disc)
-Vmalloc_t*	vm;
-Void_t*		addr;
-size_t		size;
-Vmdisc_t*	disc;
-#endif
 {
 	if(disc == &Disc)
 		Walk += 1;

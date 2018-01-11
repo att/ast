@@ -28,15 +28,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 Sfio_t *sfnew(Sfio_t *oldf, Void_t *buf, size_t size, int file, int flags)
-#else
-Sfio_t *sfnew(oldf, buf, size, file, flags) Sfio_t *oldf; /* old stream to be reused */
-Void_t *buf; /* a buffer to read/write, if NULL, will be allocated */
-size_t size; /* buffer size if buf is given or desired buffer size */
-int file;    /* file descriptor to read/write from */
-int flags;   /* type of file stream */
-#endif
 {
     reg Sfio_t *f;
     reg int sflags;

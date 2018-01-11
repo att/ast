@@ -23,12 +23,7 @@
 char	Buf[16];
 int	Except;
 
-#if __STD_C
 void alrmhandler(int sig)
-#else
-void alrmhandler(sig)
-int	sig;
-#endif
 {
 	strcpy(Buf,HANDLER);
 
@@ -46,15 +41,7 @@ int	sig;
 	else	terror("Unexpected Except(%d) state", Except);
 }
 
-#if __STD_C
 int exceptf(Sfio_t* f, int type, Void_t* data, Sfdisc_t* disc)
-#else
-int exceptf(f, type, data, disc)
-Sfio_t* 	f;
-int		type;
-Void_t*		data;
-Sfdisc_t*	disc;
-#endif
 {
 	if(type == SF_ATEXIT || type == SF_DPOP)
 		return 0;

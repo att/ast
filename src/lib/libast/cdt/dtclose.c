@@ -25,11 +25,7 @@
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96) (11/15/2010)
 */
-#if __STD_C
 int dtclose(Dt_t *dt)
-#else
-int dtclose(dt) Dt_t *dt;
-#endif
 {
     int ev, type;
     Dt_t pdt;

@@ -31,13 +31,7 @@
     (DT_INSERT | DT_APPEND | DT_DELETE | DT_ATTACH | DT_DETACH | DT_RELINK | DT_CLEAR | \
      DT_FLATTEN | DT_EXTRACT | DT_RESTORE | DT_STAT)
 
-#if __STD_C
 static Void_t *dtvsearch(Dt_t *dt, reg Void_t *obj, reg int type)
-#else
-static Void_t *dtvsearch(dt, obj, type) Dt_t *dt;
-reg Void_t *obj;
-reg int type;
-#endif
 {
     int cmp;
     Dt_t *d, *p;
@@ -117,12 +111,7 @@ reg int type;
     }
 }
 
-#if __STD_C
 Dt_t *dtview(reg Dt_t *dt, reg Dt_t *view)
-#else
-Dt_t *dtview(dt, view) reg Dt_t *dt;
-reg Dt_t *view;
-#endif
 {
     reg Dt_t *d;
 

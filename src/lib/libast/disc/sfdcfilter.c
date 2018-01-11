@@ -36,14 +36,7 @@ typedef struct _filter_s {
 } Filter_t;
 
 /* read data from the filter */
-#if __STD_C
 static ssize_t filterread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t filterread(f, buf, n, disc) Sfio_t *f;  /* stream reading from */
-Void_t *buf;                                           /* buffer to read into */
-size_t n;                                              /* number of bytes requested */
-Sfdisc_t *disc;                                        /* discipline */
-#endif
 {
     Filter_t *fi;
     ssize_t r, w;
@@ -92,27 +85,13 @@ Sfdisc_t *disc;                                        /* discipline */
     }
 }
 
-#if __STD_C
 static ssize_t filterwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t filterwrite(f, buf, n, disc) Sfio_t *f; /* stream writing to */
-Void_t *buf;                                           /* buffer to write into */
-size_t n;                                              /* number of bytes requested */
-Sfdisc_t *disc;                                        /* discipline */
-#endif
 {
     return -1;
 }
 
 /* for the duration of this discipline, the stream is unseekable */
-#if __STD_C
 static Sfoff_t filterseek(Sfio_t *f, Sfoff_t addr, int offset, Sfdisc_t *disc)
-#else
-static Sfoff_t filterseek(f, addr, offset, disc) Sfio_t *f;
-Sfoff_t addr;
-int offset;
-Sfdisc_t *disc;
-#endif
 {
     f = NULL;
     addr = 0;
@@ -122,14 +101,7 @@ Sfdisc_t *disc;
 }
 
 /* on close, remove the discipline */
-#if __STD_C
 static int filterexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-#else
-static int filterexcept(f, type, data, disc) Sfio_t *f;
-int type;
-Void_t *data;
-Sfdisc_t *disc;
-#endif
 {
     if (type == SF_FINAL || type == SF_DPOP) {
         sfclose(((Filter_t *)disc)->filter);
@@ -139,12 +111,7 @@ Sfdisc_t *disc;
     return 0;
 }
 
-#if __STD_C
 int sfdcfilter(Sfio_t *f, const char *cmd)
-#else
-int sfdcfilter(f, cmd) Sfio_t *f; /* stream to filter data	*/
-char *cmd;                        /* program to run as a filter	*/
-#endif
 {
     reg Filter_t *fi;
     reg Sfio_t *filter;

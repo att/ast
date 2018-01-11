@@ -26,12 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-#if __STD_C
 Sfulong_t sfgetm(Sfio_t *f, Sfulong_t m)
-#else
-Sfulong_t sfgetm(f, m) Sfio_t *f;
-Sfulong_t m;
-#endif
 {
     Sfulong_t v;
     reg uchar *s, *ends, c;

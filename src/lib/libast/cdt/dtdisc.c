@@ -28,14 +28,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-#if __STD_C
 static Void_t *dtmemory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc)
-#else
-static Void_t *dtmemory(dt, addr, size, disc) Dt_t *dt; /* dictionary			*/
-Void_t *addr;                                           /* address to be manipulate	*/
-size_t size;                                            /* size to obtain		*/
-Dtdisc_t *disc;                                         /* discipline			*/
-#endif
 {
     if (addr) {
         if (size == 0) {
@@ -47,13 +40,7 @@ Dtdisc_t *disc;                                         /* discipline			*/
         return size > 0 ? malloc(size) : NULL;
 }
 
-#if __STD_C
 Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type)
-#else
-Dtdisc_t *dtdisc(dt, disc, type) Dt_t *dt;
-Dtdisc_t *disc;
-int type;
-#endif
 {
     Dtdisc_t *old;
     Dtlink_t *list;

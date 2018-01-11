@@ -22,14 +22,7 @@
 static int	Type;
 static int	Mttype;
 
-#if __STD_C
 static void notify(Sfio_t* f, int type, void* data)
-#else
-static void notify(f, type, data)
-Sfio_t*	f;
-int	type;
-void*	data;
-#endif
 {
 	switch(type)
 	{

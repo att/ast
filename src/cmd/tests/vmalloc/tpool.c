@@ -21,17 +21,8 @@
 
 int	Release = 0;
 
-#if __STD_C
 Void_t*	memory(Vmalloc_t* vm, Void_t* caddr,
 		size_t oldsize, size_t newsize, Vmdisc_t* disc)
-#else
-Void_t*	memory(vm, caddr, oldsize, newsize, disc)
-Vmalloc_t*	vm;
-Void_t*		caddr;
-size_t		oldsize;
-size_t		newsize;
-Vmdisc_t*	disc;
-#endif
 {
 	if(caddr)
 	{	if(newsize != 0)

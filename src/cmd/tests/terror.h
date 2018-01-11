@@ -57,14 +57,6 @@ _BEGIN_EXTERNS_
 
 extern int sprintf _ARG_((char *, const char *, ...));
 
-#if !__STD_C && !_hdr_stdlib
-extern int atexit _ARG_((void (*)(void)));
-extern void exit _ARG_((int));
-extern Void_t *malloc _ARG_((size_t));
-extern char *getenv _ARG_((const char *));
-extern int system _ARG_((const char *));
-#endif
-
 #if !_hdr_unistd
 extern int alarm _ARG_((int));
 extern int sleep _ARG_((int));
@@ -159,13 +151,7 @@ static char Tstfile[256][256];
 #endif
 
 #ifndef tmain
-#if __STD_C
 #define tmain() int main(int argc, char **argv)
-#else
-#define tmain()                    \
-    int main(argc, argv) int argc; \
-    char **argv;
-#endif
 #endif /*tmain*/
 
 #ifndef texit
@@ -176,11 +162,7 @@ static char Tstfile[256][256];
     }
 #endif
 
-#if __STD_C
 static void tcleanup(void)
-#else
-static void tcleanup()
-#endif
 {
 #ifndef DEBUG
     int i;
@@ -192,11 +174,7 @@ static void tcleanup()
 #endif
 }
 
-#if __STD_C
 static void tnote(char *note)
-#else
-static void tnote(note) char *note;
-#endif
 {
     char buf[1024];
 
@@ -208,13 +186,7 @@ static void tnote(note) char *note;
     write(2, buf, strlen(buf));
 }
 
-#if __STD_C
 static void tstputmesg(int line, char *form, va_list args)
-#else
-static void tstputmesg(line, form, args) int line;
-char *form;
-va_list args;
-#endif
 {
     char *s, buf[1024];
     size_t n;
@@ -246,22 +218,12 @@ va_list args;
     }
 }
 
-#if __STD_C
 void tsterror(char *form, ...)
-#else
-void tsterror(va_alist) va_dcl
-#endif
 {
     char failform[1024];
 
     va_list args;
-#if __STD_C
     va_start(args, form);
-#else
-    char *form;
-    va_start(args);
-    form = va_arg(args, char *);
-#endif
 
     if (form) {
 #if _SFIO_H
@@ -281,20 +243,10 @@ void tsterror(va_alist) va_dcl
     texit(1);
 }
 
-#if __STD_C
 void tstsuccess(char *form, ...)
-#else
-void tstsuccess(va_alist) va_dcl
-#endif
 {
     va_list args;
-#if __STD_C
     va_start(args, form);
-#else
-    char *form;
-    va_start(args);
-    form = va_arg(args, char *);
-#endif
 
     tstputmesg(Tstline, form, args);
 
@@ -303,21 +255,11 @@ void tstsuccess(va_alist) va_dcl
     texit(0);
 }
 
-#if __STD_C
 void tstinfo(char *form, ...)
-#else
-void tstinfo(va_alist) va_dcl
-#endif
 {
 #ifdef INFO
     va_list args;
-#if __STD_C
     va_start(args, form);
-#else
-    char *form;
-    va_start(args);
-    form = va_arg(args, char *);
-#endif
 
     tstputmesg(Tstline, form, args);
 
@@ -325,42 +267,22 @@ void tstinfo(va_alist) va_dcl
 #endif
 }
 
-#if __STD_C
 void tstwarn(char *form, ...)
-#else
-void tstwarn(va_alist) va_dcl
-#endif
 {
     va_list args;
-#if __STD_C
     va_start(args, form);
-#else
-    char *form;
-    va_start(args);
-    form = va_arg(args, char *);
-#endif
 
     tstputmesg(Tstline, form, args);
 
     va_end(args);
 }
 
-#if __STD_C
 void tstpause(char *form, ...)
-#else
-void tstpause(va_alist) va_dcl
-#endif
 {
     char pauseform[1024];
 
     va_list args;
-#if __STD_C
     va_start(args, form);
-#else
-    char *form;
-    va_start(args);
-    form = va_arg(args, char *);
-#endif
 
 #ifdef INFO
 #if _SFIO_H
@@ -388,12 +310,7 @@ static int asoerror(int type, const char *mesg) {
     return 0;
 }
 
-#if __STD_C
 int tstwait(pid_t *proc, int nproc)
-#else
-int tstwait(proc, nproc) pid_t *proc;
-int nproc;
-#endif
 {
     int code = 2, n, status, reaped = 0, ignore = 0;
     pid_t pid, parent = getpid();
@@ -428,12 +345,7 @@ int nproc;
     return code;
 }
 
-#if __STD_C
 static char *tstfile(char *pfx, int n)
-#else
-static char *tstfile(pfx, n) char *pfx;
-int n;
-#endif
 {
     static int Setatexit = 0;
 
@@ -502,11 +414,7 @@ static void asointr(int sig) {
     texit(sig);
 }
 
-#if __STD_C
 static void tstintr(void)
-#else
-static void tstintr()
-#endif
 {
     setpgid(0, 0);
     signal(SIGINT, asointr);
@@ -520,11 +428,7 @@ static void tstintr()
     }
 }
 
-#if __STD_C
 static int tstchild(char **argv)
-#else
-static int tstchild(argv) char **argv;
-#endif
 {
     char **v = argv;
     char *a;
@@ -545,11 +449,7 @@ static int tstchild(argv) char **argv;
     return 0;
 }
 
-#if __STD_C
 static int tstopts(char **argv)
-#else
-static int tstopts(argv) char **argv;
-#endif
 {
     char **v = argv;
     char *a;
@@ -569,30 +469,18 @@ static int tstopts(argv) char **argv;
 
 static unsigned int Rand = 0xdeadbeef;
 
-#if __STD_C
 static void trandseed(unsigned int seed)
-#else
-static void trandseed(seed) unsigned int seed;
-#endif
 {
     Rand = seed == 0 ? 0xdeadbeef : seed;
 }
 
-#if __STD_C
 static unsigned int trandom(void)
-#else
-static unsigned int trandom()
-#endif
 {
     Rand = Rand * 17109811 + 751;
     return Rand;
 }
 
-#if __STD_C
 static Void_t *tstshared(size_t n)
-#else
-static Void_t *tstshared(n) size_t n;
-#endif
 {
     Void_t *p;
     int z;

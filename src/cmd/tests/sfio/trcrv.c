@@ -19,15 +19,7 @@
 ***********************************************************************/
 #include	"sftest.h"
 
-#if __STD_C
 ssize_t myread(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t myread(f, buf, n, disc)
-Sfio_t*	f;
-Void_t*	buf;
-size_t	n;
-Sfdisc_t* disc;
-#endif
 {
 	return sfrd(f,buf,n,disc);
 }

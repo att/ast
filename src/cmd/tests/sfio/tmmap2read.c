@@ -34,11 +34,7 @@
 
 static int	Success = 1;
 
-#if __STD_C
 void* mmap(void* addr, size_t size, int x, int y, int z, off_t offset)
-#else
-void* mmap()
-#endif
 {
 	if(Success)
 		texit(0);
@@ -46,11 +42,7 @@ void* mmap()
 	return (void*)(-1);
 }
 
-#if __STD_C
 void* mmap64(void* addr, size_t size, int x, int y, int z, Sfoff_t offset)
-#else
-void* mmap64()
-#endif
 {
 	if(Success)
 		texit(0);

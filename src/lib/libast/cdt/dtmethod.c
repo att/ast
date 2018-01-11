@@ -26,12 +26,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-#if __STD_C
 Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth)
-#else
-Dtmethod_t *dtmethod(dt, meth) Dt_t *dt;
-Dtmethod_t *meth;
-#endif
 {
     Dtlink_t *list;
     Dtdisc_t *disc = dt->disc;

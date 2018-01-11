@@ -95,12 +95,7 @@ void*	arg;
 	return arg;
 }
 
-#if __STD_C
 void sighandler(int sig)
-#else
-void sighandler(sig)
-int     sig;
-#endif
 {
 	tmesg("\tSignal %d.\n", sig);
 	texit(0);

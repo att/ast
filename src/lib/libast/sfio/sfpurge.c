@@ -26,11 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 int sfpurge(Sfio_t *f)
-#else
-int sfpurge(f) Sfio_t *f;
-#endif
 {
     reg int mode;
     SFMTXDECL(f);

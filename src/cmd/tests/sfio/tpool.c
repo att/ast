@@ -20,15 +20,7 @@
 #include	"sftest.h"
 
 static char	Serial[128], *S = Serial;
-#if __STD_C
 ssize_t writef(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t writef(f, buf, n, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	memcpy((Void_t*)S,buf,n);
 	S += n;

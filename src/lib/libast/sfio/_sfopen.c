@@ -38,15 +38,8 @@
 #define extern __EXPORT__
 #endif
 extern
-#if __STD_C
     Sfio_t *
     _sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode)
-#else
-    Sfio_t *_sfopenat(cwd, f, file, mode) int cwd; /* cwd fd */
-Sfio_t *f;                                         /* old stream structure */
-char *file;                                        /* file/string to be opened */
-char *mode;                                        /* mode of the stream */
-#endif
 {
     int fd, oldfd, oflags, fflags, sflags;
     SFMTXDECL(f);
@@ -174,27 +167,14 @@ char *mode;                                        /* mode of the stream */
     return f;
 }
 
-#if __STD_C
 Sfio_t *_sfopen(Sfio_t *f, const char *file, const char *mode)
-#else
-Sfio_t *_sfopen(f, file, mode) Sfio_t *f; /* old stream structure */
-char *file;                               /* file/string to be opened */
-char *mode;                               /* mode of the stream */
-#endif
 {
     return _sfopenat(AT_FDCWD, f, file, mode);
 }
 
 #undef extern
 
-#if __STD_C
 int _sftype(reg const char *mode, int *oflagsp, int *fflagsp, int *uflagp)
-#else
-int _sftype(mode, oflagsp, fflagsp, uflagp) reg char *mode;
-int *oflagsp;
-int *fflagsp;
-int *uflagp;
-#endif
 {
     reg int sflags, oflags, fflags, uflag;
 

@@ -31,14 +31,7 @@ static char *Version = "\n@(#)$Id: Vmalloc (AT&T Labs - Research) 2013-06-10 $\0
 static int N_open;
 #endif
 
-#if __STD_C
 Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode)
-#else
-Vmalloc_t *_vmopen(vmo, disc, meth, mode) Vmalloc_t *vmo; /* from previous vmopen if != 0	*/
-Vmdisc_t *disc;                                           /* discipline to get segments	*/
-Vmethod_t *meth;                                          /* method to manage space	*/
-int mode;                                                 /* type of region		*/
-#endif
 {
     Vmalloc_t *vm, *vmp, vmproto;
     Vmdata_t *vd, vdproto;
@@ -201,13 +194,7 @@ int mode;                                                 /* type of region		*/
     return vm;
 }
 
-#if __STD_C
 Vmalloc_t *vmopen(Vmdisc_t *disc, Vmethod_t *meth, int mode)
-#else
-Vmalloc_t *vmopen(vm, disc, meth, mode) Vmdisc_t *disc;   /* discipline to get segments	*/
-Vmethod_t *meth;                                          /* method to manage space	*/
-int mode;                                                 /* type of region		*/
-#endif
 {
     return _vmopen(NULL, disc, meth, mode);
 }

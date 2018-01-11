@@ -25,12 +25,7 @@
         Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 int sfresize(Sfio_t *f, Sfoff_t size)
-#else
-int sfresize(f, size) Sfio_t *f;
-Sfoff_t size;
-#endif
 {
     SFMTXDECL(f);
 

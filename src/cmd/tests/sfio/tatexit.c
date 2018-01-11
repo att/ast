@@ -34,13 +34,7 @@ void ae()
 	tcleanup();
 }
 
-#if __STD_C
 main(int argc, char** argv)
-#else
-main(argc, argv)
-int	argc;
-char**	argv;
-#endif
 {
 	Sfio_t* f;
 

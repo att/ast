@@ -19,41 +19,17 @@
 ***********************************************************************/
 #include	"sftest.h"
 
-#if __STD_C
 static ssize_t discread(Sfio_t* f, void* buf, size_t n, Sfdisc_t* disc)
-#else
-static ssize_t discread(f, buf, n, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	return sfrd(f, buf, n, disc);
 }
 
-#if __STD_C
 static ssize_t discwrite(Sfio_t* f, const void* buf, size_t n, Sfdisc_t* disc)
-#else
-static ssize_t discwrite(f, buf, n, disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	return sfwr(f, buf, n, disc);
 }
 
-#if __STD_C
 static Sfoff_t discseek(Sfio_t* f, Sfoff_t offset, int type, Sfdisc_t* disc)
-#else
-static Sfoff_t discseek(f, offset, type, disc)
-Sfio_t*		f;
-Sfoff_t		offset;
-int		type;
-Sfdisc_t*	disc;
-#endif
 {
 	return (Sfoff_t)(-1);	/* pretend that stream is unseekable */
 }

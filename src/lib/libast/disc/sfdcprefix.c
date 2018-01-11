@@ -42,14 +42,7 @@ typedef struct {
  * prefix write
  */
 
-#if __STD_C
 static ssize_t pfxwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *dp)
-#else
-static ssize_t pfxwrite(f, buf, n, dp) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *dp;
-#endif
 {
     Prefix_t *pfx = (Prefix_t *)dp;
     char *b;
@@ -85,14 +78,7 @@ Sfdisc_t *dp;
  * remove the discipline on close
  */
 
-#if __STD_C
 static int pfxexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *dp)
-#else
-static int pfxexcept(f, type, data, dp) Sfio_t *f;
-int type;
-Void_t *data;
-Sfdisc_t *dp;
-#endif
 {
     if (type == SF_FINAL || type == SF_DPOP) free(dp);
     return 0;
@@ -102,12 +88,7 @@ Sfdisc_t *dp;
  * push the prefix discipline on f
  */
 
-#if __STD_C
 int sfdcprefix(Sfio_t *f, const char *prefix)
-#else
-int sfdcprefix(f, prefix) Sfio_t *f;
-char *prefix;
-#endif
 {
     Prefix_t *pfx;
     char *s;

@@ -31,13 +31,7 @@
 #define extern __EXPORT__
 #endif
 
-#if __STD_C
 extern ssize_t sfpeek(reg Sfio_t *f, Void_t **bp, reg size_t size)
-#else
-extern ssize_t sfpeek(f, bp, size) reg Sfio_t *f; /* file to peek */
-Void_t **bp;                                      /* start of data area */
-reg size_t size;                                  /* size of peek */
-#endif
 {
     reg ssize_t n, sz;
     reg int mode;

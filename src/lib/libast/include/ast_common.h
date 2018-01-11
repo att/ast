@@ -11,9 +11,6 @@
 #define __OPTIMIZE_SIZE__ 1
 #endif
 
-/* __STD_C indicates that the language is ANSI-C or C++ */
-#define __STD_C 1
-
 /* extern symbols must be protected against C++ name mangling */
 #ifndef _BEGIN_EXTERNS_
 #if __cplusplus || c_plusplus
@@ -27,11 +24,7 @@
 
 /* _ARG_ simplifies function prototyping among flavors of C */
 #ifndef _ARG_
-#if __STD_C
 #define _ARG_(x) x
-#else
-#define _ARG_(x) ()
-#endif
 #endif
 
 /* __INLINE__, if defined, is the inline keyword */
@@ -102,11 +95,7 @@
 
 #ifndef va_listref
 #ifndef va_start
-#if __STD_C
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 #endif
 
 #define va_listref(p) (&(p)) /* pass va_list to varargs function */
@@ -115,7 +104,7 @@
 #endif
 
 #ifndef _AST_STD_H
-#if __STD_C && _hdr_stddef
+#if _hdr_stddef
 #include <stddef.h>
 #endif
 #if _sys_types

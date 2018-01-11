@@ -26,13 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 int sfset(Sfio_t *f, int flags, int set)
-#else
-int sfset(f, flags, set) Sfio_t *f;
-int flags;
-int set;
-#endif
 {
     reg int oflags, tflags, rv;
     SFMTXDECL(f);

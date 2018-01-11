@@ -27,13 +27,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-#if __STD_C
 int dtwalk(Dt_t *dt, int (*userf)(Dt_t *, Void_t *, Void_t *), Void_t *data)
-#else
-int dtwalk(dt, userf, data) Dt_t *dt;
-int (*userf)();
-Void_t *data;
-#endif
 {
     Void_t *obj, *next;
     Dt_t *walk;

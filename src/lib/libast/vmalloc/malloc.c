@@ -31,17 +31,9 @@
 #define vmregion(d) Vmregion
 #endif
 
-#if __STD_C
 #define F0(f, t0) f(t0)
 #define F1(f, t1, a1) f(t1 a1)
 #define F2(f, t1, a1, t2, a2) f(t1 a1, t2 a2)
-#else
-#define F0(f, t0) f()
-#define F1(f, t1, a1) f(a1) t1 a1;
-#define F2(f, t1, a1, t2, a2) \
-    f(a1, a2) t1 a1;          \
-    t2 a2;
-#endif /*__STD_C*/
 
 /*
  * define _AST_std_malloc=1 to force the standard malloc
@@ -112,11 +104,7 @@ static Vmulong_t _Vmdbtime = 0;  /* clock counting malloc/free/realloc	*/
 static Vmulong_t _Vmdbstart = 0; /* start checking when time passes this	*/
 static Vmulong_t _Vmdbcheck = 0; /* check region periodically with this	*/
 
-#if __STD_C
 static Vmulong_t atou(char **sp)
-#else
-static Vmulong_t atou(sp) char **sp;
-#endif
 {
     char *s = *sp;
     Vmulong_t v = 0;
@@ -181,12 +169,7 @@ static Vmulong_t atou(sp) char **sp;
     return v;
 }
 
-#if __STD_C
 static char *insertpid(char *begs, char *ends)
-#else
-static char *insertpid(begs, ends) char *begs;
-char *ends;
-#endif
 {
     int pid;
     char *s;
@@ -203,11 +186,7 @@ char *ends;
     return begs;
 }
 
-#if __STD_C
 static int createfile(char *file)
-#else
-static int createfile(file) char *file;
-#endif
 {
     char buf[1024];
     char *next, *endb;
@@ -940,12 +919,7 @@ typedef struct mstats Mstats_t;
 #endif
 
 #if _lib_mallopt
-#if __STD_C
 extern int mallopt(int cmd, int value)
-#else
-extern int mallopt(cmd, value) int cmd;
-int value;
-#endif
 {
     VMPROLOGUE(0);
     VMEPILOGUE(0);
@@ -954,11 +928,7 @@ int value;
 #endif /*_lib_mallopt*/
 
 #if _lib_mallinfo && _mem_arena_mallinfo
-#if __STD_C
 extern Mallinfo_t mallinfo(void)
-#else
-extern Mallinfo_t mallinfo()
-#endif
 {
     Vmstat_t sb;
     Mallinfo_t mi;
@@ -978,11 +948,7 @@ extern Mallinfo_t mallinfo()
 #endif /* _lib_mallinfo */
 
 #if _lib_mstats && _mem_bytes_total_mstats
-#if __STD_C
 extern Mstats_t mstats(void)
-#else
-extern Mstats_t mstats()
-#endif
 {
     Vmstat_t sb;
     Mstats_t ms;
@@ -1117,11 +1083,7 @@ extern Mstats_t F0(_ast_mstats, void) { return mstats(); }
 #endif
 
 extern int
-#if __STD_C
 _vmkeep(int v)
-#else
-    _vmkeep(v) int v;
-#endif
 {
     int r;
 

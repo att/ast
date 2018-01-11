@@ -26,11 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 Sfoff_t sftell(Sfio_t *f)
-#else
-Sfoff_t sftell(f) Sfio_t *f;
-#endif
 {
     reg int mode;
     Sfoff_t p;

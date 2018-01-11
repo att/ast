@@ -107,14 +107,8 @@ typedef struct _hash_s /* recursive hashing data */
     Fngr_t fngr; /* finger to help dtnext/dtstep	*/
 } Hash_t;
 
-#if __STD_C /* lock/unlock a class of objects by hash values */
+/* lock/unlock a class of objects by hash values */
 static int hclslock(Dt_t *dt, uint hsh, int type, int locking)
-#else
-static int hclslock(dt, hsh, type, locking) Dt_t *dt;
-uint hsh;                                           /* hash to class	*/
-int type;                                           /* operation type	*/
-int locking;                                        /* (0)1: (un)locking	*/
-#endif
 {
     Hash_t *hash = (Hash_t *)dt->data;
     uchar *lckp = hash->lock + (hsh & hash->lmax);
@@ -144,14 +138,8 @@ int locking;                                        /* (0)1: (un)locking	*/
     return 0;
 }
 
-#if __STD_C /* allocating a trie branch/hash table */
+/* allocating a trie branch/hash table */
 static Htbl_t *htable(Dt_t *dt, ssize_t lev, Htbl_t *ptbl, ssize_t ppos)
-#else
-static Htbl_t *htable(dt, lev, ptbl, hsh) Dt_t *dt; /* dictionary holding objects	*/
-ssize_t lev;                                        /* level of table		*/
-Htbl_t *ptbl;                                       /* parent hash table		*/
-ssize_t ppos;                                       /* position in parent table	*/
-#endif
 {
     ssize_t z;
     Htbl_t *tbl;
@@ -170,13 +158,8 @@ ssize_t ppos;                                       /* position in parent table	
     return tbl;
 }
 
-#if __STD_C /* delete an object from the hashtrie */
+/* delete an object from the hashtrie */
 static void hdelete(Dt_t *dt, Dtlink_t **lnkp, int type)
-#else
-static void hdelete(dt, lnkp, type) Dt_t *hash;
-Dtlink_t **lnkp;
-int type;
-#endif
 {
     Dtlink_t *lnk;
     Hash_t *hash = (Hash_t *)dt->data;
@@ -200,15 +183,8 @@ int type;
     _dtfree(dt, lnk, type); /* now it's safe to free object */
 }
 
-#if __STD_C /* clear everything from tbl and its children tables */
+/* clear everything from tbl and its children tables */
 static Void_t *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap)
-#else
-static Void_t *hclear(dt, tbl, lev, zap) Dt_t *dt; /* dictionary structure		*/
-Htbl_t *tbl;                                       /* current table to be cleared	*/
-ssize_t lev;                                       /* level of current table	*/
-int zap;                                           /* < 0: free all structures	*/
-                                                   /* >=0: free all but save root	*/
-#endif
 {
     ssize_t p, tblz;
     Dtlink_t *t;
@@ -237,18 +213,9 @@ int zap;                                           /* < 0: free all structures	*
     return NULL;
 }
 
-#if __STD_C /* this constitutes the core of dtfirst() and dtlast() */
+/* this constitutes the core of dtfirst() and dtlast() */
 static Void_t *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                       int type)
-#else
-static Void_t *hfirst(dt, fngr, tbl, lev, pos, hsh, type) Dt_t *dt;
-Fngr_t *fngr; /* finger to speed search	*/
-Htbl_t *tbl;  /* subtable to search		*/
-ssize_t lev;  /* level of given subtable	*/
-ssize_t pos;  /* starting position in table 	*/
-uint hsh;     /* top level hash value		*/
-int type;     /* operation type		*/
-#endif
 {
     ssize_t tblz;
     Void_t *obj;
@@ -288,18 +255,9 @@ int type;     /* operation type		*/
     return obj;
 }
 
-#if __STD_C /* this constitutes the core of dtnext() and dtprev() */
+/* this constitutes the core of dtnext() and dtprev() */
 static Void_t *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                      int type)
-#else
-static Void_t *hnext(dt, fngr, tbl, lev, pos, hsh, type) Dt_t *dt;
-Fngr_t *fngr; /* finger to speed up search	*/
-Htbl_t *tbl;  /* hash subtable to search	*/
-ssize_t lev;  /* subtable level		*/
-ssize_t pos;  /* starting position in table 	*/
-uint hsh;     /* top level hash value		*/
-int type;     /* operation type		*/
-#endif
 {
     Dtlink_t *t;
     Void_t *obj;
@@ -321,17 +279,9 @@ int type;     /* operation type		*/
     }
 }
 
-#if __STD_C /* construct a flat list of objects */
+/* construct a flat list of objects */
 static Void_t *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
                         int zap)
-#else
-static Void_t *hflatten(dt, list, last, tbl, lev, zap) Dt_t *dt;
-Dtlink_t **list; /* to return chain of objects	*/
-Dtlink_t *last;  /* currently last elt of chain	*/
-Htbl_t *tbl;     /* current hash table to search */
-ssize_t lev;     /* table level			*/
-int zap;         /* erase the location		*/
-#endif
 {
     ssize_t tblz, p;
     Dtlink_t *t, **lnkp;
@@ -362,13 +312,8 @@ int zap;         /* erase the location		*/
     return last;
 }
 
-#if __STD_C /* construct/extract a list of objects, or reconstruct from a list */
+/* construct/extract a list of objects, or reconstruct from a list */
 static Void_t *hlist(Dt_t *dt, Dtlink_t *list, int type)
-#else
-static Void_t *hlist(dt, list, type) Dt_t *dt;
-Dtlink_t *list;
-int type;
-#endif
 {
     Void_t *obj;
     Dtlink_t *next, *l;
@@ -391,14 +336,8 @@ int type;
     return (Void_t *)list;
 }
 
-#if __STD_C /* compute size and depth of a hash table */
+/* compute size and depth of a hash table */
 static ssize_t hsize(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st)
-#else
-static ssize_t hsize(dt, tbl, lev, st) Dt_t *dt;
-Htbl_t *tbl;
-ssize_t lev;
-Dtstat_t *st;
-#endif
 {
     Dtlink_t *t;
     ssize_t p, z, rz, tblz, size;
@@ -443,12 +382,7 @@ Dtstat_t *st;
     return size;
 }
 
-#if __STD_C
 static Void_t *hstat(Dt_t *dt, Dtstat_t *st)
-#else
-static Void_t *hstat(dt, st) Dt_t *dt;
-Dtstat_t *st;
-#endif
 {
     ssize_t size;
     Hash_t *hash = (Hash_t *)dt->data;

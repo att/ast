@@ -21,15 +21,7 @@
 
 static int Bufcount = 0;
 
-#if __STD_C
 ssize_t readbuf(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t readbuf(f,buf,n,disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	Bufcount += 1;
 	return sfrd(f,buf,n,disc);

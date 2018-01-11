@@ -27,14 +27,7 @@ Dtdisc_t Disc =
 
 static int Count, See[10];
 
-#if __STD_C
 static int visit(Dt_t* dt, Void_t* obj, Void_t* data)
-#else
-static int visit(dt, obj, data)
-Dt_t*	dt;
-Void_t* obj;
-Void_t*	data;
-#endif
 {
 	See[(long)obj] = 1;
 	Count += 1;

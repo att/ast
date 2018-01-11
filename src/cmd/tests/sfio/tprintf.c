@@ -26,14 +26,7 @@ typedef struct _coord_
 
 Coord_t	Coord;
 
-#if __STD_C
 int coordprint(Sfio_t* f, Void_t* v, Sffmt_t* fe)
-#else
-int coordprint(f, v, fe)
-Sfio_t*		f;
-Void_t*		v;
-Sffmt_t*	fe;
-#endif
 {
 	char		type[128];
 	Coord_t*	cp;
@@ -66,14 +59,7 @@ typedef union Value_u
 	char		**p;
 } Value_t;
 
-#if __STD_C
 int nulprint(Sfio_t* f, Void_t* val, Sffmt_t* fe)
-#else
-int nulprint(f, val, fe)
-Sfio_t*		f;
-Void_t*		val;
-Sffmt_t*	fe;
-#endif
 {
 	if(fe->fmt == 'Z')
 	{	fe->fmt = 'c';
@@ -97,14 +83,7 @@ Sffmt_t*	fe;
 
 static int	OXcount;
 static char*	OXstr = "abc";
-#if __STD_C
 int DOXSprint(Sfio_t* f, Void_t* v, Sffmt_t* fe)
-#else
-int DOXSprint(f, v, fe)
-Sfio_t*		f;
-Void_t*		v;
-Sffmt_t*	fe;
-#endif
 {
 	OXcount += 1;
 
@@ -136,14 +115,7 @@ Sffmt_t*	fe;
 	return 0;
 }
 
-#if __STD_C
 int abprint(Sfio_t* f, Void_t* v, Sffmt_t* fe)
-#else
-int abprint(f, v, fe)
-Sfio_t*		f;
-Void_t*		v;
-Sffmt_t*	fe;
-#endif
 {
 	switch(fe->fmt)
 	{
@@ -163,28 +135,14 @@ Sffmt_t*	fe;
 	}
 }
 
-#if __STD_C
 int intarg(Sfio_t* f, Void_t* val, Sffmt_t* fe)
-#else
-int intarg(f, val, fe)
-Sfio_t*		f;
-Void_t*		val;
-Sffmt_t*	fe;
-#endif
 {	static int	i = 1;
 	*((int*)val) = i++;
 	fe->flags |= SFFMT_VALUE;
 	return 0;
 }
 
-#if __STD_C
 int shortarg(Sfio_t* f, Void_t* val, Sffmt_t* fe)
-#else
-int shortarg(f, val, fe)
-Sfio_t*		f;
-Void_t*		val;
-Sffmt_t*	fe;
-#endif
 {	static short	i = -2;
 
 	*((short*)val) = i++;
@@ -194,14 +152,7 @@ Sffmt_t*	fe;
 	return 0;
 }
 
-#if __STD_C
 int transarg(Sfio_t* f, Void_t* val, Sffmt_t* fe)
-#else
-int transarg(f, val, fe)
-Sfio_t*		f;
-Void_t*		val;
-Sffmt_t*	fe;
-#endif
 {
 	switch(fe->fmt)
 	{ case 'D' :
@@ -218,22 +169,10 @@ Sffmt_t*	fe;
 	}
 }
 
-#if __STD_C
 void stkprint(char* buf, int n, char* form, ...)
-#else
-void stkprint(buf,n,form,va_alist)
-char*	buf;
-int	n;
-char*	form;
-va_dcl
-#endif
 {	va_list	args;
 	Sffmt_t	fe;
-#if __STD_C
 	va_start(args,form);
-#else
-	va_start(args);
-#endif
 	fe.form = form;
 	va_copy(fe.args,args);
 	fe.extf = NULL;

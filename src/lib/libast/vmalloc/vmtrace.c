@@ -30,17 +30,8 @@ static int Trfile = -1;
 static int Pid = -1;
 
 /* generate a trace of some call */
-#if __STD_C
 static void trtrace(Vmalloc_t *vm, Vmuchar_t *oldaddr, Vmuchar_t *newaddr, size_t size,
                     size_t align)
-#else
-static void trtrace(vm, oldaddr, newaddr, size,
-                    align) Vmalloc_t *vm; /* region call was made from	*/
-Vmuchar_t *oldaddr;                       /* old data address		*/
-Vmuchar_t *newaddr;                       /* new data address		*/
-size_t size;                              /* size of piece		*/
-size_t align;                             /* alignment			*/
-#endif
 {
     char buf[1024], *bufp, *endbuf;
     Vmdata_t *vd = vm->data;
@@ -134,14 +125,7 @@ size_t align;                             /* alignment			*/
     write(Trfile, buf, (bufp - buf));
 }
 
-#if __STD_C
 void _vmmessage(const char *s1, long n1, const char *s2, long n2)
-#else
-void _vmmessage(s1, n1, s2, n2) const char *s1;
-long n1;
-const char *s2;
-long n2;
-#endif
 {
     char buf[1024], *bufp;
 
@@ -163,11 +147,7 @@ long n2;
     write(2, buf, (bufp - buf));
 }
 
-#if __STD_C
 int vmtrace(int file)
-#else
-int vmtrace(file) int file;
-#endif
 {
     int fd;
 

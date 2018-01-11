@@ -21,16 +21,7 @@
 
 static char Mem[1024*1024];
 
-#if __STD_C
 static Void_t* alignmem(Vmalloc_t* vm, Void_t* ca, size_t cs, size_t ns, Vmdisc_t* dc)
-#else
-static Void_t* alignmem(vm, ca, cs, ns, dc)
-Vmalloc_t*	vm;
-Void_t*		ca;
-size_t		cs;
-size_t		ns;
-Vmdisc_t*	dc;
-#endif
 {
 	return ns <= sizeof(Mem) ? (Void_t*)Mem : (Void_t*)0;
 }

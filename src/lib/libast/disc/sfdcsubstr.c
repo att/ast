@@ -36,15 +36,7 @@ typedef struct _subfile_s {
     Sfoff_t here;   /* current seek location */
 } Subfile_t;
 
-#if __STD_C
 static ssize_t streamio(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc, int type)
-#else
-static ssize_t streamio(f, buf, n, disc, type) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *disc;
-int type;
-#endif
 {
     reg Subfile_t *su;
     reg Sfoff_t here, parent;
@@ -77,38 +69,17 @@ int type;
     return io;
 }
 
-#if __STD_C
 static ssize_t streamwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t streamwrite(f, buf, n, disc) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *disc;
-#endif
 {
     return streamio(f, (Void_t *)buf, n, disc, SF_WRITE);
 }
 
-#if __STD_C
 static ssize_t streamread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-#else
-static ssize_t streamread(f, buf, n, disc) Sfio_t *f;
-Void_t *buf;
-size_t n;
-Sfdisc_t *disc;
-#endif
 {
     return streamio(f, buf, n, disc, SF_READ);
 }
 
-#if __STD_C
 static Sfoff_t streamseek(Sfio_t *f, Sfoff_t pos, int type, Sfdisc_t *disc)
-#else
-static Sfoff_t streamseek(f, pos, type, disc) Sfio_t *f;
-Sfoff_t pos;
-int type;
-Sfdisc_t *disc;
-#endif
 {
     reg Subfile_t *su;
     reg Sfoff_t here, parent;
@@ -144,27 +115,13 @@ Sfdisc_t *disc;
     return (su->here = pos);
 }
 
-#if __STD_C
 static int streamexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-#else
-static int streamexcept(f, type, data, disc) Sfio_t *f;
-int type;
-Void_t *data;
-Sfdisc_t *disc;
-#endif
 {
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
     return 0;
 }
 
-#if __STD_C
 Sfio_t *sfdcsubstream(Sfio_t *f, Sfio_t *parent, Sfoff_t offset, Sfoff_t extent)
-#else
-Sfio_t *sfdcsubstream(f, parent, offset, extent) Sfio_t *f; /* stream */
-Sfio_t *parent;                                             /* parent stream */
-Sfoff_t offset;                                             /* offset in f */
-Sfoff_t extent;                                             /* desired size */
-#endif
 {
     reg Sfio_t *sp;
     reg Subfile_t *su;

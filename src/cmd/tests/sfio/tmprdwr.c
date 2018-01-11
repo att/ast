@@ -30,15 +30,7 @@ typedef struct _mydisc_s
 	int		recv;	/* channel to read amount of data	*/
 } Mydisc_t;
 
-#if __STD_C
 ssize_t discread(Sfio_t* f, void* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t discread(f, buf, n, disc)
-Sfio_t*	f;
-void*	buf;
-size_t	n;
-Sfdisc_t*	disc;
-#endif
 {
 	Mydisc_t	*dc = (Mydisc_t*)disc;
 	int		r;
@@ -66,14 +58,7 @@ Sfdisc_t*	disc;
 	return r;
 }
 
-#if __STD_C
 void writeprocess(int send, int recv, Sfio_t* f)
-#else
-void writeprocess(send, recv, f)
-int	send;
-int	recv;
-Sfio_t*	f;
-#endif
 {
 	char	buf[11*CNT], *bp;
 	int	i, s, size, rv;

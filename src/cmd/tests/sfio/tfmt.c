@@ -20,14 +20,7 @@
 #include	"sftest.h"
 
 static char	*Mystr = "abc";
-#if __STD_C
 int myprint(Sfio_t* f, Void_t* v, Sffmt_t* fe)
-#else
-int myprint(f, v, fe)
-Sfio_t*		f;
-Void_t*		v;
-Sffmt_t*	fe;
-#endif
 {
 	switch(fe->fmt)
 	{

@@ -21,12 +21,7 @@
 
 static int	Fd[2];
 
-#if __STD_C
 void alarmhandler(int sig)
-#else
-void alarmhandler(sig)
-int	sig;
-#endif
 {
 	if(write(Fd[1],"01234\n56789\n",12) != 12)
 		terror("Writing to pipe");

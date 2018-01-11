@@ -26,12 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
 static void newpos(Sfio_t *f, Sfoff_t p)
-#else
-static void newpos(f, p) Sfio_t *f;
-Sfoff_t p;
-#endif
 {
     if ((f->bits & SF_MMAP) && f->data) {
         SFMUNMAP(f, f->data, f->endb - f->data);
@@ -45,13 +40,7 @@ Sfoff_t p;
     }
 }
 
-#if __STD_C
 Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type)
-#else
-Sfoff_t sfseek(f, p, type) Sfio_t *f; /* seek to a new location in this stream */
-Sfoff_t p;                            /* place to seek to */
-int type;                             /* 0: from org, 1: from here, 2: from end */
-#endif
 {
     Sfoff_t r, s;
     int mode, local, hardseek, mustsync;

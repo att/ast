@@ -22,15 +22,7 @@
 static ssize_t	Read;
 static int	Count;
 
-#if __STD_C
 ssize_t readf(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)
-#else
-ssize_t readf(f,buf,n,disc)
-Sfio_t*		f;
-Void_t*		buf;
-size_t		n;
-Sfdisc_t*	disc;
-#endif
 {
 	Count += 1;
 	Read += (n = sfrd(f,buf,n,disc));

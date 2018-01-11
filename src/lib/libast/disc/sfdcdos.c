@@ -54,11 +54,7 @@ typedef struct _dosdisc {
     int bsize;
 } Dosdisc_t;
 
-#if __STD_C
 static void addmapping(Dosdisc_t *dp)
-#else
-static void addmapping(dp) Dosdisc_t *dp;
-#endif
 {
     int n;
     if ((n = dp->maptop++) >= dp->mapsize) {
@@ -75,13 +71,7 @@ static void addmapping(dp) Dosdisc_t *dp;
     dp->maptable[dp->maptop].logical = 0;
 }
 
-#if __STD_C
 static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, int whence)
-#else
-static struct map *getmapping(dp, offset, whence) Dosdisc_t *dp;
-Sfoff_t offset;
-int whence;
-#endif
 {
     struct map *mp;
     static struct map dummy;
@@ -99,14 +89,7 @@ int whence;
     return (mp - 1);
 }
 
-#if __STD_C
 static ssize_t dos_read(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *disc)
-#else
-static ssize_t dos_read(iop, buff, size, disc) Sfio_t *iop;
-void *buff;
-size_t size;
-Sfdisc_t *disc;
-#endif
 {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     char *cp = (char *)buff, *first, *cpmax;
@@ -201,14 +184,7 @@ done:
  * if <whence> is SEEK_CUR, physical offset converted to logical offset
  *  otherwise, logical offset is converted to physical offset
  */
-#if __STD_C
 static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset, Sfio_t *iop, int whence)
-#else
-static Sfoff_t cur_offset(dp, offset, iop, whence) Dosdisc_t *dp;
-Sfoff_t offset;
-Sfio_t *iop;
-int whence;
-#endif
 {
     Sfoff_t n, m = 0;
     char *cp;
@@ -238,14 +214,7 @@ int whence;
     return (offset + m);
 }
 
-#if __STD_C
 static Sfoff_t dos_seek(Sfio_t *iop, Sfoff_t offset, int whence, Sfdisc_t *disc)
-#else
-static Sfoff_t dos_seek(iop, offset, whence, disc) Sfio_t *iop;
-Sfoff_t offset;
-int whence;
-Sfdisc_t *disc;
-#endif
 {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     struct map dummy, *mp = 0;
@@ -313,14 +282,7 @@ retry:
     return (offset);
 }
 
-#if __STD_C
 static int dos_except(Sfio_t *iop, int type, void *arg, Sfdisc_t *disc)
-#else
-static int dos_except(iop, type, arg, disc) Sfio_t *iop;
-int type;
-void *arg;
-Sfdisc_t *disc;
-#endif
 {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     if (type == SF_DPOP || type == SF_FINAL) {
@@ -331,11 +293,7 @@ Sfdisc_t *disc;
     return (0);
 }
 
-#if __STD_C
 int sfdcdos(Sfio_t *f)
-#else
-int sfdcdos(f) Sfio_t *f;
-#endif
 {
     Dosdisc_t *dos;
 

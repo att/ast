@@ -317,11 +317,7 @@ done:
     return rv;
 }
 
-#if __STD_C /* end a file mapping */
 static int mmend(Mmdisc_t *mmdc)
-#else
-static int mmend(mmdc) Mmdisc_t *mmdc;
-#endif
 {
     Mmvm_t *mmvm;
     struct shmid_ds shmds;
@@ -347,15 +343,7 @@ static int mmend(mmdc) Mmdisc_t *mmdc;
     return 0;
 }
 
-#if __STD_C
 static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc)
-#else
-static Void_t *mmgetmem(vm, caddr, csize, nsize, disc) Vmalloc_t *vm;
-Void_t *caddr;
-size_t csize;
-size_t nsize;
-Vmdisc_t *disc;
-#endif
 {
     Mmvm_t *mmvm;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
@@ -381,14 +369,7 @@ Vmdisc_t *disc;
     }
 }
 
-#if __STD_C
 static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc)
-#else
-static int mmexcept(vm, type, data, disc) Vmalloc_t *vm;
-int type;
-Void_t *data;
-Vmdisc_t *disc;
-#endif
 {
     int rv;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
@@ -437,16 +418,16 @@ Vmdisc_t *disc;
         return 0;
 }
 
-#if __STD_C
+//
+// Args:
+// name   key or file persistent store
+// proj   project ID, < 0 for doing mmap
+// size   desired size for memory segment
+// mode   1: keep memory segments
+//        0: release memory
+//        -1: like 0 plus removing files/shms
+//
 Vmdisc_t *vmdcshare(char *name, int proj, ssize_t size, int mode)
-#else
-Vmdisc_t *vmdcshare(name, proj, size, mode) char *name; /* key or file persistent store		*/
-int proj;                                               /* project ID, < 0 for doing mmap	*/
-ssize_t size;                                           /* desired size for memory segment	*/
-int mode;                                               /*  1: keep memory segments		*/
-                                                        /*  0: release memory segments		*/
-                                                        /* -1: like 0 plus removing files/shms	*/
-#endif
 {
     Mmdisc_t *mmdc;
 

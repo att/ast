@@ -27,12 +27,7 @@ int	Code_line = 30; /* line number of CALL(sfclose(0)) */
 #define CALL(x)	((Code_line += 1),(x))
 #endif
 
-#if __STD_C
 void handler(int sig)
-#else
-void handler(sig)
-int	sig;
-#endif
 {
 	terror("Bad argument handling on code line %d", Code_line);
 }
