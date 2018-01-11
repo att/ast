@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	(( Errors+=1 ))
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    (( Errors+=1 ))
 }
 
 alias err_exit='err_exit $LINENO'
@@ -39,19 +40,25 @@ trap "(( background++ ))" CHLD
 
 (( d = delay ))
 for ((i = 0; i < '$BACKGROUND'; i++))
-do	sleep $d &
-	(( d *= 4 ))
-	(( s += d ))
+do
+    sleep $d &
+    (( d *= 4 ))
+    (( s += d ))
 done
+
 for ((i = 0; i < '$FOREGROUND'; i++))
-do	(( foreground++ ))
-	sleep $delay
-	(( s -= delay ))
-	$SHELL -c : > /dev/null # foreground does not generate SIGCHLD
+do
+    (( foreground++ ))
+    sleep $delay
+    (( s -= delay ))
+    $SHELL -c : > /dev/null # foreground does not generate SIGCHLD
 done
-if	(( (s += delay) < 1 ))
-then	(( s = 1 ))
+
+if (( (s += delay) < 1 ))
+then
+    (( s = 1 ))
 fi
+
 sleep $s
 wait
 print foreground=$foreground background=$background
@@ -64,86 +71,96 @@ eval $s
 
 set --noerrexit
 
-if	[[ ${.sh.version} == Version?*([[:upper:]])J* ]]
+if [[ ${.sh.version} == Version?*([[:upper:]])J* ]]
 then
+    jobmax=4
+    got=$($SHELL -c '
+        JOBMAX='$jobmax' JOBCOUNT=$(('$jobmax'*2))
+        integer running=0 maxrunning=0
+        trap "((running--))" CHLD
+        for ((i=0; i<JOBCOUNT; i++))
+        do
+            sleep 1 &
+            sleep .1
+            if ((++running > maxrunning))
+            then
+                ((maxrunning=running))
+            fi
 
-	jobmax=4
-	got=$($SHELL -c '
-		JOBMAX='$jobmax' JOBCOUNT=$(('$jobmax'*2))
-		integer running=0 maxrunning=0
-		trap "((running--))" CHLD
-		for ((i=0; i<JOBCOUNT; i++))
-		do	sleep 1 &
-			sleep .1
-			if	((++running > maxrunning))
-			then	((maxrunning=running))
-			fi
-		done
-		wait
-		print running=$running maxrunning=$maxrunning
-	')
-	exp='running=0 maxrunning='$jobmax
-	[[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected '$exp', got '$got'"
+        done
 
-	got=$($SHELL -c '
-		typeset -A proc
+        wait
+        print running=$running maxrunning=$maxrunning
+    ')
+    exp='running=0 maxrunning='$jobmax
+    [[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected '$exp', got '$got'"
 
-		trap "
-			print \${proc[\$!].name} \${proc[\$!].status} \$?
-			unset proc[\$!]
-		" CHLD
+    got=$($SHELL -c '
+        typeset -A proc
 
-		{ sleep 3; print a; exit 1; } &
-		proc[$!]=( name=a status=1 )
+        trap "
+            print \${proc[\$!].name} \${proc[\$!].status} \$?
+            unset proc[\$!]
+        " CHLD
 
-		{ sleep 2; print b; exit 2; } &
-		proc[$!]=( name=b status=2 )
+        { sleep 3; print a; exit 1; } &
+        proc[$!]=( name=a status=1 )
 
-		{ sleep 1; print c; exit 3; } &
-		proc[$!]=( name=c status=3 )
+        { sleep 2; print b; exit 2; } &
+        proc[$!]=( name=b status=2 )
 
-		while	(( ${#proc[@]} ))
-		do	sleep -s
-		done
-	')
-	exp='c\nc 3 3\nb\nb 2 2\na\na 1 1'
-	[[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected $(printf %q "$exp"), got $(printf %q "$got")"
+        { sleep 1; print c; exit 3; } &
+        proc[$!]=( name=c status=3 )
 
+        while (( ${#proc[@]} ))
+        do
+            sleep -s
+        done
+    ')
+    exp='c\nc 3 3\nb\nb 2 2\na\na 1 1'
+    [[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 fi
 
 {
 got=$( ( sleep 1;print $'\n') | $SHELL -c 'function handler { : ;}
-	trap handler CHLD; sleep .3 & IFS= read; print good')
+    trap handler CHLD; sleep .3 & IFS= read; print good')
 } 2> /dev/null
 [[ $got == good ]] || err_exit 'SIGCLD handler effects read behavior'
 
 set -- $(
-	(
-	$SHELL -xc $'
-		trap \'wait $!; print $! $?\' CHLD
-		{ sleep 0.1; exit 9; } &
-		print $!
-		sleep 0.5
-	'
-	) 2>/dev/null; print $?
+    (
+    $SHELL -xc $'
+        trap \'wait $!; print $! $?\' CHLD
+        { sleep 0.1; exit 9; } &
+        print $!
+        sleep 0.5
+    '
+    ) 2>/dev/null; print $?
 )
-if	(( $# != 4 ))
-then	err_exit "CHLD trap failed -- expected 4 args, got $#"
-elif	(( $4 != 0 ))
-then	err_exit "CHLD trap failed -- exit code $4"
-elif	(( $1 != $2 ))
-then	err_exit "child pid mismatch -- got '$1' != '$2'"
-elif	(( $3 != 9 ))
-then	err_exit "child status mismatch -- expected '9', got '$3'"
+if (( $# != 4 ))
+then
+    err_exit "CHLD trap failed -- expected 4 args, got $#"
+elif (( $4 != 0 ))
+then
+    err_exit "CHLD trap failed -- exit code $4"
+elif (( $1 != $2 ))
+then
+    err_exit "child pid mismatch -- got '$1' != '$2'"
+elif (( $3 != 9 ))
+then
+    err_exit "child status mismatch -- expected '9', got '$3'"
 fi
 
 trap '' CHLD
 integer d
 for ((d=0; d < 2000; d++))
-do      if      print foo | grep bar
-        then    break 
-        fi
+do
+    if print foo | grep bar
+    then
+        break 
+    fi
 done
+
 (( d==2000 )) ||  err_exit "trap '' CHLD  causes side effects d=$d"
 trap - CHLD
 
@@ -165,6 +182,7 @@ $SHELL > $tmpfile <<- \EOF
 		for ((i=0 ; i < 10 ; i++ )) ; do
 			sleep .4
 		done
+
 	} &
 	cpid=$!
 	sleep .2 &
@@ -177,27 +195,32 @@ $SHELL > $tmpfile <<- \EOF
 	wait
 EOF
 {
-	read xpid pid
-	for stat in EXITED STOPPED CONTINUED EXITED
-	do	read pid1 pid2 status  || { err_exit "line with stopped continued or exited expected";break;} 
-		[[ $pid1 == $pid ]] || err_exit ".sh.sig.pid=$pid1 should be $pid"
-		[[ $pid2 == $pid ]] ||  err_exit "\$!=$pid1 should be $pid"
-		[[ $status == $stat ]] || err_exit "status is $status, should be $stat"
-		pid=$xpid
-	done
+    read xpid pid
+    for stat in EXITED STOPPED CONTINUED EXITED
+    do
+        read pid1 pid2 status  || { err_exit "line with stopped continued or exited expected";break;} 
+        [[ $pid1 == $pid ]] || err_exit ".sh.sig.pid=$pid1 should be $pid"
+        [[ $pid2 == $pid ]] ||  err_exit "\$!=$pid1 should be $pid"
+        [[ $status == $stat ]] || err_exit "status is $status, should be $stat"
+        pid=$xpid
+    done
+
 } <  $tmpfile
 
 typeset -A finished
 function sighandler_chld
 {
-	[[ ${finished[${.sh.sig.pid}]} ]] && { err_exit "${.sh.sig.pid} already finished and reaped"; trap '' CHLD;}
-	finished[${.sh.sig.pid}]=1
+    [[ ${finished[${.sh.sig.pid}]} ]] && { err_exit "${.sh.sig.pid} already finished and reaped"; trap '' CHLD;}
+    finished[${.sh.sig.pid}]=1
 }
+
 trap 'sighandler_chld' CHLD
 integer i 
 for (( i=0 ; i < 512 ; i++ ))
-do	sleep 0.1 &
+do
+    sleep 0.1 &
 done
+
 wait
 
 exit $((Errors<125?Errors:125))
