@@ -46,9 +46,9 @@ function testfunc
     typeset cmd="$2"
     typeset expected_output="$3"
     typeset output
-    
+
     output="$($SHELL -c "${cmd}" 2>&1 )"
-    
+
     [[ "${output}" == "${expected_output}" ]] || err_exit ${line_number} "${output} != ${expected_output}"
 }
 
@@ -60,7 +60,7 @@ function test1
     testfunc ${LINENO} 'function  l { typeset -S x=">" ; x+="#" ; $1 && print "$x" ; } ; l false ; l false   ; l true'   ">###"
     testfunc ${LINENO} 'function  l { typeset -S x=">" ; x+="#" ; $1 && print "$x" ; } ; l false ; (l false) ; l true'   ">##"
     testfunc ${LINENO} 'function  l { typeset -S x=">" ; x+="#" ; $1 && print "$x" ; } ; l false; ( ulimit -c 0 ; l false) ; l true' ">##"
-    
+
     # integer
     # (normal)
     testfunc ${LINENO} '(function l { integer -S x ;        x+=1 ;   $1 && print "$x" ; } ; l false ; l false   ; l true )' "3"
@@ -71,7 +71,7 @@ function test1
     # (short)
     testfunc ${LINENO} '(function l { typeset -S -s -i x ;  x+=1 ;   $1 && print "$x" ; } ; l false ; l false   ; l true )' "3"
     testfunc ${LINENO} '(function l { typeset -S -s -i x ;  x+=1 ;   $1 && print "$x" ; } ; l false ; (l false) ; l true )' "2"
-    
+
     # float
     testfunc ${LINENO} '(function l { float -S x=0.5 ;  (( x+=.5 )) ;   $1 && print "$x" ; } ; l false ; l false   ; l true )' "2"
     testfunc ${LINENO} '(function l { float -S x=0.5 ;  (( x+=.5 )) ;   $1 && print "$x" ; } ; l false ; (l false) ; l true )' "1.5"
@@ -84,7 +84,7 @@ function test2
 {
     compound out=( typeset stdout stderr ; integer res )
     integer i
-    
+
     test_t -r -a tests=(
         (
             name='compound'
@@ -95,9 +95,9 @@ function test2
                         integer a=1
                         integer b=2
                     )
-                
+
                     (( s.a++, s.b++ ))
-                
+
                     $1 && printf "a=%d, b=%d\n" s.a s.b
                 }
                 (l false ; l false ; l true ; printf ";")
@@ -112,7 +112,7 @@ function test2
                 {
                     nameref sn=$2
                     (( sn.a++, sn.b++ ))
-                
+
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function l
@@ -132,7 +132,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -141,9 +141,9 @@ function test2
                 function l
                 {
                     ab_t -S s
-                
+
                     s.increment
-                
+
                     $1 && printf "a=%d, b=%d\n" s.a s.b
                 }
                 (l false ; l false ; l true ; printf ";")
@@ -158,7 +158,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -169,13 +169,13 @@ function test2
                     nameref sn=$2
 
                     sn.increment
-                
+
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function l
                 {
                     ab_t -S s
-                    l_n $1 s        
+                    l_n $1 s
                 }
                 (l false ; l false ; l true ; printf ";")
                 (l false ; l false ; l true ; printf ";")
@@ -189,9 +189,9 @@ function test2
                 function ar
                 {
                     typeset -a -S s=( "hello" )
-                
+
                     s+=( "an element" )
-                
+
                     $1 && { printf "%s" "${s[@]}" ; printf "\n" ; }
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -207,7 +207,7 @@ function test2
                 {
                     nameref sn=$2
                     sn+=( "an element" )
-                
+
                     $1 && { printf "%s" "${sn[@]}" ; printf "\n" ; }
                 }
                 function ar
@@ -227,9 +227,9 @@ function test2
                 function ar
                 {
                     typeset -A -S s=( [0]="hello" )
-                
+
                     s[$(( ${#s[@]} + 1))]="an element"
-                
+
                     $1 && { printf "%s" "${s[@]}" ; printf "\n" ; }
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -244,15 +244,15 @@ function test2
                 function ar_n
                 {
                     nameref sn=$2
-                    
+
                     sn[$(( ${#sn[@]} + 1))]="an element"
-                
+
                     $1 && { printf "%s" "${sn[@]}" ; printf "\n" ; }
                 }
                 function ar
                 {
                     typeset -A -S s=( [0]="hello" )
-                    ar_n $1 s        
+                    ar_n $1 s
                 }
                 (ar false ; ar false ; ar true ; printf ";")
                 (ar false ; ar false ; ar true ; printf ";")
@@ -265,14 +265,14 @@ function test2
             cmd=$'
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [5]=(
                             integer a=1
                             integer b=2
                         )
                     )
 
-                    (( s[5].a++, s[5].b++ ))                
+                    (( s[5].a++, s[5].b++ ))
                     $1 && printf "a=%d, b=%d\n" s[5].a s[5].b
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -288,12 +288,12 @@ function test2
                 {
                     nameref sn=$2
 
-                    (( sn.a++, sn.b++ ))                
+                    (( sn.a++, sn.b++ ))
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [5]=(
                             integer a=1
                             integer b=2
@@ -313,14 +313,14 @@ function test2
             cmd=$'
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [8][5]=(
                             integer a=1
                             integer b=2
                         )
                     )
 
-                    (( s[8][5].a++, s[8][5].b++ ))                
+                    (( s[8][5].a++, s[8][5].b++ ))
                     $1 && printf "a=%d, b=%d\n" s[8][5].a s[8][5].b
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -336,12 +336,12 @@ function test2
                 {
                     nameref sn=$2
 
-                    (( sn.a++, sn.b++ ))                
+                    (( sn.a++, sn.b++ ))
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [8][5]=(
                             integer a=1
                             integer b=2
@@ -361,14 +361,14 @@ function test2
             cmd=$'
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [8][5][0][9]=(
                             integer a=1
                             integer b=2
                         )
                     )
 
-                    (( s[8][5][0][9].a++, s[8][5][0][9].b++ ))                
+                    (( s[8][5][0][9].a++, s[8][5][0][9].b++ ))
                     $1 && printf "a=%d, b=%d\n" s[8][5][0][9].a s[8][5][0][9].b
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -384,12 +384,12 @@ function test2
                 {
                     nameref sn=$2
 
-                    (( sn.a++, sn.b++ ))                
+                    (( sn.a++, sn.b++ ))
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function ar
                 {
-                    compound -S -a s=( 
+                    compound -S -a s=(
                         [8][5][0][9]=(
                             integer a=1
                             integer b=2
@@ -409,14 +409,14 @@ function test2
             cmd=$'
                 function ar
                 {
-                    compound -S -A s=( 
+                    compound -S -A s=(
                         [5]=(
                             integer a=1
                             integer b=2
                         )
                     )
 
-                    (( s[5].a++, s[5].b++ ))                
+                    (( s[5].a++, s[5].b++ ))
                     $1 && printf "a=%d, b=%d\n" s[5].a s[5].b
                 }
                 (ar false ; ar false ; ar true ; printf ";")
@@ -432,12 +432,12 @@ function test2
                 {
                     nameref sn=$2
 
-                    (( sn.a++, sn.b++ ))                
+                    (( sn.a++, sn.b++ ))
                     $1 && printf "a=%d, b=%d\n" sn.a sn.b
                 }
                 function ar
                 {
-                    compound -S -A s=( 
+                    compound -S -A s=(
                         [5]=(
                             integer a=1
                             integer b=2
@@ -458,7 +458,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -485,7 +485,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -518,7 +518,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -545,7 +545,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -578,7 +578,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -605,7 +605,7 @@ function test2
                 typeset -T ab_t=(
                     integer a=1
                     integer b=2
-                    
+
                     function increment
                     {
                         (( _.a++, _.b++ ))
@@ -632,7 +632,7 @@ function test2
             expected_output=$'a=4, b=5\n;a=4, b=5\n;'
         )
     )
-    
+
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         nameref currtest=tests[i]
 
