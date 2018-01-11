@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	let Errors+=1
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    let Errors+=1
 }
 alias err_exit='err_exit $LINENO'
 
@@ -33,18 +34,23 @@ trap "cd /; rm -rf $tmp" EXIT
 
 function checkref
 {
-	nameref foo=$1 bar=$2
-	if	[[ $foo !=  $bar ]]
-	then	err_exit "foo=$foo != bar=$bar"
-	fi
-	foo=hello
-	if	[[ $foo !=  $bar ]]
-	then	err_exit "foo=$foo != bar=$bar"
-	fi
-	foo.child=child
-	if	[[ ${foo.child} !=  ${bar.child} ]]
-	then	err_exit "foo.child=${foo.child} != bar=${bar.child}"
-	fi
+    nameref foo=$1 bar=$2
+    if [[ $foo !=  $bar ]]
+    then
+        err_exit "foo=$foo != bar=$bar"
+    fi
+
+    foo=hello
+    if [[ $foo !=  $bar ]]
+    then
+        err_exit "foo=$foo != bar=$bar"
+    fi
+
+    foo.child=child
+    if [[ ${foo.child} !=  ${bar.child} ]]
+    then
+        err_exit "foo.child=${foo.child} != bar=${bar.child}"
+    fi
 }
 
 name=first
@@ -54,12 +60,16 @@ checkref name name
 .foo=top
 .foo.bar=next
 checkref .foo.bar .foo.bar
-if	[[ ${.foo.bar} !=  hello ]]
-then	err_exit ".foo.bar=${.foo.bar} != hello"
+if [[ ${.foo.bar} !=  hello ]]
+then
+    err_exit ".foo.bar=${.foo.bar} != hello"
 fi
-if	[[ ${.foo.bar.child} !=  child ]]
-then	err_exit ".foo.bar.child=${.foo.bar.child} != child"
+
+if [[ ${.foo.bar.child} !=  child ]]
+then
+    err_exit ".foo.bar.child=${.foo.bar.child} != child"
 fi
+
 function func1
 {
         nameref color=$1
@@ -70,153 +80,182 @@ function func2
 {
         nameref color=$1
         set -s -- ${!color[@]}
-	print -r -- "$@"
+    print -r -- "$@"
 }
 
 typeset -A color
 color[apple]=red
 color[grape]=purple
 color[banana]=yellow
-if	[[ $(func1 color) != 'apple banana grape' ]]
-then	err_exit "nameref or nameref not working"
+if [[ $(func1 color) != 'apple banana grape' ]]
+then
+    err_exit "nameref or nameref not working"
 fi
+
 nameref x=.foo.bar
-if	[[ ${!x} != .foo.bar ]]
-then	err_exit "${!x} not working"
+if [[ ${!x} != .foo.bar ]]
+then
+    err_exit "${!x} not working"
 fi
+
 typeset +n x $(typeset +n)
 unset x
 nameref x=.foo.bar
 function x.set
 {
-	[[ ${.sh.value} ]] && print hello
+    [[ ${.sh.value} ]] && print hello
 }
-if	[[ $(.foo.bar.set) != $(x.set) ]]
-then	err_exit "function references  not working"
+if [[ $(.foo.bar.set) != $(x.set) ]]
+then
+    err_exit "function references  not working"
 fi
-if	[[ $(typeset +n) != x ]]
-then	err_exit "typeset +n doesn't list names of reference variables"
+
+if [[ $(typeset +n) != x ]]
+then
+    err_exit "typeset +n doesn't list names of reference variables"
 fi
-if	[[ $(typeset -n) != x=.foo.bar ]]
-then	err_exit "typeset +n doesn't list values of reference variables"
+
+if [[ $(typeset -n) != x=.foo.bar ]]
+then
+    err_exit "typeset +n doesn't list values of reference variables"
 fi
+
 file=$tmp/test
 typeset +n foo bar 2> /dev/null
 unset foo bar
 export bar=foo
 nameref foo=bar
-if	[[ $foo != foo ]]
-then	err_exit "value of nameref foo !=  $foo"
+if [[ $foo != foo ]]
+then
+    err_exit "value of nameref foo !=  $foo"
 fi
+
 cat > $file <<\!
 print -r -- $foo
 !
 chmod +x "$file"
 y=$( $file)
-if	[[ $y != '' ]]
-then	err_exit "reference variable not cleared"
+if [[ $y != '' ]]
+then
+    err_exit "reference variable not cleared"
 fi
+
 {
-	command nameref xx=yy
-	command nameref yy=xx
+    command nameref xx=yy
+    command nameref yy=xx
 } 2> /dev/null && err_exit "self reference not detected"
 typeset +n foo bar
 unset foo bar
 set foo
 nameref bar=$1
 foo=hello
-if	[[ $bar !=  hello ]]
-then	err_exit 'nameref of positional paramters outside of function not working'
+if [[ $bar !=  hello ]]
+then
+    err_exit 'nameref of positional paramters outside of function not working'
 fi
+
 unset foo bar
 bar=123
 function foobar
 {
-	typeset -n foo=bar
-	typeset -n foo=bar
+    typeset -n foo=bar
+    typeset -n foo=bar
 }
 foobar 2> /dev/null || err_exit 'nameref not unsetting previous reference'
 (
-	nameref short=verylong
-	short=( A=a B=b )
-	if	[[ ${verylong.A} != a ]]
-	then	err_exit 'nameref short to longname compound assignment error'
-	fi
+    nameref short=verylong
+    short=( A=a B=b )
+    if [[ ${verylong.A} != a ]]
+    then
+        err_exit 'nameref short to longname compound assignment error'
+    fi
 ) 2> /dev/null|| err_exit 'nameref short to longname compound assignment error'
 unset x
-if	[[	$(var1=1 var2=2
-		for i in var1 var2
-		do	nameref x=$i
-			print $x
-		done) != $'1\n2' ]]
-then	err_exit 'for loop nameref optimization error'
+if [[    $(var1=1 var2=2
+        for i in var1 var2
+        do
+            nameref x=$i
+            print $x
+        done) != $'1\n2' ]]
+then
+    err_exit 'for loop nameref optimization error'
 fi
-if	[[	$(typeset -A var1 var2
-		var1[sub1]=1 var2[sub2]=1
-		for i in var1 var2
-		do
-		        typeset -n array=$i
-		        print ${!array[*]}
-		done) != $'sub1\nsub2' ]]
-then 	err_exit 'for loop nameref optimization test2 error'
+
+if [[    $(typeset -A var1 var2
+        var1[sub1]=1 var2[sub2]=1
+        for i in var1 var2
+        do
+            typeset -n array=$i
+            print ${!array[*]}
+        done) != $'sub1\nsub2' ]]
+then
+     err_exit 'for loop nameref optimization test2 error'
 fi
 
 unset -n x foo bar
-if	[[ $(nameref x=foo;for x in foo bar;do print ${!x};done) != $'foo\nbar' ]]
-then	err_exit 'for loop optimization with namerefs not working'
+if [[ $(nameref x=foo;for x in foo bar;do print ${!x};done) != $'foo\nbar' ]]
+then
+    err_exit 'for loop optimization with namerefs not working'
 fi
-if	[[ $(
-	p=(x=(r=3) y=(r=4))
-	for i in x y
-	do	nameref x=p.$i
-		print ${x.r}
-	done
+
+if [[ $(
+    p=(x=(r=3) y=(r=4))
+    for i in x y
+    do
+        nameref x=p.$i
+        print ${x.r}
+    done
 ) != $'3\n4' ]]
-then	err_exit 'nameref optimization error'
+then
+    err_exit 'nameref optimization error'
 fi
+
 [[ $(
 unset x y var
 var=(foo=bar)
 for i in y var
-do	typeset -n x=$i
-	if	[[ ${!x.@} ]]
-	then	print ok
-	fi
-	typeset +n x
+do
+    typeset -n x=$i
+    if [[ ${!x.@} ]]
+    then
+        print ok
+    fi
+
+    typeset +n x
 done) != ok ]] && err_exit 'invalid for loop optimization of name references'
 function setval # name value
 {
-        nameref arg=$1
-	nameref var=arg.bar
-	var=$2
+    nameref arg=$1
+    nameref var=arg.bar
+    var=$2
 }
 foo=( integer bar=0)
 setval foo 5
 (( foo.bar == 5)) || err_exit 'nested nameref not working'
 function selfref
 {
-        typeset -n ps=$1
-        print -r -- "${ps}"
+    typeset -n ps=$1
+    print -r -- "${ps}"
 }
 ps=(a=1 b=2)
 [[ $(selfref ps) == *a=1* ]] ||  err_exit 'local nameref cannot reference global variable of the same name'
 function subref
 {
-	typeset -n foo=$1
-	print -r -- ${foo.a}
+    typeset -n foo=$1
+    print -r -- ${foo.a}
 }
 [[ $(subref ps) == 1 ]] ||  err_exit 'local nameref cannot reference global variable child'
 
 function local
 {
-	typeset ps=(typeset -i a=3 b=4)
-	[[ $(subref ps) == 3 ]] ||  err_exit 'local nameref cannot reference caller compound variable'
+    typeset ps=(typeset -i a=3 b=4)
+    [[ $(subref ps) == 3 ]] ||  err_exit 'local nameref cannot reference caller compound variable'
 }
 local
 unset -f local
 function local
 {
-	qs=(integer  a=3; integer b=4)
+    qs=(integer  a=3; integer b=4)
 }
 local 2> /dev/null || err_exit 'function local has non-zero exit status'
 [[ ${qs.a} == 3 ]] || err_exit 'function cannot set compound global variable'
@@ -244,26 +283,29 @@ i=$($SHELL -c 'nameref foo=bar; bar[2]=(x=3 y=4); nameref x=foo[2].y;print -r --
 [[ $($SHELL 2> /dev/null <<- '+++EOF'
 	function bar
 	{
-	 	nameref x=$1
-	 	print -r -- "$x"
+		nameref x=$1
+		print -r -- "$x"
 	}
 	function foo
 	{
-	 	typeset var=( foo=hello)
-	 	bar var
+		typeset var=( foo=hello)
+		bar var
 	}
 	foo
 +++EOF
 ) ==  *foo=hello* ]] || err_exit 'unable to display compound variable from name reference of local variable'
 #set -x
 for c in '=' '[' ']' '\' "'" '"' '<' '=' '('
-do	[[ $($SHELL 2> /dev/null <<- ++EOF++
+do
+    [[ $($SHELL 2> /dev/null <<- ++EOF++
 	i=\\$c;typeset -A a; a[\$i]=foo;typeset -n x=a[\$i]; print "\$x"
 	++EOF++
 ) != foo ]] && err_exit 'nameref x=a[$c] '"not working for c=$c"
 done
+
 for c in '=' '[' ']' '\' "'" '"' '<' '=' '('
-do      [[ $($SHELL 2> /dev/null <<- ++EOF++
+do
+    [[ $($SHELL 2> /dev/null <<- ++EOF++
 	i=\\$c;typeset -A a; a[\$i]=foo;b=a[\$i];typeset -n x=\$b; print "\$x"
 	++EOF++
 ) != foo ]] && err_exit 'nameref x=$b with b=a[$c] '"not working for c=$c"
@@ -277,14 +319,14 @@ foo[xyz]=ok
 [[ $x == ok ]] || err_exit 'nameref to unset subscript not working'
 function function2
 {
-	nameref v=$1
-	v.x=19 v.y=20
+    nameref v=$1
+    v.x=19 v.y=20
 }
 function function1
 {
-	typeset compound_var=()
-	function2 compound_var
-	printf "x=%d, y=%d\n" compound_var.x compound_var.y
+    typeset compound_var=()
+    function2 compound_var
+    printf "x=%d, y=%d\n" compound_var.x compound_var.y
 }
 x="$(function1)"
 [[ "$x" != 'x=19, y=20' ]] && err_exit "expected 'x=19, y=20', got '${x}'"
@@ -292,16 +334,17 @@ typeset +n bar
 unset foo bar
 [[ $(function a
 {
-	for i in  foo bar
-	do	typeset -n v=$i
-		print $v
-	done | cat
+    for i in  foo bar
+    do
+        typeset -n v=$i
+        print $v
+    done | cat
 }
 foo=1 bar=2;a) == $'1\n2' ]] 2> /dev/null || err_exit 'nameref in pipeline broken'
 function a
 {
-	typeset -n v=vars.data._1
-	print "${v.a} ${v.b}"
+    typeset -n v=vars.data._1
+    print "${v.a} ${v.b}"
 }
 vars=(data=())
 vars.data._1.a=a.1
@@ -326,9 +369,9 @@ typeset -n ref
 x=3
 function foobar
 {
-	typeset xxx=3
-	ref=xxx
-	return 0
+    typeset xxx=3
+    ref=xxx
+    return 0
 }
 foobar 2> /dev/null && err_exit 'invalid reference should cause foobar to fail'
 [[ -v ref ]] && err_exit '$ref should be unset'
@@ -346,7 +389,7 @@ function foobar
 {
         nameref doc=docs
         nameref bar=doc.num
-	[[ $bar == 2 ]] || err_exit 'nameref scoping error'
+    [[ $bar == 2 ]] || err_exit 'nameref scoping error'
 }
 
 docs=(num=2)
@@ -371,41 +414,41 @@ sp[14]=( size=1 )
 
 function fun2
 {
-	nameref var=$1
-	var.foo=bar
+    nameref var=$1
+    var.foo=bar
 }
 
 function fun1
 {
-	compound -S container
-	fun2 container
-	[[ $container == *foo=bar* ]] || err_exit 'name references to static compound variables in parent scope not working'
+    compound -S container
+    fun2 container
+    [[ $container == *foo=bar* ]] || err_exit 'name references to static compound variables in parent scope not working'
 }
 fun1
 
 function fun2
 {
-	nameref var=$1
-	var.foo=bar
+    nameref var=$1
+    var.foo=bar
 }
 
 typeset -T container_t=(
-	typeset foo
+    typeset foo
 )
 
 function fun1
 {
-	container_t -S container
-	fun2 container 
-	[[ $container == *foo=bar* ]] || err_exit 'name references to static type variables in parent scope not working'
+    container_t -S container
+    fun2 container 
+    [[ $container == *foo=bar* ]] || err_exit 'name references to static type variables in parent scope not working'
 }
 fun1
 
 function fun2
 {
-	nameref var=$1
-	nameref node=var.foo
-	node=bar
+    nameref var=$1
+    nameref node=var.foo
+    node=bar
 }
 function fun3
 {
@@ -422,9 +465,9 @@ nameref c=x[h]
 unset a
 function x
 {
-	nameref a=a
-	(( $# > 0 )) && typeset -A a
-	a[a b]=${1-99}  # this was cauing a syntax on the second call
+    nameref a=a
+    (( $# > 0 )) && typeset -A a
+    a[a b]=${1-99}  # this was cauing a syntax on the second call
 }
 x 7
 x 2> /dev/null
@@ -465,11 +508,14 @@ x[4]=1
 EOF
 } 2> /dev/null #|| print -u2 bad
 exitval=$?
-if	[[ $(kill -l $exitval) == SEGV ]]
-then	print -u2 'name reference to unset type instance causes segmentation violation'
-else 	if((exitval))
-	then	print -u2 'name reference to unset type instance not redirected to .deleted'
-	fi
+if [[ $(kill -l $exitval) == SEGV ]]
+then
+    print -u2 'name reference to unset type instance causes segmentation violation'
+else
+    if((exitval))
+    then
+        print -u2 'name reference to unset type instance not redirected to .deleted'
+    fi
 fi
 
 typeset +n nr
@@ -510,8 +556,8 @@ EOF
 
 function add_compound
 {
-	nameref arr=$1
-	arr[34]+=( float val=1.1 )
+    nameref arr=$1
+    arr[34]+=( float val=1.1 )
 }
 compound -a rootcpv
 nameref mycpv=rootcpv[4][8][16][32][64]
@@ -521,14 +567,14 @@ add_compound mycpv.myindexedcompoundarray
 
 function add_file_to_tree
 {
-	nameref node=$1
-	compound -A node.elements
-	node.elements[/]=(filepath=foobar)
+    nameref node=$1
+    compound -A node.elements
+    node.elements[/]=(filepath=foobar)
 }
 function main
-{	
-	compound filetree
-	add_file_to_tree filetree
+{    
+    compound filetree
+    add_file_to_tree filetree
 }
 main 2> /dev/null
 [[ $? == 0 ]] || err_exit 'nameref binding to calling function compound variable failed'
@@ -566,28 +612,28 @@ printf "( typeset -a ar=( 1\n2\n) b=1 )\n" | read -C l4
 exp=$'(\n\t[9]=(\n\t\ttypeset -i fish=4\n\t)\n)'
 function add_eval
 {
-	nameref pos=$1
-	source /dev/stdin <<<"$2"
-	typeset -m pos=addvar
+    nameref pos=$1
+    source /dev/stdin <<<"$2"
+    typeset -m pos=addvar
 }
 function do_local_plain
 {
-	compound -A local_tree
-	add_eval local_tree[9].fish "typeset -i addvar=4"
-	[[ $(print -v local_tree) == "$exp" ]] || err_exit 'do_local_plain failed'
+    compound -A local_tree
+    add_eval local_tree[9].fish "typeset -i addvar=4"
+    [[ $(print -v local_tree) == "$exp" ]] || err_exit 'do_local_plain failed'
 }
 function do_global_throughnameref
 {
-	nameref tr=global_tree
-	add_eval tr[9].fish "typeset -i addvar=4"
-	[[ $(print -v tr) == "$exp" ]] || err_exit 'do_global_throughnameref failed'
+    nameref tr=global_tree
+    add_eval tr[9].fish "typeset -i addvar=4"
+    [[ $(print -v tr) == "$exp" ]] || err_exit 'do_global_throughnameref failed'
 }
 function do_local_throughnameref
 {
-	compound -A local_tree
-	nameref tr=local_tree
-	add_eval tr[9].fish "typeset -i addvar=4"
-	[[ $(print -v tr) == "$exp" ]] || err_exit 'do_local_throughnameref failed'
+    compound -A local_tree
+    nameref tr=local_tree
+    add_eval tr[9].fish "typeset -i addvar=4"
+    [[ $(print -v tr) == "$exp" ]] || err_exit 'do_local_throughnameref failed'
 }
 compound -A global_tree
 let 1
@@ -599,8 +645,8 @@ unset ar
 compound -a ar
 function read_c
 {
-	nameref v=$1
-	read -C v
+    nameref v=$1
+    read -C v
 }
 print "( typeset -i x=36 ) " | read_c ar[5][9][2]
 exp=$'(\n\t[5]=(\n\t\t[9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
@@ -609,37 +655,37 @@ exp=$'(\n\ttypeset -a [5]=(\n\t\ttypeset -a [9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset 
 
 function read_c
 {
-	nameref v=$1
-	read -C v
+    nameref v=$1
+    read -C v
 }
 function main
 {
-	compound -a ar
-	nameref nar=ar
-	print "( typeset -i x=36 ) " | read_c nar[5][9][2]
-	exp=$'(\n\ttypeset -a [5]=(\n\t\ttypeset -a [9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
-	[[ $(print -v nar) == "$exp" ]] || err_exit 'read from a nameref variable from calling scope fails'
+    compound -a ar
+    nameref nar=ar
+    print "( typeset -i x=36 ) " | read_c nar[5][9][2]
+    exp=$'(\n\ttypeset -a [5]=(\n\t\ttypeset -a [9]=(\n\t\t\t[2]=(\n\t\t\t\ttypeset -i x=36\n\t\t\t)\n\t\t)\n\t)\n)'
+    [[ $(print -v nar) == "$exp" ]] || err_exit 'read from a nameref variable from calling scope fails'
 }
 main
 
 function rf2
 {
-	nameref val=$1
-	read -C val
+    nameref val=$1
+    read -C val
 }
 function rf
 {
-	nameref val=$1
-	rf2 val
+    nameref val=$1
+    rf2 val
 }
 function main
 {
-	compound c
-	typeset -A -C c.l
-	nameref l4=c.l[4]
-	printf "( typeset -a ar=( 1\n2\n3\n) b=1 )\n" | rf l4
-	exp=$'(\n\ttypeset -C -A l=(\n\t\t[4]=(\n\t\t\ttypeset -a ar=(\n\t\t\t\t1\n\t\t\t\t2\n\t\t\t\t3\n\t\t\t)\n\t\t\tb=1\n\t\t)\n\t)\n)'
-	[[ $(print -v c) == "$exp" ]] || err_exit 'read -C with nameref to array element fails'
+    compound c
+    typeset -A -C c.l
+    nameref l4=c.l[4]
+    printf "( typeset -a ar=( 1\n2\n3\n) b=1 )\n" | rf l4
+    exp=$'(\n\ttypeset -C -A l=(\n\t\t[4]=(\n\t\t\ttypeset -a ar=(\n\t\t\t\t1\n\t\t\t\t2\n\t\t\t\t3\n\t\t\t)\n\t\t\tb=1\n\t\t)\n\t)\n)'
+    [[ $(print -v c) == "$exp" ]] || err_exit 'read -C with nameref to array element fails'
 }
 main
 
@@ -647,8 +693,8 @@ main
 cfg=( alarms=(type=3))
 function a
 {
-	typeset -n y=$1
-	print -- ${y.type}
+    typeset -n y=$1
+    print -- ${y.type}
 }
 function b
 {
@@ -659,8 +705,8 @@ function b
 
 function yy
 {
-	nameref n=$1
-	n=( z=4 )
+    nameref n=$1
+    n=( z=4 )
 }
 yy foo
 unset foo
@@ -676,13 +722,13 @@ typeset -n ref=arr[1]
 
 function fun2
 {
-	nameref var=$1.foo
-	var=$2
+    nameref var=$1.foo
+    var=$2
 }
 function fun1
 {
-	xxx=$1
-	fun2 $xxx bam
+    xxx=$1
+    fun2 $xxx bam
 }
 args=(bar=yes)
 fun1 args
@@ -701,23 +747,24 @@ one=1 bar=2 baz=3
 arr=(one bar baz)
 nameref vv
 val=$(
-	for vv in "${arr[@]}"
-	do	print -n -- "$vv"
-	done
+    for vv in "${arr[@]}"
+    do
+        print -n -- "$vv"
+    done
 )
 [[ $val == 123 ]] || err_exit 'optimization bug with for loops with references'
 
 function setref
 {
-	nameref obj=$1
-	obj=foo
+    nameref obj=$1
+    obj=foo
 }
 function foo
 {
-	typeset -S static
-	compound v
-	setref v.s 2> /dev/null
-	[[ ${v.s} == foo ]] || err_exit  'nameref to v.s cannot failed when called from function with static variables ans v.s does not exist'
+    typeset -S static
+    compound v
+    setref v.s 2> /dev/null
+    [[ ${v.s} == foo ]] || err_exit  'nameref to v.s cannot failed when called from function with static variables ans v.s does not exist'
 }
 foo
 
@@ -733,7 +780,8 @@ val=$($SHELL 2> /dev/null <<- \EOF
 	{
 		integer i
 		for ((i=0 ; i < ${#ar[@]} ;))
-		do fn ar[i++]
+		do
+			fn ar[i++]
 		done
 	}
 	main
@@ -744,7 +792,7 @@ EOF
 #name references in name spaces
 namespace sp1
 {
-	compound -a c=( [4][16]=( bool -a b=( [4][3]=true [4][5]=false ) ) )
+    compound -a c=( [4][16]=( bool -a b=( [4][3]=true [4][5]=false ) ) )
 }
 nameref n=.sp1.c[4][16]
 [[ ${n.b[4][@]} == "${.sp1.c[4][16].b[4][@]}" ]] || err_exit 'name references to variables in name spaces not working'
