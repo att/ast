@@ -17,11 +17,12 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
+
 function err_exit
 {
-	print -u2 -n "\t"
-	print -u2 -r ${Command}[$1]: "${@:2}"
-	let Errors+=1
+    print -u2 -n "\t"
+    print -u2 -r ${Command}[$1]: "${@:2}"
+    let Errors+=1
 }
 alias err_exit='err_exit $LINENO'
 
@@ -76,8 +77,8 @@ cat > bug1 <<- EOF
 	chmod 755 $tmp/ok
 	function a
 	{
-	        typeset -x PATH=$tmp
-	        ok
+		typeset -x PATH=$tmp
+		ok
 	}
 	path=\$PATH
 	unset PATH
@@ -89,10 +90,9 @@ EOF
 cat > bug1 <<- \EOF
 	function lock_unlock
 	{
-	typeset PATH=/usr/bin
-	typeset -x PATH=''
+		typeset PATH=/usr/bin
+		typeset -x PATH=''
 	}
-
 	PATH=/usr/bin
 	: $(PATH=/usr/bin getconf PATH)
 	typeset -ft lock_unlock
@@ -100,17 +100,22 @@ cat > bug1 <<- \EOF
 EOF
 ($SHELL ./bug1)  2> /dev/null || err_exit "path_delete bug"
 mkdir tdir
-if	$SHELL tdir > /dev/null 2>&1
-then	err_exit 'not an error to run ksh on a directory'
+if $SHELL tdir > /dev/null 2>&1
+then
+    err_exit 'not an error to run ksh on a directory'
 fi
 
 print 'print hi' > ls
-if	[[ $($SHELL ls 2> /dev/null) != hi ]]
-then	err_exit "$SHELL name not executing version in current directory"
+if [[ $($SHELL ls 2> /dev/null) != hi ]]
+then
+    err_exit "$SHELL name not executing version in current directory"
 fi
-if	[[ $(ls -d . 2>/dev/null) == . && $(PATH=/bin:/usr/bin:$PATH ls -d . 2>/dev/null) != . ]]
-then	err_exit 'PATH export in command substitution not working'
+
+if [[ $(ls -d . 2>/dev/null) == . && $(PATH=/bin:/usr/bin:$PATH ls -d . 2>/dev/null) != . ]]
+then
+    err_exit 'PATH export in command substitution not working'
 fi
+
 pwd=$PWD
 # get rid of leading and trailing : and trailing :.
 PATH=${PATH%.}
@@ -121,11 +126,14 @@ path=$PATH
 var=$(whence date)
 dir=$(basename "$var")
 for i in 1 2 3 4 5 6 7 8 9 0
-do	if	! whence notfound$i 2> /dev/null
-	then	cmd=notfound$i
-		break
-	fi
+do
+    if ! whence notfound$i 2> /dev/null
+    then
+        cmd=notfound$i
+        break
+    fi
 done
+
 print 'print hello' > date
 chmod +x date
 print 'print notfound' >  $cmd
@@ -134,25 +142,30 @@ chmod +x "$cmd"
 chmod 755 foo
 for PATH in "$path" ":$path" "$path:" ".:$path" "$path:" "$path:." "$PWD::$path" "$PWD:.:$path" "$path:$PWD" "$path:.:$PWD"
 do
-#	print path=$PATH $(whence date)
-#	print path=$PATH $(whence "$cmd")
-		date
-		"$cmd"
+#    print path=$PATH $(whence date)
+#    print path=$PATH $(whence "$cmd")
+        date
+        "$cmd"
 done > /dev/null 2>&1
 builtin -d date 2> /dev/null
-if	[[ $(PATH=:/usr/bin; date) != 'hello' ]]
-then	err_exit "leading : in path not working"
+if [[ $(PATH=:/usr/bin; date) != 'hello' ]]
+then
+    err_exit "leading : in path not working"
 fi
+
 (
-	#TODO: Enable if chmod is a builtin
-	#PATH=$PWD:
-	#builtin chmod
-	print 'print cannot execute' > noexec
-	chmod 644 noexec
-	if	[[ ! -x noexec ]]
-	then	noexec > /dev/null 2>&1
-	else	exit 126
-	fi
+    #TODO: Enable if chmod is a builtin
+    #PATH=$PWD:
+    #builtin chmod
+    print 'print cannot execute' > noexec
+    chmod 644 noexec
+    if [[ ! -x noexec ]]
+    then
+        noexec > /dev/null 2>&1
+    else
+        exit 126
+    fi
+
 )
 status=$?
 [[ $status == 126 ]] || err_exit "exit status of non-executable is $status -- 126 expected"
@@ -164,19 +177,20 @@ d=$(dirname "$rm")
 chmod=$(whence chmod)
 
 for cmd in date foo
-do	exp="$cmd found"
-	print print $exp > $cmd
-	$chmod +x $cmd
-	got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
-	[[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
-	got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
-	[[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
-	exp=$PWD/./$cmd
-	got=$(unset FPATH; PATH=/dev/null; whence ./$cmd)
-	[[ $got == $exp ]] || err_exit "whence $cmd should find ./$cmd with PATH=/dev/null"
-	exp=$PWD/$cmd
-	got=$(unset FPATH; PATH=/dev/null; whence $PWD/$cmd)
-	[[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
+do
+    exp="$cmd found"
+    print print $exp > $cmd
+    $chmod +x $cmd
+    got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
+    [[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
+    got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
+    [[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
+    exp=$PWD/./$cmd
+    got=$(unset FPATH; PATH=/dev/null; whence ./$cmd)
+    [[ $got == $exp ]] || err_exit "whence $cmd should find ./$cmd with PATH=/dev/null"
+    exp=$PWD/$cmd
+    got=$(unset FPATH; PATH=/dev/null; whence $PWD/$cmd)
+    [[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
 done
 
 exp=''
@@ -188,19 +202,20 @@ got=$($SHELL -c "unset FPATH; PATH=/dev/null; whence $PWD/notfound" 2>&1)
 unset FPATH
 PATH=/dev/null
 for cmd in date foo
-do	exp="$cmd found"
-	print print $exp > $cmd
-	$chmod +x $cmd
-	got=$($cmd 2>&1)
-	[[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
-	got=$($cmd 2>&1; :)
-	[[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
-	exp=$PWD/./$cmd
-	got=$(whence ./$cmd)
-	[[ $got == $exp ]] || err_exit "whence ./$cmd should find ./$cmd with PATH=/dev/null"
-	exp=$PWD/$cmd
-	got=$(whence $PWD/$cmd)
-	[[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
+do
+    exp="$cmd found"
+    print print $exp > $cmd
+    $chmod +x $cmd
+    got=$($cmd 2>&1)
+    [[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
+    got=$($cmd 2>&1; :)
+    [[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
+    exp=$PWD/./$cmd
+    got=$(whence ./$cmd)
+    [[ $got == $exp ]] || err_exit "whence ./$cmd should find ./$cmd with PATH=/dev/null"
+    exp=$PWD/$cmd
+    got=$(whence $PWD/$cmd)
+    [[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
 done
 exp=''
 got=$(whence ./notfound)
@@ -210,35 +225,49 @@ got=$(whence $PWD/notfound)
 
 PATH=$d:
 cp "$rm" kshrm
-if	[[ $(whence kshrm) != $PWD/kshrm  ]]
-then	err_exit 'trailing : in pathname not working'
+if [[ $(whence kshrm) != $PWD/kshrm  ]]
+then
+    err_exit 'trailing : in pathname not working'
 fi
+
 cp "$rm" rm
 PATH=:$d
-if	[[ $(whence rm) != $PWD/rm ]]
-then	err_exit 'leading : in pathname not working'
+if [[ $(whence rm) != $PWD/rm ]]
+then
+    err_exit 'leading : in pathname not working'
 fi
+
 PATH=$d: whence rm > /dev/null
-if	[[ $(whence rm) != $PWD/rm ]]
-then	err_exit 'pathname not restored after scoping'
+if [[ $(whence rm) != $PWD/rm ]]
+then
+    err_exit 'pathname not restored after scoping'
 fi
+
 mkdir bin
 print 'print ok' > bin/tst
 chmod +x bin/tst
-if	[[ $(PATH=$PWD/bin tst 2>/dev/null) != ok ]]
-then	err_exit '(PATH=$PWD/bin foo) does not find $PWD/bin/foo'
+if [[ $(PATH=$PWD/bin tst 2>/dev/null) != ok ]]
+then
+    err_exit '(PATH=$PWD/bin foo) does not find $PWD/bin/foo'
 fi
+
 cd /
-if	whence ls > /dev/null
-then	PATH=
-	if	[[ $(whence rm) ]]
-	then	err_exit 'setting PATH to Null not working'
-	fi
-	unset PATH
-	if	[[ $(whence rm) != /*rm ]]
-	then	err_exit 'unsetting path  not working'
-	fi
+if whence ls > /dev/null
+then
+    PATH=
+    if [[ $(whence rm) ]]
+    then
+        err_exit 'setting PATH to Null not working'
+    fi
+
+    unset PATH
+    if [[ $(whence rm) != /*rm ]]
+    then
+        err_exit 'unsetting path  not working'
+    fi
+
 fi
+
 PATH=/dev:$tmp
 x=$(whence rm)
 typeset foo=$(PATH=/xyz:/abc :)
@@ -308,10 +337,13 @@ PATH=$PATH:
 chmod +x ls
 ok=
 for i in $(whence -a ls)
-do	if	[[ $i == *"$PWD/ls" ]]
-	then	ok=1
-		break;
-	fi
+do
+    if [[ $i == *"$PWD/ls" ]]
+    then
+        ok=1
+        break;
+    fi
+
 done
 [[ $ok ]] || err_exit 'whence -a not finding all executables'
 rm -f ls
@@ -320,7 +352,7 @@ PATH=${PATH%:}
 #whence -p bug fix
 function foo
 {
-	:
+    :
 }
 [[ $(whence -p foo) == foo ]] && err_exit 'whence -p foo should not find function foo'
 
@@ -334,7 +366,8 @@ print  'function foobar { :;}' > foobar
 autoload foobar;
 exec {m}< /dev/null
 for ((i=0; i < 25; i++))
-do	( foobar )
+do
+    ( foobar )
 done
 exec {m}<& -
 exec {n}< /dev/null
@@ -342,12 +375,13 @@ exec {n}< /dev/null
 
 # whence -a bug fix
 rmdir=rmdir
-if	mkdir "$rmdir"
-then	rm=${ whence rm;}
-	cp "$rm" "$rmdir"
-	{ PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
-	exitval=$?
-	(( exitval==0 )) || err_exit "whence -a has exitval $exitval"
+if mkdir "$rmdir"
+then
+    rm=${ whence rm;}
+    cp "$rm" "$rmdir"
+    { PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
+    exitval=$?
+    (( exitval==0 )) || err_exit "whence -a has exitval $exitval"
 fi
 
 [[ ! -d bin ]] && mkdir bin
@@ -389,10 +423,12 @@ END
 
 path=$PATH
 PATH=/bin:/usr/bin
-if	[[ $(type date) == *builtin* ]]
-then	builtin -d date
-	[[ $(type date) == *builtin* ]] && err_exit 'builtin -d does not delete builtin'
+if [[ $(type date) == *builtin* ]]
+then
+    builtin -d date
+    [[ $(type date) == *builtin* ]] && err_exit 'builtin -d does not delete builtin'
 fi
+
 PATH=$path
 
 exit $((Errors<125?Errors:125))
