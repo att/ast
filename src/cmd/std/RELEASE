@@ -280,7 +280,7 @@
 	 find: move to tw
 	 rm: add
 96-02-29 df: list some stat errors -- well, maybe not
-	 sum: add cksum link and att,bsd,POSIX,zip,md5 algorithms
+	 sum: add cksum link and att,bsd,posix,zip,md5 algorithms
 96-02-07 df: (long) cast to handle (unsigned long) vs. (long) header diffs
 96-01-30 banner: unused var cleanup
 96-01-01 AT&T Research now
