@@ -34,7 +34,8 @@ ninja -C build install
 ## Getting KornShell
 
 ### Linux
-Latest builds for Fedora can be found in [copr](https://copr.fedorainfracloud.org/coprs/g/ksh/latest/).
+Latest builds for Red Hat Enterprise Linux (CentOS) and Fedora can be found in
+[copr](https://copr.fedorainfracloud.org/coprs/g/ksh/latest/).
 
 TBD packages for other Linux distros.
 
