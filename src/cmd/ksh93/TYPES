@@ -73,8 +73,8 @@ Thus, if this definition is in a file named Pt_t on FPATH, then
 a program can create instances of Pt_t without first including
 the definition.
 
-A type definition is readonly and cannot be unset.  Unsetting non-shared
-elements of a type restores them to their default value.  Unsetting a
+A type definition is readonly and cannot be unset.  Un-setting non-shared
+elements of a type restores them to their default value.  Un-setting a
 shared element has no effect.
 
 The Pt_t command is used to create an instance of Pt_t.
@@ -92,7 +92,7 @@ can be used.  Unlike (and ) which are always special, the { and } are
 reserved words and require the space after { and a newline or ; before }.
 Unlike $(), the ${ ;} command substitution executes the command in
 the current shell context saving the need to save and restore
-changes, therefore also allowing side effects. 
+changes, therefore also allowing side effects.
 
 When trying to expand an element of a type, if the element does not exist,
 ksh will look for a discipline function with that name and treat this as if
@@ -114,13 +114,13 @@ Each instance of the type Pt_t behaves like a compound variable except
 that only the variables defined by the type can be referenced or set.
 Thus, p2.x=9 is valid, but p2.z=9 is not.  Unless a set discipline function
 does otherwise, the value of $p1 will be expanded to the form of a compound
-variable that can be used for reinput into ksh.
+variable that can be used for re-input into ksh.
 
 If the variables var1 and var2 are of the same type, then the assignment
 	var2=var1
 will create a copy of the variable var1 into var2.  This is equivalent to
 	eval var2="$var1"
-but is faster since the variable does not need to get expanded or reparsed.
+but is faster since the variable does not need to get expanded or re-parsed.
 
 The type Pt_t can be referenced as if it were a variable using the name
 .sh.type.Pt_t.  To change the default point location for subsequent

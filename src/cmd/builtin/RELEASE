@@ -142,7 +142,7 @@
 97-07-17 join: more tests in join.tst
 	 uudecode: ignore chars after counted limit
 	 uudecode: add binhex (decode only)
-	 uudecode: fix posix/ucb uu_decode()! time for uu.tst
+	 uudecode: fix POSIX/ucb uu_decode()! time for uu.tst
 96-12-25 od: add od.tst
 	 od: off_t -> int_max
 96-11-28 uudecode: fix buffer boundary bug in qp_decode

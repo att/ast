@@ -3,7 +3,7 @@
 12-02-22 coinit.c: handle non-identifier export var names
 11-12-13 cowait.c: handle sfpoll() error return on interrupt
 11-11-21 cowait.c: poll before blocking read to weed out killed jobs (no 'x' message)
-11-08-30 codata.c,coopen.c: drop macro "..." catenation for old cc
+11-08-30 codata.c,coopen.c: drop macro "..." concatenation for old cc
 10-08-11 coinit.c: force _BLD_DLL for environ intercept
 10-06-01 sync with ast api 20100601
 10-05-19 cokill.c: do cowait(co,co,0) to drain pending messages
@@ -46,6 +46,6 @@
 00-12-18 coinit: CO_OSH ? "${!-$$}" : "${!:-$$}"
 00-10-25 codata: $ZSH_VERSION is not ksh
 00-02-14 procrun,system: system(3) returns wait() status (not shell status)
-99-11-19 co*: add CO_OSH for bsdi lack of times(1)
+99-11-19 co*: add CO_OSH for BSDi lack of times(1)
 	 coexec: CO_IGNORE for all but real ksh
 98-06-22 coinit: quote cd path arg

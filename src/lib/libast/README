@@ -34,7 +34,7 @@ hash:			generic, scoped hash table support
 
 include/ast:		libast support headers
 
-	align.h		compile time type alignmnent support
+	align.h		compile time type alignment support
 	dirent.h	POSIX directory(3) interface definitions
 	error.h		error() interface definitions
 	ftw.h		ftwalk() interface definitions
@@ -56,7 +56,7 @@ misc:
 	getshell	return full path of shell for cmdopen()
 	ooptget		optget() for obsolete ar(1) and tar(1) options
 	optget		YA getopt(3) but no argc or error message output
-	pathaccess	find file with specific acces on list of dirs
+	pathaccess	find file with specific access on list of dirs
 	pathcanon	canonicalize path name in place
 	pathcmd		return full path name of executable using $PATH
 	pathroot	determine `related root' directory for command

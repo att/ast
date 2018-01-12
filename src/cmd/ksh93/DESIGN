@@ -46,7 +46,7 @@ Directory layout:
 	The  data/bash_pre_rc.sh is a startup script used when emulating
 	bash if the shell is compiled with SHOPT_BASH and the shell
 	is invoked as bash.  The bash emulation is not complete.
- 
+
 Include directory:
 	1.	argnod.h contains the type definitions for command
 		nodes, io nodes, argument nodes, and for positional
@@ -60,11 +60,11 @@ Include directory:
 		don't fit elsewhere and it includes several other
 		headers.  It defines a structure that contains ksh
 		global data, sh, and a structure that contains per
-		function data, sh.st. 
+		function data, sh.st.
 	4.	edit.h contains definitions that are common to both
 		vi and emacs edit modes.
 	5.	env.h contains an alternative interfaces for creating and
-		modifying environment variables. 
+		modifying environment variables.
 	6.	fault.h contains prototypes for signal related
 		functions and trap and fault handling.
 	7.	fcin.h contains macro and function definitions for
@@ -111,7 +111,7 @@ sh directory:
 		library and the interface to shell arithmetic.
 	3.	array.c contains the code for indexed and associative
 		arrays.
-	4.      bash.c contains code used when compiling with SHOPT_BASH
+	4.  bash.c contains code used when compiling with SHOPT_BASH
 		to add bash specific features such as shopt.
 	5.	defs.c contains the data definitions for global symbols.
 	6.	deparse.c contains code to generate shell script from
@@ -125,8 +125,8 @@ sh directory:
 	10.	fcin.c contains code for reading and writing a character
 		at a time from a file or string.
 	11.	init.c contains initialization code and callbacks
-		for get and set functions for built-in variables.	
-	12.	io.o contains code for redirections and managing file
+		for get and set functions for built-in variables.
+	12.	io.c contains code for redirections and managing file
 		descriptors and file streams.
 	13.	jobs.c contains the code for job management.
 	14.	lex.c contains the code for the lexical analyzer.
