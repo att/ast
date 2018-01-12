@@ -131,7 +131,7 @@
 12-07-25 pathprobe.c: fix read() loop to handle EINTR
 12-06-28 vmalloc/malloc.c: use sbrk() unless VMALLOC_OPTIONS=mmap or asoinit(0,0,0)!=0 (workaround until next malloc update)
 12-06-28 aso/aso.c: asoinit(0,0,0): 0: no specific init, 1: app initialized
-12-06-27 sfio/sfvprintf.c: allow { L* z* } aliases for I* -- posix will probably pick one
+12-06-27 sfio/sfvprintf.c: allow { L* z* } aliases for I* -- POSIX will probably pick one
 12-06-26 regex/regnexec.c: fix uninitialized variable reference
 12-06-26 comp/setlocale.c: utf8_wctomb() now calls (the corrrect) wc2utf8()
 12-06-25 string/chresc.c: accept \u[U+<hex>] and \u{U+<hex>}
@@ -140,7 +140,7 @@
 12-06-18 sfio/_sfopen.c: add 'e' => O_CLOEXEC
 12-06-18 features/fcntl.c: add #define O_CLOEXEC 0 if not defined
 12-06-13 features/float: handle __mips c99 peculiarities
-12-06-13 features/standards: handle __MACH__ posix peculiarities
+12-06-13 features/standards: handle __MACH__ POSIX peculiarities
 12-06-08 sfio/sfclose.c,sfmode.c: sfclose() for sfopopen() stream returns sh-compatible $?
 12-06-08 comp/strtold.c: fix header botch that missed ldexpl() prototype -- ouch
 12-06-06 misc/proclib.h: partially undo <ast_standards.h> for leaked ancient bsd-isms
@@ -273,7 +273,7 @@
 10-08-11 misc/conformance.c: check ast_env_serial for dynamic astconf() changes
 10-08-11 port/lcgen.c: remember to fudge Table_t.count for synthesized entries
 10-08-04 include/ast.h,comp/setlocale.c: add { debug C.UTF-8 } mbalpha() mbwidth()
-10-08-02 misc/translate.c: add NLSPATH message cache check 
+10-08-02 misc/translate.c: add NLSPATH message cache check
 10-07-29 string/fmtint.c: fix nasty bug that rendered "1000" as "1"
 10-07-27 setlocale,lsgen,localeconv: handle C vs C_EU decimal thousands sep
 10-07-26 misc/optget.c: fix interaction with nested plugin/builtin calls
@@ -343,7 +343,7 @@
 10-01-01 ast_std.h: add { AST_LC_internal AST_LC_setenv }
 09-12-24 comp/setlocale.c: fix setlocale(LC_ALL,"") when already initialized
 09-12-17 misc/optget.c: handle mixed solaris usage="x:f:(in)yo:(out)"
-09-12-11 regex/regcomp.c: posix semantics for [z-a]
+09-12-11 regex/regcomp.c: POSIX semantics for [z-a]
 09-12-11 regex/regcomp.c: fix BRE/ERE ^^ logic
 09-12-11 regex/regcomp.c: fix regcomb() for REG_LEFT|REG_RIGHT
 09-12-11 regex/regcomp.c: bm complete=0 if REX_END
@@ -434,7 +434,7 @@
 08-07-21 include/glob.h,misc/glob.c: GLOB_STARSTAR only forces lstat on chdir
 08-07-17 sfio: sync with kpv
 08-07-17 misc/optget.c: call astwinsize() each time terminal width required
-08-07-16 sfio/sfvscanf.c: fix %% to skip leading space per posix
+08-07-16 sfio/sfvscanf.c: fix %% to skip leading space per POSIX
 08-07-16 vmalloc/vmbest.c: add VMCHECK=m, VM_mmap to favor mmap() alloc
 08-07-16 features/stdio,stdio/f(read|write).c: size_t return value!! ouch
 08-06-24 tm/tmxfmt.c: fix %z to handle tm_isdst -- doh
@@ -460,7 +460,7 @@
 08-03-06 misc/optget.c: ---* and +++* are now operands
 08-03-06 misc/errorx.c: fix old error_info.translate workaround
 08-02-05 regex/regcomp.c: allow REG_SHELL {,n}... => {0,n}...
-08-02-27 misc/stk.c: top element during allocation relocated to top 
+08-02-27 misc/stk.c: top element during allocation relocated to top
 08-02-18 include/ip6.h,string/strtoip6.c,fmtip6.c: add ipv6 addr support
 08-02-14 regex/regsubexec.c: fix null match (tricky)
 08-02-14 regex/regsubcomp.c: fix SRE to match ksh
@@ -533,12 +533,12 @@
 07-02-14 include/int.h: drop
 07-02-14 include/sfio.h: add SF_WCWIDTH
 07-02-12 comp/conf.sh: fix CONF_LIMIT bug that missed ULONG_MAX etc.
-07-02-12 comp/conf.tab: *LONGLONG* => *LLONG* to match posix
-07-02-12 features/float: *LONGLONG* => *LLONG* to match posix
+07-02-12 comp/conf.tab: *LONGLONG* => *LLONG* to match POSIX
+07-02-12 features/float: *LONGLONG* => *LLONG* to match POSIX
 07-02-12 port/astconf.c: handle CONF_LIMITS_DEF with no deferral
 07-02-12 stdio/vasprintf.c: add trailing '\0' -- doh
 07-02-04 string/fmtelapsed.c: fix naive multi month/year logic
-07-02-02 misc/optget.c: add --??posix for getopts(1)/getopt(3)
+07-02-02 misc/optget.c: add --??POSIX for getopts(1)/getopt(3)
 07-01-26 string/chresc.c: use mbchar()
 07-01-26 misc/optget.c: handle "o:-:" usage for old-style long options
 07-01-22 sfio/sfdisc.c,sfpool.c: handle push on streams with pending peek
@@ -546,7 +546,7 @@
 07-01-17 tm/tmxfmt.c: fix terminating nil logic which clobbered size-1
 07-01-11 misc/stk.c: a 2 day marathon bug fix (can we release now dr ek?)
 07-01-05 comp/spawnveg.c: posix_spawnattr_setflags(POSIX_SPAWN_SETPGROUP)
-07-01-05 misc/error.c: fix multibyte vs. printable logic
+07-01-05 misc/error.c: fix multi-byte vs. printable logic
 07-01-01 comp/conf.sh: LC_ALL=C
 06-12-26 tm/tmxdate.c: handle nn*.nnnn* == sec.ns
 06-12-20 features/libpath.sh: generalize sol.* LIBPATH patterns
@@ -632,7 +632,7 @@
 06-06-27 features/float,sfio/sfcvt.c: fix Nan logic
 06-06-27 port/astmath.c: fix long double isnan() test
 06-06-27 features/map.c: _map_libc for std => _ast_std
-06-06-25 string/strperm.c: handle posix = w.r.t. umask
+06-06-25 string/strperm.c: handle POSIX = w.r.t. umask
 06-06-19 port/mnt.c,features/fs: handle netbsd getmntent api change
 06-06-18 regex/regstat.c: add REG_LITERAL check
 06-06-11 cdt/dtview.c: update from kpv
@@ -880,9 +880,9 @@
 	 vmalloc/malloc.c: _AST_mem_method==_mem_* to force mem get method
 	 sfio/sfputr.c: __ia64 memccpy is bogus -- how many tries do they get?
 	 path/pathshell.c: verify abs path and access(path,X_OK) -- duh
-	 vmalloc/vmhdr.h: add private _Vmessage() for non-sfio ASSERT() 
+	 vmalloc/vmhdr.h: add private _Vmessage() for non-sfio ASSERT()
 	 port/astconf.c: fix bug that always returned the minmax value
-03-06-11 comp/*.c: reorder macro hding for mvs.390 and <ast_map.h> 
+03-06-11 comp/*.c: reorder macro hding for mvs.390 and <ast_map.h>
 	 features/vmalloc: add _lib_brk and _lib_sbrk verification
 	 include/ast_std.h,etc.: add _map_malloc for malloc => _ast_malloc
 	 comp/conf.sh: fix SI_* and *_SI_* macro redefs
@@ -904,7 +904,7 @@
 03-05-24 misc/optget.c: fix (ancient) argv null dereference
 03-05-23 comp/getcwd.c: don't intercept on _WINIX -- unreliable st_ino
 03-05-22 sfio/sfsprintf.c: n<0 => don't append '\0'
-03-05-18 misc/fts.c: re-stat FTS_DP to update nlink/times 
+03-05-18 misc/fts.c: re-stat FTS_DP to update nlink/times
 	 misc/fts.c: add FTSENT.stack to eliminate getlist() recursion
 	 regex/ucs_names.h: use "..." catenation to placate some cc's
 03-05-11 string/strtoi.h: handle "-" "+" "0x" "11#"
@@ -1251,7 +1251,7 @@
 	 regex/regcomp.c: fix \ in [...] parse
 	 setlocale: retain user locale spelling in setlocale() return value
 	 features/limits.c: don't include ./limits.h -- duh
-	 fmtesc: don't escape multibyte chars
+	 fmtesc: don't escape multi-byte chars
 	 tm/tmlocale.c: fix native C locale default
 01-08-08 features/float: some compilers (msdev) forget long long vs. double
 01-07-31 misc/optget.c: handle suboptions
@@ -1316,9 +1316,9 @@
 	 tmfmt: handle standard E and O format modifiers
 	 tmlocale: consult nl_langinfo() if defined
 	 fmtquote("\"",1) => shell quote
-01-03-08 regex: handle multibyte chars and collation classes
+01-03-08 regex: handle multi-byte chars and collation classes
 	 strmatch,strgrpmatch: now a wrapper on regex
-	 ast_std.h: add mb*() multibyte and collation support
+	 ast_std.h: add mb*() multi-byte and collation support
 	 sfvscanf: handle locale decimal and thousand
 	 proc*,system: handle ignored SIGCHLD
 	 sfkeyprintf: handle %*C
@@ -1559,7 +1559,7 @@
 98-06-19 tokscan: add %f %g
 98-06-01 disc/sf*.c: memset(0) after disc malloc()
 98-05-11 strelapsed: y==Y
-	 fts: pathcanon() top list 
+	 fts: pathcanon() top list
 98-04-01 error: error_info.time for all msgs, just after cmd id
 	 error: no sfsync(sfstdin)
 	 sfio: sfpool, Sffmt_t update
@@ -1669,7 +1669,7 @@
 	 sfio.h,stdio.h,ast_common.h: pollution cleanup
 	 magic.c: add | op for switch
 	 Makefile: stdio.h was on both HEADERSRC and HEADERGEN -- don't do that
-	 drop pp:notice to get <sfio.h> ... <ast.h> to work 
+	 drop pp:notice to get <sfio.h> ... <ast.h> to work
 	 regex: add [[:<:]]==\< and [[:>:]]==\> for bsd compat
 	 mime.c: ignore X-* headers while scanning for Content-*
 	 magic.c: check for negative indirect offsets
@@ -1679,7 +1679,7 @@
 	 magic.c: MAGIFILE is now a : file list
 	 mnt.c: another 4.4 bsd fix -- users must include <sys/crap.h>
 	 common: fix _WIN32 chicken&egg with va_copy
-	 sfio: forgot to set f->val along with _Sfi in sfexcept() 
+	 sfio: forgot to set f->val along with _Sfi in sfexcept()
 	 Makefile: add mini target for uwin libmini.a
 	 sfcvt.c: workaround for flaky long double optimizers
 	 features/common: fix to work with va_list==void*
@@ -1692,7 +1692,7 @@
 	 regerror: fix for xopen
 	 getopt: fix for xopen
 	 magic: add ciao virtual database
-	 astconf: posix/strict/xopen implies "standard" conformance
+	 astconf: POSIX/strict/xopen implies "standard" conformance
 	 fs3d.h: hide mount prototype
 	 ast_std.h,mnt.c,features/fs: ncr port tweaks
 96-10-31 version 5.0
@@ -1824,7 +1824,7 @@
 	 oops object / shared library compat with _sfgetl2 _sfgetu2
 95-09-11 add getopt() compatibility
 	 add fstat,lstat,mknod,stat fixes for _x versions in sys/stat.h
-	 add getconf CONFORMANCE - posix for things that aren't ast default
+	 add getconf CONFORMANCE - POSIX for things that aren't ast default
 	 sfio_t.h: #ifndef _SFIO_H #include "sfio.h" #endif
 	 snarf vmalloc from kpv
 95-08-11 fix malloc bug in magic
@@ -1910,7 +1910,7 @@
 	 , treated like :space: between stropt() options
 	 fix procopen() fd dup to ignore self-dups
 	 add library id[] to misc/state.c
-	 add ftwalk(FTW_METAPHYSICAL) for posix -H
+	 add ftwalk(FTW_METAPHYSICAL) for POSIX -H
 	 sfvprintf() now handles balanced () in %()
 	 add tmfmt() with buffer size check to replace tmform()
 	 add fmttime() calling tmfmt() to fit fmt*() mold
@@ -1919,9 +1919,9 @@
 	 add EXTTYPE extended header to tar.h
 95-02-14 sfmove() buffer size overflow fix
 	 add _SFSTDIO_H to sfio.h
-	 rename setenv() to setenviron() -- posix finally decided
+	 rename setenv() to setenviron() -- POSIX finally decided
 	 rename <option.h> opt_* to opt_info.*
-	 update features/unistd.c for _SC_* and _PC_* posix additions
+	 update features/unistd.c for _SC_* and _PC_* POSIX additions
 95-01-19 (char*)uchar cast in fmtesc()
 	 fix hash bucket memory leak in hashlook() [via John Mocenigo]
 	 update strings/strtape()
