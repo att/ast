@@ -56,9 +56,9 @@ that causes self-destruction when the associated stream is closed.
 .Ss "  Sfdisc_t* dcnewskable(Sfio_t* f);"
 .Ss "  int dcdelskable(Sfdisc_t* disc);"
 \f5dcnewskable()\fP creates a discipline that when inserted
-on the stream \f5f\fP will ensure that \f5f\fP is seekable.
+on the stream \f5f\fP will ensure that \f5f\fP is seek-able.
 If \f5f\fP is originally unseekable, data will be shadowed
-in a temporary file stream to allow seekability.
+in a temporary file stream to allow seek-ability.
 \f5dcnewskable()\fP returns the discipline on success and \f5NULL\fP on failure.
 
 .Ss "  Sfdisc_t* dcnewtee(Sfio_t* tee);"

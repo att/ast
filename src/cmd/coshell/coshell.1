@@ -12,7 +12,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -59,7 +59,7 @@ whereas the environment of remote shells is initialized by
 .B .profile
 and
 .BR $ENV .
-The shells run with the 
+The shells run with the
 .I ksh
 .B bgnice
 and
@@ -100,7 +100,7 @@ The optional
 arguments name files containing local network host information
 which may be generated from two shell scripts
 .I genlocal
-and 
+and
 .I genshare
 under the subdirectory bin of the installation root directory.
 If no files are specified then the default
@@ -108,23 +108,23 @@ If no files are specified then the default
 is used.
 The local network is comprised of hosts sharing the same file name space.
 .PP
-Attributes used by 
+Attributes used by
 .I coshell
-can be categorized 
-into two types, global and host-specific.  
+can be categorized
+into two types, global and host-specific.
 The
 .I global
-attributes control 
+attributes control
 .I coshell
 and are not associated with any particular host.
 Attribute value pairs, not including readonly ones, may be specified in the
 local network host information files,
-in 
-.B COATTRIBUTES 
+in
+.B COATTRIBUTES
 (see ENVIRONMENT)
 or may be set/added using
 .I coshell -a,
-and may be referenced in an expression in 
+and may be referenced in an expression in
 .B COATTRIBUTES.
 Attribute names must match [a-zA-Z_][a-zA-Z_0-9]*.
 In the following description on these attributes,
@@ -140,7 +140,7 @@ are:
 .BI auto =n
 .B auto=1
 adds the host to the automatic selection pool.
-Hosts named in the 
+Hosts named in the
 .B file
 global-attribute have
 .B auto=1
@@ -156,8 +156,8 @@ The default bias is
 .BI busy =time
 (global attribute)
 The grace period for jobs running on busy hosts.
-A host is busy when its 
-.B idle 
+A host is busy when its
+.B idle
 attribute is non-zero and its minimum logged in
 user idle time is less than the value of
 .BR busy .
@@ -166,18 +166,18 @@ For a job running on an idle host,
 is the maximum amount of time the job may run after the host becomes
 busy.  If the job does not finish within
 .B busy,
-the SIGSTOP signal is sent to the job and the job stops.  When 
+the SIGSTOP signal is sent to the job and the job stops.  When
 the host idle time exceeds
 .BR busy ,
 the SIGCONT signal is sent to the job and the job resumes.
-The meaningful unit of 
+The meaningful unit of
 .I time
 may be m(inute) and h(our).
 The default is
 .BR busy=2m .
 .TP
 .BI cpu =n
-The number of cpus on the host.
+The number of CPUs on the host.
 The default is
 .BR 1 .
 .TP
@@ -192,16 +192,16 @@ The default attribute file for the local network is
 .TP
 .BI idle =time
 The minimum logged in user idle time before jobs will be scheduled on the host.
-The meaningful unit of 
+The meaningful unit of
 .I time
 may be m(inute) and h(our).
 The default is
 .BR 0 ,
 meaning no idle time restrictions.
 .B idle
-is usually 
-.B 15m 
-for workstations and is not specified (i.e., always 
+is usually
+.B 15m
+for workstations and is not specified (i.e., always
 available) for compute servers.
 .TP
 .BI label =string
@@ -214,7 +214,7 @@ in
 .IR coshell (3))
 or the current job (via
 .I coexec
-in 
+in
 .IR coshell (3)).
 Labels are displayed but are otherwise ignored.
 .TP
@@ -223,7 +223,7 @@ A readonly attribute that evaluates to the host load average.
 .TP
 .BI maxload =n.m
 (global attribute)
-The maximum host load average.  No job will be 
+The maximum host load average.  No job will be
 scheduled on a host with load average >=
 .B maxload.
 The default
@@ -240,7 +240,7 @@ In a host selection context:
 may be a
 .IR sh (1)
 file match pattern;
-.B \- 
+.B \-
 matches any host;
 .B local
 matches the local host.
@@ -261,26 +261,26 @@ The maximum number of concurrent jobs on each cpu.  The default is
 .TP
 .BI perserver =n
 (global attribute)
-The maximum number of concurrent jobs run by 
+The maximum number of concurrent jobs run by
 .I
 coshell.
 .B perserver
 has an upper limit that is silently enforced.
 The limit is the half of the number of file descriptors allowed.
 .BR perserver=0
-queues jobs until 
-.B perserver>0. 
+queues jobs until
+.B perserver>0.
 .TP
 .BI peruser =n
 (global attribute)
-The maximum number of concurrent jobs per user connection to 
+The maximum number of concurrent jobs per user connection to
 .I
 coshell.  The default is
 .BR 12 .
 .TP
 .BI pool =n
 (global attribute)
-The number of cpus in the processor pool.
+The number of CPUs in the processor pool.
 .TP
 .BI rating =n.m
 The host cpu rating, usually in mips relative to the other hosts
@@ -288,7 +288,7 @@ on the local network.  This is usually the observed rating rather than
 the one in the vendor's advertisements.
 .TP
 .BI type =string
-The host type that differentiates different processor types, usually 
+The host type that differentiates different processor types, usually
 related to the object and executable attributes.
 The default type is
 .BR * .
@@ -301,7 +301,7 @@ If
 is less than 0 then it is the number of seconds the host has been down.
 .PP
 Other user-defined attributes may be specified.
-They may be referenced in 
+They may be referenced in
 .B COATTRIBUTES
 expressions, but are otherwise ignored by
 .IR coshell .
@@ -430,7 +430,7 @@ Kill the server and quit the interactive connection.
 \fBr\fP \fIhost\fP [ \fIcommand\fP ]
 Run
 .I command
-on 
+on
 .IR host .
 .I host
 may be an attribute expression.
@@ -450,10 +450,10 @@ lists the attributes for all shells,
 lists all shells,
 .B l
 lists all shells in the processor pool,
-.B o 
+.B o
 lists all open shells,
 .B p
-lists the process id of all open shells, 
+lists the process id of all open shells,
 .B s
 lists the shell scheduling status (primarily for debugging),
 and
@@ -500,7 +500,7 @@ follows the time if the host does not meet the processor pool
 idle time requirements.
 .TP .6i
 .B CPU
-The number of cpus on the host.
+The number of CPUs on the host.
 .TP .6i
 .B LOAD
 The host load average.
@@ -565,7 +565,7 @@ restriction, load average, and the number of CPU into account.
 Two digits after the decimal point are random numbers which are
 used to break ties between different
 .I coshell
-servers.  Hosts with lower 
+servers.  Hosts with lower
 .B RANK
 are more likely to be scheduled.
 .TP .6i
@@ -608,7 +608,7 @@ The accumulated user time for all jobs on all hosts.
 The accumulated sys time for all jobs on all hosts.
 .TP .6i
 .B CPU
-The number of cpus available on all connected hosts followed by the
+The number of CPUs available on all connected hosts followed by the
 processor pool cpu limit plus the explicit host override count.
 An
 .I override
@@ -642,7 +642,7 @@ The number of jobs currently running on behalf of the user.
 The total number of jobs requested by the user.
 .TP .6i
 .B TTY
-The user process 
+The user process
 .B stderr
 file name.
 .TP .6i
@@ -655,10 +655,10 @@ The label assigned to the connection by the requesting user.
 List the server version stamp.
 .PP
 The interactive commands are useful in terms of tuning some global
-variable values.  For example, one could set 
-.B NPROC 
+variable values.  For example, one could set
+.B NPROC
 to 100, export it,
-and control the number of jobs executed using the 
+and control the number of jobs executed using the
 .I coshell
 interactive command:
 .EX
@@ -675,7 +675,7 @@ produces a long shell status listing and
 closes the shell connection to the host
 .LR dodo .
 .SH EXAMPLES
-The following environment variables must be set if 
+The following environment variables must be set if
 .I coshell
 is installed in a non-standard directory (not
 .BI /bin ,
@@ -686,17 +686,17 @@ or
 root=<coshell-installation-root-directory>
 export PATH=$root/bin:$PATH
 .EE
-If 
+If
 .I coshell
-is dynamically linked, the 
-.B LD_LIBRARY_PATH 
+is dynamically linked, the
+.B LD_LIBRARY_PATH
 environment variable needs to
 be set.
 .EX
 export LD_LIBRARY_PATH=$root/lib:$LD_LIBRARY_PATH
 .EE
 .PP
-The following two commands are used to generate the local 
+The following two commands are used to generate the local
 network host information which is shared among all the
 .I coshell
 users and only needs to be generated once unless this information needs
@@ -707,19 +707,19 @@ genshare > $root/lib/cs/share
 genlocal > $root/share/lib/cs/local
 .EE
 The
-.I genshare 
+.I genshare
 command is run first to generate information on servers for the network.
 By default, this information is stored in $root/lib/cs/share.
 Based on this information,
 .I genlocal
 is run to generate the local host attribute file.  By default,
 this information is stored in $root/share/lib/cs/local.  If the
-.I share 
+.I share
 file generated by the
-.I genshare 
+.I genshare
 command is not stored in the default path, you need to pass its path
-to 
-the 
+to
+the
 .I genlocal
 command using the -f option.
 .PP
@@ -809,8 +809,8 @@ event when the connect stream file is removed
 do not handle mounted streams or sockets.
 .RE
 .PP
-In any of these cases, the environment variable 
-.BR CS_MOUNT_LOCAL 
+In any of these cases, the environment variable
+.BR CS_MOUNT_LOCAL
 needs to be set to another file system where
 all the users have read and write permissions.  For example:
 .EX
@@ -829,7 +829,7 @@ NFS cache inconsistencies may arise for files generated via NFS on remote hosts
 but serviced via the native file system on the local host.
 Running
 .I coshell
-from a diskless host avoids the problem.
+from a disk-less host avoids the problem.
 .PP
 Host load average and logged in user idle times are used
 to schedule hosts and jobs.
@@ -897,7 +897,7 @@ server.
 .B COEXPORT
 A colon separated list of environment variables to export to each job.
 This is to support the rare cases where some environment variables
-change after the 
+change after the
 .I coshell
 server has been started.
 For example, some commands use environment variables rather

@@ -165,7 +165,7 @@ long       sffmtversion(Sffmt_t* fe, type);
 .ft 5
 Void_t*    sfsetbuf(Sfio_t* f, Void_t* buf, size_t size);
 int        sfsync(Sfio_t* f);
-int        sfpoll(Sfio_t** flist, int n, int timeout); 
+int        sfpoll(Sfio_t** flist, int n, int timeout);
 Sfio_t*    sfpool(Sfio_t* f, Sfio_t* poolf, int mode);
 int        sfpurge(Sfio_t* f);
 .ft 1
@@ -188,7 +188,7 @@ SF_DPUSH
 SF_DPOP
 SF_DPOLL
 SF_DBUFFER
-SF_SYNC	
+SF_SYNC
 SF_PURGE
 SF_FINAL
 SF_READY
@@ -283,7 +283,7 @@ stream pools for automatic data synchronization.
 Applications can extend the \f5sfprintf()/sfscanf()\fP functions
 to define their own conversion patterns as well as redefine existing ones.
 .PP
-A discipline defines analogues of 
+A discipline defines analogues of
 the system calls \f5read(2), write(2)\fP and \f5lseek(2)\fP.
 Such system calls or their discipline replacements are used to process stream data.
 Henceforth, ``\fIsystem call\fP'' will refer to either a system call
@@ -455,8 +455,8 @@ no longer behave as macros. Thus, an application that requires such fast macro f
 should leave \f5SF_MTSAFE\fP off and performs explicit locking with \f5sfmutex()\fP.
 .Tp
 \f5SF_IOINTR\fP:
-This flag indicates that I/O system calls should not be resumed 
-after being interrupted by signals. It is useful for 
+This flag indicates that I/O system calls should not be resumed
+after being interrupted by signals. It is useful for
 aborting I/O operations on such interruptions. Note, however,
 than certain operating systems (e.g., BSD Unix systems) may automatically
 resume interrupted system calls outside the scope of the library. On such systems,
@@ -784,7 +784,7 @@ from input stream \f5fr\fP to output stream \f5fw\fP.
 
 An object can be either a byte if the record separator argument
 \f5rsc\fP is negative or a record of \f5rsc\fP is non-negative.
-In the latter case, a record is incomplete if it does not end in \f5rsc\fP. 
+In the latter case, a record is incomplete if it does not end in \f5rsc\fP.
 Generally speaking, a stream can have at most one incomplete record.
 If \f5n\fP is negative, all complete objects of \f5fr\fP will be moved.
 Otherwise, \f5n\fP indicates the number of objects to move.
@@ -866,7 +866,7 @@ call can be obtained in another \f5sfreserve()\fP call with the argument
 \f5type\fP being \f5SF_LASTR\fP. The second argument \f5n\fP
 to \f5sfreserve()\fP will be ignored in this case.
 
-A \f5sfreserve()\fP call is successful if it can obtain a data block 
+A \f5sfreserve()\fP call is successful if it can obtain a data block
 of size at least the absolute value of \f5n\fP.
 For a \f5SF_READ\fP atream, the argument \f5n\fP is treated as follows:
 .Tp
@@ -986,7 +986,7 @@ which contains the following elements:
 
     char*        form;   /* format string to stack     */
     va_list      args;   /* corresponding arg list     */
-        
+
     int          fmt;    /* pattern being processed    */
     ssize_t      size;   /* object size                */
     int          flags;  /* formatting control flags   */
@@ -1100,7 +1100,7 @@ Arguments are always processed in order and
 \f5fe->extf\fP is called exactly once per argument.
 Note that, when \f5pos$\fP (below) is not used anywhere in a format string,
 each argument is used exactly once per a corresponding pattern.
-In that case, \f5fe->extf\fP is called 
+In that case, \f5fe->extf\fP is called
 as soon as the pattern is recognized and before any scanning or formatting.
 On the other hand, when \f5pos$\fP is used in a format string,
 an argument may be used multiple times.
@@ -1257,7 +1257,7 @@ In the second case, a given decimal value would define a size while
 Then, if the conversion specifier is \f5s\fP, this size defines the
 length of the string or strings being formatted (see the discussion of \f5base\fP below).
 For integer and floating point patterns,
-the size is used to select a type from one of the below lists as 
+the size is used to select a type from one of the below lists as
 indicated by the conversion specifier:
 
 .nf
@@ -1270,7 +1270,7 @@ indicated by the conversion specifier:
 
 The selection algorithm always matches types from left to right in any given list.
 Although selection is generally based on sizes in bytes,
-for compatibility with Microsoft-C, the size 64 
+for compatibility with Microsoft-C, the size 64
 is matched with an appropriate type with the same number of bits, if any.
 If the given size does not match any of the listed types,
 it shall match one of \f5int\fP, \f5unsigned int\fP, and \f5double\fP
@@ -1517,7 +1517,7 @@ indicated by the conversion specifier:
 
 The selection algorithm always matches types from left to right in any given list.
 Although selection is generally based on sizes in bytes,
-for compatibility with Microsoft-C, the size 64 
+for compatibility with Microsoft-C, the size 64
 is matched with an appropriate type with the same number of bits, if any.
 If the given size does not match any of the listed types,
 it shall match one of \f5int\fP, \f5unsigned int\fP, and \f5double\fP
@@ -1738,7 +1738,7 @@ the discipline that was pushed down.
 
 Note that a discipline can be used on only one stream at a time.
 An application should take care to allocate different discipline
-structures for use with different streams. 
+structures for use with different streams.
 A discipline structure is of the type \f5Sfdisc_t\fP which
 contains the following public fields:
 
@@ -1854,7 +1854,7 @@ I/O modes are ready.
 .Tp
 \f5SF_SYNC\fP, \f5SF_PURGE\fP:
 If \f5SF_IOCHECK\fP is set,
-these events are raised respectively for a \f5sfsync()\fP or \f5sfpurge()\fP call. 
+these events are raised respectively for a \f5sfsync()\fP or \f5sfpurge()\fP call.
 In each case, the respective event is raised once before the appropriate
 operation (synchronization or purging) with \f5((int)value)\fP being \f51\fP
 and once after with \f5((int)value)\fP being \f50\fP.
@@ -2066,7 +2066,7 @@ On such a call, if the return value is negative, \f5sfwalk()\fP will terminate.
 Otherwise, it returns the return value from the last invocation of \f5walkf()\fP.
 
 As an example, the call \f5sfwalk(walkf, data, SF_READ)\fP will iterate over all streams
-opened for reading. Similarly, \f5sfwalk(walkf, data, SF_READ|SF_WRITE)\fP 
+opened for reading. Similarly, \f5sfwalk(walkf, data, SF_READ|SF_WRITE)\fP
 iterates over all streams opened for both reading and writing.
 Lastly, \f5sfwalk(walkf, data, 0)\fP iterates over all streams.
 
@@ -2353,7 +2353,7 @@ defined in the system header \f5socket.h\fP of AIX Unix systems.
 On such systems, we shall not define \f5SF_CLOSE\fP and this
 symbol may be removed in a future release.
 .PP
-The printing and scanning functions were extended to handle multibyte characters
+The printing and scanning functions were extended to handle multi-byte characters
 and to conform to the C99 standard.
 .PP
 The function \f5sfpoll()\fP was rehauled to make it useful

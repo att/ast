@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -72,12 +72,12 @@ and flags in
 .IR flags .
 .PP
 .I command
-is searched for using the 
+is searched for using the
 .L PATH
 environment variable from the calling environment.
 If
 .I command
-is 
+is
 .L 0
 then the current shell is used (see
 .IR pathshell (3)).
@@ -85,7 +85,7 @@ If
 .I envv
 is not
 .L 0
-then it is a 
+then it is a
 .L 0
 terminated vector of
 \fIname\fP[=\fIvalue\fP]
@@ -110,9 +110,9 @@ and will appear at the top of the child environment.
 .PP
 If
 .I opv
-is not 
+is not
 .L 0
-then it is a 0 terminaled vector of operations to perform.
+then it is a 0-terminated vector of operations to perform.
 In the following
 .I context
 is a combination of
@@ -131,7 +131,7 @@ is closed in
 \f5PROC_FD_DUP(\fIfrom\fP,\fIto\fP,\fIcontext\fP)\fR
 The file descriptor
 .I from
-is 
+is
 .IR dup (2)'d
 into the file descriptor
 .I to
@@ -155,7 +155,7 @@ in the child context.
 \f5PROC_SYS_PGRP(\fIpgid\fP)\fR
 The child process group is set to
 .IR pgid .
-.I pgid 
+.I pgid
 may have the following values:
 .TP
 .L <0
@@ -190,12 +190,12 @@ when
 is a shell script.
 .TP
 .L PROC_BACKGROUND
-Standard shell 
+Standard shell
 .L &
 setup is done for the child process.
 .TP
 .L PROC_CLEANUP
-Parent process redirection file discriptors are closed on error.
+Parent process redirection file descriptors are closed on error.
 .TP
 .L PROC_DAEMON
 Standard daemon setup is done for the child process.
@@ -212,7 +212,7 @@ The child effective group id is set to the real group id.
 Parent pipe errors are ignored.
 .TP
 .L PROC_OVERLAY
-The current process is overlayed by
+The current process is overlaid by
 .I command
 if possible
 (i.e., the
@@ -241,7 +241,7 @@ if it is a shell script.
 .L PROC_PRIVELEGED
 If the effective user id is
 .L 0
-then the child real user id is set to 
+then the child real user id is set to
 .L 0
 and the child real group id is set to the effective group id.
 .TP
@@ -274,7 +274,7 @@ The child process id.
 .TP
 .L "pid_t \fIpgrp\fP"
 The child process group.
-.TP 
+.TP
 .L "int \fIrfd\fP"
 A read file descriptor connected to
 .IR command 's
@@ -308,9 +308,9 @@ Presumably some other mechanism will be used to wait for
 .IR proc.pid .
 .PP
 .L procrun
-combines 
+combines
 .L procopen
-and 
+and
 .L procclose
 with the flags
 .L PROC_GID|PROC_UID

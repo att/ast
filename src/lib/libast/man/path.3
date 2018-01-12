@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -67,7 +67,7 @@ Path buffers are assumed to be of size
 .L <ast.h>
 always defines
 .LR PATH_MAX ,
-even if it indeterminant on the local system.
+even if it is indeterminate on the local system.
 Yes, this was probably a bad choice, but it was made about 10 years ago.
 We will probably move to a <stk.h> based implementation.
 .PP
@@ -80,7 +80,7 @@ with access
 .L mode
 using the
 .L :
-separated directories in 
+separated directories in
 .IR dirs .
 Both
 .I a
@@ -109,11 +109,11 @@ A regular file.
 .L PATH_ABSOLUTE
 Generated path name is rooted at
 .LR / .
-.I path 
+.I path
 is returned, 0 on error.
 .PP
 .L pathbin
-returns a pointer to the 
+returns a pointer to the
 .L :
 separated list of directories to search for executable commands.
 The
@@ -130,7 +130,7 @@ canonicalizes the path
 in place.
 A pointer to the trailing 0 in the canonicalized path is returned.
 A canonical path has:
-redundant 
+redundant
 .L .
 and
 .L /
@@ -160,7 +160,7 @@ Symbolic links are resolved at each component.
 If an error occurs and either of
 .L PATH_DOTDOT
 or
-.L PATH_EXISTS 
+.L PATH_EXISTS
 is set then
 .I path
 will contain the components following the failure point.
@@ -209,7 +209,7 @@ is longer than
 then it is split up into a sequence of relative paths and
 .I chdir
 is called on each of these.
-For any given system, if you got to a directory, then 
+For any given system, if you got to a directory, then
 .L pathcd
 can get you back, modulo permission and link changes.
 .PP
@@ -235,13 +235,13 @@ by converting non-standard dynamic link text to
 converts in the other direction.
 .PP
 .L pathkey
-generates in 
+generates in
 .I key
 a 14 character lookup key (plus terminating 0) for the language
 .I lang
 processor in
 .IR path .
-A poihter to the key is returned, 0 on error.
+A pointer to the key is returned, 0 on error.
 If
 .I "key == 0"
 then space is allocated via
@@ -274,9 +274,9 @@ and the
 environment variable (set by
 .IR ksh (1) )
 are used for related root searching.
-If 
+If
 .I p
-also contains a 
+also contains a
 .L /
 then
 .I ../p
@@ -291,7 +291,7 @@ specific
 .IR probe (1)
 information file for the
 .I lang
-langauge processor
+language processor
 .IR proc .
 If
 .I "path == 0"
@@ -371,14 +371,14 @@ where the length of
 if !=0, is limited to 5, the length of
 .I <pid>
 (the base 64 representation of the current process id)
-is limited to 3, and 
+is limited to 3, and
 .I <suf>
-(an internally generated suffix that avoid file confilicts)
+(an internally generated suffix that avoid file conflicts)
 is limited to 3.
 The generated path name conforms to the classic UNIX 14 char and the DOS
 .LR 8.3
 limitations.
-Both 
+Both
 .I dir
 and
 .I pfx

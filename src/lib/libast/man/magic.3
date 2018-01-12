@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -62,7 +62,7 @@ These routines provide an interface to the
 command magic file.
 .L magicopen
 returns a magic session handle that is passed to all of the other routines.
-.I flags 
+.I flags
 may be
 .TP
 .L MAGIC_MIME
@@ -94,13 +94,13 @@ loads the magic file named by
 .I path
 into the magic session.
 .I flags
-are the same as with 
+are the same as with
 .LR magicopen .
 More than one magic file can be loaded into a session;
 the files are searched in load order.
 If
 .I path
-is 
+is
 .L 0
 then the default magic file is loaded.
 .PP
@@ -133,13 +133,13 @@ flag then
 .I st
 is assumed to contain valid stat information, otherwise
 .L magictype
-calls 
+calls
 .L stat
 on
 .IR st .
 .L magictype
 always returns a non-null string.
-If errors are encounterd on
+If errors are encountered on
 .I path
 then the return value will contain information on those errors, e.g.,
 .LR "cannot stat" .
@@ -150,7 +150,7 @@ However, with the extended format it is possible to write a single
 magic file that works on all platforms.
 Most of the net magic files floating around work with
 .LR magic ,
-but they usually double up on 
+but they usually double up on
 .I le
 and
 .I be
@@ -227,7 +227,7 @@ field is either the offset into the data upon which the current entry operates
 or a file metadata identifier.
 Offsets are either integer constants or offset expressions.
 An offset expression is contained in (...) and is a combination of
-integral arithmetic operators and the 
+integral arithmetic operators and the
 .L @
 indirection operator.
 Indirections take the form
@@ -238,9 +238,9 @@ The size of the indirection value is taken either from one of the suffixes
 .LR H (short, 2 chars),
 .LR L (long, 4 chars),
 pr
-.LR Q (quead, 8 chars),
+.LR Q (quad, 8 chars),
 or from the
-.L type 
+.L type
 field.
 Valid file metadata identifiers are:
 .TP
@@ -372,7 +372,7 @@ field takes the form
 .LI & number
 where
 .I number
-is 
+is
 .I anded
 with the integral value at
 .L offset
@@ -389,13 +389,13 @@ field entries above.
 means any value and applies to all types.
 Integral
 .L type
-expression take the form [\fIoperator\fP] \fIoperand\P where 
+expression take the form [\fIoperator\fP] \fIoperand\P where
 .I operand
 is compared with the data value at
 .L offset
 using
 .IR operator .
-.I operator 
+.I operator
 may be one of
 .LR < .
 .LR <= ,
@@ -407,7 +407,7 @@ or
 defaults to
 .L ==
 if omitted.
-.I operand 
+.I operand
 may be an integral constant or one of the following builtin function calls:
 .TP
 .L magic()
@@ -415,7 +415,7 @@ A recursive call to the magic algorithm starting with the data at
 .LR offset .
 .TP
 \f5loop(\fIfunction\fP,\fIoffset\fP,\fIincrement\fP)\fR
-Call 
+Call
 .I function
 starting at
 .I offset
@@ -447,7 +447,7 @@ then a
 is placed between the descriptions
 (most optional descriptions start with
 .IR comma .)
-The data value at 
+The data value at
 .L offset
 can be referenced in the description using
 .L %s
