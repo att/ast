@@ -17,7 +17,9 @@ Source3:        dotkshrc
 BuildRequires:  meson
 BuildRequires:  gcc
 BuildRequires:  glibc-devel
-BuildRequires:  glibc-langpack-zh
+# This package is require by test cases
+# It should be enabled when we start running test cases in package builds
+# BuildRequires:  glibc-langpack-zh
 BuildRequires:  ed
 Conflicts:      pdksh
 Requires(post): grep, coreutils, systemd-units
