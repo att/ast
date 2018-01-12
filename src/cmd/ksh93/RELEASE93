@@ -403,7 +403,7 @@ of ksh.
 	d.  The displaying of multi-byte strings in export, readonly,
 	    typeset, and execution traces has been fixed.
 	e.  A bug with type ahead and KEYBOARD traps with the
-	    multi-byte option set has been fixed.
+	    MULTIBYTE option set has been fixed.
 	f.  The k-shell information abstraction database option, KIA,
 	    has been revamped for the 'e' point release.
 	g.  A bug in brace pattern expansions that caused expressions
@@ -416,7 +416,7 @@ of ksh.
 	    use fork() in which the current option settings where
 	    not propagated to sub-shells.
 	j.  A bug in setting .sh.editchar during the KEYBD trap
-	    for the multi-byte option was fixed in release 'h'.
+	    for the MULTIBYTE option was fixed in release 'h'.
 	k.  A bug in which the precision given as an argument
 	    to printf was not working has been fixed.
 
