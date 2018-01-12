@@ -27,6 +27,14 @@
  * that support __thread may not support extern __thread in dlls
  */
 
+// For unknown reasons the gcc included in OpenBSD 6.2 does not support the `__thread` keyword.
+// Since ksh does not use or support threads just nullify that keyword. See issue #276.
+//
+// TODO: Figure out why this is needed on OpenBSD.
+#if defined(__OpenBSD__)
+#define __thread
+#endif
+
 static __thread unsigned int _AsoThreadId; /* thread local ID		*/
 
 static unsigned int _AsoThreadCount = 0; /* known thread count	*/

@@ -1,9 +1,22 @@
 project('ksh93', 'c', default_options: ['b_lundef=false'])
+system = host_machine.system()
+
 run_command('bin/libast_prereq.sh')
 run_command('bin/ksh93_prereq.sh')
 
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
+
+if system == 'openbsd'
+    # This is needed because OpenBSD installs a lot of stuff in
+    # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
+    # But the compiler doesn't automatically search /usr/local/included for
+    # headers so force it to do so.
+    #
+    # We could do this unconditionally but it's safer to limit the scope to
+    # the platforms that need it.
+    add_project_arguments('-I/usr/local/include', language: 'c')
+endif
 
 # We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
 # than `c99` because the former enables language features we need. The latter

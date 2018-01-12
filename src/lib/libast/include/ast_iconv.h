@@ -9,7 +9,7 @@
 #include <ast_common.h>
 #include <ccode.h>
 
-#if !__CYGWIN__
+#if !defined(__CYGWIN__) && !defined(__OpenBSD__)
 // Under Cygwin the iconv shared library exports the symbols we need with a
 // `lib` prefix. So we don't want the LIBICONV_PLUG behavior on that platform.
 // On others we either want this or it's a no-op.
