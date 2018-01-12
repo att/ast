@@ -104,8 +104,7 @@ static Vmulong_t _Vmdbtime = 0;  /* clock counting malloc/free/realloc	*/
 static Vmulong_t _Vmdbstart = 0; /* start checking when time passes this	*/
 static Vmulong_t _Vmdbcheck = 0; /* check region periodically with this	*/
 
-static Vmulong_t atou(char **sp)
-{
+static Vmulong_t atou(char **sp) {
     char *s = *sp;
     Vmulong_t v = 0;
     int b;
@@ -169,8 +168,7 @@ static Vmulong_t atou(char **sp)
     return v;
 }
 
-static char *insertpid(char *begs, char *ends)
-{
+static char *insertpid(char *begs, char *ends) {
     int pid;
     char *s;
 
@@ -186,8 +184,7 @@ static char *insertpid(char *begs, char *ends)
     return begs;
 }
 
-static int createfile(char *file)
-{
+static int createfile(char *file) {
     char buf[1024];
     char *next, *endb;
     int fd;
@@ -919,8 +916,7 @@ typedef struct mstats Mstats_t;
 #endif
 
 #if _lib_mallopt
-extern int mallopt(int cmd, int value)
-{
+extern int mallopt(int cmd, int value) {
     VMPROLOGUE(0);
     VMEPILOGUE(0);
     return 0;
@@ -928,8 +924,7 @@ extern int mallopt(int cmd, int value)
 #endif /*_lib_mallopt*/
 
 #if _lib_mallinfo && _mem_arena_mallinfo
-extern Mallinfo_t mallinfo(void)
-{
+extern Mallinfo_t mallinfo(void) {
     Vmstat_t sb;
     Mallinfo_t mi;
 
@@ -948,8 +943,7 @@ extern Mallinfo_t mallinfo(void)
 #endif /* _lib_mallinfo */
 
 #if _lib_mstats && _mem_bytes_total_mstats
-extern Mstats_t mstats(void)
-{
+extern Mstats_t mstats(void) {
     Vmstat_t sb;
     Mstats_t ms;
 
@@ -1082,9 +1076,7 @@ extern Mstats_t F0(_ast_mstats, void) { return mstats(); }
 #define extern __EXPORT__
 #endif
 
-extern int
-_vmkeep(int v)
-{
+extern int _vmkeep(int v) {
     int r;
 
     r = !!(_Vmassert & VM_keep);

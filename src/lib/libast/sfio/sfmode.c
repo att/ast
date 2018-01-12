@@ -61,8 +61,7 @@ typedef void(*Sfsignal_f) _ARG_((int));
 static int _Sfsigp = 0; /* # of streams needing SIGPIPE protection */
 
 /* done at exiting time */
-static void _sfcleanup(void)
-{
+static void _sfcleanup(void) {
     reg Sfpool_t *p;
     reg Sfio_t *f;
     reg int n;
@@ -102,8 +101,7 @@ static void _sfcleanup(void)
 }
 
 /* put into discrete pool */
-int _sfsetpool(Sfio_t *f)
-{
+int _sfsetpool(Sfio_t *f) {
     reg Sfpool_t *p;
     reg Sfio_t **array;
     reg int n, rv;
@@ -149,8 +147,7 @@ done:
 }
 
 /* create an auxiliary buffer for sfgetr/sfreserve/sfputr */
-Sfrsrv_t *_sfrsrv(reg Sfio_t *f, reg ssize_t size)
-{
+Sfrsrv_t *_sfrsrv(reg Sfio_t *f, reg ssize_t size) {
     Sfrsrv_t *rsrv, *rs;
 
     /* make buffer if nothing yet */
@@ -175,14 +172,10 @@ Sfrsrv_t *_sfrsrv(reg Sfio_t *f, reg ssize_t size)
 }
 
 #ifdef SIGPIPE
-static void ignoresig(int sig)
-{
-    signal(sig, ignoresig);
-}
+static void ignoresig(int sig) { signal(sig, ignoresig); }
 #endif
 
-int _sfpopen(reg Sfio_t *f, int fd, int pid, int stdio)
-{
+int _sfpopen(reg Sfio_t *f, int fd, int pid, int stdio) {
     reg Sfproc_t *p;
 
     if (f->proc) return 0;
@@ -210,8 +203,7 @@ int _sfpopen(reg Sfio_t *f, int fd, int pid, int stdio)
     return 0;
 }
 
-int _sfpclose(reg Sfio_t *f)
-{
+int _sfpclose(reg Sfio_t *f) {
     Sfproc_t *p;
     int status;
 
@@ -255,8 +247,7 @@ int _sfpclose(reg Sfio_t *f)
     return status;
 }
 
-static int _sfpmode(Sfio_t *f, int type)
-{
+static int _sfpmode(Sfio_t *f, int type) {
     Sfproc_t *p;
 
     if (!(p = f->proc)) return -1;
@@ -294,8 +285,7 @@ static int _sfpmode(Sfio_t *f, int type)
     return 0;
 }
 
-int _sfmode(reg Sfio_t *f, reg int wanted, reg int local)
-{
+int _sfmode(reg Sfio_t *f, reg int wanted, reg int local) {
     reg int n;
     Sfoff_t addr;
     reg int rv = 0;

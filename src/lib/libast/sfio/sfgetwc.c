@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-int sfgetwc(Sfio_t *f)
-{
+int sfgetwc(Sfio_t *f) {
     uchar *s;
     char *e, *b;
     int c, n, m, i;

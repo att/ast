@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-ssize_t sfnputc(Sfio_t *f, int c, size_t n)
-{
+ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
     reg uchar *ps;
     reg ssize_t p, w;
     uchar buf[128];

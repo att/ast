@@ -28,12 +28,8 @@
 extern Sfio_t *_sfopen _ARG_((Sfio_t *, const char *, const char *));
 extern Sfio_t *_sfopenat _ARG_((int, Sfio_t *, const char *, const char *));
 
-Sfio_t *sfopen(Sfio_t *f, const char *file, const char *mode)
-{
-    return _sfopen(f, file, mode);
-}
+Sfio_t *sfopen(Sfio_t *f, const char *file, const char *mode) { return _sfopen(f, file, mode); }
 
-Sfio_t *sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode)
-{
+Sfio_t *sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     return _sfopenat(cwd, f, file, mode);
 }

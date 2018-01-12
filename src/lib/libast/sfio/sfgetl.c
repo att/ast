@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-Sflong_t sfgetl(Sfio_t *f)
-{
+Sflong_t sfgetl(Sfio_t *f) {
     Sflong_t v;
     uchar *s, *ends, c;
     int p;

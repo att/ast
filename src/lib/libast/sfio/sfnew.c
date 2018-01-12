@@ -28,8 +28,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-Sfio_t *sfnew(Sfio_t *oldf, Void_t *buf, size_t size, int file, int flags)
-{
+Sfio_t *sfnew(Sfio_t *oldf, Void_t *buf, size_t size, int file, int flags) {
     reg Sfio_t *f;
     reg int sflags;
 

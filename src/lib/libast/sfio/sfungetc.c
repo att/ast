@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-static int _uexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
-{
+static int _uexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
     NOTUSED(val);
 
     /* hmm! This should never happen */
@@ -38,8 +37,7 @@ static int _uexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
     return 1;
 }
 
-int sfungetc(Sfio_t *f, int c)
-{
+int sfungetc(Sfio_t *f, int c) {
     reg Sfio_t *uf;
     SFMTXDECL(f);
 

@@ -27,8 +27,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-char *sfgetr(Sfio_t *f, int rc, int type)
-{
+char *sfgetr(Sfio_t *f, int rc, int type) {
     ssize_t n, un;
     uchar *s, *ends, *us;
     int found;

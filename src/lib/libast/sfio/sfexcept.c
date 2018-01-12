@@ -25,8 +25,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc)
-{
+int _sfexcept(Sfio_t *f, int type, ssize_t io, Sfdisc_t *disc) {
     reg int ev, local, lock;
     reg ssize_t size;
     reg uchar *data;

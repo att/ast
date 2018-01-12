@@ -23,7 +23,4 @@
 
 #undef sfputc
 
-int sfputc(reg Sfio_t *f, reg int c)
-{
-    return __sf_putc(f, c);
-}
+int sfputc(reg Sfio_t *f, reg int c) { return __sf_putc(f, c); }

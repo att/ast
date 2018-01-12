@@ -27,8 +27,7 @@
 **	Written by Glenn Fowler (03/18/1998).
 */
 
-static int slowexcept(Sfio_t *f, int type, Void_t *v, Sfdisc_t *disc)
-{
+static int slowexcept(Sfio_t *f, int type, Void_t *v, Sfdisc_t *disc) {
     NOTUSED(f);
     NOTUSED(v);
     NOTUSED(disc);
@@ -47,8 +46,7 @@ static int slowexcept(Sfio_t *f, int type, Void_t *v, Sfdisc_t *disc)
     return (0);
 }
 
-int sfdcslow(Sfio_t *f)
-{
+int sfdcslow(Sfio_t *f) {
     Sfdisc_t *disc;
 
     if (!(disc = (Sfdisc_t *)malloc(sizeof(Sfdisc_t)))) return (-1);

@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96) (11/15/2010)
 */
-int dtclose(Dt_t *dt)
-{
+int dtclose(Dt_t *dt) {
     int ev, type;
     Dt_t pdt;
     Dtdisc_t *disc = dt->disc;

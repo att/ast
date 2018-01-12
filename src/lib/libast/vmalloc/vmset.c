@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
-int vmset(Vmalloc_t *vm, int flags, int on)
-{
+int vmset(Vmalloc_t *vm, int flags, int on) {
     int mode, newm;
     Vmdata_t *vd = vm->data;
 

@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-int _sfputd(Sfio_t *f, Sfdouble_t v)
-{
+int _sfputd(Sfio_t *f, Sfdouble_t v) {
 #define N_ARRAY (16 * sizeof(Sfdouble_t))
     reg ssize_t n, w;
     reg uchar *s, *ends;

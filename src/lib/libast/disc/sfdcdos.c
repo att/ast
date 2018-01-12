@@ -54,8 +54,7 @@ typedef struct _dosdisc {
     int bsize;
 } Dosdisc_t;
 
-static void addmapping(Dosdisc_t *dp)
-{
+static void addmapping(Dosdisc_t *dp) {
     int n;
     if ((n = dp->maptop++) >= dp->mapsize) {
         dp->mapsize *= 2;
@@ -71,8 +70,7 @@ static void addmapping(Dosdisc_t *dp)
     dp->maptable[dp->maptop].logical = 0;
 }
 
-static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, int whence)
-{
+static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, int whence) {
     struct map *mp;
     static struct map dummy;
     if (offset <= dp->begin) {
@@ -89,8 +87,7 @@ static struct map *getmapping(Dosdisc_t *dp, Sfoff_t offset, int whence)
     return (mp - 1);
 }
 
-static ssize_t dos_read(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *disc)
-{
+static ssize_t dos_read(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *disc) {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     char *cp = (char *)buff, *first, *cpmax;
     int n, count, m;
@@ -184,8 +181,7 @@ done:
  * if <whence> is SEEK_CUR, physical offset converted to logical offset
  *  otherwise, logical offset is converted to physical offset
  */
-static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset, Sfio_t *iop, int whence)
-{
+static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset, Sfio_t *iop, int whence) {
     Sfoff_t n, m = 0;
     char *cp;
 
@@ -214,8 +210,7 @@ static Sfoff_t cur_offset(Dosdisc_t *dp, Sfoff_t offset, Sfio_t *iop, int whence
     return (offset + m);
 }
 
-static Sfoff_t dos_seek(Sfio_t *iop, Sfoff_t offset, int whence, Sfdisc_t *disc)
-{
+static Sfoff_t dos_seek(Sfio_t *iop, Sfoff_t offset, int whence, Sfdisc_t *disc) {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     struct map dummy, *mp = 0;
     Sfoff_t physical;
@@ -282,8 +277,7 @@ retry:
     return (offset);
 }
 
-static int dos_except(Sfio_t *iop, int type, void *arg, Sfdisc_t *disc)
-{
+static int dos_except(Sfio_t *iop, int type, void *arg, Sfdisc_t *disc) {
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     if (type == SF_DPOP || type == SF_FINAL) {
         if (dp->bsize > 0) free(dp->buff);
@@ -293,8 +287,7 @@ static int dos_except(Sfio_t *iop, int type, void *arg, Sfdisc_t *disc)
     return (0);
 }
 
-int sfdcdos(Sfio_t *f)
-{
+int sfdcdos(Sfio_t *f) {
     Dosdisc_t *dos;
 
     /* this is a readonly discipline */

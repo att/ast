@@ -30,18 +30,18 @@
 #define MISCLEN 256  // max misc string length
 
 #define _CO_JOB_PRIVATE_  /* Cojob_t private additions */ \
-    char label[LABELLEN];     /* optional label */                              \
-    int pid;                  /* pid */                                         \
-    int rid;                  /* user request id */                             \
-    int sig;                  /* last signal sent to job */                     \
-    int fd;                   /* con USER fd */                                 \
-    int ref;                  /* drop reference count */                        \
-    char *cmd;                /* cmd msg text */                                \
-    Coshell_t *shell;         /* controlling shell */                           \
-    unsigned long busy;       /* time when job becomes hog */                   \
-    unsigned long lost;       /* time when job is lost */                       \
-    unsigned long start;      /* start time */                                  \
-                              /* end of private additions */
+    char label[LABELLEN]; /* optional label */            \
+    int pid;              /* pid */                       \
+    int rid;              /* user request id */           \
+    int sig;              /* last signal sent to job */   \
+    int fd;               /* con USER fd */               \
+    int ref;              /* drop reference count */      \
+    char *cmd;            /* cmd msg text */              \
+    Coshell_t *shell;     /* controlling shell */         \
+    unsigned long busy;   /* time when job becomes hog */ \
+    unsigned long lost;   /* time when job is lost */     \
+    unsigned long start;  /* start time */                \
+                          /* end of private additions */
 
 #define _CO_SHELL_PRIVATE_  /* Coshell_t private additions */ \
     Coshell_t *next;        /* next in ring */                \

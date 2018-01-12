@@ -185,8 +185,7 @@ static int sfsetlinemode(void) {
 
 #endif
 
-Void_t *sfsetbuf(Sfio_t *f, Void_t *buf, size_t size)
-{
+Void_t *sfsetbuf(Sfio_t *f, Void_t *buf, size_t size) {
     int sf_malloc, oflags, init, okmmap, local;
     ssize_t bufsize, blksz;
     Sfdisc_t *disc;

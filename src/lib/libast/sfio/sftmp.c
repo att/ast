@@ -52,8 +52,7 @@ struct _file_s {
 
 static File_t *File; /* list pf temp files	*/
 
-static int _tmprmfile(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
-{
+static int _tmprmfile(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
     reg File_t *ff, *last;
 
     NOTUSED(val);
@@ -84,8 +83,7 @@ static int _tmprmfile(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
     return 0;
 }
 
-static void _rmfiles(void)
-{
+static void _rmfiles(void) {
     reg File_t *ff, *next;
 
     (void)vtmtxlock(_Sfmutex);
@@ -100,8 +98,7 @@ static Sfdisc_t Rmdisc = {NULL, NULL, NULL, _tmprmfile, NULL};
 
 #endif /*_tmp_rmfail*/
 
-static int _rmtmp(Sfio_t *f, char *file)
-{
+static int _rmtmp(Sfio_t *f, char *file) {
 #if _tmp_rmfail /* remove only when stream is closed */
     reg File_t *ff;
 
@@ -126,8 +123,7 @@ static int _rmtmp(Sfio_t *f, char *file)
 #define TMPDFLT "/tmp"
 static char **Tmppath, **Tmpcur;
 
-char **_sfgetpath(char *path)
-{
+char **_sfgetpath(char *path) {
     reg char *p, **dirs;
     reg int n;
 
@@ -161,8 +157,7 @@ char **_sfgetpath(char *path)
 
 #endif /*!_PACKAGE_ast*/
 
-static int _tmpfd(Sfio_t *f)
-{
+static int _tmpfd(Sfio_t *f) {
     reg char *file;
     int fd;
 
@@ -227,8 +222,7 @@ static int _tmpfd(Sfio_t *f)
     return fd;
 }
 
-static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
-{
+static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
     reg int fd, m;
     reg Sfio_t *sf;
     Sfio_t newf, savf;
@@ -302,8 +296,7 @@ static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc)
     return 1;
 }
 
-Sfio_t *sftmp(size_t s)
-{
+Sfio_t *sftmp(size_t s) {
     Sfio_t *f;
     int rv;
     Sfnotify_f notify = _Sfnotify;

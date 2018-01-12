@@ -23,7 +23,4 @@
 
 #undef sfslen
 
-ssize_t sfslen(void)
-{
-    return __sf_slen();
-}
+ssize_t sfslen(void) { return __sf_slen(); }

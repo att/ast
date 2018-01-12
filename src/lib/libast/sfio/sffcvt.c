@@ -21,8 +21,7 @@
  ***********************************************************************/
 #include "sfhdr.h"
 
-char *sffcvt(double dval, int n_digit, int *decpt, int *sign)
-{
+char *sffcvt(double dval, int n_digit, int *decpt, int *sign) {
     int len;
     static char buf[SF_MAXDIGITS];
 

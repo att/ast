@@ -112,24 +112,21 @@ static void dbinit() {
 }
 
 static int Dbfd = 2; /* default warning file descriptor */
-int vmdebug(int fd)
-{
+int vmdebug(int fd) {
     int old = Dbfd;
     Dbfd = fd;
     return old;
 }
 
 /* just an entry point to make it easy to set break point */
-static void vmdbwarn(Vmalloc_t *vm, char *mesg, int n)
-{
+static void vmdbwarn(Vmalloc_t *vm, char *mesg, int n) {
     write(Dbfd, mesg, n);
     if (vm->data->mode & VM_DBABORT) abort();
 }
 
 /* issue a warning of some type */
 static void dbwarn(Vmalloc_t *vm, Void_t *data, int where, char *file, int line, Void_t *func,
-                   int type)
-{
+                   int type) {
     char buf[1024], *bufp, *endbuf, *s;
 #define SLOP 64 /* enough for a message and an int */
 
@@ -204,8 +201,7 @@ static void dbwarn(Vmalloc_t *vm, Void_t *data, int where, char *file, int line,
 }
 
 /* check for watched address and issue warnings */
-static void dbwatch(Vmalloc_t *vm, Void_t *data, char *file, int line, Void_t *func, int type)
-{
+static void dbwatch(Vmalloc_t *vm, Void_t *data, char *file, int line, Void_t *func, int type) {
     int n;
 
     for (n = Dbnwatch; n >= 0; --n) {
@@ -217,8 +213,7 @@ static void dbwatch(Vmalloc_t *vm, Void_t *data, char *file, int line, Void_t *f
 }
 
 /* record information about the block */
-static void dbsetinfo(Vmuchar_t *data, size_t size, char *file, int line)
-{
+static void dbsetinfo(Vmuchar_t *data, size_t size, char *file, int line) {
     Vmuchar_t *begp, *endp;
     Dbfile_t *last, *db;
 
@@ -259,8 +254,7 @@ static void dbsetinfo(Vmuchar_t *data, size_t size, char *file, int line)
     while (begp < endp) *begp++ = DB_MAGIC;
 }
 
-static Void_t *dballoc(Vmalloc_t *vm, size_t size, int local)
-{
+static Void_t *dballoc(Vmalloc_t *vm, size_t size, int local) {
     size_t sz;
     Vmuchar_t *data;
     char *file;
@@ -296,8 +290,7 @@ done:
     return (Void_t *)data;
 }
 
-static int dbfree(Vmalloc_t *vm, Void_t *data, int local)
-{
+static int dbfree(Vmalloc_t *vm, Void_t *data, int local) {
     char *file;
     int line;
     Void_t *func;
@@ -358,8 +351,7 @@ static int dbfree(Vmalloc_t *vm, Void_t *data, int local)
 }
 
 /*	Resizing an existing block */
-static Void_t *dbresize(Vmalloc_t *vm, Void_t *addr, size_t size, int type, int local)
-{
+static Void_t *dbresize(Vmalloc_t *vm, Void_t *addr, size_t size, int type, int local) {
     size_t sz, oldsize;
     Seg_t *seg;
     char *file, *oldfile;
@@ -432,8 +424,7 @@ done:
 }
 
 /* check for memory overwrites over all live blocks */
-int vmdbcheck(Vmalloc_t *vm)
-{
+int vmdbcheck(Vmalloc_t *vm) {
     Block_t *sgb, *bp, *endbp;
     Seg_t *seg;
     int rv;
@@ -490,8 +481,7 @@ int vmdbcheck(Vmalloc_t *vm)
 }
 
 /* set/delete an address to watch */
-Void_t *vmdbwatch(Void_t *addr)
-{
+Void_t *vmdbwatch(Void_t *addr) {
     int n;
     Void_t *out;
 
@@ -515,8 +505,7 @@ Void_t *vmdbwatch(Void_t *addr)
     return out;
 }
 
-static Void_t *dbalign(Vmalloc_t *vm, size_t size, size_t align, int local)
-{
+static Void_t *dbalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     Vmuchar_t *data;
     size_t sz;
     char *file;
@@ -559,8 +548,7 @@ static int dbevent(Vmalloc_t *vm, int event, Void_t *arg) {
 }
 
 /* print statistics of region vm. If vm is NULL, use Vmregion */
-ssize_t vmdbstat(Vmalloc_t *vm)
-{
+ssize_t vmdbstat(Vmalloc_t *vm) {
     ssize_t n;
     Vmstat_t st;
 

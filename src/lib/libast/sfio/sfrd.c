@@ -28,8 +28,7 @@
 */
 
 /* synchronize unseekable write streams */
-static void _sfwrsync(void)
-{
+static void _sfwrsync(void) {
     reg Sfpool_t *p;
     reg Sfio_t *f;
     reg int n;
@@ -51,8 +50,7 @@ static void _sfwrsync(void)
     }
 }
 
-ssize_t sfrd(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-{
+ssize_t sfrd(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     Sfoff_t r;
     reg Sfdisc_t *dc;
     reg int local, rcrv, dosync, oerrno;

@@ -27,8 +27,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
 
-int vmclose(Vmalloc_t *vm)
-{
+int vmclose(Vmalloc_t *vm) {
     int mode;
     Seg_t *seg, *next;
     Vmhold_t *vh;

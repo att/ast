@@ -233,8 +233,7 @@ static Void_t *hstat(Dt_t *dt, Dtstat_t *st) {
     return (Void_t *)hash->data.size;
 }
 
-static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type)
-{
+static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
     Dtlink_t *lnk, *pp, *ll, *p, *l, **tbl;
     Void_t *key, *k, *o;
     uint hsh;

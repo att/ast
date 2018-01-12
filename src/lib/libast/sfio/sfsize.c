@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-Sfoff_t sfsize(Sfio_t *f)
-{
+Sfoff_t sfsize(Sfio_t *f) {
     Sfdisc_t *disc;
     reg int mode;
     Sfoff_t s;

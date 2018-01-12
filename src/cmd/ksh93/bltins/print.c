@@ -434,7 +434,7 @@ static char strformat(char *s) {
                     t += mbconv(t, c);
                     continue;
                 }
-#else  // FMT_EXP_WIDE
+#else   // FMT_EXP_WIDE
                 if (c > UCHAR_MAX && mbwide()) {
                     t += mbconv(t, c);
                     continue;
@@ -549,7 +549,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
         }
 #if 1
         return sfwrite(iop, (void *)&number, size);
-#else  // 1
+#else   // 1
         if (sz) *sz = size;
         return ((void *)&number);
 #endif  // 1
@@ -603,8 +603,8 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
         size = strlen(cp);
         return sfwrite(iop, cp, size);
     }
-#else  // 1
-    nv_onattr(np, NV_RAW);
+#else   // 1
+        nv_onattr(np, NV_RAW);
     cp = nv_getval(np);
     if (nv_isattr(np, NV_BINARY)) nv_offattr(np, NV_RAW);
     if ((size = nv_size(np)) == 0) size = strlen(cp);

@@ -27,8 +27,7 @@
 */
 #define N_ARRAY (2 * sizeof(Sfulong_t))
 
-int _sfputu(Sfio_t *f, Sfulong_t v)
-{
+int _sfputu(Sfio_t *f, Sfulong_t v) {
     reg uchar *s, *ps;
     reg ssize_t n, p;
     uchar c[N_ARRAY];

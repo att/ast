@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-Void_t *sfreserve(Sfio_t *f, ssize_t size, int type)
-{
+Void_t *sfreserve(Sfio_t *f, ssize_t size, int type) {
     reg ssize_t n, now, sz, iosz;
     reg Sfrsrv_t *rsrv;
     reg Void_t *data;

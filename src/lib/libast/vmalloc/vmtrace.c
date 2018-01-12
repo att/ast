@@ -31,8 +31,7 @@ static int Pid = -1;
 
 /* generate a trace of some call */
 static void trtrace(Vmalloc_t *vm, Vmuchar_t *oldaddr, Vmuchar_t *newaddr, size_t size,
-                    size_t align)
-{
+                    size_t align) {
     char buf[1024], *bufp, *endbuf;
     Vmdata_t *vd = vm->data;
     const char *file = 0;
@@ -125,8 +124,7 @@ static void trtrace(Vmalloc_t *vm, Vmuchar_t *oldaddr, Vmuchar_t *newaddr, size_
     write(Trfile, buf, (bufp - buf));
 }
 
-void _vmmessage(const char *s1, long n1, const char *s2, long n2)
-{
+void _vmmessage(const char *s1, long n1, const char *s2, long n2) {
     char buf[1024], *bufp;
 
     bufp = buf;
@@ -147,8 +145,7 @@ void _vmmessage(const char *s1, long n1, const char *s2, long n2)
     write(2, buf, (bufp - buf));
 }
 
-int vmtrace(int file)
-{
+int vmtrace(int file) {
     int fd;
 
     _Vmtrace = file >= 0 ? trtrace : 0;

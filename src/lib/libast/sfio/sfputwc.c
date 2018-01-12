@@ -36,14 +36,12 @@ typedef struct Sfmbstate_s {
     Mbstate_t mbs;
 } Sfmbstate_t;
 
-static int _sfmbexcept(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc)
-{
+static int _sfmbexcept(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc) {
     if (type == SF_DPOP || type == SF_FINAL) free(disc);
     return 0;
 }
 
-Mbstate_t *_sfmbstate(Sfio_t *f)
-{
+Mbstate_t *_sfmbstate(Sfio_t *f) {
     Sfdisc_t *disc;
     Sfmbstate_t *mbs;
 
@@ -56,8 +54,7 @@ Mbstate_t *_sfmbstate(Sfio_t *f)
     return &mbs->mbs;
 }
 
-int sfputwc(Sfio_t *f, int w)
-{
+int sfputwc(Sfio_t *f, int w) {
     reg uchar *s;
     reg char *b;
     int n, m;

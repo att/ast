@@ -36,8 +36,7 @@ typedef struct _subfile_s {
     Sfoff_t here;   /* current seek location */
 } Subfile_t;
 
-static ssize_t streamio(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc, int type)
-{
+static ssize_t streamio(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc, int type) {
     reg Subfile_t *su;
     reg Sfoff_t here, parent;
     reg ssize_t io;
@@ -69,18 +68,15 @@ static ssize_t streamio(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc, int ty
     return io;
 }
 
-static ssize_t streamwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-{
+static ssize_t streamwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
     return streamio(f, (Void_t *)buf, n, disc, SF_WRITE);
 }
 
-static ssize_t streamread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-{
+static ssize_t streamread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     return streamio(f, buf, n, disc, SF_READ);
 }
 
-static Sfoff_t streamseek(Sfio_t *f, Sfoff_t pos, int type, Sfdisc_t *disc)
-{
+static Sfoff_t streamseek(Sfio_t *f, Sfoff_t pos, int type, Sfdisc_t *disc) {
     reg Subfile_t *su;
     reg Sfoff_t here, parent;
 
@@ -115,14 +111,12 @@ static Sfoff_t streamseek(Sfio_t *f, Sfoff_t pos, int type, Sfdisc_t *disc)
     return (su->here = pos);
 }
 
-static int streamexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-{
+static int streamexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc) {
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
     return 0;
 }
 
-Sfio_t *sfdcsubstream(Sfio_t *f, Sfio_t *parent, Sfoff_t offset, Sfoff_t extent)
-{
+Sfio_t *sfdcsubstream(Sfio_t *f, Sfio_t *parent, Sfoff_t offset, Sfoff_t extent) {
     reg Sfio_t *sp;
     reg Subfile_t *su;
     reg Sfoff_t here;

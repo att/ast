@@ -23,7 +23,4 @@
 
 #undef sfulen
 
-int sfulen(reg Sfulong_t v)
-{
-    return __sf_ulen(v);
-}
+int sfulen(reg Sfulong_t v) { return __sf_ulen(v); }

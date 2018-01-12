@@ -32,8 +32,7 @@ static int _dttype2005(Dt_t *dt, int type) {
     return type;
 }
 
-Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version)
-{
+Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     Dtdata_t *data;
     Dt_t *dt, pdt;
     int ev, type;
@@ -94,10 +93,7 @@ Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version)
 }
 
 #undef dtopen /* deal with binary upward compatibility for op bits */
-Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth)
-{
-    return _dtopen(disc, meth, 20050420L);
-}
+Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth) { return _dtopen(disc, meth, 20050420L); }
 
 /* below are private functions used across CDT modules */
 Dtlink_t *_dtmake(Dt_t *dt, Void_t *obj, int type) {

@@ -30,8 +30,7 @@
 */
 #define MAX_SSIZE ((ssize_t)((~((size_t)0)) >> 1))
 
-Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, reg int rc)
-{
+Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, reg int rc) {
     reg uchar *cp, *next;
     reg ssize_t r, w;
     reg uchar *endb;

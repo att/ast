@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com
 */
 
-Void_t *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size)
-{
+Void_t *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size) {
     unsigned int key;
     Vmuser_t *u;
     Vmdata_t *vmdt = vm->data;

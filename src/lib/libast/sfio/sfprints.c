@@ -28,8 +28,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-char *sfvprints(const char *form, va_list args)
-{
+char *sfvprints(const char *form, va_list args) {
     reg int rv;
     Sfnotify_f notify = _Sfnotify;
     static Sfio_t *f;
@@ -51,8 +50,7 @@ char *sfvprints(const char *form, va_list args)
     return (char *)f->data;
 }
 
-char *sfprints(const char *form, ...)
-{
+char *sfprints(const char *form, ...) {
     char *s;
     va_list args;
 
@@ -63,8 +61,7 @@ char *sfprints(const char *form, ...)
     return s;
 }
 
-ssize_t sfvaprints(char **sp, const char *form, va_list args)
-{
+ssize_t sfvaprints(char **sp, const char *form, va_list args) {
     char *s;
     ssize_t n;
 
@@ -77,8 +74,7 @@ ssize_t sfvaprints(char **sp, const char *form, va_list args)
     }
 }
 
-ssize_t sfaprints(char **sp, const char *form, ...)
-{
+ssize_t sfaprints(char **sp, const char *form, ...) {
     ssize_t n;
     va_list args;
 

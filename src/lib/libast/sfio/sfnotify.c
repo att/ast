@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-int sfnotify(void (*notify)(Sfio_t *, int, void *))
-{
+int sfnotify(void (*notify)(Sfio_t *, int, void *)) {
     _Sfnotify = notify;
     return 0;
 }

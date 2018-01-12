@@ -199,7 +199,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
             cp = pathcanon(stakptr(PATH_OFFSET), PATH_MAX,
                            PATH_ABSOLUTE | PATH_DOTDOT | PATH_DROP_TAIL_SLASH);
             if (!cp) continue;
-#else  // SHOPT_FS_3D
+#else   // SHOPT_FS_3D
             cp = stakptr(PATH_OFFSET);
             if (*cp == '/') {
                 if (!pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;

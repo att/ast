@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-Sfdouble_t sfgetd(Sfio_t *f)
-{
+Sfdouble_t sfgetd(Sfio_t *f) {
     reg uchar *s, *ends, c;
     reg int p, sign, exp;
     Sfdouble_t v;

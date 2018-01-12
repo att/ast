@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-Sfoff_t sfsk(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
-{
+Sfoff_t sfsk(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
     Sfoff_t p;
     reg Sfdisc_t *dc;
     reg ssize_t s;

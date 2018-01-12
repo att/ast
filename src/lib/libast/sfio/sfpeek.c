@@ -31,8 +31,7 @@
 #define extern __EXPORT__
 #endif
 
-extern ssize_t sfpeek(reg Sfio_t *f, Void_t **bp, reg size_t size)
-{
+extern ssize_t sfpeek(reg Sfio_t *f, Void_t **bp, reg size_t size) {
     reg ssize_t n, sz;
     reg int mode;
 

@@ -25,8 +25,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-ssize_t sfputr(Sfio_t *f, const char *s, int rc)
-{
+ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
     ssize_t p, n, w, sn;
     uchar *ps;
     char *ss;

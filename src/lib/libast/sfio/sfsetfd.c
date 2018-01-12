@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfdup(int fd, int newfd)
-{
+static int _sfdup(int fd, int newfd) {
     reg int dupfd;
 
 #ifdef F_DUPFD /* the simple case */
@@ -47,8 +46,7 @@ static int _sfdup(int fd, int newfd)
 #endif
 }
 
-int sfsetfd(Sfio_t *f, int newfd)
-{
+int sfsetfd(Sfio_t *f, int newfd) {
     reg int oldfd;
     SFMTXDECL(f);
 

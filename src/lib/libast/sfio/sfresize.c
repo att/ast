@@ -25,8 +25,7 @@
         Written by Kiem-Phong Vo.
 */
 
-int sfresize(Sfio_t *f, Sfoff_t size)
-{
+int sfresize(Sfio_t *f, Sfoff_t size) {
     SFMTXDECL(f);
 
     SFMTXENTER(f, -1);

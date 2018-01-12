@@ -52,8 +52,7 @@
 #endif             /* _chr_ebcdic */
 #endif             /* _PACKAGE_ast */
 
-static int chr2str(char *buf, int v)
-{
+static int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {
         *buf++ = v;
         return 1;
@@ -104,8 +103,7 @@ static int chr2str(char *buf, int v)
 #define _sffmt_small 1
 #endif
 
-int sfvprintf(Sfio_t *f, const char *form, va_list args)
-{
+int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     int n, v, w, k, n_s, base, fmt, flags;
     Sflong_t lv;
     char *sp, *ssp, *endsp, *ep, *endep;

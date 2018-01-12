@@ -27,8 +27,7 @@
 */
 #define N_ARRAY (16 * sizeof(Sfdouble_t))
 
-int _sfdlen(Sfdouble_t v)
-{
+int _sfdlen(Sfdouble_t v) {
     reg int n, w;
     Sfdouble_t x;
     int exp;

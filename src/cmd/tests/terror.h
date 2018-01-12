@@ -162,8 +162,7 @@ static char Tstfile[256][256];
     }
 #endif
 
-static void tcleanup(void)
-{
+static void tcleanup(void) {
 #ifndef DEBUG
     int i;
     for (i = 0; i < sizeof(Tstfile) / sizeof(Tstfile[0]); ++i)
@@ -174,8 +173,7 @@ static void tcleanup(void)
 #endif
 }
 
-static void tnote(char *note)
-{
+static void tnote(char *note) {
     char buf[1024];
 
 #if _SFIO_H
@@ -186,8 +184,7 @@ static void tnote(char *note)
     write(2, buf, strlen(buf));
 }
 
-static void tstputmesg(int line, char *form, va_list args)
-{
+static void tstputmesg(int line, char *form, va_list args) {
     char *s, buf[1024];
     size_t n;
 
@@ -218,8 +215,7 @@ static void tstputmesg(int line, char *form, va_list args)
     }
 }
 
-void tsterror(char *form, ...)
-{
+void tsterror(char *form, ...) {
     char failform[1024];
 
     va_list args;
@@ -243,8 +239,7 @@ void tsterror(char *form, ...)
     texit(1);
 }
 
-void tstsuccess(char *form, ...)
-{
+void tstsuccess(char *form, ...) {
     va_list args;
     va_start(args, form);
 
@@ -255,8 +250,7 @@ void tstsuccess(char *form, ...)
     texit(0);
 }
 
-void tstinfo(char *form, ...)
-{
+void tstinfo(char *form, ...) {
 #ifdef INFO
     va_list args;
     va_start(args, form);
@@ -267,8 +261,7 @@ void tstinfo(char *form, ...)
 #endif
 }
 
-void tstwarn(char *form, ...)
-{
+void tstwarn(char *form, ...) {
     va_list args;
     va_start(args, form);
 
@@ -277,8 +270,7 @@ void tstwarn(char *form, ...)
     va_end(args);
 }
 
-void tstpause(char *form, ...)
-{
+void tstpause(char *form, ...) {
     char pauseform[1024];
 
     va_list args;
@@ -310,8 +302,7 @@ static int asoerror(int type, const char *mesg) {
     return 0;
 }
 
-int tstwait(pid_t *proc, int nproc)
-{
+int tstwait(pid_t *proc, int nproc) {
     int code = 2, n, status, reaped = 0, ignore = 0;
     pid_t pid, parent = getpid();
 
@@ -345,8 +336,7 @@ int tstwait(pid_t *proc, int nproc)
     return code;
 }
 
-static char *tstfile(char *pfx, int n)
-{
+static char *tstfile(char *pfx, int n) {
     static int Setatexit = 0;
 
     if (!Setatexit) {
@@ -414,8 +404,7 @@ static void asointr(int sig) {
     texit(sig);
 }
 
-static void tstintr(void)
-{
+static void tstintr(void) {
     setpgid(0, 0);
     signal(SIGINT, asointr);
     signal(SIGQUIT, asointr);
@@ -428,8 +417,7 @@ static void tstintr(void)
     }
 }
 
-static int tstchild(char **argv)
-{
+static int tstchild(char **argv) {
     char **v = argv;
     char *a;
 
@@ -449,8 +437,7 @@ static int tstchild(char **argv)
     return 0;
 }
 
-static int tstopts(char **argv)
-{
+static int tstopts(char **argv) {
     char **v = argv;
     char *a;
 
@@ -469,19 +456,14 @@ static int tstopts(char **argv)
 
 static unsigned int Rand = 0xdeadbeef;
 
-static void trandseed(unsigned int seed)
-{
-    Rand = seed == 0 ? 0xdeadbeef : seed;
-}
+static void trandseed(unsigned int seed) { Rand = seed == 0 ? 0xdeadbeef : seed; }
 
-static unsigned int trandom(void)
-{
+static unsigned int trandom(void) {
     Rand = Rand * 17109811 + 751;
     return Rand;
 }
 
-static Void_t *tstshared(size_t n)
-{
+static Void_t *tstshared(size_t n) {
     Void_t *p;
     int z;
 

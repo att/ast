@@ -27,8 +27,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-int dtwalk(Dt_t *dt, int (*userf)(Dt_t *, Void_t *, Void_t *), Void_t *data)
-{
+int dtwalk(Dt_t *dt, int (*userf)(Dt_t *, Void_t *, Void_t *), Void_t *data) {
     Void_t *obj, *next;
     Dt_t *walk;
     int rv;

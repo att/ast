@@ -43,13 +43,9 @@ typedef struct _union_s {
     File_t f[1];   /* array of streams	*/
 } Union_t;
 
-static ssize_t unwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-{
-    return -1;
-}
+static ssize_t unwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) { return -1; }
 
-static ssize_t unread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-{
+static ssize_t unread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     reg Union_t *un;
     reg ssize_t r, m;
 
@@ -70,8 +66,7 @@ static ssize_t unread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
     return n - m;
 }
 
-static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
-{
+static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
     reg Union_t *un;
     reg int i;
     reg Sfoff_t extent, s;
@@ -108,15 +103,13 @@ static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc)
 }
 
 /* on close, remove the discipline */
-static int unexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-{
+static int unexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc) {
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
 
     return 0;
 }
 
-int sfdcunion(Sfio_t *f, Sfio_t **array, int n)
-{
+int sfdcunion(Sfio_t *f, Sfio_t **array, int n) {
     reg Union_t *un;
     reg int i;
 

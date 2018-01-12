@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth)
-{
+Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {
     Dtlink_t *list;
     Dtdisc_t *disc = dt->disc;
     Dtmethod_t *oldmt = dt->meth;

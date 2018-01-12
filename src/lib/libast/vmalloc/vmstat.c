@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94, 03/31/2012.
 */
 
-int _vmstat(Vmalloc_t *vm, Vmstat_t *st, size_t extra)
-{
+int _vmstat(Vmalloc_t *vm, Vmstat_t *st, size_t extra) {
     Seg_t *seg;
     int rv;
 
@@ -50,8 +49,7 @@ int _vmstat(Vmalloc_t *vm, Vmstat_t *st, size_t extra)
     return rv;
 }
 
-int vmstat(Vmalloc_t *vm, Vmstat_t *st)
-{
+int vmstat(Vmalloc_t *vm, Vmstat_t *st) {
     if (!st) return _vmheapbusy();
     if (!vm) /* getting stats for Vmregion */
     {

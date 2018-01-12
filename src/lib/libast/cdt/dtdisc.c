@@ -28,8 +28,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-static Void_t *dtmemory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc)
-{
+static Void_t *dtmemory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc) {
     if (addr) {
         if (size == 0) {
             free(addr);
@@ -40,8 +39,7 @@ static Void_t *dtmemory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc)
         return size > 0 ? malloc(size) : NULL;
 }
 
-Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type)
-{
+Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type) {
     Dtdisc_t *old;
     Dtlink_t *list;
 

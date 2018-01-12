@@ -27,8 +27,7 @@
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/94.
 */
-Vmdisc_t *vmdisc(Vmalloc_t *vm, Vmdisc_t *disc)
-{
+Vmdisc_t *vmdisc(Vmalloc_t *vm, Vmdisc_t *disc) {
     Vmdisc_t *old = vm->disc;
 
     if (disc) {

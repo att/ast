@@ -64,8 +64,7 @@ static char *Zero = "0";
 #define CVT_DIG_MPY 4
 
 char *_sfcvt(Void_t *vp, char *buf, size_t size, int n_digit, int *decpt, int *sign, int *len,
-             int format)
-{
+             int format) {
     reg char *sp;
     reg long n, v;
     reg char *ep, *b, *endsp, *t;

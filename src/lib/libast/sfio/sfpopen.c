@@ -40,8 +40,7 @@
 static char Meta[1 << CHAR_BIT], **Path;
 
 /* execute command directly if possible; else use the shell */
-static void execute(const char *argcmd)
-{
+static void execute(const char *argcmd) {
     reg char *s, *cmd, **argv, **p, *interp;
     reg int n;
 
@@ -112,8 +111,7 @@ do_interp:
 
 #endif /*_PACKAGE_ast*/
 
-Sfio_t *sfpopen(Sfio_t *f, const char *command, const char *mode)
-{
+Sfio_t *sfpopen(Sfio_t *f, const char *command, const char *mode) {
 #if _PACKAGE_ast
     reg Proc_t *proc;
     reg int sflags;

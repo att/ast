@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-Sfoff_t sftell(Sfio_t *f)
-{
+Sfoff_t sftell(Sfio_t *f) {
     reg int mode;
     Sfoff_t p;
     SFMTXDECL(f);

@@ -28,8 +28,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-int sfpoll(Sfio_t **fa, reg int n, int tm)
-{
+int sfpoll(Sfio_t **fa, reg int n, int tm) {
     reg int r, c, m, np, eintr;
     reg Sfio_t *f;
     reg int *status, *check;

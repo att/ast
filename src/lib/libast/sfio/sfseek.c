@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static void newpos(Sfio_t *f, Sfoff_t p)
-{
+static void newpos(Sfio_t *f, Sfoff_t p) {
     if ((f->bits & SF_MMAP) && f->data) {
         SFMUNMAP(f, f->data, f->endb - f->data);
         f->data = NULL;
@@ -40,8 +39,7 @@ static void newpos(Sfio_t *f, Sfoff_t p)
     }
 }
 
-Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type)
-{
+Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
     Sfoff_t r, s;
     int mode, local, hardseek, mustsync;
     SFMTXDECL(f);

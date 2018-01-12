@@ -33,8 +33,7 @@
  * Written by Glenn S. Fowler.
  */
 
-Void_t *vmgetmem(Vmalloc_t *vm, Void_t *data, size_t size)
-{
+Void_t *vmgetmem(Vmalloc_t *vm, Void_t *data, size_t size) {
     if (!vm) return (Void_t *)vmopen(Vmdcheap, Vmbest, 0);
 
     if (data || size) return vmresize(vm, data, size, VM_RSMOVE | VM_RSCOPY | VM_RSZERO);

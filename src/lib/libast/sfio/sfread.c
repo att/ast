@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-ssize_t sfread(Sfio_t *f, Void_t *buf, size_t n)
-{
+ssize_t sfread(Sfio_t *f, Void_t *buf, size_t n) {
     reg uchar *s, *begs;
     reg ssize_t r;
     reg int local, justseek;

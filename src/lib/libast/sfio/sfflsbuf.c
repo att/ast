@@ -27,8 +27,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-int _sfflsbuf(Sfio_t *f, int c)
-{
+int _sfflsbuf(Sfio_t *f, int c) {
     ssize_t n, w, written;
     uchar *data;
     uchar outc;

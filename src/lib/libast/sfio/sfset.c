@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-int sfset(Sfio_t *f, int flags, int set)
-{
+int sfset(Sfio_t *f, int flags, int set) {
     reg int oflags, tflags, rv;
     SFMTXDECL(f);
 

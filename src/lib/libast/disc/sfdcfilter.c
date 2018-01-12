@@ -36,8 +36,7 @@ typedef struct _filter_s {
 } Filter_t;
 
 /* read data from the filter */
-static ssize_t filterread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
-{
+static ssize_t filterread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     Filter_t *fi;
     ssize_t r, w;
 
@@ -85,14 +84,10 @@ static ssize_t filterread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc)
     }
 }
 
-static ssize_t filterwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc)
-{
-    return -1;
-}
+static ssize_t filterwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) { return -1; }
 
 /* for the duration of this discipline, the stream is unseekable */
-static Sfoff_t filterseek(Sfio_t *f, Sfoff_t addr, int offset, Sfdisc_t *disc)
-{
+static Sfoff_t filterseek(Sfio_t *f, Sfoff_t addr, int offset, Sfdisc_t *disc) {
     f = NULL;
     addr = 0;
     offset = 0;
@@ -101,8 +96,7 @@ static Sfoff_t filterseek(Sfio_t *f, Sfoff_t addr, int offset, Sfdisc_t *disc)
 }
 
 /* on close, remove the discipline */
-static int filterexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
-{
+static int filterexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc) {
     if (type == SF_FINAL || type == SF_DPOP) {
         sfclose(((Filter_t *)disc)->filter);
         free(disc);
@@ -111,8 +105,7 @@ static int filterexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc)
     return 0;
 }
 
-int sfdcfilter(Sfio_t *f, const char *cmd)
-{
+int sfdcfilter(Sfio_t *f, const char *cmd) {
     reg Filter_t *fi;
     reg Sfio_t *filter;
 

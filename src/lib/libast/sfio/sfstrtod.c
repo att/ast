@@ -32,8 +32,7 @@
 #define FPART 1                 /* doing fractional part */
 #define EPART 2                 /* doing exponent part */
 
-static Sfdouble_t sfpow10(reg int n)
-{
+static Sfdouble_t sfpow10(reg int n) {
     Sfdouble_t dval;
 
     switch (n) {
@@ -64,8 +63,7 @@ static Sfdouble_t sfpow10(reg int n)
     return dval;
 }
 
-Sfdouble_t _sfstrtod(reg const char *s, char **retp)
-{
+Sfdouble_t _sfstrtod(reg const char *s, char **retp) {
     reg int n, c, m;
     reg int mode, fexp, sign, expsign;
     Sfdouble_t dval;

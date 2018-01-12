@@ -31,8 +31,7 @@ static char *Version = "\n@(#)$Id: Vmalloc (AT&T Labs - Research) 2013-06-10 $\0
 static int N_open;
 #endif
 
-Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode)
-{
+Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode) {
     Vmalloc_t *vm, *vmp, vmproto;
     Vmdata_t *vd, vdproto;
     ssize_t algn, incr, vdsz, vmsz, sgsz, size;
@@ -194,7 +193,6 @@ Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode)
     return vm;
 }
 
-Vmalloc_t *vmopen(Vmdisc_t *disc, Vmethod_t *meth, int mode)
-{
+Vmalloc_t *vmopen(Vmdisc_t *disc, Vmethod_t *meth, int mode) {
     return _vmopen(NULL, disc, meth, mode);
 }

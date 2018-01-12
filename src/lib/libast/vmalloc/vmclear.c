@@ -25,8 +25,7 @@
 /*	Clear a region.
  */
 
-int vmclear(Vmalloc_t *vm)
-{
+int vmclear(Vmalloc_t *vm) {
     Seg_t *seg, *next;
     Vmdata_t *vmdt = vm->data;
     Vmdisc_t *disc = vm->disc;

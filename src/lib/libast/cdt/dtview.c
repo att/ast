@@ -31,8 +31,7 @@
     (DT_INSERT | DT_APPEND | DT_DELETE | DT_ATTACH | DT_DETACH | DT_RELINK | DT_CLEAR | \
      DT_FLATTEN | DT_EXTRACT | DT_RESTORE | DT_STAT)
 
-static Void_t *dtvsearch(Dt_t *dt, reg Void_t *obj, reg int type)
-{
+static Void_t *dtvsearch(Dt_t *dt, reg Void_t *obj, reg int type) {
     int cmp;
     Dt_t *d, *p;
     Void_t *o, *n, *oky, *nky;
@@ -111,8 +110,7 @@ static Void_t *dtvsearch(Dt_t *dt, reg Void_t *obj, reg int type)
     }
 }
 
-Dt_t *dtview(reg Dt_t *dt, reg Dt_t *view)
-{
+Dt_t *dtview(reg Dt_t *dt, reg Dt_t *view) {
     reg Dt_t *d;
 
     if (view && view->meth != dt->meth) /* must use the same method */

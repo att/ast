@@ -29,10 +29,7 @@
 #define extern __EXPORT__
 #endif
 
-extern
-    Sflong_t
-    _sfgetl(reg Sfio_t *f)
-{
+extern Sflong_t _sfgetl(reg Sfio_t *f) {
     sfungetc(f, (unsigned char)_SF_(f)->val);
     return sfgetl(f);
 }

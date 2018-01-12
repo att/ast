@@ -27,8 +27,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfall(void)
-{
+static int _sfall(void) {
     reg Sfpool_t *p, *next;
     reg Sfio_t *f;
     reg int n, rv;
@@ -66,8 +65,7 @@ static int _sfall(void)
     return rv;
 }
 
-int sfsync(reg Sfio_t *f)
-{
+int sfsync(reg Sfio_t *f) {
     int local, rv, mode, lock;
     Sfio_t *origf;
     SFMTXDECL(f);

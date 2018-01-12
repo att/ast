@@ -27,8 +27,7 @@
 **
 **	Written by Kiem-Phong Vo
 */
-int sfclrlock(Sfio_t *f)
-{
+int sfclrlock(Sfio_t *f) {
     int rv;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */
 

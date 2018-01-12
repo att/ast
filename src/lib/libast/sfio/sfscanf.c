@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-int sfscanf(Sfio_t *f, const char *form, ...)
-{
+int sfscanf(Sfio_t *f, const char *form, ...) {
     va_list args;
     reg int rv;
 
@@ -38,8 +37,7 @@ int sfscanf(Sfio_t *f, const char *form, ...)
     return rv;
 }
 
-int sfvsscanf(const char *s, const char *form, va_list args)
-{
+int sfvsscanf(const char *s, const char *form, va_list args) {
     Sfio_t f;
 
     if (!s || !form) return -1;
@@ -56,8 +54,7 @@ int sfvsscanf(const char *s, const char *form, va_list args)
     return sfvscanf(&f, form, args);
 }
 
-int sfsscanf(const char *s, const char *form, ...)
-{
+int sfsscanf(const char *s, const char *form, ...) {
     va_list args;
     reg int rv;
     va_start(args, form);

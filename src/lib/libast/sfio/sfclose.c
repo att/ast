@@ -26,8 +26,7 @@
 **	Written by Kiem-Phong Vo
 */
 
-int sfclose(Sfio_t *f)
-{
+int sfclose(Sfio_t *f) {
     reg int local, ex, rv;
     Void_t *data = NULL;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */

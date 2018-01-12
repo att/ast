@@ -39,8 +39,7 @@ typedef struct _vmlast_s {
     Vmuchar_t *last; /* last allocated block */
 } Vmlast_t;
 
-static Void_t *lastalloc(Vmalloc_t *vm, size_t size, int local)
-{
+static Void_t *lastalloc(Vmalloc_t *vm, size_t size, int local) {
     Block_t *blk;
     size_t sz, blksz;
     size_t origsz = size;
@@ -88,8 +87,7 @@ static Void_t *lastalloc(Vmalloc_t *vm, size_t size, int local)
     return (Void_t *)last->last;
 }
 
-static int lastfree(Vmalloc_t *vm, Void_t *data, int local)
-{
+static int lastfree(Vmalloc_t *vm, Void_t *data, int local) {
     ssize_t size;
     Vmlast_t *last = (Vmlast_t *)vm->data;
 
@@ -114,8 +112,7 @@ static int lastfree(Vmalloc_t *vm, Void_t *data, int local)
     return data ? 0 : -1;
 }
 
-static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local)
-{
+static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local) {
     Block_t *blk;
     ssize_t sz, oldz, blksz;
     Void_t *origdt = data;
@@ -196,8 +193,7 @@ static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
     return (Void_t *)data;
 }
 
-static Void_t *lastalign(Vmalloc_t *vm, size_t size, size_t align, int local)
-{
+static Void_t *lastalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     Vmuchar_t *data;
     size_t algn;
     size_t orgsize = size, orgalign = align;

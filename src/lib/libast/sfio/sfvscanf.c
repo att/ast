@@ -35,8 +35,7 @@
 #include "sfstrtof.h"
 
 /* refresh stream buffer - taking care of unseekable/share streams too */
-static void _sfbuf(Sfio_t *f, int *peek)
-{
+static void _sfbuf(Sfio_t *f, int *peek) {
     if (f->next >= f->endb) {
         if (*peek) /* try peeking for a share stream if possible */
         {
@@ -71,8 +70,7 @@ typedef struct _scan_s {
     (inp = (sc)->inp, f = (sc)->f, (width = (ds) ? (sc)->width : width), d = (sc)->d, \
      endd = (sc)->endd, data = (sc)->data, peek = (sc)->peek, n_input = (sc)->n_input)
 
-static int _scgetc(void *arg, int flag)
-{
+static int _scgetc(void *arg, int flag) {
     Scan_t *sc = (Scan_t *)arg;
 
     if (flag) {
@@ -120,8 +118,7 @@ typedef struct _accept_s {
 #endif
 } Accept_t;
 
-static char *_sfsetclass(const char *form, Accept_t *ac, int flags)
-{
+static char *_sfsetclass(const char *form, Accept_t *ac, int flags) {
     int c, endc, n;
     SFMBDCL(mbs)
 
@@ -168,8 +165,7 @@ static char *_sfsetclass(const char *form, Accept_t *ac, int flags)
 }
 
 #if _has_multibyte
-static int _sfwaccept(wchar_t wc, Accept_t *ac)
-{
+static int _sfwaccept(wchar_t wc, Accept_t *ac) {
     int endc, c, n;
     wchar_t fwc;
     char *form = ac->form;
@@ -200,8 +196,7 @@ static int _sfwaccept(wchar_t wc, Accept_t *ac)
 #define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, NULL)
 #endif
 
-static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, Void_t *mbs)
-{
+static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, Void_t *mbs) {
     int n, v;
     char b[16]; /* assuming that SFMBMAX <= 16! */
 
@@ -254,8 +249,7 @@ no_match: /* this unget is lossy on a stream with small buffer */
 }
 #endif /*_has_multibyte*/
 
-int sfvscanf(Sfio_t *f, reg const char *form, va_list args)
-{
+int sfvscanf(Sfio_t *f, reg const char *form, va_list args) {
     reg int inp, shift, base, width;
     ssize_t size;
     int fmt, flags, dot, n_assign, v, n, n_input;

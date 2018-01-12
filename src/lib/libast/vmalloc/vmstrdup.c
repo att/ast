@@ -25,8 +25,7 @@
  * return a copy of s using vmalloc
  */
 
-char *vmstrdup(Vmalloc_t *v, const char *s)
-{
+char *vmstrdup(Vmalloc_t *v, const char *s) {
     char *t;
     size_t n;
 

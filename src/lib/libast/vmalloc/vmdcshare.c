@@ -317,8 +317,7 @@ done:
     return rv;
 }
 
-static int mmend(Mmdisc_t *mmdc)
-{
+static int mmend(Mmdisc_t *mmdc) {
     Mmvm_t *mmvm;
     struct shmid_ds shmds;
 
@@ -343,8 +342,7 @@ static int mmend(Mmdisc_t *mmdc)
     return 0;
 }
 
-static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc)
-{
+static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Mmvm_t *mmvm;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
 
@@ -369,8 +367,7 @@ static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize
     }
 }
 
-static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc)
-{
+static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc) {
     int rv;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
 
@@ -427,8 +424,7 @@ static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc)
 //        0: release memory
 //        -1: like 0 plus removing files/shms
 //
-Vmdisc_t *vmdcshare(char *name, int proj, ssize_t size, int mode)
-{
+Vmdisc_t *vmdcshare(char *name, int proj, ssize_t size, int mode) {
     Mmdisc_t *mmdc;
 
     VMPAGESIZE();
