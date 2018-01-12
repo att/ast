@@ -37,7 +37,7 @@
 99-09-22 cs*: add CS_MNT_TAIL for multi-char mount files
 	 css: _UWIN workaround for st_ino verification
 99-07-17 csaddr: clear more state->flags bits to avoid prev csopen() carryover
-99-05-20 msg*: handle f_basetype and f_fsid for redhat 6.0 linux -- boo
+99-05-20 msg*: handle f_basetype and f_fsid for Red Hat 6.0 Linux -- boo
 99-05-13 css: fix disc.wakeup logic
 	 cspoll: add debug=6 poll trace
 99-04-23 csaddr: check for 127.0.0.[01] from hostname lookup == local

@@ -138,11 +138,11 @@
 98-05-18 what: change "%s%-*s" to "%s%-.*s" and fix buffer boundary bug
 98-03-01 tr: fix char class range bugs
 	 tr.tst: add
-97-10-01 strings: add -m for multibyte
+97-10-01 strings: add -m for multi-byte
 97-07-17 join: more tests in join.tst
 	 uudecode: ignore chars after counted limit
 	 uudecode: add binhex (decode only)
-	 uudecode: fix posix/ucb uu_decode()! time for uu.tst
+	 uudecode: fix POSIX/ucb uu_decode()! time for uu.tst
 96-12-25 od: add od.tst
 	 od: off_t -> int_max
 96-11-28 uudecode: fix buffer boundary bug in qp_decode

@@ -4,7 +4,7 @@
 .AL 1
 .LI
 Using a pair of grave accents \^\fB\(ga\fR ... \fB\(ga\fR\^
-for command substition.  Use \fB$(\fR ... \fB)\fR instead.
+for command substitution.  Use \fB$(\fR ... \fB)\fR instead.
 .LI
 .B FCEDIT
 is an obsolete name for
@@ -96,7 +96,7 @@ variable should contains the name of this directory.
 They may also
 be specified in the
 .B ENV
-file with the 
+file with the
 .B \-xf
 option of
 .BR typeset .

@@ -24,8 +24,8 @@
 11-02-11 mount.c: fix umount operand verification
 11-01-28 file.c: add -a, --all to list all magic table matches
 11-01-11 dd.c,iconv.c: convert Iconv_disc_t* for iconv_move() and iconv_write()
-11-01-11 iconv.c: add posix { -c,--omit -l,--list -s,--silent }
-10-12-01 ps*: update freebsd procfs logic
+11-01-11 iconv.c: add POSIX { -c,--omit -l,--list -s,--silent }
+10-12-01 ps*: update FreeBSD procfs logic
 10-08-11 df.c: use conformance("standard",0) test
 10-06-01 sync with ast api 20100601
 10-05-25 ls.c: back off 09-07-02 logical|(meta)physical change
@@ -44,7 +44,7 @@
 08-12-07 ls.c: use %[_][EO]K for [space pad] [full|long] iso
 08-10-28 pss-procfs.c: use hz = getconf("CLK_TCK")
 08-09-10 features/procfs,pss-kvm.c: netbsd 4.0 kvm tweaks
-08-01-31 features/procfs,pss-kvm.c: freebsd6 kvm tweaks -- stop already
+08-01-31 features/procfs,pss-kvm.c: FreeBSD6 kvm tweaks -- stop already
 08-01-26 df.c: belay some of that delay (automounts foiled it)
 07-11-19 df.c: delay stat()/statfs() until necessary
 07-11-15 pss-procfs.c: handle pr_pgrp and (...) with embedded space
@@ -116,10 +116,10 @@
 	 ps.c: don't warn about unsupported fields for [cfjl]
 03-02-21 pss-*.c: initf errors except no space now warnings for ps fallback
 	 Makefile: hosttype workaround to avoid botched -lkvm
-03-02-11 ps.c: flags width 2 => 3 since posix says its octal
+03-02-11 ps.c: flags width 2 => 3 since POSIX says its octal
 03-02-07 ps.c: add --children and --parents, --tree == --children --parents
 03-02-06 locale.c,ls.c: fmtquote() FMT_ALWAYS update
-03-02-01 ps*.[ch]: convert to independent Pssmeth_t methods 
+03-02-01 ps*.[ch]: convert to independent Pssmeth_t methods
 	 pss-ps.c: export _PSS_ps=1 to force for testing
 03-01-31 pss.c: add darwin.ppc kvm_getprocs() -- still needs work
 03-01-29 ps.c: check for obvious invalid pids
@@ -135,7 +135,7 @@
 02-09-09 ls.c: really ignore -T<n>
 02-08-13 touch.tst: fix 10 digit ambiguity test
 02-08-05 ls.c: add %(perm)[os]
-02-07-31 file.c: add -[cdiM] and swap (old ast) -m and -M semantics for posix
+02-07-31 file.c: add -[cdiM] and swap (old ast) -m and -M semantics for POSIX
 02-06-25 ps.c: handle %s vs. %d --format inconsistencies
 02-02-14 touch.c: explicit epoch dates (0) are different from now (also 0)
 	 locale.c: don't output on unknown keyword
@@ -171,7 +171,7 @@
 	 ps: fix -x to include session leaders
 01-02-14 ps: disable some iffe results for synthesized /proc structs
 	 ps: use sfstrbase() and sfstrsize() instead of member names
-	 mount: define NGROUPS for freebsd -- how does <sys/ucred.h> make it?
+	 mount: define NGROUPS for FreeBSD -- how does <sys/ucred.h> make it?
 	 df: add scaled sizes, no sync(2) unless -s,--sync
 	 df: add statvfs() timeout for good ol NFS
 01-01-31 ls: handle --sort=size
@@ -220,7 +220,7 @@
 	 ps: all key.cancel format mods on rhs
 	 sum: binary mode by default, local text mode implementation
 99-06-01 dd: fix conv=* bitmasks
-99-05-20 df: F_BASETYPE() for redhat 6.0 linux statvfs incompatibility
+99-05-20 df: F_BASETYPE() for Red Hat 6.0 Linux statvfs incompatibility
 99-05-18 date: add settimeofday() and stime() checks/calls
 	 date: use %Y in /bin/date punt
 99-05-11 ps: use pr_sid for session leader checks
@@ -235,7 +235,7 @@
 99-03-11 dd: convert to optget()
 	 ls: (time_t) cast fmttime() arg
 99-03-01 ps: fix static key table inititialization
-99-02-04 ps: add maxval to determine default width 
+99-02-04 ps: add maxval to determine default width
 99-01-23 testdate: check date output format too
 	 move sfio,date,opt tests to src/cmd/tests
 	 move pax tests to src/cmd/pax
@@ -299,16 +299,16 @@
 95-07-17 date: add gnu -d string
 	 ls: fix "total..." aggressive output
 95-05-09 file: switch to <magic.h> and libast/magic()
-	 file: add posix -h == -P
+	 file: add POSIX -h == -P
 	 ls: sfkeyprintf lookup string arg is now the format conversion char
 	 ls: #ifdef check S_ISSOCK
 95-04-01 ls: fix -c botch that treated it like -u
-95-03-19 ls: add -H for posix FTW_META|FTW_PHYSICAL
+95-03-19 ls: add -H for POSIX FTW_META|FTW_PHYSICAL
 	 ls: add -f format to match pax -o listformat
 	 ls: add -D key=value to match pax -o listmacro
 	 ls: dir.sh to mimic dos -- ouch
 	 ls: don't stresc() possibly readonly string literals
-95-03-11 find: add -metaphysical (posix -H) for FTW_META|FTW_PHYSICAL
+95-03-11 find: add -metaphysical (POSIX -H) for FTW_META|FTW_PHYSICAL
 95-02-14 file: add -p pattern to select types that match pattern
 95-01-19 file: add linux kernel and minix as,ld
 95-01-01 file: start RELEASE file

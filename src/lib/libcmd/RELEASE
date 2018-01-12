@@ -3,7 +3,7 @@
 13-12-05 ls.c: move from src/cmd/std
 13-12-01 getconf.c: add -f<fd>, --descriptor=<fd> for fpathconf()
 13-12-01 rm.c: fix --directory logic; could really use unlinkat(d,p,AT_REMOVE)
-13-11-18 wclib.c: fix multibyte buffer boundary side buffer logic
+13-11-18 wclib.c: fix multi-byte buffer boundary side buffer logic
 13-10-31 Makefile: use test instead of [[ ... ]] for mamfile portability -- doh
 13-09-25 shasum.c: add sha*sum variants
 13-09-25 cksum.c: handle SUM_INDICATOR per-method { '*'(binary) ' '(text) } read mode indicator
@@ -17,7 +17,7 @@
 13-09-13 cat.c,cmdext.h,cmdlist.h,cut.c,join.c,od.c,paste.c,rev.c,tr.c,uniq.c,wc.c,wc.h,wclib.c: Mbstate_t update
 13-08-11 join.c: drop setlocale() call already done by optget()
 13-08-11 strcopy() => stpcpy()
-13-07-17 tr.c: finally handle ``tr -Cd "[=e=]" <<<"1e2é3"''-- how about a posix equivalence class api
+13-07-17 tr.c: finally handle ``tr -Cd "[=e=]" <<<"1e2é3"''-- how about a POSIX equivalence class api
 13-07-16 cp.c: limit st_size>0 logic to S_ISREG() files
 13-05-01 vmstate.c: update for new vmalloc snarf
 13-04-22 grep.c: add first draft of context.c to handle -C
@@ -64,7 +64,7 @@
 10-06-14 rm.c: fix -rfu logic
 10-06-12 paste.c: repeat after me: do not modify argv[i]
 10-06-01 sync with ast api 20100601
-10-05-09 tail.c: fix -0f bug that inially listed the entire file
+10-05-09 tail.c: fix -0f bug that initially listed the entire file
 10-05-06 basename.c: add { -a,--all -s,--suffux=suffix } from BSD
 10-04-12 cat.c: fix -v bug that dumped core and make consistent with cmp --print-chars
 10-04-11 cmp.c: add --print-bytes, --count=n, --differences=n
@@ -115,12 +115,12 @@
 09-02-02 mktemp.c: add
 09-02-02 features/utsname: UWIN _UNAME_os_DEFAULT => UWIN
 09-01-31 dirname.c: add experimental { -f -r -x } for pathpath(3)
-09-01-05 cmp.c: fix EOF diagnostic to conform to posix
+09-01-05 cmp.c: fix EOF diagnostic to conform to POSIX
 09-01-03 mkfifo.c: fix --mode=mode logic
 08-12-07 date.c: add %[_][EO]K for [space pad] [full|long] iso docs
 08-11-10 stty.c: check for -t grouping so -tostop != -t -ostop
 08-10-15 rm.c: handle 'rm -f x x' => exit 0
-08-09-08 stty.c: #ifdef guard TAB[012] -- freebsd: damn the posix, full speed ahead
+08-09-08 stty.c: #ifdef guard TAB[012] -- FreeBSD: damn the POSIX, full speed ahead
 08-06-17 shcmd.h: move to libast
 08-04-24 uniq.c: add optget() 'n' option for -1 => -f1
 08-04-24 getconf.c: clarify diffs between "name - value" and "name = value"
@@ -134,7 +134,7 @@
 08-02-11 Makefile: add -lmd possibly required by sumlib.o -- hack alert
 08-01-30 expr.c: fix <=0 type that broke substr * 1 * -- wow
 07-12-13 cp.c: fix builtin state reinitialization
-07-11-29 rev.c: honor multibyte locales
+07-11-29 rev.c: honor multi-byte locales
 07-11-27 cp.c: open non-existent destination with O_EXCL
 07-11-27 stty.c: add -t,--terminal-group to list tty pgrp
 07-11-27 cksum.c: --silent -s => -S, -s == -x sys5 for gnu compatibility
@@ -173,8 +173,8 @@
 06-11-11 getconf.c: fix deferred getconf path search
 06-11-11 fmt.c: handle two char { \t \n } in --usage ouput
 06-10-31 global edit to eliminate most non-const static data0
-06-10-31 use <cmd.h> for all b_*() implementations; drop <cmdlib.h> 
-06-10-31 cmd.h: add CMD_ prefix to { BUILTIN DYNAMIC STANDALONE } 
+06-10-31 use <cmd.h> for all b_*() implementations; drop <cmdlib.h>
+06-10-31 cmd.h: add CMD_ prefix to { BUILTIN DYNAMIC STANDALONE }
 06-10-31 join.c: tone down /tmp usage vi SFSK_DISCARD
 06-10-31 cp.c,rm.c: update to <fts.h> to accomodate non-static data
 06-10-29 date.c: "...%H%..." => "...%H" "%..." to avoid SCCS conflict
@@ -286,7 +286,7 @@
 01-04-17 date,rm: add
 01-03-07 cp: fix readonly string mod on "."
 01-01-23 cp: `cp foo' => `cp foo .' only for CONFORMANCE!=standard
-00-12-01 cut: multibyte support
+00-12-01 cut: multi-byte support
 00-10-31 mkdir: handle races by checking EEXIST
 00-09-20 cp: copy argv to stack before modifying in place
 00-05-18 add setlocale(LC_ALL,"")
