@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -105,7 +105,7 @@ then the array
 is filled with character pointers to the substrings of
 .I source
 that correspond to the
-parenthesized subexpressions of 
+parenthesized sub-expressions of
 .IR pattern :
 .I re\->match[i].sp
 points to the beginning and
@@ -113,7 +113,7 @@ points to the beginning and
 points just beyond
 the end of substring
 .IR i .
-(Subexpression
+(Sub-expression
 .I i
 begins at the
 .IR i th
@@ -128,12 +128,12 @@ are filled with zeros.
 Matches involving
 .LR * ,
 .LR + ,
-and 
+and
 .L ?
 are extended as far as possible.
-A maximum of 9 subexpressions will be matched.
+A maximum of 9 sub-expressions will be matched.
 The structure of elements of
-.I re\->match 
+.I re\->match
 is:
 .nf
 .ta 8n
@@ -168,7 +168,7 @@ string delimited by
 .LI re\->match[ n ].sp
 and
 .LI re\->match[ n ].ep .
-Each instance of 
+Each instance of
 .L &
 is replaced by the string delimited by
 .I re\->match[0].sp

@@ -116,7 +116,7 @@ Other functions work similarly on their respective types.
 On most modern architectures (with modern compilers) the \fIASO\fP functions are macros
 that reference the respective intrinsic operations directly.
 Operations lacking intrinsics are implemented by composing other intrinsics.
-At minimum a \fBcas\fP (compare and swap) atomic intrinsic must be avalable for
+At minimum a \fBcas\fP (compare and swap) atomic intrinsic must be available for
 \fIASO\fP to ensure atomic operations.
 The value of the macro \f5_ASO_INTRINSIC\fP describes the native environment:
 .Tp
@@ -129,7 +129,7 @@ Some atomic intrinsic operations are available.
 \fIASO\fP works for multi process/thread and shared memory.
 .Tp
 2
-Atomic intrinsics are implemented using atomic assember machine instructions.
+Atomic intrinsics are implemented using atomic assembler machine instructions.
 \fIASO\fP works for multi process/thread and shared memory.
 .PP
 .Ss "TYPES"
@@ -159,7 +159,7 @@ on the same \f5dest\fP with values, say \fIv1\fP and \fIv2\fP.
 The eventual value in \f5dest\fP
 will be as if \f5*dest += v1+v2\fP was performed in a single-threaded execution.
 
-That should be constrasted with a situation where, instead of \f5asoadd8()\fP,
+That should be contrasted with a situation where, instead of \f5asoadd8()\fP,
 only normal arithmetics were used. Then, the end result could be any of
 \f5*dest += v1\fP, \f5*dest += v2\fP or \f5*dest += v1+v2\fP, depending
 on states of the hardware cache and the process scheduling.
