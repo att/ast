@@ -216,7 +216,8 @@ subdir('tm')
 subdir('vmalloc')
 
 libm_dep = cc.find_library('m', required: false)
-libiconv_dep = cc.find_library('iconv', required: false)
+# On OpenBSD libiconv is in /usr/local/lib rather than /usr/lib.
+libiconv_dep = cc.find_library('iconv', required: false, dirs: ['/usr/lib', '/usr/local/lib'])
 # On Cygwin the message catalog functions (e.g., `catopen()`) are in this
 # library.
 libcatgets_dep = cc.find_library('catgets', required: false)
