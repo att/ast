@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -62,7 +62,7 @@ These routines provide an interface to the MIME type database.
 .L mimeopen
 returns a mime session handle that is passed to all of the other routines.
 The
-.I flags 
+.I flags
 argument is currently unused.
 .PP
 .L mimeclose
@@ -80,7 +80,7 @@ The
 .I path
 argument is a
 .B :
-separated list of pathnames, each of which is loaded.
+separated list of path names, each of which is loaded.
 Non-existent files are ignored
 .L MIME_LIST
 set.
@@ -93,7 +93,7 @@ More than one mime file can be loaded into a session;
 the files are searched in load order.
 If
 .I path
-is 
+is
 .L 0
 then the default mime file is loaded.
 .PP
@@ -109,7 +109,7 @@ returns the type string for
 .IR path .
 .L mimetype
 always returns a non-null string.
-If errors are encounterd on
+If errors are encountered on
 .I path
 then the return value will be
 .LR "error" .

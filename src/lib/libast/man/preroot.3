@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -53,12 +53,12 @@ The
 .I preroot
 routines manipulate the process preroot.
 .I preroot
-is a kernel supported per-process two level viewpath.
-All pathnames rooted at
+is a kernel supported per-process two level view-path.
+All path names rooted at
 .L /
 are first searched for in the process preroot directory
 and then in the system root directory.
-Setting the process preroot is a priveleged operation controlled by the
+Setting the process preroot is a privileged operation controlled by the
 .IR /etc/preroot (1)
 command.
 .PP
@@ -92,10 +92,10 @@ In this case
 is set to indicate the error.
 .TP
 .L ispreroot
-Non-zero is returned if 
+Non-zero is returned if
 .I dir
 is the current process preroot.
-If 
+If
 .I dir
 is
 .B 0
@@ -124,7 +124,7 @@ with the process preroot set to
 must be a
 .BR 0 -terminated
 argument array.
-If 
+If
 .I argv
 is
 .B 0
@@ -146,6 +146,6 @@ The
 .IR directory (3)
 routines do this.
 .IR 3d (1)
-viewpathing does 
+view-pathing does
 .I preroot
 the right way.

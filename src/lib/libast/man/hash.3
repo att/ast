@@ -24,7 +24,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -52,7 +52,7 @@ and its
 .IR value .
 A
 .I key
-is a sequence of 
+is a sequence of
 .L char
 elements and a
 .I value
@@ -116,7 +116,7 @@ The number of lookup collisions.
 .RE
 .TP
 .L "Hash_table_t* scope"
-The table that this scope covers, 
+The table that this scope covers,
 .L NULL
 if the table is not a scope.
 .TP
@@ -215,11 +215,11 @@ if
 is specified and
 .IR strcmp (3)
 otherwise.
-The first argument is the 
+The first argument is the
 .I key
-from the current hash bucket on the 
+from the current hash bucket on the
 .I "collision chain"
-and the second argument is the user supplied 
+and the second argument is the user supplied
 .IR key .
 .TP
 .L "HASH_free, (int(*)()) free"
@@ -230,7 +230,7 @@ If
 was set in
 .L hashalloc
 then the hash bucket pointer is passed, otherwise the bucket
-.L value 
+.L value
 pointer is passed.
 .TP
 .L "HASH_hash, (int(*)()) hash"
@@ -275,7 +275,7 @@ Changes the hash table flags by
 .IR or ing
 in
 .LR flags .
-The flags, which may be 
+The flags, which may be
 .IR or ed
 together, are:
 .RS
@@ -321,7 +321,7 @@ in the hash table
 .L tab
 according to
 .L flags
-and 
+and
 .LR value .
 A
 .L Hash_bucket_t
@@ -408,7 +408,7 @@ value is returned.
 For
 .L HASH_LOOKUP
 the bucket
-.L value 
+.L value
 field is returned,
 .L NULL
 if the bucket is not found.
@@ -418,7 +418,7 @@ If
 .L NULL
 then the name from the most recent
 .L hashlook()
-is used, avoiding recomputation of some internal parameters.
+is used, avoiding re-computation of some internal parameters.
 .TP
 .L "char* hashget(Hash_table_t* tab, char* name)"
 Returns the value
@@ -432,7 +432,7 @@ is
 .L NULL
 then the name from the most recent
 .L hashget()
-is used, avoiding recomputation of some internal parameters.
+is used, avoiding re-computation of some internal parameters.
 .L NULL
 is returned if
 .L name
@@ -481,7 +481,7 @@ in the hash table
 .LR tab .
 If
 .L flags
-is 
+is
 .L HASH_NOSCOPE
 then only the top level hash table is used, otherwise the walk includes
 all scope covered tables.
@@ -514,7 +514,7 @@ pointer for a sequential scan on the hash table
 .LR tab .
 If
 .L flags
-is 
+is
 .L HASH_NOSCOPE
 then only the top level hash table is used, otherwise the scan includes
 all scope covered tables.
@@ -534,9 +534,9 @@ If no elements remain then
 is returned.
 .TP
 .L "void hashdone(Hash_position_t* pos)"
-Completes a scan initiated by 
+Completes a scan initiated by
 .L hashscan()
-on 
+on
 .LR pos .
 .TP
 .L "int hashset(Hash_table_t* tab, int flags)"
@@ -567,14 +567,14 @@ may be cleared.
 Dumps hash table accounting info to standard error.
 If
 .L tab
-is 
+is
 .L NULL
 then all allocated hash tables are dumped, otherwise only information on
 .L tab
 is dumped.
 If
 .L flags
-is 
+is
 .L HASH_BUCKET
 then the hash bucket
 .I key-value

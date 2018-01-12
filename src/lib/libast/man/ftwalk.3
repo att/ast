@@ -21,8 +21,8 @@ int ftwflags(void);
 \fIFtwalk\fR traverses a directory hierarchy using depth-first search.
 Upon visiting each file or directory in the hierarchy, it calls
 the user function \fIuserf\fP to process that file or directory.
-On a directory object, \fIuserf\fR may be called twice, once in preorder
-and once in postorder.
+On a directory object, \fIuserf\fR may be called twice, once in pre-order
+and once in post-order.
 On a terminal object such as a file or an unreadable directory,
 \fIuserf\fP is called only once.
 Cycles due to hard links or symbolic links are detected
@@ -37,7 +37,7 @@ as if it points to the current (dot) directory.
 \fIOptions\fR consists of zero or more of the following bits:
 .IP
 FTW_CHILDREN:
-This implies preorder calls to \fIuserf\fR on directory objects.
+This implies pre-order calls to \fIuserf\fR on directory objects.
 On such a call to \fIuserf\fR,
 the field \fIftw->link\fR (below) points to a link list of
 the children of the respective directory.
@@ -64,11 +64,11 @@ FTW_MULTIPLE: The \fIpath\fP argument is treated as a \fIchar**\fP
 pointer to a null-terminated array of path names.
 All hierarchies rooted at these paths will be searched
 .IP
-FTW_POST: Calls to the user function are issued only in postorder.
+FTW_POST: Calls to the user function are issued only in post-order.
 That is, \fIuserf\fP is called on a directory only after its descendants have
 been processed.
 The absence of this bit indicates that calls to the user functions
-are issued in preorder. That is, \fIuserf\fP is
+are issued in pre-order. That is, \fIuserf\fP is
 called on a directory before its descendants  are processed.
 .IP
 FTW_PHYSICAL: Use \fIlstat\fR(2) instead of \fIstat\fR(2) to get
@@ -84,8 +84,8 @@ Used to implement the POSIX
 option for commands like
 .IR ls .
 .IP
-FTW_TWICE: Calls to the user function are issued in both preorder and postorder
-for directory objects.
+FTW_TWICE: Calls to the user function are issued in both pre-order and
+post-order for directory objects.
 .IP
 FTW_USER: The first of 6 user defined option bits.
 These bits are ignored by \fIftwalk\fP.
@@ -114,7 +114,7 @@ The \fIuserf\fP prototype is:
     char*          path;    /* full pathname */
     short          pathlen; /* strlen(path) */
     unsigned short info;    /* type of object */
-    unsigned short status;  /* status of object */ 
+    unsigned short status;  /* status of object */
     short          level;   /* depth of object on the search path */
     short          namelen; /* strlen(name) */
     char           name[];  /* file name of object */
@@ -123,7 +123,7 @@ The \fIuserf\fP prototype is:
 The \fIlink\fR field is normally NULL.
 If the option FTW_CHILDREN was turned on,
 it points to the start of the list of children
-of the directory being visited in preorder.
+of the directory being visited in pre-order.
 Finally, if the directory being visited causes a cycle,
 \fIlink\fR points to the object on the search path that is
 identical to this directory. Note that if FTW_PHYSICAL was turned on,
@@ -140,13 +140,13 @@ the rest of the structure may be undefined.
 The \fIinfo\fR field indicates the type of the object
 being visited and the type of the visit. The types are:
 .IP
-FTW_D: A directory being visited in preorder, i.e.,
+FTW_D: A directory being visited in pre-order, i.e.,
 none of its children has been visited by the search.
 .IP
-FTW_DNX: A directory being visited in preorder that does not have
+FTW_DNX: A directory being visited in pre-order that does not have
 search permission.
 .IP
-FTW_DP: A directory being visited in postorder, i.e., all of its
+FTW_DP: A directory being visited in post-order, i.e., all of its
 descendants have been completely processed.
 .IP
 FTW_DC: A directory that causes cycles. This is a terminal object.
@@ -177,11 +177,11 @@ for accessing the file information of the object.
 Upon returning, \fIuserf\fR may set the \fIstatus\fR field
 to one of the following values:
 .IP
-FTW_AGAIN: If this is a directory object being visited in postorder,
+FTW_AGAIN: If this is a directory object being visited in post-order,
 it will be processed \fIagain\fR as if it had not been visited.
 .IP
-FTW_NOPOST: If this is a directory object being visited in preorder,
-the user function will not be called on its postorder visit.
+FTW_NOPOST: If this is a directory object being visited in pre-order,
+the user function will not be called on its post-order visit.
 .IP
 FTW_SKIP: This object and its descendants are pruned from the search.
 .IP
@@ -191,7 +191,7 @@ follow the link to its physical counterpart.
 \fIComparf\fR, if not NULL, is a pointer to a function
 used to define a search ordering for children of a directory.
 If FTW_CHILDREN is turned on, the ordering of the children of
-a directory is done before the preorder call to \fIuserf\fR on that directory.
+a directory is done before the pre-order call to \fIuserf\fR on that directory.
 Therefore, in that case, \fIftw->link\fR will point to the smallest child.
 .PP
 The \fIcomparf\fP prototype is:
@@ -206,7 +206,7 @@ The \fIcomparf\fP prototype is:
 \fIFtwalk\fR normally returns 0.
 On hard errors such as running out of memory, it returns -1.
 \fIFtwalk\fR may also return other values as discussed with respect
-to \fIuserf\fR. 
+to \fIuserf\fR.
 .PP
 \fIFtwflags\fR returns a combination of \fB0, FTW_META, FTW_PHYSICAL\fR
 according to the

@@ -12,7 +12,7 @@
 .de EX		\" start example
 .ta 1i 2i 3i 4i 5i 6i
 .PP
-.RS 
+.RS
 .PD 0
 .ft 5
 .nf
@@ -63,7 +63,7 @@ then the call is applied to all open coshell.
 .L "Coshell_t* coopen(const char* shell, int flags, const char* attributes)"
 .PP
 Returns a pointer to a new coshell.
-.L NULL 
+.L NULL
 is returned on error.
 If
 .L shell
@@ -88,7 +88,7 @@ Enable library debug tracing.
 .TP
 .L CO_IGNORE
 Ignore any command errors.
-By default any command error that is not tested by a condtional causes
+By default any command error that is not tested by a conditional causes
 the job to terminate.
 .TP
 .L CO_LOCAL
@@ -300,7 +300,7 @@ If both
 and
 .L job
 are
-.L NULL 
+.L NULL
 then the signal is sent to all jobs in all coshells.
 .L \-1
 is returned on error,
@@ -318,10 +318,10 @@ If
 .L path
 is
 .L NULL
-then 
+then
 .L fd
 is used.
-If 
+If
 .L fd<0
 and
 .L mode>=0
