@@ -6,6 +6,10 @@ run_command('bin/ksh93_prereq.sh')
 
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
+# This was added because OpenBSD installs a lot of stuff in /usr/local/{include,lib}
+# that would normally be in /usr/{include,lib}. But the compiler doesn't
+# automatically search /usr/local/included for headers so force it to do so.
+add_project_arguments('-I/usr/local/include', language: 'c')
 
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
