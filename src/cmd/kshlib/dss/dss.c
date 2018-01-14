@@ -1076,7 +1076,8 @@ static int listdss(int argc, char *argv[], Shbltin_t *bp) {
     Dt_t *dict;
     char *name;
     Cxtype_t *tp;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     while ((n = optget(argv, optlist))) {
         switch (n) {
             case 'm':

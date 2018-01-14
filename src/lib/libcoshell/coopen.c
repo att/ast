@@ -43,7 +43,7 @@ Costate_t state = {"libcoshell:coshell"};
  */
 
 static void hung(int sig) {
-    NoP(sig);
+    UNUSED(sig);
     close(sffileno(state.current->msgfp));
 }
 
@@ -80,7 +80,7 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
     char *s;
     char **a;
 
-    NoP(v);
+    UNUSED(v);
     if (p) {
         if (n) {
             co->flags |= ((Namval_t *)p)->value;

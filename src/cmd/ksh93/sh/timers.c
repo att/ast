@@ -79,8 +79,7 @@ static void sigalrm(int sig, siginfo_t *info, void *context) {
     double now;
     static double left;
     Shell_t *shp = sh_getinterp();
-
-    NOT_USED(sig);
+    UNUSED(sig);
 
     if (shp->st.trapcom[SIGALRM] && *shp->st.trapcom[SIGALRM]) {
         shp->siginfo[SIGALRM] = malloc(sizeof(siginfo_t));

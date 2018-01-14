@@ -488,7 +488,7 @@ int main(int argc, char **argv) {
     int flags = 0;
     Convert_f convert = msg2html;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "msgcvt";
     for (;;) {
         switch (optget(argv, usage)) {

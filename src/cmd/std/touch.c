@@ -121,7 +121,7 @@ int main(int argc, register char **argv) {
     Tv_t mv;
     Tv_t uv;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "touch";
     up = 0;
     for (;;) {

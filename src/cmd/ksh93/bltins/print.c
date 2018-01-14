@@ -98,7 +98,8 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     prdata.options = sh_optecho + 5;
     prdata.raw = prdata.echon = 0;
     prdata.sh = context->shp;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     // This mess is because /bin/echo on BSD is different.
     if (!prdata.sh->universe) {
         char *universe;
@@ -132,7 +133,8 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
 //
 int b_printf(int argc, char *argv[], Shbltin_t *context) {
     struct print prdata;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     memset(&prdata, 0, sizeof(prdata));
     prdata.sh = context->shp;
     prdata.options = sh_optprintf;

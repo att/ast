@@ -223,7 +223,14 @@ typedef struct {
 #define strneq(a, b, n) (*(a) == *(b) && !strncmp(a, b, n))
 #define strsignal(s) fmtsignal(s)
 
-#define NoP(x) (void)(x)
+/// This is a macro that can be used to silence "unused parameter" warnings from the compiler for
+/// functions which need to accept parameters they do not use because they need to be compatible
+/// with an interface. It's similar to the Python idiom of doing `_ = param` at the top of a
+/// function in the same situation.
+#define UNUSED(expr)  \
+    do {              \
+        (void)(expr); \
+    } while (0)
 
 #if !defined(NoF)
 #define NoF(x) \
@@ -240,8 +247,6 @@ typedef struct {
 #define _STUB_
 #endif
 #endif
-
-#define NOT_USED(x) NoP(x)
 
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);

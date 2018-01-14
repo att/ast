@@ -82,7 +82,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     int flag;
     char *command = argv[0];
     struct tdata tdata;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     memset((void *)&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
@@ -135,7 +135,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
     Dt_t *troot;
     int n;
     struct tdata tdata;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     memset((void *)&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
@@ -212,7 +212,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
 #if SHOPT_BASH
     bool local = *argv[0] == 'l' && strcmp(argv[0], "local") == 0;
 #endif  // SHOPT_BASH
-    NOT_USED(argc);
+    UNUSED(argc);
 
     memset((void *)&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
@@ -915,7 +915,8 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #ifdef SH_PLUGIN_VERSION
     int list = 0;
 #endif  // SH_PLUGIN_VERSION
-    NOT_USED(argc);
+    UNUSED(argc);
+
     memset(&tdata, 0, sizeof(tdata));
     tdata.sh = context->shp;
     stkp = tdata.sh->stk;
@@ -1113,7 +1114,8 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     Dt_t *dp;
     int nflag = 0, all = 0, isfun, jmpval;
     struct checkpt buff;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     if (troot == shp->alias_tree) {
         name = sh_optunalias;
         if (shp->subshell) troot = sh_subaliastree(shp, 0);

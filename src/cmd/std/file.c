@@ -174,7 +174,7 @@ int main(int argc, register char **argv) {
     int hit;
     Magicdisc_t disc;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "file";
     disc.version = MAGIC_VERSION;
     disc.flags = 0;

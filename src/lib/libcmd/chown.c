@@ -31,6 +31,6 @@ static const char id[] = "\n@(#)$Id: chown (AT&T Research) 1997-11-11 $\0\n";
 #include <cmd.h>
 
 int b_chown(int argc, char **argv, Shbltin_t *context) {
-    NoP(id[0]);
+    UNUSED(id[0]);
     return b_chgrp(argc, argv, context);
 }

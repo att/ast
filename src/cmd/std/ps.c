@@ -887,8 +887,8 @@ static int byorder(Dt_t *dt, void *a, void *b, Dtdisc_t *disc) {
     register Ps_t *pb = (Ps_t *)b;
     register int i;
 
-    NoP(dt);
-    NoP(disc);
+    UNUSED(dt);
+    UNUSED(disc);
     if (i = strcmp(pa->user, pb->user)) return i;
     if (pa->ps->pgrp < pb->ps->pgrp) return -1;
     if (pa->ps->pgrp > pb->ps->pgrp) return 1;
@@ -1135,7 +1135,7 @@ int main(int argc, register char **argv) {
     Optdisc_t od;
     struct stat st;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "ps";
     setlocale(LC_ALL, "");
     state.now = time((time_t *)0);

@@ -2299,8 +2299,8 @@ static int charlen(const char *string, int len) {
 static int sh_btilde(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cp = sh_tilde(shp, argv[1]);
+    UNUSED(argc);
 
-    NOT_USED(argc);
     if (!cp) cp = argv[1];
     sfputr(sfstdout, cp, '\n');
     return 0;

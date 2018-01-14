@@ -1487,7 +1487,8 @@ static int io_heredoc(Shell_t *shp, struct ionod *iop, const char *name, int tra
 // when tracing here-documents.
 //
 static ssize_t tee_write(Sfio_t *iop, const void *buff, size_t n, Sfdisc_t *unused) {
-    NOT_USED(unused);
+    UNUSED(unused);
+
     sfwrite(sfstderr, buff, n);
     return write(sffileno(iop), buff, n);
 }
@@ -1728,7 +1729,7 @@ int sh_ioaccess(int fd, int mode) {
 static int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
     Shell_t *shp = ((struct Iodisc *)handle)->sh;
     int n, fno;
-    NOT_USED(handle);
+    UNUSED(handle);
 
     if (type == SF_DPOP || type == SF_FINAL) free(handle);
     if (type == SF_WRITE && ERROR_PIPE(errno)) {
@@ -2194,7 +2195,7 @@ static Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
 static ssize_t subread(Sfio_t *sp, void *buff, size_t size, Sfdisc_t *handle) {
     struct subfile *disp = (struct subfile *)handle;
     ssize_t n;
-    NOT_USED(sp);
+    UNUSED(sp);
 
     sfseek(disp->oldsp, disp->offset, SEEK_SET);
     if (disp->left == 0) return (0);

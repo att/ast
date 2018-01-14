@@ -38,9 +38,9 @@
 #ifdef _no_ulimit
 
 int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
-    NOT_USED(argc);
-    NOT_USED(argv);
-    NOT_USED(context);
+    UNUSED(argc);
+    UNUSED(argv);
+    UNUSED(context);
 
     errormsg(SH_DICT, ERROR_exit(2), e_nosupport);
     return 0;

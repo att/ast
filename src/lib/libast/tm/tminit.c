@@ -138,7 +138,7 @@ static int tzwest(time_t *clock, int *isdst) {
 static int tmopt(void *a, const void *p, int n, const char *v) {
     Tm_zone_t *zp;
 
-    NoP(a);
+    UNUSED(a);
     if (p) {
         switch (((Namval_t *)p)->value) {
             case TM_DEFAULT:

@@ -124,8 +124,8 @@ static const char ident_name[] = "EVEN";
 #if !_use_ndbm
 
 int main(int argc, char **argv) {
-    NoP(argc);
-    NoP(argv);
+    UNUSED(argc);
+    UNUSED(argv);
     error(3, "<ndbm.h> library required");
     return 1;
 }
@@ -849,8 +849,8 @@ static void confree(Dt_t *dt, void *obj, Dtdisc_t *disc) {
     State_t *state = (State_t *)((char *)disc - offsetof(State_t, condisc));
     Connection_t *con = (Connection_t *)obj;
 
-    NoP(dt);
-    NoP(disc);
+    UNUSED(dt);
+    UNUSED(disc);
     state->active--;
     if (con->waiting) dtclose(con->waiting);
     log(state, con, 'S', "drop connection -- %d active", state->active);
@@ -862,8 +862,8 @@ static void confree(Dt_t *dt, void *obj, Dtdisc_t *disc) {
  */
 
 static void eventfree(Dt_t *dt, void *obj, Dtdisc_t *disc) {
-    NoP(dt);
-    NoP(disc);
+    UNUSED(dt);
+    UNUSED(disc);
     free(obj);
 }
 
@@ -875,7 +875,7 @@ static void waitfree(Dt_t *dt, void *obj, Dtdisc_t *disc) {
     State_t *state = (State_t *)((char *)disc - offsetof(State_t, waitdisc));
     Waiting_t *p = (Waiting_t *)obj;
 
-    NoP(dt);
+    UNUSED(dt);
     if (--p->event->waiting == 0) dtdelete(state->events, p->event);
     free(obj);
 }
@@ -939,7 +939,7 @@ int main(int argc, char **argv) {
 
     static State_t state;
 
-    NoP(argc);
+    UNUSED(argc);
     setlocale(LC_ALL, "");
     opt_info.argv = argv;
     state.log = 1;

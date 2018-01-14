@@ -1905,7 +1905,8 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
 static void kia_add(Namval_t *np, void *data) {
     char *name = nv_name(np);
     Lex_t *lp = (Lex_t *)data;
-    NOT_USED(data);
+    UNUSED(data);
+
     kiaentity(lp, name + 1, -1, *name, 0, -1, (*name == 'p' ? lp->unknown : lp->script),
               np->nvalue.i, nv_size(np), "");
 }

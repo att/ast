@@ -72,7 +72,7 @@ static const Namval_t options[] = {
  */
 
 static int setopt(void *a, const void *p, int n, const char *v) {
-    NoP(v);
+    UNUSED(v);
     if (p) {
         if (n)
             *((int *)a) |= ((Namval_t *)p)->value;
@@ -259,7 +259,7 @@ static void restore(Proc_t *proc) {
     Modify_t *p;
     int oerrno;
 
-    NoP(proc);
+    UNUSED(proc);
     oerrno = errno;
     m = proc->mods;
     proc->mods = 0;

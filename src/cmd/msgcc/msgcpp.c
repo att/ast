@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
     register int c;
     Sfio_t *tmp;
 
-    NoP(argc);
+    UNUSED(argc);
     if (s = strrchr(*argv, '/'))
         s++;
     else

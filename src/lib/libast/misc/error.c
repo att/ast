@@ -113,7 +113,7 @@ static const Namval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CAT
  */
 
 static int setopt(void *a, const void *p, int n, const char *v) {
-    NoP(a);
+    UNUSED(a);
     if (p) {
         switch (((Namval_t *)p)->value) {
             case OPT_BREAK:

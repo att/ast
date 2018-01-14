@@ -131,7 +131,7 @@ int main(int argc, register char **argv) {
     unsigned long blocksize = 0;
     Count_t count = 0;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "du";
     blocksize = 0;
     flags = FTS_PHYSICAL | FTS_NOSEEDOTDIR;

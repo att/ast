@@ -36,7 +36,7 @@
 static int children;
 
 static void child(int sig) {
-    NoP(sig);
+    UNUSED(sig);
     children++;
 }
 

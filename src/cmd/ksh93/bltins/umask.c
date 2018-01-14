@@ -45,7 +45,7 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
     char *mask;
     int flag = 0;
     bool sflag = false, pflag = false;
-    NOT_USED(context);
+    UNUSED(context);
 
     while ((argc = optget(argv, sh_optumask))) {
         switch (argc) {

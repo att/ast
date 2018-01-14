@@ -81,9 +81,9 @@ int pathcheck(const char *package, const char *tool, Pathcheck_t *pc) {
         }
     }
 #else
-    NoP(tool);
+    UNUSED(tool);
 #endif
-    NoP(package);
+    UNUSED(package);
     if (pc) memzero(pc, sizeof(*pc));
     return (0);
 }

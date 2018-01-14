@@ -194,7 +194,8 @@ static int rand_shift;
 // Invalidate all path name bindings.
 //
 static void rehash(Namval_t *np, void *data) {
-    NOT_USED(data);
+    UNUSED(data);
+
     nv_onattr(np, NV_NOALIAS);
 }
 
@@ -202,7 +203,8 @@ static void rehash(Namval_t *np, void *data) {
 // Out of memory routine for stak routines.
 //
 static char *nospace(int unused) {
-    NOT_USED(unused);
+    UNUSED(unused);
+
     errormsg(SH_DICT, ERROR_exit(3), e_nospace);
     return NULL;
 }
@@ -335,12 +337,14 @@ static void put_cdpath(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 //
 #if ERROR_VERSION >= 20000101L
 static char *msg_translate(const char *catalog, const char *message) {
-    NOT_USED(catalog);
+    UNUSED(catalog);
+
     return (char *)message;
 }
 #else
 static char *msg_translate(const char *message, int type) {
-    NOT_USED(type);
+    UNUSED(type);
+
     return (char *)message;
 }
 #endif
@@ -531,7 +535,8 @@ static char *get_seconds(Namval_t *np, Namfun_t *fp) {
     int places = nv_size(np);
     struct tms tp;
     double d, offset = (np->nvalue.dp ? *np->nvalue.dp : 0);
-    NOT_USED(fp);
+    UNUSED(fp);
+
     timeofday(&tp);
     d = dtime(&tp) - offset;
     sfprintf(shp->strbuf, "%.*f", places, d);
@@ -541,7 +546,8 @@ static char *get_seconds(Namval_t *np, Namfun_t *fp) {
 static Sfdouble_t nget_seconds(Namval_t *np, Namfun_t *fp) {
     struct tms tp;
     double offset = (np->nvalue.dp ? *np->nvalue.dp : 0);
-    NOT_USED(fp);
+    UNUSED(fp);
+
     timeofday(&tp);
     return dtime(&tp) - offset;
 }
@@ -575,7 +581,8 @@ static void put_rand(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 //
 static Sfdouble_t nget_rand(Namval_t *np, Namfun_t *fp) {
     long cur, last = *np->nvalue.lp;
-    NOT_USED(fp);
+    UNUSED(fp);
+
     do {
         cur = (rand() >> rand_shift) & RANDMASK;
     } while (cur == last);
@@ -592,9 +599,10 @@ static char *get_rand(Namval_t *np, Namfun_t *fp) {
 // These three routines are for LINENO.
 //
 static Sfdouble_t nget_lineno(Namval_t *np, Namfun_t *fp) {
-    NOT_USED(np);
-    NOT_USED(fp);
     double d = 1;
+    UNUSED(np);
+    UNUSED(fp);
+
     if (error_info.line > 0) {
         d = error_info.line;
     } else if (error_info.context && error_info.context->line > 0) {
@@ -929,7 +937,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     const char *cp = e_version + strlen(e_version) - 10;
     int c;
     Sflong_t t = 0;
-    NOT_USED(fp);
+    UNUSED(fp);
 
     while ((c = *cp++)) {
         if (c >= '0' && c <= '9') {

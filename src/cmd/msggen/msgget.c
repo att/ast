@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     Sfio_t *sp;
     char path[PATH_MAX];
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "msgget";
     for (;;) {
         switch (optget(argv, usage)) {

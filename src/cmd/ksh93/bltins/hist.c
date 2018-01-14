@@ -53,7 +53,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     int pflag = 0;
 #endif
     Histloc_t location;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     if (!sh_histinit((void *)shp)) errormsg(SH_DICT, ERROR_system(1), e_histopen);
     hp = shp->gd->hist_ptr;

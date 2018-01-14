@@ -55,7 +55,7 @@ static const char *reg_error[] = {
 size_t regerror(int code, const regex_t *p, char *buf, size_t size) {
     const char *s;
 
-    NoP(p);
+    UNUSED(p);
     if (code++ == REG_VERSIONID)
         s = (const char *)fmtident(&id[1]);
     else if (code >= 0 && code < elementsof(reg_error))

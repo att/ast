@@ -126,7 +126,7 @@ static void tsort(Sfio_t *ip) {
 int main(int argc, char **argv) {
     Sfio_t *ip;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "tsort";
     for (;;) {
         switch (optget(argv, usage)) {

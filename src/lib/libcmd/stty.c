@@ -780,9 +780,9 @@ static void listmode(Sfio_t *sp, const char *name) {
 }
 
 static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
-    NoP(op);
-    NoP(s);
-    NoP(dp);
+    UNUSED(op);
+    UNUSED(s);
+    UNUSED(dp);
     sfprintf(sp, "[+Control Modes.]{");
     listfields(sp, C_FLAG);
     listgroup(sp, SPEED,

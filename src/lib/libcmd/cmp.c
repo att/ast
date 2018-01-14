@@ -237,7 +237,7 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     Sfoff_t differences = -1;
     int flags = 0;
 
-    NoP(argc);
+    UNUSED(argc);
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
     for (;;) {
         switch (optget(argv, usage)) {

@@ -238,7 +238,7 @@ static int err;
 extern void *dlopen(const char *path, int mode) {
     void *dll;
 
-    NoP(mode);
+    UNUSED(mode);
     if (!(dll = (void *)dllload(path))) err = errno;
     return dll;
 }

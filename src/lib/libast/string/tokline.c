@@ -62,7 +62,7 @@ static int spliceline(Sfio_t *s, int op, void *val, Sfdisc_t *ad) {
     char *e;
     char *buf;
 
-    NoP(val);
+    UNUSED(val);
     switch (op) {
         case SF_CLOSING:
             sfclose(d->sp);

@@ -89,7 +89,8 @@ int main(int argc, char *argv[]) {
     int mode;
     uid_t effuid;
     gid_t effgid;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     arglist = argv;
     if ((command = argv[1]) == 0) error_exit(badexec);
     ruserid = getuid();

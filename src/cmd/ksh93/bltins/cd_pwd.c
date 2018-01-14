@@ -42,7 +42,8 @@
 //
 static void invalidate(Namval_t *np, void *data) {
     Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
-    NOT_USED(data);
+    UNUSED(data);
+
     if (pp && *pp->name != '/') _nv_unset(np, 0);
 }
 
@@ -292,7 +293,7 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     bool pflag = false;
     int n, ffd = -1;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     while ((n = optget(argv, sh_optpwd))) {
         switch (n) {

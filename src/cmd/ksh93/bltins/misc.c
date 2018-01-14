@@ -94,7 +94,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
 }
 
 static void noexport(Namval_t *np, void *data) {
-    NOT_USED(data);
+    UNUSED(data);
     nv_offattr(np, NV_EXPORT);
 }
 
@@ -157,7 +157,8 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
     int r;
     char *arg;
     Shell_t *shp = context->shp;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     while ((r = optget(argv, sh_optlet))) {
         switch (r) {
             case ':': {
@@ -180,7 +181,8 @@ int b_let(int argc, char *argv[], Shbltin_t *context) {
 int b_eval(int argc, char *argv[], Shbltin_t *context) {
     int r;
     Shell_t *shp = context->shp;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     while ((r = optget(argv, sh_opteval))) {
         switch (r) {
             case ':': {
@@ -316,9 +318,9 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
 // Builtins `:` and `true`.
 //
 int b_true(int argc, char *argv[], Shbltin_t *context) {
-    NOT_USED(argc);
-    NOT_USED(argv[0]);
-    NOT_USED(context);
+    UNUSED(argc);
+    UNUSED(argv[0]);
+    UNUSED(context);
     return 0;
 }
 
@@ -326,9 +328,9 @@ int b_true(int argc, char *argv[], Shbltin_t *context) {
 // Builtin `false`.
 //
 int b_false(int argc, char *argv[], Shbltin_t *context) {
-    NOT_USED(argc);
-    NOT_USED(argv[0]);
-    NOT_USED(context);
+    UNUSED(argc);
+    UNUSED(argv[0]);
+    UNUSED(context);
     return 1;
 }
 
@@ -472,7 +474,8 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
 int b_universe(int argc, char *argv[], Shbltin_t *context) {
     char *arg;
     int n;
-    NOT_USED(context);
+    UNUSED(context);
+
     while ((n = optget(argv, sh_optuniverse))) {
         switch (n) {
             case ':': {

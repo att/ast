@@ -42,7 +42,7 @@ void memfatal(void) {}
 static int nomalloc(Vmalloc_t *region, int type, void *obj, Vmdisc_t *disc) {
     Vmstat_t st;
 
-    NoP(disc);
+    UNUSED(disc);
     switch (type) {
         case VM_NOMEM:
             vmstat(region, &st);

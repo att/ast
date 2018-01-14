@@ -347,8 +347,8 @@ int b_mkservice(int argc, char **argv, Shbltin_t *context) {
     Service_t *sp;
     int fd;
     Shell_t *shp = context->shp;
+    UNUSED(argc);
 
-    NOT_USED(argc);
     for (;;) {
         switch (optget(argv, mkservice_usage)) {
             case 0: {
@@ -405,7 +405,8 @@ int b_mkservice(int argc, char **argv, Shbltin_t *context) {
 //
 int b_eloop(int argc, char **argv, Shbltin_t *context) {
     long timeout = -1;
-    NOT_USED(argc);
+    UNUSED(argc);
+
     for (;;) {
         switch (optget(argv, eloop_usage)) {
             case 0: {

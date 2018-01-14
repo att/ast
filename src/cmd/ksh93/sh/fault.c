@@ -557,7 +557,8 @@ void sh_exit(int xno) {
 
 static void array_notify(Namval_t *np, void *data) {
     Namarr_t *ap = nv_arrayptr(np);
-    NOT_USED(data);
+    UNUSED(data);
+
     if (ap && ap->fun) (*ap->fun)(np, 0, NV_AFREE);
 }
 

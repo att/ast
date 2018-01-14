@@ -211,7 +211,7 @@ int main(int argc, char **argv) {
     int list = 0;
     int set = 0;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "msggen";
     for (;;) {
         switch (optget(argv, usage)) {

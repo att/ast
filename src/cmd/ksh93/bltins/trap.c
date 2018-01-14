@@ -42,7 +42,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
     int sig, clear;
     bool pflag = false, dflag = false, aflag = false, lflag = false;
     Shell_t *shp = context->shp;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     while ((sig = optget(argv, sh_opttrap))) {
         switch (sig) {
@@ -188,7 +188,7 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
     int sig = SIGTERM, flag = 0, n;
     Shell_t *shp = context->shp;
     int usemenu = 0;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     while ((n = optget(argv, sh_optkill))) {
         switch (n) {

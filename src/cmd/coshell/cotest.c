@@ -26,11 +26,11 @@
 State_t state;
 
 void shellclose(Coshell_t *a, int b) {
-    NoP(a);
-    NoP(b);
+    UNUSED(a);
+    UNUSED(b);
 }
 
-void jobcheck(Coshell_t *a) { NoP(a); }
+void jobcheck(Coshell_t *a) { UNUSED(a); }
 
 static void init(void) {
     register int n;
@@ -80,8 +80,8 @@ int main(int argc, char **argv) {
     register int op;
     Coattr_t attr;
 
-    NoP(argc);
-    NoP(argv);
+    UNUSED(argc);
+    UNUSED(argv);
     error(-1, "debug");
     init();
     while ((s = sfgetr(sfstdin, '\n', 0)) && sfvalue(sfstdin) > 1)

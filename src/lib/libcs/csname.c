@@ -82,7 +82,7 @@ char *csname(register Cs_t *state, unsigned long addr) {
 
     messagef((state->id, NULL, -8, "name(%s) call", csntoa(state, addr)));
 #if CS_LIB_LOCAL
-    NoP(addr);
+    UNUSED(addr);
 #else
     if (addr) {
         if (addr != CS_LOCAL) {

@@ -115,7 +115,7 @@ static const char Omsg[] = "malloc failed while growing stack\n";
  * default overflow exception
  */
 static char *overflow(int n) {
-    NoP(n);
+    UNUSED(n);
     write(2, Omsg, sizeof(Omsg) - 1);
     exit(2);
     /* NOTREACHED */
@@ -134,8 +134,8 @@ static void stkinit(size_t size) {
 }
 
 static int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
-    NoP(dp);
-    NoP(val);
+    UNUSED(dp);
+    UNUSED(val);
     switch (type) {
         case SF_CLOSING: {
             struct stk *sp = stream2stk(stream);

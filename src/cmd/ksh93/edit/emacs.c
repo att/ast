@@ -986,7 +986,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
 //
 static void xcommands(Emacs_t *ep, int count) {
     int i = ed_getchar(ep->ed, 0);
-    NOT_USED(count);
+    UNUSED(count);
 
     switch (i) {
         case cntl('X'): {  // exchange dot and mark

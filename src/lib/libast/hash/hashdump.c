@@ -53,7 +53,7 @@ static void dumpbucket(Hash_table_t *tab, int flags) {
     int n;
     unsigned char *s;
 
-    NoP(flags);
+    UNUSED(flags);
     sx = tab->table + tab->size;
     for (sp = tab->table; sp < sx; sp++) {
         n = 0;

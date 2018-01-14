@@ -105,7 +105,7 @@ int b_rev(int argc, char **argv, Shbltin_t *context) {
     Sfio_t *fp;
     char *cp;
     int n, line = 0;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
     for (;;) {

@@ -98,7 +98,7 @@ static void *init(void *handle, int fdmax) {
     register int n;
     register char *s;
 
-    NoP(handle);
+    UNUSED(handle);
     message((-1, "init pid=%d", getpid()));
     state.clock = state.start = state.toss = cs.time;
     for (n = 0; n < 10; n++) TOSS;
@@ -211,10 +211,10 @@ static void *init(void *handle, int fdmax) {
  */
 
 static int user(void *handle, int fd, Cs_id_t *id, int clone, char **argv) {
-    NoP(handle);
-    NoP(id);
-    NoP(clone);
-    NoP(argv);
+    UNUSED(handle);
+    UNUSED(id);
+    UNUSED(clone);
+    UNUSED(argv);
     if (state.indirect.con) {
         state.con[fd].type = INIT;
         state.con[fd].info.user.fds[0] = fd;
@@ -266,7 +266,7 @@ static int service(void *handle, register int fd) {
     int fds[5];
     char cmd[256];
 
-    NoP(handle);
+    UNUSED(handle);
     switch (state.con[fd].type) {
         case ANON:
         case SHELL:
@@ -667,7 +667,7 @@ static int service(void *handle, register int fd) {
  */
 
 static int wakeup(void *handle) {
-    NoP(handle);
+    UNUSED(handle);
     shellcheck();
     jobcheck(NULL);
     return (0);
@@ -680,7 +680,7 @@ static int wakeup(void *handle) {
 static void *indirect(void *handle, int fdmax) {
     int *pass;
 
-    NoP(handle);
+    UNUSED(handle);
     if (!(pass = newof(0, int, fdmax, 0))) error(3, "out of space [pass]");
     csfd(state.indirect.con, CS_POLL_READ);
     pass[state.indirect.con] = state.indirect.msg;
@@ -731,7 +731,7 @@ int main(int argc, char **argv) {
     char *t;
     int fds[4];
 
-    NoP(argc);
+    UNUSED(argc);
     setlocale(LC_ALL, "");
     opt_info.argv = argv;
     error_info.id = CO_ID;

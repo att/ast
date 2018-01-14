@@ -1962,8 +1962,8 @@ static int scanfilter(Dt_t *dict, void *arg, void *data) {
     struct scan *sp = (struct scan *)data;
     struct adata *tp = (struct adata *)sp->scandata;
     char *cp;
+    UNUSED(dict);
 
-    NOT_USED(dict);
     if (!is_abuiltin(np) && tp && tp->tp && nv_type(np) != tp->tp) return (0);
     if (sp->scanmask == NV_TABLE && nv_isvtree(np)) k = NV_TABLE;
     if (sp->scanmask ? (k & sp->scanmask) == sp->scanflags
@@ -2079,7 +2079,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
 //
 // Currently this is a dummy, but someday will be needed for reference counting.
 //
-void nv_close(Namval_t *np) { NOT_USED(np); }
+void nv_close(Namval_t *np) { UNUSED(np); }
 
 static void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
     Namval_t *np, *nq, *npnext;
@@ -3139,7 +3139,8 @@ extern char *hashname(void *obj) {
 #undef hashlook
 
 extern void *hashlook(Dt_t *root, const char *name, int mode, int size) {
-    NOT_USED(size);
+    UNUSED(size);
+
     return nv_search(name, root, mode);
 }
 

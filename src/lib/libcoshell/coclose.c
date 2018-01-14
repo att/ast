@@ -31,7 +31,7 @@
  */
 
 static void hung(int sig) {
-    NoP(sig);
+    UNUSED(sig);
     kill(state.current->pid, SIGKILL);
 }
 

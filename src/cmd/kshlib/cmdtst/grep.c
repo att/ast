@@ -835,8 +835,8 @@ done:
 int b_grep(int argc, char **argv, Shbltin_t *context) {
     char *s;
     int options;
+    UNUSED(argc);
 
-    NoP(argc);
     options = 0;
     if (s = strrchr(argv[0], '/'))
         s++;
@@ -871,22 +871,24 @@ int b_grep(int argc, char **argv, Shbltin_t *context) {
 }
 
 int b_egrep(int argc, char **argv, Shbltin_t *context) {
-    NoP(argc);
+    UNUSED(argc);
+
     return grep("egrep", REG_EXTENDED, argc, argv, context);
 }
 
 int b_fgrep(int argc, char **argv, Shbltin_t *context) {
-    NoP(argc);
+    UNUSED(argc);
+
     return grep("fgrep", REG_LITERAL, argc, argv, context);
 }
 
 int b_pgrep(int argc, char **argv, Shbltin_t *context) {
-    NoP(argc);
+    UNUSED(argc);
     return grep("pgrep", REG_EXTENDED | REG_LENIENT, argc, argv, context);
 }
 
 int b_xgrep(int argc, char **argv, Shbltin_t *context) {
-    NoP(argc);
+    UNUSED(argc);
     return grep("xgrep", REG_AUGMENTED, argc, argv, context);
 }
 

@@ -629,7 +629,7 @@ static uintmax_t coused;
 //
 static void print_fun(Namval_t *np, void *data) {
     char *format;
-    NOT_USED(data);
+    UNUSED(data);
 
     if (!is_afunction(np) || !np->nvalue.ip) return;
     if (nv_isattr(np, NV_FPOSIX)) {
@@ -2673,7 +2673,7 @@ bool sh_trace(Shell_t *shp, char *argv[], int nl) {
 // The process-id of the child is returned to the parent, 0 to the child.
 //
 static void timed_out(void *handle) {
-    NOT_USED(handle);
+    UNUSED(handle);
     timeout = 0;
 }
 
@@ -3000,10 +3000,11 @@ int sh_fun(Namval_t *np, Namval_t *nq, char *argv[]) {
 // chown).  It causes the shell to invoke the non-builtin version in this case.
 //
 int cmdrecurse(int argc, char *argv[], int ac, char *av[]) {
-    NOT_USED(argc);
-    NOT_USED(argv[0]);
-    NOT_USED(ac);
-    NOT_USED(av[0]);
+    UNUSED(argc);
+    UNUSED(argv[0]);
+    UNUSED(ac);
+    UNUSED(av[0]);
+
     return SH_RUNPROG;
 }
 

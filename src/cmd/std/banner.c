@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
     char *delim = "#";
     int width = 80;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "banner";
     while (n = optget(argv, usage)) {
         switch (n) {

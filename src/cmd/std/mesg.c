@@ -74,7 +74,7 @@ static int mesg(int mode) {
 int main(int argc, char *argv[]) {
     register int n;
 
-    NoP(argc);
+    UNUSED(argc);
     error_info.id = "mesg";
     for (;;) {
         switch (optget(argv, usage)) {

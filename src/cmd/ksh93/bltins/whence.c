@@ -101,7 +101,7 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
 int b_whence(int argc, char *argv[], Shbltin_t *context) {
     int flags = 0, n;
     Shell_t *shp = context->shp;
-    NOT_USED(argc);
+    UNUSED(argc);
 
     if (*argv[0] == 't') flags = V_FLAG;
     while ((n = optget(argv, sh_optwhence))) {
