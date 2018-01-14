@@ -148,69 +148,71 @@ echo TODO: Enable when custom builtins of external commands is working.
 #
 # multibyte char straddling buffer boundary
 
-locale=C_EU.UTF-8
-
-{
-    unset i
-    integer i
-    for ((i = 0; i < 163; i++))
-    do    print "#234567890123456789012345678901234567890123456789"
-    done
-    printf $'%-.*c\n' 15 '#'
-    for ((i = 0; i < 2; i++))
-    do    print $': "\xe5\xae\x9f\xe8\xa1\x8c\xe6\xa9\x9f\xe8\x83\xbd\xe3\x82\x92\xe8\xa1\xa8\xe7\xa4\xba\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82" :'
-    done
-} > ko.dat
-
-LC_ALL=$locale $SHELL < ko.dat 2> /dev/null || err_exit "script with multibyte char straddling buffer boundary fails"
-
-#    exp    LC_ALL        LC_NUMERIC    LANG
-set -- \
-    2,5    $locale        C        ''        \
-    2.5    C        $locale        ''        \
-    2,5    $locale        ''        C        \
-    2,5    ''        $locale        C        \
-    2.5    C        ''        $locale        \
-    2.5    ''        C        $locale        \
-
-unset a b c
-unset LC_ALL LC_NUMERIC LANG
-integer a b c
-while (( $# >= 4 ))
-do
-    exp=$1
-    unset H V
-    typeset -A H
-    typeset -a V
-    [[ $2 ]] && V[0]="export LC_ALL=$2;"
-    [[ $3 ]] && V[1]="export LC_NUMERIC=$3;"
-    [[ $4 ]] && V[2]="export LANG=$4;"
-    for ((a = 0; a < 3; a++))
-    do
-        for ((b = 0; b < 3; b++))
-        do
-            if (( b != a ))
-            then
-                for ((c = 0; c < 3; c++))
-                do
-                    if (( c != a && c != b ))
-                    then
-                        T=${V[$a]}${V[$b]}${V[$c]}
-                        if [[ ! ${H[$T]} ]]
-                        then
-                            H[$T]=1
-                            got=$($SHELL -c "${T}print \$(( $exp ))" 2>&1)
-                            [[ $got == $exp ]] || err_exit "${T} sequence failed -- expected '$exp', got '$got'"
-                        fi
-                    fi
-                done
-            fi
-        done
-    done
-    shift 4
-done
-
+# See https://github.com/att/ast/issues/177
+#locale=C_EU.UTF-8
+#
+#{
+#    unset i
+#    integer i
+#    for ((i = 0; i < 163; i++))
+#    do    print "#234567890123456789012345678901234567890123456789"
+#    done
+#    printf $'%-.*c\n' 15 '#'
+#    for ((i = 0; i < 2; i++))
+#    do    print $': "\xe5\xae\x9f\xe8\xa1\x8c\xe6\xa9\x9f\xe8\x83\xbd\xe3\x82\x92\xe8\xa1\xa8\xe7\xa4\xba\xe3\x81\x97\xe3\x81\xbe\xe3\x81\x99\xe3\x80\x82" :'
+#    done
+#} > ko.dat
+#
+#LC_ALL=$locale $SHELL < ko.dat 2> /dev/null || err_exit "script with multibyte char straddling buffer boundary fails"
+#
+##    exp    LC_ALL        LC_NUMERIC    LANG
+#set -- \
+#    2,5    $locale        C        ''        \
+#    2.5    C        $locale        ''        \
+#    2,5    $locale        ''        C        \
+#    2,5    ''        $locale        C        \
+#    2.5    C        ''        $locale        \
+#    2.5    ''        C        $locale        \
+#
+#unset a b c
+#unset LC_ALL LC_NUMERIC LANG
+#integer a b c
+#while (( $# >= 4 ))
+#do
+#    exp=$1
+#    unset H V
+#    typeset -A H
+#    typeset -a V
+#    [[ $2 ]] && V[0]="export LC_ALL=$2;"
+#    [[ $3 ]] && V[1]="export LC_NUMERIC=$3;"
+#    [[ $4 ]] && V[2]="export LANG=$4;"
+#    for ((a = 0; a < 3; a++))
+#    do
+#        for ((b = 0; b < 3; b++))
+#        do
+#            if (( b != a ))
+#            then
+#                for ((c = 0; c < 3; c++))
+#                do
+#                    if (( c != a && c != b ))
+#                    then
+#                        T=${V[$a]}${V[$b]}${V[$c]}
+#                        if [[ ! ${H[$T]} ]]
+#                        then
+#                            H[$T]=1
+#                            got=$($SHELL -c "${T}print \$(( $exp ))" 2>&1)
+#                            [[ $got == $exp ]] || err_exit "${T} sequence failed -- expected '$exp', got '$got'"
+#                        fi
+#                    fi
+#                done
+#            fi
+#        done
+#    done
+#    shift 4
+#done
+#
 # setocale(LC_ALL,"") after setlocale() initialization
+
 locale=en_US.UTF-8
 
 printf 'f1\357\274\240f2\n' > input1
