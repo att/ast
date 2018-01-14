@@ -38,4 +38,5 @@ shared_c_args = []
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libcoshell')
+subdir('src/cmd/builtin')
 subdir('src/cmd/ksh93')

@@ -96,15 +96,22 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcommand\b(1), \bexec\b(1)]";
 
-#include "FEATURE/pty"
-#include <ast_systime.h>
+#if _hdr_pty
+#include <pty.h>
+#endif
+#if _hdr_util
+#include <util.h>
+#endif
+
 #include <cmd.h>
 #include <ctype.h>
 #include <error.h>
 #include <fcntl.h>
 #include <proc.h>
 #include <regex.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <termios.h>
 #include <vmalloc.h>
