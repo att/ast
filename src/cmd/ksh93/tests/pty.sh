@@ -48,7 +48,7 @@ x=$( $SHELL <<- \EOF
         #sleep 1
         jobs
         kill $$
-    EOF
+	EOF
 )
 [[ $x == *Stop* ]] && err_exit 'monitor mode enabled incorrectly causes job to stop'
 
