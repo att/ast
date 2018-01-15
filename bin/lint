@@ -1,0 +1,170 @@
+#!/usr/bin/env fish
+#
+# TODO: Rewrite this as a ksh script.
+#
+# Usage: bin/lint [--all] [directory_or_filename]...
+#
+# Run the source through various lint detection tools. If invoked with `-all` then all the
+# src/cmd/ksh93 source files will be linted. If invoked with one or more path names they
+# will be linted. If the pathname is a directory all *.c files inside it will be linted.
+# Otherwise any uncommitted source files are linted. If there is no uncommitted change
+# then the files in the most recent commit are linted.
+#
+set all no
+set cppchecks warning,performance,portability,information,missingInclude
+set enable_global_analysis
+set lint_args
+set c_files
+set files
+set kernel_name (uname -s)
+set machine_type (uname -m)
+
+if not test -d build
+or not test -f build/compile_commands.json
+    echo "You need to run `meson` to configure the build before we can lint the source." >&2
+    exit 1
+end
+
+# Deal with any CLI flags.
+while set -q argv[1]
+    if test "$argv[1]" = "--all"
+    or test "$argv[1]" = "all"
+        set all yes
+        set -e argv[1]
+    else
+        break
+    end
+end
+
+if test $all = yes
+and set -q argv[1]
+    echo "Unexpected arguments: '$argv'" >&2
+    exit 1
+end
+
+# Figure out which files to lint.
+if test $all = yes
+    set files src/cmd/ksh93/**.c
+else if set -q argv[1]
+    set files
+    for f in $argv
+        if test -f $argv
+            set files $files $f
+        else if test -d $argv
+            set files $files {$argv}**.c
+        end
+    end
+else
+    # We haven't been asked to lint all the source or specific files. If there are uncommitted
+    # changes lint those, else lint the files in the most recent commit.
+    # Select (cached files) (modified but not cached, and untracked files).
+    set files (git diff-index --cached HEAD --name-only)
+    set files $files (git ls-files --exclude-standard --others --modified)
+    if not set -q files[1]
+        # No pending changes so lint the files in the most recent commit.
+        set files (git diff-tree --no-commit-id --name-only -r HEAD)
+    end
+end
+
+# Filter out non C source files.
+set c_files
+for file in (string match -r '^.*\.c$' -- $files)
+    if test -f $file
+        set c_files $c_files ../$file
+    end
+end
+
+cd build
+
+# We need to limit the source modules to those for which we have build rules. We also need to
+# produce a version of the compile_commands.json file that only contains the files to be linted.
+# Finally, we need the `-D` and `-I` flags from the build rule for the IWYU and cppcheck programs.
+set project_file compile_commands_partial.json
+set defs_file cppcheck_defs
+set c_files (../bin/partition_compile_db compile_commands.json $project_file $defs_file \
+             $c_files)
+if not set -q c_files[1]
+    echo >&2
+    echo 'WARNING: No C files to check' >&2
+    echo >&2
+    exit 1
+end
+
+# On some platforms (e.g., macOS) oclint can't find the system headers. So ask the real compiler
+# to tell us where they are and pass that information to oclint.
+#
+# Passing this path via the compiler `-isystem` flag also keeps oclint from complaining about
+# problems with the system headers.
+#
+# We also need this value for cppcheck to find some system headers again, on platforms like macOS,
+# where the system headers aren't found at /usr/include.
+set system_hdrs (clang -H -E ../bin/hdrs.c 2>&1 | head -1 | sed -e 's/^\. //' -e 's/\/[^/]*$//')
+
+# On macOS the system headers used by `clang` may not be rooted at /usr/include.
+set lint_args $lint_args -I$system_hdrs
+
+# This is needed with clang on macOS. Without it `cppcheck` fails with
+# `#error Unsupported architecture` from `#include <sys/cdefs.h>`.
+if test "$machine_type" = "x86_64"
+    set lint_args $lint_args -D__x86_64__ -D__LP64__
+end
+
+set lint_args $lint_args (cat $defs_file)
+
+if type -q include-what-you-use
+    echo
+    echo ========================================
+    echo Running IWYU
+    echo ========================================
+    for c_file in $c_files
+        include-what-you-use -Xiwyu --transitive_includes_only --std=c99 \
+            -Wno-expansion-to-defined -Wno-nullability-completeness \
+            $lint_args $c_file 2>&1
+    end
+end
+
+if type -q cppcheck
+    echo
+    echo ========================================
+    echo Running cppcheck
+    echo ========================================
+    # The stderr to stdout redirection is because cppcheck, incorrectly IMHO, writes its
+    # diagnostic messages to stderr. Anyone running this who wants to capture its output will
+    # expect those messages to be written to stdout.
+    set -l cn (set_color normal | string trim --chars \cO)
+    set -l cb (set_color --bold)
+    set -l cu (set_color --underline)
+    set -l cm (set_color magenta)
+    set -l cbrm (set_color brmagenta)
+    set -l template "[$cb$cu{file}$cn$cb:{line}$cn] $cbrm{severity}$cm ({id}):$cn\n {message}"
+
+    # It should be possible to use --project=$project_file but cppcheck 1.82 doesn't correctly
+    # extract the -D and -I flags. So we do it ourselves and pass the flags on the cppcheck
+    # command line.
+    set cppcheck_args $lint_args -q --verbose --std=c99 --std=posix --language=c \
+        --template $template --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
+        --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
+
+    cppcheck $cppcheck_args $c_files 2>&1
+
+    echo
+    echo ========================================
+    echo 'Running `cppcheck --check-config` to identify missing includes and similar problems.'
+    echo 'Ignore unmatchedSuppression warnings as they are probably false positives we'
+    echo 'cannot suppress.'
+    echo ========================================
+    cppcheck $cppcheck_args --check-config $c_files 2>&1
+end
+
+if type -q oclint
+    echo
+    echo ========================================
+    echo Running oclint
+    echo ========================================
+    # A copy of this config file has to be in the CWD (the Meson build dir).
+    test -f .ocling
+    or cp ../.oclint .
+
+    oclint -p $PWD -enable-clang-static-analyzer $enable_global_analysis \
+        -extra-arg="-isystem" -extra-arg="$system_hdrs" $c_files
+end

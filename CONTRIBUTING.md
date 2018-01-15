@@ -75,10 +75,12 @@ of cleanup is required to reach that goal. For now simply try to avoid
 introducing new lint.
 
 To make linting the code easy there is the `bin/lint` command. If you
-pass it the magic string `all` it will lint all the code. If you pass
-it a list of files it will lint those. If run with no arguments it will
-lint any uncommitted source files. If there are no uncommitted files it
-will lint the files in the most recent commit.
+pass it the magic string `--all` it will lint all the *src/cmd/ksh93*
+code. If you pass it a list of files it will lint those. The paths can be
+directory names in which case all the source beneath that directory will
+be linted. If run with no arguments it will lint any uncommitted source
+files. If there are no uncommitted files it will lint the files in the
+most recent commit.
 
 ### Dealing With Lint Warnings
 
@@ -105,8 +107,17 @@ on the topic.
 ## Ensuring Your Changes Conform to the Style Guides
 
 The following sections discuss the specific rules for the style that
-should be used when writing AST ksh code. To ensure your changes conform
-to the style rules you simply need to run
+should be used when writing AST ksh code.
+
+To make restyling the code easy there is the `bin/style` command. If you
+pass it the magic string `--all` it will restyle all the *src/cmd/ksh93*
+code. If you pass it a list of files it will restyle those. The paths can be
+directory names in which case all the source beneath that directory will
+be restyled. If run with no arguments it will restyle any uncommitted source
+files. If there are no uncommitted files it will restyle the files in the
+most recent commit.
+
+To ensure your changes conform to the style rules you simply need to run
 
 ```sh
 bin/style
@@ -121,14 +132,6 @@ you've merged someone elses change and want to check that it's style
 is correct. However, in that case it will run `clang-format` to ensure
 the entire file, not just the lines modified by the commit, conform to
 the style.
-
-If you want to check the style of the entire code base run
-
-```sh
-bin/style all
-```
-
-That command will refuse to restyle any files if you have uncommitted changes.
 
 ### Configuring Your Editor
 

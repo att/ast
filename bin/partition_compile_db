@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+#
+# Usage: partition_compile_commands input.json output.json defs source_file...
+#
+# This filters the contents of the input.json compile commands database to
+# output.json including only those source modules listed on our command line.
+# It also writes all the -D and -I flags from the build command of the first
+# source file to the file named by the `defs` argument.
+#
+import json
+import shlex
+import sys
+
+input_build_db = sys.argv[1]
+output_build_db = sys.argv[2]
+defs_file = sys.argv[3]
+files_to_lint = set(sys.argv[4:])
+source_files = []
+
+
+# This assumes all the `-D` and `-I` flags we care about have the value
+# concatenated to the flag rather than separated by whitespace. If that
+# assumption ever becomes invalid this will need to become more complicated.
+def extract_defines(command_line):
+    for token in shlex.split(command_line):
+        if token.startswith("-D") or token.startswith("-I"):
+            yield token
+
+
+input_json = json.load(open(input_build_db, mode='r'))
+output_json = []
+for file_item in input_json:
+    if file_item["file"] in files_to_lint:
+        output_json.append(file_item)
+        source_files.append(file_item["file"])
+        files_to_lint.remove(file_item["file"])
+        if len(source_files) == 1:
+            with open(defs_file, mode="w") as fp:
+                for define in extract_defines(file_item["command"]):
+                    print(define, file=fp)
+
+json.dump(output_json, open(output_build_db, mode='w'), indent=4)
+if files_to_lint:
+    # There were source files for which we could not find a build rule.
+    for f in files_to_lint:
+        print("WARN: No build rule so ignoring file: {!r}".format(f),
+              file=sys.stderr)
+for f in source_files:
+    print(f)
+sys.exit(0)
