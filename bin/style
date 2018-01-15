@@ -1,0 +1,91 @@
+#!/usr/bin/env fish
+#
+# Usage: bin/style [--all] [source_filename]...
+#
+# Run the source through clang-format. If invoked with one or more path names they
+# will be restyled Otherwise any uncommitted source files are restyled If there is no uncommitted
+# change then the files in the most recent commit are restyled.
+#
+set git_clang_format no
+set c_files
+set files
+set all no
+
+if test "$argv[1]" = "--all"
+    set all yes
+    set -e argv[1]
+    if set -q argv[1]
+        echo "Unexpected arguments: '$argv'" >&2
+        exit 1
+    end
+else
+    set files $argv
+end
+
+if test $all = yes
+    set files (git status --porcelain --short --untracked-files=all | sed -e 's/^ *[^ ]* *//')
+    if set -q files[1]
+        echo >&2
+        echo You have uncommited changes. Cowardly refusing to restyle the entire code base. >&2
+        echo >&2
+        exit 1
+    end
+    set files src/**.h src/**.c
+else if not set -q files[1]
+    # We haven't been asked to reformat all the source or specific files. If there are
+    # uncommitted changes reformat those using `git clang-format`. Else reformat the
+    # files in the most recent commit. Select (cached files) (modified but not cached,
+    # and untracked files).
+    set files (git diff-index --cached HEAD --name-only) (git ls-files --exclude-standard --others --modified)
+    if set -q files[1]
+        set git_clang_format yes
+    else
+        # No pending changes so lint the files in the most recent commit.
+        set files (git diff-tree --no-commit-id --name-only -r HEAD)
+    end
+end
+
+# Extract just the C files that exist.
+for file in (string match -r '^.*\.(?:c|h)$' -- $files)
+    if test -f $file
+        set c_files $c_files $file
+    end
+end
+
+# Run the C reformatter if we have any C files.
+if not set -q c_files[1]
+    echo
+    echo 'WARNING: No C files to restyle'
+    echo
+    exit 1
+end
+
+if test $git_clang_format = yes
+    if type -q git-clang-format
+        echo
+        echo ========================================
+        echo Running git-clang-format
+        echo ========================================
+        git add $c_files
+        git-clang-format
+    else
+        echo
+        echo 'WARNING: Cannot find git-clang-format command'
+        echo
+    end
+else if type -q clang-format
+    echo
+    echo ========================================
+    echo Running clang-format
+    echo ========================================
+    for file in $c_files
+        cp $file $file.new # preserves mode bits
+        clang-format $file >$file.new
+        if cmp --quiet $file $file.new
+            rm $file.new
+        else
+            echo $file was NOT correctly formatted
+            mv $file.new $file
+        end
+    end
+end
