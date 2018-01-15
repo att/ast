@@ -17,4 +17,4 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#define SH_RELEASE "20180115+git.562.468e2eb"
+#define SH_RELEASE "93v- 2014-12-24"
