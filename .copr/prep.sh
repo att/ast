@@ -1,6 +1,13 @@
 #!/bin/sh -euf
 set -x
 
+# Copr sets clone depth to 500 to avoid cloning big repositories
+# however we use number of commits in version number, so fetch
+# full repository
+# If `get fetch --unshallow` fails, this means if we have full
+# repo, so ignore if it fails.
+git fetch --unshallow || :
+
 COMMIT=$(git rev-parse HEAD)
 COMMIT_SHORT=$(git rev-parse --short HEAD)
 COMMIT_NUM=$(git rev-list HEAD --count)
