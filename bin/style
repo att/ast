@@ -2,24 +2,31 @@
 #
 # Usage: bin/style [--all] [source_filename]...
 #
-# Run the source through clang-format. If invoked with one or more path names they
-# will be restyled Otherwise any uncommitted source files are restyled If there is no uncommitted
-# change then the files in the most recent commit are restyled.
+# Run the source through `clang-format`. If invoked with `-all` then all the
+# src/cmd/ksh93 source files will be linted. If invoked with one or more path names they
+# will be linted. If the pathname is a directory all *.c files inside it will be linted.
+# Otherwise any uncommitted source files are linted. If there is no uncommitted change
+# then the files in the most recent commit are linted.
 #
+set all no
 set git_clang_format no
 set c_files
 set files
-set all no
 
-if test "$argv[1]" = "--all"
-    set all yes
-    set -e argv[1]
-    if set -q argv[1]
-        echo "Unexpected arguments: '$argv'" >&2
-        exit 1
+# Deal with any CLI flags.
+while set -q argv[1]
+    if test "$argv[1]" = "--all"
+        set all yes
+        set -e argv[1]
+    else
+        break
     end
-else
-    set files $argv
+end
+
+if test $all = yes
+and set -q argv[1]
+    echo "Unexpected arguments: '$argv'" >&2
+    exit 1
 end
 
 if test $all = yes
@@ -30,22 +37,34 @@ if test $all = yes
         echo >&2
         exit 1
     end
-    set files src/**.h src/**.c
-else if not set -q files[1]
+    set files src/cmd/ksh93/**.c
+else if set -q argv[1]
+    set files
+    for f in $argv
+        if test -f $argv
+            set files $files $f
+        else if test -d $argv
+            set files $files {$argv}**.c {$argv}**.h
+        end
+    end
+else
     # We haven't been asked to reformat all the source or specific files. If there are
     # uncommitted changes reformat those using `git clang-format`. Else reformat the
     # files in the most recent commit. Select (cached files) (modified but not cached,
     # and untracked files).
-    set files (git diff-index --cached HEAD --name-only) (git ls-files --exclude-standard --others --modified)
+    set files (git diff-index --cached HEAD --name-only)
+    set files $files (git ls-files --exclude-standard --others --modified)
     if set -q files[1]
+        # Pending changes so restyle just the regions modified.
         set git_clang_format yes
     else
-        # No pending changes so lint the files in the most recent commit.
+        # No pending changes so restyle the files in the most recent commit.
         set files (git diff-tree --no-commit-id --name-only -r HEAD)
     end
 end
 
-# Extract just the C files that exist.
+# Filter out non C source files.
+set c_files
 for file in (string match -r '^.*\.(?:c|h)$' -- $files)
     if test -f $file
         set c_files $c_files $file
