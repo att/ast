@@ -46,28 +46,29 @@ install -p -D -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/binfmt.d/kshcomp.conf
 install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/kshrc
 install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/skel/.kshrc
 
+ln -s %{_bindir}/ksh %{buildroot}%{_bindir}/rksh
+
 %post
-if [ ! -f /etc/shells ]; then
-        echo "/bin/ksh" > /etc/shells
-        echo "/usr/bin/ksh" >> /etc/shells
-else
-        if ! grep -q '^/bin/ksh$' /etc/shells ; then
-                echo "/bin/ksh" >> /etc/shells
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
+do
+  if [ ! -f /etc/shells ]; then
+        echo "$s" > /etc/shells
+  else
+        if ! grep -q '^'"$s"'$' /etc/shells ; then
+                echo "$s" >> /etc/shells
         fi
-        if ! grep -q '^/usr/bin/ksh$' /etc/shells ; then
-                echo "/usr/bin/ksh" >> /etc/shells
-        fi
-fi
+  fi
+done
 
 /bin/systemctl try-restart systemd-binfmt.service >/dev/null 2>&1 || :
 
 %postun
-if [ ! -f /bin/ksh ]; then
-    sed -i '/^\/bin\/ksh$/ d' /etc/shells
-fi
-if [ ! -f /usr/bin/ksh ]; then
-    sed -i '/^\/usr\/bin\/ksh$/ d' /etc/shells
-fi
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
+do
+  if [ ! -f $s ]; then
+	sed -i '\|^'"$s"'$|d' /etc/shells
+  fi
+done
 
 %verifyscript
 echo -n "Looking for ksh in /etc/shells... "
@@ -82,6 +83,7 @@ fi
 %doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
 # LICENSE file is missing, temporarily?
 %{_bindir}/ksh
+%{_bindir}/rksh
 %{_bindir}/shcomp
 %{_libdir}/libast.so
 %{_libdir}/libcmd.so
