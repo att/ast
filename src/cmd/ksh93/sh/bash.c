@@ -37,7 +37,7 @@
 #endif
 #define BASH_VERSION BASH_MAJOR "." BASH_MINOR "." BASH_PATCH "(" BASH_BUILD ")-" BASH_RELEASE
 
-extern const char bash_pre_rc[];
+const char *bash_pre_rc = "";
 
 static char *login_files[4];
 

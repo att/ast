@@ -45,5 +45,4 @@ build/
 src/lib/libast/include/lc.h
 src/lib/libast/port/lctab.c
 src/lib/libast/features
-src/cmd/ksh93/data/bash_pre_rc.c
 src/cmd/ksh93/features/FEATURE/

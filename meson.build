@@ -2,7 +2,6 @@ project('ksh93', 'c', default_options: ['b_lundef=false'])
 system = host_machine.system()
 
 run_command('bin/libast_prereq.sh')
-run_command('bin/ksh93_prereq.sh')
 
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
