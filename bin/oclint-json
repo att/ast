@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+
+import os
+import platform
+import json
+import argparse
+import re
+import subprocess
+import sys
+
+OCLINT_BIN = "oclint"
+
+arg_parser = argparse.ArgumentParser(description='OCLint for JSON Compilation Database (compile_commands.json)')
+arg_parser.add_argument("-v", action="store_true", dest="invocation", help="show invocation command with arguments")
+arg_parser.add_argument('-debug', '--debug', action="store_true", dest="debug", help="invoke OCLint in debug mode")
+arg_parser.add_argument('-i', '-include', '--include', action='append', dest='includes', help="extract files matching pattern")
+arg_parser.add_argument('-e', '-exclude', '--exclude', action='append', dest='excludes', help="remove files matching pattern")
+arg_parser.add_argument('-p', action='store', metavar='build-path', dest='build_path', default=os.getcwd(),
+                        help="specify the directory containing compile_commands.json")
+arg_parser.add_argument('oclint_args', nargs='*', help="arguments that are passed to OCLint invocation")
+args = arg_parser.parse_args()
+
+def get_source_path(file_attr, dir_attr):
+    if file_attr.startswith(os.sep):
+        return file_attr
+    elif dir_attr.endswith(os.sep):
+        return dir_attr + file_attr
+    else:
+        return dir_attr + os.sep + file_attr
+
+def source_exist_at(path):
+    return os.path.isfile(path)
+
+def source_list_inclusion_filter(source_list, inclusion_filter):
+    filtered_list = []
+    for path in source_list:
+        if re.search(inclusion_filter, path):
+            filtered_list.append(path)
+    return filtered_list
+
+def source_list_exclusion_filter(source_list, exclusion_filter):
+    filtered_list = []
+    for path in source_list:
+        if not re.search(exclusion_filter, path):
+            filtered_list.append(path)
+    return filtered_list
+
+json_compilation_database = os.path.join(args.build_path, 'compile_commands.json')
+if not source_exist_at(json_compilation_database):
+    print("Error: compile_commands.json not found at %s." % args.build_path)
+    sys.exit(98)
+
+compilation_database = json.load(open(json_compilation_database))
+source_list = []
+for file_item in compilation_database:
+    file_path = file_item["file"]
+    file_path = get_source_path(file_item["file"], file_item["directory"])
+    if source_exist_at(file_path) and not file_path in source_list:
+        source_list.append(file_path)
+if args.includes:
+    matched_list = []
+    for inclusion_filter in args.includes:
+        matched_list.extend( source_list_inclusion_filter(source_list, inclusion_filter) )
+    source_list = matched_list
+if args.excludes:
+    for exclusion_filter in args.excludes:
+        source_list = source_list_exclusion_filter(source_list, exclusion_filter)
+oclint_arguments = [OCLINT_BIN, '-p', args.build_path]
+if args.oclint_args:
+    oclint_arguments += args.oclint_args
+if args.debug:
+    oclint_arguments.append('-debug')
+oclint_arguments += source_list
+if args.invocation:
+    print('------------------------------ OCLint ------------------------------')
+    print(subprocess.list2cmdline(oclint_arguments))
+    print('--------------------------------------------------------------------')
+print("WTF oclint_arguments %r" % (oclint_arguments,), file=sys.stderr)
+exit_code = subprocess.call(oclint_arguments)
+sys.exit(exit_code)
