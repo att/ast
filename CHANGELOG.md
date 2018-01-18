@@ -1,11 +1,17 @@
 # ksh x.y.z (version TBD, this is a work in progress)
 
+This is meant to document changes since the AST (including the `ksh`
+program) was open-sourced that will be in the next stable release based
+on the original AST code. The next stable version will be treated as a
+major release for several reasons. Not least of which is changing the
+build tool chain from the legacy Nmake system to Meson. Legacy changes
+can be found in the various `RELEASE` files.
+
 Starting in June 2017 maintenance of the Korn shell (`ksh`) resumed with
 the merging of some fixes from Red Hat by Siteshwar Vashisht after he was
 granted commit privilege. In October 2017 Kurtis Rader noticed that `ksh`
 had been open sourced and started contributing changes. This document
-was subsequently created to document the work being done. Whether the
-next stable version is considered a minor or major release is TBD.
+was subsequently created to document the work being done.
 
 ## Deprecations
 
@@ -35,10 +41,11 @@ None at this time.
   unconditionally included (e.g., the code protected by `SHOPT_MULTIBYTE`,
   `SHOPT_COMPLETE`, `SHOPT_BRACEPAT`, `SHOPT_RAWONLY`, `SHOPT_STATS,
   `SHOPT_OPTIMIZE`, `SHOPT_SUID_EXEC`, `SHOPT_FILESCAN`, `SHOPT_POLL,
-  and `SHOPT_SYSRC`).
+  `SHOPT_AUDIT`, and `SHOPT_SYSRC`).
 - Unit tests can now be run under `valgrind` to help detect more bugs.
 - Any code not needed to build and run `ksh` has been removed from the master
   branch.
-- Fixes backported from Solaris (issue #122).
+- Fixes backported from OpenSuse (issue #377).
 - Fixes backported from Red Hat Fedora and Enterprise Linux (RHEL) distros
   (issue #172).
+- Fixes backported from Solaris (issue #122).

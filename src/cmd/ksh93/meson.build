@@ -17,10 +17,6 @@ subdir('sh')
 #
 # TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
 # build the libast libdll code.
-#
-# TODO: Figure out if '-DSHOPT_AUDIT' and '-DSHOPT_AUDITFILE="/etc/ksh_audit"'
-# should be added. They are defined in the legacy beta branch build.
-# See issue #240.
 shared_c_args += [
     '-DUSAGE_LICENSE=""',
     '-D_PACKAGE_ast',

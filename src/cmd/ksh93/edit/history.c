@@ -44,14 +44,10 @@
 #define HIST_BSIZE 4096  // size of history file buffer
 #define HIST_DFLT 512    // default size of history list
 
-#if SHOPT_AUDIT
 #define _HIST_AUDIT  \
     Sfio_t *auditfp; \
     char *tty;       \
     int auditmask;
-#else  // SHOPT_AUDIT
-#define _HIST_AUDIT
-#endif  // SHOPT_AUDIT
 
 #define _HIST_PRIVATE                                                       \
     void *histshell;                                                        \
@@ -81,6 +77,10 @@
 #include <ctype.h>
 #endif  // KSHELL
 #include "history.h"
+
+#ifndef SHOPT_AUDITFILE
+#define SHOPT_AUDITFILE "/etc/ksh_audit"
+#endif  // SHOPT_AUDITFILE
 
 #if !KSHELL
 #define new_of(type, x) ((type *)calloc(sizeof(type) + (x), 1U))
@@ -157,7 +157,6 @@ static int acctinit(History_t *hp) {
 }
 #endif  // SHOPT_ACCTFILE
 
-#if SHOPT_AUDIT
 static int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t len) {
     char *cp, *last;
     int id1, id2, r = 0, n, fd;
@@ -180,7 +179,6 @@ done:
     sh_close(fd);
     return r;
 }
-#endif  // SHOPT_AUDIT
 
 static const unsigned char hist_stamp[2] = {HIST_UNDO, HIST_VERSION};
 static const Sfdisc_t hist_disc = {NULL, hist_write, NULL, hist_exceptf, NULL};
@@ -330,29 +328,27 @@ retry:
 #if SHOPT_ACCTFILE
     if (sh_isstate(shp, SH_INTERACTIVE)) acctinit(hp);
 #endif  // SHOPT_ACCTFILE
-#if SHOPT_AUDIT
-    {
-        char buff[SF_BUFSIZE];
-        hp->auditfp = 0;
-        if (sh_isstate(shp, SH_INTERACTIVE) &&
-            (hp->auditmask = sh_checkaudit(hp, SHOPT_AUDITFILE, buff, sizeof(buff)))) {
-            if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
-                              S_IRUSR | S_IWUSR)) >= 0 &&
-                fd < 10) {
-                int n;
-                if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {
-                    sh_close(fd);
-                    fd = n;
-                }
-            }
-            if (fd >= 0) {
-                fcntl(fd, F_SETFD, FD_CLOEXEC);
-                hp->tty = strdup(ttyname(2));
-                hp->auditfp = sfnew((Sfio_t *)0, NULL, -1, fd, SF_WRITE);
+
+    char buff[SF_BUFSIZE];
+    hp->auditfp = 0;
+    if (sh_isstate(shp, SH_INTERACTIVE) &&
+        (hp->auditmask = sh_checkaudit(hp, SHOPT_AUDITFILE, buff, sizeof(buff)))) {
+        if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
+                          S_IRUSR | S_IWUSR)) >= 0 &&
+            fd < 10) {
+            int n;
+            if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {
+                sh_close(fd);
+                fd = n;
             }
         }
+        if (fd >= 0) {
+            fcntl(fd, F_SETFD, FD_CLOEXEC);
+            hp->tty = strdup(ttyname(2));
+            hp->auditfp = sfnew((Sfio_t *)0, NULL, -1, fd, SF_WRITE);
+        }
     }
-#endif
+
     return 1;
 }
 
@@ -361,12 +357,10 @@ retry:
 //
 void hist_close(History_t *hp) {
     sfclose(hp->histfp);
-#if SHOPT_AUDIT
     if (hp->auditfp) {
         if (hp->tty) free(hp->tty);
         sfclose(hp->auditfp);
     }
-#endif  // SHOPT_AUDIT
     free((char *)hp);
     hist_ptr = 0;
     shgd->hist_ptr = 0;
@@ -701,6 +695,7 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
     char *bufptr = ((char *)buff) + insize;
     int c, size = insize;
     off_t cur;
+    Shell_t *shp = hp->histshell;
     int saved = 0;
     char saveptr[HIST_MARKSZ];
 
@@ -723,7 +718,6 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
     *bufptr++ = '\n';
     *bufptr++ = 0;
     size = bufptr - (char *)buff;
-#if SHOPT_AUDIT
     if (hp->auditfp) {
         time_t t = time((time_t *)0);
         sfprintf(hp->auditfp, "%u;%u;%s;%*s%c",
@@ -731,7 +725,6 @@ static int hist_write(Sfio_t *iop, const void *buff, int insize, Sfdisc_t *handl
                  buff, 0);
         sfsync(hp->auditfp);
     }
-#endif  // SHOPT_AUDIT
 #if SHOPT_ACCTFILE
     if (acctfd) {
         int timechars, offset;

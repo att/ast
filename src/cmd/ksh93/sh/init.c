@@ -52,10 +52,8 @@
 
 char e_version[] =
     "\n@(#)$Id: Version "
-#if SHOPT_AUDIT
 #define ATTRS 1
     "A"
-#endif
 #if SHOPT_BASH
 #define ATTRS 1
     "B"
