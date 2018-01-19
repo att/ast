@@ -51,36 +51,36 @@ shcomp_c_args = shared_c_args + [
 cpu = host_machine.cpu()
 system = host_machine.system()
 bash_machtype = cpu + '-unknown-'+ system
-ksh93_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
-shcomp_c_args += [ '-DBASH_MACHTYPE="' + bash_machtype + '"' ]
+ksh93_c_args += ['-DBASH_MACHTYPE="' + bash_machtype + '"']
+shcomp_c_args += ['-DBASH_MACHTYPE="' + bash_machtype + '"']
 
 newgrp = find_program('newgrp', required: false)
 ed = find_program('ed', required: false)
 tput = find_program('tput', required: false)
 
 if newgrp.found()
-    ksh93_c_args += [ '-D_cmd_newgrp=1' ]
-    shcomp_c_args += [ '-D_cmd_newgrp=1' ]
+    ksh93_c_args += ['-D_cmd_newgrp']
+    shcomp_c_args += ['-D_cmd_newgrp']
 endif
 
 if tput.found()
-    ksh93_c_args += [ '-D_cmd_tput=1' ]
-    shcomp_c_args += [ '-D_cmd_tput=1' ]
+    ksh93_c_args += ['-D_cmd_tput']
+    shcomp_c_args += ['-D_cmd_tput']
 endif
 
 if ed.found()
-    ksh93_c_args += [ '-D_pth_ed="' + ed.path() + '"' ]
-    shcomp_c_args += [ '-D_pth_ed="' + ed.path() + '"' ]
+    ksh93_c_args += ['-D_pth_ed="' + ed.path() + '"']
+    shcomp_c_args += ['-D_pth_ed="' + ed.path() + '"']
 else
-    ksh93_c_args += [ '-D_pth_ed="ed"' ]
-    shcomp_c_args += [ '-D_pth_ed="ed"' ]
+    ksh93_c_args += ['-D_pth_ed="ed"']
+    shcomp_c_args += ['-D_pth_ed="ed"']
 endif
 
 shopt_devfd_result = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
 
 if shopt_devfd_result.returncode() == 0
-    ksh93_c_args += [ '-DSHOPT_DEVFD=1' ]
-    shcomp_c_args += [ '-DSHOPT_DEVFD=1' ]
+    ksh93_c_args += ['-DSHOPT_DEVFD']
+    shcomp_c_args += ['-DSHOPT_DEVFD']
 endif
 
 cc = meson.get_compiler('c')
@@ -95,68 +95,32 @@ libdl_dep = cc.find_library('dl', required: false)
 # on others they are found in libexecinfo.
 execinfo_dep = cc.find_library('execinfo', required: false)
 if cc.has_header('execinfo.h')
-    ksh93_c_args += [ '-D_hdr_execinfo']
-    shcomp_c_args += [ '-D_hdr_execinfo']
+    ksh93_c_args += ['-D_hdr_execinfo']
+    shcomp_c_args += ['-D_hdr_execinfo']
 endif
 
 
 if cc.has_function('sigqueue', prefix: '#include <signal.h>')
-    ksh93_c_args += [ '-D_lib_sigqueue=1' ]
-    shcomp_c_args += [ '-D_lib_sigqueue=1' ]
+    ksh93_c_args += ['-D_lib_sigqueue']
+    shcomp_c_args += ['-D_lib_sigqueue']
 endif
 
-
-socketpair_shutdown_mode_test = '''
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <sys/socket.h>
-    int main() {
-        int sfd[2];
-        struct stat st0;
-        struct stat st1;
-        if (socketpair(AF_UNIX, SOCK_STREAM, 0, sfd) < 0 ||
-            shutdown(sfd[0], 1) < 0 ||
-            shutdown(sfd[1], 0) < 0) {
-                return 1;
-            }
-        if (fstat(sfd[0], &st0) < 0 || fstat(sfd[1], &st1) < 0) {
-            return 1;
-        }
-        if ((st0.st_mode & (S_IRUSR|S_IWUSR)) == S_IRUSR &&
-            (st1.st_mode & (S_IRUSR|S_IWUSR)) == S_IWUSR) {
-            return 1;
-        }
-        if (fchmod(sfd[0], S_IRUSR) < 0 ||
-            fstat(sfd[0], &st0) < 0 ||
-            (st0.st_mode & (S_IRUSR|S_IWUSR)) != S_IRUSR) {
-            return 1;
-        }
-        if (fchmod(sfd[1], S_IWUSR) < 0 ||
-            fstat(sfd[1], &st1) < 0 ||
-            (st1.st_mode & (S_IRUSR|S_IWUSR)) != S_IWUSR) {
-            return 1;
-        }
-        return 0;
-    }
-'''
-
-
-socketpair_shutdown_mode_result = cc.run(
-    socketpair_shutdown_mode_test,
+socketpair_shutdown_feature_file = files('features/socketpair_shutdown_feature.c')
+socketpair_shutdown_feature_result = cc.run(
+    socketpair_shutdown_feature_file,
     name: 'fchmod() after socketpair() shutdown()')
-
-if socketpair_shutdown_mode_result.returncode() == 0
-    ksh93_c_args += [ '-D_socketpair_shutdown_mode=1' ]
-    shcomp_c_args += [ '-D_socketpair_shutdown_mode=1' ]
+if socketpair_shutdown_feature_result.returncode() == 0
+    ksh93_c_args += ['-D_socketpair_shutdown_mode']
+    shcomp_c_args += ['-D_socketpair_shutdown_mode']
 endif
 
 if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
-    ksh93_c_args += [ '-DSTAT_ST_MTIM=1' ]
-    shcomp_c_args += [ '-DSTAT_ST_MTIM=1' ]
+    ksh93_c_args += ['-DSTAT_ST_MTIM']
+    shcomp_c_args += ['-DSTAT_ST_MTIM']
 elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
     # Under macOS modification time field is defined as mtimespec
-    ksh93_c_args += [ '-DSTAT_ST_MTIMESPEC=1' ]
-    shcomp_c_args += [ '-DSTAT_ST_MTIMESPEC=1' ]
+    ksh93_c_args += ['-DSTAT_ST_MTIMESPEC']
+    shcomp_c_args += ['-DSTAT_ST_MTIMESPEC']
 else
     error('Can not determine modification time field in struct stat')
 endif
