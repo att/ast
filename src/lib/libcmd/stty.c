@@ -65,6 +65,8 @@ static const char usage[] =
 #include <sys/ioctl.h>
 #endif
 
+#include "stty.h"
+
 #define C(x) ERROR_catalog(x)
 
 #ifndef _POSIX_VDISABLE

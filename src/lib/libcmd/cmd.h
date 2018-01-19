@@ -72,11 +72,14 @@ static int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalo
     char *cp;
     char *pp;
 
-    if (cp = strrchr(argv[0], '/'))
+    cp = strrchr(argv[0], '/');
+    if (cp) {
         cp++;
-    else
+    } else {
         cp = argv[0];
-    if (pp = strrchr(cp, '_')) cp = pp + 1;
+    }
+    pp = strrchr(cp, '_');
+    if (pp) cp = pp + 1;
     error_info.id = cp;
     if (!error_info.catalog) error_info.catalog = (char *)catalog;
     opt_info.index = 0;

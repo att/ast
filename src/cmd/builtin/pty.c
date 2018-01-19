@@ -96,18 +96,27 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcommand\b(1), \bexec\b(1)]";
 
-#include "FEATURE/pty"
-#include <ast_systime.h>
+#if _hdr_pty
+#include <pty.h>
+#endif
+#if _hdr_util
+#include <util.h>
+#endif
+
 #include <cmd.h>
 #include <ctype.h>
 #include <error.h>
 #include <fcntl.h>
 #include <proc.h>
 #include <regex.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <termios.h>
 #include <vmalloc.h>
+
+#include "stty.h"
 
 #define MODE_666 (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
 #define MAXNAME 64
@@ -121,50 +130,53 @@ static char *slavename(const char *name) {
     strncpy(sname, name, sizeof(sname));
     last = strrchr(sname, '/');
     last[1] = 't';
-    return (sname);
+    return sname;
 }
-#endif
+#endif  // !_lib_ptsname
 
 static char *master_name(char *name) {
     static char sname[MAXNAME];
     int n;
     if (!name) {
         strcpy(sname, _pty_first);
-        return (sname);
+        return sname;
     }
     n = strlen(_pty_first);
-    if (name[n - 1] == '9')
+    if (name[n - 1] == '9') {
         name[n - 1] = 'a';
-    else if (name[n - 1] == 'f') {
+    } else if (name[n - 1] == 'f') {
         if (_pty_first[n - 2] == '0' && name[n - 2] == '9') {
             name[n - 2] = '0';
             if (name[n - 3] == '9' || name[n - 3] == 'z') return (NULL);
             name[n - 3]++;
         }
         if (_pty_first[n - 2] == 'p' && (name[n - 2] == 'z' || name[n - 2] == 'Z')) {
-            if (name[n - 2] == 'z')
+            if (name[n - 2] == 'z') {
                 name[n - 2] == 'P';
-            else
-                return (0);
-        } else
+            } else {
+                return 0;
+            }
+        } else {
             name[n - 2]++;
+        }
         name[n - 1] = '0';
-    } else
+    } else {
         name[n - 1]++;
-    return (name);
+    }
+    return name;
 }
-#endif
+#endif  // !_lib_grantpt || !_lib_unlock
 
 #if !_lib_openpty
 static char *ptymopen(int *master) {
     char *slave = 0;
 #if _lib__getpty
     return (_getpty(master, O_RDWR, MODE_666, 0));
-#else
+#else  // _lib__getpty
 #if defined(_pty_clone)
     *master = open(_pty_clone, O_RDWR | O_CREAT, MODE_666);
     if (*master >= 0) slave = ptsname(*master);
-#else
+#else  // defined(_pty_clone)
     int fdm;
     char *name = 0;
     while (name = master_name(name)) {
@@ -173,88 +185,86 @@ static char *ptymopen(int *master) {
             *master = fdm;
 #if _lib_ptsname
             slave = ptsname(fdm);
-#else
+#else  // _lib_ptsname
             slave = slavename(name);
-#endif
+#endif  // _lib_ptsname
             break;
         }
     }
-#endif
-#endif
-    return (slave);
+#endif  // defined(_pty_clone)
+#endif  // _lib__getpty
+    return slave;
 }
-#endif
-#endif
+#endif  // !_lib_openpty
+#endif  // !_lib_openpty && !_lib__getpty && !defined(_pty_clone)
 
 static int mkpty(int *master, int *slave) {
     struct termios tty;
-    struct termios tst;
     struct termios *ttyp;
 #ifdef TIOCGWINSZ
     struct winsize win;
     struct winsize *winp;
-#endif
+#endif  // TIOCGWINSZ
 #if !_lib_openpty
     char *sname;
-#endif
-    /*
-     * some systems hang hard during the handshake
-     * if you know why then please let us know
-     */
-
+#endif  // !_lib_openpty
+    // Some systems hang hard during the handshake. If you know why then please let us know.
     alarm(4);
-    if (tcgetattr(sffileno(sfstderr), &tty) >= 0)
+    if (tcgetattr(sffileno(sfstderr), &tty) >= 0) {
         ttyp = &tty;
-    else {
+    } else {
         ttyp = 0;
         error(-1, "unable to get standard error terminal attributes");
     }
 #ifdef TIOCGWINSZ
-    if (ioctl(sffileno(sfstderr), TIOCGWINSZ, &win) >= 0)
+    if (ioctl(sffileno(sfstderr), TIOCGWINSZ, &win) >= 0) {
         winp = &win;
-    else {
+    } else {
         winp = 0;
         error(-1, "unable to get standard error window size");
     }
-#endif
+#endif  // TIOCGWINSZ
 #if _lib_openpty
     if (openpty(master, slave, NULL, ttyp, winp) < 0) return -1;
-#else
+#else  // _lib_openpty
 #if _lib_grantpt && _lib_unlockpt
 #if !_lib_posix_openpt
 #ifndef _pty_clone
 #define _pty_clone "/dev/ptmx"
-#endif
+#endif  // _pty_clone
 #define posix_openpt(m) open(_pty_clone, m)
-#endif
+#endif  // !_lib_posix_openpt
     if ((*master = posix_openpt(O_RDWR)) < 0) return -1;
     if (grantpt(*master) || unlockpt(*master) || !(sname = ptsname(*master)) ||
         (*slave = open(sname, O_RDWR | O_CLOEXEC)) < 0) {
         close(*master);
         return -1;
     }
-#else
+#else  // _lib_grantpt && _lib_unlockpt
     if (!(sname = ptymopen(master)) || (*slave = open(sname, O_RDWR | O_CLOEXEC)) < 0) return -1;
-#endif
+#endif  // _lib_grantpt && _lib_unlockpt
 #ifdef I_PUSH
+    struct termios tst;
     if (tcgetattr(*slave, &tst) < 0 &&
         (ioctl(*slave, I_PUSH, "ptem") < 0 || ioctl(*slave, I_PUSH, "ldterm") < 0)) {
         close(*slave);
         close(*master);
         return -1;
     }
-#endif
-#endif
-    if (ttyp && tcsetattr(*slave, TCSANOW, ttyp) < 0)
+#endif  // I_PUSH
+#endif  // _lib_openpty
+    if (ttyp && tcsetattr(*slave, TCSANOW, ttyp) < 0) {
         error(ERROR_warn(0), "unable to set pty terminal attributes");
+    }
 #ifdef TIOCSWINSZ
-    if (winp && ioctl(*slave, TIOCSWINSZ, winp) < 0)
+    if (winp && ioctl(*slave, TIOCSWINSZ, winp) < 0) {
         error(ERROR_warn(0), "unable to set pty window size");
-#endif
+    }
+#endif  // TIOCSWINSZ
     fcntl(*master, F_SETFD, FD_CLOEXEC);
 #if !O_CLOEXEC
     fcntl(*slave, F_SETFD, FD_CLOEXEC);
-#endif
+#endif  // !O_CLOEXEC
     alarm(0);
     return 0;
 }
@@ -274,10 +284,9 @@ static Proc_t *runcmd(char **argv, int slave, int session) {
     return procopen(argv[0], argv, NULL, ops, 0);
 }
 
-/*
- * default master dance
- */
-
+//
+// Default master dance.
+//
 static int process(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
     int i;
     int n;
@@ -291,8 +300,9 @@ static int process(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
 
     ip = sfstdin;
     if (!fstat(sffileno(ip), &dst) && !stat("/dev/null", &fst) && dst.st_dev == fst.st_dev &&
-        dst.st_ino == fst.st_ino)
+        dst.st_ino == fst.st_ino) {
         ip = 0;
+    }
     do {
         i = 0;
         t = timeout;
@@ -307,9 +317,9 @@ static int process(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
             break;
         }
         for (i = t = 0; i < n; i++) {
-            if (!(sfvalue(sps[i]) & SF_READ))
-                /*skip*/;
-            else if (sps[i] == mp) {
+            if (!(sfvalue(sps[i]) & SF_READ)) {
+                ;  // skip
+            } else if (sps[i] == mp) {
                 t++;
                 if (!(s = (char *)sfreserve(mp, SF_UNBOUND, -1))) {
                     sfclose(mp);
@@ -321,9 +331,9 @@ static int process(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                 }
             } else {
                 t++;
-                if (!(s = sfgetr(ip, '\n', 1)))
+                if (!(s = sfgetr(ip, '\n', 1))) {
                     ip = 0;
-                else if (sfputr(mp, s, '\r') < 0 || sfsync(mp)) {
+                } else if (sfputr(mp, s, '\r') < 0 || sfsync(mp)) {
                     error(ERROR_SYSTEM | 2, "write failed");
                     goto done;
                 }
@@ -335,10 +345,9 @@ done:
     return error_info.errors != 0;
 }
 
-/*
- * return 1 is extended re pattern matches text
- */
-
+//
+// Return 1 is extended re pattern matches text.
+//
 static int match(char *pattern, char *text, int must) {
     regex_t *re;
     int code;
@@ -348,16 +357,19 @@ static int match(char *pattern, char *text, int must) {
     if (pattern[0] == '?' && pattern[1] && !pattern[2]) {
         switch (pattern[1]) {
             case '0':
-            case '1':
-                if (text)
+            case '1': {
+                if (text) {
                     error(2, "got \"%s\"", fmtesq(text, "\""));
-                else
+                } else {
                     error(2, "got EOF");
+                }
                 return pattern[1] == '1';
-            case '.':
+            }
+            case '.': {
                 if (!text) return 1;
                 if (must) error(2, "expected EOF, got \"%s\"", fmtesq(text, "\""));
                 return 0;
+            }
         }
     }
     if (!text) {
@@ -377,27 +389,26 @@ static int match(char *pattern, char *text, int must) {
 }
 
 typedef struct Master_s {
-    Vmalloc_t *vm; /* allocation region			*/
-    char *ignore;  /* ignore master lines matching this re	*/
-    char *peek;    /* peek buffer pointer			*/
-    char *cur;     /* current line				*/
-    char *nxt;     /* next line				*/
-    char *end;     /* end of lines				*/
-    char *max;     /* end of buf				*/
-    char *buf;     /* current buffer			*/
-    char *prompt;  /* peek prompt				*/
-    int cursor;    /* cursor in buf, 0 if fresh line	*/
-    int line;      /* prompt line number			*/
-    int restore;   /* previous line save char		*/
+    Vmalloc_t *vm; // allocation region
+    char *ignore;  // ignore master lines matching this re
+    char *peek;    // peek buffer pointer
+    char *cur;     // current line
+    char *nxt;     // next line
+    char *end;     // end of lines
+    char *max;     // end of buf
+    char *buf;     // current buffer
+    char *prompt;  // peek prompt
+    int cursor;    // cursor in buf, 0 if fresh line
+    int line;      // prompt line number
+    int restore;   // previous line save char
 } Master_t;
-
-/*
- * read one line from the master
- */
 
 #define MASTER_EOF (-1)
 #define MASTER_TIMEOUT (-2)
 
+//
+// Read one line from the master.
+//
 static char *masterline(Sfio_t *mp, Sfio_t *lp, char *prompt, int must, int timeout, Master_t *bp) {
     char *r;
     char *s;
@@ -412,21 +423,23 @@ static char *masterline(Sfio_t *mp, Sfio_t *lp, char *prompt, int must, int time
 again:
     if (prompt) {
         if (bp->cur < bp->end && bp->restore >= 0) *bp->cur = bp->restore;
-        if (strneq(bp->cur, promptbuf, promptlen))
+        if (strneq(bp->cur, promptbuf, promptlen)) {
             r = bp->cur;
-        else
+        } else {
             r = 0;
+        }
         if (bp->cur < bp->end && bp->restore >= 0) *bp->cur = 0;
         if (r) {
             error(-1, "p \"%s\"", fmtnesq(promptbuf, "\"", promptlen));
             return r;
         }
-        if (r = bp->nxt) {
+        r = bp->nxt;
+        if (r) {
             if (strneq(r, promptbuf, promptlen)) {
                 error(-1, "p \"%s\"", fmtnesq(promptbuf, "\"", promptlen));
                 return r;
             }
-            while (r = memchr(r, '\n', bp->end - r)) {
+            while ((r = memchr(r, '\n', bp->end - r))) {
                 if (strneq(r, promptbuf, promptlen)) {
                     error(-1, "p \"%s\"", fmtnesq(promptbuf, "\"", promptlen));
                     return r;
@@ -445,16 +458,18 @@ again:
             bp->nxt = 0;
         } else {
             bp->cur = bp->nxt;
-            if (bp->nxt = memchr(bp->nxt + 1, '\n', bp->end - bp->nxt - 1)) bp->nxt++;
+            bp->nxt = memchr(bp->nxt + 1, '\n', bp->end - bp->nxt - 1);
+            if (bp->nxt) bp->nxt++;
         }
         goto done;
     }
     if ((n = sfpoll(&mp, 1, timeout)) <= 0 || !((int)sfvalue(mp) & SF_READ)) {
         if (n < 0) {
-            if (must)
+            if (must) {
                 error(ERROR_SYSTEM | 2, "poll failed");
-            else
+            } else {
                 error(-1, "r poll failed");
+            }
         } else if (bp->cur < bp->end) {
             if (bp->restore >= 0) {
                 *bp->cur = bp->restore;
@@ -469,9 +484,9 @@ again:
             }
             bp->cur = bp->end = bp->buf;
             goto done;
-        } else if (must >= 0)
+        } else if (must >= 0) {
             error(2, "read timeout");
-        else {
+        } else {
             errno = 0;
             error(-1, "r EOF");
         }
@@ -514,15 +529,18 @@ again:
     }
     memcpy(bp->end, s, n);
     bp->end += n;
-    if ((r = bp->cur) > bp->buf && bp->restore >= 0) *r = bp->restore;
-    if (bp->cur = memchr(bp->cur, '\n', bp->end - bp->cur)) {
+    r = bp->cur;
+    if (r > bp->buf && bp->restore >= 0) *r = bp->restore;
+    bp->cur = memchr(bp->cur, '\n', bp->end - bp->cur);
+    if (bp->cur) {
         bp->restore = *++bp->cur;
         *bp->cur = 0;
         if (bp->cur >= bp->end) {
             bp->cur = bp->end = bp->buf;
             bp->nxt = 0;
-        } else if (bp->nxt = memchr(bp->cur + 1, '\n', bp->end - bp->cur - 1))
+        } else if ((bp->nxt = memchr(bp->cur + 1, '\n', bp->end - bp->cur - 1))) {
             bp->nxt++;
+        }
         if (prompt) goto again;
     } else {
         bp->restore = -1;
@@ -538,7 +556,7 @@ done:
         r -= bp->cursor;
         bp->cursor = 0;
     }
-    for (t = 0, n = 0; *s; s++)
+    for (t = 0, n = 0; *s; s++) {
         if (*s == '\n') {
             if (t) {
                 *t++ = '\n';
@@ -547,10 +565,12 @@ done:
                 n = 0;
             }
         } else if (*s == '\r' && *(s + 1) != '\n') {
-            if (t = strchr(s + 1, '\r'))
+            t = strchr(s + 1, '\r');
+            if (t) {
                 n += t - s;
-            else
+            } else {
                 n += strlen(s);
+            }
             t = r;
         } else if (*s == '\a') {
             if (!t) t = s;
@@ -558,12 +578,15 @@ done:
             n++;
         } else if (*s == '\b') {
             if (!t) t = s;
-            if (t > r)
+            if (t > r) {
                 t--;
-            else
+            } else {
                 n++;
-        } else if (t)
+            }
+        } else if (t) {
             *t++ = *s;
+        }
+    }
     if (t) error(-3, "R \"%s\"", fmtesq(r, "\""));
     if (n) *(r + strlen(r) - n) = 0;
     error(-1, "r \"%s\"", fmtesq(r, "\""));
@@ -572,10 +595,6 @@ done:
     if (bp->ignore && match(bp->ignore, r, 0)) goto again;
     return r;
 }
-
-/*
- * execute dialogue script on stdin
- */
 
 #define NESTING 64
 
@@ -594,14 +613,17 @@ struct Cond_s {
     int flags;
 };
 
+//
+// Execute dialogue script on stdin.
+//
 static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
+    int line = 0;
     int op;
-    int line;
     int n;
     char *s;
     char *m;
     char *e;
-    char *id;
+    char *id = NULL;
     Vmalloc_t *vm;
     Cond_t *cond;
     Master_t *master;
@@ -623,24 +645,27 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
     error_info.id = 0;
     line = error_info.line;
     error_info.line = 0;
-    while (s = sfgetr(sfstdin, '\n', 1)) {
+    while ((s = sfgetr(sfstdin, '\n', 1))) {
         error_info.line++;
         while (isspace(*s)) s++;
         if ((op = *s++) && isspace(*s)) s++;
         switch (op) {
             case 0:
-            case '#':
+            case '#': {
                 break;
+            }
             case 'c':
-            case 'w':
+            case 'w': {
                 if (cond->flags & SKIP) continue;
-                if (master->prompt && !masterline(mp, lp, master->prompt, 0, timeout, master))
+                if (master->prompt && !masterline(mp, lp, master->prompt, 0, timeout, master)) {
                     goto done;
+                }
                 if (delay) usleep((unsigned long)delay * 1000);
-                if (op == 'w')
+                if (op == 'w') {
                     error(-1, "w \"%s\\r\"", s);
-                else
+                } else {
                     error(-1, "w \"%s\"", s);
+                }
                 if ((n = stresc(s)) >= 0) s[n] = 0;
                 if (sfputr(mp, s, op == 'w' ? '\n' : -1) < 0 || sfsync(mp)) {
                     error(ERROR_SYSTEM | 2, "write failed");
@@ -648,26 +673,30 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                 }
                 if (delay) usleep((unsigned long)delay * 1000);
                 break;
-            case 'd':
+            }
+            case 'd': {
                 delay = (int)strtol(s, &e, 0);
                 if (*e) error(2, "%s: invalid delay -- milliseconds expected", s);
                 break;
-            case 'i':
+            }
+            case 'i': {
                 if (!cond->next && !(cond->next = vmnewof(vm, 0, Cond_t, 1, 0))) {
                     error(ERROR_SYSTEM | 2, "out of space");
                     goto done;
                 }
                 cond = cond->next;
                 cond->flags = IF;
-                if ((cond->prev->flags & SKIP) && !(cond->text = 0) ||
-                    !(cond->text = masterline(mp, lp, 0, 0, timeout, master)))
+                if (((cond->prev->flags & SKIP) && !(cond->text = 0)) ||
+                    !(cond->text = masterline(mp, lp, 0, 0, timeout, master))) {
                     cond->flags |= KEPT | SKIP;
-                else if (match(s, cond->text, 0))
+                } else if (match(s, cond->text, 0)) {
                     cond->flags |= KEPT;
-                else
+                } else {
                     cond->flags |= SKIP;
+                }
                 break;
-            case 'e':
+            }
+            case 'e': {
                 if (!(cond->flags & IF)) {
                     error(2, "no matching i for e");
                     goto done;
@@ -678,52 +707,61 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                         goto done;
                     }
                     cond->flags |= ELSE;
-                    if (cond->flags & KEPT)
+                    if (cond->flags & KEPT) {
                         cond->flags |= SKIP;
-                    else {
+                    } else {
                         cond->flags |= KEPT;
                         cond->flags &= ~SKIP;
                     }
-                } else if ((cond->flags & KEPT) || !match(s, cond->text, 0))
+                } else if ((cond->flags & KEPT) || !match(s, cond->text, 0)) {
                     cond->flags |= SKIP;
-                else
+                } else {
                     cond->flags |= KEPT;
+                }
                 break;
-            case 'f':
+            }
+            case 'f': {
                 if (!(cond->flags & IF)) {
                     error(2, "no matching i for f");
                     goto done;
                 }
                 cond = cond->prev;
                 break;
-            case 'm':
+            }
+            case 'm': {
                 if (cond->flags & SKIP) continue;
                 if (sfputr(sfstderr, s, '\n') < 0 || sfsync(sfstderr)) {
                     error(ERROR_SYSTEM | 2, "standard error write failed");
                     goto done;
                 }
                 break;
-            case 'p':
+            }
+            case 'p': {
                 if (cond->flags & SKIP) continue;
                 if (!(m = masterline(mp, lp, s, 1, timeout, master))) goto done;
                 break;
-            case 'r':
+            }
+            case 'r': {
                 if (cond->flags & SKIP) continue;
                 if (!(m = masterline(mp, lp, 0, s[0] == '?' && s[1] == '.' ? -1 : 1, timeout,
-                                     master)))
+                                     master))) {
                     goto done;
+                }
                 match(s, m, 1);
                 break;
-            case 's':
+            }
+            case 's': {
                 n = (int)strtol(s, &e, 0);
                 if (*e) error(2, "%s: invalid delay -- milliseconds expected", s);
                 if (n) usleep((unsigned long)n * 1000);
                 break;
-            case 't':
+            }
+            case 't': {
                 timeout = (int)strtol(s, &e, 0);
                 if (*e) error(2, "%s: invalid timeout -- milliseconds expected", s);
                 break;
-            case 'u':
+            }
+            case 'u': {
                 if (cond->flags & SKIP) continue;
                 do {
                     if (!(m = masterline(mp, lp, 0, -1, timeout, master))) {
@@ -732,15 +770,18 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                     }
                 } while (!match(s, m, 0));
                 break;
-            case 'v':
+            }
+            case 'v': {
                 error_info.trace = -(int)strtol(s, &e, 0);
                 if (*e) error(2, "%s: invalid verbose level -- number expected", s);
                 break;
-            case 'x':
+            }
+            case 'x': {
                 status = (int)strtol(s, &e, 0);
                 if (*e) error(2, "%s: invalid exit code", s);
                 break;
-            case 'I':
+            }
+            case 'I': {
                 if (master->ignore) {
                     vmfree(vm, master->ignore);
                     master->ignore = 0;
@@ -750,7 +791,8 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                     goto done;
                 }
                 break;
-            case 'L':
+            }
+            case 'L': {
                 if (error_info.id) {
                     vmfree(vm, error_info.id);
                     error_info.id = 0;
@@ -760,7 +802,8 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                     goto done;
                 }
                 break;
-            case 'P':
+            }
+            case 'P': {
                 if (master->prompt) {
                     vmfree(vm, master->prompt);
                     master->prompt = 0;
@@ -770,10 +813,12 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                     goto done;
                 }
                 break;
-            default:
+            }
+            default: {
                 if (cond->flags & SKIP) continue;
                 error(2, "'%c': unknown op", op);
                 goto done;
+            }
         }
     }
     if (cond->prev) error(2, "missing 1 or more f statements");
@@ -813,50 +858,63 @@ int b_pty(int argc, char **argv, Shbltin_t *context) {
     int (*fun)(Sfio_t *, Sfio_t *, int, int) = process;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
-    for (;;) {
+    while (1) {
         switch (optget(argv, usage)) {
-            case 'd':
+            case 'd': {
                 if (opt_info.num) fun = dialogue;
                 continue;
-            case 'D':
+            }
+            case 'D': {
                 error_info.trace = -(int)opt_info.num;
                 continue;
-            case 'l':
+            }
+            case 'l': {
                 log = opt_info.arg;
-            case 'm':
+            }
+            case 'm': {
                 messages = opt_info.arg;
                 continue;
-            case 's':
+            }
+            case 's': {
                 session = !!opt_info.num;
                 continue;
-            case 't':
+            }
+            case 't': {
                 timeout = (int)opt_info.num;
                 continue;
-            case 'T':
+            }
+            case 'T': {
                 stty = opt_info.arg;
                 continue;
-            case 'w':
+            }
+            case 'w': {
                 delay = (int)opt_info.num;
                 continue;
-            case ':':
+            }
+            case ':': {
                 break;
-            case '?':
+            }
+            case '?': {
                 error(ERROR_usage(2), "%s", opt_info.arg);
                 break;
+            }
         }
         break;
     }
     argv += opt_info.index;
     if (!argv[0]) error(ERROR_exit(1), "command must be specified");
     if (mkpty(&master, &slave) < 0) error(ERROR_system(1), "unable to create pty");
-    if (!(mp = sfnew(NULL, 0, SF_UNBOUND, master, SF_READ | SF_WRITE)))
+    if (!(mp = sfnew(NULL, 0, SF_UNBOUND, master, SF_READ | SF_WRITE))) {
         error(ERROR_system(1), "cannot open master stream");
+    }
     if (stty) {
         n = 2;
-        for (s = stty; *s; s++)
+        for (s = stty; *s; s++) {
             if (isspace(*s)) n++;
-        if (!(ap = newof(0, Argv_t, 1, (n + 2) * sizeof(char *) + (s - stty + 1))))
+        }
+        if (!(ap = newof(0, Argv_t, 1, (n + 2) * sizeof(char *) + (s - stty + 1)))) {
             error(ERROR_system(1), "out of space");
+        }
         ap->argc = n + 1;
         ap->argv = (char **)(ap + 1);
         ap->args = (char *)(ap->argv + n + 2);
@@ -864,30 +922,34 @@ int b_pty(int argc, char **argv, Shbltin_t *context) {
         ap->argv[0] = "stty";
         sfsprintf(ap->argv[1] = buf, sizeof(buf), "--fd=%d", slave);
         ap->argv[2] = s = ap->args;
-        for (n = 2; *s; s++)
+        for (n = 2; *s; s++) {
             if (isspace(*s)) {
                 *s = 0;
                 ap->argv[++n] = s + 1;
             }
+        }
         ap->argv[n + 1] = 0;
         b_stty(ap->argc, ap->argv, 0);
     }
-    if (!log)
+    if (!log) {
         lp = 0;
-    else if (!(lp = sfopen(NULL, log, "w")))
+    } else if (!(lp = sfopen(NULL, log, "w"))) {
         error(ERROR_system(1), "%s: cannot write", log);
-    if (!(proc = runcmd(argv, slave, session))) error(ERROR_system(1), "unable run %s", argv[0]);
+    }
+    proc = runcmd(argv, slave, session);
+    if (!proc) error(ERROR_system(1), "unable run %s", argv[0]);
     close(slave);
     if (messages) {
         drop = 1;
-        if (strneq(messages, "/dev/fd/", 8))
+        if (strneq(messages, "/dev/fd/", 8)) {
             fd = atoi(messages + 8);
-        else if (streq(messages, "/dev/stdout"))
+        } else if (streq(messages, "/dev/stdout")) {
             fd = 1;
-        else if ((fd = open(messages, O_CREAT | O_WRONLY, MODE_666)) >= 0)
+        } else if ((fd = open(messages, O_CREAT | O_WRONLY, MODE_666)) >= 0) {
             drop = 0;
-        else
+        } else {
             error(ERROR_system(1), "%s: cannot redirect messages", messages);
+        }
         close(2);
         dup(fd);
         if (drop) close(fd);
