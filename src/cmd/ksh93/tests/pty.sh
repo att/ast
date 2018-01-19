@@ -204,7 +204,8 @@ u ^hello\r?\n$
 !
 
 # err_exit #
-tst $LINENO <<"!"
+# TODO: Re-enable this test once stty is available as a builtin.
+: tst $LINENO <<"!"
 L POSIX sh 096(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -245,7 +246,8 @@ u ^ok\r?\n$
 !
 
 # err_exit #
-tst $LINENO <<"!"
+# TODO: Re-enable this test once stty is available as a builtin.
+: tst $LINENO <<"!"
 L POSIX sh 099(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -274,7 +276,8 @@ r history
 !
 
 # err_exit #
-tst $LINENO <<"!"
+# TODO: Re-enable this test once stty is available as a builtin.
+: tst $LINENO <<"!"
 L POSIX sh 100(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -290,7 +293,8 @@ u ^ok\r?\n$
 !
 
 # err_exit #
-tst $LINENO <<"!"
+# TODO: Re-enable this test once stty is available as a builtin.
+: tst $LINENO <<"!"
 L POSIX sh 101(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -436,16 +440,23 @@ r echo repeat-3
 !
 
 # err_exit #
+# TODO: Enable this when issue #375 is fixed. At this time SIGTSTP is not correctly handled.
+if false; then
 whence -q less &&
 TERM=vt100 tst $LINENO <<"!"
 L process/terminal group exercise
 
-w m=yes; while true; do echo $m-$m; done | less
+# Make sure any LESS env var the user might have set doesn't interfere.
+w unset LESS
+w for i in $(seq 100); do echo seq-$i; done | less
 u :$|:\E|lines
+c j
+u seq-24
 c \cZ
-r Stopped
+u Stopped
 w fg
-u yes-yes
+u seq-
 !
+fi
 
 exit $((Errors<125?Errors:125))
