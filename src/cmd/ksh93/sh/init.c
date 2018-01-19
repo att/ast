@@ -1416,7 +1416,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #endif  // SHOPT_TIMEOUT
     // Initialize jobs table.
     job_clear(shp);
-    sh_onoption(shp, SH_MULTILINE);
+
     if (argc > 0) {
         int dolv_index = -1;
         // Check for restricted shell.
