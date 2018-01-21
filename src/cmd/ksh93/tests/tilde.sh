@@ -29,7 +29,7 @@ alias err_exit='err_exit $LINENO'
 Command=${0##*/}
 integer Errors=0
 
-tmp=$(mktemp -dt tmp.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
+tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
 trap "cd /; rm -rf $tmp" EXIT
 
 if $SHELL -c '[[ ~root == /* ]]'

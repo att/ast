@@ -164,7 +164,7 @@ done
 (( d==2000 )) ||  err_exit "trap '' CHLD  causes side effects d=$d"
 trap - CHLD
 
-tmp=$(mktemp -dt tmp.XXXXXXXXXX)
+tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX)
 trap 'rm -rf $tmp' EXIT
 x=$($SHELL 2> /dev/null -ic '/bin/notfound; sleep .5 & sleep 1;jobs')
 [[ $x == *Done* ]] || err_exit 'SIGCHLD blocked after notfound'

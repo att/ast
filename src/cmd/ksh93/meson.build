@@ -195,7 +195,7 @@ foreach testspec : all_tests
         if locale != ''
             locale = '/' + locale
         endif
-        test(testname + locale, ksh93_exe, timeout: timeout, args: [test_path],
+        test(testname + locale, ksh93_exe, timeout: timeout, args: [test_path, testname],
              env: [shell_var, lang_var, ld_library_path])
     endforeach
 
@@ -203,7 +203,7 @@ foreach testspec : all_tests
     lang_var = 'LANG='
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
-             args: [ shcomp_test_path, test_path],
+             args: [ shcomp_test_path, test_path, testname],
              env: [shell_var, lang_var, shcomp_var, ld_library_path])
     endif
 endforeach
