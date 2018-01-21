@@ -6,6 +6,10 @@ run_command('bin/libast_prereq.sh')
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
 
+if system == 'darwin'
+    add_project_arguments('-D_DARWIN_C_SOURCE', language: 'c')
+endif
+
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
