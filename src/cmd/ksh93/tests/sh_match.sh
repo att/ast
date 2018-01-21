@@ -65,7 +65,7 @@ typeset tmpdir
 
 # create temporary test directory
 ocwd="${PWD}"
-tmpdir="${ mktemp -t -d 'test_sh_match.XXXXXXXX' ; }" || err_exit 'Cannot create temporary directory.'
+tmpdir=$(mktemp -dt ksh.${Command}.XXXXXXXXXX ) || err_exit 'Cannot create temporary directory.'
 
 cd "${tmpdir}" || { err_exit "cd ${tmpdir} failed." ; exit $((Errors<125?Errors:125)) ; }
 
