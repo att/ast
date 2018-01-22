@@ -37,7 +37,7 @@ with "sh" (the Bourne Shell).
 %autosetup -n ast-%{commit}
 
 %build
-%meson
+%meson -Dbuild-pty=false
 %meson_build
 
 %install
