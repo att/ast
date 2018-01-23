@@ -14,4 +14,4 @@ libcoshell = library('coshell', libcoshell_files,
                      include_directories: libcoshell_incdir,
                      c_args: libcoshell_c_args,
                      link_with: libast,
-                     install: true)
+                     install: get_option('default_library') == 'shared')

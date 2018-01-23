@@ -95,4 +95,4 @@ libast = library('ast', libast_files,
                  include_directories: incdir,
                  c_args: libast_c_args,
                  dependencies: [libm_dep, libiconv_dep, libcatgets_dep],
-                 install: true)
+                 install: get_option('default_library') == 'shared')

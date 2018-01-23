@@ -1,4 +1,4 @@
-project('ksh93', 'c', default_options: ['b_lundef=false'])
+project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
 system = host_machine.system()
 
 run_command('bin/libast_prereq.sh')
