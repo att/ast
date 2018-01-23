@@ -85,9 +85,6 @@ fi
 %{_bindir}/ksh
 %{_bindir}/rksh
 %{_bindir}/shcomp
-%{_libdir}/libast.so
-%{_libdir}/libcmd.so
-%{_libdir}/libcoshell.so
 %{_mandir}/man1/ksh.1*
 %config(noreplace) %{_sysconfdir}/skel/.kshrc
 %config(noreplace) %{_sysconfdir}/kshrc
