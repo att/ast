@@ -18,26 +18,19 @@ subdir('sh')
 # TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
 # build the libast libdll code.
 shared_c_args += [
-    '-DUSAGE_LICENSE=""',
     '-D_PACKAGE_ast',
     '-D_BLD_shell',
-    '-D_API_ast=20130625',
     '-DERROR_CONTEXT_T=Error_context_t',
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
-    '-D_ast_sizeof_int=@0@'.format(cc.sizeof('int')),
-    '-D_ast_sizeof_long=@0@'.format(cc.sizeof('long')),
-    '-D_ast_sizeof_size_t=@0@'.format(cc.sizeof('size_t')),
-    '-D_ast_sizeof_off_t=@0@'.format(cc.sizeof('off_t')),
-    '-D_ast_sizeof_pointer=@0@'.format(cc.sizeof('void*'))
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for
 # ksh93 versus shcomp and if there is a good reason add a comment why they are
 # defined differently.
 ksh93_c_args = shared_c_args + [
-    '-DERROR_CATALOG=0',
+    '-DERROR_CATALOG=NULL',
 ]
 
 shcomp_c_args = shared_c_args + [
@@ -73,64 +66,21 @@ else
 endif
 
 shopt_devfd_result = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
-
 if shopt_devfd_result.returncode() == 0
     ksh93_c_args += ['-DSHOPT_DEVFD']
     shcomp_c_args += ['-DSHOPT_DEVFD']
 endif
 
-cc = meson.get_compiler('c')
-# On some platforms the math functions (e.g., `sin()`) that we need are found in
-# libc, on others they are found in libm.
-m_dep = cc.find_library('m', required: false)
-# On some platforms `dladdr()` and related functions are found in libc,
-# on others they are found in libdl.
-libdl_dep = cc.find_library('dl', required: false)
-
-# On some platforms `backtrace()` and related functions are found in libc,
-# on others they are found in libexecinfo.
-execinfo_dep = cc.find_library('execinfo', required: false)
-if cc.has_header('execinfo.h')
-    ksh93_c_args += ['-D_hdr_execinfo']
-    shcomp_c_args += ['-D_hdr_execinfo']
-endif
-
-
-if cc.has_function('sigqueue', prefix: '#include <signal.h>')
-    ksh93_c_args += ['-D_lib_sigqueue']
-    shcomp_c_args += ['-D_lib_sigqueue']
-endif
-
-socketpair_shutdown_feature_file = files('features/socketpair_shutdown_feature.c')
-socketpair_shutdown_feature_result = cc.run(
-    socketpair_shutdown_feature_file,
-    name: 'fchmod() after socketpair() shutdown()')
-if socketpair_shutdown_feature_result.returncode() == 0
-    ksh93_c_args += ['-D_socketpair_shutdown_mode']
-    shcomp_c_args += ['-D_socketpair_shutdown_mode']
-endif
-
-if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
-    ksh93_c_args += ['-DSTAT_ST_MTIM']
-    shcomp_c_args += ['-DSTAT_ST_MTIM']
-elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
-    # Under macOS modification time field is defined as mtimespec
-    ksh93_c_args += ['-DSTAT_ST_MTIMESPEC']
-    shcomp_c_args += ['-DSTAT_ST_MTIMESPEC']
-else
-    error('Can not determine modification time field in struct stat')
-endif
-
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: ksh93_incdir,
     link_with: [libast, libcmd, libcoshell],
-    dependencies: [m_dep, execinfo_dep, libdl_dep],
+    dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
 shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
     include_directories: ksh93_incdir,
     link_with: [ libast, libcmd, libcoshell],
-    dependencies: [ m_dep, execinfo_dep, libdl_dep ],
+    dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
 install_man('ksh.1')

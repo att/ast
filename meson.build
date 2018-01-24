@@ -1,4 +1,5 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
+cc = meson.get_compiler('c')
 system = host_machine.system()
 
 run_command('bin/libast_prereq.sh')
@@ -34,11 +35,27 @@ hosttype_cmd=run_command('bin/hosttype')
 hosttype=hosttype_cmd.stdout().strip()
 add_project_arguments('-DHOSTTYPE="' + hosttype + '"', language: 'c')
 
-# Compiler arguments used by ksh93 and shcomp executables. The aso feature
-# tests need to modify this variable, so declaring it before libast meson
-# build file is processed.
-shared_c_args = []
+# Compiler arguments used when building `ksh93`, `shcomp`, and related AST
+# code. These are primarily `-Dsome_symbol` flags that define which features
+# the platform provides.
+ptr_size = cc.sizeof('void*')
+int_size = cc.sizeof('int')
+long_size = cc.sizeof('long')
+size_t_size = cc.sizeof('size_t')
+off_t_size = cc.sizeof('off_t')
 
+shared_c_args = [
+    '-DUSAGE_LICENSE=""',
+    '-D_API_ast=20130625',
+    '-D_ast_sizeof_int=@0@'.format(int_size),
+    '-D_ast_sizeof_long=@0@'.format(long_size),
+    '-D_ast_sizeof_size_t=@0@'.format(size_t_size),
+    '-D_ast_sizeof_off_t=@0@'.format(off_t_size),
+    '-D_ast_sizeof_pointer=@0@'.format(ptr_size),
+    '-D_ptr_bits=@0@'.format(ptr_size * 8),
+]
+
+subdir('features')
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libcoshell')

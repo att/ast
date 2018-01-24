@@ -1,0 +1,4 @@
+This directory contains code for platform feature detection. Such as which
+header files are available, functions, syscalls, system libraries and whether
+syscalls/functions provide specific functionality. It does not contain any
+code included in `ksh`.
