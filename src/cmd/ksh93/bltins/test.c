@@ -382,7 +382,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         }
         case 'a':
         case 'e': {
-            if (memcmp(arg, "/dev/", 5) == 0 && sh_open(arg, O_NONBLOCK)) return (1);
+            if (strncmp(arg, "/dev/", 5) == 0 && sh_open(arg, O_NONBLOCK)) return (1);
             return permission(arg, F_OK);
         }
         case 'o': {

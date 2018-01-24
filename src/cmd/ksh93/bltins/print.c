@@ -574,7 +574,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
     } else if (nv_isarray(np) && (ap = nv_arrayptr(np)) && array_elem(ap) &&
                (ap->flags & (ARRAY_UNDEF | ARRAY_SCAN))) {
         Namval_t *nspace = shp->namespace;
-        if (*string == '.' && memcmp(string, ".sh.", 4)) shp->namespace = shp->last_table;
+        if (*string == '.' && strncmp(string, ".sh.", 4)) shp->namespace = shp->last_table;
         nv_outnode(np, iop, (alt ? -1 : 0), 0);
         sfputc(iop, ')');
         shp->namespace = nspace;
@@ -582,13 +582,13 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
     } else {
         Namval_t *nspace = shp->namespace;
         if (alt == 1 && nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
-        if (fmt && memcmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
+        if (fmt && strncmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
         if (*string == '.') shp->namespace = 0;
         cp = nv_getval(np);
         if (*string == '.') shp->namespace = nspace;
         if (alt == 1) {
             nv_offattr(np, NV_EXPORT);
-        } else if (fmt && memcmp(fmt, "json", 4) == 0) {
+        } else if (fmt && strncmp(fmt, "json", 4) == 0) {
             nv_offattr(np, NV_JSON);
         }
 

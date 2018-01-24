@@ -2470,7 +2470,7 @@ Sfio_t *sh_pathopen(Shell_t *shp, const char *cp) {
 Sfio_t *sh_pathopen(const char *cp) { return (sh_pathopen_20120720(sh_getinterp(), cp)); }
 
 bool sh_isdevfd(const char *fd) {
-    if (!fd || memcmp(fd, "/dev/fd/", 8) || fd[8] == 0) return false;
+    if (!fd || strncmp(fd, "/dev/fd/", 8) || fd[8] == 0) return false;
     for (fd = &fd[8]; *fd != '\0'; fd++) {
         if (*fd < '0' || *fd > '9') return false;
     }

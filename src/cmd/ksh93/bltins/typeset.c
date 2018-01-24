@@ -579,7 +579,7 @@ static int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     if (!np) {
                         if (np = nv_search(name, troot, 0)) {
                             if (!is_afunction(np)) np = 0;
-                        } else if (memcmp(name, ".sh.math.", 9) == 0 && sh_mathstd(name + 9)) {
+                        } else if (strncmp(name, ".sh.math.", 9) == 0 && sh_mathstd(name + 9)) {
                             continue;
                         }
                     }

@@ -1386,7 +1386,7 @@ static bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Path
             }
             *cp = 0;
             m = ep ? (ep - sp) : 0;
-            if (m == 0 || (m == 6 && memcmp((void *)sp, (void *)"FPATH=", m) == 0)) {
+            if (m == 0 || (m == 6 && strncmp(sp, "FPATH=", m) == 0)) {
                 if (first) {
                     char *ptr = stkptr(shp->stk, offset + pp->len + 1);
                     size_t len = strlen(ep);
@@ -1394,10 +1394,10 @@ static bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Path
                     path_addcomp(shp, first, old, stkptr(shp->stk, offset),
                                  PATH_FPATH | PATH_BFPATH);
                 }
-            } else if (m == 11 && memcmp((void *)sp, (void *)"PLUGIN_LIB=", m) == 0) {
+            } else if (m == 11 && strncmp(sp, "PLUGIN_LIB=", m) == 0) {
                 if (pp->bbuf) free(pp->bbuf);
                 pp->blib = pp->bbuf = strdup(ep);
-            } else if (m == 4 && memcmp((void *)sp, (void *)"BIN=1", m) == 0) {
+            } else if (m == 4 && strncmp(sp, "BIN=1", m) == 0) {
                 pp->flags |= PATH_BIN;
             } else if (m) {
                 size_t z;

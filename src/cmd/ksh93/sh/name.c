@@ -992,7 +992,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                                 nv_onattr(np, nofree);
                                 nofree = 0;
                                 np = nq;
-                            } else if (memcmp(cp, "[0]", 3)) {
+                            } else if (strncmp(cp, "[0]", 3)) {
                                 return nq;
                             } else {
                                 // Ignore [0].

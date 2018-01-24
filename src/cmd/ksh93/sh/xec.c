@@ -1371,7 +1371,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                 char *ep;
                                 bool type = 0;
                                 cp = np->nvname + 1;
-                                if (memcmp(cp, "sh.type.", 8) == 0) {
+                                if (strncmp(cp, "sh.type.", 8) == 0) {
                                     cp += 8;
                                     type = true;
                                 }
