@@ -302,7 +302,7 @@ static int sig_number(Shell_t *shp, const char *string) {
             sfputc(shp->stk, c);
         } while (c);
         stkseek(shp->stk, o);
-        if (memcmp(stkptr(shp->stk, o), "SIG", 3) == 0) {
+        if (strncmp(stkptr(shp->stk, o), "SIG", 3) == 0) {
             sig = 1;
             o += 3;
             if (isdigit(*stkptr(shp->stk, o))) {

@@ -1239,7 +1239,7 @@ breakloop:
         lp->arg->argflag |= ARG_ASSIGN;
         if (sh_isoption(shp, SH_NOEXEC)) {
             char *cp = strchr(state, '=');
-            if (cp && memcmp(++cp, "$((", 3) == 0) {
+            if (cp && strncmp(++cp, "$((", 3) == 0) {
                 errormsg(SH_DICT, ERROR_warn(0), e_lexarithwarn, shp->inlineno, cp - state, state,
                          cp + 3, state);
             }
@@ -1430,9 +1430,9 @@ static int comsub(Lex_t *lp, int endtok) {
                 word[n++] = c;
             }
             if (sh_lexstates[ST_NAME][c] == S_BREAK) {
-                if (memcmp(word, "case", 4) == 0) {
+                if (strncmp(word, "case", 4) == 0) {
                     lp->lex.incase = 1;
-                } else if (memcmp(word, "esac", 4) == 0) {
+                } else if (strncmp(word, "esac", 4) == 0) {
                     lp->lex.incase = 0;
                 }
             }

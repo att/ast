@@ -179,7 +179,7 @@ static void check_typedef(Lex_t *lp, struct comnod *tp) {
     if (tp->comtyp & COMSCAN) {
         struct argnod *ap = tp->comarg;
         while ((ap = ap->argnxt.ap)) {
-            if (!(ap->argflag & ARG_RAW) || memcmp(ap->argval, "--", 2)) break;
+            if (!(ap->argflag & ARG_RAW) || strncmp(ap->argval, "--", 2)) break;
             if (lp->intypeset == 2) {
                 if (*ap->argval == '-') {
                     continue;
@@ -188,7 +188,7 @@ static void check_typedef(Lex_t *lp, struct comnod *tp) {
                 }
             }
             if (sh_isoption(lp->sh, SH_NOEXEC)) typeset_order(ap->argval, tp->comline);
-            if (memcmp(ap->argval, "-T", 2) == 0) {
+            if (strncmp(ap->argval, "-T", 2) == 0) {
                 if (ap->argval[2]) {
                     cp = ap->argval + 2;
                 } else if ((ap->argnxt.ap)->argflag & ARG_RAW) {
@@ -200,13 +200,13 @@ static void check_typedef(Lex_t *lp, struct comnod *tp) {
     } else {
         struct dolnod *dp = (struct dolnod *)tp->comarg;
         char **argv = dp->dolval + dp->dolbot + 1;
-        while ((cp = *argv++) && memcmp(cp, "--", 2)) {
+        while ((cp = *argv++) && strncmp(cp, "--", 2)) {
             if (lp->intypeset == 2) {
                 if (*cp == '-') continue;
                 break;
             }
             if (sh_isoption(lp->sh, SH_NOEXEC)) typeset_order(cp, tp->comline);
-            if (memcmp(cp, "-T", 2) == 0) {
+            if (strncmp(cp, "-T", 2) == 0) {
                 if (cp[2]) {
                     cp = cp + 2;
                 } else {
@@ -762,7 +762,7 @@ static Shnode_t *funct(Lex_t *lexp) {
             if (c) errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
             nargs = argv - argv0;
             size += sizeof(struct dolnod) + (nargs + ARG_SPARE) * sizeof(char *);
-            if (shp->shcomp && memcmp(".sh.math.", t->funct.functnam, 9) == 0) {
+            if (shp->shcomp && strncmp(".sh.math.", t->funct.functnam, 9) == 0) {
                 Namval_t *np = nv_open(t->funct.functnam, shp->fun_tree, NV_ADD | NV_VARNAME);
                 np->nvalue.rp = new_of(struct Ufunction, shp->funload ? sizeof(Dtlink_t) : 0);
                 memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
@@ -1331,7 +1331,7 @@ static Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
             *settail = argp;
             settail = &(argp->argnxt.ap);
             lexp->assignok = (flag & SH_ASSIGN) ? SH_ASSIGN : 1;
-            if (memcmp(argp->argval, ".sh.value", 9) == 0) opt_get |= FSHVALUE;
+            if (strncmp(argp->argval, ".sh.value", 9) == 0) opt_get |= FSHVALUE;
             if (assignment) {
                 struct argnod *ap = argp;
                 char *last, *cp;

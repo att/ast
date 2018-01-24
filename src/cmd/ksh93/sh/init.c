@@ -1043,7 +1043,7 @@ static char *get_math(Namval_t *np, Namfun_t *fp) {
     fake.nvname = ".sh.math.";
     mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
     while ((mp = (Namval_t *)dtnext(shp->fun_tree, mp))) {
-        if (memcmp(mp->nvname, ".sh.math.", 9)) break;
+        if (strncmp(mp->nvname, ".sh.math.", 9)) break;
         if (first++) sfputc(shp->strbuf, ' ');
         sfputr(shp->strbuf, mp->nvname + 9, -1);
     }
