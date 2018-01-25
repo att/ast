@@ -23,6 +23,8 @@
 // David Korn
 // AT&T Labs
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <time.h>
 
 //

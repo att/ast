@@ -22,6 +22,7 @@
 /*
  * install error message handler for fatal malloc exceptions
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

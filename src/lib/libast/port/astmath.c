@@ -26,6 +26,7 @@
  *	----		-----			---
  *	linux.sparc	sfdlen,sfputd		frexp,ldexp
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #if N >= 8
 #define _ISOC99_SOURCE 1

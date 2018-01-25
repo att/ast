@@ -19,6 +19,8 @@
  ***********************************************************************/
 #define putenv ___putenv
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include "lexstates.h"

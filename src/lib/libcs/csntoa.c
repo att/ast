@@ -23,6 +23,7 @@
  *
  * return the string representation of addr
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

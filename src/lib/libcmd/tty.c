@@ -24,6 +24,7 @@
  *
  * tty
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: tty (AT&T Research) 2008-03-13 $\n]" USAGE_LICENSE

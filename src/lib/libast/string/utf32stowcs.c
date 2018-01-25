@@ -24,6 +24,7 @@
  * Roland Mainz <roland.mainz@nrubsig.org>
  * Glenn Fowler
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ast_iconv.h>

@@ -22,6 +22,7 @@
 /*
  * localeconv() intercept
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclib.h"
 

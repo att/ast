@@ -24,6 +24,7 @@
  * poll for read/write/control on fds with ms timeout
  * number of selected fd's returned
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

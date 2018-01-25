@@ -25,6 +25,7 @@
  *
  * convert a 0 terminated character constant string to an int
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

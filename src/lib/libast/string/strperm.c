@@ -33,6 +33,7 @@
  *
  * if non-null, e points to the first unrecognized char in expr
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ls.h>

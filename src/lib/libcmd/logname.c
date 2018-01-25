@@ -24,6 +24,7 @@
  *
  * logname
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\n]" USAGE_LICENSE
                             "[+NAME?logname - return the user's login name]"

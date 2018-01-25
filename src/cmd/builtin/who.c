@@ -23,6 +23,7 @@
  * Written by David Korn
  * Thu Aug 15 00:12:29 EDT 1996
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: who (AT&T Research) 2004-03-25 $\n]" USAGE_LICENSE

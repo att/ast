@@ -22,6 +22,7 @@
  *
  * NOTE: errno and the st_mode bits are not yet canonical
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "msglib.h"
 

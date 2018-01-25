@@ -22,6 +22,7 @@
 /*
  * archive scan/touch/extract implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ardirlib.h>
 

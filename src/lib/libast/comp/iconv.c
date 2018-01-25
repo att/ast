@@ -26,6 +26,7 @@
  * iconv intercept
  * minimally provides { utf*<=>bin ascii<=>ebcdic* }
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <dirent.h>

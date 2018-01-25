@@ -22,6 +22,7 @@
 /*
  * dtopen() with handle placed in specific vm region
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <dt.h>
 

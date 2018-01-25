@@ -23,6 +23,7 @@
  *
  * send an action to the coshell for execution
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

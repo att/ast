@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sfhdr.h"
 static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n";
 

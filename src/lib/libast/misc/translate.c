@@ -23,6 +23,7 @@
  * AT&T Research and SCO
  * ast l10n message translation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclib.h"
 

@@ -22,6 +22,7 @@
 /*
  * OBSOLETE Sfio_t buffer interface -- use regsubcomp(),regsubexec()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

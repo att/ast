@@ -25,6 +25,7 @@
  *
  * return current PATH
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

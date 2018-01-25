@@ -24,6 +24,7 @@
  *
  * rmdir
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: rmdir (AT&T Research) 2006-08-24 $\n]" USAGE_LICENSE
                             "[+NAME?rmdir - remove empty directories]"

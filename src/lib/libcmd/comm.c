@@ -52,6 +52,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcmp\b(1), \bdiff\b(1)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 
 #define C_FILE1 1

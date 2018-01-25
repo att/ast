@@ -35,6 +35,7 @@
  * NOTE: all operands are evaluated as both the parse
  *	 and evaluation are done on the fly
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ctype.h>

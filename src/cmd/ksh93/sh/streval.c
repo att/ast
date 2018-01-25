@@ -25,6 +25,8 @@
 //
 // This version compiles the expression onto a stack and has a separate executor.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <ctype.h>

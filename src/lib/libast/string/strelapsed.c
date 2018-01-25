@@ -29,6 +29,7 @@
  * also handles coshell % for 'infinity'
  * if e!=0 then it is set to first unrecognized char
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ctype.h>

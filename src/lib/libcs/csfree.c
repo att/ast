@@ -23,6 +23,7 @@
  *
  * free cs state context
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

@@ -25,6 +25,7 @@
  *
  * return tmfmt() formatted time
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "tm.h"
 

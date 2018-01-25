@@ -23,6 +23,7 @@
  *
  * banner [-d delim] [-w width] arg ...
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: banner (AT&T Research) 1999-04-28 $\n]" USAGE_LICENSE

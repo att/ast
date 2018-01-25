@@ -25,6 +25,7 @@
  *
  * return strperm() expression for perm
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ls.h>

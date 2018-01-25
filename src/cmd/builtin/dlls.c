@@ -24,6 +24,7 @@
  *
  * dll scan interface
  */
+#include "config_ast.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: dlls (AT&T Research) 2011-04-22 $\n]" USAGE_LICENSE

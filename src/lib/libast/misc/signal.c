@@ -23,6 +23,7 @@
  * signal that disables syscall restart on interrupt with clear signal mask
  * fun==SIG_DFL also unblocks signal
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #undef signal
 #define signal ______signal

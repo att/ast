@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sftest.h"
 
 ssize_t myread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) { return sfrd(f, buf, n, disc); }

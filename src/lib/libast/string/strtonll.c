@@ -22,6 +22,7 @@
 /*
  * strtonll() implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define S2I_function strtonll
 #define S2I_number intmax_t

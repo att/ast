@@ -22,6 +22,7 @@
 /*
  * locale state implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclang.h"
 #include "lclib.h"

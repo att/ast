@@ -28,6 +28,7 @@
  *	RECTYPE(r)==REC_delimited	variable length delimiter=REC_D_DELIMITER(r)
  *	RECTYPE(r)==REC_variable	variable length
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <recfmt.h>
 

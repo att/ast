@@ -21,6 +21,8 @@
 //  This installs a hook to allow the processing of events when the shell is waiting for input and
 //  when the shell is waiting for job completion. The previous waitevent hook function is returned.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 void *sh_waitnotify(int (*newevent)(int, long, int)) {

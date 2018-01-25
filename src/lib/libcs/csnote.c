@@ -26,6 +26,7 @@
  *
  * NOTE: name must already exist and pwd must be CS_STAT_DIR
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

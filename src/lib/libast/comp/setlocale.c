@@ -25,6 +25,7 @@
  * and a permanent locale namespace for pointer comparison
  * and persistent private data for locale related functions
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast_standards.h>
 

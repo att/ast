@@ -23,6 +23,7 @@
  *
  * return the address of a host given its name
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

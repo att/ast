@@ -23,6 +23,8 @@
 // Written by David Korn
 // AT&T Labs
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <ast.h>
 #include <fcin.h>
 #include <nval.h>

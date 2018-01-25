@@ -24,6 +24,7 @@
  *
  * tee
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: tee (AT&T Research) 2012-05-31 $\n]" USAGE_LICENSE
                             "[+NAME?tee - duplicate standard input]"

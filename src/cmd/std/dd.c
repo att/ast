@@ -23,6 +23,7 @@
  *
  * posix dd
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage1[] =
     "[-1p0?\n@(#)$Id: dd (AT&T Research) 2011-04-21 $\n]" USAGE_LICENSE

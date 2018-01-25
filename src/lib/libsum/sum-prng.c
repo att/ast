@@ -20,6 +20,7 @@
 /*
  * prng
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <fnv.h>
 

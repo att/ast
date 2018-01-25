@@ -20,6 +20,8 @@
 //
 // String processing routines for Korn shell.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <ast.h>

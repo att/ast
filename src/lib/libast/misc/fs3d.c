@@ -26,6 +26,7 @@
  * 3d fs operations
  * only active for non-shared 3d library
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define mount ______mount
 

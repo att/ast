@@ -45,6 +45,8 @@
 //   wait for the child to complete.  A pipe is used to guarantee that we
 //   do not remove the /tmp file too soon.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <ast.h>
 #include <error.h>
 #include <ls.h>

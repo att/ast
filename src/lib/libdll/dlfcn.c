@@ -24,6 +24,7 @@
  * Glenn Fowler
  * AT&T Research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char id[] = "\n@(#)$Id: dll library (AT&T Research) 2010-10-20 $\0\n";
 

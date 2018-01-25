@@ -24,6 +24,7 @@
  *
  * mkfifo
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: mkfifo (AT&T Research) 2009-01-02 $\n]" USAGE_LICENSE
                             "[+NAME?mkfifo - make FIFOs (named pipes)]"

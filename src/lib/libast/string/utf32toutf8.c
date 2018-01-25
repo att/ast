@@ -28,6 +28,7 @@
  * return value is the number of chars placed in s
  * thanks Tom Duff
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

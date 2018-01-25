@@ -27,6 +27,8 @@
 //   David Korn
 //   at&t research
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #if SHOPT_REGRESS

@@ -23,6 +23,7 @@
  *
  * ping host by name
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

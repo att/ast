@@ -28,6 +28,7 @@
  * NOTE: coded for minimal library dependence
  *	 not so for the legal department
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #ifndef _PPLIB_H
 #include <ast.h>

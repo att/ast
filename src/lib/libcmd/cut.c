@@ -72,6 +72,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bpaste\b(1), \bgrep\b(1)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <ctype.h>
 

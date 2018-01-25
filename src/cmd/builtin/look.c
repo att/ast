@@ -23,6 +23,7 @@
  *
  *   David Korn
  */
+#include "config_ast.h"
 
 #ifndef DICT_FILE
 #define DICT_FILE "/usr/dict/words"

@@ -23,7 +23,10 @@
 //
 // Shell deparser.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
+
 #include "shnodes.h"
 #include "test.h"
 

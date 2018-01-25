@@ -24,6 +24,7 @@
  * AT&T Labs
  * Tue Mar 25 11:03:23 EST 2003
  */
+#include "config_ast.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: asa (AT&T Research) 2003-03-25 $\n]"

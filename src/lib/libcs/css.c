@@ -23,6 +23,7 @@
  *
  * connect stream server support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "csslib.h"
 

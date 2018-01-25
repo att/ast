@@ -17,6 +17,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define _IN_SUF_TREE
 #include "suftree.h"
 

@@ -26,6 +26,7 @@
  *
  * shell library support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <sys/stat.h>

@@ -25,6 +25,7 @@
  *
  * nanosecond resolution sleep
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <tm.h>

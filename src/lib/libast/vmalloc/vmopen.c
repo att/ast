@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "vmhdr.h"
 
 static char *Version = "\n@(#)$Id: Vmalloc (AT&T Labs - Research) 2013-06-10 $\0\n";

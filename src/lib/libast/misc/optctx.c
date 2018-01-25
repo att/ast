@@ -34,6 +34,7 @@
  * switch to old_context and free new_context:
  *	optctx(old_context, new_context);
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <optlib.h>
 

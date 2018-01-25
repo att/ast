@@ -24,6 +24,7 @@
  * compatible with strelapsed()
  * return value length is at most 7
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

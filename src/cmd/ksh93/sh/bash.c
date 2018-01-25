@@ -21,6 +21,8 @@
 // Bash specific extensions.
 // Originally provided by Karsten Fleischer.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include "builtins.h"

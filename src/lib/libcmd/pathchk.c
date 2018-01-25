@@ -23,6 +23,7 @@
  *
  * Written by David Korn
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: pathchk (AT&T Research) 2009-07-24 $\n]" USAGE_LICENSE
                             "[+NAME?pathchk - check pathnames for portability]"

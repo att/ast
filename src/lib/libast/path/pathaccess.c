@@ -30,6 +30,7 @@
  * if (mode&PATH_ABSOLUTE) then path must be rooted
  * path returned in path buffer
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

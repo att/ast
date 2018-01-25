@@ -40,6 +40,7 @@
  *	z	size_t
  *	?	unknown
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ctype.h>

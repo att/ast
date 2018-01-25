@@ -20,6 +20,7 @@
 /*
  * crc
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define crc_description "32 bit CRC (cyclic redundancy check)."
 #define crc_options \

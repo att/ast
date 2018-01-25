@@ -1,3 +1,5 @@
+#include "config_ast.h"  // IWYU pragma: keep
+
 #if _typ_int64_t
 
 /*

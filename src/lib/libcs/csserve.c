@@ -24,6 +24,7 @@
  * obsolete generic server state machine
  * <css.h> provides a discipline interface with multiple servers
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "csslib.h"
 

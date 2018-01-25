@@ -20,6 +20,7 @@
 /*
  * bsd
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define bsd_description "The BSD checksum."
 #define bsd_options 0

@@ -25,6 +25,7 @@
  *
  * the sum of the hacks {s5,v10,planix} is _____ than the parts
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: file (AT&T Research) 2011-08-01 $\n]" USAGE_LICENSE

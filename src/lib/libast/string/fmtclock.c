@@ -23,6 +23,7 @@
  * return pointer to formatted clock() tics t
  * return value length is at most 6
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <tm.h>

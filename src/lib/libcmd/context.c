@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define CONTEXT_BLOCK (1024 * 1024)
 #define CONTEXT_LINE (4 * 1024)
 

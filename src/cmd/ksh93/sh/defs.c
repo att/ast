@@ -22,6 +22,8 @@
 // Written by David Korn
 // This file defines all the  read/write shell global variables
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include "edit.h"

@@ -33,6 +33,7 @@
  *	  l|b little-endian or big-endian size (ibm V b (0))
  *	  i|n header included/not-included in size (ibm V i (1))
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <recfmt.h>

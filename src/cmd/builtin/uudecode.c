@@ -21,6 +21,7 @@
 /*
  * uuencode/uudecode common main
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: uudecode (AT&T Research) 2002-03-24 $\n]" USAGE_LICENSE

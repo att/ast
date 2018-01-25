@@ -33,6 +33,7 @@
  *		code	name	lang1|lang2...
  *	:abbreviation:
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <stdio.h>

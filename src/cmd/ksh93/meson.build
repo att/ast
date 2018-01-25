@@ -72,13 +72,13 @@ if shopt_devfd_result.returncode() == 0
 endif
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
-    include_directories: ksh93_incdir,
+    include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [libast, libcmd, libcoshell],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
 shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
-    include_directories: ksh93_incdir,
+    include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [ libast, libcmd, libcoshell],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)

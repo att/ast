@@ -27,6 +27,8 @@
 //  Rewritten April, 1988
 //  Revised January, 1992
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <wait.h>

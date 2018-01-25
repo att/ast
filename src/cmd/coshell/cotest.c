@@ -20,6 +20,7 @@
 /*
  * coshell attribute expression test
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <service.h>
 

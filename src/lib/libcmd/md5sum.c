@@ -24,6 +24,7 @@
  *
  * md5sum -- implemented by cksum
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 

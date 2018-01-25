@@ -106,6 +106,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bregcomp\b(5), \bgrep\b(1), \bsh\b(1)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <regex.h>
 

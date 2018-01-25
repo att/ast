@@ -26,6 +26,7 @@
  * return the full path of the current program in path
  * command!=0 is used as a default
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

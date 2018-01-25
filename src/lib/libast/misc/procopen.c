@@ -29,6 +29,7 @@
  * _ contains the process path name and is
  * placed at the top of the environment
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "proclib.h"
 

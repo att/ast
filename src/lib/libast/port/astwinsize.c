@@ -23,6 +23,7 @@
  * AT&T Research
  * return terminal rows and cols
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ast_tty.h>

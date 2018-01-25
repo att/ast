@@ -71,6 +71,8 @@
 
 static const char lib[] = "libast:fastfind";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "findlib.h"
 
 #define FIND_MATCH "*/(find|locate)/*"

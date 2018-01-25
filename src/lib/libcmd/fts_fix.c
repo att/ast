@@ -31,6 +31,7 @@
  *
  * probably safe to drop after 20150101
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <fts_fix.h>

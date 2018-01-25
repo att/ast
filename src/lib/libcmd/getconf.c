@@ -21,6 +21,7 @@
 /*
  * getconf - get configuration values
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: getconf (AT&T Research) 2013-12-01 $\n]" USAGE_LICENSE

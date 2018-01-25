@@ -25,6 +25,7 @@
  *
  * cat
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 #include <fcntl.h>

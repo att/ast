@@ -23,6 +23,8 @@
 //
 // Shell parse tree dump.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <ccode.h>

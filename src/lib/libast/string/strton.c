@@ -22,6 +22,7 @@
 /*
  * strton() implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define S2I_function strton
 #define S2I_number long

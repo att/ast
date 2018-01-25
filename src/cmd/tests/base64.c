@@ -20,6 +20,7 @@
 /*
  * base64encode()/base64decode() tester
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

@@ -31,6 +31,7 @@
  * qualifier:	optional service qualifier
  * perm:	{user[=euid],group[=egid],other(default)}
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

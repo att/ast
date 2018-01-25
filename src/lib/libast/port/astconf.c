@@ -23,6 +23,7 @@
  * string interface to confstr(),pathconf(),sysconf(),sysinfo()
  * extended to allow some features to be set per-process
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "univlib.h"
 

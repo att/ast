@@ -24,6 +24,7 @@
  * return Sfio_t stream pointer to host info file
  * if line!=0 then it points to current line number in file
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

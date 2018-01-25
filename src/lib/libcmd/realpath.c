@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 static const char usage[] =
     "[-?\n@(#)$Id: realpath (AT&T Research) 2013-12-06 $\n]" USAGE_LICENSE
     "[+NAME?realpath - print canonicalized path]"

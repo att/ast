@@ -23,6 +23,7 @@
  *
  * man this is sum library
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char id[] = "\n@(#)$Id: sumlib (AT&T Research) 2013-09-25 $\0\n";
 

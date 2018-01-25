@@ -106,6 +106,8 @@ static const char usage[] =
 
     "[+SEE ALSO?\bgetconf\b(1), \btw\b(1), \buuencode\b(1)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <error.h>
 #include <fts_fix.h>

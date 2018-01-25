@@ -27,6 +27,7 @@
  *	strntol		strntoul	strnton
  *	strntoll	strntoull	strntonll
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
 #include <ast.h>

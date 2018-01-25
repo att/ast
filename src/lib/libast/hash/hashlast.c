@@ -27,6 +27,7 @@
  *
  * hash table library
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "hashlib.h"
 

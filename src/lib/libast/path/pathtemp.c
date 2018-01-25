@@ -69,6 +69,7 @@
  *	/TMPPATH	dir overrides the env value
  *	/TMPDIR		dir overrides the env value
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <error.h>

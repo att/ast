@@ -30,6 +30,7 @@
  * if non-null, f points to the first unused format char
  * t provides default values
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <tmx.h>

@@ -25,6 +25,7 @@
  *
  * join
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: join (AT&T Research) 2013-09-13 $\n]" USAGE_LICENSE

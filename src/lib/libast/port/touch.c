@@ -36,6 +36,7 @@
  *	-1	PATH_TOUCH_CREATE|PATH_TOUCH_VERBATIM
  *		PATH_TOUCH_VERBATIM -- not supported
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <times.h>

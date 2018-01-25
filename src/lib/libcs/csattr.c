@@ -23,6 +23,7 @@
  *
  * return the local attr attributes for host name
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

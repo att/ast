@@ -26,6 +26,7 @@
  * convert utf8 to utf32
  * return value is the number of chars consumed from s
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <error.h>

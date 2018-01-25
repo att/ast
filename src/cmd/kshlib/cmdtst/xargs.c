@@ -24,6 +24,7 @@
  *
  * xargs -- construct arg list and exec -- use tw instead
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: xargs (AT&T Research) 2012-04-11 $\n]" USAGE_LICENSE

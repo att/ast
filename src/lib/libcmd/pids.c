@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define FORMAT "PID=%(pid)d PPID=%(ppid)d PGID=%(pgid)d TID=%(tid)d SID=%(sid)d"
 
 static const char usage[] =

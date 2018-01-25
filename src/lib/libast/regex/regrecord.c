@@ -22,6 +22,7 @@
 /*
  * return 1 if regrexec() can be used
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

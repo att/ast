@@ -20,6 +20,7 @@
 /*
  * syscall message server side receipt
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "msglib.h"
 

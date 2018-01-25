@@ -22,6 +22,7 @@
 /*
  * posix regex error message handler
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-09-27 $\0\n";
 

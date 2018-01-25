@@ -29,6 +29,7 @@
  * with siz=length+1 would work
  * if buf==0 then required size is returned
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

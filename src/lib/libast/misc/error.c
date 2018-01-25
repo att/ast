@@ -32,6 +32,7 @@
  *
  * NOTE: id && ERROR_NOID && !ERROR_USAGE implies format=id for errmsg()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclib.h"
 

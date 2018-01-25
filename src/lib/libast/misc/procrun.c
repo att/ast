@@ -29,6 +29,7 @@
  * effective=real
  * parent ignores INT & QUIT
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "proclib.h"
 

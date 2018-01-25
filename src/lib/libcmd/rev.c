@@ -28,6 +28,7 @@
  *   dgk@research.att.com
  *
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] = "[-?\n@(#)$Id: rev (AT&T Research) 2013-09-13 $\n]" USAGE_LICENSE
                             "[+NAME?rev - reverse the characters or lines of one or more files]"

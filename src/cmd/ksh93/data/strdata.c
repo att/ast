@@ -20,6 +20,8 @@
 //
 // Data for string evaluator library.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <ast_standards.h>
 #include "streval.h"
 

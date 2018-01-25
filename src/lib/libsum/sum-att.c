@@ -20,6 +20,7 @@
 /*
  * att
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define att_description \
     "The system 5 release 4 checksum. This is the default for \bsum\b \

@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 static const char usage[] =
     "[-?\n@(#)$Id: fmt (AT&T Research) 2007-01-02 $\n]" USAGE_LICENSE
     "[+NAME?fmt - simple text formatter]"

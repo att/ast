@@ -26,6 +26,7 @@
  * fmtmode() and strperm() readonly data
  * for external format modes
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "modelib.h"
 

@@ -25,6 +25,7 @@
  *
  * time_t conversion support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <tm.h>
 

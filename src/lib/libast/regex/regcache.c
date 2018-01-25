@@ -23,6 +23,7 @@
  * regcomp() regex_t cache
  * at&t research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <regex.h>

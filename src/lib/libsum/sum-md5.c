@@ -23,6 +23,7 @@
    These notices must be retained in any copies of any part of this
    documentation and/or software.
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define md5_description \
     "The RSA Data Security, Inc. MD5 Message-Digest Method, 1991-2, \

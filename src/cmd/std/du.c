@@ -23,6 +23,7 @@
  *
  * du -- report number of blocks used by . | file ...
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: du (AT&T Research) 2012-01-26 $\n]" USAGE_LICENSE

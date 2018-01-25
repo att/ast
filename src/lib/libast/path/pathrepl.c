@@ -26,6 +26,7 @@
  * in place replace of first occurrence of /match/ with /replace/ in path
  * end of path returned
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

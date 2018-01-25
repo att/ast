@@ -24,6 +24,7 @@
  * AT&T Labs
  * Mon Mar 24 10:10:10 EST 2003
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: nl (AT&T Research) 2003-03-24 $\n]" USAGE_LICENSE

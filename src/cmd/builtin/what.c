@@ -27,6 +27,7 @@
  * your who is what?
  * no, they're different.
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: what (AT&T Research) 2012-02-11 $\n]" USAGE_LICENSE

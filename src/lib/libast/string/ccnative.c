@@ -27,6 +27,7 @@
  * indexed by CC_ASCII to table
  * indexed by CC_NATIVE
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ccode.h>

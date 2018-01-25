@@ -1,8 +1,8 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
 cc = meson.get_compiler('c')
 system = host_machine.system()
-
-run_command('bin/libast_prereq.sh')
+# So the `config_ast.h` header can be found (see below).
+configuration_incdir = include_directories('.')
 
 add_project_arguments('-D_PACKAGE_ast', language: 'c')
 add_project_arguments('-DMESON_BUILD=1', language: 'c')
@@ -35,6 +35,11 @@ hosttype_cmd=run_command('bin/hosttype')
 hosttype=hosttype_cmd.stdout().strip()
 add_project_arguments('-DHOSTTYPE="' + hosttype + '"', language: 'c')
 
+shared_c_args = [
+    '-DUSAGE_LICENSE=""',
+    '-D_API_ast=20130625',
+]
+
 # Compiler arguments used when building `ksh93`, `shcomp`, and related AST
 # code. These are primarily `-Dsome_symbol` flags that define which features
 # the platform provides.
@@ -44,18 +49,22 @@ long_size = cc.sizeof('long')
 size_t_size = cc.sizeof('size_t')
 off_t_size = cc.sizeof('off_t')
 
-shared_c_args = [
-    '-DUSAGE_LICENSE=""',
-    '-D_API_ast=20130625',
-    '-D_ast_sizeof_int=@0@'.format(int_size),
-    '-D_ast_sizeof_long=@0@'.format(long_size),
-    '-D_ast_sizeof_size_t=@0@'.format(size_t_size),
-    '-D_ast_sizeof_off_t=@0@'.format(off_t_size),
-    '-D_ast_sizeof_pointer=@0@'.format(ptr_size),
-    '-D_ptr_bits=@0@'.format(ptr_size * 8),
-]
+feature_data = configuration_data()
+feature_data.set('_ast_sizeof_int', int_size)
+feature_data.set('_ast_sizeof_long', long_size)
+feature_data.set('_ast_sizeof_size_t', size_t_size)
+feature_data.set('_ast_sizeof_off_t', off_t_size)
+feature_data.set('_ast_sizeof_pointer', ptr_size)
+feature_data.set('_ptr_bits', ptr_size * 8)
 
 subdir('features')
+
+configure_file(input : 'config_ast.h.in',
+               output : 'config_ast.h',
+               configuration : feature_data)
+
+run_command('bin/libast_prereq.sh')
+
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libcoshell')

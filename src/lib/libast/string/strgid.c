@@ -25,6 +25,7 @@
  *
  * gid name -> number
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
 __STDPP__directive pragma pp : hide getgrgid getgrnam getpwnam

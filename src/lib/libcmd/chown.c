@@ -28,6 +28,8 @@
 
 static const char id[] = "\n@(#)$Id: chown (AT&T Research) 1997-11-11 $\0\n";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 
 int b_chown(int argc, char **argv, Shbltin_t *context) {
