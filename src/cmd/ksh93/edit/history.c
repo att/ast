@@ -455,7 +455,7 @@ static History_t *hist_trim(History_t *hp, int n) {
             if (newp <= oldp) break;
         }
         if (!(buff = (char *)sfreserve(hist_old->histfp, SF_UNBOUND, 0))) break;
-        *(endbuff = (cp = buff) + sfvalue(hist_old->histfp) - 1) = 0;
+        *(endbuff = (cp = buff) + sfvalue(hist_old->histfp)) = 0;
         // Copy to null byte.
         incmd = 0;
         while (*cp++) {
@@ -495,7 +495,7 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
     // with HIST_CMDNO.
     while ((cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR))) {
         n = sfvalue(iop);
-        *(endbuff = cp + n - 1) = 0;
+        *(endbuff = cp + n) = 0;
         while (1) {
             // Check for marker.
             if (!incmd && *cp++ == HIST_CMDNO && *cp == 0) {
@@ -557,7 +557,7 @@ again:
     sfseek(hp->histfp, count, SEEK_SET);
     while ((cp = (char *)sfreserve(hp->histfp, SF_UNBOUND, 0))) {
         n = sfvalue(hp->histfp);
-        *(endbuff = cp + n -1) = 0;
+        *(endbuff = cp + n) = 0;
         first = cp += skip;
         while (1) {
             while (!incmd) {
