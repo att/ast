@@ -397,7 +397,7 @@ static History_t *hist_trim(History_t *hp, int n) {
     char *cp;
     int incmd = 1, c = 0;
     History_t *hist_new, *hist_old = hp;
-    char *buff, *endbuff, *tmpname = 0;
+    char *buff, *endbuff, *tmpname = 0, *tmp = 0;
     off_t oldp, newp;
     struct stat statb;
 
@@ -455,6 +455,10 @@ static History_t *hist_trim(History_t *hp, int n) {
             if (newp <= oldp) break;
         }
         if (!(buff = (char *)sfreserve(hist_old->histfp, SF_UNBOUND, 0))) break;
+        // Reserve extra char to put NULL at end of buffer
+        tmp = malloc((sfvalue(hist_old->histfp) + 1) * sizeof(char));
+        memcpy(tmp, buff, sfvalue(hist_old->histfp));
+        buff = tmp;
         *(endbuff = (cp = buff) + sfvalue(hist_old->histfp)) = 0;
         // Copy to null byte.
         incmd = 0;
@@ -470,6 +474,7 @@ static History_t *hist_trim(History_t *hp, int n) {
         c = cp - buff;
         hist_new->histcnt += c;
         sfwrite(hist_new->histfp, buff, c);
+        free(tmp);
     }
     hist_cancel(hist_new);
     sfclose(hist_old->histfp);
@@ -486,7 +491,7 @@ static History_t *hist_trim(History_t *hp, int n) {
 // Position history file at size and find next command number.
 //
 static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
-    unsigned char *cp, *endbuff;
+    unsigned char *cp, *endbuff, *tmp = 0;
     int n, incmd = 1;
     unsigned char *buff, marker[4];
 
@@ -495,6 +500,10 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
     // with HIST_CMDNO.
     while ((cp = buff = (unsigned char *)sfreserve(iop, SF_UNBOUND, SF_LOCKR))) {
         n = sfvalue(iop);
+        // Reserve extra char to put NULL at end of buffer
+        tmp = malloc((n + 1) * sizeof(char));
+        memcpy(tmp, buff, n);
+        cp = buff = tmp;
         *(endbuff = cp + n) = 0;
         while (1) {
             // Check for marker.
@@ -527,6 +536,7 @@ static int hist_nearend(History_t *hp, Sfio_t *iop, off_t size) {
             if (n > 0) size += n;
             incmd = 0;
         }
+        free(tmp);
     }
 begin:
     sfseek(iop, (off_t)2, SEEK_SET);
@@ -541,7 +551,7 @@ begin:
 // it is followed by 0.  If followed by 0 then it cancels the previous command.
 //
 void hist_eof(History_t *hp) {
-    char *cp, *first, *endbuff;
+    char *cp, *first, *endbuff, *tmp;
     int incmd = 0;
     off_t count = hp->histcnt;
     int oldind, n, skip = 0;
@@ -557,6 +567,10 @@ again:
     sfseek(hp->histfp, count, SEEK_SET);
     while ((cp = (char *)sfreserve(hp->histfp, SF_UNBOUND, 0))) {
         n = sfvalue(hp->histfp);
+        // Reserve extra char to put NULL at end of buffer
+        tmp = malloc((n + 1) * sizeof(char));
+        memcpy(tmp, cp, n);
+        cp = tmp;
         *(endbuff = cp + n) = 0;
         first = cp += skip;
         while (1) {
@@ -621,6 +635,7 @@ again:
         count += (--cp - first);
         skip = (cp - endbuff);
         if (!incmd && !skip) hp->histcmds[hist_ind(hp, ++hp->histind)] = count;
+        free(tmp);
     }
     hp->histcnt = count;
     if (incmd && last) {
