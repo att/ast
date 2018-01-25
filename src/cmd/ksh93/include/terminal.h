@@ -59,7 +59,7 @@
 #endif  // !VEOL
 #endif  // !ECHOCTL
 
-#ifdef _sys_filio
+#if _sys_filio
 #ifndef FIONREAD
 #include <sys/filio.h>
 #endif  // FIONREAD

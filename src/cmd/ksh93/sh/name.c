@@ -1589,7 +1589,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             sp = sfstruse(shp->strbuf);
         }
         if (nv_isattr(np, NV_HOST | NV_INTEGER) == NV_HOST && sp) {
-#ifdef _lib_pathnative
+#if _lib_pathnative
             // Return the host file name given the UNIX name.
             pathnative(sp, buff, sizeof(buff));
             if (buff[1] == ':' && buff[2] == '/') {

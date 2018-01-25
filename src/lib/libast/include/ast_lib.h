@@ -1,6 +1,6 @@
 /* : : generated from lib by iffe version 2013-11-14 : : */
-#ifndef _def_lib_features
-#define _def_lib_features 1
+#ifndef lib_features_defined
+#define lib_features_defined 1
 
 #define _mem_d_reclen_direct 1 /* d_reclen is a member of struct direct */
 #define _mem_d_fileno_dirent 1 /* d_fileno is a member of struct dirent */

@@ -25,7 +25,7 @@
 //
 #define _GNU_SOURCE 1
 #include <dlfcn.h>
-#ifdef _hdr_execinfo
+#if _hdr_execinfo
 #include <execinfo.h>
 #endif
 #include <stdio.h>
@@ -57,7 +57,7 @@ static int cursig = -1;
 // Write a primitive backtrace to stderr. This can be called from anyplace in
 // the code where you would like to understand the call sequence leading to
 // that point in the code.
-#ifdef _hdr_execinfo
+#if _hdr_execinfo
 void dump_backtrace(int max_frames, int skip_levels) {
     char text[512];
     void *callstack[128];

@@ -41,7 +41,7 @@
 #include "shnodes.h"
 #include "timeout.h"
 #include "variables.h"
-#ifdef _hdr_nc
+#if _hdr_nc
 #include <nc.h>
 #endif  // _hdr_nc
 
@@ -64,7 +64,7 @@ static struct stat lastmail;
 static time_t mailtime;
 static char beenhere = 0;
 
-#ifdef _lib_sigvec
+#if _lib_sigvec
 void clearsigmask(int sig) {
     struct sigvec vec;
     if (sigvec(sig, NULL, &vec) >= 0 && vec.sv_mask) {
@@ -124,13 +124,13 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     astserial(AST_SERIAL_RESTART, AST_SERIAL_always);
 #endif
     free(malloc(64 * 1024));
-#ifdef _lib_sigvec
+#if _lib_sigvec
     // This is to clear mask that may be left on by rlogin.
     clearsigmask(SIGALRM);
     clearsigmask(SIGHUP);
     clearsigmask(SIGCHLD);
 #endif  // _lib_sigvec
-#ifdef _hdr_nc
+#if _hdr_nc
     _NutConf(_NC_SET_SUFFIXED_SEARCHING, 1);
 #endif  // _hdr_nc
     fixargs(av, 0);
@@ -621,12 +621,12 @@ static void chkmail(Shell_t *shp, char *files) {
 
 #undef EXECARGS
 #undef PSTAT
-#if defined(_hdr_execargs) && defined(pdp11)
+#if _hdr_execargs && defined(pdp11)
 #include <execargs.h>
 #define EXECARGS 1
 #endif
 
-#if defined(_lib_pstat) && defined(_sys_pstat)
+#if _lib_pstat && _sys_pstat
 #include <sys/pstat.h>
 #define PSTAT 1
 #endif

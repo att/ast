@@ -1191,7 +1191,7 @@ int ed_external(const genchar *src, char *dest) {
         char buffer[MAXLINE * sizeof(genchar)];
         c = ed_external(src, buffer);
 
-#ifdef _lib_wcscpy
+#if _lib_wcscpy
         wcscpy((wchar_t *)dest, (const wchar_t *)buffer);
 #else
         strcpy(dest, buffer);

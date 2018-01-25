@@ -157,7 +157,7 @@ int uname(struct utsname *ut) {
         if (!*sys) sys = 0;
     }
 #endif
-#ifdef _lib_gethostname
+#if _lib_gethostname
     if (gethostname(ut->nodename, sizeof(ut->nodename) - 1)) return -1;
 #else
     strncpy(ut->nodename, "local", sizeof(ut->nodename) - 1);

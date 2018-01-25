@@ -380,7 +380,7 @@ extern const Shtable_t shtab_siginfo[];
 #define timeofday(p) gettimeofday(p, (struct timezone *)0)
 
 // sigqueue() is not available on macOS.
-#ifndef _lib_sigqueue
+#if !_lib_sigqueue
 #define sigqueue(sig, action, val) kill(sig, action)
 #endif
 

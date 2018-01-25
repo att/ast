@@ -20,7 +20,7 @@
 #include "sftest.h"
 
 #if _PACKAGE_ast
-#ifndef _hdr_wchar
+#if !_hdr_wchar
 #define _hdr_wchar 1
 #endif
 #include <stdio.h>
@@ -38,7 +38,7 @@ tmain() {
 
     static char tst[] = "hello-world";
 
-#if defined(_hdr_wchar)
+#if _hdr_wchar
 
 #if _PACKAGE_ast
 

@@ -834,7 +834,7 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     return (1);
 }
 
-#ifndef _lib_tcgetpgrp
+#if !_lib_tcgetpgrp
 #ifdef TIOCGPGRP
 static int _i_;
 #define tcgetpgrp(a) (ioctl(a, TIOCGPGRP, &_i_) >= 0 ? _i_ : -1)
