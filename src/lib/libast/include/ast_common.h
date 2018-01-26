@@ -2,8 +2,6 @@
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
 
-#define _std_proto 1 /* standard C prototypes ok */
-
 /* disable non-standard linux/gnu inlines */
 #ifdef __GNUC__
 #undef __OPTIMIZE_SIZE__
