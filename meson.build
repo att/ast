@@ -3,14 +3,6 @@ cc = meson.get_compiler('c')
 system = host_machine.system()
 # So the `config_ast.h` header can be found (see below).
 configuration_incdir = include_directories('.')
-
-add_project_arguments('-D_PACKAGE_ast', language: 'c')
-add_project_arguments('-DMESON_BUILD=1', language: 'c')
-
-if system == 'darwin'
-    add_project_arguments('-D_DARWIN_C_SOURCE', language: 'c')
-endif
-
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
@@ -31,13 +23,8 @@ add_project_arguments('-std=gnu99', language: 'c')
 # `dump_backtrace()` function can provide some minimally useful information.
 add_project_arguments('-g', language: 'c')
 
-hosttype_cmd=run_command('bin/hosttype')
-hosttype=hosttype_cmd.stdout().strip()
-add_project_arguments('-DHOSTTYPE="' + hosttype + '"', language: 'c')
-
 shared_c_args = [
     '-DUSAGE_LICENSE=""',
-    '-D_API_ast=20130625',
 ]
 
 # Compiler arguments used when building `ksh93`, `shcomp`, and related AST
@@ -50,6 +37,17 @@ size_t_size = cc.sizeof('size_t')
 off_t_size = cc.sizeof('off_t')
 
 feature_data = configuration_data()
+feature_data.set('MESON_BUILD', 1)
+feature_data.set('_PACKAGE_ast', 1)
+feature_data.set('_API_ast', 20130625)
+if system == 'darwin'
+    feature_data.set('DARWIN_C_SOURCE', 1)
+endif
+
+hosttype_cmd=run_command('bin/hosttype')
+hosttype=hosttype_cmd.stdout().strip()
+feature_data.set_quoted('HOSTTYPE', hosttype)
+
 feature_data.set('_ast_sizeof_int', int_size)
 feature_data.set('_ast_sizeof_long', long_size)
 feature_data.set('_ast_sizeof_size_t', size_t_size)
