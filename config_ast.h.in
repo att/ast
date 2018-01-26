@@ -275,7 +275,6 @@
 #mesondefine _lib_grantpt
 #mesondefine _lib_htonl
 #mesondefine _lib_htons
-#mesondefine _lib_iconv_open
 #mesondefine _lib_ilogb
 #mesondefine _lib_index
 #mesondefine _lib_inet_ntoa

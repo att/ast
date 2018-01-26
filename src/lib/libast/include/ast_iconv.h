@@ -1,10 +1,6 @@
 /* : : generated from iconv by iffe version 2013-11-14 : : */
 #ifndef _def_iconv_features
 #define _def_iconv_features 1
-#define _hdr_iconv 1       /* #include <iconv.h> ok */
-#define _lib_iconv_open 1  /* iconv_open() in default lib(s) */
-#define _lib_iconv_close 1 /* iconv_close() in default lib(s) */
-#define _lib_iconv 1       /* iconv() in default lib(s) */
 #include <ast_common.h>
 #include <ccode.h>
 
