@@ -25,6 +25,7 @@
 // platform feature detection and naming conventions.
 #mesondefine MESON_BUILD
 #mesondefine HOSTTYPE
+#mesondefine BASH_MACHTYPE
 #mesondefine STAT_ST_MTIM
 #mesondefine STAT_ST_MTIMESPEC
 #mesondefine CONF_LIBPATH
@@ -50,6 +51,7 @@
 #mesondefine _bin_tput
 #mesondefine _bin_universe
 #mesondefine _bin_wc
+#mesondefine _cmd_newgrp
 #mesondefine _cmd_nfsd
 #mesondefine _cmd_tput
 #mesondefine _cmd_universe
@@ -66,6 +68,7 @@
 #mesondefine _may_use_threads
 #mesondefine _more_long_int
 #mesondefine _more_void_int
+#mesondefine _pth_ed
 #mesondefine _pipe_rw
 #mesondefine _proto_bcopy
 #mesondefine _proto_bzero

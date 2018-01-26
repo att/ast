@@ -41,7 +41,7 @@ feature_data.set('MESON_BUILD', 1)
 feature_data.set('_PACKAGE_ast', 1)
 feature_data.set('_API_ast', 20130625)
 if system == 'darwin'
-    feature_data.set('DARWIN_C_SOURCE', 1)
+    feature_data.set('_DARWIN_C_SOURCE', 1)
 endif
 
 hosttype_cmd=run_command('bin/hosttype')

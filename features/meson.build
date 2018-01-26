@@ -1,3 +1,8 @@
+cpu = host_machine.cpu()
+system = host_machine.system()
+bash_machtype = cpu + '-unknown-'+ system
+feature_data.set_quoted('BASH_MACHTYPE', bash_machtype)
+
 # voidptr is larger than int
 if ptr_size > int_size
     feature_data.set('_more_void_int', 1)
@@ -210,3 +215,20 @@ posix_spawn_feature_file = files('posix_spawn.c')
 posix_spawn_feature_result = cc.run(
     posix_spawn_feature_file, name: 'posix_spawn exists and it works and its worth using')
 feature_data.set('_lib_posix_spawn', posix_spawn_feature_result.returncode())
+
+newgrp = find_program('newgrp', required: false)
+if newgrp.found()
+    feature_data.set('_cmd_newgrp', 1)
+endif
+
+tput = find_program('tput', required: false)
+if tput.found()
+    feature_data.set('_cmd_tput', 1)
+endif
+
+ed = find_program('ed', required: false)
+if ed.found()
+    feature_data.set_quoted('_pth_ed', ed.path())
+else
+    feature_data.set_quoted('_pth_ed', 'ed')
+endif
