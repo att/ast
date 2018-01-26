@@ -1,7 +1,6 @@
 /* : : generated from common by iffe version 2013-11-14 : : */
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 
 #define _std_proto 1 /* standard C prototypes ok */
 
@@ -107,9 +106,7 @@
 #if _hdr_stddef
 #include <stddef.h>
 #endif
-#if _sys_types
 #include <sys/types.h>
-#endif
 #include <stdint.h>
 #endif
 

@@ -1,7 +1,6 @@
 /* : : generated from aso by iffe version 2013-11-14 : : */
 #ifndef _def_aso_features
 #define _def_aso_features 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 #include <ast_common.h>
 #define asointegralof(x) (void *)(((char *)(x)) - ((char *)0))
 

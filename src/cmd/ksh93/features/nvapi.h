@@ -1,7 +1,6 @@
 /* : : generated from nvapi by iffe version 2013-11-14 : : */
 #ifndef _NV_API_H
 #define _NV_API_H 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 #ifndef _API_nv
 #define _API_nv _API_shell
 #endif

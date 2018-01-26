@@ -1,7 +1,6 @@
 /* : : generated from shellapi by iffe version 2013-11-14 : : */
 #ifndef _SHELL_API_H
 #define _SHELL_API_H 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 #define SHELLAPI(rel) (_BLD_shell || !_API_shell || _API_shell >= rel)
 
 #ifndef _SHELL_API_IMPLEMENT

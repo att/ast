@@ -1,7 +1,6 @@
 /* : : generated from tty by iffe version 2013-11-14 : : */
 #ifndef _def_tty_features
 #define _def_tty_features 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 
 #if _mac__POSIX_VDISABLE
 #undef _POSIX_VDISABLE

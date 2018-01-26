@@ -632,7 +632,6 @@
 #mesondefine _sys_time
 #mesondefine _sys_times
 #mesondefine _sys_ttyio
-#mesondefine _sys_types
 #mesondefine _sys_uio
 #mesondefine _sys_un
 #mesondefine _sys_universe
