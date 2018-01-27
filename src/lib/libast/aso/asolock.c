@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "asohdr.h"
 
 int asolock(unsigned int volatile *lock, unsigned int key, int type) {

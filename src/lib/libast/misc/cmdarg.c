@@ -25,6 +25,7 @@
  *
  * xargs/tw command arg list support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

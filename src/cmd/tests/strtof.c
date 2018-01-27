@@ -25,6 +25,7 @@
  *	strtod		strtold
  *	strntod		strntold
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
 #include <ast.h>

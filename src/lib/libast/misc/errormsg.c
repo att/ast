@@ -25,6 +25,7 @@
  *
  * error function with specific dictionary
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <error.h>
 

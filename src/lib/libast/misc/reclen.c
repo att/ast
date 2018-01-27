@@ -24,6 +24,7 @@
  * -1 returned on error
  *  0 returned if more data is required
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <recfmt.h>

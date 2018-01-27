@@ -21,6 +21,7 @@
 /*
  * common support for tail and rev
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 #include <rev.h>

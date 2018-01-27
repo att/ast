@@ -1,5 +1,4 @@
 /* : : generated from api by iffe version 2013-11-14 : : */
-#define _sys_types 1             /* #include <sys/types.h> ok */
 #define _AST_VERSION AST_VERSION /* pre-20100601 compatibility */
 
 #define AST_VERSION 20131127

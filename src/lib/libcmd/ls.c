@@ -21,6 +21,7 @@
 /*
  * ls -- list file status
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define TIME_ISO "%Q/%m-%d+%H:%M/%Y-%m-%d /"
 #define TIME_LONG_ISO "%_K"

@@ -20,6 +20,7 @@
 /*
  * first hack dbm plugin
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ast_ndbm.h>

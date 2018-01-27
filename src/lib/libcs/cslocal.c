@@ -24,6 +24,7 @@
  * open|initiate /dev/fdp/local/<service>/user
  * coded for bootstrap
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

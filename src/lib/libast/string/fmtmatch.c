@@ -26,6 +26,7 @@
  * return strmatch() expression given REG_AUGMENTED RE
  * 0 returned for invalid RE
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

@@ -22,6 +22,7 @@
 /*
  * posix regex ed(1) style substitute compile
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

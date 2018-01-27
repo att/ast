@@ -74,6 +74,6 @@ fi
 case $libpath in
 '')	libpath=bin ;;
 esac
-echo "\"$libpath\""
+echo "$libpath"
 
 exit 0

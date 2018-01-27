@@ -28,6 +28,7 @@
  *
  * NOTE: this is an unfortunate NFS workaround that should be done by fsync()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

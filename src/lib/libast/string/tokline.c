@@ -36,6 +36,7 @@
  * NOTE: seek disabled and string disciplines cannot be composed
  *	 quoted \n translated to \r
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <error.h>

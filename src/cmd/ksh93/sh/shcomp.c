@@ -23,6 +23,8 @@
 //
 // Shell script to shell binary converter.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <shell.h>

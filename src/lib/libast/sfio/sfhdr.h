@@ -87,8 +87,6 @@
 #define _stat_blksize 1
 #endif
 
-#define _lib_locale 1
-
 #define sfoff_t off_t
 #define sfstat_t struct stat
 #define sysclosef close
@@ -560,7 +558,7 @@
     while (0)
 #endif /*!defined(SFSETLOCALE) && _PACKAGE_ast*/
 
-#if !defined(SFSETLOCALE) && _lib_locale
+#if !defined(SFSETLOCALE)
 #include <locale.h>
 #define SFSETLOCALE(decimal, thousand)                                 \
     do {                                                               \
@@ -576,7 +574,7 @@
             }                                                          \
         }                                                              \
     } while (0)
-#endif /*!defined(SFSETLOCALE) && _lib_locale*/
+#endif /*!defined(SFSETLOCALE)*/
 
 #if !defined(SFSETLOCALE)
 #define SFSETLOCALE(decimal, thousand) (*(decimal) = '.', *(thousand) = -1)

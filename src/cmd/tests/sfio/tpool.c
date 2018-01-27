@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sftest.h"
 
 static char Serial[128], *S = Serial;

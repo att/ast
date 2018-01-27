@@ -20,6 +20,7 @@
 /*
  * sum(3) wrapper for solaris -lmd message digest library
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 typedef void (*Lmd_init_f)(void *);
 typedef void (*Lmd_update_f)(void *, const void *, size_t);

@@ -85,33 +85,33 @@ main()
 	}
 #if _X86_ || _X64_
 	#if _X64
-            printf("-DALIGN_BOUND2=16\n");
+            printf("ALIGN_BOUND2 16\n");
 	#else
-            printf("-DALIGN_BOUND2=8\n");
+            printf("ALIGN_BOUND2 8\n");
 	#endif
 #else
-	printf("-DALIGN_BOUND2=%d\n", align2);
+	printf("ALIGN_BOUND2 %d\n", align2);
 #endif
 	if (align1 == align2)
 	{
-		printf("-DALIGN_BOUND1=ALIGN_BOUND2\n");
+		printf("ALIGN_BOUND1 ALIGN_BOUND2\n");
 	}
 	else
 	{
-		printf("-DALIGN_BOUND1=%d\n", align1);
+		printf("ALIGN_BOUND1 %d\n", align1);
 	}
 
     if (align0 == align2)
 	{
-		printf("-DALIGN_BOUND=ALIGN_BOUND2\n");
+		printf("ALIGN_BOUND ALIGN_BOUND2\n");
 	}
 	else if (align0 == align1)
 	{
-		printf("-DALIGN_BOUND=ALIGN_BOUND1\n");
+		printf("ALIGN_BOUND ALIGN_BOUND1\n");
 	}
 	else
 	{
-		printf("-DALIGN_BOUND=1\n");
+		printf("ALIGN_BOUND 1\n");
 	}
     return 0;
 }

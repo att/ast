@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 /*
  *  *  malloc-test: snarf from the web to test multithreaded mallocs. see also tsafemalloc.c
  *   *  cel - Thu Jan  7 15:49:16 EST 1999

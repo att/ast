@@ -23,6 +23,7 @@
  * Glenn Fowler
  * AT&T Bell Laboratories
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "univlib.h"
 

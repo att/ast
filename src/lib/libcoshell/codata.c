@@ -23,6 +23,7 @@
  *
  * coshell readonly data
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

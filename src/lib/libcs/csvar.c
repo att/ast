@@ -23,6 +23,7 @@
  *
  * run time cs var support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

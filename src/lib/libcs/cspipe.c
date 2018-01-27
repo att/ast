@@ -23,6 +23,7 @@
  *
  * create bi-directional local pipe
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "dttest.h"
 
 static char Space[16 * 1024 * 1024];

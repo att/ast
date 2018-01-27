@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sfhdr.h"
 
 /*	Poll a set of streams to see if any is available for I/O.

@@ -14,7 +14,7 @@ int main() {
     for (i = 0; i < sizeof(ptc) / sizeof(ptc[0]); i++) {
         if ((fd = open(ptc[i], 2)) >= 0) {
             if (ptsname(fd)) {
-                printf("-D_pty_clone=\"%s\"\n", ptc[i]);
+                printf("_pty_clone \"%s\"\n", ptc[i]);
                 close(fd);
                 break;
             }
@@ -27,7 +27,7 @@ int main() {
     static char *pty[] = {"/dev/ptyp0000", "/dev/ptym/ptyp0", "/dev/ptyp0"};
     for (i = 0;; i++) {
         if (i >= (sizeof(pty) / sizeof(pty[0]) - 1) || stat(pty[i], &statb) >= 0) {
-            printf("-D_pty_first=\"%s\"\n", pty[i]);
+            printf("_pty_first \"%s\"\n", pty[i]);
             break;
         }
     }

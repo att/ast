@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sfhdr.h"
 
 /*	Set the IO pointer to a specific location in the stream

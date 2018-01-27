@@ -17,13 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sftest.h"
-#if _lib_locale
 #include <locale.h>
-#endif
 
 tmain() {
-#if _lib_locale
     char buf[128], cmp[128];
     float d;
     int n, decimal, thousand;
@@ -55,7 +54,6 @@ tmain() {
     if (d < 1000.099 || d > 1000.101) terror("Bad scanning");
     sfsprintf(buf, sizeof(buf), "%.2f", d);
     if (strcmp(buf, "1000.10") != 0) terror("Deep formatting error");
-#endif
 
     texit(0);
 }

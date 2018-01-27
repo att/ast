@@ -58,6 +58,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bbasename\b(1), \bgetconf\b(1), \bdirname\b(3), \bpathname\b(3)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 
 static void l_dirname(Sfio_t *outfile, const char *pathname) {

@@ -31,6 +31,7 @@
  *	csauth(state,-1,path,arg)	called by `cs -O...'
  *	csauth(state,fd,0,arg)	normal user call
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

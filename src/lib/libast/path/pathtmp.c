@@ -22,6 +22,7 @@
 /*
  * obsolete -- use pathtemp()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <stdio.h>

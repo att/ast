@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #ifndef TMETHOD
 #define TMETHOD Dtset /* hash table with chaining */
 #endif

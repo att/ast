@@ -22,6 +22,7 @@
  * David Korn
  * AT&T Research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char split_usage[] =
     "[-?\n@(#)$Id: split (AT&T Research) 2006-09-19 $\n]" USAGE_LICENSE

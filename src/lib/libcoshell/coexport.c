@@ -23,6 +23,7 @@
  *
  * coshell export var set/unset
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

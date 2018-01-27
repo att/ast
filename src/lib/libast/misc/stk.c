@@ -34,6 +34,8 @@
  *   dgk@research.att.com
  *
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <sfio_t.h>  // must be first include for some reason
 
 #include <ast.h>

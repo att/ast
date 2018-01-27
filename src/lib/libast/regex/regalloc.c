@@ -22,6 +22,7 @@
 /*
  * posix regex alloc control
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

@@ -23,6 +23,7 @@
  *
  * remote coshell server command interface support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "service.h"
 

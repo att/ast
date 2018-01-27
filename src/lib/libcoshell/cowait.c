@@ -24,6 +24,7 @@
  * wait for and return status of job or the next coshell job that completes
  * job==co for non-blocking wait
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sfhdr.h"
 
 /*	Close a stream. A file stream is synced before closing.

@@ -20,6 +20,8 @@
 //
 //  Command and file completion for shell editors.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include "edit.h"

@@ -11,7 +11,7 @@ libcoshell_incdir = include_directories('../libast/include',
                                         '../../cmd/ksh93/features/')
 
 libcoshell = library('coshell', libcoshell_files,
-                     include_directories: libcoshell_incdir,
+                     include_directories: [configuration_incdir, libcoshell_incdir],
                      c_args: libcoshell_c_args,
                      link_with: libast,
                      install: get_option('default_library') == 'shared')

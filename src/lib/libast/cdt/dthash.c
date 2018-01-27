@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "dthdr.h"
 
 /*	Hash table with chaining for collisions.

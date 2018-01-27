@@ -26,6 +26,7 @@
  *	<unit><density>[<no-rewind>]
  *	{0-7}[l,m,h,u,c][n]
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

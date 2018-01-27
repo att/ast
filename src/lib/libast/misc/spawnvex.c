@@ -26,6 +26,7 @@
  * this code looks worse than it is because of the DEBUG_* emulations
  * the DEBUG_* emulations allow { cygwin ibm } debugging on linux
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _SPAWNVEX_PRIVATE_ \
     unsigned int max;      \

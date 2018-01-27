@@ -25,6 +25,7 @@
  *
  * mime/mailcap support library
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char lib[] = "libast:mime";
 

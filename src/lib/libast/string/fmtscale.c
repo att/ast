@@ -26,6 +26,7 @@
  * return number n scaled to metric multiples of k { 1000 1024 }
  * return string length is at most 5 chars + terminating nul
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <lclib.h>

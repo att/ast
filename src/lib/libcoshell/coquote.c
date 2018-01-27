@@ -24,6 +24,7 @@
  * single quote s into sp
  * if type!=0 then /<getenv(<CO_ENV_TYPE>)/ translated to /$<CO_ENV_TYPE>/
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

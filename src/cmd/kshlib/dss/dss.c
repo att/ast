@@ -24,6 +24,7 @@
  *   AT&T Labs
  *
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <dsslib.h>
 #include <shell.h>

@@ -21,6 +21,7 @@
 /*
  * builtin main stub for -lcmd
  */
+#include "config_ast.h"
 
 #include <cmd.h>
 

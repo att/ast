@@ -17,6 +17,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <ast_ndbm.h>
 #include <shell.h>
 

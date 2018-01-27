@@ -24,6 +24,7 @@
  *
  * cp/ln/mv -- copy/link/move files
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 

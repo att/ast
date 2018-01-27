@@ -25,6 +25,7 @@
  *
  * time conversion support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <tmx.h>
 

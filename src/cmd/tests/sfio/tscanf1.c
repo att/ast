@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sftest.h"
 
 /* test to see sfvscanf still works ok with a discipline that

@@ -25,6 +25,8 @@
 //
 // Coded April 1983.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #if KSHELL
 #include "defs.h"
 #endif

@@ -21,6 +21,7 @@
  * Glenn Fowler
  * at&t research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "dlllib.h"
 

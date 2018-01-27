@@ -21,6 +21,7 @@
 /*
  * command initialization
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 #include <shcmd.h>

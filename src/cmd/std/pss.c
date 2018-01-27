@@ -23,6 +23,7 @@
  *
  * process status stream implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char id[] = "\n@(#)$Id: pss library (AT&T Research) 2011-05-09 $\0\n";
 

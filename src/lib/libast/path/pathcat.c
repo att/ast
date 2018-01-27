@@ -25,6 +25,7 @@
  *
  * single dir support for pathaccess()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

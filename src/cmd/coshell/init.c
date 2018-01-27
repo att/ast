@@ -23,6 +23,7 @@
  *
  * remote coshell initialization script
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 const char corinit[] =
     "\

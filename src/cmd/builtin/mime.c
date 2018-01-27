@@ -24,6 +24,7 @@
  *
  * mime capability interface
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: mime (AT&T Research) 1999-08-11 $\n]" USAGE_LICENSE

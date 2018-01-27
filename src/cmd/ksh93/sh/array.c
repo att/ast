@@ -23,7 +23,10 @@
 //   David Korn
 //   dgkorn@gmail.com
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
+
 #include "name.h"
 
 #define NUMSIZE 11

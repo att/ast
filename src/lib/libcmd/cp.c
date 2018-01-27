@@ -122,6 +122,8 @@ static const char usage_tail[] =
     "[+SEE ALSO?\bpax\b(1), \bfsync\b(2), \brename\b(2), \bunlink\b(2),"
     "	\bremove\b(3)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <fs3d.h>
 #include <fts_fix.h>

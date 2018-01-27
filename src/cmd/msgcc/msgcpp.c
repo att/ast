@@ -23,6 +23,7 @@
  *
  * C message catalog preprocessor
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: msgcpp (AT&T Research) 2002-03-11 $\n]" USAGE_LICENSE

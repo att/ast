@@ -20,6 +20,7 @@
 /*
  * list system call message
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "msglib.h"
 

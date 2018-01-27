@@ -44,6 +44,7 @@
  * pathdev(PATH_AUX) Pathdev_t.flags|=PATH_AUX if AUX fd was created
  * see pathopen() for the api that ties it all together
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

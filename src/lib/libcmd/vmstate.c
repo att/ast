@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define FORMAT                                                                                 \
     "region=%(region)p method=%(method)s flags=%(flags)s size=%(size)d segments=%(segments)d " \
     "packs=%(packs)d busy=(%(busy_size)d,%(busy_blocks)d) free=(%(free_size)d,%(free_blocks)d)"

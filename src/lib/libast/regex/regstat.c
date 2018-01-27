@@ -22,6 +22,7 @@
 /*
  * return p stat info
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

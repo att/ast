@@ -19,6 +19,8 @@
  ***********************************************************************/
 static const char id[] = "\n@(#)$Id: open (AT&T Research) 1998-07-07 $\0\n";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <option.h>
 #include <shell.h>
 #include <stk.h>

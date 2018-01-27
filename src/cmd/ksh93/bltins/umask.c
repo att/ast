@@ -23,12 +23,14 @@
 //   David Korn
 //   dgkorn@gmail.com
 //
+#include "config_ast.h"  // IWYU pragma: keep
 
 // WARNING: Normally every ksh source module should normally begin with:
 //   #include "defs.h"
 // However, including that header in this module alters its behavior and breaks a unit test.
 //
 // TODO: Figure out why including that header changes the behavior of this code since it shouldn't.
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ctype.h>

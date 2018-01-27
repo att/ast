@@ -23,6 +23,7 @@
  *
  * return job initialization commands
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #if _WIN32
 #undef _BLD_DLL

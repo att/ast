@@ -25,6 +25,7 @@
  *
  * fall back to /bin/ps if no support -- and you better match their args!
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define FIELDS_default "pid,tty,time,comm"
 #define FIELDS_c "pid,class,pri,tty,time,comm"

@@ -22,6 +22,7 @@
 /*
  * backwards binary compatibility
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cdt.h>
 

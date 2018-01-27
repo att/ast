@@ -24,6 +24,7 @@
  *   David Korn
  *   Glenn Fowler
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "+[-?\n@(#)$Id: tail (AT&T Research) 2013-09-19 $\n]" USAGE_LICENSE

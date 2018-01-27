@@ -34,6 +34,7 @@
  * if (quit&ERROR_PROMPT) then tty forced for IO
  * if quit>=0 then [qQ] or EOF calls exit(quit)
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <error.h>

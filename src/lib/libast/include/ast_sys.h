@@ -1,7 +1,6 @@
 /* : : generated from sys by iffe version 2013-11-14 : : */
 #ifndef _AST_SYS_H
 #define _AST_SYS_H 1
-#define _sys_types 1 /* #include <sys/types.h> ok */
 #if __mips == 2 && !defined(_NO_LARGEFILE64_SOURCE)
 #define _NO_LARGEFILE64_SOURCE 1
 #endif

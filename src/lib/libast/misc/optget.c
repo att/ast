@@ -27,6 +27,7 @@
  * its a monster but its all in one place
  * widen your window while you're at it
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ccode.h>
 #include <ctype.h>

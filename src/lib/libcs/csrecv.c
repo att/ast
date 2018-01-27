@@ -28,6 +28,7 @@
  *       for local host Csid_t.hid==0, Csid_t.pid not trusted
  *	 for remote host csauth() can authenticate Csid_t.[ug]id
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

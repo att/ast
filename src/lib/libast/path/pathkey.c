@@ -30,6 +30,7 @@
  * if attr != 0 then attribute var assignments placed here:
  *	ATTRIBUTES	list of attribute names
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

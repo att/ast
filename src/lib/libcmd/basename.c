@@ -60,6 +60,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bdirname\b(1), \bgetconf\b(1), \bbasename\b(3)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {

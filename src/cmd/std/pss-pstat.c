@@ -23,6 +23,7 @@
  *
  * process status stream PSS_METHOD_pstat implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "psslib.h"
 

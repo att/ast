@@ -23,6 +23,7 @@
  *
  * return a pointer to a pathname for an open fd
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

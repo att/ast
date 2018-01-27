@@ -33,6 +33,7 @@
  *
  * hows that
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define PARANOID_TOOLS PARANOID
 #define PARANOID_COMPANY "Lucent Technologies"

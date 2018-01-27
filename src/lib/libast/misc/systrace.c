@@ -22,6 +22,7 @@
 /*
  * trace systems calls if possible
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <debug.h>

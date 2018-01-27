@@ -26,6 +26,7 @@
  * iconv intercept
  * minimally provides { utf*<=>bin ascii<=>ebcdic* }
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <dirent.h>
@@ -48,21 +49,6 @@
 #define CC_U32LE (-7)
 #define CC_UTF (-8)
 #define CC_UME (-9)
-
-#if !_lib_iconv_open
-
-#define _ast_iconv_t iconv_t
-#define _ast_iconv_f iconv_f
-#define _ast_iconv_list_t iconv_list_t
-#define _ast_iconv_open iconv_open
-#define _ast_iconv iconv
-#define _ast_iconv_close iconv_close
-#define _ast_iconv_list iconv_list
-#define _ast_iconv_move iconv_move
-#define _ast_iconv_name iconv_name
-#define _ast_iconv_write iconv_write
-
-#endif
 
 #ifndef E2BIG
 #define E2BIG ENOMEM
@@ -831,13 +817,10 @@ _ast_iconv_t _ast_iconv_open(const char *t, const char *f) {
     for (i = 0; i < elementsof(freelist); i++)
         if ((cc = freelist[i]) && streq(to, cc->to.name) && streq(fr, cc->from.name)) {
             freelist[i] = 0;
-#if _lib_iconv_open
             /*
              * reset the shift state if any
              */
-
             if (cc->cvt != (iconv_t)(-1)) iconv(cc->cvt, NULL, NULL, NULL, NULL);
-#endif
             return cc;
         }
 
@@ -856,11 +839,9 @@ _ast_iconv_t _ast_iconv_open(const char *t, const char *f) {
      */
 
     if (fc >= 0 && tc >= 0) cc->from.map = ccmap(fc, tc);
-#if _lib_iconv_open
     else if ((cc->cvt = iconv_open(t, f)) != (iconv_t)(-1) ||
              (cc->cvt = iconv_open(to, fr)) != (iconv_t)(-1))
         cc->from.fun = (_ast_iconv_f)iconv;
-#endif
     else {
         switch (fc) {
             case CC_UTF:
@@ -1006,9 +987,7 @@ int _ast_iconv_close(_ast_iconv_t cd) {
 
             oc = freelist[i];
             if (oc) {
-#if _lib_iconv_open
                 if (oc->cvt != (iconv_t)(-1)) r = iconv_close(oc->cvt);
-#endif
                 if (oc->buf) free(oc->buf);
                 free(oc);
             }

@@ -24,6 +24,7 @@
  *
  * fold
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: fold (AT&T Research) 2004-11-18 $\n]" USAGE_LICENSE

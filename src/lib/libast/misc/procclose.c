@@ -26,6 +26,7 @@
  * close a proc opened by procopen()
  * otherwise exit() status of process is returned
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "proclib.h"
 

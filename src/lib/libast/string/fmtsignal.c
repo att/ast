@@ -26,6 +26,7 @@
  * if sig>=0 then return signal text for signal sig
  * otherwise return signal name for signal -sig
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <sig.h>

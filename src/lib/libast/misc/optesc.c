@@ -26,6 +26,7 @@
  * escape optget() special chars in s and write to sp
  * esc == '?' or ':' also escaped
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <optlib.h>

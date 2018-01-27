@@ -22,6 +22,7 @@
 /*
  * return the record format string given a format descriptor
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
 #include <recfmt.h>

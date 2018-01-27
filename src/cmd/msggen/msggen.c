@@ -21,6 +21,7 @@
  * Glenn Fowler
  * AT&T Research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: msggen (AT&T Research) 2002-03-11 $\n]" USAGE_LICENSE

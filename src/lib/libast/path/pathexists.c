@@ -30,6 +30,7 @@
  * in half by checking ENOTDIR vs. ENOENT
  * case ignorance infection unavoidable here
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclib.h"
 

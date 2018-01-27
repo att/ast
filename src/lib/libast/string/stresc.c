@@ -27,6 +27,7 @@
  * the length of the converted s is returned (may have embedded \0's)
  * strexp() FMT_EXP_* flags passed to chrexp() for selective conversion
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

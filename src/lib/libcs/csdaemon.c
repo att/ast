@@ -29,6 +29,7 @@
  * daemon details thanks to
  *	"UNIX Network Programming, W. Richard Stevens, Prentice Hall, 1990"
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

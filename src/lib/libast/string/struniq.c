@@ -27,6 +27,7 @@
  * David Korn
  * AT&T Research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

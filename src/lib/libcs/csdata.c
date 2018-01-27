@@ -23,6 +23,7 @@
  *
  * cs library data
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static char id_cs[] = "\n@(#)$Id: libcs (AT&T Research) 2001-12-12 $\0\n";
 

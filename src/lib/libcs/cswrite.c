@@ -23,6 +23,7 @@
  *
  * write n bytes to fd, using multiple write(2) if necessary
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

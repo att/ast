@@ -22,6 +22,7 @@
 /*
  * posix regex fatal error interface to error()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

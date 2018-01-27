@@ -28,6 +28,7 @@
  * *p is updated to point to the next character in s
  * *m is 1 if return value is wide
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ccode.h>

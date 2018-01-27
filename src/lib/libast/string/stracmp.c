@@ -22,6 +22,7 @@
 /*
  * ccmapchr(ccmap(CC_NATIVE,CC_ASCII),c) and strcmp
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ccode.h>

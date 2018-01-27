@@ -25,6 +25,8 @@
 //   P.D. Sullivan
 //   cbosgd!pds
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #if KSHELL
 #include "defs.h"
 #else  // KSHELL

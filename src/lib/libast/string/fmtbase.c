@@ -27,6 +27,7 @@
  * if p!=0 then base prefix is included
  * otherwise if n==0 or b==0 then output is signed base 10
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

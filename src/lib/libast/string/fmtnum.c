@@ -27,6 +27,7 @@
  * string width is 5 chars or less
  * if m>1 then n divided by m before scaling
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

@@ -20,6 +20,8 @@
 //
 // Tables for the test builin [[...]] and [...].
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <ast.h>

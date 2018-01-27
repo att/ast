@@ -17,5 +17,7 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define TMETHOD Dtoset /* hash-trie table */
 #include "tvsafehash.c"

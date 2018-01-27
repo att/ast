@@ -23,6 +23,8 @@
 //
 // Shell intermediate code reader.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <ccode.h>

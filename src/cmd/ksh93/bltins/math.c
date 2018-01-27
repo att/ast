@@ -6,7 +6,8 @@
 // This assumes that all the functions in a typical UNIX libm library are
 // available.
 //
-//
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>

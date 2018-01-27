@@ -23,6 +23,7 @@
  *
  * coshell procrun(3)
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 

@@ -25,6 +25,7 @@
  *
  * return error message string given errno
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

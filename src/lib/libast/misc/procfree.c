@@ -26,6 +26,7 @@
  * free a proc opened by procopen()
  * skipping wait() and close()
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "proclib.h"
 

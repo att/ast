@@ -22,6 +22,7 @@
  *
  * test harness for strelapsed
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

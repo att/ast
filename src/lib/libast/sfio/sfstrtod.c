@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "sfhdr.h"
 
 /*	Convert a Sfdouble_t value represented in an ASCII format into
@@ -67,13 +69,9 @@ Sfdouble_t _sfstrtod(reg const char *s, char **retp) {
     reg int n, c, m;
     reg int mode, fexp, sign, expsign;
     Sfdouble_t dval;
-#if _lib_locale
     int decpoint = 0;
     int thousand = 0;
     SFSETLOCALE(&decpoint, &thousand);
-#else
-#define decpoint '.'
-#endif
 
     /* skip initial blanks */
     while (isspace(*s)) ++s;

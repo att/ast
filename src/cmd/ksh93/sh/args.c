@@ -22,6 +22,8 @@
 // Rewritten by David Korn
 // AT&T Labs
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "defs.h"
 
 #include <poll.h>

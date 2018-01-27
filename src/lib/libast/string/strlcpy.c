@@ -22,6 +22,7 @@
 /*
  * strlcpy implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define strlcpy ______strlcpy
 

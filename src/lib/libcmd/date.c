@@ -192,6 +192,8 @@ static const char usage[] =
     "[+SEE ALSO?\bcrontab\b(1), \bls\b(1), \btouch\b(1), \bfmtelapsed\b(3),"
     "	\bstrftime\b(3), \bstrptime\b(3), \btm\b(3)]";
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <ls.h>
 #include <proc.h>

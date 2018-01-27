@@ -25,6 +25,7 @@
  *
  * 8 bit character code map name/id lookup support
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ccode.h>

@@ -31,6 +31,7 @@
  * full path returned in path buffer
  * if path==0 then the space is malloc'd
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

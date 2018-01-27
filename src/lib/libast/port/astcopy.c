@@ -25,6 +25,7 @@
  *
  * copy from rfd to wfd (with conditional mmap hacks)
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ast_mmap.h>

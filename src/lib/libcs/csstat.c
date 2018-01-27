@@ -23,6 +23,7 @@
  *
  * return host status given name
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

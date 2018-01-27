@@ -23,6 +23,7 @@
  * Written by David Korn
  * Sat Oct  8 13:47:13 EDT 1994
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char expand_usage[] =
     "[-?@(#)$Id: expand (AT&T Research) 1999-06-17 $\n]" USAGE_LICENSE

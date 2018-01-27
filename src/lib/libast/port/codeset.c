@@ -22,6 +22,7 @@
 /*
  * ast private function that returns locale codeset names
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "lclib.h"
 

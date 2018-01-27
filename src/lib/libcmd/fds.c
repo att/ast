@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 static const char usage[] =
     "[-?\n@(#)$Id: fds (AT&T Research) 2009-09-09 $\n]" USAGE_LICENSE
     "[+NAME?fds - list open file descriptor status]"

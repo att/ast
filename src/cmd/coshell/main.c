@@ -25,6 +25,7 @@
  * except for history this program would
  * have been called shmux (with a TeX x)
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "service.h"
 

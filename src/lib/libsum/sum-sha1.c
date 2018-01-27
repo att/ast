@@ -11,6 +11,7 @@
  * A million repetitions of "a"
  *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define sha1_description "FIPS 180-1 SHA-1 secure hash algorithm 1."
 #define sha1_options \

@@ -25,6 +25,8 @@
  *
  * sfio tmp string buffer support
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <sfio_t.h>
 
 #include <ast.h>

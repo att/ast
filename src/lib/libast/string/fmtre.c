@@ -26,6 +26,7 @@
  * return RE expression given strmatch() pattern
  * 0 returned for invalid RE
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 

@@ -40,6 +40,7 @@
  * optjoin() returns non-zero if more args remain
  * to be parsed at opt_info.index
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <optlib.h>
 

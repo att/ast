@@ -54,6 +54,8 @@
 // I do not pretend these for changes are completely independent, but you can use them to seperate
 // features.
 //
+#include "config_ast.h"  // IWYU pragma: keep
+
 #if KSHELL
 #include "defs.h"
 #else

@@ -28,6 +28,7 @@
  * mail gsf@research.att.com when you figure out the stat.st_blocks units
  * until then we assume LS_BLOCKSIZE (512)
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #if _AIX /* XXX */

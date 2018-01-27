@@ -19,6 +19,8 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "vmhdr.h"
 
 /* The below implements the discipline Vmdcsystem and the heap region Vmheap.

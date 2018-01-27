@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 static const char usage[] =
     "[-?\n@(#)$Id: mktemp (AT&T Research) 2012-12-12 $\n]" USAGE_LICENSE
     "[+NAME?mktemp - make temporary file or directory]"

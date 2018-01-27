@@ -23,6 +23,7 @@
  *
  * touch -- touch file times
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: touch (AT&T Research) 2004-12-12 $\n]" USAGE_LICENSE

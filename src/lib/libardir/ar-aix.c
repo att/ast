@@ -21,6 +21,7 @@
 /*
  * aix archive format method
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ardirlib.h>
 #include <tm.h>

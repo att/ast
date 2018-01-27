@@ -23,6 +23,7 @@
  * convert wide character string to native utf-32 string
  * Roland Mainz <roland.mainz@nrubsig.org>
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <ast_iconv.h>

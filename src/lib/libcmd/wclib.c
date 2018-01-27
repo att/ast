@@ -27,6 +27,7 @@
  *
  * library interface for word count
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
 #include <ctype.h>

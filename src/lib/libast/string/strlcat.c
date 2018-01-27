@@ -22,6 +22,7 @@
 /*
  * strlcat implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define strlcat ______strlcat
 

@@ -24,6 +24,7 @@
  *
  * strings
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: strings (AT&T Research) 2000-04-01 $\n]" USAGE_LICENSE

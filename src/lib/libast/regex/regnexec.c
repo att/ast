@@ -23,6 +23,7 @@
  * posix regex executor
  * single sized-record interface
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "reglib.h"
 

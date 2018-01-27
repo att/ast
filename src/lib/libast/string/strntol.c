@@ -22,6 +22,7 @@
 /*
  * strntol() implementation
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define S2I_function strntol
 #define S2I_number long

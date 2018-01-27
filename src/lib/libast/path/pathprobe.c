@@ -39,6 +39,7 @@
  *
  * 0 returned if the info does not exist and cannot be generated
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
 

@@ -18,6 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <cmd.h>
 #include <ls.h>
 

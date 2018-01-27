@@ -26,6 +26,7 @@
  * return ls -l style file mode string given file mode bits
  * if external!=0 then mode is modex canonical
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "modelib.h"
 

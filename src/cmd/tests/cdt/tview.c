@@ -17,6 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include "dttest.h"
 
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL};

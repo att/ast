@@ -32,6 +32,7 @@
  *
  * 0 returned on eof
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "cslib.h"
 

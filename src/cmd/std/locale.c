@@ -20,6 +20,7 @@
 /*
  * locale command
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-?\n@(#)$Id: locale (AT&T Research) 2009-10-21 $\n]" USAGE_LICENSE

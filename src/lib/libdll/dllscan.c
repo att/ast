@@ -21,6 +21,7 @@
  * Glenn Fowler
  * AT&T Research
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define _DLLINFO_PRIVATE_ \
     char *sib[3];         \

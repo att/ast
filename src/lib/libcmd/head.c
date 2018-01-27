@@ -24,6 +24,7 @@
  *
  * output the beginning portion of one or more files
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 static const char usage[] =
     "[-n?\n@(#)$Id: head (AT&T Research) 2013-09-19 $\n]" USAGE_LICENSE

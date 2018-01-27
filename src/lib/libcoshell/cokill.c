@@ -27,6 +27,7 @@
  *
  * if sig==0 then cause all CO_SERVICE jobs to fail
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 
