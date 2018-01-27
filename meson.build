@@ -19,10 +19,6 @@ endif
 # does that but also limits which APIs are available.
 add_project_arguments('-std=gnu99', language: 'c')
 
-# Make sure we have symbolic debug info in the compiled binaries so that our
-# `dump_backtrace()` function can provide some minimally useful information.
-add_project_arguments('-g', language: 'c')
-
 shared_c_args = [
     '-DUSAGE_LICENSE=""',
 ]
