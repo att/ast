@@ -62,6 +62,18 @@ if cc.has_header('malloc.h')
     feature_data.set('_hdr_malloc', 1)
 endif
 
+if cc.has_header('paths.h')
+    feature_data.set('_hdr_paths', 1)
+endif
+
+if cc.has_header('utmp.h')
+    feature_data.set('_hdr_utmp', 1)
+endif
+
+if cc.has_header('utmpx.h')
+    feature_data.set('_hdr_utmpx', 1)
+endif
+
 if cc.has_function('sigqueue', prefix: '#include <signal.h>')
     feature_data.set('_lib_sigqueue', 1)
 endif
@@ -92,13 +104,45 @@ if socketpair_shutdown_feature_result.returncode() == 0
     feature_data.set('_socketpair_shutdown_mode', 1)
 endif
 
-if cc.has_member('struct stat','st_mtim', prefix: '#include <sys/stat.h>')
+if cc.has_member('struct stat', 'st_mtim', prefix: '#include <sys/stat.h>')
     feature_data.set('STAT_ST_MTIM', 1)
 elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
     # Under macOS modification time field is defined as mtimespec
     feature_data.set('STAT_ST_MTIMESPEC', 1)
 else
     error('Cannot determine modification time field in struct stat.')
+endif
+
+if cc.has_member('struct utmp', 'ut_host', prefix: '#include <utmp.h>')
+    feature_data.set('_mem_ut_host_utmp', 1)
+endif
+
+if cc.has_member('struct utmp', 'ut_tv', prefix: '#include <utmp.h>')
+    feature_data.set('_mem_ut_tv_utmp', 1)
+endif
+
+if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmp.h>')
+    feature_data.set('_mem_ut_type_utmp', 1)
+endif
+
+if cc.has_member('struct utmp', 'ut_user', prefix: '#include <utmp.h>')
+    feature_data.set('_mem_ut_user_utmp', 1)
+endif
+
+if cc.has_member('struct utmpx', 'ut_host', prefix: '#include <utmpx.h>')
+    feature_data.set('_mem_ut_host_utmpx', 1)
+endif
+
+if cc.has_member('struct utmpx', 'ut_tv', prefix: '#include <utmpx.h>')
+    feature_data.set('_mem_ut_tv_utmpx', 1)
+endif
+
+if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmpx.h>')
+    feature_data.set('_mem_ut_type_utmxp', 1)
+endif
+
+if cc.has_member('struct utmpx', 'ut_user', prefix: '#include <utmpx.h>')
+    feature_data.set('_mem_ut_user_utmpx', 1)
 endif
 
 if cc.has_function('posix_openpt', prefix: '#include <stdlib.h>',

@@ -4,10 +4,9 @@ if get_option('build-pty') == true
         '-DERROR_CATALOG=NULL',
         '-DCMD_STANDALONE=b_pty',
     ]
-    builtin_incdir = include_directories('features',
-                                         '../../lib/libast/include/',
-                                         '../../lib/libast/features/',
-                                         '../../lib/libcmd/')
+    builtin_incdir = include_directories('../../lib/libast/include',
+                                         '../../lib/libast/features',
+                                         '../../lib/libcmd')
 
     pty_exe = executable('pty', pty_files, c_args: pty_c_args,
         include_directories: [configuration_incdir, builtin_incdir],
