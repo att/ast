@@ -6086,26 +6086,13 @@ or all active jobs if
 is omitted,
 when a login shell terminates.
 .TP
-\f3echo\fP \*(OK \f2arg\^\fP .\|.\|. \*(CK
-When the first
-.I arg\^
-does not begin with a \-, and
-none of the arguments contain a \e,
-then
-.B echo
-prints each of its arguments separated by a space
-and terminated by a new-line.
-Otherwise, the behavior of
-.B echo
-is system dependent
-and
-.B print
-or
-.B printf
-described below should be used.
-See
-.IR echo (1)
-for usage and description.
+\f3echo\fP \*(OK \f3\-n\fP  \f3\-e\fP \*(CK \*(OK \f2 arg\^\fP .\|.\|. \*(CK
+echo builtin prints all of its arguments separated by space and terminated by new-line.
+.B -n
+will skip putting a newline character at the end of output. If
+.B -e
+is set, it will enable interpreting escape sequences.
+
 .TP
 \(dg\(dg \f3enum\fP \*(OK \f3\-i\fP  \*(CK \f2type\^\fP\*(OK=(\f2value\^\fP .\|.\|.) \*(CK
 Creates a declaration command named \f2type\^\fP that is an

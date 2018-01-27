@@ -18,7 +18,8 @@ was subsequently created to document the work being done.
 None at this time.
 
 ## Notable non-backward compatible changes
-
+- echo builtin now interprets escape sequences and parses command line options
+  on all platforms. (issue #370)
 - Support for the UWIN environment has been removed (issue #284).
 - The experimental `SHOPT_FIXEDARRAY` feature has been removed. It is known to
   have been enabled in some Fedora and RHEL builds. But because it was
