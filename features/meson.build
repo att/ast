@@ -66,6 +66,10 @@ if cc.has_header('paths.h', args: feature_test_args)
     feature_data.set('_hdr_paths', 1)
 endif
 
+if cc.has_header('termios.h', args: feature_test_args)
+    feature_data.set('_hdr_termios', 1)
+endif
+
 if cc.has_header('utmp.h', args: feature_test_args)
     feature_data.set('_hdr_utmp', 1)
 endif
@@ -76,6 +80,11 @@ endif
 
 if cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args)
     feature_data.set('_lib_sigqueue', 1)
+endif
+
+if cc.has_function('tcgetattr', prefix: '#include <signal.h>', args: feature_test_args)
+    feature_data.set('_lib_tcgetattr', 1)
+    feature_data.set('_lib_tcsetattr', 1)
 endif
 
 if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test_args)
