@@ -696,7 +696,7 @@ bad:
                              | VEXFLAG(SPAWN_umask)
 #endif
                                  ))
-#if _lib_posix_spawn < 2
+#if !_lib_posix_spawn
                 || !(vex->flags & SPAWN_EXEC)
 #endif
                     )) {
