@@ -279,3 +279,4 @@ endif
 
 subdir('ids')
 subdir('locales')
+subdir('sockets')
