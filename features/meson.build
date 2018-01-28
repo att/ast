@@ -277,4 +277,5 @@ else
     feature_data.set_quoted('_pth_ed', 'ed')
 endif
 
+subdir('ids')
 subdir('locales')
