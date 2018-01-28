@@ -335,7 +335,6 @@
 #mesondefine _lib_mntctl
 #mesondefine _lib_mntopen
 #mesondefine _lib_mntread
-#mesondefine _lib_mount
 #mesondefine _lib_mstats
 #mesondefine _lib_munmap64
 #mesondefine _lib_nanosleep
@@ -465,14 +464,12 @@
 #mesondefine _lib_tspopen
 #mesondefine _lib_tzset
 #mesondefine _lib_ulimit
-#mesondefine _lib_umount
 #mesondefine _lib_uname
 #mesondefine _lib_universe
 #mesondefine _lib_unlink
 #mesondefine _lib_unlinkat
 #mesondefine _lib_unlock
 #mesondefine _lib_unlockpt
-#mesondefine _lib_unmount
 #mesondefine _lib_unsetenv
 #mesondefine _lib_usleep
 #mesondefine _lib_utime
