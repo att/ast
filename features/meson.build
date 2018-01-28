@@ -40,143 +40,146 @@ libcatgets_dep = cc.find_library('catgets', required: false)
 # It was turned off on Linux but the iffe test was botched, keeping it on here.
 feature_data.set('_map_malloc', 1)
 
-if cc.has_header('execinfo.h')
+if cc.has_header('execinfo.h', args: feature_test_args)
     feature_data.set('_hdr_execinfo', 1)
 endif
 
-if cc.has_header('mach-o/dyld.h')
+if cc.has_header('mach-o/dyld.h', args: feature_test_args)
     feature_data.set('_hdr_mach_o_dyld', 1)
 endif
 
 openpty_hdrs = ['#include <stdlib.h>']
-if cc.has_header('pty.h')
+if cc.has_header('pty.h', args: feature_test_args)
     feature_data.set('_hdr_pty', 1)
     openpty_hdrs += ['#include <pty.h>']
 endif
-if cc.has_header('util.h')
+if cc.has_header('util.h', args: feature_test_args)
     feature_data.set('_hdr_util', 1)
     openpty_hdrs += ['#include <util.h>']
 endif
 
-if cc.has_header('malloc.h')
+if cc.has_header('malloc.h', args: feature_test_args)
     feature_data.set('_hdr_malloc', 1)
 endif
 
-if cc.has_header('paths.h')
+if cc.has_header('paths.h', args: feature_test_args)
     feature_data.set('_hdr_paths', 1)
 endif
 
-if cc.has_header('utmp.h')
+if cc.has_header('utmp.h', args: feature_test_args)
     feature_data.set('_hdr_utmp', 1)
 endif
 
-if cc.has_header('utmpx.h')
+if cc.has_header('utmpx.h', args: feature_test_args)
     feature_data.set('_hdr_utmpx', 1)
 endif
 
-if cc.has_function('sigqueue', prefix: '#include <signal.h>')
+if cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args)
     feature_data.set('_lib_sigqueue', 1)
 endif
 
-if not cc.has_function('isnanl', prefix: '#include <math.h>')
+if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test_args)
     feature_data.set('isnanl', 'isnan')
 endif
 
-if cc.has_function('utimensat', prefix: '#include <sys/stat.h>')
+if cc.has_function('utimensat', prefix: '#include <sys/stat.h>', args: feature_test_args)
     feature_data.set('_lib_utimensat', 1)
-elif cc.has_function('utimets', prefix: '#include <sys/stat.h>')
+elif cc.has_function('utimets', prefix: '#include <sys/stat.h>', args: feature_test_args)
     feature_data.set('_lib_utimets', 1)
 endif
 
-if cc.has_function('sysinfo', prefix: '#include <sys/sysinfo.h>')
+if cc.has_function('sysinfo', prefix: '#include <sys/sysinfo.h>', args: feature_test_args)
     feature_data.set('_lib_sysinfo', 1)
 endif
 
-if cc.has_function('pipe2', prefix: '#include <unistd.h>')
+if cc.has_function('pipe2', prefix: '#include <unistd.h>', args: feature_test_args)
     feature_data.set('_lib_pipe2', 1)
 endif
 
 socketpair_shutdown_feature_file = files('socketpair_shutdown.c')
 socketpair_shutdown_feature_result = cc.run(
     socketpair_shutdown_feature_file,
-    name: 'fchmod() after socketpair() shutdown()')
+    name: 'fchmod() after socketpair() shutdown()',
+    args: feature_test_args)
 if socketpair_shutdown_feature_result.returncode() == 0
     feature_data.set('_socketpair_shutdown_mode', 1)
 endif
 
-if cc.has_member('struct stat', 'st_mtim', prefix: '#include <sys/stat.h>')
+if cc.has_member('struct stat', 'st_mtim', prefix: '#include <sys/stat.h>',
+                 args: feature_test_args)
     feature_data.set('STAT_ST_MTIM', 1)
-elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>')
+elif cc.has_member('struct stat', 'st_mtimespec', prefix: '#include <sys/stat.h>',
+                   args: feature_test_args)
     # Under macOS modification time field is defined as mtimespec
     feature_data.set('STAT_ST_MTIMESPEC', 1)
 else
     error('Cannot determine modification time field in struct stat.')
 endif
 
-if cc.has_member('struct utmp', 'ut_host', prefix: '#include <utmp.h>')
+if cc.has_member('struct utmp', 'ut_host', prefix: '#include <utmp.h>', args: feature_test_args)
     feature_data.set('_mem_ut_host_utmp', 1)
 endif
 
-if cc.has_member('struct utmp', 'ut_tv', prefix: '#include <utmp.h>')
+if cc.has_member('struct utmp', 'ut_tv', prefix: '#include <utmp.h>', args: feature_test_args)
     feature_data.set('_mem_ut_tv_utmp', 1)
 endif
 
-if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmp.h>')
+if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmp.h>', args: feature_test_args)
     feature_data.set('_mem_ut_type_utmp', 1)
 endif
 
-if cc.has_member('struct utmp', 'ut_user', prefix: '#include <utmp.h>')
+if cc.has_member('struct utmp', 'ut_user', prefix: '#include <utmp.h>', args: feature_test_args)
     feature_data.set('_mem_ut_user_utmp', 1)
 endif
 
-if cc.has_member('struct utmpx', 'ut_host', prefix: '#include <utmpx.h>')
+if cc.has_member('struct utmpx', 'ut_host', prefix: '#include <utmpx.h>', args: feature_test_args)
     feature_data.set('_mem_ut_host_utmpx', 1)
 endif
 
-if cc.has_member('struct utmpx', 'ut_tv', prefix: '#include <utmpx.h>')
+if cc.has_member('struct utmpx', 'ut_tv', prefix: '#include <utmpx.h>', args: feature_test_args)
     feature_data.set('_mem_ut_tv_utmpx', 1)
 endif
 
-if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmpx.h>')
+if cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmpx.h>', args: feature_test_args)
     feature_data.set('_mem_ut_type_utmxp', 1)
 endif
 
-if cc.has_member('struct utmpx', 'ut_user', prefix: '#include <utmpx.h>')
+if cc.has_member('struct utmpx', 'ut_user', prefix: '#include <utmpx.h>', args: feature_test_args)
     feature_data.set('_mem_ut_user_utmpx', 1)
 endif
 
 if cc.has_function('posix_openpt', prefix: '#include <stdlib.h>',
-                    args: shared_c_args,
+                    args: feature_test_args,
                     dependencies: [libutil_dep])
     feature_data.set('_lib_posix_openpt', 1)
 endif
 
 if cc.has_function('openpty', prefix: '\n'.join(openpty_hdrs),
-                    args: shared_c_args,
+                    args: feature_test_args,
                     dependencies: [libutil_dep])
     feature_data.set('_lib_openpty', 1)
 endif
 
 if cc.has_function('ptsname', prefix: '#include <stdlib.h>',
-                    args: shared_c_args,
+                    args: feature_test_args,
                     dependencies: [libutil_dep])
     feature_data.set('_lib_ptsname', 1)
 endif
 
 if cc.has_function('grantpt', prefix: '#include <stdlib.h>',
-                    args: shared_c_args,
+                    args: feature_test_args,
                     dependencies: [libutil_dep])
     feature_data.set('_lib_grantpt', 1)
 endif
 
 if cc.has_function('unlockpt', prefix: '#include <stdlib.h>',
-                    args: shared_c_args,
+                    args: feature_test_args,
                     dependencies: [libutil_dep])
     feature_data.set('_lib_unlockpt', 1)
 endif
 
 pty_feature_file = files('pty.c')
-pty_feature_result = cc.run(pty_feature_file, name: 'pty dev name check', args: shared_c_args)
+pty_feature_result = cc.run(pty_feature_file, name: 'pty dev name check', args: feature_test_args)
 if not pty_feature_result.compiled()
     error('Unable to compile the pty_feature.c module to determine pty device names')
 endif
@@ -184,36 +187,38 @@ foreach line : pty_feature_result.stdout().strip().split('\n')
     feature_data.set(line.split())
 endforeach
 
-if cc.has_function('mallinfo', prefix: '#include <malloc.h>')
+if cc.has_function('mallinfo', prefix: '#include <malloc.h>', args: feature_test_args)
     feature_data.set('_lib_mallinfo', 1)
 endif
 
-if cc.has_member('struct mstats', 'bytes_total', prefix : '#include<malloc/malloc.h>')
+if cc.has_member('struct mstats', 'bytes_total', prefix : '#include<malloc/malloc.h>',
+                 args: feature_test_args)
     feature_data.set('_lib_mstats', 1)
 endif
 
-if cc.has_function('mallopt', prefix: '#include <malloc.h>')
+if cc.has_function('mallopt', prefix: '#include <malloc.h>', args: feature_test_args)
     feature_data.set('_lib_mallopt', 1)
 endif
 
-if cc.has_function('memalign', prefix: '#include <stdlib.h>')
+if cc.has_function('memalign', prefix: '#include <stdlib.h>', args: feature_test_args)
     feature_data.set('_lib_memalign', 1)
 endif
 
-if cc.has_function('pvalloc', prefix: '#include <malloc.h>')
+if cc.has_function('pvalloc', prefix: '#include <malloc.h>', args: feature_test_args)
     feature_data.set('_lib_pvalloc', 1)
 endif
 
-if cc.has_function('__libc_malloc', prefix: '#include <malloc.h>')
+if cc.has_function('__libc_malloc', prefix: '#include <malloc.h>', args: feature_test_args)
     feature_data.set('_lib___libc_malloc', 1)
 endif
 
-if cc.has_member('struct mallinfo', 'arena', prefix : '#include<malloc.h>')
+if cc.has_member('struct mallinfo', 'arena', prefix : '#include<malloc.h>', args: feature_test_args)
     feature_data.set('_mem_arena_mallinfo', 1)
 endif
 
 sbrk_feature_file = files('sbrk.c')
-sbrk_feature_result = cc.run(sbrk_feature_file, name: 'sbrk() works as expected')
+sbrk_feature_result = cc.run(sbrk_feature_file, name: 'sbrk() works as expected',
+                             args: feature_test_args)
 if sbrk_feature_result.returncode() == 0
     feature_data.set('_mem_sbrk', 1)
 endif
@@ -223,7 +228,8 @@ endif
 feature_data.set('_mem_mmap_anon', 1)
 
 stack_direction_feature_file = files('stack_direction.c')
-stack_direction_feature_result = cc.run(stack_direction_feature_file, name: 'stack grows downward')
+stack_direction_feature_result = cc.run(stack_direction_feature_file, name: 'stack grows downward',
+                                        args: feature_test_args)
 if stack_direction_feature_result.returncode() == 0
     feature_data.set('_stk_down', 1)
 endif
@@ -247,7 +253,8 @@ if prog_result.returncode() == 0
 endif
 
 align_feature_file = files('alignment.c')
-align_feature_result = cc.run(align_feature_file, name: 'align bound check')
+align_feature_result = cc.run(align_feature_file, name: 'align bound check',
+                              args: feature_test_args)
 if not align_feature_result.compiled()
     error('Unable to compile the align_feature.c module to determine compiler alignment')
 endif
@@ -256,8 +263,9 @@ foreach line : align_feature_result.stdout().strip().split('\n')
 endforeach
 
 posix_spawn_feature_file = files('posix_spawn.c')
-posix_spawn_feature_result = cc.run(
-    posix_spawn_feature_file, name: 'posix_spawn exists and it works and its worth using')
+posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
+                                    name: 'posix_spawn exists and it works and its worth using',
+                                    args: feature_test_args)
 feature_data.set('_lib_posix_spawn', posix_spawn_feature_result.returncode())
 
 newgrp = find_program('newgrp', required: false)

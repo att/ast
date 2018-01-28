@@ -1,4 +1,20 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
+
+# We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
+# than `c99` because the former enables language features we need. The latter
+# does that but also limits which APIs are available.
+add_global_arguments('-std=gnu99', language: 'c')
+
+# Without this flag some symbols aren't visible.
+#
+# TODO: Figure out if there is a more generic manner of enabling support for
+# GNU distros.
+add_global_arguments('-D_GNU_SOURCE', language: 'c')
+
+# Global compiler flags aren't used by the feature tests. So instead put them
+# in an array that will be used by the feature tests.
+feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
+
 cc = meson.get_compiler('c')
 system = host_machine.system()
 # So the `config_ast.h` header can be found (see below).
@@ -11,13 +27,8 @@ if system == 'openbsd'
     #
     # We could do this unconditionally but it's safer to limit the scope to
     # the platforms that need it.
-    add_project_arguments('-I/usr/local/include', language: 'c')
+    add_global_arguments('-I/usr/local/include', language: 'c')
 endif
-
-# We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
-# than `c99` because the former enables language features we need. The latter
-# does that but also limits which APIs are available.
-add_project_arguments('-std=gnu99', language: 'c')
 
 shared_c_args = [
     '-DUSAGE_LICENSE=""',

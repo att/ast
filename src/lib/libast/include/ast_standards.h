@@ -3,11 +3,6 @@
 #define _def_standards_features 1
 
 /* TODO: Check if it Is safe to use these macros on all platforms ? */
-/* _GNU_SOURCE works */
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE 1
-#endif
-
 /* _ISOC99_SOURCE plays nice */
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE 1

@@ -20,6 +20,8 @@
 // `_hdr_`, etc.) based on tests like `cc.has_function()` or `cc.has_header()`
 // are enumerated later.
 
+#define _GNU_SOURCE 1
+
 // These are atypical platform symbols with respect to how they are
 // determined. They are either hardcoded or not determined via the usual
 // platform feature detection and naming conventions.

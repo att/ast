@@ -23,9 +23,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE 1
-#endif
 #ifndef __EXTENSIONS__
 #define __EXTENSIONS__ 1
 #endif

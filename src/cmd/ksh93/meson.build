@@ -2,7 +2,7 @@ ksh93_files = []
 # We use same set of files as ksh93 to compile shcomp, we should check if it
 # can be modularized.
 shcomp_files = [ ]
-ksh93_incdir = include_directories('include', 'features',
+ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libast/features/',
                                    '../../lib/libcmd/',

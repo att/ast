@@ -25,7 +25,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define _GNU_SOURCE 1
 #include <dlfcn.h>
 #if _hdr_execinfo
 #include <execinfo.h>
