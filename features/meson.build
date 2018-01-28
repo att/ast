@@ -275,7 +275,11 @@ posix_spawn_feature_file = files('posix_spawn.c')
 posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
                                     name: 'posix_spawn exists and it works and its worth using',
                                     args: feature_test_args)
-feature_data.set('_lib_posix_spawn', posix_spawn_feature_result.returncode())
+if posix_spawn_feature_result.returncode() == 0
+    feature_data.set('_lib_posix_spawn', 1)
+else
+    feature_data.set('_lib_posix_spawn', 0)
+endif
 
 newgrp = find_program('newgrp', required: false)
 if newgrp.found()
