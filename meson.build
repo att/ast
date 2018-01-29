@@ -30,6 +30,11 @@ if system == 'openbsd'
     add_global_arguments('-I/usr/local/include', language: 'c')
 endif
 
+# Error on implicit declarations.
+if cc.has_argument('-Werror=implicit')
+    add_global_arguments('-Werror=implicit', language: 'c')
+endif
+
 shared_c_args = [
     '-DUSAGE_LICENSE=""',
 ]
