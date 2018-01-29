@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 // If it uses fork() why bother?
 #undef fork
@@ -34,11 +35,11 @@ int main(int argc, char **argv) {
     char *s;
     pid_t pid;
     posix_spawnattr_t attr;
-    int n;
+    int n = 0;
     int status;
-    char *cmd[4];
+    char *cmd[3];
     char tmp[1024];
-    if (argv[2]) {
+    if (argc > 1) {
         _exit(signal(SIGHUP, SIG_DFL) != SIG_IGN);
     }
     signal(SIGHUP, SIG_IGN);
@@ -56,9 +57,8 @@ int main(int argc, char **argv) {
     }
     /* first try an a.out and verify that SIGHUP is ignored */
     cmd[0] = argv[0];
-    cmd[1] = argv[1];
-    cmd[2] = "test";
-    cmd[3] = 0;
+    cmd[1] = "test";
+    cmd[2] = 0;
     if (posix_spawn(&pid, cmd[0], 0, &attr, cmd, 0)) {
         printf("posix_spawn() FAILED\n");
         _exit(0);
