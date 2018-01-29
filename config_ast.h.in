@@ -153,6 +153,7 @@
 #mesondefine _hdr_stdlib
 #mesondefine _hdr_string
 #mesondefine _hdr_stropts
+#mesondefine _hdr_sys_sysmacros
 #mesondefine _hdr_termio
 #mesondefine _hdr_termios
 #mesondefine _hdr_time
