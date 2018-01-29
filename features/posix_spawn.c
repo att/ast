@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     char *s;
     pid_t pid;
     posix_spawnattr_t attr;
-    int n;
+    int n = 0;
     int status;
     char *cmd[3];
     char tmp[1024];
