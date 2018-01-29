@@ -207,7 +207,7 @@ static bool keywords(Sfio_t *out) {
 }
 
 // Write wordlist to stack splitting on IFS, one word per line.
-static gen_wordlist(Sfio_t *iop, const char *word) {
+static void gen_wordlist(Sfio_t *iop, const char *word) {
     const char *ifs = nv_getval(IFSNOD);
     char c, n = 0;
 
