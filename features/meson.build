@@ -44,10 +44,6 @@ if cc.has_header('execinfo.h', args: feature_test_args)
     feature_data.set('_hdr_execinfo', 1)
 endif
 
-if cc.has_header('mach-o/dyld.h', args: feature_test_args)
-    feature_data.set('_hdr_mach_o_dyld', 1)
-endif
-
 openpty_hdrs = ['#include <stdlib.h>']
 if cc.has_header('pty.h', args: feature_test_args)
     feature_data.set('_hdr_pty', 1)
@@ -294,6 +290,7 @@ else
     feature_data.set_quoted('_pth_ed', 'ed')
 endif
 
+subdir('dll')
 subdir('ids')
 subdir('locales')
 subdir('sockets')
