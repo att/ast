@@ -24,6 +24,10 @@
 
 #include <sys/ioctl.h>
 
+#ifndef _AST_INTERCEPT_IMPLEMENT
+#define _AST_INTERCEPT_IMPLEMENT 1
+#endif
+
 #if _AST_INTERCEPT_IMPLEMENT < 2
 
 #undef ioctl
