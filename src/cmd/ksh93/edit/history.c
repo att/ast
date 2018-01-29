@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <time.h>
+#include <times.h>
 
 //
 // Each command in the history file starts on an even byte is null terminated. The first byte must
