@@ -30,6 +30,8 @@
 #include <aso.h>
 #include <ast_ioctl.h>
 #include <error.h>
+#include <fcntl.h>
+#include <stdio.h>
 #include <sys/socket.h>
 
 static const char dot[] = ".";
