@@ -30,6 +30,9 @@
 #include <ast.h>
 #include <ctype.h>
 #include <ls.h>
+#if _hdr_sys_sysmacros
+#include <sys/sysmacros.h>
+#endif
 
 char *fmtdev(struct stat *st) {
     char *buf;

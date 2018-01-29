@@ -66,6 +66,10 @@ if cc.has_header('termios.h', args: feature_test_args)
     feature_data.set('_hdr_termios', 1)
 endif
 
+if cc.has_header('sys/sysmacros.h', args: feature_test_args)
+    feature_data.set('_hdr_sys_sysmacros', 1)
+endif
+
 if cc.has_header('utmp.h', args: feature_test_args)
     feature_data.set('_hdr_utmp', 1)
 endif
