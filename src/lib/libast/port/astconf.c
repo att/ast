@@ -34,6 +34,9 @@
 #include <ls.h>
 #include <proc.h>
 #include <regex.h>
+#if _lib_sysinfo
+#include <sys/systeminfo.h>
+#endif
 #include <sys/utsname.h>
 
 #include "conftab.h"
