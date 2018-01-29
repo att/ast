@@ -1613,8 +1613,13 @@ void path_alias(Namval_t *np, Pathcomp_t *pp) {
         Shell_t *shp = sh_ptr(np);
         struct stat statb;
         char *sp;
+        Pathcomp_t *old;
         nv_offattr(np, NV_NOPRINT);
         nv_stack(np, &talias_init);
+        old = np->nvalue.pathcomp;
+        if (old && (--old->refcount <= 0)) {
+            free(old);
+        }
         np->nvalue.cp = (char *)pp;
         pp->refcount++;
         nv_setattr(np, NV_TAGGED | NV_NOFREE);
