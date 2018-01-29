@@ -93,7 +93,7 @@ elif cc.has_function('utimets', prefix: '#include <sys/stat.h>', args: feature_t
     feature_data.set('_lib_utimets', 1)
 endif
 
-if cc.has_function('sysinfo', prefix: '#include <sys/sysinfo.h>', args: feature_test_args)
+if cc.has_function('sysinfo', prefix: '#include <sys/systeminfo.h>', args: feature_test_args)
     feature_data.set('_lib_sysinfo', 1)
 endif
 
