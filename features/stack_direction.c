@@ -1,5 +1,5 @@
 // This is a Meson config stage feature test for stack growth direction.
-static growdown() {
+static int growdown() {
     static char *addr = 0;
     char array[4];
     if (!addr) {
