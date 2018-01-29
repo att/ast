@@ -34,9 +34,7 @@ NoN(pss_kvm)
 #else
 
 #include <kvm.h>
-#if _sys_time
 #include <sys/time.h>
-#endif
 #if _sys_param
 #include <sys/param.h>
 #endif
