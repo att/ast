@@ -81,7 +81,6 @@ do
         if [ -d ${DIR} ]
         then
             PATH=${PATH}:${DIR}
-            true
         fi
         time=$(date +%T)
     done
