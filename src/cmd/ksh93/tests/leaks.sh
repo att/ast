@@ -70,6 +70,30 @@ then
     err_exit "Memory leak on associative array"
 fi
 
+# Test for leak in executing subshell after PATH is reset
+init_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
+
+for (( i=0; i<10000; i++ ))
+do
+    PATH=.
+    for DIR in /usr/bin /usr/sbin /bin /usr/local/bin
+    do
+        if [ -d ${DIR} ]
+        then
+            PATH=${PATH}:${DIR}
+            true
+        fi
+        time=$(date +%T)
+    done
+done
+
+curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
+
+if [[ $init_vsz -lt $curr_vsz ]];
+then
+    err_exit "Memory leak in executing subshell after PATH is reset"
+fi
+
 #TODO: Enable these tests when vmstate is a builtin
 
 #builtin vmstate 2>/dev/null || exit 0
