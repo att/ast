@@ -253,6 +253,9 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
     int maketype = flags & NV_TYPE;
     struct sh_type shtp;
 
+    memset(&node, 0, sizeof(node));
+    memset(&nr, 0, sizeof(nr));
+
     if (maketype) {
         shtp.previous = shp->mktype;
         shp->mktype = (void *)&shtp;

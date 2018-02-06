@@ -1042,7 +1042,9 @@ static char *get_math(Namval_t *np, Namfun_t *fp) {
     char *val;
     int first = 0;
 
+    memset(&fake, 0, sizeof(fake));
     fake.nvname = ".sh.math.";
+
     mp = (Namval_t *)dtprev(shp->fun_tree, &fake);
     while ((mp = (Namval_t *)dtnext(shp->fun_tree, mp))) {
         if (strncmp(mp->nvname, ".sh.math.", 9)) break;
@@ -1059,7 +1061,9 @@ static char *setdisc_any(Namval_t *np, const char *event, Namval_t *action, Namf
     char *name;
     int getname = 0, off = stktell(shp->stk);
 
+    memset(&fake, 0, sizeof(fake));
     fake.nvname = nv_name(np);
+
     if (!event) {
         if (!action) {
             mp = (Namval_t *)dtprev(shp->fun_tree, &fake);

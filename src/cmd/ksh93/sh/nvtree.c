@@ -142,12 +142,13 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     const char *last;
     char *next;
     size_t c, len = strlen(name);
-    struct nvdir *save, *dp = new_of(struct nvdir, len + 1);
+    struct nvdir *save, *dp;
     Namval_t *nq = 0, fake;
     Namfun_t *nfp = 0;
 
+    dp = new_of(struct nvdir, len + 1);
     if (!dp) return NULL;
-    memset((void *)dp, 0, sizeof(*dp));
+
     dp->data = (char *)(dp + 1);
     if (name[len - 1] == '*' || name[len - 1] == '@') len -= 1;
     name = memcpy(dp->data, name, len);
@@ -172,6 +173,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
         }
     }
     if (*name) {
+        memset(&fake, 0, sizeof(fake));
         fake.nvname = (char *)name;
         dp->hp = (Namval_t *)dtprev(dp->root, &fake);
         if (dp->hp) {

@@ -264,6 +264,8 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
         Dt_t *walk, *root = shp->var_tree;
         char *name = nv_name(np);
         size_t len = strlen(name);
+
+        memset(&fake, 0, sizeof(fake));
         fake.nvname = name;
         mpnext = dtnext(root, &fake);
         dp = root->walk ? root->walk : root;

@@ -1251,6 +1251,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                     }
                 } else if (ap->header.flags & ARRAY_SCAN) {
                     Namval_t fake;
+                    memset(&fake, 0, sizeof(fake));
                     fake.nvname = (char *)sp;
                     ap->pos = mp = (Namval_t *)dtprev(ap->header.table, &fake);
                     ap->nextpos = (Namval_t *)dtnext(ap->header.table, mp);
