@@ -15,6 +15,28 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 # in an array that will be used by the feature tests.
 feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
 
+# Enable malloc debug options for macOS, GNU, FreeBSD, and other
+# implementations. This isn't a replacement for Valgrind or Asan but is useful
+# for detecting problems without incurring the overhead of those tools.
+#
+# To use these add `--setup=malloc` to your `meson test` command.
+#
+malloc_debug_env = environment()
+# These env vars are recognized by GNU malloc.
+malloc_debug_env.set('MALLOC_CHECK_', '3')
+malloc_debug_env.set('MALLOC_PERTURB_', '165')  # 0xA5
+# These env vars are recognized by macOS malloc.
+malloc_debug_env.set('MallocGuardEdges', '1')
+malloc_debug_env.set('MallocScribble', '1')
+malloc_debug_env.set('MallocErrorAbort', '1')
+# These env vars are recognized by jemalloc as used by FreeBSD, OpenBSD, and
+# other distros.  See https://github.com/jemalloc/jemalloc/wiki/Getting-Started.
+# The "junk=true" setting enables setting both allocated and freed memory to
+# "0xA5" and "0x5A" respectively (other than, obviously, `calloc()`'d memory).
+malloc_debug_env.set('MALLOC_CONF', 'junk:true')
+# Add a malloc specific test setup environment.
+add_test_setup('malloc', env: malloc_debug_env)
+
 cc = meson.get_compiler('c')
 system = host_machine.system()
 # So the `config_ast.h` header can be found (see below).

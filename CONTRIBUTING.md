@@ -275,10 +275,14 @@ by the project. To run the tests:
 
 ```
 cd build
-meson test
+meson test --setup=malloc
 ```
 
-To run a specific test include its name: `meson test types`.
+To run a specific test include its name: `meson test --setup=malloc types`.
+
+The `--setup=malloc` will enable malloc integrity features provided by your
+system's malloc implementation if it supports such things via environment
+variables. That flag can be ommitted but its use is recommended.
 
 ### Testing with Valgrind
 
