@@ -1990,14 +1990,20 @@ static int io_prompt(Shell_t *shp, Sfio_t *iop, int flag) {
 #endif /* TIOCLBIC */
             cp = sh_mactry(shp, nv_getval(sh_scoped(shp, PS1NOD)));
             shp->exitval = 0;
-            for (; (c = *cp); cp++) {
-                if (c == HIST_CHAR) {
+            for (int escape_index = 0; (c = *cp); cp++) {
+                if ((escape_index == 0 && c == ESC) ||
+                    /* Track escape sequences, and don't expand ! if it appears at 2nd position */
+                    (escape_index == 1 && (c == '[' || c == ']' || c == '('))) {
+                    escape_index++;
+                } else if (c == HIST_CHAR && escape_index == 0) {
                     c = *++cp;             // look at next character
                     if (c != HIST_CHAR) {  // print out line number if not !!
                         sfprintf(sfstderr, "%d",
                                  shp->gd->hist_ptr ? (int)shp->gd->hist_ptr->histind : ++cmdno);
                     }
                     if (c == 0) goto done;
+                } else {
+                    escape_index = 0;
                 }
                 sfputc(sfstderr, c);
             }
