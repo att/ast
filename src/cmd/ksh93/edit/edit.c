@@ -595,13 +595,16 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                             skip = 0;
                             continue;
                         }
-                        if (n > 1 && c == ';') {
+                        if (n == 3 && (c == '?' || c == '!')) {
+                            continue;
+                        } else if (n > 1 && c == ';') {
                             skip = 1;
-                        } else if (n > 2 || (c != '[' && c != ']')) {
+                        } else if (n > 2 || (c != '[' && c != ']' && c != '(')) {
                             break;
                         }
                     }
                     if (c == 0 || c == ESC || c == '\r') last--;
+                    qlen += (last - prev);
                     break;
                 }
                 case '\b': {
