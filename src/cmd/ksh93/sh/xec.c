@@ -3373,7 +3373,7 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     char *trap;
     int nsig;
     struct dolnod *argsav = 0, *saveargfor;
-    struct sh_scoped savst, *prevscope = shp->st.self;
+    struct sh_scoped savst, *prevscope;
     struct argnod *envlist = 0;
     int jmpval;
     volatile int r = 0;
@@ -3394,9 +3394,11 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
 #if 0
     shp->st.lineno = error_info.line;
 #endif
+    prevscope = shp->st.self;
     *prevscope = shp->st;
     sh_offoption(shp, SH_ERREXIT);
     shp->st.prevst = prevscope;
+    memset(&savst, 0, sizeof(savst));
     shp->st.self = &savst;
     shp->topscope = (Shscope_t *)shp->st.self;
     shp->st.opterror = shp->st.optchar = 0;
