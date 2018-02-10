@@ -31,13 +31,13 @@ script:
         mkdir build;
         cd build;
         echo ==== Configuring the build;
-        meson ..;
+        meson;
         echo ==== Building the code;
         ninja;
         echo ==== Running unit tests;
         ulimit -n 1024;
         export MESON_TESTTHREADS=$(( 4 * CORE_COUNT ));
-        if ! meson test --setup=malloc; then cat meson-logs/testlog.txt; exit 1; fi;
+        if ! meson test --setup=malloc; then cat /source/build/meson-logs/testlog.txt; exit 1; fi;
         "
 
     - chmod a+x build.sh
