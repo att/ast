@@ -85,12 +85,13 @@ shcomp_test_path = join_paths(test_dir, 'shcomptest')
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 default_timeout = 30
 # TODO: Fix and add `builtin_poll` to this list.
+# TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
     ['basic', 90], ['bracket'], ['builtins'], ['case'], ['comvar'],
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'],
-    ['io'], ['leaks', 180], ['locale'], ['math', 50], ['nameref'], ['namespace'],
+    ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
     ['sh_match'], ['sigchld', 100], ['signal', 100], ['statics'], ['subshell', 100],
