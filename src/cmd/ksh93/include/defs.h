@@ -148,8 +148,6 @@ struct shared {
 #endif
 
 // Error exits from various parts of shell.
-#define new_of(type, x) ((type *)calloc(sizeof(type) + (x), 1U))
-
 #define exitset(shp) (shp->savexit = shp->exitval)
 
 #ifndef SH_DICT

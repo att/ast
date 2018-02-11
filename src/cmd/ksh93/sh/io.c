@@ -2092,7 +2092,7 @@ static void sftrack(Sfio_t *sp, int flag, void *data) {
             struct openlist *item;
             // Record open file descriptors so they can be closed in case a
             // longjmp prevents built-ins from cleanup.
-            item = new_of(struct openlist, 0);
+            item = calloc(1, sizeof(struct openlist));
             item->strm = sp;
             item->next = pp->olist;
             pp->olist = item;
@@ -2135,7 +2135,8 @@ Sfio_t *sh_sfeval(char *argv[]) {
     iop = sfopen(NULL, (char *)cp, "s");
     if (argv[1]) {
         struct eval *ep;
-        if (!(ep = new_of(struct eval, 0))) return NULL;
+        ep = calloc(1, sizeof(struct eval));
+        if (!ep) return NULL;
         ep->disc = eval_disc;
         ep->argv = argv;
         ep->slen = -1;

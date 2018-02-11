@@ -1433,7 +1433,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                     ld = sh_arith(shp, sp);
                 }
                 if (!up->ldp) {
-                    up->ldp = new_of(Sfdouble_t, 0);
+                    up->ldp = calloc(1, sizeof(Sfdouble_t));
                 } else if (flags & NV_APPEND) {
                     old = *(up->ldp);
                 }
@@ -1453,9 +1453,9 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 }
                 if (!up->dp) {
                     if (nv_isattr(np, NV_SHORT)) {
-                        up->fp = new_of(float, 0);
+                        up->fp = calloc(1, sizeof(float));
                     } else {
-                        up->dp = new_of(double, 0);
+                        up->dp = calloc(1, sizeof(double));
                     }
                 } else if (flags & NV_APPEND) {
                     od = *(up->dp);
@@ -1499,7 +1499,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                     ll = (Sflong_t)sh_arith(shp, sp);
                 }
                 if (!up->llp) {
-                    up->llp = new_of(Sflong_t, 0);
+                    up->llp = calloc(1, sizeof(Sflong_t));
                 } else if (flags & NV_APPEND) {
                     oll = *(up->llp);
                 }
@@ -1555,7 +1555,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                     nv_onattr(np, NV_NOFREE);
                 } else {
                     if (!up->lp) {
-                        up->lp = new_of(int32_t, 0);
+                        up->lp = calloc(1, sizeof(int32_t));
                     } else if (flags & NV_APPEND) {
                         ol = *(up->lp);
                     }

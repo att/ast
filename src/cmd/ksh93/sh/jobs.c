@@ -1251,7 +1251,7 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
     if (pw) {
         freelist = pw->p_nxtjob;
     } else {
-        pw = new_of(struct process, 0);
+        pw = calloc(1, sizeof(struct process));
     }
     pw->p_flag = 0;
     pw->p_curdir = 0;
@@ -1806,7 +1806,7 @@ again:
 }
 
 void *job_subsave(void) {
-    struct back_save *bp = new_of(struct back_save, 0);
+    struct back_save *bp = calloc(1, sizeof(struct back_save));
     job_lock();
     *bp = bck;
     bp->prev = bck.prev;

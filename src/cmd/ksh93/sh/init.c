@@ -522,7 +522,7 @@ static void put_seconds(Namval_t *np, const char *val, int flags, Namfun_t *fp) 
     if (!np->nvalue.dp) {
         nv_setsize(np, 3);
         nv_onattr(np, NV_DOUBLE);
-        np->nvalue.dp = new_of(double, 0);
+        np->nvalue.dp = calloc(1, sizeof(double));
     }
     nv_putv(np, val, flags, fp);
     d = *np->nvalue.dp;

@@ -679,7 +679,9 @@ struct dolnod *sh_argcreate(char *argv[]) {
     // Count args and number of bytes of arglist.
     while ((sp = *pp++)) size += strlen(sp);
     n = (pp - argv) - 1;
-    dp = new_of(struct dolnod, n * sizeof(char *) + size + n);
+    // TODO: The expression for the size of this allocation is very suspicious.
+    // If this is correct it requires a comment.
+    dp = calloc(1, sizeof(struct dolnod) + size + n + (n * sizeof(char *)));
     dp->dolrefcnt = 1;  // use count
     dp->dolnum = n;
     dp->dolnxt = 0;

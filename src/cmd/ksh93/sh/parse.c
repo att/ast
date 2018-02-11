@@ -766,7 +766,8 @@ static Shnode_t *funct(Lex_t *lexp) {
             size += sizeof(struct dolnod) + (nargs + ARG_SPARE) * sizeof(char *);
             if (shp->shcomp && strncmp(".sh.math.", t->funct.functnam, 9) == 0) {
                 Namval_t *np = nv_open(t->funct.functnam, shp->fun_tree, NV_ADD | NV_VARNAME);
-                np->nvalue.rp = new_of(struct Ufunction, shp->funload ? sizeof(Dtlink_t) : 0);
+                np->nvalue.rp = calloc(
+                    1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0));
                 memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
                 np->nvalue.rp->argc = ((struct dolnod *)ac->comarg)->dolnum;
             }

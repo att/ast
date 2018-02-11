@@ -593,7 +593,7 @@ static struct index_array *array_grow(Namval_t *np, struct index_array *arp, int
         errormsg(SH_DICT, ERROR_exit(1), e_subscript, fmtbase((long)maxi, 10, 0));
     }
     size = (newsize - 1) * sizeof(union Value *) + newsize;
-    ap = new_of(struct index_array, size);
+    ap = calloc(1, sizeof(struct index_array) + size);
     memset((void *)ap, 0, sizeof(*ap) + size);
     ap->maxi = newsize;
     ap->cur = maxi;

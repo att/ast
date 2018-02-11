@@ -86,7 +86,6 @@
 #endif  // SHOPT_AUDITFILE
 
 #if !KSHELL
-#define new_of(type, x) ((type *)calloc(sizeof(type) + (x), 1U))
 #define path_relative(s, x) (s, x)
 #define nv_getval(s) getenv(#s)
 #define e_unknown "unknown"
@@ -270,7 +269,9 @@ retry:
     for (histmask = 16; histmask <= maxlines; histmask <<= 1) {
         ;  // empty loop
     }
-    if (!(hp = new_of(History_t, (--histmask) * sizeof(off_t)))) {
+    histmask -= 1;
+    hp = calloc(1, sizeof(History_t) + histmask * sizeof(off_t));
+    if (!hp) {
         sh_close(fd);
         return 0;
     }
