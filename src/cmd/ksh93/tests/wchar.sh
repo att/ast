@@ -41,17 +41,19 @@ integer Errors=0
 
 locales="en_US.UTF-8 en_US.ISO-8859-15 zh_CN.GB18030"
 supported="C.UTF-8"
+locale_tmpfile=$(mktemp)
+locale -a >$locale_tmpfile
 
 for lc_all in $locales
 do
-    if
-    [[ $($SHELL -c "LC_ALL=$lc_all || echo error" 2>&1) == "" ]]
+    if grep -q $lc_all $locale_tmpfile
     then
         supported+=" $lc_all"
     else
         warning "LC_ALL=$lc_all not supported"
     fi
 done
+rm $locale_tmpfile
 
 exp0=$'0000000 24 27 e2 82 ac 27 0a'
 exp2=$'\'\\u[20ac]\''
@@ -59,12 +61,18 @@ exp1='$'$exp2
 
 for lc_all in $supported
 do
-    got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"' | iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1)
+    got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
+        printf "%q\n" "$(printf "\u[20ac]")"' |
+        iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
+        sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
     [[ $got == "$exp0" ]] || err_exit "${lc_all} nounicodeliterals FAILED -- expected '$exp0', got '$got'"
-    
-    got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(nounicodeliterals)q\n" "$(printf "\u[20ac]")"' | iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1)
+
+    got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
+        printf "%(nounicodeliterals)q\n" "$(printf "\u[20ac]")"' |
+        iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
+        sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
     [[ $got == "$exp0" ]] || err_exit "${lc_all} (nounicodeliterals) FAILED -- expected '$exp0', got '$got'"
-    
+
     got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"')
     [[ $got == "$exp1" || $got == "$exp2" ]] || err_exit "${lc_all} unicode FAILED -- expected $exp1, got $got"
     
