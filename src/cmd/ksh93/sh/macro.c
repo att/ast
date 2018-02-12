@@ -191,7 +191,7 @@ char *sh_mactrim(Shell_t *shp, char *str, int mode) {
 //
 int sh_macexpand(Shell_t *shp, struct argnod *argp, struct argnod **arghead, int flag) {
     int flags = argp->argflag;
-    char *str = argp->argval;
+    char *str = NULL;
     Mac_t *mp = (Mac_t *)shp->mac_context;
     char **saveargaddr = shp->argaddr;
     Mac_t savemac;

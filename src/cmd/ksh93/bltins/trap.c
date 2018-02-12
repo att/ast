@@ -40,7 +40,7 @@
 static int sig_number(Shell_t *, const char *);
 
 int b_trap(int argc, char *argv[], Shbltin_t *context) {
-    char *arg = argv[1];
+    char *arg = NULL;
     int sig, clear;
     bool pflag = false, dflag = false, aflag = false, lflag = false;
     Shell_t *shp = context->shp;

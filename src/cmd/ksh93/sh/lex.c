@@ -115,7 +115,7 @@ static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
 static void refvar(Lex_t *lp, int type) {
     Shell_t *shp = lp->sh;
     Stk_t *stkp = shp->stk;
-    off_t off = (fcseek(0) - (type + 1)) - (lp->lexd.first ? lp->lexd.first : fcfirst());
+    off_t off = 0;
     unsigned long r;
 
     if (lp->lexd.first) {
