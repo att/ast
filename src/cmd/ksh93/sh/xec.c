@@ -2341,7 +2341,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #endif  // SHOPT_COSHELL
                 if (t->tre.tretyp == TNSPACE) {
                     Dt_t *root;
-                    Namval_t *oldnspace = shp->namespace;
+                    Namval_t *oldnspace = NULL;
                     int offset = stktell(stkp);
                     int flag = NV_NOASSIGN | NV_NOARRAY | NV_VARNAME;
                     char *sp, *xp;

@@ -38,7 +38,7 @@ Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode) {
     Vmdata_t *vd, vdproto;
     ssize_t algn, incr, vdsz, vmsz, sgsz, size;
     Vmuchar_t *addr, *base;
-    Seg_t *seg = (Seg_t *)Version; /* stop compiler's warning */
+    Seg_t *seg = NULL;
     int rv, mt, initheap = 0;
     /**/ DEBUG_COUNT(N_open);
 

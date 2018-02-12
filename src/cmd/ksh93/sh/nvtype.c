@@ -330,7 +330,7 @@ static Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp)
     size_t size = fp->dsize;
     int save, offset = stktell(shp->stk);
     char *cp;
-    Dt_t *root = shp->last_root;
+    Dt_t *root = NULL;
     Namval_t *last_table = shp->last_table;
     struct Namref *nrp = 0;
     Namarr_t *ap;

@@ -648,7 +648,7 @@ static int hashevent(Dt_t *dt, int event, Void_t *arg) {
     Dtdisc_t *disc = dt->disc;
     Hash_t *hash = (Hash_t *)dt->data;
 
-    if (!(disc = dt->disc)) return -1;
+    if (!disc) return -1;
 
     if (event == DT_OPEN) {
         if (hash) /* already allocated private data */

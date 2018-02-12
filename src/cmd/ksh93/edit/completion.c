@@ -240,7 +240,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
 
     {
         // Adjust cur.
-        int c = *cur;
+        int c;
         genchar *cp;
         cp = (genchar *)outbuff + *cur;
         c = *cp;
