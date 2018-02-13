@@ -567,11 +567,11 @@ drop:
  */
 
 char *findread(Find_t *fp) {
-    char *p;
-    char *q;
-    char *s;
-    char *b;
-    char *e;
+    char *p = NULL;
+    char *q = NULL;
+    char *s = NULL;
+    char *b = NULL;
+    char *e = NULL;
     int c;
     int n;
     int m;

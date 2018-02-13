@@ -748,9 +748,9 @@ a_lloc: /**/
 /* allocate a small block from a specific pack */
 static Block_t *bestsmallalloc(Vmalloc_t *vm, Pack_t *pack, ssize_t size) {
     int n;
-    Block_t *blk, *list, *last, *head;
+    Block_t *blk = NULL, *list = NULL, *last = NULL, *head = NULL;
     size_t memz, blkz, smiz;
-    Small_t *small;
+    Small_t *small = NULL;
     asospindecl();
     /**/ DEBUG_ASSERT(size >= SM_MIN && size <= SM_MAX);
 
