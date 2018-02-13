@@ -22,8 +22,11 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <tm.h>
-#include <tv.h>
+
+#include "tm.h"
+#include "tv.h"
+
+#if _lib_clock_gettime && defined(CLOCK_REALTIME)
 
 int tvsettime(const Tv_t *tv) {
     struct timespec s;
@@ -32,3 +35,24 @@ int tvsettime(const Tv_t *tv) {
     s.tv_nsec = tv->tv_nsec;
     return clock_settime(CLOCK_REALTIME, &s);
 }
+
+#elif _lib_gettimeofday
+
+#include <sys/time.h>
+
+int tvsettime(const Tv_t *tv) {
+    struct timeval v;
+
+    v.tv_sec = tv->tv_sec;
+    v.tv_usec = tv->tv_nsec / 1000;
+    return settimeofday(&v, NULL);
+}
+
+#else
+
+int tvsettime(const Tv_t *tv) {
+    errno = EPERM;
+    return -1;
+}
+
+#endif

@@ -43,7 +43,7 @@ typedef struct Tv_s {
 #define extern __EXPORT__
 #endif
 
-extern int tvgettime(Tv_t *);
+extern void tvgettime(Tv_t *);
 extern int tvsettime(const Tv_t *);
 extern int tvcmp(const Tv_t *, const Tv_t *);
 extern int tvtouch(const char *, const Tv_t *, const Tv_t *, const Tv_t *, int);
