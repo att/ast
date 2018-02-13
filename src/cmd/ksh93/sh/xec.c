@@ -672,6 +672,7 @@ static void *sh_coinit(Shell_t *shp, char **argv) {
     if (!(csp->coshell = coopen(NULL, CO_SHELL | CO_SILENT, argv[1]))) {
         free(csp);
         errormsg(SH_DICT, ERROR_exit(1), "%s: unable to create namespace", name);
+        __builtin_unreachable();
     }
     csp->coshell->data = (void *)csp;
     csp->name = (char *)(csp + 1);
