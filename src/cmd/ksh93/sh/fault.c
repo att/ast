@@ -284,7 +284,7 @@ void sh_siginit(void *ptr) {
     }
     shp->gd->sigmax = ++n;
     shp->st.trapcom = (char **)calloc(n, sizeof(char *));
-    shp->sigflag = (unsigned char *)calloc(n, sizeof(char));
+    shp->sigflag = (unsigned char *)calloc(n, sizeof(unsigned char));
     shp->gd->sigmsg = (char **)calloc(n, sizeof(char *));
     shp->siginfo = (void **)calloc(sizeof(void *), shp->gd->sigmax);
     for (tp = shtab_signals; (sig = tp->sh_number); tp++) {
