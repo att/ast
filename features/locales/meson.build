@@ -1,13 +1,8 @@
 # This is derived from the legacy Nmake src/cmd/std/features/locales feature
 # test file.
 
-if cc.has_header('langinfo.h')
-    feature_data.set('_hdr_langinfo', 1)
-endif
-
-if cc.has_header('nl_types.h')
-    feature_data.set('_hdr_nl_types', 1)
-endif
+feature_data.set10('_hdr_langinfo', cc.has_header('langinfo.h'))
+feature_data.set10('_hdr_nl_types', cc.has_header('nl_types.h'))
 
 # For now I'm omitting all the following tests since we've been building and
 # testing ksh without them for a couple of months.

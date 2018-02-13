@@ -270,9 +270,7 @@ static int getids(Sfio_t *sp, const char *name, int flags) {
         putid(sp, flags, " gid", gname, group);
         if ((flags & X_FLAG) && name) {
 #if _lib_getgrent
-#if _lib_setgrent
             setgrent();
-#endif
             lastchar = '=';
             while (grp = getgrent())
                 if (p = grp->gr_mem)
@@ -286,9 +284,7 @@ static int getids(Sfio_t *sp, const char *name, int flags) {
                             else
                                 sfprintf(sp, "%u(%s)", grp->gr_gid, grp->gr_name);
                         }
-#if _lib_endgrent
             endgrent();
-#endif
 #endif
 #if _lib_fsid
             getfsids(sp, name, flags, '=');
@@ -334,9 +330,7 @@ static int getids(Sfio_t *sp, const char *name, int flags) {
     } else if (flags & GG_FLAG) {
         if ((flags & X_FLAG) && name) {
 #if _lib_getgrent
-#if _lib_setgrent
             setgrent();
-#endif
             i = 0;
             while (grp = getgrent())
                 if (p = grp->gr_mem)
@@ -348,9 +342,7 @@ static int getids(Sfio_t *sp, const char *name, int flags) {
                             else
                                 sfprintf(sp, "%u", grp->gr_gid);
                         }
-#if _lib_endgrent
             endgrent();
-#endif
             if (i) sfputc(sp, '\n');
 #endif
         } else if (ngroups > 0) {

@@ -28,7 +28,7 @@
 #include "cslib.h"
 
 #include "FEATURE/termios"
-#if !_lib_tcgetattr || !_lib_tcsetattr
+#if !_lib_tcgetattr
 #undef _hdr_termios
 #endif
 #if _hdr_termios

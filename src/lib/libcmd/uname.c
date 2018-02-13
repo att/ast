@@ -108,8 +108,6 @@ extern long gethostid(void);
 #endif
 #if _lib_gethostname
 extern int gethostname(char *, size_t);
-#endif
-#if _lib_sethostname
 extern int sethostname(const char *, size_t);
 #endif
 
@@ -329,7 +327,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     if (error_info.errors || *argv && (flags || sethost) || sethost && flags)
         error(ERROR_usage(2), "%s", optusage(NULL));
     if (sethost) {
-#if _lib_sethostname
+#if _lib_gethostname
         if (sethostname(sethost, strlen(sethost) + 1))
 #else
 #ifdef ENOSYS

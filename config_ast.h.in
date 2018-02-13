@@ -121,7 +121,6 @@
 #mesondefine _lib_creat64
 #mesondefine _lib_dllload
 #mesondefine _lib_dlopen
-#mesondefine _lib_endgrent
 #mesondefine _lib_fdopendir
 #mesondefine _lib_fork
 #mesondefine _lib_fsid
@@ -184,8 +183,6 @@
 #mesondefine _lib_ptsname
 #mesondefine _lib_pvalloc
 #mesondefine _lib_rewinddir
-#mesondefine _lib_setgrent
-#mesondefine _lib_sethostname
 #mesondefine _lib_setlocale
 #mesondefine _lib_setregid
 #mesondefine _lib_setreuid
@@ -214,7 +211,6 @@
 #mesondefine _lib_sysinfo
 #mesondefine _lib_tcgetattr
 #mesondefine _lib_tcgetpgrp
-#mesondefine _lib_tcsetattr
 #mesondefine _lib_towlower
 #mesondefine _lib_towupper
 #mesondefine _lib_truncate64

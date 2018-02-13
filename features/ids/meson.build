@@ -1,25 +1,13 @@
-if cc.has_function('endgrent')
-    feature_data.set('_lib_endgrent', 1)
-    feature_data.set('_lib_getgrent', 1)
-    feature_data.set('_lib_setgrent', 1)
-endif
+feature_data.set10('_lib_getgrent', cc.has_function('getgrent'))
 
 # TODO: Figure out if these tests still make sense. These functions don't seem
 # to exist on any system I'm using.
 if system == 'darwin'
     prefix = '\n'.join(['#include sys/types.h', '#include sys/fss.h', '#include fsg.h'])
-    if cc.has_function('fsid', prefix: prefix)
-        feature_data.set('_lib_fsid', 1)
-    endif
+    feature_data.set10('_lib_fsid', cc.has_function('fsid', prefix: prefix))
 else
     prefix = '\n'.join(['#include sys/types.h', '#include sys/fss.h', '#include fsg.h'])
-    if cc.has_function('fsid', args: '-lfsg', prefix: prefix)
-        feature_data.set('_lib_fsid', 1)
-    endif
-    if cc.has_function('getfsgid', args: '-lfsg', prefix: prefix)
-        feature_data.set('_lib_getfsgid', 1)
-    endif
-    if cc.has_function('isfsg', args: '-lfsg', prefix: prefix)
-        feature_data.set('_lib_isfsg', 1)
-    endif
+    feature_data.set10('_lib_fsid', cc.has_function('fsid', args: '-lfsg', prefix: prefix))
+    feature_data.set10('_lib_getfsgid', cc.has_function('getfsgid', args: '-lfsg', prefix: prefix))
+    feature_data.set10('_lib_isfsg', cc.has_function('isfsg', args: '-lfsg', prefix: prefix))
 endif
