@@ -678,8 +678,9 @@ void hist_flush(History_t *hp) {
             hp->histflush = 0;
         }
         if (sfsync(hp->histfp) < 0) {
+            Shell_t *shp = hp->histshell;
             hist_close(hp);
-            if (!sh_histinit(hp->histshell)) sh_offoption((Shell_t *)hp->histshell, SH_HISTORY);
+            if (!sh_histinit(shp)) sh_offoption((Shell_t *)shp, SH_HISTORY);
         }
         hp->histflush = 0;
     }

@@ -297,6 +297,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
         }
     }
     sh_popcontext(shp, &buff);
+    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     if (buffer) free(buffer);
     if (!np) free(shp->st.filename);
     shp->dot_depth--;
@@ -310,7 +311,6 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     // Only restore the top Shscope_t portion for posix functions.
     memcpy((void *)&shp->st, (void *)prevscope, sizeof(Shscope_t));
     shp->topscope = (Shscope_t *)prevscope;
-    nv_putval(SH_PATHNAMENOD, shp->st.filename, NV_NOFREE);
     if (jmpval && jmpval != SH_JMPFUN) siglongjmp(*shp->jmplist, jmpval);
     return shp->exitval;
 }
