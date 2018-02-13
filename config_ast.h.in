@@ -115,6 +115,7 @@
 #mesondefine _lib___malloc
 #mesondefine _lib__getpty
 #mesondefine _lib_alloca
+#mesondefine _lib_clock_gettime
 #mesondefine _lib_close64
 #mesondefine _lib_confstr
 #mesondefine _lib_creat64
@@ -138,6 +139,7 @@
 #mesondefine _lib_getsid
 #mesondefine _lib_getsockname
 #mesondefine _lib_getsockopt
+#mesondefine _lib_gettimeofday
 #mesondefine _lib_grantpt
 #mesondefine _lib_htonl
 #mesondefine _lib_htons
