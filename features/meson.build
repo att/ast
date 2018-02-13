@@ -70,7 +70,7 @@ feature_data.set10('_hdr_utmpx', cc.has_header('utmpx.h', args: feature_test_arg
 feature_data.set10('_lib_sigqueue',
     cc.has_function('sigqueue', prefix: '#include <signal.h>', args: feature_test_args))
 feature_data.set10('_lib_tcgetattr',
-    cc.has_function('tcgetattr', prefix: '#include <signal.h>', args: feature_test_args))
+    cc.has_function('tcgetattr', prefix: '#include <termios.h>', args: feature_test_args))
 
 if not cc.has_function('isnanl', prefix: '#include <math.h>', args: feature_test_args)
     feature_data.set('isnanl', 'isnan')
