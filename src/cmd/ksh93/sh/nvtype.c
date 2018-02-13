@@ -1568,8 +1568,8 @@ Namval_t *nv_typeparent(Namval_t *np) {
 }
 
 void nv_checkrequired(Namval_t *mp) {
-    Namtype_t *dp, *dq = 0;
-    Namval_t *np, *mq, *nq;
+    Namtype_t *dp = NULL, *dq = NULL;
+    Namval_t *np = NULL, *mq = NULL, *nq = NULL;
     int i;
 
     if (nv_arrayptr(mp) || !(dp = (Namtype_t *)nv_hasdisc(mp, &type_disc))) return;
