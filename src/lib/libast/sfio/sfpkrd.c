@@ -229,7 +229,6 @@ ssize_t sfpkrd(int fd, Void_t *argbuf, size_t n, int rc, long tm, int action) {
                     t &= ~SOCKET_PEEK;
             }
             if (r >= 0) {
-                t &= ~STREAM_PEEK;
                 if (r > 0)
                     break;
                 else /* read past eof */
