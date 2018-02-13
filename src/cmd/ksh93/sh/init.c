@@ -2146,8 +2146,6 @@ static void env_init(Shell_t *shp) {
             nv_newattr(np, flag | NV_IMPORT | NV_EXPORT, size);
             if ((flag & (NV_INTEGER | NV_UTOL | NV_LTOU)) == (NV_UTOL | NV_LTOU))
                 nv_mapchar(np, (flag & NV_UTOL) ? e_tolower : e_toupper);
-        } else {
-            cp += 2;
         }
     }
 skip:
@@ -2158,7 +2156,8 @@ skip:
         nv_offattr(PWDNOD, NV_TAGGED);
         path_pwd(shp, 0);
     }
-    if ((cp = nv_getval(SHELLNOD)) && (sh_type(cp) & SH_TYPE_RESTRICTED)) {
+    cp = nv_getval(SHELLNOD);
+    if (cp && (sh_type(cp) & SH_TYPE_RESTRICTED)) {
         sh_onoption(shp, SH_RESTRICTED);  // restricted shell
     }
 }

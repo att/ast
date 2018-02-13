@@ -98,7 +98,6 @@ Tm_t *tmxtm(Tm_t *tm, Time_t t, Tm_zone_t *zone) {
     tm->tm_mday = x + 1;
     tm->tm_nsec = tmxnsec(t);
     tmfix(tm);
-    n += 1900;
     tm->tm_isdst = 0;
     if (tm->tm_zone->daylight) {
         if ((y = tmequiv(tm) - 1900) == tm->tm_year)
