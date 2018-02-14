@@ -35,7 +35,7 @@
 
 #include <ast_tty.h>
 #include <ls.h>
-
+#include <error.h>
 /*
  * not quite ready for _use_spawnveg
  */
@@ -486,11 +486,31 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if (flags & (PROC_DAEMON | PROC_SESSION)) modify(proc, forked, PROC_sys_pgrp, -1, 0);
         if (forked || (flags & PROC_OVERLAY)) {
             if ((flags & PROC_PRIVELEGED) && !geteuid()) {
-                setuid(geteuid());
-                setgid(getegid());
+                uid_t euid = geteuid();
+                gid_t egid = getegid();
+                if (setuid(euid) < 0) {
+                    error(ERROR_system(0), "setuid(%d) failed", euid);
+                    goto cleanup;
+                }
+                if (setgid(egid) < 0) {
+                    error(ERROR_system(0), "setgid(%d) failed", egid);
+                    goto cleanup;
+                }
             }
-            if (flags & (PROC_PARANOID | PROC_GID)) setgid(getgid());
-            if (flags & (PROC_PARANOID | PROC_UID)) setuid(getuid());
+            if (flags & (PROC_PARANOID | PROC_GID)) {
+                gid_t gid = getgid();
+                if (setgid(gid) < 0) {
+                    error(ERROR_system(0), "setgid(%d) failed", gid);
+                    goto cleanup;
+                }
+            }
+            if (flags & (PROC_PARANOID | PROC_UID)) {
+                uid_t uid = getuid();
+                if (setuid(uid) < 0) {
+                    error(ERROR_system(0), "setuid(%d) failed", uid);
+                    goto cleanup;
+                }
+            }
         }
         if (procfd > 1) {
             if (modify(proc, forked, PROC_fd_dup | PROC_FD_CHILD, pio[0], PROC_ARG_NULL))

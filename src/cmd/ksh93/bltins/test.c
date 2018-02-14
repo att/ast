@@ -552,13 +552,24 @@ int sh_access(const char *name, int mode) {
             setreuid(shp->gd->euserid, shp->gd->userid) == 0) {
             mode = access(name, mode);
             // Restore ids.
-            if (shp->gd->userid != shp->gd->euserid) setreuid(shp->gd->userid, shp->gd->euserid);
+            if (shp->gd->userid != shp->gd->euserid) {
+                if (setreuid(shp->gd->userid, shp->gd->euserid) < 0) {
+                    // Restoring real user id failed, exit.
+                    error(ERROR_system(1), "setreuid(%d, %d) failed", shp->gd->userid, shp->gd->euserid);
+                }
+            }
             if (shp->gd->groupid != shp->gd->egroupid) {
-                setregid(shp->gd->groupid, shp->gd->egroupid);
+                if (setregid(shp->gd->groupid, shp->gd->egroupid) < 0) {
+                    // Restoring real group id failed, exit.
+                    error(ERROR_system(1), "setregid(%d, %d) failed", shp->gd->groupid, shp->gd->egroupid);
+                }
             }
             return mode;
         } else if (shp->gd->groupid != shp->gd->egroupid) {
-            setregid(shp->gd->groupid, shp->gd->egroupid);
+            if (setregid(shp->gd->groupid, shp->gd->egroupid) < 0) {
+                // Restoring real group id failed, exit.
+                error(ERROR_system(1), "setregid(%d, %d) failed", shp->gd->groupid, shp->gd->egroupid);
+            }
         }
     }
 

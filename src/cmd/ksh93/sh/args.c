@@ -35,6 +35,7 @@
 #include "path.h"
 #include "shlex.h"
 #include "terminal.h"
+#include <error.h>
 #if SHOPT_BASH
 #define BASHOPT "\374"
 #else
@@ -563,8 +564,14 @@ void sh_applyopts(Shell_t *shp, Shopt_t newflags) {
     if ((!sh_isstate(shp, SH_INIT) && is_privileged) ||
         (sh_isstate(shp, SH_INIT) && is_privileged_off && shp->gd->userid != shp->gd->euserid)) {
         if (!is_option(&newflags, SH_PRIVILEGED)) {
-            setuid(shp->gd->userid);
-            setgid(shp->gd->groupid);
+            if (setuid(shp->gd->userid) < 0) {
+                error(ERROR_system(0), "setuid(%d) failed", shp->gd->userid);
+                return;
+            }
+            if (setgid(shp->gd->groupid) < 0) {
+                error(ERROR_system(0), "setgid(%d) failed", shp->gd->groupid);
+                return;
+            }
             if (shp->gd->euserid == 0) {
                 shp->gd->euserid = shp->gd->userid;
                 shp->gd->egroupid = shp->gd->groupid;
