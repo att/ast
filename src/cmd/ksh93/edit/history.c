@@ -561,7 +561,7 @@ again:
     sfseek(hp->histfp, count, SEEK_SET);
     while ((cp = (char *)sfreserve(hp->histfp, SF_UNBOUND, 0))) {
         n = sfvalue(hp->histfp);
-        *(endbuff = cp + n) = 0;
+        endbuff = cp + n;
         first = cp += skip;
         while (1) {
             while (!incmd) {
@@ -606,23 +606,21 @@ again:
                         incmd = 1;
                     }
                 }
-                if (cp > endbuff) {
-                    cp++;
+                if (cp >= endbuff) {
                     goto refill;
                 }
             }
             first = cp;
-            while (*cp++) {
-                ;  // empty loop
+            while (*cp) {
+                if (++cp >= endbuff) goto refill;
             }
-            if (cp > endbuff) break;
             incmd = 0;
             while (*cp == 0) {
-                if (++cp > endbuff) goto refill;
+                if (++cp >= endbuff) goto refill;
             }
         }
     refill:
-        count += (--cp - first);
+        count += (cp - first);
         skip = (cp - endbuff);
         if (!incmd && !skip) hp->histcmds[hist_ind(hp, ++hp->histind)] = count;
     }
