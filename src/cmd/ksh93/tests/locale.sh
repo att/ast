@@ -215,6 +215,8 @@ echo TODO: Enable when custom builtins of external commands is working.
 
 locale=en_US.UTF-8
 
+# TODO: Enable the `join` test when it is a builtin again (issues #411, #129).
+if false; then
 printf 'f1\357\274\240f2\n' > input1
 printf 't2\357\274\240f1\n' > input2
 printf '\357\274\240\n' > delim
@@ -225,6 +227,7 @@ err_exit "join test script failed -- exit code $?"
 exp=$(printf 'f2\357\274\240t2')
 got="$(<out)"
 [[ $got == "$exp" ]] || err_exit "LC_ALL test script failed -- expected '$exp', got '$got'"
+fi  # if false
 
 # multibyte identifiers
 
