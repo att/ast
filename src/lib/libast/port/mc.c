@@ -210,7 +210,7 @@ Mc_t *mcopen(Sfio_t *ip) {
             errno = oerrno;
             return 0;
         }
-        if (memcmp(buf, MC_MAGIC, MC_MAGIC_SIZE)) return 0;
+        if (strncmp(buf, MC_MAGIC, MC_MAGIC_SIZE)) return 0;
     }
 
     /*

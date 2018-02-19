@@ -890,7 +890,7 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp) 
                 if (*argv) continue;
                 break;
             } else if (outfile && !wp->nofollow && argv[1] &&
-                       memcmp(arg, argv[1], l = strlen(arg)) == 0 && argv[1][l] == '[') {
+                       strncmp(arg, argv[1], l = strlen(arg)) == 0 && argv[1][l] == '[') {
                 int k = 1;
                 Namarr_t *aq = 0;
                 np = nv_open(arg, wp->root, NV_VARNAME | NV_NOADD | NV_NOASSIGN | wp->noscope);
@@ -933,7 +933,7 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp) 
                     }
                 }
                 if ((wp->flags & NV_JSON) &&
-                    (!argv[1] || strlen(argv[1]) < m + n || memcmp(argv[1], arg, m + n - 1))) {
+                    (!argv[1] || strlen(argv[1]) < m + n || strncmp(argv[1], arg, m + n - 1))) {
                     wp->flags |= NV_JSON_LAST;
                 }
                 outval(cp, arg, wp);
@@ -962,7 +962,7 @@ static char **genvalue(char **argv, const char *prefix, int n, struct Walk *wp) 
         if (c == '.') cp[m - 1] = c;
         if (wp->indent > 0) sfnputc(outfile, '\t', --wp->indent);
         sfputc(outfile, endchar);
-        if (json && wp->indent > 0 && *argv && memcmp(arg, argv[-1], n) == 0) sfputc(outfile, ',');
+        if (json && wp->indent > 0 && *argv && strncmp(arg, argv[-1], n) == 0) sfputc(outfile, ',');
         if (*argv && n && wp->indent < 0) sfputc(outfile, ';');
     }
     wp->flags &= ~NV_JSON_LAST;

@@ -676,9 +676,9 @@ static void astbin_update(Shell_t *shp, const char *from, const char *to) {
     for (np = (Namval_t *)dtfirst(shp->bltin_tree); np;
          np = (Namval_t *)dtnext(shp->bltin_tree, np)) {
         flen = len;
-        if (bin && memcmp(from + 4, np->nvname, len - 4) == 0) {
+        if (bin && strncmp(from + 4, np->nvname, len - 4) == 0) {
             flen -= 4;
-        } else if (memcmp(from, np->nvname, len)) {
+        } else if (strncmp(from, np->nvname, len)) {
             continue;
         }
         nv_onattr(np, BLT_DISABLE);

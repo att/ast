@@ -301,7 +301,7 @@ static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t
     Namval_t *nq;
 
     for (i = 0; (cp = disctab[i]); i++) {
-        if (memcmp(event, cp, n)) continue;
+        if (strncmp(event, cp, n)) continue;
         if (action == np) {
             action = sp->disc[i];
         } else {

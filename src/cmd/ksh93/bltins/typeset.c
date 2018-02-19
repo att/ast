@@ -1382,7 +1382,7 @@ static void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct td
                 onp = np;
                 if (name) {
                     char *newname = nv_name(np);
-                    if (memcmp(name, newname, len) == 0 && newname[len] == '.') continue;
+                    if (strncmp(name, newname, len) == 0 && newname[len] == '.') continue;
                     name = 0;
                 }
                 if (flag & NV_ARRAY) {

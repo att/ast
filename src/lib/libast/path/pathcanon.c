@@ -322,7 +322,7 @@ again:
                                         errno = EINVAL;
                                         goto nope;
                                     } else if (oflags[n].length == c &&
-                                               !memcmp(oflags[n].name, v, c)) {
+                                               !strncmp(oflags[n].name, v, c)) {
                                         if (!oflags[n].oflag) {
                                             errno = ENXIO;
                                             goto nope;

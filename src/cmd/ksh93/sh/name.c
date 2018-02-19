@@ -182,10 +182,10 @@ Namval_t *nv_addnode(Namval_t *np, int remove) {
         nv_delete(np, root, NV_NOFREE);
         np = nv_search(sp->rp->nvname, root, NV_ADD);
     }
-    if (sp->numnodes && memcmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1)) {
+    if (sp->numnodes && strncmp(np->nvname, NV_CLASS, sizeof(NV_CLASS) - 1)) {
         name = (sp->nodes[0])->nvname;
         i = strlen(name);
-        if (memcmp(np->nvname, name, i)) return (np);
+        if (strncmp(np->nvname, name, i)) return (np);
     }
     if (sp->rp && sp->numnodes) {
         // Check for a redefine.
@@ -231,7 +231,7 @@ struct argnod *nv_onlist(struct argnod *arg, const char *name) {
         } else {
             cp = arg->argval;
         }
-        if (memcmp(cp, name, len) == 0 && (cp[len] == 0 || cp[len] == '=')) return (arg);
+        if (strncmp(cp, name, len) == 0 && (cp[len] == 0 || cp[len] == '=')) return (arg);
     }
     return 0;
 }
@@ -856,7 +856,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                             xlen = strlen(xp);
                         }
                         cp = nv_name(np);
-                        if (xp && memcmp(cp, xp, xlen) && cp[xlen] == '.') cp += xlen + 1;
+                        if (xp && strncmp(cp, xp, xlen) && cp[xlen] == '.') cp += xlen + 1;
                         copy = strlen(cp);
                         dp->nofree |= 1;
                         name = copystack(shp, cp, sp, sub);
@@ -1217,7 +1217,7 @@ Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
         if (xp->root != root) continue;
         if ((*name != '_' || name[1] != '.') && *name == *xp->name &&
             xp->namespace == shp->namespace && (flags & (NV_ARRAY | NV_NOSCOPE)) == xp->flags &&
-            memcmp(xp->name, name, xp->len) == 0 &&
+            strncmp(xp->name, name, xp->len) == 0 &&
             (name[xp->len] == 0 || name[xp->len] == '=' || name[xp->len] == '+')) {
             sh_stats(STAT_NVHITS);
             np = xp->np;
@@ -1977,7 +1977,7 @@ static int scanfilter(Dt_t *dict, void *arg, void *data) {
         if (tp && tp->mapname) {
             if (sp->scanflags == NV_FUNCTION || sp->scanflags == (NV_NOFREE | NV_BINARY | NV_RAW)) {
                 int n = strlen(tp->mapname);
-                if (memcmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' ||
+                if (strncmp(np->nvname, tp->mapname, n) || np->nvname[n] != '.' ||
                     strchr(&np->nvname[n + 1], '.')) {
                     return 0;
                 }
@@ -2113,7 +2113,7 @@ static void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
         if (nv_isvtree(np)) {
             int len = strlen(np->nvname);
             npnext = (Namval_t *)dtnext(root, np);
-            while ((nq = npnext) && memcmp(np->nvname, nq->nvname, len) == 0 &&
+            while ((nq = npnext) && strncmp(np->nvname, nq->nvname, len) == 0 &&
                    nq->nvname[len] == '.') {
                 _nv_unset(nq, flags);
                 npnext = (Namval_t *)dtnext(root, nq);
@@ -2751,7 +2751,7 @@ static void cache_purge(const char *name) {
 
     for (c = 0, xp = nvcache.entries; c < NVCACHE; xp = &nvcache.entries[++c]) {
         if (xp->len <= len || xp->name[len] != '.') continue;
-        if (memcmp(name, xp->name, len) == 0) xp->root = 0;
+        if (strncmp(name, xp->name, len) == 0) xp->root = 0;
     }
 }
 #endif  // NVCACHE
@@ -3162,7 +3162,7 @@ char *nv_name(Namval_t *np) {
         if (shp->namespace && is_afunction(np)) {
             char *name = nv_name(shp->namespace);
             int n = strlen(name);
-            if (memcmp(np->nvname, name, n) == 0 && np->nvname[n] == '.') {
+            if (strncmp(np->nvname, name, n) == 0 && np->nvname[n] == '.') {
                 return np->nvname + n + 1;
             }
         }
