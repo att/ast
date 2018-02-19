@@ -404,7 +404,7 @@ again:
     sfseek(tmp, (Sfoff_t)0, SEEK_SET);
     while (str = sfgetr(tmp, '\n', 0)) {
         wlen = sfvalue(tmp) - 1;
-        if (prefix && memcmp(prefix, str, len)) continue;
+        if (prefix && strncmp(prefix, str, len)) continue;
         if (filter) {
             str[wlen] = 0;
             i = strmatch(str, filter);

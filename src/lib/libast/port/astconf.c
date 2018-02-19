@@ -320,7 +320,7 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
                 ;
             n = s - v;
             if ((!path ||
-                 *path == *p && strlen(path) == (v - p - 1) && !memcmp(path, p, v - p - 1)) &&
+                 *path == *p && strlen(path) == (v - p - 1) && !strncmp(path, p, v - p - 1)) &&
                 strneq(v, value, n))
                 goto ok;
             for (; isspace(*s); s++)

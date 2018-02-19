@@ -1652,7 +1652,7 @@ static int curline_search(Vi_t *vp, const char *string) {
 
     ed_external(vp->u_space, (char *)vp->u_space);
     for (dp = (char *)vp->u_space, dpmax = dp + strlen(dp) - len; dp <= dpmax; dp++) {
-        if (*dp == *cp && memcmp(cp, dp, len) == 0) return (dp - (char *)vp->u_space);
+        if (*dp == *cp && strncmp(cp, dp, len) == 0) return (dp - (char *)vp->u_space);
     }
     ed_internal((char *)vp->u_space, vp->u_space);
     return -1;

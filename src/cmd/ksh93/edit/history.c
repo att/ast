@@ -884,7 +884,7 @@ int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
     m = sfvalue(hp->histfp);
     n = (int)strlen(string);
     while (m > n) {
-        if (*cp == *string && memcmp(cp, string, n) == 0) {
+        if (*cp == *string && strncmp(cp, string, n) == 0) {
             if (coffset) *coffset = (cp - first);
             return line;
         }

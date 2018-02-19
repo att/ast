@@ -630,7 +630,7 @@ static int varname(const char *str, ssize_t n) {
 static const char *mapformat(Sffmt_t *fe) {
     const struct printmap *pm = Pmap;
     while (pm->size > 0) {
-        if (pm->size == fe->n_str && memcmp(pm->name, fe->t_str, fe->n_str) == 0) return pm->map;
+        if (pm->size == fe->n_str && strncmp(pm->name, fe->t_str, fe->n_str) == 0) return pm->map;
         pm++;
     }
     return 0;

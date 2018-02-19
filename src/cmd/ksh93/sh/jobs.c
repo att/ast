@@ -284,7 +284,7 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
         n = cp - name;
     }
     for (csp = (struct cosh *)job.colist; csp; csp = csp->next) {
-        if (memcmp(name, csp->name, n) == 0 && csp->name[n] == 0) break;
+        if (strncmp(name, csp->name, n) == 0 && csp->name[n] == 0) break;
     }
     if (!csp) errormsg(SH_DICT, ERROR_exit(1), e_jobusage, name);
     if (cp) {
