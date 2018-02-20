@@ -134,8 +134,11 @@ struct _glob_ {
 #define extern __EXPORT__
 #endif
 
-extern int glob(const char *, int, int (*)(const char *, int), glob_t *);
-extern void globfree(glob_t *);
+extern int _ast_glob(const char *, int, int (*)(const char *, int), glob_t *);
+extern void _ast_globfree(glob_t *);
+
+#define glob _ast_glob
+#define globfree _ast_globfree
 
 #undef extern
 
