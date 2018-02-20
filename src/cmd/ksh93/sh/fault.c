@@ -159,8 +159,18 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     struct checkpt *pp = (struct checkpt *)shp->jmplist;
     int action = 0;
 
+    if (sig == SIGABRT) {
+        signal(sig, SIG_DFL);
+        sigrelease(sig);
+        kill(getpid(), sig);
+    }
     if (sig == SIGSEGV) {
         dump_backtrace(100, 0);
+        // The preceding call should call `abort()` which means this shouldn't be reached but
+        // be paranoid.
+        signal(sig, SIG_DFL);
+        sigrelease(sig);
+        kill(getpid(), sig);
     }
     if (sig == SIGCHLD) sfprintf(sfstdout, "childsig\n");
 #ifdef SIGWINCH
