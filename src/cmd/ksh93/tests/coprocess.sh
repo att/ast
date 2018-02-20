@@ -202,7 +202,7 @@ do
         sleep 2
         kill $! 2> /dev/null
     ) && err_exit "$cat coprocess with subshell would hang"
-    for sig in IOT ABRT
+    for sig in USR1 TERM
     do
     if ( trap - $sig ) 2> /dev/null
         then
