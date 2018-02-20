@@ -458,7 +458,7 @@ skip:
     if (err == REG_ESPACE) gp->gl_error = GLOB_NOSPACE;
 }
 
-int glob(const char *pattern, int flags, int (*errfn)(const char *, int), glob_t *gp) {
+int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), glob_t *gp) {
     globlist_t *ap;
     char *pat;
     globlist_t *top;
@@ -658,7 +658,7 @@ int glob(const char *pattern, int flags, int (*errfn)(const char *, int), glob_t
     return gp->gl_error;
 }
 
-void globfree(glob_t *gp) {
+void _ast_globfree(glob_t *gp) {
     if ((gp->gl_flags & GLOB_MAGIC) == GLOB_MAGIC) {
         gp->gl_flags &= ~GLOB_MAGIC;
         if (gp->gl_stak) stkclose(gp->gl_stak);
