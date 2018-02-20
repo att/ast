@@ -68,7 +68,10 @@ int sfraise(Sfio_t *f, int type, Void_t *data) {
 
         if (disc->exceptf) {
             SFOPEN(f, 0);
-            if ((rv = (*disc->exceptf)(f, type, data, disc)) != 0) SFMTXRETURN(f, rv);
+            // We do not return the value from the disc->exceptf function. That's because it can
+            // return a negative or positive value to indicate a problem. This function, however,
+            // must only return -1 on error. See issue #398.
+            if ((*disc->exceptf)(f, type, data, disc) != 0) SFMTXRETURN(f, -1);
             SFLOCK(f, 0);
         }
 
