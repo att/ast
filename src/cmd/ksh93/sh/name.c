@@ -2178,9 +2178,11 @@ void _nv_unset(Namval_t *np, int flags) {
                 }
                 dtclose(rp->sdict);
             }
-            // Note that stkclose() calls sfclose() which frees the stream.
             if (flags & NV_TABLE) {
-                while (stkclose(slp->slptr) == 1) {
+                // Drop all references and close the stream.
+                // Note that stkclose() calls sfclose() which frees the stream.
+                // TODO: What should we do if `stkclose()` reports an error (by returning -1)?
+                while (stkclose(slp->slptr) > 0) {
                     ;  // empty loop
                 }
             } else {
