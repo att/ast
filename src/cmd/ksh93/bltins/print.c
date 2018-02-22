@@ -95,24 +95,33 @@ static char *nullarg[] = {0, 0};
 // Builtin `echo`.
 //
 int B_echo(int argc, char *argv[], Shbltin_t *context) {
+    static char bsd_univ;
     struct print prdata;
     prdata.options = sh_optecho + 5;
-    prdata.echon = 0;
-    prdata.raw = 1;
+    prdata.raw = prdata.echon = 0;
     prdata.sh = context->shp;
     UNUSED(argc);
 
-    // This mimics BSD style echo command
-    // See https://github.com/att/ast/issues/370
+    // This mess is because /bin/echo on BSD is different.
+    if (!prdata.sh->universe) {
+        char *universe;
+        universe = astconf("UNIVERSE", 0, 0);
+        if (universe) bsd_univ = (strcmp(universe, "ucb") == 0);
+        prdata.sh->universe = 1;
+    }
+    if (!bsd_univ) return b_print(0, argv, (Shbltin_t *)&prdata);
     prdata.options = sh_optecho;
+    prdata.raw = 1;
     while (argv[1] && *argv[1] == '-') {
         if (strcmp(argv[1], "-n") == 0) prdata.echon = 1;
+#if !SHOPT_ECHOE
         else if (strcmp(argv[1], "-e") == 0) {
             prdata.raw = 0;
         } else if (strcmp(argv[1], "-ne") == 0 || strcmp(argv[1], "-en") == 0) {
             prdata.raw = 0;
             prdata.echon = 1;
         }
+#endif  // SHOPT_ECHOE
         else {
             break;
         }
