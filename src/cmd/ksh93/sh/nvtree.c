@@ -1021,8 +1021,21 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     dir = nv_diropen(mp, name, (void *)shp);
     walk.root = shp->last_root ? shp->last_root : shp->var_tree;
     if (subscript) name[strlen(name) - 1] = 0;
-    while ((cp = nv_dirnext(dir))) {
+
+    struct nvdir *odir = NULL;
+    Namval_t *nq = NULL;
+    while (true) {
+        cp = nv_dirnext(dir);
+        if (odir) {
+            free(odir);
+            odir = NULL;
+        }
+        if (nq) {
+            nv_delete(nq, walk.root, 0);
+        }
+        if (!cp) break;
         if (cp[len] != '.') continue;
+
         if (xp) {
             Dt_t *dp = shp->var_tree;
             Namval_t *nq, *mq;
@@ -1045,8 +1058,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
                 }
                 nv_clone(nq, mq, flags | NV_RAW);
                 mq->nvenv = nvenv;
-                if (flags & NV_MOVE) nv_delete(nq, walk.root, 0);
-                if (odir) free(odir);
+                if (!(flags & NV_MOVE)) nq = NULL;
             }
             continue;
         }
@@ -1058,6 +1070,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
         n++;
         arglist = ap;
     }
+
     nv_dirclose(dir);
     if (xp) {
         shp->var_tree = save_tree;
