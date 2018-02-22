@@ -16,4 +16,6 @@
 #define _use_spawnveg 1
 #endif
 
+// https://github.com/att/ast/issues/370
+#define _UNIV_DEFAULT "ucb"
 #endif
