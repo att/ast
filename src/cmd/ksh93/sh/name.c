@@ -454,7 +454,6 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         nv_close(np);
                         goto check_type;
                     }
-                    nq = np;
                     if (*cp != '.' && *cp != '[' && strchr(cp, '[')) {
                         cp = stkcopy(shp->stk, nv_name(np));
                         nv_close(np);
@@ -462,6 +461,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         shp->prefix_root = shp->first_root;
                         np = nv_open(cp, shp->prefix_root ? shp->prefix_root : shp->var_tree, flag);
                     }
+                    nq = np;
                     if (arg->argflag & ARG_APPEND) {
                         if (nv_isarray(np)) {
                             if ((sub = nv_aimax(np)) < 0 && nv_arrayptr(np)) {
