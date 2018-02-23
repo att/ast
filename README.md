@@ -37,7 +37,7 @@ ninja -C build install
 Latest builds for Red Hat Enterprise Linux (CentOS) and Fedora can be found in
 [copr](https://copr.fedorainfracloud.org/coprs/g/ksh/latest/).
 
-TBD packages for other Linux distros.
+For Arch Linux, there is an [AUR package](https://aur.archlinux.org/packages/ksh93-git/) and also a pre-compiled version in the [openSUSE Build Service](https://software.opensuse.org//download.html?project=home%3AHead_on_a_Stick%3AArch&package=ksh93-git).
 
 ### Windows
 TBD
