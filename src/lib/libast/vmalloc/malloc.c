@@ -354,6 +354,9 @@ void _vmoptions(int boot) {
                                 _Vmassert &= ~b;
                         } while ((v = strchr(v, ':')) && ++v);
                     break;
+                case 'j': /* junk */
+                    if (boot & 1) _Vmassert |= VM_junk;
+                    break;
                 case 'k': /* keep */
                     if (boot & 2) _Vmassert |= VM_keep;
                     break;
@@ -619,6 +622,7 @@ extern Void_t *malloc(size_t size) {
 
     VMPROLOGUE(0);
     addr = (*Vmregion->meth.allocf)(Vmregion, size, 0);
+    if (addr && (_Vmassert & VM_junk)) memset(addr, 0x55, size);
     VMEPILOGUE(0);
 
     return VMRECORD(addr);
@@ -632,8 +636,16 @@ extern Void_t *realloc(Void_t *data, size_t size) {
 
     if (!data)
         return malloc(size);
-    else if ((vm = vmregion(data)))
+    else if ((vm = vmregion(data))) {
+        int old_size = TRUEBDSZ(BLOCK(data)) / sizeof(unsigned int);
         addr = (*vm->meth.resizef)(vm, data, size, VM_RSCOPY | VM_RSMOVE, 0);
+        if (addr && (_Vmassert & VM_junk)) {
+            int new_size = TRUEBDSZ(BLOCK(addr)) / sizeof(unsigned int);
+            for (int i = old_size; i < new_size; i++) {
+                ((unsigned int *)addr)[i] = 0x66666666;
+            }
+        }
+    }
     else /* not our data */
 #if USE_NATIVE
         addr = native_realloc(data, size);
@@ -651,10 +663,18 @@ extern void free(Void_t *data) {
     VMPROLOGUE(1);
 
     if (data && !(_Vmassert & VM_keep)) {
-        if ((vm = vmregion(data))) (void)(*vm->meth.freef)(vm, data, 0);
+        if ((vm = vmregion(data))) {
+            if (_Vmassert & VM_junk) {
+                int old_size = TRUEBDSZ(BLOCK(data)) / sizeof(unsigned int);
+                for (int i = 0; i < old_size; i++) {
+                    ((unsigned int *)data)[i] = 0xA5A5A5A5;
+                }
+            }
+            (void)(*vm->meth.freef)(vm, data, 0);
+        }
 #if USE_NATIVE
-        else /* not our data */
-            native_free(data);
+            else /* not our data */
+                native_free(data);
 #endif
     }
 
