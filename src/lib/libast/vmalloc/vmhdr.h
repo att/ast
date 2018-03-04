@@ -129,6 +129,8 @@ typedef struct _seg_s Seg_t;     /* the type of a raw memory segment	*/
 #define VM_safe 0x08000000   /* safe MAP_ANON emulation of sbrk()	*/
 #define VM_zero 0x10000000   /* /dev/zero block allocator		*/
 
+#define VM_junk 0x20000000   /* fill allocated and freed blocks with junk */
+
 #define VM_GETMEMORY (VM_anon | VM_break | VM_native | VM_safe | VM_zero)
 
 #ifndef DEBUG
