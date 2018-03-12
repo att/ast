@@ -1640,7 +1640,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_redirect(shp, t->tre.treio, 1 | IOUSEVEX);
                     if (rewrite) {
                         job_lock();
-                        while ((parent = vfork()) < 0) _sh_fork(shp, parent, 0, NULL);
+#if _lib_vfork
+#define vfork_or_fork vfork
+#else
+#define vfork_or_fork fork
+#endif  // _lib_vfork
+                        while ((parent = vfork_or_fork()) < 0) _sh_fork(shp, parent, 0, NULL);
                         if (parent) {
                             job.toclear = 0;
                             job_post(shp, parent, 0);
