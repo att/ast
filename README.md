@@ -137,8 +137,14 @@ Use `#ksh` channel on freenode to discuss about AT&T KornShell and related varia
 TBD is setting up a public Gitter, and other channels for real-time
 communication.
 
-Archives of the legacy AST mailing lists (which is mostly
-about ksh) can be read at https://marc.info/?l=ast-developers and
-https://marc.info/?l=ast-users. These mailing lists now receive almost
-zero traffic. It no longer appears to be possible to subscribe to those
-mailing lists.
+### Mailing lists
+Mailman is reachable through e-mail commands to:
+<ast-developers-request@lists.research.att.com>
+<ast-users-request@lists.research.att.com>
+Send "help" in the subject line or in the body of the
+message for more info, or for detailed instructions go to:
+http://www.list.org/mailman-member/node41.html
+http://www.list.org/mailman-member/node42.html
+
+Archives of the AST mailing lists (which is mostly about ksh) are available at:
+https://marc.info/?l=ast-developers and https://marc.info/?l=ast-users.
