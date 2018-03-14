@@ -139,12 +139,18 @@ communication.
 
 ### Mailing lists
 Mailman is reachable through e-mail commands to:
-<ast-developers-request@lists.research.att.com>
-<ast-users-request@lists.research.att.com>
-Send "help" in the subject line or in the body of the
-message for more info, or for detailed instructions go to:
-http://www.list.org/mailman-member/node41.html
-http://www.list.org/mailman-member/node42.html
+<ast-developers-request@lists.research.att.com> and 
+<ast-users-request@lists.research.att.com>.
+
+To subscribe send an e-mail with "subscribe" in the subject line.
+[Mailman web interface](http://lists.research.att.com) is not available from internet due
+to security reasons. To confirm your subscription, please reply to the confirmation
+e-mail.
+
+Send "help" in the subject line or in the body of the message for more info, or for
+detailed instructions go to mailman 
+[email commands](http://www.list.org/mailman-member/node41.html) or
+[member options](http://www.list.org/mailman-member/node42.html) quick reference.
 
 Archives of the AST mailing lists (which is mostly about ksh) are available at:
 https://marc.info/?l=ast-developers and https://marc.info/?l=ast-users.
