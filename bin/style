@@ -103,7 +103,7 @@ else if type -q clang-format
     for file in $c_files
         cp $file $file.new # preserves mode bits
         clang-format $file >$file.new
-        if cmp --quiet $file $file.new
+        if cmp -s $file $file.new
             rm $file.new
         else
             echo $file was NOT correctly formatted
