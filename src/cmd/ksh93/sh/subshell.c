@@ -664,6 +664,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         shp->st.otrap = 0;
         if (nsig) {
             memcpy((char *)&shp->st.trapcom[0], savsig, nsig);
+            shp->st.otrapcom = NULL;
             free(savsig);
         }
         shp->options = sp->options;
