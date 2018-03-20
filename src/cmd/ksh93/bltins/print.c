@@ -350,7 +350,11 @@ printv:
         if (pdata.nextarg == nullarg && pdata.argsize > 0) {
             sfwrite(outfile, stkptr(shp->stk, stktell(shp->stk)), pdata.argsize);
         }
-        if (sffileno(outfile) != sffileno(sfstderr)) sfsync(outfile);
+        // -f flag skips adding newline at the end of output. This causes issues
+        // with syncing history if -s and -f are used together. History is synced
+        // later with histflush() function.
+        // https://github.com/att/ast/issues/425
+        if (!sflag && sffileno(outfile) != sffileno(sfstderr)) sfsync(outfile);
         sfpool(sfstderr, pool, SF_WRITE);
         exitval = pdata.err;
     } else if (vflag) {
