@@ -133,7 +133,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dir = nv_getval(HOME);
         if (!dir && (pw = getpwuid(geteuid()))) dir = pw->pw_dir;
     } else if (*dir == '-' && dir[1] == 0) {
-        dir = nv_getval(opwdnod);
+        dir = sh_scoped(shp, opwdnod)->nvalue.cp;
     }
 
     if (!dir || *dir == 0) errormsg(SH_DICT, ERROR_exit(1), argc == 2 ? e_subst + 4 : e_direct);
@@ -252,7 +252,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
     }
 success:
-    if (dir == nv_getval(opwdnod) || argc == 2) dp = dir;  // print out directory for cd -
+    if (dir == sh_scoped(shp, opwdnod)->nvalue.cp || argc == 2) dp = dir;  // print out directory for cd -
     if (pflag) {
         dir = stakptr(PATH_OFFSET);
         dir = pathcanon(dir, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
