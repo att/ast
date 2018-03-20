@@ -896,9 +896,16 @@ else
     err_exit 'cannot cd to ~{fd} when fd is /dev'
 fi
 
+mkdir $tmp/oldpwd
+OLDPWD=$tmp/oldpwd
+cd -
+[[ $PWD == "$tmp/oldpwd" ]] || err_exit "cd - does not recognize overridden OLDPWD variable"
+
+cd $tmp
+[[ $(OLDPWD="$tmp/oldpwd" cd -) == "$tmp/oldpwd" ]] ||
+    err_exit "cd - does not recognize overridden OLDPWD variable if it is overridden in new scope"
 
 [[ $(pwd -f $fd) == /dev ]] || err_exit "pwd -f $fd should be /dev"
-
 
 # Below test fails on OpenSUSE
 echo "TODO: Skipping test - 'cd with no arguments fails if HOME is unset'. It should be fixed later."
