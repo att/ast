@@ -957,11 +957,20 @@ then
 fi
 
 
+# -s flag writes to history file
 if print -s 'print hello world' 2> /dev/null
 then
-    [[ $(history -1) == *'hello world'* ]] || err_exit 'history file does not can results of print -s'
+    [[ $(history -1) == *'hello world'* ]] || err_exit 'history file does not contain result of print -s'
 else
     err_exit 'print -s fails'
+fi
+
+# Check if history file is updated correclty if entry does not end with newline
+if print -s -f 'print foo' 2> /dev/null
+then
+    [[ $(history -1) == *'foo' ]] || err_exit 'history file does not contain result of print -s -f'
+else
+    err_exit 'print -s -f fails'
 fi
 
 builtin  -d set 2> /dev/null && err_exit 'buitin -d allows special builtins to be deleted'
