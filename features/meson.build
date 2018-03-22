@@ -223,6 +223,12 @@ posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
                                     args: feature_test_args)
 feature_data.set10('_lib_posix_spawn', posix_spawn_feature_result.returncode() == 0)
 
+vfork_feature_file = files('vfork.c')
+vfork_feature_result = cc.run(vfork_feature_file,
+                              name: 'vfork exists and it works',
+                              args: feature_test_args)
+feature_data.set10('_lib_vfork', vfork_feature_result.returncode() == 0)
+
 newgrp = find_program('newgrp', required: false)
 feature_data.set10('_cmd_newgrp', newgrp.found())
 

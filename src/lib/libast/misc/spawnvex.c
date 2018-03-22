@@ -704,20 +704,26 @@ bad:
         int m;
         Spawnvex_noexec_t nx;
         int msg[2];
+#if _lib_vfork
         volatile int exec_errno;
         volatile int *volatile exec_errno_ptr;
+#endif
 
         if (!envv) envv = environ;
+#if _lib_vfork
         if (!vex || !(vex->flags & SPAWN_FORK))
             nx.flags = SPAWN_VFORK;
         else
+#endif
             nx.flags = SPAWN_FORK;
         n = errno;
+#if _lib_vfork
         if (nx.flags & SPAWN_VFORK) {
             exec_errno = 0;
             exec_errno_ptr = &exec_errno;
             msg[0] = msg[1] = -1;
         } else
+#endif
 #if _lib_pipe2
             if (pipe2(msg, O_CLOEXEC) < 0)
             msg[0] = msg[1] = -1;
@@ -730,9 +736,11 @@ bad:
         }
 #endif
         if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
+#if _lib_vfork
         if (nx.flags & SPAWN_VFORK)
             pid = vfork();
         else
+#endif
             pid = fork();
         if (pid == -1)
             n = errno;
@@ -769,20 +777,26 @@ bad:
                     errno = (*vex->op[i + 2].callback)(&nx, SPAWN_noexec, errno);
                 }
             }
+#if _lib_vfork
             if (nx.flags & SPAWN_VFORK)
                 *exec_errno_ptr = errno;
-            else if (msg[1] != -1) {
+            else
+#endif
+                if (msg[1] != -1) {
                 m = errno;
                 write(msg[1], &m, sizeof(m));
             }
             _exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
         }
+#if _lib_vfork
         if ((nx.flags & SPAWN_VFORK) && pid != -1 && (m = *exec_errno_ptr)) {
             while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
                 ;
             pid = -1;
             n = m;
-        } else if (msg[0] != -1) {
+        } else
+#endif
+            if (msg[0] != -1) {
             close(msg[1]);
             if (pid != -1) {
                 m = 0;
