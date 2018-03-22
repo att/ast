@@ -115,8 +115,6 @@
 #undef _hdr_filio
 #undef _sys_filio
 #undef _stream_peek
-#undef _hdr_vfork
-#undef _sys_vfork
 #undef _hdr_values
 #undef _hdr_math
 #undef _hdr_mman
@@ -372,17 +370,6 @@
 /* to test for executable access mode of a file */
 #ifndef X_OK
 #define X_OK 01
-#endif
-
-/* alternative process forking */
-#if !defined(fork) && !defined(__sparc) && !defined(__sparc__)
-#if _hdr_vfork
-#include <vfork.h>
-#endif
-#if _sys_vfork
-#include <sys/vfork.h>
-#endif
-#define fork vfork
 #endif
 
 /* to get rid of pesky compiler warnings */
@@ -1205,10 +1192,6 @@ extern int waitpid _ARG_((int, int *, int));
 extern void _exit _ARG_((int));
 typedef int(*Onexit_f) _ARG_((void));
 extern Onexit_f onexit _ARG_((Onexit_f));
-
-#if !_hdr_vfork && !_sys_vfork
-extern pid_t vfork _ARG_((void));
-#endif /*_lib_vfork*/
 
 extern int poll _ARG_((struct pollfd *, ulong, int));
 

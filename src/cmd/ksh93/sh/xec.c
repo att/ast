@@ -1640,7 +1640,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_redirect(shp, t->tre.treio, 1 | IOUSEVEX);
                     if (rewrite) {
                         job_lock();
-                        while ((parent = vfork()) < 0) _sh_fork(shp, parent, 0, NULL);
+                        while ((parent = fork()) < 0) _sh_fork(shp, parent, 0, NULL);
                         if (parent) {
                             job.toclear = 0;
                             job_post(shp, parent, 0);
@@ -2665,8 +2665,8 @@ bool sh_trace(Shell_t *shp, char *argv[], int nl) {
 }
 
 //
-// This routine creates a subshell by calling fork() or vfork().
-// If ((flags&COMASK)==TCOM), then vfork() is permitted.
+// This routine creates a subshell by calling fork().
+// If ((flags&COMASK)==TCOM), then fork() is permitted.
 // If fork fails, the shell sleeps for exponentially longer periods
 //   and tries again until a limit is reached.
 // SH_FORKLIM is the max period between forks - power of 2 usually.

@@ -76,11 +76,7 @@ The new process becomes a process group leader.
 The new process joins the process group
 .IR pgid .
 .SH COMMENTS
-It is possible to code all process creation (except for
-.IR vfork (2)
-hack like in
-.IR csh (1))
-using
+It is possible to code all process creation using
 .LR spawnveg .
 The
 .IR proc (3)

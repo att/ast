@@ -86,23 +86,35 @@ static pid_t spawn(const char *path, int nmap, const int map[], const struct inh
     int i;
     int n;
     int m;
-    volatile int exec_errno;
-    volatile int *volatile exec_errno_ptr;
+    int j;
+    int k;
+    int msg[2];
 
     pgid = inherit && (inherit->flags & SPAWN_SETGROUP) ? inherit->pgroup : -1;
     n = errno;
-    exec_errno = 0;
-    exec_errno_ptr = &exec_errno;
+    if (pipe(msg) < 0) {
+        msg[0] = msg[1] = -1;
+    } else {
+        fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+        fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+    }
     sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
-    pid = vfork();
+    pid = fork();
     if (pid == -1)
         n = errno;
     else if (!pid) {
         sigcritical(0);
         for (i = 0; i < nmap; i++) {
-            if (map[i] == i)
+            for (j = 0; j < elementsof(msg); j++) {
+                if (i == msg[j] && (k = fcntl(i, F_DUPFD, 0)) >= 0) {
+                    fcntl(k, F_SETFD, FD_CLOEXEC);
+                    msg[j] = k;
+                }
+            }
+
+            if (map[i] == i) {
                 fcntl(i, F_SETFD, 0);
-            else {
+            } else {
                 close(i);
                 fcntl(map[i], F_DUPFD, i);
                 close(map[i]);
@@ -110,15 +122,31 @@ static pid_t spawn(const char *path, int nmap, const int map[], const struct inh
         }
         if (pgid >= 0 && setpgid(0, pgid) < 0 && pgid && errno == EPERM) setpgid(pgid, 0);
         execve(path, argv, envv);
-        *exec_errno_ptr = errno;
+        if (msg[0] != -1) {
+            m = errno;
+            write(msg[1], &m, sizeof(m));
+        }
         _exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
     }
-    if (pid != -1 && (m = *exec_errno_ptr)) {
-        while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
-            ;
-        pid = -1;
-        n = m;
+
+    if (msg[0] != -1) {
+        close(msg[1]);
+        if (pid != -1) {
+            m = 0;
+            while (read(msg[0], &m, sizeof(m)) == -1)
+                if (errno != EINTR) {
+                    m = errno;
+                    break;
+                }
+            if (m) {
+                while (waitpid(pid, &n, 0) && errno == EINTR);
+                pid = -1;
+                n = m;
+            }
+        }
+        close(msg[0]);
     }
+
     sigcritical(0);
     if (pgid >= 0 && setpgid(pid, pgid) < 0 && pgid && errno == EPERM) setpgid(pid, pid);
     errno = n;
@@ -150,28 +178,46 @@ static pid_t spawnve(int mode, const char *path, char *const argv[], char *const
     int i;
     int n;
     int m;
-    volatile int exec_errno;
-    volatile int *volatile exec_errno_ptr;
+    int msg[2];
 
     n = errno;
-    exec_errno = 0;
-    exec_errno_ptr = &exec_errno;
+    if (pipe(msg) < 0) {
+        msg[0] = msg[1] = -1;
+    } else {
+        fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+        fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+    }
+
     sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
-    pid = vfork();
+    pid = fork();
     if (pid == -1)
         n = errno;
     else if (!pid) {
         sigcritical(0);
         if (mode == P_DETACH) setpgid(0, 0);
         execve(path, argv, envv);
-        *exec_errno_ptr = errno;
+        if (msg[0] != -1) {
+            m = errno;
+            write(msg[1], &m, sizeof(m));
+        }
         _exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
     }
-    if (pid != -1 && (m = *exec_errno_ptr)) {
-        while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
-            ;
-        pid = -1;
-        n = m;
+    if (msg[0] != -1) {
+        close(msg[1]);
+        if (pid != -1) {
+            m = 0;
+            while (read(msg[0], &m, sizeof(m)) == -1)
+                if (errno != EINTR) {
+                    m = errno;
+                    break;
+                }
+            if (m) {
+                while (waitpid(pid, &n, 0) && errno == EINTR);
+                pid = -1;
+                n = m;
+            }
+        }
+        close(msg[0]);
     }
     sigcritical(0);
     errno = n;
@@ -704,36 +750,17 @@ bad:
         int m;
         Spawnvex_noexec_t nx;
         int msg[2];
-        volatile int exec_errno;
-        volatile int *volatile exec_errno_ptr;
 
         if (!envv) envv = environ;
-        if (!vex || !(vex->flags & SPAWN_FORK))
-            nx.flags = SPAWN_VFORK;
-        else
-            nx.flags = SPAWN_FORK;
         n = errno;
-        if (nx.flags & SPAWN_VFORK) {
-            exec_errno = 0;
-            exec_errno_ptr = &exec_errno;
+        if (pipe(msg) < 0) {
             msg[0] = msg[1] = -1;
-        } else
-#if _lib_pipe2
-            if (pipe2(msg, O_CLOEXEC) < 0)
-            msg[0] = msg[1] = -1;
-#else
-            if (pipe(msg) < 0)
-            msg[0] = -1;
-        else {
+        } else {
             fcntl(msg[0], F_SETFD, FD_CLOEXEC);
             fcntl(msg[1], F_SETFD, FD_CLOEXEC);
         }
-#endif
         if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
-        if (nx.flags & SPAWN_VFORK)
-            pid = vfork();
-        else
-            pid = fork();
+        pid = fork();
         if (pid == -1)
             n = errno;
         else if (!pid) {
@@ -769,20 +796,13 @@ bad:
                     errno = (*vex->op[i + 2].callback)(&nx, SPAWN_noexec, errno);
                 }
             }
-            if (nx.flags & SPAWN_VFORK)
-                *exec_errno_ptr = errno;
-            else if (msg[1] != -1) {
+            if (msg[1] != -1) {
                 m = errno;
                 write(msg[1], &m, sizeof(m));
             }
             _exit(errno == ENOENT ? EXIT_NOTFOUND : EXIT_NOEXEC);
         }
-        if ((nx.flags & SPAWN_VFORK) && pid != -1 && (m = *exec_errno_ptr)) {
-            while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
-                ;
-            pid = -1;
-            n = m;
-        } else if (msg[0] != -1) {
+        if (msg[0] != -1) {
             close(msg[1]);
             if (pid != -1) {
                 m = 0;

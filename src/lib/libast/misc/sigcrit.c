@@ -94,11 +94,9 @@ int sigcritical(int op) {
             }
         return 0;
     } else {
-        /*
-         * a vfork() may have intervened so we
-         * allow apparent nesting mismatches
-         */
-
+        // A fork() may have intervened so we allow apparent nesting mismatches.
+        // TODO: The original statement mentioned vfork(), not fork(). Is this still correct since
+        // we no longer support vfork()? Does it apply to fork()?
         if (--level <= 0) {
             level = 0;
             sigprocmask(SIG_SETMASK, &mask, NULL);

@@ -107,7 +107,6 @@
 #mesondefine _hdr_utmp
 #mesondefine _hdr_utmpx
 #mesondefine _hdr_values
-#mesondefine _hdr_vfork
 #mesondefine _hdr_wchar
 #mesondefine _hdr_wctype
 
@@ -122,7 +121,6 @@
 #mesondefine _lib_dllload
 #mesondefine _lib_dlopen
 #mesondefine _lib_fdopendir
-#mesondefine _lib_fork
 #mesondefine _lib_fsid
 #mesondefine _lib_fstat64
 #mesondefine _lib_fstatvfs64
@@ -222,7 +220,6 @@
 #mesondefine _lib_utime_now
 #mesondefine _lib_utimensat
 #mesondefine _lib_utimets
-#mesondefine _lib_vfork
 #mesondefine _lib_wcrtomb
 #mesondefine _lib_wcscmp
 #mesondefine _lib_wcsxfrm
@@ -323,7 +320,6 @@
 #mesondefine _sys_un
 #mesondefine _sys_universe
 #mesondefine _sys_utsname
-#mesondefine _sys_vfork
 
 #mesondefine _typ___va_list
 #mesondefine _typ_ino64_t

@@ -63,7 +63,6 @@ int csdaemon(register Cs_t *state, int fds) {
      */
 
     if (getppid() > 1) {
-#if _lib_fork
         if (!(state->flags & CS_DAEMON_SLAVE)) {
             switch (fork()) {
                 case -1:
@@ -80,7 +79,6 @@ int csdaemon(register Cs_t *state, int fds) {
                     exit(0);
             }
         }
-#endif
 
         /*
          * become process group leader and drop control tty

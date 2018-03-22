@@ -917,16 +917,15 @@ static int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
     char **argv = (char **)ep->argv;
 
     if (fd2 != ENOEXEC) return (int)fd2;
-    if (ep->flags & SPAWN_FORK) {
-        if (ep->msgfd >= 0) close(ep->msgfd);
-        spawnvex_apply(ep->vex, 0, SPAWN_RESET);
-        if (!shp->subshell) {
-            exscript((Shell_t *)ep->handle, (char *)ep->path, argv, ep->envv);
-            return ENOEXEC;
-        }
-    } else if (!(ep->flags & SPAWN_EXEC)) {
+    if (!(ep->flags & SPAWN_EXEC)) return ENOEXEC;
+
+    if (ep->msgfd >= 0) close(ep->msgfd);
+    spawnvex_apply(ep->vex, 0, SPAWN_RESET);
+    if (!shp->subshell) {
+        exscript((Shell_t *)ep->handle, (char *)ep->path, argv, ep->envv);
         return ENOEXEC;
     }
+
     fd = open(ep->path, O_RDONLY);
     if (fd >= 0) {
         struct stat statb;

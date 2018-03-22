@@ -59,7 +59,7 @@ typedef struct Spawnvex_noexec_s {
     const char *path;   /* spawnvex() path		*/
     char *const *argv;  /* spawnvex() argv		*/
     char *const *envv;  /* spawnvex() envv		*/
-    unsigned int flags; /* SPAWN_(EXEC|FORK|VFORK)	*/
+    unsigned int flags; /* SPAWN_EXEC             	*/
     int msgfd;          /* if no return and >= 0 close	*/
 } Spawnvex_noexec_t;
 
@@ -72,14 +72,12 @@ typedef int (*Spawnvex_f)(void *, uintmax_t, uintmax_t);
 #define SPAWN_EXEC 0x00010
 #define SPAWN_FLUSH 0x00020
 #define SPAWN_FOREGROUND 0x00040
-#define SPAWN_FORK 0x00080
 #define SPAWN_FRAME 0x00100
 #define SPAWN_NOCALL 0x00200
 #define SPAWN_ORPHAN 0x00400
 #define SPAWN_OVERLAY 0x00800
 #define SPAWN_READ 0x01000
 #define SPAWN_RESET 0x02000
-#define SPAWN_VFORK 0x04000
 #define SPAWN_UNDO 0x08000
 #define SPAWN_WRITE 0x10000
 #define SPAWN_ZOMBIE 0x20000
