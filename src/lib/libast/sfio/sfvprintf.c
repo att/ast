@@ -721,8 +721,10 @@ loop_fmt:
 #ifdef mbwidth
                             if (wc) {
                                 n_w = mbwidth(*wsp);
-                                if (precis >= 0 && (w + n_w) > precis) break;
-                                w += n_w;
+                                if (n_w > 0) {
+                                    if (precis >= 0 && (w + n_w) > precis) break;
+                                    w += n_w;
+                                }
                             } else
 #endif
                                 if (precis >= 0 && (v + n_s) > precis)
@@ -742,9 +744,12 @@ loop_fmt:
                             if ((size >= 0 && w >= size) || (size < 0 && *ssp == 0)) break;
                             osp = ssp;
                             n = mbchar(&tw, osp, MB_LEN_MAX, &mbs);
+                            if (!n) break;
                             n_w = mbwidth(n);
-                            if (precis >= 0 && (w + n_w) > precis) break;
-                            w += n_w;
+                            if (n_w > 0) {
+                                if (precis >= 0 && (w + n_w) > precis) break;
+                                w += n_w;
+                            }
                             ssp = osp;
                         }
                         v = ssp - sp;
