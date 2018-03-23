@@ -50,7 +50,7 @@ const struct shtable2 shtab_aliases[] = {
     {"redirect", NV_NOFREE, "command exec"},
 #ifdef SIGTSTP
     {"stop", NV_NOFREE, "kill -s STOP"},
-    {"suspend", NV_NOFREE, "kill -s STOP $$"},
+    {"suspend", NV_NOFREE, "kill -s STOP \"$$\""},
 #endif  // SIGTSTP
     {"times", NV_NOFREE, "{ { time;} 2>&1;}"},
     {"type", NV_NOFREE, "whence -v"},
