@@ -877,4 +877,9 @@ integer -A ar=([1]=9 [3]=12)
 ar=()
 [[ $(typeset -p ar) == 'typeset -A -l -i ar=()' ]] || err_exit 'ar=() for associative array should preserve attributes'
 
+unset foo bar
+typeset -a foo=([1]=w [2]=x) bar=(a b c)
+foo+=("${bar[@]}")
+[[ $(typeset -p foo) == 'typeset -a foo=([1]=w [2]=x [3]=a [4]=b [5]=c)' ]] || err_exit 'Appending does not work if array contains empty indexes'
+
 exit $((Errors<125?Errors:125))
