@@ -143,7 +143,6 @@ static void job_unlink(struct process *);
 static void job_prmsg(Shell_t *, struct process *);
 static struct process *freelist;
 static char beenhere;
-static char possible;
 static struct process dummy;
 static char by_number;
 static Sfio_t *outfile;
@@ -570,7 +569,7 @@ bool job_reap(int sig) {
 }
 
 //
-// Initialize job control if possible. If lflag is set the switching driver
+// Initialize job control. If lflag is set the switching driver
 // message will not print.
 //
 void job_init(Shell_t *shp, int lflag) {
@@ -598,40 +597,17 @@ void job_init(Shell_t *shp, int lflag) {
 #endif /* NTTYDISC */
 
     job.mypgid = getpgrp();
-    // Some systems have job control, but not initialized.
-    if (job.mypgid <= 0) {
-        // Get a controlling terminal and set process group.
-        // This should have already been done by rlogin.
-        int fd;
-        char *ttynam;
-        int err = errno;
-#ifndef SIGTSTP
-        setpgid(0, shp->gd->pid);
-#endif  // SIGTSTP
-        if (job.mypgid < 0 || !(ttynam = ttyname(JOBTTY))) return;
-        while (close(JOBTTY) < 0 && errno == EINTR) errno = err;
-        if ((fd = sh_open(ttynam, O_RDWR)) < 0) return;
-        if (fd != JOBTTY) sh_iorenumber(shp, fd, JOBTTY);
-        job.mypgid = shp->gd->pid;
 #ifdef SIGTSTP
-        tcsetpgrp(JOBTTY, shp->gd->pid);
-        setpgid(0, shp->gd->pid);
-#endif  // SIGTSTP
-    }
-#ifdef SIGTSTP
-    possible = (setpgid(0,job.mypgid)>=0) || errno==EPERM;
-    if (possible) {
-        // Wait until we are in the foreground.
-        while ((job.mytgid = tcgetpgrp(JOBTTY)) != job.mypgid) {
-            if (job.mytgid <= 0) return;
-            // Stop this shell until continued.
-            signal(SIGTTIN, SIG_DFL);
-            kill(shp->gd->pid, SIGTTIN);
-            // Resumes here after continue tries again.
-            if (ntry++ > IOMAXTRY) {
-                errormsg(SH_DICT, 0, e_no_start);
-                return;
-            }
+    // Wait until we are in the foreground.
+    while ((job.mytgid = tcgetpgrp(JOBTTY)) != job.mypgid) {
+        if (job.mytgid <= 0) return;
+        // Stop this shell until continued.
+        signal(SIGTTIN, SIG_DFL);
+        kill(shp->gd->pid, SIGTTIN);
+        // Resumes here after continue tries again.
+        if (ntry++ > IOMAXTRY) {
+            errormsg(SH_DICT, 0, e_no_start);
+            return;
         }
     }
 #endif  // SIGTTIN
@@ -658,7 +634,6 @@ void job_init(Shell_t *shp, int lflag) {
         }
     }
 #endif  // NTTYDISC
-    if (!possible) return;
 
 #ifdef SIGTSTP
     // Make sure that we are a process group leader.
@@ -701,9 +676,7 @@ void job_init(Shell_t *shp, int lflag) {
 int job_close(Shell_t *shp) {
     struct process *pw;
     int count = 0, running = 0;
-    if (possible && !job.jobcontrol) {
-        return 0;
-    } else if (!possible && (!sh_isstate(shp, SH_MONITOR) || sh_isstate(shp, SH_FORKED))) {
+    if (!job.jobcontrol) {
         return 0;
     } else if (getpid() != job.mypid) {
         return 0;
@@ -729,7 +702,7 @@ int job_close(Shell_t *shp) {
     }
     job_unlock();
 #ifdef SIGTSTP
-    if (possible && setpgid(0, job.mypgid) >= 0) tcsetpgrp(job.fd, job.mypgid);
+    if (setpgid(0, job.mypgid) >= 0) tcsetpgrp(job.fd, job.mypgid);
 #endif  // SIGTSTP
 #ifdef NTTYDISC
     if (job.linedisc >= 0) {
@@ -750,7 +723,7 @@ int job_close(Shell_t *shp) {
     }
 #endif  // NTTYDISC
 #ifdef CNSUSP
-    if (possible && job.suspend == CNSUSP) {
+    if (job.suspend == CNSUSP) {
         tty_get(job.fd, &my_stty);
         my_stty.c_cc[VSUSP] = CNSUSP;
         tty_set(job.fd, TCSAFLUSH, &my_stty);
