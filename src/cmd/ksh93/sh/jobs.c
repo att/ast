@@ -619,8 +619,8 @@ void job_init(Shell_t *shp, int lflag) {
 #endif  // SIGTSTP
     }
 #ifdef SIGTSTP
-    possible = setpgid(0, job.mypgid) >= 0;
-    if (possible || errno == EPERM) {
+    possible = (setpgid(0,job.mypgid)>=0) || errno==EPERM;
+    if (possible) {
         // Wait until we are in the foreground.
         while ((job.mytgid = tcgetpgrp(JOBTTY)) != job.mypgid) {
             if (job.mytgid <= 0) return;
