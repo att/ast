@@ -1295,7 +1295,7 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
             arg0 = 0;
         } else if (ap) {
             if (!(aq = (struct index_array *)ap->header.scope)) aq = ap;
-            if (ap->header.nelem > ap->last) ap->last = ap->header.nelem;
+            if (ap->header.nelem > ap->last) ap->last = array_maxindex(np);
             arg0 = ap->last;
         } else {
             nv_offattr(np, NV_ARRAY);
@@ -1307,7 +1307,7 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
         nv_putsub(np, NULL, (long)argc + arg0, ARRAY_FILL | ARRAY_ADD);
         nv_putval(np, argv[argc], 0);
     }
-    if (!ap && (ap = (struct index_array *)nv_arrayptr(np))) ap->last = ap->header.nelem;
+    if (!ap && (ap = (struct index_array *)nv_arrayptr(np))) ap->last = array_maxindex(np);
 }
 
 #undef nv_putsub
