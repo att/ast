@@ -218,6 +218,8 @@ then
     err_exit    'command -v not working'
 fi
 
+$SHELL -c 'command -p ls >/dev/null' 2>/dev/null || err_exit 'command -p not working'
+
 read -r var <<\!
 
 !
