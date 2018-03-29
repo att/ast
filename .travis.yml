@@ -28,6 +28,7 @@ before_install:
 script:
     # TODO: Check how to set MESON_TESTTHREADS dynamically.
     # TODO: Change "meson test" to "meson test --setup=malloc" when #398 is fixed.
+    # TODO: When we run the tests with --setup=malloc change "testlog.txt" to "testlog-malloc.txt".
     - echo > build.sh "set -e;
         export CFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
         cd /source;
@@ -40,7 +41,7 @@ script:
         echo ==== Running unit tests;
         ulimit -n 1024;
         export MESON_TESTTHREADS=$(( 4 * CORE_COUNT ));
-        if ! meson test; then cat meson-logs/testlog-malloc.txt; exit 1; fi;
+        if ! meson test; then cat meson-logs/testlog.txt; exit 1; fi;
         "
 
     - chmod a+x build.sh
