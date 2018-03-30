@@ -1167,12 +1167,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     else if (sh_isoption(shp, SH_NOCLOBBER)) {
                         struct stat sb;
                         if (stat(fname, &sb) >= 0) {
-#if SHOPT_FS_3D
-                            if (S_ISREG(sb.st_mode) && (!shp->gd->lim.fs3d || iview(&sb) == 0))
-#else
-                            if (S_ISREG(sb.st_mode))
-#endif /* SHOPT_FS_3D */
-                            {
+                            if (S_ISREG(sb.st_mode)) {
                                 errno = EEXIST;
                                 errormsg(SH_DICT, ERROR_system(1), e_exists, fname);
                             }

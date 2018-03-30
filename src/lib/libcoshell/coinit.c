@@ -33,7 +33,6 @@
 #include "colib.h"
 
 #include <ctype.h>
-#include <fs3d.h>
 #include <ls.h>
 
 static void exid(Sfio_t *sp, const char *pre, const char *name, const char *pos) {
@@ -286,24 +285,8 @@ char *coinitialize(Coshell_t *co, int flags) {
             p = (int)sfstrtell(sp);
             sfprintf(sp, "vpath ");
             n = PATH_MAX;
-            if (fs3d(FS3D_TEST))
-                for (;;) {
-                    if (!(t = sfstrrsrv(sp, n))) goto bad;
-                    if ((m = mount(NULL, t, FS3D_GET | FS3D_ALL | FS3D_SIZE(n), NULL)) > 0)
-                        m = n;
-                    else {
-                        if (!m) sfstrseek(sp, strlen(t), SEEK_CUR);
-                        break;
-                    }
-                }
-            else {
-                m = 0;
-                sfprintf(sp, "- /#option/2d");
-            }
-            if (m)
-                sfstrseek(sp, p, SEEK_SET);
-            else
-                sfprintf(sp, " 2>/dev/null || :\n");
+            sfprintf(sp, "- /#option/2d");
+            sfprintf(sp, " 2>/dev/null || :\n");
             sfprintf(sp, "umask 0%o\ncd '%s'\n", co->init.mask, state.pwd);
         }
     done:

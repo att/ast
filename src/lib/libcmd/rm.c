@@ -64,7 +64,6 @@ static const char usage[] =
     "[+SEE ALSO?\bmv\b(1), \brmdir\b(2), \bunlink\b(2), \bremove\b(3)]";
 
 #include <cmd.h>
-#include <fs3d.h>
 #include <fts_fix.h>
 #include <ls.h>
 
@@ -82,7 +81,6 @@ typedef struct State_s /* program state		*/
     int clobber;        /* clear out file data first	*/
     int directory;      /* rmdir(dir) not unlink(dir)	*/
     int force;          /* force actions		*/
-    int fs3d;           /* 3d enabled			*/
     int interactive;    /* prompt for approval		*/
     int recursive;      /* remove subtrees too		*/
     int terminal;       /* attached to terminal		*/
@@ -106,9 +104,7 @@ static int rm(State_t *state, FTSENT *ent) {
 
     if (ent->fts_info == FTS_NS || ent->fts_info == FTS_ERR || ent->fts_info == FTS_SLNONE) {
         if (!state->force) error(2, "%s: not found", ent->fts_path);
-    } else if (state->fs3d && iview(ent->fts_statp))
-        fts_set(NULL, ent, FTS_SKIP);
-    else
+    } else
         switch (ent->fts_info) {
             case FTS_DNR:
             case FTS_DNX:
@@ -305,7 +301,6 @@ int b_rm(int argc, char **argv, Shbltin_t *context) {
     cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY);
     memset(&state, 0, sizeof(state));
     state.context = context;
-    state.fs3d = fs3d(FS3D_TEST);
     state.terminal = isatty(0);
     for (;;) {
         switch (optget(argv, usage)) {
@@ -358,18 +353,11 @@ int b_rm(int argc, char **argv, Shbltin_t *context) {
     if (state.interactive) state.verbose = 0;
     state.uid = geteuid();
     state.unconditional = state.unconditional && state.recursive && state.force;
-    if (state.recursive && state.fs3d) {
-        set3d = state.fs3d;
-        state.fs3d = 0;
-        fs3d(0);
-    } else
-        set3d = 0;
     if (fts = fts_open(argv, FTS_PHYSICAL, NULL)) {
         while (!sh_checksig(context) && (ent = fts_read(fts)) && !rm(&state, ent))
             ;
         fts_close(fts);
     } else if (!state.force)
         error(ERROR_SYSTEM | 2, "%s: cannot remove", argv[0]);
-    if (set3d) fs3d(set3d);
     return error_info.errors != 0;
 }

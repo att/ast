@@ -197,16 +197,10 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         if (!fflag && !pflag) {
             char *cp;
             stakseek(PATH_MAX + PATH_OFFSET);
-#if SHOPT_FS_3D
-            cp = pathcanon(stakptr(PATH_OFFSET), PATH_MAX,
-                           PATH_ABSOLUTE | PATH_DOTDOT | PATH_DROP_TAIL_SLASH);
-            if (!cp) continue;
-#else   // SHOPT_FS_3D
             cp = stakptr(PATH_OFFSET);
             if (*cp == '/') {
                 if (!pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
             }
-#endif  // SHOPT_FS_3D
         }
         rval = newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
         if (newdirfd >= 0) {
@@ -332,17 +326,8 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
         return 0;
     }
     if (pflag) {
-#if SHOPT_FS_3D
-        int mc;
-        if (shp->gd->lim.fs3d && (mc = mount(e_dot, NULL, FS3D_GET | FS3D_VIEW, 0)) >= 0) {
-            cp = (char *)stakseek(++mc + PATH_MAX);
-            mount(e_dot, cp, FS3D_GET | FS3D_VIEW | FS3D_SIZE(mc), 0);
-        } else
-#endif  // SHOPT_FS_3D
-        {
-            cp = path_pwd(shp, 0);
-            cp = strcpy(stakseek(strlen(cp) + PATH_MAX), cp);
-        }
+        cp = path_pwd(shp, 0);
+        cp = strcpy(stakseek(strlen(cp) + PATH_MAX), cp);
         pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
     } else {
         cp = path_pwd(shp, 0);

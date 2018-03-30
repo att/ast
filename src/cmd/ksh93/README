@@ -52,8 +52,6 @@ The options have the following defaults and meanings:
     FILESCAN     on  Experimental option that allows fast reading of files
                      using while < file;do ...; done and allowing fields in
                      each line to be accessed as positional parameters.
-    FS_3D        off For use with 3-D file system.  Enabled automatically for
-                     sytems with dynamic linking.
     KIA          off Allow generation of shell cross reference database with -I.
     MULTIBYTE    on  Multibyte character handling.  Requires mblen() and
                      mbctowc().

@@ -286,20 +286,6 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         case 'x': {
             return permission(arg, X_OK);
         }
-        case 'V': {
-#if SHOPT_FS_3D
-            int offset = stktell(shp->stk);
-            if (stat(arg, &statb) < 0 || !S_ISREG(statb.st_mode)) return 0;
-            // Add trailing /.
-            sfputr(shp->stk, arg, '/');
-            sfputc(shp->stk, 0);
-            arg = (const char *)stkptr(shp->stk, offset);
-            stkseek(shp->stk, offset);
-            // FALL THRU
-#else   // SHOPT_FS_3D
-            return 0;
-#endif  // SHOPT_FS_3D
-        }
         case 'd': {
             return test_stat(arg, &statb) >= 0 && S_ISDIR(statb.st_mode);
         }

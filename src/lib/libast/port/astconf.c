@@ -30,7 +30,6 @@
 #include <ast.h>
 #include <ctype.h>
 #include <error.h>
-#include <fs3d.h>
 #include <ls.h>
 #include <proc.h>
 #include <regex.h>
@@ -102,12 +101,10 @@ static Feature_t dynamic[] = {
 #define OP_architecture 0
     {&dynamic[OP_architecture + 1], "ARCHITECTURE", &null[0], 0, 0, 12, CONF_AST, 0,
      OP_architecture},
-#define OP_conformance 1
+#define OP_conformance (OP_architecture + 1)
     {&dynamic[OP_conformance + 1], "CONFORMANCE", "ast", "standard", "ast", 11, CONF_AST, 0,
      OP_conformance},
-#define OP_fs_3d 2
-    {&dynamic[OP_fs_3d + 1], "FS_3D", &null[0], "0", 0, 5, CONF_AST, 0, OP_fs_3d},
-#define OP_getconf 3
+#define OP_getconf (OP_conformance + 1)
     {&dynamic[OP_getconf + 1], "GETCONF",
 #ifdef _pth_getconf
      _pth_getconf,
@@ -115,10 +112,10 @@ static Feature_t dynamic[] = {
      &null[0],
 #endif
      0, 0, 7, CONF_AST, CONF_READONLY, OP_getconf},
-#define OP_hosttype 4
+#define OP_hosttype (OP_getconf + 1)
     {&dynamic[OP_hosttype + 1], "HOSTTYPE", HOSTTYPE, 0, 0, 8, CONF_AST, CONF_READONLY,
      OP_hosttype},
-#define OP_libpath 5
+#define OP_libpath (OP_hosttype + 1)
     {&dynamic[OP_libpath + 1], "LIBPATH",
 #ifdef CONF_LIBPATH
      CONF_LIBPATH,
@@ -126,7 +123,7 @@ static Feature_t dynamic[] = {
      &null[0],
 #endif
      0, 0, 7, CONF_AST, 0, OP_libpath},
-#define OP_libprefix 6
+#define OP_libprefix (OP_libpath + 1)
     {&dynamic[OP_libprefix + 1], "LIBPREFIX",
 #ifdef CONF_LIBPREFIX
      CONF_LIBPREFIX,
@@ -134,7 +131,7 @@ static Feature_t dynamic[] = {
      "lib",
 #endif
      0, 0, 9, CONF_AST, 0, OP_libprefix},
-#define OP_libsuffix 7
+#define OP_libsuffix (OP_libprefix + 1)
     {&dynamic[OP_libsuffix + 1], "LIBSUFFIX",
 #ifdef CONF_LIBSUFFIX
      CONF_LIBSUFFIX,
@@ -142,7 +139,7 @@ static Feature_t dynamic[] = {
      ".so",
 #endif
      0, 0, 9, CONF_AST, 0, OP_libsuffix},
-#define OP_path_attributes 8
+#define OP_path_attributes (OP_libsuffix + 1)
     {&dynamic[OP_path_attributes + 1], "PATH_ATTRIBUTES",
 #if _WINIX
      "c",
@@ -150,10 +147,10 @@ static Feature_t dynamic[] = {
      &null[0],
 #endif
      &null[0], 0, 15, CONF_AST, CONF_READONLY, OP_path_attributes},
-#define OP_path_resolve 9
+#define OP_path_resolve (OP_path_attributes + 1)
     {&dynamic[OP_path_resolve + 1], "PATH_RESOLVE", &null[0], "physical", "metaphysical", 12,
      CONF_AST, 0, OP_path_resolve},
-#define OP_universe 10
+#define OP_universe (OP_path_resolve + 1)
     {0, "UNIVERSE", &null[0], "att", 0, 8, CONF_AST, 0, OP_universe},
     {0}};
 
@@ -426,7 +423,7 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
             ok = 1;
             break;
         case OP_path_resolve:
-            ok = fs3d(FS3D_TEST);
+            ok = 1;
             break;
         case OP_universe:
             ok = streq(_UNIV_DEFAULT, DEFAULT(OP_universe));
@@ -554,10 +551,6 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
             error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
                   fp->std, fp->ast, fp->value);
 #endif
-            break;
-
-        case OP_fs_3d:
-            fp->value = fs3d(value ? value[0] ? FS3D_ON : FS3D_OFF : FS3D_TEST) ? "1" : null;
             break;
 
         case OP_hosttype:
@@ -1123,9 +1116,10 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
     }
 bad:
     if (!(listflags & ~(ASTCONF_error | ASTCONF_system)))
-        for (fp = state.features; fp; fp = fp->next)
-            if (streq(name, fp->name)) return format(fp, path, 0, listflags, conferror);
-    return (listflags & ASTCONF_error) ? (char *)0 : null;
+        for (fp = state.features; fp; fp = fp->next) {
+            if (streq(name, fp->name)) return format(fp, path, NULL, listflags, conferror);
+        }
+    return (listflags & ASTCONF_error) ? NULL : null;
 }
 
 #ifdef _pth_getconf_a

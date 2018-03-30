@@ -98,10 +98,6 @@ const char sh_opttest[] =
     "user id of the current process.]"
     "[+-R \avarname\a?True if \avarname\a is a name reference.]"
     "[+-S \afile\a?True if \afile\a exists and is a socket.]"
-#if SHOPT_FS_3D
-    "[+-V \afile\a?True if \afile\a exists and is a version "
-    "directory.]"
-#endif  // SHOPT_FS_3D
     "}"
     "[+?Binary expressions can be one of the following:]{"
     "[+\astring1\a = \astring2\a?True if \astring1\a is equal to "

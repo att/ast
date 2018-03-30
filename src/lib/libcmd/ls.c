@@ -224,7 +224,6 @@ static const char usage[] =
 #include <ctype.h>
 #include <dt.h>
 #include <error.h>
-#include <fs3d.h>
 #include <fts.h>
 #include <ls.h>
 #include <sfdisc.h>

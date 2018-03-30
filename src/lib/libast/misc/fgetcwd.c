@@ -31,7 +31,6 @@
 
 #include <ast_dir.h>
 #include <error.h>
-#include <fs3d.h>
 
 #ifndef ERANGE
 #define ERANGE E2BIG
@@ -62,7 +61,6 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     char *s;
     DIR *dirp = NULL;
     int dd = 0;
-    int f = FS3D_OFF;
     int n;
     int x;
     size_t namlen;
@@ -90,7 +88,6 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     cur = &curst;
     par = &parst;
     if (fstatat(fd, ".", par, 0)) ERROR(errno);
-    f = fs3d(f);
     for (n = 0; n < elementsof(env); n++)
         if ((env[n].name && (p = getenv(env[n].name)) || (p = env[n].path)) && *p == '/') {
             Pathdev_t dev;
@@ -106,7 +103,6 @@ char *fgetcwd(int fd, char *buf, size_t len) {
                         if (len < namlen) ERROR(ERANGE);
                     } else if (!(buf = newof(0, char, namlen, len)))
                         ERROR(ENOMEM);
-                    if (f != FS3D_OFF) fs3d(f);
                     return (char *)memcpy(buf, p, namlen);
                 }
             }
@@ -195,12 +191,10 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     env[0].path = strdup(buf);
     if (dd != AT_FDCWD) fchdir(dd);
     if (dirp) closedir(dirp);
-    if (f != FS3D_OFF) fs3d(f);
     return buf;
 error:
     if (buf && extra >= 0) free(buf);
     if (dirp) closedir(dirp);
     if (dd != AT_FDCWD) fchdir(dd);
-    if (f != FS3D_OFF) fs3d(f);
     return 0;
 }

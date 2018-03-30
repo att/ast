@@ -23,8 +23,6 @@
 
 #include "intercepts.h"
 
-#include <fs3d.h>
-
 /*
  * put name=value in the environment
  * pointer to value returned
@@ -67,14 +65,6 @@ char *setenviron(const char *akey) {
         } else
             n = INCREMENT;
         if (!p || (last - p + 1) < n) {
-            if (!p && fs3d(FS3D_TEST)) {
-                /*
-                 * kick 3d initialization
-                 */
-
-                close(open(".", O_RDONLY | O_CLOEXEC));
-                v = environ;
-            }
             if (!(p = newof(p, char *, n, 0))) return 0;
             last = p + n - 1;
         }

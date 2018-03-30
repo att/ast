@@ -95,9 +95,6 @@ extern int b_umask(int, char *[], Shbltin_t *);
 #ifdef _cmd_universe
 extern int b_universe(int, char *[], Shbltin_t *);
 #endif  // _cmd_universe
-#if SHOPT_FS_3D
-extern int b_vpath(int, char *[], Shbltin_t *);
-#endif  // SHOPT_FS_3D
 extern int b_wait(int, char *[], Shbltin_t *);
 extern int b_whence(int, char *[], Shbltin_t *);
 
@@ -145,12 +142,6 @@ extern const char e_direct[];
 extern const char e_defedit[];
 extern const char e_cneedsarg[];
 extern const char e_defined[];
-#if SHOPT_FS_3D
-extern const char e_cantset[];
-extern const char e_cantget[];
-extern const char e_mapping[];
-extern const char e_versions[];
-#endif  // SHOPT_FS_3D
 
 // For option parsing.
 extern const char sh_set[];
@@ -197,10 +188,6 @@ extern const char sh_optwait[];
 extern const char sh_optuniverse[];
 #endif  // _cmd_universe
 extern const char sh_optunset[];
-#if SHOPT_FS_3D
-extern const char sh_optvpath[];
-extern const char sh_optvmap[];
-#endif  // SHOPT_FS_3D
 extern const char sh_optwhence[];
 #endif  // SYSDECLARE
 

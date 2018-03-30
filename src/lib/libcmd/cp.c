@@ -125,7 +125,6 @@ static const char usage_tail[] =
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <cmd.h>
-#include <fs3d.h>
 #include <fts_fix.h>
 #include <hashkey.h>
 #include <ls.h>
@@ -155,7 +154,6 @@ typedef struct State_s /* program state		*/
     int directory;      /* destination is directory	*/
     int flags;          /* FTS_* flags			*/
     int force;          /* force approval		*/
-    int fs3d;           /* 3d fs enabled		*/
     int hierarchy;      /* preserve hierarchy		*/
     int interactive;    /* prompt for approval		*/
     int missmode;       /* default missing dir mode	*/
@@ -391,11 +389,7 @@ static int visit(State_t *state, FTSENT *ent) {
              (unsigned long)ent->fts_statp->st_mtime < (unsigned long)st.st_mtime) {
         fts_set(NULL, ent, FTS_SKIP);
         return 0;
-    } else if (!state->fs3d || !iview(&st)) {
-        /*
-         * target is in top 3d view
-         */
-
+    } else if (!iview(&st)) {
         if (state->op != LN && st.st_dev == ent->fts_statp->st_dev &&
             st.st_ino == ent->fts_statp->st_ino) {
             if (state->op == MV) {
@@ -881,7 +875,6 @@ int b_cp(int argc, char **argv, Shbltin_t *context) {
     if (!(state->directory = !stat(file, &st) && S_ISDIR(st.st_mode)) && argc > 1)
         error(ERROR_USAGE | 4, "%s", optusage(NULL));
     if (s && !state->directory) error(3, "%s: not a directory", file);
-    if ((state->fs3d = fs3d(FS3D_TEST)) && strmatch(file, "...|*/...|.../*")) state->official = 1;
     state->postsiz = strlen(file);
     if (state->pathsiz < roundof(state->postsiz + 2, PATH_CHUNK) &&
         !(state->path = newof(state->path, char,

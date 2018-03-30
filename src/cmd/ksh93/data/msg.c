@@ -168,12 +168,6 @@ const char e_alphanum[] = "[_[:alpha:]]*([_[:alnum:]])";
 const char e_devfdNN[] = "/dev/fd/+([0-9])";
 const char e_devfdstd[] = "/dev/@(fd/+([0-9])|std@(in|out|err))";
 const char e_signo[] = "Signal %d";
-#if SHOPT_FS_3D
-const char e_cantget[] = "cannot get %s";
-const char e_cantset[] = "cannot set %s";
-const char e_mapping[] = "mapping";
-const char e_versions[] = "versions";
-#endif  // SHOPT_FS_3D
 
 // String constants.
 const char e_astbin[] = SH_CMDLIB_DIR;

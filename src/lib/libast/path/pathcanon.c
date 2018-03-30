@@ -50,7 +50,6 @@
 
 #include <ast.h>
 #include <error.h>
-#include <fs3d.h>
 #include <ls.h>
 
 #ifndef ELOOP

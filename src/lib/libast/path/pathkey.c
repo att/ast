@@ -36,7 +36,6 @@
 
 #include <ast.h>
 #include <ctype.h>
-#include <fs3d.h>
 #include <ls.h>
 
 char *pathkey(char *key, char *attr, const char *lang, const char *tool, const char *path) {
@@ -89,18 +88,8 @@ char *pathkey_20100601(const char *lang, const char *tool, const char *apath, ch
         }
 
         /*
-         * 3D
-         */
-
-        if (!flags && fs3d(FS3D_TEST) &&
-            (c = mount(path, tmp, FS3D_GET | FS3D_ALL | FS3D_SIZE(PATH_MAX), NULL)) > 1 &&
-            c < PATH_MAX)
-            path = tmp;
-
-        /*
          * preroot
          */
-
         if (attr) attr = stpcpy(attr, "PREROOT='");
 #if FS_PREROOT
         if (k = getenv(PR_BASE)) {

@@ -129,10 +129,6 @@ const struct shtable3 shtab_builtins[] = {
 #ifdef _cmd_universe
     {"universe", NV_BLTIN | BLT_ENV, bltin(universe)},
 #endif  // _cmd_universe
-#if SHOPT_FS_3D
-    {"vpath", NV_BLTIN | BLT_ENV, bltin(vpath)},
-    {"vmap", NV_BLTIN | BLT_ENV, bltin(vpath)},
-#endif  // SHOPT_FS_3D
     {"wait", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(wait)},
     {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
@@ -1807,11 +1803,6 @@ const char sh_optwait[] =
     "to the current shell environment.]"
     "}"
     "[+SEE ALSO?\bjobs\b(1), \bps\b(1)]";
-
-#if SHOPT_FS_3D
-const char sh_optvpath[] = " [top] [base]";
-const char sh_optvmap[] = " [dir] [list]";
-#endif  // SHOPT_FS_3D
 
 const char sh_optwhence[] =
     "[-1c?\n@(#)$Id: whence (AT&T Research) 2007-04-24 $\n]" USAGE_LICENSE
