@@ -114,14 +114,14 @@ int B_echo(int argc, char *argv[], Shbltin_t *context) {
     prdata.options = sh_optecho;
     prdata.raw = 1;
     while (argv[1] && *argv[1] == '-') {
-        if (strcmp(argv[1], "-n") == 0) prdata.echon = 1;
-        else if (strcmp(argv[1], "-e") == 0) {
+        if (strcmp(argv[1], "-n") == 0) {
+            prdata.echon = 1;
+        } else if (strcmp(argv[1], "-e") == 0) {
             prdata.raw = 0;
         } else if (strcmp(argv[1], "-ne") == 0 || strcmp(argv[1], "-en") == 0) {
             prdata.raw = 0;
             prdata.echon = 1;
-        }
-        else {
+        } else {
             break;
         }
         argv++;

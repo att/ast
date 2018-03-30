@@ -28,6 +28,7 @@
 
 #include <poll.h>
 
+#include <error.h>
 #include "builtins.h"
 #include "edit.h"
 #include "io.h"
@@ -35,7 +36,6 @@
 #include "path.h"
 #include "shlex.h"
 #include "terminal.h"
-#include <error.h>
 #if SHOPT_BASH
 #define BASHOPT "\374"
 #else

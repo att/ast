@@ -2426,8 +2426,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     }
                 }
                 if (!np->nvalue.rp) {
-                    np->nvalue.rp = calloc(
-                        1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0));
+                    np->nvalue.rp =
+                        calloc(1, sizeof(struct Ufunction) + (shp->funload ? sizeof(Dtlink_t) : 0));
                     memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
                 }
                 if (t->funct.functstak) {

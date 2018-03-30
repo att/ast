@@ -252,7 +252,9 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         errormsg(SH_DICT, ERROR_system(1), "%s:", dir);
     }
 success:
-    if (dir == sh_scoped(shp, opwdnod)->nvalue.cp || argc == 2) dp = dir;  // print out directory for cd -
+    if (dir == sh_scoped(shp, opwdnod)->nvalue.cp || argc == 2) {
+        dp = dir;  // print out directory for cd -
+    }
     if (pflag) {
         dir = stakptr(PATH_OFFSET);
         dir = pathcanon(dir, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
