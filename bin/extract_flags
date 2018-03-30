@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+#
+# Usage: extract_flags input.json source_file
+#
+# This finds the named source_file in the compiler json file and writes all
+# the -D and -I flags from the build command for that source file to stdout.
+#
+import json
+import shlex
+import sys
+
+input_build_db = sys.argv[1]
+file_to_lint = sys.argv[2]
+
+
+# This assumes all the `-D` and `-I` flags we care about have the value
+# concatenated to the flag rather than separated by whitespace. If that
+# assumption ever becomes invalid this will need to become more complicated.
+def extract_defines(command_line):
+    for token in shlex.split(command_line):
+        if token.startswith("-D") or token.startswith("-I"):
+            yield token
+
+
+input_json = json.load(open(input_build_db, mode='r'))
+output_json = []
+for file_item in input_json:
+    if file_item["file"] == file_to_lint:
+        for define in extract_defines(file_item["command"]):
+            print(define, file=sys.stdout)
+        break
+
+sys.exit(0)

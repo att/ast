@@ -48,10 +48,10 @@ if test $all = yes
 else if set -q argv[1]
     set files
     for f in $argv
-        if test -f $argv
+        if test -f $f
             set files $files $f
         else if test -d $argv
-            set files $files {$argv}**.c
+            set files $files $argv/**.c
         end
     end
 else
@@ -80,9 +80,7 @@ cd build
 # produce a version of the compile_commands.json file that only contains the files to be linted.
 # Finally, we need the `-D` and `-I` flags from the build rule for the IWYU and cppcheck programs.
 set project_file compile_commands_partial.json
-set defs_file cppcheck_defs
-set c_files (../bin/partition_compile_db compile_commands.json $project_file $defs_file \
-             $c_files)
+set c_files (../bin/partition_compile_db compile_commands.json $project_file $c_files)
 if not set -q c_files[1]
     echo >&2
     echo 'WARNING: No C files to check' >&2
@@ -101,15 +99,13 @@ end
 set system_hdrs (clang -H -E ../bin/hdrs.c 2>&1 | head -1 | sed -e 's/^\. //' -e 's/\/[^/]*$//')
 
 # On macOS the system headers used by `clang` may not be rooted at /usr/include.
-set lint_args $lint_args -I$system_hdrs
+set lint_args -I. -I$system_hdrs
 
 # This is needed with clang on macOS. Without it `cppcheck` fails with
 # `#error Unsupported architecture` from `#include <sys/cdefs.h>`.
 if test "$machine_type" = "x86_64"
     set lint_args $lint_args -D__x86_64__ -D__LP64__
 end
-
-set lint_args $lint_args (cat $defs_file)
 
 if type -q include-what-you-use
     echo
@@ -119,7 +115,7 @@ if type -q include-what-you-use
     for c_file in $c_files
         include-what-you-use -Xiwyu --transitive_includes_only --std=c99 \
             -Wno-expansion-to-defined -Wno-nullability-completeness \
-            $lint_args $c_file 2>&1
+            $lint_args (../bin/extract_flags $project_file $c_file) $c_file 2>&1
     end
 end
 
@@ -141,11 +137,13 @@ if type -q cppcheck
     # It should be possible to use --project=$project_file but cppcheck 1.82 doesn't correctly
     # extract the -D and -I flags. So we do it ourselves and pass the flags on the cppcheck
     # command line.
-    set cppcheck_args $lint_args -q --verbose --std=c99 --std=posix --language=c \
-        --template $template --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
-        --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
-
-    cppcheck $cppcheck_args $c_files 2>&1
+    for c_file in $c_files
+        set cppcheck_args $lint_args (../bin/extract_flags $project_file $c_file) \
+            -q --verbose --std=c99 --std=posix --language=c --template $template \
+            --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
+            --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
+        cppcheck $cppcheck_args $c_file 2>&1
+    end
 
     echo
     echo ========================================
@@ -153,7 +151,13 @@ if type -q cppcheck
     echo 'Ignore unmatchedSuppression warnings as they are probably false positives we'
     echo 'cannot suppress.'
     echo ========================================
-    cppcheck $cppcheck_args --check-config $c_files 2>&1
+    for c_file in $c_files
+        set cppcheck_args $lint_args (../bin/extract_flags $project_file $c_file) \
+            -q --verbose --std=c99 --std=posix --language=c --template $template \
+            --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
+            --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
+        cppcheck $cppcheck_args --check-config $c_file 2>&1
+    end
 end
 
 if type -q oclint
@@ -162,7 +166,7 @@ if type -q oclint
     echo Running oclint
     echo ========================================
     # A copy of this config file has to be in the CWD (the Meson build dir).
-    test -f .ocling
+    test -f .oclint
     or cp ../.oclint .
 
     oclint -p $PWD -enable-clang-static-analyzer $enable_global_analysis \
