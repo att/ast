@@ -821,11 +821,7 @@ bad:
             close(msg[0]);
         }
         if (!(flags & SPAWN_FOREGROUND)) sigcritical(0);
-        if (pid != -1 && vex) {
-            if (vex->pgrp >= 0 && setpgid(pid, vex->pgrp) < 0 && vex->pgrp && errno == EPERM)
-                setpgid(pid, pid);
-            VEXINIT(vex);
-        }
+        if (pid != -1 && vex) VEXINIT(vex);
         errno = n;
         return pid;
     }
