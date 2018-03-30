@@ -27,6 +27,7 @@
 
 #include "defs.h"
 
+#include <assert.h>
 #include <fcin.h>
 #include <times.h>
 #include "builtins.h"
@@ -1057,7 +1058,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 last_table = shp->last_table;
                 shp->last_table = 0;
                 if ((io || argn)) {
-                    Shbltin_t *bp = 0;
+                    Shbltin_t *bp = NULL;
                     static char *argv[2] = {NULL, NULL};
                     int tflags = 1;
                     if (np && nv_isattr(np, BLT_DCL)) tflags |= 2;
@@ -1259,10 +1260,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                 spawnvex_add(shp->vex, fd, 1, 0, 0);
 #endif
                         }
-                        if (bp) {
-                            bp->bnode = 0;
-                            if (bp->ptr != nv_context(np)) np->nvfun = (Namfun_t *)bp->ptr;
-                        }
+                        bp->bnode = NULL;
+                        if (bp->ptr != nv_context(np)) np->nvfun = (Namfun_t *)bp->ptr;
                         if (execflg && !was_nofork) sh_offstate(shp, SH_NOFORK);
                         if (!(nv_isattr(np, BLT_ENV))) {
 #ifdef O_SEARCH
@@ -2294,7 +2293,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (!timer_on) sh_offstate(shp, SH_TIMING);
                     job.waitall = 0;
                 } else {
-#ifndef timeofday
+#ifdef timeofday
+                    tb.tv_sec = tb.tv_usec = 0;
+#else
                     bt = 0;
 #endif  // timeofday
                     before.tms_utime = before.tms_cutime = 0;
@@ -2303,6 +2304,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
 #ifdef timeofday
                 times(&after);
                 timeofday(&ta);
+                assert(tb.tv_sec);
                 at = shp->gd->lim.clk_tck * (ta.tv_sec - tb.tv_sec);
                 at += ((shp->gd->lim.clk_tck *
                         (((1000000L / 2) / shp->gd->lim.clk_tck) + (ta.tv_usec - tb.tv_usec))) /
@@ -2851,7 +2853,10 @@ static void local_exports(Namval_t *np, void *data) {
 // This routine executes .sh.math functions from within ((...))).
 //
 Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
-    Sfdouble_t d;
+    // The initialization of this var isn't really needed because it is indirectly modified by the
+    // sh_funscope() call below. But this stops lint tools from complaining that we're returning
+    // garbage from an uninitialized var.
+    Sfdouble_t d = 0.0;
     Namval_t node, *mp, *np, *nref[9], **nr = nref;
     char *argv[2];
     struct funenv funenv;
