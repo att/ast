@@ -94,7 +94,7 @@ all_tests = [
     ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld', 100], ['signal', 100], ['statics'], ['subshell', 100],
+    ['sh_match'], ['sigchld', 100], ['signal', 100, false], ['statics'], ['subshell', 100],
     ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['variables'], ['vartree1'], ['vartree2'], ['wchar']
 ]
@@ -107,15 +107,16 @@ shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
 # The test cases are executed in parallel by default
 foreach testspec : all_tests
     testname = testspec[0]
-    timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
+    timeout = (testspec.length() >= 2) ? testspec[1] : default_timeout
+    is_parallel = (testspec.length() == 3) ? testspec[2] : true
     test_path = join_paths(test_dir, testname + '.sh')
     foreach locale : locales
         lang_var = 'LANG=' + locale
         if locale != ''
             locale = '/' + locale
         endif
-        test(testname + locale, ksh93_exe, timeout: timeout, args: [test_path, testname],
-             env: [shell_var, lang_var, ld_library_path])
+        test(testname + locale, ksh93_exe, timeout: timeout, is_parallel: is_parallel,
+        args: [test_path, testname], env: [shell_var, lang_var, ld_library_path])
     endforeach
 
     # shcomp tests
