@@ -30,7 +30,6 @@
 #include <ast.h>
 #include <ctype.h>
 #include <error.h>
-#include <ls.h>
 #include <proc.h>
 #include <regex.h>
 #if _lib_sysinfo
@@ -73,8 +72,7 @@
 #define _UNIV_DEFAULT "att"
 #endif
 
-static char null[1];
-static char root[2] = "/";
+static const char *root = "/";
 
 typedef struct Feature_s {
     struct Feature_s *next;
@@ -99,7 +97,7 @@ typedef struct Lookup_s {
 
 static Feature_t dynamic[] = {
 #define OP_architecture 0
-    {&dynamic[OP_architecture + 1], "ARCHITECTURE", &null[0], 0, 0, 12, CONF_AST, 0,
+    {&dynamic[OP_architecture + 1], "ARCHITECTURE", "", NULL, NULL, 12, CONF_AST, 0,
      OP_architecture},
 #define OP_conformance (OP_architecture + 1)
     {&dynamic[OP_conformance + 1], "CONFORMANCE", "ast", "standard", "ast", 11, CONF_AST, 0,
@@ -109,20 +107,20 @@ static Feature_t dynamic[] = {
 #ifdef _pth_getconf
      _pth_getconf,
 #else
-     &null[0],
+     "",
 #endif
-     0, 0, 7, CONF_AST, CONF_READONLY, OP_getconf},
+     NULL, NULL, 7, CONF_AST, CONF_READONLY, OP_getconf},
 #define OP_hosttype (OP_getconf + 1)
-    {&dynamic[OP_hosttype + 1], "HOSTTYPE", HOSTTYPE, 0, 0, 8, CONF_AST, CONF_READONLY,
+    {&dynamic[OP_hosttype + 1], "HOSTTYPE", HOSTTYPE, NULL, NULL, 8, CONF_AST, CONF_READONLY,
      OP_hosttype},
 #define OP_libpath (OP_hosttype + 1)
     {&dynamic[OP_libpath + 1], "LIBPATH",
 #ifdef CONF_LIBPATH
      CONF_LIBPATH,
 #else
-     &null[0],
+     "",
 #endif
-     0, 0, 7, CONF_AST, 0, OP_libpath},
+     NULL, NULL, 7, CONF_AST, 0, OP_libpath},
 #define OP_libprefix (OP_libpath + 1)
     {&dynamic[OP_libprefix + 1], "LIBPREFIX",
 #ifdef CONF_LIBPREFIX
@@ -130,7 +128,7 @@ static Feature_t dynamic[] = {
 #else
      "lib",
 #endif
-     0, 0, 9, CONF_AST, 0, OP_libprefix},
+     NULL, NULL, 9, CONF_AST, 0, OP_libprefix},
 #define OP_libsuffix (OP_libprefix + 1)
     {&dynamic[OP_libsuffix + 1], "LIBSUFFIX",
 #ifdef CONF_LIBSUFFIX
@@ -138,21 +136,21 @@ static Feature_t dynamic[] = {
 #else
      ".so",
 #endif
-     0, 0, 9, CONF_AST, 0, OP_libsuffix},
+     NULL, NULL, 9, CONF_AST, 0, OP_libsuffix},
 #define OP_path_attributes (OP_libsuffix + 1)
     {&dynamic[OP_path_attributes + 1], "PATH_ATTRIBUTES",
 #if _WINIX
      "c",
 #else
-     &null[0],
+     "",
 #endif
-     &null[0], 0, 15, CONF_AST, CONF_READONLY, OP_path_attributes},
+     "", 0, 15, CONF_AST, CONF_READONLY, OP_path_attributes},
 #define OP_path_resolve (OP_path_attributes + 1)
-    {&dynamic[OP_path_resolve + 1], "PATH_RESOLVE", &null[0], "physical", "metaphysical", 12,
-     CONF_AST, 0, OP_path_resolve},
+    {&dynamic[OP_path_resolve + 1], "PATH_RESOLVE", "", "physical", "metaphysical", 12, CONF_AST, 0,
+     OP_path_resolve},
 #define OP_universe (OP_path_resolve + 1)
-    {0, "UNIVERSE", &null[0], "att", 0, 8, CONF_AST, 0, OP_universe},
-    {0}};
+    {NULL, "UNIVERSE", "", "att", NULL, 8, CONF_AST, 0, OP_universe},
+    {NULL}};
 
 typedef struct State_s {
     const char *id;
@@ -237,7 +235,7 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
             n = strlen(value);
             goto ok;
         }
-        return null;
+        return "";
     }
     if (!state.data) {
         char *se;
@@ -246,8 +244,9 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
 
         state.prefix = strlen(state.name) + 1;
         n = state.prefix + 3 * MAXVAL;
-        if ((s = getenv(state.name)) || getenv(state.strict) && (s = (char *)state.standard))
-            n += strlen(s) + 1;
+        s = getenv(state.name);
+        if (!s && getenv(state.strict)) s = (char *)state.standard;
+        if (s) n += strlen(s) + 1;
         n = roundof(n, 32);
         if (!(state.data = newof(0, char, n, 0))) return 0;
         state.last = state.data + n - 1;
@@ -258,19 +257,25 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
         ve = state.data;
         state.synthesizing = 1;
         for (;;) {
-            for (s = ve; isspace(*s); s++)
-                ;
-            for (d = s; *d && !isspace(*d); d++)
-                ;
-            for (se = d; isspace(*d); d++)
-                ;
-            for (v = d; *v && !isspace(*v); v++)
-                ;
-            for (de = v; isspace(*v); v++)
-                ;
+            for (s = ve; isspace(*s); s++) {
+                ;  // empty loop
+            }
+            for (d = s; *d && !isspace(*d); d++) {
+                ;  // empty loop
+            }
+            for (se = d; isspace(*d); d++) {
+                ;  // empty loop
+            }
+            for (v = d; *v && !isspace(*v); v++) {
+                ;  // empty loop
+            }
+            for (de = v; isspace(*v); v++) {
+                ;  // empty loop
+            }
             if (!*v) break;
-            for (ve = v; *ve && !isspace(*ve); ve++)
-                ;
+            for (ve = v; *ve && !isspace(*ve); ve++) {
+                ;  // empty loop
+            }
             if (*ve)
                 *ve = 0;
             else
@@ -299,58 +304,71 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
         if (!*d) break;
         if (strneq(d, s, n) && isspace(d[n])) {
             if (!value) {
-                for (d += n + 1; *d && !isspace(*d); d++)
-                    ;
-                for (; isspace(*d); d++)
-                    ;
-                for (s = d; *s && !isspace(*s); s++)
-                    ;
+                for (d += n + 1; *d && !isspace(*d); d++) {
+                    ;  // empty loop
+                }
+                for (; isspace(*d); d++) {
+                    ;  // empty loop
+                }
+                for (s = d; *s && !isspace(*s); s++) {
+                    ;  // empty loop
+                }
                 n = s - d;
                 value = (const char *)d;
                 goto ok;
             }
-            for (s = p = d + n + 1; *s && !isspace(*s); s++)
-                ;
-            for (; isspace(*s); s++)
-                ;
-            for (v = s; *s && !isspace(*s); s++)
-                ;
+            for (s = p = d + n + 1; *s && !isspace(*s); s++) {
+                ;  // empty loop
+            }
+            for (; isspace(*s); s++) {
+                ;  // empty loop
+            }
+            for (v = s; *s && !isspace(*s); s++) {
+                ;  // empty loop
+            }
             n = s - v;
             if ((!path ||
-                 *path == *p && strlen(path) == (v - p - 1) && !strncmp(path, p, v - p - 1)) &&
+                 (*path == *p && strlen(path) == (v - p - 1) && !strncmp(path, p, v - p - 1))) &&
                 strneq(v, value, n))
                 goto ok;
-            for (; isspace(*s); s++)
-                ;
+            for (; isspace(*s); s++) {
+                ;  // empty loop
+            }
             if (*s)
-                for (; *d = *s++; d++)
-                    ;
+                for (; (*d = *s++); d++) {
+                    ;  // empty loop
+                }
             else if (d != state.data)
                 d--;
             break;
         }
-        for (; *d && !isspace(*d); d++)
-            ;
-        for (; isspace(*d); d++)
-            ;
-        for (; *d && !isspace(*d); d++)
-            ;
-        for (; isspace(*d); d++)
-            ;
-        for (; *d && !isspace(*d); d++)
-            ;
+        for (; *d && !isspace(*d); d++) {
+            ;  // empty loop
+        }
+        for (; isspace(*d); d++) {
+            ;  // empty loop
+        }
+        for (; *d && !isspace(*d); d++) {
+            ;  // empty loop
+        }
+        for (; isspace(*d); d++) {
+            ;  // empty loop
+        }
+        for (; *d && !isspace(*d); d++) {
+            ;  // empty loop
+        }
     }
     if (!value) {
         if (!fp->op) {
             if (fp->flags & CONF_ALLOC)
                 fp->value[0] = 0;
             else
-                fp->value = null;
+                fp->value = "";
         }
         return 0;
     }
     if (!value[0]) value = "0";
-    if (!path || !path[0] || path[0] == '/' && !path[1]) path = "-";
+    if (!path || !path[0] || (path[0] == '/' && !path[1])) path = "-";
     n += strlen(path) + strlen(value) + 3;
     if (d + n >= state.last) {
         int c;
@@ -366,14 +384,17 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
         d = state.data + i;
     }
     if (d != state.data) *d++ = ' ';
-    for (s = (char *)fp->name; *d = *s++; d++)
-        ;
+    for (s = (char *)fp->name; (*d = *s++); d++) {
+        ;  // empty loop
+    }
     *d++ = ' ';
-    for (s = (char *)path; *d = *s++; d++)
-        ;
+    for (s = (char *)path; (*d = *s++); d++) {
+        ;  // empty loop
+    }
     *d++ = ' ';
-    for (s = (char *)value; *d = *s++; d++)
-        ;
+    for (s = (char *)value; (*d = *s++); d++) {
+        ;  // empty loop
+    }
 #if DEBUG_astconf
     error(-7, "astconf synthesize %s", state.data - state.prefix);
 #endif
@@ -384,7 +405,7 @@ ok:
     if (!(fp->flags & CONF_ALLOC)) fp->value = 0;
     if (n == 1 && (*value == '0' || *value == '-')) n = 0;
     if (!(fp->value = newof(fp->value, char, n, 1)))
-        fp->value = null;
+        fp->value = "";
     else {
         fp->flags |= CONF_ALLOC;
         memcpy(fp->value, value, n);
@@ -429,7 +450,8 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
             ok = streq(_UNIV_DEFAULT, DEFAULT(OP_universe));
             /*FALLTHROUGH...*/
         default:
-            if (p = getenv("PATH")) {
+            p = getenv("PATH");
+            if (p) {
                 int r = 1;
                 char *d = p;
                 Sfio_t *tmp;
@@ -437,14 +459,16 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
 #if DEBUG_astconf
                 error(-6, "astconf initialize name=%s ok=%d PATH=%s", fp->name, ok, p);
 #endif
-                if (tmp = sfstropen()) {
+                tmp = sfstropen();
+                if (tmp) {
                     for (;;) {
                         switch (*p++) {
                             case 0:
                                 break;
                             case ':':
                                 if (command && fp->op != OP_universe) {
-                                    if (r = p - d - 1) {
+                                    r = p - d - 1;
+                                    if (r) {
                                         sfwrite(tmp, d, r);
                                         sfputc(tmp, '/');
                                         sfputr(tmp, command, 0);
@@ -463,11 +487,13 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
                                     if (fp->op == OP_universe) {
                                         if (p[0] == 'u' && p[1] == 's' && p[2] == 'r' &&
                                             p[3] == '/')
-                                            for (p += 4; *p == '/'; p++)
-                                                ;
+                                            for (p += 4; *p == '/'; p++) {
+                                                ;  // empty loop
+                                            }
                                         if (p[0] == 'b' && p[1] == 'i' && p[2] == 'n') {
-                                            for (p += 3; *p == '/'; p++)
-                                                ;
+                                            for (p += 3; *p == '/'; p++) {
+                                                ;  // empty loop
+                                            }
                                             if (!*p || *p == ':') break;
                                         }
                                     }
@@ -620,7 +646,7 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
                     if (!(fp->flags & CONF_ALLOC)) fp->value = 0;
                     n = strlen(value);
                     if (!(fp->value = newof(fp->value, char, n, 1)))
-                        fp->value = null;
+                        fp->value = "";
                     else {
                         fp->flags |= CONF_ALLOC;
                         memcpy(fp->value, value, n);
@@ -655,10 +681,11 @@ static char *feature(Feature_t *fp, const char *name, const char *path, const ch
                      unsigned int flags, Error_f conferror) {
     int n;
 
-    if (value && (streq(value, "-") || streq(value, "0"))) value = null;
+    if (value && (streq(value, "-") || streq(value, "0"))) value = "";
     if (!fp)
-        for (fp = state.features; fp && !streq(fp->name, name); fp = fp->next)
-            ;
+        for (fp = state.features; fp && !streq(fp->name, name); fp = fp->next) {
+            ;  // empty loop
+        }
 #if DEBUG_astconf
     error(-6, "astconf feature name=%s path=%s value=%s flags=%04x fp=%p%s", name, path, value,
           flags, fp, state.synthesizing ? " SYNTHESIZING" : "");
@@ -675,7 +702,7 @@ static char *feature(Feature_t *fp, const char *name, const char *path, const ch
         fp->name = (const char *)fp + sizeof(Feature_t);
         strcpy((char *)fp->name, name);
         fp->length = n;
-        fp->std = &null[0];
+        fp->std = "";
         fp->next = state.features;
         state.features = fp;
     } else if (value) {
@@ -799,7 +826,7 @@ static char *fmtlower(const char *s) {
     char *b;
 
     b = t = fmtbuf(strlen(s) + 1);
-    while (c = *s++) {
+    while ((c = *s++)) {
         if (isupper(c)) c = tolower(c);
         *t++ = c;
     }
@@ -860,12 +887,14 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
         if (!(flags & CONF_MINMAX) || !(p->flags & CONF_MINMAX)) {
             switch (p->call) {
                 case CONF_pathconf:
+                    // Note: This is deliberately comparing pointers rather than the strings.
                     if (path == root) {
                         (*conferror)(&state, &state, 2, "%s: path expected", name);
                         goto bad;
                     }
                     break;
                 default:
+                    // Note: This is deliberately comparing pointers rather than the strings.
                     if (path != root) {
                         (*conferror)(&state, &state, 2, "%s: path not expected", name);
                         goto bad;
@@ -876,6 +905,7 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
             if (p->flags & CONF_DEFER_CALL) goto bad;
 #endif
         } else {
+            // Note: This is deliberately comparing pointers rather than the strings.
             if (path != root) {
                 (*conferror)(&state, &state, 2, "%s: path not expected", name);
                 goto bad;
@@ -884,16 +914,17 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
             if ((p->flags & CONF_DEFER_MM) || !(p->flags & CONF_MINMAX_DEF)) goto bad;
 #endif
         }
-        if (look->standard >= 0 &&
-                (name[0] != '_' && ((p->flags & CONF_UNDERSCORE) || look->section <= 1) ||
-                 name[0] == '_' && (p->flags & CONF_NOUNDERSCORE)) ||
-            look->standard < 0 && name[0] == '_')
-            goto bad;
+        if (look->standard < 0) {
+            if (name[0] == '_') goto bad;
+        } else {
+            if (name[0] != '_' && ((p->flags & CONF_UNDERSCORE) || look->section <= 1)) goto bad;
+            if (name[0] == '_' && (p->flags & CONF_NOUNDERSCORE)) goto bad;
+        }
     }
     s = 0;
     defined = 1;
-    switch (i = (p->op < 0 || (flags & CONF_MINMAX) && (p->flags & CONF_MINMAX_DEF)) ? 0
-                                                                                     : p->call) {
+    i = (p->op < 0 || ((flags & CONF_MINMAX) && (p->flags & CONF_MINMAX_DEF))) ? 0 : p->call;
+    switch (i) {
         case CONF_confstr:
             call = "confstr";
             if (!(v = confstr(p->op, buf, sizeof(buf)))) {
@@ -1107,7 +1138,8 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
         }
     }
     if (drop) {
-        if (call = sfstruse(sp))
+        call = sfstruse(sp);
+        if (call)
             call = buffer(call);
         else
             call = "[ out of space ]";
@@ -1119,7 +1151,7 @@ bad:
         for (fp = state.features; fp; fp = fp->next) {
             if (streq(name, fp->name)) return format(fp, path, NULL, listflags, conferror);
         }
-    return (listflags & ASTCONF_error) ? NULL : null;
+    return (listflags & ASTCONF_error) ? NULL : "";
 }
 
 #ifdef _pth_getconf_a
@@ -1187,7 +1219,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
         conferror = 0;
 #endif
     if (!name) {
-        if (path) return null;
+        if (path) return "";
         if (!(name = value)) {
             if (state.data) {
                 Ast_confdisc_f notify;
@@ -1201,7 +1233,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
                 INITIALIZE();
                 state.notify = notify;
             }
-            return null;
+            return "";
         }
         value = 0;
     }
@@ -1215,13 +1247,14 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
         ro:
             errno = EINVAL;
             if (conferror) (*conferror)(&state, &state, 2, "%s: cannot set value", name);
-            return (flags & ASTCONF_error) ? (char *)0 : null;
+            return (flags & ASTCONF_error) ? NULL : "";
         }
         return print(NULL, &look, name, path, flags, conferror);
     }
     if ((n = strlen(name)) > 3 && n < (ALT + 3)) {
         if (streq(name + n - 3, "DEV")) {
-            if (tmp = sfstropen()) {
+            tmp = sfstropen();
+            if (tmp) {
                 sfprintf(tmp, "/dev/");
                 for (s = (char *)name; s < (char *)name + n - 3; s++)
                     sfputc(tmp, isupper(*s) ? tolower(*s) : *s);
@@ -1237,7 +1270,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
             Lookup_t altlook;
             char altname[ALT];
 
-            static const char *dirs[] = {"/usr/lib", "/usr", null};
+            static const char *dirs[] = {"/usr/lib", "/usr", ""};
 
             strcpy(altname, name);
             altname[n - 3] = 0;
@@ -1245,13 +1278,14 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
                 if (value) {
                     errno = EINVAL;
                     if (conferror) (*conferror)(&state, &state, 2, "%s: cannot set value", altname);
-                    return (flags & ASTCONF_error) ? (char *)0 : null;
+                    return (flags & ASTCONF_error) ? NULL : "";
                 }
                 return print(NULL, &altlook, altname, path, flags, conferror);
             }
             for (s = altname; *s; s++)
                 if (isupper(*s)) *s = tolower(*s);
-            if (tmp = sfstropen()) {
+            tmp = sfstropen();
+            if (tmp) {
                 for (n = 0; n < elementsof(dirs); n++) {
                     sfprintf(tmp, "%s/%s/.", dirs[n], altname);
                     if ((s = sfstruse(tmp)) && !access(s, F_OK)) {
@@ -1271,7 +1305,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
     errno = EINVAL;
     if (conferror && !(flags & ASTCONF_system))
         (*conferror)(&state, &state, 2, "%s: unknown name", name);
-    return (flags & ASTCONF_error) ? (char *)0 : null;
+    return (flags & ASTCONF_error) ? NULL : "";
 }
 
 /*
