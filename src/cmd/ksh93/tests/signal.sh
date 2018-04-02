@@ -185,7 +185,6 @@ case $# in
 esac
 !
 cat > tst-1 <<'!'
-exec 2>/dev/null
 case $1 in
 *v*)    echo 1-main ;;
 esac
@@ -495,14 +494,18 @@ then
     trap 'rttrap 7' RTMIN+7
     typeset m # used in child processes
     integer pid=$$ p i numchildren=64
-    ( ( sleep 5; kill $$ 2> /dev/null) & ) &
+
+    ( ( sleep 30; kill $pid 2> /dev/null) & ; print $! >$tmp/wd_pid ) &
+    sleep 0.2
+    watchdog_pid=$(< $tmp/wd_pid)
+
     for (( p=0 ; p < numchildren ; p++ ))
     do
      {
             sleep 1
             for m in 'a' 'b' 'c' 'd' 'e' 'f'
             do
-    print p=$p m=$m >> junk 
+                print p=$p m=$m >> junk
                 kill -q $((16#$m)) -s RTMIN+6 $pid
                 kill -q $((16#$m)) -s RTMIN+7 $pid
                 kill -q $((16#$m)) -s RTMIN+4 $pid
@@ -518,7 +521,7 @@ then
     do
         true
     done
-    :
+
     if  (( ${#rtar[@]} != 6 ))
     then
         err_exit "got  ${#rtar[@]} different signals, expected 6"
@@ -531,7 +534,7 @@ then
             err_exit  "got ${#rtar[$i][*]} signals with value $((i)) expected $((numchildren*8))"
         fi
     done
-    
+
     SIG1=RTMIN+1 SIG2=RTMIN+2
     compound a=(float i=0)
     trap "((a.i+=.00001));(kill -q0 -$SIG2 $$) & :" $SIG1
@@ -543,7 +546,8 @@ then
     while ! wait ; do true;done
     exp='typeset -C a=(typeset -l -E i=200.002)'
     got=$(typeset -p a)
-    [[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp" 
+    [[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp"
+    kill $watchdog_pid
 fi
 
 float s=SECONDS
