@@ -94,7 +94,7 @@ all_tests = [
     ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld', 100], ['signal', 100], ['statics'], ['subshell', 100],
+    ['sh_match'], ['sigchld', 100], ['signal', 120], ['statics'], ['subshell', 100],
     ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
     ['variables'], ['vartree1'], ['vartree2'], ['wchar']
 ]
