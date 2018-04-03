@@ -521,7 +521,7 @@ int sh_lex(Lex_t *lp) {
                     } else if (n == '|') {
                         c |= SYMPIPE;
                     } else if (c == '<' && n == '>') {
-                        lp->digits = 1;
+                        lp->digits = 0;
                         c = IORDWRSYM;
                         fcgetc(n);
                         if (fcgetc(n) == ';') {
