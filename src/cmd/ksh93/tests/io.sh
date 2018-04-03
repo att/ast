@@ -589,4 +589,7 @@ redirect {fd}< $tmp
 ) & wait $!
 ((Errors += $?))
 
+# According to POSIX <> should redirect stdin when no fd is specified
+read -n 1 -t 0.1 <>/dev/zero || err_exit '<> should redirect stdin by default'
+
 exit $((Errors<125?Errors:125))
