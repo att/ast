@@ -24,7 +24,3 @@ for name in sfinit signal; do
     echo "#endif" >> FEATURE/$name
     rm -f $name
 done
-
-cd "$MESON_SOURCE_ROOT/src/lib/libast/port"
-cc -o "$bin_dir/lcgen" -std=gnu99 -I$MESON_BUILD_ROOT lcgen.c
-"$bin_dir/lcgen" ../include/lc.h lctab.c < lc.tab

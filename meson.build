@@ -45,8 +45,8 @@ add_test_setup('malloc', env: malloc_debug_env)
 
 cc = meson.get_compiler('c')
 system = host_machine.system()
-# So the `config_ast.h` header can be found (see below).
-configuration_incdir = include_directories('.')
+# So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
+configuration_incdir = include_directories(['.', 'features/locales'])
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
