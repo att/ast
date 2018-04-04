@@ -248,7 +248,8 @@ static size_t debug_strxfrm(char *t, const char *s, size_t n) {
 
     o = t;
     z = 0;
-    if (e = t) e += n;
+    e = t;
+    if (e) e += n;
     while (s[0]) {
         if ((((unsigned char *)s)[0] == DL0 || ((unsigned char *)s)[0] == DL1) &&
             (w = s[1]) >= '0' && w <= ('0' + DC)) {
@@ -2051,9 +2052,9 @@ static int set_ctype(Lc_category_t *cp) {
         ast._ast_mbsrtowcs = 0;
         ast._ast_wcrtomb = 0;
         ast._ast_wcsrtombs = 0;
-        ast.mb_len = 0;
-        ast.mb_towc = 0;
-        ast.mb_conv = 0;
+        ast.mb_len = NULL;
+        ast.mb_towc = NULL;
+        ast.mb_conv = NULL;
     } else {
         if (!(ast.mb_width = wcwidth)) ast.mb_width = default_wcwidth;
         ast._ast_mbrlen = mbrlen;

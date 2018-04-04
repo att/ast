@@ -525,7 +525,7 @@ static Sfdouble_t number(const char *s, char **p, int b, struct lval *lvalue) {
         }
     }
     c = r == LLONG_MAX && errno ? 'e' : *t;
-    if (c == GETDECIMAL(0) || c == 'e' || c == 'E' || (base == 16 && (c == 'p' || c == 'P'))) {
+    if (c == getdecimal() || c == 'e' || c == 'E' || (base == 16 && (c == 'p' || c == 'P'))) {
         r = strtold(s, &t);
         lvalue->isfloat = TYPE_LD;
     }

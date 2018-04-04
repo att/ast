@@ -401,10 +401,13 @@ extern const Shtable_t shtab_siginfo[];
 #define CLD_CONTINUED 5
 #endif
 
-// TODO: Shall this be removed when we move to standard locale functions?
-static struct lconv *lp;
-#define GETDECIMAL(x) \
-    (((lp = localeconv()) && lp->decimal_point && *lp->decimal_point) ? *lp->decimal_point : '.')
+// TODO: Should this be removed when we move to standard locale functions?
+static inline int getdecimal() {
+    struct lconv *lp;
+    lp = localeconv();
+    if (lp && lp->decimal_point && *lp->decimal_point) return *lp->decimal_point;
+    return '.';
+}
 
 //
 // This defintion has been taken from iffe feature test for pipes.

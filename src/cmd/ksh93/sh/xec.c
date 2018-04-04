@@ -204,7 +204,7 @@ static void l_time(Sfio_t *outfile, clock_t t, int p) {
     hr = t / 60;
     if (hr) sfprintf(outfile, "%dh", hr);
     if (p) {
-        sfprintf(outfile, "%dm%d%c%0*ds", min, sec, GETDECIMAL(0), p, frac);
+        sfprintf(outfile, "%dm%d%c%0*ds", min, sec, getdecimal(), p, frac);
     } else {
         sfprintf(outfile, "%dm%ds", min, sec);
     }

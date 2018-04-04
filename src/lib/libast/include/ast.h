@@ -391,7 +391,7 @@ extern int strvcmp(const char *, const char *);
 extern size_t utf32toutf8(char *, uint32_t);
 extern size_t utf8toutf32(uint32_t *, const char *, size_t);
 extern size_t utf8toutf32v(uint32_t *, const char *);
-extern size_t utf8towc(wchar_t *, const char *, size_t);
+extern int utf8towc(wchar_t *, const char *, size_t);
 
 extern ssize_t utf32stowcs(wchar_t *, uint32_t *, size_t);
 extern ssize_t wcstoutf32s(uint32_t *, wchar_t *, size_t);

@@ -2510,12 +2510,12 @@ static void mac_error(Namval_t *np) {
 }
 
 //
-// Given pattern/string, replace / with 0 and return pointer to string \
-// characters are stripped from string.  The \ are stripped in the replacement
-// string unless followed by a digit or \.
+// Given pattern/string, replace "/" chars with 0 and return pointer to string with "\" characters
+// stripped from string.  The "\" are stripped in the replacement string unless followed by a digit
+// or "\".
 //
 static char *mac_getstring(char *pattern) {
-    char *cp = pattern, *rep = 0, *dp;
+    char *cp = pattern, *rep = NULL, *dp;
     int c;
     while ((c = *cp++)) {
         if (c == ESCAPE && (!rep || (*cp && strchr("&|()[]*?", *cp)))) {

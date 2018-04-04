@@ -47,7 +47,7 @@ static const signed char utf8tab[256] = {
     3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, -1, -1,
 };
 
-size_t utf8towc(wchar_t *wp, const char *str, size_t n) {
+int utf8towc(wchar_t *wp, const char *str, size_t n) {
     unsigned char *sp = (unsigned char *)str;
     int m;
     int i;
@@ -80,7 +80,7 @@ size_t utf8towc(wchar_t *wp, const char *str, size_t n) {
     }
 invalid:
     errno = EILSEQ;
-    return (size_t)-1;
+    return -1;
 }
 
 size_t utf8toutf32(uint32_t *up, const char *str, size_t n) {
