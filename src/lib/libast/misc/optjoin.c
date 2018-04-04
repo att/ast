@@ -42,7 +42,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <optlib.h>
+#include "error.h"
+#include "optlib.h"
 
 typedef int (*Optpass_f)(char **, int);
 

@@ -56,7 +56,7 @@ int utf8towc(wchar_t *wp, const char *str, size_t n) {
 
     if (!sp || !n) goto nul;
     if ((m = utf8tab[*sp]) > 0) {
-        if (m > n) return (size_t)-2;
+        if (m > n) return -2;
         if (wp) {
             if (m == 1)
                 *wp = *sp;

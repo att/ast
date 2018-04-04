@@ -47,12 +47,9 @@ typedef struct Optdisc_s {
     Optinfo_f infof;       /* runtime info function	*/
 } Optdisc_t;
 
-/* NOTE: Opt_t member order fixed by a previous binary release */
+typedef struct Optstate_s Optstate_t;
 
-#ifndef _OPT_PRIVATE_
-#define _OPT_PRIVATE_ char pad[3 * sizeof(void *)];
-#endif
-
+// NOTE: Opt_t member order fixed by a previous binary release
 typedef struct Opt_s {
     int again;                /* see optjoin()		*/
     char *arg;                /* {:,#} string argument	*/
@@ -67,7 +64,8 @@ typedef struct Opt_s {
     intmax_t number;          /* # numeric argument		*/
     unsigned char assignment; /* option arg assigment op	*/
     unsigned char pads[sizeof(void *) - 1];
-    _OPT_PRIVATE_
+    char pad[2 * sizeof(void *)];
+    Optstate_t *state;
 } Opt_t;
 
 #if _BLD_ast && defined(__EXPORT__)

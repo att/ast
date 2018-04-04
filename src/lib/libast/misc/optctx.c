@@ -36,7 +36,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <optlib.h>
+#include "error.h"
+#include "optlib.h"
 
 static Opt_t *freecontext;
 

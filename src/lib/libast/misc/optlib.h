@@ -100,12 +100,7 @@ typedef struct Optstate_s {
     char **conformance; /* conformance id vector	*/
 } Optstate_t;
 
-#define _OPT_PRIVATE_             \
-    char pad[2 * sizeof(void *)]; \
-    Optstate_t *state;
-
-#include <error.h>
-
+typedef struct Opt_s Opt_t;
 extern Optstate_t *optstate(Opt_t *);
 
 #endif

@@ -29,11 +29,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ccode.h>
 #include <ctype.h>
-#include <debug.h>
 #include <errno.h>
-#include <optlib.h>
+
+#include "ccode.h"
+#include "debug.h"
+#include "optlib.h"
 
 #define KEEP "*[A-Za-z][A-Za-z]*"
 #define OMIT "*@(\\[[-+]*\\?*\\]|\\@\\(#\\)|Copyright \\(c\\)|\\$\\I\\d\\: )*"

@@ -875,12 +875,13 @@ Histloc_t hist_find(History_t *hp, char *string, int index1, int flag, int direc
 // Returns the line number of the match if successful, otherwise -1.
 //
 int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
-    unsigned char *first, *cp;
+    char *first, *cp;
     int m, n, c = 1, line = 0;
 
     mbinit();
     sfseek(hp->histfp, offset, SEEK_SET);
-    if (!(cp = first = (unsigned char *)sfgetr(hp->histfp, 0, 0))) return -1;
+    cp = first = sfgetr(hp->histfp, 0, 0);
+    if (!cp) return -1;
     m = sfvalue(hp->histfp);
     n = (int)strlen(string);
     while (m > n) {
@@ -890,7 +891,8 @@ int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
         }
         if (!coffset) break;
         if (*cp == '\n') line++;
-        if ((c = mbsize(cp)) < 0) c = 1;
+        c = mbsize(cp);
+        if (c < 0) c = 1;
         cp += c;
         m -= c;
     }
