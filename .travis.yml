@@ -30,6 +30,7 @@ script:
     # TODO: Change "meson test" to "meson test --setup=malloc" when #398 is fixed.
     # TODO: When we run the tests with --setup=malloc change "testlog.txt" to "testlog-malloc.txt".
     - echo > build.sh "set -e;
+        export LANG=en_US.UTF-8;
         export CFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
         cd /source;
         mkdir build;
