@@ -25,6 +25,7 @@ None at this time.
   have been enabled in some Fedora and RHEL builds. But because it was
   experimental and undocumented this should not break any existing users of
   `ksh` built with this feature enabled. (issue #234)
+- <> operator now redirects standard input by default (issue #75).
 
 ## Notable fixes and improvements
 
