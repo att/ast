@@ -196,7 +196,7 @@ void sh_subfork(void) {
             shp->savesig = -1;
         }
         shp->comsub = 0;
-        SH_SUBSHELLNOD->nvalue.s = 0;
+        SH_SUBSHELLNOD->nvalue.i16 = 0;
         sp->subpid = 0;
         shp->st.trapcom[0] = trap;
     }
@@ -454,7 +454,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     savst = shp->st;
     sh_pushcontext(shp, &buff, SH_JMPSUB);
     subshell = shp->subshell + 1;
-    SH_SUBSHELLNOD->nvalue.s = subshell;
+    SH_SUBSHELLNOD->nvalue.i16 = subshell;
     shp->subshell = subshell;
     sp->prev = subshell_data;
     sp->shp = shp;
@@ -708,7 +708,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
 #if SHOPT_COSHELL
     shp->coshell = sp->coshell;
 #endif  // SHOPT_COSHELL
-    if (shp->subshell) SH_SUBSHELLNOD->nvalue.s = --shp->subshell;
+    if (shp->subshell) SH_SUBSHELLNOD->nvalue.i16 = --shp->subshell;
     subshell = shp->subshell;
     subshell_data = sp->prev;
     if (!argsav || argsav->dolrefcnt == argcnt) sh_argfree(shp, argsav, 0);

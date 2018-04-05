@@ -1063,17 +1063,17 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         dupfd = sffileno(sfstdout);
                     } else if ((sp = shp->sftable[dupfd])) {
                         char *tmpname;
-                        if ((sfset(sp, 0, 0) & SF_STRING) &&
-                            (tmpname = pathtemp(NULL, NULL, NULL, "sf", &f))) {
-                            Sfoff_t last = sfseek(sp, (Sfoff_t)0, SEEK_END);
-
-                            unlink(tmpname);
-                            free(tmpname);
-                            write(f, sp->_data, (size_t)last);
-                            lseek(f, (Sfoff_t)0, SEEK_SET);
-
-                            sfclose(sp);
-                            sp = sfnew(sp, NULL, -1, f, SF_READ);
+                        if (sfset(sp, 0, 0) & SF_STRING) {
+                            tmpname = pathtemp(NULL, 0, NULL, "sf", &f);
+                            if (tmpname) {
+                                Sfoff_t last = sfseek(sp, (Sfoff_t)0, SEEK_END);
+                                unlink(tmpname);
+                                free(tmpname);
+                                write(f, sp->_data, (size_t)last);
+                                lseek(f, (Sfoff_t)0, SEEK_SET);
+                                sfclose(sp);
+                                sp = sfnew(sp, NULL, -1, f, SF_READ);
+                            }
                         }
                         sfsync(shp->sftable[dupfd]);
                     }

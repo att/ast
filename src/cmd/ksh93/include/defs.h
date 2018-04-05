@@ -58,7 +58,7 @@ extern char *sh_getenv(const char *);
 extern char *sh_setenviron(const char *);
 
 //
-// Note that the first few fields have to be the same as for Shscoped_t in <shell.h>.
+// Note that the first few fields have to be the same as for Shscope_t in <shell.h>.
 //
 struct sh_scoped {
     struct sh_scoped *prevst;  // pointer to previous state
@@ -70,6 +70,7 @@ struct sh_scoped {
     int64_t lineno;
     Dt_t *save_tree;         // var_tree for calling function
     struct sh_scoped *self;  // pointer to copy of this scope
+
     Dt_t *var_local;         // local level variables for name()
     struct slnod *staklist;  // link list of function stacks
     int states;

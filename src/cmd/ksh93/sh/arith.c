@@ -336,7 +336,7 @@ static Namval_t *check_limits(Shell_t *shp, char *cp) {
                 if (unsign) {
                     node.nvalue.u = ip->us;
                 } else {
-                    node.nvalue.s = ip->ss;
+                    node.nvalue.i16 = ip->ss;
                 }
             } else if (nv_isattr(np, NV_LONG)) {
                 if (unsign) {

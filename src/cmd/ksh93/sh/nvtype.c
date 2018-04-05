@@ -137,7 +137,7 @@ static const Namdisc_t type_disc = {
 #endif
 };
 
-static char *Null = "";
+static const char *EmptyStr = "";
 
 size_t nv_datasize(Namval_t *np, size_t *offset) {
     size_t s = 0, a = 0;
@@ -312,7 +312,7 @@ static int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, int 
                 }
                 nv_offattr(nq, NV_NOFREE);
             }
-        } else if (nq->nvalue.cp == Null) {
+        } else if (nq->nvalue.cp == EmptyStr) {
             nq->nvalue.cp = Empty;
         } else if (nq->nvalue.cp == Empty) {
             nv_offattr(nq, NV_NOFREE);
@@ -401,7 +401,7 @@ static Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp)
                 if ((size = nv_datasize(nr, (size_t *)0)) && size == nv_datasize(nq, (size_t *)0)) {
                     if (nv_isattr(nr, NV_INT16 | NV_DOUBLE) == NV_INT16) {
                         if (nv_isattr(nq, NV_INT16P) == NV_INT16P) {
-                            *nq->nvalue.sp = nr->nvalue.s;
+                            *nq->nvalue.i16p = nr->nvalue.i16;
                         } else {
                             nq->nvalue.cp = nr->nvalue.cp;
                         }
@@ -1091,11 +1091,11 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
                 } else if (nv_isattr(np, NV_LJUST | NV_RJUST)) {
                     memset((char *)nq->nvalue.cp, ' ', dsize);
                 }
-                if (!j) free(np->nvalue.cp);
+                if (!j) free(np->nvalue.sp);
             }
             if (!nq->nvalue.cp && nq->nvfun == &pp->childfun.fun) {
                 if (nv_isattr(np, NV_ARRAY | NV_NOFREE) == (NV_ARRAY | NV_NOFREE)) {
-                    nq->nvalue.cp = Null;
+                    nq->nvalue.cp = EmptyStr;
                 } else {
                     nq->nvalue.cp = Empty;
                 }
@@ -1268,7 +1268,7 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
         np->nvalue.up = 0;
         nv_clone(tp, np, flags | NV_NOFREE);
         if (np->nvalue.cp && np->nvalue.cp != Empty && !nv_isattr(np, NV_NOFREE)) {
-            free(np->nvalue.cp);
+            free(np->nvalue.sp);
         }
         np->nvalue.up = 0;
         nofree = ap->hdr.nofree;

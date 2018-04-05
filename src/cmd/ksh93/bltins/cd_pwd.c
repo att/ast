@@ -133,9 +133,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dir = nv_getval(HOME);
         if (!dir && (pw = getpwuid(geteuid()))) dir = pw->pw_dir;
     } else if (*dir == '-' && dir[1] == 0) {
-        // Explicit cast to discard const'ness. We actually need to modify the value and doing so is
-        // okay despite nvalue.cp being "const char *".
-        dir = (char *)(sh_scoped(shp, opwdnod)->nvalue.cp);
+        dir = sh_scoped(shp, opwdnod)->nvalue.sp;
     }
 
     if (!dir || *dir == 0) errormsg(SH_DICT, ERROR_exit(1), argc == 2 ? e_subst + 4 : e_direct);

@@ -183,7 +183,7 @@ static Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t
         }
 
         if (n == 0) {
-            mp->nvalue.s = i;
+            mp->nvalue.i16 = i;
             mp->nvname = (char *)v;
             fp->last = (char *)(name + strlen(name));
             return mp;
@@ -199,7 +199,7 @@ static Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t
             i = 0;
         }
 
-        mp->nvalue.s = i;
+        mp->nvalue.i16 = i;
         mp->nvname = (char *)name;
         fp->last = (char *)(name + strlen(name));
         return mp;

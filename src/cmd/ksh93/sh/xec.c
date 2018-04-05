@@ -1019,7 +1019,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                     if (!shp->strbuf2) shp->strbuf2 = sfstropen();
                                     sfprintf(shp->strbuf2, "%s%s%c", NV_CLASS,
                                              nv_name(shp->namespace), 0);
-                                    shp->prefix = strdup(sfstruse(shp->strbuf2));
+                                    char *p = sfstruse(shp->strbuf2);
+                                    assert(p);
+                                    shp->prefix = strdup(p);
                                     xp = shp->prefix + strlen(NV_CLASS);
                                     for (sp = xp + 1; sp;) {
                                         sp = strchr(sp, '.');
@@ -2900,7 +2902,7 @@ static void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct 
     if (!lp->hdr.disc) lp = init_level(shp, 0);
     if ((struct sh_scoped *)shp->topscope != shp->st.self) sh_setscope(shp, shp->topscope);
     level = lp->maxlevel = shp->dot_depth + shp->fn_depth + 1;
-    SH_LEVELNOD->nvalue.s = lp->maxlevel;
+    SH_LEVELNOD->nvalue.i16 = lp->maxlevel;
     shp->st.lineno = error_info.line;
     np->nvalue.rp->running += 2;
     if (nv_isattr(np, NV_FPOSIX) && !sh_isoption(shp, SH_BASH)) {
@@ -2929,7 +2931,7 @@ static void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct 
         sh_setscope(shp, sp);
     }
     lp->maxlevel = level;
-    SH_LEVELNOD->nvalue.s = lp->maxlevel;
+    SH_LEVELNOD->nvalue.i16 = lp->maxlevel;
     shp->last_root = nv_dict(DOTSHNOD);
 #if 0
     nv_putval(SH_FUNNAMENOD,shp->st.funname,NV_NOFREE);

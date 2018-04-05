@@ -27,6 +27,8 @@
 
 #include "defs.h"
 
+#include <assert.h>
+
 #include "name.h"
 
 #define NUMSIZE 11
@@ -290,13 +292,11 @@ static Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
 bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq;
-    char *av[2];
     int rdonly = nv_isattr(np, NV_RDONLY);
     int xtrace = sh_isoption(shp, SH_XTRACE);
     Namarr_t *ap = nv_arrayptr(np);
 
-    av[1] = 0;
-    shp->last_table = 0;
+    shp->last_table = NULL;
     if (!tp->nvfun) return true;
     if (!ap->table) {
         ap->table = dtopen(&_Nvdisc, Dtoset);
@@ -304,11 +304,15 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     }
     nq = nv_search(sub, ap->table, NV_ADD);
     if (nq) {
+        char *av[2] = {NULL, NULL};
+
         if (!nq->nvfun && nq->nvalue.cp && *nq->nvalue.cp == 0) _nv_unset(nq, NV_RDONLY);
         nv_arraychild(np, nq, 0);
         if (!nv_isattr(tp, NV_BINARY)) {
             sfprintf(shp->strbuf, "%s=%s", nv_name(nq), nv_getval(np));
-            av[0] = strdup(sfstruse(shp->strbuf));
+            char *p = sfstruse(shp->strbuf);
+            assert(p);
+            av[0] = strdup(p);
         }
         if (!nv_clone(tp, nq, flags | NV_NOFREE)) return (false);
         ap->flags |= ARRAY_SCAN;
@@ -567,7 +571,7 @@ static void array_copytree(Namval_t *np, Namval_t *mp) {
     Namfun_t *fp = nv_disc(np, NULL, NV_POP);
     nv_offattr(np, NV_ARRAY);
     nv_clone(np, mp, 0);
-    if (np->nvalue.cp && !nv_isattr(np, NV_NOFREE)) free(np->nvalue.cp);
+    if (np->nvalue.cp && !nv_isattr(np, NV_NOFREE)) free(np->nvalue.sp);
     np->nvalue.cp = 0;
     np->nvalue.up = &mp->nvalue;
     fp->nofree &= ~1;
@@ -1053,7 +1057,7 @@ char *nv_getsub(Namval_t *np) {
     if (is_associative(ap)) return ((char *)((*ap->header.fun)(np, NULL, NV_ANAME)));
     if (ap->xp) {
         np = nv_namptr(ap->xp, 0);
-        np->nvalue.s = ap->cur;
+        np->nvalue.i16 = ap->cur;
         return (nv_getval(np));
     }
     if ((dot = ap->cur) == 0) {

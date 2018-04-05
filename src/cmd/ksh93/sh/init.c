@@ -27,19 +27,21 @@
 
 #include "defs.h"
 
-#include <ccode.h>
+#include <assert.h>
 #include <pwd.h>
-#include <regex.h>
-#include <stak.h>
-#include <tmx.h>
+
 #include "builtins.h"
+#include "ccode.h"
 #include "edit.h"
 #include "fault.h"
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
 #include "path.h"
+#include "regex.h"
 #include "shlex.h"
+#include "stak.h"
+#include "tmx.h"
 #include "variables.h"
 
 #if SHOPT_DYNAMIC
@@ -1802,7 +1804,9 @@ void sh_setsiginfo(siginfo_t *sip) {
     sh_siglist(sp->sh, sp->sh->strbuf, sip->si_signo + 1);
     sfseek(sp->sh->strbuf, (Sfoff_t)-1, SEEK_END);
     sfputc(sp->sh->strbuf, 0);
-    strncpy(signame, sfstruse(sp->sh->strbuf), SIGNAME_MAX);
+    char *p = sfstruse(sp->sh->strbuf);
+    assert(p);
+    strncpy(signame, p, SIGNAME_MAX);
     np->nvalue.cp = signame;
     np = create_svar(SH_SIG, "pid", 0, fp);
     np->nvalue.idp = &sip->si_pid;

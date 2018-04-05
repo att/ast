@@ -284,7 +284,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         if (strcmp(comp->name, " E") == 0) complete = 1;
         if (complete) {
             _nv_unset(COMPREPLY, 0);
-            COMP_POINT->nvalue.s = index + 1;
+            COMP_POINT->nvalue.i16 = index + 1;
             COMP_LINE->nvalue.cp = line;
             cp = (char *)&line[index] - strlen(prefix);
             csave = *(cpsave = cp);
@@ -309,7 +309,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                     spaces = 0;
                 }
             }
-            COMP_CWORD->nvalue.s = n - 1;
+            COMP_CWORD->nvalue.i16 = n - 1;
             stkseek(shp->stk, 0);
             len = (n + 1) * sizeof(char *) + strlen(line) + 1;
             stkseek(shp->stk, len);

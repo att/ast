@@ -23,6 +23,8 @@
 
 #include "defs.h"
 
+#include <assert.h>
+
 #include "lexstates.h"
 #include "path.h"
 #include "streval.h"
@@ -31,8 +33,12 @@
 
 #define NVCACHE 8  // must be a power of 2
 
-static char *savesub = 0;
-static char Null[1];
+// This var used to be writable but was treated as if it was immutable except for one assignment
+// that failed to validate it was modifying only the first, and only, char. So we now make it
+// truly immutable to catch any attempts to modify it.
+static const char *EmptyStr = "";
+
+static char *savesub = NULL;
 static Namval_t NullNode;
 static Dt_t *Refdict;
 static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *),
@@ -97,14 +103,17 @@ static void (*nullscan)(Namval_t *, void *);
 #include "shnodes.h"
 
 static char *getbuf(size_t len) {
-    static char *buf;
-    static size_t buflen;
+    static char *buf = NULL;
+    static size_t buflen = 0;
     if (buflen < len) {
+        char *bp;
         if (buflen == 0) {
-            buf = (char *)malloc(len);
+            buf = malloc(len);
         } else {
-            buf = (char *)realloc(buf, len);
+            // cppcheck-suppress memleakOnRealloc
+            buf = realloc(buf, len);
         }
+        assert(buf);
         buflen = len;
     }
     return buf;
@@ -1384,8 +1393,8 @@ static char savechars[8 + 1];
 void nv_putval(Namval_t *np, const char *string, int flags) {
     Shell_t *shp = sh_ptr(np);
     const char *sp = string;
-    union Value *up;
     char *cp;
+    union Value *up;
     int size = 0;
     int dot;
     int was_local = nv_local;
@@ -1415,7 +1424,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
     if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) nv_offattr(np, NV_BINARY);
     if (flags & (NV_NOREF | NV_NOFREE)) {
         if (np->nvalue.cp && np->nvalue.cp != sp && !nv_isattr(np, NV_NOFREE)) {
-            free(np->nvalue.cp);
+            free(np->nvalue.sp);
         }
         np->nvalue.cp = (char *)sp;
         nv_setattr(np, (flags & ~NV_RDONLY) | NV_NOFREE);
@@ -1554,11 +1563,11 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 if (nv_isattr(np, NV_SHORT)) {
                     int16_t s = 0;
                     bool ptr = (nv_isattr(np, NV_INT16P) == NV_INT16P);
-                    if (flags & NV_APPEND) s = ptr ? *up->sp : up->s;
+                    if (flags & NV_APPEND) s = ptr ? *up->i16p : up->i16;
                     if (ptr) {
-                        *(up->sp) = s + (int16_t)l;
+                        *(up->i16p) = s + (int16_t)l;
                     } else {
-                        up->s = s + (int16_t)l;
+                        up->i16 = s + (int16_t)l;
                     }
                     nv_onattr(np, NV_NOFREE);
                 } else {
@@ -1572,7 +1581,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             }
         }
     } else {
-        const char *tofree = 0;
+        char *tofree = NULL;
         int offset, append;
 #if _lib_pathnative
         char buff[PATH_MAX];
@@ -1628,12 +1637,12 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
         if (!up->cp || *up->cp == 0) flags &= ~NV_APPEND;
         if (!nv_isattr(np, NV_NOFREE)) {
             // Delay free in case <sp> points into free region.
-            tofree = up->cp;
+            tofree = up->sp;
         }
-        if (nv_isattr(np, NV_BINARY) && !(flags & NV_RAW)) tofree = 0;
+        if (nv_isattr(np, NV_BINARY) && !(flags & NV_RAW)) tofree = NULL;
         if (nv_isattr(np, NV_LJUST | NV_RJUST) &&
             nv_isattr(np, NV_LJUST | NV_RJUST) != (NV_LJUST | NV_RJUST)) {
-            tofree = 0;
+            tofree = NULL;
         }
         if (sp) {
             append = 0;
@@ -1653,12 +1662,13 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 size = 0;
                 if (nv_isattr(np, NV_ZFILL)) size = nv_size(np);
                 if (size == 0) size = oldsize + (3 * dot / 4);
-                *(cp = (char *)malloc(size + 1)) = 0;
+                cp = malloc(size + 1);
+                *cp = 0;
                 nv_offattr(np, NV_NOFREE);
                 if (oldsize) memcpy((void *)cp, (void *)up->cp, oldsize);
-                up->cp = cp;
+                up->sp = cp;
                 if (size <= oldsize) return;
-                dot = base64decode(sp, dot, (void **)0, cp + oldsize, size - oldsize, (void **)0);
+                dot = base64decode(sp, dot, NULL, cp + oldsize, size - oldsize, NULL);
                 dot += oldsize;
                 if (!nv_isattr(np, NV_ZFILL) || nv_size(np) == 0) {
                     nv_setsize(np, dot);
@@ -1672,7 +1682,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
                 if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
                     nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
                     nv_setsize(np, size = dot);
-                    tofree = up->cp;
+                    tofree = up->sp;
                 } else if (size > dot) {
                     dot = size;
                 } else if (nv_isattr(np, NV_LJUST | NV_RJUST) == NV_LJUST && dot > size) {
@@ -1695,10 +1705,10 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             }
             if (size == 0 || tofree || dot || !(cp = (char *)up->cp)) {
                 if (dot == 0 && !nv_isattr(np, NV_LJUST | NV_RJUST)) {
-                    cp = Null;
+                    cp = (char *)EmptyStr;  // we'd better not try to modify this buf as it's const
                     nv_onattr(np, NV_NOFREE);
                 } else {
-                    if (tofree && tofree != Empty && tofree != Null) {
+                    if (tofree && tofree != Empty && tofree != EmptyStr) {
                         cp = (char *)realloc((void *)tofree, ((unsigned)dot + append + 8));
                         tofree = 0;
                     } else {
@@ -1710,13 +1720,17 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             }
 
         } else {
-            cp = 0;
+            cp = NULL;
         }
         up->cp = cp;
         if (sp) {
             int c = cp[dot + append];
             memmove(cp + append, sp, dot);
-            cp[dot + append] = c;
+            if (cp == EmptyStr) {
+                assert(dot == 0 && append == 0 && c == 0);
+            } else {
+                cp[dot + append] = c;
+            }
             if (nv_isattr(np, NV_RJUST) && nv_isattr(np, NV_ZFILL)) {
                 rightjust(cp, size, '0');
             } else if (nv_isattr(np, NV_LJUST | NV_RJUST) == NV_RJUST) {
@@ -1733,7 +1747,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
             if (savep) ja_restore();
         }
         if (flags & NV_APPEND) stkseek(shp->stk, offset);
-        if (tofree && tofree != Empty && tofree != Null) free(tofree);
+        if (tofree && tofree != Empty && tofree != EmptyStr) free(tofree);
     }
     if (!was_local && ((flags & NV_EXPORT) || nv_isattr(np, NV_EXPORT))) sh_envput(shp, np);
     return;
@@ -2230,9 +2244,9 @@ void _nv_unset(Namval_t *np, int flags) {
     } else {
         up = &np->nvalue;
     }
-    if (up && up->cp) {
-        if (up->cp != Empty && up->cp != Null && !nv_isattr(np, NV_NOFREE)) free(up->cp);
-        up->cp = 0;
+    if (up && up->sp) {
+        if (up->sp != Empty && up->sp != EmptyStr && !nv_isattr(np, NV_NOFREE)) free(up->sp);
+        up->sp = NULL;
     }
 
 done:
@@ -2423,9 +2437,9 @@ char *nv_getval(Namval_t *np) {
                 ll = *(Sfulong_t *)up->llp;
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
-                    ll = *(uint16_t *)(up->sp);
+                    ll = *(uint16_t *)(up->i16p);
                 } else {
-                    ll = (uint16_t)up->s;
+                    ll = (uint16_t)up->i16;
                 }
             } else {
                 ll = *(uint32_t *)(up->lp);
@@ -2434,9 +2448,9 @@ char *nv_getval(Namval_t *np) {
             ll = *up->llp;
         } else if (nv_isattr(np, NV_SHORT)) {
             if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
-                ll = *up->sp;
+                ll = *up->i16p;
             } else {
-                ll = up->s;
+                ll = up->i16;
             }
         } else {
             ll = *(up->lp);
@@ -2455,11 +2469,10 @@ done:
     // If NV_RAW flag is on, return pointer to binary data otherwise, base64 encode the data and
     // return this string.
     if (up->cp && nv_isattr(np, NV_BINARY) && !nv_isattr(np, NV_RAW)) {
-        char *cp;
-        char *ep;
         int size = nv_size(np), insize = (4 * size) / 3 + size / 45 + 8;
-        base64encode(up->cp, size, (void **)0, cp = getbuf(insize), insize, (void **)&ep);
-        *ep = 0;
+        char *cp = getbuf(insize);
+        char *ep;
+        base64encode(up->cp, size, NULL, cp, insize, (void **)&ep);
         return cp;
     }
 #endif  // (_AST_VERSION >= 20030127L)
@@ -2470,7 +2483,7 @@ done:
         cp[numeric] = 0;
         return cp;
     }
-    return up->cp;
+    return up->sp;
 }
 
 Sfdouble_t nv_getnum(Namval_t *np) {
@@ -2514,9 +2527,9 @@ Sfdouble_t nv_getnum(Namval_t *np) {
                 r = (Sfulong_t) * ((Sfulong_t *)up->llp);
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
-                    r = (Sfulong_t)(*(uint16_t *)up->sp);
+                    r = (Sfulong_t)(*up->i16p);
                 } else {
-                    r = (Sfulong_t)((uint16_t)up->s);
+                    r = (Sfulong_t)(up->i16);
                 }
             } else {
                 r = *((uint32_t *)up->lp);
@@ -2526,9 +2539,9 @@ Sfdouble_t nv_getnum(Namval_t *np) {
                 r = *up->llp;
             } else if (nv_isattr(np, NV_SHORT)) {
                 if (nv_isattr(np, NV_INT16P) == NV_INT16P) {
-                    r = *up->sp;
+                    r = *up->i16p;
                 } else {
-                    r = up->s;
+                    r = up->i16;
                 }
             } else {
                 r = *up->lp;
@@ -2645,7 +2658,8 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
 
 static char *oldgetenv(const char *string) {
     char c0, c1;
-    const char *cp, *sp;
+    char *cp;
+    const char *sp;
     char **av = environ;
 
     if (!string || (c0 = *string) == 0) return (0);
@@ -3061,7 +3075,7 @@ Shscope_t *sh_getscope_20120720(Shell_t *shp, int index, int whence) {
     while (index-- && (sp = sp->prevst)) {
         ;  // empty loop
     }
-    return sp;
+    return (Shscope_t *)sp;  // here be dragons
 }
 
 #undef sh_getscope

@@ -268,9 +268,9 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         int c;
         char *last = out;
         Namval_t *np = nv_search("COMP_KEY", shp->var_tree, 0);
-        if (np) np->nvalue.s = '\t';
+        if (np) np->nvalue.i16 = '\t';
         if (np = nv_search("COMP_TYPE", shp->var_tree, 0)) {
-            np->nvalue.s = (mode == '\\' ? '\t' : '?');
+            np->nvalue.i16 = (mode == '\\' ? '\t' : '?');
         }
         c = *(unsigned char *)out;
         var = mode;
