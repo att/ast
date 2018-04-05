@@ -179,6 +179,7 @@ struct argnod;
 #define array_assoc(ap) ((ap)->fun)
 
 extern int array_maxindex(Namval_t *);
+extern int array_isempty(Namval_t *);
 extern char *nv_endsubscript(Namval_t *, char *, int, void *);
 extern Namfun_t *nv_cover(Namval_t *);
 extern Namarr_t *nv_arrayptr(Namval_t *);
