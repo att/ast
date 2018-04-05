@@ -132,15 +132,20 @@ static int arsize(struct index_array *ap, int maxi) {
 
 static struct index_array *array_grow(Namval_t *, struct index_array *, int);
 
-// Return index of highest element of an array.
+// Return next index after the highest element in an array.
 int array_maxindex(Namval_t *np) {
     struct index_array *ap = (struct index_array *)nv_arrayptr(np);
     int i = ap->maxi;
-    if (is_associative(ap)) return (-1);
-    while (i > 0 && ap->val[--i].cp == 0) {
+    if (is_associative(ap)) return -1;
+    while (--i >= 0 && ap->val[i].cp == 0) {
         ;  // empty loop
     }
     return i + 1;
+}
+
+// Check if array is empty
+int array_isempty(Namval_t *np) {
+    return array_maxindex(np)<=0;
 }
 
 static union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {

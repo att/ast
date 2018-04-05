@@ -283,12 +283,12 @@ static void assign(Namval_t *np, const char *val, int flags, Namfun_t *handle) {
         int n;
         Namarr_t *ap;
         block(bp, type);
-        nv_disc(np, handle, NV_POP);
         if (!nv_isattr(np, NV_MINIMAL)) pp = (Namval_t *)np->nvenv;
         nv_putv(np, val, flags, handle);
+        if (!nv_isarray(np) || array_isempty(np)) nv_disc(np, handle, NV_POP);
         if (shp->subshell) goto done;
         if (pp && nv_isarray(pp)) goto done;
-        if (nv_isarray(np) && (ap = nv_arrayptr(np)) && ap->nelem > 0) goto done;
+        if (nv_isarray(np) && !array_isempty(np)) goto done;
         for (n = 0; n < sizeof(vp->disc) / sizeof(*vp->disc); n++) {
             if ((nq = vp->disc[n]) && !nv_isattr(nq, NV_NOFREE)) {
                 _nv_unset(nq, 0);
