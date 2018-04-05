@@ -1433,7 +1433,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
                     }
                 }
             }
-#endif /* _WINIX */
+#endif // _WINIX
         }
         if (beenhere == 1) {
             struct lconv *lc;
@@ -1643,7 +1643,7 @@ static Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     if (!root) {
         sp->current = 0;
     } else if (++sp->current >= sp->numnodes) {
-        return 0;
+        return NULL;
     }
     return nv_namptr(sp->nodes, sp->current);
 }
@@ -1652,7 +1652,7 @@ static Namval_t *create_svar(Namval_t *np, const char *name, int flag, Namfun_t 
     struct Svars *sp = (struct Svars *)fp;
     const char *cp = name;
     int i = 0, n;
-    Namval_t *nq = 0;
+    Namval_t *nq = NULL;
     Shell_t *shp = sp->sh;
 
     if (!name) return (sp->parent);
@@ -1664,7 +1664,7 @@ static Namval_t *create_svar(Namval_t *np, const char *name, int flag, Namfun_t 
         nq = nv_namptr(sp->nodes, i);
         if ((n == 0 || strncmp(name, nq->nvname, n) == 0) && nq->nvname[n] == 0) goto found;
     }
-    nq = 0;
+    nq = NULL;
 found:
     if (nq) {
         fp->last = (char *)&name[n];
@@ -1676,13 +1676,15 @@ found:
 }
 
 static Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
-    struct Svars *dp, *sp = (struct Svars *)fp;
+    struct Svars *sp = (struct Svars *)fp;
+    struct Svars *dp;
     int i;
     char *cp;
     Sfdouble_t d;
 
-    dp = (struct Svars *)malloc(fp->dsize + sp->dsize + sizeof(void **));
-    memcpy((void *)dp, (void *)sp, fp->dsize);
+    // cppcheck-suppress pointerSize
+    dp = malloc(fp->dsize + sp->dsize + sizeof(void **));
+    memcpy(dp, sp, fp->dsize);
     dp->nodes = (char *)(dp + 1);
     dp->data = (void *)((char *)dp + fp->dsize + sizeof(void **));
     memcpy(dp->data, sp->data, sp->dsize);
@@ -1809,9 +1811,9 @@ void sh_setsiginfo(siginfo_t *sip) {
     strncpy(signame, p, SIGNAME_MAX);
     np->nvalue.cp = signame;
     np = create_svar(SH_SIG, "pid", 0, fp);
-    np->nvalue.idp = &sip->si_pid;
+    np->nvalue.pidp = &sip->si_pid;
     np = create_svar(SH_SIG, "uid", 0, fp);
-    np->nvalue.idp = &sip->si_uid;
+    np->nvalue.uidp = &sip->si_uid;
     np = create_svar(SH_SIG, "code", 0, fp);
     nv_offattr(np, NV_INTEGER);
     sistr = siginfocode2str(sip->si_signo, sip->si_code);
@@ -1826,14 +1828,14 @@ void sh_setsiginfo(siginfo_t *sip) {
     np->nvalue.ip = &sip->si_status;
     np = create_svar(SH_SIG, "addr", 0, fp);
     nv_setsize(np, 16);
-    np->nvalue.llp = (Sflong_t *)&sip->si_addr;
-    np = create_svar(SH_SIG, "value", 0, fp);
+    np->nvalue.vp = &sip->si_addr;
+    create_svar(SH_SIG, "value", 0, fp);
     np = create_svar(SH_SIG, "value.q", 0, fp);
     nv_setsize(np, 10);
     np->nvalue.ip = &(sip->si_value.sival_int);
     np = create_svar(SH_SIG, "value.Q", 0, fp);
     nv_setsize(np, 10);
-    np->nvalue.llp = (Sflong_t *)&(sip->si_value.sival_ptr);
+    np->nvalue.vp = &sip->si_value.sival_ptr;
 }
 
 //
@@ -1881,7 +1883,7 @@ static Init_t *nv_init(Shell_t *shp) {
     ip->SH_JOBPOOL_init.disc = &SH_JOBPOOL_disc;
     ip->SH_JOBPOOL_init.nofree = 1;
     nv_stack(SH_JOBPOOL, &ip->SH_JOBPOOL_init);
-#endif /* SHOPT_COSHELL */
+#endif // SHOPT_COSHELL
     ip->SH_VERSION_init.disc = &SH_VERSION_disc;
     ip->SH_VERSION_init.nofree = 1;
     ip->LINENO_init.disc = &LINENO_disc;
@@ -1936,11 +1938,11 @@ static Init_t *nv_init(Shell_t *shp) {
     nv_stack(LCCOLLNOD, &ip->LC_COLL_init);
     nv_stack(LCNUMNOD, &ip->LC_NUM_init);
     nv_stack(LANGNOD, &ip->LANG_init);
-    (PPIDNOD)->nvalue.idp = (&shp->gd->ppid);
-    (TMOUTNOD)->nvalue.lp = (&shp->st.tmout);
-    (MCHKNOD)->nvalue.lp = (&sh_mailchk);
-    (OPTINDNOD)->nvalue.lp = (&shp->st.optindex);
-    /* set up the seconds clock */
+    (PPIDNOD)->nvalue.pidp = &shp->gd->ppid;
+    (TMOUTNOD)->nvalue.lp = &shp->st.tmout;
+    (MCHKNOD)->nvalue.lp = &sh_mailchk;
+    (OPTINDNOD)->nvalue.lp = &shp->st.optindex;
+    // Set up the seconds clock.
     shp->alias_tree = inittree(shp, shtab_aliases);
     dtuserdata(shp->alias_tree, shp, 1);
     shp->track_tree = dtopen(&_Nvdisc, Dtset);

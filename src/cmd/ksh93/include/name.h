@@ -35,6 +35,7 @@ struct pathcomp;
 
 // Nodes can have all kinds of values.
 union Value {
+    void *vp;
     const char *cp;
     char *sp;
     int *ip;
@@ -42,8 +43,9 @@ union Value {
     int i;
     unsigned int u;
     int32_t *lp;
-    pid_t *idp;
-    Sflong_t *llp;  // for long long arithmetic
+    pid_t *pidp;
+    uid_t *uidp;
+    int64_t *llp;  // for long long arithmetic
     int16_t i16;
     int16_t *i16p;
     double *dp;              // for floating point arithmetic
