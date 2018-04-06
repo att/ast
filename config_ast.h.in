@@ -25,6 +25,7 @@
 // These are atypical platform symbols with respect to how they are
 // determined. They are either hardcoded or not determined via the usual
 // platform feature detection and naming conventions.
+#mesondefine DEBUG_BUILD
 #mesondefine MESON_BUILD
 #mesondefine HOSTTYPE
 #mesondefine BASH_MACHTYPE
@@ -342,3 +343,11 @@
 #define _ast_intmax_long 1
 #define _ast_intswap 7
 #define _ast_fltmax_t long double
+
+#if DEBUG_BUILD
+// If we're doing a debug build don't have any static (module private) functions.
+// This is needed on most platforms for dladdr() to give us an accurate backtrace.
+#define static_fn
+#else
+#define static_fn static
+#endif
