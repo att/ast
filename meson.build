@@ -86,6 +86,21 @@ if system == 'darwin'
     feature_data.set('_DARWIN_C_SOURCE', 1)
 endif
 
+# We need symbols in the program to be visible to `dladdr()` and related
+# functions. This is necessary to be able to resolve addresses in the program
+# to the appropriate function. Otherwise only symbols in dynamically loaded
+# libraries are visible.
+if get_option('buildtype') == 'debug'
+    feature_data.set('DEBUG_BUILD', 1)
+    add_global_arguments('-fno-inline', language: 'c')
+    # This should be `if cc.has_link_argument()` but that isn't available
+    # until Meson 0.46 or newer and we can't count on that yet. And in
+    # practice this test works fine but can result in a meson warning.
+    if cc.has_argument('-Wl,-E')
+        add_global_link_arguments('-Wl,-E', language: 'c')
+    endif
+endif
+
 hosttype_cmd=run_command('bin/hosttype')
 hosttype=hosttype_cmd.stdout().strip()
 feature_data.set_quoted('HOSTTYPE', hosttype)
