@@ -1,0 +1,39 @@
+print 2-main
+test_mode=$1
+
+x_int_trap() {
+    read -t2 -u9 actual
+    expect=go2
+    [[ $actual == $expect ]] ||
+        log_error "$test_mode unexpected go message received" "$expect" "$actual"
+    print 2-intr
+    print -u8 int1
+    exit 0
+}
+
+t_int_trap() {
+    read -t2 -u9 actual
+    expect=go2
+    [[ $actual == $expect ]] ||
+        log_error "$test_mode unexpected go message received" "$expect" "$actual"
+    print 2-intr
+    print -u8 int1
+    trap - INT
+    kill -s INT $$
+    print 2-running
+}
+
+case $test_mode in
+*x*) trap x_int_trap INT
+    ;;
+*t*) trap t_int_trap INT
+    ;;
+esac
+
+case $test_mode in
+*d*) sigtst3 $test_mode; status=$? ;;
+*)   $SHELL -c "sigtst3 $test_mode"; status=$? ;;
+esac
+
+read -t0.01 -u9 actual && log_warning "$test_mode unexpected data on fifo9" "" "$actual"
+printf '2-%04d\n' $status

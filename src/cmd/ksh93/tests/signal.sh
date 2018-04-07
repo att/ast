@@ -18,6 +18,9 @@
 #                                                                      #
 ########################################################################
 
+# ====================
+# Verify enumerating signal names and converting names to numbers works.
+#
 unset n s t
 typeset -A SIG
 for s in $(kill -l)
@@ -40,424 +43,366 @@ do
     fi
 done
 
+# ====================
+# Verify pipefail and trapping SIGPIPE interact properly.
+#
+empty_fifos
+print running > out3
 (
     set --pipefail
     {
-        $SHELL 2> out2 <<- \EOF
-		g=false
-		trap 'print -u2 PIPED; $g && exit 0;g=true' PIPE
-		while :
-		do
-			print hello
-		done
-	EOF
+        # The `head` command will terminate after reading ten lines which will cause the next
+        # `print hello` to generate SIGPIPE. We want to see two SIGPIPEs delivered.
+        $SHELL 2> out2 <<#'EOF'
+            g=false
+            trap 'print -u2 -n SIGPIPE; $g && exit 27; g=true' PIPE
+            while true
+            do
+                print hello
+                sleep 0.01
+            done
+            EOF
     } | head > /dev/null
-    (( $? == 0)) ||   err_exit "SIGPIPE with wrong error code $?"
-    [[ $(<out2) == $'PIPED\nPIPED' ]] || err_exit 'SIGPIPE output on standard error is not correct'
+    print $? > out3
 ) &
-
 cop=$!
-{ sleep 4; kill $cop; } 2>/dev/null &
-spy=$!
-if wait $cop 2>/dev/null
+
+{ read -u9 -t5 x; [[ $x == okay ]] || kill -s TERM $cop; } &
+watchdog=$!
+
+if wait $cop
 then
-    kill $spy 2>/dev/null
+    print -u9 okay  # cleanly terminate watchdog process
+    sleep 0.01      # give it a chance to exit
 else
     err_exit "pipe with --pipefail PIPE trap hangs"
 fi
+kill $watchdog 2> /dev/null  # should already be dead but just in case
+wait  # reap watchdog process
 
-wait
-rm -f out2
+expect=27
+actual="$(< out3)"
+[[ $actual == $expect ]] || err_exit "SIGPIPE with wrong error code" "$expect" "$actual"
 
-[[ $( trap 'print -n got_child' SIGCHLD
-    sleep 2 &
+expect='SIGPIPESIGPIPE'
+actual="$(< out2)"
+[[ $actual == $expect ]] ||
+    err_exit "SIGPIPE output on standard error is not correct" "$expect" "$actual"
+
+# ====================
+# Verify SIGCHLD can be trapped.
+#
+empty_fifos
+expect='01sigchld23'
+actual=$(
+    sigchld=no
+    trap 'print -n sigchld; sigchld=yes' SIGCHLD
+    { read -u9 x; print -u8 go; } &
     for ((i=0; i < 4; i++))
     do
-        sleep .75
         print -n $i
-    done) == 01got_child23 ]] || err_exit 'SIGCHLD not working'
-
-# begin standalone SIGINT test generation
-
-cat > tst <<'!'
-# shell trap tests
-#
-#    tst  control script that calls tst-1, must be run by ksh
-#  tst-1  calls tst-2
-#  tst-2  calls tst-3
-#  tst-3  defaults or handles and discards/propagates SIGINT
-#
-# initial -v option lists script entry and SIGINT delivery
-#
-# three test options
-#
-#     d call next script directly, otherwise via $SHELL -c
-#     t trap, echo, and kill self on SIGINT, otherwise x or SIGINT default if no x
-#     x trap, echo on SIGINT, and tst-3 exit 0, tst-2 exit, otherwise SIGINT default
-#     z trap, echo on SIGINT, and tst-3 exit 0, tst-2 exit 0, otherwise SIGINT default
-#
-# Usage: tst [-v] [-options] shell-to-test ...
-
-# "trap + sig" is an unadvertized extension for this test
-# if run from nmake SIGINT is set to SIG_IGN
-# this call sets it back to SIG_DFL
-# semantics w.r.t. function scope must be worked out before
-# making it public
-trap + INT
-
-set -o monitor
-
-function gen
-{
-    typeset o t x d
-    for x in - x z
-    do
-    case $x in
-        [$1])    for t in - t
-            do
-    case $t in
-                [$1])    for d in - d
-                    do
-    case $d in
-                        [$1])    o="$o $x$t$d"
-                        esac
-                    done
-                esac
-            done
-        esac
+        [[ $i -eq 1 ]] && { print -u9 die; read -u8 x; while [[ $sigchld == no ]]; do :; done; }
     done
-    echo '' $o
-}
+)
+[[ $actual == $expect ]] || err_exit 'SIGCHLD not working:' "$expect" "$actual"
 
-case $1 in
--v)    v=v; shift ;;
--*v*)    v=v ;;
-*)    v= ;;
-esac
-case $1 in
-*' '*)    o=$1; shift ;;
--*)    o=$(gen $1); shift ;;
-*)    o=$(gen -txd) ;;
-esac
-case $# in
-0)    set ksh bash ksh88 pdksh ash zsh ;;
-esac
-for f in $o
-do
-    case $# in
-    1)    ;;
-    *)    echo ;;
-    esac
-    for sh
-    do
-    if $sh -c 'exit 0' > /dev/null 2>&1
-        then
-    case $# in
-            1)    printf '%3s ' "$f" ;;
-            *)    printf '%16s %3s ' "$sh" "$f" ;;
-            esac
-            $sh tst-1 $v$f $sh > tst.out &
-            wait
-            echo $(cat tst.out)
-        fi
-
-    done
-done
-case $# in
-1)    ;;
-*)    echo ;;
-esac
-!
-cat > tst-1 <<'!'
-case $1 in
-*v*)    echo 1-main ;;
-esac
-{
-    sleep 2
-    case $1 in
-    *v*)    echo "SIGINT" ;;
-    esac
-    kill -s INT 0
-} &
-case $1 in
-*t*)    trap '
-        echo 1-intr
-        trap - INT
-        # omitting the self kill exposes shells that deliver
-        # the SIGINT trap but exit 0 for -xt
-        # kill -s INT $$
-    ' INT
-    ;;
-esac
-case $1 in
-*d*)    tst-2 $1 $2; status=$? ;;
-*)    $2 -c "tst-2 $1 $2"; status=$? ;;
-esac
-printf '1-%04d\n' $status
-sleep 2
-!
-cat > tst-2 <<'!'
-case $1 in
-*z*)    trap '
-        echo 2-intr
-        exit 0
-    ' INT
-    ;;
-*x*)    trap '
-        echo 2-intr
-        exit
-    ' INT
-    ;;
-*t*)    trap '
-        echo 2-intr
-        trap - INT
-        kill -s INT $$
-    ' INT
-    ;;
-esac
-case $1 in
-*v*)    echo 2-main ;;
-esac
-case $1 in
-*d*)    tst-3 $1 $2; status=$? ;;
-*)    $2 -c "tst-3 $1 $2"; status=$? ;;
-esac
-printf '2-%04d\n' $status
-!
-cat > tst-3 <<'!'
-case $1 in
-*[xz]*)    trap '
-        sleep 2
-        echo 3-intr
-        exit 0
-    ' INT
-    ;;
-*)    trap '
-        sleep 2
-        echo 3-intr
-        trap - INT
-        kill -s INT $$
-    ' INT
-    ;;
-esac
-case $1 in
-*v*)    echo 3-main ;;
-esac
-sleep 5
-printf '3-%04d\n' $?
-!
-chmod +x tst tst-?
-
-# end standalone test generation
-
-export PATH=$PATH:
+# ====================
+# Verify SIGINT trapping works for various complicated cases of nested scripts.
+#
+empty_fifos
 typeset -A expected
-expected[---]="3-intr"
-expected[--d]="3-intr"
-expected[-t-]="3-intr 2-intr 1-intr 1-0258"
-expected[-td]="3-intr 2-intr 1-intr 1-0258"
-expected[x--]="3-intr 2-intr 1-0000"
-expected[x-d]="3-intr 2-intr 1-0000"
-expected[xt-]="3-intr 2-intr 1-intr 1-0000"
-expected[xtd]="3-intr 2-intr 1-intr 1-0000"
-expected[z--]="3-intr 2-intr 1-0000"
-expected[z-d]="3-intr 2-intr 1-0000"
-expected[zt-]="3-intr 2-intr 1-intr 1-0000"
-expected[ztd]="3-intr 2-intr 1-intr 1-0000"
+expected[...]="1-main 2-main 3-main SIGINT 3-intr"
+expected[..d]="1-main 2-main 3-main SIGINT 3-intr"
+expected[.t.]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0258"
+expected[.td]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0258"
+expected[x..]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-0000"
+expected[x.d]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-0000"
+expected[xt.]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0000"
+expected[xtd]="1-main 2-main 3-main SIGINT 3-intr 2-intr 1-intr 1-0000"
 
-tst $SHELL > tst.got
-
-while read ops out
+cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst0 > sigtst0
+cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst1 > sigtst1
+cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst2 > sigtst2
+cat $TEST_SRC_DIR/util/util.sh $TEST_SRC_DIR/signal/sigtst3 > sigtst3
+chmod +x sigtst?
+$SHELL sigtst0 > sigtst.out
+while read ops actual
 do
-    [[ $out == ${expected[$ops]} ]] || err_exit "interrupt $ops test failed -- expected '${expected[$ops]}', got '$out'"
-done < tst.got
+    expect=${expected[$ops]}
+    [[ $actual == $expect ]] || err_exit "SIGINT $ops test failed" "$expect" "$actual"
+done < sigtst.out
 
-if [[ ${SIG[USR1]} ]]
-then
-    float s=$SECONDS
-    [[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell ignoring signal does not send signal to parent'
-    (( (SECONDS-s) < 4 )) && err_exit 'parent does not wait for child to complete before handling signal'
-    ((s = SECONDS))
-    [[ $(LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1; (trap "exit" USR1 ; exec kill -USR1 $$ & sleep 5); print done') == SIGUSR1 ]] || err_exit 'subshell catching signal does not send signal to parent'
-    (( SECONDS-s < 4 )) && err_exit 'parent completes early'
-fi
+# ====================
+# Verify SIGUSR1 trapping works.
+#
+empty_fifos
 
-yes=$(whence -p yes)
-if [[ $yes ]]
-then
-    for exp in TERM VTALRM PIPE
-    do
-        if [[ ${SIG[$exp]} ]]
-        then
-            {
-                $SHELL <<- EOF
-		foo() { return 0; }
-		trap foo EXIT
-		{ sleep 2; kill -$exp \$\$; sleep 3; kill -0 \$\$ && kill -KILL \$\$; } &
-		$yes |
-		while read yes
-		do
-    			(/bin/date; sleep .1)
-		done > /dev/null
-		EOF
-            } 2>> /dev/null
-            got=$(kill -l $?)
-            [[ $exp == $got ]] || err_exit "kill -$exp \$\$ failed, required termination by signal '$got'"
-        fi
+expect='done SIGUSR1'
+actual=$(echo $(
+    LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1;
+        (trap "" USR1 ; exec kill -USR1 $$ &; print go > fifo9; sleep 0.5; print done);
+        read x < fifo9;
+        print should not get here'
+))
+[[ $actual == $expect ]] ||
+    err_exit "subshell ignoring signal does not send signal to parent" "$expect" "$actual"
+read -u9 -t0.01 x || err_exit 'parent unexpectedly consumed fifo go signal'
 
-    done
-fi
+expect='done SIGUSR1'
+actual=$(echo $(
+    LC_ALL=C $SHELL -c 'trap "print SIGUSR1 ; exit 0" USR1;
+        (trap "exit" USR1 ; exec kill -USR1 $$ &; print go > fifo9; sleep 0.5; print done);
+        read x < fifo9;
+        print should not get here'
+))
+[[ $actual == $expect ]] ||
+    err_exit "subshell catching signal does not send signal to parent" "$expect" "$actual"
+read -u9 -t0.01 x || err_exit 'parent unexpectedly consumed fifo go signal'
+
+# ====================
+# Verify exit due to signal can be mapped to the correct signal name.
+#
+empty_fifos
+cmd_true=$(whence -p true)
+for expect in TERM VTALRM PIPE
+do
+    [[ ${SIG[$expect]} ]] || continue
+
+    $SHELL <<#EOF
+        foo() { return 0; }
+        trap foo EXIT
+        { sleep 0.5; kill -$expect \$\$; sleep 1; kill -KILL \$\$ 2> /dev/null; } &
+        while :
+        do
+            ($cmd_true; sleep .1)
+        done
+        EOF
+    status=$?
+    actual=$(kill -l $status)
+    [[ $actual == $expect ]] ||
+        err_exit "kill -$expect failed to force exit via expected signal number" "$expect" "$actual"
+done
+
+# ====================
+# Verify the EXIT trap works correctly when the shell is killed by a signal.
+#
+SECONDS=0
+expect=11
+$SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    sleep 2  # this can be a long sleep because we expect it to be interrupted
+    print bad" > sig
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual=$(< sig)
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
-$SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; (sleep 5); print finished' > $tmp/sig
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-x=$(<$tmp/sig)
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
+expect=13
+$SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    (sleep 2)  # this can be a long sleep because we expect it to be interrupted
+    print bad" > sig
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual=$(< sig)
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
-$SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; sleep 5; print finished' > $tmp/sig
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-x=$(<$tmp/sig)
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
+expect=15
+{ $SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    sleep 2  # this can be a long sleep because we expect it to be interrupted
+    print bad" > sig
+}
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual=$(< sig)
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
-{ $SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; (sleep 5); print finished' > $tmp/sig ;} 2> /dev/null
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-x=$(<$tmp/sig)
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
+expect=17
+{ $SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    (sleep 2)  # this can be a long sleep because we expect it to be interrupted
+    print bad" > sig
+}
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual=$(< sig)
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
-{ $SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; sleep 5; print finished' > $tmp/sig ;} 2> /dev/null
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-x=$(<$tmp/sig)
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
+expect=19
+output=$($SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    sleep 2  # this can be a long sleep because we expect it to be interrupted
+    print bad"
+)
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual="$output"
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
-x=$($SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; (sleep 5); print finished')
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
-
-SECONDS=0
-x=$($SHELL 2> /dev/null -c 'sleep 2 && kill $$ & trap "print done; exit 3" EXIT; sleep 5; print finished')
-e=$?
-[[ $e == 3 ]] || err_exit "exit status failed -- expected 3, got $e"
-[[ $x == done ]] || err_exit "output failed -- expected 'done', got '$x'"
-(( SECONDS > 3.5 )) && err_exit "took $SECONDS seconds, expected around 2"
+expect=21
+output=$($SHELL -c "trap 'print okay; exit $expect' EXIT
+    (sleep 0.1; kill \$\$) &
+    (sleep 2)  # this can be a long sleep because we expect it to be interrupted
+    print bad"
+)
+actual=$?
+[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+expect=okay
+actual="$output"
+[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
 
 trap '' SIGBUS
-[[ $($SHELL -c 'trap date SIGBUS; trap -p SIGBUS') ]] && err_exit 'SIGBUS should not have a trap'
+expect=''
+actual=$($SHELL -c 'trap date SIGBUS; trap -p SIGBUS')
+[[ $actual == $expect ]] || err_exit 'SIGBUS should not have a trap' "$expect" "$actual"
 trap -- - SIGBUS
 
 {
-    x=$(
-    $SHELL   <<- \++EOF
-	timeout() 
-	{
-		trap 'trap - TERM; return' TERM
-		( sleep $1; kill -TERM $$ ) >/dev/null 2>&1 &
-		sleep 3
-	}
-	timeout 1
-	print ok
-++EOF
+    output=$($SHELL <<'EOF'
+        timeout() {
+            trap 'trap - TERM; return' TERM
+            ( sleep $1; kill -TERM $$ ) >/dev/null 2>&1 &
+            sleep 3  # this can be a long sleep because we expect it to be interrupted
+        }
+        timeout 0.1
+        print ok
+EOF
     )
-} 2> /dev/null
-[[ $x == ok ]] || err_exit 'return without arguments in trap not preserving exit status'
+    actual=$?
+}
+expect=0
+[[ $actual == $expect ]] ||
+    err_exit 'return without arguments in trap not preserving exit status' "$expect" "$actual"
+expect=ok
+actual="$output"
+[[ $actual == $expect ]] ||
+    err_exit 'return without arguments in trap not preserving exit status' "$expect" "$actual"
 
-x=$(
-    $SHELL  <<- \++EOF
-	set -o pipefail
-	foobar()
-	{
-		for ((i=0; i < 10000; i++))
-		do
-			print abcdefghijklmnopqrstuvwxyz
-		done | head > /dev/null
-	}
-	foobar
-	print ok
-	++EOF
-)
-[[ $x == ok ]] || err_exit 'SIGPIPE exit status causes PIPE signal to be propogaged'
-
-x=$(
-    $SHELL <<- \EOF
-	trap "print GNAW" URG
-	print 1
-	( sleep 1 ; kill -URG $$ ; sleep 1 ; print S1 ; )
-	print 2
+# ====================
+# Verify pipefail and trapping SIGPIPE doesnt' propagate the signal to the exit status.
+#
+actual=$($SHELL <<'EOF'
+    set -o pipefail
+    foobar() {
+        for ((i=0; i < 10000; i++))
+        do
+            print abcdefghijklmnopqrstuvwxyz
+        done | head > /dev/null
+    }
+    foobar
+    print ok
 EOF
 )
-[[ $x == $'1\nS1\nGNAW\n2' ]] || err_exit 'signal ignored in subshell not propagated to parent'
+expect=ok
+[[ $actual == $expect ]] ||
+    err_exit 'SIGPIPE exit status causes PIPE signal to be propagated' "$expect" "$actual"
 
-if [[ ${SIG[RTMIN]} ]]
-then
-    {
-    $SHELL <<- \EOF
-	trap : RTMIN
-	for ((i=0 ; i < 3 ; i++))
-	do
-		sleep 1
-		kill -RTMIN $$ 2> /dev/null
-	done &
-	wait
-	EOF
-    } 2> /dev/null
-    [[ $? == 0 ]] && err_exit 'wait interrupted by caught signal should have non-zero exit status'
-    {
-    $SHELL <<- \EOF
-	for ((i=0 ; i < 3 ; i++))
-	do
-		sleep 1
-		kill -RTMIN $$ 2> /dev/null
-	done &
-	wait
-	EOF
-    } 2> /dev/null
-    [[ $(kill -l $?) == RTMIN ]] || err_exit 'wait interrupted by signal not caught should exit with the value of that signal+256'
-fi
+# ====================
+# Verify signal ignored in subshell not propagated to parent.
+#
+actual=$($SHELL <<'EOF'
+    trap "print GNAW" URG
+    print 1
+    ( sleep 0.1 ; kill -URG $$ ; sleep 0.1 ; print S1 ; )
+    print 2
+EOF
+)
+actual=$(print $actual)
+expect='1 S1 GNAW 2'
+[[ $actual == $expect ]] ||
+    err_exit 'signal ignored in subshell not propagated to parent' "$expect" "$actual"
 
-function b
-{
-    sleep 3
+# ====================
+# Verify termination by a signal is correctly reflected in the exit status.
+#
+$SHELL <<#'EOF'
+    trap : USR2
+    for ((i=0; i < 3; i++))
+    do
+        sleep 0.1
+        kill -0 $$ 2> /dev/null && kill -USR2 $$
+    done &
+    wait
+    EOF
+actual=$?
+expect=$(( $(kill -l USR2) + 128 ))
+[[ $actual == $expect ]] ||
+    err_exit 'wait interrupted by a signal should have USR2 exit status' "$expect" "$actual"
+
+$SHELL <<#'EOF'
+    for ((i = 0; i < 3; i++))
+    do
+        sleep 0.1
+        kill -0 $$ 2> /dev/null && kill -USR2 $$
+    done &
+    wait
+    EOF
+actual=$(kill -l $?)
+expect=USR2
+[[ $actual == $expect ]] ||
+    err_exit 'wait interrupted by signal not caught should exit with the value of that signal+128' "$expect" "$actual"
+
+# ====================
+# Verify nested functions can be terminated via a signal.
+#
+empty_fifos
+function b {
+    print -u9 go  # tell the monitor we're ready for it to signal us
+    sleep 1
     endb=1
 }
 
-function a
-{
-    trap 'print int'  TERM
+function a {
+    trap 'print function a interrupted' TERM
     b
     enda=1
 }
 
-{ /bin/sleep 1;kill -s TERM $$;}&
+{ read -u9 -t5 x; kill -s TERM $$; } &
 unset enda endb
 a
-[[ $endb ]] &&  err_exit 'TERM signal did not kill function b'
+[[ $endb == 1 ]] && err_exit 'TERM signal did not kill function b'
 [[ $enda == 1 ]] || err_exit 'TERM signal killed function a'
 
-got=$($SHELL <<- \EOF
-	trap 'print foo; kill -s USR2 $$; print bar' USR1
-	trap 'print USR2' USR2
-	kill -s USR1 $$
-EOF)
-[[ $got == $'foo\nbar\nUSR2' ]] || err_exit 'the trap command not blocking trapped signals until trap command completes'
+# ====================
+# Verify ???
+#
+empty_fifos
+actual=$($SHELL <<#'EOF'
+    trap 'print foo; kill -s USR2 $$; print bar' USR1
+    trap 'print USR2' USR2
+    kill -s USR1 $$
+EOF
+)
+actual=$(echo $actual)  # flatten newlines to spaces
+expect='foo bar USR2'
+[[ $actual == $expect ]] ||
+    err_exit 'trap command not blocking signals until trap command completes' "$expect" "$actual"
 
+# ====================
+# Verify ???
+#
 if   [[ ${SIG[RTMIN]} ]]
 then
     compound -a rtar
-    function rttrap
-    {
+    function rttrap {
         integer v=${.sh.sig.value.q}
         integer s=${#rtar[v][@]}
         integer rtnum=$1
@@ -476,17 +421,17 @@ then
     trap 'rttrap 5' RTMIN+5
     trap 'rttrap 6' RTMIN+6
     trap 'rttrap 7' RTMIN+7
-    typeset m # used in child processes
+    typeset m  # used in child processes
     integer pid=$$ p i numchildren=64
 
-    ( ( sleep 30; kill $pid 2> /dev/null) & ; print $! >$tmp/wd_pid ) &
+    ( (sleep 30; kill $pid 2> /dev/null) & ; print $! >$tmp/wd_pid ) &
     sleep 0.2
     watchdog_pid=$(< $tmp/wd_pid)
 
-    for (( p=0 ; p < numchildren ; p++ ))
+    for (( p=0; p < numchildren; p++ ))
     do
-     {
-            sleep 1
+        {
+            sleep 0.1
             for m in 'a' 'b' 'c' 'd' 'e' 'f'
             do
                 print p=$p m=$m >> junk
@@ -506,43 +451,62 @@ then
         true
     done
 
-    if  (( ${#rtar[@]} != 6 ))
-    then
-        err_exit "got  ${#rtar[@]} different signals, expected 6"
-    fi
+    expect=6
+    actual=${#rtar[@]}
+    [[ $actual == $expect ]] || err_exit "wrong number of signals" "$expect" "$actual"
 
     for (( i=0xa ; i <= 0xf; i++ ))
     do
-        if  (( ${#rtar[i][*]} != (numchildren*8) ))
-        then
-            err_exit  "got ${#rtar[$i][*]} signals with value $((i)) expected $((numchildren*8))"
-        fi
+        expect=$(( numchildren * 8 ))
+        actual=${#rtar[i][*]}
+        [[ $actual == $expect ]] || err_exit "wrong number of $i signals" "$expect" "$actual"
     done
 
     SIG1=RTMIN+1 SIG2=RTMIN+2
     compound a=(float i=0)
-    trap "((a.i+=.00001));(kill -q0 -$SIG2 $$) & :" $SIG1
+    trap "((a.i+=.00001)); (kill -q0 -$SIG2 $$) &; :" $SIG1
     trap '((a.i+=1))' $SIG2
-    for    ((j=0;j<200;j++))
+    for ((j = 0; j < 200; j++))
     do
         kill -q0 -s $SIG1 $$ &
     done
-    while ! wait ; do true;done
-    exp='typeset -C a=(typeset -l -E i=200.002)'
-    got=$(typeset -p a)
-    [[ $got == "$exp" ]] || err_exit "signals lost: got $got expected $exp"
+    while ! wait
+    do
+        true
+    done
+    expect='typeset -C a=(typeset -l -E i=200.002)'
+    actual=$(typeset -p a)
+    [[ $actual == $expect ]] || err_exit "signals lost" "$expect" "$actual"
     kill $watchdog_pid
 fi
 
+# ====================
+# Verify ???
+#
 float s=SECONDS
-(trap - INT; exec sleep 2) &  sleep .5;kill -sINT $!
+(trap - INT; exec sleep 0.5) &
+sleep .1
+kill -s INT $!
 wait $!
-(( (SECONDS-s) < 1.8)) && err_exit "'trap - INT' causing trap to not be ignored"
+actual=$(( SECONDS - s ))
+expect=0.5
+(( $actual >= $expect )) ||
+    err_exit "'trap - INT' causing trap to not be ignored" "$expect" "$actual"
 
+# ====================
+# Verify ???
+#
 compound c=(compound -a car; integer cari=0)
 trap 'c.car[c.cari++]=.sh.sig' USR1
 kill -q4 -s USR1 $$
 kill -q5 -s USR1 $$
-(( c.car[0].value.q == 4 )) || err_exit "\${c.car[0].value.q} is  ${c.car[0].value.q} but should be 4"
-(( c.car[1].value.q == 5 )) || err_exit "\${c.car[1].value.q} is  ${c.car[1].value.q} but should be 5"
-[[ ${c.car[1].value.q} == 5 ]]
+
+expect=4
+actual=${c.car[0].value.q}
+(( $actual == $expect )) ||
+    err_exit "\${c.car[0].value.q} is wrong" "$expect" "$actual"
+
+expect=5
+actual=${c.car[1].value.q}
+(( $actual == $expect )) ||
+    err_exit "\${c.car[1].value.q} is wrong" "$expect" "$actual"

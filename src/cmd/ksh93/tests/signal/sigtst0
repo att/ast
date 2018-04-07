@@ -1,0 +1,67 @@
+# Shell trap tests. Run by the `signal.sh` unit test.
+#
+#  sigtst0  control script that calls sigtst1 (called by signal.sh unit test)
+#  sigtst1  calls sigtst2
+#  sigtst2  calls sigtst3
+#  sigtst3  defaults or handles and discards/propagates SIGINT
+#
+# three test options
+#
+#     d call next script directly, otherwise via $SHELL -c
+#     t trap, echo, and kill self on SIGINT, otherwise x or SIGINT default if no x
+#     x trap, echo on SIGINT, and sigtst3 exit 0, sigtst2 exit, otherwise SIGINT default
+#     z trap, echo on SIGINT, and sigtst3 exit 0, sigtst2 exit 0, otherwise SIGINT default
+#
+# Usage: sigtst
+#
+if (( $# != 0 ))
+then
+    log_error "unexpected script args" "" "$*"
+    exit 1
+fi
+
+# "trap + sig" is an unadvertized extension for this test
+# if run from nmake SIGINT is set to SIG_IGN
+# this call sets it back to SIG_DFL
+# semantics w.r.t. function scope must be worked out before
+# making it public
+trap + INT
+
+set -o monitor
+
+function gen {
+    typeset o t x d
+    for x in . x z
+    do
+        case $x in
+        [$1])
+            for t in . t
+            do
+                case $t in
+                [$1])
+                    for d in . d
+                    do
+                        case $d in
+                        [$1]) o="$o $x$t$d"
+                        esac
+                    done
+                esac
+            done
+        esac
+    done
+    print '' $o
+}
+
+o=$(gen .xtd)
+
+# Have this shell ignore SIGINT. This is necessary to keep us from being killed by the SIGINT sent
+# to the process group by sigtst1.
+trap 'true' INT
+
+for test_mode in $o
+do
+    $SHELL -c "$TEST_DIR/sigtst1 $test_mode" > tst.out
+    # The print seems superfluous but is used to concat the content into a single line.
+    print $test_mode $(cat tst.out)
+    empty_fifos
+done

@@ -1,0 +1,59 @@
+print 1-main
+test_mode=$1
+integer int_trap_count=0
+
+int_trap() {
+    expect=int1
+    if read -t2 -u8 actual
+    then
+        [[ $actual == $expect ]] ||
+            log_error "$test_mode unexpected message received" "$expect" "$actual"
+    else
+        log_error "$test_mode expected message not received" "$expect" ""
+    fi
+    print 1-intr
+    trap - INT
+    # Omitting the self kill exposes shells that deliver the SIGINT trap but exit 0 for our .xt
+    # test mode case.
+    # kill -s INT $$
+    if (( ++int_trap_count > 1 ))
+    then
+        log_error "$test_mode int_trap should have run only once,but ran $int_trap_count times"
+    fi
+}
+
+{
+    read -t2 -u9 actual
+    expect=go1
+    [[ $actual == $expect ]] ||
+        log_error "$test_mode unexpected message received" "$expect" "$actual"
+    print SIGINT
+    kill -s INT 0  # send signal to process group
+} &
+
+case $test_mode in
+*t*) trap int_trap INT
+    ;;
+esac
+
+case $test_mode in
+*d*) sigtst2 $test_mode ;;
+*)   $SHELL -c "sigtst2 $test_mode" ;;
+esac
+status=$?
+
+# If we were trapping SIGINT we shouldn't have a message in fifo8 at this point; otherwise we
+# should because sigtst2 sends the message regardless of whether the SIGINT is being trapped.
+if [[ $test_mode = *t* ]]
+then
+    read -t0.01 -u8 actual && log_warning "$test_mode unexpected data on fifo8" "" "$actual"
+else
+    expect=int1
+    actual=
+    read -t0.01 -u8 actual
+    [[ $actual == $expect ]] ||
+        log_warning "$test_mode unexpected data on fifo8" "$expect" "$actual"
+fi
+
+printf '1-%04d\n' $status
+exit_error_count

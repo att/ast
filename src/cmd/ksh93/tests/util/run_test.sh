@@ -45,7 +45,7 @@ cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99;
 #
 export ORIG_PATH=$PATH
 export SAFE_PATH=$TEST_DIR:$TEST_SRC_DIR:$BUILD_DIR/src/cmd/builtin
-export FULL_PATH=$SAFE_PATH:$PATH
+export FULL_PATH=$SAFE_PATH:$ORIG_PATH
 export PATH=$FULL_PATH
 
 #

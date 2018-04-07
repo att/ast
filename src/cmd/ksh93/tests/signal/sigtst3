@@ -1,0 +1,29 @@
+print 3-main
+test_mode=$1
+
+x_int_trap() {
+    print 3-intr
+    print -u9 go2
+    exit 0
+}
+
+t_int_trap() {
+    print 3-intr
+    case $test_mode in
+    *t*) print -u9 go2 ;;
+    esac
+    trap - INT
+    kill -s INT $$
+    print 3-running
+}
+
+case $test_mode in
+*x*) trap x_int_trap INT
+    ;;
+*) trap t_int_trap INT
+    ;;
+esac
+
+print -u9 go1
+sleep 1
+print '3-9999'  # we shouldn't get here because a INT trap above should cause us to exit
