@@ -471,4 +471,8 @@ x=10
 
 ([[ x -eq 10 ]]) 2> /dev/null || err_exit 'x -eq 10 fails in [[...]] with x=10'
 
+# POSIX specifies that on error, test builtin should always return value > 1
+test 123 -eq 123x 2>/dev/null
+[[ $? -ge 2 ]] || err_exit 'test builtin should return value greater than 1 on error'
+
 exit $((Errors<125?Errors:125))
