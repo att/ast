@@ -268,9 +268,11 @@ chmod +x $tmp/foobar
 FPATH=$tmp
 cd $tmp
 print 'function zzz { return 0;}' > zzz
-PATH=$PATH:
+# Remove other commands named zzz from PATH.
+old_path=$PATH
+PATH=.
 zzz  2> /dev/null || err_exit 'function not found in . when $PWD is in FPATH'
-PATH=${PATH%:}
+PATH=$old_path
 cd ~-
 autoload foobar
 if [[ $(foobar 2>/dev/null) != foo ]]
@@ -525,7 +527,7 @@ then
 fi
 
 print 'set a b c' > dotscript
-[[ $(PATH=$PATH: $SHELL -c '. dotscript;print $#') == 3 ]] || err_exit 'positional parameters not preserved with . script without arguments'
+[[ $(PATH=:$PATH $SHELL -c '. dotscript;print $#') == 3 ]] || err_exit 'positional parameters not preserved with . script without arguments'
 cd ~- || err_exit "cd back failed"
 function errcheck
 {
