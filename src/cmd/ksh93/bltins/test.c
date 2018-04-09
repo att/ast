@@ -38,7 +38,6 @@
 #include "io.h"
 #include "terminal.h"
 #include "test.h"
-
 #ifdef S_ISSOCK
 #if _pipe_socketpair
 #if _socketpair_shutdown_mode
@@ -106,15 +105,34 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
     struct test tdata;
     char *cp = argv[0];
     int not;
+    Shell_t *shp = context->shp;
+    int jmpval = 0, result = 0;
+    struct checkpt buff = {};
 
     tdata.sh = context->shp;
     tdata.av = argv;
     tdata.ap = 1;
+
+    sh_pushcontext(shp, &buff, 1);
+    jmpval = sigsetjmp(buff.buff, 0);
+
+    // According to POSIX, test builtin should always return value > 1 on error
+    if (jmpval) {
+        result = 2;
+        goto done;
+    }
+
     if (c_eq(cp, '[')) {
         cp = argv[--argc];
         if (!c_eq(cp, ']')) errormsg(SH_DICT, ERROR_exit(2), e_missing, "']'");
     }
-    if (argc <= 1) return 1;
+
+    // According to POSIX, test builtin should return 1 if expression is missing
+    if (argc <= 1) {
+        result = 1;
+        goto done;
+    }
+
     cp = argv[1];
     if (c_eq(cp, '(') && argc <= 6 && c_eq(argv[argc - 1], ')')) {
         // Special case  ( binop ) to conform with standard.
@@ -143,18 +161,26 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
             if (!op) {
                 if (argc == 5) break;
                 if (not&&cp[0] == '-' && cp[2] == 0) {
-                    return test_unop(tdata.sh, cp[1], argv[3]) != 0;
+                    result = (test_unop(tdata.sh, cp[1], argv[3]) != 0);
+                    goto done;
                 } else if (argv[1][0] == '-' && argv[1][2] == 0) {
-                    return !test_unop(tdata.sh, argv[1][1], cp);
+                    result = !test_unop(tdata.sh, argv[1][1], cp);
+                    goto done;
                 } else if (not&&c_eq(argv[2], '!')) {
-                    return *argv[3] == 0;
+                    result = (*argv[3] == 0);
+                    goto done;
                 }
                 errormsg(SH_DICT, ERROR_exit(2), e_badop, cp);
             }
-            return test_binop(tdata.sh, op, argv[1], argv[3]) ^ (argc != 5);
+            result = (test_binop(tdata.sh, op, argv[1], argv[3]) ^ (argc != 5));
+            goto done;
         }
         case 3: {
-            if (not) return *argv[2] != 0;
+            if (not) {
+                result = (*argv[2] != 0);
+                goto done;
+            }
+
             if (cp[0] != '-' || cp[2] || cp[1] == '?') {
                 if (cp[0] == '-' && (cp[1] == '-' || cp[1] == '?') && strcmp(argv[2], "--") == 0) {
                     char *av[3];
@@ -163,18 +189,23 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
                     av[2] = 0;
                     optget(av, sh_opttest);
                     errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
-                    return 2;
                 }
                 break;
             }
-            return !test_unop(tdata.sh, cp[1], argv[2]);
+            result = !test_unop(tdata.sh, cp[1], argv[2]);
+            goto done;
         }
         case 2: {
-            return *cp == 0;
+            result = (*cp == 0);
+            goto done;
         }
     }
     tdata.ac = argc;
-    return !expr(&tdata, 0);
+    result = !expr(&tdata, 0);
+
+done:
+    sh_popcontext(shp, &buff);
+    return result;
 }
 
 //
