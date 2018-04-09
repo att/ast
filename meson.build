@@ -50,12 +50,13 @@ configuration_incdir = include_directories(['.', 'features/locales'])
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
-    # But the compiler doesn't automatically search /usr/local/included for
+    # But the compiler doesn't automatically search /usr/local/include for
     # headers so force it to do so.
     #
     # We could do this unconditionally but it's safer to limit the scope to
     # the platforms that need it.
     add_global_arguments('-I/usr/local/include', language: 'c')
+    feature_test_args += '-I/usr/local/include'
 endif
 
 # Error on implicit declarations.
