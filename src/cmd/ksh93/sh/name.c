@@ -681,7 +681,7 @@ static Namval_t *nv_parentnode(Namval_t *np) {
 }
 
 Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
-    Shell_t *shp = dtuserdata(root, 0, 0);
+    Shell_t *shp = sh_getinterp();
     char *sub = 0, *cp = (char *)name, *sp, *xp;
     int c;
     Namval_t *np = 0, *nq = 0;
@@ -1158,7 +1158,7 @@ void nv_delete(Namval_t *np, Dt_t *root, int flags) {
 // SH_INIT is only set while initializing the environment.
 //
 Namval_t *nv_open(const char *name, Dt_t *root, int flags) {
-    Shell_t *shp = dtuserdata(root, 0, 0);
+    Shell_t *shp = sh_getinterp();
     char *cp = (char *)name;
     int c;
     Namval_t *np = 0;
