@@ -266,7 +266,8 @@ chmod +x tst tst-?
 
 # end standalone test generation
 
-export PATH=$PATH:
+# Find our tst* scripts before any commands with the same name.
+export PATH=:$PATH
 typeset -A expected
 expected[---]="3-intr"
 expected[--d]="3-intr"
