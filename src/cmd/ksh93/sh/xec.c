@@ -2848,6 +2848,7 @@ static void local_exports(Namval_t *np, void *data) {
     if (cp && (mp = nv_search(nv_name(np), shp->var_tree, NV_ADD | HASH_NOSCOPE)) &&
         nv_isnull(mp)) {
         nv_putval(mp, cp, 0);
+        mp->nvflag = np->nvflag;
     }
 }
 
