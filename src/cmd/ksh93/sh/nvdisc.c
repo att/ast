@@ -882,7 +882,7 @@ Namval_t *nv_mkclone(Namval_t *mp) {
 }
 
 Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
-    Shell_t *shp = dtuserdata(root, 0, 0);
+    Shell_t *shp = sh_getinterp();
 
     if (!shp) shp = &sh;
 
@@ -907,7 +907,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
             while ((next = dtvnext(root))) root = next;
         }
         np = (Namval_t *)dtinsert(root, newnode(name));
-        np->nvshell = dtuserdata(root, 0, 0);
+        np->nvshell = sh_getinterp();
     }
     if (dp) dtview(root, dp);
     return np;
@@ -920,7 +920,7 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
 // variable. If last==0 and first component of name is a reference, nv_bfsearch() will return 0.
 //
 Namval_t *nv_bfsearch(const char *name, Dt_t *root, Namval_t **var, char **last) {
-    Shell_t *shp = dtuserdata(root, 0, 0);
+    Shell_t *shp = sh_getinterp();
     int c, offset = stktell(shp->stk);
     char *sp, *cp = 0;
     Namval_t *np, *nq;
