@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 tmp1=$tmp/tmp1.csv
 tmp2=$tmp/tmp2.csv
 cat > $tmp1 <<- \EOF
@@ -76,5 +62,3 @@ do
     done < $tmp1 > $tmp2
 done
 diff "$tmp1" "$tmp2" >/dev/null 2>&1 || err_exit "files $tmp1 and $tmp2 differ"
-
-exit $((Errors<125?Errors:125))

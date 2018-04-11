@@ -18,24 +18,8 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
 unset HISTFILE
 export LC_ALL=C ENV=
-
-ulimit -c 0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 if [[ $( ${SHELL-ksh} -s hello<<-\!
 	print $1
@@ -164,7 +148,8 @@ rm -rf $tmp/.kshrc
 
 if command set -G 2> /dev/null
 then
-    cd $tmp
+    mkdir subdir
+    cd subdir
     mkdir bar foo
     > bar.c > bam.c
     > bar/foo.c > bar/bam.c
@@ -172,23 +157,22 @@ then
     set -- **.c
     expected='bam.c bar.c'
     [[ $* == $expected ]] ||
-        err_exit "-G **.c failed -- expected '$expected', got '$*'"
+        err_exit '-G **.c failed' "$expected" "$*"
     set -- **
     expected='bam.c bar bar.c bar/bam.c bar/foo.c foo foo/bam.c'
     [[ $* == $expected ]] ||
-        err_exit "-G ** failed -- expected '$expected', got '$*'"
+        err_exit '-G ** failed' "$expected" "$*"
     set -- **/*.c
     expected='bam.c bar.c bar/bam.c bar/foo.c foo/bam.c'
     [[ $* == $expected ]] ||
-        err_exit "-G **/*.c failed -- expected '$expected', got '$*'"
+        err_exit '-G **/*.c failed' "$expected" "$*"
     set -- **/bam.c
     expected='bam.c bar/bam.c foo/bam.c'
     [[ $* == $expected ]] ||
-        err_exit "-G **/bam.c failed -- expected '$expected', got '$*'"
-    cd ~-
+        err_exit '-G **/bam.c failed' "$expected" "$*"
+    cd ..
 fi
 
-cd $tmp
 t="<$$>.profile.<$$>"
 echo "echo '$t'" > .profile
 cp $SHELL ./-ksh
@@ -583,12 +567,12 @@ print $'alias print=:\nprint foobar' > dotfile
 
 # tests the set -m puts background jobs in separate process group
 Command=$Command LINENO=$LINENO $SHELL -m  <<- \EOF
-	Errors=0
+	error_count=0
 	function err_exit
 	{
 		print -u2 -n "\t"
 		print -u2 -r ${Command}[$LINENO]: "${@:1}"
-		((Errors++))
+		((error_count++))
 	}
 	[[ $- == *m* ]] || err_exit '$- does not contain m when monitor mode specified'
 	float t=SECONDS
@@ -596,9 +580,9 @@ Command=$Command LINENO=$LINENO $SHELL -m  <<- \EOF
 	kill -KILL -$pid 2> /dev/null || err_exit 'kill to background group failed'
 	wait 2> /dev/null
 	(( (SECONDS-t) > 1 )) && err_exit 'kill did not kill background sleep'
-	exit $Errors
+	exit $error_count
 EOF
-((Errors+=$?))
+((error_count+=$?))
 
 $SHELL 2> /dev/null <<- \EOF && err_exit 'unset variable with set -u on does not terminate script'
 	set -e -u -o pipefail
@@ -610,5 +594,3 @@ $SHELL 2> /dev/null <<- \EOF && err_exit 'unset variable with set -u on does not
 EOF
 
 [[ $($SHELL -vc : 2>&1) == : ]] || err_exit 'incorrect output with ksh -v' 
-
-exit $((Errors<125?Errors:125))

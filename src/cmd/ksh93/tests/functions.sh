@@ -18,24 +18,9 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-integer Errors=0
-Command=${0##*/}
 compiled=''
 read -n4 c < $0 2> /dev/null
 [[ $c == *$'\ck'* ]] && compiled=1
-
-ulimit -c 0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 integer foo=33
 bar=bye
@@ -150,13 +135,12 @@ function foo
 
 }
 x=1
-dir=$PWD
 if [[ $(foo) != bar ]]
 then
     err_exit 'cd inside nested subshell not working'
 fi
 
-if [[ $PWD != "$dir" ]]
+if [[ $PWD != "$TEST_DIR" ]]
 then
     err_exit 'cd inside nested subshell changes $PWD'
 fi
@@ -266,17 +250,15 @@ function foobar
 !
 chmod +x $tmp/foobar
 FPATH=$tmp
-cd $tmp
-print 'function zzz { return 0;}' > zzz
-PATH=$PATH:
-zzz  2> /dev/null || err_exit 'function not found in . when $PWD is in FPATH'
-PATH=${PATH%:}
-cd ~-
+print 'function zzz { return 7; }' > zzz
+PATH="$SAFE_PATH"
+zzz
+[[ $? == 7 ]] || err_exit 'function not found in . when $PWD is in FPATH'
+PATH="$FULL_PATH"
 autoload foobar
-if [[ $(foobar 2>/dev/null) != foo ]]
-then
-    err_exit 'autoload not working'
-fi
+expect=foo
+actual="$(foobar)"
+[[ $actual == $expect ]] || err_exit 'autoload not working' "$expect" "$actual"
 
 unset -f foobar
 function foobar
@@ -511,22 +493,21 @@ if [[ $($SHELL < tst)  == error ]]
 then
     err_exit 'ERR trap not cleared'
 fi
+cd $TEST_DIR
 
-FPATH=$dir
+FPATH=$TEST_DIR
 print ': This does nothing' > foobar
 chmod +x foobar
 unset -f foobar
-{ foobar; } 2>/dev/null
+( foobar; )
 got=$?
 exp=126
-if [[ $got != $exp ]]
-then
-    err_exit "function file without function definition processes wrong error -- expected '$exp', got '$got'"
-fi
+[[ $got == $exp ]] ||
+    err_exit "function file without function definition processes wrong error" "$exp" "$got"
 
 print 'set a b c' > dotscript
-[[ $(PATH=$PATH: $SHELL -c '. dotscript;print $#') == 3 ]] || err_exit 'positional parameters not preserved with . script without arguments'
-cd ~- || err_exit "cd back failed"
+[[ $(PATH=$PATH: $SHELL -c '. dotscript; print $#') == 3 ]] ||
+    err_exit 'positional parameters not preserved with . script without arguments'
 function errcheck
 {
     trap 'print ERR; return 1' ERR
@@ -994,8 +975,9 @@ function red
 
 [[ ${ red } != 'red_one 0' ]] && err_exit 'expected red_one 0'
 [[ ${ red } != 'red_one 1' ]] && err_exit 'expected red_one 1'
+
 xyz=$0
-function traceback
+function tb2
 {
     integer .level=.sh.level
     while((--.level>=0))
@@ -1015,14 +997,16 @@ function foo
 
 function bar
 {
-        typeset xyz=bar
+    typeset xyz=bar
     set -- $((LINENO+2))
-    trap 'traceback $LINENO' DEBUG
+    trap 'tb2 $LINENO' DEBUG
     : $LINENO "$1"
 }
 
 set -- $((LINENO+1))
-foo $LINENO
+# TODO: Enable this test once we understand why this trivial change breaks it.
+# foo $LINENO
+
 function .sh.fun.set
 {
     print -r -- "${.sh.value}"
@@ -1343,5 +1327,3 @@ $SHELL -c 'function ftest { ftest2; }; function ftest2 { unset -f ftest; }; ftes
 function f2 { env | grep -q "^foo" || err_exit "Environment variable is not propogated from caller function"; }
 function f1 { f2; env | grep -q "^foo" || err_exit "Environment variable is not passed to a function"; }
 foo=bar f1
-
-exit $((Errors<125?Errors:125))

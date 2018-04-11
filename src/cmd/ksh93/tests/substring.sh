@@ -18,16 +18,7 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0 j=4
+integer j=4
 base=/home/dgk/foo//bar
 string1=$base/abcabcabc
 
@@ -817,5 +808,3 @@ typeset -m co.array=.sh.match
 [[ $x == "$(print -v co.array)" ]] || err_exit 'typeset -m for .sh.match to compound variable not working'
 #: "${x//~(X)([345])|([012])/}"
 [[ $x == "$(print -v co.array)" ]] || err_exit 'typeset -m for .sh.match to compound variable not working2'
-
-exit $((Errors<125?Errors:125))

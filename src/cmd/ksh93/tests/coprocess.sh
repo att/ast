@@ -19,24 +19,10 @@
 ########################################################################
 # Test the behavior of co-processes
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 if [[ -d /cygdrive ]]
 then
-    err_exit cygwin detected - coprocess tests disabled - enable at the risk of wedging your system
-    exit $((Errors))
+    warning cygwin detected - coprocess tests disabled - enable at the risk of wedging your system
+    exit 99
 fi
 
 bintrue=$(whence -p true)
@@ -400,5 +386,3 @@ $tee -a /dev/null <&p > /dev/null
 wait $pid
 x=$?
 [[ $x == 0 ]] || err_exit "coprocess exitval should be 0, not $x"
-
-exit $((Errors<125?Errors:125))

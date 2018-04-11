@@ -18,16 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$Line]: "$@"
-    ((Errors++))
-}
-
-integer Errors=0
-Command=${0##*/}
-
 # {...} expansion tests -- ignore if not supported
 
 [[ $(print a{0,1}z) == "a0z a1z" ]] || exit 0
@@ -126,5 +116,3 @@ for i in ""~(N)/dev/non_existent_file
 do
     [[ ! $i ]] || err_exit '""~(N)/dev/non_existent_file not null'
 done
-
-exit $((Errors<125?Errors:125))

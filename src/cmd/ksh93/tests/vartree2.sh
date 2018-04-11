@@ -24,15 +24,6 @@
 # and "unset" handling.
 #
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-
-alias err_exit='err_exit $LINENO'
-
 # "built_tree1" and "built_tree2" are identical except the way how they test
 # whether a variable exists:
 # - "built_tree1" uses "${varname}" != "", e.g. looking whether the variable
@@ -331,5 +322,3 @@ function main
 }
 
 main
-
-exit $((Errors<125?Errors:125))

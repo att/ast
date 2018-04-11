@@ -18,26 +18,7 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors < 127 && Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
 set -o nounset
-Command=${0##*/}
-integer Errors=0
-
-set -o nounset
-
-typeset tmp
-
-# create temporary test directory
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-cd $tmp || exit
 
 function test_arithmetric_expression_accesss_array_element_through_nameref
 {
@@ -197,5 +178,3 @@ function test_has_iszero
 # run tests
 test_arithmetric_expression_accesss_array_element_through_nameref
 test_has_iszero
-
-exit $((Errors<125?Errors:125))

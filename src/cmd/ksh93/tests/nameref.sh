@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 function checkref
 {
     nameref foo=$1 bar=$2
@@ -796,5 +782,3 @@ namespace sp1
 }
 nameref n=.sp1.c[4][16]
 [[ ${n.b[4][@]} == "${.sp1.c[4][16].b[4][@]}" ]] || err_exit 'name references to variables in name spaces not working'
-
-exit $((Errors<125?Errors:125))

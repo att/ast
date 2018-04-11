@@ -58,6 +58,7 @@ shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
 install_man('ksh.1')
 
 test_dir = join_paths(meson.current_source_dir(), 'tests')
+test_driver = join_paths(test_dir, 'util', 'run_test.sh')
 
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
@@ -77,8 +78,6 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # TODO: Check how ksh code handles '' string while setting locales and
 # explicitly set string to 'C' or 'POSIX' here if possible.
 locales = ['', 'C.UTF-8']
-
-shcomp_test_path = join_paths(test_dir, 'shcomptest')
 
 # Each entry in `all_tests` is an array of one or two elements. The first
 # element is the test name. The second is an optional timeout if the default
@@ -108,13 +107,13 @@ shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
 foreach testspec : all_tests
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
-    test_path = join_paths(test_dir, testname + '.sh')
     foreach locale : locales
         lang_var = 'LANG=' + locale
         if locale != ''
             locale = '/' + locale
         endif
-        test(testname + locale, ksh93_exe, timeout: timeout, args: [test_path, testname],
+        test(testname + locale, ksh93_exe, timeout: timeout,
+             args: [test_driver, testname],
              env: [shell_var, lang_var, ld_library_path])
     endforeach
 
@@ -122,7 +121,7 @@ foreach testspec : all_tests
     lang_var = 'LANG='
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
-             args: [ shcomp_test_path, test_path, testname],
+             args: [ test_driver, 'shcomp', testname],
              env: [shell_var, lang_var, shcomp_var, ld_library_path])
     endif
 endforeach

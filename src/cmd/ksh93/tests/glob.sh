@@ -18,18 +18,7 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -r $'\t'"${Command}[$1] ${@:2}"
-    ((Errors++))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer aware=0 contrary=0 Errors=0 ignorant=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
+integer aware=0 contrary=0 ignorant=0
 
 function test_glob
 {
@@ -87,7 +76,7 @@ function test_glob
 
     if  [[ $got != "$expected" ]]
     then
-        'err_exit' $lineno "glob -- expected '$expected', got '$got'"
+        'err_exit' $lineno "glob" "$expected" "$got"
     fi
 
 }
@@ -105,7 +94,7 @@ function test_case
     "
     if  [[ $got != "$expected" ]]
     then
-        'err_exit' $lineno "case $subject in $pattern) -- expected '$expected', got '$got'"
+        'err_exit' $lineno "case $subject in $pattern" "$expected" "$got"
     fi
 
 }
@@ -337,7 +326,7 @@ function test_sub
     eval g=$x
     if  [[ "$g" != "$3" ]]
     then
-        'err_exit' $1 subject="'$subject' $x failed, expected '$3', got '$g'"
+        'err_exit' $1 "subject='$subject' $x failed" "$3" "$g"
     fi
 
 }
@@ -402,5 +391,3 @@ test_sub '/@(!(a))/[\1]'      '[aha]'
 test_sub '//@(!(a))/[\1]'     '[aha]'
 test_sub '/@(!(aha))/[\1]'    '[ah]a'
 test_sub '//@(!(aha))/[\1]'   '[ah][a]'
-
-exit $((Errors<125?Errors:125))

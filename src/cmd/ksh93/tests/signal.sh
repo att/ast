@@ -18,22 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
-cd $tmp || err_exit "cd $tmp failed"
-
 unset n s t
 typeset -A SIG
 for s in $(kill -l)
@@ -562,5 +546,3 @@ kill -q5 -s USR1 $$
 (( c.car[0].value.q == 4 )) || err_exit "\${c.car[0].value.q} is  ${c.car[0].value.q} but should be 4"
 (( c.car[1].value.q == 5 )) || err_exit "\${c.car[1].value.q} is  ${c.car[1].value.q} but should be 5"
 [[ ${c.car[1].value.q} == 5 ]]
-
-exit $((Errors<125?Errors:125))

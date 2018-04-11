@@ -18,14 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
 function idempotent
 {
     typeset got var action='typeset -p'
@@ -40,8 +32,6 @@ function idempotent
 }
 
 #test for compound variables
-Command=${0##*/}
-integer Errors=0
 Point=(
     float x=1. y=0.
 )
@@ -706,5 +696,3 @@ exp=$'{\n\t"this": "that",\n\t"x": 5\n}'
 compound y=(foo=bar;compound x=(lef=one right=2);integer z=5)
 exp=$'{\n\t"foo": "bar",\n\t"x": {\n\t\t"lef": "one",\n\t\t"right": "2"\n\t},\n\t"z": 5\n}'
 [[ $(print -j y) == "$exp" ]] || err_exit "got $(print -j y)" expected "$exp"
-
-exit $((Errors<125?Errors:125))

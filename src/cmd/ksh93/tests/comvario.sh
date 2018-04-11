@@ -17,24 +17,9 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-# test setup
-
-function err_exit
-{
-    print -u2 -n '\t'
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-cd "$tmp"
 
 # "nounset" disabled for now
 #set -o nounset
-Command=${0##*/}
-integer Errors=0 HAVE_signbit=0
 
 if typeset -f .sh.math.signbit >/dev/null && (( signbit(-NaN) ))
 then
@@ -674,6 +659,3 @@ done
 
 exp='typeset -C -a sar=((i=1) (i=2))'
 [[ $(typeset -p sar) == "$exp" ]] || err_exit 'read -C foo[x++] not working'
-
-# tests done
-exit $((Errors<125?Errors:125))

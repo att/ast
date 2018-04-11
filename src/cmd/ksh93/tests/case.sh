@@ -18,17 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
 bar=foo2
 bam=foo[3]
 for i in foo1 foo2 foo3 foo4 foo5 foo6
@@ -87,5 +76,3 @@ esac') != b ]] && err_exit 'bug in ;& at end of script'
 
 x=$($SHELL -ec 'case a in a) echo 1; false; echo 2 ;& b) echo 3;; esac')
 [[ $x == 1 ]] || err_exit 'set -e ignored on case fail through'
-
-exit $((Errors<125?Errors:125))

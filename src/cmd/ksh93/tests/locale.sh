@@ -18,22 +18,7 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
 unset LANG ${!LC_*}
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-cd $tmp || exit
 
 a=$($SHELL -c '/' 2>&1 | sed -e "s,.*: *,," -e "s, *\[.*,,")
 b=$($SHELL -c '(LC_ALL=debug / 2>/dev/null); /' 2>&1 | sed -e "s,.*: *,," -e "s, *\[.*,,")
@@ -317,12 +302,12 @@ got=$(message; LANG=C message; message)
 
 a_thing=fish
 got=$(print -r aa$"\\ahello \" /\\${a_thing}/\\"zz)
-exp='aa(debug,'$Command',libshell,\ahello " /\fish/\)zz'
-[[ $got == "$exp" ]] || err_exit "$\"...\" containing expansions fails: expected $exp, got $got"
+exp="aa(debug,${test_file},libshell,\ahello " /\fish/\)zz"
+[[ $got == "$exp" ]] || err_exit "$\"...\" containing expansions fails" "$exp" "$got"
 
-exp='(debug,'$Command',libshell,This is a string\n)'
+exp='(debug,locale.sh,libshell,This is a string\n)'
 typeset got=$"This is a string\n"
-[[ $got == "$exp" ]] || err_exit "$\"...\" in assignment expansion fails: expected $exp got $got"
+[[ $got == "$exp" ]] || err_exit "$\"...\" in assignment expansion fails" "$exp" "$got"
 
 unset LANG
 
@@ -401,5 +386,3 @@ typeset -r utf8_euro_char2=$'\342\202\254'
 (( (${#utf8_euro_char1} == 1) && (${#utf8_euro_char2} == 1) )) \
         || export LC_ALL='en_US.UTF-8'
 [[ "$(printf '\u[20ac]')" == $'\342\202\254' ]]  || err_exit 'locales not handled correctly in command substitution'
-
-exit $((Errors<125?Errors:125))

@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 integer n=2
 
 typeset -T Type_t=(
@@ -978,5 +964,3 @@ typeset -txu test_txu=uppercase
 [[ $test_u != "UPPERCASE" ]] && err_exit "typeset -u failed"
 [[ $test_xu != "UPPERCASE" ]] && err_exit "typeset -xu failed"
 [[ $test_txu != "UPPERCASE" ]] && err_exit "typeset -txu failed"
-
-exit $((Errors<125?Errors:125))

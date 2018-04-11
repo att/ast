@@ -24,15 +24,6 @@
 # and "unset" handling.
 #
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-
-alias err_exit='err_exit $LINENO'
-
 function build_tree
 {
 #set -o errexit -o xtrace
@@ -211,5 +202,3 @@ function main
 }
 
 main
-
-exit $((Errors<125?Errors:125))

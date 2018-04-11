@@ -42,29 +42,6 @@
 # Test module to check the ksh93 "poll" builtin
 #
 
-# test setup
-function err_exit
-{
-    print -u2 -n '\t'
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-set -o nounset
-Command=${0##*/}
-integer Errors=0
-
-typeset ocwd
-typeset tmpdir
-
-# create temporary test directory
-ocwd="${PWD}"
-tmpdir=$(mktemp -dt ksh.${Command}.XXXXXXXXXX ) || err_exit 'Cannot create temporary directory.'
-
-cd "${tmpdir}" || { err_exit "cd ${tmpdir} failed." ; exit $((Errors<125?Errors:125)) ; }
-
-
 # basic tests
 function test1
 {
@@ -472,10 +449,3 @@ builtin rmdir    || { err_exit 'rmdir builtin not found.'; exit 1; }
 test1
 test_sparse_array1
 test_fifo_circus1
-
-# cleanup
-cd "${ocwd}"
-rmdir "${tmpdir}" || err_exit "Cannot remove temporary directory ${tmpdir}."
-
-# tests done
-exit $((Errors<125?Errors:125))

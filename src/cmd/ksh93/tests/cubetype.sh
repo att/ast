@@ -18,16 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
 integer n=2
 
 typeset -T Box_t=(
@@ -211,5 +201,3 @@ do
     cc[two].count=0
     unset cc
 done
-
-exit $((Errors<125?Errors:125))

@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 unset HISTFILE
 
 function fun
@@ -197,20 +183,20 @@ line 3
 cat > $tmp/1 <<- ++EOF++
 	script=$tmp/2
 	trap "rm -f \$script" EXIT
-	exec 9> \$script
+	exec 7> \$script
 	for ((i=3; i<9; i++))
 	do
 	eval "while read -u\$i; do : ; done \$i</dev/null"
-		print -u9 "exec \$i< /dev/null"
+		print -u7 "exec \$i< /dev/null"
 	done
 	
 	for ((i=0; i < 60; i++))
 	do
-		print -u9 -f "%.80c\n"  ' '
+		print -u7 -f "%.80c\n"  ' '
 	done
 	
-	print -u9 'print ok'
-	exec 9<&-
+	print -u7 'print ok'
+	exec 7<&-
 	chmod +x \$script
 	\$script
 ++EOF++
@@ -530,8 +516,11 @@ exp=$':2:printf :1:A:\n:2::\n:2:print\n:2:print :1:Z:'
 got=$(<$tmp/22.out)
 [[ $exp == "$got" ]] || err_exit "standard error garbled -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 
-tmp=$tmp $SHELL 2> /dev/null -c 'exec 3<&1 ; exec 1<&- ; exec > $tmp/outfile;print foobar' || err_exit 'exec 1<&- causes failure'
-[[ $(<$tmp/outfile) == foobar ]] || err_exit 'outfile does not contain foobar'
+$SHELL -c 'exec 3<&1 ; exec 1<&- ; exec > outfile; print foobar' ||
+    err_exit 'exec 1<&- causes failure'
+expect=foobar
+actual=$(< outfile)
+[[ $actual == $expect ]] || err_exit 'outfile content wrong' "$expect" "$actual"
 
 print hello there world > $tmp/foobar
 sed  -e 's/there //' $tmp/foobar  >; $tmp/foobar
@@ -580,16 +569,14 @@ redirect {fd}< $tmp
 { cd /dev/fd/$fd/ ;} 2> /dev/null || err_exit "Cannot cd to /dev/fd/$fd/"
 
 (
-    Errors=0
+    integer error_count=0
     redirect {n}> $tmp/foo; print foobar >&{n} > $tmp/foo
     [[ $(<$tmp/foo) == foobar ]] || err_exit '>& {n} not working for write'
     { got=$( redirect {n}< $tmp/foo; cat <&{n} ) ;} 2> /dev/null
     [[ $got == foobar ]] || err_exit  ' <& {n} not working for read'
-    exit $((Errors))
+    exit $((error_count))
 ) & wait $!
-((Errors += $?))
+((error_count += $?))
 
 # According to POSIX <> should redirect stdin when no fd is specified
 read -n 1 -t 0.1 <>/dev/zero || err_exit '<> should redirect stdin by default'
-
-exit $((Errors<125?Errors:125))

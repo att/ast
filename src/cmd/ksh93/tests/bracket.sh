@@ -17,19 +17,6 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 null=''
 if [[ ! -z $null ]]
@@ -474,5 +461,3 @@ x=10
 # POSIX specifies that on error, test builtin should always return value > 1
 test 123 -eq 123x 2>/dev/null
 [[ $? -ge 2 ]] || err_exit 'test builtin should return value greater than 1 on error'
-
-exit $((Errors<125?Errors:125))

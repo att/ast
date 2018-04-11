@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 foo=abc
 typeset -C bar=(x=3 y=4 t=7)
 typeset -A z=([abc]=qqq)
@@ -191,5 +177,3 @@ namespace a.b
     [[ $(x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type not found from within a namespace'
 }
 [[ $(.a.b.x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type not found from outside a.b namespace'
-
-exit $((Errors<125?Errors:125))

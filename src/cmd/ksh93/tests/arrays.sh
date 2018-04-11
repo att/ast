@@ -17,19 +17,6 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 function fun
 {
@@ -881,5 +868,3 @@ unset foo bar
 typeset -a foo=([1]=w [2]=x) bar=(a b c)
 foo+=("${bar[@]}")
 [[ $(typeset -p foo) == 'typeset -a foo=([1]=w [2]=x [3]=a [4]=b [5]=c)' ]] || err_exit 'Appending does not work if array contains empty indexes'
-
-exit $((Errors<125?Errors:125))

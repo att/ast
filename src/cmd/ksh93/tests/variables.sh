@@ -17,19 +17,6 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 [[ ${.sh.version} == "$KSH_VERSION" ]] || err_exit '.sh.version != KSH_VERSION'
 unset ss
@@ -702,7 +689,9 @@ set --
 unset r v x
 path=$PATH
 x=foo
-for v in EDITOR VISUAL OPTIND CDPATH FPATH PATH ENV LINENO RANDOM SECONDS _
+# We would like to include LINENO in this list but mucking with it affects the line numbers that
+# appear in the diagnostic messages.
+for v in EDITOR VISUAL OPTIND CDPATH FPATH PATH ENV RANDOM SECONDS _
 do
     nameref r=$v
     unset $v
@@ -796,6 +785,7 @@ cat > $tmp/foo.sh <<EOF
 echo "foo"
 EOF
 . $tmp/foo.sh > /dev/null
-[[ ${.sh.file} == $0 ]] || err_exit ".sh.file is not set to correct value after sourcing a file"
-
-exit $((Errors<125?Errors:125))
+expect="$0"
+actual="${.sh.file}"
+[[ $actual == $expect ]] ||
+    err_exit ".sh.file is not set to correct value after sourcing a file" "$expect" "$actual"

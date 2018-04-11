@@ -18,16 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
 if [[ 'hi there' != "hi there" ]]
 then
     err_exit "single quotes not the same as double quotes"
@@ -487,5 +477,3 @@ esac
 
 unset IFS
 [[  ${IFS+abc} ]] && err_exit "testing for unset IFS not working"
-
-exit $((Errors<125?Errors:125))

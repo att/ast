@@ -18,17 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
 typeset -T Pt_t=(
     float x=1
     float y=0
@@ -68,5 +57,3 @@ r[one]=(ur=(x=4 y=4))
 (( r[one].area == 16 )) || err_exit 'area of r[one] should be 16'
 [[ ${r[one].area} == 16 ]] || err_exit '${r[one].area} should be 16'
 unset r
-
-exit $((Errors<125?Errors:125))

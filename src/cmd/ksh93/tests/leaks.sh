@@ -18,17 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
 # Test for variable reset leak #
 function test_reset
 {
@@ -143,5 +132,3 @@ fi
 #b=0$(vmstate --format='+%(size)u')
 #(( b > a )) && err_exit 'memory leak with read -C when using <<<'
 #
-
-exit $((Errors<125?Errors:125))

@@ -18,16 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
 {
 x=abc
 x+=def ;} 2> /dev/null
@@ -143,5 +133,3 @@ foo=()
 foo+=(x=1 y=2)
 foo+=(x=3 y=4)
 [[ ${!foo[@]} == '0 1' ]] || err_exit  'append to unset array of types not working'
-
-exit $((Errors<125?Errors:125))

@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 alias foo='print hello'
 if [[ $(foo) != hello ]]
 then
@@ -132,5 +118,3 @@ for i in compound float integer nameref
 do    
     [[ $i=$(whence $i) == "$(alias $i)" ]] || err_exit "whence $i not matching $(alias $i)"
 done
-
-exit $((Errors<125?Errors:125))

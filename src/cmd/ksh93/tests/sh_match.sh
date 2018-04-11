@@ -46,29 +46,6 @@
 # This test module tests the .sh.match pattern matching facility
 #
 
-# Test setup
-
-function err_exit
-{
-    print -u2 -n '\t'
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-set -o nounset
-Command=${0##*/}
-integer Errors=0
-
-typeset ocwd
-typeset tmpdir
-
-# create temporary test directory
-ocwd="${PWD}"
-tmpdir=$(mktemp -dt ksh.${Command}.XXXXXXXXXX ) || err_exit 'Cannot create temporary directory.'
-
-cd "${tmpdir}" || { err_exit "cd ${tmpdir} failed." ; exit $((Errors<125?Errors:125)) ; }
-
 # tests
 function test_xmlfragment1
 {
@@ -125,18 +102,16 @@ function test_xmlfragment1
 	
 		return 0
 	}
-	
+
 	function rebuild_xml_and_verify
 	{
 		nameref ar="\$1"
 		typeset xtext="\$2" # xml text
-	
+
 		#
 		# rebuild the original text from "ar" (copy of ".sh.match")
 		# and compare it to the content of "xtext"
 		#
-		tmpfile=\$(mktemp)
-	
 		{
 			# rebuild the original text, based on our matches
 			nameref nodes_all=ar[0]		# contains all matches
@@ -152,23 +127,21 @@ function test_xmlfragment1
 				[[ -v nodes_text[i]		]] && printf '%s' "\${nodes_text[i]}"
 			done
 			printf '\\n'
-		} >"\${tmpfile}"
-	
-		diff -u <( printf '%s\\n' "\${xtext}") "\${tmpfile}"
-		if cmp <( printf '%s\\n' "\${xtext}") "\${tmpfile}" ; then
-			printf "#input and output OK (%d characters).\\n" "\$(wc -m <"\${tmpfile}")"
+		} > tmp_file
+
+		diff -u <( printf '%s\\n' "\${xtext}")  tmp_file
+		if cmp <( printf '%s\\n' "\${xtext}")  tmp_file ; then
+			printf "#input and output OK (%d characters).\\n" "\$(wc -m < tmp_file)"
 		else
 			printf "#difference between input and output found.\\n"
 		fi
 
-	
-		rm -f "\${tmpfile}"
 		return 0
 	}
-	
+
 	# main
 	set -o nounset
-	
+
 	typeset -a xar
 	parse_xmltext xar "\$xmltext"
 	rebuild_xml_and_verify xar "\$xmltext"
@@ -700,10 +673,6 @@ test_num_elements1
 test_nomatch
 
 
-# cleanup
-cd "${ocwd}"
-rmdir "${tmpdir}" || err_exit "Cannot remove temporary directory ${tmpdir}."
-
 set +u
 x=1234
 compound co
@@ -712,6 +681,3 @@ x=$(print -v .sh.match)
 typeset -m co.array=.sh.match
 y=$(print -v co.array)
 [[ $y == "$x" ]] || 'typeset -m of .sh.match to variable not working'
-
-# tests done
-exit $((Errors<125?Errors:125))

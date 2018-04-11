@@ -17,16 +17,7 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
 
-Command=${0##*/}
-integer Errors=0
 for ((i=0; i < 4; i++ ))
 do
     for ((j=0; j < 5; j++ ))
@@ -280,5 +271,3 @@ typeset -A foo[bar]
 foo[bar][x]=2
 (( foo[bar][x]++ ))
 [[ ${foo[bar][x]} == 3 ]] || err_ext 'subscrit gets added incorrectly to an associat array when ++ operator is called'
-
-exit $((Errors<125?Errors:125))

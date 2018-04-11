@@ -18,21 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
-cd $tmp || exit
 type /xxxxxx > out1 2> out2
 [[ -s out1 ]] && err_exit 'type should not write on stdout for not found case'
 [[ -s out2 ]] || err_exit 'type should write on stderr for not found case'
@@ -49,10 +34,12 @@ chmod +x dir[12]/foobar
 p=$PATH
 FPATH=$PWD/dir1
 PATH=$FPATH:$p
-[[ $( foobar) == foobar1 ]] || err_exit 'foobar should output foobar1'
+expect=foobar1
+actual=$( foobar)
+[[ $actual == $expect ]] || err_exit 'foobar output wrong' "$expect" "$actual"
 FPATH=$PWD/dir2
 PATH=$FPATH:$p
-[[ $(foobar) == foobar2 ]] || err_exit 'foobar should output foobar2'
+[[ $(foobar) == foobar2 ]] || err_exit 'foobar output wrong' "$expect" "$actual"
 FPATH=$PWD/dir1
 PATH=$FPATH:$p
 [[ $(foobar) == foobar1 ]] || err_exit 'foobar should output foobar1 again'
@@ -155,7 +142,6 @@ fi
 
 (
     #TODO: Enable if chmod is a builtin
-    #PATH=$PWD:
     #builtin chmod
     print 'print cannot execute' > noexec
     chmod 644 noexec
@@ -165,10 +151,11 @@ fi
     else
         exit 126
     fi
-
 )
-status=$?
-[[ $status == 126 ]] || err_exit "exit status of non-executable is $status -- 126 expected"
+actual=$?
+expect=127
+[[ $actual == $expect ]] || err_exit "exit status of non-executable is wrong" "$expect" "$actual"
+
 builtin -d rm 2> /dev/null
 chmod=$(whence chmod)
 rm=$(whence rm)
@@ -223,7 +210,7 @@ got=$(whence ./notfound)
 got=$(whence $PWD/notfound)
 [[ $got == $exp ]] || err_exit "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
 
-PATH=$d:
+PATH=$d:.
 cp "$rm" kshrm
 if [[ $(whence kshrm) != $PWD/kshrm  ]]
 then
@@ -231,17 +218,18 @@ then
 fi
 
 cp "$rm" rm
-PATH=:$d
+PATH=.:$d
 if [[ $(whence rm) != $PWD/rm ]]
 then
     err_exit 'leading : in pathname not working'
 fi
 
-PATH=$d: whence rm > /dev/null
+PATH=$d:. whence rm > /dev/null
 if [[ $(whence rm) != $PWD/rm ]]
 then
     err_exit 'pathname not restored after scoping'
 fi
+rm rm
 
 mkdir bin
 print 'print ok' > bin/tst
@@ -375,13 +363,15 @@ exec {n}< /dev/null
 
 # whence -a bug fix
 rmdir=rmdir
-if mkdir "$rmdir"
+mkdir $rmdir || { warning "failed to create '$rmdir'"; exit 99; }
+type whence >&2
+rm=${ whence rm; }
+if [[ $rm ]]
 then
-    rm=${ whence rm;}
-    cp "$rm" "$rmdir"
-    { PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
-    exitval=$?
-    (( exitval==0 )) || err_exit "whence -a has exitval $exitval"
+cp "$rm" "$rmdir"
+{ PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
+exitval=$?
+(( exitval==0 )) || err_exit "whence -a has exitval $exitval"
 fi
 
 [[ ! -d bin ]] && mkdir bin
@@ -421,14 +411,9 @@ ${.sh.version}
 END
 ) || err_exit '${.sh.xxx} variables causes cat not be found'
 
-path=$PATH
 PATH=/bin:/usr/bin
 if [[ $(type date) == *builtin* ]]
 then
     builtin -d date
     [[ $(type date) == *builtin* ]] && err_exit 'builtin -d does not delete builtin'
 fi
-
-PATH=$path
-
-exit $((Errors<125?Errors:125))

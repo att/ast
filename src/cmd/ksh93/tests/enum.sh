@@ -17,16 +17,7 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-alias err_exit='err_exit $LINENO'
 
-Command=${0##*/}
-integer Errors=0
 enum Color_t=(red green blue orange yellow)
 enum -i Sex_t=(Male Female)
 for ((i=0; i < 1000; i++))
@@ -125,5 +116,3 @@ bool -A a=( [2]=true [4]=false )
 [[ ${#a[@]} == 2 ]] || err_exit ' bool -A a should only have two elements' 
 
 $SHELL  -uc 'i=1; bool b; ((b=((i==1)?(true):(false)) ));:'  || err_exit 'assignment to enum with ?: fails with set -u'
-
-exit $((Errors<125?Errors:125))

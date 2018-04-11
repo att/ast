@@ -54,17 +54,6 @@
 # -- snip --
 #
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-
-alias err_exit='err_exit $LINENO'
-
-integer Errors=0
-
 function idempotent
 {
     typeset got var action='typeset -p'
@@ -202,9 +191,9 @@ function sortar
         do
             if (( ar[i].i > ar[i-1].i ))
             then
-                typeset -m "tmp=ar[i-1]"
+                typeset -m "tmpvar=ar[i-1]"
                 typeset -m "ar[i-1]=ar[i]"
-                typeset -m "ar[i]=tmp"
+                typeset -m "ar[i]=tmpvar"
                 swapped=true
             fi
         done
@@ -300,9 +289,9 @@ compound c=(
     )
 )
 nameref ar=c.ar
-typeset -m "tmp=ar[1]"
+typeset -m "tmpvar=ar[1]"
 command typeset -m "ar[1]=ar[2]" 2> /dev/null || err_exit 'typeset -m ar[1]=ar[2] not working when ar is numerical'
-typeset -m "ar[2]=tmp"
+typeset -m "ar[2]=tmpvar"
 exp='key_t -a c.ar=((typeset -l -E i=7) (typeset -l -E i=11) (typeset -l -E i=1))'
 [[ $(typeset -p c.ar) == "$exp" ]] 2> /dev/null || err_exit 'typeset -m c.ar has wrong value'
 idempotent exp c.ar 'typeset -T key_t=(float i);compound c'
@@ -319,9 +308,9 @@ function sortar
         do
             if ((isnan(ar[i].i) || isgreater(ar[i].i-ar[i-1].i, 0.)))
             then
-                typeset -m "tmp=ar[i-1]"
+                typeset -m "tmpvar=ar[i-1]"
                 typeset -m "ar[i-1]=ar[i]"
-                typeset -m "ar[i]=tmp"
+                typeset -m "ar[i]=tmpvar"
                 swapped=true
             fi
         done
@@ -378,5 +367,3 @@ function f1
     [[ ${ print -v matchar;}  == "$exp" ]] || err_exit  'move .sh.match to a function local variable using a name reference fails'
 }
 f1
-
-exit $((Errors<125?Errors:125))

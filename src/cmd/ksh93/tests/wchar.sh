@@ -21,39 +21,20 @@
 # Tests for \u[...] and \w[...] input and output
 #
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-function warning
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: warning: "${@:2}"
-}
-alias warning='warning $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-locales="en_US.UTF-8 en_US.ISO-8859-15 zh_CN.GB18030"
+locales="en_US.UTF-8 en_US.utf8 en_US.ISO-8859-15 en_US.iso885915 zh_CN.GB18030 zh_CN.gb18030"
 supported="C.UTF-8"
-locale_tmpfile=$(mktemp)
-locale -a >$locale_tmpfile
+locale -a > locale.txt
 
 for lc_all in $locales
 do
-    if grep -q $lc_all $locale_tmpfile
+    if grep -q $lc_all locale.txt
     then
         supported+=" $lc_all"
+        warning "LC_ALL=$lc_all is supported and will be tested"
     else
         warning "LC_ALL=$lc_all not supported"
     fi
 done
-rm $locale_tmpfile
 
 exp0=$'0000000 24 27 e2 82 ac 27 0a'
 exp2=$'\'\\u[20ac]\''
@@ -79,5 +60,3 @@ do
     got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(unicodeliterals)q\n" "$(printf "\u[20ac]")"')
     [[ $got == "$exp1" || $got == "$exp2" ]] || err_exit "${lc_all} (unicodeliterals) FAILED -- expected $exp1, got $got"
 done
-
-exit $((Errors<125?Errors:125))

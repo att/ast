@@ -21,18 +21,7 @@
 # Written by Roland Mainz <roland.mainz@nrubsig.org>
 #
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors < 127 && Errors++ ))
-}
-
-alias err_exit='err_exit $LINENO'
-
 set -o nounset
-Command=${0##*/}
-integer Errors=0
 
 typeset -T test_t=(
     typeset name
@@ -688,5 +677,3 @@ function fun1
 )
 
 [[ $out == $'a=3, b=3\na=3, b=3' ]] || err_exit 'static variables in functions with initializers not working'
-
-exit $((Errors<125?Errors:125))

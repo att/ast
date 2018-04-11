@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 trap '' FPE # NOTE: osf.alpha requires this (no ieee math)
 
 integer x=1 y=2 z=3
@@ -1020,5 +1006,3 @@ integer -u u=123
 (( u.MAX < (1<<31) ))  && err_exit '$((i.MAX)) not workng when i is unsigned int'
 
 [[ $(( (2**32) << 67 )) == 0 ]] || err_exit 'left shift count 67 is non-zero' 
-
-exit $((Errors<125?Errors:125))

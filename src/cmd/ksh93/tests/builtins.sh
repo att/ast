@@ -17,19 +17,6 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 # test shell builtin commands
 # builtin getconf
@@ -229,15 +216,16 @@ then
 fi
 
 mkdir -p $tmp/a/b/c 2>/dev/null || err_exit  "mkdir -p failed"
-$SHELL -c "cd $tmp/a/b; cd c" 2>/dev/null || err_exit "initial script relative cd fails"
+$SHELL -c "cd $tmp/a/b; cd c" || err_exit "initial script relative cd fails"
 
-trap 'print TERM' TERM
-exp=$'trap -- \'print TERM\' TERM\ntrap -- \'cd /; rm -rf '$tmp$'\' EXIT'
-got=$(trap)
-[[ $got == $exp ]] || err_exit "\$(trap) failed -- expected \"$exp\", got \"$got\""
-exp='print TERM'
-got=$(trap -p TERM)
-[[ $got == $exp ]] || err_exit "\$(trap -p TERM) failed -- expected \"$exp\", got \"$got\""
+# The `| sort` is because ksh doesn't guarantee the order of the output of the `trap` command.
+expect="trap -- 'print TERM' TERM trap -- 'print USR1' USR1"
+actual=$(echo $($SHELL -c 'trap "print TERM" TERM; trap "print USR1" USR1; trap' | sort) )
+[[ $actual == $expect ]] || err_exit "'trap' failed" "$expect" "$actual"
+
+expect='print TERM'
+actual=$(echo $($SHELL -c 'trap "print TERM" TERM; trap "print USR1" USR1; trap -p TERM') )
+[[ $actual == $expect ]] || err_exit "'trap -p TERM' failed" "$expect" "$actual"
 
 [[ $($SHELL -c 'trap "print ok" SIGTERM; kill -s SIGTERM $$' 2> /dev/null) == ok ]] || err_exit 'SIGTERM not recognized'
 [[ $($SHELL -c 'trap "print ok" sigterm; kill -s sigterm $$' 2> /dev/null) == ok ]] || err_exit 'SIGTERM not recognized'
@@ -651,11 +639,19 @@ fi
 $SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || err_exit "sleep doesn't except %a format constants"
 $SHELL -c 'test \( ! -e \)' 2> /dev/null ; [[ $? == 1 ]] || err_exit 'test \( ! -e \) not working'
 [[ $(ulimit) == "$(ulimit -fS)" ]] || err_exit 'ulimit is not the same as ulimit -fS'
+
 tmpfile=$tmp/file.2
 print $'\nprint -r -- "${.sh.file} ${LINENO} ${.sh.lineno}"' > $tmpfile
-[[ $( . "$tmpfile") == "$tmpfile 2 1" ]] || err_exit 'dot command not working'
+actual="$(. $tmpfile)"
+expect="$tmpfile 2 1"
+[[ $actual == $expect ]] || err_exit 'dot command not working' "$expect" "$actual"
+
+tmpfile=$tmp/file.3
 print -r -- "'xxx" > $tmpfile
-[[ $($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null) == ok ]] || err_exit 'syntax error in dot command affects next command'
+actual="$($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null)"
+expect="ok"
+[[ $actual == $expect ]] || 
+   err_exit 'syntax error in dot command affects next command' "$expect" "$actual"
 
 typeset -r z=3
 y=5
@@ -898,10 +894,13 @@ else
     err_exit 'cannot cd to ~{fd} when fd is /dev'
 fi
 
-mkdir $tmp/oldpwd
-OLDPWD=$tmp/oldpwd
-cd -
-[[ $PWD == "$tmp/oldpwd" ]] || err_exit "cd - does not recognize overridden OLDPWD variable"
+mkdir $TEST_DIR/oldpwd
+OLDPWD=$TEST_DIR/oldpwd
+cd - > $TEST_DIR/cd.out
+actual=$(< $TEST_DIR/cd.out)
+expect="$TEST_DIR/oldpwd"
+[[ $actual == $expect ]] || err_exit "cd - does not recognize overridden OLDPWD variable"
+[[ $PWD == $expect ]] || err_exit "cd - does not recognize overridden OLDPWD variable"
 
 cd $tmp
 [[ $(OLDPWD="$tmp/oldpwd" cd -) == "$tmp/oldpwd" ]] ||
@@ -964,6 +963,7 @@ then
     chmod -x $tmp/a/b
     cd $tmp/a/b 2> /dev/null && err_exit 'cd to directory without execute should fail'
 fi
+chmod +x $tmp/a/b  # so the test temp dir can be removed when the test completes
 
 
 # -s flag writes to history file
@@ -983,5 +983,3 @@ else
 fi
 
 builtin  -d set 2> /dev/null && err_exit 'buitin -d allows special builtins to be deleted'
-
-exit $((Errors<125?Errors:125))

@@ -17,19 +17,6 @@
 #                    David Korn <dgkorn@gmail.com>                     #
 #                                                                      #
 ########################################################################
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
 
 # test basic file operations like redirection, pipes, file expansion
 set -- \
@@ -83,23 +70,25 @@ then
     print -u2 "optimizer bug with file expansion"
 fi
 
-rm -f out foobar
+mkdir top_dir
+cd top_dir
 mkdir dir
-if [[ $(print */) != dir/ ]]
-then
-    err_exit 'file expansion with trailing / not working'
-fi
+actual="$(print */)"
+expect=dir/
+[[ $actual == $expect ]] ||
+    err_exit 'file expansion with trailing / not working' "$expect" "$actual"
 
-if [[ $(print *) != dir ]]
-then
-    err_exit 'file expansion with single file not working'
-fi
+actual="$(print */)"
+expect=dir/
+[[ $actual == $expect ]] ||
+    err_exit 'file expansion with single file not working' "$expect" "$actual"
 
 print hi > .foo
-if [[ $(print *) != dir ]]
-then
-    err_exit 'file expansion leading . not working'
-fi
+actual="$(print *)"
+expect=dir
+[[ $actual == $expect ]] ||
+    err_exit 'file expansion leading . not working' "$expect" "$actual"
+cd ..
 
 date > dat1 || err_exit "date > dat1 failed"
 test -r dat1 || err_exit "dat1 is not readable"
@@ -278,7 +267,7 @@ then
     err_exit "subshell in command substitution fails"
 fi
 
-exec 9>& 1
+exec 7>& 1
 exec 1>&-
 x=$(print hello)
 if [[ $x != hello ]]
@@ -286,7 +275,7 @@ then
     err_exit "command subsitution with stdout closed failed"
 fi
 
-exec >& 9
+exec >& 7
 cd $pwd
 x=$(cat <<\! | $SHELL
 /bin/echo | /bin/cat
@@ -671,5 +660,3 @@ $SHELL -c 'kill -0 123456789123456789123456789' 2> /dev/null && err_exit 'kill n
 $SHELL -xc '$(LD_LIBRARY_PATH=$LD_LIBRARY_PATH exec $SHELL -c :)' > /dev/null 2>&1  || err_exit "ksh -xc '(name=value exec ksh)' fails with err=$?"
 
 $SHELL 2> /dev/null -c $'for i;\ndo :;done' || err_exit 'for i ; <newline> not vaid'
-
-exit $((Errors<125?Errors:125))

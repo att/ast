@@ -18,17 +18,8 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-
-alias err_exit='err_exit $LINENO'
-
 float DELAY=${1:-0.2}
-integer FOREGROUND=10 BACKGROUND=2 Errors=0
+integer FOREGROUND=10 BACKGROUND=2
 
 s=$($SHELL -c '
 integer i foreground=0 background=0
@@ -164,8 +155,6 @@ done
 (( d==2000 )) ||  err_exit "trap '' CHLD  causes side effects d=$d"
 trap - CHLD
 
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX)
-trap 'rm -rf $tmp' EXIT
 x=$($SHELL 2> /dev/null -ic '/bin/notfound; sleep .5 & sleep 1;jobs')
 [[ $x == *Done* ]] || err_exit 'SIGCHLD blocked after notfound'
 x=$($SHELL 2> /dev/null  -ic 'kill -0 12345678901234567876; sleep .5 & sleep 1;jobs')
@@ -222,5 +211,3 @@ do
 done
 
 wait
-
-exit $((Errors<125?Errors:125))

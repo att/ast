@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u2 -n "\t"
-    print -u2 -r $Command: "$@"
-    let Errors+=1
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 if $SHELL -c '[[ ~root == /* ]]'
 then
     x=$(print -r -- ~root)
@@ -122,5 +108,3 @@ print $'print ~+\n[[ $1 ]] && $0' > $tmp/tilde
 chmod +x $tmp/tilde
 nl=$'\n'
 [[ $($tmp/tilde foo) == "$PWD$nl$PWD" ]] 2> /dev/null  || err_exit 'tilde fails inside a script run by name'
-
-exit $((Errors<125?Errors:125))

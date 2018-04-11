@@ -18,20 +18,6 @@
 #                                                                      #
 ########################################################################
 
-function err_exit
-{
-    print -u$Error_fd -n "\t"
-    print -u$Error_fd -r ${Command}[$1]: "${@:2}"
-    (( Errors+=1 ))
-}
-alias err_exit='err_exit $LINENO'
-
-Command=${0##*/}
-integer Errors=0 Error_fd=2
-
-tmp=$(mktemp -dt ksh.${Command}.XXXXXXXXXX) || { err_exit mktemp -dt failed; exit 1; }
-trap "cd /; rm -rf $tmp" EXIT
-
 # builtin getconf
 bincat=$(PATH=$(getconf PATH) whence -p cat)
 
@@ -96,9 +82,6 @@ unset l
     l=( a=1 b="BE" )
 )
 [[ ${l+foo} != foo ]] || err_exit 'l should be unset'
-
-Error_fd=9
-eval "exec $Error_fd>&2 2>/dev/null"
 
 TEST_notfound=notfound
 while whence $TEST_notfound >/dev/null 2>&1
@@ -617,11 +600,10 @@ print -n $(fun1 2> $tmpf)
 [[  $(< $tmpf) == *SUCCESS ]] || err_exit 'standard error output lost with command substitution'
 
 
-tmpfile=$tmp/foo
-cat > $tmpfile <<-\EOF
+cat > foo <<-\EOF
 	$SHELL -c 'function g { IFS= ;};function f { typeset IFS;(g);: $V;};f;f'
 	EOF
-$SHELL 2> /dev/null "$tmpfile" || err_exit 'IFS in subshell causes core dump'
+$SHELL 2> /dev/null foo || err_exit 'IFS in subshell causes core dump'
 
 unset i
 if   [[ -d /dev/fd ]]
@@ -821,14 +803,13 @@ fi
 # ========================================
 # Test that closing file descriptors don't affect capturing the output of a
 # subshell. Regression test for issue #198.
-tmpfile=$(mktemp)
 expected='return value'
 
 function get_value {
     case=$1
-    (( case >= 1 )) && exec 3< $tmpfile
-    (( case >= 2 )) && exec 4< $tmpfile
-    (( case >= 3 )) && exec 6< $tmpfile
+    (( case >= 1 )) && exec 3< foo
+    (( case >= 2 )) && exec 4< foo
+    (( case >= 3 )) && exec 6< foo
 
     # To trigger the bug we have to spawn an external command. Why is a
     # mystery but not really relevant.
@@ -864,8 +845,3 @@ if [[ $actual != $expected ]]
 then
     err_exit -u2 "failed to capture subshell output when closing fd: case 3"
 fi
-
-rm $tmpfile
-
-# ========================================
-exit $((Errors<125?Errors:125))

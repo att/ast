@@ -47,28 +47,6 @@
 # work
 #
 
-# test setup
-function err_exit
-{
-    print -u2 -n '\t'
-    print -u2 -r ${Command}[$1]: "${@:2}"
-    (( Errors++ ))
-}
-alias err_exit='err_exit $LINENO'
-
-set -o nounset
-Command=${0##*/}
-integer Errors=0
-
-typeset ocwd
-typeset tmpdir
-
-# create temporary test directory
-ocwd="${PWD}"
-tmpdir=$(mktemp -dt ksh.${Command}.XXXXXXXXXX ) || err_exit 'Cannot create temporary directory.'
-
-cd "${tmpdir}" || { err_exit "cd ${tmpdir} failed." ; exit $((Errors<125?Errors:125)) ; }
-
 function test_dirfd_basics1
 {
     mkdir 'test_dirfd_basics1'
@@ -148,13 +126,5 @@ function test_dirfd_basics1
     return 0
 }
 
-
 # run tests
 test_dirfd_basics1
-
-# cleanup
-cd "${ocwd}"
-rmdir "${tmpdir}" || err_exit "Cannot remove temporary directory ${tmpdir}."
-
-# tests done
-exit $((Errors<125?Errors:125))
