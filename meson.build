@@ -66,6 +66,7 @@ endif
 
 shared_c_args = [
     '-DUSAGE_LICENSE=""',
+    '-D_AST_no_spawnveg=1',
 ]
 
 # Compiler arguments used when building `ksh93`, `shcomp`, and related AST
