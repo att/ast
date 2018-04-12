@@ -2383,8 +2383,10 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
         char *s2;
         size_t len;
         int fd, offset = stktell(shp->stk);
+#ifdef SPAWN_cwd
         Spawnvex_t *vc = (Spawnvex_t *)shp->vex;
         if (!vc && (vc = spawnvex_open(0))) shp->vex = (void *)vc;
+#endif
         if (!(s2 = strchr(string++, '}'))) return NULL;
         len = s2 - string;
         sfwrite(shp->stk, string, len + 1);
@@ -2410,7 +2412,9 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
         sfprintf(shp->stk, "/dev/fd/%d", fd);
 #endif
 #endif
+#ifdef SPAWN_cwd
         if (vc) spawnvex_add(vc, fd, fd, 0, 0);
+#endif
         return stkfreeze(shp->stk, 1);
     }
 #if _WINIX

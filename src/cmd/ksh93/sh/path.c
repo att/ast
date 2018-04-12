@@ -35,6 +35,8 @@
 #include "test.h"
 #include "variables.h"
 
+#include <assert.h>
+
 #if SHOPT_DYNAMIC
 #include <dlldefs.h>
 #endif
@@ -70,13 +72,16 @@ static bool onstdpath(Shell_t *shp, const char *name) {
 
 static pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                            int spawn) {
+
+#ifdef SPAWN_cwd
     if (shp->vex->cur) {
         spawnvex_apply(shp->vex, 0, 0);
         spawnvex_apply(shp->vexp, 0, SPAWN_RESET);
     }
-
+#endif
     return execve(path, argv, envp);
 }
+
 
 static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                        pid_t pgid) {
@@ -101,7 +106,8 @@ static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char 
             }
         }
 #else
-        pid = spawnveg(path, argv, envp, pgid);
+        assert(0); // We should never reach here
+        // pid = spawnveg(path, argv, envp, pgid);
 #endif  // SPAWN_cwd
         if (pid >= 0 || errno != EAGAIN) break;
     }

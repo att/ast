@@ -45,6 +45,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#if !_AST_no_spawnveg
 typedef struct Spawnvex_s {
     unsigned int cur;
     int io;
@@ -95,6 +96,16 @@ typedef int (*Spawnvex_f)(void *, uintmax_t, uintmax_t);
 #define SPAWN_truncate (-10)
 #define SPAWN_umask (-11)
 
+extern pid_t spawnveg(const char *, char *const[], char *const[], pid_t);
+extern pid_t spawnvex(const char *, char *const[], char *const[], Spawnvex_t *);
+extern Spawnvex_t *spawnvex_open(unsigned int);
+extern int spawnvex_add(Spawnvex_t *, intmax_t, intmax_t, Spawnvex_f, void *);
+extern int spawnvex_apply(Spawnvex_t *, int, int);
+extern intmax_t spawnvex_get(Spawnvex_t *, int, int);
+extern int spawnvex_close(Spawnvex_t *);
+
+#endif
+
 #if _BLD_ast && defined(__EXPORT__)
 #define extern __EXPORT__
 #endif
@@ -105,13 +116,6 @@ extern char *gettxt(const char *, const char *);
 extern void *memalign(size_t, size_t);
 extern void *pvalloc(size_t);
 extern char *resolvepath(const char *, char *, size_t);
-extern pid_t spawnveg(const char *, char *const[], char *const[], pid_t);
-extern pid_t spawnvex(const char *, char *const[], char *const[], Spawnvex_t *);
-extern Spawnvex_t *spawnvex_open(unsigned int);
-extern int spawnvex_add(Spawnvex_t *, intmax_t, intmax_t, Spawnvex_f, void *);
-extern int spawnvex_apply(Spawnvex_t *, int, int);
-extern intmax_t spawnvex_get(Spawnvex_t *, int, int);
-extern int spawnvex_close(Spawnvex_t *);
 extern size_t strlcat(char *, const char *, size_t);
 extern size_t strlcpy(char *, const char *, size_t);
 extern void swab(const void *, void *, ssize_t);

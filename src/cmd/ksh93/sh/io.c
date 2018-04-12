@@ -945,7 +945,11 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
     flag &= ~(IOHERESTRING | IOUSEVEX);
     if (flag == 2) clexec = 1;
     if (iop) traceon = sh_trace(shp, NULL, 0);
+
+#ifdef SPAWN_cwd
     if (vex) indx = vp->cur;
+#endif
+
     for (; iop; iop = iop->ionxt) {
         iof = iop->iofile;
         fn = (iof & IOUFD);
@@ -1105,8 +1109,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     shp->sftable[fd] = sfnew(NULL, cp, r, -1, SF_READ | SF_STRING);
                     shp->fdstatus[fd] = shp->fdstatus[dupfd];
                 } else if (vex && toclose >= 0) {
+#ifdef SPAWN_cwd
                     indx = spawnvex_add(vp, dupfd, -1, 0, 0);
                     spawnvex_add(vc, dupfd, -1, 0, 0);
+#endif
                     fd = dupfd;
                 } else if ((fd = sh_fcntl(dupfd, F_DUPFD_CLOEXEC, 3)) < 0) {
                     goto fail;
@@ -1280,7 +1286,9 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
             if (fd < 0) {
                 if (vex) {
                     if (flag < 2) {
+#ifdef SPAWN_cwd
                         sh_vexsave(shp, fn, (iof & IODOC) ? -1 : -2, 0, 0);
+#endif
                     } else if (!(iof & IODOC)) {
                         sh_close(fn);
                     } else {
@@ -1338,7 +1346,9 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     }
                     if (fx != fd) shp->fdstatus[fx] = status;
 #endif
+#ifdef SPAWN_cwd
                     if (fn <= 2) iovex_stdstream(shp, fn);
+#endif
                 } else if (vex) {
 #ifdef SPAWN_cwd
                     Spawnvex_f fun = 0;
@@ -1348,17 +1358,27 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         fd = sh_fcntl(fn, F_DUPFD_CLOEXEC, fn);
                         close(fn);
                     }
+
+#ifdef SPAWN_cwd
                     if (trunc)
                         fun = iovex_trunc;
-                    else if (tname) {
+                    else
+#endif
+                        if (tname) {
                         arg = malloc(sizeof(void *) + strlen(fname) + 1);
                         *(Shell_t **)arg = shp;
                         strcpy((char *)arg + sizeof(void *), fname);
+#ifdef SPAWN_cwd
                         fun = iovex_rename;
+#endif
                     } else if (shp->sftable[fn]) {
+#ifdef SPAWN_cwd
                         fun = iovex_stream;
+#endif
                     }
+#ifdef SPAWN_cwd
                     sh_vexsave(shp, fn, fd, fun, arg);
+#endif
                 } else {
                     fd = sh_iorenumber(shp, sh_iomovefd(shp, fd), fn);
                     if (fn > 2 && fn < 10) shp->inuse_bits |= (1 << fn);
@@ -1570,6 +1590,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
     }
 }
 
+#ifdef SPAWN_cwd
 void sh_vexsave(Shell_t *shp, int fn, int fd, Spawnvex_f vexfun, void *arg) {
     Spawnvex_t *vp = shp->vexp;
     Spawnvex_t *vc = shp->vex;
@@ -1606,6 +1627,7 @@ void sh_vexsave(Shell_t *shp, int fn, int fd, Spawnvex_f vexfun, void *arg) {
         iovex_stdstream(shp, fn);
     }
 }
+#endif
 
 // Return the lowest numbered fd that is equal to or greater than the requested
 // `min_fd` and which is not currently in use.
