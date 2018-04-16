@@ -25,7 +25,7 @@
 #include <shcmd.h>
 
 extern int	b_basename (int, char**, Shbltin_t*);
-//extern int	b_cat (int, char**, Shbltin_t*);
+extern int	b_cat (int, char**, Shbltin_t*);
 //extern int	b_chgrp (int, char**, Shbltin_t*);
 extern int	b_chmod (int, char**, Shbltin_t*);
 //extern int	b_chown (int, char**, Shbltin_t*);
