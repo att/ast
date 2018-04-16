@@ -41,18 +41,13 @@
 
 #ifndef SHOPT_CMDLIB_DIR
 #define SHOPT_CMDLIB_DIR SH_CMDLIB_DIR
-#endif  // SHOPT_CMDLIB_DIR
+#else
 #ifndef SHOPT_CMDLIB_HDR
 #define SHOPT_CMDLIB_HDR <cmdlist.h>
-#endif  // SHOPT_CMDLIB_HDR
+#endif // SHOPT_CMDLIB_HDR
+#endif // SHOPT_CMDLIB_DIR
 
-#if _AST_VERSION < 20121001L
 #define CMDLIST(f) SHOPT_CMDLIB_DIR "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
-#else  // _AST_VERSION < 20121001L
-#define CMDLIST(f, d)                                                                        \
-    d "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE | BLT_DISABLE, b_##f, SH_CMDLIB_DIR "/" #f, \
-        NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
-#endif  // _AST_VERSION < 20121001L
 
 #undef basename
 #undef dirname
@@ -138,18 +133,18 @@ const struct shtable3 shtab_builtins[] = {
 #include SHOPT_CMDLIB_HDR
 #else   // SHOPT_CMDLIB_HDR
     {CMDLIST(basename)},
-    {CMDLIST(chmod)},
-    {CMDLIST(dirname)},
-    {CMDLIST(getconf)},
+//    {CMDLIST(chmod)},
+//    {CMDLIST(dirname)},
+//    {CMDLIST(getconf)},
     {CMDLIST(head)},
-    {CMDLIST(mkdir)},
-    {CMDLIST(logname)},
-    {CMDLIST(cat)},
-    {CMDLIST(cmp)},
-    {CMDLIST(cut)},
-    {CMDLIST(uname)},
-    {CMDLIST(wc)},
-    {CMDLIST(sync)},
+//    {CMDLIST(mkdir)},
+//    {CMDLIST(logname)},
+//    {CMDLIST(cat)},
+//    {CMDLIST(cmp)},
+//    {CMDLIST(cut)},
+//    {CMDLIST(uname)},
+//    {CMDLIST(wc)},
+//    {CMDLIST(sync)},
 #endif  // SHOPT_CMDLIB_HDR
 #if SHOPT_REGRESS
     {"__regress__", NV_BLTIN | BLT_ENV, bltin(__regress__)},
