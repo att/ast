@@ -52,31 +52,6 @@ static const char optsync[] =
 
     "[+SEE ALSO?\bfsync\b(2), \bsync\b(2), \bsyncfs\b(2), \bsfsync\b(3), \bshutdown\b(8)]";
 
-#ifndef ENOSYS
-#define ENOSYS EINVAL
-#endif
-
-#if !_lib_fsync
-int fsync(int fd) {
-    if (fcntl(fd, F_GETFL) >= 0) errno = ENOSYS;
-    return -1;
-}
-#endif
-
-#if !_lib_sync
-int sync(void) {
-    errno = ENOSYS;
-    return -1;
-}
-#endif
-
-#if !_lib_syncfs
-int syncfs(int fd) {
-    if (fcntl(fd, F_GETFL) >= 0) errno = ENOSYS;
-    return -1;
-}
-#endif
-
 int b_sync(int argc, char **argv, Shbltin_t *context) {
     int fsync_fd = -1;
     int syncfs_fd = -1;

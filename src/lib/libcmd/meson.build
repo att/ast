@@ -1,7 +1,7 @@
 libcmd_files = ['context.c', 'cmdinit.c' ]
 
 libcmd_files += [ 'basename.c', 'chmod.c', 'dirname.c', 'stty.c', 'head.c', 'getconf.c', 'mkdir.c', 
-                  'logname.c', 'cat.c', 'cmp.c', 'uname.c' ]
+                  'logname.c', 'cat.c', 'cmp.c', 'uname.c', 'sync.c' ]
 
 libcmd_c_args = shared_c_args + [
     '-DUSAGE_LICENSE=""',
