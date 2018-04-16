@@ -1,8 +1,12 @@
-libcmd_files = ['context.c', 'cmdinit.c', 'stty.c']
+libcmd_files = ['context.c', 'cmdinit.c' ]
+
+libcmd_files += [ 'basename.c', 'stty.c', 'head.c' ]
+
 libcmd_c_args = shared_c_args + [
     '-DUSAGE_LICENSE=""',
     '-DERROR_CATALOG=0',
 ]
+
 incdir = include_directories('../libast/include', '../libast/features/')
 
 libcmd = library('cmd', libcmd_files, c_args: libcmd_c_args,
