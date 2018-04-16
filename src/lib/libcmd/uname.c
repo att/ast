@@ -79,15 +79,9 @@ __STDPP__directive pragma pp : hide getdomainname gethostid gethostname sethostn
 #include <ctype.h>
 #include <proc.h>
 
-#include "FEATURE/utsname"
-
 #define MAXHOSTNAME 64
 
-#if _lib_uname && _sys_utsname
-
 #include <sys/utsname.h>
-
-#endif
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
                                    __STDPP__directive pragma pp
@@ -99,82 +93,12 @@ __STDPP__directive pragma pp : hide getdomainname gethostid gethostname sethostn
 #undef sethostname
 #endif
 
-#if _lib_getdomainname
-      extern int
-      getdomainname(char *, size_t);
-#endif
-#if _lib_gethostid
+extern int getdomainname(char *, size_t);
 extern long gethostid(void);
-#endif
-#if _lib_gethostname
 extern int gethostname(char *, size_t);
 extern int sethostname(const char *, size_t);
-#endif
-
-#ifndef HOSTTYPE
-#define HOSTTYPE "unknown"
-#endif
 
 static const char hosttype[] = HOSTTYPE;
-
-#if !_lib_uname || !_sys_utsname
-
-#if defined(__STDPP__)
-#define SYSNAME #(getprd machine)
-#define RELEASE #(getprd release)
-#define VERSION #(getprd version)
-#define MACHINE #(getprd architecture)
-#else
-#define SYSNAME ""
-#define RELEASE ""
-#define VERSION ""
-#define MACHINE ""
-#endif
-
-struct utsname {
-    char *sysname;
-    char nodename[MAXHOSTNAME];
-    char *release;
-    char *version;
-    char *machine;
-};
-
-int uname(struct utsname *ut) {
-#ifdef HOSTTYPE
-    char *sys = 0;
-    char *arch = 0;
-
-    if (*hosttype) {
-        static char buf[sizeof(hosttype)];
-
-        strcpy(buf, hosttype);
-        sys = buf;
-        if (arch = strchr(sys, '.')) {
-            *arch++ = 0;
-            if (!*arch) arch = 0;
-        }
-        if (!*sys) sys = 0;
-    }
-#endif
-#if _lib_gethostname
-    if (gethostname(ut->nodename, sizeof(ut->nodename) - 1)) return -1;
-#else
-    strncpy(ut->nodename, "local", sizeof(ut->nodename) - 1);
-#endif
-#ifdef HOSTTYPE
-    if (!(ut->sysname = sys))
-#endif
-        if (!*(ut->sysname = SYSNAME)) ut->sysname = ut->nodename;
-#ifdef HOSTTYPE
-    if (!(ut->machine = arch))
-#endif
-        ut->machine = MACHINE;
-    ut->release = RELEASE;
-    ut->version = VERSION;
-    return 0;
-}
-
-#endif
 
 #define OPT_system (1 << 0)
 #define OPT_nodename (1 << 1)
@@ -210,10 +134,6 @@ int uname(struct utsname *ut) {
 #else
 #define MACHINE ""
 #endif
-#endif
-
-#ifndef HOSTTYPE
-#define HOSTTYPE "unknown"
 #endif
 
 #define extra(m)                                                                    \
@@ -327,15 +247,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     if (error_info.errors || *argv && (flags || sethost) || sethost && flags)
         error(ERROR_usage(2), "%s", optusage(NULL));
     if (sethost) {
-#if _lib_gethostname
         if (sethostname(sethost, strlen(sethost) + 1))
-#else
-#ifdef ENOSYS
-        errno = ENOSYS;
-#else
-        errno = EPERM;
-#endif
-#endif
             error(ERROR_system(1), "%s: cannot set host name", sethost);
     } else if (list)
         astconflist(
@@ -364,9 +276,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         if (uname(&ut) < 0) error(ERROR_usage(2), "information unavailable");
         output(OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {
-#if !_mem_nodeext_utsname && _lib_gethostname
             if (sizeof(ut.nodename) > 9 || gethostname(s, sizeof(buf)))
-#endif
                 s = ut.nodename;
             output(OPT_nodename, s, "nodename");
         }
@@ -406,11 +316,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
 #else
         if (flags & OPT_hostid) {
             if (!*(s = astconf("HW_SERIAL", NULL, NULL)))
-#if _lib_gethostid
                 sfsprintf(s = buf, sizeof(buf), "%08x", gethostid());
-#else
-                /*NOP*/;
-#endif
             output(OPT_hostid, s, "hostid");
         }
 #endif
@@ -420,11 +326,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         }
         if (flags & OPT_domain) {
             if (!*(s = astconf("SRPC_DOMAIN", NULL, NULL)))
-#if _lib_getdomainname
                 getdomainname(s, sizeof(buf));
-#else
-                /*NOP*/;
-#endif
+
             output(OPT_domain, s, "domain");
         }
 #if _mem_m_type_utsname

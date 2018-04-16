@@ -77,7 +77,7 @@ extern  int	b_mkdir (int, char**, Shbltin_t*);
 //extern  int	b_tee (int, char**, Shbltin_t*);
 //extern  int	b_tr (int, char**, Shbltin_t*);
 //extern  int	b_tty (int, char**, Shbltin_t*);
-//extern  int	b_uname (int, char**, Shbltin_t*);
+extern  int	b_uname (int, char**, Shbltin_t*);
 //extern  int	b_uniq (int, char**, Shbltin_t*);
 //extern  int	b_vmstate (int, char**, Shbltin_t*);
 //extern  int	b_wc (int, char**, Shbltin_t*);
