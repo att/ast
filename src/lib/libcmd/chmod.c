@@ -132,7 +132,7 @@ __STDPP__directive pragma pp : hide lchmod
 #endif
 
 #include <cmd.h>
-#include <fts_fix.h>
+#include <fts.h>
 #include <ls.h>
 
 #ifndef ENOSYS

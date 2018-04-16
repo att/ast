@@ -133,7 +133,7 @@ const struct shtable3 shtab_builtins[] = {
 #include SHOPT_CMDLIB_HDR
 #else   // SHOPT_CMDLIB_HDR
     {CMDLIST(basename)},
-//    {CMDLIST(chmod)},
+    {CMDLIST(chmod)},
 //    {CMDLIST(dirname)},
 //    {CMDLIST(getconf)},
     {CMDLIST(head)},
