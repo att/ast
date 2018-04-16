@@ -790,5 +790,12 @@ def=bar
 OPTIND=2
 [[ ${$OPTIND:1:1} == e ]] || err_exit '${$OPTIND:1:1} not correct with OPTIND=2 and $2=def'
 
+# Check if ${.sh.file} is set to correct value after sourcing a file
+# https://github.com/att/ast/issues/472
+cat > $tmp/foo.sh <<EOF
+echo "foo"
+EOF
+. $tmp/foo.sh > /dev/null
+[[ ${.sh.file} == $0 ]] || err_exit ".sh.file is not set to correct value after sourcing a file"
 
 exit $((Errors<125?Errors:125))
