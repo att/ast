@@ -42,7 +42,7 @@ extern  int	b_dirname (int, char**, Shbltin_t*);
 //extern  int	b_fgrep (int, char**, Shbltin_t*);
 //extern  int	b_fmt (int, char**, Shbltin_t*);
 //extern  int	b_fold (int, char**, Shbltin_t*);
-//extern  int	b_getconf (int, char**, Shbltin_t*);
+extern  int	b_getconf (int, char**, Shbltin_t*);
 //extern  int	b_grep (int, char**, Shbltin_t*);
 extern int	b_head (int, char**, Shbltin_t*);
 //extern  int	b_iconv (int, char**, Shbltin_t*);
