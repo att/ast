@@ -1338,4 +1338,10 @@ foo()
 
 $SHELL -c 'function ftest { ftest2; }; function ftest2 { unset -f ftest; }; ftest' 2> /dev/null || err_exit 'unset of function in the calling stack fails'
 
+# Check if environment variables passed while invoking a function are exported
+# https://github.com/att/ast/issues/32
+function f2 { env | grep -q "^foo" || err_exit "Environment variable is not propogated from caller function"; }
+function f1 { f2; env | grep -q "^foo" || err_exit "Environment variable is not passed to a function"; }
+foo=bar f1
+
 exit $((Errors<125?Errors:125))
