@@ -52,7 +52,7 @@ extern int	b_head (int, char**, Shbltin_t*);
 //extern  int	b_logname (int, char**, Shbltin_t*);
 //extern  int	b_ls (int, char**, Shbltin_t*);
 //extern  int	b_md5sum (int, char**, Shbltin_t*);
-//extern  int	b_mkdir (int, char**, Shbltin_t*);
+extern  int	b_mkdir (int, char**, Shbltin_t*);
 //extern  int	b_mkfifo (int, char**, Shbltin_t*);
 //extern  int	b_mktemp (int, char**, Shbltin_t*);
 //extern  int	b_mv (int, char**, Shbltin_t*);
