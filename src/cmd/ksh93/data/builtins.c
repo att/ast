@@ -142,7 +142,7 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(cat)},
     {CMDLIST(cmp)},
 //    {CMDLIST(cut)},
-//    {CMDLIST(uname)},
+    {CMDLIST(uname)},
 //    {CMDLIST(wc)},
 //    {CMDLIST(sync)},
 #endif  // SHOPT_CMDLIB_HDR
