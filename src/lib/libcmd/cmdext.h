@@ -49,7 +49,7 @@ extern int	b_head (int, char**, Shbltin_t*);
 //extern  int	b_id (int, char**, Shbltin_t*);
 //extern  int	b_join (int, char**, Shbltin_t*);
 //extern  int	b_ln (int, char**, Shbltin_t*);
-//extern  int	b_logname (int, char**, Shbltin_t*);
+extern  int	b_logname (int, char**, Shbltin_t*);
 //extern  int	b_ls (int, char**, Shbltin_t*);
 //extern  int	b_md5sum (int, char**, Shbltin_t*);
 extern  int	b_mkdir (int, char**, Shbltin_t*);
