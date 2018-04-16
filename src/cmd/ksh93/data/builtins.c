@@ -144,7 +144,7 @@ const struct shtable3 shtab_builtins[] = {
 //    {CMDLIST(cut)},
     {CMDLIST(uname)},
 //    {CMDLIST(wc)},
-//    {CMDLIST(sync)},
+    {CMDLIST(sync)},
 #endif  // SHOPT_CMDLIB_HDR
 #if SHOPT_REGRESS
     {"__regress__", NV_BLTIN | BLT_ENV, bltin(__regress__)},

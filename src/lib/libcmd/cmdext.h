@@ -72,7 +72,7 @@ extern  int	b_mkdir (int, char**, Shbltin_t*);
 //extern  int	b_sha512sum (int, char**, Shbltin_t*);
 //extern  int	b_stty (int, char**, Shbltin_t*);
 //extern  int	b_sum (int, char**, Shbltin_t*);
-//extern  int	b_sync (int, char**, Shbltin_t*);
+extern  int	b_sync (int, char**, Shbltin_t*);
 //extern  int	b_tail (int, char**, Shbltin_t*);
 //extern  int	b_tee (int, char**, Shbltin_t*);
 //extern  int	b_tr (int, char**, Shbltin_t*);
