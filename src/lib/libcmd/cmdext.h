@@ -30,7 +30,7 @@ extern int	b_cat (int, char**, Shbltin_t*);
 extern int	b_chmod (int, char**, Shbltin_t*);
 //extern int	b_chown (int, char**, Shbltin_t*);
 //extern  int	b_cksum (int, char**, Shbltin_t*);
-//extern int	b_cmp (int, char**, Shbltin_t*);
+extern int	b_cmp (int, char**, Shbltin_t*);
 //extern int	b_comm (int, char**, Shbltin_t*);
 //extern int	b_cp (int, char**, Shbltin_t*);
 //extern  int	b_cut (int, char**, Shbltin_t*);

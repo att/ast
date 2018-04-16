@@ -140,7 +140,7 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(mkdir)},
     {CMDLIST(logname)},
     {CMDLIST(cat)},
-//    {CMDLIST(cmp)},
+    {CMDLIST(cmp)},
 //    {CMDLIST(cut)},
 //    {CMDLIST(uname)},
 //    {CMDLIST(wc)},
