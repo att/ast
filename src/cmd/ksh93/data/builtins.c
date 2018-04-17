@@ -47,6 +47,11 @@
 #endif // SHOPT_CMDLIB_HDR
 #endif // SHOPT_CMDLIB_DIR
 
+// In the last beta release that came out from AT&T, all the builtins for standard commands
+// were enabled by default. It was a backward incompatible change from the last stable
+// release. Since we want to be as close as possible to the last stable release, I am keeping
+// these builtins disabled by default. Alternative CMDLIST macro which was used in the last
+// beta release has been removed.
 #define CMDLIST(f) SHOPT_CMDLIB_DIR "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
 
 #undef basename
