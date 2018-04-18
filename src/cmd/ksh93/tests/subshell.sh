@@ -845,3 +845,10 @@ if [[ $actual != $expected ]]
 then
     err_exit -u2 "failed to capture subshell output when closing fd: case 3"
 fi
+
+builtin -d echo
+# Check if redirections work if backticks are nested inside $()
+foo=$(print `echo bar`)
+[[ $foo == "bar" ]] || err_exit 'Redirections do not work if backticks are nested inside $()'
+
+rm $tmpfile
