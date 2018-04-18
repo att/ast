@@ -92,6 +92,8 @@ feature_data.set10('_lib_sysinfo',
     cc.has_function('sysinfo', prefix: '#include <sys/systeminfo.h>', args: feature_test_args))
 feature_data.set10('_lib_pipe2',
     cc.has_function('pipe2', prefix: '#include <unistd.h>', args: feature_test_args))
+feature_data.set10('_lib_syncfs',
+    cc.has_function('syncfs', prefix: '#include <unistd.h>', args: feature_test_args))
 
 socketpair_shutdown_feature_file = files('socketpair_shutdown.c')
 socketpair_shutdown_feature_result = cc.run(
