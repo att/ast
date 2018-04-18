@@ -445,11 +445,12 @@ int sh_close(int fd) {
         return -1;
     }
 
-    if (!(sp = shp->sftable[fd]) || sfclose(sp) < 0) {
+    if (!(sp = shp->sftable[fd]) || (sp->_file != fd) || (sfclose(sp) < 0)) {
         int err = errno;
         if (fdnotify) (*fdnotify)(fd, SH_FDCLOSE);
         while ((r = close(fd)) < 0 && errno == EINTR) errno = err;
     }
+
     if (fd > 2) shp->sftable[fd] = 0;
     r = (shp->fdstatus[fd] >> 8);
     if (r) close(r);
