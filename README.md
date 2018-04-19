@@ -55,6 +55,10 @@ to anyone who wants to modify the source.
 
 ## Working with the full AST source
 
+Warning: Running test cases through the legacy test script may wipe out your home directory
+([See #477](https://github.com/att/ast/issues/477)). This has been fixed in current
+development version.
+
 Full AST source code is available under the `2012-08-01-master` and
 `2016-01-10-beta` branches (see below for more details). Bug fixes to
 these branches are welcome but they are otherwise under low maintenance.
