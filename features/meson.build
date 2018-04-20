@@ -86,8 +86,6 @@ endif
 
 feature_data.set10('_lib_utimensat',
     cc.has_function('utimensat', prefix: '#include <sys/stat.h>', args: feature_test_args))
-feature_data.set10('_lib_utimets',
-    cc.has_function('utimets', prefix: '#include <sys/stat.h>', args: feature_test_args))
 feature_data.set10('_lib_sysinfo',
     cc.has_function('sysinfo', prefix: '#include <sys/systeminfo.h>', args: feature_test_args))
 feature_data.set10('_lib_pipe2',
