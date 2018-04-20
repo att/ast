@@ -140,14 +140,18 @@ then
     err_exit "leading : in path not working"
 fi
 
-(
-    rm -rf noexec
-    print 'print cannot execute' > noexec
-    noexec > /dev/null 2>&1
-)
-actual=$?
-expect=127
-[[ $actual == $expect ]] || err_exit "exit status of non-executable is wrong" "$expect" "$actual"
+info "TODO: Enable this test when bug #485 is fixed."
+# Disabled because once in a while (~20% of the time) the exit status is 126 (ENOENT) rather than
+# the expected 127 (ENOEXEC).
+#
+# (
+#     rm -rf noexec
+#     print 'print cannot execute' > noexec
+#     noexec > /dev/null 2>&1
+# )
+# actual=$?
+# expect=127
+# [[ $actual == $expect ]] || err_exit "exit status of non-executable is wrong" "$expect" "$actual"
 
 builtin -d rm 2> /dev/null
 chmod=$(whence chmod)
@@ -255,8 +259,7 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
-# TODO: If and when builtins are supported uncomment the next two lines and
-# remove the third.
+info "TODO: If and when builtins are supported uncomment the next two lines and remove the third."
 #builtin /bin/getconf
 #PATH=/bin
 PATH=$path
