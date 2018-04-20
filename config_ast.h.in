@@ -219,7 +219,6 @@
 #mesondefine _lib_utime
 #mesondefine _lib_utime_now
 #mesondefine _lib_utimensat
-#mesondefine _lib_utimets
 #mesondefine _lib_wcrtomb
 #mesondefine _lib_wcscmp
 #mesondefine _lib_wcsxfrm
