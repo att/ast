@@ -141,16 +141,9 @@ then
 fi
 
 (
-    #TODO: Enable if chmod is a builtin
-    #builtin chmod
+    rm -rf noexec
     print 'print cannot execute' > noexec
-    chmod 644 noexec
-    if [[ ! -x noexec ]]
-    then
-        noexec > /dev/null 2>&1
-    else
-        exit 126
-    fi
+    noexec > /dev/null 2>&1
 )
 actual=$?
 expect=127
