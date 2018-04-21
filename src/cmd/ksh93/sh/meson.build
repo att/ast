@@ -1,4 +1,3 @@
-# TODO: Need to add build target for 'sh/suid_exec.c'
 ksh93_files += [
     'sh/args.c', 'sh/arith.c', 'sh/array.c',
     'sh/bash.c', 'sh/defs.c', 'sh/deparse.c', 'sh/env.c',

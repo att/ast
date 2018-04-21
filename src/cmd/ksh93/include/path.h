@@ -115,7 +115,6 @@ extern const char e_suidprofile[];
 extern const char e_sysprofile[];
 extern const char e_traceprompt[];
 extern const char e_crondir[];
-extern const char e_suidexec[];
 extern const char is_alias[];
 extern const char is_builtin[];
 extern const char is_spcbuiltin[];
