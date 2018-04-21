@@ -3079,39 +3079,6 @@ There is code in
 \f5ksh\fP
 to guard against this simple form of intrusion.
 .P
-A more reliable way to handle
-.I setuid
-and
-.I setgid
-procedures is provided with
-\f5ksh\fP.
-The technique does not require any changes to the operating system
-and provides better security.
-Another advantage to this method is that it also allows scripts which
-have execute permission but no read permission to run.  Taking away read
-permission makes scripts more secure.
-.P
-The method relies on a setuid
-.B root
-program to authenticate the
-request and exec the shell with the correct mode bits to carry out
-the task.  This shell is invoked with the requested file already open
-for reading.  A script which cannot be opened for reading or which
-has its setuid and/or setgid bits turned on causes this setuid
-.B root
-program to get \fBexec\fPed.
-For security reasons, this program is given the full
-pathname
-\f5/etc/suid_exec\fP.
-A description of the implementation of the
-\f5/etc/suid_exec\fP
-program can be found in
-a separate paper\*(Rf.
-.RS
-D. G Korn
-.I "Parlez-vous Kanji?"
-TM-59554-860602-03, 1986.
-.RF
 .H 1 "CODE CHANGES"
 \f5ksh\fP is written in ANSI-C as a reusable library.
 The code can be compiled with C++ and older K&R C as well.

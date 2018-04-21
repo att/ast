@@ -72,7 +72,6 @@ static bool onstdpath(Shell_t *shp, const char *name) {
 
 static pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                            int spawn) {
-
 #ifdef SPAWN_cwd
     if (shp->vex->cur) {
         spawnvex_apply(shp->vex, 0, 0);
@@ -81,7 +80,6 @@ static pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *c
 #endif
     return execve(path, argv, envp);
 }
-
 
 static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                        pid_t pgid) {
@@ -106,7 +104,7 @@ static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char 
             }
         }
 #else
-        assert(0); // We should never reach here
+        assert(0);  // we should never reach here
         // pid = spawnveg(path, argv, envp, pgid);
 #endif  // SPAWN_cwd
         if (pid >= 0 || errno != EAGAIN) break;
@@ -1180,11 +1178,25 @@ static void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) 
     }
     savet = *--argv;
     *argv = path;
+#if 1
+    if (err == EACCES) {
+        errno = EACCES;
+        return;
+    }
+#else
+    // This block is commented out because we no longer intend to support the suid_exec program.
+    // See issue #366. I'm leaving the code here to provide context for the surrounding code.
+    //
+    // TODO: Rewrite this function. The code above that creates a temp file if a suid/sgid file is
+    // found appears to be pointless since the temp file is never used. Furthermore, if the file is
+    // suid/sgid but can be opened (and the suidexec program isn't found) then it is still executed
+    // but without the proper credentials!
     if (err == EACCES && sh_access(e_suidexec, X_OK) < 0) {
         errno = EACCES;
         return;
     }
     path_pfexecve(shp, e_suidexec, argv, envp, 0);
+#endif
 
 fail:
     // The following code is just for compatibility.

@@ -38,6 +38,7 @@ None at this time.
 
 ## Other significant changes
 
+- The suid_exec program has been removed (issue #366).
 - The code has been restyled according to new guidelines (issue #125).
 - Many features which used to be optionally included at build time are now
   unconditionally included (e.g., the code protected by `SHOPT_MULTIBYTE`,

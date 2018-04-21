@@ -196,7 +196,6 @@ const char e_bash_profile[] = "$HOME/.bash_profile";
 #endif  // SHOPT_BASH
 const char e_crondir[] = "/usr/spool/cron/atjobs";
 const char e_prohibited[] = "login setuid/setgid shells prohibited";
-const char e_suidexec[] = "/etc/suid_exec";
 const char hist_fname[] = "/.sh_history";
 const char e_dot[] = ".";
 const char e_envmarker[] = "A__z";
