@@ -1150,7 +1150,6 @@ static void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) 
     static char name[] = "/tmp/euidXXXXXXXXXX";
     int n;
     uid_t euserid;
-    char *savet = 0;
     struct stat statb;
     int err = 0;
 
@@ -1178,20 +1177,14 @@ static void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) 
             n = 10;
         }
     }
-    savet = *--argv;
     *argv = path;
-    if (err == EACCES && sh_access(e_suidexec, X_OK) < 0) {
-        errno = EACCES;
-        return;
-    }
-    path_pfexecve(shp, e_suidexec, argv, envp, 0);
+    if (err == EACCES) return;
 
 fail:
     // The following code is just for compatibility.
     if ((n = open(path, O_RDONLY | O_CLOEXEC, 0)) < 0) {
         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
     }
-    if (savet) *argv++ = savet;
 
 openok:
     shp->infd = n;
