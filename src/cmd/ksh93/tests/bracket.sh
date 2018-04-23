@@ -21,320 +21,320 @@
 null=''
 if [[ ! -z $null ]]
 then
-    err_exit "-z: null string should be of zero length"
+    log_error "-z: null string should be of zero length"
 fi
 
 file=$tmp/original
 newer_file=$tmp/newer
 if [[ -z $file ]]
 then
-    err_exit "-z: $file string should not be of zero length"
+    log_error "-z: $file string should not be of zero length"
 fi
 
 if [[ -a $file ]]
 then
-    err_exit "-a: $file shouldn't exist"
+    log_error "-a: $file shouldn't exist"
 fi
 
 if [[ -e $file ]]
 then
-    err_exit "-e: $file shouldn't exist"
+    log_error "-e: $file shouldn't exist"
 fi
 
 > $file
 if [[ ! -a $file ]]
 then
-    err_exit "-a: $file should exist"
+    log_error "-a: $file should exist"
 fi
 
 if [[ ! -e $file ]]
 then
-    err_exit "-e: $file should exist"
+    log_error "-e: $file should exist"
 fi
 
 chmod 777 $file
 if [[ ! -r $file ]]
 then
-    err_exit "-r: $file should be readable"
+    log_error "-r: $file should be readable"
 fi
 
 if [[ ! -w $file ]]
 then
-    err_exit "-w: $file should be writable"
+    log_error "-w: $file should be writable"
 fi
 
 if [[ ! -w $file ]]
 then
-    err_exit "-x: $file should be executable"
+    log_error "-x: $file should be executable"
 fi
 
 if [[ ! -w $file || ! -r $file ]]
 then
-    err_exit "-rw: $file should be readable/writable"
+    log_error "-rw: $file should be readable/writable"
 fi
 
 if [[ -s $file ]]
 then
-    err_exit "-s: $file should be of zero size"
+    log_error "-s: $file should be of zero size"
 fi
 
 if [[ ! -f $file ]]
 then
-    err_exit "-f: $file should be an ordinary file"
+    log_error "-f: $file should be an ordinary file"
 fi
 
 if [[  -d $file ]]
 then
-    err_exit "-f: $file should not be a directory file"
+    log_error "-f: $file should not be a directory file"
 fi
 
 if [[  ! -d . ]]
 then
-    err_exit "-d: . should not be a directory file"
+    log_error "-d: . should not be a directory file"
 fi
 
 if [[  -f /dev/null ]]
 then
-    err_exit "-f: /dev/null  should not be an ordinary file"
+    log_error "-f: /dev/null  should not be an ordinary file"
 fi
 
 chmod 000 $file
 if [[ -r $file ]]
 then
-    err_exit "-r: $file should not be readable"
+    log_error "-r: $file should not be readable"
 fi
 
 if [[ ! -O $file ]]
 then
-    err_exit "-r: $file should be owned by me"
+    log_error "-r: $file should be owned by me"
 fi
 
 if [[ -w $file ]]
 then
-    err_exit "-w: $file should not be writable"
+    log_error "-w: $file should not be writable"
 fi
 
 if [[ -w $file ]]
 then
-    err_exit "-x: $file should not be executable"
+    log_error "-x: $file should not be executable"
 fi
 
 if [[ -w $file || -r $file ]]
 then
-    err_exit "-rw: $file should not be readable/writable"
+    log_error "-rw: $file should not be readable/writable"
 fi
 
 if [[   -z x &&  -z x || ! -z x ]]
 then
     :
-else    err_exit " wrong precedence"
+else    log_error " wrong precedence"
 fi
 
 if [[   -z x &&  (-z x || ! -z x) ]]
 then
-    err_exit " () grouping not working"
+    log_error " () grouping not working"
 fi
 
 if [[ foo < bar ]]
 then
-    err_exit "foo comes before bar"
+    log_error "foo comes before bar"
 fi
 
-[[ . -ef $(pwd) ]] || err_exit ". is not $PWD"
+[[ . -ef $(pwd) ]] || log_error ". is not $PWD"
 set -o allexport
-[[ -o allexport ]] || err_exit '-o: did not set allexport option'
+[[ -o allexport ]] || log_error '-o: did not set allexport option'
 if [[ -n  $null ]]
 then
-    err_exit "'$null' has non-zero length"
+    log_error "'$null' has non-zero length"
 fi
 
 if [[ ! -r /dev/fd/0 ]]
 then
-    err_exit "/dev/fd/0 not open for reading"
+    log_error "/dev/fd/0 not open for reading"
 fi
 
 if [[ ! -w /dev/fd/2 ]]
 then
-    err_exit "/dev/fd/2 not open for writing"
+    log_error "/dev/fd/2 not open for writing"
 fi
 
 sleep 1
 > $newer_file
 if [[ ! $file -ot $newer_file ]]
 then
-    err_exit "$file should be older than $newer_file"
+    log_error "$file should be older than $newer_file"
 fi
 
 if [[ $file -nt $newer_file ]]
 then
-    err_exit "$newer_file should be newer than $file"
+    log_error "$newer_file should be newer than $file"
 fi
 
 if [[ $file != $tmp/* ]]
 then
-    err_exit "$file should match $tmp/*"
+    log_error "$file should match $tmp/*"
 fi
 
 if [[ $file == $tmp'/*' ]]
 then
-    err_exit "$file should not equal $tmp'/*'"
+    log_error "$file should not equal $tmp'/*'"
 fi
 
-[[ ! ( ! -z $null && ! -z x) ]]    || err_exit "negation and grouping"
-[[ -z '' || -z '' || -z '' ]]    || err_exit "three ors not working"
-[[ -z '' &&  -z '' && -z '' ]]    || err_exit "three ors not working"
+[[ ! ( ! -z $null && ! -z x) ]]    || log_error "negation and grouping"
+[[ -z '' || -z '' || -z '' ]]    || log_error "three ors not working"
+[[ -z '' &&  -z '' && -z '' ]]    || log_error "three ors not working"
 (exit 8)
 if [[ $? -ne 8 || $? -ne 8 ]]
 then
-    err_exit 'value $? within [[...]]'
+    log_error 'value $? within [[...]]'
 fi
 
 x='(x'
 if [[ '(x' != '('* ]]
 then
-    err_exit " '(x' does not match '('* within [[...]]"
+    log_error " '(x' does not match '('* within [[...]]"
 fi
 
 if [[ '(x' != "("* ]]
 then
-    err_exit ' "(x" does not match "("* within [[...]]'
+    log_error ' "(x" does not match "("* within [[...]]'
 fi
 
 if [[ '(x' != \(* ]]
 then
-    err_exit ' "(x" does not match \(* within [[...]]'
+    log_error ' "(x" does not match \(* within [[...]]'
 fi
 
 if [[ 'x(' != *'(' ]]
 then
-    err_exit " 'x(' does not match '('* within [[...]]"
+    log_error " 'x(' does not match '('* within [[...]]"
 fi
 
 if [[ 'x&' != *'&' ]]
 then
-    err_exit " 'x&' does not match '&'* within [[...]]"
+    log_error " 'x&' does not match '&'* within [[...]]"
 fi
 
 if [[ 'xy' == *'*' ]]
 then
-    err_exit " 'xy' matches *'*' within [[...]]"
+    log_error " 'xy' matches *'*' within [[...]]"
 fi
 
 if [[ 3 > 4 ]]
 then
-    err_exit '3 < 4'
+    log_error '3 < 4'
 fi
 
 if [[ 4 < 3 ]]
 then
-    err_exit '3 > 4'
+    log_error '3 > 4'
 fi
 
 if [[ 3x > 4x ]]
 then
-    err_exit '3x < 4x'
+    log_error '3x < 4x'
 fi
 
 x='@(bin|dev|?)'
 cd /
 if [[ $(print $x) != "$x" ]]
 then
-    err_exit 'extended pattern matching on command arguments'
+    log_error 'extended pattern matching on command arguments'
 fi
 
 if [[ dev != $x ]]
 then
-    err_exit 'extended pattern matching not working on variables'
+    log_error 'extended pattern matching not working on variables'
 fi
 
 if [[ -u $SHELL ]]
 then
-    err_exit "setuid on $SHELL"
+    log_error "setuid on $SHELL"
 fi
 
 if [[ -g $SHELL ]]
 then
-    err_exit "setgid on $SHELL"
+    log_error "setgid on $SHELL"
 fi
 
-test -d .  -a '(' ! -f . ')' || err_exit 'test not working'
+test -d .  -a '(' ! -f . ')' || log_error 'test not working'
 if [[ '!' != ! ]]
 then
-    err_exit 'quoting unary operator not working'
+    log_error 'quoting unary operator not working'
 fi
 
-test \( -n x \) -o \( -n y \) 2> /dev/null || err_exit 'test ( -n x ) -o ( -n y) not working'
-test \( -n x \) -o -n y 2> /dev/null || err_exit 'test ( -n x ) -o -n y not working'
+test \( -n x \) -o \( -n y \) 2> /dev/null || log_error 'test ( -n x ) -o ( -n y) not working'
+test \( -n x \) -o -n y 2> /dev/null || log_error 'test ( -n x ) -o -n y not working'
 chmod 600 $file
 exec 4> $file
 print -u4 foobar
 if [[ ! -s $file ]]
 then
-    err_exit "-s: $file should be non-zero"
+    log_error "-s: $file should be non-zero"
 fi
 
 exec 4>&-
 if [[ 011 -ne 11 ]]
 then
-    err_exit "leading zeros in arithmetic compares not ignored"
+    log_error "leading zeros in arithmetic compares not ignored"
 fi
 
 {
     set -x
     [[ foo > bar ]]
-} 2> /dev/null || { set +x; err_exit "foo<bar with -x enabled" ;}
+} 2> /dev/null || { set +x; log_error "foo<bar with -x enabled" ;}
 set +x
 (
     eval "[[ (a) ]]"
-) 2> /dev/null || err_exit "[[ (a) ]] not working"
+) 2> /dev/null || log_error "[[ (a) ]] not working"
 > $file
 chmod 4755 "$file"
 if test -u $file && test ! -u $file
 then
-    err_exit "test ! -u suidfile not working"
+    log_error "test ! -u suidfile not working"
 fi
 
 for i in '(' ')' '[' ']'
-do    [[ $i == $i ]] || err_exit "[[ $i != $i ]]"
+do    [[ $i == $i ]] || log_error "[[ $i != $i ]]"
 done
 (
-    [[ aaaa == {4}(a) ]] || err_exit 'aaaa != {4}(a)'
-    [[ aaaa == {2,5}(a) ]] || err_exit 'aaaa != {2,4}(a)'
-    [[ abcdcdabcd == {3,6}(ab|cd) ]] || err_exit 'abcdcdabcd == {3,4}(ab|cd)'
-    [[ abcdcdabcde == {5}(ab|cd)e ]] || err_exit 'abcdcdabcd == {5}(ab|cd)e'
-) || err_exit 'errors with {..}(...) patterns'
-[[ D290.2003.02.16.temp == D290.+(2003.02.16).temp* ]] || err_exit 'pattern match bug with +(...)'
+    [[ aaaa == {4}(a) ]] || log_error 'aaaa != {4}(a)'
+    [[ aaaa == {2,5}(a) ]] || log_error 'aaaa != {2,4}(a)'
+    [[ abcdcdabcd == {3,6}(ab|cd) ]] || log_error 'abcdcdabcd == {3,4}(ab|cd)'
+    [[ abcdcdabcde == {5}(ab|cd)e ]] || log_error 'abcdcdabcd == {5}(ab|cd)e'
+) || log_error 'errors with {..}(...) patterns'
+[[ D290.2003.02.16.temp == D290.+(2003.02.16).temp* ]] || log_error 'pattern match bug with +(...)'
 rm -rf $file
 {
-[[ -N $file ]] && err_exit 'test -N $tmp/*: st_mtime>st_atime after creat'
+[[ -N $file ]] && log_error 'test -N $tmp/*: st_mtime>st_atime after creat'
 sleep 2
 print 'hello world'
-[[ -N $file ]] || err_exit 'test -N $tmp/*: st_mtime<=st_atime after write'
+[[ -N $file ]] || log_error 'test -N $tmp/*: st_mtime<=st_atime after write'
 sleep 2
 read
-[[ -N $file ]] && err_exit 'test -N $tmp/*: st_mtime>st_atime after read'
+[[ -N $file ]] && log_error 'test -N $tmp/*: st_mtime>st_atime after read'
 } > $file < $file
 if rm -rf "$file" && ln -s / "$file"
 then
-    [[ -L "$file" ]] || err_exit '-L not working'
-    [[ -L "$file"/ ]] && err_exit '-L with file/ not working'
+    [[ -L "$file" ]] || log_error '-L not working'
+    [[ -L "$file"/ ]] && log_error '-L with file/ not working'
 fi
 
-$SHELL -c 't=1234567890; [[ $t == @({10}(\d)) ]]' 2> /dev/null || err_exit ' @({10}(\d)) pattern not working'
-$SHELL -c '[[ att_ == ~(E)(att|cus)_.* ]]' 2> /dev/null || err_exit ' ~(E)(att|cus)_* pattern not working'
-$SHELL -c '[[ att_ =~ (att|cus)_.* ]]' 2> /dev/null || err_exit ' =~ ere not working'
-$SHELL -c '[[ abc =~ a(b)c ]]' 2> /dev/null || err_exit '[[ abc =~ a(b)c ]] fails'
-$SHELL -xc '[[ abc =~  \babc\b ]]' 2> /dev/null || err_exit '[[ abc =~ \babc\b ]] fails'
-[[ abc == ~(E)\babc\b ]] || err_exit '\b not preserved for ere when not in ()'
-[[ abc == ~(iEi)\babc\b ]] || err_exit '\b not preserved for ~(iEi) when not in ()'
+$SHELL -c 't=1234567890; [[ $t == @({10}(\d)) ]]' 2> /dev/null || log_error ' @({10}(\d)) pattern not working'
+$SHELL -c '[[ att_ == ~(E)(att|cus)_.* ]]' 2> /dev/null || log_error ' ~(E)(att|cus)_* pattern not working'
+$SHELL -c '[[ att_ =~ (att|cus)_.* ]]' 2> /dev/null || log_error ' =~ ere not working'
+$SHELL -c '[[ abc =~ a(b)c ]]' 2> /dev/null || log_error '[[ abc =~ a(b)c ]] fails'
+$SHELL -xc '[[ abc =~  \babc\b ]]' 2> /dev/null || log_error '[[ abc =~ \babc\b ]] fails'
+[[ abc == ~(E)\babc\b ]] || log_error '\b not preserved for ere when not in ()'
+[[ abc == ~(iEi)\babc\b ]] || log_error '\b not preserved for ~(iEi) when not in ()'
 
 e=$($SHELL -c '[ -z "" -a -z "" ]' 2>&1)
-[[ $e ]] && err_exit "[ ... ] compatibility check failed -- $e"
+[[ $e ]] && log_error "[ ... ] compatibility check failed -- $e"
 i=hell
-[[ hell0 == $i[0] ]]  ||  err_exit 'pattern $i[0] interpreded as array ref'
-test '(' = ')' && err_exit '"test ( = )" should not be true'
-[[ $($SHELL -c 'case  F in ~(Eilr)[a-z0-9#]) print ok;;esac' 2> /dev/null) == ok ]] || err_exit '~(Eilr) not working in case command'
-[[ $($SHELL -c "case  Q in ~(Fi)q |  \$'\E') print ok;;esac" 2> /dev/null) == ok ]] || err_exit '~(Fi)q | \E  not working in case command'
+[[ hell0 == $i[0] ]]  ||  log_error 'pattern $i[0] interpreded as array ref'
+test '(' = ')' && log_error '"test ( = )" should not be true'
+[[ $($SHELL -c 'case  F in ~(Eilr)[a-z0-9#]) print ok;;esac' 2> /dev/null) == ok ]] || log_error '~(Eilr) not working in case command'
+[[ $($SHELL -c "case  Q in ~(Fi)q |  \$'\E') print ok;;esac" 2> /dev/null) == ok ]] || log_error '~(Fi)q | \E  not working in case command'
 
 for l in C en_US.ISO8859-15
 do    [[ $($SHELL -c "LC_COLLATE=$l" 2>&1) ]] && continue
@@ -372,92 +372,92 @@ do    [[ $($SHELL -c "LC_COLLATE=$l" 2>&1) ]] && continue
             shift
             [[ $c == $p ]]
             g=$?
-            [[ $g == $e ]] || err_exit "[[ '$c' == $p ]] for LC_COLLATE=$l failed -- expected $e, got $g"
+            [[ $g == $e ]] || log_error "[[ '$c' == $p ]] for LC_COLLATE=$l failed -- expected $e, got $g"
         done
     done
 done
 integer n
 if ( : < /dev/tty ) 2>/dev/null && exec {n}< /dev/tty
 then
-    [[ -t  $n ]] || err_exit "[[ -t  n ]] fails when n > 9"
+    [[ -t  $n ]] || log_error "[[ -t  n ]] fails when n > 9"
 fi
 
 foo=([1]=a [2]=b [3]=c)
-[[ -v foo[1] ]] ||  err_exit 'foo[1] should be set'
-[[ ${foo[1]+x} ]] ||  err_exit '${foo[1]+x} should be x'
-[[ ${foo[@]+x} ]] ||  err_exit '${foo[@]+x} should be x'
+[[ -v foo[1] ]] ||  log_error 'foo[1] should be set'
+[[ ${foo[1]+x} ]] ||  log_error '${foo[1]+x} should be x'
+[[ ${foo[@]+x} ]] ||  log_error '${foo[@]+x} should be x'
 unset foo[1]
-[[ -v foo[1] ]] && err_exit 'foo[1] should not be set'
-[[ ${foo[1]+x} ]] &&  err_exit '${foo[1]+x} should be empty'
+[[ -v foo[1] ]] && log_error 'foo[1] should not be set'
+[[ ${foo[1]+x} ]] &&  log_error '${foo[1]+x} should be empty'
 bar=(a b c)
-[[ -v bar[1] ]]  || err_exit 'bar[1] should be set'
-[[ ${bar[1]+x} ]] ||  err_exit '${foo[1]+x} should be x'
+[[ -v bar[1] ]]  || log_error 'bar[1] should be set'
+[[ ${bar[1]+x} ]] ||  log_error '${foo[1]+x} should be x'
 unset bar[1]
-[[ ${bar[1]+x} ]] &&  err_exit '${foo[1]+x} should be empty'
-[[ -v bar ]] || err_exit 'bar should be set'
-[[ -v bar[1] ]] && err_exit 'bar[1] should not be set'
+[[ ${bar[1]+x} ]] &&  log_error '${foo[1]+x} should be empty'
+[[ -v bar ]] || log_error 'bar should be set'
+[[ -v bar[1] ]] && log_error 'bar[1] should not be set'
 integer z=( 1 2 4)
-[[ -v z[1] ]] || err_exit 'z[1] should be set'
+[[ -v z[1] ]] || log_error 'z[1] should be set'
 unset z[1]
-[[ -v z[1] ]] && err_exit 'z[1] should not be set'
+[[ -v z[1] ]] && log_error 'z[1] should not be set'
 typeset -si y=( 1 2 4)
-[[ -v y[6] ]] && err_exit 'y[6] should not be set'
-[[ -v y[1] ]] ||  err_exit  'y[1] should be set'
+[[ -v y[6] ]] && log_error 'y[6] should not be set'
+[[ -v y[1] ]] ||  log_error  'y[1] should be set'
 unset y[1]
-[[ -v y[1] ]] && err_exit 'y[1] should not be set'
+[[ -v y[1] ]] && log_error 'y[1] should not be set'
 x=abc
-[[ -v x[0] ]] || err_exit  'x[0] should be set'
-[[ ${x[0]+x} ]] || err_exit print  '${x[0]+x} should be x'
-[[ -v x[3] ]] && err_exit 'x[3] should not be set'
-[[ ${x[3]+x} ]] && err_exit  '${x[0]+x} should be Empty'
+[[ -v x[0] ]] || log_error  'x[0] should be set'
+[[ ${x[0]+x} ]] || log_error print  '${x[0]+x} should be x'
+[[ -v x[3] ]] && log_error 'x[3] should not be set'
+[[ ${x[3]+x} ]] && log_error  '${x[0]+x} should be Empty'
 unset x
-[[ ${x[@]+x} ]] && err_exit  '${x[@]+x} should be Empty'
+[[ ${x[@]+x} ]] && log_error  '${x[@]+x} should be Empty'
 unset x y z foo bar
 
 { x=$($SHELL -c '[[ (( $# -eq 0 )) ]] && print ok') 2> /dev/null;}
-[[ $x == ok ]] || err_exit '((...)) inside [[...]] not treated as nested ()'
+[[ $x == ok ]] || log_error '((...)) inside [[...]] not treated as nested ()'
 
-[[ -e /dev/fd/ ]] || err_exit '/dev/fd/ does not exits'
-[[ -e /dev/tcp/ ]] || err_exit '/dev/tcp/ does not exist'
-[[ -e /dev/udp/ ]] || err_exit '/dev/udp/ does not exist'
-[[ -e /dev/xxx/ ]] &&  err_exit '/dev/xxx/ exists'
+[[ -e /dev/fd/ ]] || log_error '/dev/fd/ does not exits'
+[[ -e /dev/tcp/ ]] || log_error '/dev/tcp/ does not exist'
+[[ -e /dev/udp/ ]] || log_error '/dev/udp/ does not exist'
+[[ -e /dev/xxx/ ]] &&  log_error '/dev/xxx/ exists'
 
-$SHELL 2> /dev/null -c '[[(-n foo)]]' || err_exit '[[(-n foo)]] should not require space in front of ('
+$SHELL 2> /dev/null -c '[[(-n foo)]]' || log_error '[[(-n foo)]] should not require space in front of ('
 
-$SHELL 2> /dev/null -c '[[ "]" == ~(E)[]] ]]' || err_exit 'pattern "~(E)[]]" does not match "]"'
+$SHELL 2> /dev/null -c '[[ "]" == ~(E)[]] ]]' || log_error 'pattern "~(E)[]]" does not match "]"'
 
 unset var
-[[ -v var ]] &&  err_exit '[[ -v var ]] should be false after unset var'
+[[ -v var ]] &&  log_error '[[ -v var ]] should be false after unset var'
 float var
-[[ -v var ]]  ||  err_exit '[[ -v var ]] should be true after float var'
+[[ -v var ]]  ||  log_error '[[ -v var ]] should be true after float var'
 unset var
-[[ -v var ]] &&  err_exit '[[ -v var ]] should be false after unset var again'
+[[ -v var ]] &&  log_error '[[ -v var ]] should be false after unset var again'
 
-test ! ! ! 2> /dev/null || err_exit 'test ! ! ! should return 0'
-test ! ! x 2> /dev/null || err_exit 'test ! ! x should return 0'
-test ! ! '' 2> /dev/null && err_exit 'test ! ! "" should return non-zero'
+test ! ! ! 2> /dev/null || log_error 'test ! ! ! should return 0'
+test ! ! x 2> /dev/null || log_error 'test ! ! x should return 0'
+test ! ! '' 2> /dev/null && log_error 'test ! ! "" should return non-zero'
 
-test ! = -o a  || err_exit 'test ! \( = -o a \) should return 0'
-test ! \( = -o a \)  || err_exit 'test ! \( = -o a \) should return 0'
+test ! = -o a  || log_error 'test ! \( = -o a \) should return 0'
+test ! \( = -o a \)  || log_error 'test ! \( = -o a \) should return 0'
 
-$SHELL 2> /dev/null -c '[[ 1<2 ]]' ||  err_exit '[[ 1<2 ]] not parsed correctly'
+$SHELL 2> /dev/null -c '[[ 1<2 ]]' ||  log_error '[[ 1<2 ]] not parsed correctly'
 
 false
 x=$( [[ -z $(printf $? >&2) && -z $(printf $? >&2) ]] 2>&1)
-[[ $x$? == 110 ]] || err_exit '$? not reserved when expanding [[...]]'
+[[ $x$? == 110 ]] || log_error '$? not reserved when expanding [[...]]'
 
-$SHELL -c 2> /dev/null '[[ AATAAT =~ (AAT){2} ]]' || err_exit '[[ AATAAT =~ (AAT){2} ]] does not match'
+$SHELL -c 2> /dev/null '[[ AATAAT =~ (AAT){2} ]]' || log_error '[[ AATAAT =~ (AAT){2} ]] does not match'
 
-$SHELL -c 2> /dev/null '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]]' || err_exit '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]] does not match'
+$SHELL -c 2> /dev/null '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]]' || log_error '[[ AATAATCCCAATAAT =~ (AAT){2}CCC(AAT){2} ]] does not match'
 
-[[ 0x10 -eq 16 ]] || err_exit 'heximal constants not working in [[...]]'
+[[ 0x10 -eq 16 ]] || log_error 'heximal constants not working in [[...]]'
 
-[[ 010 -eq 10 ]] || err_exit '010 not 10 in [[...]]'
+[[ 010 -eq 10 ]] || log_error '010 not 10 in [[...]]'
 
 x=10
 
-([[ x -eq 10 ]]) 2> /dev/null || err_exit 'x -eq 10 fails in [[...]] with x=10'
+([[ x -eq 10 ]]) 2> /dev/null || log_error 'x -eq 10 fails in [[...]] with x=10'
 
 # POSIX specifies that on error, test builtin should always return value > 1
 test 123 -eq 123x 2>/dev/null
-[[ $? -ge 2 ]] || err_exit 'test builtin should return value greater than 1 on error'
+[[ $? -ge 2 ]] || log_error 'test builtin should return value greater than 1 on error'

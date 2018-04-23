@@ -54,12 +54,12 @@ function test1
 
     # test 1:
     print -C d1 >'testdata.cpv'
-    cat '/dev/zero' | $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; redirect 5<&0 ; poll -e d1.res -t 5. d1.u ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || err_exit "poll returned non-zero exit code $?"
-    unset d1 ; read -C d1 <'testdata.cpv' || err_exit 'Cannot read test data.'
-    [[ "$(< 'log.txt')" == '' ]] || err_exit "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
-    [[ "${d1.u[x].revents.pollin-}" == 'true' ]] || err_exit "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
-    [[ "${d1.u[y].revents.pollin-}" == 'true' ]] || err_exit "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
-    [[ "${d1.res[*]-}" == 'x y' ]] || err_exit "d1.res contains '${d1.res[*]-}', not 'x y'"
+    cat '/dev/zero' | $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; redirect 5<&0 ; poll -e d1.res -t 5. d1.u ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || log_error "poll returned non-zero exit code $?"
+    unset d1 ; read -C d1 <'testdata.cpv' || log_error 'Cannot read test data.'
+    [[ "$(< 'log.txt')" == '' ]] || log_error "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
+    [[ "${d1.u[x].revents.pollin-}" == 'true' ]] || log_error "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
+    [[ "${d1.u[y].revents.pollin-}" == 'true' ]] || log_error "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
+    [[ "${d1.res[*]-}" == 'x y' ]] || log_error "d1.res contains '${d1.res[*]-}', not 'x y'"
 
     rm 'testdata.cpv' 'log.txt'
 
@@ -68,14 +68,14 @@ function test1
     d1.u[z]=( integer fd=5 ; compound events=( pollout='true' ) revents=() )
 
     print -C d1 >'testdata.cpv'
-    $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; { poll -e d1.res -t 5. d1.u ; } 5<"/dev/null" 5>"/dev/null" ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || err_exit "poll returned non-zero exit code $?"
-    unset d1 ; read -C d1 <'testdata.cpv' || err_exit 'Cannot read test data.'
+    $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; { poll -e d1.res -t 5. d1.u ; } 5<"/dev/null" 5>"/dev/null" ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || log_error "poll returned non-zero exit code $?"
+    unset d1 ; read -C d1 <'testdata.cpv' || log_error 'Cannot read test data.'
 
-    [[ "$(< 'log.txt')" == '' ]] || err_exit "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
-    [[ "${d1.u[x].revents.pollin-}"  == 'true' ]] || err_exit "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
-    [[ "${d1.u[y].revents.pollin-}"  == 'true' ]] || err_exit "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
-    [[ "${d1.u[z].revents.pollout-}" == 'true' ]] || err_exit "d1.u[z].revents contains '${d1.u[z].revents-}', not 'POLLOUT,'"
-    [[ "${d1.res[*]-}" == 'x y z' ]] || err_exit "d1.res contains '${d1.res[*]-}', not 'x y z'"
+    [[ "$(< 'log.txt')" == '' ]] || log_error "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
+    [[ "${d1.u[x].revents.pollin-}"  == 'true' ]] || log_error "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
+    [[ "${d1.u[y].revents.pollin-}"  == 'true' ]] || log_error "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
+    [[ "${d1.u[z].revents.pollout-}" == 'true' ]] || log_error "d1.u[z].revents contains '${d1.u[z].revents-}', not 'POLLOUT,'"
+    [[ "${d1.res[*]-}" == 'x y z' ]] || log_error "d1.res contains '${d1.res[*]-}', not 'x y z'"
 
     rm 'testdata.cpv' 'log.txt'
 
@@ -178,9 +178,9 @@ function test_sparse_array1
 
         out.stderr="${ { out.stdout="${ print 'IN' | ${SHELL} -o nounset -c "${tst.script[*]}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout//typeset -C/}" == ${expected_output_pattern}    ]] || err_exit "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''                ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout//typeset -C/}" == ${expected_output_pattern}    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
     done
 
     return 0
@@ -427,15 +427,15 @@ EOF
 
     testname="$0/plain"
     out.stderr="${ { out.stdout="${ ${SHELL} 'poll_circus.sh' ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || err_exit "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-    [[ "${out.stderr}" == ''                ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-    (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
+    [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+    (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
     testname="$0/compiled"
     out.stderr="${ { out.stdout="${ ${SHCOMP} -n 'poll_circus.sh' 'poll_circus.shbin' && ${SHELL} 'poll_circus.shbin' ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || err_exit "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-    [[ "${out.stderr}" == ''                ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-    (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
+    [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+    (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
     rm -f 'poll_circus.sh' 'poll_circus.shbin'
 
@@ -443,8 +443,8 @@ EOF
 }
 
 # run tests
-builtin poll    || { err_exit 'poll builtin not found.'; exit 1; }
-builtin rmdir    || { err_exit 'rmdir builtin not found.'; exit 1; }
+builtin poll    || { log_error 'poll builtin not found.'; exit 1; }
+builtin rmdir    || { log_error 'rmdir builtin not found.'; exit 1; }
 
 test1
 test_sparse_array1

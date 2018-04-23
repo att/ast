@@ -56,7 +56,7 @@ curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
 
 if [[ $init_vsz -lt $curr_vsz ]];
 then
-    err_exit "Memory leak on associative array"
+    log_error "Memory leak on associative array"
 fi
 
 # Test for leak in executing subshell after PATH is reset
@@ -79,10 +79,10 @@ curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
 
 if [[ $init_vsz -lt $curr_vsz ]];
 then
-    err_exit "Memory leak in executing subshell after PATH is reset"
+    log_error "Memory leak in executing subshell after PATH is reset"
 fi
 
-#TODO: Enable these tests when vmstate is a builtin
+log_info 'TODO: Enable these tests when vmstate is a builtin'
 
 #builtin vmstate 2>/dev/null || exit 0
 ## one round to get to steady state -- sensitive to -x
@@ -98,14 +98,14 @@ fi
 #b=0$(vmstate --format='+%(size)u')
 #
 #if    (( b > a ))
-#then    err_exit "variable value reset memory leak -- $((b-a)) bytes after $n iterations"
+#then    log_error "variable value reset memory leak -- $((b-a)) bytes after $n iterations"
 #fi
 #
 ## buffer boundary tests
 #
 #for exp in 65535 65536
 #do    got=$($SHELL -c 'x=$(printf "%.*c" '$exp' x); print ${#x}' 2>&1)
-#    [[ $got == $exp ]] || err_exit "large command substitution failed -- expected $exp, got $got"
+#    [[ $got == $exp ]] || log_error "large command substitution failed -- expected $exp, got $got"
 #done
 #
 #data="(v=;sid=;di=;hi=;ti='1328244300';lv='o';id='172.3.161.178';var=(k='conn_num._total';u=;fr=;l='Number of Connections';n='22';t='number';))"
@@ -122,7 +122,7 @@ fi
 #    do    :
 #    done    {n}<&0-
 #b=0$(vmstate --format='+%(size)u')
-#(( b > a )) && err_exit 'memory leak with read -C when deleting compound variable'
+#(( b > a )) && log_error 'memory leak with read -C when deleting compound variable'
 #
 #read -C stat <<< "$data"
 #a=0$(vmstate --format='+%(size)u')
@@ -130,5 +130,5 @@ fi
 #do      read -C stat <<< "$data"
 #done
 #b=0$(vmstate --format='+%(size)u')
-#(( b > a )) && err_exit 'memory leak with read -C when using <<<'
+#(( b > a )) && log_error 'memory leak with read -C when using <<<'
 #

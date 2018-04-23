@@ -33,18 +33,18 @@ chmod 755 $tmp/mycat
 for ((i=3; i < 10; i++))
 do
     eval "a=\$(print foo | $tmp/mycat" $i $i'>&1 > /dev/null |cat)' 2> /dev/null
-    [[ $a == foo ]] || err_exit "bad file descriptor $i in comsub script"
+    [[ $a == foo ]] || log_error "bad file descriptor $i in comsub script"
 done
 
 exec 3> /dev/null
-[[ $(fun) == good ]] || err_exit 'file 3 closed before subshell completes'
+[[ $(fun) == good ]] || log_error 'file 3 closed before subshell completes'
 exec 3>&-
-cd $tmp || { err_exit "cd $tmp failed"; exit ; }
+cd $tmp || { log_error "cd $tmp failed"; exit ; }
 print foo > file1
 print bar >> file1
 if [[ $(<file1) != $'foo\nbar' ]]
 then
-    err_exit 'append (>>) not working'
+    log_error 'append (>>) not working'
 fi
 
 set -o noclobber
@@ -53,12 +53,12 @@ read -u3 line
 exp=foo
 if [[ $line != $exp ]]
 then
-    err_exit "read on <> fd failed -- expected '$exp', got '$line'"
+    log_error "read on <> fd failed -- expected '$exp', got '$line'"
 fi
 
 if ( 4> file1 ) 2> /dev/null
 then
-    err_exit 'noclobber not causing exclusive open'
+    log_error 'noclobber not causing exclusive open'
 fi
 
 set +o noclobber
@@ -85,7 +85,7 @@ then
     bar)    semantics='dup' ;;
     *)    semantics='failed' ;;
     esac
-    [[ $semantics == @(${FDFS[fdfs].semantics}) ]] || err_exit "'4< ${FDFS[fdfs].dir}/3' $semantics semantics instead of ${FDFS[fdfs].semantics} -- expected '$exp', got '$got'"
+    [[ $semantics == @(${FDFS[fdfs].semantics}) ]] || log_error "'4< ${FDFS[fdfs].dir}/3' $semantics semantics instead of ${FDFS[fdfs].semantics} -- expected '$exp', got '$got'"
 fi
 
 # 2004-11-25 ancient /dev/fd/N redirection bug fix
@@ -103,7 +103,7 @@ case $got in
 4)    semantics='open' ;;
 *)    semantics='failed' ;;
 esac
-[[ $semantics == @(${FDFS[fdfs].semantics}) ]] || err_exit "${FDFS[fdfs].dir}/N $semantics semantics instead of ${FDFS[fdfs].semantics} -- expected '$exp', got '$got'"
+[[ $semantics == @(${FDFS[fdfs].semantics}) ]] || log_error "${FDFS[fdfs].dir}/N $semantics semantics instead of ${FDFS[fdfs].semantics} -- expected '$exp', got '$got'"
 
 cat > close0 <<\!
 exec 0<&-
@@ -114,7 +114,7 @@ chmod +x close0 close1
 x=$(./close0)
 if [[ $x != "abc" ]]
 then
-    err_exit "picked up file descriptor zero for opening script file"
+    log_error "picked up file descriptor zero for opening script file"
 fi
 
 cat > close0 <<\!
@@ -126,7 +126,7 @@ cat > close0 <<\!
 
     exit 0
 !
-./close0 2> /dev/null || err_exit "multiple exec 4< /dev/null can fail"
+./close0 2> /dev/null || log_error "multiple exec 4< /dev/null can fail"
 $SHELL -c '
     trap "rm -f in out" EXIT
     for ((i = 0; i < 1000; i++))
@@ -138,7 +138,7 @@ $SHELL -c '
     # builtin cat
     print -r -- "$(<in)"
     cmp -s in out'  2> /dev/null
-[[ $? == 0 ]] || err_exit 'builtin cat truncates files'
+[[ $? == 0 ]] || log_error 'builtin cat truncates files'
 cat >| script <<-\!
 	print hello
 	( exec 3<&- 4<&-)
@@ -146,12 +146,12 @@ cat >| script <<-\!
 	print world
 !
 chmod +x script
-[[ $( $SHELL ./script) == $'hello\nworld' ]] || err_exit 'closing 3 & 4 causes script to fail'
-cd ~- || err_exit "cd back failed"
-cd $tmp || { err_exit "cd $tmp failed"; exit ; }
-( exec  > '' ) 2> /dev/null  && err_exit '> "" does not fail'
+[[ $( $SHELL ./script) == $'hello\nworld' ]] || log_error 'closing 3 & 4 causes script to fail'
+cd ~- || log_error "cd back failed"
+cd $tmp || { log_error "cd $tmp failed"; exit ; }
+( exec  > '' ) 2> /dev/null  && log_error '> "" does not fail'
 unset x
-( exec > ${x} ) 2> /dev/null && err_exit '> $x, where x null does not fail'
+( exec > ${x} ) 2> /dev/null && log_error '> $x, where x null does not fail'
 exec <<!
 foo
 bar
@@ -160,7 +160,7 @@ bar
 read line
 if [[ $line != foo ]]
 then
-    err_exit 'file descriptor not restored after exec in subshell'
+    log_error 'file descriptor not restored after exec in subshell'
 fi
 
 exec 3>&- 4>&-
@@ -178,7 +178,7 @@ exec 3>&- 4>&-
 line 1
 line 2
 line 3
-!) == $'line 1\nline 2\nline 3' ]] || err_exit 'read error with subshells'
+!) == $'line 1\nline 2\nline 3' ]] || log_error 'read error with subshells'
 # 2004-05-11 bug fix
 cat > $tmp/1 <<- ++EOF++
 	script=$tmp/2
@@ -202,7 +202,7 @@ cat > $tmp/1 <<- ++EOF++
 ++EOF++
 
 chmod +x $tmp/1
-[[ $($SHELL  $tmp/1) == ok ]]  || err_exit "parent i/o causes child script to fail"
+[[ $($SHELL  $tmp/1) == ok ]]  || log_error "parent i/o causes child script to fail"
 # 2004-12-20 redirection loss bug fix
 cat > $tmp/1 <<- \++EOF++
 	function a
@@ -213,18 +213,18 @@ cat > $tmp/1 <<- \++EOF++
 	a
 ++EOF++
 chmod +x $tmp/1
-[[ $($tmp/1) == ok ]] || err_exit "trap on EXIT loses last command redirection"
+[[ $($tmp/1) == ok ]] || log_error "trap on EXIT loses last command redirection"
 print > /dev/null {n}> $tmp/1
 [[ ! -s $tmp/1 ]] && newio=1
 if [[ $newio && $(print hello | while read -u$n; do print $REPLY; done {n}<&0) != hello ]]
 then
-    err_exit "{n}<&0 not working with for loop"
+    log_error "{n}<&0 not working with for loop"
 fi
 
 [[ $({ read -r; read -u3 3<&0; print -- "$REPLY" ;} <<!
 hello
 world
-!) == world ]] || err_exit 'I/O not synchronized with <&'
+!) == world ]] || log_error 'I/O not synchronized with <&'
 x="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNSPQRSTUVWXYZ1234567890"
 for ((i=0; i < 62; i++))
 do
@@ -233,45 +233,45 @@ done >  $tmp/seek
 
 if command exec 3<> $tmp/seek
 then
-    (( $(3<#) == 0 )) || err_exit "not at position 0"
-    (( $(3<# ((EOF))) == 40*62 )) || err_exit "not at end-of-file"
-    command exec 3<# ((40*8)) || err_exit "absolute seek fails"
+    (( $(3<#) == 0 )) || log_error "not at position 0"
+    (( $(3<# ((EOF))) == 40*62 )) || log_error "not at end-of-file"
+    command exec 3<# ((40*8)) || log_error "absolute seek fails"
     read -u3
-    [[ $REPLY == +(i) ]] || err_exit "expected iiii..., got $REPLY"
-    [[ $(3<#) == $(3<# ((CUR)) ) ]] || err_exit '$(3<#)!=$(3<#((CUR)))'
+    [[ $REPLY == +(i) ]] || log_error "expected iiii..., got $REPLY"
+    [[ $(3<#) == $(3<# ((CUR)) ) ]] || log_error '$(3<#)!=$(3<#((CUR)))'
     command exec 3<# ((CUR+80))
     read -u3
-    [[ $REPLY == {39}(l) ]] || err_exit "expected lll..., got $REPLY"
+    [[ $REPLY == {39}(l) ]] || log_error "expected lll..., got $REPLY"
     command exec 3<# ((EOF-80))
     read -u3
-    [[ $REPLY == +(9) ]] || err_exit "expected 999..., got $REPLY"
+    [[ $REPLY == +(9) ]] || log_error "expected 999..., got $REPLY"
     command exec 3># ((80))
     print -u3 -f "%.39c\n"  @
     command exec 3># ((80))
     read -u3
-    [[ $REPLY == +(@) ]] || err_exit "expected @@@..., got $REPLY"
+    [[ $REPLY == +(@) ]] || log_error "expected @@@..., got $REPLY"
     read -u3
-    [[ $REPLY == +(d) ]] || err_exit "expected ddd..., got $REPLY"
+    [[ $REPLY == +(d) ]] || log_error "expected ddd..., got $REPLY"
     command exec 3># ((EOF))
     print -u3 -f "%.39c\n"  ^
-    (( $(3<# ((CUR-0))) == 40*63 )) || err_exit "not at extended end-of-file"
+    (( $(3<# ((CUR-0))) == 40*63 )) || log_error "not at extended end-of-file"
     command exec 3<# ((40*62))
     read -u3
-    [[ $REPLY == +(^) ]] || err_exit "expected ddd..., got $REPLY"
+    [[ $REPLY == +(^) ]] || log_error "expected ddd..., got $REPLY"
     command exec 3<# ((0))
     command exec 3<# *jjjj*
     read -u3
-    [[  $REPLY == {39}(j) ]] || err_exit "<# pattern failed"
-    [[ $(command exec 3<## *llll*) == {39}(k) ]] || err_exit "<## pattern not saving standard output"
+    [[  $REPLY == {39}(j) ]] || log_error "<# pattern failed"
+    [[ $(command exec 3<## *llll*) == {39}(k) ]] || log_error "<## pattern not saving standard output"
     read -u3
-    [[  $REPLY == {39}(l) ]] || err_exit "<## pattern failed to position"
+    [[  $REPLY == {39}(l) ]] || log_error "<## pattern failed to position"
     command exec 3<# *abc*
-    read -u3 && err_exit "not found pattern not positioning at eof"
+    read -u3 && log_error "not found pattern not positioning at eof"
     cat $tmp/seek | read -r <# *WWW*
-    [[ $REPLY == *WWWWW* ]] || err_exit '<# not working for pipes'
-    { < $tmp/seek <# ((2358336120)) ;} 2> /dev/null || err_exit 'long seek not working'
+    [[ $REPLY == *WWWWW* ]] || log_error '<# not working for pipes'
+    { < $tmp/seek <# ((2358336120)) ;} 2> /dev/null || log_error 'long seek not working'
 else
-    err_exit "$tmp/seek: cannot open for reading"
+    log_error "$tmp/seek: cannot open for reading"
 fi
 
 command exec 3<&- || 'cannot close 3'
@@ -282,12 +282,12 @@ done >  $tmp/seek
 
 if command exec {n}<> $tmp/seek
 then
-    { command exec {n}<#((EOF)) ;} 2> /dev/null || err_exit '{n}<# not working'
+    { command exec {n}<#((EOF)) ;} 2> /dev/null || log_error '{n}<# not working'
     if $SHELL -c '{n}</dev/null' 2> /dev/null
     then
-        (( $({n}<#) ==  40*62))  || err_exit '$({n}<#) not working'
+        (( $({n}<#) ==  40*62))  || log_error '$({n}<#) not working'
     else
-        err_exit 'not able to parse {n}</dev/null'
+        log_error 'not able to parse {n}</dev/null'
     fi
 
 fi
@@ -304,12 +304,12 @@ $SHELL -ic '
     print -u9  || exit 9
 }  3> /dev/null 4> /dev/null 5> /dev/null 6> /dev/null 7> /dev/null 8> /dev/null 9> /dev/null' > /dev/null 2>&1
 exitval=$?
-(( exitval ))  && err_exit  "print to unit $exitval failed"
+(( exitval ))  && log_error  "print to unit $exitval failed"
 
-echo "TODO: Skipping test - 'commands with standard output closed produce output'. It should be fixed later."
+log_info "TODO: Skipping test - 'commands with standard output closed produce output'. It should be fixed later."
 #$SHELL -c "{ > $tmp/1 ; date;} >&- 2> /dev/null" > $tmp/2
-#[[ -s $tmp/1 || -s $tmp/2 ]] && err_exit 'commands with standard output closed produce output'
-$SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && err_exit 'closed standard output not passed to subshell'
+#[[ -s $tmp/1 || -s $tmp/2 ]] && log_error 'commands with standard output closed produce output'
+$SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && log_error 'closed standard output not passed to subshell'
 [[ $(cat  <<- \EOF | $SHELL
 	do_it_all()
 	{
@@ -318,37 +318,37 @@ $SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && err_exit 'closed standard out
 	}
 	do_it_all ; exit $?
 	hello world
-EOF) == 'hello world' ]] || err_exit 'invalid readahead on stdin'
-$SHELL -c 'exec 3>; /dev/null'  2> /dev/null && err_exit '>; with exec should be an error'
-$SHELL -c ': 3>; /dev/null'  2> /dev/null || err_exit '>; not working with at all'
+EOF) == 'hello world' ]] || log_error 'invalid readahead on stdin'
+$SHELL -c 'exec 3>; /dev/null'  2> /dev/null && log_error '>; with exec should be an error'
+$SHELL -c ': 3>; /dev/null'  2> /dev/null || log_error '>; not working with at all'
 print hello > $tmp/1
 if ! $SHELL -c "false >; $tmp/1"  2> /dev/null
 then
-    [[ $(<$tmp/1) == hello ]] || err_exit '>; not preserving file on failure'
+    [[ $(<$tmp/1) == hello ]] || log_error '>; not preserving file on failure'
 fi
 
 if ! $SHELL -c "sed -e 's/hello/hello world/' $tmp/1" >; $tmp/1  2> /dev/null
 then
-    [[ $(<$tmp/1) == 'hello world' ]] || err_exit '>; not updating file on success'
+    [[ $(<$tmp/1) == 'hello world' ]] || log_error '>; not updating file on success'
 fi
 
-$SHELL -c 'exec 3<>; /dev/null'  2> /dev/null && err_exit '<>; with exec should be an error'
-$SHELL -c ': 3<>; /dev/null'  2> /dev/null || err_exit '<>; not working with at all'
+$SHELL -c 'exec 3<>; /dev/null'  2> /dev/null && log_error '<>; with exec should be an error'
+$SHELL -c ': 3<>; /dev/null'  2> /dev/null || log_error '<>; not working with at all'
 print $'hello\nworld' > $tmp/1
 if ! $SHELL -c "false <>; $tmp/1"  2> /dev/null
 then
-    [[ $(<$tmp/1) == $'hello\nworld' ]] || err_exit '<>; not preserving file on failure'
+    [[ $(<$tmp/1) == $'hello\nworld' ]] || log_error '<>; not preserving file on failure'
 fi
 
 if ! $SHELL -c "head -1 $tmp/1" <>; $tmp/1  2> /dev/null
 then
-    [[ $(<$tmp/1) == hello ]] || err_exit '<>; not truncating file on success of head'
+    [[ $(<$tmp/1) == hello ]] || log_error '<>; not truncating file on success of head'
 fi
 
 print $'hello\nworld' > $tmp/1
 if ! $SHELL -c head  < $tmp/1 <#((6)) <>; $tmp/1  2> /dev/null
 then
-    [[ $(<$tmp/1) == world ]] || err_exit '<>; not truncating file on success of behead'
+    [[ $(<$tmp/1) == world ]] || log_error '<>; not truncating file on success of behead'
 fi
 
 unset y
@@ -358,52 +358,52 @@ abc
 
 if   [[ $y != a ]]
 then
-    err_exit  'read -n1 not working'
+    log_error  'read -n1 not working'
 fi
 
 unset a
 { read -N3 a; read -N1 b;}  <<!
 abcdefg
 !
-[[ $a == abc ]] || err_exit 'read -N3 here-document not working'
-[[ $b == d ]] || err_exit 'read -N1 here-document not working'
+[[ $a == abc ]] || log_error 'read -N3 here-document not working'
+[[ $b == d ]] || log_error 'read -N1 here-document not working'
 read -n3 a <<!
 abcdefg
 !
-[[ $a == abc ]] || err_exit 'read -n3 here-document not working'
+[[ $a == abc ]] || log_error 'read -n3 here-document not working'
 (print -n a; sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
-[[ $a == abc ]] || err_exit 'read -N3 from pipe not working'
-[[ $b == d ]] || err_exit 'read -N1 from pipe not working'
+[[ $a == abc ]] || log_error 'read -N3 from pipe not working'
+[[ $b == d ]] || log_error 'read -N1 from pipe not working'
 (print -n a; sleep 1; print -n bcde) |read -n3 a
-[[ $a == a ]] || err_exit 'read -n3 from pipe not working'
+[[ $a == a ]] || log_error 'read -n3 from pipe not working'
 
 if mkfifo $tmp/fifo 2> /dev/null
 then
     (print -n a; sleep 2; print -n bcde) > $tmp/fifo &
     {
-    read -u5 -n3 -t3 a || err_exit 'read -n3 from fifo timed out'
-    read -u5 -n1 -t3 b || err_exit 'read -n1 from fifo timed out'
+    read -u5 -n3 -t3 a || log_error 'read -n3 from fifo timed out'
+    read -u5 -n1 -t3 b || log_error 'read -n1 from fifo timed out'
     } 5< $tmp/fifo
     exp=a
     got=$a
-    [[ $got == "$exp" ]] || err_exit "read -n3 from fifo failed -- expected '$exp', got '$got'"
+    [[ $got == "$exp" ]] || log_error "read -n3 from fifo failed -- expected '$exp', got '$got'"
     exp=b
     got=$b
-    [[ $got == "$exp" ]] || err_exit "read -n1 from fifo failed -- expected '$exp', got '$got'"
+    [[ $got == "$exp" ]] || log_error "read -n1 from fifo failed -- expected '$exp', got '$got'"
     rm -f $tmp/fifo
     wait
     mkfifo $tmp/fifo 2> /dev/null
     (print -n a; sleep 2; print -n bcde) > $tmp/fifo &
     {
-    read -u5 -N3 -t3 a || err_exit 'read -N3 from fifo timed out'
-    read -u5 -N1 -t3 b || err_exit 'read -N1 from fifo timed out'
+    read -u5 -N3 -t3 a || log_error 'read -N3 from fifo timed out'
+    read -u5 -N1 -t3 b || log_error 'read -N1 from fifo timed out'
     } 5< $tmp/fifo
     exp=abc
     got=$a
-    [[ $got == "$exp" ]] || err_exit "read -N3 from fifo failed -- expected '$exp', got '$got'"
+    [[ $got == "$exp" ]] || log_error "read -N3 from fifo failed -- expected '$exp', got '$got'"
     exp=d
     got=$b
-    [[ $got == "$exp" ]] || err_exit "read -N1 from fifo failed -- expected '$exp', got '$got'"
+    [[ $got == "$exp" ]] || log_error "read -N1 from fifo failed -- expected '$exp', got '$got'"
     wait
 fi
 
@@ -421,11 +421,11 @@ fi
     read -t2 -n 1000 line4
 }
 
-[[ $? == 0 ]]             && err_exit 'should have timed out'
-[[ $line1 == 'prompt1: ' ]]     || err_exit "line1 should be 'prompt1: '"
-[[ $line2 == line2 ]]        || err_exit "line2 should be line2"
-[[ $line3 == 'prompt2: ' ]]    || err_exit "line3 should be 'prompt2: '"
-[[ ! $line4 ]]            || err_exit "line4 should be empty"
+[[ $? == 0 ]]             && log_error 'should have timed out'
+[[ $line1 == 'prompt1: ' ]]     || log_error "line1 should be 'prompt1: '"
+[[ $line2 == line2 ]]        || log_error "line2 should be line2"
+[[ $line3 == 'prompt2: ' ]]    || log_error "line3 should be 'prompt2: '"
+[[ ! $line4 ]]            || log_error "line4 should be empty"
 
 if $SHELL -c "export LC_ALL=C.UTF-8; c=$'\342\202\254'; [[ \${#c} == 1 ]]" 2>/dev/null
 then
@@ -453,7 +453,7 @@ do
         for lc_all in C $lc_utf8
         do
             g=$(LC_ALL=$lc_all $SHELL -c "{ print -n '$a'; sleep 0.2; print -n '$b'; sleep 0.2; } | { read ${o[i]} a; print -n \$a; read a; print -n \ \$a; }")
-            [[ $g == "${e[i]}" ]] || err_exit "LC_ALL=$lc_all read ${o[i]} from pipe '$a $b' failed -- expected '${e[i]}', got '$g'"
+            [[ $g == "${e[i]}" ]] || log_error "LC_ALL=$lc_all read ${o[i]} from pipe '$a $b' failed -- expected '${e[i]}', got '$g'"
         done
     done
 done
@@ -480,7 +480,7 @@ then
                     e=${c[w]}
                 fi
 
-                [[ $g == "$e" ]] || err_exit "read -${o}${i} failed for '${c[w]}' -- expected '$e', got '$g'"
+                [[ $g == "$e" ]] || log_error "read -${o}${i} failed for '${c[w]}' -- expected '$e', got '$g'"
                 done
             done
         done
@@ -495,10 +495,10 @@ print -u2 OK
 exec 2<&3
 exp=$'This is a test\nOK'
 got=$(< $file)
-[[ $got == $exp ]] || err_exit "output garbled when stderr is duped -- expected $(printf %q "$exp"), got $(printf %q "$got")"
+[[ $got == $exp ]] || log_error "output garbled when stderr is duped -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 print 'hello world' > $file
 1<>; $file  1># ((5))
-(( $(wc -c < $file) == 5 )) || err_exit "$file was not truncate to 5 bytes"
+(( $(wc -c < $file) == 5 )) || log_error "$file was not truncate to 5 bytes"
 
 $SHELL -c "PS4=':2:'
     exec 1> $tmp/21.out 2> $tmp/22.out
@@ -506,31 +506,31 @@ $SHELL -c "PS4=':2:'
     printf ':1:A:'
     print \$(:)
     print :1:Z:" 1> $tmp/11.out 2> $tmp/12.out
-[[ -s $tmp/11.out ]] && err_exit "standard output leaked past redirection"
-[[ -s $tmp/12.out ]] && err_exit "standard error leaked past redirection"
+[[ -s $tmp/11.out ]] && log_error "standard output leaked past redirection"
+[[ -s $tmp/12.out ]] && log_error "standard error leaked past redirection"
 
 exp=$':1:A:\n:1:Z:'
 got=$(<$tmp/21.out)
-[[ $exp == "$got" ]] || err_exit "standard output garbled -- expected $(printf %q "$exp"), got $(printf %q "$got")"
+[[ $exp == "$got" ]] || log_error "standard output garbled -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 exp=$':2:printf :1:A:\n:2::\n:2:print\n:2:print :1:Z:'
 got=$(<$tmp/22.out)
-[[ $exp == "$got" ]] || err_exit "standard error garbled -- expected $(printf %q "$exp"), got $(printf %q "$got")"
+[[ $exp == "$got" ]] || log_error "standard error garbled -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 
 $SHELL -c 'exec 3<&1 ; exec 1<&- ; exec > outfile; print foobar' ||
-    err_exit 'exec 1<&- causes failure'
+    log_error 'exec 1<&- causes failure'
 expect=foobar
 actual=$(< outfile)
-[[ $actual == $expect ]] || err_exit 'outfile content wrong' "$expect" "$actual"
+[[ $actual == $expect ]] || log_error 'outfile content wrong' "$expect" "$actual"
 
 print hello there world > $tmp/foobar
 sed  -e 's/there //' $tmp/foobar  >; $tmp/foobar
-[[ $(<$tmp/foobar) == 'hello world' ]] || err_exit '>; redirection not working on simple command'
+[[ $(<$tmp/foobar) == 'hello world' ]] || log_error '>; redirection not working on simple command'
 print hello there world > $tmp/foobar
 { sed  -e 's/there //' $tmp/foobar;print done;} >; $tmp/foobar 
-[[ $(<$tmp/foobar) == $'hello world\ndone' ]] || err_exit '>; redirection not working for compound command'
+[[ $(<$tmp/foobar) == $'hello world\ndone' ]] || log_error '>; redirection not working for compound command'
 print hello there world > $tmp/foobar
 $SHELL -c "sed  -e 's/there //' $tmp/foobar  >; $tmp/foobar"
-[[ $(<$tmp/foobar) == 'hello world' ]] || err_exit '>; redirection not working with -c on a simple command'
+[[ $(<$tmp/foobar) == 'hello world' ]] || log_error '>; redirection not working with -c on a simple command'
 
 chmod -w $tmp/foobar
 (: >; $tmp/foobar) 2> /dev/null && '>; should fail for a file without write permission'
@@ -541,7 +541,7 @@ do
     out=$(/bin/ls "$tmp/junk" 2>/dev/null)
     if (( $? == 0 ))
     then
-        err_exit 'wrong error code with redirection'
+        log_error 'wrong error code with redirection'
         break
     fi
 done
@@ -551,32 +551,32 @@ print foo > $tmp/file3
 ln -s $tmp/file3 $tmp/file2
 ln -s $tmp/file2 $tmp/file1
 print bar >; $tmp/file1
-[[ $(<$tmp/file3) == bar ]] || err_exit '>; not following symlinks'
+[[ $(<$tmp/file3) == bar ]] || log_error '>; not following symlinks'
 
 for i in 1
 do
     :
 done    {n}< /dev/null
-[[ -r /dev/fd/$n ]] &&  err_exit "file descriptor n=$n left open after {n}<"
+[[ -r /dev/fd/$n ]] &&  log_error "file descriptor n=$n left open after {n}<"
 
 n=$( exec {n}< /dev/null; print -r -- $n)
-[[ -r /dev/fd/$n ]] && err_exit "file descriptor n=$n left open after subshell"
+[[ -r /dev/fd/$n ]] && log_error "file descriptor n=$n left open after subshell"
 
 print hello > $tmp/foo
 redirect {fd}< $tmp
-[[ $(< ~{fd}/foo) == hello ]] 2> /dev/null || err_exit '~{fd}/foo not working'
-[[ $(< ~{$fd}/foo) == hello ]] 2> /dev/null || err_exit "~{$fd}/foo not working"
-{ cd /dev/fd/$fd/ ;} 2> /dev/null || err_exit "Cannot cd to /dev/fd/$fd/"
+[[ $(< ~{fd}/foo) == hello ]] 2> /dev/null || log_error '~{fd}/foo not working'
+[[ $(< ~{$fd}/foo) == hello ]] 2> /dev/null || log_error "~{$fd}/foo not working"
+{ cd /dev/fd/$fd/ ;} 2> /dev/null || log_error "Cannot cd to /dev/fd/$fd/"
 
 (
     integer error_count=0
     redirect {n}> $tmp/foo; print foobar >&{n} > $tmp/foo
-    [[ $(<$tmp/foo) == foobar ]] || err_exit '>& {n} not working for write'
+    [[ $(<$tmp/foo) == foobar ]] || log_error '>& {n} not working for write'
     { got=$( redirect {n}< $tmp/foo; cat <&{n} ) ;} 2> /dev/null
-    [[ $got == foobar ]] || err_exit  ' <& {n} not working for read'
+    [[ $got == foobar ]] || log_error  ' <& {n} not working for read'
     exit $((error_count))
 ) & wait $!
 ((error_count += $?))
 
 # According to POSIX <> should redirect stdin when no fd is specified
-read -n 1 -t 0.1 <>/dev/zero || err_exit '<> should redirect stdin by default'
+read -n 1 -t 0.1 <>/dev/zero || log_error '<> should redirect stdin by default'

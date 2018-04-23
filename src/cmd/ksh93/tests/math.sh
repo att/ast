@@ -130,7 +130,7 @@ function test_arithmetric_expression_accesss_array_element_through_nameref
                         cmd="compound -A c ; nameref ncr=c[info].z ; ${cmd//@@VAR@@/ncr}"
                         ;;
                     *)
-                        err_exit "Unexpected mode ${mode}"
+                        log_error "Unexpected mode ${mode}"
                         ;;
                 esac
 
@@ -139,9 +139,9 @@ function test_arithmetric_expression_accesss_array_element_through_nameref
                 out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -o errexit -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 #set +x
 
-                    [[ "${out.stdout}" == ${tst.stdoutpattern}      ]] || err_exit "${testname}: Expected stdout to match $(printf '%q\n' "${tst.stdoutpattern}"), got $(printf '%q\n' "${out.stdout}")"
-                       [[ "${out.stderr}" == ''            ]] || err_exit "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
-                (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+                    [[ "${out.stdout}" == ${tst.stdoutpattern}      ]] || log_error "${testname}: Expected stdout to match $(printf '%q\n' "${tst.stdoutpattern}"), got $(printf '%q\n' "${out.stdout}")"
+                       [[ "${out.stderr}" == ''            ]] || log_error "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
+                (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
             done
         done
     done
@@ -168,8 +168,8 @@ function test_has_iszero
     )
 
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
-        str="$( ${SHELL} -o errexit -c "${tests[i]}" 2>&1 )" || err_exit "test $i: returned non-zero exit code $?"
-        [[ "${str}" == 'OK' ]] || err_exit "test $i: expected 'OK', got '${str}'"
+        str="$( ${SHELL} -o errexit -c "${tests[i]}" 2>&1 )" || log_error "test $i: returned non-zero exit code $?"
+        [[ "${str}" == 'OK' ]] || log_error "test $i: expected 'OK', got '${str}'"
     done
 
     return 0

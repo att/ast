@@ -64,14 +64,14 @@ namespace x
     {
         print local fn $foo
     }
-    [[ $(fn) == 'local fn bar' ]] || err_exit 'fn inside namespace should run local function'
-    [[ $(fun) == 'global fun abc' ]] || err_exit 'global fun run from namespace not working'
-    (( r == 9 )) || err_exit 'global variable r not set in namespace'
+    [[ $(fn) == 'local fn bar' ]] || log_error 'fn inside namespace should run local function'
+    [[ $(fun) == 'global fun abc' ]] || log_error 'global fun run from namespace not working'
+    (( r == 9 )) || log_error 'global variable r not set in namespace'
 false
-    [[ ${z[qqq]} == abc ]] || err_exit 'local array element not correct'
-    [[ ${z[abc]} == '' ]] || err_exit 'global array element should not be visible when local element exists'
-    [[ ${bar.y} == 2 ]] || err_exit 'local variable bar.y not found'
-    [[ ${bar.t} == '' ]] || err_exit 'global bar.t should not be visible'
+    [[ ${z[qqq]} == abc ]] || log_error 'local array element not correct'
+    [[ ${z[abc]} == '' ]] || log_error 'global array element should not be visible when local element exists'
+    [[ ${bar.y} == 2 ]] || log_error 'local variable bar.y not found'
+    [[ ${bar.t} == '' ]] || log_error 'global bar.t should not be visible'
     function runxrun
     {
         xfun
@@ -82,33 +82,33 @@ false
     }
     PATH=$tmp/local/bin:/bin
     FPATH=$tmp/local
-    [[ $(runxrun) ==  'xfun local bar' ]] || err_exit 'local function on FPATH failed'
-    [[ $(runrun $foo) ==  'local prog bar' ]] || err_exit 'local binary on PATH failed'
+    [[ $(runxrun) ==  'xfun local bar' ]] || log_error 'local function on FPATH failed'
+    [[ $(runrun $foo) ==  'local prog bar' ]] || log_error 'local binary on PATH failed'
 }
 
-[[ $(fn) == 'global fn abc' ]] || err_exit 'fn outside namespace should run global function'
-[[ $(.x.fn) == 'local fn bar' ]] || err_exit 'namespace function called from global failed'
-[[  ${z[abc]} == qqq ]] || err_exit 'global associative array should not be affected by definiton in namespace'
-[[  ${bar.y} == 4 ]] || err_exit 'global compound variable should not be affected by definiton in namespace'
-[[  ${bar.z} == ''  ]] || err_exit 'global compound variable should not see elements in namespace'
-[[ $(xfun) ==  'xfun global abc' ]] || err_exit 'global function on FPATH failed'
-[[ $(run $foo) ==  'global prog abc' ]] || err_exit 'global binary on PATH failed'
+[[ $(fn) == 'global fn abc' ]] || log_error 'fn outside namespace should run global function'
+[[ $(.x.fn) == 'local fn bar' ]] || log_error 'namespace function called from global failed'
+[[  ${z[abc]} == qqq ]] || log_error 'global associative array should not be affected by definiton in namespace'
+[[  ${bar.y} == 4 ]] || log_error 'global compound variable should not be affected by definiton in namespace'
+[[  ${bar.z} == ''  ]] || log_error 'global compound variable should not see elements in namespace'
+[[ $(xfun) ==  'xfun global abc' ]] || log_error 'global function on FPATH failed'
+[[ $(run $foo) ==  'global prog abc' ]] || log_error 'global binary on PATH failed'
 false
-[[ $(.x.runxrun) ==  'xfun local bar' ]] || err_exit 'namespace function on FPATH failed'
+[[ $(.x.runxrun) ==  'xfun local bar' ]] || log_error 'namespace function on FPATH failed'
 
 namespace sp1
 {
     compound -a c=( [4]=( bool b=true) )
 }
 exp=$'(\n\t[4]=(\n\t\t_Bool b=true\n\t)\n)'
-[[ $(print -v .sp1.c) == "$exp" ]] || err_exit 'print -v .sp1.c where sp1 is a namespace and c a compound variable not correct'
+[[ $(print -v .sp1.c) == "$exp" ]] || log_error 'print -v .sp1.c where sp1 is a namespace and c a compound variable not correct'
 
 namespace com.foo
 {
     compound container=(compound -a a; integer i=2)
     exp=$(print -v container)
 }
-[[ $(print -v .com.foo.container) == "${.com.foo.exp}" ]] || err_exit 'compound variables defined in a namespace not expanded the same outside and inside'
+[[ $(print -v .com.foo.container) == "${.com.foo.exp}" ]] || log_error 'compound variables defined in a namespace not expanded the same outside and inside'
 
 namespace a.b
 {
@@ -129,13 +129,13 @@ namespace com.foo.test1
     typeset -T y_t=( x_t x ; integer j=5 )
 }
 .com.foo.test1.y_t v
-[[ $(v.x.pr) == 9/5 ]] || err_exit  '_.__ not working with nested types in a namespace'
+[[ $(v.x.pr) == 9/5 ]] || log_error  '_.__ not working with nested types in a namespace'
 
 namespace a.b
 {
     function f1 { print OK ; }
     function f2 { f1 ; }
-    [[ $(f2) == OK ]] 2> /dev/null || err_exit 'function defined in namespace not found when referenced by another function in the namespace'
+    [[ $(f2) == OK ]] 2> /dev/null || log_error 'function defined in namespace not found when referenced by another function in the namespace'
 }
 
 namespace org.terror
@@ -152,7 +152,7 @@ namespace org.terror
         x1.method_a
             x2.method_a
     }
-    [[ $(main 2> /dev/null)  == $'xxx\nyyy' ]] || err_exit 'discipline override type defined in namespace not working'
+    [[ $(main 2> /dev/null)  == $'xxx\nyyy' ]] || log_error 'discipline override type defined in namespace not working'
 }
 
 namespace a.b
@@ -161,7 +161,7 @@ namespace a.b
     {
         integer i=1
         typeset s=abcd
-        [[ $(print "${s:i++:1}") == b ]] || err_exit 'binding function local variables in functions defined in namespace not working'
+        [[ $(print "${s:i++:1}") == b ]] || log_error 'binding function local variables in functions defined in namespace not working'
     }
     f
 }
@@ -174,6 +174,6 @@ namespace a.b
     )
         function p { printf "%q\n" "$1" ;}
     y_t x
-    [[ $(x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type not found from within a namespace'
+    [[ $(x.px 2> /dev/null) == 9 ]] || log_error 'function defined in type not found from within a namespace'
 }
-[[ $(.a.b.x.px 2> /dev/null) == 9 ]] || err_exit 'function defined in type not found from outside a.b namespace'
+[[ $(.a.b.x.px 2> /dev/null) == 9 ]] || log_error 'function defined in type not found from outside a.b namespace'

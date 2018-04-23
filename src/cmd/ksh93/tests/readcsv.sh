@@ -40,8 +40,8 @@ do
         ((nfields=${#arr[@]}))
         if ((++count==1))
         then
-            ((nfields==10)) || err_exit 'first record should contain 10 fields'
-            [[ ${arr[7]} == $'New Inter""State\nTerm' ]] || err_exit $'7th field of record 1 should contain New Inter""State\nTerm'
+            ((nfields==10)) || log_error 'first record should contain 10 fields'
+            [[ ${arr[7]} == $'New Inter""State\nTerm' ]] || log_error $'7th field of record 1 should contain New Inter""State\nTerm'
         fi
 
         for ((i=0; i < nfields;i++))
@@ -61,4 +61,4 @@ do
         done
     done < $tmp1 > $tmp2
 done
-diff "$tmp1" "$tmp2" >/dev/null 2>&1 || err_exit "files $tmp1 and $tmp2 differ"
+diff "$tmp1" "$tmp2" >/dev/null 2>&1 || log_error "files $tmp1 and $tmp2 differ"

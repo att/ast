@@ -45,44 +45,44 @@ function print
 
 if [[ $(print) != hi ]]
 then
-    err_exit "command print not working inside print function"
+    log_error "command print not working inside print function"
 fi
 
 unset -f print
 
 if [[ $(foobar 1) != '33 bye' ]]
 then
-    err_exit 'global variables not correct'
+    log_error 'global variables not correct'
 fi
 
 if [[ $(foobar 2) != 'foobar' ]]
 then
-    err_exit '$0  not correct'
+    log_error '$0  not correct'
 fi
 
 if [[ $(bar=foo foobar 1) != '33 foo' ]]
 then
-    err_exit 'environment override not correct'
+    log_error 'environment override not correct'
 fi
 
 if [[ $bar == foo ]]
 then
-    err_exit 'scoping error'
+    log_error 'scoping error'
 fi
 
 if [[ $(foobar 3) != 'foo 10' ]]
 then
-    err_exit non-local variables
+    log_error non-local variables
 fi
 
 foobar 4
 if [[ $foo != 36 ]]
 then
-    err_exit EXIT trap in wrong scope
+    log_error EXIT trap in wrong scope
 fi
 
-unset -f foobar || err_exit "cannot unset function foobar"
-typeset -f foobar>/dev/null  && err_exit "typeset -f has incorrect exit status"
+unset -f foobar || log_error "cannot unset function foobar"
+typeset -f foobar>/dev/null  && log_error "typeset -f has incorrect exit status"
 
 function foobar
 {
@@ -95,20 +95,20 @@ if [ -r $tmp/test1 ]
 then
     rm -r $tmp/test1
 else
-    err_exit 'return within subshell inside function error'
+    log_error 'return within subshell inside function error'
 fi
 
 }
 abc() print hi
 if [[ $(abc) != hi ]]
 then
-    err_exit 'abc() print hi not working'
+    log_error 'abc() print hi not working'
 fi
 
 ( unset -f abc )
 if [[ $(abc 2>/dev/null) != hi ]]
 then
-    err_exit 'abc() print hi not working after subshell unset'
+    log_error 'abc() print hi not working after subshell unset'
 fi
 
 (
@@ -117,7 +117,7 @@ fi
         exit 1
     }
     f
-    err_exit 'exit from function not working'
+    log_error 'exit from function not working'
 )
 unset -f foo
 function foo
@@ -130,25 +130,25 @@ function foo
     )
     if [[ $x != 2 ]]
     then
-    err_exit 'value of x not restored after subshell inside function'
+    log_error 'value of x not restored after subshell inside function'
     fi
 
 }
 x=1
 if [[ $(foo) != bar ]]
 then
-    err_exit 'cd inside nested subshell not working'
+    log_error 'cd inside nested subshell not working'
 fi
 
 if [[ $PWD != "$TEST_DIR" ]]
 then
-    err_exit 'cd inside nested subshell changes $PWD'
+    log_error 'cd inside nested subshell changes $PWD'
 fi
 
 fun() /bin/echo hello
 if [[ $(fun) != hello ]]
 then
-    err_exit one line functions not working
+    log_error one line functions not working
 fi
 
 cat > $tmp/script <<-\!
@@ -161,7 +161,7 @@ function passargs
 }
 if [[ $(passargs one) != one ]]
 then
-    err_exit 'passing args from functions to scripts not working'
+    log_error 'passing args from functions to scripts not working'
 fi
 
 cat > $tmp/script <<-\!
@@ -175,18 +175,18 @@ cat > $tmp/script <<-\!
 
 if ! $tmp/script
 then
-    err_exit 'exit trap incorrectly triggered'
+    log_error 'exit trap incorrectly triggered'
 fi
 
 if ! $SHELL -c $tmp/script
 then
-    err_exit 'exit trap incorrectly triggered when invoked with -c'
+    log_error 'exit trap incorrectly triggered when invoked with -c'
 fi
 
 $SHELL -c "trap 'rm $tmp/script' EXIT"
 if [[ -f $tmp/script ]]
 then
-    err_exit 'exit trap not triggered when invoked with -c'
+    log_error 'exit trap not triggered when invoked with -c'
 fi
 
 cat > $tmp/script <<- \EOF
@@ -201,7 +201,7 @@ EOF
 chmod +x $tmp/script
 if [[ $( $SHELL $tmp/script arg1 arg2) != arg2 ]]
 then
-    err_exit 'arguments not restored by posix functions'
+    log_error 'arguments not restored by posix functions'
 fi
 
 function foo
@@ -215,13 +215,13 @@ function foo
     }
     if [[ $(foo) != bar ]]
     then
-        err_exit 'function definitions inside subshells not working'
+        log_error 'function definitions inside subshells not working'
     fi
 )
 
 if [[ $(foo) != hello ]]
 then
-    err_exit 'function definitions inside subshells not restored'
+    log_error 'function definitions inside subshells not restored'
 fi
 
 unset -f foo bar
@@ -238,7 +238,7 @@ function foo
 x=1
 if [[ $(foo) != 3 ]]
 then
-    err_exit 'variable assignment list not using parent scope'
+    log_error 'variable assignment list not using parent scope'
 fi
 
 unset -f foobar
@@ -253,12 +253,12 @@ FPATH=$tmp
 print 'function zzz { return 7; }' > zzz
 PATH="$SAFE_PATH"
 zzz
-[[ $? == 7 ]] || err_exit 'function not found in . when $PWD is in FPATH'
+[[ $? == 7 ]] || log_error 'function not found in . when $PWD is in FPATH'
 PATH="$FULL_PATH"
 autoload foobar
 expect=foo
 actual="$(foobar)"
-[[ $actual == $expect ]] || err_exit 'autoload not working' "$expect" "$actual"
+[[ $actual == $expect ]] || log_error 'autoload not working' "$expect" "$actual"
 
 unset -f foobar
 function foobar
@@ -266,12 +266,12 @@ function foobar
     typeset -r x=3
     return 0
 }
-( foobar ) 2> /dev/null || err_exit "cannot unset readonly variable in function"
+( foobar ) 2> /dev/null || log_error "cannot unset readonly variable in function"
 if $SHELL -n 2> /dev/null <<-!
 	abc()
 	!
 then
-    err_exit 'abc() without a function body is not a syntax error'
+    log_error 'abc() without a function body is not a syntax error'
 fi
 
 function winpath
@@ -288,12 +288,12 @@ function winpath
 
 if [[ $( (winpath --man 2>/dev/null); print ok) != ok ]]
 then
-    err_exit 'getopts --man in functions not working'
+    log_error 'getopts --man in functions not working'
 fi
 
 if [[ $( (winpath -z 2>/dev/null); print ok) != ok ]]
 then
-    err_exit 'getopts with bad option in functions not working'
+    log_error 'getopts with bad option in functions not working'
 fi
 
 unset -f x
@@ -304,7 +304,7 @@ function x
 typeset -ft x
 if   [[ $(x x=y 2>/dev/null) != x=y ]]
 then
-    err_exit 'name=value pair args not passed to traced functions'
+    log_error 'name=value pair args not passed to traced functions'
 fi
 
 function bad
@@ -316,7 +316,7 @@ val=true
 bad
 if [[ $val != false ]]
 then
-    err_exit 'set -e not working for functions'
+    log_error 'set -e not working for functions'
 fi
 
 function bad
@@ -328,7 +328,7 @@ val=true
 bad
 if [[ $val != true ]]
 then
-    err_exit 'set -e not disabled for functions'
+    log_error 'set -e not disabled for functions'
 fi
 
 bad()
@@ -340,7 +340,7 @@ val=true
 bad
 if [[ $val != false ]]
 then
-    err_exit 'set -e not inherited for posix functions'
+    log_error 'set -e not inherited for posix functions'
 fi
 
 trap - ERR
@@ -367,50 +367,50 @@ export dgk=base
 val=$(myexport dgk fun)
 if [[ $val != fun ]]
 then
-    err_exit "export inside function not working -- expected 'fun', got '$val'"
+    log_error "export inside function not working -- expected 'fun', got '$val'"
 fi
 
 val=$(export | sed -e '/^dgk=/!d' -e 's/^dgk=//')
 if [[ $val != base ]]
 then
-    err_exit "export not restored after function call -- expected 'base', got '$val'"
+    log_error "export not restored after function call -- expected 'base', got '$val'"
 fi
 
 val=$(myexport dgk fun fun2)
 if [[ $val != fun2 ]]
 then
-    err_exit "export inside function not working with recursive function -- expected 'fun2', got '$val'"
+    log_error "export inside function not working with recursive function -- expected 'fun2', got '$val'"
 fi
 
 val=$(export | sed -e '/^dgk=/!d' -e 's/^dgk=//')
 if [[ $val != base ]]
 then
-    err_exit "export not restored after recursive function call -- expected 'base', got '$val'"
+    log_error "export not restored after recursive function call -- expected 'base', got '$val'"
 fi
 
 val=$(dgk=try3 myexport dgk)
 if [[ $val != try3 ]]
 then
-    err_exit "name=value not added to export list with function call -- expected 'try3', got '$val'"
+    log_error "name=value not added to export list with function call -- expected 'try3', got '$val'"
 fi
 
 val=$(export | sed -e '/^dgk=/!d' -e 's/^dgk=//')
 if [[ $val != base ]]
 then
-    err_exit "export not restored name=value function call -- expected 'base', got '$val'"
+    log_error "export not restored name=value function call -- expected 'base', got '$val'"
 fi
 
 unset zzz
 val=$(myexport zzz fun)
 if [[ $val != fun ]]
 then
-    err_exit "export inside function not working -- expected 'fun', got '$val'"
+    log_error "export inside function not working -- expected 'fun', got '$val'"
 fi
 
 val=$(export | sed -e '/^zzz=/!d' -e 's/^zzz=//')
 if [[ $val ]]
 then
-    err_exit "unset varaible exported after function call -- expected '', got '$val'"
+    log_error "unset varaible exported after function call -- expected '', got '$val'"
 fi
 
 unset zzz
@@ -423,7 +423,7 @@ function foo
 
 if [[ $(foo)$(foo) != ABCABC ]]
 then
-    err_exit 'attributes on unset variables not saved/restored'
+    log_error 'attributes on unset variables not saved/restored'
 fi
 
 function xpd {
@@ -437,7 +437,7 @@ function xpd {
 
 if [[ $(xpd a c) != $'i=a j=a\ni=b j=b\ni=c j=a' ]]
 then
-    err_exit 'for loop function optimization error'
+    log_error 'for loop function optimization error'
 fi
 
 typeset -A visited
@@ -456,10 +456,10 @@ function closure
     done
     return $r
 }
-closure 0 || err_exit -u2 'for loop function optimization bug2'
+closure 0 || log_error -u2 'for loop function optimization bug2'
 dir=$tmp/dir
 mkdir $dir
-cd $dir || { err_exit "cd $dir failed"; exit 1; }
+cd $dir || { log_error "cd $dir failed"; exit 1; }
 
 (
     function a {
@@ -474,7 +474,7 @@ cd $dir || { err_exit "cd $dir failed"; exit 1; }
     PS4=X
     b 
 ) > file 2>&1
-[[ $(<file) == *'Xprint 2'* ]] ||  err_exit 'function trace disabled by function call'
+[[ $(<file) == *'Xprint 2'* ]] ||  log_error 'function trace disabled by function call'
 rm -f file
 
 print 'false' > try
@@ -491,7 +491,7 @@ cat > tst <<- EOF
 EOF
 if [[ $($SHELL < tst)  == error ]]
 then
-    err_exit 'ERR trap not cleared'
+    log_error 'ERR trap not cleared'
 fi
 cd $TEST_DIR
 
@@ -503,11 +503,11 @@ unset -f foobar
 got=$?
 exp=126
 [[ $got == $exp ]] ||
-    err_exit "function file without function definition processes wrong error" "$exp" "$got"
+    log_error "function file without function definition processes wrong error" "$exp" "$got"
 
 print 'set a b c' > dotscript
 [[ $(PATH=$PATH: $SHELL -c '. dotscript; print $#') == 3 ]] ||
-    err_exit 'positional parameters not preserved with . script without arguments'
+    log_error 'positional parameters not preserved with . script without arguments'
 function errcheck
 {
     trap 'print ERR; return 1' ERR
@@ -515,7 +515,7 @@ function errcheck
     print ok
 }
 err=$(errcheck)
-[[ $err == ERR ]] || err_exit 'trap on ERR not working in a function'
+[[ $err == ERR ]] || log_error 'trap on ERR not working in a function'
 x="$(
     function foobar
     {
@@ -523,8 +523,8 @@ x="$(
     }
     typeset -f foobar
 )"
-eval "$x"  || err_exit 'typeset -f generates syntax error'
-[[ $(foobar) != ok ]] && err_exit 'typeset -f not generating function'
+eval "$x"  || log_error 'typeset -f generates syntax error'
+[[ $(foobar) != ok ]] && log_error 'typeset -f not generating function'
 unset -f a b c
 a()
 {
@@ -533,8 +533,8 @@ a()
         print ${.sh.fun}
 }
 b() { : ;}
-[[ $(a) == a ]] || err_exit '.sh.fun not set correctly in a function'
-print $'a(){\ndate\n}'  | $SHELL 2> /dev/null || err_exit 'parser error in a(){;date;}'
+[[ $(a) == a ]] || log_error '.sh.fun not set correctly in a function'
+print $'a(){\ndate\n}'  | $SHELL 2> /dev/null || log_error 'parser error in a(){;date;}'
 cat > $tmp/data1 << '++EOF'
      1  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
      2  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -826,7 +826,7 @@ cat <<\M
 cat $tmp/data1 >> $tmp/script
 printf 'M\n}\n\nf\n\n' >> $tmp/script
 $SHELL -c $tmp/script  > $tmp/data2
-cmp -s $tmp/data[12] || err_exit 'error with long functions'
+cmp -s $tmp/data[12] || log_error 'error with long functions'
 v=1
 function f
 {
@@ -837,7 +837,7 @@ function f
         [[ $v == $i ]] || return 1
     done
 }
-f || err_exit "typeset optimization bug"
+f || log_error "typeset optimization bug"
 function f
 {
     print -r -- "$foo$bar"
@@ -847,8 +847,8 @@ function g
     print -r -- $(bar=bam f)
 }
 unset foo bar
-[[ $(foo=hello g) == hellobam ]] || err_exit 'function exports not passed on'
-[[ $(bar=hello g) == bam ]] || err_exit 'function exports not overridden'
+[[ $(foo=hello g) == hellobam ]] || log_error 'function exports not passed on'
+[[ $(bar=hello g) == bam ]] || log_error 'function exports not overridden'
 unset -f foo
 function foo
 {
@@ -867,7 +867,7 @@ function foo
         varname=
     done
 }
-[[ $(foo 'NUMBERED RECORDSIZE') == ok ]] || err_exit 'optimization error with undefined variable'
+[[ $(foo 'NUMBERED RECORDSIZE') == ok ]] || log_error 'optimization error with undefined variable'
 unset x
 x=$(
     set -e
@@ -885,7 +885,7 @@ x=$(
     trap 'err_f' ERR
     false
 )
-[[ $x == failed ]] && err_exit 'ERR trap executed multiple times'
+[[ $x == failed ]] && log_error 'ERR trap executed multiple times'
 export environment
 typeset global
 function f
@@ -915,7 +915,7 @@ function f
             t=$(typeset +f $1)
             ;;
         esac
-        [[ $t ]] || err_exit "typeset +f \$$i failed"
+        [[ $t ]] || log_error "typeset +f \$$i failed"
     done
 }
 f local global environment literal positional
@@ -929,7 +929,7 @@ $SHELL -c '
         PATH='$tmp' script
     }
     fun
-' || err_exit "compound variable cleanup before script exec failed"
+' || log_error "compound variable cleanup before script exec failed"
 ( $SHELL << \++EOF++
 function main
 {
@@ -939,7 +939,7 @@ function main
 }
 main
 ++EOF++
-) 2> /dev/null || err_exit 'function main fails'
+) 2> /dev/null || log_error 'function main fails'
 optind=$OPTIND
 sub()
 {
@@ -950,13 +950,13 @@ sub()
                 done
         )
 }
-[[ $(sub -a) == OPTIND=2 ]] || err_exit 'OPTIND should be 2'
-[[ $(sub -a) == OPTIND=2 ]] || err_exit 'OPTIND should be 2 again'
-[[ $OPTIND == "$optind" ]] || err_exit 'OPTIND should be 1'
+[[ $(sub -a) == OPTIND=2 ]] || log_error 'OPTIND should be 2'
+[[ $(sub -a) == OPTIND=2 ]] || log_error 'OPTIND should be 2 again'
+[[ $OPTIND == "$optind" ]] || log_error 'OPTIND should be 1'
 
 function bar
 {
-    [[ -o nounset ]] && err_exit  'nounset option should not be inherited'
+    [[ -o nounset ]] && log_error  'nounset option should not be inherited'
 }
 function foo
 {
@@ -973,8 +973,8 @@ function red
     return 0
 }
 
-[[ ${ red } != 'red_one 0' ]] && err_exit 'expected red_one 0'
-[[ ${ red } != 'red_one 1' ]] && err_exit 'expected red_one 1'
+[[ ${ red } != 'red_one 0' ]] && log_error 'expected red_one 0'
+[[ ${ red } != 'red_one 1' ]] && log_error 'expected red_one 1'
 
 xyz=$0
 function tb2
@@ -983,8 +983,8 @@ function tb2
     while((--.level>=0))
     do
         ((.sh.level = .level))
-        [[ $xyz == "$0" ]] || err_exit "\$xyz=$xyz does not match $0 on level ${.level}"
-        [[ ${.sh.lineno} == "$1" ]] || err_exit "\${.sh.lineno}=${.sh.lineno} does not match $1 on level ${.level}"
+        [[ $xyz == "$0" ]] || log_error "\$xyz=$xyz does not match $0 on level ${.level}"
+        [[ ${.sh.lineno} == "$1" ]] || log_error "\${.sh.lineno}=${.sh.lineno} does not match $1 on level ${.level}"
     done
 }
 
@@ -1004,7 +1004,7 @@ function bar
 }
 
 set -- $((LINENO+1))
-# TODO: Enable this test once we understand why this trivial change breaks it.
+log_info 'TODO: Enable this test once we understand why this trivial change breaks it.'
 # foo $LINENO
 
 function .sh.fun.set
@@ -1019,8 +1019,8 @@ def()
 {
     :
 }
-[[ $(abc) == abc ]] || err_exit '.sh.fun.set not capturing function name'
-[[ $(def) == def ]] || err_exit '.sh.fun.set not capturing name()'
+[[ $(abc) == abc ]] || log_error '.sh.fun.set not capturing function name'
+[[ $(def) == def ]] || log_error '.sh.fun.set not capturing name()'
 unset -f .sh.fun.set
 
 # tests for debug functions
@@ -1042,15 +1042,15 @@ function _Dbg_print_frame
     shift 5
     if ((pos==0))
     then
-    [[ $filename == "$basefile" ]] || err_exit "filename for level 0 is $filename not $basename"
+    [[ $filename == "$basefile" ]] || log_error "filename for level 0 is $filename not $basename"
         [[ $arg == DEBUG  ]] && ((baseline++))
-        [[ $line == "$baseline" ]] || err_exit "line number for level 0 is $line not $baseline"
+        [[ $line == "$baseline" ]] || log_error "line number for level 0 is $line not $baseline"
     elif ((pos==1))
     then
-    [[ $filename == "$tmp/debug" ]] ||  err_exit "filename for level 1 is $filename not $tmp/debug"
-        [[ $* == 'foo bar' ]] || err_exit "args are '$*', not 'foo bar'"
-        [[ $line == $arg ]] || err_exit "line number for level 1 is $line not $arg"
-    else    err_exit "level should be 0 or 1 but is $pos"
+    [[ $filename == "$tmp/debug" ]] ||  log_error "filename for level 1 is $filename not $tmp/debug"
+        [[ $* == 'foo bar' ]] || log_error "args are '$*', not 'foo bar'"
+        [[ $line == $arg ]] || log_error "line number for level 1 is $line not $arg"
+    else    log_error "level should be 0 or 1 but is $pos"
     fi
 
 }
@@ -1081,8 +1081,8 @@ caller() {
 }
 bar() { caller;}
 set -- $(bar)
-[[ $1 == $2 ]] && err_exit ".sh.inline optimization bug"
-( $SHELL  -c ' function foo { typeset x=$1;print $1;};z=();z=($(foo bar)) ') 2> /dev/null ||  err_exit 'using a function to set an array in a command sub  fails'
+[[ $1 == $2 ]] && log_error ".sh.inline optimization bug"
+( $SHELL  -c ' function foo { typeset x=$1;print $1;};z=();z=($(foo bar)) ') 2> /dev/null ||  log_error 'using a function to set an array in a command sub  fails'
 
 {
 got=$(
@@ -1106,7 +1106,7 @@ f 257 && print ok
 +++
 )
 } 2>/dev/null
-[[ $got == ok ]] || err_exit 'cannot handle comsub depth > 256 in function'
+[[ $got == ok ]] || log_error 'cannot handle comsub depth > 256 in function'
 
 tmp1=$tmp/job.1
 tmp2=$tmp/job.2
@@ -1120,10 +1120,10 @@ function foo
     typeset pid
     $tmp1 > $tmp2 & pid=$!
     wait $!
-    [[ $(< $tmp2) == $pid ]] || err_exit 'wrong pid for & job in function'
+    [[ $(< $tmp2) == $pid ]] || log_error 'wrong pid for & job in function'
 }
 foo
-echo 'TODO: Enable shcomp tests'
+log_info 'TODO: Enable shcomp tests'
 ## make sure compiled functions work
 #[[ $(tmp=$tmp $SHELL <<- \++++
 #    cat > $tmp/functions <<- \EOF
@@ -1144,12 +1144,12 @@ echo 'TODO: Enable shcomp tests'
 #    PATH=$FPATH:$PATH
 #    foobar
 #++++
-#) == foo ]] > /dev/null  || err_exit 'functions compiled with shcomp not working'
+#) == foo ]] > /dev/null  || log_error 'functions compiled with shcomp not working'
 ## tests for compiled . scripts
 #print $'print hello\nprint world' > $tmp/foo
 #${SHCOMP:-${SHELL%/*}/shcomp} $tmp/foo > $tmp/foo.sh
 #val=$(. $tmp/foo.sh)
-#[[ $val ==  $'hello\nworld' ]] || err_exit "processing compiled dot files not working correctly val=$val"
+#[[ $val ==  $'hello\nworld' ]] || log_error "processing compiled dot files not working correctly val=$val"
 ## test for functions in shell having side effects.
 unset -f foo foobar bar
 cd "$tmp"
@@ -1167,11 +1167,11 @@ cat > foo <<- \EOF
 EOF
 chmod +x foo
 : $(foo)
-[[ $(typeset +f) == *foo* ]] &&  err_exit 'function in subshell leaving side effect of function foo'
+[[ $(typeset +f) == *foo* ]] &&  log_error 'function in subshell leaving side effect of function foo'
 unset -f foo bar
 :  $(foo)
-[[ $(typeset +f) == *foo* ]] && err_exit 'function in subshell leaving side effects of function foo after reload'
-[[ $(typeset +f) == *bar* ]] && err_exit 'function in subshell leaving side effects of function bar after reload'
+[[ $(typeset +f) == *foo* ]] && log_error 'function in subshell leaving side effects of function foo after reload'
+[[ $(typeset +f) == *bar* ]] && log_error 'function in subshell leaving side effects of function bar after reload'
 
 unset -f foo
 typeset -A bar
@@ -1181,7 +1181,7 @@ function foo
     bar[$1].x=5
 }
 foo sub
-[[ ${!bar[@]} == sub ]] || err_exit 'scoping problem with compound array variables'
+[[ ${!bar[@]} == sub ]] || log_error 'scoping problem with compound array variables'
 
 function A
 {
@@ -1196,14 +1196,14 @@ function B
 }
             
 x=$(B)      
-[[ $x == $'TRAP A\nTRAP B' ]] || err_exit "trap from functions in subshells fails got" $x
+[[ $x == $'TRAP A\nTRAP B' ]] || log_error "trap from functions in subshells fails got" $x
 
 function foo
 {
     typeset bar=abc
     unset bar
-#    [[ $bar == bam ]] || err_exit 'unsetting local variable does not expose global variable'
-    [[ $bar ]] && err_exit 'unsetting local variable exposes global variable'
+#    [[ $bar == bam ]] || log_error 'unsetting local variable does not expose global variable'
+    [[ $bar ]] && log_error 'unsetting local variable exposes global variable'
 }
 bar=bam
 foo
@@ -1218,16 +1218,16 @@ x=$(
     gosleep 2> /dev/null
     print ok
 )
-[[ $x == ok ]] || err_exit 'TERM signal sent to last process of function kills the script'
+[[ $x == ok ]] || log_error 'TERM signal sent to last process of function kills the script'
 
 # verify that $0 does not change with functions defined as fun()
 func1()
 {
-    [[ $0 == "$dol0" ]] || err_exit "\$0 changed in func1() to $0"
+    [[ $0 == "$dol0" ]] || log_error "\$0 changed in func1() to $0"
 }
 function func2
 {
-    [[ $0 == func2 ]] || err_exit "\$0 changed in func2() to $0"
+    [[ $0 == func2 ]] || log_error "\$0 changed in func2() to $0"
     dol0=func2
     func1
 }
@@ -1242,7 +1242,7 @@ func2
 	}
 	foo
 EOF
-} 2> /dev/null || err_exit  'problem with unset -f  foo within function foo'
+} 2> /dev/null || log_error  'problem with unset -f  foo within function foo'
 
 val=$($SHELL 2> /dev/null <<- \EOF
 	.sh.fun.set() { set -x; }
@@ -1252,7 +1252,7 @@ val=$($SHELL 2> /dev/null <<- \EOF
 	set -o | grep xtrace
 	f2
 EOF)
-[[ $val == f1xtrace*on*off*f2xtrace*on* ]] || err_exit "'.sh.fun.set() { set -x; }' not tracing all functions"
+[[ $val == f1xtrace*on*off*f2xtrace*on* ]] || log_error "'.sh.fun.set() { set -x; }' not tracing all functions"
 
 function foo
 {
@@ -1260,22 +1260,22 @@ function foo
     while getopts hi: opt
     do    case $opt in
         h)    hflag=1;;
-            i)    [[ $OPTARG == foobar ]] || err_exit 'OPTARG should be set to foobar in function foo';;
+            i)    [[ $OPTARG == foobar ]] || log_error 'OPTARG should be set to foobar in function foo';;
         esac
     done
     shift $((OPTIND - 1))
-    (( OPTIND == 4 )) || err_exit "OPTIND is $OPTIND at end of function foo; it should be 4"  
-    [[ $1 == foo2 ]] || err_exit "\$1 is $1, not foo after getopts in function"
+    (( OPTIND == 4 )) || log_error "OPTIND is $OPTIND at end of function foo; it should be 4"  
+    [[ $1 == foo2 ]] || log_error "\$1 is $1, not foo after getopts in function"
 }
 OPTIND=6 OPTARG=xxx
 foo -h -i foobar foo2
-[[ $OPTARG == xxx ]] || err_exit 'getopts in function changes global OPTARG'
-(( OPTIND == 6 )) || err_exit 'getopts in function changes global OPTIND'
+[[ $OPTARG == xxx ]] || log_error 'getopts in function changes global OPTARG'
+(( OPTIND == 6 )) || log_error 'getopts in function changes global OPTIND'
 
 if [[ ! $compiled ]]
 then
     function foo { getopts --man; }
-    [[ $(typeset -f foo) == 'function foo { getopts --man; }' ]] || err_exit 'typeset -f not work for function with getopts'
+    [[ $(typeset -f foo) == 'function foo { getopts --man; }' ]] || log_error 'typeset -f not work for function with getopts'
 fi
 
 
@@ -1288,7 +1288,7 @@ invals=(135 255 256 267 -1)
 outvals=(135 255 0 267 255)
 for ((i=0; i < ${#invals[@]}; i++))
 do    foo ${invals[i]}
-    [[ $? == "${outvals[i]}" ]] || err_exit "function exit ${invals[i]} should set \$? to ${outvals[i]}"
+    [[ $? == "${outvals[i]}" ]] || log_error "function exit ${invals[i]} should set \$? to ${outvals[i]}"
 done
 
 function foo
@@ -1304,13 +1304,13 @@ function foo
 foo  2> /dev/null
 rc=$?
 exp=$((256+$(kill -l TERM) ))
-[[  $rc == "$exp" ]] || err_exit "expected exitval $exp got $rc"
+[[  $rc == "$exp" ]] || log_error "expected exitval $exp got $rc"
 
 $SHELL  <<- \EOF
 	fun() { shift 10 ;}
 	for i in a b
 	do    fun 2> /dev/null
-		[[ $i == b ]] && err_exit 'The bad shift did not terminated the loop'
+		[[ $i == b ]] && log_error 'The bad shift did not terminated the loop'
 	done
 EOF
 
@@ -1318,12 +1318,12 @@ $SHELL 2> /dev/null -uc 'typeset -T My_t=( float x);My_t -a A=( (x=1) )
 foo()
 {
     ((  (A[i-1].x != A[i].x) ))
-}' || err_exit 'unset parameter in function not called causes error with set -u'
+}' || log_error 'unset parameter in function not called causes error with set -u'
 
-$SHELL -c 'function ftest { ftest2; }; function ftest2 { unset -f ftest; }; ftest' 2> /dev/null || err_exit 'unset of function in the calling stack fails'
+$SHELL -c 'function ftest { ftest2; }; function ftest2 { unset -f ftest; }; ftest' 2> /dev/null || log_error 'unset of function in the calling stack fails'
 
 # Check if environment variables passed while invoking a function are exported
 # https://github.com/att/ast/issues/32
-function f2 { env | grep -q "^foo" || err_exit "Environment variable is not propogated from caller function"; }
-function f1 { f2; env | grep -q "^foo" || err_exit "Environment variable is not passed to a function"; }
+function f2 { env | grep -q "^foo" || log_error "Environment variable is not propogated from caller function"; }
+function f1 { f2; env | grep -q "^foo" || log_error "Environment variable is not passed to a function"; }
 foo=bar f1

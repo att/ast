@@ -30,9 +30,9 @@ do
     if grep -q $lc_all locale.txt
     then
         supported+=" $lc_all"
-        warning "LC_ALL=$lc_all is supported and will be tested"
+        log_info "LC_ALL=$lc_all is supported and will be tested"
     else
-        warning "LC_ALL=$lc_all not supported"
+        log_info "LC_ALL=$lc_all not supported"
     fi
 done
 
@@ -46,17 +46,17 @@ do
         printf "%q\n" "$(printf "\u[20ac]")"' |
         iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
-    [[ $got == "$exp0" ]] || err_exit "${lc_all} nounicodeliterals FAILED -- expected '$exp0', got '$got'"
+    [[ $got == "$exp0" ]] || log_error "${lc_all} nounicodeliterals FAILED -- expected '$exp0', got '$got'"
 
     got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
         printf "%(nounicodeliterals)q\n" "$(printf "\u[20ac]")"' |
         iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
-    [[ $got == "$exp0" ]] || err_exit "${lc_all} (nounicodeliterals) FAILED -- expected '$exp0', got '$got'"
+    [[ $got == "$exp0" ]] || log_error "${lc_all} (nounicodeliterals) FAILED -- expected '$exp0', got '$got'"
 
     got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"')
-    [[ $got == "$exp1" || $got == "$exp2" ]] || err_exit "${lc_all} unicode FAILED -- expected $exp1, got $got"
+    [[ $got == "$exp1" || $got == "$exp2" ]] || log_error "${lc_all} unicode FAILED -- expected $exp1, got $got"
     
     got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(unicodeliterals)q\n" "$(printf "\u[20ac]")"')
-    [[ $got == "$exp1" || $got == "$exp2" ]] || err_exit "${lc_all} (unicodeliterals) FAILED -- expected $exp1, got $got"
+    [[ $got == "$exp1" || $got == "$exp2" ]] || log_error "${lc_all} (unicodeliterals) FAILED -- expected $exp1, got $got"
 done

@@ -21,78 +21,78 @@
 alias foo='print hello'
 if [[ $(foo) != hello ]]
 then
-    err_exit 'foo, where foo is alias for "print hello" failed'
+    log_error 'foo, where foo is alias for "print hello" failed'
 fi
 
 if [[ $(foo world) != 'hello world' ]]
 then
-    err_exit 'foo world, where foo is alias for "print hello" failed'
+    log_error 'foo world, where foo is alias for "print hello" failed'
 fi
 
 alias foo='print hello '
 alias bar=world
 if [[ $(foo bar) != 'hello world' ]]
 then
-    err_exit 'foo bar, where foo is alias for "print hello " failed'
+    log_error 'foo bar, where foo is alias for "print hello " failed'
 fi
 
 if [[ $(foo \bar) != 'hello bar' ]]
 then
-    err_exit 'foo \bar, where foo is alias for "print hello " failed'
+    log_error 'foo \bar, where foo is alias for "print hello " failed'
 fi
 
 alias bar='foo world'
 if [[ $(bar) != 'hello world' ]]
 then
-    err_exit 'bar, where bar is alias for "foo world" failed'
+    log_error 'bar, where bar is alias for "foo world" failed'
 fi
 
 if [[ $(alias bar) != "bar='foo world'" ]]
 then
-    err_exit 'alias bar, where bar is alias for "foo world" failed'
+    log_error 'alias bar, where bar is alias for "foo world" failed'
 fi
 
-unalias foo  || err_exit  "unalias foo failed"
-alias foo 2> /dev/null  && err_exit "alias for non-existent alias foo returns true"
+unalias foo  || log_error  "unalias foo failed"
+alias foo 2> /dev/null  && log_error "alias for non-existent alias foo returns true"
 unset bar
 alias bar="print foo$bar"
 bar=bar
 if [[ $(bar) != foo ]]
 then
-    err_exit 'alias bar, where bar is alias for "print foo$bar" failed'
+    log_error 'alias bar, where bar is alias for "print foo$bar" failed'
 fi
 
 unset bar
 alias bar='print hello'
 if [[ $bar != '' ]]
 then
-    err_exit 'alias bar cause variable bar to be set'
+    log_error 'alias bar cause variable bar to be set'
 fi
 
 alias !!=print
 if [[ $(!! hello 2>/dev/null) != hello ]]
 then
-    err_exit 'alias for !!=print not working'
+    log_error 'alias for !!=print not working'
 fi
 
 alias foo=echo
 if [[ $(print  "$(foo bar)" ) != bar  ]]
 then
-    err_exit 'alias in command substitution not working'
+    log_error 'alias in command substitution not working'
 fi
 
 (unalias foo)
 if [[ $(foo bar 2> /dev/null)  != bar  ]]
 then
-    err_exit 'alias not working after unalias in subshell'
+    log_error 'alias not working after unalias in subshell'
 fi
 
 builtin -d rm 2> /dev/null
 if whence rm > /dev/null
 then
-    [[ ! $(alias -t | grep rm= ) ]] && err_exit 'tracked alias not set'
+    [[ ! $(alias -t | grep rm= ) ]] && log_error 'tracked alias not set'
     PATH=$PATH
-    [[ $(alias -t | grep rm= ) ]] && err_exit 'tracked alias not cleared'
+    [[ $(alias -t | grep rm= ) ]] && log_error 'tracked alias not cleared'
 fi
 
 if hash -r 2>/dev/null && [[ ! $(hash) ]]
@@ -102,19 +102,19 @@ then
     do    
         print ':' > $tmp/$i
         chmod +x $tmp/$i
-        hash -r -- $i 2>/dev/null || err_exit "hash -r -- $i failed"
-        [[ $(hash) == $i=$tmp/$i ]] || err_exit "hash -r -- $i failed, expected $i=$tmp/$i, got $(hash)"
+        hash -r -- $i 2>/dev/null || log_error "hash -r -- $i failed"
+        [[ $(hash) == $i=$tmp/$i ]] || log_error "hash -r -- $i failed, expected $i=$tmp/$i, got $(hash)"
     done
 else    
-    err_exit 'hash -r failed'
+    log_error 'hash -r failed'
 fi
 
-( alias :pr=print) 2> /dev/null || err_exit 'alias beginning with : fails'
-( alias p:r=print) 2> /dev/null || err_exit 'alias with : in name fails'
+( alias :pr=print) 2> /dev/null || log_error 'alias beginning with : fails'
+( alias p:r=print) 2> /dev/null || log_error 'alias with : in name fails'
 
-unalias no_such_alias &&  err_exit 'unalias should return non-zero for unknown alias'
+unalias no_such_alias &&  log_error 'unalias should return non-zero for unknown alias'
 
 for i in compound float integer nameref
 do    
-    [[ $i=$(whence $i) == "$(alias $i)" ]] || err_exit "whence $i not matching $(alias $i)"
+    [[ $i=$(whence $i) == "$(alias $i)" ]] || log_error "whence $i not matching $(alias $i)"
 done

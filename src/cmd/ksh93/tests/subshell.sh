@@ -45,25 +45,25 @@ val='(
 	)
 )'
 
-[[ $z == "$val" ]] || err_exit 'compound variable with mixed arrays not working'
+[[ $z == "$val" ]] || log_error 'compound variable with mixed arrays not working'
 z.bar[1]=yesyes
-[[ ${z.bar[1]} == yesyes ]] || err_exit 'reassign of index array compound variable fails'
+[[ ${z.bar[1]} == yesyes ]] || log_error 'reassign of index array compound variable fails'
 z.bar[1]=(x=12 y=5)
-[[ ${z.bar[1]} == $'(\n\tx=12\n\ty=5\n)' ]] || err_exit 'reassign array simple to compound variable fails'
+[[ ${z.bar[1]} == $'(\n\tx=12\n\ty=5\n)' ]] || log_error 'reassign array simple to compound variable fails'
 eval val="$z"
 (
     z.foo[three]=good
-    [[ ${z.foo[three]} == good ]] || err_exit 'associative array assignment in subshell not working'
+    [[ ${z.foo[three]} == good ]] || log_error 'associative array assignment in subshell not working'
 )
-[[ $z == "$val" ]] || err_exit 'compound variable changes after associative array assignment'
+[[ $z == "$val" ]] || log_error 'compound variable changes after associative array assignment'
 eval val="$z"
 (
     z.foo[two]=ok
-    [[ ${z.foo[two]} == ok ]] || err_exit 'associative array assignment to compound variable in subshell not working'
+    [[ ${z.foo[two]} == ok ]] || log_error 'associative array assignment to compound variable in subshell not working'
     z.bar[1]=yes
-    [[ ${z.bar[1]} == yes ]] || err_exit 'index array assignment to compound variable in subshell not working'
+    [[ ${z.bar[1]} == yes ]] || log_error 'index array assignment to compound variable in subshell not working'
 )
-[[ $z == "$val" ]] || err_exit 'compound variable changes after associative array assignment'
+[[ $z == "$val" ]] || log_error 'compound variable changes after associative array assignment'
 
 x=(
     foo=( qqq=abc rrr=def)
@@ -72,16 +72,16 @@ x=(
 eval val="$x"
 (
     unset x.foo
-    [[ ${x.foo.qqq} ]] && err_exit 'x.foo.qqq should be unset'
+    [[ ${x.foo.qqq} ]] && log_error 'x.foo.qqq should be unset'
     x.foo=good
-    [[ ${x.foo} == good ]] || err_exit 'x.foo should be good'
+    [[ ${x.foo} == good ]] || log_error 'x.foo should be good'
 )
-[[ $x == "$val" ]] || err_exit 'compound variable changes after unset leaves'
+[[ $x == "$val" ]] || log_error 'compound variable changes after unset leaves'
 unset l
 (
     l=( a=1 b="BE" )
 )
-[[ ${l+foo} != foo ]] || err_exit 'l should be unset'
+[[ ${l+foo} != foo ]] || log_error 'l should be unset'
 
 TEST_notfound=notfound
 while whence $TEST_notfound >/dev/null 2>&1
@@ -103,7 +103,7 @@ do
         kill $!
     ' > $tmp/sub 2>/dev/null
     no=$(<$tmp/sub)
-    (( no == (BS * nb) )) || err_exit "shell hangs on command substitution output size >= $BS*$nb with write size $bs -- expected $((BS*nb)), got ${no:-0}"
+    (( no == (BS * nb) )) || log_error "shell hangs on command substitution output size >= $BS*$nb with write size $bs -- expected $((BS*nb)), got ${no:-0}"
 done
 
 # This time with redirection on the trailing command
@@ -120,7 +120,7 @@ do
         kill $!
     ' > $tmp/sub 2>/dev/null
     no=$(<$tmp/sub)
-    (( no == (BS * nb) )) || err_exit "shell hangs on command substitution output size >= $BS*$nb with write size $bs and trailing redirection -- expected $((BS*nb)), got ${no:-0}"
+    (( no == (BS * nb) )) || log_error "shell hangs on command substitution output size >= $BS*$nb with write size $bs and trailing redirection -- expected $((BS*nb)), got ${no:-0}"
 done
 
 # exercise command substitutuion trailing newline logic w.r.t. pipe vs. tmp file io
@@ -164,12 +164,12 @@ do
             do
                 if ! got=$($TEST_shell "$cmd")
                 then
-                    err_exit "${TEST_shell/*-c/\$SHELL -c} ${TEST_unset:+unset }${TEST_fork:+fork }$txt print failed"
+                    log_error "${TEST_shell/*-c/\$SHELL -c} ${TEST_unset:+unset }${TEST_fork:+fork }$txt print failed"
                 elif [[ "$got" != "$exp" ]]
                 then
                     EXP=$(printf %q "$exp")
                     GOT=$(printf %q "$got")
-                    err_exit "${TEST_shell/*-c/\$SHELL -c} ${TEST_unset:+unset }${TEST_fork:+fork }$txt command substitution failed -- expected $EXP, got $GOT"
+                    log_error "${TEST_shell/*-c/\$SHELL -c} ${TEST_unset:+unset }${TEST_fork:+fork }$txt command substitution failed -- expected $EXP, got $GOT"
                 fi
             done
         done
@@ -194,7 +194,7 @@ r=$( ($SHELL -c '
     print ok
     kill -KILL $!
 ') 2>/dev/null)
-[[ $r == ok ]] || err_exit "large subshell command substitution hangs"
+[[ $r == ok ]] || log_error "large subshell command substitution hangs"
 
 for TEST_command in '' $TEST_notfound
 do
@@ -218,19 +218,19 @@ do
                         kill $!
                         print ok
                         ')
-                    [[ $r == ok ]] || err_exit "shell hangs on $TEST_test"
+                    [[ $r == ok ]] || log_error "shell hangs on $TEST_test"
                 done
             done
         done
     done
 done
 
-$SHELL -c '( autoload xxxxx);print -n' ||  err_exit 'autoloaded functions in subshells can cause failure'
+$SHELL -c '( autoload xxxxx);print -n' ||  log_error 'autoloaded functions in subshells can cause failure'
 foo=$($SHELL  <<- ++EOF++
 	(trap 'print bar' EXIT;print -n foo)
 	++EOF++
 )
-[[ $foo == foobar ]] || err_exit 'trap on exit when last commands is subshell is not triggered'
+[[ $foo == foobar ]] || log_error 'trap on exit when last commands is subshell is not triggered'
 
 err=$(
     $SHELL  2>&1  <<- \EOF
@@ -255,7 +255,7 @@ err=$(
     err=${err%%$'\n'*}
     err=${err#*:}
     err=${err##[[:space:]]}
-    err_exit "nested command substitution with redirections failed -- $err"
+    log_error "nested command substitution with redirections failed -- $err"
 }
 
 exp=0
@@ -268,7 +268,7 @@ $SHELL -c $'
     exit '$exp$'
 '
 got=$?
-[[ $got == $exp ]] || err_exit "getopts --man runtime callout with nonzero exit terminates shell -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "getopts --man runtime callout with nonzero exit terminates shell -- expected '$exp', got '$got'"
 exp=ok
 got=$($SHELL -c $'
     function foobar
@@ -278,7 +278,7 @@ got=$($SHELL -c $'
     [[ $(getopts \'[+?X\ffoobar\fX]\' v --man 2>&1) == *"Xhello worldX"* ]]
     print '$exp$'
 ')
-[[ $got == $exp ]] || err_exit "getopts --man runtime callout with nonzero exit terminates shell -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "getopts --man runtime callout with nonzero exit terminates shell -- expected '$exp', got '$got'"
 
 # command substitution variations #
 set -- \
@@ -325,10 +325,10 @@ do
             status=$?
             if (( status != code ))
             then
-                err_exit "test $TEST '$1...$2 exit $code' failed -- exit status $status, expected $code"
+                log_error "test $TEST '$1...$2 exit $code' failed -- exit status $status, expected $code"
             elif [[ $got != $exp ]]
             then
-                err_exit "test $TEST '$1...$2 exit $code' failed -- got '$got', expected '$exp'"
+                log_error "test $TEST '$1...$2 exit $code' failed -- got '$got', expected '$exp'"
             fi
         done
     done
@@ -429,7 +429,7 @@ do
                             cmd=${TST[T].CMD//\$cat/$cat}
                             cmd=${cmd//\$tmp\/buf/$siz.buf}
                             cmd=${cmd//\$tmp\/lin/$siz.lin}
-                            err_exit "'x=${SUB[S].BEG}${INS[I]}${cmd}${APP[A]}${SUB[S].END} && print \${#x}' failed -- expected '$exp', got '$got'"
+                            log_error "'x=${SUB[S].BEG}${INS[I]}${cmd}${APP[A]}${SUB[S].END} && print \${#x}' failed -- expected '$exp', got '$got'"
                         elif [[ ${TST[T].EXP} ]] || (( TST[T].LIM >= n ))
                         then
                             SKIP[S][C][I][A][T]=1
@@ -466,7 +466,7 @@ fi
 
 if [[ $got != $exp ]]
 then
-    err_exit "eval '$cmd' failed -- expected '$exp', got '$got'"
+    log_error "eval '$cmd' failed -- expected '$exp', got '$got'"
 fi
 
 float t1=$SECONDS
@@ -474,22 +474,22 @@ sleep=$(whence -p sleep)
 if [[ $sleep ]]
 then
     $SHELL -c "( $sleep 5 </dev/null >/dev/null 2>&1 & );exit 0" | cat 
-    (( (SECONDS-t1) > 4 )) && err_exit '/bin/sleep& in subshell hanging'
+    (( (SECONDS-t1) > 4 )) && log_error '/bin/sleep& in subshell hanging'
     ((t1=SECONDS))
 fi
 
 $SHELL -c '( sleep 5 </dev/null >/dev/null 2>&1 & );exit 0' | cat 
-(( (SECONDS-t1) > 4 )) && err_exit 'sleep& in subshell hanging'
+(( (SECONDS-t1) > 4 )) && log_error 'sleep& in subshell hanging'
 
 exp=HOME=$HOME
 ( HOME=/bin/sh )
 got=$(env | grep ^HOME=)
-[[ $got == "$exp" ]] ||  err_exit "( HOME=/bin/sh ) cleanup failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] ||  log_error "( HOME=/bin/sh ) cleanup failed -- expected '$exp', got '$got'"
 
 cmd='echo $((case x in x)echo ok;esac);:)'
 exp=ok
 got=$($SHELL -c "$cmd" 2>&1)
-[[ $got == "$exp" ]] ||  err_exit "'$cmd' failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] ||  log_error "'$cmd' failed -- expected '$exp', got '$got'"
 
 cmd='eval "for i in 1 2; do eval /bin/echo x; done"'
 exp=$'x\nx'
@@ -498,17 +498,17 @@ if [[ $got != "$exp" ]]
 then
     EXP=$(printf %q "$exp")
     GOT=$(printf %q "$got")
-    err_exit "'$cmd' failed -- expected $EXP, got $GOT"
+    log_error "'$cmd' failed -- expected $EXP, got $GOT"
 fi
 
 (
 $SHELL -c 'sleep 20 & pid=$!; { x=$( ( seq 60000 ) );kill -9 $pid;}&;wait $pid'
 ) 2> /dev/null
-(( $? )) ||  err_exit 'nested command substitution with large output hangs'
+(( $? )) ||  log_error 'nested command substitution with large output hangs'
 
 (.sh.foo=foobar)
-[[ ${.sh.foo} == foobar ]] && err_exit '.sh subvariables in subshells remain set'
-[[ $($SHELL -c 'print 1 | : "$(/bin/cat <(/bin/cat))"') ]] && err_exit 'process substitution not working correctly in subshells'
+[[ ${.sh.foo} == foobar ]] && log_error '.sh subvariables in subshells remain set'
+[[ $($SHELL -c 'print 1 | : "$(/bin/cat <(/bin/cat))"') ]] && log_error 'process substitution not working correctly in subshells'
 
 # config hang bug
 integer i
@@ -522,25 +522,25 @@ done
 sleep  1.5
 if kill -KILL $! 2> /dev/null
 then
-    err_exit 'process timed out with hung comsub'
+    log_error 'process timed out with hung comsub'
 fi
 
 wait $! 2> /dev/null
-(( $? > 128 )) && err_exit 'incorrect exit status with comsub' 
+(( $? > 128 )) && log_error 'incorrect exit status with comsub' 
 
-$SHELL 2> /dev/null -c '[[ ${ print foo },${ print bar } == foo,bar ]]' || err_exit  '${ print foo },${ print bar } not working'
-$SHELL 2> /dev/null -c '[[ ${ print foo; },${ print bar } == foo,bar ]]' || err_exit  '${ print foo; },${ print bar } not working'
+$SHELL 2> /dev/null -c '[[ ${ print foo },${ print bar } == foo,bar ]]' || log_error  '${ print foo },${ print bar } not working'
+$SHELL 2> /dev/null -c '[[ ${ print foo; },${ print bar } == foo,bar ]]' || log_error  '${ print foo; },${ print bar } not working'
 
 src=$'true 2>&1\n: $(true | true)\n: $(true | true)\n: $(true | true)\n'$(whence -p true)
 exp=ok
 got=$( $SHELL -c "(eval '$src'); echo $exp" )
-[[ $got == "$exp" ]] || err_exit 'subshell eval of pipeline clobbers stdout'
+[[ $got == "$exp" ]] || log_error 'subshell eval of pipeline clobbers stdout'
 
 x=$( { time $SHELL -c date >| /dev/null;} 2>&1)
-[[ $x == *real*user*sys* ]] || err_exit 'time { ...;} 2>&1 in $(...) fails'
+[[ $x == *real*user*sys* ]] || log_error 'time { ...;} 2>&1 in $(...) fails'
 
 x=$($SHELL -c '( function fx { export X=123;  } ; fx; ); echo $X')
-[[ $x == 123 ]] && err_exit 'global variables set from with functions inside a
+[[ $x == 123 ]] && log_error 'global variables set from with functions inside a
 subshell can leave side effects in parent shell'
 
 date=$(whence -p date)
@@ -548,12 +548,12 @@ err() { return $1; }
 ( err 12 ) & pid=$!
 : $( $date)
 wait $pid
-[[ $? == 12 ]] || err_exit 'exit status from subshells not being preserved'
+[[ $? == 12 ]] || log_error 'exit status from subshells not being preserved'
 
 if cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
 then
     x="$(sed 's/^/Hello /' <(print "Fred" | sort))"
-    [[ $x == 'Hello Fred' ]] || err_exit  "process substitution of pipeline in command substitution not working"
+    [[ $x == 'Hello Fred' ]] || log_error  "process substitution of pipeline in command substitution not working"
 fi
 
 {
@@ -569,11 +569,11 @@ $SHELL <<- \EOF
 		print -u2 done
 	}
 	out=$(eval "foo | cat" 2>&1)
-	(( ${#out} == 96011 )) || err_exit "\${#out} is ${#out} should be 96011"
+	(( ${#out} == 96011 )) || log_error "\${#out} is ${#out} should be 96011"
 EOF
 } & pid=$!
 $SHELL -c "{ sleep 4 && kill $pid ;}" 2> /dev/null
-(( $? == 0 )) &&  err_exit 'process has hung'
+(( $? == 0 )) &&  log_error 'process has hung'
 
 {
 x=$( $SHELL  <<- \EOF
@@ -584,7 +584,7 @@ x=$( $SHELL  <<- \EOF
 EOF
 )
 } 2> /dev/null
-[[ $x == $'END\nEND' ]] || err_exit 'bug in save/restore of IFS in subshell'
+[[ $x == $'END\nEND' ]] || log_error 'bug in save/restore of IFS in subshell'
 
 true=$(whence -p true)
 date=$(whence -p date)
@@ -597,13 +597,13 @@ function fun1
 }
 
 print -n $(fun1 2> $tmpf)
-[[  $(< $tmpf) == *SUCCESS ]] || err_exit 'standard error output lost with command substitution'
+[[  $(< $tmpf) == *SUCCESS ]] || log_error 'standard error output lost with command substitution'
 
 
 cat > foo <<-\EOF
 	$SHELL -c 'function g { IFS= ;};function f { typeset IFS;(g);: $V;};f;f'
 	EOF
-$SHELL 2> /dev/null foo || err_exit 'IFS in subshell causes core dump'
+$SHELL 2> /dev/null foo || log_error 'IFS in subshell causes core dump'
 
 unset i
 if   [[ -d /dev/fd ]]
@@ -614,17 +614,17 @@ then
             if ! [[ -r /dev/fd/$i  || -w /dev/fd/$i ]]
             then
                 a=$($SHELL -c "[[ -r /dev/fd/$i || -w /dev/fd/$i ]]")
-                (( $? )) || err_exit "file descriptor $i not close on exec"
+                (( $? )) || log_error "file descriptor $i not close on exec"
             fi
         done
 fi
 
 trap USR1 USR1
 trap ERR ERR
-[[ $(trap -p USR1) == USR1 ]] || err_exit 'trap -p USR1 in subshell not working'
-[[ $(trap -p ERR) == ERR ]] || err_exit 'trap -p ERR in subshell not working'
-[[ $(trap -p) == *USR* ]] || err_exit 'trap -p in subshell does not contain USR'
-[[ $(trap -p) == *ERR* ]] || err_exit 'trap -p in subshell does not contain ERR'
+[[ $(trap -p USR1) == USR1 ]] || log_error 'trap -p USR1 in subshell not working'
+[[ $(trap -p ERR) == ERR ]] || log_error 'trap -p ERR in subshell not working'
+[[ $(trap -p) == *USR* ]] || log_error 'trap -p in subshell does not contain USR'
+[[ $(trap -p) == *ERR* ]] || log_error 'trap -p in subshell does not contain ERR'
 trap - USR1 ERR
 
 ( PATH=/bin:/usr/bin
@@ -635,20 +635,20 @@ dot=$(cat <<-EOF
 
 if kill -0 $! 2> /dev/null
 then
-    err_exit  'command substitution containg here-doc with command substitution fails'
+    log_error  'command substitution containg here-doc with command substitution fails'
 fi
 
 printf=$(whence -p printf)
-[[ $( { trap "echo foobar" EXIT; ( $printf ""); } & wait) == foobar ]] || err_exit  'exit trap not being invoked'
+[[ $( { trap "echo foobar" EXIT; ( $printf ""); } & wait) == foobar ]] || log_error  'exit trap not being invoked'
 
-$SHELL 2> /dev/null -c '( PATH=/bin; set -o restricted) ; exit 0'  || err_exit 'restoring PATH when a subshell enables restricted exits not working'
+$SHELL 2> /dev/null -c '( PATH=/bin; set -o restricted) ; exit 0'  || log_error 'restoring PATH when a subshell enables restricted exits not working'
 
 $SHELL <<- \EOF
 	wc=$(whence wc) head=$(whence head)
 	print > /dev/null  $( ( $head -c 1 /dev/zero | ( $wc -c) 3>&1 ) 3>&1) &
 	pid=$!
 	sleep 2
-	kill -9 $! 2> /dev/null && err_exit '/dev/zero in command substitution hangs'
+	kill -9 $! 2> /dev/null && log_error '/dev/zero in command substitution hangs'
 	wait $!
 EOF
 
@@ -656,13 +656,13 @@ for f in /dev/stdout /dev/fd/1
 do
     if [[ -e $f ]]
     then
-        $SHELL -c "x=\$(command -p tee $f </dev/null 2>/dev/null)" || err_exit "$f in command substitution fails"
+        $SHELL -c "x=\$(command -p tee $f </dev/null 2>/dev/null)" || log_error "$f in command substitution fails"
     fi
 done
 
-$SHELL > /dev/null -c 'echo $(for x in whatever; do case y in *) true;; esac; done)' || err_exit 'syntax error with case in command substitution'
+$SHELL > /dev/null -c 'echo $(for x in whatever; do case y in *) true;; esac; done)' || log_error 'syntax error with case in command substitution'
 
-$SHELL 2> /dev/null <<- \EOF || err_exit 'cannot run 100000 subshells'
+$SHELL 2> /dev/null <<- \EOF || log_error 'cannot run 100000 subshells'
 	( for ((i=0; i < 100000; i++))
 	do
 		(b=$(printf %08d ${i}))
@@ -670,11 +670,11 @@ $SHELL 2> /dev/null <<- \EOF || err_exit 'cannot run 100000 subshells'
 EOF
 
 print 'print OK'  | out=$(${SHELL})
-[[ $out == OK ]] || err_exit '$() command substitution not waiting for process completion'
+[[ $out == OK ]] || log_error '$() command substitution not waiting for process completion'
 
 print 'print OK' | out=$( ${SHELL} 2>&1 )
 out2="${out}$?"
-[[ "$out2" == 'OK0' ]]  ||  err_exit -u2 "expected OK0 got $out2"
+[[ "$out2" == 'OK0' ]]  ||  log_error -u2 "expected OK0 got $out2"
 
 fun()
 {
@@ -683,14 +683,14 @@ fun()
     print -n stdout=$foo
     print -u2 stderr=$foo
 }
-[[ `fun 2>&1` == 'stdout=foostderr=foo' ]] || err_exit 'nested command substitution with 2>&1 not working'
+[[ `fun 2>&1` == 'stdout=foostderr=foo' ]] || log_error 'nested command substitution with 2>&1 not working'
 
 mkdir $tmp/bin$$
 print 'print foo' > $tmp/bin$$/foo
 chmod +x  $tmp/bin$$/foo
 : $(type foo)
 : ${ PATH=$tmp/bin$$:$PATH;}
-[[ $(whence foo) == "$tmp/bin$$/foo" ]] || err_exit '${...PATH=...} does not preserve PATH bindings'
+[[ $(whence foo) == "$tmp/bin$$/foo" ]] || log_error '${...PATH=...} does not preserve PATH bindings'
 
 > $tmp/log
 function A
@@ -704,14 +704,14 @@ function B
     A
 }
 x=${ ( B ) ; }
-[[ $(<$tmp/log) ==  *'TRAP A'*'TRAP B'* ]] || err_exit 'trap A and trap B not both executed'
+[[ $(<$tmp/log) ==  *'TRAP A'*'TRAP B'* ]] || log_error 'trap A and trap B not both executed'
 
 function foo
 {
     .sh.value=bam
 }
 val=${ foo;}
-[[ $val ]] && err_exit "function foo generates $val but should generate the empty string in command substitution"
+[[ $val ]] && log_error "function foo generates $val but should generate the empty string in command substitution"
 
 x=$(
     for i in a b c 
@@ -721,19 +721,19 @@ x=$(
         STDERR=$(</dev/null)
     done <<< $'y\ny\ny\n'
 )
-[[ $x == yyy ]] || err_exit '$(</dev/null) in a subshell causes failure'
+[[ $x == yyy ]] || log_error '$(</dev/null) in a subshell causes failure'
 
 
-$SHELL -c 'while((SECONDS<3)); do test -z `/bin/false | /bin/false | /bin/doesnotexist`;done;:' 2> /dev/null || err_exit 'non-existant last command in pipeline causes `` to fail'
+$SHELL -c 'while((SECONDS<3)); do test -z `/bin/false | /bin/false | /bin/doesnotexist`;done;:' 2> /dev/null || log_error 'non-existant last command in pipeline causes `` to fail'
 
 x=$({ sleep .1;false;} | true)
-[[ $? != 0 ]] && err_exit 'without pipefail, non-zero exit in pipeline causes command substitution to fail'
+[[ $? != 0 ]] && log_error 'without pipefail, non-zero exit in pipeline causes command substitution to fail'
 
 foo() {
   print -r foo | read
   return 1
 }
-o1=$(foo "foo") && err_exit 'function which fails inside commad substitution should return non-zero exit status for assignments'
+o1=$(foo "foo") && log_error 'function which fails inside commad substitution should return non-zero exit status for assignments'
 
 # test for larg `` command substitutions
 tmpscr=$tmp/xxx.sh
@@ -752,7 +752,7 @@ spy=$!
 if   wait $cop 2>/dev/null
 then
     kill $spy 2>/dev/null
-else    err_exit -u2 "\`...\` hangs for large with output size $size"
+else    log_error -u2 "\`...\` hangs for large with output size $size"
 fi
 
 if [[ -e /dev/zero ]]
@@ -766,7 +766,7 @@ then
     then
         kill $spy 2>/dev/null
     else
-        err_exit -u2 "\`(...)\` hangs for large with output size $size"
+        log_error -u2 "\`(...)\` hangs for large with output size $size"
     fi
 fi
 
@@ -796,7 +796,7 @@ MYVAR=blah
 MYVAR="
 if [[ $actual != $expected ]]
 then
-    err_exit -u2 "exported vars in subshells not confined to the subshell: $actual"
+    log_error -u2 "exported vars in subshells not confined to the subshell: $actual"
 fi
 
 
@@ -825,30 +825,30 @@ function get_value {
 actual=$(get_value 0)
 if [[ $actual != $expected ]]
 then
-    err_exit -u2 "failed to capture subshell output when closing fd: case 0"
+    log_error -u2 "failed to capture subshell output when closing fd: case 0"
 fi
 
 actual=$(get_value 1)
 if [[ $actual != $expected ]]
 then
-    err_exit -u2 "failed to capture subshell output when closing fd: case 1"
+    log_error -u2 "failed to capture subshell output when closing fd: case 1"
 fi
 
 actual=$(get_value 2)
 if [[ $actual != $expected ]]
 then
-    err_exit -u2 "failed to capture subshell output when closing fd: case 2"
+    log_error -u2 "failed to capture subshell output when closing fd: case 2"
 fi
 
 actual=$(get_value 3)
 if [[ $actual != $expected ]]
 then
-    err_exit -u2 "failed to capture subshell output when closing fd: case 3"
+    log_error -u2 "failed to capture subshell output when closing fd: case 3"
 fi
 
 builtin -d echo
 # Check if redirections work if backticks are nested inside $()
 foo=$(print `echo bar`)
-[[ $foo == "bar" ]] || err_exit 'Redirections do not work if backticks are nested inside $()'
+[[ $foo == "bar" ]] || log_error 'Redirections do not work if backticks are nested inside $()'
 
 rm $tmpfile

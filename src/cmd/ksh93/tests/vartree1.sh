@@ -171,33 +171,33 @@ function main
 
     # build tree using global tree variables
     build_tree mytree_global mysrcdata_global leaf_compound || \
-        err_exit 'build_tree mytree_global mysrcdata_global leaf_compound returned an error'
+        log_error 'build_tree mytree_global mysrcdata_global leaf_compound returned an error'
 
-    (( $(print -r -- "${mytree_global}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_global' too small"
+    (( $(print -r -- "${mytree_global}" | wc -l) > 10 )) || log_error "compound tree 'mytree_global' too small"
 
     # build tree using local tree variables
     mytree_local=()
     build_tree mytree_local mysrcdata_local leaf_compound || \
-        err_exit 'build_tree mytree_local mysrcdata_local leaf_compound returned an error'
+        log_error 'build_tree mytree_local mysrcdata_local leaf_compound returned an error'
 
-    (( $(print -r -- "${mytree_local}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_local' too small"
+    (( $(print -r -- "${mytree_local}" | wc -l) > 10 )) || log_error "compound tree 'mytree_local' too small"
 
     # Compare trees
     if [[ "${mytree_global}" != "${mytree_local}" ]] ; then
-        err_exit "compound trees 'mytree_local' and 'mytree_global' not identical"
+        log_error "compound trees 'mytree_local' and 'mytree_global' not identical"
     fi
 
     unset 'mytree_global.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ||
-        err_exit "variable 'mytree_global.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
+        log_error "variable 'mytree_global.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
 
-    [[ "${mytree_global}" != "${mytree_local}" ]] || err_exit "mytree_global and mytree_local should differ"
+    [[ "${mytree_global}" != "${mytree_local}" ]] || log_error "mytree_global and mytree_local should differ"
 
     unset 'mytree_local.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ||
-        err_exit "variable 'mytree_local.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
+        log_error "variable 'mytree_local.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
 
     # Compare trees (after "unset")
     if [[ "${mytree_global}" != "${mytree_local}" ]] ; then
-        err_exit "compound trees 'mytree_local' and 'mytree_global' not identical after unset"
+        log_error "compound trees 'mytree_local' and 'mytree_global' not identical after unset"
     fi
 }
 

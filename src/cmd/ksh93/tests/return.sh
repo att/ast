@@ -55,61 +55,61 @@ function bar
 
 function funcheck
 {
-    [[ $foo == EXIT ]] || err_exit "foo "$@" : exit trap not set"
+    [[ $foo == EXIT ]] || log_error "foo "$@" : exit trap not set"
     if [[ -f $file ]]
     then
         rm -r $file
-        err_exit "foo $@: doesn't remove $file"
+        log_error "foo $@: doesn't remove $file"
     fi
 
     foo=NOVAL bar=NOVAL
 }
 
-(exit 0) || err_exit "exit 0 is not zero"
-(return 0) || err_exit "return 0 is not zero"
-(exit) || err_exit "default exit value is not zero"
-(return) || err_exit "default return value is not zero"
+(exit 0) || log_error "exit 0 is not zero"
+(return 0) || log_error "return 0 is not zero"
+(exit) || log_error "default exit value is not zero"
+(return) || log_error "default return value is not zero"
 (exit 35)
 ret=$?
 if (( $ret != 35 ))
 then
-    err_exit "exit 35 is $ret not 35"
+    log_error "exit 35 is $ret not 35"
 fi
 
 (return 35)
 ret=$?
 if (( $ret != 35 ))
 then
-    err_exit "return 35 is $ret not 35"
+    log_error "return 35 is $ret not 35"
 fi
 
-foo 0 0 || err_exit "foo 0 0: incorrect return"
+foo 0 0 || log_error "foo 0 0: incorrect return"
 funcheck 0 0
 foo 0 3
 ret=$?
 if (( $ret != 3 ))
 then
-    err_exit "foo 0 3: return is $ret not 3"
+    log_error "foo 0 3: return is $ret not 3"
 fi
 
 funcheck 0 3
-foo 2 0 || err_exit "foo 2 0: incorrect return"
-[[ $bar == EXIT ]] || err_exit "foo 2 0: bar exit trap not set"
+foo 2 0 || log_error "foo 2 0: incorrect return"
+[[ $bar == EXIT ]] || log_error "foo 2 0: bar exit trap not set"
 funcheck 2 0
 foo 2 3
 ret=$?
 if (( $ret != 3 ))
 then
-    err_exit "foo 2 3: return is $ret not 3"
+    log_error "foo 2 3: return is $ret not 3"
 fi
 
-[[ $bar == EXIT ]] || err_exit "foo 2 3: bar exit trap not set"
+[[ $bar == EXIT ]] || log_error "foo 2 3: bar exit trap not set"
 funcheck 2 3
 (foo 3 3)
 ret=$?
 if (( $ret != 3 ))
 then
-    err_exit "foo 3 3: return is $ret not 3"
+    log_error "foo 3 3: return is $ret not 3"
 fi
 
 foo=EXIT
@@ -122,7 +122,7 @@ exit 4
 ret=$?
 if (( $ret != 3 ))
 then
-    err_exit "return in dot script is $ret should be 3"
+    log_error "return in dot script is $ret should be 3"
 fi
 
 chmod 755 $file
@@ -130,7 +130,7 @@ chmod 755 $file
 ret=$?
 if (( $ret != 3 ))
 then
-    err_exit "return in script is $ret should be 3"
+    log_error "return in script is $ret should be 3"
 fi
 
 cat > $file <<!
@@ -143,14 +143,14 @@ exit 4
 ret=$?
 if (( $ret != 1 ))
 then
-    err_exit "error in dot script is $ret should be 1"
+    log_error "error in dot script is $ret should be 1"
 fi
 
 (  $file; exit 5 ) 2> /dev/null
 ret=$?
 if (( $ret != 5 ))
 then
-    err_exit "error in script is $ret should be 5"
+    log_error "error in script is $ret should be 5"
 fi
 
 cat > $file <<\!
@@ -159,7 +159,7 @@ print -r -- "$0"
 x=$( . $file)
 if [[ $x != $0 ]]
 then
-    err_exit "\$0 in a dot script is $x. Should be $0"
+    log_error "\$0 in a dot script is $x. Should be $0"
 fi
 
 x=$($SHELL -i --norc 2> /dev/null <<\!
@@ -169,7 +169,7 @@ print hello
 )
 if [[ $x != hello ]]
 then
-    err_exit "interactive shell terminates with error in bltin"
+    log_error "interactive shell terminates with error in bltin"
 fi
 
 x=$( set -e
@@ -178,7 +178,7 @@ x=$( set -e
     )
 if [[ $x != '' ]]
 then
-    err_exit "set -e doesn't terminate script on error"
+    log_error "set -e doesn't terminate script on error"
 fi
 
 x=$( set -e
@@ -188,7 +188,7 @@ x=$( set -e
     )
 if (( $? != 0 ))
 then
-    err_exit "exit 0 in trap should doesn't set exit value to 0"
+    log_error "exit 0 in trap should doesn't set exit value to 0"
 fi
 
 $SHELL <<\!
@@ -197,5 +197,5 @@ exit 1
 !
 if (( $? != 8 ))
 then
-    err_exit "exit 8 in trap should set exit value to 8"
+    log_error "exit 8 in trap should set exit value to 8"
 fi

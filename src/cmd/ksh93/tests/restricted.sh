@@ -34,38 +34,38 @@ function check_restricted
 }
 
 [[ $SHELL != /* ]] && SHELL=$pwd/$SHELL
-cd $tmp || err_exit "cd $tmp failed"
+cd $tmp || log_error "cd $tmp failed"
 ln -s $SHELL rksh
 PATH=$PWD:$PATH
-rksh -c  '[[ -o restricted ]]' || err_exit 'restricted option not set'
-[[ $(rksh -c 'print hello') == hello ]] || err_exit 'unable to run print'
-check_restricted /bin/echo || err_exit '/bin/echo not resticted'
-check_restricted ./echo || err_exit './echo not resticted'
-check_restricted 'SHELL=ksh' || err_exit 'SHELL asignment not resticted'
-check_restricted 'PATH=/bin' || err_exit 'PATH asignment not resticted'
-check_restricted 'FPATH=/bin' || err_exit 'FPATH asignment not resticted'
-check_restricted 'ENV=/bin' || err_exit 'ENV asignment not resticted'
-check_restricted 'print > file' || err_exit '> file not restricted'
+rksh -c  '[[ -o restricted ]]' || log_error 'restricted option not set'
+[[ $(rksh -c 'print hello') == hello ]] || log_error 'unable to run print'
+check_restricted /bin/echo || log_error '/bin/echo not resticted'
+check_restricted ./echo || log_error './echo not resticted'
+check_restricted 'SHELL=ksh' || log_error 'SHELL asignment not resticted'
+check_restricted 'PATH=/bin' || log_error 'PATH asignment not resticted'
+check_restricted 'FPATH=/bin' || log_error 'FPATH asignment not resticted'
+check_restricted 'ENV=/bin' || log_error 'ENV asignment not resticted'
+check_restricted 'print > file' || log_error '> file not restricted'
 > empty
-check_restricted 'print <> empty' || err_exit '<> file not restricted'
+check_restricted 'print <> empty' || log_error '<> file not restricted'
 print 'echo hello' > script
 chmod +x ./script
-! check_restricted script ||  err_exit 'script without builtins should run in restricted mode'
-check_restricted ./script ||  err_exit 'script with / in name should not run in restricted mode'
+! check_restricted script ||  log_error 'script without builtins should run in restricted mode'
+check_restricted ./script ||  log_error 'script with / in name should not run in restricted mode'
 print '/bin/echo hello' > script
-! check_restricted script ||  err_exit 'script with pathnames should run in restricted mode'
+! check_restricted script ||  log_error 'script with pathnames should run in restricted mode'
 print 'echo hello> file' > script
-! check_restricted script ||  err_exit 'script with output redirection should run in restricted mode'
+! check_restricted script ||  log_error 'script with output redirection should run in restricted mode'
 print 'PATH=/bin' > script
-! check_restricted script ||  err_exit 'script with PATH assignment should run in restricted mode'
+! check_restricted script ||  log_error 'script with PATH assignment should run in restricted mode'
 cat > script <<!
 #! $SHELL
 print hello
 !
-! check_restricted 'script;:' ||  err_exit 'script with #! pathname should run in restricted mode'
-! check_restricted 'script' ||  err_exit 'script with #! pathname should run in restricted mode even if last command in script'
+! check_restricted 'script;:' ||  log_error 'script with #! pathname should run in restricted mode'
+! check_restricted 'script' ||  log_error 'script with #! pathname should run in restricted mode even if last command in script'
 
 for i in PATH ENV FPATH
 do
-    check_restricted  "function foo { typeset $i=foobar;};foo" || err_exit "$i can be changed in function by using typeset"
+    check_restricted  "function foo { typeset $i=foobar;};foo" || log_error "$i can be changed in function by using typeset"
 done

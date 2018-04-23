@@ -32,7 +32,7 @@ do
         foo)
             break;;
         *)
-            err_exit "select 1 not working"
+            log_error "select 1 not working"
             break;;
     esac
 done 2> /dev/null <<!
@@ -44,14 +44,14 @@ select i in foo bar bam
 do
     case $i in
     foo)
-        err_exit "select foo not working" 2>&3
+        log_error "select foo not working" 2>&3
         break;;
     *)
         if [[ $REPLY != foo ]]
         then
-            err_exit "select REPLY not correct" 2>&3
+            log_error "select REPLY not correct" 2>&3
         fi
-        ( set -u; : $i ) || err_exit "select: i not set to null" 2>&3
+        ( set -u; : $i ) || log_error "select: i not set to null" 2>&3
         break;;
     esac
 done  3>&2 2> $tmp/2 <<!

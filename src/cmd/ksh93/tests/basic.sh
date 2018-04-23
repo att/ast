@@ -38,24 +38,24 @@ do
     umask 0
     umask $1
     g=$(umask)
-    [[ $g == $2 ]] || err_exit "umask 0; umask $1 failed -- expected $2, got $g"
+    [[ $g == $2 ]] || log_error "umask 0; umask $1 failed -- expected $2, got $g"
     shift 2
 done
 
-umask u=rwx,go=rx || err_exit "umask u=rws,go=rx failed"
+umask u=rwx,go=rx || log_error "umask u=rws,go=rx failed"
 if [[ $(umask -S) != u=rwx,g=rx,o=rx ]]
 then
-    err_exit 'umask -S incorrect'
+    log_error 'umask -S incorrect'
 fi
 
 pwd=$PWD
 [[ $SHELL != /* ]] && SHELL=$pwd/$SHELL
-cd $tmp || { err_exit "cd $tmp failed"; exit 1; }
+cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 um=$(umask -S)
 ( umask 0777; > foobar )
 rm -f foobar
 > foobar
-[[ -r foobar ]] || err_exit 'umask not being restored after subshell'
+[[ -r foobar ]] || log_error 'umask not being restored after subshell'
 umask "$um"
 rm -f foobar
 # optimizer bug test
@@ -76,25 +76,25 @@ mkdir dir
 actual="$(print */)"
 expect=dir/
 [[ $actual == $expect ]] ||
-    err_exit 'file expansion with trailing / not working' "$expect" "$actual"
+    log_error 'file expansion with trailing / not working' "$expect" "$actual"
 
 actual="$(print */)"
 expect=dir/
 [[ $actual == $expect ]] ||
-    err_exit 'file expansion with single file not working' "$expect" "$actual"
+    log_error 'file expansion with single file not working' "$expect" "$actual"
 
 print hi > .foo
 actual="$(print *)"
 expect=dir
 [[ $actual == $expect ]] ||
-    err_exit 'file expansion leading . not working' "$expect" "$actual"
+    log_error 'file expansion leading . not working' "$expect" "$actual"
 cd ..
 
-date > dat1 || err_exit "date > dat1 failed"
-test -r dat1 || err_exit "dat1 is not readable"
+date > dat1 || log_error "date > dat1 failed"
+test -r dat1 || log_error "dat1 is not readable"
 x=dat1
-cat <$x > dat2 || err_exit "cat < $x > dat2 failed"
-cat dat1 dat2 | cat  | cat | cat > dat3 || err_exit "cat pipe failed"
+cat <$x > dat2 || log_error "cat < $x > dat2 failed"
+cat dat1 dat2 | cat  | cat | cat > dat3 || log_error "cat pipe failed"
 cat > dat4 <<!
 $(date)
 !
@@ -103,7 +103,7 @@ wait $!
 set -- dat*
 if (( $# != 5 ))
 then
-    err_exit "dat* matches only $# files"
+    log_error "dat* matches only $# files"
 fi
 
 if (command > foo\\abc) 2> /dev/null
@@ -111,7 +111,7 @@ then
     set -- foo*
     if [[ $1 != 'foo\abc' ]]
     then
-        err_exit 'foo* does not match foo\abc'
+        log_error 'foo* does not match foo\abc'
     fi
 
 fi
@@ -121,12 +121,12 @@ then
     set -- TT*
     if (( $# < 2 ))
     then
-        err_exit 'TT* not expanding when file TT* exists'
+        log_error 'TT* not expanding when file TT* exists'
     fi
 
 fi
 
-cd ~- || err_exit "cd back failed"
+cd ~- || log_error "cd back failed"
 cat > $tmp/script <<- !
     #! $SHELL
     print -r -- \$0
@@ -134,28 +134,28 @@ cat > $tmp/script <<- !
 chmod 755 $tmp/script
 if [[ $($tmp/script) != "$tmp/script" ]]
 then
-    err_exit '$0 not correct for #! script'
+    log_error '$0 not correct for #! script'
 fi
 
 bar=foo
 eval foo=\$bar
 if [[ $foo != foo ]]
 then
-    err_exit 'eval foo=\$bar not working'
+    log_error 'eval foo=\$bar not working'
 fi
 
 bar='foo=foo\ bar'
 eval $bar
 if [[ $foo != 'foo bar' ]]
 then
-    err_exit 'eval foo=\$bar, with bar="foo\ bar" not working'
+    log_error 'eval foo=\$bar, with bar="foo\ bar" not working'
 fi
 
 cd /tmp
-cd ../../tmp || err_exit "cd ../../tmp failed"
+cd ../../tmp || log_error "cd ../../tmp failed"
 if [[ $PWD != /tmp ]]
 then
-    err_exit 'cd ../../tmp is not /tmp'
+    log_error 'cd ../../tmp is not /tmp'
 fi
 
 ( sleep 2; cat <<!
@@ -166,7 +166,7 @@ wait $!
 foobar=$( < $tmp/foobar)
 if [[ $foobar != foobar ]]
 then
-    err_exit "$foobar is not foobar"
+    log_error "$foobar is not foobar"
 fi
 
 {
@@ -176,7 +176,7 @@ fi
 } > $tmp/foobar
 if [[ $( < $tmp/foobar) != $'foo\nbar\nbam' ]]
 then
-    err_exit "output file pointer not shared correctly"
+    log_error "output file pointer not shared correctly"
 fi
 
 cat > $tmp/foobar <<\!
@@ -187,40 +187,40 @@ cat > $tmp/foobar <<\!
 chmod +x $tmp/foobar
 if [[ $($tmp/foobar) != $'foo\nbar\nbam' ]]
 then
-    err_exit "script not working"
+    log_error "script not working"
 fi
 
 if [[ $($tmp/foobar | /bin/cat) != $'foo\nbar\nbam' ]]
 then
-    err_exit "script | cat not working"
+    log_error "script | cat not working"
 fi
 
 if [[ $( $tmp/foobar) != $'foo\nbar\nbam' ]]
 then
-    err_exit "output file pointer not shared correctly"
+    log_error "output file pointer not shared correctly"
 fi
 
 rm -f $tmp/foobar
 x=$( (print foo) ; (print bar) )
 if [[ $x != $'foo\nbar' ]]
 then
-    err_exit " ( (print foo);(print bar ) failed"
+    log_error " ( (print foo);(print bar ) failed"
 fi
 
 x=$( (/bin/echo foo) ; (print bar) )
 if [[ $x != $'foo\nbar' ]]
 then
-    err_exit " ( (/bin/echo);(print bar ) failed"
+    log_error " ( (/bin/echo);(print bar ) failed"
 fi
 
 x=$( (/bin/echo foo) ; (/bin/echo bar) )
 if [[ $x != $'foo\nbar' ]]
 then
-    err_exit " ( (/bin/echo);(/bin/echo bar ) failed"
+    log_error " ( (/bin/echo);(/bin/echo bar ) failed"
 fi
 
 
-echo 'TODO: Skipping test "builtin replaces standard input pipe"'
+log_info 'TODO: Skipping test "builtin replaces standard input pipe"'
 #cat > $tmp/script <<\!
 #if [[ -p /dev/fd/0 ]]
 #then
@@ -234,37 +234,37 @@ echo 'TODO: Skipping test "builtin replaces standard input pipe"'
 #chmod +x $tmp/script
 #case $( (print) | $tmp/script;:) in
 #ok)    ;;
-#no)    err_exit "[[ -p /dev/fd/0 ]] fails for standard input pipe" ;;
-#*)    err_exit "builtin replaces standard input pipe" ;;
+#no)    log_error "[[ -p /dev/fd/0 ]] fails for standard input pipe" ;;
+#*)    log_error "builtin replaces standard input pipe" ;;
 #esac
 print 'print $0' > $tmp/script
 print ". $tmp/script" > $tmp/scriptx
 chmod +x $tmp/scriptx
 if [[ $($tmp/scriptx) != $tmp/scriptx ]]
 then
-    err_exit '$0 not correct for . script'
+    log_error '$0 not correct for . script'
 fi
 
-cd $tmp || { err_exit "cd $tmp failed"; exit 1; }
+cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 print ./b > ./a; print ./c > b; print ./d > c; print ./e > d; print "echo \"hello there\"" > e
 chmod 755 a b c d e
 x=$(./a)
 if [[ $x != "hello there" ]]
 then
-    err_exit "nested scripts failed"
+    log_error "nested scripts failed"
 fi
 
 x=$( (./a) | cat)
 if [[ $x != "hello there" ]]
 then
-    err_exit "scripts in subshells fail"
+    log_error "scripts in subshells fail"
 fi
 
-cd ~- || err_exit "cd back failed"
+cd ~- || log_error "cd back failed"
 x=$( (/bin/echo foo) 2> /dev/null )
 if [[ $x != foo ]]
 then
-    err_exit "subshell in command substitution fails"
+    log_error "subshell in command substitution fails"
 fi
 
 exec 7>& 1
@@ -272,7 +272,7 @@ exec 1>&-
 x=$(print hello)
 if [[ $x != hello ]]
 then
-    err_exit "command subsitution with stdout closed failed"
+    log_error "command subsitution with stdout closed failed"
 fi
 
 exec >& 7
@@ -284,13 +284,13 @@ x=$(cat <<\! | $SHELL
 )
 if [[ $x != $'\n'hello ]]
 then
-    err_exit "$SHELL not working when standard input is a pipe"
+    log_error "$SHELL not working when standard input is a pipe"
 fi
 
 x=$( (/bin/echo hello) 2> /dev/null )
 if [[ $x != hello ]]
 then
-    err_exit "subshell in command substitution with 1 closed fails"
+    log_error "subshell in command substitution with 1 closed fails"
 fi
 
 cat > $tmp/script <<- \!
@@ -300,7 +300,7 @@ print done
 !
 if [[ $($SHELL $tmp/script <&-) != done ]]
 then
-    err_exit "executing script with 0 closed fails"
+    log_error "executing script with 0 closed fails"
 fi
 
 trap '' INT
@@ -312,7 +312,7 @@ print good
 chmod +x $tmp/script
 if [[ $($SHELL  $tmp/script) != good ]]
 then
-    err_exit "traps ignored by parent not ignored"
+    log_error "traps ignored by parent not ignored"
 fi
 
 trap - INT
@@ -326,24 +326,24 @@ two
 !
 )    != two ]]
 then
-    err_exit "standard input not positioned correctly"
+    log_error "standard input not positioned correctly"
 fi
 
 word=$(print $'foo\nbar' | { read line; /bin/cat;})
 if [[ $word != bar ]]
 then
-    err_exit "pipe to { read line; /bin/cat;} not working"
+    log_error "pipe to { read line; /bin/cat;} not working"
 fi
 
 word=$(print $'foo\nbar' | ( read line; /bin/cat) )
 if [[ $word != bar ]]
 then
-    err_exit "pipe to ( read line; /bin/cat) not working"
+    log_error "pipe to ( read line; /bin/cat) not working"
 fi
 
 if [[ $(print x{a,b}y) != 'xay xby' ]]
 then
-    err_exit 'brace expansion not working'
+    log_error 'brace expansion not working'
 fi
 
 if [[ $(for i in foo bar
@@ -351,7 +351,7 @@ if [[ $(for i in foo bar
       print $tgz)
       done) != $'foo\nbar' ]]
 then
-    err_exit 'for loop subshell optimizer bug'
+    log_error 'for loop subshell optimizer bug'
 fi
 
 unset a1
@@ -369,14 +369,14 @@ optbug()
 
     return 1
 }
-optbug ||  err_exit 'array size optimzation bug'
+optbug ||  log_error 'array size optimzation bug'
 wait # not running --pipefail which would interfere with subsequent tests
 : $(jobs -p) # required to clear jobs for next jobs -p (interactive side effect)
 sleep 20 &
 pids=$!
 if [[ $(jobs -p) != $! ]]
 then
-    err_exit 'jobs -p not reporting a background job'
+    log_error 'jobs -p not reporting a background job'
 fi
 
 sleep 20 &
@@ -384,25 +384,25 @@ pids="$pids $!"
 foo()
 {
     set -- $(jobs -p)
-    (( $# == 2 )) || err_exit "$# jobs not reported -- 2 expected"
+    (( $# == 2 )) || log_error "$# jobs not reported -- 2 expected"
 }
 foo
 kill $pids
 
-[[ $( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait) == alarm ]] || err_exit 'ALRM signal not working'
-[[ $($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2;kill -HUP $$)& sleep 4;print done"') != done ]] && err_exit 'ignored traps not being ignored'
-[[ $($SHELL -c 'o=foobar; for x in foo bar; do (o=save);print $o;done' 2> /dev/null ) == $'foobar\nfoobar' ]] || err_exit 'for loop optimization subshell bug'
+[[ $( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait) == alarm ]] || log_error 'ALRM signal not working'
+[[ $($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2;kill -HUP $$)& sleep 4;print done"') != done ]] && log_error 'ignored traps not being ignored'
+[[ $($SHELL -c 'o=foobar; for x in foo bar; do (o=save);print $o;done' 2> /dev/null ) == $'foobar\nfoobar' ]] || log_error 'for loop optimization subshell bug'
 command exec 3<> /dev/null
 if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
 then
-    [[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || err_exit 'process substitution not working'
+    [[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || log_error 'process substitution not working'
     [[ $($SHELL -c  $'tee >(grep \'1$\' > '$tmp/scriptx$') > /dev/null <<-  \!!!
 	line0
 	line1
 	line2
 	!!!
     wait
-    cat '$tmp/scriptx 2> /dev/null)  == line1 ]] || err_exit '>() process substitution fails'
+    cat '$tmp/scriptx 2> /dev/null)  == line1 ]] || log_error '>() process substitution fails'
     > $tmp/scriptx
     [[ $($SHELL -c  $'
     for i in 1
@@ -415,29 +415,29 @@ then
     done
 
     wait
-    cat '$tmp/scriptx 2>> /dev/null) == line1 ]] || err_exit '>() process substitution fails in for loop'
+    cat '$tmp/scriptx 2>> /dev/null) == line1 ]] || log_error '>() process substitution fails in for loop'
     [[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
-        err_exit 'process substitution of compound commands not working'
+        log_error 'process substitution of compound commands not working'
 
     builtin tee 2> /dev/null
     for tee in "$(whence tee)" "$(whence -p tee)"
     do
     print xxx > $tmp/file
         $tee  >(sleep 1;cat > $tmp/file) <<< "hello" > /dev/null
-        [[ $(< $tmp/file) != hello ]] && err_exit "process substitution does not wait for >() to complete with $tee"
+        [[ $(< $tmp/file) != hello ]] && log_error "process substitution does not wait for >() to complete with $tee"
         print yyy > $tmp/file2
         $tee >(cat > $tmp/file) >(sleep 1;cat > $tmp/file2) <<< "hello" > /dev/null
-        [[ $(< $tmp/file2) != hello ]] && err_exit "process substitution does not wait for second of two >() to complete with $tee"
+        [[ $(< $tmp/file2) != hello ]] && log_error "process substitution does not wait for second of two >() to complete with $tee"
         print xxx > $tmp/file
         $tee  >(sleep 1;cat > $tmp/file) >(cat > $tmp/file2) <<< "hello" > /dev/null
-        [[ $(< $tmp/file) != hello ]] && err_exit "process substitution does not wait for first of two >() to complete with $tee"
+        [[ $(< $tmp/file) != hello ]] && log_error "process substitution does not wait for first of two >() to complete with $tee"
     done
 
     if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd* ]]
     then
         exp='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
         got=$( print <(print foo) v=bam <(print bar))
-        [[ $got == $exp ]] ||  err_exit 'assignments after command substitution not treated as arguments'
+        [[ $got == $exp ]] ||  log_error 'assignments after command substitution not treated as arguments'
     fi
 
     {
@@ -457,47 +457,47 @@ then
         consumer <(producer) >  /dev/null
     } & pid=$!
     ( sleep 5 ; kill -HUP $pid) 2> /dev/null  &
-    wait $pid 2> /dev/null || err_exit  "process substitution hangs"
+    wait $pid 2> /dev/null || log_error  "process substitution hangs"
 fi
 
-[[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || err_exit 'command -p not restricted'
+[[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || log_error 'command -p not restricted'
 print cat >  $tmp/scriptx
 chmod +x $tmp/scriptx
-[[ $($SHELL -c "print foo | $tmp/scriptx ;:" 2> /dev/null ) == foo ]] || err_exit 'piping into script fails'
-[[ $($SHELL -c 'X=1;print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 1 ]] || err_exit 'x=1;${x:=$(..."...")} failure'
-[[ $($SHELL -c 'print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 0 ]] || err_exit '${x:=$(..."...")} failure'
+[[ $($SHELL -c "print foo | $tmp/scriptx ;:" 2> /dev/null ) == foo ]] || log_error 'piping into script fails'
+[[ $($SHELL -c 'X=1;print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 1 ]] || log_error 'x=1;${x:=$(..."...")} failure'
+[[ $($SHELL -c 'print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 0 ]] || log_error '${x:=$(..."...")} failure'
 if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
 then
-    [[ $(cat <(print hello) ) == hello ]] || err_exit "process substitution not working outside for or while loop"
-    $SHELL -c '[[ $(for i in 1;do cat <(print hello);done ) == hello ]]' 2> /dev/null|| err_exit "process substitution not working in for or while loop"
+    [[ $(cat <(print hello) ) == hello ]] || log_error "process substitution not working outside for or while loop"
+    $SHELL -c '[[ $(for i in 1;do cat <(print hello);done ) == hello ]]' 2> /dev/null|| log_error "process substitution not working in for or while loop"
 fi
 
 exec 3> /dev/null
 print 'print foo "$@"' > $tmp/scriptx
-[[ $( print "($tmp/scriptx bar)" | $SHELL 2>/dev/null) == 'foo bar' ]] || err_exit 'script pipe to shell fails'
+[[ $( print "($tmp/scriptx bar)" | $SHELL 2>/dev/null) == 'foo bar' ]] || log_error 'script pipe to shell fails'
 print "#! $SHELL" > $tmp/scriptx
 print 'print  -- $0' >> $tmp/scriptx
 chmod +x $tmp/scriptx
-[[ $($tmp/scriptx) == $tmp/scriptx ]] || err_exit  "\$0 is $0 instead of $tmp/scriptx"
+[[ $($tmp/scriptx) == $tmp/scriptx ]] || log_error  "\$0 is $0 instead of $tmp/scriptx"
 cat > $tmp/scriptx <<- \EOF
     myfilter() { x=$(print ok | cat); print  -r -- $SECONDS;}
     set -o pipefail
     sleep 3 | myfilter
 EOF
-(( $($SHELL $tmp/scriptx) > 2.0 )) && err_exit 'command substitution causes pipefail option to hang'
+(( $($SHELL $tmp/scriptx) > 2.0 )) && log_error 'command substitution causes pipefail option to hang'
 exec 3<&-
-( typeset -r foo=bar) 2> /dev/null || err_exit 'readonly variables set in a subshell cannot unset'
+( typeset -r foo=bar) 2> /dev/null || log_error 'readonly variables set in a subshell cannot unset'
 
-$SHELL -c 'x=${ print hello;}; [[ $x == hello ]]' 2> /dev/null || err_exit '${ command;} not supported'
+$SHELL -c 'x=${ print hello;}; [[ $x == hello ]]' 2> /dev/null || log_error '${ command;} not supported'
 
-$SHELL 2> /dev/null <<- \EOF || err_exit 'multiline ${...} command substitution not supported'
+$SHELL 2> /dev/null <<- \EOF || log_error 'multiline ${...} command substitution not supported'
     x=${
         print hello
     }
     [[ $x == hello ]]
 EOF
 
-$SHELL 2> /dev/null <<- \EOF || err_exit '${...} command substitution with side effects not supported '
+$SHELL 2> /dev/null <<- \EOF || log_error '${...} command substitution with side effects not supported '
     y=bye
     x=${
         y=hello
@@ -506,19 +506,19 @@ $SHELL 2> /dev/null <<- \EOF || err_exit '${...} command substitution with side 
     [[ $y == $x ]]
 EOF
 
-$SHELL   2> /dev/null <<- \EOF || err_exit 'nested ${...} command substitution not supported'
+$SHELL   2> /dev/null <<- \EOF || log_error 'nested ${...} command substitution not supported'
     x=${
         print ${ print hello;} $(print world)
     }
     [[ $x == 'hello world' ]]
 EOF
 
-$SHELL   2> /dev/null <<- \EOF || err_exit 'terminating } is not a reserved word with ${ command }'
+$SHELL   2> /dev/null <<- \EOF || log_error 'terminating } is not a reserved word with ${ command }'
     x=${    { print -n } ; print -n hello ; }  ; print ' world' }
     [[ $x == '}hello world' ]]
 EOF
 
-$SHELL   2> /dev/null <<- \EOF || err_exit '${ command;}xxx not working'
+$SHELL   2> /dev/null <<- \EOF || log_error '${ command;}xxx not working'
     f()
     {
         print foo
@@ -527,35 +527,35 @@ $SHELL   2> /dev/null <<- \EOF || err_exit '${ command;}xxx not working'
 EOF
 
 unset foo
-[[ ! ${foo[@]} ]] || err_exit '${foo[@]} is not empty when foo is unset'
-[[ ! ${foo[3]} ]] || err_exit '${foo[3]} is not empty when foo is unset'
-[[ $(print  "[${ print foo }]") == '[foo]' ]] || err_exit '${...} not working when } is followed by ]'
-[[ $(print  "${ print "[${ print foo }]" }") == '[foo]' ]] || err_exit 'nested ${...} not working when } is followed by ]'
+[[ ! ${foo[@]} ]] || log_error '${foo[@]} is not empty when foo is unset'
+[[ ! ${foo[3]} ]] || log_error '${foo[3]} is not empty when foo is unset'
+[[ $(print  "[${ print foo }]") == '[foo]' ]] || log_error '${...} not working when } is followed by ]'
+[[ $(print  "${ print "[${ print foo }]" }") == '[foo]' ]] || log_error 'nested ${...} not working when } is followed by ]'
 unset foo
-foo=$(false) > /dev/null && err_exit 'failed command substitution with redirection not returning false'
+foo=$(false) > /dev/null && log_error 'failed command substitution with redirection not returning false'
 expected=foreback
 got=`print -n fore; (sleep 2;print back)&`
-[[ $got == $expected ]] || err_exit "\`\`command substitution background process output error -- got '$got', expected '$expected'"
+[[ $got == $expected ]] || log_error "\`\`command substitution background process output error -- got '$got', expected '$expected'"
 got=$(print -n fore; (sleep 2;print back)&)
-[[ $got == $expected ]] || err_exit "\$() command substitution background process output error -- got '$got', expected '$expected'"
+[[ $got == $expected ]] || log_error "\$() command substitution background process output error -- got '$got', expected '$expected'"
 got=${ print -n fore; (sleep 2;print back)& }
-[[ $got == $expected ]] || err_exit "\${} command substitution background process output error -- got '$got', expected '$expected'"
+[[ $got == $expected ]] || log_error "\${} command substitution background process output error -- got '$got', expected '$expected'"
 function abc { sleep 2; print back; }
 function abcd { abc & }
 got=$(print -n fore;abcd)
-[[ $got == $expected ]] || err_exit "\$() command substitution background with function process output error -- got '$got', expected '$expected'"
+[[ $got == $expected ]] || log_error "\$() command substitution background with function process output error -- got '$got', expected '$expected'"
 
 binfalse=$(whence -p false)
 for false in false $binfalse
 do
-    x=$($false) && err_exit "x=\$($false) should fail"
-    $($false) && err_exit "\$($false) should fail"
-    $($false) > /dev/null && err_exit "\$($false) > /dev/null should fail"
+    x=$($false) && log_error "x=\$($false) should fail"
+    $($false) && log_error "\$($false) should fail"
+    $($false) > /dev/null && log_error "\$($false) > /dev/null should fail"
 done
 
 if env x-a=y >/dev/null 2>&1
 then
-    [[ $(env 'x-a=y'  $SHELL -c 'env | grep x-a') == *x-a=y* ]] || err_exit 'invalid environment variables not preserved'
+    [[ $(env 'x-a=y'  $SHELL -c 'env | grep x-a') == *x-a=y* ]] || log_error 'invalid environment variables not preserved'
 fi
 
 float s=SECONDS
@@ -565,7 +565,7 @@ do
       print $i
 done | while read sec; do ( $sleep $sec; $sleep $sec) done
 
-(( (SECONDS-s)  < 4)) && err_exit '"command | while read...done" finishing too fast'
+(( (SECONDS-s)  < 4)) && log_error '"command | while read...done" finishing too fast'
 s=SECONDS
 set -o pipefail
 for ((i=0; i < 30; i++))
@@ -573,10 +573,10 @@ do
     print hello
     sleep .1
 done |  $sleep 1
-(( (SECONDS-s) < 2 )) || err_exit 'early termination not causing broken pipe'
-[[ $({ trap 'print trap' 0; print -n | $(whence -p cat); } & wait $!) == trap ]] || err_exit 'trap on exit not getting triggered'
+(( (SECONDS-s) < 2 )) || log_error 'early termination not causing broken pipe'
+[[ $({ trap 'print trap' 0; print -n | $(whence -p cat); } & wait $!) == trap ]] || log_error 'trap on exit not getting triggered'
 var=$({ trap 'print trap' ERR; print -n | $binfalse; } & wait $!)
-[[ $var == trap ]] || err_exit 'trap on ERR not getting triggered'
+[[ $var == trap ]] || log_error 'trap on ERR not getting triggered'
 
 exp=
 got=$(
@@ -588,22 +588,22 @@ got=$(
     fun
     : works if this line deleted :
 )
-[[ $got == $exp ]] || err_exit "pipe to function with conditional fails -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "pipe to function with conditional fails -- expected '$exp', got '$got'"
 got=$(
     : works if this line deleted : |
     { $binfalse && echo FAILED; }
     : works if this line deleted :
 )
-[[ $got == $exp ]] || err_exit "pipe to { ... } with conditional fails -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "pipe to { ... } with conditional fails -- expected '$exp', got '$got'"
 
 got=$(
     : works if this line deleted : |
     ( $binfalse && echo FAILED )
     : works if this line deleted :
 )
-[[ $got == $exp ]] || err_exit "pipe to ( ... ) with conditional fails -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "pipe to ( ... ) with conditional fails -- expected '$exp', got '$got'"
 
-( $SHELL -c 'trap : DEBUG; x=( $foo); exit 0') 2> /dev/null  || err_exit 'trap DEBUG fails'
+( $SHELL -c 'trap : DEBUG; x=( $foo); exit 0') 2> /dev/null  || log_error 'trap DEBUG fails'
 
 bintrue=$(whence -p true)
 set -o pipefail
@@ -613,18 +613,18 @@ do
     print foo
     sleep 1.5
 done | { read; $bintrue; end=$SECONDS ;}
-(( (SECONDS-start) < 1 )) && err_exit "pipefail not waiting for pipe to finish"
+(( (SECONDS-start) < 1 )) && log_error "pipefail not waiting for pipe to finish"
 set +o pipefail
-(( (SECONDS-end) > 2 )) &&  err_exit "pipefail causing $bintrue to wait for other end of pipe"
+(( (SECONDS-end) > 2 )) &&  log_error "pipefail causing $bintrue to wait for other end of pipe"
 
 
-{ env A__z=C+SHLVL $SHELL -c : ;} 2> /dev/null || err_exit "SHLVL with wrong attribute fails"
+{ env A__z=C+SHLVL $SHELL -c : ;} 2> /dev/null || log_error "SHLVL with wrong attribute fails"
 
 if [[ $bintrue ]]
 then
     float t0=SECONDS
     { time sleep 1.5 | $bintrue ;} 2> /dev/null
-    (( (SECONDS-t0) < 1 )) && err_exit 'time not waiting for pipeline to complete' 
+    (( (SECONDS-t0) < 1 )) && log_error 'time not waiting for pipeline to complete' 
 fi
 
 
@@ -634,10 +634,10 @@ cat > $tmp/foo.sh <<- \EOF
 EOF
 float sec=SECONDS
 . $tmp/foo.sh  | cat > /dev/null
-(( (SECONDS-sec) < .7 ))  && err_exit '. script does not restore output redirection with eval'
+(( (SECONDS-sec) < .7 ))  && log_error '. script does not restore output redirection with eval'
 
 file=$tmp/foobar
-echo "TODO: Skipping call to builtin cat"
+log_info "TODO: Skipping call to builtin cat"
 
 #builtin cat
 for ((n=0; n < 1000; n++))
@@ -646,17 +646,17 @@ do
     { sleep .001;echo $? >$file;} | cat > /dev/null
     if [[ !  -s $file ]]
     then
-        err_exit 'output from pipe is lost with pipe to builtin'
+        log_error 'output from pipe is lost with pipe to builtin'
         break;
     fi
 
 done
 
 
-$SHELL -c 'kill -0 123456789123456789123456789' 2> /dev/null && err_exit 'kill not catching process id overflows'
+$SHELL -c 'kill -0 123456789123456789123456789' 2> /dev/null && log_error 'kill not catching process id overflows'
 
-[[ $($SHELL -c '{ cd..; print ok;}' 2> /dev/null) == ok ]] || err_exit 'command name ending in .. causes shell to abort'
+[[ $($SHELL -c '{ cd..; print ok;}' 2> /dev/null) == ok ]] || log_error 'command name ending in .. causes shell to abort'
 
-$SHELL -xc '$(LD_LIBRARY_PATH=$LD_LIBRARY_PATH exec $SHELL -c :)' > /dev/null 2>&1  || err_exit "ksh -xc '(name=value exec ksh)' fails with err=$?"
+$SHELL -xc '$(LD_LIBRARY_PATH=$LD_LIBRARY_PATH exec $SHELL -c :)' > /dev/null 2>&1  || log_error "ksh -xc '(name=value exec ksh)' fails with err=$?"
 
-$SHELL 2> /dev/null -c $'for i;\ndo :;done' || err_exit 'for i ; <newline> not vaid'
+$SHELL 2> /dev/null -c $'for i;\ndo :;done' || log_error 'for i ; <newline> not vaid'

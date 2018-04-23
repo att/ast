@@ -32,78 +32,78 @@ typeset -T Type_t=(
 for ((i=0; i < 10; i++))
 do
     Type_t r s
-    [[ $r == "$s" ]] || err_exit 'r is not equal to s'
+    [[ $r == "$s" ]] || log_error 'r is not equal to s'
     typeset -C x=r.x
     y=(xa=bb xq=cc)
     y2=xyz
     z2=xyz
     typeset -C z=y
-    [[ $y == "$z" ]] || err_exit 'y is not equal to z'
+    [[ $y == "$z" ]] || log_error 'y is not equal to z'
     typeset -C s.y=z
-    [[ $y == "${s.y}" ]] || err_exit 'y is not equal to s.y'
+    [[ $y == "${s.y}" ]] || log_error 'y is not equal to s.y'
     .sh.q=$y
     typeset -C www=.sh.q
-    [[ $www == "$z" ]] || err_exit 'www is not equal to z'
+    [[ $www == "$z" ]] || log_error 'www is not equal to z'
     typeset -C s.x=r.x
-    [[ ${s.x} == "${r.x}" ]] || err_exit 's.x is not equal to r.x'
+    [[ ${s.x} == "${r.x}" ]] || log_error 's.x is not equal to r.x'
 
     function foo
     {
         nameref x=$1 y=$2
         typeset z=$x
         y=$x
-        [[ $x == "$y" ]] || err_exit "x is not equal to y with ${!x}"
+        [[ $x == "$y" ]] || log_error "x is not equal to y with ${!x}"
     }
     foo r.y y
-    [[ $y == "${r.y}" ]] || err_exit 'y is not equal to r.y'
+    [[ $y == "${r.y}" ]] || log_error 'y is not equal to r.y'
     typeset -C y=z
     foo y r.y
-    [[ $y == "${r.y}" ]] || err_exit 'y is not equal to r.y again'
+    [[ $y == "${r.y}" ]] || log_error 'y is not equal to r.y again'
     typeset -C y=z
     (
         q=${z}
-        [[ $q == "$z" ]] || err_exit 'q is not equal to z'
+        [[ $q == "$z" ]] || log_error 'q is not equal to z'
         z=abc
     )
-    [[ $z == "$y" ]] || err_exit 'value of z not preserved after subshell'
+    [[ $z == "$y" ]] || log_error 'value of z not preserved after subshell'
     unset z y r s x z2 y2 www .sh.q
 done
 
 typeset -T Frame_t=( typeset file lineno )
 Frame_t frame
-[[ $(typeset -p frame) == 'Frame_t frame=()' ]] || err_exit 'empty fields in type not displayed'
+[[ $(typeset -p frame) == 'Frame_t frame=()' ]] || log_error 'empty fields in type not displayed'
 x=( typeset -a arr=([2]=abc [4]=(x=1 y=def));zz=abc)
 typeset -C y=x
 [[ "$x" == "$y" ]] || print -u2 'y is not equal to x'
 Type_t z=(y=(xa=bb xq=cc))
 typeset -A arr=([foo]=one [bar]=2)
 typeset -A brr=([foo]=one [bar]=2)
-[[ "${arr[@]}" == "${brr[@]}" ]] || err_exit 'arr is not brr'
+[[ "${arr[@]}" == "${brr[@]}" ]] || log_error 'arr is not brr'
 for ((i=0; i < 1; i++))
 do
     typeset -m zzz=x
-    [[ $zzz == "$y" ]] || err_exit 'zzz is not equal to y'
+    [[ $zzz == "$y" ]] || log_error 'zzz is not equal to y'
     typeset -m x=zzz
-    [[ $x == "$y" ]] || err_exit 'x is not equal to y'
+    [[ $x == "$y" ]] || log_error 'x is not equal to y'
     Type_t t=(y=(xa=bb xq=cc))
     typeset -m r=t
-    [[ $r == "$z" ]] || err_exit 'r is not equal to z'
+    [[ $r == "$z" ]] || log_error 'r is not equal to z'
     typeset -m t=r
-    [[ $t == "$z" ]] || err_exit 't is not equal to z'
+    [[ $t == "$z" ]] || log_error 't is not equal to z'
     typeset -m crr=arr
-    [[ "${crr[@]}" == "${brr[@]}" ]] || err_exit 'crr is not brr'
+    [[ "${crr[@]}" == "${brr[@]}" ]] || log_error 'crr is not brr'
     typeset -m arr=crr
-    [[ "${arr[@]}" == "${brr[@]}" ]] || err_exit 'brr is not arr'
+    [[ "${arr[@]}" == "${brr[@]}" ]] || log_error 'brr is not arr'
 done
 
 typeset -m brr[foo]=brr[bar]
-[[ ${brr[foo]} == 2 ]] || err_exit 'move an associative array element fails'
-[[ ${brr[bar]} ]] && err_exit 'brr[bar] should be unset after move'
+[[ ${brr[foo]} == 2 ]] || log_error 'move an associative array element fails'
+[[ ${brr[bar]} ]] && log_error 'brr[bar] should be unset after move'
 unset x y zzz
 x=(a b c)
 typeset -m x[1]=x[2]
-[[ ${x[1]} == c ]] || err_exit 'move an indexed array element fails'
-[[ ${x[2]} ]] && err_exit 'x[2] should be unset after move'
+[[ ${x[1]} == c ]] || log_error 'move an indexed array element fails'
+[[ ${x[2]} ]] && log_error 'x[2] should be unset after move'
 cat > $tmp/types <<- \+++
 	typeset -T Pt_t=(float x=1. y=0.)
 	Pt_t p=(y=2)
@@ -111,7 +111,7 @@ cat > $tmp/types <<- \+++
 +++
 expected=2
 got=$(. $tmp/types) 2>/dev/null
-[[ "$got" == "$expected" ]] || err_exit "typedefs in dot script failed -- expected '$expected', got '$got'"
+[[ "$got" == "$expected" ]] || log_error "typedefs in dot script failed -- expected '$expected', got '$got'"
 typeset -T X_t=(
     typeset x=foo y=bar
     typeset s=${_.x}
@@ -121,20 +121,20 @@ typeset -T X_t=(
     }
 )
 X_t x
-[[ ${x.x} == foo ]] || err_exit 'x.x should be foo'
-[[ ${x.y} == bam ]] || err_exit 'x.y should be bam'
-[[ ${x.s} == ${x.x} ]] || err_exit 'x.s should be x.x'
+[[ ${x.x} == foo ]] || log_error 'x.x should be foo'
+[[ ${x.y} == bam ]] || log_error 'x.y should be bam'
+[[ ${x.s} == ${x.x} ]] || log_error 'x.s should be x.x'
 typeset -T Y_t=( X_t r )
 Y_t z
-[[ ${z.r.x} == foo ]] || err_exit 'z.r.x should be foo'
-[[ ${z.r.y} == bam ]] || err_exit 'z.r.y should be bam'
-[[ ${z.r.s} == ${z.r.x} ]] || err_exit 'z.r.s should be z.r.x'
+[[ ${z.r.x} == foo ]] || log_error 'z.r.x should be foo'
+[[ ${z.r.y} == bam ]] || log_error 'z.r.y should be bam'
+[[ ${z.r.s} == ${z.r.x} ]] || log_error 'z.r.s should be z.r.x'
 
 unset xx yy
 typeset -T xx=(typeset yy=zz)
 xx=yy
-( typeset -T xx=(typeset yy=zz) ) 2>/dev/null && err_exit 'type redefinition should fail'
-$SHELL 2> /dev/null <<- +++ || err_exit 'typedef with only f(){} fails'
+( typeset -T xx=(typeset yy=zz) ) 2>/dev/null && log_error 'type redefinition should fail'
+$SHELL 2> /dev/null <<- +++ || log_error 'typedef with only f(){} fails'
 	typeset -T X_t=(
 		f()
 		{
@@ -142,7 +142,7 @@ $SHELL 2> /dev/null <<- +++ || err_exit 'typedef with only f(){} fails'
 		}
 	)
 +++
-$SHELL 2> /dev/null <<- +++ || err_exit 'unable to redefine f discipline function'
+$SHELL 2> /dev/null <<- +++ || log_error 'unable to redefine f discipline function'
 	typeset -T X_t=(
 		x=1
 		f()
@@ -157,7 +157,7 @@ $SHELL 2> /dev/null <<- +++ || err_exit 'unable to redefine f discipline functio
 		}
 	)
 +++
-$SHELL 2> /dev/null <<- +++ && err_exit 'invalid discipline name should be an error'
+$SHELL 2> /dev/null <<- +++ && log_error 'invalid discipline name should be an error'
 	typeset -T X_t=(
 		x=1
 		f()
@@ -180,9 +180,9 @@ var=(
     Type_t    r
     integer z=5
 )
-[[ ${var.r} == "$r" ]] || err_exit 'var.r != r'
-(( var.z == 5)) || err_exit 'var.z !=5'
-[[ "$var" == *x=foobar* ]] || err_exit '$var does not contain x=foobar'
+[[ ${var.r} == "$r" ]] || log_error 'var.r != r'
+(( var.z == 5)) || log_error 'var.z !=5'
+[[ "$var" == *x=foobar* ]] || log_error '$var does not contain x=foobar'
 
 typeset -T A_t=(
     typeset x=aha
@@ -192,7 +192,7 @@ unset x
 A_t x
 expected=aha
 got=${x.b}
-[[ "$got" == "$expected" ]] || err_exit "type '_' reference failed -- expected '$expected', got '$got'"
+[[ "$got" == "$expected" ]] || log_error "type '_' reference failed -- expected '$expected', got '$got'"
 
 typeset -T Tst_t=(
      function f
@@ -208,7 +208,7 @@ typeset -T Tst_t=(
 Tst_t tst
 expected=foo
 got=${ tst.f;}
-[[ "$got" == "$expected" ]] || err_exit "_.g where g is a function in type discipline method failed -- expected '$expected', got '$got'"
+[[ "$got" == "$expected" ]] || log_error "_.g where g is a function in type discipline method failed -- expected '$expected', got '$got'"
 
 typeset -T B_t=(
     integer -a arr
@@ -223,7 +223,7 @@ unset x
 B_t x
 expected='0 1'
 got=${ x.f;}
-[[ "$got" == "$expected" ]] || err_exit "array assignment of subscripts in type discipline arithmetic failed -- expected '$expected', got '$got'"
+[[ "$got" == "$expected" ]] || log_error "array assignment of subscripts in type discipline arithmetic failed -- expected '$expected', got '$got'"
 
 typeset -T Fileinfo_t=(
     size=-1
@@ -244,10 +244,10 @@ expected='Fileinfo_t -A _Dbg_filenames=([foo]=(size=3;typeset -a text=(line1 lin
 got=$(typeset -p _Dbg_filenames)
 [[ "$got" == "$expected" ]] || {
     got=$(printf %q "$got")
-    err_exit "copy to associative array of types in function failed -- expected '$expected', got $got"
+    log_error "copy to associative array of types in function failed -- expected '$expected', got $got"
 }
 
-$SHELL > /dev/null  <<- '+++++' || err_exit 'passing _ as nameref arg not working'
+$SHELL > /dev/null  <<- '+++++' || log_error 'passing _ as nameref arg not working'
 	function f1
 	{
 		typeset -n v=$1
@@ -277,7 +277,7 @@ expected='A_t b.a=(name=one)'
     B_t b
     b.f
 +++
-) ==  "$expected" ]] 2> /dev/null || err_exit  '_.a=(name=one) not expanding correctly'
+) ==  "$expected" ]] 2> /dev/null || log_error  '_.a=(name=one) not expanding correctly'
 expected='A_t x=(name=xxx)'
 [[ $( $SHELL << \+++
     typeset -T A_t=(
@@ -286,7 +286,7 @@ expected='A_t x=(name=xxx)'
     A_t x=(name="xxx")
     typeset -p x
 +++
-) ==  "$expected" ]] || err_exit  'empty field in definition does not expand correctly'
+) ==  "$expected" ]] || log_error  'empty field in definition does not expand correctly'
 
 typeset -T Foo_t=(
     integer x=3
@@ -294,7 +294,7 @@ typeset -T Foo_t=(
     len() { print -r -- $(( sqrt(_.x**2 + _.y**2))) ;}
 )
 Foo_t foo
-[[ ${foo.len} == 5 ]] || err_exit "discipline function len not working"
+[[ ${foo.len} == 5 ]] || log_error "discipline function len not working"
 
 typeset -T benchmark_t=(
     integer num_iterations
@@ -307,7 +307,7 @@ function do_benchmarks
     printf "%d\n" num_iterations
 }
 benchmark_t b=(num_iterations=5)
-[[  $(do_benchmarks) == 5 ]] || err_exit 'scoping of nameref of type variables in arithmetic expressions not working'
+[[  $(do_benchmarks) == 5 ]] || log_error 'scoping of nameref of type variables in arithmetic expressions not working'
 
 function cat_content
 {
@@ -336,7 +336,7 @@ function do_something
     li[2].print
 }
 cat_content | read -C x
-[[ $(do_something x.foolist) == 5  ]] || err_exit 'subscripts not honored for arrays of type with disciplines'
+[[ $(do_something x.foolist) == 5  ]] || log_error 'subscripts not honored for arrays of type with disciplines'
 
 typeset -T benchcmd_t=(
     float x=1
@@ -349,7 +349,7 @@ compound x=(
     integer h
 )
 expected=$'(\n\ttypeset -l -i h=0\n\tbenchcmd_t -a m\n\ttypeset -l -E o=0\n)'
-[[ $x == "$expected" ]] || err_exit 'compound variable with array of types with no elements not working'
+[[ $x == "$expected" ]] || log_error 'compound variable with array of types with no elements not working'
 
 expected=$'Std_file_t db.file[/etc/profile]=(action=preserve;typeset -A sum=([8242e663d6f7bb4c5427a0e58e2925f3]=1);)'
 {
@@ -367,15 +367,15 @@ expected=$'Std_file_t db.file[/etc/profile]=(action=preserve;typeset -A sum=([82
 	typeset -p db.file[/etc/profile]
 	EOF)
 } 2> /dev/null
-[[ $got == "$expected" ]] ||  err_exit 'types with arrays of types as members fails'
+[[ $got == "$expected" ]] ||  log_error 'types with arrays of types as members fails'
 
 typeset -T x_t=(
     integer dummy 
     function set
     {
-        [[ ${.sh.name} == v ]] || err_exit  "name=${.sh.name} should be v"
-        [[ ${.sh.subscript} == 4 ]] || err_exit "subscript=${.sh.subscript} should be 4"
-        [[ ${.sh.value} == hello ]] || err_exit  "value=${.sh.value} should be hello"
+        [[ ${.sh.name} == v ]] || log_error  "name=${.sh.name} should be v"
+        [[ ${.sh.subscript} == 4 ]] || log_error "subscript=${.sh.subscript} should be 4"
+        [[ ${.sh.value} == hello ]] || log_error  "value=${.sh.value} should be hello"
     } 
 )
 x_t -a v 
@@ -387,7 +387,7 @@ typeset -T oset=(
 oset foo bar
 : ${foo.s[a]:=foobar}
 : ${bar.s[d]:=foobar}
-[[ ${bar.s[a]} == foobar ]] && err_exit '${var:=val} for types assigns to type instead of type instance'
+[[ ${bar.s[a]} == foobar ]] && log_error '${var:=val} for types assigns to type instead of type instance'
 
 typeset -T olist=(
     typeset -a l
@@ -400,9 +400,9 @@ typeset -T oset2=( typeset -A foo )
 oset2 bar
 : ${bar.foo[a]}
 bar.foo[a]=b
-[[ ${#bar.foo[*]} == 1 ]] || err_exit "bar.foo should have 1 element not  ${#bar.foo[*]}"
-[[ ${bar.foo[*]} == b ]] || err_exit "bar.foo[*] should be 'b'  not  ${bar.foo[*]}"
-[[ ${bar.foo[a]} == b ]] || err_exit "bar.foo[a] should be 'b'  not  ${bar.foo[*]}"
+[[ ${#bar.foo[*]} == 1 ]] || log_error "bar.foo should have 1 element not  ${#bar.foo[*]}"
+[[ ${bar.foo[*]} == b ]] || log_error "bar.foo[*] should be 'b'  not  ${bar.foo[*]}"
+[[ ${bar.foo[a]} == b ]] || log_error "bar.foo[a] should be 'b'  not  ${bar.foo[*]}"
 
 { x=$( $SHELL 2> /dev/null << \++EOF++
 	typeset -T ab_t=(
@@ -429,8 +429,8 @@ bar.foo[a]=b
 	print -r -- "\"$x\"" ==  "\"$y\""
 ++EOF++
 ) ;} 2> /dev/null
-[[ $x == *a=4*b=5* ]] || err_exit 'static types in a function not working'
-{ eval "[[ $x ]]";} 2> /dev/null || err_exit 'arrays of types leaving side effects in subshells'
+[[ $x == *a=4*b=5* ]] || log_error 'static types in a function not working'
+{ eval "[[ $x ]]";} 2> /dev/null || log_error 'arrays of types leaving side effects in subshells'
 
 typeset -T y_t=(
     typeset dummy
@@ -445,11 +445,11 @@ y_t a b=(
         print "1"
     }
 )
-[[ $(a.print_b) == B ]] || err_exit 'default discipline not working'
-[[ $(b.print_b) == 1 ]] || err_exit 'discipline override not working'
+[[ $(a.print_b) == B ]] || log_error 'default discipline not working'
+[[ $(b.print_b) == 1 ]] || log_error 'discipline override not working'
 
 $SHELL 2> /dev/null -c 'true || { typeset -T Type_t=(typeset name=foo);
-    Type_t z=(name=bar) ;}' || err_exit 'unable to parse type command until typeset -T executes'
+    Type_t z=(name=bar) ;}' || log_error 'unable to parse type command until typeset -T executes'
 
 cd "$tmp"
 FPATH=$PWD
@@ -468,9 +468,9 @@ EOF
 unset n
 if n=$(FPATH=$PWD PATH=$PWD:$PATH $SHELL 2> /dev/null -c 'A_t a; print ${a.b.n}') 
 then
-    (( n==5 )) || err_exit 'dynamic loading of types gives wrong result'
+    (( n==5 )) || log_error 'dynamic loading of types gives wrong result'
 else
-    err_exit 'unable to load types dynamically'
+    log_error 'unable to load types dynamically'
 fi
 
 
@@ -494,27 +494,27 @@ then
 	print 'typeset -T'
 	+++EOF
     $SHELL -c '. ./junk1;print "typeset -T"' > junk2
-    diff junk[12] > /dev/null || err_exit 'typeset -T not idempotent'
+    diff junk[12] > /dev/null || log_error 'typeset -T not idempotent'
     $SHELL -c '. ./junk1;print "typeset +f"' > junk2
-    [[ -s junk2 ]] || err_exit 'non-discipline-method functions found'
+    [[ -s junk2 ]] || log_error 'non-discipline-method functions found'
 else
-    err_exit 'typeset -T not supported'
+    log_error 'typeset -T not supported'
 fi
 
 
-[[ $($SHELL -c 'typeset -T x=( typeset -a h ) ; x j; print -v j.h') ]] && err_exit 'type with indexed array without elements inserts element 0' 
+[[ $($SHELL -c 'typeset -T x=( typeset -a h ) ; x j; print -v j.h') ]] && log_error 'type with indexed array without elements inserts element 0' 
 
-[[ $($SHELL  -c 'typeset -T x=( integer -a s ) ; compound c ; x c.i ; c.i.s[4]=666 ; print -v c') == *'[0]'* ]] &&  err_exit 'type with indexed array with non-zero element inserts element 0'
+[[ $($SHELL  -c 'typeset -T x=( integer -a s ) ; compound c ; x c.i ; c.i.s[4]=666 ; print -v c') == *'[0]'* ]] &&  log_error 'type with indexed array with non-zero element inserts element 0'
 
 
 { $SHELL -c '(sleep 3;kill $$)& typeset -T x=( typeset -a s );compound c;x c.i;c.i.s[7][5][3]=hello;x c.j=c.i;[[ ${c.i} == "${c.j}" ]]';} 2> /dev/null
 exitval=$?
 if [[ $(kill -l $exitval) == TERM ]]
 then
-    err_exit 'clone of multi-dimensional array timed out'
+    log_error 'clone of multi-dimensional array timed out'
 elif ((exitval))
 then
-    err_exit "c.i and c.j are not the same multi-dimensional array"
+    log_error "c.i and c.j are not the same multi-dimensional array"
 fi
 
 
@@ -532,10 +532,10 @@ typeset -T foobar_t=(
 )
 unset z
 foobar_t z=(x=3 y=4)
-(( z.len == 5 )) || err_exit 'z.len should be 5'
-(( z.slen == 1 )) || err_exit 'z.slen should be 1'
-(( .sh.type.foobar_t.slen == 1 )) || err_exit '.sh.type.foobar_t.slen should be 1'
-(( .sh.type.foobar_t.len == 1 )) || err_exit '.sh.type.foobar_t.len should be 1'
+(( z.len == 5 )) || log_error 'z.len should be 5'
+(( z.slen == 1 )) || log_error 'z.slen should be 1'
+(( .sh.type.foobar_t.slen == 1 )) || log_error '.sh.type.foobar_t.slen should be 1'
+(( .sh.type.foobar_t.len == 1 )) || log_error '.sh.type.foobar_t.len should be 1'
 
 typeset -T z_t=( typeset -a ce )
 z_t x1
@@ -545,7 +545,7 @@ z_t -a c.x2
 c.x2[9]=x1
 got=$(typeset +p "c.x2[9].ce")
 exp='typeset -a c.x2[9].ce'
-[[ $got == "$exp" ]] || err_exit "typeset +p 'c.x2[9].ce' failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "typeset +p 'c.x2[9].ce' failed -- expected '$exp', got '$got'"
 
 unset b
 typeset -T a_t=(
@@ -559,7 +559,7 @@ compound -a b.ca
 b_t b.ca[4].b
 exp='typeset -C b=(typeset -C -a ca=( [4]=(b_t b=(a_t b=(a=hello)))))'
 got=$(typeset -p b)
-[[ $got == "$exp" ]] || err_exit 'typeset -p of nested type not correct'
+[[ $got == "$exp" ]] || log_error 'typeset -p of nested type not correct'
 
 typeset -T u_t=(
     integer dummy 
@@ -570,13 +570,13 @@ typeset -T u_t=(
 )
 unset z
 u_t -a x | read z
-[[ $z == unset ]]  && err_exit 'unset discipline called on type creation'
+[[ $z == unset ]]  && log_error 'unset discipline called on type creation'
 
 { z=$($SHELL 2> /dev/null 'typeset -T foo; typeset -T') ;} 2> /dev/null
-[[ $z == 'typeset -T foo' ]] || err_exit '"typeset -T foo; typeset -T" failed'
+[[ $z == 'typeset -T foo' ]] || log_error '"typeset -T foo; typeset -T" failed'
 
 { z=$($SHELL 2> /dev/null 'typeset -T foo=bar; typeset -T') ;} 2> /dev/null
-[[ $z ]] && err_exit '"typeset -T foo=bar" should not creates type foo'
+[[ $z ]] && log_error '"typeset -T foo=bar" should not creates type foo'
 
 {
 $SHELL << \EOF
@@ -608,9 +608,9 @@ if (( exitval=$?))
 then
     if [[ $(kill -l $exitval) == SEGV ]]
     then
-        err_exit 'typeset -m in type discipline causes exception'
+        log_error 'typeset -m in type discipline causes exception'
     else
-        err_exit 'typeset -m in type discipline gives wrong value'
+        log_error 'typeset -m in type discipline gives wrong value'
     fi
 fi
 
@@ -632,19 +632,19 @@ function main
     done
     
 }
-main 2> /dev/null && err_exit 'type assignment to compound array instance should generate an error'
+main 2> /dev/null && log_error 'type assignment to compound array instance should generate an error'
 
 {    $SHELL -c 'typeset -T Foo_t=(integer -a data=([0]=0) );Foo_t x=(data[0]=2);((x.data[0]==2))'
-} 2> /dev/null || err_exit 'type definition with integer array variable not working'
+} 2> /dev/null || log_error 'type definition with integer array variable not working'
 
 typeset -T Bar_t=(
     typeset -a foo
 )
 Bar_t bar
 bar.foo+=(bam)
-[[ ${bar.foo[0]} == bam ]] || err_exit 'appending to empty array variable in type does not create element 0'
+[[ ${bar.foo[0]} == bam ]] || log_error 'appending to empty array variable in type does not create element 0'
 
-$SHELL 2> /dev/null -c 'typeset -T y_t=(compound extensions);y_t x;x.extensions=( integer i=1 )' || err_exit 'compound variable defined in type unable to be extended'
+$SHELL 2> /dev/null -c 'typeset -T y_t=(compound extensions);y_t x;x.extensions=( integer i=1 )' || log_error 'compound variable defined in type unable to be extended'
 
 typeset -T addme_t=(
     compound c=(
@@ -656,7 +656,7 @@ unset arr ref
 nameref ref=ad.c
 nameref arr=ref.ar
 arr+=( value=foo value2=bar )
-[[ ${ad.c.ar.value} == foo ]] || err_exit 'references to type elements not working'
+[[ ${ad.c.ar.value} == foo ]] || log_error 'references to type elements not working'
 
 typeset -T fifo_t=(
     typeset fifo_name
@@ -675,9 +675,9 @@ compound c
 fifo_t -A c.ar
 c.ar[a].cinit fifo_a
 c.ar[b].cinit fifo_b
-[[ ${c.ar[a].fifo_name} == fifo_a ]] || err_exit 'fifo_name c.ar[a] not fifo_a'
-[[ ${c.ar[b].fifo_name} == fifo_b ]] || err_exit 'fifo_name c.ar[b] not fifo_b'
-[[ ${c.ar[a].in_fd} == "${c.ar[b].in_fd}" ]] && err_exit 'c.ar[a].in_fd and c.ar[b].in_fd are the same' 
+[[ ${c.ar[a].fifo_name} == fifo_a ]] || log_error 'fifo_name c.ar[a] not fifo_a'
+[[ ${c.ar[b].fifo_name} == fifo_b ]] || log_error 'fifo_name c.ar[b] not fifo_b'
+[[ ${c.ar[a].in_fd} == "${c.ar[b].in_fd}" ]] && log_error 'c.ar[a].in_fd and c.ar[b].in_fd are the same' 
 redirect  {c.ar[a].in_fd}<&-
 redirect  {c.ar[b].in_fd}<&-
 redirect  {c.ar[a].out_fd}>&-
@@ -686,7 +686,7 @@ rm -f fifo_a fifo_b
 
 typeset -T Z_t=(compound -a x)
 Z_t z
-[[ $(typeset -p z.x) ==  *'-C -a'* ]] || err_exit 'typeset -p for compound array element not displaying attributes'  
+[[ $(typeset -p z.x) ==  *'-C -a'* ]] || log_error 'typeset -p for compound array element not displaying attributes'  
 
 out='foo f 123'
 typeset -T bam_t=(
@@ -694,26 +694,26 @@ typeset -T bam_t=(
     function out { print foo f ${_.f}; }
 )
 bam_t f
-[[ ${f.f} == 123 ]] || err_exit "f.f is ${f.f} should be 123"
-[[ ${ f.out } == "$out" ]] 2> /dev/null || err_exit "f.out is ${ f.out } should be $out"
+[[ ${f.f} == 123 ]] || log_error "f.f is ${f.f} should be 123"
+[[ ${ f.out } == "$out" ]] 2> /dev/null || log_error "f.out is ${ f.out } should be $out"
 typeset -T bar_t=(
     bam_t foo
     b=456
     function out { _.foo.out; }
 )
 bar_t b
-[[ ${b.b} == 456 ]] || err_exit "b.b is ${b.b} should be 456"
-[[ ${ b.out } == "$out" ]] || err_exit "b.out is ${ b.out } should be $out"
+[[ ${b.b} == 456 ]] || log_error "b.b is ${b.b} should be 456"
+[[ ${ b.out } == "$out" ]] || log_error "b.out is ${ b.out } should be $out"
 typeset -T baz_t=(
     bar_t bar
     z=789
     function out { _.bar.out ;}
 )
 baz_t z
-[[ ${z.z} == 789 ]] || err_exit "z.z is ${z.z} should be 789"
-[[ ${ z.out } == "$out" ]] 2> /dev/null || err_exit "z.out should be $out"
+[[ ${z.z} == 789 ]] || log_error "z.z is ${z.z} should be 789"
+[[ ${ z.out } == "$out" ]] 2> /dev/null || log_error "z.out should be $out"
 
-$SHELL  2> /dev/null <<- \EOF || err_exit 'typeset -p with types not working'
+$SHELL  2> /dev/null <<- \EOF || log_error 'typeset -p with types not working'
 	typeset -T Man_t=( typeset X)
 	Man_t Man
 	function bootstrap { : ;}
@@ -727,14 +727,14 @@ exp="$(
         integer c.d.bar[4][6][8].b=789 
         print -v c)"
 read -C got  <<< "$exp"
-[[ $got == "$exp" ]] || err_exit 'read -C for compound variable containing a type not working correctly'
+[[ $got == "$exp" ]] || log_error 'read -C for compound variable containing a type not working correctly'
 ) & wait $!
-[[ $? == 0 ]] || err_exit 'read -C for compound variable containing a type not working correctly'
+[[ $? == 0 ]] || log_error 'read -C for compound variable containing a type not working correctly'
 
 unset c
 exp=$(compound c=( zz_t d=( typeset -C -a bar=( [4]=( zz_t b=( typeset -C -a bar)))));print -v c)
 read -C got <<< "$exp"
-[[ $got == "$exp" ]] || err_exit 'read -C for compound variable containing a nested type not working correctly'
+[[ $got == "$exp" ]] || log_error 'read -C for compound variable containing a nested type not working correctly'
 
 exp='ub=(
 	Job_t -A job=(
@@ -756,8 +756,8 @@ got=$( $SHELL 2> /dev/null <<- \EOF
 	ub.job[$n].schedule=$s
 	print -r -- ub="$ub"
 EOF)
-[[ $? == 0 ]] || err_exit 'assignment in nested type fails'
-[[ $got == "$exp" ]] || err_exit 'assignment in nested type returns wrong value'
+[[ $? == 0 ]] || log_error 'assignment in nested type fails'
+[[ $got == "$exp" ]] || log_error 'assignment in nested type returns wrong value'
 
 got=$($SHELL <<- \EOF
 	typeset -T Module_t=( typeset hit; typeset -A call contract table_read table_write )
@@ -811,7 +811,7 @@ exp='(
 	)
 )'
 
-[[ $got == "$exp" ]] || err_exit "expansion of variable containing a type that contains an index array of types not correct."
+[[ $got == "$exp" ]] || log_error "expansion of variable containing a type that contains an index array of types not correct."
 
 exp='typeset -T Job_t
 typeset -T Schedule_t
@@ -831,24 +831,24 @@ got=$($SHELL << EOF
 $exp
 typeset -T
 EOF)
-[[ $got == "$exp" ]] || err_exit 'typeset -T not displaying types correctly'
+[[ $got == "$exp" ]] || log_error 'typeset -T not displaying types correctly'
 
 typeset -T Apar_t=(typeset name)
 typeset -T Child_t=(Apar_t apar )
 Child_t A=( apar=( name=IV01111))
 Child_t C=( apar=( name=IV09557))
-[[ ${A.apar.name} == IV01111 ]] || err_exit "A.apar.name is ${A.apar.name} should be IV01111"
-[[ ${A.apar.name} == "${C.apar.name}" ]] && err_exit 'string fields in nested typed not working correctly'
+[[ ${A.apar.name} == IV01111 ]] || log_error "A.apar.name is ${A.apar.name} should be IV01111"
+[[ ${A.apar.name} == "${C.apar.name}" ]] && log_error 'string fields in nested typed not working correctly'
 
 unset ar
 Pt_t -a ar=((x=3 y=4) (x=5 y=6))
 ar=()
-[[ $(typeset -p ar) == 'Pt_t -a ar=()' ]] || err_exit 'ar=() for an index array of Pt_t not correct'
+[[ $(typeset -p ar) == 'Pt_t -a ar=()' ]] || log_error 'ar=() for an index array of Pt_t not correct'
 
 unset ar
 Pt_t -A ar=([one]=(x=3 y=4) [two]=(x=5 y=6))
 ar=()
-[[ $(typeset -p ar) == 'Pt_t -A ar=()' ]] || err_exit 'ar=() for an associative array of Pt_t not correct'
+[[ $(typeset -p ar) == 'Pt_t -A ar=()' ]] || log_error 'ar=() for an associative array of Pt_t not correct'
 
 typeset -T Type=(
     typeset x
@@ -859,14 +859,14 @@ typeset -T Type=(
         }
     )
 Type obj
-[[ ${obj.x} == 6 ]] || err_exit '_ for type variable not set to type'
+[[ ${obj.x} == 6 ]] || log_error '_ for type variable not set to type'
 
-got=$($SHELL  2> /dev/null <<- \EOF || err_exit 'short integer arrays in types fails'
+got=$($SHELL  2> /dev/null <<- \EOF || log_error 'short integer arrays in types fails'
 	typeset -T X_t=(typeset -si -a arr=(7 8) )
 	X_t x
 	print -r -- $((x.arr[1]))
 EOF)
-[[ $got == 8 ]] || err_exit 'sort integer arrays in types not working correctly'
+[[ $got == 8 ]] || log_error 'sort integer arrays in types not working correctly'
 
 typeset -T p_t=(
     integer fd
@@ -875,7 +875,7 @@ typeset -T p_t=(
 compound c
 p_t -A c.p
 c.p[2]=(fd=0 events=( bool pollin=true))
-[[ ${c.p[2].events.pollin} == true ]] || err_exit 'c.p[2]=(fd=0 events=( bool pollin=true)) does not set pollin to true'
+[[ ${c.p[2].events.pollin} == true ]] || log_error 'c.p[2]=(fd=0 events=( bool pollin=true)) does not set pollin to true'
 
 typeset -T xx_t=(
     integer i=2
@@ -883,8 +883,8 @@ typeset -T xx_t=(
 )
 typeset -T yy_t=( integer i=3; xx_t x)
 yy_t y
-[[ $(y.x.printi) == 2.3 ]] || err_exit 'discipline function with nested type using _.__ not working as command substitution'
-[[ ${y.x.printi} == 2.3 ]] || err_exit 'discipline function with nested type us
+[[ $(y.x.printi) == 2.3 ]] || log_error 'discipline function with nested type using _.__ not working as command substitution'
+[[ ${y.x.printi} == 2.3 ]] || log_error 'discipline function with nested type us
 ing _.__ not working as ${var.function}'
 
 typeset -T pp_t=( integer fd ;
@@ -892,20 +892,20 @@ typeset -T pp_t=( integer fd ;
 )
 compound c
 pp_t -a c.pl
-[[ $(c.pl[3].pinit 7) == 7 ]] 2> /dev/null || err_exit 'arrays of types in arithmetic expressions not working'
+[[ $(c.pl[3].pinit 7) == 7 ]] 2> /dev/null || log_error 'arrays of types in arithmetic expressions not working'
 
 $SHELL 2> /dev/null -c '
 typeset -T p_t=( integer fd=-1 ; compound events=(  bool pollin=false ; );)
 p_t --man'
-[[ $? == 2 ]] || err_exit 'unable to generated manpage for types that contain compound variables'
+[[ $? == 2 ]] || log_error 'unable to generated manpage for types that contain compound variables'
 
 export FPATH=$tmp/fundir
 mkdir -p $FPATH
 print 'typeset -T My_t=(integer i j)' > $FPATH/My_t
 $SHELL 2> /dev/null -c 'My_t a=(i=1 j=2); [[ "${a.i} ${a.j}" == "1 2" ]]' || 
-    err_exit "dynamic loading of type with assignment fails"
+    log_error "dynamic loading of type with assignment fails"
 
-$SHELL 2> /dev/null -c 'typeset -T My_t=(readonly x); My_t foo' && err_exit 'unset type subvariables defined as readonly are required to be specified for each type instance'
+$SHELL 2> /dev/null -c 'typeset -T My_t=(readonly x); My_t foo' && log_error 'unset type subvariables defined as readonly are required to be specified for each type instance'
 
 typeset -T Goo_t=(typeset x)
 Goo_t -A foo
@@ -913,7 +913,7 @@ foo[bar]=(x=1) foo[baz]=(x=2)
 exp='Goo_t -A foo=([bar]=(x=1) [baz]=(x=2))'
 [[ $(typeset -p foo) == "$exp" ]] || print 'typeset -p for associative array of types not correct'
 
-$SHELL <<- \!!! || err_exit 'creating an empty array of a type variable with required field fails'
+$SHELL <<- \!!! || log_error 'creating an empty array of a type variable with required field fails'
     typeset -T My_t=(readonly x)
     My_t -a foo 2> /dev/null
     foo[0]=(typeset -r x=bar)
@@ -921,25 +921,25 @@ $SHELL <<- \!!! || err_exit 'creating an empty array of a type variable with req
     [[ $(typeset -p foo) == "$exp" ]]
 !!!
 
-$SHELL <<- \!!! || err_exit 'creating an array with required fields with assigments fails'
+$SHELL <<- \!!! || log_error 'creating an array with required fields with assigments fails'
     typeset -T My_t=(readonly x)
     My_t -a foo=((x=5) (x=6)) 2> /dev/null
     exp='My_t -a foo=((typeset -r x=5) (typeset -r x=6))'
     [[ $(typeset -p foo) == "$exp" ]]
 !!!
 
-$SHELL <<- \!!! && err_exit 'creating an array with required fields missing does not fail'
+$SHELL <<- \!!! && log_error 'creating an array with required fields missing does not fail'
     typeset -T My_t=(typeset -r x y)
     My_t -a foo=((typeset -r x=5;)) 2> /dev/null
 !!!
 
-$SHELL <<- \!!! && err_exit 'creating an array element with required field missing does not fail'
+$SHELL <<- \!!! && log_error 'creating an array element with required field missing does not fail'
     typeset -T My_t=(typeset -r x y)
     My_t -a foo
     { foo[1]=(x=2);} 2> /dev/null
 !!!
 
-$SHELL <<- \!!! && err_exit 'appending an array element with required field missing does not fail'
+$SHELL <<- \!!! && log_error 'appending an array element with required field missing does not fail'
     typeset -T My_t=(typeset -r x y)
     My_t -a foo
     { foo+=(y=3);} 2> /dev/null
@@ -950,17 +950,17 @@ My_t -a A
 A=()
 A+=(x=1 y=2)
 exp='My_t -a A=((typeset -l -i x=1;typeset -l -i y=2))'
-[[ $(typeset -p A) == "$exp" ]] || err_exit 'empty assignment to array of types creates element 0 by mistake'
+[[ $(typeset -p A) == "$exp" ]] || log_error 'empty assignment to array of types creates element 0 by mistake'
 
-$SHELL 2> /dev/null -c 'typeset -T a_t=(x=3 y=4); a_t b=(x=1)' || err_exit 'Cannot create instances for type names starting with the letter a'
+$SHELL 2> /dev/null -c 'typeset -T a_t=(x=3 y=4); a_t b=(x=1)' || log_error 'Cannot create instances for type names starting with the letter a'
 
-$SHELL 2> /dev/null -c 'typeset -T X=(typeset x; function x.get { :; }); X -a xs=((x=yo) (x=jo)); [[ $(typeset -p xs) == "X -a xs=((x=yo) (x=jo))" ]]' || err_exit 'X -a xs=((v1) (v2)) where X is a type, not working'
+$SHELL 2> /dev/null -c 'typeset -T X=(typeset x; function x.get { :; }); X -a xs=((x=yo) (x=jo)); [[ $(typeset -p xs) == "X -a xs=((x=yo) (x=jo))" ]]' || log_error 'X -a xs=((v1) (v2)) where X is a type, not working'
 
 # Verify -u converts string to uppercase regardless of whether or not it is
 # also exported or tagged.
 typeset -u test_u=uppercase
 typeset -xu test_xu=uppercase
 typeset -txu test_txu=uppercase
-[[ $test_u != "UPPERCASE" ]] && err_exit "typeset -u failed"
-[[ $test_xu != "UPPERCASE" ]] && err_exit "typeset -xu failed"
-[[ $test_txu != "UPPERCASE" ]] && err_exit "typeset -txu failed"
+[[ $test_u != "UPPERCASE" ]] && log_error "typeset -u failed"
+[[ $test_xu != "UPPERCASE" ]] && log_error "typeset -xu failed"
+[[ $test_txu != "UPPERCASE" ]] && log_error "typeset -txu failed"

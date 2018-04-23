@@ -38,7 +38,7 @@ function testfunc
 
     output="$($SHELL -c "${cmd}" 2>&1 )"
 
-    [[ "${output}" == "${expected_output}" ]] || err_exit ${line_number} "${output} != ${expected_output}"
+    [[ "${output}" == "${expected_output}" ]] || log_error ${line_number} "${output} != ${expected_output}"
 }
 
 # Test1: Basic tests
@@ -628,9 +628,9 @@ function test2
         #print -u2 -- "${currtest.cmd}"
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${currtest.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        (( out.res == 0 )) || err_exit "${currtest.name}: Test shell returned with exit code ${out.res}"
-        [[ "${out.stdout}" == "${currtest.expected_output}" ]] || err_exit "${currtest.name}: Expected stdout == $(printf "%q\n" "${currtest.expected_output}"), got $(printf "%q\n" "${out.stdout}")"
-        [[ "${out.stderr}" == '' ]] || err_exit "${currtest.name}: Expected empty stderr, got $(printf "%q\n" "${out.stderr}")"
+        (( out.res == 0 )) || log_error "${currtest.name}: Test shell returned with exit code ${out.res}"
+        [[ "${out.stdout}" == "${currtest.expected_output}" ]] || log_error "${currtest.name}: Expected stdout == $(printf "%q\n" "${currtest.expected_output}"), got $(printf "%q\n" "${out.stdout}")"
+        [[ "${out.stderr}" == '' ]] || log_error "${currtest.name}: Expected empty stderr, got $(printf "%q\n" "${out.stderr}")"
     done
 
     return 0
@@ -654,10 +654,10 @@ test_hx_scope false false
 test_hx_scope false false
 
 # First test the "unset" call in a $(...) subshell...
-[[ "$( test_hx_scope true true   )" == 'hx=5' ]] || err_exit "can't see global variable hx after unsetting static variable hx"
+[[ "$( test_hx_scope true true   )" == 'hx=5' ]] || log_error "can't see global variable hx after unsetting static variable hx"
 
 # ... end then test whether the value has changed.
-[[ "${ test_hx_scope true false ;}" == 'hx=9' ]] || err_exit "hx variable somehow changed"
+[[ "${ test_hx_scope true false ;}" == 'hx=9' ]] || log_error "hx variable somehow changed"
 
 out=$(function fun2
 {
@@ -676,4 +676,4 @@ function fun1
 (fun1 false ; fun1 false ; fun1 true)
 )
 
-[[ $out == $'a=3, b=3\na=3, b=3' ]] || err_exit 'static variables in functions with initializers not working'
+[[ $out == $'a=3, b=3\na=3, b=3' ]] || log_error 'static variables in functions with initializers not working'

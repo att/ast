@@ -76,7 +76,7 @@ function test_glob
 
     if  [[ $got != "$expected" ]]
     then
-        'err_exit' $lineno "glob" "$expected" "$got"
+        'log_error' $lineno "glob" "$expected" "$got"
     fi
 
 }
@@ -94,7 +94,7 @@ function test_case
     "
     if  [[ $got != "$expected" ]]
     then
-        'err_exit' $lineno "case $subject in $pattern" "$expected" "$got"
+        'log_error' $lineno "case $subject in $pattern" "$expected" "$got"
     fi
 
 }
@@ -102,7 +102,7 @@ alias test_case='test_case $LINENO'
 
 unset undefined
 
-cd $tmp || { err_exit "cd $tmp failed"; exit 1; }
+cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 
 export LC_COLLATE=C
 touch B b
@@ -326,7 +326,7 @@ function test_sub
     eval g=$x
     if  [[ "$g" != "$3" ]]
     then
-        'err_exit' $1 "subject='$subject' $x failed" "$3" "$g"
+        'log_error' $1 "subject='$subject' $x failed" "$3" "$g"
     fi
 
 }

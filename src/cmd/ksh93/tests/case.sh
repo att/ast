@@ -35,14 +35,14 @@ do
     esac
     if [[ $i != foo$foo ]]
     then
-        err_exit "$i not matching correct pattern"
+        log_error "$i not matching correct pattern"
     fi
 done
 
 f="[ksh92]"
 case $f in
 \[*\])  ;;
-*)      err_exit "$f does not match \[*\]";;
+*)      log_error "$f does not match \[*\]";;
 esac
 
 if [[ $($SHELL -c '
@@ -53,13 +53,13 @@ if [[ $($SHELL -c '
         )
         print -r -- "$x"' 2> /dev/null) != yes ]]
 then
-    err_exit 'case abc {...} not working'
+    log_error 'case abc {...} not working'
 fi
 
 [[ $($SHELL -c 'case a in
 a)      print -n a > /dev/null ;&
 b)      print b;;
-esac') != b ]] && err_exit 'bug in ;& at end of script'
+esac') != b ]] && log_error 'bug in ;& at end of script'
 [[ $(VMDEBUG=1 $SHELL -c '
     tmp=foo
     for i in a b
@@ -72,7 +72,7 @@ esac') != b ]] && err_exit 'bug in ;& at end of script'
             ;;
         esac
     done
-') == foo.h ]] || err_exit "optimizer bug"
+') == foo.h ]] || log_error "optimizer bug"
 
 x=$($SHELL -ec 'case a in a) echo 1; false; echo 2 ;& b) echo 3;; esac')
-[[ $x == 1 ]] || err_exit 'set -e ignored on case fail through'
+[[ $x == 1 ]] || log_error 'set -e ignored on case fail through'

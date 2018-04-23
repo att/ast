@@ -22,9 +22,9 @@ unset LANG ${!LC_*}
 
 a=$($SHELL -c '/' 2>&1 | sed -e "s,.*: *,," -e "s, *\[.*,,")
 b=$($SHELL -c '(LC_ALL=debug / 2>/dev/null); /' 2>&1 | sed -e "s,.*: *,," -e "s, *\[.*,,")
-[[ "$b" == "$a" ]] || err_exit "locale not restored after subshell -- expected '$a', got '$b'"
+[[ "$b" == "$a" ]] || log_error "locale not restored after subshell -- expected '$a', got '$b'"
 b=$($SHELL -c '(LC_ALL=debug; / 2>/dev/null); /' 2>&1 | sed -e "s,.*: *,," -e "s, *\[.*,,")
-[[ "$b" == "$a" ]] || err_exit "locale not restored after subshell -- expected '$a', got '$b'"
+[[ "$b" == "$a" ]] || log_error "locale not restored after subshell -- expected '$a', got '$b'"
 
 # test shift-jis \x81\x40 ... \x81\x7E encodings
 # (shift char followed by 7 bit ascii)
@@ -40,10 +40,10 @@ do
         do
             b="$(printf "$s")"
             eval n=\$\'$s\'
-            [[ $b == "$n" ]] || err_exit "LC_ALL=$locale printf difference for \"$s\" -- expected '$n', got '$b'"
+            [[ $b == "$n" ]] || log_error "LC_ALL=$locale printf difference for \"$s\" -- expected '$n', got '$b'"
             u=$(print -- $b)
             q=$(print -- "$b")
-            [[ $u == "$q" ]] || err_exit "LC_ALL=$locale quoted print difference for \"$s\" -- $b => '$u' vs \"$b\" => '$q'"
+            [[ $u == "$q" ]] || log_error "LC_ALL=$locale quoted print difference for \"$s\" -- $b => '$u' vs \"$b\" => '$q'"
         done
     done
 done
@@ -83,17 +83,17 @@ then
         eval \"txt=\${arr[0]}\"
         print -- \$txt
     " 2>&1)
-    [[ "$u" == "$x" ]] || err_exit LC_ALL=$locale multibyte value/trace format failed
+    [[ "$u" == "$x" ]] || log_error LC_ALL=$locale multibyte value/trace format failed
 
     x=$'00fc\n20ac'
     u=$(LC_ALL=$locale $SHELL -c $'printf "%04x\n" \$\'\"\303\274\"\' \$\'\"\xE2\x82\xAC\"\'')
-    [[ $u == $x ]] || err_exit LC_ALL=$locale multibyte %04x printf format failed
+    [[ $u == $x ]] || log_error LC_ALL=$locale multibyte %04x printf format failed
 fi
 
 
 if (( $($SHELL -c $'export LC_ALL='$locale$'; print -r "\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254" | wc -m' 2>/dev/null) == 10 ))
 then
-    LC_ALL=$locale $SHELL -c b1=$'"\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254"; [[ ${b1:4:1} == w ]]' || err_exit 'multibyte ${var:offset:len} not working correctly'
+    LC_ALL=$locale $SHELL -c b1=$'"\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254"; [[ ${b1:4:1} == w ]]' || log_error 'multibyte ${var:offset:len} not working correctly'
 fi
 
 
@@ -112,8 +112,8 @@ set -- $($SHELL -c "
     command wc -m < $tmp/two_euro_chars.txt
 ")
 got=$*
-[[ $got == $exp ]] || err_exit "command wc LC_ALL default failed -- expected '$exp', got '$got'"
-echo TODO: Enable when custom builtins of external commands is working.
+[[ $got == $exp ]] || log_error "command wc LC_ALL default failed -- expected '$exp', got '$got'"
+log_info 'TODO: Enable when custom builtins of external commands is working.'
 #set -- $($SHELL -c "
 #    if builtin wc 2>/dev/null || builtin -f cmd wc 2>/dev/null
 #    then
@@ -129,7 +129,7 @@ echo TODO: Enable when custom builtins of external commands is working.
 
 #")
 #got=$*
-#[[ $got == $exp ]] || err_exit "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
+#[[ $got == $exp ]] || log_error "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
 #
 # multibyte char straddling buffer boundary
 
@@ -148,7 +148,7 @@ echo TODO: Enable when custom builtins of external commands is working.
 #    done
 #} > ko.dat
 #
-#LC_ALL=$locale $SHELL < ko.dat 2> /dev/null || err_exit "script with multibyte char straddling buffer boundary fails"
+#LC_ALL=$locale $SHELL < ko.dat 2> /dev/null || log_error "script with multibyte char straddling buffer boundary fails"
 #
 ##    exp    LC_ALL        LC_NUMERIC    LANG
 #set -- \
@@ -186,7 +186,7 @@ echo TODO: Enable when custom builtins of external commands is working.
 #                        then
 #                            H[$T]=1
 #                            got=$($SHELL -c "${T}print \$(( $exp ))" 2>&1)
-#                            [[ $got == $exp ]] || err_exit "${T} sequence failed -- expected '$exp', got '$got'"
+#                            [[ $got == $exp ]] || log_error "${T} sequence failed -- expected '$exp', got '$got'"
 #                        fi
 #                    fi
 #                done
@@ -200,7 +200,7 @@ echo TODO: Enable when custom builtins of external commands is working.
 
 locale=en_US.UTF-8
 
-# TODO: Enable the `join` test when it is a builtin again (issues #411, #129).
+log_info 'TODO: Enable the `join` test when it is a builtin again (issues #411, #129).'
 if false; then
 printf 'f1\357\274\240f2\n' > input1
 printf 't2\357\274\240f1\n' > input2
@@ -208,27 +208,27 @@ printf '\357\274\240\n' > delim
 print "export LC_ALL=$locale
 join -1 1 -2 2 -o 1.2,2.1 -t \$(cat delim) input1 input2 > out" > script
 $SHELL -c 'unset LANG ${!LC_*}; $SHELL ./script' ||
-err_exit "join test script failed -- exit code $?"
+log_error "join test script failed -- exit code $?"
 exp=$(printf 'f2\357\274\240t2')
 got="$(<out)"
-[[ $got == "$exp" ]] || err_exit "LC_ALL test script failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "LC_ALL test script failed -- expected '$exp', got '$got'"
 fi  # if false
 
 # multibyte identifiers
 
 exp=OK
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf '\u[5929]=OK; print ${\u[5929]}')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte variable definition/expansion failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte variable definition/expansion failed -- expected '$exp', got '$got'"
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf 'function \u[5929]\n{\nprint OK;\n}; \u[5929]')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte ksh function definition/execution failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte ksh function definition/execution failed -- expected '$exp', got '$got'"
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf '\u[5929]()\n{\nprint OK;\n}; \u[5929]')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte posix function definition/execution failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte posix function definition/execution failed -- expected '$exp', got '$got'"
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf '\w[5929]=OK; print ${\w[5929]}')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte variable definition/expansion failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte variable definition/expansion failed -- expected '$exp', got '$got'"
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf 'function \w[5929]\n{\nprint OK;\n}; \w[5929]')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte ksh function definition/execution failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte ksh function definition/execution failed -- expected '$exp', got '$got'"
 got=$(export LC_ALL=C.UTF-8; $SHELL -c "$(printf '\w[5929]()\n{\nprint OK;\n}; \w[5929]')" 2>&1)
-[[ $got == "$exp" ]] || err_exit "multibyte posix function definition/execution failed -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "multibyte posix function definition/execution failed -- expected '$exp', got '$got'"
 
 # this locale is supported by ast on all platforms
 # mainly used to debug multibyte and message translation code
@@ -242,7 +242,7 @@ if [[ "$(LC_ALL=$locale $SHELL <<- \+EOF+
 	+EOF+)" != 5
     ]]
 then
-    err_exit '${#x} not working with multibyte locales'
+    log_error '${#x} not working with multibyte locales'
 fi
 
 dir=_not_found_
@@ -252,7 +252,7 @@ for cmd in \
     "cd $dir; LC_ALL=debug cd $dir"
 do
     got=$($SHELL -c "$cmd" 2>&1 | sort -u | wc -l)
-    (( ${got:-0} == $exp )) || err_exit "'$cmd' sequence failed -- error message not localized"
+    (( ${got:-0} == $exp )) || log_error "'$cmd' sequence failed -- error message not localized"
 done
 exp=121
 for lc in LANG LC_MESSAGES LC_ALL
@@ -261,7 +261,7 @@ do
     do
         tst="$lc=C;cd $dir;$cmd;cd $dir;:"
         $SHELL -c "unset LANG \${!LC_*}; $SHELL -c '$tst'" > out 2>&1 ||
-        err_exit "'$tst' failed -- exit status $?"
+        log_error "'$tst' failed -- exit status $?"
         integer id=0
         unset msg
         typeset -A msg
@@ -276,13 +276,13 @@ do
 
             got+=${msg[$line]}
         done < out
-        [[ $got == $exp ]] || err_exit "'$tst' failed -- expected '$exp', got '$got'"
+        [[ $got == $exp ]] || log_error "'$tst' failed -- expected '$exp', got '$got'"
     done
 done
 
 exp=123
 got=$(LC_ALL=debug $SHELL -c "a<2A@>z=$exp; print \$a<2A@>z")
-[[ $got == $exp ]] || err_exit "multibyte debug locale \$a<2A@>z failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "multibyte debug locale \$a<2A@>z failed -- expected '$exp', got '$got'"
 
 unset LC_ALL LC_MESSAGES
 export LANG=debug
@@ -297,23 +297,23 @@ got=$(message; LANG=C message; message)
     EXP=$(printf %q "$exp")
     ALT=$(printf %q "$alt")
     GOT=$(printf %q "$got")
-    err_exit "LANG change not seen by function -- expected $EXP or $ALT, got $GOT"
+    log_error "LANG change not seen by function -- expected $EXP or $ALT, got $GOT"
 }
 
 a_thing=fish
 got=$(print -r aa$"\\ahello \" /\\${a_thing}/\\"zz)
 exp="aa(debug,${test_file},libshell,\ahello " /\fish/\)zz"
-[[ $got == "$exp" ]] || err_exit "$\"...\" containing expansions fails" "$exp" "$got"
+[[ $got == "$exp" ]] || log_error "$\"...\" containing expansions fails" "$exp" "$got"
 
 exp='(debug,locale.sh,libshell,This is a string\n)'
 typeset got=$"This is a string\n"
-[[ $got == "$exp" ]] || err_exit "$\"...\" in assignment expansion fails" "$exp" "$got"
+[[ $got == "$exp" ]] || log_error "$\"...\" in assignment expansion fails" "$exp" "$got"
 
 unset LANG
 
 LC_ALL=C
 x=$"hello"
-[[ $x == hello ]] || err_exit 'assignment of message strings not working'
+[[ $x == hello ]] || log_error 'assignment of message strings not working'
 
 # tests for multibyte characteer at buffer boundary
 {
@@ -329,15 +329,15 @@ x=$"hello"
 } > script$$.1
 chmod +x script$$.1
 x=$(LC_ALL=debug $SHELL ./script$$.1)
-[[ ${#x} == 8641 ]] || err_exit 'here doc contains wrong number of chars with multibyte locale'
-[[ $x == *$'next character is multibyte<2b|>c<3d|\>foo'* ]] || err_exit "here_doc doesn't contain line with multibyte chars"
+[[ ${#x} == 8641 ]] || log_error 'here doc contains wrong number of chars with multibyte locale'
+[[ $x == *$'next character is multibyte<2b|>c<3d|\>foo'* ]] || log_error "here_doc doesn't contain line with multibyte chars"
 
 x=$(LC_ALL=debug $SHELL -c 'x="a<2b|>c";print -r -- ${#x}')
-(( x == 3  )) || err_exit 'character length of multibyte character should be 3'
+(( x == 3  )) || log_error 'character length of multibyte character should be 3'
 x=$(LC_ALL=debug $SHELL -c 'typeset -R10 x="a<2b|>c";print -r -- "${x}"')
-[[ $x == '   a<2b|>c' ]] || err_exit 'typeset -R10 should begin with three spaces'
+[[ $x == '   a<2b|>c' ]] || log_error 'typeset -R10 should begin with three spaces'
 x=$(LC_ALL=debug $SHELL -c 'typeset -L10 x="a<2b|>c";print -r -- "${x}"')
-[[ $x == 'a<2b|>c   ' ]] || err_exit 'typeset -L10 should end in three spaces'
+[[ $x == 'a<2b|>c   ' ]] || log_error 'typeset -L10 should end in three spaces'
 
 if   $SHELL -c "export LC_ALL=en_US.UTF-8; c=$'\342\202\254'; [[ \${#c} == 1 ]]" 2>/dev/null
 then
@@ -360,12 +360,12 @@ then
             p1=  p2="is not a space character"
         fi
 
-        err_exit "unicode char$p1 ${x#?} $p2 in locale $LC_ALL"
+        log_error "unicode char$p1 ${x#?} $p2 in locale $LC_ALL"
     fi
 
     unset x
     x=$(export LC_ALL=C.UTF-8; printf "hello\u[20ac]\xee world")
-    LC_ALL=C.UTF-8 eval $'[[ $(print -r -- "$x") == $\'hello\\u[20ac]\\xee world\' ]]' || err_exit '%q with unicode and non-unicode not working'
+    LC_ALL=C.UTF-8 eval $'[[ $(print -r -- "$x") == $\'hello\\u[20ac]\\xee world\' ]]' || log_error '%q with unicode and non-unicode not working'
     if [[ $(whence od) ]]
     then
         expected='68 65 6c 6c 6f e2 82 ac ee 20 77 6f 72 6c 64 0a'
@@ -373,7 +373,7 @@ then
                  sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
         if [[ "$actual" != "$expected" ]]
         then
-            err_exit $(echo 'incorrect string from printf %q:';
+            log_error $(echo 'incorrect string from printf %q:';
                        echo "expected '$expected'";
                    echo "actual   '$actual'")
         fi
@@ -385,4 +385,4 @@ typeset -r utf8_euro_char1=$'\u[20ac]'
 typeset -r utf8_euro_char2=$'\342\202\254'
 (( (${#utf8_euro_char1} == 1) && (${#utf8_euro_char2} == 1) )) \
         || export LC_ALL='en_US.UTF-8'
-[[ "$(printf '\u[20ac]')" == $'\342\202\254' ]]  || err_exit 'locales not handled correctly in command substitution'
+[[ "$(printf '\u[20ac]')" == $'\342\202\254' ]]  || log_error 'locales not handled correctly in command substitution'

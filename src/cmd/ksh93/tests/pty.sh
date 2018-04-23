@@ -21,7 +21,7 @@
 
 # The trickiest part of the tests is avoiding typeahead in the pty dialogue.
 
-whence -q pty || { warning "pty command not found -- tests skipped"; exit 0; }
+whence -q pty || { log_warning "pty command not found -- tests skipped"; exit 0; }
 
 bintrue=$(whence -p true)
 
@@ -37,7 +37,7 @@ x=$( $SHELL <<- \EOF
         kill $$
 	EOF
 )
-[[ $x == *Stop* ]] && err_exit 'monitor mode enabled incorrectly causes job to stop'
+[[ $x == *Stop* ]] && log_error 'monitor mode enabled incorrectly causes job to stop'
 
 if [[ -o xtrace ]]
 then
@@ -57,9 +57,9 @@ function tst
     do
         if [[ $text == *debug* ]]
         then
-            'warning' $lineno "$text"
+            'log_warning' $lineno "$text"
         else
-            'err_exit' $lineno "$text"
+            'log_error' $lineno "$text"
         fi
     done
 }
@@ -68,11 +68,11 @@ export PS1=':test-!: ' PS2='> ' PS4=': ' ENV= EXINIT= HISTFILE= TERM=dumb VISUAL
 
 if ! pty $bintrue < /dev/null
 then
-    err_exit pty command hangs on $bintrue -- tests skipped
+    log_error pty command hangs on $bintrue -- tests skipped
     exit 0
 fi
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 026(C)
 
@@ -95,7 +95,7 @@ w wait
 u (Killed|Done)
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 028(C)
 
@@ -118,7 +118,7 @@ w wait
 u (Killed|Done)
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 029(C)
 
@@ -141,7 +141,7 @@ w wait
 u (Killed|Done)
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 091(C)
 
@@ -157,7 +157,7 @@ w o
 u ^hello\r?\n$
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 093(C)
 
@@ -173,7 +173,7 @@ w e
 u ^goodbye\r?\n$
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 094(C)
 
@@ -187,8 +187,8 @@ w allo
 u ^hello\r?\n$
 !
 
-# err_exit #
-# TODO: Re-enable this test once stty is available as a builtin.
+# log_error #
+log_info 'TODO: Re-enable this test once stty is available as a builtin.'
 : tst $LINENO <<"!"
 L POSIX sh 096(C)
 
@@ -217,7 +217,7 @@ r echo
 r history
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 097(C)
 
@@ -229,8 +229,8 @@ c echo ok\n
 u ^ok\r?\n$
 !
 
-# err_exit #
-# TODO: Re-enable this test once stty is available as a builtin.
+# log_error #
+log_info 'TODO: Re-enable this test once stty is available as a builtin.'
 : tst $LINENO <<"!"
 L POSIX sh 099(C)
 
@@ -259,8 +259,8 @@ r echo last
 r history
 !
 
-# err_exit #
-# TODO: Re-enable this test once stty is available as a builtin.
+# log_error #
+log_info 'TODO: Re-enable this test once stty is available as a builtin.'
 : tst $LINENO <<"!"
 L POSIX sh 100(C)
 
@@ -276,8 +276,8 @@ w echo ok
 u ^ok\r?\n$
 !
 
-# err_exit #
-# TODO: Re-enable this test once stty is available as a builtin.
+# log_error #
+log_info 'TODO: Re-enable this test once stty is available as a builtin.'
 : tst $LINENO <<"!"
 L POSIX sh 101(C)
 
@@ -322,7 +322,7 @@ w echo interrupt=:\cV\cC:
 u ^interrupt=:\cC:\r?\n$
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 104(C)
 
@@ -339,7 +339,7 @@ c \cD
 u ^done\r?\n$
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 111(C)
 
@@ -359,8 +359,8 @@ u #echo save
 r history
 !
 
-# err_exit #
-# TODO: Fix this so that it succeeds on the Travis CI OpenSuse environment. It passes on my local
+# log_error #
+log_info 'TODO: Fix this so that it succeeds on the Travis CI OpenSuse environment. It passes on my local'
 # OpenSuse environment and all other local environments (i.e., systems/virtual machines) I test
 # with.
 #
@@ -391,7 +391,7 @@ w :wq
 u ^hello world\r?\n$
 !
 
-# err_exit #
+# log_error #
 tst $LINENO <<"!"
 L POSIX sh 251(C)
 
@@ -434,8 +434,8 @@ c n
 r echo repeat-3
 !
 
-# err_exit #
-# TODO: Enable this when issue #375 is fixed. At this time SIGTSTP is not correctly handled.
+# log_error #
+log_info 'TODO: Enable this when issue #375 is fixed. At this time SIGTSTP is not correctly handled.'
 if false; then
 whence -q less &&
 TERM=vt100 tst $LINENO <<"!"

@@ -9,6 +9,6 @@ then
     rm -rf $TEST_DIR
     exit 0
 else
-    'warning' $((start_of_test_lineno - 1)) "error_count = $error_count"
+    'log_warning' $((start_of_test_lineno - 1)) "error_count = $error_count"
     exit $(( error_count < 125 ? error_count : 125 ))
 fi

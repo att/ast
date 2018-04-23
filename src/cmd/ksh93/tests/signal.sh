@@ -27,19 +27,19 @@ for s in $(kill -l)
 do
     if ! n=$(kill -l $s 2>/dev/null)
     then
-        err_exit "'kill -l $s' failed"
+        log_error "'kill -l $s' failed"
     elif ! t=$(kill -l $n 2>/dev/null)
     then
-        err_exit "'kill -l $n' failed"
+        log_error "'kill -l $n' failed"
     elif [[ $s == ?(SIG)$t ]]
     then
         SIG[${s#SIG}]=1
     elif ! m=$(kill -l $t 2>/dev/null)
     then
-        err_exit "'kill -l $t' failed"
+        log_error "'kill -l $t' failed"
     elif [[ $m != $n ]]
     then
-        err_exit "'kill -l $s' => $n, 'kill -l $n' => $t, kill -l $t => $m -- expected $n"
+        log_error "'kill -l $s' => $n, 'kill -l $n' => $t, kill -l $t => $m -- expected $n"
     fi
 done
 
@@ -75,19 +75,19 @@ then
     print -u9 okay  # cleanly terminate watchdog process
     sleep 0.01      # give it a chance to exit
 else
-    err_exit "pipe with --pipefail PIPE trap hangs"
+    log_error "pipe with --pipefail PIPE trap hangs"
 fi
 kill $watchdog 2> /dev/null  # should already be dead but just in case
 wait  # reap watchdog process
 
 expect=27
 actual="$(< out3)"
-[[ $actual == $expect ]] || err_exit "SIGPIPE with wrong error code" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "SIGPIPE with wrong error code" "$expect" "$actual"
 
 expect='SIGPIPESIGPIPE'
 actual="$(< out2)"
 [[ $actual == $expect ]] ||
-    err_exit "SIGPIPE output on standard error is not correct" "$expect" "$actual"
+    log_error "SIGPIPE output on standard error is not correct" "$expect" "$actual"
 
 # ====================
 # Verify SIGCHLD can be trapped.
@@ -104,7 +104,7 @@ actual=$(
         [[ $i -eq 1 ]] && { print -u9 die; read -u8 x; while [[ $sigchld == no ]]; do :; done; }
     done
 )
-[[ $actual == $expect ]] || err_exit 'SIGCHLD not working:' "$expect" "$actual"
+[[ $actual == $expect ]] || log_error 'SIGCHLD not working:' "$expect" "$actual"
 
 # ====================
 # Verify SIGINT trapping works for various complicated cases of nested scripts.
@@ -129,7 +129,7 @@ $SHELL sigtst0 > sigtst.out
 while read ops actual
 do
     expect=${expected[$ops]}
-    [[ $actual == $expect ]] || err_exit "SIGINT $ops test failed" "$expect" "$actual"
+    [[ $actual == $expect ]] || log_error "SIGINT $ops test failed" "$expect" "$actual"
 done < sigtst.out
 
 # ====================
@@ -145,8 +145,8 @@ actual=$(echo $(
         print should not get here'
 ))
 [[ $actual == $expect ]] ||
-    err_exit "subshell ignoring signal does not send signal to parent" "$expect" "$actual"
-read -u9 -t0.01 x || err_exit 'parent unexpectedly consumed fifo go signal'
+    log_error "subshell ignoring signal does not send signal to parent" "$expect" "$actual"
+read -u9 -t0.01 x || log_error 'parent unexpectedly consumed fifo go signal'
 
 expect='done SIGUSR1'
 actual=$(echo $(
@@ -156,8 +156,8 @@ actual=$(echo $(
         print should not get here'
 ))
 [[ $actual == $expect ]] ||
-    err_exit "subshell catching signal does not send signal to parent" "$expect" "$actual"
-read -u9 -t0.01 x || err_exit 'parent unexpectedly consumed fifo go signal'
+    log_error "subshell catching signal does not send signal to parent" "$expect" "$actual"
+read -u9 -t0.01 x || log_error 'parent unexpectedly consumed fifo go signal'
 
 # ====================
 # Verify exit due to signal can be mapped to the correct signal name.
@@ -180,7 +180,7 @@ do
     status=$?
     actual=$(kill -l $status)
     [[ $actual == $expect ]] ||
-        err_exit "kill -$expect failed to force exit via expected signal number" "$expect" "$actual"
+        log_error "kill -$expect failed to force exit via expected signal number" "$expect" "$actual"
 done
 
 # ====================
@@ -193,11 +193,11 @@ $SHELL -c "trap 'print okay; exit $expect' EXIT
     sleep 2  # this can be a long sleep because we expect it to be interrupted
     print bad" > sig
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual=$(< sig)
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
 expect=13
@@ -206,11 +206,11 @@ $SHELL -c "trap 'print okay; exit $expect' EXIT
     (sleep 2)  # this can be a long sleep because we expect it to be interrupted
     print bad" > sig
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual=$(< sig)
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
 expect=15
@@ -220,11 +220,11 @@ expect=15
     print bad" > sig
 }
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual=$(< sig)
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
 expect=17
@@ -234,11 +234,11 @@ expect=17
     print bad" > sig
 }
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual=$(< sig)
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
 expect=19
@@ -248,11 +248,11 @@ output=$($SHELL -c "trap 'print okay; exit $expect' EXIT
     print bad"
 )
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual="$output"
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 SECONDS=0
 expect=21
@@ -262,16 +262,16 @@ output=$($SHELL -c "trap 'print okay; exit $expect' EXIT
     print bad"
 )
 actual=$?
-[[ $actual == $expect ]] || err_exit "exit status failed" "$expect" "$actual"
+[[ $actual == $expect ]] || log_error "exit status failed" "$expect" "$actual"
 expect=okay
 actual="$output"
-[[ $actual == $expect ]] || err_exit "output failed" "$expect" "$actual"
-(( SECONDS > 1 )) && err_exit "took $SECONDS seconds, expected around 0.5"
+[[ $actual == $expect ]] || log_error "output failed" "$expect" "$actual"
+(( SECONDS > 1 )) && log_error "took $SECONDS seconds, expected around 0.5"
 
 trap '' SIGBUS
 expect=''
 actual=$($SHELL -c 'trap date SIGBUS; trap -p SIGBUS')
-[[ $actual == $expect ]] || err_exit 'SIGBUS should not have a trap' "$expect" "$actual"
+[[ $actual == $expect ]] || log_error 'SIGBUS should not have a trap' "$expect" "$actual"
 trap -- - SIGBUS
 
 {
@@ -289,11 +289,11 @@ EOF
 }
 expect=0
 [[ $actual == $expect ]] ||
-    err_exit 'return without arguments in trap not preserving exit status' "$expect" "$actual"
+    log_error 'return without arguments in trap not preserving exit status' "$expect" "$actual"
 expect=ok
 actual="$output"
 [[ $actual == $expect ]] ||
-    err_exit 'return without arguments in trap not preserving exit status' "$expect" "$actual"
+    log_error 'return without arguments in trap not preserving exit status' "$expect" "$actual"
 
 # ====================
 # Verify pipefail and trapping SIGPIPE doesnt' propagate the signal to the exit status.
@@ -312,7 +312,7 @@ EOF
 )
 expect=ok
 [[ $actual == $expect ]] ||
-    err_exit 'SIGPIPE exit status causes PIPE signal to be propagated' "$expect" "$actual"
+    log_error 'SIGPIPE exit status causes PIPE signal to be propagated' "$expect" "$actual"
 
 # ====================
 # Verify signal ignored in subshell not propagated to parent.
@@ -327,7 +327,7 @@ EOF
 actual=$(print $actual)
 expect='1 S1 GNAW 2'
 [[ $actual == $expect ]] ||
-    err_exit 'signal ignored in subshell not propagated to parent' "$expect" "$actual"
+    log_error 'signal ignored in subshell not propagated to parent' "$expect" "$actual"
 
 # ====================
 # Verify termination by a signal is correctly reflected in the exit status.
@@ -344,7 +344,7 @@ $SHELL <<#'EOF'
 actual=$?
 expect=$(( $(kill -l USR2) + 128 ))
 [[ $actual == $expect ]] ||
-    err_exit 'wait interrupted by a signal should have USR2 exit status' "$expect" "$actual"
+    log_error 'wait interrupted by a signal should have USR2 exit status' "$expect" "$actual"
 
 $SHELL <<#'EOF'
     for ((i = 0; i < 3; i++))
@@ -357,7 +357,7 @@ $SHELL <<#'EOF'
 actual=$(kill -l $?)
 expect=USR2
 [[ $actual == $expect ]] ||
-    err_exit 'wait interrupted by signal not caught should exit with the value of that signal+128' "$expect" "$actual"
+    log_error 'wait interrupted by signal not caught should exit with the value of that signal+128' "$expect" "$actual"
 
 # ====================
 # Verify nested functions can be terminated via a signal.
@@ -378,8 +378,8 @@ function a {
 { read -u9 -t5 x; kill -s TERM $$; } &
 unset enda endb
 a
-[[ $endb == 1 ]] && err_exit 'TERM signal did not kill function b'
-[[ $enda == 1 ]] || err_exit 'TERM signal killed function a'
+[[ $endb == 1 ]] && log_error 'TERM signal did not kill function b'
+[[ $enda == 1 ]] || log_error 'TERM signal killed function a'
 
 # ====================
 # Verify ???
@@ -394,7 +394,7 @@ EOF
 actual=$(echo $actual)  # flatten newlines to spaces
 expect='foo bar USR2'
 [[ $actual == $expect ]] ||
-    err_exit 'trap command not blocking signals until trap command completes' "$expect" "$actual"
+    log_error 'trap command not blocking signals until trap command completes' "$expect" "$actual"
 
 # ====================
 # Verify ???
@@ -453,13 +453,13 @@ then
 
     expect=6
     actual=${#rtar[@]}
-    [[ $actual == $expect ]] || err_exit "wrong number of signals" "$expect" "$actual"
+    [[ $actual == $expect ]] || log_error "wrong number of signals" "$expect" "$actual"
 
     for (( i=0xa ; i <= 0xf; i++ ))
     do
         expect=$(( numchildren * 8 ))
         actual=${#rtar[i][*]}
-        [[ $actual == $expect ]] || err_exit "wrong number of $i signals" "$expect" "$actual"
+        [[ $actual == $expect ]] || log_error "wrong number of $i signals" "$expect" "$actual"
     done
 
     SIG1=RTMIN+1 SIG2=RTMIN+2
@@ -476,7 +476,7 @@ then
     done
     expect='typeset -C a=(typeset -l -E i=200.002)'
     actual=$(typeset -p a)
-    [[ $actual == $expect ]] || err_exit "signals lost" "$expect" "$actual"
+    [[ $actual == $expect ]] || log_error "signals lost" "$expect" "$actual"
     kill $watchdog_pid
 fi
 
@@ -491,7 +491,7 @@ wait $!
 actual=$(( SECONDS - s ))
 expect=0.5
 (( $actual >= $expect )) ||
-    err_exit "'trap - INT' causing trap to not be ignored" "$expect" "$actual"
+    log_error "'trap - INT' causing trap to not be ignored" "$expect" "$actual"
 
 # ====================
 # Verify ???
@@ -504,9 +504,9 @@ kill -q5 -s USR1 $$
 expect=4
 actual=${c.car[0].value.q}
 (( $actual == $expect )) ||
-    err_exit "\${c.car[0].value.q} is wrong" "$expect" "$actual"
+    log_error "\${c.car[0].value.q} is wrong" "$expect" "$actual"
 
 expect=5
 actual=${c.car[1].value.q}
 (( $actual == $expect )) ||
-    err_exit "\${c.car[1].value.q} is wrong" "$expect" "$actual"
+    log_error "\${c.car[1].value.q} is wrong" "$expect" "$actual"

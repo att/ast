@@ -19,8 +19,8 @@
 ########################################################################
 
 type /xxxxxx > out1 2> out2
-[[ -s out1 ]] && err_exit 'type should not write on stdout for not found case'
-[[ -s out2 ]] || err_exit 'type should write on stderr for not found case'
+[[ -s out1 ]] && log_error 'type should not write on stdout for not found case'
+[[ -s out2 ]] || log_error 'type should write on stderr for not found case'
 mkdir dir1 dir2
 cat  > dir1/foobar << '+++'
 foobar() { print foobar1;}
@@ -36,29 +36,29 @@ FPATH=$PWD/dir1
 PATH=$FPATH:$p
 expect=foobar1
 actual=$( foobar)
-[[ $actual == $expect ]] || err_exit 'foobar output wrong' "$expect" "$actual"
+[[ $actual == $expect ]] || log_error 'foobar output wrong' "$expect" "$actual"
 FPATH=$PWD/dir2
 PATH=$FPATH:$p
-[[ $(foobar) == foobar2 ]] || err_exit 'foobar output wrong' "$expect" "$actual"
+[[ $(foobar) == foobar2 ]] || log_error 'foobar output wrong' "$expect" "$actual"
 FPATH=$PWD/dir1
 PATH=$FPATH:$p
-[[ $(foobar) == foobar1 ]] || err_exit 'foobar should output foobar1 again'
+[[ $(foobar) == foobar1 ]] || log_error 'foobar should output foobar1 again'
 FPATH=$PWD/dir2
 PATH=$FPATH:$p
-[[ ${ foobar;} == foobar2 ]] || err_exit 'foobar should output foobar2 with ${}'
-[[ ${ dir2;} == dir2 ]] || err_exit 'should be dir2'
-[[ ${ dir1;} == dir1 ]] 2> /dev/null &&  err_exit 'should not be be dir1'
+[[ ${ foobar;} == foobar2 ]] || log_error 'foobar should output foobar2 with ${}'
+[[ ${ dir2;} == dir2 ]] || log_error 'should be dir2'
+[[ ${ dir1;} == dir1 ]] 2> /dev/null &&  log_error 'should not be be dir1'
 FPATH=$PWD/dir1
 PATH=$FPATH:$p
-[[ ${ foobar;} == foobar1 ]] || err_exit 'foobar should output foobar1 with ${}'
-[[ ${ dir1;} == dir1 ]] || err_exit 'should be dir1'
-[[ ${ dir2;} == dir2 ]] 2> /dev/null &&  err_exit 'should not be be dir2'
+[[ ${ foobar;} == foobar1 ]] || log_error 'foobar should output foobar1 with ${}'
+[[ ${ dir1;} == dir1 ]] || log_error 'should be dir1'
+[[ ${ dir2;} == dir2 ]] 2> /dev/null &&  log_error 'should not be be dir2'
 FPATH=$PWD/dir2
 PATH=$FPATH:$p
-[[ ${ foobar;} == foobar2 ]] || err_exit 'foobar should output foobar2 with ${} again'
+[[ ${ foobar;} == foobar2 ]] || log_error 'foobar should output foobar2 with ${} again'
 PATH=$p
 (PATH="/bin")
-[[ $($SHELL -c 'print -r -- "$PATH"') == "$PATH" ]] || err_exit 'export PATH lost in subshell'
+[[ $($SHELL -c 'print -r -- "$PATH"') == "$PATH" ]] || log_error 'export PATH lost in subshell'
 cat > bug1 <<- EOF
 	print print ok > $tmp/ok
 	chmod 755 $tmp/ok
@@ -73,7 +73,7 @@ cat > bug1 <<- EOF
 	PATH=\$path
 }
 EOF
-[[ $($SHELL ./bug1 2>/dev/null) == ok ]]  || err_exit "PATH in function not working"
+[[ $($SHELL ./bug1 2>/dev/null) == ok ]]  || log_error "PATH in function not working"
 cat > bug1 <<- \EOF
 	function lock_unlock
 	{
@@ -85,22 +85,22 @@ cat > bug1 <<- \EOF
 	typeset -ft lock_unlock
 	lock_unlock
 EOF
-($SHELL ./bug1)  2> /dev/null || err_exit "path_delete bug"
+($SHELL ./bug1)  2> /dev/null || log_error "path_delete bug"
 mkdir tdir
 if $SHELL tdir > /dev/null 2>&1
 then
-    err_exit 'not an error to run ksh on a directory'
+    log_error 'not an error to run ksh on a directory'
 fi
 
 print 'print hi' > ls
 if [[ $($SHELL ls 2> /dev/null) != hi ]]
 then
-    err_exit "$SHELL name not executing version in current directory"
+    log_error "$SHELL name not executing version in current directory"
 fi
 
 if [[ $(ls -d . 2>/dev/null) == . && $(PATH=/bin:/usr/bin:$PATH ls -d . 2>/dev/null) != . ]]
 then
-    err_exit 'PATH export in command substitution not working'
+    log_error 'PATH export in command substitution not working'
 fi
 
 pwd=$PWD
@@ -137,10 +137,10 @@ done > /dev/null 2>&1
 builtin -d date 2> /dev/null
 if [[ $(PATH=:/usr/bin; date) != 'hello' ]]
 then
-    err_exit "leading : in path not working"
+    log_error "leading : in path not working"
 fi
 
-info "TODO: Enable this test when bug #485 is fixed."
+log_info "TODO: Enable this test when bug #485 is fixed."
 # Disabled because once in a while (~20% of the time) the exit status is 126 (ENOENT) rather than
 # the expected 127 (ENOEXEC).
 #
@@ -151,7 +151,7 @@ info "TODO: Enable this test when bug #485 is fixed."
 # )
 # actual=$?
 # expect=127
-# [[ $actual == $expect ]] || err_exit "exit status of non-executable is wrong" "$expect" "$actual"
+# [[ $actual == $expect ]] || log_error "exit status of non-executable is wrong" "$expect" "$actual"
 
 builtin -d rm 2> /dev/null
 chmod=$(whence chmod)
@@ -166,22 +166,22 @@ do
     print print $exp > $cmd
     $chmod +x $cmd
     got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
-    [[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] && log_error "$cmd as last command should not find ./$cmd with PATH=/dev/null"
     got=$($SHELL -c "unset FPATH; PATH=/dev/null; $cmd" 2>&1)
-    [[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] && log_error "$cmd should not find ./$cmd with PATH=/dev/null"
     exp=$PWD/./$cmd
     got=$(unset FPATH; PATH=/dev/null; whence ./$cmd)
-    [[ $got == $exp ]] || err_exit "whence $cmd should find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] || log_error "whence $cmd should find ./$cmd with PATH=/dev/null"
     exp=$PWD/$cmd
     got=$(unset FPATH; PATH=/dev/null; whence $PWD/$cmd)
-    [[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] || log_error "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
 done
 
 exp=''
 got=$($SHELL -c "unset FPATH; PATH=/dev/null; whence ./notfound" 2>&1)
-[[ $got == $exp ]] || err_exit "whence ./$cmd failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "whence ./$cmd failed -- expected '$exp', got '$got'"
 got=$($SHELL -c "unset FPATH; PATH=/dev/null; whence $PWD/notfound" 2>&1)
-[[ $got == $exp ]] || err_exit "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
 
 unset FPATH
 PATH=/dev/null
@@ -191,40 +191,40 @@ do
     print print $exp > $cmd
     $chmod +x $cmd
     got=$($cmd 2>&1)
-    [[ $got == $exp ]] && err_exit "$cmd as last command should not find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] && log_error "$cmd as last command should not find ./$cmd with PATH=/dev/null"
     got=$($cmd 2>&1; :)
-    [[ $got == $exp ]] && err_exit "$cmd should not find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] && log_error "$cmd should not find ./$cmd with PATH=/dev/null"
     exp=$PWD/./$cmd
     got=$(whence ./$cmd)
-    [[ $got == $exp ]] || err_exit "whence ./$cmd should find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] || log_error "whence ./$cmd should find ./$cmd with PATH=/dev/null"
     exp=$PWD/$cmd
     got=$(whence $PWD/$cmd)
-    [[ $got == $exp ]] || err_exit "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
+    [[ $got == $exp ]] || log_error "whence \$PWD/$cmd should find ./$cmd with PATH=/dev/null"
 done
 exp=''
 got=$(whence ./notfound)
-[[ $got == $exp ]] || err_exit "whence ./$cmd failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "whence ./$cmd failed -- expected '$exp', got '$got'"
 got=$(whence $PWD/notfound)
-[[ $got == $exp ]] || err_exit "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "whence \$PWD/$cmd failed -- expected '$exp', got '$got'"
 
 PATH=$d:.
 cp "$rm" kshrm
 if [[ $(whence kshrm) != $PWD/kshrm  ]]
 then
-    err_exit 'trailing : in pathname not working'
+    log_error 'trailing : in pathname not working'
 fi
 
 cp "$rm" rm
 PATH=.:$d
 if [[ $(whence rm) != $PWD/rm ]]
 then
-    err_exit 'leading : in pathname not working'
+    log_error 'leading : in pathname not working'
 fi
 
 PATH=$d:. whence rm > /dev/null
 if [[ $(whence rm) != $PWD/rm ]]
 then
-    err_exit 'pathname not restored after scoping'
+    log_error 'pathname not restored after scoping'
 fi
 rm rm
 
@@ -233,7 +233,7 @@ print 'print ok' > bin/tst
 chmod +x bin/tst
 if [[ $(PATH=$PWD/bin tst 2>/dev/null) != ok ]]
 then
-    err_exit '(PATH=$PWD/bin foo) does not find $PWD/bin/foo'
+    log_error '(PATH=$PWD/bin foo) does not find $PWD/bin/foo'
 fi
 
 cd /
@@ -242,13 +242,13 @@ then
     PATH=
     if [[ $(whence rm) ]]
     then
-        err_exit 'setting PATH to Null not working'
+        log_error 'setting PATH to Null not working'
     fi
 
     unset PATH
     if [[ $(whence rm) != /*rm ]]
     then
-        err_exit 'unsetting path  not working'
+        log_error 'unsetting path  not working'
     fi
 
 fi
@@ -257,28 +257,28 @@ PATH=/dev:$tmp
 x=$(whence rm)
 typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
-[[ $x != "$y" ]] && err_exit 'PATH not restored after command substitution'
-whence getconf > /dev/null  &&  err_exit 'getconf should not be found'
-info "TODO: If and when builtins are supported uncomment the next two lines and remove the third."
+[[ $x != "$y" ]] && log_error 'PATH not restored after command substitution'
+whence getconf > /dev/null  &&  log_error 'getconf should not be found'
+log_info "TODO: If and when builtins are supported uncomment the next two lines and remove the third."
 #builtin /bin/getconf
 #PATH=/bin
 PATH=$path
 PATH="$(getconf PATH)"
 x=$(whence ls)
 PATH=.:$PWD:${x%/ls}
-[[ $(whence ls) == "$x" ]] || err_exit 'PATH search bug when .:$PWD in path'
+[[ $(whence ls) == "$x" ]] || log_error 'PATH search bug when .:$PWD in path'
 PATH=$PWD:.:${x%/ls}
-[[ $(whence ls) == "$x" ]] || err_exit 'PATH search bug when :$PWD:. in path'
+[[ $(whence ls) == "$x" ]] || log_error 'PATH search bug when :$PWD:. in path'
 cd   "${x%/ls}"
-[[ $(whence ls) == /* ]] || err_exit 'whence not generating absolute pathname'
+[[ $(whence ls) == /* ]] || log_error 'whence not generating absolute pathname'
 status=$($SHELL -c $'trap \'print $?\' EXIT;/xxx/a/b/c/d/e 2> /dev/null')
-[[ $status == 127 ]] || err_exit "not found command exit status $status -- expected 127"
+[[ $status == 127 ]] || log_error "not found command exit status $status -- expected 127"
 status=$($SHELL -c $'trap \'print $?\' EXIT;/dev/null 2> /dev/null')
-[[ $status == 126 ]] || err_exit "non executable command exit status $status -- expected 126"
+[[ $status == 126 ]] || log_error "non executable command exit status $status -- expected 126"
 status=$($SHELL -c $'trap \'print $?\' ERR;/xxx/a/b/c/d/e 2> /dev/null')
-[[ $status == 127 ]] || err_exit "not found command with ERR trap exit status $status -- expected 127"
+[[ $status == 127 ]] || log_error "not found command with ERR trap exit status $status -- expected 127"
 status=$($SHELL -c $'trap \'print $?\' ERR;/dev/null 2> /dev/null')
-[[ $status == 126 ]] || err_exit "non executable command ERR trap exit status $status -- expected 126"
+[[ $status == 126 ]] || log_error "non executable command ERR trap exit status $status -- expected 126"
 
 PATH=$path
 
@@ -288,29 +288,29 @@ exp=126
 : > $scr
 chmod a=x $scr
 { got=$($scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || err_exit "unreadable empty script should fail -- expected $exp, got $got"
+[[ "$got" == "$exp" ]] || log_error "unreadable empty script should fail -- expected $exp, got $got"
 { got=$(command $scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || err_exit "command of unreadable empty script should fail -- expected $exp, got $got"
-[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || err_exit "unreadable empty script in [[ ... ]] should fail -- expected $exp"
-[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || err_exit "command unreadable empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$got" == "$exp" ]] || log_error "command of unreadable empty script should fail -- expected $exp, got $got"
+[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "unreadable empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "command unreadable empty script in [[ ... ]] should fail -- expected $exp"
 got=$($SHELL -c "$scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || err_exit "\$SHELL -c of unreadable empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of unreadable empty script should fail -- expected $exp, got" $got
 got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || err_exit "\$SHELL -c of command of unreadable empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of command of unreadable empty script should fail -- expected $exp, got" $got
 
 rm -f $scr
 print : > $scr
 chmod a=x $scr
 { got=$($scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || err_exit "unreadable non-empty script should fail -- expected $exp, got $got"
+[[ "$got" == "$exp" ]] || log_error "unreadable non-empty script should fail -- expected $exp, got $got"
 { got=$(command $scr; print $?); } 2>/dev/null
-[[ "$got" == "$exp" ]] || err_exit "command of unreadable non-empty script should fail -- expected $exp, got $got"
-[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || err_exit "unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
-[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || err_exit "command unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$got" == "$exp" ]] || log_error "command of unreadable non-empty script should fail -- expected $exp, got $got"
+[[ "$(:; $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
+[[ "$(:; command $scr; print $?)" == "$exp" ]] 2>/dev/null || log_error "command unreadable non-empty script in [[ ... ]] should fail -- expected $exp"
 got=$($SHELL -c "$scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || err_exit "\$SHELL -c of unreadable non-empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of unreadable non-empty script should fail -- expected $exp, got" $got
 got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
-[[ "$got" == "$exp" ]] || err_exit "\$SHELL -c of command of unreadable non-empty script should fail -- expected $exp, got" $got
+[[ "$got" == "$exp" ]] || log_error "\$SHELL -c of command of unreadable non-empty script should fail -- expected $exp, got" $got
 
 # whence -a bug fix
 cd "$tmp"
@@ -329,7 +329,7 @@ do
     fi
 
 done
-[[ $ok ]] || err_exit 'whence -a not finding all executables'
+[[ $ok ]] || log_error 'whence -a not finding all executables'
 rm -f ls
 PATH=${PATH%:}
 
@@ -338,12 +338,12 @@ function foo
 {
     :
 }
-[[ $(whence -p foo) == foo ]] && err_exit 'whence -p foo should not find function foo'
+[[ $(whence -p foo) == foo ]] && log_error 'whence -p foo should not find function foo'
 
 # whence -q bug fix
 $SHELL -c 'whence -q cat' & pid=$!
 sleep 3
-kill $! 2> /dev/null && err_exit 'whence -q appears to be hung'
+kill $! 2> /dev/null && log_error 'whence -q appears to be hung'
 
 FPATH=$PWD
 print  'function foobar { :;}' > foobar
@@ -355,11 +355,11 @@ do
 done
 exec {m}<& -
 exec {n}< /dev/null
-(( n > m )) && err_exit 'autoload function in subshell leaves file open'
+(( n > m )) && log_error 'autoload function in subshell leaves file open'
 
 # whence -a bug fix
 rmdir=rmdir
-mkdir $rmdir || { warning "failed to create '$rmdir'"; exit 99; }
+mkdir $rmdir || { log_warning "failed to create '$rmdir'"; exit 99; }
 type whence >&2
 rm=${ whence rm; }
 if [[ $rm ]]
@@ -367,7 +367,7 @@ then
 cp "$rm" "$rmdir"
 { PATH=:${rm%/rm} $SHELL -c "cd \"$rmdir\";whence -a rm";} > /dev/null 2>&1
 exitval=$?
-(( exitval==0 )) || err_exit "whence -a has exitval $exitval"
+(( exitval==0 )) || log_error "whence -a has exitval $exitval"
 fi
 
 [[ ! -d bin ]] && mkdir bin
@@ -380,12 +380,12 @@ cat <<- \EOF > fun/myfun
 	}
 EOF
 x=$(FPATH= PATH=$PWD/bin $SHELL -c  ': $(whence less);myfun') 2> /dev/null
-[[ $x == myfun ]] || err_exit 'function myfun not found'
+[[ $x == myfun ]] || log_error 'function myfun not found'
 
 cp $(whence -p echo) user_to_group_relationship.hdr.query
 FPATH=/foobar:
 PATH=$FPATH:$PATH:.
-[[ $(user_to_group_relationship.hdr.query foobar) == foobar ]] 2> /dev/null || err_exit 'Cannot execute command with . in name when PATH and FPATH end in :.'
+[[ $(user_to_group_relationship.hdr.query foobar) == foobar ]] 2> /dev/null || log_error 'Cannot execute command with . in name when PATH and FPATH end in :.'
 
 mkdir -p $tmp/new/bin
 mkdir $tmp/new/fun
@@ -394,9 +394,9 @@ print FPATH=../xxfun > $tmp/bin/.paths
 cp "$(whence -p echo)" $tmp/new/bin
 PATH=$tmp/bin:$tmp/new/bin:$PATH
 x=$(whence -p echo 2> /dev/null)
-[[ $x == "$tmp/new/bin/echo" ]] ||  err_exit 'nonexistant FPATH directory in .paths file causes path search to fail'
+[[ $x == "$tmp/new/bin/echo" ]] ||  log_error 'nonexistant FPATH directory in .paths file causes path search to fail'
 
-$SHELL 2> /dev/null <<- \EOF || err_exit 'path search problem with non-existant directories in PATH'
+$SHELL 2> /dev/null <<- \EOF || log_error 'path search problem with non-existant directories in PATH'
 	PATH=/usr/nogood1/bin:/usr/nogood2/bin:/bin:/usr/bin
 	tail /dev/null && tail /dev/null
 EOF
@@ -405,11 +405,11 @@ EOF
 cat << END >/dev/null 2>&1
 ${.sh.version}
 END
-) || err_exit '${.sh.xxx} variables causes cat not be found'
+) || log_error '${.sh.xxx} variables causes cat not be found'
 
 PATH=/bin:/usr/bin
 if [[ $(type date) == *builtin* ]]
 then
     builtin -d date
-    [[ $(type date) == *builtin* ]] && err_exit 'builtin -d does not delete builtin'
+    [[ $(type date) == *builtin* ]] && log_error 'builtin -d does not delete builtin'
 fi

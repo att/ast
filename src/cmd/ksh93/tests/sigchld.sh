@@ -53,12 +53,12 @@ fi
 sleep $s
 wait
 print foreground=$foreground background=$background
-') || err_exit "test loop failed"
+') || log_error "test loop failed"
 
 eval $s
 
-(( foreground == FOREGROUND )) || err_exit "expected '$FOREGROUND foreground' -- got '$foreground' (DELAY=$DELAY)"
-(( background == BACKGROUND )) || err_exit "expected '$BACKGROUND background' -- got '$background' (DELAY=$DELAY)"
+(( foreground == FOREGROUND )) || log_error "expected '$FOREGROUND foreground' -- got '$foreground' (DELAY=$DELAY)"
+(( background == BACKGROUND )) || log_error "expected '$BACKGROUND background' -- got '$background' (DELAY=$DELAY)"
 
 set --noerrexit
 
@@ -84,7 +84,7 @@ then
         print running=$running maxrunning=$maxrunning
     ')
     exp='running=0 maxrunning='$jobmax
-    [[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected '$exp', got '$got'"
+    [[ $got == $exp ]] || log_error "SIGCHLD trap queueing failed -- expected '$exp', got '$got'"
 
     got=$($SHELL -c '
         typeset -A proc
@@ -109,14 +109,14 @@ then
         done
     ')
     exp='c\nc 3 3\nb\nb 2 2\na\na 1 1'
-    [[ $got == $exp ]] || err_exit "SIGCHLD trap queueing failed -- expected $(printf %q "$exp"), got $(printf %q "$got")"
+    [[ $got == $exp ]] || log_error "SIGCHLD trap queueing failed -- expected $(printf %q "$exp"), got $(printf %q "$got")"
 fi
 
 {
 got=$( ( sleep 1;print $'\n') | $SHELL -c 'function handler { : ;}
     trap handler CHLD; sleep .3 & IFS= read; print good')
 } 2> /dev/null
-[[ $got == good ]] || err_exit 'SIGCLD handler effects read behavior'
+[[ $got == good ]] || log_error 'SIGCLD handler effects read behavior'
 
 set -- $(
     (
@@ -130,16 +130,16 @@ set -- $(
 )
 if (( $# != 4 ))
 then
-    err_exit "CHLD trap failed -- expected 4 args, got $#"
+    log_error "CHLD trap failed -- expected 4 args, got $#"
 elif (( $4 != 0 ))
 then
-    err_exit "CHLD trap failed -- exit code $4"
+    log_error "CHLD trap failed -- exit code $4"
 elif (( $1 != $2 ))
 then
-    err_exit "child pid mismatch -- got '$1' != '$2'"
+    log_error "child pid mismatch -- got '$1' != '$2'"
 elif (( $3 != 9 ))
 then
-    err_exit "child status mismatch -- expected '9', got '$3'"
+    log_error "child status mismatch -- expected '9', got '$3'"
 fi
 
 trap '' CHLD
@@ -152,17 +152,17 @@ do
     fi
 done
 
-(( d==2000 )) ||  err_exit "trap '' CHLD  causes side effects d=$d"
+(( d==2000 )) ||  log_error "trap '' CHLD  causes side effects d=$d"
 trap - CHLD
 
 x=$($SHELL 2> /dev/null -ic '/bin/notfound; sleep .5 & sleep 1;jobs')
-[[ $x == *Done* ]] || err_exit 'SIGCHLD blocked after notfound'
+[[ $x == *Done* ]] || log_error 'SIGCHLD blocked after notfound'
 x=$($SHELL 2> /dev/null  -ic 'kill -0 12345678901234567876; sleep .5 & sleep 1;jobs')
-[[ $x == *Done* ]] || err_exit 'SIGCHLD blocked after error message'
+[[ $x == *Done* ]] || log_error 'SIGCHLD blocked after error message'
 print 'set -o monitor;sleep .5 & sleep 1;jobs' > $tmp/foobar
 chmod +x $tmp/foobar
 x=$($SHELL  -c "echo | $tmp/foobar")
-[[ $x == *Done* ]] || err_exit 'SIGCHLD blocked for script at end of pipeline'
+[[ $x == *Done* ]] || log_error 'SIGCHLD blocked for script at end of pipeline'
 
 tmpfile=$tmp/file
 $SHELL > $tmpfile <<- \EOF
@@ -187,10 +187,10 @@ EOF
     read xpid pid
     for stat in EXITED STOPPED CONTINUED EXITED
     do
-        read pid1 pid2 status  || { err_exit "line with stopped continued or exited expected";break;} 
-        [[ $pid1 == $pid ]] || err_exit ".sh.sig.pid=$pid1 should be $pid"
-        [[ $pid2 == $pid ]] ||  err_exit "\$!=$pid1 should be $pid"
-        [[ $status == $stat ]] || err_exit "status is $status, should be $stat"
+        read pid1 pid2 status  || { log_error "line with stopped continued or exited expected";break;} 
+        [[ $pid1 == $pid ]] || log_error ".sh.sig.pid=$pid1 should be $pid"
+        [[ $pid2 == $pid ]] ||  log_error "\$!=$pid1 should be $pid"
+        [[ $status == $stat ]] || log_error "status is $status, should be $stat"
         pid=$xpid
     done
 
@@ -199,7 +199,7 @@ EOF
 typeset -A finished
 function sighandler_chld
 {
-    [[ ${finished[${.sh.sig.pid}]} ]] && { err_exit "${.sh.sig.pid} already finished and reaped"; trap '' CHLD;}
+    [[ ${finished[${.sh.sig.pid}]} ]] && { log_error "${.sh.sig.pid} already finished and reaped"; trap '' CHLD;}
     finished[${.sh.sig.pid}]=1
 }
 

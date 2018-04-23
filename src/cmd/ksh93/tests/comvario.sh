@@ -25,7 +25,7 @@ if typeset -f .sh.math.signbit >/dev/null && (( signbit(-NaN) ))
 then
     HAVE_signbit=1
 else
-    print -u2 "$0: warning: -lm does not support signbit(-NaN)"
+    log_warning '-lm does not support signbit(-NaN)'
 fi
 
 compound bracketstat=(
@@ -146,17 +146,17 @@ s=${
         read s
     }
     print "x${s}x"
-} || err_exit "test returned exit code $?"
+} || log_error "test returned exit code $?"
 
-[[ "${s}" == "xhellox" ]] || err_exit "Expected 'xhellox', got ${s}"
-count_brackets "$y" || err_exit "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -v y)" || err_exit "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -C y)" || err_exit "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+[[ "${s}" == "xhellox" ]] || log_error "Expected 'xhellox', got ${s}"
+count_brackets "$y" || log_error "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -v y)" || log_error "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -C y)" || log_error "y: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
 
 # cleanup
-unset x y || err_exit "unset failed"
-[[ "$x" == '' ]] || err_exit "cleanup failed for x"
-[[ "$y" == '' ]] || err_exit "cleanup failed for y"
+unset x y || log_error "unset failed"
+[[ "$x" == '' ]] || log_error "cleanup failed for x"
+[[ "$y" == '' ]] || log_error "cleanup failed for y"
 
 
 # Test 2:
@@ -214,37 +214,37 @@ s=${
     }
 
     print "x${s}x"
-} || err_exit "test returned exit code $?"
+} || log_error "test returned exit code $?"
 
-[[ "${s}" == "xhellox" ]] || err_exit "Expected 'xhellox', got ${s}."
-[[ "${y1.myarray3[b].foo}" == "bar" ]] || err_exit "y1.myarray3[b].foo != bar"
-[[ "${y2.myarray3[b].foo}" == "bar" ]] || err_exit "y2.myarray3[b].foo != bar"
-[[ "$y1" != "" ]] || err_exit "y1 is empty"
-[[ "$y2" != "" ]] || err_exit "y2 is empty"
-(( ${#y1.myarray3[e].nested_cpv.myarray[@]} == 10 )) || err_exit "Expected 10 elements in y1.myarray3[e].nested_cpv, got ${#y1.myarray3[e].nested_cpv[@]}"
-(( ${#y2.myarray3[e].nested_cpv.myarray[@]} == 10 )) || err_exit "Expected 10 elements in y2.myarray3[e].nested_cpv, got ${#y2.myarray3[e].nested_cpv[@]}"
-(( isnan(y1.myarray3[a_nan].my_nan) ))   || err_exit "y1.myarray3[a_nan].my_nan not a NaN"
-(( isnan(y2.myarray3[a_nan].my_nan) ))   || err_exit "y2.myarray3[a_nan].my_nan not a NaN"
+[[ "${s}" == "xhellox" ]] || log_error "Expected 'xhellox', got ${s}."
+[[ "${y1.myarray3[b].foo}" == "bar" ]] || log_error "y1.myarray3[b].foo != bar"
+[[ "${y2.myarray3[b].foo}" == "bar" ]] || log_error "y2.myarray3[b].foo != bar"
+[[ "$y1" != "" ]] || log_error "y1 is empty"
+[[ "$y2" != "" ]] || log_error "y2 is empty"
+(( ${#y1.myarray3[e].nested_cpv.myarray[@]} == 10 )) || log_error "Expected 10 elements in y1.myarray3[e].nested_cpv, got ${#y1.myarray3[e].nested_cpv[@]}"
+(( ${#y2.myarray3[e].nested_cpv.myarray[@]} == 10 )) || log_error "Expected 10 elements in y2.myarray3[e].nested_cpv, got ${#y2.myarray3[e].nested_cpv[@]}"
+(( isnan(y1.myarray3[a_nan].my_nan) ))   || log_error "y1.myarray3[a_nan].my_nan not a NaN"
+(( isnan(y2.myarray3[a_nan].my_nan) ))   || log_error "y2.myarray3[a_nan].my_nan not a NaN"
 if (( HAVE_signbit ))
 then
-    (( signbit(y1.myarray3[a_nan].my_nan) )) || err_exit "y1.myarray3[a_nan].my_nan not negative"
-    (( signbit(y2.myarray3[a_nan].my_nan) )) || err_exit "y2.myarray3[a_nan].my_nan not negative"
+    (( signbit(y1.myarray3[a_nan].my_nan) )) || log_error "y1.myarray3[a_nan].my_nan not negative"
+    (( signbit(y2.myarray3[a_nan].my_nan) )) || log_error "y2.myarray3[a_nan].my_nan not negative"
 fi
 
-count_brackets "$y1" || err_exit "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -v y1)" || err_exit "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -C y1)" || err_exit "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$y2" || err_exit "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -v y2)" || err_exit "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -C y2)" || err_exit "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-[[ "$y1" == "$y2" ]] || err_exit "Expected $(printf "%q\n" "${y1}") == $(printf "%q\n" "${y2}")."
-[[ "$x"  == "$y1" ]] || err_exit "Expected $(printf "%q\n" "${x}") == $(printf "%q\n" "${y1}")."
+count_brackets "$y1" || log_error "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -v y1)" || log_error "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -C y1)" || log_error "y1: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$y2" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -v y2)" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -C y2)" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+[[ "$y1" == "$y2" ]] || log_error "Expected $(printf "%q\n" "${y1}") == $(printf "%q\n" "${y2}")."
+[[ "$x"  == "$y1" ]] || log_error "Expected $(printf "%q\n" "${x}") == $(printf "%q\n" "${y1}")."
 
 # cleanup
-unset x y1 y2 || err_exit "unset failed"
-[[ "$x" == '' ]]  || err_exit "cleanup failed for x"
-[[ "$y1" == '' ]] || err_exit "cleanup failed for y1"
-[[ "$y2" == '' ]] || err_exit "cleanup failed for y2"
+unset x y1 y2 || log_error "unset failed"
+[[ "$x" == '' ]]  || log_error "cleanup failed for x"
+[[ "$y1" == '' ]] || log_error "cleanup failed for y1"
+[[ "$y2" == '' ]] || log_error "cleanup failed for y2"
 
 
 # Test 3: Test compound variable copy operator vs. "read -C"
@@ -282,48 +282,48 @@ compound x=(
     )
 )
 
-compound x_copy=x || err_exit "x_copy copy failed"
-[[ "${x_copy}" != "" ]] || err_exit "x_copy should not be empty"
-count_brackets "${x_copy}" || err_exit "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -v x_copy)" || err_exit "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -C x_copy)" || err_exit "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+compound x_copy=x || log_error "x_copy copy failed"
+[[ "${x_copy}" != "" ]] || log_error "x_copy should not be empty"
+count_brackets "${x_copy}" || log_error "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -v x_copy)" || log_error "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -C x_copy)" || log_error "x_copy: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
 
 compound nested_cpv_copy
 
-nested_cpv_copy=x.myarray3[e].nested_cpv || err_exit "x.myarray3[e].nested_cpv copy failed"
-(( ${#nested_cpv_copy.myarray[@]} == 10 )) || err_exit "Expected 10 elements in nested_cpv_copy.myarray, got ${#nested_cpv_copy.myarray[@]}"
+nested_cpv_copy=x.myarray3[e].nested_cpv || log_error "x.myarray3[e].nested_cpv copy failed"
+(( ${#nested_cpv_copy.myarray[@]} == 10 )) || log_error "Expected 10 elements in nested_cpv_copy.myarray, got ${#nested_cpv_copy.myarray[@]}"
 
 # unset branch "x.myarray3[e].nested_cpv" of the variable tree "x" ...
-unset x.myarray3[e].nested_cpv || err_exit "unset x.myarray3[e].nested_cpv failed"
-[[ "${x.myarray3[e].nested_cpv}" == "" ]] || err_exit "x.myarray3[e].nested_cpv still has a value"
+unset x.myarray3[e].nested_cpv || log_error "unset x.myarray3[e].nested_cpv failed"
+[[ "${x.myarray3[e].nested_cpv}" == "" ]] || log_error "x.myarray3[e].nested_cpv still has a value"
 
 # ... and restore it from the saved copy
-printf "%B\n" nested_cpv_copy | cpvcat1 | cpvcat2 | cpvcat3 | cpvcat4 | read -C x.myarray3[e].nested_cpv || err_exit "read failed"
+printf "%B\n" nested_cpv_copy | cpvcat1 | cpvcat2 | cpvcat3 | cpvcat4 | read -C x.myarray3[e].nested_cpv || log_error "read failed"
 
 # compare copy of the original tree and the modified one
-[[ "${x}" == "${x_copy}" ]] || err_exit "x != x_copy"
-count_brackets "${x}" || err_exit "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -v x)" || err_exit "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-count_brackets "$(print -C x)" || err_exit "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-(( ${#x.myarray3[e].nested_cpv.myarray[@]} == 10 )) || err_exit "Expected 10 elements in x.myarray3[e].nested_cpv, got ${#x.myarray3[e].nested_cpv[@]}"
-(( isnan(x.myarray3[a_nan].my_nan) ))   || err_exit "x.myarray3[a_nan].my_nan not a NaN"
+[[ "${x}" == "${x_copy}" ]] || log_error "x != x_copy"
+count_brackets "${x}" || log_error "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -v x)" || log_error "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+count_brackets "$(print -C x)" || log_error "x: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
+(( ${#x.myarray3[e].nested_cpv.myarray[@]} == 10 )) || log_error "Expected 10 elements in x.myarray3[e].nested_cpv, got ${#x.myarray3[e].nested_cpv[@]}"
+(( isnan(x.myarray3[a_nan].my_nan) ))   || log_error "x.myarray3[a_nan].my_nan not a NaN"
 if (( HAVE_signbit ))
 then
-    (( signbit(x.myarray3[a_nan].my_nan) )) || err_exit "x.myarray3[a_nan].my_nan not negative"
+    (( signbit(x.myarray3[a_nan].my_nan) )) || log_error "x.myarray3[a_nan].my_nan not negative"
 fi
 
 # cleanup
-unset x x_copy nested_cpv_copy || err_exit "unset failed"
+unset x x_copy nested_cpv_copy || log_error "unset failed"
 
 # Test 4: Test "read -C" failure for missing bracket at the end
 typeset s
-s=$($SHELL -c 'compound myvar ; print "( unfinished=1" | read -C myvar 2>'/dev/null' || print "error $?"') || err_exit 'shell failed'
-[[ "$s" == 'error 3' ]] || err_exit "compound_read: expected error 3, got ${s}"
+s=$($SHELL -c 'compound myvar ; print "( unfinished=1" | read -C myvar 2>'/dev/null' || print "error $?"') || log_error 'shell failed'
+[[ "$s" == 'error 3' ]] || log_error "compound_read: expected error 3, got ${s}"
 
 # Test 5: Test "read -C" failure for missing bracket at the beginning
 typeset s
-s=$($SHELL -c 'compound myvar ; print "  unfinished=1 )" | read -C myvar 2>'/dev/null' || print "error $?"') || err_exit 'shell failed'
-[[ "$s" == 'error 3' ]] || err_exit "compound_read: expected error 3, got ${s}"
+s=$($SHELL -c 'compound myvar ; print "  unfinished=1 )" | read -C myvar 2>'/dev/null' || print "error $?"') || log_error 'shell failed'
+[[ "$s" == 'error 3' ]] || log_error "compound_read: expected error 3, got ${s}"
 
 # test6: Derived from the test2 for CR #6944386
 # ("compound v=( integer -A ar=( [aa]=4 [bb]=9 ) ; ) ; print -C v prints trash")
@@ -392,14 +392,14 @@ function test6
 
             out.stderr="${ { out.stdout="${ ${SHELL} -c "${test.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-            (( out.res == 0 )) || err_exit "${testname}: Test shell returned with exit code ${out.res}"
-            [[ "${out.stdout}" == ${test.stdoutpattern} ]] || err_exit "${testname}: Expected match for ${test.stdoutpattern}, got $(printf "%q\n" "${out.stdout}")"
-            [[ "${out.stderr}" == ""                    ]] || err_exit "${testname}: Expected empty stderr, got $(printf "%q\n" "${out.stderr}")"
+            (( out.res == 0 )) || log_error "${testname}: Test shell returned with exit code ${out.res}"
+            [[ "${out.stdout}" == ${test.stdoutpattern} ]] || log_error "${testname}: Expected match for ${test.stdoutpattern}, got $(printf "%q\n" "${out.stdout}")"
+            [[ "${out.stderr}" == ""                    ]] || log_error "${testname}: Expected empty stderr, got $(printf "%q\n" "${out.stderr}")"
 
-        read -C val <<<"${out.stdout}" || err_exit "${testname}: read -C val failed with exit code $?"
+        read -C val <<<"${out.stdout}" || log_error "${testname}: read -C val failed with exit code $?"
         nameref ar="val.${test.arrefname}"
-        (( ar[aa] == 4 )) || err_exit "${testname}: Expected ar[aa] == 4, got ${ar[aa]}"
-        (( ar[bb] == 9 )) || err_exit "${testname}: Expected ar[bb] == 9, got ${ar[bb]}"
+        (( ar[aa] == 4 )) || log_error "${testname}: Expected ar[aa] == 4, got ${ar[aa]}"
+        (( ar[bb] == 9 )) || log_error "${testname}: Expected ar[bb] == 9, got ${ar[bb]}"
     done
 
     return 0
@@ -422,8 +422,8 @@ function test_3D_array_read_C
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tests[i]}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == '' ]] || err_exit "$0/${i}: Expected empty stdout, got $(printf '%q\n' "${out.stdout}")"
-        [[ "${out.stderr}" == '' ]] || err_exit "$0/${i}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
+        [[ "${out.stdout}" == '' ]] || log_error "$0/${i}: Expected empty stdout, got $(printf '%q\n' "${out.stdout}")"
+        [[ "${out.stderr}" == '' ]] || log_error "$0/${i}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
     done
 
     return 0
@@ -442,8 +442,8 @@ function test_access_2Darray_in_type_in_compound
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tests[i]}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == '' ]] || err_exit "$0/${i}: Expected empty stdout, got $(printf '%q\n' "${out.stdout}")"
-        [[ "${out.stderr}" == '' ]] || err_exit "$0/${i}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
+        [[ "${out.stdout}" == '' ]] || log_error "$0/${i}: Expected empty stdout, got $(printf '%q\n' "${out.stdout}")"
+        [[ "${out.stderr}" == '' ]] || log_error "$0/${i}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
     done
 
     return 0
@@ -498,8 +498,8 @@ print -v c2
 
     out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${test}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-    [[ "${out.stdout}" != '' ]] || err_exit "$0: Expected nonempty stdout."
-    [[ "${out.stderr}" == '' ]] || err_exit "$0: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
+    [[ "${out.stdout}" != '' ]] || log_error "$0: Expected nonempty stdout."
+    [[ "${out.stderr}" == '' ]] || log_error "$0: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
 
     if [[ -f 'core' && -x '/usr/bin/pstack' ]] ; then
         pstack 'core'
@@ -575,10 +575,10 @@ function test_read_C_into_array
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -o errexit -c "${tv.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
         for pat in "${tv.stdoutpattern[@]}" ; do
-            [[ "${out.stdout}" == ${pat} ]] || err_exit "${tv.testname}: Expected stdout of $(printf '%q\n' "${tv.cmd}") to match $(printf '%q\n' "${pat}"), got $(printf '%q\n' "${out.stdout}")"
+            [[ "${out.stdout}" == ${pat} ]] || log_error "${tv.testname}: Expected stdout of $(printf '%q\n' "${tv.cmd}") to match $(printf '%q\n' "${pat}"), got $(printf '%q\n' "${out.stdout}")"
         done
-        [[ "${out.stderr}" == '' ]] || err_exit "${tv.testname}: Expected empty stderr for $(printf '%q\n' "${tv.cmd}"), got $(printf '%q\n' "${out.stderr}")"
-        (( out.res == 0 )) || err_exit "${tv.testname}: Unexpected exit code ${out.res} for $(printf '%q\n' "${tv.cmd}")"
+        [[ "${out.stderr}" == '' ]] || log_error "${tv.testname}: Expected empty stderr for $(printf '%q\n' "${tv.cmd}"), got $(printf '%q\n' "${out.stderr}")"
+        (( out.res == 0 )) || log_error "${tv.testname}: Unexpected exit code ${out.res} for $(printf '%q\n' "${tv.cmd}")"
     done
 
     return 0
@@ -636,9 +636,9 @@ function test_read_C_special_shell_keywords
 
             out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -o errexit -c "${testcmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-            [[ "${out.stdout}" == "X${shkeyword}X" ]] || err_exit "${testname}: Expected stdout to match $(printf '%q\n' "X${shkeyword}X"), got $(printf '%q\n' "${out.stdout}")"
-            [[ "${out.stderr}" == '' ]] || err_exit "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
-            (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+            [[ "${out.stdout}" == "X${shkeyword}X" ]] || log_error "${testname}: Expected stdout to match $(printf '%q\n' "X${shkeyword}X"), got $(printf '%q\n' "${out.stdout}")"
+            [[ "${out.stderr}" == '' ]] || log_error "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
+            (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
         done
     done
 
@@ -658,4 +658,4 @@ do :
 done
 
 exp='typeset -C -a sar=((i=1) (i=2))'
-[[ $(typeset -p sar) == "$exp" ]] || err_exit 'read -C foo[x++] not working'
+[[ $(typeset -p sar) == "$exp" ]] || log_error 'read -C foo[x++] not working'

@@ -25,87 +25,87 @@ do
     typeset -$option $option
 done
 
-(r=newval) 2> /dev/null && err_exit readonly attribute fails
+(r=newval) 2> /dev/null && log_error readonly attribute fails
 i=i+5
 if ((i != 27))
 then
-    err_exit integer attributes fails
+    log_error integer attributes fails
 fi
 
 if [[ $i8 != 8#12 ]]
 then
-    err_exit integer base 8 fails
+    log_error integer base 8 fails
 fi
 
 if [[ $u != UPPERCASE ]]
 then
-    err_exit uppercase fails
+    log_error uppercase fails
 fi
 
 if [[ $l != lowercase ]]
 then
-    err_exit lowercase fails
+    log_error lowercase fails
 fi
 
 if [[ $n != lowercase ]]
 then
-    err_exit reference variables fail
+    log_error reference variables fail
 fi
 
 if [[ t=tagged != $(typeset -t) ]]
 then
-    err_exit tagged fails
+    log_error tagged fails
 fi
 
 if [[ t != $(typeset +t) ]]
 then
-    err_exit tagged fails
+    log_error tagged fails
 fi
 
 if [[ $Z5 != 00123 ]]
 then
-    err_exit zerofill fails
+    log_error zerofill fails
 fi
 
 if [[ $RZ5 != 00026 ]]
 then
-    err_exit right zerofill fails
+    log_error right zerofill fails
 fi
 
 L=12345
 if [[ $L != 123 ]]
 then
-    err_exit leftjust fails
+    log_error leftjust fails
 fi
 
 if [[ $L5 != "def  " ]]
 then
-    err_exit leftjust fails
+    log_error leftjust fails
 fi
 
 if [[ $uL5 != ABCDE ]]
 then
-    err_exit leftjust uppercase fails
+    log_error leftjust uppercase fails
 fi
 
 if [[ $lR5 != bcdef ]]
 then
-    err_exit rightjust fails
+    log_error rightjust fails
 fi
 
 if [[ $R5 != "  def" ]]
 then
-    err_exit rightjust fails
+    log_error rightjust fails
 fi
 
 if [[ $($SHELL -c 'echo $x') != export ]]
 then
-    err_exit export fails
+    log_error export fails
 fi
 
 if [[ $($SHELL -c 'xi=xi+4;echo $xi') != 24 ]]
 then
-    err_exit export attributes fails
+    log_error export attributes fails
 fi
 
 x=$(foo=abc $SHELL <<!
@@ -115,26 +115,26 @@ x=$(foo=abc $SHELL <<!
 )
 if [[ $x != bar ]]
 then
-    err_exit 'environment variables require re-export'
+    log_error 'environment variables require re-export'
 fi
 
-(typeset + ) > /dev/null 2>&1 || err_exit 'typeset + not working'
+(typeset + ) > /dev/null 2>&1 || log_error 'typeset + not working'
 (typeset -L-5 buf="A" 2>/dev/null)
 if [[ $? == 0 ]]
 then
-    err_exit 'typeset allows negative field for left/right adjust'
+    log_error 'typeset allows negative field for left/right adjust'
 fi
 
 a=b
 readonly $a=foo
 if [[ $b != foo ]]
 then
-    err_exit 'readonly $a=b not working'
+    log_error 'readonly $a=b not working'
 fi
 
 if [[ $(export | grep '^PATH=') != PATH=* ]]
 then
-    err_exit 'export not working'
+    log_error 'export not working'
 fi
 
 picture=(
@@ -144,14 +144,14 @@ picture=(
 string="$(print $picture)"
 if [[ "${string}" != *'size=( typeset -E'* ]]
 then
-    err_exit 'print of compound exponential variable not working'
+    log_error 'print of compound exponential variable not working'
 fi
 
 sz=(typeset -E y=2.2)
 string="$(print $sz)"
 if [[ "${sz}" == *'typeset -E -F'* ]]
 then
-     err_exit 'print of exponential shows both -E and -F attributes'
+     log_error 'print of exponential shows both -E and -F attributes'
 fi
 
 print 'typeset -i m=48/4+1;print -- $m' > $tmp/script
@@ -159,13 +159,13 @@ chmod +x $tmp/script
 typeset -Z2 m
 if [[ $($tmp/script) != 13 ]]
 then
-    err_exit 'attributes not cleared for script execution'
+    log_error 'attributes not cleared for script execution'
 fi
 
 print 'print VAR=$VAR' > $tmp/script
 typeset -L70 VAR=var
 $tmp/script > $tmp/script.1
-[[ $(< $tmp/script.1) == VAR= ]] || err_exit 'typeset -L should not be inherited'
+[[ $(< $tmp/script.1) == VAR= ]] || log_error 'typeset -L should not be inherited'
 typeset -Z  LAST=00
 unset -f foo
 function foo
@@ -180,22 +180,22 @@ function foo
 foo 1
 if (( ${#LAST} != 2 ))
 then
-    err_exit 'LAST!=2'
+    log_error 'LAST!=2'
 fi
 
 foo
 if (( ${#LAST} != 2 ))
 then
-    err_exit 'LAST!=2'
+    log_error 'LAST!=2'
 fi
 
-[[ $(set | grep LAST) == LAST=02 ]] || err_exit "LAST not correct in set list"
+[[ $(set | grep LAST) == LAST=02 ]] || log_error "LAST not correct in set list"
 set -a
 unset foo
 foo=bar
 if [[ $(export | grep ^foo=) != 'foo=bar' ]]
 then
-    err_exit 'all export not working'
+    log_error 'all export not working'
 fi
 
 unset foo
@@ -204,12 +204,12 @@ bar
 !
 if [[ $(export | grep ^foo=) != 'foo=bar' ]]
 then
-    err_exit 'all export not working with read'
+    log_error 'all export not working with read'
 fi
 
 if [[ $(typeset | grep PS2) == PS2 ]]
 then
-    err_exit 'typeset without arguments outputs names without attributes'
+    log_error 'typeset without arguments outputs names without attributes'
 fi
 
 unset a z q x
@@ -228,21 +228,21 @@ z=$b1
 typeset -b x=$b1
 [[ $x == "$z" ]] || print -u2 'binary variable not expanding correctly'
 
-[[  $(printf "%B" x) == $t1 ]] || err_exit 'typeset -b not working'
+[[  $(printf "%B" x) == $t1 ]] || log_error 'typeset -b not working'
 typeset -b -Z5 a=$b1
 
-[[  $(printf "%B" a) == $w1 ]] || err_exit 'typeset -b -Z5 not working'
+[[  $(printf "%B" a) == $w1 ]] || log_error 'typeset -b -Z5 not working'
 
 typeset -b q=$x$x
-[[ $q == $b2 ]] || err_exit 'typeset -b not working with concatination'
-[[  $(printf "%B" q) == $t1$t1 ]] || err_exit 'typeset -b concatination not working'
+[[ $q == $b2 ]] || log_error 'typeset -b not working with concatination'
+[[  $(printf "%B" q) == $t1$t1 ]] || log_error 'typeset -b concatination not working'
 
 x+=$b1
-[[ $x == $b2 ]] || err_exit 'typeset -b not working with append'
-[[  $(printf "%B" x) == $t1$t1 ]] || err_exit 'typeset -b append not working'
+[[ $x == $b2 ]] || log_error 'typeset -b not working with append'
+[[  $(printf "%B" x) == $t1$t1 ]] || log_error 'typeset -b append not working'
 
 typeset -b -Z20 z=$b1
-(( $(printf "%B" z | wc -c) == 20 )) || err_exit 'typeset -b -Z20 not storing 20 bytes'
+(( $(printf "%B" z | wc -c) == 20 )) || log_error 'typeset -b -Z20 not storing 20 bytes'
 {
     typeset -b v1 v2
     read -N11 v1
@@ -250,65 +250,65 @@ typeset -b -Z20 z=$b1
 } << !
 hello worldhello worldhello world
 !
-[[ $v1 == "$b1" ]] || err_exit "v1=$v1 should be $b1"
-[[ $v2 == "$x" ]] || err_exit "v1=$v2 should be $x"
+[[ $v1 == "$b1" ]] || log_error "v1=$v1 should be $b1"
+[[ $v2 == "$x" ]] || log_error "v1=$v2 should be $x"
 if env '!=1' >/dev/null 2>&1
 then
-    [[ $(env '!=1' $SHELL -c 'echo ok' 2>/dev/null) == ok ]] || err_exit 'malformed environment terminates shell'
+    [[ $(env '!=1' $SHELL -c 'echo ok' 2>/dev/null) == ok ]] || log_error 'malformed environment terminates shell'
 fi
 
 unset var
 typeset -b var
 printf '12%Z34' | read -r -N 5 var
-[[ $var == MTIAMzQ= ]] || err_exit 'binary files with zeros not working'
+[[ $var == MTIAMzQ= ]] || log_error 'binary files with zeros not working'
 unset var
 if command typeset -usi var=0xfffff 2> /dev/null
 then
-    (( $var == 0xffff )) || err_exit 'unsigned short integers not working'
+    (( $var == 0xffff )) || log_error 'unsigned short integers not working'
 else
-    err_exit 'typeset -usi cannot be used for unsigned short'
+    log_error 'typeset -usi cannot be used for unsigned short'
 fi
 
-[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:-3}' 2> /dev/null) == 3 ]]  || err_exit  '${foo:-3} not 3 when typeset -Z2 field undefined'
-[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:=3}' 2> /dev/null) == 03 ]]  || err_exit  '${foo:=-3} not 3 when typeset -Z2 foo undefined'
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:-3}' 2> /dev/null) == 3 ]]  || log_error  '${foo:-3} not 3 when typeset -Z2 field undefined'
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:=3}' 2> /dev/null) == 03 ]]  || log_error  '${foo:=-3} not 3 when typeset -Z2 foo undefined'
 unset foo bar
 unset -f fun
 function fun
 {
     export foo=hello
     typeset -x  bar=world
-    [[ $foo == hello ]] || err_exit 'export scoping problem in function'
+    [[ $foo == hello ]] || log_error 'export scoping problem in function'
 }
 fun
-[[ $(export | grep ^foo=) == 'foo=hello' ]] || err_exit 'export not working in functions'
-[[ $(export | grep ^bar=) ]] && err_exit 'typeset -x not local'
-[[ $($SHELL -c 'typeset -r IFS=;print -r $(pwd)' 2> /dev/null) == "$(pwd)" ]] || err_exit 'readonly IFS causes command substitution to fail'
+[[ $(export | grep ^foo=) == 'foo=hello' ]] || log_error 'export not working in functions'
+[[ $(export | grep ^bar=) ]] && log_error 'typeset -x not local'
+[[ $($SHELL -c 'typeset -r IFS=;print -r $(pwd)' 2> /dev/null) == "$(pwd)" ]] || log_error 'readonly IFS causes command substitution to fail'
 
 fred[66]=88
-[[ $(typeset -pa) == *fred* ]] || err_exit 'typeset -pa not working'
+[[ $(typeset -pa) == *fred* ]] || log_error 'typeset -pa not working'
 
 unset x y z
 typeset -LZ3 x=abcd y z=00abcd
 y=03
-[[ $y == "3  " ]] || err_exit '-LZ3 not working for value 03'
-[[ $x == "abc" ]] || err_exit '-LZ3 not working for value abcd'
-[[ $x == "abc" ]] || err_exit '-LZ3 not working for value 00abcd'
+[[ $y == "3  " ]] || log_error '-LZ3 not working for value 03'
+[[ $x == "abc" ]] || log_error '-LZ3 not working for value abcd'
+[[ $x == "abc" ]] || log_error '-LZ3 not working for value 00abcd'
 
 unset x z
 set +a
-[[ $(typeset -p z) ]] && err_exit "typeset -p for z undefined failed"
+[[ $(typeset -p z) ]] && log_error "typeset -p for z undefined failed"
 
 unset z
 x='typeset -i z=45'
 eval "$x"
-[[ $(typeset -p z) == "$x" ]] || err_exit "typeset -p for '$x' failed"
-[[ $(typeset +p z) == "${x%=*}" ]] || err_exit "typeset +p for '$x' failed"
+[[ $(typeset -p z) == "$x" ]] || log_error "typeset -p for '$x' failed"
+[[ $(typeset +p z) == "${x%=*}" ]] || log_error "typeset +p for '$x' failed"
 
 unset z
 x='typeset -a z=(a b c)'
 eval "$x"
-[[ $(typeset -p z) == "$x" ]] || err_exit "typeset -p for '$x' failed"
-[[ $(typeset +p z) == "${x%=*}" ]] || err_exit "typeset +p for '$x' failed"
+[[ $(typeset -p z) == "$x" ]] || log_error "typeset -p for '$x' failed"
+[[ $(typeset +p z) == "${x%=*}" ]] || log_error "typeset +p for '$x' failed"
 
 unset z
 x='typeset -C z=(
@@ -320,21 +320,21 @@ x=${x//$'\t'}
 x=${x//$'(\n'/'('}
 x=${x//$'\n'/';'}
 x=${x%';)'}')'
-[[ $(typeset -p z) == "$x" ]] || err_exit "typeset -p for '$x' failed"
-[[ $(typeset +p z) == "${x%%=*}" ]] || err_exit "typeset +p for '$x' failed"
+[[ $(typeset -p z) == "$x" ]] || log_error "typeset -p for '$x' failed"
+[[ $(typeset +p z) == "${x%%=*}" ]] || log_error "typeset +p for '$x' failed"
 
 unset z
 x='typeset -A z=([bar]=bam [xyz]=bar)'
 eval "$x"
-[[ $(typeset -p z) == "$x" ]] || err_exit "typeset -p for '$x' failed"
-[[ $(typeset +p z) == "${x%%=*}" ]] || err_exit "typeset +p for '$x' failed"
+[[ $(typeset -p z) == "$x" ]] || log_error "typeset -p for '$x' failed"
+[[ $(typeset +p z) == "${x%%=*}" ]] || log_error "typeset +p for '$x' failed"
 
 unset z
 foo=abc
 x='typeset -n z=foo'
 eval "$x"
-[[ $(typeset -p z) == "$x" ]] || err_exit "typeset -p for '$x' failed"
-[[ $(typeset +p z) == "${x%%=*}" ]] || err_exit "typeset +p for '$x' failed"
+[[ $(typeset -p z) == "$x" ]] || log_error "typeset -p for '$x' failed"
+[[ $(typeset +p z) == "${x%%=*}" ]] || log_error "typeset +p for '$x' failed"
 
 typeset +n z
 unset foo z
@@ -346,8 +346,8 @@ x=${z//$'\t'}
 x=${x//$'(\n'/'('}
 x=${x//$'\n'/';'}
 x=${x%';)'}')'
-[[ $(typeset -p z) == "Pt_t z=$x" ]] || err_exit "typeset -p for type failed"
-[[ $(typeset +p z) == "Pt_t z" ]] || err_exit "typeset +p for type failed"
+[[ $(typeset -p z) == "Pt_t z=$x" ]] || log_error "typeset -p for type failed"
+[[ $(typeset +p z) == "Pt_t z" ]] || log_error "typeset +p for type failed"
 
 unset z
 function foo
@@ -355,48 +355,48 @@ function foo
     typeset -p bar
 }
 bar=xxx
-[[ $(foo) == bar=xxx ]] || err_exit 'typeset -p not working inside a function'
+[[ $(foo) == bar=xxx ]] || log_error 'typeset -p not working inside a function'
 unset foo
 typeset -L5 foo
-[[ $(typeset -p foo) == 'typeset -L 5 foo' ]] || err_exit 'typeset -p not working for variables with attributes but without a value'
+[[ $(typeset -p foo) == 'typeset -L 5 foo' ]] || log_error 'typeset -p not working for variables with attributes but without a value'
 { $SHELL  <<- EOF
     typeset -L3 foo=aaa
     typeset -L6 foo=bbbbbb
     [[ \$foo == bbbbbb ]]
 EOF
-}  || err_exit 'typeset -L should not preserve old attributes'
+}  || log_error 'typeset -L should not preserve old attributes'
 { $SHELL <<- EOF
     typeset -R3 foo=aaa
     typeset -R6 foo=bbbbbb
     [[ \$foo == bbbbbb ]]
 EOF
-} 2> /dev/null || err_exit 'typeset -R should not preserve old attributes'
+} 2> /dev/null || log_error 'typeset -R should not preserve old attributes'
 
 expected='YWJjZGVmZ2hpag=='
 unset foo
 typeset -b -Z10 foo
 read foo <<< 'abcdefghijklmnop'
-[[ $foo == "$expected" ]] || err_exit 'read foo, where foo is "typeset -b -Z10" not working'
+[[ $foo == "$expected" ]] || log_error 'read foo, where foo is "typeset -b -Z10" not working'
 
 unset foo
 typeset -b -Z10 foo
 read -N10 foo <<< 'abcdefghijklmnop'
-[[ $foo == "$expected" ]] || err_exit 'read -N10 foo, where foo is "typeset -b -Z10" not working'
+[[ $foo == "$expected" ]] || log_error 'read -N10 foo, where foo is "typeset -b -Z10" not working'
 
 unset foo
 typeset  -b -A foo
 read -N10 foo[4] <<< 'abcdefghijklmnop'
-[[ ${foo[4]} == "$expected" ]] || err_exit 'read -N10 foo, where foo is "typeset  -b -A" foo not working'
+[[ ${foo[4]} == "$expected" ]] || log_error 'read -N10 foo, where foo is "typeset  -b -A" foo not working'
 
 unset foo
 typeset  -b -a foo
 read -N10 foo[4] <<< 'abcdefghijklmnop'
-[[ ${foo[4]} == "$expected" ]] || err_exit 'read -N10 foo, where foo is "typeset  -b -a" foo not working'
-[[ $(printf %B foo[4]) == abcdefghij ]] || err_exit 'printf %B for binary associative array element not working'
-[[ $(printf %B foo[4]) == abcdefghij ]] || err_exit 'printf %B for binary indexed array element not working'
+[[ ${foo[4]} == "$expected" ]] || log_error 'read -N10 foo, where foo is "typeset  -b -a" foo not working'
+[[ $(printf %B foo[4]) == abcdefghij ]] || log_error 'printf %B for binary associative array element not working'
+[[ $(printf %B foo[4]) == abcdefghij ]] || log_error 'printf %B for binary indexed array element not working'
 unset foo
 
-$SHELL 2> /dev/null -c 'export foo=(bar=3)' && err_exit 'compound variables cannot be exported'
+$SHELL 2> /dev/null -c 'export foo=(bar=3)' && log_error 'compound variables cannot be exported'
 
 $SHELL -c 'builtin date' >/dev/null 2>&1 &&
 {
@@ -425,7 +425,7 @@ while    (( $# >= 4 ))
 do
     exp=$1
     got=$(print $($SHELL -c "builtin date; $2 $CMD; $3 $CMD; $4 $CMD"))
-    [[ $got == $exp ]] || err_exit "[ '$2'  '$3'  '$4' ] env sequence failed -- expected '$exp', got '$got'"
+    [[ $got == $exp ]] || log_error "[ '$2'  '$3'  '$4' ] env sequence failed -- expected '$exp', got '$got'"
     shift 4
 done
 
@@ -434,40 +434,40 @@ done
 
 unset v
 typeset -H v=/dev/null
-[[ $v == *nul* ]] || err_exit 'typeset -H for /dev/null not working'
+[[ $v == *nul* ]] || log_error 'typeset -H for /dev/null not working'
 
 unset x
-(typeset +C x) 2> /dev/null && err_exit 'typeset +C should be an error' 
-(typeset +A x) 2> /dev/null && err_exit 'typeset +A should be an error' 
-(typeset +a x) 2> /dev/null && err_exit 'typeset +a should be an error' 
+(typeset +C x) 2> /dev/null && log_error 'typeset +C should be an error' 
+(typeset +A x) 2> /dev/null && log_error 'typeset +A should be an error' 
+(typeset +a x) 2> /dev/null && log_error 'typeset +a should be an error' 
 
 unset x
 {
 x=$($SHELL -c 'integer -s x=5;print -r -- $x')
 } 2> /dev/null
-[[ $x == 5 ]] || err_exit 'integer -s not working'
+[[ $x == 5 ]] || log_error 'integer -s not working'
 
-[[ $(typeset -l) == *namespace*.sh* ]] && err_exit 'typeset -l should not contain namespace .sh'
+[[ $(typeset -l) == *namespace*.sh* ]] && log_error 'typeset -l should not contain namespace .sh'
 
 unset got
 typeset -u got
 exp=100
 ((got=$exp))
-[[ $got == $exp ]] || err_exit "typeset -l fails on numeric value -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "typeset -l fails on numeric value -- expected '$exp', got '$got'"
 
 unset s
 typeset -a -u s=( hello world chicken )
-[[ ${s[2]} == CHICKEN ]] || err_exit 'typeset -u not working with indexed arrays'
+[[ ${s[2]} == CHICKEN ]] || log_error 'typeset -u not working with indexed arrays'
 unset s
 typeset -A -u s=( [1]=hello [0]=world [2]=chicken )
-[[ ${s[2]} == CHICKEN ]] || err_exit 'typeset -u not working with associative arrays'
+[[ ${s[2]} == CHICKEN ]] || log_error 'typeset -u not working with associative arrays'
 expected=$'(\n\t[0]=WORLD\n\t[1]=HELLO\n\t[2]=CHICKEN\n)'
-[[ $(print -v s) == "$expected" ]] || err_exit 'typeset -u for associative array does not display correctly'
+[[ $(print -v s) == "$expected" ]] || log_error 'typeset -u for associative array does not display correctly'
 
 unset s
 if command typeset -M totitle s 2> /dev/null
 then
-    [[ $(typeset +p s) == 'typeset -M totitle s' ]] || err_exit 'typeset -M totitle does not display correctly with typeset -p'
+    [[ $(typeset +p s) == 'typeset -M totitle s' ]] || log_error 'typeset -M totitle does not display correctly with typeset -p'
 fi
 
 
@@ -481,16 +481,16 @@ fi
     [[ ${a1[70].text} == hello ]]
 EOF
 } 2> /dev/null
-(( $? )) && err_exit  'typeset + a[i] not working'
+(( $? )) && log_error  'typeset + a[i] not working'
 
 typeset groupDB="" userDB=""
 typeset -l -L1 DBPick=""
-[[ -n "$groupDB" ]]  && err_exit 'typeset -l -L1 causes unwanted side effect'
+[[ -n "$groupDB" ]]  && log_error 'typeset -l -L1 causes unwanted side effect'
 
 HISTFILE=foo
 typeset -u PS1='hello --- '
 HISTFILE=foo
-[[ $HISTFILE == foo ]] || err_exit  'typeset -u PS1 affects HISTFILE'
+[[ $HISTFILE == foo ]] || log_error  'typeset -u PS1 affects HISTFILE'
 
 typeset -a a=( aA= ZQ= bA= bA= bw= Cg= )
 typeset -b x
@@ -499,61 +499,61 @@ do
      x+="${a[i]}"
 done
 
-[[ $(printf "%B" x) == hello ]] || err_exit "append for typeset -b not working: got '$(printf "%B" x)' should get hello"
+[[ $(printf "%B" x) == hello ]] || log_error "append for typeset -b not working: got '$(printf "%B" x)' should get hello"
 
 (
     trap 'exit $?' EXIT
     $SHELL -c 'typeset v=foo; [[ $(typeset -p v[0]) == v=foo ]]'
-) 2> /dev/null || err_exit 'typeset -p v[0] not working for simple variable v'
+) 2> /dev/null || log_error 'typeset -p v[0] not working for simple variable v'
 
 unset x
 expected='typeset -a x=(a\=3 b\=4)'
 typeset -a x=( a=3 b=4)
-[[ $(typeset -p x) == "$expected" ]] || err_exit 'assignment elements in typeset -a assignment not working'
+[[ $(typeset -p x) == "$expected" ]] || log_error 'assignment elements in typeset -a assignment not working'
 
 unset z
 z='typeset -a q=(a b c)'
-$SHELL -c "$z; [[ \$(typeset -pa) == '$z' ]]" || err_exit 'typeset -pa does not list only index arrays'
+$SHELL -c "$z; [[ \$(typeset -pa) == '$z' ]]" || log_error 'typeset -pa does not list only index arrays'
 z='typeset -C z=(foo=bar)'
-$SHELL -c "$z; [[ \$(typeset -pC) == '$z' ]]" || err_exit 'typeset -pC does not list only compound variables'
+$SHELL -c "$z; [[ \$(typeset -pC) == '$z' ]]" || log_error 'typeset -pC does not list only compound variables'
 unset y
 z='typeset -A y=([a]=foo)'
-$SHELL -c "$z; [[ \$(typeset -pA) == '$z' ]]" || err_exit 'typeset -pA does not list only associative arrays'
+$SHELL -c "$z; [[ \$(typeset -pA) == '$z' ]]" || log_error 'typeset -pA does not list only associative arrays'
 
-$SHELL 2> /dev/null -c 'typeset -C arr=( aa bb cc dd )' && err_exit 'invalid compound variable assignment not reported'
+$SHELL 2> /dev/null -c 'typeset -C arr=( aa bb cc dd )' && log_error 'invalid compound variable assignment not reported'
 
 unset x
 typeset -l x=
-[[ ${x:=foo} == foo ]] || err_exit '${x:=foo} with x unset, not foo when x is a lowercase variable'
+[[ ${x:=foo} == foo ]] || log_error '${x:=foo} with x unset, not foo when x is a lowercase variable'
 
 unset x
 typeset -L4 x=$'\001abcdef'
-[[ ${#x} == 5 ]] || err_exit "width of character '\01' is not zero" 
+[[ ${#x} == 5 ]] || log_error "width of character '\01' is not zero" 
 
 unset x
 typeset -L x=-1
-command typeset -F x=0-1 2> /dev/null || err_exit 'typeset -F after typeset -L fails'
+command typeset -F x=0-1 2> /dev/null || log_error 'typeset -F after typeset -L fails'
 
 unset val
 typeset -i val=10#0-3
 typeset -Z val=0-1
-[[ $val == 0-1 ]] || err_exit 'integer attribute not cleared for subsequent typeset'
+[[ $val == 0-1 ]] || log_error 'integer attribute not cleared for subsequent typeset'
 
 unset x
 typeset -L -Z x=foo
-[[ $(typeset -p x) == 'typeset -Z 3 -L 3 x=foo' ]] || err_exit '-LRZ without [n] not defaulting to width of variable'
+[[ $(typeset -p x) == 'typeset -Z 3 -L 3 x=foo' ]] || log_error '-LRZ without [n] not defaulting to width of variable'
 
 unset foo
 typeset -Z2 foo=3
-[[ $(typeset -p foo) == 'typeset -Z 2 -R 2 foo=03' ]] || err_exit '-Z2  not working'
+[[ $(typeset -p foo) == 'typeset -Z 2 -R 2 foo=03' ]] || log_error '-Z2  not working'
 export foo
-[[ $(typeset -p foo) == 'typeset -x -Z 2 -R 2 foo=03' ]] || err_exit '-Z2  not working after export'
+[[ $(typeset -p foo) == 'typeset -x -Z 2 -R 2 foo=03' ]] || log_error '-Z2  not working after export'
 
 unset foo
 export foo=/C/TEMP
 typeset -H bar=$foo
 got=$( $SHELL -c 'typeset -H foo;print -r -- "$foo')
-[[ $got == "$bar" ]] || err_exit 'typeset -H not working for export variables'
+[[ $got == "$bar" ]] || log_error 'typeset -H not working for export variables'
 
 unset exp got
 typeset -Z4 VAR1
@@ -562,12 +562,12 @@ exp=$(typeset -p VAR1)
 export VAR1
 got=$(typeset -p VAR1)
 got=${got/ -x/}
-[[ $got == "$exp" ]] || err_exit 'typeset -x causes zerofill width to change'
+[[ $got == "$exp" ]] || log_error 'typeset -x causes zerofill width to change'
 
 unset var
 typeset -bZ6 var
 for i in 2 3
 do
     read -r -N6 var
-    [[ $var == dHdvdG93 ]] &&  ((i !=2)) && err_exit 'loop optimization bug with typeset -b variables'
+    [[ $var == dHdvdG93 ]] &&  ((i !=2)) && log_error 'loop optimization bug with typeset -b variables'
 done <<< 'twotowthreetfourro'

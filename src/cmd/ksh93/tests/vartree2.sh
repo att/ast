@@ -244,12 +244,12 @@ function main
 
     #### Build tree using global tree variables
     build_tree1 mytree_global1 mysrcdata_global leaf_compound || \
-        err_exit 'build_tree1 mytree_global1 mysrcdata_global leaf_compound returned an error'
-    (( $(print -r -- "${mytree_global1}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_global1' too small"
+        log_error 'build_tree1 mytree_global1 mysrcdata_global leaf_compound returned an error'
+    (( $(print -r -- "${mytree_global1}" | wc -l) > 10 )) || log_error "compound tree 'mytree_global1' too small"
 
     build_tree2 mytree_global2 mysrcdata_global leaf_compound || \
-        err_exit 'build_tree2 mytree_global2 mysrcdata_global leaf_compound returned an error'
-    (( $(print -r -- "${mytree_global2}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_global2' too small"
+        log_error 'build_tree2 mytree_global2 mysrcdata_global leaf_compound returned an error'
+    (( $(print -r -- "${mytree_global2}" | wc -l) > 10 )) || log_error "compound tree 'mytree_global2' too small"
 
 
     #### Build tree using local tree variables
@@ -257,67 +257,67 @@ function main
     mytree_local2=()
 
     build_tree1 mytree_local1 mysrcdata_local leaf_compound || \
-        err_exit 'build_tree1 mytree_local1 mysrcdata_local leaf_compound returned an error'
-    (( $(print -r -- "${mytree_local1}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_local1' too small"
+        log_error 'build_tree1 mytree_local1 mysrcdata_local leaf_compound returned an error'
+    (( $(print -r -- "${mytree_local1}" | wc -l) > 10 )) || log_error "compound tree 'mytree_local1' too small"
 
     build_tree2 mytree_local2 mysrcdata_local leaf_compound || \
-        err_exit 'build_tree2 mytree_local2 mysrcdata_local leaf_compound returned an error'
-    (( $(print -r -- "${mytree_local2}" | wc -l) > 10 )) || err_exit "compound tree 'mytree_local2' too small"
+        log_error 'build_tree2 mytree_local2 mysrcdata_local leaf_compound returned an error'
+    (( $(print -r -- "${mytree_local2}" | wc -l) > 10 )) || log_error "compound tree 'mytree_local2' too small"
 
 
     #### Compare treess
     if [[ "${mytree_global1}" != "${mytree_local1}" ]] ; then
-        err_exit "compound trees 'mytree_global1' and 'mytree_local1' not identical"
+        log_error "compound trees 'mytree_global1' and 'mytree_local1' not identical"
     fi
 
     if [[ "${mytree_global1}" != "${mytree_global2}" ]] ; then
-        err_exit "compound trees 'mytree_global1' and 'mytree_global2' not identical"
+        log_error "compound trees 'mytree_global1' and 'mytree_global2' not identical"
     fi
 
     if [[ "${mytree_local1}" != "${mytree_local2}" ]] ; then
-        err_exit "compound trees 'mytree_local1' and 'mytree_local2' not identical"
+        log_error "compound trees 'mytree_local1' and 'mytree_local2' not identical"
     fi
 
 
     #### Test "unset" in a subshell
     (  unset 'mytree_global1.l1[urw].l2[itc zapfdingbats]'  ) || \
-        err_exit "try 1: variable 'mytree_global1.l1[urw].l2[itc zapfdingbats]' not found"
+        log_error "try 1: variable 'mytree_global1.l1[urw].l2[itc zapfdingbats]' not found"
     (  unset 'mytree_global1.l1[urw].l2[itc zapfdingbats]'  ) || \
-        err_exit "try 2: variable 'mytree_global1.l1[urw].l2[itc zapfdingbats]' not found"
+        log_error "try 2: variable 'mytree_global1.l1[urw].l2[itc zapfdingbats]' not found"
 
     # Remove parent node (array element) and then check whether the child is gone, too:
     (
         unset 'mytree_global1.l1[urw].l2[itc zapfdingbats]'
         [[ -v 'mytree_global1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]'} ]]
-    ) && err_exit "global: parent node removed (array element), child still exists"
+    ) && log_error "global: parent node removed (array element), child still exists"
     (
         unset 'mytree_local1.l1[urw].l2[itc zapfdingbats]'
         [[ -v 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ]]
-    ) && err_exit "local: parent node removed (array element), child still exists"
+    ) && log_error "local: parent node removed (array element), child still exists"
 
     # Remove parent node  (array variable) and then check whether the child is gone, too:
     (
         unset 'mytree_local1.l1[urw].l2'
         [[ -v 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ]]
-    ) && err_exit "global: parent node removed (array variable), child still exists"
+    ) && log_error "global: parent node removed (array variable), child still exists"
     (
         unset 'mytree_local1.l1[urw].l2'
         [[ -v 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ]]
-    ) && err_exit "local: parent node removed (array variable), child still exists"
+    ) && log_error "local: parent node removed (array variable), child still exists"
 
 
     #### Test "unset" and compare trees
     unset 'mytree_global1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ||
-        err_exit "variable 'mytree_global1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
+        log_error "variable 'mytree_global1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
 
-    [[ "${mytree_global1}" != "${mytree_local1}" ]] || err_exit "mytree_global1 and mytree_local1 should differ"
+    [[ "${mytree_global1}" != "${mytree_local1}" ]] || log_error "mytree_global1 and mytree_local1 should differ"
 
     unset 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' ||
-        err_exit "variable 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
+        log_error "variable 'mytree_local1.l1[urw].l2[itc zapfdingbats].l3[medium].entries[abcd].filenames[0]' not found"
 
     # Compare trees (after "unset")
     if [[ "${mytree_global1}" != "${mytree_local1}" ]] ; then
-        err_exit "compound trees 'mytree_local1' and 'mytree_global1' not identical after unset"
+        log_error "compound trees 'mytree_local1' and 'mytree_global1' not identical after unset"
     fi
 }
 

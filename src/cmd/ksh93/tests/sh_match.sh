@@ -418,9 +418,9 @@ printf "%s" $'<h1 style=\'nice\' h="bar">> <oook:banana color="<yellow />"><oook
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset "${testscript}" "${tst.file}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${expected_output}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
     done
 
     rm "${testscript}"
@@ -460,9 +460,9 @@ function test_testop_v1
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${expected_output}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
     done
 
     return 0
@@ -504,9 +504,9 @@ function test_testop_v2
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
 
         #
@@ -524,9 +524,9 @@ function test_testop_v2
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
         #
         # test first dimension, by variable index
@@ -541,9 +541,9 @@ function test_testop_v2
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_1d}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_1d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
 
         #
@@ -561,9 +561,9 @@ function test_testop_v2
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${tst.expected_output_2d}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${tst.expected_output_2d}" ;}, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
 
     done
 
@@ -600,9 +600,9 @@ function test_num_elements1
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout}" == "${expected_output}" ]] || err_exit "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''           ]] || err_exit "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || err_exit "${testname}: Unexpected exit code ${out.res}"
+        [[ "${out.stdout}" == "${expected_output}" ]] || log_error "${testname}: Expected stdout==${ printf '%q\n' "${expected_output}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
+        [[ "${out.stderr}" == ''           ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
+        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
     done
 
     return 0
@@ -662,7 +662,7 @@ function test_nomatch
 	)
 )'
     got=$(print -v c)
-    [[ $got == "$expect" ]] || err_exit 'unset submatches not handled correctly'
+    [[ $got == "$expect" ]] || log_error 'unset submatches not handled correctly'
 }
 
 # run tests

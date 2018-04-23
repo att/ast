@@ -21,7 +21,7 @@
 if $SHELL -c '[[ ~root == /* ]]'
 then
     x=$(print -r -- ~root)
-    [[ $x == ~root ]] || err_exit '~user expanded in subshell prevent ~user from working'
+    [[ $x == ~root ]] || log_error '~user expanded in subshell prevent ~user from working'
 fi
 
 function home # id
@@ -40,41 +40,41 @@ function home # id
 OLDPWD=/bin
 if [[ ~ != $HOME ]]
 then
-    err_exit '~' not $HOME
+    log_error '~' not $HOME
 fi
 
 x=~
 if [[ $x != $HOME ]]
 then
-    err_exit x=~ not $HOME
+    log_error x=~ not $HOME
 fi
 
 x=x:~
 if [[ $x != x:$HOME ]]
 then
-    err_exit x=x:~ not x:$HOME
+    log_error x=x:~ not x:$HOME
 fi
 
 if [[ ~+ != $PWD ]]
 then
-    err_exit '~' not $PWD
+    log_error '~' not $PWD
 fi
 
 x=~+
 if [[ $x != $PWD ]]
 then
-    err_exit x=~+ not $PWD
+    log_error x=~+ not $PWD
 fi
 
 if [[ ~- != $OLDPWD ]]
 then
-    err_exit '~' not $PWD
+    log_error '~' not $PWD
 fi
 
 x=~-
 if [[ $x != $OLDPWD ]]
 then
-    err_exit x=~- not $OLDPWD
+    log_error x=~- not $OLDPWD
 fi
 
 for u in root Administrator
@@ -82,7 +82,7 @@ do
     h=$(home $u)
     if [[ $h != . ]]
     then
-        [[ ~$u -ef $h ]] || err_exit "~$u not $h"
+        [[ ~$u -ef $h ]] || log_error "~$u not $h"
         x=~$u
         [[ $x -ef $h ]] || x="~$u not $h"
         break
@@ -92,19 +92,19 @@ done
 x=~g.r.emlin
 if [[ $x != '~g.r.emlin' ]]
 then
-    err_exit "x=~g.r.emlin failed -- expected '~g.r.emlin', got '$x'"
+    log_error "x=~g.r.emlin failed -- expected '~g.r.emlin', got '$x'"
 fi
 
 x=~:~
 if [[ $x != "$HOME:$HOME" ]]
 then
-    err_exit "x=~:~ failed, expected '$HOME:$HOME', got '$x'"
+    log_error "x=~:~ failed, expected '$HOME:$HOME', got '$x'"
 fi
 
 HOME=/
-[[ ~ == / ]] || err_exit '~ should be /'
-[[ ~/foo == /foo ]] || err_exit '~/foo should be /foo when ~==/'
+[[ ~ == / ]] || log_error '~ should be /'
+[[ ~/foo == /foo ]] || log_error '~/foo should be /foo when ~==/'
 print $'print ~+\n[[ $1 ]] && $0' > $tmp/tilde
 chmod +x $tmp/tilde
 nl=$'\n'
-[[ $($tmp/tilde foo) == "$PWD$nl$PWD" ]] 2> /dev/null  || err_exit 'tilde fails inside a script run by name'
+[[ $($tmp/tilde foo) == "$PWD$nl$PWD" ]] 2> /dev/null  || log_error 'tilde fails inside a script run by name'

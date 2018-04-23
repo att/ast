@@ -18,29 +18,29 @@
 #                                                                      #
 ########################################################################
 
-[[ ${.sh.version} == "$KSH_VERSION" ]] || err_exit '.sh.version != KSH_VERSION'
+[[ ${.sh.version} == "$KSH_VERSION" ]] || log_error '.sh.version != KSH_VERSION'
 unset ss
-[[ ${@ss} ]] && err_exit '${@ss} should be empty string when ss is unset'
-[[ ${!ss} == ss ]] ||  err_exit '${!ss} should be ss when ss is unset'
-[[ ${#ss} == 0 ]] ||  err_exit '${#ss} should be 0 when ss is unset'
+[[ ${@ss} ]] && log_error '${@ss} should be empty string when ss is unset'
+[[ ${!ss} == ss ]] ||  log_error '${!ss} should be ss when ss is unset'
+[[ ${#ss} == 0 ]] ||  log_error '${#ss} should be 0 when ss is unset'
 # RANDOM
 if (( RANDOM==RANDOM || $RANDOM==$RANDOM ))
 then
-    err_exit RANDOM variable not working
+    log_error RANDOM variable not working
 fi
 
 # SECONDS
 sleep 3
 if (( SECONDS < 2 ))
 then
-    err_exit SECONDS variable not working
+    log_error SECONDS variable not working
 fi
 
 # _
 set abc def
 if [[ $_ != def ]]
 then
-    err_exit _ variable not working
+    log_error _ variable not working
 fi
 
 # ERRNO
@@ -50,13 +50,13 @@ fi
 #2> /dev/null < foobar#
 #if (( ERRNO == 0 ))
 #then
-#    err_exit ERRNO variable not working
+#    log_error ERRNO variable not working
 #fi
 
 # PWD
 if [[ !  $PWD -ef . ]]
 then
-    err_exit PWD variable failed, not equivalent to .
+    log_error PWD variable failed, not equivalent to .
 fi
 
 # PPID
@@ -64,7 +64,7 @@ exp=$$
 got=${ $SHELL -c 'print $PPID'; }
 if [[ ${ $SHELL -c 'print $PPID'; } != $$ ]]
 then
-    err_exit "PPID variable failed -- expected '$exp', got '$got'"
+    log_error "PPID variable failed -- expected '$exp', got '$got'"
 fi
 
 # OLDPWD
@@ -72,17 +72,17 @@ old=$PWD
 cd /
 if [[ $OLDPWD != $old ]]
 then
-    err_exit "OLDPWD variable failed -- expected '$old', got '$OLDPWD'"
+    log_error "OLDPWD variable failed -- expected '$old', got '$OLDPWD'"
 fi
 
-cd $old || err_exit cd failed
+cd $old || log_error cd failed
 # REPLY
 read <<-!
 foobar
 !
 if [[ $REPLY != foobar ]]
 then
-    err_exit REPLY variable not working
+    log_error REPLY variable not working
 fi
 
 integer save=$LINENO
@@ -93,7 +93,7 @@ LINENO=10
 #
 if (( LINENO != 13))
 then
-    err_exit LINENO variable not working
+    log_error LINENO variable not working
 fi
 
 LINENO=save+10
@@ -101,19 +101,19 @@ IFS=:
 x=a::b::c
 if [[ $x != a::b::c ]]
 then
-    err_exit "word splitting on constants"
+    log_error "word splitting on constants"
 fi
 
 set -- $x
 if [[ $# != 5 ]]
 then
-    err_exit ":: doesn't separate null arguments "
+    log_error ":: doesn't separate null arguments "
 fi
 
 set x
 if x$1=0 2> /dev/null
 then
-    err_exit "x\$1=value treated as an assignment"
+    log_error "x\$1=value treated as an assignment"
 fi
 
 # Check for attributes across subshells
@@ -121,7 +121,7 @@ typeset -i x=3
 y=1/0
 if ( x=y ) 2> /dev/null
 then
-    err_exit "attributes not passed to subshells"
+    log_error "attributes not passed to subshells"
 fi
 
 unset x
@@ -134,7 +134,7 @@ function x.set
 x=bar
 if [[ $x != x.set ]]
 then
-    err_exit 'x.set does not override assignment'
+    log_error 'x.set does not override assignment'
 fi
 
 x.get()
@@ -145,7 +145,7 @@ x.get()
 
 if [[ $x != bar ]]
 then
-    err_exit 'x.get does not work correctly'
+    log_error 'x.get does not work correctly'
 fi
 
 typeset +n foo
@@ -156,32 +156,32 @@ foo=bar
     set +u
     if [[ $foo != '' ]]
     then
-        err_exit '$foo not null after unset in subsehll'
+        log_error '$foo not null after unset in subsehll'
     fi
 
 )
 if [[ $foo != bar ]]
 then
-    err_exit 'unset foo in subshell produces side effect '
+    log_error 'unset foo in subshell produces side effect '
 fi
 
 unset foo
 if [[ $( { : ${foo?hi there} ; } 2>&1) != *'hi there' ]]
 then
-    err_exit '${foo?hi there} with foo unset does not print hi there on 2'
+    log_error '${foo?hi there} with foo unset does not print hi there on 2'
 fi
 
 x=$0
 set foobar
 if [[ ${@:0} != "$x foobar" ]]
 then
-    err_exit '${@:0} not expanding correctly'
+    log_error '${@:0} not expanding correctly'
 fi
 
 set --
 if [[ ${*:0:1} != "$0" ]]
 then
-    err_exit '${@:0} not expanding correctly'
+    log_error '${@:0} not expanding correctly'
 fi
 
 ACCESS=0
@@ -193,13 +193,13 @@ COUNT=0
 (( COUNT++ ))
 if (( COUNT != 1 || ACCESS!=2 ))
 then
-    err_exit " set discipline failure COUNT=$COUNT ACCESS=$ACCESS"
+    log_error " set discipline failure COUNT=$COUNT ACCESS=$ACCESS"
 fi
 
 LANG=C > /dev/null 2>&1
 if [[ $LANG != C ]]
 then
-    err_exit "C locale not working"
+    log_error "C locale not working"
 fi
 
 unset RANDOM
@@ -212,12 +212,12 @@ function foo.get
 }
 if [[ $foo != stuff ]]
 then
-    err_exit "foo.get discipline not working"
+    log_error "foo.get discipline not working"
 fi
 
 if [[ $foo != junk ]]
 then
-    err_exit "foo.get discipline not working after unset"
+    log_error "foo.get discipline not working after unset"
 fi
 
 # special variables
@@ -225,7 +225,7 @@ set -- 1 2 3 4 5 6 7 8 9 10
 sleep 1000 &
 if [[ $(print -r -- ${#10}) != 2 ]]
 then
-    err_exit '${#10}, where ${10}=10 not working'
+    log_error '${#10}, where ${10}=10 not working'
 fi
 
 for i in @ '*' ! '#' - '?' '$'
@@ -234,25 +234,25 @@ do
     eval foo='$'$i bar='$'{$i}
     if [[ ${foo} != "${bar}" ]]
     then
-        err_exit "\$$i not equal to \${$i}"
+        log_error "\$$i not equal to \${$i}"
     fi
 
-    command eval bar='$'{$i%?} 2> /dev/null || err_exit "\${$i%?} gives syntax error"
+    command eval bar='$'{$i%?} 2> /dev/null || log_error "\${$i%?} gives syntax error"
     if [[ $i != [@*] && ${foo%?} != "$bar"  ]]
     then
-        err_exit "\${$i%?} not correct"
+        log_error "\${$i%?} not correct"
     fi
 
-    command eval bar='$'{$i#?} 2> /dev/null || err_exit "\${$i#?} gives syntax error"
+    command eval bar='$'{$i#?} 2> /dev/null || log_error "\${$i#?} gives syntax error"
     if [[ $i != [@*] && ${foo#?} != "$bar"  ]]
     then
-        err_exit "\${$i#?} not correct"
+        log_error "\${$i#?} not correct"
     fi
 
-    command eval foo='$'{$i} bar='$'{#$i} || err_exit "\${#$i} gives syntax error"
+    command eval foo='$'{$i} bar='$'{#$i} || log_error "\${#$i} gives syntax error"
     if [[ $i != @([@*]) && ${#foo} != "$bar" ]]
     then
-        err_exit "\${#$i} not correct"
+        log_error "\${#$i} not correct"
     fi
 done
 kill $!
@@ -261,27 +261,27 @@ CDPATH=/
 x=$(cd ${tmp#/})
 if [[ $x != $tmp ]]
 then
-    err_exit 'CDPATH does not display new directory'
+    log_error 'CDPATH does not display new directory'
 fi
 
 CDPATH=/:
 x=$(cd ${tmp%/*}; cd ${tmp##*/})
 if [[ $x ]]
 then
-    err_exit 'CDPATH displays new directory when not used'
+    log_error 'CDPATH displays new directory when not used'
 fi
 
 x=$(cd ${tmp#/})
 if [[ $x != $tmp ]]
 then
-    err_exit "CDPATH ${tmp#/} does not display new directory"
+    log_error "CDPATH ${tmp#/} does not display new directory"
 fi
 
 TMOUT=100
 (TMOUT=20)
 if (( TMOUT !=100 ))
 then
-    err_exit 'setting TMOUT in subshell affects parent'
+    log_error 'setting TMOUT in subshell affects parent'
 fi
 
 unset y
@@ -297,7 +297,7 @@ y=bad
 setdisc y
 if [[ $y != good ]]
 then
-    err_exit 'setdisc function not working'
+    log_error 'setdisc function not working'
 fi
 
 integer x=$LINENO
@@ -305,19 +305,19 @@ integer x=$LINENO
 '
 if (( LINENO != x+3  ))
 then
-    err_exit '\<newline> gets linenumber count wrong'
+    log_error '\<newline> gets linenumber count wrong'
 fi
 
 set --
 set -- "${@-}"
 if (( $# !=1 ))
 then
-    err_exit '"${@-}" not expanding to null string'
+    log_error '"${@-}" not expanding to null string'
 fi
 
 for i in : % + / 3b '**' '***' '@@' '{' '[' '}' !!  '*a' '$$'
 do
-    (eval : \${"$i"} 2> /dev/null) && err_exit "\${$i} not an syntax error"
+    (eval : \${"$i"} 2> /dev/null) && log_error "\${$i} not an syntax error"
 done
 
 unset IFS
@@ -326,7 +326,7 @@ unset IFS
 	!
 	if [[ $b ]]
 	then
-		err_exit 'IFS="  " not causing adjacent space to be null string'
+		log_error 'IFS="  " not causing adjacent space to be null string'
 	fi
 
 )
@@ -335,7 +335,7 @@ x  y z
 !
 if [[ $b != y ]]
 then
-    err_exit 'IFS not restored after subshell'
+    log_error 'IFS not restored after subshell'
 fi
 
 
@@ -358,12 +358,12 @@ function split
 
     case "$g" in
     "$s")    ;;
-    *)    err_exit "IFS=': '; set -- '$i'; expected '$s' got '$g'" ;;
+    *)    log_error "IFS=': '; set -- '$i'; expected '$s' got '$g'" ;;
     esac
     print "$i" | IFS=": " read arg rem; g="($arg)($rem)"
     case "$g" in
     "$r")    ;;
-    *)    err_exit "IFS=': '; read '$i'; expected '$r' got '$g'" ;;
+    *)    log_error "IFS=': '; read '$i'; expected '$r' got '$g'" ;;
     esac
 }
 for str in     \
@@ -478,19 +478,19 @@ unset IFS
 
 if [[ $( (print ${12345:?}) 2>&1) != *12345* ]]
 then
-    err_exit 'incorrect error message with ${12345?}'
+    log_error 'incorrect error message with ${12345?}'
 fi
 
 unset foobar
 if [[ $( (print ${foobar:?}) 2>&1) != *foobar* ]]
 then
-    err_exit 'incorrect error message with ${foobar?}'
+    log_error 'incorrect error message with ${foobar?}'
 fi
 
 unset bar
 if [[ $( (print ${bar:?bam}) 2>&1) != *bar*bam* ]]
 then
-    err_exit 'incorrect error message with ${foobar?}'
+    log_error 'incorrect error message with ${foobar?}'
 fi
 
 { $SHELL -c '
@@ -504,7 +504,7 @@ function foo
 x=$(foo)
 (( x >1 && x < 2 ))
 '
-} 2> /dev/null   || err_exit 'SECONDS not working in function'
+} 2> /dev/null   || log_error 'SECONDS not working in function'
 cat > $tmp/script <<-\!
 	posixfun()
 	{
@@ -527,27 +527,27 @@ cat > $tmp/script <<-\!
 
 chmod +x $tmp/script
 . $tmp/script  1
-[[ $file == $tmp/script ]] || err_exit ".sh.file not working for dot scripts"
-[[ $($SHELL $tmp/script) == $tmp/script ]] || err_exit ".sh.file not working for scripts"
-[[ $(posixfun .sh.file) == $tmp/script ]] || err_exit ".sh.file not working for posix functions"
-[[ $(fun .sh.file) == $tmp/script ]] || err_exit ".sh.file not working for functions"
-[[ $(posixfun .sh.fun) == posixfun ]] || err_exit ".sh.fun not working for posix functions"
-[[ $(fun .sh.fun) == fun ]] || err_exit ".sh.fun not working for functions"
-[[ $(posixfun .sh.subshell) == 1 ]] || err_exit ".sh.subshell not working for posix functions"
-[[ $(fun .sh.subshell) == 1 ]] || err_exit ".sh.subshell not working for functions"
+[[ $file == $tmp/script ]] || log_error ".sh.file not working for dot scripts"
+[[ $($SHELL $tmp/script) == $tmp/script ]] || log_error ".sh.file not working for scripts"
+[[ $(posixfun .sh.file) == $tmp/script ]] || log_error ".sh.file not working for posix functions"
+[[ $(fun .sh.file) == $tmp/script ]] || log_error ".sh.file not working for functions"
+[[ $(posixfun .sh.fun) == posixfun ]] || log_error ".sh.fun not working for posix functions"
+[[ $(fun .sh.fun) == fun ]] || log_error ".sh.fun not working for functions"
+[[ $(posixfun .sh.subshell) == 1 ]] || log_error ".sh.subshell not working for posix functions"
+[[ $(fun .sh.subshell) == 1 ]] || log_error ".sh.subshell not working for functions"
 (
-    [[ $(posixfun .sh.subshell) == 2 ]]  || err_exit ".sh.subshell not working for posix functions in subshells"
-    [[ $(fun .sh.subshell) == 2 ]]  || err_exit ".sh.subshell not working for functions in subshells"
-    (( .sh.subshell == 1 )) || err_exit ".sh.subshell not working in a subshell"
+    [[ $(posixfun .sh.subshell) == 2 ]]  || log_error ".sh.subshell not working for posix functions in subshells"
+    [[ $(fun .sh.subshell) == 2 ]]  || log_error ".sh.subshell not working for functions in subshells"
+    (( .sh.subshell == 1 )) || log_error ".sh.subshell not working in a subshell"
 )
 TIMEFORMAT='this is a test'
-[[ $({ { time :;} 2>&1;}) == "$TIMEFORMAT" ]] || err_exit 'TIMEFORMAT not working'
+[[ $({ { time :;} 2>&1;}) == "$TIMEFORMAT" ]] || log_error 'TIMEFORMAT not working'
 : ${.sh.version}
-[[ $(alias integer) == *.sh.* ]] && err_exit '.sh. prefixed to alias name'
+[[ $(alias integer) == *.sh.* ]] && log_error '.sh. prefixed to alias name'
 : ${.sh.version}
-[[ $(whence rm) == *.sh.* ]] && err_exit '.sh. prefixed to tracked alias name'
+[[ $(whence rm) == *.sh.* ]] && log_error '.sh. prefixed to tracked alias name'
 : ${.sh.version}
-[[ $(cd /bin;env | grep PWD=) == *.sh.* ]] && err_exit '.sh. prefixed to PWD'
+[[ $(cd /bin;env | grep PWD=) == *.sh.* ]] && log_error '.sh. prefixed to PWD'
 # unset discipline bug fix
 dave=dave
 function dave.unset
@@ -555,7 +555,7 @@ function dave.unset
     unset dave
 }
 unset dave
-[[ $(typeset +f) == *dave.* ]] && err_exit 'unset discipline not removed'
+[[ $(typeset +f) == *dave.* ]] && log_error 'unset discipline not removed'
 
 x=$(
     dave=dave
@@ -564,26 +564,26 @@ x=$(
         print dave.unset
     }
 )
-[[ $x == dave.unset ]] || err_exit 'unset discipline not called with subset completion'
+[[ $x == dave.unset ]] || log_error 'unset discipline not called with subset completion'
 
 print 'print ${VAR}' > $tmp/script
 unset VAR
 VAR=new $tmp/script > $tmp/out
 got=$(<$tmp/out)
-[[ $got == new ]] || err_exit "previously unset environment variable not passed to script, expected 'new', got '$got'"
-[[ ! $VAR ]] || err_exit "previously unset environment variable set after script, expected '', got '$VAR'"
+[[ $got == new ]] || log_error "previously unset environment variable not passed to script, expected 'new', got '$got'"
+[[ ! $VAR ]] || log_error "previously unset environment variable set after script, expected '', got '$VAR'"
 unset VAR
 VAR=old
 VAR=new $tmp/script > $tmp/out
 got=$(<$tmp/out)
-[[ $got == new ]] || err_exit "environment variable covering local variable not passed to script, expected 'new', got '$got'"
-[[ $VAR == old ]] || err_exit "previously set local variable changed after script, expected 'old', got '$VAR'"
+[[ $got == new ]] || log_error "environment variable covering local variable not passed to script, expected 'new', got '$got'"
+[[ $VAR == old ]] || log_error "previously set local variable changed after script, expected 'old', got '$VAR'"
 unset VAR
 export VAR=old
 VAR=new $tmp/script > $tmp/out
 got=$(<$tmp/out)
-[[ $got == new ]] || err_exit "environment variable covering environment variable not passed to script, expected 'new', got '$got'"
-[[ $VAR == old ]] || err_exit "previously set environment variable changed after script, expected 'old', got '$VAR'"
+[[ $got == new ]] || log_error "environment variable covering environment variable not passed to script, expected 'new', got '$got'"
+[[ $VAR == old ]] || log_error "previously set environment variable changed after script, expected 'old', got '$VAR'"
 
 (
     unset dave
@@ -597,8 +597,8 @@ got=$(<$tmp/out)
 ) 2> /dev/null
 case $? in
 0)     ;;
-1)     err_exit 'append discipline not implemented';;
-*)     err_exit 'append discipline not working';;
+1)     log_error 'append discipline not implemented';;
+*)     log_error 'append discipline not working';;
 esac
 .sh.foobar=hello
 {
@@ -606,22 +606,22 @@ esac
     {
         .sh.value=world
     }
-} 2> /dev/null || err_exit "cannot add get discipline to .sh.foobar"
-[[ ${.sh.foobar} == world ]]  || err_exit 'get discipline for .sh.foobar not working'
+} 2> /dev/null || log_error "cannot add get discipline to .sh.foobar"
+[[ ${.sh.foobar} == world ]]  || log_error 'get discipline for .sh.foobar not working'
 x='a|b'
 IFS='|'
 set -- $x
-[[ $2 == b ]] || err_exit '$2 should be b after set'
+[[ $2 == b ]] || log_error '$2 should be b after set'
 exec 3>&2 2> /dev/null
 set -x
 ( IFS= ) 2> /dev/null
 set +x
 exec 2>&3-
 set -- $x
-[[ $2 == b ]] || err_exit '$2 should be b after subshell'
+[[ $2 == b ]] || log_error '$2 should be b after subshell'
 : & pid=$!
 ( : & )
-[[ $pid == $! ]] || err_exit '$! value not preserved across subshells'
+[[ $pid == $! ]] || log_error '$! value not preserved across subshells'
 unset foo
 typeset -A foo
 function foo.set
@@ -645,14 +645,14 @@ function foo.set
 }
 foo[barrier_hit]=no
 foo[bar]=1
-(( foo[bar] == 1 )) || err_exit 'foo[bar] should be 1'
-[[ ${foo[barrier_hit]} == no ]] || err_exit 'foo[barrier_hit] should be no'
-[[ ${foo[barrier_not_hit]} == yes ]] || err_exit 'foo[barrier_not_hit] should be yes'
+(( foo[bar] == 1 )) || log_error 'foo[bar] should be 1'
+[[ ${foo[barrier_hit]} == no ]] || log_error 'foo[barrier_hit] should be no'
+[[ ${foo[barrier_not_hit]} == yes ]] || log_error 'foo[barrier_not_hit] should be yes'
 foo[barrier_hit]=no
 foo[bar]=2
-(( foo[bar] == 5 )) || err_exit 'foo[bar] should be 5'
-[[ ${foo[barrier_hit]} == yes ]] || err_exit 'foo[barrier_hit] should be yes'
-[[ ${foo[barrier_not_hit]} == no ]] || err_exit 'foo[barrier_not_hit] should be no'
+(( foo[bar] == 5 )) || log_error 'foo[bar] should be 5'
+[[ ${foo[barrier_hit]} == yes ]] || log_error 'foo[barrier_hit] should be yes'
+[[ ${foo[barrier_not_hit]} == no ]] || log_error 'foo[barrier_not_hit] should be no'
 unset x
 typeset -i x
 function x.set
@@ -661,29 +661,29 @@ function x.set
     (( sub > 0 )) && (( x[sub-1]= x[sub-1] + .sh.value ))
 }
 x[0]=0 x[1]=1 x[2]=2 x[3]=3
-[[ ${x[@]} == '12 8 5 3' ]] || err_exit 'set discipline for indexed array not working correctly'
+[[ ${x[@]} == '12 8 5 3' ]] || log_error 'set discipline for indexed array not working correctly'
 float seconds
 ((SECONDS=3*4))
 seconds=SECONDS
-(( seconds < 12 || seconds > 12.1 )) &&  err_exit "SECONDS is $seconds and should be close to 12"
+(( seconds < 12 || seconds > 12.1 )) &&  log_error "SECONDS is $seconds and should be close to 12"
 unset a
 function a.set
 {
     print -r -- "${.sh.name}=${.sh.value}"
 }
-[[ $(a=1) == a=1 ]] || err_exit 'set discipline not working in subshell assignment'
-[[ $(a=1 :) == a=1 ]] || err_exit 'set discipline not working in subshell command'
+[[ $(a=1) == a=1 ]] || log_error 'set discipline not working in subshell assignment'
+[[ $(a=1 :) == a=1 ]] || log_error 'set discipline not working in subshell command'
 
-[[ ${.sh.subshell} == 0 ]] || err_exit '${.sh.subshell} should be 0'
+[[ ${.sh.subshell} == 0 ]] || log_error '${.sh.subshell} should be 0'
 (
-    [[ ${.sh.subshell} == 1 ]] || err_exit '${.sh.subshell} should be 1'
+    [[ ${.sh.subshell} == 1 ]] || log_error '${.sh.subshell} should be 1'
     (
-        [[ ${.sh.subshell} == 2 ]] || err_exit '${.sh.subshell} should be 2'
+        [[ ${.sh.subshell} == 2 ]] || log_error '${.sh.subshell} should be 2'
     )
 )
 
 set -- {1..32768}
-(( $# == 32768 )) || err_exit "\$# failed -- expected 32768, got $#"
+(( $# == 32768 )) || log_error "\$# failed -- expected 32768, got $#"
 set --
 
 unset r v x
@@ -697,11 +697,11 @@ do
     unset $v
     if ( $SHELL -c "unset $v; : \$$v" ) 2>/dev/null
     then
-    [[ $r ]] && err_exit "unset $v failed -- expected '', got '$r'"
+    [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
         r=$x
-        [[ $r == $x ]] || err_exit "$v=$x failed -- expected '$x', got '$r'"
+        [[ $r == $x ]] || log_error "$v=$x failed -- expected '$x', got '$r'"
     else
-        err_exit "unset $v; : \$$v failed"
+        log_error "unset $v; : \$$v failed"
     fi
 done
 
@@ -710,13 +710,13 @@ for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC
 do
     nameref r=$v
     unset $v
-    [[ $r ]] && err_exit "unset $v failed -- expected '', got '$r'"
+    [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
     d=$($SHELL -c "$v=$x" 2>&1)
-    [[ $d ]] || err_exit "$v=$x failed -- expected locale diagnostic"
+    [[ $d ]] || log_error "$v=$x failed -- expected locale diagnostic"
     { g=$( r=$x; print -- $r ); } 2>/dev/null
-    [[ $g == '' ]] || err_exit "$v=$x failed -- expected '', got '$g'"
+    [[ $g == '' ]] || log_error "$v=$x failed -- expected '', got '$g'"
     { g=$( r=C; r=$x; print -- $r ); } 2>/dev/null
-    [[ $g == 'C' ]] || err_exit "$v=C; $v=$x failed -- expected 'C', got '$g'"
+    [[ $g == 'C' ]] || log_error "$v=C; $v=$x failed -- expected 'C', got '$g'"
 done
 PATH=$path
 
@@ -726,7 +726,7 @@ print print -n zzz > zzz
 chmod +x zzz
 exp='aaazzz'
 got=$($SHELL -c 'unset SHLVL; print -n aaa; ./zzz' 2>&1) >/dev/null 2>&1
-[[ $got == "$exp" ]] || err_exit "unset SHLVL causes script failure -- expected '$exp', got '$got'"
+[[ $got == "$exp" ]] || log_error "unset SHLVL causes script failure -- expected '$exp', got '$got'"
 
 mkdir glean
 for cmd in date ok
@@ -736,48 +736,48 @@ do
     print print $exp > glean/$cmd
     chmod +x glean/$cmd
     got=$(CDPATH=:.. $SHELL -c "PATH=:/bin:/usr/bin; date > /dev/null; cd glean && ./$cmd" 2>&1)
-    [[ $got == "$exp" ]] || err_exit "cd with CDPATH after PATH change failed -- expected '$exp', got '$got'"
+    [[ $got == "$exp" ]] || log_error "cd with CDPATH after PATH change failed -- expected '$exp', got '$got'"
 done
 
 v=LC_CTYPE
 unset $v
-[[ -v $v ]] && err_exit "unset $v; [[ -v $v ]] failed"
+[[ -v $v ]] && log_error "unset $v; [[ -v $v ]] failed"
 eval $v=C
-[[ -v $v ]] || err_exit "$v=C; [[ -v $v ]] failed"
+[[ -v $v ]] || log_error "$v=C; [[ -v $v ]] failed"
 
 cmd='set --nounset; unset foo; : ${!foo*}'
-$SHELL -c "$cmd" 2>/dev/null || err_exit "'$cmd' exit status $?, expected 0"
+$SHELL -c "$cmd" 2>/dev/null || log_error "'$cmd' exit status $?, expected 0"
 
 SHLVL=1
 level=$($SHELL -c $'$SHELL -c \'print -r "$SHLVL"\'')
-[[ $level  == 3 ]]  || err_exit "SHLVL should be 3 not $level"
+[[ $level  == 3 ]]  || log_error "SHLVL should be 3 not $level"
 
-[[ $($SHELL -c '{ x=1; : ${x.};print ok;}' 2> /dev/null) == ok ]] || err_exit '${x.} where x is a simple variable causes shell to abort'
+[[ $($SHELL -c '{ x=1; : ${x.};print ok;}' 2> /dev/null) == ok ]] || log_error '${x.} where x is a simple variable causes shell to abort'
 
 $SHELL -c 'unset .sh' 2> /dev/null
-[[ $? == 1 ]] || err_exit 'unset .sh should return 1'
+[[ $? == 1 ]] || log_error 'unset .sh should return 1'
 
 x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
-[[ $x == 'foo '* ]] || err_exit 'foo not included in ${!foo*}' 
+[[ $x == 'foo '* ]] || log_error 'foo not included in ${!foo*}' 
 
-[[ ${!.sh.sig@} == *.sh.sig.pid* ]]  ||  err_exit '.sh.sig.pid not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.status* ]]  ||  err_exit '.sh.sig.status not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.value.q* ]]  ||  err_exit '.sh.sig.value.q not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.value.Q* ]]  ||  err_exit '.sh.sig.value.Q not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.pid* ]]  ||  log_error '.sh.sig.pid not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.status* ]]  ||  log_error '.sh.sig.status not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.value.q* ]]  ||  log_error '.sh.sig.value.q not in ${!.sh.sig@]}'
+[[ ${!.sh.sig@} == *.sh.sig.value.Q* ]]  ||  log_error '.sh.sig.value.Q not in ${!.sh.sig@]}'
 
 unset x
 integer x=1
-[[ $(x+=3 command eval echo \$x) == 4 ]] || err_exit '+= assignment for environment variables for command special_built-in not working'
-(( $x == 1 )) || err_exit 'environment not restored afer command special_builtin'
-[[ $(x+=3 eval echo \$x) == 4 ]] || err_exit '+= assignment for environment variables for built-ins not working'
+[[ $(x+=3 command eval echo \$x) == 4 ]] || log_error '+= assignment for environment variables for command special_built-in not working'
+(( $x == 1 )) || log_error 'environment not restored afer command special_builtin'
+[[ $(x+=3 eval echo \$x) == 4 ]] || log_error '+= assignment for environment variables for built-ins not working'
 
 # Tests for ${$parameter}
 set abc def
 abc=foo
 def=bar
-[[ ${$2:1:1} == a ]] || err_exit '${$2:1:1} not correct with $2=def and def=bar'
+[[ ${$2:1:1} == a ]] || log_error '${$2:1:1} not correct with $2=def and def=bar'
 OPTIND=2
-[[ ${$OPTIND:1:1} == e ]] || err_exit '${$OPTIND:1:1} not correct with OPTIND=2 and $2=def'
+[[ ${$OPTIND:1:1} == e ]] || log_error '${$OPTIND:1:1} not correct with OPTIND=2 and $2=def'
 
 # Check if ${.sh.file} is set to correct value after sourcing a file
 # https://github.com/att/ast/issues/472
@@ -788,4 +788,4 @@ EOF
 expect="$0"
 actual="${.sh.file}"
 [[ $actual == $expect ]] ||
-    err_exit ".sh.file is not set to correct value after sourcing a file" "$expect" "$actual"
+    log_error ".sh.file is not set to correct value after sourcing a file" "$expect" "$actual"

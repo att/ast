@@ -21,7 +21,7 @@
 
 if [[ -d /cygdrive ]]
 then
-    warning cygwin detected - coprocess tests disabled - enable at the risk of wedging your system
+    log_warning 'cygwin detected - coprocess tests disabled - enable at the risk of wedging your system'
     exit 99
 fi
 
@@ -46,11 +46,11 @@ do
     $cat |&
     print -p "hello"
     read -p line
-    [[ $line == hello ]] || err_exit "$cat coprocessing fails"
+    [[ $line == hello ]] || log_error "$cat coprocessing fails"
     exec 5>&p 6<&p
-    print -u5 'hello again' || err_exit "write on $cat coprocess u5 fails"
+    print -u5 'hello again' || log_error "write on $cat coprocess u5 fails"
     read -u6 line
-    [[ $line == 'hello again' ]] || err_exit "$cat coprocess after moving fds fails"
+    [[ $line == 'hello again' ]] || log_error "$cat coprocess after moving fds fails"
     exec 5<&- 6<&-
     wait $!
     
@@ -79,14 +79,14 @@ do
         set -- $REPLY
         if [[ $1 != $2 ]]
         then
-            err_exit "$cat coprocess $1 does not match $2"
+            log_error "$cat coprocess $1 does not match $2"
         fi
 
         case $1 in
         three)    ;;
         four)    ;;
         pipe)    ;;
-        *)    err_exit "$cat coprocess unknown message +|$REPLY|+" ;;
+        *)    log_error "$cat coprocess unknown message +|$REPLY|+" ;;
         esac
     done
     kill $(jobs -p) 2>/dev/null
@@ -97,7 +97,7 @@ do
 	!
     chmod +x $file
     sleep 10 |&
-    $file 2> /dev/null || err_exit "parent $cat coprocess prevents script coprocess"
+    $file 2> /dev/null || log_error "parent $cat coprocess prevents script coprocess"
     exec 5<&p 6>&p
     exec 5<&- 6>&-
     kill $(jobs -p) 2>/dev/null
@@ -111,7 +111,7 @@ do
     got=$REPLY
     if [[ $got != $exp ]]
     then
-        err_exit "${SHELL-ksh} $cat coprocess io failed -- got '$got', expected '$exp'"
+        log_error "${SHELL-ksh} $cat coprocess io failed -- got '$got', expected '$exp'"
     fi
 
     exec 5<&p 6>&p
@@ -122,7 +122,7 @@ do
     then
         kill $spy 2>/dev/null
     else
-        err_exit "$cat coprocess hung after 'exec 5<&p 6>&p; exec 5<&- 6>&-'"
+        log_error "$cat coprocess hung after 'exec 5<&p 6>&p; exec 5<&- 6>&-'"
     fi
 
     wait
@@ -138,15 +138,15 @@ do
     done
     if (( SECONDS > 8 ))
     then
-        err_exit "$cat coprocess read -p hanging (SECONDS=$SECONDS count=$count)"
+        log_error "$cat coprocess read -p hanging (SECONDS=$SECONDS count=$count)"
     fi
 
     wait $!
     
     ( sleep 3 |& sleep 1 && kill $!; sleep 1; sleep 3 |& sleep 1 && kill $! ) ||
-        err_exit "$cat coprocess cleanup not working correctly"
+        log_error "$cat coprocess cleanup not working correctly"
     { : |& } 2>/dev/null ||
-        err_exit "subshell $cat coprocess lingers in parent"
+        log_error "subshell $cat coprocess lingers in parent"
     wait $!
     
     unset N r e
@@ -163,7 +163,7 @@ do
         done
         print
     ) 2>/dev/null | read -t 10 r
-    [[ $r == $e ]] || err_exit "$cat coprocess timing bug -- expected $e, got '$r'"
+    [[ $r == $e ]] || log_error "$cat coprocess timing bug -- expected $e, got '$r'"
     
     r=
     (
@@ -177,7 +177,7 @@ do
         done
         print $r
     ) 2>/dev/null | read -t 10 r
-    [[ $r == $e ]] || err_exit "$cat coprocess command substitution bug -- expected $e, got '$r'"
+    [[ $r == $e ]] || log_error "$cat coprocess command substitution bug -- expected $e, got '$r'"
     
     (
         $cat |&
@@ -187,7 +187,7 @@ do
         exec 6>&-
         sleep 2
         kill $! 2> /dev/null
-    ) && err_exit "$cat coprocess with subshell would hang"
+    ) && log_error "$cat coprocess with subshell would hang"
     for sig in USR1 TERM
     do
     if ( trap - $sig ) 2> /dev/null
@@ -212,7 +212,7 @@ do
 		++EOF++
                 } ) != $'TRAP\nTRAP' ]] 2> /dev/null
             then
-                err_exit "traps when reading from $cat coprocess not working"
+                log_error "traps when reading from $cat coprocess not working"
             fi
 
             break
@@ -220,7 +220,7 @@ do
 
     done
     
-    trap 'sleep_pid=; kill $pid; err_exit "$cat coprocess 1 hung"' TERM
+    trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 1 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!
     $cat |&
@@ -228,35 +228,35 @@ do
     exec 5<&p 6>&p
     exp=hi
     print -u6 $exp; read -u5
-    [[ $REPLY == "$exp" ]] || err_exit "REPLY from $cat coprocess failed -- expected '$exp', got '$REPLY'"
+    [[ $REPLY == "$exp" ]] || log_error "REPLY from $cat coprocess failed -- expected '$exp', got '$REPLY'"
     exec 6>&-
     wait $pid
     trap - TERM
     [[ $sleep_pid ]] && kill $sleep_pid
     
-    trap 'sleep_pid=; kill $pid; err_exit "$cat coprocess 2 hung"' TERM
+    trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 2 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!
     $cat |&
     pid=$!
-    print foo >&p 2> /dev/null || err_exit "first write of foo to $cat coprocess failed"
-    print foo >&p 2> /dev/null || err_exit "second write of foo to coprocess failed"
+    print foo >&p 2> /dev/null || log_error "first write of foo to $cat coprocess failed"
+    print foo >&p 2> /dev/null || log_error "second write of foo to coprocess failed"
     kill $pid
     wait $pid 2> /dev/null
     trap - TERM
     [[ $sleep_pid ]] && kill $sleep_pid
     
-    trap 'sleep_pid=; kill $pid; err_exit "$cat coprocess 3 hung"' TERM
+    trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 3 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!
     $cat |&
     pid=$!
     print -p foo
     print -p bar
-    read <&p || err_exit "first read from $cat coprocess failed"
-    [[ $REPLY == foo ]] || err_exit "first REPLY from $cat coprocess is $REPLY not foo"
-    read <&p || err_exit "second read from $cat coprocess failed"
-    [[ $REPLY == bar ]] || err_exit "second REPLY from $cat coprocess is $REPLY not bar"
+    read <&p || log_error "first read from $cat coprocess failed"
+    [[ $REPLY == foo ]] || log_error "first REPLY from $cat coprocess is $REPLY not foo"
+    read <&p || log_error "second read from $cat coprocess failed"
+    [[ $REPLY == bar ]] || log_error "second REPLY from $cat coprocess is $REPLY not bar"
     kill $pid
     wait $pid 2> /dev/null
     trap - TERM
@@ -269,7 +269,7 @@ COATTRIBUTES=\'label=make \'
 # @(#)$Id: libcoshell (AT&T Research) 2008-04-28 $
 _COSHELL_msgfd=5
 { { (eval \'function fun { trap \":\" 0; return 1; }; trap \"exit 0\" 0; fun; exit 1\') && PATH= print -u$_COSHELL_msgfd ksh; } || { times && echo bsh >&$_COSHELL_msgfd; } || { echo osh >&$_COSHELL_msgfd; }; } >/dev/null 2>&1' | $SHELL 5>&1)
-[[ $got == $exp ]] || err_exit "coshell(3) identification sequence failed -- expected '$exp', got '$got'"
+[[ $got == $exp ]] || log_error "coshell(3) identification sequence failed -- expected '$exp', got '$got'"
 
 function cop
 {
@@ -288,7 +288,7 @@ else
     got='no coprocess'
 fi
 
-[[ $got == $exp ]] || err_exit "main coprocess main query failed -- expected $exp, got '$got'"
+[[ $got == $exp ]] || log_error "main coprocess main query failed -- expected $exp, got '$got'"
 kill $pid 2>/dev/null
 wait
 
@@ -302,7 +302,7 @@ else
     got='no coprocess'
 fi
 
-[[ $got == $exp ]] || err_exit "main coprocess subshell query failed -- expected $exp, got '$got'"
+[[ $got == $exp ]] || log_error "main coprocess subshell query failed -- expected $exp, got '$got'"
 )
 kill $pid 2>/dev/null
 wait
@@ -321,7 +321,7 @@ else
     got=$exp
 fi
 
-[[ $got == $exp ]] || err_exit "subshell coprocess main query failed -- expected $exp, got '$got'"
+[[ $got == $exp ]] || log_error "subshell coprocess main query failed -- expected $exp, got '$got'"
 kill $pid 2>/dev/null
 wait
 
@@ -338,7 +338,7 @@ else
     got=$exp
 fi
 
-[[ $got == $exp ]] || err_exit "subshell coprocess subshell query failed -- expected $exp, got '$got'"
+[[ $got == $exp ]] || log_error "subshell coprocess subshell query failed -- expected $exp, got '$got'"
 kill $pid 2>/dev/null
 wait
 )
@@ -354,7 +354,7 @@ print -p "hello"
 z="$( $bintrue $($bintrue) )"
 { print -p "world";} 2> /dev/null
 read -p
-[[ $REPLY == world ]] ||  err_exit "expected 'world' got '$REPLY'"
+[[ $REPLY == world ]] ||  log_error "expected 'world' got '$REPLY'"
 kill $pid 2>/dev/null
 wait
 
@@ -374,7 +374,7 @@ else
     got='no coprocess'
 fi
 
-[[ $got == $exp ]] || err_exit "main coprocess subshell query failed -- expected $exp, got '$got'"
+[[ $got == $exp ]] || log_error "main coprocess subshell query failed -- expected $exp, got '$got'"
 )
 kill $pid 2>/dev/null
 wait
@@ -385,4 +385,4 @@ pid=$!
 $tee -a /dev/null <&p > /dev/null
 wait $pid
 x=$?
-[[ $x == 0 ]] || err_exit "coprocess exitval should be 0, not $x"
+[[ $x == 0 ]] || log_error "coprocess exitval should be 0, not $x"

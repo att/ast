@@ -31,7 +31,7 @@ function abspath
 
 # builtin getconf
 ABSHELL=$(abspath)
-cd $tmp || { err_exit "cd $tmp failed"; exit 1; }
+cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 print exit 0 >.profile
 ${ABSHELL}  <<!
 HOME=$PWD \
@@ -50,15 +50,15 @@ exec -c -a -ksh ${ABSHELL} -c "exit 1" 1>/dev/null 2>&1
 status=$(echo $?)
 if [[ -o noprivileged && $status != 0 ]]
 then
-    err_exit 'exit in .profile is ignored'
+    log_error 'exit in .profile is ignored'
 elif [[ -o privileged && $status == 0 ]]
 then
-    err_exit 'privileged .profile not ignored'
+    log_error 'privileged .profile not ignored'
 fi
 
 if [[ $(trap 'code=$?; echo $code; trap 0; exit $code' 0; exit 123) != 123 ]]
 then
-    err_exit 'exit not setting $?'
+    log_error 'exit not setting $?'
 fi
 
 cat > run.sh <<- "EOF"
@@ -67,16 +67,16 @@ cat > run.sh <<- "EOF"
 EOF
 if [[ $($SHELL ./run.sh) != 123 ]]
 then
-    err_exit 'subshell trap on exit overwrites parent trap'
+    log_error 'subshell trap on exit overwrites parent trap'
 fi
 
-cd ~- || err_exit "cd back failed"
-$SHELL -c 'builtin -f cmd getconf; getconf --"?-version"; exit 0' >/dev/null 2>&1 || err_exit 'ksh plugin exit failed -- was ksh built with CCFLAGS+=$(CC.EXPORT.DYNAMIC)?'
+cd ~- || log_error "cd back failed"
+$SHELL -c 'builtin -f cmd getconf; getconf --"?-version"; exit 0' >/dev/null 2>&1 || log_error 'ksh plugin exit failed -- was ksh built with CCFLAGS+=$(CC.EXPORT.DYNAMIC)?'
 
-# TODO: RHBZ#1117316 - Fix and enable this test case 
+log_info 'TODO: RHBZ#1117316 - Fix and enable this test case.'
 # foo=`ls *foo 2> /dev/null | wc -l`
 # status=$?
 # if [[ $status -ne 0 ]]
 # then
-#     err_exit "Wrong return code from a pipe in command"
+#     log_error "Wrong return code from a pipe in command"
 # fi
