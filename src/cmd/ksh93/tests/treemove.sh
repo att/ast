@@ -57,7 +57,7 @@
 function idempotent
 {
     typeset got var action='typeset -p'
-    [[ $1 == -* ]] && { shift;var=$2=; action='print -v';} 
+    [[ $1 == -* ]] && { shift;var=$2=; action='print -v';}
     typeset -n exp=$1
     got=$($SHELL <<- EOF
 		$3
@@ -229,7 +229,7 @@ c.ost.pushobj foo
 compound res
 c.ost.popobj res.a
 exp='typeset -C res.a=(typeset -l -i val=5)'
-[[ $(typeset -p res.a) == "$exp" ]] || log_error 'typeset -m for compound variable in a type not working' 
+[[ $(typeset -p res.a) == "$exp" ]] || log_error 'typeset -m for compound variable in a type not working'
 idempotent exp res.a 'typeset -C res'
 
 unset c

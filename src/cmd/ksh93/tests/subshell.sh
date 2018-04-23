@@ -413,14 +413,14 @@ do
                         then
                             got=HUNG
                         fi
-                
+
                         if [[ ${TST[T].EXP} ]]
                         then
                             exp=${TST[T].EXP}
                         else
                             exp=$n
                         fi
-                
+
                         if [[ $got != $exp ]]
                         then
                             # on failure skip similar tests on larger files sizes #
@@ -434,7 +434,7 @@ do
                         then
                             SKIP[S][C][I][A][T]=1
                         fi
-                
+
                     fi
                     #...indent#
                     done
@@ -473,12 +473,12 @@ float t1=$SECONDS
 sleep=$(whence -p sleep)
 if [[ $sleep ]]
 then
-    $SHELL -c "( $sleep 5 </dev/null >/dev/null 2>&1 & );exit 0" | cat 
+    $SHELL -c "( $sleep 5 </dev/null >/dev/null 2>&1 & );exit 0" | cat
     (( (SECONDS-t1) > 4 )) && log_error '/bin/sleep& in subshell hanging'
     ((t1=SECONDS))
 fi
 
-$SHELL -c '( sleep 5 </dev/null >/dev/null 2>&1 & );exit 0' | cat 
+$SHELL -c '( sleep 5 </dev/null >/dev/null 2>&1 & );exit 0' | cat
 (( (SECONDS-t1) > 4 )) && log_error 'sleep& in subshell hanging'
 
 exp=HOME=$HOME
@@ -517,7 +517,7 @@ do
     typeset foo$i=$i
 done
 {
-    : $( (ac_space=' '; set | grep ac_space) 2>&1) 
+    : $( (ac_space=' '; set | grep ac_space) 2>&1)
 } < /dev/null | cat > /dev/null &
 sleep  1.5
 if kill -KILL $! 2> /dev/null
@@ -526,7 +526,7 @@ then
 fi
 
 wait $! 2> /dev/null
-(( $? > 128 )) && log_error 'incorrect exit status with comsub' 
+(( $? > 128 )) && log_error 'incorrect exit status with comsub'
 
 $SHELL 2> /dev/null -c '[[ ${ print foo },${ print bar } == foo,bar ]]' || log_error  '${ print foo },${ print bar } not working'
 $SHELL 2> /dev/null -c '[[ ${ print foo; },${ print bar } == foo,bar ]]' || log_error  '${ print foo; },${ print bar } not working'
@@ -714,7 +714,7 @@ val=${ foo;}
 [[ $val ]] && log_error "function foo generates $val but should generate the empty string in command substitution"
 
 x=$(
-    for i in a b c 
+    for i in a b c
     do
     read A
         print -n "$A"

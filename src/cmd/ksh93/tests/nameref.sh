@@ -384,7 +384,7 @@ foobar
 typeset +n x y
 unset x y
 typeset -A x
-x[a]=(b=c)  
+x[a]=(b=c)
 typeset -n y=x[a]
 [[ ${!y.@} == 'x[a].b' ]] || log_error 'reference to array element not expanded with ${!y.@}'
 
@@ -425,7 +425,7 @@ typeset -T container_t=(
 function fun1
 {
     container_t -S container
-    fun2 container 
+    fun2 container
     [[ $container == *foo=bar* ]] || log_error 'name references to static type variables in parent scope not working'
 }
 fun1
@@ -444,7 +444,7 @@ compound container
 fun3
 [[ $container == *foo=bar* ]] || log_error 'name reference to a name reference variable in a function not working'
 
-typeset -A x=( [a]=1 ) 
+typeset -A x=( [a]=1 )
 nameref c=x[h]
 [[ -v x[h] ]] && log_error 'creating reference to non-existant associative array element causes element to get added'
 
@@ -476,12 +476,12 @@ nameref z=ar[0]
 
 unset c x
 typeset +n c x
-compound c=( typeset -a x )  
+compound c=( typeset -a x )
 nameref x=c.x
 x[4]=1
 [[ ${ typeset -p c.x ;} == *-C* ]] && log_error 'c.x should not have -C attributes'
 
-{ $SHELL 2> /dev/null  <<- \EOF 
+{ $SHELL 2> /dev/null  <<- \EOF
 	typeset -T xxx_t=(
 		float x=1 y=2
 		typeset name=abc
@@ -507,12 +507,12 @@ fi
 typeset +n nr
 unset c nr
 compound c
-compound -A c.a 
+compound -A c.a
 nameref nr=c.a[hello]
 [[ ${!nr} == "c.a[hello]" ]] || log_error 'name reference nr to unset associative array instance does not expand ${!nr} correctly.'
 
 typeset +n nr
-compound -a c.b 
+compound -a c.b
 nameref nr=c.b[2]
 [[ ${!nr} == "c.b[2]" ]] || log_error 'name reference nr to unset indexed array instance does not expand ${!nr} correctly.'
 
@@ -558,7 +558,7 @@ function add_file_to_tree
     node.elements[/]=(filepath=foobar)
 }
 function main
-{    
+{
     compound filetree
     add_file_to_tree filetree
 }

@@ -642,8 +642,8 @@ do
 done
 
 typeset -l y y_ascii
-(( y=sin(90) )) 
-y_ascii=$y 
+(( y=sin(90) ))
+y_ascii=$y
 (( y == y_ascii )) || log_error "no match,\n\t$(printf "%a\n" y)\n!=\n\t$(printf "%a\n" y_ascii)"
 
 ( $SHELL  <<- \EOF
@@ -651,16 +651,16 @@ y_ascii=$y
     t[p]=6
     while (( t[p] != 0 )) ; do
         ((
-        p+=1 , 
-        t[p]+=2 , 
-        p+=3 , 
-        t[p]+=5 , 
-        p+=1 , 
-        t[p]+=2 , 
-        p+=1 , 
-        t[p]+=1 , 
+        p+=1 ,
+        t[p]+=2 ,
+        p+=3 ,
+        t[p]+=5 ,
+        p+=1 ,
+        t[p]+=2 ,
+        p+=1 ,
+        t[p]+=1 ,
         p-=6  ,
-        t[p]-=1 
+        t[p]-=1
         ))
     :
     done
@@ -719,7 +719,7 @@ $SHELL 2> /dev/null  <<- \EOF || log_error "arithmetic functions defined and ref
     {
             ((.sh.value = x-x**3/6. + x**5/120.-x**7/5040. + x**9/362880.))
     }
-    (( abs(sin(.5)-mysin(.5)) < 1e-6 )) 
+    (( abs(sin(.5)-mysin(.5)) < 1e-6 ))
     exit 0
 }
 EOF
@@ -754,7 +754,7 @@ function x
     float x y
     float x=$((log10(nz))) y=$((log10($nz)))
     (( abs(x-y) < 1e-10 )) || log_error '$nz and nz differs in arithmetic expression when nz is reference to array instance'
-} 
+}
 x z[1]
 
 unset x
@@ -775,7 +775,7 @@ typeset -i foo
 foobar
 (( foo == 8 )) || log_error  'arithmetic assignment binding to the wrong scope'
 
-(( tgamma(4)/12 )) || log_error 'floating point attribute for functions not preserved'  
+(( tgamma(4)/12 )) || log_error 'floating point attribute for functions not preserved'
 
 unset F
 function f
@@ -888,8 +888,8 @@ done
 
 x=010
 let "$x==10" || log_error 'arithmetic with $x where $x is 010 should be decimal in let'
-(( 9.$x == 9.01 )) || log_error 'arithmetic with 9.$x where x=010 should be 9.01' 
-(( 9$x == 9010 )) || log_error 'arithmetic with 9$x where x=010 should be 9010' 
+(( 9.$x == 9.01 )) || log_error 'arithmetic with 9.$x where x=010 should be 9.01'
+(( 9$x == 9010 )) || log_error 'arithmetic with 9$x where x=010 should be 9010'
 
 x010=99
 ((x$x == 99 )) || log_error 'arithtmetic with x$x where x=010 should be $x010'
@@ -897,7 +897,7 @@ x010=99
 
 let "(3+$x)==13" || log_error 'let should not recognize leading 0 as octal'
 unset x
-typeset -RZ3 x=10 
+typeset -RZ3 x=10
 (( $x == 10 )) || log_error 'leading 0 in -RZ should not create octal constant with ((...))'
 let "$x==10" || log_error 'leading 0 in -RZ should not create octal constant with let'
 
@@ -971,7 +971,7 @@ do
     (( x[i].pid == x[0].pid )) && ((count++))
 done
 (( count==1 )) || log_error 'x[i].pid==x[0].pid should be true only once'
-    
+
 #bug with short integers that causes core dumps
 $SHELL 2> /dev/null <<- \EOF || log_error 'short integer bug causing core dumps'
     typeset -s -i -a t
@@ -1000,9 +1000,9 @@ function f
     done
     printf "%q\n" "${ar[*]}"
 }
-[[ $(f) == "'0 1 2'" ]] 2> /dev/null || log_error '0 value for variable in arithmetic expression inside function with set -u fails' 
+[[ $(f) == "'0 1 2'" ]] 2> /dev/null || log_error '0 value for variable in arithmetic expression inside function with set -u fails'
 
 integer -u u=123
 (( u.MAX < (1<<31) ))  && log_error '$((i.MAX)) not workng when i is unsigned int'
 
-[[ $(( (2**32) << 67 )) == 0 ]] || log_error 'left shift count 67 is non-zero' 
+[[ $(( (2**32) << 67 )) == 0 ]] || log_error 'left shift count 67 is non-zero'

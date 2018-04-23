@@ -429,7 +429,7 @@ fi
 function xpd {
     typeset i j=$1
     for i
-    do 
+    do
         print i=$i j=$j
         [[ $i == a ]] && xpd b
     done
@@ -472,7 +472,7 @@ cd $dir || { log_error "cd $dir failed"; exit 1; }
     } > /dev/null
     typeset -ft a b
     PS4=X
-    b 
+    b
 ) > file 2>&1
 [[ $(<file) == *'Xprint 2'* ]] ||  log_error 'function trace disabled by function call'
 rm -f file
@@ -1194,8 +1194,8 @@ function B
     trap "> /dev/null;print TRAP B" EXIT
     A
 }
-            
-x=$(B)      
+
+x=$(B)
 [[ $x == $'TRAP A\nTRAP B' ]] || log_error "trap from functions in subshells fails got" $x
 
 function foo
@@ -1264,7 +1264,7 @@ function foo
         esac
     done
     shift $((OPTIND - 1))
-    (( OPTIND == 4 )) || log_error "OPTIND is $OPTIND at end of function foo; it should be 4"  
+    (( OPTIND == 4 )) || log_error "OPTIND is $OPTIND at end of function foo; it should be 4"
     [[ $1 == foo2 ]] || log_error "\$1 is $1, not foo after getopts in function"
 }
 OPTIND=6 OPTARG=xxx

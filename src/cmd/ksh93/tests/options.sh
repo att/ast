@@ -444,10 +444,10 @@ exp=$(HISTFILE=$histfile $SHELL -c $'function foo\n{\ncat\n}\ntype foo')
 for var in HISTSIZE HISTFILE
 do
     got=$( ( HISTFILE=$histfile $SHELL +E -ic $'unset '$var$'\nfunction foo\n{\ncat\n}\ntype foo\nexit' ) 2>&1 )
-    got=${got##*"$PS1"} 
+    got=${got##*"$PS1"}
     [[ $got == "$exp" ]] || log_error "function definition inside (...) with $var unset fails -- got '$got', expected '$exp'"
     got=$( { HISTFILE=$histfile $SHELL +E -ic $'unset '$var$'\nfunction foo\n{\ncat\n}\ntype foo\nexit' ;} 2>&1 )
-    got=${got##*"$PS1"} 
+    got=${got##*"$PS1"}
     [[ $got == "$exp" ]] || log_error "function definition inside {...;} with $var unset fails -- got '$got', expected '$exp'"
 done
 ( unset HISTFILE; $SHELL -ic "HISTFILE=$histfile" 2>/dev/null ) || log_error "setting HISTFILE when not in environment fails"
@@ -585,4 +585,4 @@ $SHELL 2> /dev/null <<- \EOF && log_error 'unset variable with set -u on does no
 	exit
 EOF
 
-[[ $($SHELL -vc : 2>&1) == : ]] || log_error 'incorrect output with ksh -v' 
+[[ $($SHELL -vc : 2>&1) == : ]] || log_error 'incorrect output with ksh -v'

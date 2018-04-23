@@ -56,12 +56,12 @@ function test_xmlfragment1
 	ulimit -M \$(( 1024 * 1024 ))
 	ulimit -v \$(( 1024 * 1024 ))
 	ulimit -d \$(( 1024 * 1024 ))
-	
+
 	# input text
 	xmltext="\$( < "\$1" )"
-	
+
 	print -f "%d characters to process...\\n" "\${#xmltext}"
-		
+
 	#
 	# parse the XML data
 	#
@@ -70,7 +70,7 @@ function test_xmlfragment1
 	{
 		typeset xmltext="\$2"
 		nameref ar="\$1"
-	
+
 		# fixme:
 		# - We want to enforce standard conformance - does ~(Exp) or ~(Ex-p) does that ?
 		dummy="\${xmltext//~(Ex-p)(?:
@@ -91,7 +91,7 @@ function test_xmlfragment1
 			(<\\/[:_[:alnum:]-]+>)+?|	# xml end tags
 			([^<]+)				# xml text
 			)/D}"
-	
+
 		# copy ".sh.match" to array "ar"
 		integer i j
 		for i in "\${!.sh.match[@]}" ; do
@@ -99,7 +99,7 @@ function test_xmlfragment1
 				[[ -v .sh.match[i][j] ]] && ar[i][j]="\${.sh.match[i][j]}"
 			done
 		done
-	
+
 		return 0
 	}
 

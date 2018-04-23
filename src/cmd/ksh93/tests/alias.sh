@@ -99,13 +99,13 @@ if hash -r 2>/dev/null && [[ ! $(hash) ]]
 then
     PATH=$TEST_DIR:/bin:/usr/bin
     for i in foo -foo --
-    do    
+    do
         print ':' > $TEST_DIR/$i
         chmod +x $TEST_DIR/$i
         hash -r -- $i 2>/dev/null || log_error "hash -r -- $i failed"
         [[ $(hash) == $i=$TEST_DIR/$i ]] || log_error "hash -r -- $i failed, expected $i=$TEST_DIR/$i, got $(hash)"
     done
-else    
+else
     log_error 'hash -r failed'
 fi
 
@@ -115,6 +115,6 @@ fi
 unalias no_such_alias &&  log_error 'unalias should return non-zero for unknown alias'
 
 for i in compound float integer nameref
-do    
+do
     [[ $i=$(whence $i) == "$(alias $i)" ]] || log_error "whence $i not matching $(alias $i)"
 done

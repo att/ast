@@ -437,9 +437,9 @@ typeset -H v=/dev/null
 [[ $v == *nul* ]] || log_error 'typeset -H for /dev/null not working'
 
 unset x
-(typeset +C x) 2> /dev/null && log_error 'typeset +C should be an error' 
-(typeset +A x) 2> /dev/null && log_error 'typeset +A should be an error' 
-(typeset +a x) 2> /dev/null && log_error 'typeset +a should be an error' 
+(typeset +C x) 2> /dev/null && log_error 'typeset +C should be an error'
+(typeset +A x) 2> /dev/null && log_error 'typeset +A should be an error'
+(typeset +a x) 2> /dev/null && log_error 'typeset +a should be an error'
 
 unset x
 {
@@ -528,7 +528,7 @@ typeset -l x=
 
 unset x
 typeset -L4 x=$'\001abcdef'
-[[ ${#x} == 5 ]] || log_error "width of character '\01' is not zero" 
+[[ ${#x} == 5 ]] || log_error "width of character '\01' is not zero"
 
 unset x
 typeset -L x=-1

@@ -650,7 +650,7 @@ tmpfile=$TEST_DIR/file.3
 print -r -- "'xxx" > $tmpfile
 actual="$($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null)"
 expect="ok"
-[[ $actual == $expect ]] || 
+[[ $actual == $expect ]] ||
    log_error 'syntax error in dot command affects next command' "$expect" "$actual"
 
 typeset -r z=3
@@ -757,7 +757,7 @@ CDPATH= $SHELL 2> /dev/null -c 'cd foobar' && log_error "cd to a regular file sh
 cd "$TEST_DIR"
 mkdir foo .bar
 cd foo
-cd ../.bar 2> /dev/null || log_error 'cd ../.bar when ../.bar exists should not fail' 
+cd ../.bar 2> /dev/null || log_error 'cd ../.bar when ../.bar exists should not fail'
 
 $SHELL +E -i <<- \! && log_error 'interactive shell should not exit 0 after false'
     false
@@ -793,19 +793,19 @@ log_info 'TODO: Enable these tests when the custom builtins of external commands
 #PATH=/opt/ast/bin:$PATH
 #PATH=/opt/ast/bin:/bin:/usr/bin
 #[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
-#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename" 
-#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp" 
+#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename"
+#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp"
 #.sh.op_astbin=/bin
 #SH_OPTIONS=astbin=/bin
 #[[ ${SH_OPTIONS} == *astbin=/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
-#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename" 
-#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp" 
+#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename"
+#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp"
 #.sh.op_astbin=/opt/ast/bin
-#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename" 
-#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp" 
+#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename"
+#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp"
 #PATH=/bin:/usr/bin:/opt/ast/bin
-#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH" 
-#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH" 
+#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH"
+#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
 #
 unset y
 exp='outside f, 1, 2, 3, outside f'
@@ -848,7 +848,7 @@ done
 
 [[ $(jobs -l) ]] && log_error 'jobs -l should not have any output'
 
-# tests with cd and ~{fd} 
+# tests with cd and ~{fd}
 pwd=$PWD
 exec {fd}</dev
 if cd ~{fd}
@@ -923,7 +923,7 @@ if mkdir -p f1
 then
     redirect {d}<f1
     pwd=$(pwd)
-    ( cd -f $d && [[ $(pwd) == "$pwd/f1" ]]) || log_error '$(pwd) does not show new directory' 
+    ( cd -f $d && [[ $(pwd) == "$pwd/f1" ]]) || log_error '$(pwd) does not show new directory'
     [[ $(pwd) == "$pwd" ]] || log_error '$(pwd) is not $pwd'
     [[ $(/bin/pwd) == "$pwd" ]] || log_error  '/bin/pwd is not "$pwd"'
     [[ $(/bin/pwd) == "$(pwd)" ]] || log_error  '/bin/pwd is not pwd'
@@ -946,7 +946,7 @@ $SHELL 2> /dev/null <<- \!!! || log_error 'alarm during read causes core dump'
     {
         print "goodbye world" | read arg1 arg2
     }
-    
+
     input_feed | while IFS=',' read arg1 arg2
     do
     :

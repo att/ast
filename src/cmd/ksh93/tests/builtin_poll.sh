@@ -245,13 +245,13 @@ function main
     typeset -M toupper up
     integer i
     integer -r num_cycles=18
-    
+
     circus_t -A ar
-    
+
     for name in 'a' 'b' 'c' 'd' ; do
         ar[\${name}].fifo_init "fifo_\${name}"
     done
-    
+
     compound -A pollfd
     for name in "\${!ar[@]}" ; do
         subname="fifo_\${name}_in"
@@ -260,15 +260,15 @@ function main
         pollfd[\${subname}]=( fd=\${ar[\${name}].out_fd} events=( pollout='true' pollerr='false' pollhup='false' pollnval='false' ) revents=() )
     done
 
-    # main event loop    
+    # main event loop
     for (( i=0 ; i < num_cycles ; i++ )) ; do
         poll -t2 pollfd || print -u2 -f "poll failed, retval=%d'n" "\$?"
-    
+
         # print results table
         printf '|'
         for name in "\${!ar[@]}" ; do
             up="\$name"
-    
+
             subname="fifo_\${name}_in"
             if \${pollfd[\${subname}].revents.pollin}    ; then printf '%sI+' "\${up}" ; else printf '...' ; fi
 
@@ -363,7 +363,7 @@ function main
         \${pollfd[fifo_d_in].revents.pollnval}  && (( pollfd[fifo_d_in].fd=-1  ))
         \${pollfd[fifo_d_out].revents.pollnval} && (( pollfd[fifo_d_out].fd=-1 ))
 
-        # send start token    
+        # send start token
         if (( i==0 )) ; then
             # Use the Euro symbol (\u[20ac]) if the locale
             # uses a UTF-8 encoding

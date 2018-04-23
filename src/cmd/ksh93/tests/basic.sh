@@ -606,7 +606,7 @@ got=$(
 
 bintrue=$(whence -p true)
 set -o pipefail
-float start=$SECONDS end 
+float start=$SECONDS end
 for ((i=0; i < 2; i++))
 do
     print foo
@@ -623,7 +623,7 @@ if [[ $bintrue ]]
 then
     float t0=SECONDS
     { time sleep 1.5 | $bintrue ;} 2> /dev/null
-    (( (SECONDS-t0) < 1 )) && log_error 'time not waiting for pipeline to complete' 
+    (( (SECONDS-t0) < 1 )) && log_error 'time not waiting for pipeline to complete'
 fi
 
 

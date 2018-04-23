@@ -21,7 +21,7 @@
 function idempotent
 {
     typeset got var action='typeset -p'
-    [[ $1 == -* ]] && { shift;var=$2=; action='print -v';} 
+    [[ $1 == -* ]] && { shift;var=$2=; action='print -v';}
     typeset -n exp=$1
     got=$($SHELL <<- EOF
 		$3
@@ -529,7 +529,7 @@ function f1
         typeset -C node
         node.one="hello"
         node.two="world"
-        
+
         # move local note into the array
         typeset -m tr.subtree["a_node"]=node
 }
@@ -539,7 +539,7 @@ expected=$'(\n\ttypeset -A subtree=(\n\t\t[a_node]=(\n\t\t\tone=hello\n\t\t\ttwo
 idempotent -v expected subtree
 
 typeset -C -A array
-float array[12].amount=2.9 
+float array[12].amount=2.9
 expected='typeset -C -A array=([12]=(typeset -l -E amount=2.9))'
 [[ $(typeset -p array) == "$expected" ]] || log_error 'typeset with compound  variable with compound variable array not working'
 idempotent  expected array
@@ -559,11 +559,11 @@ compound output=(
 )
 [[ $output == *end=* ]] ||  log_error "The field 'name' end is missing"
 
-compound cpv1=( integer f=2 ) 
+compound cpv1=( integer f=2 )
 compound x=(
     integer a=1
-    compound b=cpv1 
-) 
+    compound b=cpv1
+)
 [[ $x == *f=2* ]] ||  log_error "The field b containg 'f=2' is missing"
 
 unset x
@@ -571,7 +571,7 @@ compound x=(
         compound -a nodes=(
                  [4]=( )
         )
-) 
+)
 expected='typeset -C x=(typeset -C -a nodes=([4]=());)'
 [[ $(typeset -p x) == "$expected" ]] || log_error 'typeset -p with nested compound index array not working'
 idempotent  expected x
@@ -580,8 +580,8 @@ unset v
 compound v=(
     integer -A ar=(
         [aa]=4 [bb]=9
-    ) 
-) 
+    )
+)
 expected='typeset -C v=(typeset -A -l -i ar=([aa]=4 [bb]=9);)'
 [[ $(typeset -p v) == "$expected" ]] || log_error 'attributes for associative arrays embedded in compound variables not working'
 idempotent  expected v
@@ -599,7 +599,7 @@ idempotent  z x
 
 expected='typeset -C -A l=([4]=(typeset -a ar=(1 2 3);b=1))'
 typeset -A -C l
-printf "( typeset -a ar=( 1\n2\n3\n) b=1 )\n" | read -C l[4] 
+printf "( typeset -a ar=( 1\n2\n3\n) b=1 )\n" | read -C l[4]
 [[ $(typeset -p l) == "$expected" ]] ||  log_error 'read -C for associative array of compound variables not working'
 idempotent  expected l
 

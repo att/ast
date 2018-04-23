@@ -756,7 +756,7 @@ unset v
 typeset -a arr=( 0 1 2 3 4 )
 for v in "${arr[@]:5}"
 do
-    log_error "\${arr[@]:5} should not generate $v" 
+    log_error "\${arr[@]:5} should not generate $v"
     break
 done
 
@@ -775,7 +775,7 @@ done
 set 1 2 3 4
 for v in "${@:5}"
 do
-    log_error "\${@:5} should not generate $v" 
+    log_error "\${@:5} should not generate $v"
     break
 done
 

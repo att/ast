@@ -148,7 +148,7 @@ for ((d=0; d < 2000; d++))
 do
     if print foo | grep bar
     then
-        break 
+        break
     fi
 done
 
@@ -187,7 +187,7 @@ EOF
     read xpid pid
     for stat in EXITED STOPPED CONTINUED EXITED
     do
-        read pid1 pid2 status  || { log_error "line with stopped continued or exited expected";break;} 
+        read pid1 pid2 status  || { log_error "line with stopped continued or exited expected";break;}
         [[ $pid1 == $pid ]] || log_error ".sh.sig.pid=$pid1 should be $pid"
         [[ $pid2 == $pid ]] ||  log_error "\$!=$pid1 should be $pid"
         [[ $status == $stat ]] || log_error "status is $status, should be $stat"
@@ -204,7 +204,7 @@ function sighandler_chld
 }
 
 trap 'sighandler_chld' CHLD
-integer i 
+integer i
 for (( i=0 ; i < 512 ; i++ ))
 do
     sleep 0.1 &

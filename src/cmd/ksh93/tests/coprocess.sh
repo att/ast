@@ -53,13 +53,13 @@ do
     [[ $line == 'hello again' ]] || log_error "$cat coprocess after moving fds fails"
     exec 5<&- 6<&-
     wait $!
-    
+
     ping three |&
     exec 3>&p
     ping four |&
     exec 4>&p
     ping pipe |&
-    
+
     integer count
     for i in three four pipe four pipe four three pipe pipe three pipe
     do
@@ -71,7 +71,7 @@ do
         (( count++ ))
         print $to $i $count
     done
-    
+
     while ((count > 0))
     do
     (( count-- ))
@@ -90,7 +90,7 @@ do
         esac
     done
     kill $(jobs -p) 2>/dev/null
-    
+
     file=$TEST_DIR/regress
     $cat > $file  <<-!
 	$cat |&
@@ -101,7 +101,7 @@ do
     exec 5<&p 6>&p
     exec 5<&- 6>&-
     kill $(jobs -p) 2>/dev/null
-    
+
     ${SHELL-ksh} |&
     cop=$!
     exp=Done
@@ -126,7 +126,7 @@ do
     fi
 
     wait
-    
+
     {
     echo line1 | grep 'line2'
     echo line2 | grep 'line1'
@@ -142,13 +142,13 @@ do
     fi
 
     wait $!
-    
+
     ( sleep 3 |& sleep 1 && kill $!; sleep 1; sleep 3 |& sleep 1 && kill $! ) ||
         log_error "$cat coprocess cleanup not working correctly"
     { : |& } 2>/dev/null ||
         log_error "subshell $cat coprocess lingers in parent"
     wait $!
-    
+
     unset N r e
     integer N=5
     e=12345
@@ -164,7 +164,7 @@ do
         print
     ) 2>/dev/null | read -t 10 r
     [[ $r == $e ]] || log_error "$cat coprocess timing bug -- expected $e, got '$r'"
-    
+
     r=
     (
         integer i
@@ -178,7 +178,7 @@ do
         print $r
     ) 2>/dev/null | read -t 10 r
     [[ $r == $e ]] || log_error "$cat coprocess command substitution bug -- expected $e, got '$r'"
-    
+
     (
         $cat |&
         sleep 0.01
@@ -219,7 +219,7 @@ do
         fi
 
     done
-    
+
     trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 1 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!
@@ -233,7 +233,7 @@ do
     wait $pid
     trap - TERM
     [[ $sleep_pid ]] && kill $sleep_pid
-    
+
     trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 2 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!
@@ -245,7 +245,7 @@ do
     wait $pid 2> /dev/null
     trap - TERM
     [[ $sleep_pid ]] && kill $sleep_pid
-    
+
     trap 'sleep_pid=; kill $pid; log_error "$cat coprocess 3 hung"' TERM
     { sleep 5; kill $$; } &
     sleep_pid=$!

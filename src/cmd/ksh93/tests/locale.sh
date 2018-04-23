@@ -320,7 +320,7 @@ x=$"hello"
     print 'cat << \\EOF'
     for ((i=1; i < 164; i++))
     do    print 123456789+123456789+123456789+123456789+123456789
-    done 
+    done
     print $'next character is multibyte<2b|>c<3d|\>foo'
     for ((i=1; i < 10; i++))
     do    print 123456789+123456789+123456789+123456789+123456789

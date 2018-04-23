@@ -98,7 +98,7 @@ log_info 'TODO: This is a test for mkdir/cat/rmdir builtins. We should reenable 
 
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         nameref tst=tests[i]
-    
+
         # iterate over all names libast uses to emulate /dev/fd/$fd/<path>
         for devfd in \
             '/proc/$$/fd/${dirfd}/' \

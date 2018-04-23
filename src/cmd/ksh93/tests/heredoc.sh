@@ -512,7 +512,7 @@ $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"
 ++EOF++' || log_error 'command substitution on heredoc line causes syntax error'
 
 (
-    cat=$(whence -p cat) 
+    cat=$(whence -p cat)
     function foobar
     {
         $cat <<- XXX

@@ -680,7 +680,7 @@ arr2[1]=def
 
 unset foo
 typeset foo[7]
-[[ ${#foo[@]} == 0 ]] || log_error 'typeset foo[7] should not have one element' 
+[[ ${#foo[@]} == 0 ]] || log_error 'typeset foo[7] should not have one element'
 
 a=123 $SHELL  2> /dev/null -c 'integer a[5]=3 a[2]=4; unset a;x=0; ((a[++x]++));:' || log_error 'unsetting array variable leaves side effect'
 
@@ -721,7 +721,7 @@ x=$(
 [[ $x == "$exp" ]] || log_error 'setting element 1 of array to compound variable failed'
 
 #test for cloning a very large index array - can core dump
-(    
+(
     trap 'x=$?;exit $(( $x!=0 ))' EXIT
     $SHELL <<- \EOF
     (
@@ -778,11 +778,11 @@ arr5=(foo bar)
 
 typeset -A Foo
 Foo=( [a]=AA;[b]=BB)
-[[ ${Foo[a]} == AA ]] || log_error 'Fooa[a] is {Foo[a]} not AA' 
+[[ ${Foo[a]} == AA ]] || log_error 'Fooa[a] is {Foo[a]} not AA'
 
 $SHELL 2> /dev/null  <<- \+++ || log_error '${ar[${a}..${b}]} not working'
     typeset -a ar=([0]=a [1]=b [2]=c)
-    integer a=1 b=2 
+    integer a=1 b=2
     [[ ${ar[${a}..${b}]} == 'b c' ]]
 +++
 
@@ -807,7 +807,7 @@ IFS=$'\n' read -rd '' -A ar <<< $'a\nb\nc\nd\ne\nf'
 b=(a b c d e f '')
 [[ $(print -v ar) == "$(print -v b)" ]] || log_error 'read -d"" with IFS=\n not working'
 
-$SHELL 2> /dev/null -c 'a=(foo bar); [[ $(typeset -a) == *"a=("*")"* ]]' || log_error '"typeset -a" not working' 
+$SHELL 2> /dev/null -c 'a=(foo bar); [[ $(typeset -a) == *"a=("*")"* ]]' || log_error '"typeset -a" not working'
 
 ar=(9 11 6 3.5 22)
 set -s -A ar

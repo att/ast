@@ -758,7 +758,7 @@ $SHELL -c 'unset .sh' 2> /dev/null
 [[ $? == 1 ]] || log_error 'unset .sh should return 1'
 
 x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
-[[ $x == 'foo '* ]] || log_error 'foo not included in ${!foo*}' 
+[[ $x == 'foo '* ]] || log_error 'foo not included in ${!foo*}'
 
 [[ ${!.sh.sig@} == *.sh.sig.pid* ]]  ||  log_error '.sh.sig.pid not in ${!.sh.sig@]}'
 [[ ${!.sh.sig@} == *.sh.sig.status* ]]  ||  log_error '.sh.sig.status not in ${!.sh.sig@]}'

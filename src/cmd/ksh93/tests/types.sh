@@ -353,7 +353,7 @@ expected=$'(\n\ttypeset -l -i h=0\n\tbenchcmd_t -a m\n\ttypeset -l -E o=0\n)'
 
 expected=$'Std_file_t db.file[/etc/profile]=(action=preserve;typeset -A sum=([8242e663d6f7bb4c5427a0e58e2925f3]=1);)'
 {
-  got=$($SHELL <<- \EOF 
+  got=$($SHELL <<- \EOF
 	MAGIC='stdinstall (at&t research) 2009-08-25'
 	typeset -T Std_file_t=(
 		typeset action
@@ -370,15 +370,15 @@ expected=$'Std_file_t db.file[/etc/profile]=(action=preserve;typeset -A sum=([82
 [[ $got == "$expected" ]] ||  log_error 'types with arrays of types as members fails'
 
 typeset -T x_t=(
-    integer dummy 
+    integer dummy
     function set
     {
         [[ ${.sh.name} == v ]] || log_error  "name=${.sh.name} should be v"
         [[ ${.sh.subscript} == 4 ]] || log_error "subscript=${.sh.subscript} should be 4"
         [[ ${.sh.value} == hello ]] || log_error  "value=${.sh.value} should be hello"
-    } 
+    }
 )
-x_t -a v 
+x_t -a v
 v[4]="hello"
 
 typeset -T oset=(
@@ -466,7 +466,7 @@ cat > B_t <<-  \EOF
 EOF
 
 unset n
-if n=$(FPATH=$PWD PATH=$PWD:$PATH $SHELL 2> /dev/null -c 'A_t a; print ${a.b.n}') 
+if n=$(FPATH=$PWD PATH=$PWD:$PATH $SHELL 2> /dev/null -c 'A_t a; print ${a.b.n}')
 then
     (( n==5 )) || log_error 'dynamic loading of types gives wrong result'
 else
@@ -502,7 +502,7 @@ else
 fi
 
 
-[[ $($SHELL -c 'typeset -T x=( typeset -a h ) ; x j; print -v j.h') ]] && log_error 'type with indexed array without elements inserts element 0' 
+[[ $($SHELL -c 'typeset -T x=( typeset -a h ) ; x j; print -v j.h') ]] && log_error 'type with indexed array without elements inserts element 0'
 
 [[ $($SHELL  -c 'typeset -T x=( integer -a s ) ; compound c ; x c.i ; c.i.s[4]=666 ; print -v c') == *'[0]'* ]] &&  log_error 'type with indexed array with non-zero element inserts element 0'
 
@@ -555,14 +555,14 @@ typeset -T b_t=(
     a_t b
 )
 compound b
-compound -a b.ca 
+compound -a b.ca
 b_t b.ca[4].b
 exp='typeset -C b=(typeset -C -a ca=( [4]=(b_t b=(a_t b=(a=hello)))))'
 got=$(typeset -p b)
 [[ $got == "$exp" ]] || log_error 'typeset -p of nested type not correct'
 
 typeset -T u_t=(
-    integer dummy 
+    integer dummy
     unset()
     {
         print unset
@@ -630,7 +630,7 @@ function main
     for ((i=2 ; i < 8 ; i++ )) ; do
         pawn_t c.board[1][$i]
     done
-    
+
 }
 main 2> /dev/null && log_error 'type assignment to compound array instance should generate an error'
 
@@ -677,7 +677,7 @@ c.ar[a].cinit fifo_a
 c.ar[b].cinit fifo_b
 [[ ${c.ar[a].fifo_name} == fifo_a ]] || log_error 'fifo_name c.ar[a] not fifo_a'
 [[ ${c.ar[b].fifo_name} == fifo_b ]] || log_error 'fifo_name c.ar[b] not fifo_b'
-[[ ${c.ar[a].in_fd} == "${c.ar[b].in_fd}" ]] && log_error 'c.ar[a].in_fd and c.ar[b].in_fd are the same' 
+[[ ${c.ar[a].in_fd} == "${c.ar[b].in_fd}" ]] && log_error 'c.ar[a].in_fd and c.ar[b].in_fd are the same'
 redirect  {c.ar[a].in_fd}<&-
 redirect  {c.ar[b].in_fd}<&-
 redirect  {c.ar[a].out_fd}>&-
@@ -686,7 +686,7 @@ rm -f fifo_a fifo_b
 
 typeset -T Z_t=(compound -a x)
 Z_t z
-[[ $(typeset -p z.x) ==  *'-C -a'* ]] || log_error 'typeset -p for compound array element not displaying attributes'  
+[[ $(typeset -p z.x) ==  *'-C -a'* ]] || log_error 'typeset -p for compound array element not displaying attributes'
 
 out='foo f 123'
 typeset -T bam_t=(
@@ -717,14 +717,14 @@ $SHELL  2> /dev/null <<- \EOF || log_error 'typeset -p with types not working'
 	typeset -T Man_t=( typeset X)
 	Man_t Man
 	function bootstrap { : ;}
-	[[ $(typeset -p) == *Man_t* ]] 2> /dev/null 
+	[[ $(typeset -p) == *Man_t* ]] 2> /dev/null
 EOF
 
 typeset -T zz_t=( compound -a bar )
 (
 exp="$(
-        compound c=( zz_t d ) 
-        integer c.d.bar[4][6][8].b=789 
+        compound c=( zz_t d )
+        integer c.d.bar[4][6][8].b=789
         print -v c)"
 read -C got  <<< "$exp"
 [[ $got == "$exp" ]] || log_error 'read -C for compound variable containing a type not working correctly'
@@ -888,7 +888,7 @@ yy_t y
 ing _.__ not working as ${var.function}'
 
 typeset -T pp_t=( integer fd ;
-      function pinit { print $(( _.fd=$1 )) ;} 
+      function pinit { print $(( _.fd=$1 )) ;}
 )
 compound c
 pp_t -a c.pl
@@ -902,7 +902,7 @@ p_t --man'
 export FPATH=$TEST_DIR/fundir
 mkdir -p $FPATH
 print 'typeset -T My_t=(integer i j)' > $FPATH/My_t
-$SHELL 2> /dev/null -c 'My_t a=(i=1 j=2); [[ "${a.i} ${a.j}" == "1 2" ]]' || 
+$SHELL 2> /dev/null -c 'My_t a=(i=1 j=2); [[ "${a.i} ${a.j}" == "1 2" ]]' ||
     log_error "dynamic loading of type with assignment fails"
 
 $SHELL 2> /dev/null -c 'typeset -T My_t=(readonly x); My_t foo' && log_error 'unset type subvariables defined as readonly are required to be specified for each type instance'
