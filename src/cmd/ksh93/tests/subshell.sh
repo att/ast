@@ -407,7 +407,9 @@ do
                         wait $m
                         h=$?
                         kill -9 $k
-                        wait $k
+                        # Suppress messages like this from the test log:
+                        # /tmp/ksh.subshell.7fgw2W8/subshell.sh[475]: wait: 8737: Killed
+                        wait $k 2> /dev/null
                         got=$(<$TEST_DIR/out)
                         if [[ ! $got ]] && (( h ))
                         then
@@ -690,7 +692,10 @@ print 'print foo' > $TEST_DIR/bin$$/foo
 chmod +x  $TEST_DIR/bin$$/foo
 : $(type foo)
 : ${ PATH=$TEST_DIR/bin$$:$PATH;}
-[[ $(whence foo) == "$TEST_DIR/bin$$/foo" ]] || log_error '${...PATH=...} does not preserve PATH bindings'
+actual=$(whence foo 2> /dev/null)
+expect="$TEST_DIR/bin$$/foo"
+[[ $actual == $expect ]] ||
+    log_error '${...PATH=...} does not preserve PATH bindings' "$expect" "$actual"
 
 > $TEST_DIR/log
 function A
