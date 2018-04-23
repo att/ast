@@ -901,15 +901,19 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
                 opath = arg0;
             }
             path_spawn(shp, opath, argv, envp, libpath, 0);
+            // Command exists but failed to exec
+            if (shp->path_err != ENOENT) {
+                // Exit with status 126
+                // https://github.com/att/ast/issues/485
+                ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
+                errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_found, arg0);
+            }
             while (pp && (pp->flags & PATH_FPATH)) pp = path_nextcomp(shp, pp, arg0, 0);
         } while (pp);
-    // Force an exit.
+
+    // Command not found, force an exit.
     ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
-    if ((errno = shp->path_err) == ENOENT) {
-        errormsg(SH_DICT, ERROR_exit(ERROR_NOENT), e_found, arg0);
-    } else {
-        errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
-    }
+    errormsg(SH_DICT, ERROR_exit(ERROR_NOENT), e_found, arg0);
 }
 
 #ifdef SPAWN_cwd
