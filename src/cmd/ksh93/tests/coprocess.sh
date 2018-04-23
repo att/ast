@@ -91,7 +91,7 @@ do
     done
     kill $(jobs -p) 2>/dev/null
     
-    file=$tmp/regress
+    file=$TEST_DIR/regress
     $cat > $file  <<-!
 	$cat |&
 	!
@@ -311,9 +311,9 @@ exp='no coprocess'
 
 (
 cop |&
-print $! > $tmp/pid
+print $! > $TEST_DIR/pid
 )
-pid=$(<$tmp/pid)
+pid=$(<$TEST_DIR/pid)
 if print -p yo 2>/dev/null
 then
     read -p got
@@ -327,9 +327,9 @@ wait
 
 (
 cop |&
-print $! > $tmp/pid
+print $! > $TEST_DIR/pid
 )
-pid=$(<$tmp/pid)
+pid=$(<$TEST_DIR/pid)
 (
 if print -p yo 2>/dev/null
 then

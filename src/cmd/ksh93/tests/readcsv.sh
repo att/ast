@@ -18,8 +18,8 @@
 #                                                                      #
 ########################################################################
 
-tmp1=$tmp/tmp1.csv
-tmp2=$tmp/tmp2.csv
+tmp1=$TEST_DIR/tmp1.csv
+tmp2=$TEST_DIR/tmp2.csv
 cat > $tmp1 <<- \EOF
 	CAT,"CVE CCODE","NECA OCN",ST,LATA,AP,"New InterState
 	Orig","New Inter""""State

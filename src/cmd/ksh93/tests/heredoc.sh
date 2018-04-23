@@ -18,8 +18,8 @@
 #                                                                      #
 ########################################################################
 
-f=$tmp/here1
-g=$tmp/here2
+f=$TEST_DIR/here1
+g=$TEST_DIR/here2
 cat > $f <<!
 hello world
 !
@@ -262,8 +262,8 @@ abc
 EOF)
 [[ $got == abc ]] || log_error 'line continuation at start of buffer not working'
 
-tmpfile1=$tmp/file1
-tmpfile2=$tmp/file2
+tmpfile1=$TEST_DIR/file1
+tmpfile2=$TEST_DIR/file2
 function gendata
 {
     typeset -RZ3 i
@@ -304,8 +304,8 @@ tst $line $LINENO <<"!" # this comment affects LINENO #
 
 [[ $($SHELL -c 'wc -c <<< ""' 2> /dev/null) == *1 ]] || log_error '<<< with empty string not working'
 
-mkdir $tmp/functions
-cat > $tmp/functions/t2 <<\!!!
+mkdir $TEST_DIR/functions
+cat > $TEST_DIR/functions/t2 <<\!!!
 function t2
 {
 cat <<EOF | sed 's/1234567890/qwertyuiopasdfghj/'
@@ -314,7 +314,7 @@ EOF
 }
 !!!
 
-FPATH=$tmp/functions
+FPATH=$TEST_DIR/functions
 foo=${
 cat <<EOF
 1 34567890 $(t2 1234567890 ) 0123456789012345678901234567890123
@@ -504,8 +504,8 @@ EOF
 $SHELL $f > $g
 [[ $(grep meep $g | grep -v foobar) != '' ]] && log_error 'here-doc loosing $var expansions on boundaries in rare cases'
 
-print foo > $tmp/foofile
-x=$( $SHELL 2> /dev/null 'read <<< $(<'"$tmp"'/foofile) 2> /dev/null;print -r "$REPLY"')
+print foo > $TEST_DIR/foofile
+x=$( $SHELL 2> /dev/null 'read <<< $(<'"$TEST_DIR"'/foofile) 2> /dev/null;print -r "$REPLY"')
 [[ $x == foo ]] || log_error '<<< $(<file) not working'
 
 $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"

@@ -101,8 +101,8 @@ do
         set -- $(printf %.'$(($BS*$nb))'c x | dd bs='$bs')
         print ${#1}
         kill $!
-    ' > $tmp/sub 2>/dev/null
-    no=$(<$tmp/sub)
+    ' > $TEST_DIR/sub 2>/dev/null
+    no=$(<$TEST_DIR/sub)
     (( no == (BS * nb) )) || log_error "shell hangs on command substitution output size >= $BS*$nb with write size $bs -- expected $((BS*nb)), got ${no:-0}"
 done
 
@@ -118,8 +118,8 @@ do
         set -- $(printf %.'$(($BS*$nb))'c x | dd bs='$bs' 2>/dev/null)
         print ${#1}
         kill $!
-    ' > $tmp/sub 2>/dev/null
-    no=$(<$tmp/sub)
+    ' > $TEST_DIR/sub 2>/dev/null
+    no=$(<$TEST_DIR/sub)
     (( no == (BS * nb) )) || log_error "shell hangs on command substitution output size >= $BS*$nb with write size $bs and trailing redirection -- expected $((BS*nb)), got ${no:-0}"
 done
 
@@ -351,10 +351,10 @@ INS=(  ""  "builtin cat; "  "builtin -d cat $bincat; "  ": > /dev/null; "  )
 APP=(  ""  "; :"  )
 TST=(
     ( CMD='print foo | $cat'            EXP=3        )
-    ( CMD='$cat < $tmp/lin'                        )
-    ( CMD='cat $tmp/lin | $cat'                    )
-    ( CMD='read v < $tmp/buf; print $v'        LIM=4*1024    )
-    ( CMD='cat $tmp/buf | read v; print $v'        LIM=4*1024    )
+    ( CMD='$cat < $TEST_DIR/lin'                        )
+    ( CMD='cat $TEST_DIR/lin | $cat'                    )
+    ( CMD='read v < $TEST_DIR/buf; print $v'        LIM=4*1024    )
+    ( CMD='cat $TEST_DIR/buf | read v; print $v'        LIM=4*1024    )
 )
 
 if cat /dev/fd/3 3</dev/null >/dev/null 2>&1 || whence mkfifo > /dev/null
@@ -365,7 +365,7 @@ then
 fi
 
 # Prime the two data files to 512 bytes each
-# $tmp/lin has newlines every 16 bytes and $tmp/buf has no newlines
+# $TEST_DIR/lin has newlines every 16 bytes and $TEST_DIR/buf has no newlines
 # the outer loop doubles the file size at top
 
 buf=$'1234567890abcdef'
@@ -376,16 +376,16 @@ do
     lin=$lin$lin
 done
 
-print -n "$buf" > $tmp/buf
-print -n "$lin" > $tmp/lin
+print -n "$buf" > $TEST_DIR/buf
+print -n "$lin" > $TEST_DIR/lin
 
 unset SKIP
 for ((n=1024; n<=1024*1024; n*=2))
 do
-    cat $tmp/buf $tmp/buf > $tmp/tmp
-    mv $tmp/tmp $tmp/buf
-    cat $tmp/lin $tmp/lin > $tmp/tmp
-    mv $tmp/tmp $tmp/lin
+    cat $TEST_DIR/buf $TEST_DIR/buf > $TEST_DIR/tmp
+    mv $TEST_DIR/tmp $TEST_DIR/buf
+    cat $TEST_DIR/lin $TEST_DIR/lin > $TEST_DIR/tmp
+    mv $TEST_DIR/tmp $TEST_DIR/lin
     for ((S=0; S<${#SUB[@]}; S++))
     do
         for ((C=0; C<${#CAT[@]}; C++))
@@ -400,7 +400,7 @@ do
                     #undent...#
                     if [[ ! ${SKIP[S][C][I][A][T]} ]]
                     then
-                        eval "{ x=${SUB[S].BEG}${INS[I]}${TST[T].CMD}${APP[A]}${SUB[S].END}; print \${#x}; } >\$tmp/out &"
+                        eval "{ x=${SUB[S].BEG}${INS[I]}${TST[T].CMD}${APP[A]}${SUB[S].END}; print \${#x}; } >\$TEST_DIR/out &"
                         m=$!
                         { sleep 4; kill -9 $m; } &
                         k=$!
@@ -408,7 +408,7 @@ do
                         h=$?
                         kill -9 $k
                         wait $k
-                        got=$(<$tmp/out)
+                        got=$(<$TEST_DIR/out)
                         if [[ ! $got ]] && (( h ))
                         then
                             got=HUNG
@@ -427,8 +427,8 @@ do
                             SKIP[S][C][I][A][T]=1
                             siz=$(printf $'%#i' $exp)
                             cmd=${TST[T].CMD//\$cat/$cat}
-                            cmd=${cmd//\$tmp\/buf/$siz.buf}
-                            cmd=${cmd//\$tmp\/lin/$siz.lin}
+                            cmd=${cmd//\$TEST_DIR\/buf/$siz.buf}
+                            cmd=${cmd//\$TEST_DIR\/lin/$siz.lin}
                             log_error "'x=${SUB[S].BEG}${INS[I]}${cmd}${APP[A]}${SUB[S].END} && print \${#x}' failed -- expected '$exp', got '$got'"
                         elif [[ ${TST[T].EXP} ]] || (( TST[T].LIM >= n ))
                         then
@@ -447,7 +447,7 @@ done
 # specifics -- there's more?
 
 {
-    cmd='{ exec 5>/dev/null; print "$(eval ls -d . 2>&1 1>&5)"; } >$tmp/out &'
+    cmd='{ exec 5>/dev/null; print "$(eval ls -d . 2>&1 1>&5)"; } >$TEST_DIR/out &'
     eval $cmd
     m=$!
     { sleep 4; kill -9 $m; } &
@@ -456,7 +456,7 @@ done
     h=$?
     kill -9 $k
     wait $k
-    got=$(<$tmp/out)
+    got=$(<$TEST_DIR/out)
 } 2>/dev/null
 exp=''
 if [[ ! $got ]] && (( h ))
@@ -588,7 +588,7 @@ EOF
 
 true=$(whence -p true)
 date=$(whence -p date)
-tmpf=$tmp/foo
+tmpf=$TEST_DIR/foo
 function fun1
 {
     $true
@@ -685,26 +685,26 @@ fun()
 }
 [[ `fun 2>&1` == 'stdout=foostderr=foo' ]] || log_error 'nested command substitution with 2>&1 not working'
 
-mkdir $tmp/bin$$
-print 'print foo' > $tmp/bin$$/foo
-chmod +x  $tmp/bin$$/foo
+mkdir $TEST_DIR/bin$$
+print 'print foo' > $TEST_DIR/bin$$/foo
+chmod +x  $TEST_DIR/bin$$/foo
 : $(type foo)
-: ${ PATH=$tmp/bin$$:$PATH;}
-[[ $(whence foo) == "$tmp/bin$$/foo" ]] || log_error '${...PATH=...} does not preserve PATH bindings'
+: ${ PATH=$TEST_DIR/bin$$:$PATH;}
+[[ $(whence foo) == "$TEST_DIR/bin$$/foo" ]] || log_error '${...PATH=...} does not preserve PATH bindings'
 
-> $tmp/log
+> $TEST_DIR/log
 function A
 {
-    trap 'print TRAP A >> $tmp/log' EXIT
+    trap 'print TRAP A >> $TEST_DIR/log' EXIT
     print >&2
 }
 function B
 {
-    trap 'print TRAP B >> $tmp/log' EXIT
+    trap 'print TRAP B >> $TEST_DIR/log' EXIT
     A
 }
 x=${ ( B ) ; }
-[[ $(<$tmp/log) ==  *'TRAP A'*'TRAP B'* ]] || log_error 'trap A and trap B not both executed'
+[[ $(<$TEST_DIR/log) ==  *'TRAP A'*'TRAP B'* ]] || log_error 'trap A and trap B not both executed'
 
 function foo
 {
@@ -736,7 +736,7 @@ foo() {
 o1=$(foo "foo") && log_error 'function which fails inside commad substitution should return non-zero exit status for assignments'
 
 # test for larg `` command substitutions
-tmpscr=$tmp/xxx.sh
+tmpscr=$TEST_DIR/xxx.sh
 print 'x=` print -n '"'" > $tmpscr
 integer i
 for ((i=0; i < 4000; i++))

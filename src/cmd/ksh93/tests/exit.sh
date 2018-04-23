@@ -29,9 +29,12 @@ function abspath
 
 # Test for proper exit of shell
 
+# This would be gratuitous since our CWD should be $TEST_DIR but the `cd ~-` below requires we do
+# this for it to succeed.
+cd $TEST_DIR || { err_exit "cd $TEST_DIR failed"; exit 1; }
+
 # builtin getconf
 ABSHELL=$(abspath)
-cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 print exit 0 >.profile
 ${ABSHELL}  <<!
 HOME=$PWD \
@@ -71,6 +74,7 @@ then
 fi
 
 cd ~- || log_error "cd back failed"
+
 $SHELL -c 'builtin -f cmd getconf; getconf --"?-version"; exit 0' >/dev/null 2>&1 || log_error 'ksh plugin exit failed -- was ksh built with CCFLAGS+=$(CC.EXPORT.DYNAMIC)?'
 
 log_info 'TODO: RHBZ#1117316 - Fix and enable this test case.'

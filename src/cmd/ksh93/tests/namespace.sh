@@ -33,27 +33,27 @@ function fun
     print global fun $foo
 }
 
-mkdir -p $tmp/global/bin $tmp/local/bin
-cat > $tmp/global/xfun <<- \EOF
+mkdir -p $TEST_DIR/global/bin $TEST_DIR/local/bin
+cat > $TEST_DIR/global/xfun <<- \EOF
     function xfun
     {
         print xfun global $foo
     }
 EOF
 
-cat > $tmp/local/xfun <<- \EOF
+cat > $TEST_DIR/local/xfun <<- \EOF
     function xfun
     {
         print xfun local $foo
     }
 EOF
 
-chmod +x "$tmp/global/xfun" "$tmp/local/xfun"
-print 'print local prog $1' >  $tmp/local/bin/run
-print 'print global prog $1' >  $tmp/global/bin/run
-chmod +x "$tmp/local/bin/run" "$tmp/global/bin/run"
-PATH=$tmp/global/bin:$PATH
-FPATH=$tmp/global
+chmod +x "$TEST_DIR/global/xfun" "$TEST_DIR/local/xfun"
+print 'print local prog $1' >  $TEST_DIR/local/bin/run
+print 'print global prog $1' >  $TEST_DIR/global/bin/run
+chmod +x "$TEST_DIR/local/bin/run" "$TEST_DIR/global/bin/run"
+PATH=$TEST_DIR/global/bin:$PATH
+FPATH=$TEST_DIR/global
 
 namespace x
 {
@@ -80,8 +80,8 @@ false
     {
         run $1
     }
-    PATH=$tmp/local/bin:/bin
-    FPATH=$tmp/local
+    PATH=$TEST_DIR/local/bin:/bin
+    FPATH=$TEST_DIR/local
     [[ $(runxrun) ==  'xfun local bar' ]] || log_error 'local function on FPATH failed'
     [[ $(runrun $foo) ==  'local prog bar' ]] || log_error 'local binary on PATH failed'
 }

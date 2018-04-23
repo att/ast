@@ -495,7 +495,7 @@ i=2
 unset i; typeset -i i=01-2
 (( i == -1 )) || log_error "01-2 is not -1"
 
-cat > $tmp/script <<-\!
+cat > $TEST_DIR/script <<-\!
 tests=$*
 typeset -A blop
 function blop.get
@@ -543,14 +543,14 @@ function mkobj
 
 mkobj bla
 !
-chmod +x $tmp/script
-[[ $($tmp/script 1) != '( bar=2 baz=3 foo=1 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 2) != '( faz=0 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 3) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 4) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 5) != '( fuz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 6) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
-[[ $($tmp/script 7) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+chmod +x $TEST_DIR/script
+[[ $($TEST_DIR/script 1) != '( bar=2 baz=3 foo=1 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 2) != '( faz=0 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 3) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 4) != '( foz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 5) != '( fuz=777 )' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 6) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
+[[ $($TEST_DIR/script 7) != '0' ]] 2>/dev/null && log_error 'compound var arithmetic failed'
 unset foo
 typeset -F1 foo=123456789.19
 [[ $foo == 123456789.2 ]] || log_error 'typeset -F1 not working correctly'

@@ -102,8 +102,6 @@ alias test_case='test_case $LINENO'
 
 unset undefined
 
-cd $tmp || { log_error "cd $tmp failed"; exit 1; }
-
 export LC_COLLATE=C
 touch B b
 set -- *

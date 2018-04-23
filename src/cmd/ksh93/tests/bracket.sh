@@ -24,8 +24,8 @@ then
     log_error "-z: null string should be of zero length"
 fi
 
-file=$tmp/original
-newer_file=$tmp/newer
+file=$TEST_DIR/original
+newer_file=$TEST_DIR/newer
 if [[ -z $file ]]
 then
     log_error "-z: $file string should not be of zero length"
@@ -170,14 +170,14 @@ then
     log_error "$newer_file should be newer than $file"
 fi
 
-if [[ $file != $tmp/* ]]
+if [[ $file != $TEST_DIR/* ]]
 then
-    log_error "$file should match $tmp/*"
+    log_error "$file should match $TEST_DIR/*"
 fi
 
-if [[ $file == $tmp'/*' ]]
+if [[ $file == $TEST_DIR'/*' ]]
 then
-    log_error "$file should not equal $tmp'/*'"
+    log_error "$file should not equal $TEST_DIR'/*'"
 fi
 
 [[ ! ( ! -z $null && ! -z x) ]]    || log_error "negation and grouping"
@@ -306,13 +306,13 @@ done
 [[ D290.2003.02.16.temp == D290.+(2003.02.16).temp* ]] || log_error 'pattern match bug with +(...)'
 rm -rf $file
 {
-[[ -N $file ]] && log_error 'test -N $tmp/*: st_mtime>st_atime after creat'
+[[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after creat'
 sleep 2
 print 'hello world'
-[[ -N $file ]] || log_error 'test -N $tmp/*: st_mtime<=st_atime after write'
+[[ -N $file ]] || log_error 'test -N $TEST_DIR/*: st_mtime<=st_atime after write'
 sleep 2
 read
-[[ -N $file ]] && log_error 'test -N $tmp/*: st_mtime>st_atime after read'
+[[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after read'
 } > $file < $file
 if rm -rf "$file" && ln -s / "$file"
 then

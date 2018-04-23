@@ -60,11 +60,11 @@ PATH=$p
 (PATH="/bin")
 [[ $($SHELL -c 'print -r -- "$PATH"') == "$PATH" ]] || log_error 'export PATH lost in subshell'
 cat > bug1 <<- EOF
-	print print ok > $tmp/ok
-	chmod 755 $tmp/ok
+	print print ok > $TEST_DIR/ok
+	chmod 755 $TEST_DIR/ok
 	function a
 	{
-		typeset -x PATH=$tmp
+		typeset -x PATH=$TEST_DIR
 		ok
 	}
 	path=\$PATH
@@ -253,7 +253,7 @@ then
 
 fi
 
-PATH=/dev:$tmp
+PATH=/dev:$TEST_DIR
 x=$(whence rm)
 typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
@@ -282,7 +282,7 @@ status=$($SHELL -c $'trap \'print $?\' ERR;/dev/null 2> /dev/null')
 
 PATH=$path
 
-scr=$tmp/script
+scr=$TEST_DIR/script
 exp=126
 
 : > $scr
@@ -313,7 +313,7 @@ got=$($SHELL -c "command $scr; print \$?" 2>/dev/null)
 [[ "$got" == "$exp" ]] || log_error "\$SHELL -c of command of unreadable non-empty script should fail -- expected $exp, got" $got
 
 # whence -a bug fix
-cd "$tmp"
+cd "$TEST_DIR"
 ifs=$IFS
 IFS=$'\n'
 PATH=$PATH:
@@ -387,14 +387,14 @@ FPATH=/foobar:
 PATH=$FPATH:$PATH:.
 [[ $(user_to_group_relationship.hdr.query foobar) == foobar ]] 2> /dev/null || log_error 'Cannot execute command with . in name when PATH and FPATH end in :.'
 
-mkdir -p $tmp/new/bin
-mkdir $tmp/new/fun
-print FPATH=../fun > $tmp/new/bin/.paths
-print FPATH=../xxfun > $tmp/bin/.paths
-cp "$(whence -p echo)" $tmp/new/bin
-PATH=$tmp/bin:$tmp/new/bin:$PATH
+mkdir -p $TEST_DIR/new/bin
+mkdir $TEST_DIR/new/fun
+print FPATH=../fun > $TEST_DIR/new/bin/.paths
+print FPATH=../xxfun > $TEST_DIR/bin/.paths
+cp "$(whence -p echo)" $TEST_DIR/new/bin
+PATH=$TEST_DIR/bin:$TEST_DIR/new/bin:$PATH
 x=$(whence -p echo 2> /dev/null)
-[[ $x == "$tmp/new/bin/echo" ]] ||  log_error 'nonexistant FPATH directory in .paths file causes path search to fail'
+[[ $x == "$TEST_DIR/new/bin/echo" ]] ||  log_error 'nonexistant FPATH directory in .paths file causes path search to fail'
 
 $SHELL 2> /dev/null <<- \EOF || log_error 'path search problem with non-existant directories in PATH'
 	PATH=/usr/nogood1/bin:/usr/nogood2/bin:/bin:/usr/bin

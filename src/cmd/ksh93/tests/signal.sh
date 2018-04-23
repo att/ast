@@ -424,9 +424,9 @@ then
     typeset m  # used in child processes
     integer pid=$$ p i numchildren=64
 
-    ( (sleep 30; kill $pid 2> /dev/null) & ; print $! >$tmp/wd_pid ) &
+    ( (sleep 30; kill $pid 2> /dev/null) & ; print $! >$TEST_DIR/wd_pid ) &
     sleep 0.2
-    watchdog_pid=$(< $tmp/wd_pid)
+    watchdog_pid=$(< $TEST_DIR/wd_pid)
 
     for (( p=0; p < numchildren; p++ ))
     do

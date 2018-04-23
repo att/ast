@@ -56,11 +56,16 @@ then
     log_error 'case abc {...} not working'
 fi
 
-[[ $($SHELL -c 'case a in
-a)      print -n a > /dev/null ;&
-b)      print b;;
-esac') != b ]] && log_error 'bug in ;& at end of script'
-[[ $(VMDEBUG=1 $SHELL -c '
+actual=$($SHELL -c '
+    case a in
+    a) print -n a > /dev/null ;&
+    b) print b ;;
+    esac
+    ')
+expect=b
+[[ $actual == $expect ]] || log_error 'bug in ;& at end of script' "$expect" "$actual"
+
+actual=$($SHELL -c '
     tmp=foo
     for i in a b
     do    case $i in
@@ -72,7 +77,9 @@ esac') != b ]] && log_error 'bug in ;& at end of script'
             ;;
         esac
     done
-') == foo.h ]] || log_error "optimizer bug"
+    ')
+expect=foo.h
+[[ $actual == $expect ]] || log_error "optimizer bug" "$expect" "$actual"
 
 x=$($SHELL -ec 'case a in a) echo 1; false; echo 2 ;& b) echo 3;; esac')
 [[ $x == 1 ]] || log_error 'set -e ignored on case fail through'

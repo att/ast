@@ -41,9 +41,9 @@ fi
 
 [[ $($SHELL -D -c 'print hi; print $"hello"') == '"hello"' ]] || log_error 'ksh -D not working'
 
-env=$tmp/.env
+env=$TEST_DIR/.env
 print $'(print -u1 aha) &>/dev/null\n(print -u2 aha) &>/dev/null' > $env
-rc=$tmp/.kshrc
+rc=$TEST_DIR/.kshrc
 print $'PS1=""\nfunction env_hit\n{\n\tprint OK\n}' > $rc
 
 export ENV=/.$env
@@ -95,56 +95,56 @@ fi
 export ENV=
 if [[ -o privileged ]]
 then
-    [[ $(print env_hit | HOME=$tmp $SHELL 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL 2>&1) == "OK" ]] &&
         log_error 'privileged nointeractive shell reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL -E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL -E 2>&1) == "OK" ]] &&
         log_error 'privileged -E ignores empty $ENV'
-    [[ $(print env_hit | HOME=$tmp $SHELL +E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL +E 2>&1) == "OK" ]] &&
         log_error 'privileged +E reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --rc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --rc 2>&1) == "OK" ]] &&
         log_error 'privileged --rc ignores empty $ENV'
-    [[ $(print env_hit | HOME=$tmp $SHELL --norc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --norc 2>&1) == "OK" ]] &&
         log_error 'privileged --norc reads $HOME/.kshrc file'
 else
-    [[ $(print env_hit | HOME=$tmp $SHELL 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL 2>&1) == "OK" ]] &&
         log_error 'nointeractive shell reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL -E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL -E 2>&1) == "OK" ]] &&
         log_error '-E ignores empty $ENV'
-    [[ $(print env_hit | HOME=$tmp $SHELL +E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL +E 2>&1) == "OK" ]] &&
         log_error '+E reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --rc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --rc 2>&1) == "OK" ]] &&
         log_error '--rc ignores empty $ENV'
-    [[ $(print env_hit | HOME=$tmp $SHELL --norc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --norc 2>&1) == "OK" ]] &&
         log_error '--norc reads $HOME/.kshrc file'
 fi
 
 unset ENV
 if [[ -o privileged ]]
 then
-    [[ $(print env_hit | HOME=$tmp $SHELL 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL 2>&1) == "OK" ]] &&
         log_error 'privileged nointeractive shell reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL -E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL -E 2>&1) == "OK" ]] &&
         log_error 'privileged -E reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL +E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL +E 2>&1) == "OK" ]] &&
         log_error 'privileged +E reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --rc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --rc 2>&1) == "OK" ]] &&
         log_error 'privileged --rc reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --norc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --norc 2>&1) == "OK" ]] &&
         log_error 'privileged --norc reads $HOME/.kshrc file'
 else
-    [[ $(print env_hit | HOME=$tmp $SHELL 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL 2>&1) == "OK" ]] &&
         log_error 'nointeractive shell reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL -E 2>&1) == "OK" ]] ||
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL -E 2>&1) == "OK" ]] ||
         log_error '-E ignores $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL +E 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL +E 2>&1) == "OK" ]] &&
         log_error '+E reads $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --rc 2>&1) == "OK" ]] ||
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --rc 2>&1) == "OK" ]] ||
         log_error '--rc ignores $HOME/.kshrc file'
-    [[ $(print env_hit | HOME=$tmp $SHELL --norc 2>&1) == "OK" ]] &&
+    [[ $(print env_hit | HOME=$TEST_DIR $SHELL --norc 2>&1) == "OK" ]] &&
         log_error '--norc reads $HOME/.kshrc file'
 fi
 
-rm -rf $tmp/.kshrc
+rm -rf $TEST_DIR/.kshrc
 
 if command set -G 2> /dev/null
 then
@@ -212,7 +212,7 @@ else
 fi
 
 cd ~-
-rm -rf $tmp/.profile
+rm -rf $TEST_DIR/.profile
 
 # { exec interactive login_shell restricted xtrace } in the following test
 
@@ -408,7 +408,7 @@ got=$(
     print $'1\n2' |
     while read i
     do
-        if pipe $tmp
+        if pipe $TEST_DIR
         then
             { print -n $i; sleep 2; print -n $i; } &
         fi
@@ -417,11 +417,11 @@ got=$(
 )
 [[ $got == @((12|21)(12|21)) ]] || log_error "& job delayed by --pipefail, expected '$exp', got '$got'"
 $SHELL -c '[[ $- == *c* ]]' || log_error 'option c not in $-'
-> $tmp/.profile
+> $TEST_DIR/.profile
 
 for i in i l r s D E a b e f h k n t u v x B C G H
 do
-    HOME=$tmp ENV= $SHELL -$i >/dev/null 2>&1 <<- ++EOF++ || log_error "option $i not in \$-"
+    HOME=$TEST_DIR ENV= $SHELL -$i >/dev/null 2>&1 <<- ++EOF++ || log_error "option $i not in \$-"
 	[[ \$- == *$i* ]] || exit 1
 	++EOF++
 done
@@ -432,14 +432,14 @@ for i in interactive login restricted allexport notify errexit \
     noglob trackall keyword noexec nounset verbose xtrace braceexpand \
     noclobber globstar rc
 do
-    HOME=$tmp ENV= $SHELL -o $i >/dev/null 2>&1 <<- ++EOF++ || log_error "option $i not equivalent to ${letters:j:1}"
+    HOME=$TEST_DIR ENV= $SHELL -o $i >/dev/null 2>&1 <<- ++EOF++ || log_error "option $i not equivalent to ${letters:j:1}"
 	[[ \$- == *${letters:j:1}* ]] || exit 1
 	++EOF++
     ((j++))
 done
 
 export ENV= PS1="(:$$:)"
-histfile=$tmp/history
+histfile=$TEST_DIR/history
 exp=$(HISTFILE=$histfile $SHELL -c $'function foo\n{\ncat\n}\ntype foo')
 for var in HISTSIZE HISTFILE
 do
@@ -466,7 +466,7 @@ PAR=(
 CMD=(    command-kill    script-kill    )
 ADD=(    ''        '; :'        )
 
-cd $tmp
+cd $TEST_DIR
 print $'#!'$SHELL$'\nkill -KILL $$' > command-kill
 print $'kill -KILL $$' > script-kill
 chmod +x command-kill script-kill

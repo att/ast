@@ -51,7 +51,6 @@ function empty_fifos {
 }
 alias empty_fifos='empty_fifos $LINENO'
 
-readonly tmp="$TEST_DIR"
 'log_info' -1 "TEST_DIR=$TEST_DIR"
 
 #

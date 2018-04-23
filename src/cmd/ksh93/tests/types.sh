@@ -104,13 +104,13 @@ x=(a b c)
 typeset -m x[1]=x[2]
 [[ ${x[1]} == c ]] || log_error 'move an indexed array element fails'
 [[ ${x[2]} ]] && log_error 'x[2] should be unset after move'
-cat > $tmp/types <<- \+++
+cat > $TEST_DIR/types <<- \+++
 	typeset -T Pt_t=(float x=1. y=0.)
 	Pt_t p=(y=2)
 	print -r -- ${p.y}
 +++
 expected=2
-got=$(. $tmp/types) 2>/dev/null
+got=$(. $TEST_DIR/types) 2>/dev/null
 [[ "$got" == "$expected" ]] || log_error "typedefs in dot script failed -- expected '$expected', got '$got'"
 typeset -T X_t=(
     typeset x=foo y=bar
@@ -451,7 +451,7 @@ y_t a b=(
 $SHELL 2> /dev/null -c 'true || { typeset -T Type_t=(typeset name=foo);
     Type_t z=(name=bar) ;}' || log_error 'unable to parse type command until typeset -T executes'
 
-cd "$tmp"
+cd "$TEST_DIR"
 FPATH=$PWD
 PATH=$PWD:$PATH
 cat > A_t <<-  \EOF
@@ -899,7 +899,7 @@ typeset -T p_t=( integer fd=-1 ; compound events=(  bool pollin=false ; );)
 p_t --man'
 [[ $? == 2 ]] || log_error 'unable to generated manpage for types that contain compound variables'
 
-export FPATH=$tmp/fundir
+export FPATH=$TEST_DIR/fundir
 mkdir -p $FPATH
 print 'typeset -T My_t=(integer i j)' > $FPATH/My_t
 $SHELL 2> /dev/null -c 'My_t a=(i=1 j=2); [[ "${a.i} ${a.j}" == "1 2" ]]' || 

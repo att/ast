@@ -50,7 +50,6 @@ fi
 
 pwd=$PWD
 [[ $SHELL != /* ]] && SHELL=$pwd/$SHELL
-cd $tmp || { log_error "cd $tmp failed"; exit 1; }
 um=$(umask -S)
 ( umask 0777; > foobar )
 rm -f foobar
@@ -127,12 +126,12 @@ then
 fi
 
 cd ~- || log_error "cd back failed"
-cat > $tmp/script <<- !
+cat > $TEST_DIR/script <<- !
     #! $SHELL
     print -r -- \$0
 !
-chmod 755 $tmp/script
-if [[ $($tmp/script) != "$tmp/script" ]]
+chmod 755 $TEST_DIR/script
+if [[ $($TEST_DIR/script) != "$TEST_DIR/script" ]]
 then
     log_error '$0 not correct for #! script'
 fi
@@ -161,9 +160,9 @@ fi
 ( sleep 2; cat <<!
 foobar
 !
-) | cat > $tmp/foobar &
+) | cat > $TEST_DIR/foobar &
 wait $!
-foobar=$( < $tmp/foobar)
+foobar=$( < $TEST_DIR/foobar)
 if [[ $foobar != foobar ]]
 then
     log_error "$foobar is not foobar"
@@ -173,34 +172,34 @@ fi
     print foo
     /bin/echo bar
     print bam
-} > $tmp/foobar
-if [[ $( < $tmp/foobar) != $'foo\nbar\nbam' ]]
+} > $TEST_DIR/foobar
+if [[ $( < $TEST_DIR/foobar) != $'foo\nbar\nbam' ]]
 then
     log_error "output file pointer not shared correctly"
 fi
 
-cat > $tmp/foobar <<\!
+cat > $TEST_DIR/foobar <<\!
     print foo
     /bin/echo bar
     print bam
 !
-chmod +x $tmp/foobar
-if [[ $($tmp/foobar) != $'foo\nbar\nbam' ]]
+chmod +x $TEST_DIR/foobar
+if [[ $($TEST_DIR/foobar) != $'foo\nbar\nbam' ]]
 then
     log_error "script not working"
 fi
 
-if [[ $($tmp/foobar | /bin/cat) != $'foo\nbar\nbam' ]]
+if [[ $($TEST_DIR/foobar | /bin/cat) != $'foo\nbar\nbam' ]]
 then
     log_error "script | cat not working"
 fi
 
-if [[ $( $tmp/foobar) != $'foo\nbar\nbam' ]]
+if [[ $( $TEST_DIR/foobar) != $'foo\nbar\nbam' ]]
 then
     log_error "output file pointer not shared correctly"
 fi
 
-rm -f $tmp/foobar
+rm -f $TEST_DIR/foobar
 x=$( (print foo) ; (print bar) )
 if [[ $x != $'foo\nbar' ]]
 then
@@ -221,7 +220,7 @@ fi
 
 
 log_info 'TODO: Skipping test "builtin replaces standard input pipe"'
-#cat > $tmp/script <<\!
+#cat > $TEST_DIR/script <<\!
 #if [[ -p /dev/fd/0 ]]
 #then
 #    builtin cat
@@ -231,21 +230,21 @@ log_info 'TODO: Skipping test "builtin replaces standard input pipe"'
 #fi
 
 #!
-#chmod +x $tmp/script
-#case $( (print) | $tmp/script;:) in
+#chmod +x $TEST_DIR/script
+#case $( (print) | $TEST_DIR/script;:) in
 #ok)    ;;
 #no)    log_error "[[ -p /dev/fd/0 ]] fails for standard input pipe" ;;
 #*)    log_error "builtin replaces standard input pipe" ;;
 #esac
-print 'print $0' > $tmp/script
-print ". $tmp/script" > $tmp/scriptx
-chmod +x $tmp/scriptx
-if [[ $($tmp/scriptx) != $tmp/scriptx ]]
+print 'print $0' > $TEST_DIR/script
+print ". $TEST_DIR/script" > $TEST_DIR/scriptx
+chmod +x $TEST_DIR/scriptx
+if [[ $($TEST_DIR/scriptx) != $TEST_DIR/scriptx ]]
 then
     log_error '$0 not correct for . script'
 fi
 
-cd $tmp || { log_error "cd $tmp failed"; exit 1; }
+cd $TEST_DIR || { log_error "cd $TEST_DIR failed"; exit 1; }
 print ./b > ./a; print ./c > b; print ./d > c; print ./e > d; print "echo \"hello there\"" > e
 chmod 755 a b c d e
 x=$(./a)
@@ -293,34 +292,34 @@ then
     log_error "subshell in command substitution with 1 closed fails"
 fi
 
-cat > $tmp/script <<- \!
+cat > $TEST_DIR/script <<- \!
 read line 2> /dev/null
 print done
 
 !
-if [[ $($SHELL $tmp/script <&-) != done ]]
+if [[ $($SHELL $TEST_DIR/script <&-) != done ]]
 then
     log_error "executing script with 0 closed fails"
 fi
 
 trap '' INT
-cat > $tmp/script <<- \!
+cat > $TEST_DIR/script <<- \!
 trap 'print bad' INT
 kill -s INT $$
 print good
 !
-chmod +x $tmp/script
-if [[ $($SHELL  $tmp/script) != good ]]
+chmod +x $TEST_DIR/script
+if [[ $($SHELL  $TEST_DIR/script) != good ]]
 then
     log_error "traps ignored by parent not ignored"
 fi
 
 trap - INT
-cat > $tmp/script <<- \!
+cat > $TEST_DIR/script <<- \!
 read line
 /bin/cat
 !
-if [[ $($SHELL $tmp/script <<!
+if [[ $($SHELL $TEST_DIR/script <<!
 one
 two
 !
@@ -396,18 +395,18 @@ command exec 3<> /dev/null
 if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
 then
     [[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || log_error 'process substitution not working'
-    [[ $($SHELL -c  $'tee >(grep \'1$\' > '$tmp/scriptx$') > /dev/null <<-  \!!!
+    [[ $($SHELL -c  $'tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null <<-  \!!!
 	line0
 	line1
 	line2
 	!!!
     wait
-    cat '$tmp/scriptx 2> /dev/null)  == line1 ]] || log_error '>() process substitution fails'
-    > $tmp/scriptx
+    cat '$TEST_DIR/scriptx 2> /dev/null)  == line1 ]] || log_error '>() process substitution fails'
+    > $TEST_DIR/scriptx
     [[ $($SHELL -c  $'
     for i in 1
     do
-    tee >(grep \'1$\' > '$tmp/scriptx$') > /dev/null  <<-  \!!!
+    tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null  <<-  \!!!
 	line0
 	line1
 	line2
@@ -415,22 +414,22 @@ then
     done
 
     wait
-    cat '$tmp/scriptx 2>> /dev/null) == line1 ]] || log_error '>() process substitution fails in for loop'
+    cat '$TEST_DIR/scriptx 2>> /dev/null) == line1 ]] || log_error '>() process substitution fails in for loop'
     [[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
         log_error 'process substitution of compound commands not working'
 
     builtin tee 2> /dev/null
     for tee in "$(whence tee)" "$(whence -p tee)"
     do
-    print xxx > $tmp/file
-        $tee  >(sleep 1;cat > $tmp/file) <<< "hello" > /dev/null
-        [[ $(< $tmp/file) != hello ]] && log_error "process substitution does not wait for >() to complete with $tee"
-        print yyy > $tmp/file2
-        $tee >(cat > $tmp/file) >(sleep 1;cat > $tmp/file2) <<< "hello" > /dev/null
-        [[ $(< $tmp/file2) != hello ]] && log_error "process substitution does not wait for second of two >() to complete with $tee"
-        print xxx > $tmp/file
-        $tee  >(sleep 1;cat > $tmp/file) >(cat > $tmp/file2) <<< "hello" > /dev/null
-        [[ $(< $tmp/file) != hello ]] && log_error "process substitution does not wait for first of two >() to complete with $tee"
+    print xxx > $TEST_DIR/file
+        $tee  >(sleep 1;cat > $TEST_DIR/file) <<< "hello" > /dev/null
+        [[ $(< $TEST_DIR/file) != hello ]] && log_error "process substitution does not wait for >() to complete with $tee"
+        print yyy > $TEST_DIR/file2
+        $tee >(cat > $TEST_DIR/file) >(sleep 1;cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+        [[ $(< $TEST_DIR/file2) != hello ]] && log_error "process substitution does not wait for second of two >() to complete with $tee"
+        print xxx > $TEST_DIR/file
+        $tee  >(sleep 1;cat > $TEST_DIR/file) >(cat > $TEST_DIR/file2) <<< "hello" > /dev/null
+        [[ $(< $TEST_DIR/file) != hello ]] && log_error "process substitution does not wait for first of two >() to complete with $tee"
     done
 
     if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd* ]]
@@ -461,9 +460,9 @@ then
 fi
 
 [[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || log_error 'command -p not restricted'
-print cat >  $tmp/scriptx
-chmod +x $tmp/scriptx
-[[ $($SHELL -c "print foo | $tmp/scriptx ;:" 2> /dev/null ) == foo ]] || log_error 'piping into script fails'
+print cat >  $TEST_DIR/scriptx
+chmod +x $TEST_DIR/scriptx
+[[ $($SHELL -c "print foo | $TEST_DIR/scriptx ;:" 2> /dev/null ) == foo ]] || log_error 'piping into script fails'
 [[ $($SHELL -c 'X=1;print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 1 ]] || log_error 'x=1;${x:=$(..."...")} failure'
 [[ $($SHELL -c 'print -r -- ${X:=$(expr "a(0)" : '"'a*(\([^)]\))')}'" 2> /dev/null) == 0 ]] || log_error '${x:=$(..."...")} failure'
 if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
@@ -473,18 +472,18 @@ then
 fi
 
 exec 3> /dev/null
-print 'print foo "$@"' > $tmp/scriptx
-[[ $( print "($tmp/scriptx bar)" | $SHELL 2>/dev/null) == 'foo bar' ]] || log_error 'script pipe to shell fails'
-print "#! $SHELL" > $tmp/scriptx
-print 'print  -- $0' >> $tmp/scriptx
-chmod +x $tmp/scriptx
-[[ $($tmp/scriptx) == $tmp/scriptx ]] || log_error  "\$0 is $0 instead of $tmp/scriptx"
-cat > $tmp/scriptx <<- \EOF
+print 'print foo "$@"' > $TEST_DIR/scriptx
+[[ $( print "($TEST_DIR/scriptx bar)" | $SHELL 2>/dev/null) == 'foo bar' ]] || log_error 'script pipe to shell fails'
+print "#! $SHELL" > $TEST_DIR/scriptx
+print 'print  -- $0' >> $TEST_DIR/scriptx
+chmod +x $TEST_DIR/scriptx
+[[ $($TEST_DIR/scriptx) == $TEST_DIR/scriptx ]] || log_error  "\$0 is $0 instead of $TEST_DIR/scriptx"
+cat > $TEST_DIR/scriptx <<- \EOF
     myfilter() { x=$(print ok | cat); print  -r -- $SECONDS;}
     set -o pipefail
     sleep 3 | myfilter
 EOF
-(( $($SHELL $tmp/scriptx) > 2.0 )) && log_error 'command substitution causes pipefail option to hang'
+(( $($SHELL $TEST_DIR/scriptx) > 2.0 )) && log_error 'command substitution causes pipefail option to hang'
 exec 3<&-
 ( typeset -r foo=bar) 2> /dev/null || log_error 'readonly variables set in a subshell cannot unset'
 
@@ -628,15 +627,15 @@ then
 fi
 
 
-cat > $tmp/foo.sh <<- \EOF
+cat > $TEST_DIR/foo.sh <<- \EOF
     eval "cat > /dev/null  < /dev/null"
     sleep 1
 EOF
 float sec=SECONDS
-. $tmp/foo.sh  | cat > /dev/null
+. $TEST_DIR/foo.sh  | cat > /dev/null
 (( (SECONDS-sec) < .7 ))  && log_error '. script does not restore output redirection with eval'
 
-file=$tmp/foobar
+file=$TEST_DIR/foobar
 log_info "TODO: Skipping call to builtin cat"
 
 #builtin cat

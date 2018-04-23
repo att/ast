@@ -426,9 +426,9 @@ bam[foo]=value
 [[ $bam == value ]] && log_error 'unset associative array element error'
 : only first element of an array can be exported
 unset bam
-print 'print ${var[0]} ${var[1]}' > $tmp/script
-chmod +x $tmp/script
-[[ $($SHELL -c "var=(foo bar);export var;$tmp/script") == foo ]] || log_error 'export array not exporting just first element'
+print 'print ${var[0]} ${var[1]}' > $TEST_DIR/script
+chmod +x $TEST_DIR/script
+[[ $($SHELL -c "var=(foo bar);export var;$TEST_DIR/script") == foo ]] || log_error 'export array not exporting just first element'
 
 unset foo
 set --allexport
@@ -439,12 +439,12 @@ foo[0]=three
 set --noallexport
 unset foo
 
-cat > $tmp/script <<- \!
+cat > $TEST_DIR/script <<- \!
     typeset -A foo
     print foo${foo[abc]}
 !
-[[ $($SHELL -c "typeset -A foo;$tmp/script")  == foo ]] 2> /dev/null || log_error 'empty associative arrays not being cleared correctly before scripts'
-[[ $($SHELL -c "typeset -A foo;foo[abc]=abc;$tmp/script") == foo ]] 2> /dev/null || log_error 'associative arrays not being cleared correctly before scripts'
+[[ $($SHELL -c "typeset -A foo;$TEST_DIR/script")  == foo ]] 2> /dev/null || log_error 'empty associative arrays not being cleared correctly before scripts'
+[[ $($SHELL -c "typeset -A foo;foo[abc]=abc;$TEST_DIR/script") == foo ]] 2> /dev/null || log_error 'associative arrays not being cleared correctly before scripts'
 unset foo
 foo=(one two)
 [[ ${foo[@]:1} == two ]] || log_error '${foo[@]:1} == two'

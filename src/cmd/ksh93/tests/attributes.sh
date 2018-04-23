@@ -154,18 +154,18 @@ then
      log_error 'print of exponential shows both -E and -F attributes'
 fi
 
-print 'typeset -i m=48/4+1;print -- $m' > $tmp/script
-chmod +x $tmp/script
+print 'typeset -i m=48/4+1;print -- $m' > $TEST_DIR/script
+chmod +x $TEST_DIR/script
 typeset -Z2 m
-if [[ $($tmp/script) != 13 ]]
+if [[ $($TEST_DIR/script) != 13 ]]
 then
     log_error 'attributes not cleared for script execution'
 fi
 
-print 'print VAR=$VAR' > $tmp/script
+print 'print VAR=$VAR' > $TEST_DIR/script
 typeset -L70 VAR=var
-$tmp/script > $tmp/script.1
-[[ $(< $tmp/script.1) == VAR= ]] || log_error 'typeset -L should not be inherited'
+$TEST_DIR/script > $TEST_DIR/script.1
+[[ $(< $TEST_DIR/script.1) == VAR= ]] || log_error 'typeset -L should not be inherited'
 typeset -Z  LAST=00
 unset -f foo
 function foo

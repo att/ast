@@ -88,12 +88,12 @@ function foobar
 {
     (return 0)
 }
-> $tmp/test1
+> $TEST_DIR/test1
 {
 foobar
-if [ -r $tmp/test1 ]
+if [ -r $TEST_DIR/test1 ]
 then
-    rm -r $tmp/test1
+    rm -r $TEST_DIR/test1
 else
     log_error 'return within subshell inside function error'
 fi
@@ -125,7 +125,7 @@ function foo
     x=2
     (
         x=3
-        cd $tmp
+        cd $TEST_DIR
         print bar
     )
     if [[ $x != 2 ]]
@@ -151,20 +151,20 @@ then
     log_error one line functions not working
 fi
 
-cat > $tmp/script <<-\!
+cat > $TEST_DIR/script <<-\!
 	print -r -- "$1"
 !
-chmod +x $tmp/script
+chmod +x $TEST_DIR/script
 function passargs
 {
-    $tmp/script "$@"
+    $TEST_DIR/script "$@"
 }
 if [[ $(passargs one) != one ]]
 then
     log_error 'passing args from functions to scripts not working'
 fi
 
-cat > $tmp/script <<-\!
+cat > $TEST_DIR/script <<-\!
 	trap 'exit 0' EXIT
 	function foo
 	{
@@ -173,23 +173,23 @@ cat > $tmp/script <<-\!
 	foo
 !
 
-if ! $tmp/script
+if ! $TEST_DIR/script
 then
     log_error 'exit trap incorrectly triggered'
 fi
 
-if ! $SHELL -c $tmp/script
+if ! $SHELL -c $TEST_DIR/script
 then
     log_error 'exit trap incorrectly triggered when invoked with -c'
 fi
 
-$SHELL -c "trap 'rm $tmp/script' EXIT"
-if [[ -f $tmp/script ]]
+$SHELL -c "trap 'rm $TEST_DIR/script' EXIT"
+if [[ -f $TEST_DIR/script ]]
 then
     log_error 'exit trap not triggered when invoked with -c'
 fi
 
-cat > $tmp/script <<- \EOF
+cat > $TEST_DIR/script <<- \EOF
 	foobar()
 	{
 		return
@@ -198,8 +198,8 @@ cat > $tmp/script <<- \EOF
 	foobar
 	print -r -- "$1"
 EOF
-chmod +x $tmp/script
-if [[ $( $SHELL $tmp/script arg1 arg2) != arg2 ]]
+chmod +x $TEST_DIR/script
+if [[ $( $SHELL $TEST_DIR/script arg1 arg2) != arg2 ]]
 then
     log_error 'arguments not restored by posix functions'
 fi
@@ -242,14 +242,14 @@ then
 fi
 
 unset -f foobar
-cat > $tmp/foobar <<!
+cat > $TEST_DIR/foobar <<!
 function foobar
 {
     print foo
 }
 !
-chmod +x $tmp/foobar
-FPATH=$tmp
+chmod +x $TEST_DIR/foobar
+FPATH=$TEST_DIR
 print 'function zzz { return 7; }' > zzz
 PATH="$SAFE_PATH"
 zzz
@@ -451,13 +451,13 @@ function closure
 
     for tmp in $level _$level
     do
-        [[ ${visited[$tmp]} == 1 ]] && continue
-        closure $tmp $* || r=1
+        [[ ${visited[$TEST_DIR]} == 1 ]] && continue
+        closure $TEST_DIR $* || r=1
     done
     return $r
 }
 closure 0 || log_error -u2 'for loop function optimization bug2'
-dir=$tmp/dir
+dir=$TEST_DIR/dir
 mkdir $dir
 cd $dir || { log_error "cd $dir failed"; exit 1; }
 
@@ -535,7 +535,7 @@ a()
 b() { : ;}
 [[ $(a) == a ]] || log_error '.sh.fun not set correctly in a function'
 print $'a(){\ndate\n}'  | $SHELL 2> /dev/null || log_error 'parser error in a(){;date;}'
-cat > $tmp/data1 << '++EOF'
+cat > $TEST_DIR/data1 << '++EOF'
      1  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
      2  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
      3  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -557,7 +557,7 @@ cat > $tmp/data1 << '++EOF'
     19  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     20  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ++EOF
-cat > $tmp/script << '++EOF'
+cat > $TEST_DIR/script << '++EOF'
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -823,10 +823,10 @@ f()
 {
 cat <<\M
 ++EOF
-cat $tmp/data1 >> $tmp/script
-printf 'M\n}\n\nf\n\n' >> $tmp/script
-$SHELL -c $tmp/script  > $tmp/data2
-cmp -s $tmp/data[12] || log_error 'error with long functions'
+cat $TEST_DIR/data1 >> $TEST_DIR/script
+printf 'M\n}\n\nf\n\n' >> $TEST_DIR/script
+$SHELL -c $TEST_DIR/script  > $TEST_DIR/data2
+cmp -s $TEST_DIR/data[12] || log_error 'error with long functions'
 v=1
 function f
 {
@@ -920,13 +920,13 @@ function f
 }
 f local global environment literal positional
 $SHELL -c '
-    print exit 0 > '$tmp'/script
-    chmod +x '$tmp'/script
+    print exit 0 > '$TEST_DIR'/script
+    chmod +x '$TEST_DIR'/script
     unset var
     var=( ident=1 )
     function fun
     {
-        PATH='$tmp' script
+        PATH='$TEST_DIR' script
     }
     fun
 ' || log_error "compound variable cleanup before script exec failed"
@@ -1026,7 +1026,7 @@ unset -f .sh.fun.set
 # tests for debug functions
 basefile=${.sh.file}
 integer baseline
-cat > $tmp/debug << \+++
+cat > $TEST_DIR/debug << \+++
     : line 1
 
     : line 3
@@ -1047,7 +1047,7 @@ function _Dbg_print_frame
         [[ $line == "$baseline" ]] || log_error "line number for level 0 is $line not $baseline"
     elif ((pos==1))
     then
-    [[ $filename == "$tmp/debug" ]] ||  log_error "filename for level 1 is $filename not $tmp/debug"
+    [[ $filename == "$TEST_DIR/debug" ]] ||  log_error "filename for level 1 is $filename not $TEST_DIR/debug"
         [[ $* == 'foo bar' ]] || log_error "args are '$*', not 'foo bar'"
         [[ $line == $arg ]] || log_error "line number for level 1 is $line not $arg"
     else    log_error "level should be 0 or 1 but is $pos"
@@ -1068,7 +1068,7 @@ function _Dbg_debug_trap_handler
 
 ((baseline=LINENO+2))
 trap '_Dbg_debug_trap_handler' DEBUG
-.  $tmp/debug foo bar
+.  $TEST_DIR/debug foo bar
 trap '' DEBUG
 
 caller() {
@@ -1108,8 +1108,8 @@ f 257 && print ok
 } 2>/dev/null
 [[ $got == ok ]] || log_error 'cannot handle comsub depth > 256 in function'
 
-tmp1=$tmp/job.1
-tmp2=$tmp/job.2
+tmp1=$TEST_DIR/job.1
+tmp2=$TEST_DIR/job.2
 cat > $tmp1 << +++
 #! $SHELL
 print \$\$
@@ -1125,8 +1125,8 @@ function foo
 foo
 log_info 'TODO: Enable shcomp tests'
 ## make sure compiled functions work
-#[[ $(tmp=$tmp $SHELL <<- \++++
-#    cat > $tmp/functions <<- \EOF
+#[[ $($SHELL <<- \++++
+#    cat > $TEST_DIR/functions <<- \EOF
 #         function bar
 #         {
 #             print foo
@@ -1136,23 +1136,23 @@ log_info 'TODO: Enable shcomp tests'
 #             bar
 #         }
 #    EOF
-#    ${SHCOMP:-${SHELL%/*}/shcomp} $tmp/functions > $tmp/foobar
-#    rm -f "$tmp/functions"
-#    chmod +x $tmp/foobar
-#    rm $tmp/!(dir|foobar)
-#    FPATH=$tmp
+#    ${SHCOMP:-${SHELL%/*}/shcomp} $TEST_DIR/functions > $TEST_DIR/foobar
+#    rm -f "$TEST_DIR/functions"
+#    chmod +x $TEST_DIR/foobar
+#    rm $TEST_DIR/!(dir|foobar)
+#    FPATH=$TEST_DIR
 #    PATH=$FPATH:$PATH
 #    foobar
 #++++
 #) == foo ]] > /dev/null  || log_error 'functions compiled with shcomp not working'
 ## tests for compiled . scripts
-#print $'print hello\nprint world' > $tmp/foo
-#${SHCOMP:-${SHELL%/*}/shcomp} $tmp/foo > $tmp/foo.sh
-#val=$(. $tmp/foo.sh)
+#print $'print hello\nprint world' > $TEST_DIR/foo
+#${SHCOMP:-${SHELL%/*}/shcomp} $TEST_DIR/foo > $TEST_DIR/foo.sh
+#val=$(. $TEST_DIR/foo.sh)
 #[[ $val ==  $'hello\nworld' ]] || log_error "processing compiled dot files not working correctly val=$val"
 ## test for functions in shell having side effects.
 unset -f foo foobar bar
-cd "$tmp"
+cd "$TEST_DIR"
 FPATH=$PWD
 PATH=$FPATH:$PATH
 cat > foo <<- \EOF

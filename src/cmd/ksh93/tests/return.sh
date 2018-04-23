@@ -22,7 +22,7 @@
 unset HISTFILE
 
 foo=NOVAL bar=NOVAL
-file=$tmp/test
+file=$TEST_DIR/test
 function foo
 {
     typeset foo=NOEXIT

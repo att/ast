@@ -98,18 +98,18 @@ fi
 
 
 locale=en_US.UTF-8
-#$SHELL -c 'export LANG='$locale'; printf "\u[20ac]\u[20ac]" > $tmp/two_euro_chars.txt'
-printf $'\342\202\254\342\202\254' > $tmp/two_euro_chars.txt
+#$SHELL -c 'export LANG='$locale'; printf "\u[20ac]\u[20ac]" > $TEST_DIR/two_euro_chars.txt'
+printf $'\342\202\254\342\202\254' > $TEST_DIR/two_euro_chars.txt
 exp="6 2 6"
 set -- $($SHELL -c "
     unset LC_CTYPE
     export LANG=$locale
     export LC_ALL=C
-    command wc -m < $tmp/two_euro_chars.txt
+    command wc -m < $TEST_DIR/two_euro_chars.txt
     unset LC_ALL
-    command wc -m < $tmp/two_euro_chars.txt
+    command wc -m < $TEST_DIR/two_euro_chars.txt
     export LC_ALL=C
-    command wc -m < $tmp/two_euro_chars.txt
+    command wc -m < $TEST_DIR/two_euro_chars.txt
 ")
 got=$*
 [[ $got == $exp ]] || log_error "command wc LC_ALL default failed -- expected '$exp', got '$got'"
@@ -120,11 +120,11 @@ log_info 'TODO: Enable when custom builtins of external commands is working.'
 #    unset LC_CTYPE
 #        export LANG=$locale
 #        export LC_ALL=C
-#        wc -m < $tmp/two_euro_chars.txt
+#        wc -m < $TEST_DIR/two_euro_chars.txt
 #        unset LC_ALL
-#        wc -m < $tmp/two_euro_chars.txt
+#        wc -m < $TEST_DIR/two_euro_chars.txt
 #        export LC_ALL=C
-#        wc -m < $tmp/two_euro_chars.txt
+#        wc -m < $TEST_DIR/two_euro_chars.txt
 #    fi
 
 #")

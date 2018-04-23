@@ -159,12 +159,12 @@ x=$($SHELL 2> /dev/null -ic '/bin/notfound; sleep .5 & sleep 1;jobs')
 [[ $x == *Done* ]] || log_error 'SIGCHLD blocked after notfound'
 x=$($SHELL 2> /dev/null  -ic 'kill -0 12345678901234567876; sleep .5 & sleep 1;jobs')
 [[ $x == *Done* ]] || log_error 'SIGCHLD blocked after error message'
-print 'set -o monitor;sleep .5 & sleep 1;jobs' > $tmp/foobar
-chmod +x $tmp/foobar
-x=$($SHELL  -c "echo | $tmp/foobar")
+print 'set -o monitor;sleep .5 & sleep 1;jobs' > $TEST_DIR/foobar
+chmod +x $TEST_DIR/foobar
+x=$($SHELL  -c "echo | $TEST_DIR/foobar")
 [[ $x == *Done* ]] || log_error 'SIGCHLD blocked for script at end of pipeline'
 
-tmpfile=$tmp/file
+tmpfile=$TEST_DIR/file
 $SHELL > $tmpfile <<- \EOF
 	trap 'printf "%d %d %s\n" .sh.sig.pid $! "${.sh.sig.code}"' CHLD
 	{

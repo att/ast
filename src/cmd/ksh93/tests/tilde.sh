@@ -104,7 +104,7 @@ fi
 HOME=/
 [[ ~ == / ]] || log_error '~ should be /'
 [[ ~/foo == /foo ]] || log_error '~/foo should be /foo when ~==/'
-print $'print ~+\n[[ $1 ]] && $0' > $tmp/tilde
-chmod +x $tmp/tilde
+print $'print ~+\n[[ $1 ]] && $0' > $TEST_DIR/tilde
+chmod +x $TEST_DIR/tilde
 nl=$'\n'
-[[ $($tmp/tilde foo) == "$PWD$nl$PWD" ]] 2> /dev/null  || log_error 'tilde fails inside a script run by name'
+[[ $($TEST_DIR/tilde foo) == "$PWD$nl$PWD" ]] 2> /dev/null  || log_error 'tilde fails inside a script run by name'

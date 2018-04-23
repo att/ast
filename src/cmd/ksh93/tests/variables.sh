@@ -258,23 +258,23 @@ done
 kill $!
 unset x
 CDPATH=/
-x=$(cd ${tmp#/})
-if [[ $x != $tmp ]]
+x=$(cd ${TEST_DIR#/})
+if [[ $x != $TEST_DIR ]]
 then
     log_error 'CDPATH does not display new directory'
 fi
 
 CDPATH=/:
-x=$(cd ${tmp%/*}; cd ${tmp##*/})
+x=$(cd ${TEST_DIR%/*}; cd ${TEST_DIR##*/})
 if [[ $x ]]
 then
     log_error 'CDPATH displays new directory when not used'
 fi
 
-x=$(cd ${tmp#/})
-if [[ $x != $tmp ]]
+x=$(cd ${TEST_DIR#/})
+if [[ $x != $TEST_DIR ]]
 then
-    log_error "CDPATH ${tmp#/} does not display new directory"
+    log_error "CDPATH ${TEST_DIR#/} does not display new directory"
 fi
 
 TMOUT=100
@@ -505,7 +505,7 @@ x=$(foo)
 (( x >1 && x < 2 ))
 '
 } 2> /dev/null   || log_error 'SECONDS not working in function'
-cat > $tmp/script <<-\!
+cat > $TEST_DIR/script <<-\!
 	posixfun()
 	{
 		unset x
@@ -525,12 +525,12 @@ cat > $tmp/script <<-\!
 	fi
 !
 
-chmod +x $tmp/script
-. $tmp/script  1
-[[ $file == $tmp/script ]] || log_error ".sh.file not working for dot scripts"
-[[ $($SHELL $tmp/script) == $tmp/script ]] || log_error ".sh.file not working for scripts"
-[[ $(posixfun .sh.file) == $tmp/script ]] || log_error ".sh.file not working for posix functions"
-[[ $(fun .sh.file) == $tmp/script ]] || log_error ".sh.file not working for functions"
+chmod +x $TEST_DIR/script
+. $TEST_DIR/script  1
+[[ $file == $TEST_DIR/script ]] || log_error ".sh.file not working for dot scripts"
+[[ $($SHELL $TEST_DIR/script) == $TEST_DIR/script ]] || log_error ".sh.file not working for scripts"
+[[ $(posixfun .sh.file) == $TEST_DIR/script ]] || log_error ".sh.file not working for posix functions"
+[[ $(fun .sh.file) == $TEST_DIR/script ]] || log_error ".sh.file not working for functions"
 [[ $(posixfun .sh.fun) == posixfun ]] || log_error ".sh.fun not working for posix functions"
 [[ $(fun .sh.fun) == fun ]] || log_error ".sh.fun not working for functions"
 [[ $(posixfun .sh.subshell) == 1 ]] || log_error ".sh.subshell not working for posix functions"
@@ -566,22 +566,22 @@ x=$(
 )
 [[ $x == dave.unset ]] || log_error 'unset discipline not called with subset completion'
 
-print 'print ${VAR}' > $tmp/script
+print 'print ${VAR}' > $TEST_DIR/script
 unset VAR
-VAR=new $tmp/script > $tmp/out
-got=$(<$tmp/out)
+VAR=new $TEST_DIR/script > $TEST_DIR/out
+got=$(<$TEST_DIR/out)
 [[ $got == new ]] || log_error "previously unset environment variable not passed to script, expected 'new', got '$got'"
 [[ ! $VAR ]] || log_error "previously unset environment variable set after script, expected '', got '$VAR'"
 unset VAR
 VAR=old
-VAR=new $tmp/script > $tmp/out
-got=$(<$tmp/out)
+VAR=new $TEST_DIR/script > $TEST_DIR/out
+got=$(<$TEST_DIR/out)
 [[ $got == new ]] || log_error "environment variable covering local variable not passed to script, expected 'new', got '$got'"
 [[ $VAR == old ]] || log_error "previously set local variable changed after script, expected 'old', got '$VAR'"
 unset VAR
 export VAR=old
-VAR=new $tmp/script > $tmp/out
-got=$(<$tmp/out)
+VAR=new $TEST_DIR/script > $TEST_DIR/out
+got=$(<$TEST_DIR/out)
 [[ $got == new ]] || log_error "environment variable covering environment variable not passed to script, expected 'new', got '$got'"
 [[ $VAR == old ]] || log_error "previously set environment variable changed after script, expected 'old', got '$VAR'"
 
@@ -720,7 +720,7 @@ do
 done
 PATH=$path
 
-cd $tmp
+cd $TEST_DIR
 
 print print -n zzz > zzz
 chmod +x zzz
@@ -781,10 +781,10 @@ OPTIND=2
 
 # Check if ${.sh.file} is set to correct value after sourcing a file
 # https://github.com/att/ast/issues/472
-cat > $tmp/foo.sh <<EOF
+cat > $TEST_DIR/foo.sh <<EOF
 echo "foo"
 EOF
-. $tmp/foo.sh > /dev/null
+. $TEST_DIR/foo.sh > /dev/null
 expect="$0"
 actual="${.sh.file}"
 [[ $actual == $expect ]] ||

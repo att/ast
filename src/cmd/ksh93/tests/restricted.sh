@@ -34,7 +34,6 @@ function check_restricted
 }
 
 [[ $SHELL != /* ]] && SHELL=$pwd/$SHELL
-cd $tmp || log_error "cd $tmp failed"
 ln -s $SHELL rksh
 PATH=$PWD:$PATH
 rksh -c  '[[ -o restricted ]]' || log_error 'restricted option not set'

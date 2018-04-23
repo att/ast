@@ -215,8 +215,8 @@ then
     log_error "read -r of blank line not working"
 fi
 
-mkdir -p $tmp/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
-$SHELL -c "cd $tmp/a/b; cd c" || log_error "initial script relative cd fails"
+mkdir -p $TEST_DIR/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
+$SHELL -c "cd $TEST_DIR/a/b; cd c" || log_error "initial script relative cd fails"
 
 # The `| sort` is because ksh doesn't guarantee the order of the output of the `trap` command.
 expect="trap -- 'print TERM' TERM trap -- 'print USR1' USR1"
@@ -411,9 +411,9 @@ then
     log_error "read -n1 failed -- expected '$exp', got '$y'"
 fi
 
-print -n $'{ read -r line;print $line;}\nhello' > $tmp/script
-chmod 755 $tmp/script
-if [[ $($SHELL < $tmp/script) != hello ]]
+print -n $'{ read -r line;print $line;}\nhello' > $TEST_DIR/script
+chmod 755 $TEST_DIR/script
+if [[ $($SHELL < $TEST_DIR/script) != hello ]]
 then
     log_error 'read of incomplete line not working correctly'
 fi
@@ -549,30 +549,30 @@ exp=abc
 #(print -n a;sleep 1; print -n bcde) | read -n3 a
 #exp=a
 #[[ $a == $exp ]] || log_error "read -n3 from pipe failed -- expected '$exp', got '$a'"
-#rm -f $tmp/fifo
-#if mkfifo $tmp/fifo 2> /dev/null
+#rm -f $TEST_DIR/fifo
+#if mkfifo $TEST_DIR/fifo 2> /dev/null
 #then
-#    (print -n a; sleep 1;print -n bcde)  > $tmp/fifo &
+#    (print -n a; sleep 1;print -n bcde)  > $TEST_DIR/fifo &
 #    {
 #    read -u5 -n3 -t2 a || log_error 'read -n3 from fifo timedout'
 #    read -u5 -n1 -t2 b || log_error 'read -n1 from fifo timedout'
-#    } 5< $tmp/fifo
+#    } 5< $TEST_DIR/fifo
 #    exp=a
 #    [[ $a == $exp ]] || log_error "read -n3 from fifo failed -- expected '$exp', got '$a'"
-#    rm -f $tmp/fifo
-#    mkfifo $tmp/fifo 2> /dev/null
-#    (print -n a; sleep 1;print -n bcde) > $tmp/fifo &
+#    rm -f $TEST_DIR/fifo
+#    mkfifo $TEST_DIR/fifo 2> /dev/null
+#    (print -n a; sleep 1;print -n bcde) > $TEST_DIR/fifo &
 #    {
 #    read -u5 -N3 -t2 a || log_error 'read -N3 from fifo timed out'
 #    read -u5 -N1 -t2 b || log_error 'read -N1 from fifo timedout'
-#    } 5< $tmp/fifo
+#    } 5< $TEST_DIR/fifo
 #    exp=abc
 #    [[ $a == $exp ]] || log_error "read -N3 from fifo failed -- expected '$exp', got '$a'"
 #    exp=d
 #    [[ $b == $exp ]] || log_error "read -N1 from fifo failed -- expected '$exp', got '$b'"
 #fi
 
-#rm -f $tmp/fifo
+#rm -f $TEST_DIR/fifo
 
 function longline
 {
@@ -640,13 +640,13 @@ $SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || log_error "sleep doesn't ex
 $SHELL -c 'test \( ! -e \)' 2> /dev/null ; [[ $? == 1 ]] || log_error 'test \( ! -e \) not working'
 [[ $(ulimit) == "$(ulimit -fS)" ]] || log_error 'ulimit is not the same as ulimit -fS'
 
-tmpfile=$tmp/file.2
+tmpfile=$TEST_DIR/file.2
 print $'\nprint -r -- "${.sh.file} ${LINENO} ${.sh.lineno}"' > $tmpfile
 actual="$(. $tmpfile)"
 expect="$tmpfile 2 1"
 [[ $actual == $expect ]] || log_error 'dot command not working' "$expect" "$actual"
 
-tmpfile=$tmp/file.3
+tmpfile=$TEST_DIR/file.3
 print -r -- "'xxx" > $tmpfile
 actual="$($SHELL -c ". $tmpfile"$'\n print ok' 2> /dev/null)"
 expect="ok"
@@ -680,7 +680,7 @@ $SHELL 2> /dev/null -c 'cd ""' && log_error 'cd "" not producing an error'
 
 bincat=$(whence -p cat)
 # builtin cat
-out=$tmp/seq.out
+out=$TEST_DIR/seq.out
 seq 11 >$out
 cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || log_error "builtin cat differs from $bincat"
 
@@ -699,24 +699,24 @@ v=$( $SHELL -c $'
 ' ) 2> /dev/null
 [[ $v == $'usr1\ndone' ]] ||  log_error 'read not terminating when receiving USR1 signal'
 
-mkdir $tmp/tmpdir1
-cd $tmp/tmpdir1
+mkdir $TEST_DIR/tmpdir1
+cd $TEST_DIR/tmpdir1
 pwd=$PWD
 cd ../tmpdir1
 [[ $PWD == "$pwd" ]] || log_error 'cd ../tmpdir1 causes directory to change'
 cd "$pwd"
-mv $tmp/tmpdir1 $tmp/tmpdir2
+mv $TEST_DIR/tmpdir1 $TEST_DIR/tmpdir2
 cd ..  2> /dev/null || log_error 'cannot change directory to .. after current directory has been renamed'
-[[ $PWD == "$tmp" ]] || log_error 'after "cd $tmp/tmpdir1; cd .." directory is not $tmp'
+[[ $PWD == "$TEST_DIR" ]] || log_error 'after "cd $TEST_DIR/tmpdir1; cd .." directory is not $TEST_DIR'
 
-cd "$tmp"
-mkdir $tmp/tmpdir2/foo
+cd "$TEST_DIR"
+mkdir $TEST_DIR/tmpdir2/foo
 pwd=$PWD
-cd $tmp/tmpdir2/foo
-mv $tmp/tmpdir2 $tmp/tmpdir1
+cd $TEST_DIR/tmpdir2/foo
+mv $TEST_DIR/tmpdir2 $TEST_DIR/tmpdir1
 cd ../.. 2> /dev/null || log_error 'cannot change directory to ../.. after current directory has been renamed'
-[[ $PWD == "$tmp" ]] || log_error 'after "cd $tmp/tmpdir2; cd ../.." directory is not $tmp'
-cd "$tmp"
+[[ $PWD == "$TEST_DIR" ]] || log_error 'after "cd $TEST_DIR/tmpdir2; cd ../.." directory is not $TEST_DIR'
+cd "$TEST_DIR"
 rm -rf tmpdir1
 
 cd /etc
@@ -734,11 +734,11 @@ cd ../..
 cd /usr/bin
 cd ..
 [[ $(pwd) == /usr ]] || log_error 'cd /usr/bin;cd ..;pwd is not /usr'
-cd "$tmp"
-if mkdir $tmp/t1
+cd "$TEST_DIR"
+if mkdir $TEST_DIR/t1
 then
     (
-        cd $tmp/t1
+        cd $TEST_DIR/t1
         > real_t1
         (
             cd ..
@@ -749,12 +749,12 @@ then
     )
 fi
 
-cd "$tmp"
+cd "$TEST_DIR"
 
 > foobar
 CDPATH= $SHELL 2> /dev/null -c 'cd foobar' && log_error "cd to a regular file should fail"
 
-cd "$tmp"
+cd "$TEST_DIR"
 mkdir foo .bar
 cd foo
 cd ../.bar 2> /dev/null || log_error 'cd ../.bar when ../.bar exists should not fail' 
@@ -902,8 +902,8 @@ expect="$TEST_DIR/oldpwd"
 [[ $actual == $expect ]] || log_error "cd - does not recognize overridden OLDPWD variable"
 [[ $PWD == $expect ]] || log_error "cd - does not recognize overridden OLDPWD variable"
 
-cd $tmp
-[[ $(OLDPWD="$tmp/oldpwd" cd -) == "$tmp/oldpwd" ]] ||
+cd $TEST_DIR
+[[ $(OLDPWD="$TEST_DIR/oldpwd" cd -) == "$TEST_DIR/oldpwd" ]] ||
     log_error "cd - does not recognize overridden OLDPWD variable if it is overridden in new scope"
 
 [[ $(pwd -f $fd) == /dev ]] || log_error "pwd -f $fd should be /dev"
@@ -918,7 +918,7 @@ log_info "TODO: Skipping test - 'cd with no arguments fails if HOME is unset'. I
 #EOF
 #[[ $? == 0 ]] || log_error 'cd with no arguments fails if HOME is unset'
 
-cd "$tmp"
+cd "$TEST_DIR"
 if mkdir -p f1
 then
     redirect {d}<f1
@@ -953,17 +953,17 @@ $SHELL 2> /dev/null <<- \!!! || log_error 'alarm during read causes core dump'
     done
 !!!
 # test for eval bug when called from . script in a startup file.
-print $'eval : foo\nprint ok' > $tmp/evalbug
-print ". $tmp/evalbug" >$tmp/envfile
-[[ $(ENV=$tmp/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || log_error 'eval inside dot script called from profile file not working'
+print $'eval : foo\nprint ok' > $TEST_DIR/evalbug
+print ". $TEST_DIR/evalbug" >$TEST_DIR/envfile
+[[ $(ENV=$TEST_DIR/envfile $SHELL -i -c : 2> /dev/null) == ok ]] || log_error 'eval inside dot script called from profile file not working'
 
 # test cd to a directory that doesn't have execute permission
-if mkdir -p $tmp/a/b
+if mkdir -p $TEST_DIR/a/b
 then
-    chmod -x $tmp/a/b
-    cd $tmp/a/b 2> /dev/null && log_error 'cd to directory without execute should fail'
+    chmod -x $TEST_DIR/a/b
+    cd $TEST_DIR/a/b 2> /dev/null && log_error 'cd to directory without execute should fail'
 fi
-chmod +x $tmp/a/b  # so the test temp dir can be removed when the test completes
+chmod +x $TEST_DIR/a/b  # so the test temp dir can be removed when the test completes
 
 
 # -s flag writes to history file

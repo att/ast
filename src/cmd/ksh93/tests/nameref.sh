@@ -106,7 +106,7 @@ then
     log_error "typeset +n doesn't list values of reference variables"
 fi
 
-file=$tmp/test
+file=$TEST_DIR/test
 typeset +n foo bar 2> /dev/null
 unset foo bar
 export bar=foo

@@ -97,13 +97,13 @@ fi
 
 if hash -r 2>/dev/null && [[ ! $(hash) ]]
 then
-    PATH=$tmp:/bin:/usr/bin
+    PATH=$TEST_DIR:/bin:/usr/bin
     for i in foo -foo --
     do    
-        print ':' > $tmp/$i
-        chmod +x $tmp/$i
+        print ':' > $TEST_DIR/$i
+        chmod +x $TEST_DIR/$i
         hash -r -- $i 2>/dev/null || log_error "hash -r -- $i failed"
-        [[ $(hash) == $i=$tmp/$i ]] || log_error "hash -r -- $i failed, expected $i=$tmp/$i, got $(hash)"
+        [[ $(hash) == $i=$TEST_DIR/$i ]] || log_error "hash -r -- $i failed, expected $i=$TEST_DIR/$i, got $(hash)"
     done
 else    
     log_error 'hash -r failed'

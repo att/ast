@@ -84,7 +84,7 @@ function grep
     let tc                    #  set the return value
 }
 
-cat > $tmp/grep <<\!
+cat > $TEST_DIR/grep <<\!
 this is a food bar test
 to see how many lines find both foo and bar.
 Some line contain foo only,
@@ -95,7 +95,7 @@ There should be six lines with foo and bar.
 There are only two line with out foo but with bar.
 !
 
-if (( $(grep -c 'foo*bar' $tmp/grep ) != 6))
+if (( $(grep -c 'foo*bar' $TEST_DIR/grep ) != 6))
 then
     log_error
 fi

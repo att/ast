@@ -20,7 +20,7 @@
 
 PS3='ABC '
 
-cat > $tmp/1 <<\!
+cat > $TEST_DIR/1 <<\!
 1) foo
 2) bar
 3) bam
@@ -54,6 +54,6 @@ do
         ( set -u; : $i ) || log_error "select: i not set to null" 2>&3
         break;;
     esac
-done  3>&2 2> $tmp/2 <<!
+done  3>&2 2> $TEST_DIR/2 <<!
 foo
 !
