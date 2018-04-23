@@ -690,7 +690,11 @@ fun()
 mkdir $TEST_DIR/bin$$
 print 'print foo' > $TEST_DIR/bin$$/foo
 chmod +x  $TEST_DIR/bin$$/foo
-: $(type foo)
+: $(type foo 2> type.foo.out)
+actual=$(< type.foo.out)
+actual=${actual#*: }  # remove the script name and line number prefix
+expect='whence: foo: not found'
+[[ $actual == $expect ]] || log_error "command foo should not have been found" "$expect" "$actual"
 : ${ PATH=$TEST_DIR/bin$$:$PATH;}
 actual=$(whence foo 2> /dev/null)
 expect="$TEST_DIR/bin$$/foo"
