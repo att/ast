@@ -18,6 +18,10 @@ was subsequently created to document the work being done.
 None at this time.
 
 ## Notable non-backward compatible changes
+
+- `case "[0-9]" in [0-9]) echo match;; esac` has stopped matching. When a case
+  statement doesn't match a pattern, it no longer tries to use the pattern as
+  a literal string (issue #476).
 - echo builtin now interprets escape sequences and parses command line options
   on all platforms. (issue #370)
 - Support for the UWIN environment has been removed (issue #284).
