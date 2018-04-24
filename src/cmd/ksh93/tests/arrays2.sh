@@ -206,18 +206,21 @@ function test_short_integer
         ( cmd='integer    -r -a x=( [0]=( [0]=1 [1]=2 [2]=3 ) [1]=( [0]=4 [1]=5 [2]=6 ) [2]=( [0]=7 [1]=8 [2]=9 ) ) ; print "${x[1][1]}"' stdoutpattern='5' )
         ( cmd='integer -s -r -a x=( [0]=( [0]=1 [1]=2 [2]=3 ) [1]=( [0]=4 [1]=5 [2]=6 ) [2]=( [0]=7 [1]=8 [2]=9 ) ) ; print "${x[1][1]}"' stdoutpattern='5' )
        )
-    typeset testname
     integer i
 
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         nameref tst=tests[i]
-        testname="${0}/${i}"
 
         out.stderr="${ { out.stdout="${ ${SHELL} -o nounset -o errexit -c "${tst.cmd}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-
-            [[ "${out.stdout}" == ${tst.stdoutpattern}      ]] || log_error "${testname}: Expected stdout to match $(printf '%q\n' "${tst.stdoutpattern}"), got $(printf '%q\n' "${out.stdout}")"
-               [[ "${out.stderr}" == ''            ]] || log_error "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
-        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+        expect="${tst.stdoutpattern}"
+        actual="${out.stdout}"
+        [[ "$actual" == "$expect" ]] || log_error "Expected stdout to match" "$expect" "$actual"
+        expect=''
+        actual="${out.stderr}"
+        [[ "$actual" == $expect ]] || log_error "Expected empty stderr" "$expect" "$actual"
+        expect=0
+        actual=$out.res
+        (( actual == expect )) || log_error "Unexpected exit code" "$expect" "$actual"
     done
 
     return 0
@@ -245,25 +248,25 @@ function initialize
 }
 initialize
 
-exp='typeset -a g_arr[0]=(11 22 33)'
-got=$(typeset -p g_arr[0])
-[[ $got == "$exp" ]] || log_error "typeset -p g_arr[0] expeccted $exp got $got"
-exp='typeset -a g_arr[1]'
-got=$(typeset -p g_arr[1])
-[[ $got == "$exp" ]] || log_error "typeset -p g_arr[1] expeccted $exp got $got"
-exp='typeset -a g_arr=((11 22 33)  () )'
-got=$(typeset -p g_arr)
-[[ $got == "$exp" ]] || log_error "typeset -p g_arr expeccted $exp got $got"
+expect='typeset -a g_arr[0]=(11 22 33)'
+actual=$(typeset -p g_arr[0])
+[[ $actual == "$expect" ]] || log_error "typeset -p g_arr[0]" "$expect" "$actual"
+expect='typeset -a g_arr[1]'
+actual=$(typeset -p g_arr[1])
+[[ $actual == "$expect" ]] || log_error "typeset -p g_arr[1]" "$expect" "$actual"
+expect='typeset -a g_arr=((11 22 33)  () )'
+actual=$(typeset -p g_arr)
+[[ $actual == "$expect" ]] || log_error "typeset -p g_arr" "$expect" "$actual"
 
 unset arr
 typeset -a arr
 typeset -a arr[0]=()
-exp='typeset -a arr[0]'
-got=$(typeset -p arr[0])
-[[ $got == "$exp" ]] || log_error "arr[0] expected $exp got $got"
-exp='typeset -a arr=( () )'
-got=$(typeset -p arr)
-[[ $got == "$exp" ]] || log_error "arr expected $exp got $got"
+expect='typeset -a arr[0]'
+actual=$(typeset -p arr[0])
+[[ $actual == "$expect" ]] || log_error "arr[0]" "$expect" "$actual"
+expect='typeset -a arr=( () )'
+actual=$(typeset -p arr)
+[[ $actual == "$expect" ]] || log_error "arr" "$expect" "$actual"
 
 unset foo
 typeset -A foo

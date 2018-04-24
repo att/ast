@@ -56,7 +56,9 @@ function test1
     print -C d1 >'testdata.cpv'
     cat '/dev/zero' | $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; redirect 5<&0 ; poll -e d1.res -t 5. d1.u ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || log_error "poll returned non-zero exit code $?"
     unset d1 ; read -C d1 <'testdata.cpv' || log_error 'Cannot read test data.'
-    [[ "$(< 'log.txt')" == '' ]] || log_error "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
+    expect=""
+    actual="$(< 'log.txt')"
+    [[ $actual == $expect ]] || log_error "Excepted empty stdout/stderr" "$expect" "$actual"
     [[ "${d1.u[x].revents.pollin-}" == 'true' ]] || log_error "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
     [[ "${d1.u[y].revents.pollin-}" == 'true' ]] || log_error "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
     [[ "${d1.res[*]-}" == 'x y' ]] || log_error "d1.res contains '${d1.res[*]-}', not 'x y'"
@@ -71,7 +73,9 @@ function test1
     $SHELL -o errexit -c 'builtin poll ; read -C <"testdata.cpv" d1 ; { poll -e d1.res -t 5. d1.u ; } 5<"/dev/null" 5>"/dev/null" ; print -C d1 >"testdata.cpv"' >'log.txt' 2>&1 || log_error "poll returned non-zero exit code $?"
     unset d1 ; read -C d1 <'testdata.cpv' || log_error 'Cannot read test data.'
 
-    [[ "$(< 'log.txt')" == '' ]] || log_error "Excepted empty stdout/stderr, got $(printf '%q\n' "$(< 'log.txt')")"
+    expect=""
+    actual="$(< 'log.txt')"
+    [[ $actual == $expect ]] || log_error "Excepted empty stdout/stderr" "$expect" "$actual"
     [[ "${d1.u[x].revents.pollin-}"  == 'true' ]] || log_error "d1.u[x].revents contains '${d1.u[x].revents-}', not 'POLLIN'"
     [[ "${d1.u[y].revents.pollin-}"  == 'true' ]] || log_error "d1.u[y].revents contains '${d1.u[y].revents-}', not 'POLLIN'"
     [[ "${d1.u[z].revents.pollout-}" == 'true' ]] || log_error "d1.u[z].revents contains '${d1.u[z].revents-}', not 'POLLOUT,'"
@@ -87,7 +91,6 @@ function test_sparse_array1
     compound out=( typeset stdout stderr ; integer res )
     integer i
     typeset expected_output_pattern
-    typeset testname
     compound -r -a tests=(
         (
             name='sparse_compound_array1'
@@ -173,14 +176,19 @@ function test_sparse_array1
 
     for (( i=0 ; i < ${#tests[@]} ; i++ )) ; do
         nameref tst=tests[i]
-        testname="${0}/${i}/${tst.name}"
         expected_output_pattern="${tst.expected_output_pattern}"
 
         out.stderr="${ { out.stdout="${ print 'IN' | ${SHELL} -o nounset -c "${tst.script[*]}" ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
 
-        [[ "${out.stdout//typeset -C/}" == ${expected_output_pattern}    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-        [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-        (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+        expect="${expected_output_pattern}"
+        actual="${out.stdout//typeset -C/}"
+        [[ $actual == $expect ]] || log_error "Expected stdout to match" "$expect" "$actual"
+        expect=""
+        actual="${out.stderr}"
+        [[ $actual == $expect ]] || log_error "Expected empty stderr" "$expect" "$actual"
+        expect=0
+        actual=$out.res
+        (( actual == expect )) || log_error "Unexpected exit code" "$expect" "$actual"
     done
 
     return 0
@@ -194,7 +202,6 @@ function test_fifo_circus1
 {
     compound out=( typeset stdout stderr ; integer res )
     integer i
-    typeset testname
 cat >'poll_circus.sh' <<EOF
 typeset -T circus_t=(
     typeset fifo_name
@@ -425,17 +432,27 @@ EOF
         $'DONE'
     )
 
-    testname="$0/plain"
     out.stderr="${ { out.stdout="${ ${SHELL} 'poll_circus.sh' ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-    [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-    (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+    expect="${expected_output_pattern[*]}"
+    actual="${out.stdout}"
+    [[ $actual == "$expect" ]] || log_error "Expected stdout to match" "$expect" "$actual"
+    expect=""
+    actual="${out.stderr}"
+    [[ $actual == $expect ]] || log_error "Expected empty stderr" "$expect" "$actual"
+    expect=0
+    actual=$out.res
+    (( actual == expect )) || log_error "Unexpected exit code" "$expect" "$actual"
 
-    testname="$0/compiled"
     out.stderr="${ { out.stdout="${ ${SHCOMP} -n 'poll_circus.sh' 'poll_circus.shbin' && ${SHELL} 'poll_circus.shbin' ; (( out.res=$? )) ; }" ; } 2>&1 ; }"
-    [[ "${out.stdout}" == "${expected_output_pattern[*]}"    ]] || log_error "${testname}: Expected stdout to match ${ printf '%q\n' "${expected_output_pattern[*]}" ; }, got ${ printf '%q\n' "${out.stdout}" ; }"
-    [[ "${out.stderr}" == ''                ]] || log_error "${testname}: Expected empty stderr, got ${ printf '%q\n' "${out.stderr}" ; }"
-    (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+    expect="${expected_output_pattern[*]}"
+    actual="${out.stdout}"
+    [[ $actual == "$expect" ]] || log_error "Expected stdout to match" "$expect" "$actual"
+    expect=""
+    actual="${out.stderr}"
+    [[ $actual == $expect ]] || log_error "Expected empty stderr" "$expect" "$actual"
+    expect=0
+    actual=$out.res
+    (( actual == expect )) || log_error "Unexpected exit code" "$expect" "$actual"
 
     rm -f 'poll_circus.sh' 'poll_circus.shbin'
 

@@ -586,12 +586,13 @@ then
         1.0/0.0        inf
     while (( $# >= 2 ))
     do
-        x=$(printf "%g\n" $(($1)))
-        [[ $x == $2 ]] || log_error "printf '%g\\n' \$(($1)) failed -- expected $2, got $x"
-        x=$(printf "%g\n" $1)
-        [[ $x == $2 ]] || log_error "printf '%g\\n' $1 failed -- expected $2, got $x"
-        x=$(printf -- $(($1)))
-        [[ $x == $2 ]] || log_error "print -- \$(($1)) failed -- expected $2, got $x"
+        expect="$2"
+        actual=$(printf "%g\n" $(($1)))
+        [[ $actual == $expect ]] || log_error "printf '%g\\n' \$(($1)) failed" "$expect" "$actual"
+        actual=$(printf "%g\n" $1)
+        [[ $actual == $expect ]] || log_error "printf '%g\\n' $1 failed" "$expect" "$actual"
+        actual=$(printf -- $(($1)))
+        [[ $actual == $expect ]] || log_error "print -- \$(($1)) failed" "$expect" "$actual"
         shift 2
     done
     (( 1.0/0.0 == Inf )) || log_error '1.0/0.0 != Inf'
@@ -609,11 +610,11 @@ else
 fi
 
 unset x y n r
-n=14.555
-float x=$n y
-y=$(printf "%a" x)
-r=$y
-[[ $r == $n ]] || log_error "output of printf %a not self preserving -- expected $x, got $y"
+expect=14.555
+float x=$expect
+float y=$(printf "%a" x)
+actual=$y
+[[ $actual == $expect ]] || log_error "output of printf %a not self preserving" "$expect" "$actual"
 
 unset x y r
 float x=-0 y=-0.0
@@ -816,9 +817,9 @@ x=([0]=3 [1]=6 [2]=12)
 (( x[2] /= x[0]))
 (( x[2] == 4 )) || log_error '(( x[2] /= x[0])) fails for associative array'
 
-got=$($SHELL 2> /dev/null -c 'compound -a x;compound -a x[0].y; integer -a x[0].y[0].z; (( x[0].y[0].z[2]=3 )); typeset -p x')
-exp='typeset -C -a x=((typeset -C -a y=( [0]=(typeset -a -l -i z=([2]=3);))))'
-[[ $got == "$exp" ]] || log_error '(( x[0].y[0].z[2]=3 )) not working'
+actual=$($SHELL -c 'compound -a x;compound -a x[0].y; integer -a x[0].y[0].z; (( x[0].y[0].z[2]=3 )); typeset -p x')
+expect='typeset -C -a x=((typeset -C -a y=( [0]=(typeset -a -l -i z=([2]=3);))))'
+[[ "$actual" == "$expect" ]] || log_error '(( x[0].y[0].z[2]=3 )) not working' "$expect" "$actual"
 
 unset x
 let x=010
@@ -902,9 +903,9 @@ typeset -RZ3 x=10
 let "$x==10" || log_error 'leading 0 in -RZ should not create octal constant with let'
 
 unset v x
-x=0x1.0000000000000000000000000000p+6
-v=$(printf $'%.28a\n' 64)
-[[ $v == "$x" ]] || log_error "'printf %.28a 64' failed -- expected '$x', got '$v'"
+expect=0x1.0000000000000000000000000000p+6
+actual=$(printf $'%.28a\n' 64)
+[[ $actual == $expect ]] || log_error "'printf %.28a 64' failed" "$expect" "$actual"
 
 # redirections with ((...)) should not cause a syntax error
 $SHELL 2>/dev/null -c '(($(echo 1+1 | tee /dev/fd/3))) >/dev/null 3>&1'

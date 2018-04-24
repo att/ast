@@ -402,14 +402,11 @@ then
     log_error "read reading ahead on a pipe"
 fi
 
-read -n1 y <<!
+expect=a
+read -n1 actual <<!
 abc
 !
-exp=a
-if   [[ $y != $exp ]]
-then
-    log_error "read -n1 failed -- expected '$exp', got '$y'"
-fi
+[[ $actual == $expect ]] || log_error "read -n1 failed" "$expect" "$actual"
 
 print -n $'{ read -r line;print $line;}\nhello' > $TEST_DIR/script
 chmod 755 $TEST_DIR/script
@@ -474,23 +471,24 @@ set -- \
     '"C"X'    $val    1
 while (( $# >= 3 ))
 do
-    arg=$1 val=$2 code=$3
+    arg=$1 expect=$2 code=$3
     shift 3
     for fmt in '%d' '%g'
     do
-        out=$(printf "$fmt" "$arg" 2>/dev/null)
+        actual=$(printf "$fmt" "$arg" 2>/dev/null)
         err=$(printf "$fmt" "$arg" 2>&1 >/dev/null)
         printf "$fmt" "$arg" >/dev/null 2>&1
         ret=$?
-        [[ $out == $val ]] || log_error "printf $fmt $arg failed -- expected '$val', got '$out'"
+        [[ $actual == $expect ]] || log_error "printf $fmt $arg failed" "$expect" "$actual"
         if (( $code ))
         then
             [[ $err ]] || log_error "printf $fmt $arg failed, error message expected"
         else
-            [[ $err ]] && log_error "$err: printf $fmt $arg failed, error message not expected -- got '$err'"
+            [[ $err ]] &&
+               log_error "$err: printf $fmt $arg failed, error message not expected" "" "$err"
         fi
 
-        (( $ret == $code )) || log_error "printf $fmt $arg failed -- expected exit code $code, got $ret"
+        (( $ret == $code )) || log_error "printf $fmt $arg failed -- wrong status" "$code" "$ret"
     done
 done
 
@@ -509,10 +507,10 @@ do
     :
     done
 
-    if [[ $OPTIND != ${ARGC[$i]} ]]
-    then
-        log_error "\$OPTIND after getopts loop incorrect -- expected ${ARGC[$i]}, got $OPTIND"
-    fi
+    expect="${ARGC[$i]}"
+    actual="$OPTIND"
+    [[ $actual == $expect ]] ||
+        log_error "\$OPTIND after getopts loop incorrect" "$expect" "$actual"
 done
 
 options=ab:c
@@ -521,27 +519,40 @@ set -- -a -b $optarg -c bar
 while getopts $options opt
 do
     case $opt in
-    a|c)    [[ $OPTARG ]] && log_error "getopts $options \$OPTARG for flag $opt failed, expected \"\", got \"$OPTARG\"" ;;
-    b)    [[ $OPTARG == $optarg ]] || log_error "getopts $options \$OPTARG failed -- \"$optarg\" expected, got \"$OPTARG\"" ;;
-    *)    log_error "getopts $options failed -- got flag $opt" ;;
+    a|c)
+       expect=""
+       actual="$OPTARG"
+       [[ $actual == $expect ]] ||
+          log_error "getopts $options \$OPTARG for flag $opt failed" "$expect" "$actual"
+       ;;
+    b)
+       expect="$optarg"
+       actual="$OPTARG"
+       [[ $actual == $expect ]] ||
+          log_error "getopts $options \$OPTARG failed" "$expect" "$actual"
+       ;;
+    *) log_error "getopts $options failed" "" "$opt" ;;
     esac
 done
 
 [[ $($SHELL 2> /dev/null -c 'readonly foo; getopts a: foo -a blah; echo foo') == foo ]] || log_error 'getopts with readonly variable causes script to abort'
 
-unset a
-{ read -N3 a; read -N1 b;}  <<!
+expect=abc
+unset actual
+{ read -N3 actual; read -N1 b;}  <<!
 abcdefg
 !
-exp=abc
-[[ $a == $exp ]] || log_error "read -N3 here-document failed -- expected '$exp', got '$a'"
-exp=d
-[[ $b == $exp ]] || log_error "read -N1 here-document failed -- expected '$exp', got '$b'"
-read -n3 a <<!
-abcdefg
+[[ $actual == $expect ]] || log_error "read -N3 here-document failed" "$expect" "$actual"
+expect=d
+actual="$b"
+[[ $actual == $expect ]] || log_error "read -N1 here-document failed" "$expect" "$actual"
+
+expect=ABC
+read -n3 actual <<!
+ABCDEFG
 !
-exp=abc
-[[ $a == $exp ]] || log_error "read -n3 here-document failed -- expected '$exp', got '$a'"
+[[ $actual == $expect ]] || log_error "read -n3 here-document failed" "$expect" "$actual"
+
 #(print -n a;sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
 #[[ $a == $exp ]] || log_error "read -N3 from pipe failed -- expected '$exp', got '$a'"
 #exp=d
@@ -808,8 +819,8 @@ log_info 'TODO: Enable these tests when the custom builtins of external commands
 #[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
 #
 unset y
-exp='outside f, 1, 2, 3, outside f'
-got=$(
+expect='outside f, 1, 2, 3, outside f'
+actual=$(
     f() {
         if [ -n "${_called_f+_}" ]; then
             for y; do
@@ -825,7 +836,8 @@ got=$(
     f 1 2 3
     echo "$y"
 )
-[[ $got == "$exp" ]] || log_error 'assignments to "command special_built-in" leaving side effects.'
+[[ $actual == "$expect" ]] ||
+   log_error 'assignments to "command special_built-in" leaving side effects' "$expect" "$actual"
 
 { $SHELL -c 'kill %' ;} 2> /dev/null
 [[ $? == 1 ]] || log_error "'kill %' has wrong exit status"

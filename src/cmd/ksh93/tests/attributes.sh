@@ -423,9 +423,10 @@ set -- \
 
 while    (( $# >= 4 ))
 do
-    exp=$1
-    got=$(print $($SHELL -c "builtin date; $2 $CMD; $3 $CMD; $4 $CMD"))
-    [[ $got == $exp ]] || log_error "[ '$2'  '$3'  '$4' ] env sequence failed -- expected '$exp', got '$got'"
+    expect=$1
+    actual=$(print $($SHELL -c "builtin date; $2 $CMD; $3 $CMD; $4 $CMD"))
+    [[ $actual == $expect ]] ||
+        log_error "[ '$2'  '$3'  '$4' ] env sequence failed" "$expect" "$actual"
     shift 4
 done
 
@@ -449,11 +450,10 @@ x=$($SHELL -c 'integer -s x=5;print -r -- $x')
 
 [[ $(typeset -l) == *namespace*.sh* ]] && log_error 'typeset -l should not contain namespace .sh'
 
-unset got
-typeset -u got
-exp=100
-((got=$exp))
-[[ $got == $exp ]] || log_error "typeset -l fails on numeric value -- expected '$exp', got '$got'"
+unset actual
+expect=100
+((actual=$expect))
+[[ $actual == $expect ]] || log_error "typeset -l fails on numeric value" "$expect" "$actual"
 
 unset s
 typeset -a -u s=( hello world chicken )
@@ -499,7 +499,9 @@ do
      x+="${a[i]}"
 done
 
-[[ $(printf "%B" x) == hello ]] || log_error "append for typeset -b not working: got '$(printf "%B" x)' should get hello"
+expect="hello"
+actual="$(printf "%B" x)"
+[[ $actual == $expect ]] || log_error "append for typeset -b not working" "$expect" "$actual"
 
 (
     trap 'exit $?' EXIT
@@ -551,18 +553,19 @@ export foo
 
 unset foo
 export foo=/C/TEMP
-typeset -H bar=$foo
-got=$( $SHELL -c 'typeset -H foo;print -r -- "$foo')
-[[ $got == "$bar" ]] || log_error 'typeset -H not working for export variables'
+typeset -H expect=$foo
+actual=$( $SHELL -c 'typeset -H foo;print -r -- "$foo')
+[[ $actual == "$expect" ]] ||
+    log_error 'typeset -H not working for export variables' "$expect" "$actual"
 
-unset exp got
 typeset -Z4 VAR1
 VAR1=1
-exp=$(typeset -p VAR1)
+expect=$(typeset -p VAR1)
 export VAR1
-got=$(typeset -p VAR1)
-got=${got/ -x/}
-[[ $got == "$exp" ]] || log_error 'typeset -x causes zerofill width to change'
+actual=$(typeset -p VAR1)
+actual=${actual/ -x/}
+[[ $actual == "$expect" ]] ||
+    log_error 'typeset -x causes zerofill width to change' "$expect" "$actual"
 
 unset var
 typeset -bZ6 var

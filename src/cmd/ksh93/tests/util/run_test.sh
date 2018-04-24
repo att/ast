@@ -73,8 +73,8 @@ cat $TEST_SRC_DIR/util/postscript.sh >> $test_script
 chmod 755 $test_script
 if [[ $shcomp == false ]]
 then
-    exec $TEST_DIR/$test_script $test_name < /dev/null
+    $TEST_DIR/$test_script $test_name < /dev/null
 else
     $SHCOMP $test_script > $test_script.comp
-    exec $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
+    $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
 fi

@@ -368,11 +368,13 @@ do    [[ $($SHELL -c "LC_COLLATE=$l" 2>&1) ]] && continue
             '[-[:upper:]]' \
             '[-A-Z]' \
             # retain this line #
-        do    e=$1
+        do
+            expect=$1
             shift
             [[ $c == $p ]]
-            g=$?
-            [[ $g == $e ]] || log_error "[[ '$c' == $p ]] for LC_COLLATE=$l failed -- expected $e, got $g"
+            actual=$?
+            [[ $actual == $expect ]] ||
+                log_error "[[ '$c' == $p ]] for LC_COLLATE=$l failed" "$expect" "$actual"
         done
     done
 done

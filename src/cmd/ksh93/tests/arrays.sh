@@ -469,17 +469,20 @@ EMPTY foo
 [[ $(typeset | grep foo$) == *associative* ]] || log_error 'array lost associative attribute'
 [[ ! ${foo[@]}  ]] || log_error 'array not empty'
 [[ ! ${!foo[@]}  ]] || log_error 'array names not empty'
+
 unset foo
 foo=bar
 set -- "${foo[@]:1}"
 (( $# == 0 )) || log_error '${foo[@]:1} should not have any values'
-unset bar
-exp=4
-: ${_foo[bar=4]}
-(( bar == 4 )) || log_error "subscript of unset variable not evaluated -- expected '4', got '$got'"
-unset bar
-: ${_foo[bar=$exp]}
-(( bar == $exp )) || log_error "subscript of unset variable not evaluated -- expected '$exp', got '$got'"
+
+expect=4
+: ${_foo[actual=4]}
+(( actual == $expect )) || log_error "subscript of unset variable not evaluated" "$expect" "$actual"
+
+expect=7
+: ${_foo[actual=$expect]}
+(( actual == $expect )) || log_error "subscript of unset variable not evaluated" "$expect" "$actual"
+
 unset foo bar
 foo[5]=4
 bar[4]=3
@@ -791,10 +794,11 @@ integer -A A
 (( A[a] ))
 [[ ${!A[@]} ]] &&  log_error '(( A[a] )) should not create element a of A'
 
-got=$($SHELL 2> /dev/null -c 'integer n=0; read  a[n++]<<<foo;read  a[n++]<<<bar;typeset -p a')
+actual=$($SHELL 2> /dev/null -c 'integer n=0; read  a[n++]<<<foo;read  a[n++]<<<bar;typeset -p a')
 exitval=$?
 (( exitval == 0))  || log_error "read a[n++] has bad exit value $exitval"
-[[ $got == 'typeset -a a=(foo bar)' ]] || log_error "read a[n++] yields '$got', but should get 'typeset -a a=(foo bar)'"
+expect='typeset -a a=(foo bar)'
+[[ $actual == "$expect" ]] || log_error "read a[n++] yields wrong answer" "$expect" "$actual"
 
 integer -a ar
 ar+=( 4 )

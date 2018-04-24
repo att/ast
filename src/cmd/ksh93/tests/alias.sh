@@ -103,7 +103,9 @@ then
         print ':' > $TEST_DIR/$i
         chmod +x $TEST_DIR/$i
         hash -r -- $i 2>/dev/null || log_error "hash -r -- $i failed"
-        [[ $(hash) == $i=$TEST_DIR/$i ]] || log_error "hash -r -- $i failed, expected $i=$TEST_DIR/$i, got $(hash)"
+        expect="$i=$TEST_DIR/$i"
+        actual="$(hash)"
+        [[ $actual == $expect ]] || log_error "hash -r -- $i failed" "$expect" "$actual"
     done
 else
     log_error 'hash -r failed'

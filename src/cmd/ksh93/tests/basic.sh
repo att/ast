@@ -37,8 +37,9 @@ while (( $# >= 2 ))
 do
     umask 0
     umask $1
-    g=$(umask)
-    [[ $g == $2 ]] || log_error "umask 0; umask $1 failed -- expected $2, got $g"
+    expect=$2
+    actual=$(umask)
+    [[ $actual == $expect ]] || log_error "umask 0; umask $1 failed" "$expect" "$actual"
     shift 2
 done
 
@@ -434,9 +435,10 @@ then
 
     if [[ $(print <(print foo) & sleep .5; kill $! 2>/dev/null) == /dev/fd* ]]
     then
-        exp='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
-        got=$( print <(print foo) v=bam <(print bar))
-        [[ $got == $exp ]] ||  log_error 'assignments after command substitution not treated as arguments'
+        expect='/dev/fd/+(\d) v=bam /dev/fd/+(\d)'
+        actual=$( print <(print foo) v=bam <(print bar))
+        [[ $actual == $expect ]] ||
+            log_error 'assignments after command substitution not treated as arguments' "$expect" "$actual"
     fi
 
     {
@@ -532,17 +534,21 @@ unset foo
 [[ $(print  "${ print "[${ print foo }]" }") == '[foo]' ]] || log_error 'nested ${...} not working when } is followed by ]'
 unset foo
 foo=$(false) > /dev/null && log_error 'failed command substitution with redirection not returning false'
-expected=foreback
-got=`print -n fore; (sleep 2;print back)&`
-[[ $got == $expected ]] || log_error "\`\`command substitution background process output error -- got '$got', expected '$expected'"
-got=$(print -n fore; (sleep 2;print back)&)
-[[ $got == $expected ]] || log_error "\$() command substitution background process output error -- got '$got', expected '$expected'"
-got=${ print -n fore; (sleep 2;print back)& }
-[[ $got == $expected ]] || log_error "\${} command substitution background process output error -- got '$got', expected '$expected'"
+expect=foreback
+actual=`print -n fore; (sleep 2;print back)&`
+[[ $actual == $expect ]] ||
+    log_error "\`\`command substitution background process output error" "$expect" "$actual"
+actual=$(print -n fore; (sleep 2;print back)&)
+[[ $actual == $expect ]] ||
+    log_error "\$() command substitution background process output error" "$expect" "$actual"
+actual=${ print -n fore; (sleep 2;print back)& }
+[[ $actual == $expect ]] ||
+    log_error "\${} command substitution background process output error" "$expect" "$actual"
 function abc { sleep 2; print back; }
 function abcd { abc & }
-got=$(print -n fore;abcd)
-[[ $got == $expected ]] || log_error "\$() command substitution background with function process output error -- got '$got', expected '$expected'"
+actual=$(print -n fore;abcd)
+[[ $actual == $expect ]] ||
+    log_error "\$() command substitution background with function process output error" "$expect" "$actual"
 
 binfalse=$(whence -p false)
 for false in false $binfalse
@@ -577,8 +583,8 @@ done |  $sleep 1
 var=$({ trap 'print trap' ERR; print -n | $binfalse; } & wait $!)
 [[ $var == trap ]] || log_error 'trap on ERR not getting triggered'
 
-exp=
-got=$(
+expect=""
+actual=$(
     function fun
     {
         $binfalse && echo FAILED
@@ -587,20 +593,20 @@ got=$(
     fun
     : works if this line deleted :
 )
-[[ $got == $exp ]] || log_error "pipe to function with conditional fails -- expected '$exp', got '$got'"
-got=$(
+[[ $actual == $expect ]] || log_error "pipe to function with conditional fails" "$expect" "$actual"
+actual=$(
     : works if this line deleted : |
     { $binfalse && echo FAILED; }
     : works if this line deleted :
 )
-[[ $got == $exp ]] || log_error "pipe to { ... } with conditional fails -- expected '$exp', got '$got'"
+[[ $actual == $expect ]] || log_error "pipe to { ... } with conditional fails" "$expect" "$actual"
 
-got=$(
+actual=$(
     : works if this line deleted : |
     ( $binfalse && echo FAILED )
     : works if this line deleted :
 )
-[[ $got == $exp ]] || log_error "pipe to ( ... ) with conditional fails -- expected '$exp', got '$got'"
+[[ $actual == $expect ]] || log_error "pipe to ( ... ) with conditional fails" "$expect" "$actual"
 
 ( $SHELL -c 'trap : DEBUG; x=( $foo); exit 0') 2> /dev/null  || log_error 'trap DEBUG fails'
 
