@@ -83,3 +83,8 @@ expect=foo.h
 
 x=$($SHELL -ec 'case a in a) echo 1; false; echo 2 ;& b) echo 3;; esac')
 [[ $x == 1 ]] || log_error 'set -e ignored on case fail through'
+
+# https://github.com/att/ast/issues/476
+case "[0-9]" in
+[0-9])    log_error 'literal "[0-9]" matches pattern [0-9]';;
+esac

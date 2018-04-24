@@ -53,7 +53,6 @@ static pid_t sh_ntfork(Shell_t *, const Shnode_t *, char *[], int *, int);
 #endif  // SHOPT_SPAWN
 
 static void sh_funct(Shell_t *, Namval_t *, int, char *[], struct argnod *, int);
-static bool trim_eq(const char *, const char *);
 static void coproc_init(Shell_t *, int pipes[]);
 
 static void *timeout;
@@ -2257,8 +2256,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             s = rex->argval;
                         }
                         type = (rex->argflag & ARG_RAW);
-                        if ((type && strcmp(r, s) == 0) ||
-                            (!type && (strmatch(r, s) || trim_eq(r, s)))) {
+                        if ((type && strcmp(r, s) == 0) || (!type && strmatch(r, s))) {
                             do {
                                 sh_exec(shp, t->reg.regcom,
                                         (t->reg.regflag ? (flags & sh_state(SH_ERREXIT)) : flags));
@@ -2618,20 +2616,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         if (was_errexit) sh_onstate(shp, SH_ERREXIT);
     }
     return shp->exitval;
-}
-
-//
-// Test for equality with second argument trimmed.
-// Returns 1 if r == trim(s) otherwise 0.
-//
-static bool trim_eq(const char *r, const char *s) {
-    char c;
-
-    while ((c = *s++)) {
-        if (c == '\\') c = *s++;
-        if (c && c != *r++) return (0);
-    }
-    return *r == 0;
 }
 
 //
