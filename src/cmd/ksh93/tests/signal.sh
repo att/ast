@@ -424,14 +424,13 @@ then
     typeset m  # used in child processes
     integer pid=$$ p i numchildren=64
 
-    ( (sleep 10; kill $pid 2> /dev/null) & ; print $! >$TEST_DIR/wd_pid ) &
-    sleep 0.2
-    watchdog_pid=$(< $TEST_DIR/wd_pid)
+    # Double-fork so this shell doesn't wait for it down below where we reap all the
+    # `kill -q -s RTMIN` subshells.
+    ( (read -t 10 x < fifo9 && exit 0; kill $pid 2> /dev/null) & ) &
 
     for (( p=0; p < numchildren; p++ ))
     do
         {
-            sleep 0.1
             for m in 'a' 'b' 'c' 'd' 'e' 'f'
             do
                 print p=$p m=$m >> junk
@@ -448,6 +447,7 @@ then
     done
     while ! wait
     do
+        jobs >&2  # WTF
         true
     done
 
@@ -462,7 +462,8 @@ then
         [[ $actual == $expect ]] || log_error "wrong number of $i signals" "$expect" "$actual"
     done
 
-    SIG1=RTMIN+1 SIG2=RTMIN+2
+    SIG1=RTMIN+1
+    SIG2=RTMIN+2
     compound a=(float i=0)
     trap "((a.i+=.00001)); (kill -q0 -$SIG2 $$) &; :" $SIG1
     trap '((a.i+=1))' $SIG2
@@ -477,7 +478,7 @@ then
     expect='typeset -C a=(typeset -l -E i=200.002)'
     actual=$(typeset -p a)
     [[ $actual == $expect ]] || log_error "signals lost" "$expect" "$actual"
-    kill $watchdog_pid
+    print -u9 exit  # tell the watchdog to exit since we no longer need it
 fi
 
 # ====================

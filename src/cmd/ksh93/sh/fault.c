@@ -824,6 +824,13 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     } else {
         sigin.sa_sigaction = (void (*)(int, siginfo_t *, void *))func;
         sigin.sa_flags = SA_SIGINFO;
+        // Delivering a signal results in malloc() being called. If a different signal is delivered
+        // while inside malloc() we can deadlock. So only allow one signal at a time with a couple
+        // of exceptions. See issue #490.
+        sigfillset(&sigin.sa_mask);
+        sigdelset(&sigin.sa_mask, SIGABRT);
+        sigdelset(&sigin.sa_mask, SIGCHLD);
+        sigdelset(&sigin.sa_mask, SIGSEGV);
     }
     sigaction(sig, &sigin, &sigout);
     sigunblock(sig);
