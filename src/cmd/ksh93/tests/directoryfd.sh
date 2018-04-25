@@ -33,20 +33,20 @@
 #                 Roland Mainz <roland.mainz@nrubsig.org>              #
 #                                                                      #
 ########################################################################
-
 #
 # Copyright (c) 2013, Roland Mainz. All rights reserved.
 #
+log_info 'TODO: Reenable the commented out tests below if and when mkdir/rmdir/cat builtins are enabled.'
+
+if [[ ! -d /proc ]]
+then
+    log_warning "Skipping this test since the system does not have a /proc directory"
+    exit 0
+fi
 
 #
-# Tests for directory file descriptors
+# The test module checks whether directory file descrpitors work.
 #
-
-#
-# The test module checks whether directory file descritors
-# work
-#
-
 function test_dirfd_basics1
 {
     mkdir 'test_dirfd_basics1'
@@ -79,7 +79,6 @@ function test_dirfd_basics1
             cmd='{ print -n "foo2_" >[dirfd]/test1 ; dfd=$dirfd $SHELL -c "print appendix2 >>/dev/fd/\$dfd/test1" ; } {dirfd}<"./tmp"; cat tmp/test1'
             stdoutpattern='foo2_appendix2'
         )
-log_info 'TODO: This is a test for mkdir/cat/rmdir builtins. We should reenable it if we choose to make these commands builtin.'
 #        (
 #            testname='createdir1_redirect'
 #            cmd='redirect {dirfd}<"./tmp" ; mkdir [dirfd]/test1 ; print "foo2" >tmp/test1/a ; cat [dirfd]/test1/a ; rm tmp/test1/a ; rmdir [dirfd]/test1'
@@ -114,17 +113,23 @@ log_info 'TODO: This is a test for mkdir/cat/rmdir builtins. We should reenable 
 
             rm -Rf 'tmp'
 
-            [[ "${out.stdout}" == ${tst.stdoutpattern}      ]] || log_error "${testname}: Expected stdout to match $(printf '%q\n' "${tst.stdoutpattern}"), got $(printf '%q\n' "${out.stdout}")"
-            [[ "${out.stderr}" == ''                        ]] || log_error "${testname}: Expected empty stderr, got $(printf '%q\n' "${out.stderr}")"
-            (( out.res == 0 )) || log_error "${testname}: Unexpected exit code ${out.res}"
+            expect="${tst.stdoutpattern}"
+            actual="${out.stdout}"
+            [[ $actual == $expect ]] ||
+                log_error "${testname}: Expected stdout to match" "$expect" "$actual"
+            expect=''
+            actual="${out.stderr}"
+            [[ $actual == $expect ]] ||
+                log_error "${testname}: Expected empty stderr" "$expect" "$actual"
+            expect=0
+            actual=$out.res
+            (( actual == expect )) ||
+                log_error "${testname}: Unexpected exit code" "$expect" "$actual"
         done
     done
 
-    cd '..'
-    rmdir 'test_dirfd_basics1' || log_error "${0}: Cannot remove directory."
-
-    return 0
+    cd $TEST_DIR
 }
 
-# run tests
+# Run tests.
 test_dirfd_basics1
