@@ -86,5 +86,7 @@ x=$($SHELL -ec 'case a in a) echo 1; false; echo 2 ;& b) echo 3;; esac')
 
 # https://github.com/att/ast/issues/476
 case "[0-9]" in
-[0-9])    log_error 'literal "[0-9]" matches pattern [0-9]';;
+    [0-9]) log_error "Shell should not match pattern as literal string in case command";;
+    "[0-9]") ;;
+    *) log_error "Shell fails to match quoted pattern-like string as literal string";;
 esac
