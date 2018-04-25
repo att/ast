@@ -59,7 +59,9 @@ static void *timeout;
 static char nlock;
 static char pipejob;
 static int restorefd;
+#if SPAWN_cwd
 static int restorevex;
+#endif  // SPAWN_cwd
 
 struct funenv {
     Namval_t *node;
@@ -67,6 +69,7 @@ struct funenv {
     Namval_t **nref;
 };
 
+#if SHOPT_SPAWN
 static int io_usevex(struct ionod *iop) {
     struct ionod *first = iop;
     for (; iop; iop = iop->ionxt) {
@@ -74,6 +77,7 @@ static int io_usevex(struct ionod *iop) {
     }
     return (IOUSEVEX);
 }
+#endif  // SHOPT_SPAWN
 #if 1
 #undef IOUSEVEX
 #define IOUSEVEX 0
