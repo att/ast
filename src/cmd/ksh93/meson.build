@@ -77,7 +77,7 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # The emptry string is POSIX locale.
 # TODO: Check how ksh code handles '' string while setting locales and
 # explicitly set string to 'C' or 'POSIX' here if possible.
-locales = ['', 'C.UTF-8']
+locales = ['C', 'C.UTF-8']
 
 # Each entry in `all_tests` is an array of one or two elements. The first
 # element is the test name. The second is an optional timeout if the default
@@ -118,7 +118,7 @@ foreach testspec : all_tests
     endforeach
 
     # shcomp tests
-    lang_var = 'LANG='
+    lang_var = 'LANG=C.UTF-8'
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
              args: [ test_driver, 'shcomp', testname],

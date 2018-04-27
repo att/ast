@@ -17,7 +17,7 @@ fi
 #
 # Setup the environment for the unit test.
 #
-export TEST_SRC_DIR=${0%/*/*}
+export TEST_SRC_DIR=${0%/*/*}  # capture the parent directory containing this script
 readonly test_name=$1
 readonly test_path=$TEST_SRC_DIR/$test_name.sh
 readonly test_script=$test_name.sh
@@ -25,7 +25,7 @@ export BUILD_DIR=$PWD
 
 #
 # Create a temp dir and make it the CWD for the unit test. It will be removed by the unit test
-# postscript it if we exit cleanly.
+# postscript if there are no test failures.
 #
 # The use of `mktemp -dt` isn't ideal as it has slightly different meaning on BSD and GNU. But for
 # our purposes that doesn't matter. It simply means the temp file name will contain the X's on a BSD
@@ -50,7 +50,8 @@ export PATH=$FULL_PATH
 
 #
 # Create a couple of named pipes (fifos) for the unit test to use as barriers rather than using
-# arbitrary sleeps.
+# arbitrary sleeps. The numeric suffix reflects the file-descriptor that will be open for
+# read-write on the fifo; e.g., `exec 9<>fifo9`.
 #
 mkfifo fifo9
 mkfifo fifo8
@@ -61,6 +62,18 @@ mkfifo fifo8
 mkdir $TEST_DIR/home
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
+
+#
+# Make sure any locale vars set by the user (or the continuous build environment) don't affect the
+# tests. The only var we don't unset or change is `LANG` because we expect `meson test` to set it.
+#
+unset LC_ALL
+unset LC_COLLATE
+unset LC_CTYPE
+unset LC_MESSAGES
+unset LC_MONETARY
+unset LC_NUMERIC
+unset LC_TIME
 
 #
 # Create the actual unit test script by concatenating the stock preamble and postscript to the unit
