@@ -140,18 +140,15 @@ then
     log_error "leading : in path not working"
 fi
 
-log_info "TODO: Enable this test when bug #485 is fixed."
-# Disabled because once in a while (~20% of the time) the exit status is 126 (ENOENT) rather than
-# the expected 127 (ENOEXEC).
-#
-# (
-#     rm -rf noexec
-#     print 'print cannot execute' > noexec
-#     noexec > /dev/null 2>&1
-# )
-# actual=$?
-# expect=127
-# [[ $actual == $expect ]] || log_error "exit status of non-executable is wrong" "$expect" "$actual"
+# POSIX: If a command is found, but is not executable, exit status should be 126.
+(
+    rm -rf noexec
+    print 'print cannot execute' > noexec
+    noexec > /dev/null 2>&1
+)
+actual=$?
+expect=126
+[[ $actual == $expect ]] || log_error "exit status of non-executable is wrong" "$expect" "$actual"
 
 builtin -d rm 2> /dev/null
 chmod=$(whence chmod)

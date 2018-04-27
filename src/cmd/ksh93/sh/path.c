@@ -876,6 +876,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
     const char *opath;
     Pathcomp_t *libpath, *pp = 0;
     int slash = 0;
+    int not_executable = 0;
 
     sh_setlist(shp, local, NV_EXPORT | NV_IDENT | NV_ASSIGN, 0);
     envp = sh_envgen(shp);
@@ -901,14 +902,26 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
                 opath = arg0;
             }
             path_spawn(shp, opath, argv, envp, libpath, 0);
+            if ((shp->path_err != ENOENT) && (shp->path_err != EACCES)) {
+                // An executable command was found, but failed to execute it
+                errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
+            } else if (shp->path_err == EACCES) {
+                // A command was found but it was not executable.
+                // POSIX specifies that shell should continue to search for command in PATH
+                // and return 126 only when it can not find executable file in other elements
+                // of PATH.
+                not_executable = 1;
+            }
             while (pp && (pp->flags & PATH_FPATH)) pp = path_nextcomp(shp, pp, arg0, 0);
         } while (pp);
     // Force an exit.
     ((struct checkpt *)shp->jmplist)->mode = SH_JMPEXIT;
-    if ((errno = shp->path_err) == ENOENT) {
-        errormsg(SH_DICT, ERROR_exit(ERROR_NOENT), e_found, arg0);
-    } else {
+    if (not_executable) {
+        // This will return with status 126.
         errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
+    } else {
+        // This will return with status 127.
+        errormsg(SH_DICT, ERROR_exit(ERROR_NOENT), e_found, arg0);
     }
 }
 
