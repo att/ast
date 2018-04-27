@@ -495,19 +495,31 @@ expect=0.5
     log_error "'trap - INT' causing trap to not be ignored" "$expect" "$actual"
 
 # ====================
-# Verify ???
+# Verify kill -qN sends the value N and .sh.sig.value receives it.
 #
 compound c=(compound -a car; integer cari=0)
 trap 'c.car[c.cari++]=.sh.sig' USR1
 kill -q4 -s USR1 $$
 kill -q5 -s USR1 $$
 
-expect=4
-actual=${c.car[0].value.q}
-(( $actual == $expect )) ||
-    log_error "\${c.car[0].value.q} is wrong" "$expect" "$actual"
+case "${c.car[0].code}" in
+    SI_QUEUE)
+        # System has sigqueue().
+        expect=4
+        actual=${c.car[0].value.q}
+        (( $actual == $expect )) ||
+            log_error "\${c.car[0].value.q} is wrong" "$expect" "$actual"
 
-expect=5
-actual=${c.car[1].value.q}
-(( $actual == $expect )) ||
-    log_error "\${c.car[1].value.q} is wrong" "$expect" "$actual"
+        expect=5
+        actual=${c.car[1].value.q}
+        (( $actual == $expect )) ||
+            log_error "\${c.car[1].value.q} is wrong" "$expect" "$actual"
+        ;;
+    SI_USER)
+        # System lacks sigqueue(), ksh called kill().
+        log_warning "skipping test: sigqueue() not supported"
+        ;;
+    *)
+        log_error "expected SI_QUEUE or SI_USER, got |${c.car[0].code}|"
+        ;;
+esac
