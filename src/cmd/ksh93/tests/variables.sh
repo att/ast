@@ -704,21 +704,41 @@ do
         log_error "unset $v; : \$$v failed"
     fi
 done
-
-x=x
-for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC
-do
-    nameref r=$v
-    unset $v
-    [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
-    d=$($SHELL -c "$v=$x" 2>&1)
-    [[ $d ]] || log_error "$v=$x failed -- expected locale diagnostic"
-    { g=$( r=$x; print -- $r ); } 2>/dev/null
-    [[ $g == '' ]] || log_error "$v=$x failed -- expected '', got '$g'"
-    { g=$( r=C; r=$x; print -- $r ); } 2>/dev/null
-    [[ $g == 'C' ]] || log_error "$v=C; $v=$x failed -- expected 'C', got '$g'"
-done
 PATH=$path
+
+# $x must be an unknown locale.
+case "$(uname)" in
+    OpenBSD)
+        # "x" acts as a known alias of "C", but "x.x" is unknown (see
+        # https://man.openbsd.org/setlocale). For worse, `locale -a` doesn't
+        # list "x", so `locale -a | grep -q '^x$'` doesn't work.
+        x=x.x
+        ;;
+    *)
+        # Most systems agree that "x" is an unknown locale.
+        if locale -a | grep -q '^x$'; then
+            # Someone added "x" using localedef(1)?
+            log_warning "skipping test: 'x' is a known locale"
+            unset x
+        else
+            x=x
+        fi
+        ;;
+esac
+
+if [[ -n $x ]]; then
+    for v in LC_ALL LC_CTYPE LC_MESSAGES LC_COLLATE LC_NUMERIC; do
+        nameref r=$v
+        unset $v
+        [[ $r ]] && log_error "unset $v failed -- expected '', got '$r'"
+        d=$($SHELL -c "$v=$x" 2>&1)
+        [[ $d ]] || log_error "$v=$x failed -- expected locale diagnostic"
+        { g=$( r=$x; print -- $r ); } 2>/dev/null
+        [[ $g == '' ]] || log_error "$v=$x failed -- expected '', got '$g'"
+        { g=$( r=C; r=$x; print -- $r ); } 2>/dev/null
+        [[ $g == 'C' ]] || log_error "$v=C; $v=$x failed -- expected 'C', got '$g'"
+    done
+fi
 
 cd $TEST_DIR
 
