@@ -309,6 +309,22 @@ exitval=$?
 log_info "TODO: Skipping test - 'commands with standard output closed produce output'. It should be fixed later."
 #$SHELL -c "{ > $TEST_DIR/1 ; date;} >&- 2> /dev/null" > $TEST_DIR/2
 #[[ -s $TEST_DIR/1 || -s $TEST_DIR/2 ]] && log_error 'commands with standard output closed produce output'
+
+# ==================
+# Verify that symlinks are correctly canonicalized as part of a conditional redirection.
+# Regression issue #492.
+#
+mkdir -p dir1/dir2
+ln -s dir1 s1
+cd dir1
+ln -s dir2 s2
+cd ..
+expect=symlinks-resolved
+print wrong-answer > dir1/dir2/x
+print $expect >; s1/s2/x
+actual=$(< dir1/dir2/x)
+[[ $actual == $expect ]] || log_error "symlink in conditional redirect wrong" "$expect" "$actual"
+
 $SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && log_error 'closed standard output not passed to subshell'
 [[ $(cat  <<- \EOF | $SHELL
 	do_it_all()
@@ -321,16 +337,21 @@ $SHELL -c "$SHELL -c ': 3>&1' 1>&- 2>/dev/null" && log_error 'closed standard ou
 EOF) == 'hello world' ]] || log_error 'invalid readahead on stdin'
 $SHELL -c 'exec 3>; /dev/null'  2> /dev/null && log_error '>; with exec should be an error'
 $SHELL -c ': 3>; /dev/null'  2> /dev/null || log_error '>; not working with at all'
-print hello > $TEST_DIR/1
-if ! $SHELL -c "false >; $TEST_DIR/1"  2> /dev/null
-then
-    [[ $(<$TEST_DIR/1) == hello ]] || log_error '>; not preserving file on failure'
-fi
 
-if ! $SHELL -c "sed -e 's/hello/hello world/' $TEST_DIR/1" >; $TEST_DIR/1  2> /dev/null
-then
-    [[ $(<$TEST_DIR/1) == 'hello world' ]] || log_error '>; not updating file on success'
-fi
+print hello > $TEST_DIR/1
+$SHELL -c "false >; $TEST_DIR/1"
+status=$?
+(( status == 1 )) || log_error "unexpected exit status" "1" "$status"
+expect='hello'
+actual="$(<$TEST_DIR/1)"
+[[ $actual == $expect ]] || log_error '>; not preserving file on failure' "$expect" "$actual"
+
+$SHELL -c "sed -e 's/hello/hello world/' $TEST_DIR/1" >; $TEST_DIR/1
+status=$?
+(( status == 0 )) || log_error "unexpected exit status" "0" "$status"
+expect='hello world'
+actual="$(<$TEST_DIR/1)"
+[[ $actual == $expect ]] || log_error '>; not updating file on success' "$expect" "$actual"
 
 $SHELL -c 'exec 3<>; /dev/null'  2> /dev/null && log_error '<>; with exec should be an error'
 $SHELL -c ': 3<>; /dev/null'  2> /dev/null || log_error '<>; not working with at all'
@@ -545,13 +566,6 @@ do
         break
     fi
 done
-
-rm -f $TEST_DIR/file1 $TEST_DIR/file2
-print foo > $TEST_DIR/file3
-ln -s $TEST_DIR/file3 $TEST_DIR/file2
-ln -s $TEST_DIR/file2 $TEST_DIR/file1
-print bar >; $TEST_DIR/file1
-[[ $(<$TEST_DIR/file3) == bar ]] || log_error '>; not following symlinks'
 
 for i in 1
 do

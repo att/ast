@@ -44,6 +44,7 @@
  * pathdev(PATH_AUX) Pathdev_t.flags|=PATH_AUX if AUX fd was created
  * see pathopen() for the api that ties it all together
  */
+#include <stdio.h>
 #include "config_ast.h"  // IWYU pragma: keep
 
 #define _AST_API_IMPLEMENT 1
@@ -207,25 +208,12 @@ static const Oflags_t oflags[] = {
  */
 
 char *pathdev(int dfd, const char *path, char *canon, size_t size, int flags, Pathdev_t *dev) {
-    char *p;
-    char *r;
-    char *s;
-    char *t;
-    int dots;
-    char *v;
-    char *x;
-    char *z;
-    char *a;
-    char *b;
-    char *e;
-    int c;
-    int n;
-    int loop;
-    int oerrno;
-    int inplace;
+    char *p, *r, *s, *t, *v, *x, *z, *a, *b, *e;
+    int dots, c, n, loop;
+    int oerrno = errno;
+    bool inplace = (path == canon);
     Pathdev_t nodev;
 
-    oerrno = errno;
     if (!dev) dev = &nodev;
     dev->fd = -1;
     dev->oflags = 0;
@@ -233,7 +221,6 @@ char *pathdev(int dfd, const char *path, char *canon, size_t size, int flags, Pa
     if (!size) size = strlen(path) + 1;
     e = canon + size;
     p = (char *)path;
-    inplace = p == canon;
 again:
     r = x = 0;
     if (path[0] == '/') {
@@ -425,12 +412,12 @@ again:
         if (x)
             for (t = x; r = strchr(t, '@'); t = r + 1)
                 if ((r - t) >= 2 && r[-2] == '/' && r[-1] == '/' && r[1] == '/' && r[2] == '/') {
-                    char buf[2 * PATH_MAX];
+                    char buf[2 * PATH_MAX] = {0};
 
                     t = r - 2;
                     r = x;
                     if (t > r) {
-                        memcpy(buf, r, t - r);
+                        memmove(buf, r, t - r);
                         for (r = buf + (t - r); r > buf && *(r - 1) == '/'; r--)
                             ;
                     }
@@ -484,7 +471,7 @@ again:
             z = x || (flags & PATH_PHYSICAL) && dev->fd >= 0 ? s : (char *)path;
             n = strlen(z) + 1;
             a = fmtbuf(n);
-            memcpy(a, z, n);
+            memmove(a, z, n);
         } else {
             a = s;
             n = strlen(a) + 1;
@@ -494,13 +481,13 @@ again:
             r = v = z;
             v += strlen(v);
             if ((v - z) > 1) *v++ = '/';
-            memcpy(v, a, n);
+            memmove(v, a, n);
             s = v = r;
         } else if (*s != '/')
             goto nope;
         dev->path.offset = 0;
         t = s;
-        inplace = 1;
+        inplace = true;
     }
     if (!(flags & PATH_DROP_HEAD_SLASH2) && s[0] == '/' && s[1] == '/') {
         for (a = s + 2; *a == '/'; a++)
@@ -560,11 +547,14 @@ again:
                                 while (t > r && *(t - 1) != '/') t--;
                         } else
 #endif
-                            if ((t - 5) >= r)
-                            for (t -= 5; t > r && *(t - 1) != '/'; t--)
-                                ;
-                        else if ((t - 4) == r)
+                            if ((t - 5) >= r) {
+                                for (t -= 5; t > r && *(t - 1) != '/'; t--) {
+                                    ;  // empty loop
+                                }
+                            }
+                        else if ((t - 4) == r) {
                             t = r + 1;
+                        }
                         else
                             r = t;
                         break;
@@ -575,7 +565,7 @@ again:
                         if ((flags & PATH_PHYSICAL) && (t - 1) > (x ? x : canon) &&
                             (loop < 32 || (flags & PATH_EXISTS) ||
                              *s && (flags & PATH_EXCEPT_LAST))) {
-                            char buf[PATH_MAX];
+                            char buf[PATH_MAX] = {0};
 
                             if (loop >= 32) {
                                 errno = ELOOP;
@@ -586,13 +576,17 @@ again:
                             dots = pathgetlink(x ? x : canon, buf, sizeof(buf));
                             *(t - 1) = c;
                             if (dots > 0) {
-                                if ((t + dots + 1) >= e) goto nope;
                                 loop++;
-                                strcpy(buf + dots, s - (*s != 0));
+                                if (inplace) {
+                                    char *sp = s - (*s != 0);
+                                    memmove(buf + dots, sp, strlen(sp) + 1);
+                                } else {
+                                    strcpy(buf + dots, s - (*s != 0));
+                                }
                                 if (*buf == '/') p = r = x ? x : canon;
-                                inplace = 1;
+                                inplace = true;
                                 s = t = p;
-                                strcpy(p, buf);
+                                memmove(p, buf, strlen(buf) + 1);
                             } else if (dots < 0 && errno == ENOENT) {
                                 if (!*s && (flags & PATH_EXCEPT_LAST)) break;
                                 if (flags & PATH_EXISTS) goto nope;
@@ -637,21 +631,23 @@ again:
                                 dfd, x,
                                 O_INTERCEPT | O_RDONLY | O_NONBLOCK | O_CLOEXEC | dev->oflags);
                             *r = '/';
-                            if (dev->fd < 0)
-                                t = 0;
-                            else if ((n = openat(dev->fd, ".",
-                                                 O_INTERCEPT | O_RDONLY | O_XATTR | O_NONBLOCK)) <
-                                     0) {
-                                close(dev->fd);
-                                dev->fd = -1;
+                            if (dev->fd < 0) {
                                 t = 0;
                             } else {
-                                dev->oflags |= O_INTERCEPT;
-                                close(dev->fd);
-                                if (dev == &nodev) close(n);
-                                dev->fd = n;
-                                dev->pid = -1;
-                                dev->path.offset = z - canon;
+                                n = openat(dev->fd, ".",
+                                           O_INTERCEPT | O_RDONLY | O_XATTR | O_NONBLOCK);
+                                if (n < 0) {
+                                    close(dev->fd);
+                                    dev->fd = -1;
+                                    t = 0;
+                                } else {
+                                    dev->oflags |= O_INTERCEPT;
+                                    close(dev->fd);
+                                    if (dev == &nodev) close(n);
+                                    dev->fd = n;
+                                    dev->pid = -1;
+                                    dev->path.offset = z - canon;
+                                }
                             }
                         }
 #endif
@@ -682,12 +678,9 @@ again:
                 break;
         }
     }
+
 nope:
-    if (canon) {
-        if (inplace)
-            memmove(canon, s, strlen(s) + 1);
-        else if (e)
-            strcpy(canon, s);
-    }
+    if (canon && !inplace && e) strcpy(canon, s);
+
     return 0;
 }
