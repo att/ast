@@ -932,8 +932,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
     static char io_op[7];  // used for -x trace info
     int trunc = 0, clexec = 0, fn, traceon;
     int r, indx = shp->topfd, perm = -1;
-    char *tname = 0, *after = "", *trace = shp->st.trap[SH_DEBUGTRAP];
-    Namval_t *np = 0;
+    char *tname = NULL;
+    char *after = "";
+    char *trace = shp->st.trap[SH_DEBUGTRAP];
+    Namval_t *np = NULL;
     int isstring = shp->subshell ? (sfset(sfstdout, 0, 0) & SF_STRING) : 0;
     int herestring = (flag & IOHERESTRING);
     int vex = (flag & IOUSEVEX);
@@ -1185,9 +1187,11 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 }
             openit:
                 if (flag != SH_SHOWME) {
-                    if ((fd = sh_open(tname ? tname : fname, o_mode, RW_ALL)) < 0)
+                    fd = sh_open(tname ? tname : fname, o_mode, RW_ALL);
+                    if (fd < 0) {
                         errormsg(SH_DICT, ERROR_system(1), ((o_mode & O_CREAT) ? e_create : e_open),
-                                 fname);
+                                 tname ? tname : fname);
+                    }
                     if (perm > 0) {
                         fchmod(fd, perm);
                     }
