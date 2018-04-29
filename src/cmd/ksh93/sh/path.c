@@ -635,6 +635,8 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
     while (1) {
         sh_sigcheck(shp);
         shp->bltin_dir = 0;
+        // In this loop, oldpp is the current pointer
+        // pp is the next pointer
         while ((oldpp = pp)) {
             pp = path_nextcomp(shp, pp, name, 0);
             if (!(oldpp->flags & PATH_SKIP)) break;
