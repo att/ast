@@ -1687,8 +1687,15 @@ retry2:
                 }
             }
             if (vsize) {
+#if 0
                 if (c == ',' || c == '^') offset = stktell(stkp);
+#endif
                 mac_copy(mp, v, vsize > 0 ? vsize : strlen(v));
+#if 0
+                // This code supports case modification in parameter substitution.
+                // It was not available in ksh-20120801. We should consider removing
+                // it altogether.
+                // https://github.com/att/ast/issues/417
                 if (c == ',' || c == '^') {
                     v = stkptr(stkp, offset);
                     if (type) {
@@ -1698,6 +1705,7 @@ retry2:
                         *v = (c == '^' ? toupper(*v) : tolower(*v));
                     }
                 }
+#endif
             }
             if (addsub) {
                 mp->shp->instance++;
