@@ -30,6 +30,8 @@ None at this time.
   experimental and undocumented this should not break any existing users of
   `ksh` built with this feature enabled. (issue #234)
 - <> operator now redirects standard input by default (issue #75).
+- Support for the build time SHOPT_ACCTFILE symbol and code has been removed
+  (issue #210).
 
 ## Notable fixes and improvements
 
