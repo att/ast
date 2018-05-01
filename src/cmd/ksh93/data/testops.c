@@ -72,9 +72,6 @@ const char sh_opttest[] =
     "set.]"
     "[+-h \afile\a?True if \afile\a exists and is a symbolic link.]"
     "[+-k \afile\a?True if \afile\a exists and has its sticky bit on.]"
-#if SHOPT_TEST_L
-    "[+-l \afile\a?True if \afile\a exists and is a symbolic link.]"
-#endif  // SHOPT_TEST_L
     "[+-n \astring\a?True if length of \astring\a is non-zero.]"
     "[+-o \aoption\a?True if the shell option \aoption\a is enabled.]"
     "[+-p \afile\a?True if \afile\a exists and is a pipe or fifo.]"
@@ -138,9 +135,6 @@ const char sh_opttest[] =
 
 const char test_opchars[] =
     "HLNRSVOGCaeohrwxdcbfugkv"
-#if SHOPT_TEST_L
-    "l"
-#endif  // SHOPT_TEST_L
     "psnzt";
 const char e_argument[] = "argument expected";
 const char e_missing[] = "%s missing";

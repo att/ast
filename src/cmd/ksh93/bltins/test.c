@@ -342,9 +342,6 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
             return 0;
 #endif  // S_ISVTX
         }
-#if SHOPT_TEST_L
-        case 'l':
-#endif  // SHOPT_TEST_L
         case 'L':
         case 'h': {  // -h is undocumented, and hopefully will disappear
             if (*arg == 0 || arg[strlen(arg) - 1] == '/' || lstat(arg, &statb) < 0) return 0;
