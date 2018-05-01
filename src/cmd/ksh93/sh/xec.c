@@ -2789,9 +2789,6 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
     sh_onstate(shp, SH_FORKED);
     sh_onstate(shp, SH_NOLOG);
     if (shp->fn_reset) shp->fn_depth = shp->fn_reset = 0;
-#if SHOPT_ACCT
-    sh_accsusp();
-#endif  // SHOPT_ACCT
     // Reset remaining signals to parent except for those `lost' by trap.
     if (!(flags & FSHOWME)) sh_sigreset(shp, 2);
     shp->subshell = 0;

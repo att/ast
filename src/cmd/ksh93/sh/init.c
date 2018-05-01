@@ -70,10 +70,6 @@ char e_version[] =
 #define ATTRS 1
     "J"
 #endif
-#if SHOPT_ACCT
-#define ATTRS 1
-    "L"
-#endif
 #if SHOPT_REGRESS
 #define ATTRS 1
     "R"
