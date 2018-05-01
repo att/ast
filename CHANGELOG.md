@@ -44,6 +44,10 @@ None at this time.
 
 ## Other significant changes
 
+- Code hidden behind the SHOPT_ACCT and SHOPT_ACCTFILE build time symbols
+  has been removed. The features are not enabled by default and I am not aware
+  of any distro which enables them. Furthermore, they are huge security holes
+  and should never be enabled.
 - The suid_exec program has been removed (issue #366).
 - The code has been restyled according to new guidelines (issue #125).
 - Many features which used to be optionally included at build time are now

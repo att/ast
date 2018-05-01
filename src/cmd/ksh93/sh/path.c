@@ -1224,9 +1224,6 @@ openok:
     shp->infd = n;
 
     shp->infd = sh_iomovefd(shp, shp->infd);
-#if SHOPT_ACCT
-    sh_accbegin(path);  // reset accounting
-#endif                  // SHOPT_ACCT
     shp->arglist = sh_argcreate(argv);
     shp->lastarg = strdup(path);
     // Save name of calling command.
@@ -1241,83 +1238,6 @@ openok:
     if (shp->sigflag[SIGCHLD] == SH_SIGOFF) shp->sigflag[SIGCHLD] = SH_SIGFAULT;
     siglongjmp(*shp->jmplist, SH_JMPSCRIPT);
 }
-
-#if SHOPT_ACCT
-#include <sys/acct.h>
-
-static struct acct sabuf;
-static struct tms buffer;
-static clock_t before;
-static char *SHACCT; /* set to value of SHACCT environment variable */
-static shaccton;     /* non-zero causes accounting record to be written */
-static int compress(time_t);
-//
-// Initialize accounting, i.e., see if SHACCT variable set.
-//
-void sh_accinit(void) { SHACCT = getenv("SHACCT"); }
-//
-// Suspend accounting until turned on by sh_accbegin().
-//
-void sh_accsusp(void) {
-    shaccton = 0;
-#ifdef AEXPAND
-    sabuf.ac_flag |= AEXPND;
-#endif  // AEXPAND
-}
-
-//
-// Begin an accounting record by recording start time.
-//
-void sh_accbegin(const char *cmdname) {
-    if (SHACCT) {
-        sabuf.ac_btime = time(NULL);
-        before = times(&buffer);
-        sabuf.ac_uid = getuid();
-        sabuf.ac_gid = getgid();
-        strncpy(sabuf.ac_comm, (char *)path_basename(cmdname), sizeof(sabuf.ac_comm));
-        shaccton = 1;
-    }
-}
-
-//
-// Terminate an accounting record and append to accounting file.
-//
-void sh_accend(void) {
-    int fd;
-    clock_t after;
-
-    if (shaccton) {
-        after = times(&buffer);
-        sabuf.ac_utime = compress(buffer.tms_utime + buffer.tms_cutime);
-        sabuf.ac_stime = compress(buffer.tms_stime + buffer.tms_cstime);
-        sabuf.ac_etime = compress((time_t)(after - before));
-        fd = open(SHACCT, O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC, RW_ALL);
-        write(fd, (const char *)&sabuf, sizeof(sabuf));
-        sh_close(fd);
-    }
-}
-
-//
-// Produce a pseudo-floating point representation with 3 bits base-8 exponent, 13 bits fraction.
-//
-static int compress(time_t t) {
-    int exp = 0, rund = 0;
-
-    while (t >= 8192) {
-        exp++;
-        rund = t & 04;
-        t >>= 3;
-    }
-    if (rund) {
-        t++;
-        if (t >= 8192) {
-            t >>= 3;
-            exp++;
-        }
-    }
-    return ((exp << 13) + t);
-}
-#endif  // SHOPT_ACCT
 
 //
 // Add a pathcomponent to the path search list and eliminate duplicates and non-existing absolute

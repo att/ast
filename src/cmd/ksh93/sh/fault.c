@@ -603,9 +603,6 @@ void sh_done(void *ptr, int sig) {
     }
     if (shp->var_tree) nv_scan(shp->var_tree, array_notify, (void *)0, NV_ARRAY, NV_ARRAY);
     sh_freeup(shp);
-#if SHOPT_ACCT
-    sh_accend();
-#endif  // SHOPT_ACCT
     if (mbwide() || sh_isoption(shp, SH_EMACS) || sh_isoption(shp, SH_VI) ||
         sh_isoption(shp, SH_GMACS))
         tty_cooked(-1);

@@ -325,10 +325,6 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
             }
             error_info.id = name;
             shp->comdiv--;
-#if SHOPT_ACCT
-            sh_accinit();
-            if (fdin != 0) sh_accbegin(error_info.id);
-#endif  // SHOPT_ACCT
         }
     } else {
         fdin = shp->infd;

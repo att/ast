@@ -126,11 +126,4 @@ extern const char is_function[];
 extern const char is_ufunction[];
 extern const char e_prohibited[];
 
-#if SHOPT_ACCT
-extern void sh_accinit(void);
-extern void sh_accbegin(const char *);
-extern void sh_accend(void);
-extern void sh_accsusp(void);
-#endif  // SHOPT_ACCT
-
 #endif  // !PATH_OFFSET
