@@ -80,7 +80,7 @@ extern  int	b_sync (int, char**, Shbltin_t*);
 extern  int	b_uname (int, char**, Shbltin_t*);
 //extern  int	b_uniq (int, char**, Shbltin_t*);
 //extern  int	b_vmstate (int, char**, Shbltin_t*);
-//extern  int	b_wc (int, char**, Shbltin_t*);
+extern  int	b_wc (int, char**, Shbltin_t*);
 //extern  int	b_xargs (int, char**, Shbltin_t*);
 //extern  int	b_xgrep (int, char**, Shbltin_t*);
 
