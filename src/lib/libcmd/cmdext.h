@@ -33,7 +33,7 @@ extern int	b_chmod (int, char**, Shbltin_t*);
 extern int	b_cmp (int, char**, Shbltin_t*);
 //extern int	b_comm (int, char**, Shbltin_t*);
 //extern int	b_cp (int, char**, Shbltin_t*);
-//extern  int	b_cut (int, char**, Shbltin_t*);
+extern  int	b_cut (int, char**, Shbltin_t*);
 //extern  int	b_date (int, char**, Shbltin_t*);
 extern  int	b_dirname (int, char**, Shbltin_t*);
 //extern  int	b_egrep (int, char**, Shbltin_t*);
