@@ -256,9 +256,8 @@ typeset foo=$(PATH=/xyz:/abc :)
 y=$(whence rm)
 [[ $x != "$y" ]] && log_error 'PATH not restored after command substitution'
 whence getconf > /dev/null  &&  log_error 'getconf should not be found'
-log_info "TODO: If and when builtins are supported uncomment the next two lines and remove the third."
-#builtin /bin/getconf
-#PATH=/bin
+builtin /bin/getconf
+PATH=/bin
 PATH=$path
 PATH="$(getconf PATH)"
 x=$(whence ls)

@@ -113,24 +113,23 @@ set -- $($SHELL -c "
 ")
 got=$*
 [[ $got == $exp ]] || log_error "command wc LC_ALL default failed -- expected '$exp', got '$got'"
-log_info 'TODO: Enable when custom builtins of external commands is working.'
-#set -- $($SHELL -c "
-#    if builtin wc 2>/dev/null || builtin -f cmd wc 2>/dev/null
-#    then
-#    unset LC_CTYPE
-#        export LANG=$locale
-#        export LC_ALL=C
-#        wc -m < $TEST_DIR/two_euro_chars.txt
-#        unset LC_ALL
-#        wc -m < $TEST_DIR/two_euro_chars.txt
-#        export LC_ALL=C
-#        wc -m < $TEST_DIR/two_euro_chars.txt
-#    fi
+set -- $($SHELL -c "
+    if builtin wc 2>/dev/null || builtin -f cmd wc 2>/dev/null
+    then
+    unset LC_CTYPE
+        export LANG=$locale
+        export LC_ALL=C
+        wc -m < $TEST_DIR/two_euro_chars.txt
+        unset LC_ALL
+        wc -m < $TEST_DIR/two_euro_chars.txt
+        export LC_ALL=C
+        wc -m < $TEST_DIR/two_euro_chars.txt
+    fi
 
-#")
-#got=$*
-#[[ $got == $exp ]] || log_error "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
-#
+")
+got=$*
+[[ $got == $exp ]] || log_error "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
+
 # multibyte char straddling buffer boundary
 
 # See https://github.com/att/ast/issues/177

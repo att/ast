@@ -644,7 +644,7 @@ float sec=SECONDS
 file=$TEST_DIR/foobar
 log_info "TODO: Skipping call to builtin cat"
 
-#builtin cat
+builtin cat
 for ((n=0; n < 1000; n++))
 do
     > $file
