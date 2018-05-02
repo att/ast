@@ -1,1 +1,12 @@
 option('build-pty', type : 'boolean', value : true)
+#
+# This build symbol used to be named SHOPT_TIMEOUT. It was renamed when it
+# stopped being used to conditionally compile segments of code. It defines
+# the default, and maximum, read timeout value (see the `TMOUT` shell var).
+#
+# TODO: Use the following definition when we can count on Meson 0.45 being
+# available on the platforms we care about. For the moment we're stuck with
+# Meson 0.44.
+# option('read-timeout', type : 'integer', min : 0, value : 0)
+#
+option('read-timeout', type : 'string', value : '0')

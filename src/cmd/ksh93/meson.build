@@ -24,6 +24,7 @@ shared_c_args += [
     '-DKSHELL',
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
+    '-DREAD_TIMEOUT=' + '@0@'.format(get_option('read-timeout')),
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for

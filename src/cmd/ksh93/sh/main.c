@@ -480,9 +480,9 @@ static void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
             if (shp->gd->hist_ptr) hist_eof(shp->gd->hist_ptr);
             // Sets timeout for command entry.
             shp->timeout = shp->st.tmout;
-#if SHOPT_TIMEOUT
-            if (shp->timeout <= 0 || shp->timeout > SHOPT_TIMEOUT) shp->timeout = SHOPT_TIMEOUT;
-#endif  // SHOPT_TIMEOUT
+            if (READ_TIMEOUT > 0 && (shp->timeout <= 0 || shp->timeout > READ_TIMEOUT)) {
+                shp->timeout = READ_TIMEOUT;
+            }
             shp->inlineno = 1;
             error_info.line = 1;
             shp->trapnote = 0;

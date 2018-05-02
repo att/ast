@@ -1379,9 +1379,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #endif
     nv_putval(IFSNOD, (char *)e_sptbnl, NV_RDONLY);
     astconfdisc(newconf);
-#if SHOPT_TIMEOUT
-    shp->st.tmout = SHOPT_TIMEOUT;
-#endif  // SHOPT_TIMEOUT
+    shp->st.tmout = READ_TIMEOUT;
     // Initialize jobs table.
     job_clear(shp);
     sh_onoption(shp, SH_MULTILINE);
