@@ -19,7 +19,7 @@
 ########################################################################
 
 # test shell builtin commands
-# builtin getconf
+builtin getconf
 : ${foo=bar} || log_error ": failed"
 [[ $foo == bar ]] || log_error ": side effects failed"
 set -- - foobar
@@ -690,7 +690,7 @@ $SHELL 2> /dev/null -c 'cd ""' && log_error 'cd "" not producing an error'
 [[ $($SHELL 2> /dev/null -c 'cd "";print hi') != hi ]] && log_error 'cd "" should not terminate script'
 
 bincat=$(whence -p cat)
-# builtin cat
+builtin cat
 out=$TEST_DIR/seq.out
 seq 11 >$out
 cmp -s <(print -- "$($bincat<( $bincat $out ) )") <(print -- "$(cat <( cat $out ) )") || log_error "builtin cat differs from $bincat"

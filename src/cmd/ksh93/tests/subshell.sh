@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-# builtin getconf
+builtin getconf
 bincat=$(PATH=$(getconf PATH) whence -p cat)
 
 z=()

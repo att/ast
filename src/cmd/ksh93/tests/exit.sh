@@ -33,7 +33,7 @@ function abspath
 # this for it to succeed.
 cd $TEST_DIR || { err_exit "cd $TEST_DIR failed"; exit 1; }
 
-# builtin getconf
+builtin getconf
 ABSHELL=$(abspath)
 print exit 0 >.profile
 ${ABSHELL}  <<!

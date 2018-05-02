@@ -38,7 +38,7 @@ function ping # id
 }
 
 bincat=$(whence -p cat)
-#builtin cat
+builtin cat
 
 for cat in cat $bincat
 do

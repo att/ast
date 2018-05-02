@@ -135,7 +135,7 @@ $SHELL -c '
     done > in
     > out
     exec 1<> out
-    # builtin cat
+    builtin cat
     print -r -- "$(<in)"
     cmp -s in out'  2> /dev/null
 [[ $? == 0 ]] || log_error 'builtin cat truncates files'
