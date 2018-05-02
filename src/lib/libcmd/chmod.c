@@ -132,8 +132,12 @@ __STDPP__directive pragma pp : hide lchmod
 #endif
 
 #include <cmd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fts.h>
 #include <ls.h>
+
+extern int fts_flags();
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL
@@ -168,9 +172,10 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     int show = 0;
     int chlink = 0;
     struct stat st;
+    int recursive = 0;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY);
-    flags = fts_flags() | FTS_META | FTS_TOP | FTS_NOPOSTORDER | FTS_NOSEEDOTDIR;
+    flags = fts_flags() | FTS_COMFOLLOW;
 
     /*
      * NOTE: we diverge from the normal optget boilerplate
@@ -203,20 +208,22 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 amode = "";
                 continue;
             case 'H':
-                flags |= FTS_META | FTS_PHYSICAL;
+                flags |= FTS_COMFOLLOW | FTS_PHYSICAL;
                 logical = 0;
                 continue;
             case 'L':
-                flags &= ~(FTS_META | FTS_PHYSICAL);
+                flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
                 logical = 0;
                 continue;
             case 'P':
-                flags &= ~FTS_META;
+                flags &= ~FTS_COMFOLLOW;
                 flags |= FTS_PHYSICAL;
                 logical = 0;
                 continue;
             case 'R':
-                flags &= ~FTS_TOP;
+                // fts_open() does not support this flag, so instead use a different flag
+                //flags &= ~FTS_TOP;
+                recursive = 1; 
                 logical = 0;
                 continue;
             case '?':
@@ -229,11 +236,11 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     if (error_info.errors || !*argv || !amode && !*(argv + 1))
         error(ERROR_usage(2), "%s", optusage(NULL));
     if (chlink) {
-        flags &= ~FTS_META;
+        flags &= ~FTS_COMFOLLOW;
         flags |= FTS_PHYSICAL;
         logical = 0;
     }
-    if (logical) flags &= ~(FTS_META | FTS_PHYSICAL);
+    if (logical) flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
     if (ignore) ignore = umask(0);
     if (amode)
         amode = 0;
@@ -287,13 +294,15 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
             case FTS_DNR:
                 if (!force) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
                 goto anyway;
-            case FTS_DNX:
-                if (!force) error(ERROR_system(0), "%s: cannot search directory", ent->fts_path);
+            case FTS_ERR:
+                if (!force) error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
                 goto anyway;
             case FTS_NS:
                 if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);
                 break;
         }
+        // Unless '-R' is specified, avoid processing subdirectories.
+        if (!recursive) break;
     }
     fts_close(fts);
     if (ignore) umask(ignore);

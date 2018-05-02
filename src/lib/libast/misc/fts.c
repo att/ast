@@ -47,6 +47,6 @@ fts_flags(void)
     if (streq(s, "logical"))
         return FTS_LOGICAL;
     if (streq(s, "physical"))
-        return FTS_PHYSICAL|FTS_SEEDOTDIR;
-    return FTS_META|FTS_PHYSICAL|FTS_SEEDOTDIR;
+        return FTS_PHYSICAL|FTS_SEEDOT;
+    return FTS_COMFOLLOW|FTS_PHYSICAL|FTS_SEEDOT;
 }
