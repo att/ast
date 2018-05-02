@@ -797,27 +797,26 @@ IFS=',' read -S a b c <<<'foo,"""title"" data",bar'
 [[ $b == '"title" data' ]] || log_error '"" inside "" not handled correctly with read -S'
 
 PATH=/bin:/usr/bin
-log_info 'TODO: Enable these tests when the custom builtins of external commands are available.'
-#basename=$(whence -p basename)
-#cmp=$(whence -p cmp)
-#.sh.op_astbin=/opt/ast/bin
-#PATH=/opt/ast/bin:$PATH
-#PATH=/opt/ast/bin:/bin:/usr/bin
-#[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
-#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename"
-#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp"
-#.sh.op_astbin=/bin
-#SH_OPTIONS=astbin=/bin
-#[[ ${SH_OPTIONS} == *astbin=/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
-#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename"
-#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp"
-#.sh.op_astbin=/opt/ast/bin
-#[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename"
-#[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp"
-#PATH=/bin:/usr/bin:/opt/ast/bin
-#[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH"
-#[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
-#
+basename=$(whence -p basename)
+cmp=$(whence -p cmp)
+.sh.op_astbin=/opt/ast/bin
+PATH=/opt/ast/bin:$PATH
+PATH=/opt/ast/bin:/bin:/usr/bin
+[[ ${SH_OPTIONS} == *astbin=/opt/ast/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/opt/ast/bin"
+[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /opt/ast/bin/basename"
+[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /opt/ast/bin/cmp"
+.sh.op_astbin=/bin
+SH_OPTIONS=astbin=/bin
+[[ ${SH_OPTIONS} == *astbin=/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
+[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename"
+[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp"
+.sh.op_astbin=/opt/ast/bin
+[[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename"
+[[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp"
+PATH=/bin:/usr/bin:/opt/ast/bin
+[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename when PATH=$PATH"
+[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp when PATH=$PATH"
+
 unset y
 expect='outside f, 1, 2, 3, outside f'
 actual=$(
@@ -976,7 +975,6 @@ then
     cd $TEST_DIR/a/b 2> /dev/null && log_error 'cd to directory without execute should fail'
 fi
 chmod +x $TEST_DIR/a/b  # so the test temp dir can be removed when the test completes
-
 
 # -s flag writes to history file
 if print -s 'print hello world' 2> /dev/null
