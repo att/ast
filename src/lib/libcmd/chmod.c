@@ -221,7 +221,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 logical = 0;
                 continue;
             case 'R':
-                // fts_open() does not support this flag, so instead use a different flag
+                // Standard fts_open() does not support this flag, so instead use a different flag
                 //flags &= ~FTS_TOP;
                 recursive = 1; 
                 logical = 0;

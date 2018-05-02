@@ -152,7 +152,7 @@ then
 fi
 
 cat  > "$f" <<- '!!!!'
-	# builtin cat
+	builtin cat
 	: << EOF
 	$PWD
 	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -526,7 +526,7 @@ $SHELL 2> /dev/null -c 'true <<- ++EOF++ || true "$(true)"
 ) > $f > /dev/null
 [[ $(<$f) == $'hello\nworld' ]] || log_error 'nested here-document fails'
 
-# builtin cat
+builtin cat
 exp='foo bar baz bork blah blarg'
 got=$(cat <<<"foo bar baz" 3<&0 <<<"$(</dev/fd/3) bork blah blarg")
 [[ $got == "$exp" ]] || '3<%0 not working when 0 is <<< here-doc'
