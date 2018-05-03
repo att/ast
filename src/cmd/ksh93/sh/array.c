@@ -146,9 +146,7 @@ int array_maxindex(Namval_t *np) {
 }
 
 // Check if array is empty
-int array_isempty(Namval_t *np) {
-    return array_maxindex(np)<=0;
-}
+int array_isempty(Namval_t *np) { return array_maxindex(np) <= 0; }
 
 static union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     struct index_array *ap = (struct index_array *)arp;

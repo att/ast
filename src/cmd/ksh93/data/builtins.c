@@ -44,8 +44,8 @@
 #else
 #ifndef SHOPT_CMDLIB_HDR
 #define SHOPT_CMDLIB_HDR <cmdlist.h>
-#endif // SHOPT_CMDLIB_HDR
-#endif // SHOPT_CMDLIB_DIR
+#endif  // SHOPT_CMDLIB_HDR
+#endif  // SHOPT_CMDLIB_DIR
 
 // In the last beta release that came out from AT&T, all the builtins for standard commands
 // were enabled by default. It was a backward incompatible change from the last stable

@@ -1427,7 +1427,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
                     }
                 }
             }
-#endif // _WINIX
+#endif  // _WINIX
         }
         if (beenhere == 1) {
             struct lconv *lc;
@@ -1877,7 +1877,7 @@ static Init_t *nv_init(Shell_t *shp) {
     ip->SH_JOBPOOL_init.disc = &SH_JOBPOOL_disc;
     ip->SH_JOBPOOL_init.nofree = 1;
     nv_stack(SH_JOBPOOL, &ip->SH_JOBPOOL_init);
-#endif // SHOPT_COSHELL
+#endif  // SHOPT_COSHELL
     ip->SH_VERSION_init.disc = &SH_VERSION_disc;
     ip->SH_VERSION_init.nofree = 1;
     ip->LINENO_init.disc = &LINENO_disc;
