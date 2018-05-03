@@ -33,9 +33,6 @@
 #define TCSAFLUSH TCSADFLUSH
 #endif  // TCSADFLUSH
 #undef TIOCGETC
-#if SHOPT_OLDTERMIO  // use both termios and termio
-#include <termio.h>
-#endif  // SHOPT_OLDTERMIO
 
 // Set ECHOCTL if driver can echo control charaters as ^c.
 #ifdef LCTLECH
