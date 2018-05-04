@@ -6,6 +6,7 @@ ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libast/features/',
                                    '../../lib/libcmd/',
+                                   '../../lib/libdll/',
                                    '../../lib/libcoshell/')
 
 subdir('bltins')
@@ -26,6 +27,7 @@ shared_c_args += [
     '-DSHOPT_COSHELL',
     '-DREAD_TIMEOUT=' + '@0@'.format(get_option('read-timeout')),
     '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file')),
+    '-DSHOPT_DYNAMIC'
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for
@@ -47,13 +49,13 @@ endif
 
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [libast, libcmd, libcoshell],
+    link_with: [libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
 shcomp_exe = executable('shcomp', shcomp_files, c_args: shcomp_c_args ,
     include_directories: [configuration_incdir, ksh93_incdir],
-    link_with: [ libast, libcmd, libcoshell],
+    link_with: [ libast, libcmd, libcoshell, libdll],
     dependencies: [libm_dep, libexecinfo_dep, libdl_dep],
     install: true)
 
