@@ -51,7 +51,6 @@
 typedef struct pathcomp {
     struct pathcomp *next;
     int refcount;
-    int fd;
     dev_t dev;
     ino_t ino;
     time_t mtime;

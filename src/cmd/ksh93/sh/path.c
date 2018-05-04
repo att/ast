@@ -235,7 +235,6 @@ void path_delete(Pathcomp_t *first) {
         if (--pp->refcount <= 0) {
             if (pp->lib) free(pp->lib);
             if (pp->bbuf) free(pp->bbuf);
-            if (pp->fd) close(pp->fd);
             free(pp);
             if (old) old->next = ppnext;
         } else {
@@ -301,21 +300,13 @@ static void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
     Pathcomp_t *oldpp, *first;
     int flag = 0;
     struct stat statb;
-    int fd = -1;
 
-#if SHOPT_ATFUN
-    if ((fd = open(name, O_search | O_CLOEXEC)) < 0 || fstat(fd, &statb) < 0 ||
-        !S_ISDIR(statb.st_mode))
-#else
     if (stat(name, &statb) < 0 || !S_ISDIR(statb.st_mode))
-#endif /* SHOPT_ATFUN */
     {
         pp->flags |= PATH_SKIP;
         pp->dev = *name == '/';
-        if (fd >= 0) close(fd);
         return;
     }
-    pp->fd = fd;
     pp->mtime = statb.st_mtime;
     pp->ino = statb.st_ino;
     pp->dev = statb.st_dev;
