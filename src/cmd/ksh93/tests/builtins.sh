@@ -808,8 +808,8 @@ PATH=/opt/ast/bin:/bin:/usr/bin
 .sh.op_astbin=/bin
 SH_OPTIONS=astbin=/bin
 [[ ${SH_OPTIONS} == *astbin=/bin* ]] || log_error "SH_OPTIONS=${SH_OPTIONS} but should contain astbin=/bin"
-[[ $(whence basename) == "$basename" ]] || log_error "basename bound to $(whence basename) but should be bound to $basename"
-[[ $(whence cmp) == "$cmp" ]] || log_error "cmp bound to $(whence cmp) but should be bound to $cmp"
+[[ $(whence basename) == /bin/basename ]] || log_error "basename bound to $(whence basename) but should be bound to /bin/basename"
+[[ $(whence cmp) == /bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be bound to /bin/cmp"
 .sh.op_astbin=/opt/ast/bin
 [[ $(whence basename) == /opt/ast/bin/basename ]] || log_error "basename bound to $(whence basename) but should be rebound to /opt/ast/bin/basename"
 [[ $(whence cmp) == /opt/ast/bin/cmp ]] || log_error "cmp bound to $(whence cmp) but should be rebound to /opt/ast/bin/cmp"
