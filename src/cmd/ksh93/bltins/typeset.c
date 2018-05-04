@@ -914,8 +914,11 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     Shbltin_f addr;
     Stk_t *stkp;
     char *errmsg;
+    void *library=0;
 #ifdef SH_PLUGIN_VERSION
+    unsigned long ver;
     int list = 0;
+    char path[1024];
 #endif  // SH_PLUGIN_VERSION
     UNUSED(argc);
 
