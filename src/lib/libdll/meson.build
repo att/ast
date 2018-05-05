@@ -12,3 +12,6 @@ libdll = library('dll', libdll_files, c_args: libdll_c_args,
                  include_directories: [configuration_incdir, incdir],
                  link_with: libast,
                  install: get_option('default_library') == 'shared')
+
+libsample_files = ['sample.c']
+libsample = shared_library('sample', libsample_files, install: false)
