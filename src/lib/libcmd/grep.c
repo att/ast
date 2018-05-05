@@ -470,19 +470,17 @@ static int execute(State_t *state, Sfio_t *input, char *name, Shbltin_t *context
         for (;;) {
             if (sh_checksig(context)) goto bad;
             error_info.line++;
-            if (s = sfgetr(input, '\n', 0))
+            if (s = sfgetr(input, '\n', 0)) {
                 len = sfvalue(input) - 1;
-            else if (s = sfgetr(input, '\n', -1)) {
+            } else if (s = sfgetr(input, '\n', -1)) {
                 len = sfvalue(input);
                 s[len] = '\n';
-#if _you_like_the_noise
-                error(1, "newline appended");
-#endif
             } else if (sferror(input) && errno != EISDIR) {
                 error(ERROR_SYSTEM | 2, "read error");
                 goto bad;
-            } else
+            } else {
                 break;
+            }
             if ((result = regnexec(&state->re, s, len, state->posnum, state->pos, 0)) &&
                 result != REG_NOMATCH) {
                 regfatal(&state->re, 2, result);
