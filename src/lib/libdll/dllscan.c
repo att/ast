@@ -355,7 +355,7 @@ again:
             if (scan->flags & (DLL_MATCH_NAME | DLL_MATCH_VERSION)) {
                 sfstrseek(scan->tmp, scan->off, SEEK_SET);
                 if (!(t = sfstruse(scan->tmp))) return 0;
-                if ((scan->fts = fts_open((char **)t, FTS_LOGICAL | FTS_NOPOSTORDER | FTS_ONEPATH,
+                if ((scan->fts = fts_open((char **)t, FTS_LOGICAL,
                                           vercmp)) &&
                     (scan->ent = fts_read(scan->fts)) &&
                     (scan->ent = fts_children(scan->fts, FTS_NOSTAT)))
