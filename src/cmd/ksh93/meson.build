@@ -73,9 +73,13 @@ build_dir = meson.build_root()
 libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
 libcmd_build_dir = join_paths(build_dir, 'src', 'lib', 'libcmd')
 libcoshell_build_dir = join_paths(build_dir, 'src', 'lib', 'libcoshell')
+libdll_build_dir = join_paths(build_dir, 'src', 'lib', 'libdll')
 
 ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
-    [libast_build_dir, libcmd_build_dir, libcoshell_build_dir])
+    [libast_build_dir, libcmd_build_dir, libcoshell_build_dir, libdll_build_dir])
+
+# Sample loadable builtin will be loaded from this path in builtins test cases
+libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
 # These are the default locales used by legacy test script.
 # The emptry string is POSIX locale.
@@ -118,7 +122,7 @@ foreach testspec : all_tests
         endif
         test(testname + locale, ksh93_exe, timeout: timeout,
              args: [test_driver, testname],
-             env: [shell_var, lang_var, ld_library_path])
+             env: [shell_var, lang_var, ld_library_path, libsample_path])
     endforeach
 
     # shcomp tests
@@ -126,6 +130,6 @@ foreach testspec : all_tests
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
              args: [ test_driver, 'shcomp', testname],
-             env: [shell_var, lang_var, shcomp_var, ld_library_path])
+             env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
     endif
 endforeach
