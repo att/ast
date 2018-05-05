@@ -314,7 +314,7 @@ int dllsclose(Dllscan_t *scan) {
 Dllent_t *dllsread(register Dllscan_t *scan) {
     register char *p;
     register char *b;
-    register char *t;
+    char *t;
     register Uniq_t *u;
     register int n;
     register int m;
@@ -355,7 +355,9 @@ again:
             if (scan->flags & (DLL_MATCH_NAME | DLL_MATCH_VERSION)) {
                 sfstrseek(scan->tmp, scan->off, SEEK_SET);
                 if (!(t = sfstruse(scan->tmp))) return 0;
-                if ((scan->fts = fts_open((char **)t, FTS_LOGICAL,
+                // fts_open() expects it's first argument to be NULL terminated
+                char *argv[2] = {t, NULL};
+                if ((scan->fts = fts_open(argv, FTS_LOGICAL,
                                           vercmp)) &&
                     (scan->ent = fts_read(scan->fts)) &&
                     (scan->ent = fts_children(scan->fts, FTS_NOSTAT)))
