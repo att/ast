@@ -993,3 +993,7 @@ else
 fi
 
 builtin  -d set 2> /dev/null && log_error 'buitin -d allows special builtins to be deleted'
+
+builtin -f $LIBSAMPLE_PATH sample || log_error "Failed to load sample builtin"
+
+sample >/dev/null || log_error "Sample builtin should exit with 0 status"
