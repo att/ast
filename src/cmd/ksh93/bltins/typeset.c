@@ -1042,13 +1042,15 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #endif  // SHOPT_DYNAMIC
                 {
                     if (np = sh_addbuiltin(tdata.sh, arg, addr, pointerof(dlete))) {
-                        if (dlete || nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
-                    }
+                        if (dlete || nv_isattr(np, BLT_SPC)) {
+                            errmsg = "restricted name";
+                        }
 #if SHOPT_DYNAMIC
-                    else {
-                        nv_onattr(np, liblist[n].attr);
-                    }
+                        else {
+                            nv_onattr(np, liblist[n].attr);
+                        }
 #endif  // SHOPT_DYNAMIC
+                    }
                     break;
                 }
             }
