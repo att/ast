@@ -29,13 +29,7 @@
  * ALSO: { 0 } definition required by some dynamic linkers averse to common symbols
  * UWIN: no _ast_getenv macro map to maintain ast54 compatibility
  */
-
-Intercepts_t intercepts
-#if _BLD_3d
-    ;
-#else
-    = {0};
-#endif
+Intercepts_t intercepts = {0};
 
 /*
  * get name from the environment

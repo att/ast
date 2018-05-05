@@ -35,18 +35,9 @@
  * building 3d flirts with the dark side
  */
 
-#if _BLD_3d
-
-#undef pathcat
-#define pathcat_20100601 _3d_pathcat
-
-#else
-
 char *pathcat(char *path, const char *dirs, int sep, const char *a, const char *b) {
     return pathcat_20100601(dirs, sep, a, b, path, PATH_MAX);
 }
-
-#endif
 
 #undef _AST_API_IMPLEMENT
 

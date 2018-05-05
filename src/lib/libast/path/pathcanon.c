@@ -56,23 +56,15 @@
 #define ELOOP EINVAL
 #endif
 
-#if !_BLD_3d
-
 char *pathcanon(char *path, int flags) { return pathcanon_20100601(path, PATH_MAX, flags); }
-
-#endif
 
 #undef _AST_API_IMPLEMENT
 
 #include <ast_api.h>
 
-#if !_BLD_3d
-
 char *pathcanon_20100601(char *path, size_t size, int flags) {
     return pathdev(AT_FDCWD, path, path, size, flags | PATH_CANON, NULL);
 }
-
-#endif
 
 /*
  * NAMED_XATTR
