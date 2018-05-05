@@ -28,6 +28,8 @@
 #include <time.h>
 #include <times.h>
 
+#define stringify(s) #s
+
 //
 // Each command in the history file starts on an even byte is null terminated. The first byte must
 // contain the special character HIST_UNDO and the second byte is the version number.  The sequence
@@ -80,10 +82,6 @@
 #include <ctype.h>
 #endif  // KSHELL
 #include "history.h"
-
-#ifndef SHOPT_AUDITFILE
-#define SHOPT_AUDITFILE "/etc/ksh_audit"
-#endif  // SHOPT_AUDITFILE
 
 #if !KSHELL
 #define path_relative(s, x) (s, x)
@@ -290,7 +288,7 @@ retry:
     char buff[SF_BUFSIZE];
     hp->auditfp = 0;
     if (sh_isstate(shp, SH_INTERACTIVE) &&
-        (hp->auditmask = sh_checkaudit(hp, SHOPT_AUDITFILE, buff, sizeof(buff)))) {
+        (hp->auditmask = sh_checkaudit(hp, stringify(AUDIT_FILE), buff, sizeof(buff)))) {
         if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
                           S_IRUSR | S_IWUSR)) >= 0 &&
             fd < 10) {

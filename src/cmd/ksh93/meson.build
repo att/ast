@@ -25,6 +25,7 @@ shared_c_args += [
     '-DSHOPT_BASH',
     '-DSHOPT_COSHELL',
     '-DREAD_TIMEOUT=' + '@0@'.format(get_option('read-timeout')),
+    '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file')),
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for

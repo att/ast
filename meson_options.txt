@@ -10,3 +10,9 @@ option('build-pty', type : 'boolean', value : true)
 # option('read-timeout', type : 'integer', min : 0, value : 0)
 #
 option('read-timeout', type : 'string', value : '0')
+#
+# This build symbol used to be named SHOPT_AUDITFILE. It was renamed when it
+# stopped being used to conditionally compile segments of code. It defines
+# the default pathname for recording shell auditable events.
+#
+option('audit-file', type : 'string', value : '/etc/ksh_audit')
