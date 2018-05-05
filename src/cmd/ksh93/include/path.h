@@ -27,11 +27,9 @@
 #include <nval.h>
 #include "defs.h"
 
-#if !defined(SHOPT_SPAWN)
-#if _use_spawnveg
-#define SHOPT_SPAWN 1
-#endif
-#endif  // !SHOPT_SPAWN
+#if !SHOPT_SPAWN && _use_spawnveg
+#error -D_use_spawnveg requires -DSHOPT_SPAWN
+#endif  // !SHOPT_SPAWN && _use_spawnveg
 
 #define PATH_PATH 0001
 #define PATH_FPATH 0002

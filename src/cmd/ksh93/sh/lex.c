@@ -814,7 +814,7 @@ int sh_lex(Lex_t *lp) {
                 // before I restyled it).
             }
             case S_SPC2: {
-#ifdef SHOPT_BASH
+#if SHOPT_BASH
                 if (c == '=' && (lp->lexd.warn || !sh_isoption(shp, SH_BASH))) {
                     lp->token = c;
                     sh_syntax(lp);
