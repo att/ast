@@ -136,13 +136,6 @@ int b_tee(int argc, char **argv, Shbltin_t *context) {
     if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
     argv += opt_info.index;
     argc -= opt_info.index;
-#if _ANCIENT_BSD_COMPATIBILITY
-    if (*argv && streq(*argv, "-")) {
-        signal(SIGINT, SIG_IGN);
-        argv++;
-        argc--;
-    }
-#endif
     if (argc > 0) {
         if (tp = (Tee_t *)stakalloc(sizeof(Tee_t) + argc * sizeof(int))) {
             memset(&tp->disc, 0, sizeof(tp->disc));
