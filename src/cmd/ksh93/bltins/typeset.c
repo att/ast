@@ -918,7 +918,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #ifdef SH_PLUGIN_VERSION
     unsigned long ver;
     int list = 0;
-    char path[1024];
+    char path[PATH_MAX];
 #endif  // SH_PLUGIN_VERSION
     UNUSED(argc);
 
