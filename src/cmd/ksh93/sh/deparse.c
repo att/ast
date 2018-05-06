@@ -409,7 +409,8 @@ static void p_redirect(const struct ionod *iop) {
             io_op[2] = '|';
         }
         if (iop->iodelim) {  // here document
-#ifdef xxx
+#if 0
+            // TODO: Figure out if this should be enabled. Originally excluded via `#ifdef xxx`.
             iop->iolink = (char *)here_doc;
 #endif
             here_doc = iop;
@@ -497,7 +498,8 @@ static void p_switch(const struct regnod *reg) {
 // Output `here` documents.
 static void here_body(const struct ionod *iop) {
     Sfio_t *infile;
-#ifdef xxx
+#if 0
+    // TODO: Figure out if this should be enabled. Originally excluded via `#ifdef xxx`.
     if (iop->iolink) here_body((struct inode *)iop->iolink);
     iop->iolink = 0;
 #endif
