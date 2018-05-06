@@ -49,6 +49,6 @@ script:
 
     - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
         ${INSTALL_REQUIREMENTS};
-        useradd test;
+        useradd --create-home test;
         chown -R test /source;
         sudo -u test /source/build.sh"

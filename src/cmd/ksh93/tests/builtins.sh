@@ -919,15 +919,15 @@ cd $TEST_DIR
 
 [[ $(pwd -f $fd) == /dev ]] || log_error "pwd -f $fd should be /dev"
 
-# Below test fails on OpenSUSE
-log_info "TODO: Skipping test - 'cd with no arguments fails if HOME is unset'. It should be fixed later."
-#$SHELL <<- \EOF
-#    home=$HOME
-#    unset HOME
-#    cd 2> /dev/null
-#    [[ $(pwd) == "$home" ]]
-#EOF
-#[[ $? == 0 ]] || log_error 'cd with no arguments fails if HOME is unset'
+$SHELL <<- \EOF
+    # $HOME is set to a temporary directory by test framework
+    # Get actual home directory of the user
+    home=~$USER
+    unset HOME
+    cd
+    [[ $(pwd) == "$home" ]]
+EOF
+[[ $? == 0 ]] || log_error 'cd with no arguments fails if HOME is unset'
 
 cd "$TEST_DIR"
 if mkdir -p f1
