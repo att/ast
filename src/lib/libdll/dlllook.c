@@ -32,7 +32,7 @@
  */
 
 void *dlllook(void *dll, const char *name) {
-    register void *addr;
+    void *addr;
     char buf[256];
 
     if (!(addr = dlsym(dll, name)) && strlen(name) < (sizeof(buf) - 2)) {
