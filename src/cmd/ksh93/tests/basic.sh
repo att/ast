@@ -642,8 +642,6 @@ float sec=SECONDS
 (( (SECONDS-sec) < .7 ))  && log_error '. script does not restore output redirection with eval'
 
 file=$TEST_DIR/foobar
-log_info "TODO: Skipping call to builtin cat"
-
 builtin cat
 for ((n=0; n < 1000; n++))
 do
