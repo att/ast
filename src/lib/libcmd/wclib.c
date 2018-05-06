@@ -18,7 +18,6 @@
 *                  David Korn <dgk@research.att.com>                   *
 *                                                                      *
 ***********************************************************************/
-#pragma prototyped
 /*
  * David Korn
  * AT&T Bell Laboratories
