@@ -169,7 +169,8 @@ int sh_histinit(void *sh_context) {
         histname = stkptr(shp->stk, offset);
     }
 
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
     if (hp = wasopen) {
         // Reuse history file if same name.
         wasopen = 0;
@@ -514,7 +515,8 @@ again:
                 if (cp > first) {
                     count += (cp - first);
                     n = hist_ind(hp, ++hp->histind);
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
                     if (count == hp->histcmds[n]) {
                         sfprintf(sfstderr, "count match n=%d\n", n);
                         if (histinit) {

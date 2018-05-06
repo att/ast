@@ -172,7 +172,8 @@ Edit_t editb;
 #define _POSIX_DISABLE 0
 #endif
 
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
 static int compare(const char *, const char *, int);
 #endif  // future
 #define ttyparm (ep->e_ttyparm)
@@ -219,7 +220,8 @@ int tty_set(int fd, int action, struct termios *tty) {
     Edit_t *ep = (Edit_t *)(shgd->ed_context);
 
     if (fd >= 0) {
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
         if (ep->e_savefd >= 0 && compare(&ep->e_savetty, tty, sizeof(struct termios))) return 0;
 #endif  // future
         while (tcsetattr(fd, action, tty) == SYSERR) {
@@ -1136,7 +1138,8 @@ int ed_genlen(const genchar *str) {
     return sp - str - 1;
 }
 
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
 //
 // Returns 1 when <n> bytes starting at <a> and <b> are equal.
 //

@@ -415,7 +415,8 @@ static void p_redirect(const struct ionod *iop) {
 #endif
             here_doc = iop;
             io_op[2] = '<';
-#ifdef future
+#if 0
+// TODO: Figure out if this should be enabled. Originally excluded via `#ifdef future`.
             if (iof & IOSTRIP) io_op[3] = '-';
 #endif
         }
