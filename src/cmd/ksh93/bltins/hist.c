@@ -29,9 +29,7 @@
 #include "io.h"
 #include "name.h"
 #include "variables.h"
-#if SHOPT_HISTEXPAND
 #include "edit.h"
-#endif
 
 #define HIST_RECURSE 5
 
@@ -51,9 +49,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     char *edit = 0;     // name of editor
     char *replace = 0;  // replace old=new
     int lflag = 0, nflag = 0, rflag = 0;
-#if SHOPT_HISTEXPAND
     int pflag = 0;
-#endif
     Histloc_t location;
     UNUSED(argc);
 
@@ -81,12 +77,10 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                 edit = "-";
                 break;
             }
-#if SHOPT_HISTEXPAND
             case 'p': {
                 pflag++;
                 break;
             }
-#endif
             case 'N': {
                 if (indx <= 0) {
                     if ((flag = hist_max(hp) - opt_info.num - 1) < 0) flag = 1;
@@ -107,12 +101,12 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     argv += (opt_info.index - 1);
-#if SHOPT_HISTEXPAND
+    // TODO: What is the usefulness of this flag ? Shall this be removed in future ?
     if (pflag) {
         hist_cancel(hp);
         pflag = 0;
         while (arg = argv[1]) {
-            flag = hist_expand(arg, &replace);
+            flag = hist_expand(shp, arg, &replace);
             if (!(flag & HIST_ERROR)) {
                 sfputr(sfstdout, replace, '\n');
             } else {
@@ -123,7 +117,6 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         }
         return pflag;
     }
-#endif
     flag = indx;
     while (flag < 1 && (arg = argv[1])) {
         // Look for old=new argument.
