@@ -26,7 +26,6 @@
 
 #undef _sfgetl2
 
-_BEGIN_EXTERNS_
 #if _BLD_sfio && defined(__EXPORT__)
 #define extern __EXPORT__
 #endif
@@ -34,7 +33,6 @@ _BEGIN_EXTERNS_
 extern long _sfgetl2 _ARG_((Sfio_t *, long));
 
 #undef extern
-_END_EXTERNS_
 
 long _sfgetl2(reg Sfio_t *f, long v) {
     if (v < 0) return -1;

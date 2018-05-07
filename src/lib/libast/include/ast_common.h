@@ -2,17 +2,6 @@
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
 
-/* extern symbols must be protected against C++ name mangling */
-#ifndef _BEGIN_EXTERNS_
-#if __cplusplus || c_plusplus
-#define _BEGIN_EXTERNS_ extern "C" {
-#define _END_EXTERNS_ }
-#else
-#define _BEGIN_EXTERNS_
-#define _END_EXTERNS_
-#endif
-#endif
-
 /* _ARG_ simplifies function prototyping among flavors of C */
 #ifndef _ARG_
 #define _ARG_(x) x

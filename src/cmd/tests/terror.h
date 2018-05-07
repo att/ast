@@ -53,8 +53,6 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-_BEGIN_EXTERNS_
-
 extern int sprintf _ARG_((char *, const char *, ...));
 
 #if !_hdr_unistd
@@ -73,8 +71,6 @@ extern void tsterror _ARG_((char *, ...));
 extern void tstinfo _ARG_((char *, ...));
 extern void tstwarn _ARG_((char *, ...));
 extern void tstsuccess _ARG_((char *, ...));
-
-_END_EXTERNS_
 
 static int Tstall;
 static int Tstchild;

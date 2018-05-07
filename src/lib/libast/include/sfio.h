@@ -196,8 +196,6 @@ struct _sffmt_s {
 #define SF_CLOSE SF_CLOSING /* AIX sys/socket.h		*/
 #endif
 
-_BEGIN_EXTERNS_
-
 #if _BLD_sfio && defined(__EXPORT__)
 #define extern extern __EXPORT__
 #endif
@@ -318,7 +316,6 @@ extern ssize_t sfslen _ARG_((void));
 extern ssize_t sfmaxr _ARG_((ssize_t, int));
 
 #undef extern
-_END_EXTERNS_
 
 /* coding long integers in a portable and compact fashion */
 #define SF_SBITS 6

@@ -36,8 +36,7 @@ __STDPP__directive pragma pp : hide getpagesize
 #undef getpagesize
 #endif
 
-          _BEGIN_EXTERNS_ extern int getpagesize _ARG_((void));
-_END_EXTERNS_
+extern int getpagesize _ARG_((void));
 
 /*	Set a (new) buffer for a stream.
 **	If size < 0, it is assigned a suitable value depending on the

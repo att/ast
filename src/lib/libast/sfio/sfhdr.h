@@ -1135,8 +1135,6 @@ typedef struct _sftab_ {
             *s++ = c;                       \
     }
 
-_BEGIN_EXTERNS_
-
 extern Sftab_t _Sftable;
 
 extern int _sfpopen _ARG_((Sfio_t *, int, int, int));
@@ -1196,7 +1194,5 @@ extern Onexit_f onexit _ARG_((Onexit_f));
 extern int poll _ARG_((struct pollfd *, ulong, int));
 
 #endif /* _PACKAGE_ast */
-
-_END_EXTERNS_
 
 #endif /*_SFHDR_H*/

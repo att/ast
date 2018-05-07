@@ -237,8 +237,6 @@ struct _dtstat_s {
 #define DT_HASHSIZE 7  /* initialize hash table size		*/
 #define DT_ERROR 0xbad /* announcing an error			*/
 
-_BEGIN_EXTERNS_ /* data structures and functions */
-
 #if _PACKAGE_ast /* Microsoft import/export dll stuffs */
 #if _BLD_cdt && defined(__EXPORT__)
 #define extern __EXPORT__
@@ -300,8 +298,6 @@ extern void *dllmeth(const char *, const char *, unsigned long);
 #undef extern
 
 #endif
-
-_END_EXTERNS_
 
 /* internal functions for translating among holder, object and key */
 #define _DT(dt) ((Dt_t *)(dt))

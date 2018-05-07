@@ -103,8 +103,6 @@ typedef struct _vthread_s Vthread_t;
 #define EPERM 1
 #endif
 
-_BEGIN_EXTERNS_
-
 extern Vthread_t *vtopen _ARG_((Vthread_t *, int));
 extern int vtclose _ARG_((Vthread_t *));
 extern int vtset _ARG_((Vthread_t *, int, void *));
@@ -125,8 +123,6 @@ extern void *vtstatus _ARG_((Vthread_t *));
 extern int vterror _ARG_((Vthread_t *));
 extern int vtmtxerror _ARG_((Vtmutex_t *));
 extern int vtonceerror _ARG_((Vtonce_t *));
-
-_END_EXTERNS_
 
 #if vt_threaded
 

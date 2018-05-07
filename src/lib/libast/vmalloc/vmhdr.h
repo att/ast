@@ -425,8 +425,6 @@ extern Vmalloc_t *_vmopen _ARG_((Vmalloc_t *, Vmdisc_t *, Vmethod_t *, int));
 extern void _vmoptions _ARG_((int));                         /* VMALLOC_OPTIONS preferences	*/
 extern int _vmstat _ARG_((Vmalloc_t *, Vmstat_t *, size_t)); /* internal vmstat() */
 
-_BEGIN_EXTERNS_
-
 extern Vmextern_t _Vmextern;
 
 #if _PACKAGE_ast
@@ -448,7 +446,5 @@ extern void _exit _ARG_((int));
 extern void _cleanup _ARG_((void));
 
 #endif /*_PACKAGE_ast*/
-
-_END_EXTERNS_
 
 #endif /* _VMHDR_H */
