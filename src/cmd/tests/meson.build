@@ -1,1 +1,2 @@
+subdir('aso')
 subdir('sfio')

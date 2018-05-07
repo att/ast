@@ -21,12 +21,8 @@
 
 #include <stdio.h>
 
-#if _hdr_stdlib
 #include <stdlib.h>
-#endif
-#if _hdr_unistd
 #include <unistd.h>
-#endif
 
 #include <aso.h>
 #include <errno.h>
