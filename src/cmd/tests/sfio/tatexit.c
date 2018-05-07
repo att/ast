@@ -33,7 +33,7 @@ void ae() {
     tcleanup();
 }
 
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
     Sfio_t *f;
 
     if (argc <= 1) /* atexit function registered after some sfio access */
