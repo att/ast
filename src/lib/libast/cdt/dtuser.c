@@ -41,18 +41,18 @@ int dtuserlock(Dt_t *dt, unsigned int key, int type) {
 }
 
 /* managing the user data slot dt->data->user.data */
-Void_t *dtuserdata(Dt_t *dt, Void_t *data, int set) {
+void *dtuserdata(Dt_t *dt, void *data, int set) {
     if (set == 0) /* just return current value */
         return asogetptr(&dt->data->user.data);
     else
         while (1) {
-            Void_t *current = dt->data->user.data;
+            void *current = dt->data->user.data;
             if (asocasptr(&dt->data->user.data, current, data) == current) return current;
         }
 }
 
 /* announcing an event on the user's behalf */
-int dtuserevent(Dt_t *dt, int flags, Void_t *data) {
+int dtuserevent(Dt_t *dt, int flags, void *data) {
     if (!dt->disc->eventf)
         return 0;
     else

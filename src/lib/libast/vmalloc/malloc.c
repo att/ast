@@ -431,7 +431,7 @@ void _vmoptions(int boot) {
                             case 't': /* watch=<addr> */
                                 if (!vm) vm = vmopen(Vmdcsystem, Vmdebug, 0);
                                 if (vm && vm->meth.meth == VM_MTDEBUG && v && (n = atou(&v)) > 0)
-                                    vmdbwatch((Void_t *)n);
+                                    vmdbwatch((void *)n);
                                 break;
                         }
                     }
@@ -548,7 +548,7 @@ static int _vmstart(int freeing) {
     unsigned int start;
     char *file;
     int line;
-    Void_t *func;
+    void *func;
 
     _vmoptions(1);
 
@@ -607,8 +607,8 @@ static int _vmstart(int freeing) {
     return 0;
 }
 
-extern Void_t *calloc(size_t n_obj, size_t s_obj) {
-    Void_t *addr;
+extern void *calloc(size_t n_obj, size_t s_obj) {
+    void *addr;
 
     VMPROLOGUE(0);
     addr = (*Vmregion->meth.resizef)(Vmregion, NULL, n_obj * s_obj, VM_RSZERO, 0);
@@ -617,8 +617,8 @@ extern Void_t *calloc(size_t n_obj, size_t s_obj) {
     return VMRECORD(addr);
 }
 
-extern Void_t *malloc(size_t size) {
-    Void_t *addr;
+extern void *malloc(size_t size) {
+    void *addr;
 
     VMPROLOGUE(0);
     addr = (*Vmregion->meth.allocf)(Vmregion, size, 0);
@@ -628,8 +628,8 @@ extern Void_t *malloc(size_t size) {
     return VMRECORD(addr);
 }
 
-extern Void_t *realloc(Void_t *data, size_t size) {
-    Void_t *addr;
+extern void *realloc(void *data, size_t size) {
+    void *addr;
     Vmalloc_t *vm;
 
     VMPROLOGUE(0);
@@ -657,7 +657,7 @@ extern Void_t *realloc(Void_t *data, size_t size) {
     return VMRECORD(addr);
 }
 
-extern void free(Void_t *data) {
+extern void free(void *data) {
     Vmalloc_t *vm;
 
     VMPROLOGUE(1);
@@ -681,10 +681,10 @@ extern void free(Void_t *data) {
     VMEPILOGUE(1);
 }
 
-extern void cfree(Void_t *data) { free(data); }
+extern void cfree(void *data) { free(data); }
 
-extern Void_t *memalign(size_t align, size_t size) {
-    Void_t *addr;
+extern void *memalign(size_t align, size_t size) {
+    void *addr;
 
     VMPROLOGUE(0);
 
@@ -697,14 +697,14 @@ extern Void_t *memalign(size_t align, size_t size) {
     return VMRECORD(addr);
 }
 
-extern Void_t *aligned_alloc(size_t align, size_t size) {
+extern void *aligned_alloc(size_t align, size_t size) {
     return memalign(align, ROUND(size, align));
 }
 
-extern int posix_memalign(Void_t **memptr, size_t align, size_t size) {
-    Void_t *mem;
+extern int posix_memalign(void **memptr, size_t align, size_t size) {
+    void *mem;
 
-    if (align == 0 || (align % sizeof(Void_t *)) != 0 || ((align - 1) & align) != 0) return EINVAL;
+    if (align == 0 || (align % sizeof(void *)) != 0 || ((align - 1) & align) != 0) return EINVAL;
 
     if (!(mem = memalign(align, size))) return ENOMEM;
 
@@ -712,8 +712,8 @@ extern int posix_memalign(Void_t **memptr, size_t align, size_t size) {
     return 0;
 }
 
-extern Void_t *valloc(size_t size) {
-    Void_t *addr;
+extern void *valloc(size_t size) {
+    void *addr;
 
     VMPROLOGUE(0);
 
@@ -725,8 +725,8 @@ extern Void_t *valloc(size_t size) {
     return VMRECORD(addr);
 }
 
-extern Void_t *pvalloc(size_t size) {
-    Void_t *addr;
+extern void *pvalloc(size_t size) {
+    void *addr;
 
     VMPROLOGUE(0);
 
@@ -769,11 +769,11 @@ struct Alloca_s {
     Vmuchar_t data[1];
 };
 
-extern Void_t *alloca(size_t size) {
+extern void *alloca(size_t size) {
     char array[MEM_ALIGN];
     char *file;
     int line;
-    Void_t *func;
+    void *func;
     Alloca_t *f;
     Vmalloc_t *vm;
     static Alloca_t *Frame;
@@ -807,7 +807,7 @@ extern Void_t *alloca(size_t size) {
 
     VMEPILOGUE(0);
 
-    return (Void_t *)f->data;
+    return (void *)f->data;
 }
 #endif /*!_lib_alloca || _mal_alloca*/
 
@@ -865,42 +865,42 @@ void __attribute__ ((constructor)) vm_initialize_initialize_hook(void)
 /* intercept _* __* __libc_* variants */
 
 #if __lib__malloc
-extern Void_t *F2(_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern Void_t F1(_cfree, Void_t *, p) { free(p); }
-extern Void_t F1(_free, Void_t *, p) { free(p); }
-extern Void_t *F1(_malloc, size_t, n) { return malloc(n); }
-extern Void_t *F2(_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+extern void *F2(_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+extern void F1(_cfree, void *, p) { free(p); }
+extern void F1(_free, void *, p) { free(p); }
+extern void *F1(_malloc, size_t, n) { return malloc(n); }
+extern void *F2(_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern Void_t *F1(_pvalloc, size_t, n) { return pvalloc(n); }
+extern void *F1(_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern Void_t *F2(_realloc, Void_t *, p, size_t, n) { return realloc(p, n); }
-extern Void_t *F1(_valloc, size_t, n) { return valloc(n); }
+extern void *F2(_realloc, void *, p, size_t, n) { return realloc(p, n); }
+extern void *F1(_valloc, size_t, n) { return valloc(n); }
 #endif
 
 #if _lib___malloc
-extern Void_t *F2(__calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern Void_t F1(__cfree, Void_t *, p) { free(p); }
-extern Void_t F1(__free, Void_t *, p) { free(p); }
-extern Void_t *F1(__malloc, size_t, n) { return malloc(n); }
-extern Void_t *F2(__memalign, size_t, a, size_t, n) { return memalign(a, n); }
+extern void *F2(__calloc, size_t, n, size_t, m) { return calloc(n, m); }
+extern void F1(__cfree, void *, p) { free(p); }
+extern void F1(__free, void *, p) { free(p); }
+extern void *F1(__malloc, size_t, n) { return malloc(n); }
+extern void *F2(__memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern Void_t *F1(__pvalloc, size_t, n) { return pvalloc(n); }
+extern void *F1(__pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern Void_t *F2(__realloc, Void_t *, p, size_t, n) { return realloc(p, n); }
-extern Void_t *F1(__valloc, size_t, n) { return valloc(n); }
+extern void *F2(__realloc, void *, p, size_t, n) { return realloc(p, n); }
+extern void *F1(__valloc, size_t, n) { return valloc(n); }
 #endif
 
 #if _lib___libc_malloc
-extern Void_t *F2(__libc_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern Void_t F1(__libc_cfree, Void_t *, p) { free(p); }
-extern Void_t F1(__libc_free, Void_t *, p) { free(p); }
-extern Void_t *F1(__libc_malloc, size_t, n) { return malloc(n); }
-extern Void_t *F2(__libc_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+extern void *F2(__libc_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+extern void F1(__libc_cfree, void *, p) { free(p); }
+extern void F1(__libc_free, void *, p) { free(p); }
+extern void *F1(__libc_malloc, size_t, n) { return malloc(n); }
+extern void *F2(__libc_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern Void_t *F1(__libc_pvalloc, size_t, n) { return pvalloc(n); }
+extern void *F1(__libc_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern Void_t *F2(__libc_realloc, Void_t *, p, size_t, n) { return realloc(p, n); }
-extern Void_t *F1(__libc_valloc, size_t, n) { return valloc(n); }
+extern void *F2(__libc_realloc, void *, p, size_t, n) { return realloc(p, n); }
+extern void *F1(__libc_valloc, size_t, n) { return valloc(n); }
 #endif
 
 #endif /* _malloc_hook */
@@ -996,45 +996,45 @@ extern Mstats_t mstats(void) {
  */
 
 #undef calloc
-extern Void_t *calloc _ARG_((size_t, size_t));
+extern void *calloc _ARG_((size_t, size_t));
 
 #undef cfree
-extern void cfree _ARG_((Void_t *));
+extern void cfree _ARG_((void *));
 
 #undef free
-extern void free _ARG_((Void_t *));
+extern void free _ARG_((void *));
 
 #undef malloc
-extern Void_t *malloc _ARG_((size_t));
+extern void *malloc _ARG_((size_t));
 
 #undef memalign
-extern Void_t *memalign _ARG_((size_t, size_t));
+extern void *memalign _ARG_((size_t, size_t));
 
 #if _lib_pvalloc
 #undef pvalloc
-extern Void_t *pvalloc _ARG_((size_t));
+extern void *pvalloc _ARG_((size_t));
 #endif
 
 #undef realloc
-extern Void_t *realloc _ARG_((Void_t *, size_t));
+extern void *realloc _ARG_((void *, size_t));
 
 #undef valloc
-extern Void_t *valloc _ARG_((size_t));
+extern void *valloc _ARG_((size_t));
 
 #if defined(__EXPORT__)
 #define extern __EXPORT__
 #endif
 
-extern Void_t *F2(_ast_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern Void_t F1(_ast_cfree, Void_t *, p) { free(p); }
-extern Void_t F1(_ast_free, Void_t *, p) { free(p); }
-extern Void_t *F1(_ast_malloc, size_t, n) { return malloc(n); }
-extern Void_t *F2(_ast_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+extern void *F2(_ast_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+extern void F1(_ast_cfree, void *, p) { free(p); }
+extern void F1(_ast_free, void *, p) { free(p); }
+extern void *F1(_ast_malloc, size_t, n) { return malloc(n); }
+extern void *F2(_ast_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern Void_t *F1(_ast_pvalloc, size_t, n) { return pvalloc(n); }
+extern void *F1(_ast_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern Void_t *F2(_ast_realloc, Void_t *, p, size_t, n) { return realloc(p, n); }
-extern Void_t *F1(_ast_valloc, size_t, n) { return valloc(n); }
+extern void *F2(_ast_realloc, void *, p, size_t, n) { return realloc(p, n); }
+extern void *F1(_ast_valloc, size_t, n) { return valloc(n); }
 
 #undef extern
 

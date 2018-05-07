@@ -22,7 +22,7 @@
 #include "sftest.h"
 
 static char *Mystr = "abc";
-int myprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
+int myprint(Sfio_t *f, void *v, Sffmt_t *fe) {
     switch (fe->fmt) {
         case 's':
             *((char **)v) = Mystr;

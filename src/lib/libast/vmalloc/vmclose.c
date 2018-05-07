@@ -40,7 +40,7 @@ int vmclose(Vmalloc_t *vm) {
         return -1;
 
     /* announce closing event */
-    if (disc->exceptf && (rv = (*disc->exceptf)(vm, VM_CLOSE, (Void_t *)1, disc)) < 0) return -1;
+    if (disc->exceptf && (rv = (*disc->exceptf)(vm, VM_CLOSE, (void *)1, disc)) < 0) return -1;
 
     if (vm->meth.eventf) /* let method clean up */
         (*vm->meth.eventf)(vm, VM_CLOSE, NULL);
@@ -59,7 +59,7 @@ int vmclose(Vmalloc_t *vm) {
     }
 
     if (disc->exceptf) /* the 3rd argument tells if vm might have been destroyed */
-        (void)(*disc->exceptf)(vm, VM_ENDCLOSE, VMCAST(Void_t *, mode & VM_MEMORYF), disc);
+        (void)(*disc->exceptf)(vm, VM_ENDCLOSE, VMCAST(void *, mode & VM_MEMORYF), disc);
 
     if (!(mode & VM_MEMORYF)) vmfree(Vmheap, vm);
 

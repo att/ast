@@ -37,7 +37,7 @@ Dtmethod_t *dtmethod(Dt_t *dt, Dtmethod_t *meth) {
     if (!meth || meth == oldmt) return oldmt;
 
     /* ask discipline if switching to new method is ok */
-    if (disc->eventf && (*disc->eventf)(dt, DT_METH, (Void_t *)meth, disc) < 0) return NULL;
+    if (disc->eventf && (*disc->eventf)(dt, DT_METH, (void *)meth, disc) < 0) return NULL;
 
     list = dtextract(dt); /* extract elements out of dictionary */
 
@@ -76,7 +76,7 @@ int dtcustomize(Dt_t *dt, int type, int action) {
     int done = 0;
 
     if ((type & DT_SHARE) &&
-        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_SHARE, (Void_t *)((long)action)) >= 0)) {
+        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_SHARE, (void *)((long)action)) >= 0)) {
         if (action <= 0)
             dt->data->type &= ~DT_SHARE;
         else
@@ -86,7 +86,7 @@ int dtcustomize(Dt_t *dt, int type, int action) {
 
     if ((type & DT_ANNOUNCE) &&
         (!dt->meth->eventf ||
-         (*dt->meth->eventf)(dt, DT_ANNOUNCE, (Void_t *)((long)action)) >= 0)) {
+         (*dt->meth->eventf)(dt, DT_ANNOUNCE, (void *)((long)action)) >= 0)) {
         if (action <= 0)
             dt->data->type &= ~DT_ANNOUNCE;
         else
@@ -95,7 +95,7 @@ int dtcustomize(Dt_t *dt, int type, int action) {
     }
 
     if ((type & DT_OPTIMIZE) &&
-        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_OPTIMIZE, (Void_t *)((long)action)) >= 0))
+        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_OPTIMIZE, (void *)((long)action)) >= 0))
         done |= DT_OPTIMIZE;
 
     return done;

@@ -23,7 +23,7 @@
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *addr;
+    void *addr;
     Vmstat_t st;
 
     if (!(vm = vmopen(Vmdcheap, Vmbest, 0))) terror("Can't open Vmbest region");

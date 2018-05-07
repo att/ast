@@ -33,7 +33,7 @@ Vmdisc_t *vmdisc(Vmalloc_t *vm, Vmdisc_t *disc) {
     Vmdisc_t *old = vm->disc;
 
     if (disc) {
-        if (old->exceptf && (*old->exceptf)(vm, VM_DISC, (Void_t *)disc, old) != 0) return NULL;
+        if (old->exceptf && (*old->exceptf)(vm, VM_DISC, (void *)disc, old) != 0) return NULL;
         vm->disc = disc;
     }
     return old;

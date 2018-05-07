@@ -35,7 +35,7 @@ static char Seg3[SEGZ + 16];
 static char *Segm[SEGN] = {Seg0, Seg1, Seg2, Seg3};
 static int Segn = 0;
 
-static Void_t *segmem(Vmalloc_t *vm, Void_t *ca, size_t cs, size_t ns, Vmdisc_t *dc) {
+static void *segmem(Vmalloc_t *vm, void *ca, size_t cs, size_t ns, Vmdisc_t *dc) {
     if (ns > SEGZ)
         return NULL;
     else if (ca && cs > 0)
@@ -43,14 +43,14 @@ static Void_t *segmem(Vmalloc_t *vm, Void_t *ca, size_t cs, size_t ns, Vmdisc_t 
     else if (Segn >= SEGN)
         return NULL;
     else
-        return (Void_t *)Segm[Segn++];
+        return (void *)Segm[Segn++];
 }
 
 static Vmdisc_t Disc = {segmem, NULL, 1024};
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *data[SEGN][SEGN];
+    void *data[SEGN][SEGN];
     int n, k;
 
     if (!(vm = vmopen(&Disc, Vmbest, 0))) terror("Opening region0");
@@ -69,7 +69,7 @@ tmain() {
 #define ZBLOCK 512
 #define NBLOCK (SEGZ / (ZBLOCK + 64))
     {
-        Void_t *big, *blk[NBLOCK];
+        void *big, *blk[NBLOCK];
         if (!(vm = vmopen(&Disc, Vmbest, 0))) terror("Opening region1");
 
         for (n = 0; n < NBLOCK; ++n)

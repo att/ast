@@ -77,7 +77,7 @@ static int Dcount; /* # deletions done		*/
 static State_t *State; /* insert/delete states		*/
 
 /* memory allocator for shared dictionary - no freeing here */
-static Void_t *memory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc) {
+static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     int k;
     Disc_t *dc = (Disc_t *)disc;
 
@@ -88,9 +88,9 @@ static Void_t *memory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc) {
         if (asocasint(&dc->lock, 0, 1) == 0) /* get exclusive use first */
             break;
 
-    size = ((size + sizeof(Void_t *) - 1) / sizeof(Void_t *)) * sizeof(Void_t *);
+    size = ((size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
     if (size <= dc->size) {
-        addr = (Void_t *)dc->addr;
+        addr = (void *)dc->addr;
         dc->addr += size;
         dc->size -= size;
     } else
@@ -195,7 +195,7 @@ tmain() {
     if ((zerof = open("/dev/zero", O_RDWR)) < 0) terror("Can't open /dev/zero");
 
     /* get shared memory */
-    if ((k = 4 * N_OBJ * sizeof(Void_t *)) < 64 * 1024 * 1024) k = 64 * 1024 * 1024;
+    if ((k = 4 * N_OBJ * sizeof(void *)) < 64 * 1024 * 1024) k = 64 * 1024 * 1024;
     z = sizeof(State_t) /* insert/delete states */ + sizeof(Disc_t) /* discipline */ +
         N_OBJ * sizeof(Obj_t) /*  Obj  */ + k; /* table memory */
     State = (State_t *)mmap(0, z, PROT_READ | PROT_WRITE, MAP_SHARED, zerof, 0);

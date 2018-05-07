@@ -65,19 +65,19 @@ typedef struct _dtdata_s Dtdata_t;
 typedef struct _dtuser_s Dtuser_t;
 typedef struct _dt_s Dt_t;
 typedef struct _dtstat_s Dtstat_t;
-typedef Void_t *(*Dtsearch_f)_ARG_((Dt_t *, Void_t *, int));
-typedef Void_t *(*Dtmake_f)_ARG_((Dt_t *, Void_t *, Dtdisc_t *));
-typedef void(*Dtfree_f) _ARG_((Dt_t *, Void_t *, Dtdisc_t *));
-typedef int(*Dtcompar_f) _ARG_((Dt_t *, Void_t *, Void_t *, Dtdisc_t *));
-typedef unsigned int(*Dthash_f) _ARG_((Dt_t *, Void_t *, Dtdisc_t *));
-typedef Void_t *(*Dtmemory_f)_ARG_((Dt_t *, Void_t *, size_t, Dtdisc_t *));
-typedef int(*Dtevent_f) _ARG_((Dt_t *, int, Void_t *, Dtdisc_t *));
+typedef void *(*Dtsearch_f)_ARG_((Dt_t *, void *, int));
+typedef void *(*Dtmake_f)_ARG_((Dt_t *, void *, Dtdisc_t *));
+typedef void(*Dtfree_f) _ARG_((Dt_t *, void *, Dtdisc_t *));
+typedef int(*Dtcompar_f) _ARG_((Dt_t *, void *, void *, Dtdisc_t *));
+typedef unsigned int(*Dthash_f) _ARG_((Dt_t *, void *, Dtdisc_t *));
+typedef void *(*Dtmemory_f)_ARG_((Dt_t *, void *, size_t, Dtdisc_t *));
+typedef int(*Dtevent_f) _ARG_((Dt_t *, int, void *, Dtdisc_t *));
 typedef int(*Dttype_f) _ARG_((Dt_t *, int));
 
 struct _dtuser_s /* for application to access and use */
 {
     unsigned int lock; /* used by dtapplock	*/
-    Void_t *data;      /* for whatever data	*/
+    void *data;      /* for whatever data	*/
 };
 
 struct _dtlink_s {
@@ -102,14 +102,14 @@ struct _dtlink_s {
 /* private structure to hold an object */
 struct _dthold_s {
     Dtlink_t hdr; /* header to hold obj	*/
-    Void_t *obj;  /* application object	*/
+    void *obj;  /* application object	*/
 };
 
 /* method to manipulate dictionary structure */
 struct _dtmethod_s {
     Dtsearch_f searchf; /* search function	*/
     unsigned int type;  /* type of operation	*/
-    int(*eventf) _ARG_((Dt_t *, int, Void_t *));
+    int(*eventf) _ARG_((Dt_t *, int, void *));
     char *name;        /* name of method	*/
     char *description; /* description */
 };
@@ -275,12 +275,12 @@ extern int dtclose _ARG_((Dt_t *));
 extern Dt_t *dtview _ARG_((Dt_t *, Dt_t *));
 extern Dtdisc_t *dtdisc _ARG_((Dt_t * dt, Dtdisc_t *, int));
 extern Dtmethod_t *dtmethod _ARG_((Dt_t *, Dtmethod_t *));
-extern int dtwalk _ARG_((Dt_t *, int (*)(Dt_t *, Void_t *, Void_t *), Void_t *));
+extern int dtwalk _ARG_((Dt_t *, int (*)(Dt_t *, void *, void *), void *));
 extern int dtcustomize _ARG_((Dt_t *, int, int));
 extern unsigned int dtstrhash _ARG_((unsigned int, char *, int));
 extern int dtuserlock _ARG_((Dt_t *, unsigned int, int));
-extern Void_t *dtuserdata _ARG_((Dt_t *, Void_t *, int));
-extern int dtuserevent _ARG_((Dt_t *, int, Void_t *));
+extern void *dtuserdata _ARG_((Dt_t *, void *, int));
+extern int dtuserevent _ARG_((Dt_t *, int, void *));
 extern ssize_t dtstat _ARG_((Dt_t *, Dtstat_t *));
 
 /* deal with upward binary compatibility (operation bit translation, etc.) */
@@ -308,15 +308,15 @@ _END_EXTERNS_
 
 #define _DTLNK(dc, o) ((Dtlink_t *)((char *)(o) + (dc)->link)) /* get link from obj */
 
-#define _DTO(dc, l) (Void_t *)((char *)(l) - (dc)->link) /* get object from link */
+#define _DTO(dc, l) (void *)((char *)(l) - (dc)->link) /* get object from link */
 #define _DTOBJ(dc, l) ((dc)->link >= 0 ? _DTO(dc, l) : ((Dthold_t *)(l))->obj)
 
 #define _DTK(dc, o) ((char *)(o) + (dc)->key) /* get key from object */
-#define _DTKEY(dc, o) (Void_t *)((dc)->size >= 0 ? _DTK(dc, o) : *((char **)_DTK(dc, o)))
+#define _DTKEY(dc, o) (void *)((dc)->size >= 0 ? _DTK(dc, o) : *((char **)_DTK(dc, o)))
 
 #define _DTCMP(dt, k1, k2, dc)                                                           \
     ((dc)->comparf ? (*(dc)->comparf)((dt), (k1), (k2), (dc))                            \
-                   : (dc)->size > 0 ? memcmp((Void_t *)(k1), ((Void_t *)k2), (dc)->size) \
+                   : (dc)->size > 0 ? memcmp((void *)(k1), ((void *)k2), (dc)->size) \
                                     : strcmp((char *)(k1), ((char *)k2)))
 
 #define _DTHSH(dt, ky, dc) \
@@ -329,32 +329,32 @@ _END_EXTERNS_
 #define dtlink(d, e) (((Dtlink_t *)(e))->rh.__rght)
 #define dtobj(d, e) _DTOBJ(_DT(d)->disc, (e))
 
-#define dtfirst(d) (*(_DT(d)->searchf))((d), (Void_t *)(0), DT_FIRST)
-#define dtnext(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_NEXT)
-#define dtatleast(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_ATLEAST)
-#define dtlast(d) (*(_DT(d)->searchf))((d), (Void_t *)(0), DT_LAST)
-#define dtprev(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_PREV)
-#define dtatmost(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_ATMOST)
-#define dtsearch(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_SEARCH)
-#define dtmatch(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_MATCH)
-#define dtinsert(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_INSERT)
-#define dtinstall(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_INSTALL)
-#define dtappend(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_APPEND)
-#define dtdelete(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_DELETE)
-#define dtremove(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_REMOVE)
-#define dtattach(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_ATTACH)
-#define dtdetach(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_DETACH)
-#define dtclear(d) (*(_DT(d)->searchf))((d), (Void_t *)(0), DT_CLEAR)
+#define dtfirst(d) (*(_DT(d)->searchf))((d), (void *)(0), DT_FIRST)
+#define dtnext(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_NEXT)
+#define dtatleast(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_ATLEAST)
+#define dtlast(d) (*(_DT(d)->searchf))((d), (void *)(0), DT_LAST)
+#define dtprev(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_PREV)
+#define dtatmost(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_ATMOST)
+#define dtsearch(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_SEARCH)
+#define dtmatch(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_MATCH)
+#define dtinsert(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_INSERT)
+#define dtinstall(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_INSTALL)
+#define dtappend(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_APPEND)
+#define dtdelete(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_DELETE)
+#define dtremove(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_REMOVE)
+#define dtattach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_ATTACH)
+#define dtdetach(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_DETACH)
+#define dtclear(d) (*(_DT(d)->searchf))((d), (void *)(0), DT_CLEAR)
 
-#define dtstart(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_START)
-#define dtstep(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_STEP)
-#define dtstop(d, o) (*(_DT(d)->searchf))((d), (Void_t *)(o), DT_STOP)
+#define dtstart(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_START)
+#define dtstep(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_STEP)
+#define dtstop(d, o) (*(_DT(d)->searchf))((d), (void *)(o), DT_STOP)
 
-#define dtflatten(d) (Dtlink_t *)(*(_DT(d)->searchf))((d), (Void_t *)(0), DT_FLATTEN)
-#define dtextract(d) (Dtlink_t *)(*(_DT(d)->searchf))((d), (Void_t *)(0), DT_EXTRACT)
-#define dtrestore(d, l) (Dtlink_t *)(*(_DT(d)->searchf))((d), (Void_t *)(l), DT_RESTORE)
+#define dtflatten(d) (Dtlink_t *)(*(_DT(d)->searchf))((d), (void *)(0), DT_FLATTEN)
+#define dtextract(d) (Dtlink_t *)(*(_DT(d)->searchf))((d), (void *)(0), DT_EXTRACT)
+#define dtrestore(d, l) (Dtlink_t *)(*(_DT(d)->searchf))((d), (void *)(l), DT_RESTORE)
 
-#define dtsize(d) (ssize_t) (*(_DT(d)->searchf))((d), (Void_t *)(0), DT_STAT)
+#define dtsize(d) (ssize_t) (*(_DT(d)->searchf))((d), (void *)(0), DT_STAT)
 
 /* this is for backward compatibility - will be removed someday */
 #define DT_prime 17109811 /* 2#00000001 00000101 00010011 00110011 */

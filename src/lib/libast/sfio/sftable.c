@@ -351,7 +351,7 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
             memcpy(ft, &fp[n].ft, sizeof(Sffmt_t));
             va_copy(ft->args, args);
             ft->flags |= SFFMT_ARGPOS;
-            v = (*ft->extf)(f, (Void_t *)(&fp[n].argv), ft);
+            v = (*ft->extf)(f, (void *)(&fp[n].argv), ft);
             va_copy(args, ft->args);
             memcpy(&fp[n].ft, ft, sizeof(Sffmt_t));
             if (v < 0) {
@@ -389,7 +389,7 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                 if (ft->form) ft = NULL;
                 if (ft) memcpy(&savft, ft, sizeof(Sffmt_t));
             } else if (type > 0) /* from sfvscanf */
-                fp[n].argv.vp = va_arg(args, Void_t *);
+                fp[n].argv.vp = va_arg(args, void *);
             else
                 switch (_Sftype[fp[n].ft.fmt]) {
                     case SFFMT_INT:
@@ -413,7 +413,7 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                             fp[n].argv.d = va_arg(args, double);
                         break;
                     case SFFMT_POINTER:
-                        fp[n].argv.vp = va_arg(args, Void_t *);
+                        fp[n].argv.vp = va_arg(args, void *);
                         break;
                     case SFFMT_CHAR:
                         if (fp[n].ft.base >= 0) fp[n].argv.s = va_arg(args, char *);

@@ -49,7 +49,7 @@ typedef struct _vmpool_s {
 static int N_pool; /* counter for Vmpool calls	*/
 #endif
 
-static Void_t *poolalloc(Vmalloc_t *vm, size_t size, int local) {
+static void *poolalloc(Vmalloc_t *vm, size_t size, int local) {
     Pool_t *pl, *last, *list, *free;
     Block_t *blk;
     Vmuchar_t *dt, *enddt;
@@ -106,10 +106,10 @@ static Void_t *poolalloc(Vmalloc_t *vm, size_t size, int local) {
 
     if (!local && pl && _Vmtrace) (*_Vmtrace)(vm, NULL, (Vmuchar_t *)pl, pool->size, 0);
 
-    return (Void_t *)pl;
+    return (void *)pl;
 }
 
-static int poolfree(Vmalloc_t *vm, Void_t *data, int local) {
+static int poolfree(Vmalloc_t *vm, void *data, int local) {
     Pool_t *pl, *free;
     Vmpool_t *pool = (Vmpool_t *)vm->data;
 
@@ -128,7 +128,7 @@ static int poolfree(Vmalloc_t *vm, Void_t *data, int local) {
     return 0;
 }
 
-static Void_t *poolresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local) {
+static void *poolresize(Vmalloc_t *vm, void *data, size_t size, int type, int local) {
     NOTUSED(type);
 
     if (!data) {
@@ -142,7 +142,7 @@ static Void_t *poolresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
         return NULL;
 }
 
-static Void_t *poolalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
+static void *poolalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     NOTUSED(vm);
     NOTUSED(size);
     NOTUSED(align);
@@ -171,7 +171,7 @@ static int poolstat(Vmalloc_t *vm, Vmstat_t *st, int local) {
     return 0;
 }
 
-static int poolevent(Vmalloc_t *vm, int event, Void_t *arg) {
+static int poolevent(Vmalloc_t *vm, int event, void *arg) {
     Vmpool_t *pool;
 
     if (event == VM_OPEN) /* return the size of Vmpool_t */

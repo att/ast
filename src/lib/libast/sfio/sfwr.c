@@ -113,7 +113,7 @@ static ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
     return w > 0 ? w : -1;
 }
 
-ssize_t sfwr(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     reg ssize_t w;
     reg Sfdisc_t *dc;
     reg int local, oerrno;

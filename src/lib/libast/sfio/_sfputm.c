@@ -50,7 +50,7 @@ int _sfputm(Sfio_t *f, Sfulong_t v, Sfulong_t m) {
     n = (ps - s) + 1;
 
     if (n > 8 || SFWPEEK(f, ps, p) < n)
-        n = SFWRITE(f, (Void_t *)s, n); /* write the hard way */
+        n = SFWRITE(f, (void *)s, n); /* write the hard way */
     else {
         switch (n) {
             case 8:

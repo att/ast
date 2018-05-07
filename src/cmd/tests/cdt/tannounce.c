@@ -23,7 +23,7 @@
 
 static int Event;
 
-static int event(Dt_t *dt, int type, Void_t *obj, Dtdisc_t *disc) {
+static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
     if (type & DT_ANNOUNCE) Event = type & ~DT_ANNOUNCE;
     return 0;
 }

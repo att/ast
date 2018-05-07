@@ -38,16 +38,16 @@ tmain() {
     if (dtuserlock(dt, 1111, -1) < 0) terror("dtuserlock() should have succeeded to unlock");
     if (dt->user->lock != 0) terror("user->lock should be 0");
 
-    if (dtuserdata(dt, (Void_t *)11, 1) != (Void_t *)0)
+    if (dtuserdata(dt, (void *)11, 1) != (void *)0)
         terror("dtuserdata() should have returned NULL");
-    if (dt->user->data != (Void_t *)11) terror("user->data should be 11");
+    if (dt->user->data != (void *)11) terror("user->data should be 11");
 
-    if (dtuserdata(dt, (Void_t *)0, 0) != (Void_t *)11)
+    if (dtuserdata(dt, (void *)0, 0) != (void *)11)
         terror("dtuserdata() should have returned 11");
 
-    if (dtuserdata(dt, (Void_t *)22, 1) != (Void_t *)11)
+    if (dtuserdata(dt, (void *)22, 1) != (void *)11)
         terror("dtuserdata() should have returned 11");
-    if (dt->user->data != (Void_t *)22) terror("user->data should be 22");
+    if (dt->user->data != (void *)22) terror("user->data should be 22");
 
     texit(0);
 }

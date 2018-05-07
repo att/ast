@@ -122,7 +122,7 @@ static int ttyquery(Sfio_t *rp, Sfio_t *wp, const char *label, Sfdisc_t *dp) {
  * more write
  */
 
-static ssize_t morewrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *dp) {
+static ssize_t morewrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *dp) {
     More_t *more = (More_t *)dp;
     char *b;
     char *s;
@@ -209,7 +209,7 @@ static ssize_t morewrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *dp) {
  * remove the discipline on close
  */
 
-static int moreexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *dp) {
+static int moreexcept(Sfio_t *f, int type, void *data, Sfdisc_t *dp) {
     More_t *more = (More_t *)dp;
 
     if (type == SF_FINAL || type == SF_DPOP) {

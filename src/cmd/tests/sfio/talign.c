@@ -24,7 +24,7 @@
 static ssize_t Read;
 static int Count;
 
-ssize_t readf(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t readf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Count += 1;
     Read += (n = sfrd(f, buf, n, disc));
     return n;

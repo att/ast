@@ -40,9 +40,9 @@ typedef struct Vmstat_s Vmstat_t;
 typedef struct Vmdisc_s Vmdisc_t;
 typedef struct Vmethod_s Vmethod_t;
 typedef struct Vmdata_s Vmdata_t;
-typedef Void_t *(*Vmemory_f)_ARG_((Vmalloc_t *, Void_t *, size_t, size_t, Vmdisc_t *));
-typedef int(*Vmexcept_f) _ARG_((Vmalloc_t *, int, Void_t *, Vmdisc_t *));
-typedef int(*Vmseg_f) _ARG_((Vmalloc_t *, Void_t *, size_t, Vmdisc_t *, Void_t *));
+typedef void *(*Vmemory_f)_ARG_((Vmalloc_t *, void *, size_t, size_t, Vmdisc_t *));
+typedef int(*Vmexcept_f) _ARG_((Vmalloc_t *, int, void *, Vmdisc_t *));
+typedef int(*Vmseg_f) _ARG_((Vmalloc_t *, void *, size_t, Vmdisc_t *, void *));
 
 struct Vmstat_s {
     size_t n_busy;   /* number of busy blocks	*/
@@ -66,13 +66,13 @@ struct Vmdisc_s {
 };
 
 struct Vmethod_s {
-    Void_t *(*allocf)_ARG_((Vmalloc_t *, size_t, int));
-    Void_t *(*resizef)_ARG_((Vmalloc_t *, Void_t *, size_t, int, int));
-    int(*freef) _ARG_((Vmalloc_t *, Void_t *, int));
-    int(*nopf) _ARG_((Vmalloc_t *, Void_t *, int)); /* was addrf -- binary compatibility filler */
+    void *(*allocf)_ARG_((Vmalloc_t *, size_t, int));
+    void *(*resizef)_ARG_((Vmalloc_t *, void *, size_t, int, int));
+    int(*freef) _ARG_((Vmalloc_t *, void *, int));
+    int(*nopf) _ARG_((Vmalloc_t *, void *, int)); /* was addrf -- binary compatibility filler */
     int(*statf) _ARG_((Vmalloc_t *, Vmstat_t *, int)); /* was sizef */
-    int(*eventf) _ARG_((Vmalloc_t *, int, Void_t *));  /* was compactf */
-    Void_t *(*alignf)_ARG_((Vmalloc_t *, size_t, size_t, int));
+    int(*eventf) _ARG_((Vmalloc_t *, int, void *));  /* was compactf */
+    void *(*alignf)_ARG_((Vmalloc_t *, size_t, size_t, int));
     unsigned int meth;
 };
 
@@ -156,42 +156,42 @@ extern Vmdisc_t *vmdisc _ARG_((Vmalloc_t *, Vmdisc_t *));
 extern Vmdisc_t *vmdcshare _ARG_((char *, int, ssize_t, int));
 extern Vmdisc_t *vmdcderive _ARG_((Vmalloc_t *, ssize_t, int));
 
-extern Void_t *vmuserdata _ARG_((Vmalloc_t *, unsigned int, ssize_t size));
-extern Void_t *vmmaddress _ARG_((size_t));
+extern void *vmuserdata _ARG_((Vmalloc_t *, unsigned int, ssize_t size));
+extern void *vmmaddress _ARG_((size_t));
 
-extern Void_t *vmalloc _ARG_((Vmalloc_t *, size_t));
-extern Void_t *vmalign _ARG_((Vmalloc_t *, size_t, size_t));
-extern Void_t *vmresize _ARG_((Vmalloc_t *, Void_t *, size_t, int));
-extern int vmfree _ARG_((Vmalloc_t *, Void_t *));
+extern void *vmalloc _ARG_((Vmalloc_t *, size_t));
+extern void *vmalign _ARG_((Vmalloc_t *, size_t, size_t));
+extern void *vmresize _ARG_((Vmalloc_t *, void *, size_t, int));
+extern int vmfree _ARG_((Vmalloc_t *, void *));
 
 extern int vmset _ARG_((Vmalloc_t *, int, int));
 extern void vmclrlock _ARG_((int));
 
-extern Void_t *vmsegfind _ARG_((Vmalloc_t *, Void_t *));
-extern int vmsegwalk _ARG_((Vmalloc_t *, Vmseg_f, Void_t *));
+extern void *vmsegfind _ARG_((Vmalloc_t *, void *));
+extern int vmsegwalk _ARG_((Vmalloc_t *, Vmseg_f, void *));
 
-extern Vmalloc_t *vmregion _ARG_((Void_t *));
+extern Vmalloc_t *vmregion _ARG_((void *));
 
-extern Void_t *vmdbwatch _ARG_((Void_t *));
+extern void *vmdbwatch _ARG_((void *));
 extern int vmdbcheck _ARG_((Vmalloc_t *));
 extern int vmdebug _ARG_((int));
 
 extern int vmtrace _ARG_((int));
 extern int vmstat _ARG_((Vmalloc_t *, Vmstat_t *));
 
-extern Void_t *vmgetmem _ARG_((Vmalloc_t *, Void_t *, size_t));
+extern void *vmgetmem _ARG_((Vmalloc_t *, void *, size_t));
 
 extern char *vmstrdup _ARG_((Vmalloc_t *, const char *));
 
 #if !defined(_BLD_vmalloc) && !defined(_AST_STD_H) && !defined(__stdlib_h) && \
     !defined(__STDLIB_H) && !defined(_STDLIB_INCLUDED) && !defined(_INC_STDLIB)
-extern Void_t *malloc _ARG_((size_t));
-extern Void_t *realloc _ARG_((Void_t *, size_t));
-extern void free _ARG_((Void_t *));
-extern void cfree _ARG_((Void_t *));
-extern Void_t *calloc _ARG_((size_t, size_t));
-extern Void_t *memalign _ARG_((size_t, size_t));
-extern Void_t *valloc _ARG_((size_t));
+extern void *malloc _ARG_((size_t));
+extern void *realloc _ARG_((void *, size_t));
+extern void free _ARG_((void *));
+extern void cfree _ARG_((void *));
+extern void *calloc _ARG_((size_t, size_t));
+extern void *memalign _ARG_((size_t, size_t));
+extern void *valloc _ARG_((size_t));
 #endif
 
 #undef extern
@@ -225,8 +225,8 @@ _END_EXTERNS_
 
 #define vmalloc(vm, sz) (_VMFL_(vm), (*(_VM_(vm)->meth.allocf))((vm), (sz), 0))
 #define vmresize(vm, d, sz, type) \
-    (_VMFL_(vm), (*(_VM_(vm)->meth.resizef))((vm), (Void_t *)(d), (sz), (type), 0))
-#define vmfree(vm, d) (_VMFL_(vm), (*(_VM_(vm)->meth.freef))((vm), (Void_t *)(d), 0))
+    (_VMFL_(vm), (*(_VM_(vm)->meth.resizef))((vm), (void *)(d), (sz), (type), 0))
+#define vmfree(vm, d) (_VMFL_(vm), (*(_VM_(vm)->meth.freef))((vm), (void *)(d), 0))
 #define vmalign(vm, sz, align) (_VMFL_(vm), (*(_VM_(vm)->meth.alignf))((vm), (sz), (align), 0))
 
 #undef malloc
@@ -239,9 +239,9 @@ _END_EXTERNS_
 #if _map_malloc
 
 #define malloc(s) (_VMFL_(Vmregion), _ast_malloc((size_t)(s)))
-#define realloc(d, s) (_VMFL_(Vmregion), _ast_realloc((Void_t *)(d), (size_t)(s)))
+#define realloc(d, s) (_VMFL_(Vmregion), _ast_realloc((void *)(d), (size_t)(s)))
 #define calloc(n, s) (_VMFL_(Vmregion), _ast_calloc((size_t)n, (size_t)(s)))
-#define free(d) (_VMFL_(Vmregion), _ast_free((Void_t *)(d)))
+#define free(d) (_VMFL_(Vmregion), _ast_free((void *)(d)))
 #define memalign(a, s) (_VMFL_(Vmregion), _ast_memalign((size_t)(a), (size_t)(s)))
 #define valloc(s)		(_VMFL_(Vmregion), _ast_valloc((size_t)(s) )
 
@@ -250,9 +250,9 @@ _END_EXTERNS_
 #if !_std_malloc
 
 #define malloc(s) (_VMFL_(Vmregion), malloc((size_t)(s)))
-#define realloc(d, s) (_VMFL_(Vmregion), realloc((Void_t *)(d), (size_t)(s)))
+#define realloc(d, s) (_VMFL_(Vmregion), realloc((void *)(d), (size_t)(s)))
 #define calloc(n, s) (_VMFL_(Vmregion), calloc((size_t)n, (size_t)(s)))
-#define free(d) (_VMFL_(Vmregion), free((Void_t *)(d)))
+#define free(d) (_VMFL_(Vmregion), free((void *)(d)))
 #define memalign(a, s) (_VMFL_(Vmregion), memalign((size_t)(a), (size_t)(s)))
 #define valloc(s)		(_VMFL_(Vmregion), valloc((size_t)(s) )
 #ifndef strdup
@@ -272,16 +272,16 @@ _END_EXTERNS_
 #define vmalloc(vm, sz) (*(_VM_(vm)->meth.allocf))((vm), (sz), 0)
 #endif
 #ifndef vmresize
-#define vmresize(vm, d, sz, type) (*(_VM_(vm)->meth.resizef))((vm), (Void_t *)(d), (sz), (type), 0)
+#define vmresize(vm, d, sz, type) (*(_VM_(vm)->meth.resizef))((vm), (void *)(d), (sz), (type), 0)
 #endif
 #ifndef vmfree
-#define vmfree(vm, d) (*(_VM_(vm)->meth.freef))((vm), (Void_t *)(d), 0)
+#define vmfree(vm, d) (*(_VM_(vm)->meth.freef))((vm), (void *)(d), 0)
 #endif
 #ifndef vmalign
 #define vmalign(vm, sz, align) (*(_VM_(vm)->meth.alignf))((vm), (sz), (align), 0)
 #endif
 
-#define vmdata(vm) ((Void_t *)(_VM_(vm)->data))
+#define vmdata(vm) ((void *)(_VM_(vm)->data))
 
 #define vmoldof(v, p, t, n, x) (t *)vmresize((v), (p), sizeof(t) * (n) + (x), (VM_RSMOVE))
 #define vmnewof(v, p, t, n, x) \

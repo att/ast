@@ -32,14 +32,14 @@
 #define N_REC 1000
 #define B_SIZE 256
 
-static ssize_t inspect(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+static ssize_t inspect(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     int w, k;
     char *s;
     Sfio_t *sf;
 
     if (*((char *)buf + n - 1) != '\n') terror("Not writing a whole record");
 
-    sf = sfnew(NULL, (Void_t *)buf, n, -1, SF_STRING | SF_READ);
+    sf = sfnew(NULL, (void *)buf, n, -1, SF_STRING | SF_READ);
     while ((s = sfgetr(sf, '\n', 0))) {
         w = sfvalue(sf) - 1;
         if (s[0] != s[w - 1] - 1) terror("Bad record");
@@ -97,7 +97,7 @@ tmain() {
         if ((pid = (int)FORK()) < 0)
             terror("Creating process %d", i);
         else if (pid == 0) { /* write to file */
-            sfsetbuf(fa[i], (Void_t *)buf[i], sizeof(buf[i]));
+            sfsetbuf(fa[i], (void *)buf[i], sizeof(buf[i]));
             sfset(fa[i], SF_WHOLE, 1);
             Disc[i].writef = inspect;
             sfdisc(fa[i], &Disc[i]);

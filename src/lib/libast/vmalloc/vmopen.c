@@ -69,7 +69,7 @@ Vmalloc_t *_vmopen(Vmalloc_t *vmo, Vmdisc_t *disc, Vmethod_t *meth, int mode) {
     size = 0;
 
     if (disc->exceptf) {
-        if ((rv = (*disc->exceptf)(vmp, VM_OPEN, (Void_t *)(&addr), disc)) < 0) {
+        if ((rv = (*disc->exceptf)(vmp, VM_OPEN, (void *)(&addr), disc)) < 0) {
             if (initheap) write(9, "vmalloc: panic: heap initialization error #1\n", 45);
             return NULL;
         } else if (rv == 0) /* normal case of region opening */

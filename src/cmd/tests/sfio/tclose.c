@@ -23,7 +23,7 @@
 
 static int Write_error = 0;
 
-static int except(Sfio_t *f, int type, Void_t *obj, Sfdisc_t *disc) {
+static int except(Sfio_t *f, int type, void *obj, Sfdisc_t *disc) {
     if (type == SF_WRITE) Write_error = 1;
     return 0;
 }

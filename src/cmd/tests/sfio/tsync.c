@@ -23,7 +23,7 @@
 
 /* this tests to see if SF_SYNC is raised at the right time */
 static int Count = 0;
-static int except(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc) {
+static int except(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     if (type == SF_SYNC && integralof(arg) == 1) Count += 1;
     return 0;
 }
@@ -34,12 +34,12 @@ typedef struct _mydisc_s {
     Sfdisc_t disc;
     int sync;
 } Mydisc_t;
-int event(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc) {
+int event(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     if (type == SF_SYNC) ((Mydisc_t *)disc)->sync = integralof(arg);
     return 0;
 }
 
-ssize_t newline(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t newline(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     size_t i;
     char *s = (char *)buf;
 

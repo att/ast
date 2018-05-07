@@ -21,7 +21,7 @@
 
 #include "sftest.h"
 
-ssize_t myread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) { return sfrd(f, buf, n, disc); }
+ssize_t myread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) { return sfrd(f, buf, n, disc); }
 
 Sfdisc_t Disc = {myread, NULL, NULL, NULL};
 

@@ -42,11 +42,11 @@
 
 #define N_CONCUR ((N_PROC / 2) * 2) /* #players, must be even	*/
 #define N_OBJ 20000                 /* total number of objects	*/
-#define MEMSIZE (N_OBJ * 2 * sizeof(Obj_t) + sizeof(Void_t *) * 1024 * 1024)
+#define MEMSIZE (N_OBJ * 2 * sizeof(Obj_t) + sizeof(void *) * 1024 * 1024)
 
 #define CDT_DATA 1 /* data section of dictionary	*/
 typedef struct _cdtdata_s {
-    Void_t *data;
+    void *data;
     int process;
 } Cdtdata_t;
 
@@ -69,12 +69,12 @@ static char *Shmstore;
 static Mmdisc_t Mapdisc, Shmdisc;
 
 /* allocate data from the shared memory region */
-Void_t *mmmemory(Dt_t *dt, Void_t *data, size_t size, Dtdisc_t *disc) {
+void *mmmemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
     return vmresize(((Mmdisc_t *)disc)->vm, data, size, 0);
 }
 
 /* handle dictionary events */
-static int mmevent(Dt_t *dt, int type, Void_t *data, Dtdisc_t *disc) {
+static int mmevent(Dt_t *dt, int type, void *data, Dtdisc_t *disc) {
     Cdtdata_t *cdtdt;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
 
@@ -87,7 +87,7 @@ static int mmevent(Dt_t *dt, int type, Void_t *data, Dtdisc_t *disc) {
                 return 0;
             else /* got data area, just return it */
             {
-                *((Void_t **)data) = cdtdt->data;
+                *((void **)data) = cdtdt->data;
                 return 1;
             }
         } else
@@ -96,8 +96,8 @@ static int mmevent(Dt_t *dt, int type, Void_t *data, Dtdisc_t *disc) {
     {
         if (!asogetptr(&cdtdt->data)) /* save data area for future references */
         {
-            asocasptr(&cdtdt->data, NULL, (Void_t *)dt->data);
-            return asogetptr(&cdtdt->data) == (Void_t *)dt->data ? 0 : -1;
+            asocasptr(&cdtdt->data, NULL, (void *)dt->data);
+            return asogetptr(&cdtdt->data) == (void *)dt->data ? 0 : -1;
         } else
             return 0;             /* data area existed */
     } else if (type == DT_CLOSE)  /* starting to close dictionary */
@@ -112,7 +112,7 @@ static int mmevent(Dt_t *dt, int type, Void_t *data, Dtdisc_t *disc) {
 }
 
 /* compare two objects by their integer keys */
-static int mmcompare(Dt_t *dt, Void_t *key1, Void_t *key2, Dtdisc_t *disc) {
+static int mmcompare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
     return *((int *)key1) - *((int *)key2);
 }
 

@@ -25,7 +25,7 @@
 
 typedef struct _obj_s Obj_t;
 struct _obj_s {
-    Void_t *obj; /* allocated object	*/
+    void *obj; /* allocated object	*/
     size_t size; /* its allocated size	*/
     Obj_t *next; /* linked list pointer 	*/
 };
@@ -55,7 +55,7 @@ static Obj_t Obj[N_OBJ], *List[N_OBJ + 1];
 
 tmain() {
     Obj_t *o, *next;
-    Void_t *huge;
+    void *huge;
     size_t hugesz;
     Vmstat_t sb;
     ssize_t k, p;

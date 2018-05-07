@@ -30,7 +30,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-static Void_t *dtmemory(Dt_t *dt, Void_t *addr, size_t size, Dtdisc_t *disc) {
+static void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     if (addr) {
         if (size == 0) {
             free(addr);
@@ -55,7 +55,7 @@ Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *disc, int type) {
     if (!disc) /* only want to know current discipline */
         return old;
 
-    if (old->eventf && (*old->eventf)(dt, DT_DISC, (Void_t *)disc, old) < 0) return NULL;
+    if (old->eventf && (*old->eventf)(dt, DT_DISC, (void *)disc, old) < 0) return NULL;
 
     if ((type & (DT_SAMEHASH | DT_SAMECMP)) != (DT_SAMEHASH | DT_SAMECMP))
         list = dtextract(dt); /* grab the list of objects if any */

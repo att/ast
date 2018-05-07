@@ -37,7 +37,7 @@ typedef struct _dttree_s {
 } Dttree_t;
 
 #ifdef _BLD_DEBUG
-int dttreeprint(Dt_t *dt, Dtlink_t *here, int lev, char *(*objprintf)(Void_t *)) {
+int dttreeprint(Dt_t *dt, Dtlink_t *here, int lev, char *(*objprintf)(void *)) {
     int k, rv;
     char *obj, *endb, buf[1024];
     Dtdisc_t *disc = dt->disc;
@@ -91,7 +91,7 @@ int dttreeprint(Dt_t *dt, Dtlink_t *here, int lev, char *(*objprintf)(Void_t *))
 #endif
 
 /* terminal object: DT_FIRST|DT_LAST */
-Void_t *tfirstlast(Dt_t *dt, int type) {
+void *tfirstlast(Dt_t *dt, int type) {
     Dtlink_t *t, *root;
     Dtdisc_t *disc = dt->disc;
     Dttree_t *tree = (Dttree_t *)dt->data;
@@ -110,7 +110,7 @@ Void_t *tfirstlast(Dt_t *dt, int type) {
 }
 
 /* DT_CLEAR */
-static Void_t *tclear(Dt_t *dt) {
+static void *tclear(Dt_t *dt) {
     Dtlink_t *root, *t;
     Dtdisc_t *disc = dt->disc;
     Dttree_t *tree = (Dttree_t *)dt->data;
@@ -130,8 +130,8 @@ static Void_t *tclear(Dt_t *dt) {
     return NULL;
 }
 
-static Void_t *tlist(Dt_t *dt, Dtlink_t *list, int type) {
-    Void_t *obj;
+static void *tlist(Dt_t *dt, Dtlink_t *list, int type) {
+    void *obj;
     Dtlink_t *last, *r, *t;
     Dttree_t *tree = (Dttree_t *)dt->data;
     Dtdisc_t *disc = dt->disc;
@@ -159,11 +159,11 @@ static Void_t *tlist(Dt_t *dt, Dtlink_t *list, int type) {
         for (r = list; r; r = t) {
             t = r->_rght;
             obj = _DTOBJ(disc, r);
-            if ((*dt->meth->searchf)(dt, (Void_t *)r, DT_RELINK) == obj) dt->data->size += 1;
+            if ((*dt->meth->searchf)(dt, (void *)r, DT_RELINK) == obj) dt->data->size += 1;
         }
     }
 
-    return (Void_t *)list;
+    return (void *)list;
 }
 
 static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
@@ -198,12 +198,12 @@ static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
     return size;
 }
 
-static Void_t *tstat(Dt_t *dt, Dtstat_t *st) {
+static void *tstat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Dttree_t *tree = (Dttree_t *)dt->data;
 
     if (!st)
-        return (Void_t *)dt->data->size;
+        return (void *)dt->data->size;
     else {
         memset(st, 0, sizeof(Dtstat_t));
         size = tsize(tree->root, 0, st);
@@ -211,7 +211,7 @@ static Void_t *tstat(Dt_t *dt, Dtstat_t *st) {
         st->meth = dt->meth->type;
         st->size = size;
         st->space = sizeof(Dttree_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
-        return (Void_t *)size;
+        return (void *)size;
     }
 }
 
@@ -242,9 +242,9 @@ static void toptimize(Dt_t *dt) {
     }
 }
 
-static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, Void_t *obj, int type) {
+static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, void *obj, int type) {
     Dtlink_t *root, *last, *t, *r, *l;
-    Void_t *key, *o, *k;
+    void *key, *o, *k;
     Dtdisc_t *disc = dt->disc;
 
     key = _DTKEY(disc, obj); /* key of object */
@@ -366,9 +366,9 @@ static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, Void_t *obj, in
     return root;
 }
 
-static Void_t *dttree(Dt_t *dt, Void_t *obj, int type) {
+static void *dttree(Dt_t *dt, void *obj, int type) {
     int cmp;
-    Void_t *o, *k, *key;
+    void *o, *k, *key;
     Dtlink_t *root, *t, *l, *r, *me, link;
     Dtlink_t **fngr = NULL;
     Dtdisc_t *disc = dt->disc;
@@ -393,11 +393,11 @@ static Void_t *dttree(Dt_t *dt, Void_t *obj, int type) {
             DTRETURN(obj, NULL);
         if (!obj) {
             if (!(obj = tfirstlast(dt, DT_FIRST))) {
-                (void)(*dt->memoryf)(dt, (Void_t *)fngr, 0, disc);
+                (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                 DTRETURN(obj, NULL);
             } else {
                 *fngr = tree->root;
-                DTRETURN(obj, (Void_t *)fngr);
+                DTRETURN(obj, (void *)fngr);
             }
         }
         /* else: fall through to search for obj */
@@ -509,7 +509,7 @@ static Void_t *dttree(Dt_t *dt, Void_t *obj, int type) {
             if (type & DT_START) /* walk is now well-defined */
             {
                 *fngr = root;
-                DTRETURN(obj, (Void_t *)fngr);
+                DTRETURN(obj, (void *)fngr);
             } else if (type & DT_STEP) /* return obj and set fngr to next */
             {
                 *fngr = root;
@@ -605,7 +605,7 @@ static Void_t *dttree(Dt_t *dt, Void_t *obj, int type) {
                 DTRETURN(obj, obj);
             else {
                 if (type & DT_START) /* cannot start a walk from nowhere */
-                    (void)(*dt->memoryf)(dt, (Void_t *)fngr, 0, disc);
+                    (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                 DTRETURN(obj, NULL);
             }
         } else if (type & (DT_NEXT | DT_ATLEAST))
@@ -637,7 +637,7 @@ dt_return:
     return obj;
 }
 
-static int treeevent(Dt_t *dt, int event, Void_t *arg) {
+static int treeevent(Dt_t *dt, int event, void *arg) {
     Dttree_t *tree = (Dttree_t *)dt->data;
 
     if (event == DT_OPEN) {
@@ -653,7 +653,7 @@ static int treeevent(Dt_t *dt, int event, Void_t *arg) {
     } else if (event == DT_CLOSE) {
         if (!tree) return 0;
         if (tree->root) (void)tclear(dt);
-        (void)(*dt->memoryf)(dt, (Void_t *)tree, 0, dt->disc);
+        (void)(*dt->memoryf)(dt, (void *)tree, 0, dt->disc);
         dt->data = NULL;
         return 0;
     } else if (event == DT_OPTIMIZE) /* balance the search tree */

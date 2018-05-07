@@ -168,7 +168,7 @@ static void lex_advance(Sfio_t *iop, const char *buff, int size, void *context) 
         sfwrite(shp->strbuf, lp->lexd.docend, n);
         lp->lexd.docextra += n;
         if (sffileno(iop) >= 0) {
-            lp->lexd.docend = sfsetbuf(iop, (Void_t *)iop, 0);
+            lp->lexd.docend = sfsetbuf(iop, (void *)iop, 0);
         } else {
             lp->lexd.docend = fcfirst();
         }

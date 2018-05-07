@@ -23,7 +23,7 @@
 
 static int Bufcount = 0;
 
-ssize_t readbuf(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t readbuf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Bufcount += 1;
     return sfrd(f, buf, n, disc);
 }

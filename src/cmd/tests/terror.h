@@ -64,7 +64,7 @@ extern int fork();
 extern int access _ARG_((const char *, int));
 extern int write _ARG_((int, const void *, int));
 extern int unlink _ARG_((const char *));
-extern Void_t *sbrk _ARG_((int));
+extern void *sbrk _ARG_((int));
 extern int getpid();
 extern int getpgrp();
 #endif
@@ -463,13 +463,13 @@ static unsigned int trandom(void) {
     return Rand;
 }
 
-static Void_t *tstshared(size_t n) {
-    Void_t *p;
+static void *tstshared(size_t n) {
+    void *p;
     int z;
 
     if ((z = open("/dev/zero", O_RDWR)) >= 0) {
         p = mmap(0, n, PROT_READ | PROT_WRITE, MAP_SHARED, z, 0);
-        if (!p || p == (Void_t *)(-1)) {
+        if (!p || p == (void *)(-1)) {
             p = 0;
             close(z);
         }
@@ -477,7 +477,7 @@ static Void_t *tstshared(size_t n) {
     if (!p) {
 #ifdef MAP_ANONYMOUS
         p = mmap(0, n, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_SHARED, -1, 0);
-        if (!p || p == (Void_t *)(-1))
+        if (!p || p == (void *)(-1))
 #endif
             tsterror("mmap failed on %zu bytes", n);
     }

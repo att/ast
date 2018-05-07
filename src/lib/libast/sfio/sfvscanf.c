@@ -193,12 +193,12 @@ static int _sfwaccept(wchar_t wc, Accept_t *ac) {
 }
 
 #if _has_multibyte == 1
-#define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, (Void_t *)(mbs))
+#define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, (void *)(mbs))
 #else
 #define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, NULL)
 #endif
 
-static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, Void_t *mbs) {
+static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     int n, v;
     char b[16]; /* assuming that SFMBMAX <= 16! */
 
@@ -215,7 +215,7 @@ static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, Void_t *mbs)
     }
 
     for (n = 0; n < SFMBMAX;) {
-        if ((v = _scgetc((Void_t *)sc, 0)) <= 0)
+        if ((v = _scgetc((void *)sc, 0)) <= 0)
             goto no_match;
         else
             b[n++] = v;
@@ -276,7 +276,7 @@ int sfvscanf(Sfio_t *f, reg const char *form, va_list args) {
     SFMBDCL(mbs)
 #endif
 
-    Void_t *value; /* location to assign scanned value */
+    void *value; /* location to assign scanned value */
     char *t_str;
     ssize_t n_str;
 
@@ -288,7 +288,7 @@ int sfvscanf(Sfio_t *f, reg const char *form, va_list args) {
 #define SFlen(f) (d - data)
 #define SFinit(f) ((peek = f->extent < 0 && (f->flags & SF_SHARE)), SFbuf(f))
 #define SFend(f) \
-    ((n_input += SFlen(f)), (peek ? SFREAD(f, (Void_t *)data, SFlen(f)) : ((f->next = d), 0)))
+    ((n_input += SFlen(f)), (peek ? SFREAD(f, (void *)data, SFlen(f)) : ((f->next = d), 0)))
 #define SFgetc(f, c) ((c) = (d < endd || (SFend(f), SFbuf(f), d < endd)) ? (int)(*d++) : -1)
 #define SFungetc(f, c) (d -= 1)
 
@@ -412,7 +412,7 @@ loop_fmt:
                                     n_str = fp[n].ft.size;
                                 } else if (ft && ft->extf) {
                                     FMTSET(ft, form, args, LEFTP, 0, 0, 0, 0, 0, NULL, 0);
-                                    n = (*ft->extf)(f, (Void_t *)&argv, ft);
+                                    n = (*ft->extf)(f, (void *)&argv, ft);
                                     if (n < 0) goto pop_fmt;
                                     if (!(ft->flags & SFFMT_VALUE)) goto t_arg;
                                     if ((t_str = argv.s) && (n_str = (int)ft->size) < 0)
@@ -448,7 +448,7 @@ loop_fmt:
                         v = fp[n].argv.i;
                     else if (ft && ft->extf) {
                         FMTSET(ft, form, args, '.', dot, 0, 0, 0, 0, NULL, 0);
-                        if ((*ft->extf)(f, (Void_t *)(&argv), ft) < 0) goto pop_fmt;
+                        if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
                         if (ft->flags & SFFMT_VALUE)
                             v = argv.i;
                         else
@@ -504,7 +504,7 @@ loop_fmt:
                         size = fp[n].argv.i;
                     else if (ft && ft->extf) {
                         FMTSET(ft, form, args, 'I', sizeof(int), 0, 0, 0, 0, NULL, 0);
-                        if ((*ft->extf)(f, (Void_t *)(&argv), ft) < 0) goto pop_fmt;
+                        if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
                         if (ft->flags & SFFMT_VALUE)
                             size = argv.i;
                         else
@@ -604,7 +604,7 @@ loop_fmt:
             FMTSET(ft, form, args, fmt, size, flags, width, 0, base, t_str, n_str);
             SFend(f);
             SFOPEN(f, 0);
-            v = (*ft->extf)(f, (Void_t *)&argv, ft);
+            v = (*ft->extf)(f, (void *)&argv, ft);
             SFLOCK(f, 0);
             SFbuf(f);
 
@@ -635,7 +635,7 @@ loop_fmt:
             if (!(argv.ft = va_arg(args, Sffmt_t *))) continue;
             if (!argv.ft->form && ft) /* change extension functions */
             {
-                if (ft->eventf && (*ft->eventf)(f, SF_DPOP, (Void_t *)form, ft) < 0) continue;
+                if (ft->eventf && (*ft->eventf)(f, SF_DPOP, (void *)form, ft) < 0) continue;
                 fmstk->ft = ft = argv.ft;
             } else /* stack a new environment */
             {
@@ -671,7 +671,7 @@ loop_fmt:
         }
 
         /* get the address to assign value */
-        if (!value && !(flags & SFFMT_SKIP)) value = va_arg(args, Void_t *);
+        if (!value && !(flags & SFFMT_SKIP)) value = va_arg(args, void *);
 
         if (fmt == 'n') /* return length of consumed input */
         {
@@ -707,7 +707,7 @@ loop_fmt:
         if (_Sftype[fmt] == SFFMT_FLOAT) {
             SFungetc(f, inp);
             SCinit(&scd, 1);
-            argv.ld = _sfdscan((Void_t *)(&scd), _scgetc);
+            argv.ld = _sfdscan((void *)(&scd), _scgetc);
             SCend(&scd, 1);
 
             if (scd.error >= 0) {
@@ -834,9 +834,9 @@ loop_fmt:
 
                 if (fmt == 'p')
 #if _more_void_int
-                    *((Void_t **)value) = (Void_t *)((ulong)argv.lu);
+                    *((void **)value) = (void *)((ulong)argv.lu);
 #else
-                    *((Void_t **)value) = (Void_t *)((uint)argv.lu);
+                    *((void **)value) = (void *)((uint)argv.lu);
 #endif
 #if !_ast_intmax_long
                 else if (size == sizeof(Sflong_t))
@@ -951,7 +951,7 @@ pop_fmt:
         if (fm->eventf) {
             if (!form || !form[0])
                 (*fm->eventf)(f, SF_FINAL, NULL, ft);
-            else if ((*fm->eventf)(f, SF_DPOP, (Void_t *)form, ft) < 0)
+            else if ((*fm->eventf)(f, SF_DPOP, (void *)form, ft) < 0)
                 goto loop_fmt;
         }
 

@@ -238,7 +238,7 @@ struct _two_s {
 typedef union _word_u {
     size_t size;        /* to store a size_t	*/
     unsigned int intdt; /* to store an integer	*/
-    Void_t *ptrdt;      /* to store a pointer	*/
+    void *ptrdt;      /* to store a pointer	*/
 } Word_t;
 
 struct _head_s /* a block header has two words */
@@ -286,7 +286,7 @@ struct _block_s {
 #define RGHT(b) ((b)->body.body.rght) /* right child in splay tree	*/
 
 /* translating between a block and its data area */
-#define DATA(b) ((Void_t *)((b)->body.data))
+#define DATA(b) ((void *)((b)->body.data))
 #define BLOCK(d) ((Block_t *)((Vmuchar_t *)(d) - sizeof(Head_t)))
 
 /* when a block is free, its last word stores a pointer to itself.
@@ -334,7 +334,7 @@ struct _vmuser_s {
     Vmuser_t *next;
     unsigned int dtid; /* key to identify data item	*/
     ssize_t size;      /* size of data area		*/
-    Void_t *data;      /* user data area		*/
+    void *data;      /* user data area		*/
 };
 
 struct _seg_s /* a segment of raw memory obtained via Vmdisc_t.memoryf */

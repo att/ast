@@ -141,7 +141,7 @@ int sfpoll(Sfio_t **fa, reg int n, int tm) {
             }
         }
 
-        free((Void_t *)fds);
+        free((void *)fds);
     }
 
     if (np < 0 && c > 0) {
@@ -208,7 +208,7 @@ report:
 
         /* announce status */
         if (f->disc && f->disc->exceptf)
-            (*f->disc->exceptf)(f, SF_READY, (Void_t *)(long)status[c], f->disc);
+            (*f->disc->exceptf)(f, SF_READY, (void *)(long)status[c], f->disc);
 
         if (c > r) /* move to front of list */
         {
@@ -218,6 +218,6 @@ report:
         r += 1;
     }
 
-    free((Void_t *)status);
+    free((void *)status);
     return r ? r : np < 0 ? -1 : 0;
 }

@@ -23,7 +23,7 @@
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *dt[10];
+    void *dt[10];
     int i;
 
     if (!(vm = vmopen(Vmdcsbrk, Vmbest, 0))) terror("Couldn't open region");

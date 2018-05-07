@@ -70,7 +70,7 @@
 
 typedef struct _mmvm_s {
     unsigned int magic; /* magic bytes		*/
-    Void_t *base;       /* address to map to	*/
+    void *base;       /* address to map to	*/
     ssize_t size;       /* total data size	*/
     ssize_t busy;       /* amount in use	*/
     key_t shmkey;       /* shared segment's key	*/
@@ -145,18 +145,18 @@ static key_t mmkey(char *str, int proj) {
 
 /* fix the mapped address for a region */
 static Mmvm_t *mmfix(Mmvm_t *mmvm, Mmdisc_t *mmdc, int fd) {
-    Void_t *base = mmvm->base;
+    void *base = mmvm->base;
     ssize_t size = mmvm->size;
 
-    if (base != (Void_t *)mmvm) /* mmvm is not right yet */
+    if (base != (void *)mmvm) /* mmvm is not right yet */
     {                           /**/
         DEBUG_ASSERT(!base || (base && (VMLONG(base) % _Vmpagesize) == 0));
         if (mmdc->proj < 0) {
-            munmap((Void_t *)mmvm, size);
+            munmap((void *)mmvm, size);
             mmvm = (Mmvm_t *)mmap(base, size, (PROT_READ | PROT_WRITE), (MAP_FIXED | MAP_SHARED),
                                   fd, (off_t)0);
         } else {
-            shmdt((Void_t *)mmvm);
+            shmdt((void *)mmvm);
             mmvm = (Mmvm_t *)shmat(mmdc->shmid, base, 0);
         }
         if (!mmvm || mmvm == (Mmvm_t *)(-1)) mmvm = NULL;
@@ -167,7 +167,7 @@ static Mmvm_t *mmfix(Mmvm_t *mmvm, Mmdisc_t *mmdc, int fd) {
 
 /* initialize region data */
 static int mminit(Mmdisc_t *mmdc) {
-    Void_t *base;
+    void *base;
     int try
         ;
     int fd = -1;
@@ -261,7 +261,7 @@ static int mminit(Mmdisc_t *mmdc) {
         mmvm->proj = mmdc->proj;
         strcpy(mmvm->name, mmdc->name);
         if (mmdc->proj < 0) /* flush to file */
-            msync((Void_t *)mmvm, MMHEAD(mmvm->name), MS_SYNC);
+            msync((void *)mmvm, MMHEAD(mmvm->name), MS_SYNC);
 
         rv = 0; /* success, return this value to indicate a new map */
     } else      /* wait for someone else to finish initialization */
@@ -289,7 +289,7 @@ static int mminit(Mmdisc_t *mmdc) {
             goto done;
         }
 
-        if (mmvm->base != (Void_t *)mmvm) /* not yet at the right address */
+        if (mmvm->base != (void *)mmvm) /* not yet at the right address */
         {
             if (!(mmvm = mmfix(mmvm, mmdc, fd))) { /**/
                 DEBUG_MESSAGE("vmdcshare: Can't fix address");
@@ -311,9 +311,9 @@ done:
     {                                          /**/
         DEBUG_MESSAGE("vmdcshare: error during opening region");
         if (mmdc->proj < 0)
-            (void)munmap((Void_t *)mmvm, size);
+            (void)munmap((void *)mmvm, size);
         else
-            (void)shmdt((Void_t *)mmvm);
+            (void)shmdt((void *)mmvm);
     }
 
     return rv;
@@ -344,7 +344,7 @@ static int mmend(Mmdisc_t *mmdc) {
     return 0;
 }
 
-static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *mmgetmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Mmvm_t *mmvm;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
 
@@ -369,7 +369,7 @@ static Void_t *mmgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize
     }
 }
 
-static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc) {
+static int mmexcept(Vmalloc_t *vm, int type, void *data, Vmdisc_t *disc) {
     int rv;
     Mmdisc_t *mmdc = (Mmdisc_t *)disc;
 
@@ -387,7 +387,7 @@ static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc) {
             {      /**/
                 DEBUG_ASSERT(mmdc->init == 0);
                 /**/ DEBUG_ASSERT(mmdc->mmvm->magic == MM_MAGIC);
-                *((Void_t **)data) = MMDATA(mmdc->mmvm);
+                *((void **)data) = MMDATA(mmdc->mmvm);
                 return 1;
             }
         } else
@@ -400,7 +400,7 @@ static int mmexcept(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc) {
             asocasint(&mmdc->mmvm->magic, MM_JUST4US, MM_MAGIC);
 
             if (mmdc->proj < 0) /* sync data to file now */
-                msync((Void_t *)mmdc->mmvm, MMHEAD(mmdc->name), MS_SYNC);
+                msync((void *)mmdc->mmvm, MMHEAD(mmdc->name), MS_SYNC);
         } /**/
         DEBUG_ASSERT(mmdc->mmvm->magic == MM_MAGIC);
         return 0;

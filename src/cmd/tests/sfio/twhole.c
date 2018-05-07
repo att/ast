@@ -24,7 +24,7 @@
 static int Count;
 static int Size;
 
-ssize_t writef(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     Count += 1;
     if ((n % Size) != 0) terror("Wrong record size");
     return write(sffileno(f), buf, n);

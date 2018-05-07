@@ -28,7 +28,7 @@ libstdio-mt.a -lstdio-mt
 .Ss "DATA TYPES"
 .nf
 .ft 5
-Void_t;
+void;
 Sfoff_t;
 Sflong_t;
 Sfulong_t;
@@ -37,14 +37,14 @@ Sfdouble_t;
 Sfio_t;
 
 Sfdisc_t;
-ssize_t    (*Sfread_f)(Sfio_t*, Void_t*, size_t, Sfdisc_t*);
-ssize_t    (*Sfwrite_f)(Sfio_t*, const Void_t*, size_t, Sfdisc_t*);
+ssize_t    (*Sfread_f)(Sfio_t*, void*, size_t, Sfdisc_t*);
+ssize_t    (*Sfwrite_f)(Sfio_t*, const void*, size_t, Sfdisc_t*);
 Sfoff_t    (*Sfseek_f)(Sfio_t*, Sfoff_t, int, Sfdisc_t*);
-int        (*Sfexcept_f)(Sfio_t*, int, Void_t*, Sfdisc_t*);
+int        (*Sfexcept_f)(Sfio_t*, int, void*, Sfdisc_t*);
 
 Sffmt_t;
-int        (*Sffmtext_f)(Sfio_t*, Void_t*, Sffmt_t*);
-int        (*Sffmtevent_f)(Sfio_t*, int, Void_t*, Sffmt_t*);
+int        (*Sffmtext_f)(Sfio_t*, void*, Sffmt_t*);
+int        (*Sffmtevent_f)(Sfio_t*, int, void*, Sffmt_t*);
 
 SFIO_VERSION
 .ft 1
@@ -70,7 +70,7 @@ SF_IOINTR
 .Ss "OPENING/CLOSING STREAMS"
 .nf
 .ft 5
-Sfio_t*    sfnew(Sfio_t* f, Void_t* buf, size_t size, int fd, int flags);
+Sfio_t*    sfnew(Sfio_t* f, void* buf, size_t size, int fd, int flags);
 Sfio_t*    sfopen(Sfio_t* f, const char* string, const char* mode);
 Sfio_t*    sfpopen(Sfio_t* f, const char* cmd, const char* mode);
 Sfio_t*    sftmp(size_t size);
@@ -111,10 +111,10 @@ char*      sfgetr(Sfio_t* f, int rsc, int type);
 ssize_t    sfputr(Sfio_t* f, const char* s, int rsc);
 Sfoff_t    sfmove(Sfio_t* fr, Sfio_t* fw, Sfoff_t n, int rsc);
 
-ssize_t    sfread(Sfio_t* f, Void_t* buf, size_t n);
-ssize_t    sfwrite(Sfio_t* f, const Void_t* buf, size_t n);
+ssize_t    sfread(Sfio_t* f, void* buf, size_t n);
+ssize_t    sfwrite(Sfio_t* f, const void* buf, size_t n);
 Sfoff_t    sfseek(Sfio_t* f, Sfoff_t offset, int type);
-Void_t*    sfreserve(Sfio_t* f, ssize_t n, int type);
+void*    sfreserve(Sfio_t* f, ssize_t n, int type);
 .ft 1
 .fi
 .Ss "DATA FORMATTING"
@@ -154,8 +154,8 @@ SFFMT_SKIP
 SFFMT_ARGPOS
 SFFMT_VALUE
 
-int        (*Sffmtext_f)(Sfio_t* f, Void_t* v, Sffmt_t* fe);
-int        (*Sffmtevent_f)(Sfio_t* f, int type, Void_t* v, Sffmt_t* fe);
+int        (*Sffmtext_f)(Sfio_t* f, void* v, Sffmt_t* fe);
+int        (*Sffmtevent_f)(Sfio_t* f, int type, void* v, Sffmt_t* fe);
 void       va_copy(va_list to, va_list fr);
 long       sffmtversion(Sffmt_t* fe, type);
 .ft 1
@@ -163,7 +163,7 @@ long       sffmtversion(Sffmt_t* fe, type);
 .Ss "BUFFERING, SYNCHRONIZATION"
 .nf
 .ft 5
-Void_t*    sfsetbuf(Sfio_t* f, Void_t* buf, size_t size);
+void*    sfsetbuf(Sfio_t* f, void* buf, size_t size);
 int        sfsync(Sfio_t* f);
 int        sfpoll(Sfio_t** flist, int n, int timeout);
 Sfio_t*    sfpool(Sfio_t* f, Sfio_t* poolf, int mode);
@@ -174,9 +174,9 @@ int        sfpurge(Sfio_t* f);
 .nf
 .ft 5
 Sfdisc_t*  sfdisc(Sfio_t* f, Sfdisc_t* disc);
-int        sfraise(Sfio_t* f, int type, Void_t* data);
-ssize_t    sfrd(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc);
-ssize_t    sfwr(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc);
+int        sfraise(Sfio_t* f, int type, void* data);
+ssize_t    sfrd(Sfio_t* f, void* buf, size_t n, Sfdisc_t* disc);
+ssize_t    sfwr(Sfio_t* f, const void* buf, size_t n, Sfdisc_t* disc);
 Sfoff_t    sfsk(Sfio_t* f, Sfoff_t offset, int type, Sfdisc_t* disc);
 
 SF_NEW
@@ -221,9 +221,9 @@ int        sferror(Sfio_t* f);
 int        sfclrerr(Sfio_t* f);
 int        sfclrlock(Sfio_t* f);
 
-int        sfnotify(void (*notify)(Sfio_t* f, int type, Void_t* data));
+int        sfnotify(void (*notify)(Sfio_t* f, int type, void* data));
 
-int        sfwalk(Sfwalk_f walkf, Void_t* data, int type);
+int        sfwalk(Sfwalk_f walkf, void* data, int type);
 .ft 1
 .fi
 .Ss "MISCELLANEOUS FUNCTIONS"
@@ -234,7 +234,7 @@ ssize_t    sfslen();
 int        sfulen(Sfulong_t v);
 int        sfllen(Sflong_t v);
 int        sfdlen(Sfdouble_t v);
-ssize_t    sfpkrd(int fd, Void_t* buf, size_t n,
+ssize_t    sfpkrd(int fd, void* buf, size_t n,
                   int rsc, long tm, int action);
 .ft 1
 .fi
@@ -324,10 +324,10 @@ native header \fBstdio.h\fP instead of the one provided by Sfio.
 .PP
 .Ss "DATA TYPES"
 .PP
-.Ss "  Void_t*"
+.Ss "  void*"
 This defines a type suitable to exchange
 data of unknown types between application and Sfio.
-\f5Void_t\fP is a macro defined as \f5void\fP for ANSI-C and C++ and
+\f5void\fP is a macro defined as \f5void\fP for ANSI-C and C++ and
 \f5char\fP for other compilation environments.
 .PP
 .Ss "  Sfoff_t"
@@ -342,10 +342,10 @@ unsigned integer, signed integer, and floating point value types on the local pl
 This defines the type of a stream handle.
 .PP
 .Ss "  Sfdisc_t"
-.Ss "  ssize_t (*Sfread_f)(Sfio_t*, Void_t*, size_t, Sfdisc_t*)"
-.Ss "  ssize_t (*Sfwrite_f)(Sfio_t*, const Void_t*, size_t, Sfdisc_t*)"
+.Ss "  ssize_t (*Sfread_f)(Sfio_t*, void*, size_t, Sfdisc_t*)"
+.Ss "  ssize_t (*Sfwrite_f)(Sfio_t*, const void*, size_t, Sfdisc_t*)"
 .Ss "  Sfoff_t (*Sfseek_f)(Sfio_t*, Sfoff_t, int, Sfdisc_t*)"
-.Ss "  int (*Sfexcept_f)(Sfio_t*, int, Void_t*, Sfdisc_t*)"
+.Ss "  int (*Sfexcept_f)(Sfio_t*, int, void*, Sfdisc_t*)"
 \f5Sfdisc_t\fP defines a stream discipline structure.
 \f5Sfread_f\fP, \f5Sfwrite_f\fP and \f5Sfseek_f\fP are the types
 of discipline functions to replace the system calls:
@@ -354,8 +354,8 @@ of discipline functions to replace the system calls:
 See \f5sfdisc()\fP for more details.
 .PP
 .Ss "  Sffmt_t"
-.Ss "  int (*Sffmtext_f)(Sfio_t*, Void_t*, Sffmt_t*)"
-.Ss "  int (*Sffmtevent_f)(Sfio_t*, int, Void_t*, Sffmt_t*)"
+.Ss "  int (*Sffmtext_f)(Sfio_t*, void*, Sffmt_t*)"
+.Ss "  int (*Sffmtevent_f)(Sfio_t*, int, void*, Sffmt_t*)"
 \f5Sffmt_t\fP defines a formatting environment that can be used
 to extend scanning and printing in the \f5sfprint()/sfscanf()\fP
 functions. \f5Sffmtext_f\fP and \f5Sffmtevent_f\fP define the types
@@ -465,7 +465,7 @@ resume interrupted system calls outside the scope of the library. On such system
 .PP
 .Ss "OPENING/CLOSING STREAMS"
 .PP
-.Ss "  Sfio_t* sfnew(Sfio_t* f, Void_t* buf, size_t size, int fd, int flags)"
+.Ss "  Sfio_t* sfnew(Sfio_t* f, void* buf, size_t size, int fd, int flags)"
 This function creates or renews a stream.
 It returns the new stream on success and \f5NULL\fP on error.
 .Tp
@@ -794,11 +794,11 @@ the UNIX device that has no read data and throws away any write data.
 For example, the call \f5sfmove(f,(Sfio_t*)0,(Sfoff_t)(-1),'\en')\fP
 counts the number of complete lines in stream \f5f\fP.
 
-.Ss "  ssize_t sfread(Sfio_t* f, Void_t* buf, size_t n)"
+.Ss "  ssize_t sfread(Sfio_t* f, void* buf, size_t n)"
 This function reads up to \f5n\fP bytes from \f5f\fP into buffer \f5buf\fP.
 It returns the number of bytes actually read or \f5-1\fP on error.
 
-.Ss "  ssize_t sfwrite(Sfio_t* f, const Void_t* buf, size_t n)"
+.Ss "  ssize_t sfwrite(Sfio_t* f, const void* buf, size_t n)"
 This function writes \f5n\fP bytes from \f5buf\fP to \f5f\fP.
 If \f5f\fP is \f5SF_STRING\fP, and the buffer is not large enough,
 an \f5SF_WRITE\fP exception shall be raised.
@@ -835,7 +835,7 @@ If the physical file position has changed from its last known location,
 the current position is taken as the new physical position.
 Otherwise, the current position is the logical stream position.
 
-.Ss "  Void_t* sfreserve(Sfio_t* f, ssize_t n, int type)"
+.Ss "  void* sfreserve(Sfio_t* f, ssize_t n, int type)"
 This function reserves a data block from the stream \f5f\fP.
 It returns the reserved data block on success and \f5NULL\fP on failure.
 
@@ -967,7 +967,7 @@ original formatting pair and without any extension functions.
 The top environment of a stack, say \f5fe\fP, is automatically popped whenever
 its format string is completely processed.
 In this case, its event-handling function (if any) is called
-as \f5(*eventf)(f,SF_FINAL,NIL(Void_t*),fe)\fP.
+as \f5(*eventf)(f,SF_FINAL,NIL(void*),fe)\fP.
 The top environment
 can also be popped by giving an argument \f5NULL\fP to \f5%!\fP
 or by returning a negative value in an extension function.
@@ -1093,7 +1093,7 @@ This is the conversion base.
 \f5t_str\fP and \f5n_str\fP:
 This is the type string and its size.
 
-.Ss "  int (*Sffmtext_f)(Sfio_t* f, Void_t* v, Sffmt_t* fe)"
+.Ss "  int (*Sffmtext_f)(Sfio_t* f, void* v, Sffmt_t* fe)"
 This is the type of the extension function \f5fe->extf\fP to process
 patterns and arguments.
 Arguments are always processed in order and
@@ -1571,7 +1571,7 @@ If \fIbase\fP is larger than \f536\fP, the set of digits is:
 .PP
 .Ss "BUFFERING, SYNCHRONIZATION"
 .PP
-.Ss "  Void_t* sfsetbuf(Sfio_t* f, Void_t* buf, size_t size)"
+.Ss "  void* sfsetbuf(Sfio_t* f, void* buf, size_t size)"
 This function changes the buffering scheme for the stream \f5f\fP.
 The stream will be synchronized before any buffer modification.
 If a new buffer is successfully set and the old buffer has not been freed,
@@ -1583,7 +1583,7 @@ Sfio attempts to read data in blocks likely to be serviced fast by the file syst
 This means block sizes being multiples of a suitable alignment value
 (e.g., 512, 1024 or 8192). By default, the alignment value
 is computed via some internal mechanism depending on the local platform but
-it can also be explicitly set via the call \f5sfsetbuf(f, (Void_t*)f, size)\fP.
+it can also be explicitly set via the call \f5sfsetbuf(f, (void*)f, size)\fP.
 
 In invocations of \f5sfsetbuf()\fP other than the above case,
 the \f5size\fP argument is treated as follows:
@@ -1765,7 +1765,7 @@ functions \f5sfrd()\fP, \f5sfwr()\fP and \f5sfsk()\fP described below.
 .PP
 The exception function, \f5(*exceptf)()\fP announces exceptional events during
 I/O operations.
-It is called as \f5(*exceptf)(Sfio_t* f, int type, Void_t* value, Sfdisc_t* disc)\fP.
+It is called as \f5(*exceptf)(Sfio_t* f, int type, void* value, Sfdisc_t* disc)\fP.
 Unless noted otherwise, the return value of \f5(*exceptf)()\fP is used as follows:
 .Tp
 \f5<0\fP:
@@ -1865,7 +1865,7 @@ Note that \f5sfsync()\fP is called for each
 \f5SF_ATEXIT\fP:
 This event is raised for each open stream before the process exits.
 
-.Ss "  int sfraise(Sfio_t* f, int type, Void_t* data)"
+.Ss "  int sfraise(Sfio_t* f, int type, void* data)"
 If \f5f\fP is non-\f5NULL\fP, \f5sfraise()\fP calls all exception handlers
 of \f5f\fP with the event \f5type\fP and associated \f5data\fP.
 If an exception handler returns a non-zero value,
@@ -1880,8 +1880,8 @@ and raise events as described above. In this case,
 on failure. The absolute value of the return value tells how many
 streams failed on raising the given event.
 
-.Ss "  ssize_t sfrd(Sfio_t* f, Void_t* buf, size_t n, Sfdisc_t* disc)"
-.Ss "  ssize_t sfwr(Sfio_t* f, const Void_t* buf, size_t n, Sfdisc_t* disc)"
+.Ss "  ssize_t sfrd(Sfio_t* f, void* buf, size_t n, Sfdisc_t* disc)"
+.Ss "  ssize_t sfwr(Sfio_t* f, const void* buf, size_t n, Sfdisc_t* disc)"
 .Ss "  Sfoff_t sfsk(Sfio_t* f, Sfoff_t offset, int type, Sfdisc_t* disc)"
 These functions provides safe methods for a discipline I/O function to invoke
 earlier discipline I/O functions and to properly handle exceptions.
@@ -2058,7 +2058,7 @@ In this way, certain global streams such as the standard streams \f5sfstdin\fP,
 \f5sfstdout\fP and \f5sfstderr\fP could be made to act differently when used
 in different streams.
 
-.Ss "  int sfwalk(Sfwalk_f walkf, Void_t* data, int type)"
+.Ss "  int sfwalk(Sfwalk_f walkf, void* data, int type)"
 This function invokes \f5(*walkf)(f, data)\fP on every open stream \f5f\fP
 whose flags as defined by \f5sfset()\fP contains all bit flags given in \f5type\fP.
 On such a call, if the return value is negative, \f5sfwalk()\fP will terminate.
@@ -2267,7 +2267,7 @@ int    ungetc(int c, FILE* stream);
 int    getw(FILE* stream);
 char*  gets(char* s);
 char*  fgets(char* s, int n, FILE* stream);
-size_t fread(Void_t* ptr, size_t size, size_t nelt, FILE* stream);
+size_t fread(void* ptr, size_t size, size_t nelt, FILE* stream);
 
 int    putc(int c, FILE* stream);
 int    fputc(int c, FILE* stream);
@@ -2275,7 +2275,7 @@ int    putchar(int c);
 int    putw(int w, FILE* stream);
 int    puts(const char* s, FILE* stream);
 int    fputs(const char* s, FILE* stream);
-size_t fwrite(const Void_t* ptr, size_t size, size_t nelt, FILE* stream);
+size_t fwrite(const void* ptr, size_t size, size_t nelt, FILE* stream);
 
 int    fscanf(FILE* stream, const char* format, ...);
 int    vfscanf(FILE* stream, const char* format, va_list args);

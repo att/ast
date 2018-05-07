@@ -28,7 +28,7 @@ typedef struct _coord_ {
 
 Coord_t Coord;
 
-int coordprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
+int coordprint(Sfio_t *f, void *v, Sffmt_t *fe) {
     char type[128];
     Coord_t *cp;
     char *s;
@@ -59,7 +59,7 @@ typedef union Value_u {
     char **p;
 } Value_t;
 
-int nulprint(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
+int nulprint(Sfio_t *f, void *val, Sffmt_t *fe) {
     if (fe->fmt == 'Z') {
         fe->fmt = 'c';
         fe->size = -1;
@@ -81,7 +81,7 @@ int nulprint(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
 
 static int OXcount;
 static char *OXstr = "abc";
-int DOXSprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
+int DOXSprint(Sfio_t *f, void *v, Sffmt_t *fe) {
     OXcount += 1;
 
     switch (fe->fmt) {
@@ -111,7 +111,7 @@ int DOXSprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
     return 0;
 }
 
-int abprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
+int abprint(Sfio_t *f, void *v, Sffmt_t *fe) {
     switch (fe->fmt) {
         case 'a':
             fe->fmt = 'u';
@@ -129,14 +129,14 @@ int abprint(Sfio_t *f, Void_t *v, Sffmt_t *fe) {
     }
 }
 
-int intarg(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
+int intarg(Sfio_t *f, void *val, Sffmt_t *fe) {
     static int i = 1;
     *((int *)val) = i++;
     fe->flags |= SFFMT_VALUE;
     return 0;
 }
 
-int shortarg(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
+int shortarg(Sfio_t *f, void *val, Sffmt_t *fe) {
     static short i = -2;
 
     *((short *)val) = i++;
@@ -146,7 +146,7 @@ int shortarg(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
     return 0;
 }
 
-int transarg(Sfio_t *f, Void_t *val, Sffmt_t *fe) {
+int transarg(Sfio_t *f, void *val, Sffmt_t *fe) {
     switch (fe->fmt) {
         case 'D':
             fe->fmt = 'd';

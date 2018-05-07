@@ -23,15 +23,15 @@
 
 static char Mem[1024 * 1024];
 
-static Void_t *alignmem(Vmalloc_t *vm, Void_t *ca, size_t cs, size_t ns, Vmdisc_t *dc) {
-    return ns <= sizeof(Mem) ? (Void_t *)Mem : (Void_t *)0;
+static void *alignmem(Vmalloc_t *vm, void *ca, size_t cs, size_t ns, Vmdisc_t *dc) {
+    return ns <= sizeof(Mem) ? (void *)Mem : (void *)0;
 }
 
 static Vmdisc_t Disc = {alignmem, NULL, 10 * 1024};
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *data;
+    void *data;
     int i, j;
 
     if (!(vm = vmopen(&Disc, Vmbest, 0))) terror("Opening region0");

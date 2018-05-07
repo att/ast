@@ -23,7 +23,7 @@
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *addr[10];
+    void *addr[10];
 
     vm = Vmheap;
     if (!(addr[0] = vmalloc(vm, 8))) terror("vmalloc failed");

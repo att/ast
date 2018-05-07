@@ -507,7 +507,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
 
                 if (c == 's') {
                     // Preset old with match from !?string?.
-                    if (!sb.str[0] && wm) sb.str[0] = strdup(sfsetbuf(wm, (Void_t *)1, 0));
+                    if (!sb.str[0] && wm) sb.str[0] = strdup(sfsetbuf(wm, (void *)1, 0));
                     cp = parse_subst(shp, cp, &sb);
                 }
 
@@ -521,7 +521,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                 }
 
                 // Need pointer for strstr().
-                str = sfsetbuf(tmp, (Void_t *)1, 0);
+                str = sfsetbuf(tmp, (void *)1, 0);
 
                 flag |= HIST_SUBSTITUTE;
                 while (flag & HIST_SUBSTITUTE) {

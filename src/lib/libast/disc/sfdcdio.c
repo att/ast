@@ -50,7 +50,7 @@ int sfdcdio(Sfio_t *f, size_t bufsize) {
 #else
     int cntl;
     struct dioattr dio;
-    Void_t *buf;
+    void *buf;
     Direct_t *di;
 
     if (f->extent < 0 || (f->flags & SF_STRING)) return -1;
@@ -70,7 +70,7 @@ int sfdcdio(Sfio_t *f, size_t bufsize) {
 
     if (!(di = (Direct_t *)malloc(sizeof(Direct_t)))) goto no_direct;
 
-    if (!(buf = (Void_t *)memalign(dio.d_mem, bufsize))) {
+    if (!(buf = (void *)memalign(dio.d_mem, bufsize))) {
         free(di);
         goto no_direct;
     }

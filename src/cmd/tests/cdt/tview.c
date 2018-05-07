@@ -25,7 +25,7 @@ Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL
 
 static int Count, See[10];
 
-static int visit(Dt_t *dt, Void_t *obj, Void_t *data) {
+static int visit(Dt_t *dt, void *obj, void *data) {
     See[(long)obj] = 1;
     Count += 1;
     return 0;

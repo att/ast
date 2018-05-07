@@ -130,8 +130,8 @@ int _sfsetpool(Sfio_t *f) {
             if (!(array = (Sfio_t **)malloc(n * sizeof(Sfio_t *)))) goto done;
 
             /* move old array to new one */
-            memcpy((Void_t *)array, (Void_t *)p->sf, p->n_sf * sizeof(Sfio_t *));
-            if (p->sf != p->array) free((Void_t *)p->sf);
+            memcpy((void *)array, (void *)p->sf, p->n_sf * sizeof(Sfio_t *));
+            if (p->sf != p->array) free((void *)p->sf);
 
             p->sf = array;
             p->s_sf = n;
@@ -265,13 +265,13 @@ static int _sfpmode(Sfio_t *f, int type) {
                 return -1;
             }
         }
-        if (p->ndata > 0) memcpy((Void_t *)p->rdata, (Void_t *)f->next, p->ndata);
+        if (p->ndata > 0) memcpy((void *)p->rdata, (void *)f->next, p->ndata);
         f->endb = f->data;
     } else {                    /* restore read data */
         if (p->ndata > f->size) /* may lose data!!! */
             p->ndata = f->size;
         if (p->ndata > 0) {
-            memcpy((Void_t *)f->data, (Void_t *)p->rdata, p->ndata);
+            memcpy((void *)f->data, (void *)p->rdata, p->ndata);
             f->endb = f->data + p->ndata;
             p->ndata = 0;
         }
@@ -328,7 +328,7 @@ int _sfmode(reg Sfio_t *f, reg int wanted, reg int local) {
             if (!++f->ngetr) f->tiny[0]++;
             if (((f->tiny[0] << 8) | f->ngetr) >=
                 (4 * SF_NMAP)) { /* turn off mmap to avoid page faulting */
-                sfsetbuf(f, (Void_t *)f->tiny, (size_t)SF_UNBOUND);
+                sfsetbuf(f, (void *)f->tiny, (size_t)SF_UNBOUND);
                 f->ngetr = f->tiny[0] = 0;
             }
         }
@@ -465,7 +465,7 @@ int _sfmode(reg Sfio_t *f, reg int wanted, reg int local) {
             f->mode = SF_WRITE | SF_LOCK;
             if (f->bits & SF_MMAP) {
                 if (f->data) SFMUNMAP(f, f->data, f->endb - f->data);
-                (void)SFSETBUF(f, (Void_t *)f->tiny, (size_t)SF_UNBOUND);
+                (void)SFSETBUF(f, (void *)f->tiny, (size_t)SF_UNBOUND);
             }
             if (f->data == f->tiny) {
                 f->endb = f->data = f->next = NULL;

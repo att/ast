@@ -23,7 +23,7 @@
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *addr[10];
+    void *addr[10];
 
     Vmdcheap->round = 64;
     if (!(vm = vmopen(Vmdcheap, Vmbest, 0))) terror("Open failed");

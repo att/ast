@@ -23,8 +23,8 @@
 
 tmain() {
     Vmalloc_t *vm;
-    Void_t *addr[10];
-    Void_t *mem;
+    void *addr[10];
+    void *mem;
     int i;
 
     Vmdcheap->round = 64;
@@ -41,11 +41,11 @@ tmain() {
     if (posix_memalign(&mem, 3, 128) != EINVAL) terror("Bad return value from posix_memalign()");
     if (mem) terror("Bad memory");
 
-    if (posix_memalign(&mem, 3 * sizeof(Void_t *), 128) != EINVAL)
+    if (posix_memalign(&mem, 3 * sizeof(void *), 128) != EINVAL)
         terror("Bad return value from posix_memalign()");
     if (mem) terror("Bad memory");
 
-    if (posix_memalign(&mem, (sizeof(Void_t *) << 4), 128) != 0) terror("posix_memalign() failed");
+    if (posix_memalign(&mem, (sizeof(void *) << 4), 128) != 0) terror("posix_memalign() failed");
     if (!mem) terror("Bad memory");
 
     texit(0);

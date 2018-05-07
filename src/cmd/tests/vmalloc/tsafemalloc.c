@@ -40,7 +40,7 @@ static size_t Largelf = 1000; /* life of an allocated piece		*/
 
 static size_t Empperiod = 0;  /* period to make emphemeral threads	*/
 static size_t Empcount = 100; /* #allocations on each invovation	*/
-static Void_t **Emp;          /* array of allocated blocks		*/
+static void **Emp;          /* array of allocated blocks		*/
 
 static size_t Maxbusy = 0; /* size of max busy space at any time	*/
 static size_t Curbusy = 0; /* size of busy space at current time	*/
@@ -238,7 +238,7 @@ tmain() {
 
     /* space for emphemeral threads */
     if (Empperiod > 0) {
-        sz = Empcount * sizeof(Void_t *);
+        sz = Empcount * sizeof(void *);
         if (!(Emp = malloc(sz)))
             terror("Failed allocating shared list of emphemeral objects nalloc=%d", nalloc);
         memset(Emp, 0, sz);

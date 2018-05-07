@@ -41,7 +41,7 @@ typedef struct _vmlast_s {
     Vmuchar_t *last; /* last allocated block */
 } Vmlast_t;
 
-static Void_t *lastalloc(Vmalloc_t *vm, size_t size, int local) {
+static void *lastalloc(Vmalloc_t *vm, size_t size, int local) {
     Block_t *blk;
     size_t sz, blksz;
     size_t origsz = size;
@@ -86,10 +86,10 @@ static Void_t *lastalloc(Vmalloc_t *vm, size_t size, int local) {
 
     LASTOPEN(last, local);
 
-    return (Void_t *)last->last;
+    return (void *)last->last;
 }
 
-static int lastfree(Vmalloc_t *vm, Void_t *data, int local) {
+static int lastfree(Vmalloc_t *vm, void *data, int local) {
     ssize_t size;
     Vmlast_t *last = (Vmlast_t *)vm->data;
 
@@ -97,7 +97,7 @@ static int lastfree(Vmalloc_t *vm, Void_t *data, int local) {
 
     LASTLOCK(last, local);
 
-    if (data != (Void_t *)last->last)
+    if (data != (void *)last->last)
         data = NULL;
     else {
         size = last->data - last->last; /**/
@@ -114,10 +114,10 @@ static int lastfree(Vmalloc_t *vm, Void_t *data, int local) {
     return data ? 0 : -1;
 }
 
-static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local) {
+static void *lastresize(Vmalloc_t *vm, void *data, size_t size, int type, int local) {
     Block_t *blk;
     ssize_t sz, oldz, blksz;
-    Void_t *origdt = data;
+    void *origdt = data;
     size_t origsz = size;
     Vmlast_t *last = (Vmlast_t *)vm->data;
 
@@ -132,7 +132,7 @@ static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
 
     LASTLOCK(last, local);
 
-    if (data != (Void_t *)last->last)
+    if (data != (void *)last->last)
         data = NULL;
     else {
         oldz = last->data - last->last; /**/
@@ -169,14 +169,14 @@ static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
             if ((oldz + last->size) < size)
                 data = NULL;
             else {
-                if (data != (Void_t *)last->last) { /* block moved, reset location */
+                if (data != (void *)last->last) { /* block moved, reset location */
                     last->last = last->data;
                     last->data += oldz;
                     last->size -= oldz;
 
                     if (type & VM_RSCOPY) memcpy(last->last, data, oldz);
 
-                    data = (Void_t *)last->last;
+                    data = (void *)last->last;
                 }
 
                 if (type & VM_RSZERO) memset(last->last + oldz, 0, size - oldz);
@@ -192,10 +192,10 @@ static Void_t *lastresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
 
     LASTOPEN(last, local);
 
-    return (Void_t *)data;
+    return (void *)data;
 }
 
-static Void_t *lastalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
+static void *lastalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     Vmuchar_t *data;
     size_t algn;
     size_t orgsize = size, orgalign = align;
@@ -221,7 +221,7 @@ static Void_t *lastalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
 
     LASTOPEN(last, local);
 
-    return (Void_t *)data;
+    return (void *)data;
 }
 
 static int laststat(Vmalloc_t *vm, Vmstat_t *st, int local) {
@@ -245,7 +245,7 @@ static int laststat(Vmalloc_t *vm, Vmstat_t *st, int local) {
     return 0;
 }
 
-static int lastevent(Vmalloc_t *vm, int event, Void_t *arg) {
+static int lastevent(Vmalloc_t *vm, int event, void *arg) {
     Vmlast_t *last;
 
     if (event == VM_OPEN) /* return the size of Vmpool_t */

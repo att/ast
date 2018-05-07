@@ -102,7 +102,7 @@ do_inverted: /* get back to here when trying to make things fail */
 
     for (i = 0; i < 26; ++i) {
         if (!(thread[i] = vtopen(0, 0))) terror("Creating thread handle[%d]", i);
-        if (vtrun(thread[i], writesmall, (Void_t *)i) < 0) terror("Running thread [%d]", i);
+        if (vtrun(thread[i], writesmall, (void *)i) < 0) terror("Running thread [%d]", i);
     }
 
     for (i = 0; i < 26; ++i) {

@@ -127,7 +127,7 @@ void sh_subtmpfile(Shell_t *shp) {
             // Write the data to the pipe.
             off = sftell(sfstdout);
             if (off) {
-                write(fds[1], sfsetbuf(sfstdout, (Void_t *)sfstdout, 0), (size_t)off);
+                write(fds[1], sfsetbuf(sfstdout, (void *)sfstdout, 0), (size_t)off);
             }
             sfclose(sfstdout);
             if ((sh_fcntl(fds[1], F_DUPFD, 1)) != 1) errormsg(SH_DICT, ERROR_system(1), e_file + 4);

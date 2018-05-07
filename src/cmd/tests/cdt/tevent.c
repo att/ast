@@ -24,7 +24,7 @@
 static int Event[8];
 static int Index;
 
-static int event(Dt_t *dt, int type, Void_t *obj, Dtdisc_t *disc) {
+static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
     if (Index >= sizeof(Event) / sizeof(Event[0])) Index = 0;
     Event[Index++] = type;
 
@@ -51,7 +51,7 @@ static int chkevent(int type) {
     }
 }
 
-static Void_t *memory(Dt_t *dt, Void_t *obj, size_t size, Dtdisc_t *disc) {
+static void *memory(Dt_t *dt, void *obj, size_t size, Dtdisc_t *disc) {
     if (!obj)
         return malloc(size);
     else {

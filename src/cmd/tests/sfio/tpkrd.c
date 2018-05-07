@@ -38,14 +38,14 @@ tmain() {
         terror("Can't renew stdin");
     sfset(sfstdin, SF_SHARE, 1);
 
-    if (sfpkrd(Fd[0], (Void_t *)buf, 10, -1, 1000, 1) >= 0) terror("There isn't any data yet");
+    if (sfpkrd(Fd[0], (void *)buf, 10, -1, 1000, 1) >= 0) terror("There isn't any data yet");
 
-    if ((n = sfpkrd(Fd[0], (Void_t *)buf, sizeof(buf), -1, 0L, 0)) >= 0)
+    if ((n = sfpkrd(Fd[0], (void *)buf, sizeof(buf), -1, 0L, 0)) >= 0)
         terror("Wrong data size %d, expecting < 0", n);
 
     if (write(Fd[1], "abcd", 4) != 4) terror("Couldn't write to pipe");
 
-    if ((n = sfpkrd(Fd[0], (Void_t *)buf, sizeof(buf), -1, 0L, 0)) != 4)
+    if ((n = sfpkrd(Fd[0], (void *)buf, sizeof(buf), -1, 0L, 0)) != 4)
         terror("Wrong data size %d, expecting 4", n);
 
     signal(SIGALRM, alarmhandler);

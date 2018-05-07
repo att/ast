@@ -23,7 +23,7 @@
 
 int Release = 0;
 
-Void_t *memory(Vmalloc_t *vm, Void_t *caddr, size_t oldsize, size_t newsize, Vmdisc_t *disc) {
+void *memory(Vmalloc_t *vm, void *caddr, size_t oldsize, size_t newsize, Vmdisc_t *disc) {
     if (caddr) {
         if (newsize != 0) return NULL;
         Release += 1;
@@ -36,7 +36,7 @@ Void_t *memory(Vmalloc_t *vm, Void_t *caddr, size_t oldsize, size_t newsize, Vmd
 Vmdisc_t Disc = {memory, NULL, 64};
 
 tmain() {
-    Void_t *addr[10];
+    void *addr[10];
     Vmalloc_t *vm;
     int i;
 

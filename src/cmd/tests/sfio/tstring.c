@@ -24,7 +24,7 @@
 /* test to make sure sfputr() does not cause too many buffer reallocation */
 static int Putrextend = 0;
 static char Putrbuf[1024 * 1024];
-static int putrextend(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc) {
+static int putrextend(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     if (type == SF_WRITE) Putrextend += 1;
     return 0;
 }

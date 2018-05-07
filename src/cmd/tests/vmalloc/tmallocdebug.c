@@ -59,7 +59,7 @@ tmain() {
     }
 
     /* error for freeing something non-existent */
-    free((Void_t *)1);
+    free((void *)1);
     TMESSAGE();
 
     /* error for freeing something twice */
@@ -74,7 +74,7 @@ tmain() {
     TMESSAGE();
 
     /* resize a non-existent block */
-    if (realloc((Void_t *)3, 256) != NULL) terror("Resizing a nonexistent block succeeded");
+    if (realloc((void *)3, 256) != NULL) terror("Resizing a nonexistent block succeeded");
     TMESSAGE();
 
     /* resize a freed block */

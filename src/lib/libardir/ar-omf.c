@@ -57,7 +57,7 @@ struct Table {
     size_t disp;
 };
 
-static int namcomp(Dt_t *dp, Void_t *left, Void_t *right, Dtdisc_t *dsp) {
+static int namcomp(Dt_t *dp, void *left, void *right, Dtdisc_t *dsp) {
     char *l = (char *)left;
     char *r = (char *)right;
     char *suffix;
@@ -65,7 +65,7 @@ static int namcomp(Dt_t *dp, Void_t *left, Void_t *right, Dtdisc_t *dsp) {
     return (strcmp(l, r));
 }
 
-static int offcomp(Dt_t *dp, Void_t *left, Void_t *right, Dtdisc_t *dsp) {
+static int offcomp(Dt_t *dp, void *left, void *right, Dtdisc_t *dsp) {
     off_t l = *((off_t *)left);
     off_t r = *((off_t *)right);
     if (l < r) return -1;
@@ -342,7 +342,7 @@ int omfinsert(Ardir_t *ar, const char *name, int op) {
     if (ret < 0 && !((op & ARDIR_DELETE) && fp)) return -1;
     if (fp) {
         if (op & ARDIR_DELETE) {
-            dtdelete(dp, (Void_t *)fp);
+            dtdelete(dp, (void *)fp);
             return ARDIR_DELETE;
         }
         if (fp->st.mtime >= statb.st_mtime && (op & ARDIR_NEWER)) return 0;

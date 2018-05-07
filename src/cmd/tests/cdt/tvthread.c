@@ -47,16 +47,16 @@ static Dt_t *Dict[2];
 static int Nthreads;
 
 /* allocate data from the shared memory region */
-Void_t *mymemory(Dt_t *dt, Void_t *data, size_t size, Dtdisc_t *disc) {
+void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
     return vmresize(((Mydisc_t *)disc)->vm, data, size, 0);
 }
 
 /* compare two objects by their integer keys */
-static int mycompare(Dt_t *dt, Void_t *key1, Void_t *key2, Dtdisc_t *disc) {
+static int mycompare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
     return *((int *)key1) - *((int *)key2);
 }
 
-unsigned int myhash(Dt_t *dt, Void_t *key, Dtdisc_t *disc) { return *((unsigned *)key); }
+unsigned int myhash(Dt_t *dt, void *key, Dtdisc_t *disc) { return *((unsigned *)key); }
 
 /* open a shared dictionary */
 static Dt_t *opendictionary(Mydisc_t *dc) {

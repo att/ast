@@ -33,10 +33,10 @@
     (DT_INSERT | DT_APPEND | DT_DELETE | DT_ATTACH | DT_DETACH | DT_RELINK | DT_CLEAR | \
      DT_FLATTEN | DT_EXTRACT | DT_RESTORE | DT_STAT)
 
-static Void_t *dtvsearch(Dt_t *dt, reg Void_t *obj, reg int type) {
+static void *dtvsearch(Dt_t *dt, reg void *obj, reg int type) {
     int cmp;
     Dt_t *d, *p;
-    Void_t *o, *n, *oky, *nky;
+    void *o, *n, *oky, *nky;
 
     if (type & DT_NOVIEWPATH) return (*(dt->meth->searchf))(dt, obj, type);
 

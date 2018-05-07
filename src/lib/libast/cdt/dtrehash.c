@@ -183,7 +183,7 @@ static void hdelete(Dt_t *dt, Dtlink_t **lnkp, int type) {
 }
 
 /* clear everything from tbl and its children tables */
-static Void_t *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
+static void *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
     ssize_t p, tblz;
     Dtlink_t *t;
     Htbl_t *ptbl;
@@ -203,7 +203,7 @@ static Void_t *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 
     if (zap < 0 || (zap >= 0 && lev > 0)) {
         if ((ptbl = (Htbl_t *)tbl->link._ptbl)) ptbl->list[HVALUE(tbl->link._ppos)] = NULL;
-        (*dt->memoryf)(dt, (Void_t *)tbl, 0, dt->disc);
+        (*dt->memoryf)(dt, (void *)tbl, 0, dt->disc);
     }
 
     if (lev == 0) hash->data.size = 0;
@@ -212,10 +212,10 @@ static Void_t *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 }
 
 /* this constitutes the core of dtfirst() and dtlast() */
-static Void_t *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
+static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                       int type) {
     ssize_t tblz;
-    Void_t *obj;
+    void *obj;
     Dtlink_t *t, *p;
     Hash_t *hash = (Hash_t *)dt->data;
     int share = hash->data.type & DT_SHARE;
@@ -253,10 +253,10 @@ static Void_t *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t 
 }
 
 /* this constitutes the core of dtnext() and dtprev() */
-static Void_t *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
+static void *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                      int type) {
     Dtlink_t *t;
-    Void_t *obj;
+    void *obj;
 
     if ((t = asogetptr(tbl->list + pos)) && HTABLE(t))
         if ((obj = hfirst(dt, fngr, (Htbl_t *)t, lev + 1, 0, hsh, type))) return obj;
@@ -276,7 +276,7 @@ static Void_t *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t p
 }
 
 /* construct a flat list of objects */
-static Void_t *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
+static void *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
                         int zap) {
     ssize_t tblz, p;
     Dtlink_t *t, **lnkp;
@@ -308,8 +308,8 @@ static Void_t *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, 
 }
 
 /* construct/extract a list of objects, or reconstruct from a list */
-static Void_t *hlist(Dt_t *dt, Dtlink_t *list, int type) {
-    Void_t *obj;
+static void *hlist(Dt_t *dt, Dtlink_t *list, int type) {
+    void *obj;
     Dtlink_t *next, *l;
     Dtdisc_t *disc = dt->disc;
     Hash_t *hash = (Hash_t *)dt->data;
@@ -323,11 +323,11 @@ static Void_t *hlist(Dt_t *dt, Dtlink_t *list, int type) {
         for (l = list; l; l = next) {
             next = l->_rght;
             obj = _DTOBJ(disc, l);
-            if ((dt->meth->searchf)(dt, (Void_t *)l, DT_RELINK) == obj) hash->data.size += 1;
+            if ((dt->meth->searchf)(dt, (void *)l, DT_RELINK) == obj) hash->data.size += 1;
         }
     }
 
-    return (Void_t *)list;
+    return (void *)list;
 }
 
 /* compute size and depth of a hash table */
@@ -375,7 +375,7 @@ static ssize_t hsize(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st) {
     return size;
 }
 
-static Void_t *hstat(Dt_t *dt, Dtstat_t *st) {
+static void *hstat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Hash_t *hash = (Hash_t *)dt->data;
 
@@ -389,11 +389,11 @@ static Void_t *hstat(Dt_t *dt, Dtstat_t *st) {
         /**/ DEBUG_ASSERT((dt->data->type & DT_SHARE) || size == hash->data.size);
     }
 
-    return (Void_t *)size;
+    return (void *)size;
 }
 
-static Void_t *dthashtrie(Dt_t *dt, Void_t *obj, int type) {
-    Void_t *o, *ky, *key;
+static void *dthashtrie(Dt_t *dt, void *obj, int type) {
+    void *o, *ky, *key;
     uint hsh;
     Dtlink_t *lnk, **lnkp, *t;
     ssize_t k, pos, lev, srch, hshp, modz, opnp, oplv;
@@ -420,7 +420,7 @@ static Void_t *dthashtrie(Dt_t *dt, Void_t *obj, int type) {
             {
                 if (!(obj = hfirst(dt, fngr, hash->root, 0, 0, 0, type)))
                     (*dt->memoryf)(dt, fngr, 0, disc);
-                return obj ? (Void_t *)fngr : NULL;
+                return obj ? (void *)fngr : NULL;
             }
             /* else, search for obj below */
         } else if (type & DT_STEP) /* take a step forward in a walk */
@@ -506,7 +506,7 @@ static Void_t *dthashtrie(Dt_t *dt, Void_t *obj, int type) {
                         fngr->mlev = lev;
 
                         HCLSOPEN(dt, hsh, type, share);
-                        return (Void_t *)fngr;
+                        return (void *)fngr;
                     } else if (o != obj) /* try to find exact object in case of a bag */
                     {
                         if (type & (DT_NEXT | DT_PREV)) /* track last matched object */
@@ -599,7 +599,7 @@ static Void_t *dthashtrie(Dt_t *dt, Void_t *obj, int type) {
             HCLSOPEN(dt, hsh, type, share);
             if (type & DT_START) /* no matching object, no walk */
             {
-                (void)(*dt->memoryf)(dt, (Void_t *)fngr, 0, disc);
+                (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                 return NULL;
             } else if (opnt) /* (opnt,opnp,oplv) is the last known matching obj */
                 return hnext(dt, fngr, opnt, oplv, opnp, hsh, type);
@@ -643,7 +643,7 @@ do_insert: /**/
     return lnk ? _DTOBJ(disc, lnk) : NULL;
 }
 
-static int hashevent(Dt_t *dt, int event, Void_t *arg) {
+static int hashevent(Dt_t *dt, int event, void *arg) {
     ssize_t z, b, k;
     Dtdisc_t *disc = dt->disc;
     Hash_t *hash = (Hash_t *)dt->data;

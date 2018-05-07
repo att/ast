@@ -27,7 +27,7 @@ size_t count;
 
 Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) { return 0; }
 
-ssize_t discwrite(Sfio_t *f, const Void_t *s, size_t n, Sfdisc_t *disc) {
+ssize_t discwrite(Sfio_t *f, const void *s, size_t n, Sfdisc_t *disc) {
     buffer = (char *)s;
     size = n;
     count += 1;

@@ -111,7 +111,7 @@ ssize_t sfputr(Sfio_t *f, const char *s, int rc) {
     else if ((f->flags & SF_LINE) && !(f->flags & SF_STRING) && (n = f->next - f->data) > 0) {
         if (n > w) n = w;
         f->next -= n;
-        (void)SFWRITE(f, (Void_t *)f->next, n);
+        (void)SFWRITE(f, (void *)f->next, n);
     }
 
     SFOPEN(f, 0);

@@ -258,7 +258,7 @@ static int chkregion(Vmbest_t *best, int local) /* check region integrity */
 }
 
 /* free an allocated block */
-static int bestfree(Vmalloc_t *vm, Void_t *data, int local) {
+static int bestfree(Vmalloc_t *vm, void *data, int local) {
     size_t sz;
     Block_t *blk, *head;
     Block_t *volatile *listp;
@@ -266,7 +266,7 @@ static int bestfree(Vmalloc_t *vm, Void_t *data, int local) {
     asospindecl();
 
 #if _BLD_DEBUG /* special use for debugging */
-    if (data == (Void_t *)(1) || data == (Void_t *)(-1)) {
+    if (data == (void *)(1) || data == (void *)(-1)) {
         int save = _Vmassert;
         _Vmassert |= VM_check_reg;
         chkregion((Vmbest_t *)vm->data, 0);
@@ -800,7 +800,7 @@ static Block_t *bestsmallalloc(Vmalloc_t *vm, Pack_t *pack, ssize_t size) {
 }
 
 /* allocate a block big enough to cover a requested size */
-static Void_t *bestalloc(Vmalloc_t *vm, size_t size, int local) {
+static void *bestalloc(Vmalloc_t *vm, size_t size, int local) {
     unsigned int pkid, ppos, lpos, begp, tid;
     ssize_t smsz, pksz;
     Block_t *blk;
@@ -859,11 +859,11 @@ static Void_t *bestalloc(Vmalloc_t *vm, size_t size, int local) {
 }
 
 /* resize a block to a new size */
-static Void_t *bestresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, int local) {
+static void *bestresize(Vmalloc_t *vm, void *data, size_t size, int type, int local) {
     Block_t *rp, *np;
     ssize_t sz, oldz, newz, incz;
     Pack_t *pack;
-    Void_t *rsdt = data;
+    void *rsdt = data;
     /**/ DEBUG_DECLARE(Vmbest_t, *best = (Vmbest_t *)vm->data)
 
         /**/ DEBUG_COUNT(N_resize);
@@ -873,7 +873,7 @@ static Void_t *bestresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
     {
         if ((rsdt = bestalloc(vm, size, local)) && (type & VM_RSZERO)) {
             rp = BLOCK(rsdt);
-            memset((Void_t *)rsdt, 0, TRUEBDSZ(rp));
+            memset((void *)rsdt, 0, TRUEBDSZ(rp));
         }
         return rsdt;
     }
@@ -970,7 +970,7 @@ static Void_t *bestresize(Vmalloc_t *vm, Void_t *data, size_t size, int type, in
 
     /* if get here, resizing was successful */
     if ((type & VM_RSZERO) && sz > oldz) /* zero out new mememory */
-        memset((Void_t *)((Vmuchar_t *)rsdt + oldz), 0, sz - oldz);
+        memset((void *)((Vmuchar_t *)rsdt + oldz), 0, sz - oldz);
 
     if (incz > 0) /* add information to tell that we added more space */
     {
@@ -985,7 +985,7 @@ done:
 }
 
 /* allocate a block with a specific alignment requirement */
-static Void_t *bestalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
+static void *bestalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     Vmuchar_t *data;
     Block_t *tp, *np;
     ssize_t sz, remz, algz, algn, extra;
@@ -1048,7 +1048,7 @@ static Void_t *bestalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     asocasint(&pack->lock, KEY_BEST, 0);
 
     if (!local && _Vmtrace) (*_Vmtrace)(vm, NULL, data, size, align);
-    return (Void_t *)data;
+    return (void *)data;
 }
 
 static int beststat(Vmalloc_t *vm, Vmstat_t *st, int local) {
@@ -1079,7 +1079,7 @@ static int beststat(Vmalloc_t *vm, Vmstat_t *st, int local) {
 
             for (endbp = ENDB(sgb); bp < endbp; bp = TRUENEXT(bp)) {
                 pack = PACK(bp);
-                if (DATA(bp) == (Void_t *)pack) /* administrative data for the pack */
+                if (DATA(bp) == (void *)pack) /* administrative data for the pack */
                     continue;
 
                 sz = TRUEBDSZ(bp); /**/
@@ -1132,7 +1132,7 @@ static int beststat(Vmalloc_t *vm, Vmstat_t *st, int local) {
     return 0;
 }
 
-static int bestevent(Vmalloc_t *vm, int event, Void_t *arg) {
+static int bestevent(Vmalloc_t *vm, int event, void *arg) {
     Vmbest_t *best = (Vmbest_t *)vm->data;
 
     if (event == VM_OPEN) /* return the size of Vmbest_t */
@@ -1179,7 +1179,7 @@ void _vmchkall(int tag) /* check to see if some region may have a bad free list 
 }
 
 /* find the region containing a block allocated by Vmalloc  */
-Vmalloc_t *vmregion(Void_t *addr) {
+Vmalloc_t *vmregion(void *addr) {
     Seg_t *seg;
     Pack_t *pack;
     Vmdata_t *vmdt;

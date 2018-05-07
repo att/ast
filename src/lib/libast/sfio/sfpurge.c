@@ -38,7 +38,7 @@ int sfpurge(Sfio_t *f) {
         SFMTXRETURN(f, -1);
 
     if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
-        (void)(*f->disc->exceptf)(f, SF_PURGE, (Void_t *)((int)1), f->disc);
+        (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)1), f->disc);
 
     if (f->disc == _Sfudisc) (void)sfclose((*_Sfstack)(f, NULL));
 
@@ -82,7 +82,7 @@ int sfpurge(Sfio_t *f) {
 
 done:
     if ((f->flags & SF_IOCHECK) && f->disc && f->disc->exceptf)
-        (void)(*f->disc->exceptf)(f, SF_PURGE, (Void_t *)((int)0), f->disc);
+        (void)(*f->disc->exceptf)(f, SF_PURGE, (void *)((int)0), f->disc);
 
     SFMTXRETURN(f, 0);
 }

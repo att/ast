@@ -52,7 +52,7 @@ static void _sfwrsync(void) {
     }
 }
 
-ssize_t sfrd(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t sfrd(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Sfoff_t r;
     reg Sfdisc_t *dc;
     reg int local, rcrv, dosync, oerrno;
@@ -188,10 +188,10 @@ ssize_t sfrd(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
                 (void)SFSK(f, f->here, SEEK_SET, dc);
 
                 /* make a buffer */
-                (void)SFSETBUF(f, (Void_t *)f->tiny, (size_t)SF_UNBOUND);
+                (void)SFSETBUF(f, (void *)f->tiny, (size_t)SF_UNBOUND);
 
                 if (!buf) {
-                    buf = (Void_t *)f->data;
+                    buf = (void *)f->data;
                     n = f->size;
                 }
             }

@@ -40,7 +40,7 @@ tmain() {
     }
 
     /* error for freeing something non-existent */
-    vmfree(vm, (Void_t *)1);
+    vmfree(vm, (void *)1);
     if ((n = read(pfd[0], buf, sizeof(buf))) <= 0) terror("No corruption messages written");
     buf[n] = 0;
     tinfo(buf);
@@ -62,7 +62,7 @@ tmain() {
     tinfo(buf);
 
     /* resize a non-existent block */
-    if (vmresize(vm, (Void_t *)3, 256, VM_RSMOVE | VM_RSCOPY) != NULL)
+    if (vmresize(vm, (void *)3, 256, VM_RSMOVE | VM_RSCOPY) != NULL)
         terror("Resizing a nonexistent block succeeded");
     if ((n = read(pfd[0], buf, sizeof(buf))) <= 0) terror("No corruption messages written");
     buf[n] = 0;

@@ -33,7 +33,7 @@ typedef struct _drvdisc_s {
     Vmalloc_t *vm; /* region being derived from	*/
 } Drvdisc_t;
 
-static Void_t *drvgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *drvgetmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Drvdisc_t *drvdc = (Drvdisc_t *)disc;
 
     if (csize == 0 && nsize == 0)
@@ -46,7 +46,7 @@ static Void_t *drvgetmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsiz
         return vmresize(drvdc->vm, caddr, nsize, 0);
 }
 
-static int drvexcept(Vmalloc_t *vm, int type, Void_t *arg, Vmdisc_t *disc) {
+static int drvexcept(Vmalloc_t *vm, int type, void *arg, Vmdisc_t *disc) {
     Drvdisc_t *dc = (Drvdisc_t *)disc;
     if (type == VM_ENDCLOSE) {
         if (dc->type > 0)

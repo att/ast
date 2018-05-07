@@ -136,7 +136,7 @@ int _vmboundaries(void) {
         DEBUG_MESSAGE("shmat() failed first NULL attachment");
         goto done;
     } else
-        shmdt((Void_t *)shm);
+        shmdt((void *)shm);
     if (shm < min || shm > max) { /**/
         DEBUG_MESSAGE("shmat() got an out-of-range address");
         goto done;
@@ -151,7 +151,7 @@ int _vmboundaries(void) {
         size = ROUND(size, _Vmpagesize);
         shm = left > rght ? max - size : min + size;
         if ((tmp = shmat(shmid, shm, 0600)) == shm) {
-            shmdt((Void_t *)tmp);
+            shmdt((void *)tmp);
             if (left > rght)
                 min = shm;
             else
@@ -170,7 +170,7 @@ int _vmboundaries(void) {
     for (z = memz; z < size; z *= 2) {
         shm = left > rght ? min - z : max + z;
         if ((tmp = shmat(shmid, shm, 0600)) == shm)
-            shmdt((Void_t *)tmp);
+            shmdt((void *)tmp);
         else /* failing to attach means at limit or close to it */
         {
             if (left > rght)
@@ -182,7 +182,7 @@ int _vmboundaries(void) {
     }
 
     /* amount to offset from boundaries to avoid random collisions */
-    z = (max - min) / (sizeof(Void_t *) > 4 ? 4 : 8);
+    z = (max - min) / (sizeof(void *) > 4 ? 4 : 8);
     z = ROUND(z, _Vmpagesize);
 
     /* these are the bounds that we can use */
@@ -194,12 +194,12 @@ int _vmboundaries(void) {
 
 #if _mem_mmap_anon /* see if we can simulate sbrk(): memory grows from low to high */
     /* map two consecutive pages to see if they come out adjacent */
-    tmp = (Void_t *)mmap((Void_t *)(min + z), _Vmpagesize, PROT_READ | PROT_WRITE,
+    tmp = (void *)mmap((void *)(min + z), _Vmpagesize, PROT_READ | PROT_WRITE,
                          MAP_PRIVATE | MAP_ANON, -1, 0);
-    shm = (Void_t *)mmap((Void_t *)(tmp + _Vmpagesize), _Vmpagesize, PROT_READ | PROT_WRITE,
+    shm = (void *)mmap((void *)(tmp + _Vmpagesize), _Vmpagesize, PROT_READ | PROT_WRITE,
                          MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (tmp && tmp != (Vmuchar_t *)(-1)) munmap((Void_t *)tmp, _Vmpagesize);
-    if (shm && shm != (Vmuchar_t *)(-1)) munmap((Void_t *)shm, _Vmpagesize);
+    if (tmp && tmp != (Vmuchar_t *)(-1)) munmap((void *)tmp, _Vmpagesize);
+    if (shm && shm != (Vmuchar_t *)(-1)) munmap((void *)shm, _Vmpagesize);
 
     if (tmp && tmp != (Vmuchar_t *)(-1) && shm && shm != (Vmuchar_t *)(-1)) {
         _Vmmemsbrk = shm + _Vmpagesize; /* mmap starts from here */
@@ -223,7 +223,7 @@ done:
 }
 
 /* Function to suggest an address usable for mapping shared memory. */
-Void_t *vmmaddress(size_t size) {
+void *vmmaddress(size_t size) {
     Vmuchar_t *addr, *memaddr;
 
     VMBOUNDARIES();

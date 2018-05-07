@@ -187,7 +187,7 @@ static int sfsetlinemode(void) {
 
 #endif
 
-Void_t *sfsetbuf(Sfio_t *f, Void_t *buf, size_t size) {
+void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
     int sf_malloc, oflags, init, okmmap, local;
     ssize_t bufsize, blksz;
     Sfdisc_t *disc;
@@ -204,7 +204,7 @@ Void_t *sfsetbuf(Sfio_t *f, Void_t *buf, size_t size) {
 
     if (size == 0 && buf) { /* special case to get buffer info */
         _Sfi = f->val = (f->bits & SF_MMAP) ? (f->endb - f->data) : f->size;
-        SFMTXRETURN(f, (Void_t *)f->data);
+        SFMTXRETURN(f, (void *)f->data);
     }
 
     /* cleanup actions already done, don't allow write buffering any more */
@@ -419,13 +419,13 @@ setbuf:
     sf_malloc = 0;
     if (size > 0 && !buf && !(f->bits & SF_MMAP)) { /* try to allocate a buffer */
         if (obuf && size == (size_t)osize && init) {
-            buf = (Void_t *)obuf;
+            buf = (void *)obuf;
             obuf = NULL;
             sf_malloc = (oflags & SF_MALLOC);
         }
         if (!buf) { /* do allocation */
             while (!buf && size > 0) {
-                if ((buf = (Void_t *)malloc(size)))
+                if ((buf = (void *)malloc(size)))
                     break;
                 else
                     size /= 2;
@@ -437,7 +437,7 @@ setbuf:
     if (size == 0 && !(f->flags & SF_STRING) && !(f->bits & SF_MMAP) &&
         (f->mode & SF_READ)) { /* use the internal buffer */
         size = sizeof(f->tiny);
-        buf = (Void_t *)f->tiny;
+        buf = (void *)f->tiny;
     }
 
     /* set up new buffer */
@@ -455,7 +455,7 @@ setbuf:
     f->flags = (f->flags & ~SF_MALLOC) | sf_malloc;
 
     if (obuf && (obuf != f->data) && (osize > 0) && (oflags & SF_MALLOC)) {
-        free((Void_t *)obuf);
+        free((void *)obuf);
         obuf = NULL;
     }
 
@@ -473,5 +473,5 @@ done:
 
     SFOPEN(f, local);
 
-    SFMTXRETURN(f, (Void_t *)obuf);
+    SFMTXRETURN(f, (void *)obuf);
 }

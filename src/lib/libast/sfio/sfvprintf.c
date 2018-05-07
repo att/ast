@@ -115,7 +115,7 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
 #endif
     ssize_t size;
     Sfdouble_t dval;
-    Void_t *valp;
+    void *valp;
     char *tls[2], **ls; /* for %..[separ]s		*/
     char *t_str;        /* stuff between ()		*/
     ssize_t n_str;      /* its length			*/
@@ -165,7 +165,7 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     }
 #define SMwrite(f, s, n)                                         \
     {                                                            \
-        if ((o = SFWRITE(f, (Void_t *)s, n)) > 0) n_output += o; \
+        if ((o = SFWRITE(f, (void *)s, n)) > 0) n_output += o; \
         if (o != n) {                                            \
             SFBUF(f);                                            \
             goto done;                                           \
@@ -313,7 +313,7 @@ loop_fmt:
                                     n_str = fp[n].ft.size;
                                 } else if (ft && ft->extf) {
                                     FMTSET(ft, form, args, LEFTP, 0, 0, 0, 0, 0, NULL, 0);
-                                    n = (*ft->extf)(f, (Void_t *)&argv, ft);
+                                    n = (*ft->extf)(f, (void *)&argv, ft);
                                     if (n < 0) goto pop_fmt;
                                     if (!(ft->flags & SFFMT_VALUE)) goto t_arg;
                                     if ((t_str = argv.s) && (n_str = (int)ft->size) < 0)
@@ -401,7 +401,7 @@ loop_fmt:
                     v = fp[n].argv.i;
                 else if (ft && ft->extf) {
                     FMTSET(ft, form, args, '.', dot, 0, 0, 0, 0, NULL, 0);
-                    if ((*ft->extf)(f, (Void_t *)(&argv), ft) < 0) goto pop_fmt;
+                    if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
                     fmt = ft->fmt;
                     flags = (flags & ~SFFMT_TYPES) | (ft->flags & SFFMT_TYPES);
                     if (ft->flags & SFFMT_VALUE)
@@ -460,7 +460,7 @@ loop_fmt:
                         size = fp[n].argv.i;
                     else if (ft && ft->extf) {
                         FMTSET(ft, form, args, 'I', sizeof(int), 0, 0, 0, 0, NULL, 0);
-                        if ((*ft->extf)(f, (Void_t *)(&argv), ft) < 0) goto pop_fmt;
+                        if ((*ft->extf)(f, (void *)(&argv), ft) < 0) goto pop_fmt;
                         if (ft->flags & SFFMT_VALUE)
                             size = argv.i;
                         else
@@ -555,7 +555,7 @@ loop_fmt:
             FMTSET(ft, form, args, fmt, size, flags, width, precis, base, t_str, n_str);
             SFEND(f);
             SFOPEN(f, 0);
-            v = (*ft->extf)(f, (Void_t *)(&argv), ft);
+            v = (*ft->extf)(f, (void *)(&argv), ft);
             SFLOCK(f, 0);
             SFBUF(f);
 
@@ -613,7 +613,7 @@ loop_fmt:
                         argv.d = va_arg(args, double);
                     break;
                 case SFFMT_POINTER:
-                    argv.vp = va_arg(args, Void_t *);
+                    argv.vp = va_arg(args, void *);
                     break;
                 case SFFMT_CHAR:
                     if (base >= 0) argv.s = va_arg(args, char *);
@@ -649,7 +649,7 @@ loop_fmt:
                 if (!argv.ft) goto pop_fmt;
                 if (!argv.ft->form && ft) /* change extension functions */
                 {
-                    if (ft->eventf && (*ft->eventf)(f, SF_DPOP, (Void_t *)form, ft) < 0) continue;
+                    if (ft->eventf && (*ft->eventf)(f, SF_DPOP, (void *)form, ft) < 0) continue;
                     fmstk->ft = ft = argv.ft;
                 } else /* stack a new environment */
                 {
@@ -1376,7 +1376,7 @@ pop_fmt:
         if (fm->eventf) {
             if (!form || !form[0])
                 (*fm->eventf)(f, SF_FINAL, NULL, ft);
-            else if ((*fm->eventf)(f, SF_DPOP, (Void_t *)form, ft) < 0)
+            else if ((*fm->eventf)(f, SF_DPOP, (void *)form, ft) < 0)
                 goto loop_fmt;
         }
 
@@ -1410,7 +1410,7 @@ done:
 
     if ((((flags = f->flags) & SF_SHARE) && !(flags & SF_PUBLIC)) ||
         (n > 0 && (sp == data || (flags & SF_LINE))))
-        (void)SFWRITE(f, (Void_t *)sp, n);
+        (void)SFWRITE(f, (void *)sp, n);
     else
         f->next += n;
 

@@ -397,7 +397,7 @@ static void interrupt(int sig) {
     fini(EXIT_TERM(sig));
 }
 
-static ssize_t output(Sfio_t *sp, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+static ssize_t output(Sfio_t *sp, const void *buf, size_t n, Sfdisc_t *disc) {
     register ssize_t r;
     register size_t x;
 

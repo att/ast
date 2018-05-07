@@ -20,16 +20,16 @@
 #include "cdt.h"
 #include "terror.h"
 
-static int compare(Dt_t *dt, Void_t *o1, Void_t *o2, Dtdisc_t *disc) {
+static int compare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
     return (int)((char *)o1 - (char *)o2);
 }
 
-static int rcompare(Dt_t *dt, Void_t *o1, Void_t *o2, Dtdisc_t *disc) {
+static int rcompare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
     return (int)((char *)o2 - (char *)o1);
 }
 
-static Void_t *newint(Dt_t *dt, Void_t *o, Dtdisc_t *disc) { return o; }
+static void *newint(Dt_t *dt, void *o, Dtdisc_t *disc) { return o; }
 
-static unsigned int hashint(Dt_t *dt, Void_t *o, Dtdisc_t *disc) {
+static unsigned int hashint(Dt_t *dt, void *o, Dtdisc_t *disc) {
     return (unsigned int)((char *)o - (char *)0);
 }

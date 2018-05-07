@@ -82,7 +82,7 @@
 #define DB_MARK 0xdbdbdbdb /* tell a busy Vmdebug block	*/
 
 /* compute the bounds of the magic areas */
-#define DBHEAD(d, begp, endp) (((begp) = (Vmuchar_t *)(d) - sizeof(Void_t *)), ((endp) = (d)))
+#define DBHEAD(d, begp, endp) (((begp) = (Vmuchar_t *)(d) - sizeof(void *)), ((endp) = (d)))
 #define DBTAIL(d, begp, endp) (((begp) = (Vmuchar_t *)(d) + DBSIZE(d)), ((endp) = DBBEND(d)))
 
 /* structure to keep track of file names */
@@ -96,7 +96,7 @@ static Dbfile_t *Dbfile;
 /* global watch list */
 #define S_WATCH 32
 static int Dbnwatch;
-static Void_t *Dbwatch[S_WATCH];
+static void *Dbwatch[S_WATCH];
 
 /* types of warnings reported by dbwarn() */
 #define DB_CHECK 0
@@ -127,7 +127,7 @@ static void vmdbwarn(Vmalloc_t *vm, char *mesg, int n) {
 }
 
 /* issue a warning of some type */
-static void dbwarn(Vmalloc_t *vm, Void_t *data, int where, char *file, int line, Void_t *func,
+static void dbwarn(Vmalloc_t *vm, void *data, int where, char *file, int line, void *func,
                    int type) {
     char buf[1024], *bufp, *endbuf, *s;
 #define SLOP 64 /* enough for a message and an int */
@@ -203,7 +203,7 @@ static void dbwarn(Vmalloc_t *vm, Void_t *data, int where, char *file, int line,
 }
 
 /* check for watched address and issue warnings */
-static void dbwatch(Vmalloc_t *vm, Void_t *data, char *file, int line, Void_t *func, int type) {
+static void dbwatch(Vmalloc_t *vm, void *data, char *file, int line, void *func, int type) {
     int n;
 
     for (n = Dbnwatch; n >= 0; --n) {
@@ -256,12 +256,12 @@ static void dbsetinfo(Vmuchar_t *data, size_t size, char *file, int line) {
     while (begp < endp) *begp++ = DB_MAGIC;
 }
 
-static Void_t *dballoc(Vmalloc_t *vm, size_t size, int local) {
+static void *dballoc(Vmalloc_t *vm, size_t size, int local) {
     size_t sz;
     Vmuchar_t *data;
     char *file;
     int line;
-    Void_t *func;
+    void *func;
     VMFLF(vm, file, line, func);
 
     asolock(&vm->data->dlck, KEY_DEBUG, ASO_LOCK);
@@ -289,13 +289,13 @@ static Void_t *dballoc(Vmalloc_t *vm, size_t size, int local) {
 
 done:
     asolock(&vm->data->dlck, KEY_DEBUG, ASO_UNLOCK);
-    return (Void_t *)data;
+    return (void *)data;
 }
 
-static int dbfree(Vmalloc_t *vm, Void_t *data, int local) {
+static int dbfree(Vmalloc_t *vm, void *data, int local) {
     char *file;
     int line;
-    Void_t *func;
+    void *func;
     Seg_t *seg;
     Free_t *list;
     Free_t *item;
@@ -338,7 +338,7 @@ static int dbfree(Vmalloc_t *vm, Void_t *data, int local) {
 
         memset(DB2BEST(data), 0, DBBSIZE(data)); /* clear memory */
 
-        rv |= KPVFREE((vm), (Void_t *)DB2BEST(data), (*Vmbest->freef));
+        rv |= KPVFREE((vm), (void *)DB2BEST(data), (*Vmbest->freef));
     done:
         if (!list &&
             (rv || !(list = vm->data->delay) || asocasptr(&vm->data->delay, list, NULL) != list))
@@ -353,18 +353,18 @@ static int dbfree(Vmalloc_t *vm, Void_t *data, int local) {
 }
 
 /*	Resizing an existing block */
-static Void_t *dbresize(Vmalloc_t *vm, Void_t *addr, size_t size, int type, int local) {
+static void *dbresize(Vmalloc_t *vm, void *addr, size_t size, int type, int local) {
     size_t sz, oldsize;
     Seg_t *seg;
     char *file, *oldfile;
     int line, oldline;
-    Void_t *func;
+    void *func;
     Vmuchar_t *data = NULL;
     VMFLF(vm, file, line, func);
 
     if (!addr) {
         data = (Vmuchar_t *)dballoc(vm, size, local);
-        if (data && (type & VM_RSZERO)) memset((Void_t *)data, 0, size);
+        if (data && (type & VM_RSZERO)) memset((void *)data, 0, size);
         return data;
     }
     if (size == 0) {
@@ -396,7 +396,7 @@ static Void_t *dbresize(Vmalloc_t *vm, Void_t *addr, size_t size, int type, int 
     sz = ROUND(size, MEM_ALIGN) + DB_EXTRA;
     sz = sz >= sizeof(Body_t) ? sz : sizeof(Body_t);
     data =
-        (Vmuchar_t *)KPVRESIZE(vm, (Void_t *)data, sz, (type & ~VM_RSZERO), (*(Vmbest->resizef)));
+        (Vmuchar_t *)KPVRESIZE(vm, (void *)data, sz, (type & ~VM_RSZERO), (*(Vmbest->resizef)));
     if (!data) /* failed, reset data for old block */
     {
         dbwarn(vm, NULL, DB_ALLOC, file, line, func, DB_RESIZE);
@@ -422,7 +422,7 @@ static Void_t *dbresize(Vmalloc_t *vm, Void_t *addr, size_t size, int type, int 
 
 done:
     asolock(&vm->data->dlck, KEY_DEBUG, ASO_UNLOCK);
-    return (Void_t *)data;
+    return (void *)data;
 }
 
 /* check for memory overwrites over all live blocks */
@@ -483,9 +483,9 @@ int vmdbcheck(Vmalloc_t *vm) {
 }
 
 /* set/delete an address to watch */
-Void_t *vmdbwatch(Void_t *addr) {
+void *vmdbwatch(void *addr) {
     int n;
-    Void_t *out;
+    void *out;
 
     out = NULL;
     if (!addr)
@@ -507,12 +507,12 @@ Void_t *vmdbwatch(Void_t *addr) {
     return out;
 }
 
-static Void_t *dbalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
+static void *dbalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     Vmuchar_t *data;
     size_t sz;
     char *file;
     int line;
-    Void_t *func;
+    void *func;
     VMFLF(vm, file, line, func);
 
     if (size <= 0 || align <= 0) return NULL;
@@ -535,14 +535,14 @@ static Void_t *dbalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
 
     asolock(&vm->data->dlck, KEY_DEBUG, ASO_UNLOCK);
 
-    return (Void_t *)data;
+    return (void *)data;
 }
 
 static int dbstat(Vmalloc_t *vm, Vmstat_t *st, int local) {
     return (*Vmbest->statf)(vm, st, local);
 }
 
-static int dbevent(Vmalloc_t *vm, int event, Void_t *arg) {
+static int dbevent(Vmalloc_t *vm, int event, void *arg) {
     if (event == VM_BLOCKHEAD) /* Vmbest asking for size of extra head */
         return (int)DB_HEAD;
     else

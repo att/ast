@@ -21,7 +21,7 @@
 
 #include "sftest.h"
 
-ssize_t upper(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t upper(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     size_t i;
     char *s = (char *)buf;
 
@@ -33,7 +33,7 @@ ssize_t upper(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     return n;
 }
 
-ssize_t wupper(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t wupper(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     size_t i;
     char *s = (char *)buf;
 
@@ -44,7 +44,7 @@ ssize_t wupper(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
     return sfwr(f, buf, n, disc);
 }
 
-ssize_t lower(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t lower(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     size_t i;
     char *s = (char *)buf;
 
@@ -56,7 +56,7 @@ ssize_t lower(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
     return n;
 }
 
-ssize_t once(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t once(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     static int called = 0;
 
     if (!called) {
@@ -70,7 +70,7 @@ ssize_t once(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
 }
 
 static char External[128], *Enext = External;
-ssize_t external(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+ssize_t external(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     memcpy(Enext, buf, n);
     Enext += n;
     return n;

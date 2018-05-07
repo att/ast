@@ -30,7 +30,7 @@ typedef struct _mydisc_s {
     Sfio_t *f;
 } Mydisc_t;
 
-static ssize_t oneread(Sfio_t *f, Void_t *buf, size_t size, Sfdisc_t *disc) {
+static ssize_t oneread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
     Mydisc_t *dc = (Mydisc_t *)disc;
 
     if (!f || size <= 0) return -1;
@@ -49,7 +49,7 @@ tmain() {
     if ((n = sfsscanf("ten 10 10", "%s %d %lf", s, &i, &d)) != 3) terror("Bad scanning %d", n);
     if (strncmp("ten", s, 3) != 0 || i != 10 || d != 10) terror("Bad scanned values ");
 
-    if (!(f = sfnew((Sfio_t *)0, (Void_t *)0, (size_t)SF_UNBOUND, 0, SF_READ)))
+    if (!(f = sfnew((Sfio_t *)0, (void *)0, (size_t)SF_UNBOUND, 0, SF_READ)))
         terror("Can't create stream f");
     if (!(str = sfopen(0, "ten 10 10", "s"))) terror("Can't open string stream str");
     Mydisc.disc.readf = oneread;

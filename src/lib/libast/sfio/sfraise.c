@@ -28,7 +28,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfraiseall(int type, Void_t *data) {
+static int _sfraiseall(int type, void *data) {
     Sfio_t *f;
     Sfpool_t *p, *next;
     int n, rv;
@@ -45,7 +45,7 @@ static int _sfraiseall(int type, Void_t *data) {
     return rv;
 }
 
-int sfraise(Sfio_t *f, int type, Void_t *data) {
+int sfraise(Sfio_t *f, int type, void *data) {
     reg Sfdisc_t *disc, *next, *d;
     reg int local, rv;
     SFMTXDECL(f);

@@ -21,7 +21,7 @@
 
 #include "sftest.h"
 
-int walkf(Sfio_t *f, Void_t *cntp) { return (*((int *)cntp) += 1); }
+int walkf(Sfio_t *f, void *cntp) { return (*((int *)cntp) += 1); }
 
 tmain() {
     Sfio_t *f;

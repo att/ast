@@ -27,18 +27,18 @@ typedef struct _obj_s {
     long ord;
 } Obj_t;
 
-static int objcmp(Dt_t *dt, Void_t *arg1, Void_t *arg2, Dtdisc_t *disc) {
+static int objcmp(Dt_t *dt, void *arg1, void *arg2, Dtdisc_t *disc) {
     Obj_t *o1 = (Obj_t *)arg1, *o2 = (Obj_t *)arg2;
 
     return (int)(o1->key - o2->key);
 }
 
-static unsigned int objhash(Dt_t *dt, Void_t *arg, Dtdisc_t *disc) {
+static unsigned int objhash(Dt_t *dt, void *arg, Dtdisc_t *disc) {
     Obj_t *o = (Obj_t *)arg;
     return (unsigned int)(o->key / 8); /* cause hash collisions */
 }
 
-static char *objprint(Void_t *arg) {
+static char *objprint(void *arg) {
     Obj_t *obj = (Obj_t *)arg;
     static char buf[1024];
 

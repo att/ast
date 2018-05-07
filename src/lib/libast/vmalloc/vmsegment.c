@@ -80,7 +80,7 @@ static isfree(Vmdata_t *vmdt, Block_t *blk) {
 #define DELETE_ENDB 2  /* delete the end block of a segment	*/
 
 /* lock-less type op for arg on free list */
-static Block_t *_vmfreelist(Vmdata_t *vmdt, Void_t *arg, int type) {
+static Block_t *_vmfreelist(Vmdata_t *vmdt, void *arg, int type) {
     Block_t *pb, *bp, *blk;
     /**/ DEBUG_ASSERT(vmdt->lock != 0);
 
@@ -140,7 +140,7 @@ void vmclrlock(int all) {
 }
 
 /* Walks all segments held in region "vm" or all regions if vm == NULL */
-int vmsegwalk(Vmalloc_t *vm, Vmseg_f segf, Void_t *handle) {
+int vmsegwalk(Vmalloc_t *vm, Vmseg_f segf, void *handle) {
     Vmhold_t *vh;
     Seg_t *seg;
     Vmalloc_t *todo;
@@ -156,14 +156,14 @@ int vmsegwalk(Vmalloc_t *vm, Vmseg_f segf, Void_t *handle) {
 }
 
 /* find the segment containing a particular address */
-Void_t *vmsegfind(Vmalloc_t *vm, Void_t *addr) {
+void *vmsegfind(Vmalloc_t *vm, void *addr) {
     Seg_t *seg;
 
     if (vm->data)
         for (seg = vm->data->seg; seg; seg = seg->next)
             if ((Vmuchar_t *)addr >= (Vmuchar_t *)seg->base &&
                 (Vmuchar_t *)addr < ((Vmuchar_t *)seg->base + seg->size))
-                return (Void_t *)seg->base;
+                return (void *)seg->base;
 
     return NULL;
 }
@@ -197,7 +197,7 @@ static Block_t *_vmseginit(Vmdata_t *vmdt, Seg_t *seg, Vmuchar_t *base, ssize_t 
 
     /* add the free block to the free list */
     if (insert)
-        _vmfreelist(vmdt, (Void_t *)seg->begb, INSERT_BLOCK);
+        _vmfreelist(vmdt, (void *)seg->begb, INSERT_BLOCK);
     else
         SIZE(seg->begb) |= BUSY;
 
@@ -218,7 +218,7 @@ static void _vmsegmerge(Vmdata_t *vmdt, Block_t *blk) {
         next = NEXT(blk); /**/
         DEBUG_ASSERT(SEG(next) == SEG(blk));
         if (!(SIZE(next) & BUSY)) {
-            _vmfreelist(vmdt, (Void_t *)next, DELETE_BLOCK);
+            _vmfreelist(vmdt, (void *)next, DELETE_BLOCK);
             size = SIZE(blk) + BDSZ(next) + sizeof(Head_t);
             asocassize(&SIZE(blk), SIZE(blk), size); /**/
             DEBUG_ASSERT(SIZE(blk) == size);
@@ -279,7 +279,7 @@ static Block_t *_vmsegalloc(Vmalloc_t *vm, Block_t *blk, ssize_t size, int type)
             for (blk = vmdt->free; blk; blk = LINK(blk)) {
                 _vmsegmerge(vmdt, blk);
                 if (BDSZ(blk) >= size) {
-                    _vmfreelist(vmdt, (Void_t *)blk, DELETE_BLOCK);
+                    _vmfreelist(vmdt, (void *)blk, DELETE_BLOCK);
                     RETURN(blk);
                 }
             }
@@ -293,7 +293,7 @@ static Block_t *_vmsegalloc(Vmalloc_t *vm, Block_t *blk, ssize_t size, int type)
             /**/ DEBUG_ASSERT((SIZE(blk) & BUSY) && NEXT(blk) == seg->endb);
         } else {
             seg = vmdt->seg;
-            blk = seg->iffy ? NULL : _vmfreelist(vmdt, (Void_t *)seg, DELETE_ENDB);
+            blk = seg->iffy ? NULL : _vmfreelist(vmdt, (void *)seg, DELETE_ENDB);
             /**/ DEBUG_ASSERT(!blk || (SEG(blk) == seg && NEXT(blk) == seg->endb));
         }
 
@@ -356,7 +356,7 @@ static Block_t *_vmsegalloc(Vmalloc_t *vm, Block_t *blk, ssize_t size, int type)
             if (SIZE(blk) & BUSY) /* unextensible busy block */
                 RETURN(blk = NULL);
 
-            _vmfreelist(vmdt, (Void_t *)blk, INSERT_BLOCK);
+            _vmfreelist(vmdt, (void *)blk, INSERT_BLOCK);
             blk = NULL;
         }
 
@@ -367,7 +367,7 @@ static Block_t *_vmsegalloc(Vmalloc_t *vm, Block_t *blk, ssize_t size, int type)
 
         if (!(base = (Vmuchar_t *)(*disc->memoryf)(vm, NULL, 0, segsz, disc))) {
             if (disc->exceptf) /* announce that no more memory is available */
-                (void)(*disc->exceptf)(vm, VM_NOMEM, (Void_t *)segsz, disc);
+                (void)(*disc->exceptf)(vm, VM_NOMEM, (void *)segsz, disc);
             RETURN(blk = NULL);
         }
 
@@ -395,7 +395,7 @@ re_turn:
             size |= SIZE(blk) & BUSY;
             asocassize(&SIZE(blk), SIZE(blk), size);
 
-            _vmfreelist(vmdt, (Void_t *)np, INSERT_BLOCK);
+            _vmfreelist(vmdt, (void *)np, INSERT_BLOCK);
         }
         SIZE(blk) |= BUSY; /**/
         DEBUG_ASSERT(BDSZ(blk) >= Segunit);
@@ -415,7 +415,7 @@ re_turn:
 */
 static void _vmsegfree(Vmalloc_t *vm, Block_t *blk) {
     SIZE(blk) &= ~BUSY;
-    _vmfreelist(vm->data, (Void_t *)blk, INSERT_BLOCK);
+    _vmfreelist(vm->data, (void *)blk, INSERT_BLOCK);
 }
 
 /* copy a string and add a special end of character */

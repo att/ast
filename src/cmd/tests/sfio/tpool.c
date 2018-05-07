@@ -22,8 +22,8 @@
 #include "sftest.h"
 
 static char Serial[128], *S = Serial;
-ssize_t writef(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
-    memcpy((Void_t *)S, buf, n);
+ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    memcpy((void *)S, buf, n);
     S += n;
     return n;
 }

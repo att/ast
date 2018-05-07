@@ -42,7 +42,7 @@ void alrmhandler(int sig) {
         terror("Unexpected Except(%d) state", Except);
 }
 
-int exceptf(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc) {
+int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
     if (type == SF_ATEXIT || type == SF_DPOP) return 0;
 
     if (type != SF_READ) terror("Bad Io type %0o", type);

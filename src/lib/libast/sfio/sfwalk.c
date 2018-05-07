@@ -28,7 +28,7 @@
 ** Written by Kiem-Phong Vo.
 */
 
-int sfwalk(Sfwalk_f walkf, Void_t *data, int type) {
+int sfwalk(Sfwalk_f walkf, void *data, int type) {
     Sfpool_t *p;
     Sfio_t *f;
     int n, rv;

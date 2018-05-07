@@ -28,7 +28,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com
 */
 
-Void_t *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size) {
+void *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size) {
     unsigned int key;
     Vmuser_t *u;
     Vmdata_t *vmdt = vm->data;
@@ -42,10 +42,10 @@ Void_t *vmuserdata(Vmalloc_t *vm, unsigned int dtid, ssize_t size) {
 
     if (!u && size > 0 && /* try making a new entry */
         (u = KPVALLOC(vm, sizeof(Vmuser_t) + size, vm->meth.allocf))) {
-        memset((Void_t *)(u + 1), 0, size);
+        memset((void *)(u + 1), 0, size);
         u->dtid = dtid;
         u->size = size;
-        u->data = (Void_t *)(u + 1);
+        u->data = (void *)(u + 1);
         u->next = vmdt->user;
         vmdt->user = u;
     }

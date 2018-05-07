@@ -43,8 +43,8 @@ typedef struct Memdisc_s {
 
 #define RESTARTMEM(a, f)                   \
     do {                                   \
-        a = (Void_t *)f;                   \
-        if (a == (Void_t *)(-1)) a = NULL; \
+        a = (void *)f;                   \
+        if (a == (void *)(-1)) a = NULL; \
     } while (a == NULL && errno == EINTR)
 
 #define RESTARTSYS(r, f) \
@@ -128,10 +128,10 @@ static Vmemory_f _Vmemoryf = 0;
 #include <windows.h>
 #endif
 
-static Void_t *win32mem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *win32mem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     GETMEMCHK(vm, caddr, csize, nsize, disc);
     if (csize == 0) {
-        caddr = (Void_t *)VirtualAlloc(0, nsize, MEM_COMMIT, PAGE_READWRITE);
+        caddr = (void *)VirtualAlloc(0, nsize, MEM_COMMIT, PAGE_READWRITE);
         RETURN(vm, caddr, nsize);
     } else if (nsize == 0) {
         (void)VirtualFree((LPVOID)caddr, 0, MEM_RELEASE);
@@ -145,7 +145,7 @@ static Void_t *win32mem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize
 /*
 ** this may be unsafe due to code external to Vmalloc that may also use sbrk()
 */
-static Void_t *sbrkmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *sbrkmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Vmuchar_t *newm;
     unsigned int key;
 
@@ -185,7 +185,7 @@ bad:
 /*
 ** concurrency-safe memory allocation via mmap-anonymous providing an emulation of sbrk()
 */
-static Void_t *safebrkmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize,
+static void *safebrkmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize,
                           Vmdisc_t *disc) {
     Vmuchar_t *newm;
     unsigned int key;
@@ -221,17 +221,17 @@ static Void_t *safebrkmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsi
                     _Vmmemsbrk += nsize;
             }
             if (newm)
-                RESTARTMEM(newm, mmap((Void_t *)newm, nsize, PROT_READ | PROT_WRITE,
+                RESTARTMEM(newm, mmap((void *)newm, nsize, PROT_READ | PROT_WRITE,
                                       MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0));
         } else
-            RESTARTMEM(newm, mmap((Void_t *)_Vmmemsbrk, nsize, PROT_READ | PROT_WRITE,
+            RESTARTMEM(newm, mmap((void *)_Vmmemsbrk, nsize, PROT_READ | PROT_WRITE,
                                   MAP_ANON | MAP_PRIVATE, -1, 0));
 
         if (newm) {
             if (csize > 0 &&
                 newm != ((Vmuchar_t *)caddr + csize)) /* new memory is not contiguous */
             {
-                munmap((Void_t *)newm, nsize); /* remove it and wait for a call for new memory */
+                munmap((void *)newm, nsize); /* remove it and wait for a call for new memory */
                 newm = NULL;
             } else
                 _Vmmemsbrk = newm + nsize;
@@ -245,7 +245,7 @@ static Void_t *safebrkmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsi
 #endif /* _mem_mmap_anon */
 
 #if _mem_mmap_anon /* getting space via mmap(MAP_ANON) */
-static Void_t *mmapanonmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize,
+static void *mmapanonmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize,
                            Vmdisc_t *disc) {
     GETMEMCHK(vm, caddr, csize, nsize, disc);
     if (csize == 0) {
@@ -262,7 +262,7 @@ static Void_t *mmapanonmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t ns
 #endif /* _mem_mmap_anon */
 
 #if _std_malloc /* using native malloc as a last resort */
-static Void_t *mallocmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *mallocmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     GETMEMCHK(vm, caddr, csize, nsize, disc);
     if (csize == 0) {
         RESTARTMEM(caddr, malloc(nsize));
@@ -276,7 +276,7 @@ static Void_t *mallocmem(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsiz
 #endif
 
 /* A discipline to get raw memory */
-static Void_t *getmemory(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
+static void *getmemory(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Vmuchar_t *addr;
 
     if (_Vmemoryf) {
@@ -287,31 +287,31 @@ static Void_t *getmemory(Vmalloc_t *vm, Void_t *caddr, size_t csize, size_t nsiz
 #if _mem_mmap_anon
     if ((_Vmassert & VM_safe) && (addr = safebrkmem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(safebrkmem, disc);
-        return (Void_t *)addr;
+        return (void *)addr;
     }
 #endif
 #if _mem_mmap_anon
     if ((_Vmassert & VM_anon) && (addr = mmapanonmem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(mmapanonmem, disc);
-        return (Void_t *)addr;
+        return (void *)addr;
     }
 #endif
 #if _mem_sbrk
     if ((_Vmassert & VM_break) && (addr = sbrkmem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(sbrkmem, disc);
-        return (Void_t *)addr;
+        return (void *)addr;
     }
 #endif
 #if _mem_win32
     if ((addr = win32mem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(win32mem, disc);
-        return (Void_t *)addr;
+        return (void *)addr;
     }
 #endif
 #if _std_malloc
     if ((_Vmassert & VM_native) && (addr = mallocmem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(mallocmem, disc);
-        return (Void_t *)addr;
+        return (void *)addr;
     }
 #endif
     write(2, "vmalloc: panic: all memory allocation disciplines failed\n", 57);
@@ -385,16 +385,16 @@ Vmalloc_t *_vmheapinit(Vmalloc_t *vm) {
     return heap;
 }
 
-static Void_t *heapalloc(Vmalloc_t *vm, size_t size, int local) {
+static void *heapalloc(Vmalloc_t *vm, size_t size, int local) {
     return (vm = _vmheapinit(vm)) ? (*vm->meth.allocf)(vm, size, local) : NULL;
 }
-static Void_t *heapresize(Vmalloc_t *vm, Void_t *obj, size_t size, int type, int local) {
+static void *heapresize(Vmalloc_t *vm, void *obj, size_t size, int type, int local) {
     return (vm = _vmheapinit(vm)) ? (*vm->meth.resizef)(vm, obj, size, type, local) : NULL;
 }
-static int heapfree(Vmalloc_t *vm, Void_t *obj, int local) {
+static int heapfree(Vmalloc_t *vm, void *obj, int local) {
     return (vm = _vmheapinit(vm)) ? (*vm->meth.freef)(vm, obj, local) : -1;
 }
-static Void_t *heapalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
+static void *heapalign(Vmalloc_t *vm, size_t size, size_t align, int local) {
     return (vm = _vmheapinit(vm)) ? (*vm->meth.alignf)(vm, size, align, local) : NULL;
 }
 static int heapstat(Vmalloc_t *vm, Vmstat_t *st, int local) {

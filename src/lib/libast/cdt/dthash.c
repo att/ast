@@ -95,7 +95,7 @@ static int htable(Dt_t *dt) {
     return 0;
 }
 
-static Void_t *hclear(Dt_t *dt) {
+static void *hclear(Dt_t *dt) {
     Dtlink_t **t, **endt, *l, *next;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
@@ -113,7 +113,7 @@ static Void_t *hclear(Dt_t *dt) {
     return NULL;
 }
 
-static Void_t *hfirst(Dt_t *dt) {
+static void *hfirst(Dt_t *dt) {
     Dtlink_t **tbl, **endt, *lnk;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
@@ -124,7 +124,7 @@ static Void_t *hfirst(Dt_t *dt) {
     return lnk ? _DTOBJ(dt->disc, lnk) : NULL;
 }
 
-static Void_t *hnext(Dt_t *dt, Dtlink_t *lnk) {
+static void *hnext(Dt_t *dt, Dtlink_t *lnk) {
     Dtlink_t **tbl, **endt, *next;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
@@ -140,7 +140,7 @@ static Void_t *hnext(Dt_t *dt, Dtlink_t *lnk) {
     return next ? _DTOBJ(dt->disc, next) : NULL;
 }
 
-static Void_t *hflatten(Dt_t *dt, int type) {
+static void *hflatten(Dt_t *dt, int type) {
     Dtlink_t **tbl, **endt, *head, *tail, *lnk;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
@@ -163,7 +163,7 @@ static Void_t *hflatten(Dt_t *dt, int type) {
         } else
             hash->data.size = 0;
 
-        return (Void_t *)head;
+        return (void *)head;
     } else /* restoring a previous flattened list */
     {
         head = hash->here;
@@ -188,8 +188,8 @@ static Void_t *hflatten(Dt_t *dt, int type) {
     }
 }
 
-static Void_t *hlist(Dt_t *dt, Dtlink_t *list, int type) {
-    Void_t *obj;
+static void *hlist(Dt_t *dt, Dtlink_t *list, int type) {
+    void *obj;
     Dtlink_t *lnk, *next;
     Dtdisc_t *disc = dt->disc;
 
@@ -203,13 +203,13 @@ static Void_t *hlist(Dt_t *dt, Dtlink_t *list, int type) {
         for (lnk = list; lnk; lnk = next) {
             next = lnk->_rght;
             obj = _DTOBJ(disc, lnk);
-            if ((*dt->meth->searchf)(dt, (Void_t *)lnk, DT_RELINK) == obj) dt->data->size += 1;
+            if ((*dt->meth->searchf)(dt, (void *)lnk, DT_RELINK) == obj) dt->data->size += 1;
         }
-        return (Void_t *)list;
+        return (void *)list;
     }
 }
 
-static Void_t *hstat(Dt_t *dt, Dtstat_t *st) {
+static void *hstat(Dt_t *dt, Dtstat_t *st) {
     ssize_t n;
     Dtlink_t **tbl, **endt, *lnk;
     Dthash_t *hash = (Dthash_t *)dt->data;
@@ -232,12 +232,12 @@ static Void_t *hstat(Dt_t *dt, Dtstat_t *st) {
         }
     }
 
-    return (Void_t *)hash->data.size;
+    return (void *)hash->data.size;
 }
 
-static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
+static void *dthashchain(Dt_t *dt, void *obj, int type) {
     Dtlink_t *lnk, *pp, *ll, *p, *l, **tbl;
-    Void_t *key, *k, *o;
+    void *key, *k, *o;
     uint hsh;
     Dtlink_t **fngr = NULL;
     Dtdisc_t *disc = dt->disc;
@@ -262,12 +262,12 @@ static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
             if (!obj) {
                 if (!(obj = hfirst(dt))) /* nothing to walk over */
                 {
-                    (void)(*dt->memoryf)(dt, (Void_t *)fngr, 0, disc);
+                    (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                     DTRETURN(obj, NULL);
                 } else {
                     asoaddint(&hash->walk, 1); /* increase walk count */
                     *fngr = hash->here;        /* set finger to first object */
-                    DTRETURN(obj, (Void_t *)fngr);
+                    DTRETURN(obj, (void *)fngr);
                 }
             }
             /* else: fall through to search for obj */
@@ -301,7 +301,7 @@ static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
             DTRETURN(obj, hnext(dt, lnk));
         else if (type & DT_START) {
             *fngr = lnk; /* set finger to found object */
-            DTRETURN(obj, (Void_t *)fngr);
+            DTRETURN(obj, (void *)fngr);
         } else if (type & DT_STEP) /* return obj and set finger to next */
         {
             *fngr = hnext(dt, lnk) ? hash->here : NULL;
@@ -356,7 +356,7 @@ static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
         {
             *fngr = hash->here = ll;
             asoaddint(&hash->walk, 1); /* up reference count */
-            DTRETURN(obj, (Void_t *)fngr);
+            DTRETURN(obj, (void *)fngr);
         } else if (type & DT_STEP) /* return obj and set finger to next */
         {
             *fngr = hnext(dt, ll) ? hash->here : NULL;
@@ -407,7 +407,7 @@ static Void_t *dthashchain(Dt_t *dt, Void_t *obj, int type) {
     {
         if (!(type & (DT_INSERT | DT_INSTALL | DT_APPEND | DT_ATTACH | DT_RELINK))) {
             if (type & DT_START) /* cannot start a walk from nowhere */
-                (void)(*dt->memoryf)(dt, (Void_t *)fngr, 0, disc);
+                (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
             else if (type & DT_STEP)
                 *fngr = NULL;
             DTRETURN(obj, NULL);
@@ -439,7 +439,7 @@ dt_return:
     return obj;
 }
 
-static int hashevent(Dt_t *dt, int event, Void_t *arg) {
+static int hashevent(Dt_t *dt, int event, void *arg) {
     Dthash_t *hash = (Dthash_t *)dt->data;
 
     if (event == DT_OPEN) {

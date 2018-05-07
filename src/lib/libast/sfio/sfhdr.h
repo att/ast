@@ -273,7 +273,7 @@
             (_mf_) = (ff);                                            \
             if (sfmutex((ff), SFMTX_LOCK) != 0) return (rv);          \
             if (_Sfnotify) {                                          \
-                (*_Sfnotify)((_mf_), SF_MTACCESS, (Void_t *)(&(ff))); \
+                (*_Sfnotify)((_mf_), SF_MTACCESS, (void *)(&(ff))); \
                 if (!(ff)) (ff) = (_mf_);                             \
             }                                                         \
         }                                                             \
@@ -627,7 +627,7 @@ typedef union {
 #endif
     char c, *s, **sp;
     uchar uc, *us, **usp;
-    Void_t *vp;
+    void *vp;
     Sffmt_t *ft;
 } Argv_t;
 
@@ -808,8 +808,8 @@ typedef struct _sfextern_s {
     ((((v) = (f)->mode & SF_RV) ? ((f)->mode &= ~SF_RV) : 0), \
      ((v) || ((f)->flags & (SF_SHARE | SF_APPENDWR | SF_WHOLE))))
 #define SFSK(f, a, o, d) (SETLOCAL(f), sfsk(f, (Sfoff_t)a, o, d))
-#define SFRD(f, b, n, d) (SETLOCAL(f), sfrd(f, (Void_t *)b, n, d))
-#define SFWR(f, b, n, d) (SETLOCAL(f), sfwr(f, (Void_t *)b, n, d))
+#define SFRD(f, b, n, d) (SETLOCAL(f), sfrd(f, (void *)b, n, d))
+#define SFWR(f, b, n, d) (SETLOCAL(f), sfwr(f, (void *)b, n, d))
 #define SFSYNC(f) (SETLOCAL(f), sfsync(f))
 #define SFCLOSE(f) (SETLOCAL(f), sfclose(f))
 #define SFFLSBUF(f, n) (SETLOCAL(f), _sfflsbuf(f, n))
@@ -1094,7 +1094,7 @@ typedef struct _sftab_ {
 #define MEMCPY(to, fr, n)                          \
     switch (n) {                                   \
         default:                                   \
-            memcpy((Void_t *)to, (Void_t *)fr, n); \
+            memcpy((void *)to, (void *)fr, n); \
             to += n;                               \
             fr += n;                               \
             break;                                 \
@@ -1116,7 +1116,7 @@ typedef struct _sftab_ {
 #define MEMSET(s, c, n)                     \
     switch (n) {                            \
         default:                            \
-            memset((Void_t *)s, (int)c, n); \
+            memset((void *)s, (int)c, n); \
             s += n;                         \
             break;                          \
         case 7:                             \
@@ -1144,7 +1144,7 @@ extern int _sfpclose _ARG_((Sfio_t *));
 extern int _sfexcept _ARG_((Sfio_t *, int, ssize_t, Sfdisc_t *));
 extern Sfrsrv_t *_sfrsrv _ARG_((Sfio_t *, ssize_t));
 extern int _sfsetpool _ARG_((Sfio_t *));
-extern char *_sfcvt _ARG_((Void_t *, char *, size_t, int, int *, int *, int *, int));
+extern char *_sfcvt _ARG_((void *, char *, size_t, int, int *, int *, int *, int));
 extern char **_sfgetpath _ARG_((char *));
 extern Mbstate_t *_sfmbstate _ARG_((Sfio_t *));
 

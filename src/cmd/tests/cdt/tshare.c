@@ -26,14 +26,14 @@ static char *Current = &Space[0];
 static int Close = 0;
 static int Free = 0;
 
-static int event(Dt_t *dt, int type, Void_t *obj, Dtdisc_t *disc) {
+static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
     if (type == DT_OPEN) { /* opening first dictionary */
         if (obj) {
             if (Current == &Space[0])
                 return 0;
             else /* opening a dictionary sharing with some previous one */
             {
-                *((Void_t **)obj) = (Void_t *)(&Space[0]);
+                *((void **)obj) = (void *)(&Space[0]);
                 return 1;
             }
         } else
@@ -47,10 +47,10 @@ static int event(Dt_t *dt, int type, Void_t *obj, Dtdisc_t *disc) {
         return 0;
 }
 
-static Void_t *memory(Dt_t *dt, Void_t *buf, size_t size, Dtdisc_t *disc) {
+static void *memory(Dt_t *dt, void *buf, size_t size, Dtdisc_t *disc) {
     if (!buf) {
-        size = ((size + sizeof(Void_t *) - 1) / sizeof(Void_t *)) * sizeof(Void_t *);
-        buf = (Void_t *)Current;
+        size = ((size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
+        buf = (void *)Current;
         Current += size;
     } else {
         if (Close > 0) Free += 1;

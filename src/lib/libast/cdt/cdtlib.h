@@ -105,7 +105,7 @@ typedef struct _dtlib_s {
 #define DTERROR(dt, mesg)                \
     (!((dt)->disc && (dt)->disc->eventf) \
          ? 0                             \
-         : (*(dt)->disc->eventf)((dt), DT_ERROR, (Void_t *)(mesg), (dt)->disc))
+         : (*(dt)->disc->eventf)((dt), DT_ERROR, (void *)(mesg), (dt)->disc))
 
 /* announce completion of an operation of type (ty) on some object (ob) in dictionary (dt) */
 #define DTANNOUNCE(dt, ob, ty)                                                          \
@@ -147,16 +147,16 @@ _BEGIN_EXTERNS_
 #define extern __EXPORT__
 #endif
 
-extern Dtlink_t *_dtmake _ARG_((Dt_t *, Void_t *, int));
+extern Dtlink_t *_dtmake _ARG_((Dt_t *, void *, int));
 extern void _dtfree _ARG_((Dt_t *, Dtlink_t *, int));
 extern int _dtlock _ARG_((Dt_t *, int));
 
 #undef extern
 
 #if !_PACKAGE_ast
-extern Void_t *malloc _ARG_((size_t));
-extern Void_t *realloc _ARG_((Void_t *, size_t));
-extern void free _ARG_((Void_t *));
+extern void *malloc _ARG_((size_t));
+extern void *realloc _ARG_((void *, size_t));
+extern void free _ARG_((void *));
 #endif
 
 _END_EXTERNS_

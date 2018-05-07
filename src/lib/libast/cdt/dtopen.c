@@ -51,7 +51,7 @@ Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     dtdisc(&pdt, disc, 0); /* note that this sets pdt.memoryf */
 
     if (disc->eventf) {
-        if ((ev = (*disc->eventf)(&pdt, DT_OPEN, (Void_t *)(&data), disc)) < 0)
+        if ((ev = (*disc->eventf)(&pdt, DT_OPEN, (void *)(&data), disc)) < 0)
             return NULL; /* something bad happened */
         else if (ev > 0) {
             if (data) /* shared data are being restored */
@@ -86,7 +86,7 @@ Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     dt->user = &dt->data->user; /* space allocated for application usage */
 
     if (disc->eventf) /* signal opening is done */
-        (void)(*disc->eventf)(dt, DT_ENDOPEN, (Void_t *)0, disc);
+        (void)(*disc->eventf)(dt, DT_ENDOPEN, (void *)0, disc);
 
     /* set mapping of operation bits between versions as needed */
     if (version < 20111111L) dt->typef = _dttype2005;
@@ -98,7 +98,7 @@ Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
 Dt_t *dtopen(Dtdisc_t *disc, Dtmethod_t *meth) { return _dtopen(disc, meth, 20050420L); }
 
 /* below are private functions used across CDT modules */
-Dtlink_t *_dtmake(Dt_t *dt, Void_t *obj, int type) {
+Dtlink_t *_dtmake(Dt_t *dt, void *obj, int type) {
     Dthold_t *h;
     Dtdisc_t *disc = dt->disc;
 
@@ -127,5 +127,5 @@ void _dtfree(Dt_t *dt, Dtlink_t *l, int type) {
         (void)(*disc->freef)(dt, _DTOBJ(disc, l), disc);
 
     if (disc->link < 0) /* free holder */
-        (void)(*dt->memoryf)(dt, (Void_t *)l, 0, disc);
+        (void)(*dt->memoryf)(dt, (void *)l, 0, disc);
 }

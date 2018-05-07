@@ -54,7 +54,7 @@ struct _file_s {
 
 static File_t *File; /* list pf temp files	*/
 
-static int _tmprmfile(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
+static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     reg File_t *ff, *last;
 
     NOTUSED(val);
@@ -77,7 +77,7 @@ static int _tmprmfile(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
             f->file = -1;
             while (sysremovef(ff->name) < 0 && errno == EINTR) errno = 0;
 
-            free((Void_t *)ff);
+            free((void *)ff);
         }
         (void)vtmtxunlock(_Sfmutex);
     }
@@ -224,7 +224,7 @@ static int _tmpfd(Sfio_t *f) {
     return fd;
 }
 
-static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
+static int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     reg int fd, m;
     reg Sfio_t *sf;
     Sfio_t newf, savf;
@@ -264,8 +264,8 @@ static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
     sfset(sf, (f->mode & (SF_READ | SF_WRITE)), 1);
 
     /* now remake the old stream into the new image */
-    memcpy((Void_t *)(&savf), (Void_t *)f, sizeof(Sfio_t));
-    memcpy((Void_t *)f, (Void_t *)sf, sizeof(Sfio_t));
+    memcpy((void *)(&savf), (void *)f, sizeof(Sfio_t));
+    memcpy((void *)f, (void *)sf, sizeof(Sfio_t));
     f->push = savf.push;
     f->pool = savf.pool;
     f->rsrv = savf.rsrv;
@@ -278,10 +278,10 @@ static int _tmpexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
 
     if (savf.data) {
         SFSTRSIZE(&savf);
-        if (!(savf.flags & SF_MALLOC)) (void)sfsetbuf(f, (Void_t *)savf.data, savf.size);
-        if (savf.extent > 0) (void)sfwrite(f, (Void_t *)savf.data, (size_t)savf.extent);
+        if (!(savf.flags & SF_MALLOC)) (void)sfsetbuf(f, (void *)savf.data, savf.size);
+        if (savf.extent > 0) (void)sfwrite(f, (void *)savf.data, (size_t)savf.extent);
         (void)sfseek(f, (Sfoff_t)(savf.next - savf.data), SEEK_SET);
-        if ((savf.flags & SF_MALLOC)) free((Void_t *)savf.data);
+        if ((savf.flags & SF_MALLOC)) free((void *)savf.data);
     }
 
     /* announce change of status */

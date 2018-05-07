@@ -39,7 +39,7 @@
 static int delpool(reg Sfpool_t *p) {
     POOLMTXENTER(p);
 
-    if (p->s_sf && p->sf != p->array) free((Void_t *)p->sf);
+    if (p->s_sf && p->sf != p->array) free((void *)p->sf);
     p->mode = SF_AVAIL;
 
     POOLMTXRETURN(p, 0);

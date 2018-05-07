@@ -33,7 +33,7 @@ static Vmuchar_t *Buf, *Endbuf, *Avail;
 static int Count = 0;
 static int Walk = 0;
 
-static Void_t *memory(Vmalloc_t *vm, Void_t *caddr, size_t oldsize, size_t newsize,
+static void *memory(Vmalloc_t *vm, void *caddr, size_t oldsize, size_t newsize,
                       Vmdisc_t *disc) {
     if (!Avail) {
         Avail = Buf = (Vmuchar_t *)(&Algn[0]);
@@ -43,29 +43,29 @@ static Void_t *memory(Vmalloc_t *vm, Void_t *caddr, size_t oldsize, size_t newsi
     if (oldsize) return NULL;
 
     Count += 1;
-    caddr = (Void_t *)Avail;
+    caddr = (void *)Avail;
     Avail += newsize;
     if (Avail >= Endbuf) terror("No more buffer");
 
     return caddr;
 }
 
-static int except(Vmalloc_t *vm, int type, Void_t *data, Vmdisc_t *disc) {
+static int except(Vmalloc_t *vm, int type, void *data, Vmdisc_t *disc) {
     /* make the eventual handle be a part of our memory */
-    if (type == VM_OPEN && data) *((Void_t **)data) = data;
+    if (type == VM_OPEN && data) *((void **)data) = data;
     return 0;
 }
 
 static Vmdisc_t Disc = {memory, except, 64};
 
-static int walk(Vmalloc_t *vm, Void_t *addr, size_t size, Vmdisc_t *disc, Void_t *handle) {
+static int walk(Vmalloc_t *vm, void *addr, size_t size, Vmdisc_t *disc, void *handle) {
     if (disc == &Disc) Walk += 1;
     if (handle != &Walk) terror("handle != &Walk");
     return 0;
 }
 
 tmain() {
-    Void_t *m1, *m2, *m3, *m4;
+    void *m1, *m2, *m3, *m4;
     Vmalloc_t *vm1, *vm2, *vm3, *vm4;
 
     if (!(vm1 = vmopen(&Disc, Vmbest, 0))) terror("Failed to open vm1");

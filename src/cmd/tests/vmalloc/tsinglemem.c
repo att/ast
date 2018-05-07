@@ -31,7 +31,7 @@
 #define N_FREE (256)      /* #frees <= #allocs	*/
 
 typedef struct _piece_s {
-    Void_t *addr; /* allocated address	*/
+    void *addr; /* allocated address	*/
     size_t size;  /* size to be allocated	*/
     int free;     /* 1: to be freed	*/
 } Piece_t;
@@ -64,7 +64,7 @@ static int working(char *store, int type, ssize_t size) {
             nfree += 1;
             nbusy -= 1;
             Piece[f].free = 0;
-            Piece[f].addr = (Void_t *)0;
+            Piece[f].addr = (void *)0;
         }
     }
 

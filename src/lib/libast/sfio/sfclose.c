@@ -30,7 +30,7 @@
 
 int sfclose(Sfio_t *f) {
     reg int local, ex, rv;
-    Void_t *data = NULL;
+    void *data = NULL;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
     SFMTXENTER(f, -1);
@@ -96,7 +96,7 @@ int sfclose(Sfio_t *f) {
         if (f->bits & SF_MMAP)
             SFMUNMAP(f, f->data, f->endb - f->data);
         else if (f->flags & SF_MALLOC)
-            data = (Void_t *)f->data;
+            data = (void *)f->data;
 
         f->data = NULL;
         f->size = -1;

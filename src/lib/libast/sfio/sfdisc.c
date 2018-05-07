@@ -49,12 +49,12 @@ typedef struct _dccache_s {
     uchar *endb;
 } Dccache_t;
 
-static int _dccaexcept(Sfio_t *f, int type, Void_t *val, Sfdisc_t *disc) {
+static int _dccaexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     if (disc && type == SF_FINAL) free(disc);
     return 0;
 }
 
-static ssize_t _dccaread(Sfio_t *f, Void_t *buf, size_t size, Sfdisc_t *disc) {
+static ssize_t _dccaread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
     ssize_t sz;
     Sfdisc_t *prev;
     Dccache_t *dcca;
@@ -170,7 +170,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         disc = d->disc;
         if (d->exceptf) {
             SFOPEN(f, 0);
-            if ((*(d->exceptf))(f, SF_DPOP, (Void_t *)disc, d) < 0) goto done;
+            if ((*(d->exceptf))(f, SF_DPOP, (void *)disc, d) < 0) goto done;
             SFLOCK(f, 0);
         }
         f->disc = disc;
@@ -180,7 +180,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
             d = f->disc;
             if (d && d->exceptf) {
                 SFOPEN(f, 0);
-                if ((*(d->exceptf))(f, SF_DPUSH, (Void_t *)disc, d) < 0) goto done;
+                if ((*(d->exceptf))(f, SF_DPUSH, (void *)disc, d) < 0) goto done;
                 SFLOCK(f, 0);
             }
         } while (d != f->disc);
@@ -223,7 +223,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
                 sfsetbuf(f, NULL, 0);
             else {
                 int flags = f->flags;
-                sfsetbuf(f, (Void_t *)f->data, f->size);
+                sfsetbuf(f, (void *)f->data, f->size);
                 f->flags |= (flags & SF_MALLOC);
             }
         }

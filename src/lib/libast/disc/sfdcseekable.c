@@ -39,11 +39,11 @@ typedef struct _skable_s {
     int eof;         /* if eof has been reached */
 } Seek_t;
 
-static ssize_t skwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *disc) {
+static ssize_t skwrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     return (ssize_t)(-1);
 }
 
-static ssize_t skread(Sfio_t *f, Void_t *buf, size_t n, Sfdisc_t *disc) {
+static ssize_t skread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Seek_t *sk;
     Sfio_t *sf;
     Sfoff_t addr;
@@ -126,7 +126,7 @@ static Sfoff_t skseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
 }
 
 /* on close, remove the discipline */
-static int skexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *disc) {
+static int skexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
     Seek_t *sk;
 
     sk = (Seek_t *)disc;

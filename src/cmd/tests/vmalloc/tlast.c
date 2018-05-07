@@ -22,7 +22,7 @@
 #include "vmtest.h"
 
 tmain() {
-    Void_t *addr[10];
+    void *addr[10];
     Vmalloc_t *vm;
     int i;
 

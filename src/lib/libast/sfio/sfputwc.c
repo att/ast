@@ -38,7 +38,7 @@ typedef struct Sfmbstate_s {
     Mbstate_t mbs;
 } Sfmbstate_t;
 
-static int _sfmbexcept(Sfio_t *f, int type, Void_t *arg, Sfdisc_t *disc) {
+static int _sfmbexcept(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     if (type == SF_DPOP || type == SF_FINAL) free(disc);
     return 0;
 }
@@ -71,7 +71,7 @@ int sfputwc(Sfio_t *f, int w) {
     n = mbtconv(buf, w, SFMBSTATE(f));
 
     if (n > 8 || SFWPEEK(f, s, m) < n)
-        n = SFWRITE(f, (Void_t *)s, n); /* write the hard way */
+        n = SFWRITE(f, (void *)s, n); /* write the hard way */
     else {
         b = buf;
         switch (n) {

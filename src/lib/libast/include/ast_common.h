@@ -29,11 +29,6 @@
 #define __INLINE__ inline
 #endif
 
-/* Void_t is defined so that Void_t* can address any type */
-#ifndef Void_t
-#define Void_t void
-#endif
-
 /* windows variants and veneers */
 #if __CYGWIN__
 #define _WINIX 1

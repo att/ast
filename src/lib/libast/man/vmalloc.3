@@ -27,7 +27,7 @@ Vmalloc \- Virtual memory allocation
 .Ce
 .Ss "VMALLOC TYPES"
 .Cs
-Void_t*;
+void*;
 Vmalloc_t;
 Vmdisc_t;
 Vmethod_t;
@@ -62,20 +62,20 @@ void       vmclrlock(int all);
 .Ce
 .Ss "ALLOCATION FUNCTIONS"
 .Cs
-Void_t*    vmalloc(Vmalloc_t* vm, size_t size);
-Void_t*    vmalign(Vmalloc_t* vm, size_t size, size_t align);
-Void_t*    vmresize(Vmalloc_t* vm, Void_t* addr, size_t size, int type);
-int        vmfree(Vmalloc_t* vm, Void_t* addr);
+void*    vmalloc(Vmalloc_t* vm, size_t size);
+void*    vmalign(Vmalloc_t* vm, size_t size, size_t align);
+void*    vmresize(Vmalloc_t* vm, void* addr, size_t size, int type);
+int        vmfree(Vmalloc_t* vm, void* addr);
 .Ce
 .Ss "SUPPORT FUNCTIONS"
 .Cs
-Void_t*    vmmaddress(size_t size);
-Void_t*    vmdata(Vmalloc_t* vm);
-Void_t*    vmuserdata(Vmalloc_t* vm, unsigned int key, ssize_t size);
-Vmalloc_t* vmregion(Void_t* addr);
+void*    vmmaddress(size_t size);
+void*    vmdata(Vmalloc_t* vm);
+void*    vmuserdata(Vmalloc_t* vm, unsigned int key, ssize_t size);
+Vmalloc_t* vmregion(void* addr);
 int        vmsegwalk(Vmalloc_t* vm,
-                     int(*walkf)(vm, Void_t* seg, size_t size, disc));
-Void_t*    vmsegfind(Vmalloc_t* vm, Void_t* addr);
+                     int(*walkf)(vm, void* seg, size_t size, disc));
+void*    vmsegfind(Vmalloc_t* vm, void* addr);
 int        vmstat(Vmalloc_t* vm, Vmstat_t* statb);
 .Ce
 .Ss "TRACING ALLOCATION CALLS"
@@ -86,27 +86,27 @@ int        vmtrace(int fd);
 .Cs
 int        vmdebug(int fd);
 int        vmdbcheck(Vmalloc_t* vm);
-Void_t*    vmdbwatch(Void_t* addr);
+void*    vmdbwatch(void* addr);
 .Ce
 .Ss "MALLOC COMPATIBILITY"
 .Cs
-Void_t*    malloc(size_t size);
-Void_t*    realloc(Void_t* addr, size_t size);
-Void_t*    calloc(size_t n_obj, size_t s_obj);
-int        cfree(Void_t* addr);
-void       free(Void_t* addr);"
-int        posix_memalign(Void_t** memptr, size_t align, size_t size);
-Void_t*    memalign(size_t align, size_t size);
-Void_t*    aligned_alloc(size_t align, size_t size);
-Void_t*    valloc(size_t size);
-Void_t*    pvalloc(size_t size);
-Void_t*    alloca(size_t size);
+void*    malloc(size_t size);
+void*    realloc(void* addr, size_t size);
+void*    calloc(size_t n_obj, size_t s_obj);
+int        cfree(void* addr);
+void       free(void* addr);"
+int        posix_memalign(void** memptr, size_t align, size_t size);
+void*    memalign(size_t align, size_t size);
+void*    aligned_alloc(size_t align, size_t size);
+void*    valloc(size_t size);
+void*    pvalloc(size_t size);
+void*    alloca(size_t size);
 .Ce
 .Ss "MISCELLANIES"
 .Cs
-Void_t*    vmnewof(Vmalloc_t* vm, Void_t* addr, type, size_t n, size_t x);
-Void_t*    vmoldof(Vmalloc_t* vm, Void_t* addr, type, size_t n, size_t x);
-Void_t*    vmgetmem(Vmalloc_t* vm, Void_t* addr, size_t size);
+void*    vmnewof(Vmalloc_t* vm, void* addr, type, size_t n, size_t x);
+void*    vmoldof(Vmalloc_t* vm, void* addr, type, size_t n, size_t x);
+void*    vmgetmem(Vmalloc_t* vm, void* addr, size_t size);
 .Ce
 .SH DESCRIPTION
 Vmalloc provides for general dynamic storage allocation.
@@ -130,9 +130,9 @@ the allocation functions operate on a standard region that is concurrency-safe.
 .PP
 .Ss "VMALLOC TYPES"
 .PP
-.Ss "  Void_t*"
-Pointers to space have type \f5Void_t*\fP
-where \f5Void_t\fP is \f5#define\fPd as \f5void\fP if possible, otherwise \f5char\fP.
+.Ss "  void*"
+Pointers to space have type \f5void*\fP
+where \f5void\fP is \f5#define\fPd as \f5void\fP if possible, otherwise \f5char\fP.
 .PP
 .Ss "  Vmalloc_t"
 This is the type of a memory region. See \f5vmopen()\fP for region creation.
@@ -164,10 +164,10 @@ See the section "MALLOC COMPATIBILITY" below for details.
 .Ss "MEMORY DISCIPLINES"
 The type \f5Vmdisc_t\fP defines a memory discipline structure with these members:
 .Cs
-    Void_t* (*memoryf)(Vmalloc_t *vm,
-                 Void_t* mem, size_t csz, size_t nsz, Vmdisc_t *disc);
+    void* (*memoryf)(Vmalloc_t *vm,
+                 void* mem, size_t csz, size_t nsz, Vmdisc_t *disc);
     int     (*exceptf)(Vmalloc_t *vm,
-                 int type, Void_t* arg, Vmdisc_t *disc);
+                 int type, void* arg, Vmdisc_t *disc);
     size_t  round;
 .Ce
 .PP
@@ -189,20 +189,20 @@ Following are the events:
 .Tp
 \f5VM_OPEN\fP
 This event announces a region opening.
-The argument \f5arg\fP points to an object of type \f5Void_t*\fP
+The argument \f5arg\fP points to an object of type \f5void*\fP
 initialized to NULL. The return value of \f5exceptf\fP
 is significant as follows:
 
 On a negative return value, \f5vmopen()\fP will terminate with failure.
 
-On a zero return value, \f5exceptf\fP may additionally set \f5*((Void_t**)arg)\fP
+On a zero return value, \f5exceptf\fP may additionally set \f5*((void**)arg)\fP
 to some non-NULL value and cause \f5vmopen()\fP
 to allocate the region handle itself via memory obtained by \f5memoryf\fP.
 Otherwise, the region handle will be allocated from the \f5Vmheap\fP region.
 
 A positive return value indicates that the region is being reconstructed
 from some existing states. It is assumed that \f5exceptf\fP has set
-\f5*((Void_t**)arg)\fP to point to such states.
+\f5*((void**)arg)\fP to point to such states.
 Here, "states" means the memory pointed to by the field \f5Vmalloc_t.data\fP
 of some other region (perhaps in shared or persistent memory).
 See also \f5VM_CLOSE\fP below.
@@ -372,17 +372,17 @@ may be inevitable.
 .PP
 .Ss "ALLOCATION FUNCTIONS"
 .PP
-.Ss "  Void_t* vmalloc(Vmalloc_t* vm, size_t size);"
+.Ss "  void* vmalloc(Vmalloc_t* vm, size_t size);"
 This function computes a block of at least the requested \f5size\fP
 from the region \f5vm\fP. This block will be aligned to the \fIstrictest alignment\fP
 suitable for storing any basic data type.
 \f5vmalloc()\fP returns the computed block on success or \f5NULL\fP on failure.
 .PP
-.Ss "  Void_t* vmalign(Vmalloc_t* vm, size_t size, size_t align);"
+.Ss "  void* vmalign(Vmalloc_t* vm, size_t size, size_t align);"
 This function works like \f5vmalloc()\fP but the computed block
 will also be aligned by \f5align\fP, i.e., its address will be \f50%align\fP.
 .PP
-.Ss "  Void_t* vmresize(Vmalloc_t* vm, Void_t* addr, size_t size, int type);"
+.Ss "  void* vmresize(Vmalloc_t* vm, void* addr, size_t size, int type);"
 This function changes the size of the block pointed to by
 \f5addr\fP to the new \f5size\fP.
 If that cannot be done in place and \f5type\fP has
@@ -394,20 +394,20 @@ When a resized block gets larger and \f5type\fP has the bit \f5VM_RSZERO\fP.
 the extended space will be cleared.
 \f5vmresize()\fP returns a pointer to the new block, or \f5NULL\fP on failure.
 .PP
-.Ss "  int vmfree(Vmalloc_t* vm, Void_t* addr);"
+.Ss "  int vmfree(Vmalloc_t* vm, void* addr);"
 This function frees the block pointed to by \f5addr\fP.
 It returns \-1 on error, and nonnegative otherwise.
 .PP
 .Ss "SUPPORT FUNCTIONS"
 .PP
-.Ss "  Void_t* vmmaddress(size_t size);"
+.Ss "  void* vmmaddress(size_t size);"
 This function computes an address for attaching
 or memory-mapping a shared memory segment with the given \f5size\fP.
 The address is chosen to minimize collision with common memory regions
 such as the process stack, the heap space (\f5sbrk(2)\fP)
 or space used by dynamically linked libraries, etc.
 .PP
-.Ss "  Void_t* vmdata(Vmalloc_t* vm);"
+.Ss "  void* vmdata(Vmalloc_t* vm);"
 Note that the memory used by the pointer \f5vm\fP representing a region is often
 obtained from some process-local memory and may not be a part of the memory obtained
 via the memory discipline used to open \f5vm\fP.
@@ -418,14 +418,14 @@ threads and processes or kept persistent in secondary storage is that it may nee
 may need to store this pointer to facilitate region reopening in different processes.
 See also the events \f5VM_OPEN\fP and \f5VM_CLOSE\fP in the MEMORY DISCIPLINES section.
 .PP
-.Ss "  Void_t* vmuserdata(Vmalloc_t* vm, unsigned int key, ssize_t size);"
+.Ss "  void* vmuserdata(Vmalloc_t* vm, unsigned int key, ssize_t size);"
 This function returns a pointer to a memory area of size at least \f5size\fP
 that is uniquely associated with the given \f5key\fP.
 Storing data by \f5key\fP is a useful way to maintain states
 in shared and/or persistent memory (see \f5vmdcshare()\fP)
 across concurrent processes or process instances.
 .PP
-.Ss "  Vmalloc_t* vmregion(Void_t* addr);"
+.Ss "  Vmalloc_t* vmregion(void* addr);"
 If \f5addr\fP points to a memory block allocated from a region based on \f5Vmbest\fP,
 this function returns that region. \f5vmregion()\fP first attempts to
 certify the legitimacy of \f5addr\fP.
@@ -435,7 +435,7 @@ to some unknown memory, the certfication may or not succeed at telling so.
 In that case, on success, \f5vmregion()\fP will return \f5NULL\fP.
 However, on failure, the behavior of \f5vmregion()\fP is undefined.
 .PP
-.Ss "  int vmsegwalk(Vmalloc_t* vm, int(*walkf)vm, Void_t* seg, size_t size, disc));"
+.Ss "  int vmsegwalk(Vmalloc_t* vm, int(*walkf)vm, void* seg, size_t size, disc));"
 Each region consists of a sequence of raw memory segments obtained from the memory discipline.
 This function walks all such segments in region \f5vm\fP or
 all segments in all regions if \f5vm\fP is \f5NULL\fP.
@@ -445,7 +445,7 @@ with \f5vm\fP being the region, \f5seg\fP the segment,
 If \f5(*walkf)()\fP returns a negative value, the walk stops and returns the same value.
 Otherwise, 0 is returned on success and -1 on failure.
 .PP
-.Ss "Void_t* vmsegfind(Vmalloc_t* vm, Void_t* addr);"
+.Ss "void* vmsegfind(Vmalloc_t* vm, void* addr);"
 This function returns the pointer to the raw memory segment in region \f5vm\fP
 that contains \f5addr\fP or \f5NULL\fP  if no such segment exists.
 .PP
@@ -534,7 +534,7 @@ This function checks the integrity of \f5vm\fP if it uses \f5Vmdebug\fP or \f5Vm
 If flag \f5VM_DBCHECK\fP is on and the allocation method is \f5Vmdebug\fP,
 \f5vmdbcheck()\fP will be called on each allocation operation.
 .PP
-.Ss "  Void_t* vmdbwatch(Void_t* addr);"
+.Ss "  void* vmdbwatch(void* addr);"
 If \f5addr\fP is not \f5NULL\fP, any allocation event that
 involves the address \f5addr\fP will cause a warning message to be generated.
 Watched addresses are kept on a small list in a first-in-first-out fashion.
@@ -593,41 +593,41 @@ Enable (potentially expensive) integrity tests of internal data structures of
 the allocation algorithm. This may be useful for debugging rare memory violation
 errors not detectable by the method \f5Vmdebug\fP.
 .PP
-.Ss "  Void_t* malloc(size_t size);"
+.Ss "  void* malloc(size_t size);"
 This function allocates a block of size \f5size\fP.
 .PP
-.Ss "  Void_t* realloc(Void_t* addr, size_t size);"
+.Ss "  void* realloc(void* addr, size_t size);"
 This function resizes block \f5addr\fP to have size \f5size\fP.
 The block may be moved if needed.
 .PP
-.Ss "  Void_t* calloc(size_t n_obj, size_t s_obj);"
+.Ss "  void* calloc(size_t n_obj, size_t s_obj);"
 This function allocates \f5n_obj\fP objects, each of size \f5s_obj\fP.
 The new memory will be cleared.
 .PP
-.Ss "  int cfree(Void_t* addr);"
-.Ss "  int free(Void_t* addr);"
+.Ss "  int cfree(void* addr);"
+.Ss "  int free(void* addr);"
 These functions free the block that \f5addr\fP points to.
 .PP
-.Ss "  int posix_memalign(Void_t** memptr, size_t align, size_t, size);"
+.Ss "  int posix_memalign(void** memptr, size_t align, size_t, size);"
 This function allocates \f5size\fP bytes
 and places the address of the allocated memory in \f5*memptr\fP.
 The address of the allocated memory will be a multiple of \f5align\fP
-which must be a power of two and a multiple of \f5sizeof(Void_t*)\fP.
+which must be a power of two and a multiple of \f5sizeof(void*)\fP.
 \f5posix_memalign()\fP returns 0 on success, \f5EINVAL\fP if \f5align\fP
 is invalid, and \f5ENOMEM\fP if there is no available memory.
 .PP
-.Ss "  Void_t* memalign(size_t align, size_t size);"
+.Ss "  void* memalign(size_t align, size_t size);"
 .Ss "  Void_* aligned_alloc(size_t align, size_t size);"
 \f5memalign()\fP allocates memory of size \f5size\fP with address being \f50%align\fP.
 \f5aligned_alloc()\fP is like \f5memalign()\fP but \f5size\fP is rounded to a multiple of \f5align\fP first.
 .PP
-.Ss "  Void_t* valloc(size_t size);"
-.Ss "  Void_t* pvalloc(size_t size);"
+.Ss "  void* valloc(size_t size);"
+.Ss "  void* pvalloc(size_t size);"
 \f5valloc()\fP allocates memory of size \f5size\fP with address \f50%\fP\fIpagesize\fP
 where \fIpagesize\fP is the value defined by \f5getpagesize(2)\fP.
 \f5pvalloc()\fP is like \f5valloc()\fP but \f5size\fP is rounded up to \fIpagesize\fP first.
 .PP
-.Ss "  Void_t* alloca(size_t size);"
+.Ss "  void* alloca(size_t size);"
 This function is normally provided by the standard environment to allocate a block of
 \f5size\fP bytes in the stack frame of the calling function. In that way, when the calling
 function returns, the memory is released along with its stack frame.
@@ -637,15 +637,15 @@ that would be automatically freed some time after the calling function returns.
 .PP
 .Ss "MISCELLANIES"
 .PP
-.Ss "Void_t* vmnewof(Vmalloc_t* vm, Void_t* addr, type, size_t n, size_t x);"
-.Ss "Void_t* vmoldof(Vmalloc_t* vm, Void_t* addr, type, size_t n, size_t x);"
+.Ss "void* vmnewof(Vmalloc_t* vm, void* addr, type, size_t n, size_t x);"
+.Ss "void* vmoldof(Vmalloc_t* vm, void* addr, type, size_t n, size_t x);"
 \f5vmnewof()\fP is a macro function that resizes block \f5addr\fP to the new size \f5n*sizeof(type)+x\fP.
 Any additional space beyond old content will be set to zero and,
 if the block is moved, old content will be copied as will fit.
 \f5vmoldof()\fP is like \f5vmnewof()\fP but it neither copies old content nor clears space.
 Both functions return the new block or \f5NULL\fP on failure.
 .PP
-.Ss "Void_t* vmgetmem(Vmalloc_t* vm, Void_t* addr, size_t size);"
+.Ss "void* vmgetmem(Vmalloc_t* vm, void* addr, size_t size);"
 This function provides a convenient way to create/close derived regions based on \f5Vmheap\fP
 and/or allocate/free memory. Below are templates of how it may be used:
 .Tp

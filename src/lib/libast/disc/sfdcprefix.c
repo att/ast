@@ -44,7 +44,7 @@ typedef struct {
  * prefix write
  */
 
-static ssize_t pfxwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *dp) {
+static ssize_t pfxwrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *dp) {
     Prefix_t *pfx = (Prefix_t *)dp;
     char *b;
     char *s;
@@ -79,7 +79,7 @@ static ssize_t pfxwrite(Sfio_t *f, const Void_t *buf, size_t n, Sfdisc_t *dp) {
  * remove the discipline on close
  */
 
-static int pfxexcept(Sfio_t *f, int type, Void_t *data, Sfdisc_t *dp) {
+static int pfxexcept(Sfio_t *f, int type, void *data, Sfdisc_t *dp) {
     if (type == SF_FINAL || type == SF_DPOP) free(dp);
     return 0;
 }
