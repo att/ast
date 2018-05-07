@@ -50,8 +50,8 @@ else if set -q argv[1]
     for f in $argv
         if test -f $f
             set files $files $f
-        else if test -d $argv
-            set files $files $argv/**.c
+        else if test -d $f
+            set files $files $f/**.c
         end
     end
 else

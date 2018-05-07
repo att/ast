@@ -44,10 +44,10 @@ if test $all = yes
 else if set -q argv[1]
     set files
     for f in $argv
-        if test -f $argv
+        if test -f $f
             set files $files $f
-        else if test -d $argv
-            set files $files {$argv}**.c {$argv}**.h
+        else if test -d $f
+            set files $files {$f}**.c {$f}**.h
         end
     end
 else
