@@ -34,8 +34,8 @@
 #include "proclib.h"
 
 #include <ast_tty.h>
-#include <ls.h>
 #include <error.h>
+#include <ls.h>
 /*
  * not quite ready for _use_spawnveg
  */

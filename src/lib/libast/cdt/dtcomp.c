@@ -42,6 +42,4 @@ Dtlink_t *dtrestore(Dt_t *d, void *l) {
 }
 
 #undef dtsize
-ssize_t dtsize(Dt_t *d) {
-    return (ssize_t)(*(_DT(d)->searchf))((d), (void *)(0), DT_STAT);
-}
+ssize_t dtsize(Dt_t *d) { return (ssize_t)(*(_DT(d)->searchf))((d), (void *)(0), DT_STAT); }

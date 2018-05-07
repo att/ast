@@ -131,9 +131,8 @@ done:
 #define regrexec _ast_regrexec
 #endif
 
-int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch,
-                    oldregmatch_t *oldmatch, regflags_t flags, int sep, void *handle,
-                    regrecord_t record) {
+int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch, oldregmatch_t *oldmatch,
+             regflags_t flags, int sep, void *handle, regrecord_t record) {
     if (oldmatch) {
         regmatch_t *match;
         ssize_t i;

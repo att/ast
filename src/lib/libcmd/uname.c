@@ -93,7 +93,8 @@ __STDPP__directive pragma pp : hide getdomainname gethostid gethostname sethostn
 #undef sethostname
 #endif
 
-extern int getdomainname(char *, size_t);
+      extern int
+      getdomainname(char *, size_t);
 extern long gethostid(void);
 extern int gethostname(char *, size_t);
 extern int sethostname(const char *, size_t);
@@ -276,8 +277,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         if (uname(&ut) < 0) error(ERROR_usage(2), "information unavailable");
         output(OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {
-            if (sizeof(ut.nodename) > 9 || gethostname(s, sizeof(buf)))
-                s = ut.nodename;
+            if (sizeof(ut.nodename) > 9 || gethostname(s, sizeof(buf))) s = ut.nodename;
             output(OPT_nodename, s, "nodename");
         }
         output(OPT_release, ut.release, "release");
@@ -325,8 +325,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             output(OPT_vendor, s, "vendor");
         }
         if (flags & OPT_domain) {
-            if (!*(s = astconf("SRPC_DOMAIN", NULL, NULL)))
-                getdomainname(s, sizeof(buf));
+            if (!*(s = astconf("SRPC_DOMAIN", NULL, NULL))) getdomainname(s, sizeof(buf));
 
             output(OPT_domain, s, "domain");
         }

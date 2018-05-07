@@ -91,7 +91,7 @@ static size_t Largere = 80;     /* probability of being reallocated	*/
 
 static size_t Empperiod = 1000; /* period to make emphemeral threads	*/
 static size_t Empcount = 1000;  /* #allocations on each invovation	*/
-static void **Emp;            /* shared array of allocated blocks	*/
+static void **Emp;              /* shared array of allocated blocks	*/
 
 /* accounting for space usage */
 static size_t Maxbusy = 0; /* size of max busy space at any time	*/

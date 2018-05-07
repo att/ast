@@ -25,11 +25,11 @@
 #include <ls.h>
 #include <stak.h>
 #include "builtins.h"
+#include "edit.h"
 #include "history.h"
 #include "io.h"
 #include "name.h"
 #include "variables.h"
-#include "edit.h"
 
 #define HIST_RECURSE 5
 

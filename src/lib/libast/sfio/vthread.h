@@ -143,7 +143,7 @@ struct _vthread_s {
     size_t stack;    /* stack size		*/
     int state;       /* execution state	*/
     int error;       /* error status 	*/
-    void *exit;    /* exit value		*/
+    void *exit;      /* exit value		*/
 };
 
 /* structure for exactly once execution */

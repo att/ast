@@ -132,25 +132,26 @@ __STDPP__directive pragma pp : hide lchmod
 #endif
 
 #include <cmd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fts.h>
 #include <ls.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
-extern int fts_flags();
+                               extern int
+                               fts_flags();
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL
 #endif
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp : nohide lchmod
+__STDPP__directive pragma pp : nohide lchmod
 #else
 #undef lchmod
 #endif
 
-                                                                  extern int
-                                                                  lchmod(const char *, mode_t);
+                               extern int
+                               lchmod(const char *, mode_t);
 
 /*
  * NOTE: we only use the native lchmod() on symlinks just in case
@@ -222,8 +223,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case 'R':
                 // Standard fts_open() does not support this flag, so instead use a different flag
-                //flags &= ~FTS_TOP;
-                recursive = 1; 
+                // flags &= ~FTS_TOP;
+                recursive = 1;
                 logical = 0;
                 continue;
             case '?':
@@ -295,7 +296,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 if (!force) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
                 goto anyway;
             case FTS_ERR:
-                if (!force) error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
+                if (!force)
+                    error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
                 goto anyway;
             case FTS_NS:
                 if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);

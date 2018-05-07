@@ -187,7 +187,7 @@ static char *ptymopen(int *master) {
             *master = fdm;
 #if _lib_ptsname
             slave = ptsname(fdm);
-#else  // _lib_ptsname
+#else   // _lib_ptsname
             slave = slavename(name);
 #endif  // _lib_ptsname
             break;
@@ -242,7 +242,7 @@ static int mkpty(int *master, int *slave) {
         close(*master);
         return -1;
     }
-#else  // _lib_grantpt && _lib_unlockpt
+#else   // _lib_grantpt && _lib_unlockpt
     if (!(sname = ptymopen(master)) || (*slave = open(sname, O_RDWR | O_CLOEXEC)) < 0) return -1;
 #endif  // _lib_grantpt && _lib_unlockpt
 #ifdef I_PUSH
@@ -391,18 +391,18 @@ static int match(char *pattern, char *text, int must) {
 }
 
 typedef struct Master_s {
-    Vmalloc_t *vm; // allocation region
-    char *ignore;  // ignore master lines matching this re
-    char *peek;    // peek buffer pointer
-    char *cur;     // current line
-    char *nxt;     // next line
-    char *end;     // end of lines
-    char *max;     // end of buf
-    char *buf;     // current buffer
-    char *prompt;  // peek prompt
-    int cursor;    // cursor in buf, 0 if fresh line
-    int line;      // prompt line number
-    int restore;   // previous line save char
+    Vmalloc_t *vm;  // allocation region
+    char *ignore;   // ignore master lines matching this re
+    char *peek;     // peek buffer pointer
+    char *cur;      // current line
+    char *nxt;      // next line
+    char *end;      // end of lines
+    char *max;      // end of buf
+    char *buf;      // current buffer
+    char *prompt;   // peek prompt
+    int cursor;     // cursor in buf, 0 if fresh line
+    int line;       // prompt line number
+    int restore;    // previous line save char
 } Master_t;
 
 #define MASTER_EOF (-1)

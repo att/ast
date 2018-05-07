@@ -641,8 +641,7 @@ void *realloc(void *data, size_t size) {
                 ((unsigned int *)addr)[i] = 0x66666666;
             }
         }
-    }
-    else /* not our data */
+    } else /* not our data */
 #if USE_NATIVE
         addr = native_realloc(data, size);
 #else
@@ -669,8 +668,8 @@ void free(void *data) {
             (void)(*vm->meth.freef)(vm, data, 0);
         }
 #if USE_NATIVE
-            else /* not our data */
-                native_free(data);
+        else /* not our data */
+            native_free(data);
 #endif
     }
 
@@ -693,9 +692,7 @@ void *memalign(size_t align, size_t size) {
     return VMRECORD(addr);
 }
 
-void *aligned_alloc(size_t align, size_t size) {
-    return memalign(align, ROUND(size, align));
-}
+void *aligned_alloc(size_t align, size_t size) { return memalign(align, ROUND(size, align)); }
 
 int posix_memalign(void **memptr, size_t align, size_t size) {
     void *mem;

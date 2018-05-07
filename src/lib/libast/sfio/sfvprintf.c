@@ -163,13 +163,13 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
             goto done;                                 \
         }                                              \
     }
-#define SMwrite(f, s, n)                                         \
-    {                                                            \
+#define SMwrite(f, s, n)                                       \
+    {                                                          \
         if ((o = SFWRITE(f, (void *)s, n)) > 0) n_output += o; \
-        if (o != n) {                                            \
-            SFBUF(f);                                            \
-            goto done;                                           \
-        }                                                        \
+        if (o != n) {                                          \
+            SFBUF(f);                                          \
+            goto done;                                         \
+        }                                                      \
     }
 #if _sffmt_small /* these macros are made smaller at some performance cost */
 #define SFBUF(f)

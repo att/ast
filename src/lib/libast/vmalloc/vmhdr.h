@@ -129,7 +129,7 @@ typedef struct _seg_s Seg_t;     /* the type of a raw memory segment	*/
 #define VM_safe 0x08000000   /* safe MAP_ANON emulation of sbrk()	*/
 #define VM_zero 0x10000000   /* /dev/zero block allocator		*/
 
-#define VM_junk 0x20000000   /* fill allocated and freed blocks with junk */
+#define VM_junk 0x20000000 /* fill allocated and freed blocks with junk */
 
 #define VM_GETMEMORY (VM_anon | VM_break | VM_native | VM_safe | VM_zero)
 
@@ -238,7 +238,7 @@ struct _two_s {
 typedef union _word_u {
     size_t size;        /* to store a size_t	*/
     unsigned int intdt; /* to store an integer	*/
-    void *ptrdt;      /* to store a pointer	*/
+    void *ptrdt;        /* to store a pointer	*/
 } Word_t;
 
 struct _head_s /* a block header has two words */
@@ -334,7 +334,7 @@ struct _vmuser_s {
     Vmuser_t *next;
     unsigned int dtid; /* key to identify data item	*/
     ssize_t size;      /* size of data area		*/
-    void *data;      /* user data area		*/
+    void *data;        /* user data area		*/
 };
 
 struct _seg_s /* a segment of raw memory obtained via Vmdisc_t.memoryf */
@@ -382,12 +382,12 @@ struct _vmhold_s {
 typedef struct _vmextern_s {
     Block_t *(*vm_seginit)(Vmdata_t *, Seg_t *, Vmuchar_t *, ssize_t, int);
     Block_t *(*vm_segalloc)(Vmalloc_t *, Block_t *, ssize_t, int);
-    void(*vm_segfree)(Vmalloc_t *, Block_t *);
+    void (*vm_segfree)(Vmalloc_t *, Block_t *);
     char *(*vm_strcpy)(char *, const char *, int);
     char *(*vm_itoa)(Vmulong_t, int);
-    ssize_t(*vm_lcm)(ssize_t, ssize_t);
-    void(*vm_trace)(Vmalloc_t *, Vmuchar_t *, Vmuchar_t *, size_t, size_t);
-    int(*vm_chkmem)(Vmuchar_t *, size_t);
+    ssize_t (*vm_lcm)(ssize_t, ssize_t);
+    void (*vm_trace)(Vmalloc_t *, Vmuchar_t *, Vmuchar_t *, size_t, size_t);
+    int (*vm_chkmem)(Vmuchar_t *, size_t);
     Vmuchar_t *vm_memmin;     /* address lower abound	*/
     Vmuchar_t *vm_memmax;     /* address upper abound	*/
     Vmuchar_t *vm_memaddr;    /* vmmaddress() memory	*/

@@ -301,8 +301,7 @@ static void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
     int flag = 0;
     struct stat statb;
 
-    if (stat(name, &statb) < 0 || !S_ISDIR(statb.st_mode))
-    {
+    if (stat(name, &statb) < 0 || !S_ISDIR(statb.st_mode)) {
         pp->flags |= PATH_SKIP;
         pp->dev = *name == '/';
         return;

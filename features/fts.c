@@ -1,4 +1,3 @@
 #include <fts.h>
 
-int main() {
-}
+int main() {}

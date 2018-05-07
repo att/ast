@@ -44,11 +44,11 @@ typedef struct _sfdisc_s Sfdisc_t;
 #define Sfulong_t uint64_t
 #define Sfdouble_t _ast_fltmax_t
 
-typedef ssize_t(*Sfread_f)(Sfio_t *, void *, size_t, Sfdisc_t *);
-typedef ssize_t(*Sfwrite_f)(Sfio_t *, const void *, size_t, Sfdisc_t *);
-typedef Sfoff_t(*Sfseek_f)(Sfio_t *, Sfoff_t, int, Sfdisc_t *);
-typedef int(*Sfexcept_f)(Sfio_t *, int, void *, Sfdisc_t *);
-typedef int(*Sfwalk_f)(Sfio_t *, void *);
+typedef ssize_t (*Sfread_f)(Sfio_t *, void *, size_t, Sfdisc_t *);
+typedef ssize_t (*Sfwrite_f)(Sfio_t *, const void *, size_t, Sfdisc_t *);
+typedef Sfoff_t (*Sfseek_f)(Sfio_t *, Sfoff_t, int, Sfdisc_t *);
+typedef int (*Sfexcept_f)(Sfio_t *, int, void *, Sfdisc_t *);
+typedef int (*Sfwalk_f)(Sfio_t *, void *);
 
 /* discipline structure */
 struct _sfdisc_s {
@@ -63,8 +63,8 @@ struct _sfdisc_s {
 
 /* formatting environment */
 typedef struct _sffmt_s Sffmt_t;
-typedef int(*Sffmtext_f)(Sfio_t *, void *, Sffmt_t *);
-typedef int(*Sffmtevent_f)(Sfio_t *, int, void *, Sffmt_t *);
+typedef int (*Sffmtext_f)(Sfio_t *, void *, Sffmt_t *);
+typedef int (*Sffmtevent_f)(Sfio_t *, int, void *, Sffmt_t *);
 struct _sffmt_s {
     long version;        /* version of this structure		*/
     Sffmtext_f extf;     /* function to process arguments	*/

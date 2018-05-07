@@ -1842,8 +1842,8 @@ void regfree(regex_t *p) {
 #define regnexec _ast_regnexec
 #endif
 
-int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch,
-                    oldregmatch_t *oldmatch, regflags_t flags) {
+int regnexec(const regex_t *p, const char *s, size_t len, size_t nmatch, oldregmatch_t *oldmatch,
+             regflags_t flags) {
     if (oldmatch) {
         regmatch_t *match;
         ssize_t i;

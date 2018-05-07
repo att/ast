@@ -6,5 +6,5 @@ unsigned long plugin_version(void) { return 20131127; }
 int b_sample(int argc, char *argv[]) {
     printf("This is a sample builtin");
     fflush(stdout);
-    return 0; 
+    return 0;
 }

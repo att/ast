@@ -19,8 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
 #include <locale.h>
+#include "sftest.h"
 
 tmain() {
     char buf[128], cmp[128];

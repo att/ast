@@ -525,7 +525,7 @@ again:
                         }
                     } else if (n >= histinit)
 #endif
-                        hp->histcmds[n] = count;
+                    hp->histcmds[n] = count;
                     first = cp;
                 }
                 switch (*((unsigned char *)(cp++))) {

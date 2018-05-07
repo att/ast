@@ -395,8 +395,7 @@ static void *dbresize(Vmalloc_t *vm, void *addr, size_t size, int type, int loca
     /* do the resize */
     sz = ROUND(size, MEM_ALIGN) + DB_EXTRA;
     sz = sz >= sizeof(Body_t) ? sz : sizeof(Body_t);
-    data =
-        (Vmuchar_t *)KPVRESIZE(vm, (void *)data, sz, (type & ~VM_RSZERO), (*(Vmbest->resizef)));
+    data = (Vmuchar_t *)KPVRESIZE(vm, (void *)data, sz, (type & ~VM_RSZERO), (*(Vmbest->resizef)));
     if (!data) /* failed, reset data for old block */
     {
         dbwarn(vm, NULL, DB_ALLOC, file, line, func, DB_RESIZE);

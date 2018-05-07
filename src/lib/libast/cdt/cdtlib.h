@@ -74,7 +74,7 @@ typedef struct _dtlib_s {
 
 #if _BLD_cdt
 
-#define CDTLIB(m) Dtmethod_t * m = &_##m;
+#define CDTLIB(m) Dtmethod_t *m = &_##m;
 
 #else
 

@@ -1,23 +1,23 @@
 /***********************************************************************
-*                                                                      *
-*               This software is part of the ast package               *
-*          Copyright (c) 1992-2012 AT&T Intellectual Property          *
-*                      and is licensed under the                       *
-*                 Eclipse Public License, Version 1.0                  *
-*                    by AT&T Intellectual Property                     *
-*                                                                      *
-*                A copy of the License is available at                 *
-*          http://www.eclipse.org/org/documents/epl-v10.html           *
-*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
-*                                                                      *
-*              Information and Software Systems Research               *
-*                            AT&T Research                             *
-*                           Florham Park NJ                            *
-*                                                                      *
-*                 Glenn Fowler <gsf@research.att.com>                  *
-*                  David Korn <dgk@research.att.com>                   *
-*                                                                      *
-***********************************************************************/
+ *                                                                      *
+ *               This software is part of the ast package               *
+ *          Copyright (c) 1992-2012 AT&T Intellectual Property          *
+ *                      and is licensed under the                       *
+ *                 Eclipse Public License, Version 1.0                  *
+ *                    by AT&T Intellectual Property                     *
+ *                                                                      *
+ *                A copy of the License is available at                 *
+ *          http://www.eclipse.org/org/documents/epl-v10.html           *
+ *         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
+ *                                                                      *
+ *              Information and Software Systems Research               *
+ *                            AT&T Research                             *
+ *                           Florham Park NJ                            *
+ *                                                                      *
+ *                 Glenn Fowler <gsf@research.att.com>                  *
+ *                  David Korn <dgk@research.att.com>                   *
+ *                                                                      *
+ ***********************************************************************/
 /*
  * David Korn
  * AT&T Bell Laboratories
@@ -128,8 +128,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
     register char *cp = str;
     Cut_t *cut;
     cut = (Cut_t *)stakalloc(sizeof(Cut_t) + strlen(cp) * sizeof(int));
-    if (!cut)
-        error(ERROR_exit(1), "out of space");
+    if (!cut) error(ERROR_exit(1), "out of space");
     cut->mb = mbwide();
     if (cut->mb) {
         memset(cut->space, 0, sizeof(cut->space) / 2);
@@ -149,7 +148,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
     cut->nlflag = (mode & C_NONEWLINE) != 0;
     cut->reclen = reclen;
     lp = cut->list;
-    for (;;) { 
+    for (;;) {
         switch (c = *cp++) {
             case ' ':
             case '\t':

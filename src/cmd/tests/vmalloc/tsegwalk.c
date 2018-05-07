@@ -33,8 +33,7 @@ static Vmuchar_t *Buf, *Endbuf, *Avail;
 static int Count = 0;
 static int Walk = 0;
 
-static void *memory(Vmalloc_t *vm, void *caddr, size_t oldsize, size_t newsize,
-                      Vmdisc_t *disc) {
+static void *memory(Vmalloc_t *vm, void *caddr, size_t oldsize, size_t newsize, Vmdisc_t *disc) {
     if (!Avail) {
         Avail = Buf = (Vmuchar_t *)(&Algn[0]);
         Endbuf = Buf + sizeof(Algn);

@@ -357,8 +357,7 @@ again:
                 if (!(t = sfstruse(scan->tmp))) return 0;
                 // fts_open() expects it's first argument to be NULL terminated
                 char *argv[2] = {t, NULL};
-                if ((scan->fts = fts_open(argv, FTS_LOGICAL,
-                                          vercmp)) &&
+                if ((scan->fts = fts_open(argv, FTS_LOGICAL, vercmp)) &&
                     (scan->ent = fts_read(scan->fts)) &&
                     (scan->ent = fts_children(scan->fts, FTS_NOSTAT)))
                     break;

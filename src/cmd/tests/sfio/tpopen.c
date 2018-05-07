@@ -25,7 +25,7 @@ tmain() {
     Sfio_t *f;
     char *s, *endos, *os = "one\ntwo\nthree\n";
     int n;
-    void(*handler) (int);
+    void (*handler)(int);
 
     if (argc > 1) {
         sfmove(sfstdin, sfstdout, (Sfoff_t)(-1), -1);

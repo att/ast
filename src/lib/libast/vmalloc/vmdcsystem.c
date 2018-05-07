@@ -41,8 +41,8 @@ typedef struct Memdisc_s {
 #define STR(x) #x
 #define XTR(x) STR(x)
 
-#define RESTARTMEM(a, f)                   \
-    do {                                   \
+#define RESTARTMEM(a, f)                 \
+    do {                                 \
         a = (void *)f;                   \
         if (a == (void *)(-1)) a = NULL; \
     } while (a == NULL && errno == EINTR)
@@ -185,8 +185,7 @@ bad:
 /*
 ** concurrency-safe memory allocation via mmap-anonymous providing an emulation of sbrk()
 */
-static void *safebrkmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize,
-                          Vmdisc_t *disc) {
+static void *safebrkmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     Vmuchar_t *newm;
     unsigned int key;
 
@@ -245,8 +244,7 @@ static void *safebrkmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize,
 #endif /* _mem_mmap_anon */
 
 #if _mem_mmap_anon /* getting space via mmap(MAP_ANON) */
-static void *mmapanonmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize,
-                           Vmdisc_t *disc) {
+static void *mmapanonmem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
     GETMEMCHK(vm, caddr, csize, nsize, disc);
     if (csize == 0) {
         nsize = ROUND(nsize, _Vmpagesize);

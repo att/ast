@@ -55,7 +55,7 @@
  *	 make sure future usage follows suit
  */
 
-typedef void(*Sighandler_f)(int);
+typedef void (*Sighandler_f)(int);
 
 static volatile int peek;
 static sigjmp_buf jmp;
@@ -195,9 +195,9 @@ int _vmboundaries(void) {
 #if _mem_mmap_anon /* see if we can simulate sbrk(): memory grows from low to high */
     /* map two consecutive pages to see if they come out adjacent */
     tmp = (void *)mmap((void *)(min + z), _Vmpagesize, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANON, -1, 0);
+                       MAP_PRIVATE | MAP_ANON, -1, 0);
     shm = (void *)mmap((void *)(tmp + _Vmpagesize), _Vmpagesize, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANON, -1, 0);
+                       MAP_PRIVATE | MAP_ANON, -1, 0);
     if (tmp && tmp != (Vmuchar_t *)(-1)) munmap((void *)tmp, _Vmpagesize);
     if (shm && shm != (Vmuchar_t *)(-1)) munmap((void *)shm, _Vmpagesize);
 

@@ -267,16 +267,16 @@
 #if vt_threaded
 
 #define SFMTXdecl(ff, _mf_) Sfio_t *_mf_ = (ff)
-#define SFMTXbegin(ff, _mf_, rv)                                      \
-    {                                                                 \
-        if ((ff)->_flags & SF_MTSAFE) {                               \
-            (_mf_) = (ff);                                            \
-            if (sfmutex((ff), SFMTX_LOCK) != 0) return (rv);          \
-            if (_Sfnotify) {                                          \
+#define SFMTXbegin(ff, _mf_, rv)                                    \
+    {                                                               \
+        if ((ff)->_flags & SF_MTSAFE) {                             \
+            (_mf_) = (ff);                                          \
+            if (sfmutex((ff), SFMTX_LOCK) != 0) return (rv);        \
+            if (_Sfnotify) {                                        \
                 (*_Sfnotify)((_mf_), SF_MTACCESS, (void *)(&(ff))); \
-                if (!(ff)) (ff) = (_mf_);                             \
-            }                                                         \
-        }                                                             \
+                if (!(ff)) (ff) = (_mf_);                           \
+            }                                                       \
+        }                                                           \
     }
 #define SFMTXend(ff, _mf_)                                          \
     {                                                               \
@@ -692,7 +692,7 @@ struct _fmtpos_s {
 /* _Sftest SF_TEST_* bitmasks -- 0x0001..0x0080 are unnamed */
 
 /* local variables used across sf-functions */
-typedef void(*Sfnotify_f)(Sfio_t *, int, void *);
+typedef void (*Sfnotify_f)(Sfio_t *, int, void *);
 #define _Sfpage (_Sfextern.sf_page)
 #define _Sfpool (_Sfextern.sf_pool)
 #define _Sfpmove (_Sfextern.sf_pmove)
@@ -711,16 +711,16 @@ typedef void(*Sfnotify_f)(Sfio_t *, int, void *);
 typedef struct _sfextern_s {
     ssize_t sf_page;
     struct _sfpool_s sf_pool;
-    int(*sf_pmove)(Sfio_t *, int);
+    int (*sf_pmove)(Sfio_t *, int);
     Sfio_t *(*sf_stack)(Sfio_t *, Sfio_t *);
-    void(*sf_notify)(Sfio_t *, int, void *);
-    int(*sf_stdsync)(Sfio_t *);
+    void (*sf_notify)(Sfio_t *, int, void *);
+    int (*sf_stdsync)(Sfio_t *);
     struct _sfdisc_s sf_udisc;
-    void(*sf_cleanup)(void);
+    void (*sf_cleanup)(void);
     int sf_exiting;
     int sf_done;
     Vtonce_t *sf_once;
-    void(*sf_oncef)(void);
+    void (*sf_oncef)(void);
     Vtmutex_t *sf_mutex;
     size_t sf_maxm;
     unsigned long sf_test;
@@ -1091,48 +1091,48 @@ typedef struct _sftab_ {
 #endif /*_PACKAGE_ast*/
 
 /* note that MEMCPY advances the associated pointers */
-#define MEMCPY(to, fr, n)                          \
-    switch (n) {                                   \
-        default:                                   \
+#define MEMCPY(to, fr, n)                      \
+    switch (n) {                               \
+        default:                               \
             memcpy((void *)to, (void *)fr, n); \
-            to += n;                               \
-            fr += n;                               \
-            break;                                 \
-        case 7:                                    \
-            *to++ = *fr++;                         \
-        case 6:                                    \
-            *to++ = *fr++;                         \
-        case 5:                                    \
-            *to++ = *fr++;                         \
-        case 4:                                    \
-            *to++ = *fr++;                         \
-        case 3:                                    \
-            *to++ = *fr++;                         \
-        case 2:                                    \
-            *to++ = *fr++;                         \
-        case 1:                                    \
-            *to++ = *fr++;                         \
+            to += n;                           \
+            fr += n;                           \
+            break;                             \
+        case 7:                                \
+            *to++ = *fr++;                     \
+        case 6:                                \
+            *to++ = *fr++;                     \
+        case 5:                                \
+            *to++ = *fr++;                     \
+        case 4:                                \
+            *to++ = *fr++;                     \
+        case 3:                                \
+            *to++ = *fr++;                     \
+        case 2:                                \
+            *to++ = *fr++;                     \
+        case 1:                                \
+            *to++ = *fr++;                     \
     }
-#define MEMSET(s, c, n)                     \
-    switch (n) {                            \
-        default:                            \
+#define MEMSET(s, c, n)                   \
+    switch (n) {                          \
+        default:                          \
             memset((void *)s, (int)c, n); \
-            s += n;                         \
-            break;                          \
-        case 7:                             \
-            *s++ = c;                       \
-        case 6:                             \
-            *s++ = c;                       \
-        case 5:                             \
-            *s++ = c;                       \
-        case 4:                             \
-            *s++ = c;                       \
-        case 3:                             \
-            *s++ = c;                       \
-        case 2:                             \
-            *s++ = c;                       \
-        case 1:                             \
-            *s++ = c;                       \
+            s += n;                       \
+            break;                        \
+        case 7:                           \
+            *s++ = c;                     \
+        case 6:                           \
+            *s++ = c;                     \
+        case 5:                           \
+            *s++ = c;                     \
+        case 4:                           \
+            *s++ = c;                     \
+        case 3:                           \
+            *s++ = c;                     \
+        case 2:                           \
+            *s++ = c;                     \
+        case 1:                           \
+            *s++ = c;                     \
     }
 
 extern Sftab_t _Sftable;
@@ -1175,7 +1175,7 @@ extern void bzero(void *, size_t);
 extern time_t time(time_t *);
 extern int waitpid(int, int *, int);
 extern void _exit(int);
-typedef int(*Onexit_f)(void);
+typedef int (*Onexit_f)(void);
 extern Onexit_f onexit(Onexit_f);
 
 extern int poll(struct pollfd *, ulong, int);

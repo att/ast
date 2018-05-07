@@ -85,8 +85,7 @@ int dtcustomize(Dt_t *dt, int type, int action) {
     }
 
     if ((type & DT_ANNOUNCE) &&
-        (!dt->meth->eventf ||
-         (*dt->meth->eventf)(dt, DT_ANNOUNCE, (void *)((long)action)) >= 0)) {
+        (!dt->meth->eventf || (*dt->meth->eventf)(dt, DT_ANNOUNCE, (void *)((long)action)) >= 0)) {
         if (action <= 0)
             dt->data->type &= ~DT_ANNOUNCE;
         else

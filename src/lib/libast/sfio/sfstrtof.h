@@ -119,7 +119,7 @@
 
 #if S2F_scan
 
-typedef int(*S2F_get_f)(void *, int);
+typedef int (*S2F_get_f)(void *, int);
 
 #define ERR(e)
 #define GET(p) (*get)(p, 0)
@@ -164,7 +164,7 @@ static
     S2F_function(void *s, S2F_get_f get)
 #else
 #if S2F_size
-    S2F_function(const char *str, size_t size, char **end)
+S2F_function(const char *str, size_t size, char **end)
 #else
 S2F_function(const char *str, char **end)
 #endif

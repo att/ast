@@ -31,9 +31,9 @@
 #define N_FREE (256)      /* #frees <= #allocs	*/
 
 typedef struct _piece_s {
-    void *addr; /* allocated address	*/
-    size_t size;  /* size to be allocated	*/
-    int free;     /* 1: to be freed	*/
+    void *addr;  /* allocated address	*/
+    size_t size; /* size to be allocated	*/
+    int free;    /* 1: to be freed	*/
 } Piece_t;
 Piece_t Piece[N_ALLOC];
 

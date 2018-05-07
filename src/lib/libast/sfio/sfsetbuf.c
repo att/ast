@@ -30,13 +30,13 @@ __STDPP__directive pragma pp : hide getpagesize
 #include "sfhdr.h"
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp
-    : nohide getpagesize
+                                   __STDPP__directive pragma pp : nohide getpagesize
 #else
 #undef getpagesize
 #endif
 
-extern int getpagesize(void);
+                                                                  extern int
+                                                                  getpagesize(void);
 
 /*	Set a (new) buffer for a stream.
 **	If size < 0, it is assigned a suitable value depending on the

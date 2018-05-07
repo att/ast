@@ -70,7 +70,7 @@
 
 typedef struct _mmvm_s {
     unsigned int magic; /* magic bytes		*/
-    void *base;       /* address to map to	*/
+    void *base;         /* address to map to	*/
     ssize_t size;       /* total data size	*/
     ssize_t busy;       /* amount in use	*/
     key_t shmkey;       /* shared segment's key	*/
@@ -149,7 +149,7 @@ static Mmvm_t *mmfix(Mmvm_t *mmvm, Mmdisc_t *mmdc, int fd) {
     ssize_t size = mmvm->size;
 
     if (base != (void *)mmvm) /* mmvm is not right yet */
-    {                           /**/
+    {                         /**/
         DEBUG_ASSERT(!base || (base && (VMLONG(base) % _Vmpagesize) == 0));
         if (mmdc->proj < 0) {
             munmap((void *)mmvm, size);

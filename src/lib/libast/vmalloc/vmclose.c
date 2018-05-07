@@ -59,7 +59,7 @@ int vmclose(Vmalloc_t *vm) {
     }
 
     if (disc->exceptf) /* the 3rd argument tells if vm might have been destroyed */
-        (void)(*disc->exceptf)(vm, VM_ENDCLOSE, VMCAST(void *, mode & VM_MEMORYF), disc);
+        (void)(*disc->exceptf)(vm, VM_ENDCLOSE, VMCAST(void *, mode &VM_MEMORYF), disc);
 
     if (!(mode & VM_MEMORYF)) vmfree(Vmheap, vm);
 

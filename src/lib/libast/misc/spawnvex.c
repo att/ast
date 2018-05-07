@@ -139,7 +139,8 @@ static pid_t spawn(const char *path, int nmap, const int map[], const struct inh
                     break;
                 }
             if (m) {
-                while (waitpid(pid, &n, 0) && errno == EINTR);
+                while (waitpid(pid, &n, 0) && errno == EINTR)
+                    ;
                 pid = -1;
                 n = m;
             }
@@ -212,7 +213,8 @@ static pid_t spawnve(int mode, const char *path, char *const argv[], char *const
                     break;
                 }
             if (m) {
-                while (waitpid(pid, &n, 0) && errno == EINTR);
+                while (waitpid(pid, &n, 0) && errno == EINTR)
+                    ;
                 pid = -1;
                 n = m;
             }

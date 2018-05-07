@@ -548,14 +548,12 @@ again:
                         } else
 #endif
                             if ((t - 5) >= r) {
-                                for (t -= 5; t > r && *(t - 1) != '/'; t--) {
-                                    ;  // empty loop
-                                }
+                            for (t -= 5; t > r && *(t - 1) != '/'; t--) {
+                                ;  // empty loop
                             }
-                        else if ((t - 4) == r) {
+                        } else if ((t - 4) == r) {
                             t = r + 1;
-                        }
-                        else
+                        } else
                             r = t;
                         break;
                     case 3:

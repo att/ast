@@ -42,11 +42,9 @@ tmain() {
         terror("dtuserdata() should have returned NULL");
     if (dt->user->data != (void *)11) terror("user->data should be 11");
 
-    if (dtuserdata(dt, (void *)0, 0) != (void *)11)
-        terror("dtuserdata() should have returned 11");
+    if (dtuserdata(dt, (void *)0, 0) != (void *)11) terror("dtuserdata() should have returned 11");
 
-    if (dtuserdata(dt, (void *)22, 1) != (void *)11)
-        terror("dtuserdata() should have returned 11");
+    if (dtuserdata(dt, (void *)22, 1) != (void *)11) terror("dtuserdata() should have returned 11");
     if (dt->user->data != (void *)22) terror("user->data should be 22");
 
     texit(0);

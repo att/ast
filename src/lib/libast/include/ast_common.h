@@ -21,8 +21,8 @@
 #if _hdr_stddef
 #include <stddef.h>
 #endif
-#include <sys/types.h>
 #include <stdint.h>
+#include <sys/types.h>
 #endif
 
 #endif

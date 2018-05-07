@@ -51,10 +51,10 @@
 
 #define EXIT_BITS 8 /* # exit status bits	*/
 
-#define EXIT_USAGE 2            /* usage exit code	*/
-#define EXIT_QUIT 255           /* parent should quit	*/
-#define EXIT_NOTFOUND 127       /* command not found	*/
-#define EXIT_NOEXEC 126         /* other exec error	*/
+#define EXIT_USAGE 2      /* usage exit code	*/
+#define EXIT_QUIT 255     /* parent should quit	*/
+#define EXIT_NOTFOUND 127 /* command not found	*/
+#define EXIT_NOEXEC 126   /* other exec error	*/
 
 #define EXIT_CODE(x) ((x) & ((1 << EXIT_BITS) - 1))
 #define EXIT_CORE(x) (EXIT_CODE(x) | (1 << EXIT_BITS) | (1 << (EXIT_BITS - 1)))

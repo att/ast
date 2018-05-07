@@ -67,17 +67,17 @@ typedef struct _dt_s Dt_t;
 typedef struct _dtstat_s Dtstat_t;
 typedef void *(*Dtsearch_f)(Dt_t *, void *, int);
 typedef void *(*Dtmake_f)(Dt_t *, void *, Dtdisc_t *);
-typedef void(*Dtfree_f) (Dt_t *, void *, Dtdisc_t *);
-typedef int(*Dtcompar_f)(Dt_t *, void *, void *, Dtdisc_t *);
-typedef unsigned int(*Dthash_f)(Dt_t *, void *, Dtdisc_t *);
+typedef void (*Dtfree_f)(Dt_t *, void *, Dtdisc_t *);
+typedef int (*Dtcompar_f)(Dt_t *, void *, void *, Dtdisc_t *);
+typedef unsigned int (*Dthash_f)(Dt_t *, void *, Dtdisc_t *);
 typedef void *(*Dtmemory_f)(Dt_t *, void *, size_t, Dtdisc_t *);
-typedef int(*Dtevent_f)(Dt_t *, int, void *, Dtdisc_t *);
-typedef int(*Dttype_f)(Dt_t *, int);
+typedef int (*Dtevent_f)(Dt_t *, int, void *, Dtdisc_t *);
+typedef int (*Dttype_f)(Dt_t *, int);
 
 struct _dtuser_s /* for application to access and use */
 {
     unsigned int lock; /* used by dtapplock	*/
-    void *data;      /* for whatever data	*/
+    void *data;        /* for whatever data	*/
 };
 
 struct _dtlink_s {
@@ -102,14 +102,14 @@ struct _dtlink_s {
 /* private structure to hold an object */
 struct _dthold_s {
     Dtlink_t hdr; /* header to hold obj	*/
-    void *obj;  /* application object	*/
+    void *obj;    /* application object	*/
 };
 
 /* method to manipulate dictionary structure */
 struct _dtmethod_s {
     Dtsearch_f searchf; /* search function	*/
     unsigned int type;  /* type of operation	*/
-    int(*eventf)(Dt_t *, int, void *);
+    int (*eventf)(Dt_t *, int, void *);
     char *name;        /* name of method	*/
     char *description; /* description */
 };
@@ -262,7 +262,7 @@ extern Dtmethod_t *Dtrhbag;
 extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 extern int dtclose(Dt_t *);
 extern Dt_t *dtview(Dt_t *, Dt_t *);
-extern Dtdisc_t *dtdisc(Dt_t * dt, Dtdisc_t *, int);
+extern Dtdisc_t *dtdisc(Dt_t *dt, Dtdisc_t *, int);
 extern Dtmethod_t *dtmethod(Dt_t *, Dtmethod_t *);
 extern int dtwalk(Dt_t *, int (*)(Dt_t *, void *, void *), void *);
 extern int dtcustomize(Dt_t *, int, int);
@@ -293,8 +293,8 @@ extern void *dllmeth(const char *, const char *, unsigned long);
 #define _DTK(dc, o) ((char *)(o) + (dc)->key) /* get key from object */
 #define _DTKEY(dc, o) (void *)((dc)->size >= 0 ? _DTK(dc, o) : *((char **)_DTK(dc, o)))
 
-#define _DTCMP(dt, k1, k2, dc)                                                           \
-    ((dc)->comparf ? (*(dc)->comparf)((dt), (k1), (k2), (dc))                            \
+#define _DTCMP(dt, k1, k2, dc)                                                       \
+    ((dc)->comparf ? (*(dc)->comparf)((dt), (k1), (k2), (dc))                        \
                    : (dc)->size > 0 ? memcmp((void *)(k1), ((void *)k2), (dc)->size) \
                                     : strcmp((char *)(k1), ((char *)k2)))
 

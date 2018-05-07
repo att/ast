@@ -213,7 +213,7 @@ static void *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 
 /* this constitutes the core of dtfirst() and dtlast() */
 static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
-                      int type) {
+                    int type) {
     ssize_t tblz;
     void *obj;
     Dtlink_t *t, *p;
@@ -254,7 +254,7 @@ static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t po
 
 /* this constitutes the core of dtnext() and dtprev() */
 static void *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
-                     int type) {
+                   int type) {
     Dtlink_t *t;
     void *obj;
 
@@ -277,7 +277,7 @@ static void *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos
 
 /* construct a flat list of objects */
 static void *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
-                        int zap) {
+                      int zap) {
     ssize_t tblz, p;
     Dtlink_t *t, **lnkp;
     Hash_t *hash = (Hash_t *)dt->data;

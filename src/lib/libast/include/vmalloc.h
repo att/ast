@@ -41,8 +41,8 @@ typedef struct Vmdisc_s Vmdisc_t;
 typedef struct Vmethod_s Vmethod_t;
 typedef struct Vmdata_s Vmdata_t;
 typedef void *(*Vmemory_f)(Vmalloc_t *, void *, size_t, size_t, Vmdisc_t *);
-typedef int(*Vmexcept_f)(Vmalloc_t *, int, void *, Vmdisc_t *);
-typedef int(*Vmseg_f)(Vmalloc_t *, void *, size_t, Vmdisc_t *, void *);
+typedef int (*Vmexcept_f)(Vmalloc_t *, int, void *, Vmdisc_t *);
+typedef int (*Vmseg_f)(Vmalloc_t *, void *, size_t, Vmdisc_t *, void *);
 
 struct Vmstat_s {
     size_t n_busy;   /* number of busy blocks	*/
@@ -68,10 +68,10 @@ struct Vmdisc_s {
 struct Vmethod_s {
     void *(*allocf)(Vmalloc_t *, size_t, int);
     void *(*resizef)(Vmalloc_t *, void *, size_t, int, int);
-    int(*freef)(Vmalloc_t *, void *, int);
-    int(*nopf)(Vmalloc_t *, void *, int); /* was addrf -- binary compatibility filler */
-    int(*statf)(Vmalloc_t *, Vmstat_t *, int); /* was sizef */
-    int(*eventf)(Vmalloc_t *, int, void *);  /* was compactf */
+    int (*freef)(Vmalloc_t *, void *, int);
+    int (*nopf)(Vmalloc_t *, void *, int);      /* was addrf -- binary compatibility filler */
+    int (*statf)(Vmalloc_t *, Vmstat_t *, int); /* was sizef */
+    int (*eventf)(Vmalloc_t *, int, void *);    /* was compactf */
     void *(*alignf)(Vmalloc_t *, size_t, size_t, int);
     unsigned int meth;
 };
@@ -119,10 +119,10 @@ struct Vmalloc_s {
 #define VM_CHECKARENA 101 /* checking arena integrity	*/
 #define VM_BLOCKHEAD 102  /* get size of extra head	*/
 
-extern Vmethod_t *Vmbest; /* best allocation		*/
-extern Vmethod_t *Vmlast;     /* last-block allocation	*/
-extern Vmethod_t *Vmpool;     /* pool allocation		*/
-extern Vmethod_t *Vmdebug;    /* allocation with debugging	*/
+extern Vmethod_t *Vmbest;  /* best allocation		*/
+extern Vmethod_t *Vmlast;  /* last-block allocation	*/
+extern Vmethod_t *Vmpool;  /* pool allocation		*/
+extern Vmethod_t *Vmdebug; /* allocation with debugging	*/
 
 extern Vmdisc_t *Vmdcsystem; /* get memory from the OS	*/
 extern Vmdisc_t *Vmdcheap;   /* get memory from Vmheap	*/

@@ -60,7 +60,7 @@ extern int alarm(int);
 extern int sleep(int);
 extern int fork();
 extern int access(const char *, int);
-extern int write (int, const void *, int);
+extern int write(int, const void *, int);
 extern int unlink(const char *);
 extern void *sbrk(int);
 extern int getpid();

@@ -838,7 +838,8 @@ _ast_iconv_t _ast_iconv_open(const char *t, const char *f) {
      * 8 bit maps are the easiest
      */
 
-    if (fc >= 0 && tc >= 0) cc->from.map = ccmap(fc, tc);
+    if (fc >= 0 && tc >= 0)
+        cc->from.map = ccmap(fc, tc);
     else if ((cc->cvt = iconv_open(t, f)) != (iconv_t)(-1) ||
              (cc->cvt = iconv_open(to, fr)) != (iconv_t)(-1))
         cc->from.fun = (_ast_iconv_f)iconv;

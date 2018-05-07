@@ -25,7 +25,7 @@
 
 typedef struct _obj_s Obj_t;
 struct _obj_s {
-    void *obj; /* allocated object	*/
+    void *obj;   /* allocated object	*/
     size_t size; /* its allocated size	*/
     Obj_t *next; /* linked list pointer 	*/
 };
