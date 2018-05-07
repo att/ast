@@ -24,7 +24,7 @@
 
 #include <ast.h>
 
-main() {
+int main() {
     register int i;
     int testno;
     int errors;
