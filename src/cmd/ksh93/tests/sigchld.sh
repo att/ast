@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-float DELAY=${1:-0.2}
+float DELAY=0.2
 integer FOREGROUND=10 BACKGROUND=2
 
 s=$($SHELL -c '
