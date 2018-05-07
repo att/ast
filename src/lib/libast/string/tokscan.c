@@ -61,6 +61,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+
 #include <ast.h>
 #include <ctype.h>
 #include <tok.h>
@@ -221,11 +223,11 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
                         {
                             va_list np;
 
-                            np = va_listval(va_arg(ap, va_listarg));
+                            np = *va_arg(ap, va_list *);
                             va_copy(ap, np);
                         }
 #else
-                        va_copy(ap, va_listval(va_arg(ap, va_listarg)));
+                        va_copy(ap, *va_arg(ap, va_list *));
 #endif
                         continue;
                     case 'c':

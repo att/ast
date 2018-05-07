@@ -17,16 +17,6 @@
 
 #include <stdbool.h>
 
-#ifndef va_listref
-#ifndef va_start
-#include <stdarg.h>
-#endif
-
-#define va_listref(p) (&(p)) /* pass va_list to varargs function */
-#define va_listval(p) (*(p)) /* retrieve va_list from va_arg(ap,va_listarg) */
-#define va_listarg va_list * /* va_arg() va_list type */
-#endif
-
 #ifndef _AST_STD_H
 #if _hdr_stddef
 #include <stddef.h>

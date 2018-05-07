@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+
 #include "hashlib.h"
 
 Hash_info_t hash_info = {0};
@@ -138,11 +140,11 @@ Hash_table_t *hashalloc(Hash_table_t *ref, ...) {
                 {
                     va_list np;
 
-                    np = va_listval(va_arg(ap, va_listarg));
+                    np = *va_arg(ap, va_list *);
                     va_copy(ap, np);
                 }
 #else
-                va_copy(ap, va_listval(va_arg(ap, va_listarg)));
+                va_copy(ap, *va_arg(ap, va_list *));
 #endif
                 break;
             case 0:
