@@ -74,9 +74,6 @@ extern void sh_iorestore(Shell_t *, int, int);
 extern void sh_vexrestore(Shell_t *, int);
 extern void sh_vexsave(Shell_t *, int, int, Spawnvex_f, void *);
 #endif
-#if defined(__EXPORT__) && defined(_BLD_DLL) && defined(_BLD_shell)
-__EXPORT__
-#endif
 extern Sfio_t *sh_iostream(Shell_t *, int, int);
 extern int sh_redirect(Shell_t *, struct ionod *, int);
 extern void sh_iosave(Shell_t *, int, int, char *);

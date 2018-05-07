@@ -20,11 +20,7 @@
 #ifndef _ENV_H
 #define _ENV_H 1
 
-#ifdef _BLD_env
-#ifdef __EXPORT__
-#define export __EXPORT__
-#endif
-#else
+#ifndef _BLD_env
 typedef void *Env_t;
 #endif
 

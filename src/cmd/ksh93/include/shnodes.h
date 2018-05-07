@@ -195,9 +195,6 @@ union Shnode_u {
 extern void sh_freeup(Shell_t *);
 extern void sh_funstaks(struct slnod *, int);
 extern Sfio_t *sh_subshell(Shell_t *, Shnode_t *, volatile int, int);
-#if defined(__EXPORT__) && defined(_BLD_DLL) && defined(_BLD_shell)
-__EXPORT__
-#endif
 extern int sh_tdump(Sfio_t *, const Shnode_t *);
 extern Shnode_t *sh_trestore(Shell_t *, Sfio_t *);
 

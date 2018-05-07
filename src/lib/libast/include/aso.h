@@ -42,15 +42,6 @@
 #define asospininit() (_asor = 1 << 17)
 #define asospinnext() (asorelax(_asor <<= 1), _asor >= (1 << 21) ? (asoyield(), asospininit()) : 0)
 
-#if _BLD_aso && defined(__EXPORT__)
-#undef __MANGLE__
-#define __MANGLE__ __LINKAGE__ __EXPORT__
-#endif
-#endif
-
-#undef __MANGLE__
-#define __MANGLE__ __LINKAGE__
-
 extern unsigned int asoactivecpu(void);
 extern int asolock(unsigned int volatile *, unsigned int, int);
 extern int asorelax(long);
@@ -163,6 +154,8 @@ extern unsigned int asothreadid(void);
 #define asodecoff(p) asodec64((uint64_t volatile *)p)
 #define asominoff(p, n) asomin64((uint64_t volatile *)p, n)
 #define asomaxoff(p, n) asomax64((uint64_t volatile *)p, n)
+#endif
+
 #endif
 
 #endif

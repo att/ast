@@ -25,11 +25,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _WIN32
-#undef _BLD_DLL
-#define _BLD_DLL 1
-#endif
-
 #include "colib.h"
 
 #include <ctype.h>

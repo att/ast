@@ -26,16 +26,4 @@
 
 #include <ast.h>
 
-#if _dll_data_intercept && (_DLL_BLD || _BLD_DLL)
-
-void _ast_init(void) {
-    struct _astdll *ap = _ast_getdll();
-
-    ap->_dll_environ = &environ;
-}
-
-#else
-
 NoN(aststatic)
-
-#endif

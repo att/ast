@@ -35,10 +35,6 @@
 
 #define ERROR_VERSION 20070319L
 
-#if !defined(errno) && defined(__DYNAMIC__)
-#define errno __DYNAMIC__(errno)
-#endif
-
 #define ERROR_debug(n) (-(n))
 #define ERROR_exit(n) ((n) + ERROR_ERROR)
 #define ERROR_system(n) (((n) + ERROR_ERROR) | ERROR_SYSTEM)

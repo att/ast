@@ -7,23 +7,6 @@
 #define _WINIX 1
 #endif
 
-/* dynamic linked library external scope handling */
-#ifdef __DYNAMIC__
-#undef __DYNAMIC__
-#ifndef _DLL
-#define _DLL 1
-#endif
-#endif
-#if _dll_import
-#if _BLD_STATIC && !_BLD_DLL
-#undef _DLL
-#else
-#if !defined(_DLL)
-#define _DLL 1
-#endif
-#endif
-#endif
-
 #define _ast_LL 1 /* LL numeric suffix supported */
 #define _ast_int8_t long
 #define _ast_intmax_t _ast_int8_t

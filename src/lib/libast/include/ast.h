@@ -397,12 +397,7 @@ extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
 /*
  * C library global data symbols not prototyped by <unistd.h>
  */
-
-#if !defined(environ) && defined(__DYNAMIC__)
-#define environ __DYNAMIC__(environ)
-#else
 extern char **environ;
-#endif
 
 #include <ast_debug.h>
 
