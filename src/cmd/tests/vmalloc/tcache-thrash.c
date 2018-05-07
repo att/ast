@@ -28,6 +28,8 @@
 #define REPETITION 10
 #define ITERATION 10000
 
+#define N_THREADS 8
+
 #ifdef VMALLOC
 #define malloc(x) vmalloc(Vmregion, (x))
 #define free(x) vmfree(Vmregion, (x))
@@ -71,8 +73,8 @@ static void *worker(void *arg) {
 tmain() {
     int i, rv;
     void *status;
-    pthread_t thread[N_THREAD];
-    int nthreads = N_THREAD;
+    pthread_t thread[N_THREADS];
+    int nthreads = N_THREADS;
     int iteration = ITERATION;
     int objsize = OBJSIZE;
     int repetition = REPETITION;
@@ -90,8 +92,8 @@ tmain() {
             repetition = atoi(argv[1] + 2);
     }
 
-    if (nthreads <= 0 || nthreads > N_THREAD)
-        terror("nthreads=%d must be in 1..%d", nthreads, N_THREAD);
+    if (nthreads <= 0 || nthreads > N_THREADS)
+        terror("nthreads=%d must be in 1..%d", nthreads, N_THREADS);
     if (repetition < nthreads) repetition = 0;
 
     tinfo("nthreads=%d iteration=%d objsize=%d repetition=%d", nthreads, iteration, objsize,

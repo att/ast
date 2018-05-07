@@ -22,6 +22,8 @@
 #include <pthread.h>
 #include "terror.h"
 
+#define N_THREADS 8
+
 #if VMALLOC
 #include "vmalloc.h"
 #undef malloc
@@ -74,7 +76,7 @@
 #define N_EMPHE 10000 /* max #allocs for emphemeral threads	*/
 
 /* below are parameters and default values that drive the simulation */
-static size_t Nthread = N_THREAD; /* number of main threads		*/
+static size_t Nthread = N_THREADS; /* number of main threads		*/
 static size_t Nalloc = 10000;     /* total number of allocations	*/
 
 static size_t Smalllo = 10;  /* low end of size range		*/
@@ -134,7 +136,7 @@ typedef struct _thread_s {
     Piece_t *list;
 } Tdata_t;
 
-Tdata_t Tdata[N_THREAD];
+Tdata_t Tdata[N_THREADS];
 
 void *emphemeral(void *arg) /* an empheral thread, allocate a few times, free then return */
 {
@@ -265,7 +267,7 @@ tmain() {
     int i, arg1, arg2, arg3, arg4, nalloc, rv;
     size_t sz;
     void *status;
-    pthread_t th[N_THREAD];
+    pthread_t th[N_THREADS];
 
     for (; argc > 1; --argc, ++argv) {
         if (argv[1][0] != '-')
@@ -295,8 +297,8 @@ tmain() {
         }
     }
 
-    if (Nthread <= 0 || Nthread > N_THREAD)
-        terror("Nthread=%d must be in 1..%d", Nthread, N_THREAD);
+    if (Nthread <= 0 || Nthread > N_THREADS)
+        terror("Nthread=%d must be in 1..%d", Nthread, N_THREADS);
 
     tresource(-1, 0);
 

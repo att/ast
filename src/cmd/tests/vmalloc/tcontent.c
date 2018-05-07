@@ -28,7 +28,9 @@
 #define CH_MALLOC 3  /* character to fill malloc space	*/
 #define CH_REALLOC 5 /* character to fill realloc space	*/
 
-static size_t Nthread = N_THREAD; /* number of main threads		*/
+#define N_THREADS 8
+
+static size_t Nthread = N_THREADS; /* number of main threads		*/
 static size_t Nalloc = 10000;     /* total number of allocations	*/
 static size_t Life = 10;          /* life before free or realloc	*/
 
@@ -74,7 +76,7 @@ typedef struct _thread_s {
     Piece_t *list;
 } Tdata_t;
 
-Tdata_t Tdata[N_THREAD];
+Tdata_t Tdata[N_THREADS];
 
 void *simulate(void *arg) {
     int k, p, a;
@@ -160,7 +162,7 @@ tmain() {
     int i, k, t, ch, arg1, arg2, arg3, nalloc, rv;
     size_t sz;
     void *status;
-    pthread_t th[N_THREAD];
+    pthread_t th[N_THREADS];
 
     for (; argc > 1; --argc, ++argv) {
         if (argv[1][0] != '-')
@@ -184,8 +186,8 @@ tmain() {
         }
     }
 
-    if (Nthread <= 0 || Nthread > N_THREAD)
-        terror("nthreads=%d must be in 1..%d", Nthread, N_THREAD);
+    if (Nthread <= 0 || Nthread > N_THREADS)
+        terror("nthreads=%d must be in 1..%d", Nthread, N_THREADS);
 
     tresource(-1, 0);
 

@@ -21,12 +21,15 @@
 
 #include "terror.h"
 
+#include <pthread.h>
+
 #if VMALLOC
 #include "vmhdr.h"
 #endif
 
 #define N_EMPHE 10000 /* max #allocs for emphemeral threads	*/
 
+#define N_THREADS 8
 static size_t Nalloc = 10000; /* total number of allocations		*/
 static size_t Life = 10;      /* expected life before free or realloc	*/
 
@@ -80,7 +83,7 @@ typedef struct _thread_s {
     Piece_t *list;
 } Tdata_t;
 
-Tdata_t Tdata[N_THREAD];
+Tdata_t Tdata[N_THREADS];
 
 void *emphemeral(void *arg) /* an empheral thread, allocate a few times, free then return */
 {
@@ -205,7 +208,7 @@ tmain() {
     int i, arg1, arg2, arg3, nalloc, rv;
     size_t sz;
     void *status;
-    pthread_t th[N_THREAD];
+    pthread_t th[N_THREADS];
 
     for (; argc > 1; --argc, ++argv) {
         if (argv[1][0] != '-')
@@ -233,8 +236,8 @@ tmain() {
 
     tresource(-1, 0);
 
-    nalloc = Nalloc / N_THREAD; /* #of allocations per thread */
-    Nalloc = nalloc * N_THREAD;
+    nalloc = Nalloc / N_THREADS; /* #of allocations per thread */
+    Nalloc = nalloc * N_THREADS;
 
     /* space for emphemeral threads */
     if (Empperiod > 0) {
@@ -245,7 +248,7 @@ tmain() {
         Curbusy += sz;
     }
 
-    for (i = 0; i < N_THREAD; ++i) {
+    for (i = 0; i < N_THREADS; ++i) {
         Tdata[i].nalloc = nalloc;
         sz = Tdata[i].nalloc * sizeof(Piece_t);
         if (!(Tdata[i].list = (Piece_t *)malloc(sz)))
@@ -258,15 +261,15 @@ tmain() {
     tinfo(
         "Nstep=%d Nthread=%d Small(min=%d,max=%d,life=%d) Large(min=%d,max=%d,life=%d Emp(p=%d "
         "n=%d)",
-        Nalloc, N_THREAD, Smalllo, Smallhi, Smalllf, Largelo, Largehi, Largelf, Empperiod,
+        Nalloc, N_THREADS, Smalllo, Smallhi, Smalllf, Largelo, Largehi, Largelf, Empperiod,
         Empcount);
 
-    for (i = 0; i < N_THREAD; ++i) {
+    for (i = 0; i < N_THREADS; ++i) {
         if ((rv = pthread_create(&th[i], NULL, simulate, (void *)((long)i))) != 0)
             terror("Failed to create simulation thread %d", i);
     }
 
-    for (i = 0; i < N_THREAD; ++i) {
+    for (i = 0; i < N_THREADS; ++i) {
         if ((rv = pthread_join(th[i], &status)) != 0)
             terror("Failed waiting for simulation thread %d", i);
     }
