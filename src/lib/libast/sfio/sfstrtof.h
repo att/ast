@@ -119,7 +119,7 @@
 
 #if S2F_scan
 
-typedef int(*S2F_get_f) _ARG_((void *, int));
+typedef int(*S2F_get_f)(void *, int);
 
 #define ERR(e)
 #define GET(p) (*get)(p, 0)

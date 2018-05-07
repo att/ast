@@ -55,7 +55,7 @@
  *	 make sure future usage follows suit
  */
 
-typedef void(*Sighandler_f) _ARG_((int));
+typedef void(*Sighandler_f)(int);
 
 static volatile int peek;
 static sigjmp_buf jmp;

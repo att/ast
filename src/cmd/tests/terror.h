@@ -53,24 +53,24 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-extern int sprintf _ARG_((char *, const char *, ...));
+extern int sprintf(char *, const char *, ...);
 
 #if !_hdr_unistd
-extern int alarm _ARG_((int));
-extern int sleep _ARG_((int));
+extern int alarm(int);
+extern int sleep(int);
 extern int fork();
-extern int access _ARG_((const char *, int));
-extern int write _ARG_((int, const void *, int));
-extern int unlink _ARG_((const char *));
-extern void *sbrk _ARG_((int));
+extern int access(const char *, int);
+extern int write (int, const void *, int);
+extern int unlink(const char *);
+extern void *sbrk(int);
 extern int getpid();
 extern int getpgrp();
 #endif
 
-extern void tsterror _ARG_((char *, ...));
-extern void tstinfo _ARG_((char *, ...));
-extern void tstwarn _ARG_((char *, ...));
-extern void tstsuccess _ARG_((char *, ...));
+extern void tsterror(char *, ...);
+extern void tstinfo(char *, ...);
+extern void tstwarn(char *, ...);
+extern void tstsuccess(char *, ...);
 
 static int Tstall;
 static int Tstchild;

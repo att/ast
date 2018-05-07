@@ -34,7 +34,7 @@ tmain() {
     int fd[2];
     Sfio_t *r, *w;
     char *s;
-    void(*handler) _ARG_((int));
+    void(*handler) (int);
 
 #define N_STR 10
     alarm(10);

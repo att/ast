@@ -692,7 +692,7 @@ struct _fmtpos_s {
 /* _Sftest SF_TEST_* bitmasks -- 0x0001..0x0080 are unnamed */
 
 /* local variables used across sf-functions */
-typedef void(*Sfnotify_f) _ARG_((Sfio_t *, int, void *));
+typedef void(*Sfnotify_f)(Sfio_t *, int, void *);
 #define _Sfpage (_Sfextern.sf_page)
 #define _Sfpool (_Sfextern.sf_pool)
 #define _Sfpmove (_Sfextern.sf_pmove)
@@ -711,16 +711,16 @@ typedef void(*Sfnotify_f) _ARG_((Sfio_t *, int, void *));
 typedef struct _sfextern_s {
     ssize_t sf_page;
     struct _sfpool_s sf_pool;
-    int(*sf_pmove) _ARG_((Sfio_t *, int));
-    Sfio_t *(*sf_stack)_ARG_((Sfio_t *, Sfio_t *));
-    void(*sf_notify) _ARG_((Sfio_t *, int, void *));
-    int(*sf_stdsync) _ARG_((Sfio_t *));
+    int(*sf_pmove)(Sfio_t *, int);
+    Sfio_t *(*sf_stack)(Sfio_t *, Sfio_t *);
+    void(*sf_notify)(Sfio_t *, int, void *);
+    int(*sf_stdsync)(Sfio_t *);
     struct _sfdisc_s sf_udisc;
-    void(*sf_cleanup) _ARG_((void));
+    void(*sf_cleanup)(void);
     int sf_exiting;
     int sf_done;
     Vtonce_t *sf_once;
-    void(*sf_oncef) _ARG_((void));
+    void(*sf_oncef)(void);
     Vtmutex_t *sf_mutex;
     size_t sf_maxm;
     unsigned long sf_test;
@@ -986,8 +986,8 @@ typedef struct _sftab_ {
     char *sf_digits;                  /* digits for general bases	*/
     int (*sf_cvinitf)();              /* initialization function	*/
     int sf_cvinit;                    /* initialization state		*/
-    Fmtpos_t *(*sf_fmtposf)_ARG_((Sfio_t *, const char *, va_list, Sffmt_t *, int));
-    char *(*sf_fmtintf)_ARG_((const char *, int *));
+    Fmtpos_t *(*sf_fmtposf)(Sfio_t *, const char *, va_list, Sffmt_t *, int);
+    char *(*sf_fmtintf)(const char *, int *);
     float *sf_flt_pow10;           /* float powers of 10		*/
     double *sf_dbl_pow10;          /* double powers of 10		*/
     Sfdouble_t *sf_ldbl_pow10;     /* Sfdouble_t powers of 10	*/
@@ -1137,19 +1137,19 @@ typedef struct _sftab_ {
 
 extern Sftab_t _Sftable;
 
-extern int _sfpopen _ARG_((Sfio_t *, int, int, int));
-extern int _sfpclose _ARG_((Sfio_t *));
-extern int _sfexcept _ARG_((Sfio_t *, int, ssize_t, Sfdisc_t *));
-extern Sfrsrv_t *_sfrsrv _ARG_((Sfio_t *, ssize_t));
-extern int _sfsetpool _ARG_((Sfio_t *));
-extern char *_sfcvt _ARG_((void *, char *, size_t, int, int *, int *, int *, int));
-extern char **_sfgetpath _ARG_((char *));
-extern Mbstate_t *_sfmbstate _ARG_((Sfio_t *));
+extern int _sfpopen(Sfio_t *, int, int, int);
+extern int _sfpclose(Sfio_t *);
+extern int _sfexcept(Sfio_t *, int, ssize_t, Sfdisc_t *);
+extern Sfrsrv_t *_sfrsrv(Sfio_t *, ssize_t);
+extern int _sfsetpool(Sfio_t *);
+extern char *_sfcvt(void *, char *, size_t, int, int *, int *, int *, int);
+extern char **_sfgetpath(char *);
+extern Mbstate_t *_sfmbstate(Sfio_t *);
 
 extern Sfextern_t _Sfextern;
 
-extern int _sfmode _ARG_((Sfio_t *, int, int));
-extern int _sftype _ARG_((const char *, int *, int *, int *));
+extern int _sfmode(Sfio_t *, int, int);
+extern int _sftype(const char *, int *, int *, int *);
 
 #ifndef errno
 extern int errno;
@@ -1170,19 +1170,19 @@ extern int errno;
 #if !_PACKAGE_ast
 
 #if !_proto_bcopy
-extern void bcopy _ARG_((const void *, void *, size_t));
+extern void bcopy(const void *, void *, size_t);
 #endif
 #if !_proto_bzero
-extern void bzero _ARG_((void *, size_t));
+extern void bzero(void *, size_t);
 #endif
 
-extern time_t time _ARG_((time_t *));
-extern int waitpid _ARG_((int, int *, int));
-extern void _exit _ARG_((int));
-typedef int(*Onexit_f) _ARG_((void));
-extern Onexit_f onexit _ARG_((Onexit_f));
+extern time_t time(time_t *);
+extern int waitpid(int, int *, int);
+extern void _exit(int);
+typedef int(*Onexit_f)(void);
+extern Onexit_f onexit(Onexit_f);
 
-extern int poll _ARG_((struct pollfd *, ulong, int));
+extern int poll(struct pollfd *, ulong, int);
 
 #endif /* _PACKAGE_ast */
 

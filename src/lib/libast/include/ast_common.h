@@ -2,11 +2,6 @@
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
 
-/* _ARG_ simplifies function prototyping among flavors of C */
-#ifndef _ARG_
-#define _ARG_(x) x
-#endif
-
 /* __INLINE__, if defined, is the inline keyword */
 #if !defined(__INLINE__) && defined(__cplusplus)
 #define __INLINE__ inline

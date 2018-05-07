@@ -13,7 +13,7 @@ sys	file,inet/tcp_user,resource,select,socket,sockio,uio,un,utsname
 tst	stream_pipe note{ pipes are streams }end execute{
 	#include <sys/types.h>
 	#include <stropts.h>
-	extern int	pipe _ARG_((int*));
+	extern int	pipe (int*);
 	main()
 	{	struct strpeek	pbuf;
 		int fds[2];

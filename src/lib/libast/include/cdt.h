@@ -65,14 +65,14 @@ typedef struct _dtdata_s Dtdata_t;
 typedef struct _dtuser_s Dtuser_t;
 typedef struct _dt_s Dt_t;
 typedef struct _dtstat_s Dtstat_t;
-typedef void *(*Dtsearch_f)_ARG_((Dt_t *, void *, int));
-typedef void *(*Dtmake_f)_ARG_((Dt_t *, void *, Dtdisc_t *));
-typedef void(*Dtfree_f) _ARG_((Dt_t *, void *, Dtdisc_t *));
-typedef int(*Dtcompar_f) _ARG_((Dt_t *, void *, void *, Dtdisc_t *));
-typedef unsigned int(*Dthash_f) _ARG_((Dt_t *, void *, Dtdisc_t *));
-typedef void *(*Dtmemory_f)_ARG_((Dt_t *, void *, size_t, Dtdisc_t *));
-typedef int(*Dtevent_f) _ARG_((Dt_t *, int, void *, Dtdisc_t *));
-typedef int(*Dttype_f) _ARG_((Dt_t *, int));
+typedef void *(*Dtsearch_f)(Dt_t *, void *, int);
+typedef void *(*Dtmake_f)(Dt_t *, void *, Dtdisc_t *);
+typedef void(*Dtfree_f) (Dt_t *, void *, Dtdisc_t *);
+typedef int(*Dtcompar_f)(Dt_t *, void *, void *, Dtdisc_t *);
+typedef unsigned int(*Dthash_f)(Dt_t *, void *, Dtdisc_t *);
+typedef void *(*Dtmemory_f)(Dt_t *, void *, size_t, Dtdisc_t *);
+typedef int(*Dtevent_f)(Dt_t *, int, void *, Dtdisc_t *);
+typedef int(*Dttype_f)(Dt_t *, int);
 
 struct _dtuser_s /* for application to access and use */
 {
@@ -109,7 +109,7 @@ struct _dthold_s {
 struct _dtmethod_s {
     Dtsearch_f searchf; /* search function	*/
     unsigned int type;  /* type of operation	*/
-    int(*eventf) _ARG_((Dt_t *, int, void *));
+    int(*eventf)(Dt_t *, int, void *);
     char *name;        /* name of method	*/
     char *description; /* description */
 };
@@ -259,21 +259,21 @@ extern Dtmethod_t *Dtrhbag;
 
 #endif /*_PACKAGE_ast*/
 
-extern Dt_t *dtopen _ARG_((Dtdisc_t *, Dtmethod_t *));
-extern int dtclose _ARG_((Dt_t *));
-extern Dt_t *dtview _ARG_((Dt_t *, Dt_t *));
-extern Dtdisc_t *dtdisc _ARG_((Dt_t * dt, Dtdisc_t *, int));
-extern Dtmethod_t *dtmethod _ARG_((Dt_t *, Dtmethod_t *));
-extern int dtwalk _ARG_((Dt_t *, int (*)(Dt_t *, void *, void *), void *));
-extern int dtcustomize _ARG_((Dt_t *, int, int));
-extern unsigned int dtstrhash _ARG_((unsigned int, char *, int));
-extern int dtuserlock _ARG_((Dt_t *, unsigned int, int));
-extern void *dtuserdata _ARG_((Dt_t *, void *, int));
-extern int dtuserevent _ARG_((Dt_t *, int, void *));
-extern ssize_t dtstat _ARG_((Dt_t *, Dtstat_t *));
+extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
+extern int dtclose(Dt_t *);
+extern Dt_t *dtview(Dt_t *, Dt_t *);
+extern Dtdisc_t *dtdisc(Dt_t * dt, Dtdisc_t *, int);
+extern Dtmethod_t *dtmethod(Dt_t *, Dtmethod_t *);
+extern int dtwalk(Dt_t *, int (*)(Dt_t *, void *, void *), void *);
+extern int dtcustomize(Dt_t *, int, int);
+extern unsigned int dtstrhash(unsigned int, char *, int);
+extern int dtuserlock(Dt_t *, unsigned int, int);
+extern void *dtuserdata(Dt_t *, void *, int);
+extern int dtuserevent(Dt_t *, int, void *);
+extern ssize_t dtstat(Dt_t *, Dtstat_t *);
 
 /* deal with upward binary compatibility (operation bit translation, etc.) */
-extern Dt_t *_dtopen _ARG_((Dtdisc_t *, Dtmethod_t *, unsigned long));
+extern Dt_t *_dtopen(Dtdisc_t *, Dtmethod_t *, unsigned long);
 #define dtopen(dc, mt) _dtopen((dc), (mt), CDT_VERSION)
 
 #if _PACKAGE_ast && !defined(_CDTLIB_H)

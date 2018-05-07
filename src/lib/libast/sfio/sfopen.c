@@ -27,8 +27,8 @@
  * _sfopen() wrapper to allow user sfopen() intercept
  */
 
-extern Sfio_t *_sfopen _ARG_((Sfio_t *, const char *, const char *));
-extern Sfio_t *_sfopenat _ARG_((int, Sfio_t *, const char *, const char *));
+extern Sfio_t *_sfopen(Sfio_t *, const char *, const char *);
+extern Sfio_t *_sfopenat(int, Sfio_t *, const char *, const char *);
 
 Sfio_t *sfopen(Sfio_t *f, const char *file, const char *mode) { return _sfopen(f, file, mode); }
 

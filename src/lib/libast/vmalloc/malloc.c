@@ -519,8 +519,8 @@ static char *lcl_getenv(const char *s) {
 #define USE_NATIVE 0 /* native free/realloc on non-vmalloc ptrs */
 
 #if USE_NATIVE
-static void *native_realloc _ARG_((void *, size_t));
-static void native_free _ARG_((void *));
+static void *native_realloc(void *, size_t);
+static void native_free(void *);
 #endif
 
 #define VM_STARTING 1
@@ -984,30 +984,30 @@ Mstats_t mstats(void) {
  */
 
 #undef calloc
-void *calloc _ARG_((size_t, size_t));
+void *calloc(size_t, size_t);
 
 #undef cfree
-void cfree _ARG_((void *));
+void cfree(void *);
 
 #undef free
-void free _ARG_((void *));
+void free(void *);
 
 #undef malloc
-void *malloc _ARG_((size_t));
+void *malloc(size_t);
 
 #undef memalign
-void *memalign _ARG_((size_t, size_t));
+void *memalign(size_t, size_t);
 
 #if _lib_pvalloc
 #undef pvalloc
-void *pvalloc _ARG_((size_t));
+void *pvalloc(size_t);
 #endif
 
 #undef realloc
-void *realloc _ARG_((void *, size_t));
+void *realloc(void *, size_t);
 
 #undef valloc
-void *valloc _ARG_((size_t));
+void *valloc(size_t);
 
 void *F2(_ast_calloc, size_t, n, size_t, m) { return calloc(n, m); }
 void F1(_ast_cfree, void *, p) { free(p); }

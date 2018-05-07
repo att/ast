@@ -138,7 +138,7 @@ typedef struct _seg_s Seg_t;     /* the type of a raw memory segment	*/
 #define DEBUG 1
 #endif /*_BLD_DEBUG*/
 #endif /*DEBUG*/
-extern void _vmmessage _ARG_((const char *, long, const char *, long));
+extern void _vmmessage(const char *, long, const char *, long);
 #if DEBUG
 #define MESSAGE(s) _vmmessage(__FILE__, __LINE__, (s), 0)
 #define PRINT(s, n) _vmmessage(__FILE__, __LINE__, (s), (n))
@@ -380,14 +380,14 @@ struct _vmhold_s {
 
 /* external symbols for use inside vmalloc only */
 typedef struct _vmextern_s {
-    Block_t *(*vm_seginit)_ARG_((Vmdata_t *, Seg_t *, Vmuchar_t *, ssize_t, int));
-    Block_t *(*vm_segalloc)_ARG_((Vmalloc_t *, Block_t *, ssize_t, int));
-    void(*vm_segfree) _ARG_((Vmalloc_t *, Block_t *));
-    char *(*vm_strcpy)_ARG_((char *, const char *, int));
-    char *(*vm_itoa)_ARG_((Vmulong_t, int));
-    ssize_t(*vm_lcm) _ARG_((ssize_t, ssize_t));
-    void(*vm_trace) _ARG_((Vmalloc_t *, Vmuchar_t *, Vmuchar_t *, size_t, size_t));
-    int(*vm_chkmem) _ARG_((Vmuchar_t *, size_t));
+    Block_t *(*vm_seginit)(Vmdata_t *, Seg_t *, Vmuchar_t *, ssize_t, int);
+    Block_t *(*vm_segalloc)(Vmalloc_t *, Block_t *, ssize_t, int);
+    void(*vm_segfree)(Vmalloc_t *, Block_t *);
+    char *(*vm_strcpy)(char *, const char *, int);
+    char *(*vm_itoa)(Vmulong_t, int);
+    ssize_t(*vm_lcm)(ssize_t, ssize_t);
+    void(*vm_trace)(Vmalloc_t *, Vmuchar_t *, Vmuchar_t *, size_t, size_t);
+    int(*vm_chkmem)(Vmuchar_t *, size_t);
     Vmuchar_t *vm_memmin;     /* address lower abound	*/
     Vmuchar_t *vm_memmax;     /* address upper abound	*/
     Vmuchar_t *vm_memaddr;    /* vmmaddress() memory	*/
@@ -417,20 +417,20 @@ typedef struct _vmextern_s {
 #define _Vmhold (_Vmextern.vm_hold)
 #define _Vmassert (_Vmextern.vm_assert)
 
-extern Vmalloc_t *_vmheapinit _ARG_((Vmalloc_t *)); /* initialize Vmheap	*/
-extern int _vmheapbusy _ARG_((void));               /* initializing Vmheap	*/
-extern ssize_t _vmpagesize _ARG_((void));           /* get system page size	*/
-extern int _vmboundaries _ARG_((void));             /* get mem boundaries	*/
-extern Vmalloc_t *_vmopen _ARG_((Vmalloc_t *, Vmdisc_t *, Vmethod_t *, int));
-extern void _vmoptions _ARG_((int));                         /* VMALLOC_OPTIONS preferences	*/
-extern int _vmstat _ARG_((Vmalloc_t *, Vmstat_t *, size_t)); /* internal vmstat() */
+extern Vmalloc_t *_vmheapinit(Vmalloc_t *); /* initialize Vmheap	*/
+extern int _vmheapbusy(void);               /* initializing Vmheap	*/
+extern ssize_t _vmpagesize(void);           /* get system page size	*/
+extern int _vmboundaries(void);             /* get mem boundaries	*/
+extern Vmalloc_t *_vmopen(Vmalloc_t *, Vmdisc_t *, Vmethod_t *, int);
+extern void _vmoptions(int);                         /* VMALLOC_OPTIONS preferences	*/
+extern int _vmstat(Vmalloc_t *, Vmstat_t *, size_t); /* internal vmstat() */
 
 extern Vmextern_t _Vmextern;
 
 #if _PACKAGE_ast
 
 #if _npt_getpagesize
-extern int getpagesize _ARG_((void));
+extern int getpagesize(void);
 #endif
 
 #else
@@ -441,9 +441,9 @@ extern int getpagesize _ARG_((void));
 #include <string.h>
 
 /* for vmexit.c */
-extern int onexit _ARG_((void (*)(void)));
-extern void _exit _ARG_((int));
-extern void _cleanup _ARG_((void));
+extern int onexit(void (*)(void));
+extern void _exit(int);
+extern void _cleanup(void);
 
 #endif /*_PACKAGE_ast*/
 

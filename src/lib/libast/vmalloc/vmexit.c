@@ -41,7 +41,7 @@ int atexit(void (*exitf)(void)) { return onexit(exitf); }
 
 typedef struct _exit_s {
     struct _exit_s *next;
-    void(*exitf) _ARG_((void));
+    void(*exitf)(void);
 } Exit_t;
 static Exit_t *Exit;
 

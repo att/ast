@@ -141,14 +141,14 @@ typedef struct _dtlib_s {
 #define LLSHIFT(x, t) \
     ((t) = (x)->_rght->_rght, (x)->_rght->_rght = (t)->_left, (t)->_left = (x), (x) = (t))
 
-extern Dtlink_t *_dtmake _ARG_((Dt_t *, void *, int));
-extern void _dtfree _ARG_((Dt_t *, Dtlink_t *, int));
-extern int _dtlock _ARG_((Dt_t *, int));
+extern Dtlink_t *_dtmake(Dt_t *, void *, int);
+extern void _dtfree(Dt_t *, Dtlink_t *, int);
+extern int _dtlock(Dt_t *, int);
 
 #if !_PACKAGE_ast
-extern void *malloc _ARG_((size_t));
-extern void *realloc _ARG_((void *, size_t));
-extern void free _ARG_((void *));
+extern void *malloc(size_t);
+extern void *realloc(void *, size_t);
+extern void free(void *);
 #endif
 
 #endif /* _CDTLIB_H */
