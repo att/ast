@@ -125,10 +125,6 @@ extern char *co_export[]; /* default export var list	*/
 
 extern Costate_t state; /* global coshell info		*/
 
-#ifndef errno
-extern int errno;
-#endif
-
 extern char *costash(Sfio_t *);
 extern char *coinitialize(Coshell_t *, int);
 

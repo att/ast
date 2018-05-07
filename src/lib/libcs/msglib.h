@@ -39,8 +39,4 @@
 #define D_FILENO(d) (1)
 #endif
 
-#ifndef errno
-extern int errno;
-#endif
-
 #endif

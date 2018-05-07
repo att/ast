@@ -1151,10 +1151,6 @@ extern Sfextern_t _Sfextern;
 extern int _sfmode(Sfio_t *, int, int);
 extern int _sftype(const char *, int *, int *, int *);
 
-#ifndef errno
-extern int errno;
-#endif
-
 /* for portable encoding of double values */
 #ifndef frexpl
 #if _ast_fltmax_double

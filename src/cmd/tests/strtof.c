@@ -47,10 +47,6 @@
 #define ERANGE EINVAL
 #endif
 
-#ifndef errno
-extern int errno;
-#endif
-
 #ifndef LDBL_DIG
 #define LDBL_DIG DBL_DIG
 #endif

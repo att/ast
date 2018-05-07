@@ -160,10 +160,6 @@ struct Error_info_s /* error state			*/
     void *handle;        /* user defined => Error_*_handle_f */
 };
 
-#ifndef errno
-extern int errno; /* system call error status  */
-#endif
-
 extern Error_info_t *_error_infop_;
 
 #define error_info (*_error_infop_)

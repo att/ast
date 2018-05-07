@@ -45,10 +45,6 @@
 #define ERANGE EINVAL
 #endif
 
-#ifndef errno
-extern int errno;
-#endif
-
 #if !_PACKAGE_ast
 
 static int base(const char *s) {

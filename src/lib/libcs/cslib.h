@@ -222,10 +222,6 @@ struct csfdhdr /* send/recv fd data header	*/
 #define EROFS EACCES
 #endif
 
-#ifndef errno
-extern int errno;
-#endif
-
 #if CS_LIB_SOCKET
 #define csdb(h)                       \
     do {                              \

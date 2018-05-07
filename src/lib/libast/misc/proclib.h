@@ -53,8 +53,4 @@ struct Mods_s;
 
 extern Proc_t proc_default; /* first proc			*/
 
-#ifndef errno
-extern int errno;
-#endif
-
 #endif
