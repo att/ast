@@ -33,9 +33,6 @@
 
 Shell_t sh = {};
 struct shared *shgd;
-#ifdef __IMPORT__
-Shell_t *_imp__sh = &sh;
-#endif
 
 Dtdisc_t _Nvdisc = {offsetof(Namval_t, nvname), -1, 0, 0, 0, nv_compare};
 

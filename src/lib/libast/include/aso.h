@@ -46,10 +46,6 @@
 #undef __MANGLE__
 #define __MANGLE__ __LINKAGE__ __EXPORT__
 #endif
-#if !_BLD_aso && defined(__IMPORT__)
-#undef __MANGLE__
-#define __MANGLE__ __LINKAGE__ __IMPORT__
-#endif
 #endif
 
 #undef __MANGLE__

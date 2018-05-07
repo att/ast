@@ -33,13 +33,6 @@
 #endif
 #endif
 #endif
-#if !defined(_astimport)
-#if defined(__IMPORT__) && defined(_DLL)
-#define _astimport __IMPORT__
-#else
-#define _astimport extern
-#endif
-#endif
 
 #define _ast_LL 1 /* LL numeric suffix supported */
 #define _ast_int8_t long

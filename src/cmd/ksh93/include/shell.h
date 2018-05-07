@@ -384,11 +384,7 @@ extern void *sh_waitnotify_20120720(Shwait_f, void *);
 //
 // Direct access to sh is obsolete, use sh_getinterp() instead.
 //
-#if !defined(_SH_PRIVATE) && defined(__IMPORT__) && !defined(_BLD_shell)
-extern __IMPORT__ Shell_t sh;
-#else
 extern Shell_t sh;
-#endif
 
 #include <shellapi.h>
 
