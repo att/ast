@@ -348,31 +348,6 @@ extern ssize_t sfmaxr(ssize_t, int);
 #define __sf_slen() (_Sfi)
 #define __sf_maxr(n, s) ((s) ? ((_Sfi = _Sfmaxr), (_Sfmaxr = (n)), _Sfi) : _Sfmaxr)
 
-#if defined(__INLINE__) && !_BLD_sfio
-
-__INLINE__ int sfputd(Sfio_t *f, Sfdouble_t v) { return __sf_putd(f, v); }
-__INLINE__ int sfputl(Sfio_t *f, Sflong_t v) { return __sf_putl(f, v); }
-__INLINE__ int sfputu(Sfio_t *f, Sfulong_t v) { return __sf_putu(f, v); }
-__INLINE__ int sfputm(Sfio_t *f, Sfulong_t v, Sfulong_t m) { return __sf_putm(f, v, m); }
-
-__INLINE__ int sfputc(Sfio_t *f, int c) { return __sf_putc(f, c); }
-__INLINE__ int sfgetc(Sfio_t *f) { return __sf_getc(f); }
-
-__INLINE__ int sfdlen(Sfdouble_t v) { return __sf_dlen(v); }
-__INLINE__ int sfllen(Sflong_t v) { return __sf_llen(v); }
-__INLINE__ int sfulen(Sfulong_t v) { return __sf_ulen(v); }
-
-__INLINE__ int sffileno(Sfio_t *f) { return __sf_fileno(f); }
-__INLINE__ int sfeof(Sfio_t *f) { return __sf_eof(f); }
-__INLINE__ int sferror(Sfio_t *f) { return __sf_error(f); }
-__INLINE__ int sfclrerr(Sfio_t *f) { return __sf_clrerr(f); }
-__INLINE__ int sfstacked(Sfio_t *f) { return __sf_stacked(f); }
-__INLINE__ ssize_t sfvalue(Sfio_t *f) { return __sf_value(f); }
-__INLINE__ ssize_t sfslen() { return __sf_slen(); }
-__INLINE__ ssize_t sfmaxr(ssize_t n, int s) { return __sf_maxr(n, s); }
-
-#else
-
 #define sfputd(f, v) (__sf_putd((f), (v)))
 #define sfputl(f, v) (__sf_putl((f), (v)))
 #define sfputu(f, v) (__sf_putu((f), (v)))
@@ -393,8 +368,6 @@ __INLINE__ ssize_t sfmaxr(ssize_t n, int s) { return __sf_maxr(n, s); }
 #define sfvalue(f) (__sf_value(f))
 #define sfslen() (__sf_slen())
 #define sfmaxr(n, s) (__sf_maxr(n, s))
-
-#endif /*__INLINE__*/
 
 #ifndef _SFSTR_H /* GSF's string manipulation stuff */
 #define _SFSTR_H 1

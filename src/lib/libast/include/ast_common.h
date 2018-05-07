@@ -2,11 +2,6 @@
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
 
-/* __INLINE__, if defined, is the inline keyword */
-#if !defined(__INLINE__) && defined(__cplusplus)
-#define __INLINE__ inline
-#endif
-
 /* windows variants and veneers */
 #if __CYGWIN__
 #define _WINIX 1
