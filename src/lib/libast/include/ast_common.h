@@ -40,17 +40,6 @@
 #define _astimport extern
 #endif
 #endif
-#if _dll_import && (!_BLD_DLL || _WINIX)
-#define __EXTERN__(T, obj) \
-    extern T obj;          \
-    T *_imp__##obj = &obj
-#define __DEFINE__(T, obj, val) \
-    T obj = val;                \
-    T *_imp__##obj = &obj
-#else
-#define __EXTERN__(T, obj) extern T obj
-#define __DEFINE__(T, obj, val) T obj = val
-#endif
 
 #define _ast_LL 1 /* LL numeric suffix supported */
 #define _ast_int8_t long

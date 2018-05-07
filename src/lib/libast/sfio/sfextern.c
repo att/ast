@@ -94,11 +94,3 @@ Sfio_t _Sfstderr = SFNEW(NULL, -1, 2, (SF_WRITE | SF_STATIC | SF_STDSAFE), NULL,
 Sfio_t *sfstdin = &_Sfstdin;
 Sfio_t *sfstdout = &_Sfstdout;
 Sfio_t *sfstderr = &_Sfstderr;
-
-__EXTERN__(ssize_t, _Sfi);
-__EXTERN__(Sfio_t, _Sfstdin);
-__EXTERN__(Sfio_t, _Sfstdout);
-__EXTERN__(Sfio_t, _Sfstderr);
-__EXTERN__(Sfio_t *, sfstdin);
-__EXTERN__(Sfio_t *, sfstdout);
-__EXTERN__(Sfio_t *, sfstderr);

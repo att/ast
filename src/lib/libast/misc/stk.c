@@ -63,8 +63,6 @@ static Sfdisc_t stkdisc = {0, 0, 0, stkexcept};
 
 Sfio_t _Stak_data = SFNEW((char *)0, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
 
-__EXTERN__(Sfio_t, _Stak_data);
-
 struct frame {
     char *prev;     /* address of previous frame */
     char *end;      /* address of end this frame */

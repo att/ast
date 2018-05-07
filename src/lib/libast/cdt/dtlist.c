@@ -354,10 +354,10 @@ static Dtmethod_t _Dtdeque = {dtlist, DT_DEQUE, listevent, "Dtdeque"};
 static Dtmethod_t _Dtstack = {dtlist, DT_STACK, listevent, "Dtstack"};
 static Dtmethod_t _Dtqueue = {dtlist, DT_QUEUE, listevent, "Dtqueue"};
 
-__DEFINE__(Dtmethod_t *, Dtlist, &_Dtlist);
-__DEFINE__(Dtmethod_t *, Dtdeque, &_Dtdeque);
-__DEFINE__(Dtmethod_t *, Dtstack, &_Dtstack);
-__DEFINE__(Dtmethod_t *, Dtqueue, &_Dtqueue);
+Dtmethod_t *Dtlist = &_Dtlist;
+Dtmethod_t *Dtdeque = &_Dtdeque;
+Dtmethod_t *Dtstack = &_Dtstack;
+Dtmethod_t *Dtqueue = &_Dtqueue;
 
 #ifdef NoF
 NoF(dtlist)

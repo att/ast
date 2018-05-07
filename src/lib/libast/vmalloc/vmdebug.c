@@ -563,8 +563,7 @@ ssize_t vmdbstat(Vmalloc_t *vm) {
 }
 
 static Vmethod_t _Vmdebug = {dballoc, dbresize, dbfree, 0, dbstat, dbevent, dbalign, VM_MTDEBUG};
-
-__DEFINE__(Vmethod_t *, Vmdebug, &_Vmdebug);
+Vmethod_t *Vmdebug = &_Vmdebug;
 
 #ifdef NoF
 NoF(vmdebug)

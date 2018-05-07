@@ -32,5 +32,3 @@ _Ast_info_t _ast_info = {
     0,        0,       0, 0, 0, 0, 0,      20130624, /* version */
     0,        AT_FDCWD                               /* pwd */
 };
-
-__EXTERN__(_Ast_info_t, _ast_info);

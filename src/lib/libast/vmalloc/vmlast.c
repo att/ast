@@ -268,8 +268,7 @@ static int lastevent(Vmalloc_t *vm, int event, void *arg) {
 /* Public method for free-1 allocation */
 static Vmethod_t _Vmlast = {lastalloc, lastresize, lastfree,  0,
                             laststat,  lastevent,  lastalign, VM_MTLAST};
-
-__DEFINE__(Vmethod_t *, Vmlast, &_Vmlast);
+Vmethod_t *Vmlast = &_Vmlast;
 
 #ifdef NoF
 NoF(vmlast)

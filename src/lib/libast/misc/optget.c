@@ -290,13 +290,7 @@ static Msg_t C_LC_MESSAGES_libast[] = {
  */
 
 Opt_t _opt_info_ = {0, 0, 0, 0, 0, 0, 0, {0}, {0}, 0, 0, 0, {0}, {0}, &state};
-
-__EXTERN__(Opt_t, _opt_info_);
-
-__EXTERN__(Opt_t *, _opt_infop_);
-
 Opt_t *_opt_infop_ = &_opt_info_;
-
 Optstate_t *optstate(Opt_t *p) { return &state; }
 
 #if DEBUG || _BLD_DEBUG

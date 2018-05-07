@@ -58,10 +58,6 @@ Error_info_t _error_info_ = {
     translate, 0                                       /* catalog			*/
 };
 
-__EXTERN__(Error_info_t, _error_info_);
-
-__EXTERN__(Error_info_t *, _error_infop_);
-
 Error_info_t *_error_infop_ = &_error_info_;
 
 /*

@@ -1221,8 +1221,7 @@ Vmalloc_t *vmregion(void *addr) {
 /* now define the method */
 static Vmethod_t _Vmbest = {bestalloc, bestresize, bestfree,  0,
                             beststat,  bestevent,  bestalign, VM_MTBEST};
-
-__DEFINE__(Vmethod_t *, Vmbest, &_Vmbest);
+Vmethod_t *Vmbest = &_Vmbest;
 
 #ifdef NoF
 NoF(vmbest)

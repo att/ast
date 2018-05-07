@@ -322,8 +322,8 @@ static void *getmemory(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, V
 static Memdisc_t _Vmdcsystem = {
     {getmemory, NULL, 0 * 64 * 1024 * 1024, sizeof(Memdisc_t)}, FD_INIT, 0};
 
-__DEFINE__(Vmdisc_t *, Vmdcsystem, (Vmdisc_t *)(&_Vmdcsystem));
-__DEFINE__(Vmdisc_t *, Vmdcsbrk, (Vmdisc_t *)(&_Vmdcsystem));
+Vmdisc_t *Vmdcsystem = (Vmdisc_t *)(&_Vmdcsystem);
+Vmdisc_t *Vmdcsbrk = (Vmdisc_t *)(&_Vmdcsystem);
 
 /* Note that the below function may be invoked from multiple threads.
 ** It initializes the Vmheap region to use the VMHEAPMETH method.
@@ -414,5 +414,5 @@ Vmalloc_t _Vmheap = {
     NULL, /* see heapinit	*/
 };
 
-__DEFINE__(Vmalloc_t *, Vmheap, &_Vmheap);
-__DEFINE__(Vmalloc_t *, Vmregion, &_Vmheap);
+Vmalloc_t *Vmheap = &_Vmheap;
+Vmalloc_t *Vmregion = &_Vmheap;

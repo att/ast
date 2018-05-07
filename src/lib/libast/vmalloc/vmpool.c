@@ -190,8 +190,7 @@ static int poolevent(Vmalloc_t *vm, int event, void *arg) {
 /* Public interface */
 static Vmethod_t _Vmpool = {poolalloc, poolresize, poolfree,  0,
                             poolstat,  poolevent,  poolalign, VM_MTPOOL};
-
-__DEFINE__(Vmethod_t *, Vmpool, &_Vmpool);
+Vmethod_t *Vmpool = &_Vmpool;
 
 #ifdef NoF
 NoF(vmpool)

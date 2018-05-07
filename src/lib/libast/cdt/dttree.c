@@ -667,8 +667,8 @@ static int treeevent(Dt_t *dt, int event, void *arg) {
 /* make this method available */
 static Dtmethod_t _Dtoset = {dttree, DT_OSET, treeevent, "Dtoset"};
 static Dtmethod_t _Dtobag = {dttree, DT_OBAG, treeevent, "Dtobag"};
-__DEFINE__(Dtmethod_t *, Dtoset, &_Dtoset);
-__DEFINE__(Dtmethod_t *, Dtobag, &_Dtobag);
+Dtmethod_t *Dtoset = &_Dtoset;
+Dtmethod_t *Dtobag = &_Dtobag;
 
 #ifdef NoF
 NoF(dttree)

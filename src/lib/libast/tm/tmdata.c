@@ -454,9 +454,4 @@ static Tm_zone_t zone[] = {{0, "GMT", 0, (0 * 60), 0},                  /* UTC		
  */
 
 Tm_data_t _tm_data_ = {format, lex, digit, days, sum, leap, zone};
-
-__EXTERN__(Tm_data_t, _tm_data_);
-
-__EXTERN__(Tm_data_t *, _tm_datap_);
-
 Tm_data_t *_tm_datap_ = &_tm_data_;

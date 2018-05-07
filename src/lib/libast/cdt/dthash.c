@@ -464,8 +464,8 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
 
 static Dtmethod_t _Dtset = {dthashchain, DT_SET, hashevent, "Dtset"};
 static Dtmethod_t _Dtbag = {dthashchain, DT_BAG, hashevent, "Dtbag"};
-__DEFINE__(Dtmethod_t *, Dtset, &_Dtset);
-__DEFINE__(Dtmethod_t *, Dtbag, &_Dtbag);
+Dtmethod_t *Dtset = &_Dtset;
+Dtmethod_t *Dtbag = &_Dtbag;
 
 #ifdef NoF
 NoF(dthashchain)

@@ -46,11 +46,6 @@ static const Namval_t options[] = {
  */
 
 Tm_info_t _tm_info_ = {0};
-
-__EXTERN__(Tm_info_t, _tm_info_);
-
-__EXTERN__(Tm_info_t *, _tm_infop_);
-
 Tm_info_t *_tm_infop_ = &_tm_info_;
 
 static char TZ[256];

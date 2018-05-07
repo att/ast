@@ -734,8 +734,8 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
 
 static Dtmethod_t _Dtrhset = {dthashtrie, DT_RHSET, hashevent, "Dtrhset"};
 static Dtmethod_t _Dtrhbag = {dthashtrie, DT_RHBAG, hashevent, "Dtrhbag"};
-__DEFINE__(Dtmethod_t *, Dtrhset, &_Dtrhset);
-__DEFINE__(Dtmethod_t *, Dtrhbag, &_Dtrhbag);
+Dtmethod_t *Dtrhset = &_Dtrhset;
+Dtmethod_t *Dtrhbag = &_Dtrhbag;
 
 #ifdef NoF
 NoF(dthashtrie)
