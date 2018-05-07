@@ -43,7 +43,7 @@ tmain() {
     if (!(data = vmalign(vm, 10, 13))) terror("vmalign0.1");
     if (((Vmulong_t)data % 13) != 0) terror("Not aligned0.1");
 
-    Vmdcheap->round = ALIGN;
+    Vmdcheap->round = MEM_ALIGN;
     if (!(vm = vmopen(Vmdcheap, Vmbest, 0))) terror("Opening region1");
     if (!(data = vmalloc(vm, 10))) terror("vmalloc1");
     if (!(data = vmalign(vm, 10, 13))) terror("vmalign1");

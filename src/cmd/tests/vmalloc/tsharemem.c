@@ -30,6 +30,7 @@
 #define M_SIZE (1024)      /* max size of an allocated blk	*/
 #define N_ALLOC (4 * 1024) /* #allocations in each process	*/
 #define N_FREE (2 * 1024)  /* #frees <= #allocations	*/
+#define N_PROC 16
 
 typedef struct _piece_s {
     void *addr;  /* allocated address	*/

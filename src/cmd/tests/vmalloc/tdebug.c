@@ -36,7 +36,7 @@ tmain() {
 
     for (k = 0; k < 10; ++k) {
         if (!(addr[k] = vmalloc(vm, ALLOCSZ))) terror("Allocation of block[%d] failed", k);
-        if ((((Vmulong_t)addr[k]) % ALIGN) != 0) terror("Unaligned addr");
+        if ((((Vmulong_t)addr[k]) % MEM_ALIGN) != 0) terror("Unaligned addr");
     }
 
     /* error for freeing something non-existent */

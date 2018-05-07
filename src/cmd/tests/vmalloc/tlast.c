@@ -31,7 +31,7 @@ tmain() {
 
     for (i = 0; i < 10; ++i) {
         addr[i] = vmalloc(vm, 8);
-        if ((((Vmulong_t)addr[i]) % ALIGN) != 0) terror("Unaligned addr");
+        if ((((Vmulong_t)addr[i]) % MEM_ALIGN) != 0) terror("Unaligned addr");
     }
 
     if (vmfree(vm, addr[0]) >= 0) terror("Free non-last element succeeds?");

@@ -35,9 +35,10 @@
 
 #include <pthread.h>
 
+#define N_THREADS 8
 #define USECSPERSEC 1000000
 #define pthread_attr_default NULL
-#define MAX_THREADS N_THREAD
+#define MAX_THREADS N_THREADS
 
 static unsigned size = 512;
 static unsigned iteration_count = 1000000;
@@ -108,7 +109,7 @@ static void run_test(void) {
 
 tmain() {
     unsigned i;
-    unsigned thread_count = N_THREAD;
+    unsigned thread_count = N_THREADS;
     pthread_t thread[MAX_THREADS];
 
     /*
@@ -132,8 +133,8 @@ tmain() {
             terror("Unrecognized arguments");
     }
 
-    if (thread_count <= 0 || thread_count > N_THREAD)
-        terror("thread_count=%d must be in 1..%d", thread_count, N_THREAD);
+    if (thread_count <= 0 || thread_count > N_THREADS)
+        terror("thread_count=%d must be in 1..%d", thread_count, N_THREADS);
 
     /*
     ** Invoke the tests

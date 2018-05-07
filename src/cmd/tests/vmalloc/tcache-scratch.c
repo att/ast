@@ -29,6 +29,8 @@
 #define REPETITIONS 10
 #define ITERATIONS 10000
 
+#define N_THREADS 8
+
 typedef struct _worker_s {
     char *object;
     int objsize;
@@ -68,9 +70,9 @@ static void *worker(void *arg) {
 tmain() {
     int i, rv;
     void *status;
-    char *objs[N_THREAD];
-    pthread_t thread[N_THREAD];
-    int nthreads = N_THREAD;
+    char *objs[N_THREADS];
+    pthread_t thread[N_THREADS];
+    int nthreads = N_THREADS;
     int iterations = ITERATIONS;
     int objsize = OBJSIZE;
     int repetitions = REPETITIONS;
@@ -93,8 +95,8 @@ tmain() {
         argv++;
     }
 
-    if (nthreads <= 0 || nthreads > N_THREAD)
-        terror("nthreads=%d must be in 1..%d", nthreads, N_THREAD);
+    if (nthreads <= 0 || nthreads > N_THREADS)
+        terror("nthreads=%d must be in 1..%d", nthreads, N_THREADS);
     if (repetitions < nthreads) repetitions = 0;
 
     tinfo("nthreads=%d iterations=%d objsize=%d repetitions=%d", nthreads, iterations, objsize,
