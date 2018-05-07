@@ -33,10 +33,6 @@
 
 #undef signal
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #if defined(SV_ABORT)
 #undef SV_INTERRUPT
 #define SV_INTERRUPT SV_ABORT
@@ -59,7 +55,7 @@
 #define sa_mask sv_mask
 #endif
 
-extern Sig_handler_t signal(int sig, Sig_handler_t fun) {
+Sig_handler_t signal(int sig, Sig_handler_t fun) {
     struct sigaction na;
     struct sigaction oa;
     int unblock;

@@ -97,15 +97,9 @@ typedef struct {
 
 } Proc_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int procclose(Proc_t *);
 extern int procfree(Proc_t *);
 extern Proc_t *procopen(const char *, char **, char **, long *, int);
 extern int procrun(const char *, char **, int);
-
-#undef extern
 
 #endif

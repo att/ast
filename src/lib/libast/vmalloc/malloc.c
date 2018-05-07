@@ -515,10 +515,6 @@ static char *lcl_getenv(const char *s) {
 #define VMUNBLOCK
 #endif
 
-#if defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
 /* not sure of all the implications -- 0 is conservative for now */
 #define USE_NATIVE 0 /* native free/realloc on non-vmalloc ptrs */
 
@@ -607,7 +603,7 @@ static int _vmstart(int freeing) {
     return 0;
 }
 
-extern void *calloc(size_t n_obj, size_t s_obj) {
+void *calloc(size_t n_obj, size_t s_obj) {
     void *addr;
 
     VMPROLOGUE(0);
@@ -617,7 +613,7 @@ extern void *calloc(size_t n_obj, size_t s_obj) {
     return VMRECORD(addr);
 }
 
-extern void *malloc(size_t size) {
+void *malloc(size_t size) {
     void *addr;
 
     VMPROLOGUE(0);
@@ -628,7 +624,7 @@ extern void *malloc(size_t size) {
     return VMRECORD(addr);
 }
 
-extern void *realloc(void *data, size_t size) {
+void *realloc(void *data, size_t size) {
     void *addr;
     Vmalloc_t *vm;
 
@@ -657,7 +653,7 @@ extern void *realloc(void *data, size_t size) {
     return VMRECORD(addr);
 }
 
-extern void free(void *data) {
+void free(void *data) {
     Vmalloc_t *vm;
 
     VMPROLOGUE(1);
@@ -681,9 +677,9 @@ extern void free(void *data) {
     VMEPILOGUE(1);
 }
 
-extern void cfree(void *data) { free(data); }
+void cfree(void *data) { free(data); }
 
-extern void *memalign(size_t align, size_t size) {
+void *memalign(size_t align, size_t size) {
     void *addr;
 
     VMPROLOGUE(0);
@@ -697,11 +693,11 @@ extern void *memalign(size_t align, size_t size) {
     return VMRECORD(addr);
 }
 
-extern void *aligned_alloc(size_t align, size_t size) {
+void *aligned_alloc(size_t align, size_t size) {
     return memalign(align, ROUND(size, align));
 }
 
-extern int posix_memalign(void **memptr, size_t align, size_t size) {
+int posix_memalign(void **memptr, size_t align, size_t size) {
     void *mem;
 
     if (align == 0 || (align % sizeof(void *)) != 0 || ((align - 1) & align) != 0) return EINVAL;
@@ -712,7 +708,7 @@ extern int posix_memalign(void **memptr, size_t align, size_t size) {
     return 0;
 }
 
-extern void *valloc(size_t size) {
+void *valloc(size_t size) {
     void *addr;
 
     VMPROLOGUE(0);
@@ -725,7 +721,7 @@ extern void *valloc(size_t size) {
     return VMRECORD(addr);
 }
 
-extern void *pvalloc(size_t size) {
+void *pvalloc(size_t size) {
     void *addr;
 
     VMPROLOGUE(0);
@@ -769,7 +765,7 @@ struct Alloca_s {
     Vmuchar_t data[1];
 };
 
-extern void *alloca(size_t size) {
+void *alloca(size_t size) {
     char array[MEM_ALIGN];
     char *file;
     int line;
@@ -865,49 +861,47 @@ void __attribute__ ((constructor)) vm_initialize_initialize_hook(void)
 /* intercept _* __* __libc_* variants */
 
 #if __lib__malloc
-extern void *F2(_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern void F1(_cfree, void *, p) { free(p); }
-extern void F1(_free, void *, p) { free(p); }
-extern void *F1(_malloc, size_t, n) { return malloc(n); }
-extern void *F2(_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+void *F2(_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+void F1(_cfree, void *, p) { free(p); }
+void F1(_free, void *, p) { free(p); }
+void *F1(_malloc, size_t, n) { return malloc(n); }
+void *F2(_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern void *F1(_pvalloc, size_t, n) { return pvalloc(n); }
+void *F1(_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern void *F2(_realloc, void *, p, size_t, n) { return realloc(p, n); }
-extern void *F1(_valloc, size_t, n) { return valloc(n); }
+void *F2(_realloc, void *, p, size_t, n) { return realloc(p, n); }
+void *F1(_valloc, size_t, n) { return valloc(n); }
 #endif
 
 #if _lib___malloc
-extern void *F2(__calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern void F1(__cfree, void *, p) { free(p); }
-extern void F1(__free, void *, p) { free(p); }
-extern void *F1(__malloc, size_t, n) { return malloc(n); }
-extern void *F2(__memalign, size_t, a, size_t, n) { return memalign(a, n); }
+void *F2(__calloc, size_t, n, size_t, m) { return calloc(n, m); }
+void F1(__cfree, void *, p) { free(p); }
+void F1(__free, void *, p) { free(p); }
+void *F1(__malloc, size_t, n) { return malloc(n); }
+void *F2(__memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern void *F1(__pvalloc, size_t, n) { return pvalloc(n); }
+void *F1(__pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern void *F2(__realloc, void *, p, size_t, n) { return realloc(p, n); }
-extern void *F1(__valloc, size_t, n) { return valloc(n); }
+void *F2(__realloc, void *, p, size_t, n) { return realloc(p, n); }
+void *F1(__valloc, size_t, n) { return valloc(n); }
 #endif
 
 #if _lib___libc_malloc
-extern void *F2(__libc_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern void F1(__libc_cfree, void *, p) { free(p); }
-extern void F1(__libc_free, void *, p) { free(p); }
-extern void *F1(__libc_malloc, size_t, n) { return malloc(n); }
-extern void *F2(__libc_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+void *F2(__libc_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+void F1(__libc_cfree, void *, p) { free(p); }
+void F1(__libc_free, void *, p) { free(p); }
+void *F1(__libc_malloc, size_t, n) { return malloc(n); }
+void *F2(__libc_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern void *F1(__libc_pvalloc, size_t, n) { return pvalloc(n); }
+void *F1(__libc_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern void *F2(__libc_realloc, void *, p, size_t, n) { return realloc(p, n); }
-extern void *F1(__libc_valloc, size_t, n) { return valloc(n); }
+void *F2(__libc_realloc, void *, p, size_t, n) { return realloc(p, n); }
+void *F1(__libc_valloc, size_t, n) { return valloc(n); }
 #endif
 
 #endif /* _malloc_hook */
 
 #endif /* _map_malloc */
-
-#undef extern
 
 #if _hdr_malloc /* need the mallint interface for statistics, etc. */
 
@@ -933,12 +927,8 @@ extern void *F1(__libc_valloc, size_t, n) { return valloc(n); }
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #if _lib_mallopt
-extern int mallopt(int cmd, int value) {
+int mallopt(int cmd, int value) {
     VMPROLOGUE(0);
     VMEPILOGUE(0);
     return 0;
@@ -946,7 +936,7 @@ extern int mallopt(int cmd, int value) {
 #endif /*_lib_mallopt*/
 
 #if _lib_mallinfo && _mem_arena_mallinfo
-extern Mallinfo_t mallinfo(void) {
+Mallinfo_t mallinfo(void) {
     Vmstat_t sb;
     Mallinfo_t mi;
 
@@ -965,7 +955,7 @@ extern Mallinfo_t mallinfo(void) {
 #endif /* _lib_mallinfo */
 
 #if _lib_mstats && _mem_bytes_total_mstats
-extern Mstats_t mstats(void) {
+Mstats_t mstats(void) {
     Vmstat_t sb;
     Mstats_t ms;
 
@@ -984,8 +974,6 @@ extern Mstats_t mstats(void) {
 }
 #endif /*_lib_mstats*/
 
-#undef extern
-
 #endif /*_hdr_malloc*/
 
 #else
@@ -996,47 +984,41 @@ extern Mstats_t mstats(void) {
  */
 
 #undef calloc
-extern void *calloc _ARG_((size_t, size_t));
+void *calloc _ARG_((size_t, size_t));
 
 #undef cfree
-extern void cfree _ARG_((void *));
+void cfree _ARG_((void *));
 
 #undef free
-extern void free _ARG_((void *));
+void free _ARG_((void *));
 
 #undef malloc
-extern void *malloc _ARG_((size_t));
+void *malloc _ARG_((size_t));
 
 #undef memalign
-extern void *memalign _ARG_((size_t, size_t));
+void *memalign _ARG_((size_t, size_t));
 
 #if _lib_pvalloc
 #undef pvalloc
-extern void *pvalloc _ARG_((size_t));
+void *pvalloc _ARG_((size_t));
 #endif
 
 #undef realloc
-extern void *realloc _ARG_((void *, size_t));
+void *realloc _ARG_((void *, size_t));
 
 #undef valloc
-extern void *valloc _ARG_((size_t));
+void *valloc _ARG_((size_t));
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern void *F2(_ast_calloc, size_t, n, size_t, m) { return calloc(n, m); }
-extern void F1(_ast_cfree, void *, p) { free(p); }
-extern void F1(_ast_free, void *, p) { free(p); }
-extern void *F1(_ast_malloc, size_t, n) { return malloc(n); }
-extern void *F2(_ast_memalign, size_t, a, size_t, n) { return memalign(a, n); }
+void *F2(_ast_calloc, size_t, n, size_t, m) { return calloc(n, m); }
+void F1(_ast_cfree, void *, p) { free(p); }
+void F1(_ast_free, void *, p) { free(p); }
+void *F1(_ast_malloc, size_t, n) { return malloc(n); }
+void *F2(_ast_memalign, size_t, a, size_t, n) { return memalign(a, n); }
 #if _lib_pvalloc
-extern void *F1(_ast_pvalloc, size_t, n) { return pvalloc(n); }
+void *F1(_ast_pvalloc, size_t, n) { return pvalloc(n); }
 #endif
-extern void *F2(_ast_realloc, void *, p, size_t, n) { return realloc(p, n); }
-extern void *F1(_ast_valloc, size_t, n) { return valloc(n); }
-
-#undef extern
+void *F2(_ast_realloc, void *, p, size_t, n) { return realloc(p, n); }
+void *F1(_ast_valloc, size_t, n) { return valloc(n); }
 
 #if _hdr_malloc
 
@@ -1059,23 +1041,17 @@ extern void *F1(_ast_valloc, size_t, n) { return valloc(n); }
 typedef struct mallinfo Mallinfo_t;
 typedef struct mstats Mstats_t;
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #if _lib_mallopt
-extern int F2(_ast_mallopt, int, cmd, int, value) { return mallopt(cmd, value); }
+int F2(_ast_mallopt, int, cmd, int, value) { return mallopt(cmd, value); }
 #endif
 
 #if _lib_mallinfo && _mem_arena_mallinfo
-extern Mallinfo_t F0(_ast_mallinfo, void) { return mallinfo(); }
+Mallinfo_t F0(_ast_mallinfo, void) { return mallinfo(); }
 #endif
 
 #if _lib_mstats && _mem_bytes_total_mstats
-extern Mstats_t F0(_ast_mstats, void) { return mstats(); }
+Mstats_t F0(_ast_mstats, void) { return mstats(); }
 #endif
-
-#undef extern
 
 #endif /*_hdr_malloc*/
 
@@ -1093,12 +1069,7 @@ extern Mstats_t F0(_ast_mstats, void) { return mstats(); }
  * and to restore to the previous state
  *	(void)_vmkeep(r);
  */
-
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern int _vmkeep(int v) {
+int _vmkeep(int v) {
     int r;
 
     r = !!(_Vmassert & VM_keep);
@@ -1109,19 +1080,17 @@ extern int _vmkeep(int v) {
     return r;
 }
 
-#undef extern
-
 #if USE_NATIVE
 
 #undef realloc
 
-extern void *realloc(void *, size_t);
+void *realloc(void *, size_t);
 
 static void *native_realloc(void *p, size_t n) { return realloc(p, n); }
 
 #undef free
 
-extern void free(void *);
+void free(void *);
 
 static void native_free(void *p) { free(p); }
 

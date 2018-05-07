@@ -119,13 +119,6 @@ struct Vmalloc_s {
 #define VM_CHECKARENA 101 /* checking arena integrity	*/
 #define VM_BLOCKHEAD 102  /* get size of extra head	*/
 
-#if _BLD_vmalloc && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_vmalloc && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Vmethod_t *Vmbest; /* best allocation		*/
 extern Vmethod_t *Vmlast;     /* last-block allocation	*/
 extern Vmethod_t *Vmpool;     /* pool allocation		*/
@@ -138,12 +131,6 @@ extern Vmdisc_t *Vmdcsbrk;   /* like Vmdcsystem - legacy use	*/
 extern Vmalloc_t _Vmheap;   /* use this with extreme care!	*/
 extern Vmalloc_t *Vmheap;   /* == &_Vmheap but safe to use	*/
 extern Vmalloc_t *Vmregion; /* malloc allocates from this	*/
-
-#undef extern
-
-#if _BLD_vmalloc && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 extern Vmalloc_t *vmopen _ARG_((Vmdisc_t *, Vmethod_t *, int));
 extern int vmclose _ARG_((Vmalloc_t *));
@@ -190,8 +177,6 @@ extern void *calloc _ARG_((size_t, size_t));
 extern void *memalign _ARG_((size_t, size_t));
 extern void *valloc _ARG_((size_t));
 #endif
-
-#undef extern
 
 /* to coerce any value to a Vmalloc_t*, make ANSI happy */
 #define _VM_(vm) ((Vmalloc_t *)(vm))

@@ -65,10 +65,6 @@ struct stacktable /* stack information		*/
 #define popstack stackpop
 #define posstack stacktell
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern STACK stackalloc(int, void *);
 extern void stackfree(STACK);
 extern void stackclear(STACK);
@@ -76,7 +72,5 @@ extern void *stackget(STACK);
 extern int stackpush(STACK, void *);
 extern int stackpop(STACK);
 extern void stacktell(STACK, int, STACKPOS *);
-
-#undef extern
 
 #endif

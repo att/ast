@@ -183,10 +183,6 @@ struct Hash_table /* hash table information	*/
 #endif
 };
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Hash_table_t *hashalloc(Hash_table_t *, ...);
 extern void hashdone(Hash_position_t *);
 extern void hashdump(Hash_table_t *, int);
@@ -198,7 +194,5 @@ extern Hash_position_t *hashscan(Hash_table_t *, int);
 extern void hashsize(Hash_table_t *, int);
 extern Hash_table_t *hashview(Hash_table_t *, Hash_table_t *);
 extern int hashwalk(Hash_table_t *, int, int (*)(const char *, char *, void *), void *);
-
-#undef extern
 
 #endif

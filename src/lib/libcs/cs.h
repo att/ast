@@ -204,20 +204,7 @@ struct Cs_s /* thread state			*/
 #endif
 };
 
-#if _BLD_cs && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-#if !_BLD_cs && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Cs_t cs;
-
-#undef extern
-
-#if _BLD_cs && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 #if CS_INTERFACE <= 1
 
@@ -350,7 +337,5 @@ extern unsigned long _cs_wakeup(unsigned long);
 extern ssize_t _cs_write(int, const void *, size_t);
 
 #endif
-
-#undef extern
 
 #endif

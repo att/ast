@@ -49,13 +49,6 @@
  *	      to allow future Error_info_t growth
  *            by 2009 _error_info_ can be static
  */
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
-extern Error_info_t _error_info_;
-
 Error_info_t _error_info_ = {
     2,         exit, write, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* version			*/
     0,                                                 /* auxilliary			*/
@@ -64,8 +57,6 @@ Error_info_t _error_info_ = {
     0,                                                 /* time				*/
     translate, 0                                       /* catalog			*/
 };
-
-#undef extern
 
 __EXTERN__(Error_info_t, _error_info_);
 
@@ -286,8 +277,7 @@ static void context(Sfio_t *sp, Error_context_t *cp) {
 /*
  * debugging breakpoint
  */
-
-extern void error_break(void) {
+void error_break(void) {
     char *s;
 
     if (error_state.tty || (error_state.tty = sfopen(NULL, "/dev/tty", "r+"))) {

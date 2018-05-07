@@ -69,10 +69,6 @@ struct Mime_s {
 #endif
 };
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Mime_t *mimeopen(Mimedisc_t *);
 extern int mimeload(Mime_t *, const char *, unsigned long);
 extern int mimelist(Mime_t *, Sfio_t *, const char *);
@@ -82,7 +78,5 @@ extern char *mimetype(Mime_t *, Sfio_t *, const char *, struct stat *);
 extern char *mimeview(Mime_t *, const char *, const char *, const char *, const char *);
 extern int mimehead(Mime_t *, void *, size_t, size_t, char *);
 extern int mimecmp(const char *, const char *, char **);
-
-#undef extern
 
 #endif

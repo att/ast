@@ -192,10 +192,6 @@
 
 #if _AST_INTERCEPT_IMPLEMENT > 0
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern uint32_t astserial(int, uint32_t);
 
 extern int ast_access(const char *, int);
@@ -241,8 +237,6 @@ extern int ast_renameat(int, const char *, int, const char *);
 extern ssize_t ast_readlinkat(int, const char *, char *, size_t);
 extern int ast_symlinkat(const char *, int, const char *);
 extern int ast_unlinkat(int, const char *, int);
-
-#undef extern
 
 #endif
 

@@ -172,16 +172,12 @@ int regsubexec(const regex_t *p, const char *s, size_t nmatch, regmatch_t *match
  * 20120528: regoff_t changed from int to ssize_t
  */
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #undef regsubexec
 #if _map_libc
 #define regsubexec _ast_regsubexec
 #endif
 
-extern int regsubexec(const regex_t *p, const char *s, size_t nmatch, oldregmatch_t *oldmatch) {
+int regsubexec(const regex_t *p, const char *s, size_t nmatch, oldregmatch_t *oldmatch) {
     if (oldmatch) {
         regmatch_t *match;
         ssize_t i;

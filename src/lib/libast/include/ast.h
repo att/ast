@@ -258,10 +258,6 @@ typedef int (*Strcmp_f)(const char *, const char *);
 struct Vmdisc_s;
 #endif
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
 extern char *astconf(const char *, const char *, const char *);
 extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
@@ -398,8 +394,6 @@ extern ssize_t wcstoutf32s(uint32_t *, wchar_t *, size_t);
 
 extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
 
-#undef extern
-
 /*
  * C library global data symbols not prototyped by <unistd.h>
  */
@@ -457,17 +451,11 @@ extern char **environ;
 #undef AST_PLUGIN_VERSION
 #define AST_PLUGIN_VERSION(v) ((v) > AST_VERSION ? (v) : AST_VERSION)
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern unsigned long plugin_version(void);
 
 /* This is a workaround for issue discussed in https://github.com/att/ast/pull/107 */
 #include <wctype.h>
 #undef iswalpha
 #define iswalpha(w) (_ast_info.mb_alpha ? (*_ast_info.mb_alpha)(w) : isalpha(w))
-
-#undef extern
 
 #endif

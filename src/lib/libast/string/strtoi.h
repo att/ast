@@ -184,11 +184,7 @@ static const S2I_unumber mm[] = {
     S2I_umax / 64,
 };
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 extern S2I_type
-#undef extern
 #if S2I_size
 #if S2I_multiplier
 S2I_function(const char *a, size_t size, char **e, char *basep, int m)

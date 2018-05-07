@@ -57,10 +57,6 @@
 #endif
 #include <wchar.h>
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #undef getenv
 #define getenv _ast_getenv
 
@@ -160,8 +156,6 @@ extern char *strerror(int);
 #define LC_LANG (-AST_LC_LANG)
 #endif
 
-#undef extern
-
 #undef strcoll
 #define strcoll _ast_info.collate
 
@@ -220,16 +214,7 @@ typedef struct {
 
 } _Ast_info_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_ast && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern _Ast_info_t _ast_info;
-
-#undef extern
 
 /* direct macro access for bsd crossover */
 
@@ -253,12 +238,6 @@ extern int rename(const char *, const char *);
 #endif
 
 /* and now introducing prototypes botched by the standard(s) */
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-#undef extern
 
 /*
  * and finally, standard interfaces hijacked by ast

@@ -49,12 +49,6 @@ char *fmtbase(intmax_t n, int b, int p) {
 
 #undef fmtbasell
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern char *fmtbasell(intmax_t n, int b, int p) { return fmtbase(n, b, p); }
-
-#undef extern
+char *fmtbasell(intmax_t n, int b, int p) { return fmtbase(n, b, p); }
 
 #endif

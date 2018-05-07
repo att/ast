@@ -111,15 +111,9 @@ struct Css_s /* connect stream server state	*/
 #endif
 };
 
-#if _BLD_cs && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Css_t *cssopen(const char *, Cssdisc_t *);
 extern Cssfd_t *cssfd(Css_t *, int, unsigned long);
 extern Cssfd_t *csspoll(unsigned long, unsigned long);
 extern int cssclose(Css_t *);
-
-#undef extern
 
 #endif

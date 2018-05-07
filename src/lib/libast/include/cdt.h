@@ -237,16 +237,7 @@ struct _dtstat_s {
 #define DT_HASHSIZE 7  /* initialize hash table size		*/
 #define DT_ERROR 0xbad /* announcing an error			*/
 
-#if _PACKAGE_ast /* Microsoft import/export dll stuffs */
-#if _BLD_cdt && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-#if !_BLD_cdt && defined(__IMPORT__)
-#define extern __IMPORT__
-#endif
-#endif /*_PACKAGE_ast*/
-
-    extern Dtmethod_t *Dtset;
+extern Dtmethod_t *Dtset;
 extern Dtmethod_t *Dtbag;
 extern Dtmethod_t *Dtoset;
 extern Dtmethod_t *Dtobag;
@@ -285,17 +276,9 @@ extern ssize_t dtstat _ARG_((Dt_t *, Dtstat_t *));
 extern Dt_t *_dtopen _ARG_((Dtdisc_t *, Dtmethod_t *, unsigned long));
 #define dtopen(dc, mt) _dtopen((dc), (mt), CDT_VERSION)
 
-#undef extern
-
 #if _PACKAGE_ast && !defined(_CDTLIB_H)
 
-#if _BLD_dll && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern void *dllmeth(const char *, const char *, unsigned long);
-
-#undef extern
 
 #endif
 

@@ -35,11 +35,7 @@ Intercepts_t intercepts = {0};
  * get name from the environment
  */
 
-#if defined(__EXPORT__) && defined(getenv)
-#define extern __EXPORT__
-#endif
-
-extern char *getenv(const char *name) {
+char *getenv(const char *name) {
 #undef getenv
     return intercepts.intercept_getenv ? (*intercepts.intercept_getenv)(name) : getenv(name);
 }

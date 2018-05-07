@@ -1146,19 +1146,10 @@ extern char *_sfcvt _ARG_((void *, char *, size_t, int, int *, int *, int *, int
 extern char **_sfgetpath _ARG_((char *));
 extern Mbstate_t *_sfmbstate _ARG_((Sfio_t *));
 
-#if _BLD_sfio && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-#if !_BLD_sfio && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Sfextern_t _Sfextern;
 
 extern int _sfmode _ARG_((Sfio_t *, int, int));
 extern int _sftype _ARG_((const char *, int *, int *, int *));
-
-#undef extern
 
 #ifndef errno
 extern int errno;

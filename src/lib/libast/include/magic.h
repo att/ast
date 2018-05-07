@@ -68,16 +68,10 @@ typedef struct Magic_s {
 
 } Magic_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Magic_t *magicopen(Magicdisc_t *);
 extern int magicload(Magic_t *, const char *, unsigned long);
 extern int magiclist(Magic_t *, Sfio_t *);
 extern char *magictype(Magic_t *, Sfio_t *, const char *, struct stat *);
 extern int magicclose(Magic_t *);
-
-#undef extern
 
 #endif

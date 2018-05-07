@@ -30,14 +30,8 @@
 
 #include <modecanon.h>
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int modei(int);
 extern int modex(int);
-
-#undef extern
 
 #if _S_IDPERM
 #define modei(m) ((m)&X_IPERM)

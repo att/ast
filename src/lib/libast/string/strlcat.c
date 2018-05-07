@@ -41,12 +41,7 @@ NoN(strlcat)
  * s 0 terminated if n>0
  * min(n,strlen(s))+strlen(t) returned
  */
-
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern size_t strlcat(char *s, const char *t, size_t n) {
+size_t strlcat(char *s, const char *t, size_t n) {
     size_t m;
     const char *o = t;
 

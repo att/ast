@@ -576,10 +576,6 @@ int main(int argc, char **argv) {
     fprintf(hf, "\tunsigned int\t\tflags;\n");
     fprintf(hf, "} Lc_category_t;\n");
     fprintf(hf, "\n");
-    fprintf(hf, "#if _BLD_ast && defined(__EXPORT__)\n");
-    fprintf(hf, "#define extern\t\t__EXPORT__\n");
-    fprintf(hf, "#endif\n");
-    fprintf(hf, "\n");
     fprintf(hf, "extern size_t\t\tlccanon(Lc_t*, unsigned long flags, char*, size_t);\n");
     fprintf(hf, "extern Lc_category_t*\tlccategories(void);\n");
     fprintf(hf, "extern int\t\tlcindex(int, int);\n");
@@ -587,7 +583,6 @@ int main(int argc, char **argv) {
     fprintf(hf, "extern Lc_t*\t\tlcmake(const char*);\n");
     fprintf(hf, "extern Lc_t*\t\tlcscan(Lc_t*);\n");
     fprintf(hf, "\n");
-    fprintf(hf, "#undef\textern\n");
     fprintf(lf, "\nconst Lc_charset_t lc_charsets[] =\n{\n");
     for (cp = (Charset_t *)state.charset.root; cp; cp = (Charset_t *)cp->link.next) {
         fprintf(lf, "{\"%s\",", cp->link.code);

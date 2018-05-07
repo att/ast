@@ -28,12 +28,6 @@
 
 typedef int (*Error_f)(void *, void *, int, ...);
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int errorf(void *, void *, int, ...);
-
-#undef extern
 
 #endif

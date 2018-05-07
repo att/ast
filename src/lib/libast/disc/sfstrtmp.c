@@ -37,15 +37,11 @@ NoN(sfstrtmp)
 
 #else
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 /*
  * replace buffer in string stream f for either SF_READ or SF_WRITE
  */
 
-extern int sfstrtmp(Sfio_t *f, int mode, void *buf, size_t siz) {
+int sfstrtmp(Sfio_t *f, int mode, void *buf, size_t siz) {
     if (!(f->_flags & SF_STRING)) return -1;
     if (f->_flags & SF_MALLOC) free(f->_data);
     f->_flags &= ~(SF_ERROR | SF_MALLOC);

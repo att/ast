@@ -189,16 +189,7 @@ typedef struct {
 
 #define msg_info _msg_info_
 
-#if _BLD_cs && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-#if !_BLD_cs && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Msg_info_t msg_info;
-
-#undef extern
 
 #ifndef msgreserve
 #define msgreserve(p)
@@ -211,10 +202,6 @@ extern Msg_info_t msg_info;
 #define msgsetsize(p, n)                                           \
     ((p)[0] = ((n) >> MSG_SIZE_BITS) & ((1 << MSG_SIZE_BITS) - 1), \
      (p)[1] = (n) & ((1 << MSG_SIZE_BITS) - 1))
-
-#if _BLD_cs && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 extern int msggetmask(char *, int, unsigned long);
 extern int msgindex(const char *);
@@ -236,7 +223,5 @@ extern ssize_t msgblast(Msg_call_t *);
 extern ssize_t msgread(int, char *, size_t);
 extern ssize_t msgrecv(int, Msg_call_t *);
 extern ssize_t msgsend(int, Msg_call_t *, unsigned long, long, int, void *);
-
-#undef extern
 
 #endif

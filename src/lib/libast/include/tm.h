@@ -147,24 +147,11 @@ typedef struct Tm_s {
     Tm_zone_t *tm_zone;
 } Tm_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_ast && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Tm_data_t *_tm_datap_;
 extern Tm_info_t *_tm_infop_;
 
 #define tm_data (*_tm_datap_)
 #define tm_info (*_tm_infop_)
-
-#undef extern
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 extern time_t tmdate(const char *, char **, time_t *);
 extern int tmequiv(Tm_t *);
@@ -185,7 +172,5 @@ extern Tm_zone_t *tmtype(const char *, char **);
 extern int tmweek(Tm_t *, int, int, int);
 extern int tmword(const char *, char **, const char *, char **, int);
 extern Tm_zone_t *tmzone(const char *, char **, const char *, int *);
-
-#undef extern
 
 #endif

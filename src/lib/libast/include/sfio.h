@@ -196,13 +196,6 @@ struct _sffmt_s {
 #define SF_CLOSE SF_CLOSING /* AIX sys/socket.h		*/
 #endif
 
-#if _BLD_sfio && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_sfio && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern ssize_t _Sfi;
 extern ssize_t _Sfmaxr;
 
@@ -214,12 +207,6 @@ extern Sfio_t *sfstderr;
 extern Sfio_t _Sfstdin;
 extern Sfio_t _Sfstdout;
 extern Sfio_t _Sfstderr;
-
-#undef extern
-
-#if _BLD_sfio && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 extern Sfio_t *sfnew _ARG_((Sfio_t *, void *, size_t, int, int));
 extern Sfio_t *sfopen _ARG_((Sfio_t *, const char *, const char *));
@@ -314,8 +301,6 @@ extern int sfstacked _ARG_((Sfio_t *));
 extern ssize_t sfvalue _ARG_((Sfio_t *));
 extern ssize_t sfslen _ARG_((void));
 extern ssize_t sfmaxr _ARG_((ssize_t, int));
-
-#undef extern
 
 /* coding long integers in a portable and compact fashion */
 #define SF_SBITS 6

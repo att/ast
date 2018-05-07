@@ -26,13 +26,7 @@
 #define IP6BITS IP6ADDR
 #define IP6PREFIX (IP6ADDR + 1)
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern char *fmtip6(const unsigned char *, int);
 extern int strtoip6(const char *, char **, unsigned char *, unsigned char *);
-
-#undef extern
 
 #endif

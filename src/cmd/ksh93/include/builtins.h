@@ -51,10 +51,6 @@
 
 // Entry point for shell special builtins.
 
-#if _BLD_shell && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int b_alias(int, char *[], Shbltin_t *);
 extern int b_break(int, char *[], Shbltin_t *);
 extern int b_dot_cmd(int, char *[], Shbltin_t *);
@@ -111,8 +107,6 @@ extern int b_mkservice(int, char*[],Shbltin_t*);
 extern int b_eloop(int, char*[],Shbltin_t*);
 #endif
 extern int b_complete(int, char *[], Shbltin_t *);
-
-#undef extern
 
 extern const char e_alrm1[];
 extern const char e_alrm2[];

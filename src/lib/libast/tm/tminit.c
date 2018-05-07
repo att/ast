@@ -45,14 +45,6 @@ static const Namval_t options[] = {
  *            by 2009 _tm_info_ can be static
  */
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
-extern Tm_info_t _tm_info_;
-
-#undef extern
-
 Tm_info_t _tm_info_ = {0};
 
 __EXTERN__(Tm_info_t, _tm_info_);

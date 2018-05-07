@@ -142,10 +142,6 @@ int main() {
         printf("extern char*            dlerror(void);\n");
 #endif
         printf("\n");
-        printf("#if _BLD_dll && defined(__EXPORT__)\n");
-        printf("#define extern          __EXPORT__\n");
-        printf("#endif\n");
-        printf("\n");
         printf("extern Dllinfo_t*       dllinfo(void);\n");
         printf("extern void*            dllplugin(const char*, const char*, const char*, unsigned long, unsigned long*, int, char*, size_t);\n");
         printf("extern void*            dllplug(const char*, const char*, const char*, int, char*, size_t);\n");
@@ -172,7 +168,6 @@ int main() {
         printf("extern Dllent_t*        dllsread(Dllscan_t*);\n");
         printf("extern int              dllsclose(Dllscan_t*);\n");
         printf("\n");
-        printf("#undef  extern\n");
 #if _hdr_rld_interface
         if (i >= 0)
         {

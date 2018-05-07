@@ -39,10 +39,6 @@ typedef struct Tv_s {
 #define tvsetmtime(t, s) (ST_MTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_mtime = (t)->tv_sec)
 #define tvsetctime(t, s) (ST_CTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_ctime = (t)->tv_sec)
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern void tvgettime(Tv_t *);
 extern int tvsettime(const Tv_t *);
 extern int tvcmp(const Tv_t *, const Tv_t *);

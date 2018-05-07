@@ -36,13 +36,7 @@
 
 #define ERROR_CALLBACK ERROR_SET
 
-#if _BLD_cmd && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #include <cmdext.h>
-
-#undef extern
 
 #if defined(CMD_BUILTIN) && !defined(CMD_STANDALONE)
 #define CMD_STANDALONE CMD_BUILTIN
@@ -146,13 +140,7 @@ int main(int argc, char **argv) {
     } while (0)
 #endif
 
-#if _BLD_cmd && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
 extern int _cmd_init(int, char **, Shbltin_t *, const char *, int);
-
-#undef extern
 
 #endif
 

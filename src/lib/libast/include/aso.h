@@ -55,13 +55,6 @@
 #undef __MANGLE__
 #define __MANGLE__ __LINKAGE__
 
-#if _BLD_aso && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_aso && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern unsigned int asoactivecpu(void);
 extern int asolock(unsigned int volatile *, unsigned int, int);
 extern int asorelax(long);
@@ -175,7 +168,5 @@ extern unsigned int asothreadid(void);
 #define asominoff(p, n) asomin64((uint64_t volatile *)p, n)
 #define asomaxoff(p, n) asomax64((uint64_t volatile *)p, n)
 #endif
-
-#undef extern
 
 #endif

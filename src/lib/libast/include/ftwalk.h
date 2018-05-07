@@ -111,13 +111,7 @@
 #define FTW_SKIP FTS_SKIP
 #define FTW_STAT FTS_STAT
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int ftwalk(const char *, int (*)(Ftw_t *), int, int (*)(Ftw_t *, Ftw_t *));
 extern int ftwflags(void);
-
-#undef extern
 
 #endif

@@ -106,9 +106,6 @@ extern int spawnvex_close(Spawnvex_t *);
 
 #endif
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 extern int eaccess(const char *, int);
 extern int execvpe(const char *, char *const[], char *const[]);
 extern char *fgetcwd(int, char *, size_t);
@@ -119,7 +116,7 @@ extern char *resolvepath(const char *, char *, size_t);
 extern size_t strlcat(char *, const char *, size_t);
 extern size_t strlcpy(char *, const char *, size_t);
 extern void swab(const void *, void *, ssize_t);
-#undef extern
+
 #include <stdarg.h>
 #include <string.h>
 #endif

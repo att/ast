@@ -80,12 +80,8 @@ extern char *path_fullname(Shell_t *, const char *);
 extern int path_expand(Shell_t *, const char *, struct argnod **);
 extern void path_exec(Shell_t *, const char *, char *[], struct argnod *);
 extern pid_t path_spawn(Shell_t *, const char *, char *[], char *[], Pathcomp_t *, int);
-#if defined(__EXPORT__) && defined(_BLD_DLL) && defined(_BLD_shell)
-#define extern __EXPORT__
-#endif
 extern int path_open(Shell_t *, const char *, Pathcomp_t *);
 extern Pathcomp_t *path_get(Shell_t *, const char *);
-#undef extern
 extern char *path_pwd(Shell_t *, int);
 extern Pathcomp_t *path_nextcomp(Shell_t *, Pathcomp_t *, const char *, Pathcomp_t *);
 extern bool path_search(Shell_t *, const char *, Pathcomp_t **, int);

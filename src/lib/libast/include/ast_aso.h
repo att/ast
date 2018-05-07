@@ -305,13 +305,6 @@
 
 #endif
 
-#if _BLD_aso && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_aso && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 #ifndef asocas8
 extern uint8_t asocas8(uint8_t volatile *, int, int);
 #endif
@@ -422,7 +415,5 @@ extern void *asocasptr(void volatile *, void *, void *);
 #ifndef asogetptr
 extern void *asogetptr(void volatile *);
 #endif
-
-#undef extern
 
 #endif

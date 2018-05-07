@@ -26,26 +26,10 @@
 #ifndef _LIBGEN_H
 #define _LIBGEN_H
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-#if !_BLD_ast && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern char *__loc1;
-
-#undef extern
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern char *regcmp(const char *, ...);
 extern char *regex(const char *, const char *, ...);
 extern char *basename(char *);
 extern char *dirname(char *);
-
-#undef extern
 
 #endif

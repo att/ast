@@ -191,10 +191,6 @@ struct regex_s {
 
 #define reginit(disc) (memset(disc, 0, sizeof(*(disc))), (disc)->re_version = REG_VERSION)
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int regcomp(regex_t *, const char *, regflags_t);
 extern size_t regerror(int, const regex_t *, char *, size_t);
 extern int regexec(const regex_t *, const char *, size_t, regmatch_t *, regflags_t);
@@ -247,7 +243,5 @@ struct _sfio_s;
 extern void regalloc(void *, regresize_t, regflags_t);
 extern int regsub(const regex_t *, struct _sfio_s *, const char *, const char *, size_t,
                   regmatch_t *, regflags_t);
-
-#undef extern
 
 #endif

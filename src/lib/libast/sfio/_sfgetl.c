@@ -26,12 +26,7 @@
 /*
  * for backwards compatibility with pre-threaded sfgetl() inline
  */
-
-#ifdef __EXPORT__
-#define extern __EXPORT__
-#endif
-
-extern Sflong_t _sfgetl(reg Sfio_t *f) {
+Sflong_t _sfgetl(reg Sfio_t *f) {
     sfungetc(f, (unsigned char)_SF_(f)->val);
     return sfgetl(f);
 }

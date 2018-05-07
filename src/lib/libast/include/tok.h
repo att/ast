@@ -31,16 +31,10 @@
 
 #include <ast.h>
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Sfio_t *tokline(const char *, int, int *);
 extern int tokscan(char *, char **, const char *, ...);
 extern char *tokopen(char *, int);
 extern void tokclose(char *);
 extern char *tokread(char *);
-
-#undef extern
 
 #endif

@@ -126,16 +126,12 @@ done:
  * 20120528: regoff_t changed from int to ssize_t
  */
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #undef regrexec
 #if _map_libc
 #define regrexec _ast_regrexec
 #endif
 
-extern int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch,
+int regrexec(const regex_t *p, const char *s, size_t len, size_t nmatch,
                     oldregmatch_t *oldmatch, regflags_t flags, int sep, void *handle,
                     regrecord_t record) {
     if (oldmatch) {

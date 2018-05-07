@@ -158,14 +158,6 @@ typedef struct S2F_part_s {
 
 #if S2F_static > 0
 static
-#else
-#if S2F_static < 0 || !defined(S2F_static)
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-extern
-#undef extern
-#endif
 #endif
     S2F_number
 #if S2F_scan

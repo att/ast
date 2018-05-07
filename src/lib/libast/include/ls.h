@@ -73,16 +73,10 @@
 #define LS_W_MARK 1    /* LS_MARK field width		*/
 #define LS_W_NAME 9    /* group|user name field width	*/
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern off_t _iblocks(struct stat *);
 extern char *fmtdev(struct stat *);
 extern char *fmtfs(struct stat *);
 extern char *fmtls(char *, const char *, struct stat *, const char *, const char *, int);
 extern int pathstat(const char *, struct stat *);
-
-#undef extern
 
 #endif

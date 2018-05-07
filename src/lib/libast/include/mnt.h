@@ -42,15 +42,9 @@ typedef struct {
     int flags;     /* MNT_* flags			*/
 } Mnt_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern void *mntopen(const char *, const char *);
 extern Mnt_t *mntread(void *);
 extern int mntwrite(void *, const Mnt_t *);
 extern int mntclose(void *);
-
-#undef extern
 
 #endif

@@ -61,10 +61,6 @@ typedef size_t (*_ast_iconv_f)(_ast_iconv_t, char **, size_t *, char **, size_t 
     (memset(d, 0, sizeof(*(d))), (d)->version = ICONV_VERSION, (d)->errorf = (Iconv_error_f)(e), \
      (d)->fill = (-1))
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern _ast_iconv_t _ast_iconv_open(const char *, const char *);
 extern size_t _ast_iconv(_ast_iconv_t, char **, size_t *, char **, size_t *);
 extern int _ast_iconv_close(_ast_iconv_t);
@@ -79,7 +75,5 @@ extern ssize_t _ast_iconv_move(_ast_iconv_t, FILE *, FILE *, size_t, Iconv_disc_
 extern ssize_t _ast_iconv_write(_ast_iconv_t, FILE *, char **, size_t *, Iconv_disc_t *);
 #endif
 #endif
-
-#undef extern
 
 #endif

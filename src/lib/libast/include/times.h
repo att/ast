@@ -44,12 +44,6 @@
 #define _TIMES_H
 #endif
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int touch(const char *, time_t, time_t, int);
-
-#undef extern
 
 #endif

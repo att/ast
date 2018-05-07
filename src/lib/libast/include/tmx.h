@@ -41,10 +41,6 @@ typedef uint32_t Tmxnsec_t;
 #define tmxsetctime(s, t) ((s)->st_ctime = tmxsec(t), ST_CTIME_NSEC_SET(s, tmxnsec(t)))
 #define tmxsetmtime(s, t) ((s)->st_mtime = tmxsec(t), ST_MTIME_NSEC_SET(s, tmxnsec(t)))
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Time_t tmxdate(const char *, char **, Time_t);
 extern Time_t tmxduration(const char *, char **);
 extern char *tmxfmt(char *, size_t, const char *, Time_t);
@@ -61,7 +57,5 @@ extern int tmxsettime(Time_t);
 extern int tmxtouch(const char *, Time_t, Time_t, Time_t, int);
 
 extern char *fmttmx(const char *, Time_t);
-
-#undef extern
 
 #endif

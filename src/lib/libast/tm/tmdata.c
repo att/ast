@@ -453,14 +453,6 @@ static Tm_zone_t zone[] = {{0, "GMT", 0, (0 * 60), 0},                  /* UTC		
  *            by 2009 _tm_data_ can be static
  */
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
-extern Tm_data_t _tm_data_;
-
-#undef extern
-
 Tm_data_t _tm_data_ = {format, lex, digit, days, sum, leap, zone};
 
 __EXTERN__(Tm_data_t, _tm_data_);

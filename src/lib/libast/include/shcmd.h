@@ -100,12 +100,6 @@ struct Shbltin_s {
 #endif  // !_CMD_H
 #endif  // defined(SH_VERSION) || defined(_SH_PRIVATE)
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern int astintercept(Shbltin_t *, int);
-
-#undef extern
 
 #endif

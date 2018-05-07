@@ -871,17 +871,11 @@ void *asocasptr(void volatile *p, void *o, void *n) {
 
 #if __OBSOLETE__ < 20160101
 
-#if defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-
-extern int asoloop(unsigned int k) {
+int asoloop(unsigned int k) {
     k = (k % 21) + 1;
     if (k > 21) return asoyield();
     return asorelax(1 << ((k % 21) + 1));
 }
-
-#undef extern
 
 #endif
 

@@ -69,15 +69,9 @@ typedef struct Find_s {
 
 } Find_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Find_t *findopen(const char *, const char *, const char *, Finddisc_t *);
 extern char *findread(Find_t *);
 extern int findwrite(Find_t *, const char *, size_t, const char *);
 extern int findclose(Find_t *);
-
-#undef extern
 
 #endif

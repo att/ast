@@ -32,12 +32,6 @@
 #define _DLL 1
 #endif
 #endif
-#if !defined(__EXPORT__) && _BLD_DLL
-#define __EXPORT__ __declspec(dllexport)
-#endif
-#if !defined(__IMPORT__) && (_BLD_DLL || defined(_DLL))
-#define __IMPORT__ __declspec(dllimport)
-#endif
 #endif
 #if !defined(_astimport)
 #if defined(__IMPORT__) && defined(_DLL)

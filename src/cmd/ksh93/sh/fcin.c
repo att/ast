@@ -123,15 +123,11 @@ void fcnotify(void (*fun)(Sfio_t *, const char *, int, void *), void *context) {
     _Fcin.context = context;
 }
 
-#ifdef __EXPORT__
-#define extern __EXPORT__
-#endif
-
 #undef fcsave
-extern void fcsave(Fcin_t *fp) { *fp = _Fcin; }
+void fcsave(Fcin_t *fp) { *fp = _Fcin; }
 
 #undef fcrestore
-extern void fcrestore(Fcin_t *fp) { _Fcin = *fp; }
+void fcrestore(Fcin_t *fp) { _Fcin = *fp; }
 
 int _fcmbget(short *len) {
     int c;

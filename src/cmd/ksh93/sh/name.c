@@ -3143,17 +3143,13 @@ void nv_unref(Namval_t *np) {
 // someday.
 //
 
-#if defined(__IMPORT__) && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #undef hashscope
 
-extern Dt_t *hashscope(Dt_t *root) { return dtvnext(root); }
+Dt_t *hashscope(Dt_t *root) { return dtvnext(root); }
 
 #undef hashfree
 
-extern Dt_t *hashfree(Dt_t *root) {
+Dt_t *hashfree(Dt_t *root) {
     Dt_t *dp = dtvnext(root);
     dtclose(root);
     return dp;
@@ -3161,14 +3157,14 @@ extern Dt_t *hashfree(Dt_t *root) {
 
 #undef hashname
 
-extern char *hashname(void *obj) {
+char *hashname(void *obj) {
     Namval_t *np = (Namval_t *)obj;
     return np->nvname;
 }
 
 #undef hashlook
 
-extern void *hashlook(Dt_t *root, const char *name, int mode, int size) {
+void *hashlook(Dt_t *root, const char *name, int mode, int size) {
     UNUSED(size);
 
     return nv_search(name, root, mode);

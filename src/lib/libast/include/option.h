@@ -68,25 +68,12 @@ typedef struct Opt_s {
     Optstate_t *state;
 } Opt_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_ast && defined(__IMPORT__)
-#define extern extern __IMPORT__
-#endif
-
 extern Opt_t *_opt_infop_;
 
 #define opt_info (*_opt_infop_)
 
-#undef extern
-
 #define optinit(d, f) \
     (memset(d, 0, sizeof(*(d))), (d)->version = OPT_VERSION, (d)->infof = (f), opt_info.disc = (d))
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
 
 extern int optget(char **, const char *);
 extern int optjoin(char **, ...);
@@ -95,7 +82,5 @@ extern char *optusage(const char *);
 extern int optstr(const char *, const char *);
 extern int optesc(Sfio_t *, const char *, int);
 extern Opt_t *optctx(Opt_t *, Opt_t *);
-
-#undef extern
 
 #endif

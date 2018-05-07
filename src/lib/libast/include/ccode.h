@@ -45,10 +45,6 @@ typedef struct Ccmap_s {
     void *data;        /* map specific data		*/
 } Ccmap_t;
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern unsigned char *_ccmap(int, int);
 extern void *_ccmapcpy(unsigned char *, void *, const void *, size_t);
 extern void *_ccmapstr(unsigned char *, void *, size_t);
@@ -57,8 +53,6 @@ extern int ccmapid(const char *);
 extern char *ccmapname(int);
 extern void *ccnative(void *, const void *, size_t);
 extern Ccmap_t *ccmaplist(Ccmap_t *);
-
-#undef extern
 
 #define CCOP(i, o) ((i) == (o) ? 0 : (((o) << 8) | (i)))
 #define CCIN(x) ((x)&0xFF)

@@ -165,32 +165,17 @@ struct Error_info_s /* error state			*/
 };
 
 #ifndef errno
-extern int errno; /* system call error status	*/
-#endif
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern extern __EXPORT__
-#endif
-#if !_BLD_ast && defined(__IMPORT__)
-#define extern extern __IMPORT__
+extern int errno; /* system call error status  */
 #endif
 
 extern Error_info_t *_error_infop_;
 
 #define error_info (*_error_infop_)
 
-#undef extern
-
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern void error(int, ...);
 extern int errormsg(const char *, int, ...);
 extern void errorv(const char *, int, va_list);
 extern char *errorx(const char *, const char *, const char *, const char *);
 extern Error_info_t *errorctx(Error_info_t *, int, int);
-
-#undef extern
 
 #endif

@@ -311,12 +311,6 @@ struct Shell_s {
 
 #undef getenv  // -lshell provides its own
 
-#if defined(__EXPORT__) && defined(_DLL)
-#ifdef _BLD_shell
-#define extern __EXPORT__
-#endif  // _BLD_shell
-#endif  // _DLL
-
 extern int sh_access(const char *, int);
 extern Namval_t *sh_addbuiltin(const char *, int (*)(int, char *[], Shbltin_t *), void *);
 extern Dt_t *sh_bltin_tree(void);
@@ -397,10 +391,6 @@ extern Shell_t sh;
 #endif
 
 #include <shellapi.h>
-
-#ifdef _DLL
-#undef extern
-#endif  // _DLL
 
 #ifndef _AST_INTERCEPT
 #if _lib_lseek64

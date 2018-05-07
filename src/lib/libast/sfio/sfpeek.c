@@ -29,11 +29,7 @@
 **	Written by Kiem-Phong Vo (06/27/90).
 */
 
-#if _BLD_sfio && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern ssize_t sfpeek(reg Sfio_t *f, void **bp, reg size_t size) {
+ssize_t sfpeek(reg Sfio_t *f, void **bp, reg size_t size) {
     reg ssize_t n, sz;
     reg int mode;
 

@@ -42,6 +42,4 @@ extern char **env_get(Env_t *);
 extern Env_t *env_open(char **, int);
 extern Env_t *env_scope(Env_t *, int);
 
-#undef extern
-
 #endif

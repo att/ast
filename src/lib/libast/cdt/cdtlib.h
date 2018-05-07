@@ -141,15 +141,9 @@ typedef struct _dtlib_s {
 #define LLSHIFT(x, t) \
     ((t) = (x)->_rght->_rght, (x)->_rght->_rght = (t)->_left, (t)->_left = (x), (x) = (t))
 
-#if _BLD_cdt && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Dtlink_t *_dtmake _ARG_((Dt_t *, void *, int));
 extern void _dtfree _ARG_((Dt_t *, Dtlink_t *, int));
 extern int _dtlock _ARG_((Dt_t *, int));
-
-#undef extern
 
 #if !_PACKAGE_ast
 extern void *malloc _ARG_((size_t));

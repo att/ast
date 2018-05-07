@@ -39,10 +39,6 @@ typedef struct State_s {
 
 static State_t state;
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 static const char dbm_open_usage[] =
     "[-?@(#)$Id: dbm_open (AT&T Research) 2007-09-26 $\n]" USAGE_LICENSE
     "[+NAME?dbm_open - open dbm file]"
@@ -60,7 +56,7 @@ static const char dbm_open_usage[] =
     "}"
     "[+SEE ALSO?\bdbm_close\b(1), \bdbm_get\b(1), \bdbm_set\b(1), \bdbm\b(3)]";
 
-extern int b_dbm_open(int argc, char **argv, Shbltin_t *context) {
+int b_dbm_open(int argc, char **argv, Shbltin_t *context) {
     int flags = 0;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY);
@@ -132,7 +128,7 @@ static const char dbm_close_usage[] =
     "}"
     "[+SEE ALSO?\bdbm_open\b(1), \bdbm_get\b(1), \bdbm_set\b(1), \bdbm\b(3)]";
 
-extern int b_dbm_close(int argc, char **argv, Shbltin_t *context) {
+int b_dbm_close(int argc, char **argv, Shbltin_t *context) {
     cmdinit(argc, argv, context, ERROR_CATALOG, ERROR_NOTIFY);
 #if _use_ndbm
     for (;;) {
@@ -183,7 +179,7 @@ static const char dbm_get_usage[] =
     "}"
     "[+SEE ALSO?\bdbm_open\b(1), \bdbm_close\b(1), \bdbm_set\b(1), \bdbm\b(3)]";
 
-extern int b_dbm_get(int argc, char **argv, Shbltin_t *context) {
+int b_dbm_get(int argc, char **argv, Shbltin_t *context) {
     datum key;
     datum val;
     int r;
@@ -256,7 +252,7 @@ static const char dbm_set_usage[] =
     "}"
     "[+SEE ALSO?\bdbm_open\b(1), \bdbm_close\b(1), \bdbm_get\b(1), \bdbm\b(3)]";
 
-extern int b_dbm_set(int argc, char **argv, Shbltin_t *context) {
+int b_dbm_set(int argc, char **argv, Shbltin_t *context) {
     datum key;
     datum val;
     int n;

@@ -184,8 +184,6 @@ static const Map_t map[] = {
     (TM_MONTH + 11),
 };
 
-#undef extern
-
 /*
  * convert ms word date spec w to posix strftime format f
  * next char after f returned

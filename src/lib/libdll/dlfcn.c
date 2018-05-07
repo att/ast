@@ -34,10 +34,6 @@ static const char id[] = "\n@(#)$Id: dll library (AT&T Research) 2010-10-20 $\0\
 
 #define T(x) ERROR_dictionary(x)
 
-#if _BLD_dll && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 #if _hdr_dlfcn && _lib_dlopen
 
 /*
@@ -64,7 +60,7 @@ static const char id[] = "\n@(#)$Id: dll library (AT&T Research) 2010-10-20 $\0\
 static shl_t all;
 static int err;
 
-extern void *dlopen(const char *path, int mode) {
+void *dlopen(const char *path, int mode) {
     void *dll;
 
     if (!path) return (void *)&all;
@@ -73,9 +69,9 @@ extern void *dlopen(const char *path, int mode) {
     return dll;
 }
 
-extern int dlclose(void *dll) { return 0; }
+int dlclose(void *dll) { return 0; }
 
-extern void *dlsym(void *dll, const char *name) {
+void *dlsym(void *dll, const char *name) {
     shl_t handle;
     long addr;
 
@@ -87,7 +83,7 @@ extern void *dlsym(void *dll, const char *name) {
     return (void *)addr;
 }
 
-extern char *dlerror(void) {
+char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
@@ -118,14 +114,14 @@ static unsigned int ld_info_size = 1024;
 static void *last_module;
 static int err;
 
-extern void *dlopen(const char *path, int mode) {
+void *dlopen(const char *path, int mode) {
     void *dll;
 
     if (!(dll = (void *)load((char *)path, mode, getenv("LIBPATH")))) err = errno;
     return dll;
 }
 
-extern int dlclose(void *dll) { return 0; }
+int dlclose(void *dll) { return 0; }
 
 static int getquery(void) {
     if (!ld_info) ld_info = malloc(ld_info_size);
@@ -204,7 +200,7 @@ static char *getloc(struct hdr *hdr, char *data, char *name) {
     return 0;
 }
 
-extern void *dlsym(void *handle, const char *name) {
+void *dlsym(void *handle, const char *name) {
     void *addr;
     struct ld_info *info;
 
@@ -216,7 +212,7 @@ extern void *dlsym(void *handle, const char *name) {
     return addr;
 }
 
-extern char *dlerror(void) {
+char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
@@ -236,7 +232,7 @@ extern char *dlerror(void) {
 
 static int err;
 
-extern void *dlopen(const char *path, int mode) {
+void *dlopen(const char *path, int mode) {
     void *dll;
 
     UNUSED(mode);
@@ -244,16 +240,16 @@ extern void *dlopen(const char *path, int mode) {
     return dll;
 }
 
-extern int dlclose(void *dll) { return 0; }
+int dlclose(void *dll) { return 0; }
 
-extern void *dlsym(void *handle, const char *name) {
+void *dlsym(void *handle, const char *name) {
     void *addr;
 
     if (!(addr = (void *)dllqueryfn(handle, (char *)name))) err = errno;
     return addr;
 }
 
-extern char *dlerror(void) {
+char *dlerror(void) {
     char *msg;
 
     if (!err) return 0;
@@ -301,7 +297,7 @@ static void linkedit(NSLinkEditErrors c, int n, const char *f, const char *m) { 
 
 static NSLinkEditErrorHandlers handlers = {undefined, multiple, linkedit};
 
-extern void *dlopen(const char *path, int mode) {
+void *dlopen(const char *path, int mode) {
     Dll_t *dll;
     int i;
     NSObjectFileImage image;
@@ -349,7 +345,7 @@ extern void *dlopen(const char *path, int mode) {
     return (void *)dll;
 }
 
-extern int dlclose(void *handle) {
+int dlclose(void *handle) {
     Dll_t *dll = (Dll_t *)handle;
 
     if (!dll || dll == DL_NEXT || dll->magic != DL_MAGIC) {
@@ -381,7 +377,7 @@ static NSSymbol lookup(Dll_t *dll, const char *name) {
     return address;
 }
 
-extern void *dlsym(void *handle, const char *name) {
+void *dlsym(void *handle, const char *name) {
     Dll_t *dll = (Dll_t *)handle;
     NSSymbol address;
     char buf[1024];
@@ -402,7 +398,7 @@ extern void *dlsym(void *handle, const char *name) {
     return (void *)address;
 }
 
-extern char *dlerror(void) {
+char *dlerror(void) {
     char *msg;
 
     msg = (char *)dlmessage;
@@ -417,22 +413,22 @@ extern char *dlerror(void) {
 
 static int err;
 
-extern void *dlopen(const char *path, int mode) {
+void *dlopen(const char *path, int mode) {
     err = 1;
     return 0;
 }
 
-extern int dlclose(void *dll) {
+int dlclose(void *dll) {
     err = 1;
     return 0;
 }
 
-extern void *dlsym(void *handle, const char *name) {
+void *dlsym(void *handle, const char *name) {
     err = 1;
     return 0;
 }
 
-extern char *dlerror(void) {
+char *dlerror(void) {
     if (!err) return 0;
     err = 0;
     return "dynamic linking not supported";

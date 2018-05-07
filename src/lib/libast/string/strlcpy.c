@@ -41,12 +41,7 @@ NoN(strlcpy)
  * result 0 terminated if n>0
  * strlen(t) returned
  */
-
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern size_t strlcpy(char *s, const char *t, size_t n) {
+size_t strlcpy(char *s, const char *t, size_t n) {
     const char *o = t;
 
     if (n) do {

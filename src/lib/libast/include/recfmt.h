@@ -69,15 +69,9 @@ typedef uint32_t Recfmt_t;
 
 #define REC_N_TYPE() 0xffffffff
 
-#if _BLD_ast && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern char *fmtrec(Recfmt_t, int);
 extern Recfmt_t recfmt(const void *, size_t, off_t);
 extern Recfmt_t recstr(const char *, char **);
 extern ssize_t reclen(Recfmt_t, const void *, size_t);
-
-#undef extern
 
 #endif

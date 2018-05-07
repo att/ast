@@ -227,13 +227,6 @@ struct Namval {
 #define NV_DCADD 0       // used to add named disciplines
 #define NV_DCRESTRICT 1  // variable that are restricted in rsh
 
-#if defined(__EXPORT__) && defined(_DLL)
-#ifdef _BLD_shell
-#define extern __EXPORT__
-#else
-#define extern __IMPORT__
-#endif  // _BLD_shell
-#endif  // _DLL
 // Prototype for array interface.
 extern Namarr_t *nv_arrayptr(Namval_t *);
 extern Namarr_t *nv_setarray(Namval_t *, void *(*)(Namval_t *, const char *, int));
@@ -285,10 +278,6 @@ extern char *nv_name(Namval_t *);
 extern Namval_t *nv_type(Namval_t *);
 extern void nv_addtype(Namval_t *, const char *, Optdisc_t *, size_t);
 extern const Namdisc_t *nv_discfun(int);
-
-#ifdef _DLL
-#undef extern
-#endif  // _DLL
 
 #define nv_unset(np) _nv_unset(np, 0)
 #define nv_size(np) nv_setsize((np), -1)

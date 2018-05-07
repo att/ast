@@ -37,10 +37,6 @@ void *sh_waitnotify(int (*newevent)(int, long, int)) {
 // This used to be a private symbol. Retain the old name for a bit for a smooth transition.
 //
 
-#if defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
-extern void *_sh_waitnotify(int (*newevent)(int, long, int)) { return sh_waitnotify(newevent); }
+void *_sh_waitnotify(int (*newevent)(int, long, int)) { return sh_waitnotify(newevent); }
 
 #endif

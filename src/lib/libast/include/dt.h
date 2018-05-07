@@ -25,14 +25,8 @@
 #include <cdt.h>
 #include <vmalloc.h>
 
-#if _BLD_cdt && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-
 extern Dt_t *dtnew(Vmalloc_t *, Dtdisc_t *, Dtmethod_t *);
 extern Dt_t *_dtnew(Vmalloc_t *, Dtdisc_t *, Dtmethod_t *, unsigned long);
-
-#undef extern
 
 #define dtnew(v, d, m) _dtnew(v, d, m, CDT_VERSION)
 

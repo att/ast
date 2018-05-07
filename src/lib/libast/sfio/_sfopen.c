@@ -36,10 +36,7 @@
 
 #define sysopenatf openat
 
-#if _BLD_sfio && defined(__EXPORT__)
-#define extern __EXPORT__
-#endif
-extern Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
+Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
     int fd, oldfd, oflags, fflags, sflags;
     SFMTXDECL(f);
 
@@ -169,8 +166,6 @@ extern Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode)
 Sfio_t *_sfopen(Sfio_t *f, const char *file, const char *mode) {
     return _sfopenat(AT_FDCWD, f, file, mode);
 }
-
-#undef extern
 
 int _sftype(reg const char *mode, int *oflagsp, int *fflagsp, int *uflagp) {
     reg int sflags, oflags, fflags, uflag;
