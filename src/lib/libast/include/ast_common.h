@@ -2,12 +2,6 @@
 #ifndef _AST_COMMON_H
 #define _AST_COMMON_H 1
 
-/* disable non-standard linux/gnu inlines */
-#ifdef __GNUC__
-#undef __OPTIMIZE_SIZE__
-#define __OPTIMIZE_SIZE__ 1
-#endif
-
 /* extern symbols must be protected against C++ name mangling */
 #ifndef _BEGIN_EXTERNS_
 #if __cplusplus || c_plusplus
