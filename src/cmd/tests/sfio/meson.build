@@ -1,7 +1,7 @@
 sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
                    'tbadargs.c', 'tclose.c', 'tdisc.c', 'terrno.c', 'texcept.c',
                    'tflags.c', 'tfmt.c', 'tgetr.c', 'thole.c', 'tleak.c',
-                   'tlocale.c', 'tlongdouble.c', 'tmmap2read.c', 'tmode.c',
+                   'tlocale.c', 'tlongdouble.c',  'tmode.c',
                    'tmove.c', 'tmprdwr.c', 'tmpread.c', 'tmprocess.c',
                    'tmtsafe.c', 'tmultiple.c', 'tmwrite.c', 'tnoseek.c',
                    'tnotify.c', 'topen.c', 'tpipe.c', 'tpipemove.c', 'tpkrd.c',
@@ -16,6 +16,10 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
 
 # TODO: Fix and enable these test cases.
 # 'tprintf.c', 'tstdio.c', 'twc.c', 'twchar.c',
+
+# TODO: This test causes mmap() to fail delibrately to check if sfio is tolerant to such failiures
+# It fails to compile on opensuse, so I am marking it to be fixed later.
+# 'tmmap2read.c',
 
 incdir = include_directories('..',
                              '../../../lib/libast/include/')
