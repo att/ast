@@ -22,6 +22,8 @@
 #ifndef _CDT_H
 #define _CDT_H 1
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 /*	Public interface for the dictionary library
 **
 **      Written by Kiem-Phong Vo, phongvo@gmail.com
@@ -42,7 +44,6 @@
 #if _PACKAGE_ast
 #include <ast_std.h>
 #else
-#include <ast_common.h>
 #include <string.h>
 #endif
 

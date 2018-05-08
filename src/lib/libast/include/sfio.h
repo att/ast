@@ -22,6 +22,8 @@
 #ifndef _SFIO_H
 #define _SFIO_H 1
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 #define SFIO_VERSION 20090915L
 
 /*	Public header file for the sfio library
@@ -34,8 +36,6 @@ typedef struct _sfdisc_s Sfdisc_t;
 
 #if defined(_AST_STD_H) || defined(_PACKAGE_ast) && defined(_SFIO_PRIVATE)
 #include <ast_std.h>
-#else
-#include <ast_common.h>
 #endif /* _PACKAGE_ast */
 
 /* Sfoff_t should be large enough for largest file address */

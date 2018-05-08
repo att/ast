@@ -32,8 +32,6 @@
 #define _AST_STD_H 1
 #define _AST_STD_I 1
 
-#include <ast_common.h>
-
 #if _BLD_ast
 #define _BLD_aso 1
 #define _BLD_cdt 1

@@ -31,7 +31,7 @@
 #ifndef _FNV_H
 #define _FNV_H
 
-#include <ast_common.h>
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define FNV_INIT 0x811c9dc5L
 #define FNV_MULT 0x01000193L

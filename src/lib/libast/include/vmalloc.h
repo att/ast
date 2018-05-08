@@ -22,6 +22,8 @@
 #ifndef _VMALLOC_H
 #define _VMALLOC_H 1
 
+#include "config_ast.h"  // IWYU pragma: keep
+
 /*	Public header file for the virtual malloc package.
 **
 **	Written by Kiem-Phong Vo, phongvo@gmail.com, 01/16/1994.
@@ -31,8 +33,6 @@
 
 #if _PACKAGE_ast
 #include <ast_std.h>
-#else
-#include <ast_common.h>
 #endif
 
 typedef struct Vmalloc_s Vmalloc_t;

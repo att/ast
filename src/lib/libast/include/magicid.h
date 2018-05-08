@@ -26,7 +26,7 @@
 #ifndef _MAGICID_H
 #define _MAGICID_H 1
 
-#include <ast_common.h>
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define MAGICID 0x00010203
 

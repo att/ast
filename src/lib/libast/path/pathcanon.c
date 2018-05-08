@@ -47,6 +47,8 @@
 #include <stdio.h>
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+
 #define _AST_API_IMPLEMENT 1
 
 #include <ast.h>

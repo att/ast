@@ -20,6 +20,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+
 #include <cmd.h>
 #include <ls.h>
 

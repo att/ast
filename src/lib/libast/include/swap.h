@@ -30,7 +30,7 @@
 #ifndef _SWAP_H
 #define _SWAP_H
 
-#include <ast_common.h>
+#include "config_ast.h"  // IWYU pragma: keep
 
 #define int_swap _ast_intswap
 

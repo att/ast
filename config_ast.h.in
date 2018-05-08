@@ -326,3 +326,20 @@
 #mesondefine _typ_mbstate_t
 #mesondefine _typ_off64_t
 #mesondefine _typ_struct_stat64
+
+// If we're on Cygwin we need some workarounds controlled by the _WINIX symbol.
+#if __CYGWIN__
+#define _WINIX 1
+#endif
+
+// These symbols are from src/lib/libast/include/ast_common.h that was
+// generated on a Linux platform by the legacay IFFE mechanism. They may not
+// be correct for other platforms.
+//
+// TODO: Convert these to proper feature tests.
+#define _ast_LL 1  // LL numeric suffix supported
+#define _ast_int8_t long
+#define _ast_intmax_t _ast_int8_t
+#define _ast_intmax_long 1
+#define _ast_intswap 7
+#define _ast_fltmax_t long double

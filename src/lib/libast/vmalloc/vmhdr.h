@@ -21,6 +21,9 @@
  ***********************************************************************/
 #ifndef _VMHDR_H
 #define _VMHDR_H 1
+
+#include "config_ast.h"  // IWYU pragma: keep
+
 #ifndef _BLD_vmalloc
 #define _BLD_vmalloc 1
 #endif
@@ -43,7 +46,6 @@
 
 #else
 
-#include <ast_common.h>
 #include <sys/types.h>
 #include <unistd.h>
 

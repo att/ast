@@ -32,8 +32,11 @@
 #ifndef _CHARCODE_H
 #define _CHARCODE_H 1
 
+#include "config_ast.h"  // IWYU pragma: keep
+
+#include <sys/types.h>
+
 #include <ast_ccode.h>
-#include <ast_common.h>
 
 typedef struct Ccmap_s {
     const char *name;  /* code set name		*/

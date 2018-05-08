@@ -25,6 +25,8 @@
 // Interface definitions of structures for name-value pairs.
 // These structures are used for named variables, functions and aliases.
 //
+#include <stdbool.h>
+
 #include <ast.h>
 #include <cdt.h>
 #include <option.h>

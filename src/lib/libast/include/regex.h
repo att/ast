@@ -22,6 +22,7 @@
 /*
  * regex library interface
  */
+#include "config_ast.h"  // IWYU pragma: keep
 
 #ifdef _AST_STD_I
 #define _REGEX_H -1
@@ -34,7 +35,6 @@
 #undef regmatch_t
 
 #include <ast_api.h>
-#include <ast_common.h>
 #include <wchar.h>
 
 #define REG_VERSION 20100930L

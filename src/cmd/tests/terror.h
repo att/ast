@@ -17,7 +17,8 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#include <ast_common.h>
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <stdio.h>
 
 #if _hdr_stdlib

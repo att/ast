@@ -1,7 +1,8 @@
 /* : : generated from iconv by iffe version 2013-11-14 : : */
 #ifndef _def_iconv_features
 #define _def_iconv_features 1
-#include <ast_common.h>
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <ccode.h>
 
 #if !defined(__CYGWIN__) && !defined(__OpenBSD__)
