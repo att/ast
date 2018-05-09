@@ -121,11 +121,12 @@ int b_dirname(int argc, char **argv, Shbltin_t *context) {
     argv += opt_info.index;
     argc -= opt_info.index;
     if (error_info.errors || argc != 1) error(ERROR_usage(2), "%s", optusage(NULL));
-    if (!mode)
+    if (!mode) {
         l_dirname(sfstdout, argv[0]);
-    else if (pathpath(argv[0], "", mode, buf, sizeof(buf)))
+    } else if (pathpath(argv[0], "", mode, buf, sizeof(buf))) {
         sfputr(sfstdout, buf, '\n');
-    else
+    } else {
         error(1 | ERROR_WARNING, "%s: relative path not found", argv[0]);
+    }
     return 0;
 }
