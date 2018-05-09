@@ -158,7 +158,8 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
     oargv = argv;
-    if (*(native = astconf("GETCONF", NULL, NULL)) != '/') native = 0;
+    native = astconf("GETCONF", NULL, NULL);
+    if (*native != '/') native = 0;
     dev = 0;
     flags = 0;
     pattern = 0;
@@ -178,7 +179,8 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 flags |= ASTCONF_defined;
                 continue;
             case 'f':
-                sfsprintf(dev = devbuf, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d",
+                dev = devbuf;
+                sfsprintf(dev, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d",
                           (int)opt_info.num);
                 continue;
             case 'l':
@@ -221,22 +223,24 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     argv += opt_info.index;
-    if (!(name = *argv))
+    name = *argv;
+    if (!name) {
         path = 0;
-    else if (streq(name, empty)) {
+    } else if (streq(name, empty)) {
         name = 0;
         if (path = *++argv) {
             argv++;
-            if (streq(path, empty))
+            if (streq(path, empty)) {
                 path = 0;
-            else
+            } else {
                 path = dev;
+            }
         }
     }
     if (error_info.errors || !name && *argv) error(ERROR_usage(2), "%s", optusage(NULL));
-    if (!name)
+    if (!name) {
         astconflist(sfstdout, path, flags, pattern);
-    else {
+    } else {
         if (native) flags |= (ASTCONF_system | ASTCONF_error);
         do {
             if (!(path = *++argv)) {
@@ -275,8 +279,8 @@ defer:
     /*
      * defer to argv[0] if absolute and it exists
      */
-
-    if ((cmd = oargv[0]) && *cmd == '/' && !access(cmd, X_OK)) goto found;
+    cmd = oargv[0];
+    if (cmd && *cmd == '/' && !access(cmd, X_OK)) goto found;
 
     /*
      * defer to the first getconf on $PATH that is also on the standard PATH
@@ -291,8 +295,8 @@ defer:
         for (t = s; *s && *s != ':'; s++)
             ;
         if ((n = s - t) && *t == '/') {
-            if (q)
-                for (i = 0; i < 2; i++)
+            if (q) {
+                for (i = 0; i < 2; i++) {
                     if (n == equiv[i].len && !strncmp(t, equiv[i].path, n)) {
                         if (m & (i + 1))
                             t = 0;
@@ -309,6 +313,8 @@ defer:
                             }
                         }
                     }
+                }
+            }
             if (t) {
                 e->path = t;
                 e->len = n;
@@ -324,10 +330,12 @@ defer:
             e++;
         }
     }
-    if (s = getenv("PATH")) do {
+    s = getenv("PATH");
+    if (s) do {
             for (t = s; *s && *s != ':'; s++)
                 ;
-            if ((n = s - t) && *t == '/') {
+            n = s - t;
+            if (n && *t == '/') {
                 for (p = std; p < e; p++)
                     if (p->len == n && !strncmp(t, p->path, n)) {
                         sfsprintf(buf, sizeof(buf), "%-*.*s/%s", n, n, t, error_info.id);
@@ -356,10 +364,12 @@ defer:
      * out of deferrals
      */
 
-    if (name)
+    if (name) {
         error(4, "%s: unknown name -- no native getconf(1) to defer to", name);
-    else
+    } else {
         error(4, "no native getconf(1) to defer to");
+    }
+
     return 2;
 
 found:
@@ -369,7 +379,8 @@ found:
      */
 
     oargv[0] = cmd;
-    if ((n = sh_run(context, argc, oargv)) >= EXIT_NOEXEC)
+    n = sh_run(context, argc, oargv);
+    if (n >= EXIT_NOEXEC)
         error(ERROR_SYSTEM | 2, "%s: exec error [%d]", cmd, n);
     return n;
 }
