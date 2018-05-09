@@ -49,7 +49,7 @@ TBD
 ## Contributing changes to the source code
 
 See the
-[contributing guidelines](https://github.com/att/ast/blob/contributing/CONTRIBUTING.md)
+[contributing guidelines](https://github.com/att/ast/blob/master/CONTRIBUTING.md)
 for information about code style, unit tests, and other topics of interest
 to anyone who wants to modify the source.
 
