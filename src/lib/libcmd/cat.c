@@ -104,8 +104,8 @@ typedef void *(*Reserve_f)(Sfio_t *, ssize_t, int);
 
 static void *regress(Sfio_t *sp, ssize_t n, int f) {
     void *r;
-
-    if (!(r = sfreserve(sp, 4, f)))
+    r = sfreserve(sp, 4, f);
+    if (!r)
         r = sfreserve(sp, n, f);
     else if (sfvalue(sp) > 4)
         sfvalue(sp) = 4;
@@ -143,7 +143,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
     header = flags & (B_FLAG | N_FLAG);
     line = 1;
     states[0] = T_ENDBUF;
-    if (!(raw = !mbwide())) mbinit();
+    raw = !mbwide();
+    if (!raw) mbinit();
     for (;;) {
         cur = cp;
         if (raw)
@@ -155,7 +156,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     ;
                 if (n < T_CONTROL) break;
                 pp = cp - 1;
-                if ((m = mbnsize(pp, MB_LEN_MAX)) > 1)
+                m = mbnsize(pp, MB_LEN_MAX);
+                if (m > 1)
                     cp += m - 1;
                 else {
                     if (m <= 0) {
@@ -164,7 +166,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                 *end = last;
                                 last = -1;
                                 c = end - pp + 1;
-                                if ((m = mbnsize(pp, MB_LEN_MAX)) == c) {
+                                m = mbnsize(pp, MB_LEN_MAX);
+                                if (m == c) {
                                     any = 1;
                                     if (header) {
                                         header = 0;
@@ -174,7 +177,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                     *(cp = cur = end) = 0;
                                 } else {
                                     memcpy(tmp, pp, c);
-                                    if (!(nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0))) {
+                                    nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                                    if (!nxt) {
                                         states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
                                         *(cp = end = tmp + sizeof(tmp) - 1) = 0;
                                         last = -1;
@@ -189,10 +193,12 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                         *end = 0;
                                     }
                                 mb:
-                                    if ((n = end - cp + 1) >= (sizeof(tmp) - c))
+                                    n = end - cp + 1;
+                                    if (n >= (sizeof(tmp) - c))
                                         n = sizeof(tmp) - c - 1;
                                     memcpy(tmp + c, cp, n);
-                                    if ((m = mbnsize(tmp, MB_LEN_MAX)) >= c) {
+                                    m = mbnsize(tmp, MB_LEN_MAX);
+                                    if (m >= c) {
                                         any = 1;
                                         if (header) {
                                             header = 0;
@@ -213,7 +219,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                 }
             }
         c = *--cp;
-        if ((m = cp - cur) || n >= T_CONTROL) {
+        m = cp - cur;
+        if (m || n >= T_CONTROL) {
         flush:
             any = 1;
             if (header) {
@@ -242,7 +249,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     goto flush;
                 }
                 c = last;
-                if (!(nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0))) {
+                nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                if (!nxt) {
                     *(cp = end = tmp + sizeof(tmp) - 1) = 0;
                     states[0] = (m = sfvalue(ip)) ? T_ERROR : T_EOF;
                     last = -1;
@@ -258,7 +266,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     cp = buf;
                 }
                 if (c >= 0) {
-                    if (!(n = states[c])) {
+                n = states[c];
+                if (!n) {
                         *(cur = tmp) = c;
                         m = 1;
                         goto flush;
@@ -300,9 +309,11 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                 if (!header || !(flags & B_FLAG)) line++;
                 header = !(flags & S_FLAG);
                 for (;;) {
-                    if ((n = states[*++cp]) == T_ENDBUF) {
+                    n = states[*++cp];
+                    if (n == T_ENDBUF) {
                         if (cp < end || last != '\n') break;
-                        if (!(nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0))) {
+                        nxt = (unsigned char *)(*reserve)(ip, SF_UNBOUND, 0);
+                        if (!nxt) {
                             states[0] = sfvalue(ip) ? T_ERROR : T_EOF;
                             cp = end = tmp;
                             *cp-- = 0;
@@ -319,8 +330,9 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                             *end = 0;
                             cp = buf - 1;
                         }
-                    } else if (n != T_NEWLINE)
+                    } else if (n != T_NEWLINE) {
                         break;
+                        }
                     if (!(flags & S_FLAG) || any || header) {
                         any = 0;
                         header = 0;
@@ -440,7 +452,8 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
         dovcat = 1;
     }
     if (flags & d_FLAG) sfopen(sfstdout, NULL, "wt");
-    if (cp = *argv) argv++;
+    cp = *argv;
+    if (cp) argv++;
     do {
         if (!cp || streq(cp, "-")) {
             fp = sfstdin;
@@ -451,18 +464,20 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
             continue;
         }
         if (flags & U_FLAG) sfsetbuf(fp, (void *)fp, -1);
-        if (dovcat)
+        if (dovcat) {
             n = vcat(states, fp, sfstdout, reserve, flags);
-        else if (sfmove(fp, sfstdout, SF_UNBOUND, -1) >= 0 && sfeof(fp))
+        } else if (sfmove(fp, sfstdout, SF_UNBOUND, -1) >= 0 && sfeof(fp)) {
             n = 0;
-        else
+        } else {
             n = -1;
+        }
         if (fp != sfstdin) sfclose(fp);
         if (n < 0 && !ERROR_PIPE(errno) && errno != EINTR) {
-            if (cp)
+            if (cp) {
                 error(ERROR_system(0), "%s: read error", cp);
-            else
+            } else {
                 error(ERROR_system(0), "read error");
+            }
         }
         if (sferror(sfstdout)) break;
     } while (cp = *argv++);
