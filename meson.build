@@ -5,10 +5,6 @@ project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=stati
 # does that but also limits which APIs are available.
 add_global_arguments('-std=gnu99', language: 'c')
 
-# Compiling for small code size is usually the better choice unless
-# benchmarking shows otherwise.
-add_global_arguments('-Os', language: 'c')
-
 # Without this flag some symbols aren't visible.
 #
 # TODO: Figure out if there is a more generic manner of enabling support for
