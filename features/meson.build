@@ -160,7 +160,8 @@ if not pty_feature_result.compiled()
     error('Unable to compile the pty_feature.c module to determine pty device names')
 endif
 foreach line : pty_feature_result.stdout().strip().split('\n')
-    feature_data.set(line.split())
+    split = line.split()
+    feature_data.set(split[0], split[1])
 endforeach
 
 feature_data.set10('_lib_mallinfo',
@@ -222,7 +223,8 @@ if not align_feature_result.compiled()
     error('Unable to compile the align_feature.c module to determine compiler alignment')
 endif
 foreach line : align_feature_result.stdout().strip().split('\n')
-    feature_data.set(line.split())
+    split = line.split()
+    feature_data.set(split[0], split[1])
 endforeach
 
 posix_spawn_feature_file = files('posix_spawn.c')
