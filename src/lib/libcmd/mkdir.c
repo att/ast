@@ -139,7 +139,8 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
                     break;
                 }
                 if (vflag) error(0, "%s: directory created", path);
-                if (!(*part = n)) {
+                *part = n;
+                if (!(*part)) {
                     made = 1;
                     break;
                 }
