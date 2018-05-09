@@ -245,17 +245,19 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || *argv && (flags || sethost) || sethost && flags)
+    if (error_info.errors || *argv && (flags || sethost) || sethost && flags) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+    }
     if (sethost) {
-        if (sethostname(sethost, strlen(sethost) + 1))
+        if (sethostname(sethost, strlen(sethost) + 1)) {
             error(ERROR_system(1), "%s: cannot set host name", sethost);
-    } else if (list)
+        }
+    } else if (list) {
         astconflist(
             sfstdout, NULL,
             ASTCONF_base | ASTCONF_defined | ASTCONF_lower | ASTCONF_quote | ASTCONF_matchcall,
             "CS|SI");
-    else if (*argv) {
+    } else if (*argv) {
         e = &buf[sizeof(buf) - 1];
         while (s = *argv++) {
             t = buf;
@@ -288,11 +290,13 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             output(OPT_processor, s, "processor");
         }
         if (flags & OPT_implementation) {
-            if (!*(s = astconf("PLATFORM", NULL, NULL)) && !*(s = astconf("HW_NAME", NULL, NULL))) {
-                if (t = strchr(hosttype, '.'))
+            s = astconf("PLATFORM", NULL, NULL);
+            if (!(*s) && !*(s = astconf("HW_NAME", NULL, NULL))) {
+                if (t = strchr(hosttype, '.')) {
                     t++;
-                else
+                } else {
                     t = (char *)hosttype;
+                }
                 strncpy(s = buf, t, sizeof(buf) - 1);
             }
             output(OPT_implementation, s, "implementation");
@@ -315,8 +319,10 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         output(OPT_hostid, ut.idnumber, "hostid");
 #else
         if (flags & OPT_hostid) {
-            if (!*(s = astconf("HW_SERIAL", NULL, NULL)))
+            s = astconf("HW_SERIAL", NULL, NULL);
+            if (!(*s)) {
                 sfsprintf(s = buf, sizeof(buf), "%08x", gethostid());
+            }
             output(OPT_hostid, s, "hostid");
         }
 #endif
@@ -325,7 +331,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             output(OPT_vendor, s, "vendor");
         }
         if (flags & OPT_domain) {
-            if (!*(s = astconf("SRPC_DOMAIN", NULL, NULL))) getdomainname(s, sizeof(buf));
+            s = astconf("SRPC_DOMAIN", NULL, NULL);
+            if (!(*s)) getdomainname(s, sizeof(buf));
 
             output(OPT_domain, s, "domain");
         }
@@ -361,17 +368,20 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             if (last < ((char *)(&ut + 1))) {
                 s = t = last;
                 while (s < (char *)(&ut + 1)) {
-                    if (!(n = *s++)) {
+                    n = *s++;
+                    if (!n) {
                         if ((s - t) > 1) {
-                            if (sep)
+                            if (sep) {
                                 sfputc(sfstdout, ' ');
-                            else
+                            } else {
                                 sep = 1;
+                            }
                             sfputr(sfstdout, t, -1);
                         }
                         t = s;
-                    } else if (!isprint(n))
+                    } else if (!isprint(n)) {
                         break;
+                    }
                 }
             }
         }
