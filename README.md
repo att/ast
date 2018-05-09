@@ -138,8 +138,8 @@ and watching the project.
 ### IRC
 Use `#ksh` channel on freenode to discuss about AT&T KornShell and related variants.
 
-TBD is setting up a public Gitter, and other channels for real-time
-communication.
+### Gitter
+[ksh93/users](https://gitter.im/ksh93/users) is gitter chatroom for AT&T KornShell users.
 
 ### Mailing lists
 Mailman is reachable through e-mail commands to:
