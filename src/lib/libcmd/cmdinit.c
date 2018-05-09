@@ -40,10 +40,12 @@ int _cmd_init(int argc, char **argv, Shbltin_t *context, const char *catalog, in
         }
         error_info.flags |= flags;
     }
-    if (cp = strrchr(argv[0], '/'))
+    cp = strrchr(argv[0], '/');
+    if (cp) {
         cp++;
-    else
+    } else {
         cp = argv[0];
+    }
     error_info.id = cp;
     if (!error_info.catalog) error_info.catalog = catalog;
     opt_info.index = 0;
