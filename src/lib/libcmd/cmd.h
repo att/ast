@@ -101,15 +101,22 @@ int main(int argc, char **argv) {
     buf[2] = '_';
     strncpy(buf + 3, s, sizeof(buf) - 4);
     buf[sizeof(buf) - 1] = 0;
-    if (t = strchr(buf, '.')) *t = 0;
+    t = strchr(buf, '.');
+    if (t) *t = 0;
     for (;;) {
-        if (dll = dlopen(NULL, RTLD_LAZY)) {
-            if (fun = (Shbltin_f)dlsym(dll, buf + 1)) break;
-            if (fun = (Shbltin_f)dlsym(dll, buf)) break;
+        dll = dlopen(NULL, RTLD_LAZY);
+        if (dll) {
+            fun = (Shbltin_f)dlsym(dll, buf + 1);
+            if (fun) break;
+            fun = (Shbltin_f)dlsym(dll, buf);
+            if (fun) break;
         }
-        if (dll = dllplug(NULL, "cmd", NULL, RTLD_LAZY, NULL, 0)) {
-            if (fun = (Shbltin_f)dlsym(dll, buf + 1)) break;
-            if (fun = (Shbltin_f)dlsym(dll, buf)) break;
+        dll = dllplug(NULL, "cmd", NULL, RTLD_LAZY, NULL, 0);
+        if (dll) {
+            fun = (Shbltin_f)dlsym(dll, buf + 1);
+            if (fun) break;
+            fun = (Shbltin_f)dlsym(dll, buf);
+            if (fun) break;
         }
         return 127;
     }
