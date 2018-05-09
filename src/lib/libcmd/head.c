@@ -88,9 +88,11 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
                     delim = -1;
                     opt_info.offset++;
                 }
-                if ((keep = opt_info.number) <= 0)
+                keep = opt_info.number;
+                if (keep <= 0) {
                     error(2, "%s: %I*d: positive numeric option argument expected", opt_info.name,
                           sizeof(keep), keep);
+                }
                 continue;
             case 'q':
                 header = argc;
@@ -113,7 +115,8 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
     argv += opt_info.index;
     argc -= opt_info.index;
     if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
-    if (cp = *argv) argv++;
+    cp = *argv;
+    if (cp) argv++;
     do {
         if (!cp || streq(cp, "-")) {
             cp = "/dev/stdin";
@@ -126,15 +129,17 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
         if (argc > header) sfprintf(sfstdout, format, cp);
         format = (char *)header_fmt;
         if (skip > 0) {
-            if ((moved = sfmove(fp, NULL, skip, delim)) < 0 && !ERROR_PIPE(errno) && errno != EINTR)
+            if ((moved = sfmove(fp, NULL, skip, delim)) < 0 && !ERROR_PIPE(errno) && errno != EINTR) {
                 error(ERROR_system(0), "%s: skip error", cp);
+            }
             if (delim >= 0 && moved < skip) goto next;
         }
-        if ((moved = sfmove(fp, sfstdout, keep, delim)) < 0 && !ERROR_PIPE(errno) &&
-                errno != EINTR ||
+        moved = sfmove(fp, sfstdout, keep, delim);
+        if (moved < 0 && !ERROR_PIPE(errno) && errno != EINTR ||
             delim >= 0 && moved < keep && sfmove(fp, sfstdout, SF_UNBOUND, -1) < 0 &&
-                !ERROR_PIPE(errno) && errno != EINTR)
+                !ERROR_PIPE(errno) && errno != EINTR) {
             error(ERROR_system(0), "%s: read error", cp);
+        }
     next:
         if (fp != sfstdin) sfclose(fp);
     } while (cp = *argv++);
