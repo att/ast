@@ -113,10 +113,6 @@ const struct shtable3 shtab_builtins[] = {
     {"complete", NV_BLTIN, bltin(complete)},
     {"false", NV_BLTIN | BLT_ENV, bltin(false)},
     {"getopts", NV_BLTIN | BLT_ENV, bltin(getopts)},
-#if 0
-    { "mkservice", NV_BLTIN|BLT_ENV, bltin(mkservice) },
-    { "eloop", NV_BLTIN|BLT_ENV, bltin(eloop) },
-#endif
     {"poll", NV_BLTIN | BLT_ENV, bltin(poll)},
     {"print", NV_BLTIN | BLT_ENV, bltin(print)},
     {"printf", NV_BLTIN | BLT_ENV, bltin(printf)},
