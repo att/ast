@@ -61,7 +61,8 @@ int b_logname(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
-    if (!(logname = getlogin())) logname = fmtuid(getuid());
+    logname = getlogin();
+    if (!logname) logname = fmtuid(getuid());
     sfputr(sfstdout, logname, '\n');
     return 0;
 }
