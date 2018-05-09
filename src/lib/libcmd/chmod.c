@@ -137,8 +137,7 @@ __STDPP__directive pragma pp : hide lchmod
 #include <sys/stat.h>
 #include <sys/types.h>
 
-                               extern int
-                               fts_flags();
+extern int fts_flags();
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL
@@ -150,8 +149,7 @@ __STDPP__directive pragma pp : nohide lchmod
 #undef lchmod
 #endif
 
-                               extern int
-                               lchmod(const char *, mode_t);
+extern int lchmod(const char *, mode_t);
 
 /*
  * NOTE: we only use the native lchmod() on symlinks just in case
@@ -243,9 +241,9 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
     }
     if (logical) flags &= ~(FTS_COMFOLLOW | FTS_PHYSICAL);
     if (ignore) ignore = umask(0);
-    if (amode)
+    if (amode) {
         amode = 0;
-    else {
+    } else {
         amode = *argv++;
         mode = strperm(amode, &last, 0);
         if (*last) {
@@ -253,7 +251,8 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
             error(ERROR_exit(1), "%s: invalid mode", amode);
         }
     }
-    if (!(fts = fts_open(argv, flags, NULL))) {
+    fts = fts_open(argv, flags, NULL);
+    if (!fts) {
         if (ignore) umask(ignore);
         error(ERROR_system(1), "%s: not found", *argv);
     }
@@ -283,11 +282,13 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 if (amode) mode = strperm(amode, &last, ent->fts_statp->st_mode);
                 if (show || (*chmodf)(ent->fts_accpath, mode) >= 0) {
                     if (notify == 2 ||
-                        notify == 1 && (mode & S_IPERM) != (ent->fts_statp->st_mode & S_IPERM))
+                        notify == 1 && (mode & S_IPERM) != (ent->fts_statp->st_mode & S_IPERM)) {
                         sfprintf(sfstdout, "%s: mode changed to %0.4o (%s)\n", ent->fts_path, mode,
                                  fmtmode(mode, 1) + 1);
-                } else if (!force)
+                    }
+                } else if (!force) {
                     error(ERROR_system(0), "%s: cannot change mode", ent->fts_path);
+                }
                 break;
             case FTS_DC:
                 if (!force) error(ERROR_warn(0), "%s: directory causes cycle", ent->fts_path);
@@ -296,8 +297,9 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 if (!force) error(ERROR_system(0), "%s: cannot read directory", ent->fts_path);
                 goto anyway;
             case FTS_ERR:
-                if (!force)
+                if (!force) {
                     error(ERROR_system(0), "%s: %s", ent->fts_path, strerror(ent->fts_errno));
+                }
                 goto anyway;
             case FTS_NS:
                 if (!force) error(ERROR_system(0), "%s: not found", ent->fts_path);
