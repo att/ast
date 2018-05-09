@@ -21,5 +21,6 @@ foreach file: vmalloc_test_files
                                      link_with: [libast],
                                      link_args: ['-lpthread'],
                                      install: false)
-    test('API/' + file, vmalloc_test_target)
+    # tsignal.c test requires a longer timeout
+    test('API/' + file, vmalloc_test_target, timeout: 60)
 endforeach
