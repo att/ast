@@ -397,28 +397,32 @@ static void sane(struct termios *sp) {
                 case BITS:
                     switch (tp->field) {
                         case C_FLAG:
-                            if (tp->flags & SS)
+                            if (tp->flags & SS) {
                                 sp->c_cflag |= tp->mask;
-                            else
+                            } else {
                                 sp->c_cflag &= ~tp->mask;
+                            }
                             break;
                         case I_FLAG:
-                            if (tp->flags & SS)
+                            if (tp->flags & SS) {
                                 sp->c_iflag |= tp->mask;
-                            else
+                            } else {
                                 sp->c_iflag &= ~tp->mask;
+                            }
                             break;
                         case O_FLAG:
-                            if (tp->flags & SS)
+                            if (tp->flags & SS) {
                                 sp->c_oflag |= tp->mask;
-                            else
+                            } else {
                                 sp->c_oflag &= ~tp->mask;
+                            }
                             break;
                         case L_FLAG:
-                            if (tp->flags & SS)
+                            if (tp->flags & SS) {
                                 sp->c_lflag |= tp->mask;
-                            else
+                            } else {
                                 sp->c_lflag &= ~tp->mask;
+                            }
                             break;
                     }
                     break;
@@ -431,32 +435,32 @@ static void sane(struct termios *sp) {
 
 static int gin(char *arg, struct termios *sp) {
     int i;
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     sp->c_iflag = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     sp->c_oflag = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     sp->c_cflag = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     sp->c_lflag = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     for (i = 0; i < NCCS; i++) {
         sp->c_cc[i] = strtol(arg, &arg, 16);
-        if (*arg++ != ':') return (0);
+        if (*arg++ != ':') return 0;
     }
 #if _mem_c_line_termios
     sp->c_line =
 #endif
         strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     i = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     cfsetispeed(sp, i);
     i = strtol(arg, &arg, 16);
-    if (*arg++ != ':') return (0);
+    if (*arg++ != ':') return 0;
     cfsetospeed(sp, i);
-    if (*arg) return (0);
-    return (1);
+    if (*arg) return 0;
+    return 1;
 }
 
 static void gout(struct termios *sp) {
@@ -519,10 +523,11 @@ static void output(struct termios *sp, int flags) {
                 }
                 if (tp->flags & NL) delim = '\n';
                 if (!flags && off == off2) continue;
-                if (!off)
+                if (!off) {
                     sfprintf(sfstdout, "%s%c", tp->name, delim);
-                else if (tp->type == BIT)
+                } else if (tp->type == BIT) {
                     sfprintf(sfstdout, "-%s%c", tp->name, delim);
+                }
                 delim = ' ';
                 break;
 
@@ -530,11 +535,11 @@ static void output(struct termios *sp, int flags) {
                 off = sp->c_cc[tp->mask];
                 if (tp->flags & NL) delim = '\n';
                 if (!flags && off == (unsigned char)tty.c_cc[tp->mask]) continue;
-                if (off == _POSIX_VDISABLE)
+                if (off == _POSIX_VDISABLE) {
                     sfprintf(sfstdout, "%s = <undef>;%c", tp->name, delim);
-                else if (isprint(off & 0xff))
+                } else if (isprint(off & 0xff)) {
                     sfprintf(sfstdout, "%s = %c;%c", tp->name, off, delim);
-                else
+                } else
 #if CC_NATIVE == CC_ASCII
                     sfprintf(sfstdout, "%s = ^%c;%c", tp->name, off == 0177 ? '?' : (off ^ 0100),
                              delim);
@@ -554,22 +559,25 @@ static void output(struct termios *sp, int flags) {
                 break;
             case SPEED:
                 if (tp->mask == ispeed) {
-                    if (ispeed != ospeed)
+                    if (ispeed != ospeed) {
                         schar[0] = 'i';
-                    else
+                    } else {
                         schar[0] = 0;
-                } else if (tp->mask == ospeed)
+                    }
+                } else if (tp->mask == ospeed) {
                     schar[0] = 'o';
-                else
+                } else {
                     continue;
+                }
                 schar[1] = 0;
 #ifdef TIOCSWINSZ
                 {
                     struct winsize win;
                     off = ioctl(0, TIOCGWINSZ, &win);
-                    if (off >= 0)
+                    if (off >= 0) {
                         sfprintf(sfstdout, "%sspeed %s baud; rows %d; columns %d;\n", schar,
                                  tp->name, win.ws_row, win.ws_col);
+                    }
                 }
                 if (off < 0)
 #endif
@@ -582,32 +590,32 @@ static void output(struct termios *sp, int flags) {
 static const Tty_t *lookup(const char *name) {
     int i;
     for (i = 0; i < elementsof(Ttable); i++) {
-        if (strcmp(Ttable[i].name, name) == 0) return (&Ttable[i]);
+        if (strcmp(Ttable[i].name, name) == 0) return &Ttable[i];
     }
-    return (0);
+    return 0;
 }
 
 static const Tty_t *getspeed(unsigned long val) {
     int i;
     for (i = 0; i < elementsof(Ttable); i++) {
-        if (Ttable[i].type == SPEED && Ttable[i].mask == val) return (&Ttable[i]);
+        if (Ttable[i].type == SPEED && Ttable[i].mask == val) return &Ttable[i];
     }
-    return (0);
+    return 0;
 }
 
 static int gettchar(const char *cp) {
-    if (*cp == 0) return (-1);
-    if (cp[1] == 0) return ((unsigned)cp[0]);
+    if (*cp == 0) return -1;
+    if (cp[1] == 0) return (unsigned)cp[0];
     if (*cp == '^' && cp[1] && cp[2] == 0) {
         switch (cp[1]) {
             case '-':
-                return (-1);
+                return -1;
             default:
-                return (cntl(cp[1]));
+                return cntl(cp[1]);
         }
     }
-    if (streq(cp, "undef") || streq(cp, "<undef>")) return (-1);
-    return (*((unsigned char *)cp));
+    if (streq(cp, "undef") || streq(cp, "<undef>")) return -1;
+    return *((unsigned char *)cp);
 }
 
 static void set(char *argv[], struct termios *sp) {
@@ -621,42 +629,48 @@ static void set(char *argv[], struct termios *sp) {
             cp++;
             off = 1;
         }
-        if (!(tp = lookup(cp)) || (off && (tp->type != BIT) && (tp->type != TABS)))
+        tp = lookup(cp);
+        if (!tp || (off && (tp->type != BIT) && (tp->type != TABS))) {
             error(ERROR_exit(1), "%s: unknown mode", cp);
+        }
         switch (tp->type) {
             case CHAR:
                 if (off) error(ERROR_exit(1), "%s: unknown mode", cp);
                 if (!*argv) error(ERROR_exit(1), "missing argument to %s", cp);
                 c = gettchar(*argv++);
-                if (c >= 0)
+                if (c >= 0) {
                     sp->c_cc[tp->mask] = c;
-                else
+                } else {
                     sp->c_cc[tp->mask] = _POSIX_VDISABLE;
+                }
                 break;
             case BIT:
             case BITS:
                 switch (tp->field) {
                     case C_FLAG:
-                        if (off)
+                        if (off) {
                             sp->c_cflag &= ~tp->mask;
-                        else
+                        } else {
                             sp->c_cflag |= tp->mask;
+                        }
                         break;
                     case I_FLAG:
-                        if (off)
+                        if (off) {
                             sp->c_iflag &= ~tp->mask;
-                        else
+                        } else {
                             sp->c_iflag |= tp->mask;
+                        }
                         break;
                     case O_FLAG:
                         sp->c_oflag &= ~tp->mask;
                         sp->c_oflag |= tp->val;
                         break;
                     case L_FLAG:
-                        if (off)
+                        if (off) {
                             sp->c_lflag &= ~tp->mask;
-                        else
+                        } else {
                             sp->c_lflag |= tp->mask;
+                        }
                         break;
                 }
                 break;
@@ -668,21 +682,25 @@ static void set(char *argv[], struct termios *sp) {
             case WIND: {
                 struct winsize win;
                 int n;
-                if (ioctl(0, TIOCGWINSZ, &win) < 0)
+                if (ioctl(0, TIOCGWINSZ, &win) < 0) {
                     error(ERROR_system(1), "cannot set %s", tp->name);
-                if (!(cp = *argv)) {
+                }
+                cp = *argv;
+                if (!cp) {
                     sfprintf(sfstdout, "%d\n", tp->mask ? win.ws_col : win.ws_row);
                     break;
                 }
                 argv++;
                 n = strtol(cp, &cp, 10);
                 if (*cp) error(ERROR_system(1), "%d: invalid number of %s", argv[-1], tp->name);
-                if (tp->mask)
+                if (tp->mask) {
                     win.ws_col = n;
-                else
+                } else {
                     win.ws_row = n;
-                if (ioctl(0, TIOCSWINSZ, &win) < 0)
+                }
+                if (ioctl(0, TIOCSWINSZ, &win) < 0) {
                     error(ERROR_system(1), "cannot set %s", tp->name);
+                }
                 break;
             }
 #endif
@@ -690,8 +708,9 @@ static void set(char *argv[], struct termios *sp) {
                 cp = *argv;
                 if (!cp) {
                     if (tp->field == C_SPEED) {
-                        if (tp = getspeed(*tp->name == 'i' ? cfgetispeed(sp) : cfgetospeed(sp)))
+                        if (tp = getspeed(*tp->name == 'i' ? cfgetispeed(sp) : cfgetospeed(sp))) {
                             sfprintf(sfstdout, "%s\n", tp->name);
+                        }
                         break;
                     }
                     error(ERROR_exit(1), "%s: missing numeric argument", tp->name);
@@ -709,8 +728,9 @@ static void set(char *argv[], struct termios *sp) {
                         if (getspeed(c)) {
                             if (*tp->name != 'o') cfsetispeed(sp, c);
                             if (*tp->name != 'i') cfsetospeed(sp, c);
-                        } else
+                        } else {
                             error(ERROR_exit(1), "%s: %s: invalid speed", tp->name, cp);
+                        }
                         break;
                     case T_CHAR:
                         sp->c_cc[tp->mask] = c;
@@ -747,8 +767,9 @@ static void listchars(Sfio_t *sp, int type) {
     int i, c;
     c = (type == CHAR ? 'c' : 'n');
     for (i = 0; i < elementsof(Ttable); i++) {
-        if (Ttable[i].type == type && *Ttable[i].description)
+        if (Ttable[i].type == type && *Ttable[i].description) {
             sfprintf(sp, "[+%s \a%c\a?%s.]", Ttable[i].name, c, Ttable[i].description);
+        }
     }
 }
 
@@ -773,8 +794,9 @@ static void listmask(Sfio_t *sp, unsigned int mask, const char *description) {
 static void listfields(Sfio_t *sp, int field) {
     int i;
     for (i = 0; i < elementsof(Ttable); i++) {
-        if (Ttable[i].field == field && Ttable[i].type == BIT && *Ttable[i].description)
+        if (Ttable[i].field == field && Ttable[i].type == BIT && *Ttable[i].description) {
             sfprintf(sp, "[+%s (-%s)?%s.]", Ttable[i].name, Ttable[i].name, Ttable[i].description);
+        }
     }
 }
 
@@ -858,7 +880,8 @@ int b_stty(int argc, char **argv, Shbltin_t *context) {
     disc.infof = infof;
     opt_info.disc = &disc;
     for (;;) {
-        switch (n = optget(argv, usage)) {
+        n = optget(argv, usage);
+        switch (n) {
             case 'f':
                 fd = (int)opt_info.num;
                 continue;
@@ -881,11 +904,12 @@ int b_stty(int argc, char **argv, Shbltin_t *context) {
                 }
                 /*FALLTHROUGH*/
             case ':':
-                if (!opt_info.offset)
+                if (!opt_info.offset) {
                     error(2, "%s", opt_info.arg);
-                else if (!(tp = lookup(argv[opt_info.index] + 1)) ||
-                         (tp->type != BIT && tp->type != TABS))
+                } else if (!(tp = lookup(argv[opt_info.index] + 1)) ||
+                         (tp->type != BIT && tp->type != TABS)) {
                     error(ERROR_exit(1), "%s: unknown mode", argv[opt_info.index]);
+                }
                 break;
             case '?':
                 error(ERROR_usage(2), "%s", opt_info.arg);
@@ -894,16 +918,18 @@ int b_stty(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || (flags && *argv) || (flags & (flags - 1)))
+    if (error_info.errors || (flags && *argv) || (flags & (flags - 1))) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+    }
     if (tcgetattr(fd, &tty) < 0) error(ERROR_system(1), "not a tty");
-    if (flags & T_FLAG)
+    if (flags & T_FLAG) {
         sfprintf(sfstdout, "%d\n", tcgetpgrp(0));
-    else if (*argv) {
-        if (!argv[1] && **argv == ':')
+    } else if (*argv) {
+        if (!argv[1] && **argv == ':') {
             gin(*argv, &tty);
-        else
+        } else {
             set(argv, &tty);
+        }
         if (tcsetattr(0, TCSANOW, &tty) < 0) error(ERROR_system(1), "cannot set tty");
     } else
         output(&tty, flags);
