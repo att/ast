@@ -133,9 +133,9 @@ int b_wc(int argc, register char **argv, Shbltin_t *context) {
     if (cp) argv++;
     n = 0;
     do {
-        if (!cp || streq(cp, "-"))
+        if (!cp || streq(cp, "-")) {
             fp = sfstdin;
-        else if (!(fp = sfopen(NULL, cp, "r"))) {
+        } else if (!(fp = sfopen(NULL, cp, "r"))) {
             error(ERROR_system(0), "%s: cannot open", cp);
             continue;
         }

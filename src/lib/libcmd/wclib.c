@@ -63,27 +63,30 @@ Wc_t *wc_init(int mode) {
     if (!wp) return 0;
     if (!mbwide()) wp->mb = 0;
 #if _hdr_wchar && _hdr_wctype && _lib_iswctype
-    else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8))
+    else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8)) {
         wp->mb = 1;
+    }
 #endif
-    else
+    else {
         wp->mb = -1;
+    }
     w = mode & WC_WORDS;
     for (n = (1 << CHAR_BIT); --n >= 0;) wp->type[n] = (w && isspace(n)) ? WC_SP : 0;
     wp->type['\n'] = WC_SP | WC_NL;
     if ((mode & (WC_MBYTE | WC_WORDS)) && wp->mb > 0) {
         for (n = 0; n < 64; n++) {
             wp->type[0x80 + n] |= WC_MB;
-            if (n < 32)
+            if (n < 32) {
                 wp->type[0xc0 + n] |= WC_MB + 1;
-            else if (n < 48)
+            } else if (n < 48) {
                 wp->type[0xc0 + n] |= WC_MB + 2;
-            else if (n < 56)
+            } else if (n < 56) {
                 wp->type[0xc0 + n] |= WC_MB + 3;
-            else if (n < 60)
+            } else if (n < 60) {
                 wp->type[0xc0 + n] |= WC_MB + 4;
-            else if (n < 62)
+            } else if (n < 62) {
                 wp->type[0xc0 + n] |= WC_MB + 5;
+            }
         }
         wp->type[0xc0] = WC_MB | WC_ERR;
         wp->type[0xc1] = WC_MB | WC_ERR;
@@ -127,19 +130,19 @@ static int chkstate(int state, register unsigned int c) {
         case 6:
             state = 0;
             if (c == 0xa0 || c == 0xa1) {
-                return (10);
+                return 10;
             } else if ((c & 0xf0) == 0x80) {
-                if ((c &= 0xf) == 7) return (iswspace(0x2007) ? 10 : 0);
+                if ((c &= 0xf) == 7) return iswspace(0x2007) ? 10 : 0;
                 if (c <= 0xb) return (10);
             } else if (c == 0xaf && iswspace(0x202f)) {
-                return (10);
+                return 10;
             }
             break;
         case 7:
             state = (c == 0x9f ? 10 : 0);
             break;
         case 8:
-            return (iswspace(c) ? 10 : 0);
+            return iswspace(c) ? 10 : 0;
     }
     return state;
 }
@@ -231,10 +234,11 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             while ((cp = (unsigned char *)sfreserve(fd, SF_UNBOUND, 0)) && (c = sfvalue(fd)) > 0) {
                 nchars += c;
                 endbuff = cp + c;
-                if (*--endbuff == '\n')
+                if (*--endbuff == '\n') {
                     nlines++;
-                else
+                } else {
                     *endbuff = '\n';
+                }
                 for (;;)
                     if (*cp++ == '\n') {
                         if (cp > endbuff) break;
@@ -357,9 +361,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                             skip = (c & 7);
                             adjust += skip;
                             state = 0;
-                            if (skip == 2 && (cp[-1] & 0xc) == 0 && (state = (cp[-1] & 0x3)))
+                            if (skip == 2 && (cp[-1] & 0xc) == 0 && (state = (cp[-1] & 0x3))) {
                                 oldc = *cp;
-                            else if (xspace && cp[-1] == 0xc2) {
+                            } else if (xspace && cp[-1] == 0xc2) {
                                 state = 8;
                                 oldc = *cp;
                             }
@@ -382,8 +386,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                     err:
                         skip = 0;
                         state = 0;
-                        if (eline != nlines && !(wp->mode & WC_QUIET))
+                        if (eline != nlines && !(wp->mode & WC_QUIET)) {
                             eline = invalid(file, nlines);
+                        }
                         while (mbc(c) && ((c | WC_ERR) || (c & 7) == 0)) c = type[*cp++];
                         if (eol(c) && (cp > endbuff)) {
                             c = WC_MB | WC_ERR;
@@ -418,8 +423,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             if (!c && !lasttype) nwords--;
         }
         if ((wp->mode & WC_LONGEST) &&
-            ((endbuff + 1 - start) - adjust - (lastchar == '\n')) > longest)
+            ((endbuff + 1 - start) - adjust - (lastchar == '\n')) > longest) {
             longest = (endbuff + 1 - start) - adjust - (lastchar == '\n');
+        }
         wp->longest = longest;
 
         if (eol(lasttype)) {
