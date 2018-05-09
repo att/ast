@@ -97,8 +97,9 @@ int b_sync(int argc, char **argv, Shbltin_t *context) {
     if (fsync_fd == -1 && syncfs_fd == -1) do_sync = do_sfsync = 1;
     if (do_sfsync && sfsync(NULL) < 0) error(ERROR_system(0), "sfsync(0) failed");
     if (fsync_fd >= 0 && fsync(fsync_fd) < 0) error(ERROR_system(0), "fsync(%d) failed", fsync_fd);
-    if (syncfs_fd >= 0 && syncfs(syncfs_fd) < 0)
+    if (syncfs_fd >= 0 && syncfs(syncfs_fd) < 0) {
         error(ERROR_system(0), "syncfs(%d) failed", syncfs_fd);
+    }
     if (do_sync) sync();
     return error_info.errors != 0;
 }
