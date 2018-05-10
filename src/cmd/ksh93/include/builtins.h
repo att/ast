@@ -101,7 +101,6 @@ extern int b_pwd(int, char *[], Shbltin_t *);
 extern int b_sleep(int, char *[], Shbltin_t *);
 extern int b_test(int, char *[], Shbltin_t *);
 extern int B_echo(int, char *[], Shbltin_t *);
-extern int b_poll(int, char *[], Shbltin_t *);
 extern int b_complete(int, char *[], Shbltin_t *);
 
 extern const char e_alrm1[];

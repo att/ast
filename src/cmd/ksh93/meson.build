@@ -91,7 +91,6 @@ locales = ['C', 'C.UTF-8']
 # element is the test name. The second is an optional timeout if the default
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 default_timeout = 30
-# TODO: Fix and add `builtin_poll` to this list.
 # TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
