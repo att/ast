@@ -257,6 +257,15 @@ else
     feature_data.set_quoted('_pth_ed', 'ed')
 endif
 
+atime_feature_file = files('atime.c')
+atime_feature_result = cc.run(atime_feature_file,
+                                    name: 'Check if file system updates atime on reads')
+if atime_feature_result.returncode() == 0
+    is_atime_updated_on_reads = 1
+else
+    is_atime_updated_on_reads = 0
+endif
+
 subdir('dll')
 subdir('ids')
 subdir('locales')

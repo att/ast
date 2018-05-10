@@ -310,9 +310,11 @@ rm -rf $file
 sleep 2
 print 'hello world'
 [[ -N $file ]] || log_error 'test -N $TEST_DIR/*: st_mtime<=st_atime after write'
+# It is a recommended optimization on Linux to disable atime updates with 'noatime' option.
+# https://github.com/att/ast/issues/227
 sleep 2
 read
-[[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after read'
+[[ $ENABLE_READ_ATIME_TEST -eq 1 ]] && [[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after read'
 } > $file < $file
 if rm -rf "$file" && ln -s / "$file"
 then
