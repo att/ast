@@ -1,3 +1,4 @@
+# TODO: Add `tsignal.c` when issue #525 is resolved.
 vmalloc_test_files = [ 'talign.c', 'tcache-scratch.c', 'tcache-thrash.c',
                        'tcompact.c', 'tcontent.c', 'tdcshare.c', 'tdebug.c',
                        'tek.c', 'theap.c', 'tlast.c', 'tmalloc.c',
@@ -5,7 +6,7 @@ vmalloc_test_files = [ 'talign.c', 'tcache-scratch.c', 'tcache-thrash.c',
                        'tperform.c', 'tpool.c', 'trandom.c', 'tregion.c',
                        'tresize.c', 'tsafemalloc.c', 'tsegmented.c',
                        'tsegwalk.c', 'tsharemem.c', 'tsharesimple.c',
-                       'tsignal.c', 'tsinglemem.c', 'tsmall.c', 'tstat.c' ]
+                       'tsinglemem.c', 'tsmall.c', 'tstat.c' ]
 
 # TODO: Fix and enable this test case
 # 'tmallocdebug.c',
@@ -21,6 +22,5 @@ foreach file: vmalloc_test_files
                                      link_with: [libast],
                                      link_args: ['-lpthread'],
                                      install: false)
-    # tsignal.c test requires a longer timeout
-    test('API/' + file, vmalloc_test_target, timeout: 60)
+    test('API/' + file, vmalloc_test_target)
 endforeach
