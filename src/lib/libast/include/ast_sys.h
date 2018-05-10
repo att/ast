@@ -113,8 +113,10 @@ extern char *gettxt(const char *, const char *);
 extern void *memalign(size_t, size_t);
 extern void *pvalloc(size_t);
 extern char *resolvepath(const char *, char *, size_t);
+#if !_lib_strlcat
 extern size_t strlcat(char *, const char *, size_t);
 extern size_t strlcpy(char *, const char *, size_t);
+#endif
 extern void swab(const void *, void *, ssize_t);
 
 #include <stdarg.h>

@@ -51,7 +51,6 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-extern int sprintf (char *, const char *, ...);
 extern void tsterror (char *, ...);
 extern void tstinfo (char *, ...);
 extern void tstwarn (char *, ...);

@@ -24,13 +24,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define strlcpy ______strlcpy
-
 #include <ast.h>
 
-#undef strlcpy
-
-#if _lib_strlcpy
+#if _lib_strlcat
 
 NoN(strlcpy)
 
