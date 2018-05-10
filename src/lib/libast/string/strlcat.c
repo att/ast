@@ -24,11 +24,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define strlcat ______strlcat
-
 #include <ast.h>
-
-#undef strlcat
 
 #if _lib_strlcat
 
