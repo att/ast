@@ -67,6 +67,7 @@ test_driver = join_paths(test_dir, 'util', 'run_test.sh')
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
 shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
+enable_read_atime_test = 'ENABLE_READ_ATIME_TEST=@0@'.format(is_atime_updated_on_reads)
 
 build_dir = meson.build_root()
 
@@ -121,7 +122,7 @@ foreach testspec : all_tests
         endif
         test(testname + locale, ksh93_exe, timeout: timeout,
              args: [test_driver, testname],
-             env: [shell_var, lang_var, ld_library_path, libsample_path])
+             env: [shell_var, lang_var, ld_library_path, libsample_path, enable_read_atime_test])
     endforeach
 
     # shcomp tests
@@ -129,6 +130,6 @@ foreach testspec : all_tests
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
              args: [ test_driver, 'shcomp', testname],
-             env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+             env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path, enable_read_atime_test])
     endif
 endforeach
