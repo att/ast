@@ -305,17 +305,17 @@ done
 ) || log_error 'errors with {..}(...) patterns'
 [[ D290.2003.02.16.temp == D290.+(2003.02.16).temp* ]] || log_error 'pattern match bug with +(...)'
 rm -rf $file
-{
+touch $file
 [[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after creat'
 sleep 2
-print 'hello world'
+print 'hello world' > $file
 [[ -N $file ]] || log_error 'test -N $TEST_DIR/*: st_mtime<=st_atime after write'
 # It is a recommended optimization on Linux to disable atime updates with 'noatime' option.
 # https://github.com/att/ast/issues/227
 sleep 2
-read
+# Update atime timestamp
+touch -a $file
 [[ $ENABLE_READ_ATIME_TEST -eq 1 ]] && [[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after read'
-} > $file < $file
 if rm -rf "$file" && ln -s / "$file"
 then
     [[ -L "$file" ]] || log_error '-L not working'
