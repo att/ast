@@ -10,28 +10,38 @@ env:
         # For now just hardcode the expected value.
         - CORE_COUNT=2
 
-    matrix:
-        - OS_TYPE=fedora
-          INSTALL_REQUIREMENTS="dnf repolist; dnf install -y gcc meson sudo langpacks-zh_CN ed ncurses vi"
+matrix:
+    include:
+        - os: linux
+          env:
+            - OS_TYPE=fedora
+              INSTALL_REQUIREMENTS="dnf repolist; dnf install -y gcc meson sudo langpacks-zh_CN ed ncurses vi"
+
 
         # Note: Meson 0.44.0 is the newest version that works with Python
         # 3.4 available on OpenSuse Leap. See issue #430.
-        - OS_TYPE=opensuse
-          INSTALL_REQUIREMENTS="zypper refresh; zypper in -y gcc python3 python3-pip ninja sudo glibc-locale glibc-devel ed ncurses-utils vim; pip3 install meson==0.44.0"
+        - os: linux
+          env:
+            - OS_TYPE=opensuse
+              INSTALL_REQUIREMENTS="zypper refresh; zypper in -y gcc python3 python3-pip ninja sudo glibc-locale glibc-devel ed ncurses-utils vim; pip3 install meson==0.44.0"
 
         # Ubuntu requires explicitly generating en_US.UTF-8 locale
-        - OS_TYPE=ubuntu
-          INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim meson; locale-gen en_US.UTF-8"
+        - os: linux
+          env:
+            - OS_TYPE=ubuntu
+              INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim meson; locale-gen en_US.UTF-8"
 
         # Debian requires explicitly generating en_US.UTF-8 locale too
-        - OS_TYPE=debian
-          INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 python3-pip ninja-build sudo locales ed vim procps; pip3 install meson==0.44.0; sed -i '/# en_US.UTF-8 UTF-8/s/..//' /etc/locale.gen && locale-gen"
+        - os: linux
+          env:
+            - OS_TYPE=debian
+              INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 python3-pip ninja-build sudo locales ed vim procps; pip3 install meson==0.44.0; sed -i '/# en_US.UTF-8 UTF-8/s/..//' /etc/locale.gen && locale-gen"
 
+        - os: osx
+          env:
+            - OS_TYPE=macos
 services:
     - docker
-
-before_install:
-    - docker pull ${OS_TYPE}
 
 script:
     # TODO: Check how to set MESON_TESTTHREADS dynamically.
@@ -55,8 +65,10 @@ script:
 
     - chmod a+x build.sh
 
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
+    - test $OS_TYPE == "macos" && scripts/build-on-macos.sh && exit 0
+
+    - test $OS_TYPE != "macos" && docker pull ${OS_TYPE} && docker run -v $TRAVIS_BUILD_DIR:/source ${OS_TYPE} bash -c "set -e;
         ${INSTALL_REQUIREMENTS};
         useradd --create-home test;
         chown -R test /source;
-        sudo -u test /source/build.sh"
+        sudo -u test /source/build.sh" && exit 0
