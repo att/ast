@@ -305,15 +305,14 @@ done
 ) || log_error 'errors with {..}(...) patterns'
 [[ D290.2003.02.16.temp == D290.+(2003.02.16).temp* ]] || log_error 'pattern match bug with +(...)'
 rm -rf $file
-{
+touch -t 01020304.05 $file
 [[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after creat'
-sleep 2
-print 'hello world'
+# Update only mtime to mimic the file was written
+touch -m -t 01020708.09 $file
 [[ -N $file ]] || log_error 'test -N $TEST_DIR/*: st_mtime<=st_atime after write'
-sleep 2
-read
+# Update only atime to mimic the file was read
+touch -a -t 01020809.10 $file
 [[ -N $file ]] && log_error 'test -N $TEST_DIR/*: st_mtime>st_atime after read'
-} > $file < $file
 if rm -rf "$file" && ln -s / "$file"
 then
     [[ -L "$file" ]] || log_error '-L not working'

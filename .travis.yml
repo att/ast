@@ -1,7 +1,6 @@
 sudo: required
-dist: trusty
-group: deprecated-2017Q4
 language: c
+
 env:
     global:
         # Travis currently only provides two cores per VM:
