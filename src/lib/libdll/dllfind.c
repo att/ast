@@ -17,27 +17,27 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <dlldefs.h>
 #include <error.h>
 
-/*
- * find and load library name with optional version ver and dlopen() flags
- * at least one dlopen() is called to initialize dlerror()
- * if path!=0 then library path up to size chars copied to path with trailing 0
- * if name contains a directory prefix then library search is limited to the dir and siblings
- */
+//
+// find and load library name with optional version ver and dlopen() flags
+// at least one dlopen() is called to initialize dlerror()
+// if path!=0 then library path up to size chars copied to path with trailing 0
+// if name contains a directory prefix then library search is limited to the dir and siblings
+//
 
 extern void *dllfind(const char *lib, const char *ver, int flags, char *path, size_t size) {
     char *id;
     void *dll;
-
-    if ((id = error_info.id) && (dll = dllplug(id, lib, ver, flags, path, size))) return dll;
+    id = error_info.id;
+    if (id && (dll = dllplug(id, lib, ver, flags, path, size))) return dll;
     return dllplug(NULL, lib, ver, flags, path, size);
 }
