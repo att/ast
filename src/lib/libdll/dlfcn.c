@@ -17,13 +17,13 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * provide dlopen/dlsym/dlerror interface
- *
- * David Korn
- * Glenn Fowler
- * AT&T Research
- */
+//
+// provide dlopen/dlsym/dlerror interface
+//
+// David Korn
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 static const char id[] = "\n@(#)$Id: dll library (AT&T Research) 2010-10-20 $\0\n";
@@ -36,18 +36,18 @@ static const char id[] = "\n@(#)$Id: dll library (AT&T Research) 2010-10-20 $\0\
 
 #if _hdr_dlfcn && _lib_dlopen
 
-/*
- * standard
- */
+//
+// standard
+//
 
 #include <dlfcn.h>
 
 #else
 #if _hdr_dl
 
-/*
- * HP-UX
- */
+//
+// HP-UX
+//
 
 #include <dl.h>
 #ifndef BIND_FIRST
@@ -65,7 +65,8 @@ void *dlopen(const char *path, int mode) {
 
     if (!path) return (void *)&all;
     if (mode) mode = (BIND_IMMEDIATE | BIND_FIRST | BIND_NOSTART);
-    if (!(dll = (void *)shl_load(path, mode, 0L))) err = errno;
+    dll = (void *)shl_load(path, mode, 0L);
+    if (!dll) err = errno;
     return dll;
 }
 
@@ -95,14 +96,14 @@ char *dlerror(void) {
 #else
 #if _sys_ldr && _lib_loadbind
 
-/*
- * rs6000
- */
+//
+// rs6000
+//
 
 #include <sys/ldr.h>
 #include <xcoff.h>
 
-/* xcoff module header */
+// xcoff module header
 struct hdr {
     struct filehdr f;
     struct aouthdr a;
@@ -116,8 +117,8 @@ static int err;
 
 void *dlopen(const char *path, int mode) {
     void *dll;
-
-    if (!(dll = (void *)load((char *)path, mode, getenv("LIBPATH")))) err = errno;
+    dll = (void *)load((char *)path, mode, getenv("LIBPATH"));
+    if (!dll) err = errno;
     return dll;
 }
 
@@ -133,11 +134,12 @@ static int getquery(void) {
     }
 }
 
-/* find the loaded module whose data area contains the
- * address passed in. Remember that procedure pointers
- * are implemented as pointers to descriptors in the
- * data area of the module defining the procedure
- */
+//
+// find the loaded module whose data area contains the
+// address passed in. Remember that procedure pointers
+// are implemented as pointers to descriptors in the
+// data area of the module defining the procedure
+//
 static struct ld_info *getinfo(void *module) {
     struct ld_info *info = ld_info;
     int n = 1;
@@ -151,7 +153,8 @@ static struct ld_info *getinfo(void *module) {
         if ((char *)(info->ldinfo_dataorg) <= (char *)module &&
             (char *)module <= ((char *)(info->ldinfo_dataorg) + (unsigned)(info->ldinfo_datasize)))
             return info;
-        if (n = info->ldinfo_next) info = (void *)((char *)info + n);
+        n = info->ldinfo_next;
+        if (n) info = (void *)((char *)info + n);
     }
     return 0;
 }
@@ -163,38 +166,40 @@ static char *getloc(struct hdr *hdr, char *data, char *name) {
     ulong textreloc;
     int i;
 
-    /* data is relocated by the difference between
-     * its virtual origin and where it was
-     * actually placed
-     */
-    /*N.B. o_sndata etc. are one based */
+    //
+    // data is relocated by the difference between
+    // its virtual origin and where it was
+    // actually placed
+    //
+    // N.B. o_sndata etc. are one based
     datareloc = (ulong)data - hdr->s[hdr->a.o_sndata - 1].s_vaddr;
-    /*hdr is address of header, not text, so add text s_scnptr */
+    // hdr is address of header, not text, so add text s_scnptr
     textreloc =
         (ulong)hdr + hdr->s[hdr->a.o_sntext - 1].s_scnptr - hdr->s[hdr->a.o_sntext - 1].s_vaddr;
     ldhdr = (void *)((char *)hdr + hdr->s[hdr->a.o_snloader - 1].s_scnptr);
     ldsym = (void *)(ldhdr + 1);
-    /* search the exports symbols */
+    // search the exports symbols
     for (i = 0; i < ldhdr->l_nsyms; ldsym++, i++) {
         char *symname, symbuf[9];
         char *loc;
-        /* the symbol name representation is a nuisance since
-         * 8 character names appear in l_name but may
-         * not be null terminated. This code works around
-         * that by brute force
-         */
+        // the symbol name representation is a nuisance since
+        // 8 character names appear in l_name but may
+        // not be null terminated. This code works around
+        // that by brute force
         if (ldsym->l_zeroes) {
             symname = symbuf;
             memcpy(symbuf, ldsym->l_name, 8);
             symbuf[8] = 0;
-        } else
+        } else {
             symname = (void *)(ldsym->l_offset + (ulong)ldhdr + ldhdr->l_stoff);
+        }
         if (strcmp(symname, name)) continue;
         loc = (char *)ldsym->l_value;
-        if ((ldsym->l_scnum == hdr->a.o_sndata) || (ldsym->l_scnum == hdr->a.o_snbss))
+        if ((ldsym->l_scnum == hdr->a.o_sndata) || (ldsym->l_scnum == hdr->a.o_snbss)) {
             loc += datareloc;
-        else if (ldsym->l_scnum == hdr->a.o_sntext)
+        } else if (ldsym->l_scnum == hdr->a.o_sntext) {
             loc += textreloc;
+        }
         return loc;
     }
     return 0;
@@ -203,8 +208,8 @@ static char *getloc(struct hdr *hdr, char *data, char *name) {
 void *dlsym(void *handle, const char *name) {
     void *addr;
     struct ld_info *info;
-
-    if (!(info = getinfo(handle)) ||
+    info = getinfo(handle);
+    if (!info ||
         !(addr = getloc(info->ldinfo_textorg, info->ldinfo_dataorg, (char *)name))) {
         err = errno;
         return 0;
@@ -224,9 +229,9 @@ char *dlerror(void) {
 #else
 #if _hdr_dll && _lib_dllload
 
-/*
- * MVS
- */
+// 
+//  MVS
+//
 
 #include <dll.h>
 
@@ -236,7 +241,8 @@ void *dlopen(const char *path, int mode) {
     void *dll;
 
     UNUSED(mode);
-    if (!(dll = (void *)dllload(path))) err = errno;
+    dll = (void *)dllload(path);
+    if (!dll) err = errno;
     return dll;
 }
 
@@ -244,8 +250,8 @@ int dlclose(void *dll) { return 0; }
 
 void *dlsym(void *handle, const char *name) {
     void *addr;
-
-    if (!(addr = (void *)dllqueryfn(handle, (char *)name))) err = errno;
+    addr = (void *)dllqueryfn(handle, (char *)name);
+    if (!addr) err = errno;
     return addr;
 }
 
@@ -261,9 +267,9 @@ char *dlerror(void) {
 #else
 #if _hdr_mach_o_dyld
 
-/*
- * mac[h]
- */
+//
+// mac[h]
+//
 
 #include <mach-o/dyld.h>
 
@@ -312,9 +318,9 @@ void *dlopen(const char *path, int mode) {
         init = 1;
         NSInstallLinkEditErrorHandlers(&handlers);
     }
-    if (!path)
+    if (!path) {
         dll = &global;
-    else if (!(dll = newof(0, Dll_t, 1, strlen(path)))) {
+    } else if (!(dll = newof(0, Dll_t, 1, strlen(path)))) {
         dlmessage = e_space;
         return 0;
     } else {
@@ -364,9 +370,9 @@ static NSSymbol lookup(Dll_t *dll, const char *name) {
     if (dll == DL_NEXT) {
         if (!_dyld_func_lookup(name, &pun)) return 0;
         address = (NSSymbol)pun;
-    } else if (dll->module)
+    } else if (dll->module) {
         address = NSLookupSymbolInModule(dll->module, name);
-    else if (dll->image) {
+    } else if (dll->image) {
         if (!NSIsSymbolNameDefinedInImage(dll->image, name)) return 0;
         address = NSLookupSymbolInImage(dll->image, name, 0);
     } else {
@@ -386,7 +392,8 @@ void *dlsym(void *handle, const char *name) {
         dlmessage = e_handle;
         return 0;
     }
-    if (!(address = lookup(dll, name)) && name[0] != '_' && strlen(name) < (sizeof(buf) - 1)) {
+    address = lookup(dll, name);
+    if (!address && name[0] != '_' && strlen(name) < (sizeof(buf) - 1)) {
         buf[0] = '_';
         strcpy(buf + 1, name);
         address = lookup(dll, buf);
@@ -407,9 +414,9 @@ char *dlerror(void) {
 }
 
 #else
-/*
- * punt
- */
+//
+// punt
+//
 
 static int err;
 
