@@ -17,25 +17,25 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ast.h>
 #include <dlldefs.h>
 #include <error.h>
 
-/*
- * dlsym() with `_' weak fallback
- */
+//
+// dlsym() with `_' weak fallback
+//
 
 void *dlllook(void *dll, const char *name) {
     void *addr;
     char buf[256];
-
-    if (!(addr = dlsym(dll, name)) && strlen(name) < (sizeof(buf) - 2)) {
+    addr = dlsym(dll, name);
+    if (!addr && strlen(name) < (sizeof(buf) - 2)) {
         buf[0] = '_';
         strcpy(buf + 1, name);
         name = (const char *)buf;
