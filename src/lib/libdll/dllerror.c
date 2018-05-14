@@ -17,20 +17,20 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "dlllib.h"
 
 Dllstate_t state;
 
-/*
- * return error message from last failed dl*() call
- * retain==0 resets the last dl*() error
- */
+//
+// return error message from last failed dl*() call
+// retain==0 resets the last dl*() error
+//
 
 extern char *dllerror(int retain) {
     char *s;
