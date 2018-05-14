@@ -17,20 +17,20 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "dlllib.h"
 
-/*
- * find and load lib plugin/module library name with optional version ver and dlopen() flags
- * at least one dlopen() is called to initialize dlerror()
- * if path!=0 then library path up to size chars copied to path with trailing 0
- * if name contains a directory prefix then library search is limited to the dir and siblings
- */
+//
+// find and load lib plugin/module library name with optional version ver and dlopen() flags
+// at least one dlopen() is called to initialize dlerror()
+// if path!=0 then library path up to size chars copied to path with trailing 0
+// if name contains a directory prefix then library search is limited to the dir and siblings
+//
 
 extern void *dllplugin(const char *lib, const char *name, const char *ver, unsigned long rel,
                        unsigned long *cur, int flags, char *path, size_t size) {
@@ -42,13 +42,15 @@ extern void *dllplugin(const char *lib, const char *name, const char *ver, unsig
 
     err = hit = 0;
     for (;;) {
-        if (dls = dllsopen(lib, name, ver)) {
+        dls = dllsopen(lib, name, ver);
+        if (dls) {
             while (dle = dllsread(dls)) {
                 hit = 1;
 #if 0
 			again:
 #endif
-                if (dll = dllopen(dle->path, flags | RTLD_GLOBAL | RTLD_PARENT)) {
+            dll = dllopen(dle->path, flags | RTLD_GLOBAL | RTLD_PARENT);
+            if (dll) {
                     if (!dllcheck(dll, dle->path, rel, cur)) {
                         err = state.error;
                         dlclose(dll);
@@ -95,12 +97,14 @@ extern void *dllplugin(const char *lib, const char *name, const char *ver, unsig
         if (!lib) break;
         lib = 0;
     }
-    if (dll = dllopen(name, flags)) {
+    dll = dllopen(name, flags);
+    if (dll) {
         if (!dllcheck(dll, name, rel, cur)) {
             dlclose(dll);
             dll = 0;
-        } else if (path && size)
+        } else if (path && size) {
             strlcpy(path, name, size);
+        }
     }
     return dll;
 }
