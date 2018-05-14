@@ -17,10 +17,10 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "dlllib.h"
@@ -34,9 +34,9 @@ typedef struct Dll_lib_s {
     char base[1];
 } Dll_lib_t;
 
-/*
- * split <name,base,type,opts> from name into names
- */
+//
+// split <name,base,type,opts> from name into names
+//
 
 Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     char *s;
@@ -49,18 +49,20 @@ Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     if (strneq(name, id, n) && (streq(name + n, "_s") || streq(name + n, "_t"))) return 0;
     if (!names) {
         s = fmtbuf(sizeof(Dllnames_t *) + sizeof(names) - 1);
-        if (n = (s - (char *)0) % sizeof(names)) s += sizeof(names) - n;
+        n = (s - (char *)0) % sizeof(names);
+        if (n) s += sizeof(names) - n;
         names = (Dllnames_t *)s;
     }
 
-    /*
-     * determine the base name
-     */
-
-    if ((s = strrchr(name, '/')) || (s = strrchr(name, '\\')))
+    //
+    // determine the base name
+    //
+    s = strrchr(name, '/');
+    if (s || (s = strrchr(name, '\\'))) {
         s++;
-    else
+    } else {
         s = (char *)name;
+    }
     if (strneq(s, "lib", 3)) s += 3;
     b = names->base = names->data;
     e = b + sizeof(names->data) - 1;
@@ -68,11 +70,11 @@ Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     while (b < e && *t && *t != '.' && *t != '-' && *t != ':') *b++ = *t++;
     *b++ = 0;
 
-    /*
-     * determine the optional type
-     */
-
-    if (t = strrchr(s, ':')) {
+    //
+    // determine the optional type
+    //
+    t = strrchr(s, ':');
+    if (t) {
         names->name = b;
         while (b < e && s < t) *b++ = *s++;
         *b++ = 0;
@@ -89,9 +91,9 @@ Dllnames_t *dllnames(const char *id, const char *name, Dllnames_t *names) {
     return names;
 }
 
-/*
- * return method pointer for <id,version> in names
- */
+//
+// return method pointer for <id,version> in names
+//
 
 void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, void *disc) {
     void *dll;
@@ -104,54 +106,59 @@ void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, vo
 
     if (!names) return 0;
 
-    /*
-     * check if plugin already loaded
-     */
+    //
+    //   check if plugin already loaded
+    //
 
-    for (lib = loaded; lib; lib = lib->next)
+    for (lib = loaded; lib; lib = lib->next) {
         if (streq(names->base, lib->base)) {
             libf = lib->libf;
             goto init;
         }
+    }
 
-    /*
-     * load
-     */
+    //
+    //  load
+    //
+    dll = dllplugin(names->id, names->name, NULL, version, NULL, RTLD_LAZY, names->path,
+            names->data + sizeof(names->data) - names->path);
 
-    if (!(dll = dllplugin(names->id, names->name, NULL, version, NULL, RTLD_LAZY, names->path,
-                          names->data + sizeof(names->data) - names->path)) &&
-        (streq(names->name, names->base) ||
+    if (!dll && (streq(names->name, names->base) ||
          !(dll = dllplugin(names->id, names->base, NULL, version, NULL, RTLD_LAZY, names->path,
                            names->data + sizeof(names->data) - names->path)))) {
-        if (dllerrorf)
+        if (dllerrorf) {
             (*dllerrorf)(NULL, disc, 2, "%s: library not found", names->name);
-        else
+        }
+        else {
             errorf("dll", NULL, -1, "dll_lib: %s version %lu library not found", names->name,
                    version);
+        }
         return 0;
     }
 
-    /*
-     * init
-     */
+    //
+    // init
+    //
 
     sfsprintf(sym, sizeof(sym), "%s_lib", names->id);
-    if (!(libf = (Dll_lib_f)dlllook(dll, sym))) {
-        if (dllerrorf)
+    libf = (Dll_lib_f)dlllook(dll, sym);
+    if (!libf) {
+        if (dllerrorf) {
             (*dllerrorf)(NULL, disc, 2, "%s: %s: initialization function not found in library",
                          names->path, sym);
-        else
+        } else {
             errorf("dll", NULL, -1,
                    "dll_lib: %s version %lu initialization function %s not found in library",
                    names->name, version, sym);
+        }
         return 0;
     }
 
-    /*
-     * add to the loaded list
-     */
-
-    if (lib = newof(0, Dll_lib_t, 1, (n = strlen(names->base)) + strlen(names->path) + 1)) {
+    //
+    // add to the loaded list
+    //
+    lib = newof(0, Dll_lib_t, 1, (n = strlen(names->base)) + strlen(names->path) + 1);
+    if (lib) {
         lib->libf = libf;
         strcpy(lib->base, names->base);
         strcpy(lib->path = lib->base + n + 1, names->path);
@@ -164,9 +171,9 @@ init:
     return (*libf)(names->path, disc, names->type);
 }
 
-/*
- * return method pointer for <id,name,version>
- */
+//
+// return method pointer for <id,name,version>
+//
 
 void *dllmeth(const char *id, const char *name, unsigned long version) {
     Dllnames_t names;
