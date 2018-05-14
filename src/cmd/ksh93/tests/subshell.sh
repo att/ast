@@ -226,13 +226,15 @@ do
 done
 
 $SHELL -c '( autoload xxxxx);print -n' ||  log_error 'autoloaded functions in subshells can cause failure'
-foo=$($SHELL  <<- ++EOF++
+actual=$($SHELL  <<- ++EOF++
 	(trap 'print bar' EXIT;print -n foo)
 	++EOF++
 )
-[[ $foo == foobar ]] || log_error 'trap on exit when last commands is subshell is not triggered'
+expect=foobar
+[[ $actual == $expect ]] ||
+    log_error 'trap on exit when last commands is subshell is not triggered' "$expect" "$actual"
 
-err=$(
+actual=$(
     $SHELL  2>&1  <<- \EOF
 		date=$(whence -p date)
 		function foo
@@ -245,17 +247,15 @@ err=$(
 		for ((i=20; i < max; i++))
 		do
 			exec {i}>&1
-	    	done
+                done
 		for ((i=0; i < 20; i++))
-	        do
+                do
 			y=$(foo)
 		done
 	EOF
 ) || {
-    err=${err%%$'\n'*}
-    err=${err#*:}
-    err=${err##[[:space:]]}
-    log_error "nested command substitution with redirections failed -- $err"
+    expect=''
+    log_error "nested command substitution with redirections failed" "$expect" "$actual"
 }
 
 exp=0
@@ -859,5 +859,3 @@ builtin -d echo
 # Check if redirections work if backticks are nested inside $()
 foo=$(print `echo bar`)
 [[ $foo == "bar" ]] || log_error 'Redirections do not work if backticks are nested inside $()'
-
-rm $tmpfile
