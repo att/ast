@@ -17,10 +17,10 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #ifndef __EXTENSIONS__
@@ -34,15 +34,15 @@
 #include <rld_interface.h>
 #endif
 
-/*
- * return a handle for the next layer down,
- * i.e., the next layer that has symbols covered
- * by the main prog and dll's loaded so far
- *
- * intentionally light on external lib calls
- * so this routine can be used early in process
- * startup
- */
+//
+// return a handle for the next layer down,
+// i.e., the next layer that has symbols covered
+// by the main prog and dll's loaded so far
+//
+// intentionally light on external lib calls
+// so this routine can be used early in process
+// startup
+//
 
 #ifdef _DLL_RLD_SYM
 
@@ -74,14 +74,17 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
     if (getenv("DLL_DEBUG") && (vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME))) {
         do {
             if (strcmp(vp, "MAIN") && (lp = dllopen(vp, flags))) {
-                if (xr = (Write_f)dlsym(lp, "write")) wr = xr;
+                xr = (Write_f)dlsym(lp, "write")
+                if (xr) wr = xr;
             }
         } while (vp = (char *)_rld_new_interface(_RLD_NEXT_PATHNAME));
     }
 #endif
-    if (vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME)) {
+    vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME);
+    if (vp) {
         do {
-            if (lp = dllopen(strcmp(vp, "MAIN") ? vp : (char *)0, flags)) {
+            lp = dllopen(strcmp(vp, "MAIN") ? vp : (char *)0, flags);
+            if (lp) {
                 if (found) {
                     b = e = 0;
                     s = vp;
@@ -121,8 +124,9 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
                         return lp;
                     }
 #if DEBUG
-                    else if (wr)
+                    else if (wr) {
                         (*wr)(2, buf, sfsprintf(buf, sizeof(buf), "dll: skip %s\n", vp));
+                    }
 #endif
                 } else if ((_DLL_RLD_SYM_TYPE *)dlsym(lp, _DLL_RLD_SYM_STR) == here) {
 #if DEBUG
@@ -170,8 +174,9 @@ void *dllnext(int flags) {
     for (map = _DYNAMIC.ld_un.ld_1->ld_loaded; map; map = map->lm_next) {
         b = 0;
         s = map->lm_name;
-        while (*s)
+        while (*s) {
             if (*s++ == '/') b = s;
+        }
         if (b && b[0] == 'l' && b[1] == 'i' && b[2] == 'b' && b[3] == 'c' && b[4] == '.') {
             path = map->lm_name;
             break;
