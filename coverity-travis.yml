@@ -1,0 +1,38 @@
+sudo: required
+language: c
+env:
+    global:
+        # COVERITY_SCAN_TOKEN
+        - secure: "OEVGFl9FijJybDAgaoIwNsaQOlVre3HF95LnFGa3D+S8Nsr1V+DOn2FSdlxjcXqJpInJ/+8o5q2krLw85yKE+wgPsqhglGAw85XYkh15pM3VattPXCUhEZUEaeE2jspdm6s8u6BGrwbT84a2KikX21yXr3Vf+2m1oQjkQLuhrrI="
+
+before_install:
+    - sudo apt-get update
+    - sudo apt-get install python3-pip
+    - sudo pip3 install meson==0.44.0
+    # Ubuntu repositories have older version of ninja
+    - wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip
+    - unzip ninja-linux.zip
+    - mv ninja ~/bin
+
+script:
+    - exit 0
+
+addons:
+    coverity_scan:
+        # GitHub project metadata
+        project:
+            name: ksh
+
+        # Where email notification of build analysis results will be sent
+        notification_email: svashisht@redhat.com
+
+        # Commands to prepare for build_command
+        build_command_prepend: meson build
+
+        # The command that will be added as an argument to "cov-build" to compile your project for analysis,
+        build_command: ninja -C build
+
+        # Pattern to match selecting branches that will run analysis. We recommend leaving this set to 'coverity_scan'.
+        # Take care in resource usage, and consider the build frequency allowances per
+        #   https://scan.coverity.com/faq#frequency
+        branch_pattern: coverity_scan
