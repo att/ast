@@ -17,12 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * coshell procrun(3)
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Coshell procrun(3)
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
@@ -34,18 +34,21 @@ int coprocrun(const char *path, char **argv, int flags) {
     char **a;
     Sfio_t *tmp;
     int n;
-
-    if (!(a = argv))
+    a = argv;
+    if (!a) {
         return procclose(
             procopen(path, a, NULL, NULL, PROC_FOREGROUND | PROC_GID | PROC_UID | flags));
-    if (!(tmp = sfstropen())) return -1;
+    }
+    tmp = sfstropen();
+    if (!tmp) return -1;
     sfputr(tmp, path ? path : "sh", -1);
     while (s = *++a) {
         sfputr(tmp, " '", -1);
         coquote(tmp, s, 0);
         sfputc(tmp, '\'');
     }
-    if (!(s = costash(tmp))) return -1;
+    s = costash(tmp);
+    if (!s) return -1;
     n = cosystem(s);
     sfstrclose(tmp);
     return n;
