@@ -36,7 +36,4 @@
 Desktop.ini
 
 # Artifacts of the build and test process that should not be committed.
-/lib/package/CONVERT.mk
 build/
-src/lib/libast/features
-src/cmd/ksh93/features/FEATURE/
