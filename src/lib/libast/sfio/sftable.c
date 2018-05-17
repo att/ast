@@ -511,4 +511,4 @@ static int sfcvinit() {
 }
 
 /* table for floating point and integer conversions */
-#include "FEATURE/sfinit"
+#include "features/sfinit.h"
