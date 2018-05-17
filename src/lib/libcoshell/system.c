@@ -17,12 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * coshell system(3)
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Coshell system(3)
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
@@ -33,19 +33,22 @@ int cosystem(const char *cmd) {
     int status;
 
     if (!cmd) return !eaccess(pathshell(), X_OK);
-    if (!(co = coopen(NULL, CO_ANY, NULL))) return -1;
-    if (cj = coexec(co, cmd, CO_SILENT, NULL, NULL, NULL)) cj = cowait(co, cj, -1);
+    co = coopen(NULL, CO_ANY, NULL);
+    if (!co) return -1;
+    cj = coexec(co, cmd, CO_SILENT, NULL, NULL, NULL);
+    if (cj) cj = cowait(co, cj, -1);
     if (!cj) return -1;
 
-    /*
-     * synthesize wait() status from shell status
-     * lack of synthesis is the standard's proprietary sellout
-     */
+    //
+    // Synthesize wait() status from shell status
+    // Lack of synthesis is the standard's proprietary sellout
+    //
 
     status = cj->status;
-    if (EXITED_TERM(status))
+    if (EXITED_TERM(status)) {
         status &= ((1 << (EXIT_BITS - 1)) - 1);
-    else
+    } else {
         status = (status & ((1 << EXIT_BITS) - 1)) << EXIT_BITS;
+    }
     return status;
 }
