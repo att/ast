@@ -380,7 +380,7 @@ static struct _m_ map[] = {
     "XFSZ",
     SIGXFSZ,
 #endif
-#include "FEATURE/siglist"
+#include "siglist.h"
     0};
 
 #define RANGE_MIN (1 << 14)
