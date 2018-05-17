@@ -30,7 +30,7 @@
 #include <ast.h>
 #include <sig.h>
 
-#include "FEATURE/signal"
+#include "features/signal.h"
 
 Sig_info_t _sig_info_ = {(char **)sig_name, (char **)sig_text, SIG_MAX};
 

@@ -24,6 +24,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdio.h>
+
 #include "ast_float.h"
 
 int main() {
@@ -38,7 +40,10 @@ int main() {
     char *ls = "L";
 #endif
 
-    printf("\nstatic const float sf_flt_pow10[] =\n{\n");
+    printf("#ifndef _def_sfinit_features\n");
+    printf("#define _def_sfinit_features 1\n");
+    printf("\n");
+    printf("static const float sf_flt_pow10[] =\n{\n");
     for (i = 0; i <= FLT_MAX_10_EXP; i++) printf("\t1E%d%s,\n", i, fs);
     printf("};\n");
     printf("\nstatic const double sf_dbl_pow10[] =\n{\n");
@@ -85,5 +90,6 @@ int main() {
     printf("\t(_ast_fltmax_t*)&sf_ldbl_pow10[0],\n");
 #endif
     printf("};\n");
+    printf("#endif\n");
     return 0;
 }
