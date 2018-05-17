@@ -17,36 +17,38 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * if co==0 then kill all coshell jobs with sig
- * elif cj==0 then kill co jobs with sig
- * else kill cj with sig
- *
- * if sig==0 then cause all CO_SERVICE jobs to fail
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// if co==0 then kill all coshell jobs with sig
+// elif cj==0 then kill co jobs with sig
+// else kill cj with sig
+//
+// if sig==0 then cause all CO_SERVICE jobs to fail
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 
-/*
- * kill job cj in shell co with signal sig
- */
+//
+// Kill job cj in shell co with signal sig
+//
 
 static int cokilljob(Coshell_t *co, Cojob_t *cj, int sig) {
     int n;
 
-    if (co->flags & CO_DEBUG)
+    if (co->flags & CO_DEBUG) {
         errormsg(state.lib, 2, "coshell %d kill co=%d cj=%d sig=%d", co->index, co->pid, cj->pid,
                  sig);
+    }
     if (cj->pid < 0) return 0;
     if (cj->pid == 0) {
-        if (cj->service)
+        if (cj->service) {
             co->svc_running--;
-        else
+        } else {
             co->running--;
+        }
         cj->pid = CO_PID_ZOMBIE;
         cj->status = EXIT_TERM(sig);
         return 0;
@@ -61,9 +63,9 @@ static int cokilljob(Coshell_t *co, Cojob_t *cj, int sig) {
     return n;
 }
 
-/*
- * kill cj (or all jobs if cj==0) in shell co with sig
- */
+//
+// Kill cj (or all jobs if cj==0) in shell co with sig
+//
 
 static int cokillshell(Coshell_t *co, Cojob_t *cj, int sig) {
     int n;
@@ -77,8 +79,9 @@ static int cokillshell(Coshell_t *co, Cojob_t *cj, int sig) {
     }
     if (cj) return cokilljob(co, cj, sig);
     n = 0;
-    for (cj = co->jobs; cj; cj = cj->next)
+    for (cj = co->jobs; cj; cj = cj->next) {
         if (cj->pid > 0) n |= cokilljob(co, cj, sig);
+    }
     return n;
 }
 
@@ -87,20 +90,23 @@ int cokill(Coshell_t *co, Cojob_t *cj, int sig) {
     int n;
 
     if (cj) {
-        if (!co)
+        if (!co) {
             co = cj->coshell;
-        else if (co != cj->coshell)
+        } else if (co != cj->coshell) {
             return -1;
+        }
         any = 0;
-    } else if (co)
+    } else if (co) {
         any = 0;
-    else if (!(co = state.coshells))
+    } else if (!(co = state.coshells)) {
         return -1;
-    else
+    } else {
         any = 1;
-    if (co->flags & CO_DEBUG)
+    }
+    if (co->flags & CO_DEBUG) {
         errormsg(state.lib, 2, "coshell %d kill co=%d cj=%d sig=%d", co->index, co ? co->pid : 0,
                  cj ? cj->pid : 0, sig);
+    }
     switch (sig) {
         case SIGINT:
             sig = SIGTERM;
