@@ -17,12 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * coshell library interface
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Coshell library interface
+//
 
 #ifndef _COSHELL_H
 #define _COSHELL_H
@@ -43,82 +43,82 @@ typedef struct Coshell_s Coshell_t;
 struct Cojob_s;
 typedef struct Cojob_s Cojob_t;
 
-/*
- * DEPRECATED names for compatibility
- */
+//
+// DEPRECATED names for compatibility
+//
 
 #define COSHELL Coshell_t
 #define COJOB Cojob_t
 
-#define CO_ID "coshell" /* library/command id		*/
+#define CO_ID "coshell" // Library/command id
 
-#define CO_ENV_ATTRIBUTES "COATTRIBUTES" /* coshell attributes env var	*/
-#define CO_ENV_EXPORT "COEXPORT"         /* coshell env var export list	*/
-#define CO_ENV_HOST "HOSTNAME"           /* coshell host name env var	*/
-#define CO_ENV_MSGFD "_COSHELL_msgfd"    /* msg fd			*/
-#define CO_ENV_OPTIONS "COSHELL_OPTIONS" /* options environment var	*/
-#define CO_ENV_PROC "NPROC"              /* concurrency environment var	*/
-#define CO_ENV_SHELL "COSHELL"           /* coshell path environment var	*/
-#define CO_ENV_TEMP "COTEMP"             /* 10 char temp file base	*/
-#define CO_ENV_TYPE "HOSTTYPE"           /* coshell host type env var	*/
+#define CO_ENV_ATTRIBUTES "COATTRIBUTES" // Coshell attributes env var
+#define CO_ENV_EXPORT "COEXPORT"         // Coshell env var export list
+#define CO_ENV_HOST "HOSTNAME"           // Coshell host name env var
+#define CO_ENV_MSGFD "_COSHELL_msgfd"    // Msg fd
+#define CO_ENV_OPTIONS "COSHELL_OPTIONS" // Options environment var
+#define CO_ENV_PROC "NPROC"              // Concurrency environment var
+#define CO_ENV_SHELL "COSHELL"           // Coshell path environment var
+#define CO_ENV_TEMP "COTEMP"             // 10 char temp file base
+#define CO_ENV_TYPE "HOSTTYPE"           // Coshell host type env var
 
-#define CO_OPT_ACK "ack"           /* wait for server coexec() ack	*/
-#define CO_OPT_INDIRECT "indirect" /* indirect server connection	*/
-#define CO_OPT_SERVER "server"     /* server connection		*/
+#define CO_OPT_ACK "ack"           // Wait for server coexec() ack
+#define CO_OPT_INDIRECT "indirect" // Indirect server connection
+#define CO_OPT_SERVER "server"     // Server connection
 
-#define CO_QUANT 100 /* time quanta per sec		*/
+#define CO_QUANT 100 // Time quanta per sec
 
-#define CO_ANY 0x000001      /* return any open coshell	*/
-#define CO_DEBUG 0x000002    /* library debug trace		*/
-#define CO_EXPORT 0x000004   /* export everything		*/
-#define CO_IGNORE 0x000008   /* ignore command errors	*/
-#define CO_LOCAL 0x000010    /* local affinity		*/
-#define CO_NONBLOCK 0x000020 /* don't block coexec if Q full	*/
-#define CO_SHELL 0x000040    /* shell using coshell!		*/
-#define CO_SILENT 0x000080   /* don't trace commands		*/
+#define CO_ANY 0x000001      // Return any open coshell
+#define CO_DEBUG 0x000002    // Library debug trace	
+#define CO_EXPORT 0x000004   // Export everything
+#define CO_IGNORE 0x000008   // Ignore command errors
+#define CO_LOCAL 0x000010    // Local affinity
+#define CO_NONBLOCK 0x000020 // Don't block coexec if Q full
+#define CO_SHELL 0x000040    // Shell using coshell!
+#define CO_SILENT 0x000080   // Don't trace commands
 
-#define CO_KSH 0x000100    /* coshell is ksh (readonly)	*/
-#define CO_SERVER 0x000200 /* coshell is server (readonly)	*/
-#define CO_OSH 0x000400    /* coshell is OLD (readonly)	*/
+#define CO_KSH 0x000100         // Coshell is ksh (readonly)
+#define CO_SERVER 0x000200      // Coshell is server (readonly)
+#define CO_OSH 0x000400         // Coshell is OLD (readonly)
 
-#define CO_CROSS 0x000800 /* don't prepend local dirs	*/
-#define CO_DEVFD 0x001000 /* coshell handles /dev/fd/#	*/
+#define CO_CROSS 0x000800       // Don't prepend local dirs
+#define CO_DEVFD 0x001000       // Coshell handles /dev/fd/#
 
-#define CO_SERIALIZE 0x002000 /* serialize stdout and stderr	*/
-#define CO_SERVICE 0x004000   /* service callouts		*/
+#define CO_SERIALIZE 0x002000   // Serialize stdout and stderr
+#define CO_SERVICE 0x004000     // Service callouts
 
-#define CO_APPEND 0x008000   /* append coexec() out/err	*/
-#define CO_SEPARATE 0x010000 /* 1 shell+wait per coexec()	*/
-#define CO_ORPHAN 0x020000   /* PROC_ORPHAN			*/
+#define CO_APPEND 0x008000      // Append coexec() out/err
+#define CO_SEPARATE 0x010000    // 1 shell+wait per coexec()
+#define CO_ORPHAN 0x020000      // PROC_ORPHAN
 
-#define CO_USER 0x100000 /* first user flag		*/
+#define CO_USER 0x100000        // First user flag
 
-struct Cojob_s /* coshell job info		*/
+struct Cojob_s // Coshell job info
 {
-    Coshell_t *coshell; /* running in this coshell	*/
-    int id;             /* job id			*/
-    int status;         /* exit status			*/
-    int flags;          /* CO_* flags			*/
-    void *local;        /* local info			*/
-    unsigned long user; /* user time in 1/CO_QUANT secs	*/
-    unsigned long sys;  /* sys time in 1/CO_QUANT secs	*/
+    Coshell_t *coshell; // Running in this coshell
+    int id;             // Job id
+    int status;         // Exit status
+    int flags;          // CO_* flags
+    void *local;        // Local info
+    unsigned long user; // User time in 1/CO_QUANT secs
+    unsigned long sys;  // Sys time in 1/CO_QUANT secs
 #ifdef _CO_JOB_PRIVATE_
-    _CO_JOB_PRIVATE_ /* library private additions	*/
+    _CO_JOB_PRIVATE_    // Library private additions
 #endif
 };
 
-struct Coshell_s /* coshell connection info	*/
+struct Coshell_s        // coshell connection info
 {
-    void *data;         /* user data, initially 0	*/
-    int flags;          /* flags			*/
-    int outstanding;    /* number of outstanding jobs	*/
-    int running;        /* number of running jobs	*/
-    int total;          /* number of coexec() jobs	*/
-    unsigned long user; /* user time in 1/CO_QUANT secs	*/
-    unsigned long sys;  /* sys time in 1/CO_QUANT secs	*/
-    Sfio_t *msgfp;      /* message stream for sfpoll()	*/
+    void *data;         // User data, initially 0
+    int flags;          // Flags
+    int outstanding;    // Number of outstanding jobs
+    int running;        // Number of running jobs
+    int total;          // Number of coexec() jobs
+    unsigned long user; // User time in 1/CO_QUANT secs
+    unsigned long sys;  // Sys time in 1/CO_QUANT secs
+    Sfio_t *msgfp;      // Message stream for sfpoll()
 #ifdef _CO_SHELL_PRIVATE_
-    _CO_SHELL_PRIVATE_ /* library private additions	*/
+    _CO_SHELL_PRIVATE_  // Library private additions
 #endif
 };
 
