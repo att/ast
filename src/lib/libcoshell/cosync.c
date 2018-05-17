@@ -17,17 +17,17 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * sync all outstanding file operations for file opened on fd
- * if file==0 then fd used
- * if fd<0 then file used
- * if mode<0 then fd not created
- *
- * NOTE: this is an unfortunate NFS workaround that should be done by fsync()
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Sync all outstanding file operations for file opened on fd
+// if file==0 then fd used
+// if fd<0 then file used
+// if mode<0 then fd not created
+//
+// NOTE: this is an unfortunate NFS workaround that should be done by fsync()
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
@@ -45,15 +45,16 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
             char *b;
             int td;
 
-            /*
-             * writing to a dir apparently flushes the
-             * attribute cache for all entries in the dir
-             */
+            //
+            // Writing to a dir apparently flushes the
+            // attribute cache for all entries in the dir
+            //
 
             s = file;
             b = t = tmp;
             while (t < &tmp[sizeof(tmp) - 1]) {
-                if (!(*t = *s++)) break;
+                *t = *s++;
+                if (!(*t)) break;
                 if (*t++ == '/') b = t;
             }
             s = "..nfs..botch..";
@@ -61,10 +62,12 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
             while (t < &tmp[sizeof(tmp) - 1] && (*t++ = *s++))
                 ;
             *t = 0;
-            if ((td = open(tmp, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0)) >= 0) close(td);
+            td = open(tmp, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0);
+            if (td >= 0) close(td);
             unlink(tmp);
             if (fd >= 0 && mode >= 0) {
-                if ((td = open(file, mode | O_CLOEXEC)) < 0) return (-1);
+                td = open(file, mode | O_CLOEXEC);
+                if (td < 0) return (-1);
                 close(fd);
                 dup2(td, fd);
                 close(td);
@@ -76,13 +79,13 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
             struct flock lock;
 
             if (fd < 0) {
-                if (!file || mode < 0 || (fd = open(file, O_RDONLY | O_CLOEXEC)) < 0) return (-1);
+                if (!file || mode < 0 || (fd = open(file, O_RDONLY | O_CLOEXEC)) < 0) return -1;
                 clean = 1;
             }
 
-            /*
-             * this sets the VNOCACHE flag across NFS
-             */
+            //
+            // This sets the VNOCACHE flag across NFS
+            //
 
             lock.l_type = F_RDLCK;
             lock.l_whence = 0;
@@ -94,13 +97,13 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
             }
             if (clean) close(fd);
 
-            /*
-             * 4.1 has a bug that lets VNOCACHE linger after unlock
-             * VNOCACHE inhibits mapping which kills exec
-             * the double rename flushes the incore vnode (and VNOCACHE)
-             *
-             * this kind of stuff doesn't happen with *real* file systems
-             */
+            //
+            // 4.1 has a bug that lets VNOCACHE linger after unlock
+            // VNOCACHE inhibits mapping which kills exec
+            // the double rename flushes the incore vnode (and VNOCACHE)
+            //
+            // This kind of stuff doesn't happen with *real* file systems
+            //
 
             if (file && *file) {
                 strcpy(tmp, file);
@@ -112,5 +115,5 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
 #endif
     }
 #endif
-    return (0);
+    return 0;
 }
