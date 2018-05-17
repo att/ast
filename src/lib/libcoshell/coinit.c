@@ -17,12 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * return job initialization commands
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Return job initialization commands
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
@@ -40,17 +40,18 @@ static void exid(Sfio_t *sp, const char *pre, const char *name, const char *pos)
             if (!isalnum(c)) c = '_';
             sfputc(sp, c);
         } while ((c = *name++) && c != '=');
-    } else
+    } else {
         sfputc(sp, '_');
+    }
     sfputr(sp, pos, -1);
 }
 
-/*
- * add n to the export list
- * old!=0 formats in old style
- * coex!=0 for CO_ENV_EXPORT
- * if n prefixed by % then coquote conversion enabled
- */
+//
+// Add n to the export list
+// old!=0 formats in old style
+// coex!=0 for CO_ENV_EXPORT
+// If n prefixed by % then coquote conversion enabled
+//
 
 static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int flags) {
     int cvt;
@@ -59,13 +60,14 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
 
     if (cvt = *n == '%') n++;
 
-    /*
-     * currently limited to valid identifer env var names
-     */
+    //
+    // Currently limited to valid identifer env var names
+    //
 
     if (!co->export || !dtmatch(co->export, n)) {
         if (old) cvt = 0;
-        if ((v = getenv(n)) && *v ||
+        v = getenv(n);
+        if (v && *v ||
             coex && ((flags & CO_EXPORT) || co->export && dtsize(co->export) > 0)) {
             if (!old) sfprintf(sp, "\\\n");
             exid(sp, " ", n, "='");
@@ -86,9 +88,9 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
     }
 }
 
-/*
- * return job initialization commands
- */
+//
+// Return job initialization commands
+//
 
 char *coinitialize(Coshell_t *co, int flags) {
     char *s;
@@ -106,16 +108,17 @@ char *coinitialize(Coshell_t *co, int flags) {
     sync = co->init.sync;
     co->init.sync = 0;
 
-    /*
-     * pwd
-     */
+    //
+    // Pwd
+    //
 
     if (stat(".", &st)) return 0;
     if (!state.pwd || st.st_ino != co->init.pwd_ino || st.st_dev != co->init.pwd_dev) {
         co->init.pwd_dev = st.st_dev;
         co->init.pwd_ino = st.st_ino;
         if (state.pwd) free(state.pwd);
-        if (!(state.pwd = getcwd(NULL, 0))) {
+        state.pwd = getcwd(NULL, 0);
+        if (!state.pwd) {
             if (errno != EINVAL || !(state.pwd = newof(0, char, PATH_MAX, 0))) return 0;
             if (!getcwd(state.pwd, PATH_MAX)) {
                 free(state.pwd);
@@ -126,28 +129,28 @@ char *coinitialize(Coshell_t *co, int flags) {
         if (!(flags & CO_INIT)) sync = 1;
     }
 
-    /*
-     * umask
-     */
-
-    umask(n = umask(co->init.mask));
+    //
+    // Umask
+    //
+    n = umask(co->init.mask);
+    umask(n);
     if (co->init.mask != n) {
         co->init.mask = n;
         if (!(flags & CO_INIT)) sync = 1;
     }
     if (!co->init.script || sync) {
-        /*
-         * co_export[] vars
-         */
-
-        if (!(sp = sfstropen())) return 0;
+        //
+        // co_export[] vars
+        //
+        sp = sfstropen();
+        if (!sp) return 0;
         tp = 0;
         old = !(flags & (CO_KSH | CO_SERVER));
         if (!old) sfprintf(sp, "export");
         if (sync) {
-            if (flags & CO_EXPORT)
+            if (flags & CO_EXPORT) {
                 s = "(*)";
-            else {
+            } else {
                 for (n = 0; s = co_export[n]; n++) putexport(co, sp, s, old, !n, flags);
                 s = getenv(co_export[0]);
             }
@@ -158,11 +161,11 @@ char *coinitialize(Coshell_t *co, int flags) {
                     char *v;
                     char *es;
                     char *xs;
-
-                    if (v = strchr(s, ':')) *v = 0;
-                    while (e = *ep++)
-                        if ((t = strsubmatch(e, s, 1)) &&
-                            (*t == '=' || !*t && (t = strchr(e, '=')))) {
+                    v = strchr(s, ':');
+                    if (v) *v = 0;
+                    while (e = *ep++) {
+                        t = strsubmatch(e, s, 1);
+                        if (t && (*t == '=' || !*t && (t = strchr(e, '=')))) {
                             m = (int)(t - e);
                             if (!strneq(e, "PATH=", 5) && !strneq(e, "_=", 2)) {
                                 for (n = 0; xs = co_export[n]; n++) {
@@ -182,6 +185,7 @@ char *coinitialize(Coshell_t *co, int flags) {
                                 }
                             }
                         }
+                    }
                     if (v) {
                         *v++ = ':';
                         s = v;
@@ -189,13 +193,15 @@ char *coinitialize(Coshell_t *co, int flags) {
                 }
                 if (*s)
                     for (;;) {
-                        if (t = strchr(s, ':')) *t = 0;
+                        t = strchr(s, ':');
+                        if (t) *t = 0;
                         putexport(co, sp, s, old, 0, 0);
-                        if (!(s = t)) break;
+                        s = t;
+                        if (!s) break;
                         *s++ = ':';
                     }
             }
-            if (co->export)
+            if (co->export) {
                 for (ex = (Coexport_t *)dtfirst(co->export); ex;
                      ex = (Coexport_t *)dtnext(co->export, ex)) {
                     if (!old) sfprintf(sp, "\\\n");
@@ -204,16 +210,18 @@ char *coinitialize(Coshell_t *co, int flags) {
                     sfputc(sp, '\'');
                     if (old) exid(sp, "\nexport ", ex->name, "\n");
                 }
+            }
         }
 
-        /*
-         * PATH
-         */
+        //
+        // PATH
+        //
 
         if (!old) sfprintf(sp, "\\\n");
         sfprintf(sp, " PATH='");
         n = PATH_MAX;
-        if (!(t = sfstrrsrv(sp, n))) {
+        t = sfstrrsrv(sp, n);
+        if (!t) {
         bad:
             sfstrclose(sp);
             if (tp) sfstrclose(tp);
@@ -239,18 +247,19 @@ char *coinitialize(Coshell_t *co, int flags) {
             }
         }
         for (;;) {
-            if (*s == ':')
+            if (*s == ':') {
                 s++;
-            else if (*s == '.' && *(s + 1) == ':')
+            } else if (*s == '.' && *(s + 1) == ':') {
                 s += 2;
-            else
+            } else {
                 break;
+            }
         }
-        if (!(flags & CO_CROSS))
+        if (!(flags & CO_CROSS)) {
             tp = 0;
-        else if (!(tp = sfstropen()))
+        } else if (!(tp = sfstropen())) {
             goto bad;
-        else {
+        } else {
             while (n = *s++) {
                 if (n == ':') {
                     while (*s == ':') s++;
@@ -265,7 +274,8 @@ char *coinitialize(Coshell_t *co, int flags) {
                 }
                 sfputc(tp, n);
             }
-            if (!(s = costash(tp))) goto bad;
+            s = costash(tp);
+            if (!s) goto bad;
         }
         coquote(sp, s, !old);
         if (tp) sfstrclose(tp);
@@ -273,10 +283,9 @@ char *coinitialize(Coshell_t *co, int flags) {
         if (old) sfprintf(sp, "\nexport PATH");
         sfputc(sp, '\n');
         if (sync) {
-            /*
-             * VPATH
-             */
-
+            //
+            // VPATH
+            //
             p = (int)sfstrtell(sp);
             sfprintf(sp, "vpath ");
             n = PATH_MAX;
@@ -294,27 +303,32 @@ char *coinitialize(Coshell_t *co, int flags) {
         n = (int)sfstrtell(sp);
         if (co->vm) {
             if (co->init.script) vmfree(co->vm, co->init.script);
-            if (!(co->init.script = vmnewof(co->vm, 0, char, n, 1))) goto bad;
+            co->init.script = vmnewof(co->vm, 0, char, n, 1);
+            if (!co->init.script) goto bad;
         } else {
             if (co->init.script) free(co->init.script);
-            if (!(co->init.script = newof(0, char, n, 1))) goto bad;
+            co->init.script = newof(0, char, n, 1);
+            if (!co->init.script) goto bad;
         }
         memcpy(co->init.script, sfstrbase(sp), n);
         sfstrclose(sp);
     } else if (!co->init.script) {
-        if (co->init.script = co->vm ? vmnewof(co->vm, 0, char, 1, 0) : newof(0, char, 1, 0))
+        co->init.script = co->vm ? vmnewof(co->vm, 0, char, 1, 0) : newof(0, char, 1, 0);
+        if (co->init.script) {
             *co->init.script = 0;
+        }
     }
     return co->init.script;
 }
 
-/*
- * return generic job initialization commands
- */
+//
+// Return generic job initialization commands
+//
 
 char *coinit(int flags) {
     if (!state.generic) {
-        if (!(state.generic = newof(0, Coshell_t, 1, 0))) return 0;
+        state.generic = newof(0, Coshell_t, 1, 0);
+        if (!state.generic) return 0;
         state.generic->init.sync = 1;
     }
     return coinitialize(state.generic, flags);
