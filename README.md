@@ -53,6 +53,11 @@ See the
 for information about code style, unit tests, and other topics of interest
 to anyone who wants to modify the source.
 
+
+## Coverity Scan
+
+Latest results of coverity scan can be viewed [here](https://scan.coverity.com/projects/ksh).
+
 ## Working with the full AST source
 
 Warning: Running test cases through the legacy test script may wipe out your home directory

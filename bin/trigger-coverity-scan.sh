@@ -2,7 +2,7 @@
 # Get current branch name
 current=$(git rev-parse --abbrev-ref HEAD | tr -d "\n")
 # Coverity scan is triggered only for coverity_scan branch
-git branch -D coverity_scan
+git branch -D coverity_scan 2>/dev/null
 git checkout -b coverity_scan
 # Use custom .travis.yml file for coverity
 cp coverity-travis.yml .travis.yml
