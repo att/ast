@@ -17,12 +17,12 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * open a new coshell
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// Open a new coshell
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
@@ -39,26 +39,26 @@ static const Namval_t options[] = {
 
 Costate_t state = {"libcoshell:coshell"};
 
-/*
- * called when ident sequence hung
- */
+//
+// Called when ident sequence hung
+//
 
 static void hung(int sig) {
     UNUSED(sig);
     close(sffileno(state.current->msgfp));
 }
 
-/*
- * close all open coshells
- */
+//
+// Close all open coshells
+//
 
 static void clean(void) { coclose(NULL); }
 
 #ifdef SIGCONT
 
-/*
- * pass job control signals to the coshell and self
- */
+//
+// Pass job control signals to the coshell and self
+//
 
 static void stop(int sig) {
     cokill(NULL, NULL, sig);
@@ -71,9 +71,9 @@ static void stop(int sig) {
 
 #endif
 
-/*
- * called by stropt() to set options
- */
+//
+// Called by stropt() to set options
+//
 
 static int setopt(void *handle, const void *p, int n, const char *v) {
     Coshell_t *co = (Coshell_t *)handle;
@@ -96,13 +96,13 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
                             v++;
                             if (*v == '-') v++;
                         }
-                        if (strneq(v, "command=", 8))
+                        if (strneq(v, "command=", 8)) {
                             cs->path = s + 8;
-                        else if (strneq(v, "state=", 6))
+                        } else if (strneq(v, "state=", 6)) {
                             cs->db = s + 6;
-                        else if (strneq(v, "db=", 3))
+                        } else if (strneq(v, "db=", 3)) {
                             cs->db = s + 3;
-                        else if (a < &cs->argv[elementsof(cs->argv) - 2] && *v && *v != ':') {
+                        } else if (a < &cs->argv[elementsof(cs->argv) - 2] && *v && *v != ':') {
                             *a++ = s;
                             *s++ = '-';
                             *s++ = '-';
@@ -113,8 +113,9 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
                 cs->next = co->service;
                 co->service = cs;
             }
-        } else
+        } else {
             co->mask |= ((Namval_t *)p)->value;
+        }
     }
     return 0;
 }
@@ -141,7 +142,8 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
 
     if (!state.type && (!(s = getenv(CO_ENV_TYPE)) || !(state.type = strdup(s)))) state.type = "";
     if ((flags & CO_ANY) && (co = state.coshells)) return co;
-    if (!(vm = vmopen(Vmdcheap, Vmbest, 0)) || !(co = vmnewof(vm, 0, Coshell_t, 1, 0))) {
+    vm = vmopen(Vmdcheap, Vmbest, 0);
+    if (!vm || !(co = vmnewof(vm, 0, Coshell_t, 1, 0))) {
         if (vm) vmclose(vm);
         errormsg(state.lib, ERROR_LIBRARY | 2, "out of space");
         return 0;
@@ -165,15 +167,18 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
             errormsg(state.lib, ERROR_LIBRARY | ERROR_SYSTEM | 2, "cannot allocate pipes");
             goto bad;
         }
-        if (flags & CO_SHELL)
-            for (i = 0; i < elementsof(pio); i++)
+        if (flags & CO_SHELL) {
+            for (i = 0; i < elementsof(pio); i++) {
                 if (pio[i] < 10 && (n = fcntl(pio[i], F_DUPFD, 10)) >= 0) {
                     close(pio[i]);
                     pio[i] = n;
                 }
+            }
+        }
         co->cmdfd = pio[1];
         co->gsmfd = pio[3];
-        if (!(co->msgfp = sfnew(NULL, NULL, 256, pio[2], SF_READ))) {
+        co->msgfp = sfnew(NULL, NULL, 256, pio[2], SF_READ);
+        if (!co->msgfp) {
             errormsg(state.lib, ERROR_LIBRARY | ERROR_SYSTEM | 2, "cannot allocate message stream");
             goto bad;
         }
@@ -188,10 +193,12 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
     }
     sh[0] = (char *)path;
     sh[1] = getenv(CO_ENV_SHELL);
-    for (i = 0; i < elementsof(sh); i++)
+    for (i = 0; i < elementsof(sh); i++) {
         if ((s = sh[i]) && *s && (s = strdup(s))) {
-            if ((n = tokscan(s, NULL, " %v ", av, elementsof(av) - 1)) > 0) {
-                if (t = strrchr(s = av[0], '/')) av[0] = t + 1;
+            n = tokscan(s, NULL, " %v ", av, elementsof(av) - 1);
+            if (n > 0) {
+                t = strrchr(s = av[0], '/');
+                if (t) av[0] = t + 1;
                 if (flags || (co->flags & CO_DEVFD) && strmatch(s, "*ksh*")) av[n++] = devfd;
                 av[n] = 0;
                 sfsprintf(evbuf, sizeof(evbuf), "%s=%d", CO_ENV_MSGFD, co->gsmfd);
@@ -213,21 +220,23 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
             }
             free(s);
         }
+    }
     if (i >= elementsof(sh)) {
         errormsg(state.lib, ERROR_LIBRARY | ERROR_SYSTEM | 2, "cannot execute");
         goto bad;
     }
     if (!(co->mode & CO_MODE_SEPARATE)) {
-        /*
-         * send the shell identification sequence
-         */
-
-        if (!(sp = sfstropen())) {
+        //
+        // Send the shell identification sequence
+        //
+        sp = sfstropen();
+        if (!sp) {
             errormsg(state.lib, ERROR_LIBRARY | 2, "out of buffer space");
             goto bad;
         }
         sfprintf(sp, "#%05d\n%s='", 0, CO_ENV_ATTRIBUTES);
-        if (t = getenv(CO_ENV_ATTRIBUTES)) {
+        t = getenv(CO_ENV_ATTRIBUTES);
+        if (t) {
             coquote(sp, t, 0);
             if (attributes) sfprintf(sp, ",");
         }
@@ -247,21 +256,24 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
         state.current = co;
         handler = signal(SIGALRM, hung);
         i = alarm(30);
-        if (!(s = sfgetr(co->msgfp, '\n', 1))) {
-            if (errno == EINTR)
+        s = sfgetr(co->msgfp, '\n', 1);
+        if (!s) {
+            if (errno == EINTR) {
                 errormsg(state.lib, ERROR_LIBRARY | ERROR_SYSTEM | 2,
                          "identification message read timeout");
+            }
             goto nope;
         }
         alarm(i);
         signal(SIGALRM, handler);
-        if (co->flags & CO_DEBUG)
+        if (co->flags & CO_DEBUG) {
             errormsg(state.lib, 2, "coshell %d shell path %s identification \"%s\"", co->index,
                      state.sh, s);
+        }
         switch (*s) {
             case 'o':
                 co->flags |= CO_OSH;
-                /*FALLTHROUGH*/
+                // FALLTHROUGH
             case 'b':
                 s = cobinit;
                 break;
@@ -269,17 +281,20 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
                 co->flags |= CO_KSH;
                 s = cokinit;
                 break;
-            case 'i': /* NOTE: 'i' is obsolete */
+            case 'i': // NOTE: 'i' is obsolete
             case 's':
                 co->flags |= CO_SERVER;
                 co->pid = 0;
                 for (;;) {
-                    if (t = strchr(s, ',')) *t = 0;
-                    if (streq(s, CO_OPT_ACK))
+                    t = strchr(s, ',');
+                    if (t) *t = 0;
+                    if (streq(s, CO_OPT_ACK)) {
                         co->mode |= CO_MODE_ACK;
-                    else if (streq(s, CO_OPT_INDIRECT))
+                    } else if (streq(s, CO_OPT_INDIRECT)) {
                         co->mode |= CO_MODE_INDIRECT;
-                    if (!(s = t)) break;
+                    }
+                    s = t;
+                    if (!s) break;
                     s++;
                 }
                 if (!(co->mode & CO_MODE_INDIRECT)) wait(NULL);
@@ -288,7 +303,8 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
                 goto nope;
         }
         if (s) {
-            if (!(cj = coexec(co, s, 0, NULL, NULL, NULL)) || cowait(co, cj, -1) != cj) {
+            cj = coexec(co, s, 0, NULL, NULL, NULL);
+            if (!cj || cowait(co, cj, -1) != cj) {
                 errormsg(state.lib, ERROR_LIBRARY | ERROR_SYSTEM | 2,
                          "initialization message exec error");
                 goto nope;
@@ -327,23 +343,26 @@ bad:
         sfclose(co->msgfp);
         pio[2] = -1;
     }
-    for (i = 0; i < elementsof(pio); i++)
+    for (i = 0; i < elementsof(pio); i++) {
         if (pio[i] >= 0) close(pio[i]);
+    }
     coclose(co);
     errno = n;
     return 0;
 nope:
     i = errno;
-    if (!(s = sh[1]) ||
-        (s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && !streq(s, CO_ID))
+    s = sh[1];
+    if (!s ||
+        (s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && !streq(s, CO_ID)) {
         error(2, "export %s={ksh,sh,%s}", CO_ENV_SHELL, CO_ID);
+    }
     coclose(co);
     errno = i;
     return 0;
 }
 
-/*
- * set coshell attributes
- */
+//
+// Set coshell attributes
+//
 
 int coattr(Coshell_t *co, const char *attributes) { return 0; }
