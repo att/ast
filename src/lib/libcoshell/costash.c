@@ -17,21 +17,21 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <colib.h>
 
-/*
- * 0 terminate string stream, reset, and return value
- */
+//
+// 0 terminate string stream, reset, and return value
+//
 
 char *costash(Sfio_t *sp) {
     char *s;
-
-    if (!(s = sfstruse(sp))) errormsg(state.lib, ERROR_LIBRARY | 2, "out of space");
+    s = sfstruse(sp);
+    if (!s) errormsg(state.lib, ERROR_LIBRARY | 2, "out of space");
     return s;
 }
