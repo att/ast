@@ -17,28 +17,28 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-/*
- * Glenn Fowler
- * AT&T Research
- *
- * close a coshell
- */
+//
+// Glenn Fowler
+// AT&T Research
+//
+// close a coshell
+//
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
 
-/*
- * called when coshell is hung
- */
+//
+// called when coshell is hung
+//
 
 static void hung(int sig) {
     UNUSED(sig);
     kill(state.current->pid, SIGKILL);
 }
 
-/*
- * shut down one coshell
- */
+//
+// shut down one coshell
+//
 
 static int shut(Coshell_t *co) {
     Coshell_t *cs;
@@ -59,11 +59,13 @@ static int shut(Coshell_t *co) {
         alarm(n);
         signal(SIGALRM, handler);
         killpg(co->pid, SIGTERM);
-    } else
+    } else {
         status = 0;
-    if (co->flags & CO_DEBUG)
+    }
+    if (co->flags & CO_DEBUG) {
         errormsg(state.lib, 2, "coshell %d jobs %d user %s sys %s", co->index, co->total,
                  fmtelapsed(co->user, CO_QUANT), fmtelapsed(co->sys, CO_QUANT));
+    }
     for (sv = co->service; sv; sv = sv->next) {
         if (sv->fd > 0) close(sv->fd);
         if (sv->pid) waitpid(sv->pid, &status, 0);
@@ -73,10 +75,11 @@ static int shut(Coshell_t *co) {
     while (cs) {
         if (cs == co) {
             cs = cs->next;
-            if (ps)
+            if (ps) {
                 ps->next = cs;
-            else
+            } else {
                 state.coshells = cs;
+            }
             vmclose(co->vm);
             break;
         }
@@ -86,9 +89,9 @@ static int shut(Coshell_t *co) {
     return status;
 }
 
-/*
- * close coshell co
- */
+//
+// close coshell co
+//
 
 int coclose(Coshell_t *co) {
     if (co) return shut(co);
