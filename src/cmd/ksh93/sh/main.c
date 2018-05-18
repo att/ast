@@ -256,13 +256,13 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                 char *sp;
                 /* open stream should have been passed into shell */
                 if (strmatch(name, e_devfdNN)) {
-#if !_WINIX
+#if !__CYGWIN__
                     char *cp;
                     int type;
 #endif
                     fdin = (int)strtol(name + 8, (char **)0, 10);
                     if (fstat(fdin, &statb) < 0) errormsg(SH_DICT, ERROR_system(1), e_open, name);
-#if !_WINIX
+#if !__CYGWIN__
                     //
                     // Try to undo effect of solaris 2.5+ change for argv for setuid scripts.
                     //

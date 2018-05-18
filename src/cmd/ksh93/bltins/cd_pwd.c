@@ -145,11 +145,11 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         sfprintf(shp->strbuf, "/dev/file/xattr@%s//@//", dir);
         dir = sfstruse(shp->strbuf);
     }
-#if _WINIX
+#if __CYGWIN__
     if (*dir != '/' && (dir[1] != ':'))
 #else
     if (dirfd == shp->pwdfd && *dir != '/')
-#endif  // _WINIX
+#endif  // __CYGWIN__
     {
         cdpath = (Pathcomp_t *)shp->cdpathlist;
         if (!cdpath && (dp = sh_scoped(shp, CDPNOD)->nvalue.cp)) {
@@ -179,12 +179,12 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     do {
         dp = cdpath ? cdpath->name : "";
         cdpath = path_nextcomp(shp, cdpath, dir, 0);
-#if _WINIX
+#if __CYGWIN__
         if (*stakptr(PATH_OFFSET + 1) == ':' && isalpha(*stakptr(PATH_OFFSET))) {
             *stakptr(PATH_OFFSET + 1) = *stakptr(PATH_OFFSET);
             *stakptr(PATH_OFFSET) = '/';
         }
-#endif  // _WINIX
+#endif  // __CYGWIN__
         if (*stakptr(PATH_OFFSET) != '/' && dirfd == shp->pwdfd) {
             char *last = (char *)stakfreeze(1);
             stakseek(PATH_OFFSET);

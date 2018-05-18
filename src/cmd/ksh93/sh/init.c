@@ -177,7 +177,7 @@ static Init_t *nv_init(Shell_t *);
 static Dt_t *inittree(Shell_t *, const struct shtable2 *);
 static int shlvl;
 
-#ifdef _WINIX
+#ifdef __CYGWIN__
 #define EXE "?(.exe)"
 #else
 #define EXE
@@ -1161,7 +1161,7 @@ int sh_type(const char *path) {
         s++;
         t |= SH_TYPE_SH;
         if ((t & SH_TYPE_KSH) && *s == '9' && *(s + 1) == '3') s += 2;
-#if _WINIX
+#if __CYGWIN__
         if (*s == '.' && *(s + 1) == 'e' && *(s + 2) == 'x' && *(s + 3) == 'e') s += 4;
 #endif
         if (!isalnum(*s)) return t;
@@ -1408,7 +1408,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         if (!sh_isoption(shp, SH_SFLAG)) {
             shp->st.dolc--;
             shp->st.dolv++;
-#if _WINIX
+#if __CYGWIN__
             {
                 char *name;
                 name = shp->st.dolv[0];
@@ -1427,7 +1427,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
                     }
                 }
             }
-#endif  // _WINIX
+#endif  // __CYGWIN__
         }
         if (beenhere == 1) {
             struct lconv *lc;

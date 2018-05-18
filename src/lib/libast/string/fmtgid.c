@@ -73,7 +73,7 @@ char *fmtgid(int gid) {
         return ip->name;
     if (gr = getgrgid(gid)) {
         name = gr->gr_name;
-#if _WINIX
+#if __CYGWIN__
         if (streq(name, "Administrators")) name = "sys";
 #endif
     } else if (gid == 0)

@@ -326,11 +326,6 @@
 #mesondefine _typ_off64_t
 #mesondefine _typ_struct_stat64
 
-// If we're on Cygwin we need some workarounds controlled by the _WINIX symbol.
-#if __CYGWIN__
-#define _WINIX 1
-#endif
-
 // These symbols are from src/lib/libast/include/ast_common.h that was
 // generated on a Linux platform by the legacay IFFE mechanism. They may not
 // be correct for other platforms.

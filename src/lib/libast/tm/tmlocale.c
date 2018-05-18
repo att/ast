@@ -92,7 +92,7 @@ static void fixup(Lc_info_t *li, char **b) {
     li->data = (void *)b;
 }
 
-#if _WINIX
+#if __CYGWIN__
 
 #include <ast_windows.h>
 

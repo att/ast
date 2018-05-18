@@ -139,7 +139,7 @@ static Feature_t dynamic[] = {
      NULL, NULL, 9, CONF_AST, 0, OP_libsuffix},
 #define OP_path_attributes (OP_libsuffix + 1)
     {&dynamic[OP_path_attributes + 1], "PATH_ATTRIBUTES",
-#if _WINIX
+#if __CYGWIN__
      "c",
 #else
      "",

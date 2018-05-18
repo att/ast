@@ -23,7 +23,7 @@
  * lc (sub)lang definitions -- very windowsish
  */
 
-#if _WINIX
+#if __CYGWIN__
 
 #include <ast_windows.h>
 

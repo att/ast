@@ -30,7 +30,7 @@
 
 #include <ast.h>
 
-#if _WINIX
+#if __CYGWIN__
 #include <ast_windows.h>
 #include <ctype.h>
 #endif
@@ -42,7 +42,7 @@
 static size_t prog(const char *command, char *path, size_t size) {
     ssize_t n;
     char *s;
-#if _WINIX
+#if __CYGWIN__
     char *t;
     char *e;
     int c;
@@ -65,7 +65,7 @@ static size_t prog(const char *command, char *path, size_t size) {
     z = size;
     if (!_NSGetExecutablePath(path, &z) && *path == '/') return strlen(path);
 #endif
-#if _WINIX
+#if __CYGWIN__
     if (s = GetCommandLine()) {
         n = 0;
         q = 0;

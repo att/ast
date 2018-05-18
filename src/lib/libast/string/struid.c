@@ -79,7 +79,7 @@ int struid(const char *name) {
         id = pw->pw_uid;
     else {
         id = strtol(name, &e, 0);
-#if _WINIX
+#if __CYGWIN__
         if (!*e) {
             if (!getpwuid(id)) id = -1;
         } else if (streq(name, "root") && (pw = getpwnam("Administrator")))

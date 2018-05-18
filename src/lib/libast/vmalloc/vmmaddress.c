@@ -103,7 +103,7 @@ int _vmboundaries(void) {
     Vmuchar_t *tmp, *shm, *min, *max;
 
     VMPAGESIZE();
-#if !_WINIX
+#if !__CYGWIN__
     /* try to get a shared memory segment, memz is the successful size */
     memz = sizeof(void *) < 8 ? 1024 * 1024 : 64 * 1024 * 1024;
     for (; memz >= _Vmpagesize; memz /= 2) {
@@ -215,7 +215,7 @@ int _vmboundaries(void) {
     }
 #endif /*_mem_mmap_anon_*/
 
-#endif /*!_WINIX*/
+#endif /*!__CYGWIN__*/
 
 done:
     (void)shmctl(shmid, IPC_RMID, 0);

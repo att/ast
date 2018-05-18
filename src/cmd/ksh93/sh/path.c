@@ -809,7 +809,7 @@ static int canexecute(Shell_t *shp, char *path, int isfun) {
     if (isfun) {
         if ((fd = open(path, O_RDONLY | O_CLOEXEC, 0)) < 0 || fstat(fd, &statb) < 0) goto err;
     } else if (stat(path, &statb) < 0) {
-#if _WINIX
+#if __CYGWIN__
         // Check for .exe or .bat suffix.
         char *cp;
         if (errno == ENOENT && (!(cp = strrchr(path, '.')) || strlen(cp) > 4 || strchr(cp, '/'))) {
@@ -823,7 +823,7 @@ static int canexecute(Shell_t *shp, char *path, int isfun) {
                 if (stat(path, &statb) < 0) goto err;
             }
         } else
-#endif  // _WINIX
+#endif  // __CYGWIN__
             goto err;
     }
     errno = EPERM;

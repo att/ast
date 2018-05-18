@@ -87,7 +87,7 @@ int strgid(const char *name) {
         id = pw->pw_gid;
     else {
         id = strtol(name, &e, 0);
-#if _WINIX
+#if __CYGWIN__
         if (!*e) {
             if (!getgrgid(id)) id = -1;
         } else if (!streq(name, "sys"))

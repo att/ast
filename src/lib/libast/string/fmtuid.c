@@ -73,7 +73,7 @@ char *fmtuid(int uid) {
         return ip->name;
     if (pw = getpwuid(uid)) {
         name = pw->pw_name;
-#if _WINIX
+#if __CYGWIN__
         if (streq(name, "Administrator")) name = "root";
 #endif
     } else if (uid == 0)

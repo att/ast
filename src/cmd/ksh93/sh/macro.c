@@ -51,9 +51,9 @@
 #define isacii(c) ((c) <= UCHAR_MAX)
 #include <lc.h>
 
-#if _WINIX
+#if __CYGWIN__
 static int Skip;
-#endif  //_WINIX
+#endif  //__CYGWIN__
 
 static int _c_;
 typedef struct _mac_ {
@@ -742,12 +742,12 @@ static void copyto(Mac_t *mp, int endch, int newquote) {
                     if (c) sfwrite(stkp, first, c);
                     first = fcseek(c);
                     tilde_expand2(shp, tilde);
-#if _WINIX
+#if __CYGWIN__
                     if (Skip) {
                         first = cp = fcseek(Skip);
                         Skip = 0;
                     }
-#endif  // _WINIX
+#endif  // __CYGWIN__
                     tilde = -1;
                     c = 0;
                 }
@@ -2425,7 +2425,7 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
 #endif
         return stkfreeze(shp->stk, 1);
     }
-#if _WINIX
+#if __CYGWIN__
     if (fcgetc(c) == '/') {
         char *str;
         int n = 0, offset = stktell(shp->stk);
@@ -2445,12 +2445,12 @@ static char *sh_tilde(Shell_t *shp, const char *string) {
         }
         Skip = 0;
     }
-#endif /* _WINIX */
+#endif  // __CYGWIN__
     if (logins_tree && (np = nv_search(string, logins_tree, 0))) return nv_getval(np);
     if (!(pw = getpwnam(string))) return NULL;
-#if _WINIX
+#if __CYGWIN__
 skip:
-#endif /* _WINIX */
+#endif  // __CYGWIN__
     if (!logins_tree) {
         logins_tree = dtopen(&_Nvdisc, Dtbag);
         dtuserdata(logins_tree, shp, 1);

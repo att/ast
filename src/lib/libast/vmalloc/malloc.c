@@ -493,7 +493,7 @@ void _vmoptions(int boot) {
 
 #endif
 
-#if _WINIX
+#if __CYGWIN__
 
 #include <ast_windows.h>
 
@@ -507,7 +507,7 @@ static char *lcl_getenv(const char *s) {
     return buf;
 }
 
-#endif /* _WINIX */
+#endif /* __CYGWIN__ */
 
 #ifndef VMRECORD
 #define VMRECORD(p) (p)
