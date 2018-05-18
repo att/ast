@@ -1025,6 +1025,7 @@ static bool varsub(Mac_t *mp) {
     char *idx = 0;
     int var = 1, addsub = 0, oldpat = mp->pattern, idnum = 0, flag = 0, d;
     Stk_t *stkp = mp->shp->stk;
+    Shell_t *shp = sh_getinterp();
 
 retry1:
     mp->zeros = 0;
@@ -1788,6 +1789,7 @@ retry2:
             if (np) {
                 if (mp->shp->subshell) np = sh_assignok(np, 1);
                 nv_putval(np, argp, 0);
+                if (sh_isoption(shp, SH_ALLEXPORT)) nv_onattr(np, NV_EXPORT);
                 v = nv_getval(np);
                 nulflg = 0;
                 stkseek(stkp, offset);
