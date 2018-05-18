@@ -131,7 +131,7 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
     Vmalloc_t *vm;
     Sfio_t *sp;
     Sig_handler_t handler;
-    int pio[4];
+    int pio[4] = {-1, -1, -1, -1};
     long ops[5];
     char devfd[16];
     char evbuf[sizeof(CO_ENV_MSGFD) + 8];

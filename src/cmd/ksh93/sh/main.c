@@ -112,8 +112,8 @@ bool sh_source(Shell_t *shp, Sfio_t *iop, const char *file) {
 #endif
 
 int sh_main(int ac, char *av[], Shinit_f userinit) {
+    int fdin = 0;
     char *name;
-    int fdin;
     Sfio_t *iop;
     Shell_t *shp;
     struct stat statb;

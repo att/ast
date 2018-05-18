@@ -444,7 +444,7 @@ static unsigned int trandom(void) {
 }
 
 static void *tstshared(size_t n) {
-    void *p;
+    void *p = NULL;
     int z;
 
     if ((z = open("/dev/zero", O_RDWR)) >= 0) {

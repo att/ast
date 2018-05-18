@@ -965,7 +965,7 @@ nope:
 int _ast_iconv_close(_ast_iconv_t cd) {
     Conv_t *cc;
     Conv_t *oc;
-    int i;
+    int i = 0;
     int r = 0;
 
     if (cd == (_ast_iconv_t)(-1)) return -1;

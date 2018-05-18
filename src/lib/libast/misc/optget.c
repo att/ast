@@ -3490,7 +3490,7 @@ int optget(char **argv, const char *oopts) {
     char *catalog;
     int n;
     int m;
-    int k;
+    int k = -1;
     int j;
     int x;
     int err;

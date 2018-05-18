@@ -507,8 +507,8 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
     int n;
     Cut_t *cut;
     int mode = 0;
-    Delim_t wdelim;
-    Delim_t ldelim;
+    Delim_t wdelim = {NULL, 0, 0};
+    Delim_t ldelim = {NULL, 0, 0};
     size_t reclen = 0;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);

@@ -861,7 +861,8 @@ static void *bestalloc(Vmalloc_t *vm, size_t size, int local) {
 /* resize a block to a new size */
 static void *bestresize(Vmalloc_t *vm, void *data, size_t size, int type, int local) {
     Block_t *rp, *np;
-    ssize_t sz, oldz, newz, incz;
+    ssize_t sz, oldz, newz;
+    ssize_t incz = 0;
     Pack_t *pack;
     void *rsdt = data;
     /**/ DEBUG_DECLARE(Vmbest_t, *best = (Vmbest_t *)vm->data)

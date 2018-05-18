@@ -933,6 +933,7 @@ Histloc_t hist_locate(History_t *hp, int command, int line, int lines) {
 done:
     next.hist_line = line;
     next.hist_command = command;
+    next.hist_char = 0;
     return next;
 }
 

@@ -57,8 +57,8 @@ Mbstate_t *_sfmbstate(Sfio_t *f) {
 }
 
 int sfputwc(Sfio_t *f, int w) {
-    reg uchar *s;
-    reg char *b;
+    uchar *s = NULL;
+    char *b;
     int n, m;
     char buf[32];
     SFMTXDECL(f);

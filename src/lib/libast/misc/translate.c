@@ -264,7 +264,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
     char *t;
     int p;
     int oerrno;
-    Catalog_t *cp;
+    Catalog_t *cp = NULL;
     Message_t *mp;
 
     static uint32_t serial;
@@ -310,7 +310,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
         sfprintf(sfstderr, "AHA#%d:%s cmd %s cat %s:%s id %s msg `%s'\n", __LINE__, __FILE__, cmd,
                  cat, error_info.catalog, ast.id, msg);
 #endif
-        cp = 0;
+        cp = NULL;
         goto done;
     }
 

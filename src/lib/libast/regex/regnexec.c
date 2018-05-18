@@ -573,7 +573,7 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
 }
 
 static int collelt(Celt_t *ce, char *key, int c, int x) {
-    Ckey_t elt;
+    Ckey_t elt = {0};
 
     mbxfrm(elt, key, COLL_KEY_MAX);
     for (;; ce++) {

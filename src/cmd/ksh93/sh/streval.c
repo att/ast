@@ -190,7 +190,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
     Sfdouble_t d, small_stack[SMALL_STACK + 1], arg[9];
     const char *ptr = "";
     char *lastval = 0;
-    int lastsub;
+    int lastsub = 0;
     Math_f fun;
     struct lval node;
     Shell_t *shp = ep->shp;

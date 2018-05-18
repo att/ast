@@ -130,7 +130,7 @@ typedef struct Path_s {
 } Path_t;
 
 int b_getconf(int argc, char **argv, Shbltin_t *context) {
-    char *name;
+    char *name = NULL;
     char *path;
     char *value;
     const char *s;
@@ -227,7 +227,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
     if (!name) {
         path = 0;
     } else if (streq(name, empty)) {
-        name = 0;
+        name = NULL;
         if (path = *++argv) {
             argv++;
             if (streq(path, empty)) {
