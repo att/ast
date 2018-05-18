@@ -15,5 +15,7 @@ foreach file: cdt_test_files
                              link_with: [libast],
                              link_args: ['-lpthread'],
                              install: false)
-    test('API/' + file, aso_test_target)
+    # TODO: Figure out how to make these tests more efficient so we don't need such an absurdly long
+    # timeout in order to keep these tests from timing out on OpenBSD. See issue #483.
+    test('API/' + file, aso_test_target, timeout: 300)
 endforeach
