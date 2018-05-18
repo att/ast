@@ -1,7 +1,5 @@
 ---
 name: Bug report
-about: Short description of bug
-
 ---
 
 **Description of problem:**
