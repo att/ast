@@ -1,5 +1,6 @@
 ---
 name: Bug report
+about: Template for bug reports
 ---
 
 **Description of problem:**
