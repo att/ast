@@ -574,3 +574,11 @@ do
     read -r -N6 var
     [[ $var == dHdvdG93 ]] &&  ((i !=2)) && log_error 'loop optimization bug with typeset -b variables'
 done <<< 'twotowthreetfourro'
+
+# https://github.com/att/ast/issues/537
+unset foo bar
+# Export each variable that gets assigned
+set -a
+foo=${bar:=baz}
+env | grep -q bar || log_error 'Variable bar should be exported'
+set +a
