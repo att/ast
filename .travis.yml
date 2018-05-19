@@ -58,7 +58,7 @@ script:
     # TODO: Check how to set MESON_TESTTHREADS dynamically.
     # TODO: Change "meson test" to "meson test --setup=malloc" when #398 is fixed.
     # TODO: When we run the tests with --setup=malloc change "testlog.txt" to "testlog-malloc.txt".
-    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then scripts/build-on-macos.sh; exit $?; fi
+    - if [[ $TRAVIS_OS_NAME == "osx" ]]; then exec scripts/build-on-macos.sh; fi
 
     - echo > build.sh "set -e;
         export LANG=en_US.UTF-8;

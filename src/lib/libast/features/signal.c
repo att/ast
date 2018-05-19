@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdio.h>
+
 #include <ast_standards.h> /* iffe --include-first */
 
 #define strsignal ______strsignal
@@ -380,7 +382,7 @@ static struct _m_ map[] = {
     "XFSZ",
     SIGXFSZ,
 #endif
-#include "FEATURE/siglist"
+#include "features/siglist.h"
     0};
 
 #define RANGE_MIN (1 << 14)
@@ -427,6 +429,10 @@ int main() {
         mapindex[j] = RANGE_MAX | RANGE_RT | n;
     }
 #endif
+
+    printf("#ifndef _def_signal_features\n");
+    printf("#define _def_signal_features 1\n");
+    printf("\n");
     printf("#define SIG_MAX	%d\n", k);
     printf("\n");
     printf("static const char* const	sig_name[] =\n");
@@ -469,5 +475,6 @@ int main() {
             printf("	\"Signal %d\",\n", i);
     printf("	0\n");
     printf("};\n");
+    printf("#endif\n");
     return 0;
 }

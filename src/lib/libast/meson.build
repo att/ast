@@ -1,4 +1,6 @@
-libast_files = ['features/conftab.c']
+# The conftab.c file is unusual in that it is dynamically generated during the Meson config step
+# and is placed in the build tree.
+libast_files = [meson.build_root() + '/src/lib/libast/comp/conftab.c']
 libast_incdir = include_directories('include', 'features', 'aso', 'cdt', 'comp',
                                     'sfio', 'path', 'port', 'string', 'misc',
                                     'vmalloc', 'tm')
