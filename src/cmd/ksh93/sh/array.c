@@ -58,7 +58,7 @@ struct assoc_array {
     Namval_t *cur;
 };
 
-static Namarr_t *array_scope(Namval_t *np, Namarr_t *ap, int flags) {
+static_fn Namarr_t *array_scope(Namval_t *np, Namarr_t *ap, int flags) {
     Shell_t *shp = sh_ptr(np);
     Namarr_t *aq;
     struct index_array *ar;
@@ -83,7 +83,7 @@ static Namarr_t *array_scope(Namval_t *np, Namarr_t *ap, int flags) {
     return aq;
 }
 
-static bool array_unscope(Namval_t *np, Namarr_t *ap) {
+static_fn bool array_unscope(Namval_t *np, Namarr_t *ap) {
     Namfun_t *fp;
 
     if (!ap->scope) return (false);
@@ -94,11 +94,11 @@ static bool array_unscope(Namval_t *np, Namarr_t *ap) {
     return true;
 }
 
-static void array_syncsub(Namarr_t *ap, Namarr_t *aq) {
+static_fn void array_syncsub(Namarr_t *ap, Namarr_t *aq) {
     ((struct index_array *)ap)->cur = ((struct index_array *)aq)->cur;
 }
 
-static bool array_covered(Namval_t *np, struct index_array *ap) {
+static_fn bool array_covered(Namval_t *np, struct index_array *ap) {
     struct index_array *aq = (struct index_array *)ap->header.scope;
     if (!ap->header.fun && aq) {
         return ((ap->cur < aq->maxi) && aq->val[ap->cur].cp);
@@ -109,7 +109,7 @@ static bool array_covered(Namval_t *np, struct index_array *ap) {
 //
 // Replace discipline with new one.
 //
-static void array_setptr(Namval_t *np, struct index_array *old, struct index_array *new) {
+static_fn void array_setptr(Namval_t *np, struct index_array *old, struct index_array *new) {
     Namfun_t **fp = &np->nvfun;
 
     while (*fp && *fp != &old->header.hdr) fp = &((*fp)->next);
@@ -126,13 +126,13 @@ static void array_setptr(Namval_t *np, struct index_array *old, struct index_arr
 // which <maxi> is a legal index.  The number of elements that will actually
 // fit into the array (> <maxi> but <= ARRAY_MAX) is returned.
 //
-static int arsize(struct index_array *ap, int maxi) {
+static_fn int arsize(struct index_array *ap, int maxi) {
     if (ap && maxi < 2 * ap->maxi) maxi = 2 * ap->maxi;
     maxi = roundof(maxi, ARRAY_INCR);
     return maxi > ARRAY_MAX ? ARRAY_MAX : maxi;
 }
 
-static struct index_array *array_grow(Namval_t *, struct index_array *, int);
+static_fn struct index_array *array_grow(Namval_t *, struct index_array *, int);
 
 // Return next index after the highest element in an array.
 int array_maxindex(Namval_t *np) {
@@ -148,7 +148,7 @@ int array_maxindex(Namval_t *np) {
 // Check if array is empty
 int array_isempty(Namval_t *np) { return array_maxindex(np) <= 0; }
 
-static union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
+static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
     struct index_array *ap = (struct index_array *)arp;
     union Value *up;
     int nofree = 0;
@@ -199,7 +199,7 @@ bool nv_arrayisset(Namval_t *np, Namarr_t *arp) {
 // Delete space as necessary if flag is ARRAY_DELETE.
 // After the lookup is done the last @ or * subscript is incremented.
 //
-static Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
+static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
     Shell_t *shp = sh_ptr(np);
     struct index_array *ap = (struct index_array *)arp;
     union Value *up;
@@ -336,7 +336,7 @@ bool nv_arraysettype(Namval_t *np, Namval_t *tp, const char *sub, int flags) {
     return false;
 }
 
-static Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *array_clone(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namarr_t *ap = (Namarr_t *)fp;
     Namval_t *nq, *mq;
     char *name, *sub = 0;
@@ -427,7 +427,7 @@ skip:
     return &ap->hdr;
 }
 
-static char *array_getval(Namval_t *np, Namfun_t *disc) {
+static_fn char *array_getval(Namval_t *np, Namfun_t *disc) {
     Namarr_t *aq, *ap = (Namarr_t *)disc;
     Namval_t *mp;
     char *cp = NULL;
@@ -447,7 +447,7 @@ static char *array_getval(Namval_t *np, Namfun_t *disc) {
     return nv_getv(np, &ap->hdr);
 }
 
-static Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
+static_fn Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
     Namarr_t *aq, *ap = (Namarr_t *)disc;
     Namval_t *mp;
 
@@ -462,7 +462,7 @@ static Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
     return nv_getn(np, &ap->hdr);
 }
 
-static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *dp) {
+static_fn void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *dp) {
     Namarr_t *ap = (Namarr_t *)dp;
     union Value *up;
     Namval_t *mp;
@@ -570,7 +570,7 @@ static void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *
 static const Namdisc_t array_disc = {
     sizeof(Namarr_t), array_putval, array_getval, array_getnum, 0, 0, array_clone};
 
-static void array_copytree(Namval_t *np, Namval_t *mp) {
+static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
     Namfun_t *fp = nv_disc(np, NULL, NV_POP);
     nv_offattr(np, NV_ARRAY);
     nv_clone(np, mp, 0);
@@ -590,7 +590,7 @@ static void array_copytree(Namval_t *np, Namval_t *mp) {
 // allocated.  A pointer to the allocated Namarr_t structure is returned.
 // <maxi> becomes the current index of the array.
 //
-static struct index_array *array_grow(Namval_t *np, struct index_array *arp, int maxi) {
+static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, int maxi) {
     struct index_array *ap;
     int i;
     int newsize = arsize(arp, maxi + 1);
@@ -699,7 +699,7 @@ Namarr_t *nv_arrayptr(Namval_t *np) {
 // Verify that argument is an indexed array and convert to associative, freeing
 // relevant storage.
 //
-static Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int)) {
+static_fn Namarr_t *nv_changearray(Namval_t *np, void *(*fun)(Namval_t *, const char *, int)) {
     Namarr_t *ap;
     char numbuff[NUMSIZE + 1];
     unsigned dot, digit, n;

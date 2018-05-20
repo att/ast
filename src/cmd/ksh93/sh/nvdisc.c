@@ -25,7 +25,7 @@
 #include "path.h"
 #include "variables.h"
 
-static void assign(Namval_t *, const char *, int, Namfun_t *);
+static_fn void assign(Namval_t *, const char *, int, Namfun_t *);
 
 int nv_compare(Dt_t *dict, void *sp, void *dp, Dtdisc_t *disc) {
     if (sp == dp) return 0;
@@ -159,7 +159,7 @@ static struct blocked *blist;
 //
 // Returns pointer to blocking structure.
 //
-static struct blocked *block_info(Namval_t *np, struct blocked *pp) {
+static_fn struct blocked *block_info(Namval_t *np, struct blocked *pp) {
     struct blocked *bp;
     void *sub = 0;
     int isub = 0;
@@ -180,7 +180,7 @@ static struct blocked *block_info(Namval_t *np, struct blocked *pp) {
     return pp;
 }
 
-static void block_done(struct blocked *bp) {
+static_fn void block_done(struct blocked *bp) {
     blist = bp = bp->next;
     if (bp && (bp->isub >= 0 || bp->sub)) {
         nv_putsub(bp->np, bp->sub, (bp->isub < 0 ? 0 : bp->isub), ARRAY_SETSUB);
@@ -190,7 +190,7 @@ static void block_done(struct blocked *bp) {
 //
 // Free discipline if no more discipline functions.
 //
-static void chktfree(Namval_t *np, struct vardisc *vp) {
+static_fn void chktfree(Namval_t *np, struct vardisc *vp) {
     int n;
 
     for (n = 0; n < sizeof(vp->disc) / sizeof(*vp->disc); n++) {
@@ -206,7 +206,7 @@ static void chktfree(Namval_t *np, struct vardisc *vp) {
 //
 // This function performs an assignment disc on the given node <np>.
 //
-static void assign(Namval_t *np, const char *val, int flags, Namfun_t *handle) {
+static_fn void assign(Namval_t *np, const char *val, int flags, Namfun_t *handle) {
     Shell_t *shp = sh_ptr(np);
     int type = (flags & NV_APPEND) ? APPEND : ASSIGN;
     struct vardisc *vp = (struct vardisc *)handle;
@@ -309,7 +309,7 @@ done:
 //
 // This function executes a lookup disc and then performs the lookup on the given node <np>.
 //
-static char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle) {
+static_fn char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle) {
     Shell_t *shp = sh_ptr(np);
     struct vardisc *vp = (struct vardisc *)handle;
     struct blocked block, *bp = block_info(np, &block);
@@ -360,11 +360,11 @@ static char *lookup(Namval_t *np, int type, Sfdouble_t *dp, Namfun_t *handle) {
     return cp;
 }
 
-static char *lookups(Namval_t *np, Namfun_t *handle) {
+static_fn char *lookups(Namval_t *np, Namfun_t *handle) {
     return lookup(np, LOOKUPS, (Sfdouble_t *)0, handle);
 }
 
-static Sfdouble_t lookupn(Namval_t *np, Namfun_t *handle) {
+static_fn Sfdouble_t lookupn(Namval_t *np, Namfun_t *handle) {
     Sfdouble_t d;
     lookup(np, LOOKUPN, &d, handle);
     return d;
@@ -464,7 +464,7 @@ char *nv_setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp
 // If <event> is NULL, then return the event name after <action>.
 // If <event> is NULL, and <action> is NULL, return the first event.
 //
-static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp) {
+static_fn char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp) {
     Nambfun_t *vp = (Nambfun_t *)fp;
     int type, getname = 0;
     const char *name;
@@ -504,7 +504,7 @@ static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t
     return (char *)action;
 }
 
-static void putdisc(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
+static_fn void putdisc(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     nv_putv(np, val, flag, fp);
     if (!val && !(flag & NV_NOFREE)) {
@@ -654,7 +654,7 @@ struct notify {
     char **ptr;
 };
 
-static void put_notify(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_notify(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     struct notify *pp = (struct notify *)fp;
 
     nv_putv(np, val, flags, fp);
@@ -690,7 +690,7 @@ bool nv_setnotify(Namval_t *np, char **addr) {
     return true;
 }
 
-static void *newnode(const char *name) {
+static_fn void *newnode(const char *name) {
     size_t s;
     Namval_t *np = newof(0, Namval_t, 1, s = strlen(name) + 1);
 
@@ -704,7 +704,7 @@ static void *newnode(const char *name) {
 //
 // Clone a numeric value.
 //
-static void *num_clone(Namval_t *np, void *val) {
+static_fn void *num_clone(Namval_t *np, void *val) {
     int size;
     void *nval;
 
@@ -843,15 +843,15 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
 //
 // The following discipline is for copy-on-write semantics.
 //
-static char *clone_getv(Namval_t *np, Namfun_t *handle) {
+static_fn char *clone_getv(Namval_t *np, Namfun_t *handle) {
     return np->nvalue.np ? nv_getval(np->nvalue.np) : 0;
 }
 
-static Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
+static_fn Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
     return np->nvalue.np ? nv_getnum(np->nvalue.np) : 0;
 }
 
-static void clone_putv(Namval_t *np, const char *val, int flags, Namfun_t *handle) {
+static_fn void clone_putv(Namval_t *np, const char *val, int flags, Namfun_t *handle) {
     Shell_t *shp = sh_ptr(np);
     Namfun_t *dp = nv_stack(np, (Namfun_t *)0);
     Namval_t *mp = np->nvalue.np;
@@ -1085,7 +1085,7 @@ struct table {
     Dt_t *dict;
 };
 
-static Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
+static_fn Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     if (root) {
         return ((Namval_t *)dtnext(root, np));
@@ -1094,13 +1094,13 @@ static Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     }
 }
 
-static Namval_t *create_table(Namval_t *np, const char *name, int flags, Namfun_t *fp) {
+static_fn Namval_t *create_table(Namval_t *np, const char *name, int flags, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     tp->shp->last_table = np;
     return nv_create(name, tp->dict, flags, fp);
 }
 
-static Namfun_t *clone_table(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_table(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
     struct table *ntp = (struct table *)nv_clone_disc(fp, 0);
     Dt_t *oroot = tp->dict, *nroot = dtopen(&_Nvdisc, Dtoset);
@@ -1127,12 +1127,12 @@ struct adata {
     char *attval;
 };
 
-static void delete_fun(Namval_t *np, void *data) {
+static_fn void delete_fun(Namval_t *np, void *data) {
     Shell_t *shp = ((struct adata *)data)->sh;
     nv_delete(np, shp->fun_tree, NV_NOFREE);
 }
 
-static void put_table(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_table(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     Dt_t *root = ((struct table *)fp)->dict;
     Namval_t *nq, *mp;
     Namarr_t *ap;
@@ -1162,7 +1162,7 @@ static void put_table(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 //
 // Return space separated list of names of variables in given tree.
 //
-static char *get_table(Namval_t *np, Namfun_t *fp) {
+static_fn char *get_table(Namval_t *np, Namfun_t *fp) {
     Dt_t *root = ((struct table *)fp)->dict;
     static Sfio_t *out;
     int first = 1;

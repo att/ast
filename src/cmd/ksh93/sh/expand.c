@@ -44,7 +44,7 @@
 #define argbegin argnxt.cp
 static const char *sufstr;
 static int suflen;
-static int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
+static_fn int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
 #else
 #define sh_sigcheck(sig) (0)
 #define sh_access access
@@ -63,7 +63,7 @@ static int scantree(Shell_t *, Dt_t *, const char *, struct argnod **);
 #define GLOB_RESCAN 1
 
 #if GLOB_VERSION >= 20010916L
-static char *nextdir(glob_t *gp, char *dir) {
+static_fn char *nextdir(glob_t *gp, char *dir) {
     Shell_t *shp = sh_getinterp();
     Pathcomp_t *pp = (Pathcomp_t *)gp->gl_handle;
     if (!dir) {
@@ -182,7 +182,7 @@ int path_expand(Shell_t *shp, const char *pattern, struct argnod **arghead) {
 //
 // Scan tree and add each name that matches the given pattern.
 //
-static int scantree(Shell_t *shp, Dt_t *tree, const char *pattern, struct argnod **arghead) {
+static_fn int scantree(Shell_t *shp, Dt_t *tree, const char *pattern, struct argnod **arghead) {
     Namval_t *np;
     struct argnod *ap;
     int nmatch = 0;
@@ -218,7 +218,7 @@ int path_complete(Shell_t *shp, const char *name, const char *suffix, struct arg
 
 #endif
 
-static int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) { return -1; }
+static_fn int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) { return -1; }
 
 int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     char *cp;

@@ -55,7 +55,7 @@ typedef struct _env_ {
 //
 // Compares the name portion of name=... only.
 //
-static int compare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
+static_fn int compare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
     int c, d;
     const unsigned char *s1 = (unsigned const char *)key1;
     const unsigned char *s2 = (unsigned const char *)key2;

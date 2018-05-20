@@ -230,7 +230,7 @@ void sh_utol(char const *str1, char *str2) {
 //
 // Format string as a csv field.
 //
-static char *sh_fmtcsv(const char *string) {
+static_fn char *sh_fmtcsv(const char *string) {
     const char *cp = string;
     int c;
     int offset;

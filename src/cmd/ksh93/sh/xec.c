@@ -49,11 +49,11 @@
 
 extern int nice(int);
 #if SHOPT_SPAWN
-static pid_t sh_ntfork(Shell_t *, const Shnode_t *, char *[], int *, int);
+static_fn pid_t sh_ntfork(Shell_t *, const Shnode_t *, char *[], int *, int);
 #endif  // SHOPT_SPAWN
 
-static void sh_funct(Shell_t *, Namval_t *, int, char *[], struct argnod *, int);
-static void coproc_init(Shell_t *, int pipes[]);
+static_fn void sh_funct(Shell_t *, Namval_t *, int, char *[], struct argnod *, int);
+static_fn void coproc_init(Shell_t *, int pipes[]);
 
 static void *timeout;
 static char nlock;
@@ -70,7 +70,7 @@ struct funenv {
 };
 
 #if SHOPT_SPAWN
-static int io_usevex(struct ionod *iop) {
+static_fn int io_usevex(struct ionod *iop) {
     struct ionod *first = iop;
     for (; iop; iop = iop->ionxt) {
         if ((iop->iofile & IODOC) && !(iop->iofile & IOQUOTE) && iop != first) return (0);
@@ -86,7 +86,7 @@ static int io_usevex(struct ionod *iop) {
 // ======== command execution ========
 
 #if !SHOPT_DEVFD
-static void fifo_check(void *handle) {
+static_fn void fifo_check(void *handle) {
     Shell_t *shp = (Shell_t *)handle;
     pid_t pid = getppid();
     if (pid == 1) {
@@ -102,7 +102,7 @@ static void fifo_check(void *handle) {
 //
 static int subpipe[3], subdup, tsetio, usepipe;
 
-static bool iousepipe(Shell_t *shp) {
+static_fn bool iousepipe(Shell_t *shp) {
     int i, err = errno;
     int fd = sffileno(sfstdout);
     sh_iovalidfd(shp, fd);
@@ -192,7 +192,7 @@ done:
 //
 // Print time <t> in h:m:s format with precision <p>.
 //
-static void l_time(Sfio_t *outfile, clock_t t, int p) {
+static_fn void l_time(Sfio_t *outfile, clock_t t, int p) {
     int min, sec, frac;
     int hr;
 
@@ -213,7 +213,7 @@ static void l_time(Sfio_t *outfile, clock_t t, int p) {
     }
 }
 
-static int p_time(Shell_t *shp, Sfio_t *out, const char *format, clock_t *tm) {
+static_fn int p_time(Shell_t *shp, Sfio_t *out, const char *format, clock_t *tm) {
     int c, p, l, n, offset = stktell(shp->stk);
     const char *first;
     double d;
@@ -270,13 +270,13 @@ static int p_time(Shell_t *shp, Sfio_t *out, const char *format, clock_t *tm) {
 //
 // Clear argument pointers that point into the stack.
 //
-static int p_arg(Shell_t *, struct argnod *, int);
-static int p_switch(Shell_t *, struct regnod *);
+static_fn int xec_p_arg(Shell_t *, struct argnod *, int);
+static_fn int xec_p_switch(Shell_t *, struct regnod *);
 
-static int p_comarg(Shell_t *shp, struct comnod *com) {
+static_fn int xec_p_comarg(Shell_t *shp, struct comnod *com) {
     Namval_t *np = com->comnamp;
-    int n = p_arg(shp, com->comset, ARG_ASSIGN);
-    if (com->comarg && (com->comtyp & COMSCAN)) n += p_arg(shp, com->comarg, 0);
+    int n = xec_p_arg(shp, com->comset, ARG_ASSIGN);
+    if (com->comarg && (com->comtyp & COMSCAN)) n += xec_p_arg(shp, com->comarg, 0);
     if (com->comstate && np) {
         // Call builtin to cleanup state.
         Shbltin_t *bp = &shp->bltindata;
@@ -298,7 +298,7 @@ static int p_comarg(Shell_t *shp, struct comnod *com) {
 
 extern void sh_optclear(Shell_t *, void *);
 
-static int sh_tclear(Shell_t *shp, Shnode_t *t) {
+static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
     int n = 0;
     if (!t) return 0;
     switch (t->tre.tretyp & COMMSK) {
@@ -307,7 +307,7 @@ static int sh_tclear(Shell_t *shp, Shnode_t *t) {
             return sh_tclear(shp, t->par.partre);
         }
         case TCOM: {
-            return p_comarg(shp, (struct comnod *)t);
+            return xec_p_comarg(shp, (struct comnod *)t);
         }
         case TSETIO:
         case TFORK: {
@@ -333,15 +333,15 @@ static int sh_tclear(Shell_t *shp, Shnode_t *t) {
             return n + sh_tclear(shp, t->lst.lstrit);
         }
         case TARITH: {
-            return p_arg(shp, t->ar.arexpr, ARG_ARITH);
+            return xec_p_arg(shp, t->ar.arexpr, ARG_ARITH);
         }
         case TFOR: {
             n = sh_tclear(shp, t->for_.fortre);
             return n + sh_tclear(shp, (Shnode_t *)t->for_.forlst);
         }
         case TSW: {
-            n = p_arg(shp, t->sw.swarg, 0);
-            return n + p_switch(shp, t->sw.swlst);
+            n = xec_p_arg(shp, t->sw.swarg, 0);
+            return n + xec_p_switch(shp, t->sw.swlst);
         }
         case TFUN: {
             n = sh_tclear(shp, t->funct.functtre);
@@ -351,15 +351,15 @@ static int sh_tclear(Shell_t *shp, Shnode_t *t) {
             if ((t->tre.tretyp & TPAREN) == TPAREN) {
                 return sh_tclear(shp, t->lst.lstlef);
             } else {
-                n = p_arg(shp, &(t->lst.lstlef->arg), 0);
-                if (t->tre.tretyp & TBINARY) n += p_arg(shp, &(t->lst.lstrit->arg), 0);
+                n = xec_p_arg(shp, &(t->lst.lstlef->arg), 0);
+                if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
             }
         }
     }
     return n;
 }
 
-static int p_arg(Shell_t *shp, struct argnod *arg, int flag) {
+static_fn int xec_p_arg(Shell_t *shp, struct argnod *arg, int flag) {
     while (arg) {
         if (strlen(arg->argval) || (arg->argflag == ARG_RAW)) {
             arg->argchn.ap = 0;
@@ -373,10 +373,10 @@ static int p_arg(Shell_t *shp, struct argnod *arg, int flag) {
     return 0;
 }
 
-static int p_switch(Shell_t *shp, struct regnod *reg) {
+static_fn int xec_p_switch(Shell_t *shp, struct regnod *reg) {
     int n = 0;
     while (reg) {
-        n += p_arg(shp, reg->regptr, 0);
+        n += xec_p_arg(shp, reg->regptr, 0);
         n += sh_tclear(shp, reg->regcom);
         reg = reg->regnxt;
     }
@@ -386,7 +386,7 @@ static int p_switch(Shell_t *shp, struct regnod *reg) {
 #define OPTIMIZE_FLAG (ARG_OPTIMIZE)
 #define OPTIMIZE (flags & OPTIMIZE_FLAG)
 
-static void out_pattern(Sfio_t *iop, const char *cp, int n) {
+static_fn void out_pattern(Sfio_t *iop, const char *cp, int n) {
     int c;
 
     do {
@@ -419,7 +419,7 @@ static void out_pattern(Sfio_t *iop, const char *cp, int n) {
     } while (*cp++);
 }
 
-static void out_string(Sfio_t *iop, const char *cp, int c, int quoted) {
+static_fn void out_string(Sfio_t *iop, const char *cp, int c, int quoted) {
     if (quoted) {
         int n = stktell(stkstd);
         cp = sh_fmtq(cp);
@@ -440,7 +440,7 @@ struct Level {
 // This is for a debugger but it hasn't been tested yet. If a debug script sets .sh.level it should
 // set up the scope as if you were executing in that level.
 //
-static void put_level(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_level(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     Shscope_t *sp;
     struct Level *lp = (struct Level *)fp;
@@ -468,7 +468,7 @@ static void put_level(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
 
 static const Namdisc_t level_disc = {sizeof(struct Level), put_level};
 
-static struct Level *init_level(Shell_t *shp, int level) {
+static_fn struct Level *init_level(Shell_t *shp, int level) {
     struct Level *lp = newof(NULL, struct Level, 1, 0);
 
     lp->maxlevel = level;
@@ -552,7 +552,7 @@ int sh_debug(Shell_t *shp, const char *trap, const char *name, const char *subsc
 //
 // Returns true when option -<c> is specified.
 //
-static bool checkopt(char *argv[], int c) {
+static_fn bool checkopt(char *argv[], int c) {
     char *cp;
 
     while ((cp = *++argv)) {
@@ -564,7 +564,7 @@ static bool checkopt(char *argv[], int c) {
     return false;
 }
 
-static void free_list(struct openlist *olist) {
+static_fn void free_list(struct openlist *olist) {
     struct openlist *item, *next;
 
     for (item = olist; item; item = next) {
@@ -577,7 +577,7 @@ static void free_list(struct openlist *olist) {
 // Set ${.sh.name} and ${.sh.subscript}.
 // Set _ to reference for ${.sh.name}[$.sh.subscript].
 //
-static int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namref *nr) {
+static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namref *nr) {
     char *sp = 0, *cp;
     Namarr_t *ap;
     Namval_t *np;
@@ -615,7 +615,7 @@ static int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namre
     return 0;
 }
 
-static void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long mode) {
+static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long mode) {
     L_ARGNOD->nvalue.nrp = node->nvalue.nrp;
     L_ARGNOD->nvflag = node->nvflag;
     L_ARGNOD->nvfun = node->nvfun;
@@ -633,7 +633,7 @@ static uintmax_t coused;
 //
 // Print out function definition.
 //
-static void print_fun(Namval_t *np, void *data) {
+static_fn void print_fun(Namval_t *np, void *data) {
     char *format;
     UNUSED(data);
 
@@ -648,7 +648,7 @@ static void print_fun(Namval_t *np, void *data) {
     sfwrite(sfstdout, "}\n", 2);
 }
 
-static void *sh_coinit(Shell_t *shp, char **argv) {
+static_fn void *sh_coinit(Shell_t *shp, char **argv) {
     struct cosh *csp = job.colist;
     const char *name = argv ? argv[0] : 0;
     int id, xopen = 1;
@@ -704,7 +704,7 @@ bool sh_coaddfile(Shell_t *shp, char *name) {
     return false;
 }
 
-static int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
+static_fn int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
     struct cosh *csp = ((struct cosh *)shp->coshell);
     Cojob_t *cjp;
     char *str, *trap, host[PATH_MAX];
@@ -784,7 +784,7 @@ static int sh_coexec(Shell_t *shp, const Shnode_t *t, int filt) {
 }
 #endif  // SHOPT_COSHELL
 
-static Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
+static_fn Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
     int err = errno, savein, fd = sh_redirect(shp, iop, 3);
     Sfio_t *sp;
 
@@ -799,7 +799,7 @@ static Sfio_t *openstream(Shell_t *shp, struct ionod *iop, int *save) {
     return sp;
 }
 
-static Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
+static_fn Namval_t *enter_namespace(Shell_t *shp, Namval_t *nsp) {
     Namval_t *path = nsp, *fpath = nsp, *onsp = shp->namespace;
     Dt_t *root = 0, *oroot = 0;
     char *val;
@@ -2670,7 +2670,7 @@ bool sh_trace(Shell_t *shp, char *argv[], int nl) {
 // Traps are reset by the child.
 // The process-id of the child is returned to the parent, 0 to the child.
 //
-static void timed_out(void *handle) {
+static_fn void timed_out(void *handle) {
     UNUSED(handle);
     timeout = 0;
 }
@@ -2825,7 +2825,7 @@ struct Tdata {
 //
 // Add exports from previous scope to the new scope.
 //
-static void local_exports(Namval_t *np, void *data) {
+static_fn void local_exports(Namval_t *np, void *data) {
     Shell_t *shp = ((struct Tdata *)data)->sh;
     Namval_t *mp;
     char *cp;
@@ -2878,7 +2878,7 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
     return d;
 }
 
-static void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct argnod *envlist,
+static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct argnod *envlist,
                      int execflg) {
     struct funenv fun;
     char *fname = nv_getval(SH_FUNNAMENOD);
@@ -3010,7 +3010,7 @@ int cmdrecurse(int argc, char *argv[], int ac, char *av[]) {
 //
 // Set up pipe for cooperating process.
 //
-static void coproc_init(Shell_t *shp, int pipes[]) {
+static_fn void coproc_init(Shell_t *shp, int pipes[]) {
     int outfd;
     if (shp->coutpipe >= 0 && shp->cpid) errormsg(SH_DICT, ERROR_exit(1), e_pexists);
     shp->cpid = 0;
@@ -3038,7 +3038,7 @@ static void coproc_init(Shell_t *shp, int pipes[]) {
 
 #if SHOPT_SPAWN
 
-static void sigreset(Shell_t *shp, int mode) {
+static_fn void sigreset(Shell_t *shp, int mode) {
     char *trap;
     int sig = shp->st.trapmax;
 
@@ -3058,7 +3058,7 @@ static void sigreset(Shell_t *shp, int mode) {
 //
 // A combined fork/exec for systems with slow or non-existent fork().
 //
-static pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jobid, int flag) {
+static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jobid, int flag) {
     static pid_t spawnpid;
     static int savetype;
     static int savejobid;

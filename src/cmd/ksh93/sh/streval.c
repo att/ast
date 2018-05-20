@@ -143,7 +143,7 @@ typedef int (*Math_3i_f)(Sfdouble_t, Sfdouble_t, Sfdouble_t);
 //
 // Set error message string and return 0.
 //
-static int _seterror(struct vars *vp, const char *msg) {
+static_fn int _seterror(struct vars *vp, const char *msg) {
     if (!vp->errmsg.value) vp->errmsg.value = (char *)msg;
     vp->errchr = vp->nextchr;
     vp->nextchr = "";
@@ -151,14 +151,14 @@ static int _seterror(struct vars *vp, const char *msg) {
     return 0;
 }
 
-static void arith_error(const char *message, const char *expr, int mode) {
+static_fn void arith_error(const char *message, const char *expr, int mode) {
     level = 0;
     mode = (mode & 3) != 0;
     errormsg(SH_DICT, ERROR_exit(mode), message, expr);
 }
 
 #if _ast_no_um2fm
-static Sfdouble_t U2F(Sfulong_t u) {
+static_fn Sfdouble_t U2F(Sfulong_t u) {
     Sflong_t s = u;
     Sfdouble_t f;
 
@@ -173,7 +173,7 @@ static Sfdouble_t U2F(Sfulong_t u) {
 #define U2F(x) x
 #endif
 
-static void array_args(Shell_t *shp, char *tp, int n) {
+static_fn void array_args(Shell_t *shp, char *tp, int n) {
     while (n--) {
         if (tp[n] == 5) {
             Namval_t *np = nv_namptr(shp->mathnodes, n);
@@ -592,7 +592,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
 //
 // This returns operator tokens or A_REG or A_NUM.
 //
-static int gettok(struct vars *vp) {
+static_fn int gettok(struct vars *vp) {
     int c, op;
 
     vp->errchr = vp->nextchr;
@@ -669,7 +669,7 @@ static int gettok(struct vars *vp) {
 //
 // Evaluate a subexpression with precedence.
 //
-static bool expr(struct vars *vp, int precedence) {
+static_fn bool expr(struct vars *vp, int precedence) {
     int c, op;
     int invalid, wasop = 0;
     struct lval lvalue, assignop;

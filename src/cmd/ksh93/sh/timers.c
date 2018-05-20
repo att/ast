@@ -43,7 +43,7 @@ typedef struct _timer {
 static Timer_t *tptop, *tpmin, *tpfree;
 static char time_state;
 
-static double getnow(void) {
+static_fn double getnow(void) {
     double now;
 #ifdef timeofday
     struct timeval tp;
@@ -59,7 +59,7 @@ static double getnow(void) {
 //
 // Set an alarm for <t> seconds.
 //
-static double setalarm(double t) {
+static_fn double setalarm(double t) {
     struct itimerval tnew, told;
     tnew.it_value.tv_sec = t;
     tnew.it_value.tv_usec = 1.e6 * (t - (double)tnew.it_value.tv_sec);
@@ -76,7 +76,7 @@ static double setalarm(double t) {
 //
 // Signal handler for alarm call.
 //
-static void sigalrm(int sig, siginfo_t *info, void *context) {
+static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
     Timer_t *tp, *tplast, *tpold, *tpnext;
     double now;
     static double left;
@@ -155,7 +155,7 @@ static void sigalrm(int sig, siginfo_t *info, void *context) {
     errno = EINTR;
 }
 
-static void oldalrm(void *handle) {
+static_fn void oldalrm(void *handle) {
     Handler_t fn = *(Handler_t *)handle;
     free(handle);
     (*fn)(SIGALRM);

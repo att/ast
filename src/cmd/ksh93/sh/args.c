@@ -71,8 +71,8 @@ typedef struct _arg_ {
     char *kiafile;
 } Arg_t;
 
-static int arg_expand(Shell_t *, struct argnod *, struct argnod **, int);
-static void sh_argset(Arg_t *, char *[]);
+static_fn int arg_expand(Shell_t *, struct argnod *, struct argnod **, int);
+static_fn void sh_argset(Arg_t *, char *[]);
 
 #define SORT_numeric 01
 #define SORT_reverse 02
@@ -99,7 +99,7 @@ struct Sort {
 
 static struct Sort *Sp;
 
-static int arraysort(const char *s1, const char *s2) {
+static_fn int arraysort(const char *s1, const char *s2) {
     struct Sort *sp = Sp;
     Shell_t *shp = sp->shp;
     int r = 0, cur = sp->cur;
@@ -147,7 +147,7 @@ static int arraysort(const char *s1, const char *s2) {
     return r;
 }
 
-static int alphasort(const char *s1, const char *s2) {
+static_fn int alphasort(const char *s1, const char *s2) {
     struct Sort *sp = Sp;
     int r = 0;
     char *sp1, *sp2;
@@ -161,7 +161,7 @@ static int alphasort(const char *s1, const char *s2) {
     return r;
 }
 
-static int numsort(const char *s1, const char *s2) {
+static_fn int numsort(const char *s1, const char *s2) {
     struct Sort *sp = Sp;
     Sfdouble_t d1, d2;
     int r = 0;
@@ -188,7 +188,7 @@ void *sh_argopen(Shell_t *shp) {
     return addr;
 }
 
-static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     Shell_t *shp = sh_getinterp();
 #if SHOPT_BASH
     extern const char sh_bash1[], sh_bash2[];
@@ -632,7 +632,7 @@ char *sh_argdolminus(void *context) {
 }
 
 // Set up positional parameters.
-static void sh_argset(Arg_t *ap, char *argv[]) {
+static_fn void sh_argset(Arg_t *ap, char *argv[]) {
     sh_argfree(ap->sh, ap->dolh, 0);
     ap->dolh = sh_argcreate(argv);
     // Link into chain.
@@ -960,7 +960,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
 }
 
 // Argument expansion.
-static int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argchain, int flag) {
+static_fn int arg_expand(Shell_t *shp, struct argnod *argp, struct argnod **argchain, int flag) {
     int count = 0;
 
     argp->argflag &= ~ARG_MAKE;

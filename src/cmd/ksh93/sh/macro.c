@@ -101,19 +101,19 @@ typedef struct _mac_ {
 #define M_TYPE 8       // ${@var}
 #define M_EVAL 9       // ${$var}
 
-static int substring(const char *, size_t, const char *, int[], int);
-static void copyto(Mac_t *, int, int);
-static void comsubst(Mac_t *, Shnode_t *, int);
-static bool varsub(Mac_t *);
-static void mac_copy(Mac_t *, const char *, size_t);
-static void tilde_expand2(Shell_t *, int);
-static char *sh_tilde(Shell_t *, const char *);
-static char *special(Shell_t *, int);
-static void endfield(Mac_t *, int);
-static void mac_error(Namval_t *);
-static char *mac_getstring(char *);
-static int charlen(const char *, int);
-static char *lastchar(const char *, const char *);
+static_fn int substring(const char *, size_t, const char *, int[], int);
+static_fn void copyto(Mac_t *, int, int);
+static_fn void comsubst(Mac_t *, Shnode_t *, int);
+static_fn bool varsub(Mac_t *);
+static_fn void mac_copy(Mac_t *, const char *, size_t);
+static_fn void tilde_expand2(Shell_t *, int);
+static_fn char *sh_tilde(Shell_t *, const char *);
+static_fn char *special(Shell_t *, int);
+static_fn void endfield(Mac_t *, int);
+static_fn void mac_error(Namval_t *);
+static_fn char *mac_getstring(char *);
+static_fn int charlen(const char *, int);
+static_fn char *lastchar(const char *, const char *);
 
 void *sh_macopen(Shell_t *shp) {
     void *addr = newof(0, Mac_t, 1, 0);
@@ -409,7 +409,7 @@ char *sh_macpat(Shell_t *shp, struct argnod *arg, int flags) {
 //
 // Process the characters up to <endch> or end of input string.
 //
-static void copyto(Mac_t *mp, int endch, int newquote) {
+static_fn void copyto(Mac_t *mp, int endch, int newquote) {
     int c, n;
     const char *state = sh_lexstates[ST_MACRO];
     char *cp, *first;
@@ -791,7 +791,7 @@ done:
 //
 // Copy <str> to stack performing sub-expression substitutions.
 //
-static void mac_substitute(Mac_t *mp, char *cp, char *str, int subexp[], int subsize) {
+static_fn void mac_substitute(Mac_t *mp, char *cp, char *str, int subexp[], int subsize) {
     int c, n;
     char *first = fcseek(0);
     char *ptr;
@@ -843,7 +843,7 @@ static void mac_substitute(Mac_t *mp, char *cp, char *str, int subexp[], int sub
 // Compute the arguments $1 ... $n and $# from the current line as needed.
 // Save line offsets in the offsets array.
 //
-static char *getdolarg(Shell_t *shp, int n, int *size) {
+static_fn char *getdolarg(Shell_t *shp, int n, int *size) {
     int c = S_DELIM, d = shp->ifstable['\\'];
     unsigned char *first, *last, *cp = (unsigned char *)shp->cur_line;
     int m = shp->offsets[0], delim = 0;
@@ -897,7 +897,7 @@ static char *getdolarg(Shell_t *shp, int n, int *size) {
 //
 // Get the prefix after name reference resolution.
 //
-static char *prefix(Shell_t *shp, char *id) {
+static_fn char *prefix(Shell_t *shp, char *id) {
     Namval_t *np;
     char *sub = 0, *cp = strchr(id, '.');
 
@@ -934,7 +934,7 @@ static char *prefix(Shell_t *shp, char *id) {
 //
 // Copy to ']' onto the stack and return offset to it.
 //
-static int subcopy(Mac_t *mp, int flag) {
+static_fn int subcopy(Mac_t *mp, int flag) {
     int split = mp->split;
     int xpattern = mp->pattern;
     int loc = stktell(mp->shp->stk);
@@ -988,7 +988,7 @@ bool sh_macfun(Shell_t *shp, const char *name, int offset) {
     return false;
 }
 
-static int namecount(Mac_t *mp, const char *prefix) {
+static_fn int namecount(Mac_t *mp, const char *prefix) {
     int count = 0;
 
     mp->nvwalk = nv_diropen((Namval_t *)0, prefix, mp->shp);
@@ -997,7 +997,7 @@ static int namecount(Mac_t *mp, const char *prefix) {
     return count;
 }
 
-static char *nextname(Mac_t *mp, const char *prefix, int len) {
+static_fn char *nextname(Mac_t *mp, const char *prefix, int len) {
     char *cp;
 
     if (len == 0) {
@@ -1012,7 +1012,7 @@ static char *nextname(Mac_t *mp, const char *prefix, int len) {
 // This routine handles $param,  ${parm}, and ${param op word}.
 // The input stream is assumed to be a string.
 //
-static bool varsub(Mac_t *mp) {
+static_fn bool varsub(Mac_t *mp) {
     int c;
     int type = 0; /* M_xxx */
     char *v, *argp = 0;
@@ -1832,7 +1832,7 @@ nosub:
 // This routine handles command substitution.
 // <type> is 0 for older `...` version.
 //
-static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
+static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     Sfdouble_t num;
     int c;
     char *str;
@@ -2026,7 +2026,7 @@ static void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
 //
 // Copy <str> onto the stack.
 //
-static void mac_copy(Mac_t *mp, const char *str, size_t size) {
+static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
     char *state;
     const char *cp = str;
     const char *ep = cp + size;
@@ -2199,7 +2199,7 @@ static void mac_copy(Mac_t *mp, const char *str, size_t size) {
 // Terminate field. If field is null count field if <split> is non-zero. Do
 // filename expansion of required.
 //
-static void endfield(Mac_t *mp, int split) {
+static_fn void endfield(Mac_t *mp, int split) {
     struct argnod *argp;
     int count = 0;
     Stk_t *stkp = mp->shp->stk;
@@ -2238,7 +2238,7 @@ static void endfield(Mac_t *mp, int split) {
 // Finds the right substring of STRING using the expression PAT. The longest
 // substring is found when FLAG is set.
 //
-static int substring(const char *string, size_t len, const char *pat, int match[], int flag) {
+static_fn int substring(const char *string, size_t len, const char *pat, int match[], int flag) {
     const char *sp = string;
     int size, nmatch, n;
     int smatch[2 * (MATCH_MAX + 1)];
@@ -2274,7 +2274,7 @@ static int substring(const char *string, size_t len, const char *pat, int match[
     return n;
 }
 
-static char *lastchar(const char *string, const char *endstring) {
+static_fn char *lastchar(const char *string, const char *endstring) {
     char *str = (char *)string;
     int c;
 
@@ -2287,7 +2287,7 @@ static char *lastchar(const char *string, const char *endstring) {
     return str;
 }
 
-static int charlen(const char *string, int len) {
+static_fn int charlen(const char *string, int len) {
     if (!string) return 0;
     if (mbwide()) {
         const char *str = string, *strmax = string + len;
@@ -2308,7 +2308,7 @@ static int charlen(const char *string, int len) {
 //
 // This is the default tilde discipline function.
 //
-static int sh_btilde(int argc, char *argv[], Shbltin_t *context) {
+static_fn int sh_btilde(int argc, char *argv[], Shbltin_t *context) {
     Shell_t *shp = context->shp;
     char *cp = sh_tilde(shp, argv[1]);
     UNUSED(argc);
@@ -2321,7 +2321,7 @@ static int sh_btilde(int argc, char *argv[], Shbltin_t *context) {
 //
 // <offset> is byte offset for beginning of tilde string.
 //
-static void tilde_expand2(Shell_t *shp, int offset) {
+static_fn void tilde_expand2(Shell_t *shp, int offset) {
     char shtilde[10], *av[3], *ptr = stkfreeze(shp->stk, 1);
     Sfio_t *iop, *save = sfstdout;
     Namval_t *np;
@@ -2369,7 +2369,7 @@ static void tilde_expand2(Shell_t *shp, int offset) {
 // If ~name  is replaced with login directory of name.
 // If string doesn't start with ~ or ~... not found then 0 returned.
 //
-static char *sh_tilde(Shell_t *shp, const char *string) {
+static_fn char *sh_tilde(Shell_t *shp, const char *string) {
     char *cp;
     int c;
     struct passwd *pw;
@@ -2470,7 +2470,7 @@ skip:
 //
 // Return values for special macros.
 //
-static char *special(Shell_t *shp, int c) {
+static_fn char *special(Shell_t *shp, int c) {
     if (c != '$') shp->argaddr = 0;
     switch (c) {
         case '@':
@@ -2518,7 +2518,7 @@ static char *special(Shell_t *shp, int c) {
 //
 // Handle macro expansion errors.
 //
-static void mac_error(Namval_t *np) {
+static_fn void mac_error(Namval_t *np) {
     if (np) nv_close(np);
     errormsg(SH_DICT, ERROR_exit(1), e_subst, fcfirst());
 }
@@ -2528,7 +2528,7 @@ static void mac_error(Namval_t *np) {
 // stripped from string.  The "\" are stripped in the replacement string unless followed by a digit
 // or "\".
 //
-static char *mac_getstring(char *pattern) {
+static_fn char *mac_getstring(char *pattern) {
     char *cp = pattern, *rep = NULL, *dp;
     int c;
     while ((c = *cp++)) {

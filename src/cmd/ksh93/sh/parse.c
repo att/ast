@@ -53,21 +53,21 @@
 
 // These routines are local to this module.
 
-static Shnode_t *makeparent(Lex_t *, int, Shnode_t *);
-static Shnode_t *makelist(Lex_t *, int, Shnode_t *, Shnode_t *);
-static struct argnod *qscan(Lex_t *, struct comnod *, int);
-static struct ionod *inout(Lex_t *, struct ionod *, int);
-static Shnode_t *sh_cmd(Lex_t *, int, int);
-static Shnode_t *term(Lex_t *, int);
-static Shnode_t *list(Lex_t *, int);
-static struct regnod *syncase(Lex_t *, int);
-static Shnode_t *item(Lex_t *, int);
-static Shnode_t *simple(Lex_t *, int, struct ionod *);
-static int skipnl(Lex_t *, int);
-static Shnode_t *test_expr(Lex_t *, int);
-static Shnode_t *test_and(Lex_t *);
-static Shnode_t *test_or(Lex_t *);
-static Shnode_t *test_primary(Lex_t *);
+static_fn Shnode_t *makeparent(Lex_t *, int, Shnode_t *);
+static_fn Shnode_t *makelist(Lex_t *, int, Shnode_t *, Shnode_t *);
+static_fn struct argnod *qscan(Lex_t *, struct comnod *, int);
+static_fn struct ionod *inout(Lex_t *, struct ionod *, int);
+static_fn Shnode_t *sh_cmd(Lex_t *, int, int);
+static_fn Shnode_t *term(Lex_t *, int);
+static_fn Shnode_t *list(Lex_t *, int);
+static_fn struct regnod *syncase(Lex_t *, int);
+static_fn Shnode_t *item(Lex_t *, int);
+static_fn Shnode_t *simple(Lex_t *, int, struct ionod *);
+static_fn int skipnl(Lex_t *, int);
+static_fn Shnode_t *test_expr(Lex_t *, int);
+static_fn Shnode_t *test_and(Lex_t *);
+static_fn Shnode_t *test_or(Lex_t *);
+static_fn Shnode_t *test_primary(Lex_t *);
 
 #define sh_getlineno(lp) (lp->lastline)
 #define CNTL(x) ((x)&037)
@@ -91,7 +91,7 @@ static struct argnod *label_last;
 // Write out entities for each item in the list type=='V' for variable assignment lists. Otherwise
 // type is determined by the command.
 //
-static unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line, int type,
+static_fn unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line, int type,
                                struct argnod *cmd) {
     struct argnod *argp = arglist;
     char *cp;
@@ -156,7 +156,7 @@ static unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line, in
     return r;
 }
 
-static void typeset_order(const char *str, int line) {
+static_fn void typeset_order(const char *str, int line) {
     int c, n = 0;
     unsigned const char *cp = (unsigned char *)str;
     static unsigned char *table;
@@ -176,7 +176,7 @@ static void typeset_order(const char *str, int line) {
 //
 // a/d type definitions when compiling with -n.
 //
-static void check_typedef(Lex_t *lp, struct comnod *tp) {
+static_fn void check_typedef(Lex_t *lp, struct comnod *tp) {
     char *cp = 0;
     if (tp->comtyp & COMSCAN) {
         struct argnod *ap = tp->comarg;
@@ -228,7 +228,7 @@ static void check_typedef(Lex_t *lp, struct comnod *tp) {
 //
 // Make a parent node for fork() or io-redirection.
 //
-static Shnode_t *makeparent(Lex_t *lp, int flag, Shnode_t *child) {
+static_fn Shnode_t *makeparent(Lex_t *lp, int flag, Shnode_t *child) {
     Shnode_t *par = getnode(forknod);
     par->fork.forktyp = flag;
     par->fork.forktre = child;
@@ -237,7 +237,7 @@ static Shnode_t *makeparent(Lex_t *lp, int flag, Shnode_t *child) {
     return par;
 }
 
-static bool paramsub(const char *str) {
+static_fn bool paramsub(const char *str) {
     int c, sub = 0, lit = 0;
 
     while ((c = *str++)) {
@@ -259,7 +259,7 @@ static bool paramsub(const char *str) {
     return false;
 }
 
-static Shnode_t *getanode(Lex_t *lp, struct argnod *ap) {
+static_fn Shnode_t *getanode(Lex_t *lp, struct argnod *ap) {
     Shnode_t *t = getnode(arithnod);
 
     t->ar.artyp = TARITH;
@@ -279,7 +279,7 @@ static Shnode_t *getanode(Lex_t *lp, struct argnod *ap) {
 //
 // Make a node corresponding to a command list.
 //
-static Shnode_t *makelist(Lex_t *lexp, int type, Shnode_t *l, Shnode_t *r) {
+static_fn Shnode_t *makelist(Lex_t *lexp, int type, Shnode_t *l, Shnode_t *r) {
     Shnode_t *t = NULL;
 
     if (!l || !r) {
@@ -448,7 +448,7 @@ void sh_funstaks(struct slnod *slp, int flag) {
 //	list & [ cmd ]
 //	list [ ; cmd ]
 //
-static Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
+static_fn Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
     Shnode_t *left, *right;
     int type = FINT | FAMP;
 
@@ -501,7 +501,7 @@ static Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
 //	list || term
 //      unfortunately, these are equal precedence
 //
-static Shnode_t *list(Lex_t *lexp, int flag) {
+static_fn Shnode_t *list(Lex_t *lexp, int flag) {
     Shnode_t *t = term(lexp, flag);
     int token;
 
@@ -516,7 +516,7 @@ static Shnode_t *list(Lex_t *lexp, int flag) {
 //	item
 //	item | term
 //
-static Shnode_t *term(Lex_t *lexp, int flag) {
+static_fn Shnode_t *term(Lex_t *lexp, int flag) {
     Shnode_t *t;
     int token;
 
@@ -570,7 +570,7 @@ static Shnode_t *term(Lex_t *lexp, int flag) {
 //
 // Case statement.
 //
-static struct regnod *syncase(Lex_t *lexp, int esym) {
+static_fn struct regnod *syncase(Lex_t *lexp, int esym) {
     int tok = skipnl(lexp, 0);
     struct regnod *r;
 
@@ -610,7 +610,7 @@ static struct regnod *syncase(Lex_t *lexp, int esym) {
 // the string inside ((...)). When the first argument is missing, a while node is returned. Otherise
 // a list containing an arithmetic command and a while is returned.
 //
-static Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
+static_fn Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
     Shnode_t *t, *tw = tf;
     int offset;
     struct argnod *argp;
@@ -676,7 +676,7 @@ static Shnode_t *arithfor(Lex_t *lexp, Shnode_t *tf) {
     return tf;
 }
 
-static Shnode_t *funct(Lex_t *lexp) {
+static_fn Shnode_t *funct(Lex_t *lexp) {
     Shell_t *shp = lexp->sh;
     Shnode_t *t;
     int flag;
@@ -855,7 +855,7 @@ static Shnode_t *funct(Lex_t *lexp) {
     return t;
 }
 
-static bool check_array(Lex_t *lexp) {
+static_fn bool check_array(Lex_t *lexp) {
     int n, c;
 
     if (lexp->token == 0 && strcmp(lexp->arg->argval, "typeset") == 0) {
@@ -881,7 +881,7 @@ static bool check_array(Lex_t *lexp) {
 //
 // Compound assignment.
 //
-static struct argnod *assign(Lex_t *lexp, struct argnod *ap, int type) {
+static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) {
     int n;
     Shnode_t *t, **tp;
     struct comnod *ac;
@@ -937,7 +937,7 @@ static struct argnod *assign(Lex_t *lexp, struct argnod *ap, int type) {
             }
             ar = (struct argnod *)stkfreeze(stkp, 1);
             ar->argnxt.ap = 0;
-            if (!aq) ar = assign(lexp, ar, 0);
+            if (!aq) ar = parse_assign(lexp, ar, 0);
             ar->argflag |= ARG_MESSAGE;
             *settail = ar;
             settail = &(ar->argnxt.ap);
@@ -1040,7 +1040,7 @@ static struct argnod *assign(Lex_t *lexp, struct argnod *ap, int type) {
 //    case ... in ... esac
 //    begin ... end
 //
-static Shnode_t *item(Lex_t *lexp, int flag) {
+static_fn Shnode_t *item(Lex_t *lexp, int flag) {
     Shnode_t *t;
     struct ionod *io;
     int tok = (lexp->token & 0xff);
@@ -1268,7 +1268,7 @@ done:
     return t;
 }
 
-static struct argnod *process_sub(Lex_t *lexp, int tok) {
+static_fn struct argnod *process_sub(Lex_t *lexp, int tok) {
     struct argnod *argp;
     Shnode_t *t;
     int mode = (tok == OPROCSYM);
@@ -1285,7 +1285,7 @@ static struct argnod *process_sub(Lex_t *lexp, int tok) {
 //
 // This is for a simple command, for list, or compound assignment.
 //
-static Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
+static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     struct comnod *t;
     struct argnod *argp;
     int tok;
@@ -1434,7 +1434,7 @@ static Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                         }
                     }
                 }
-                argp = assign(lexp, argp, type);
+                argp = parse_assign(lexp, argp, type);
                 if (type == NV_ARRAY) argp->argflag |= ARG_ARRAY;
                 lexp->intypeset = intypeset;
                 if (lexp->assignlevel) was_assign = 1;
@@ -1544,7 +1544,7 @@ static Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
 //
 // Skip past newlines but issue prompt if interactive.
 //
-static int skipnl(Lex_t *lexp, int flag) {
+static_fn int skipnl(Lex_t *lexp, int flag) {
     int token;
 
     while ((token = sh_lex(lexp)) == NL) {
@@ -1559,7 +1559,7 @@ static int skipnl(Lex_t *lexp, int flag) {
 // If flag>0 then an alias can be in the next word.
 // If flag<0 only one redirection will be processed.
 //
-static struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
+static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
     int iof = lexp->digits, token = lexp->token;
     struct ionod *iop;
     Stk_t *stkp = lexp->sh->stk;
@@ -1695,7 +1695,7 @@ static struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
 //
 // Convert argument chain to argument list when no special arguments.
 //
-static struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
+static_fn struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
     char **cp;
     struct argnod *ap;
     struct dolnod *dp;
@@ -1748,19 +1748,19 @@ static struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
     return ((struct argnod *)dp);
 }
 
-static Shnode_t *test_expr(Lex_t *lp, int sym) {
+static_fn Shnode_t *test_expr(Lex_t *lp, int sym) {
     Shnode_t *t = test_or(lp);
     if (lp->token != sym) sh_syntax(lp);
     return (t);
 }
 
-static Shnode_t *test_or(Lex_t *lp) {
+static_fn Shnode_t *test_or(Lex_t *lp) {
     Shnode_t *t = test_and(lp);
     while (lp->token == ORFSYM) t = makelist(lp, TORF | TTEST, t, test_and(lp));
     return (t);
 }
 
-static Shnode_t *test_and(Lex_t *lp) {
+static_fn Shnode_t *test_and(Lex_t *lp) {
     Shnode_t *t = test_primary(lp);
     while (lp->token == ANDFSYM) t = makelist(lp, TAND | TTEST, t, test_primary(lp));
     return (t);
@@ -1769,7 +1769,7 @@ static Shnode_t *test_and(Lex_t *lp) {
 //
 // Convert =~ into == ~(E).
 //
-static void ere_match(void) {
+static_fn void ere_match(void) {
     Sfio_t *base, *iop = sfopen((Sfio_t *)0, " ~(E)", "s");
     int c;
 
@@ -1783,7 +1783,7 @@ static void ere_match(void) {
     fcfopen(base);
 }
 
-static Shnode_t *test_primary(Lex_t *lexp) {
+static_fn Shnode_t *test_primary(Lex_t *lexp) {
     struct argnod *arg;
     Shnode_t *t;
     int num, token;
@@ -1905,7 +1905,7 @@ unsigned long kiaentity(Lex_t *lexp, const char *name, int len, int type, int fi
     return np->hash;
 }
 
-static void kia_add(Namval_t *np, void *data) {
+static_fn void kia_add(Namval_t *np, void *data) {
     char *name = nv_name(np);
     Lex_t *lp = (Lex_t *)data;
     UNUSED(data);

@@ -99,20 +99,20 @@ struct lexdata {
 #define setchar(lp, c) (lp->lexd.lastc = ((lp->lexd.lastc & ~0xff) | (c)))
 #define poplevel(lp) (lp->lexd.lastc = lp->lexd.lex_match[--lp->lexd.level])
 
-static char *fmttoken(Lex_t *, int, char *);
+static_fn char *fmttoken(Lex_t *, int, char *);
 #ifdef SF_BUFCONST
-static int alias_exceptf(Sfio_t *, int, void *, Sfdisc_t *);
+static_fn int alias_exceptf(Sfio_t *, int, void *, Sfdisc_t *);
 #else
-static int alias_exceptf(Sfio_t *, int, Sfdisc_t *);
+static_fn int alias_exceptf(Sfio_t *, int, Sfdisc_t *);
 #endif
-static void setupalias(Lex_t *, const char *, Namval_t *);
-static int comsub(Lex_t *, int);
-static void nested_here(Lex_t *);
-static int here_copy(Lex_t *, struct ionod *);
-static bool stack_grow(Lex_t *);
+static_fn void setupalias(Lex_t *, const char *, Namval_t *);
+static_fn int comsub(Lex_t *, int);
+static_fn void nested_here(Lex_t *);
+static_fn int here_copy(Lex_t *, struct ionod *);
+static_fn bool stack_grow(Lex_t *);
 static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
 
-static void refvar(Lex_t *lp, int type) {
+static_fn void refvar(Lex_t *lp, int type) {
     Shell_t *shp = lp->sh;
     Stk_t *stkp = shp->stk;
     off_t off = 0;
@@ -148,7 +148,7 @@ static void refvar(Lex_t *lp, int type) {
 // This routine gets called when reading across a buffer boundary.
 // If lexd.nocopy is off, then current token is saved on the stack.
 //
-static void lex_advance(Sfio_t *iop, const char *buff, int size, void *context) {
+static_fn void lex_advance(Sfio_t *iop, const char *buff, int size, void *context) {
     Lex_t *lp = (Lex_t *)context;
     Shell_t *shp = lp->sh;
     Sfio_t *log = shp->funlog;
@@ -188,7 +188,7 @@ static void lex_advance(Sfio_t *iop, const char *buff, int size, void *context) 
 //
 // Fill up another input buffer. Preserves lexical state.
 //
-static int lexfill(Lex_t *lp) {
+static_fn int lexfill(Lex_t *lp) {
     int c;
     Lex_t savelex;
     struct argnod *ap;
@@ -1384,7 +1384,7 @@ breakloop:
 //
 // Read to end of command substitution.
 //
-static int comsub(Lex_t *lp, int endtok) {
+static_fn int comsub(Lex_t *lp, int endtok) {
     int n, c, count = 1;
     int line = lp->sh->inlineno;
     struct ionod *inheredoc = lp->heredoc;
@@ -1518,7 +1518,7 @@ done:
 // Here-doc nested in $(...).
 // Allocate ionode with delimiter filled in without disturbing stak.
 //
-static void nested_here(Lex_t *lp) {
+static_fn void nested_here(Lex_t *lp) {
     struct ionod *iop;
     int n = 0, offset;
     struct argnod *arg = lp->arg;
@@ -1585,7 +1585,7 @@ void sh_lexskip(Lex_t *lp, int close, int copy, int state) {
 //
 // Returns 1 for complete here-doc, 0 for EOF.
 //
-static int here_copy(Lex_t *lp, struct ionod *iop) {
+static_fn int here_copy(Lex_t *lp, struct ionod *iop) {
     const char *state;
     int c, n;
     char *bufp, *cp;
@@ -1770,7 +1770,7 @@ done:
 //
 // Generates string for given token.
 //
-static char *fmttoken(Lex_t *lp, int sym, char *tok) {
+static_fn char *fmttoken(Lex_t *lp, int sym, char *tok) {
     int n = 1;
 
     if (sym < 0) return ((char *)sh_translate(e_lexzerobyte));
@@ -1863,7 +1863,7 @@ void sh_syntax(Lex_t *lp) {
     }
 }
 
-static char *stack_shift(Stk_t *stkp, char *sp, char *dp) {
+static_fn char *stack_shift(Stk_t *stkp, char *sp, char *dp) {
     char *ep;
     int offset = stktell(stkp);
     int left = offset - (sp - stkptr(stkp, 0));
@@ -2124,9 +2124,9 @@ struct alias {
 // This code gets called whenever an end of string is found with alias.
 //
 #ifdef SF_BUFCONST
-static int alias_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle)
+static_fn int alias_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle)
 #else
-static int alias_exceptf(Sfio_t *iop, int type, Sfdisc_t *handle)
+static_fn int alias_exceptf(Sfio_t *iop, int type, Sfdisc_t *handle)
 #endif
 {
     struct alias *ap = (struct alias *)handle;
@@ -2159,7 +2159,7 @@ done:
     return 0;
 }
 
-static void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
+static_fn void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
     Sfio_t *iop, *base;
     struct alias *ap = (struct alias *)malloc(sizeof(struct alias));
 
@@ -2191,7 +2191,7 @@ static void setupalias(Lex_t *lp, const char *string, Namval_t *np) {
 //
 // Grow storage stack for nested constructs by STACK_ARRAY.
 //
-static bool stack_grow(Lex_t *lp) {
+static_fn bool stack_grow(Lex_t *lp) {
     lp->lexd.lex_max += STACK_ARRAY;
     if (lp->lexd.lex_match) {
         lp->lexd.lex_match =

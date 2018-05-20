@@ -42,14 +42,14 @@
 #define NEED_BRACE 2
 #define NO_BRACKET 4
 
-static void p_comlist(const struct dolnod *, int);
-static void p_arg(const struct argnod *, int endchar, int opts);
-static void p_comarg(const struct comnod *);
-static void p_keyword(const char *, int);
-static void p_redirect(const struct ionod *);
-static void p_switch(const struct regnod *);
-static void here_body(const struct ionod *);
-static void p_tree(const Shnode_t *, int);
+static_fn void p_comlist(const struct dolnod *, int);
+static_fn void p_arg(const struct argnod *, int endchar, int opts);
+static_fn void p_comarg(const struct comnod *);
+static_fn void p_keyword(const char *, int);
+static_fn void p_redirect(const struct ionod *);
+static_fn void p_switch(const struct regnod *);
+static_fn void here_body(const struct ionod *);
+static_fn void p_tree(const Shnode_t *, int);
 
 static int level;
 static int begin_line;
@@ -68,7 +68,7 @@ void sh_deparse(Sfio_t *out, const Shnode_t *t, int tflags) {
 }
 
 // Print script corresponding to shell tree <t>.
-static void p_tree(const Shnode_t *t, int tflags) {
+static_fn void p_tree(const Shnode_t *t, int tflags) {
     char *cp;
     int save = end_line;
     int needbrace = (tflags & NEED_BRACE);
@@ -318,7 +318,7 @@ static void p_tree(const Shnode_t *t, int tflags) {
 // Print a keyword.
 // Increment indent level for flag==BEGIN.
 // Decrement indent level for flag==END.
-static void p_keyword(const char *word, int flag) {
+static_fn void p_keyword(const char *word, int flag) {
     int sep;
 
     if (flag == END) {
@@ -339,7 +339,7 @@ static void p_keyword(const char *word, int flag) {
     if (flag != END) level++;
 }
 
-static void p_arg(const struct argnod *arg, int endchar, int opts) {
+static_fn void p_arg(const struct argnod *arg, int endchar, int opts) {
     const char *cp;
     int flag;
 
@@ -375,7 +375,7 @@ static void p_arg(const struct argnod *arg, int endchar, int opts) {
     } while ((opts & POST) && arg);
 }
 
-static void p_redirect(const struct ionod *iop) {
+static_fn void p_redirect(const struct ionod *iop) {
     char *cp;
     int iof, iof2;
 
@@ -440,7 +440,7 @@ static void p_redirect(const struct ionod *iop) {
     }
 }
 
-static void p_comarg(const struct comnod *com) {
+static_fn void p_comarg(const struct comnod *com) {
     int flag = end_line;
 
     if (com->comtyp & FAMP) sfwrite(outfile, "& ", 2);
@@ -457,7 +457,7 @@ static void p_comarg(const struct comnod *com) {
     if (com->comio) p_redirect(com->comio);
 }
 
-static void p_comlist(const struct dolnod *dol, int endchar) {
+static_fn void p_comlist(const struct dolnod *dol, int endchar) {
     char *cp, *const *argv;
     int flag = ' ', special;
 
@@ -481,7 +481,7 @@ static void p_comlist(const struct dolnod *dol, int endchar) {
     } while (cp);
 }
 
-static void p_switch(const struct regnod *reg) {
+static_fn void p_switch(const struct regnod *reg) {
     if (level > 1) sfnputc(outfile, '\t', level - 1);
     p_arg(reg->regptr, ')', PRE);
     begin_line = 0;
@@ -497,7 +497,7 @@ static void p_switch(const struct regnod *reg) {
 }
 
 // Output `here` documents.
-static void here_body(const struct ionod *iop) {
+static_fn void here_body(const struct ionod *iop) {
     Sfio_t *infile;
 #if 0
     // TODO: Figure out if this should be enabled. Originally excluded via `#ifdef xxx`.

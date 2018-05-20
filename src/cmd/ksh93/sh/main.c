@@ -50,10 +50,10 @@
 #define CMD_LENGTH 64
 
 // These routines are referenced by this module.
-static void exfile(Shell_t *, Sfio_t *, int);
-static void chkmail(Shell_t *shp, char *);
+static_fn void exfile(Shell_t *, Sfio_t *, int);
+static_fn void chkmail(Shell_t *shp, char *);
 #if !defined(_NEXT_SOURCE)
-static void fixargs(char **, int);
+static_fn void fixargs(char **, int);
 #else  // _NEXT_SOURCE
 #define fixargs(a, b)
 #endif  // _NEXT_SOURCE
@@ -343,7 +343,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
 // iop is not null when the input is a string.
 // fdin is the input file descriptor.
 //
-static void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
+static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
     time_t curtime;
     Shnode_t *t;
     int maxtry = IOMAXTRY, tdone = 0, execflags;
@@ -559,7 +559,7 @@ done:
 }
 
 // Prints out messages if files in list have been modified since last call.
-static void chkmail(Shell_t *shp, char *files) {
+static_fn void chkmail(Shell_t *shp, char *files) {
     char *cp, *sp, *qp;
     char save;
     struct argnod *arglist = 0;
@@ -634,7 +634,7 @@ static void chkmail(Shell_t *shp, char *files) {
 // Fix up command line for ps command.
 // Mode is 0 for initialization.
 //
-static void fixargs(char **argv, int mode) {
+static_fn void fixargs(char **argv, int mode) {
 #if EXECARGS
     *execargs = (char *)argv;
 #else

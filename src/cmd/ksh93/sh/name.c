@@ -44,13 +44,13 @@ static Dt_t *Refdict;
 static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *),
                             sizeof(struct Namref)};
 
-static void attstore(Namval_t *, void *);
+static_fn void attstore(Namval_t *, void *);
 #ifndef _ENV_H
-static void pushnam(Namval_t *, void *);
-static char *staknam(Shell_t *, Namval_t *, char *);
+static_fn void pushnam(Namval_t *, void *);
+static_fn char *staknam(Shell_t *, Namval_t *, char *);
 #endif  // _ENV_H
-static void rightjust(char *, int, int);
-static char *lastdot(char *, int, void *);
+static_fn void rightjust(char *, int, int);
+static_fn char *lastdot(char *, int, void *);
 
 struct adata {
     Shell_t *sh;
@@ -90,7 +90,7 @@ static struct Namcache nvcache;
 
 char nv_local = 0;
 #ifndef _ENV_H
-static void (*nullscan)(Namval_t *, void *);
+static_fn void (*nullscan)(Namval_t *, void *);
 #endif  // _ENV_H
 
 #if (SFIO_VERSION <= 20010201L)
@@ -102,7 +102,7 @@ static void (*nullscan)(Namval_t *, void *);
 #include "builtins.h"
 #include "shnodes.h"
 
-static char *getbuf(size_t len) {
+static_fn char *getbuf(size_t len) {
     static char *buf = NULL;
     static size_t buflen = 0;
     if (buflen < len) {
@@ -621,7 +621,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
 //
 // Copy the subscript onto the stack.
 //
-static void stak_subscript(const char *sub, int last) {
+static_fn void stak_subscript(const char *sub, int last) {
     int c;
     stakputc('[');
     while ((c = *sub++)) {
@@ -634,7 +634,7 @@ static void stak_subscript(const char *sub, int last) {
 //
 // Construct a new name from a prefix and base name on the stack.
 //
-static char *copystack(Shell_t *shp, const char *prefix, const char *name, const char *sub) {
+static_fn char *copystack(Shell_t *shp, const char *prefix, const char *name, const char *sub) {
     int last = 0, offset = stktell(shp->stk);
     if (prefix) {
         sfputr(shp->stk, prefix, -1);
@@ -658,7 +658,7 @@ static char *copystack(Shell_t *shp, const char *prefix, const char *name, const
 // Grow this stack string <name> by <n> bytes and move from cp-1 to end right
 // by <n>.  Returns beginning of string on the stack.
 //
-static char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
+static_fn char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
     char *name = (char *)cname;
     int offset = name - stkptr(shp->stk, 0);
     int m = cp - name;
@@ -671,7 +671,7 @@ static char *stack_extend(Shell_t *shp, const char *cname, char *cp, int n) {
     return name;
 }
 
-static Namval_t *nv_parentnode(Namval_t *np) {
+static_fn Namval_t *nv_parentnode(Namval_t *np) {
     Namval_t *mp = np;
     if (nv_istable(np)) return nv_parent(np);
     mp = nv_typeparent(np);
@@ -1377,8 +1377,8 @@ skip:
     return np;
 }
 
-static int ja_size(char *, int, int);
-static void ja_restore(void);
+static_fn int ja_size(char *, int, int);
+static_fn void ja_restore(void);
 static char *savep;
 static char savechars[8 + 1];
 
@@ -1759,7 +1759,7 @@ void nv_putval(Namval_t *np, const char *string, int flags) {
 //
 // If the leftmost digit in <str> is not a digit, <fill> will default to a blank.
 //
-static void rightjust(char *str, int size, int fill) {
+static_fn void rightjust(char *str, int size, int fill) {
     int n;
     char *cp, *sp;
     n = strlen(str);
@@ -1797,7 +1797,7 @@ static void rightjust(char *str, int size, int fill) {
 // spaces if they cross the boundary. <type> is non-zero for right justified  fields.
 //
 
-static int ja_size(char *str, int size, int type) {
+static_fn int ja_size(char *str, int size, int type) {
     char *cp = str;
     int c, n = size;
     int outsize;
@@ -1834,14 +1834,14 @@ static int ja_size(char *str, int size, int type) {
     return n;
 }
 
-static void ja_restore(void) {
+static_fn void ja_restore(void) {
     char *cp = savechars;
     while (*cp) *savep++ = *cp++;
     savep = 0;
 }
 
 #ifndef _ENV_H
-static char *staknam(Shell_t *shp, Namval_t *np, char *value) {
+static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
     char *p, *q;
 
     q = stkalloc(shp->stk, strlen(nv_name(np)) + (value ? strlen(value) : 0) + 2);
@@ -1858,7 +1858,7 @@ static char *staknam(Shell_t *shp, Namval_t *np, char *value) {
 // Put the name and attribute into value of attributes variable.
 //
 #ifdef _ENV_H
-static void attstore(Namval_t *np, void *data) {
+static_fn void attstore(Namval_t *np, void *data) {
     struct adata Shell_t *shp = (struct adata *)data->sh;
     int flag, c = ' ';
 
@@ -1877,7 +1877,7 @@ static void attstore(Namval_t *np, void *data) {
     sfputr(shp->stk, nv_name(np) - 1);
 }
 #else   // _ENV_H
-static void attstore(Namval_t *np, void *data) {
+static_fn void attstore(Namval_t *np, void *data) {
     int flag = np->nvflag;
     struct adata *ap = (struct adata *)data;
     ap->sh = (Shell_t *)data;
@@ -1906,7 +1906,7 @@ static void attstore(Namval_t *np, void *data) {
 #endif  // _ENV_H
 
 #ifndef _ENV_H
-static void pushnam(Namval_t *np, void *data) {
+static_fn void pushnam(Namval_t *np, void *data) {
     char *value;
     struct adata *ap = (struct adata *)data;
     ap->sh = sh_ptr(np);
@@ -1984,7 +1984,7 @@ struct scan {
     void *scandata;
 };
 
-static int scanfilter(Dt_t *dict, void *arg, void *data) {
+static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
     Namval_t *np = (Namval_t *)arg;
     int k = np->nvflag;
     struct scan *sp = (struct scan *)data;
@@ -2109,7 +2109,7 @@ void sh_envnolocal(Namval_t *np, void *data) {
 //
 void nv_close(Namval_t *np) { UNUSED(np); }
 
-static void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
+static_fn void table_unset(Shell_t *shp, Dt_t *root, int flags, Dt_t *oroot) {
     Namval_t *np, *nq, *npnext;
     for (np = (Namval_t *)dtfirst(root); np; np = npnext) {
         nq = dtsearch(oroot, np);
@@ -2283,7 +2283,7 @@ struct optimize {
 
 static struct optimize *opt_free;
 
-static void optimize_clear(Namval_t *np, Namfun_t *fp) {
+static_fn void optimize_clear(Namval_t *np, Namfun_t *fp) {
     struct optimize *op = (struct optimize *)fp;
     nv_stack(np, fp);
     nv_stack(np, (Namfun_t *)0);
@@ -2295,12 +2295,12 @@ static void optimize_clear(Namval_t *np, Namfun_t *fp) {
     }
 }
 
-static void put_optimize(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_optimize(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     nv_putv(np, val, flags, fp);
     optimize_clear(np, fp);
 }
 
-static Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     return NULL;
 }
 
@@ -2656,7 +2656,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
     return;
 }
 
-static char *oldgetenv(const char *string) {
+static_fn char *oldgetenv(const char *string) {
     char c0, c1;
     char *cp;
     const char *sp;
@@ -2739,7 +2739,7 @@ char *setenviron(const char *name) { return sh_setenviron(name); }
 // Normalize <cp> and return pointer to subscript if any if <eq> is specified, return pointer to
 // first = not in a subscript.
 //
-static char *lastdot(char *cp, int eq, void *context) {
+static_fn char *lastdot(char *cp, int eq, void *context) {
     char *ep = 0;
     int c;
 
@@ -2768,7 +2768,7 @@ static char *lastdot(char *cp, int eq, void *context) {
 //
 // Purge all entries whose name is of the form name.
 //
-static void cache_purge(const char *name) {
+static_fn void cache_purge(const char *name) {
     int c;
     size_t len = strlen(name);
     struct Cache_entry *xp;

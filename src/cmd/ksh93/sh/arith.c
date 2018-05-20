@@ -292,7 +292,7 @@ static const Fltconst_t fltconst[] = {
     },
 };
 
-static Namval_t *check_limits(Shell_t *shp, char *cp) {
+static_fn Namval_t *check_limits(Shell_t *shp, char *cp) {
     static Namval_t node;
     static Sfdouble_t dd;
     Namval_t *np;
@@ -357,7 +357,7 @@ static Namval_t *check_limits(Shell_t *shp, char *cp) {
     return NULL;
 }
 
-static Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
+static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
     int flag = lvalue->flag;
     char *sub = 0, *cp = (char *)np;
     Namval_t *mp;
@@ -489,7 +489,7 @@ Math_f sh_mathstdfun(const char *fname, size_t fsize, short *nargs) {
 
 int sh_mathstd(const char *name) { return sh_mathstdfun(name, strlen(name), NULL) != 0; }
 
-static Sfdouble_t number(const char *s, char **p, int b, struct lval *lvalue) {
+static_fn Sfdouble_t number(const char *s, char **p, int b, struct lval *lvalue) {
     Sfdouble_t r;
     char *t;
     int oerrno;
@@ -548,7 +548,7 @@ static Sfdouble_t number(const char *s, char **p, int b, struct lval *lvalue) {
     return r;
 }
 
-static Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdouble_t n) {
+static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdouble_t n) {
     Shell_t *shp = lvalue->shp;
     Sfdouble_t r = 0;
     char *str = (char *)*ptr;

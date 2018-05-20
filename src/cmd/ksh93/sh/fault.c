@@ -114,7 +114,7 @@ void handle_sigsegv(int signo) {
 //
 // This exception handler is called after vmalloc() unlocks the region.
 //
-static int malloc_done(Vmalloc_t *vm, int type, void *val, Vmdisc_t *dp) {
+static_fn int malloc_done(Vmalloc_t *vm, int type, void *val, Vmdisc_t *dp) {
     Shell_t *shp = sh_getinterp();
     dp->exceptf = 0;
     sh_exit(shp, SH_EXITSIG);
@@ -122,7 +122,7 @@ static int malloc_done(Vmalloc_t *vm, int type, void *val, Vmdisc_t *dp) {
 }
 #endif
 
-static int notify_builtin(Shell_t *shp, int sig) {
+static_fn int notify_builtin(Shell_t *shp, int sig) {
     int action = 0;
 #ifdef ERROR_NOTIFY
     if (error_info.flags & ERROR_NOTIFY) action = (*shp->bltinfun)(-sig, NULL, NULL);
@@ -132,7 +132,7 @@ static int notify_builtin(Shell_t *shp, int sig) {
     return action;
 }
 
-static void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
+static_fn void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
     if (info) {
         struct Siginfo *jp, *ip;
         ip = malloc(sizeof(struct Siginfo));
@@ -572,7 +572,7 @@ void sh_exit(int xno) {
     sh_exit_20120720(shp, xno);
 }
 
-static void array_notify(Namval_t *np, void *data) {
+static_fn void array_notify(Namval_t *np, void *data) {
     Namarr_t *ap = nv_arrayptr(np);
     UNUSED(data);
 
@@ -645,7 +645,7 @@ void sh_done(void *ptr, int sig) {
 // Synthesize signal name for sig in buf.
 // pfx != 0 prepends SIG to default signal number.
 //
-static char *sig_name(Shell_t *shp, int sig, char *buf, int pfx) {
+static_fn char *sig_name(Shell_t *shp, int sig, char *buf, int pfx) {
     int i;
 
     i = 0;

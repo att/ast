@@ -44,16 +44,16 @@
 #define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)
 #define LIBCMD "cmd"
 
-static int canexecute(Shell_t *, char *, int);
-static void funload(Shell_t *, int, const char *);
-static void exscript(Shell_t *, char *, char *[], char *const *);
-static bool path_chkpaths(Shell_t *, Pathcomp_t *, Pathcomp_t *, Pathcomp_t *, int);
-static void path_checkdup(Shell_t *shp, Pathcomp_t *);
-static Pathcomp_t *defpath_init(Shell_t *shp);
+static_fn int canexecute(Shell_t *, char *, int);
+static_fn void funload(Shell_t *, int, const char *);
+static_fn void exscript(Shell_t *, char *, char *[], char *const *);
+static_fn bool path_chkpaths(Shell_t *, Pathcomp_t *, Pathcomp_t *, Pathcomp_t *, int);
+static_fn void path_checkdup(Shell_t *shp, Pathcomp_t *);
+static_fn Pathcomp_t *defpath_init(Shell_t *shp);
 
 static const char *std_path = NULL;
 
-static bool onstdpath(Shell_t *shp, const char *name) {
+static_fn bool onstdpath(Shell_t *shp, const char *name) {
     if (!std_path) defpath_init(shp);
     const char *cp = std_path, *sp;
     if (cp) {
@@ -70,7 +70,7 @@ static bool onstdpath(Shell_t *shp, const char *name) {
     return false;
 }
 
-static pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
+static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                            int spawn) {
 #ifdef SPAWN_cwd
     if (shp->vex->cur) {
@@ -81,7 +81,7 @@ static pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *c
     return execve(path, argv, envp);
 }
 
-static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
+static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                        pid_t pgid) {
     pid_t pid;
 #ifdef SIGTSTP
@@ -122,7 +122,7 @@ static pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char 
 // Used with command -x to run the command in multiple passes. Spawn is non-zero when invoked via
 // spawn. The exitval is set to the maximum for each execution.
 //
-static pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *const envp[],
+static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                         int spawn) {
     char **av, **xv;
     char **avlast = &argv[shp->xargmax], **saveargs = 0;
@@ -247,7 +247,7 @@ void path_delete(Pathcomp_t *first) {
 //
 // Returns library variable from .paths. The value might be returned on the stack overwriting path.
 //
-static char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
+static_fn char *path_lib(Shell_t *shp, Pathcomp_t *pp, char *path) {
     char *last = strrchr(path, '/');
     int r;
     struct stat statb;
@@ -295,7 +295,7 @@ void path_dump(Pathcomp_t *pp)
 //
 // Check for duplicate directories on PATH.
 //
-static void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
+static_fn void path_checkdup(Shell_t *shp, Pathcomp_t *pp) {
     char *name = pp->name;
     Pathcomp_t *oldpp, *first;
     int flag = 0;
@@ -362,13 +362,13 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
     return NULL;
 }
 
-static Pathcomp_t *defpath_init(Shell_t *shp) {
+static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
     if (!std_path && !(std_path = astconf("PATH", NULL, NULL))) std_path = e_defpath;
     Pathcomp_t *pp = (void *)path_addpath(shp, (Pathcomp_t *)0, (std_path), PATH_PATH);
     return pp;
 }
 
-static void path_init(Shell_t *shp) {
+static_fn void path_init(Shell_t *shp) {
     const char *val;
     Pathcomp_t *pp;
 
@@ -405,7 +405,7 @@ Pathcomp_t *path_get(Shell_t *shp, const char *name) {
 //
 // Open file corresponding to name using path give by <pp>.
 //
-static int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int fun) {
+static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int fun) {
     int fd = -1;
     struct stat statb;
     Pathcomp_t *oldpp;
@@ -476,7 +476,7 @@ char *path_fullname(Shell_t *shp, const char *name) {
 //
 // Load functions from file <fno>.
 //
-static void funload(Shell_t *shp, int fno, const char *name) {
+static_fn void funload(Shell_t *shp, int fno, const char *name) {
     char *pname, *oldname = shp->st.filename, buff[IOBSIZE + 1];
     Namval_t *np;
     struct Ufunction *rp, *rpfirst;
@@ -592,7 +592,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
     return false;
 }
 
-static bool pwdinfpath(void) {
+static_fn bool pwdinfpath(void) {
     const char *pwd = nv_getval(PWDNOD);
     const char *fpath = nv_getval(FPATHNOD);
     int n;
@@ -801,7 +801,7 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 #endif  // S_IEXEC
 #endif  // S_IXUSR
 
-static int canexecute(Shell_t *shp, char *path, int isfun) {
+static_fn int canexecute(Shell_t *shp, char *path, int isfun) {
     struct stat statb;
     int fd = 0;
 
@@ -918,7 +918,7 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
 }
 
 #ifdef SPAWN_cwd
-static int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
+static_fn int vexexec(void *ptr, uintmax_t fd1, uintmax_t fd2) {
     char *devfd;
     int fd = -1;
     Spawnvex_noexec_t *ep = (Spawnvex_noexec_t *)ptr;
@@ -1126,7 +1126,7 @@ retry:
 //
 // File is executable but not machine code. Assume file is a Shell script and execute it.
 //
-static void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) {
+static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) {
     Sfio_t *sp;
 
     path = path_relative(shp, path);
@@ -1233,7 +1233,7 @@ openok:
 // Add a pathcomponent to the path search list and eliminate duplicates and non-existing absolute
 // paths.
 //
-static Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, const char *name,
+static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, const char *name,
                                 int flag) {
     Pathcomp_t *pp, *oldpp;
     int offset = stktell(shp->stk);
@@ -1301,7 +1301,7 @@ bool path_cmdlib(Shell_t *shp, const char *dir, bool on) {
 // This function checks for the .paths file in directory in <pp>. It assumes that the directory is
 // on the stack at <offset>.
 //
-static bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Pathcomp_t *pp,
+static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Pathcomp_t *pp,
                           int offset) {
     struct stat statb;
     int k, m, n, fd;
@@ -1526,7 +1526,7 @@ Pathcomp_t *path_dirfind(Pathcomp_t *first, const char *name, int c) {
 //
 // Get discipline for tracked alias.
 //
-static char *talias_get(Namval_t *np, Namfun_t *nvp) {
+static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
     Shell_t *shp = sh_ptr(np);
     Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
     char *ptr;
@@ -1538,7 +1538,7 @@ static char *talias_get(Namval_t *np, Namfun_t *nvp) {
     return ptr + PATH_OFFSET;
 }
 
-static void talias_put(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void talias_put(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     if (!val && np->nvalue.cp) {
         Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
         if (--pp->refcount <= 0) free(pp);

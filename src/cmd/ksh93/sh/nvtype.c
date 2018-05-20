@@ -125,10 +125,10 @@ typedef struct {
 
 #define alignof(t)((char *)&((_Align_ *)0)->_d##t - (char *)&((_Align_ *)0)->_c##t)
 
-static void put_type(Namval_t *, const char *, int, Namfun_t *);
-static Namval_t *create_type(Namval_t *, const char *, int, Namfun_t *);
-static Namfun_t *clone_type(Namval_t *, Namval_t *, int, Namfun_t *);
-static Namval_t *next_type(Namval_t *, Dt_t *, Namfun_t *);
+static_fn void put_type(Namval_t *, const char *, int, Namfun_t *);
+static_fn Namval_t *create_type(Namval_t *, const char *, int, Namfun_t *);
+static_fn Namfun_t *clone_type(Namval_t *, Namval_t *, int, Namfun_t *);
+static_fn Namval_t *next_type(Namval_t *, Dt_t *, Namfun_t *);
 
 static const Namdisc_t type_disc = {
     sizeof(Namtype_t), put_type, 0, 0, 0, create_type, clone_type, 0, next_type, 0,
@@ -175,7 +175,7 @@ size_t nv_datasize(Namval_t *np, size_t *offset) {
     return s;
 }
 
-static char *name_chtype(Namval_t *np, Namfun_t *fp) {
+static_fn char *name_chtype(Namval_t *np, Namfun_t *fp) {
     Namchld_t *pp = (Namchld_t *)fp;
     Shell_t *shp = pp->ptype->sh;
     char *cp, *sub;
@@ -194,7 +194,7 @@ static char *name_chtype(Namval_t *np, Namfun_t *fp) {
     return sfstruse(shp->strbuf);
 }
 
-static void put_chtype(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
+static_fn void put_chtype(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     if (!val && nv_isattr(np, NV_REF)) return;
     nv_putv(np, val, flag, fp);
     if (!val) {
@@ -215,12 +215,12 @@ static void put_chtype(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     }
 }
 
-static Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     if (flags & NV_NODISC) return NULL;
     return nv_clone_disc(fp, flags);
 }
 
-static Namval_t *create_chtype(Namval_t *np, const char *name, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_chtype(Namval_t *np, const char *name, int flag, Namfun_t *fp) {
     Namchld_t *xp = (Namchld_t *)fp;
     Namval_t *pp = xp->ptype->parent, *nq;
     Shell_t *shp = np->nvshell;
@@ -238,7 +238,7 @@ static Namval_t *create_chtype(Namval_t *np, const char *name, int flag, Namfun_
 static const Namdisc_t chtype_disc = {sizeof(Namchld_t), put_chtype,   0,          0, 0,
                                       create_chtype,     clone_chtype, name_chtype};
 
-static Namval_t *findref(void *nodes, int n) {
+static_fn Namval_t *findref(void *nodes, int n) {
     Namval_t *tp, *np = nv_namptr(nodes, n);
     char *name = np->nvname;
     int i = n, len = strrchr(name, '.') - name;
@@ -255,7 +255,7 @@ static Namval_t *findref(void *nodes, int n) {
     return NULL;
 }
 
-static int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, int flag) {
+static_fn int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, int flag) {
     Namval_t *nq = nv_namptr(dp->nodes, i);
     Namfun_t *fp;
 
@@ -322,7 +322,7 @@ static int fixnode(Namtype_t *dp, Namtype_t *pp, int i, struct Namref *nrp, int 
     return 0;
 }
 
-static Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namtype_t *dp, *pp = (Namtype_t *)fp;
     Shell_t *shp = (Shell_t *)np->nvshell;
     int i;
@@ -452,7 +452,7 @@ static Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp)
 // Return Namval_t* corresponding to child <name> in <np>.
 // Try complete match first, otherwise find match to first.
 //
-static Namval_t *create_type(Namval_t *np, const char *name, int flag, Namfun_t *fp) {
+static_fn Namval_t *create_type(Namval_t *np, const char *name, int flag, Namfun_t *fp) {
     Namtype_t *dp = (Namtype_t *)fp;
     const char *cp = name;
     int i = 0, n, r = 0, s = 0;
@@ -509,7 +509,7 @@ found:
     return nq;
 }
 
-static void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
+static_fn void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *nq;
 
@@ -541,7 +541,7 @@ static void put_type(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     }
 }
 
-static Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
+static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     Namtype_t *dp = (Namtype_t *)fp;
     Namarr_t *ap;
 
@@ -561,7 +561,7 @@ static Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     return nv_namptr(dp->nodes, dp->current);
 }
 
-static Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     Namfun_t *pp = (Namfun_t *)malloc(fp->dsize);
 
     memcpy((void *)pp, (void *)fp, fp->dsize);
@@ -576,7 +576,7 @@ static Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return pp;
 }
 
-static int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
+static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
     Shell_t *shp = sh_getinterp();
     char *cp, **help, buffer[256];
     Namtype_t *dp;
@@ -696,7 +696,7 @@ static int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
     return 0;
 }
 
-static int std_disc(Namval_t *mp, Namtype_t *pp) {
+static_fn int std_disc(Namval_t *mp, Namtype_t *pp) {
     const char *sp, *cp = strrchr(mp->nvname, '.');
     const char **argv;
     int i;
@@ -1196,7 +1196,7 @@ Namval_t *nv_type(Namval_t *np) {
 //
 // Call any and all create functions.
 //
-static void type_init(Namval_t *np) {
+static_fn void type_init(Namval_t *np) {
     Shell_t *shp = sh_ptr(np);
     int i;
     Namtype_t *dp, *pp = (Namtype_t *)nv_hasdisc(np, &type_disc);
@@ -1417,7 +1417,7 @@ Namval_t *nv_mkstruct(const char *name, int rsize, Fields_t *fields, void *conte
     return mp;
 }
 
-static void put_stat(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
+static_fn void put_stat(Namval_t *np, const char *val, int flag, Namfun_t *nfp) {
     if (val) {
         if (stat(val, (struct stat *)np->nvalue.cp) < 0)
             sfprintf(sfstderr, "stat of %s failed\n", val);
@@ -1444,7 +1444,7 @@ void nv_mkstat(Shell_t *shp) {
     nv_onattr(tp, NV_RDONLY);
 }
 
-static void write_indent(Sfio_t *out, char *str, int n, int indent) {
+static_fn void write_indent(Sfio_t *out, char *str, int n, int indent) {
     int c, first = 1;
     char *cp = str;
     while (n-- && (c = *str++)) {

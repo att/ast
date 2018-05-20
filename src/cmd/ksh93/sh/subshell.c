@@ -294,7 +294,7 @@ Namval_t *sh_assignok(Namval_t *np, int add) {
 //
 // Restore the variables.
 //
-static void nv_restore(struct subshell *sp) {
+static_fn void nv_restore(struct subshell *sp) {
     struct Link *lp, *lq;
     Namval_t *mp, *np;
     const char *save = sp->shpwd;
@@ -381,7 +381,7 @@ Dt_t *sh_subfuntree(Shell_t *shp, int create) {
     return sp->shp->fun_tree;
 }
 
-static void table_unset(Dt_t *root, int fun) {
+static_fn void subshell_table_unset(Dt_t *root, int fun) {
     Namval_t *np, *nq;
     int flag;
     for (np = (Namval_t *)dtfirst(root); np; np = nq) {
@@ -648,12 +648,12 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         shp->options = sp->options;
         if (sp->salias) {
             shp->alias_tree = dtview(sp->salias, 0);
-            table_unset(sp->salias, 0);
+            subshell_table_unset(sp->salias, 0);
             dtclose(sp->salias);
         }
         if (sp->sfun) {
             shp->fun_tree = dtview(sp->sfun, 0);
-            table_unset(sp->sfun, 1);
+            subshell_table_unset(sp->sfun, 1);
             dtclose(sp->sfun);
         }
         n = shp->st.trapmax - savst.trapmax;
