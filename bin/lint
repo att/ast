@@ -80,7 +80,7 @@ cd build
 # produce a version of the compile_commands.json file that only contains the files to be linted.
 # Finally, we need the `-D` and `-I` flags from the build rule for the IWYU and cppcheck programs.
 set project_file compile_commands_partial.json
-set c_files (../bin/partition_compile_db compile_commands.json $project_file $c_files)
+set c_files (../scripts/partition_compile_db compile_commands.json $project_file $c_files)
 if not set -q c_files[1]
     echo >&2
     echo 'WARNING: No C files to check' >&2
@@ -96,7 +96,7 @@ end
 #
 # We also need this value for cppcheck to find some system headers again, on platforms like macOS,
 # where the system headers aren't found at /usr/include.
-set system_hdrs (clang -H -E ../bin/hdrs.c 2>&1 | head -1 | sed -e 's/^\. //' -e 's/\/[^/]*$//')
+set system_hdrs (clang -H -E ../etc/hdrs.c 2>&1 | head -1 | sed -e 's/^\. //' -e 's/\/[^/]*$//')
 
 # On macOS the system headers used by `clang` may not be rooted at /usr/include.
 set lint_args -I. -I$system_hdrs
@@ -115,7 +115,7 @@ if type -q include-what-you-use
     for c_file in $c_files
         include-what-you-use -Xiwyu --transitive_includes_only --std=c99 \
             -Wno-expansion-to-defined -Wno-nullability-completeness \
-            $lint_args (../bin/extract_flags $project_file $c_file) $c_file 2>&1
+            $lint_args (../scripts/extract_flags $project_file $c_file) $c_file 2>&1
     end
 end
 
@@ -138,7 +138,7 @@ if type -q cppcheck
     # extract the -D and -I flags. So we do it ourselves and pass the flags on the cppcheck
     # command line.
     for c_file in $c_files
-        set cppcheck_args $lint_args (../bin/extract_flags $project_file $c_file) \
+        set cppcheck_args $lint_args (../scripts/extract_flags $project_file $c_file) \
             -q --verbose --std=c99 --std=posix --language=c --template $template \
             --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
             --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
@@ -152,7 +152,7 @@ if type -q cppcheck
     echo 'cannot suppress.'
     echo ========================================
     for c_file in $c_files
-        set cppcheck_args $lint_args (../bin/extract_flags $project_file $c_file) \
+        set cppcheck_args $lint_args (../scripts/extract_flags $project_file $c_file) \
             -q --verbose --std=c99 --std=posix --language=c --template $template \
             --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
             --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
