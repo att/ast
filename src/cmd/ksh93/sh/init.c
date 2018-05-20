@@ -930,8 +930,17 @@ static const Namdisc_t SH_MATCH_disc = {sizeof(struct match), 0, get_match, 0, 0
 
 static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp)); }
 
-static_fn Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
-    const char *cp = e_version + strlen(e_version) - 10;
+// This is invoked when var `.sh.version` is used in a numeric context such as
+// `$(( .sh.version ))`.
+//
+// TODO: Figure out what we want this to do with a semantic version string and
+// a version string that may include information about the git commit used for
+// the build. The original version converted the YYYY-MM-DD date stamp into the
+// number represented by YYYYMMDD. But note it would return a nonsensical value
+// if a date stamp in the correct form did not start exactly 10 characters
+// before the end of the string referred to by`e_version`.
+static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
+    const char *cp = SH_RELEASE;
     int c;
     Sflong_t t = 0;
     UNUSED(fp);
