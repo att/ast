@@ -50,7 +50,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
 
 #else  // _no_ulimit
 
-static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+static_fn int ulimit_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     const Limit_t *tp;
 
     for (tp = shtab_limits; tp->option; tp++) {
@@ -80,7 +80,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
 
     memset(&disc, 0, sizeof(disc));
     disc.version = OPT_VERSION;
-    disc.infof = infof;
+    disc.infof = ulimit_infof;
     opt_info.disc = &disc;
     while ((n = optget(argv, sh_optulimit))) {
         switch (n) {

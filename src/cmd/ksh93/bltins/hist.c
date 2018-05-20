@@ -33,7 +33,7 @@
 
 #define HIST_RECURSE 5
 
-static void hist_subst(Shell_t *shp, const char *, int fd, char *);
+static_fn void hist_subst(Shell_t *shp, const char *, int fd, char *);
 
 //
 // Builtin `hist`.
@@ -245,7 +245,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
 // Given a file containing a command and a string of the form old=new, execute the command with the
 // string old replaced by new.
 //
-static void hist_subst(Shell_t *shp, const char *command, int fd, char *replace) {
+static_fn void hist_subst(Shell_t *shp, const char *command, int fd, char *replace) {
     char *newp = replace;
     char *sp;
     int c;

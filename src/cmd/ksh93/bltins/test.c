@@ -60,9 +60,9 @@
 #endif  // S_ISSOCK
 
 #define permission(a, f) (sh_access(a, f) == 0)
-static time_t test_time(const char *, const char *);
-static int test_stat(const char *, struct stat *);
-static int test_mode(const char *);
+static_fn time_t test_time(const char *, const char *);
+static_fn int test_stat(const char *, struct stat *);
+static_fn int test_mode(const char *);
 
 // Single char string compare.
 #define c_eq(a, c) (*a == c && *(a + 1) == 0)
@@ -76,11 +76,11 @@ struct test {
     char **av;
 };
 
-static char *nxtarg(struct test *, int);
-static int expr(struct test *, int);
-static int e3(struct test *);
+static_fn char *nxtarg(struct test *, int);
+static_fn int eval_expr(struct test *, int);
+static_fn int eval_e3(struct test *);
 
-static int test_strmatch(Shell_t *shp, const char *str, const char *pat) {
+static_fn int test_strmatch(Shell_t *shp, const char *str, const char *pat) {
     int match[2 * (MATCH_MAX + 1)], n;
     int c, m = 0;
     const char *cp = pat;
@@ -201,7 +201,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
         }
     }
     tdata.ac = argc;
-    result = !expr(&tdata, 0);
+    result = !eval_expr(&tdata, 0);
 
 done:
     sh_popcontext(shp, &buff);
@@ -214,11 +214,11 @@ done:
 // Flag is 1 when in parenthesis.
 // Flag is 2 when evaluating -a.
 //
-static int expr(struct test *tp, int flag) {
+static_fn int eval_expr(struct test *tp, int flag) {
     int r;
     char *p;
 
-    r = e3(tp);
+    r = eval_e3(tp);
     while (tp->ap < tp->ac) {
         p = nxtarg(tp, 0);
         // Check for -o and -a.
@@ -232,10 +232,10 @@ static int expr(struct test *tp, int flag) {
                     tp->ap--;
                     break;
                 }
-                r |= expr(tp, 3);
+                r |= eval_expr(tp, 3);
                 continue;
             } else if (*p == 'a') {
-                r &= expr(tp, 2);
+                r &= eval_expr(tp, 2);
                 continue;
             }
         }
@@ -245,7 +245,7 @@ static int expr(struct test *tp, int flag) {
     return r;
 }
 
-static char *nxtarg(struct test *tp, int mt) {
+static_fn char *nxtarg(struct test *tp, int mt) {
     if (tp->ap >= tp->ac) {
         if (mt) {
             tp->ap++;
@@ -256,15 +256,15 @@ static char *nxtarg(struct test *tp, int mt) {
     return tp->av[tp->ap++];
 }
 
-static int e3(struct test *tp) {
+static_fn int eval_e3(struct test *tp) {
     char *arg, *cp;
     int op;
     char *binop;
 
     arg = nxtarg(tp, 0);
-    if (arg && c_eq(arg, '!')) return (!e3(tp));
+    if (arg && c_eq(arg, '!')) return (!eval_e3(tp));
     if (c_eq(arg, '(')) {
-        op = expr(tp, 1);
+        op = eval_expr(tp, 1);
         cp = nxtarg(tp, 0);
         if (!cp || !c_eq(cp, ')')) errormsg(SH_DICT, ERROR_exit(2), e_missing, "')'");
         return op;
@@ -516,7 +516,7 @@ int test_binop(Shell_t *shp, int op, const char *left, const char *right) {
 //
 // Returns the modification time of f1 - modification time of f2.
 //
-static time_t test_time(const char *file1, const char *file2) {
+static_fn time_t test_time(const char *file1, const char *file2) {
     Time_t t1, t2;
     struct stat statb1, statb2;
     int r = test_stat(file2, &statb2);
@@ -632,7 +632,7 @@ skip:
 // Return the mode bits of file <file>. If <file> is null, then the previous stat buffer is used.
 // The mode bits are zero if the file doesn't exist.
 //
-static int test_mode(const char *file) {
+static_fn int test_mode(const char *file) {
     struct stat statb;
 
     statb.st_mode = 0;
@@ -643,7 +643,7 @@ static int test_mode(const char *file) {
 /*
  * do an fstat() for /dev/fd/n, otherwise stat()
  */
-static int test_stat(const char *name, struct stat *buff) {
+static_fn int test_stat(const char *name, struct stat *buff) {
     if (*name == 0) {
         errno = ENOENT;
         return (-1);

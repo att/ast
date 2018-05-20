@@ -64,7 +64,7 @@ struct Method {
     void *fun;
 };
 
-static int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
+static_fn int json2sh(Shell_t *shp, Sfio_t *in, Sfio_t *out) {
     int c, state = 0, lastc = 0, level = 0, line = 1;
     size_t here, offset = stktell(shp->stk);
     char *start;
@@ -369,7 +369,7 @@ struct timeout {
 //
 // Here for read timeout.
 //
-static void timedout(void *handle) {
+static_fn void timedout(void *handle) {
     struct timeout *tp = (struct timeout *)handle;
     sfclrlock(tp->iop);
     sh_exit(tp->shp, 1);

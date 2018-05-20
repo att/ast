@@ -32,7 +32,7 @@
 #include "builtins.h"
 #include "variables.h"
 
-static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+static_fn int getopts_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     Shell_t *shp = *(Shell_t **)(dp + 1);
     Stk_t *stkp = shp->stk;
     if ((shp->namespace && sh_fsearch(shp, s, 0)) || nv_search(s, shp->fun_tree, 0)) {
@@ -65,7 +65,7 @@ int b_getopts(int argc, char *argv[], Shbltin_t *context) {
     } disc;
     memset(&disc, 0, sizeof(disc));
     disc.hdr.version = OPT_VERSION;
-    disc.hdr.infof = infof;
+    disc.hdr.infof = getopts_infof;
     disc.sh = shp;
     value[1] = 0;
     key[1] = 0;

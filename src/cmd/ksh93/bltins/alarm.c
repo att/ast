@@ -49,12 +49,12 @@ struct tevent {
 
 static const char ALARM[] = "alarm";
 
-static void trap_timeout(void *);
+static_fn void trap_timeout(void *);
 
 //
 // Insert timeout item on current given list in sorted order.
 //
-static void *time_add(struct tevent *item, void *list) {
+static_fn void *time_add(struct tevent *item, void *list) {
     struct tevent *tp = (struct tevent *)list;
     if (!tp || item->milli < tp->milli) {
         item->next = tp;
@@ -72,7 +72,7 @@ static void *time_add(struct tevent *item, void *list) {
 //
 // Delete timeout item from current given list, delete timer.
 //
-static void *time_delete(struct tevent *item, void *list) {
+static_fn void *time_delete(struct tevent *item, void *list) {
     struct tevent *tp = (struct tevent *)list;
     if (item == tp) {
         list = (void *)tp->next;
@@ -84,7 +84,7 @@ static void *time_delete(struct tevent *item, void *list) {
     return list;
 }
 
-static Time_t getnow(void) {
+static_fn Time_t alarm_getnow(void) {
     double now;
 #ifdef timeofday
     struct timeval tmp;
@@ -96,7 +96,7 @@ static Time_t getnow(void) {
     return now;
 }
 
-static void print_alarms(void *list) {
+static_fn void print_alarms(void *list) {
     struct tevent *tp = (struct tevent *)list;
     while (tp) {
         if (tp->timeout) {
@@ -105,7 +105,7 @@ static void print_alarms(void *list) {
                 double d = tp->milli;
                 sfprintf(sfstdout, e_alrm1, name, d / 1000.);
             } else {
-                Time_t num = nv_getnum(tp->node), now = getnow();
+                Time_t num = nv_getnum(tp->node), now = alarm_getnow();
                 sfprintf(sfstdout, e_alrm2, name, (double)num - now);
             }
         }
@@ -113,7 +113,7 @@ static void print_alarms(void *list) {
     }
 }
 
-static void trap_timeout(void *handle) {
+static_fn void trap_timeout(void *handle) {
     struct tevent *tp = (struct tevent *)handle;
     tp->sh->trapnote |= SH_SIGALRM;
     if (!(tp->flags & R_FLAG)) tp->timeout = 0;
@@ -156,7 +156,7 @@ void sh_timetraps(Shell_t *shp) {
 //
 // This trap function catches "alarm" actions only.
 //
-static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp) {
+static_fn char *alarm_setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp) {
     struct tevent *tp = (struct tevent *)fp;
     if (!event) return (action ? "" : (char *)ALARM);
     if (strcmp(event, ALARM) != 0) {
@@ -174,13 +174,13 @@ static char *setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t
 //
 // Catch assignments and set alarm traps.
 //
-static void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
+static_fn void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
     struct tevent *tp = (struct tevent *)fp;
     double d, x;
     Shell_t *shp = tp->sh;
     char *pp;
     if (val) {
-        Time_t now = getnow();
+        Time_t now = alarm_getnow();
         char *last;
         if (*val == '+') {
             d = strtod(val + 1, &last);
@@ -211,7 +211,7 @@ static void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
 }
 
 static const Namdisc_t alarmdisc = {
-    sizeof(struct tevent), putval, 0, 0, setdisc,
+    sizeof(struct tevent), putval, 0, 0, alarm_setdisc,
 };
 
 int b_alarm(int argc, char *argv[], Shbltin_t *context) {

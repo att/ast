@@ -99,7 +99,7 @@ struct Enum {
     const char *values[1];
 };
 
-static int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
+static_fn int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
     Namval_t *np;
     struct Enum *ep;
     int n = 0;
@@ -119,14 +119,14 @@ static int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
     return 0;
 }
 
-static Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
     struct Enum *ep, *pp = (struct Enum *)fp;
     ep = newof(0, struct Enum, 1, pp->nelem * sizeof(char *));
     memcpy((void *)ep, (void *)pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
     return &ep->hdr;
 }
 
-static void put_enum(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_enum(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     const char *v;
     unsigned short i = 0, n;
@@ -156,7 +156,7 @@ static void put_enum(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
     if (nv_isattr(np, NV_NOFREE)) error(ERROR_exit(1), "%s:  invalid value %s", nv_name(np), val);
 }
 
-static char *get_enum(Namval_t *np, Namfun_t *fp) {
+static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
     static char buff[6];
     struct Enum *ep = (struct Enum *)fp;
     long n = nv_getn(np, fp);
@@ -166,9 +166,9 @@ static char *get_enum(Namval_t *np, Namfun_t *fp) {
     return buff;
 }
 
-static Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
+static_fn Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
 
-static Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t *fp) {
+static_fn Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     Namval_t *mp;
     const char *v;
@@ -210,7 +210,7 @@ static Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t
 
 const Namdisc_t ENUM_disc = {0, put_enum, get_enum, get_nenum, 0, create_enum, clone_enum};
 
-static int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
+static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
     Namval_t *mp;
     Dt_t *dp = 0;
     char nvtype[sizeof(NV_CLASS)];
@@ -235,7 +235,7 @@ static int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
 }
 
 #ifdef STANDALONE
-static int enum_create(int argc, char **argv, Shbltin_t *context)
+static_fn int enum_create(int argc, char **argv, Shbltin_t *context)
 #else
 int b_enum(int argc, char **argv, Shbltin_t *context)
 #endif

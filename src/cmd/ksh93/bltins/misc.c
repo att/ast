@@ -48,7 +48,7 @@
 
 #define DOTMAX MAXDEPTH  // Maximum level of . nesting.
 
-static void noexport(Namval_t *, void *);
+static_fn void noexport(Namval_t *, void *);
 
 struct login {
     Shell_t *sh;
@@ -94,7 +94,7 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
     return 0;
 }
 
-static void noexport(Namval_t *np, void *data) {
+static_fn void noexport(Namval_t *np, void *data) {
     UNUSED(data);
     nv_offattr(np, NV_EXPORT);
 }

@@ -37,7 +37,7 @@
 #define Q_FLAG JOB_QFLAG
 #define QQ_FLAG JOB_QQFLAG
 
-static int sig_number(Shell_t *, const char *);
+static_fn int sig_number(Shell_t *, const char *);
 
 int b_trap(int argc, char *argv[], Shbltin_t *context) {
     char *arg = NULL;
@@ -287,7 +287,7 @@ endopts:
 //
 // Given the name or number of a signal return the signal number.
 //
-static int sig_number(Shell_t *shp, const char *string) {
+static_fn int sig_number(Shell_t *shp, const char *string) {
     const Shtable_t *tp;
     int n, o, sig = 0;
     char *last, *name;

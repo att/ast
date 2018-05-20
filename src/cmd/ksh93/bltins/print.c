@@ -76,11 +76,12 @@ static const struct printmap Pmap[] = {
     {3, "url", "#H"},    {0, NULL, ""},
 };
 
-static int extend(Sfio_t *, void *, Sffmt_t *);
 static const char preformat[] = "";
-static char *genformat(Shell_t *, char *);
-static int fmtvecho(Shell_t *, const char *, struct printf *);
-static ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
+
+static_fn int extend(Sfio_t *, void *, Sffmt_t *);
+static_fn char *genformat(Shell_t *, char *);
+static_fn int fmtvecho(Shell_t *, const char *, struct printf *);
+static_fn ssize_t fmtbase64(Shell_t *, Sfio_t *, char *, const char *, int);
 
 struct print {
     Shell_t *sh;
@@ -142,7 +143,7 @@ int b_printf(int argc, char *argv[], Shbltin_t *context) {
     return b_print(-1, argv, (Shbltin_t *)&prdata);
 }
 
-static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+static_fn int print_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     const struct printmap *pm;
     char c = '%';
     for (pm = Pmap; pm->size > 0; pm++) {
@@ -169,7 +170,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
 
     memset(&disc, 0, sizeof(disc));
     disc.version = OPT_VERSION;
-    disc.infof = infof;
+    disc.infof = print_infof;
     opt_info.disc = &disc;
     if (argc > 0) {
         options = sh_optprint;
@@ -411,7 +412,7 @@ int sh_echolist(Shell_t *shp, Sfio_t *outfile, int raw, char *argv[]) {
 //
 // Modified version of stresc for generating formats.
 //
-static char strformat(char *s) {
+static_fn char strformat(char *s) {
     char *t;
     int c;
     char *b;
@@ -464,7 +465,7 @@ static char strformat(char *s) {
     }
 }
 
-static char *genformat(Shell_t *shp, char *format) {
+static_fn char *genformat(Shell_t *shp, char *format) {
     char *fp;
     stkseek(shp->stk, 0);
     sfputr(shp->stk, preformat, -1);
@@ -474,7 +475,7 @@ static char *genformat(Shell_t *shp, char *format) {
     return fp;
 }
 
-static char *fmthtml(Shell_t *shp, const char *string, int flags) {
+static_fn char *fmthtml(Shell_t *shp, const char *string, int flags) {
     const char *cp = string;
     int c, offset = stktell(shp->stk);
     if (!(flags & SFFMT_ALTER)) {
@@ -517,7 +518,7 @@ static char *fmthtml(Shell_t *shp, const char *string, int flags) {
     return stkptr(shp->stk, offset);
 }
 
-static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fmt, int alt) {
+static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fmt, int alt) {
     char *cp;
     Sfdouble_t d;
     ssize_t size;
@@ -620,7 +621,7 @@ static ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char *fm
 #endif  // 1
 }
 
-static int varname(const char *str, ssize_t n) {
+static_fn int varname(const char *str, ssize_t n) {
     int c, dot = 1, len = 1;
     if (n < 0) {
         if (*str == '.') str++;
@@ -639,7 +640,7 @@ static int varname(const char *str, ssize_t n) {
     return n == 0;
 }
 
-static const char *mapformat(Sffmt_t *fe) {
+static_fn const char *mapformat(Sffmt_t *fe) {
     const struct printmap *pm = Pmap;
     while (pm->size > 0) {
         if (pm->size == fe->n_str && strncmp(pm->name, fe->t_str, fe->n_str) == 0) return pm->map;
@@ -648,7 +649,7 @@ static const char *mapformat(Sffmt_t *fe) {
     return 0;
 }
 
-static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
+static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
     char *lastchar = "";
     int neg = 0;
     Sfdouble_t d;
@@ -1013,7 +1014,7 @@ static int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
 // Construct System V echo string out of <cp>. If there are not escape sequences, returns -1.
 // Otherwise, puts null terminated result on stack, but doesn't freeze it returns length of output.
 //
-static int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
+static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     const char *cp = string, *cpmax;
     int c;
     int offset = stktell(shp->stk);

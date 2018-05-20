@@ -43,7 +43,7 @@
 #define Q_FLAG (1 << 5)
 #define T_FLAG (1 << 6)
 
-static int whence(Shell_t *, char **, int);
+static_fn int whence(Shell_t *, char **, int);
 
 //
 // Command is called with argc==0 when checking for -V or -v option. In this case return 0 when -v
@@ -150,7 +150,7 @@ int b_whence(int argc, char *argv[], Shbltin_t *context) {
     return whence(shp, argv, flags);
 }
 
-static int whence(Shell_t *shp, char **argv, int flags) {
+static_fn int whence(Shell_t *shp, char **argv, int flags) {
     const char *name;
     Namval_t *np;
     const char *cp;

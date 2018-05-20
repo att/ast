@@ -41,7 +41,7 @@
 //
 // Invalidate path name bindings to relative paths.
 //
-static void invalidate(Namval_t *np, void *data) {
+static_fn void invalidate(Namval_t *np, void *data) {
     Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
     UNUSED(data);
 

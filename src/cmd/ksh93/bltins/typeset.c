@@ -64,14 +64,14 @@ struct tdata {
     int noref;
 };
 
-static int print_namval(Sfio_t *, Namval_t *, int, struct tdata *);
-static void print_attribute(Namval_t *, void *);
-static void print_all(Sfio_t *, Dt_t *, struct tdata *);
-static void print_scan(Sfio_t *, int, Dt_t *, int, struct tdata *);
-static int unall(int, char **, Dt_t *, Shell_t *);
-static int setall(char **, int, Dt_t *, struct tdata *);
-static void pushname(Namval_t *, void *);
-static void (*nullscan)(Namval_t *, void *);
+static_fn int print_namval(Sfio_t *, Namval_t *, int, struct tdata *);
+static_fn void print_attribute(Namval_t *, void *);
+static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
+static_fn void print_scan(Sfio_t *, int, Dt_t *, int, struct tdata *);
+static_fn int unall(int, char **, Dt_t *, Shell_t *);
+static_fn int setall(char **, int, Dt_t *, struct tdata *);
+static_fn void pushname(Namval_t *, void *);
+static_fn void (*nullscan)(Namval_t *, void *);
 
 //
 // Note `export` and `readonly` are the same.
@@ -474,7 +474,7 @@ endargs:
     return setall(argv, flag, troot, &tdata);
 }
 
-static void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
+static_fn void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
     char *name;
     int aflag = tp->aflag;
     Namval_t *table;
@@ -528,7 +528,7 @@ static void print_value(Sfio_t *iop, Namval_t *np, struct tdata *tp) {
     }
 }
 
-static int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
+static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
     char *name;
     char *last = 0;
     int nvflags =
@@ -1114,7 +1114,7 @@ int b_unset(int argc, char *argv[], Shbltin_t *context) {
     return unall(argc, argv, shp->var_tree, shp);
 }
 
-static int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
+static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     Namval_t *np;
     const char *name;
     volatile int r;
@@ -1231,7 +1231,7 @@ static int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
 //
 // Print out the name and value of a name-value pair <np>.
 //
-static int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *tp) {
+static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *tp) {
     char *cp;
     int indent = tp->indent, outname = 0, isfun;
 
@@ -1338,7 +1338,7 @@ static int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *tp) 
 //
 // Print attributes at all nodes.
 //
-static void print_all(Sfio_t *file, Dt_t *root, struct tdata *tp) {
+static_fn void print_all(Sfio_t *file, Dt_t *root, struct tdata *tp) {
     tp->outfile = file;
     nv_scan(root, print_attribute, (void *)tp, 0, 0);
 }
@@ -1346,7 +1346,7 @@ static void print_all(Sfio_t *file, Dt_t *root, struct tdata *tp) {
 //
 // Print the attributes of name value pair give by <np>.
 //
-static void print_attribute(Namval_t *np, void *data) {
+static_fn void print_attribute(Namval_t *np, void *data) {
     struct tdata *dp = (struct tdata *)data;
     nv_attribute(np, dp->outfile, dp->prefix, dp->aflag);
 }
@@ -1356,7 +1356,7 @@ static void print_attribute(Namval_t *np, void *data) {
 // subscript or value is printed.
 //
 
-static void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct tdata *tp) {
+static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct tdata *tp) {
     char **argv;
     Namval_t *np;
     int namec;
@@ -1413,7 +1413,7 @@ static void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct td
 //
 // Add the name of the node to the argument list argnam.
 //
-static void pushname(Namval_t *np, void *data) {
+static_fn void pushname(Namval_t *np, void *data) {
     struct tdata *tp = (struct tdata *)data;
     *tp->argnam++ = nv_name(np);
 }
