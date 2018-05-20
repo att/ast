@@ -1,7 +1,10 @@
+build_dir = meson.build_root()
+
 ksh93_files = []
 # We use same set of files as ksh93 to compile shcomp, we should check if it
 # can be modularized.
-shcomp_files = [ ]
+shcomp_files = []
+
 ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
                                    '../../lib/libast/features/',
@@ -9,6 +12,7 @@ ksh93_incdir = include_directories('include',
                                    '../../lib/libdll/',
                                    '../../lib/libcoshell/')
 
+subdir('include')
 subdir('bltins')
 subdir('data')
 subdir('edit')
@@ -67,8 +71,6 @@ test_driver = join_paths(test_dir, 'util', 'run_test.sh')
 # This variable is used by some tests while executing subtests
 shell_var = 'SHELL=' + ksh93_exe.full_path()
 shcomp_var = 'SHCOMP=' + shcomp_exe.full_path()
-
-build_dir = meson.build_root()
 
 libast_build_dir = join_paths(build_dir, 'src', 'lib', 'libast')
 libcmd_build_dir = join_paths(build_dir, 'src', 'lib', 'libcmd')
