@@ -1,7 +1,8 @@
 #!/bin/sh
-# This script is does not due feature detection in the usual sense. In fact it
+# This script does not do feature detection in the usual sense. In fact it
 # must be run after the normal Meson feature detection and the config_ast.h
-# header has been created.
+# header has been created. That is why it isn't part of the feature detection
+# code in the "features" subdirectory.
 #
 # This script creates dynamically generated source files. Which can involve
 # detecting whether the platform supports specific symbols (e.g.,

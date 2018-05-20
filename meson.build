@@ -103,7 +103,7 @@ configure_file(input : 'config_ast.h.in',
                output : 'config_ast.h',
                configuration : feature_data)
 
-run_command('bin/libast_prereq.sh')
+run_command('scripts/libast_prereq.sh')
 
 subdir('src/lib/libast')
 subdir('src/lib/libcmd')
