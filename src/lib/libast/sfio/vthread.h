@@ -62,16 +62,6 @@ typedef pthread_attr_t _vtattr_t;
 
 #endif
 
-#if _may_use_threads && !defined(vt_threaded) && _WIN32
-#define vt_threaded 1
-#include <windows.h>
-typedef CRITICAL_SECTION _vtmtx_t;
-typedef int _vtonce_t;
-typedef HANDLE _vtself_t;
-typedef DWORD _vtid_t;
-typedef SECURITY_ATTRIBUTES _vtattr_t;
-#endif
-
 #ifndef vt_threaded
 #define vt_threaded 0
 #endif
@@ -154,13 +144,7 @@ struct _vtonce_s {
     int error;
 };
 
-#if _WIN32
-#define VTONCE_INITDATA \
-    { 0, 0 }
-#else
-#define VTONCE_INITDATA \
-    { 0, PTHREAD_ONCE_INIT }
-#endif
+#define VTONCE_INITDATA { 0, PTHREAD_ONCE_INIT }
 
 #define vtstatus(vt) ((vt)->exit)
 #define vterror(vt) ((vt)->error)

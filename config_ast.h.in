@@ -299,7 +299,6 @@
 #mesondefine _mem_ut_type_utmpx
 #mesondefine _mem_ut_user_utmp
 #mesondefine _mem_ut_user_utmpx
-#mesondefine _mem_win32
 
 #mesondefine _sys_file
 #mesondefine _sys_filio

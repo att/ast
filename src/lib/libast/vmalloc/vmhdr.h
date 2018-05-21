@@ -80,10 +80,7 @@
 #include <setjmp.h> /* use the type jmp_buf for alignment	*/
 
 /* extra information needed about methods to get memory from the system */
-#if defined(_WIN32)
-#define _mem_win32 1 /* use the VirtualAlloc interface	*/
-#endif
-#if !_mem_win32 && !_mem_sbrk && !_mem_mmap_anon
+#if !_mem_sbrk && !_mem_mmap_anon
 #undef _std_malloc
 #define _std_malloc 1 /* use native malloc/free/realloc	*/
 #endif

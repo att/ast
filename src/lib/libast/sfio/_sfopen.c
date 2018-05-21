@@ -228,9 +228,6 @@ int _sftype(reg const char *mode, int *oflagsp, int *fflagsp, int *uflagp) {
                 continue;
             default:
                 if (!(oflags & O_CREAT)) oflags &= ~O_EXCL;
-#if _WIN32 && !__CYGWIN__
-                if (!(oflags & (O_BINARY | O_TEXT))) oflags |= O_BINARY;
-#endif
                 if ((sflags & SF_RDWR) == SF_RDWR) oflags = (oflags & ~O_ACCMODE) | O_RDWR;
                 if (oflagsp) *oflagsp = oflags;
                 if (fflagsp) *fflagsp = fflags;

@@ -65,12 +65,6 @@ static Vmemory_f _Vmemoryf = 0;
 #if _std_malloc
 #undef _mem_mmap_anon
 #undef _mem_sbrk
-#undef _mem_win32
-#endif
-
-#if _mem_win32
-#undef _mem_mmap_anon
-#undef _mem_sbrk
 #endif
 
 #if _mem_mmap_anon /* may get space using mmap */
@@ -120,26 +114,6 @@ static Vmemory_f _Vmemoryf = 0;
         USAGE(v, a, z); \
     }                   \
     return (a)
-
-#if _mem_win32 /* getting memory on a window system */
-#if _PACKAGE_ast
-#include <ast_windows.h>
-#else
-#include <windows.h>
-#endif
-
-static void *win32mem(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, Vmdisc_t *disc) {
-    GETMEMCHK(vm, caddr, csize, nsize, disc);
-    if (csize == 0) {
-        caddr = (void *)VirtualAlloc(0, nsize, MEM_COMMIT, PAGE_READWRITE);
-        RETURN(vm, caddr, nsize);
-    } else if (nsize == 0) {
-        (void)VirtualFree((LPVOID)caddr, 0, MEM_RELEASE);
-        RETURN(vm, caddr, nsize);
-    } else
-        return NULL;
-}
-#endif /* _mem_win32 */
 
 #if _mem_sbrk /* getting space via sbrk() */
 /*
@@ -297,12 +271,6 @@ static void *getmemory(Vmalloc_t *vm, void *caddr, size_t csize, size_t nsize, V
 #if _mem_sbrk
     if ((_Vmassert & VM_break) && (addr = sbrkmem(vm, caddr, csize, nsize, disc))) {
         GETMEMUSE(sbrkmem, disc);
-        return (void *)addr;
-    }
-#endif
-#if _mem_win32
-    if ((addr = win32mem(vm, caddr, csize, nsize, disc))) {
-        GETMEMUSE(win32mem, disc);
         return (void *)addr;
     }
 #endif
