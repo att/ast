@@ -44,6 +44,8 @@ None at this time.
 
 ## Other significant changes
 
+- The math `scalb` function has been removed since it was marked obsolete by
+  POSIX in 2001 and is no longer found in some libc implementations.
 - Code hidden behind the SHOPT_ACCT and SHOPT_ACCTFILE build time symbols
   has been removed. The features are not enabled by default and I am not aware
   of any distro which enables them. Furthermore, they are huge security holes
