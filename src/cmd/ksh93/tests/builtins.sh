@@ -876,28 +876,6 @@ else
     log_error "unable to cd ~- back to $pwd"
 fi
 
-if cd /dev/fd/$fd/..
-then
-    [[ $(pwd -P) == '/' ]] || log_error 'physical directory should be /'
-else
-    log_error  "cd to /dev/fd/$fd/.. failed"
-fi
-
-pwd=$(pwd -P)
-if cd bin
-then
-    [[ -x sh ]] || log_error 'cannot find executable sh in bin'
-else
-    log_error 'cd bin failed'
-fi
-
-if cd ~-
-then
-    [[ $(pwd -P) == "$pwd" ]] || log_error "directory is $PWD, should be $pwd"
-else
-    log_error 'cd ~- failed'
-fi
-
 if cd -f $fd
 then
     [[ -r null ]] || log_error 'cannot find "null" file in /dev'
