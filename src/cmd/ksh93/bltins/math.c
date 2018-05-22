@@ -91,8 +91,6 @@ static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfd
     return 0;
 }
 
-static Sfdouble_t local_scalb(Sfdouble_t a1, Sfdouble_t a2) { return scalb(a1, a2); }
-
 static int local_signbit(Sfdouble_t a1) { return signbit(a1); }
 
 static Sfdouble_t local_y0(Sfdouble_t a1) { return y0(a1); }
@@ -170,7 +168,6 @@ const struct mathtab shtab_math[] = {{"\001acos", (Math_f)acosl},
                                      {"\002remainder", (Math_f)remainderl},
                                      {"\001rint", (Math_f)rintl},
                                      {"\001round", (Math_f)roundl},
-                                     {"\002scalb", (Math_f)local_scalb},
                                      {"\002scalbn", (Math_f)scalbnl},
                                      {"\011signbit", (Math_f)local_signbit},
                                      {"\001sin", (Math_f)sinl},
