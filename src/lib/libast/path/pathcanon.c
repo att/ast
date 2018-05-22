@@ -59,13 +59,11 @@
 #define ELOOP EINVAL
 #endif
 
-char *pathcanon(char *path, int flags) { return pathcanon_20100601(path, PATH_MAX, flags); }
-
 #undef _AST_API_IMPLEMENT
 
 #include <ast_api.h>
 
-char *pathcanon_20100601(char *path, size_t size, int flags) {
+char *pathcanon(char *path, size_t size, int flags) {
     char *p;
     char *r;
     char *s;

@@ -30,11 +30,6 @@
 #endif
 
 #if ASTAPI(20100601)
-#undef pathcanon
-#define pathcanon pathcanon_20100601
-#endif
-
-#if ASTAPI(20100601)
 #undef pathcat
 #define pathcat pathcat_20100601
 #endif
