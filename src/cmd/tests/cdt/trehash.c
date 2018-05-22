@@ -19,9 +19,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dttest.h"
-
 #include <sys/mman.h>
+#include <sched.h>
+
+#include "dttest.h"
 
 /* Test concurrency usage of the method Dtrhset.
 **
@@ -130,7 +131,7 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
     /* insert objects in 'p' */
     asoincint(&State->insert);                  /* signaling that we are ready to go */
     while (asogetint(&State->insert) != N_PROC) /* wait until all processes are set */
-        usleep(100);
+        sched_yield();
     for (k = 0; k < proc->objn; ++k) {
         if (k && k % PROGRESS == 0) tinfo("\tProcess %d(%d): insertion passing %d", p, pid, k);
 
@@ -158,12 +159,12 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
     tinfo("Process %d(%d): insertion done", p, pid);
     asoincint(&State->idone);            /* signaling that this workload has been inserted */
     while (asogetint(&State->idone) > 0) /* wait until parent signal ok to continue */
-        usleep(100);
+        sched_yield();
 
     /* delete objects in 'p' and also in "foe" of p */
     asoincint(&State->delete);                  /* signaling that we are ready to delete */
     while (asogetint(&State->delete) != N_PROC) /* wait until all processes are set */
-        usleep(100);
+        sched_yield();
     for (k = 0; k < proc->objn; ++k) {
         if (k && k % PROGRESS == 0) tinfo("\tProcess %d(%d): deletion passing %d", p, pid, k);
 

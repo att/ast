@@ -19,6 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sched.h>
+
 #include "terror.h"
 
 /* Test concurrency locking based on Atomic Scalar Operations
@@ -66,7 +68,7 @@ int lockobj(void *lck, ssize_t size, int locking) {
         return 0;
     }
 
-    for (k = 0;; ++k, usleep(100)) /* locking a slot */
+    for (k = 0;; ++k, sched_yield()) /* locking a slot */
     {
         if (size == sizeof(char))
             aso = asocaschar(lck, 0, Pnum);
@@ -83,7 +85,7 @@ int lockobj(void *lck, ssize_t size, int locking) {
             twarn("Process %3d(pid=%d): locking loop %d blocked by %d", Pnum, Pid[Pnum], k, aso);
     }
 
-    for (k = 0; k < 2; ++k, usleep(100)) /* make sure that lock is good */
+    for (k = 0; k < 2; ++k, sched_yield()) /* make sure that lock is good */
     {
         if (size == sizeof(char))
             lckv = *((char *)lck);
@@ -154,7 +156,7 @@ tmain() {
             continue;
         } else /* child process */
         {
-            for (;; usleep(1000)) /* wait until all are alive */
+            for (;; sched_yield()) /* wait until all are alive */
                 if (*Nproc == N_PROC) break;
             workload(k); /* now start working concurrently */
             texit(0);
