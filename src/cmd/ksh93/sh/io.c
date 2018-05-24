@@ -462,21 +462,132 @@ int sh_close(int fd) {
 }
 
 //
-// Mimic open(2) and keep track of fd/sfio descriptors.
+// Return <protocol>/<host>/<service> fd.
+// If called with flags==O_NONBLOCK return 1 if protocol is supported.
 //
-int sh_open(const char *path, int flags, ...) {
+typedef int (*Inetintr_f)(struct addrinfo *, void *);
+
+static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle) {
+    char *s;
+    char *t;
+    int fd;
+    int oerrno;
+    struct addrinfo hint;
+    struct addrinfo *addr;
+    struct addrinfo *p;
+    int server = !!(flags & O_SERVICE);
+
+    memset(&hint, 0, sizeof(hint));
+    hint.ai_family = PF_UNSPEC;
+    switch (path[0]) {
+#ifdef IPPROTO_SCTP
+        case 's': {
+            if (path[1] != 'c' || path[2] != 't' || path[3] != 'p' || path[4] != '/') {
+                errno = ENOTDIR;
+                return -1;
+            }
+            hint.ai_socktype = SOCK_STREAM;
+            hint.ai_protocol = IPPROTO_SCTP;
+            path += 5;
+            break;
+        }
+#endif
+        case 't': {
+            if (path[1] != 'c' || path[2] != 'p' || path[3] != '/') {
+                errno = ENOTDIR;
+                return -1;
+            }
+            hint.ai_socktype = SOCK_STREAM;
+            path += 4;
+            break;
+        }
+        case 'u': {
+            if (path[1] != 'd' || path[2] != 'p' || path[3] != '/') {
+                errno = ENOTDIR;
+                return -1;
+            }
+            hint.ai_socktype = SOCK_DGRAM;
+            path += 4;
+            break;
+        }
+        default: {
+            errno = ENOTDIR;
+            return -1;
+        }
+    }
+    if (flags == O_NONBLOCK) return 1;
+    if (!(s = strdup(path))) return -1;
+    if (t = strchr(s, '/')) {
+        *t++ = 0;
+        if (streq(s, "local")) s = strdup("localhost");
+        fd = getaddrinfo(s, t, &hint, &addr);
+    } else {
+        fd = -1;
+    }
+    free(s);
+    if (fd) {
+        if (fd != EAI_SYSTEM) errno = ENOTDIR;
+        return -1;
+    }
+    oerrno = errno;
+    errno = 0;
+    fd = -1;
+    for (p = addr; p; p = p->ai_next) {
+        //
+        // Some api's don't take the hint.
+        //
+        if (!p->ai_protocol) p->ai_protocol = hint.ai_protocol;
+        if (!p->ai_socktype) p->ai_socktype = hint.ai_socktype;
+        while ((fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) >= 0) {
+            if (server && !bind(fd, p->ai_addr, p->ai_addrlen) && !listen(fd, 5) ||
+                !server && !connect(fd, p->ai_addr, p->ai_addrlen)) {
+                goto done;
+            }
+            close(fd);
+            fd = -1;
+            if (errno != EINTR || !onintr) break;
+            if ((*onintr)(addr, handle)) goto done;
+        }
+    }
+
+done:
+    freeaddrinfo(addr);
+    if (fd >= 0) errno = oerrno;
+    return fd;
+}
+
+#ifdef O_SERVICE
+
+static int onintr(struct addrinfo *addr, void *handle) {
+    Shell_t *sh = (Shell_t *)handle;
+
+    if (sh->trapnote & SH_SIGSET) {
+        Shell_t *shp = sh_getinterp();
+        freeaddrinfo(addr);
+        sh_exit(shp, SH_EXITSIG);
+        return -1;
+    }
+    if (sh->trapnote) sh_chktrap(sh);
+    return 0;
+}
+
+#endif
+
+//
+// Mimic open(2) with checks for pseudo /dev files and keep track of fd/sfio descriptors.
+//
+int sh_open(register const char *path, int flags, ...) {
     Shell_t *shp = sh_getinterp();
     Sfio_t *sp;
-    int fd;
+    register int fd = -1;
     mode_t mode;
+    char *e;
     va_list ap;
-#if SHOPT_REGRESS
-    char buf[PATH_MAX];
-#endif
 
     va_start(ap, flags);
     mode = (flags & O_CREAT) ? va_arg(ap, int) : 0;
     va_end(ap);
+
     errno = 0;
     if (path == 0) {
         errno = EFAULT;
@@ -486,23 +597,75 @@ int sh_open(const char *path, int flags, ...) {
         errno = ENOENT;
         return -1;
     }
+    if (path[0] == '/' && path[1] == 'd' && path[2] == 'e' && path[3] == 'v' && path[4] == '/') {
+        switch (path[5]) {
+            case 'f': {
+                if (path[6] == 'd' && path[7] == '/') {
+                    if (flags == O_NONBLOCK) return (1);
+                    fd = (int)strtol(path + 8, &e, 10);
+                    if (*e) fd = -1;
+                }
+                break;
+            }
+            case 's': {
+                if (path[6] == 't' && path[7] == 'd') {
+                    switch (path[8]) {
+                        case 'e': {
+                            if (path[9] == 'r' && path[10] == 'r' && !path[11]) fd = 2;
+                            break;
+                        }
+                        case 'i': {
+                            if (path[9] == 'n' && !path[10]) fd = 0;
+                            break;
+                        }
+                        case 'o': {
+                            if (path[9] == 'u' && path[10] == 't' && !path[11]) fd = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+#ifdef O_SERVICE
+        if (fd < 0) {
+            if ((fd = inetopen(path + 5, flags, onintr, shp)) < 0 && errno != ENOTDIR) return -1;
+            if (flags == O_NONBLOCK) return (fd >= 0);
+            if (fd >= 0) goto ok;
+        }
+        if (flags == O_NONBLOCK) return 0;
+#endif
+    }
+
+    if (fd >= 0) {
+        int nfd = -1;
+        if (flags & O_CREAT) {
+            struct stat st;
+            if (stat(path, &st) >= 0) nfd = open(path, flags, st.st_mode);
+        } else {
+            nfd = open(path, flags);
+        }
+        if (nfd >= 0) {
+            fd = nfd;
+            goto ok;
+        }
+        if ((mode = sh_iocheckfd(shp, fd, fd)) == IOCLOSE) return -1;
+        flags &= O_ACCMODE;
+        if (!(mode & IOWRITE) && ((flags == O_WRONLY) || (flags == O_RDWR))) return -1;
+        if (!(mode & IOREAD) && ((flags == O_RDONLY) || (flags == O_RDWR))) return -1;
+        if ((fd = dup(fd)) < 0) return -1;
+    } else {
 #if SHOPT_REGRESS
-    if (strncmp(path, "/etc/", 5) == 0) {
-        sfsprintf(buf, sizeof(buf), "%s%s", sh_regress_etc(path, __LINE__, __FILE__), path + 4);
-        path = buf;
+        char buf[PATH_MAX];
+        if (strncmp(path, "/etc/", 5) == 0) {
+            sfsprintf(buf, sizeof(buf), "%s%s", sh_regress_etc(path, __LINE__, __FILE__), path + 4);
+            path = buf;
+        }
+#endif
+        while ((fd = open(path, flags, mode)) < 0) {
+            if (errno != EINTR || shp->trapnote) return -1;
+        }
     }
-#endif
-#ifdef PATH_DEV
-    if (flags == O_NONBLOCK) return pathopen(AT_FDCWD, path, NULL, 0, PATH_DEV, flags, mode) > 0;
-#endif
-    fd = open(path, flags, mode);
-#ifndef PATH_DEV
-    if (flags == O_NONBLOCK) {
-        close(fd);
-        return 1;
-    }
-#endif
-    if (fd < 0) return -1;
+ok:
     flags &= O_ACCMODE;
     if (flags == O_WRONLY) {
         mode = IOWRITE;
