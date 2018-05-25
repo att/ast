@@ -354,7 +354,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
 #else
     dp->parent = mp;
 #endif
-    dp->fun.nofree = (flags & NV_RDONLY ? 1 : 0);
+    dp->fun.nofree = (flags & (NV_RDONLY | NV_NOFREE) ? 1 : 0);
     dp->np = mp;
     dp->childfun.ptype = dp;
 #if 0
