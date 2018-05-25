@@ -32,7 +32,7 @@ matrix:
         - os: linux
           env:
             - DISTRO_TYPE=ubuntu
-              INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim meson findutils debianutils; locale-gen en_US.UTF-8"
+              INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
           before_install:
               - docker pull ${DISTRO_TYPE}
 
@@ -73,7 +73,7 @@ script:
         echo ==== Running unit tests;
         ulimit -n 1024;
         export MESON_TESTTHREADS=$(( 4 * CORE_COUNT ));
-        if ! meson test; then cat meson-logs/testlog.txt; exit 1; fi;
+        if ! meson test --setup=malloc; then cat meson-logs/testlog-malloc.txt; exit 1; fi;
         "
 
     - chmod a+x build.sh
