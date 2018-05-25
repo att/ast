@@ -1241,7 +1241,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                                 free(tmpname);
                                 write(f, sp->_data, (size_t)last);
                                 lseek(f, (Sfoff_t)0, SEEK_SET);
-                                sfclose(sp);
+                                // Close stream fd, but do not free associated stream
+                                // This is a workaround for use after free issue
+                                // https://github.com/att/ast/issues/398
+                                close(sffileno(sp));
                                 sp = sfnew(sp, NULL, -1, f, SF_READ);
                             }
                         }
