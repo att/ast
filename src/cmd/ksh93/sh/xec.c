@@ -2578,14 +2578,14 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
         // Set $_.
         if (mainloop && com0) {
             // Store last argument here if it fits.
-            static char lastarg[32];
+            static char lastarg[PATH_MAX];
             if (sh_isstate(shp, SH_FORKED)) sh_done(shp, 0);
             if (shp->lastarg != lastarg && shp->lastarg) free(shp->lastarg);
+            // Although this node is marked as NV_NOFREE, it should get free'd above when $_ is reset
+            nv_onattr(L_ARGNOD, NV_NOFREE);
             if (strlen(comn) < sizeof(lastarg)) {
-                nv_onattr(L_ARGNOD, NV_NOFREE);
                 shp->lastarg = strcpy(lastarg, comn);
             } else {
-                nv_offattr(L_ARGNOD, NV_NOFREE);
                 shp->lastarg = strdup(comn);
             }
         }
