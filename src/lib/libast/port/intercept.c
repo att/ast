@@ -334,8 +334,9 @@ int ast_openat(int cwd, const char *path, int flags, ...) {
 #endif
         }
 #endif
-    } else
-        RESTART(r, pathopen(cwd, path, NULL, 0, 0, flags | O_INTERCEPT, mode));
+    } else {
+        RESTART(r, openat(cwd, path, flags | O_INTERCEPT, mode));
+    }
 #if _ast_O_LOCAL && O_CLOEXEC >= _ast_O_LOCAL
     if (o_cloexec && r >= 0) RESTART(o_cloexec, fcntl(r, F_SETFD, FD_CLOEXEC));
 #endif

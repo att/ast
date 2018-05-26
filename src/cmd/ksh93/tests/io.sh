@@ -576,12 +576,6 @@ done    {n}< /dev/null
 n=$( exec {n}< /dev/null; print -r -- $n)
 [[ -r /dev/fd/$n ]] && log_error "file descriptor n=$n left open after subshell"
 
-print hello > $TEST_DIR/foo
-redirect {fd}< $TEST_DIR
-[[ $(< ~{fd}/foo) == hello ]] 2> /dev/null || log_error '~{fd}/foo not working'
-[[ $(< ~{$fd}/foo) == hello ]] 2> /dev/null || log_error "~{$fd}/foo not working"
-{ cd /dev/fd/$fd/ ;} 2> /dev/null || log_error "Cannot cd to /dev/fd/$fd/"
-
 (
     integer error_count=0
     redirect {n}> $TEST_DIR/foo; print foobar >&{n} > $TEST_DIR/foo

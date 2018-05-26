@@ -44,6 +44,11 @@ None at this time.
 
 ## Other significant changes
 
+- Operations that depend on the simulated 3DFS behavior found in release
+  ksh93v are no longer supported. That behavior does not work in ksh93u (the
+  most recent stable release found in all distros) unless the 3D file system
+  is actually present. This includes operations such as this:
+  `exec {fd}</dev; cd ~{fd}` (issue #510).
 - The math `scalb` function has been removed since it was marked obsolete by
   POSIX in 2001 and is no longer found in some libc implementations.
 - Code hidden behind the SHOPT_ACCT and SHOPT_ACCTFILE build time symbols
