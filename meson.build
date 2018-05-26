@@ -31,10 +31,10 @@ malloc_debug_env.set('MALLOC_PERTURB_', '165')  # 0xA5
 # macOS debug malloc messages go to stderr. Those messages include
 # informational messages that cause any unit test that checks what is written
 # to stderr to fail.
-malloc_debug_env.set('MallocGuardEdges', '1')
-malloc_debug_env.set('MallocScribble', '1')
-malloc_debug_env.set('MallocErrorAbort', '1')
-malloc_debug_env.set('MallocLogFile', '/dev/null')
+#malloc_debug_env.set('MallocGuardEdges', '1')
+#malloc_debug_env.set('MallocScribble', '1')
+#malloc_debug_env.set('MallocErrorAbort', '1')
+#malloc_debug_env.set('MallocLogFile', '/dev/null')
 # These env vars are recognized by jemalloc as used by FreeBSD, OpenBSD, and
 # other distros.  See https://github.com/jemalloc/jemalloc/wiki/Getting-Started.
 # The "junk=true" setting enables setting both allocated and freed memory to
