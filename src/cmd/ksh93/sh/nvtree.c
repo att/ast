@@ -975,7 +975,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
 static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     Shell_t *shp = sh_ptr(np);
     static Sfio_t *out;
-    struct Walk walk;
+    struct Walk walk = {0};
     Sfio_t *outfile;
     Sfoff_t off = 0;
     int len, savtop = stktell(shp->stk);
