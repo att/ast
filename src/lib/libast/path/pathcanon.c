@@ -39,10 +39,6 @@
  * will contain the components following the failure point
  *
  * pathcanon() and pathdev() return pointer to trailing 0 in canon
- * pathdev() handles ast specific /dev/ and /proc/ special files
- * pathdev(PATH_DEV) returns 0 if path is not a valid special file
- * pathdev(PATH_AUX) Pathdev_t.flags|=PATH_AUX if AUX fd was created
- * see pathopen() for the api that ties it all together
  */
 #include <stdio.h>
 #include "config_ast.h"  // IWYU pragma: keep

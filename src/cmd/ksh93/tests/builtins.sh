@@ -859,16 +859,11 @@ done
 
 [[ $(jobs -l) ]] && log_error 'jobs -l should not have any output'
 
-# tests with cd and ~{fd}
+# tests with cd
 pwd=$PWD
 exec {fd}</dev
-if cd ~{fd}
-then
-    [[ -r null ]] || log_error 'cannot find "null" file in /dev'
-else
-    log_error 'cannot cd to ~{fd} when fd is /dev'
-fi
 
+cd /dev
 if cd ~-
 then
     [[ $PWD == "$pwd" ]] || log_error "directory is $PWD, should be $pwd"
