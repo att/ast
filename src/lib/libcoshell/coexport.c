@@ -36,35 +36,35 @@ int coexport(Coshell_t *co, const char *name, const char *value) {
     char *v;
 
     if (!co->export) {
-        co->exdisc = vmnewof(co->vm, 0, Dtdisc_t, 1, 0);
+        co->exdisc = calloc(1, sizeof(Dtdisc_t));
         if (!co->exdisc) return -1;
         co->exdisc->link = offsetof(Coexport_t, link);
         co->exdisc->key = offsetof(Coexport_t, name);
         co->exdisc->size = 0;
-        co->export = dtnew(co->vm, co->exdisc, Dtset);
+        co->export = dtnew(co->exdisc, Dtset);
         if (!co->export) {
-            vmfree(co->vm, co->exdisc);
+            free(co->exdisc);
             return -1;
         }
     }
     ex = (Coexport_t *)dtmatch(co->export, name);
     if (!ex) {
         if (!value) return 0;
-        ex = vmnewof(co->vm, 0, Coexport_t, 1, strlen(name));
+        ex = calloc(1, sizeof(Coexport_t) + strlen(name));
         if (!ex) return -1;
         strcpy(ex->name, name);
         dtinsert(co->export, ex);
     }
     if (ex->value) {
-        vmfree(co->vm, ex->value);
+        free(ex->value);
         ex->value = 0;
     }
     if (value) {
-        if (!(v = vmstrdup(co->vm, value))) return -1;
+        if (!(v = strdup(value))) return -1;
         ex->value = v;
     } else {
         dtdelete(co->export, ex);
-        vmfree(co->vm, ex);
+        free(ex);
     }
     co->init.sync = 1;
     return 0;

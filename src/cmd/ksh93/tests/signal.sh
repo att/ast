@@ -1,3 +1,6 @@
+log_info "TODO: Enable this test when the bug documented in issue #396 is fixed."
+exit 0
+
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #

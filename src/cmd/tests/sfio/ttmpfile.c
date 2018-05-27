@@ -29,7 +29,6 @@ tmain() {
     if (sfputc(f, 0) < 0) terror("Can't write to temp file");
     if (sffileno(f) >= 0) terror("Attempt to create file detected");
     if (sfclose(f) < 0) terror("Can't close temp file");
-    if (sffileno(f) >= 0) terror("Attempt to create file detected");
 
     if (!(f = sftmp(8))) terror("Can't open temp file");
     if (sffileno(f) >= 0) terror("Attempt to create file detected");

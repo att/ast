@@ -23,11 +23,10 @@
 #define _DT_H 1
 
 #include <cdt.h>
-#include <vmalloc.h>
 
-extern Dt_t *dtnew(Vmalloc_t *, Dtdisc_t *, Dtmethod_t *);
-extern Dt_t *_dtnew(Vmalloc_t *, Dtdisc_t *, Dtmethod_t *, unsigned long);
+extern Dt_t *dtnew(Dtdisc_t *, Dtmethod_t *);
+extern Dt_t *_dtnew(Dtdisc_t *, Dtmethod_t *, unsigned long);
 
-#define dtnew(v, d, m) _dtnew(v, d, m, CDT_VERSION)
+#define dtnew(d, m) _dtnew(d, m, CDT_VERSION)
 
 #endif

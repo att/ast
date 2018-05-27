@@ -149,6 +149,7 @@ void *nv_diropen(Namval_t *np, const char *name, void *context) {
     dp = calloc(1, sizeof(struct nvdir) + len + 1);
     if (!dp) return NULL;
 
+    memset(&fake, 0, sizeof(fake));
     dp->data = (char *)(dp + 1);
     if (name[len - 1] == '*' || name[len - 1] == '@') len -= 1;
     name = memcpy(dp->data, name, len);

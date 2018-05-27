@@ -25,6 +25,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#if _hdr_stdlib
+#include <stdlib.h>
+#elif _hdr_malloc
+#include <malloc.h>
+#endif
+
 #include "colib.h"
 
 #include <namval.h>
@@ -86,7 +92,7 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
         if (n) {
             co->flags |= ((Namval_t *)p)->value;
             if (((Namval_t *)p)->value == CO_SERVICE && v &&
-                (cs = vmnewof(co->vm, 0, Coservice_t, 1, 2 * strlen(v)))) {
+                (cs = calloc(1, sizeof(Coservice_t) + 2 * strlen(v)))) {
                 a = cs->argv;
                 *a++ = s = cs->path = cs->name = (char *)(cs + 1);
                 while (*s = *v++)
@@ -128,7 +134,6 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
     int n;
     Proc_t *proc;
     Cojob_t *cj;
-    Vmalloc_t *vm;
     Sfio_t *sp;
     Sig_handler_t handler;
     int pio[4] = {-1, -1, -1, -1};
@@ -142,13 +147,11 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
 
     if (!state.type && (!(s = getenv(CO_ENV_TYPE)) || !(state.type = strdup(s)))) state.type = "";
     if ((flags & CO_ANY) && (co = state.coshells)) return co;
-    vm = vmopen(Vmdcheap, Vmbest, 0);
-    if (!vm || !(co = vmnewof(vm, 0, Coshell_t, 1, 0))) {
-        if (vm) vmclose(vm);
+    co = calloc(1, sizeof(Coshell_t));
+    if (!co) {
         errormsg(state.lib, ERROR_LIBRARY | 2, "out of space");
         return 0;
     }
-    co->vm = vm;
     co->index = ++state.index;
     stropt(getenv(CO_ENV_OPTIONS), options, sizeof(*options), setopt, co);
     if (attributes) stropt(attributes, options, sizeof(*options), setopt, co);

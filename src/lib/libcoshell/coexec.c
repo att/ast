@@ -161,7 +161,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
     }
     if (cj) {
         cj->service = 0;
-    } else if (!(cj = vmnewof(co->vm, 0, Cojob_t, 1, 0))) {
+    } else if (!(cj = calloc(1, sizeof(Cojob_t)))) {
         return 0;
     } else {
         cj->coshell = co;

@@ -107,21 +107,6 @@ void handle_sigsegv(int signo) {
     abort();
 }
 
-#if !_std_malloc
-#include <vmalloc.h>
-#endif
-#if defined(VMFL) && (VMALLOC_VERSION >= 20031205L)
-//
-// This exception handler is called after vmalloc() unlocks the region.
-//
-static_fn int malloc_done(Vmalloc_t *vm, int type, void *val, Vmdisc_t *dp) {
-    Shell_t *shp = sh_getinterp();
-    dp->exceptf = 0;
-    sh_exit(shp, SH_EXITSIG);
-    return 0;
-}
-#endif
-
 static_fn int notify_builtin(Shell_t *shp, int sig) {
     int action = 0;
 #ifdef ERROR_NOTIFY
@@ -222,14 +207,6 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
             // mark signal and continue.
             shp->trapnote |= SH_SIGSET;
             if (sig < shp->gd->sigmax) shp->sigflag[sig] |= SH_SIGSET;
-#if defined(VMFL) && (VMALLOC_VERSION >= 20031205L)
-            if (abortsig(sig)) {
-                // Abort inside malloc, process when malloc returns.
-                // VMFL defined when using vmalloc().
-                Vmdisc_t *dp = vmdisc(Vmregion, 0);
-                if (dp) dp->exceptf = malloc_done;
-            }
-#endif
             goto done;
         }
     }

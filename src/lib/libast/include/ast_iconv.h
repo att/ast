@@ -3,6 +3,8 @@
 #define _def_iconv_features 1
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+
 #include <ccode.h>
 
 #if !defined(__CYGWIN__) && !defined(__OpenBSD__)

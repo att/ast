@@ -80,7 +80,6 @@ static int shut(Coshell_t *co) {
             } else {
                 state.coshells = cs;
             }
-            vmclose(co->vm);
             break;
         }
         ps = cs;

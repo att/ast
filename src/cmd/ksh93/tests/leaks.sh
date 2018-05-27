@@ -56,7 +56,7 @@ curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
 
 if [[ $init_vsz -lt $curr_vsz ]];
 then
-    log_error "Memory leak on associative array"
+    log_error "Memory leak on associative array: $curr_vsz > $init_vsz"
 fi
 
 # Test for leak in executing subshell after PATH is reset
@@ -79,7 +79,7 @@ curr_vsz=$(ps -o vsz $$ | tail -n 1 | tr -d '\n')
 
 if [[ $init_vsz -lt $curr_vsz ]];
 then
-    log_error "Memory leak in executing subshell after PATH is reset"
+    log_error "Memory leak in executing subshell after PATH is reset: $curr_vsz > $init_vsz"
 fi
 
 log_info 'TODO: Enable these tests when vmstate is a builtin'
