@@ -1,0 +1,79 @@
+%global commit #COMMIT#
+%global shortcommit #SHORTCOMMIT#
+%global commitnum #COMMITNUM#
+%global commitdate #COMMITDATE#
+
+Name:           ksh
+Summary:        The Original ATT Korn Shell
+URL:            http://www.kornshell.com/
+License:        EPL
+Version:        %{commitdate}+git.%{commitnum}.%{shortcommit}
+Release:        0%{?dist}
+Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+
+BuildRequires:  meson
+BuildRequires:  gcc
+BuildRequires:  glibc-devel
+BuildRequires:  ed
+Conflicts:      pdksh
+Requires(post): grep, coreutils
+Requires(postun): sed
+
+Provides:       /bin/ksh
+
+%description
+KSH-93 is the most recent version of the KornShell by David Korn of
+AT&T Bell Laboratories.
+KornShell is a shell programming language, which is upward compatible
+with "sh" (the Bourne Shell).
+
+%prep
+%autosetup -n ast-%{commit}
+
+%build
+%meson -Dbuild-pty=false
+%meson_build
+
+%install
+%meson_install
+
+ln -s %{_bindir}/ksh %{buildroot}%{_bindir}/rksh
+
+%post
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
+do
+  if [ ! -f /etc/shells ]; then
+        echo "$s" > /etc/shells
+  else
+        if ! grep -q '^'"$s"'$' /etc/shells ; then
+                echo "$s" >> /etc/shells
+        fi
+  fi
+done
+
+%postun
+for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
+do
+  if [ ! -f $s ]; then
+	sed -i '\|^'"$s"'$|d' /etc/shells
+  fi
+done
+
+%verifyscript
+echo -n "Looking for ksh in /etc/shells... "
+if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
+    echo "missing"
+    echo "ksh missing from /etc/shells" >&2
+else
+    echo "found"
+fi
+
+%files
+%doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
+# LICENSE file is missing, temporarily?
+%{_bindir}/ksh
+%{_bindir}/rksh
+%{_bindir}/shcomp
+%{_mandir}/man1/ksh.1*
+
+%changelog
