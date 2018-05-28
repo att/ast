@@ -1,15 +1,12 @@
 %global commit #COMMIT#
-%global shortcommit #SHORTCOMMIT#
-%global commitnum #COMMITNUM#
-%global commitdate #COMMITDATE#
 
 Name:           ksh
 Summary:        The Original ATT Korn Shell
 URL:            http://www.kornshell.com/
 License:        EPL
-Version:        %{commitdate}+git.%{commitnum}.%{shortcommit}
+Version:        #VERSION#
 Release:        0%{?dist}
-Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source0:        %{name}_%{version}.orig.tar.gz
 
 BuildRequires:  meson
 BuildRequires:  gcc

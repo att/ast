@@ -1,0 +1,7 @@
+ksh (#VERSION#) testing; urgency=low
+
+  * Built from commit #COMMIT#
+
+  #COMMIT#
+
+ -- Siteshwar Vashisht <svashisht@redhat.com>  #CHANGELOG_DATE#

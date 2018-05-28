@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# Note: Meson is only available for debhelper >= 10.3
+	dh_auto_configure --buildsystem=meson --parallel
+
+override_dh_installdocs:
+	dh_installdocs --link-doc=ksh
+
+# Still needed until all platforms have debhelper 9.20151219
+# Consider transitioning https://wiki.debian.org/DebugPackage
+override_dh_strip:
+	dh_strip --dbg-package=ksh-dbg
+
+# Don't run tests; they don't work until ksh is installed
+override_dh_auto_test:
