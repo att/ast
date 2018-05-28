@@ -1,0 +1,31 @@
+Source: ksh
+Section: shells
+Priority: extra
+Maintainer: Siteshwar Vashisht <svashisht@redhat.com>
+Uploaders: Siteshwar Vashisht <svashisht@redhat.com>
+Build-Depends: debhelper (>= 10.3.0), meson
+Standards-Version: 3.9.4
+Homepage: http://kornshell.com/
+Vcs-Git: https://github.com/att/ast.git
+Vcs-Browser: https://github.com/att/ast
+
+Package: ksh
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, man-db
+Description: The Original ATT Korn Shell
+ KSH-93 is the most recent version of the KornShell by David Korn of
+ AT&T Bell Laboratories.
+ KornShell is a shell programming language, which is upward compatible
+ with "sh" (the Bourne Shell).
+
+Package: ksh-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ksh (= ${binary:Version}), ${misc:Depends}
+Description: Debugging symbols for KornShell
+ KSH-93 is the most recent version of the KornShell by David Korn of
+ AT&T Bell Laboratories.
+ KornShell is a shell programming language, which is upward compatible
+ with "sh" (the Bourne Shell). This package contains the debugging
+ symbols for ksh.

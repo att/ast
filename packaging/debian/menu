@@ -1,0 +1,2 @@
+?package(ksh):needs="text" section="Applications/Shells"\
+  title="ksh" command="/usr/bin/ksh"
