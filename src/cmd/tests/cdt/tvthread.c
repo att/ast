@@ -23,7 +23,6 @@
 
 #include <pthread.h>
 #include <sys/mman.h>
-#include <vmalloc.h>
 
 /* Test concurrency by volleying objects between two dictionaries. */
 
@@ -37,10 +36,9 @@ typedef struct obj_s {
     int del[2]; /* #deletion from Dict[0,1]	*/
 } Obj_t;
 
-/* Cdt discipline to allocate memory from a vmalloc region */
+/* Cdt discipline to allocate memory */
 typedef struct _mydisc_s {
     Dtdisc_t disc; /* cdt discipline		*/
-    Vmalloc_t *vm; /* vmalloc region		*/
 } Mydisc_t;
 
 static Dt_t *Dict[2];
@@ -48,7 +46,7 @@ static int Nthreads;
 
 /* allocate data from the shared memory region */
 void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
-    return vmresize(((Mydisc_t *)disc)->vm, data, size, 0);
+    return realloc(data, size);
 }
 
 /* compare two objects by their integer keys */
@@ -60,11 +58,7 @@ unsigned int myhash(Dt_t *dt, void *key, Dtdisc_t *disc) { return *((unsigned *)
 
 /* open a shared dictionary */
 static Dt_t *opendictionary(Mydisc_t *dc) {
-    Vmalloc_t *vm;
     Dt_t *dt;
-
-    /* create region to allocate memory from */
-    if (!(vm = vmopen(Vmdcsystem, Vmbest, 0))) terror("Couldn't create vmalloc region");
 
     /* discipline for objects identified by their decimal values */
     dc->disc.key = (ssize_t)DTOFFSET(Obj_t, value);
@@ -76,7 +70,6 @@ static Dt_t *opendictionary(Mydisc_t *dc) {
     dc->disc.hashf = myhash;
     dc->disc.memoryf = mymemory;
     dc->disc.eventf = (Dtevent_f)0;
-    dc->vm = vm;
 
     if (!(dt = dtopen(&dc->disc, Dtrhset))) /* open dictionary with hash-trie */
         terror("Can't open dictionary");
@@ -135,8 +128,8 @@ tmain() {
         if (!(Dict[n] = opendictionary(&disc[n]))) terror("Can't open dictionary %d", n);
 
         /* make objects */
-        if (!(list[n] = vmalloc(disc[n].vm, (N_OBJ / 2) * sizeof(Obj_t))))
-            terror("vmalloc failed %d", n);
+        if (!(list[n] = malloc((N_OBJ / 2) * sizeof(Obj_t))))
+            terror("malloc failed %d", n);
         memset(list[n], 0, (N_OBJ / 2) * sizeof(Obj_t));
 
         for (o = list[n], k = 0; k < N_OBJ / 2; ++k, ++o) {

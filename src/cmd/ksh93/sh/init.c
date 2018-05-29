@@ -1228,11 +1228,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     int type;
     static char *login_files[2];
 
-#if AST_VERSION >= 20130509
-    memfatal(NULL);
-#else
-    memfatal();
-#endif
     n = strlen(e_version);
     if (e_version[n - 1] == '$' && e_version[n - 2] == ' ') e_version[n - 2] = 0;
 #if (CC_NATIVE == CC_ASCII)

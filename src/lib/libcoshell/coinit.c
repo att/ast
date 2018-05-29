@@ -301,19 +301,12 @@ char *coinitialize(Coshell_t *co, int flags) {
         }
         sfputc(sp, 0);
         n = (int)sfstrtell(sp);
-        if (co->vm) {
-            if (co->init.script) vmfree(co->vm, co->init.script);
-            co->init.script = vmnewof(co->vm, 0, char, n, 1);
-            if (!co->init.script) goto bad;
-        } else {
-            if (co->init.script) free(co->init.script);
-            co->init.script = newof(0, char, n, 1);
-            if (!co->init.script) goto bad;
-        }
+        if (co->init.script) free(co->init.script);
+        if (!(co->init.script = calloc(1, n + 1))) goto bad;
         memcpy(co->init.script, sfstrbase(sp), n);
         sfstrclose(sp);
     } else if (!co->init.script) {
-        co->init.script = co->vm ? vmnewof(co->vm, 0, char, 1, 0) : newof(0, char, 1, 0);
+        co->init.script = calloc(1, 1);
         if (co->init.script) {
             *co->init.script = 0;
         }

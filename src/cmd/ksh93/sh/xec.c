@@ -27,8 +27,15 @@
 
 #include "defs.h"
 
+#if _hdr_stdlib
+#include <stdlib.h>
+#elif _hdr_malloc
+#include <malloc.h>
+#endif
+
 #include <assert.h>
 #include <fcin.h>
+
 #include <times.h>
 #include "builtins.h"
 #include "io.h"
@@ -39,10 +46,6 @@
 #include "streval.h"
 #include "test.h"
 #include "variables.h"
-
-#if !_std_malloc
-#include <vmalloc.h>
-#endif
 
 #define SH_NTFORK SH_TIMING
 #define NV_BLTPFSH NV_ARRAY
@@ -2744,9 +2747,6 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
         }
         return parent;
     }
-#if !_std_malloc
-    vmtrace(-1);
-#endif
     shp->outpipepid = ((flags & FPOU) ? getpid() : 0);
     // This is the child process.
     if (shp->trapnote & SH_SIGTERM) sh_exit(shp, SH_EXITSIG | SIGTERM);

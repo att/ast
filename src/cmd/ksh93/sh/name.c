@@ -819,8 +819,9 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                 if (c) *sp = c;
                 top = 0;
                 if (np && !nv_isattr(np, NV_MINIMAL) && shp->oldnp && !np->nvenv &&
-                    shp->oldnp != np && !(flags & NV_ARRAY))
+                    shp->oldnp != np && !(flags & NV_ARRAY)) {
                     np->nvenv = (char *)shp->oldnp;
+                }
                 shp->oldnp = np;
                 if (isref) {
 #if NVCACHE

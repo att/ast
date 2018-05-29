@@ -135,20 +135,6 @@ extern struct jobs job;
 
 #ifdef JOBS
 
-#if !_std_malloc
-#include <vmalloc.h>
-#ifdef vmlocked
-#define vmbusy() vmlocked(Vmregion)
-#else  // vmlocked
-#if VMALLOC_VERSION >= 20130509L
-#define vmbusy() (vmstat(Vmregion, 0) != 0)
-#else  // VMALLOC_VERSION >= 20130509L
-#if VMALLOC_VERSION >= 20070911L
-#define vmbusy() (vmstat(0, 0) != 0)
-#endif  // VMALLOC_VERSION >= 20070911L
-#endif  // VMALLOC_VERSION >= 20130509L
-#endif  // vmlocked
-#endif  // !_std_malloc
 #ifndef vmbusy
 #define vmbusy() 0
 #endif  // vmbusy

@@ -116,7 +116,6 @@ static const char usage[] =
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <termios.h>
-#include <vmalloc.h>
 
 #include "stty.h"
 
@@ -391,7 +390,6 @@ static int match(char *pattern, char *text, int must) {
 }
 
 typedef struct Master_s {
-    Vmalloc_t *vm;  // allocation region
     char *ignore;   // ignore master lines matching this re
     char *peek;     // peek buffer pointer
     char *cur;      // current line
@@ -416,7 +414,6 @@ static char *masterline(Sfio_t *mp, Sfio_t *lp, char *prompt, int must, int time
     char *s;
     char *t;
     ssize_t n;
-    ssize_t a;
     size_t promptlen;
     ptrdiff_t d;
     char promptbuf[64];
@@ -516,13 +513,14 @@ again:
     n = sfvalue(mp);
     error(-2, "b \"%s\"", fmtnesq(s, "\"", n));
     if ((bp->max - bp->end) < n) {
-        a = roundof(bp->max - bp->buf + n, SF_BUFSIZE);
         r = bp->buf;
-        if (!(bp->buf = vmnewof(bp->vm, bp->buf, char, a, 0))) {
+        ssize_t new_buf_size = roundof(bp->max - bp->buf + n, SF_BUFSIZE);
+        bp->buf = realloc(bp->buf, new_buf_size);
+        if (!bp->buf) {
             error(ERROR_SYSTEM | 2, "out of space");
-            return 0;
+            return NULL;
         }
-        bp->max = bp->buf + a;
+        bp->max = bp->buf + new_buf_size;
         if (bp->buf != r) {
             d = bp->buf - r;
             bp->cur += d;
@@ -626,19 +624,18 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
     char *m;
     char *e;
     char *id = NULL;
-    Vmalloc_t *vm;
     Cond_t *cond;
     Master_t *master;
 
     int status = 0;
 
-    if (!(vm = vmopen(Vmdcheap, Vmbest, 0)) || !(cond = vmnewof(vm, 0, Cond_t, 1, 0)) ||
-        !(master = vmnewof(vm, 0, Master_t, 1, 0)) ||
-        !(master->buf = vmnewof(vm, 0, char, 2 * SF_BUFSIZE, 0))) {
+    cond = calloc(1, sizeof(*cond));
+    master = calloc(1, sizeof(*master));
+    if (master) master->buf = calloc(2 * SF_BUFSIZE, sizeof(char));
+    if (!cond || !master || !master->buf) {
         error(ERROR_SYSTEM | 2, "out of space");
         goto done;
     }
-    master->vm = vm;
     master->cur = master->end = master->buf;
     master->max = master->buf + 2 * SF_BUFSIZE - 1;
     master->restore = -1;
@@ -682,9 +679,12 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
                 break;
             }
             case 'i': {
-                if (!cond->next && !(cond->next = vmnewof(vm, 0, Cond_t, 1, 0))) {
-                    error(ERROR_SYSTEM | 2, "out of space");
-                    goto done;
+                if (!cond->next) {
+                    cond->next = calloc(1, sizeof(Cond_t));
+                    if (!cond->next) {
+                        error(ERROR_SYSTEM | 2, "out of space");
+                        goto done;
+                    }
                 }
                 cond = cond->next;
                 cond->flags = IF;
@@ -785,10 +785,10 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
             }
             case 'I': {
                 if (master->ignore) {
-                    vmfree(vm, master->ignore);
+                    free(master->ignore);
                     master->ignore = 0;
                 }
-                if (*s && !(master->ignore = vmstrdup(vm, s))) {
+                if (*s && !(master->ignore = strdup(s))) {
                     error(ERROR_SYSTEM | 2, "out of space");
                     goto done;
                 }
@@ -796,10 +796,10 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
             }
             case 'L': {
                 if (error_info.id) {
-                    vmfree(vm, error_info.id);
+                    free(error_info.id);
                     error_info.id = 0;
                 }
-                if (*s && !(error_info.id = vmstrdup(vm, s))) {
+                if (*s && !(error_info.id = strdup(s))) {
                     error(ERROR_SYSTEM | 2, "out of space");
                     goto done;
                 }
@@ -807,10 +807,10 @@ static int dialogue(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
             }
             case 'P': {
                 if (master->prompt) {
-                    vmfree(vm, master->prompt);
+                    free(master->prompt);
                     master->prompt = 0;
                 }
-                if (*s && !(master->prompt = vmstrdup(vm, s))) {
+                if (*s && !(master->prompt = strdup(s))) {
                     error(ERROR_SYSTEM | 2, "out of space");
                     goto done;
                 }
@@ -828,7 +828,6 @@ done:
     if (mp) sfclose(mp);
     error_info.id = id;
     error_info.line = line;
-    if (vm) vmclose(vm);
     return status ? status : error_info.errors != 0;
 }
 

@@ -29,7 +29,6 @@
 
 #include <ast.h>
 #include <dt.h>
-#include <vmalloc.h>
 
 #define _CO_JOB_PRIVATE_  /* Cojob_t private additions	*/ \
     Cojob_t *next;        /* Next in list			*/            \
@@ -40,7 +39,6 @@
                           /* End of private additions	*/
 
 #define _CO_SHELL_PRIVATE_ /* Coshell_t private additions	*/  \
-    Vmalloc_t *vm;         /* Coshell_t vm			*/               \
     Coshell_t *next;       /* Next in list			*/               \
     Cojob_t *jobs;         /* Job list			*/                   \
     Coservice_t *service;  /* Service 			*/                   \

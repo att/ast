@@ -1,8 +1,9 @@
+# TODO: Enable tvsafehash.c, tvsaferehash.c, tvsafetree.c once they have been rewritten to not
+# depend on Vmalloc features.
 cdt_test_files = [ 'tannounce.c', 'tbags.c', 'tdeque.c', 'tevent.c',
                    'tinstall.c', 'tlist.c', 'tobag.c', 'tqueue.c', 'trehash.c',
                    'trhbags.c', 'tsafehash.c', 'tsafetree.c', 'tsearch.c',
                    'tshare.c', 'tstack.c', 'tstringset.c', 'tuser.c',
-                   'tvsafehash.c', 'tvsaferehash.c', 'tvsafetree.c',
                    'tvthread.c', 'twalk.c', 'tview.c' ]
 
 incdir = include_directories('..',

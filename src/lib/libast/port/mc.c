@@ -27,19 +27,24 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#if _hdr_stdlib
+#include <stdlib.h>
+#elif _hdr_malloc
+#include <malloc.h>
+#endif
+
+// TODO: Figure out why this header has to be included before the other project headers.
 #include "sfhdr.h"
-#include "vmalloc.h"
 
 #include "lclib.h"
 
-#include <ast_iconv.h>
+#include "ast_iconv.h"
 
 #define _MC_PRIVATE_ \
     size_t nstrs;    \
     size_t nmsgs;    \
     iconv_t cvt;     \
-    Sfio_t *tmp;     \
-    Vmalloc_t *vm;
+    Sfio_t *tmp;
 
 #include <error.h>
 #include <mc.h>
@@ -192,7 +197,6 @@ Mc_t *mcopen(Sfio_t *ip) {
     Mc_t *mc;
     char **mp;
     char *sp;
-    Vmalloc_t *vm;
     char *rp;
     int i;
     int j;
@@ -216,19 +220,17 @@ Mc_t *mcopen(Sfio_t *ip) {
     /*
      * allocate the region
      */
-
-    if (!(vm = vmopen(Vmdcheap, Vmbest, 0)) || !(mc = vmnewof(vm, 0, Mc_t, 1, 0))) {
+    mc = calloc(1, sizeof(Mc_t));
+    if (!mc) {
         errno = oerrno;
         return 0;
     }
-    mc->vm = vm;
     mc->cvt = (iconv_t)(-1);
     if (ip) {
         /*
          * read the translation record
          */
-
-        if (!(sp = sfgetr(ip, 0, 0)) || !(mc->translation = vmstrdup(vm, sp))) goto bad;
+        if (!(sp = sfgetr(ip, 0, 0)) || !(mc->translation = strdup(sp))) goto bad;
 
         /*
          * read the optional header records
@@ -246,17 +248,19 @@ Mc_t *mcopen(Sfio_t *ip) {
         mc->nmsgs = sfgetu(ip);
         mc->num = sfgetu(ip);
         if (sfeof(ip)) goto bad;
-    } else if (!(mc->translation = vmnewof(vm, 0, char, 1, 0)))
+    } else if (!(mc->translation = calloc(1, sizeof(char))))
         goto bad;
 
     /*
      * allocate the remaining space
      */
-
-    if (!(mc->set = vmnewof(vm, 0, Mcset_t, mc->num + 1, 0))) goto bad;
+    mc->set = calloc(mc->num + 1, sizeof(Mcset_t));
+    if (!mc->set) goto bad;
     if (!ip) return mc;
-    if (!(mp = vmnewof(vm, 0, char *, mc->nmsgs + mc->num + 1, 0))) goto bad;
-    if (!(rp = sp = vmalloc(vm, mc->nstrs + 1))) goto bad;
+    mp = calloc(mc->nmsgs + mc->num + 1, sizeof(char *));
+    if (!mp) goto bad;
+    rp = sp = malloc(mc->nstrs + 1);
+    if (!rp) goto bad;
 
     /*
      * get the set dimensions and initialize the msg pointers
@@ -291,7 +295,6 @@ Mc_t *mcopen(Sfio_t *ip) {
     errno = oerrno;
     return mc;
 bad:
-    vmclose(vm);
     errno = oerrno;
     return 0;
 }
@@ -381,7 +384,8 @@ int mcput(Mc_t *mc, int set, int num, const char *msg) {
     if (set > mc->num) {
         if (set > mc->gen) {
             i = MC_SET_MAX;
-            if (!(sp = vmnewof(mc->vm, 0, Mcset_t, i + 1, 0))) return -1;
+            sp = calloc(i + 1, sizeof(Mcset_t));
+            if (!sp) return -1;
             mc->gen = i;
             for (i = 1; i <= mc->num; i++) sp[i] = mc->set[i];
             mc->set = sp;
@@ -400,14 +404,16 @@ int mcput(Mc_t *mc, int set, int num, const char *msg) {
                 i = (MC_NUM_MAX + 1) / 32;
                 if (i <= num) i = 2 * num;
                 if (i > MC_NUM_MAX) i = MC_NUM_MAX;
-                if (!(mp = vmnewof(mc->vm, 0, char *, i + 1, 0))) return -1;
+                mp = calloc(i + 1, sizeof(char *));
+                if (!mp) return -1;
                 mc->gen = i;
                 sp->msg = mp;
                 for (i = 1; i <= sp->num; i++) mp[i] = sp->msg[i];
             } else {
                 i = 2 * mc->gen;
                 if (i > MC_NUM_MAX) i = MC_NUM_MAX;
-                if (!(mp = vmnewof(mc->vm, sp->msg, char *, i + 1, 0))) return -1;
+                mp = realloc(sp->msg, sizeof(char *) * (i + 1));
+                if (!mp) return -1;
                 sp->gen = i;
                 sp->msg = mp;
             }
@@ -433,7 +439,8 @@ int mcput(Mc_t *mc, int set, int num, const char *msg) {
      * allocate, add and adjust the string table size
      */
 
-    if (!(s = vmstrdup(mc->vm, msg))) return -1;
+    s = strdup(msg);
+    if (!s) return -1;
     sp->msg[num] = s;
     mc->nstrs += strlen(s) + 1;
     return 0;
@@ -582,6 +589,5 @@ int mcclose(Mc_t *mc) {
     if (!mc) return -1;
     if (mc->tmp) sfclose(mc->tmp);
     if (mc->cvt != (iconv_t)(-1)) iconv_close(mc->cvt);
-    vmclose(mc->vm);
     return 0;
 }

@@ -2187,25 +2187,6 @@ static int setopt(void *a, const void *p, int n, const char *v) {
 }
 
 /*
- * workaround for systems that shall not be named (solaris,freebsd)
- * the call free() with addresses that look like the came from the stack
- */
-
-extern int _vmkeep(int);
-
-static char *_sys_setlocale(int category, const char *locale) {
-    char *r;
-    int k;
-
-    k = _vmkeep(1);
-    r = setlocale(category, locale);
-    (void)_vmkeep(k);
-    return r;
-}
-
-#define setlocale(a, b) _sys_setlocale(a, b)
-
-/*
  * set a single AST_LC_* locale category
  * the caller must validate category
  * lc==0 restores the previous state

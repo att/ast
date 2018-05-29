@@ -68,6 +68,7 @@ else
     feature_data.set('_hdr_util', 0)
 endif
 
+feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
 feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
 feature_data.set10('_hdr_paths', cc.has_header('paths.h', args: feature_test_args))
 feature_data.set10('_hdr_termios', cc.has_header('termios.h', args: feature_test_args))

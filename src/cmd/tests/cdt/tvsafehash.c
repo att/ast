@@ -26,7 +26,6 @@
 #include "dttest.h"
 
 #include <sys/mman.h>
-#include <vmalloc.h>
 
 /* Test concurrent insert/delete/search by pingpong objects between
 ** two dictionaries, one built with mmap and the other shmget.
@@ -57,11 +56,10 @@ typedef struct obj_s {
     int accn;      /* # of times accessed		*/
 } Obj_t;
 
-/* Cdt discipline to allocate memory from a vmalloc region */
+/* Cdt discipline to allocate memory */
 typedef struct _mmdisc_s {
     Dtdisc_t disc; /* cdt discipline		*/
     char *store;   /* backing store file name	*/
-    Vmalloc_t *vm; /* shm vmalloc region		*/
 } Mmdisc_t;
 
 static char *Mapstore;
@@ -70,7 +68,7 @@ static Mmdisc_t Mapdisc, Shmdisc;
 
 /* allocate data from the shared memory region */
 void *mmmemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
-    return vmresize(((Mmdisc_t *)disc)->vm, data, size, 0);
+    return realloc(data, size);
 }
 
 /* handle dictionary events */
@@ -104,8 +102,6 @@ static int mmevent(Dt_t *dt, int type, void *data, Dtdisc_t *disc) {
         return 1;                 /* make sure no objects get deleted */
     else if (type == DT_ENDCLOSE) /* at end of closing, close the memory region */
     {
-        vmclose(mmdc->vm);
-        mmdc->vm = NULL;
         return 0; /* all done */
     } else
         return 0;
@@ -118,19 +114,10 @@ static int mmcompare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
 
 /* open a shared dictionary based on a common backing store */
 static Dt_t *opendictionary(int num, pid_t pid, char *store, int type) {
-    Vmalloc_t *vm;
-    Vmdisc_t *vmdc;
     Dt_t *dt;
     ssize_t size;
     int proj;
     Mmdisc_t *mmdc;
-
-    /* create/reopen the region backed by a file using mmap */
-    proj = store == Mapstore ? -1 : 1;
-    if (!(vmdc = vmdcshare(store, proj, MEMSIZE, type)))
-        terror("[store=%s]: Failed creating discipline for shared memory", store);
-    if (!(vm = vmopen(vmdc, Vmbest, 0)))
-        terror("[store=%s]: Failed opening shared vmalloc region", store);
 
     /* discipline for objects identified by their decimal values */
     mmdc = store == Mapstore ? &Mapdisc : &Shmdisc;
@@ -144,7 +131,6 @@ static Dt_t *opendictionary(int num, pid_t pid, char *store, int type) {
     mmdc->disc.memoryf = mmmemory;
     mmdc->disc.eventf = mmevent;
     mmdc->store = store;
-    mmdc->vm = vm;
 
     if (!(dt = dtopen(&mmdc->disc, TMETHOD)))
         terror("Process[num=%d,pid=%d]: Can't open dictionary for %s", num, pid, store);
@@ -263,14 +249,14 @@ tmain() {
 
     for (k = 0; k < N_OBJ; ++k) {
         if (random() % 2 == 0) {
-            if (!(om = vmalloc(mapdc->vm, sizeof(Obj_t))))
-                terror("Parent[pid=%d]: vmalloc failed k=%d store=%s", ppid, k, Mapstore);
+            if (!(om = malloc(sizeof(Obj_t))))
+                terror("Parent[pid=%d]: malloc failed k=%d store=%s", ppid, k, Mapstore);
             om->dval = k;
             if (dtinsert(mapdt, om) != om)
                 terror("Parent[pid=%d]: dtinsert failed k=%d store=%s", ppid, k, Mapstore);
         } else {
-            if (!(os = vmalloc(shmdc->vm, sizeof(Obj_t))))
-                terror("Parent[pid=%d]: vmalloc failed k=%d store=%s", ppid, k, Shmstore);
+            if (!(os = malloc(sizeof(Obj_t))))
+                terror("Parent[pid=%d]: malloc failed k=%d store=%s", ppid, k, Shmstore);
             os->dval = k;
             if (dtinsert(shmdt, os) != os)
                 terror("Parent[pid=%d]: dtinsert failed k=%d store=%s", ppid, k, Shmstore);
