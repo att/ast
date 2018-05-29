@@ -44,6 +44,8 @@ None at this time.
 
 ## Other significant changes
 
+- The AST Vmalloc subsystem has been removed. The project now uses the system
+  malloc. (issue #396)
 - Operations that depend on the simulated 3DFS behavior found in release
   ksh93v are no longer supported. That behavior does not work in ksh93u (the
   most recent stable release found in all distros) unless the 3D file system

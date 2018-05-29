@@ -22,8 +22,6 @@ feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
 # To use these add `--setup=malloc` to your `meson test` command.
 #
 malloc_debug_env = environment()
-# These env vars are recognized by AST vmalloc.
-malloc_debug_env.set('VMALLOC_OPTIONS', 'junk')
 # These env vars are recognized by GNU malloc.
 malloc_debug_env.set('MALLOC_CHECK_', '3')
 malloc_debug_env.set('MALLOC_PERTURB_', '165')  # 0xA5
