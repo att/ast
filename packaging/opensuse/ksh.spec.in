@@ -51,19 +51,16 @@ done
 %postun
 for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
 do
-  if [ ! -f $s ]; then
-	sed -i '\|^'"$s"'$|d' /etc/shells
-  fi
 done
 
-%verifyscript
-echo -n "Looking for ksh in /etc/shells... "
-if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-    echo "missing"
-    echo "ksh missing from /etc/shells" >&2
-else
-    echo "found"
-fi
+#%verifyscript
+#echo -n "Looking for ksh in /etc/shells... "
+#if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
+#    echo "missing"
+#    echo "ksh missing from /etc/shells" >&2
+#else
+#    echo "found"
+#fi
 
 %files
 %doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
