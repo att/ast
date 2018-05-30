@@ -40,7 +40,7 @@ if test $all = yes
         echo >&2
         exit 1
     end
-    set files src/cmd/ksh93/**.c
+    set files src/**.h src/**.c
 else if set -q argv[1]
     set files
     for f in $argv
