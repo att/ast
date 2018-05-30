@@ -21,7 +21,7 @@
 
 #include "sftest.h"
 
-int Code_line = 30; /* line number of CALL(sfclose(0)) */
+int Code_line = 42; /* line number of CALL(sfclose(0)) */
 
 #if defined(__LINE__)
 #define CALL(x) ((Code_line = __LINE__), (x))
@@ -31,11 +31,14 @@ int Code_line = 30; /* line number of CALL(sfclose(0)) */
 
 void handler(int sig) { terror("Bad argument handling on code line %d", Code_line); }
 
-tmain() {
+void main_varargs(int argc, char **argv, ...) {
+    va_list args;
+
     signal(SIGILL, handler);
     signal(SIGBUS, handler);
     signal(SIGSEGV, handler);
 
+    va_start(args, argv);
     CALL(sfclose(0));
     CALL(sfclrlock(0));
     CALL(sfopen(0, 0, 0));
@@ -56,7 +59,7 @@ tmain() {
     CALL(sfpool(0, 0, 0));
     CALL(sfpopen(0, 0, 0));
     CALL(sfprintf(0, 0));
-    CALL(sfvsprintf(0, 0, 0, 0));
+    CALL(sfvsprintf(0, 0, 0, args));
     CALL(sfsprintf(0, 0, 0));
     CALL(sfprints(0));
     CALL(sfpurge(0));
@@ -71,7 +74,7 @@ tmain() {
     CALL(sfreserve(0, 0, 0));
     CALL(sfresize(0, 0));
     CALL(sfscanf(0, 0));
-    CALL(sfvsscanf(0, 0, 0));
+    CALL(sfvsscanf(0, 0, args));
     CALL(sfsscanf(0, 0));
     CALL(sfseek(0, 0, 0));
     CALL(sfset(0, 0, 0));
@@ -89,6 +92,10 @@ tmain() {
     CALL(sfvscanf(0, 0, 0));
     CALL(sfwr(0, 0, 0, 0));
     CALL(sfwrite(0, 0, 0));
+    va_end(args);
+}
 
+tmain() {
+    main_varargs(argc, argv);
     texit(0);
 }
