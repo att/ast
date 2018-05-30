@@ -51,6 +51,9 @@ done
 %postun
 for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh
 do
+  if [ ! -f $s ]; then
+    sed -i '\|^'"$s"'$|d' /etc/shells
+  fi
 done
 
 #%verifyscript
