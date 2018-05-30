@@ -1683,10 +1683,10 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     Sfdouble_t d;
 
     // cppcheck-suppress pointerSize
-    dp = malloc(fp->dsize + sp->dsize + sizeof(void **));
+    dp = malloc(fp->dsize + sp->dsize + sizeof(void *));
     memcpy(dp, sp, fp->dsize);
     dp->nodes = (char *)(dp + 1);
-    dp->data = (void *)((char *)dp + fp->dsize + sizeof(void **));
+    dp->data = (void *)((char *)dp + fp->dsize + sizeof(void *));
     memcpy(dp->data, sp->data, sp->dsize);
     dp->hdr.nofree = (flags & NV_RDONLY ? 1 : 0);
     for (i = dp->numnodes; --i >= 0;) {
@@ -1722,13 +1722,15 @@ static Namfun_t svar_child_fun = {&svar_child_disc, 1, 0, sizeof(Namfun_t)};
 #endif
 
 static_fn int svar_init(Shell_t *shp, Namval_t *pp, const Shtable_t *tab, size_t extra) {
-    int i, nnodes = 0;
+    int i;
     struct Svars *sp;
     Namval_t *np, **mp;
     Namfun_t *fp;
 
+    int nnodes = 0;
     while (*tab[nnodes].sh_name) nnodes++;
-    sp = newof(0, struct Svars, 1, nnodes * NV_MINSZ + sizeof(Namfun_t) + sizeof(void *) + extra);
+    size_t xtra = nnodes * (sizeof(int) + NV_MINSZ) + sizeof(Namfun_t) + sizeof(void *) + extra;
+    sp = newof(0, struct Svars, 1, xtra);
     sp->nodes = (char *)(sp + 1);
     fp = (Namfun_t *)((char *)sp->nodes + nnodes * NV_MINSZ);
     memset(fp, 0, sizeof(Namfun_t));
