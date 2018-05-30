@@ -121,15 +121,15 @@ void *dll_lib(Dllnames_t *names, unsigned long version, Dllerror_f dllerrorf, vo
     //  load
     //
     dll = dllplugin(names->id, names->name, NULL, version, NULL, RTLD_LAZY, names->path,
-            names->data + sizeof(names->data) - names->path);
+                    names->data + sizeof(names->data) - names->path);
 
-    if (!dll && (streq(names->name, names->base) ||
+    if (!dll &&
+        (streq(names->name, names->base) ||
          !(dll = dllplugin(names->id, names->base, NULL, version, NULL, RTLD_LAZY, names->path,
                            names->data + sizeof(names->data) - names->path)))) {
         if (dllerrorf) {
             (*dllerrorf)(NULL, disc, 2, "%s: library not found", names->name);
-        }
-        else {
+        } else {
             errorf("dll", NULL, -1, "dll_lib: %s version %lu library not found", names->name,
                    version);
         }

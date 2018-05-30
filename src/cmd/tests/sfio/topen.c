@@ -30,12 +30,13 @@ tmain() {
     sfclose(sfstdin);
 
     if (!(f = sfopen(NULL, "123", "s"))) terror("Opening a stream");
-    // The next two statements are commented out because the test is bogus. The sfclose() will free
-    // the structure pointed to by `f`. Which means it isn't safe to pass that pointer to a
-    // subsequent sfopen() call. This works when linked against Vmalloc by accident. It does not
-    // work reliably when linked against the system malloc. Furthermore, I believe you can reopen
-    // the closed stream if you first call `sfset(f, SF_STATIC, 1)` to keep sfclose() from freeing
-    // the structure. And, in fact, if you do so the subsequent sfopen() test fails.
+        // The next two statements are commented out because the test is bogus. The sfclose() will
+        // free the structure pointed to by `f`. Which means it isn't safe to pass that pointer to a
+        // subsequent sfopen() call. This works when linked against Vmalloc by accident. It does not
+        // work reliably when linked against the system malloc. Furthermore, I believe you can
+        // reopen the closed stream if you first call `sfset(f, SF_STATIC, 1)` to keep sfclose()
+        // from freeing the structure. And, in fact, if you do so the subsequent sfopen() test
+        // fails.
 #if 0
     sfclose(f);
     if (sfopen(f, "123", "s") != NULL) terror("can't reopen a closed stream!");

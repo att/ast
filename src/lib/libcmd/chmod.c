@@ -137,7 +137,8 @@ __STDPP__directive pragma pp : hide lchmod
 #include <sys/stat.h>
 #include <sys/types.h>
 
-extern int fts_flags();
+                               extern int
+                               fts_flags();
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL
@@ -149,7 +150,8 @@ __STDPP__directive pragma pp : nohide lchmod
 #undef lchmod
 #endif
 
-extern int lchmod(const char *, mode_t);
+                               extern int
+                               lchmod(const char *, mode_t);
 
 /*
  * NOTE: we only use the native lchmod() on symlinks just in case

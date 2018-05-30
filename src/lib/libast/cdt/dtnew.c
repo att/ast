@@ -64,6 +64,4 @@ Dt_t *_dtnew(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
 
 #undef dtnew
 
-Dt_t *dtnew(Dtdisc_t *disc, Dtmethod_t *meth) {
-    return _dtnew(disc, meth, 20050420L);
-}
+Dt_t *dtnew(Dtdisc_t *disc, Dtmethod_t *meth) { return _dtnew(disc, meth, 20050420L); }

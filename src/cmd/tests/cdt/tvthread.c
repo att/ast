@@ -45,9 +45,7 @@ static Dt_t *Dict[2];
 static int Nthreads;
 
 /* allocate data from the shared memory region */
-void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
-    return realloc(data, size);
-}
+void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) { return realloc(data, size); }
 
 /* compare two objects by their integer keys */
 static int mycompare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
@@ -128,8 +126,7 @@ tmain() {
         if (!(Dict[n] = opendictionary(&disc[n]))) terror("Can't open dictionary %d", n);
 
         /* make objects */
-        if (!(list[n] = malloc((N_OBJ / 2) * sizeof(Obj_t))))
-            terror("malloc failed %d", n);
+        if (!(list[n] = malloc((N_OBJ / 2) * sizeof(Obj_t)))) terror("malloc failed %d", n);
         memset(list[n], 0, (N_OBJ / 2) * sizeof(Obj_t));
 
         for (o = list[n], k = 0; k < N_OBJ / 2; ++k, ++o) {

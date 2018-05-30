@@ -67,8 +67,7 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
     if (!co->export || !dtmatch(co->export, n)) {
         if (old) cvt = 0;
         v = getenv(n);
-        if (v && *v ||
-            coex && ((flags & CO_EXPORT) || co->export && dtsize(co->export) > 0)) {
+        if (v && *v || coex && ((flags & CO_EXPORT) || co->export && dtsize(co->export) > 0)) {
             if (!old) sfprintf(sp, "\\\n");
             exid(sp, " ", n, "='");
             if (coex && (flags & CO_EXPORT)) v = "(*)";

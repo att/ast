@@ -67,9 +67,7 @@ static char *Shmstore;
 static Mmdisc_t Mapdisc, Shmdisc;
 
 /* allocate data from the shared memory region */
-void *mmmemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
-    return realloc(data, size);
-}
+void *mmmemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) { return realloc(data, size); }
 
 /* handle dictionary events */
 static int mmevent(Dt_t *dt, int type, void *data, Dtdisc_t *disc) {

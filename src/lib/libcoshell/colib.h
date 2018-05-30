@@ -72,15 +72,15 @@ typedef struct Coexport_s {
 struct Coservice_s;
 typedef struct Coservice_s Coservice_t;
 
-struct Coservice_s // Service info
+struct Coservice_s  // Service info
 {
-    Coservice_t *next; // Next in list
-    char *name;        // Instance name
-    char *path;        // coexec() command path
-    char *db;          // State/db path
-    int fd;            // Command pipe
-    int pid;           // Pid
-    char *argv[16];    // coexec() command argv[]
+    Coservice_t *next;  // Next in list
+    char *name;         // Instance name
+    char *path;         // coexec() command path
+    char *db;           // State/db path
+    int fd;             // Command pipe
+    int pid;            // Pid
+    char *argv[16];     // coexec() command argv[]
 };
 
 #include <coshell.h>
@@ -88,40 +88,40 @@ struct Coservice_s // Service info
 #include <sig.h>
 #include <wait.h>
 
-#define state _coshell_info_ // Hide external symbol
+#define state _coshell_info_  // Hide external symbol
 
-#define CO_MODE_ACK (1 << 0)      // Wait for coexec() ack
-#define CO_MODE_INDIRECT (1 << 1) // Indirect CO_SERVER
-#define CO_MODE_SEPARATE (1 << 2) // 1 shell+wait per action
+#define CO_MODE_ACK (1 << 0)       // Wait for coexec() ack
+#define CO_MODE_INDIRECT (1 << 1)  // Indirect CO_SERVER
+#define CO_MODE_SEPARATE (1 << 2)  // 1 shell+wait per action
 
-#define CO_INIT (CO_USER >> 1) // Initial command
+#define CO_INIT (CO_USER >> 1)  // Initial command
 
-#define CO_PID_FREE (-3)   // Free job slot
-#define CO_PID_WARPED (-2) // Exit before start message
-#define CO_PID_ZOMBIE (-1) // Ready for wait
+#define CO_PID_FREE (-3)    // Free job slot
+#define CO_PID_WARPED (-2)  // Exit before start message
+#define CO_PID_ZOMBIE (-1)  // Ready for wait
 
-#define CO_BUFSIZ (PATH_MAX / 2)  // Temporary buffer size
-#define CO_MAXEVAL (PATH_MAX * 8) // Max eval'd action size
+#define CO_BUFSIZ (PATH_MAX / 2)   // Temporary buffer size
+#define CO_MAXEVAL (PATH_MAX * 8)  // Max eval'd action size
 
-typedef struct Costate_s // Global coshell state
+typedef struct Costate_s  // Global coshell state
 {
-    const char *lib;     // Library id
-    Coshell_t *coshells; // List of all coshells
-    Coshell_t *current;  // Current coshell
-    Coshell_t *generic;  // Generic coshell for coinit()
-    char *pwd;           // pwd
-    char *sh;            // sh from first coopen()
-    char *type;          // CO_ENV_TYPE value
-    int init;            // 0 if first coopen()
-    int index;           // Last coshell index
+    const char *lib;      // Library id
+    Coshell_t *coshells;  // List of all coshells
+    Coshell_t *current;   // Current coshell
+    Coshell_t *generic;   // Generic coshell for coinit()
+    char *pwd;            // pwd
+    char *sh;             // sh from first coopen()
+    char *type;           // CO_ENV_TYPE value
+    int init;             // 0 if first coopen()
+    int index;            // Last coshell index
 } Costate_t;
 
-extern char coident[];    // Coshell ident script
-extern char cobinit[];    // bsh initialition script
-extern char cokinit[];    // ksh initialition script
-extern char *co_export[]; // Default export var list
+extern char coident[];     // Coshell ident script
+extern char cobinit[];     // bsh initialition script
+extern char cokinit[];     // ksh initialition script
+extern char *co_export[];  // Default export var list
 
-extern Costate_t state; // Global coshell info
+extern Costate_t state;  // Global coshell info
 
 extern char *costash(Sfio_t *);
 extern char *coinitialize(Coshell_t *, int);

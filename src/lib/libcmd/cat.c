@@ -194,8 +194,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                     }
                                 mb:
                                     n = end - cp + 1;
-                                    if (n >= (sizeof(tmp) - c))
-                                        n = sizeof(tmp) - c - 1;
+                                    if (n >= (sizeof(tmp) - c)) n = sizeof(tmp) - c - 1;
                                     memcpy(tmp + c, cp, n);
                                     m = mbnsize(tmp, MB_LEN_MAX);
                                     if (m >= c) {
@@ -266,8 +265,8 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     cp = buf;
                 }
                 if (c >= 0) {
-                n = states[c];
-                if (!n) {
+                    n = states[c];
+                    if (!n) {
                         *(cur = tmp) = c;
                         m = 1;
                         goto flush;
@@ -332,7 +331,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                         }
                     } else if (n != T_NEWLINE) {
                         break;
-                        }
+                    }
                     if (!(flags & S_FLAG) || any || header) {
                         any = 0;
                         header = 0;

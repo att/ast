@@ -385,8 +385,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         if (copy) {
                                             empty = 0;
                                             c = cp - copy;
-                                            if (c > 0 &&
-                                                sfwrite(fdout, (char *)copy, c) < 0)
+                                            if (c > 0 && sfwrite(fdout, (char *)copy, c) < 0)
                                                 goto failed;
                                         }
                                         for (i = 0; i <= (ep - cp); i++) mb[i] = cp[i];

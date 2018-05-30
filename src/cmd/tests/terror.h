@@ -19,8 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -51,10 +51,10 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-extern void tsterror (char *, ...);
-extern void tstinfo (char *, ...);
-extern void tstwarn (char *, ...);
-extern void tstsuccess (char *, ...);
+extern void tsterror(char *, ...);
+extern void tstinfo(char *, ...);
+extern void tstwarn(char *, ...);
+extern void tstsuccess(char *, ...);
 
 static int Tstall;
 static int Tstchild;

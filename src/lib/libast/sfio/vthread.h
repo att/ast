@@ -144,7 +144,8 @@ struct _vtonce_s {
     int error;
 };
 
-#define VTONCE_INITDATA { 0, PTHREAD_ONCE_INIT }
+#define VTONCE_INITDATA \
+    { 0, PTHREAD_ONCE_INIT }
 
 #define vtstatus(vt) ((vt)->exit)
 #define vterror(vt) ((vt)->error)

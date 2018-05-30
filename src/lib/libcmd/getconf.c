@@ -180,8 +180,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
                 continue;
             case 'f':
                 dev = devbuf;
-                sfsprintf(dev, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d",
-                          (int)opt_info.num);
+                sfsprintf(dev, sizeof(devbuf), "/dev/file/flags@@/dev/fd/%d", (int)opt_info.num);
                 continue;
             case 'l':
                 flags |= ASTCONF_lower;
@@ -380,7 +379,6 @@ found:
 
     oargv[0] = cmd;
     n = sh_run(context, argc, oargv);
-    if (n >= EXIT_NOEXEC)
-        error(ERROR_SYSTEM | 2, "%s: exec error [%d]", cmd, n);
+    if (n >= EXIT_NOEXEC) error(ERROR_SYSTEM | 2, "%s: exec error [%d]", cmd, n);
     return n;
 }

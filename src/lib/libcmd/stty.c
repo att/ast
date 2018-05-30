@@ -907,7 +907,7 @@ int b_stty(int argc, char **argv, Shbltin_t *context) {
                 if (!opt_info.offset) {
                     error(2, "%s", opt_info.arg);
                 } else if (!(tp = lookup(argv[opt_info.index] + 1)) ||
-                         (tp->type != BIT && tp->type != TABS)) {
+                           (tp->type != BIT && tp->type != TABS)) {
                     error(ERROR_exit(1), "%s: unknown mode", argv[opt_info.index]);
                 }
                 break;

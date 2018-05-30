@@ -502,8 +502,8 @@ static_fn void array_putval(Namval_t *np, const char *string, int flags, Namfun_
                         array_clrbit(aq->bits, aq->cur, ARRAY_CHILD);
                         aq->val[aq->cur].cp = 0;
                         // TODO: NV_NOFREE was added here as a workaround for a use after free bug
-                        // If it creates a big memory leak we should investigate another solution for it
-                        // https://github.com/att/ast/issues/398
+                        // If it creates a big memory leak we should investigate another solution
+                        // for it https://github.com/att/ast/issues/398
                         if (!xfree) nv_delete(mp, ap->table, NV_NOFREE);
                     }
                     if (!array_covered(np, (struct index_array *)ap)) {

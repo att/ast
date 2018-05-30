@@ -192,7 +192,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     char buf[32];
 
     if (lib && *lib && (*lib != '-' || *(lib + 1))) {
-        // 
+        //
         //  grab the local part of the library id
         //
         s = strrchr(lib, ':');

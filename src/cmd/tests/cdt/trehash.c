@@ -19,8 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <sys/mman.h>
 #include <sched.h>
+#include <sys/mman.h>
 
 #include "dttest.h"
 

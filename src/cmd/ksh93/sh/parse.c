@@ -92,7 +92,7 @@ static struct argnod *label_last;
 // type is determined by the command.
 //
 static_fn unsigned long writedefs(Lex_t *lexp, struct argnod *arglist, int line, int type,
-                               struct argnod *cmd) {
+                                  struct argnod *cmd) {
     struct argnod *argp = arglist;
     char *cp;
     int eline;

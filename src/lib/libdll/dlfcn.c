@@ -209,8 +209,7 @@ void *dlsym(void *handle, const char *name) {
     void *addr;
     struct ld_info *info;
     info = getinfo(handle);
-    if (!info ||
-        !(addr = getloc(info->ldinfo_textorg, info->ldinfo_dataorg, (char *)name))) {
+    if (!info || !(addr = getloc(info->ldinfo_textorg, info->ldinfo_dataorg, (char *)name))) {
         err = errno;
         return 0;
     }
@@ -229,7 +228,7 @@ char *dlerror(void) {
 #else
 #if _hdr_dll && _lib_dllload
 
-// 
+//
 //  MVS
 //
 

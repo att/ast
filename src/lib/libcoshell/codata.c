@@ -161,12 +161,12 @@ function silent\n\
 typeset -xf ignore silent\n\
 ";
 
-char *co_export[] = // default export var list
+char *co_export[] =  // default export var list
     {
-        CO_ENV_EXPORT, // first
+        CO_ENV_EXPORT,  // first
         CO_ENV_ATTRIBUTES,
         CO_ENV_PROC,
         "FPATH",
         "VPATH",
-        0 // last
+        0  // last
 };

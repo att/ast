@@ -71,7 +71,7 @@ static_fn bool onstdpath(Shell_t *shp, const char *name) {
 }
 
 static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
-                           int spawn) {
+                              int spawn) {
 #ifdef SPAWN_cwd
     if (shp->vex->cur) {
         spawnvex_apply(shp->vex, 0, 0);
@@ -82,7 +82,7 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
 }
 
 static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
-                       pid_t pgid) {
+                          pid_t pgid) {
     pid_t pid;
 #ifdef SIGTSTP
     if (job.jobcontrol) {
@@ -123,7 +123,7 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 // spawn. The exitval is set to the maximum for each execution.
 //
 static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *const envp[],
-                        int spawn) {
+                           int spawn) {
     char **av, **xv;
     char **avlast = &argv[shp->xargmax], **saveargs = 0;
     char *const *ev;
@@ -1233,8 +1233,8 @@ openok:
 // Add a pathcomponent to the path search list and eliminate duplicates and non-existing absolute
 // paths.
 //
-static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, const char *name,
-                                int flag) {
+static_fn Pathcomp_t *path_addcomp(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old,
+                                   const char *name, int flag) {
     Pathcomp_t *pp, *oldpp;
     int offset = stktell(shp->stk);
     size_t len;
@@ -1302,7 +1302,7 @@ bool path_cmdlib(Shell_t *shp, const char *dir, bool on) {
 // on the stack at <offset>.
 //
 static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, Pathcomp_t *pp,
-                          int offset) {
+                             int offset) {
     struct stat statb;
     int k, m, n, fd;
     char *sp, *cp, *ep;

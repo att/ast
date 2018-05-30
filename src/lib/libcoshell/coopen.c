@@ -284,7 +284,7 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
                 co->flags |= CO_KSH;
                 s = cokinit;
                 break;
-            case 'i': // NOTE: 'i' is obsolete
+            case 'i':  // NOTE: 'i' is obsolete
             case 's':
                 co->flags |= CO_SERVER;
                 co->pid = 0;

@@ -74,8 +74,7 @@ void *_dll_next(int flags, _DLL_RLD_SYM_TYPE *here) {
     if (getenv("DLL_DEBUG") && (vp = (char *)_rld_new_interface(_RLD_FIRST_PATHNAME))) {
         do {
             if (strcmp(vp, "MAIN") && (lp = dllopen(vp, flags))) {
-                xr = (Write_f)dlsym(lp, "write")
-                if (xr) wr = xr;
+                xr = (Write_f)dlsym(lp, "write") if (xr) wr = xr;
             }
         } while (vp = (char *)_rld_new_interface(_RLD_NEXT_PATHNAME));
     }

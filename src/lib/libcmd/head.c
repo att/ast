@@ -129,7 +129,8 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
         if (argc > header) sfprintf(sfstdout, format, cp);
         format = (char *)header_fmt;
         if (skip > 0) {
-            if ((moved = sfmove(fp, NULL, skip, delim)) < 0 && !ERROR_PIPE(errno) && errno != EINTR) {
+            if ((moved = sfmove(fp, NULL, skip, delim)) < 0 && !ERROR_PIPE(errno) &&
+                errno != EINTR) {
                 error(ERROR_system(0), "%s: skip error", cp);
             }
             if (delim >= 0 && moved < skip) goto next;

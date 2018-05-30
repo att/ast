@@ -49,8 +49,8 @@ extern void *dllplugin(const char *lib, const char *name, const char *ver, unsig
 #if 0
 			again:
 #endif
-            dll = dllopen(dle->path, flags | RTLD_GLOBAL | RTLD_PARENT);
-            if (dll) {
+                dll = dllopen(dle->path, flags | RTLD_GLOBAL | RTLD_PARENT);
+                if (dll) {
                     if (!dllcheck(dll, dle->path, rel, cur)) {
                         err = state.error;
                         dlclose(dll);

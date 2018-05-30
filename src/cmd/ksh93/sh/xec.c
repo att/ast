@@ -2584,7 +2584,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
             static char lastarg[PATH_MAX];
             if (sh_isstate(shp, SH_FORKED)) sh_done(shp, 0);
             if (shp->lastarg != lastarg && shp->lastarg) free(shp->lastarg);
-            // Although this node is marked as NV_NOFREE, it should get free'd above when $_ is reset
+            // Although this node is marked as NV_NOFREE, it should get free'd above when $_ is
+            // reset
             nv_onattr(L_ARGNOD, NV_NOFREE);
             if (strlen(comn) < sizeof(lastarg)) {
                 shp->lastarg = strcpy(lastarg, comn);
@@ -2879,7 +2880,7 @@ Sfdouble_t sh_mathfun(Shell_t *shp, void *fp, int nargs, Sfdouble_t *arg) {
 }
 
 static_fn void sh_funct(Shell_t *shp, Namval_t *np, int argn, char *argv[], struct argnod *envlist,
-                     int execflg) {
+                        int execflg) {
     struct funenv fun;
     char *fname = nv_getval(SH_FUNNAMENOD);
     struct Level *lp = (struct Level *)(SH_LEVELNOD->nvfun);

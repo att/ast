@@ -152,7 +152,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
     struct stat sto;
     struct stat ste;
 
-    // 
+    //
     //  Get a free job slot
     //
 
@@ -171,7 +171,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
         co->jobs = cj;
     }
 
-    // 
+    //
     //  Set the flags
     //
 
@@ -179,7 +179,7 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
     flags |= co->flags;
     cj->flags = flags;
 
-    // 
+    //
     // Check service intercepts
     //
 
