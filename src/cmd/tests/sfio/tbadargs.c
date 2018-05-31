@@ -38,7 +38,6 @@ void main_varargs(int argc, char **argv, ...) {
     signal(SIGBUS, handler);
     signal(SIGSEGV, handler);
 
-    va_start(args, argv);
     CALL(sfclose(0));
     CALL(sfclrlock(0));
     CALL(sfopen(0, 0, 0));
@@ -59,7 +58,6 @@ void main_varargs(int argc, char **argv, ...) {
     CALL(sfpool(0, 0, 0));
     CALL(sfpopen(0, 0, 0));
     CALL(sfprintf(0, 0));
-    CALL(sfvsprintf(0, 0, 0, args));
     CALL(sfsprintf(0, 0, 0));
     CALL(sfprints(0));
     CALL(sfpurge(0));
@@ -74,7 +72,6 @@ void main_varargs(int argc, char **argv, ...) {
     CALL(sfreserve(0, 0, 0));
     CALL(sfresize(0, 0));
     CALL(sfscanf(0, 0));
-    CALL(sfvsscanf(0, 0, args));
     CALL(sfsscanf(0, 0));
     CALL(sfseek(0, 0, 0));
     CALL(sfset(0, 0, 0));
@@ -88,10 +85,14 @@ void main_varargs(int argc, char **argv, ...) {
     CALL(sftell(0));
     CALL(sftmp(0));
     CALL(sfungetc(0, 0));
-    CALL(sfvprintf(0, 0, 0));
-    CALL(sfvscanf(0, 0, 0));
     CALL(sfwr(0, 0, 0, 0));
     CALL(sfwrite(0, 0, 0));
+
+    va_start(args, argv);
+    CALL(sfvprintf(0, 0, args));
+    CALL(sfvscanf(0, 0, args));
+    CALL(sfvsprintf(0, 0, 0, args));
+    CALL(sfvsscanf(0, 0, args));
     va_end(args);
 }
 
