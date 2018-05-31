@@ -16,3 +16,7 @@ option('read-timeout', type : 'string', value : '0')
 # the default pathname for recording shell auditable events.
 #
 option('audit-file', type : 'string', value : '/etc/ksh_audit')
+
+# To disable building api tests, set build-api-tests option to false:
+#   meson -Dbuild-api-tests=false
+option('build-api-tests', type : 'boolean', value : true)
