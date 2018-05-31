@@ -183,9 +183,21 @@ $SHELL > $tmpfile <<- \EOF
 	sleep 1
 	wait
 EOF
+
+# Check the output of the previous code to determine if the platform supports reporting SIGCONT via
+# waitpid() or wait4(). Ideally this would be done in a manner that doesn't result in false
+# negatives but it is not obvious how to do that. See issue #561.
+if grep -q CONTINUED $tmpfile
+then
+    expected_statuses=(EXITED STOPPED CONTINUED EXITED)
+else
+    # The platform does not support reporting SIGCONT via waitpid() or wait4().
+    expected_statuses=(EXITED STOPPED EXITED)
+fi
+
 {
     read xpid pid
-    for stat in EXITED STOPPED CONTINUED EXITED
+    for stat in $expected_statuses
     do
         read pid1 pid2 status  || { log_error "line with stopped continued or exited expected";break;}
         [[ $pid1 == $pid ]] || log_error ".sh.sig.pid=$pid1 should be $pid"
@@ -194,7 +206,7 @@ EOF
         pid=$xpid
     done
 
-} <  $tmpfile
+} < $tmpfile
 
 typeset -A finished
 function sighandler_chld
