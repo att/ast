@@ -1309,7 +1309,7 @@ case $CONF_getconf in
     ;;
 esac
 
-python.sh fill_template.py < ${source_dir}/conftab.h > ${target_dir}/conftab.h \
+python.sh fill_template.py < ${source_dir}/conftab.h.in > ${target_dir}/conftab.h \
     conf_standards "$conf_standards" \
     getconf "$getconf" \
     name_max "$name_max"
@@ -1330,7 +1330,7 @@ done
 
 getconf=`cat $tmp.t`
 
-python.sh fill_template.py < ${source_dir}/conftab.c > ${target_dir}/conftab.c \
+python.sh fill_template.py < ${source_dir}/conftab.c.in > ${target_dir}/conftab.c \
     getconf "$getconf" \
     headers "$headers" \
     prefix_standards "$prefix_standards"
