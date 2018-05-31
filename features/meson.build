@@ -68,6 +68,10 @@ else
     feature_data.set('_hdr_util', 0)
 endif
 
+# TODO: Figure out if detecting header unistd.h is really necessary.
+# Especially given it is assumed to be present for detecting functions like
+# `pipe2()` below.
+feature_data.set10('_hdr_unistd', cc.has_header('unistd.h', args: feature_test_args))
 feature_data.set10('_hdr_stdlib', cc.has_header('stdlib.h', args: feature_test_args))
 feature_data.set10('_hdr_malloc', cc.has_header('malloc.h', args: feature_test_args))
 feature_data.set10('_hdr_paths', cc.has_header('paths.h', args: feature_test_args))

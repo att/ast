@@ -19,6 +19,8 @@
 // prefix groups are listed first. The standard prefix symbols (e.g., `_sys_`,
 // `_hdr_`, etc.) based on tests like `cc.has_function()` or `cc.has_header()`
 // are enumerated later.
+#ifndef _CONFIG_AST_H
+#define _CONFIG_AST_H 1
 
 #define _GNU_SOURCE 1
 
@@ -344,4 +346,24 @@
 #define static_fn
 #else
 #define static_fn static
+#endif
+
+//
+// We need to wrap the malloc family of functions. That's because the
+// `job_waitsafe()` function is called from an interrupt context and
+// indirectly calls `malloc()`. See issue #563.
+//
+#include <stdbool.h>
+
+extern volatile bool vmbusy_flag;
+#define vmbusy() vmbusy_flag
+
+#if !NO_MALLOC_WRAPPERS
+#define malloc(s) ast_malloc(s)
+#define calloc(c, s) ast_calloc(c, s)
+#define realloc(p, s) ast_realloc(p, s)
+#define valloc(s) ast_valloc(s)
+#define free(p) ast_free(p)
+#endif
+
 #endif

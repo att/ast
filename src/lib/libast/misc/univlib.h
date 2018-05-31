@@ -85,7 +85,6 @@ extern char univ_env[];
 #endif
 
 extern int getuniverse(char *);
-extern int readlink(const char *, char *, int);
 extern int setuniverse(int);
 extern int symlink(const char *, const char *);
 extern int universe(int);

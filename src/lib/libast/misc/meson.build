@@ -9,7 +9,7 @@ libast_files += [
     'misc/recstr.c', 'misc/setenviron.c', 'misc/sigcrit.c', 'misc/sigdata.c',
     'misc/signal.c', 'misc/stack.c', 'misc/state.c',
     'misc/stk.c', 'misc/systrace.c', 'misc/translate.c', 'misc/univdata.c',
-    'misc/fts.c'
+    'misc/fts.c', 'misc/vmbusy.c'
 ]
 
 if not shared_c_args.contains('-D_AST_no_spawnveg=1')

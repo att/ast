@@ -25,12 +25,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#if _hdr_unistd
+#include <unistd.h>
+#endif
+
 #include "univlib.h"
 
 #ifdef UNIV_MAX
-
 #include <ctype.h>
-
 #endif
 
 /*

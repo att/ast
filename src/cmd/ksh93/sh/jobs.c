@@ -316,6 +316,9 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
 //
 // This is the SIGCLD interrupt routine.
 //
+// TODO: Refactor this so that it only records the receipt of the signal and the actual reaping is
+// done from non-interrupt context.  See issue #563.
+//
 static_fn void job_waitsafe(int sig, siginfo_t *info, void *context) {
     int saved_errno = errno;
     if (job.in_critical || vmbusy()) {
