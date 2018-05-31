@@ -1085,11 +1085,16 @@ set -- $(bar)
 ( $SHELL  -c ' function foo { typeset x=$1;print $1;};z=();z=($(foo bar)) ') 2> /dev/null ||  log_error 'using a function to set an array in a command sub  fails'
 
 {
-got=$(
-s=$(ulimit -s)
-if [[ $s == +([[:digit:]]) ]] && (( s < 16384 ))
+actual=$(
+ulimit=$(ulimit -s)
+if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 16384 ))
 then
-    ulimit -s 16384 2>/dev/null
+    ulimit -s 16384
+fi
+ulimit=$(ulimit -n)
+if [[ $ulimit == +([[:digit:]]) ]] && (( ulimit < 512 ))
+then
+    ulimit -n 512
 fi
 
 $SHELL << \+++
@@ -1102,11 +1107,12 @@ f()
 
     return 0
 }
-f 257 && print ok
+f 257 && print ok || print fail
 +++
 )
-} 2>/dev/null
-[[ $got == ok ]] || log_error 'cannot handle comsub depth > 256 in function'
+}
+expect=ok
+[[ $actual == $expect ]] || log_error 'comsub depth > 256 in function failed' "$expect" "$actual"
 
 tmp1=$TEST_DIR/job.1
 tmp2=$TEST_DIR/job.2
