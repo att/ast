@@ -37,6 +37,8 @@
 
 #undef strsignal
 
+volatile bool vmbusy_flag = false;
+
 struct _m_ {
     char *text;
     char *name;

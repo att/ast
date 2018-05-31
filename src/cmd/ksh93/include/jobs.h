@@ -135,10 +135,6 @@ extern struct jobs job;
 
 #ifdef JOBS
 
-#ifndef vmbusy
-#define vmbusy() 0
-#endif  // vmbusy
-
 #define job_lock() asoincint(&job.in_critical)
 #define job_unlock()                                                                               \
     do {                                                                                           \

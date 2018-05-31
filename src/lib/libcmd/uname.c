@@ -66,15 +66,6 @@ static const char usage[] =
     "[+SEE ALSO?\bhostname\b(1), \bgetconf\b(1), \buname\b(2),"
     "	\bsysconf\b(2), \bsysinfo\b(2)]";
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide getdomainname gethostid gethostname sethostname
-#else
-#define getdomainname ______getdomainname
-#define gethostid ______gethostid
-#define gethostname ______gethostname
-#define sethostname ______sethostname
-#endif
-
 #include <cmd.h>
 #include <ctype.h>
 #include <proc.h>
@@ -83,21 +74,12 @@ __STDPP__directive pragma pp : hide getdomainname gethostid gethostname sethostn
 
 #include <sys/utsname.h>
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp
-    : nohide getdomainname gethostid gethostname sethostname
-#else
-#undef getdomainname
-#undef gethostid
-#undef gethostname
-#undef sethostname
+#if _hdr_unistd
+#include <unistd.h>
 #endif
 
-      extern int
-      getdomainname(char *, size_t);
 extern long gethostid(void);
 extern int gethostname(char *, size_t);
-extern int sethostname(const char *, size_t);
 
 static const char hosttype[] = HOSTTYPE;
 
