@@ -97,7 +97,7 @@ default_timeout = 30
 all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
     ['basic', 90], ['bracket'], ['builtins'], ['case'], ['comvar'],
-    ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
+    ['comvario'], ['coprocess', 100], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'],
     ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
