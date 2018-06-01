@@ -37,7 +37,8 @@ ninja -C build install
 Latest builds for Red Hat Enterprise Linux (CentOS) and Fedora can be found in
 [copr](https://copr.fedorainfracloud.org/coprs/g/ksh/latest/).
 
-TBD packages for other Linux distros.
+Latest builds for openSUSE and Ubuntu can be found in
+[OBS](https://build.opensuse.org/project/show/shells:ksh:new:latest).
 
 ### Windows
 TBD
