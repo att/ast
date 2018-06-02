@@ -240,8 +240,8 @@ do
     $cat |&
     pid=$!
     print foo >&p 2> /dev/null || log_error "first write of foo to $cat coprocess failed"
-    print foo >&p 2> /dev/null || log_error "second write of foo to coprocess failed"
-    kill $pid
+    print foo >&p 2> /dev/null || log_error "second write of foo to $cat coprocess failed"
+    exec 3>&p 3>&-
     wait $pid 2> /dev/null
     trap - TERM
     [[ $sleep_pid ]] && kill $sleep_pid
