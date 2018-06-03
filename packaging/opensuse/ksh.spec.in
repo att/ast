@@ -1,4 +1,5 @@
 %global commit #COMMIT#
+%global vcs_version #VCS_VERSION#
 
 Name:           ksh
 Summary:        The Original ATT Korn Shell
@@ -28,7 +29,7 @@ with "sh" (the Bourne Shell).
 %autosetup -n ast-%{commit}
 
 %build
-%meson -Dbuild-pty=false
+%meson -Dbuild-pty=false -Dfallback-version-number=%{vcs_version}
 %meson_build
 
 %install

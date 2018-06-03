@@ -12,6 +12,9 @@ git checkout master 2> /dev/null
 last_commit=$(git rev-parse HEAD)
 git pull origin master
 
+# Fetch tags to determine version number
+git fetch --tags
+
 # Check if new commits were added since last build
 if [[ $last_commit ==  $(git rev-parse HEAD) ]]; then
     echo "No new changes since last build. Exiting..."
@@ -29,15 +32,25 @@ COMMIT_SHORT=$(git rev-parse --short HEAD)
 COMMIT_NUM=$(git rev-list HEAD --count)
 COMMIT_DATE=$(date --date="@$(git show -s --format=%ct HEAD)" +%Y%m%d)
 CHANGELOG_DATE=$(date +"%a\, %d %b %Y %R:%S %z")
+
+# This is version number of rpm and debian packages
 VERSION=${COMMIT_DATE}.0.0+git.${COMMIT_NUM}.${COMMIT_SHORT}
 
+# This is the ksh version number seen inside scripts
+# For e.g. with ksh --version
+VCS_VERSION=$(git describe --always --dirty --tags)
+
 sed "s,#VERSION#,${VERSION},;
+     s,#VCS_VERSION#,${VCS_VERSION},;
      s,#COMMIT#,${COMMIT},;" \
          packaging/opensuse/ksh.spec.in > "${OBS_REPO}/ksh.spec"
 
 # Make all debian related changes in a temporary branch
 git branch -D debian_build
 git checkout -b debian_build
+
+sed  -i "s,#VCS_VERSION#,${VCS_VERSION},;" \
+         packaging/debian/rules
 
 sed  -i "s,#COMMIT#,${COMMIT},;
         s,#VERSION#,${VERSION},;
