@@ -35,6 +35,7 @@
 
 #include "aso.h"
 #include "builtins.h"
+#include "fault.h"
 #include "fcin.h"
 #include "history.h"
 #include "io.h"
@@ -45,12 +46,6 @@
 #include "variables.h"
 
 #define abortsig(sig) (sig == SIGABRT || sig == SIGBUS || sig == SIGILL || sig == SIGSEGV)
-
-struct Siginfo {
-    siginfo_t info;
-    struct Siginfo *next;
-    struct Siginfo *last;
-};
 
 static char indone;
 static int cursig = -1;
@@ -117,19 +112,21 @@ static_fn int notify_builtin(Shell_t *shp, int sig) {
     return action;
 }
 
-static_fn void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
-    if (info) {
-        struct Siginfo *jp, *ip;
-        ip = malloc(sizeof(struct Siginfo));
-        ip->next = 0;
-        memcpy(&ip->info, info, sizeof(siginfo_t));
-        if (!(jp = (struct Siginfo *)shp->siginfo[sig])) {
-            ip->last = ip;
-            shp->siginfo[sig] = (void *)ip;
-        } else {
-            jp->last->next = ip;
-            jp->last = ip;
-        }
+void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
+    if (!info) return;
+
+    siginfo_ll_t *ip = malloc(sizeof(siginfo_ll_t));
+    ip->next = NULL;
+    memcpy(&ip->info, info, sizeof(*info));
+
+    siginfo_ll_t *jp = shp->siginfo[sig];
+    if (!jp) {
+        ip->last = ip;
+        shp->siginfo[sig] = ip;
+    } else {
+        ip->last = NULL;
+        jp->last->next = ip;
+        jp->last = ip;
     }
 }
 
@@ -279,7 +276,7 @@ void sh_siginit(void *ptr) {
     shp->st.trapcom = (char **)calloc(n, sizeof(char *));
     shp->sigflag = (unsigned char *)calloc(n, sizeof(unsigned char));
     shp->gd->sigmsg = (char **)calloc(n, sizeof(char *));
-    shp->siginfo = (void **)calloc(sizeof(void *), shp->gd->sigmax);
+    shp->siginfo = calloc(sizeof(siginfo_ll_t *), shp->gd->sigmax);
     for (tp = shtab_signals; (sig = tp->sh_number); tp++) {
         n = (sig >> SH_SIGBITS);
         if ((sig &= ((1 << SH_SIGBITS) - 1)) > (shp->gd->sigmax)) continue;
@@ -439,7 +436,7 @@ void sh_chktrap(Shell_t *shp) {
             }
             trap = shp->st.trapcom[sig];
             if (trap) {
-                struct Siginfo *ip = 0, *ipnext;
+                siginfo_ll_t *ip = 0, *ipnext;
             retry:
                 if (shp->siginfo) {
                     do {
