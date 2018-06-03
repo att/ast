@@ -17,7 +17,9 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SH_INTERACTIVE
+#ifndef SHELL_H_DEFINED
+#define SHELL_H_DEFINED
+
 //
 // David Korn
 // AT&T Labs
@@ -26,9 +28,16 @@
 //
 #define SH_VERSION 20120720
 
+// Bit of a chicken and egg problem here. If we've already included fault.h then this typedef
+// already exists and depending on the compiler defining it here may cause a warning or an error.
+#ifndef FAULT_H_DEFINED
+typedef struct Shell_s Shell_t;
+#endif
+
 #include <ast.h>
 #include <cdt.h>
 #include <stk.h>
+#include "fault.h"
 #ifdef _SH_PRIVATE
 #include "name.h"
 #else
@@ -56,8 +65,6 @@ typedef unsigned int Shopt_t_data_t;
 typedef struct {
     Shopt_t_data_t v[(256 / 8) / sizeof(Shopt_t_data_t)];
 } Shopt_t;
-
-typedef struct Shell_s Shell_t;
 
 #include <shcmd.h>
 
@@ -253,7 +260,7 @@ struct Shell_s {
     void *cdpathlist;
     char **argaddr;
     void *optlist;
-    void **siginfo;
+    siginfo_ll_t **siginfo;
 #if !_AST_no_spawnveg
     Spawnvex_t *vex;
     Spawnvex_t *vexp;
@@ -386,7 +393,7 @@ extern void *sh_waitnotify_20120720(Shwait_f, void *);
 //
 extern Shell_t sh;
 
-#include <shellapi.h>
+#include "shellapi.h"
 
 #ifndef _AST_INTERCEPT
 #if _lib_lseek64
@@ -455,4 +462,4 @@ extern Shell_t sh;
 #define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits
 #define SH_RUNPROG -1022              // needs to be negative and < 256
 
-#endif  // SH_INTERACTIVE
+#endif  // SHELL_H_DEFINED

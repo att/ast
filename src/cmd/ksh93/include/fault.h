@@ -17,7 +17,9 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SH_SIGBITS
+#ifndef FAULT_H_DEFINED
+#define FAULT_H_DEFINED
+
 //
 // UNIX shell
 // S. R. Bourne
@@ -97,6 +99,13 @@ struct checkpt {
 #endif
 };
 
+struct siginfo_ll {
+    siginfo_t info;
+    struct siginfo_ll *next;
+    struct siginfo_ll *last;
+};
+typedef struct siginfo_ll siginfo_ll_t;
+
 #if !_AST_no_spawnveg
 #define sh_pushcontext(shp, bp, n)                                                           \
     ((bp)->mode = (n), (bp)->olist = 0, (bp)->topfd = shp->topfd, (bp)->prev = shp->jmplist, \
@@ -111,10 +120,17 @@ struct checkpt {
 
 #define sh_popcontext(shp, bp) (shp->jmplist = (bp)->prev, errorpop(&((bp)->err)))
 
+// Bit of a chicken and egg problem here. If we've already included shell.h then this typedef
+// already exists and depending on the compiler defining it here may cause a warning or an error.
+#ifndef SHELL_H_DEFINED
+typedef struct Shell_s Shell_t;
+#endif
+
 typedef void (*sh_sigfun_t)(int);
 extern sh_sigfun_t sh_signal(int, sh_sigfun_t);
 extern void sh_fault(int, siginfo_t *, void *);
 extern void sh_setsiginfo(siginfo_t *);
+extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
 extern void dump_backtrace(int max_frames, int skip_levels);
 #undef signal
 #define signal(a, b) sh_signal(a, (sh_sigfun_t)(b))
@@ -126,4 +142,4 @@ extern void timerdel(void *);
 
 extern const char e_alarm[];
 
-#endif  // !SH_SIGBITS
+#endif  // FAULT_H_DEFINED
