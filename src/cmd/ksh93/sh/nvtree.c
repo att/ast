@@ -928,8 +928,9 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
                 if (outfile && wp->indent < 0 && (wp->flags & NV_COMVAR)) sfputc(outfile, ';');
                 wp->flags |= NV_COMVAR;
                 if (argv[1]) {
-                    ssize_t r = (cp - argv[0]) + strlen(cp);
-                    if (argv[1][r] == '.' && strncmp(argv[0], argv[1], r) == 0) {
+                    ssize_t r0 = (cp - argv[0]) + strlen(cp);
+                    ssize_t r1 = strlen(argv[1]);
+                    if (r0 <= r1 && argv[1][r0] == '.' && strncmp(argv[0], argv[1], r0) == 0) {
                         wp->flags &= ~NV_COMVAR;
                     }
                 }

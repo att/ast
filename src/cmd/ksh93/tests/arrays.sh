@@ -723,9 +723,9 @@ x=$(
 ) 2> /dev/null
 [[ $x == "$exp" ]] || log_error 'setting element 1 of array to compound variable failed'
 
-#test for cloning a very large index array - can core dump
+# Test for cloning a very large index array.
 (
-    trap 'x=$?;exit $(( $x!=0 ))' EXIT
+    trap 'x=$?; exit $(( $x != 0 ))' EXIT
     $SHELL <<- \EOF
     (
         print '('
@@ -747,7 +747,7 @@ x=$(
     v=$(typeset -p hugecpv)
     [[ ${v/hugecpv/hugecpv2} == "$(typeset -p hugecpv2)" ]]
 EOF
-) 2> /dev/null || log_error 'copying a large array fails'
+) || log_error 'copying a large array fails'
 
 unset foo
 typeset -a foo
