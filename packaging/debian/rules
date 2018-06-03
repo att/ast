@@ -9,7 +9,7 @@ export DH_VERBOSE=1
 
 override_dh_auto_configure:
 	# Note: Meson is only available for debhelper >= 10.3
-	dh_auto_configure --buildsystem=meson --parallel
+	dh_auto_configure --buildsystem=meson --parallel -- -Dfallback-version-number=#VCS_VERSION#
 
 override_dh_installdocs:
 	dh_installdocs --link-doc=ksh
