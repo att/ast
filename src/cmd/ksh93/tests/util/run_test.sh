@@ -62,6 +62,10 @@ mkfifo fifo8
 mkdir $TEST_DIR/home
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
+#
+# A test may need to alter its behavior based on the OS we're running on.
+#
+export OS_NAME=$(uname -s)
 
 #
 # Make sure any locale vars set by the user (or the continuous build environment) don't affect the

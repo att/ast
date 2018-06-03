@@ -56,15 +56,16 @@
 
 function idempotent
 {
-    typeset got var action='typeset -p'
-    [[ $1 == -* ]] && { shift;var=$2=; action='print -v';}
-    typeset -n exp=$1
-    got=$($SHELL <<- EOF
+    typeset var action='typeset -p'
+    [[ $1 == -* ]] && { shift; var=$2=; action='print -v'; }
+    typeset -n expect=$1
+    typeset actual=$($SHELL <<- EOF
 		$3
-		$var$exp
-		$action  $2
+		$var$expect
+		$action $2
 	EOF)
-    [[ $got == "$exp" ]] || log_error "$exp is not idempotent"
+
+    [[ "$actual" == "$expect" ]] || log_error "idempotent test failed" "$expect" "$actual"
 }
 
 ## test start
@@ -107,9 +108,10 @@ compound c
 typeset -C -a c.ar
 c.ar[4]=( a4=1 )
 typeset -m "c.ar[5]=c.ar[4]"
-exp=$'(\n\ttypeset -C -a ar=(\n\t\t[5]=(\n\t\t\ta4=1\n\t\t)\n\t)\n)'
-[[ $(print -v c) == "$exp" ]] || log_error 'typeset -m "c.ar[5]=c.ar[4]" not working'
-idempotent -v exp c
+expect=$'(\n\ttypeset -C -a ar=(\n\t\t[5]=(\n\t\t\ta4=1\n\t\t)\n\t)\n)'
+actual=$(print -v c)
+[[ "$actual" == "$expect" ]] || log_error 'typeset -m "c.ar[5]=c.ar[4]" not working' "$expect" "$actual"
+idempotent -v exexpect c
 
 typeset -T x_t=( hello=world )
 function m
@@ -202,9 +204,10 @@ function sortar
 }
 
 sortar c.ar
-exp='typeset -C -a c.ar=((typeset -l -E i=24) (typeset -l -E i=7) (typeset -l -E i=4) (typeset -l -E i=2) (typeset -l -E i=1) (typeset -l -E i=-1))'
-[[ $(typeset -p c.ar) == "$exp" ]] || log_error 'sorting compound arrays with typeset -m failed'
-idempotent exp c.ar 'typeset -C c'
+expect='typeset -C -a c.ar=((typeset -l -E i=24) (typeset -l -E i=7) (typeset -l -E i=4) (typeset -l -E i=2) (typeset -l -E i=1) (typeset -l -E i=-1))'
+actual=$(typeset -p c.ar)
+[[ "$actual" == "$expect" ]] || log_error 'sorting compound arrays with typeset -m failed' "$expect" "$actual"
+idempotent expect c.ar 'typeset -C c'
 
 typeset -T objstack_t=(
         compound -a st
@@ -228,9 +231,10 @@ compound foo=( integer val=5 )
 c.ost.pushobj foo
 compound res
 c.ost.popobj res.a
-exp='typeset -C res.a=(typeset -l -i val=5)'
-[[ $(typeset -p res.a) == "$exp" ]] || log_error 'typeset -m for compound variable in a type not working'
-idempotent exp res.a 'typeset -C res'
+expect='typeset -C res.a=(typeset -l -i val=5)'
+actual=$(typeset -p res.a)
+[[ "$actual" == "$expect" ]] || log_error 'typeset -m for compound variable in a type not working' "$expect" "$actual"
+idempotent expect res.a 'typeset -C res'
 
 unset c
 compound c dummy
@@ -240,9 +244,10 @@ typeset -a bar=(  2 3 4 )
 c.ost.pushobj foo
 c.ost.pushobj bar
 c.ost.popobj dummy
-exp='typeset -C c=(objstack_t ost=(typeset -l -i st_n=1;st[0]=(obj=(typeset -l -i val=5))))'
-[[ $(typeset -p c) == "$exp" ]] || log_error 'typeset -m for types not working'
-idempotent exp c "$(typeset -T)"
+expect='typeset -C c=(objstack_t ost=(typeset -l -i st_n=1;st[0]=(obj=(typeset -l -i val=5))))'
+actual=$(typeset -p c)
+[[ "$actual" == "$expect" ]] || log_error 'typeset -m for types not working' "$expect" "$actual"
+idempotent expect c "$(typeset -T)"
 
 unset c
 typeset -p c
@@ -292,9 +297,10 @@ nameref ar=c.ar
 typeset -m "tmpvar=ar[1]"
 command typeset -m "ar[1]=ar[2]" 2> /dev/null || log_error 'typeset -m ar[1]=ar[2] not working when ar is numerical'
 typeset -m "ar[2]=tmpvar"
-exp='key_t -a c.ar=((typeset -l -E i=7) (typeset -l -E i=11) (typeset -l -E i=1))'
-[[ $(typeset -p c.ar) == "$exp" ]] 2> /dev/null || log_error 'typeset -m c.ar has wrong value'
-idempotent exp c.ar 'typeset -T key_t=(float i);compound c'
+expect='key_t -a c.ar=((typeset -l -E i=7) (typeset -l -E i=11) (typeset -l -E i=1))'
+actual=$(typeset -p c.ar)
+[[ "$actual" == "$expect" ]] 2> /dev/null || log_error 'typeset -m c.ar has wrong value' "$expect" "$actual"
+idempotent expect c.ar 'typeset -T key_t=(float i);compound c'
 
 function sortar
 {
@@ -325,9 +331,15 @@ function main
             ( float i=+inf ) ( float i=-1 ) )
     )
     sortar c.ar
-    exp='typeset -C -a c.ar=((typeset -l -E i=-nan) (typeset -l -E i=inf) (typeset -l -E i=24) (typeset -l -E i=4) (typeset -l -E i=2) (typeset -l -E i=1) (typeset -l -E i=-1) (typeset -l -E i=-inf))'
-         [[ $(typeset -p c.ar) == "$exp" ]] || log_error 'typeset -m not working when passed a reference to an local argument from a calling function'
-    idempotent exp c.ar 'compound c'
+    expect='typeset -C -a c.ar=((typeset -l -E i=-nan) (typeset -l -E i=inf) (typeset -l -E i=24) (typeset -l -E i=4) (typeset -l -E i=2) (typeset -l -E i=1) (typeset -l -E i=-1) (typeset -l -E i=-inf))'
+    # TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
+    # See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
+    if [[ $OS_NAME != OpenBSD ]]
+    then
+        actual=$(typeset -p c.ar)
+        [[ "$actual" == "$expect" ]] || log_error 'typeset -m not working when passed a reference to an local argument from a calling function' "$expect" "$actual"
+        idempotent expect c.ar 'compound c'
+    fi
  }
 main
 
@@ -338,19 +350,21 @@ compound cc.a.xc
 typeset cc.a.xc.i=5
 X_t cc.b
 typeset -m "cc.b.xc.j=cc.a.xc.i"
-exp='typeset -C cc=(X_t a=(typeset -C xc);X_t b=(xc=(j=5)))'
-[[ $(typeset -p cc) == $exp ]] || log_error 'typeset -m compound variable embedded in type not working'
-idempotent exp cc 'typeset -T X_t=( typeset -C xc )'
+expect='typeset -C cc=(X_t a=(typeset -C xc);X_t b=(xc=(j=5)))'
+actual=$(typeset -p cc)
+[[ "$actual" == "$expect" ]] || log_error 'typeset -m compound variable embedded in type not working' "$expect" "$actual"
+idempotent expect cc 'typeset -T X_t=( typeset -C xc )'
 
 unset d
 compound d=(
     compound sta=( compound -a st;integer st_numelements=0)
 )
-exp='typeset -C d=(sta=(typeset -C -a st=( [0]=(obj=(typeset -l -i t=3;);););typeset -l -i st_numelements=1))'
+expect='typeset -C d=(sta=(typeset -C -a st=( [0]=(obj=(typeset -l -i t=3;);););typeset -l -i st_numelements=1))'
 compound foo=( integer t=3 )
 typeset -m "d.sta.st[$((d.sta.st_numelements++))].obj=foo"
-[[ $(typeset -p d) == "$exp" ]] || log_error 'compound variable not displayed properly'
-idempotent exp d
+actual=$(typeset -p d)
+[[ "$actual" == "$expect" ]] || log_error 'compound variable not displayed properly' "$expect" "$actual"
+idempotent expect d
 
 function f2
 {

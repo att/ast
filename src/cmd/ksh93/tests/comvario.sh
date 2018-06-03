@@ -237,8 +237,21 @@ count_brackets "$(print -C y1)" || log_error "y1: bracket open ${bracketstat.bop
 count_brackets "$y2" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
 count_brackets "$(print -v y2)" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
 count_brackets "$(print -C y2)" || log_error "y2: bracket open ${bracketstat.bopen} != bracket close ${bracketstat.bclose}"
-[[ "$y1" == "$y2" ]] || log_error "Expected $(printf "%q\n" "${y1}") == $(printf "%q\n" "${y2}")."
-[[ "$x"  == "$y1" ]] || log_error "Expected $(printf "%q\n" "${x}") == $(printf "%q\n" "${y1}")."
+[[ "$y1" == "$y2" ]] || {
+    expect=$(printf "%q\n" "${y1}")
+    actual=$(printf "%q\n" "${y2}")
+    log_error "Expected \$y1 == \$y2" "$expect" "$actual"
+}
+# TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
+# See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
+if [[ $OS_NAME != OpenBSD ]]
+then
+    [[ "$x"  == "$y1" ]] || {
+        expect=$(printf "%q\n" "${x}")
+        actual=$(printf "%q\n" "${y1}")
+        log_error "Expected \$x == \$y1" "$expect" "$actual"
+    }
+fi
 
 # cleanup
 unset x y1 y2 || log_error "unset failed"

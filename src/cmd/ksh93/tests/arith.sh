@@ -589,10 +589,15 @@ then
         expect="$2"
         actual=$(printf "%g\n" $(($1)))
         [[ $actual == $expect ]] || log_error "printf '%g\\n' \$(($1)) failed" "$expect" "$actual"
-        actual=$(printf "%g\n" $1)
-        [[ $actual == $expect ]] || log_error "printf '%g\\n' $1 failed" "$expect" "$actual"
-        actual=$(printf -- $(($1)))
-        [[ $actual == $expect ]] || log_error "print -- \$(($1)) failed" "$expect" "$actual"
+        # TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
+        # See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
+        if [[ $OS_NAME != OpenBSD ]]
+        then
+            actual=$(printf "%g\n" $1)
+            [[ $actual == $expect ]] || log_error "printf '%g\\n' $1 failed" "$expect" "$actual"
+            actual=$(printf -- $(($1)))
+            [[ $actual == $expect ]] || log_error "print -- \$(($1)) failed" "$expect" "$actual"
+        fi
         shift 2
     done
     (( 1.0/0.0 == Inf )) || log_error '1.0/0.0 != Inf'

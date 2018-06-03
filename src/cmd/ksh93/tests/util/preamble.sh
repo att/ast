@@ -13,6 +13,7 @@ readonly SAFE_PATH
 readonly TEST_DIR
 readonly TEST_SRC_DIR
 readonly BUILD_DIR
+readonly OS_NAME
 
 #
 # Create some functions for reporting and counting errors.
