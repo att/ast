@@ -1,4 +1,6 @@
 log_info "TODO: Enable this test when the bug documented in issue #396 is fixed."
+cd /tmp
+rm -rf $TEST_DIR
 exit 0
 
 ########################################################################
