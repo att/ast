@@ -41,6 +41,8 @@ log_info 'TODO: Reenable the commented out tests below if and when mkdir/rmdir/c
 if [[ ! -d /proc ]]
 then
     log_warning "Skipping this test since the system does not have a /proc directory"
+    cd /tmp
+    rm -rf $TEST_DIR
     exit 0
 fi
 
