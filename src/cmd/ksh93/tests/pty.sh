@@ -392,6 +392,10 @@ u ^hello world\r?\n$
 !
 
 # log_error #
+if [[ $OS_NAME = OpenBSD ]]
+then
+    log_info 'TODO: Enable this when someone who cares about pty on OpenBSD cares to investigate'
+else
 tst $LINENO <<"!"
 L POSIX sh 251(C)
 
@@ -433,6 +437,7 @@ r echo repeat-2
 c n
 r echo repeat-3
 !
+fi
 
 # log_error #
 log_info 'TODO: Enable this when issue #375 is fixed. At this time SIGTSTP is not correctly handled.'
