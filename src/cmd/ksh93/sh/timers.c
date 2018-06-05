@@ -79,15 +79,11 @@ static_fn double setalarm(double t) {
 static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
     Timer_t *tp, *tplast, *tpold, *tpnext;
     double now;
-    static double left;
+    static double left = 0;
     Shell_t *shp = sh_getinterp();
-    UNUSED(sig);
 
-    if (shp->st.trapcom[SIGALRM] && *shp->st.trapcom[SIGALRM]) {
-        shp->siginfo[SIGALRM] = malloc(sizeof(siginfo_t));
-        memcpy(shp->siginfo[SIGALRM], context, sizeof(siginfo_t));
-    }
-    left = 0;
+    set_trapinfo(shp, sig, info);
+
     if (time_state & SIGALRM_CALL)
         time_state &= ~SIGALRM_CALL;
     else if (alarm(0))
