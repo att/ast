@@ -40,6 +40,9 @@ Latest builds for Red Hat Enterprise Linux (CentOS) and Fedora can be found in
 Latest builds for openSUSE and Ubuntu can be found in
 [OBS](https://build.opensuse.org/project/show/shells:ksh:new:latest).
 
+Latest builds for Mageia Cauldron can be found in their repository.
+Info for [KSH in Mageia](https://madb.mageia.org/package/show/name/ksh/release/cauldron/application/0).
+
 ### Windows
 TBD
 
