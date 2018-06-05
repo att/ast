@@ -42,21 +42,25 @@ exp1='$'$exp2
 
 for lc_all in $supported
 do
-    got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
+    actual=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
         printf "%q\n" "$(printf "\u[20ac]")"' |
         iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
-    [[ $got == "$exp0" ]] || log_error "${lc_all} nounicodeliterals FAILED -- expected '$exp0', got '$got'"
+    [[ "$actual" == "$exp0" ]] || log_error "${lc_all} nounicodeliterals FAILED" "$exp0" "$actual"
 
-    got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
+    actual=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}';
         printf "%(nounicodeliterals)q\n" "$(printf "\u[20ac]")"' |
         iconv -f ${lc_all#*.} -t UTF-8 | od -tx1 | head -1 |
         sed -e 's/^ *//' -e 's/ *$//' -e 's/   */ /g')
-    [[ $got == "$exp0" ]] || log_error "${lc_all} (nounicodeliterals) FAILED -- expected '$exp0', got '$got'"
+    [[ "$actual" == "$exp0" ]] || log_error "${lc_all} (nounicodeliterals) FAILED" "$exp0" "$actual"
 
-    got=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"')
-    [[ $got == "$exp1" || $got == "$exp2" ]] || log_error "${lc_all} unicode FAILED -- expected $exp1, got $got"
+    actual=$(LC_OPTIONS=unicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%q\n" "$(printf "\u[20ac]")"')
+    # TODO: Figure out why these tests needs to verify the actual value matches either of two
+    # expected values.
+    [[ "$actual" == "$exp1" || "$actual" == "$exp2" ]] ||
+        log_error "${lc_all} unicode FAILED" "$exp1" "$actual"
 
-    got=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(unicodeliterals)q\n" "$(printf "\u[20ac]")"')
-    [[ $got == "$exp1" || $got == "$exp2" ]] || log_error "${lc_all} (unicodeliterals) FAILED -- expected $exp1, got $got"
+    actual=$(LC_OPTIONS=nounicodeliterals $SHELL -c 'export LC_ALL='${lc_all}'; printf "%(unicodeliterals)q\n" "$(printf "\u[20ac]")"')
+    [[ "$actual" == "$exp1" || $actual == "$exp2" ]] ||
+        log_error "${lc_all} (unitcodeliterals) FAILED" "$exp1" "$actual"
 done

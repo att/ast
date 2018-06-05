@@ -386,11 +386,22 @@ then
 fi
 
 [[ $(printf '%q\n') == '' ]] || log_error 'printf "%q" with missing arguments'
+
 # We won't get hit by the one second boundary twice, right?
-log_info 'TODO: Figure out how to make this more robust.'
-[[ $(printf '%T\n' now | sed -e 's/GMT/UTC/') == "$(date)" ]] ||
-[[ $(printf '%T\n' now | sed -e 's/GMT/UTC/') == "$(date)" ]] ||
-log_error 'printf "%T" now = '"$(printf '%T\n' now) != $(date)"
+#
+# TODO: Figure out how to make this test more robust.
+actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
+expect=$(date)
+if [[ "$actual" != "$expect" ]]
+then
+   actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
+   expect=$(date)
+   if [[ "$actual" != "$expect" ]]
+   then
+      log_error 'printf "%T" now wrong output' "$expect" "$actual"
+   fi
+fi
+
 behead()
 {
     read line
