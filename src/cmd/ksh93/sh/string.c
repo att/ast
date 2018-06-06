@@ -33,7 +33,7 @@
 
 #include <wctype.h>
 
-#if !_lib_iswprint && !defined(iswprint)
+#if !_lib_iswprint
 #define iswprint(c) (((c) & ~0377) || isprint(c))
 #endif
 
