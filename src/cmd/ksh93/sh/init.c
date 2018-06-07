@@ -1325,7 +1325,8 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     shp->pwdfd = sh_diropenat(shp, AT_FDCWD, e_dot);
 #if O_SEARCH
     // This should _never_ happen, guaranteed by design and goat sacrifice.
-    if (shp->pwdfd < 0) errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
+    // If shell starts in a directory that it does not have access to, this will cause error.
+    // if (shp->pwdfd < 0) errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
 #endif
 
     // Initialize signal handling.
