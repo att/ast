@@ -21,7 +21,13 @@
 # Tests for \u[...] and \w[...] input and output
 #
 
-locales="en_US.UTF-8 en_US.utf8 en_US.ISO-8859-15 en_US.iso885915 zh_CN.GB18030 zh_CN.gb18030"
+locales="en_US.UTF-8 en_US.utf8 en_US.ISO-8859-15 en_US.iso885915"
+# On FreeBSD 11.1 the native locale subsystem cannot convert the Euro currency symbol from UTF-8 to
+# GB1803. See https://github.com/att/ast/issues/577#issuecomment-396113061.
+if [[ $OS_NAME != "FreeBSD" ]]
+then
+    locales="$locales zh_CN.GB18030 zh_CN.gb18030"
+fi
 supported="C.UTF-8"
 locale -a > locale.txt
 

@@ -118,10 +118,7 @@ foreach testspec : all_tests
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
     foreach locale : locales
         lang_var = 'LANG=' + locale
-        if locale != ''
-            locale = '/' + locale
-        endif
-        test(testname + locale, ksh93_exe, timeout: timeout,
+        test(testname + '/' + locale, ksh93_exe, timeout: timeout,
              args: [test_driver, testname],
              env: [shell_var, lang_var, ld_library_path, libsample_path])
     endforeach
