@@ -64,7 +64,9 @@ function tst
     done
 }
 
-export PS1=':test-!: ' PS2='> ' PS4=': ' ENV= EXINIT= HISTFILE= TERM=dumb VISUAL=vi LC_ALL=C
+# ENV begins with /./ to disable /etc/ksh.kshrc.
+export PS1=':test-!: ' PS2='> ' PS4=': ' ENV=/./dev/null EXINIT= HISTFILE=
+export TERM=dumb VISUAL=vi LC_ALL=C
 
 if ! pty $bintrue < /dev/null
 then
@@ -448,7 +450,7 @@ L process/terminal group exercise
 
 # Make sure any LESS env var the user might have set doesn't interfere.
 w unset LESS
-w for i in $(seq 100); do echo seq-$i; done | less
+w printf 'seq-%s\n' {1..100} | less
 u :$|:\E|lines
 c j
 u seq-24
