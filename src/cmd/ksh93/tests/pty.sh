@@ -64,7 +64,9 @@ function tst
     done
 }
 
-export PS1=':test-!: ' PS2='> ' PS4=': ' ENV= EXINIT= HISTFILE= TERM=dumb VISUAL=vi LC_ALL=C
+# ENV begins with /./ to disable /etc/ksh.kshrc.
+export PS1=':test-!: ' PS2='> ' PS4=': ' ENV=/./dev/null EXINIT= HISTFILE=
+export TERM=dumb VISUAL=vi LC_ALL=C
 
 if ! pty $bintrue < /dev/null
 then
@@ -188,8 +190,7 @@ u ^hello\r?\n$
 !
 
 # log_error #
-log_info 'TODO: Re-enable this test once stty is available as a builtin.'
-: tst $LINENO <<"!"
+tst $LINENO <<"!"
 L POSIX sh 096(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -230,8 +231,7 @@ u ^ok\r?\n$
 !
 
 # log_error #
-log_info 'TODO: Re-enable this test once stty is available as a builtin.'
-: tst $LINENO <<"!"
+tst $LINENO <<"!"
 L POSIX sh 099(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -260,8 +260,7 @@ r history
 !
 
 # log_error #
-log_info 'TODO: Re-enable this test once stty is available as a builtin.'
-: tst $LINENO <<"!"
+tst $LINENO <<"!"
 L POSIX sh 100(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -277,8 +276,7 @@ u ^ok\r?\n$
 !
 
 # log_error #
-log_info 'TODO: Re-enable this test once stty is available as a builtin.'
-: tst $LINENO <<"!"
+tst $LINENO <<"!"
 L POSIX sh 101(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -360,18 +358,7 @@ r history
 !
 
 # log_error #
-log_info 'TODO: Fix this so that it succeeds on the Travis CI OpenSuse environment. It passes on my local'
-# OpenSuse environment and all other local environments (i.e., systems/virtual machines) I test
-# with.
-#
-# On the Travis OpenSuse environment it fails thusly:
-#
-#  pty.sh[379]: POSIX sh 137(C): line 396: expected "^hello world\r?\n$", got EOF
-#
-# figuring out why this fails will on some systems but not others will require replicating the
-# failure on a local system where debugging is easier than on Travis.
-#
-: tst $LINENO <<"!"
+tst $LINENO <<"!"
 L POSIX sh 137(C)
 
 # If the User Portability Utilities Option is supported and shell
@@ -392,10 +379,6 @@ u ^hello world\r?\n$
 !
 
 # log_error #
-if [[ $OS_NAME = OpenBSD ]]
-then
-    log_info 'TODO: Enable this when someone who cares about pty on OpenBSD cares to investigate'
-else
 tst $LINENO <<"!"
 L POSIX sh 251(C)
 
@@ -437,18 +420,15 @@ r echo repeat-2
 c n
 r echo repeat-3
 !
-fi
 
 # log_error #
-log_info 'TODO: Enable this when issue #375 is fixed. At this time SIGTSTP is not correctly handled.'
-if false; then
 whence -q less &&
 TERM=vt100 tst $LINENO <<"!"
 L process/terminal group exercise
 
 # Make sure any LESS env var the user might have set doesn't interfere.
 w unset LESS
-w for i in $(seq 100); do echo seq-$i; done | less
+w printf 'seq-%s\n' {1..100} | less
 u :$|:\E|lines
 c j
 u seq-24
@@ -457,4 +437,3 @@ u Stopped
 w fg
 u seq-
 !
-fi
