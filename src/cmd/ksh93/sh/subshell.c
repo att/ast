@@ -498,7 +498,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         sp->shpwd = shp->pwd;
         sp->shpwdfd = ((shp->pwdfd >= 0)) ? sh_fcntl(shp->pwdfd, F_DUPFD_CLOEXEC, 10) : -1;
 #ifdef O_SEARCH
-        if (sp->shpwdfd < 0) errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
+        // If shell starts in a directory that it does not have access to, this will cause error.
+        // if (sp->shpwdfd < 0) errormsg(SH_DICT, ERROR_system(1), "Can't obtain directory fd.");
 #endif
         sp->pwd = (shp->pwd ? strdup(shp->pwd) : 0);
         sp->mask = shp->mask;
