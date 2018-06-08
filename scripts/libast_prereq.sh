@@ -9,7 +9,6 @@
 # ABI_AIO_XFER_MAX) but that is secondary.
 #
 set -e
-set -x
 bin_dir="$MESON_SOURCE_ROOT/bin"
 comp_dir="$MESON_SOURCE_ROOT/src/lib/libast/comp"
 PATH=$bin_dir:$PATH
@@ -21,10 +20,11 @@ INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/cmd/std"
 
 cd $MESON_BUILD_ROOT
 
-"$comp_dir/conf.sh" cc -std=gnu99 -D_BLD_DLL -D_BLD_ast $INC_DIRS || exit
+# Generate the conftab.[ch] source files.
+"$comp_dir/conf.sh" cc -std=gnu99 -D_BLD_DLL -D_BLD_ast $INC_DIRS
 
-$MESON_SOURCE_ROOT/scripts/siglist.sh > features/siglist.h || exit
-
+# Generate header files whose content depends on the current platform.
+$MESON_SOURCE_ROOT/scripts/siglist.sh > features/siglist.h
 for name in sfinit signal; do
     cc -D_BLD_DLL -D_BLD_ast $INC_DIRS -std=gnu99 -o $name $MESON_SOURCE_ROOT/src/lib/libast/features/$name.c
     ./$name > features/$name.h
