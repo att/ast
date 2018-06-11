@@ -1226,7 +1226,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         message = e_file;
                         goto fail;
                     }
-                    sh_iovalidfd(shp, dupfd);
+                    if (!sh_iovalidfd(shp, dupfd)) {
+                        message = e_file;
+                        goto fail;
+                    }
                     if (shp->subshell && dupfd == 1) {
                         if (sfset(sfstdout, 0, 0) & SF_STRING) sh_subtmpfile(shp);
                         if (shp->comsub == 1) shp->subdup |= 1 << fn;
