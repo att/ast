@@ -25,6 +25,44 @@
 #define _BLD_sfio 1
 #endif
 
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <poll.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <time.h>
+#include <time.h>
+#include <unistd.h>
+#include <wchar.h>
+
+#if _stream_peek
+#include <stropts.h>
+#endif
+
+/* see if we can use memory mapping for io */
+#if _hdr_mman
+#include <mman.h>
+#endif
+#include <sys/mman.h>
+
+#ifndef F_SETFD
+#ifndef FIOCLEX
+#if _hdr_filio
+#include <filio.h>
+#else
+#if _sys_filio
+#include <sys/filio.h>
+#endif /*_sys_filio*/
+#endif /*_hdr_filio*/
+#endif /*_FIOCLEX*/
+#endif /*F_SETFD*/
+
 /*	Internal definitions for sfio.
 **	Written by Kiem-Phong Vo
 */
@@ -61,8 +99,6 @@
 #define _LARGEFILE_SOURCE 1
 #endif
 
-#include <stdarg.h>
-#include <stdbool.h>
 #endif /* !_PACKAGE_ast */
 
 #include "sfio_t.h"
@@ -76,8 +112,6 @@
 #include <ast.h>
 #include <ast_tty.h>
 #include <ls.h>
-#include <sys/time.h>
-#include <time.h>
 
 /* ast always provides multibyte handling */
 #undef _lib_wcrtomb
@@ -120,41 +154,11 @@
 #undef _hdr_mman
 #endif
 
-#include <stdlib.h>
-
-#include <string.h>
-
-#include <time.h>
-
-#include <sys/stat.h>
-
-#include <fcntl.h>
-
-#ifndef F_SETFD
-#ifndef FIOCLEX
-#if _hdr_filio
-#include <filio.h>
-#else
-#if _sys_filio
-#include <sys/filio.h>
-#endif /*_sys_filio*/
-#endif /*_hdr_filio*/
-#endif /*_FIOCLEX*/
-#endif /*F_SETFD*/
-
-#include <unistd.h>
-
 #if !_LARGEFILE64_SOURCE /* turn off the *64 stuff */
 #undef _typ_struct_stat64
 #undef _lib_close64
 #undef _lib_munmap64
 #endif /*!_LARGEFILE64_SOURCE */
-
-/* see if we can use memory mapping for io */
-#if _hdr_mman
-#include <mman.h>
-#endif
-#include <sys/mman.h>
 
 /* standardize system calls and types dealing with files */
 //#if _typ_off64_t
@@ -196,13 +200,8 @@
 
 #include "ast_float.h"
 
-#include <ctype.h>
-#include <errno.h>
-
 /* deal with multi-byte character and string conversions */
 #if _PACKAGE_ast
-
-#include <wchar.h>
 
 #define _has_multibyte 1
 
@@ -222,7 +221,7 @@
 #if _typ___va_list && !defined(__va_list)
 #define __va_list va_list
 #endif
-#include <wchar.h>
+
 #define SFMBCPY(to, fr) memcpy((to), (fr), sizeof(mbstate_t))
 #define SFMBCLR(mb) memset((mb), 0, sizeof(mbstate_t))
 #define SFMBSET(lhs, v) (lhs = (v))
@@ -232,7 +231,6 @@
 
 #if !_has_multibyte && _lib_wctomb
 #define _has_multibyte 2 /* no shift states	*/
-#include <wchar.h>
 #undef mbrtowc
 #define mbrtowc(wp, s, n, mb) mbtowc(wp, s, n)
 #undef wcrtomb
@@ -357,15 +355,8 @@
 #endif /*vt_threaded*/
 
 /* functions for polling readiness of streams */
-#include <poll.h>
 
 #define SFPOLL(pfd, n, tm) poll((pfd), (ulong)(n), (tm))
-
-#if _stream_peek
-#include <stropts.h>
-#endif
-
-#include <sys/socket.h>
 
 /* to test for executable access mode of a file */
 #ifndef X_OK
