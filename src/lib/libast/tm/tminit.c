@@ -189,8 +189,7 @@ static void tmlocal(void) {
         else if (e)
             environ[0] = e;
     }
-    local.standard = strdup(tzname[0]);
-    local.daylight = strdup(tzname[1]);
+
     tmlocale();
 
     /*
@@ -230,8 +229,8 @@ static void tmlocal(void) {
          * POSIX
          */
 
-        if (!local.standard) local.standard = strdup(tzname[0]);
-        if (!local.daylight) local.daylight = strdup(tzname[1]);
+        local.standard = strdup(tzname[0]);
+        local.daylight = strdup(tzname[1]);
     } else if ((s = getenv("TZNAME")) && *s && (s = strdup(s))) {
         /*
          * BSD
