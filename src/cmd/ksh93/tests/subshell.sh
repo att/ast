@@ -21,6 +21,17 @@
 builtin getconf
 bincat=$(PATH=$(getconf PATH) whence -p cat)
 
+# Some platforms have an extremely large default value for the number of open files. For example,
+# FreeBSD 11.1 has a default of 44685. This test fails with such a large value. Every other platform
+# has a limit an order of magnitude smaller. So limit the allowable values to something more
+# reasonable.
+#
+# TBD is why such a large default limit causes the test to fail.
+#
+# TODO: Figure out why this test seems to depend on `ulimit` being a builtin without explicitly
+# invoking the builtin via `builtin ulimit`.
+ulimit -n 512
+
 z=()
 z.foo=( [one]=hello [two]=(x=3 y=4) [three]=hi)
 z.bar[0]=hello
