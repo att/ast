@@ -434,7 +434,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     struct sh_scoped savst;
     struct dolnod *argsav = 0;
     int argcnt;
-    bool pipefail = false;
 #ifdef SPAWN_cwd
     Spawnvex_t *vp;
 #endif
@@ -489,9 +488,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     if (!shp->subshare) sp->pathlist = path_dup((Pathcomp_t *)shp->pathlist);
     if (comsub) {
         shp->comsub = comsub;
-        if (comsub == 1 && !(pipefail = sh_isoption(shp, SH_PIPEFAIL))) {
-            sh_onoption(shp, SH_PIPEFAIL);
-        }
     }
     sp->shpwdfd = -1;
     if (!comsub || !shp->subshare) {
@@ -596,9 +592,8 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                 shp->exitval = c;
                 if (shp->pipepid == shp->spid) shp->spid = 0;
                 shp->pipepid = 0;
-            } else if (comsub == 1 && !pipefail) {
-                sh_offoption(shp, SH_PIPEFAIL);
             }
+
             // Move tmp file to iop and restore sfstdout.
             iop = sfswap(sfstdout, NULL);
             if (!iop) {
