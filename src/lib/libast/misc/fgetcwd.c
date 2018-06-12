@@ -90,9 +90,8 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     if (fstatat(fd, ".", par, 0)) ERROR(errno);
     for (n = 0; n < elementsof(env); n++)
         if ((env[n].name && (p = getenv(env[n].name)) || (p = env[n].path)) && *p == '/') {
-            Pathdev_t dev;
-
-            if ((!pathdev(AT_FDCWD, p, NULL, 0, PATH_DEV, &dev) || dev.fd < 0) && !stat(p, cur)) {
+            int fd = openat(p, buf, O_INTERCEPT | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+            if (fd < 0 && !stat(p, cur)) {
                 env[n].path = p;
                 env[n].dev = cur->st_dev;
                 env[n].ino = cur->st_ino;
