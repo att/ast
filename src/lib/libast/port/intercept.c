@@ -1,3 +1,4 @@
+#include <stdio.h>
 /***********************************************************************
  *                                                                      *
  *               This software is part of the ast package               *
@@ -47,82 +48,6 @@ Ast_global_t ast_global = {
 
 #define LOCAL(f) (ast.f)         /* to thread or not		*/
 #define GLOBAL(f) (ast_global.f) /* process global		*/
-
-#ifdef _fd_pid_dir_fmt
-
-#if O_SEARCH
-#define OPENSEARCH(f) open(f, O_SEARCH)
-#else
-#define OPENSEARCH(f) (-1)
-#endif
-
-#define DEVFD(p, f, r)                                                   \
-    if (p >= 0 && p != getpid()) {                                       \
-        char buf[256];                                                   \
-        sfsprintf(buf, sizeof(buf), _fd_pid_dir_fmt, p, f, "", "");      \
-        oerrno = errno;                                                  \
-        if ((r = open(buf, O_RDONLY)) < 0) {                             \
-            if (errno != EACCES || (r = OPENSEARCH(buf)) < 0) return -1; \
-            errno = oerrno;                                              \
-        }                                                                \
-    } else                                                               \
-        r = f
-#else
-#define DEVFD(p, f, r)             \
-    if (p >= 0 && p != getpid()) { \
-        errno = EACCES;            \
-        r = -1;                    \
-    } else                         \
-        r = f
-#endif
-
-#define RATIFY(dev, d, p, v, nodot, end)                                      \
-    {                                                                         \
-        Pathdev_t dev;                                                        \
-        int oerrno;                                                           \
-        if (!v) d = LOCAL(pwd);                                               \
-        if (!p) {                                                             \
-            dev.oflags = 0;                                                   \
-            errno = EFAULT;                                                   \
-            goto end;                                                         \
-        } else if (p[0] == 0) {                                               \
-            dev.oflags = 0;                                                   \
-            errno = EINVAL;                                                   \
-            goto end;                                                         \
-        } else if (p[0] == '.' && p[1] == 0 && 0)                             \
-            p = dot;                                                          \
-        else if ((oerrno = errno), !pathdev(d, p, NULL, 0, PATH_DEV, &dev)) { \
-            if (errno != ENODEV) goto end;                                    \
-            errno = oerrno;                                                   \
-        } else if (dev.path.offset) {                                         \
-            if (!*(p += dev.path.offset)) {                                   \
-                if (nodot) {                                                  \
-                    errno = EINVAL;                                           \
-                    goto end;                                                 \
-                }                                                             \
-                p = dot;                                                      \
-            }                                                                 \
-            if (dev.fd >= 0) {                                                \
-                if (dev.oflags & O_INTERCEPT)                                 \
-                    d = dev.fd;                                               \
-                else                                                          \
-                    DEVFD(dev.pid, dev.fd, d);                                \
-            }                                                                 \
-        }
-
-#define PATHIFY(d, p, v, nodot) RATIFY(devpath, d, p, v, nodot, pathend)
-
-#define LINKIFY(d, p, v, nodot) RATIFY(devlink, d, p, v, nodot, linkend)
-
-#define LINKEND()                                        \
-    linkend:                                             \
-    if (devlink.oflags & O_INTERCEPT) close(devlink.fd); \
-    }
-
-#define PATHEND()                                        \
-    pathend:                                             \
-    if (devpath.oflags & O_INTERCEPT) close(devpath.fd); \
-    }
 
 #define RESTART(r, f)                                                      \
     do {                                                                   \
@@ -193,7 +118,6 @@ uint32_t astserial(int serial, uint32_t op) {
 int ast_faccessat(int cwd, const char *path, mode_t mode, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 0);
     if (path == dot && cwd >= 0) {
         int f;
 
@@ -221,7 +145,6 @@ int ast_faccessat(int cwd, const char *path, mode_t mode, int flags) {
         }
     } else
         RESTART(r, faccessat(cwd, path, mode, flags));
-    PATHEND();
 
     return r;
 }
@@ -229,12 +152,10 @@ int ast_faccessat(int cwd, const char *path, mode_t mode, int flags) {
 int ast_fchmodat(int cwd, const char *path, mode_t mode, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 0);
     if (path == dot && cwd >= 0)
         RESTART(r, fchmod(cwd, mode));
     else
         RESTART(r, fchmodat(cwd, path, mode, flags));
-    PATHEND();
 
     return r;
 }
@@ -242,12 +163,10 @@ int ast_fchmodat(int cwd, const char *path, mode_t mode, int flags) {
 int ast_fchownat(int cwd, const char *path, uid_t owner, gid_t group, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 0);
     if (path == dot && cwd >= 0)
         RESTART(r, fchown(cwd, owner, group));
     else
         RESTART(r, fchownat(cwd, path, owner, group, flags));
-    PATHEND();
 
     return r;
 }
@@ -255,12 +174,10 @@ int ast_fchownat(int cwd, const char *path, uid_t owner, gid_t group, int flags)
 int ast_fstatat(int cwd, const char *path, struct stat *st, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 0);
     if (path == dot && cwd >= 0)
         RESTART(r, fstat(cwd, st));
     else
         RESTART(r, fstatat(cwd, path, st, flags));
-    PATHEND();
 
     return r;
 }
@@ -268,11 +185,7 @@ int ast_fstatat(int cwd, const char *path, struct stat *st, int flags) {
 int ast_linkat(int cwd, const char *path, int lwd, const char *linkpath, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 1);
-    LINKIFY(lwd, linkpath, 1, 1);
     RESTART(r, linkat(cwd, path, lwd, linkpath, flags));
-    LINKEND();
-    PATHEND();
 
     return r;
 }
@@ -280,9 +193,7 @@ int ast_linkat(int cwd, const char *path, int lwd, const char *linkpath, int fla
 int ast_mkdirat(int cwd, const char *path, mode_t mode) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 1);
     RESTART(r, mkdirat(cwd, path, mode));
-    PATHEND();
 
     return r;
 }
@@ -357,9 +268,7 @@ int ast_openat(int cwd, const char *path, int flags, ...) {
 ssize_t ast_readlinkat(int cwd, const char *path, char *buf, size_t size) {
     ssize_t r = -1;
 
-    PATHIFY(cwd, path, 1, 1);
     RESTART(r, readlinkat(cwd, path, buf, size));
-    PATHEND();
 
     return r;
 }
@@ -367,11 +276,7 @@ ssize_t ast_readlinkat(int cwd, const char *path, char *buf, size_t size) {
 int ast_renameat(int owd, const char *opath, int nwd, const char *npath) {
     int r = -1;
 
-    PATHIFY(owd, opath, 1, 1);
-    LINKIFY(nwd, npath, 1, 1);
     RESTART(r, renameat(owd, opath, nwd, npath));
-    LINKEND();
-    PATHEND();
 
     return r;
 }
@@ -379,9 +284,7 @@ int ast_renameat(int owd, const char *opath, int nwd, const char *npath) {
 int ast_symlinkat(const char *path, int cwd, const char *linkpath) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 1);
     RESTART(r, symlinkat(path, cwd, linkpath));
-    PATHEND();
 
     return r;
 }
@@ -389,9 +292,7 @@ int ast_symlinkat(const char *path, int cwd, const char *linkpath) {
 int ast_unlinkat(int cwd, const char *path, int flags) {
     int r = -1;
 
-    PATHIFY(cwd, path, 1, 1);
     RESTART(r, unlinkat(cwd, path, flags));
-    PATHEND();
 
     return r;
 }
@@ -668,7 +569,6 @@ int ast_truncate(const char *path, off_t size) {
     int d;
     int fd;
 
-    PATHIFY(d, path, 0, 0);
     if (path == dot && d >= 0)
         r = ast_ftruncate(d, size);
     else if (*path != '/') {
@@ -680,7 +580,6 @@ int ast_truncate(const char *path, off_t size) {
         }
     } else
         RESTART(r, truncate(path, size));
-    PATHEND();
 
     return r;
 }
