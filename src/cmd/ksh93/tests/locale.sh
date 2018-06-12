@@ -96,11 +96,13 @@ then
     LC_ALL=$locale $SHELL -c b1=$'"\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254"; [[ ${b1:4:1} == w ]]' || log_error 'multibyte ${var:offset:len} not working correctly'
 fi
 
+# TODO: On FreeBSD 11.1 it's `wc` command gives `LANG` higher priority than `LC_ALL`.
+if [[ $OS_NAME != FreeBSD ]]
+then
 
-locale=en_US.UTF-8
-#$SHELL -c 'export LANG='$locale'; printf "\u[20ac]\u[20ac]" > $TEST_DIR/two_euro_chars.txt'
+# The following bytes are the UTF-8 encoding of "\u[20ac]", twice.
 printf $'\342\202\254\342\202\254' > $TEST_DIR/two_euro_chars.txt
-exp="6 2 6"
+locale=en_US.UTF-8
 set -- $($SHELL -c "
     unset LC_CTYPE
     export LANG=$locale
@@ -111,8 +113,10 @@ set -- $($SHELL -c "
     export LC_ALL=C
     command wc -m < $TEST_DIR/two_euro_chars.txt
 ")
-got=$*
-[[ $got == $exp ]] || log_error "command wc LC_ALL default failed -- expected '$exp', got '$got'"
+actual=$*
+expect="6 2 6"
+[[ $actual == $expect ]] || log_error "command wc LC_ALL default failed" "$expect" "$actual"
+
 set -- $($SHELL -c "
     if builtin wc 2>/dev/null || builtin -f cmd wc 2>/dev/null
     then
@@ -127,8 +131,11 @@ set -- $($SHELL -c "
     fi
 
 ")
-got=$*
-[[ $got == $exp ]] || log_error "builtin wc LC_ALL default failed -- expected '$exp', got '$got'"
+actual=$*
+expect="6 2 6"
+[[ $actual == $expect ]] || log_error "builtin wc LC_ALL default failed" "$expect" "$actual"
+
+fi  # $OS_NAME != FreeBSD
 
 # multibyte char straddling buffer boundary
 
