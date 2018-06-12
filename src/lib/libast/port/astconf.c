@@ -181,31 +181,6 @@ static State_t state = {"getconf",         "_AST_FEATURES", "CONFORMANCE = stand
 static char *feature(Feature_t *, const char *, const char *, const char *, unsigned int, Error_f);
 
 /*
- * private ast pathconf() intercept with special /dev/ file checks on path for fpathconf()
- */
-
-static intmax_t ast_pathconf(const char *path, int op, int *err) {
-    Pathdev_t dev;
-    char buf[PATH_MAX];
-    intmax_t v;
-    int olderrno;
-
-    olderrno = errno;
-    if (!pathdev(AT_FDCWD, path, buf, sizeof(buf), PATH_DEV, &dev)) {
-        errno = 0;
-        v = pathconf(path, op);
-    } else if (dev.fd < 0) {
-        errno = 0;
-        v = pathconf(buf, op);
-    } else {
-        errno = 0;
-        v = fpathconf(dev.fd, op);
-    }
-    if (v != -1 || !(*err = errno)) errno = olderrno;
-    return v;
-}
-
-/*
  * return fmtbuf() copy of s
  */
 
@@ -583,31 +558,7 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
             break;
 
         case OP_path_attributes:
-#ifdef _PC_PATH_ATTRIBUTES
-        {
-            char *s;
-            char *e;
-            intmax_t v;
-            unsigned long b;
-            int err;
-
-            /*
-             * _PC_PATH_ATTRIBUTES is a bitmap for 'a' to 'z'
-             */
-
-            v = ast_pathconf(path, _PC_PATH_ATTRIBUTES, &err);
-            if (err) return 0;
-            s = fp->value;
-            e = s + sizeof(fp->value) - 1;
-            for (n = 'a', b = 1; n <= 'z'; n++, b <<= 1)
-                if (v & b) {
-                    *s++ = n;
-                    if (s >= e) break;
-                }
-            *s = 0;
-        }
-#endif
-        break;
+            break;
 
         case OP_path_resolve:
             if (state.synthesizing && value == (char *)fp->std)
@@ -927,24 +878,27 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
     switch (i) {
         case CONF_confstr:
             call = "confstr";
-            if (!(v = confstr(p->op, buf, sizeof(buf)))) {
+            v = confstr(p->op, buf, sizeof(buf));
+            if (v == 0) {
                 defined = 0;
                 v = -1;
                 errno = EINVAL;
             } else if (v > 0) {
                 buf[sizeof(buf) - 1] = 0;
                 s = (const char *)buf;
-            } else
+            } else {
                 defined = 0;
+            }
             break;
         case CONF_pathconf:
             call = "pathconf";
-            v = ast_pathconf(path, p->op, &n);
-            if (n) defined = 0;
+            v = pathconf(path, p->op);
+            if (v == -1) defined = 0;
             break;
         case CONF_sysconf:
             call = "sysconf";
-            if ((v = sysconf(p->op)) < 0) defined = 0;
+            v = sysconf(p->op);
+            if (v == -1) defined = 0;
             break;
         case CONF_sysinfo:
             call = "sysinfo";
