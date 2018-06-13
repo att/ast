@@ -18,9 +18,13 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#define O_INTERCEPT 020000000000 /* ast extension */
 #ifndef O_SEARCH
-#define O_SEARCH 000010000000 /* O_PATH */
+#ifdef O_PATH
+#define O_SEARCH O_PATH
+#else
+// System doesn't support O_PATH so we can't use it.
+#define O_SEARCH 0
+#endif
 #endif
 
 #define _ast_O_LOCAL 020000000000 /* ast extension up to 020000000000 */
