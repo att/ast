@@ -709,8 +709,17 @@ do ((a[RANDOM%2]++))
 done
 (( (a[0]+a[1])==1000)) || log_error '(a[0]+a[1])!=1000'
 
-(( 4.**3/10 == 6.4 )) || log_error '4.**3/10!=6.4'
-(( (.5+3)/7 == .5 )) || log_error '(.5+3)/7!==.5'
+function fequal {
+    (( fabs($1 - $2) < 0.000001 ))
+}
+
+actual=$(( 4.**3 / 10 ))
+expect=6.4
+fequal $actual $expect || log_error '4.**3/10 != 6.4' "$expect" "$actual"
+
+actual=$(( (.5 + 3) / 7 ))
+expect=0.5
+fequal $actual $expect || log_error '(.5+3)/7 !== .5' "$expect" "$actual"
 
 function .sh.math.mysin x
 {
@@ -957,16 +966,46 @@ function .sh.math.norm arr
 x=( 9.2 2 3 6.4 5)
 y=( 1 2 3)
 z=([zero]=9.2 [one]=2  [two]=3 [three]=6.4 [four]=5)
-[[ $((mean(x))) == 5.12 ]] || log_error "mean of index array  is $((mean(x))) should be 5.12"
-[[ $((mean(z))) == 5.12 ]] || log_error "mean of associative array  is $((mean(y))) should be 5.12"
-[[ $((median(x))) == 5 ]] || log_error "median of index array  is $((median(x))) should be 5"
-[[ $((median(z))) == 5 ]] || log_error "median of associative array  is $((median(y))) should be 5"
-[[ $((dotprod(x,y))) == 22.2 ]] || log_error "dotprod of two index arrays  is $((dotprod(x,y))) should be 22.2"
-[[ $((dotprod(x,x))) == 163.6 ]] || log_error "dotprod of two identical index arrays  is $((dotprod(x,x))) should be 163.6"
-[[ $((dotprod(z,y))) == 28.2 ]] || log_error "dotprod of index and associative array  is $((dotprod(z,y))) should be 28.2"
-[[ $((dotprod(x,x))) == 163.6 ]] || log_error "dotprod of two identical associaive arrays  is $((dotprod(z,z))) should be 163.6"
-[[ $((norm(x))) == $((sqrt(163.6))) ]] || log_error "norm of index array  is $((norm(x))) should be 12.7906215642555855"
-[[ $((norm(z))) == $((sqrt(163.6))) ]] || log_error "norm of associative array  is $((norm(z))) should be 12.7906215642555855"
+
+actual=$(( mean(x) ))
+expect=5.12
+fequal $actual $expect || log_error "mean of index array wrong" "$expect" "$actual"
+
+actual=$(( mean(z) ))
+expect=5.12
+fequal $actual $expect || log_error "mean of associative array wrong" "$expect" "$actual"
+
+actual=$(( median(x) ))
+expect=5
+fequal $actual $expect || log_error "median of index array wrong" "$expect" "$actual"
+
+actual=$(( median(z) ))
+expect=5
+fequal $actual $expect || log_error "median of associative wrong" "$expect" "$actual"
+
+actual=$(( dotprod(x, y) ))
+expect=22.2
+fequal $actual $expect || log_error "dotprod of two index arrays wrong" "$expect" "$actual"
+
+actual=$(( dotprod(x, x) ))
+expect=163.6
+fequal $actual $expect || log_error "dotprod of two identical index arrays wrong" "$expect" "$actual"
+
+actual=$(( dotprod(z, y) ))
+expect=28.2
+fequal $actual $expect || log_error "dotprod of index and associative array wrong" "$expect" "$actual"
+
+actual=$(( dotprod(z, z) ))
+expect=163.6
+fequal $actual $expect || log_error "dotprod of two identical associaive arrays wrong" "$expect" "$actual"
+
+actual=$(( norm(x) ))
+expect=$(( sqrt(163.6) ))
+fequal $actual $expect || log_error "norm of index array wrong" "$expect" "$actual"
+
+actual=$(( norm(z) ))
+expect=$(( sqrt(163.6) ))
+fequal $actual $expect || log_error "norm of associative array wrong" "$expect" "$actual"
 
 $SHELL -c 'for ((i = 0; i < 1023; i++)); do eval a$i=a$((i+1));done;a1023=999;print $((a0))' > /dev/null 2>&1 || log_error 'arithmetic recursive evaluation too deep'
 
