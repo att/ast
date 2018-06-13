@@ -227,27 +227,24 @@ int ast_openat(int cwd, const char *path, int flags, ...) {
         o_directory = 0;
 #endif
     if (!path) path = dot;
-    if (flags & O_INTERCEPT) {
-        flags &= ~O_INTERCEPT;
-        RESTART(r, openat(cwd, path, flags & ~O_INTERCEPT, mode));
-#ifdef O_ASYNC
-        if (r >= 0 && (flags & O_ASYNC)) {
-            int x;
-            int f;
 
-            RESTART(f, fcntl(r, F_GETFL, 0));
-            if (f >= 0 && !(f & O_ASYNC)) {
-                f |= O_ASYNC;
-                RESTART(x, fcntl(r, F_SETFL, f));
-            }
-#ifdef F_SETOWN
-            RESTART(x, fcntl(r, F_SETOWN, getuid()));
-#endif
+    RESTART(r, openat(cwd, path, flags, mode));
+#ifdef O_ASYNC
+    if (r >= 0 && (flags & O_ASYNC)) {
+        int x;
+        int f;
+
+        RESTART(f, fcntl(r, F_GETFL, 0));
+        if (f >= 0 && !(f & O_ASYNC)) {
+            f |= O_ASYNC;
+            RESTART(x, fcntl(r, F_SETFL, f));
         }
+#ifdef F_SETOWN
+        RESTART(x, fcntl(r, F_SETOWN, getuid()));
 #endif
-    } else {
-        RESTART(r, openat(cwd, path, flags | O_INTERCEPT, mode));
     }
+#endif
+
 #if _ast_O_LOCAL && O_CLOEXEC >= _ast_O_LOCAL
     if (o_cloexec && r >= 0) RESTART(o_cloexec, fcntl(r, F_SETFD, FD_CLOEXEC));
 #endif
