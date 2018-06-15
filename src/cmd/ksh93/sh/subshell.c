@@ -608,7 +608,9 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                     ((struct checkpt *)shp->jmplist)->mode = SH_JMPERREXIT;
                     errormsg(SH_DICT, ERROR_system(1), e_toomany);
                 }
-                if (fd >= shp->gd->lim.open_max) sh_iovalidfd(shp, fd);
+                if (fd >= shp->gd->lim.open_max) {
+                    if (!sh_iovalidfd(shp, fd)) abort();
+                }
                 shp->sftable[fd] = iop;
                 fcntl(fd, F_SETFD, FD_CLOEXEC);
                 shp->fdstatus[fd] = (shp->fdstatus[1] | IOCLEX);

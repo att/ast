@@ -108,7 +108,7 @@ static int subpipe[3], subdup, tsetio, usepipe;
 static_fn bool iousepipe(Shell_t *shp) {
     int i, err = errno;
     int fd = sffileno(sfstdout);
-    sh_iovalidfd(shp, fd);
+    if (!sh_iovalidfd(shp, fd)) abort();
     if (usepipe) {
         usepipe++;
         sh_iounpipe(shp);
@@ -121,7 +121,7 @@ static_fn bool iousepipe(Shell_t *shp) {
         return true;
     }
     subpipe[2] = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
-    sh_iovalidfd(shp, subpipe[2]);
+    if (!sh_iovalidfd(shp, subpipe[2])) abort();
     shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
     while (close(fd) < 0 && errno == EINTR) errno = err;
     fcntl(subpipe[1], F_DUPFD, fd);

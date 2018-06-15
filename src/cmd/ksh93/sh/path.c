@@ -427,7 +427,11 @@ static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int 
             }
         }
     } while (fd < 0 && pp);
-    sh_iovalidfd(shp, fd);
+
+    if (fd >= 0) {
+        if (!sh_iovalidfd(shp, fd)) abort();
+    }
+
     if (fd >= 0 && (fd = sh_iomovefd(shp, fd)) > 0) {
         fcntl(fd, F_SETFD, FD_CLOEXEC);
         shp->fdstatus[fd] |= IOCLEX;
