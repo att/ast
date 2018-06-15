@@ -1,15 +1,6 @@
 sudo: required
 language: c
 
-env:
-    global:
-        # Travis currently only provides two cores per VM:
-        # https://docs.travis-ci.com/user/reference/overview/.
-        # There is at least one open issue asking that this info be provided to the
-        # client environment: https://github.com/travis-ci/travis-ci/issues/4696.
-        # For now just hardcode the expected value.
-        - CORE_COUNT=2
-
 matrix:
     include:
         - os: linux
@@ -60,26 +51,8 @@ script:
     # TODO: When we run the tests with --setup=malloc change "testlog.txt" to "testlog-malloc.txt".
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then exec scripts/build-on-macos.sh; fi
 
-    - echo > build.sh "set -e;
-        export LANG=en_US.UTF-8;
-        export CFLAGS='-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast -Wno-parentheses -Wno-unused -Wno-unused-but-set-variable -Wno-cpp -Wno-char-subscripts';
-        cd /source;
-        mkdir build;
-        cd build;
-        echo ==== Configuring the build;
-        if ! meson; then cat meson-logs/meson-log.txt; exit 1; fi;
-        echo ==== Building the code;
-        ninja;
-        echo ==== Running unit tests;
-        ulimit -n 1024;
-        export MESON_TESTTHREADS=$(( 4 * CORE_COUNT ));
-        if ! meson test --setup=malloc; then cat meson-logs/testlog-malloc.txt; exit 1; fi;
-        "
-
-    - chmod a+x build.sh
-
     - docker run -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
         ${INSTALL_REQUIREMENTS};
         useradd --create-home test;
         chown -R test /source;
-        sudo -u test /source/build.sh"
+        sudo -u test /source/scripts/build-on-docker.sh"
