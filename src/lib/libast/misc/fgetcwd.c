@@ -1,3 +1,4 @@
+#include <stdio.h>
 /***********************************************************************
  *                                                                      *
  *               This software is part of the ast package               *
@@ -88,24 +89,27 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     cur = &curst;
     par = &parst;
     if (fstatat(fd, ".", par, 0)) ERROR(errno);
-    for (n = 0; n < elementsof(env); n++)
+
+    for (n = 0; n < elementsof(env); n++) {
         if ((env[n].name && (p = getenv(env[n].name)) || (p = env[n].path)) && *p == '/') {
-            int fd = openat(p, buf, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
-            if (fd < 0 && !stat(p, cur)) {
+            if (stat(p, cur) == 0) {
                 env[n].path = p;
                 env[n].dev = cur->st_dev;
                 env[n].ino = cur->st_ino;
                 if (cur->st_ino == par->st_ino && cur->st_dev == par->st_dev) {
-                    namlen = strlen(p);
-                    namlen++;
+                    namlen = strlen(p) + 1;
                     if (buf) {
                         if (len < namlen) ERROR(ERANGE);
-                    } else if (!(buf = newof(0, char, namlen, len)))
-                        ERROR(ENOMEM);
+                    } else {
+                        buf = newof(0, char, namlen, len);
+                        if (!buf) ERROR(ENOMEM);
+                    }
                     return (char *)memcpy(buf, p, namlen);
                 }
             }
         }
+    }
+
     if (!buf) {
         extra = len;
         len = PATH_MAX;
