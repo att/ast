@@ -26,11 +26,20 @@ fi
 
 function home # id
 {
+    typeset user=$1
+
+    # On Cygwin on MS Windows we can't count on the Administrator account home dir existing.
+    if [[ $OS_NAME == CYGWIN* && $user == Administrator ]]
+    then
+        print .
+        return
+    fi
+
     typeset IFS=: pwd=/etc/passwd
     set -o noglob
-    if [[ -f $pwd ]] && grep -c "^$1:" $pwd > /dev/null
+    if [[ -f $pwd ]] && grep -c "^$user:" $pwd > /dev/null
     then
-    set -- $(grep "^$1:" $pwd)
+    set -- $(grep "^$user:" $pwd)
         print -r -- "$6"
     else
         print .
@@ -79,14 +88,12 @@ fi
 
 for u in root Administrator
 do
-    h=$(home $u)
-    if [[ $h != . ]]
-    then
-        [[ ~$u -ef $h ]] || log_error "~$u not $h"
-        x=~$u
-        [[ $x -ef $h ]] || x="~$u not $h"
-        break
-    fi
+    # If we can't find the home dir for the account in the passwd file ignore it.
+    expect=$(home $u)
+    [[ $expect != '.' ]] || continue
+
+    actual=~$u
+    [[ $actual -ef $expect ]] || log_error "~$u not $h" "$expect" "$actual"
 done
 
 x=~g.r.emlin
