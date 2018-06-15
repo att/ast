@@ -18,15 +18,18 @@
 #                                                                      #
 ########################################################################
 
-# "nounset" disabled for now
-#set -o nounset
-
+# Some platforms, such as OpenBSD and Cygwin, do not handle NaN correctly.
+# See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
 if typeset -f .sh.math.signbit >/dev/null && (( signbit(-NaN) ))
 then
     HAVE_signbit=1
 else
     log_warning '-lm does not support signbit(-NaN)'
+    HAVE_signbit=0
 fi
+
+# "nounset" disabled for now
+#set -o nounset
 
 compound bracketstat=(
     integer bopen=0
@@ -242,9 +245,8 @@ count_brackets "$(print -C y2)" || log_error "y2: bracket open ${bracketstat.bop
     actual=$(printf "%q\n" "${y2}")
     log_error "Expected \$y1 == \$y2" "$expect" "$actual"
 }
-# TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
-# See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
-if [[ $OS_NAME != OpenBSD ]]
+
+if (( HAVE_signbit ))
 then
     [[ "$x"  == "$y1" ]] || {
         expect=$(printf "%q\n" "${x}")

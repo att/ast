@@ -18,6 +18,16 @@
 #                                                                      #
 ########################################################################
 
+# Some platforms, such as OpenBSD and Cygwin, do not handle NaN correctly.
+# See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
+if typeset -f .sh.math.signbit >/dev/null && (( signbit(-NaN) ))
+then
+    HAVE_signbit=1
+else
+    log_warning '-lm does not support signbit(-NaN)'
+    HAVE_signbit=0
+fi
+
 trap '' FPE # NOTE: osf.alpha requires this (no ieee math)
 
 integer x=1 y=2 z=3
@@ -589,9 +599,7 @@ then
         expect="$2"
         actual=$(printf "%g\n" $(($1)))
         [[ $actual == $expect ]] || log_error "printf '%g\\n' \$(($1)) failed" "$expect" "$actual"
-        # TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
-        # See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
-        if [[ $OS_NAME != OpenBSD ]]
+        if (( HAVE_signbit ))
         then
             actual=$(printf "%g\n" $1)
             [[ $actual == $expect ]] || log_error "printf '%g\\n' $1 failed" "$expect" "$actual"
@@ -605,10 +613,15 @@ then
     (( Inf*Inf == Inf )) || log_error 'Inf*Inf != Inf'
     (( NaN != NaN )) || log_error 'NaN == NaN'
     (( -5*Inf == -Inf )) || log_error '-5*Inf != -Inf'
-    [[ $(print -- $((sqrt(-1.0)))) == ?(-)nan ]]|| log_error 'sqrt(-1.0) != NaN'
+    if (( HAVE_signbit ))
+    then
+        actual=$(print -- $(( sqrt(-1.0) )))
+        [[ $actual == ?(-)nan ]]|| log_error 'sqrt(-1.0) != NaN' "?(-)nan" "$actual"
+    fi
     (( pow(1.0,Inf) == 1.0 )) || log_error 'pow(1.0,Inf) != 1.0'
     (( pow(Inf,0.0) == 1.0 )) || log_error 'pow(Inf,0.0) != 1.0'
-    [[ $(print -- $((NaN/Inf))) == ?(-)nan ]] || log_error 'NaN/Inf != NaN'
+    actual=$(( NaN/Inf ))
+    [[ $actual == ?(-)nan ]] || log_error 'NaN/Inf != NaN' "?(-)nan" "$actual"
     (( 4.0/Inf == 0.0 )) || log_error '4.0/Inf != 0.0'
 else
     log_error 'Inf and NaN not working'
@@ -635,15 +648,18 @@ $SHELL -c '(( x=+));:' 2> /dev/null && log_error '((x=+)) should be an error'
 $SHELL -c 'x=();x.arr[0]=(z=3); ((x.arr[0].z=2))' 2> /dev/null || log_error '(((x.arr[0].z=2)) should not be an error'
 
 float t
-typeset a b r
+float a b r
 v="-0.0 0.0 +0.0 -1.0 1.0 +1.0"
 for a in $v
 do
     for b in $v
     do
-        (( r = copysign(a,b) ))
-        (( t = copysign(a,b) ))
-        [[ $r == $t ]] || log_error $(printf "float t=copysign(%3.1f,%3.1f) => %3.1f -- expected %3.1f\n" a b t r)
+        (( expect = copysign(a, b) ))
+        (( actual = copysign(a, b) ))
+        [[ $actual == $expect ]] || {
+            msg=$(printf "float t=copysign(%3.1f, %3.1f)\n" a b)
+            log_error "$msg" "$expect" "$actual"
+        }
     done
 done
 

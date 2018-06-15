@@ -54,6 +54,16 @@
 # -- snip --
 #
 
+# Some platforms, such as OpenBSD and Cygwin, do not handle NaN correctly.
+# See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
+if typeset -f .sh.math.signbit >/dev/null && (( signbit(-NaN) ))
+then
+    HAVE_signbit=1
+else
+    log_warning '-lm does not support signbit(-NaN)'
+    HAVE_signbit=0
+fi
+
 function idempotent
 {
     typeset var action='typeset -p'
@@ -332,9 +342,7 @@ function main
     )
     sortar c.ar
     expect='typeset -C -a c.ar=((typeset -l -E i=-nan) (typeset -l -E i=inf) (typeset -l -E i=24) (typeset -l -E i=4) (typeset -l -E i=2) (typeset -l -E i=1) (typeset -l -E i=-1) (typeset -l -E i=-inf))'
-    # TODO: Re-enable this on OpenBSD when it's handling of NaN is fixed.
-    # See https://marc.info/?l=openbsd-bugs&m=152488432922625&w=2
-    if [[ $OS_NAME != OpenBSD ]]
+    if (( HAVE_signbit ))
     then
         actual=$(typeset -p c.ar)
         [[ "$actual" == "$expect" ]] || log_error 'typeset -m not working when passed a reference to an local argument from a calling function' "$expect" "$actual"
