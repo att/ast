@@ -53,7 +53,6 @@
 #define eol(c) ((c)&WC_NL)
 #define mbc(c) ((c)&WC_MB)
 #define spc(c) ((c)&WC_SP)
-#define mb2wc(w, p, n) (*ast.mb_towc)(&w, (char *)p, n)
 
 Wc_t *wc_init(int mode) {
     register int n;

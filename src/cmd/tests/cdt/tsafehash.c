@@ -37,7 +37,7 @@
 #define SEARCH 4                        /* #searches while inserting	*/
 #define PROGRESS (N_OBJ / (N_PROC * 4)) /* amount done	*/
 
-#define FORMAT "%09d" /* 9-digit numbers with zero-filled	*/
+#define FORMAT "%09zd"  // 9 digit ssize_t numbers zero-filled
 
 #define INSERT 001 /* to tell if an object was inserted	*/
 #define DELETE 002 /* to tell if an object was deleted	*/
