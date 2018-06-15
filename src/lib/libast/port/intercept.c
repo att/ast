@@ -1,4 +1,3 @@
-#include <stdio.h>
 /***********************************************************************
  *                                                                      *
  *               This software is part of the ast package               *
@@ -34,8 +33,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/socket.h>
-
-static const char dot[] = ".";
 
 Ast_global_t ast_global = {
     "libast",
@@ -116,68 +113,33 @@ uint32_t astserial(int serial, uint32_t op) {
 /* *at() intercepts */
 
 int ast_faccessat(int cwd, const char *path, mode_t mode, int flags) {
-    int r = -1;
+    int r;
 
-    if (path == dot && cwd >= 0) {
-        int f;
-
-        RESTART(f, fcntl(cwd, F_GETFL));
-        if (f < 0)
-            r = -1;
-        else if (mode & R_OK) {
-            if ((f & (O_WRONLY | O_RDWR)) == O_WRONLY) {
-                errno = EACCES;
-                r = -1;
-            }
-        } else if (mode & W_OK) {
-            if (!(f & (O_WRONLY | O_RDWR))) {
-                errno = EACCES;
-                r = -1;
-            }
-        } else if (mode & X_OK) {
-            struct stat st;
-
-            RESTART(r, fstat(cwd, &st));
-            if (r >= 0 && !(st.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
-                errno = EACCES;
-                r = -1;
-            }
-        }
-    } else
-        RESTART(r, faccessat(cwd, path, mode, flags));
+    RESTART(r, faccessat(cwd, path, mode, flags));
 
     return r;
 }
 
 int ast_fchmodat(int cwd, const char *path, mode_t mode, int flags) {
-    int r = -1;
+    int r;
 
-    if (path == dot && cwd >= 0)
-        RESTART(r, fchmod(cwd, mode));
-    else
-        RESTART(r, fchmodat(cwd, path, mode, flags));
+    RESTART(r, fchmodat(cwd, path, mode, flags));
 
     return r;
 }
 
 int ast_fchownat(int cwd, const char *path, uid_t owner, gid_t group, int flags) {
-    int r = -1;
+    int r;
 
-    if (path == dot && cwd >= 0)
-        RESTART(r, fchown(cwd, owner, group));
-    else
-        RESTART(r, fchownat(cwd, path, owner, group, flags));
+    RESTART(r, fchownat(cwd, path, owner, group, flags));
 
     return r;
 }
 
 int ast_fstatat(int cwd, const char *path, struct stat *st, int flags) {
-    int r = -1;
+    int r;
 
-    if (path == dot && cwd >= 0)
-        RESTART(r, fstat(cwd, st));
-    else
-        RESTART(r, fstatat(cwd, path, st, flags));
+    RESTART(r, fstatat(cwd, path, st, flags));
 
     return r;
 }
@@ -226,7 +188,7 @@ int ast_openat(int cwd, const char *path, int flags, ...) {
     } else
         o_directory = 0;
 #endif
-    if (!path) path = dot;
+    if (!path) path = ".";
 
     RESTART(r, openat(cwd, path, flags, mode));
 #ifdef O_ASYNC
@@ -563,20 +525,16 @@ int ast_symlink(const char *path, const char *linkpath) {
 
 int ast_truncate(const char *path, off_t size) {
     int r = -1;
-    int d;
-    int fd;
 
-    if (path == dot && d >= 0)
-        r = ast_ftruncate(d, size);
-    else if (*path != '/') {
-        if ((fd = openat(d, path, O_WRONLY)) < 0)
-            r = -1;
-        else {
+    if (*path != '/') {
+        int fd = openat(AT_FDCWD, path, O_WRONLY);
+        if (fd >= 0) {
             r = ast_ftruncate(fd, size);
             close(fd);
         }
-    } else
+    } else {
         RESTART(r, truncate(path, size));
+    }
 
     return r;
 }
