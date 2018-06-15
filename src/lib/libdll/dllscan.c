@@ -156,7 +156,7 @@ Dllinfo_t *dllinfo(void) {
 // higher versions appear first
 //
 
-static int vercmp(FTSENT *const *ap, FTSENT *const *bp) {
+static int vercmp(const FTSENT **ap, const FTSENT **bp) {
     unsigned char *a = (unsigned char *)(*ap)->fts_name;
     unsigned char *b = (unsigned char *)(*bp)->fts_name;
     int n;
