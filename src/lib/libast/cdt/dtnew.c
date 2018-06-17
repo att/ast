@@ -58,7 +58,8 @@ Dt_t *_dtnew(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     dc.ndisc = *disc;
     dc.ndisc.eventf = eventf;
     if (!dc.ndisc.memoryf) dc.ndisc.memoryf = memoryf;
-    if (dt = _dtopen(&dc.ndisc, meth, version)) dtdisc(dt, disc, DT_SAMECMP | DT_SAMEHASH);
+    dt = _dtopen(&dc.ndisc, meth, version);
+    if (dt) dtdisc(dt, disc, DT_SAMECMP | DT_SAMEHASH);
     return dt;
 }
 
