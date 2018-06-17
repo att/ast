@@ -382,10 +382,12 @@ Lc_t *lcmake(const char *name) {
             lp = mp->language;
             tp = mp->territory;
             cp = mp->charset;
-            if (!mp->attribute)
+            if (!mp->attribute) {
                 al = 0;
-            else if (al = newof(0, Lc_attribute_list_t, 1, 0))
-                al->attribute = mp->attribute;
+            } else {
+                al = newof(0, Lc_attribute_list_t, 1, 0);
+                if (al) al->attribute = mp->attribute;
+            }
             goto mapped;
         }
     language_name = buf;
@@ -572,14 +574,13 @@ Lc_t *lcmake(const char *name) {
         }
     }
 
-    /*
-     * attributes -- done here to catch misplaced charset references
-     */
-
-    if (s = attributes_name) {
+    // Attributes -- done here to catch misplaced charset references.
+    s = attributes_name;
+    if (s) {
         do {
-            for (w = s; *s && *s != ','; s++)
-                ;
+            for (w = s; *s && *s != ','; s++) {
+                ;  // empty loop
+            }
             c = *s;
             *s = 0;
             if (!(cp = lp->charset) || !match_charset(w, cp))
@@ -591,7 +592,8 @@ Lc_t *lcmake(const char *name) {
             if (!cp->code) {
                 for (i = 0; i < elementsof(lp->attributes) && (ap = lp->attributes[i]); i++)
                     if (match(w, ap->name, 5, 0)) {
-                        if (ai = newof(0, Lc_attribute_list_t, 1, 0)) {
+                        ai = newof(0, Lc_attribute_list_t, 1, 0);
+                        if (ai) {
                             ai->attribute = ap;
                             ai->next = al;
                             al = ai;
@@ -611,13 +613,13 @@ Lc_t *lcmake(const char *name) {
         } while (*s++);
     }
 
-    /*
-     * charset
-     */
-
-    if (s = charset_name)
-        for (cp = lc_charsets; cp->code; cp++)
+    // Charset.
+    s = charset_name;
+    if (s) {
+        for (cp = lc_charsets; cp->code; cp++) {
             if (match_charset(s, cp)) break;
+        }
+    }
 #if AHA
     if ((ast.locale.set & AST_LC_debug) && !(ast.locale.set & AST_LC_internal))
         sfprintf(sfstderr, "locale make %s charset_name=%s cp=%s ppa=%s lp=%s\n", name,

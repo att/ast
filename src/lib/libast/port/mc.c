@@ -62,17 +62,17 @@ char *mcfind(const char *locale, const char *catalog, int category, int nls, cha
              size_t size) {
     int c;
     char *s;
-    char *e;
-    char *p;
     const char *v;
     int i;
-    int first;
     int next;
-    int last;
     int oerrno;
     Lc_t *lc;
     char file[PATH_MAX];
     char *paths[5];
+    char *p;
+    int first;
+    int last;
+    char *e;
 
     static char lc_messages[] = "LC_MESSAGES";
 
@@ -87,16 +87,19 @@ char *mcfind(const char *locale, const char *catalog, int category, int nls, cha
         return path;
     }
     i = 0;
-    if ((p = getenv("NLSPATH")) && *p) paths[i++] = p;
+    p = getenv("NLSPATH");
+    if (p && *p) paths[i++] = p;
     paths[i++] = "share/lib/locale/%l/%C/%N";
     paths[i++] = "share/locale/%l/%C/%N";
     paths[i++] = "lib/locale/%l/%C/%N";
     paths[i] = 0;
     next = 1;
-    for (i = 0; p = paths[i]; i += next) {
+    for (i = 0; paths[i]; i += next) {
+        p = paths[i];
         first = 1;
         last = 0;
         e = &file[elementsof(file) - 1];
+
         while (*p) {
             s = file;
             for (;;) {
@@ -171,11 +174,12 @@ char *mcfind(const char *locale, const char *catalog, int category, int nls, cha
             else
                 strlcpy(file, catalog, elementsof(file));
             if (ast.locale.set & AST_LC_find) sfprintf(sfstderr, "locale find %s\n", file);
-            if (s = pathpath(file, "",
-                             (!catalog && category == AST_LC_MESSAGES)
-                                 ? PATH_READ
-                                 : (PATH_REGULAR | PATH_READ | PATH_ABSOLUTE),
-                             path, size)) {
+            s = pathpath(file, "",
+                         (!catalog && category == AST_LC_MESSAGES)
+                             ? PATH_READ
+                             : (PATH_REGULAR | PATH_READ | PATH_ABSOLUTE),
+                         path, size);
+            if (s) {
                 if (ast.locale.set & (AST_LC_find | AST_LC_setlocale))
                     sfprintf(sfstderr, "locale path %s\n", s);
                 errno = oerrno;
@@ -266,7 +270,7 @@ Mc_t *mcopen(Sfio_t *ip) {
      * get the set dimensions and initialize the msg pointers
      */
 
-    while (i = sfgetu(ip)) {
+    while ((i = sfgetu(ip))) {
         if (i > mc->num) goto bad;
         n = sfgetu(ip);
         mc->set[i].num = n;
@@ -278,12 +282,15 @@ Mc_t *mcopen(Sfio_t *ip) {
      * read the msg sizes and set up the msg pointers
      */
 
-    for (i = 1; i <= mc->num; i++)
-        for (j = 1; j <= mc->set[i].num; j++)
-            if (n = sfgetu(ip)) {
+    for (i = 1; i <= mc->num; i++) {
+        for (j = 1; j <= mc->set[i].num; j++) {
+            n = sfgetu(ip);
+            if (n) {
                 mc->set[i].msg[j] = sp;
                 sp += n;
             }
+        }
+    }
 
     /*
      * read the string table
@@ -422,15 +429,10 @@ int mcput(Mc_t *mc, int set, int num, const char *msg) {
         sp->num = num;
     }
 
-    /*
-     * decrease the string table size
-     */
-
-    if (s = sp->msg[num]) {
-        /*
-         * no-op if no change
-         */
-
+    // Decrease the string table size.
+    s = sp->msg[num];
+    if (s) {
+        // No-op if no change.
         if (streq(s, msg)) return 0;
         mc->nstrs -= strlen(s) + 1;
     }
@@ -514,12 +516,15 @@ int mcdump(Mc_t *mc, Sfio_t *op) {
      * write the string table
      */
 
-    for (i = 1; i <= mc->num; i++)
+    for (i = 1; i <= mc->num; i++) {
         if (mc->set[i].num) {
             sp = mc->set + i;
-            for (j = 1; j <= sp->num; j++)
-                if (s = sp->msg[j]) sfputr(op, s, 0);
+            for (j = 1; j <= sp->num; j++) {
+                s = sp->msg[j];
+                if (s) sfputr(op, s, 0);
+            }
         }
+    }
 
     /*
      * sync and return

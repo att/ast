@@ -253,7 +253,8 @@ static void expand(Notice_t *notice, Buffer_t *b, const Item_t *item) {
     int i;
     int k;
 
-    if (t = item->data) {
+    t = item->data;
+    if (t) {
         q = item->quote;
         e = t + item->size;
         i = 0;
@@ -375,10 +376,12 @@ static int push(Stack_t *sp, char *file, char *parent, char *info, int size, Buf
                 if (s[0] == '/' && s[1] == 'a' && s[2] == 'r' && s[3] == 'c' && s[4] == 'h' &&
                     s[5] == '/') {
                     t = s;
-                    for (s += 6; *s && *s != '/'; s++)
-                        ;
-                    while (*t++ = *s++)
-                        ;
+                    for (s += 6; *s && *s != '/'; s++) {
+                        ;  // empty loop
+                    }
+                    while ((*t++ = *s++)) {
+                        ;  // empty loop
+                    }
                     i = open(file, O_RDONLY | O_CLOEXEC);
                 }
         if (i < 0) {
@@ -463,7 +466,8 @@ int astlicense(char *p, int size, char *file, char *options, int cc1, int cc2, i
     contributor = i = k = 0;
     for (;;) {
         first = 1;
-        while (c = *s) {
+        while (*s) {
+            c = *s;
             while (c == ' ' || c == '\t' || c == '\n' && ++input[level].line || c == '\r' ||
                    c == ',' || c == ';' || c == ')')
                 c = *++s;
@@ -1005,7 +1009,8 @@ int astlicense(char *p, int size, char *file, char *options, int cc1, int cc2, i
                 comment(&notice, &buf, NULL, 0, 0);
             }
         }
-        if (v = notice.item[NOTICE].data) {
+        v = notice.item[NOTICE].data;
+        if (v) {
             x = v + notice.item[NOTICE].size;
             if (*v == '\n') v++;
             item.quote = notice.item[NOTICE].quote;
@@ -1040,7 +1045,8 @@ int astlicense(char *p, int size, char *file, char *options, int cc1, int cc2, i
             comment(&notice, &buf, NULL, 0, 0);
         }
     }
-    if (v = notice.item[AUTHOR].data) {
+    v = notice.item[AUTHOR].data;
+    if (v) {
         x = v + notice.item[AUTHOR].size;
         q = (x - v) == 1 && (*v == '*' || *v == '-');
         k = q && notice.type != USAGE ? -1 : 0;

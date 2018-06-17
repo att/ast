@@ -504,7 +504,8 @@ int ast_remove(const char *path) {
 
     d = LOCAL(pwd);
     oerrno = errno;
-    if (r = ast_unlinkat(LOCAL(pwd), path, 0)) {
+    r = ast_unlinkat(LOCAL(pwd), path, 0);
+    if (r) {
         if (errno == EISDIR) return ast_unlinkat(d, path, AT_REMOVEDIR);
         errno = oerrno;
     }
