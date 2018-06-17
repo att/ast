@@ -402,7 +402,7 @@ static int tstchild(char **argv) {
     char *a;
 
     Tstchild = 1;
-    while (a = *++v)
+    while ((a = *++v)) {
         if (strcmp(a, "--all") == 0)
             Tstall++;
         else if (strcmp(a, "--child") == 0)
@@ -413,6 +413,7 @@ static int tstchild(char **argv) {
             break;
         else if (strncmp(a, "--", 2) != 0)
             break;
+    }
     tstintr();
     return 0;
 }
@@ -421,7 +422,7 @@ static int tstopts(char **argv) {
     char **v = argv;
     char *a;
 
-    while (a = *++v)
+    while ((a = *++v)) {
         if (strcmp(a, "--all") == 0)
             Tstall++;
         else if (strncmp(a, "--timeout=", 10) == 0)
@@ -430,6 +431,7 @@ static int tstopts(char **argv) {
             return (int)(v - argv + 1);
         else if (strncmp(a, "--", 2) != 0)
             break;
+    }
     tstintr();
     return (int)(v - argv);
 }

@@ -50,9 +50,10 @@ tmain() {
     if (sfstrclose(fp)) terror("sfstrclose failed");
 
     if (!(fp = sfstropen())) terror("sfstropen failed");
-    if (s = sfreserve(fp, SF_UNBOUND, SF_LOCKR)) terror("initial sfreserve SF_LOCKR should fail");
-    if (!(s = sfreserve(fp, SF_UNBOUND, SF_WRITE | SF_LOCKR)))
-        terror("initial sfreserve SF_WRITE|SF_LOCKR failed");
+    s = sfreserve(fp, SF_UNBOUND, SF_LOCKR);
+    if (s) terror("initial sfreserve SF_LOCKR should fail");
+    s = sfreserve(fp, SF_UNBOUND, SF_WRITE | SF_LOCKR);
+    if (!s) terror("initial sfreserve SF_WRITE|SF_LOCKR failed");
     if (sfwrite(fp, s, 0)) terror("sfwrite reserve unlock failed");
     if (sfstrclose(fp)) terror("sfstrclose failed");
 
@@ -65,8 +66,8 @@ tmain() {
 
     if (!(fp = sfstropen())) terror("sfstropen failed");
     sfset(fp, SF_WRITE, 0);
-    if (s = sfreserve(fp, SF_UNBOUND, SF_LOCKR))
-        terror("initial sfreserve SF_READ SF_LOCKR should have failed");
+    s = sfreserve(fp, SF_UNBOUND, SF_LOCKR);
+    if (s) terror("initial sfreserve SF_READ SF_LOCKR should have failed");
     if (sfstrclose(fp)) terror("sfstrclose failed");
 
     texit(0);

@@ -51,17 +51,24 @@ tmain() {
         terror("sfwrite failed with siz=%ld", siz);
 
     /* ast ed does this */
-    if (!(f = sftmp(SF_BUFSIZE))) terror("sftmp");
-    if (pos = sfseek(f, (Sfoff_t)0, SEEK_CUR))
-        terror("top offset %I*d expected 0", sizeof(pos), pos);
-    if ((siz = sfputr(f, Rec, 0)) != sizeof(Rec))
+    f = sftmp(SF_BUFSIZE);
+    if (!f) terror("sftmp");
+    pos = sfseek(f, (Sfoff_t)0, SEEK_CUR);
+    if (pos) terror("top offset %I*d expected 0", sizeof(pos), pos);
+    siz = sfputr(f, Rec, 0);
+    if (siz != sizeof(Rec)) {
         terror("put record size %I*d expected %d", sizeof(siz), siz, sizeof(Rec));
-    if ((nxt = sfseek(f, (Sfoff_t)0, SEEK_CUR)) != (pos + siz))
+    }
+    nxt = sfseek(f, (Sfoff_t)0, SEEK_CUR);
+    if (nxt != (pos + siz)) {
         terror("put record size %I*d offset %I*d expected %I*d", sizeof(siz), siz, sizeof(nxt), nxt,
                sizeof(nxt), nxt + sizeof(Rec));
-    if ((pos = sfseek(f, (Sfoff_t)SF_BUFSIZE, SEEK_CUR)) != (nxt + SF_BUFSIZE))
+    }
+    pos = sfseek(f, (Sfoff_t)SF_BUFSIZE, SEEK_CUR);
+    if (pos != (nxt + SF_BUFSIZE)) {
         terror("skip block size %d offset %I*d expected %I*d", SF_BUFSIZE, sizeof(nxt), nxt,
                sizeof(nxt), nxt + SF_BUFSIZE);
+    }
     sfclose(f);
 
     /* let two run concurrently */
@@ -75,7 +82,8 @@ tmain() {
     if (sfvalue(f) != 5) terror("Get n=%d, expect n=5", sfvalue(f));
 
     sfseek(f, (Sfoff_t)10, 1); /* seek to extend buffer */
-    if (s = sfreserve(f, SF_UNBOUND, 0)) terror("Get n=%d, expect n=0", sfvalue(f));
+    s = sfreserve(f, SF_UNBOUND, 0);
+    if (s) terror("Get n=%d, expect n=0", sfvalue(f));
 
     sfset(f, SF_READ, 0); /* turn off read mode so stream is write only */
 
