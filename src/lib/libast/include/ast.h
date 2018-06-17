@@ -247,8 +247,6 @@ extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
 extern char *astconf(const char *, const char *, const char *);
 extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
 extern void astconflist(Sfio_t *, const char *, int, const char *);
-extern off_t astcopy(int, int, off_t);
-extern int astlicense(char *, int, char *, char *, int, int, int);
 extern int astquery(int, const char *, ...);
 extern void astwinsize(int, int *, int *);
 
