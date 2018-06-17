@@ -41,7 +41,7 @@ static char *fmtx(Shell_t *shp, const char *string) {
     }
     if (n == S_EOF && *string != '#') return (char *)string;
     sfwrite(shp->stk, string, --cp - string);
-    for (string = cp; c = mbchar(cp); string = cp) {
+    for (string = cp; (c = mbchar(cp)); string = cp) {
         if ((n = cp - string) == 1) {
             if ((n = state[c]) && n != S_EPAT) sfputc(shp->stk, '\\');
             sfputc(shp->stk, c);
@@ -269,9 +269,8 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         char *last = out;
         Namval_t *np = nv_search("COMP_KEY", shp->var_tree, 0);
         if (np) np->nvalue.i16 = '\t';
-        if (np = nv_search("COMP_TYPE", shp->var_tree, 0)) {
-            np->nvalue.i16 = (mode == '\\' ? '\t' : '?');
-        }
+        np = nv_search("COMP_TYPE", shp->var_tree, 0);
+        if (np) np->nvalue.i16 = (mode == '\\' ? '\t' : '?');
         c = *(unsigned char *)out;
         var = mode;
         begin = out = find_begin(outbuff, last, 0, &var);
@@ -369,18 +368,17 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
                 *dir = 0;
                 saveout = begin;
             }
-            if (saveout = astconf("PATH_ATTRIBUTES", saveout, NULL)) {
-                nocase = (strchr(saveout, 'c') != 0);
-            }
+            saveout = astconf("PATH_ATTRIBUTES", saveout, NULL);
+            if (saveout) nocase = (strchr(saveout, 'c') != 0);
             if (dir) *dir = c;
             // Just expand until name is unique.
             size += strlen(*com);
         } else {
+            char **tmpcom = com;
             size += narg;
-            {
-                char **savcom = com;
-                while (*com) size += strlen(cp = fmtx(shp, *com++));
-                com = savcom;
+            while (*tmpcom) {
+                cp = fmtx(shp, *tmpcom++);
+                size += strlen(cp);
             }
         }
         // See if room for expansion.
@@ -391,7 +389,8 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         // Save remainder of the buffer.
         if (*out) left = stkcopy(shp->stk, out);
         if (cmd_completion && mode == '\\') {
-            out = strcopy(begin, path_basename(cp = *com++));
+            cp = *com++;
+            out = strcopy(begin, path_basename(cp));
         } else if (mode == '*') {
             if (ep->e_nlist && dir && var) {
                 if (*cp == var) {

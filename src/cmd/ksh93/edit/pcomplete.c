@@ -212,7 +212,8 @@ static void gen_wordlist(Sfio_t *iop, const char *word) {
     char c, n = 0;
 
     while ((c = *word) && strchr(ifs, c)) word++;
-    while (c = *word++) {
+    while (*word) {
+        c = *word++;
         if (strchr(ifs, c)) {
             if (n++) continue;
             c = '\n';
@@ -302,7 +303,8 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
             cp = (char *)line;
             if (strchr(" \t", *cp)) cp++;
             n = 1;
-            while (c = *cp++) {
+            while (*cp) {
+                c = *cp++;
                 if (strchr(" \t", c)) {
                     if (spaces++ == 0) n++;
                 } else if (spaces) {
@@ -351,8 +353,9 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
                     cp = nv_getval(np);
                     sfputr(tmp, cp, '\n');
                 } while (nv_nextsub(np));
-            } else if (cp = nv_getval(np)) {
-                sfputr(tmp, cp, '\n');
+            } else {
+                cp = nv_getval(np);
+                if (cp) sfputr(tmp, cp, '\n');
             }
         }
         if (comp->command) {
@@ -374,7 +377,8 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
     if (comp->suffix) slen = strlen(comp->prefix);
     filter = comp->filter;
     if (comp->options & FILTER_AMP) {
-        while (c = *filter++) {
+        while (*filter) {
+            c = *filter++;
             if (c == '\\' && *filter == '&') {
                 c = *filter++;
             } else if (c == '&') {
@@ -402,7 +406,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
 again:
     c = 0;
     sfseek(tmp, (Sfoff_t)0, SEEK_SET);
-    while (str = sfgetr(tmp, '\n', 0)) {
+    while ((str = sfgetr(tmp, '\n', 0))) {
         wlen = sfvalue(tmp) - 1;
         if (prefix && strncmp(prefix, str, len)) continue;
         if (filter) {
@@ -502,7 +506,8 @@ static const char *lquote(struct Complete *cp, const char *str) {
     stkseek(stakp, 0);
     sfputc(stakp, '$');
     if (sp - str) sfwrite(stakp, str, sp - str);
-    while (c = *sp++) {
+    while (*sp) {
+        c = *sp++;
         if (c == '\'') sfputc(stakp, '\\');
         sfputc(stakp, c);
     }
@@ -519,8 +524,10 @@ static void print_out(struct Complete *cp, Sfio_t *out) {
         if (cp->options & (1 << c)) sfprintf(out, "-o %s ", Option_names[c] + 1);
     }
     while (Actions[c = i++]) {
-        if (a = cp->action & (1L << c)) {
-            if (sp = strchr("abcdefgjksuv", Actions[c])) {
+        a = cp->action & (1L << c);
+        if (a) {
+            sp = strchr("abcdefgjksuv", Actions[c]);
+            if (sp) {
                 sfputc(out, '-');
                 sfputc(out, *sp);
                 sfputc(out, ' ');
@@ -591,8 +598,8 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 if (Actions[n] == 'c') {
                     // c contains keywords, builtins and funcs.
                     const char *cp;
-                    for (cp = "kbF"; n = *cp; cp++) {
-                        n = (strchr(Actions, n) - Actions);
+                    for (cp = "kbF"; *cp; cp++) {
+                        n = (strchr(Actions, *cp) - Actions);
                         comp.action |= 1L << n;
                     }
                 }
@@ -679,7 +686,8 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
             }
         }
         if (empty) argv = av;
-        while (name = *argv++) {
+        while (*argv) {
+            name = *argv++;
             if (print) {
                 if (!compdict || !(cp = (struct Complete *)dtmatch(compdict, name))) {
                     r = 1;

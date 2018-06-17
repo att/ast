@@ -332,7 +332,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 ep->mark = i;
                 for (i = eol; i >= cur; i--) out[c + i] = out[i];
                 kptr = kstack;
-                while (i = *kptr++) out[cur++] = i;
+                while ((i = *kptr++)) out[cur++] = i;
                 draw(ep, UPDATE);
                 eol = genlen(out);
                 continue;

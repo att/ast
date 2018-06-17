@@ -430,10 +430,9 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
 #ifdef SIGWINCH
     if (shp->winch) {
         int rows = 0, cols = 0;
-        int32_t v;
         astwinsize(2, &rows, &cols);
-        if (v = cols) nv_putval(COLUMNS, (char *)&v, NV_INT32 | NV_RDONLY);
-        if (v = rows) nv_putval(LINES, (char *)&v, NV_INT32 | NV_RDONLY);
+        if (cols) nv_putval(COLUMNS, (char *)&cols, NV_INT32 | NV_RDONLY);
+        if (rows) nv_putval(LINES, (char *)&rows, NV_INT32 | NV_RDONLY);
         shp->winch = 0;
     }
 #endif
@@ -476,7 +475,8 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                     int skip = 0;
                     ep->e_crlf = 0;
                     if (pp < ppmax) *pp++ = c;
-                    for (n = 1; c = *last++; n++) {
+                    for (n = 1; *last; n++) {
+                        c = *last++;
                         if (pp < ppmax) *pp++ = c;
                         if (c == '\a' || c == ESC || c == '\r') break;
                         if (skip || (c >= '0' && c <= '9')) {
@@ -577,7 +577,8 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
             if (r) sh_offoption(shp, SH_RESTRICTED);
             sh_trap(shp, ".sh.subscript=$(tput cuu1 2>/dev/null)", 0);
             if (r) sh_isoption(shp, SH_RESTRICTED);
-            if (pp = nv_getval(SH_SUBSCRNOD)) strncpy(CURSOR_UP, pp, sizeof(CURSOR_UP) - 1);
+            pp = nv_getval(SH_SUBSCRNOD);
+            if (pp) strncpy(CURSOR_UP, pp, sizeof(CURSOR_UP) - 1);
             nv_unset(SH_SUBSCRNOD);
             strcpy(ep->e_termname, term);
         }
@@ -819,7 +820,8 @@ int ed_getchar(Edit_t *ep, int mode) {
                         if (n > 2 || (c != '[' && c != 'O')) break;
                     }
                 }
-                if (n = keytrap(ep, readin, n, LOOKAHEAD - n, mode)) {
+                n = keytrap(ep, readin, n, LOOKAHEAD - n, mode);
+                if (n) {
                     putstack(ep, readin, n, 0);
                     c = ep->e_lbuf[--ep->e_lookahead];
                 } else {
@@ -1013,7 +1015,8 @@ int ed_virt_to_phys(Edit_t *ep, genchar *virt, genchar *phys, int cur, int voff,
 
     sp += voff;
     dp += poff;
-    for (r = poff; c = *sp; sp++) {
+    for (r = poff; *sp; sp++) {
+        c = *sp;
         if (curp == sp) r = dp - phys;
         d = mbwidth((wchar_t)c);
         if (d == 1 && is_cntrl(c)) d = -1;
@@ -1109,7 +1112,7 @@ int ed_external(const genchar *src, char *dest) {
 void ed_gencpy(genchar *dp, const genchar *sp) {
     dp = (genchar *)roundof((char *)dp - (char *)0, sizeof(genchar));
     sp = (const genchar *)roundof((char *)sp - (char *)0, sizeof(genchar));
-    while (*dp++ = *sp++) {
+    while ((*dp++ = *sp++)) {
         ;  // empty loop
     }
 }
@@ -1208,7 +1211,7 @@ static int ed_histlencopy(const char *cp, char *dp) {
     int c, n = 1, col = 1;
     const char *oldcp = cp;
 
-    for (n = 0; c = mbchar(cp); oldcp = cp, col++) {
+    for (n = 0; (c = mbchar(cp)); oldcp = cp, col++) {
         if (c == '\n' && *cp) {
             n += 2;
             if (dp) {
@@ -1296,7 +1299,8 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
         *av = 0;
         strsort(argv, ac, ed_sortdata);
         mplast = (Histmatch_t *)argv[0];
-        for (ar = av = &argv[1]; mp = (Histmatch_t *)*av; av++) {
+        for (ar = av = &argv[1]; *av; av++) {
+            mp = (Histmatch_t *)*av;
             if (strcmp(mp->data, mplast->data) == 0) {
                 mplast->count++;
                 if (mp->index > mplast->index) mplast->index = mp->index;
@@ -1309,7 +1313,11 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
         ac = ar - argv;
         strsort(argv, ac, ed_sortindex);
         mplast = (Histmatch_t *)argv[0];
-        for (av = &argv[1]; mp = (Histmatch_t *)*av; av++, mplast = mp) mplast->next = mp;
+        for (av = &argv[1]; *av; av++) {
+            mp = (Histmatch_t *)*av;
+            mplast->next = mp;
+            mplast = mp;
+        }
         mplast->next = 0;
     }
     ep->hlist = (Histmatch_t **)argv;

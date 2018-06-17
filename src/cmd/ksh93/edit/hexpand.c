@@ -154,7 +154,8 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
     }
 
     // Save shell stack.
-    if (off = stktell(shp->stk)) sp = stkfreeze(shp->stk, 0);
+    off = stktell(shp->stk);
+    if (off) sp = stkfreeze(shp->stk, 0);
 
     cp = (char *)ln;
 
@@ -475,7 +476,8 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                 c = *++cp;
             }
 
-            if (cc = strchr(modifiers, c)) {
+            cc = strchr(modifiers, c);
+            if (cc) {
                 flag |= mod_flags[cc - modifiers];
             } else {
                 errormsg(SH_DICT, ERROR_ERROR, "%c: unrecognized history modifier", c);
@@ -526,7 +528,8 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                 flag |= HIST_SUBSTITUTE;
                 while (flag & HIST_SUBSTITUTE) {
                     // Find string.
-                    if (cc = strstr(str, sb.str[0])) {  // replace it
+                    cc = strstr(str, sb.str[0]);
+                    if (cc) {  // replace it
                         c = *cc;
                         *cc = '\0';
                         sfputr(tmp2, str, -1);
