@@ -519,7 +519,8 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
     }
     if (flags == O_NONBLOCK) return 1;
     if (!(s = strdup(path))) return -1;
-    if (t = strchr(s, '/')) {
+    t = strchr(s, '/');
+    if (t) {
         *t++ = 0;
         if (streq(s, "local")) s = strdup("localhost");
         fd = getaddrinfo(s, t, &hint, &addr);

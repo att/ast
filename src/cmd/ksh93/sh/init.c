@@ -2035,22 +2035,27 @@ static_fn void env_init(Shell_t *shp) {
     env_delete(shp->env, "_");
 #endif
     if (ep) {
-        while (cp = *ep++) {
+        while (*ep) {
+            cp = *ep++;
             if (*cp == 'A' && cp[1] == '_' && cp[2] == '_' && cp[3] == 'z' && cp[4] == '=') {
                 next = cp + 4;
-            } else if (np = nv_open(cp, shp->var_tree,
-                                    (NV_EXPORT | NV_IDENT | NV_ASSIGN | NV_NOFAIL))) {
-                nv_onattr(np, NV_IMPORT);
-                np->nvenv = cp;
-                nv_close(np);
             } else {
-                // Swap with front
-                ep[-1] = environ[shp->nenv];
-                environ[shp->nenv++] = cp;
+                np = nv_open(cp, shp->var_tree, (NV_EXPORT | NV_IDENT | NV_ASSIGN | NV_NOFAIL));
+                if (np) {
+                    nv_onattr(np, NV_IMPORT);
+                    np->nvenv = cp;
+                    nv_close(np);
+                } else {
+                    // Swap with front
+                    ep[-1] = environ[shp->nenv];
+                    environ[shp->nenv++] = cp;
+                }
             }
         }
-        while (cp = next) {
-            if (next = strchr(++cp, '=')) *next = 0;
+        while (next) {
+            cp = next;
+            next = strchr(++cp, '=');
+            if (next) *next = 0;
             np = nv_search(cp + 2, shp->var_tree, NV_ADD);
             if (np != SHLVL && nv_isattr(np, NV_IMPORT | NV_EXPORT)) {
                 int flag = *(unsigned char *)cp - ' ';

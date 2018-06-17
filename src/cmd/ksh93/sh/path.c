@@ -665,9 +665,8 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
 #if SHOPT_DYNAMIC
                 if (np) {
                     addr = (Shbltin_f)np->nvalue.bfp;
-                    if (np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL)) {
-                        return oldpp;
-                    }
+                    np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL);
+                    if (np) return oldpp;
                 }
 #endif
             }
@@ -682,11 +681,14 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 return oldpp;
             }
             stkseek(shp->stk, n);
-            while (bp = oldpp->blib) {
+            while (oldpp->blib) {
                 char *fp;
                 void *dll;
                 int m;
-                if (fp = strchr(bp, ':')) {
+
+                bp = oldpp->blib;
+                fp = strchr(bp, ':');
+                if (fp) {
                     *fp++ = 0;
                     oldpp->blib = fp;
                     fp = 0;
@@ -701,7 +703,8 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 shp->bltin_dir = oldpp->name;
                 if (*bp != '/') sfputr(shp->stk, oldpp->name, '/');
                 sfputr(shp->stk, bp, 0);
-                if (cp = strrchr(stkptr(shp->stk, m), '/')) {
+                cp = strrchr(stkptr(shp->stk, m), '/');
+                if (cp) {
                     cp++;
                 } else {
                     cp = stkptr(shp->stk, m);
@@ -716,9 +719,9 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     return oldpp;
                 }
 #ifdef SH_PLUGIN_VERSION
-                if (dll = dllplugin(SH_ID, stkptr(shp->stk, m), NULL, SH_PLUGIN_VERSION, NULL,
-                                    RTLD_LAZY, NULL, 0))
-                    sh_addlib(shp, dll, stkptr(shp->stk, m), oldpp);
+                dll = dllplugin(SH_ID, stkptr(shp->stk, m), NULL, SH_PLUGIN_VERSION, NULL,
+                                RTLD_LAZY, NULL, 0);
+                if (dll) sh_addlib(shp, dll, stkptr(shp->stk, m), oldpp);
 #else
 #if (_AST_VERSION >= 20040404)
                 if (dll = dllplug(SH_ID, stkptr(shp->stk, m), NULL, RTLD_LAZY, NULL, 0))
