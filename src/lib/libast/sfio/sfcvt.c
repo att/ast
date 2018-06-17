@@ -86,7 +86,8 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             if (signbit(f)) *sign = 1;
             return SF_NAN;
         }
-        if (n = isinf(f)) {
+        n = isinf(f);
+        if (n) {
             if (signbit(f)) *sign = 1;
             return SF_INF;
         }
@@ -226,7 +227,8 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             if (signbit(f)) *sign = 1;
             return SF_NAN;
         }
-        if (n = isinf(f)) {
+        n = isinf(f);
+        if (n) {
             if (signbit(f)) *sign = 1;
             return SF_INF;
         }
