@@ -54,7 +54,7 @@ static char *fmtbuf(int n) {
  */
 
 static char *dec(char *s, char *p, int n) {
-    while (*s = *p++) s++;
+    while ((*s = *p++)) s++;
     if (n >= 100) *s++ = '0' + ((n / 100) % 10);
     if (n >= 10) *s++ = '0' + ((n / 10) % 10);
     *s++ = '0' + (n % 10);

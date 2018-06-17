@@ -47,7 +47,8 @@ int stracmp(const char *aa, const char *ab) {
     b = (unsigned char *)ab;
     for (;;) {
         c = m[*a++];
-        if (d = c - m[*b++]) return d;
+        d = c - m[*b++];
+        if (d) return d;
         if (!c) return 0;
     }
 }

@@ -84,7 +84,7 @@ int stropt(const char *as, const void *tab, int siz,
                 break;
             }
             if (tab) {
-                for (p = (char **)tab; t = *p; p = (char **)((char *)p + siz)) {
+                for (p = (char **)tab; (t = *p); p = (char **)((char *)p + siz)) {
                     for (v = s; *t && *t == *v; t++, v++)
                         ;
                     if (!*t || isspace(*v) || *v == ',' || *v == '=') break;
@@ -112,7 +112,8 @@ int stropt(const char *as, const void *tab, int siz,
                 if (!t) *v = 0;
                 t = s = ++v;
                 ql = qr = 0;
-                while (c = *s++) {
+                while (*s) {
+                    c = *s++;
                     if (c == '\\') {
                         *t++ = chresc(s - 1, &e);
                         s = e;

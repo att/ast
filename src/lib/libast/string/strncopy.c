@@ -37,6 +37,6 @@ char *strncopy(char *t, const char *f, size_t n) {
             *t = 0;
             return t;
         }
-    } while (*t++ = *f++);
+    } while ((*t++ = *f++));
     return t - 1;
 }

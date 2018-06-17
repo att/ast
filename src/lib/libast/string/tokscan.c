@@ -188,7 +188,8 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
     for (;;) {
         switch (c = *f++) {
             case 0:
-                if (f = prv_f) {
+                f = prv_f;
+                if (f) {
                     prv_f = 0;
                     /* prv_ap value is guarded by prv_f */
                     va_copy(ap, prv_ap);
@@ -267,13 +268,16 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
                             val = strtol(s, &p_char, c);
                         switch (q) {
                             case 'h':
-                                if (p_short = va_arg(ap, short *)) *p_short = (short)val;
+                                p_short = va_arg(ap, short *);
+                                if (p_short) *p_short = (short)val;
                                 break;
                             case 'l':
-                                if (p_long = va_arg(ap, long *)) *p_long = val;
+                                p_long = va_arg(ap, long *);
+                                if (p_long) *p_long = val;
                                 break;
                             default:
-                                if (p_int = va_arg(ap, int *)) *p_int = (int)val;
+                                p_int = va_arg(ap, int *);
+                                if (p_int) *p_int = (int)val;
                                 break;
                         }
                         if (s != p_char) {
@@ -288,7 +292,8 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
                             p_char = s;
                         } else
                             dval = strtod(s, &p_char);
-                        if (p_double = va_arg(ap, double *)) *p_double = dval;
+                        p_double = va_arg(ap, double *);
+                        if (p_double) *p_double = dval;
                         if (s != p_char) {
                             s = p_char;
                             num++;
@@ -296,16 +301,19 @@ int tokscan(char *s, char **nxt, const char *fmt, ...) {
                         break;
                     case 's':
                         p_string = va_arg(ap, char **);
-                        if (q = *f) f++;
+                        q = *f;
+                        if (q) f++;
                         if (!*s || *s == '\n') {
                             if (p_string) *p_string = s;
-                        } else
+                        } else {
                             s = lextok(s, q, p_string, &num);
+                        }
                         break;
                     case 'v':
                         p_string = va_arg(ap, char **);
                         c = va_arg(ap, int);
-                        if (q = *f) f++;
+                        q = *f;
+                        if (q) f++;
                         if ((!*s || *s == '\n') && p_string) {
                             *p_string = 0;
                             p_string = 0;

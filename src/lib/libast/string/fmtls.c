@@ -87,10 +87,10 @@ char *fmtls(char *buf, const char *name, struct stat *st, const char *info, cons
         *s++ = ' ';
     }
     if (info) {
-        while (*s = *info++) s++;
+        while ((*s = *info++)) s++;
         *s++ = ' ';
     }
-    while (*s = *name++) s++;
+    while ((*s = *name++)) s++;
     if (flags & LS_MARK) {
         if (S_ISDIR(st->st_mode)) *s++ = '/';
 #ifdef S_ISLNK

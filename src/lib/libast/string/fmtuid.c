@@ -69,16 +69,19 @@ char *fmtuid(int uid) {
         disc.key = offsetof(Id_t, id);
         disc.size = sizeof(int);
         dict = dtopen(&disc, Dtset);
-    } else if (ip = (Id_t *)dtmatch(dict, &uid))
-        return ip->name;
-    if (pw = getpwuid(uid)) {
+    } else {
+        ip = (Id_t *)dtmatch(dict, &uid);
+        if (ip) return ip->name;
+    }
+    pw = getpwuid(uid);
+    if (pw) {
         name = pw->pw_name;
 #if __CYGWIN__
         if (streq(name, "Administrator")) name = "root";
 #endif
-    } else if (uid == 0)
+    } else if (uid == 0) {
         name = "root";
-    else {
+    } else {
         name = fmtbuf(z = sizeof(uid) * 3 + 1);
         sfsprintf(name, z, "%I*d", sizeof(uid), uid);
     }

@@ -65,7 +65,8 @@ ssize_t base64encode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
         fe += fz - n;
         fz = n;
     }
-    if (tp = (unsigned char *)tb) {
+    tp = (unsigned char *)tb;
+    if (tp) {
         te = tp + tz - B64_EC + 1;
         n = 0;
     } else {
@@ -145,15 +146,17 @@ ssize_t base64decode(const void *fb, size_t fz, void **fn, void *tb, size_t tz, 
     unsigned char *fc;
     ssize_t n;
 
-    if (!(m = map)[0]) {
+    m = map;
+    if (!map[0]) {
         memset(m, B64_IGN, sizeof(map));
-        for (tp = (unsigned char *)alp; c = *tp; tp++) m[c] = tp - (unsigned char *)alp;
+        for (tp = (unsigned char *)alp; *tp; tp++) m[*tp] = tp - (unsigned char *)alp;
         m[PAD] = B64_PAD;
         m[' '] = m['\t'] = m['\n'] = B64_SPC;
     }
     fp = (unsigned char *)fb;
     fe = fp + fz;
-    if (tp = (unsigned char *)tb) {
+    tp = (unsigned char *)tb;
+    if (tp) {
         te = tp + tz;
         if (tz > 2) tz = 2;
         tx = te - tz;

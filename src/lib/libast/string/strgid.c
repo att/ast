@@ -79,13 +79,16 @@ int strgid(const char *name) {
     if (!dict) {
         disc.key = offsetof(Id_t, name);
         dict = dtopen(&disc, Dtset);
-    } else if (ip = (Id_t *)dtmatch(dict, name))
-        return ip->id;
-    if (gr = getgrnam(name))
+    } else {
+        ip = (Id_t *)dtmatch(dict, name);
+        if (ip) return ip->id;
+    }
+    gr = getgrnam(name);
+    if (gr) {
         id = gr->gr_gid;
-    else if (pw = getpwnam(name))
+    } else if ((pw = getpwnam(name))) {
         id = pw->pw_gid;
-    else {
+    } else {
         id = strtol(name, &e, 0);
 #if __CYGWIN__
         if (!*e) {

@@ -169,9 +169,12 @@ char *fmtfmt(const char *as) {
                     i++;
                 if (i < elementsof(formats)) {
                     formats[i] = t;
-                    if (extra[i] = x) do
+                    extra[i] = x;
+                    if (extra[i]) {
+                        do {
                             z++;
-                        while (x /= 10);
+                        } while (x /= 10);
+                    }
                     if (m < i) m = i;
                 }
                 continue;

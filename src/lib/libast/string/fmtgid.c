@@ -69,9 +69,12 @@ char *fmtgid(int gid) {
         disc.key = offsetof(Id_t, id);
         disc.size = sizeof(int);
         dict = dtopen(&disc, Dtset);
-    } else if (ip = (Id_t *)dtmatch(dict, &gid))
-        return ip->name;
-    if (gr = getgrgid(gid)) {
+    } else {
+        ip = (Id_t *)dtmatch(dict, &gid);
+        if (ip) return ip->name;
+    }
+    gr = getgrgid(gid);
+    if (gr) {
         name = gr->gr_name;
 #if __CYGWIN__
         if (streq(name, "Administrators")) name = "sys";

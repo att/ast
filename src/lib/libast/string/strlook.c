@@ -41,7 +41,10 @@ void *strlook(const void *tab, size_t siz, const char *name) {
     char *s;
     int c = *name;
 
-    for (; s = *((char **)t); t += siz)
-        if (*s == c && !strcmp(s, name)) return (void *)t;
-    return 0;
+    while (*((char **)t)) {
+        s = *((char **)t);
+        if (*s == c && !strcmp(s, name)) return t;
+        t += siz;
+    }
+    return NULL;
 }

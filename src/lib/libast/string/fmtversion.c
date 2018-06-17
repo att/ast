@@ -41,8 +41,10 @@ char *fmtversion(unsigned long v) {
         sfsprintf(cur, end - cur, "%04lu-%02lu-%02lu", (v / 10000) % 10000, (v / 100) % 100,
                   v % 100);
     else {
-        if (n = (v >> 24) & 0xff) cur += sfsprintf(cur, end - cur, "%d.", n);
-        if (n = (v >> 16) & 0xff) cur += sfsprintf(cur, end - cur, "%d.", n);
+        n = (v >> 24) & 0xff;
+        if (n) cur += sfsprintf(cur, end - cur, "%d.", n);
+        n = (v >> 16) & 0xff;
+        if (n) cur += sfsprintf(cur, end - cur, "%d.", n);
         sfsprintf(cur, end - cur, "%ld.%ld", (v >> 8) & 0xff, v & 0xff);
     }
     return buf;

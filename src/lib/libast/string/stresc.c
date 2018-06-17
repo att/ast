@@ -40,7 +40,8 @@ int strexp(char *s, int flags) {
     Mbstate_t q;
 
     b = t = s;
-    while (c = *s++) {
+    while (*s) {
+        c = *s++;
         if (c == '\\') {
             c = chrexp(s - 1, &e, &w, flags);
             s = e;

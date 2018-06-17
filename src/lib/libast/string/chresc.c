@@ -100,7 +100,8 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                     case 'c': /*DEPRECATED*/
                     case 'C':
                         if (!(flags & FMT_EXP_CHAR)) goto noexpand;
-                        if (c = *s) {
+                        c = *s;
+                        if (c) {
                             s++;
                             if (c == '\\') {
                                 c = chrexp(s - 1, &r, 0, flags);

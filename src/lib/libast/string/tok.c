@@ -53,10 +53,12 @@ static Tok_t *freelist;
 char *tokopen(char *s, int f) {
     Tok_t *p;
 
-    if (p = freelist)
+    p = freelist;
+    if (p) {
         freelist = freelist->ptr.nxt;
-    else if (!(p = newof(0, Tok_t, 1, 0)))
-        return 0;
+    } else if (!(p = newof(0, Tok_t, 1, 0))) {
+        return NULL;
+    }
     p->chr = *(p->ptr.end = s);
     p->flg = f ? FLG_RESTORE : 0;
     return (char *)p;

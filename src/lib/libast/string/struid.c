@@ -73,11 +73,14 @@ int struid(const char *name) {
     if (!dict) {
         disc.key = offsetof(Id_t, name);
         dict = dtopen(&disc, Dtset);
-    } else if (ip = (Id_t *)dtmatch(dict, name))
-        return ip->id;
-    if (pw = getpwnam(name))
+    } else {
+        ip = (Id_t *)dtmatch(dict, name);
+        if (ip) return ip->id;
+    }
+    pw = getpwnam(name);
+    if (pw) {
         id = pw->pw_uid;
-    else {
+    } else {
         id = strtol(name, &e, 0);
 #if __CYGWIN__
         if (!*e) {

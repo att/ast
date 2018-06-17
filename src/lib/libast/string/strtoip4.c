@@ -83,8 +83,10 @@ int strtoip4(const char *s, char **e, uint32_t *paddr, unsigned char *pbits) {
         part++;
     } while (c == '.');
     if ((s - b) == 1 && c != '/' || part > 4) goto done;
-    if (old = part < 4)
+    old = part < 4;
+    if (old) {
         while (part++ < 4) addr <<= 8;
+    }
     if (pbits) {
         if (c == '/') {
             part = 0;
@@ -114,10 +116,12 @@ int strtoip4(const char *s, char **e, uint32_t *paddr, unsigned char *pbits) {
             bits = 16;
         else
             bits = 24;
-        if (*pbits = bits)
+        *pbits = bits;
+        if (*pbits) {
             addr &= ~((((uint32_t)1) << (32 - bits)) - 1);
-        else
+        } else {
             addr = 0;
+        }
     }
     if (paddr) *paddr = addr;
     r = 0;

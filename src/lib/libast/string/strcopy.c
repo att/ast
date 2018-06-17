@@ -29,7 +29,8 @@
 
 char *strcopy(char *s, const char *t) {
     if (!t) return s;
-    while (*s++ = *t++)
-        ;
+    while ((*s++ = *t++)) {
+        ;  // empty loop
+    }
     return s - 1;
 }

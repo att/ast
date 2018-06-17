@@ -105,8 +105,10 @@ static int spliceline(Sfio_t *s, int op, void *val, Sfdisc_t *ad) {
                                 if (buf[n - 1] != '\n') {
                                     q = '#';
                                     n = b - buf - 2;
-                                } else if (n = b - buf - 1)
-                                    buf[n - 1] = '\n';
+                                } else {
+                                    n = b - buf - 1;
+                                    if (n) buf[n - 1] = '\n';
+                                }
                                 break;
                             }
                         }

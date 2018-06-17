@@ -98,7 +98,8 @@ char *fmtre(const char *as) {
                     p->beg = s - 1;
                     s = x;
                     p->len = s - p->beg;
-                    if (p->min = *s == '-') s++;
+                    p->min = *s == '-';
+                    if (p->min) s++;
                     p++;
                     *t++ = *s++;
                 } else
@@ -120,8 +121,9 @@ char *fmtre(const char *as) {
                     p->beg = s - 1;
                     if (c == '~') {
                         if (*(s + 1) == 'E' && *(s + 2) == ')') {
-                            for (s += 3; *t = *s; t++, s++)
-                                ;
+                            for (s += 3; (*t = *s); t++, s++) {
+                                ;  // empty loop
+                            }
                             continue;
                         }
                         p->len = 0;
@@ -130,7 +132,8 @@ char *fmtre(const char *as) {
                         *t++ = '?';
                     } else {
                         p->len = c != '@';
-                        if (p->min = *s == '-') s++;
+                        p->min = (*s == '-');
+                        if (p->min) s++;
                         *t++ = *s++;
                     }
                     p++;

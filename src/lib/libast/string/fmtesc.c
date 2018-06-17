@@ -74,7 +74,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
             else if (qb[0] == '\'')
                 singlequote = 1;
         }
-        while (*b = *qb++) b++;
+        while ((*b = *qb++)) b++;
     } else if (flags & FMT_SHELL)
         doublequote = 1;
     f = b;
@@ -174,7 +174,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     if (qb) {
         if (!escaped) buf += shell + !spaced;
         if (qe && (escaped || spaced))
-            while (*b = *qe++) b++;
+            while ((*b = *qe++)) b++;
     }
     *b = 0;
     return buf;

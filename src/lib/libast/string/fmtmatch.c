@@ -40,7 +40,7 @@ char *fmtmatch(const char *as) {
     char *y;
     char *z;
     int a;
-    int e;
+    int e = 0;
     int n;
     char *buf;
     char *stack[32];
@@ -49,8 +49,8 @@ char *fmtmatch(const char *as) {
     buf = fmtbuf(c);
     t = b = buf + 3;
     p = stack;
-    if (a = *s == '^') s++;
-    e = 0;
+    a = (*s == '^');
+    if (a) s++;
     for (;;) {
         switch (c = *s++) {
             case 0:
@@ -123,7 +123,7 @@ char *fmtmatch(const char *as) {
                     if (*s == 'K' && *(s + 1) == ')') {
                         s += 2;
                         p--;
-                        while (*t = *s) t++, s++;
+                        while ((*t = *s)) t++, s++;
                         continue;
                     }
                     *t++ = '~';
@@ -228,8 +228,9 @@ char *fmtmatch(const char *as) {
                 *t++ = c;
                 continue;
             case '$':
-                if (e = !*s) break;
-                /*FALLTHROUGH*/
+                e = !*s;
+                if (e) break;
+                // fallthru
             default:
                 *t++ = c;
                 continue;
