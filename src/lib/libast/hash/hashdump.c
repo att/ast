@@ -64,7 +64,8 @@ static void dumpbucket(Hash_table_t *tab, int flags) {
             sfprintf(sfstderr, "%5d %2d :", sp - tab->table, n);
             for (b = *sp; b; b = b->next)
                 if (!(b->hash & HASH_DELETED) && (!(tab->flags & HASH_VALUE) || b->value)) {
-                    if (n = tab->root->namesize) {
+                    n = tab->root->namesize;
+                    if (n) {
                         sfprintf(sfstderr, " 0x");
                         s = (unsigned char *)hashname(b);
                         while (n-- > 0) sfprintf(sfstderr, "%02x", *s++);
@@ -94,9 +95,10 @@ static void dumptable(Hash_table_t *tab, int flags) {
     int level;
 
     sfprintf(sfstderr, "        name:        %s", tab->name ? tab->name : "*no name*");
-    if (scope = tab->scope) {
+    scope = tab->scope;
+    if (scope) {
         level = 1;
-        while (scope = scope->scope) level++;
+        while ((scope = scope->scope)) level++;
         sfprintf(sfstderr, " level %d scope on 0x%08lx", level, (unsigned long)tab->scope);
     }
     sfprintf(sfstderr, "\n");

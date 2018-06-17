@@ -51,7 +51,7 @@ char *hashlook(Hash_table_t *tab, const char *name, long flags, const char *valu
         else {
             s2 = name;
             n = 0;
-            while (c = *s2++) HASHPART(n, c);
+            while ((c = *s2++)) HASHPART(n, c);
         }
         i = n;
         for (;;) {
@@ -125,17 +125,12 @@ char *hashlook(Hash_table_t *tab, const char *name, long flags, const char *valu
         n = i = last->hash;
         prev = 0;
         HASHMOD(tab, n);
-        if (b = last->bucket) {
-            /*
-             * found the bucket
-             */
-
+        b = last->bucket;
+        if (b) {
+            // Found the bucket.
         found:
             if (prev && !tab->frozen) {
-                /*
-                 * migrate popular buckets to the front
-                 */
-
+                // Migrate popular buckets to the front.
                 prev->next = b->next;
                 b->next = tab->table[n];
                 tab->table[n] = b;
@@ -250,7 +245,8 @@ create:
     if (tab == top)
         prev = 0;
     else {
-        if (prev = b) {
+        prev = b;
+        if (prev) {
             name = (b->hash & HASH_HIDES) ? b->name : (char *)b;
             i |= HASH_HIDES;
         }

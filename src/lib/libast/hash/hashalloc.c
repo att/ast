@@ -70,13 +70,17 @@ Hash_table_t *hashalloc(Hash_table_t *ref, ...) {
         internal = HASH_INTERNAL;
     } else {
         if (region) {
-            if (!(tab->root = (Hash_root_t *)(*region)(handle, NULL, sizeof(Hash_root_t), 0)))
-                goto out;
+            tab->root = (Hash_root_t *)(*region)(handle, NULL, sizeof(Hash_root_t), 0);
+            if (!tab->root) goto out;
             memset(tab->root, 0, sizeof(Hash_root_t));
-        } else if (!(tab->root = newof(0, Hash_root_t, 1, 0)))
-            goto out;
-        if (!(tab->root->local = newof(0, Hash_local_t, 1, 0))) goto out;
-        if (tab->root->local->region = region) tab->root->local->handle = handle;
+        } else {
+            tab->root = newof(0, Hash_root_t, 1, 0);
+            if (!tab->root) goto out;
+        }
+        tab->root->local = newof(0, Hash_local_t, 1, 0);
+        if (!tab->root->local) goto out;
+        tab->root->local->region = region;
+        if (region) tab->root->local->handle = handle;
         tab->root->meanchain = HASHMEANCHAIN;
         internal = 0;
     }

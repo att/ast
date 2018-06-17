@@ -55,26 +55,32 @@ Hash_table_t *hashview(Hash_table_t *top, Hash_table_t *bot) {
         else {
             sx = &top->table[top->size];
             sp = &top->table[0];
-            while (sp < sx)
-                for (b = *sp++; b; b = b->next)
-                    if (p = (Hash_bucket_t *)hashlook(bot, b->name, HASH_LOOKUP, NULL)) {
+            while (sp < sx) {
+                for (b = *sp++; b; b = b->next) {
+                    p = (Hash_bucket_t *)hashlook(bot, b->name, HASH_LOOKUP, NULL);
+                    if (p) {
                         b->name = (p->hash & HASH_HIDES) ? p->name : (char *)b;
                         b->hash |= HASH_HIDES;
                     }
+                }
+            }
             top->scope = bot;
             bot->frozen++;
         }
-    } else if (bot = top->scope) {
-        sx = &top->table[top->size];
-        sp = &top->table[0];
-        while (sp < sx)
-            for (b = *sp++; b; b = b->next)
-                if (b->hash & HASH_HIDES) {
-                    b->hash &= ~HASH_HIDES;
-                    b->name = ((Hash_bucket_t *)b->name)->name;
-                }
-        top->scope = 0;
-        bot->frozen--;
+    } else {
+        bot = top->scope;
+        if (bot) {
+            sx = &top->table[top->size];
+            sp = &top->table[0];
+            while (sp < sx)
+                for (b = *sp++; b; b = b->next)
+                    if (b->hash & HASH_HIDES) {
+                        b->hash &= ~HASH_HIDES;
+                        b->name = ((Hash_bucket_t *)b->name)->name;
+                    }
+            top->scope = 0;
+            bot->frozen--;
+        }
     }
     return (bot);
 }

@@ -38,6 +38,6 @@ unsigned int strhash(const char *as) {
     unsigned int i = 0;
     unsigned int c;
 
-    while (c = *s++) HASHPART(i, c);
+    while ((c = *s++)) HASHPART(i, c);
     return (i);
 }

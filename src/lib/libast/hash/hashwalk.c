@@ -36,15 +36,16 @@
 int hashwalk(Hash_table_t *tab, int flags, int (*walker)(const char *, char *, void *),
              void *handle) {
     Hash_bucket_t *b;
-    int v;
     Hash_position_t *pos;
+    int v = 0;
 
     if (!(pos = hashscan(tab, flags))) return (-1);
-    v = 0;
-    while (b = hashnext(pos))
-        if ((v = (*walker)(hashname(b), (tab->flags & HASH_VALUE) ? b->value : (char *)b, handle)) <
-            0)
-            break;
+    b = hashnext(pos);
+    while (b) {
+        v = (*walker)(hashname(b), (tab->flags & HASH_VALUE) ? b->value : (char *)b, handle);
+        if (v < 0) break;
+        b = hashnext(pos);
+    }
     hashdone(pos);
-    return (v);
+    return v;
 }

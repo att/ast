@@ -45,7 +45,8 @@ void hashsize(Hash_table_t *tab, int size) {
     void *handle;
 
     if (size > 0 && size != tab->size && !(size & (size - 1))) {
-        if (region = tab->root->local->region) {
+        region = tab->root->local->region;
+        if (region) {
             handle = tab->root->local->handle;
             new_s = (Hash_bucket_t **)(*region)(handle, NULL, sizeof(Hash_bucket_t *) * size, 0);
         } else

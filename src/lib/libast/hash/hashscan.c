@@ -64,7 +64,7 @@ Hash_position_t *hashscan(Hash_table_t *tab, int flags) {
                 while (sp < sx)
                     for (b = *sp++; b; b = b->next) b->hash &= ~HASH_HIDDEN;
             }
-        } while (tab = tab->scope);
+        } while ((tab = tab->scope));
         tab = pos->tab;
     } else
         pos->flags = 0;

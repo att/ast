@@ -58,7 +58,8 @@ Hash_table_t *hashfree(Hash_table_t *tab) {
             else
                 freevalue = tab->root->local->free;
         }
-        if (region = tab->root->local->region) handle = tab->root->local->handle;
+        region = tab->root->local->region;
+        if (region) handle = tab->root->local->handle;
         sx = &tab->table[tab->size];
         sp = &tab->table[0];
         while (sp < sx) {
@@ -127,7 +128,8 @@ Hash_table_t *hashfree(Hash_table_t *tab) {
                 free(tab->root);
         }
     }
-    if (tp = tab->scope) tp->frozen--;
+    tp = tab->scope;
+    if (tp) tp->frozen--;
     if (region)
         (*region)(handle, tab, 0, 0);
     else
