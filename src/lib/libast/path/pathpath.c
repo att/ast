@@ -73,34 +73,38 @@ char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size
             return (path == buf) ? strdup(path) : path;
         }
     }
-    if (*p == '/')
+    if (*p == '/') {
         a = 0;
-    else if (s = (char *)a) {
-        x = s;
-        if (strchr(p, '/')) {
-            a = p;
-            p = "..";
-        } else
-            a = 0;
-        if ((!cmd || *cmd) && (strchr(s, '/') || (s = cmd))) {
-            if (!cmd && *s == '/') cmd = strdup(s);
-            if (strlen(s) < (sizeof(buf) - 6)) {
-                s = stpcpy(path, s);
-                for (;;) {
-                    do
-                        if (s <= path) goto normal;
-                    while (*--s == '/');
-                    do
-                        if (s <= path) goto normal;
-                    while (*--s != '/');
-                    strcpy(s + 1, "bin");
-                    if (pathexists(path, PATH_EXECUTE)) {
-                        if (s = pathaccess(path, p, a, mode, path, size))
-                            return path == buf ? strdup(s) : s;
-                        goto normal;
+    } else {
+        s = (char *)a;
+        if (s) {
+            x = s;
+            if (strchr(p, '/')) {
+                a = p;
+                p = "..";
+            } else {
+                a = 0;
+            }
+            if ((!cmd || *cmd) && (strchr(s, '/') || (s = cmd))) {
+                if (!cmd && *s == '/') cmd = strdup(s);
+                if (strlen(s) < (sizeof(buf) - 6)) {
+                    s = stpcpy(path, s);
+                    for (;;) {
+                        do
+                            if (s <= path) goto normal;
+                        while (*--s == '/');
+                        do
+                            if (s <= path) goto normal;
+                        while (*--s != '/');
+                        strcpy(s + 1, "bin");
+                        if (pathexists(path, PATH_EXECUTE)) {
+                            s = pathaccess(path, p, a, mode, path, size);
+                            if (s) return path == buf ? strdup(s) : s;
+                            goto normal;
+                        }
                     }
+                normal:;
                 }
-            normal:;
             }
         }
     }

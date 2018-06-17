@@ -133,7 +133,8 @@ char *pathfind(const char *name, const char *lib, const char *type, char *buf, s
      */
 
     if (lib) {
-        if (s = strrchr((char *)lib, ':')) lib = (const char *)s + 1;
+        s = strrchr((char *)lib, ':');
+        if (s) lib = (const char *)s + 1;
         sfsprintf(tmp, sizeof(tmp), "lib/%s/%s", lib, name);
         if (pathpath(tmp, "", PATH_REGULAR, buf, size)) return buf;
         if (type) {

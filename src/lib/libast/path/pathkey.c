@@ -73,14 +73,12 @@ char *pathkey_20100601(const char *lang, const char *tool, const char *apath, ch
         for (c = 0; c < elementsof(env); c++) env[c] = 0;
         n = 0;
 
-        /*
-         * trailing flags in path
-         */
-
-        if (flags = strchr(path, ' ')) {
-            if (flags == path)
+        // Trailing flags in path.
+        flags = strchr(path, ' ');
+        if (flags) {
+            if (flags == path) {
                 flags = 0;
-            else {
+            } else {
                 strlcpy(tmp, path, sizeof(tmp));
                 *(flags = tmp + (flags - path)) = 0;
                 path = tmp;
@@ -104,12 +102,10 @@ char *pathkey_20100601(const char *lang, const char *tool, const char *apath, ch
         }
 #endif
 
-        /*
-         * universe
-         */
-
+        // Universe.
         if (attr) attr = stpcpy(attr, "' UNIVERSE='");
-        if (k = astconf("UNIVERSE", NULL, NULL)) {
+        k = astconf("UNIVERSE", NULL, NULL);
+        if (k) {
             n = memsum(k, strlen(k), n);
             if (attr) attr = stpcpy(attr, k);
         }
@@ -196,8 +192,9 @@ char *pathkey_20100601(const char *lang, const char *tool, const char *apath, ch
                 }
         found:;
         }
-        for (c = 0; c < elementsof(env); c++)
-            if (k = env[c]) {
+        for (c = 0; c < elementsof(env); c++) {
+            k = env[c];
+            if (k) {
                 if (attr) {
                     *attr++ = ' ';
                     while ((*attr++ = *k++) != '=')
@@ -210,13 +207,16 @@ char *pathkey_20100601(const char *lang, const char *tool, const char *apath, ch
                         ;
                 n = memsum(k, strlen(k), n);
             }
+        }
         if (attr) {
             attr = stpcpy(attr, " ATTRIBUTES='PREROOT UNIVERSE");
-            for (c = 0; c < elementsof(env); c++)
-                if (k = env[c]) {
+            for (c = 0; c < elementsof(env); c++) {
+                k = env[c];
+                if (k) {
                     *attr++ = ' ';
                     while ((*attr = *k++) != '=') attr++;
                 }
+            }
             *attr++ = '\'';
             *attr = 0;
         }

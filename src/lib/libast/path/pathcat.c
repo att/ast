@@ -59,16 +59,22 @@ char *pathcat_20100601(const char *dirs, int sep, const char *a, const char *b, 
         *s++ = '/';
     }
     if (a) {
-        while (*s = *a++)
+        while ((*s = *a++)) {
             if (++s >= e) return 0;
+        }
         if (b) {
             if (s >= e) return 0;
             *s++ = '/';
         }
-    } else if (!b)
+    } else if (!b) {
         b = ".";
-    if (b) do {
+    }
+
+    if (b) {
+        do {
             if (s >= e) return 0;
-        } while (*s++ = *b++);
+        } while ((*s++ = *b++));
+    }
+
     return *dirs ? (char *)++dirs : 0;
 }

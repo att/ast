@@ -122,14 +122,15 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
     struct stat ps;
 
     if (*proc != '/') {
-        if (p = strchr(proc, ' ')) {
+        p = strchr(proc, ' ');
+        if (p) {
             strncopy(buf, proc, p - proc + 1);
             proc = buf;
         }
         if (!(proc = pathpath(proc, NULL, PATH_ABSOLUTE | PATH_REGULAR | PATH_EXECUTE, cmd,
-                              sizeof(cmd))))
+                              sizeof(cmd)))) {
             proc = (char *)aproc;
-        else if (p) {
+        } else if (p) {
             n = strlen(proc);
             strncopy(proc + n, p, PATH_MAX - n - 1);
         }
@@ -200,15 +201,15 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
     force = 0;
     if (op >= 0 && !stat(path, &st)) {
         if (ptime <= (unsigned long)st.st_mtime || ptime <= (unsigned long)st.st_ctime) {
-            /*
-             * verify (<sep><name><sep><option><sep><value>)* header
-             */
-
-            if (sp = sfopen(NULL, path, "r")) {
-                if (x = sfgetr(sp, '\n', 1)) {
+            // Verify (<sep><name><sep><option><sep><value>)* header.
+            sp = sfopen(NULL, path, "r");
+            if (sp) {
+                x = sfgetr(sp, '\n', 1);
+                if (x) {
                     while (*x && *x != ' ') x++;
                     while (*x == ' ') x++;
-                    if (n = *x++)
+                    n = *x++;
+                    if (n)
                         for (;;) {
                             for (k = x; *x && *x != n; x++)
                                 ;
@@ -229,7 +230,8 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
                                 *ap = 0;
                                 ops[0] = PROC_FD_DUP(1, 2, 0);
                                 ops[1] = 0;
-                                if (pp = procopen(proc, arg, NULL, ops, PROC_READ)) {
+                                pp = procopen(proc, arg, NULL, ops, PROC_READ);
+                                if (pp) {
                                     if ((v = x - e) >= sizeof(ver)) v = sizeof(ver) - 1;
                                     k = p = ver;
                                     for (;;) {

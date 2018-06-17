@@ -177,7 +177,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
             if ((x = tmp.tmppath) || (x = getenv(TMP_PATH_ENV))) {
                 n = 2;
                 s = x;
-                while (s = strchr(s, ':')) {
+                while ((s = strchr(s, ':'))) {
                     s++;
                     n++;
                 }
@@ -185,7 +185,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
                 tmp.dir = tmp.vec;
                 x = strcpy((char *)(tmp.dir + n), x);
                 *tmp.dir++ = x;
-                while (x = strchr(x, ':')) {
+                while ((x = strchr(x, ':'))) {
                     *x++ = 0;
                     if (!VALID(*(tmp.dir - 1))) tmp.dir--;
                     *tmp.dir++ = x;
@@ -213,7 +213,8 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
     z = 0;
     if (!pfx && !(pfx = tmp.pfx)) pfx = "ast";
     m = strlen(pfx);
-    if (directory = pfx[m - 1] == '/') m--;
+    directory = pfx[m - 1] == '/';
+    if (directory) m--;
     if (buf && dir &&
         (buf == (char *)dir && (buf + strlen(buf) + 1) == (char *)pfx ||
          buf == (char *)pfx && !*dir) &&

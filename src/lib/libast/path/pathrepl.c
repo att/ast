@@ -63,8 +63,9 @@ char *pathrepl_20100601(char *path, size_t size, const char *match, const char *
                 r = replace;
                 while (p < path && *r) *p++ = *r++;
                 if (p < path)
-                    while (*p++ = *path++)
-                        ;
+                    while ((*p++ = *path++)) {
+                        ;  // empty loop
+                    }
                 else if (*r && p >= path) {
                     char *u;
 
