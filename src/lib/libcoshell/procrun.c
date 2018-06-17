@@ -42,7 +42,7 @@ int coprocrun(const char *path, char **argv, int flags) {
     tmp = sfstropen();
     if (!tmp) return -1;
     sfputr(tmp, path ? path : "sh", -1);
-    while (s = *++a) {
+    while ((s = *++a)) {
         sfputr(tmp, " '", -1);
         coquote(tmp, s, 0);
         sfputc(tmp, '\'');

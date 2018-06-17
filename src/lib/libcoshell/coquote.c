@@ -32,7 +32,8 @@ void coquote(Sfio_t *sp, const char *s, int type) {
     int c;
 
     if (type && (!state.type || !*state.type)) type = 0;
-    while (c = *s++) {
+    while (*s) {
+        c = *s++;
         sfputc(sp, c);
         if (c == '\'') {
             sfputc(sp, '\\');

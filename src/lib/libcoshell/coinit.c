@@ -58,7 +58,8 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
     char *v;
     Coexport_t *ex;
 
-    if (cvt = *n == '%') n++;
+    cvt = *n == '%';
+    if (cvt) n++;
 
     //
     // Currently limited to valid identifer env var names
@@ -150,7 +151,9 @@ char *coinitialize(Coshell_t *co, int flags) {
             if (flags & CO_EXPORT) {
                 s = "(*)";
             } else {
-                for (n = 0; s = co_export[n]; n++) putexport(co, sp, s, old, !n, flags);
+                for (n = 0; co_export[n]; n++) {
+                    putexport(co, sp, s = co_export[n], old, !n, flags);
+                }
                 s = getenv(co_export[0]);
             }
             if (s) {
@@ -162,12 +165,14 @@ char *coinitialize(Coshell_t *co, int flags) {
                     char *xs;
                     v = strchr(s, ':');
                     if (v) *v = 0;
-                    while (e = *ep++) {
+                    while (*ep) {
+                        e = *ep++;
                         t = strsubmatch(e, s, 1);
                         if (t && (*t == '=' || !*t && (t = strchr(e, '=')))) {
                             m = (int)(t - e);
                             if (!strneq(e, "PATH=", 5) && !strneq(e, "_=", 2)) {
-                                for (n = 0; xs = co_export[n]; n++) {
+                                for (n = 0; co_export[n]; n++) {
+                                    xs = co_export[n];
                                     es = e;
                                     while (*xs && *es == *xs) {
                                         es++;
@@ -259,7 +264,8 @@ char *coinitialize(Coshell_t *co, int flags) {
         } else if (!(tp = sfstropen())) {
             goto bad;
         } else {
-            while (n = *s++) {
+            while (*s) {
+                n = *s++;
                 if (n == ':') {
                     while (*s == ':') s++;
                     if (!*s) break;

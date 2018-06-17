@@ -95,7 +95,7 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
                 (cs = calloc(1, sizeof(Coservice_t) + 2 * strlen(v)))) {
                 a = cs->argv;
                 *a++ = s = cs->path = cs->name = (char *)(cs + 1);
-                while (*s = *v++)
+                while ((*s = *v++)) {
                     if (*s++ == ':') {
                         *(s - 1) = 0;
                         if (*v == '-') {
@@ -114,6 +114,7 @@ static int setopt(void *handle, const void *p, int n, const char *v) {
                             *s++ = '-';
                         }
                     }
+                }
                 if (cs->db) *a++ = cs->db;
                 *a = 0;
                 cs->next = co->service;

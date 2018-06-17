@@ -248,8 +248,9 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
             if (!out && !fstat(1, &sto) && !fstat(2, &ste) && sto.st_dev == ste.st_dev &&
                 sto.st_ino == ste.st_ino) {
                 sfprintf(sp, " 2>&1");
-            } else if (cj->err = pathtemp(NULL, 64, NULL, "coe", NULL)) {
-                sfprintf(sp, " 2>%s", cj->err);
+            } else {
+                cj->err = pathtemp(NULL, 64, NULL, "coe", NULL);
+                if (cj->err) sfprintf(sp, " 2>%s", cj->err);
             }
         }
         sfprintf(sp, " &\nprint -u$%s j %d $!\n", CO_ENV_MSGFD, cj->id);
@@ -292,8 +293,9 @@ Cojob_t *coexec(Coshell_t *co, const char *action, int flags, const char *out, c
         } else if (flags & CO_SERIALIZE) {
             if (out) {
                 sfprintf(sp, " 2>&1");
-            } else if (cj->err = pathtemp(NULL, 64, NULL, "coe", NULL)) {
-                sfprintf(sp, " 2>%s", cj->err);
+            } else {
+                cj->err = pathtemp(NULL, 64, NULL, "coe", NULL);
+                if (cj->err) sfprintf(sp, " 2>%s", cj->err);
             }
         }
         if (!(co->mode & CO_MODE_SEPARATE)) {
