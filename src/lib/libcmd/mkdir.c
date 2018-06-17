@@ -106,7 +106,8 @@ int b_mkdir(int argc, char **argv, Shbltin_t *context) {
         umask(mask);
         mask = 0;
     }
-    while (path = *argv++) {
+    while (*argv) {
+        path = *argv++;
         if (!mkdir(path, mode)) {
             if (vflag) error(0, "%s: directory created", path);
             made = 1;

@@ -241,7 +241,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
             "CS|SI");
     } else if (*argv) {
         e = &buf[sizeof(buf) - 1];
-        while (s = *argv++) {
+        while (*argv) {
+            s = *argv++;
             t = buf;
             *t++ = 'C';
             *t++ = 'S';
@@ -274,7 +275,8 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         if (flags & OPT_implementation) {
             s = astconf("PLATFORM", NULL, NULL);
             if (!(*s) && !*(s = astconf("HW_NAME", NULL, NULL))) {
-                if (t = strchr(hosttype, '.')) {
+                t = strchr(hosttype, '.');
+                if (t) {
                     t++;
                 } else {
                     t = (char *)hosttype;

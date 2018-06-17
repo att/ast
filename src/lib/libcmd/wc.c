@@ -152,7 +152,8 @@ int b_wc(int argc, register char **argv, Shbltin_t *context) {
         twords += wp->words;
         tlines += wp->lines;
         printout(wp, cp, mode);
-    } while (cp = *argv++);
+        cp = *argv++;
+    } while (cp);
     if (n > 1) {
         wp->lines = tlines;
         wp->chars = tchars;

@@ -263,7 +263,7 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                 for (;;) {
                     /* process spaces and new-lines */
                     do {
-                        if (eol(c))
+                        if (eol(c)) {
                             for (;;) {
                                 /* check for end of buffer */
                                 if (cp > endbuff) goto beob;
@@ -271,7 +271,9 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                                 if (*cp != '\n') break;
                                 cp++;
                             }
-                    } while (c = type[*cp++]);
+                        }
+                        c = type[*cp++];
+                    } while (c);
                     /* skip over word characters */
                     while (!(c = type[*cp++]))
                         ;

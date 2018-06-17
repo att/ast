@@ -122,6 +122,6 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     if (!all)
         namebase(sfstdout, argv[0], argv[1]);
     else
-        while (string = *argv++) namebase(sfstdout, string, suffix);
+        while ((string = *argv++)) namebase(sfstdout, string, suffix);
     return 0;
 }

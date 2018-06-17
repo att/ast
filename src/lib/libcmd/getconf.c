@@ -227,7 +227,8 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
         path = 0;
     } else if (streq(name, empty)) {
         name = NULL;
-        if (path = *++argv) {
+        path = *++argv;
+        if (path) {
             argv++;
             if (streq(path, empty)) {
                 path = 0;

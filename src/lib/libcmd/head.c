@@ -143,7 +143,8 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
         }
     next:
         if (fp != sfstdin) sfclose(fp);
-    } while (cp = *argv++);
+        cp = *argv++;
+    } while (cp);
     if (sfsync(sfstdout)) error(ERROR_system(0), "write error");
     return error_info.errors != 0;
 }

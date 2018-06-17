@@ -623,7 +623,8 @@ static void set(char *argv[], struct termios *sp) {
     int c, off;
     char *cp;
     char *ep;
-    while (cp = *argv++) {
+    while (*argv) {
+        cp = *argv++;
         off = 0;
         if (*cp == '-') {
             cp++;
@@ -708,9 +709,8 @@ static void set(char *argv[], struct termios *sp) {
                 cp = *argv;
                 if (!cp) {
                     if (tp->field == C_SPEED) {
-                        if (tp = getspeed(*tp->name == 'i' ? cfgetispeed(sp) : cfgetospeed(sp))) {
-                            sfprintf(sfstdout, "%s\n", tp->name);
-                        }
+                        tp = getspeed(*tp->name == 'i' ? cfgetispeed(sp) : cfgetospeed(sp));
+                        if (tp) sfprintf(sfstdout, "%s\n", tp->name);
                         break;
                     }
                     error(ERROR_exit(1), "%s: missing numeric argument", tp->name);
