@@ -81,10 +81,12 @@ static int ttyquery(Sfio_t *rp, Sfio_t *wp, const char *label, Sfdisc_t *dp) {
     int rfd = sffileno(rp);
     int wfd = sffileno(rp);
 
-    if (!label)
+    if (!label) {
         n = 0;
-    else if (n = strlen(label))
-        write(wfd, label, n);
+    } else {
+        n = strlen(label);
+        if (n) write(wfd, label, n);
+    }
     tcgetattr(rfd, &old);
     tty = old;
     tty.c_cc[VTIME] = 0;
@@ -180,7 +182,8 @@ static ssize_t morewrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *dp) {
                     more->pattern[n] = 0;
                 }
             }
-            if (more->match = strlen(more->pattern)) {
+            more->match = strlen(more->pattern);
+            if (more->match) {
                 more->row = 1;
                 more->col = 1;
                 goto match;
@@ -213,14 +216,19 @@ static int moreexcept(Sfio_t *f, int type, void *data, Sfdisc_t *dp) {
     More_t *more = (More_t *)dp;
 
     if (type == SF_FINAL || type == SF_DPOP) {
-        if (f = more->input) {
+        f = more->input;
+        if (f) {
             more->input = 0;
             sfdisc(f, SF_POPDISC);
-        } else if (f = more->error) {
-            more->error = 0;
-            sfdisc(f, SF_POPDISC);
-        } else
-            free(dp);
+        } else {
+            f = more->error;
+            if (f) {
+                more->error = 0;
+                sfdisc(f, SF_POPDISC);
+            } else {
+                free(dp);
+            }
+        }
     } else if (type == SF_SYNC) {
         more->match = 0;
         more->row = 1;

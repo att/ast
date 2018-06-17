@@ -135,7 +135,8 @@ static ssize_t dos_read(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *disc) {
     }
     if (!dp->maptable) {
         dp->begin += cp - (char *)buff - 1;
-        if (dp->maptable = (struct map *)malloc((MINMAP + 1) * sizeof(struct map))) {
+        dp->maptable = (struct map *)malloc((MINMAP + 1) * sizeof(struct map));
+        if (dp->maptable) {
             dp->mapsize = MINMAP;
             dp->maptable[0].logical = dp->begin;
             dp->maptable[0].physical = dp->maptable[0].logical + 1;

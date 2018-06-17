@@ -157,7 +157,8 @@ static int getfmt(Sfio_t *sp, void *vp, Sffmt_t *dp) {
                 default:
                     continue;
             }
-            if (i = *--v) {
+            i = *--v;
+            if (i) {
                 *v = 0;
                 if (i == ':' && fp->fmt.fmt == 's' && strlen(a) > 4 && !isalnum(*(a + 4))) {
                     d = *(a + 4);
