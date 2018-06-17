@@ -551,7 +551,9 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (tp->aflag != '-') nvflags |= NV_NOREF;
         }
         if (tp->pflag) nvflags |= (NV_NOREF | NV_NOADD | NV_NOFAIL);
-        while (name = *++argv) {
+        argv++;
+        while (*argv) {
+            name = *argv++;
             unsigned newflag;
             Namval_t *np;
             Namarr_t *ap;
@@ -579,7 +581,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     np = 0;
                     if (shp->namespace) np = sh_fsearch(shp, name, HASH_NOSCOPE);
                     if (!np) {
-                        if (np = nv_search(name, troot, 0)) {
+                        np = nv_search(name, troot, 0);
+                        if (np) {
                             if (!is_afunction(np)) np = 0;
                         } else if (strncmp(name, ".sh.math.", 9) == 0 && sh_mathstd(name + 9)) {
                             continue;
@@ -711,7 +714,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             }
             if (tp->tp) nv_checkrequired(np);
             flag &= ~NV_ASSIGN;
-            if (last = strchr(name, '=')) *last = 0;
+            last = strchr(name, '=');
+            if (last) *last = 0;
             if (shp->typeinit) continue;
             curflag = np->nvflag;
             if (!(flag & NV_INTEGER) && (flag & (NV_LTOU | NV_UTOL))) {
@@ -719,7 +723,8 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 char *cp;
                 if (!tp->wctname) errormsg(SH_DICT, ERROR_exit(1), e_mapchararg, nv_name(np));
                 cp = (char *)nv_mapchar(np, 0);
-                if (fp = nv_mapchar(np, tp->wctname)) {
+                fp = nv_mapchar(np, tp->wctname);
+                if (fp) {
                     if (tp->aflag == '+') {
                         if (cp && strcmp(cp, tp->wctname) == 0) {
                             nv_disc(np, fp, NV_POP);
@@ -926,7 +931,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     tdata.sh = context->shp;
     stkp = tdata.sh->stk;
     if (!tdata.sh->pathlist) path_absolute(tdata.sh, argv[0], NULL);
-    while (n = optget(argv, sh_optbuiltin)) {
+    while ((n = optget(argv, sh_optbuiltin))) {
         switch (n) {
             case 's': {
                 flag = BLT_SPC;
@@ -1021,7 +1026,8 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     }
     flag = stktell(stkp);
     r = 0;
-    while (arg = *argv) {
+    while (*argv) {
+        arg = *argv;
         if (tdata.prefix) {
             sfprintf(sfstdout, "%s %s\n", tdata.prefix, arg);
             argv++;
@@ -1041,7 +1047,8 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 if (dlete)
 #endif  // SHOPT_DYNAMIC
                 {
-                    if (np = sh_addbuiltin(tdata.sh, arg, addr, pointerof(dlete))) {
+                    np = sh_addbuiltin(tdata.sh, arg, addr, pointerof(dlete));
+                    if (np) {
                         if (dlete || nv_isattr(np, BLT_SPC)) {
                             errmsg = "restricted name";
                         }
@@ -1129,7 +1136,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
     } else {
         name = sh_optunset;
     }
-    while (r = optget(argv, name)) {
+    while ((r = optget(argv, name))) {
         switch (r) {
             case 'f': {
                 troot = sh_subfuntree(shp, 1);
@@ -1172,7 +1179,8 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
         return r;
     }
     sh_pushcontext(shp, &buff, 1);
-    while (name = *argv++) {
+    while (*argv) {
+        name = *argv++;
         jmpval = sigsetjmp(buff.buff, 0);
         np = 0;
         if (jmpval == 0) {
@@ -1315,7 +1323,8 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *t
         return 0;
     }
     if (nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
-    if (cp = nv_getval(np)) {
+    cp = nv_getval(np);
+    if (cp) {
         if (indent) sfnputc(file, '\t', indent);
         sfputr(file, nv_name(np), -1);
         if (!flag) flag = '=';

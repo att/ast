@@ -105,7 +105,8 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     if (pflag) {
         hist_cancel(hp);
         pflag = 0;
-        while (arg = argv[1]) {
+        while (argv[1]) {
+            arg = argv[1];
             flag = hist_expand(shp, arg, &replace);
             if (!(flag & HIST_ERROR)) {
                 sfputr(sfstdout, replace, '\n');
