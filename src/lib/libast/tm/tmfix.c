@@ -53,8 +53,8 @@ Tm_t *tmfix(Tm_t *tm) {
      *	nl_langinfo() => strftime() => tmfmt()
      */
 
-    if (w = !tm->tm_sec && !tm->tm_min && !tm->tm_mday && !tm->tm_year && !tm->tm_yday &&
-            !tm->tm_isdst) {
+    w = !tm->tm_sec && !tm->tm_min && !tm->tm_mday && !tm->tm_year && !tm->tm_yday && !tm->tm_isdst;
+    if (w) {
         tm->tm_year = 99;
         tm->tm_mday = 2;
     }
@@ -128,7 +128,8 @@ Tm_t *tmfix(Tm_t *tm) {
         w = tm->tm_wday;
         t = tmtime(tm, TM_LOCALZONE);
         p = tmmake(&t);
-        if (w = (w - p->tm_wday)) {
+        w = w - p->tm_wday;
+        if (w) {
             if (w < 0) w += 7;
             tm->tm_wday += w;
             if ((tm->tm_mday += w) > DAYS(tm)) tm->tm_mday -= 7;

@@ -529,7 +529,8 @@ static void load(Lc_info_t *li) {
     Sfio_t *tp;
     char path[PATH_MAX];
 
-    if (b = (char **)li->data) {
+    b = (char **)li->data;
+    if (b) {
         tm_info.format = b;
         if (!(tm_info.deformat = state.format)) tm_info.deformat = tm_info.format[TM_DEFAULT];
         return;
@@ -538,19 +539,24 @@ static void load(Lc_info_t *li) {
     if (!(tm_info.deformat = state.format)) tm_info.deformat = tm_info.format[TM_DEFAULT];
     if (mcfind(NULL, NULL, LC_TIME, 0, path, sizeof(path)) && (sp = sfopen(NULL, path, "r"))) {
         n = sfsize(sp);
-        tp = 0;
-        if (u = (unsigned char *)sfreserve(sp, 3, 1)) {
-            if (u[0] == 0xef && u[1] == 0xbb && u[2] == 0xbf &&
-                (cvt = iconv_open("", "utf")) != (iconv_t)(-1)) {
-                if (tp = sfstropen()) {
-                    sfread(sp, u, 3);
-                    n = iconv_move(cvt, sp, tp, SF_UNBOUND, NULL);
+        tp = NULL;
+        u = (unsigned char *)sfreserve(sp, 3, 1);
+        if (u) {
+            if (u[0] == 0xef && u[1] == 0xbb && u[2] == 0xbf) {
+                cvt = iconv_open("", "utf");
+                if (cvt != (iconv_t)(-1)) {
+                    tp = sfstropen();
+                    if (tp) {
+                        sfread(sp, u, 3);
+                        n = iconv_move(cvt, sp, tp, SF_UNBOUND, NULL);
+                    }
+                    iconv_close(cvt);
                 }
-                iconv_close(cvt);
             }
             if (!tp) sfread(sp, u, 0);
         }
-        if (b = newof(0, char *, TM_NFORM, n + 2)) {
+        b = newof(0, char *, TM_NFORM, n + 2);
+        if (b) {
             v = b;
             e = b + TM_NFORM;
             s = (char *)e;
@@ -562,13 +568,15 @@ static void load(Lc_info_t *li) {
                     *s++ = 0;
                 }
                 fixup(li, b);
-            } else
+            } else {
                 free(b);
+            }
         }
         if (tp) sfclose(tp);
         sfclose(sp);
-    } else
+    } else {
         native_lc_time(li);
+    }
 }
 
 /*

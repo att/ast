@@ -65,7 +65,8 @@ int tmweek(Tm_t *tm, int type, int week, int day) {
     d = tm->tm_wday;
     tm->tm_mday = week * 7 - offset[d][type] + ((day || type != 2) ? day : 7);
     tmfix(tm);
-    if (d = tm->tm_wday - day) {
+    d = tm->tm_wday - day;
+    if (d) {
         tm->tm_mday -= d;
         tmfix(tm);
     }

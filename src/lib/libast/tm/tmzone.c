@@ -66,7 +66,8 @@ Tm_zone_t *tmzone(const char *name, char **end, const char *type, int *dst) {
         } else
             *p++ = 'W';
         p += sfsprintf(p, sizeof(off) - 2, "%u", d / 60);
-        if (d = (d % 60) / 15) *p++ = 'A' + d - 1;
+        d = (d % 60) / 15;
+        if (d) *p++ = 'A' + d - 1;
         *p = 0;
         fixed.dst = 0;
         if (end) *end = e;

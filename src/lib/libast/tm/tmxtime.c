@@ -88,7 +88,8 @@ Time_t tmxtime(Tm_t *tm, int west) {
                 now = tmxsec(tmxtime(tm, tm_info.zone->west));
                 tm->tm_year = y;
                 if (!(tl = tmlocaltime(&now))) return TMX_NOTIME;
-                if (tm->tm_isdst = tl->tm_isdst) t += tm_info.zone->dst * 60;
+                tm->tm_isdst = tl->tm_isdst;
+                if (tm->tm_isdst) t += tm_info.zone->dst * 60;
             }
         } else {
             t += west * 60;

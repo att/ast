@@ -334,7 +334,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 p = "%Qz";
                 goto push;
             case 'Q': /* (AST) %Q<alpha> or %Q<delim>recent<delim>distant<delim> */
-                if (c = *format) {
+                c = *format;
+                if (c) {
                     format++;
                     if (isalpha(c)) {
                         switch (c) {
@@ -432,11 +433,14 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                                 } else if (!(flags & TM_UTC)) {
                                     if ((zp = tm->tm_zone) != tm_info.local) {
                                         for (; zp >= tm_data.zone; zp--) {
-                                            if (p = zp->type) goto string;
+                                            p = zp->type;
+                                            if (p) goto string;
                                             if (zp->standard == zp->daylight) break;
                                         }
-                                    } else if (p = zp->type)
-                                        goto string;
+                                    } else {
+                                        p = zp->type;
+                                        if (p) goto string;
+                                    }
                                 }
                                 break;
                             default:
@@ -450,7 +454,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                         } else
                             p = (char *)format;
                         i = 0;
-                        while (n = *format) {
+                        while (*format) {
+                            n = *format;
                             format++;
                             if (n == c) {
                                 if (!p) p = (char *)format;
@@ -562,7 +567,8 @@ char *tmxfmt(char *buf, size_t len, const char *format, Time_t t) {
                 for (arg = argbuf;
                      *format == '=' || *format == '-' || *format == '+' || *format == '!'; format++)
                     if (arg < &argbuf[sizeof(argbuf) - 2]) *arg++ = *format;
-                if (*arg++ = *format) format++;
+                *arg++ = *format;
+                if (*format) format++;
                 *arg = 0;
                 arg = argbuf;
                 goto options;

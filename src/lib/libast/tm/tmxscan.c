@@ -327,14 +327,17 @@ again:
                     continue;
                 case 'Z':
                 case 'q':
-                    if (zp = tmtype(s, &u)) {
+                    zp = tmtype(s, &u);
+                    if (zp) {
                         s = u;
                         u = zp->type;
-                    } else
+                    } else {
                         u = 0;
+                    }
                     if (d == 'q') continue;
                 case 'z':
-                    if ((zp = tmzone(s, &u, u, &m))) {
+                    zp = tmzone(s, &u, u, &m);
+                    if (zp) {
                         s = u;
                         set.zone = zp->west + m;
                         tm_info.date = zp;
@@ -419,7 +422,8 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
                 for (n = 1; sfgetr(sp, '\n', 0); n++)
                     ;
                 m = sfseek(sp, 0L, SEEK_CUR);
-                if (p = newof(0, char *, n, m)) {
+                p = newof(0, char *, n, m);
+                if (p) {
                     sfseek(sp, 0L, SEEK_SET);
                     v = (char *)(p + n);
                     if (sfread(sp, v, m) != m) {
@@ -438,8 +442,9 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
                 }
             }
         }
-        if (p = datemask)
-            while (v = *p++) {
+        p = datemask;
+        if (p) {
+            while ((v = *p++)) {
                 x = scan(s, &q, v, &r, t, flags);
                 if (!*q && !*r) {
                     if (e) *e = q;
@@ -447,6 +452,7 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
                     return x;
                 }
             }
+        }
         if (f) *f = (char *)format;
         if (format) return tmxdate(s, e, t);
         if (e) *e = (char *)s;

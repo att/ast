@@ -109,7 +109,8 @@ static int tzwest(time_t *clock, int *isdst) {
      */
 
     tp = tmlocaltime(clock);
-    if (n = tp->tm_yday - n) {
+    n = tp->tm_yday - n;
+    if (n) {
         if (n > 1)
             n = -1;
         else if (n < -1)
@@ -172,7 +173,8 @@ static void tmlocal(void) {
     {
         char **v = environ;
 
-        if (s = getenv("TZ")) {
+        s = getenv("TZ");
+        if (s) {
             sfsprintf(TZ, sizeof(TZ), "TZ=%s", s);
             if (!environ || !*environ)
                 environ = TE;
@@ -232,15 +234,14 @@ static void tmlocal(void) {
         local.standard = strdup(tzname[0]);
         local.daylight = strdup(tzname[1]);
     } else if ((s = getenv("TZNAME")) && *s && (s = strdup(s))) {
-        /*
-         * BSD
-         */
-
+        // BSD
         local.standard = s;
-        if (s = strchr(s, ','))
+        s = strchr(s, ',');
+        if (s) {
             *s++ = 0;
-        else
+        } else {
             s = "";
+        }
         local.daylight = s;
     } else if ((s = getenv("TZ")) && *s && *s != ':' && (s = strdup(s))) {
         /*

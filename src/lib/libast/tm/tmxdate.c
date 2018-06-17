@@ -466,14 +466,17 @@ again:
             while (isspace(*++s) || *s == '_')
                 ;
             n = strtol(s, &t, 0);
-            if (w = t - s) {
-                for (s = t; skip[*s]; s++)
-                    ;
+            w = t - s;
+            if (w) {
+                for (s = t; skip[*s]; s++) {
+                    ;  // empty loop
+                }
                 state |= (f = n) ? NEXT : THIS;
                 set &= ~(EXACT | LAST | NEXT | THIS);
                 set |= state & (EXACT | LAST | NEXT | THIS);
-            } else
+            } else {
                 s = last;
+            }
         }
         if (!(state & CRON)) {
             /*
@@ -719,10 +722,12 @@ again:
                 state |= ((f = n) ? NEXT : THIS) | ORDINAL;
                 set &= ~(EXACT | LAST | NEXT | THIS);
                 set |= state & (EXACT | LAST | NEXT | THIS);
-                for (s = t; skip[*s]; s++)
-                    ;
+                for (s = t; skip[*s]; s++) {
+                    ;  // empty loop
+                }
                 if (isdigit(*s)) {
-                    if (n = strtol(s, &t, 10)) n--;
+                    n = strtol(s, &t, 10);
+                    if (n) n--;
                     s = t;
                     if (*s == '_') s++;
                 } else
