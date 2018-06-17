@@ -86,9 +86,10 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         flushcache();
         i = 0;
         if (reflags > matchstate.size) {
-            if (matchstate.cache = newof(matchstate.cache, Cache_t *, reflags, 0))
+            matchstate.cache = newof(matchstate.cache, Cache_t *, reflags, 0);
+            if (matchstate.cache) {
                 matchstate.size = reflags;
-            else {
+            } else {
                 matchstate.size = 0;
                 i = 1;
             }
@@ -158,7 +159,8 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
         strcpy(cp->pattern, pattern);
         while (++i < sizeof(Key_t)) cp->pattern[i] = 0;
         pattern = (const char *)cp->pattern;
-        if (i = regcomp(&cp->re, pattern, reflags)) {
+        i = regcomp(&cp->re, pattern, reflags);
+        if (i) {
             if (status) *status = i;
             return 0;
         }

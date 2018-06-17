@@ -61,7 +61,8 @@ static void detrie(Trie_node_t *x, Sfio_t *sp, char *b, char *p, char *e, int de
             sfputc(sp, '}');
             p = o;
         }
-    } while (x = x->son);
+        x = x->son;
+    } while (x);
 }
 
 static int decomp(Rex_t *e, Rex_t *parent, Sfio_t *sp, int type, int delimiter, regflags_t flags) {
@@ -305,7 +306,8 @@ static int decomp(Rex_t *e, Rex_t *parent, Sfio_t *sp, int type, int delimiter, 
                 if (e->re.group.expr.binary.left &&
                     decomp(e->re.group.expr.binary.left, e, sp, type, delimiter, flags))
                     return 1;
-                if (q = e->re.group.expr.binary.right) {
+                q = e->re.group.expr.binary.right;
+                if (q) {
                     sfputc(sp, ':');
                     if (q->re.group.expr.binary.left &&
                         decomp(q->re.group.expr.binary.left, q, sp, type, delimiter, flags))
@@ -329,7 +331,8 @@ static int decomp(Rex_t *e, Rex_t *parent, Sfio_t *sp, int type, int delimiter, 
                 sfprintf(sp, "<ERROR:REX_%d>", e->type);
                 break;
         }
-    } while (e = e->next);
+        e = e->next;
+    } while (e);
     return 0;
 }
 

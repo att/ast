@@ -148,7 +148,8 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
             }
         }
         if (*s) {
-            if (n = regsubflags(p, s, &e, d, map, &minmatch, &flags)) return n;
+            n = regsubflags(p, s, &e, d, map, &minmatch, &flags);
+            if (n) return n;
             s = (const char *)e;
         }
         p->re_npat = s - o;
@@ -220,14 +221,16 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
                 if (isdigit(*s) && (p->env->flags & REG_MULTIREF)) c = c * 10 + *s++ - '0';
                 break;
             case 'l':
-                if (c = *s) {
+                c = *s;
+                if (c) {
                     s++;
                     if (isupper(c)) c = tolower(c);
                     *t++ = c;
                 }
                 continue;
             case 'u':
-                if (c = *s) {
+                c = *s;
+                if (c) {
                     s++;
                     if (islower(c)) c = toupper(c);
                     *t++ = c;
@@ -236,13 +239,18 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
             case 'E':
                 f = g;
             set:
-                if ((op->len = (t - sub->re_rhs) - op->off) && (n = ++op - sub->re_ops) >= nops) {
-                    if (!(sub->re_ops = (regsubop_t *)alloc(p->env->disc, sub->re_ops,
-                                                            (nops *= 2) * sizeof(regsubop_t)))) {
-                        regfree(p);
-                        return fatal(disc, REG_ESPACE, NULL);
+                op->len = (t - sub->re_rhs) - op->off;
+                if (op->len) {
+                    n = ++op - sub->re_ops;
+                    if (n) {
+                        sub->re_ops = (regsubop_t *)alloc(p->env->disc, sub->re_ops,
+                                                          (nops *= 2) * sizeof(regsubop_t));
+                        if (!sub->re_ops) {
+                            regfree(p);
+                            return fatal(disc, REG_ESPACE, NULL);
+                        }
+                        op = sub->re_ops + n;
                     }
-                    op = sub->re_ops + n;
                 }
                 op->op = f;
                 op->off = t - sub->re_rhs;
@@ -277,7 +285,8 @@ int regsubcomp(regex_t *p, const char *s, const regflags_t *map, int minmatch, r
             }
             op = sub->re_ops + n;
         }
-        if (op->len = (t - sub->re_rhs) - op->off) op++;
+        op->len = (t - sub->re_rhs) - op->off;
+        if (op->len) op++;
         op->op = f;
         op->off = c;
         op->len = 0;

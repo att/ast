@@ -168,7 +168,8 @@ static Rex_t *node(Cenv_t *env, int type, int lo, int hi, size_t extra) {
                (sfprintf(sfstdout, "%s:%d node(%d,%d,%d,%u)\n", file, line, type, lo, hi,
                          sizeof(Rex_t) + extra)),
                (0));
-    if (e = (Rex_t *)alloc(env->disc, 0, sizeof(Rex_t) + extra)) {
+    e = (Rex_t *)alloc(env->disc, 0, sizeof(Rex_t) + extra);
+    if (e) {
         memset(e, 0, sizeof(Rex_t) + extra);
         e->type = type;
         e->marked = 0;
@@ -230,7 +231,8 @@ void drop(regdisc_t *disc, Rex_t *e) {
             }
             x = e->next;
             alloc(disc, e, 0);
-        } while (e = x);
+            e = x;
+        } while (e);
 }
 
 /*
@@ -263,7 +265,8 @@ static void mark(Rex_t *e, int set) {
                     mark(e->re.group.expr.rex, set);
                     break;
             }
-        } while (e = e->next);
+            e = e->next;
+        } while (e);
 }
 
 /*
@@ -297,7 +300,8 @@ static int serialize(Cenv_t *env, Rex_t *e, int n) {
                 n = serialize(env, e->re.group.expr.rex, n);
                 break;
         }
-    } while (e = e->next);
+        e = e->next;
+    } while (e);
     return n;
 }
 
@@ -478,7 +482,8 @@ static int stats(Cenv_t *env, Rex_t *e) {
                 if (e->re.group.size > 0 && ++env->stats.b <= 0) return 1;
                 if (e->re.group.expr.binary.left && stats(env, e->re.group.expr.binary.left))
                     return 1;
-                if (q = e->re.group.expr.binary.right) {
+                q = e->re.group.expr.binary.right;
+                if (q) {
                     if (q->re.group.expr.binary.left && stats(env, q->re.group.expr.binary.left))
                         return 1;
                     if (q->re.group.expr.binary.right && stats(env, q->re.group.expr.binary.right))
@@ -575,7 +580,8 @@ static int stats(Cenv_t *env, Rex_t *e) {
                 }
                 break;
         }
-    } while (e = e->next);
+        e = e->next;
+    } while (e);
     return 0;
 }
 
@@ -590,7 +596,8 @@ static int magic(Cenv_t *env, int c, int escaped) {
     short *mp;
     char *ep;
 
-    if (mp = state.magic[c]) {
+    mp = state.magic[c];
+    if (mp) {
         c = mp[env->type + escaped];
         if (c >= T_META) {
             sp = (char *)env->cursor + env->token.len;
@@ -846,7 +853,8 @@ static int token(Cenv_t *env) {
         return T_BAR;
     }
     if (env->flags & REG_LITERAL) return c;
-    if (posixkludge = env->posixkludge) {
+    posixkludge = env->posixkludge;
+    if (posixkludge) {
         env->posixkludge = 0;
         if (c == '*') return c;
     }
@@ -1263,8 +1271,10 @@ static Rex_t *bra(Cenv_t *env) {
         }
         if (dt) {
             drop(env->disc, e);
-            if (ic = env->flags & REG_ICASE) elements *= 2;
-            if (!(e = node(env, REX_COLL_CLASS, 1, 1, (elements + 3) * sizeof(Celt_t)))) return 0;
+            ic = env->flags & REG_ICASE;
+            if (ic) elements *= 2;
+            e = node(env, REX_COLL_CLASS, 1, 1, (elements + 3) * sizeof(Celt_t));
+            if (!e) return 0;
             ce = (Celt_t *)e->re.data;
             e->re.collate.invert = neg;
             e->re.collate.elements = ce;
@@ -1636,7 +1646,8 @@ static int isstring(Rex_t *e) {
 static Trie_node_t *trienode(Cenv_t *env, int c) {
     Trie_node_t *t;
 
-    if (t = (Trie_node_t *)alloc(env->disc, 0, sizeof(Trie_node_t))) {
+    t = (Trie_node_t *)alloc(env->disc, 0, sizeof(Trie_node_t));
+    if (t) {
         memset(t, 0, sizeof(Trie_node_t));
         t->c = c;
     }
@@ -2124,7 +2135,7 @@ static Rex_t *grp(Cenv_t *env, int parno) {
         case '{':
             p = env->cursor;
             n = 1;
-            while (c = *env->cursor) {
+            while ((c = *env->cursor)) {
                 if (c == '\\' && *(env->cursor + 1))
                     env->cursor++;
                 else if (c == '{')
@@ -2414,10 +2425,12 @@ static Rex_t *seq(Cenv_t *env) {
                     eat(env);
                     flags = env->flags;
                     type = env->type;
-                    if (!(e = grp(env, env->parno + 1))) {
+                    e = grp(env, env->parno + 1);
+                    if (!e) {
                         if (env->error) return 0;
-                        if (env->literal == env->pattern && env->literal == p)
+                        if (env->literal == env->pattern && env->literal == p) {
                             env->literal = env->cursor;
+                        }
                         continue;
                     }
                     env->flags = flags;
@@ -2425,7 +2438,8 @@ static Rex_t *seq(Cenv_t *env) {
                     break;
                 case T_BRA:
                     eat(env);
-                    if (e = bra(env)) e = rep(env, e, 0, 0);
+                    e = bra(env);
+                    if (e) e = rep(env, e, 0, 0);
                     break;
                 case T_ALNUM:
                 case T_ALNUM_NOT:
@@ -2434,7 +2448,8 @@ static Rex_t *seq(Cenv_t *env) {
                 case T_SPACE:
                 case T_SPACE_NOT:
                     eat(env);
-                    if (e = ccl(env, c)) e = rep(env, e, 0, 0);
+                    e = ccl(env, c);
+                    if (e) e = rep(env, e, 0, 0);
                     break;
                 case T_LT:
                     eat(env);
@@ -2458,7 +2473,8 @@ static Rex_t *seq(Cenv_t *env) {
                     eat(env);
                     env->token.lex = T_PLUS;
                     env->token.push = 1;
-                    if (e = node(env, REX_ONECHAR, 1, 1, 0)) {
+                    e = node(env, REX_ONECHAR, 1, 1, 0);
+                    if (e) {
                         e->re.onechar = '/';
                         e = rep(env, e, 0, 0);
                     }
@@ -2594,11 +2610,14 @@ static int bmtrie(Cenv_t *env, Rex_t *a, unsigned char *v, Trie_node_t *x, int n
             if (!(b <<= 1)) {
                 b = 1;
                 a->re.bm.complete = 0;
-            } else if (x->son)
+            } else if (x->son) {
                 a->re.bm.complete = 0;
-        } else if (x->son)
+            }
+        } else if (x->son) {
             b = bmtrie(env, a, v, x->son, n, m + 1, b);
-    } while (x = x->sib);
+        }
+        x = x->sib;
+    } while (x);
     return b;
 }
 
@@ -2623,9 +2642,12 @@ static int special(Cenv_t *env, regex_t *p) {
     int k;
 
     DEBUG_INIT();
-    if (e = p->env->rex) {
-        if ((x = env->stats.x) && x->re.string.size < 3) x = 0;
-        if ((t = env->stats.y) && t->re.trie.min < 3) t = 0;
+    e = p->env->rex;
+    if (e) {
+        x = env->stats.x;
+        if (x && x->re.string.size < 3) x = 0;
+        t = env->stats.y;
+        if (t && t->re.trie.min < 3) t = 0;
         if (x && t) {
             if (x->re.string.size >= t->re.trie.min)
                 t = 0;

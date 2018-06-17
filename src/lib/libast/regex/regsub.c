@@ -114,7 +114,8 @@ static int subold(Sfio_t *dp, const char *op, const char *sp, size_t nmatch, reg
                     c = -1;
                     break;
                 }
-                if (c = *sp) {
+                c = *sp;
+                if (c) {
                     sp++;
                     if (isupper(c)) c = tolower(c);
                     sfputc(dp, c);
@@ -128,7 +129,8 @@ static int subold(Sfio_t *dp, const char *op, const char *sp, size_t nmatch, reg
                     }
                     sp++;
                 }
-                if (c = *sp) {
+                c = *sp;
+                if (c) {
                     sp++;
                     if (islower(c)) c = toupper(c);
                     sfputc(dp, c);
@@ -222,12 +224,12 @@ int regsub(const regex_t *p, Sfio_t *dp, const char *op, const char *sp, size_t 
     sre = !!(p->env->flags & REG_SHELL);
     r = 0;
     do {
-        if (--m > 0)
+        if (--m > 0) {
             sfwrite(dp, op, match->rm_eo);
-        else {
+        } else {
             sfwrite(dp, op, match->rm_so);
-            if (r = subold(dp, op, sp, nmatch, match, flags, sre))
-                return fatal(p->env->disc, r, NULL);
+            r = subold(dp, op, sp, nmatch, match, flags, sre);
+            if (r) return fatal(p->env->disc, r, NULL);
         }
         op += match->rm_eo;
     } while ((m > 0 || (flags & REG_SUB_ALL)) &&

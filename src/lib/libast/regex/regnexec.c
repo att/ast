@@ -352,7 +352,8 @@ static int better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, in
             }
         if (ne->p > oe->p) return 1;
         if (oe->p > ne->p) return -1;
-        if (k = better(env, os + 1, ns + 1, oe, ne, level + 1)) return k;
+        k = better(env, os + 1, ns + 1, oe, ne, level + 1);
+        if (k) return k;
         os = oe + 1;
         ns = ne + 1;
     }
@@ -507,7 +508,8 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
     unsigned char *p;
     int r;
 
-    if (p = rex->map) {
+    p = rex->map;
+    if (p) {
         for (;;) {
             if (s >= env->end) return NONE;
             while (x->c != p[*s])
@@ -1183,12 +1185,15 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
             case REX_GROUP_BEHIND_NOT_CATCH:
                 return s == rex->re.neg_catch.beg ? GOOD : NONE;
             case REX_GROUP_COND:
-                if (q = rex->re.group.expr.binary.right) {
+                q = rex->re.group.expr.binary.right;
+                if (q) {
                     catcher.re.cond_catch.next[0] = q->re.group.expr.binary.right;
                     catcher.re.cond_catch.next[1] = q->re.group.expr.binary.left;
-                } else
+                } else {
                     catcher.re.cond_catch.next[0] = catcher.re.cond_catch.next[1] = 0;
-                if (q = rex->re.group.expr.binary.left) {
+                }
+                q = rex->re.group.expr.binary.left;
+                if (q) {
                     catcher.type = REX_GROUP_COND_CATCH;
                     catcher.flags = rex->flags;
                     catcher.serial = rex->serial;
@@ -1199,11 +1204,13 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     r = parse(env, q, &catcher, s);
                     if (r == BAD || catcher.re.cond_catch.yes) return r;
                 } else if (!rex->re.group.size ||
-                           rex->re.group.size > 0 && env->match[rex->re.group.size].rm_so >= 0)
+                           rex->re.group.size > 0 && env->match[rex->re.group.size].rm_so >= 0) {
                     r = GOOD;
-                else
+                } else {
                     r = NONE;
-                if (q = catcher.re.cond_catch.next[r != NONE]) {
+                }
+                q = catcher.re.cond_catch.next[r != NONE];
+                if (q) {
                     catcher.type = REX_CAT;
                     catcher.flags = q->flags;
                     catcher.serial = q->serial;
@@ -1245,7 +1252,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 n = rex->re.string.size;
                 t = s;
                 e = env->end;
-                if (p = rex->map) {
+                p = rex->map;
+                if (p) {
                     while (t + n <= e) {
                         for (i = -1; t < e; t++) {
                             while (i >= 0 && b[i + 1] != p[*t]) i = f[i];
@@ -1358,7 +1366,8 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 c = rex->re.onechar;
                 if (!(rex->flags & REG_MINIMAL)) {
                     if (!mbwide()) {
-                        if (p = rex->map) {
+                        p = rex->map;
+                        if (p) {
                             for (i = 0; i < n; i++, s++)
                                 if (p[*s] != c) break;
                         } else {
@@ -1420,9 +1429,11 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 } else {
                     if (!mbwide()) {
                         e = s + m;
-                        if (p = rex->map) {
-                            for (; s < e; s++)
+                        p = rex->map;
+                        if (p) {
+                            for (; s < e; s++) {
                                 if (p[*s] != c) return r;
+                            }
                             e += n - m;
                             for (;;) {
                                 switch (follow(env, rex, cont, s)) {
@@ -1688,7 +1699,8 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
     env->flags |= (flags & REG_EXEC);
     advance = 0;
     stknew(env->mst, &env->stk);
-    if (env->stack = env->hard || !(env->flags & REG_NOSUB) && nmatch) {
+    env->stack = env->hard || !(env->flags & REG_NOSUB) && nmatch;
+    if (env->stack) {
         n = env->nsub;
         if (!(env->match = (regmatch_t *)stkpush(env->mst, 2 * (n + 1) * sizeof(regmatch_t))) ||
             !env->pos && !(env->pos = vecopen(16, sizeof(Pos_t))) ||
@@ -1784,7 +1796,8 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
     }
     if ((flags & REG_LEFT) && env->stack && env->best[0].rm_so) goto done;
 hit:
-    if (k = env->error) goto done;
+    k = env->error;
+    if (k) goto done;
     if (i == CUT) {
         k = env->error = REG_NOMATCH;
         goto done;

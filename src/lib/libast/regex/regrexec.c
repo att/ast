@@ -100,21 +100,26 @@ int regrexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
                 x = beg;
                 while (beg < l) {
                     while (x < l && *x != sep) x++;
-                    if (n = (*record)(handle, (char *)beg, x - beg)) goto done;
+                    n = (*record)(handle, (char *)beg, x - beg);
+                    if (n) goto done;
                     beg = ++x;
                 }
-            } else if (n = (*record)(handle, (char *)l, r - l))
-                goto done;
-            if ((index = (r - buf) + leftlen) >= len) {
+            } else {
+                n = (*record)(handle, (char *)l, r - l);
+                if (n) goto done;
+            }
+            index = (r - buf) + leftlen;
+            if (index >= len) {
                 n = (inv && (++r - buf) < len) ? (*record)(handle, (char *)r, (buf + len) - r) : 0;
                 goto done;
             }
             beg = r + 1;
-        } else if (n != REG_NOMATCH)
+        } else if (n != REG_NOMATCH) {
             goto done;
-        else {
+        } else {
         spanned:
-            if ((index += exactlen) >= mid) goto impossible;
+            index += exactlen;
+            if (index >= mid) goto impossible;
         }
     }
 done:
