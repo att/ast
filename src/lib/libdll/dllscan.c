@@ -171,7 +171,8 @@ static int vercmp(const FTSENT **ap, const FTSENT **bp) {
             b = (unsigned char *)e;
             if (n -= m) return n;
         }
-        if (n = *a - *b) return n;
+        n = *a - *b;
+        if (n) return n;
         if (!*a++) return *b ? 0 : -1;
         if (!*b++) return 1;
     }
@@ -217,10 +218,13 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     if (!name || !*name || *name == '-' && !*(name + 1)) {
         name = (const char *)"?*";
         scan->flags |= DLL_MATCH_NAME;
-    } else if (t = strrchr(name, '/')) {
-        if (!(scan->pb = calloc(1, t - (char *)name + 2))) goto bad;
-        memcpy(scan->pb, name, t - (char *)name);
-        name = (const char *)(t + 1);
+    } else {
+        t = strrchr(name, '/');
+        if (t) {
+            if (!(scan->pb = calloc(1, t - (char *)name + 2))) goto bad;
+            memcpy(scan->pb, name, t - (char *)name);
+            name = (const char *)(t + 1);
+        }
     }
     if (name) {
         i = strlen(name);

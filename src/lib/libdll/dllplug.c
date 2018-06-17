@@ -44,7 +44,7 @@ extern void *dllplugin(const char *lib, const char *name, const char *ver, unsig
     for (;;) {
         dls = dllsopen(lib, name, ver);
         if (dls) {
-            while (dle = dllsread(dls)) {
+            while ((dle = dllsread(dls))) {
                 hit = 1;
 #if 0
 			again:
