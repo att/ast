@@ -232,7 +232,8 @@ static void print(Sfio_t *sp, char *name, char *delim) {
 #else
         int c;
 
-        while (c = *name++) {
+        while (*name) {
+            c = *name++;
             if (c & 0200) {
                 c &= 0177;
                 sfputc(sp, '?');
@@ -278,7 +279,8 @@ void error_break(void) {
 
     if (error_state.tty || (error_state.tty = sfopen(NULL, "/dev/tty", "r+"))) {
         sfprintf(error_state.tty, "error breakpoint: ");
-        if (s = sfgetr(error_state.tty, '\n', 1)) {
+        s = sfgetr(error_state.tty, '\n', 1);
+        if (s) {
             if (streq(s, "q") || streq(s, "quit")) exit(0);
             stropt(s, options, sizeof(*options), setopt, NULL);
         }
@@ -359,7 +361,8 @@ void errorv(const char *id, int level, va_list ap) {
         char *bas;
 
         bas = stkptr(stkstd, 0);
-        if (off = stktell(stkstd)) stkfreeze(stkstd, 0);
+        off = stktell(stkstd);
+        if (off) stkfreeze(stkstd, 0);
         file = error_info.id;
         if (error_state.prefix) sfprintf(stkstd, "%s: ", error_state.prefix);
         if (flags & ERROR_USAGE) {
@@ -465,7 +468,8 @@ void errorv(const char *id, int level, va_list ap) {
         if (level < 0 || !(level & ERROR_OUTPUT)) {
             n = stktell(stkstd);
             s = stkptr(stkstd, 0);
-            if (t = memchr(s, '\f', n)) {
+            t = memchr(s, '\f', n);
+            if (t) {
                 n -= ++t - s;
                 s = t;
             }
@@ -528,10 +532,13 @@ Error_info_t *errorctx(Error_info_t *p, int op, int flags) {
         p = _error_infop_;
     } else {
         if (!p) {
-            if (p = freecontext)
+            p = freecontext;
+            if (p) {
                 freecontext = freecontext->context;
-            else if (!(p = newof(0, Error_info_t, 1, 0)))
-                return 0;
+            } else {
+                p = newof(0, Error_info_t, 1, 0);
+                if (!p) return NULL;
+            }
             *p = *_error_infop_;
             p->errors = p->flags = p->line = p->warnings = 0;
             p->catalog = p->file = 0;

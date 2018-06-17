@@ -37,7 +37,8 @@ ssize_t reclen(Recfmt_t f, const void *b, size_t n) {
 
     switch (RECTYPE(f)) {
         case REC_delimited:
-            if (e = (unsigned char *)memchr(s, REC_D_DELIMITER(f), n)) return e - s + 1;
+            e = (unsigned char *)memchr(s, REC_D_DELIMITER(f), n);
+            if (e) return e - s + 1;
             return 0;
         case REC_fixed:
             return REC_F_SIZE(f);

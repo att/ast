@@ -54,7 +54,8 @@ char *fmtrec(Recfmt_t f, int fs) {
             break;
         case REC_variable:
             *s++ = 'v';
-            if (n = REC_V_SIZE(f)) s += sfsprintf(s, e - s, "%lu", n);
+            n = REC_V_SIZE(f);
+            if (n) s += sfsprintf(s, e - s, "%lu", n);
             if (REC_V_HEADER(f) != 4) s += sfsprintf(s, e - s, "h%u", REC_V_HEADER(f));
             if (REC_V_OFFSET(f) != 0) s += sfsprintf(s, e - s, "o%u", REC_V_OFFSET(f));
             if (REC_V_LENGTH(f) != 2) s += sfsprintf(s, e - s, "z%u", REC_V_LENGTH(f));

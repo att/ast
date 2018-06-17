@@ -43,7 +43,8 @@ int optesc(Sfio_t *sp, const char *s, int esc) {
         }
     }
     if (esc != '?' && esc != ':') esc = 0;
-    while (c = *s++) {
+    while (*s) {
+        c = *s++;
         if (isalnum(c)) {
             for (m = s - 1; isalnum(*s); s++)
                 ;

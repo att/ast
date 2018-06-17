@@ -87,9 +87,8 @@ static int order(Dt_t *dt, void *a, void *b, Dtdisc_t *disc) { return strcasecmp
  */
 
 static void dropcap(Cap_t *cap) {
-    Att_t *att;
-
-    while (att = cap->att.next) {
+    while (cap->att.next) {
+        Att_t *att = cap->att.next;
         cap->att.next = att->next;
         free(att);
     }
@@ -102,9 +101,9 @@ static void dropcap(Cap_t *cap) {
 
 static void drop(Dt_t *dt, void *object, Dtdisc_t *disc) {
     Ent_t *ent = (Ent_t *)object;
-    Cap_t *cap;
 
-    while (cap = ent->cap) {
+    while (ent->cap) {
+        Cap_t *cap = ent->cap;
         ent->cap = cap->next;
         dropcap(cap);
     }
@@ -245,29 +244,31 @@ int mimeload(Mime_t *mp, const char *file, unsigned long flags) {
         if (!(s = getenv(MIME_FILES_ENV))) s = MIME_FILES;
     }
     for (;;) {
-        if (!(flags & MIME_LIST))
-            e = 0;
-        else if (e = strchr(s, ':')) {
-            /*
-             * ok, so ~ won't work for the last list element
-             * we do it for MIME_FILES_ENV anyway
-             */
-
-            if ((strneq(s, "~/", n = 2) || strneq(s, "$HOME/", n = 6) ||
-                 strneq(s, "${HOME}/", n = 8)) &&
-                (t = getenv("HOME"))) {
-                sfputr(mp->buf, t, -1);
-                s += n - 1;
+        if (!(flags & MIME_LIST)) {
+            e = NULL;
+        } else {
+            e = strchr(s, ':');
+            if (e) {
+                // Ok, so ~ won't work for the last list element we do it for MIME_FILES_ENV anyway.
+                if ((strneq(s, "~/", n = 2) || strneq(s, "$HOME/", n = 6) ||
+                     strneq(s, "${HOME}/", n = 8)) &&
+                    (t = getenv("HOME"))) {
+                    sfputr(mp->buf, t, -1);
+                    s += n - 1;
+                }
+                sfwrite(mp->buf, s, e - s);
+                if (!(s = sfstruse(mp->buf))) return -1;
             }
-            sfwrite(mp->buf, s, e - s);
-            if (!(s = sfstruse(mp->buf))) return -1;
         }
-        if (fp = tokline(s, SF_READ, NULL)) {
-            while (t = sfgetr(fp, '\n', 1))
+        fp = tokline(s, SF_READ, NULL);
+        if (fp) {
+            while ((t = sfgetr(fp, '\n', 1))) {
                 if (mimeset(mp, t, flags)) break;
+            }
             sfclose(fp);
-        } else if (!(flags & MIME_LIST))
+        } else if (!(flags & MIME_LIST)) {
             return -1;
+        }
         if (!e) break;
         s = e + 1;
     }
@@ -341,12 +342,15 @@ static Ent_t *find(Mime_t *mp, const char *type) {
             for (i = 0; i < elementsof(prefix) - 1; i++) {
                 sfprintf(mp->buf, "%s%s/%s%s", prefix[i], lp, prefix[i + 1], rp);
                 if (!(s = sfstruse(mp->buf))) return 0;
-                if (ent = (Ent_t *)dtmatch(mp->cap, s)) return ent;
+                ent = (Ent_t *)dtmatch(mp->cap, s);
+                if (ent) return ent;
                 if (rc) {
                     *rv = 0;
                     sfprintf(mp->buf, "%s%s/%s%s", prefix[i], lp, prefix[i + 1], rp);
-                    if (!(s = sfstruse(mp->buf))) return 0;
-                    if (ent = (Ent_t *)dtmatch(mp->cap, s)) return ent;
+                    s = sfstruse(mp->buf);
+                    if (!s) return NULL;
+                    ent = (Ent_t *)dtmatch(mp->cap, s);
+                    if (ent) return ent;
                     *rv = rc;
                 }
             }
@@ -370,15 +374,20 @@ int mimelist(Mime_t *mp, Sfio_t *fp, const char *pattern) {
     ws.fp = fp;
     ws.hit = 0;
     ws.prefix = 0;
-    if (ws.pattern = pattern) {
-        while (*pattern && *pattern++ != '/')
-            ;
-        if (!*pattern || *pattern == '*' && !*(pattern + 1))
+    ws.pattern = pattern;
+    if (ws.pattern) {
+        while (*pattern && *pattern++ != '/') {
+            ;  // empty loop
+        }
+        if (!*pattern || *pattern == '*' && !*(pattern + 1)) {
             ws.prefix = pattern - ws.pattern;
-        else if (ent = find(mp, ws.pattern)) {
-            ws.pattern = 0;
-            list(mp->cap, ent, &ws);
-            return ws.hit;
+        } else {
+            ent = find(mp, ws.pattern);
+            if (ent) {
+                ws.pattern = 0;
+                list(mp->cap, ent, &ws);
+                return ws.hit;
+            }
         }
     }
     dtwalk(mp->cap, list, &ws);
@@ -480,7 +489,8 @@ static char *expand(Mime_t *mp, char *s, const char *name, const char *type, con
                             break;
                         case ')':
                             s++;
-                            if (c = *s) s++;
+                            c = *s;
+                            if (c) s++;
                             break;
                     }
                 } else
@@ -537,11 +547,13 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
     char *s;
     int c;
 
-    if (ent = find(mp, type)) {
+    ent = find(mp, type);
+    if (ent) {
         cap = ent->cap;
         if (!view || strcasecmp(view, "test"))
-            while (s = cap->test) {
-                if (s = expand(mp, s, name, type, opts)) {
+            while (cap->test) {
+                s = expand(mp, cap->test, name, type, opts);
+                if (s) {
                     Parse_t a1;
                     Parse_t a2;
                     Parse_t a3;
@@ -629,8 +641,10 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
 int mimecmp(const char *s, const char *v, char **e) {
     int n;
 
-    while (isalnum(*v) || *v == *s && (*v == '_' || *v == '-' || *v == '/'))
-        if (n = lower(*s++) - lower(*v++)) return n;
+    while (isalnum(*v) || *v == *s && (*v == '_' || *v == '-' || *v == '/')) {
+        n = lower(*s++) - lower(*v++);
+        if (n) return n;
+    }
     if (!isalnum(*s) && *s != '_' && *s != '-') {
         if (e) *e = (char *)s;
         return 0;

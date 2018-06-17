@@ -67,7 +67,7 @@ int optjoin(char **argv, ...) {
     while (r < 0) {
         va_start(ap, argv);
         state->join = 0;
-        while (fun = va_arg(ap, Optpass_f)) {
+        while ((fun = va_arg(ap, Optpass_f))) {
             last_index = opt_info.index;
             last_offset = opt_info.offset;
             state->join++;

@@ -66,7 +66,8 @@ void stackfree(STACK stack) {
     struct stackblock *p;
 
     b = stack->blocks;
-    while (p = b) {
+    while (b) {
+        p = b;
         b = p->next;
         free(p->stack);
         free(p);

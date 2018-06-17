@@ -45,7 +45,8 @@ static char **initconformance(void) {
     static const char *conf[] = {"CONFORMANCE", "HOSTTYPE", "UNIVERSE"};
 
     p = 0;
-    if (sp = sfstropen()) {
+    sp = sfstropen();
+    if (sp) {
         for (i = h = 0, j = 1; i < elementsof(conf); i++)
             if (*(m = astconf(conf[i], NULL, NULL)) && (h |= (1 << i)) || !i && (m = "ast")) {
                 t = m;
@@ -66,7 +67,8 @@ static char **initconformance(void) {
             }
         i = sfstrtell(sp);
         sfstrseek(sp, 0, SEEK_SET);
-        if (p = newof(0, char *, j, i)) {
+        p = newof(0, char *, j, i);
+        if (p) {
             m = (char *)(p + j--);
             memcpy(m, sfstrbase(sp), i);
             i = 0;
@@ -118,9 +120,11 @@ char *conformance(const char *s, size_t n) {
             ;
         if (s == t) break;
         q = p;
-        while (m = *q++)
+        while (*q) {
+            m = *q++;
             if (strneq(t, m, s - t)) return m;
+        }
         if (s < e) s++;
     } while (s < e);
-    return 0;
+    return NULL;
 }

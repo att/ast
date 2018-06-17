@@ -84,14 +84,15 @@ static void *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendir)
 static char *gl_dirnext(glob_t *gp, void *handle) {
     struct dirent *dp;
 
-    while (dp = (struct dirent *)(*gp->gl_readdir)(handle)) {
+    while ((dp = (struct dirent *)(*gp->gl_readdir)(handle))) {
 #ifdef D_TYPE
         if (D_TYPE(dp) != DT_UNKNOWN && D_TYPE(dp) != DT_DIR && D_TYPE(dp) != DT_LNK)
             gp->gl_status |= GLOB_NOTDIR;
 #endif
         return dp->d_name;
     }
-    return 0;
+
+    return NULL;
 }
 
 /*
@@ -187,7 +188,8 @@ static void trim(char *sp, char *p1, int *n1, char *p2, int *n2) {
             p2 = 0;
             *n2 = sp - dp - 1;
         }
-    } while (*dp++ = c);
+        *dp++ = c;
+    } while (c);
 }
 
 static void addmatch(glob_t *gp, const char *dir, const char *pat, const char *rescan,
@@ -377,7 +379,8 @@ skip:
 
         while (p[0] == '*' && p[1] == '*' && (p[2] == '/' || p[2] == 0)) {
             rescan = p;
-            if (starstar = (p[2] == 0)) break;
+            starstar = (p[2] == 0);
+            if (starstar) break;
             p += 3;
             while (*p == '/') p++;
             if (*p == 0) {
@@ -398,7 +401,8 @@ skip:
             (dirf = (*gp->gl_diropen)(gp, dirname))) {
             if (!(gp->re_flags & REG_ICASE) && ((*gp->gl_attr)(gp, dirname, 0) & GLOB_ICASE)) {
                 if (!prei) {
-                    if (err = regcomp(&rei, pat, gp->re_flags | REG_ICASE)) break;
+                    err = regcomp(&rei, pat, gp->re_flags | REG_ICASE);
+                    if (err) break;
                     prei = &rei;
                     if (gp->re_first) {
                         gp->re_first = 0;
@@ -408,7 +412,8 @@ skip:
                 pre = prei;
             } else {
                 if (!prec) {
-                    if (err = regcomp(&rec, pat, gp->re_flags)) break;
+                    err = regcomp(&rec, pat, gp->re_flags);
+                    if (err) break;
                     prec = &rec;
                     if (gp->re_first) {
                         gp->re_first = 0;
@@ -429,7 +434,8 @@ skip:
             }
             if (restore2) *restore2 = gp->gl_delim;
             while ((name = (*gp->gl_dirnext)(gp, dirf)) && !*gp->gl_intr) {
-                if (notdir = (gp->gl_status & GLOB_NOTDIR)) gp->gl_status &= ~GLOB_NOTDIR;
+                notdir = (gp->gl_status & GLOB_NOTDIR);
+                if (notdir) gp->gl_status &= ~GLOB_NOTDIR;
                 if (ire && !regexec(ire, name, 0, NULL, 0)) continue;
                 if (matchdir && (name[0] != '.' || name[1] && (name[1] != '.' || name[2])) &&
                     !notdir)

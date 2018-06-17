@@ -525,7 +525,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 goto cleanup;
         }
         if (modv) {
-            for (i = 0; n = modv[i]; i++) {
+            for (i = 0; modv[i]; i++) {
+                n = modv[i];
                 switch (PROC_OP(n)) {
                     case PROC_fd_dup:
                     case PROC_fd_dup | PROC_FD_PARENT:
@@ -600,8 +601,9 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                 if (!(v = newof(0, char *, p - argv + 2, 0))) goto cleanup;
                 p = v + 2;
                 if (*argv) argv++;
-                while (*p++ = *argv++)
-                    ;
+                while ((*p++ = *argv++)) {
+                    ;  // empty loop
+                }
                 p = v + 1;
             }
             *p = path;
@@ -644,7 +646,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
 #endif
             }
         } else if (modv) {
-            for (i = 0; n = modv[i]; i++) {
+            for (i = 0; modv[i]; i++) {
+                n = modv[i];
                 switch (PROC_OP(n)) {
                     case PROC_fd_dup | PROC_FD_PARENT:
                     case PROC_fd_dup | PROC_FD_PARENT | PROC_FD_CHILD:
@@ -707,7 +710,8 @@ bad:
 #endif
     }
     if ((flags & PROC_CLEANUP) && modv) {
-        for (i = 0; n = modv[i]; i++) {
+        for (i = 0; modv[i]; i++) {
+            n = modv[i];
             switch (PROC_OP(n)) {
                 case PROC_fd_dup:
                 case PROC_fd_dup | PROC_FD_PARENT:

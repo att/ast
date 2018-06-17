@@ -37,7 +37,8 @@ char *errorx(const char *loc, const char *cmd, const char *cat, const char *msg)
         if (!loc) loc = (const char *)locales[AST_LC_MESSAGES]->code;
         if (!cmd) cmd = (const char *)error_info.id;
         if (!cat) cat = (const char *)error_info.catalog;
-        if (s = (*error_info.translate)(loc, cmd, cat, msg)) return s;
+        s = (*error_info.translate)(loc, cmd, cat, msg);
+        if (s) return s;
     }
     return (char *)msg;
 }

@@ -165,16 +165,17 @@ Cmdarg_t *cmdopen_20120411(char **argv, int argmax, int size, const char *argpat
     n -= strlen(*p++ = sh) + 1;
     cmd->argv = p;
     *p++ = exe;
-    while (*p = *++argv) p++;
+    while ((*p = *++argv)) p++;
     if (m) {
         argmax = 1;
         *p++ = 0;
         cmd->insertarg = p;
         argv = cmd->argv;
         c = *cmd->insert;
-        while (s = *argv) {
+        while (*argv) {
+            s = *argv;
             while ((s = strchr(s, c)) && strncmp(cmd->insert, s, cmd->insertlen)) s++;
-            *p++ = s ? *argv : (char *)0;
+            *p++ = s ? *argv : NULL;
             argv++;
         }
         *p++ = 0;
@@ -208,12 +209,16 @@ int cmdflush(Cmdarg_t *cmd) {
     cmd->total.args += cmd->argcount;
     cmd->total.commands++;
     cmd->argcount = 0;
-    if (p = cmd->postarg)
-        while (*cmd->nextarg++ = *p++)
-            ;
-    else
+    p = cmd->postarg;
+    if (p) {
+        while ((*cmd->nextarg++ = *p++)) {
+            ;  // empty loop
+        }
+    } else {
         *cmd->nextarg = 0;
-    if (s = cmd->insert) {
+    }
+    s = cmd->insert;
+    if (s) {
         char *a;
         char *b;
         char *e;
@@ -227,8 +232,9 @@ int cmdflush(Cmdarg_t *cmd) {
         e = cmd->nextstr;
         c = *s;
         m = cmd->insertlen;
-        for (n = 1; cmd->argv[n]; n++)
-            if (t = cmd->insertarg[n]) {
+        for (n = 1; cmd->argv[n]; n++) {
+            t = cmd->insertarg[n];
+            if (t) {
                 cmd->argv[n] = b;
                 for (;;) {
                     if (!(u = strchr(t, c))) {
@@ -247,6 +253,7 @@ int cmdflush(Cmdarg_t *cmd) {
                 }
                 if (b < e) *b++ = 0;
             }
+        }
         if (b >= e) {
             if (cmd->errorf) (*cmd->errorf)(NULL, cmd, 2, "%s: command too large after insert", a);
             return -1;
@@ -258,16 +265,20 @@ int cmdflush(Cmdarg_t *cmd) {
     if (cmd->flags & (CMD_QUERY | CMD_TRACE)) {
         p = cmd->argv;
         sfprintf(sfstderr, "+ %s", *p);
-        while (s = *++p) sfprintf(sfstderr, " %s", s);
-        if (!(cmd->flags & CMD_QUERY))
+        while ((s = *++p)) sfprintf(sfstderr, " %s", s);
+        if (!(cmd->flags & CMD_QUERY)) {
             sfprintf(sfstderr, "\n");
-        else if (astquery(1, "? ")) {
+        } else if (astquery(1, "? ")) {
             return 0;
         }
     }
     if (cmd->echo) {
         n = (cmd->flags & CMD_NEWLINE) ? '\n' : ' ';
-        for (p = cmd->argv + 1; s = *p++;) sfputr(sfstdout, s, *p ? n : '\n');
+        p = cmd->argv + 1;
+        while (*p) {
+            s = *p++;
+            sfputr(sfstdout, s, *p ? n : '\n');
+        }
         n = 0;
     } else if ((n = (*cmd->runf)(n, cmd->argv, cmd->disc)) == -1) {
         n = EXIT_NOTFOUND - 1;
@@ -299,7 +310,8 @@ int cmdarg(Cmdarg_t *cmd, const char *file, int len) {
                     (*cmd->errorf)(NULL, cmd, 2, "%s: path too long for exec args", file);
                 return -1;
             }
-            if (i = cmdflush(cmd)) {
+            i = cmdflush(cmd);
+            if (i) {
                 if (r < i) r = i;
                 if (!(cmd->flags & CMD_IGNORE)) return r;
             }

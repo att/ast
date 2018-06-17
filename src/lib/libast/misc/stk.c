@@ -473,7 +473,8 @@ static char *stkgrow(Sfio_t *stream, size_t size) {
     sp->stkend = fp->end = cp + n;
     cp = (char *)(fp + 1);
     cp = sp->stkbase + roundof((cp - sp->stkbase), STK_ALIGN);
-    if (fp->nalias = nn) {
+    fp->nalias = nn;
+    if (fp->nalias) {
         fp->aliases = (char **)fp->end;
         if (end && nn > 1) memmove(fp->aliases, end, (nn - 1) * sizeof(char *));
         if (add) fp->aliases[nn - 1] = dp + roundof(sizeof(struct frame), STK_ALIGN);

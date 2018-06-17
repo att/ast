@@ -117,7 +117,7 @@ ssize_t debug_vsprintf(char *buf, size_t siz, const char *format, va_list ap) {
                 }
                 if (c == '(') {
                     t = typ;
-                    while (c = *++format) {
+                    while ((c = *++format)) {
                         if (c == ')') {
                             format++;
                             break;
@@ -237,7 +237,8 @@ ssize_t debug_vsprintf(char *buf, size_t siz, const char *format, va_list ap) {
                         break;
                     case 'p':
                         v = va_arg(ap, void *);
-                        if (u = (uint64_t)((char *)v - (char *)0)) {
+                        u = (uint64_t)((char *)v - (char *)0);
+                        if (u) {
                             if (SIZEOF(v) == 4) u &= 0xffffffff;
                             g = 'x';
                             w = 10;
@@ -364,7 +365,8 @@ void debug_fatal(const char *file, int line, const char *text) {
     sigprocmask(SIG_BLOCK, &ss, NULL);
 #endif
     debug_printf(2, "%s:%d: assertion failed: %s\n", file, line, text);
-    if (s = getenv("DEBUG_OPTIONS")) {
+    s = getenv("DEBUG_OPTIONS");
+    if (s) {
         switch (*s) {
             case 'p':
                 pause();

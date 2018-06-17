@@ -139,11 +139,12 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         fd = dd;
 #ifdef D_FILENO
         if (par->st_dev == cur->st_dev) {
-            while (entry = readdir(dirp))
+            while ((entry = readdir(dirp))) {
                 if (D_FILENO(entry) == cur->st_ino) {
                     namlen = D_NAMLEN(entry);
                     goto part;
                 }
+            }
 
             /*
              * this fallthrough handles logical naming
@@ -185,8 +186,9 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     }
     if (p != buf) {
         s = buf;
-        while (*s++ = *p++)
-            ;
+        while ((*s++ = *p++)) {
+            ;  // empty loop
+        }
         len = s - buf;
         if (extra >= 0 && !(buf = newof(buf, char, len, extra))) ERROR(ENOMEM);
     }

@@ -118,11 +118,14 @@ static nl_catd find(const char *locale, const char *catalog) {
 
     if (!mcfind(locale, catalog, LC_MESSAGES, 0, path, sizeof(path)) ||
         (d = catopen(path, NL_CAT_LOCALE)) == NOCAT) {
-        if (locale == (const char *)lc_categories[AST_LC_MESSAGES].prev)
-            o = 0;
-        else if (o = setlocale(LC_MESSAGES, NULL)) {
-            ast.locale.set |= AST_LC_internal;
-            setlocale(LC_MESSAGES, locale);
+        if (locale == (const char *)lc_categories[AST_LC_MESSAGES].prev) {
+            o = NULL;
+        } else {
+            o = setlocale(LC_MESSAGES, NULL);
+            if (o) {
+                ast.locale.set |= AST_LC_internal;
+                setlocale(LC_MESSAGES, locale);
+            }
         }
         d = catopen(catalog, NL_CAT_LOCALE);
         if (o) {
@@ -174,7 +177,8 @@ static Catalog_t *init(char *s) {
          * missing messages
          */
 
-        if (cp->messages = dtopen(&state.message_disc, Dtset)) {
+        cp->messages = dtopen(&state.message_disc, Dtset);
+        if (cp->messages) {
             n = m = 0;
             for (;;) {
                 n++;
@@ -211,7 +215,8 @@ static Message_t *match(const char *cat, const char *msg) {
 
     s = (char *)cat;
     for (;;) {
-        if (t = strchr(s, ':')) {
+        t = strchr(s, ':');
+        if (t) {
             if (s == (char *)cat) {
                 if ((n = strlen(s)) >= sizeof(buf)) n = sizeof(buf) - 1;
                 s = (char *)memcpy(buf, s, n);

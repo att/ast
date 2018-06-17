@@ -47,16 +47,18 @@ Opt_t *optctx(Opt_t *p, Opt_t *o) {
             free(o);
         else
             freecontext = o;
-        if (!p) return 0;
+        if (!p) return NULL;
     }
     if (p) {
         o = _opt_infop_;
         _opt_infop_ = p;
     } else {
-        if (o = freecontext)
+        o = freecontext;
+        if (o) {
             freecontext = 0;
-        else if (!(o = newof(0, Opt_t, 1, 0)))
-            return 0;
+        } else if (!(o = newof(0, Opt_t, 1, 0))) {
+            return NULL;
+        }
         memset(o, 0, sizeof(Opt_t));
         o->state = _opt_infop_->state;
     }

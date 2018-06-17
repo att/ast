@@ -69,18 +69,22 @@ char *setenviron(const char *akey) {
             last = p + n - 1;
         }
         envv = environ = p;
-        if (v && v[0] && v[0][0] == '_' && v[0][1] == '=')
+        if (v && v[0] && v[0][0] == '_' && v[0][1] == '=') {
             *p++ = *v++;
-        else
+        } else {
             *p++ = "_=";
-        if (!v)
+        }
+        if (!v) {
             *p = 0;
-        else
-            while (*p = *v++)
-                if (p[0][0] == '_' && p[0][1] == '=')
+        } else {
+            while ((*p = *v++)) {
+                if (p[0][0] == '_' && p[0][1] == '=') {
                     envv[0] = *p;
-                else
+                } else {
                     p++;
+                }
+            }
+        }
         next = p;
         p = envv;
     } else if (next == last) {
@@ -91,15 +95,17 @@ char *setenviron(const char *akey) {
         envv = environ = p;
     }
     if (!key) return ok;
-    for (; s = *p; p++) {
+    for (; *p; p++) {
+        s = *p;
         t = key;
         do {
             if (!*t || *t == '=') {
                 if (*s == '=') {
                     if (!*t) {
                         v = p++;
-                        while (*v++ = *p++)
-                            ;
+                        while ((*v++ = *p++)) {
+                            ;  // empty loop
+                        }
                         next--;
                         return ok;
                     }
@@ -110,7 +116,8 @@ char *setenviron(const char *akey) {
             }
         } while (*t++ == *s++);
     }
-    if (!(s = strchr(key, '='))) return ok;
+    s = strchr(key, '=');
+    if (!s) return ok;
     p = next;
     *++next = 0;
     *p = key;
