@@ -130,7 +130,7 @@ int mimeset(Mime_t *mp, char *s, unsigned long flags) {
     if (*s && *s != '#') {
         cap = 0;
         for (v = s; *v && *v != ';'; v++)
-            if (isspace(*v) || *v == '/' && *(v + 1) == '*') *v = 0;
+            if (isspace(*v) || (*v == '/' && *(v + 1) == '*')) *v = 0;
         if (*v) {
             *v++ = 0;
             do {
@@ -201,8 +201,8 @@ int mimeset(Mime_t *mp, char *s, unsigned long flags) {
                 Cap_t *pud;
 
                 for (pud = 0, dup = ent->cap; dup; pud = dup, dup = dup->next)
-                    if (!cap->test && !dup->test ||
-                        cap->test && dup->test && streq(cap->test, dup->test)) {
+                    if ((!cap->test && !dup->test) ||
+                        (cap->test && dup->test && streq(cap->test, dup->test))) {
                         if (flags & MIME_REPLACE) {
                             if (pud)
                                 pud->next = cap;
@@ -285,8 +285,8 @@ static int list(Dt_t *dt, void *object, void *context) {
     Cap_t *cap;
     Att_t *att;
 
-    if (!wp->pattern || !strncasecmp(ent->name, wp->pattern, wp->prefix) &&
-                            (!ent->name[wp->prefix] || ent->name[wp->prefix] == '/')) {
+    if (!wp->pattern || (!strncasecmp(ent->name, wp->pattern, wp->prefix) &&
+                         (!ent->name[wp->prefix] || ent->name[wp->prefix] == '/'))) {
         wp->hit++;
         for (cap = ent->cap; cap; cap = cap->next) {
             sfprintf(wp->fp, "%s", ent->name);
@@ -379,7 +379,7 @@ int mimelist(Mime_t *mp, Sfio_t *fp, const char *pattern) {
         while (*pattern && *pattern++ != '/') {
             ;  // empty loop
         }
-        if (!*pattern || *pattern == '*' && !*(pattern + 1)) {
+        if (!*pattern || (*pattern == '*' && !*(pattern + 1))) {
             ws.prefix = pattern - ws.pattern;
         } else {
             ent = find(mp, ws.pattern);
@@ -478,9 +478,10 @@ static char *expand(Mime_t *mp, char *s, const char *name, const char *type, con
             case '\n':
                 break;
             case '%':
-                if ((c = *s++) == '{' && (e = '}') || c == '(' && (e = ')')) {
-                    for (t = s; *s && *s != e; s++)
-                        ;
+                if (((c = *s++) == '{' && (e = '}')) || (c == '(' && (e = ')'))) {
+                    for (t = s; *s && *s != e; s++) {
+                        ;  // empty loop
+                    }
                     n = s - t;
                     switch (*s) {
                         case '}':
@@ -569,8 +570,8 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
                     if (arg(&a1, -1)) {
                         if ((c = *a1.name.data == '!') && --a1.name.size <= 0 && !arg(&a1, -1))
                             goto lose;
-                        if (a1.name.size == 6 && strneq(a1.name.data, "strcmp", 6) ||
-                            a1.name.size == 10 && strneq(a1.name.data, "strcasecmp", 10)) {
+                        if ((a1.name.size == 6 && strneq(a1.name.data, "strcmp", 6)) ||
+                            (a1.name.size == 10 && strneq(a1.name.data, "strcasecmp", 10))) {
                             a2.next = a1.next;
                             if (!arg(&a2, -1)) goto lose;
                             a3.next = a2.next;
@@ -586,10 +587,11 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
                             if (!arg(&a1, -1)) goto lose;
                             a2.next = a1.next;
                             if (!arg(&a2, -1) || a2.name.size > 2 ||
-                                a2.name.size == 1 && *a2.name.data != '=' ||
-                                a2.name.size == 2 && (!strneq(a1.name.data, "!=", 2) ||
-                                                      !strneq(a2.name.data, "==", 2)))
+                                (a2.name.size == 1 && *a2.name.data != '=') ||
+                                ((a2.name.size == 2 && !strneq(a1.name.data, "!=", 2)) ||
+                                 !strneq(a2.name.data, "==", 2))) {
                                 goto lose;
+                            }
                             a3.next = a2.next;
                             if (!arg(&a3, -1)) goto lose;
                             if (*a3.name.data == '`' && *(a3.name.data + a3.name.size - 1) == '`') {
@@ -641,7 +643,7 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
 int mimecmp(const char *s, const char *v, char **e) {
     int n;
 
-    while (isalnum(*v) || *v == *s && (*v == '_' || *v == '-' || *v == '/')) {
+    while (isalnum(*v) || (*v == *s && (*v == '_' || *v == '-' || *v == '/'))) {
         n = lower(*s++) - lower(*v++);
         if (n) return n;
     }

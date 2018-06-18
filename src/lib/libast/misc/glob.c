@@ -396,7 +396,7 @@ skip:
             if (!(dirname = (*gp->gl_nextdir)(gp, dirname))) break;
             prefix = streq(dirname, ".") ? (char *)0 : dirname;
         }
-        if ((!starstar && !gp->gl_starstar ||
+        if (((!starstar && !gp->gl_starstar) ||
              (*gp->gl_type)(gp, dirname, GLOB_STARSTAR) == GLOB_DIR) &&
             (dirf = (*gp->gl_diropen)(gp, dirname))) {
             if (!(gp->re_flags & REG_ICASE) && ((*gp->gl_attr)(gp, dirname, 0) & GLOB_ICASE)) {
@@ -437,7 +437,7 @@ skip:
                 notdir = (gp->gl_status & GLOB_NOTDIR);
                 if (notdir) gp->gl_status &= ~GLOB_NOTDIR;
                 if (ire && !regexec(ire, name, 0, NULL, 0)) continue;
-                if (matchdir && (name[0] != '.' || name[1] && (name[1] != '.' || name[2])) &&
+                if (matchdir && (name[0] != '.' || (name[1] && (name[1] != '.' || name[2]))) &&
                     !notdir)
                     addmatch(gp, prefix, name, matchdir, NULL, anymeta);
                 if (!regexec(pre, name, 0, NULL, 0)) {
@@ -448,7 +448,7 @@ skip:
                 errno = 0;
             }
             (*gp->gl_dirclose)(gp, dirf);
-            if (err || errno && !errorcheck(gp, dirname)) break;
+            if (err || (errno && !errorcheck(gp, dirname))) break;
         } else if (!complete && !errorcheck(gp, dirname))
             break;
         if (!complete) break;

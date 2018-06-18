@@ -376,7 +376,7 @@ Find_t *findopen(const char *file, const char *pattern, const char *type, Finddi
             }
             if ((j = sfgetc(fp->fp)) == EOF) goto invalid;
             if (!(*s++ = fp->decode.bigram2[i] = j) &&
-                (i || fp->decode.bigram1[0] >= '0' && fp->decode.bigram1[0] <= '1'))
+                (i || (fp->decode.bigram1[0] >= '0' && fp->decode.bigram1[0] <= '1')))
                 break;
         }
         if (streq(b, FF_typ_magic)) {
@@ -737,7 +737,7 @@ next:
                 if (*(s = p) == '/') s--;
                 if (*fp->decode.pattern == '/' && b > fp->decode.path) b--;
                 for (; s >= b; s--)
-                    if (*s == *fp->decode.end || ignorecase && tolower(*s) == *fp->decode.end) {
+                    if (*s == *fp->decode.end || (ignorecase && tolower(*s) == *fp->decode.end)) {
                         if (ignorecase)
                             for (e = fp->decode.end - 1, q = s - 1;
                                  *e && (*q == *e || tolower(*q) == *e); e--, q--)

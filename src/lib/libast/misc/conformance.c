@@ -48,7 +48,7 @@ static char **initconformance(void) {
     sp = sfstropen();
     if (sp) {
         for (i = h = 0, j = 1; i < elementsof(conf); i++)
-            if (*(m = astconf(conf[i], NULL, NULL)) && (h |= (1 << i)) || !i && (m = "ast")) {
+            if ((*(m = astconf(conf[i], NULL, NULL)) && (h |= (1 << i))) || (!i && (m = "ast"))) {
                 t = m;
                 while ((c = *m++) && c != '.') {
                     if (isupper(c)) c = tolower(c);
@@ -59,7 +59,7 @@ static char **initconformance(void) {
                 if ((c = (m - t)) == 6 && strneq(t, "linux", 5)) {
                     sfputr(sp, "gnu", 0);
                     j++;
-                } else if (c > 3 && strneq(t, "bsd", 3) || c == 7 && strneq(t, "debian", 7)) {
+                } else if ((c > 3 && strneq(t, "bsd", 3)) || (c == 7 && strneq(t, "debian", 7))) {
                     sfputr(sp, "bsd", 0);
                     j++;
                 }

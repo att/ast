@@ -92,7 +92,7 @@ int optjoin(char **argv, ...) {
             if (opt_info.again) {
                 if (opt_info.again > 0 &&
                     (!err || err_index < opt_info.index ||
-                     err_index == opt_info.index && err_offset < opt_info.offset)) {
+                     (err_index == opt_info.index && err_offset < opt_info.offset))) {
                     err = fun;
                     err_index = opt_info.index;
                     err_offset = opt_info.offset;

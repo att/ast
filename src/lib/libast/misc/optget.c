@@ -447,7 +447,7 @@ static Push_t *pop(Push_t *psp) {
 static char *next(char *s, int version) {
     char *b;
 
-    while (*s == '\t' || *s == '\r' || version >= 1 && *s == ' ') s++;
+    while (*s == '\t' || *s == '\r' || (version >= 1 && *s == ' ')) s++;
     if (*s == '\n') {
         b = s;
         while (*++s == ' ' || *s == '\t' || *s == '\r')
@@ -596,7 +596,7 @@ static int match(char *s, char *t, int version, const char *id, const char *cata
             while (*x && *w) {
                 if (isupper(*x)) xw = x;
                 if (isupper(*w)) ww = w;
-                if (*x == '*' && !v++ || *x == '\a') {
+                if ((*x == '*' && !v++) || *x == '\a') {
                     if (*x == '\a') do {
                             if (!*++x) {
                                 x--;
@@ -875,9 +875,9 @@ static int init(char *s, Optpass_t *p) {
                 if (*s++ == '[') {
                     if (*s++ != '-') {
                         l = 0;
-                        if (strneq(s - 1, "+NAME?", 6) && (s += 5) ||
-                            strneq(s - 1, "+LIBRARY?", 9) && (s += 8) && (l = 1) ||
-                            strneq(s - 1, "+PLUGIN?", 8) && (s += 7) && (l = 1)) {
+                        if ((strneq(s - 1, "+NAME?", 6) && (s += 5)) ||
+                            (strneq(s - 1, "+LIBRARY?", 9) && (s += 8) && (l = 1)) ||
+                            (strneq(s - 1, "+PLUGIN?", 8) && (s += 7) && (l = 1))) {
                             for (; *s == '\a' || *s == '\b' || *s == '\v' || *s == ' '; s++)
                                 ;
                             if (*s == '\f') {
@@ -1462,9 +1462,9 @@ static int item(Sfio_t *sp, char *s, int about, int level, int style, Sfio_t *ip
             if (s[-1] == '-' && s[0] == 'l' && s[1] == 'i' && s[2] == 'c' && s[3] == 'e' &&
                 s[4] == 'n' && s[5] == 's' && s[6] == 'e' && s[7] == '?')
                 for (t = s + 8; *t && *t != ']'; t++)
-                    if (t[0] == 'p' &&
-                            (!strncmp(t, "proprietary", 11) || !strncmp(t, "private", 7)) ||
-                        t[0] == 'n' && !strncmp(t, "noncommercial", 13)) {
+                    if ((t[0] == 'p' &&
+                         (!strncmp(t, "proprietary", 11) || !strncmp(t, "private", 7))) ||
+                        (t[0] == 'n' && !strncmp(t, "noncommercial", 13))) {
                         state.flags |= OPT_proprietary;
                         break;
                     }
@@ -1485,12 +1485,14 @@ static int item(Sfio_t *sp, char *s, int about, int level, int style, Sfio_t *ip
             }
         } else {
             if (!level) {
-                if (style >= STYLE_nroff)
+                if (style >= STYLE_nroff) {
                     sfprintf(sp, ".SH ");
-                else if (style == STYLE_man)
+                } else if (style == STYLE_man) {
                     sfputc(sp, '\n');
-                else if (style != STYLE_options && style != STYLE_match || *s == '-' || *s == '+')
+                } else if ((style != STYLE_options && style != STYLE_match) || *s == '-' ||
+                           *s == '+') {
                     sfputc(sp, '\t');
+                }
             }
             label(sp, 0, s, about, -1, level, style, FONT_BOLD, ip, version, id, catalog);
         }
@@ -1560,11 +1562,13 @@ again:
                 level++;
             } else if (*s != OG) {
                 if (level <= 1 || *s != '[' || *(s + 1) != '-' ||
-                    style == STYLE_man && *(s + 2) == '?' || isalpha(*(s + 2)))
+                    (style == STYLE_man && *(s + 2) == '?') || isalpha(*(s + 2))) {
                     break;
+                }
                 s = skip(s, 0, 0, 0, 1, level, 0, version);
-            } else if ((level -= 2) <= lev)
+            } else if ((level -= 2) <= lev) {
                 return s + 1;
+            }
         }
         if (*s == '\f') {
             psp = info(psp, s + 1, NULL, ip, id);
@@ -1597,9 +1601,9 @@ again:
                     return s + 1;
             }
     }
-    if (c == '+' || c == '-' && (bump = 3) || c != ' ' && level > 1) {
+    if (c == '+' || (c == '-' && (bump = 3)) || (c != ' ' && level > 1)) {
         s = skip(t = s + 1, '?', 0, 0, 1, level, 0, version);
-        if (c == '-' && (*t == '?' || isdigit(*t) || *s == '?' && *(s + 1) == '\n')) {
+        if (c == '-' && (*t == '?' || isdigit(*t) || (*s == '?' && *(s + 1) == '\n'))) {
             if ((c = *s) != '?') return skip(s, 0, 0, 0, 1, level, 1, version);
             w = C("version");
             par = item(sp, w, about, level, style, ip, version, id, ID, hflags);
@@ -1639,7 +1643,7 @@ again:
         par = 0;
     }
     if (c == ':') c = *(s = skip(s, '?', 0, 0, 1, 0, 0, version));
-    if ((c == ']' || c == '?' && *(s + 1) == ']' && *(s + 2) != ']' && s++) &&
+    if ((c == ']' || (c == '?' && *(s + 1) == ']' && *(s + 2) != ']' && s++)) &&
         (c = *(s = next(s + 1, version))) == GO) {
         s = textout(sp, s, conform, conformlen, style, level + bump + par + 1, 0, ip, version, id,
                     catalog, hflags);
@@ -2202,7 +2206,7 @@ again:
                     }
                     f = z = 1;
                     t = 0;
-                    if (a == 0 && (c == ' ' || c == '\n' && *p == '\n')) {
+                    if (a == 0 && (c == ' ' || (c == '\n' && *p == '\n'))) {
                         if (c == ' ' && *p == ']') {
                             p++;
                             continue;
@@ -2218,7 +2222,7 @@ again:
                         }
                         continue;
                     } else if ((c == ':' || c == '#') &&
-                               (*p == '[' || *p == '?' && *(p + 1) == '[' && p++))
+                               (*p == '[' || (*p == '?' && *(p + 1) == '[' && p++)))
                         p++;
                     else if (c != '[') {
                         if (c == GO)
@@ -2475,11 +2479,12 @@ again:
                         }
                     } else if (style == STYLE_match && *what == '-') {
                         if (*(p + 1) == '?' ||
-                            *(s = skip(p + 1, ':', '?', 0, 1, 0, 0, version)) == '?' &&
-                                isspace(*(s + 1)))
+                            (*(s = skip(p + 1, ':', '?', 0, 1, 0, 0, version)) == '?' &&
+                             isspace(*(s + 1)))) {
                             s = C("version");
-                        else
+                        } else {
                             s = p + 1;
+                        }
                         w = (char *)what;
                         if (*s != '-' || *(w + 1) == '-') {
                             if (*s == '-') s++;
@@ -2544,7 +2549,7 @@ again:
                         else
                             p = skip(p, ':', '?', 0, 1, 0, 0, version);
                         if (sl || (p - s) == 1 || *(s + 1) == '=' ||
-                            *(s + 1) == '!' && (a |= OPT_invert) || *(s + 1) == '|')
+                            (*(s + 1) == '!' && (a |= OPT_invert)) || *(s + 1) == '|')
                             f = *s;
                     }
                     re = p;
@@ -2568,11 +2573,13 @@ again:
                         if (style == STYLE_match) {
                             if (wl && !match((char *)what, w, version, id, catalog)) wl = 0;
                             if ((!wl || *w == ':' || *w == '?') &&
-                                (what[1] || sl && !memchr(s, what[0], sl) || !sl && what[0] != f)) {
+                                (what[1] || (sl && !memchr(s, what[0], sl)) ||
+                                 (!sl && what[0] != f))) {
                                 w = 0;
                                 if (!z) z = -1;
-                            } else
+                            } else {
                                 matched = 1;
+                            }
                         }
                         if (t) {
                             p = t;
@@ -2621,7 +2628,7 @@ again:
             }
             ov = 0;
             u = v = y = 0;
-            if (*p == ':' && (a |= OPT_string) || *p == '#' && (a |= OPT_number)) {
+            if ((*p == ':' && (a |= OPT_string)) || (*p == '#' && (a |= OPT_number))) {
                 message((-21, "opthelp: arg %s", show(p)));
                 if (*++p == '?' || *p == *(p - 1)) {
                     p++;
@@ -2655,7 +2662,7 @@ again:
             } else
                 a |= OPT_flag;
             if (!z) {
-                if (style <= STYLE_short && !y && !mutex || style == STYLE_posix) {
+                if ((style <= STYLE_short && !y && !mutex) || style == STYLE_posix) {
                     if (style != STYLE_posix && !sfstrtell(sp)) {
                         sfputc(sp, '[');
                         if (sp == sp_plus) sfputc(sp, '+');
@@ -3131,7 +3138,7 @@ again:
                     while (*++p == '\n')
                         ;
                     if ((style == STYLE_man || style == STYLE_html) &&
-                        (!head || *p != ' ' && *p != '\t')) {
+                        (!head || (*p != ' ' && *p != '\t'))) {
                         if (style == STYLE_man)
                             p--;
                         else
@@ -3140,7 +3147,7 @@ again:
                 }
                 head = *p != ' ' && *p != '\t';
                 if (style == STYLE_html &&
-                    (*p != '<' || !strneq(p, "<BR>", 4) && !strneq(p, "<P>", 3))) {
+                    (*p != '<' || (!strneq(p, "<BR>", 4) && !strneq(p, "<P>", 3)))) {
                     y = p;
                     while (*p == '\t') p++;
                     if (*p == '\n') continue;
@@ -3279,8 +3286,8 @@ again:
                     } else if (c == 'h') {
                         y = p;
                         if (*y++ == 't' && *y++ == 't' && *y++ == 'p' &&
-                            (*y == ':' || *y++ == 's' && *y == ':') && *y++ == ':' && *y++ == '/' &&
-                            *y++ == '/') {
+                            (*y == ':' || (*y++ == 's' && *y == ':')) && *y++ == ':' &&
+                            *y++ == '/' && *y++ == '/') {
                             while (isalnum(*y) || *y == '_' || *y == '/' || *y == '-' || *y == '.')
                                 y++;
                             if (*y == '?')
@@ -3407,7 +3414,7 @@ static int opterror(char *p, int err, int version, char *id, char *catalog) {
     int c;
 
     if (opt_info.num != LONG_MIN) opt_info.num = (long)(opt_info.number = 0);
-    if (!p || !(mp = state.mp) && !(mp = state.mp = sfstropen())) goto nospace;
+    if (!p || (!(mp = state.mp) && !(mp = state.mp = sfstropen()))) goto nospace;
     s = *p == '-' ? p : opt_info.name;
     if (*p == '!') {
         while (*s == '-') sfputc(mp, *s++);
@@ -3449,9 +3456,10 @@ static int opterror(char *p, int err, int version, char *id, char *catalog) {
     else if (*p == '+')
         p = C("section not found");
     else {
-        if (opt_info.option[0] != '?' && opt_info.option[0] != '-' ||
-            opt_info.option[1] != '?' && opt_info.option[1] != '-')
+        if ((opt_info.option[0] != '?' && opt_info.option[0] != '-') ||
+            (opt_info.option[1] != '?' && opt_info.option[1] != '-')) {
             opt_info.option[0] = 0;
+        }
         p = C("unknown option");
     }
     p = T(NULL, ID, p);
@@ -3601,10 +3609,11 @@ int optget(char **argv, const char *oopts) {
     prefix = pass->prefix;
     version = pass->version;
     id = pass->id;
-    if (!(xp = state.xp) || (catalog = pass->catalog) && !X(catalog))
+    if (!(xp = state.xp) || ((catalog = pass->catalog) && !X(catalog))) {
         catalog = 0;
-    else /* if (!error_info.catalog) */
+    } else {  // if (!error_info.catalog)
         error_info.catalog = catalog;
+    }
 again:
     psp = 0;
 
@@ -3649,8 +3658,8 @@ again:
                 } else if (*s == '?')
                     n = 1;
             } else if ((c = *s++) != '-' &&
-                       (c != '+' || !(pass->flags & OPT_plus) &&
-                                        (!(pass->flags & OPT_numeric) || !isdigit(*s)))) {
+                       (c != '+' || (!(pass->flags & OPT_plus) &&
+                                     (!(pass->flags & OPT_numeric) || !isdigit(*s))))) {
                 if (!(pass->flags & OPT_old) || !isalpha(c)) return 0;
                 s--;
                 n = 1;
@@ -3829,7 +3838,7 @@ again:
                         opt_info.index++;
                         if ((k & OPT_cache_optional) &&
                             (*opt_info.arg == '-' ||
-                             (pass->flags & OPT_plus) && *opt_info.arg == '+') &&
+                             ((pass->flags & OPT_plus) && *opt_info.arg == '+')) &&
                             *(opt_info.arg + 1)) {
                             opt_info.arg = 0;
                             opt_info.index--;
@@ -3990,9 +3999,9 @@ again:
                                         break;
                                     }
                                     m = 1;
-                                } else if (*s == *w || SEP(*s) && SEP(*w))
+                                } else if (*s == *w || (SEP(*s) && SEP(*w))) {
                                     w++;
-                                else if (*w == 0)
+                                } else if (*w == 0)
                                     break;
                                 else if (!SEP(*s)) {
                                     if (SEP(*w)) {
@@ -4001,8 +4010,9 @@ again:
                                             continue;
                                         }
                                     } else if (w == y || SEP(*(w - 1)) ||
-                                               isupper(*(w - 1)) && islower(*w))
+                                               (isupper(*(w - 1)) && islower(*w))) {
                                         break;
+                                    }
                                     for (q = s;
                                          *q && !SEP(*q) && *q != '|' && *q != '?' && *q != ']'; q++)
                                         ;
@@ -4037,19 +4047,20 @@ again:
                                             break;
                                         }
                                         m = 1;
-                                    } else if (*s == *w || SEP(*s) && SEP(*w))
+                                    } else if (*s == *w || (SEP(*s) && SEP(*w))) {
                                         w++;
-                                    else if (*w == 0)
+                                    } else if (*w == 0) {
                                         break;
-                                    else if (!SEP(*s)) {
+                                    } else if (!SEP(*s)) {
                                         if (SEP(*w)) {
                                             if (*++w == *s) {
                                                 w++;
                                                 continue;
                                             }
                                         } else if (w == y || SEP(*(w - 1)) ||
-                                                   isupper(*(w - 1)) && islower(*w))
+                                                   (isupper(*(w - 1)) && islower(*w))) {
                                             break;
+                                        }
                                         for (q = s;
                                              *q && !SEP(*q) && *q != '|' && *q != '?' && *q != ']';
                                              q++)
@@ -4082,7 +4093,7 @@ again:
                                 x = -1;
                                 opt_info.option[1] = '-';
                                 opt_info.option[2] = 0;
-                            } else if (*(f + 1) == ':' || *(f + 1) == '!' && *(f + 2) == ':') {
+                            } else if (*(f + 1) == ':' || (*(f + 1) == '!' && *(f + 2) == ':')) {
                                 opt_info.option[1] = x;
                                 opt_info.option[2] = 0;
                             } else {
@@ -4247,7 +4258,7 @@ again:
         }
         if (w && x) {
             s = skip(b, '|', '?', 0, 1, 0, 0, version);
-            if (v && (a == 0 || *a == 0 || *(a + 1) != ':' && *(a + 1) != '#') &&
+            if (v && (a == 0 || *a == 0 || (*(a + 1) != ':' && *(a + 1) != '#')) &&
                 (*v == '0' || *v == '1') && !*(v + 1)) {
                 if (*v == '0') num = !num;
                 v = 0;
@@ -4294,7 +4305,7 @@ again:
      */
 
     if (opt_info.num != LONG_MIN) opt_info.num = (long)(opt_info.number = num);
-    if ((n = (*++s == '#')) || *s == ':' || w && !nov && v && (optnumber(v, &e, NULL), n = !*e)) {
+    if ((n = (*++s == '#')) || *s == ':' || (w && !nov && v && (optnumber(v, &e, NULL), n = !*e))) {
         if (w) {
             if (nov) {
                 if (v) {
@@ -4307,7 +4318,7 @@ again:
                     opt_info.index++;
                     opt_info.offset = 0;
                 }
-                if (!(opt_info.arg = v) || (*v == '0' || *v == '1') && !*(v + 1)) {
+                if (!(opt_info.arg = v) || ((*v == '0' || *v == '1') && !*(v + 1))) {
                     if (*(s + 1) != '?') {
                         if (!opt_info.arg) {
                             pop(psp);
@@ -4358,7 +4369,7 @@ again:
         } else if ((opt_info.arg = argv[opt_info.index])) {
             opt_info.index++;
             if (*(s + 1) == '?' &&
-                (*opt_info.arg == '-' || (pass->flags & OPT_plus) && *opt_info.arg == '+') &&
+                (*opt_info.arg == '-' || ((pass->flags & OPT_plus) && *opt_info.arg == '+')) &&
                 *(opt_info.arg + 1)) {
                 opt_info.num = (long)(opt_info.number = 0);
                 opt_info.index--;
@@ -4433,9 +4444,9 @@ again:
                                             break;
                                         }
                                         m = 1;
-                                    } else if (*s == *w || SEP(*s) && SEP(*w))
+                                    } else if (*s == *w || (SEP(*s) && SEP(*w))) {
                                         w++;
-                                    else if (*w == 0)
+                                    } else if (*w == 0)
                                         break;
                                     else if (!SEP(*s)) {
                                         if (SEP(*w)) {
@@ -4444,8 +4455,9 @@ again:
                                                 continue;
                                             }
                                         } else if (w == y || SEP(*(w - 1)) ||
-                                                   isupper(*(w - 1)) && islower(*w))
+                                                   (isupper(*(w - 1)) && islower(*w))) {
                                             break;
+                                        }
                                         for (q = s;
                                              *q && !SEP(*q) && *q != '|' && *q != '?' && *q != ']';
                                              q++)
@@ -4474,13 +4486,15 @@ again:
                                 }
                                 for (x = k; *(f + 1) == '|' && (j = *(f + 2)) && j != '!' &&
                                             j != '=' && j != ':' && j != '?' && j != ']';
-                                     f += 2)
-                                    ;
-                                if (*f == ':')
+                                     f += 2) {
+                                    ;  // empty loop
+                                }
+                                if (*f == ':') {
                                     x = -1;
-                                else if (*(f + 1) == ':' || *(f + 1) == '!' && *(f + 2) == ':')
-                                    /* ok */;
-                                else {
+                                } else if (*(f + 1) == ':' ||
+                                           (*(f + 1) == '!' && *(f + 2) == ':')) {
+                                    ;  // okay
+                                } else {
                                     a = f;
                                     if (*a == '=')
                                         a++;

@@ -56,14 +56,14 @@ int optesc(Sfio_t *sp, const char *s, int esc) {
                 s += 3;
             } else
                 sfwrite(sp, m, s - m);
-        } else if (c == '-' && *s == '-' || c == '<') {
+        } else if ((c == '-' && *s == '-') || c == '<') {
             m = s - 1;
             if (c == '-')
                 s++;
             else if (*s == '/')
                 s++;
             while (isalnum(*s)) s++;
-            if (c == '<' && *s == '>' || isspace(*s) || *s == 0 || *s == '=' || *s == ':' ||
+            if ((c == '<' && *s == '>') || isspace(*s) || *s == 0 || *s == '=' || *s == ':' ||
                 *s == ';' || *s == '.' || *s == ',') {
                 sfputc(sp, '\b');
                 sfwrite(sp, m, s - m);

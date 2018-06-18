@@ -200,7 +200,7 @@ ssize_t debug_vsprintf(char *buf, size_t siz, const char *format, va_list ap) {
 #endif
                         else
                             s = t;
-                        if (w || l && x) {
+                        if (w || (l && x)) {
                             if (!l || !x) x = (int)strlen(s);
                             if (!w) w = x;
                             n = w - x;

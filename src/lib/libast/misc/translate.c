@@ -182,12 +182,13 @@ static Catalog_t *init(char *s) {
             n = m = 0;
             for (;;) {
                 n++;
-                if (((s = catgets(d, set = AST_MESSAGE_SET, n, state.null)) && *s ||
-                     (s = catgets(d, set = 1, n, state.null)) && *s) &&
-                    entry(cp->messages, set, n, s))
+                if ((((s = catgets(d, set = AST_MESSAGE_SET, n, state.null)) && *s) ||
+                     ((s = catgets(d, set = 1, n, state.null)) && *s)) &&
+                    entry(cp->messages, set, n, s)) {
                     m = n;
-                else if ((n - m) > GAP)
+                } else if ((n - m) > GAP) {
                     break;
+                }
             }
             if (!m) {
                 dtclose(cp->messages);
@@ -307,9 +308,9 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
      * or do we have to spell it out for you
      */
 
-    if ((!cmd || !(mp = match(cmd, msg))) && (!cat || !(mp = match(cat, msg))) &&
-            (!error_info.catalog || !(mp = match(error_info.catalog, msg))) &&
-            (!ast.id || !(mp = match(ast.id, msg))) ||
+    if (((!cmd || !(mp = match(cmd, msg))) && (!cat || !(mp = match(cat, msg))) &&
+         (!error_info.catalog || !(mp = match(error_info.catalog, msg))) &&
+         (!ast.id || !(mp = match(ast.id, msg)))) ||
         !(cp = mp->cat)) {
 #if DEBUG_trace > 1
         sfprintf(sfstderr, "AHA#%d:%s cmd %s cat %s:%s id %s msg `%s'\n", __LINE__, __FILE__, cmd,
@@ -380,7 +381,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
         sfprintf(sfstderr, "translate locale=%s catalog=%s set=%d seq=%d \"%s\" => \"%s\"\n",
                  cp->locale, cp->name, mp->set, mp->seq, msg, r == (char *)msg ? "NOPE" : r);
 done:
-    if (r == (char *)msg && (!cp && streq(loc, "debug") || cp && cp->debug)) {
+    if (r == (char *)msg && ((!cp && streq(loc, "debug")) || (cp && cp->debug))) {
         p = tempget(state.tmp);
         sfprintf(state.tmp, "(%s,%s,%s,%s)", loc, cmd, cat, r);
         r = tempuse(state.tmp, p);

@@ -345,9 +345,9 @@ void errorv(const char *id, int level, va_list ap) {
         catalog = error_info.catalog;
     }
     if (level < error_info.trace ||
-        (flags & ERROR_LIBRARY) &&
-            !(((error_info.set | error_info.flags) ^ error_info.clear) & ERROR_LIBRARY) ||
-        level < 0 && error_info.mask && !(error_info.mask & (1 << (-level - 1)))) {
+        ((flags & ERROR_LIBRARY) &&
+         !(((error_info.set | error_info.flags) ^ error_info.clear) & ERROR_LIBRARY)) ||
+        (level < 0 && error_info.mask && !(error_info.mask & (1 << (-level - 1))))) {
         if (level >= ERROR_FATAL) (*error_info.exit)(level - 1);
         return;
     }
@@ -370,7 +370,7 @@ void errorv(const char *id, int level, va_list ap) {
                 sfprintf(stkstd, "       ");
             else
                 sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "Usage"));
-            if (file || opt_info.argv && (file = opt_info.argv[0])) print(stkstd, file, " ");
+            if (file || (opt_info.argv && (file = opt_info.argv[0]))) print(stkstd, file, " ");
         } else {
             if (level && !(flags & ERROR_NOID)) {
                 if (error_info.context && level > 0)

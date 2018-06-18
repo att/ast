@@ -91,7 +91,7 @@ char *fgetcwd(int fd, char *buf, size_t len) {
     if (fstatat(fd, ".", par, 0)) ERROR(errno);
 
     for (n = 0; n < elementsof(env); n++) {
-        if ((env[n].name && (p = getenv(env[n].name)) || (p = env[n].path)) && *p == '/') {
+        if (((env[n].name && (p = getenv(env[n].name))) || (p = env[n].path)) && *p == '/') {
             if (stat(p, cur) == 0) {
                 env[n].path = p;
                 env[n].dev = cur->st_dev;
