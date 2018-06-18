@@ -423,12 +423,12 @@ void sh_subjobcheck(pid_t pid) {
 Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     struct subshell sub_data;
     struct subshell *sp = &sub_data;
-    int jmpval, nsig = 0, duped = 0;
+    int jmpval, isig, nsig = 0, duped = 0;
     long savecurenv = shp->curenv;
     int savejobpgid = job.curpgid;
     int *saveexitval = job.exitval;
     int16_t subshell;
-    char *savsig;
+    char **savsig;
     Sfio_t *iop = 0;
     struct checkpt buff;
     struct sh_scoped savst;
@@ -503,9 +503,14 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         // Save trap table.
         shp->st.otrapcom = 0;
         shp->st.otrap = savst.trap;
-        if ((nsig = shp->st.trapmax * sizeof(char *)) > 0 || shp->st.trapcom[0]) {
-            nsig += sizeof(char *);
-            memcpy(savsig = malloc(nsig), (char *)&shp->st.trapcom[0], nsig);
+        nsig = shp->st.trapmax;
+        if (nsig > 0 || shp->st.trapcom[0]) {
+            ++nsig;
+            savsig = malloc(nsig * sizeof(char *));
+            // Contents of shp->st.st.trapcom may change
+            for (isig = 0; isig < nsig; ++isig) {
+                savsig[isig] = shp->st.trapcom[isig] ? strdup(shp->st.trapcom[isig]) : NULL;
+            }
             // This nonsense needed for $(trap).
             shp->st.otrapcom = (char **)savsig;
         }
@@ -661,7 +666,12 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         shp->curenv = savecurenv;
         shp->st.otrap = 0;
         if (nsig) {
-            memcpy((char *)&shp->st.trapcom[0], savsig, nsig);
+            for (isig = 0; isig < nsig; ++isig) {
+                if (shp->st.trapcom[isig]) {
+                    free(shp->st.trapcom[isig]);
+                }
+            }
+            memcpy(shp->st.trapcom, savsig, nsig * sizeof(char *));
             shp->st.otrapcom = NULL;
             free(savsig);
         }
