@@ -147,7 +147,7 @@ int regsubexec(const regex_t *p, const char *s, size_t nmatch, regmatch_t *match
                 return fatal(p->env->disc, c, NULL);
         }
         s += match->rm_eo;
-        if (m <= 0 && !(b->re_flags & REG_SUB_ALL) || !*s) break;
+        if ((m <= 0 && !(b->re_flags & REG_SUB_ALL)) || !*s) break;
         c = regnexec(p, s, e - s, nmatch, match,
                      p->env->flags | (match->rm_so == match->rm_eo ? REG_ADVANCE : 0));
         if (c) {

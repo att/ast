@@ -51,8 +51,10 @@ int regcollate(const char *s, char **e, char *buf, size_t size, wchar_t *wc) {
     char xfm[256];
     char tmp[sizeof(xfm)];
 
-    if (size < 2 || (term = *s) != '.' && term != '=' || !*++s || *s == term && *(s + 1) == ']')
+    if (size < 2 || ((term = *s) != '.' && term != '=') || !*++s ||
+        (*s == term && *(s + 1) == ']')) {
         goto nope;
+    }
     t = s;
     mbtinit(&q);
     w = mbtchar(&w, s, MB_LEN_MAX, &q);

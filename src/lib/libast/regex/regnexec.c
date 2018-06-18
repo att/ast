@@ -1204,7 +1204,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     r = parse(env, q, &catcher, s);
                     if (r == BAD || catcher.re.cond_catch.yes) return r;
                 } else if (!rex->re.group.size ||
-                           rex->re.group.size > 0 && env->match[rex->re.group.size].rm_so >= 0) {
+                           (rex->re.group.size > 0 && env->match[rex->re.group.size].rm_so >= 0)) {
                     r = GOOD;
                 } else {
                     r = NONE;
@@ -1534,18 +1534,19 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                                   rex->re.rep_catch.ref->re.group.expr.rex->re.group.back,
                                   rexname(rex->re.rep_catch.ref->re.group.expr.rex))),
                         (0));
-                    if (!env->stack || s != rex->re.rep_catch.ref->re.rep_catch.beg &&
-                                           !rex->re.rep_catch.ref->re.group.expr.rex->re.group.back)
+                    if (!env->stack || (s != rex->re.rep_catch.ref->re.rep_catch.beg &&
+                                        !rex->re.rep_catch.ref->re.group.expr.rex->re.group.back)) {
                         r = NONE;
-                    else if (pospush(env, rex, s, END_ANY))
+                    } else if (pospush(env, rex, s, END_ANY)) {
                         r = BAD;
-                    else {
+                    } else {
                         r = follow(env, rex, rex->re.rep_catch.cont, s);
                         pospop(env);
                     }
-                } else
+                } else {
                     r = parserep(env, rex->re.rep_catch.ref, rex->re.rep_catch.cont, s,
                                  rex->re.rep_catch.n);
+                }
                 if (env->stack) pospop(env);
                 return r;
             case REX_STRING:
@@ -1594,10 +1595,10 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 }
                 break;
             case REX_WBEG:
-                if (!isword(*s) || s > env->beg && isword(*(s - 1))) return NONE;
+                if (!isword(*s) || (s > env->beg && isword(*(s - 1)))) return NONE;
                 break;
             case REX_WEND:
-                if (isword(*s) || s > env->beg && !isword(*(s - 1))) return NONE;
+                if (isword(*s) || (s > env->beg && !isword(*(s - 1)))) return NONE;
                 break;
             case REX_WORD:
                 if (s > env->beg && isword(*(s - 1)) == isword(*s)) return NONE;
@@ -1699,12 +1700,12 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
     env->flags |= (flags & REG_EXEC);
     advance = 0;
     stknew(env->mst, &env->stk);
-    env->stack = env->hard || !(env->flags & REG_NOSUB) && nmatch;
+    env->stack = env->hard || (!(env->flags & REG_NOSUB) && nmatch);
     if (env->stack) {
         n = env->nsub;
         if (!(env->match = (regmatch_t *)stkpush(env->mst, 2 * (n + 1) * sizeof(regmatch_t))) ||
-            !env->pos && !(env->pos = vecopen(16, sizeof(Pos_t))) ||
-            !env->bestpos && !(env->bestpos = vecopen(16, sizeof(Pos_t)))) {
+            (!env->pos && !(env->pos = vecopen(16, sizeof(Pos_t)))) ||
+            (!env->bestpos && !(env->bestpos = vecopen(16, sizeof(Pos_t))))) {
             k = REG_ESPACE;
             goto done;
         }
@@ -1787,7 +1788,7 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
     j = env->once || (flags & REG_LEFT);
     DEBUG_TEST(0x0080, (sfprintf(sfstdout, "AHA#%04d parse once=%d\n", __LINE__, j)), (0));
     while ((i = parse(env, e, &env->done, (unsigned char *)s)) == NONE ||
-           advance && !env->best[0].rm_eo && !(advance = 0)) {
+           (advance && !env->best[0].rm_eo && !(advance = 0))) {
         if (j) goto done;
         i = MBSIZE(env, s);
         s += i;

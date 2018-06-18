@@ -448,9 +448,10 @@ static int stats(Cenv_t *env, Rex_t *e) {
                 env->stats.e = 1;
                 break;
             case REX_GROUP:
-                if (e->re.group.number && ++env->stats.p <= 0 ||
-                    !e->re.group.number && ++env->stats.u <= 0)
+                if ((e->re.group.number && ++env->stats.p <= 0) ||
+                    (!e->re.group.number && ++env->stats.u <= 0)) {
                     return 1;
+                }
                 if (stats(env, e->re.group.expr.rex)) return 1;
                 break;
             case REX_GROUP_AHEAD:
@@ -706,7 +707,7 @@ static int magic(Cenv_t *env, int c, int escaped) {
                 case T_BACK + 8:
                 case T_BACK + 9:
                     if (env->type == SRE ||
-                        c == T_BACK && !(env->flags & (REG_LENIENT | REG_REGEXP))) {
+                        (c == T_BACK && !(env->flags & (REG_LENIENT | REG_REGEXP)))) {
                         env->error = REG_BADESC;
                         goto bad;
                     }
@@ -773,11 +774,11 @@ static int magic(Cenv_t *env, int c, int escaped) {
             }
         }
     } else if (escaped == 2) {
-        if (env->type >= SRE && !(env->flags & REG_SHELL_ESCAPED) ||
-            (env->flags & REG_ESCAPE) &&
-                (c == '[' || c == '-' || c == ']' || env->delimiter && c == env->delimiter))
-            /*ok*/;
-        else {
+        if ((env->type >= SRE && !(env->flags & REG_SHELL_ESCAPED)) ||
+            ((env->flags & REG_ESCAPE) &&
+             (c == '[' || c == '-' || c == ']' || (env->delimiter && c == env->delimiter)))) {
+            ;  // okay
+        } else {
             env->error = REG_BADESC;
             goto bad;
         }
@@ -887,10 +888,10 @@ static int token(Cenv_t *env) {
             return c;
         return magic(env, c, 1);
     } else if (c == '$') {
-        if (env->type == BRE && (*(env->cursor + 1) == 0 || *(env->cursor + 1) == env->delimiter ||
-                                 *(env->cursor + 1) == env->terminator ||
-                                 *(env->cursor + 1) == '\\' && *(env->cursor + 2) == ')') ||
-            (env->flags & REG_MULTIPLE) && *(env->cursor + 1) == '\n')
+        if ((env->type == BRE && (*(env->cursor + 1) == 0 || *(env->cursor + 1) == env->delimiter ||
+                                  *(env->cursor + 1) == env->terminator ||
+                                  (*(env->cursor + 1) == '\\' && *(env->cursor + 2) == ')'))) ||
+            ((env->flags & REG_MULTIPLE) && *(env->cursor + 1) == '\n'))
             return T_DOLL;
     } else if (c == '^') {
         if (env->type == BRE && (env->cursor == env->pattern || posixkludge == 1)) {
@@ -1045,7 +1046,7 @@ static Rex_t *bra(Cenv_t *env) {
 
     if (!(e = node(env, REX_CLASS, 1, 1, sizeof(Set_t)))) return 0;
     collate = complicated = elements = 0;
-    if (*env->cursor == '^' || env->type >= SRE && *env->cursor == '!') {
+    if (*env->cursor == '^' || (env->type >= SRE && *env->cursor == '!')) {
         env->cursor++;
         complicated = neg = 1;
     } else
@@ -1054,9 +1055,11 @@ static Rex_t *bra(Cenv_t *env) {
     start = first + MBSIZE(env, first);
     if (*env->cursor == 0 || *(env->cursor + 1) == 0 || *env->cursor == env->terminator ||
         *(env->cursor + 1) == env->terminator ||
-        (env->flags & REG_ESCAPE) && (*env->cursor == env->delimiter ||
-                                      *env->cursor != '\\' && *(env->cursor + 1) == env->delimiter))
+        ((env->flags & REG_ESCAPE) &&
+         (*env->cursor == env->delimiter ||
+          (*env->cursor != '\\' && *(env->cursor + 1) == env->delimiter)))) {
         goto error;
+    }
     begin = env->cursor + MBSIZE(env, env->cursor);
 
     /*
@@ -1066,11 +1069,12 @@ static Rex_t *bra(Cenv_t *env) {
     inrange = 0;
     for (;;) {
         if (!(c = *env->cursor) || c == env->terminator ||
-            c == env->delimiter && (env->flags & REG_ESCAPE))
+            (c == env->delimiter && (env->flags & REG_ESCAPE))) {
             goto error;
+        }
         env->cursor += (w = MBSIZE(env, env->cursor));
         if (c == '\\' && ((env->flags & REG_CLASS_ESCAPE) ||
-                          *env->cursor == env->delimiter && (env->flags & REG_ESCAPE))) {
+                          (*env->cursor == env->delimiter && (env->flags & REG_ESCAPE)))) {
             if (*env->cursor) {
                 if (*env->cursor == 'n') {
                     env->cursor++;
@@ -1092,7 +1096,7 @@ static Rex_t *bra(Cenv_t *env) {
                             elements++;
                             continue;
                         }
-                        if (env->token.len > 1 || w >= 0 && w < T_META) {
+                        if (env->token.len > 1 || (w >= 0 && w < T_META)) {
                             c = w;
                             if (c > UCHAR_MAX) {
                                 if (env->type < SRE && !(env->flags & (REG_LENIENT | REG_REGEXP)) &&
@@ -1205,8 +1209,9 @@ static Rex_t *bra(Cenv_t *env) {
                 default:
                 normal:
                     if (*env->cursor == env->terminator ||
-                        *env->cursor == env->delimiter && (env->flags & REG_ESCAPE))
+                        (*env->cursor == env->delimiter && (env->flags & REG_ESCAPE))) {
                         goto error;
+                    }
                     break;
             }
         } else if (w > 1)
@@ -1282,12 +1287,13 @@ static Rex_t *bra(Cenv_t *env) {
             inrange = 0;
             for (;;) {
                 if ((c = *env->cursor) == 0 || c == env->terminator ||
-                    (env->flags & REG_ESCAPE) && c == env->delimiter)
+                    ((env->flags & REG_ESCAPE) && c == env->delimiter)) {
                     goto error;
+                }
                 pp = env->cursor;
                 env->cursor += (w = MBSIZE(env, env->cursor));
                 if (c == '\\' && ((env->flags & REG_CLASS_ESCAPE) ||
-                                  *env->cursor == env->delimiter && (env->flags & REG_ESCAPE))) {
+                                  (*env->cursor == env->delimiter && (env->flags & REG_ESCAPE)))) {
                     if (*env->cursor) {
                         if (*env->cursor == 'n') {
                             pp = env->cursor++;
@@ -1309,7 +1315,7 @@ static Rex_t *bra(Cenv_t *env) {
                                     ce++;
                                     continue;
                                 }
-                                if (env->token.len > 1 || w >= 0 && w < T_META) {
+                                if (env->token.len > 1 || (w >= 0 && w < T_META)) {
                                     c = w;
                                     mbtinit(&q);
                                     w = mbtconv(mbc, c, &q);
@@ -1410,12 +1416,13 @@ static Rex_t *bra(Cenv_t *env) {
                                              !strcasecmp((char *)tc->nam, (char *)cc->nam)
                                          ? tc
                                          : cc;
-                                if (c == 'l' || c == 'L' && !(c = 0))
+                                if (c == 'l' || (c == 'L' && !(c = 0))) {
                                     ce->typ = COLL_range_lc;
-                                else if (c == 'u' || c == 'U' && !(c = 0))
+                                } else if (c == 'u' || (c == 'U' && !(c = 0))) {
                                     ce->typ = COLL_range_uc;
-                                else
+                                } else {
                                     ce->typ = COLL_range;
+                                }
                                 strcpy((char *)ce->beg, (char *)xc->key);
                                 if (!(cc = (Cchr_t *)dtnext(dt, cc))) {
                                     if (i) {
@@ -1456,8 +1463,9 @@ static Rex_t *bra(Cenv_t *env) {
                         default:
                         complicated_normal:
                             if (*env->cursor == env->terminator ||
-                                *env->cursor == env->delimiter && (env->flags & REG_ESCAPE))
+                                (*env->cursor == env->delimiter && (env->flags & REG_ESCAPE))) {
                                 goto error;
+                            }
                             break;
                     }
                 }
@@ -1879,9 +1887,10 @@ static Rex_t *grp(Cenv_t *env, int parno) {
                             env->flags &= ~REG_COMMENT;
                         break;
                     case 'X':
-                        if (typ >= 0 || env->type == ERE && (env->flags & REG_CLASS_ESCAPE))
-                            break; /* PCRE_EXTRA */
-                                   /*FALLTHROUGH*/
+                        if (typ >= 0 || (env->type == ERE && (env->flags & REG_CLASS_ESCAPE))) {
+                            break;  // PCRE_EXTRA
+                        }
+                        // FALLTHROUGH
                     case 'A':
                         env->flags &= ~(REG_AUGMENTED | REG_EXTENDED | REG_LITERAL | REG_REGEXP |
                                         REG_SHELL | REG_LEFT | REG_RIGHT);
@@ -1935,11 +1944,12 @@ static Rex_t *grp(Cenv_t *env, int parno) {
                         typ = SRE;
                         break;
                     case 'U': /* PCRE_UNGREEDY */
-                        if (typ >= 0 || env->type == ERE && (env->flags & REG_CLASS_ESCAPE)) {
-                            if (i)
+                        if (typ >= 0 || (env->type == ERE && (env->flags & REG_CLASS_ESCAPE))) {
+                            if (i) {
                                 env->flags |= REG_MINIMAL;
-                            else
+                            } else {
                                 env->flags &= ~REG_MINIMAL;
+                            }
                         }
                         break;
                     case 'V':
@@ -2581,8 +2591,9 @@ static void bmstr(Cenv_t *env, Rex_t *a, unsigned char *v, int n, Bm_mask_t b) {
         if (!(z = n - m - 1)) z = HIT;
         c = v[m];
         a->re.bm.mask[m][c] |= b;
-        if (z == HIT || !a->re.bm.skip[c] || a->re.bm.skip[c] > z && a->re.bm.skip[c] < HIT)
+        if (z == HIT || !a->re.bm.skip[c] || (a->re.bm.skip[c] > z && a->re.bm.skip[c] < HIT)) {
             a->re.bm.skip[c] = z;
+        }
         if (a->flags & REG_ICASE) {
             if (isupper(c))
                 c = tolower(c);
@@ -2591,8 +2602,9 @@ static void bmstr(Cenv_t *env, Rex_t *a, unsigned char *v, int n, Bm_mask_t b) {
             else
                 continue;
             a->re.bm.mask[m][c] |= b;
-            if (z == HIT || !a->re.bm.skip[c] || a->re.bm.skip[c] > z && a->re.bm.skip[c] < HIT)
+            if (z == HIT || !a->re.bm.skip[c] || (a->re.bm.skip[c] > z && a->re.bm.skip[c] < HIT)) {
                 a->re.bm.skip[c] = z;
+            }
         }
     }
 }
@@ -2687,7 +2699,7 @@ static int special(Cenv_t *env, regex_t *p) {
             a->re.bm.left = l - 1;
             a->re.bm.right = env->stats.m - l - n;
             a->re.bm.complete =
-                (env->stats.e || y != e && (e->type != REX_GROUP || y != e->re.group.expr.rex) ||
+                (env->stats.e || (y != e && (e->type != REX_GROUP || y != e->re.group.expr.rex)) ||
                  e->next || ((a->re.bm.left + a->re.bm.right) >= 0))
                     ? 0
                     : n;
@@ -2944,8 +2956,8 @@ again:
     if (env.stats.b)
         p->env->hard = p->env->separate = 1;
     else if (!(env.flags & REG_FIRST) &&
-             (env.stats.a || env.stats.c > 1 && env.stats.c != env.stats.s ||
-              env.stats.t && (env.stats.t > 1 || env.stats.a || env.stats.c)))
+             (env.stats.a || (env.stats.c > 1 && env.stats.c != env.stats.s) ||
+              (env.stats.t && (env.stats.t > 1 || env.stats.a || env.stats.c))))
         p->env->hard = 1;
     if (p->env->hard || env.stats.c || env.stats.i)
         p->env->stats.re_min = p->env->stats.re_max = -1;

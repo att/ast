@@ -242,7 +242,7 @@ static int decomp(Rex_t *e, Rex_t *parent, Sfio_t *sp, int type, int delimiter, 
                             sfprintf(sp, "%d,", e->lo);
                             meta(sp, '}', type, 1, delimiter);
                         }
-                    } else if (e->hi != 1 || e->lo == 0 && !ismeta('?', type, 0, delimiter)) {
+                    } else if (e->hi != 1 || (e->lo == 0 && !ismeta('?', type, 0, delimiter))) {
                         meta(sp, '{', type, 1, delimiter);
                         sfprintf(sp, "%d,%d", e->lo, e->hi);
                         meta(sp, '}', type, 1, delimiter);

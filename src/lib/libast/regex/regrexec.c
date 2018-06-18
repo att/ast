@@ -93,8 +93,8 @@ int regrexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
         if ((r - l) < leftlen) goto spanned;
         while (r < end && *r != sep) r++;
         if ((r - (buf + index)) < rightlen) goto spanned;
-        if (complete || (env->rex = ((r - l) > 128) ? e : e->next) &&
-                            !(n = regnexec(p, (char *)l, r - l, nmatch, match, flags))) {
+        if (complete || ((env->rex = ((r - l) > 128) ? e : e->next) &&
+                         !(n = regnexec(p, (char *)l, r - l, nmatch, match, flags)))) {
             if (inv) {
             invert:
                 x = beg;
