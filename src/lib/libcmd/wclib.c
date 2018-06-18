@@ -227,8 +227,8 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
             nchars++;
         }
         if (!(wp->mode & WC_MBYTE)) nchars = nbytes;
-    } else if (!wp->mb && !(wp->mode & WC_LONGEST) ||
-               wp->mb > 0 && !(wp->mode & (WC_MBYTE | WC_WORDS | WC_LONGEST))) {
+    } else if ((!wp->mb && !(wp->mode & WC_LONGEST)) ||
+               (wp->mb > 0 && !(wp->mode & (WC_MBYTE | WC_WORDS | WC_LONGEST)))) {
         if (!(wp->mode & (WC_MBYTE | WC_WORDS | WC_LONGEST))) {
             while ((cp = (unsigned char *)sfreserve(fd, SF_UNBOUND, 0)) && (c = sfvalue(fd)) > 0) {
                 nchars += c;

@@ -234,8 +234,9 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || !*argv || !amode && !*(argv + 1))
+    if (error_info.errors || !*argv || (!amode && !*(argv + 1))) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+    }
     if (chlink) {
         flags &= ~FTS_COMFOLLOW;
         flags |= FTS_PHYSICAL;
@@ -284,7 +285,7 @@ int b_chmod(int argc, char **argv, Shbltin_t *context) {
                 if (amode) mode = strperm(amode, &last, ent->fts_statp->st_mode);
                 if (show || (*chmodf)(ent->fts_accpath, mode) >= 0) {
                     if (notify == 2 ||
-                        notify == 1 && (mode & S_IPERM) != (ent->fts_statp->st_mode & S_IPERM)) {
+                        (notify == 1 && (mode & S_IPERM) != (ent->fts_statp->st_mode & S_IPERM))) {
                         sfprintf(sfstdout, "%s: mode changed to %0.4o (%s)\n", ent->fts_path, mode,
                                  fmtmode(mode, 1) + 1);
                     }

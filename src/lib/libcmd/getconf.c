@@ -237,7 +237,7 @@ int b_getconf(int argc, char **argv, Shbltin_t *context) {
             }
         }
     }
-    if (error_info.errors || !name && *argv) error(ERROR_usage(2), "%s", optusage(NULL));
+    if (error_info.errors || (!name && *argv)) error(ERROR_usage(2), "%s", optusage(NULL));
     if (!name) {
         astconflist(sfstdout, path, flags, pattern);
     } else {

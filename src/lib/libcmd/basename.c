@@ -117,11 +117,13 @@ int b_basename(int argc, char **argv, Shbltin_t *context) {
     }
     argv += opt_info.index;
     argc -= opt_info.index;
-    if (error_info.errors || argc < 1 || !all && argc > 2)
+    if (error_info.errors || argc < 1 || (!all && argc > 2)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
-    if (!all)
+    }
+    if (!all) {
         namebase(sfstdout, argv[0], argv[1]);
-    else
+    } else {
         while ((string = *argv++)) namebase(sfstdout, string, suffix);
+    }
     return 0;
 }

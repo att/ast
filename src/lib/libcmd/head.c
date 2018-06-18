@@ -136,9 +136,9 @@ int b_head(int argc, char **argv, Shbltin_t *context) {
             if (delim >= 0 && moved < skip) goto next;
         }
         moved = sfmove(fp, sfstdout, keep, delim);
-        if (moved < 0 && !ERROR_PIPE(errno) && errno != EINTR ||
-            delim >= 0 && moved < keep && sfmove(fp, sfstdout, SF_UNBOUND, -1) < 0 &&
-                !ERROR_PIPE(errno) && errno != EINTR) {
+        if ((moved < 0 && !ERROR_PIPE(errno) && errno != EINTR) ||
+            (delim >= 0 && moved < keep && sfmove(fp, sfstdout, SF_UNBOUND, -1) < 0 &&
+             !ERROR_PIPE(errno) && errno != EINTR)) {
             error(ERROR_system(0), "%s: read error", cp);
         }
     next:

@@ -156,7 +156,7 @@ static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int
                 if (sferror(f1)) {
                     error(ERROR_exit(2), "read error on %s", file1);
                 }
-                if ((e2 - p2) > 0 || sfreserve(f2, SF_UNBOUND, 0) && sfvalue(f2) > 0) {
+                if ((e2 - p2) > 0 || (sfreserve(f2, SF_UNBOUND, 0) && sfvalue(f2) > 0)) {
                     ret = 1;
                     if (!(flags & CMP_SILENT)) error(ERROR_exit(1), "EOF on %s", file1);
                 }
@@ -218,7 +218,7 @@ static int cmp(const char *file1, Sfio_t *f1, const char *file2, Sfio_t *f2, int
                         sfputc(sfstdout, '\n');
                     }
 #endif
-                    if (!differences || differences < 0 && !(flags & CMP_VERBOSE)) return 1;
+                    if (!differences || (differences < 0 && !(flags & CMP_VERBOSE))) return 1;
                     ret = 1;
                 }
                 if (c1 == '\n') lines++;

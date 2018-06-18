@@ -227,7 +227,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
         break;
     }
     argv += opt_info.index;
-    if (error_info.errors || *argv && (flags || sethost) || sethost && flags) {
+    if (error_info.errors || (*argv && (flags || sethost)) || (sethost && flags)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
     }
     if (sethost) {
