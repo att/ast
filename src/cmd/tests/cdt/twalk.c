@@ -59,7 +59,6 @@ tmain() {
     Obj_t *o, *obj;
     void *walk, *path[N_PATH];
     Dt_t *dt;
-    Dtstat_t stat;
 
     /* construct objects */
     for (i = 0; i < N_OBJ; ++i) {

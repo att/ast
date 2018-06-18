@@ -131,7 +131,6 @@ static void workload(int pnum) {
 
 tmain() {
     ssize_t k;
-    void *addr;
     pid_t pid;
 
     tchild();

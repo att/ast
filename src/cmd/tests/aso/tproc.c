@@ -49,8 +49,6 @@ static void workload(unsigned int pid) {
 
 tmain() {
     ssize_t k;
-    int status;
-    int type;
     char *lockid;
     pid_t pid, cpid[N_PROC];
     struct timeval tv1, tv2;

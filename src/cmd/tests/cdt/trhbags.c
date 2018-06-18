@@ -47,7 +47,7 @@ static Obj_t Obj[N_OBJ];
 
 tmain() {
     Dt_t *dt;
-    Obj_t *o, proto;
+    Obj_t *o;
     long i, k, count, n;
 
     for (i = 0; i < N_OBJ; i = k) {

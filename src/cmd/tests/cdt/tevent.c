@@ -64,7 +64,6 @@ Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, memory, ev
 
 tmain() {
     Dt_t *dt;
-    long k;
 
     chkevent(-1);
     if (!(dt = dtopen(&Disc, Dtset))) terror("Opening Dtset");

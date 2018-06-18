@@ -25,7 +25,7 @@
 #endif
 
 tmain() {
-    Sfio_t *f, *g, *str, *fr, *fw, *sf[2];
+    Sfio_t *f, *str, *fr, *fw, *sf[2];
     int c;
     char *s;
     int fd[2];

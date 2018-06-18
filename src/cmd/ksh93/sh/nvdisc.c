@@ -279,9 +279,9 @@ static_fn void assign(Namval_t *np, const char *val, int flags, Namfun_t *handle
         nv_putv(np, val, flags, handle);
     } else if (!nq || !isblocked(bp, type)) {
         Dt_t *root = sh_subfuntree(shp, 1);
-        Namval_t *pp = 0;
+        Namval_t *pp = NULL;
         int n;
-        Namarr_t *ap;
+
         block(bp, type);
         if (!nv_isattr(np, NV_MINIMAL)) pp = (Namval_t *)np->nvenv;
         nv_putv(np, val, flags, handle);

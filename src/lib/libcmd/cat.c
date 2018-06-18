@@ -131,7 +131,6 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
     int m;
     int any;
     int header;
-    Mbstate_t q;
 
     unsigned char meta[3];
     unsigned char tmp[32];

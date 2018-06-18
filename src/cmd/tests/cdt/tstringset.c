@@ -35,13 +35,13 @@ int strcmp(const char *s1, const char *s2) {
 
 /* print statistics */
 #define N_OBJ 100000
-static int N_obj = N_OBJ, Count = 0, Brief = 0;
+static int N_obj = N_OBJ, Count = 0;
 static int Perm[N_OBJ];
 static char Key[N_OBJ][8]; /* max 7-digit numbers */
 static char *Pat = "%07d";
 
 tmain() {
-    int i, k, t;
+    int i, k;
     Dt_t *dt;
     Dtdisc_t disc;
     char *ks, tmp[16]; /* max 7-digit numbers */

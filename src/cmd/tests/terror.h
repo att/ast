@@ -251,7 +251,9 @@ void tstwarn(char *form, ...) {
 }
 
 void tstpause(char *form, ...) {
+#ifdef INFO
     char pauseform[1024];
+#endif
 
     va_list args;
     va_start(args, form);

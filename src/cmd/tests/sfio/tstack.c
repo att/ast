@@ -49,7 +49,7 @@ Sfdisc_t Disc = {readf, writef, NULL, exceptf, 0};
 
 tmain() {
     Sfio_t *f1, *f2, *f3, *f;
-    char *s, *s1, *s2, *s3, *s4, str[1024], *ss;
+    char *s, *s1, *s2, *s3, *s4;
     int n;
     int fd[2];
 

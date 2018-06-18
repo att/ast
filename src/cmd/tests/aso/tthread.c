@@ -65,7 +65,7 @@ static void *consumer(void *arg) {
 }
 
 tmain() {
-    int i, m;
+    int i;
     Obj_t *obj;
     char *lockid;
     pthread_t thread[N_THREADS];

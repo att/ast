@@ -46,8 +46,8 @@ static int _sfraiseall(int type, void *data) {
 }
 
 int sfraise(Sfio_t *f, int type, void *data) {
-    reg Sfdisc_t *disc, *next, *d;
-    reg int local, rv;
+    Sfdisc_t *disc, *next, *d;
+    int local;
     SFMTXDECL(f);
 
     if (!f) return _sfraiseall(type, data);

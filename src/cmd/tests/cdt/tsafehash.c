@@ -185,7 +185,6 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
 
 tmain() {
     ssize_t k, z, objn;
-    Obj_t *o;
     Dt_t *dt;
     pid_t pid[N_PROC];
     int zerof;

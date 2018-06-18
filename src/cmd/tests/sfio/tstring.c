@@ -88,7 +88,7 @@ tmain() {
     sfset(f, SF_READ, 0);
     for (n = 0; n < 16 * 1024; ++n) {
         if ((n % 1024) == 0) {
-            Sfoff_t a = sfseek(f, (Sfoff_t)1024, 1);
+            sfseek(f, (Sfoff_t)1024, 1);
             sfputc(f, 'a');
             sfseek(f, (Sfoff_t)(-1025), 1);
         }

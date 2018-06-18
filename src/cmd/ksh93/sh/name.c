@@ -106,7 +106,6 @@ static_fn char *getbuf(size_t len) {
     static char *buf = NULL;
     static size_t buflen = 0;
     if (buflen < len) {
-        char *bp;
         if (buflen == 0) {
             buf = malloc(len);
         } else {
