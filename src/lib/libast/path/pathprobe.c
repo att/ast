@@ -77,8 +77,9 @@ static int rofs(const char *path) {
 #endif
 #if defined(ST_NOSUID)
         if ((vfs.f_flag & ST_NOSUID) &&
-            (stat(path, &st) || st.st_uid != getuid() && st.st_uid != geteuid()))
+            (stat(path, &st) || (st.st_uid != getuid() && st.st_uid != geteuid()))) {
             return 1;
+        }
 #endif
     }
     return 0;
@@ -193,7 +194,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
     p = np;
     x = nx;
     strcpy(exe, path);
-    if (op >= -1 && (!(st.st_mode & S_ISUID) && ps.st_uid != geteuid() || rofs(path))) {
+    if (op >= -1 && ((!(st.st_mode & S_ISUID) && ps.st_uid != geteuid()) || rofs(path))) {
         if (!(p = getenv("HOME"))) return 0;
         p = path + sfsprintf(path, PATH_MAX - 1, "%s/.%s/%s/", p, probe, HOSTTYPE);
     }

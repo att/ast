@@ -172,7 +172,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
         tv.tv_nsec = 0;
     else
         tvgettime(&tv);
-    if (!(d = (char *)dir) || *d && eaccess(d, W_OK | X_OK)) {
+    if (!(d = (char *)dir) || (*d && eaccess(d, W_OK | X_OK))) {
         if (!tmp.vec) {
             if ((x = tmp.tmppath) || (x = getenv(TMP_PATH_ENV))) {
                 n = 2;
@@ -216,8 +216,8 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
     directory = pfx[m - 1] == '/';
     if (directory) m--;
     if (buf && dir &&
-        (buf == (char *)dir && (buf + strlen(buf) + 1) == (char *)pfx ||
-         buf == (char *)pfx && !*dir) &&
+        ((buf == (char *)dir && (buf + strlen(buf) + 1) == (char *)pfx) ||
+         (buf == (char *)pfx && !*dir)) &&
         !strcmp((char *)pfx + m + 1, "XXXXX")) {
         d = (char *)dir;
         len = m += strlen(d) + 8;
@@ -254,7 +254,7 @@ char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp
     *s = 0;
     len -= (s - b);
     for (attempt = 0; attempt < ATTEMPT; attempt++) {
-        if (!tmp.rng || !tmp.seed && (attempt || tmp.pid != getpid())) {
+        if (!tmp.rng || (!tmp.seed && (attempt || tmp.pid != getpid()))) {
             int r;
 
             /*

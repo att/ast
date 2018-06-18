@@ -153,7 +153,7 @@ char *pathcanon(char *path, size_t size, int flags) {
                     }
                 }
                 if (dots >= 4 && (flags & PATH_EXISTS) && (t - 1) >= v &&
-                    (t > path + 1 || t > path && *(t - 1) && *(t - 1) != '/')) {
+                    (t > path + 1 || (t > path && *(t - 1) && *(t - 1) != '/'))) {
                     struct stat st;
 
                     *(t - 1) = 0;

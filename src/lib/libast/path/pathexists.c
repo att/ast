@@ -113,7 +113,7 @@ int pathexists(char *path, int mode) {
             if (!S_ISDIR(st.st_mode)) t->mode |= PATH_REGULAR;
         }
         *e++ = c;
-        if (!t->mode || c && (t->mode & PATH_REGULAR)) return 0;
+        if (!t->mode || (c && (t->mode & PATH_REGULAR))) return 0;
     }
     mode &= (PATH_READ | PATH_WRITE | PATH_EXECUTE | PATH_REGULAR);
     return (t->mode & mode) == mode;
