@@ -121,7 +121,7 @@ Dllinfo_t *dllinfo(void) {
                     }
                     while (*s && *s++ != ',')
                         ;
-                    if (!*s || !p || !h && !*(h = astconf("HOSTTYPE", NULL, NULL))) break;
+                    if (!*s || !p || (!h && !*(h = astconf("HOSTTYPE", NULL, NULL)))) break;
                     if (pn >= sizeof(pat)) pn = sizeof(pat) - 1;
                     memcpy(pat, p, pn);
                     pat[pn] = 0;
@@ -203,7 +203,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         lib = 0;
         i = 0;
     }
-    if (version && (!*version || *version == '-' && !*(version + 1))) version = 0;
+    if (version && (!*version || (*version == '-' && !*(version + 1)))) version = 0;
     if (!(scan = calloc(1, sizeof(Dllscan_t) + i)) || !(scan->tmp = sfstropen())) {
         return 0;
     }
@@ -215,7 +215,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
         sfsprintf(s, i, "lib/%s", lib);
         if (!version && streq(info->suffix, ".dylib")) version = "0.0";
     }
-    if (!name || !*name || *name == '-' && !*(name + 1)) {
+    if (!name || !*name || (*name == '-' && !*(name + 1))) {
         name = (const char *)"?*";
         scan->flags |= DLL_MATCH_NAME;
     } else {
@@ -229,7 +229,7 @@ Dllscan_t *dllsopen(const char *lib, const char *name, const char *version) {
     if (name) {
         i = strlen(name);
         j = strlen(info->prefix);
-        if (!j || i > j && strneq(name, info->prefix, j)) {
+        if (!j || (i > j && strneq(name, info->prefix, j))) {
             k = strlen(info->suffix);
             if (i > k && streq(name + i - k, info->suffix)) {
                 i -= j + k;
