@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+
 #include <ast.h>
 #include <ccode.h>
 #include <ctype.h>
@@ -214,9 +216,10 @@ static int getfmt(Sfio_t *sp, void *vp, Sffmt_t *dp) {
             break;
         case 's':
             if (!s &&
-                (!h || !fp->tmp[1] && !(fp->tmp[1] = sfstropen()) ||
-                 sfprintf(fp->tmp[1], "%I*d", sizeof(n), n) <= 0 || !(s = sfstruse(fp->tmp[1]))))
+                (!h || (!fp->tmp[1] && !(fp->tmp[1] = sfstropen())) ||
+                 sfprintf(fp->tmp[1], "%I*d", sizeof(n), n) <= 0 || !(s = sfstruse(fp->tmp[1])))) {
                 s = "";
+            }
             if (x) {
                 h = 0;
                 d = initfield(&f, v + 4);
@@ -229,10 +232,11 @@ static int getfmt(Sfio_t *sp, void *vp, Sffmt_t *dp) {
                                 fmt = *fp;
                                 fmt.fmt.form = v;
                                 for (h = 0; h < elementsof(fmt.tmp); h++) fmt.tmp[h] = 0;
-                                if (!fp->tmp[0] && !(fp->tmp[0] = sfstropen()) ||
+                                if ((!fp->tmp[0] && !(fp->tmp[0] = sfstropen())) ||
                                     sfprintf(fp->tmp[0], "%!", &fmt) <= 0 ||
-                                    !(s = sfstruse(fp->tmp[0])))
+                                    !(s = sfstruse(fp->tmp[0]))) {
                                     s = "";
+                                }
                                 *(v - 1) = d;
                                 if (f.delimiter) *f.next = d;
                                 for (h = 0; h < elementsof(fmt.tmp); h++)
@@ -280,13 +284,23 @@ static int getfmt(Sfio_t *sp, void *vp, Sffmt_t *dp) {
         case '.':
             value->i = n;
             break;
-        default:
-            if ((!fp->convert || !(value->s = (*fp->convert)(fp->handle, &fp->fmt, a, s, n))) &&
-                (!fp->tmp[0] && !(fp->tmp[0] = sfstropen()) ||
-                 sfprintf(fp->tmp[0], "%%%c", fp->fmt.fmt) <= 0 ||
-                 !(value->s = sfstruse(fp->tmp[0]))))
-                value->s = "";
+        default: {
+            bool no_convert = !fp->convert;
+            if (!no_convert) {
+                value->s = (*fp->convert)(fp->handle, &fp->fmt, a, s, n);
+                no_convert = !value->s;
+            }
+            if (no_convert) {
+                if (!fp->tmp[0] && !(fp->tmp[0] = sfstropen())) {
+                    value->s = "";
+                } else if (sfprintf(fp->tmp[0], "%%%c", fp->fmt.fmt) <= 0) {
+                    value->s = "";
+                } else if (!(value->s = sfstruse(fp->tmp[0]))) {
+                    value->s = "";
+                }
+            }
             break;
+        }
     }
     fp->level--;
     return 0;

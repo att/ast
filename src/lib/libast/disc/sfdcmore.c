@@ -157,7 +157,7 @@ static ssize_t morewrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *dp) {
                 more->col = ((more->col + 8) & ~7) - 1;
                 /*FALLTHROUGH*/
             default:
-                if (++more->col <= more->cols || s < e && *s == '\n') continue;
+                if (++more->col <= more->cols || (s < e && *s == '\n')) continue;
                 /*FALLTHROUGH*/
             case '\n':
                 more->col = 1;
