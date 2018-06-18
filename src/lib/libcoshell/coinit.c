@@ -68,7 +68,8 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
     if (!co->export || !dtmatch(co->export, n)) {
         if (old) cvt = 0;
         v = getenv(n);
-        if (v && *v || coex && ((flags & CO_EXPORT) || co->export && dtsize(co->export) > 0)) {
+        if ((v && *v) ||
+            (coex && ((flags & CO_EXPORT) || (co->export && dtsize(co->export) > 0)))) {
             if (!old) sfprintf(sp, "\\\n");
             exid(sp, " ", n, "='");
             if (coex && (flags & CO_EXPORT)) v = "(*)";
@@ -168,7 +169,7 @@ char *coinitialize(Coshell_t *co, int flags) {
                     while (*ep) {
                         e = *ep++;
                         t = strsubmatch(e, s, 1);
-                        if (t && (*t == '=' || !*t && (t = strchr(e, '=')))) {
+                        if (t && (*t == '=' || (!*t && (t = strchr(e, '='))))) {
                             m = (int)(t - e);
                             if (!strneq(e, "PATH=", 5) && !strneq(e, "_=", 2)) {
                                 for (n = 0; co_export[n]; n++) {
@@ -243,7 +244,7 @@ char *coinitialize(Coshell_t *co, int flags) {
         } else {
             s = pathbin();
             if (!(flags & CO_CROSS)) {
-                if (!sync && (*s == ':' || *s == '.' && *(s + 1) == ':')) {
+                if (!sync && (*s == ':' || (*s == '.' && *(s + 1) == ':'))) {
                     sfstrseek(sp, 0, SEEK_SET);
                     goto done;
                 }

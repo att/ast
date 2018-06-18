@@ -137,7 +137,7 @@ Cojob_t *cowait(Coshell_t *co, Cojob_t *job, int timeout) {
     static unsigned long serial = 0;
 
     serial++;
-    if (co || job && (co = job->coshell)) {
+    if (co || (job && (co = job->coshell))) {
         any = 0;
     } else if (!(co = state.coshells)) {
         goto echild;
@@ -257,7 +257,7 @@ zombies:
 
             while (isspace(*s)) s++;
             type = *s;
-            if (!type || type != 'a' && type != 'j' && type != 'k' && type != 'x') {
+            if (!type || (type != 'a' && type != 'j' && type != 'k' && type != 'x')) {
                 goto invalid;
             }
             while (*++s && !isspace(*s))

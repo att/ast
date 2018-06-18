@@ -203,7 +203,7 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
             if (n > 0) {
                 t = strrchr(s = av[0], '/');
                 if (t) av[0] = t + 1;
-                if (flags || (co->flags & CO_DEVFD) && strmatch(s, "*ksh*")) av[n++] = devfd;
+                if (flags || ((co->flags & CO_DEVFD) && strmatch(s, "*ksh*"))) av[n++] = devfd;
                 av[n] = 0;
                 sfsprintf(evbuf, sizeof(evbuf), "%s=%d", CO_ENV_MSGFD, co->gsmfd);
                 ev[0] = evbuf;
@@ -357,7 +357,7 @@ nope:
     i = errno;
     s = sh[1];
     if (!s ||
-        (s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && !streq(s, CO_ID)) {
+        ((s = (t = strrchr(s, '/')) ? (t + 1) : s) && !strmatch(s, "?(k)sh") && !streq(s, CO_ID))) {
         error(2, "export %s={ksh,sh,%s}", CO_ENV_SHELL, CO_ID);
     }
     coclose(co);
