@@ -161,7 +161,8 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
             } else {
                 if (sig >= shp->st.trapmax) shp->st.trapmax = sig + 1;
                 arg = shp->st.trapcom[sig];
-                shp->st.trapcom[sig] = Empty;
+                // Empty trap handler
+                shp->st.trapcom[sig] = strdup("");
                 sh_sigtrap(shp, sig);
                 if (!(shp->sigflag[sig] & SH_SIGOFF)) {
                     char *cp = action;

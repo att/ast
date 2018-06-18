@@ -86,7 +86,7 @@ static_fn int io_usevex(struct ionod *iop) {
 #define IOUSEVEX 0
 #endif
 
-// ======== command execution ========
+    // ======== command execution ========
 
 #if !SHOPT_DEVFD
 static_fn void fifo_check(void *handle) {
@@ -1565,7 +1565,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     }
                     if (type & FAMP) {
                         if (sh_isstate(shp, SH_PROFILE) || sh_isstate(shp, SH_INTERACTIVE)) {
-                            /* print job number */
+                        /* print job number */
 #ifdef JOBS
 #if SHOPT_COSHELL
                             sfprintf(sfstderr, "[%d]\t%s\n", jobid, sh_pid2str(shp, parent));
@@ -1774,9 +1774,12 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     struct checkpt *buffp =
                         (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
                     shp->st.otrapcom = 0;
-                    if ((nsig = shp->st.trapmax * sizeof(char *)) > 0 || shp->st.trapcom[0]) {
-                        nsig += sizeof(char *);
-                        memcpy(savsig = malloc(nsig), (char *)&shp->st.trapcom[0], nsig);
+
+                    nsig = shp->st.trapmax;
+                    if (nsig > 0 || shp->st.trapcom[0]) {
+                        int trapcom_size = (shp->st.trapmax + 1) * sizeof(char *);
+                        savsig = malloc(trapcom_size);
+                        memcpy(savsig, shp->st.trapcom, trapcom_size);
                         shp->st.otrapcom = (char **)savsig;
                     }
                     sh_sigreset(shp, 0);
@@ -1857,7 +1860,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 job_lock();
                 nlock++;
                 do {
-                    // Create the pipe.
+                // Create the pipe.
 #if SHOPT_COSHELL
                     tt = t->lst.lstrit;
                     if (shp->coshell && !showme) {
@@ -3220,10 +3223,11 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     struct dolnod *argsav = 0, *saveargfor;
     struct sh_scoped savst, *prevscope;
     struct argnod *envlist = 0;
-    int jmpval;
+    int isig, jmpval;
     volatile int r = 0;
     int n;
     char *savstak;
+    char **savsig;
     struct funenv *fp = 0;
     struct checkpt *buffp = (struct checkpt *)stkalloc(shp->stk, sizeof(struct checkpt));
     Namval_t *nspace = shp->namespace;
@@ -3274,9 +3278,14 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     }
     shp->st.cmdname = argv[0];
     // Save trap table.
-    if ((nsig = shp->st.trapmax * sizeof(char *)) > 0 || shp->st.trapcom[0]) {
-        nsig += sizeof(char *);
-        memcpy(savstak = stkalloc(shp->stk, nsig), (char *)&shp->st.trapcom[0], nsig);
+    nsig = shp->st.trapmax;
+    if (nsig > 0 || shp->st.trapcom[0]) {
+        ++nsig;
+        savsig = malloc(nsig * sizeof(char *));
+        // Contents of shp->st.trapcom may change
+        for (isig = 0; isig < nsig; ++isig) {
+            savsig[isig] = shp->st.trapcom[isig] ? strdup(shp->st.trapcom[isig]) : NULL;
+        }
     }
     sh_sigreset(shp, 0);
     argsav = sh_argnew(shp, argv, &saveargfor);
@@ -3339,9 +3348,16 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     shp->topscope = (Shscope_t *)prevscope;
     nv_getval(sh_scoped(shp, IFSNOD));
     shp->end_fn = 0;
-    if (nsig) memcpy((char *)&shp->st.trapcom[0], savstak, nsig);
+    if (nsig) {
+        for (isig = 0; isig < nsig; ++isig) {
+            if (shp->st.trapcom[isig]) {
+                free(shp->st.trapcom[isig]);
+            }
+        }
+        memcpy(shp->st.trapcom, savsig, nsig * sizeof(char *));
+        free((void *)savsig);
+    }
     shp->trapnote = 0;
-    if (nsig) stkset(shp->stk, savstak, 0);
     shp->options = options;
     shp->last_root = last_root;
     if (jmpval == SH_JMPSUB) siglongjmp(*shp->jmplist, jmpval);
