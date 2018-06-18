@@ -1931,11 +1931,13 @@ size_t ast_mbrchar(wchar_t *w, const char *s, size_t n, Mbstate_t *q) {
     size_t m;
 
     m = (*ast._ast_mbrtowc)(w, s, n, (mbstate_t *)q);
-    if (m == (size_t)(-2) && (q->mb_errno = E2BIG) || m == (size_t)(-1) && (q->mb_errno = EILSEQ)) {
+    if (m == (size_t)(-1) || m == (size_t)(-2)) {
+        q->mb_errno = m == (size_t)(-2) ? E2BIG : EILSEQ;
         m = 1;
         if (w) *w = n ? *(unsigned char *)s : 0;
-    } else
+    } else {
         q->mb_errno = 0;
+    }
     return m;
 }
 
@@ -2253,12 +2255,14 @@ static char *single(int category, Lc_t *lc, unsigned int flags) {
             locales[category] = lc_categories[category].prev;
             return 0;
         }
-        if ((lc->flags & LC_default) ||
-            category == AST_LC_MESSAGES && lc->name[0] == 'e' && lc->name[1] == 'n' &&
-                (lc->name[2] == 0 || lc->name[2] == '_' && lc->name[3] == 'U'))
+        if (lc->flags & LC_default) {
             ast.locale.set &= ~(1 << category);
-        else
+        } else if (category == AST_LC_MESSAGES && lc->name[0] == 'e' && lc->name[1] == 'n' &&
+                   (lc->name[2] == 0 || (lc->name[2] == '_' && lc->name[3] == 'U'))) {
+            ast.locale.set &= ~(1 << category);
+        } else {
             ast.locale.set |= (1 << category);
+        }
 
     } else if (lc_categories[category].flags ^ flags) {
         lc_categories[category].flags &= ~(LC_setenv | LC_setlocale);
