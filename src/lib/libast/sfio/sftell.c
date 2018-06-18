@@ -29,7 +29,7 @@
 */
 
 Sfoff_t sftell(Sfio_t *f) {
-    reg int mode;
+    int mode;
     Sfoff_t p;
     SFMTXDECL(f);
 

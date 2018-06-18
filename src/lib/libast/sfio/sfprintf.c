@@ -30,7 +30,7 @@
 
 int sfprintf(Sfio_t *f, const char *form, ...) {
     va_list args;
-    reg int rv;
+    int rv;
 
     va_start(args, form);
     rv = sfvprintf(f, form, args);

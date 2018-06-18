@@ -356,7 +356,7 @@ void *sfsetbuf(Sfio_t *f, void *buf, size_t size) {
                         f->flags |= SF_LINE | SF_WCWIDTH;
                     else /* special case /dev/null */
                     {
-                        reg int dev, ino;
+                        int dev, ino;
                         static int null_checked, null_dev, null_ino;
                         dev = (int)st.st_dev;
                         ino = (int)st.st_ino;

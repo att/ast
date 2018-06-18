@@ -32,11 +32,11 @@
 */
 #define MAX_SSIZE ((ssize_t)((~((size_t)0)) >> 1))
 
-Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, reg int rc) {
-    reg uchar *cp, *next;
-    reg ssize_t r, w;
-    reg uchar *endb;
-    reg int direct;
+Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, int rc) {
+    uchar *cp, *next;
+    ssize_t r, w;
+    uchar *endb;
+    int direct;
     Sfoff_t n_move, sk, cur;
     uchar *rbuf = NULL;
     ssize_t rsize = 0;
@@ -114,7 +114,7 @@ Sfoff_t sfmove(Sfio_t *fr, Sfio_t *fw, Sfoff_t n, reg int rc) {
                that if we overread, the left over can be retrieved
             */
             if (!(fr->flags & SF_STRING) && !(fr->bits & SF_MMAP) && (n < 0 || fr->extent >= 0)) {
-                reg ssize_t maxw = 4 * (_Sfpage > 0 ? _Sfpage : SF_PAGE);
+                ssize_t maxw = 4 * (_Sfpage > 0 ? _Sfpage : SF_PAGE);
 
                 /* direct transfer to a seekable write stream */
                 if (fw && fw->extent >= 0 && w <= (fw->endb - fw->next)) {

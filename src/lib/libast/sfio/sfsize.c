@@ -29,7 +29,7 @@
 */
 Sfoff_t sfsize(Sfio_t *f) {
     Sfdisc_t *disc;
-    reg int mode;
+    int mode;
     Sfoff_t s;
     SFMTXDECL(f);
 

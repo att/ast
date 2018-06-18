@@ -30,10 +30,10 @@
 **	Written by Kiem-Phong Vo.
 */
 
-int sfpoll(Sfio_t **fa, reg int n, int tm) {
-    reg int r, c, m, np, eintr;
-    reg Sfio_t *f;
-    reg int *status, *check;
+int sfpoll(Sfio_t **fa, int n, int tm) {
+    int r, c, m, np, eintr;
+    Sfio_t *f;
+    int *status, *check;
 
     if (n <= 0 || !fa) return -1;
 

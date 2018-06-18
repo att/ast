@@ -33,8 +33,8 @@
 
 /* hole preserving writes */
 static ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
-    reg char *sp, *wbuf, *endbuf;
-    reg ssize_t s, w, wr;
+    char *sp, *wbuf, *endbuf;
+    ssize_t s, w, wr;
 
     s = w = 0;
     wbuf = buf;
@@ -114,9 +114,9 @@ static ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
 }
 
 ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
-    reg ssize_t w;
-    reg Sfdisc_t *dc;
-    reg int local, oerrno;
+    ssize_t w;
+    Sfdisc_t *dc;
+    int local, oerrno;
     SFMTXDECL(f);
 
     SFMTXENTER(f, (ssize_t)(-1));
@@ -140,7 +140,7 @@ ssize_t sfwr(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
         else { /* warn that a write is about to happen */
             SFDISC(f, dc, writef);
             if (dc && dc->exceptf && (f->flags & SF_IOCHECK)) {
-                reg int rv;
+                int rv;
                 if (local) SETLOCAL(f);
                 if ((rv = _sfexcept(f, SF_WRITE, n, dc)) > 0)
                     n = rv;

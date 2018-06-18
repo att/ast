@@ -29,10 +29,10 @@
 */
 
 ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
-    reg uchar *ps;
-    reg ssize_t p, w;
+    uchar *ps;
+    ssize_t p, w;
     uchar buf[128];
-    reg int local;
+    int local;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
     SFMTXENTER(f, -1);

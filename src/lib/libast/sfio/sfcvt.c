@@ -67,9 +67,9 @@ static char *Zero = "0";
 
 char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sign, int *len,
              int format) {
-    reg char *sp;
-    reg long n, v;
-    reg char *ep, *b, *endsp, *t;
+    char *sp;
+    long n, v;
+    char *ep, *b, *endsp, *t;
     int x;
     _ast_flt_unsigned_max_t m;
 
@@ -334,7 +334,7 @@ char *_sfcvt(void *vp, char *buf, size_t size, int n_digit, int *decpt, int *sig
             sp = ep;
         else {
             if ((format & SFFMT_EFORMAT) && *decpt == 0 && f > 0.) {
-                reg double d;
+                double d;
                 while ((long)(d = f * 10.) == 0) {
                     f = d;
                     *decpt -= 1;

@@ -40,7 +40,7 @@ static int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
 }
 
 int sfungetc(Sfio_t *f, int c) {
-    reg Sfio_t *uf;
+    Sfio_t *uf;
     SFMTXDECL(f);
 
     SFMTXENTER(f, -1);
@@ -69,7 +69,7 @@ int sfungetc(Sfio_t *f, int c) {
 
     /* space for data */
     if (f->next == f->data) {
-        reg uchar *data;
+        uchar *data;
         if (f->size < 0) f->size = 0;
         if (!(data = (uchar *)malloc(f->size + 16))) {
             c = -1;

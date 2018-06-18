@@ -30,7 +30,7 @@
 
 int sfscanf(Sfio_t *f, const char *form, ...) {
     va_list args;
-    reg int rv;
+    int rv;
 
     va_start(args, form);
 
@@ -58,7 +58,7 @@ int sfvsscanf(const char *s, const char *form, va_list args) {
 
 int sfsscanf(const char *s, const char *form, ...) {
     va_list args;
-    reg int rv;
+    int rv;
     va_start(args, form);
 
     rv = (s && form) ? sfvsscanf(s, form, args) : -1;

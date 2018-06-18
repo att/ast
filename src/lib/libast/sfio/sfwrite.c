@@ -29,9 +29,9 @@
 */
 
 ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
-    reg uchar *s, *begs, *next;
-    reg ssize_t w;
-    reg int local;
+    uchar *s, *begs, *next;
+    ssize_t w;
+    int local;
     SFMTXDECL(f);
 
     SFMTXENTER(f, (ssize_t)(-1));
@@ -51,7 +51,7 @@ ssize_t sfwrite(Sfio_t *f, const void *buf, size_t n) {
 
         if (f->mode & SF_PKRD) { /* read past peeked data */
             char buf[16];
-            reg ssize_t r;
+            ssize_t r;
 
             for (w = n; w > 0;) {
                 if ((r = w) > sizeof(buf)) r = sizeof(buf);

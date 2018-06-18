@@ -29,7 +29,7 @@
 */
 
 int sfpurge(Sfio_t *f) {
-    reg int mode;
+    int mode;
     SFMTXDECL(f);
 
     SFMTXENTER(f, -1);

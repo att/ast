@@ -130,7 +130,7 @@ Sfio_t *_sfopenat(int cwd, Sfio_t *f, const char *file, const char *mode) {
             }
             if (oflags & O_TRUNC) /* truncate file */
             {
-                reg int tf;
+                int tf;
                 while ((tf = syscreatf(file, SF_CREATMODE)) < 0 && errno == EINTR) errno = 0;
                 CLOSE(tf);
             }
@@ -167,8 +167,8 @@ Sfio_t *_sfopen(Sfio_t *f, const char *file, const char *mode) {
     return _sfopenat(AT_FDCWD, f, file, mode);
 }
 
-int _sftype(reg const char *mode, int *oflagsp, int *fflagsp, int *uflagp) {
-    reg int sflags, oflags, fflags, uflag;
+int _sftype(const char *mode, int *oflagsp, int *fflagsp, int *uflagp) {
+    int sflags, oflags, fflags, uflag;
 
     if (!mode) return 0;
 

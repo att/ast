@@ -251,8 +251,8 @@ no_match: /* this unget is lossy on a stream with small buffer */
 }
 #endif /*_has_multibyte*/
 
-int sfvscanf(Sfio_t *f, reg const char *form, va_list args) {
-    reg int inp, shift, base, width;
+int sfvscanf(Sfio_t *f, const char *form, va_list args) {
+    int inp, shift, base, width;
     ssize_t size;
     int fmt, flags, dot, n_assign, v, n, n_input;
     char *sp;

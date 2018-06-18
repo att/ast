@@ -40,9 +40,6 @@
 
 #include "debug.h"
 
-/* short-hand notations */
-#define reg register
-
 /* min #bits for a hash table. (1<<this) is table size */
 #define DT_HTABLE 10
 

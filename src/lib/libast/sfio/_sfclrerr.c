@@ -25,4 +25,4 @@
 
 #undef sfclrerr
 
-int sfclrerr(reg Sfio_t *f) { return __sf_clrerr(f); }
+int sfclrerr(Sfio_t *f) { return __sf_clrerr(f); }

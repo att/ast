@@ -31,7 +31,7 @@
 */
 
 char *sfvprints(const char *form, va_list args) {
-    reg int rv;
+    int rv;
     Sfnotify_f notify = _Sfnotify;
     static Sfio_t *f;
 

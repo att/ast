@@ -29,9 +29,9 @@
 **	Written by Kiem-Phong Vo (06/27/90).
 */
 
-ssize_t sfpeek(reg Sfio_t *f, void **bp, reg size_t size) {
-    reg ssize_t n, sz;
-    reg int mode;
+ssize_t sfpeek(Sfio_t *f, void **bp, size_t size) {
+    ssize_t n, sz;
+    int mode;
 
     /* query for the extent of the remainder of the buffer */
     if ((sz = size) == 0 || !bp) {

@@ -201,7 +201,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
     }
 
     if (!(f->flags & SF_STRING)) { /* this stream may have to be reinitialized */
-        reg int reinit = 0;
+        int reinit = 0;
 #define DISCF(dst, iof, type) (dst ? dst->iof : NULL)
 #define REINIT(oiof, iof, type)                      \
     if (!reinit) {                                   \

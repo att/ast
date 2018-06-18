@@ -43,8 +43,8 @@ static char Meta[1 << CHAR_BIT], **Path;
 
 /* execute command directly if possible; else use the shell */
 static void execute(const char *argcmd) {
-    reg char *s, *cmd, **argv, **p, *interp;
-    reg int n;
+    char *s, *cmd, **argv, **p, *interp;
+    int n;
 
     /* define interpreter */
     if (!(interp = getenv("SHELL")) || !interp[0]) interp = "/bin/sh";
@@ -115,10 +115,10 @@ do_interp:
 
 Sfio_t *sfpopen(Sfio_t *f, const char *command, const char *mode) {
 #if _PACKAGE_ast
-    reg Proc_t *proc;
-    reg int sflags;
-    reg long flags;
-    reg int pflags;
+    Proc_t *proc;
+    int sflags;
+    long flags;
+    int pflags;
     char *av[4];
 
     if (!command || !command[0] || !mode) return 0;
@@ -148,13 +148,13 @@ Sfio_t *sfpopen(Sfio_t *f, const char *command, const char *mode) {
     procfree(proc);
     return f;
 #else
-    reg int pid, fd, pkeep, ckeep, sflags;
+    int pid, fd, pkeep, ckeep, sflags;
     int stdio, parent[2], child[2];
     Sfio_t sf;
 
     /* set shell meta characters */
     if (Meta[0] == 0) {
-        reg char *s;
+        char *s;
         Meta[0] = 1;
         for (s = "!@#$%&*(){}[]:;<>~`'|\"\\"; *s; ++s) Meta[(uchar)s[0]] = 1;
     }

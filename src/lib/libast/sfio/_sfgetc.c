@@ -25,4 +25,4 @@
 
 #undef sfgetc
 
-int sfgetc(reg Sfio_t *f) { return __sf_getc(f); }
+int sfgetc(Sfio_t *f) { return __sf_getc(f); }

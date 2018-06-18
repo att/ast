@@ -108,8 +108,8 @@ static int filterexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
 }
 
 int sfdcfilter(Sfio_t *f, const char *cmd) {
-    reg Filter_t *fi;
-    reg Sfio_t *filter;
+    Filter_t *fi;
+    Sfio_t *filter;
 
     /* open filter for read&write */
     if (!(filter = sfpopen(NULL, cmd, "r+"))) return -1;

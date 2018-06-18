@@ -36,7 +36,7 @@
 ** link list and during such walks may free up streams&pools. Free pools will be
 ** reused in newpool().
 */
-static int delpool(reg Sfpool_t *p) {
+static int delpool(Sfpool_t *p) {
     POOLMTXENTER(p);
 
     if (p->s_sf && p->sf != p->array) free((void *)p->sf);
@@ -45,8 +45,8 @@ static int delpool(reg Sfpool_t *p) {
     POOLMTXRETURN(p, 0);
 }
 
-static Sfpool_t *newpool(reg int mode) {
-    reg Sfpool_t *p, *last = &_Sfpool;
+static Sfpool_t *newpool(int mode) {
+    Sfpool_t *p, *last = &_Sfpool;
 
     /* look to see if there is a free pool */
     for (last = &_Sfpool, p = last->next; p; last = p, p = p->next) {
@@ -85,9 +85,9 @@ static Sfpool_t *newpool(reg int mode) {
 
 /* move a stream to head */
 static int _sfphead(Sfpool_t *p, Sfio_t *f, int n) {
-    reg Sfio_t *head;
-    reg ssize_t k, w, v;
-    reg int rv;
+    Sfio_t *head;
+    ssize_t k, w, v;
+    int rv;
 
     POOLMTXENTER(p);
 
@@ -182,9 +182,9 @@ done:
     POOLMTXRETURN(p, 0);
 }
 
-static int _sfpmove(reg Sfio_t *f, reg int type) {
-    reg Sfpool_t *p;
-    reg int n;
+static int _sfpmove(Sfio_t *f, int type) {
+    Sfpool_t *p;
+    int n;
 
     if (type > 0)
         return _sfsetpool(f);
@@ -198,7 +198,7 @@ static int _sfpmove(reg Sfio_t *f, reg int type) {
     }
 }
 
-Sfio_t *sfpool(reg Sfio_t *f, reg Sfio_t *pf, reg int mode) {
+Sfio_t *sfpool(Sfio_t *f, Sfio_t *pf, int mode) {
     int k;
     Sfpool_t *p;
     Sfio_t *rv;

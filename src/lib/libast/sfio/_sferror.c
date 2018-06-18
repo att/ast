@@ -25,4 +25,4 @@
 
 #undef sferror
 
-int sferror(reg Sfio_t *f) { return __sf_error(f); }
+int sferror(Sfio_t *f) { return __sf_error(f); }

@@ -29,7 +29,7 @@
 */
 
 int sfset(Sfio_t *f, int flags, int set) {
-    reg int oflags, tflags, rv;
+    int oflags, tflags, rv;
     SFMTXDECL(f);
 
     SFMTXENTER(f, 0);

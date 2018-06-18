@@ -29,10 +29,10 @@
 */
 
 void *sfreserve(Sfio_t *f, ssize_t size, int type) {
-    reg ssize_t n, now, sz, iosz;
-    reg Sfrsrv_t *rsrv;
-    reg void *data;
-    reg int mode, local;
+    ssize_t n, now, sz, iosz;
+    Sfrsrv_t *rsrv;
+    void *data;
+    int mode, local;
     SFMTXDECL(f);
 
     SFMTXENTER(f, NULL);

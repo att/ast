@@ -25,4 +25,4 @@
 
 #undef sfputl
 
-int sfputl(reg Sfio_t *f, Sflong_t l) { return __sf_putl(f, l); }
+int sfputl(Sfio_t *f, Sflong_t l) { return __sf_putl(f, l); }

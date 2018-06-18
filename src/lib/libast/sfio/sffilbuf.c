@@ -33,9 +33,9 @@
 **	Written by Kiem-Phong Vo
 */
 
-int _sffilbuf(Sfio_t *f, reg int n) {
-    reg ssize_t r;
-    reg int first, local, rcrv, rc, justseek;
+int _sffilbuf(Sfio_t *f, int n) {
+    ssize_t r;
+    int first, local, rcrv, rc, justseek;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */
 
     SFMTXENTER(f, -1);

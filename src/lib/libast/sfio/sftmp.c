@@ -55,7 +55,7 @@ struct _file_s {
 static File_t *File; /* list pf temp files	*/
 
 static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
-    reg File_t *ff, *last;
+    File_t *ff, *last;
 
     NOTUSED(val);
 
@@ -86,7 +86,7 @@ static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
 }
 
 static void _rmfiles(void) {
-    reg File_t *ff, *next;
+    File_t *ff, *next;
 
     (void)vtmtxlock(_Sfmutex);
     for (ff = File; ff; ff = next) {
@@ -102,7 +102,7 @@ static Sfdisc_t Rmdisc = {NULL, NULL, NULL, _tmprmfile, NULL};
 
 static int _rmtmp(Sfio_t *f, char *file) {
 #if _tmp_rmfail /* remove only when stream is closed */
-    reg File_t *ff;
+    File_t *ff;
 
     if (!File) atexit(_rmfiles);
 
@@ -126,8 +126,8 @@ static int _rmtmp(Sfio_t *f, char *file) {
 static char **Tmppath, **Tmpcur;
 
 char **_sfgetpath(char *path) {
-    reg char *p, **dirs;
-    reg int n;
+    char *p, **dirs;
+    int n;
 
     if (!(path = getenv(path))) return NULL;
 
@@ -160,7 +160,7 @@ char **_sfgetpath(char *path) {
 #endif /*!_PACKAGE_ast*/
 
 static int _tmpfd(Sfio_t *f) {
-    reg char *file;
+    char *file;
     int fd;
 
 #if _PACKAGE_ast
@@ -192,7 +192,7 @@ static int _tmpfd(Sfio_t *f) {
         static ulong Key, A;
         if (A == 0 || t > 0) /* get a quasi-random coefficient */
         {
-            reg int r;
+            int r;
             A = (ulong)time(NULL) ^ (((ulong)(&t)) >> 3);
             if (Key == 0) Key = (A >> 16) | ((A & 0xffff) << 16);
             A ^= Key;
@@ -225,8 +225,8 @@ static int _tmpfd(Sfio_t *f) {
 }
 
 static int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
-    reg int fd, m;
-    reg Sfio_t *sf;
+    int fd, m;
+    Sfio_t *sf;
     Sfio_t newf, savf;
     Sfnotify_f notify = _Sfnotify;
 

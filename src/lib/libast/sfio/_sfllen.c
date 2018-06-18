@@ -25,4 +25,4 @@
 
 #undef sfllen
 
-int sfllen(reg Sflong_t v) { return __sf_llen(v); }
+int sfllen(Sflong_t v) { return __sf_llen(v); }

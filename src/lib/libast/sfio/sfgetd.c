@@ -29,8 +29,8 @@
 */
 
 Sfdouble_t sfgetd(Sfio_t *f) {
-    reg uchar *s, *ends, c;
-    reg int p, sign, exp;
+    uchar *s, *ends, c;
+    int p, sign, exp;
     Sfdouble_t v;
     SFMTXDECL(f); /* declare a local stream variable for multithreading */
 

@@ -31,8 +31,8 @@
 */
 
 Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
-    reg Sfio_t *f;
-    reg int sflags;
+    Sfio_t *f;
+    int sflags;
 
     SFONCE(); /* initialize mutexes */
 

@@ -450,7 +450,7 @@ static const unsigned char ldbl_inf[] = {_ast_ldbl_inf_init};
 
 /* function to initialize conversion tables */
 static int sfcvinit() {
-    reg int d, l;
+    int d, l;
 
     for (d = 0; d <= SF_MAXCHAR; ++d) {
         _Sfcv36[d] = SF_RADIX;

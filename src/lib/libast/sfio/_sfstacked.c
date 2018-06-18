@@ -25,4 +25,4 @@
 
 #undef sfstacked
 
-int sfstacked(reg Sfio_t *f) { return __sf_stacked(f); }
+int sfstacked(Sfio_t *f) { return __sf_stacked(f); }

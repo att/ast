@@ -29,7 +29,7 @@
 */
 
 static int _sfdup(int fd, int newfd) {
-    reg int dupfd;
+    int dupfd;
 
 #ifdef F_DUPFD /* the simple case */
     while ((dupfd = sysfcntlf(fd, F_DUPFD, newfd)) < 0 && errno == EINTR) errno = 0;
@@ -49,7 +49,7 @@ static int _sfdup(int fd, int newfd) {
 }
 
 int sfsetfd(Sfio_t *f, int newfd) {
-    reg int oldfd;
+    int oldfd;
     SFMTXDECL(f);
 
     SFMTXENTER(f, -1);

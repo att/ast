@@ -33,7 +33,7 @@
     (DT_INSERT | DT_APPEND | DT_DELETE | DT_ATTACH | DT_DETACH | DT_RELINK | DT_CLEAR | \
      DT_FLATTEN | DT_EXTRACT | DT_RESTORE | DT_STAT)
 
-static void *dtvsearch(Dt_t *dt, reg void *obj, reg int type) {
+static void *dtvsearch(Dt_t *dt, void *obj, int type) {
     int cmp;
     Dt_t *d, *p;
     void *o, *n, *oky, *nky;
@@ -112,8 +112,8 @@ static void *dtvsearch(Dt_t *dt, reg void *obj, reg int type) {
     }
 }
 
-Dt_t *dtview(reg Dt_t *dt, reg Dt_t *view) {
-    reg Dt_t *d;
+Dt_t *dtview(Dt_t *dt, Dt_t *view) {
+    Dt_t *d;
 
     if (view && view->meth != dt->meth) /* must use the same method */
         return NULL;

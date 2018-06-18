@@ -39,7 +39,7 @@ typedef struct _tee_s {
 
 /*	write to the teed stream.  */
 static ssize_t teewrite(Sfio_t *f, const void *buf, size_t size, Sfdisc_t *disc) {
-    reg Tee_t *te = (Tee_t *)disc;
+    Tee_t *te = (Tee_t *)disc;
 
     /* tee data if still ok */
     if (te->status == 0 && sfwrite(te->tee, buf, size) != (ssize_t)size) te->status = -1;
@@ -56,7 +56,7 @@ static int teeexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
 }
 
 int sfdctee(Sfio_t *f, Sfio_t *tee) {
-    reg Tee_t *te;
+    Tee_t *te;
 
     if (!(te = (Tee_t *)malloc(sizeof(Tee_t)))) return -1;
 

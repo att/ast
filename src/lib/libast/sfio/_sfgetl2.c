@@ -26,7 +26,7 @@
 
 #undef _sfgetl2
 
-long _sfgetl2(reg Sfio_t *f, long v) {
+long _sfgetl2(Sfio_t *f, long v) {
     if (v < 0) return -1;
     sfungetc(f, v);
     return sfgetl(f);

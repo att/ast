@@ -419,7 +419,6 @@
 #endif
 
 /* short-hands */
-#define reg register
 #ifndef uchar
 #define uchar unsigned char
 #endif

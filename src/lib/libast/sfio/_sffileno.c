@@ -25,4 +25,4 @@
 
 #undef sffileno
 
-int sffileno(reg Sfio_t *f) { return __sf_fileno(f); }
+int sffileno(Sfio_t *f) { return __sf_fileno(f); }

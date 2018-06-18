@@ -48,9 +48,9 @@
 //          =0: no peeking, if rc>=0, must get a single record
 //
 ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
-    reg ssize_t r;
-    reg int ntry, t;
-    reg char *buf = (char *)argbuf, *endbuf;
+    ssize_t r;
+    int ntry, t;
+    char *buf = (char *)argbuf, *endbuf;
 
     if (rc < 0 && tm < 0 && action <= 0) return sysreadf(fd, buf, n);
 
@@ -259,7 +259,7 @@ ssize_t sfpkrd(int fd, void *argbuf, size_t n, int rc, long tm, int action) {
 
     /* successful peek, find the record end */
     if (rc >= 0) {
-        reg char *sp;
+        char *sp;
 
         t = action == 0 ? 1 : action < 0 ? -action : action;
         for (endbuf = (sp = buf) + r; sp < endbuf;)
