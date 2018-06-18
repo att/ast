@@ -249,7 +249,7 @@ again:
             break;
         }
         if ((*s == 'P' || *s == 'p') &&
-            (!isalpha(*(s + 1)) || (*(s + 1) == 'T' || *(s + 1) == 't') && !isalpha(*(s + 2)))) {
+            (!isalpha(*(s + 1)) || (*(s + 1) == 'T' || (*(s + 1) == 't' && !isalpha(*(s + 2)))))) {
             Tm_t otm;
 
             /*
@@ -659,7 +659,7 @@ again:
                     n /= 10;
                 } else if (*t != '-')
                     k = 1;
-                else if (*++t && dig1(t, k) < 1 || k > 7)
+                else if ((*++t && dig1(t, k) < 1) || k > 7)
                     break;
                 if (n < 0 || n > 53) break;
                 if (k == 7) k = 0;
@@ -668,10 +668,10 @@ again:
                 set |= YEAR | MONTH | DAY;
                 s = t;
                 continue;
-            } else if (w == 6 || w == 8 && (n / 1000000) > 12) {
+            } else if (w == 6 || (w == 8 && (n / 1000000) > 12)) {
                 t = (char *)s;
                 flags = 0;
-                if (w == 8 || w == 6 && *u != 'T' && *u != 't') {
+                if (w == 8 || (w == 6 && *u != 'T' && *u != 't')) {
                     dig4(t, m);
                     if ((m -= 1900) < TM_WINDOW) break;
                 } else {
@@ -681,11 +681,11 @@ again:
                 flags |= YEAR;
                 if (dig2(t, l) <= 0 || l > 12) break;
                 flags |= MONTH;
-                if (*t != 'T' && *t != 't' || !isdigit(*++t)) {
+                if ((*t != 'T' && *t != 't') || !isdigit(*++t)) {
                     if (w == 6) goto save_yymm;
                     if (dig2(t, k) < 1 || k > 31) break;
                     flags |= DAY;
-                    if (*t != 'T' && *t != 't' || !isdigit(*++t)) goto save_yymmdd;
+                    if ((*t != 'T' && *t != 't') || !isdigit(*++t)) goto save_yymmdd;
                 }
                 n = strtol(s = t, &t, 0);
                 if ((t - s) < 2) break;
@@ -745,14 +745,14 @@ again:
                 else {
                     message((-1, "AHA#%d t=\"%s\"", __LINE__, t));
                     if (!(state & (LAST | NEXT | THIS)) &&
-                        ((i = t - s) == 4 &&
-                             (*t == '.' && isdigit(*(t + 1)) && isdigit(*(t + 2)) &&
-                                  *(t + 3) != '.' ||
-                              (!*t || isspace(*t) || *t == '_' || isalnum(*t)) && n >= 0 &&
-                                  (n % 100) < 60 &&
-                                  ((m = (n / 100)) < 20 ||
-                                   m < 24 && !((set | state) & (YEAR | MONTH | HOUR | MINUTE)))) ||
-                         i > 4 && i <= 12)) {
+                        (((i = t - s) == 4 &&
+                          ((*t == '.' && isdigit(*(t + 1)) && isdigit(*(t + 2)) &&
+                            *(t + 3) != '.') ||
+                           ((!*t || isspace(*t) || *t == '_' || isalnum(*t)) && n >= 0 &&
+                            (n % 100) < 60 &&
+                            ((m = (n / 100)) < 20 ||
+                             (m < 24 && !((set | state) & (YEAR | MONTH | HOUR | MINUTE))))))) ||
+                         (i > 4 && i <= 12))) {
                         /*
                          * various { date(1) touch(1) } formats
                          *
@@ -798,9 +798,9 @@ again:
                                 x = s;
                                 if (!dig2(x, m) || m > 12 || !dig2(x, m) || m > 31 ||
                                     dig2(x, m) > 24 || dig2(x, m) > 60 ||
-                                    dig2(x, m) <= 60 && !(tm_info.flags & TM_DATESTYLE))
+                                    (dig2(x, m) <= 60 && !(tm_info.flags & TM_DATESTYLE))) {
                                     dig2(s, m);
-                                else {
+                                } else {
                                     u -= 2;
                                     i -= 2;
                                     x = s + 8;
@@ -866,8 +866,8 @@ again:
                     for (s = t; skip[*s]; s++)
                         ;
                     message((-1, "AHA#%d s=\"%s\"", __LINE__, s));
-                    if (*s == ':' || *s == '.' && ((set | state) & (YEAR | MONTH | DAY | HOUR)) ==
-                                                      (YEAR | MONTH | DAY)) {
+                    if (*s == ':' || (*s == '.' && ((set | state) & (YEAR | MONTH | DAY | HOUR)) ==
+                                                       (YEAR | MONTH | DAY))) {
                         c = *s;
                         if ((state & HOUR) || n > 24) break;
                         while (isspace(*++s) || *s == '_')
@@ -928,9 +928,10 @@ again:
                                     f = 0;
                             }
                             if (f > 0) {
-                                if (i > k || i == k && j > l) f--;
-                            } else if (i < k || i == k && j < l)
+                                if (i > k || (i == k && j > l)) f--;
+                            } else if (i < k || (i == k && j < l)) {
                                 f++;
+                            }
                             if (f > 0) {
                                 tm->tm_hour += f * 24;
                                 while (tm->tm_hour >= 24) {
@@ -955,10 +956,11 @@ again:
             if (*s == '-' || *s == '+') {
                 if (((set | state) & (MONTH | DAY | HOUR | MINUTE)) ==
                         (MONTH | DAY | HOUR | MINUTE) ||
-                    *s == '+' && (!isdigit(s[1]) || !isdigit(s[2]) ||
-                                  s[3] != ':' && (s[3] != '.' || ((set | state) & (YEAR | MONTH)) !=
-                                                                     (YEAR | MONTH))))
+                    (*s == '+' && (!isdigit(s[1]) || !isdigit(s[2]) ||
+                                   (((s[3] != ':' && s[3] != '.') ||
+                                     ((set | state) & (YEAR | MONTH)) != (YEAR | MONTH)))))) {
                     break;
+                }
                 s++;
             } else if (skip[*s])
                 s++;
@@ -1522,7 +1524,7 @@ done:
                 : 1;
         tmfix(tm);
         message((-1, "AHA#%d WORK mday=%d wday=%d", __LINE__, tm->tm_mday, tm->tm_wday));
-        if (tm->tm_wday == 0 && (j = 1) || tm->tm_wday == 6 && (j = 2)) {
+        if ((tm->tm_wday == 0 && (j = 1)) || (tm->tm_wday == 6 && (j = 2))) {
             if ((tm->tm_mday + j) >
                 (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year))))
                 j -= 3;

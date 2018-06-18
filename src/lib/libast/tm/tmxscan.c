@@ -352,7 +352,7 @@ again:
                     if (s == (const char *)*e) goto next;
                     t = x;
                     s = (const char *)*e;
-                    if (!*format || *format == '%' && *(format + 1) == '|') goto done;
+                    if (!*format || (*format == '%' && *(format + 1) == '|')) goto done;
                     goto again;
                 default:
                     goto next;

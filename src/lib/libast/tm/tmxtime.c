@@ -117,8 +117,10 @@ Time_t tmxtime(Tm_t *tm, int west) {
             ;
         t += lp->total;
         n = lp->total - (lp + 1)->total;
-        if (t <= (lp->time + n) && (n > 0 && sec > 59 || n < 0 && sec > (59 + n) && sec <= 59))
+        if (t <= (lp->time + n) &&
+            ((n > 0 && sec > 59) || (n < 0 && sec > (59 + n) && sec <= 59))) {
             t -= n;
+        }
     }
     return tmxsns(t, tm->tm_nsec);
 }

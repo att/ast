@@ -560,7 +560,7 @@ static void load(Lc_info_t *li) {
             v = b;
             e = b + TM_NFORM;
             s = (char *)e;
-            if (tp && memcpy(s, sfstrbase(tp), n) || !tp && sfread(sp, s, n) == n) {
+            if ((tp && memcpy(s, sfstrbase(tp), n)) || (!tp && sfread(sp, s, n) == n)) {
                 s[n] = '\n';
                 while (v < e) {
                     *v++ = s;
