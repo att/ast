@@ -1171,18 +1171,21 @@ loop_fmt:
                     dval = argv.d;
                 }
 
-                if (fmt == 'e' || fmt == 'E' && (v |= SFFMT_UPPER)) {
+                if (fmt == 'e' || fmt == 'E') {
+                    if (fmt == 'E') v |= SFFMT_UPPER;
                     v |= SFFMT_EFORMAT;
                     n = (precis = precis < 0 ? FPRECIS : precis) + 1;
                     ep = _sfcvt(valp, tmp + 1, sizeof(tmp) - 1, min(n, SF_FDIGITS), &decpt, &sign,
                                 &n_s, v);
                     goto e_format;
-                } else if (fmt == 'f' || fmt == 'F' && (v |= SFFMT_UPPER)) {
+                } else if (fmt == 'f' || fmt == 'F') {
+                    if (fmt == 'F') v |= SFFMT_UPPER;
                     precis = precis < 0 ? FPRECIS : precis;
                     ep = _sfcvt(valp, tmp + 1, sizeof(tmp) - 1, min(precis, SF_FDIGITS), &decpt,
                                 &sign, &n_s, v);
                     goto f_format;
-                } else if (fmt == 'a' || fmt == 'A' && (v |= SFFMT_UPPER)) {
+                } else if (fmt == 'a' || fmt == 'A') {
+                    if (fmt == 'A') v |= SFFMT_UPPER;
                     v |= SFFMT_AFORMAT;
                     if (precis < 0) {
                         if (v & SFFMT_LDOUBLE)
@@ -1200,10 +1203,9 @@ loop_fmt:
                     if (!isxdigit(*ep)) goto infinite;
                     if (base < 0) base = 0;
                     goto a_format;
-                } else /* 'g' or 'G' format */
-                {
-                    precis = precis < 0 ? FPRECIS : precis == 0 ? 1 : precis;
+                } else if (fmt == 'g' || fmt == 'G') {
                     if (fmt == 'G') v |= SFFMT_UPPER;
+                    precis = precis < 0 ? FPRECIS : precis == 0 ? 1 : precis;
                     v |= SFFMT_EFORMAT;
                     ep = _sfcvt(valp, tmp + 1, sizeof(tmp) - 1, min(precis, SF_FDIGITS), &decpt,
                                 &sign, &n_s, v);
@@ -1227,6 +1229,8 @@ loop_fmt:
                         precis = n - decpt;
                         goto f_format;
                     }
+                } else {
+                    abort();  // obviously this should never be reached
                 }
 
             e_format: /* build the x.yyyy string */

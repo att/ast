@@ -298,7 +298,7 @@ int sfvscanf(Sfio_t *f, reg const char *form, va_list args) {
 
     SFMTXENTER(f, -1);
 
-    if (!form || f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0) SFMTXRETURN(f, -1);
+    if (!form || (f->mode != SF_READ && _sfmode(f, SF_READ, 0) < 0)) SFMTXRETURN(f, -1);
     SFLOCK(f, 0);
 
     SFinit(f); /* initialize local buffering system */

@@ -102,7 +102,7 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
         /* amount to be read */
         n = s - f->next;
 
-        if (!found && (_Sfmaxr > 0 && un + n + 1 >= _Sfmaxr ||
+        if (!found && ((_Sfmaxr > 0 && un + n + 1 >= _Sfmaxr) ||
                        (f->flags & SF_STRING))) /* already exceed limit */
         {
             us = NULL;

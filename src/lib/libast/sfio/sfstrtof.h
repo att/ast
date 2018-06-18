@@ -297,7 +297,7 @@ S2F_function(const char *str, char **end)
             digits++;
         }
     } else if (c == 'i' || c == 'I') {
-        if ((c = GET(s)) != 'n' && c != 'N' || (c = GET(s)) != 'f' && c != 'F') {
+        if (((c = GET(s)) != 'n' && c != 'N') || ((c = GET(s)) != 'f' && c != 'F')) {
             REV(s, t, b);
             PUT(s);
             return 0;
@@ -314,7 +314,7 @@ S2F_function(const char *str, char **end)
         PUT(s);
         return negative ? -S2F_inf : S2F_inf;
     } else if (c == 'n' || c == 'N') {
-        if ((c = GET(s)) != 'a' && c != 'A' || (c = GET(s)) != 'n' && c != 'N') {
+        if (((c = GET(s)) != 'a' && c != 'A') || ((c = GET(s)) != 'n' && c != 'N')) {
             REV(s, t, b);
             PUT(s);
             return 0;
