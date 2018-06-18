@@ -46,7 +46,7 @@ char *_ast_codeset(int op) {
             s = nl_langinfo(CODESET);
 #else
             if ((locales[AST_LC_CTYPE]->flags & LC_default) ||
-                (s = setlocale(LC_CTYPE, NULL)) && (s = strchr(s, '.')) && !*++s)
+                ((s = setlocale(LC_CTYPE, NULL)) && (s = strchr(s, '.')) && !*++s))
                 s = 0;
 #endif
             if (!s || strmatch(s, "~(i)@(ansi*3.4*|?(us)*ascii|?(iso)*646*)"))

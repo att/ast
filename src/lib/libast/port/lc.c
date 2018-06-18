@@ -211,7 +211,7 @@ static int match(const char *s, const char *p, int minimum, int standard) {
 
 static int match_charset(const char *s, const Lc_charset_t *cp) {
     return match(s, cp->code, 0, 1) || match(s, cp->alternates, 3, 1) ||
-           cp->ms && match(s, cp->ms, 0, 1);
+           (cp->ms && match(s, cp->ms, 0, 1));
 }
 
 /*
@@ -397,9 +397,10 @@ Lc_t *lcmake(const char *name) {
     a = 0;
     n = 0;
     while (s < e && (c = *t++)) {
-        if (isspace(c) || (c == '(' || c == '-' && *t == '-') && ++n) {
-            while ((c = *t++) && (isspace(c) || (c == '-' || c == '(' || c == ')') && ++n))
+        if (isspace(c) || ((c == '(' || (c == '-' && *t == '-')) && ++n)) {
+            while (((c = *t++) && isspace(c)) || ((c == '-' || c == '(' || c == ')') && ++n)) {
                 if (!c) break;
+            }
             if (isalnum(c) && !n)
                 *s++ = '-';
             else {
@@ -433,9 +434,10 @@ Lc_t *lcmake(const char *name) {
             attributes_name = s;
         }
         while (s < e && (c = *t++)) {
-            if (isspace(c) || (c == '(' || c == ')' || c == '-' && *t == '-') && ++n) {
-                while ((c = *t++) && (isspace(c) || (c == '-' || c == '(' || c == ')') && ++n))
+            if (isspace(c) || (c == '(' || c == ')' || ((c == '-' && *t == '-') && ++n))) {
+                while ((c = *t++) && (isspace(c) || ((c == '-' || c == '(' || c == ')') && ++n))) {
                     if (!c) break;
+                }
                 if (isalnum(c) && !n)
                     *s++ = '-';
                 else
