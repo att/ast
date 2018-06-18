@@ -906,13 +906,13 @@ typedef struct _sfextern_s {
 #endif /*O_CREAT*/
 
 #ifndef O_BINARY
-#define O_BINARY 000
+#define O_BINARY 0
 #endif
 #ifndef O_TEXT
-#define O_TEXT 000
+#define O_TEXT 0
 #endif
 #ifndef O_TEMPORARY
-#define O_TEMPORARY 000
+#define O_TEMPORARY 0
 #endif
 
 #define SF_RADIX 64 /* maximum integer conversion base */
