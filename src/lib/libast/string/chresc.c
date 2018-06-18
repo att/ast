@@ -210,7 +210,9 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                                 case '-':
                                     if (e) break;
                                     if (*(s + 1) != '}' && *(s + 1) != ']') {
-                                        if (!*(s + 1) || *(s + 2) != '}' && *(s + 2) != ']') break;
+                                        if (!*(s + 1) || (*(s + 2) != '}' && *(s + 2) != ']')) {
+                                            break;
+                                        }
                                         x = *(unsigned char *)(s + 1);
                                         s += 2;
                                     } else {
@@ -228,7 +230,7 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                             break;
                         }
                         if (e) {
-                            if (n < 8 || n == 8 && c >= 0) {
+                            if (n < 8 || (n == 8 && c >= 0)) {
                                 if (!w) {
                                     if (n > 2) {
                                         if (!(flags & FMT_EXP_WIDE)) goto noexpand;

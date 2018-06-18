@@ -92,7 +92,7 @@ char *fmtip6(const unsigned char *addr, int bits) {
     for (i = z; i < n; i += 2) {
         for (k = i; i < n - 1 && !a[i] && !a[i + 1]; i += 2)
             ;
-        if ((r[k] = i - k) > r[m] || r[k] == r[m] && i >= (n - 1)) m = k;
+        if ((r[k] = i - k) > r[m] || (r[k] == r[m] && i >= (n - 1))) m = k;
     }
     if (!m) {
         switch (r[m]) {

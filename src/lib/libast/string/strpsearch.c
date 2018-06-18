@@ -69,7 +69,7 @@ void *strpsearch(const void *tab, size_t num, size_t siz, const char *name, char
     while (lo <= hi) {
         mid = lo + (sequential ? 0 : (((hi - lo) / siz) / 2) * siz);
         if (!(v = c - MAP(m, *(s = *((unsigned char **)mid)))) ||
-            *s == '[' && !(v = c - MAP(m, *++s)) && (v = 1)) {
+            (*s == '[' && !(v = c - MAP(m, *++s)) && (v = 1))) {
             t = (unsigned char *)name;
             for (;;) {
                 if (!v && (*s == '[' || *s == '*')) {
@@ -85,8 +85,9 @@ void *strpsearch(const void *tab, size_t num, size_t siz, const char *name, char
                     }
                     if (!sequential) {
                         while ((mid -= siz) >= lo && (s = *((unsigned char **)mid)) &&
-                               ((c == MAP(m, *s)) || *s == '[' && c == MAP(m, *(s + 1))))
-                            ;
+                               ((c == MAP(m, *s)) || (*s == '[' && c == MAP(m, *(s + 1))))) {
+                            ;  // empty loop
+                        }
                         sequential = 1;
                     }
                     v = 1;

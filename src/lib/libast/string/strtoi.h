@@ -238,10 +238,11 @@ S2I_function(const char *a, char **e, int base)
         return 0;
     }
     while (S2I_valid(s) && isspace(*s)) s++;
-    if ((negative = S2I_valid(s) && (*s == '-')) || S2I_valid(s) && *s == '+')
+    if ((negative = S2I_valid(s) && (*s == '-')) || (S2I_valid(s) && *s == '+')) {
         k = ++s;
-    else
+    } else {
         k = 0;
+    }
     p = s;
     if (!base) {
         if (S2I_valid(p) && (c = *p++) >= '0' && c <= '9') {

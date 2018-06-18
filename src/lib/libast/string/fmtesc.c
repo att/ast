@@ -164,10 +164,11 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
                 else if (singlequote || (flags & FMT_SHELL))
                     spaced = 1;
             } else if (!spaced && !escaped &&
-                       (isspace(c) || ((flags & FMT_SHELL) || shell) &&
-                                          (strchr("\";~&|()<>[]*?", c) ||
-                                           c == '#' && (b == f || isspace(*(b - 1))))))
+                       (isspace(c) ||
+                        ((((flags & FMT_SHELL) || shell) && strchr("\";~&|()<>[]*?", c)) ||
+                         (c == '#' && (b == f || isspace(*(b - 1))))))) {
                 spaced = 1;
+            }
             *b++ = c;
         }
     }

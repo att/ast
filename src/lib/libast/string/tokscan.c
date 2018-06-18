@@ -97,7 +97,7 @@ static char *lextok(char *s, int c, char **p, int *n) {
     q = 0;
     t = 0;
     for (;;) {
-        if (!*s || !q && *s == '\n') {
+        if (!*s || (!q && *s == '\n')) {
             if (!q) {
                 if (!c || c == ' ' || c == '\n')
                     (*n)++;
@@ -110,9 +110,9 @@ static char *lextok(char *s, int c, char **p, int *n) {
             if (t) *t = 0;
             break;
         } else if (*s == '\\') {
-            if (!q && !isdigit(*(s + 1)) || *(s + 1) == q) {
+            if ((!q && !isdigit(*(s + 1))) || *(s + 1) == q) {
                 u = s;
-                if (!*++s || *s == '\n' && (!*++s || *s == '\n')) continue;
+                if (!*++s || (*s == '\n' && (!*++s || *s == '\n'))) continue;
                 if (p) {
                     if (b == u)
                         b = s;
@@ -140,7 +140,7 @@ static char *lextok(char *s, int c, char **p, int *n) {
                     t = s - 1;
             }
             continue;
-        } else if (*s == c || c == ' ' && *s == '\t') {
+        } else if (*s == c || (c == ' ' && *s == '\t')) {
             *s++ = 0;
             if (t) *t = 0;
         end:

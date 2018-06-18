@@ -51,10 +51,11 @@ char *fmtre(const char *as) {
     c = 2 * strlen(s) + 1;
     t = buf = fmtbuf(c);
     p = stack;
-    if (*s != '*' || *(s + 1) == '(' || *(s + 1) == '-' && *(s + 2) == '(')
+    if (*s != '*' || *(s + 1) == '(' || (*(s + 1) == '-' && *(s + 2) == '(')) {
         *t++ = '^';
-    else
+    } else {
         s++;
+    }
     for (;;) {
         switch (c = *s++) {
             case 0:
@@ -93,7 +94,7 @@ char *fmtre(const char *as) {
             case '{':
                 for (x = s; *x && *x != '}'; x++)
                     ;
-                if (*x++ && (*x == '(' || *x == '-' && *(x + 1) == '(')) {
+                if (*x++ && (*x == '(' || (*x == '-' && *(x + 1) == '('))) {
                     if (p >= &stack[elementsof(stack)]) return 0;
                     p->beg = s - 1;
                     s = x;
@@ -116,7 +117,7 @@ char *fmtre(const char *as) {
             case '@':
             case '!':
             case '~':
-                if (*s == '(' || c != '~' && *s == '-' && *(s + 1) == '(') {
+                if (*s == '(' || (c != '~' && *s == '-' && *(s + 1) == '(')) {
                     if (p >= &stack[elementsof(stack)]) return 0;
                     p->beg = s - 1;
                     if (c == '~') {

@@ -82,7 +82,7 @@ int strtoip4(const char *s, char **e, uint32_t *paddr, unsigned char *pbits) {
         addr = (addr << 8) | n;
         part++;
     } while (c == '.');
-    if ((s - b) == 1 && c != '/' || part > 4) goto done;
+    if (((s - b) == 1 && c != '/') || part > 4) goto done;
     old = part < 4;
     if (old) {
         while (part++ < 4) addr <<= 8;
