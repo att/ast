@@ -1110,7 +1110,7 @@ static void search(Emacs_t *ep, genchar *out, int direction) {
     }
     i = genlen(string);
 
-    if (ep->prevdirection == -2 && i != 2 || direction != 1) ep->prevdirection = -1;
+    if ((ep->prevdirection == -2 && i != 2) || direction != 1) ep->prevdirection = -1;
     if (direction < 1) {
         ep->prevdirection = -ep->prevdirection;
         direction = 1;

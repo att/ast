@@ -317,9 +317,9 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         int size = 'x';
         while (cp > outbuff && ((size = cp[-1]) == ' ' || size == '\t')) cp--;
         if (!var && !strchr(ap->argval, '/') &&
-            (((cp == outbuff && shp->nextprompt == 1) ||
-              (strchr(";&|(", size)) && (cp == outbuff + 1 || size == '(' || cp[-2] != '>') &&
-                  *begin != '~'))) {
+            ((cp == outbuff && shp->nextprompt == 1) ||
+             (strchr(";&|(", size) && (cp == outbuff + 1 || size == '(' || cp[-2] != '>') &&
+              *begin != '~'))) {
             cmd_completion = 1;
             sh_onstate(shp, SH_COMPLETE);
         }
@@ -339,7 +339,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
             goto done;
         }
         // Match?
-        if (*com == 0 || (narg <= 1 && (strcmp(ap->argval, *com) == 0) ||
+        if (*com == 0 || ((narg <= 1 && (strcmp(ap->argval, *com) == 0)) ||
                           (addstar && com[0][strlen(*com) - 1] == '*'))) {
             rval = -1;
             goto done;
