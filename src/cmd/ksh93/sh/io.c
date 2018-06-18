@@ -542,8 +542,8 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
         if (!p->ai_protocol) p->ai_protocol = hint.ai_protocol;
         if (!p->ai_socktype) p->ai_socktype = hint.ai_socktype;
         while ((fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) >= 0) {
-            if (server && !bind(fd, p->ai_addr, p->ai_addrlen) && !listen(fd, 5) ||
-                !server && !connect(fd, p->ai_addr, p->ai_addrlen)) {
+            if ((server && !bind(fd, p->ai_addr, p->ai_addrlen) && !listen(fd, 5)) ||
+                (!server && !connect(fd, p->ai_addr, p->ai_addrlen))) {
                 goto done;
             }
             close(fd);
