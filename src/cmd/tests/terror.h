@@ -153,7 +153,7 @@ static void tcleanup(void) {
 #endif
 }
 
-static void tnote(char *note) {
+__attribute__((unused)) static void tnote(char *note) {
     char buf[1024];
 
 #if _SFIO_H
@@ -272,7 +272,7 @@ void tstpause(char *form, ...) {
     sleep(15);
 }
 
-static int asoerror(int type, const char *mesg) {
+__attribute__((unused)) static int asoerror(int type, const char *mesg) {
     static unsigned long hit;
 
     if (hit & (1 << type))
@@ -318,7 +318,7 @@ int tstwait(pid_t *proc, int nproc) {
     return code;
 }
 
-static char *tstfile(char *pfx, int n) {
+__attribute__((unused)) static char *tstfile(char *pfx, int n) {
     static int Setatexit = 0;
 
     if (!Setatexit) {
@@ -363,7 +363,7 @@ typedef struct Asotype_s {
     int mask;
 } Asotype_t;
 
-static void asointr(int sig) {
+__attribute__((unused)) static void asointr(int sig) {
     int use;
 
     signal(sig, SIG_IGN);
@@ -386,7 +386,7 @@ static void asointr(int sig) {
     texit(sig);
 }
 
-static void tstintr(void) {
+__attribute__((unused)) static void tstintr(void) {
     setpgid(0, 0);
     signal(SIGINT, asointr);
     signal(SIGQUIT, asointr);
@@ -399,7 +399,7 @@ static void tstintr(void) {
     }
 }
 
-static int tstchild(char **argv) {
+__attribute__((unused)) static int tstchild(char **argv) {
     char **v = argv;
     char *a;
 
@@ -420,7 +420,7 @@ static int tstchild(char **argv) {
     return 0;
 }
 
-static int tstopts(char **argv) {
+__attribute__((unused)) static int tstopts(char **argv) {
     char **v = argv;
     char *a;
 
@@ -440,14 +440,16 @@ static int tstopts(char **argv) {
 
 static unsigned int Rand = 0xdeadbeef;
 
-static void trandseed(unsigned int seed) { Rand = seed == 0 ? 0xdeadbeef : seed; }
+__attribute__((unused)) static void trandseed (unsigned int seed) {
+    Rand = seed == 0 ? 0xdeadbeef : seed;
+}
 
-static unsigned int trandom(void) {
+__attribute__((unused)) static unsigned int trandom(void) {
     Rand = Rand * 17109811 + 751;
     return Rand;
 }
 
-static void *tstshared(size_t n) {
+__attribute__((unused)) static void *tstshared(size_t n) {
     void *p = NULL;
     int z;
 

@@ -38,14 +38,6 @@ static unsigned int objhash(Dt_t *dt, void *arg, Dtdisc_t *disc) {
     return (unsigned int)(o->key / 8); /* cause hash collisions */
 }
 
-static char *objprint(void *arg) {
-    Obj_t *obj = (Obj_t *)arg;
-    static char buf[1024];
-
-    sprintf(buf, "%ld,%ld", obj->key, obj->ord);
-    return buf;
-}
-
 Dtdisc_t Disc = {0, 0, 0, 0, 0, objcmp, objhash, 0, 0};
 
 #define N_OBJ 10000 /* total number of elements	*/

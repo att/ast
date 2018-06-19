@@ -20,16 +20,16 @@
 #include "cdt.h"
 #include "terror.h"
 
-static int compare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
+__attribute__((unused)) static int compare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
     return (int)((char *)o1 - (char *)o2);
 }
 
-static int rcompare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
+__attribute__((unused)) static int rcompare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
     return (int)((char *)o2 - (char *)o1);
 }
 
-static void *newint(Dt_t *dt, void *o, Dtdisc_t *disc) { return o; }
+__attribute__((unused)) static void *newint(Dt_t *dt, void *o, Dtdisc_t *disc) { return o; }
 
-static unsigned int hashint(Dt_t *dt, void *o, Dtdisc_t *disc) {
+__attribute__((unused)) static unsigned int hashint(Dt_t *dt, void *o, Dtdisc_t *disc) {
     return (unsigned int)((char *)o - (char *)0);
 }
