@@ -37,14 +37,12 @@
 
 #if _AST_REGEX_DEBUG
 
-#define DEBUG_TEST(f, y, n) ((debug & (debug_flag = f)) ? (y) : (n))
-#define DEBUG_CODE(f, y, n) \
-    do                      \
-        if (debug & (f)) {  \
-            y               \
-        } else {            \
-            n               \
-        }                   \
+#define DEBUG_TEST(f, y, n) ((debug & (debug_flag = (f))) ? (y) : (n))
+#define DEBUG_CODE(f, y)                  \
+    do                                    \
+        if (debug & (debug_flag = (f))) { \
+            y                             \
+        }                                 \
     while (0)
 #define DEBUG_INIT()                                                               \
     do {                                                                           \
@@ -62,9 +60,9 @@ static unsigned long debug_flag;
 
 #define DEBUG_INIT()
 #define DEBUG_TEST(f, y, n) (n)
-#define DEBUG_CODE(f, y, n) \
-    do {                    \
-        n                   \
+#define DEBUG_CODE(f, y) \
+    do {                 \
+        ;                \
     } while (0)
 
 #endif
@@ -164,10 +162,8 @@ typedef struct Cenv_s {
 static Rex_t *node(Cenv_t *env, int type, int lo, int hi, size_t extra) {
     Rex_t *e;
 
-    DEBUG_TEST(0x0800,
-               (sfprintf(sfstdout, "%s:%d node(%d,%d,%d,%u)\n", file, line, type, lo, hi,
-                         sizeof(Rex_t) + extra)),
-               (0));
+    DEBUG_CODE(0x0800, sfprintf(sfstdout, "%s:%d node(%d,%d,%d,%u)\n", file, line, type, lo, hi,
+                                sizeof(Rex_t) + extra));
     e = (Rex_t *)alloc(env->disc, 0, sizeof(Rex_t) + extra);
     if (e) {
         memset(e, 0, sizeof(Rex_t) + extra);
@@ -2727,34 +2723,30 @@ static int special(Cenv_t *env, regex_t *p) {
             mask--;
             memset(q, 0, n * sizeof(*q));
             for (k = (j = n) + 1; j > 0; j--, k--) {
-                DEBUG_TEST(0x0010, (sfprintf(sfstderr, "BM#0: k=%d j=%d\n", k, j)), (0));
+                DEBUG_CODE(0x0010, sfprintf(sfstderr, "BM#0: k=%d j=%d\n", k, j));
                 for (q[j] = k; k <= n; k = q[k]) {
                     for (m = 0; m <= UCHAR_MAX; m++)
                         if (mask[k][m] == mask[j][m]) {
-                            DEBUG_TEST(
-                                0x0010,
-                                sfprintf(sfstderr, "CUT1: mask[%d][%c]=mask[%d][%c]\n", k, m, j, m),
-                                (0));
+                            DEBUG_CODE(0x0010,
+                                       sfprintf(sfstderr, "CUT1: mask[%d][%c]=mask[%d][%c]\n", k, m,
+                                                j, m));
                             goto cut;
                         }
-                    DEBUG_TEST(0x0010,
+                    DEBUG_CODE(0x0010,
                                sfprintf(sfstderr, "BM#2: fail[%d]=%d => %d\n", k, a->re.bm.fail[k],
-                                        (a->re.bm.fail[k] > n - j) ? (n - j) : a->re.bm.fail[k]),
-                               (0));
+                                        (a->re.bm.fail[k] > n - j) ? (n - j) : a->re.bm.fail[k]));
                     if (a->re.bm.fail[k] > n - j) a->re.bm.fail[k] = n - j;
                 }
             cut:;
             }
             for (i = 1; i <= n; i++)
                 if (a->re.bm.fail[i] > n + k - i) {
-                    DEBUG_TEST(0x0010,
-                               sfprintf(sfstderr, "BM#4: fail[%d]=%d => %d\n", i, a->re.bm.fail[i],
-                                        n + k - i),
-                               (0));
+                    DEBUG_CODE(0x0010, sfprintf(sfstderr, "BM#4: fail[%d]=%d => %d\n", i,
+                                                a->re.bm.fail[i], n + k - i));
                     a->re.bm.fail[i] = n + k - i;
                 }
 #if _AST_REGEX_DEBUG
-            if (DEBUG_TEST(0x0020, (1), (0))) {
+            if (DEBUG_TEST(0x0020, 1, 0)) {
                 sfprintf(sfstderr, "STAT: complete=%d n=%d k=%d l=%d r=%d y=%d:%d e=%d:%d\n",
                          a->re.bm.complete, n, k, a->re.bm.left, a->re.bm.right, y->type,
                          y->next ? y->next->type : 0, e->type, e->next ? e->next->type : 0);
