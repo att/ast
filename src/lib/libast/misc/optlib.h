@@ -100,7 +100,9 @@ typedef struct Optstate_s {
     char **conformance; /* conformance id vector	*/
 } Optstate_t;
 
+#ifndef _OPTION_H
 typedef struct Opt_s Opt_t;
+#endif
 extern Optstate_t *optstate(Opt_t *);
 
 #endif
