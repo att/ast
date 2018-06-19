@@ -11,6 +11,15 @@ add_global_arguments('-std=gnu99', language: 'c')
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
+# There are quite a few places in the code which use a char to index into an
+# array. All of them appear to be "safe" in as much as they only do so when
+# the value involves an ASCII character which, by definition, won't be
+# negative.
+#
+# TODO: Modify the code to not rely on the assumption that dereferencing a
+# char pointer is safe to use as an array index.
+add_global_arguments('-Wno-char-subscripts', language: 'c')
+
 # Global compiler flags aren't used by the feature tests. So instead put them
 # in an array that will be used by the feature tests.
 feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
