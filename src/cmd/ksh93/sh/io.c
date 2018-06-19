@@ -1332,6 +1332,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
             } else if (!(iof & IOPUT)) {
                 if (flag == SH_SHOWME) goto traceit;
                 fd = sh_chkopen(fname);
+                fd = sh_iomovefd(shp, fd);
             } else if (sh_isoption(shp, SH_RESTRICTED)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_restricted, fname);
             } else {
@@ -1491,12 +1492,16 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (fd < 10) {
                         if ((fn = fcntl(fd, F_DUPFD, 10)) < 0) goto fail;
                         if (fn >= shp->gd->lim.open_max && !sh_iovalidfd(shp, fn)) goto fail;
-                        if (flag != 2 || shp->subshell)
-                            sh_iosave(shp, fn, indx | 0x10000, tname ? fname : (trunc ? Empty : 0));
                         shp->fdstatus[fn] = shp->fdstatus[fd];
                         sh_close(fd);
                         fd = fn;
                     }
+
+                    if (flag != 2 || shp->subshell) {
+                        // TODO: Shall we replace 0x10000 with IOPICKFD ?
+                        sh_iosave(shp, fn, indx | 0x10000, tname ? fname : (trunc ? Empty : 0));
+                    }
+
                     _nv_unset(np, 0);
                     nv_onattr(np, NV_INT32);
                     v = fn;
