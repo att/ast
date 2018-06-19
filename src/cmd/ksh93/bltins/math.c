@@ -15,7 +15,9 @@
 
 typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 
-static int local_finite(Sfdouble_t a1) { return finite(a1); }
+// This used to use `finite()` but that function is deprecated and generates compiler warnings
+// on some platforms.
+static int local_finite(Sfdouble_t a1) { return !isinf(a1) && !isnan(a1); }
 
 static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
 
