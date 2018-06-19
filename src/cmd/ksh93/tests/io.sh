@@ -588,3 +588,11 @@ n=$( exec {n}< /dev/null; print -r -- $n)
 
 # According to POSIX <> should redirect stdin when no fd is specified
 read -n 1 -t 0.1 <>/dev/zero || log_error '<> should redirect stdin by default'
+
+TMPF=$TEST_DIR/tmpf
+echo foo >$TMPF
+export TMPF
+
+[[ -n "$($SHELL -c 'echo $(<$TMPF)' <&-)" ]] || log_error "Closing stdin causes failure when reading file through \$(<)"
+[[ -n "$($SHELL -c "$SHELL -c 'echo \$(<$TMPF) >&2' >&-" 2>&1)" ]] || log_error "Closing stdout causes failure when reading file through \$(<)"
+[[ -n "$($SHELL -c 'echo $(<$TMPF)' 2>&-)" ]]  || log_error "Closing stderr causes failure when reading file through \$(<)"
