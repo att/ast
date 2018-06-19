@@ -42,7 +42,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
 
         mbinit(&q);
         for (i = 0; i < n; i++) {
-            if (mbconv(tmp, utf32[i], &q) < 0) break;
+            if (mbconv(tmp, utf32[i], &q) == (size_t)-1) break;
             wchar[i] = utf32[i];
         }
     } else {
@@ -68,9 +68,8 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             inbuf = tmp_in;
             outbuf = tmp_out;
             outbytesleft = sizeof(tmp_out);
-            if (iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft) < 0 ||
-                inbytesleft)
-                return -1;
+            size_t r = iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+            if (r == (size_t)-1 || inbytesleft) return -1;
             if (!mbwide()) {
                 wchar[0] = *(unsigned char *)tmp_out;
 #if CC_NATIVE == CC_ASCII
@@ -98,8 +97,8 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             inbuf = inbuf_start;
             outbuf = outbuf_start;
             i = 0;
-            if (iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft) < 0)
-                return -1;
+            size_t r = iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+            if (r == (size_t)-1) return -1;
             inbuf = outbuf;
             if (mbwide()) {
                 mbinit(&q);

@@ -41,7 +41,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
 
         mbinit(&q);
         for (i = 0; i < n; i++) {
-            if (mbconv(tmp, wchar[i], &q) < 0) break;
+            if (mbconv(tmp, wchar[i], &q) == (size_t)-1) break;
             utf32[i] = wchar[i];
         }
         res = (ssize_t)i;
