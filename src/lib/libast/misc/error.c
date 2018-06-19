@@ -50,12 +50,31 @@
  *            by 2009 _error_info_ can be static
  */
 Error_info_t _error_info_ = {
-    2,         exit, write, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* version			*/
-    0,                                                 /* auxilliary			*/
-    0,         0,    0,     0, 0, 0, 0,                /* top of old context stack	*/
-    0,         0,    0,     0, 0, 0, 0,                /* old empty context		*/
-    0,                                                 /* time				*/
-    translate, 0                                       /* catalog			*/
+    2,                            // fd
+    exit,                         // exit
+    write,                        // write
+    0,                            // clear
+    0,                            // core
+    0,                            // indent
+    0,                            // init
+    0,                            // last_errno
+    0,                            // mask
+    0,                            // set
+    0,                            // trace
+    NULL,                         // version
+    NULL,                         // auxilliary
+    NULL,                         // context
+    0,                            // errors
+    0,                            // flags
+    0,                            // line
+    0,                            // warnings
+    NULL,                         // file
+    NULL,                         // id
+    {0, 0, 0, 0, 0, NULL, NULL},  // empty
+    0,                            // time
+    translate,                    // translate
+    NULL,                         // catalog
+    NULL                          // handle
 };
 
 Error_info_t *_error_infop_ = &_error_info_;

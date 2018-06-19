@@ -40,9 +40,9 @@ tmain() {
         terror("Reopen sfstdout");
 
     if (pipe(fd) < 0) terror("Can't open pipe");
-    if (!(fr = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ)) ||
-        !(fw = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[1], SF_WRITE)))
-        terror("Can't open stream");
+    fr = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[0], SF_READ);
+    fw = sfnew(NULL, NULL, (size_t)SF_UNBOUND, fd[1], SF_WRITE);
+    if (!fr || !fw) terror("Can't open stream");
     if (to) {
         signal(SIGALRM, alrmf);
         alarm(4);

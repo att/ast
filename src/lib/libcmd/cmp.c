@@ -291,6 +291,7 @@ int b_cmp(int argc, char **argv, Shbltin_t *context) {
     argv += opt_info.index;
     if (error_info.errors || !(file1 = *argv++) || !(file2 = *argv++)) {
         error(ERROR_usage(2), "%s", optusage(NULL));
+        abort();  // not reached - used to shup up lint tools about file2 not being initialized
     }
     n = 2;
 
