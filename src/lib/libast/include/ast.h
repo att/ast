@@ -416,7 +416,9 @@ extern char **environ;
 // You cannot call this with a parameter that has side-effects (e.g.,
 // decrement/increment) because it won't occur if we're not in a wide locale.
 #define mbsize(p) (mbwide() ? (*ast.mb_len)((char *)(p), mbmax()) : 1)
-#define mbnsize(p, n) (mbwide() ? (*ast.mb_len)((char *)(p), n) : ((p), 1))
+// You cannot call this with a parameter that has side-effects (e.g.,
+// decrement/increment) because it won't occur if we're not in a wide locale.
+#define mbnsize(p, n) (mbwide() ? (*ast.mb_len)((char *)(p), n) : 1)
 #define mbconv(s, w) (ast.mb_conv ? (*ast.mb_conv)(s, w) : ((*(s) = (w)), 1))
 
 #endif
