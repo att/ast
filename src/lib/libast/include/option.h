@@ -30,6 +30,7 @@
 #define _OPTION_H
 
 #include <ast.h>
+#include "optlib.h"
 
 #define OPT_VERSION 20070319L
 
@@ -46,8 +47,6 @@ typedef struct Optdisc_s {
     char *catalog;         /* error catalog id		*/
     Optinfo_f infof;       /* runtime info function	*/
 } Optdisc_t;
-
-typedef struct Optstate_s Optstate_t;
 
 // NOTE: Opt_t member order fixed by a previous binary release
 typedef struct Opt_s {
@@ -68,6 +67,7 @@ typedef struct Opt_s {
     Optstate_t *state;
 } Opt_t;
 
+extern Optstate_t *optstate(Opt_t *);
 extern Opt_t *_opt_infop_;
 
 #define opt_info (*_opt_infop_)
