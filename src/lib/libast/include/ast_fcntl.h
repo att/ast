@@ -30,13 +30,13 @@
 #define _ast_O_LOCAL 020000000000 /* ast extension up to 020000000000 */
 
 #ifndef O_BINARY
-#define O_BINARY 0     // not implemented
+#define O_BINARY 0  // not implemented
 #endif
 #ifndef O_TEMPORARY
 #define O_TEMPORARY 0  // not implemented
 #endif
 #ifndef O_TEXT
-#define O_TEXT 0       // not implemented
+#define O_TEXT 0  // not implemented
 #endif
 
 #endif

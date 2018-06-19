@@ -374,7 +374,7 @@ static_fn void io_preserve(Shell_t *shp, Sfio_t *sp, int f2) {
         errormsg(SH_DICT, ERROR_system(1), e_toomany);
     }
     if (f2 >= shp->gd->lim.open_max) {
-        if(!sh_iovalidfd(shp, f2)) abort();
+        if (!sh_iovalidfd(shp, f2)) abort();
     }
     shp->fdptrs[fd] = shp->fdptrs[f2];
     if (shp->fdptrs[fd]) {

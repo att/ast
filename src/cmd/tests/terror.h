@@ -440,7 +440,7 @@ __attribute__((unused)) static int tstopts(char **argv) {
 
 static unsigned int Rand = 0xdeadbeef;
 
-__attribute__((unused)) static void trandseed (unsigned int seed) {
+__attribute__((unused)) static void trandseed(unsigned int seed) {
     Rand = seed == 0 ? 0xdeadbeef : seed;
 }
 
