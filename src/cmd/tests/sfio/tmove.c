@@ -26,7 +26,6 @@ tmain() {
     Sfoff_t n, i;
     Sfio_t *f;
     char buf[1024];
-    char *addr;
 
     if (sfopen(sfstdout, tstfile("sf", 0), "w+") != sfstdout) terror("Opening output file");
     for (i = 0; i < 10000; ++i)
@@ -55,10 +54,7 @@ tmain() {
     sfseek(sfstdout, (Sfoff_t)0, 0);
     sfsetbuf(sfstdin, buf, sizeof(buf));
 
-    addr = (char *)sbrk(0);
     sfmove(sfstdin, sfstdout, (Sfoff_t)((unsigned long)(~0L) >> 1), -1);
-    if ((ssize_t)((char *)sbrk(0) - addr) > 256 * 1024)
-        terror("Too much space allocated in sfmove");
 
     if (!sfeof(sfstdin)) terror("Sfstdin is not eof2");
     if (sferror(sfstdin)) terror("Sfstdin is in error2");

@@ -191,11 +191,6 @@ feature_data.set10('_mem_arena_mallinfo',
     cc.has_member('struct mallinfo', 'arena', prefix : '#include<malloc.h>',
                   args: feature_test_args))
 
-sbrk_feature_file = files('sbrk.c')
-sbrk_feature_result = cc.run(sbrk_feature_file, name: 'sbrk() works as expected',
-                             args: feature_test_args)
-feature_data.set10('_mem_sbrk', sbrk_feature_result.returncode() == 0)
-
 # This was defined in iffe tests when '_mmap_anon' is true
 # '_mmap_anon' is always true so keeping this macro on here
 feature_data.set('_mem_mmap_anon', 1)
