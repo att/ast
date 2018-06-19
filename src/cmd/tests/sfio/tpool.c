@@ -35,12 +35,15 @@ tmain() {
     char poolbuf[1024];
     Sfio_t *f, *f1, *f2, *f3, *f4;
 
-    if (!(f1 = sfopen((Sfio_t *)0, tstfile("sf", 0), "w+")) ||
-        !(f2 = sfopen((Sfio_t *)0, tstfile("sf", 1), "w")) ||
-        !(f3 = sfopen((Sfio_t *)0, tstfile("sf", 2), "w")))
-        terror("Opening files");
+    f1 = sfopen((Sfio_t *)0, tstfile("sf", 0), "w+");
+    if (!f1) terror("Opening files");
+    f2 = sfopen((Sfio_t *)0, tstfile("sf", 1), "w");
+    if (!f2) terror("Opening files");
+    f3 = sfopen((Sfio_t *)0, tstfile("sf", 2), "w");
+    if (!f3) terror("Opening files");
 
-    if (!(f4 = sfopen((Sfio_t *)0, tstfile("sf", 0), "r+"))) terror("Opening file to read");
+    f4 = sfopen((Sfio_t *)0, tstfile("sf", 0), "r+");
+    if (!f4) terror("Opening file to read");
     sfungetc(f1, 'a');
     sfungetc(f4, 'b');
     sfpool(f1, f4, 0);
