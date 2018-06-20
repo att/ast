@@ -67,12 +67,10 @@ static void *consumer(void *arg) {
 tmain() {
     int i;
     Obj_t *obj;
-    char *lockid;
     pthread_t thread[N_THREADS];
     struct timeval tv1, tv2;
 
     topts();
-    lockid = tstfile("aso", 0);
     tinfo("testing with %d threads", N_THREADS);
     Asolock = 0;
     /* create object list */
