@@ -102,11 +102,15 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             inbuf = outbuf;
             if (mbwide()) {
                 mbinit(&q);
-                for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++)
-                    if (mbchar(&wchar[i], outbuf, inbuf - outbuf, &q), mberrno(&q)) break;
-            } else
-                for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++)
+                for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++) {
+                    (void)mbchar(&wchar[i], outbuf, inbuf - outbuf, &q);
+                    if (mberrno(&q)) break;
+                }
+            } else {
+                for (outbuf = outbuf_start; i < n && outbuf < inbuf; i++) {
                     wchar[i] = *(unsigned char *)outbuf++;
+                }
+            }
             oerrno = errno;
             free(outbuf_start);
             errno = oerrno;

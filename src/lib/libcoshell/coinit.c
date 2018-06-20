@@ -52,7 +52,6 @@ static void exid(Sfio_t *sp, const char *pre, const char *name, const char *pos)
 // coex!=0 for CO_ENV_EXPORT
 // If n prefixed by % then coquote conversion enabled
 //
-
 static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int flags) {
     int cvt;
     char *v;
@@ -92,7 +91,6 @@ static void putexport(Coshell_t *co, Sfio_t *sp, char *n, int old, int coex, int
 //
 // Return job initialization commands
 //
-
 char *coinitialize(Coshell_t *co, int flags) {
     char *s;
     int n;
@@ -100,7 +98,6 @@ char *coinitialize(Coshell_t *co, int flags) {
     int old;
     int sync;
     char *t;
-    long p;
     Coexport_t *ex;
     Sfio_t *sp;
     Sfio_t *tp;
@@ -112,7 +109,6 @@ char *coinitialize(Coshell_t *co, int flags) {
     //
     // Pwd
     //
-
     if (stat(".", &st)) return 0;
     if (!state.pwd || st.st_ino != co->init.pwd_ino || st.st_dev != co->init.pwd_dev) {
         co->init.pwd_dev = st.st_dev;
@@ -221,7 +217,6 @@ char *coinitialize(Coshell_t *co, int flags) {
         //
         // PATH
         //
-
         if (!old) sfprintf(sp, "\\\n");
         sfprintf(sp, " PATH='");
         n = PATH_MAX;
@@ -292,7 +287,6 @@ char *coinitialize(Coshell_t *co, int flags) {
             //
             // VPATH
             //
-            p = (int)sfstrtell(sp);
             sfprintf(sp, "vpath ");
             n = PATH_MAX;
             sfprintf(sp, "- /#option/2d");
@@ -323,7 +317,6 @@ char *coinitialize(Coshell_t *co, int flags) {
 //
 // Return generic job initialization commands
 //
-
 char *coinit(int flags) {
     if (!state.generic) {
         state.generic = newof(0, Coshell_t, 1, 0);

@@ -49,7 +49,6 @@ static void workload(unsigned int pid) {
 
 tmain() {
     ssize_t k;
-    char *lockid;
     pid_t pid, cpid[N_PROC];
     struct timeval tv1, tv2;
 
@@ -59,7 +58,6 @@ tmain() {
     Count = Lock + 1;   /* this is the shared counter to be updated asynchronously */
     Active = Count + 1; /* this counter sets all processes to work at the same time */
 
-    lockid = tstfile("aso", 0);
     tinfo("testing with %d processes", N_PROC);
     gettimeofday(&tv1, 0); /* start the timer */
 
