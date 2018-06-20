@@ -29,6 +29,7 @@
 // platform feature detection and naming conventions.
 #mesondefine DEBUG_BUILD
 #mesondefine MESON_BUILD
+#mesondefine OSNAME
 #mesondefine HOSTTYPE
 #mesondefine BASH_MACHTYPE
 #mesondefine STAT_ST_MTIM
@@ -72,6 +73,7 @@
 #mesondefine _std_signal
 #mesondefine _stk_down
 #mesondefine isnanl
+#mesondefine const_const_fts_open
 
 // What follows are all the symbols that should be based on Meson feature
 // tests like `cc.has_header()` and `cc.find_library()`.
