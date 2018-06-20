@@ -17,6 +17,9 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
+
+#ifdef SHOPT_BASH
+
 //
 // Bash specific extensions.
 // Originally provided by Karsten Fleischer.
@@ -405,3 +408,5 @@ reinit:
     if (xtrace) sh_offoption(shp, SH_XTRACE);
     if (verbose) sh_offoption(shp, SH_VERBOSE);
 }
+
+#endif // SHOPT_BASH
