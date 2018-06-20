@@ -1420,7 +1420,6 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (off < 0) r = -1;
                 } else {
                     regex_t *rp;
-                    extern const char e_notimp[];
                     if (!(r & IOREAD)) {
                         message = e_noread;
                         goto fail;

@@ -576,7 +576,6 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
             bool r = sh_isoption(shp, SH_RESTRICTED);
             if (r) sh_offoption(shp, SH_RESTRICTED);
             sh_trap(shp, ".sh.subscript=$(tput cuu1 2>/dev/null)", 0);
-            if (r) sh_isoption(shp, SH_RESTRICTED);
             pp = nv_getval(SH_SUBSCRNOD);
             if (pp) strncpy(CURSOR_UP, pp, sizeof(CURSOR_UP) - 1);
             nv_unset(SH_SUBSCRNOD);
