@@ -1147,7 +1147,7 @@ retry1:
                     if ((c = fcmbget(&LEN), isastchar(c)) && fcpeek(0) == RBRACT && d != '.') {
                         if (type == M_VNAME) type = M_SUBNAME;
                         idbuff[0] = mode = c;
-                        fcget();
+                        fcnxt();
                         c = fcmbget(&LEN);
                         if (c == '.' || c == LBRACT) {
                             sfputc(stkp, LBRACT);

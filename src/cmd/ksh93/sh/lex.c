@@ -1758,7 +1758,7 @@ static_fn int here_copy(Lex_t *lp, struct ionod *iop) {
                 } else {
                     special++;
                 }
-                fcget();
+                fcnxt();
                 break;
             }
             case S_GRAVE:

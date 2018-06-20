@@ -23,7 +23,8 @@
 //
 // Fast character input with sfio text streams and strings.
 //
-#ifndef fcgetc
+#ifndef _FCIN_H
+#define _FCIN_H
 #include <sfio.h>
 
 typedef struct _fcin {
@@ -42,6 +43,7 @@ typedef struct _fcin {
 #define fcmbget(x) (mbwide() ? _fcmbget(x) : fcget())
 #define fcfile() (_Fcin._fcfile)
 #define fcget() ((int)(*_Fcin.fcptr++))
+#define fcnxt() _Fcin.fcptr++
 #define fcpeek(n) ((int)_Fcin.fcptr[n])
 #define fcseek(n) ((char *)(_Fcin.fcptr += (n)))
 #define fcfirst() ((char *)_Fcin.fcbuff)
@@ -62,4 +64,4 @@ extern int _fcmbget(short *);
 
 extern Fcin_t _Fcin;  // used by macros
 
-#endif  // fcgetc
+#endif  // _FCIN_H
