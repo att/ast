@@ -330,7 +330,7 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
         if (cp[0] == CNTL('k') && cp[1] == CNTL('s') && cp[2] == CNTL('h') && cp[3] == 0) {
             int version;
             fcseek(4);
-            fcgetc(version);
+            version = fcgetc();
             fcclose();
             fcrestore(&sav_input);
             lexp->arg = sav_arg;
@@ -404,7 +404,8 @@ Shnode_t *sh_dolparen(Lex_t *lp) {
         // This code handles the case where string has been converted to a file by an alias setup.
         int c;
         char *cp;
-        if (fcgetc(c) > 0) fcseek(-1);
+        c = fcgetc();
+        if (c > 0) fcseek(-1);
         cp = fcseek(0);
         fcclose();
         fcsopen(cp);
@@ -856,14 +857,14 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
 }
 
 static_fn bool check_array(Lex_t *lexp) {
-    int n, c;
+    int c;
 
     if (lexp->token == 0 && strcmp(lexp->arg->argval, "typeset") == 0) {
-        while ((c = fcgetc(n)) == ' ' || c == '\t') {
+        while ((c = fcgetc()) == ' ' || c == '\t') {
             ;  // empty loop
         }
         if (c == '-') {
-            if (fcgetc(n) == 'a') {
+            if (fcgetc() == 'a') {
                 lexp->assignok = SH_ASSIGN;
                 lexp->noreserv = 1;
                 sh_lex(lexp);
@@ -960,9 +961,10 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
                !((np = nv_search(lexp->arg->argval, lexp->sh->fun_tree, 0)) &&
                  (nv_isattr(np, BLT_DCL) || np == SYSDOT))) {
         array = SH_ARRAY;
-        if (fcgetc(n) == LPAREN) {
-            int c;
-            if (fcgetc(c) == RPAREN) {
+        n = fcgetc();
+        if (n == LPAREN) {
+            int c = fcgetc();
+            if (c == RPAREN) {
                 lexp->token = SYMRES;
                 array = 0;
             } else {
@@ -1001,7 +1003,8 @@ static_fn struct argnod *parse_assign(Lex_t *lexp, struct argnod *ap, int type) 
         lexp->assignok = SH_ASSIGN;
         if ((n = skipnl(lexp, 0)) || array) {
             if (n == RPAREN) {
-                if (fcgetc(n) != ';' && n > 0) fcseek(-LEN);
+                n = fcgetc();
+                if (n != ';' && n > 0) fcseek(-LEN);
                 break;
             }
             if (array || n != FUNCTSYM) sh_syntax(lexp);
@@ -1584,7 +1587,8 @@ static_fn struct ionod *inout(Lex_t *lexp, struct ionod *lastio, int flag) {
             } else if ((token & SYMSHARP) == SYMSHARP) {
                 int n;
                 iof |= IOLSEEK;
-                if (fcgetc(n) == '#') {
+                n = fcgetc();
+                if (n == '#') {
                     iof |= IOCOPY;
                 } else if (n > 0) {
                     fcseek(-1);
@@ -1773,7 +1777,7 @@ static_fn void ere_match(void) {
     Sfio_t *base, *iop = sfopen((Sfio_t *)0, " ~(E)", "s");
     int c;
 
-    while (fcgetc(c), (c == ' ' || c == '\t')) {
+    while ((c = fcgetc()) == ' ' || c == '\t') {
         ;  // empty loop
     }
     if (c) fcseek(-1);

@@ -41,7 +41,6 @@ typedef struct _fcin {
 
 #define fcmbget(x) (mbwide() ? _fcmbget(x) : fcget())
 #define fcfile() (_Fcin._fcfile)
-#define fcgetc(c) (((c = fcget()) || (c = fcfill())), c)
 #define fcget() ((int)(*_Fcin.fcptr++))
 #define fcpeek(n) ((int)_Fcin.fcptr[n])
 #define fcseek(n) ((char *)(_Fcin.fcptr += (n)))
@@ -54,6 +53,7 @@ typedef struct _fcin {
 #define fctell() (_Fcin.fcoff + (_Fcin.fcptr - _Fcin.fcbuff))
 #define fcsave(x) (*(x) = _Fcin)
 #define fcrestore(x) (_Fcin = *(x))
+extern int fcgetc(void);
 extern int fcfill(void);
 extern int fcfopen(Sfio_t *);
 extern int fcclose(void);

@@ -317,7 +317,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                 continue;
             }
             case S_ESC: {
-                fcgetc(c);
+                c = fcgetc();
                 cp = fcseek(-1);
                 if (c > 0) cp++;
                 if (!isescchar(state[c])) sfputc(outfile, ESCAPE);
@@ -351,7 +351,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                             }
                             sh_lexskip(lp, RBRACE, 1, ST_BRACE);
                         } else if (n == S_ALP) {
-                            while (fcgetc(c), isaname(c)) sfputc(stkp, c);
+                            while ((c = fcgetc()), isaname(c)) sfputc(stkp, c);
                             fcseek(-1);
                         }
                         sfputc(stkp, 0);
@@ -1899,9 +1899,9 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
             }
         }
     } else {
-        while (fcgetc(c) != '`' && c) {
+        while ((c = fcgetc()) != '`' && c) {
             if (c == ESCAPE) {
-                fcgetc(c);
+                c = fcgetc();
                 if (!(isescchar(sh_lexstates[ST_QUOTE][c]) || (c == '"' && mp->quote)))
                     sfputc(stkp, ESCAPE);
             }
@@ -2428,14 +2428,15 @@ static_fn char *sh_tilde(Shell_t *shp, const char *string) {
         return stkfreeze(shp->stk, 1);
     }
 #if __CYGWIN__
-    if (fcgetc(c) == '/') {
+    c = fcgetc();
+    if (c == '/') {
         char *str;
         int n = 0, offset = stktell(shp->stk);
         sfputr(shp->stk, string, -1);
         do {
             sfputc(shp->stk, c);
             n++;
-        } while (fcgetc(c) && c != '/');
+        } while ((c = fcgetc()) && c != '/');
         sfputc(shp->stk, 0);
         if (c) fcseek(-1);
         str = stkseek(shp->stk, offset);

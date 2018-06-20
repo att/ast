@@ -63,6 +63,18 @@ int fcfopen(Sfio_t *f) {
 }
 
 //
+// This was originally implemented as a macro:
+//   #define fcgetc(c) (((c = fcget()) || (c = fcfill())), c)
+//
+// However, that is an ugly API that causes lots of lint warnings.
+//
+int fcgetc() {
+    int c = fcget();
+    if (!c) c = fcfill();
+    return c;
+}
+
+//
 // With _Fcin.fcptr>_Fcin.fcbuff, the stream pointer is advanced.
 // If _Fcin.fclast!=0, performs an sfreserve() for the next buffer.
 // If a notify function has been set, it is called.
