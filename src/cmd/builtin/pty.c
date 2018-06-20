@@ -134,7 +134,11 @@ static char *slavename(const char *name) {
     return sname;
 }
 #endif  // !_lib_ptsname
+#endif  // !_lib_grantpt || !_lib_unlock
 
+#if !(_lib_grantpt && _lib_unlockpt)
+#if !_lib__getpty
+#if !defined(_pty_clone)
 static char *master_name(char *name) {
     static char sname[MAXNAME];
     int n;
@@ -153,7 +157,7 @@ static char *master_name(char *name) {
         }
         if (_pty_first[n - 2] == 'p' && (name[n - 2] == 'z' || name[n - 2] == 'Z')) {
             if (name[n - 2] == 'z') {
-                name[n - 2] == 'P';
+                name[n - 2] = 'P';
             } else {
                 return 0;
             }
@@ -166,9 +170,11 @@ static char *master_name(char *name) {
     }
     return name;
 }
-#endif  // !_lib_grantpt || !_lib_unlock
+#endif  // !defined(_pty_clone)
+#endif  // !_lib__getpty
+#endif  // !(_lib_grantpt && _lib_unlockpt)
 
-#if !_lib_openpty
+#if !(_lib_grantpt && _lib_unlockpt)
 static char *ptymopen(int *master) {
     char *slave = 0;
 #if _lib__getpty
@@ -180,7 +186,7 @@ static char *ptymopen(int *master) {
 #else  // defined(_pty_clone)
     int fdm;
     char *name = 0;
-    while (name = master_name(name)) {
+    while ((name = master_name(name))) {
         fdm = open(name, O_RDWR | O_CREAT, MODE_666);
         if (fdm >= 0) {
             *master = fdm;
@@ -196,7 +202,7 @@ static char *ptymopen(int *master) {
 #endif  // _lib__getpty
     return slave;
 }
-#endif  // !_lib_openpty
+#endif  // !(_lib_grantpt && _lib_unlockpt)
 #endif  // !_lib_openpty && !_lib__getpty && !defined(_pty_clone)
 
 static int mkpty(int *master, int *slave) {
