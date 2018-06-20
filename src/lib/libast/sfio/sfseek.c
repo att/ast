@@ -107,7 +107,7 @@ Sfoff_t sfseek(Sfio_t *f, Sfoff_t p, int type) {
             p = r;
             f->next = f->data + p;
             f->here = p;
-            if (p > f->extent) memclear((char *)(f->data + f->extent), (int)(p - f->extent));
+            if (p > f->extent) memset(f->data + f->extent, 0, p - f->extent);
             goto done;
         }
 

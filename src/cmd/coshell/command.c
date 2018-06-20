@@ -738,7 +738,7 @@ void server(int fd, int op, int sub, int arg, char *dat) {
             }
             break;
         case 't':
-            memzero(&tot, sizeof(tot));
+            memset(&tot, 0, sizeof(tot));
             sfprintf(
                 state.string,
                 "SHELLS  USERS    JOBS  CMDS     UP   REAL   USER    SYS     CPU  LOAD RATING\n");

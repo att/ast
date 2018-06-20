@@ -260,7 +260,7 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
     } else {
         s = buf;
         if (!flags) flags = OPT_system;
-        memzero(&ut, sizeof(ut));
+        memset(&ut, 0, sizeof(ut));
         if (uname(&ut) < 0) error(ERROR_usage(2), "information unavailable");
         output(OPT_system, ut.sysname, "sysname");
         if (flags & OPT_nodename) {

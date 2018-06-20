@@ -214,16 +214,6 @@ typedef struct {
 
 extern _Ast_info_t _ast_info;
 
-/* direct macro access for bsd crossover */
-
-#if !defined(__cplusplus)
-
-#if !defined(memzero) && !defined(_lib_memzero)
-#define memzero(b, n) (bzero(b, n), (b))
-#endif
-
-#endif
-
 typedef int (*Qsortcmp_f)(const void *, const void *);
 typedef int (*Qsortcmp_r_f)(const void *, const void *, void *);
 

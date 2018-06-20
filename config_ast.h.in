@@ -158,7 +158,6 @@
 #mesondefine _lib_mallopt
 #mesondefine _lib_memcntl
 #mesondefine _lib_memdup
-#mesondefine _lib_memzero
 #mesondefine _lib_mmap64
 #mesondefine _lib_mstats
 #mesondefine _lib_munmap64

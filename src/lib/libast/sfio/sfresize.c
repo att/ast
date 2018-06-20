@@ -50,10 +50,10 @@ int sfresize(Sfio_t *f, Sfoff_t size) {
                     f->extent = s;
                 }
             }
-            memclear((char *)(f->data + size), (int)(f->extent - size));
+            memset(f->data + size, 0, f->extent - size);
         } else {
             if (SFSK(f, size, SEEK_SET, f->disc) != size) SFMTXRETURN(f, -1);
-            memclear((char *)(f->data + f->extent), (int)(size - f->extent));
+            memset(f->data + f->extent, 0, size - f->extent);
         }
     } else {
         if (f->next > f->data) SFSYNC(f);

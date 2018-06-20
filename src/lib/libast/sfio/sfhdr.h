@@ -1072,13 +1072,6 @@ typedef struct _sftab_ {
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
-/* fast functions for memory copy and memory clear */
-#if _PACKAGE_ast
-//#define memclear(s,n)	memzero(s,n)
-//#else
-#define memclear(s, n) memset((s), '\0', (n))
-#endif /*_PACKAGE_ast*/
-
 /* note that MEMCPY advances the associated pointers */
 #define MEMCPY(to, fr, n)                      \
     switch (n) {                               \

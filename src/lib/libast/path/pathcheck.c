@@ -85,6 +85,6 @@ int pathcheck(const char *package, const char *tool, Pathcheck_t *pc) {
     UNUSED(tool);
 #endif
     UNUSED(package);
-    if (pc) memzero(pc, sizeof(*pc));
-    return (0);
+    if (pc) memset(pc, 0, sizeof(*pc));
+    return 0;
 }

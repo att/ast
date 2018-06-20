@@ -46,7 +46,6 @@ mem \- fixed string routines
 void    mematoe(void* \fIout\fP, const void* \fIin\fP, size_t \fIn\fP);
 void*   memdup(const void* \fIbuf\fP, size_t \fIn\fP)
 void    memetoa(void* \fIout\fP, const void* \fIin\fP, size_t \fIn\fP);
-void*   memzero(void* \fIbuf\fP, size_t \fIn\fP);
 .EE
 .SH DESCRIPTION
 .L mematoe
@@ -84,14 +83,6 @@ to ASCII characters in
 and
 .I out
 may be the same.
-.PP
-.L memzero
-sets the first 
-.I n
-bytes in
-.I buf
-to 
-.IR 0 .
 .SH "SEE ALSO"
 Proposed Bell Laboratories ASCII/EBCDIC standard, April 16, 1979.
 .br

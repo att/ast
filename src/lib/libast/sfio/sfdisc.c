@@ -141,7 +141,7 @@ Sfdisc_t *sfdisc(Sfio_t *f, Sfdisc_t *disc) {
         /* trick the new discipline into processing already buffered data */
         if ((f->mode & SF_READ) && n > 0 && disc && disc->readf) {
             if (!(dcca = (Dccache_t *)malloc(sizeof(Dccache_t) + n))) goto done;
-            memclear(dcca, sizeof(Dccache_t));
+            memset(dcca, 0, sizeof(Dccache_t));
 
             dcca->disc.readf = _dccaread;
             dcca->disc.exceptf = _dccaexcept;
