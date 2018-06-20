@@ -31,9 +31,11 @@
 #include "national.h"
 #include "shtable.h"
 
+#if _lib_iswprint
 #include <wctype.h>
-
-#if !_lib_iswprint
+#else
+// On some platforms iswprint() may be macro so make sure we don't get a redefinition warning.
+#undef iswprint
 #define iswprint(c) (((c) & ~0377) || isprint(c))
 #endif
 
