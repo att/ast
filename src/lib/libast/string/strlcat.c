@@ -38,10 +38,10 @@ NoN(strlcat)
  * min(n,strlen(s))+strlen(t) returned
  */
 size_t strlcat(char *s, const char *t, size_t n) {
-    size_t m;
+    size_t m = n;
     const char *o = t;
 
-    if (m = n) {
+    if (n) {
         while (n && *s) {
             n--;
             s++;
@@ -52,7 +52,7 @@ size_t strlcat(char *s, const char *t, size_t n) {
                     *s = 0;
                     break;
                 }
-            } while (*s++ = *t++);
+            } while ((*s++ = *t++));
         else
             *s = 0;
     }

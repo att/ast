@@ -45,7 +45,7 @@ size_t strlcpy(char *s, const char *t, size_t n) {
                 *s = 0;
                 break;
             }
-        } while (*s++ = *t++);
+        } while ((*s++ = *t++));
     if (!n)
         while (*t++)
             ;

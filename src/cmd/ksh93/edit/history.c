@@ -537,7 +537,7 @@ again:
                             if (!histinit && (cp <= endbuff)) {
                                 unsigned char *marker = (unsigned char *)(cp - 4);
                                 hp->histind =
-                                    ((marker[0] << 16) | (marker[1] << 8) | marker[2] - 1);
+                                    ((marker[0] << 16) | (marker[1] << 8) | (marker[2] - 1));
                             }
                         }
                         break;

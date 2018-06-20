@@ -184,8 +184,9 @@ typedef struct {
 #define wcsrtombs(s, w, n, q) (*ast._ast_wcsrtombs)((s), (w), (n), (mbstate_t *)(q))
 
 /* the converse does not always hold! */
-#define utf32invalid(u) \
-    ((u) > 0x0010FFFF || (u) >= 0x0000D800 && (u) <= 0x0000DFFF || (u) >= 0xFFFE && (u) <= 0xFFFF)
+#define utf32invalid(u)                                              \
+    ((u) > 0x0010FFFF || ((u) >= 0x0000D800 && (u) <= 0x0000DFFF) || \
+     ((u) >= 0xFFFE && (u) <= 0xFFFF))
 
 #define UTF8_LEN_MAX 6 /* UTF-8 only uses 5 */
 

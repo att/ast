@@ -1126,8 +1126,10 @@ static Sfio_t *nativeconf(Proc_t **pp, const char *operand) {
     cmd[2] = 0;
     ops[0] = PROC_FD_DUP(open("/dev/null", O_WRONLY, 0), 2, PROC_FD_CHILD);
     ops[1] = 0;
-    if (*pp = procopen(_pth_getconf, cmd, environ, ops, PROC_READ)) {
-        if (sp = sfnew(NULL, NULL, SF_UNBOUND, (*pp)->rfd, SF_READ)) {
+    *pp = procopen(_pth_getconf, cmd, environ, ops, PROC_READ);
+    if (*pp) {
+        sp = sfnew(NULL, NULL, SF_UNBOUND, (*pp)->rfd, SF_READ);
+        if (sp) {
             sfdisc(sp, SF_POPDISC);
             return sp;
         }
@@ -1350,9 +1352,10 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
             print(sp, &look, NULL, path, flags, errorf);
         }
 #ifdef _pth_getconf_a
-        if (pp = nativeconf(&proc, _pth_getconf_a)) {
+        pp = nativeconf(&proc, _pth_getconf_a);
+        if (pp) {
             call = "GC";
-            while (f = sfgetr(pp, '\n', 1)) {
+            while ((f = sfgetr(pp, '\n', 1))) {
                 for (s = f; *s && *s != '=' && *s != ':' && !isspace(*s); s++)
                     ;
                 if (*s)

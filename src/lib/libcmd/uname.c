@@ -124,20 +124,22 @@ static const char hosttype[] = HOSTTYPE;
         if ((char *)&ut.m[sizeof(ut.m)] > last) last = (char *)&ut.m[sizeof(ut.m)]; \
     } while (0)
 
-#define output(f, v, u)                                                                  \
-    do {                                                                                 \
-        if ((flags & (f)) &&                                                             \
-            (*(v) || (flags & (OPT_all | OPT_total)) == OPT_all && ((f)&OPT_standard) || \
-             !(flags & (OPT_all | OPT_total)))) {                                        \
-            if (sep)                                                                     \
-                sfputc(sfstdout, ' ');                                                   \
-            else                                                                         \
-                sep = 1;                                                                 \
-            if (*(v))                                                                    \
-                sfputr(sfstdout, v, -1);                                                 \
-            else                                                                         \
-                sfprintf(sfstdout, "[%s]", u);                                           \
-        }                                                                                \
+#define output(f, v, u)                                                                    \
+    do {                                                                                   \
+        if ((flags & (f)) &&                                                               \
+            (*(v) || ((flags & (OPT_all | OPT_total)) == OPT_all && ((f)&OPT_standard)) || \
+             !(flags & (OPT_all | OPT_total)))) {                                          \
+            if (sep) {                                                                     \
+                sfputc(sfstdout, ' ');                                                     \
+            } else {                                                                       \
+                sep = 1;                                                                   \
+            }                                                                              \
+            if (*(v)) {                                                                    \
+                sfputr(sfstdout, v, -1);                                                   \
+            } else {                                                                       \
+                sfprintf(sfstdout, "[%s]", u);                                             \
+            }                                                                              \
+        }                                                                                  \
     } while (0)
 
 int b_uname(int argc, char **argv, Shbltin_t *context) {

@@ -1890,8 +1890,8 @@ static_fn void attstore(Namval_t *np, void *data) {
     flag &= (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
     *ap->attval++ = '=';
     if ((flag & NV_DOUBLE) == NV_DOUBLE) {
-        /* export doubles as integers for ksh88 compatibility */
-        *ap->attval++ = ' ' + NV_INTEGER | (flag & ~(NV_DOUBLE | NV_EXPNOTE));
+        // Export doubles as integers for ksh88 compatibility.
+        *ap->attval++ = ' ' + (NV_INTEGER | (flag & ~(NV_DOUBLE | NV_EXPNOTE)));
         *ap->attval = ' ';
     } else {
         *ap->attval++ = ' ' + flag;

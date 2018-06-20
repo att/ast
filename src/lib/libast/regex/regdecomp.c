@@ -27,7 +27,7 @@
 #include "reglib.h"
 
 #undef ismeta
-#define ismeta(c, t, e, d) (state.magic[c] && state.magic[c][(t) + (e)] >= T_META || (c) == (d))
+#define ismeta(c, t, e, d) ((state.magic[c] && state.magic[c][(t) + (e)] >= T_META) || (c) == (d))
 #define meta(f, c, t, e, d)                      \
     do {                                         \
         if (ismeta(c, t, e, d)) sfputc(f, '\\'); \
