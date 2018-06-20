@@ -75,10 +75,9 @@ extern Ccmap_t *ccmaplist(Ccmap_t *);
 
 #define CCMAPC(c, i, o) ((i) == (o) ? (c) : CCMAP(i, o)[c])
 #define CCMAPM(t, f, n, i, o) ((i) == (o) ? memcpy(t, f, n) : _ccmapcpy(CCMAP(i, o), t, f, n))
-#define CCMAPS(s, n, i, o) ((i) == (o) ? (void *)(s) : _ccmapstr(CCMAP(i, o), s, n))
 
 #define ccmapc(c, i, o) CCMAPC(c, i, o)
 #define ccmapm(t, f, n, i, o) CCMAPM(t, f, n, i, o)
-#define ccmaps(s, n, i, o) CCMAPS(s, n, i, o)
+#define ccmaps(s, n, i, o) do { if ((i) != (o)) _ccmapstr(CCMAP(i, o), s, n); } while(0)
 
 #endif
