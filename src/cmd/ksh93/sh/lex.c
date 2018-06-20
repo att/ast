@@ -90,10 +90,6 @@ struct lexdata {
 
 #include "shlex.h"
 
-#define pushlevel(lp, c, s)                                       \
-    ((lp->lexd.level >= lp->lexd.lex_max ? stack_grow(lp) : 1) && \
-     ((lp->lexd.lex_match[lp->lexd.level++] = lp->lexd.lastc),    \
-      lp->lexd.lastc = (((s) << CHAR_BIT) | (c))))
 #define oldmode(lp) (lp->lexd.lastc >> CHAR_BIT)
 #define endchar(lp) (lp->lexd.lastc & 0xff)
 #define setchar(lp, c) (lp->lexd.lastc = ((lp->lexd.lastc & ~0xff) | (c)))
@@ -111,6 +107,12 @@ static_fn void nested_here(Lex_t *);
 static_fn int here_copy(Lex_t *, struct ionod *);
 static_fn bool stack_grow(Lex_t *);
 static const Sfdisc_t alias_disc = {NULL, NULL, NULL, alias_exceptf, NULL};
+
+static_fn void pushlevel(Lex_t *lp, int c, int s) {
+    if (lp->lexd.level >= lp->lexd.lex_max) stack_grow(lp);
+    lp->lexd.lex_match[lp->lexd.level++] = lp->lexd.lastc;
+    lp->lexd.lastc = (s << CHAR_BIT) | c;
+}
 
 static_fn void refvar(Lex_t *lp, int type) {
     Shell_t *shp = lp->sh;
