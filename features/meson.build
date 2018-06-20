@@ -20,33 +20,33 @@ endif
 if system == 'openbsd'
     # OpenBSD puts some libraries, like libexecinfo and libiconv, in
     # /usr/local/lib, but the compiler doesn't automatically search there.
-    dirs = ['/usr/local/lib']
+    lib_dirs = ['/usr/local/lib']
 else
-    dirs = []
+    lib_dirs = []
 endif
 
 # On some platforms the math functions (e.g., `sin()`) that we need are found in
 # libc, on others they are found in libm.
-libm_dep = cc.find_library('m', required: false, dirs: dirs)
+libm_dep = cc.find_library('m', required: false, dirs: lib_dirs)
 
 # On some platforms `dladdr()` and related functions are found in libc,
 # on others they are found in libdl.
-libdl_dep = cc.find_library('dl', required: false, dirs: dirs)
+libdl_dep = cc.find_library('dl', required: false, dirs: lib_dirs)
 
 # On some systems (e.g., FreeBSD) `libutil` contains functions we may need
 # such as `openpty()`.
-libutil_dep = cc.find_library('util', required: false, dirs: dirs)
+libutil_dep = cc.find_library('util', required: false, dirs: lib_dirs)
 
 # On some platforms `backtrace()` and related functions are found in libc,
 # on others they are found in libexecinfo.
-libexecinfo_dep = cc.find_library('execinfo', required: false, dirs: dirs)
+libexecinfo_dep = cc.find_library('execinfo', required: false, dirs: lib_dirs)
 
 # On some systems (e.g., OpenBSD) `iconv()` is in libiconv.
-libiconv_dep = cc.find_library('iconv', required: false, dirs: dirs)
+libiconv_dep = cc.find_library('iconv', required: false, dirs: lib_dirs)
 
 # On Cygwin the message catalog functions (e.g., `catopen()`) are in this
 # library.
-libcatgets_dep = cc.find_library('catgets', required: false, dirs: dirs)
+libcatgets_dep = cc.find_library('catgets', required: false, dirs: lib_dirs)
 
 
 # It was turned off on Linux but the iffe test was botched, keeping it on here.

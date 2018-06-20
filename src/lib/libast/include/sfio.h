@@ -167,6 +167,7 @@ struct _sffmt_s {
 #define SF_DPOP 6    /* when discipline is being popped	*/
 #define SF_DPOLL 7   /* see if stream is ready for I/O	*/
 #define SF_DBUFFER 8 /* buffer not empty during push or pop	*/
+#undef SF_SYNC  // Some BSDs define this in sys/socket.h
 #define SF_SYNC 9    /* announcing start/end synchronization */
 #define SF_PURGE 10  /* a sfpurge() call was issued		*/
 #define SF_FINAL 11  /* closing is done except stream free	*/

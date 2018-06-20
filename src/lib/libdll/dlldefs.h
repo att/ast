@@ -24,13 +24,13 @@
 #ifndef _def_dll_dll
 #define _def_dll_dll 1
 
-#define _hdr_dlfcn 1   // #include <dlfcn.h> ok
-#define _lib_dlopen 1  // dlopen() in default lib(s)
-
 #if defined(__MVS__) && !defined(__SUSV3)
 #define __SUSV3 1
 #endif
+
+#if _hdr_dlfcn
 #include <dlfcn.h>
+#endif
 
 #define RTLD_PARENT 0
 
