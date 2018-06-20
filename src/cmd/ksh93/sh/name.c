@@ -2775,7 +2775,7 @@ bool nv_rename(Namval_t *np, int flags) {
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp = 0, *nr = 0;
     char *cp;
-    int arraynp = 0, arraynr, index = -1;
+    int arraynr, index = -1;
     Namval_t *last_table = shp->last_table;
     Dt_t *last_root = shp->last_root;
     Dt_t *hp = 0;
@@ -2786,11 +2786,6 @@ bool nv_rename(Namval_t *np, int flags) {
         if (!(hp = (Dt_t *)shp->st.prevst->save_tree)) hp = dtvnext(shp->var_tree);
     }
     if (!nv_isattr(np, NV_MINIMAL)) nvenv = np->nvenv;
-    if (nvenv) {
-        arraynp = 1;
-    } else if ((cp = nv_name(np)) && nv_isarray(np) && cp[strlen(cp) - 1] == ']') {
-        arraynp = 1;
-    }
     mp = nv_isarray(np) ? nv_opensub(np) : 0;
     if (flags & NV_MOVE) {
         if (!(cp = (char *)(mp ? mp : np)->nvalue.cp)) {
