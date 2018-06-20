@@ -40,9 +40,10 @@
 #include <ast.h>
 #include <ctype.h>
 
-#define getchr(ex) (*(ex)->nextchr++)
-#define peekchr(ex) (*(ex)->nextchr)
-#define ungetchr(ex) ((ex)->nextchr--)
+#define getchr(vp) (*(vp)->nextchr++)
+#define nxtchr(vp) ((vp)->nextchr++)
+#define peekchr(vp) (*(vp)->nextchr)
+#define ungetchr(vp) ((vp)->nextchr--)
 
 #define error(ex, msg) return (seterror(ex, msg))
 
@@ -122,7 +123,7 @@ static long expr(Expr_t *ex, int precedence) {
             case '?':
                 if (precedence > 1) goto done;
                 if (peekchr(ex) == ':') {
-                    getchr(ex);
+                    nxtchr(ex);
                     x = expr(ex, 2);
                     if (!n) n = x;
                 } else {
@@ -143,7 +144,7 @@ static long expr(Expr_t *ex, int precedence) {
             case '|':
                 if (peekchr(ex) == '|') {
                     if (precedence > 2) goto done;
-                    getchr(ex);
+                    nxtchr(ex);
                     x = expr(ex, 3);
                     n = n || x;
                 } else {
@@ -160,7 +161,7 @@ static long expr(Expr_t *ex, int precedence) {
             case '&':
                 if (peekchr(ex) == '&') {
                     if (precedence > 3) goto done;
-                    getchr(ex);
+                    nxtchr(ex);
                     x = expr(ex, 4);
                     n = n && x;
                 } else {
@@ -173,7 +174,7 @@ static long expr(Expr_t *ex, int precedence) {
             case '!':
                 if (peekchr(ex) != '=') error(ex, "operator syntax error");
                 if (precedence > 7) goto done;
-                getchr(ex);
+                nxtchr(ex);
                 x = expr(ex, 8);
                 if (c == '=')
                     n = n == x;
@@ -184,7 +185,7 @@ static long expr(Expr_t *ex, int precedence) {
             case '>':
                 if (peekchr(ex) == c) {
                     if (precedence > 9) goto done;
-                    getchr(ex);
+                    nxtchr(ex);
                     x = expr(ex, 10);
                     if (c == '<')
                         n <<= x;
@@ -193,7 +194,7 @@ static long expr(Expr_t *ex, int precedence) {
                 } else {
                     if (precedence > 8) goto done;
                     if (peekchr(ex) == '=') {
-                        getchr(ex);
+                        nxtchr(ex);
                         x = expr(ex, 9);
                         if (c == '<')
                             n = n <= x;

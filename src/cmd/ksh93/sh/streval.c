@@ -57,10 +57,10 @@
 #define pow2size(x) \
     ((x) <= 2 ? 2 : (x) <= 4 ? 4 : (x) <= 8 ? 8 : (x) <= 16 ? 16 : (x) <= 32 ? 32 : 64)
 #define round(x, size) (((x) + (size)-1) & ~((size)-1))
-#define stkpush(stk, v, val, type)                                                            \
-    ((((v)->offset = round(stktell(stk), pow2size(sizeof(type)))),                            \
-      stkseek(stk, (v)->offset + sizeof(type)), *((type *)stkptr(stk, (v)->offset)) = (val)), \
-     (v)->offset)
+#define stkpush(stk, v, val, type)                                 \
+    ((((v)->offset = round(stktell(stk), pow2size(sizeof(type)))), \
+      stkseek(stk, (v)->offset + sizeof(type)), *((type *)stkptr(stk, (v)->offset)) = (val)))
+#define stkoffset(stk, v) ((v)->offset)
 #define roundptr(ep, cp, type) \
     (((unsigned char *)(ep)) + round(cp - ((unsigned char *)(ep)), pow2size(sizeof(type))))
 
@@ -94,6 +94,7 @@ typedef Sfdouble_t (*Math_3f_f)(Sfdouble_t, Sfdouble_t, Sfdouble_t);
 typedef int (*Math_3i_f)(Sfdouble_t, Sfdouble_t, Sfdouble_t);
 
 #define getchr(vp) (*(vp)->nextchr++)
+#define nxtchr(vp) ((vp)->nextchr++)
 #define peekchr(vp) (*(vp)->nextchr)
 #define ungetchr(vp) ((vp)->nextchr--)
 
@@ -631,7 +632,7 @@ static_fn int gettok(struct vars *vp) {
             }
             case A_QUEST: {
                 if (peekchr(vp) == ':') {
-                    getchr(vp);
+                    nxtchr(vp);
                     op = A_QCOLON;
                 }
                 break;
@@ -639,7 +640,7 @@ static_fn int gettok(struct vars *vp) {
             case A_LT:
             case A_GT: {
                 if (peekchr(vp) == c) {
-                    getchr(vp);
+                    nxtchr(vp);
                     op -= 2;
                     break;
                 }
@@ -657,7 +658,7 @@ static_fn int gettok(struct vars *vp) {
             case A_OR:
             case A_AND: {
                 if (peekchr(vp) == c) {
-                    getchr(vp);
+                    nxtchr(vp);
                     op--;
                 }
             }
@@ -735,7 +736,7 @@ again:
             if ((!lvalue.value || precedence > 3)) ERROR(vp, e_notlvalue);
             if (precedence == 3) precedence = 2;
             assignop = lvalue;
-            getchr(vp);
+            nxtchr(vp);
             c = 3;
         } else {
             c = (strval_precedence[op] & PRECMASK);
@@ -848,12 +849,14 @@ again:
             case A_QUEST: {
                 int offset1, offset2;
                 sfputc(shp->stk, A_JMPZ);
-                offset1 = stkpush(shp->stk, vp, 0, short);
+                stkpush(shp->stk, vp, 0, short);
+                offset1 = stkoffset(shp->stk, vp);
                 sfputc(shp->stk, A_POP);
                 if (!expr(vp, 1)) return (false);
                 if (gettok(vp) != A_COLON) ERROR(vp, e_questcolon);
                 sfputc(shp->stk, A_JMP);
-                offset2 = stkpush(shp->stk, vp, 0, short);
+                stkpush(shp->stk, vp, 0, short);
+                offset2 = stkoffset(shp->stk, vp);
                 *((short *)stkptr(shp->stk, offset1)) = stktell(shp->stk);
                 sfputc(shp->stk, A_POP);
                 if (!expr(vp, 3)) return (false);
@@ -876,7 +879,8 @@ again:
                     op = A_JMPNZ;
                 }
                 sfputc(shp->stk, op);
-                offset = stkpush(shp->stk, vp, 0, short);
+                stkpush(shp->stk, vp, 0, short);
+                offset = stkoffset(shp->stk, vp);
                 sfputc(shp->stk, A_POP);
                 if (!expr(vp, c)) return (false);
                 *((short *)stkptr(shp->stk, offset)) = stktell(shp->stk);
