@@ -1,9 +1,8 @@
 #!/bin/sh
+set -e
 brew install meson
 
-export CFLAGS="-fno-strict-aliasing -Wno-unknown-pragmas -Wno-missing-braces"
-CFLAGS="$CFLAGS -Wno-unused-result -Wno-return-type -Wno-int-to-pointer-cast"
-CFLAGS="$CFLAGS -Wno-parentheses -Wno-unused -Wno-char-subscripts"
+source scripts/travis_common.sh
 
 mkdir build
 cd build
@@ -15,15 +14,23 @@ then
     exit 1
 fi
 
-echo ==== Building the code;
+echo ==== Building the code
+echo CC=$CC
 ninja || exit
 
-# TODO: Enable when the known test failures on macOS have been fixed.
-#echo ==== Running unit tests
-#ulimit -n 1024
-#export MESON_TESTTHREADS=$(( 4 * CORE_COUNT ))
-#if ! meson test
-#then
-#    cat meson-logs/testlog.txt
-#    exit 1
-#fi
+echo ==== Running unit tests
+ulimit -n 1024
+CORE_COUNT=$(sysctl -n hw.ncpu)
+export MESON_TESTTHREADS=$(( 4 * ${CORE_COUNT:-1} ))
+echo MESON_TESTTHREADS=$MESON_TESTTHREADS
+
+# TODO: Run with --setup=malloc when Travis macOS is updated to 10.13 or
+# newer. macOS 10.12 doesn't honor the MallocLogFile=/dev/null env var which
+# results in lots of malloc debug messages being written to stderr which
+# breaks the unit tests.
+if ! meson test
+then
+    # cat meson-logs/testlog-malloc.txt
+    cat meson-logs/testlog.txt
+    exit 1
+fi
