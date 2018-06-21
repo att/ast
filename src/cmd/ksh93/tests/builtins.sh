@@ -394,8 +394,10 @@ actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
 expect=$(date)
 if [[ "$actual" != "$expect" ]]
 then
+   # The timezone in the %T expansion may be GMT while the date command is UTC or vice-versa.
+   # So make sure they both say UTC since the two strings are equivalent.
    actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
-   expect=$(date)
+   expect=$(date | sed -e 's/GMT/UTC/')
    if [[ "$actual" != "$expect" ]]
    then
       log_error 'printf "%T" now wrong output' "$expect" "$actual"
