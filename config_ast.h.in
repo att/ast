@@ -61,6 +61,7 @@
 #mesondefine _may_use_threads
 #mesondefine _more_long_int
 #mesondefine _more_void_int
+#mesondefine _wchar_t_is_int
 #mesondefine _pth_ed
 #mesondefine _pipe_rw
 #mesondefine _proto_bcopy

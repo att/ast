@@ -618,17 +618,25 @@ loop_fmt:
                     argv.vp = va_arg(args, void *);
                     break;
                 case SFFMT_CHAR:
-                    if (base >= 0) argv.s = va_arg(args, char *);
 #if _has_multibyte
-                    else if ((flags & SFFMT_LONG) || fmt == 'C') {
-                        if (sizeof(wchar_t) <= sizeof(uint))
-                            argv.wc = (wchar_t)va_arg(args, uint);
-                        else
-                            argv.wc = va_arg(args, wchar_t);
-                    }
-#endif
-                    else
+                    if (base >= 0) {
+                        argv.s = va_arg(args, char *);
+                    } else if ((flags & SFFMT_LONG) || fmt == 'C') {
+#if _wchar_t_is_int
+                        argv.wc = va_arg(args, wchar_t);
+#else  // _wchar_t_is_int
+                        argv.wc = (wchar_t)va_arg(args, uint);
+#endif  // _wchar_t_is_int
+                    } else {
                         argv.i = va_arg(args, int);
+                    }
+#else  // _has_multibyte
+                    if (base >= 0) {
+                        argv.s = va_arg(args, char *);
+                    } else {
+                        argv.i = va_arg(args, int);
+                    }
+#endif  // _has_multibyte
                     break;
                 default: /* unknown pattern */
                     break;

@@ -76,14 +76,12 @@ shared_c_args = [
     '-D_AST_no_spawnveg=1',
 ]
 
-# Compiler arguments used when building `ksh93`, `shcomp`, and related AST
-# code. These are primarily `-Dsome_symbol` flags that define which features
-# the platform provides.
 ptr_size = cc.sizeof('void*')
 int_size = cc.sizeof('int')
 long_size = cc.sizeof('long')
 size_t_size = cc.sizeof('size_t')
 off_t_size = cc.sizeof('off_t')
+wchar_t_size = cc.sizeof('wchar_t', prefix: '#include <wchar.h>')
 
 feature_data = configuration_data()
 feature_data.set('MESON_BUILD', 1)

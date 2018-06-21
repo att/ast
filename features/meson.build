@@ -3,19 +3,14 @@ system = host_machine.system()
 bash_machtype = cpu + '-unknown-'+ system
 feature_data.set_quoted('BASH_MACHTYPE', bash_machtype)
 
-# voidptr is larger than int
-if ptr_size > int_size
-    feature_data.set('_more_void_int', 1)
-else
-    feature_data.set('_more_void_int', 0)
-endif
+# void ptr is larger than int
+feature_data.set10('_more_void_int', ptr_size > int_size)
 
 # long is larger than int
-if long_size > int_size
-    feature_data.set('_more_long_int', 1)
-else
-    feature_data.set('_more_long_int', 0)
-endif
+feature_data.set10('_more_long_int', long_size > int_size)
+
+# wchar_t is at least as large as an int
+feature_data.set10('_wchar_t_is_int', wchar_t_size >= int_size)
 
 if system == 'openbsd'
     # OpenBSD puts some libraries, like libexecinfo and libiconv, in

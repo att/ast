@@ -419,10 +419,11 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                         if (fp[n].ft.base >= 0) fp[n].argv.s = va_arg(args, char *);
 #if _has_multibyte
                         else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
-                            if (sizeof(wchar_t) <= sizeof(int))
-                                fp[n].argv.wc = (wchar_t)va_arg(args, int);
-                            else
-                                fp[n].argv.wc = va_arg(args, wchar_t);
+#if _wchar_t_is_int
+                            fp[n].argv.wc = va_arg(args, wchar_t);
+#else  // _wchar_t_is_int
+                            fp[n].argv.wc = (wchar_t)va_arg(args, uint);
+#endif  // _wchar_t_is_int
                         }
 #endif
                         /* observe promotion rule */
