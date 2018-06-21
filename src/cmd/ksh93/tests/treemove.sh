@@ -272,8 +272,9 @@ compound c2=( integer a=2 )
 sc.s.pushobj c1
 sc.s.pushobj c2
 c.ost.pushobj sc
-exp='typeset -C c=(objstack_t ost=(typeset -l -i st_n=2;st[0]=(obj=(typeset -l -i val=5;););st[1]=(obj=(objstack_t s=(typeset -l -i st_n=2;st[0]=(obj=(typeset -l -i a=1;););st[1]=(obj=(typeset -l -i a=2)))))))'
-[[ $(typeset -p c) == "$exp" ]] || log_error 'typeset -m not working'
+expect='typeset -C c=(objstack_t ost=(typeset -l -i st_n=2;st[0]=(obj=(typeset -l -i val=5;););st[1]=(obj=(objstack_t s=(typeset -l -i st_n=2;st[0]=(obj=(typeset -l -i a=1;););st[1]=(obj=(typeset -l -i a=2)))))))'
+actual=$(typeset -p c)
+[[ "$actual" == "$expect" ]] || log_error 'typeset -m not working' "$expect" "$actual"
 
 typeset -T printfish_t=(
             typeset fname
