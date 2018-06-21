@@ -1374,22 +1374,6 @@ void *ed_open(Shell_t *shp) {
     return (void *)ed;
 }
 
-#undef ioctl
-int sh_ioctl(int fd, int cmd, void *val, int sz) {
-    int r, err = errno;
-    if (sizeof(val) == sizeof(void *)) {
-        while ((r = ioctl(fd, cmd, val)) < 0 && errno == EINTR) errno = err;
-    } else {
-        Sflong_t l = (Sflong_t)val;
-        if (sizeof(val) == sizeof(long)) {
-            while ((r = ioctl(fd, cmd, (unsigned long)l)) < 0 && errno == EINTR) errno = err;
-        } else if (sizeof(int) != sizeof(long)) {
-            while ((r = ioctl(fd, cmd, (unsigned int)l)) < 0 && errno == EINTR) errno = err;
-        }
-    }
-    return r;
-}
-
 #undef tcgetattr
 int sh_tcgetattr(int fd, struct termios *tty) {
     int r, err = errno;
