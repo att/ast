@@ -2442,7 +2442,8 @@ static_fn char *sh_tilde(Shell_t *shp, const char *string) {
         str = stkseek(shp->stk, offset);
         Skip = n;
         if (logins_tree && (np = nv_search(str, logins_tree, 0))) return nv_getval(np);
-        if (pw = getpwnam(str)) {
+        pw = getpwnam(str);
+        if (pw) {
             string = str;
             goto skip;
         }

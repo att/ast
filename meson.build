@@ -112,7 +112,7 @@ osname = hosttype.split('.')[0]
 feature_data.set_quoted('HOSTTYPE', hosttype)
 feature_data.set_quoted('OSNAME', osname)
 # Some systems, like FreeBSD, have a different signature for the fts_open() comparison function.
-feature_data.set10('const_const_fts_open', osname == 'freebsd')
+feature_data.set10('const_const_fts_open', osname == 'freebsd' or osname == 'cygwin')
 
 
 feature_data.set('_ast_sizeof_int', int_size)

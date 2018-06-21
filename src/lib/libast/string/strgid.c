@@ -93,14 +93,15 @@ int strgid(const char *name) {
 #if __CYGWIN__
         if (!*e) {
             if (!getgrgid(id)) id = -1;
-        } else if (!streq(name, "sys"))
+        } else if (!streq(name, "sys")) {
             id = -1;
-        else if (gr = getgrnam("Administrators"))
+        } else if ((gr = getgrnam("Administrators"))) {
             id = gr->gr_gid;
-        else if (pw = getpwnam("Administrator"))
+        } else if ((pw = getpwnam("Administrator"))) {
             id = pw->pw_gid;
-        else
+        } else {
             id = -1;
+        }
 #else
         if (*e || !getgrgid(id)) id = -1;
 #endif

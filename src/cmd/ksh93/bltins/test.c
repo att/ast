@@ -47,7 +47,7 @@
                                  ((p)->st_mode & (S_IRUSR | S_IWUSR)) != (S_IRUSR | S_IWUSR))))
 #else  // _socketpair_shutdown_mode
 #define isapipe(f, p) \
-    (test_stat(f, p) >= 0 && (S_ISFIFO((p)->st_mode) || S_ISSOCK((p)->st_mode) && (p)->st_ino))
+    (test_stat(f, p) >= 0 && (S_ISFIFO((p)->st_mode) || (S_ISSOCK((p)->st_mode) && (p)->st_ino)))
 #endif  // _socketpair_shutdown_mode
 #else   //_pipe_socketpair
 #define isapipe(f, p) \

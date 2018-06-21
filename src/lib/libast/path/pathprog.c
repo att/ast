@@ -66,22 +66,24 @@ static size_t prog(const char *command, char *path, size_t size) {
     if (!_NSGetExecutablePath(path, &z) && *path == '/') return strlen(path);
 #endif
 #if __CYGWIN__
-    if (s = GetCommandLine()) {
+    s = GetCommandLine();
+    if (s) {
         n = 0;
         q = 0;
         t = path;
         e = path + size - 1;
-        while (c = *s++) {
-            if (c == q)
+        while ((c = *s++)) {
+            if (c == q) {
                 q = 0;
-            else if (!q && c == '"')
+            } else if (!q && c == '"') {
                 q = c;
-            else if (!q && isspace(c))
+            } else if (!q && isspace(c)) {
                 break;
-            else if (t < e)
+            } else if (t < e) {
                 *t++ = c == '\\' ? '/' : c;
-            else
+            } else {
                 n++;
+            }
         }
         if (t < e) *t = 0;
         return (t - path) + n;
