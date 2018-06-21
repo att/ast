@@ -1029,7 +1029,9 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     while (true) {
         cp = nv_dirnext(dir);
         if (odir) {
-            free(odir);
+            // TODO: Figure out if we should even be freeing the entity pointed to by `odir`.
+            // If we do free it one of the `treemove` tests that involves `typeset -m` fails.
+            // free(odir);
             odir = NULL;
         }
         if (nq) {
@@ -1051,8 +1053,10 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
             mq = nv_open(stkptr(shp->stk, 0), last_root, NV_VARNAME | NV_NOASSIGN | NV_NOFAIL);
             shp->var_tree = dp;
             if (nq && mq) {
-                struct nvdir *odir = 0, *dp = (struct nvdir *)dir;
+                struct nvdir *dp = (struct nvdir *)dir;
                 char *nvenv = mq->nvenv;
+                // Related to the TODO above this condition appears to only ever be true if
+                // flags&NV_MOVE is true.
                 if (dp->table == nq) {
                     dp = dp->prev;
                     odir = dir;
