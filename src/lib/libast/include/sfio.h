@@ -160,21 +160,21 @@ struct _sffmt_s {
 #define SF_LOCKR 0000010 /* lock record, stop access to stream	*/
 #define SF_LASTR 0000020 /* get the last incomplete record	*/
 
-/* exception events: SF_NEW(0), SF_READ(1), SF_WRITE(2) and the below 	*/
-#define SF_SEEK 3    /* seek error				*/
-#define SF_CLOSING 4 /* when stream is about to be closed	*/
-#define SF_DPUSH 5   /* when discipline is being pushed	*/
-#define SF_DPOP 6    /* when discipline is being popped	*/
-#define SF_DPOLL 7   /* see if stream is ready for I/O	*/
-#define SF_DBUFFER 8 /* buffer not empty during push or pop	*/
-#undef SF_SYNC  // Some BSDs define this in sys/socket.h
-#define SF_SYNC 9    /* announcing start/end synchronization */
-#define SF_PURGE 10  /* a sfpurge() call was issued		*/
-#define SF_FINAL 11  /* closing is done except stream free	*/
-#define SF_READY 12  /* a polled stream is ready		*/
-#define SF_LOCKED 13 /* stream is in a locked state		*/
-#define SF_ATEXIT 14 /* process is exiting			*/
-#define SF_EVENT 100 /* start of user-defined events		*/
+// Exception events: SF_NEW(0), SF_READ(1), SF_WRITE(2) and the below.
+#define SF_SEEK 3     // seek error
+#define SF_CLOSING 4  // when stream is about to be closed
+#define SF_DPUSH 5    // when discipline is being pushed
+#define SF_DPOP 6     // when discipline is being popped
+#define SF_DPOLL 7    // see if stream is ready for I/O
+#define SF_DBUFFER 8  // buffer not empty during push or pop
+#undef SF_SYNC        // Some BSDs define this in sys/socket.h
+#define SF_SYNC 9     // announcing start/end synchronization
+#define SF_PURGE 10   // a sfpurge() call was issued
+#define SF_FINAL 11   // closing is done except stream free
+#define SF_READY 12   // a polled stream is ready
+#define SF_LOCKED 13  // stream is in a locked state
+#define SF_ATEXIT 14  // process is exiting
+#define SF_EVENT 100  // start of user-defined events
 
 /* for stack and disciplines */
 #define SF_POPSTACK ((Sfio_t *)0)  /* pop the stream stack		*/

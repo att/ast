@@ -155,7 +155,7 @@ Dllinfo_t *dllinfo(void) {
 // Fts version sort order. Higher versions appear first.
 //
 #if const_const_fts_open
-static int vercmp(const FTSENT * const *ap, const FTSENT * const *bp) {
+static int vercmp(const FTSENT *const *ap, const FTSENT *const *bp) {
 #else
 static int vercmp(const FTSENT **ap, const FTSENT **bp) {
 #endif
