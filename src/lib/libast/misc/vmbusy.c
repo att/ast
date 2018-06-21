@@ -8,6 +8,8 @@
 #define NO_MALLOC_WRAPPERS 1
 #include "config_ast.h"
 
+#include <assert.h>
+
 #if _hdr_stdlib
 #include <stdlib.h>
 #elif _hdr_malloc
@@ -26,6 +28,7 @@ void *ast_malloc(size_t size) {
     vmbusy_flag = true;
     void *p = malloc(size);
     vmbusy_flag = false;
+    assert(p);
     return p;
 }
 
@@ -33,6 +36,7 @@ void *ast_calloc(size_t count, size_t size) {
     vmbusy_flag = true;
     void *p = calloc(count, size);
     vmbusy_flag = false;
+    assert(p);
     return p;
 }
 
@@ -40,6 +44,7 @@ void *ast_realloc(void *ptr, size_t size) {
     vmbusy_flag = true;
     void *p = realloc(ptr, size);
     vmbusy_flag = false;
+    assert(p);
     return p;
 }
 
@@ -47,6 +52,7 @@ void *ast_valloc(size_t size) {
     vmbusy_flag = true;
     void *p = valloc(size);
     vmbusy_flag = false;
+    assert(p);
     return p;
 }
 

@@ -680,7 +680,7 @@ static char *save(const char *ap, size_t az, const char *bp, size_t bz, const ch
     static Dt_t *dict;
 
     if (!dict) {
-        if (!(d = newof(0, Dtdisc_t, 1, 0))) return (char *)ap;
+        d = newof(0, Dtdisc_t, 1, 0);
         d->key = offsetof(Save_t, text);
         if (!(dict = dtopen(d, Dtset))) return (char *)ap;
     }
@@ -697,7 +697,7 @@ static char *save(const char *ap, size_t az, const char *bp, size_t bz, const ch
     }
     *b = 0;
     if (!(p = (Save_t *)dtmatch(dict, buf))) {
-        if (!(p = newof(0, Save_t, 1, b - buf))) return (char *)ap;
+        p = newof(0, Save_t, 1, b - buf);
         strcpy(p->text, buf);
         dtinsert(dict, p);
     }
@@ -1019,8 +1019,6 @@ static Push_t *info(Push_t *psp, char *s, char *e, Sfio_t *ip, char *id) {
     intmax_t number;
     char *arg;
 
-    static Push_t push;
-
     index = opt_info.index;
     offset = opt_info.offset;
     num = opt_info.num;
@@ -1034,13 +1032,9 @@ static Push_t *info(Push_t *psp, char *s, char *e, Sfio_t *ip, char *id) {
     opt_info.arg = arg;
     n = strlen(b);
     tsp = newof(0, Push_t, 1, n + 1);
-    if (tsp) {
-        tsp->nb = (char *)(tsp + 1);
-        tsp->ne = tsp->nb + n;
-        strcpy(tsp->nb, b);
-    } else {
-        tsp = &push;
-    }
+    tsp->nb = (char *)(tsp + 1);
+    tsp->ne = tsp->nb + n;
+    strcpy(tsp->nb, b);
     tsp->next = psp;
     tsp->ob = s;
     tsp->oe = e;
@@ -1075,14 +1069,12 @@ static Push_t *localize(Push_t *psp, char *s, char *e, int term, int n, Sfio_t *
     if (!(s = sfstruse(ip)) || (u = T(id, catalog, s)) == s) return 0;
     n = strlen(u);
     tsp = newof(0, Push_t, 1, n + 1);
-    if (tsp) {
-        tsp->nb = (char *)(tsp + 1);
-        tsp->ne = tsp->nb + n;
-        strcpy(tsp->nb, u);
-        tsp->ob = t;
-        tsp->oe = e;
-        tsp->ch = 1;
-    }
+    tsp->nb = (char *)(tsp + 1);
+    tsp->ne = tsp->nb + n;
+    strcpy(tsp->nb, u);
+    tsp->ob = t;
+    tsp->oe = e;
+    tsp->ch = 1;
     tsp->next = psp;
     return tsp;
 }
@@ -3872,13 +3864,11 @@ again:
                 cache = 0;
             } else {
                 cache = newof(0, Optcache_t, 1, 0);
-                if (cache) {
-                    cache->caching = c;
-                    c = 0;
-                    cache->pass = *pass;
-                    cache->next = state.cache;
-                    state.cache = cache;
-                }
+                cache->caching = c;
+                c = 0;
+                cache->pass = *pass;
+                cache->next = state.cache;
+                state.cache = cache;
             }
         } else {
             cache = 0;

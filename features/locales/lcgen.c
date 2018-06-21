@@ -337,10 +337,7 @@ int main(int argc, char **argv) {
         }
         switch (type) {
             case CHARSET:
-                if (!(cp = newof(0, Charset_t, 1, s - b + 1))) {
-                    fprintf(stderr, "%s: %d: out of space\n", command, line);
-                    return 1;
-                }
+                cp = newof(0, Charset_t, 1, s - b + 1);
                 b = (char *)(cp + 1);
                 cp->link.code = copy(&b, arg[0]);
                 cp->alternates = copy(&b, arg[1]);
@@ -352,10 +349,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case TERRITORY:
-                if (!(tp = newof(0, Territory_t, 1, s - b + 1))) {
-                    fprintf(stderr, "%s: %d: out of space\n", command, line);
-                    return 1;
-                }
+                tp = newof(0, Territory_t, 1, s - b + 1);
                 b = (char *)(tp + 1);
                 tp->link.code = copy(&b, arg[0]);
                 tp->name = copy(&b, arg[1]);
@@ -372,10 +366,7 @@ int main(int argc, char **argv) {
                             fprintf(stderr, "%s: %d: %s: unknown language\n", command, line, b);
                             return 1;
                         }
-                        if (!(ll = newof(0, Language_list_t, 1, 0))) {
-                            fprintf(stderr, "%s: %d: out of space\n", command, line);
-                            return 1;
-                        }
+                        ll = newof(0, Language_list_t, 1, 0);
                         if (!tp->languages)
                             tp->languages = ll;
                         else
@@ -400,10 +391,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case LANGUAGE:
-                if (!(lp = newof(0, Language_t, 1, s - b + 1))) {
-                    fprintf(stderr, "%s: %d: out of space\n", command, line);
-                    return 1;
-                }
+                lp = newof(0, Language_t, 1, s - b + 1);
                 b = (char *)(lp + 1);
                 lp->link.code = copy(&b, arg[0]);
                 lp->name = copy(&b, arg[1]);
@@ -431,16 +419,10 @@ int main(int argc, char **argv) {
                             fprintf(lf, "LC_%s,", f);
                         else
                             fprintf(lf, "0,");
-                        if (!(ap = newof(0, Attribute_t, 1, 0))) {
-                            fprintf(stderr, "%s: %d: out of space\n", command, line);
-                            return 1;
-                        }
+                        ap = newof(0, Attribute_t, 1, 0);
                         ap->link.code = b;
                         ap->link.index = i++;
-                        if (!(al = newof(0, Attribute_list_t, 1, 0))) {
-                            fprintf(stderr, "%s: %d: out of space\n", command, line);
-                            return 1;
-                        }
+                        al = newof(0, Attribute_list_t, 1, 0);
                         if (!lp->attributes)
                             lp->attributes = al;
                         else
@@ -461,10 +443,7 @@ int main(int argc, char **argv) {
                 }
                 break;
             case MAP:
-                if (!(mp = newof(0, Map_t, 1, s - b + 1))) {
-                    fprintf(stderr, "%s: %d: out of space\n", command, line);
-                    return 1;
-                }
+                mp = newof(0, Map_t, 1, s - b + 1);
                 b = (char *)(mp + 1);
                 mp->link.code = copy(&b, arg[0]);
                 if (!arg[2]) {
