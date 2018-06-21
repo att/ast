@@ -107,7 +107,9 @@ static int chr2str(char *buf, int v) {
 
 int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     int n, v, w, k, n_s, base, fmt, flags;
+#if !_ast_intmax_long || _more_long_int || _more_void_int
     Sflong_t lv;
+#endif
     char *sp, *ssp, *endsp, *ep, *endep;
     int dot, width, precis, sign, decpt;
 #if _PACKAGE_ast

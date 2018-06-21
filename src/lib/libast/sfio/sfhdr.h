@@ -791,7 +791,7 @@ typedef struct _sfextern_s {
 #define SF_ECONT 3  /* can continue normally		*/
 
 #define SETLOCAL(f) ((f)->mode |= SF_LOCAL)
-#define GETLOCAL(f, v) ((v) = ((f)->mode & SF_LOCAL), (f)->mode &= ~SF_LOCAL, (v))
+#define GETLOCAL(f, v) do { (v) = ((f)->mode & SF_LOCAL); (f)->mode &= ~SF_LOCAL; } while (0)
 #define SFWRALL(f) ((f)->mode |= SF_RV)
 #define SFISALL(f, v)                                         \
     ((((v) = (f)->mode & SF_RV) ? ((f)->mode &= ~SF_RV) : 0), \
