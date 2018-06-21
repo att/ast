@@ -30,10 +30,14 @@
 #ifndef _AST_GETOPT_H
 #define _AST_GETOPT_H 1
 
+#ifndef __CYGWIN__
+// On Cygwin these declarations cause tons of "redeclared without dllimport attribute" warnings.
+// So we omit these on that platform.
 extern int opterr;
 extern int optind;
 extern int optopt;
 extern char *optarg;
+#endif
 
 extern int getopt(int, char *const *, const char *);
 extern int getsubopt(char **, char *const *, char **);
