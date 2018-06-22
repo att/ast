@@ -24,16 +24,16 @@
 //
 #define JOBTTY 2
 
-#include <ast.h>
-#include <sfio.h>
+#include "ast.h"
+#include "sfio.h"
 #ifndef SIGINT
 #include <signal.h>
 #endif  // !SIGINT
 
-#include <aso.h>
+#include "aso.h"
 
 #if SHOPT_COSHELL
-#include <coshell.h>
+#include "coshell.h"
 #define COPID_BIT (1L << 30)
 struct cosh {
     struct cosh *next;

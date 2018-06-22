@@ -24,7 +24,7 @@
 //
 // These are the definitions for the lexical analyzer.
 //
-#include <cdt.h>
+#include "cdt.h"
 #include "lexstates.h"
 #include "shnodes.h"
 #include "shtable.h"

@@ -34,14 +34,14 @@
 typedef struct Shell_s Shell_t;
 #endif
 
-#include <ast.h>
-#include <cdt.h>
-#include <stk.h>
+#include "ast.h"
+#include "cdt.h"
+#include "stk.h"
 #include "fault.h"
 #ifdef _SH_PRIVATE
 #include "name.h"
 #else
-#include <nval.h>
+#include "nval.h"
 #endif  // _SH_PRIVATE
 #if __STDC_VERSION__ >= 199901L
 #include <stdint.h>
@@ -66,7 +66,7 @@ typedef struct {
     Shopt_t_data_t v[(256 / 8) / sizeof(Shopt_t_data_t)];
 } Shopt_t;
 
-#include <shcmd.h>
+#include "shcmd.h"
 
 typedef void (*Shinit_f)(Shell_t *, int);
 #ifndef SH_wait_f_defined
@@ -311,7 +311,7 @@ struct Shell_s {
 #define SH_IOCOPROCESS (-2)
 #define SH_IOHISTFILE (-3)
 
-#include <cmd.h>
+#include "cmd.h"
 
 // Symbolic value for sh_fdnotify.
 #define SH_FDCLOSE (-1)

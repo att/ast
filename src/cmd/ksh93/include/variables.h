@@ -19,10 +19,10 @@
  ***********************************************************************/
 #ifndef SH_VALNOD
 
-#include <option.h>
+#include "option.h"
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 
 // The following defines are coordinated with data in data/variables.c.

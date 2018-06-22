@@ -27,8 +27,8 @@
     void *nvshell;      /* shell pointer */             \
     char *nvenv;        /* pointer to environment name */
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 
 typedef int (*Nambfp_f)(int, char **, void *);
 struct pathcomp;

@@ -25,10 +25,10 @@
 // S. R. Bourne
 // Rewritten by David Korn
 //
-#include <error.h>
+#include "error.h"
 #include <setjmp.h>
-#include <sfio.h>
-#include <sig.h>
+#include "sfio.h"
+#include "sig.h"
 
 #ifndef SIGWINCH
 #ifdef SIGWIND

@@ -24,7 +24,7 @@
 //
 #ifndef PATH_OFFSET
 
-#include <nval.h>
+#include "nval.h"
 #include "defs.h"
 
 #if !SHOPT_SPAWN && _use_spawnveg

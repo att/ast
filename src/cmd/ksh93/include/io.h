@@ -21,8 +21,8 @@
 // UNIX shell
 // David Korn
 //
-#include <ast.h>
-#include <sfio.h>
+#include "ast.h"
+#include "sfio.h"
 
 #ifndef IOBSIZE
 #define IOBSIZE (SF_BUFSIZE * sizeof(char *))

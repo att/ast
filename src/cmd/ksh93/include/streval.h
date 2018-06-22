@@ -24,11 +24,11 @@
 // Arithmetic expression evaluator.
 //
 // The following only is needed for const.
-#include <ast.h>
+#include "ast.h"
 #include <math.h>
 #include "defs.h"
 #if _AST_VERSION >= 20030127L
-#include <ast_float.h>
+#include "ast_float.h"
 #endif
 
 #if _ast_fltmax_double

@@ -22,7 +22,7 @@
 // Interface for history mechanism.
 // Written by David Korn.
 //
-#include <ast.h>
+#include "ast.h"
 
 #define HIST_CHAR '!'
 #define HIST_VERSION 1  // history file format version no.

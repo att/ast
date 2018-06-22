@@ -27,9 +27,9 @@
 //
 #include <stdbool.h>
 
-#include <ast.h>
-#include <cdt.h>
-#include <option.h>
+#include "ast.h"
+#include "cdt.h"
+#include "option.h"
 
 // For compatibility with old hash library.
 #define Hashtab_t Dt_t
@@ -299,6 +299,6 @@ extern const Namdisc_t *nv_discfun(int);
 #define settype setdisc
 #endif
 
-#include <nvapi.h>
+#include "nvapi.h"
 
 #endif  // NV_DEFAULT

@@ -22,7 +22,7 @@
 // Struct to hold a word argument.
 // Written by David Korn
 //
-#include <stak.h>
+#include "stak.h"
 
 struct ionod {
     unsigned iofile;

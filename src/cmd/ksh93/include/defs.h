@@ -30,11 +30,11 @@
 // the `ksh` command. Otherwise the assumption is they're being included to build a plugin.
 #define _SH_PRIVATE 1
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 #include <ctype.h>
-#include <error.h>
-#include <history.h>
+#include "error.h"
+#include "history.h"
 #include "argnod.h"
 #include "fault.h"
 #include "name.h"
@@ -47,7 +47,7 @@
 
 #define env_change() (++ast.env_serial)
 #if SHOPT_ENV
-#include <env.h>
+#include "env.h"
 #else  // SHOPT_ENV
 #define Env_t void
 #define sh_envput(e, p) env_change()

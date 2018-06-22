@@ -25,7 +25,7 @@
 //
 #ifndef _FCIN_H
 #define _FCIN_H
-#include <sfio.h>
+#include "sfio.h"
 
 typedef struct _fcin {
     Sfio_t *_fcfile;                                     // input file pointer

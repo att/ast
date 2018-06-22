@@ -29,7 +29,7 @@
 #if !KSHELL
 #include <ctype.h>
 #include <setjmp.h>
-#include <sig.h>
+#include "sig.h"
 #endif  // KSHELL
 
 #include "terminal.h"

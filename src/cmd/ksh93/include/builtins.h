@@ -19,10 +19,10 @@
  ***********************************************************************/
 #ifndef SYSDECLARE
 
-#include <option.h>
+#include "option.h"
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 
 #include "shtable.h"
