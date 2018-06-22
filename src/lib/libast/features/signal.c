@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 
-#include <ast_standards.h> /* iffe --include-first */
+#include "ast_standards.h" /* iffe --include-first */
 
 #define strsignal ______strsignal
 
