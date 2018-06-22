@@ -624,13 +624,13 @@ loop_fmt:
                     } else if ((flags & SFFMT_LONG) || fmt == 'C') {
 #if _wchar_t_is_int
                         argv.wc = va_arg(args, wchar_t);
-#else  // _wchar_t_is_int
+#else   // _wchar_t_is_int
                         argv.wc = (wchar_t)va_arg(args, uint);
 #endif  // _wchar_t_is_int
                     } else {
                         argv.i = va_arg(args, int);
                     }
-#else  // _has_multibyte
+#else   // _has_multibyte
                     if (base >= 0) {
                         argv.s = va_arg(args, char *);
                     } else {

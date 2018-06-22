@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "sfhdr.h"
+
 static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n";
 
 /*	Functions to set a given stream to some desired mode
@@ -53,8 +54,9 @@ static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n"
 
 /* the below is for protecting the application from SIGPIPE */
 #if _PACKAGE_ast
-#include "sig.h"
 #include <sys/wait.h>
+
+#include "sig.h"
 #define Sfsignal_f Sig_handler_t
 #else
 #include <signal.h>
