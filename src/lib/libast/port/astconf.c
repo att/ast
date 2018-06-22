@@ -27,11 +27,11 @@
 
 #include "univlib.h"
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <error.h>
-#include <proc.h>
-#include <regex.h>
+#include "error.h"
+#include "proc.h"
+#include "regex.h"
 #if _lib_sysinfo
 #include <sys/systeminfo.h>
 #endif

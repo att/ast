@@ -38,9 +38,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <times.h>
-#include <tv.h>
+#include "ast.h"
+#include "times.h"
+#include "tv.h"
 
 int touch(const char *path, time_t at, time_t mt, int flags) {
     Tv_t av;

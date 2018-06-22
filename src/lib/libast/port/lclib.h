@@ -43,9 +43,9 @@ struct Lc_info_s;
 
 #define _LC_TERRITORY_PRIVATE_ unsigned char indices[LC_territory_language_max];
 
-#include <ast.h>
-#include <error.h>
-#include <lc.h>
+#include "ast.h"
+#include "error.h"
+#include "lc.h"
 
 typedef struct Lc_numeric_s {
     int decimal;

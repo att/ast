@@ -30,7 +30,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 #if _AIX /* XXX */
 #undef major
 #undef minor
@@ -40,7 +40,7 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 
-#include <ls.h>
+#include "ls.h"
 
 #if !_mem_st_blocks_stat
 

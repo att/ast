@@ -26,7 +26,7 @@
 #ifndef _AST_LIB_H
 #define _AST_LIB_H 1
 
-#include <ast.h>
+#include "ast.h"
 
 typedef struct Ast_global_s {
     char *id;         /* lib id			*/

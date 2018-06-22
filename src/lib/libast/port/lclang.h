@@ -25,7 +25,7 @@
 
 #if __CYGWIN__
 
-#include <ast_windows.h>
+#include "ast_windows.h"
 
 #ifndef LANG_CHINESE_SIMPLIFIED
 #define LANG_CHINESE_SIMPLIFIED LANG_CHINESE

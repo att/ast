@@ -26,7 +26,7 @@
 
 #include "lclib.h"
 
-#include <codeset.h>
+#include "codeset.h"
 #include <nl_types.h>
 
 #if !_hdr_langinfo

@@ -46,8 +46,8 @@
     iconv_t cvt;     \
     Sfio_t *tmp;
 
-#include <error.h>
-#include <mc.h>
+#include "error.h"
+#include "mc.h"
 #include <nl_types.h>
 
 /*
