@@ -7,8 +7,8 @@
  * high resolution Time_t support
  */
 
-#include <tm.h>
-#include <tv.h>
+#include "tm.h"
+#include "tv.h"
 
 #define TMX_MAXDATE "2554-07-21+23:34:33.709551614 UTC"
 #define TMX_MAXYEAR 2554

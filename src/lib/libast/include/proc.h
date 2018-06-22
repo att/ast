@@ -26,7 +26,7 @@
 #ifndef _PROC_H
 #define _PROC_H
 
-#include <ast.h>
+#include "ast.h"
 
 #define PROC_ARGMOD (1 << 0)      /* argv[-1],argv[0] can be modified	*/
 #define PROC_BACKGROUND (1 << 1)  /* shell background (&) setup		*/

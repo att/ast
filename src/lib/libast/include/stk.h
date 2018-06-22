@@ -30,7 +30,7 @@
 #ifndef _STK_H
 #define _STK_H
 
-#include <sfio.h>
+#include "sfio.h"
 
 #define _Stk_data _Stak_data
 

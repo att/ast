@@ -29,7 +29,7 @@
 #ifndef _OPTION_H
 #define _OPTION_H
 
-#include <ast.h>
+#include "ast.h"
 #include "optlib.h"
 
 #define OPT_VERSION 20070319L

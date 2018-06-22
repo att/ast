@@ -28,11 +28,11 @@
 
 #ifndef _PROCLIB_H
 #define _PROCLIB_H
-#include <ast_standards.h>
+#include "ast_standards.h"
 
-#include <ast.h>
+#include "ast.h"
 #include <errno.h>
-#include <sig.h>
+#include "sig.h"
 #include <sys/wait.h>
 
 typedef sigset_t Sig_mask_t;
@@ -47,7 +47,7 @@ struct Mods_s;
     Sig_handler_t sigint;  /* PROC_FOREGROUND SIG_IGN	*/    \
     Sig_handler_t sigquit; /* PROC_FOREGROUND SIG_IGN	*/
 
-#include <proc.h>
+#include "proc.h"
 
 #define proc_default _proc_info_ /* hide external symbol		*/
 

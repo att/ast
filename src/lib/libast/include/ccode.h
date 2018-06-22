@@ -36,7 +36,7 @@
 
 #include <sys/types.h>
 
-#include <ast_ccode.h>
+#include "ast_ccode.h"
 
 typedef struct Ccmap_s {
     const char *name;  /* code set name		*/

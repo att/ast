@@ -40,6 +40,6 @@
 #endif /* !PENDIN */
 #endif /* LNEW_PENDIN */
 
-#include <ast_ioctl.h>
+#include "ast_ioctl.h"
 
 #endif

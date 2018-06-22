@@ -29,7 +29,7 @@
 #ifndef _TOK_H
 #define _TOK_H
 
-#include <ast.h>
+#include "ast.h"
 
 extern Sfio_t *tokline(const char *, int, int *);
 extern int tokscan(char *, char **, const char *, ...);

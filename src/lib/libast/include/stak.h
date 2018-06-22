@@ -30,7 +30,7 @@
 #ifndef _STAK_H
 #define _STAK_H
 
-#include <stk.h>
+#include "stk.h"
 
 #define Stak_t Sfio_t
 #define staksp stkstd

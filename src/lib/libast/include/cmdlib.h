@@ -50,6 +50,6 @@
     char *insert;     /* replace with current arg	*/     \
     char buf[1];      /* argv and arg buffer		*/
 
-#include <cmdarg.h>
+#include "cmdarg.h"
 
 #endif

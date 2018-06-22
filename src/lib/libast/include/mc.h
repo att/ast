@@ -47,7 +47,7 @@
 #ifndef _MC_H
 #define _MC_H
 
-#include <ast.h>
+#include "ast.h"
 
 #define MC_MAGIC "\015\023\007\000"
 #define MC_MAGIC_SIZE 4

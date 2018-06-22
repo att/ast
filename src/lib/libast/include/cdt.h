@@ -42,7 +42,7 @@
 #define CDT_PLUGIN_VERSION AST_PLUGIN_VERSION(20111111L)
 
 #if _PACKAGE_ast
-#include <ast_std.h>
+#include "ast_std.h"
 #else
 #include <string.h>
 #endif

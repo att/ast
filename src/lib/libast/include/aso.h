@@ -26,7 +26,7 @@
 
 #define ASO_VERSION 20130501L
 
-#include <ast_aso.h>
+#include "ast_aso.h"
 
 /*
  * ast atomic scalar operations interface definitions

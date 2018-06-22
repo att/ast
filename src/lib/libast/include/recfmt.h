@@ -29,7 +29,7 @@
 #ifndef _RECFMT_H
 #define _RECFMT_H 1
 
-#include <ast.h>
+#include "ast.h"
 
 typedef uint32_t Recfmt_t;
 

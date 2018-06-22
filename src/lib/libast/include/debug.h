@@ -27,8 +27,8 @@
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
-#include <ast.h>
-#include <error.h>
+#include "ast.h"
+#include "error.h"
 
 #if !defined(DEBUG) && _BLD_DEBUG
 #define DEBUG _BLD_DEBUG

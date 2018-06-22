@@ -22,7 +22,7 @@
 #ifndef _DT_H
 #define _DT_H 1
 
-#include <cdt.h>
+#include "cdt.h"
 
 extern Dt_t *dtnew(Dtdisc_t *, Dtmethod_t *);
 extern Dt_t *_dtnew(Dtdisc_t *, Dtmethod_t *, unsigned long);

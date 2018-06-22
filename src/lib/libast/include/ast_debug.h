@@ -45,7 +45,7 @@
 
 #if _AST_DEBUG_newof
 
-#include <error.h>
+#include "error.h"
 
 static void *_ast_newof(void *_ast_p, ssize_t _ast_t, ssize_t _ast_n, ssize_t _ast_x,
                         const char *_ast_f, unsigned long _ast_l) {

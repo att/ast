@@ -26,12 +26,12 @@
 #ifndef _FINDLIB_H
 #define _FINDLIB_H
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 #include <ctype.h>
-#include <error.h>
-#include <ls.h>
-#include <regex.h>
+#include "error.h"
+#include "ls.h"
+#include "regex.h"
 
 #define FF_old 1 /* old format - 7 bit bigram		*/
 #define FF_gnu 2 /* gnu 8 bit no bigram			*/
@@ -113,6 +113,6 @@ typedef struct {
 #define decode code.code_decode
 #define encode code.code_encode
 
-#include <find.h>
+#include "find.h"
 
 #endif

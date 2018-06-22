@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#include <ccode.h>
+#include "ccode.h"
 
 #if !defined(__CYGWIN__) && !defined(__OpenBSD__)
 // Under Cygwin the iconv shared library exports the symbols we need with a

@@ -82,7 +82,7 @@
 
 #define HASH_region 14
 
-#include <hashpart.h>
+#include "hashpart.h"
 
 #define hashclear(t, f) ((t)->flags &= ~((f) & ~HASH_INTERNAL))
 #define hashcover(b) (((b)->hash & HASH_HIDES) ? (Hash_bucket_t *)((b)->name) : (Hash_bucket_t *)0)

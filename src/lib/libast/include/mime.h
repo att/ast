@@ -26,8 +26,8 @@
 #ifndef _MIMETYPE_H
 #define _MIMETYPE_H 1
 
-#include <ls.h>
-#include <sfio.h>
+#include "ls.h"
+#include "sfio.h"
 
 #define MIME_VERSION 19970717L
 

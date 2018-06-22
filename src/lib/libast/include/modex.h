@@ -28,7 +28,7 @@
 #ifndef _MODEX_H
 #define _MODEX_H
 
-#include <modecanon.h>
+#include "modecanon.h"
 
 extern int modei(int);
 extern int modex(int);

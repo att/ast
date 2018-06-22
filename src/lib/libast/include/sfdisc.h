@@ -28,7 +28,7 @@
 #ifndef _SFDISC_H
 #define _SFDISC_H
 
-#include <ast.h>
+#include "ast.h"
 
 #define SFDCEVENT(a, b, n) ((((a) - 'A' + 1) << 11) ^ (((b) - 'A' + 1) << 6) ^ (n))
 

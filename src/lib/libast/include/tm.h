@@ -31,8 +31,8 @@
 
 #define TM_VERSION 20070319L
 
-#include <ast.h>
-#include <times.h>
+#include "ast.h"
+#include "times.h"
 
 #undef daylight
 

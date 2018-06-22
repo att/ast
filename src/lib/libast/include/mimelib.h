@@ -26,10 +26,10 @@
 #ifndef _MIMELIB_H
 #define _MIMELIB_H 1
 
-#include <ast.h>
-#include <cdt.h>
-#include <magic.h>
-#include <tok.h>
+#include "ast.h"
+#include "cdt.h"
+#include "magic.h"
+#include "tok.h"
 
 struct Mime_s;
 
@@ -45,6 +45,6 @@ typedef void (*Free_f)(struct Mime_s *);
     Free_f freef;       /* avoid magic lib if possible	*/
 
 #include <ctype.h>
-#include <mime.h>
+#include "mime.h"
 
 #endif

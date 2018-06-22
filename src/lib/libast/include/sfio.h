@@ -35,7 +35,7 @@ typedef struct _sfio_s Sfio_t;
 typedef struct _sfdisc_s Sfdisc_t;
 
 #if defined(_AST_STD_H) || defined(_PACKAGE_ast) && defined(_SFIO_PRIVATE)
-#include <ast_std.h>
+#include "ast_std.h"
 #endif /* _PACKAGE_ast */
 
 /* Sfoff_t should be large enough for largest file address */
@@ -59,7 +59,7 @@ struct _sfdisc_s {
     Sfdisc_t *disc;     /* the continuing discipline	*/
 };
 
-#include <sfio_s.h>
+#include "sfio_s.h"
 
 /* formatting environment */
 typedef struct _sffmt_s Sffmt_t;

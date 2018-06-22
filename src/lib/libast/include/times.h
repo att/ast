@@ -34,7 +34,7 @@
 #ifndef _TIMES_H
 #define _TIMES_H
 
-#include <ast.h>
+#include "ast.h"
 
 #undef _TIMES_H
 #include <sys/time.h>

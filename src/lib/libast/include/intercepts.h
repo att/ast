@@ -22,8 +22,8 @@
 #ifndef _INTERCEPTS_H
 #define _INTERCEPTS_H 1
 
-#include <ast.h>
-#include <shcmd.h>
+#include "ast.h"
+#include "shcmd.h"
 
 typedef struct Intercepts_s {
     char *(*intercept_getenv)(const char *);

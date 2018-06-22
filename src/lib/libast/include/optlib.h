@@ -29,8 +29,8 @@
 #ifndef _OPTLIB_H
 #define _OPTLIB_H
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 
 #define OPT_append 0x001
 #define OPT_cache 0x002

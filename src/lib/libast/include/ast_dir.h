@@ -28,7 +28,7 @@
 #ifndef _AST_DIR_H
 #define _AST_DIR_H
 
-#include <ast_lib.h>
+#include "ast_lib.h"
 
 #if _mem_d_fileno_dirent || _mem_d_ino_dirent
 #if !_mem_d_fileno_dirent

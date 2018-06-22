@@ -30,11 +30,11 @@
 #define _AST_H 1
 
 #ifndef _AST_STD_H
-#include <ast_std.h>
+#include "ast_std.h"
 #endif
 
 #ifndef _SFIO_H
-#include <sfio.h>
+#include "sfio.h"
 #endif
 
 #ifndef ast
@@ -238,7 +238,7 @@ typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);
 
-#include <ast_errorf.h>
+#include "ast_errorf.h"
 
 #ifndef _VMALLOC_H
 struct Vmdisc_s;
@@ -380,9 +380,9 @@ extern size_t ast_mbrchar(wchar_t *, const char *, size_t, Mbstate_t *);
  */
 extern char **environ;
 
-#include <ast_debug.h>
+#include "ast_debug.h"
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 /* api specific mb/wc macros */
 

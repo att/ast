@@ -29,7 +29,7 @@
 #ifndef _CMDARG_H
 #define _CMDARG_H 1
 
-#include <error.h>
+#include "error.h"
 
 #define CMD_VERSION 20120411L
 

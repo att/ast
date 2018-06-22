@@ -29,8 +29,8 @@
 #ifndef _MAGIC_H
 #define _MAGIC_H
 
-#include <ls.h>
-#include <sfio.h>
+#include "ls.h"
+#include "sfio.h"
 
 #define MAGIC_VERSION 19961031L
 

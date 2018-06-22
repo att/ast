@@ -39,10 +39,10 @@
 #define _BLD_vmalloc 1
 #endif
 
-#include <ast_fcntl.h>
-#include <ast_getopt.h> /* <stdlib.h> does this */
-#include <ast_lib.h>
-#include <ast_sys.h>
+#include "ast_fcntl.h"
+#include "ast_getopt.h" /* <stdlib.h> does this */
+#include "ast_lib.h"
+#include "ast_sys.h"
 
 /*
  * <stdio.h> and <wchar.h> are entangled on some systems
@@ -51,7 +51,7 @@
  */
 
 #if _AST_H
-#include <sfio.h> /* moved from <ast.h> because mbstate_t entangled with <stdio.h> on some systems */
+#include "sfio.h" /* moved from <ast.h> because mbstate_t entangled with <stdio.h> on some systems */
 #endif
 #include <wchar.h>
 
@@ -232,13 +232,13 @@ extern int rename(const char *, const char *);
  * _AST_STD_I delays headers that require <ast_map.h>
  */
 
-#include <ast_intercept.h>
+#include "ast_intercept.h"
 
 #undef _AST_STD_I
 
 #if _AST_GETOPT_H < 0
 #undef _AST_GETOPT_H
-#include <ast_getopt.h>
+#include "ast_getopt.h"
 #endif
 
 #if _GETOPT_H < 0
@@ -248,7 +248,7 @@ extern int rename(const char *, const char *);
 
 #if _REGEX_H < 0
 #undef _REGEX_H
-#include <regex.h>
+#include "regex.h"
 #endif
 
 #endif
