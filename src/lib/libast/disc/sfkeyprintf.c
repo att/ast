@@ -29,11 +29,11 @@
 
 #include <stdbool.h>
 
-#include <ast.h>
-#include <ccode.h>
+#include "ast.h"
+#include "ccode.h"
 #include <ctype.h>
-#include <regex.h>
-#include <sfdisc.h>
+#include "regex.h"
+#include "sfdisc.h"
 
 #define FMT_case 1
 #define FMT_edit 2

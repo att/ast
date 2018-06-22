@@ -24,7 +24,7 @@
 #include "sfdchdr.h"
 
 #if _PACKAGE_ast
-#include <ast_tty.h>
+#include "ast_tty.h"
 #include <signal.h>
 #endif
 
