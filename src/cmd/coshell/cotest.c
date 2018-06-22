@@ -22,7 +22,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <service.h>
+#include "service.h"
 
 State_t state;
 

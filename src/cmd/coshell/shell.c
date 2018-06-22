@@ -27,7 +27,7 @@
 
 #include "service.h"
 
-#include <proc.h>
+#include "proc.h"
 
 /*
  * single quote s into sp

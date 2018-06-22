@@ -73,15 +73,15 @@
     unsigned long update;   /* time stat last updated */      \
                             /* end of private additions */
 
-#include <ast.h>
-#include <coshell.h>
+#include "ast.h"
+#include "coshell.h"
 #include <cs.h>
 #include <ctype.h>
-#include <debug.h>
-#include <error.h>
-#include <sig.h>
-#include <tm.h>
-#include <tok.h>
+#include "debug.h"
+#include "error.h"
+#include "sig.h"
+#include "tm.h"
+#include "tok.h"
 #include <sys/wait.h>
 
 #define match(p, a, o)                                            \

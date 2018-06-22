@@ -109,20 +109,20 @@ static const char ident_name[] = "EVEN";
 #define EVENT(s) (*((char *)(s)) != ident_key[0])
 #define log _log /* gnu builtin? you've got to be kidding */
 
-#include <ast.h>
+#include "ast.h"
 #include <ast_ndbm.h>
-#include <cdt.h>
+#include "cdt.h"
 #include <css.h>
 #include <ctype.h>
-#include <debug.h>
-#include <error.h>
-#include <ls.h>
-#include <namval.h>
-#include <regex.h>
+#include "debug.h"
+#include "error.h"
+#include "ls.h"
+#include "namval.h"
+#include "regex.h"
 #include <stdarg.h>
-#include <swap.h>
-#include <tm.h>
-#include <tok.h>
+#include "swap.h"
+#include "tm.h"
+#include "tok.h"
 
 #if !_use_ndbm
 

@@ -29,7 +29,7 @@
 
 #include "service.h"
 
-#include <namval.h>
+#include "namval.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: coshell (AT&T Research) 2007-10-23 $\n]" USAGE_LICENSE
