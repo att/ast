@@ -31,10 +31,10 @@
 #include "defs.h"
 #endif
 
-#include <ast.h>
-#include <ccode.h>
+#include "ast.h"
+#include "ccode.h"
 #include <errno.h>
-#include <ls.h>
+#include "ls.h"
 #include <sys/ioctl.h>
 #include <utime.h>
 

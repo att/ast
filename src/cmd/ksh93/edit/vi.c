@@ -30,7 +30,7 @@
 #if KSHELL
 #include "defs.h"
 #else  // KSHELL
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
 #endif  // KSHELL
 #include "io.h"

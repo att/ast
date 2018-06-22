@@ -26,7 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <time.h>
-#include <times.h>
+#include "times.h"
 
 #define stringify(s) #s
 
@@ -67,10 +67,10 @@
 
 #define hist_ind(hp, c) ((int)((c) & (hp)->histmask))
 
-#include <ast.h>
-#include <error.h>
-#include <ls.h>
-#include <sfio.h>
+#include "ast.h"
+#include "error.h"
+#include "ls.h"
+#include "sfio.h"
 #if KSHELL
 #include "defs.h"
 

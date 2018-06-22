@@ -62,7 +62,7 @@
 #include <ctype.h>
 #endif  // KSHELL
 
-#include <ast.h>
+#include "ast.h"
 #include "io.h"
 
 #include "edit.h"
