@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 #if _lib_sigflag
 
@@ -29,7 +29,7 @@ NoN(sigflag)
 
 #else
 
-#include <sig.h>
+#include "sig.h"
 
 int sigflag(int sig, int flags, int set) {
     struct sigaction sa;

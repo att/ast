@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 #if _lib_sigunblock
 
@@ -29,7 +29,7 @@ NoN(sigunblock)
 
 #else
 
-#include <sig.h>
+#include "sig.h"
 
 int sigunblock(int s) {
     int op;
