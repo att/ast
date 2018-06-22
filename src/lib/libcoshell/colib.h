@@ -23,12 +23,15 @@
 //
 // coshell library private definitions
 //
-
 #ifndef _COLIB_H
 #define _COLIB_H
 
+#include <sys/wait.h>
+
 #include "ast.h"
 #include "dt.h"
+#include "error.h"
+#include "sig.h"
 
 #define _CO_JOB_PRIVATE_  /* Cojob_t private additions	*/ \
     Cojob_t *next;        /* Next in list			*/            \
@@ -72,8 +75,8 @@ typedef struct Coexport_s {
 struct Coservice_s;
 typedef struct Coservice_s Coservice_t;
 
-struct Coservice_s  // Service info
-{
+// Service info.
+struct Coservice_s  {
     Coservice_t *next;  // Next in list
     char *name;         // Instance name
     char *path;         // coexec() command path
@@ -84,9 +87,6 @@ struct Coservice_s  // Service info
 };
 
 #include "coshell.h"
-#include "error.h"
-#include "sig.h"
-#include <sys/wait.h>
 
 #define state _coshell_info_  // Hide external symbol
 
