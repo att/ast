@@ -28,7 +28,7 @@
 
 #include "defs.h"
 
-#include <error.h>
+#include "error.h"
 #include "builtins.h"
 #include "name.h"
 #include "path.h"

@@ -30,8 +30,8 @@
 
 #include "defs.h"
 
-#include <ast.h>
-#include <error.h>
+#include "ast.h"
+#include "error.h"
 #include "builtins.h"
 #include "shnodes.h"
 

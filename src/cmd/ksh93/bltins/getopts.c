@@ -27,8 +27,8 @@
 
 #include "defs.h"
 
-#include <error.h>
-#include <nval.h>
+#include "error.h"
+#include "nval.h"
 #include "builtins.h"
 #include "variables.h"
 

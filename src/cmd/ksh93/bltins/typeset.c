@@ -34,8 +34,8 @@
 
 #include "defs.h"
 
-#include <ast_float.h>
-#include <error.h>
+#include "ast_float.h"
+#include "error.h"
 #include "builtins.h"
 #include "history.h"
 #include "name.h"
@@ -43,7 +43,7 @@
 #include "variables.h"
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 struct tdata {
     Shell_t *sh;

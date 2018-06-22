@@ -27,9 +27,9 @@
 
 #include "defs.h"
 
-#include <ast.h>
-#include <error.h>
-#include <sfio.h>
+#include "ast.h"
+#include "error.h"
+#include "sfio.h"
 #include "builtins.h"
 #include "name.h"
 #include "ulimit.h"

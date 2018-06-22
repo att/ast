@@ -33,9 +33,9 @@
 
 #if SHOPT_REGRESS
 
-#include <error.h>
-#include <ls.h>
-#include <tmx.h>
+#include "error.h"
+#include "ls.h"
+#include "tmx.h"
 #include "builtins.h"
 #include "io.h"
 

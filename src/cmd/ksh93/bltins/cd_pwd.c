@@ -29,10 +29,10 @@
 
 #include "defs.h"
 
-#include <error.h>
-#include <ls.h>
+#include "error.h"
+#include "ls.h"
 #include <pwd.h>
-#include <stak.h>
+#include "stak.h"
 #include "builtins.h"
 #include "name.h"
 #include "path.h"

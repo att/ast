@@ -29,11 +29,11 @@
 #include "defs.h"
 
 #define _shtest_c
-#include <error.h>
-#include <ls.h>
+#include "error.h"
+#include "ls.h"
 #include <poll.h>
-#include <regex.h>
-#include <tmx.h>
+#include "regex.h"
+#include "tmx.h"
 #include "builtins.h"
 #include "io.h"
 #include "terminal.h"

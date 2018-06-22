@@ -30,9 +30,9 @@
 #define sleep ______sleep
 #undef sleep
 #include <errno.h>
-#include <error.h>
+#include "error.h"
 #include <poll.h>
-#include <tmx.h>
+#include "tmx.h"
 #include "builtins.h"
 #ifdef _NEXT_SOURCE
 #define sleep _ast_sleep

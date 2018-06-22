@@ -19,7 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <defs.h>
+#include "defs.h"
 
 static const char enum_usage[] =
     "[-?@(#)$Id: enum (AT&T Research) 2013-04-29 $\n]" USAGE_LICENSE

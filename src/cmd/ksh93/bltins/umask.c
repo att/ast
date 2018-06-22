@@ -32,12 +32,12 @@
 // TODO: Figure out why including that header changes the behavior of this code since it shouldn't.
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <error.h>
-#include <ls.h>
-#include <sfio.h>
-#include <shell.h>
+#include "error.h"
+#include "ls.h"
+#include "sfio.h"
+#include "shell.h"
 #include "builtins.h"
 #ifndef SH_DICT
 #define SH_DICT "libshell"

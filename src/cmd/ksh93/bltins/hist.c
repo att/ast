@@ -21,9 +21,9 @@
 
 #include "defs.h"
 
-#include <error.h>
-#include <ls.h>
-#include <stak.h>
+#include "error.h"
+#include "ls.h"
+#include "stak.h"
 #include "builtins.h"
 #include "edit.h"
 #include "history.h"

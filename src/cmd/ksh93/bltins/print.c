@@ -29,9 +29,9 @@
 
 #include "defs.h"
 
-#include <ccode.h>
-#include <error.h>
-#include <tmx.h>
+#include "ccode.h"
+#include "error.h"
+#include "tmx.h"
 #include "builtins.h"
 #include "history.h"
 #include "io.h"
