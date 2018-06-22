@@ -30,7 +30,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <recfmt.h>
+#include "recfmt.h"
 
 typedef struct {
     unsigned int rep[4 * 1024];

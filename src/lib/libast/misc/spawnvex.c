@@ -41,9 +41,9 @@
 union _Spawnvex_u;
 typedef union _Spawnvex_u Spawnvex_u;
 
-#include <ast.h>
-#include <error.h>
-#include <sig.h>
+#include "ast.h"
+#include "error.h"
+#include "sig.h"
 #include <sys/wait.h>
 
 #ifndef ENOSYS

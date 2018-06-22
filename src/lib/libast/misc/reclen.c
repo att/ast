@@ -27,7 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <recfmt.h>
+#include "recfmt.h"
 
 ssize_t reclen(Recfmt_t f, const void *b, size_t n) {
     unsigned char *s = (unsigned char *)b;

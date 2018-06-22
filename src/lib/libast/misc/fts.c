@@ -27,9 +27,9 @@
  * fts implementation unwound from the kpv ftwalk() of 1988-10-30
  */
 
-#include <ast.h>
-#include <ast_dir.h>
-#include <error.h>
+#include "ast.h"
+#include "ast_dir.h"
+#include "error.h"
 #include <fts.h>
 
 /*

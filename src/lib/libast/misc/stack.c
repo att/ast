@@ -24,8 +24,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <stack.h>
+#include "ast.h"
+#include "stack.h"
 
 /*
  * create a new stack

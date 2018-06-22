@@ -27,9 +27,9 @@
 
 #include "lclib.h"
 
-#include <cdt.h>
-#include <error.h>
-#include <mc.h>
+#include "cdt.h"
+#include "error.h"
+#include "mc.h"
 #include <nl_types.h>
 
 #ifndef DEBUG_trace

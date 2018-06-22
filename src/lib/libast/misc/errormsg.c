@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <error.h>
+#include "error.h"
 
 int errormsg(const char *dictionary, int level, ...) {
     va_list ap;

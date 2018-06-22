@@ -28,14 +28,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
-#include <ast_dir.h>
+#include "ast_dir.h"
 #include <ctype.h>
-#include <error.h>
-#include <ls.h>
-#include <regex.h>
-#include <stak.h>
+#include "error.h"
+#include "ls.h"
+#include "regex.h"
+#include "stak.h"
 
 #define GLOB_MAGIC 0xaaaa0000
 
@@ -69,7 +69,7 @@ typedef int (*GL_stat_f)(const char *, struct stat *);
     char *gl_pat;              \
     char *gl_pad[4];
 
-#include <glob.h>
+#include "glob.h"
 
 /*
  * default gl_diropen

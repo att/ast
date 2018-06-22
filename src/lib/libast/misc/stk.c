@@ -36,10 +36,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <sfio_t.h>  // must be first include for some reason
+#include "sfio_t.h"  // must be first include for some reason
 
-#include <ast.h>
-#include <stk.h>
+#include "ast.h"
+#include "stk.h"
 
 /*
  *  A stack is a header and a linked list of frames

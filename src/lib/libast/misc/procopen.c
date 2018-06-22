@@ -33,9 +33,9 @@
 
 #include "proclib.h"
 
-#include <ast_tty.h>
-#include <error.h>
-#include <ls.h>
+#include "ast_tty.h"
+#include "error.h"
+#include "ls.h"
 /*
  * not quite ready for _use_spawnveg
  */
@@ -55,7 +55,7 @@ Proc_t proc_default = {-1};
 
 #if DEBUG_PROC
 
-#include <namval.h>
+#include "namval.h"
 
 #define PROC_ENV_OPTIONS "PROC_OPTIONS"
 

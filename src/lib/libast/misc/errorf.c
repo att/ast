@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <error.h>
+#include "error.h"
 
 int errorf(void *handle, void *discipline, int level, ...) {
     va_list ap;

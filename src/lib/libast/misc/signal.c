@@ -28,8 +28,8 @@
 #undef signal
 #define signal ______signal
 
-#include <ast.h>
-#include <sig.h>
+#include "ast.h"
+#include "sig.h"
 
 #undef signal
 
