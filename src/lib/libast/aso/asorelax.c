@@ -24,7 +24,7 @@
 #include "asohdr.h"
 
 #if _PACKAGE_ast
-#include <tv.h>
+#include "tv.h"
 #else
 #include <time.h>
 #endif

@@ -24,9 +24,9 @@
 
 #if _PACKAGE_ast
 
-#include <ast.h>
+#include "ast.h"
 
-#include <error.h>
+#include "error.h"
 
 #else
 
