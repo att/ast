@@ -25,8 +25,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <hashkey.h>
+#include "ast.h"
+#include "hashkey.h"
 
 long strkey(const char *s) {
     long x = 0;

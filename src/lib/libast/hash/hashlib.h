@@ -29,7 +29,7 @@
 #ifndef _HASHLIB_H
 #define _HASHLIB_H
 
-#include <ast.h>
+#include "ast.h"
 
 #define hash_info _hash_info_
 
@@ -71,7 +71,7 @@ typedef struct /* root local pointers		*/
     Hash_bucket_t **table;    /* hash slot table		*/           \
     Hash_table_t *next;       /* root reference list link	*/
 
-#include <hash.h>
+#include "hash.h"
 
 #define HASHMINSIZE (1 << 4) /* min table slots (power of 2)	*/
 #define HASHMEANCHAIN 2      /* def resize mean chain len	*/
