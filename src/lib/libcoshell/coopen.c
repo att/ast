@@ -33,10 +33,10 @@
 
 #include "colib.h"
 
-#include <namval.h>
-#include <proc.h>
-#include <sfdisc.h>
-#include <tok.h>
+#include "namval.h"
+#include "proc.h"
+#include "sfdisc.h"
+#include "tok.h"
 
 static const Namval_t options[] = {
     {"cross", CO_CROSS},       {"debug", CO_DEBUG},     {"devfd", CO_DEVFD},

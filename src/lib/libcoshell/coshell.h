@@ -27,7 +27,7 @@
 #ifndef _COSHELL_H
 #define _COSHELL_H
 
-#include <ast.h>
+#include "ast.h"
 
 #if !_BLD_coshell
 

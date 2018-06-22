@@ -27,8 +27,8 @@
 
 #include "colib.h"
 
-#include <ls.h>
-#include <proc.h>
+#include "ls.h"
+#include "proc.h"
 
 static Cojob_t *service(Coshell_t *co, Coservice_t *cs, Cojob_t *cj, int flags, Sfio_t *sp) {
     Proc_t *proc;

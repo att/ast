@@ -28,7 +28,7 @@
 #include "colib.h"
 
 #include <ctype.h>
-#include <ls.h>
+#include "ls.h"
 
 static void exid(Sfio_t *sp, const char *pre, const char *name, const char *pos) {
     int c;

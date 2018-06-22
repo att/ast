@@ -32,7 +32,7 @@
 
 #include "colib.h"
 
-#include <ls.h>
+#include "ls.h"
 
 int cosync(Coshell_t *co, const char *file, int fd, int mode) {
 #if defined(_cmd_nfsd)

@@ -27,7 +27,7 @@
 
 #include "colib.h"
 
-#include <proc.h>
+#include "proc.h"
 
 int coprocrun(const char *path, char **argv, int flags) {
     char *s;

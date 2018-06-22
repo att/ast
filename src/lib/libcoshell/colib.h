@@ -27,8 +27,8 @@
 #ifndef _COLIB_H
 #define _COLIB_H
 
-#include <ast.h>
-#include <dt.h>
+#include "ast.h"
+#include "dt.h"
 
 #define _CO_JOB_PRIVATE_  /* Cojob_t private additions	*/ \
     Cojob_t *next;        /* Next in list			*/            \
@@ -83,9 +83,9 @@ struct Coservice_s  // Service info
     char *argv[16];     // coexec() command argv[]
 };
 
-#include <coshell.h>
-#include <error.h>
-#include <sig.h>
+#include "coshell.h"
+#include "error.h"
+#include "sig.h"
 #include <sys/wait.h>
 
 #define state _coshell_info_  // Hide external symbol

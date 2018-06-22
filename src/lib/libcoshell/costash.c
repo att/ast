@@ -23,7 +23,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <colib.h>
+#include "colib.h"
 
 //
 // 0 terminate string stream, reset, and return value
