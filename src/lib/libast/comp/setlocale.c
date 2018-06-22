@@ -27,17 +27,16 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast_standards.h"
-
-#include "lclib.h"
-
-#include "ast_iconv.h"
-#include "codeset.h"
 #include <ctype.h>
-#include "mc.h"
-#include "namval.h"
 #include <wchar.h>
 #include <wctype.h>
+
+#include "ast_iconv.h"
+#include "ast_standards.h"
+#include "codeset.h"
+#include "lclib.h"
+#include "mc.h"
+#include "namval.h"
 
 #undef mbsrtowcs
 #undef wcsrtombs

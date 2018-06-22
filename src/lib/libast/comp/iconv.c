@@ -28,8 +28,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <ctype.h>
 #include <dirent.h>
+
+#include "ast.h"
 
 #define DEBUG_TRACE 0
 #define _ICONV_LIST_PRIVATE_
@@ -37,7 +39,6 @@
 #include "ast_iconv.h"
 #include "ccode.h"
 #include "codeset.h"
-#include <ctype.h>
 #include "error.h"
 
 #define CC_ICONV (-1)
