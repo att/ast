@@ -34,10 +34,10 @@
 #endif
 #endif
 
-#include "aso.h"
-#include "cdt.h"
 #include <unistd.h>
 
+#include "aso.h"
+#include "cdt.h"
 #include "debug.h"
 
 /* min #bits for a hash table. (1<<this) is table size */
