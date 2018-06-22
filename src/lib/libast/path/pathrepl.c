@@ -30,7 +30,7 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include <ast.h>
+#include "ast.h"
 
 char *pathrepl(char *path, const char *match, const char *replace) {
     return pathrepl_20100601(path, PATH_MAX, match, replace);
@@ -38,7 +38,7 @@ char *pathrepl(char *path, const char *match, const char *replace) {
 
 #undef _AST_API_IMPLEMENT
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 char *pathrepl_20100601(char *path, size_t size, const char *match, const char *replace) {
     const char *m = match;

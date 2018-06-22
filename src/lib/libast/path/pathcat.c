@@ -29,7 +29,7 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include <ast.h>
+#include "ast.h"
 
 /*
  * building 3d flirts with the dark side
@@ -41,7 +41,7 @@ char *pathcat(char *path, const char *dirs, int sep, const char *a, const char *
 
 #undef _AST_API_IMPLEMENT
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 char *pathcat_20100601(const char *dirs, int sep, const char *a, const char *b, char *path,
                        size_t size) {

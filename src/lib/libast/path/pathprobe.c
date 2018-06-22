@@ -43,10 +43,10 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include <ast.h>
-#include <error.h>
-#include <ls.h>
-#include <proc.h>
+#include "ast.h"
+#include "error.h"
+#include "ls.h"
+#include "proc.h"
 
 char *pathprobe(char *path, char *attr, const char *lang, const char *tool, const char *proc,
                 int op) {
@@ -55,7 +55,7 @@ char *pathprobe(char *path, char *attr, const char *lang, const char *tool, cons
 
 #undef _AST_API_IMPLEMENT
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 #ifndef PROBE
 #define PROBE "probe"

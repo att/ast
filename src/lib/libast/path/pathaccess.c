@@ -34,7 +34,7 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include <ast.h>
+#include "ast.h"
 
 char *pathaccess(char *path, const char *dirs, const char *a, const char *b, int mode) {
     return pathaccess_20100601(dirs, a, b, mode, path, PATH_MAX);
@@ -42,7 +42,7 @@ char *pathaccess(char *path, const char *dirs, const char *a, const char *b, int
 
 #undef _AST_API_IMPLEMENT
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 char *pathaccess_20100601(const char *dirs, const char *a, const char *b, int mode, char *path,
                           size_t size) {

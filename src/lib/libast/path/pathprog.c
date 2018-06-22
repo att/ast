@@ -28,10 +28,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 #if __CYGWIN__
-#include <ast_windows.h>
+#include "ast_windows.h"
 #include <ctype.h>
 #endif
 

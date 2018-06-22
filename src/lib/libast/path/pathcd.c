@@ -26,9 +26,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <error.h>
-#include <stk.h>
+#include "ast.h"
+#include "error.h"
+#include "stk.h"
 
 #if DEBUG
 

@@ -47,9 +47,9 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include <ast.h>
-#include <error.h>
-#include <ls.h>
+#include "ast.h"
+#include "error.h"
+#include "ls.h"
 
 #ifndef ELOOP
 #define ELOOP EINVAL
@@ -57,7 +57,7 @@
 
 #undef _AST_API_IMPLEMENT
 
-#include <ast_api.h>
+#include "ast_api.h"
 
 char *pathcanon(char *path, size_t size, int flags) {
     char *p;

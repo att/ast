@@ -31,7 +31,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 size_t pathposix(const char *path, char *buf, size_t siz) {
     size_t n;

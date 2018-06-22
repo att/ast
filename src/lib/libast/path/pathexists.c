@@ -34,8 +34,8 @@
 
 #include "lclib.h"
 
-#include <error.h>
-#include <ls.h>
+#include "error.h"
+#include "ls.h"
 
 typedef struct Tree_s {
     struct Tree_s *next;
