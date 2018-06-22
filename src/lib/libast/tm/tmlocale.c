@@ -27,14 +27,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <nl_types.h>
+
 #include "ast.h"
 #include "ast_iconv.h"
 #include "cdt.h"
-#include "mc.h"
-#include <nl_types.h>
-#include "tm.h"
-
 #include "lclib.h"
+#include "mc.h"
+#include "tm.h"
 
 static struct {
     char *format;
@@ -93,7 +93,6 @@ static void fixup(Lc_info_t *li, char **b) {
 }
 
 #if __CYGWIN__
-
 #include "ast_windows.h"
 
 typedef struct Map_s {
@@ -373,9 +372,6 @@ bad:
 #else
 
 #if _lib_nl_langinfo && _hdr_langinfo
-
-#include <nl_types.h>
-
 #include <langinfo.h>
 
 typedef struct Map_s {
