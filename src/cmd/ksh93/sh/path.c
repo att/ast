@@ -25,9 +25,9 @@
 
 #include "defs.h"
 
-#include <fcin.h>
-#include <ls.h>
-#include <nval.h>
+#include "fcin.h"
+#include "ls.h"
+#include "nval.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
@@ -38,7 +38,7 @@
 #include <assert.h>
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 
 #define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)

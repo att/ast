@@ -28,9 +28,9 @@
 #define _shio_h 1
 #include "defs.h"
 
-#include <fcin.h>
-#include <ls.h>
-#include <regex.h>
+#include "fcin.h"
+#include "ls.h"
+#include "regex.h"
 #include <stdarg.h>
 #include "builtins.h"
 #include "edit.h"
@@ -43,7 +43,7 @@
 #include "variables.h"
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 
 #include <poll.h>

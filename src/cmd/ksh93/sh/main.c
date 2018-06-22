@@ -28,11 +28,11 @@
 
 #include "defs.h"
 
-#include <ast.h>
-#include <fcin.h>
-#include <ls.h>
-#include <sfio.h>
-#include <stak.h>
+#include "ast.h"
+#include "fcin.h"
+#include "ls.h"
+#include "sfio.h"
+#include "stak.h"
 #include <time.h>
 
 #include "history.h"

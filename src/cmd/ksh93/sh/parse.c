@@ -32,11 +32,11 @@
 #include "defs.h"
 #else
 #include <ctype.h>
-#include <shell.h>
+#include "shell.h"
 #endif
 
-#include <error.h>
-#include <fcin.h>
+#include "error.h"
+#include "fcin.h"
 #include "builtins.h"
 #include "history.h"
 #include "shlex.h"

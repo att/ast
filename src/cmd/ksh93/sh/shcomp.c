@@ -27,7 +27,7 @@
 
 #include "defs.h"
 
-#include <shell.h>
+#include "shell.h"
 #include "shnodes.h"
 #include "sys/stat.h"
 

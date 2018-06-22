@@ -25,15 +25,15 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <fcin.h>
-#include <nval.h>
-#include <stak.h>
+#include "ast.h"
+#include "fcin.h"
+#include "nval.h"
+#include "stak.h"
 
 #if KSHELL
 #include "defs.h"
 #else
-#include <shell.h>
+#include "shell.h"
 #define nv_getval(np) ((np)->nvalue)
 Shell_t sh = {1};
 #endif  // KSHELL

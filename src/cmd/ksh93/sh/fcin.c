@@ -25,10 +25,10 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <error.h>
-#include <fcin.h>
-#include <sfio.h>
+#include "ast.h"
+#include "error.h"
+#include "fcin.h"
+#include "sfio.h"
 
 Fcin_t _Fcin = {0};
 

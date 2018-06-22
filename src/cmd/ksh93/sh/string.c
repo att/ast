@@ -24,8 +24,8 @@
 
 #include "defs.h"
 
-#include <ast.h>
-#include <ccode.h>
+#include "ast.h"
+#include "ccode.h"
 #include <wchar.h>
 #include "lexstates.h"
 #include "national.h"

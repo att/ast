@@ -27,7 +27,7 @@
 
 #include "defs.h"
 
-#include <ccode.h>
+#include "ccode.h"
 #include "io.h"
 #include "path.h"
 #include "shnodes.h"

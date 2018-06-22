@@ -27,7 +27,7 @@
 
 #include "defs.h"
 
-#include <ls.h>
+#include "ls.h"
 #include "fault.h"
 #include "io.h"
 #include "jobs.h"

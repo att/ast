@@ -33,9 +33,9 @@
 #include "defs.h"
 
 #include <ctype.h>
-#include <fcin.h>
+#include "fcin.h"
 #include <pwd.h>
-#include <regex.h>
+#include "regex.h"
 
 #include "io.h"
 #include "jobs.h"
@@ -49,7 +49,7 @@
 
 #undef isascii
 #define isacii(c) ((c) <= UCHAR_MAX)
-#include <lc.h>
+#include "lc.h"
 
 #if __CYGWIN__
 static int Skip;

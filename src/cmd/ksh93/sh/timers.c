@@ -21,9 +21,9 @@
 
 #include "defs.h"
 
-#include <ast.h>
-#include <error.h>
-#include <sig.h>
+#include "ast.h"
+#include "error.h"
+#include "sig.h"
 #include "fault.h"
 #include "times.h"
 

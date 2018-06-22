@@ -30,7 +30,7 @@
 #include "defs.h"
 
 #include <ctype.h>
-#include <error.h>
+#include "error.h"
 #include <math.h>
 
 #include "stak.h"

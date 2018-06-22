@@ -34,9 +34,9 @@
 #endif
 
 #include <assert.h>
-#include <fcin.h>
+#include "fcin.h"
 
-#include <times.h>
+#include "times.h"
 #include "builtins.h"
 #include "io.h"
 #include "jobs.h"

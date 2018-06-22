@@ -28,7 +28,7 @@
 
 #include <poll.h>
 
-#include <error.h>
+#include "error.h"
 #include "builtins.h"
 #include "edit.h"
 #include "io.h"

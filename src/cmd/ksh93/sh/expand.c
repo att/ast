@@ -30,13 +30,13 @@
 #include "test.h"
 #include "variables.h"
 #else
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
 #include <setjmp.h>
 #endif  // KSHELL
-#include <ast_dir.h>
-#include <glob.h>
-#include <ls.h>
+#include "ast_dir.h"
+#include "glob.h"
+#include "ls.h"
 #include "io.h"
 #include "path.h"
 
