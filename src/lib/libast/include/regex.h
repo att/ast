@@ -34,8 +34,9 @@
 #undef regex_t
 #undef regmatch_t
 
-#include "ast_api.h"
 #include <wchar.h>
+
+#include "ast_api.h"
 
 #define REG_VERSION 20100930L
 

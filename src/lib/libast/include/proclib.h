@@ -25,15 +25,16 @@
  *
  * process library definitions
  */
-
 #ifndef _PROCLIB_H
 #define _PROCLIB_H
 #include "ast_standards.h"
 
-#include "ast.h"
 #include <errno.h>
-#include "sig.h"
 #include <sys/wait.h>
+
+#include "ast.h"
+
+#include "sig.h"
 
 typedef sigset_t Sig_mask_t;
 

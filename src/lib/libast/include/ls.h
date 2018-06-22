@@ -25,14 +25,14 @@
  *
  * ls formatter interface definitions
  */
-
 #ifndef _LS_H
 #define _LS_H
 
-#include "ast_mode.h"
-#include "ast_std.h"
 #include <sys/stat.h>
 #include <sys/statvfs.h>
+
+#include "ast_mode.h"
+#include "ast_std.h"
 
 /*
  * some systems (could it beee AIX) pollute the std name space

@@ -25,12 +25,13 @@
  *
  * option, error and message formatter external definitions
  */
-
 #ifndef _ERROR_H
 #define _ERROR_H
 
-#include "ast.h"
 #include <errno.h>
+
+#include "ast.h"
+
 #include "option.h"
 
 #define ERROR_VERSION 20070319L

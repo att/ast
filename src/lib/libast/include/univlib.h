@@ -45,15 +45,16 @@ __STDPP__directive pragma pp : hide getuniverse readlink setuniverse symlink uni
 #define universe ______universe
 #endif
 
-#include "ast.h"
 #include <errno.h>
-#include "ls.h"
-
-#define UNIV_SIZE 9
 
 #if _cmd_universe && _sys_universe
 #include <sys/universe.h>
 #endif
+
+#include "ast.h"
+#include "ls.h"
+
+#define UNIV_SIZE 9
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
                                    __STDPP__directive pragma pp

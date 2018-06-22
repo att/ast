@@ -19,16 +19,17 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * fast find private interface
- */
-
+//
+// Fast find private interface.
+//
 #ifndef _FINDLIB_H
 #define _FINDLIB_H
 
-#include "ast.h"
-#include "cdt.h"
 #include <ctype.h>
+
+#include "ast.h"
+
+#include "cdt.h"
 #include "error.h"
 #include "ls.h"
 #include "regex.h"
