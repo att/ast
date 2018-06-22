@@ -21,14 +21,14 @@
 
 #include "defs.h"
 
-#include "error.h"
-#include "ls.h"
-#include "stak.h"
 #include "builtins.h"
 #include "edit.h"
+#include "error.h"
 #include "history.h"
 #include "io.h"
+#include "ls.h"
 #include "name.h"
+#include "stak.h"
 #include "variables.h"
 
 #define HIST_RECURSE 5

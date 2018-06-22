@@ -27,9 +27,9 @@
 
 #include "defs.h"
 
+#include "builtins.h"
 #include "error.h"
 #include "nval.h"
-#include "builtins.h"
 #include "variables.h"
 
 static_fn int getopts_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {

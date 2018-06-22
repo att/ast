@@ -24,20 +24,22 @@
 //   David Korn
 //   AT&T Labs
 //
+#define _shtest_c
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "defs.h"
 
-#define _shtest_c
-#include "error.h"
-#include "ls.h"
 #include <poll.h>
-#include "regex.h"
-#include "tmx.h"
+
 #include "builtins.h"
+#include "error.h"
 #include "io.h"
+#include "ls.h"
+#include "regex.h"
 #include "terminal.h"
 #include "test.h"
+#include "tmx.h"
+
 #ifdef S_ISSOCK
 #if _pipe_socketpair
 #if _socketpair_shutdown_mode

@@ -29,14 +29,14 @@
 
 #include "defs.h"
 
+#include "builtins.h"
 #include "ccode.h"
 #include "error.h"
-#include "tmx.h"
-#include "builtins.h"
 #include "history.h"
 #include "io.h"
 #include "name.h"
 #include "streval.h"
+#include "tmx.h"
 
 union types_t {
     unsigned char c;

@@ -28,9 +28,9 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "error.h"
 #include "builtins.h"
 #include "edit.h"
+#include "error.h"
 #include "history.h"
 #include "io.h"
 #include "lexstates.h"

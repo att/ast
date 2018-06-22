@@ -29,13 +29,14 @@
 
 #include "defs.h"
 
+#include <pwd.h>
+
+#include "builtins.h"
 #include "error.h"
 #include "ls.h"
-#include <pwd.h>
-#include "stak.h"
-#include "builtins.h"
 #include "name.h"
 #include "path.h"
+#include "stak.h"
 #include "variables.h"
 
 //

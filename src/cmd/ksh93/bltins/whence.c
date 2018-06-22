@@ -28,8 +28,8 @@
 
 #include "defs.h"
 
-#include "error.h"
 #include "builtins.h"
+#include "error.h"
 #include "name.h"
 #include "path.h"
 #include "shlex.h"

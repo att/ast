@@ -33,11 +33,11 @@
 
 #if SHOPT_REGRESS
 
+#include "builtins.h"
 #include "error.h"
+#include "io.h"
 #include "ls.h"
 #include "tmx.h"
-#include "builtins.h"
-#include "io.h"
 
 #define REGRESS_HEADER "ksh:REGRESS:"
 
