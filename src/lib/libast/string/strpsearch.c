@@ -25,9 +25,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
 #include "ast.h"
 #include "ccode.h"
-#include <ctype.h>
 
 #if CC_NATIVE == CC_ASCII
 #define MAP(m, c) (c)

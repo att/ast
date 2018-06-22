@@ -82,10 +82,9 @@
  *			[mM]		mega (1000*1000)
  *			[mM]i		mibi (1024*1024)
  */
-
-#include "ast.h"
 #include <ctype.h>
 
+#include "ast.h"
 #include "sfhdr.h"
 
 #ifndef ERANGE

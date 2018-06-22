@@ -30,11 +30,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
 #include <stdbool.h>
 
 #include "ast.h"
 #include "ccode.h"
-#include <ctype.h>
 
 int chrexp(const char *s, char **p, int *m, int flags) {
     const char *t;

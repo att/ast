@@ -21,8 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 
 /*
  * convert string to 4 byte local byte order ip address

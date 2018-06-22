@@ -35,10 +35,11 @@ __STDPP__directive pragma pp : hide getgrgid getgrnam getpwnam
 #define getpwnam ______getpwnam
 #endif
 
-#include "ast.h"
-#include "cdt.h"
 #include <grp.h>
 #include <pwd.h>
+
+#include "ast.h"
+#include "cdt.h"
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)
                                    __STDPP__directive pragma pp

@@ -42,8 +42,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 
 char *fmtfmt(const char *as) {
     char *s = (char *)as;

@@ -25,11 +25,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <wchar.h>
+
 #include "ast.h"
 #include "ast_iconv.h"
 #include "codeset.h"
 #include "error.h"
-#include <wchar.h>
 
 ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
     size_t i;

@@ -25,8 +25,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 
 /*
  * parse option expression in s using options in tab with element size siz

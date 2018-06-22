@@ -37,8 +37,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 
 #define getchr(vp) (*(vp)->nextchr++)
 #define nxtchr(vp) ((vp)->nextchr++)

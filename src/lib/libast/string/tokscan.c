@@ -61,10 +61,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
 #include <stdarg.h>
 
 #include "ast.h"
-#include <ctype.h>
 #include "tok.h"
 
 static char empty[1];
