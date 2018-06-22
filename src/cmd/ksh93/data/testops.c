@@ -24,7 +24,7 @@
 
 #include "defs.h"
 
-#include <ast.h>
+#include "ast.h"
 #include "test.h"
 
 //

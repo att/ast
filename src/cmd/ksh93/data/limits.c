@@ -26,7 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #ifndef _no_ulimit
-#include <ast.h>
+#include "ast.h"
 #include "ulimit.h"
 
 const char e_unlimited[] = "unlimited";

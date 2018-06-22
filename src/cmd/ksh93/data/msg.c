@@ -28,7 +28,7 @@
 
 #include "defs.h"
 
-#include <ast.h>
+#include "ast.h"
 #include <errno.h>
 #include "builtins.h"
 #include "edit.h"

@@ -24,7 +24,7 @@
 #include <signal.h>
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 
 //

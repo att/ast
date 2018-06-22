@@ -21,13 +21,13 @@
 
 #include "defs.h"
 
-#include <ast.h>
+#include "ast.h"
 
 #if SHOPT_DYNAMIC
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif  // SHOPT_DYNAMIC
 
-#include <shell.h>
+#include "shell.h"
 #include "builtins.h"
 #include "name.h"
 #include "shtable.h"
