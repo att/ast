@@ -30,13 +30,15 @@
 #if KSHELL
 #include "defs.h"
 #else  // KSHELL
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 #endif  // KSHELL
-#include "io.h"
 
 #include "edit.h"
 #include "history.h"
+#include "io.h"
+#include "lexstates.h"
 #include "terminal.h"
 
 #ifdef ECHOCTL
@@ -51,7 +53,6 @@
 
 #define MAXCHAR MAXLINE - 2  // max char per line
 
-#include "lexstates.h"
 #define gencpy(a, b) ed_gencpy(a, b)
 #define genncpy(a, b, n) ed_genncpy(a, b, n)
 #define genlen(str) ed_genlen(str)

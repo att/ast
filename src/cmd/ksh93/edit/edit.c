@@ -31,12 +31,18 @@
 #include "defs.h"
 #endif
 
-#include "ast.h"
-#include "ccode.h"
 #include <errno.h>
-#include "ls.h"
 #include <sys/ioctl.h>
 #include <utime.h>
+
+#include "ast.h"
+#include "ccode.h"
+#include "edit.h"
+#include "history.h"
+#include "io.h"
+#include "ls.h"
+#include "terminal.h"
+#include "times.h"
 
 #if KSHELL
 #include "variables.h"
@@ -45,11 +51,6 @@
 extern char ed_errbuf[];
 char e_version[] = "\n@(#)$Id: Editlib version 1993-12-28 r $\0\n";
 #endif  // KSHELL
-#include "edit.h"
-#include "history.h"
-#include "io.h"
-#include "terminal.h"
-#include "times.h"
 
 static char CURSOR_UP[20] = {ESC, '[', 'A', 0};
 static char KILL_LINE[20] = {ESC, '[', 'J', 0};
