@@ -23,6 +23,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <fts.h>  // OpenBSD and possibly others require the above includes first
+
 #define _DLLINFO_PRIVATE_ \
     char *sib[3];         \
     char sibbuf[64];      \
@@ -56,9 +62,7 @@
 
 #include "ast.h"
 #include "cdt.h"
-#include <ctype.h>
 #include "error.h"
-#include <fts.h>
 
 typedef struct Uniq_s {
     Dtlink_t link;
