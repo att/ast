@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <nl_types.h>
+
 #if _hdr_stdlib
 #include <stdlib.h>
 #elif _hdr_malloc
@@ -36,9 +38,9 @@
 // TODO: Figure out why this header has to be included before the other project headers.
 #include "sfhdr.h"
 
-#include "lclib.h"
-
 #include "ast_iconv.h"
+#include "error.h"
+#include "lclib.h"
 
 #define _MC_PRIVATE_ \
     size_t nstrs;    \
@@ -46,9 +48,7 @@
     iconv_t cvt;     \
     Sfio_t *tmp;
 
-#include "error.h"
 #include "mc.h"
-#include <nl_types.h>
 
 /*
  * find the binary message catalog path for <locale,catalog>

@@ -20,19 +20,17 @@
  *                                                                      *
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
-
-#include "ast_standards.h"
-
 #define _AST_INTERCEPT_IMPLEMENT 2
 
-#include "astlib.h"
-
-#include "aso.h"
-#include "ast_ioctl.h"
-#include "error.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/socket.h>
+
+#include "aso.h"
+#include "ast_ioctl.h"
+#include "ast_standards.h"
+#include "astlib.h"
+#include "error.h"
 
 Ast_global_t ast_global = {
     "libast",

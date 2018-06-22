@@ -25,19 +25,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "univlib.h"
-
-#include "ast.h"
 #include <ctype.h>
-#include "error.h"
-#include "proc.h"
-#include "regex.h"
+
 #if _lib_sysinfo
 #include <sys/systeminfo.h>
 #endif
 #include <sys/utsname.h>
 
+#include "ast.h"
 #include "conftab.h"
+#include "error.h"
+#include "proc.h"
+#include "regex.h"
+#include "univlib.h"
 
 #ifndef DEBUG_astconf
 #define DEBUG_astconf 0

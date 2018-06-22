@@ -24,9 +24,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "lclib.h"
-
-#include "codeset.h"
 #include <nl_types.h>
 
 #if !_hdr_langinfo
@@ -35,6 +32,9 @@
 #if _lib_nl_langinfo
 #include <langinfo.h>
 #endif
+
+#include "codeset.h"
+#include "lclib.h"
 
 char *_ast_codeset(int op) {
     char *s;
