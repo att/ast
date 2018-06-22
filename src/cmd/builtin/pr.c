@@ -70,11 +70,11 @@ static const char usage[] =
     "\n"
     "[+SEE ALSO?\bcat\b(1), \bfold\b(1), \bless\b(1), \bmore\b(1)]";
 
-#include <ccode.h>
-#include <cmd.h>
+#include "ccode.h"
+#include "cmd.h"
 #include <ctype.h>
-#include <ls.h>
-#include <tm.h>
+#include "ls.h"
+#include "tm.h"
 
 #define A_FLAG 0x0001
 #define D_FLAG 0x0002

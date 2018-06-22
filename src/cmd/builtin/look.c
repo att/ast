@@ -54,7 +54,7 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bgrep\b(1), \bsort\b(1)]";
 
-#include <cmd.h>
+#include "cmd.h"
 #include <ctype.h>
 
 #define D_FLAG 0x01

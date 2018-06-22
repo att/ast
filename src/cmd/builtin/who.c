@@ -58,8 +58,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bdate\b(1), \blogin\b(1)]";
 
-#include <cmd.h>
-#include <ls.h>
+#include "cmd.h"
+#include "ls.h"
 #include <time.h>
 
 #include "FEATURE/utmp"

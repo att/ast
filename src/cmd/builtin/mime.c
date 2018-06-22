@@ -46,8 +46,8 @@ static const char usage[] =
 
     "[+SEE ALSO?\bfile\b(1), \bmailx\b(1), \bmagic\b(3), \bmime\b(3)]";
 
-#include <cmd.h>
-#include <mime.h>
+#include "cmd.h"
+#include "mime.h"
 
 int b_mime(int argc, char **argv, Shbltin_t *context) {
     Mime_t *mp;

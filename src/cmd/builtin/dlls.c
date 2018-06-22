@@ -58,8 +58,8 @@ static const char usage[] =
 
     "[+SEE ALSO?\bfind\b(1), \bdllscan\b(3)]";
 
-#include <cmd.h>
-#include <dlldefs.h>
+#include "cmd.h"
+#include "dlldefs.h"
 
 #define LIST_BASE 0x01
 #define LIST_INFO 0x02

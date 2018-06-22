@@ -55,7 +55,7 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bident\b(1), \bgrep\b(1), \bstrings\b(1)]";
 
-#include <cmd.h>
+#include "cmd.h"
 #include <ctype.h>
 
 #define HIT SSIZE_MAX

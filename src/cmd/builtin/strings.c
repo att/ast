@@ -57,7 +57,7 @@ static const char usage[] =
 
     "[+SEE ALSO?\bgrep\b(1), \bnm\b(1), \bwhat\b(1)]";
 
-#include <cmd.h>
+#include "cmd.h"
 #include <ctype.h>
 
 #define MULTIBYTE 0x01 /* must be 1			*/

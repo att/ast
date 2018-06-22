@@ -105,12 +105,12 @@ static const char usage[] =
 #include <util.h>
 #endif
 
-#include <cmd.h>
+#include "cmd.h"
 #include <ctype.h>
-#include <error.h>
+#include "error.h"
 #include <fcntl.h>
-#include <proc.h>
-#include <regex.h>
+#include "proc.h"
+#include "regex.h"
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>

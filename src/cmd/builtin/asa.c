@@ -56,7 +56,7 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\blpr\b(1)]";
 
-#include <cmd.h>
+#include "cmd.h"
 
 static int asa(register Sfio_t *in, Sfio_t *out, int reclen) {
     register char *cp;

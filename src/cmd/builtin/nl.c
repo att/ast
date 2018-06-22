@@ -85,8 +85,8 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bpr\b(1), \bregex\b(3)]";
 
-#include <cmd.h>
-#include <regex.h>
+#include "cmd.h"
+#include "regex.h"
 
 typedef struct _nl_ {
     void *section[3];

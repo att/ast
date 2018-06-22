@@ -52,9 +52,9 @@ static const char usage[] =
 
     "[+SEE ALSO?\bmailx\b(1), \buudecode\b(1)]";
 
-#include <ast.h>
-#include <error.h>
-#include <option.h>
+#include "ast.h"
+#include "error.h"
+#include "option.h"
 #include <uu.h>
 
 static int optinfo(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
