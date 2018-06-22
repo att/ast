@@ -54,10 +54,10 @@
 #define DLL_MATCH_NAME 0x4000
 #define DLL_MATCH_VERSION 0x2000
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 #include <ctype.h>
-#include <error.h>
+#include "error.h"
 #include <fts.h>
 
 typedef struct Uniq_s {
@@ -65,7 +65,7 @@ typedef struct Uniq_s {
     char name[1];
 } Uniq_t;
 
-#include <dlldefs.h>
+#include "dlldefs.h"
 
 static char bin[] = "bin";
 static char lib[] = "lib";

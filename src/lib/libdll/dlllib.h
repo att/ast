@@ -17,9 +17,9 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#include <ast.h>
-#include <dlldefs.h>
-#include <error.h>
+#include "ast.h"
+#include "dlldefs.h"
+#include "error.h"
 
 #define state _dll_state
 

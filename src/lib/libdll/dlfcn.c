@@ -26,9 +26,9 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <dlldefs.h>
-#include <error.h>
+#include "ast.h"
+#include "dlldefs.h"
+#include "error.h"
 
 #define T(x) ERROR_dictionary(x)
 

@@ -27,8 +27,8 @@
 #define __EXTENSIONS__ 1
 #endif
 
-#include <ast.h>
-#include <dlldefs.h>
+#include "ast.h"
+#include "dlldefs.h"
 
 #if _hdr_rld_interface
 #include <rld_interface.h>
