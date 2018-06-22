@@ -28,7 +28,7 @@
 
 #if _PACKAGE_ast
 
-#include <ccode.h>
+#include "ccode.h"
 
 #else
 

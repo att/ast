@@ -26,7 +26,7 @@
 
 #include "reglib.h"
 
-#include <error.h>
+#include "error.h"
 
 void regfatalpat(regex_t *p, int level, int code, const char *pat) {
     char buf[128];

@@ -25,8 +25,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <regex.h>
+#include "ast.h"
+#include "regex.h"
 
 #define CACHE 8  /* default # cached re's	*/
 #define ROUND 64 /* pattern buffer size round	*/
