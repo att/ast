@@ -27,9 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <tm.h>
+#include "tm.h"
 
 /*
  * return timezone pointer given name and type

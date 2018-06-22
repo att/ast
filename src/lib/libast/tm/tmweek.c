@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tmx.h>
+#include "tmx.h"
 
 static unsigned char offset[7][3] = {
     {7, 6, 6}, {1, 7, 7}, {2, 1, 8}, {3, 2, 9}, {4, 3, 10}, {5, 4, 4}, {6, 5, 5},

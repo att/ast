@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tmx.h>
-#include <tv.h>
+#include "tmx.h"
+#include "tv.h"
 
 int tmxsleep(Time_t t) {
     Tv_t tv;

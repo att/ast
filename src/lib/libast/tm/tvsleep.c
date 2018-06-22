@@ -21,9 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <error.h>
-#include <tm.h>
-#include <tv.h>
+#include "error.h"
+#include "tm.h"
+#include "tv.h"
 
 /*
  * sleep for tv

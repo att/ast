@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <tm.h>
+#include "ast.h"
+#include "tm.h"
 
 /*
  * return the tm_data.zone[] time zone entry for type s

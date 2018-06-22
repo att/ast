@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tmx.h>
+#include "tmx.h"
 
 /*
  * parse date expression in s and return time_t value

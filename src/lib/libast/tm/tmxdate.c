@@ -30,8 +30,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <debug.h>
-#include <tmx.h>
+#include "debug.h"
+#include "tmx.h"
 
 #define dig1(s, n) ((n) = ((*(s)++) - '0'))
 #define dig2(s, n) ((n) = ((*(s)++) - '0') * 10, (n) += (*(s)++) - '0')

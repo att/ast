@@ -28,7 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <tmx.h>
+#include "tmx.h"
 
 #define warped(t, n) \
     ((t) < ((n)-tmxsns(6L * 30L * 24L * 60L * 60L, 0)) || (t) > ((n) + tmxsns(24L * 60L * 60L, 0)))

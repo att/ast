@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tmx.h>
+#include "tmx.h"
 
 /*
  * scan date expression in s using format

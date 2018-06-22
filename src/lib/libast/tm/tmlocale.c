@@ -27,12 +27,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <ast_iconv.h>
-#include <cdt.h>
-#include <mc.h>
+#include "ast.h"
+#include "ast_iconv.h"
+#include "cdt.h"
+#include "mc.h"
 #include <nl_types.h>
-#include <tm.h>
+#include "tm.h"
 
 #include "lclib.h"
 
@@ -94,7 +94,7 @@ static void fixup(Lc_info_t *li, char **b) {
 
 #if __CYGWIN__
 
-#include <ast_windows.h>
+#include "ast_windows.h"
 
 typedef struct Map_s {
     LCID native;

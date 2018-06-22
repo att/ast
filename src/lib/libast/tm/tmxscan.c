@@ -33,7 +33,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <tmx.h>
+#include "tmx.h"
 
 typedef struct {
     int32_t nsec;

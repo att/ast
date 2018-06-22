@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <tmx.h>
+#include "ast.h"
+#include "tmx.h"
 
 #define DAYS(p) (tm_data.days[(p)->tm_mon] + ((p)->tm_mon == 1 && LEAP(p)))
 #define LEAP(p) (tmisleapyear((p)->tm_year))

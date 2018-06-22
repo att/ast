@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tv.h>
+#include "tv.h"
 
 /*
  * compare a with b

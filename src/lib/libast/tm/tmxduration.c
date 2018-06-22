@@ -22,7 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <tmx.h>
+#include "tmx.h"
 
 /*
  * parse duration expression in s and return Time_t value

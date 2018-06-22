@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tmx.h>
-#include <tv.h>
+#include "tmx.h"
+#include "tv.h"
 
 /*
  * return current current time to t

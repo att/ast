@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tm.h>
+#include "tm.h"
 
 /*
  * use one of the 14 equivalent calendar years to determine

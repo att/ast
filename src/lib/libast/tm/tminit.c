@@ -28,8 +28,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <namval.h>
-#include <tm.h>
+#include "namval.h"
+#include "tm.h"
 
 #include "tmlib.h"
 
