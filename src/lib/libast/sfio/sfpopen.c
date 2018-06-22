@@ -28,7 +28,7 @@
 */
 
 #if _PACKAGE_ast
-#include <proc.h>
+#include "proc.h"
 #else
 
 #define EXIT_NOTFOUND 127

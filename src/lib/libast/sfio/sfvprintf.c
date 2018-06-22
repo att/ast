@@ -40,7 +40,7 @@
 #define FPRECIS 6 /* default precision for floats 	*/
 
 #if _PACKAGE_ast
-#include <ccode.h>
+#include "ccode.h"
 #else
 /* characters when using ebcdic or ascii */
 #if _chr_ebcdic

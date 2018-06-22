@@ -77,7 +77,7 @@
 #define _size size
 #define _val val
 
-#include <ast_mmap.h>
+#include "ast_mmap.h"
 
 /* define va_list, etc. before including sfio_t.h (sfio.h) */
 #if !_PACKAGE_ast
@@ -103,14 +103,14 @@
 #include "sfio_t.h"
 
 /* note that the macro vt_threaded has effect on vthread.h */
-#include <vthread.h>
+#include "vthread.h"
 
 /* file system info */
 #if _PACKAGE_ast
 
-#include <ast.h>
-#include <ast_tty.h>
-#include <ls.h>
+#include "ast.h"
+#include "ast_tty.h"
+#include "ls.h"
 
 /* ast always provides multibyte handling */
 #undef _lib_wcrtomb
