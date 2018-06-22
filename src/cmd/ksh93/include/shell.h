@@ -19,7 +19,6 @@
  ***********************************************************************/
 #ifndef SHELL_H_DEFINED
 #define SHELL_H_DEFINED
-
 //
 // David Korn
 // AT&T Labs
@@ -35,9 +34,13 @@ typedef struct Shell_s Shell_t;
 #endif
 
 #include "ast.h"
+
 #include "cdt.h"
-#include "stk.h"
+#include "cmd.h"
 #include "fault.h"
+#include "shcmd.h"
+#include "stk.h"
+
 #ifdef _SH_PRIVATE
 #include "name.h"
 #else
@@ -65,8 +68,6 @@ typedef unsigned int Shopt_t_data_t;
 typedef struct {
     Shopt_t_data_t v[(256 / 8) / sizeof(Shopt_t_data_t)];
 } Shopt_t;
-
-#include "shcmd.h"
 
 typedef void (*Shinit_f)(Shell_t *, int);
 #ifndef SH_wait_f_defined
@@ -310,8 +311,6 @@ struct Shell_s {
 // Symbolic values for sh_iogetiop.
 #define SH_IOCOPROCESS (-2)
 #define SH_IOHISTFILE (-3)
-
-#include "cmd.h"
 
 // Symbolic value for sh_fdnotify.
 #define SH_FDCLOSE (-1)

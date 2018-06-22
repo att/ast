@@ -19,14 +19,14 @@
  ***********************************************************************/
 #ifndef FAULT_H_DEFINED
 #define FAULT_H_DEFINED
-
 //
 // UNIX shell
 // S. R. Bourne
 // Rewritten by David Korn
 //
-#include "error.h"
 #include <setjmp.h>
+
+#include "error.h"
 #include "sfio.h"
 #include "sig.h"
 
