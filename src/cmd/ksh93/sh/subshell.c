@@ -27,10 +27,10 @@
 
 #include "defs.h"
 
-#include "ls.h"
 #include "fault.h"
 #include "io.h"
 #include "jobs.h"
+#include "ls.h"
 #include "path.h"
 #include "shlex.h"
 #include "shnodes.h"

@@ -23,19 +23,19 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <assert.h>
+
 #include "defs.h"
 
 #include "fcin.h"
-#include "ls.h"
-#include "nval.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
+#include "ls.h"
+#include "nval.h"
 #include "path.h"
 #include "test.h"
 #include "variables.h"
-
-#include <assert.h>
 
 #if SHOPT_DYNAMIC
 #include "dlldefs.h"

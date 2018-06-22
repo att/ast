@@ -32,13 +32,15 @@
 #include "defs.h"
 #else
 #include <ctype.h>
+
 #include "shell.h"
 #endif
 
+#include "builtins.h"
 #include "error.h"
 #include "fcin.h"
-#include "builtins.h"
 #include "history.h"
+#include "path.h"
 #include "shlex.h"
 #include "test.h"
 #include "variables.h"
@@ -86,7 +88,6 @@ static struct argnod *label_last;
 
 #define getnode(type) ((Shnode_t *)stakalloc(sizeof(struct type)))
 
-#include "path.h"
 //
 // Write out entities for each item in the list type=='V' for variable assignment lists. Otherwise
 // type is determined by the command.

@@ -27,12 +27,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
-
 #include <ctype.h>
-#include "error.h"
 #include <math.h>
 
+#include "defs.h"
+
+#include "error.h"
 #include "stak.h"
 #include "streval.h"
 

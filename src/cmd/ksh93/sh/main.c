@@ -26,26 +26,27 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
-
-#include "ast.h"
-#include "fcin.h"
-#include "ls.h"
-#include "sfio.h"
-#include "stak.h"
 #include <time.h>
 
-#include "history.h"
-#include "io.h"
-#include "jobs.h"
-#include "path.h"
-#include "shlex.h"
-#include "shnodes.h"
-#include "timeout.h"
-#include "variables.h"
 #if _hdr_nc
 #include <nc.h>
 #endif  // _hdr_nc
+
+#include "ast.h"
+#include "defs.h"
+
+#include "fcin.h"
+#include "history.h"
+#include "io.h"
+#include "jobs.h"
+#include "ls.h"
+#include "path.h"
+#include "sfio.h"
+#include "shlex.h"
+#include "shnodes.h"
+#include "stak.h"
+#include "timeout.h"
+#include "variables.h"
 
 #define CMD_LENGTH 64
 

@@ -22,18 +22,21 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <wchar.h>
+
+#if _lib_iswprint
+#include <wctype.h>
+#endif
+
 #include "defs.h"
 
 #include "ast.h"
 #include "ccode.h"
-#include <wchar.h>
 #include "lexstates.h"
 #include "national.h"
 #include "shtable.h"
 
-#if _lib_iswprint
-#include <wctype.h>
-#else
+#if !_lib_iswprint
 // On some platforms iswprint() may be macro so make sure we don't get a redefinition warning.
 #undef iswprint
 #define iswprint(c) (((c) & ~0377) || isprint(c))

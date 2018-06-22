@@ -33,15 +33,15 @@
 #include "defs.h"
 
 #include <ctype.h>
-#include "fcin.h"
 #include <pwd.h>
-#include "regex.h"
 
+#include "fcin.h"
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
 #include "national.h"
 #include "path.h"
+#include "regex.h"
 #include "shlex.h"
 #include "shnodes.h"
 #include "streval.h"

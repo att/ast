@@ -23,8 +23,8 @@
 
 #include "ast.h"
 #include "error.h"
-#include "sig.h"
 #include "fault.h"
+#include "sig.h"
 #include "times.h"
 
 typedef struct _timer {

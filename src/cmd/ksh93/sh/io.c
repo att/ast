@@ -25,19 +25,23 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdarg.h>
+#include <sys/socket.h>
+
 #define _shio_h 1
 #include "defs.h"
 
-#include "fcin.h"
-#include "ls.h"
-#include "regex.h"
-#include <stdarg.h>
 #include "builtins.h"
 #include "edit.h"
+#include "fcin.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
+#include "ls.h"
 #include "path.h"
+#include "regex.h"
 #include "shnodes.h"
 #include "timeout.h"
 #include "variables.h"
@@ -79,9 +83,6 @@
 static void *timeout;
 static_fn int (*fdnotify)(int, int);
 
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #if _pipe_socketpair && !_stream_peek
 #ifndef SHUT_RD
 #define SHUT_RD 0

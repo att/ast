@@ -25,7 +25,7 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
+#include <assert.h>
 
 #if _hdr_stdlib
 #include <stdlib.h>
@@ -33,11 +33,10 @@
 #include <malloc.h>
 #endif
 
-#include <assert.h>
-#include "fcin.h"
+#include "defs.h"
 
-#include "times.h"
 #include "builtins.h"
+#include "fcin.h"
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
@@ -45,6 +44,7 @@
 #include "shnodes.h"
 #include "streval.h"
 #include "test.h"
+#include "times.h"
 #include "variables.h"
 
 #define SH_NTFORK SH_TIMING
