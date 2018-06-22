@@ -22,7 +22,7 @@
 #ifndef CMDEXT_H
 #define CMDEXT_H
 
-#include <shcmd.h>
+#include "shcmd.h"
 
 extern int b_basename(int, char **, Shbltin_t *);
 extern int b_cat(int, char **, Shbltin_t *);

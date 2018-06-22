@@ -53,8 +53,8 @@ static const char usage[] = "[-?\n@(#)$Id: mkdir (AT&T Research) 2010-04-08 $\n]
                             "}"
                             "[+SEE ALSO?\bchmod\b(1), \brmdir\b(1), \bumask\b(1)]";
 
-#include <cmd.h>
-#include <ls.h>
+#include "cmd.h"
+#include "ls.h"
 
 #define DIRMODE (S_IRWXU | S_IRWXG | S_IRWXO)
 

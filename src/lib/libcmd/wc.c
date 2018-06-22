@@ -61,9 +61,9 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcat\b(1), \bisspace\b(3)]";
 
-#include <cmd.h>
-#include <ls.h>
-#include <wc.h>
+#include "cmd.h"
+#include "ls.h"
+#include "wc.h"
 
 #define ERRORMAX 125
 

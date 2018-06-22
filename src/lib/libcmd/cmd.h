@@ -27,16 +27,16 @@
 #ifndef _CMD_H
 #define _CMD_H
 
-#include <ast.h>
-#include <error.h>
-#include <shcmd.h>
-#include <stak.h>
+#include "ast.h"
+#include "error.h"
+#include "shcmd.h"
+#include "stak.h"
 
 #define cmdinit _cmd_init
 
 #define ERROR_CALLBACK ERROR_SET
 
-#include <cmdext.h>
+#include "cmdext.h"
 
 #if defined(CMD_BUILTIN) && !defined(CMD_STANDALONE)
 #define CMD_STANDALONE CMD_BUILTIN
@@ -48,7 +48,7 @@
 
 #if CMD_DYNAMIC
 
-#include <dlldefs.h>
+#include "dlldefs.h"
 
 #else
 

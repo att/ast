@@ -120,9 +120,9 @@ static const char usage[] =
     "[+SEE ALSO?\bpathchk\b(1), \bconfstr\b(2), \bpathconf\b(2), "
     "\bfpathconf\b(2), \bsysconf\b(2), \bastgetconf\b(3)]";
 
-#include <cmd.h>
-#include <ls.h>
-#include <proc.h>
+#include "cmd.h"
+#include "ls.h"
+#include "proc.h"
 
 typedef struct Path_s {
     const char *path;

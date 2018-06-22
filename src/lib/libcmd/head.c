@@ -63,7 +63,7 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcat\b(1), \btail\b(1)]";
 
-#include <cmd.h>
+#include "cmd.h"
 
 int b_head(int argc, char **argv, Shbltin_t *context) {
     static const char header_fmt[] = "\n==> %s <==\n";

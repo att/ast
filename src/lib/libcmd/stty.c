@@ -58,9 +58,9 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\btegetattr\b(2), \btcsetattr\b(2), \bioctl\b(2)]";
 
-#include <ast_tty.h>
-#include <ccode.h>
-#include <cmd.h>
+#include "ast_tty.h"
+#include "ccode.h"
+#include "cmd.h"
 #include <ctype.h>
 #if _sys_ioctl
 #include <sys/ioctl.h>

@@ -22,8 +22,8 @@
 
 #include <stdbool.h>
 
-#include <cmd.h>
-#include <ls.h>
+#include "cmd.h"
+#include "ls.h"
 
 static const char optsync[] =
     "[-?\n@(#)$Id: sync (AT&T Research) 2013-09-22 $\n]" USAGE_LICENSE

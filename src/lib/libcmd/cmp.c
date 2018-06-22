@@ -78,10 +78,10 @@ static const char usage[] =
 
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ccode.h>
-#include <cmd.h>
+#include "ccode.h"
+#include "cmd.h"
 #include <ctype.h>
-#include <ls.h>
+#include "ls.h"
 
 #define CMP_VERBOSE 0x01
 #define CMP_SILENT 0x02

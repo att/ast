@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <cmd.h>
+#include "cmd.h"
 #include <fcntl.h>
 
 static const char usage[] =

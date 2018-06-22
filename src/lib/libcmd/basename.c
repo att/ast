@@ -62,7 +62,7 @@ static const char usage[] =
 
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <cmd.h>
+#include "cmd.h"
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;

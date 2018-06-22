@@ -60,7 +60,7 @@ static const char usage[] =
 
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <cmd.h>
+#include "cmd.h"
 
 static void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;

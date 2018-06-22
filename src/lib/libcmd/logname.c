@@ -43,7 +43,7 @@ static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\
                             "}"
                             "[+SEE ALSO?\bgetlogin\b(2)]";
 
-#include <cmd.h>
+#include "cmd.h"
 
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;

@@ -23,8 +23,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <cmd.h>
-#include <shcmd.h>
+#include "cmd.h"
+#include "shcmd.h"
 
 int _cmd_init(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
     char *cp;

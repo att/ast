@@ -28,7 +28,7 @@
 #ifndef _WC_H
 #define _WC_H
 
-#include <ast.h>
+#include "ast.h"
 
 #define WC_LINES 0x01
 #define WC_WORDS 0x02

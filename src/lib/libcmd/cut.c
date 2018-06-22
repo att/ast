@@ -74,7 +74,7 @@ static const char usage[] =
 
 #include "config_ast.h"
 
-#include <cmd.h>
+#include "cmd.h"
 #include <ctype.h>
 
 typedef struct Delim_s {
