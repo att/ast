@@ -19,8 +19,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
+
 #include "debug.h"
 #include "error.h"
 

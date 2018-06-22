@@ -25,8 +25,9 @@
 #include <string.h>
 #endif
 
-#include "ip6.h"
 #include <stdio.h>
+
+#include "ip6.h"
 
 int main(int argc, char **argv) {
     char *s;

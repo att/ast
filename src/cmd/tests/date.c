@@ -31,11 +31,13 @@ static const char id[] = "\n@(#)$Id: testdate (AT&T Research) 2005-01-04 $\0\n";
 
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <ctype.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdlib.h>
+
+#include "ast.h"
+
 #include "tm.h"
 
 #ifndef elementsof
