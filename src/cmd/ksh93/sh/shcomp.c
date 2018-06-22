@@ -25,11 +25,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/stat.h>
+
 #include "defs.h"
 
 #include "shell.h"
 #include "shnodes.h"
-#include "sys/stat.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: shcomp (AT&T Research) 2003-03-02 $\n]" USAGE_LICENSE
