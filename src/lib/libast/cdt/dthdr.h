@@ -32,6 +32,6 @@
 
 #undef _DTTRACE
 
-#include <cdtlib.h>
+#include "cdtlib.h"
 
 #endif /* _DTHDR_H */

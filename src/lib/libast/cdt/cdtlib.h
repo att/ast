@@ -28,14 +28,14 @@
 */
 
 #if _PACKAGE_ast
-#include <ast.h>
+#include "ast.h"
 #if !_BLD_cdt
-#include <dlldefs.h>
+#include "dlldefs.h"
 #endif
 #endif
 
-#include <aso.h>
-#include <cdt.h>
+#include "aso.h"
+#include "cdt.h"
 #include <unistd.h>
 
 #include "debug.h"

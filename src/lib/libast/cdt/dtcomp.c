@@ -24,7 +24,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <cdt.h>
+#include "cdt.h"
 
 #undef dtflatten
 Dtlink_t *dtflatten(Dt_t *d) {
