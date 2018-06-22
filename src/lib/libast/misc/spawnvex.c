@@ -28,6 +28,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/wait.h>
+
 #define _SPAWNVEX_PRIVATE_ \
     unsigned int max;      \
     unsigned int set;      \
@@ -44,7 +46,6 @@ typedef union _Spawnvex_u Spawnvex_u;
 #include "ast.h"
 #include "error.h"
 #include "sig.h"
-#include <sys/wait.h>
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL

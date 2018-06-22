@@ -28,10 +28,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-
-#include "ast_dir.h"
 #include <ctype.h>
+
+#include "ast.h"
+#include "ast_dir.h"
 #include "error.h"
 #include "ls.h"
 #include "regex.h"

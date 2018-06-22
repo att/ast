@@ -25,12 +25,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "lclib.h"
+#include <nl_types.h>
 
 #include "cdt.h"
 #include "error.h"
+#include "lclib.h"
 #include "mc.h"
-#include <nl_types.h>
 
 #ifndef DEBUG_trace
 #define DEBUG_trace 0

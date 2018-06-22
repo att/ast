@@ -26,11 +26,13 @@
  *
  * fts implementation unwound from the kpv ftwalk() of 1988-10-30
  */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fts.h>
 
 #include "ast.h"
 #include "ast_dir.h"
 #include "error.h"
-#include <fts.h>
 
 /*
  * return default (FTS_LOGICAL|FTS_META|FTS_PHYSICAL|FTS_SEEDOTDIR) flags

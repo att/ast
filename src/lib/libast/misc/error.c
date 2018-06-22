@@ -34,10 +34,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "lclib.h"
+#include <ctype.h>
 
 #include "ccode.h"
-#include <ctype.h>
+#include "lclib.h"
 #include "namval.h"
 #include "regex.h"
 #include "sig.h"
