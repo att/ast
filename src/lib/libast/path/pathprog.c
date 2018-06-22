@@ -31,8 +31,9 @@
 #include "ast.h"
 
 #if __CYGWIN__
-#include "ast_windows.h"
 #include <ctype.h>
+
+#include "ast_windows.h"
 #endif
 
 #if _hdr_mach_o_dyld

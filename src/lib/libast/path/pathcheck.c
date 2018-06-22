@@ -41,8 +41,9 @@
 #define PARANOID_PAY "135.*&!(135.104.*)"
 #define PARANOID_FREE "(192|224).*"
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 #include "error.h"
 #include "ls.h"
 #include "times.h"

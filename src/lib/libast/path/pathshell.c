@@ -28,8 +28,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <sys/stat.h>
+
+#include "ast.h"
 
 /*
  * return pointer to the full path name of the shell

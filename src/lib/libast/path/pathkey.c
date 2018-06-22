@@ -34,8 +34,9 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include "ast.h"
 #include <ctype.h>
+
+#include "ast.h"
 #include "ls.h"
 
 char *pathkey(char *key, char *attr, const char *lang, const char *tool, const char *path) {
@@ -43,7 +44,6 @@ char *pathkey(char *key, char *attr, const char *lang, const char *tool, const c
 }
 
 #undef _AST_API_IMPLEMENT
-
 #include "ast_api.h"
 
 char *pathkey_20100601(const char *lang, const char *tool, const char *apath, char *key,

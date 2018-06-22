@@ -24,8 +24,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
 #include <stdio.h>
+
+#include "ast.h"
 
 #ifndef L_tmpnam
 #define L_tmpnam 25
