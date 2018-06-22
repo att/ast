@@ -23,7 +23,7 @@
 
 #if vt_threaded
 
-#include <vthread.h>
+#include "vthread.h"
 
 #define N_STR 1000
 
