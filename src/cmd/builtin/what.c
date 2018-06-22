@@ -29,6 +29,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
+#include "cmd.h"
+
 static const char usage[] =
     "[-?\n@(#)$Id: what (AT&T Research) 2012-02-11 $\n]" USAGE_LICENSE
     "[+NAME?what - display binary identification strings]"
@@ -54,9 +58,6 @@ static const char usage[] =
     "	[+2?Option error.]"
     "}"
     "[+SEE ALSO?\bident\b(1), \bgrep\b(1), \bstrings\b(1)]";
-
-#include "cmd.h"
-#include <ctype.h>
 
 #define HIT SSIZE_MAX
 

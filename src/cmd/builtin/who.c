@@ -25,6 +25,22 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#if _hdr_paths
+#include <paths.h>
+#endif
+#if _hdr_utmp
+#include <utmp.h>
+#endif
+#if _hdr_utmpx
+#include <utmpx.h>
+#endif
+
+#include <time.h>
+
+#include "FEATURE/utmp"
+#include "cmd.h"
+#include "ls.h"
+
 static const char usage[] =
     "[-?\n@(#)$Id: who (AT&T Research) 2004-03-25 $\n]" USAGE_LICENSE
     "[+NAME?who - display who is on the system]"
@@ -58,22 +74,11 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bdate\b(1), \blogin\b(1)]";
 
-#include "cmd.h"
-#include "ls.h"
-#include <time.h>
-
-#include "FEATURE/utmp"
-
-#if _hdr_utmp
-#include <utmp.h>
-#endif
-
 #if _mem_ut_host_utmp && _mem_ut_type_utmp
 #undef _hdr_utmpx
 #endif
 
 #if _hdr_utmpx
-#include <utmpx.h>
 #undef _mem_ut_host_utmp
 #undef _mem_ut_type_utmp
 #if _mem_ut_tv_utmpx
@@ -86,9 +91,6 @@ static const char usage[] =
 #ifdef UTMPX_FILE
 #define UTMP UTMPX_FILE
 #else
-#if _hdr_paths
-#include <paths.h>
-#endif
 #ifdef _PATH_UTMPX
 #define UTMP _PATH_UTMPX
 #else
@@ -117,9 +119,6 @@ static const char usage[] =
 #ifdef UTMP_FILE
 #define UTMP UTMP_FILE
 #else
-#if _hdr_paths
-#include <paths.h>
-#endif
 #ifdef _PATH_UTMP
 #define UTMP _PATH_UTMP
 #else

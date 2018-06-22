@@ -20,6 +20,28 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#if _hdr_pty
+#include <pty.h>
+#endif
+#if _hdr_util
+#include <util.h>
+#endif
+
+#include <ctype.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <termios.h>
+
+#include "cmd.h"
+#include "error.h"
+#include "proc.h"
+#include "regex.h"
+#include "stty.h"
+
+
 static const char usage[] =
     "[-?\n@(#)pty (AT&T Research) 2013-05-22\n]" USAGE_LICENSE
     "[+NAME?pty - create pseudo terminal and run command]"
@@ -97,27 +119,6 @@ static const char usage[] =
     "[+128?The command could not be found.]"
     "}"
     "[+SEE ALSO?\bcommand\b(1), \bexec\b(1)]";
-
-#if _hdr_pty
-#include <pty.h>
-#endif
-#if _hdr_util
-#include <util.h>
-#endif
-
-#include "cmd.h"
-#include <ctype.h>
-#include "error.h"
-#include <fcntl.h>
-#include "proc.h"
-#include "regex.h"
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <termios.h>
-
-#include "stty.h"
 
 #define MODE_666 (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
 #define MAXNAME 64

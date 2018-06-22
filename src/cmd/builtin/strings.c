@@ -26,6 +26,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
+#include "cmd.h"
+
 static const char usage[] =
     "[-?\n@(#)$Id: strings (AT&T Research) 2000-04-01 $\n]" USAGE_LICENSE
     "[+NAME?strings - find and display printable strings in files]"
@@ -56,9 +60,6 @@ static const char usage[] =
     "\n"
 
     "[+SEE ALSO?\bgrep\b(1), \bnm\b(1), \bwhat\b(1)]";
-
-#include "cmd.h"
-#include <ctype.h>
 
 #define MULTIBYTE 0x01 /* must be 1			*/
 #define MULTILINE 0x02

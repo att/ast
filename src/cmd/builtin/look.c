@@ -25,6 +25,10 @@
  */
 #include "config_ast.h"
 
+#include <ctype.h>
+
+#include "cmd.h"
+
 #ifndef DICT_FILE
 #define DICT_FILE "/usr/dict/words"
 #endif
@@ -53,9 +57,6 @@ static const char usage[] =
     "	[+>1?An error occurred.]"
     "}"
     "[+SEE ALSO?\bgrep\b(1), \bsort\b(1)]";
-
-#include "cmd.h"
-#include <ctype.h>
 
 #define D_FLAG 0x01
 #define F_FLAG 0x02

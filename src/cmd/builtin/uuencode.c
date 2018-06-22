@@ -23,6 +23,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <uu.h>
+
+#include "ast.h"
+#include "error.h"
+#include "option.h"
+
 static const char usage[] =
     "[-?\n@(#)$Id: uuencode (AT&T Research) 2002-03-24 $\n]" USAGE_LICENSE
     "[+NAME?uuencode - encode a binary file]"
@@ -51,11 +57,6 @@ static const char usage[] =
     "\n"
 
     "[+SEE ALSO?\bmailx\b(1), \buudecode\b(1)]";
-
-#include "ast.h"
-#include "error.h"
-#include "option.h"
-#include <uu.h>
 
 static int optinfo(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     register Uumeth_t *mp;
