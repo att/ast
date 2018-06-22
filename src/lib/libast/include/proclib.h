@@ -33,7 +33,7 @@
 #include <ast.h>
 #include <errno.h>
 #include <sig.h>
-#include <wait.h>
+#include <sys/wait.h>
 
 typedef sigset_t Sig_mask_t;
 

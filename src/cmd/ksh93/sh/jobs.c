@@ -31,7 +31,7 @@
 
 #include "defs.h"
 
-#include <wait.h>
+#include <sys/wait.h>
 #include "aso.h"
 #include "history.h"
 #include "io.h"
@@ -189,7 +189,7 @@ static_fn void setsiginfo(Shell_t *shp, siginfo_t *info, struct process *pw) {
         info->si_code = CLD_CONTINUED;
     } else if (WIFSIGNALED(pw->p_wstat)) {
         info->si_value.sival_ptr = pointerof(WTERMSIG(pw->p_wstat));
-        info->si_code = WTERMCORE(pw->p_wstat) ? CLD_DUMPED : CLD_KILLED;
+        info->si_code = WCOREDUMP(pw->p_wstat) ? CLD_DUMPED : CLD_KILLED;
     } else {
         info->si_value.sival_ptr = pointerof(WEXITSTATUS(pw->p_wstat));
     }
@@ -497,7 +497,7 @@ bool job_reap(int sig) {
             pw->p_flag &= ~(P_STOPPED | P_SIGNALLED);
             if (WIFSIGNALED(wstat)) {
                 pw->p_flag |= (P_DONE | P_NOTIFY | P_SIGNALLED);
-                if (WTERMCORE(wstat)) pw->p_flag |= P_COREDUMP;
+                if (WCOREDUMP(wstat)) pw->p_flag |= P_COREDUMP;
                 pw->p_exit = WTERMSIG(wstat);
                 // If process in current jobs terminates from an interrupt,
                 // propogate to parent shell.

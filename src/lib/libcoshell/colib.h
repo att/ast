@@ -86,7 +86,7 @@ struct Coservice_s  // Service info
 #include <coshell.h>
 #include <error.h>
 #include <sig.h>
-#include <wait.h>
+#include <sys/wait.h>
 
 #define state _coshell_info_  // Hide external symbol
 

@@ -82,7 +82,7 @@
 #include <sig.h>
 #include <tm.h>
 #include <tok.h>
-#include <wait.h>
+#include <sys/wait.h>
 
 #define match(p, a, o)                                            \
     ((!((a)->set & SETNAME) || strmatch((p)->name, (a)->name)) && \

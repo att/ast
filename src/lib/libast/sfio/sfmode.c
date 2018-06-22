@@ -54,7 +54,7 @@ static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n"
 /* the below is for protecting the application from SIGPIPE */
 #if _PACKAGE_ast
 #include <sig.h>
-#include <wait.h>
+#include <sys/wait.h>
 #define Sfsignal_f Sig_handler_t
 #else
 #include <signal.h>
