@@ -34,8 +34,8 @@ __STDPP__directive pragma pp : hide getpwnam getpwuid
 #define getpwuid ______getpwuid
 #endif
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 #include <pwd.h>
 
 #if defined(__STDPP__directive) && defined(__STDPP__hide)

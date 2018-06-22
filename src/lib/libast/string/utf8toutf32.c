@@ -28,8 +28,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <error.h>
+#include "ast.h"
+#include "error.h"
 
 static const uint32_t utf8mask[] = {
     0x00000000, 0x00000000, 0xffffff80, 0xfffff800, 0xffff0000, 0xffe00000, 0xfc000000,

@@ -28,8 +28,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <lclib.h>
+#include "ast.h"
+#include "lclib.h"
 
 char *fmtscale(Sfulong_t n, int k) {
     Sfulong_t m;

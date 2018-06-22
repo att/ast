@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <swap.h>
+#include "ast.h"
+#include "swap.h"
 
 /*
  * get int_n from b according to op

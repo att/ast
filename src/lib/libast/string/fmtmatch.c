@@ -28,7 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 char *fmtmatch(const char *as) {
     char *s = (char *)as;

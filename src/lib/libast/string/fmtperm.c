@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <ls.h>
+#include "ast.h"
+#include "ls.h"
 
 char *fmtperm(int perm) {
     char *s;

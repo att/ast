@@ -32,8 +32,8 @@
 
 #include <stdbool.h>
 
-#include <ast.h>
-#include <ccode.h>
+#include "ast.h"
+#include "ccode.h"
 #include <ctype.h>
 
 int chrexp(const char *s, char **p, int *m, int flags) {

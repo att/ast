@@ -24,7 +24,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 typedef long (*Old_convert_t)(const char *, char **);
 

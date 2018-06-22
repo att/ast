@@ -29,7 +29,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 char *fmtbase(intmax_t n, int b, int p) {
     char *buf;

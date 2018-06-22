@@ -25,7 +25,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 /*
  * return pointer to name in tab with element size siz

@@ -31,7 +31,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 void strsort(char **argv, int n, Strcmp_f cmp) {
     int i;

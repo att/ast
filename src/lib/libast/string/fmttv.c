@@ -21,8 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <tm.h>
-#include <tv.h>
+#include "tm.h"
+#include "tv.h"
 
 /*
  * Tv_t fmttime()

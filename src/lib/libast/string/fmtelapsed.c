@@ -26,7 +26,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 char *fmtelapsed(unsigned long u, int n) {
     unsigned long t;

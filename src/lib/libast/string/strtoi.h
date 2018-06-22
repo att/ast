@@ -83,7 +83,7 @@
  *			[mM]i		mibi (1024*1024)
  */
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
 
 #include "sfhdr.h"

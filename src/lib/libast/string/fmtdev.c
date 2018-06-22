@@ -27,9 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <ls.h>
+#include "ls.h"
 #if _hdr_sys_sysmacros
 #include <sys/sysmacros.h>
 #endif

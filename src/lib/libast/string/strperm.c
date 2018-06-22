@@ -35,9 +35,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <ls.h>
-#include <modex.h>
+#include "ast.h"
+#include "ls.h"
+#include "modex.h"
 
 int strperm(const char *aexpr, char **e, int perm) {
     char *expr = (char *)aexpr;

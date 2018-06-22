@@ -29,7 +29,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 int strexp(char *s, int flags) {
     char *t;

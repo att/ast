@@ -54,8 +54,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <regex.h>
+#include "ast.h"
+#include "regex.h"
 
 static struct State_s {
     regmatch_t *match;

@@ -27,8 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <tok.h>
+#include "ast.h"
+#include "tok.h"
 
 #define FLG_RESTORE 01 /* restore string on close	*/
 #define FLG_NEWLINE 02 /* return newline token next	*/

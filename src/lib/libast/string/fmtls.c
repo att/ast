@@ -27,9 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <ls.h>
-#include <tm.h>
+#include "ast.h"
+#include "ls.h"
+#include "tm.h"
 
 #ifndef LS_W_MAX
 #define LS_W_MAX 128

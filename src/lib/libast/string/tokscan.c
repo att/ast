@@ -63,9 +63,9 @@
 
 #include <stdarg.h>
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <tok.h>
+#include "tok.h"
 
 static char empty[1];
 

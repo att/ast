@@ -27,6 +27,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 char *fmterror(int err) { return strerror(err); }

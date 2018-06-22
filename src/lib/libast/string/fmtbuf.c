@@ -21,8 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <aso.h>
-#include <ast.h>
+#include "aso.h"
+#include "ast.h"
 
 /*
  * return small format buffer chunk of size n

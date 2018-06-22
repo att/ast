@@ -26,7 +26,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 static const char table[] = {
     "000001002003004005006007008009010011012013014015016017018019"

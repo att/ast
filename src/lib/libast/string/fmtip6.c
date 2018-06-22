@@ -22,10 +22,10 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
-#include <ast.h>
+#include "ast.h"
 #endif
 
-#include <ip6.h>
+#include "ip6.h"
 
 #if !_PACKAGE_ast
 

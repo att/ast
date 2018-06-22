@@ -35,8 +35,8 @@ __STDPP__directive pragma pp : hide getgrgid getgrnam getpwnam
 #define getpwnam ______getpwnam
 #endif
 
-#include <ast.h>
-#include <cdt.h>
+#include "ast.h"
+#include "cdt.h"
 #include <grp.h>
 #include <pwd.h>
 

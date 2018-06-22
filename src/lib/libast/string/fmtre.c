@@ -28,7 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 
 typedef struct Stack_s {
     char *beg;

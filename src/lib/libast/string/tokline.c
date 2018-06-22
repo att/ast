@@ -38,9 +38,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
-#include <error.h>
-#include <tok.h>
+#include "ast.h"
+#include "error.h"
+#include "tok.h"
 
 typedef struct {
     Sfdisc_t disc;
