@@ -35,15 +35,11 @@
 #ifndef _UNIVLIB_H
 #define _UNIVLIB_H
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide getuniverse readlink setuniverse symlink universe
-#else
 #define getuniverse ______getuniverse
 #define readlink ______readlink
 #define setuniverse ______setuniverse
 #define symlink ______symlink
 #define universe ______universe
-#endif
 
 #include <errno.h>
 
@@ -56,27 +52,22 @@ __STDPP__directive pragma pp : hide getuniverse readlink setuniverse symlink uni
 
 #define UNIV_SIZE 9
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp
-    : nohide getuniverse readlink setuniverse symlink universe
-#else
 #undef getuniverse
 #undef readlink
 #undef setuniverse
 #undef symlink
 #undef universe
-#endif
 
 #if _cmd_universe
 #ifdef NUMUNIV
 #define UNIV_MAX NUMUNIV
 #else
 #define UNIV_MAX univ_max
-      extern char *univ_name[];
+extern char *univ_name[];
 extern int univ_max;
 #endif
 
-      extern char univ_cond[];
+extern char univ_cond[];
 extern int univ_size;
 
 #else

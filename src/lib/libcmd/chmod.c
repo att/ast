@@ -27,11 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide lchmod
-#else
 #define lchmod ______lchmod
-#endif
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -144,14 +140,9 @@ extern int fts_flags();
 #define ENOSYS EINVAL
 #endif
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : nohide lchmod
-#else
 #undef lchmod
-#endif
 
-                               extern int
-                               lchmod(const char *, mode_t);
+extern int lchmod(const char *, mode_t);
 
 /*
  * NOTE: we only use the native lchmod() on symlinks just in case

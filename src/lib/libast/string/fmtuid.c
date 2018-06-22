@@ -27,25 +27,16 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide getpwuid
-#else
 #define getpwuid ______getpwuid
-#endif
 
 #include <pwd.h>
 
 #include "ast.h"
 #include "cdt.h"
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp
-    : nohide getpwuid
-#else
 #undef getpwuid
-#endif
 
-      extern struct passwd *getpwuid(uid_t);
+extern struct passwd *getpwuid(uid_t);
 
 typedef struct Id_s {
     Dtlink_t link;

@@ -27,25 +27,16 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide getgrgid
-#else
 #define getgrgid ______getgrgid
-#endif
 
 #include <grp.h>
 
 #include "ast.h"
 #include "cdt.h"
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp
-    : nohide getgrgid
-#else
 #undef getgrgid
-#endif
 
-      extern struct group *getgrgid(gid_t);
+extern struct group *getgrgid(gid_t);
 
 typedef struct Id_s {
     Dtlink_t link;

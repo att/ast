@@ -28,11 +28,7 @@
 #include "ast.h"
 #include "ast_tty.h"
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide sleep
-#else
 #define sleep ______sleep
-#endif
 
 #if defined(TIOCGWINSZ)
 #if _sys_stream && _sys_ptem
@@ -53,14 +49,9 @@ __STDPP__directive pragma pp : hide sleep
 #endif
 #endif
 
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-                                   __STDPP__directive pragma pp : nohide ioctl sleep
-#else
 #undef sleep
-#endif
 
-                                                                  static int
-                                                                  ttctl(int, int, void *);
+static int ttctl(int, int, void *);
 
 void astwinsize(int fd, int *rows, int *cols) {
 #ifdef TIOCGWINSZ
