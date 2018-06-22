@@ -27,8 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "cmd.h"
 #include <fcntl.h>
+
+#include "cmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cat (AT&T Research) 2013-09-13 $\n]" USAGE_LICENSE

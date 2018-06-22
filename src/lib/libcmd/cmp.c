@@ -29,6 +29,13 @@
  *
  * cmp
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
+#include <ctype.h>
+
+#include "ccode.h"
+#include "cmd.h"
+#include "ls.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cmp (AT&T Research) 2010-04-11 $\n]" USAGE_LICENSE
@@ -75,13 +82,6 @@ static const char usage[] =
     "[+>1?An error occurred.]"
     "}"
     "[+SEE ALSO?\bcomm\b(1), \bdiff\b(1), \bcat\b(1)]";
-
-#include "config_ast.h"  // IWYU pragma: keep
-
-#include "ccode.h"
-#include "cmd.h"
-#include <ctype.h>
-#include "ls.h"
 
 #define CMP_VERBOSE 0x01
 #define CMP_SILENT 0x02

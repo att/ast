@@ -138,22 +138,7 @@ static const char usage[] =
     "[+SEE ALSO?\bchgrp\b(1), \bchown\b(1), \blchmod\b(1), \btw\b(1), \bgetconf\b(1), "
     "\bls\b(1), \bumask\b(2)]";
 
-#include "config_ast.h"  // IWYU pragma: keep
-
-#if defined(__STDPP__directive) && defined(__STDPP__hide)
-__STDPP__directive pragma pp : hide lchmod
-#else
-#define lchmod ______lchmod
-#endif
-
-#include "cmd.h"
-#include <fts.h>
-#include "ls.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-
-                               extern int
-                               fts_flags();
+extern int fts_flags();
 
 #ifndef ENOSYS
 #define ENOSYS EINVAL

@@ -27,15 +27,16 @@
 
 #include "config_ast.h"
 
-#include "cmd.h"
 #include <ctype.h>
+
+#include "cmd.h"
 #include "wc.h"
 
 #if _hdr_wchar && _hdr_wctype && _lib_iswctype
-
-#include "lc.h"
 #include <wchar.h>
 #include <wctype.h>
+
+#include "lc.h"
 
 #else
 

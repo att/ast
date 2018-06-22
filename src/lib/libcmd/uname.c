@@ -27,6 +27,18 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <sys/utsname.h>
+
+#if _hdr_unistd
+#include <unistd.h>
+#endif
+
+#include "cmd.h"
+#include "proc.h"
+
+#define MAXHOSTNAME 64
+
 static const char usage[] =
     "[-?\n@(#)$Id: uname (AT&T Research) 2007-04-19 $\n]" USAGE_LICENSE
     "[+NAME?uname - identify the current system ]"
@@ -65,18 +77,6 @@ static const char usage[] =
     "\n"
     "[+SEE ALSO?\bhostname\b(1), \bgetconf\b(1), \buname\b(2),"
     "	\bsysconf\b(2), \bsysinfo\b(2)]";
-
-#include "cmd.h"
-#include <ctype.h>
-#include "proc.h"
-
-#define MAXHOSTNAME 64
-
-#include <sys/utsname.h>
-
-#if _hdr_unistd
-#include <unistd.h>
-#endif
 
 extern long gethostid(void);
 extern int gethostname(char *, size_t);

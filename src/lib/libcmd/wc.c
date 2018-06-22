@@ -24,6 +24,11 @@
  *
  * count the number of bytes, words, and lines in a file
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
+#include "wc.h"
+#include "cmd.h"
+#include "ls.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: wc (AT&T Research) 2009-11-28 $\n]" USAGE_LICENSE
@@ -61,9 +66,6 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bcat\b(1), \bisspace\b(3)]";
 
-#include "cmd.h"
-#include "ls.h"
-#include "wc.h"
 
 #define ERRORMAX 125
 

@@ -25,6 +25,17 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
+#if _sys_ioctl
+#include <sys/ioctl.h>
+#endif
+
+#include "ast_tty.h"
+#include "ccode.h"
+#include "cmd.h"
+#include "stty.h"
+
 static const char usage[] =
     "[-?@(#)$Id: stty (AT&T Research) 2010-04-01 $\n]" USAGE_LICENSE
     "[+NAME?stty - set or get terminal modes]"
@@ -57,16 +68,6 @@ static const char usage[] =
     "failed.]"
     "}"
     "[+SEE ALSO?\btegetattr\b(2), \btcsetattr\b(2), \bioctl\b(2)]";
-
-#include "ast_tty.h"
-#include "ccode.h"
-#include "cmd.h"
-#include <ctype.h>
-#if _sys_ioctl
-#include <sys/ioctl.h>
-#endif
-
-#include "stty.h"
 
 #define C(x) ERROR_catalog(x)
 

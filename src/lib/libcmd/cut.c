@@ -24,6 +24,11 @@
  *
  * cut fields or columns from fields from a file
  */
+#include "config_ast.h"
+
+#include <ctype.h>
+
+#include "cmd.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cut (AT&T Research) 2010-08-11 $\n]" USAGE_LICENSE
@@ -71,11 +76,6 @@ static const char usage[] =
     "[+>0?One or more files failed to open or could not be read.]"
     "}"
     "[+SEE ALSO?\bpaste\b(1), \bgrep\b(1)]";
-
-#include "config_ast.h"
-
-#include "cmd.h"
-#include <ctype.h>
 
 typedef struct Delim_s {
     char *str;
