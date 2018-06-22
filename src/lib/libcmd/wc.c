@@ -26,9 +26,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "wc.h"
 #include "cmd.h"
 #include "ls.h"
+#include "wc.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: wc (AT&T Research) 2009-11-28 $\n]" USAGE_LICENSE
@@ -65,7 +65,6 @@ static const char usage[] =
     "[+>0?One or more files failed to open or could not be read.]"
     "}"
     "[+SEE ALSO?\bcat\b(1), \bisspace\b(3)]";
-
 
 #define ERRORMAX 125
 

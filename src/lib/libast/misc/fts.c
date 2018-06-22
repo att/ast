@@ -26,9 +26,10 @@
  *
  * fts implementation unwound from the kpv ftwalk() of 1988-10-30
  */
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <fts.h>
+#include <sys/types.h>
+
+#include <fts.h>  // OpenBSD and possibly others require the above includes first
 
 #include "ast.h"
 #include "ast_dir.h"

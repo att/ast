@@ -421,7 +421,7 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                         else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
 #if _wchar_t_is_int
                             fp[n].argv.wc = va_arg(args, wchar_t);
-#else  // _wchar_t_is_int
+#else   // _wchar_t_is_int
                             fp[n].argv.wc = (wchar_t)va_arg(args, uint);
 #endif  // _wchar_t_is_int
                         }

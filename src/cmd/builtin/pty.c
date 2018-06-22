@@ -41,7 +41,6 @@
 #include "regex.h"
 #include "stty.h"
 
-
 static const char usage[] =
     "[-?\n@(#)pty (AT&T Research) 2013-05-22\n]" USAGE_LICENSE
     "[+NAME?pty - create pseudo terminal and run command]"

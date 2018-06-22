@@ -76,7 +76,7 @@ struct Coservice_s;
 typedef struct Coservice_s Coservice_t;
 
 // Service info.
-struct Coservice_s  {
+struct Coservice_s {
     Coservice_t *next;  // Next in list
     char *name;         // Instance name
     char *path;         // coexec() command path
