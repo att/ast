@@ -30,7 +30,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
-#include <ast.h>
+#include "ast.h"
 #else
 #include <stdint.h>
 #include <stdlib.h>

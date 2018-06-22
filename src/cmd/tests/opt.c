@@ -19,10 +19,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ast.h>
+#include "ast.h"
 #include <ctype.h>
-#include <debug.h>
-#include <error.h>
+#include "debug.h"
+#include "error.h"
 
 #if OPT_VERSION >= 20000101L
 #define NEW 1

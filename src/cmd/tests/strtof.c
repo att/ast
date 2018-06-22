@@ -28,7 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
-#include <ast.h>
+#include "ast.h"
 #else
 #ifndef _ISOC99_SOURCE
 #define _ISOC99_SOURCE 1

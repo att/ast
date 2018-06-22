@@ -20,12 +20,12 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #if _PACKAGE_ast
-#include <ast.h>
+#include "ast.h"
 #else
 #include <string.h>
 #endif
 
-#include <ip6.h>
+#include "ip6.h"
 #include <stdio.h>
 
 int main(int argc, char **argv) {
