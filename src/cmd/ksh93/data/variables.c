@@ -22,16 +22,15 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "builtins.h"
+#include "name.h"
+#include "shell.h"
+#include "shtable.h"
+#include "variables.h"
 
 #if SHOPT_DYNAMIC
 #include "dlldefs.h"
 #endif  // SHOPT_DYNAMIC
-
-#include "shell.h"
-#include "builtins.h"
-#include "name.h"
-#include "shtable.h"
-#include "variables.h"
 
 //
 // This is the list of built-in shell variables and default values and default attributes.
