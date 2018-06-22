@@ -25,6 +25,22 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ast_ndbm.h>
+#include <css.h>
+#include <ctype.h>
+#include <stdarg.h>
+
+#include "ast.h"
+#include "cdt.h"
+#include "debug.h"
+#include "error.h"
+#include "ls.h"
+#include "namval.h"
+#include "regex.h"
+#include "swap.h"
+#include "tm.h"
+#include "tok.h"
+
 #define EVENT_MAJOR 1
 #define EVENT_MINOR 0
 
@@ -96,8 +112,6 @@ static const char usage[] =
     "[+SEE ALSO?\bcoshell\b(1), \bcs\b(1), \bnmake\b(1), \bdbm\b(3), "
     "\bndbm\b(3), \bgdbm\b(3)]";
 
-#include "config_ast.h"  // IWYU pragma: keep
-
 static const char command[] = "event";
 
 static const char ident_key[] = "'//\t<(IDENT)>\t\\\\'";
@@ -108,21 +122,6 @@ static const char ident_name[] = "EVEN";
 
 #define EVENT(s) (*((char *)(s)) != ident_key[0])
 #define log _log /* gnu builtin? you've got to be kidding */
-
-#include "ast.h"
-#include <ast_ndbm.h>
-#include "cdt.h"
-#include <css.h>
-#include <ctype.h>
-#include "debug.h"
-#include "error.h"
-#include "ls.h"
-#include "namval.h"
-#include "regex.h"
-#include <stdarg.h>
-#include "swap.h"
-#include "tm.h"
-#include "tok.h"
 
 #if !_use_ndbm
 

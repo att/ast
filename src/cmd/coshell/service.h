@@ -23,6 +23,17 @@
  *
  * remote coshell service definitions
  */
+#include <cs.h>
+#include <ctype.h>
+#include <sys/wait.h>
+
+#include "ast.h"
+#include "coshell.h"
+#include "debug.h"
+#include "error.h"
+#include "sig.h"
+#include "tm.h"
+#include "tok.h"
 
 #define LABELLEN 64  // max label string length
 #define NAMELEN 64   // max name string length
@@ -72,17 +83,6 @@
     unsigned long start;    /* connect start time */          \
     unsigned long update;   /* time stat last updated */      \
                             /* end of private additions */
-
-#include "ast.h"
-#include "coshell.h"
-#include <cs.h>
-#include <ctype.h>
-#include "debug.h"
-#include "error.h"
-#include "sig.h"
-#include "tm.h"
-#include "tok.h"
-#include <sys/wait.h>
 
 #define match(p, a, o)                                            \
     ((!((a)->set & SETNAME) || strmatch((p)->name, (a)->name)) && \
