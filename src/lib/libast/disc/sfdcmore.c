@@ -21,12 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
-
 #if _PACKAGE_ast
-#include "ast_tty.h"
 #include <signal.h>
+
+#include "ast_tty.h"
 #endif
+
+#include "sfdchdr.h"
 
 /*
  * a simple but fast more style pager discipline

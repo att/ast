@@ -27,11 +27,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
 #include <stdbool.h>
 
 #include "ast.h"
+
 #include "ccode.h"
-#include <ctype.h>
 #include "regex.h"
 #include "sfdisc.h"
 
