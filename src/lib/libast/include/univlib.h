@@ -35,12 +35,6 @@
 #ifndef _UNIVLIB_H
 #define _UNIVLIB_H
 
-#define getuniverse ______getuniverse
-#define readlink ______readlink
-#define setuniverse ______setuniverse
-#define symlink ______symlink
-#define universe ______universe
-
 #include <errno.h>
 
 #if _cmd_universe && _sys_universe
@@ -51,12 +45,6 @@
 #include "ls.h"
 
 #define UNIV_SIZE 9
-
-#undef getuniverse
-#undef readlink
-#undef setuniverse
-#undef symlink
-#undef universe
 
 #if _cmd_universe
 #ifdef NUMUNIV
@@ -78,7 +66,6 @@ extern char univ_env[];
 
 extern int getuniverse(char *);
 extern int setuniverse(int);
-extern int symlink(const char *, const char *);
 extern int universe(int);
 
 #endif
