@@ -16,7 +16,7 @@ set enable_global_analysis
 set lint_args
 set c_files
 set files
-set kernel_name (uname -s)
+set os_name (uname -s)
 set machine_type (uname -m)
 
 if not test -d build
@@ -113,9 +113,23 @@ if type -q include-what-you-use
     echo Running IWYU
     echo ========================================
     for c_file in $c_files
-        include-what-you-use -Xiwyu --transitive_includes_only --std=c99 \
-            -Wno-expansion-to-defined -Wno-nullability-completeness \
-            $lint_args (../scripts/extract_flags $project_file $c_file) $c_file 2>&1
+        set mapping_file
+        switch $os_name
+            case Darwin FreeBSD OpenBSD
+                set mapping_file ../etc/iwyu.bsd.map
+            case Linux CYGWIN\*
+                set mapping_file ../etc/iwyu.linux.map
+        end
+        if set -q mapping_file[1]
+            include-what-you-use -Xiwyu --transitive_includes_only \
+                -Xiwyu --mapping_file=$mapping_file \
+                --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
+                $lint_args (../scripts/extract_flags $project_file $c_file) $c_file 2>&1
+        else  # hope for the best
+            include-what-you-use -Xiwyu --transitive_includes_only \
+                --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
+                $lint_args (../scripts/extract_flags $project_file $c_file) $c_file 2>&1
+        end
     end
 end
 
