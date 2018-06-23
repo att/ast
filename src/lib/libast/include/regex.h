@@ -22,8 +22,6 @@
 /*
  * regex library interface
  */
-#include "config_ast.h"  // IWYU pragma: keep
-
 #ifdef _AST_STD_I
 #define _REGEX_H -1
 #define regex_t int

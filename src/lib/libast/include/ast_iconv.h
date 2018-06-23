@@ -1,7 +1,6 @@
 /* : : generated from iconv by iffe version 2013-11-14 : : */
 #ifndef _def_iconv_features
 #define _def_iconv_features 1
-#include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdint.h>
 

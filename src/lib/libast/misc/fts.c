@@ -26,6 +26,8 @@
  *
  * fts implementation unwound from the kpv ftwalk() of 1988-10-30
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <sys/stat.h>
 #include <sys/types.h>
 

@@ -22,8 +22,6 @@
 #ifndef _ASO_H
 #define _ASO_H 1
 
-#include "config_ast.h"  // IWYU pragma: keep
-
 #define ASO_VERSION 20130501L
 
 #include "ast_aso.h"

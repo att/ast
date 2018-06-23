@@ -30,8 +30,6 @@
 #ifndef _SWAP_H
 #define _SWAP_H
 
-#include "config_ast.h"  // IWYU pragma: keep
-
 #define int_swap _ast_intswap
 
 #define SWAP_MAX 8

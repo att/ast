@@ -1,3 +1,5 @@
+#include "config_ast.h"  // IWYU pragma: keep
+
 #include <stdio.h>
 
 // Version of the libast API that plugin is linked to.

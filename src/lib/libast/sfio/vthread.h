@@ -22,8 +22,6 @@
 #ifndef _VTHREAD_H
 #define _VTHREAD_H 1
 
-#include "config_ast.h"  // IWYU pragma: keep
-
 #define VTHREAD_VERSION 20001201L
 
 /*	Header for the Vthread library.

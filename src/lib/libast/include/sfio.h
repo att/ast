@@ -22,8 +22,6 @@
 #ifndef _SFIO_H
 #define _SFIO_H 1
 
-#include "config_ast.h"  // IWYU pragma: keep
-
 #define SFIO_VERSION 20090915L
 
 /*	Public header file for the sfio library

@@ -1,10 +1,8 @@
 /* : : generated from aso by iffe version 2013-11-14 : : */
-#include "config_ast.h"  // IWYU pragma: keep
-
-#include <stdint.h>
-
 #ifndef _def_aso_features
 #define _def_aso_features 1
+
+#include <stdint.h>
 #define asointegralof(x) (void *)(((char *)(x)) - ((char *)0))
 
 #if GCC_4_1PLUS_64_BIT_MEMORY_ATOMIC_OPERATIONS_MODEL
