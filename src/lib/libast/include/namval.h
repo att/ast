@@ -25,9 +25,8 @@
  *
  * common name-value struct support
  */
-
 #ifndef _NAMVAL_H
-#define _NAMVAL_H
+#define _NAMVAL_H 1
 
 typedef struct {
     char *name;
@@ -37,4 +36,4 @@ typedef struct {
 #endif
 } Namval_t;
 
-#endif
+#endif  // _NAMVAL_H

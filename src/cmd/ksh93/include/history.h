@@ -17,11 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef HIST_VERSION
 //
 // Interface for history mechanism.
 // Written by David Korn.
 //
+#ifndef _HISTORY_H
+#define _HISTORY_H 1
+
 #include "ast.h"
 
 #define HIST_CHAR '!'
@@ -65,4 +67,4 @@ extern off_t hist_seek(History_t *, int);
 extern char *hist_word(char *, int, int);
 extern Histloc_t hist_locate(History_t *, int, int, int);
 
-#endif  // HIST_VERSION
+#endif  // _HISTORY_H

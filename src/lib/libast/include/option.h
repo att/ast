@@ -25,9 +25,8 @@
  *
  * command line option parse interface
  */
-
 #ifndef _OPTION_H
-#define _OPTION_H
+#define _OPTION_H 1
 
 #include "ast.h"
 #include "optlib.h"
@@ -83,4 +82,4 @@ extern int optstr(const char *, const char *);
 extern int optesc(Sfio_t *, const char *, int);
 extern Opt_t *optctx(Opt_t *, Opt_t *);
 
-#endif
+#endif  // _OPTION_H

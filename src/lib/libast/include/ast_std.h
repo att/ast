@@ -27,9 +27,9 @@
  * with local extensions enabled
  * and local omission compensation
  */
-
 #ifndef _AST_STD_H
 #define _AST_STD_H 1
+
 #define _AST_STD_I 1
 
 #if _BLD_ast
@@ -251,4 +251,4 @@ extern int rename(const char *, const char *);
 #include "regex.h"
 #endif
 
-#endif
+#endif  // _AST_STD_H

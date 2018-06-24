@@ -17,7 +17,9 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef S_BREAK
+#ifndef _LEXSTATES_H
+#define _LEXSTATES_H 1
+
 #define S_BREAK 1  // end of token
 #define S_EOF 2    // end of buffer
 #define S_NL 3     // new-line when not a token
@@ -128,4 +130,5 @@ extern const char e_lexzerobyte[];
 extern const char e_lexemptyfor[];
 extern const char e_lextypeset[];
 extern const char e_lexcharclass[];
-#endif  // S_BREAK
+
+#endif  // _LEXSTATES_H

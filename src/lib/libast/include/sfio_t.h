@@ -135,4 +135,4 @@
 /* restore SFDCNEXT() state from int f */
 #define SFDCPREV(sp, f) ((f) ? (0) : ((sp)->bits &= ~SF_DCDOWN))
 
-#endif /* _SFIO_T_H */
+#endif  // _SFIO_T_H

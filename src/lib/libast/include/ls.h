@@ -26,7 +26,7 @@
  * ls formatter interface definitions
  */
 #ifndef _LS_H
-#define _LS_H
+#define _LS_H 1
 
 #include <sys/stat.h>
 #include <sys/statvfs.h>
@@ -79,4 +79,4 @@ extern char *fmtfs(struct stat *);
 extern char *fmtls(char *, const char *, struct stat *, const char *, const char *, int);
 extern int pathstat(const char *, struct stat *);
 
-#endif
+#endif  // _LS_H

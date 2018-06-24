@@ -18,9 +18,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-
-#ifndef CMDEXT_H
-#define CMDEXT_H
+#ifndef _CMDEXT_H
+#define _CMDEXT_H 1
 
 #include "shcmd.h"
 
@@ -38,4 +37,4 @@ extern int b_sync(int, char **, Shbltin_t *);
 extern int b_uname(int, char **, Shbltin_t *);
 extern int b_wc(int, char **, Shbltin_t *);
 
-#endif
+#endif  // _CMDEXT_H

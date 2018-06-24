@@ -27,9 +27,8 @@
  * FNV-1 linear congruent checksum/hash/PRNG
  * see http://www.isthe.com/chongo/tech/comp/fnv/
  */
-
 #ifndef _FNV_H
-#define _FNV_H
+#define _FNV_H 1
 
 #define FNV_INIT 0x811c9dc5L
 #define FNV_MULT 0x01000193L
@@ -53,4 +52,4 @@
         while (_i_ < n) FNVPART64(h, ((unsigned char *)s)[_i_++]); \
     } while (0)
 
-#endif
+#endif  // _FNV_H

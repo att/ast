@@ -22,7 +22,6 @@
 /*
  * locale state private definitions
  */
-
 #ifndef _LCLIB_H
 #define _LCLIB_H 1
 
@@ -64,4 +63,4 @@ extern Lc_t *locales[];
 
 extern char *translate(const char *, const char *, const char *, const char *);
 
-#endif
+#endif  // _LCLIB_H

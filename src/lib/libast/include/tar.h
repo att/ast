@@ -23,9 +23,8 @@
  * Standard Archive Format
  * USTAR - Uniform Standard Tape ARchive
  */
-
 #ifndef _TAR_H
-#define _TAR_H
+#define _TAR_H 1
 
 #define TBLOCK 512
 #define NAMSIZ 100
@@ -112,4 +111,4 @@ union hblock {
     struct header dbuf;
 };
 
-#endif
+#endif  // _TAR_H

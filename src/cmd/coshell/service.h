@@ -23,6 +23,9 @@
  *
  * remote coshell service definitions
  */
+#ifndef _SERVICE_H
+#define _SERVICE_H 1
+
 #include <cs.h>
 #include <ctype.h>
 #include <sys/wait.h>
@@ -366,3 +369,5 @@ extern void shellexec(Cojob_t *, char *, int);
 extern int shellopen(Coshell_t *, int);
 extern char *stream(int, char *);
 extern void update(Coshell_t *);
+
+#endif  // _SERVICE_H

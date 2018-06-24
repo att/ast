@@ -34,4 +34,4 @@ typedef struct Intercepts_s {
 
 extern Intercepts_t intercepts;
 
-#endif
+#endif  // _INTERCEPTS_H

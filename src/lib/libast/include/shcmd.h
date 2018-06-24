@@ -22,7 +22,6 @@
 /*
  * ksh builtin command api
  */
-
 #ifndef _SHCMD_H
 #define _SHCMD_H 1
 
@@ -102,4 +101,4 @@ struct Shbltin_s {
 
 extern int astintercept(Shbltin_t *, int);
 
-#endif
+#endif  // _SHCMD_H

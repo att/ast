@@ -21,6 +21,9 @@
 // UNIX shell
 // David Korn
 //
+#ifndef _IO_H
+#define _IO_H 1
+
 #include "ast.h"
 #include "sfio.h"
 
@@ -124,3 +127,5 @@ extern const char e_stdprompt[];
 extern const char e_supprompt[];
 extern const char e_ambiguous[];
 #endif  // KSHELL
+
+#endif  // _IO_H

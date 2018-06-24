@@ -157,4 +157,4 @@ extern unsigned int asothreadid(void);
 
 #endif
 
-#endif
+#endif  // _ASO_H

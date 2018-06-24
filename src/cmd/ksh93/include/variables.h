@@ -17,7 +17,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SH_VALNOD
+#ifndef _VARIABLES_H
+#define _VARIABLES_H 1
 
 #include "option.h"
 
@@ -104,4 +105,5 @@
 #define COMPREPLY (shgd->bltin_nodes + 75)
 #define COMP_WORDBREAKS (shgd->bltin_nodes + 76)
 #define COMP_TAB (shgd->bltin_nodes + 77)
-#endif  // SH_VALNOD
+
+#endif  // _VARIABLES_H

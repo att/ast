@@ -4,6 +4,9 @@
 // rather than stderr which is wrong.
 //
 //
+#ifndef _AST_ASSERT_H
+#define _AST_ASSERT_H 1
+
 #include <stdio.h>
 
 #undef assert
@@ -16,3 +19,5 @@
 #define __assert(e, file, line) \
     ((void)fprintf (stderr, "%s:%d: failed assertion '%s'\n", file, line, e), abort())
 #endif  // NDEBUG
+
+#endif  // _AST_ASSERT_H

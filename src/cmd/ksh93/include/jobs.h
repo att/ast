@@ -17,11 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef JOB_NFLAG
 //
 // Interface to job control for shell.
 // written by David Korn.
 //
+#ifndef _JOBS_H
+#define _JOBS_H 1
+
 #define JOBTTY 2
 
 #include "ast.h"
@@ -191,4 +193,4 @@ extern bool job_reap(int);
 #define job_fork(p)
 #endif  // JOBS
 
-#endif  // !JOB_NFLAG
+#endif  // _JOBS_H

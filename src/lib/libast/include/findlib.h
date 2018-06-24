@@ -23,7 +23,7 @@
 // Fast find private interface.
 //
 #ifndef _FINDLIB_H
-#define _FINDLIB_H
+#define _FINDLIB_H 1
 
 #include <ctype.h>
 
@@ -116,4 +116,4 @@ typedef struct {
 
 #include "find.h"
 
-#endif
+#endif  // _FINDLIB_H

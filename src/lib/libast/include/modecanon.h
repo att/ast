@@ -25,9 +25,8 @@
  *
  * canonical mode_t representation
  */
-
 #ifndef _MODECANON_H
-#define _MODECANON_H
+#define _MODECANON_H 1
 
 #define X_ITYPE(m) ((m)&X_IFMT)
 
@@ -61,4 +60,4 @@
 #define X_IRWXG (X_IRGRP | X_IWGRP | X_IXGRP)
 #define X_IRWXO (X_IROTH | X_IWOTH | X_IXOTH)
 
-#endif
+#endif  // _MODECANON_H

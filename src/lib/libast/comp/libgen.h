@@ -22,9 +22,8 @@
 /*
  * libgen interface definitions
  */
-
 #ifndef _LIBGEN_H
-#define _LIBGEN_H
+#define _LIBGEN_H 1
 
 extern char *__loc1;
 extern char *regcmp(const char *, ...);
@@ -32,4 +31,4 @@ extern char *regex(const char *, const char *, ...);
 extern char *basename(char *);
 extern char *dirname(char *);
 
-#endif
+#endif  // _LIBGEN_H

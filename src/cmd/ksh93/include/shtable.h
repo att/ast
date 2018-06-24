@@ -17,13 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _SHTABLE_H
 //
 // David Korn
 // AT&T Labs
 //
 // Interface definitions read-only data tables for shell.
 //
+#ifndef _SHTABLE_H
 #define _SHTABLE_H 1
 
 #include "shcmd.h"
@@ -64,4 +64,4 @@ extern const Shtable_t shtab_reserved[];
 extern const Shtable_t *sh_locate(const char *, const Shtable_t *, int);
 extern int sh_lookopt(const char *, int *);
 
-#endif  // SH_TABLE_H
+#endif  // _SHTABLE_H

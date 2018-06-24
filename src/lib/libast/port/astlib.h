@@ -22,7 +22,6 @@
 /*
  * ast private <ast.h>
  */
-
 #ifndef _AST_LIB_H
 #define _AST_LIB_H 1
 
@@ -40,4 +39,4 @@ typedef struct Ast_global_s {
 
 extern Ast_global_t ast_global;
 
-#endif
+#endif  // _AST_LIB_H

@@ -17,12 +17,14 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef TEST_ARITH
 //
 // UNIX shell
 // David Korn
 // AT&T Labs
 //
+#ifndef _TEST_H
+#define _TEST_H 1
+
 #include "defs.h"
 #include "shtable.h"
 //
@@ -64,4 +66,4 @@ extern const char e_badop[];
 extern const char e_tstbegin[];
 extern const char e_tstend[];
 
-#endif  // TEST_ARITH
+#endif  // _TEST_H

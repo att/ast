@@ -25,9 +25,8 @@
  *
  * homogenous stack routine definitions
  */
-
 #ifndef _STACK_H
-#define _STACK_H
+#define _STACK_H 1
 
 typedef struct stacktable *STACK;      /* stack pointer		*/
 typedef struct stackposition STACKPOS; /* stack position		*/
@@ -73,4 +72,4 @@ extern int stackpush(STACK, void *);
 extern int stackpop(STACK);
 extern void stacktell(STACK, int, STACKPOS *);
 
-#endif
+#endif  // _STACK_H

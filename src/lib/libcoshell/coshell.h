@@ -23,9 +23,8 @@
 //
 // Coshell library interface
 //
-
 #ifndef _COSHELL_H
-#define _COSHELL_H
+#define _COSHELL_H 1
 
 #include "ast.h"
 
@@ -141,4 +140,4 @@ extern int coattr(Coshell_t *, const char *);
 extern int coprocrun(const char *, char **, int);
 extern int cosystem(const char *);
 
-#endif
+#endif  // _COSHELL_H

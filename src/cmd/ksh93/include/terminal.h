@@ -17,8 +17,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _terminal_
-#define _terminal_ 1
+#ifndef _TERMINAL_H
+#define _TERMINAL_H 1
 
 //
 // Terminal interface is complicated by the fact that there are so many variations. This will use
@@ -86,4 +86,4 @@ extern int sh_tcsetattr(int, int, struct termios *);
 #define tcgetattr(a, b) sh_tcgetattr(a, b)
 #define tcsetattr(a, b, c) sh_tcsetattr(a, b, c)
 
-#endif  // _terminal_
+#endif  // _TERMINAL_H

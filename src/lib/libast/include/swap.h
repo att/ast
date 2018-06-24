@@ -26,9 +26,8 @@
  * integral representation conversion support definitions
  * supports sizeof(integral_type)<=sizeof(intmax_t)
  */
-
 #ifndef _SWAP_H
-#define _SWAP_H
+#define _SWAP_H 1
 
 #define int_swap _ast_intswap
 
@@ -41,4 +40,4 @@ extern intmax_t swapget(int, const void *, int);
 extern void *swapput(int, void *, int, intmax_t);
 extern int swapop(const void *, const void *, int);
 
-#endif
+#endif  // _SWAP_H

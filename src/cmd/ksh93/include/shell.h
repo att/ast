@@ -17,19 +17,20 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SHELL_H_DEFINED
-#define SHELL_H_DEFINED
 //
 // David Korn
 // AT&T Labs
 //
 // Interface definitions for shell command language.
 //
+#ifndef _SHELL_H
+#define _SHELL_H 1
+
 #define SH_VERSION 20120720
 
 // Bit of a chicken and egg problem here. If we've already included fault.h then this typedef
 // already exists and depending on the compiler defining it here may cause a warning or an error.
-#ifndef FAULT_H_DEFINED
+#ifndef _FAULT_H
 typedef struct Shell_s Shell_t;
 #endif
 
@@ -461,4 +462,4 @@ extern Shell_t sh;
 #define SH_EXITMASK (SH_EXITSIG - 1)  // normal exit status bits
 #define SH_RUNPROG -1022              // needs to be negative and < 256
 
-#endif  // SHELL_H_DEFINED
+#endif  // _SHELL_H

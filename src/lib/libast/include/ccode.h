@@ -28,7 +28,6 @@
  * NOTE: used for mapping between 8-bit character encodings
  *	 ISO character sets are handled by sfio
  */
-
 #ifndef _CHARCODE_H
 #define _CHARCODE_H 1
 
@@ -81,4 +80,4 @@ extern Ccmap_t *ccmaplist(Ccmap_t *);
         if ((i) != (o)) _ccmapstr(CCMAP(i, o), s, n); \
     } while (0)
 
-#endif
+#endif  // _CHARCODE_H

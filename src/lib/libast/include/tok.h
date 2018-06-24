@@ -25,9 +25,8 @@
  *
  * token stream interface definitions
  */
-
 #ifndef _TOK_H
-#define _TOK_H
+#define _TOK_H 1
 
 #include "ast.h"
 
@@ -37,4 +36,4 @@ extern char *tokopen(char *, int);
 extern void tokclose(char *);
 extern char *tokread(char *);
 
-#endif
+#endif  // _TOK_H

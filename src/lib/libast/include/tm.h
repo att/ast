@@ -25,9 +25,8 @@
  *
  * time conversion support definitions
  */
-
 #ifndef _TM_H
-#define _TM_H
+#define _TM_H 1
 
 #define TM_VERSION 20070319L
 
@@ -173,4 +172,4 @@ extern int tmweek(Tm_t *, int, int, int);
 extern int tmword(const char *, char **, const char *, char **, int);
 extern Tm_zone_t *tmzone(const char *, char **, const char *, int *);
 
-#endif
+#endif  // _TM_H

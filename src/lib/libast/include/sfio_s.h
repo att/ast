@@ -48,4 +48,4 @@ struct _sfio_s {
 #endif
 };
 
-#endif
+#endif  // _SFIO_S_H

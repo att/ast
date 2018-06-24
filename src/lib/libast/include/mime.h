@@ -22,7 +22,6 @@
 /*
  * mime/mailcap interface
  */
-
 #ifndef _MIMETYPE_H
 #define _MIMETYPE_H 1
 
@@ -79,4 +78,4 @@ extern char *mimeview(Mime_t *, const char *, const char *, const char *, const 
 extern int mimehead(Mime_t *, void *, size_t, size_t, char *);
 extern int mimecmp(const char *, const char *, char **);
 
-#endif
+#endif  // _MIMETYPE_H

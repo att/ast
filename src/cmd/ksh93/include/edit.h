@@ -17,13 +17,15 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SEARCHSIZE
 //
 // edit.h - Common data structure for vi and emacs edit options.
 //
 // David Korn
 // AT&T Labs
 //
+#ifndef _EDIT_H
+#define _EDIT_H 1
+
 #define SEARCHSIZE 80
 
 #include "terminal.h"
@@ -276,4 +278,4 @@ extern const char e_version[];
 
 extern int hist_expand(Shell_t *shp, const char *, char **);
 
-#endif
+#endif  // _EDIT_H

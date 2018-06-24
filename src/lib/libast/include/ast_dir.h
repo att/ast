@@ -24,9 +24,8 @@
  *
  * common dirent maintenance interface
  */
-
 #ifndef _AST_DIR_H
-#define _AST_DIR_H
+#define _AST_DIR_H 1
 
 #include "ast_lib.h"
 
@@ -70,4 +69,4 @@
 #define D_TYPE(d) ((d)->d_type)
 #endif
 
-#endif
+#endif  // _AST_DIR_H

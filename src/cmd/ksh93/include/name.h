@@ -17,10 +17,12 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _NV_PRIVATE
 //
 // This is the implementation header file for name-value pairs.
 //
+#ifndef _NAME_H
+#define _NAME_H 1
+
 #define _NV_PRIVATE                                     \
     Namfun_t *nvfun;    /* pointer to trap functions */ \
     union Value nvalue; /* value field */               \
@@ -269,4 +271,5 @@ extern const char e_tolower[];
 extern const char e_toupper[];
 extern const char e_astbin[];
 extern const char e_wordbreaks[];
-#endif  // _NV_PRIVATE
+
+#endif  // _NAME_H

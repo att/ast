@@ -30,9 +30,8 @@
  *	<sys/time.h>
  *	<sys/times.h>
  */
-
 #ifndef _TIMES_H
-#define _TIMES_H
+#define _TIMES_H 1
 
 #include "ast.h"
 
@@ -46,4 +45,4 @@
 
 extern int touch(const char *, time_t, time_t, int);
 
-#endif
+#endif  // _TIMES_H

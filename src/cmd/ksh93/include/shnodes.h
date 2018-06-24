@@ -17,12 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _SHNODES_H
-#define _SHNODES_H 1
 //
 // UNIX shell
 // Written by David Korn
 //
+#ifndef _SHNODES_H
+#define _SHNODES_H 1
+
 #include "ast.h"
 
 #include "argnod.h"

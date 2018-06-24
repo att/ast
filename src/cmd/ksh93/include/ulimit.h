@@ -17,11 +17,12 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _ULIMIT_H
-#define _ULIMIT_H 1
 //
 // This is for the ulimit built-in command.
 //
+#ifndef _ULIMIT_H
+#define _ULIMIT_H 1
+
 #include <sys/resource.h>
 
 #ifdef RLIM_INFINITY

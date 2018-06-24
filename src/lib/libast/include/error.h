@@ -26,7 +26,7 @@
  * option, error and message formatter external definitions
  */
 #ifndef _ERROR_H
-#define _ERROR_H
+#define _ERROR_H 1
 
 #include <errno.h>
 
@@ -171,4 +171,4 @@ extern void errorv(const char *, int, va_list);
 extern char *errorx(const char *, const char *, const char *, const char *);
 extern Error_info_t *errorctx(Error_info_t *, int, int);
 
-#endif
+#endif  // _ERROR_H

@@ -25,9 +25,8 @@
  *
  * command line option parser and usage formatter private definitions
  */
-
 #ifndef _OPTLIB_H
-#define _OPTLIB_H
+#define _OPTLIB_H 1
 
 #include "ast.h"
 #include "cdt.h"
@@ -100,4 +99,4 @@ typedef struct Optstate_s {
     char **conformance; /* conformance id vector	*/
 } Optstate_t;
 
-#endif
+#endif  // _OPTLIB_H

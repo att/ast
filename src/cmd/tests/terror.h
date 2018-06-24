@@ -17,6 +17,9 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#ifndef _TERROR_H
+#define _TERROR_H 1
+
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -467,3 +470,5 @@ __attribute__((unused)) static void *tstshared(size_t n) {
     memset(p, 0, n);
     return p;
 }
+
+#endif  // _TERROR_H

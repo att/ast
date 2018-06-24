@@ -31,9 +31,8 @@
  *
  * universe symlink conditionals use $(UNIVERSE)
  */
-
 #ifndef _UNIVLIB_H
-#define _UNIVLIB_H
+#define _UNIVLIB_H 1
 
 #include <errno.h>
 
@@ -68,4 +67,4 @@ extern int getuniverse(char *);
 extern int setuniverse(int);
 extern int universe(int);
 
-#endif
+#endif  // _UNIVLIB_H

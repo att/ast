@@ -17,13 +17,15 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SEQPOINT
 //
 // D. G. Korn
 //
 // Arithmetic expression evaluator.
 //
 // The following only is needed for const.
+#ifndef _STREVAL_H
+#define _STREVAL_H 1
+
 #include <math.h>
 
 #include "ast.h"
@@ -211,4 +213,5 @@ extern Sfdouble_t strval(Shell_t *, const char *, char **,
 extern Arith_t *arith_compile(Shell_t *, const char *, char **,
                               Sfdouble_t (*)(const char **, struct lval *, int, Sfdouble_t), int);
 extern Sfdouble_t arith_exec(Arith_t *);
-#endif  // !SEQPOINT
+
+#endif  // _STREVAL_H

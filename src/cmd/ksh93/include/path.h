@@ -22,7 +22,8 @@
 // Written by David Korn.
 // These are the definitions for the lexical analyzer.
 //
-#ifndef PATH_OFFSET
+#ifndef _PATH_H
+#define _PATH_H 1
 
 #include "defs.h"
 
@@ -120,4 +121,4 @@ extern const char is_function[];
 extern const char is_ufunction[];
 extern const char e_prohibited[];
 
-#endif  // !PATH_OFFSET
+#endif  // _PATH_H

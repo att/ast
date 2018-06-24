@@ -58,4 +58,4 @@ extern int tmxtouch(const char *, Time_t, Time_t, Time_t, int);
 
 extern char *fmttmx(const char *, Time_t);
 
-#endif
+#endif  // _TMX_H

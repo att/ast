@@ -22,11 +22,11 @@
 /*
  * legacy standard getopt interface
  */
-
 #ifdef _AST_STD_I
 #undef _AST_GETOPT_H
 #define _AST_GETOPT_H -1
 #endif
+
 #ifndef _AST_GETOPT_H
 #define _AST_GETOPT_H 1
 
@@ -42,4 +42,4 @@ extern char *optarg;
 extern int getopt(int, char *const *, const char *);
 extern int getsubopt(char **, char *const *, char **);
 
-#endif
+#endif  // _AST_GETOPT_H

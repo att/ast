@@ -29,4 +29,4 @@ extern Dt_t *_dtnew(Dtdisc_t *, Dtmethod_t *, unsigned long);
 
 #define dtnew(d, m) _dtnew(d, m, CDT_VERSION)
 
-#endif
+#endif  // _DT_H

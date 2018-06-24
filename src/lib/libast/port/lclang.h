@@ -22,6 +22,8 @@
 /*
  * lc (sub)lang definitions -- very windowsish
  */
+#ifndef _LCLANG_H
+#define _LCLANG_H 1
 
 #if __CYGWIN__
 
@@ -117,4 +119,6 @@
 #define SUBLANG_PORTUGUESE_BRAZIL SUBLANG_PORTUGUESE_BRAZILIAN
 #endif
 
-#endif
+#endif  // __CYGWIN__
+
+#endif  // _LCLANG_H

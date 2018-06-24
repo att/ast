@@ -22,16 +22,15 @@
 /*
  * ast function intercepts
  */
-
-#include <sys/stat.h>
-
-#if !defined(_AST_INTERCEPT) && !_BLD_ast && _API_ast && \
+#if !defined(_AST_INTERCEPT_H) && !_BLD_ast && _API_ast && \
     _API_ast < 20130625 /* <ast_api.h> not in scope yet */
 #define _AST_INTERCEPT 0
 #endif
 
-#ifndef _AST_INTERCEPT
-#define _AST_INTERCEPT 1
+#ifndef _AST_INTERCEPT_H
+#define _AST_INTERCEPT_H 1
+
+#include <sys/stat.h>
 
 #define AST_SERIAL_ENVIRON 1
 #define AST_SERIAL_LOCALE 2
@@ -240,4 +239,4 @@ extern int ast_unlinkat(int, const char *, int);
 
 #endif
 
-#endif
+#endif  // _AST_INTERCEPT_H

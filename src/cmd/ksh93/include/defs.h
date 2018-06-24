@@ -23,8 +23,8 @@
 //
 // Shell interface private definitions.
 //
-#ifndef defs_h_defined
-#define defs_h_defined
+#ifndef _DEFS_H
+#define _DEFS_H 1
 
 // Signal to the other public headers that they should expose private behavior used when building
 // the `ksh` command. Otherwise the assumption is they're being included to build a plugin.
@@ -421,4 +421,4 @@ static inline int getdecimal() {
 //
 #define _pipe_socketpair 1  // use socketpair() for peekable pipe()
 
-#endif
+#endif  // _DEFS_H

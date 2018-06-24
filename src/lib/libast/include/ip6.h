@@ -29,4 +29,4 @@
 extern char *fmtip6(const unsigned char *, int);
 extern int strtoip6(const char *, char **, unsigned char *, unsigned char *);
 
-#endif
+#endif  // _IP6_H

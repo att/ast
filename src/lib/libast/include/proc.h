@@ -22,9 +22,8 @@
 /*
  * process library interface
  */
-
 #ifndef _PROC_H
-#define _PROC_H
+#define _PROC_H 1
 
 #include "ast.h"
 
@@ -102,4 +101,4 @@ extern int procfree(Proc_t *);
 extern Proc_t *procopen(const char *, char **, char **, long *, int);
 extern int procrun(const char *, char **, int);
 
-#endif
+#endif  // _PROC_H

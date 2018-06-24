@@ -25,7 +25,6 @@
  *
  * record format interface
  */
-
 #ifndef _RECFMT_H
 #define _RECFMT_H 1
 
@@ -74,4 +73,4 @@ extern Recfmt_t recfmt(const void *, size_t, off_t);
 extern Recfmt_t recstr(const char *, char **);
 extern ssize_t reclen(Recfmt_t, const void *, size_t);
 
-#endif
+#endif  // _RECFMT_H

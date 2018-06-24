@@ -17,13 +17,14 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef FAULT_H_DEFINED
-#define FAULT_H_DEFINED
 //
 // UNIX shell
 // S. R. Bourne
 // Rewritten by David Korn
 //
+#ifndef _FAULT_H
+#define _FAULT_H 1
+
 #include <setjmp.h>
 
 #include "error.h"
@@ -122,7 +123,7 @@ typedef struct siginfo_ll siginfo_ll_t;
 
 // Bit of a chicken and egg problem here. If we've already included shell.h then this typedef
 // already exists and depending on the compiler defining it here may cause a warning or an error.
-#ifndef SHELL_H_DEFINED
+#ifndef _SHELL_H
 typedef struct Shell_s Shell_t;
 #endif
 
@@ -142,4 +143,4 @@ extern void timerdel(void *);
 
 extern const char e_alarm[];
 
-#endif  // FAULT_H_DEFINED
+#endif  // _FAULT_H

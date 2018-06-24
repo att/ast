@@ -25,7 +25,6 @@
  *
  * mounted filesystem scan interface
  */
-
 #ifndef _MNT_H
 #define _MNT_H 1
 
@@ -47,4 +46,4 @@ extern Mnt_t *mntread(void *);
 extern int mntwrite(void *, const Mnt_t *);
 extern int mntclose(void *);
 
-#endif
+#endif  // _MNT_H

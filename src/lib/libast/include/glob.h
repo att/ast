@@ -22,9 +22,8 @@
 /*
  * posix glob interface definitions with gnu extensions
  */
-
 #ifndef _GLOB_H
-#define _GLOB_H
+#define _GLOB_H 1
 
 #define GLOB_VERSION 20060717L
 
@@ -136,4 +135,4 @@ extern void _ast_globfree(glob_t *);
 #define glob _ast_glob
 #define globfree _ast_globfree
 
-#endif /* _GLOB_H */
+#endif  // _GLOB_H

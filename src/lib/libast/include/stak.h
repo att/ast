@@ -26,9 +26,8 @@
  * Interface definitions for a stack-like storage library
  *
  */
-
 #ifndef _STAK_H
-#define _STAK_H
+#define _STAK_H 1
 
 #include "stk.h"
 
@@ -51,4 +50,4 @@
 #define stakset(c, n) stkset(stkstd, c, n)
 #define stakfreeze(n) stkfreeze(stkstd, n)
 
-#endif
+#endif  // _STAK_H

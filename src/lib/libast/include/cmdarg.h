@@ -25,7 +25,6 @@
  *
  * xargs/tw command arg list interface definitions
  */
-
 #ifndef _CMDARG_H
 #define _CMDARG_H 1
 
@@ -82,4 +81,4 @@ extern int cmdflush(Cmdarg_t *);
 extern int cmdarg(Cmdarg_t *, const char *, int);
 extern int cmdclose(Cmdarg_t *);
 
-#endif
+#endif  // _CMDARG_H

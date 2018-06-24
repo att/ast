@@ -25,9 +25,8 @@
  *
  * magic interface definitions
  */
-
 #ifndef _MAGIC_H
-#define _MAGIC_H
+#define _MAGIC_H 1
 
 #include "ls.h"
 #include "sfio.h"
@@ -74,4 +73,4 @@ extern int magiclist(Magic_t *, Sfio_t *);
 extern char *magictype(Magic_t *, Sfio_t *, const char *, struct stat *);
 extern int magicclose(Magic_t *);
 
-#endif
+#endif  // _MAGIC_H

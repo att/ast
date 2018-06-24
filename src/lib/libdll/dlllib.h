@@ -17,6 +17,9 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
+#ifndef _DLLLIB_H
+#define _DLLLIB_H 1
+
 #include "ast.h"
 #include "dlldefs.h"
 #include "error.h"
@@ -29,3 +32,5 @@ typedef struct Dllstate_s {
 } Dllstate_t;
 
 extern Dllstate_t state;
+
+#endif  // _DLLLIB_H

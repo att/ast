@@ -82,6 +82,9 @@
  *			[mM]		mega (1000*1000)
  *			[mM]i		mibi (1024*1024)
  */
+#ifndef _STRTOI_H
+#define _STRTOI_H 1
+
 #include <ctype.h>
 
 #include "ast.h"
@@ -534,3 +537,5 @@ S2I_function(const char *a, char **e, int base)
     }
     return negative ? -n : n;
 }
+
+#endif  // _STRTOI_H

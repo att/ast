@@ -17,13 +17,15 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef NOTSYM
 //
 // UNIX shell
 // Written by David Korn
 //
 // These are the definitions for the lexical analyzer.
 //
+#ifndef _SHLEX_H
+#define _SHLEX_H 1
+
 #include "cdt.h"
 #include "lexstates.h"
 #include "shnodes.h"
@@ -152,4 +154,4 @@ extern int kiaclose(Lex_t *);
 extern unsigned long kiaentity(Lex_t *, const char *, int, int, int, int, unsigned long, int, int,
                                const char *);
 
-#endif  // !NOTSYM
+#endif  // _SHLEX_H

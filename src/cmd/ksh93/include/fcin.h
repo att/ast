@@ -24,7 +24,8 @@
 // Fast character input with sfio text streams and strings.
 //
 #ifndef _FCIN_H
-#define _FCIN_H
+#define _FCIN_H 1
+
 #include "sfio.h"
 
 typedef struct _fcin {

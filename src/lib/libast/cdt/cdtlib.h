@@ -148,4 +148,4 @@ extern void *realloc(void *, size_t);
 extern void free(void *);
 #endif
 
-#endif /* _CDTLIB_H */
+#endif  // _CDTLIB_H

@@ -22,7 +22,6 @@
 /*
  * generic discipline/method error message function
  */
-
 #ifndef _AST_ERRORF_H
 #define _AST_ERRORF_H 1
 
@@ -30,4 +29,4 @@ typedef int (*Error_f)(void *, void *, int, ...);
 
 extern int errorf(void *, void *, int, ...);
 
-#endif
+#endif  // _AST_ERRORF_H

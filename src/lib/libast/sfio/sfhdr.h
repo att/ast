@@ -21,6 +21,7 @@
  ***********************************************************************/
 #ifndef _SFHDR_H
 #define _SFHDR_H 1
+
 #if !defined(_BLD_sfio) && !defined(_BLD_stdio)
 #define _BLD_sfio 1
 #endif
@@ -1167,6 +1168,6 @@ extern Onexit_f onexit(Onexit_f);
 
 extern int poll(struct pollfd *, ulong, int);
 
-#endif /* _PACKAGE_ast */
+#endif  // _PACKAGE_ast
 
-#endif /*_SFHDR_H*/
+#endif  // _SFHDR_H

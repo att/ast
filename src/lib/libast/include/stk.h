@@ -26,9 +26,8 @@
  * Interface definitions for a stack-like storage library
  *
  */
-
 #ifndef _STK_H
-#define _STK_H
+#define _STK_H 1
 
 #include "sfio.h"
 
@@ -59,4 +58,4 @@ extern char *_stkseek(Stk_t *, ssize_t);
 extern char *stkfreeze(Stk_t *, size_t);
 extern int stkon(Stk_t *, char *);
 
-#endif
+#endif  // _STK_H

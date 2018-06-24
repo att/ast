@@ -23,9 +23,8 @@
  * common ast debug definitions
  * include after the ast headers
  */
-
 #ifndef _DEBUG_H
-#define _DEBUG_H
+#define _DEBUG_H 1
 
 #include "ast.h"
 #include "error.h"
@@ -126,4 +125,4 @@ extern ssize_t debug_vsprintf(char *, size_t, const char *, va_list);
 extern ssize_t debug_vprintf(int, const char *, va_list);
 extern void systrace(const char *);
 
-#endif
+#endif  // _DEBUG_H

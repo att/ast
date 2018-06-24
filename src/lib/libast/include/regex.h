@@ -27,8 +27,10 @@
 #define regex_t int
 #define regmatch_t int
 #endif
+
 #ifndef _REGEX_H
 #define _REGEX_H 1
+
 #undef regex_t
 #undef regmatch_t
 
@@ -243,4 +245,4 @@ extern void regalloc(void *, regresize_t, regflags_t);
 extern int regsub(const regex_t *, struct _sfio_s *, const char *, const char *, size_t,
                   regmatch_t *, regflags_t);
 
-#endif
+#endif  // _REGEX_H

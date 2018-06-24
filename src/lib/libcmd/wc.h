@@ -24,9 +24,8 @@
  *
  * header for wc library interface
  */
-
 #ifndef _WC_H
-#define _WC_H
+#define _WC_H 1
 
 #include "ast.h"
 
@@ -57,4 +56,4 @@ typedef struct {
 extern Wc_t *wc_init(int);
 extern int wc_count(Wc_t *, Sfio_t *, const char *);
 
-#endif /* _WC_H */
+#endif  // _WC_H

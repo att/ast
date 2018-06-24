@@ -22,7 +22,6 @@
 /*
  * ast global debugging/profiling hooks
  */
-
 #ifndef _AST_DEBUG_H
 #define _AST_DEBUG_H 1
 
@@ -73,4 +72,4 @@ static void *_ast_oldof(void *_ast_p, ssize_t _ast_t, ssize_t _ast_n, ssize_t _a
 
 #endif
 
-#endif
+#endif  // _AST_DEBUG_H

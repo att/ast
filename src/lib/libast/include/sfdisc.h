@@ -24,9 +24,8 @@
  *
  * sfio discipline interface definitions
  */
-
 #ifndef _SFDISC_H
-#define _SFDISC_H
+#define _SFDISC_H 1
 
 #include "ast.h"
 
@@ -60,4 +59,4 @@ extern int sfdcunion(Sfio_t *, Sfio_t **, int);
 
 extern Sfio_t *sfdcsubstream(Sfio_t *, Sfio_t *, Sfoff_t, Sfoff_t);
 
-#endif
+#endif  // _SFDISC_H

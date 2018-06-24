@@ -22,7 +22,6 @@
 /*
  * mime/mailcap internal interface
  */
-
 #ifndef _MIMELIB_H
 #define _MIMELIB_H 1
 
@@ -47,4 +46,4 @@ typedef void (*Free_f)(struct Mime_s *);
 #include <ctype.h>
 #include "mime.h"
 
-#endif
+#endif  // _MIMELIB_H

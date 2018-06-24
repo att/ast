@@ -24,7 +24,7 @@
 // coshell library private definitions
 //
 #ifndef _COLIB_H
-#define _COLIB_H
+#define _COLIB_H 1
 
 #include <sys/wait.h>
 
@@ -126,4 +126,4 @@ extern Costate_t state;  // Global coshell info
 extern char *costash(Sfio_t *);
 extern char *coinitialize(Coshell_t *, int);
 
-#endif
+#endif  // _COLIB_H

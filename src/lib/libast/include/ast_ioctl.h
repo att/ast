@@ -41,4 +41,4 @@ extern int ast_ioctl(int, int, ...);
 
 #endif
 
-#endif
+#endif  // _AST_IOCTL_H

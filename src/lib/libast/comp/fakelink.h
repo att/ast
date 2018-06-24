@@ -24,10 +24,9 @@
  *
  * fake symbolic link private interface
  */
-
 #ifndef _FAKELINK_H
-#define _FAKELINK_H
+#define _FAKELINK_H 1
 
 #define FAKELINK_MAGIC "!<symlink>"
 
-#endif
+#endif  // _FAKELINK_H

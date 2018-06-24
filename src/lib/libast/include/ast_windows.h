@@ -26,7 +26,6 @@
  * for libast only
  * include after ast headers
  */
-
 #ifndef _AST_WINDOWS_H
 #define _AST_WINDOWS_H 1
 
@@ -34,4 +33,4 @@
 
 #include <windows.h>
 
-#endif
+#endif  // _AST_WINDOWS_H

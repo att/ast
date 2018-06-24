@@ -2722,6 +2722,7 @@ int sh_chdir(const char *dir) {
     return r;
 }
 
+#undef stat
 int sh_stat(const char *path, struct stat *statb) {
     int r, err = errno;
 

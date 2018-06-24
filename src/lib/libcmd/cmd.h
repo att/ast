@@ -23,9 +23,8 @@
  *
  * builtin cmd definitions
  */
-
 #ifndef _CMD_H
-#define _CMD_H
+#define _CMD_H 1
 
 #include "ast.h"
 #include "error.h"
@@ -151,4 +150,4 @@ extern int _cmd_init(int, char **, Shbltin_t *, const char *, int);
 
 #endif
 
-#endif
+#endif  // _CMD_H

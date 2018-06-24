@@ -405,4 +405,4 @@ extern ssize_t sfmaxr(ssize_t, int);
 
 #endif /* _SFSTR_H */
 
-#endif /* _SFIO_H */
+#endif  // _SFIO_H

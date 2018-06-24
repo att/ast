@@ -17,7 +17,8 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef SYSDECLARE
+#ifndef _BUILTINS_H
+#define _BUILTINS_H 1
 
 #include "option.h"
 
@@ -178,6 +179,6 @@ extern const char sh_optuniverse[];
 #endif  // _cmd_universe
 extern const char sh_optunset[];
 extern const char sh_optwhence[];
-#endif  // SYSDECLARE
-
 extern const char e_dict[];
+
+#endif  // _BUILTINS_H

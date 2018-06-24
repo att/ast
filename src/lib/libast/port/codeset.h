@@ -22,6 +22,8 @@
 /*
  * ast private function that returns locale codeset names
  */
+#ifndef _CODESET_H
+#define _CODESET_H 1
 
 #define CODESET_ctype 0 /* current locale LC_CTYPE codeset name			*/
 #define CODESET_utf32 1 /* UTF-32BE or UTF-32LE depending on native arch	*/
@@ -29,3 +31,5 @@
 #define codeset(op) _ast_codeset(op)
 
 extern char *_ast_codeset(int);
+
+#endif  // _CODESET_H

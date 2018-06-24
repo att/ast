@@ -26,7 +26,8 @@
  * process library definitions
  */
 #ifndef _PROCLIB_H
-#define _PROCLIB_H
+#define _PROCLIB_H 1
+
 #include "ast_standards.h"
 
 #include <errno.h>
@@ -54,4 +55,4 @@ struct Mods_s;
 
 extern Proc_t proc_default; /* first proc			*/
 
-#endif
+#endif  // _PROCLIB_H

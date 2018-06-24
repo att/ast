@@ -25,9 +25,8 @@
  *
  * mode_t common definitions
  */
-
 #ifndef _MODELIB_H
-#define _MODELIB_H
+#define _MODELIB_H 1
 
 #include "ast.h"
 #include "ls.h"
@@ -51,4 +50,4 @@ struct modeop /* ops for each char in mode string	*/
 extern struct modeop modetab[];
 extern int permmap[];
 
-#endif
+#endif  // _MODELIB_H

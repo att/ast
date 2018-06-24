@@ -34,4 +34,4 @@
 
 #include "cdtlib.h"
 
-#endif /* _DTHDR_H */
+#endif  // _DTHDR_H

@@ -26,9 +26,8 @@
  * 1-6 char lower-case keyword -> long hash
  * digit args passed as HASHKEYN('2')
  */
-
 #ifndef _HASHKEY_H
-#define _HASHKEY_H
+#define _HASHKEY_H 1
 
 #define HASHKEYMAX 6
 #define HASHKEYBIT 5
@@ -52,4 +51,4 @@
 
 extern long strkey(const char *);
 
-#endif
+#endif  // _HASHKEY_H

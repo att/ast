@@ -19,13 +19,12 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _CDT_H
-#define _CDT_H 1
-
 /*	Public interface for the dictionary library
 **
 **      Written by Kiem-Phong Vo, phongvo@gmail.com
 */
+#ifndef _CDT_H
+#define _CDT_H 1
 
 #ifndef CDT_VERSION
 #ifdef _API_ast
@@ -338,4 +337,4 @@ extern void *dllmeth(const char *, const char *, unsigned long);
 #define DT_prime 17109811 /* 2#00000001 00000101 00010011 00110011 */
 #define dtcharhash(h, c) (((unsigned int)(h) + (unsigned int)(c)) * DT_prime)
 
-#endif /* _CDT_H */
+#endif  // _CDT_H

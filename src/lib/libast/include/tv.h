@@ -1,11 +1,11 @@
 /* : : generated from tv by iffe version 2013-11-14 : : */
-#ifndef _TV_H
-#define _TV_H 1
 /*
  * AT&T Research
  *
  * high resolution Tv_t interface definitions
  */
+#ifndef _TV_H
+#define _TV_H 1
 
 #include "ast.h"
 
@@ -47,4 +47,4 @@ extern int tvsleep(const Tv_t *, Tv_t *);
 
 extern char *fmttv(const char *, Tv_t *);
 
-#endif
+#endif  // _TV_H

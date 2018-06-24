@@ -52,4 +52,4 @@
 
 #include "aso.h"
 
-#endif
+#endif  // _ASOHDR_H

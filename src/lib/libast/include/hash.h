@@ -27,9 +27,8 @@
  *
  * NOTE: new code should use the more general <cdt.h>
  */
-
 #ifndef _HASH_H
-#define _HASH_H
+#define _HASH_H 1
 
 #define HASH_ALLOCATE (1L << 0) /* allocate new key names	*/
 #define HASH_FIXED (1L << 1)    /* fixed table size		*/
@@ -195,4 +194,4 @@ extern void hashsize(Hash_table_t *, int);
 extern Hash_table_t *hashview(Hash_table_t *, Hash_table_t *);
 extern int hashwalk(Hash_table_t *, int, int (*)(const char *, char *, void *), void *);
 
-#endif
+#endif  // _HASH_H

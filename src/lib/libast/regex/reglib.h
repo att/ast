@@ -26,9 +26,8 @@
  * Knuth-Morris-Pratt adapted from Corman-Leiserson-Rivest
  * Boyer-Moore from conversations with David Korn, Phong Vo, Andrew Hume
  */
-
 #ifndef _REGLIB_H
-#define _REGLIB_H
+#define _REGLIB_H 1
 
 #define REG_VERSION_EXEC 20020509L
 #define REG_VERSION_MAP 20030916L /* regdisc_t.re_map	*/
@@ -510,4 +509,4 @@ extern regclass_t classfun(int);
 extern void drop(regdisc_t *, Rex_t *);
 extern int fatal(regdisc_t *, int, const char *);
 
-#endif
+#endif  // _REGLIB_H

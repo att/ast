@@ -25,9 +25,8 @@
  *
  * fast find interface definitions
  */
-
 #ifndef _FIND_H
-#define _FIND_H
+#define _FIND_H 1
 
 #define FIND_VERSION 19980301L
 
@@ -74,4 +73,4 @@ extern char *findread(Find_t *);
 extern int findwrite(Find_t *, const char *, size_t, const char *);
 extern int findclose(Find_t *);
 
-#endif
+#endif  // _FIND_H

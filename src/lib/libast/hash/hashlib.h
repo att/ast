@@ -25,9 +25,8 @@
  *
  * hash table library private definitions
  */
-
 #ifndef _HASHLIB_H
-#define _HASHLIB_H
+#define _HASHLIB_H 1
 
 #include "ast.h"
 
@@ -99,4 +98,4 @@ typedef struct /* library private info		*/
 
 extern Hash_info_t hash_info;
 
-#endif
+#endif  // _HASHLIB_H

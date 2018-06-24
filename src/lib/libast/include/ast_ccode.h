@@ -1,5 +1,5 @@
-#ifndef _def_ccode_features
-#define _def_ccode_features 1
+#ifndef _AST_CCODE_H
+#define _AST_CCODE_H 1
 
 #define CC_ASCII 1    /* ISO-8859-1            */
 #define CC_EBCDIC_E 2 /* Xopen dd(1) EBCDIC        */
@@ -59,4 +59,4 @@
 #define CC_vt 0013        /* vt character            */
 #endif
 
-#endif
+#endif  // _AST_CCODE_H

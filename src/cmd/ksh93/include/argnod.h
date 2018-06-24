@@ -17,11 +17,13 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef ARG_RAW
 //
 // Struct to hold a word argument.
 // Written by David Korn
 //
+#ifndef _ARGNOD_H
+#define _ARGNOD_H 1
+
 #include "stak.h"
 
 struct ionod {
@@ -127,4 +129,4 @@ extern const char e_exec[];
 extern const char e_devfdNN[];
 extern const char e_devfdstd[];
 
-#endif  // ARG_RAW
+#endif  // _ARGNOD_H

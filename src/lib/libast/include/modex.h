@@ -24,9 +24,8 @@
  *
  * external mode_t representation support
  */
-
 #ifndef _MODEX_H
-#define _MODEX_H
+#define _MODEX_H 1
 
 #include "modecanon.h"
 
@@ -40,4 +39,4 @@ extern int modex(int);
 #endif
 #endif
 
-#endif
+#endif  // _MODEX_H

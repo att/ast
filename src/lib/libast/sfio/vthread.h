@@ -199,4 +199,4 @@ typedef int _vtattr_t;
 
 #endif /*!vt_threaded*/
 
-#endif /*_VTHREAD_H*/
+#endif  // _VTHREAD_H

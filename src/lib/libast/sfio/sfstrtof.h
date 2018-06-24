@@ -44,6 +44,8 @@
  *				flag==1		no number seen
  *			return 0 on error or EOF
  */
+#ifndef _SFSTRTOF_H
+#define _SFSTRTOF_H 1
 
 #include "ast_float.h"
 #include "sfhdr.h"
@@ -486,3 +488,5 @@ check:
 
     return negative ? -v : v;
 }
+
+#endif  // _SFSTRTOF_H

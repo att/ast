@@ -30,9 +30,8 @@
  *
  * NOTE: this file is in cahoots with the fts implementation
  */
-
 #ifndef _FTWALK_H
-#define _FTWALK_H
+#define _FTWALK_H 1
 
 #define fts_info info
 #define fts_level level
@@ -114,4 +113,4 @@
 extern int ftwalk(const char *, int (*)(Ftw_t *), int, int (*)(Ftw_t *, Ftw_t *));
 extern int ftwflags(void);
 
-#endif
+#endif  // _FTWALK_H

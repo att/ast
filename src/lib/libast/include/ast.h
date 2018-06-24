@@ -25,7 +25,6 @@
  *
  * std + posix + ast
  */
-
 #ifndef _AST_H
 #define _AST_H 1
 
@@ -436,4 +435,4 @@ extern unsigned long plugin_version(void);
 #undef iswalpha
 #define iswalpha(w) (_ast_info.mb_alpha ? (*_ast_info.mb_alpha)(w) : isalpha(w))
 
-#endif
+#endif  // _AST_H

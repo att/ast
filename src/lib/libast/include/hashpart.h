@@ -26,9 +26,8 @@
  *
  * ``the best'' combined linear congruent checksum/hash/PRNG
  */
-
 #ifndef _HASHPART_H
-#define _HASHPART_H
+#define _HASHPART_H 1
 
 #define HASH_ADD(h) (0x9c39c33dL)
 
@@ -47,4 +46,4 @@
 
 #define HASHPART(h, c) (h = HASH_MPY(h) + HASH_ADD(h) + (c))
 
-#endif
+#endif  // _HASHPART_H

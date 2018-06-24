@@ -22,7 +22,6 @@
 /*
  * cmdarg library private definitions
  */
-
 #ifndef _CMDLIB_H
 #define _CMDLIB_H 1
 
@@ -52,4 +51,4 @@
 
 #include "cmdarg.h"
 
-#endif
+#endif  // _CMDLIB_H

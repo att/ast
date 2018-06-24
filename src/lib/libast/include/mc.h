@@ -43,9 +43,8 @@
  *	msg(#sets,#msgs) size
  *	string table
  */
-
 #ifndef _MC_H
-#define _MC_H
+#define _MC_H 1
 
 #include "ast.h"
 
@@ -83,4 +82,4 @@ extern int mcdump(Mc_t *, Sfio_t *);
 extern int mcindex(const char *, char **, int *, int *);
 extern int mcclose(Mc_t *);
 
-#endif
+#endif  // _MC_H

@@ -22,7 +22,6 @@
 /*
  * generic binary magic id definitions
  */
-
 #ifndef _MAGICID_H
 #define _MAGICID_H 1
 
@@ -38,4 +37,4 @@ typedef struct Magicid_s {
     Magicid_data_t size;
 } Magicid_t;
 
-#endif
+#endif  // _MAGICID_H
