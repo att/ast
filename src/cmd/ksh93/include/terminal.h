@@ -68,6 +68,12 @@
 #endif  // !FIORDCHK
 #endif  // FIONREAD
 
+// This symbol is used by the CLI editor modes to signal an invalid character.
+// Why it is U+DFFF (the last char in the low-surrogate range) is a mystery.
+// There are other Unicode codepoints that would seem more appropriate.
+// For example, U+FFFF or U+FFFE.
+#define MARKER 0xdfff  // must be an invalid character
+
 extern int tty_alt(int);
 extern void tty_cooked(int);
 extern int tty_get(int, struct termios *);

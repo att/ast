@@ -46,7 +46,6 @@
 #include "io.h"
 #include "lexstates.h"
 #include "name.h"
-#include "national.h"
 #include "nvapi.h"
 #include "option.h"
 #include "sfio.h"

@@ -26,20 +26,11 @@
 //
 #define SEARCHSIZE 80
 
-#if !KSHELL
-#include <ctype.h>
-#include <setjmp.h>
-#include "sig.h"
-#endif  // KSHELL
-
 #include "terminal.h"
 
 #define STRIP 0377
 #define LOOKAHEAD 80
 
-#ifndef ESS_MAXCHAR
-#include "national.h"
-#endif  // ESS_MAXCHAR
 typedef wchar_t genchar;
 #define CHARSIZE (sizeof(wchar_t) <= 2 ? 3 : sizeof(wchar_t))
 

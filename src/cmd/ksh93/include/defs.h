@@ -318,6 +318,7 @@ extern int sh_coaccept(Shell_t *, int[], int);
 #endif /* SHOPT_COSHELL */
 extern Namval_t *sh_fsearch(Shell_t *, const char *, int);
 extern int sh_diropenat(Shell_t *, int, const char *);
+extern int sh_strchr(const char *, const char *, size_t);
 
 #ifndef ERROR_dictionary
 #define ERROR_dictionary(s) (s)

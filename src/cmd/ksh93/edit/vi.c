@@ -41,7 +41,6 @@
 #include "fault.h"
 #include "history.h"
 #include "io.h"
-#include "national.h"
 #include "sfio.h"
 #include "stk.h"
 #include "terminal.h"

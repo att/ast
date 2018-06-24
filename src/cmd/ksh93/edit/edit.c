@@ -52,7 +52,6 @@
 #include "history.h"
 #include "io.h"
 #include "name.h"
-#include "national.h"
 #include "sfio.h"
 #include "shellapi.h"
 #include "stk.h"
