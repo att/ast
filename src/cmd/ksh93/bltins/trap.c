@@ -27,10 +27,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/signal.h>
+
 #include "defs.h"
 
 #include "builtins.h"
+#include "error.h"
+#include "fault.h"
 #include "jobs.h"
+#include "option.h"
+#include "sfio.h"
+#include "shtable.h"
+#include "stk.h"
 
 #define L_FLAG 1
 #define S_FLAG 2

@@ -25,11 +25,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <setjmp.h>
+#include <string.h>
+
 #include "defs.h"
 
+#include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "nval.h"
+#include "fault.h"
+#include "name.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "variables.h"
 
 static_fn int getopts_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {

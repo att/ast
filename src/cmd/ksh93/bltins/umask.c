@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdbool.h>
 
 // WARNING: Normally every ksh source module should normally begin with:
 //   #include "defs.h"
@@ -34,7 +35,7 @@
 // TODO: Figure out why including that header changes the behavior of this code since it shouldn't.
 #include "ast.h"
 #include "error.h"
-#include "ls.h"
+#include "option.h"
 #include "sfio.h"
 #include "shell.h"
 

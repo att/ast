@@ -27,22 +27,36 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <termios.h>
+#include <unistd.h>
+#include <utime.h>
+#include <wchar.h>
+
 #if KSHELL
 #include "defs.h"
 #endif
 
-#include <errno.h>
-#include <sys/ioctl.h>
-#include <utime.h>
-
 #include "ast.h"
-#include "ccode.h"
+#include "ast_ccode.h"
+#include "ast_intercept.h"
 #include "edit.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
-#include "ls.h"
+#include "name.h"
+#include "national.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "terminal.h"
-#include "times.h"
 
 #if KSHELL
 #include "variables.h"

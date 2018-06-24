@@ -22,13 +22,24 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <string.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "cdt.h"
 #include "edit.h"
+#include "fault.h"
 #include "history.h"
-#include "io.h"
 #include "lexstates.h"
+#include "name.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 
 static char *fmtx(Shell_t *shp, const char *string) {
     const char *cp = string;

@@ -27,15 +27,31 @@
 #define _shtest_c
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include <poll.h>
-
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_intercept.h"
 #include "builtins.h"
 #include "error.h"
+#include "fault.h"
 #include "io.h"
-#include "ls.h"
-#include "regex.h"
+#include "name.h"
+#include "option.h"
+#include "sfio.h"
+#include "shtable.h"
+#include "stk.h"
 #include "terminal.h"
 #include "test.h"
 #include "tmx.h"

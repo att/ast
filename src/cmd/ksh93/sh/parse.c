@@ -28,22 +28,38 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #if KSHELL
 #include "defs.h"
 #else
-#include <ctype.h>
-
 #include "shell.h"
 #endif
 
+#include "argnod.h"
+#include "ast.h"
 #include "builtins.h"
+#include "cdt.h"
 #include "error.h"
+#include "fault.h"
 #include "fcin.h"
 #include "history.h"
+#include "lexstates.h"
+#include "name.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shlex.h"
+#include "shnodes.h"
+#include "stak.h"
+#include "stk.h"
 #include "test.h"
-#include "variables.h"
 
 #define HERE_MEM SF_BUFSIZE  // size of here-docs kept in memory
 

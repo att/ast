@@ -19,15 +19,19 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#ifndef _SFIO_H
-#define _SFIO_H 1
-
-#define SFIO_VERSION 20090915L
-
 /*	Public header file for the sfio library
 **
 **	Written by Kiem-Phong Vo
 */
+#ifndef _SFIO_H
+#define _SFIO_H 1
+
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#define SFIO_VERSION 20090915L
 
 typedef struct _sfio_s Sfio_t;
 typedef struct _sfdisc_s Sfdisc_t;
@@ -117,9 +121,6 @@ struct _sffmt_s {
 #define SFMTX_CLRLOCK 3 /* clear mutex count			*/
 
 /* various constants */
-#ifndef NULL
-#define NULL 0
-#endif
 #ifndef EOF
 #define EOF (-1)
 #endif

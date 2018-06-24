@@ -56,6 +56,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <setjmp.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+
 #if KSHELL
 #include "defs.h"
 #else
@@ -63,10 +69,13 @@
 #endif  // KSHELL
 
 #include "ast.h"
-#include "io.h"
-
 #include "edit.h"
+#include "fault.h"
 #include "history.h"
+#include "io.h"
+#include "national.h"
+#include "shellapi.h"
+#include "stak.h"
 #include "terminal.h"
 
 #define ESH_NFIRST

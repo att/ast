@@ -26,6 +26,8 @@
 //
 #define _SHTABLE_H 1
 
+#include "shcmd.h"
+
 typedef struct shtable1 {
     const char *sh_name;
     const unsigned sh_number;

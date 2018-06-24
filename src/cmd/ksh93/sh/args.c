@@ -24,18 +24,31 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include <poll.h>
-
+#include "argnod.h"
+#include "ast.h"
+#include "ast_intercept.h"
 #include "builtins.h"
+#include "cdt.h"
 #include "edit.h"
 #include "error.h"
+#include "fault.h"
 #include "io.h"
 #include "jobs.h"
-#include "path.h"
+#include "name.h"
+#include "nvapi.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shlex.h"
-#include "terminal.h"
+#include "shtable.h"
+#include "stk.h"
 
 #if SHOPT_BASH
 #define BASHOPT "\374"

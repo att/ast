@@ -25,16 +25,33 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <termios.h>
+
 #include "defs.h"
 
 #include "ast.h"
 #include "builtins.h"
+#include "cdt.h"
 #include "edit.h"
 #include "error.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
 #include "lexstates.h"
 #include "name.h"
+#include "national.h"
+#include "nvapi.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "terminal.h"
 #include "variables.h"
 

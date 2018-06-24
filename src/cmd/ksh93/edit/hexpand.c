@@ -31,9 +31,20 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
 #include "edit.h"
+#include "error.h"
+#include "fault.h"
+#include "history.h"
+#include "name.h"
+#include "sfio.h"
+#include "stk.h"
 
 static char *modifiers = "htrepqxs&";
 static int mod_flags[] = {0, 0, 0, 0, HIST_PRINT, HIST_QUOTE, HIST_QUOTE | HIST_QUOTE_BR, 0, 0};

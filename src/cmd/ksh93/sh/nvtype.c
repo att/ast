@@ -23,9 +23,28 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
+#include "ast.h"
+#include "ast_intercept.h"
+#include "cdt.h"
+#include "error.h"
+#include "fault.h"
+#include "history.h"
 #include "io.h"
+#include "name.h"
+#include "nvapi.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "variables.h"
 
 static const char sh_opttype[] =
@@ -67,6 +86,7 @@ static const char sh_opttype[] =
 
     "[+SEE ALSO?\fother\f \breadonly\b(1), \btypeset\b(1)]";
 
+struct Namtype;
 typedef struct Namtype Namtype_t;
 typedef struct Namchld {
     Namfun_t fun;

@@ -29,14 +29,35 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <termios.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include <sys/wait.h>
 #include "aso.h"
+#include "ast.h"
+#include "ast_aso.h"
+#include "coshell.h"
+#include "error.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
+#include "name.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "sig.h"
+#include "terminal.h"
 #include "variables.h"
 
 #if !defined(WCONTINUED) || !defined(WIFCONTINUED) || defined(__APPLE__)

@@ -19,12 +19,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <stddef.h>
+
 #include "defs.h"
 
-#include <signal.h>
+#include "cmdext.h"
 #include "name.h"
 #include "shtable.h"
-#include "ulimit.h"
 #include "version.h"
 
 // Use Bltin() for builtins that do not accept long options; e.g., `--flag`.

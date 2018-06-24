@@ -25,14 +25,34 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "ast_fcntl.h"
+#include "ast_intercept.h"
+#include "cdt.h"
+#include "error.h"
 #include "fault.h"
 #include "io.h"
 #include "jobs.h"
-#include "ls.h"
+#include "name.h"
+#include "nvapi.h"
 #include "path.h"
-#include "shlex.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shnodes.h"
 #include "variables.h"
 

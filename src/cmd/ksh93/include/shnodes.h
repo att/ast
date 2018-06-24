@@ -26,6 +26,7 @@
 #include "ast.h"
 
 #include "argnod.h"
+#include "shell.h"
 
 // Command tree for tretyp.
 #define FINT (02 << COMBITS)         // non-interruptable

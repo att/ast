@@ -19,11 +19,26 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "defs.h"
 
-#include "builtins.h"
+#include "ast.h"
+#include "cdt.h"
 #include "edit.h"
+#include "error.h"
+#include "fault.h"
 #include "name.h"
+#include "nvapi.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "shtable.h"
+#include "stk.h"
 #include "variables.h"
 
 #define FILTER_AMP 0x4000

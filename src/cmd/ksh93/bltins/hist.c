@@ -19,15 +19,28 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "ast_intercept.h"
 #include "builtins.h"
 #include "edit.h"
 #include "error.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
-#include "ls.h"
 #include "name.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "stak.h"
 #include "variables.h"
 

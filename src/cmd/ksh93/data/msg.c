@@ -26,19 +26,11 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+
 #include "defs.h"
 
-#include <errno.h>
-
-#include "ast.h"
-#include "builtins.h"
-#include "edit.h"
-#include "history.h"
-#include "io.h"
 #include "jobs.h"
-#include "path.h"
-#include "shlex.h"
-#include "timeout.h"
 
 // Error messages.
 const char e_timewarn[] = "\r\n\ashell will timeout in 60 seconds due to inactivity";

@@ -25,10 +25,14 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "fcin.h"
-#include "nval.h"
-#include "stak.h"
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 
 #if KSHELL
 #include "defs.h"
@@ -39,8 +43,18 @@ Shell_t sh = {1};
 #endif  // KSHELL
 
 #include "argnod.h"
-#include "io.h"
+#include "ast.h"
+#include "ast_intercept.h"
+#include "error.h"
+#include "fault.h"
+#include "fcin.h"
+#include "history.h"
 #include "lexstates.h"
+#include "name.h"
+#include "sfio.h"
+#include "shnodes.h"
+#include "shtable.h"
+#include "stk.h"
 #include "test.h"
 
 #define TEST_RE 3

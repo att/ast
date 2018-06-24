@@ -25,12 +25,21 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast_ccode.h"
 #include "ccode.h"
-#include "io.h"
-#include "path.h"
+#include "fault.h"
+#include "name.h"
+#include "sfio.h"
 #include "shnodes.h"
+#include "stak.h"
+#include "stk.h"
 
 static struct dolnod *r_comlist(Shell_t *);
 static struct argnod *r_arg(Shell_t *);

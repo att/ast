@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
+#include <signal.h>
+#include <stddef.h>
+
+#include "error.h"
+#include "fault.h"
+#include "shtable.h"
 
 #if defined(SIGCLD) && !defined(SIGCHLD)
 #define SIGCHLD SIGCLD

@@ -17,16 +17,15 @@
  *                    David Korn <dgkorn@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-#include "config_ast.h"  // IWYU pragma: keep
-
 //
 // This is the list of resouce limits controlled by ulimit.
 // This command requires getrlimit(), vlimit(), or ulimit().
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/resource.h>
+
 #ifndef _no_ulimit
-#include "ast.h"
 #include "ulimit.h"
 
 const char e_unlimited[] = "unlimited";

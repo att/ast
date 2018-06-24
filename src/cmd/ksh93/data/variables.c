@@ -19,18 +19,15 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "defs.h"
 
-#include "ast.h"
+#include "argnod.h"
 #include "builtins.h"
 #include "name.h"
-#include "shell.h"
 #include "shtable.h"
-#include "variables.h"
-
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif  // SHOPT_DYNAMIC
+#include "variables.h"  // IWYU pragma: keep
 
 //
 // This is the list of built-in shell variables and default values and default attributes.

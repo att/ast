@@ -27,18 +27,23 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if KSHELL
-#include "defs.h"
-#else  // KSHELL
 #include <ctype.h>
+#include <setjmp.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <wchar.h>
+
+#include "defs.h"
 
 #include "ast.h"
-#endif  // KSHELL
-
 #include "edit.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
-#include "lexstates.h"
+#include "national.h"
+#include "sfio.h"
+#include "stk.h"
 #include "terminal.h"
 
 #ifdef ECHOCTL

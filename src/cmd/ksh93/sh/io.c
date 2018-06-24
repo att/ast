@@ -25,32 +25,46 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #define _shio_h 1
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_intercept.h"
 #include "builtins.h"
 #include "edit.h"
-#include "fcin.h"
+#include "error.h"
+#include "fault.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
-#include "ls.h"
+#include "name.h"
 #include "path.h"
 #include "regex.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shnodes.h"
+#include "stk.h"
+#include "terminal.h"
 #include "timeout.h"
 #include "variables.h"
-
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
-
-#include <poll.h>
 
 #ifdef FNDELAY
 #ifdef EAGAIN

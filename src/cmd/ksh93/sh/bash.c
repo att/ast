@@ -23,12 +23,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
 #include "builtins.h"
+#include "error.h"
+#include "fault.h"
 #include "io.h"
 #include "name.h"
-#include "path.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "shtable.h"
 
 #ifndef BASH_MAJOR
 #define BASH_MAJOR "4"

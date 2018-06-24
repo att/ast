@@ -22,6 +22,11 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <wchar.h>
 
 #if _lib_iswprint
@@ -31,10 +36,15 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "ccode.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
+#include "error.h"
+#include "fault.h"
 #include "lexstates.h"
-#include "national.h"
+#include "sfio.h"
 #include "shtable.h"
+#include "stak.h"
+#include "stk.h"
 
 #if !_lib_iswprint
 // On some platforms iswprint() may be macro so make sure we don't get a redefinition warning.

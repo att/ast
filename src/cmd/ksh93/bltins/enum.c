@@ -19,7 +19,23 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
+
+#include "ast.h"
+#include "cdt.h"
+#include "cmd.h"
+#include "error.h"
+#include "fault.h"
+#include "name.h"
+#include "nvapi.h"
+#include "option.h"
+#include "sfio.h"
+#include "stk.h"
 
 static const char enum_usage[] =
     "[-?@(#)$Id: enum (AT&T Research) 2013-04-29 $\n]" USAGE_LICENSE

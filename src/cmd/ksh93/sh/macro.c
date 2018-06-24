@@ -30,26 +30,43 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <float.h>
+#include <limits.h>
+#include <pwd.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include <ctype.h>
-#include <pwd.h>
-
+#include "argnod.h"
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_lib.h"
+#include "cdt.h"
+#include "error.h"
+#include "fault.h"
 #include "fcin.h"
 #include "io.h"
 #include "jobs.h"
+#include "lexstates.h"
 #include "name.h"
 #include "national.h"
+#include "nvapi.h"
 #include "path.h"
-#include "regex.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shlex.h"
 #include "shnodes.h"
+#include "stk.h"
 #include "streval.h"
 #include "variables.h"
 
 #undef isascii
 #define isacii(c) ((c) <= UCHAR_MAX)
-#include "lc.h"
 
 #if __CYGWIN__
 static int Skip;

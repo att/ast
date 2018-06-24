@@ -28,31 +28,48 @@
 #include "defs.h"
 
 #include <assert.h>
-#include <pwd.h>
-
-#include "builtins.h"
-#include "ccode.h"
-#include "edit.h"
-#include "fault.h"
-#include "io.h"
-#include "jobs.h"
-#include "name.h"
-#include "path.h"
-#include "regex.h"
-#include "shlex.h"
-#include "stak.h"
-#include "tmx.h"
-#include "variables.h"
-
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
-
-#include "lexstates.h"
-#include "version.h"
-
+#include <ctype.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <locale.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/signal.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <wchar.h>
 #include <wctype.h>
+
+#include "argnod.h"
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
+#include "ast_fcntl.h"
+#include "ast_intercept.h"
+#include "builtins.h"
+#include "cdt.h"
+#include "edit.h"
+#include "error.h"
+#include "fault.h"
+#include "history.h"
+#include "io.h"
+#include "jobs.h"
+#include "lexstates.h"
+#include "name.h"
+#include "nvapi.h"
+#include "option.h"
+#include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "shlex.h"
+#include "shtable.h"
+#include "stak.h"
+#include "stk.h"
+#include "variables.h"
+#include "version.h"
 
 char e_version[] =
     "\n@(#)$Id: Version "

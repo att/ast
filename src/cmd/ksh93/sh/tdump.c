@@ -25,11 +25,16 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast_ccode.h"
 #include "ccode.h"
-#include "io.h"
-#include "path.h"
+#include "fault.h"
+#include "sfio.h"
 #include "shnodes.h"
 
 static_fn int dump_p_comlist(const struct dolnod *);

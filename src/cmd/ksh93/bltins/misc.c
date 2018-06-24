@@ -35,15 +35,27 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <setjmp.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
 #include "builtins.h"
-#include "history.h"
+#include "error.h"
+#include "fault.h"
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
+#include "option.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shnodes.h"
+#include "stk.h"
 #include "variables.h"
 
 #define DOTMAX MAXDEPTH  // Maximum level of . nesting.

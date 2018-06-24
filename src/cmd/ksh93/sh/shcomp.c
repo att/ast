@@ -25,12 +25,21 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
 #include <sys/stat.h>
 
 #include "defs.h"
 
-#include "shell.h"
+#include "argnod.h"
+#include "ast_intercept.h"
+#include "error.h"
+#include "fault.h"
+#include "name.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shnodes.h"
+#include "stak.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: shcomp (AT&T Research) 2003-03-02 $\n]" USAGE_LICENSE

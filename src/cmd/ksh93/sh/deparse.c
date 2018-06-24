@@ -25,10 +25,15 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+
 #include "defs.h"
 
+#include "argnod.h"
+#include "fault.h"
+#include "sfio.h"
 #include "shnodes.h"
-#include "test.h"
+#include "shtable.h"
 
 #define HUGE_INT (((unsigned)-1) >> 1)
 #define BEGIN 0

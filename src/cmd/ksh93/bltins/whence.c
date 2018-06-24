@@ -26,14 +26,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "defs.h"
 
 #include "builtins.h"
+#include "cdt.h"
 #include "error.h"
+#include "fault.h"
 #include "name.h"
+#include "option.h"
 #include "path.h"
-#include "shlex.h"
+#include "sfio.h"
 #include "shtable.h"
+#include "stak.h"
+#include "stk.h"
 
 #define P_FLAG (1 << 0)
 #define V_FLAG (1 << 1)

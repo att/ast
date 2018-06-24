@@ -25,12 +25,25 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <float.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
 #include "argnod.h"
-#include "ast_float.h"
+#include "ast.h"
+#include "cdt.h"
+#include "fault.h"
 #include "lexstates.h"
 #include "name.h"
+#include "nvapi.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "shtable.h"
+#include "stk.h"
 #include "variables.h"
 
 struct nvdir {

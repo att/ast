@@ -32,14 +32,31 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <dlfcn.h>
+#include <float.h>
+#include <limits.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
-#include "ast_float.h"
+#include "argnod.h"
+#include "ast.h"
 #include "builtins.h"
+#include "cdt.h"
 #include "error.h"
+#include "fault.h"
 #include "history.h"
 #include "name.h"
+#include "nvapi.h"
+#include "option.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "variables.h"
 
 #if SHOPT_DYNAMIC

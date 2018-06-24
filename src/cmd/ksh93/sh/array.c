@@ -25,11 +25,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <assert.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "defs.h"
 
-#include <assert.h>
-
+#include "ast.h"
+#include "cdt.h"
+#include "error.h"
+#include "fault.h"
 #include "name.h"
+#include "nvapi.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 
 #define NUMSIZE 11
 #define is_associative(ap) array_assoc((Namarr_t *)(ap))

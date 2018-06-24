@@ -19,13 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
-
 #include <signal.h>
+#include <stddef.h>
 
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
+#include "name.h"
+#include "shtable.h"
 
 //
 // This is the table of built-in aliases.  These should be exported.

@@ -19,11 +19,16 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "ast.h"
+#include "ast_intercept.h"
 #include "cdt.h"
 
 #define env_change() (++ast.env_serial)
 
+struct _venv_;
 typedef struct _venv_ Evar_t;
 struct _venv_ {
     union {

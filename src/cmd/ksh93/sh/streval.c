@@ -27,13 +27,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <limits.h>
 #include <math.h>
+#include <stdbool.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "defs.h"
 
+#include "ast.h"
+#include "ast_float.h"
 #include "error.h"
+#include "fault.h"
+#include "name.h"
+#include "sfio.h"
 #include "stak.h"
+#include "stk.h"
 #include "streval.h"
 
 #ifndef ERROR_dictionary
@@ -66,8 +75,7 @@
 
 static int level;
 
-struct vars  // vars stacked per invocation
-{
+typedef struct vars {  // vars stacked per invocation
     Shell_t *shp;
     const char *expr;     // current expression
     const char *nextchr;  // next char in current expression
@@ -81,7 +89,7 @@ struct vars  // vars stacked per invocation
     char infun;           // incremented by comma inside function
     int emode;
     Sfdouble_t (*convert)(const char **, struct lval *, int, Sfdouble_t);
-};
+} vars_t;
 
 typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 typedef Sfdouble_t (*Math_1f_f)(Sfdouble_t);
@@ -144,7 +152,7 @@ typedef int (*Math_3i_f)(Sfdouble_t, Sfdouble_t, Sfdouble_t);
 //
 // Set error message string and return 0.
 //
-static_fn int _seterror(struct vars *vp, const char *msg) {
+static_fn int _seterror(vars_t *vp, const char *msg) {
     if (!vp->errmsg.value) vp->errmsg.value = (char *)msg;
     vp->errchr = vp->nextchr;
     vp->nextchr = "";
@@ -593,7 +601,7 @@ Sfdouble_t arith_exec(Arith_t *ep) {
 //
 // This returns operator tokens or A_REG or A_NUM.
 //
-static_fn int gettok(struct vars *vp) {
+static_fn int gettok(vars_t *vp) {
     int c, op;
 
     vp->errchr = vp->nextchr;
@@ -670,7 +678,7 @@ static_fn int gettok(struct vars *vp) {
 //
 // Evaluate a subexpression with precedence.
 //
-static_fn bool expr(struct vars *vp, int precedence) {
+static_fn bool expr(vars_t *vp, int precedence) {
     int c, op;
     int invalid, wasop = 0;
     struct lval lvalue, assignop;
@@ -979,7 +987,7 @@ done:
 Arith_t *arith_compile(Shell_t *shp, const char *string, char **last,
                        Sfdouble_t (*fun)(const char **, struct lval *, int, Sfdouble_t),
                        int emode) {
-    struct vars cur;
+    vars_t cur;
     Arith_t *ep;
     int offset;
     int nounset = sh_isoption(shp, SH_NOUNSET);

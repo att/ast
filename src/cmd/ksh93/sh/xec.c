@@ -26,6 +26,18 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <assert.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <unistd.h>
 
 #if _hdr_stdlib
 #include <stdlib.h>
@@ -35,16 +47,32 @@
 
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "ast_fcntl.h"
+#include "ast_intercept.h"
 #include "builtins.h"
+#include "cdt.h"
+#include "coshell.h"
+#include "error.h"
+#include "fault.h"
 #include "fcin.h"
+#include "history.h"
 #include "io.h"
 #include "jobs.h"
 #include "name.h"
+#include "nvapi.h"
+#include "option.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "shnodes.h"
+#include "shtable.h"
+#include "stak.h"
+#include "stk.h"
 #include "streval.h"
+#include "terminal.h"
 #include "test.h"
-#include "times.h"
 #include "variables.h"
 
 #define SH_NTFORK SH_TIMING

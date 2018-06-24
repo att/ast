@@ -25,7 +25,24 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <time.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "ast_fcntl.h"
+#include "ast_intercept.h"
+#include "error.h"
+#include "fault.h"
+#include "name.h"
+#include "sfio.h"
+#include "stk.h"
 #include "times.h"
 
 #define stringify(s) #s
@@ -49,11 +66,6 @@
 #define HIST_BSIZE 4096  // size of history file buffer
 #define HIST_DFLT 512    // default size of history list
 
-#define _HIST_AUDIT  \
-    Sfio_t *auditfp; \
-    char *tty;       \
-    int auditmask;
-
 #define _HIST_PRIVATE                                                       \
     void *histshell;                                                        \
     off_t histcnt;                 /* offset into history file */           \
@@ -62,25 +74,21 @@
     int histmask;                  /* power of two mask for histcnt */      \
     char histbuff[HIST_BSIZE + 1]; /* history file buffer */                \
     int histwfail;                                                          \
-    _HIST_AUDIT                                                             \
-    off_t histcmds[2]; /* offset for recent commands, must be last */
+    Sfio_t *auditfp;                                                        \
+    char *tty;                                                              \
+    int auditmask;                                                          \
+    off_t histcmds[2];  // offset for recent commands, must be last
 
 #define hist_ind(hp, c) ((int)((c) & (hp)->histmask))
 
-#include "ast.h"
-#include "error.h"
-#include "ls.h"
-#include "sfio.h"
 #if KSHELL
 #include "defs.h"
 
-#include "builtins.h"
 #include "io.h"
 #include "path.h"
 #include "variables.h"
-#else  // KSHELL
-#include <ctype.h>
 #endif  // KSHELL
+
 #include "history.h"
 
 #if !KSHELL

@@ -783,6 +783,10 @@ static void listgroup(Sfio_t *sp, int type, const char *description) {
     sfprintf(sp, "?%s.]", description);
 }
 
+// TODO: Drop this function and its uses. These termios delay flags haven't been relevant in a
+// couple of decades. OpenBSD, for example, does not define any of these.
+#if defined(CRDLY) || defined(NLDLY) || defined(TABDLY) || defined(BSDLY) || defined(FFDLY) || \
+    defined(VTDLY)
 static void listmask(Sfio_t *sp, unsigned int mask, const char *description) {
     int i;
     sfprintf(sp, "[+");
@@ -791,6 +795,7 @@ static void listmask(Sfio_t *sp, unsigned int mask, const char *description) {
     }
     sfprintf(sp, "?%s.]", description);
 }
+#endif
 
 static void listfields(Sfio_t *sp, int field) {
     int i;

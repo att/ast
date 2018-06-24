@@ -26,26 +26,42 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
 #include <time.h>
+#include <unistd.h>
 
 #if _hdr_nc
 #include <nc.h>
 #endif  // _hdr_nc
 
-#include "ast.h"
 #include "defs.h"
 
+#include "argnod.h"
+#include "ast.h"
+#include "ast_intercept.h"
+#include "error.h"
+#include "fault.h"
 #include "fcin.h"
 #include "history.h"
 #include "io.h"
 #include "jobs.h"
-#include "ls.h"
+#include "name.h"
+#include "option.h"
 #include "path.h"
+#include "regress.h"
 #include "sfio.h"
+#include "shellapi.h"
 #include "shlex.h"
 #include "shnodes.h"
-#include "stak.h"
-#include "timeout.h"
+#include "stk.h"
+#include "terminal.h"
 #include "variables.h"
 
 #define CMD_LENGTH 64

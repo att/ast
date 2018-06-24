@@ -25,22 +25,28 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #if KSHELL
 #include "defs.h"
-#include "test.h"
 #include "variables.h"
 #else
-#include <ctype.h>
 #include <setjmp.h>
 
 #include "ast.h"
 #endif  // KSHELL
 
-#include "ast_dir.h"
+#include "argnod.h"
+#include "ast.h"
+#include "cdt.h"
+#include "fault.h"
 #include "glob.h"
-#include "io.h"
-#include "ls.h"
+#include "name.h"
 #include "path.h"
+#include "sfio.h"
+#include "stk.h"
 
 #if KSHELL
 #define argbegin argnxt.cp

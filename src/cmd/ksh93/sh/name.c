@@ -21,14 +21,33 @@
 
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <assert.h>
+#include <ctype.h>
+#include <float.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <wchar.h>
+
 #include "defs.h"
 
-#include <assert.h>
-
+#include "argnod.h"
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_intercept.h"
+#include "cdt.h"
+#include "error.h"
+#include "fault.h"
 #include "lexstates.h"
-#include "path.h"
-#include "streval.h"
-#include "timeout.h"
+#include "name.h"
+#include "nvapi.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stak.h"
+#include "stk.h"
 #include "variables.h"
 
 #define NVCACHE 8  // must be a power of 2

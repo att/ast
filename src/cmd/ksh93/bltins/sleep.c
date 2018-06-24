@@ -25,16 +25,25 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
 #include "defs.h"
 
 #define sleep ______sleep
 #undef sleep
-#include <errno.h>
-#include <poll.h>
 
 #include "builtins.h"
 #include "error.h"
+#include "fault.h"
+#include "option.h"
+#include "sfio.h"
 #include "tmx.h"
+#include "tv.h"
 
 #ifdef _NEXT_SOURCE
 #define sleep _ast_sleep

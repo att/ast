@@ -19,10 +19,24 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
+#include "ast.h"
 #include "builtins.h"
+#include "cdt.h"
+#include "error.h"
+#include "fault.h"
+#include "name.h"
+#include "nvapi.h"
 #include "path.h"
+#include "sfio.h"
+#include "shellapi.h"
+#include "stk.h"
 #include "variables.h"
 
 static_fn void assign(Namval_t *, const char *, int, Namfun_t *);

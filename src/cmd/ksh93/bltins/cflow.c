@@ -28,12 +28,16 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+
 #include "defs.h"
 
 #include "ast.h"
 #include "builtins.h"
 #include "error.h"
-#include "shnodes.h"
+#include "fault.h"
+#include "option.h"
+#include "shellapi.h"
 
 //
 // Builtins `return` and `exit`.

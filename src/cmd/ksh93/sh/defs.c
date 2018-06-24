@@ -24,12 +24,16 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <sys/types.h>
+
 #include "defs.h"
 
-#include "edit.h"
+#include "cdt.h"
+#include "fault.h"
 #include "jobs.h"
-#include "shlex.h"
-#include "timeout.h"
+#include "lexstates.h"
+#include "name.h"
 
 Shell_t sh = {};
 struct shared *shgd;

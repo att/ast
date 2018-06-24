@@ -19,8 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "shell.h"
 #include "shlex.h"
+#include "shtable.h"
 
 //
 // Table of reserved words in shell language. This list must be in in ascii sorted order.

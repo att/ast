@@ -29,10 +29,9 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "defs.h"
-
 #if SHOPT_REGRESS
 
+#include "ast.h"
 #include "builtins.h"
 #include "error.h"
 #include "io.h"
@@ -309,6 +308,8 @@ int b___regress__(int argc, char **argv, Shbltin_t *context) {
 }
 
 #else  // SHOPT_REGRESS
+
+#include "ast.h"
 
 NoN(regress)
 

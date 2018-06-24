@@ -10,7 +10,8 @@
 
 #include <limits.h>
 #include <math.h>
-#include <stdio.h>
+
+#include "sfio.h"
 #include "streval.h"
 
 typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);

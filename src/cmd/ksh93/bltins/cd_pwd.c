@@ -27,16 +27,31 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <pwd.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include <pwd.h>
-
+#include "argnod.h"
+#include "ast.h"
+#include "ast_fcntl.h"
+#include "ast_intercept.h"
+#include "ast_sys.h"
 #include "builtins.h"
 #include "error.h"
-#include "ls.h"
+#include "fault.h"
 #include "name.h"
+#include "option.h"
 #include "path.h"
+#include "sfio.h"
 #include "stak.h"
+#include "stk.h"
 #include "variables.h"
 
 //

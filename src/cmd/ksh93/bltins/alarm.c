@@ -25,12 +25,22 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
+
 #include "defs.h"
 
+#include "ast.h"
 #include "builtins.h"
 #include "error.h"
+#include "fault.h"
 #include "fcin.h"
-#include "stak.h"
+#include "name.h"
+#include "option.h"
+#include "sfio.h"
+#include "shellapi.h"
 #include "tmx.h"
 
 #define R_FLAG 1

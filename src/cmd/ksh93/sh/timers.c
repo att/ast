@@ -19,13 +19,17 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <unistd.h>
+
 #include "defs.h"
 
-#include "ast.h"
 #include "error.h"
 #include "fault.h"
 #include "sig.h"
-#include "times.h"
 
 typedef struct _timer {
     double wakeup;
