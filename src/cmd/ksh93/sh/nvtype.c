@@ -1315,27 +1315,23 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
 }
 
 #define S(x) #x
-#define FIELD(x, y) \
-    { S(y##x), S(x##_t), offsetof(struct stat, st_##y##x) }
-typedef struct _field_ {
+#define FIELD(name, type) \
+    { S(name), S(type##_t), offsetof(struct stat, st_##name) }
+typedef struct _stat_field_ {
     char *name;
     char *type;
     int offset;
-} Fields_t;
+} stat_fields_t;
 
-static Fields_t foo[] = {FIELD(dev, ),   FIELD(ino, ),   FIELD(nlink, ), FIELD(mode, ),
-                         FIELD(uid, ),   FIELD(gid, ),   FIELD(size, ),  FIELD(time, a),
-                         FIELD(time, m), FIELD(time, c),
-#if 0
-	FIELD(blksize,),
-	FIELD(blocks,),
-#endif
-                         {NULL, NULL, 0}};
+static stat_fields_t stat_fields[] = {FIELD(dev, dev),    FIELD(ino, ino),    FIELD(nlink, nlink),
+                                      FIELD(mode, mode),  FIELD(uid, uid),    FIELD(gid, gid),
+                                      FIELD(size, size),  FIELD(atime, time), FIELD(mtime, time),
+                                      FIELD(ctime, time), {NULL, NULL, 0}};
 
-Namval_t *nv_mkstruct(const char *name, int rsize, Fields_t *fields, void *context) {
+Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *context) {
     Shell_t *shp = (Shell_t *)context;
     Namval_t *mp, *nq, *nr, *tp;
-    Fields_t *fp;
+    stat_fields_t *fp;
     Namtype_t *dp, *pp;
     char *cp, *sp;
     int nnodes = 0, offset = stktell(shp->stk), n, r, i, j;
@@ -1453,7 +1449,7 @@ static const Namdisc_t stat_disc = {0, put_stat};
 void nv_mkstat(Shell_t *shp) {
     Namval_t *tp;
     Namfun_t *fp;
-    tp = nv_mkstruct("stat_t", sizeof(struct stat), foo, (void *)shp);
+    tp = nv_mkstruct("stat_t", sizeof(struct stat), stat_fields, (void *)shp);
     nv_offattr(tp, NV_RDONLY);
     nv_setvtree(tp);
     fp = newof(NULL, Namfun_t, 1, 0);
