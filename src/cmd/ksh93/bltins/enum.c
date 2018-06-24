@@ -142,7 +142,7 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return &ep->hdr;
 }
 
-static_fn void put_enum(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     const char *v;
     unsigned short i = 0, n;
@@ -184,7 +184,8 @@ static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
 
 static_fn Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
 
-static_fn Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfun_t *fp) {
+static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+    const char *name = vp;
     struct Enum *ep = (struct Enum *)fp;
     Namval_t *mp;
     const char *v;
@@ -224,7 +225,7 @@ static_fn Namval_t *create_enum(Namval_t *np, const char *name, int flags, Namfu
     return mp;
 }
 
-const Namdisc_t ENUM_disc = {0, put_enum, get_enum, get_nenum, 0, create_enum, clone_enum};
+const Namdisc_t ENUM_disc = {0, put_enum, get_enum, get_nenum, NULL, create_enum, clone_enum};
 
 static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
     Namval_t *mp;

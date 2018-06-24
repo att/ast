@@ -60,7 +60,7 @@ struct nvdir {
 
 static int Indent;
 char *nv_getvtree(Namval_t *, Namfun_t *);
-static_fn void put_tree(Namval_t *, const char *, int, Namfun_t *);
+static_fn void put_tree(Namval_t *, const void *, int, Namfun_t *);
 static_fn char *walk_tree(Namval_t *, Namval_t *, int);
 
 static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
@@ -95,7 +95,7 @@ done:
     return c;
 }
 
-static_fn Namval_t *create_tree(Namval_t *np, const char *name, int flag, Namfun_t *dp) {
+static_fn Namval_t *create_tree(Namval_t *np, const void *name, int flag, Namfun_t *dp) {
     Namfun_t *fp = dp;
 
     fp->dsize = 0;
@@ -121,8 +121,8 @@ static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return dp;
 }
 
-static const Namdisc_t treedisc = {0,          put_tree, nv_getvtree, 0, 0,        create_tree,
-                                   clone_tree, 0,        0,           0, read_tree};
+static const Namdisc_t treedisc = {0,          put_tree, nv_getvtree, NULL, NULL,     create_tree,
+                                   clone_tree, NULL,     NULL,        NULL, read_tree};
 
 static_fn char *nextdot(const char *str, void *context) {
     char *cp;
@@ -1154,7 +1154,7 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
 //
 // Put discipline for compound initializations.
 //
-static_fn void put_tree(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_tree(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     struct Namarray *ap;
     int nleft = 0;
 
@@ -1171,11 +1171,11 @@ static_fn void put_tree(Namval_t *np, const char *val, int flags, Namfun_t *fp) 
             shp->prev_root = shp->last_root;
             shp->last_table = last_table;
             shp->last_root = last_root;
-            if (!(flags & NV_APPEND)) walk_tree(np, (Namval_t *)0, (flags & NV_NOSCOPE) | 1);
+            if (!(flags & NV_APPEND)) walk_tree(np, NULL, (flags & NV_NOSCOPE) | 1);
             nv_clone(mp, np, NV_COMVAR);
             return;
         }
-        walk_tree(np, (Namval_t *)0, (flags & NV_NOSCOPE) | 1);
+        walk_tree(np, NULL, (flags & NV_NOSCOPE) | 1);
     }
     nv_putv(np, val, flags, fp);
     if (val && nv_isattr(np, (NV_INTEGER | NV_BINARY))) return;

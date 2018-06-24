@@ -473,7 +473,7 @@ static_fn Sfdouble_t array_getnum(Namval_t *np, Namfun_t *disc) {
     return nv_getn(np, &ap->hdr);
 }
 
-static_fn void array_putval(Namval_t *np, const char *string, int flags, Namfun_t *dp) {
+static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_t *dp) {
     Namarr_t *ap = (Namarr_t *)dp;
     union Value *up;
     Namval_t *mp;
@@ -582,7 +582,7 @@ static_fn void array_putval(Namval_t *np, const char *string, int flags, Namfun_
 }
 
 static const Namdisc_t array_disc = {
-    sizeof(Namarr_t), array_putval, array_getval, array_getnum, 0, 0, array_clone};
+    sizeof(Namarr_t), array_putval, array_getval, array_getnum, NULL, NULL, array_clone};
 
 static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
     Namfun_t *fp = nv_disc(np, NULL, NV_POP);

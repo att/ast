@@ -159,7 +159,7 @@ const char sh_optshopt[] =
 
 // GLOBIGNORE discipline. Turn on SH_DOTGLOB on set, turn off on unset.
 
-static_fn void put_globignore(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_globignore(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     Shell_t *shp = np->nvshell;
     if (val) {
         sh_onoption(shp, SH_DOTGLOB);
@@ -178,7 +178,7 @@ struct funcname {
     Namfun_t hdr;
 };
 
-static_fn void put_funcname(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_funcname(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     // Bash silently returns with an error when FUNCNAME is set, unsetting
     // FUNCNAME is allowed.
     if (val && !(flags & NV_RDONLY)) error_info.exit(1);

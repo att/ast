@@ -166,7 +166,7 @@ void sh_timetraps(Shell_t *shp) {
 //
 // This trap function catches "alarm" actions only.
 //
-static_fn char *alarm_setdisc(Namval_t *np, const char *event, Namval_t *action, Namfun_t *fp) {
+static_fn char *alarm_setdisc(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp) {
     struct tevent *tp = (struct tevent *)fp;
     if (!event) return (action ? "" : (char *)ALARM);
     if (strcmp(event, ALARM) != 0) {
@@ -184,7 +184,8 @@ static_fn char *alarm_setdisc(Namval_t *np, const char *event, Namval_t *action,
 //
 // Catch assignments and set alarm traps.
 //
-static_fn void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
+static_fn void alarm_put(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+    const char *val = vp;
     struct tevent *tp = (struct tevent *)fp;
     double d, x;
     Shell_t *shp = tp->sh;
@@ -221,7 +222,7 @@ static_fn void putval(Namval_t *np, const char *val, int flag, Namfun_t *fp) {
 }
 
 static const Namdisc_t alarmdisc = {
-    sizeof(struct tevent), putval, 0, 0, alarm_setdisc,
+    sizeof(struct tevent), alarm_put, NULL, NULL, alarm_setdisc,
 };
 
 int b_alarm(int argc, char *argv[], Shbltin_t *context) {

@@ -471,7 +471,7 @@ struct Level {
 // This is for a debugger but it hasn't been tested yet. If a debug script sets .sh.level it should
 // set up the scope as if you were executing in that level.
 //
-static_fn void put_level(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_level(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
     Shscope_t *sp;
     struct Level *lp = (struct Level *)fp;

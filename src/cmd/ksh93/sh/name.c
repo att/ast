@@ -128,7 +128,6 @@ static_fn char *getbuf(size_t len) {
         if (buflen == 0) {
             buf = malloc(len);
         } else {
-            // cppcheck-suppress memleakOnRealloc
             buf = realloc(buf, len);
         }
         assert(buf);
@@ -1409,7 +1408,8 @@ static char savechars[8 + 1];
 // If <flags> contains NV_NOFREE, previous value is freed, and <string>
 // becomes value of node and <flags> becomes attributes.
 //
-void nv_putval(Namval_t *np, const char *string, int flags) {
+void nv_putval(Namval_t *np, const void *vp, int flags) {
+    const char *string = vp;
     Shell_t *shp = sh_ptr(np);
     const char *sp = string;
     char *cp;
@@ -2305,7 +2305,7 @@ static_fn void optimize_clear(Namval_t *np, Namfun_t *fp) {
     }
 }
 
-static_fn void put_optimize(Namval_t *np, const char *val, int flags, Namfun_t *fp) {
+static_fn void put_optimize(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     nv_putv(np, val, flags, fp);
     optimize_clear(np, fp);
 }
@@ -2314,7 +2314,8 @@ static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun
     return NULL;
 }
 
-const Namdisc_t OPTIMIZE_disc = {sizeof(struct optimize), put_optimize, 0, 0, 0, 0, clone_optimize};
+const Namdisc_t OPTIMIZE_disc = {sizeof(struct optimize), put_optimize, NULL, NULL, NULL, NULL,
+                                 clone_optimize};
 
 void nv_optimize(Namval_t *np) {
     Shell_t *shp = sh_ptr(np);
