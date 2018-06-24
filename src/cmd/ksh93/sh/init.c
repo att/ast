@@ -1729,8 +1729,8 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return &dp->hdr;
 }
 
-static_fn const Namdisc_t svar_disc = {0,           NULL,       NULL, NULL,     NULL,
-                                       create_svar, clone_svar, NULL, next_svar};
+static const Namdisc_t svar_disc = {0,           NULL,       NULL, NULL,     NULL,
+                                    create_svar, clone_svar, NULL, next_svar};
 
 static_fn char *name_svar(Namval_t *np, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
