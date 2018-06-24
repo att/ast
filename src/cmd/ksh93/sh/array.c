@@ -25,7 +25,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +32,7 @@
 #include "defs.h"
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"

@@ -27,7 +27,6 @@
 
 #include "defs.h"
 
-#include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -46,6 +45,7 @@
 #include "argnod.h"
 #include "ast.h"
 #include "ast_api.h"
+#include "ast_assert.h"
 #include "ast_ccode.h"
 #include "ast_fcntl.h"
 #include "ast_intercept.h"

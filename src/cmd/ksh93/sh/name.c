@@ -21,7 +21,6 @@
 
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <assert.h>
 #include <ctype.h>
 #include <float.h>
 #include <stdbool.h>
@@ -37,6 +36,7 @@
 #include "argnod.h"
 #include "ast.h"
 #include "ast_api.h"
+#include "ast_assert.h"
 #include "ast_intercept.h"
 #include "cdt.h"
 #include "error.h"

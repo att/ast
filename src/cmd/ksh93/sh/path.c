@@ -23,7 +23,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <assert.h>
 #include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -40,6 +39,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_intercept.h"
 #include "cdt.h"
 #include "error.h"

@@ -25,7 +25,6 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -49,6 +48,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "ast_fcntl.h"
 #include "ast_intercept.h"
 #include "builtins.h"

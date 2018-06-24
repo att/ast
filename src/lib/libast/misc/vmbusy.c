@@ -8,7 +8,7 @@
 #define NO_MALLOC_WRAPPERS 1
 #include "config_ast.h"
 
-#include <assert.h>
+#include <stdbool.h>
 
 #if _hdr_stdlib
 #include <stdlib.h>
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #endif
 
-#include <stdbool.h>
+#include "ast_assert.h"
 
 volatile bool vmbusy_flag = false;
 
@@ -28,7 +28,6 @@ void *ast_malloc(size_t size) {
     vmbusy_flag = true;
     void *p = malloc(size);
     vmbusy_flag = false;
-    assert(p);
     return p;
 }
 

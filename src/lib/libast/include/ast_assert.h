@@ -1,0 +1,18 @@
+//
+// We have our own private `assert()` implementation because too many of the platform implements
+// result in lint warnings from tools like cppcheck. They also tend to write the error to stdout
+// rather than stderr which is wrong.
+//
+//
+#include <stdio.h>
+
+#undef assert
+
+#ifdef NDEBUG
+#define	assert(e)	((void)0)
+#else  // NDEBUG
+#define assert(e)  \
+    ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
+#define __assert(e, file, line) \
+    ((void)fprintf (stderr, "%s:%d: failed assertion '%s'\n", file, line, e), abort())
+#endif  // NDEBUG
