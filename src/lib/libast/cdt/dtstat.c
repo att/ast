@@ -22,7 +22,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdio.h>
-#include "dthdr.h"
+
+#include "cdtlib.h"
 
 /* Get statistics for a dictionary
 **

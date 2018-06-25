@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dthdr.h"
+#include "cdtlib.h"
 
 /* Hashing a string into an unsigned integer.
 ** This is the FNV (Fowler-Noll-Vo) hash function.

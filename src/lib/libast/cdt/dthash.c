@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dthdr.h"
+#include "cdtlib.h"
 
 /*	Hash table with chaining for collisions.
 **

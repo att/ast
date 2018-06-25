@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dthdr.h"
+#include "cdtlib.h"
 
 /*	Set a view path from dict to view.
 **

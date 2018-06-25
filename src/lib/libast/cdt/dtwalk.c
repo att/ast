@@ -21,7 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dthdr.h"
+#include "cdtlib.h"
 
 /*	Walk a dictionary and all dictionaries viewed through it.
 **	userf:	user function
