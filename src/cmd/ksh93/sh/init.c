@@ -48,7 +48,6 @@
 #include "ast_assert.h"
 #include "ast_ccode.h"
 #include "ast_fcntl.h"
-#include "ast_intercept.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "edit.h"

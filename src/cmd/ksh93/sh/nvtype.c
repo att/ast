@@ -33,7 +33,6 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "ast_intercept.h"
 #include "cdt.h"
 #include "error.h"
 #include "fault.h"
