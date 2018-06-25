@@ -39,7 +39,6 @@
 #include "error.h"
 #include "proc.h"
 #include "regex.h"
-#include "stty.h"
 
 static const char usage[] =
     "[-?\n@(#)pty (AT&T Research) 2013-05-22\n]" USAGE_LICENSE

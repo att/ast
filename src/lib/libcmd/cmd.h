@@ -31,6 +31,8 @@
 #include "shcmd.h"
 #include "stak.h"
 
+extern int b_stty(int argc, char **argv, Shbltin_t *context);
+
 #define cmdinit _cmd_init
 
 #define ERROR_CALLBACK ERROR_SET

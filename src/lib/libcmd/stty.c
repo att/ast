@@ -34,7 +34,6 @@
 #include "ast_tty.h"
 #include "ccode.h"
 #include "cmd.h"
-#include "stty.h"
 
 static const char usage[] =
     "[-?@(#)$Id: stty (AT&T Research) 2010-04-01 $\n]" USAGE_LICENSE
