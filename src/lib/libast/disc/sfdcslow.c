@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Make a stream op return immediately on interrupts.
 **	This is useful on slow streams (hence the name).

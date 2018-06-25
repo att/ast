@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Discipline to make an unseekable read stream seekable
 **

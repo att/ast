@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Discipline to invoke UNIX processes as data filters.
 **	These processes must be able to fit in pipelines.

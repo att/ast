@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	A discipline to tee the output to a stream to another stream.
 **	This is similar to what the "tee" program does. As implemented

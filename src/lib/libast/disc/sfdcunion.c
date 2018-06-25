@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Make a sequence of streams act like a single stream.
 **	This is for reading only.

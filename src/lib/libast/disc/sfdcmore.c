@@ -27,7 +27,9 @@
 #include "ast_tty.h"
 #endif
 
-#include "sfdchdr.h"
+#include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*
  * a simple but fast more style pager discipline
