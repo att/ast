@@ -141,7 +141,6 @@ struct shared {
     Shwait_f waitevent;
 };
 
-#include "regress.h"
 #include "shell.h"
 #include "shtable.h"
 
