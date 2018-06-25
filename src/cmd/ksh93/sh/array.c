@@ -139,6 +139,7 @@ static_fn void array_setptr(Namval_t *np, struct index_array *old, struct index_
 //
 static_fn int arsize(struct index_array *ap, int maxi) {
     if (ap && maxi < 2 * ap->maxi) maxi = 2 * ap->maxi;
+    // cppcheck-suppress integerOverflowCond
     maxi = roundof(maxi, ARRAY_INCR);
     return maxi > ARRAY_MAX ? ARRAY_MAX : maxi;
 }
@@ -170,7 +171,7 @@ static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
         mp = (Namval_t *)((*arp->fun)(np, NULL, NV_ACURRENT));
         if (mp) {
             nofree = nv_isattr(mp, NV_NOFREE);
-            up = &mp->nvalue;
+            up = &(mp->nvalue);  // parens are to silence false positive from cppcheck
         } else {
             return ((union Value *)((*arp->fun)(np, NULL, 0)));
         }
@@ -607,6 +608,7 @@ static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
 static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, int maxi) {
     struct index_array *ap;
     int i;
+    // cppcheck-suppress integerOverflowCond
     int newsize = arsize(arp, maxi + 1);
     size_t size;
 
