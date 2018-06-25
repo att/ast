@@ -86,10 +86,6 @@ char e_version[] =
 #define ATTRS 1
     "J"
 #endif
-#if SHOPT_REGRESS
-#define ATTRS 1
-    "R"
-#endif
 #if ATTRS
     " "
 #endif
@@ -1299,40 +1295,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     sh_onstate(shp, SH_INIT);
 #if ERROR_VERSION >= 20000102L
     error_info.catalog = e_dict;
-#endif
-#if SHOPT_REGRESS
-    {
-        Opt_t *nopt;
-        Opt_t *oopt;
-        char *a;
-        char **av = argv;
-        char *regress[3];
-
-        sh_regress_init(shp);
-        regress[0] = "__regress__";
-        regress[2] = 0;
-        // NOTE: only shp is used by __regress__ at this point.
-        shp->bltindata.shp = shp;
-        while ((a = *++av) && a[0] == '-' && (a[1] == 'I' || a[1] == '-' && a[2] == 'r')) {
-            if (a[1] == 'I') {
-                if (a[2]) {
-                    regress[1] = a + 2;
-                } else if (!(regress[1] = *++av)) {
-                    break;
-                }
-            } else if (strncmp(a + 2, "regress", 7)) {
-                break;
-            } else if (a[9] == '=') {
-                regress[1] = a + 10;
-            } else if (!(regress[1] = *++av)) {
-                break;
-            }
-            nopt = optctx(0, 0);
-            oopt = optctx(nopt, 0);
-            b___regress__(2, regress, &shp->bltindata);
-            optctx(oopt, nopt);
-        }
-    }
 #endif
     shp->cpipe[0] = -1;
     shp->coutpipe = -1;
