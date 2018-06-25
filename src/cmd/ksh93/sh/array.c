@@ -1304,7 +1304,8 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
 //
 void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
     int arg0 = 0;
-    struct index_array *ap = 0, *aq;
+    struct index_array *ap = NULL;
+    // struct index_array *aq;  // see TODO below
 
     if (nv_isarray(np)) {
         ap = (struct index_array *)nv_arrayptr(np);
@@ -1317,7 +1318,10 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
         if (ap && ap->header.nelem == 0) {
             arg0 = 0;
         } else if (ap) {
-            if (!(aq = (struct index_array *)ap->header.scope)) aq = ap;
+            // TODO: Figure out if this is still needed. This statement is leftover from ksh93u+.
+            // But in the subsequent changes it has become a no-op. Should it just be removed or
+            // should it be modified to do something useful in light of the changes after 93u?
+            // if (!(aq = (struct index_array *)ap->header.scope)) aq = ap;
             if (ap->header.nelem > ap->last) ap->last = array_maxindex(np);
             arg0 = ap->last;
         } else {
