@@ -158,20 +158,6 @@ if type -q cppcheck
             --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
         cppcheck $cppcheck_args $c_file 2>&1
     end
-
-    echo
-    echo ========================================
-    echo 'Running `cppcheck --check-config` to identify missing includes and similar problems.'
-    echo 'Ignore unmatchedSuppression warnings as they are probably false positives we'
-    echo 'cannot suppress.'
-    echo ========================================
-    for c_file in $c_files
-        set cppcheck_args $lint_args (../scripts/extract_flags $project_file $c_file) \
-            -q --verbose --std=c99 --std=posix --language=c --template $template \
-            --suppress=missingIncludeSystem --inline-suppr --enable=$cppchecks \
-            --rule-file=../.cppcheck.rules --suppressions-list=../.cppcheck.suppressions
-        cppcheck $cppcheck_args --check-config $c_file 2>&1
-    end
 end
 
 if type -q oclint
