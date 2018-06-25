@@ -29,8 +29,6 @@
 
 #include "tmx.h"
 
-#include "tmlib.h"
-
 /*
  * convert Tm_t to Time_t
  *

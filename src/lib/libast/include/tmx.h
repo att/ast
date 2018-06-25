@@ -50,12 +50,10 @@ extern Time_t tmxscan(const char *, char **, const char *, char **, Time_t, long
 extern int tmxsleep(Time_t);
 extern Time_t tmxtime(Tm_t *, int);
 extern Tm_t *tmxtm(Tm_t *, Time_t, Tm_zone_t *);
-
+extern struct tm *tmlocaltime(const time_t *);
 extern Time_t tmxgettime(void);
 extern int tmxsettime(Time_t);
-
 extern int tmxtouch(const char *, Time_t, Time_t, Time_t, int);
-
 extern char *fmttmx(const char *, Time_t);
 
 #endif  // _TMX_H

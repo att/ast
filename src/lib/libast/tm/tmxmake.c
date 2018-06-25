@@ -29,8 +29,6 @@
 
 #include "tmx.h"
 
-#include "tmlib.h"
-
 /*
  * return Tm_t for t
  * time zone and leap seconds accounted for in return value

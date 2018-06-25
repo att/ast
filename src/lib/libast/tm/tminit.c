@@ -28,10 +28,10 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+
 #include "namval.h"
 #include "tm.h"
-
-#include "tmlib.h"
+#include "tmx.h"
 
 #define TM_type (-1)
 
@@ -51,7 +51,7 @@ Tm_info_t *_tm_infop_ = &_tm_info_;
 static char TZ[256];
 static char *TE[2];
 
-struct tm *_tm_localtime(const time_t *t) {
+struct tm *tmlocaltime(const time_t *t) {
     struct tm *r;
     char *e = NULL;
     char **v = environ;
