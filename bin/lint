@@ -44,7 +44,7 @@ end
 
 # Figure out which files to lint.
 if test $all = yes
-    set files src/cmd/ksh93/**.c
+    set files src/cmd/**.c
 else if set -q argv[1]
     set files
     for f in $argv
