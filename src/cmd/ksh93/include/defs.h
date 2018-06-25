@@ -26,17 +26,15 @@
 #ifndef _DEFS_H
 #define _DEFS_H 1
 
+// This include shouldn't be necessary but without it compilation errors occur in modules like
+// lex.c. But if we include it in that module IWYU complains it isn't needed.
+#include <ctype.h>
+
 // Signal to the other public headers that they should expose private behavior used when building
 // the `ksh` command. Otherwise the assumption is they're being included to build a plugin.
 #define _SH_PRIVATE 1
 
-#include <ctype.h>
-
-#include "ast.h"
-
 #include "argnod.h"
-#include "cdt.h"
-#include "error.h"
 #include "fault.h"
 #include "history.h"
 #include "name.h"

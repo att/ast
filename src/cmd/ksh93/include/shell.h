@@ -26,6 +26,8 @@
 #ifndef _SHELL_H
 #define _SHELL_H 1
 
+#include <stdint.h>
+
 #define SH_VERSION 20120720
 
 // Bit of a chicken and egg problem here. If we've already included fault.h then this typedef
@@ -35,7 +37,6 @@ typedef struct Shell_s Shell_t;
 #endif
 
 #include "ast.h"
-
 #include "cdt.h"
 #include "cmd.h"
 #include "fault.h"
@@ -47,9 +48,6 @@ typedef struct Shell_s Shell_t;
 #else
 #include "nval.h"
 #endif  // _SH_PRIVATE
-#if __STDC_VERSION__ >= 199901L
-#include <stdint.h>
-#endif
 
 /// This is a macro that can be used to silence "unused parameter" warnings from the compiler for
 /// functions which need to accept parameters they do not use because they need to be compatible

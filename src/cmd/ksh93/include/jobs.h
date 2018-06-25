@@ -26,11 +26,8 @@
 
 #define JOBTTY 2
 
-#include "ast.h"
-#include "sfio.h"
-#ifndef SIGINT
 #include <signal.h>
-#endif  // !SIGINT
+#include <termios.h>
 
 #include "aso.h"
 
@@ -55,7 +52,6 @@ extern char *sh_pid2str(Shell_t *, pid_t);
 #endif
 #ifdef SIGCHLD
 #define JOBS 1
-#include "terminal.h"
 #ifdef FIOLOOKLD
 // Ninth edition.
 extern int tty_ld, ntty_ld;

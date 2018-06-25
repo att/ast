@@ -25,8 +25,8 @@
 #ifndef _TEST_H
 #define _TEST_H 1
 
-#include "defs.h"
-#include "shtable.h"
+#include "shell.h"
+
 //
 // These are the valid test operators.
 //

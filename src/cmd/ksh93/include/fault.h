@@ -26,10 +26,9 @@
 #define _FAULT_H 1
 
 #include <setjmp.h>
+#include <signal.h>
 
 #include "error.h"
-#include "sfio.h"
-#include "sig.h"
 
 #ifndef SIGWINCH
 #ifdef SIGWIND

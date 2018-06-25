@@ -21,12 +21,11 @@
 #define _BUILTINS_H 1
 
 #include "option.h"
+#include "shtable.h"
 
 #if SHOPT_DYNAMIC
 #include "dlldefs.h"
 #endif
-
-#include "shtable.h"
 
 #define SYSLOGIN (shgd->bltin_cmds)
 #define SYSEXEC (shgd->bltin_cmds + 1)

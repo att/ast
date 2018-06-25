@@ -26,10 +26,9 @@
 #ifndef _EDIT_H
 #define _EDIT_H 1
 
+#include <termios.h>
+
 #define SEARCHSIZE 80
-
-#include "terminal.h"
-
 #define STRIP 0377
 #define LOOKAHEAD 80
 

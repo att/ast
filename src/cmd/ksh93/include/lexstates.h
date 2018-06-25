@@ -20,6 +20,9 @@
 #ifndef _LEXSTATES_H
 #define _LEXSTATES_H 1
 
+#include <wchar.h>
+#include <wctype.h>
+
 #define S_BREAK 1  // end of token
 #define S_EOF 2    // end of buffer
 #define S_NL 3     // new-line when not a token
@@ -80,8 +83,6 @@
 #define ST_QNEST 10
 #define ST_NONE 11
 
-#include <wchar.h>
-#include <wctype.h>
 #undef isalpha
 #define isalpha(x) iswalpha(x)
 #undef isblank

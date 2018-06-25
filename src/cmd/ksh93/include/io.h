@@ -24,8 +24,7 @@
 #ifndef _IO_H
 #define _IO_H 1
 
-#include "ast.h"
-#include "sfio.h"
+#include "shell.h"
 
 #ifndef IOBSIZE
 #define IOBSIZE (SF_BUFSIZE * sizeof(char *))

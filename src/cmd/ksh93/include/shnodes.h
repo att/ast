@@ -24,8 +24,6 @@
 #ifndef _SHNODES_H
 #define _SHNODES_H 1
 
-#include "ast.h"
-
 #include "argnod.h"
 #include "shell.h"
 

@@ -24,8 +24,6 @@
 #ifndef _HISTORY_H
 #define _HISTORY_H 1
 
-#include "ast.h"
-
 #define HIST_CHAR '!'
 #define HIST_VERSION 1  // history file format version no.
 
