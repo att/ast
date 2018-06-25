@@ -45,12 +45,13 @@
 #include "nvapi.h"
 #include "option.h"
 #include "sfio.h"
-#include "shellapi.h"
 #include "shlex.h"
 #include "shtable.h"
 #include "stk.h"
 
 #if SHOPT_BASH
+#include "shellapi.h"
+
 #define BASHOPT "\374"
 #else
 #define BASHOPT
@@ -203,8 +204,8 @@ void *sh_argopen(Shell_t *shp) {
 }
 
 static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
-    Shell_t *shp = sh_getinterp();
 #if SHOPT_BASH
+    Shell_t *shp = sh_getinterp();
     extern const char sh_bash1[], sh_bash2[];
 
     if (strcmp(s, "bash1") == 0) {
@@ -218,7 +219,7 @@ static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
         if (*s != ':') {
         sfputr(sp, sh_set, -1);
     }
-    return (1);
+    return 1;
 }
 
 // This routine turns options on and off.
@@ -392,7 +393,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
             }
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
-                return (-1);
+                return -1;
             }
             default: {
                 sp = strchr(optksh, n);
@@ -679,7 +680,7 @@ struct dolnod *sh_argfree(Shell_t *shp, struct dolnod *blk, int flag) {
                     for (argr = ap->argfor; argr; argr = argr->dolnxt) {
                         if (argr->dolnxt == argblk) break;
                     }
-                    if (!argr) return (NULL);
+                    if (!argr) return NULL;
                     argr->dolnxt = argblk->dolnxt;
                     argr = argblk->dolnxt;
                 }
