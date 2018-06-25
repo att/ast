@@ -298,7 +298,6 @@ struct Shell_s {
     char *mathnodes;
     void *coshell;
     char *bltin_dir;
-    struct Regress_s *regress;
     char exittrap;
     char errtrap;
     char end_fn;
