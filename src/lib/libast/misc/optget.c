@@ -236,7 +236,6 @@ if not.")},
 current command]].")},
     {':', C("\?\?\?\?\?\?SECTION"),
      C("List the \bman\b(1) section number for the current command.")},
-    {':', C("\?\?\?\?\?\?TEST"), C("Massage the output for regression testing.")},
 };
 
 static const Attr_t attrs[] = {

@@ -55,7 +55,6 @@
 #include "name.h"
 #include "option.h"
 #include "path.h"
-#include "regress.h"
 #include "sfio.h"
 #include "shellapi.h"
 #include "shlex.h"
@@ -109,13 +108,11 @@ bool sh_source(Shell_t *shp, Sfio_t *iop, const char *file) {
     int fd;
 
     if (!file || !*file || (fd = path_open(shp, file, PATHCOMP)) < 0) {
-        REGRESS(source, "sh_source", ("%s:ENOENT", file));
         return false;
     }
     oid = error_info.id;
     nid = error_info.id = strdup(file);
     shp->st.filename = path_fullname(shp, stkptr(shp->stk, PATH_OFFSET));
-    REGRESS(source, "sh_source", ("%s", file));
     exfile(shp, iop, fd);
     error_info.id = oid;
     free(nid);

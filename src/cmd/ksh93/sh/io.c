@@ -672,13 +672,6 @@ int sh_open(register const char *path, int flags, ...) {
         if (!(mode & IOREAD) && ((flags == O_RDONLY) || (flags == O_RDWR))) return -1;
         if ((fd = dup(fd)) < 0) return -1;
     } else {
-#if SHOPT_REGRESS
-        char buf[PATH_MAX];
-        if (strncmp(path, "/etc/", 5) == 0) {
-            sfsprintf(buf, sizeof(buf), "%s%s", sh_regress_etc(path, __LINE__, __FILE__), path + 4);
-            path = buf;
-        }
-#endif
         while ((fd = open(path, flags, mode)) < 0) {
             if (errno != EINTR || shp->trapnote) return -1;
         }

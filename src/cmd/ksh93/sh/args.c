@@ -377,11 +377,6 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 if (sp) o = flagval[sp - optksh];
                 break;
             }
-#if SHOPT_REGRESS
-            case 'I': {
-                continue;
-            }
-#endif  // SHOPT_REGRESS
             case ':': {
                 if (opt_info.name[0] == '-' && opt_info.name[1] == '-') {
                     opt_info.arg = argv[opt_info.index - 1] + 2;

@@ -148,9 +148,6 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(wc)},
     {CMDLIST(sync)},
 #endif  // SHOPT_CMDLIB_HDR
-#if SHOPT_REGRESS
-    {"__regress__", NV_BLTIN | BLT_ENV, bltin(__regress__)},
-#endif  // SHOPT_REGRESS
     {"", 0, NULL}};
 
 #if SHOPT_COSHELL
@@ -1380,10 +1377,6 @@ const char sh_optksh[] =
     "[R]:[file?Do not execute the script, but create a cross reference database "
     "in \afile\a that can be used a separate shell script browser.  The "
     "-R option requires a script to be specified as the first operand.]"
-#if SHOPT_REGRESS
-    "[I:regress]:[intercept?Enable the regression test \aintercept\a. Must be "
-    "the first command line option(s).]"
-#endif  // SHOPT_REGRESS
 #if SHOPT_BASH
     "\fbash2\f"
 #endif  // SHOPT_BASH
