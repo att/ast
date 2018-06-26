@@ -22,7 +22,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+#include <sys/types.h>
+
 #include "ast.h"
+#include "sfio.h"
 
 int main() {
     register int i;

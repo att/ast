@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dttest.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "cdt.h"
+#include "terror.h"
 
 #define strcmp(a, b) teststrcmp(a, b)
 

@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stdarg.h>
+#include <sys/signal.h>
+#include <sys/types.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 int Code_line = 42; /* line number of CALL(sfclose(0)) */
 

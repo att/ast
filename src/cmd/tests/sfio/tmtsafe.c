@@ -19,7 +19,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include "terror.h"
 
 #if vt_threaded
 

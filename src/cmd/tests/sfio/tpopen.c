@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/signal.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 tmain() {
     Sfio_t *f;

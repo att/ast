@@ -19,7 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dttest.h"
+#include "cdt.h"
+#include "terror.h"
 
 typedef struct _obj_s {
     Dtlink_t link;

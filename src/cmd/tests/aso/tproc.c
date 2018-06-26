@@ -19,6 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+#include "aso.h"
 #include "terror.h"
 
 #ifndef N_PROC

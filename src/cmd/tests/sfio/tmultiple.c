@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /*	Test multiple processes reading/writing from same file
 **	descriptor.

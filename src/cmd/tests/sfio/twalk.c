@@ -19,7 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include "sfio.h"
+#include "terror.h"
 
 int walkf(Sfio_t *f, void *cntp) { return (*((int *)cntp) += 1); }
 

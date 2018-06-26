@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <unistd.h>
+
+#include "ast_intercept.h"
+#include "sfio.h"
+#include "terror.h"
 
 #define ITER 10
 #define CNT 2000

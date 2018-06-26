@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+
+#include "cdt.h"
 #include "dttest.h"
+#include "terror.h"
 
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL};
 

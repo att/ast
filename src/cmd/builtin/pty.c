@@ -20,6 +20,19 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <termios.h>
+#include <unistd.h>
+
+
 #if _hdr_pty
 #include <pty.h>
 #endif
@@ -27,18 +40,15 @@
 #include <util.h>
 #endif
 
-#include <ctype.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <termios.h>
-
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_intercept.h"
 #include "cmd.h"
 #include "error.h"
+#include "option.h"
 #include "proc.h"
 #include "regex.h"
+#include "sfio.h"
 
 static const char usage[] =
     "[-?\n@(#)pty (AT&T Research) 2013-05-22\n]" USAGE_LICENSE

@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 static ssize_t discread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     return sfrd(f, buf, n, disc);

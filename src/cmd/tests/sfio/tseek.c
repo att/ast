@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 static int Bufcount = 0;
 

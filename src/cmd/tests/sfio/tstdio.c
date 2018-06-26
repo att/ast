@@ -19,13 +19,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _PACKAGE_ast
 #include <stdio.h>
-#include "sftest.h"
-#else
-#include "../Stdio_s/stdio.h"
-#include "sftest.h"
-#endif
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /* test compliance of certain stdio behaviors */
 tmain() {

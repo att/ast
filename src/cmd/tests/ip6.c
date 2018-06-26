@@ -19,13 +19,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _PACKAGE_ast
-#include "ast.h"
-#else
-#include <string.h>
-#endif
-
 #include <stdio.h>
+#include <string.h>
 
 #include "ip6.h"
 

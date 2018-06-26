@@ -19,7 +19,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <errno.h>
+#include <stddef.h>
+#include <unistd.h>
+
+#include "ast_intercept.h"
+#include "sfio.h"
+#include "terror.h"
 
 /* errnos tested for xopen-compliance */
 

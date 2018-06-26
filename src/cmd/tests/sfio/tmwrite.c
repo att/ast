@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stddef.h>
+#include <string.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /* see if multiple writers do create a consistent set of records. */
 

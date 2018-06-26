@@ -19,7 +19,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "ast_intercept.h"
+#include "sfio.h"
+#include "terror.h"
 
 /* this tests to see if SF_SYNC is raised at the right time */
 static int Count = 0;

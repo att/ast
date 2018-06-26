@@ -19,18 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <locale.h>
 
-#if _PACKAGE_ast
-#if !_hdr_wchar
-#define _hdr_wchar 1
-#endif
-#include <stdio.h>
-#endif
-
-#if _hdr_wchar
-#include <wchar.h>
-#endif
+#include "ast_std.h"
+#include "sfio.h"
+#include "terror.h"
 
 tmain() {
     int n;

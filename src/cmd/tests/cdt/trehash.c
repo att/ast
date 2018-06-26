@@ -20,9 +20,20 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <sched.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
 #include <sys/mman.h>
+#include <sys/signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-#include "dttest.h"
+#include "aso.h"
+#include "ast_intercept.h"
+#include "cdt.h"
+#include "terror.h"
 
 /* Test concurrency usage of the method Dtrhset.
 **

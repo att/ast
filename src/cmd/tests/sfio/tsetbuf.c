@@ -19,7 +19,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include "sfio_t.h"
+#include "terror.h"
+
 #ifdef SF_APPEND
 #undef SF_APPEND
 #endif

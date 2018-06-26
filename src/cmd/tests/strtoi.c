@@ -29,17 +29,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _PACKAGE_ast
-#include "ast.h"
-#else
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#endif
-
 #include <errno.h>
 #include <locale.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "ast.h"
 
 #ifndef ERANGE
 #define ERANGE EINVAL

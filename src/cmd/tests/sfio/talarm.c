@@ -19,7 +19,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "ast_intercept.h"
+#include "sfio.h"
+#include "terror.h"
 
 #define HANDLER "Handler"
 char Buf[16];

@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/types.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /* to test handling of writing whole lines */
 static ssize_t writef(Sfio_t *f, const void *data, size_t n, Sfdisc_t *disc) {

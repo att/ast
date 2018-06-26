@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
+#include "cdt.h"
 #include "dttest.h"
+#include "terror.h"
 
 /* test to see if the Dtuser_t structure has the right elements */
 

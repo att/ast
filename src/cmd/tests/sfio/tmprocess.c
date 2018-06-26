@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /*	Test to see if multiple writers to the same file create
 **	a consistent set of records.

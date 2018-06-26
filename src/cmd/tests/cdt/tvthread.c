@@ -19,10 +19,15 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dttest.h"
-
 #include <pthread.h>
-#include <sys/mman.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "aso.h"
+#include "cdt.h"
+#include "terror.h"
 
 /* Test concurrency by volleying objects between two dictionaries. */
 

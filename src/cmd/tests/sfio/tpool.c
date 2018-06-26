@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/types.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 static char Serial[128], *S = Serial;
 ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {

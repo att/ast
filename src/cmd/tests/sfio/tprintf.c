@@ -19,7 +19,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 typedef struct _coord_ {
     int x;

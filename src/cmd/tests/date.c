@@ -35,9 +35,12 @@ static const char id[] = "\n@(#)$Id: testdate (AT&T Research) 2005-01-04 $\0\n";
 #include <setjmp.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "ast.h"
-
+#include "sfio.h"
 #include "tm.h"
 
 #ifndef elementsof

@@ -25,7 +25,9 @@
 #ifndef _AST_INTERCEPT_H
 #define _AST_INTERCEPT_H 1
 
+#include <stdint.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #define AST_SERIAL_ENVIRON 1
 #define AST_SERIAL_LOCALE 2

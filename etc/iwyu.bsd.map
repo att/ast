@@ -94,6 +94,8 @@
     { symbol: ["gid_t", "private", "<sys/types.h>", "public"] },
     { symbol: ["size_t", "private", "<sys/types.h>", "public"] },
     { symbol: ["ssize_t", "private", "<sys/types.h>", "public"] },
+    { symbol: ["int8_t", "private", "<sys/types.h>", "public"] },
+    { symbol: ["uint8_t", "private", "<sys/types.h>", "public"] },
     { symbol: ["int16_t", "private", "<sys/types.h>", "public"] },
     { symbol: ["uint16_t", "private", "<sys/types.h>", "public"] },
     { symbol: ["int32_t", "private", "<sys/types.h>", "public"] },

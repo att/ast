@@ -19,7 +19,15 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "sfio.h"
+#include "terror.h"
 
 static int Count = 0;
 static Sfdisc_t Disc;

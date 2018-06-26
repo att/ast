@@ -20,7 +20,11 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <locale.h>
-#include "sftest.h"
+#include <string.h>
+
+#include "ast_std.h"
+#include "sfio.h"
+#include "terror.h"
 
 tmain() {
     char buf[128], cmp[128];

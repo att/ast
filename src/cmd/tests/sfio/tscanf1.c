@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <string.h>
+#include <sys/types.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 /* test to see sfvscanf still works ok with a discipline that
 ** returns one byte at a time.

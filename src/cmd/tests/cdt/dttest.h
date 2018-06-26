@@ -18,7 +18,6 @@
  *                                                                      *
  ***********************************************************************/
 #include "cdt.h"
-#include "terror.h"
 
 __attribute__((unused)) static int compare(Dt_t *dt, void *o1, void *o2, Dtdisc_t *disc) {
     return (int)((char *)o1 - (char *)o2);

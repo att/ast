@@ -19,7 +19,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
+#include "cdt.h"
 #include "dttest.h"
+#include "terror.h"
 
 static char Space[16 * 1024 * 1024];
 static char *Current = &Space[0];

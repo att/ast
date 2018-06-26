@@ -20,7 +20,12 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <sched.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include "aso.h"
 #include "terror.h"
 
 /* Test concurrency locking based on Atomic Scalar Operations

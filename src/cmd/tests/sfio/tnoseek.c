@@ -19,7 +19,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stddef.h>
+
+#include "sfio.h"
+#include "terror.h"
 
 char *buffer;
 size_t size;

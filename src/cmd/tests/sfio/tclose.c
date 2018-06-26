@@ -19,7 +19,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sftest.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/signal.h>
+#include <unistd.h>
+
+#include "ast_intercept.h"
+#include "sfio.h"
+#include "terror.h"
 
 static int Write_error = 0;
 
