@@ -1,4 +1,6 @@
 This directory contains code for platform feature detection. Such as which
-header files are available, functions, syscalls, system libraries and whether
-syscalls/functions provide specific functionality. It does not contain any
-code included in `ksh`.
+header files, functions, syscalls, system libraries are available. Also,
+whether syscalls/functions provide specific functionality. It does not
+contain any code directly included in `ksh` although it may generate
+files (both .h and .c) that are needed to build ksh. Those generated
+files should be placed in the `build` directory.
