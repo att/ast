@@ -40,6 +40,8 @@ tmain() {
 
     static char tst[] = "hello-world";
 
+    setlocale(LC_ALL, "");
+
 #if _hdr_wchar
 
 #if _PACKAGE_ast

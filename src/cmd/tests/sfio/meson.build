@@ -11,22 +11,18 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
                    'tresize.c', 'tscanf.c', 'tscanf1.c', 'tseek.c', 'tsetbuf.c',
                    'tsetfd.c', 'tsfstr.c', 'tshare.c', 'tsize.c', 'tstack.c',
                    'tstatus.c',  'tstkpk.c', 'tstring.c', 'tswap.c', 'tsync.c',
-                   'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twalk.c',
-                   'twhole.c', 'twrrd.c']
+                   'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twalk.c', 'twhole.c',
+                   'twrrd.c', 'tprintf.c', 'tstdio.c', 'twc.c', 'twchar.c' ]
 
-# TODO: Fix and enable these test cases.
-# 'tprintf.c', 'tstdio.c', 'twc.c', 'twchar.c',
+# TODO: This test fails due to a use after free bug. Enable it when that is fixed. For some reason
+# this affects Linux systems but not BSD systems. It results in a SIGSEGV on the `sfclose(fs);`
+# statement. Apparently the earlier `sfstack(f, fs);` call to create a reference to the `f` handle
+# did not ensure the underlying Sfio_t structure was not freed when `f` was closed.
+#
+# 'tdisc.c'
 
-# TODO: This test fails due to use after free issue. Fix it.
-# https://github.com/att/ast/issues/398
-# 'tdisc.c',
 
-# TODO: This test causes mmap() to fail delibrately to check if sfio is tolerant to such failiures
-# It fails to compile on opensuse, so I am marking it to be fixed later.
-# 'tmmap2read.c',
-
-incdir = include_directories('..',
-                             '../../../lib/libast/include/')
+incdir = include_directories('..', '../../../lib/libast/include/')
 
 foreach file: sfio_test_files
     sfio_test_target = executable(file, file,

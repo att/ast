@@ -202,6 +202,12 @@ static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     int n, v;
     char b[16]; /* assuming that SFMBMAX <= 16! */
 
+#if 0
+    // TODO: Figure out why the author of this code thought this was legal.
+    // Specifically, the memcpy() which modifies the buffer. This causes a SIGSEGV if the buffer is
+    // in a read-only memory page. This was found via one of the sfsscanf() tests in
+    // src/cmd/tests/sfio/twchar.c.
+
     /* shift left data so that there will be more room to back up on error.
        this won't help streams with small buffers - c'est la vie! */
     if (sc->d > sc->f->data && (n = sc->endd - sc->d) > 0 && n < SFMBMAX) {
@@ -213,6 +219,7 @@ static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
         sc->endd = sc->f->endb;
         if (!mbs) sc->f->endb = sc->endd; /* stop cc's "unused mbs" warning */
     }
+#endif
 
     for (n = 0; n < SFMBMAX;) {
         if ((v = _scgetc((void *)sc, 0)) <= 0)

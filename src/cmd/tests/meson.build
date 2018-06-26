@@ -1,7 +1,4 @@
-test_files = [ 'base64.c' ]
-
-# TODO: Build and enable these test cases.
-# 'date.c', 'ip6.c', 'opt.c', 'strelapsed.c', 'strtof.c', 'strtoi.c'
+test_files = [ 'base64.c', 'date.c', 'ip6.c', 'opt.c', 'strelapsed.c', 'strtof.c', 'strtoi.c' ]
 
 incdir = include_directories('../../lib/libast/include/')
 
@@ -10,7 +7,12 @@ foreach file: test_files
                              include_directories: [configuration_incdir, incdir],
                              link_with: [libast],
                              install: false)
-    test('API/' + file, test_target)
+    # TODO: Enable these test cases.
+    #
+    # For the moment we only build the programs to verify they can be built and to enable linting
+    # them. Running the tests will require converting the *.rt and *.tst files into scripts.
+    #
+    # test('API/' + file, test_target)
 endforeach
 
 subdir('aso')
