@@ -24,13 +24,13 @@ for file_item in input_json:
 json.dump(output_json, open(output_build_db, mode='w'), indent=4)
 if files_to_lint:
     # There were source files for which we could not find a build rule.
-    for f in files_to_lint:
+    for f in sorted(files_to_lint):
         if f.startswith("../"):
             f = f[3:]  # change "../src/..." to "src/..."
         print("WARN: No build rule so ignoring file: {!r}".format(f),
               file=sys.stderr)
 
-for f in source_files:
+for f in sorted(source_files):
     print(f)
 
 sys.exit(0)
