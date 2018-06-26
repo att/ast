@@ -7,12 +7,14 @@ services:
 matrix:
     include:
         - env:
-            - $PROJECT_NAME=kshdb
+            - PROJECT_NAME=kshdb
               GIT_URL="https://github.com/rocky/kshdb.git"
               COMMANDS="ksh ./autogen.sh; make test"
 
 script:
     - docker pull fedora
+
+      # Test builds from https://copr.fedorainfracloud.org/coprs/g/ksh/latest/
     - docker run fedora bash -c "
       dnf install -y 'dnf-command(copr)';
       dnf copr enable -y @ksh/latest;
