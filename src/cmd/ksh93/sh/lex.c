@@ -465,6 +465,7 @@ int sh_lex(Lex_t *lp) {
                     lp->token = '\n';
                     return lp->token;
                 }
+                // FALL THRU
             }
             case S_BLNK: {
                 if (lp->lex.incase <= TEST_RE) continue;
@@ -829,8 +830,7 @@ int sh_lex(Lex_t *lp) {
             }
             case S_ALP: {
                 if (c == '.' && endchar(lp) == '$') goto err;
-                // FALL THRU (probably but the code didn't have this comment
-                // before I restyled it).
+                // FALL THRU
             }
             case S_SPC2: {
 #if SHOPT_BASH
@@ -839,6 +839,7 @@ int sh_lex(Lex_t *lp) {
                     sh_syntax(lp);
                 }
 #endif
+                // FALL THRU
             }
             case S_DIG: {
                 wordflags |= ARG_MAC;
@@ -855,9 +856,11 @@ int sh_lex(Lex_t *lp) {
                     case '@':
                     case '!': {
                         if (n != S_ALP && n != S_DIG) goto dolerr;
+                        // FALL THRU
                     }
                     case '#': {
                         if (c == '#') n = S_ALP;
+                        // FALL THRU
                     }
                     case RBRACE: {
                         if (n == S_ALP) {
@@ -868,15 +871,17 @@ int sh_lex(Lex_t *lp) {
                             c = fcgetc();
                             if (c > 0) fcseek(-LEN);
                             if (state[c] == S_ALP) goto err;
-                            if (n == S_DIG)
+                            if (n == S_DIG) {
                                 setchar(lp, '0');
-                            else
+                            } else {
                                 setchar(lp, '!');
+                            }
                         }
                         break;
                     }
                     case '0': {
                         if (n == S_DIG) break;
+                        goto dolerr;
                     }
                     default: { goto dolerr; }
                 }
