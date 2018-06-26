@@ -1,0 +1,22 @@
+# Test compatibility with applications written in ksh
+sudo: required
+
+services:
+    - docker
+
+matrix:
+    include:
+        - env:
+            - $PROJECT_NAME=kshdb
+              GIT_URL="https://github.com/rocky/kshdb.git"
+              COMMANDS="ksh ./autogen.sh; make test"
+
+script:
+    - docker pull fedora
+    - docker run fedora bash -c "
+      dnf install -y 'dnf-command(copr)';
+      dnf copr enable -y @ksh/latest;
+      dnf install -y ksh git autoconf automake make;
+      git clone $GIT_URL;
+      cd $PROJECT_NAME;
+      $COMMANDS"
