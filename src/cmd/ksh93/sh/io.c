@@ -2705,7 +2705,7 @@ bool sh_isdevfd(const char *fd) {
     return true;
 }
 
-#ifndef _AST_INTERCEPT
+#ifndef _AST_INTERCEPT_H
 
 int sh_fchdir(int fd) {
     int r, err = errno;
@@ -2730,4 +2730,4 @@ int sh_stat(const char *path, struct stat *statb) {
     return r;
 }
 
-#endif /* _AST_INTERCEPT */
+#endif  // _AST_INTERCEPT_H

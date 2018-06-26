@@ -78,7 +78,7 @@ char e_version[] =
 #define ATTRS 1
     "B"
 #endif
-#if _AST_INTERCEPT
+#if _AST_INTERCEPT_H
 #define ATTRS 1
     "I"
 #endif

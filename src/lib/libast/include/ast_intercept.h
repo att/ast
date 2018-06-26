@@ -22,11 +22,6 @@
 /*
  * ast function intercepts
  */
-#if !defined(_AST_INTERCEPT_H) && !_BLD_ast && _API_ast && \
-    _API_ast < 20130625 /* <ast_api.h> not in scope yet */
-#define _AST_INTERCEPT 0
-#endif
-
 #ifndef _AST_INTERCEPT_H
 #define _AST_INTERCEPT_H 1
 
