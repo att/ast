@@ -1,0 +1,3 @@
+This directory is for files needed by the commands in the `bin` or `scripts`
+directory. These will typically be config files and the like for the tools
+used by those commands and scripts.
