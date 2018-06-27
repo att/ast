@@ -23,7 +23,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "ast_intercept.h"
 #include "sfio.h"
 #include "terror.h"
 

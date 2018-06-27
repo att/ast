@@ -45,7 +45,6 @@
 
 #include "ast.h"
 #include "ast_aso.h"
-#include "ast_intercept.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -250,9 +249,6 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     if (shp->bltinfun) action = notify_builtin(shp, sig);
     if (action > 0) goto done;
     shp->trapnote |= flag;
-#ifdef AST_SERIAL_RESTART
-    if (flag & (SH_SIGSET | SH_SIGTRAP)) astserial(AST_SERIAL_RESTART, AST_SERIAL_except);
-#endif
     if (sig < shp->gd->sigmax) shp->sigflag[sig] |= flag;
     if (pp->mode == SH_JMPCMD && sh_isstate(shp, SH_STOPOK)) {
         if (action < 0) goto done;

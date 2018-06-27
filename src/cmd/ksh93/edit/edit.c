@@ -46,7 +46,6 @@
 
 #include "ast.h"
 #include "ast_ccode.h"
-#include "ast_intercept.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"

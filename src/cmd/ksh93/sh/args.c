@@ -33,7 +33,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_intercept.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "edit.h"

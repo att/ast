@@ -28,6 +28,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/stat.h>
+
 #include "ast.h"
 
 #include "ast_dir.h"

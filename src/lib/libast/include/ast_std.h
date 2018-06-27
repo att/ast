@@ -232,8 +232,6 @@ extern int rename(const char *, const char *);
  * _AST_STD_I delays headers that require <ast_map.h>
  */
 
-#include "ast_intercept.h"
-
 #undef _AST_STD_I
 
 #if _AST_GETOPT_H < 0

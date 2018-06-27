@@ -3,6 +3,6 @@ libast_files += [
     'port/astconf.c',
     'port/astquery.c',
     'port/astwinsize.c', 'port/codeset.c', 'port/iblocks.c',
-    'port/intercept.c', 'port/lc.c', meson.build_root() + '/features/locales/lctab.c',
+    'port/lc.c', meson.build_root() + '/features/locales/lctab.c',
     'port/mc.c', 'port/touch.c'
 ]

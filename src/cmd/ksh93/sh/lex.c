@@ -44,7 +44,6 @@ Shell_t sh = {1};
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_intercept.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"

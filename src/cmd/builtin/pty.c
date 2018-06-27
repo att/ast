@@ -42,7 +42,6 @@
 
 #include "ast.h"
 #include "ast_api.h"
-#include "ast_intercept.h"
 #include "cmd.h"
 #include "error.h"
 #include "option.h"

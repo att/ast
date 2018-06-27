@@ -30,7 +30,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_intercept.h"
 #include "builtins.h"
 #include "edit.h"
 #include "error.h"
