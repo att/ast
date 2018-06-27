@@ -392,20 +392,16 @@ static_fn Pathcomp_t *defpath_init(Shell_t *shp) {
 }
 
 static_fn void path_init(Shell_t *shp) {
-    const char *val;
-    Pathcomp_t *pp;
-
-    val = sh_scoped(shp, (PATHNOD))->nvalue.cp;
+    const char *val = sh_scoped(shp, (PATHNOD))->nvalue.cp;
     if (val) {
-        shp->pathlist = pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
+        shp->pathlist = path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_PATH);
     } else {
-        if (!(pp = (Pathcomp_t *)shp->defpathlist)) pp = defpath_init(shp);
-        shp->pathlist = (void *)path_dup(pp);
+        Pathcomp_t *pp = shp->defpathlist;
+        if (!pp) pp = defpath_init(shp);
+        shp->pathlist = path_dup(pp);
     }
     val = sh_scoped(shp, (FPATHNOD))->nvalue.cp;
-    if (val) {
-        pp = (void *)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_FPATH);
-    }
+    if (val) (void)path_addpath(shp, (Pathcomp_t *)shp->pathlist, val, PATH_FPATH);
 }
 
 //
@@ -568,7 +564,8 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
     int fno;
     Pathcomp_t *pp = 0;
 
-    if (name && strchr(name, '/')) {
+    assert(name);
+    if (strchr(name, '/')) {
         stkseek(shp->stk, PATH_OFFSET);
         sfputr(shp->stk, name, -1);
         if (canexecute(shp, stkptr(shp->stk, PATH_OFFSET), 0) < 0) {
@@ -791,7 +788,6 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                       NV_LTOU | NV_FUNCTION);
             funload(shp, f, name);
             sh_close(f);
-            f = -1;
             return NULL;
         } else if (f >= 0 && (oldpp->flags & PATH_STD_DIR)) {
             int n = stktell(shp->stk);
@@ -1208,7 +1204,6 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
             sh_close(10);
             fcntl(n, F_DUPFD_CLOEXEC, 10);
             sh_close(n);
-            n = 10;
         }
     }
     savet = *--argv;
@@ -1235,9 +1230,8 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
 
 fail:
     // The following code is just for compatibility.
-    if ((n = open(path, O_RDONLY | O_CLOEXEC, 0)) < 0) {
-        errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
-    }
+    n = open(path, O_RDONLY | O_CLOEXEC, 0);
+    if (n == -1) errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path);
     if (savet) *argv++ = savet;
 
 openok:
