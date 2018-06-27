@@ -2256,7 +2256,8 @@ static_fn void endfield(Mac_t *mp, int split) {
 //
 static_fn int substring(const char *string, size_t len, const char *pat, int match[], int flag) {
     const char *sp = string;
-    int size, nmatch, n;
+    int size, n;
+    int nmatch = 0;
     int smatch[2 * (MATCH_MAX + 1)];
 
     if (flag) {

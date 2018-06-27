@@ -701,7 +701,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     struct slnod *volatile slp = 0;
     Stak_t *volatile savstak = 0;
     Sfoff_t first, last;
-    struct functnod *volatile fp;
+    struct functnod *volatile fp = NULL;
     Sfio_t *iop;
     unsigned long current = lexp->current;
     int nargs = 0, size = 0, jmpval, saveloop = loop_level;
@@ -1108,7 +1108,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
             break;
         }
         case IFSYM: {  // if statement
-            Shnode_t *tt;
+            Shnode_t *tt = NULL;
             t = getnode(ifnod);
             t->if_.iftyp = TIF;
             t->if_.iftre = sh_cmd(lexp, THENSYM, SH_NL);
