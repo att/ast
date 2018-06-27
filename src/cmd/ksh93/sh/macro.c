@@ -1870,9 +1870,6 @@ static_fn void comsubst(Mac_t *mp, Shnode_t *t, volatile int type) {
     mp->shp->argaddr = 0;
     savemac = *mp;
     mp->shp->st.staklist = 0;
-#if SHOPT_COSHELL
-    if (mp->shp->inpool) return;
-#endif  // SHOPT_COSHELL
     if (type) {
         sp = 0;
         fcseek(-1);
@@ -2505,11 +2502,7 @@ static_fn char *special(Shell_t *shp, int c) {
         }
         case '!': {
             if (shp->bckpid) {
-#if SHOPT_COSHELL
-                return sh_pid2str(shp, shp->bckpid);
-#else
                 return ltos(shp->bckpid);
-#endif /* SHOPT_COSHELL */
             }
             break;
         }

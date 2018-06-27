@@ -109,9 +109,6 @@ static struct subshell {
     int subdup;
     char subshare;
     char comsub;
-#if SHOPT_COSHELL
-    void *coshell;
-#endif  // SHOPT_COSHELL
 } * subshell_data;
 
 static long subenv;
@@ -484,10 +481,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     sp->jobs = job_subsave();
     sp->subdup = shp->subdup;
     shp->subdup = 0;
-#if SHOPT_COSHELL
-    sp->coshell = shp->coshell;
-    shp->coshell = 0;
-#endif  // SHOPT_COSHELL
     // Make sure initialization has occurred.
     if (!shp->pathlist) {
         shp->pathinit = 1;
@@ -732,9 +725,6 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
     }
     shp->subshare = sp->subshare;
     shp->subdup = sp->subdup;
-#if SHOPT_COSHELL
-    shp->coshell = sp->coshell;
-#endif  // SHOPT_COSHELL
     if (shp->subshell) SH_SUBSHELLNOD->nvalue.i16 = --shp->subshell;
     subshell = shp->subshell;
     subshell_data = sp->prev;

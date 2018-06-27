@@ -911,9 +911,6 @@ Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
         if (*name == '.' && root == shp->var_tree && !dp) root = shp->var_base;
         np = dtmatch(root, (void *)name);
     }
-#if SHOPT_COSHELL
-    if (shp->inpool) mode |= HASH_NOSCOPE;
-#endif  // SHOPT_COSHELL
     if (!np && (mode & NV_ADD)) {
         if (shp->namespace && !(mode & HASH_NOSCOPE) && root == shp->var_tree) {
             root = nv_dict(shp->namespace);
