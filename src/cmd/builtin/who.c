@@ -159,7 +159,7 @@ typedef struct {
 #define FLAG_H 8
 #define FLAG_Q 0x10
 
-static void outline(Sfio_t *out, register struct utmpx *up, register State_t *sp) {
+static void outline(Sfio_t *out, struct utmpx *up, State_t *sp) {
     struct stat statb;
     time_t t = up->ut_time;
     char *date = ctime(&t);
@@ -240,7 +240,7 @@ static int who(Sfio_t *in, Sfio_t *out, int flags) {
 }
 
 int b_who(int argc, char **argv, Shbltin_t *context) {
-    register int n, flags = 0;
+    int n, flags = 0;
     Sfio_t *sp;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);

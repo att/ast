@@ -58,9 +58,9 @@ static const char usage[] =
 
 #include "cmd.h"
 
-static int asa(register Sfio_t *in, Sfio_t *out, int reclen) {
-    register char *cp;
-    register int n, c = 0;
+static int asa(Sfio_t *in, Sfio_t *out, int reclen) {
+    char *cp;
+    int n, c = 0;
     while (1) {
         if (reclen > 0)
             cp = sfreserve(in, n = reclen, -1);
@@ -97,9 +97,9 @@ static int asa(register Sfio_t *in, Sfio_t *out, int reclen) {
 }
 
 int b_asa(int argc, char **argv, Shbltin_t *context) {
-    register char *cp;
-    register Sfio_t *fp;
-    register int n, reclen = 0;
+    char *cp;
+    Sfio_t *fp;
+    int n, reclen = 0;
 
     cmdinit(argc, argv, (void *)0, ERROR_CATALOG, 0);
     while (n = optget(argv, usage)) {

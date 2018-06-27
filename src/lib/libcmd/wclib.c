@@ -56,8 +56,8 @@
 #define spc(c) ((c)&WC_SP)
 
 Wc_t *wc_init(int mode) {
-    register int n;
-    register int w;
+    int n;
+    int w;
     Wc_t *wp;
     wp = (Wc_t *)stakalloc(sizeof(Wc_t));
     if (!wp) return 0;
@@ -110,7 +110,7 @@ static int invalid(const char *file, int nlines) {
  * handle utf space characters
  */
 
-static int chkstate(int state, register unsigned int c) {
+static int chkstate(int state, unsigned int c) {
     switch (state) {
         case 1:
             state = (c == 0x9a ? 4 : 0);
@@ -152,17 +152,17 @@ static int chkstate(int state, register unsigned int c) {
  */
 
 int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
-    register char *type = wp->type;
-    register unsigned char *cp;
-    register Sfoff_t nbytes;
-    register Sfoff_t nchars;
-    register Sfoff_t nwords;
-    register Sfoff_t nlines;
-    register Sfoff_t eline = -1;
-    register Sfoff_t longest = 0;
-    register ssize_t c;
-    register unsigned char *endbuff;
-    register int lasttype = WC_SP;
+    char *type = wp->type;
+    unsigned char *cp;
+    Sfoff_t nbytes;
+    Sfoff_t nchars;
+    Sfoff_t nwords;
+    Sfoff_t nlines;
+    Sfoff_t eline = -1;
+    Sfoff_t longest = 0;
+    ssize_t c;
+    unsigned char *endbuff;
+    int lasttype = WC_SP;
     unsigned int lastchar;
     ssize_t n;
     ssize_t o;

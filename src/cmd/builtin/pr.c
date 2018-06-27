@@ -144,7 +144,7 @@ typedef struct _pr_ {
  * allocate and initialize pr global data
  */
 static Pr_t *prinit(void) {
-    register Pr_t *pp;
+    Pr_t *pp;
     if (!(pp = (Pr_t *)stakalloc(DATESZ + sizeof(Pr_t)))) return 0;
     pp->columns = 1;
     pp->pageskip = pp->pageno = 0;
@@ -164,7 +164,7 @@ static Pr_t *prinit(void) {
 /*
  * print the page header
  */
-static int prheader(register Pr_t *pp) {
+static int prheader(Pr_t *pp) {
     char *header = "";
     if (pp->header)
         header = pp->header;
@@ -180,8 +180,8 @@ static int prheader(register Pr_t *pp) {
 /*
  * print the page trailer
  */
-static int prtrailer(register Pr_t *pp, int line) {
-    register int n = pp->pagelen - line;
+static int prtrailer(Pr_t *pp, int line) {
+    int n = pp->pagelen - line;
     if (pp->flags & D_FLAG) {
         if (n == 0)
             n = !pp->pageodd;
@@ -199,9 +199,9 @@ static int prtrailer(register Pr_t *pp, int line) {
 /*
  * fastest version, process a page at a time
  */
-static void prpage(register Pr_t *pp) {
-    register int n, tflag = !(pp->flags & T_FLAG);
-    register Sfio_t *out = 0;
+static void prpage(Pr_t *pp) {
+    int n, tflag = !(pp->flags & T_FLAG);
+    Sfio_t *out = 0;
     while (1) {
         if (pp->pageno++ >= pp->pageskip) out = pp->outfile;
         if (out && tflag) prheader(pp);
@@ -220,8 +220,8 @@ static void prpage(register Pr_t *pp) {
  *  <col> is the number of columns until the next tab position
  *  The number of characters written is returned
  */
-static int outspaces(register Pr_t *pp, register int spaces, register int col) {
-    register int n = 0;
+static int outspaces(Pr_t *pp, int spaces, int col) {
+    int n = 0;
     if (pp->ogap) {
         /* changes spaces  <pp->otab> */
         while (spaces >= col) {
@@ -242,11 +242,11 @@ static int outspaces(register Pr_t *pp, register int spaces, register int col) {
  * <spaces> give the number of spaces that precede the field
  * This routine returns the number of spaces at end of field
  */
-static int outcol(register Pr_t *pp, char *buff, register int size, int spaces) {
-    register char *state = pp->state;
-    register int n = S_NL, col = 0;
-    register char *cp, *buffend;
-    register int omod = 0;
+static int outcol(Pr_t *pp, char *buff, int size, int spaces) {
+    char *state = pp->state;
+    int n = S_NL, col = 0;
+    char *cp, *buffend;
+    int omod = 0;
     if (pp->igap || pp->ogap) {
         cp = buff;
         buffend = cp + size;
@@ -312,9 +312,9 @@ static int outcol(register Pr_t *pp, char *buff, register int size, int spaces) 
 /*
  * print a line at a time
  */
-static int prline(register Pr_t *pp) {
-    register int n, line = pp->pagelen;
-    register char *cp;
+static int prline(Pr_t *pp) {
+    int n, line = pp->pagelen;
+    char *cp;
     pp->colno = pp->offset;
     if (pp->pageskip > 0) {
         n = pp->pageskip * pp->pagelen;
@@ -345,9 +345,9 @@ static int prline(register Pr_t *pp) {
 /*
  * output page containing <n> fields
  */
-static int outpage(register Pr_t *pp, int n) {
-    register char *cp, **next = pp->fieldlist;
-    register int line = 0, incr, size, j, c, old;
+static int outpage(Pr_t *pp, int n) {
+    char *cp, **next = pp->fieldlist;
+    int line = 0, incr, size, j, c, old;
     if (pp->pageno++ < pp->pageskip) {
         pp->lineno += pp->pagelen;
         return 0;
@@ -400,10 +400,10 @@ static int outpage(register Pr_t *pp, int n) {
  * This routine processes multi-column and merged files
  * The data is put into in array and printed when the page fills.
  */
-static int prcol(register Pr_t *pp) {
-    register char *cp, **next, **nextmax;
-    register int n = 0, size;
-    register Sfio_t *fp = pp->infile;
+static int prcol(Pr_t *pp) {
+    char *cp, **next, **nextmax;
+    int n = 0, size;
+    Sfio_t *fp = pp->infile;
     int nstream, r = 0, skip = pp->pageskip;
     nextmax = pp->fieldlist + pp->columns * pp->pagelen;
     do {
@@ -448,10 +448,10 @@ static int prcol(register Pr_t *pp) {
 }
 
 static ssize_t c_read(Sfio_t *fp, void *buf, size_t n, Sfdisc_t *dp) {
-    register Pr_t *pp = (Pr_t *)dp;
-    register char *s = (char *)buf;
-    register char *e = s + n;
-    register int c;
+    Pr_t *pp = (Pr_t *)dp;
+    char *s = (char *)buf;
+    char *e = s + n;
+    int c;
     ssize_t z;
 
     static const char hat[] = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_";
@@ -487,11 +487,11 @@ static ssize_t c_read(Sfio_t *fp, void *buf, size_t n, Sfdisc_t *dp) {
 }
 
 static ssize_t v_read(Sfio_t *fp, void *buf, size_t n, Sfdisc_t *dp) {
-    register Pr_t *pp = (Pr_t *)dp;
-    register char *s = (char *)buf;
-    register char *e = s + n;
-    register char *t;
-    register int c;
+    Pr_t *pp = (Pr_t *)dp;
+    char *s = (char *)buf;
+    char *e = s + n;
+    char *t;
+    int c;
     ssize_t z;
 
     if (pp->control.cur >= pp->control.end) {
@@ -525,10 +525,10 @@ static ssize_t v_read(Sfio_t *fp, void *buf, size_t n, Sfdisc_t *dp) {
 }
 
 int b_pr(int argc, char **argv, Shbltin_t *context) {
-    register int n;
-    register Pr_t *pp;
-    register char *cp;
-    register Sfio_t *fp;
+    int n;
+    Pr_t *pp;
+    char *cp;
+    Sfio_t *fp;
     struct stat statb;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);

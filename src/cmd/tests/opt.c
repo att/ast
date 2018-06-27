@@ -74,12 +74,12 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
 }
 
 static char *translate(const char *locale, const char *id, const char *catalog, const char *msg) {
-    register int c;
-    register int i;
-    register char *s;
-    register char *t;
-    register char *e;
-    register char *r;
+    int c;
+    int i;
+    char *s;
+    char *t;
+    char *e;
+    char *r;
 
     static char buf[8 * 1024];
 
