@@ -27,8 +27,6 @@
  *
  * see comments in testdate.dat for description of format
  */
-static const char id[] = "\n@(#)$Id: testdate (AT&T Research) 2005-01-04 $\0\n";
-
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
@@ -135,7 +133,8 @@ static int hex(int c) { return isdigit(c) ? (c - '0') : (c - (isupper(c) ? 'A' :
 static void escape(char *s) {
     char *t;
 
-    for (t = s; *t = *s; s++, t++) {
+    for (t = s; *s; s++, t++) {
+        *t = *s;
         if (*s != '\\') continue;
         switch (*++s) {
             case 0:
@@ -237,7 +236,7 @@ int main(int argc, char **argv) {
         signal(SIGSEGV, gotcha);
     }
     t_now = time(NULL);
-    while (p = sfgetr(sfstdin, '\n', 1)) {
+    while ((p = sfgetr(sfstdin, '\n', 1))) {
         state.lineno++;
 
         /* parse: */
@@ -279,9 +278,12 @@ int main(int argc, char **argv) {
 
         if (i < 3) bad("too few fields\n", NULL, NULL);
         while (i < elementsof(field)) field[i++] = 0;
-        if (str = field[0]) escape(str);
-        if (fmt = field[1]) escape(fmt);
-        if (!(ans = field[2])) bad("NIL answer", NULL, NULL);
+        str = field[0];
+        if (str) escape(str);
+        fmt = field[1];
+        if (fmt) escape(fmt);
+        ans = field[2];
+        if (!ans) bad("NIL answer", NULL, NULL);
         if (str) {
             if (streq(str, "SET")) {
                 if (!fmt) bad("NIL SET variable", NULL, NULL);
@@ -301,8 +303,10 @@ int main(int argc, char **argv) {
                 }
                 t_now = tmdate(fmt, &e, &t_now);
                 if (*e) bad("invalid NOW", fmt, NULL);
-                if (fmt = ans) escape(fmt);
-                if (!(ans = field[3])) bad("NIL answer", NULL, NULL);
+                fmt = ans;
+                if (fmt) escape(fmt);
+                ans = field[3];
+                if (!ans) bad("NIL answer", NULL, NULL);
             }
         }
         flags = 0;

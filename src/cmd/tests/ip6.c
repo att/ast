@@ -34,7 +34,8 @@ int main(int argc, char **argv) {
     int r;
     int all = 1;
 
-    while (s = *++argv) {
+    while (*++argv) {
+        s = *argv;
         if (*s == '-' && !*(s + 1)) {
             all = !all;
             continue;

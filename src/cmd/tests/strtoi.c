@@ -89,11 +89,12 @@ int main(int argc, char **argv) {
 #endif
 
     if (argc <= 1) {
-        printf("%u/%u\n", sizeof(l) * 8, sizeof(ll) * 8);
+        printf("%lu/%lu\n", sizeof(l) * 8, sizeof(ll) * 8);
         return 0;
     }
     decimal = *localeconv()->decimal_point;
-    while (s = *++argv) {
+    while (*++argv) {
+        s = *argv;
         if (!strncmp(s, "LC_ALL=", 7)) {
 #if _PACKAGE_ast
             p = s + 7;
@@ -136,21 +137,21 @@ int main(int argc, char **argv) {
         errno = 0;
         ll = strtoll(s, &p, 0);
         printf(
-            "strtoll   \"%s\" \"%s\" %lld %s\n", s, p, ll,
+            "strtoll   \"%s\" \"%s\" %ju %s\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         b = 0;
         ll = strtonll(s, &p, &b, m);
         printf(
-            "strtonll  \"%s\" \"%s\" %lld %s %d\n", s, p, ll,
+            "strtonll  \"%s\" \"%s\" %ju %s %d\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
             b);
 
         errno = 0;
         ll = strtoull(s, &p, 0);
         printf(
-            "strtoull  \"%s\" \"%s\" %llu %s\n", s, p, ll,
+            "strtoull  \"%s\" \"%s\" %ju %s\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
 #if _PACKAGE_ast
@@ -199,20 +200,20 @@ int main(int argc, char **argv) {
         errno = 0;
         ll = strntoll(s, n, &p, 0);
         printf(
-            "strntoll   %2d \"%s\" \"%s\" %lld %s\n", n, s, p, ll,
+            "strntoll   %2d \"%s\" \"%s\" %ju %s\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strntoll(s, n - 1, &p, 0);
         printf(
-            "strntoll   %2d \"%s\" \"%s\" %lld %s\n", n - 1, s, p, ll,
+            "strntoll   %2d \"%s\" \"%s\" %ju %s\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         b = 0;
         ll = strntonll(s, n, &p, &b, m);
         printf(
-            "strntonll %2d \"%s\" \"%s\" %lld %s %d\n", n, s, p, ll,
+            "strntonll %2d \"%s\" \"%s\" %ju %s %d\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
             b);
 
@@ -220,20 +221,20 @@ int main(int argc, char **argv) {
         b = 0;
         ll = strntonll(s, n - 1, &p, &b, m);
         printf(
-            "strntonll %2d \"%s\" \"%s\" %lld %s %d\n", n - 1, s, p, ll,
+            "strntonll %2d \"%s\" \"%s\" %ju %s %d\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
             b);
 
         errno = 0;
         ll = strntoull(s, n, &p, 0);
         printf(
-            "strntoull %2d \"%s\" \"%s\" %llu %s\n", n, s, p, ll,
+            "strntoull %2d \"%s\" \"%s\" %ju %s\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strntoull(s, n - 1, &p, 0);
         printf(
-            "strntoull %2d \"%s\" \"%s\" %llu %s\n", n - 1, s, p, ll,
+            "strntoull %2d \"%s\" \"%s\" %ju %s\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 #endif
     }

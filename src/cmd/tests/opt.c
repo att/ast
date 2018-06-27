@@ -106,7 +106,7 @@ static char *translate(const char *locale, const char *id, const char *catalog, 
                         break;
                     }
                 } while (!isalpha(c) ||
-                         (!islower(c) || c == 'h' || c == 'l') && (t < e) && isalpha(*s));
+                         ((!islower(c) || c == 'h' || c == 'l') && t < e && isalpha(*s)));
                 break;
             case '\b':
                 do {
@@ -119,7 +119,8 @@ static char *translate(const char *locale, const char *id, const char *catalog, 
                 } while (c != '\b');
                 break;
             default:
-                if (r = strchr(rot, c)) {
+                r = strchr(rot, c);
+                if (r) {
                     c = *(r + 13);
                     if (i) c = isupper(c) ? tolower(c) : toupper(c);
                 }
@@ -154,17 +155,17 @@ int main(int argc, char **argv) {
     extra = 0;
     ext = 0;
     str = 0;
-    while (command = *(argv + 1)) {
+    while (*(argv + 1)) {
+        command = *(argv + 1);
         if (*command == '=' && (s = strchr(command + 1, '='))) {
             argv++;
             *s++ = 0;
             command++;
-            if (ip = newof(0, Info_t, 1, 0)) {
-                ip->name = command;
-                ip->value = s;
-                ip->next = info;
-                info = ip;
-            }
+            ip = newof(0, Info_t, 1, 0);
+            ip->name = command;
+            ip->value = s;
+            ip->next = info;
+            info = ip;
         } else if (streq(command, "-")) {
             argv++;
             str = NEW;
@@ -229,7 +230,8 @@ int main(int argc, char **argv) {
             }
         }
         if (!str && *(argv += opt_info.index))
-            while (command = *argv++) {
+            while (*argv) {
+                command = *argv++;
                 if (loop) sfprintf(sfstdout, "[%d] ", loop);
                 sfprintf(sfstdout, "argument=%d value=\"%s\"\n", ++str, command);
             }

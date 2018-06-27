@@ -35,7 +35,8 @@ int main(int argc, char **argv) {
     unsigned long t;
     int n;
 
-    while (s = *++argv) {
+    while (*++argv) {
+        s = *argv;
         n = (int)strtol(s, &e, 0);
         if (*e) {
             sfprintf(sfstderr, "%s: number expected", s);

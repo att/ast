@@ -35,10 +35,6 @@ tmain() {
 
     setlocale(LC_ALL, "");
 
-#if _hdr_wchar
-
-#if _PACKAGE_ast
-
     swprintf(wuf, sizeof(wuf), L"%ls", L"hello-world");
     wcstombs(str, wuf, sizeof(str));
     if (strcmp(tst, str)) terror("swprintf %%ls \"%s\" expected, \"%s\" returned", tst, str);
@@ -73,8 +69,6 @@ tmain() {
     wcstombs(str, wuf, sizeof(str));
     if (strcmp(tst, str)) terror("swprintf %%C \"%s\" expected, \"%s\" returned", tst, str);
 
-#endif
-
     sfsprintf(buf, sizeof(buf), "%ls", L"hello-world");
     if (strcmp(tst, buf)) terror("sfsprintf %%ls \"%s\" expected, \"%s\" returned", tst, buf);
 
@@ -104,8 +98,6 @@ tmain() {
     sfsprintf(buf, sizeof(buf), "%C%C%C%C%C%C%C%C%C%C%C", L'h', L'e', L'l', L'l', L'o', L'-', L'w',
               L'o', L'r', L'l', L'd');
     if (strcmp(tst, buf)) terror("sfsprintf %%C \"%s\" expected, \"%s\" returned", tst, buf);
-
-#endif
 
     texit(0);
 }
