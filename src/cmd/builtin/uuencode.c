@@ -59,7 +59,7 @@ static const char usage[] =
     "[+SEE ALSO?\bmailx\b(1), \buudecode\b(1)]";
 
 static int optinfo(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
-    register Uumeth_t *mp;
+    Uumeth_t *mp;
 
     switch (*s) {
         case 'm':
@@ -69,7 +69,7 @@ static int optinfo(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     return 0;
 }
 
-int main(int argc, register char **argv) {
+int main(int argc, char **argv) {
     Uu_t *uu;
     Uumeth_t *meth;
     char *encoding;

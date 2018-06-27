@@ -594,10 +594,10 @@ static int onintr(struct addrinfo *addr, void *handle) {
 //
 // Mimic open(2) with checks for pseudo /dev files and keep track of fd/sfio descriptors.
 //
-int sh_open(register const char *path, int flags, ...) {
+int sh_open(const char *path, int flags, ...) {
     Shell_t *shp = sh_getinterp();
     Sfio_t *sp;
-    register int fd = -1;
+    int fd = -1;
     mode_t mode;
     char *e;
     va_list ap;

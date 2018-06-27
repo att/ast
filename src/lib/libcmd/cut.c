@@ -114,18 +114,18 @@ typedef struct Cut_s {
  * compare the first of an array of integers
  */
 
-static int mycomp(register const void *a, register const void *b) {
+static int mycomp(const void *a, const void *b) {
     if (*((int *)a) < *((int *)b)) return -1;
     if (*((int *)a) > *((int *)b)) return 1;
     return 0;
 }
 
 static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, size_t reclen) {
-    register int *lp;
-    register int c;
-    register int n = 0;
-    register int range = 0;
-    register char *cp = str;
+    int *lp;
+    int c;
+    int n = 0;
+    int range = 0;
+    char *cp = str;
     Cut_t *cut;
     cut = (Cut_t *)stakalloc(sizeof(Cut_t) + strlen(cp) * sizeof(int));
     if (!cut) error(ERROR_exit(1), "out of space");
@@ -169,7 +169,7 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
                     *lp++ = 1;
                 }
                 if (c == 0) {
-                    register int *dp;
+                    int *dp;
                     *lp = HUGE;
                     n = 1 + (lp - cut->list) / 2;
                     qsort(lp = cut->list, n, 2 * sizeof(*lp), mycomp);
@@ -227,12 +227,12 @@ static Cut_t *cutinit(int mode, char *str, Delim_t *wdelim, Delim_t *ldelim, siz
  */
 
 static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
-    register int c;
-    register int len;
-    register int ncol = 0;
-    register const int *lp = cut->list;
-    register char *bp;
-    register int skip; /* non-zero for don't copy */
+    int c;
+    int len;
+    int ncol = 0;
+    const int *lp = cut->list;
+    char *bp;
+    int skip; /* non-zero for don't copy */
     int must;
     const char *xx;
 
@@ -252,9 +252,9 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
         must = 1;
         do {
             if (cut->nosplit) {
-                register const char *s = bp;
-                register int w = len < ncol ? len : ncol;
-                register int z;
+                const char *s = bp;
+                int w = len < ncol ? len : ncol;
+                int z;
 
                 while (w > 0) {
                     if (!(*s & 0x80)) {
@@ -277,9 +277,9 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                 c = s - bp;
                 ncol = !w && ncol >= len;
             } else if (cut->cflag) {
-                register const char *s = bp;
-                register int w = len;
-                register int z;
+                const char *s = bp;
+                int w = len;
+                int z;
 
                 while (w > 0 && ncol > 0) {
                     ncol--;
@@ -324,14 +324,14 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
  */
 
 static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
-    register unsigned char *sp = cut->space;
-    register unsigned char *cp;
-    register unsigned char *wp;
-    register int c, nfields;
-    register const int *lp = cut->list;
-    register unsigned char *copy;
-    register int nodelim, empty, inword = 0;
-    register unsigned char *ep;
+    unsigned char *sp = cut->space;
+    unsigned char *cp;
+    unsigned char *wp;
+    int c, nfields;
+    const int *lp = cut->list;
+    unsigned char *copy;
+    int nodelim, empty, inword = 0;
+    unsigned char *ep;
     unsigned char *bp, *first;
     int lastchar;
     wchar_t w;
@@ -500,8 +500,8 @@ failed:
 }
 
 int b_cut(int argc, char **argv, Shbltin_t *context) {
-    register char *cp = 0;
-    register Sfio_t *fp;
+    char *cp = 0;
+    Sfio_t *fp;
     char *s;
     int n;
     Cut_t *cut;

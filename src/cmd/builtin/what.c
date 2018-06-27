@@ -70,12 +70,12 @@ static struct {
 } state;
 
 static void what(const char *file, Sfio_t *ip, Sfio_t *op) {
-    register unsigned char *buf;
-    register size_t *skip;
-    register unsigned char *s;
-    register unsigned char *e;
-    register size_t index;
-    register size_t mid;
+    unsigned char *buf;
+    size_t *skip;
+    unsigned char *s;
+    unsigned char *e;
+    size_t index;
+    size_t mid;
     int intro;
     unsigned char *b;
     char *t;
@@ -199,9 +199,9 @@ done:
 }
 
 int b_what(int argc, char **argv, Shbltin_t *context) {
-    register int n;
-    register char *s;
-    register Sfio_t *sp;
+    int n;
+    char *s;
+    Sfio_t *sp;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
     state.hit = state.single = 0;

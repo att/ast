@@ -116,8 +116,8 @@ static const char letter_a, letter_t, letter_n;
 #define FORMAT_RZ -103
 
 static int donl(Nl_t *pp, Sfio_t *in, Sfio_t *out) {
-    register char *cp;
-    register int n, line = pp->startnum, outline, sectnum = SECTION_BODY;
+    char *cp;
+    int n, line = pp->startnum, outline, sectnum = SECTION_BODY;
     int blank = 0, width = pp->width + strlen(pp->sep);
     char format[20];
     if (pp->format == FORMAT_LN)
@@ -181,7 +181,7 @@ static int donl(Nl_t *pp, Sfio_t *in, Sfio_t *out) {
 }
 
 int b_nl(int argc, char **argv, Shbltin_t *context) {
-    register int n, m;
+    int n, m;
     Sfio_t *in = sfstdin;
     Nl_t nl;
     regex_t re[3];

@@ -39,8 +39,8 @@
 #endif
 
 int main() {
-    register int m;
-    register int i;
+    int m;
+    int i;
 
     sfprintf(sfstdout, "#define CS_REMOTE_SHELL	\"%s\"\n", CS_REMOTE_SHELL);
     sfprintf(sfstdout, "\n");

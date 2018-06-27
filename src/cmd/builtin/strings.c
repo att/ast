@@ -68,7 +68,7 @@ static const char usage[] =
 
 #define special(c) (isspace(c) || (c) == '\a' || (c) == '\b')
 
-static int mapchar(register int c) {
+static int mapchar(int c) {
     switch (c) {
         case '\a':
             return ('a');
@@ -94,10 +94,10 @@ static int mapchar(register int c) {
     return 0;
 }
 
-static int outstring(Sfio_t *out, char *cp, int nbytes, register int flags) {
-    register int c;
-    register int d;
-    register int n = nbytes;
+static int outstring(Sfio_t *out, char *cp, int nbytes, int flags) {
+    int c;
+    int d;
+    int n = nbytes;
 
     while (n-- > 0) {
         c = *cp;
@@ -116,12 +116,12 @@ static int outstring(Sfio_t *out, char *cp, int nbytes, register int flags) {
     return nbytes + 1;
 }
 
-static int strings(Sfio_t *in, Sfio_t *out, register int width, char *format, register int flags) {
-    register int n = 0;
-    register int c;
-    register unsigned char *inp;
-    register unsigned char *inend;
-    register int state = 0;
+static int strings(Sfio_t *in, Sfio_t *out, int width, char *format, int flags) {
+    int n = 0;
+    int c;
+    unsigned char *inp;
+    unsigned char *inend;
+    int state = 0;
     int sep;
     off_t offset;
 
@@ -179,12 +179,12 @@ static int strings(Sfio_t *in, Sfio_t *out, register int width, char *format, re
 }
 
 int b_strings(int argc, char **argv, Shbltin_t *context) {
-    register int n;
-    register int width = WIDTH;
-    register int flags = 0;
-    register Sfio_t *fp;
-    register char *cp;
-    register char *format = 0;
+    int n;
+    int width = WIDTH;
+    int flags = 0;
+    Sfio_t *fp;
+    char *cp;
+    char *format = 0;
 
     cmdinit(argc, argv, context, ERROR_CATALOG, 0);
     if (argv[1] && streq(argv[1], "-")) argv++;

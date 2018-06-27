@@ -53,7 +53,7 @@ typedef struct Fmt_s {
 } Fmt_t;
 
 static int extf(Sfio_t *sp, void *vp, Sffmt_t *dp) {
-    register Fmt_t *fmt = (Fmt_t *)dp;
+    Fmt_t *fmt = (Fmt_t *)dp;
 
     dp->flags |= SFFMT_VALUE;
     *((void **)vp) = fmt->args[fmt->arg++];
