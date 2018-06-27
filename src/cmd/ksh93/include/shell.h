@@ -27,6 +27,7 @@
 #define _SHELL_H 1
 
 #include <stdint.h>
+#include <sys/stat.h>
 
 #define SH_VERSION 20120720
 
@@ -392,7 +393,6 @@ extern Shell_t sh;
 
 #include "shellapi.h"
 
-#ifndef _AST_INTERCEPT_H
 #if _lib_lseek64
 #undef stat64
 #define stat64(a, b) sh_stat(a, b)
@@ -400,7 +400,6 @@ extern Shell_t sh;
 #undef stat
 #define stat(a, b) sh_stat(a, b)
 #endif
-#endif  // !_AST_INTERCEPT_H
 #ifndef _shtest_c
 #ifndef _SH_PRIVATE
 #undef access
@@ -408,12 +407,10 @@ extern Shell_t sh;
 #endif
 #endif  // !_shtest_c
 #ifndef _shio_h
-#ifndef _AST_INTERCEPT_H
 #undef chdir
 #define chdir(a) sh_chdir(a)
 #undef fchdir
 #define fchdir(a) sh_fchdir(a)
-#endif
 #ifndef HIST_MAX
 #if _lib_lseek64
 #undef open64

@@ -26,10 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-
-#if _sys_ioctl
 #include <sys/ioctl.h>
-#endif
 
 #include "ast_tty.h"
 #include "ccode.h"

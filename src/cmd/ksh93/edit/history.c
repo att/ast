@@ -37,7 +37,6 @@
 
 #include "ast.h"
 #include "ast_fcntl.h"
-#include "ast_intercept.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"

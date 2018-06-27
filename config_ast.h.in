@@ -367,4 +367,11 @@ extern volatile bool vmbusy_flag;
 #define free(p) ast_free(p)
 #endif
 
+// TODO: Figure out why the code calls `eaccess()` since a) it isn't
+// available on some systems like macOS, and b) prior to removal of the
+// syscall intercept module (src/lib/libast/port/intercept.c) it was mapped
+// via a #define to be faccessat(). Wich is just `access()` since we never
+// passed anything other than AT_CWD.
+#define eaccess(p, f) access(p, f)
+
 #endif

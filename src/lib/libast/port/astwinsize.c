@@ -25,6 +25,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/ioctl.h>
+
 #include "ast.h"
 #include "ast_tty.h"
 

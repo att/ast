@@ -45,7 +45,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_intercept.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -135,11 +134,6 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     bool rshflag; /* set for restricted shell */
     char *command;
 
-#ifdef AST_SERIAL_RESTART
-    // Restart all ast_*() intercepted syscalls on EINTR.
-    astserial(AST_SERIAL_RESTART, AST_SERIAL_always);
-#endif
-    free(malloc(64 * 1024));
 #if _lib_sigvec
     // This is to clear mask that may be left on by rlogin.
     clearsigmask(SIGALRM);

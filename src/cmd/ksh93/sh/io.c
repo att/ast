@@ -47,7 +47,6 @@
 #include "argnod.h"
 #include "ast.h"
 #include "ast_api.h"
-#include "ast_intercept.h"
 #include "builtins.h"
 #include "edit.h"
 #include "error.h"
@@ -2698,8 +2697,7 @@ bool sh_isdevfd(const char *fd) {
     return true;
 }
 
-#ifndef _AST_INTERCEPT_H
-
+#undef fchdir
 int sh_fchdir(int fd) {
     int r, err = errno;
 
@@ -2722,5 +2720,3 @@ int sh_stat(const char *path, struct stat *statb) {
     while ((r = stat(path, statb)) < 0 && errno == EINTR) errno = err;
     return r;
 }
-
-#endif  // _AST_INTERCEPT_H

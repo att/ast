@@ -23,7 +23,6 @@
 #include <string.h>
 
 #include "ast.h"
-#include "ast_intercept.h"
 #include "cdt.h"
 
 #define env_change() (++ast.env_serial)

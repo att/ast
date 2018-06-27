@@ -31,7 +31,6 @@
 #include "defs.h"
 
 #include "argnod.h"
-#include "ast_intercept.h"
 #include "error.h"
 #include "fault.h"
 #include "name.h"

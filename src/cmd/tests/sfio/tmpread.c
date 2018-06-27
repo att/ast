@@ -22,7 +22,6 @@
 #include <stddef.h>
 #include <unistd.h>
 
-#include "ast_intercept.h"
 #include "sfio.h"
 #include "terror.h"
 

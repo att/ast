@@ -31,7 +31,6 @@
 #include <unistd.h>
 
 #include "aso.h"
-#include "ast_intercept.h"
 #include "cdt.h"
 #include "terror.h"
 
