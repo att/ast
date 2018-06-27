@@ -9,7 +9,7 @@ matrix:
         - env:
             - PROJECT_NAME=kshdb
               GIT_URL="https://github.com/rocky/kshdb.git"
-              COMMANDS="ksh ./autogen.sh; make test"
+              COMMANDS="git checkout att-ksh93v-testing; ksh ./autogen.sh; make test"
 
 script:
     - docker pull fedora
@@ -18,7 +18,7 @@ script:
     - docker run fedora bash -c "
       dnf install -y 'dnf-command(copr)';
       dnf copr enable -y @ksh/latest;
-      dnf install -y ksh git autoconf automake make;
+      dnf install -y ksh git autoconf automake make findutils;
       git clone $GIT_URL;
       cd $PROJECT_NAME;
       $COMMANDS"
