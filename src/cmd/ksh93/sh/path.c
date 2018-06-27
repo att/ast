@@ -100,9 +100,16 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
     return execve(path, argv, envp);
 }
 
+#if _AST_no_spawnveg
+static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
+                          pid_t pgid) {
+    abort();
+}
+#else
 static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                           pid_t pgid) {
     pid_t pid;
+
 #ifdef SIGTSTP
     if (job.jobcontrol) {
         signal(SIGTTIN, SIG_DFL);
@@ -111,31 +118,28 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 #endif  // SIGTSTP
 
     while (1) {
+        char *arg0 = argv[0], **av0 = (char **)&argv[0];
+        int fd;
+
         sh_stats(STAT_SPAWN);
-#ifdef SPAWN_cwd
-        {
-            char *arg0 = argv[0], **av0 = (char **)&argv[0];
-            int fd;
-            pid = spawnvex(path, argv, envp, shp->vex);
-            *av0 = arg0;
-            if (pid > 0 && shp->comsub && (fd = sffileno(sfstdout)) != 1 && fd >= 0) {
-                spawnvex_add(shp->vex, fd, 1, 0, 0);
-            }
+        pid = spawnvex(path, argv, envp, shp->vex);
+        *av0 = arg0;
+        if (pid > 0 && shp->comsub && (fd = sffileno(sfstdout)) != 1 && fd >= 0) {
+            spawnvex_add(shp->vex, fd, 1, 0, 0);
         }
-#else
-        assert(0);  // we should never reach here
-        // pid = spawnveg(path, argv, envp, pgid);
-#endif  // SPAWN_cwd
         if (pid >= 0 || errno != EAGAIN) break;
     }
+
 #ifdef SIGTSTP
     if (job.jobcontrol) {
         signal(SIGTTIN, SIG_IGN);
         signal(SIGTTOU, SIG_IGN);
     }
 #endif  // SIGTSTP
+
     return pid;
 }
+#endif  // SPAWN_cwd
 
 //
 // Used with command -x to run the command in multiple passes. Spawn is non-zero when invoked via
@@ -1336,7 +1340,8 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
     stkseek(shp->stk, offset + pp->len);
     if (pp->len == 1 && *stkptr(shp->stk, offset) == '/') stkseek(shp->stk, offset);
     sfputr(shp->stk, "/.paths", -1);
-    if ((fd = open(stkptr(shp->stk, offset), O_RDONLY | O_CLOEXEC)) >= 0) {
+    fd = open(stkptr(shp->stk, offset), O_RDONLY | O_CLOEXEC);
+    if (fd >= 0) {
         fstat(fd, &statb);
         n = statb.st_size;
         stkseek(shp->stk, offset + pp->len + n + 2);
@@ -1345,7 +1350,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
         n = read(fd, cp = sp, n);
         sp[n] = 0;
         close(fd);
-        for (ep = 0; n--; cp++) {
+        for (ep = NULL; n--; cp++) {
             if (*cp == '=') {
                 ep = cp + 1;
                 continue;
@@ -1357,17 +1362,17 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
                 continue;
             }
             *cp = 0;
-            m = ep ? (ep - sp) : 0;
+            m = ep ? ep - sp : 0;
             if (m == 0 || (m == 6 && strncmp(sp, "FPATH=", m) == 0)) {
                 if (first) {
                     char *ptr = stkptr(shp->stk, offset + pp->len + 1);
-                    size_t len = strlen(ep);
-                    if (ep) memmove(ptr, ep, len + 1);
+                    if (ep) memmove(ptr, ep, strlen(ep) + 1);
                     path_addcomp(shp, first, old, stkptr(shp->stk, offset),
                                  PATH_FPATH | PATH_BFPATH);
                 }
             } else if (m == 11 && strncmp(sp, "PLUGIN_LIB=", m) == 0) {
                 if (pp->bbuf) free(pp->bbuf);
+                assert(ep);
                 pp->blib = pp->bbuf = strdup(ep);
             } else if (m == 4 && strncmp(sp, "BIN=1", m) == 0) {
                 pp->flags |= PATH_BIN;
@@ -1387,7 +1392,7 @@ static_fn bool path_chkpaths(Shell_t *shp, Pathcomp_t *first, Pathcomp_t *old, P
                 }
             }
             sp = cp + 1;
-            ep = 0;
+            ep = NULL;
         }
     }
     return false;
