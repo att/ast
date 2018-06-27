@@ -186,7 +186,7 @@ void stkprint(char *buf, int n, char *form, ...) {
 }
 
 tmain() {
-    char buf1[1024], buf2[1024], *list[4], *s, *expect, *expec2;
+    char buf1[1024], buf2[1024], *list[4], *s, *expect, *expec2, *expec3;
     double x = 0.0051;
     double pnan, nnan, pinf, ninf, pnil, nnil;
     Sfdouble_t pnanl, nnanl, pinfl, ninfl, pnill, nnill;
@@ -476,7 +476,8 @@ tmain() {
     sfsprintf(buf1, sizeof(buf1), "%g %g %g %g %g %g", pnan, nnan, pinf, ninf, pnil, nnil);
     expect = "nan -nan inf -inf 0 -0";
     expec2 = "nan nan inf -inf 0 -0";
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    expec3 = "-nan nan inf -inf 0 -0";  // this is for OpenBSD which flips -nan <=> nan
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
