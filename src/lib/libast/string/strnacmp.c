@@ -24,16 +24,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
 #include "ast.h"
 #include "ccode.h"
 
-#if _lib_strnacmp
-
-NoN(strnacmp)
-
-#else
-
-#include <ctype.h>
+#if !_lib_strnacmp
 
 int strnacmp(const char *a, const char *b, size_t n) {
 #if CC_NATIVE == CC_ASCII
@@ -57,4 +53,4 @@ int strnacmp(const char *a, const char *b, size_t n) {
 #endif
 }
 
-#endif
+#endif  // !_lib_strnacmp

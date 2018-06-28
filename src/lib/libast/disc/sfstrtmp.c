@@ -33,7 +33,7 @@
 
 #if __OBSOLETE__ >= 20070101 /* sfstr* macros now use sfsetbuf() */
 
-NoN(sfstrtmp)
+#error __OBSOLETE__
 
 #else
 

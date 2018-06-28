@@ -22,14 +22,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "ast.h"
-
-#if _lib_sigunblock
-
-NoN(sigunblock)
-
-#else
-
 #include "sig.h"
+
+#if !_lib_sigunblock
 
 int sigunblock(int s) {
     int op;
@@ -44,4 +39,4 @@ int sigunblock(int s) {
     return (sigprocmask(op, &mask, NULL));
 }
 
-#endif
+#endif  // !_lib_sigunblock

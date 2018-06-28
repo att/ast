@@ -106,8 +106,4 @@ Sig_handler_t signal(int sig, Sig_handler_t fun) {
     return oa.sa_handler;
 }
 
-#else
-
-NoN(signal)
-
 #endif

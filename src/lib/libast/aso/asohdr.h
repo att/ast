@@ -40,13 +40,6 @@
 #ifndef integralof
 #define integralof(x) (((char *)(x)) - ((char *)0))
 #endif
-#ifndef NoN
-#define NoN(x) \
-    void _STUB_##x() {}
-#if !defined(_STUB_)
-#define _STUB_
-#endif
-#endif
 
 #endif
 

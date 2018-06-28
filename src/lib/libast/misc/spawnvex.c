@@ -230,11 +230,7 @@ static pid_t spawnve(int mode, const char *path, char *const argv[], char *const
 #endif
 #endif
 
-#if _lib_spawnvex
-
-NoN(spawnvex)
-
-#else
+#if !_lib_spawnvex
 
 #define VEXCHUNK 8
 #define VEXFLAG(x) (1 << (-(x)))
@@ -925,4 +921,4 @@ nope:
 #endif
 }
 
-#endif
+#endif  // !_lib_spawnvex

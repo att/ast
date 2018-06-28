@@ -23,11 +23,7 @@
 
 #include "ast.h"
 
-#if _lib_memdup
-
-NoN(memdup)
-
-#else
+#if !_lib_memdup
 
 /*
  * return a copy of s of n chars using malloc
@@ -39,4 +35,4 @@ void *memdup(const void *s, size_t n) {
     return ((t = (void *)newof(0, char, n, 0)) ? memcpy(t, s, n) : 0);
 }
 
-#endif
+#endif  // !_lib_memdup

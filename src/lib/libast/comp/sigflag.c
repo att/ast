@@ -23,11 +23,7 @@
 
 #include "ast.h"
 
-#if _lib_sigflag
-
-NoN(sigflag)
-
-#else
+#if !_lib_sigflag
 
 #include "sig.h"
 
@@ -42,4 +38,4 @@ int sigflag(int sig, int flags, int set) {
     return sigaction(sig, &sa, NULL);
 }
 
-#endif
+#endif  // !_lib_sigflag

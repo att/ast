@@ -27,11 +27,7 @@
 #include "ast.h"
 #include "ccode.h"
 
-#if _lib_stracmp
-
-NoN(stracmp)
-
-#else
+#if !_lib_stracmp
 
 #include <ctype.h>
 
@@ -53,4 +49,4 @@ int stracmp(const char *aa, const char *ab) {
     }
 }
 
-#endif
+#endif  // !_lib_stracmp

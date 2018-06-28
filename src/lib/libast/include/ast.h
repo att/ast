@@ -225,14 +225,6 @@ typedef struct {
 #endif
 #endif
 
-#if !defined(NoN)
-#define NoN(x) \
-    void _STUB_##x() {}
-#if !defined(_STUB_)
-#define _STUB_
-#endif
-#endif
-
 typedef int (*Ast_confdisc_f)(const char *, const char *, const char *);
 typedef int (*Strcmp_context_f)(const char *, const char *, void *);
 typedef int (*Strcmp_f)(const char *, const char *);
