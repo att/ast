@@ -60,20 +60,8 @@
 #include "terminal.h"
 #include "variables.h"
 
-#if !defined(WCONTINUED) || !defined(WIFCONTINUED) || defined(__APPLE__)
-#undef WCONTINUED
-#define WCONTINUED 0
-#undef WIFCONTINUED
-#define WIFCONTINUED(wstat) (0)
-#endif
-
 #define NJOB_SAVELIST 4
 
-//
-// Temporary hack to get W* macros to work.
-//
-#undef wait
-#define wait ______wait
 //
 // This struct saves a link list of processes that have non-zero exit status,
 // have had $! saved, but haven't been waited for.
