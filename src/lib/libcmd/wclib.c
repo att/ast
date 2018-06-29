@@ -32,19 +32,10 @@
 #include "cmd.h"
 #include "wc.h"
 
-#if _hdr_wchar && _hdr_wctype && _lib_iswctype
 #include <wchar.h>
 #include <wctype.h>
 
 #include "lc.h"
-
-#else
-
-#ifndef iswspace
-#define iswspace(x) isspace(x)
-#endif
-
-#endif
 
 #define WC_SP 0x08
 #define WC_NL 0x10
@@ -62,11 +53,9 @@ Wc_t *wc_init(int mode) {
     wp = (Wc_t *)stakalloc(sizeof(Wc_t));
     if (!wp) return 0;
     if (!mbwide()) wp->mb = 0;
-#if _hdr_wchar && _hdr_wctype && _lib_iswctype
     else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8)) {
         wp->mb = 1;
     }
-#endif
     else {
         wp->mb = -1;
     }

@@ -113,8 +113,6 @@
 #mesondefine _hdr_utmp
 #mesondefine _hdr_utmpx
 #mesondefine _hdr_values
-#mesondefine _hdr_wchar
-#mesondefine _hdr_wctype
 
 #mesondefine _lib___libc_malloc
 #mesondefine _lib___malloc
@@ -149,7 +147,6 @@
 #mesondefine _lib_inet_ntoa
 #mesondefine _lib_isfsg
 #mesondefine _lib_iswalnum
-#mesondefine _lib_iswctype
 #mesondefine _lib_iswprint
 #mesondefine _lib_lchmod
 #mesondefine _lib_lchown
