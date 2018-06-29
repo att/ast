@@ -20,6 +20,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 
 #include "ast_std.h"
 #include "sfio.h"
@@ -59,6 +62,7 @@ tmain() {
         if (strcmp(tst, str)) terror("swscanf %%S \"%s\" expected, \"%s\" returned", tst, str);
     }
 
+    // cppcheck-suppress invalidPrintfArgType_uint
     swprintf(wuf, sizeof(wuf), L"%lc%lc%lc%lc%lc%lc%lc%lc%lc%lc%lc", L'h', L'e', L'l', L'l', L'o',
              L'-', L'w', L'o', L'r', L'l', L'd');
     wcstombs(str, wuf, sizeof(str));

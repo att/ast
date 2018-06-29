@@ -39,6 +39,7 @@
 #define name option
 #endif
 
+struct Info_s;
 typedef struct Info_s Info_t;
 
 struct Info_s {

@@ -20,10 +20,14 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <string.h>
+#include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "sfio_t.h"
+// This has to come before sfio.h to export private structure members.
+#include "sfio_t.h"  // IWYU pragma: keep
+
+#include "sfio.h"
 #include "terror.h"
 
 #ifdef SF_APPEND

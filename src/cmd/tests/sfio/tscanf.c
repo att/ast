@@ -180,8 +180,11 @@ tmain() {
 
     n = sfsscanf("zis.zis.gawpwo", "%..36lu.%..36lu.%..36lu", &a1, &a2, &a3);
     s = sfprints("%d %lu %lu %lu", n, a1, a2, a3);
-    if (!s) terror("sfprints failed");
-    if (strcmp(s, "3 46036 46036 985781544")) terror("Base 36 scan failed");
+    if (s) {
+        if (strcmp(s, "3 46036 46036 985781544")) terror("Base 36 scan failed");
+    } else {
+        terror("sfprints failed");
+    }
 
     if (sfsscanf("NaNS", "%g", &f) != 1) terror("Scanning NaN failed");
 

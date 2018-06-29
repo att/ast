@@ -78,7 +78,7 @@ static intmax_t strtonll(const char *s, char **e, char *b, int m) {
 int main(int argc, char **argv) {
     char *s;
     char *p;
-    unsigned long l;
+    long l;
     uintmax_t ll;
     char b;
     int m;

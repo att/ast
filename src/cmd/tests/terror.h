@@ -456,7 +456,8 @@ __attribute__((unused)) static void *tstshared(size_t n) {
     if ((z = open("/dev/zero", O_RDWR)) >= 0) {
         p = mmap(0, n, PROT_READ | PROT_WRITE, MAP_SHARED, z, 0);
         if (!p || p == (void *)(-1)) {
-            p = 0;
+            // cppcheck-suppress memleak
+            p = NULL;
             close(z);
         }
     }

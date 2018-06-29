@@ -20,7 +20,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdlib.h>
-#include <string.h>
 
 #include "sfio.h"
 #include "terror.h"
