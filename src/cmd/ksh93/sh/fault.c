@@ -55,7 +55,6 @@
 #include "shlex.h"
 #include "shnodes.h"
 #include "shtable.h"
-#include "sig.h"
 #include "stk.h"
 #include "terminal.h"
 #include "ulimit.h"
@@ -113,7 +112,7 @@ void dump_backtrace(int max_frames, int skip_levels) {
 // stderr then terminates the process with prejudice. The primary purpose is to
 // help ensure we get some useful info when the shell dies due to dereferencing
 // an invalid address.
-void handle_sigsegv(int signo) {
+void handle_sigsegv(int signo, siginfo_t *info, void *context) {
     dump_backtrace(100, 0);
     abort();
 }
@@ -158,7 +157,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     int action = 0;
 
     if (sig == SIGABRT) {
-        signal(sig, SIG_DFL);
+        signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -166,7 +165,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         dump_backtrace(100, 0);
         // The preceding call should call `abort()` which means this shouldn't be reached but
         // be paranoid.
-        signal(sig, SIG_DFL);
+        signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -176,7 +175,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
 #endif  // SIGWINCH
     trap = shp->st.trapcom[sig];
     if (sig == SIGBUS) {
-        signal(sig, SIG_DFL);
+        signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -310,18 +309,19 @@ void sh_siginit(void *ptr) {
 //
 void sh_sigtrap(Shell_t *shp, int sig) {
     int flag;
-    void (*fun)(int);
+    sh_sigfun_t fun;
     shp->st.otrapcom = 0;
     if (sig == 0) {
         sh_sigdone(shp);
     } else if (!((flag = shp->sigflag[sig]) & (SH_SIGFAULT | SH_SIGOFF))) {
         // Don't set signal if already set or off by parent.
-        if ((fun = signal(sig, sh_fault)) == SIG_IGN) {
-            signal(sig, SIG_IGN);
+        fun = signal(sig, sh_fault);
+        if (fun == (sh_sigfun_t)(SIG_IGN)) {
+            signal(sig, (sh_sigfun_t)(SIG_IGN));
             flag |= SH_SIGOFF;
         } else {
             flag |= SH_SIGFAULT;
-            if (sig == SIGALRM && fun != SIG_DFL && fun != (sh_sigfun_t)sh_fault) signal(sig, fun);
+            if (sig == SIGALRM && fun != (sh_sigfun_t)(SIG_DFL) && fun != (sh_sigfun_t)sh_fault) signal(sig, fun);
         }
         flag &= ~(SH_SIGSET | SH_SIGTRAP);
         shp->sigflag[sig] = flag;
@@ -362,7 +362,7 @@ void sh_sigreset(Shell_t *shp, int mode) {
                 if (mode) free(trap);
                 shp->st.trapcom[sig] = 0;
             } else if (sig && mode > 1) {
-                if (sig != SIGCHLD) signal(sig, SIG_IGN);
+                if (sig != SIGCHLD) signal(sig, (sh_sigfun_t)(SIG_IGN));
                 flag &= ~SH_SIGFAULT;
                 flag |= SH_SIGOFF;
             }
@@ -612,7 +612,7 @@ void sh_done(void *ptr, int sig) {
             rlp.rlim_cur = 0;
             setrlimit(RLIMIT_CORE, &rlp);
         }
-        signal(sig, SIG_DFL);
+        signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
         pause();
@@ -802,9 +802,12 @@ int sh_trap(const char *trap, int mode) {
 #undef signal
 sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     struct sigaction sigin, sigout;
+
     memset(&sigin, 0, sizeof(struct sigaction));
-    if (func == SIG_DFL || func == SIG_IGN) {
-        sigin.sa_handler = func;
+    if (func == (sh_sigfun_t)(SIG_DFL)) {
+        sigin.sa_handler = SIG_DFL;
+    } else if (func == (sh_sigfun_t)(SIG_IGN)) {
+        sigin.sa_handler = SIG_IGN;
     } else {
         sigin.sa_sigaction = (void (*)(int, siginfo_t *, void *))func;
         sigin.sa_flags = SA_SIGINFO;
@@ -817,6 +820,6 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
         sigdelset(&sigin.sa_mask, SIGSEGV);
     }
     sigaction(sig, &sigin, &sigout);
-    sigunblock(sig);
+    sigrelease(sig);
     return (sh_sigfun_t)sigout.sa_sigaction;
 }

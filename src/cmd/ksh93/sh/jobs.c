@@ -56,7 +56,6 @@
 #include "path.h"
 #include "sfio.h"
 #include "shellapi.h"
-#include "sig.h"
 #include "terminal.h"
 #include "variables.h"
 
@@ -614,7 +613,7 @@ void job_init(Shell_t *shp, int lflag) {
     while ((job.mytgid = tcgetpgrp(JOBTTY)) != job.mypgid) {
         if (job.mytgid <= 0) return;
         // Stop this shell until continued.
-        signal(SIGTTIN, SIG_DFL);
+        signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
         kill(shp->gd->pid, SIGTTIN);
         // Resumes here after continue tries again.
         if (ntry++ > IOMAXTRY) {
@@ -650,6 +649,9 @@ void job_init(Shell_t *shp, int lflag) {
 #ifdef SIGTSTP
     // Make sure that we are a process group leader.
     setpgid(0, shp->gd->pid);
+#if 0
+// The sigflag() should not be needed. It is removing those signals from the mask of blocked signals
+// when SIGCHLD is run. But that should already be the case.
 #if defined(SA_NOCLDSTOP) || defined(SA_NOCLDWAIT)
 #if !defined(SA_NOCLDSTOP)
 #define SA_NOCLDSTOP 0
@@ -659,8 +661,9 @@ void job_init(Shell_t *shp, int lflag) {
 #endif
     sigflag(SIGCHLD, SA_NOCLDSTOP | SA_NOCLDWAIT, 0);
 #endif  // SA_NOCLDSTOP || SA_NOCLDWAIT
-    signal(SIGTTIN, SIG_IGN);
-    signal(SIGTTOU, SIG_IGN);
+#endif  // 0
+    signal(SIGTTIN, (sh_sigfun_t)(SIG_IGN));
+    signal(SIGTTOU, (sh_sigfun_t)(SIG_IGN));
     shp->sigflag[SIGTTIN] = SH_SIGOFF;
     shp->sigflag[SIGTTOU] = SH_SIGOFF;
     // The shell now handles ^Z.

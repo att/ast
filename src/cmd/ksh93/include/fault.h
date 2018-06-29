@@ -25,6 +25,10 @@
 #ifndef _FAULT_H
 #define _FAULT_H 1
 
+#ifdef _AST_SIG_H
+#error You cannot include fault.h after sig.h
+#endif
+
 #include <setjmp.h>
 #include <signal.h>
 
@@ -126,14 +130,14 @@ typedef struct siginfo_ll siginfo_ll_t;
 typedef struct Shell_s Shell_t;
 #endif
 
-typedef void (*sh_sigfun_t)(int);
+typedef void (*sh_sigfun_t)(int, siginfo_t *, void *);
 extern sh_sigfun_t sh_signal(int, sh_sigfun_t);
 extern void sh_fault(int, siginfo_t *, void *);
 extern void sh_setsiginfo(siginfo_t *);
 extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
 extern void dump_backtrace(int max_frames, int skip_levels);
 #undef signal
-#define signal(a, b) sh_signal(a, (sh_sigfun_t)(b))
+#define signal(a, b) sh_signal(a, b)
 
 extern void sh_done(void *, int);
 extern void sh_siginit(void *);

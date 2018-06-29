@@ -19,64 +19,23 @@
  *                     Phong Vo <phongvo@gmail.com>                     *
  *                                                                      *
  ***********************************************************************/
-/*
- * signal that disables syscall restart on interrupt with clear signal mask
- * fun==SIG_DFL also unblocks signal
- */
+//
+// Signal function that disables syscall restart on interrupt except for a handful of signals. It
+// also puts a clear signal mask in effect when the signal is delivered. If fun == SIG_DFL it also
+// unblocks the signal.
+//
 #include "config_ast.h"  // IWYU pragma: keep
-
-#undef signal
-#define signal ______signal
 
 #include "ast.h"
 #include "sig.h"
 
-#undef signal
+Sig_handler_t signal(int sig, Sig_handler_t sigfun) {
+    struct sigaction na, oa;
 
-#if defined(SV_ABORT)
-#undef SV_INTERRUPT
-#define SV_INTERRUPT SV_ABORT
-#endif
-
-#if !_std_signal && (defined(SA_NOCLDSTOP) || _lib_sigvec && defined(SV_INTERRUPT))
-
-#if !defined(SA_NOCLDSTOP) || !defined(SA_INTERRUPT) && defined(SV_INTERRUPT)
-#undef SA_INTERRUPT
-#define SA_INTERRUPT SV_INTERRUPT
-#undef sigaction
-#define sigaction sigvec
-#undef sigemptyset
-#define sigemptyset(p) (*(p) = 0)
-#undef sa_flags
-#define sa_flags sv_flags
-#undef sa_handler
-#define sa_handler sv_handler
-#undef sa_mask
-#define sa_mask sv_mask
-#endif
-
-Sig_handler_t signal(int sig, Sig_handler_t fun) {
-    struct sigaction na;
-    struct sigaction oa;
-    int unblock;
-#ifdef SIGNO_MASK
-    unsigned int flags;
-#endif
-
-    if (sig < 0) {
-        sig = -sig;
-        unblock = 0;
-    } else
-        unblock = fun == SIG_DFL;
-#ifdef SIGNO_MASK
-    flags = sig & ~SIGNO_MASK;
-    sig &= SIGNO_MASK;
-#endif
-    memset(&na, 0, sizeof(na));
-    na.sa_handler = fun;
-#if defined(SA_INTERRUPT) || defined(SA_RESTART)
+    na.sa_handler = sigfun;
+    sigemptyset(&na.sa_mask);
     switch (sig) {
-#if defined(SIGIO) || defined(SIGTSTP) || defined(SIGTTIN) || defined(SIGTTOU)
+        case -1:  // just in case none of the following symbols are defined, not likely but...
 #if defined(SIGIO)
         case SIGIO:
 #endif
@@ -85,25 +44,20 @@ Sig_handler_t signal(int sig, Sig_handler_t fun) {
 #endif
 #if defined(SIGTTIN)
         case SIGTTIN:
-#endif
-#if defined(SIGTTOU)
         case SIGTTOU:
 #endif
-#if defined(SA_RESTART)
             na.sa_flags = SA_RESTART;
-#endif
             break;
-#endif
         default:
 #if defined(SA_INTERRUPT)
+            // Some systems (e.g., Linux) automatically restart syscalls.
+            // If we're on such a system tell it not to do that.
             na.sa_flags = SA_INTERRUPT;
 #endif
             break;
     }
-#endif
-    if (sigaction(sig, &na, &oa)) return 0;
-    if (unblock) sigunblock(sig);
+
+    if (sigaction(sig, &na, &oa)) return NULL;
+    if (sigfun == SIG_DFL) sigunblock(sig);
     return oa.sa_handler;
 }
-
-#endif

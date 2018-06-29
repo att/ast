@@ -1618,8 +1618,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (jmpval) goto done;
                     if ((type & FINT) && !sh_isstate(shp, SH_MONITOR)) {
                         // Default std input for &.
-                        signal(SIGINT, SIG_IGN);
-                        signal(SIGQUIT, SIG_IGN);
+                        signal(SIGINT, (sh_sigfun_t)(SIG_IGN));
+                        signal(SIGQUIT, (sh_sigfun_t)(SIG_IGN));
                         shp->sigflag[SIGINT] = SH_SIGOFF;
                         shp->sigflag[SIGQUIT] = SH_SIGOFF;
                         if (!shp->st.ioset) {
@@ -2797,9 +2797,9 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
     }
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        signal(SIGTTIN, SIG_DFL);
-        signal(SIGTTOU, SIG_DFL);
-        signal(SIGTSTP, SIG_DFL);
+        signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
+        signal(SIGTTOU, (sh_sigfun_t)(SIG_DFL));
+        signal(SIGTSTP, (sh_sigfun_t)(SIG_DFL));
     }
 #endif  // SIGTSTP
     job.jobcontrol = 0;

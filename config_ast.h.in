@@ -71,7 +71,6 @@
 #mesondefine _pty_first
 #mesondefine _socketpair_shutdown_mode
 #mesondefine _std_remove
-#mesondefine _std_signal
 #mesondefine _stk_down
 #mesondefine isnanl
 #mesondefine const_const_fts_open
@@ -191,7 +190,6 @@
 #mesondefine _lib_sigqueue
 #mesondefine _lib_sigsetmask
 #mesondefine _lib_sigunblock
-#mesondefine _lib_sigvec
 #mesondefine _lib_socket
 #mesondefine _lib_socketpair
 #mesondefine _lib_spawn
