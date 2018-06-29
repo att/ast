@@ -1,14 +1,16 @@
 /* : : generated from sig.sh by iffe version 2013-11-14 : : */
-#ifndef _def_sig_features
-#define _def_sig_features 1
+#ifndef _AST_SIG_H
+#define _AST_SIG_H 1
+
+#ifdef _FAULT_H
+#error You cannot include sig.h after fault.h
+#endif
 
 #define sig_info _sig_info_
 
 #include <signal.h>
 
 typedef void (*Sig_handler_t)(int);
-
-#define Handler_t Sig_handler_t
 
 #define SIG_REG_PENDING (-1)
 #define SIG_REG_POP 0
@@ -26,9 +28,9 @@ typedef struct {
 
 extern Sig_info_t sig_info;
 
+Sig_handler_t ast_signal(int sig, Sig_handler_t sigfun);
 extern int sigflag(int, int, int);
-
 extern int sigcritical(int);
 extern int sigunblock(int);
 
-#endif
+#endif  // _AST_SIG_H

@@ -105,7 +105,7 @@ typedef struct Mod_s {
             Fd_t child;
         } fd;
 
-        Handler_t handler;
+        Sig_handler_t handler;
 
     } arg;
 
@@ -671,7 +671,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if (procfd >= 0) {
 #ifdef SIGPIPE
             if ((flags & (PROC_WRITE | PROC_IGNORE)) == (PROC_WRITE | PROC_IGNORE)) {
-                Handler_t handler;
+                Sig_handler_t handler;
 
                 if ((handler = signal(SIGPIPE, ignoresig)) != SIG_DFL && handler != ignoresig)
                     signal(SIGPIPE, handler);

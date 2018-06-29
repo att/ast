@@ -34,9 +34,11 @@ int sigunblock(int s) {
     if (s) {
         sigaddset(&mask, s);
         op = SIG_UNBLOCK;
-    } else
+    } else {
         op = SIG_SETMASK;
-    return (sigprocmask(op, &mask, NULL));
+    }
+
+    return sigprocmask(op, &mask, NULL);
 }
 
 #endif  // !_lib_sigunblock

@@ -7,7 +7,7 @@ libast_files += [
     'misc/optget.c', 'misc/optjoin.c', 'misc/procclose.c', 'misc/procfree.c',
     'misc/procopen.c', 'misc/procrun.c', 'misc/recfmt.c', 'misc/reclen.c',
     'misc/recstr.c', 'misc/setenviron.c', 'misc/sigcrit.c', 'misc/sigdata.c',
-    'misc/signal.c', 'misc/stack.c', 'misc/state.c',
+    'misc/stack.c', 'misc/state.c',
     'misc/stk.c', 'misc/systrace.c', 'misc/translate.c', 'misc/univdata.c',
     'misc/fts.c', 'misc/vmbusy.c'
 ]
