@@ -94,7 +94,6 @@
 #mesondefine _hdr_malloc
 #mesondefine _hdr_math
 #mesondefine _hdr_mman
-#mesondefine _hdr_nc
 #mesondefine _hdr_netdb
 #mesondefine _hdr_netinet_in
 #mesondefine _hdr_netinet_tcp

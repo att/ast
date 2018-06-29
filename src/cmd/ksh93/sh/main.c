@@ -37,10 +37,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#if _hdr_nc
-#include <nc.h>
-#endif  // _hdr_nc
-
 #include "defs.h"
 
 #include "argnod.h"
@@ -140,9 +136,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     clearsigmask(SIGHUP);
     clearsigmask(SIGCHLD);
 #endif  // _lib_sigvec
-#if _hdr_nc
-    _NutConf(_NC_SET_SUFFIXED_SEARCHING, 1);
-#endif  // _hdr_nc
+
     fixargs(av, 0);
     shp = sh_init(ac, av, userinit);
     time(&mailtime);
