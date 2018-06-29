@@ -202,7 +202,6 @@
 #mesondefine _lib_statvfs64
 #mesondefine _lib_stracmp
 #mesondefine _lib_strlcat
-#mesondefine _lib_strnacmp
 #mesondefine _lib_strsignal
 #mesondefine _lib_sync
 #mesondefine _lib_syncfs

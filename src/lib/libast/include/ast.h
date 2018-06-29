@@ -326,7 +326,6 @@ extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int)
 extern unsigned int strhash(const char *);
 extern void *strlook(const void *, size_t, const char *);
 extern int strmatch(const char *, const char *);
-extern int strnacmp(const char *, const char *, size_t);
 extern char *strncopy(char *, const char *, size_t);
 extern int strnpcmp(const char *, const char *, size_t);
 extern double strntod(const char *, size_t, char **);
