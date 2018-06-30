@@ -387,22 +387,22 @@ fi
 
 [[ $(printf '%q\n') == '' ]] || log_error 'printf "%q" with missing arguments'
 
-# We won't get hit by the one second boundary twice, right?
-#
-# TODO: Figure out how to make this test more robust.
-actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
-expect=$(date)
-if [[ "$actual" != "$expect" ]]
-then
-   # The timezone in the %T expansion may be GMT while the date command is UTC or vice-versa.
-   # So make sure they both say UTC since the two strings are equivalent.
+# This test is can fail if the load on the machine causes the printf and date commands to run on
+# opposite sides of the time rolling from one second to the next. We've seen it fail twice in a row
+# so try three times. Also, the TZ may be GMT or UTC for the builtin printf and external date
+# command and they won't necessarily agree. So normalize both to UTC.
+for i in 1 2 3
+do
    actual=$(printf '%T\n' now | sed -e 's/GMT/UTC/')
    expect=$(date | sed -e 's/GMT/UTC/')
-   if [[ "$actual" != "$expect" ]]
-   then
-      log_error 'printf "%T" now wrong output' "$expect" "$actual"
+   if [[ "$actual" == "$expect" ]]
+   then 
+      break
+   else
+      log_warning 'printf "%T" now wrong output' "$expect" "$actual"
    fi
-fi
+done
+[[ "$actual" == "$expect" ]] || log_error 'printf "%T" now wrong output' "$expect" "$actual"
 
 behead()
 {
