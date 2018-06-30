@@ -169,7 +169,7 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
             } else if (clear) {
                 sh_sigclear(shp, sig);
                 if (sig == 0) shp->exittrap = 0;
-                if (dflag) signal(sig, (sh_sigfun_t)SIG_DFL);
+                if (dflag) sh_signal(sig, (sh_sigfun_t)SIG_DFL);
             } else {
                 if (sig >= shp->st.trapmax) shp->st.trapmax = sig + 1;
                 arg = shp->st.trapcom[sig];

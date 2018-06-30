@@ -586,9 +586,9 @@ bool job_reap(int sig) {
 void job_init(Shell_t *shp, int lflag) {
     int ntry = 0;
     job.fd = JOBTTY;
-    signal(SIGCHLD, job_waitsafe);
+    sh_signal(SIGCHLD, job_waitsafe);
 #if defined(SIGCLD) && (SIGCLD != SIGCHLD)
-    signal(SIGCLD, job_waitsafe);
+    sh_signal(SIGCLD, job_waitsafe);
 #endif
     if (njob_savelist < NJOB_SAVELIST) init_savelist();
     if (!sh_isoption(shp, SH_INTERACTIVE)) return;
@@ -613,7 +613,7 @@ void job_init(Shell_t *shp, int lflag) {
     while ((job.mytgid = tcgetpgrp(JOBTTY)) != job.mypgid) {
         if (job.mytgid <= 0) return;
         // Stop this shell until continued.
-        signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
         kill(shp->gd->pid, SIGTTIN);
         // Resumes here after continue tries again.
         if (ntry++ > IOMAXTRY) {
@@ -662,12 +662,12 @@ void job_init(Shell_t *shp, int lflag) {
     sigflag(SIGCHLD, SA_NOCLDSTOP | SA_NOCLDWAIT, 0);
 #endif  // SA_NOCLDSTOP || SA_NOCLDWAIT
 #endif  // 0
-    signal(SIGTTIN, (sh_sigfun_t)(SIG_IGN));
-    signal(SIGTTOU, (sh_sigfun_t)(SIG_IGN));
+    sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_IGN));
+    sh_signal(SIGTTOU, (sh_sigfun_t)(SIG_IGN));
     shp->sigflag[SIGTTIN] = SH_SIGOFF;
     shp->sigflag[SIGTTOU] = SH_SIGOFF;
     // The shell now handles ^Z.
-    signal(SIGTSTP, sh_fault);
+    sh_signal(SIGTSTP, sh_fault);
     tcsetpgrp(JOBTTY, shp->gd->pid);
 #ifdef CNSUSP
     // Set the switch character.
