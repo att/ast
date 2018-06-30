@@ -97,7 +97,7 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
         return;
     }
     time_state |= IN_SIGALRM;
-    sigrelease(SIGALRM);
+    sh_sigaction(SIGALRM, SIG_UNBLOCK);
     while (1) {
         now = getnow();
         tpold = tpmin = 0;

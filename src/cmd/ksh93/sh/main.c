@@ -121,9 +121,9 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     char *command;
 
     // Make sure we weren't started with several critical signals blocked from delivery.
-    sigrelease(SIGALRM);
-    sigrelease(SIGCHLD);
-    sigrelease(SIGHUP);
+    sh_sigaction(SIGALRM, SIG_UNBLOCK);
+    sh_sigaction(SIGCHLD, SIG_UNBLOCK);
+    sh_sigaction(SIGHUP, SIG_UNBLOCK);
 
     fixargs(av, 0);
     shp = sh_init(ac, av, userinit);

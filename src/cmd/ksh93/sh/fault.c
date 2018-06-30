@@ -158,7 +158,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
 
     if (sig == SIGABRT) {
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
-        sigrelease(sig);
+        sh_sigaction(sig, SIG_UNBLOCK);
         kill(getpid(), sig);
     }
     if (sig == SIGSEGV) {
@@ -166,7 +166,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         // The preceding call should call `abort()` which means this shouldn't be reached but
         // be paranoid.
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
-        sigrelease(sig);
+        sh_sigaction(sig, SIG_UNBLOCK);
         kill(getpid(), sig);
     }
     if (sig == SIGCHLD) sfprintf(sfstdout, "childsig\n");
@@ -176,7 +176,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     trap = shp->st.trapcom[sig];
     if (sig == SIGBUS) {
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
-        sigrelease(sig);
+        sh_sigaction(sig, SIG_UNBLOCK);
         kill(getpid(), sig);
     }
     if (shp->savesig) {
@@ -203,7 +203,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
                 goto done;
             }
             shp->lastsig = sig;
-            sigrelease(sig);
+            sh_sigaction(sig, SIG_UNBLOCK);
             if (pp->mode != SH_JMPSUB) {
                 if (pp->mode < SH_JMPSUB) {
                     pp->mode = shp->subshell ? SH_JMPSUB : SH_JMPFUN;
@@ -238,7 +238,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         if (sig == SIGTSTP) {
             shp->trapnote |= SH_SIGTSTP;
             if (pp->mode == SH_JMPCMD && sh_isstate(shp, SH_STOPOK)) {
-                sigrelease(sig);
+                sh_sigaction(sig, SIG_UNBLOCK);
                 sh_exit(shp, SH_EXITSIG);
                 goto done;
             }
@@ -251,7 +251,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     if (sig < shp->gd->sigmax) shp->sigflag[sig] |= flag;
     if (pp->mode == SH_JMPCMD && sh_isstate(shp, SH_STOPOK)) {
         if (action < 0) goto done;
-        sigrelease(sig);
+        sh_sigaction(sig, SIG_UNBLOCK);
         sh_exit(shp, SH_EXITSIG);
     }
 
@@ -265,7 +265,8 @@ done:
 void sh_siginit(Shell_t *shp) {
     const struct shtable2 *tp = shtab_signals;
 
-    sig_begin();
+    // Make sure no signals are blocked.
+    sh_sigaction(0, SIG_SETMASK);
 
     shp->gd->sigmax = MAX_SIGNUM + 1;
     shp->st.trapcom = calloc(shp->gd->sigmax, sizeof(char *));
@@ -600,7 +601,7 @@ void sh_done(void *ptr, int sig) {
             setrlimit(RLIMIT_CORE, &rlp);
         }
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
-        sigrelease(sig);
+        sh_sigaction(sig, SIG_UNBLOCK);
         kill(getpid(), sig);
         pause();
     }
@@ -807,6 +808,6 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
         sigdelset(&sigin.sa_mask, SIGSEGV);
     }
     sigaction(sig, &sigin, &sigout);
-    sigrelease(sig);
+    sh_sigaction(sig, SIG_UNBLOCK);
     return (sh_sigfun_t)sigout.sa_sigaction;
 }
