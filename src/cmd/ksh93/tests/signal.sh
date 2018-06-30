@@ -527,9 +527,10 @@ case "${c.car[0].code}" in
         ;;
     SI_USER)
         # System lacks sigqueue(), ksh called kill().
-        log_warning "skipping test: sigqueue() not supported"
+        log_info "skipping test: sigqueue() not supported"
         ;;
     *)
-        log_error "expected SI_QUEUE or SI_USER, got |${c.car[0].code}|"
+        log_error "expected SI_QUEUE or SI_USER" "SI_QUEUE or SI_USER" "${c.car[0].code}"
+        log_warning "typeset -p \${c.car[0]} = $(typeset -p ${c.car[0]})"
         ;;
 esac

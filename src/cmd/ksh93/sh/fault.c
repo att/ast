@@ -809,5 +809,5 @@ sh_sigfun_t sh_signal(int sig, sh_sigfun_t func) {
     }
     sigaction(sig, &sigin, &sigout);
     sh_sigaction(sig, SIG_UNBLOCK);
-    return (sh_sigfun_t)sigout.sa_sigaction;
+    return sigout.sa_sigaction;
 }
