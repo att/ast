@@ -316,6 +316,11 @@ const struct shtable4 shtab_siginfo_codes[] = {{SIGCHLD, CLD_EXITED, "EXITED"},
 // Entries with sig==0 must be at the end of the list to prevent possible clashes with
 // signal-specific codes.
 //
+
+                                               // On some systems, e.g., macOS & BSD, si_code is
+                                               // zero rather than whatever SI_USER is defined to
+                                               // be when a signal is sent via kill().
+                                               {0, 0, "SI_USER"},
 #ifdef SI_USER
                                                {0, SI_USER, "SI_USER"},
 #endif  // SI_USER

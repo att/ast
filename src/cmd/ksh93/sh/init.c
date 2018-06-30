@@ -1759,7 +1759,7 @@ static_fn void siginfo_init(Shell_t *shp) {
 static_fn const char *siginfocode2str(int sig, int code) {
     const struct shtable4 *sc;
     for (sc = shtab_siginfo_codes; sc->str != NULL; sc++) {
-        if (((sc->sig == sig) || (sc->sig == 0)) && (sc->code == code)) return (sc->str);
+        if (((sc->sig == sig) || (sc->sig == 0)) && (sc->code == code)) return sc->str;
     }
     return NULL;
 }
