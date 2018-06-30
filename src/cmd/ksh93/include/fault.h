@@ -137,7 +137,7 @@ extern void sh_setsiginfo(siginfo_t *);
 extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
 extern void dump_backtrace(int max_frames, int skip_levels);
 #undef signal
-#define signal(a, b) sh_signal(a, b)
+#define signal(a, b) ERROR("use sh_signal() not signal()")
 
 extern void sh_done(void *, int);
 extern void sh_siginit(void *);

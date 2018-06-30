@@ -111,8 +111,8 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        signal(SIGTTIN, SIG_DFL);
-        signal(SIGTTOU, SIG_DFL);
+        sh_signal(SIGTTIN, SIG_DFL);
+        sh_signal(SIGTTOU, SIG_DFL);
     }
 #endif  // SIGTSTP
 
@@ -131,8 +131,8 @@ static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], ch
 
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        signal(SIGTTIN, SIG_IGN);
-        signal(SIGTTOU, SIG_IGN);
+        sh_signal(SIGTTIN, SIG_IGN);
+        sh_signal(SIGTTOU, SIG_IGN);
     }
 #endif  // SIGTSTP
 

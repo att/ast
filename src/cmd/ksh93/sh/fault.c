@@ -157,7 +157,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     int action = 0;
 
     if (sig == SIGABRT) {
-        signal(sig, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -165,7 +165,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         dump_backtrace(100, 0);
         // The preceding call should call `abort()` which means this shouldn't be reached but
         // be paranoid.
-        signal(sig, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -175,7 +175,7 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
 #endif  // SIGWINCH
     trap = shp->st.trapcom[sig];
     if (sig == SIGBUS) {
-        signal(sig, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
     }
@@ -301,7 +301,7 @@ void sh_siginit(void *ptr) {
     }
 
     // Make sure we get some useful information if the shell receives a SIGSEGV.
-    signal(SIGSEGV, handle_sigsegv);
+    sh_signal(SIGSEGV, handle_sigsegv);
 }
 
 //
@@ -315,13 +315,15 @@ void sh_sigtrap(Shell_t *shp, int sig) {
         sh_sigdone(shp);
     } else if (!((flag = shp->sigflag[sig]) & (SH_SIGFAULT | SH_SIGOFF))) {
         // Don't set signal if already set or off by parent.
-        fun = signal(sig, sh_fault);
+        fun = sh_signal(sig, sh_fault);
         if (fun == (sh_sigfun_t)(SIG_IGN)) {
-            signal(sig, (sh_sigfun_t)(SIG_IGN));
+            sh_signal(sig, (sh_sigfun_t)(SIG_IGN));
             flag |= SH_SIGOFF;
         } else {
             flag |= SH_SIGFAULT;
-            if (sig == SIGALRM && fun != (sh_sigfun_t)(SIG_DFL) && fun != (sh_sigfun_t)sh_fault) signal(sig, fun);
+            if (sig == SIGALRM && fun != (sh_sigfun_t)(SIG_DFL) && fun != sh_fault) {
+                sh_signal(sig, fun);
+            }
         }
         flag &= ~(SH_SIGSET | SH_SIGTRAP);
         shp->sigflag[sig] = flag;
@@ -362,7 +364,7 @@ void sh_sigreset(Shell_t *shp, int mode) {
                 if (mode) free(trap);
                 shp->st.trapcom[sig] = 0;
             } else if (sig && mode > 1) {
-                if (sig != SIGCHLD) signal(sig, (sh_sigfun_t)(SIG_IGN));
+                if (sig != SIGCHLD) sh_signal(sig, (sh_sigfun_t)(SIG_IGN));
                 flag &= ~SH_SIGFAULT;
                 flag |= SH_SIGOFF;
             }
@@ -612,7 +614,7 @@ void sh_done(void *ptr, int sig) {
             rlp.rlim_cur = 0;
             setrlimit(RLIMIT_CORE, &rlp);
         }
-        signal(sig, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
         sigrelease(sig);
         kill(getpid(), sig);
         pause();

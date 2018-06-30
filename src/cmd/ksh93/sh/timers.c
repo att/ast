@@ -127,7 +127,7 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
             if (!tpmin || tpmin->wakeup > tp->wakeup) tpmin = tp;
         }
         if (tpmin && (left == 0 || (tp && tpmin->wakeup < (now + left)))) {
-            if (left == 0) signal(SIGALRM, sigalrm);
+            if (left == 0) sh_signal(SIGALRM, sigalrm);
             left = setalarm(tpmin->wakeup - now);
             if (left && (now + left) < tpmin->wakeup) {
                 setalarm(left);
@@ -148,7 +148,7 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
         }
     }
     if (!tpmin) {
-        signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
     }
     time_state &= ~IN_SIGALRM;
     errno = EINTR;
@@ -182,7 +182,7 @@ void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *h
     tptop = tp;
     if (!tpmin || tp->wakeup < tpmin->wakeup) {
         tpmin = tp;
-        fn = signal(SIGALRM, sigalrm);
+        fn = sh_signal(SIGALRM, sigalrm);
         if ((t = setalarm(t)) > 0 && fn && fn != sigalrm) {
             sh_sigfun_t *hp = malloc(sizeof(sh_sigfun_t));
             if (hp) {
@@ -216,6 +216,6 @@ void timerdel(void *handle) {
             tpmin = 0;
             setalarm((double)0);
         }
-        signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
     }
 }

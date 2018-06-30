@@ -168,10 +168,10 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         }
         if (sh_isoption(shp, SH_INTERACTIVE)) {
 #ifdef SIGXCPU
-            signal(SIGXCPU, (sh_sigfun_t)(SIG_DFL));
+            sh_signal(SIGXCPU, (sh_sigfun_t)(SIG_DFL));
 #endif  // SIGXCPU
 #ifdef SIGXFSZ
-            signal(SIGXFSZ, (sh_sigfun_t)(SIG_DFL));
+            sh_signal(SIGXFSZ, (sh_sigfun_t)(SIG_DFL));
 #endif  // SIGXFSZ
             sh_onoption(shp, SH_MONITOR);
         }
