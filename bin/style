@@ -1,6 +1,4 @@
-#!/usr/bin/env fish
-#
-# TODO: Rewrite this as a ksh script.
+#!/usr/bin/env ksh
 #
 # Usage: bin/style [--all] [source_filename]...
 #
@@ -10,104 +8,141 @@
 # Otherwise any uncommitted source files are linted. If there is no uncommitted change
 # then the files in the most recent commit are linted.
 #
-set all no
-set git_clang_format no
-set c_files
-set files
+
+# shellcheck disable=SC2207
+# NOTE: Disable SC2207 warning for the entire file since we update IFS below to
+# prevent the issue it warns us about.
+
+# Allow for handling filenames with spaces
+IFS=$'\n'
+
+typeset all=no
+typeset git_clang_format=no
+typeset -a c_files=()
+typeset -a files=()
 
 # Deal with any CLI flags.
-while set -q argv[1]
-    if test "$argv[1]" = "--all"
-    or test "$argv[1]" = "all"
-        set all yes
-        set -e argv[1]
-    else
-        break
-    end
-end
+while [[ "${#1}" -ne 0 ]]
+do
+    case "${1}" in
+        --all | all )
+            all=yes
+            ;;
+        * )
+            break
+            ;;
+    esac
+    shift
+done
 
-if test $all = yes
-and set -q argv[1]
-    echo "Unexpected arguments: '$argv'" >&2
+if [[ ${all} == yes && "${#1}" -ne 0 ]]
+then
+    echo "Unexpected arguments: '${1}'" >&2
     exit 1
-end
+fi
 
-if test $all = yes
-    set files (git status --porcelain --short --untracked-files=all | sed -e 's/^ *[^ ]* *//')
-    if set -q files[1]
+if [[ ${all} == yes ]]
+then
+    files=( $(git status --porcelain --short --untracked-files=all | sed -e 's/^ *[^ ]* *//') )
+
+    if [[ "${#files[@]}" -ne 0 ]]
+    then
         echo >&2
-        echo You have uncommited changes. Cowardly refusing to restyle the entire code base. >&2
+        echo You have uncommitted changes. Cowardly refusing to restyle the entire code base. >&2
         echo >&2
-        exit 1
-    end
-    set files src/**.h src/**.c
-else if set -q argv[1]
-    set files
-    for f in $argv
-        if test -f $f
-            set files $files $f
-        else if test -d $f
-            set files $files {$f}**.c {$f}**.h
-        end
-    end
+        exit
+    fi
+
+    files+=( $(find src -name "**.h" -o -name "**.c") )
+elif [[ "${#1}" -ne 0 ]]
+then
+    for next_file in "$@"
+    do
+        if [[ -f ${next_file} ]]
+        then
+            files+=( "${next_file}" )
+        elif [[ -d ${next_file} ]]
+        then
+            files+=( $(find "${next_file}" -name "**.h" -o -name "**.c") )
+        fi
+    done
 else
     # We haven't been asked to reformat all the source or specific files. If there are
     # uncommitted changes reformat those using `git clang-format`. Else reformat the
     # files in the most recent commit. Select (cached files) (modified but not cached,
     # and untracked files).
-    set files (git diff-index --cached HEAD --name-only)
-    set files $files (git ls-files --exclude-standard --others --modified)
-    if set -q files[1]
+    files=( $(git diff-index --cached HEAD --name-only) )
+    files+=( $(git ls-files --exclude-standard --others --modified) )
+
+    if [[ "${#files[@]}" -ne 0 ]]
+    then
         # Pending changes so restyle just the regions modified.
-        set git_clang_format yes
+        git_clang_format=yes
     else
         # No pending changes so restyle the files in the most recent commit.
-        set files (git diff-tree --no-commit-id --name-only -r HEAD)
-    end
-end
+        files=( $(git diff-tree --no-commit-id --name-only -r HEAD) )
+    fi
+fi
 
 # Filter out non C source files.
-set c_files
-for file in (string match -r '^.*\.(?:c|h)$' -- $files)
-    if test -f $file
-        set c_files $c_files $file
-    end
-end
+for file in "${files[@]}"
+do
+    case "${file}" in
+        *.c | *.h )
+            if [[ -f "${file}" ]]
+            then
+                c_files+=( "${file}" )
+            fi
+            ;;
+    esac
+done
 
-# Run the C reformatter if we have any C files.
-if not set -q c_files[1]
+# Run the C reformatter if we have any C files
+if [[ "${#c_files[@]}" -eq 0 ]]
+then
     echo
     echo 'WARNING: No C files to restyle'
     echo
     exit 1
-end
+fi
 
-if test $git_clang_format = yes
-    if type -q git-clang-format
+if [[ ${git_clang_format} == yes ]]
+then
+    if command -v git-clang-format > /dev/null
+    then
         echo
         echo ========================================
         echo Running git-clang-format
         echo ========================================
-        git add $c_files
+        git add "${c_files[@]}"
         git-clang-format
     else
         echo
         echo 'WARNING: Cannot find git-clang-format command'
         echo
-    end
-else if type -q clang-format
-    echo
-    echo ========================================
-    echo Running clang-format
-    echo ========================================
-    for file in $c_files
-        cp $file $file.new # preserves mode bits
-        clang-format $file >$file.new
-        if cmp -s $file $file.new
-            rm $file.new
-        else
-            echo $file was NOT correctly formatted
-            mv $file.new $file
-        end
-    end
-end
+    fi
+else
+    if command -v clang-format > /dev/null
+    then
+        echo
+        echo ========================================
+        echo Running clang-format
+        echo ========================================
+        for file in "${c_files[@]}"
+        do
+            cp "${file}" "${file}.new"
+            clang-format "${file}" >"${file}.new"
+            if cmp -s "${file}" "${file}.new"
+            then
+                rm "${file}.new"
+            else
+                echo "${file} was NOT correctly formatted"
+                mv "${file}.new" "${file}"
+            fi
+        done
+    else
+        echo
+        echo 'WARNING: Cannot find clang-format command'
+        echo
+    fi
+fi
