@@ -392,9 +392,6 @@ extern const Shtable_t shtab_siginfo[];
         if (s) sigaddset(&ss, (s));  \
         sigprocmask(action, &ss, 0); \
     } while (0)
-#define sigrelease(s) sh_sigaction(s, SIG_UNBLOCK)
-#define sigblock(s) sh_sigaction(s, SIG_BLOCK)
-#define sig_begin() sh_sigaction(0, SIG_SETMASK)
 
 #ifndef CLD_EXITED
 #define CLD_EXITED 1

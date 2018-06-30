@@ -184,7 +184,6 @@
 #mesondefine _lib_setlocale
 #mesondefine _lib_setregid
 #mesondefine _lib_setreuid
-#mesondefine _lib_sigblock
 #mesondefine _lib_sigflag
 #mesondefine _lib_sigprocmask
 #mesondefine _lib_sigqueue

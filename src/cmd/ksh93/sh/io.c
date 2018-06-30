@@ -2005,7 +2005,7 @@ static_fn void time_grace(void *handle) {
     }
     errormsg(SH_DICT, 0, e_timewarn);
     sh_onstate(shp, SH_GRACE);
-    sigrelease(SIGALRM);
+    sh_sigaction(SIGALRM, SIG_UNBLOCK);
     shp->trapnote |= SH_SIGTRAP;
 }
 
