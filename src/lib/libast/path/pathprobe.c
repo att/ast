@@ -125,7 +125,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
     if (*proc != '/') {
         p = strchr(proc, ' ');
         if (p) {
-            strncopy(buf, proc, p - proc + 1);
+            strlcpy(buf, proc, p - proc + 1);
             proc = buf;
         }
         if (!(proc = pathpath(proc, NULL, PATH_ABSOLUTE | PATH_REGULAR | PATH_EXECUTE, cmd,
@@ -133,7 +133,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
             proc = (char *)aproc;
         } else if (p) {
             n = strlen(proc);
-            strncopy(proc + n, p, PATH_MAX - n - 1);
+            strlcpy(proc + n, p, PATH_MAX - n - 1);
         }
     }
     if (!path) {
@@ -146,12 +146,12 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
     p = k + sfsprintf(k, x - k, "%s/%s/", lang, tool);
     pathkey(lang, tool, proc, key, sizeof(key), attr, attrsize);
     if (op >= -2) {
-        strncopy(p, key, x - p);
+        strlcpy(p, key, x - p);
         if (pathpath(lib, "", PATH_ABSOLUTE, path, pathsize) && !stat(path, &st) &&
             (st.st_mode & S_IWUSR))
             return path == buf ? strdup(path) : path;
     }
-    e = strncopy(p, probe, x - p);
+    e = p + strlcpy(p, probe, x - p);
     if (!pathpath(lib, "", PATH_ABSOLUTE | PATH_EXECUTE, path, pathsize) || stat(path, &ps))
         return 0;
     for (;;) {
@@ -165,7 +165,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
         }
         np = path + n - (e - k);
         nx = path + PATH_MAX - 1;
-        strncopy(np, probe, nx - np);
+        strlcpy(np, probe, nx - np);
         if (!stat(path, &st)) break;
 
         /*
@@ -190,7 +190,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
             }
         }
     }
-    strncopy(p, key, x - p);
+    strlcpy(p, key, x - p);
     p = np;
     x = nx;
     strcpy(exe, path);
@@ -198,7 +198,7 @@ char *pathprobe_20100601(const char *lang, const char *tool, const char *aproc, 
         if (!(p = getenv("HOME"))) return 0;
         p = path + sfsprintf(path, PATH_MAX - 1, "%s/.%s/%s/", p, probe, HOSTTYPE);
     }
-    strncopy(p, k, x - p);
+    strlcpy(p, k, x - p);
     force = 0;
     if (op >= 0 && !stat(path, &st)) {
         if (ptime <= (unsigned long)st.st_mtime || ptime <= (unsigned long)st.st_ctime) {
