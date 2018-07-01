@@ -327,10 +327,8 @@ void errorv(const char *id, int level, va_list ap) {
     int line;
     char *file;
 
-#if !_PACKAGE_astsa
     unsigned long d;
     struct tms us;
-#endif
 
     if (!error_info.init) {
         error_info.init = 1;
@@ -415,13 +413,11 @@ void errorv(const char *id, int level, va_list ap) {
                          error_info.line);
             }
         }
-#if !_PACKAGE_astsa
         if (error_info.time) {
             if ((d = times(&us)) < error_info.time || error_info.time == 1) error_info.time = d;
             sfprintf(stkstd, " %05lu.%05lu.%05lu ", d - error_info.time,
                      (unsigned long)us.tms_utime, (unsigned long)us.tms_stime);
         }
-#endif
         switch (level) {
             case 0:
                 flags &= ~ERROR_SYSTEM;

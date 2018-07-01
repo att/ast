@@ -162,8 +162,6 @@ static unsigned char map[UCHAR_MAX];
 
 static Optstate_t state;
 
-#if !_PACKAGE_astsa
-
 #define ID ast.id
 
 #define C(s) ERROR_catalog(s)
@@ -181,18 +179,6 @@ static char *translate(const char *cmd, const char *cat, const char *msg) {
     if (cat != (const char *)ID && D(msg)) cat = (const char *)ID;
     return errorx(NULL, cmd, cat, msg);
 }
-
-#else
-
-static char ID[] = "ast";
-
-#define C(s) s
-#define D(s) (state.msgdict && dtmatch(state.msgdict, (s)))
-#define T(i, c, m) m
-#define X(c) 0
-#define Z(x) C(x), sizeof(x) - 1
-
-#endif
 
 static const List_t help_head[] = {
     {'-', 0, 0},
@@ -779,12 +765,10 @@ static int init(char *s, Optpass_t *p) {
 #if _BLD_DEBUG
     error(-2, "optget debug localized=%lu:%lu xp=%p", state.localized, ast.locale.serial, state.xp);
 #endif
-#if !_PACKAGE_astsa
     if (!state.localized || state.localized != ast.locale.serial) {
         state.localized = ast.locale.serial;
         setlocale(LC_ALL, "");
     }
-#endif
     if (!state.xp) {
         state.xp = sfstropen();
         if (!map[OPT_FLAGS[0]])
@@ -3542,7 +3526,6 @@ int optget(char **argv, const char *oopts) {
     Optcache_t *pcache;
     Optpass_t *pass;
 
-#if !_PACKAGE_astsa && !_YOU_FIGURED_OUT_HOW_TO_GET_ALL_DLLS_TO_DO_THIS_
     /*
      * these are not initialized by all dlls!
      */
@@ -3552,7 +3535,6 @@ int optget(char **argv, const char *oopts) {
 
     if (!_error_infop_) _error_infop_ = &_error_info_;
     if (!_opt_infop_) _opt_infop_ = &_opt_info_;
-#endif
     if (!oopts) return 0;
     state.pindex = opt_info.index;
     state.poffset = opt_info.offset;
