@@ -89,7 +89,7 @@ char *pathfind(const char *name, const char *lib, const char *type, char *buf, s
 
     if ((type && !*type) || (((s = strrchr(name, '/')) || (s = (char *)name)) && strchr(s, '.'))) {
         if (regular(name, &st)) {
-            strncopy(buf, name, size);
+            strlcpy(buf, name, size);
             return buf;
         }
         type = 0;
