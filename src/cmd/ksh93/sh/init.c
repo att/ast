@@ -1608,7 +1608,7 @@ static const char *shdiscnames[] = {"tilde", 0};
 static_fn Namval_t *create_sig(Namval_t *np, const char *name, int flag, Namfun_t *fp) { return (0); }
 #endif
 
-struct Svars {
+typedef struct Svars {
     Namfun_t hdr;
     Shell_t *sh;
     Namval_t *parent;
@@ -1617,7 +1617,7 @@ struct Svars {
     size_t dsize;
     int numnodes;
     int current;
-};
+} Svars_t;
 
 static_fn Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     struct Svars *sp = (struct Svars *)fp;
@@ -1631,30 +1631,22 @@ static_fn Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 
 static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
     const char *name = vp;
-    struct Svars *sp = (struct Svars *)fp;
-    const char *cp = name;
-    int i = 0, n;
-    Namval_t *nq = NULL;
+    Svars_t *sp = (Svars_t *)fp;
     Shell_t *shp = sp->sh;
 
-    if (!name) return (sp->parent);
-    while ((i = *cp++) && i != '=' && i != '+' && i != '[') {
-        ;  // empty loop
+    assert(name);
+    for (int i = 0; i < sp->numnodes; i++) {
+        Namval_t *nq = nv_namptr(sp->nodes, i);
+        if (strcmp(name, nq->nvname) == 0) {
+            sp->hdr.last = (char *)name + strlen(name);
+            shp->last_table = sp->parent;
+            return nq;
+        }
     }
-    n = (cp - 1) - name;
-    for (i = 0; i < sp->numnodes; i++) {
-        nq = nv_namptr(sp->nodes, i);
-        if ((n == 0 || strncmp(name, nq->nvname, n) == 0) && nq->nvname[n] == 0) goto found;
-    }
-    nq = NULL;
-found:
-    if (nq) {
-        fp->last = (char *)&name[n];
-        shp->last_table = sp->parent;
-    } else {
-        errormsg(SH_DICT, ERROR_exit(1), e_notelem, n, name, nv_name(np));
-    }
-    return nq;
+
+    // This is a can't happen case. The return is just to avoid lint warnings. It isn't reached.
+    errormsg(SH_DICT, ERROR_exit(1), e_notelem, strlen(name), name, nv_name(np));
+    return NULL;
 }
 
 static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
@@ -1777,8 +1769,10 @@ void sh_setsiginfo(siginfo_t *sip) {
     struct Svars *sp;
     const char *sistr;
     char *signame;
+
     while (fp->disc->createf != create_svar) fp = fp->next;
-    if (!fp) return;
+    if (!fp) return;  // this should probably be an abort() or errormsg(SH_DICT, ERROR_exit(1), ...)
+
     sp = (struct Svars *)fp;
     sp->data = (void *)((char *)sp + fp->dsize + sizeof(void *));
     signame = (char *)sp->data + sizeof(siginfo_t);
@@ -1799,11 +1793,10 @@ void sh_setsiginfo(siginfo_t *sip) {
     np = create_svar(SH_SIG, "uid", 0, fp);
     np->nvalue.uidp = &sip->si_uid;
     np = create_svar(SH_SIG, "code", 0, fp);
-    nv_offattr(np, NV_INTEGER);
     sistr = siginfocode2str(sip->si_signo, sip->si_code);
     if (sistr) {
         np->nvalue.cp = sistr;
-        nv_onattr(np, NV_NOFREE);
+        nv_offattr(np, NV_INTEGER);  // NV_NOFREE already set in shtab_siginfo[]
     } else {
         nv_onattr(np, NV_INTEGER);
         np->nvalue.ip = &sip->si_code;
