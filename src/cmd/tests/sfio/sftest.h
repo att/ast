@@ -17,19 +17,13 @@
  *               Glenn Fowler <glenn.s.fowler@gmail.com>                *
  *                                                                      *
  ***********************************************************************/
-#if !_PACKAGE_ast
-#include <stdarg.h>
-#endif
-
 #if _SFIO_H_ONLY
 #include "sfio.h"
 #else
 #include "sfio_t.h"
 #endif
 
-#if _PACKAGE_ast
 #include "ast.h"
-#endif
 
 #if _hdr_unistd
 #include <unistd.h>

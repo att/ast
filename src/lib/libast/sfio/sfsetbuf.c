@@ -37,7 +37,7 @@ extern int getpagesize(void);
 **	Written by Kiem-Phong Vo.
 */
 
-#if _PACKAGE_ast && !defined(SFSETLINEMODE)
+#if !defined(SFSETLINEMODE)
 #define SFSETLINEMODE 1
 #endif
 
@@ -104,11 +104,7 @@ static int sfsetlinemode(void) {
                     case 'M': /* maxrec maxmap */
                     case 'm':
                         if (n && v)
-#if _PACKAGE_ast
                             z = (size_t)strtonll(v, NULL, NULL, 0);
-#else
-                            z = (size_t)strtol(v, NULL, 0);
-#endif
                         else
                             z = 0;
                         for (;;) {
@@ -145,11 +141,7 @@ static int sfsetlinemode(void) {
                                 switch (v[0]) {
                                     default:
                                         if (isdigit(v[0])) {
-#if _PACKAGE_ast
                                             b = strtonll(v, NULL, NULL, 0);
-#else
-                                            b = strtoul(v, NULL, 0);
-#endif
                                         } else
                                             b = 0;
                                         break;

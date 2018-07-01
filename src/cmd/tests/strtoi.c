@@ -42,39 +42,6 @@
 #define ERANGE EINVAL
 #endif
 
-#if !_PACKAGE_ast
-
-static int base(const char *s) {
-    const char *t;
-    int n;
-
-    for (t = s; *t == '-' || *t == '+' || *t == ' ' || *t == '\t'; t++)
-        ;
-    if (!*t) return 10;
-    if (*t == '0') return (*++t == 'x' || *t == 'X') ? (*(t + 1) ? 16 : 10) : *t ? 8 : 0;
-    n = 0;
-    while (*t >= '0' && *t <= '9') n = n * 10 + *t++ - '0';
-    return *t == '#' ? (*(t + 1) ? n : 10) : 0;
-}
-
-static long strton(const char *s, char **e, char *b, int m) {
-    int o;
-
-    o = *b;
-    *b = base(s);
-    return strtol(s, e, o);
-}
-
-static intmax_t strtonll(const char *s, char **e, char *b, int m) {
-    int o;
-
-    o = *b;
-    *b = base(s);
-    return strtoll(s, e, o);
-}
-
-#endif
-
 int handle_argv(char **argv) {  //!OCLINT(long method)
     char *s;
     char *p;
@@ -84,19 +51,13 @@ int handle_argv(char **argv) {  //!OCLINT(long method)
     int m;
     int decimal;
     int sep = 0;
-#if _PACKAGE_ast
     int n;
-#endif
 
     decimal = *localeconv()->decimal_point;
     while (*++argv) {
         s = *argv;
         if (!strncmp(s, "LC_ALL=", 7)) {
-#if _PACKAGE_ast
             p = s + 7;
-#else
-            p = "de_DE";
-#endif
             if (!setlocale(LC_ALL, p)) {
                 printf("%s failed\n", s);
                 return 0;
@@ -153,7 +114,6 @@ int handle_argv(char **argv) {  //!OCLINT(long method)
             "strtoull  \"%s\" \"%s\" %ju %s\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
-#if _PACKAGE_ast
         n = strlen(s);
 
         errno = 0;
@@ -243,7 +203,6 @@ int handle_argv(char **argv) {  //!OCLINT(long method)
         printf(
             "strntoull %2d \"%s\" \"%s\" %ju %s\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
-#endif
     }
     return 0;
 }

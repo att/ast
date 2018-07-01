@@ -22,11 +22,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "sfhdr.h"
-#if !_PACKAGE_ast
-#ifndef FIONREAD
-#include <sys/ioctl.h>
-#endif
-#endif
 
 /*	Read/Peek a record from an unseekable device
 **

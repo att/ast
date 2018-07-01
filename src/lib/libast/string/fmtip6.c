@@ -21,31 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _PACKAGE_ast
 #include "ast.h"
-#endif
 
 #include "ip6.h"
-
-#if !_PACKAGE_ast
-
-/*
- * return a pointer to n bytes from a circular re-use buffer
- */
-
-static char *fmtbuf(int n) {
-    char *b;
-
-    static char buf[1024];
-    static char *p = buf;
-
-    if ((&buf[sizeof(buf)] - p) < n) p = buf;
-    b = p;
-    p += n;
-    return b;
-}
-
-#endif
 
 /*
  * copy p to s, then convert 0<=n<=999 to text

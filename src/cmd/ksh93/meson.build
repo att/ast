@@ -23,7 +23,6 @@ subdir('sh')
 # TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
 # build the libast libdll code.
 shared_c_args += [
-    '-D_PACKAGE_ast',
     '-D_BLD_shell',
     '-DERROR_CONTEXT_T=Error_context_t',
     '-DKSHELL',

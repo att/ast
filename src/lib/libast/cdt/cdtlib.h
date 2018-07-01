@@ -27,11 +27,9 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-#if _PACKAGE_ast
 #include "ast.h"
 #if !_BLD_cdt
 #include "dlldefs.h"
-#endif
 #endif
 
 #include <unistd.h>
@@ -141,11 +139,5 @@ typedef struct _dtlib_s {
 extern Dtlink_t *_dtmake(Dt_t *, void *, int);
 extern void _dtfree(Dt_t *, Dtlink_t *, int);
 extern int _dtlock(Dt_t *, int);
-
-#if !_PACKAGE_ast
-extern void *malloc(size_t);
-extern void *realloc(void *, size_t);
-extern void free(void *);
-#endif
 
 #endif  // _CDTLIB_H

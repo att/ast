@@ -85,7 +85,6 @@ wchar_t_size = cc.sizeof('wchar_t', prefix: '#include <wchar.h>')
 
 feature_data = configuration_data()
 feature_data.set('MESON_BUILD', 1)
-feature_data.set('_PACKAGE_ast', 1)
 feature_data.set('_API_ast', 20130625)
 if system == 'darwin'
     feature_data.set('_DARWIN_C_SOURCE', 1)

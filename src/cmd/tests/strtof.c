@@ -47,44 +47,6 @@
 #define LDBL_MAX_EXP DBL_MAX_EXP
 #endif
 
-#if !_PACKAGE_ast
-
-#define _ast_fltmax_t long double
-
-static char buf[1024];
-
-#undef strntod
-#define strntod _tst_strntod
-
-static double strntod(const char *s, size_t n, char **e) {
-    double r;
-    char *p;
-
-    if (n >= sizeof(buf)) n = sizeof(buf) - 1;
-    memcpy(buf, s, n);
-    buf[n] = 0;
-    r = strtod(buf, &p);
-    if (e) *e = (char *)s + (p - buf);
-    return r;
-}
-
-#undef strntold
-#define strntold _tst_strntold
-
-static _ast_fltmax_t strntold(const char *s, size_t n, char **e) {
-    _ast_fltmax_t r;
-    char *p;
-
-    if (n >= sizeof(buf)) n = sizeof(buf) - 1;
-    memcpy(buf, s, n);
-    buf[n] = 0;
-    r = strtold(buf, &p);
-    if (e) *e = (char *)s + (p - buf);
-    return r;
-}
-
-#endif
-
 int handle_argv(char **argv) {  //!OCLINT(long method)
     char *s, *p;
     double d;

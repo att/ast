@@ -26,17 +26,7 @@
 
 #include "reglib.h"
 
-#if _PACKAGE_ast
-
 #include "ccode.h"
-
-#else
-
-#define CC_bel '\a'
-#define CC_esc '\033'
-#define CC_vt '\v'
-
-#endif
 
 /*
  * state shared by all threads

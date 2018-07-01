@@ -23,24 +23,12 @@
 
 #include "asohdr.h"
 
-#if _PACKAGE_ast
 #include "tv.h"
-#else
-#include <time.h>
-#endif
 
 int asorelax(long nsec) {
-#if _PACKAGE_ast
     Tv_t tv;
 
     tv.tv_sec = 0;
     tv.tv_nsec = nsec;
     return tvsleep(&tv, 0);
-#else
-    struct timespec ts;
-
-    ts.tv_sec = 0;
-    ts.tv_nsec = nsec;
-    return nanosleep(&ts, 0);
-#endif
 }

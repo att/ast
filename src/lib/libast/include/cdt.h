@@ -38,11 +38,7 @@
 #endif
 #define CDT_PLUGIN_VERSION AST_PLUGIN_VERSION(20111111L)
 
-#if _PACKAGE_ast
 #include "ast_std.h"
-#else
-#include <string.h>
-#endif
 
 /* commonly used integers */
 #define DT_ZERO ((unsigned int)0)           /* all zero bits	*/
@@ -246,16 +242,12 @@ extern Dtmethod_t *Dtdeque;
 extern Dtmethod_t *Dtrhset;
 extern Dtmethod_t *Dtrhbag;
 
-#if _PACKAGE_ast /* dtplugin() for proprietary and non-standard method plugins -- requires -ldll \
-                  */
-
+// dtplugin() for proprietary and non-standard method plugins -- requires -ldll
 #define dtplugin(name) ((Dtmethod_t *)dllmeth("cdt", name, CDT_PLUGIN_VERSION))
 
 #if 0
 #define Dtrhbag dtplugin("rehash:Dtrhbag")
 #endif
-
-#endif /*_PACKAGE_ast*/
 
 extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 extern int dtclose(Dt_t *);
@@ -274,7 +266,7 @@ extern ssize_t dtstat(Dt_t *, Dtstat_t *);
 extern Dt_t *_dtopen(Dtdisc_t *, Dtmethod_t *, unsigned long);
 #define dtopen(dc, mt) _dtopen((dc), (mt), CDT_VERSION)
 
-#if _PACKAGE_ast && !defined(_CDTLIB_H)
+#if !defined(_CDTLIB_H)
 
 extern void *dllmeth(const char *, const char *, unsigned long);
 

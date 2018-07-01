@@ -3,7 +3,6 @@ libdll_files = ['dlfcn.c', 'dllcheck.c',  'dllerror.c',  'dllfind.c', 'dll_lib.c
 
 libdll_c_args = shared_c_args + [
     '-D_BLD_Dll',
-    '-D_PACKAGE_ast',
 ]
 
 libdll = library('dll', libdll_files, c_args: libdll_c_args,

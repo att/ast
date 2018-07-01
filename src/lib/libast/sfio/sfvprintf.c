@@ -39,20 +39,7 @@
 
 #define FPRECIS 6 /* default precision for floats 	*/
 
-#if _PACKAGE_ast
 #include "ccode.h"
-#else
-/* characters when using ebcdic or ascii */
-#if _chr_ebcdic
-#define CC_vt 013  /* vertical tab	*/
-#define CC_esc 047 /* escape	*/
-#define CC_bel 057 /* bell		*/
-#else
-#define CC_vt 013  /* vertical tab	*/
-#define CC_esc 033 /* escape	*/
-#define CC_bel 007 /* bell		*/
-#endif             /* _chr_ebcdic */
-#endif             /* _PACKAGE_ast */
 
 static int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {
@@ -112,9 +99,7 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
 #endif
     char *sp, *ssp, *endsp, *ep, *endep;
     int dot, width, precis, sign, decpt;
-#if _PACKAGE_ast
     int scale;
-#endif
     ssize_t size;
     Sfdouble_t dval;
     void *valp;
@@ -266,9 +251,7 @@ loop_fmt:
             form += 1;
 
         flags = 0;
-#if _PACKAGE_ast
         scale = 0;
-#endif
         size = width = precis = base = n_s = argp = -1;
         ssp = _Sfdigits;
         endep = ep = NULL;
@@ -707,13 +690,11 @@ loop_fmt:
                         sp = "(null)";
                         flags &= ~SFFMT_LONG;
                     }
-#if _PACKAGE_ast
                 str_cvt:
                     if (scale) {
                         size = base = -1;
                         flags &= ~SFFMT_LONG;
                     }
-#endif
                     ls = tls;
                     tls[0] = sp;
                 }
@@ -984,24 +965,20 @@ loop_fmt:
                 flags &= ~(SFFMT_SIGN | SFFMT_BLANK);
                 goto int_arg;
             case 'i':
-#if _PACKAGE_ast
                 if ((flags & SFFMT_ALTER) && base < 0) {
                     flags &= ~SFFMT_ALTER;
                     scale = 1024;
                 }
-#endif
                 fmt = 'd';
                 goto d_format;
             case 'u':
                 flags &= ~(SFFMT_SIGN | SFFMT_BLANK);
             case 'd':
             d_format:
-#if _PACKAGE_ast
                 if ((flags & SFFMT_ALTER) && base < 0) {
                     flags &= ~SFFMT_ALTER;
                     scale = 1000;
                 }
-#endif
                 if (base < 2 || base > SF_RADIX) base = 10;
                 if ((base & (n_s = base - 1)) == 0) {
                     if (base < 8)
@@ -1024,7 +1001,6 @@ loop_fmt:
                     else
                         lv = (Sflong_t)argv.ul;
                 long_cvt:
-#if _PACKAGE_ast
                     if (scale) {
                         sp = fmtscale(lv, scale);
 #if _has_multibyte && defined(mbwidth)
@@ -1032,7 +1008,6 @@ loop_fmt:
 #endif
                         goto str_cvt;
                     }
-#endif
                     if (lv == 0 && precis == 0) break;
                     if (lv < 0 && fmt == 'd') {
                         flags |= SFFMT_MINUS;
@@ -1076,7 +1051,6 @@ loop_fmt:
                 } else {
                     v = argv.i;
                 int_cvt:
-#if _PACKAGE_ast
                     if (scale) {
                         sp = fmtscale(v, scale);
 #if _has_multibyte && defined(mbwidth)
@@ -1084,7 +1058,6 @@ loop_fmt:
 #endif
                         goto str_cvt;
                     }
-#endif
                     if (v == 0 && precis == 0) break;
                     if (v < 0 && fmt == 'd') {
                         flags |= SFFMT_MINUS;

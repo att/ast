@@ -80,35 +80,12 @@
 #define _val val
 
 #include "ast_mmap.h"
-
-/* define va_list, etc. before including sfio_t.h (sfio.h) */
-#if !_PACKAGE_ast
-
-/* some systems don't know large files */
-#if defined(_NO_LARGEFILE64_SOURCE) || _mips == 2 /* || __hppa */
-#undef _NO_LARGEFILE64_SOURCE
-#define _NO_LARGEFILE64_SOURCE 1
-#undef _LARGEFILE64_SOURCE
-#undef _LARGEFILE_SOURCE
-#endif
-
-#if !_NO_LARGEFILE64_SOURCE
-#undef _LARGEFILE64_SOURCE
-#undef _LARGEFILE_SOURCE
-#undef _FILE_OFFSET_BITS
-#define _LARGEFILE64_SOURCE 1 /* enabling the *64 stuff */
-#define _LARGEFILE_SOURCE 1
-#endif
-
-#endif /* !_PACKAGE_ast */
-
 #include "sfio_t.h"
 
 /* note that the macro vt_threaded has effect on vthread.h */
 #include "vthread.h"
 
 /* file system info */
-#if _PACKAGE_ast
 
 #include "ast.h"
 #include "ast_tty.h"
@@ -140,69 +117,9 @@
 #define sysstatf stat
 #define syswritef write
 
-#else /*!_PACKAGE_ast*/
-
-/* when building the binary compatibility package, a number of header files
-   are not needed and they may get in the way so we remove them here.
-*/
-#if _SFBINARY_H
-#undef _hdr_stat
-#undef _hdr_filio
-#undef _sys_filio
-#undef _stream_peek
-#undef _hdr_values
-#undef _hdr_math
-#undef _hdr_mman
-#endif
-
-#if !_LARGEFILE64_SOURCE /* turn off the *64 stuff */
-#undef _typ_struct_stat64
-#undef _lib_close64
-#undef _lib_munmap64
-#endif /*!_LARGEFILE64_SOURCE */
-
-/* standardize system calls and types dealing with files */
-//#if _typ_off64_t
-//#define sfoff_t		off64_t
-//#else
-#define sfoff_t off_t
-//#endif
-#if _typ_struct_stat64
-#define sfstat_t struct stat64
-#else
-#define sfstat_t struct stat
-#endif
-#define syslseekf lseek
-#define sysstatf stat
-#define sysfstatf fstat
-#define sysmmapf mmap
-#if _lib_munmap64
-#define sysmunmapf munmap64
-#else
-#define sysmunmapf munmap
-#endif
-#define sysopenf open
-#define syscreatf creat
-#if _lib_close64
-#define sysclosef close64
-#else
-#define sysclosef close
-#endif
-#define sysftruncatef ftruncate
-#define sysremovef remove
-
-#define sysreadf read
-#define syswritef write
-#define syspipef pipe
-#define sysdupf dup
-#define sysfcntlf fcntl
-
-#endif /*_PACKAGE_ast*/
-
 #include "ast_float.h"
 
 /* deal with multi-byte character and string conversions */
-#if _PACKAGE_ast
 
 #define _has_multibyte 1
 
@@ -214,44 +131,6 @@
 #define SFMBDCL(ms) Mbstate_t ms;
 #define SFMBDCLP(ms) Mbstate_t *ms;
 #define SFMBSTATE(f) _sfmbstate(f)
-
-#else
-
-#if _typ_mbstate_t && _lib_wcrtomb
-#define _has_multibyte 1 /* Xopen-compliant	*/
-#if _typ___va_list && !defined(__va_list)
-#define __va_list va_list
-#endif
-
-#define SFMBCPY(to, fr) memcpy((to), (fr), sizeof(mbstate_t))
-#define SFMBCLR(mb) memset((mb), 0, sizeof(mbstate_t))
-#define SFMBSET(lhs, v) (lhs = (v))
-#define SFMBDCL(mb) mbstate_t mb;
-#define SFMBLEN(s, mb) mbrtowc(NULL, (s), SFMBMAX, (mb))
-#endif /*_typ_mbstate_t && _lib_wcrtomb */
-
-#if !_has_multibyte && _lib_wctomb
-#define _has_multibyte 2 /* no shift states	*/
-#undef mbrtowc
-#define mbrtowc(wp, s, n, mb) mbtowc(wp, s, n)
-#undef wcrtomb
-#define wcrtomb(s, wc, mb) wctomb(s, wc)
-#define SFMBCPY(to, fr)
-#define SFMBCLR(mb)
-#define SFMBSET(lhs, v)
-#define SFMBDCL(mb)
-#define SFMBLEN(s, mb) mbrtowc(NULL, (s), SFMBMAX, (mb))
-#endif /*!_has_multibyte && _lib_wctomb*/
-
-#define SFMBSTATE(f) ((Mbstate_t *)0)
-
-#ifdef MB_CUR_MAX
-#define SFMBMAX MB_CUR_MAX
-#else
-#define SFMBMAX sizeof(Sflong_t)
-#endif
-
-#endif /* _PACKAGE_ast */
 
 #if !_has_multibyte
 #define _has_multibyte 0 /* no multibyte support	*/
@@ -524,7 +403,7 @@
 #endif
 
 /* function to get the decimal point for local environment */
-#if !defined(SFSETLOCALE) && _PACKAGE_ast
+#if !defined(SFSETLOCALE)
 #include "lclib.h"
 #define SFSETLOCALE(dp, tp)                                                  \
     do                                                                       \
@@ -534,7 +413,7 @@
             *(tp) = lv->thousand;                                            \
         }                                                                    \
     while (0)
-#endif /*!defined(SFSETLOCALE) && _PACKAGE_ast*/
+#endif // !defined(SFSETLOCALE)
 
 #if !defined(SFSETLOCALE)
 #include <locale.h>
@@ -921,14 +800,8 @@ typedef struct _sfextern_s {
 
 #define SF_RADIX 64 /* maximum integer conversion base */
 
-#if _PACKAGE_ast
 #define SF_MAXINT INT_MAX
 #define SF_MAXLONG LONG_MAX
-#else
-#define SF_MAXINT ((int)(((uint)~0) >> 1))
-#define SF_MAXLONG ((long)(((ulong)~0L) >> 1))
-#endif
-
 #define SF_MAXCHAR ((uchar)(~0))
 
 /* floating point to ascii conversion */
@@ -1150,24 +1023,5 @@ extern int _sftype(const char *, int *, int *, int *);
 #define ldexpl ldexp
 #endif
 #endif
-
-#if !_PACKAGE_ast
-
-#if !_proto_bcopy
-extern void bcopy(const void *, void *, size_t);
-#endif
-#if !_proto_bzero
-extern void bzero(void *, size_t);
-#endif
-
-extern time_t time(time_t *);
-extern int waitpid(int, int *, int);
-extern void _exit(int);
-typedef int (*Onexit_f)(void);
-extern Onexit_f onexit(Onexit_f);
-
-extern int poll(struct pollfd *, ulong, int);
-
-#endif  // _PACKAGE_ast
 
 #endif  // _SFHDR_H

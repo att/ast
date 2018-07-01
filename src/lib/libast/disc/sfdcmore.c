@@ -21,11 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#if _PACKAGE_ast
 #include <signal.h>
 
 #include "ast_tty.h"
-#endif
 
 #include "sfhdr.h"
 
@@ -267,9 +265,7 @@ int sfdcmore(Sfio_t *f, const char *prompt, int rows, int cols) {
     more->disc.exceptf = moreexcept;
     memcpy(more->prompt, prompt, n);
     if (!rows || !cols) {
-#if _PACKAGE_ast
         astwinsize(sffileno(sfstdin), &rows, &cols);
-#endif
         if (!rows) rows = 24;
         if (!cols) cols = 80;
     }

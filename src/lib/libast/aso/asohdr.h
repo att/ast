@@ -22,27 +22,8 @@
 #ifndef _ASOHDR_H
 #define _ASOHDR_H 1
 
-#if _PACKAGE_ast
-
-#include "ast.h"
-
-#include "error.h"
-
-#else
-
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#ifndef elementsof
-#define elementsof(x) (sizeof(x) / sizeof(x[0]))
-#endif
-#ifndef integralof
-#define integralof(x) (((char *)(x)) - ((char *)0))
-#endif
-
-#endif
-
 #include "aso.h"
+#include "ast.h"
+#include "error.h"
 
 #endif  // _ASOHDR_H
