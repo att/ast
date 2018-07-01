@@ -283,7 +283,12 @@ int b_uname(int argc, char **argv, Shbltin_t *context) {
                 } else {
                     t = (char *)hosttype;
                 }
-                strncpy(s = buf, t, sizeof(buf) - 1);
+                if (strlcpy(buf, t, sizeof(buf)) >= sizeof(buf)) {
+                    // TODO: Figure out what to do if the source is longer than the destination.
+                    // It should be a can't happen situation but what to do if it does happen?
+                    ;
+                }
+                s = buf;
             }
             output(OPT_implementation, s, "implementation");
         }

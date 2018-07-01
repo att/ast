@@ -1711,8 +1711,8 @@ static int search(Vi_t *vp, int mode) {
         location = hist_find(shgd->hist_ptr, ((char *)virtual) + 1, curhline, 1, new_direction);
     }
     cur_virt = i;
-    strncpy(lsearch, ((char *)virtual) + 1, SEARCHSIZE);
-    lsearch[SEARCHSIZE - 1] = 0;
+    // Is it okay if the string is truncated?
+    (void)strlcpy(lsearch, ((char *)virtual) + 1, SEARCHSIZE);
     if ((curhline = location.hist_command) >= 0) {
         vp->ocur_virt = INVALID;
         return GOOD;

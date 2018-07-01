@@ -136,7 +136,8 @@ static const char usage[] =
 static char *slavename(const char *name) {
     static char sname[MAXNAME];
     char *last;
-    strncpy(sname, name, sizeof(sname));
+
+    (void)strlcpy(sname, name, sizeof(sname));
     last = strrchr(sname, '/');
     last[1] = 't';
     return sname;

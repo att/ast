@@ -1787,7 +1787,8 @@ void sh_setsiginfo(siginfo_t *sip) {
     sfputc(sp->sh->strbuf, 0);
     char *p = sfstruse(sp->sh->strbuf);
     assert(p);
-    strncpy(signame, p, SIGNAME_MAX);
+    // If the source signal name is longer than SIGNAME_MAX something is horribly wrong.
+    if (strlcpy(signame, p, SIGNAME_MAX) >= SIGNAME_MAX) abort();  // this can't happen
     np->nvalue.cp = signame;
     np = create_svar(SH_SIG, "pid", 0, fp);
     np->nvalue.pidp = &sip->si_pid;

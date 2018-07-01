@@ -1127,8 +1127,8 @@ static void search(Emacs_t *ep, genchar *out, int direction) {
     }
     if (i != 2) {
         ed_external(string, (char *)string);
-        strncpy(lstring, ((char *)string) + 2, SEARCHSIZE);
-        lstring[SEARCHSIZE - 1] = 0;
+        // Is it okay if the string is truncated?
+        (void)strlcpy(lstring, ((char *)string) + 2, SEARCHSIZE);
         ep->prevdirection = direction;
     } else {
         direction = ep->prevdirection;
