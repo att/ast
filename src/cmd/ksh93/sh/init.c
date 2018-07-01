@@ -853,7 +853,6 @@ void sh_setmatch(Shell_t *shp, const char *v, int vsize, int nmatch, int match[]
         }
         mp->nodes = (char *)calloc(mp->nmatch * (NV_MINSZ + sizeof(void *) + 3), 1);
         mp->names = mp->nodes + mp->nmatch * (NV_MINSZ + sizeof(void *));
-        np = nv_namptr(mp->nodes, 0);
         nv_disc(SH_MATCHNOD, &mp->hdr, NV_LAST);
         for (i = nmatch; --i >= 0;) {
             if (match[2 * i] >= 0) nv_putsub(SH_MATCHNOD, Empty, i, ARRAY_ADD);
@@ -1954,7 +1953,8 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
     const struct shtable2 *tp;
     unsigned n = 0;
     Dt_t *treep;
-    Dt_t *base_treep, *dict;
+    Dt_t *base_treep;
+    Dt_t *dict = NULL;
 
     for (tp = name_vals; *tp->sh_name; tp++) n++;
     np = (Namval_t *)calloc(n, sizeof(Namval_t));
@@ -1983,14 +1983,18 @@ static_fn Dt_t *inittree(Shell_t *shp, const struct shtable2 *name_vals) {
             np->nvalue.cp = (char *)tp->sh_value;
         }
         nv_setattr(np, tp->sh_number);
-        if (nv_isattr(np, NV_TABLE)) nv_mount(np, (const char *)0, dict = dtopen(&_Nvdisc, Dtoset));
-        if (nv_isattr(np, NV_INTEGER)) {
-            nv_setsize(np, 10);
+        nv_setsize(np, nv_isattr(np, NV_INTEGER) ? 10 : 0);
+        // The sole reason for using nv_isattr(np, NV_TABLE) here appears to be the special `.sh`
+        // compound var. At this point the nv_isattr test is true while nv_istable(np) is false.
+        // Ffter the nv_mount() the reverse is true.
+        if (nv_isattr(np, NV_TABLE)) {
+            dict = dtopen(&_Nvdisc, Dtoset);
+            nv_mount(np, NULL, dict);
+            dtinsert(treep, np);
+            treep = dict;
         } else {
-            nv_setsize(np, 0);
+            dtinsert(treep, np);
         }
-        dtinsert(treep, np);
-        if (nv_istable(np)) treep = dict;
     }
     return treep;
 }
@@ -2003,7 +2007,7 @@ static_fn void env_init(Shell_t *shp) {
     char *cp;
     Namval_t *np;
     char **ep = environ;
-    char *next = 0;
+    char *next = NULL;
 #ifdef _ENV_H
     shp->env = env_open(environ, 3);
     env_delete(shp->env, "_");
@@ -2011,6 +2015,8 @@ static_fn void env_init(Shell_t *shp) {
     if (ep) {
         while (*ep) {
             cp = *ep++;
+            // The magic "A__z" env var is an invention of ksh88 and still used by ksh93.
+            // See var `e_envmarker`.
             if (*cp == 'A' && cp[1] == '_' && cp[2] == '_' && cp[3] == 'z' && cp[4] == '=') {
                 next = cp + 4;
             } else {
@@ -2026,6 +2032,9 @@ static_fn void env_init(Shell_t *shp) {
                 }
             }
         }
+
+        // This loop deals with the value of the magic "A__z" env var that is used to pass
+        // properties of exported variables to subshells.
         while (next) {
             cp = next;
             next = strchr(++cp, '=');
@@ -2055,8 +2064,6 @@ static_fn void env_init(Shell_t *shp) {
                     }
                 }
                 nv_newattr(np, flag | NV_IMPORT | NV_EXPORT, size);
-            } else {
-                cp += 2;
             }
         }
     }
