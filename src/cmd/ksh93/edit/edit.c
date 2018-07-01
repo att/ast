@@ -590,7 +590,10 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
             if (r) sh_offoption(shp, SH_RESTRICTED);
             sh_trap(shp, ".sh.subscript=$(tput cuu1 2>/dev/null)", 0);
             pp = nv_getval(SH_SUBSCRNOD);
-            if (pp) strncpy(CURSOR_UP, pp, sizeof(CURSOR_UP) - 1);
+            if (pp) {
+                // It should be impossible for the cursor up string to be truncated.
+                if (strlcpy(CURSOR_UP, pp, sizeof(CURSOR_UP)) >= sizeof(CURSOR_UP)) abort();
+            }
             nv_unset(SH_SUBSCRNOD);
             strcpy(ep->e_termname, term);
         }
@@ -1196,8 +1199,8 @@ static int keytrap(Edit_t *ep, char *inbuff, int insize, int bufsize, int mode) 
     if ((cp = nv_getval(ED_CHRNOD)) == inbuff) {
         nv_unset(ED_CHRNOD);
     } else if (bufsize > 0) {
-        strncpy(inbuff, cp, bufsize);
-        inbuff[bufsize - 1] = '\0';
+        // Is it okay if the string is truncated?
+        (void)strlcpy(inbuff, cp, bufsize);
         insize = (int)strlen(inbuff);
     } else {
         insize = 0;

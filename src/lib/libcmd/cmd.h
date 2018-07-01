@@ -100,8 +100,8 @@ int main(int argc, char **argv) {
     buf[0] = '_';
     buf[1] = 'b';
     buf[2] = '_';
-    strncpy(buf + 3, s, sizeof(buf) - 4);
-    buf[sizeof(buf) - 1] = 0;
+    // Is it okay if the string is truncated?
+    strlcpy(buf + 3, s, sizeof(buf) - 3);
     t = strchr(buf, '.');
     if (t) *t = 0;
     for (;;) {

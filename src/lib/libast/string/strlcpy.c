@@ -26,7 +26,12 @@
 
 #include "ast.h"
 
-#if !_lib_strlcat
+#if _lib_strlcat
+
+// This is to silence the linker about modules that have no content.
+int AST_strlcpy = 0;
+
+#else  // _lib_strlcat
 
 size_t strlcpy(char *s, const char *t, size_t n) {
     const char *o = t;
@@ -49,4 +54,4 @@ size_t strlcpy(char *s, const char *t, size_t n) {
     return t - o - 1;
 }
 
-#endif  // !_lib_strlcat
+#endif  // _lib_strlcat
