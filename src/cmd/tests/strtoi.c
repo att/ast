@@ -75,7 +75,7 @@ static intmax_t strtonll(const char *s, char **e, char *b, int m) {
 
 #endif
 
-int main(int argc, char **argv) {
+int handle_argv(char **argv) {  //!OCLINT(long method)
     char *s;
     char *p;
     long l;
@@ -88,10 +88,6 @@ int main(int argc, char **argv) {
     int n;
 #endif
 
-    if (argc <= 1) {
-        printf("%lu/%lu\n", sizeof(l) * 8, sizeof(ll) * 8);
-        return 0;
-    }
     decimal = *localeconv()->decimal_point;
     while (*++argv) {
         s = *argv;
@@ -131,11 +127,12 @@ int main(int argc, char **argv) {
         errno = 0;
         l = strtoul(s, &p, 0);
         printf(
-            "strtoul   \"%s\" \"%s\" %lu %s\n", s, p, l,
+            "strtoul   \"%s\" \"%s\" %ld %s\n", s, p, l,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strtoll(s, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strtoll   \"%s\" \"%s\" %ju %s\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
@@ -143,6 +140,7 @@ int main(int argc, char **argv) {
         errno = 0;
         b = 0;
         ll = strtonll(s, &p, &b, m);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strtonll  \"%s\" \"%s\" %ju %s %d\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
@@ -150,6 +148,7 @@ int main(int argc, char **argv) {
 
         errno = 0;
         ll = strtoull(s, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strtoull  \"%s\" \"%s\" %ju %s\n", s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
@@ -187,24 +186,28 @@ int main(int argc, char **argv) {
 
         errno = 0;
         l = strntoul(s, n, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoul   %2d \"%s\" \"%s\" %lu %s\n", n, s, p, l,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         l = strntoul(s, n - 1, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoul   %2d \"%s\" \"%s\" %lu %s\n", n - 1, s, p, l,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strntoll(s, n, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoll   %2d \"%s\" \"%s\" %ju %s\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strntoll(s, n - 1, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoll   %2d \"%s\" \"%s\" %ju %s\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
@@ -212,6 +215,7 @@ int main(int argc, char **argv) {
         errno = 0;
         b = 0;
         ll = strntonll(s, n, &p, &b, m);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntonll %2d \"%s\" \"%s\" %ju %s %d\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
@@ -220,6 +224,7 @@ int main(int argc, char **argv) {
         errno = 0;
         b = 0;
         ll = strntonll(s, n - 1, &p, &b, m);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntonll %2d \"%s\" \"%s\" %ju %s %d\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR",
@@ -227,16 +232,29 @@ int main(int argc, char **argv) {
 
         errno = 0;
         ll = strntoull(s, n, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoull %2d \"%s\" \"%s\" %ju %s\n", n, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 
         errno = 0;
         ll = strntoull(s, n - 1, &p, 0);
+        // cppcheck-suppress invalidPrintfArgType_uint
         printf(
             "strntoull %2d \"%s\" \"%s\" %ju %s\n", n - 1, s, p, ll,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
 #endif
     }
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        return handle_argv(argv);
+    }
+
+    long l;
+    uintmax_t ll;
+    printf("%zu/%zu\n", sizeof(l) * 8, sizeof(ll) * 8);
     return 0;
 }

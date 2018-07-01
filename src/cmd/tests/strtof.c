@@ -85,21 +85,13 @@ static _ast_fltmax_t strntold(const char *s, size_t n, char **e) {
 
 #endif
 
-int main(int argc, char **argv) {
-    char *s;
-    char *p;
+int handle_argv(char **argv) {  //!OCLINT(long method)
+    char *s, *p;
     double d;
     _ast_fltmax_t ld;
     int sep = 0;
     int n;
 
-    if (argc <= 1) {
-        printf("%lu.%u.%u.%u-%lu.%u.%u.%u-%lu.%u.%u.%u\n", 8 * sizeof(float), FLT_DIG,
-               -(FLT_MIN_10_EXP), FLT_MAX_10_EXP, 8 * sizeof(double), DBL_DIG, -(DBL_MIN_10_EXP),
-               DBL_MAX_10_EXP, 8 * sizeof(_ast_fltmax_t), LDBL_DIG, -(LDBL_MIN_10_EXP),
-               LDBL_MAX_10_EXP);
-        return 0;
-    }
     while (*++argv) {
         s = *argv;
         if (!strncmp(s, "LC_ALL=", 7)) {
@@ -152,5 +144,19 @@ int main(int argc, char **argv) {
             "strntold %2d \"%-.*s\" \"%s\" %.*Le %s\n", n - 1, n - 1, s, p, LDBL_DIG - 1, ld,
             errno == 0 ? "OK" : errno == ERANGE ? "ERANGE" : errno == EINVAL ? "EINVAL" : "ERROR");
     }
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        return handle_argv(argv);
+    }
+
+    printf("%zu.%u.%u.%u-%zu.%u.%u.%u-%zu.%u.%u.%u\n",
+            8 * sizeof(float), FLT_DIG,
+            -(FLT_MIN_10_EXP), FLT_MAX_10_EXP,  //!OCLINT(multiple unary operator)
+            8 * sizeof(double), DBL_DIG, -(DBL_MIN_10_EXP),  //!OCLINT(multiple unary operator)
+            DBL_MAX_10_EXP, 8 * sizeof(_ast_fltmax_t), LDBL_DIG,
+            -(LDBL_MIN_10_EXP), LDBL_MAX_10_EXP);  //!OCLINT(multiple unary operator)
     return 0;
 }
