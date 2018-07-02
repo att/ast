@@ -12,7 +12,7 @@ sfio_test_files =[ 'talarm.c', 'talign.c', 'tappend.c', 'tatexit.c',
                    'tsetfd.c', 'tsfstr.c', 'tshare.c', 'tsize.c', 'tstack.c',
                    'tstatus.c',  'tstkpk.c', 'tstring.c', 'tswap.c', 'tsync.c',
                    'ttell.c', 'ttmp.c', 'ttmpfile.c', 'tungetc.c', 'twalk.c', 'twhole.c',
-                   'twrrd.c', 'tprintf.c', 'tstdio.c', 'twc.c', 'twchar.c' ]
+                   'twrrd.c', 'tprintf.c' ]
 
 # TODO: This test fails due to a use after free bug. Enable it when that is fixed. For some reason
 # this affects Linux systems but not BSD systems. It results in a SIGSEGV on the `sfclose(fs);`
