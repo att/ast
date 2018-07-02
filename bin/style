@@ -1,15 +1,16 @@
 #!/usr/bin/env ksh
 #
-# Usage: bin/style [--all] [source_filename]...
+# Usage: bin/style [all | source_filename...]
 #
-# Run the source through `clang-format`. If invoked with `-all` then all the
-# src/cmd/ksh93 source files will be linted. If invoked with one or more path names they
-# will be linted. If the pathname is a directory all *.c files inside it will be linted.
-# Otherwise any uncommitted source files are linted. If there is no uncommitted change
-# then the files in the most recent commit are linted.
+# Run the source through `clang-format`. If invoked with `all` then all the
+# src/cmd/ksh93 source files will be linted. If invoked with one or more path
+# names they will be restyled. If the pathname is a directory all *.c and *.h
+# files inside it will be restyled. Otherwise any uncommitted source files are
+# restyled. If there is no uncommitted change then the files in the most
+# recent commit are restyled.
 #
 
-# Allow for handling filenames with spaces
+# Allow for handling filenames with spaces.
 IFS=$'\n'
 
 typeset all=no
@@ -18,7 +19,7 @@ typeset -a c_files=()
 typeset -a files=()
 
 # Deal with any CLI flags.
-while [[ "${#1}" -ne 0 ]]
+while [[ "${#}" -ne 0 ]]
 do
     case "${1}" in
         --all | all )
@@ -31,7 +32,7 @@ do
     shift
 done
 
-if [[ ${all} == yes && "${#1}" -ne 0 ]]
+if [[ ${all} == yes && "${#}" -ne 0 ]]
 then
     echo "Unexpected arguments: '${1}'" >&2
     exit 1
@@ -39,14 +40,7 @@ fi
 
 if [[ ${all} == yes ]]
 then
-    git status --porcelain --short --untracked-files=all \
-        | sed -e 's/^ *[^ ]* *//' \
-        | while IFS="" read -r line
-        do
-            files+=( "${line}" )
-        done
-
-    if [[ "${#files[@]}" -eq 0 ]]
+    if [[ "$(git status --porcelain --short --untracked-files=all)" != "" ]]
     then
         echo >&2
         echo You have uncommitted changes. Cowardly refusing to restyle the entire code base. >&2
@@ -54,11 +48,11 @@ then
         exit
     fi
 
-    find src -name "**.h" -o -name "**.c" | while IFS="" read -r line
+    find src -name "*.h" -o -name "*.c" | while IFS="" read -r line
     do
         files+=( "${line}" )
     done
-elif [[ "${#1}" -ne 0 ]]
+elif [[ "${#}" -ne 0 ]]
 then
     for next_file in "$@"
     do
@@ -67,7 +61,7 @@ then
             files+=( "${next_file}" )
         elif [[ -d ${next_file} ]]
         then
-            find "${next_file}" -name "**.h" -o -name "**.c" | while IFS="" read -r line
+            find "${next_file}" -name "*.h" -o -name "*.c" | while IFS="" read -r line
             do
                 files+=( "${line}" )
             done
@@ -76,8 +70,8 @@ then
 else
     # We haven't been asked to reformat all the source or specific files. If there are
     # uncommitted changes reformat those using `git clang-format`. Else reformat the
-    # files in the most recent commit. Select (cached files) (modified but not cached,
-    # and untracked files).
+    # files in the most recent commit. Select cached files, modified but not cached,
+    # and untracked files.
     git diff-index --cached HEAD --name-only | while IFS="" read -r line
     do
         files+=( "${line}" )
@@ -136,6 +130,7 @@ then
         echo
         echo 'WARNING: Cannot find git-clang-format command'
         echo
+        exit 1
     fi
 else
     if command -v clang-format > /dev/null
@@ -146,7 +141,7 @@ else
         echo ========================================
         for file in "${c_files[@]}"
         do
-            cp "${file}" "${file}.new"
+            cp "${file}" "${file}.new"  # preserves mode bits
             clang-format "${file}" >"${file}.new"
             if cmp -s "${file}" "${file}.new"
             then
@@ -160,5 +155,6 @@ else
         echo
         echo 'WARNING: Cannot find clang-format command'
         echo
+        exit 1
     fi
 fi
