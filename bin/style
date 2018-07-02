@@ -10,7 +10,9 @@
 # recent commit are restyled.
 #
 
-# Allow for handling filenames with spaces.
+# shellcheck disable=SC2207
+# Note: Disable SC2207 warning for the entire file since setting IFS to just
+# newline makes it safe to handle file names with spaces.
 IFS=$'\n'
 
 typeset all=no
@@ -48,10 +50,7 @@ then
         exit
     fi
 
-    find src -name "*.h" -o -name "*.c" | while IFS="" read -r line
-    do
-        files+=( "${line}" )
-    done
+    files=( $(find src -name "*.h" -o -name "*.c") )
 elif [[ "${#}" -ne 0 ]]
 then
     for next_file in "$@"
@@ -61,10 +60,7 @@ then
             files+=( "${next_file}" )
         elif [[ -d ${next_file} ]]
         then
-            find "${next_file}" -name "*.h" -o -name "*.c" | while IFS="" read -r line
-            do
-                files+=( "${line}" )
-            done
+            files+=( $(find "${next_file}" -name "*.h" -o -name "*.c") )
         fi
     done
 else
@@ -72,25 +68,15 @@ else
     # uncommitted changes reformat those using `git clang-format`. Else reformat the
     # files in the most recent commit. Select cached files, modified but not cached,
     # and untracked files.
-    git diff-index --cached HEAD --name-only | while IFS="" read -r line
-    do
-        files+=( "${line}" )
-    done
-    git ls-files --exclude-standard --others --modified | while IFS="" read -r line
-    do
-        files+=( "${line}" )
-    done
-
+    files=( $(git diff-index --cached HEAD --name-only) )
+    files+=( $(git ls-files --exclude-standard --others --modified) )
     if [[ "${#files[@]}" -ne 0 ]]
     then
         # Pending changes so restyle just the regions modified.
         git_clang_format=yes
     else
         # No pending changes so restyle the files in the most recent commit.
-        git diff-tree --no-commit-id --name-only -r HEAD | while IFS="" read -r line
-        do
-            files+=( "${line}" )
-        done
+        files=( $(git diff-tree --no-commit-id --name-only -r HEAD) )
     fi
 fi
 
@@ -141,6 +127,7 @@ else
         echo ========================================
         for file in "${c_files[@]}"
         do
+            echo WTF $file
             cp "${file}" "${file}.new"  # preserves mode bits
             clang-format "${file}" >"${file}.new"
             if cmp -s "${file}" "${file}.new"
