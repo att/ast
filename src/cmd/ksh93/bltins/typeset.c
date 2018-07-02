@@ -132,18 +132,9 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
     }
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), optusage(NULL));
     argv += (opt_info.index - 1);
-    if (*command == 'r') flag = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
-#ifdef _ENV_H
-    else if (!argv[1]) {
-        char *cp, **env = env_get(tdata.sh->env);
-        while (cp = *env++) {
-            if (tdata.prefix) sfputr(sfstdout, tdata.prefix, ' ');
-            sfprintf(sfstdout, "%s\n", sh_fmtq(cp));
-        }
-        return 0;
-    }
-#endif  // _ENV_H
-    else {
+    if (*command == 'r') {
+        flag = (NV_ASSIGN | NV_RDONLY | NV_VARNAME);
+    } else {
         flag = (NV_ASSIGN | NV_EXPORT | NV_IDENT);
         if (!tdata.sh->prefix) tdata.sh->prefix = "";
     }
