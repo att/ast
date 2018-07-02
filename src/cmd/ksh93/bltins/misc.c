@@ -135,12 +135,7 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
         char *cp;
         if (shp->subshell && !shp->subshare) sh_subfork();
         if (logp && logp->clear) {
-#ifdef _ENV_H
-            env_close(shp->env);
-            shp->env = env_open((char **)0, 3);
-#else
             nv_scan(shp->var_tree, noexport, 0, NV_EXPORT, NV_EXPORT);
-#endif
         }
         while (arg) {
             cp = strchr(arg->argval, '=');

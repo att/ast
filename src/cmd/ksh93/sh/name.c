@@ -63,10 +63,8 @@ static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t 
                             sizeof(struct Namref)};
 
 static_fn void attstore(Namval_t *, void *);
-#ifndef _ENV_H
 static_fn void pushnam(Namval_t *, void *);
 static_fn char *staknam(Shell_t *, Namval_t *, char *);
-#endif  // _ENV_H
 static_fn void rightjust(char *, int, int);
 static_fn char *lastdot(char *, int, void *);
 
@@ -107,9 +105,7 @@ static struct Namcache nvcache;
 #endif  // NVCACHE
 
 char nv_local = 0;
-#ifndef _ENV_H
 static_fn void (*nullscan)(Namval_t *, void *);
-#endif  // _ENV_H
 
 #if (SFIO_VERSION <= 20010201L)
 #define _data data
@@ -134,28 +130,6 @@ static_fn char *getbuf(size_t len) {
     }
     return buf;
 }
-
-#ifdef _ENV_H
-void sh_envput(Shell_t *shp, Namval_t *np) {
-    Env_t *ep = shp->env;
-    int offset = stktell(shp->stk);
-    Namarr_t *ap = nv_arrayptr(np);
-    char *val;
-
-    if (ap) {
-        if (ap->flags & ARRAY_UNDEF) {
-            nv_putsub(np, "0", 0L, 0);
-        } else if (!(val = nv_getsub(np)) || strcmp(val, "0")) {
-            return;
-        }
-    }
-    if (!(val = nv_getval(np))) return;
-    sfputr(shp->stk, nv_name(np), '=');
-    sfputr(shp->stk, val, -1);
-    stkseek(shp->stk, offset);
-    env_add(ep, stkptr(shp->stk, offset), ENV_STRDUP);
-}
-#endif  // _ENV_H
 
 //
 // Output variable name in format for re-input.
@@ -1858,7 +1832,6 @@ static_fn void ja_restore(void) {
     savep = 0;
 }
 
-#ifndef _ENV_H
 static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
     char *p, *q;
 
@@ -1870,31 +1843,10 @@ static_fn char *staknam(Shell_t *shp, Namval_t *np, char *value) {
     }
     return q;
 }
-#endif  // _ENV_H
 
 //
 // Put the name and attribute into value of attributes variable.
 //
-#ifdef _ENV_H
-static_fn void attstore(Namval_t *np, void *data) {
-    struct adata Shell_t *shp = (struct adata *)data->sh;
-    int flag, c = ' ';
-
-    if (!(nv_isattr(np, NV_EXPORT))) return;
-    flag =
-        nv_isattr(np, NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
-    sfputc(shp->stk, '=');
-    if ((flag & NV_DOUBLE) == NV_DOUBLE) {
-        // Export doubles as integers for ksh88 compatibility.
-        sfputc(shp->stk, c + NV_INTEGER | (flag & ~(NV_DOUBLE | NV_EXPNOTE)));
-    } else {
-        sfputc(shp->stk, c + flag);
-        if (flag & NV_INTEGER) c += nv_size(np);
-    }
-    sfputc(shp->stk, c);
-    sfputr(shp->stk, nv_name(np) - 1);
-}
-#else   // _ENV_H
 static_fn void attstore(Namval_t *np, void *data) {
     int flag = np->nvflag;
     struct adata *ap = (struct adata *)data;
@@ -1921,9 +1873,7 @@ static_fn void attstore(Namval_t *np, void *data) {
     }
     ap->attval = strcopy(++ap->attval, nv_name(np));
 }
-#endif  // _ENV_H
 
-#ifndef _ENV_H
 static_fn void pushnam(Namval_t *np, void *data) {
     char *value;
     struct adata *ap = (struct adata *)data;
@@ -1939,32 +1889,10 @@ static_fn void pushnam(Namval_t *np, void *data) {
         ap->attsize += (strlen(nv_name(np)) + 4);
     }
 }
-#endif  // _ENV_H
 
 //
 // Generate the environment list for the child.
 //
-
-#ifdef _ENV_H
-char **sh_envgen(Shell_t *shp) {
-    int offset, tell;
-    char **er;
-
-    env_delete(shp->env, "_");
-    er = env_get(shp->env);
-    offset = stktell(shp->stk);
-    sfputr(shp->stkme_envmarker, -1);
-    tell = stktell(shp->stk);
-    nv_scan(shp->var_tree, attstore, (void *)shp, 0,
-            (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER));
-    if (tell == stktell(shp->stk)) {
-        stkseek(shp->stk, offset);
-    } else {
-        *--er = stkfreeze(shp->stk, 1) + offset;
-    }
-    return (er);
-}
-#else   // _ENV_H
 char **sh_envgen(Shell_t *shp) {
     char **er;
     int namec;
@@ -1992,7 +1920,6 @@ char **sh_envgen(Shell_t *shp) {
     *data.argnam = 0;
     return er;
 }
-#endif  // _ENV_H
 
 struct scan {
     void (*scanfn)(Namval_t *, void *);

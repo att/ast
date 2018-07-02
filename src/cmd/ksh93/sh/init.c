@@ -2011,10 +2011,7 @@ static_fn void env_init(Shell_t *shp) {
     Namval_t *np;
     char **ep = environ;
     char *next = 0;
-#ifdef _ENV_H
-    shp->env = env_open(environ, 3);
-    env_delete(shp->env, "_");
-#endif
+
     if (ep) {
         while (*ep) {
             cp = *ep++;
@@ -2067,9 +2064,7 @@ static_fn void env_init(Shell_t *shp) {
             }
         }
     }
-#ifdef _ENV_H
-    env_delete(shp->env, e_envmarker);
-#endif
+
     if (nv_isnull(PWDNOD) || nv_isattr(PWDNOD, NV_TAGGED)) {
         nv_offattr(PWDNOD, NV_TAGGED);
         path_pwd(shp, 0);
