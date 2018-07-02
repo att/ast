@@ -484,7 +484,8 @@ tmain() {
     sfsprintf(buf1, sizeof(buf1), "%G %G %G %G %G %G", pnan, nnan, pinf, ninf, pnil, nnil);
     expect = "NAN -NAN INF -INF 0 -0";
     expec2 = "NAN NAN INF -INF 0 -0";
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    expec3 = "-NAN NAN INF -INF 0 -0";  // this is for OpenBSD which flips -nan <=> nan
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
@@ -492,7 +493,8 @@ tmain() {
               nnil);
     expect = "  nan  -nan   inf  -inf 00000 -0000";
     expec2 = "  nan   nan   inf  -inf 00000 -0000";
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    expec3 = " -nan   nan   inf  -inf 00000 -0000";  // this is for OpenBSD which flips -nan <=> nan
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
@@ -507,15 +509,17 @@ tmain() {
               nnill);
     expect = "nan -nan inf -inf 0 -0";
     expec2 = "nan nan inf -inf 0 -0";
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    expec3 = "-nan -nan inf -inf 0 -0";  // this is for OpenBSD which flips -nan <=> nan
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
     expect = "NAN -NAN INF -INF 0 -0";
     expec2 = "NAN NAN INF -INF 0 -0";
+    expec3 = "-NAN -NAN INF -INF 0 -0";  // this is for OpenBSD which flips -nan <=> nan
     sfsprintf(buf1, sizeof(buf1), "%LG %LG %LG %LG %LG %LG", pnanl, nnanl, pinfl, ninfl, pnill,
               nnill);
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
@@ -523,7 +527,8 @@ tmain() {
               pnill, nnill);
     expect = "  nan  -nan   inf  -inf 00000 -0000";
     expec2 = "  nan   nan   inf  -inf 00000 -0000";
-    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0) {
+    expec3 = " -nan  -nan   inf  -inf 00000 -0000";  // this is for OpenBSD which flips -nan <=> nan
+    if (strcmp(buf1, expect) != 0 && strcmp(buf1, expec2) != 0 && strcmp(buf1, expec3) != 0) {
         terror("\nexpect: %s\nactual: %s", expect, buf1);
     }
 
