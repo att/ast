@@ -1,6 +1,6 @@
 #!/usr/bin/env ksh
 #
-# Usage: bin/style [all | source_filename...]
+# Usage: bin/style [all | directory_or_filename...]
 #
 # Run the source through `clang-format`. If invoked with `all` then all the
 # src/cmd/ksh93 source files will be linted. If invoked with one or more path
@@ -127,7 +127,6 @@ else
         echo ========================================
         for file in "${c_files[@]}"
         do
-            echo WTF $file
             cp "${file}" "${file}.new"  # preserves mode bits
             clang-format "${file}" >"${file}.new"
             if cmp -s "${file}" "${file}.new"
