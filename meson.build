@@ -76,6 +76,10 @@ shared_c_args = [
     '-D_AST_no_spawnveg=1',
 ]
 
+if get_option('coshell') == true
+    shared_c_args += [ '-DSHOPT_COSHELL' ]
+endif
+
 ptr_size = cc.sizeof('void*')
 int_size = cc.sizeof('int')
 long_size = cc.sizeof('long')

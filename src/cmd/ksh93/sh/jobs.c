@@ -835,9 +835,9 @@ int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int 
     by_number = 0;
     job_lock();
     pw = job.pwlist;
-#if SHOPT_COSHELL
+
     job_waitsafe(SIGCHLD, (siginfo_t *)0, (void *)0);
-#endif  // SHOPT_COSHELL
+
     if (jobs == NULL) {
         // Do all jobs.
         for (; pw; pw = px) {
