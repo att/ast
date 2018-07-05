@@ -108,6 +108,22 @@ socketpair_shutdown_feature_result = cc.run(
 feature_data.set10('_socketpair_shutdown_mode',
     socketpair_shutdown_feature_result.returncode() == 0)
 
+max_signum_feature_file = files('max_signum.c')
+max_signum_feature_result = cc.run(
+    max_signum_feature_file,
+    name: 'max signal number',
+    args: feature_test_args)
+if max_signum_feature_result.returncode() == 0
+    feature_data.set('MAX_SIGNUM', max_signum_feature_result.stdout().strip())
+else
+    warning('Could not reliably determine the max signal number.')
+    # Okay, we can't figure it out from the symbols provided by signal.h so
+    # use a big number and hope for the best. We're assuming no system has a
+    # signal number larger than 64.
+    feature_data.set('MAX_SIGNUM', '64')
+endif
+
+
 if cc.has_member('struct stat', 'st_mtim', prefix: '#include <sys/stat.h>',
                  args: feature_test_args)
     feature_data.set('STAT_ST_MTIM', 1)

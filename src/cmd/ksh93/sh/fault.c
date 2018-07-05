@@ -263,35 +263,20 @@ done:
 //
 // Initialize signal handling.
 //
-void sh_siginit(void *ptr) {
-    Shell_t *shp = (Shell_t *)ptr;
-    int sig, n;
+void sh_siginit(Shell_t *shp) {
     const struct shtable2 *tp = shtab_signals;
+
     sig_begin();
 
-    // Find the largest signal number in the table.
-#if defined(SIGRTMIN) && defined(SIGRTMAX)
-    if ((n = SIGRTMIN) > 0 && (sig = SIGRTMAX) > n && sig < SH_TRAP) {
-        shp->gd->sigruntime[SH_SIGRTMIN] = n;
-        shp->gd->sigruntime[SH_SIGRTMAX] = sig;
-    }
-#endif  // SIGRTMIN && SIGRTMAX
-    n = SIGTERM;
-    while (*tp->sh_name) {
-        sig = (tp->sh_number & ((1 << SH_SIGBITS) - 1));
-        if (!(sig-- & SH_TRAP)) {
-            if ((tp->sh_number >> SH_SIGBITS) & SH_SIGRUNTIME) sig = shp->gd->sigruntime[sig];
-            if (sig > n && sig < SH_TRAP) n = sig;
-        }
-        tp++;
-    }
-    shp->gd->sigmax = ++n;
-    shp->st.trapcom = (char **)calloc(n, sizeof(char *));
-    shp->sigflag = (unsigned char *)calloc(n, sizeof(unsigned char));
-    shp->gd->sigmsg = (char **)calloc(n, sizeof(char *));
-    shp->siginfo = calloc(sizeof(siginfo_ll_t *), shp->gd->sigmax);
-    for (tp = shtab_signals; (sig = tp->sh_number); tp++) {
-        n = (sig >> SH_SIGBITS);
+    shp->gd->sigmax = MAX_SIGNUM + 1;
+    shp->st.trapcom = calloc(shp->gd->sigmax, sizeof(char *));
+    shp->sigflag = calloc(shp->gd->sigmax, sizeof(unsigned char));
+    shp->gd->sigmsg = calloc(shp->gd->sigmax, sizeof(char *));
+    shp->siginfo = calloc(shp->gd->sigmax, sizeof(siginfo_ll_t *));
+
+    for (tp = shtab_signals; tp->sh_number; tp++) {
+        int sig = tp->sh_number;
+        int n = (sig >> SH_SIGBITS);
         if ((sig &= ((1 << SH_SIGBITS) - 1)) > (shp->gd->sigmax)) continue;
         sig--;
         if (n & SH_SIGRUNTIME) sig = shp->gd->sigruntime[sig];
