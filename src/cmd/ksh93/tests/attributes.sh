@@ -269,8 +269,16 @@ else
     log_error 'typeset -usi cannot be used for unsigned short'
 fi
 
-[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:-3}' 2> /dev/null) == 3 ]]  || log_error  '${foo:-3} not 3 when typeset -Z2 field undefined'
-[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:=3}' 2> /dev/null) == 03 ]]  || log_error  '${foo:=-3} not 3 when typeset -Z2 foo undefined'
+# Check ${parameter:-word} style of parameter expansion. ':' is optional and is used to check for null (empty string).
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo-3}') == 3 ]]  || log_error  '${foo-3} not 3 when typeset -Z2 field undefined'
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo=3}') == 03 ]]  || log_error  '${foo=3} not 3 when typeset -Z2 foo undefined'
+
+[[ $($SHELL -c 'foo=""; print ${foo-3}') == "" ]]  || log_error  '${foo-3} not "" when foo is null'
+[[ $($SHELL -c 'foo=""; print ${foo=3}') == "" ]]  || log_error  '${foo=3} not "" when foo is null'
+
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:-3}') == 3 ]]  || log_error  '${foo:-3} not 3 when typeset -Z2 field undefined'
+[[ $($SHELL -c 'unset foo;typeset -Z2 foo; print ${foo:=3}') == 03 ]]  || log_error  '${foo:=3} not 3 when typeset -Z2 foo undefined'
+
 unset foo bar
 unset -f fun
 function fun
