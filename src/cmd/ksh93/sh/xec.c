@@ -1618,8 +1618,8 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     if (jmpval) goto done;
                     if ((type & FINT) && !sh_isstate(shp, SH_MONITOR)) {
                         // Default std input for &.
-                        signal(SIGINT, SIG_IGN);
-                        signal(SIGQUIT, SIG_IGN);
+                        sh_signal(SIGINT, (sh_sigfun_t)(SIG_IGN));
+                        sh_signal(SIGQUIT, (sh_sigfun_t)(SIG_IGN));
                         shp->sigflag[SIGINT] = SH_SIGOFF;
                         shp->sigflag[SIGQUIT] = SH_SIGOFF;
                         if (!shp->st.ioset) {
@@ -2797,9 +2797,9 @@ pid_t _sh_fork(Shell_t *shp, pid_t parent, int flags, int *jobid) {
     }
 #ifdef SIGTSTP
     if (job.jobcontrol) {
-        signal(SIGTTIN, SIG_DFL);
-        signal(SIGTTOU, SIG_DFL);
-        signal(SIGTSTP, SIG_DFL);
+        sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGTTOU, (sh_sigfun_t)(SIG_DFL));
+        sh_signal(SIGTSTP, (sh_sigfun_t)(SIG_DFL));
     }
 #endif  // SIGTSTP
     job.jobcontrol = 0;
@@ -3084,7 +3084,7 @@ static_fn void sigreset(Shell_t *shp, int mode) {
         if (sig == SIGCHLD) continue;
         if (shp->sigflag[sig] & SH_SIGOFF) return;
         trap = shp->st.trapcom[sig];
-        if (trap && *trap == 0) signal(sig, mode ? (sh_sigfun_t)sh_fault : SIG_IGN);
+        if (trap && *trap == 0) sh_signal(sig, mode ? (sh_sigfun_t)sh_fault : SIG_IGN);
     }
 }
 
@@ -3111,8 +3111,8 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
     jmpval = sigsetjmp(buffp->buff, 0);
     if (jmpval == 0) {
         if ((otype & FINT) && !sh_isstate(shp, SH_MONITOR)) {
-            signal(SIGQUIT, SIG_IGN);
-            signal(SIGINT, SIG_IGN);
+            sh_signal(SIGQUIT, SIG_IGN);
+            sh_signal(SIGINT, SIG_IGN);
         }
         spawnpid = -1;
         if (t->com.comio) {

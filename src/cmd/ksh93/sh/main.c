@@ -77,16 +77,6 @@ static struct stat lastmail;
 static time_t mailtime;
 static char beenhere = 0;
 
-#if _lib_sigvec
-void clearsigmask(int sig) {
-    struct sigvec vec;
-    if (sigvec(sig, NULL, &vec) >= 0 && vec.sv_mask) {
-        vec.sv_mask = 0;
-        sigvec(sig, &vec, NULL);
-    }
-}
-#endif  // _lib_sigvec
-
 #ifdef PATH_BFPATH
 #define PATHCOMP NULL
 #else
@@ -130,12 +120,10 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     bool rshflag; /* set for restricted shell */
     char *command;
 
-#if _lib_sigvec
-    // This is to clear mask that may be left on by rlogin.
-    clearsigmask(SIGALRM);
-    clearsigmask(SIGHUP);
-    clearsigmask(SIGCHLD);
-#endif  // _lib_sigvec
+    // Make sure we weren't started with several critical signals blocked from delivery.
+    sh_sigaction(SIGALRM, SIG_UNBLOCK);
+    sh_sigaction(SIGCHLD, SIG_UNBLOCK);
+    sh_sigaction(SIGHUP, SIG_UNBLOCK);
 
     fixargs(av, 0);
     shp = sh_init(ac, av, userinit);
@@ -180,10 +168,10 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         }
         if (sh_isoption(shp, SH_INTERACTIVE)) {
 #ifdef SIGXCPU
-            signal(SIGXCPU, SIG_DFL);
+            sh_signal(SIGXCPU, (sh_sigfun_t)(SIG_DFL));
 #endif  // SIGXCPU
 #ifdef SIGXFSZ
-            signal(SIGXFSZ, SIG_DFL);
+            sh_signal(SIGXFSZ, (sh_sigfun_t)(SIG_DFL));
 #endif  // SIGXFSZ
             sh_onoption(shp, SH_MONITOR);
         }

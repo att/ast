@@ -29,7 +29,6 @@
 
 #include "error.h"
 #include "fault.h"
-#include "sig.h"
 
 typedef struct _timer {
     double wakeup;
@@ -98,7 +97,7 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
         return;
     }
     time_state |= IN_SIGALRM;
-    sigrelease(SIGALRM);
+    sh_sigaction(SIGALRM, SIG_UNBLOCK);
     while (1) {
         now = getnow();
         tpold = tpmin = 0;
@@ -128,7 +127,7 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
             if (!tpmin || tpmin->wakeup > tp->wakeup) tpmin = tp;
         }
         if (tpmin && (left == 0 || (tp && tpmin->wakeup < (now + left)))) {
-            if (left == 0) signal(SIGALRM, sigalrm);
+            if (left == 0) sh_signal(SIGALRM, sigalrm);
             left = setalarm(tpmin->wakeup - now);
             if (left && (now + left) < tpmin->wakeup) {
                 setalarm(left);
@@ -149,22 +148,22 @@ static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
         }
     }
     if (!tpmin) {
-        signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? (sh_sigfun_t)sh_fault : SIG_DFL);
+        sh_signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
     }
     time_state &= ~IN_SIGALRM;
     errno = EINTR;
 }
 
 static_fn void oldalrm(void *handle) {
-    Handler_t fn = *(Handler_t *)handle;
+    sh_sigfun_t fn = *(sh_sigfun_t *)handle;
     free(handle);
-    (*fn)(SIGALRM);
+    (*fn)(SIGALRM, NULL, NULL);
 }
 
 void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *handle) {
     Timer_t *tp;
     double t;
-    Handler_t fn;
+    sh_sigfun_t fn;
 
     t = ((double)msec) / 1000.;
     if (t <= 0 || !action) return NULL;
@@ -183,9 +182,9 @@ void *sh_timeradd(unsigned long msec, int flags, void (*action)(void *), void *h
     tptop = tp;
     if (!tpmin || tp->wakeup < tpmin->wakeup) {
         tpmin = tp;
-        fn = (Handler_t)signal(SIGALRM, sigalrm);
-        if ((t = setalarm(t)) > 0 && fn && fn != (Handler_t)sigalrm) {
-            Handler_t *hp = (Handler_t *)malloc(sizeof(Handler_t));
+        fn = sh_signal(SIGALRM, sigalrm);
+        if ((t = setalarm(t)) > 0 && fn && fn != sigalrm) {
+            sh_sigfun_t *hp = malloc(sizeof(sh_sigfun_t));
             if (hp) {
                 *hp = fn;
                 sh_timeradd((long)(1000 * t), 0, oldalrm, (void *)hp);
@@ -217,6 +216,6 @@ void timerdel(void *handle) {
             tpmin = 0;
             setalarm((double)0);
         }
-        signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? (sh_sigfun_t)sh_fault : SIG_DFL);
+        sh_signal(SIGALRM, (sh.sigflag[SIGALRM] & SH_SIGFAULT) ? sh_fault : (sh_sigfun_t)(SIG_DFL));
     }
 }
