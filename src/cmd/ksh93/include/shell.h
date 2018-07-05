@@ -295,7 +295,6 @@ struct Shell_s {
     Namval_t *typeinit;
     Namfun_t nvfun;
     char *mathnodes;
-    void *coshell;
     char *bltin_dir;
     char exittrap;
     char errtrap;

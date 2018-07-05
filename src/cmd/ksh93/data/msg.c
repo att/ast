@@ -150,11 +150,7 @@ const char e_jobsrunning[] = "You have running jobs";
 const char e_no_job[] = "no such job";
 const char e_no_proc[] = "no such process";
 const char e_badpid[] = "%s: invalid process id";
-#if SHOPT_COSHELL
-const char e_jobusage[] = "%s: Arguments must be %%job, process ids, or job pool names";
-#else   // SHOPT_COSHELL
 const char e_jobusage[] = "%s: Arguments must be %%job or process ids";
-#endif  // SHOPT_COSHELL
 #endif  // JOBS
 const char e_coredump[] = "(coredump)";
 const char e_alphanum[] = "[_[:alpha:]]*([_[:alnum:]])";

@@ -1157,7 +1157,6 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
     path = path_relative(shp, path);
     shp->comdiv = 0;
     shp->bckpid = 0;
-    shp->coshell = 0;
     shp->st.ioset = 0;
     // Clean up any cooperating processes.
     if (shp->cpipe[0] > 0) sh_pclose(shp->cpipe);

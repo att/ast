@@ -26,7 +26,6 @@
  * parse elapsed time in 1/n secs from s
  * compatible with fmtelapsed()
  * also handles ps [day-][hour:]min:sec
- * also handles coshell % for 'infinity'
  * if e!=0 then it is set to first unrecognized char
  */
 #include "config_ast.h"  // IWYU pragma: keep
