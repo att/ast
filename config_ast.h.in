@@ -74,6 +74,7 @@
 #mesondefine _stk_down
 #mesondefine isnanl
 #mesondefine const_const_fts_open
+#mesondefine MAX_SIGNUM
 
 // What follows are all the symbols that should be based on Meson feature
 // tests like `cc.has_header()` and `cc.find_library()`.

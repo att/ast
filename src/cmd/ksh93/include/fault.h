@@ -136,7 +136,7 @@ extern void dump_backtrace(int max_frames, int skip_levels);
 #define signal(a, b) sh_signal(a, (sh_sigfun_t)(b))
 
 extern void sh_done(void *, int);
-extern void sh_siginit(void *);
+extern void sh_siginit(Shell_t *shp);
 extern void *sh_timeradd(unsigned long, int, void (*)(void *), void *);
 extern void timerdel(void *);
 
