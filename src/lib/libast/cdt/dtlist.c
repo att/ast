@@ -171,7 +171,7 @@ static void *dtlist(Dt_t *dt, void *obj, int type) {
         if (!(fngr = (Dtlink_t **)obj) || !(r = *fngr)) DTRETURN(obj, NULL);
         obj = _DTOBJ(disc, r);
         *fngr = r->_rght;
-        DTRETURN(obj, obj);
+        goto dt_return;
     } else if (type & DT_STOP) {
         if (obj) /* free allocated memory */
             (void)(*dt->memoryf)(dt, obj, 0, disc);
@@ -308,7 +308,7 @@ static void *dtlist(Dt_t *dt, void *obj, int type) {
         _dtfree(dt, r, type);
         dt->data->size -= 1;
 
-        DTRETURN(obj, obj);
+        goto dt_return;
     } else if (type & DT_NEXT)
         r = r->_rght;
     else if (type & DT_PREV)

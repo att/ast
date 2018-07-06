@@ -518,7 +518,7 @@ static void *dttree(Dt_t *dt, void *obj, int type) {
             } else if (type & DT_STEP) /* return obj and set fngr to next */
             {
                 *fngr = root;
-                DTRETURN(obj, obj);
+                goto dt_return;
             } else
                 DTRETURN(obj, _DTOBJ(disc, root));
         } else if (type & (DT_NEXT | DT_STEP)) {
@@ -607,7 +607,7 @@ static void *dttree(Dt_t *dt, void *obj, int type) {
             }
 
             if (type & (DT_DELETE | DT_DETACH | DT_REMOVE | DT_STEP))
-                DTRETURN(obj, obj);
+                goto dt_return;
             else {
                 if (type & DT_START) /* cannot start a walk from nowhere */
                     (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);

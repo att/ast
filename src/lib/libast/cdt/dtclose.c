@@ -34,11 +34,11 @@
 int dtclose(Dt_t *dt) {
     int ev, type;
     Dt_t pdt;
-    Dtdisc_t *disc = dt->disc;
 
     if (!dt || dt->nview > 0) /* can't close if being viewed */
         return -1;
 
+    Dtdisc_t *disc = dt->disc;
     if (disc && disc->eventf) /* announce closing event */
         ev = (*disc->eventf)(dt, DT_CLOSE, (void *)1, disc);
     else

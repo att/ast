@@ -303,7 +303,7 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
 
     if (lnk && obj == _DTOBJ(disc, lnk)) {
         if (type & DT_SEARCH)
-            DTRETURN(obj, obj);
+            goto dt_return;
         else if (type & (DT_NEXT | DT_PREV))
             DTRETURN(obj, hnext(dt, lnk));
         else if (type & DT_START) {
@@ -312,7 +312,7 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
         } else if (type & DT_STEP) /* return obj and set finger to next */
         {
             *fngr = hnext(dt, lnk) ? hash->here : NULL;
-            DTRETURN(obj, obj);
+            goto dt_return;
         }
     }
 
@@ -367,7 +367,7 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
         } else if (type & DT_STEP) /* return obj and set finger to next */
         {
             *fngr = hnext(dt, ll) ? hash->here : NULL;
-            DTRETURN(obj, obj);
+            goto dt_return;
         } else if (type & (DT_NEXT | DT_PREV))
             DTRETURN(obj, hnext(dt, ll));
         else if (type & (DT_DELETE | DT_DETACH | DT_REMOVE)) {
