@@ -7,7 +7,6 @@ shcomp_files = []
 
 ksh93_incdir = include_directories('include',
                                    '../../lib/libast/include/',
-                                   '../../lib/libast/features/',
                                    '../../lib/libcmd/',
                                    '../../lib/libdll/',
                                    '../../lib/libcoshell/')

@@ -7,7 +7,6 @@ libcoshell_files = [
 libcoshell_c_args = ['-D_BLD_coshell']
 
 libcoshell_incdir = include_directories('../libast/include',
-                                        '../libast/features/',
                                         '../../cmd/ksh93/include/')
 
 libcoshell = library('coshell', libcoshell_files,

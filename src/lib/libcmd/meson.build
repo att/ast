@@ -9,7 +9,7 @@ libcmd_c_args = shared_c_args + [
     '-DERROR_CATALOG=0',
 ]
 
-incdir = include_directories('../libast/include', '../libast/features/')
+incdir = include_directories('../libast/include')
 
 libcmd = library('cmd', libcmd_files, c_args: libcmd_c_args,
                  include_directories: [configuration_incdir, incdir],
