@@ -28,15 +28,21 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <locale.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <wchar.h>
 #include <wctype.h>
 
+#include "ast.h"
 #include "ast_iconv.h"
-#include "ast_standards.h"
 #include "codeset.h"
 #include "lclib.h"
 #include "mc.h"
-#include "namval.h"
+#include "sfio.h"
 
 #undef mbsrtowcs
 #undef wcsrtombs

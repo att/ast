@@ -24,6 +24,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <locale.h>
+
+#include "ast.h"
 #include "lclib.h"
 
 #undef localeconv

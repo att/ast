@@ -29,9 +29,18 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <dirent.h>
+#include <errno.h>
+#include <iconv.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <wchar.h>
 
 #include "ast.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
+#include "sfio.h"
 
 #define DEBUG_TRACE 0
 #define _ICONV_LIST_PRIVATE_

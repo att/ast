@@ -155,6 +155,7 @@
     { symbol: ["wchar_t", "private", "<wchar.h>", "public"] },
     { symbol: ["wctrans_t", "private", "<wchar.h>", "public"] },
     { symbol: ["lconv", "private", "<locale.h>", "public"] },
+    { symbol: ["localeconv", "private", "<locale.h>", "public"] },
     { symbol: ["_POSIX_VDISABLE", "private", "<unistd.h>", "public"] },
     { symbol: ["clock_t", "private", "<sys/times.h>", "public"] },
     { symbol: ["PIPE_BUF", "private", "<limits.h>", "public"] },

@@ -21,11 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <signal.h>
+#include <stddef.h>
 
 #if !_lib_sigflag
-
-#include "sig.h"
 
 int sigflag(int sig, int flags, int set) {
     struct sigaction sa;
