@@ -31,23 +31,24 @@
 */
 
 Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
-    Sfio_t *f;
-    int sflags;
-
-    SFONCE(); /* initialize mutexes */
+    SFONCE();  // initialize mutexes
 
     if (!(flags & SF_RDWR)) return NULL;
 
-    sflags = 0;
-    if ((f = oldf)) {
+    Sfio_t *f = oldf;
+    int sflags = 0;
+
+    if (f) {
         if (flags & SF_EOF) {
             if (f != sfstdin && f != sfstdout && f != sfstderr) f->mutex = NULL;
             SFCLEAR(f, f->mutex);
-            oldf = NULL;
+            // Is this supposed to be `f = NULL;` ?
+            // oldf = NULL;
         } else if (f->mode & SF_AVAIL) { /* only allow SF_STATIC to be already closed */
             if (!(f->flags & SF_STATIC)) return NULL;
             sflags = f->flags;
-            oldf = NULL;
+            // Is this supposed to be `f = NULL;` ?
+            // oldf = NULL;
         } else { /* reopening an open stream, close it first */
             sflags = f->flags;
 
@@ -62,7 +63,7 @@ Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
         }
     }
 
-    if (!f) { /* reuse a standard stream structure if possible */
+    if (!f) {  // reuse a standard stream structure if possible
         if (!(flags & SF_STRING) && file >= 0 && file <= 2) {
             f = file == 0 ? sfstdin : file == 1 ? sfstdout : sfstderr;
             if (f) {
