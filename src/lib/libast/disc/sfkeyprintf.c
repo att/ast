@@ -29,12 +29,16 @@
 
 #include <ctype.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "ast.h"
-
-#include "ccode.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
 #include "regex.h"
 #include "sfdisc.h"
+#include "sfio.h"
 
 #define FMT_case 1
 #define FMT_edit 2

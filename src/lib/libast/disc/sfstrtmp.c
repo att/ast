@@ -27,9 +27,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfio_t.h"
+#include <stdlib.h>
 
-#include "ast.h"
+#include "sfhdr.h"
+
+#include "sfio.h"
 
 #if __OBSOLETE__ >= 20070101 /* sfstr* macros now use sfsetbuf() */
 

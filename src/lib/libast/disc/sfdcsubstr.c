@@ -21,9 +21,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "sfhdr.h"
 
 #include "sfdisc.h"
+#include "sfio.h"
 
 /*	Discipline to treat a contiguous segment of a stream as a stream
 **	in its own right. The hard part in all this is to allow multiple

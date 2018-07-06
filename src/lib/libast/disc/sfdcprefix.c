@@ -21,9 +21,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfhdr.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "sfdisc.h"
+#include "sfio.h"
 
 /*
  * a discipline that prepends a prefix string to each output line

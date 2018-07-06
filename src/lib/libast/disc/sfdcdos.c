@@ -21,9 +21,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 #include "sfdisc.h"
+#include "sfio.h"
 
 /*	Discipline to turn \r\n into \n.
 **	This is useful to deal with DOS text files.

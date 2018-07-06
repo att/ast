@@ -21,9 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "sfhdr.h"
+#include <stddef.h>
 
 #include "sfdisc.h"
+#include "sfio.h"
 
 /*	Discipline to turn on direct IO capability.
 **	This currently only works for XFS on SGI's.

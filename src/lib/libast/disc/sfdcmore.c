@@ -22,10 +22,13 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/termios.h>
+#include <unistd.h>
 
-#include "ast_tty.h"
-
-#include "sfhdr.h"
+#include "ast.h"
+#include "sfio.h"
 
 #include "sfdisc.h"
 
