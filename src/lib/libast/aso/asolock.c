@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "asohdr.h"
+#include <stdint.h>
+
+#include "aso.h"
 
 int asolock(unsigned int volatile *lock, unsigned int key, int type) {
     if (key == 0)

@@ -21,7 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "asohdr.h"
+#include <stdint.h>
+#include <unistd.h>
+
+#include "aso.h"
 
 /*
  * construct a non-zero thread-specific ID without the high-bit

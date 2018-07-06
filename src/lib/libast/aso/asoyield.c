@@ -22,6 +22,5 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <sched.h>
-#include "asohdr.h"
 
 int asoyield(void) { return sched_yield(); }

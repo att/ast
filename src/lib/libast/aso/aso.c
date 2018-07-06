@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdint.h>
+#include <sys/types.h>
 
 #include "aso.h"
 #include "ast_aso.h"
