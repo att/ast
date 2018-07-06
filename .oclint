@@ -1,30 +1,18 @@
 rules:
 rule-configurations:
-    #
     # This is the default value (as of the time I wrote this) but I'm making
     # it explicit since it needs to agree with the value used by clang-format.
     # Thus, if we ever change the style guide to allow longer or shorter lines
     # this should be changed (as well as the corresponding .clang-format file).
-    #
     - key: LONG_LINE
       value: 100
-    #
+
     # The default limit for the length of variable names is 20. Long names are
     # problematic but twenty chars results in way too many errors. So increase
     # the limit to something more reasonable.
     #
     - key: LONG_VARIABLE_NAME
       value: 30
-    #
-    # This allows us to avoid peppering our code with inline comments such as
-    #
-    #   scoped_lock locker(m_lock);  //!OCLINT(side-effect)
-    #
-    # Specifically, this config key tells oclint that the named classes have
-    # RAII behavior so the local vars are actually used.
-    #
-    - key: RAII_CUSTOM_CLASSES
-      value: scoped_lock scoped_buffer_t builtin_commandline_scoped_transient_t scoped_push
 
     # We're slightly more persmissive regarding the total number of lines in a
     # function. Default is 50.

@@ -199,7 +199,7 @@ then
     echo Running oclint
     echo ========================================
     # A copy of this config file has to be in the CWD (the Meson build dir).
-    if [[ -f .oclint ]]
+    if [[ -f ../.oclint ]]
     then
         cp ../.oclint .
     fi
