@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "asohdr.h"
+#include <stdint.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include "aso.h"
 
 /*
  * return the number of active cores

@@ -21,7 +21,15 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include "aso.h"
+#include "ast.h"
+#include "ast_aso.h"
 #include "cdtlib.h"
+#include "debug.h"
 
 /*	Recursive hashing data structure.
 **

@@ -21,8 +21,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "asohdr.h"
-
 #include "tv.h"
 
 int asorelax(long nsec) {

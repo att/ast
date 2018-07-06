@@ -21,7 +21,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <string.h>
+
+#include "ast.h"
 #include "cdtlib.h"
+#include "debug.h"
 
 /*	Ordered set/multiset
 **	dt:	dictionary being searched

@@ -21,7 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "cdtlib.h"
+#include "debug.h"
 
 /*	Close a dictionary
 **

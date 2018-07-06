@@ -24,7 +24,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dt.h"
+#include <stdlib.h>
+
+#include "cdt.h"
 
 typedef struct Dc_s {
     Dtdisc_t ndisc;

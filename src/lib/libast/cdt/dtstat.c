@@ -21,9 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <stdio.h>
+#include <sys/types.h>
 
 #include "cdtlib.h"
+#include "sfio.h"
 
 /* Get statistics for a dictionary
 **

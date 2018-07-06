@@ -21,7 +21,14 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "aso.h"
+#include "ast.h"
 #include "cdtlib.h"
+#include "debug.h"
 
 /*	Hash table with chaining for collisions.
 **

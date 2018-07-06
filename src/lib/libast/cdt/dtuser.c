@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "aso.h"
+#include "ast_aso.h"
 #include "cdtlib.h"
 
 /* Perform various functions on the user's behalf.
