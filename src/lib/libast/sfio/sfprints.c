@@ -21,6 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
 
 /*	Construct a string with the given format and data.

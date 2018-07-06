@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdlib.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Function to handle io exceptions.
 **	Written by Kiem-Phong Vo

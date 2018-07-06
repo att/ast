@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Write out a long value in a portable format

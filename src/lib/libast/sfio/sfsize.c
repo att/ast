@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Get the size of a stream.
 **

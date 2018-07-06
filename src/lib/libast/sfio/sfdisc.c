@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Add a new discipline to the discipline stack. Each discipline
 **	provides alternative I/O functions that are analogues of the

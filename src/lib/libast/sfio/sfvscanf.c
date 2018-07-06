@@ -21,7 +21,18 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+
 #include "sfhdr.h"
+
+#include "ast_std.h"
+#include "lclib.h"
 
 /*	The main engine for reading formatted data
 **

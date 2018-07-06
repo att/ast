@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+
 #include "sfhdr.h"
+
+#include "ast.h"
+#include "ast_std.h"
+#include "sfdisc.h"
 
 /*	Write out a rune (wide char) as a multibyte char on f.
 **

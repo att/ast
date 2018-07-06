@@ -21,7 +21,17 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <poll.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	Read/Peek a record from an unseekable device
 **

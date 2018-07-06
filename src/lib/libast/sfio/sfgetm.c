@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Read an unsigned long value coded portably for a given range.

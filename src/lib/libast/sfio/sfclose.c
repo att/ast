@@ -21,7 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdlib.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	Close a stream. A file stream is synced before closing.
 **

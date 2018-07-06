@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
 
 /*	Swap two streams. If the second argument is NULL,

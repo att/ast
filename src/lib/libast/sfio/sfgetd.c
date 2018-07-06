@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <math.h>
+
 #include "sfhdr.h"
 
 /*	Read a portably coded double value

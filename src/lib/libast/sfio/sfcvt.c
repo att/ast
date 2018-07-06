@@ -21,7 +21,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast_standards.h"
+#include <float.h>
+#include <limits.h>
+#include <math.h>
+#include <string.h>
+
+#include "ast_float.h"
 #include "sfhdr.h"
 
 /*	Convert a floating point value to ASCII.

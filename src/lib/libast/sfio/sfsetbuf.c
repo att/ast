@@ -23,7 +23,21 @@
 
 #define getpagesize ______getpagesize
 
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "sfhdr.h"
+
+#include "ast.h"
+#include "ast_fcntl.h"
+#include "ast_std.h"
+#include "sfdisc.h"
 
 #undef getpagesize
 

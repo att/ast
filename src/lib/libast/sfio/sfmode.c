@@ -21,7 +21,17 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/signal.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
+
+#include "ast.h"
+#include "vthread.h"
 
 static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n";
 

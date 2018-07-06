@@ -21,7 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	External variables and functions used only by Sfio
 **	Written by Kiem-Phong Vo

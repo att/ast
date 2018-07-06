@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdio.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Synchronize data in buffers with the file system.

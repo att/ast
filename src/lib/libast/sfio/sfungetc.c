@@ -21,7 +21,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Push back one byte to a given SF_READ stream
 **

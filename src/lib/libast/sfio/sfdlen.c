@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <math.h>
+
 #include "sfhdr.h"
 
 /*	Return the length of a double value if coded in a portable format

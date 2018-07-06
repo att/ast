@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	Obtain/release exclusive use of a stream.
 **

@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Safe access to the internal stream buffer.

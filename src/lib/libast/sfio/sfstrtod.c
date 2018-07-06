@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+
+#include "lclib.h"
 #include "sfhdr.h"
 
 /*	Convert a Sfdouble_t value represented in an ASCII format into

@@ -21,7 +21,12 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	Management of pools of streams.
 **	If pf is not nil, f is pooled with pf and f becomes current;

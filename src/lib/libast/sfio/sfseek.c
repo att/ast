@@ -21,6 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Set the IO pointer to a specific location in the stream

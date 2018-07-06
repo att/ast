@@ -21,7 +21,21 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <wchar.h>
+
 #include "sfhdr.h"
+
+#include "ast.h"
+#include "ast_ccode.h"
+#include "ast_std.h"
+#include "lclib.h"
 
 /*	The engine for formatting data.
 **	1. Argument positioning is done in sftable.c so any changes
@@ -38,8 +52,6 @@
 #define SFFMT_PREFIX (SFFMT_MINUS | SFFMT_SIGN | SFFMT_BLANK)
 
 #define FPRECIS 6 /* default precision for floats 	*/
-
-#include "ccode.h"
 
 static int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {

@@ -21,7 +21,16 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Internal function to do a hard read.
 **	This knows about discipline and memory mapping, peek read.

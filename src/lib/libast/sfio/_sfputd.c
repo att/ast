@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <math.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Write out a floating point value in a portable format

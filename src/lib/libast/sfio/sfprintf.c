@@ -21,6 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+#include <stddef.h>
+#include <string.h>
+
 #include "sfhdr.h"
 
 /*	Print data with a given format

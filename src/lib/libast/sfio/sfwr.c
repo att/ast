@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <stdio.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
+
+#include "sfdisc.h"
 
 /*	Write data with discipline.
 **	In the case of a string stream, this is used mainly to extend

@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+#include <string.h>
+
 #include "sfhdr.h"
 
 /*	Read formated data from a stream

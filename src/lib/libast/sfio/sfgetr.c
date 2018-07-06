@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <string.h>
+
 #include "sfhdr.h"
 
 /*	Read a record delineated by a character.

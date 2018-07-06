@@ -21,6 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <poll.h>
+#include <stdlib.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Poll a set of streams to see if any is available for I/O.

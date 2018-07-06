@@ -21,6 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "sfhdr.h"
 
 /*	Fill the buffer of a stream with data.

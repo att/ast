@@ -21,6 +21,16 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+
+#include "ast_std.h"
+#include "lclib.h"
 #include "ast_float.h"
 #include "sfhdr.h"
 
@@ -512,4 +522,4 @@ static int sfcvinit() {
 }
 
 /* table for floating point and integer conversions */
-#include "features/sfinit.h"
+#include "features/sfinit.h"  // IWYU pragma: keep

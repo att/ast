@@ -21,7 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
 
 /*	Fundamental function to create a new stream.
 **	The argument flags defines the type of stream and the scheme

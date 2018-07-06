@@ -21,7 +21,16 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "sfhdr.h"
+#include "vthread.h"
+
+#include "sfdisc.h"
+#include "ast.h"
 
 /*	Create a temporary stream for read/write.
 **	The stream is originally created as a memory-resident stream.

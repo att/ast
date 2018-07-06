@@ -21,7 +21,13 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <wchar.h>
+
 #include "sfhdr.h"
+
+#include "ast.h"
+#include "ast_std.h"
 
 /*	Read the next multibyte character from f and return the corresponding rune (wide char.)
 **

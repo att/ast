@@ -21,6 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <fcntl.h>
+#include <string.h>
+
+#include "ast_fcntl.h"
 #include "sfhdr.h"
 
 /*	Open a file/string for IO.
