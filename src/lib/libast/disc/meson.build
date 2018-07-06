@@ -4,7 +4,6 @@ libast_files += [
     'disc/sfdcdos.c',
     'disc/sfdcfilter.c',
     'disc/sfdcmore.c',
-    'disc/sfdcprefix.c',
     'disc/sfdcseekable.c',
     'disc/sfdcslow.c',
     'disc/sfdcsubstr.c',
