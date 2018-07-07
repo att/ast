@@ -27,9 +27,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <string.h>
+#include <sys/stat.h>
+
 #include "ast.h"
+#include "ast_api.h"
 #include "error.h"
-#include "ls.h"
+#include "sfio.h"
 
 #define directory(p, s) (stat((p), (s)) >= 0 && S_ISDIR((s)->st_mode))
 #define regular(p, s) (stat((p), (s)) >= 0 && (S_ISREG((s)->st_mode) || streq(p, "/dev/null")))

@@ -34,6 +34,10 @@
 
 #define _AST_API_IMPLEMENT 1
 
+#include <limits.h>
+#include <stddef.h>
+#include <unistd.h>
+
 #include "ast.h"
 
 char *pathaccess(char *path, const char *dirs, const char *a, const char *b, int mode) {

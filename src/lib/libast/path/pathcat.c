@@ -29,7 +29,13 @@
 
 #define _AST_API_IMPLEMENT 1
 
-#include "ast.h"
+#include <limits.h>  // for PATH_MAX
+#include <stddef.h>
+
+// Without this include the build fails. There is some weird magic here. We've already removed the
+// 3DFS support (the comment below notwithstanding). It should be possible to remove the legacay
+// API.
+#include "ast.h"  // IWYU pragma: keep
 
 /*
  * building 3d flirts with the dark side

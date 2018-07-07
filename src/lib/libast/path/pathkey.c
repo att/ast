@@ -35,9 +35,11 @@
 #define _AST_API_IMPLEMENT 1
 
 #include <ctype.h>
+#include <limits.h>
+#include <string.h>
 
 #include "ast.h"
-#include "ls.h"
+#include "sfio.h"
 
 char *pathkey(char *key, char *attr, const char *lang, const char *tool, const char *path) {
     return pathkey_20100601(lang, tool, path, key, 16, attr, PATH_MAX);

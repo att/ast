@@ -26,8 +26,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "error.h"
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "sfio.h"
 #include "stk.h"
 
 #if DEBUG

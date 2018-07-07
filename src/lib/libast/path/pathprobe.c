@@ -43,10 +43,17 @@
 
 #define _AST_API_IMPLEMENT 1
 
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
+#include <unistd.h>
+
 #include "ast.h"
 #include "error.h"
-#include "ls.h"
 #include "proc.h"
+#include "sfio.h"
 
 char *pathprobe(char *path, char *attr, const char *lang, const char *tool, const char *proc,
                 int op) {

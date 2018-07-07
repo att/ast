@@ -30,6 +30,9 @@
 
 #define _AST_API_IMPLEMENT 1
 
+#include <limits.h>
+#include <string.h>
+
 #include "ast.h"
 
 char *pathrepl(char *path, const char *match, const char *replace) {

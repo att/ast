@@ -40,16 +40,17 @@
  *
  * pathcanon() return pointer to trailing 0 in canon
  */
-#include <stdio.h>
 #include "config_ast.h"  // IWYU pragma: keep
-
-#include <stdbool.h>
 
 #define _AST_API_IMPLEMENT 1
 
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+
 #include "ast.h"
-#include "error.h"
-#include "ls.h"
 
 #ifndef ELOOP
 #define ELOOP EINVAL

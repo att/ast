@@ -41,12 +41,15 @@
 #define PARANOID_PAY "135.*&!(135.104.*)"
 #define PARANOID_FREE "(192|224).*"
 
-#include <ctype.h>
+#include <string.h>
 
 #include "ast.h"
+
+#ifdef PARANOID
 #include "error.h"
 #include "ls.h"
 #include "times.h"
+#endif
 
 int pathcheck(const char *package, const char *tool, Pathcheck_t *pc) {
 #ifdef PARANOID

@@ -32,10 +32,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "lclib.h"
+#include <errno.h>
+#include <string.h>
+#include <sys/stat.h>
 
-#include "error.h"
-#include "ls.h"
+#include "ast.h"
+#include "sfio.h"
 
 typedef struct Tree_s {
     struct Tree_s *next;

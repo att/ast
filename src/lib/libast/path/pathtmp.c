@@ -25,6 +25,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stdio.h>
+#include <string.h>
 
 #include "ast.h"
 

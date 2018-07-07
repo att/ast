@@ -35,7 +35,13 @@
 
 #define _AST_API_IMPLEMENT 1
 
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "ast.h"
+#include "sfio.h"
 
 char *pathpath(char *path, const char *p, const char *a, int mode) {
     return pathpath_20100601(p, a, mode, path, PATH_MAX);

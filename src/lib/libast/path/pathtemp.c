@@ -71,10 +71,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <unistd.h>
+
 #include "ast.h"
-#include "error.h"
-#include "ls.h"
-#include "tm.h"
+#include "ast_fcntl.h"
+#include "sfio.h"
 #include "tv.h"
 
 #define ATTEMPT 16

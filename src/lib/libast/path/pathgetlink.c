@@ -25,14 +25,17 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+
 #if _hdr_unistd
 #include <unistd.h>
 #endif
 
-#include "univlib.h"
 
-#ifdef UNIV_MAX
+#if _cmd_universe
 #include <ctype.h>
+
+#include "univlib.h"
 #endif
 
 /*
@@ -49,7 +52,7 @@ int pathgetlink(const char *name, char *buf, int siz) {
         return (-1);
     }
     buf[n] = 0;
-#ifdef UNIV_MAX
+#if _cmd_universe
     if (isspace(*buf)) {
         char *s;
         char *t;

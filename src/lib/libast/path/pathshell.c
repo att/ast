@@ -28,7 +28,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "ast.h"
 

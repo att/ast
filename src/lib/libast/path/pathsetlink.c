@@ -25,7 +25,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <unistd.h>
+
+
+#if _cmd_universe
 #include "univlib.h"
+#endif
 
 /*
  * create symbolic name from external representation text in buf
@@ -34,7 +39,7 @@
 
 int pathsetlink(const char *buf, const char *name) {
     char *t = (char *)buf;
-#ifdef UNIV_MAX
+#if _cmd_universe
     char *s = (char *)buf;
     char *v;
     int n;
@@ -67,5 +72,5 @@ int pathsetlink(const char *buf, const char *name) {
         }
     }
 #endif
-    return (symlink(t, name));
+    return symlink(t, name);
 }

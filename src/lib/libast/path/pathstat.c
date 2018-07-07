@@ -21,9 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "error.h"
-#include "ls.h"
+#include <errno.h>
+#include <sys/stat.h>
 
 /*
  * physical stat if logical fails
