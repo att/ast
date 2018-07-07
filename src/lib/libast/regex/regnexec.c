@@ -25,7 +25,18 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <wchar.h>
+#include <wctype.h>
+
+#include "ast.h"
 #include "reglib.h"
+#include "sfio.h"
+#include "stk.h"
 
 #if _AST_REGEX_DEBUG
 

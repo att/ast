@@ -24,6 +24,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <string.h>
+
+#include "ast.h"
 #include "reglib.h"
 
 static const regflags_t submap[] = {'g', REG_SUB_ALL,

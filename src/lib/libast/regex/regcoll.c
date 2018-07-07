@@ -24,7 +24,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "reglib.h"
+#include <limits.h>
+#include <string.h>
+#include <wchar.h>
+
+#include "ast.h"
 
 /*
  * return the collating symbol delimited by [c c], where c is either '=' or '.'

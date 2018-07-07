@@ -24,6 +24,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wctype.h>
+#include <sys/types.h>
+
+#include "ast.h"
 #include "reglib.h"
 
 struct Ctype_s;

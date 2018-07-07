@@ -24,9 +24,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "reglib.h"
+#include <stddef.h>
 
 #include "error.h"
+#include "reglib.h"
 
 void regfatalpat(regex_t *p, int level, int code, const char *pat) {
     char buf[128];

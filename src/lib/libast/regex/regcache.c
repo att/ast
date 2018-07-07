@@ -25,6 +25,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <locale.h>
+#include <string.h>
+
 #include "ast.h"
 #include "regex.h"
 

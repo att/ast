@@ -24,9 +24,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "reglib.h"
+#include <stdlib.h>
 
-#include "ccode.h"
+#include "ast_ccode.h"
+#include "reglib.h"
 
 /*
  * state shared by all threads

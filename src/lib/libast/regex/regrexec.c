@@ -25,6 +25,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdlib.h>
+
+#include "ast.h"
+#include "ast_api.h"
 #include "reglib.h"
 
 /*

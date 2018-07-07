@@ -24,9 +24,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "reglib.h"
+#include <ctype.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 
+#include "ast.h"
+#include "cdt.h"
 #include "lclib.h"
+#include "reglib.h"
+#include "stk.h"
 
 #define serialize re_serialize /* hp.ia64 <unistd.h>! */
 

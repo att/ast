@@ -24,6 +24,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
 #include "reglib.h"
 
 void regalloc(void *handle, void *(*resize)(void *, void *, size_t), regflags_t flags) {

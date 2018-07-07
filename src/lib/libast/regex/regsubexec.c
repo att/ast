@@ -24,6 +24,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include "ast.h"
+#include "ast_api.h"
 #include "reglib.h"
 
 #define NEED(p, b, n, r)                                                \

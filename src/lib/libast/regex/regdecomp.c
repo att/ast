@@ -24,7 +24,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <string.h>
+
 #include "reglib.h"
+#include "sfio.h"
 
 #undef ismeta
 #define ismeta(c, t, e, d) ((state.magic[c] && state.magic[c][(t) + (e)] >= T_META) || (c) == (d))

@@ -24,7 +24,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <ctype.h>
+#include <stddef.h>
+
+#include "ast.h"
+#include "ast_api.h"
 #include "reglib.h"
+#include "sfio.h"
 
 /*
  * do a single substitution

@@ -24,9 +24,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-09-27 $\0\n";
+#include <string.h>
 
+#include "ast.h"
 #include "reglib.h"
+
+static const char id[] = "\n@(#)$Id: regex (AT&T Research) 2012-09-27 $\0\n";
 
 static const char *reg_error[] = {
     /* REG_ENOSYS	*/ "not supported",
