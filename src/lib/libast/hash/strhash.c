@@ -27,7 +27,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "hashlib.h"
+#include "hashpart.h"
 
 /*
  * return the hash of the null terminated string s

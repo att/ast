@@ -27,7 +27,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+
+#include "ast.h"
 #include "hashlib.h"
+#include "hashpart.h"
 
 /*
  * hash table lookup

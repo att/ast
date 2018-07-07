@@ -27,7 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "hashlib.h"
+#include <limits.h>
+
+#include "hashpart.h"
 
 /*
  * return a running 32 bit checksum of string s

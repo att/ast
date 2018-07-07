@@ -27,7 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "ast.h"
 #include "hashlib.h"
+#include "sfio.h"
 
 /*
  * dump HASH_* flags

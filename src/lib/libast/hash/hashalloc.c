@@ -27,8 +27,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
 #include <stdarg.h>
+#include <string.h>
 
+#include "ast.h"
 #include "hashlib.h"
 
 Hash_info_t hash_info = {0};
