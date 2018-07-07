@@ -25,10 +25,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <fcntl.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
-
-#include "ast.h"
-#include "ast_tty.h"
+#include <unistd.h>
 
 #define sleep ______sleep
 
@@ -50,6 +51,8 @@
 #endif
 #endif
 #endif
+
+#include "ast.h"
 
 #undef sleep
 

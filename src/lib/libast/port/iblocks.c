@@ -30,15 +30,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <sys/stat.h>
+
 #if _AIX /* XXX */
 #undef major
 #undef minor
 #undef makedev
 #endif
-
-#include <sys/param.h>
-#include <sys/stat.h>
 
 #include "ls.h"
 

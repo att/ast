@@ -24,7 +24,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <nl_types.h>
+#include <locale.h>
+#include <string.h>
 
 #if !_hdr_langinfo
 #undef _lib_nl_langinfo
@@ -33,6 +34,7 @@
 #include <langinfo.h>
 #endif
 
+#include "ast.h"
 #include "codeset.h"
 #include "lclib.h"
 

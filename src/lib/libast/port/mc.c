@@ -27,7 +27,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <nl_types.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/unistd.h>
 
 #if _hdr_stdlib
 #include <stdlib.h>
@@ -38,9 +42,13 @@
 // TODO: Figure out why this header has to be included before the other project headers.
 #include "sfhdr.h"
 
+#include "ast.h"
+#include "ast_api.h"
 #include "ast_iconv.h"
-#include "error.h"
+#include "ast_std.h"
 #include "lclib.h"
+#include "sfio.h"
+
 
 #define _MC_PRIVATE_ \
     size_t nstrs;    \

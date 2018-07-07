@@ -36,8 +36,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #include "error.h"
+#include "sfio.h"
 
 int astquery(int quit, const char *format, ...) {
     va_list ap;

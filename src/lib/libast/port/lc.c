@@ -24,10 +24,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "lclang.h"
-#include "lclib.h"
-
 #include <ctype.h>
+#include <limits.h>
+#include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "ast.h"
+#include "lclib.h"
+#include "sfio.h"
+
+#if __CYGWIN__
+#include "lclang.h"
+#endif
 
 typedef struct Local_s {
     const char *name;

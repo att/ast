@@ -26,6 +26,13 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #if _lib_sysinfo
 #include <sys/systeminfo.h>
@@ -33,11 +40,18 @@
 #include <sys/utsname.h>
 
 #include "ast.h"
+#include "ast_api.h"
+#include "ast_errorf.h"
+#include "ast_lib.h"
 #include "conftab.h"
 #include "error.h"
-#include "proc.h"
 #include "regex.h"
+#include "sfio.h"
 #include "univlib.h"
+
+#ifdef _pth_getconf_a
+#include "proc.h"
+#endif
 
 #ifndef DEBUG_astconf
 #define DEBUG_astconf 0

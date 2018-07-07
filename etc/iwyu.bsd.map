@@ -159,6 +159,8 @@
     { symbol: ["clock_t", "private", "<sys/times.h>", "public"] },
     { symbol: ["PIPE_BUF", "private", "<limits.h>", "public"] },
     { symbol: ["TIOCSCTTY", "private", "<sys/ioctl.h>", "public"] },
+    { symbol: ["TIOCGWINSZ", "private", "<sys/ioctl.h>", "public"] },
+    { symbol: ["winsize", "private", "<sys/ioctl.h>", "public"] },
     # All of the sfio.h and sfhdr.h symbol mappings should be removed at some
     # time. They are needed for the moment because in most of the sfio code
     # base you can't actually directly include sfio.h. You have to include
