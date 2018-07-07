@@ -41,6 +41,7 @@
 #mesondefine ALIGN_BOUND
 #mesondefine ALIGN_BOUND1
 #mesondefine ALIGN_BOUND2
+#mesondefine LIBICONV_PLUG
 
 #mesondefine _ast_sizeof_int
 #mesondefine _ast_sizeof_long

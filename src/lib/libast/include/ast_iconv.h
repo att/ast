@@ -6,12 +6,6 @@
 
 #include "ccode.h"
 
-#if !defined(__CYGWIN__) && !defined(__OpenBSD__)
-// Under Cygwin the iconv shared library exports the symbols we need with a
-// `lib` prefix. So we don't want the LIBICONV_PLUG behavior on that platform.
-// On others we either want this or it's a no-op.
-#define LIBICONV_PLUG 1  // prefer more recent GNU libiconv
-#endif
 #include <iconv.h>  // the native iconv.h
 
 #define ICONV_VERSION 20121001L
