@@ -36,8 +36,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "error.h"
-#include "optlib.h"
+#include <stdlib.h>
+#include <string.h>
+
+#include "ast.h"
+#include "option.h"
 
 static Opt_t *freecontext;
 

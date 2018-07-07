@@ -146,6 +146,7 @@
     { symbol: ["AT_FDCWD", "private", "<fcntl.h>", "public"] },
     { symbol: ["F_DUPFD_CLOEXEC", "private", "<fcntl.h>", "public"] },
     { symbol: ["O_CLOEXEC", "private", "<fcntl.h>", "public"] },
+    { symbol: ["ARG_MAX", "private", "<limits.h>", "public"] },
     { symbol: ["PATH_MAX", "private", "<limits.h>", "public"] },
     { symbol: ["SEEK_SET", "private", "<stdio.h>", "public"] },
     { symbol: ["SEEK_CUR", "private", "<stdio.h>", "public"] },
@@ -157,6 +158,7 @@
     { symbol: ["_POSIX_VDISABLE", "private", "<unistd.h>", "public"] },
     { symbol: ["clock_t", "private", "<sys/times.h>", "public"] },
     { symbol: ["PIPE_BUF", "private", "<limits.h>", "public"] },
+    { symbol: ["TIOCSCTTY", "private", "<sys/ioctl.h>", "public"] },
     # All of the sfio.h and sfhdr.h symbol mappings should be removed at some
     # time. They are needed for the moment because in most of the sfio code
     # base you can't actually directly include sfio.h. You have to include

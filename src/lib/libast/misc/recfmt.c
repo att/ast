@@ -30,6 +30,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include "ast.h"
 #include "recfmt.h"
 
 typedef struct {

@@ -26,7 +26,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <string.h>
+#include <sys/types.h>
+
 #include "recfmt.h"
 
 ssize_t reclen(Recfmt_t f, const void *b, size_t n) {

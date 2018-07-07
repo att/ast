@@ -31,13 +31,25 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <limits.h>
+#include <signal.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
-#include "proclib.h"
-
-#include "ast_tty.h"
+#include "ast.h"
+#include "ast_api.h"
 #include "error.h"
-#include "ls.h"
+#include "proclib.h"
+#include "sfio.h"
+#include "sig.h"
 /*
  * not quite ready for _use_spawnveg
  */
@@ -49,9 +61,6 @@
 #ifndef DEBUG_PROC
 #define DEBUG_PROC 1
 #endif
-
-#include <sys/socket.h>
-#include <sys/types.h>
 
 Proc_t proc_default = {-1};
 

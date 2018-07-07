@@ -27,6 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <stddef.h>
+
 #include "ast.h"
 #include "sig.h"
 

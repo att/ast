@@ -28,6 +28,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+
 #include "proclib.h"
 
 int procfree(Proc_t *p) {

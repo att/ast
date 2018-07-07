@@ -27,11 +27,18 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define _AST_API_IMPLEMENT 1
 
 #include "ast.h"
 #include "cmdlib.h"
 #include "proc.h"
+#include "ast_errorf.h"
+#include "error.h"
+#include "sfio.h"
 
 static const char lib[] = "libast:cmdarg";
 
@@ -55,9 +62,6 @@ Cmdarg_t *cmdopen(char **argv, int argmax, int size, const char *argpat, int fla
 #undef _AST_API_IMPLEMENT
 
 #include "ast_api.h"
-
-#include <ctype.h>
-#include "proc.h"
 
 #ifndef ARG_MAX
 #define ARG_MAX (64 * 1024)

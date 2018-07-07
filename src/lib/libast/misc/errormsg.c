@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdarg.h>
+
 #include "error.h"
 
 int errormsg(const char *dictionary, int level, ...) {

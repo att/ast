@@ -24,12 +24,20 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "ast.h"
 
 #include "aso.h"
-#include "debug.h"
-#include "error.h"
-#include "sig.h"
 
 static int indent = 0;
 
@@ -387,9 +395,6 @@ void debug_indent(int n) {
     else
         indent = 0;
 }
-
-#include <sys/resource.h>
-#include "times.h"
 
 double debug_elapsed(int set) {
     double tm;

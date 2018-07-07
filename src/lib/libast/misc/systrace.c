@@ -24,10 +24,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
+
 #include "ast.h"
-#include "debug.h"
 #include "error.h"
 #include "proc.h"
+#include "sfio.h"
 
 void systrace(const char *id) {
     int n;

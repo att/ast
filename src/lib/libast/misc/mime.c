@@ -29,7 +29,16 @@
 
 static const char lib[] = "libast:mime";
 
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "ast.h"
+#include "cdt.h"
 #include "mimelib.h"
+#include "sfio.h"
+#include "tok.h"
 
 typedef struct Att_s {
     struct Att_s *next;

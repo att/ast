@@ -31,6 +31,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <stddef.h>
+
+#include "ast.h"
+#include "ast_api.h"
 #include "proclib.h"
 
 int procrun(const char *path, char **argv, int flags) {

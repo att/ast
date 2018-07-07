@@ -31,10 +31,23 @@
 
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
+#include <locale.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#include "ccode.h"
+#include "ast.h"
+#include "ast_ccode.h"
+#include "cdt.h"
 #include "debug.h"
+#include "error.h"
+#include "option.h"
 #include "optlib.h"
+#include "sfio.h"
 
 #define KEEP "*[A-Za-z][A-Za-z]*"
 #define OMIT "*@(\\[[-+]*\\?*\\]|\\@\\(#\\)|Copyright \\(c\\)|\\$\\I\\d\\: )*"

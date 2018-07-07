@@ -21,6 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+
+#include "ast.h"
 #include "intercepts.h"
 
 /*

@@ -28,14 +28,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <sys/stat.h>  // IWYU pragma: keep
+#include <sys/types.h>  // IWYU pragma: keep
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
 
 #include "ast.h"
-#include "ast_dir.h"
-#include "error.h"
 
 /*
  * return default (FTS_LOGICAL|FTS_META|FTS_PHYSICAL|FTS_SEEDOTDIR) flags

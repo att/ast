@@ -29,7 +29,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include "optlib.h"
+#include <string.h>
+
+#include "sfio.h"
 
 int optesc(Sfio_t *sp, const char *s, int esc) {
     const char *m;

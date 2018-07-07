@@ -22,6 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "intercepts.h"
+#include "shcmd.h"
 
 /*
  * NOTE: the "intercepts" definition is in getenv.c because some static linkers

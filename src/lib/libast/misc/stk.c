@@ -36,9 +36,15 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "sfio_t.h"  // must be first include for some reason
 
 #include "ast.h"
+#include "sfdisc.h"
+#include "sfio.h"
 #include "stk.h"
 
 /*

@@ -27,13 +27,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "univlib.h"
-
 #ifndef UNIV_MAX
 
 char univ_env[] = "__UNIVERSE__";
 
 #else
+
+#include "univlib.h"
 
 #ifndef NUMUNIV
 

@@ -34,15 +34,23 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <errno.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/times.h>
+#include <unistd.h>
 
-#include "ccode.h"
+#include "ast.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
 #include "lclib.h"
 #include "namval.h"
+#include "option.h"
 #include "regex.h"
-#include "sig.h"
+#include "sfio.h"
 #include "stk.h"
-#include "times.h"
 
 /*
  * 2007-03-19 move error_info from _error_info_ to (*_error_infop_)

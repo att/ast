@@ -28,7 +28,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "ast.h"
 #include "proclib.h"
+#include "sig.h"
 
 int procclose(Proc_t *p) {
     int pid;

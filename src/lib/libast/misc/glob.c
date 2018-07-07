@@ -28,14 +28,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
+#include <stddef.h>
+#include <string.h>
+#include <sys/stat.h>
 
 #include "ast.h"
-#include "ast_dir.h"
-#include "error.h"
+#include "ast_api.h"
 #include "ls.h"
 #include "regex.h"
+#include "sfio.h"
 #include "stak.h"
+#include "stk.h"
 
 #define GLOB_MAGIC 0xaaaa0000
 

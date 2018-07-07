@@ -35,7 +35,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <stdlib.h>
+
+#include "ast.h"
 #include "recfmt.h"
 
 Recfmt_t recstr(const char *s, char **e) {

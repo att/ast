@@ -24,8 +24,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <ctype.h>
+#include <stddef.h>
+
+#include "ast.h"
 #include "recfmt.h"
+#include "sfio.h"
 
 char *fmtrec(Recfmt_t f, int fs) {
     char *b;
