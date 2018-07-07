@@ -27,13 +27,17 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <nl_types.h>
+#include <limits.h>
+#include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "ast.h"
 #include "ast_iconv.h"
-#include "cdt.h"
 #include "lclib.h"
 #include "mc.h"
+#include "sfio.h"
 #include "tm.h"
 
 static struct {

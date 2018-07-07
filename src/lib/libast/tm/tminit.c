@@ -28,10 +28,14 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdint.h>
+#include <string.h>
+#include <time.h>
 
+#include "ast.h"
 #include "namval.h"
+#include "sfio.h"
 #include "tm.h"
-#include "tmx.h"
 
 #define TM_type (-1)
 

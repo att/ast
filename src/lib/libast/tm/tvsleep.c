@@ -21,8 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "error.h"
-#include "tm.h"
+#include <errno.h>
+#include <time.h>
+
 #include "tv.h"
 
 /*

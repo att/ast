@@ -27,8 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "tm.h"
+#include <stddef.h>
+
+#include "sfio.h"
 
 /*
  * n is minutes west of UTC

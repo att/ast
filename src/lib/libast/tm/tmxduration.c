@@ -22,6 +22,9 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdlib.h>
+
+#include "sfio.h"
 #include "tmx.h"
 
 /*

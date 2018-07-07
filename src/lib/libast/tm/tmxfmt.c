@@ -28,6 +28,11 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stddef.h>
+
+#include "ast.h"
+#include "sfio.h"
+#include "tm.h"
 #include "tmx.h"
 
 #define warped(t, n) \

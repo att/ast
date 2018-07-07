@@ -29,9 +29,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "tm.h"
+#include <time.h>
 
+#include "tm.h" 
 /*
  * format date given clock
  * end of buf is returned

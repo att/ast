@@ -27,6 +27,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+#include <time.h>
+
+#include "tm.h"
 #include "tmx.h"
 
 /*

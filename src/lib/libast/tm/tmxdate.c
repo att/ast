@@ -30,7 +30,12 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "debug.h"
+#include "tm.h"
 #include "tmx.h"
 
 #define dig1(s, n) ((n) = ((*(s)++) - '0'))

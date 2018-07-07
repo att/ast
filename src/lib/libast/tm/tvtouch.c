@@ -27,13 +27,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <utime.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #include "ast.h"
-#include "error.h"
-#include "ls.h"
-#include "times.h"
 #include "tv.h"
+
+#if _lib_utimensat
+#include "ast_mode.h"
+#endif
 
 // NOTE: These symbols aren't actually available to any code calling tvtouch() since they are not
 // defined in any header that such code could include. See the NOTE below.

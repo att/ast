@@ -29,9 +29,6 @@
 
 #include <ctype.h>
 
-#include "ast.h"
-#include "tm.h"
-
 /*
  * match s against t ignoring case and .'s
  *

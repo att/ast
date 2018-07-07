@@ -21,9 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <errno.h>
+#include <time.h>
 
-#include "tm.h"
 #include "tv.h"
 
 #if _lib_clock_gettime && defined(CLOCK_REALTIME)

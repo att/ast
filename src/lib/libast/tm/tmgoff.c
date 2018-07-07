@@ -29,9 +29,6 @@
 
 #include <ctype.h>
 
-#include "ast.h"
-#include "tm.h"
-
 /*
  * return minutes offset from absolute timezone expression
  *
