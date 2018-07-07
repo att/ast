@@ -24,8 +24,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-
 #define S2F_function strntold
 #define S2F_type 2
 #define S2F_size 1

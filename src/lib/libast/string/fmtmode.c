@@ -28,7 +28,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include "ast.h"
 #include "modelib.h"
+#include "modex.h"
 
 char *fmtmode(int mode, int external) {
     char *s;

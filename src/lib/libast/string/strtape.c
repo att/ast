@@ -28,7 +28,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <unistd.h>
+
+#include "sfio.h"
 
 char *strtape(const char *s, char **e) {
     int mtunit = '0';

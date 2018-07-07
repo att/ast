@@ -30,6 +30,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "ast.h"
 
 typedef struct Utf8_s {

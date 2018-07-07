@@ -28,6 +28,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/stat.h>
+
+#include "modecanon.h"
 #include "modelib.h"
 
 struct modeop modetab[MODELEN] = {

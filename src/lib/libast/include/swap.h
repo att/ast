@@ -29,6 +29,8 @@
 #ifndef _SWAP_H
 #define _SWAP_H 1
 
+#include <sys/types.h>
+
 #define int_swap _ast_intswap
 
 #define SWAP_MAX 8

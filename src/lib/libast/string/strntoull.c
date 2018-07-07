@@ -24,6 +24,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+
 #define S2I_function strntoull
 #define S2I_number intmax_t
 #define S2I_unumber uintmax_t

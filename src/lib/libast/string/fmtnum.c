@@ -30,6 +30,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "ast.h"
+#include "sfio.h"
 
 char *fmtnum(unsigned long n, int m) {
     int i;

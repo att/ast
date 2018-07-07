@@ -45,6 +45,7 @@
 #include <ctype.h>
 
 #include "ast.h"
+#include "sfio.h"
 
 char *fmtfmt(const char *as) {
     char *s = (char *)as;

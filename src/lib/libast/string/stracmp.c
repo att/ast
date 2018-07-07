@@ -24,12 +24,12 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <string.h>
+
 #include "ccode.h"
+#include "ast_ccode.h"
 
 #if !_lib_stracmp
-
-#include <ctype.h>
 
 int stracmp(const char *aa, const char *ab) {
     unsigned char *a;

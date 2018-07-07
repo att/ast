@@ -30,9 +30,12 @@
 #define getgrgid ______getgrgid
 
 #include <grp.h>
+#include <stddef.h>
+#include <string.h>
 
 #include "ast.h"
 #include "cdt.h"
+#include "sfio.h"
 
 #undef getgrgid
 

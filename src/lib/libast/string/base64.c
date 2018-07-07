@@ -28,7 +28,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
+#include <limits.h>
+#include <string.h>
+#include <sys/types.h>
 
 #define PAD '='
 

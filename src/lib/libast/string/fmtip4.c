@@ -21,7 +21,10 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stdint.h>
+
 #include "ast.h"
+#include "sfio.h"
 
 /*
  * format 4 byte local byte order ip address

@@ -21,7 +21,11 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "tm.h"
+#include <string.h>
+#include <time.h>
+
+#include "ast.h"
+#include "sfio.h"
 #include "tv.h"
 
 /*

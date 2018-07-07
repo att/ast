@@ -28,6 +28,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #if _hdr_sys_sysmacros
 #include <sys/sysmacros.h>
@@ -35,6 +37,7 @@
 
 #include "ast.h"
 #include "ls.h"
+#include "sfio.h"
 
 char *fmtdev(struct stat *st) {
     char *buf;

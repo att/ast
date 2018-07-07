@@ -23,8 +23,6 @@
 
 #include <ctype.h>
 
-#include "ast.h"
-
 /*
  * version strcmp(3)
  */

@@ -21,7 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "aso.h"
+#include <stddef.h>
+
+#include "ast_aso.h"
 #include "ast.h"
 
 /*

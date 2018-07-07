@@ -27,8 +27,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+
 #include "ast.h"
 #include "ls.h"
+#include "sfio.h"
 #include "tm.h"
 
 #ifndef LS_W_MAX

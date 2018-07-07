@@ -28,8 +28,11 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <sys/types.h>
 
 #include "ast.h"
+#include "ast_api.h"
+#include "ast_ccode.h"
 #include "ccode.h"
 
 static const Ccmap_t maps[] = {

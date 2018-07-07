@@ -21,8 +21,6 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-
 /*
  * path prefix strcmp(3) -- longest first!
  */

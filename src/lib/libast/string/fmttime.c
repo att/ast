@@ -27,6 +27,9 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <time.h>
+
+#include "ast.h"
 #include "tm.h"
 
 char *fmttime(const char *format, time_t clock) {

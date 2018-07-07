@@ -25,8 +25,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/types.h>
+#include <time.h>
+
 #include "ast.h"
-#include "tm.h"
+#include "sfio.h"
 
 char *fmtclock(Sfulong_t t) {
     int u;

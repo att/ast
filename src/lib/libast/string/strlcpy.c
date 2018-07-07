@@ -24,14 +24,14 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-
 #if _lib_strlcat
 
 // This is to silence the linker about modules that have no content.
 int AST_strlcpy = 0;
 
 #else  // _lib_strlcat
+
+#include <sys/types.h>
 
 size_t strlcpy(char *s, const char *t, size_t n) {
     const char *o = t;

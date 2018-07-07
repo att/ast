@@ -27,6 +27,8 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+
 #include "ast.h"
 
 int chrtoi(const char *s) {

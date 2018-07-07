@@ -27,7 +27,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <string.h>
+
 #include "ast.h"
+#include "ast_ccode.h"
 #include "ccode.h"
 
 #if !GENERATE

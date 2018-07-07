@@ -21,9 +21,9 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-
 #include <ctype.h>
+#include <stdint.h>
+
 #include "ip6.h"
 
 /*

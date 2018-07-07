@@ -28,8 +28,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stddef.h>
 
-#include "ast.h"
 #include "sfhdr.h"
 
 static const char hex[] = "0123456789ABCDEFabcdef";

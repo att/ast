@@ -29,8 +29,10 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "ccode.h"
+#include <limits.h>
+#include <string.h>
+
+#include "ast_ccode.h"
 
 void *ccnative(void *b, const void *a, size_t n) {
 #if CC_ASCII == CC_NATIVE

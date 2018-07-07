@@ -28,11 +28,13 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <limits.h>
+#include <string.h>
 #include <wchar.h>
 #include <wctype.h>
 
 #include "ast.h"
-#include "ccode.h"
+#include "ast_ccode.h"
 
 /*
  * quote string as of length n with qb...qe

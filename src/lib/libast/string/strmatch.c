@@ -54,7 +54,11 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <string.h>
+
 #include "ast.h"
+#include "ast_api.h"
 #include "regex.h"
 
 static struct State_s {

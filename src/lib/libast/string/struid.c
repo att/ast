@@ -31,6 +31,9 @@
 #define getpwuid ______getpwuid
 
 #include <pwd.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "ast.h"
 #include "cdt.h"

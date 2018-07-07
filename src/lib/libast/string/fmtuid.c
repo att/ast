@@ -30,9 +30,12 @@
 #define getpwuid ______getpwuid
 
 #include <pwd.h>
+#include <stddef.h>
+#include <string.h>
 
 #include "ast.h"
 #include "cdt.h"
+#include "sfio.h"
 
 #undef getpwuid
 
