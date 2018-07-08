@@ -34,10 +34,9 @@
 #include <limits.h>
 #include <locale.h>
 #include <stddef.h>
-#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include "ast.h"
