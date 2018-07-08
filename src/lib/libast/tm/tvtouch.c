@@ -184,8 +184,9 @@ int tvtouch(const char *path, const Tv_t *av, const Tv_t *mv, const Tv_t *cv, in
                 if (c) errno = oerrno;
                 close(fd);
                 if (c) return 0;
+            } else {
+                close(fd);
             }
-            close(fd);
         }
     }
     if (errno != ENOENT || !(flags & TV_TOUCH_CREATE)) return -1;
