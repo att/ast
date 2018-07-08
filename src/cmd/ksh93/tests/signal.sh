@@ -1,11 +1,3 @@
-if [[ "$(uname -s)" != "Linux" ]]
-then
-    log_info "TODO: Enable this test when the bug documented in issue #633 is fixed."
-    cd /tmp
-    rm -rf $TEST_DIR
-    exit 0
-fi
-
 ########################################################################
 #                                                                      #
 #               This software is part of the ast package               #
@@ -117,6 +109,10 @@ actual=$(
 # ====================
 # Verify SIGINT trapping works for various complicated cases of nested scripts.
 #
+if [[ $OS_NAME != "Linux" ]]
+then
+    log_info "TODO: Enable this test on non-Linux systems when issue #658 is fixed."
+else
 empty_fifos
 typeset -A expected
 expected[...]="1-main 2-main 3-main SIGINT 3-intr"
@@ -139,6 +135,7 @@ do
     expect=${expected[$ops]}
     [[ $actual == $expect ]] || log_error "SIGINT $ops test failed" "$expect" "$actual"
 done < sigtst.out
+fi  # if [[ "$(uname -s)" != "Linux" ]]
 
 # ====================
 # Verify SIGUSR1 trapping works.
