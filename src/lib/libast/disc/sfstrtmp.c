@@ -31,8 +31,6 @@
 
 #include "sfhdr.h"
 
-#include "sfio.h"
-
 #if __OBSOLETE__ >= 20070101 /* sfstr* macros now use sfsetbuf() */
 
 #error __OBSOLETE__

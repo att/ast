@@ -172,6 +172,8 @@
     # base you can't actually directly include sfio.h. You have to include
     # sfhdr.h and sfdisc.h in that specific order.
     { symbol: ["SEEK_SET", "private", "\"sfio.h\"", "public"] },
+    { symbol: ["SEEK_CUR", "private", "\"sfio.h\"", "public"] },
+    { symbol: ["SEEK_END", "private", "\"sfio.h\"", "public"] },
     { symbol: ["SFFMT_ALTER", "private", "\"sfio.h\"", "public"] },
     { symbol: ["SFFMT_ARGPOS", "private", "\"sfio.h\"", "public"] },
     { symbol: ["SFFMT_BLANK", "private", "\"sfio.h\"", "public"] },
@@ -281,6 +283,8 @@
     { symbol: ["sfwrite", "private", "\"sfio.h\"", "public"] },
 
     { symbol: ["SEEK_SET", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SEEK_CUR", "private", "\"sfhdr.h\"", "public"] },
+    { symbol: ["SEEK_END", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["SFFMT_ALTER", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["SFFMT_ARGPOS", "private", "\"sfhdr.h\"", "public"] },
     { symbol: ["SFFMT_BLANK", "private", "\"sfhdr.h\"", "public"] },

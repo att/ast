@@ -27,7 +27,6 @@
 #include "sfhdr.h"
 
 #include "sfdisc.h"
-#include "sfio.h"
 
 /*	Make a stream op return immediately on interrupts.
 **	This is useful on slow streams (hence the name).

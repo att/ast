@@ -25,7 +25,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sfhdr.h"
+#include "sfhdr.h"  // IWYU pragma: keep
 
 #include "sfdisc.h"
 #include "sfio.h"
