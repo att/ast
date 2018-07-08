@@ -62,10 +62,10 @@ function exit_error_count {
 exec 9<>fifo9
 exec 8<>fifo8
 function empty_fifos {
-    read -u9 -t0.01 x && {
+    read -u9 -t0.1 x && {
         'log_warning' $1 "fifo9 unexpectedly had data: '$x'"
     }
-    read -u8 -t0.01 x && {
+    read -u8 -t0.1 x && {
         'log_warning' $1 "fifo9 unexpectedly had data: '$x'"
     }
 }
