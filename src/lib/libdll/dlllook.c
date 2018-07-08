@@ -23,9 +23,10 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "dlldefs.h"
-#include "error.h"
+#include <dlfcn.h>
+#include <string.h>
+
+#include "ast_errorf.h"
 
 //
 // dlsym() with `_' weak fallback

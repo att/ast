@@ -23,7 +23,10 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <dlfcn.h>
+
 #include "dlllib.h"
+#include "sfio.h"
 
 Dllstate_t state;
 

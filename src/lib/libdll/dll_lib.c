@@ -23,7 +23,14 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "dlllib.h"
+#include <dlfcn.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include "ast.h"
+#include "ast_errorf.h"
+#include "dlldefs.h"
+#include "sfio.h"
 
 typedef void *(*Dll_lib_f)(const char *, void *, const char *);
 

@@ -23,6 +23,11 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <dlfcn.h>
+#include <string.h>
+
+#include "ast_errorf.h"
+#include "dlldefs.h"
 #include "dlllib.h"
 
 //

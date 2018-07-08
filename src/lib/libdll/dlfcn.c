@@ -26,31 +26,23 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "ast.h"
-#include "dlldefs.h"
-#include "error.h"
-
 #define T(x) ERROR_dictionary(x)
 
-#if _hdr_dlfcn && _lib_dlopen
-
-//
-// standard
-//
-
-#include <dlfcn.h>
-
-#else
+#if !_hdr_dlfcn || !_lib_dlopen
 #if _hdr_dl
 
 //
 // HP-UX
 //
-
 #include <dl.h>
 #ifndef BIND_FIRST
 #define BIND_FIRST 0x4
 #endif
+
+#include "ast.h"
+#include "dlldefs.h"
+#include "error.h"
+
 #ifndef BIND_NOSTART
 #define BIND_NOSTART 0x10
 #endif

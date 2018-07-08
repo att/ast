@@ -24,10 +24,16 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <errno.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/unistd.h>
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
+
+#include "ast_errorf.h"
+#include "sfio.h"
 
 #define _DLLINFO_PRIVATE_ \
     char *sib[3];         \
@@ -62,7 +68,6 @@
 
 #include "ast.h"
 #include "cdt.h"
-#include "error.h"
 
 typedef struct Uniq_s {
     Dtlink_t link;

@@ -23,7 +23,12 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+
+#include "ast_errorf.h"
+#include "dlldefs.h"
 #include "dlllib.h"
+#include "sfio.h"
 
 //
 // return plugin version for dll
