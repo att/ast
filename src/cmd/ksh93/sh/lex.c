@@ -50,6 +50,7 @@ Shell_t sh = {1};
 #include "history.h"
 #include "lexstates.h"
 #include "name.h"
+#include "sfdisc.h"
 #include "sfio.h"
 #include "shnodes.h"
 #include "shtable.h"

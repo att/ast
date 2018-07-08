@@ -28,10 +28,13 @@
 #endif
 
 #include <dlfcn.h>
+#include <string.h>  // IWYU pragma: keep
 
 #if _hdr_rld_interface
 #include <rld_interface.h>
 #endif
+
+#include "dlllib.h"  // IWYU pragma: keep
 
 //
 // return a handle for the next layer down,

@@ -21,8 +21,8 @@
 
 #include <ctype.h>
 #include <locale.h>
+#include <stdint.h>
 #include <string.h>
-#include <sys/types.h>
 
 #include "ast.h"
 #include "error.h"

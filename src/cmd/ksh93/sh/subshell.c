@@ -50,6 +50,7 @@
 #include "name.h"
 #include "nvapi.h"
 #include "path.h"
+#include "sfdisc.h"
 #include "sfio.h"
 #include "shellapi.h"
 #include "shnodes.h"

@@ -57,6 +57,7 @@
 #include "name.h"
 #include "path.h"
 #include "regex.h"
+#include "sfdisc.h"
 #include "sfio.h"
 #include "shellapi.h"
 #include "shnodes.h"
