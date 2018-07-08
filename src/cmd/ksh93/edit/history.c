@@ -501,17 +501,19 @@ begin:
 //
 void hist_eof(History_t *hp) {
     char *cp, *first, *endbuff;
+    int n;
     int incmd = 0;
+    int skip = 0;
+    int oldind = hp->histind;
     off_t count = hp->histcnt;
-    int oldind, n, skip = 0;
-    off_t last = sfseek(hp->histfp, (off_t)0, SEEK_END);
+    off_t last = sfseek(hp->histfp, 0, SEEK_END);
 
     if (last < count) {
         last = -1;
         count = 2 + HIST_MARKSZ;
-        oldind = hp->histind;
         if ((hp->histind -= hp->histsize) < 0) hp->histind = 1;
     }
+
 again:
     sfseek(hp->histfp, count, SEEK_SET);
     while ((cp = (char *)sfreserve(hp->histfp, SF_UNBOUND, 0))) {
@@ -954,32 +956,38 @@ static int hist_exceptf(Sfio_t *fp, int type, void *data, Sfdisc_t *handle)
 static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
 #endif
 {
-    int newfd, oldfd;
     History_t *hp = (History_t *)handle;
     if (type == SF_WRITE) {
         if (errno == ENOSPC || hp->histwfail++ >= 10) return 0;
         // Write failure could be NFS problem, try to re-open.
-        sh_close(oldfd = sffileno(fp));
-        if ((newfd = open(hp->histname, O_BINARY | O_APPEND | O_CREAT | O_RDWR | O_CLOEXEC,
-                          S_IRUSR | S_IWUSR)) >= 0) {
-            if (sh_fcntl(newfd, F_DUPFD_CLOEXEC, oldfd) != oldfd) return -1;
-            fcntl(oldfd, F_SETFD, FD_CLOEXEC);
-            close(newfd);
-            if (lseek(oldfd, (off_t)0, SEEK_END) < hp->histcnt) {
-                int index = hp->histind;
-                lseek(oldfd, (off_t)2, SEEK_SET);
-                hp->histcnt = 2;
-                hp->histind = 1;
-                hp->histcmds[1] = 2;
-                hist_eof(hp);
-                hp->histmarker = hp->histcnt;
-                hp->histind = index;
-            }
-            return 1;
+        int oldfd = sffileno(fp);
+        sh_close(oldfd);
+
+        int newfd = open(hp->histname, O_BINARY | O_APPEND | O_CREAT | O_RDWR | O_CLOEXEC,
+                         S_IRUSR | S_IWUSR);
+        if (newfd == -1) {
+            errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno,
+                     hp->histname);
+            return -1;
         }
-        errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno,
-                 hp->histname);
-        return -1;
+        if (sh_fcntl(newfd, F_DUPFD_CLOEXEC, oldfd) != oldfd) {
+            close(newfd);
+            return -1;
+        }
+
+        fcntl(oldfd, F_SETFD, FD_CLOEXEC);
+        close(newfd);
+        if (lseek(oldfd, (off_t)0, SEEK_END) < hp->histcnt) {
+            int index = hp->histind;
+            lseek(oldfd, (off_t)2, SEEK_SET);
+            hp->histcnt = 2;
+            hp->histind = 1;
+            hp->histcmds[1] = 2;
+            hist_eof(hp);
+            hp->histmarker = hp->histcnt;
+            hp->histind = index;
+        }
+        return 1;
     }
     return 0;
 }
