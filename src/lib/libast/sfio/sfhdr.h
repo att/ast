@@ -22,10 +22,6 @@
 #ifndef _SFHDR_H
 #define _SFHDR_H 1
 
-#if !defined(_BLD_sfio) && !defined(_BLD_stdio)
-#define _BLD_sfio 1
-#endif
-
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
