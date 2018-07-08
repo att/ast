@@ -25,7 +25,6 @@ shared_c_args += [
     '-D_BLD_shell',
     '-DERROR_CONTEXT_T=Error_context_t',
     '-DKSHELL',
-    '-DSHOPT_COSHELL',
     '-DREAD_TIMEOUT=' + '@0@'.format(get_option('read-timeout')),
     '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file')),
     '-DSHOPT_DYNAMIC'
