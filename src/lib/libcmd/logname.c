@@ -26,6 +26,14 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <unistd.h>
+
+#include "ast.h"
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
+
 static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\n]" USAGE_LICENSE
                             "[+NAME?logname - return the user's login name]"
                             "[+DESCRIPTION?\blogname\b writes the users's login name to standard "
@@ -42,8 +50,6 @@ static const char usage[] = "[-?\n@(#)$Id: logname (AT&T Research) 1999-04-30 $\
                             "[+>0?An error occurred.]"
                             "}"
                             "[+SEE ALSO?\bgetlogin\b(2)]";
-
-#include "cmd.h"
 
 int b_logname(int argc, char **argv, Shbltin_t *context) {
     char *logname;

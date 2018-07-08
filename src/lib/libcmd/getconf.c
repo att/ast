@@ -23,6 +23,18 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <limits.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/unistd.h>
+
+#include "ast.h"
+#include "ast_errorf.h"
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
+
 static const char usage[] =
     "[-?\n@(#)$Id: getconf (AT&T Research) 2013-12-01 $\n]" USAGE_LICENSE
     "[+NAME?getconf - get configuration values]"
@@ -119,10 +131,6 @@ static const char usage[] =
     "}"
     "[+SEE ALSO?\bpathchk\b(1), \bconfstr\b(2), \bpathconf\b(2), "
     "\bfpathconf\b(2), \bsysconf\b(2), \bastgetconf\b(3)]";
-
-#include "cmd.h"
-#include "ls.h"
-#include "proc.h"
 
 typedef struct Path_s {
     const char *path;

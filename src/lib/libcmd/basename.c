@@ -26,6 +26,14 @@
  *
  * print the namebase of a pathname
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
+#include <string.h>
+
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: basename (AT&T Research) 2010-05-06 $\n]" USAGE_LICENSE
@@ -59,10 +67,6 @@ static const char usage[] =
     "[+>0?An error occurred.]"
     "}"
     "[+SEE ALSO?\bdirname\b(1), \bgetconf\b(1), \bbasename\b(3)]";
-
-#include "config_ast.h"  // IWYU pragma: keep
-
-#include "cmd.h"
 
 static void namebase(Sfio_t *outfile, char *pathname, char *suffix) {
     char *first, *last;

@@ -29,13 +29,18 @@
 
 #define lchmod ______lchmod
 
+#include <errno.h>
+#include <stddef.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first
 
+#include "ast.h"
+#include "ast_mode.h"
 #include "cmd.h"
-#include "ls.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: chmod (AT&T Research) 2012-04-20 $\n]" USAGE_LICENSE

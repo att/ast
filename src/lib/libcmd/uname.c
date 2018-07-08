@@ -28,14 +28,18 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <string.h>
 #include <sys/utsname.h>
 
 #if _hdr_unistd
 #include <unistd.h>
 #endif
 
+#include "ast.h"
 #include "cmd.h"
-#include "proc.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 #define MAXHOSTNAME 64
 

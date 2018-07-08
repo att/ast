@@ -24,12 +24,18 @@
  *
  * library interface for word count
  */
-
-#include "config_ast.h"
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <limits.h>
+#include <locale.h>
+#include <string.h>
+#include <sys/types.h>
 
-#include "cmd.h"
+#include "ast.h"
+#include "error.h"
+#include "sfio.h"
+#include "stak.h"
 #include "wc.h"
 
 #include <wchar.h>

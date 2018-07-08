@@ -26,6 +26,15 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
+
 static const char usage[] =
     "[-n?\n@(#)$Id: head (AT&T Research) 2013-09-19 $\n]" USAGE_LICENSE
     "[+NAME?head - output beginning portion of one or more files ]"
@@ -62,8 +71,6 @@ static const char usage[] =
     "[+>0?One or more files did not copy.]"
     "}"
     "[+SEE ALSO?\bcat\b(1), \btail\b(1)]";
-
-#include "cmd.h"
 
 int b_head(int argc, char **argv, Shbltin_t *context) {
     static const char header_fmt[] = "\n==> %s <==\n";

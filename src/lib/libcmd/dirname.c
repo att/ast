@@ -26,6 +26,17 @@
  *
  * print the dirname of a pathname
  */
+#include "config_ast.h"  // IWYU pragma: keep
+
+#include <limits.h>
+#include <stddef.h>
+
+#include "ast.h"
+#include "ast_api.h"
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: dirname (AT&T Research) 2009-01-31 $\n]" USAGE_LICENSE
@@ -57,10 +68,6 @@ static const char usage[] =
     "[+>0?An error occurred.]"
     "}"
     "[+SEE ALSO?\bbasename\b(1), \bgetconf\b(1), \bdirname\b(3), \bpathname\b(3)]";
-
-#include "config_ast.h"  // IWYU pragma: keep
-
-#include "cmd.h"
 
 static void l_dirname(Sfio_t *outfile, const char *pathname) {
     const char *last;

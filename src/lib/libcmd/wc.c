@@ -26,8 +26,13 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "cmd.h"
-#include "ls.h"
+#include "error.h"
+#include "option.h"
 #include "wc.h"
 
 static const char usage[] =

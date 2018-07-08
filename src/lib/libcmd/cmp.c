@@ -32,10 +32,18 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
+#include "ast.h"
+#include "ast_ccode.h"
 #include "ccode.h"
 #include "cmd.h"
-#include "ls.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cmp (AT&T Research) 2010-04-11 $\n]" USAGE_LICENSE

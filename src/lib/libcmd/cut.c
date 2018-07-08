@@ -24,11 +24,20 @@
  *
  * cut fields or columns from fields from a file
  */
-#include "config_ast.h"
+#include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 
+#include "ast.h"
 #include "cmd.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
+#include "stak.h"
 
 static const char usage[] =
     "[-?\n@(#)$Id: cut (AT&T Research) 2010-08-11 $\n]" USAGE_LICENSE

@@ -26,6 +26,16 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/unistd.h>
+
+#include "ast.h"
+#include "cmd.h"
+#include "error.h"
+#include "option.h"
+
 static const char usage[] = "[-?\n@(#)$Id: mkdir (AT&T Research) 2010-04-08 $\n]" USAGE_LICENSE
                             "[+NAME?mkdir - make directories]"
                             "[+DESCRIPTION?\bmkdir\b creates one or more directories.  By "
@@ -52,9 +62,6 @@ static const char usage[] = "[-?\n@(#)$Id: mkdir (AT&T Research) 2010-04-08 $\n]
                             "[+>0?An error occurred.]"
                             "}"
                             "[+SEE ALSO?\bchmod\b(1), \brmdir\b(1), \bumask\b(1)]";
-
-#include "cmd.h"
-#include "ls.h"
 
 #define DIRMODE (S_IRWXU | S_IRWXG | S_IRWXO)
 

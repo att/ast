@@ -22,8 +22,15 @@
 
 #include <stdbool.h>
 
+#include <errno.h>
+#include <sys/fcntl.h>
+#include <unistd.h>
+
+#include "ast.h"
 #include "cmd.h"
-#include "ls.h"
+#include "error.h"
+#include "option.h"
+#include "sfio.h"
 
 static const char optsync[] =
     "[-?\n@(#)$Id: sync (AT&T Research) 2013-09-22 $\n]" USAGE_LICENSE

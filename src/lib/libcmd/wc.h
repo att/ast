@@ -27,7 +27,10 @@
 #ifndef _WC_H
 #define _WC_H 1
 
+#include <limits.h>
+
 #include "ast.h"
+#include "sfio.h"
 
 #define WC_LINES 0x01
 #define WC_WORDS 0x02
