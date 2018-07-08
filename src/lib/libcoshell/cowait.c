@@ -26,9 +26,16 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "colib.h"
-
 #include <ctype.h>
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "colib.h"
+#include "error.h"
+#include "sfio.h"
 
 //
 // Cat and remove fd {1,2} serialized output

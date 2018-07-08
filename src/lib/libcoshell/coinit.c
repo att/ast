@@ -25,10 +25,19 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "colib.h"
-
 #include <ctype.h>
-#include "ls.h"
+#include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include "ast.h"
+#include "ast_api.h"
+#include "cdt.h"
+#include "colib.h"
+#include "sfio.h"
 
 static void exid(Sfio_t *sp, const char *pre, const char *name, const char *pos) {
     int c;

@@ -25,7 +25,15 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "ast.h"
 #include "colib.h"
+#include "error.h"
+#include "sfio.h"
+#include "sig.h"
 
 //
 // called when coshell is hung

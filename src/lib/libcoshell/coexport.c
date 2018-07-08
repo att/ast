@@ -25,7 +25,13 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "cdt.h"
 #include "colib.h"
+#include "dt.h"
 
 //
 // Set or unset coshell export variable

@@ -25,9 +25,11 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "colib.h"
+#include <stddef.h>
 
+#include "colib.h"
 #include "proc.h"
+#include "sfio.h"
 
 int coprocrun(const char *path, char **argv, int flags) {
     char *s;

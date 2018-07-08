@@ -29,7 +29,13 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <signal.h>
+#include <unistd.h>
+
+#include "ast.h"
 #include "colib.h"
+#include "error.h"
+#include "sfio.h"
 
 //
 // Kill job cj in shell co with signal sig

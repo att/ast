@@ -25,17 +25,27 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <errno.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
 #if _hdr_stdlib
 #include <stdlib.h>
 #elif _hdr_malloc
 #include <malloc.h>
 #endif
 
+#include "ast.h"
 #include "colib.h"
-
+#include "error.h"
 #include "namval.h"
 #include "proc.h"
 #include "sfdisc.h"
+#include "sfio.h"
+#include "sig.h"
 #include "tok.h"
 
 static const Namval_t options[] = {

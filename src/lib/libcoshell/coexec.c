@@ -25,10 +25,17 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "colib.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#include "ls.h"
+#include "ast.h"
+#include "colib.h"
+#include "error.h"
 #include "proc.h"
+#include "sfio.h"
 
 static Cojob_t *service(Coshell_t *co, Coservice_t *cs, Cojob_t *cj, int flags, Sfio_t *sp) {
     Proc_t *proc;

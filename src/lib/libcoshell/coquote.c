@@ -27,6 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
+#include "sfio.h"
 
 void coquote(Sfio_t *sp, const char *s, int type) {
     int c;

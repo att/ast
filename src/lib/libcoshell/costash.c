@@ -24,6 +24,8 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "colib.h"
+#include "error.h"
+#include "sfio.h"
 
 //
 // 0 terminate string stream, reset, and return value

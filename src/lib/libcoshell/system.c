@@ -25,6 +25,9 @@
 //
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <unistd.h>
+
+#include "ast.h"
 #include "colib.h"
 
 int cosystem(const char *cmd) {
