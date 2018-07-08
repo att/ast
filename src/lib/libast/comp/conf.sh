@@ -83,8 +83,8 @@ keep_name='*'
 # script runs after that has completed. That header contains things like the definition of
 # `_ast_intmax_t` that this script depends upon.
 head='
-#include <config_ast.h>
-#include <ast_standards.h>
+#include "config_ast.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <sys/types.h>

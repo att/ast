@@ -28,8 +28,6 @@
 #ifndef _PROCLIB_H
 #define _PROCLIB_H 1
 
-#include "ast_standards.h"
-
 #include <errno.h>
 #include <sys/wait.h>
 

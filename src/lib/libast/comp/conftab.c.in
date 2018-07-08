@@ -10,7 +10,6 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 
-#include "ast_standards.h"
 #include "conftab.h"
 
 //
