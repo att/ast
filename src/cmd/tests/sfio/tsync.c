@@ -23,6 +23,7 @@
 #include <unistd.h>
 
 #include "ast.h"
+#include "sfdisc.h"
 #include "sfio.h"
 #include "terror.h"
 
