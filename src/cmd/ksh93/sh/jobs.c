@@ -46,7 +46,6 @@
 #include "aso.h"
 #include "ast.h"
 #include "ast_aso.h"
-#include "coshell.h"
 #include "error.h"
 #include "fault.h"
 #include "history.h"
@@ -58,6 +57,10 @@
 #include "shellapi.h"
 #include "terminal.h"
 #include "variables.h"
+
+#if SHOPT_COSHELL
+#include "coshell.h"
+#endif
 
 #define NJOB_SAVELIST 4
 

@@ -52,7 +52,6 @@
 #include "ast_fcntl.h"
 #include "builtins.h"
 #include "cdt.h"
-#include "coshell.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -73,6 +72,10 @@
 #include "terminal.h"
 #include "test.h"
 #include "variables.h"
+
+#if SHOPT_COSHELL
+#include "coshell.h"
+#endif
 
 #define SH_NTFORK SH_TIMING
 #define NV_BLTPFSH NV_ARRAY
