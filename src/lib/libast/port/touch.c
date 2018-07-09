@@ -49,6 +49,9 @@ int touch(const char *path, time_t at, time_t mt, int flags) {
     Tv_t *ap;
     Tv_t *mp;
 
+    if (flags & PATH_TOUCH_CREATE) abort();
+    if (flags & PATH_TOUCH_VERBATIM) abort();
+
     if (at == (time_t)(-1) && !(flags & PATH_TOUCH_VERBATIM))
         ap = TV_TOUCH_RETAIN;
     else if (!at && !(flags & PATH_TOUCH_VERBATIM))
