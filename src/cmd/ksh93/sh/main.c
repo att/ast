@@ -63,11 +63,6 @@
 // These routines are referenced by this module.
 static_fn void exfile(Shell_t *, Sfio_t *, int);
 static_fn void chkmail(Shell_t *shp, char *);
-#if !defined(_NEXT_SOURCE)
-static_fn void fixargs(char **, int);
-#else  // _NEXT_SOURCE
-#define fixargs(a, b)
-#endif  // _NEXT_SOURCE
 
 #ifndef environ
 extern char **environ;
@@ -125,7 +120,6 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     sh_sigaction(SIGCHLD, SIG_UNBLOCK);
     sh_sigaction(SIGHUP, SIG_UNBLOCK);
 
-    fixargs(av, 0);
     shp = sh_init(ac, av, userinit);
     time(&mailtime);
     rshflag = sh_isoption(shp, SH_RESTRICTED);
@@ -265,7 +259,6 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
                         execv(pathshell(), av);
                         // Exec failed.
                         shp->st.dolv[0] = av[0];
-                        fixargs(shp->st.dolv, 1);
                     }
 #endif
                     name = av[0];
@@ -318,7 +311,6 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
         }
     } else {
         fdin = shp->infd;
-        fixargs(shp->st.dolv, 1);
     }
     if (sh_isoption(shp, SH_INTERACTIVE)) sh_onstate(shp, SH_INTERACTIVE);
     nv_putval(IFSNOD, (char *)e_sptbnl, NV_RDONLY);
@@ -618,63 +610,3 @@ static_fn void chkmail(Shell_t *shp, char *files) {
 #include <sys/pstat.h>
 #define PSTAT 1
 #endif
-
-#if !defined(_NEXT_SOURCE)
-//
-// Fix up command line for ps command.
-// Mode is 0 for initialization.
-//
-static_fn void fixargs(char **argv, int mode) {
-#if EXECARGS
-    *execargs = (char *)argv;
-#else
-    static char *buff;
-    static size_t command_len;
-    char *cp;
-    int offset = 0;
-    size_t size;
-#ifdef PSTAT
-    union pstun un;
-
-    if (mode == 0) {
-        struct pst_static st;
-        un.pst_static = &st;
-        if (pstat(PSTAT_STATIC, un, sizeof(struct pst_static), 1, 0) < 0) return;
-        command_len = st.command_length;
-        return;
-    }
-    stakseek(command_len + 2);
-    buff = stakseek(0);
-#else   // PSTAT
-    if (mode == 0) {
-        buff = argv[0];
-        while ((cp = *argv++)) command_len += strlen(cp) + 1;
-        if (environ && *environ == buff + command_len) {
-            for (argv = environ; (cp = *argv); cp++) {
-                if (command_len > CMD_LENGTH) {
-                    command_len = CMD_LENGTH;
-                    break;
-                }
-                *argv++ = strdup(cp);
-                command_len += strlen(cp) + 1;
-            }
-        }
-        command_len -= 1;
-        return;
-    }
-#endif  // PSTAT
-    if (command_len == 0) return;
-    while ((cp = *argv++) && offset < command_len) {
-        if (offset + (size = strlen(cp)) >= command_len) size = command_len - offset;
-        memcpy(buff + offset, cp, size);
-        offset += size;
-        buff[offset++] = ' ';
-    }
-    memset(&buff[offset - 1], 0, command_len - offset + 1);
-#ifdef PSTAT
-    un.pst_command = stakptr(0);
-    pstat(PSTAT_SETCMD, un, 0, 0, 0);
-#endif  // PSTAT
-#endif  // EXECARGS
-}
-#endif  // _NEXT_SOURCE
