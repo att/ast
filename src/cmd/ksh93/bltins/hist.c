@@ -154,6 +154,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         location = hist_find(hp, argv[1], hist_max(hp) - 1, 0, -1);
         if ((range[++flag] = location.hist_command) < 0) {
             errormsg(SH_DICT, ERROR_exit(1), e_found, argv[1]);
+            __builtin_unreachable();
         }
         argv++;
     }
@@ -180,8 +181,12 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     // Check for valid ranges.
     if (range[1] < index2 || range[0] >= flag) {
         errormsg(SH_DICT, ERROR_exit(1), e_badrange, range[0], range[1]);
+        __builtin_unreachable();
     }
-    if (edit && *edit == '-' && range[0] != range[1]) errormsg(SH_DICT, ERROR_exit(1), e_eneedsarg);
+    if (edit && *edit == '-' && range[0] != range[1]) {
+        errormsg(SH_DICT, ERROR_exit(1), e_eneedsarg);
+        __builtin_unreachable();
+    }
     // Now list commands from range[rflag] to range[1-rflag].
     incr = 1;
     flag = rflag > 0;
@@ -191,7 +196,10 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         arg = "\n\t";
     } else {
         fname = pathtmp(NULL, 0, 0, NULL);
-        if (!fname) errormsg(SH_DICT, ERROR_exit(1), e_create, "");
+        if (!fname) {
+            errormsg(SH_DICT, ERROR_exit(1), e_create, "");
+            __builtin_unreachable();
+        }
         fdo = open(fname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
         if (fdo < 0) {
             errormsg(SH_DICT, ERROR_system(1), e_create, fname);
@@ -218,7 +226,10 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
     if (!arg && !(arg = nv_getval(sh_scoped(shp, HISTEDIT))) &&
         !(arg = nv_getval(sh_scoped(shp, FCEDNOD)))) {
         arg = (char *)e_defedit;
-        if (*arg != '/') errormsg(SH_DICT, ERROR_exit(1), "ed not found set FCEDIT");
+        if (*arg != '/') {
+            errormsg(SH_DICT, ERROR_exit(1), "ed not found set FCEDIT");
+            __builtin_unreachable();
+        }
     }
     if (*arg != '-') {
         char *com[3];
@@ -243,6 +254,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
         // Read in and run the command.
         if (shp->hist_depth++ > HIST_RECURSE) {
             errormsg(SH_DICT, ERROR_exit(1), e_toodeep, "history");
+            __builtin_unreachable();
         }
         sh_eval(shp, iop, 1);
         shp->hist_depth--;
@@ -279,6 +291,7 @@ static_fn void hist_subst(Shell_t *shp, const char *command, int fd, char *repla
     sp = sh_substitute(shp, string, replace, newp);
     if (sp == 0) {
         errormsg(SH_DICT, ERROR_exit(1), e_subst, command);
+        __builtin_unreachable();
     }
     *(newp - 1) = '=';
     sh_eval(shp, sfopen(NULL, sp, "s"), 1);

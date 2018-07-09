@@ -83,6 +83,7 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
                     flag = (flag << 3) + (c - '0');
                 } else {
                     errormsg(SH_DICT, ERROR_exit(1), e_number, *argv);
+                    __builtin_unreachable();
                 }
             }
         } else {
@@ -92,6 +93,7 @@ int b_umask(int argc, char *argv[], Shbltin_t *context) {
             if (*cp) {
                 umask(flag);
                 errormsg(SH_DICT, ERROR_exit(1), e_format, mask);
+                __builtin_unreachable();
             }
             flag = (~c & 0777);
         }

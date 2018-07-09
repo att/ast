@@ -90,7 +90,10 @@ pid_t pid_fromstring(char *str) {
     } else {
         pid = (pid_t)strtol(str, &last, 10);
     }
-    if (errno == ERANGE || *last) errormsg(SH_DICT, ERROR_exit(1), "%s: invalid process id", str);
+    if (errno == ERANGE || *last) {
+        errormsg(SH_DICT, ERROR_exit(1), "%s: invalid process id", str);
+        __builtin_unreachable();
+    }
     return pid;
 }
 
@@ -296,7 +299,10 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
     for (csp = (struct cosh *)job.colist; csp; csp = csp->next) {
         if (strncmp(name, csp->name, n) == 0 && csp->name[n] == 0) break;
     }
-    if (!csp) errormsg(SH_DICT, ERROR_exit(1), e_jobusage, name);
+    if (!csp) {
+        errormsg(SH_DICT, ERROR_exit(1), e_jobusage, name);
+        __builtin_unreachable();
+    }
     if (cp) {
         n = pid_fromstring(cp + 1);
         val = (csp->id << 16) | n | COPID_BIT;
@@ -858,7 +864,10 @@ int job_walk(Shell_t *shp, Sfio_t *file, int (*fun)(struct process *, int), int 
     } else {
         while (*jobs) {
             job_string = jobid = *jobs++;
-            if (*jobid == 0) errormsg(SH_DICT, ERROR_exit(1), e_jobusage, job_string);
+            if (*jobid == 0) {
+                errormsg(SH_DICT, ERROR_exit(1), e_jobusage, job_string);
+                __builtin_unreachable();
+            }
 #if SHOPT_COSHELL
             if (isalpha(*jobid)) {
                 r = job_cowalk(fun, arg, jobid);
@@ -1153,7 +1162,10 @@ static_fn struct process *job_byname(char *name) {
     if (*cp == '?') cp++, flag = &offset;
     for (; pw; pw = pw->p_nxtjob) {
         if (hist_match(shgd->hist_ptr, pw->p_name, cp, flag) >= 0) {
-            if (pz) errormsg(SH_DICT, ERROR_exit(1), e_jobusage, name - 1);
+            if (pz) {
+                errormsg(SH_DICT, ERROR_exit(1), e_jobusage, name - 1);
+                __builtin_unreachable();
+            }
             pz = pw;
         }
     }

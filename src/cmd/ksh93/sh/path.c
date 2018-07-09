@@ -430,7 +430,10 @@ static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int 
 
     if (!pp && !shp->pathlist) path_init(shp);
     if (!fun && strchr(name, '/')) {
-        if (sh_isoption(shp, SH_RESTRICTED)) errormsg(SH_DICT, ERROR_exit(1), e_restricted, name);
+        if (sh_isoption(shp, SH_RESTRICTED)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_restricted, name);
+            __builtin_unreachable();
+        }
     }
     do {
         pp = path_nextcomp(shp, oldpp = pp, name, 0);
@@ -900,7 +903,10 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
     if (strchr(arg0, '/')) {
         slash = 1;
         // Name containing / not allowed for restricted shell.
-        if (sh_isoption(shp, SH_RESTRICTED)) errormsg(SH_DICT, ERROR_exit(1), e_restricted, arg0);
+        if (sh_isoption(shp, SH_RESTRICTED)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_restricted, arg0);
+            __builtin_unreachable();
+        }
     } else {
         pp = path_get(shp, arg0);
     }

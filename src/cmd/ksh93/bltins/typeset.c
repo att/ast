@@ -199,6 +199,7 @@ int b_alias(int argc, char *argv[], Shbltin_t *context) {
                         argv++;
                     } else {
                         errormsg(SH_DICT, ERROR_exit(1), e_option, argv[1]);
+                        __builtin_unreachable();
                     }
                 }
             }
@@ -312,7 +313,10 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             case 'Z':
             case 'R': {
                 if (tdata.argnum == 0) tdata.argnum = (int)opt_info.num;
-                if (tdata.argnum < 0) errormsg(SH_DICT, ERROR_exit(1), e_badfield, tdata.argnum);
+                if (tdata.argnum < 0) {
+                    errormsg(SH_DICT, ERROR_exit(1), e_badfield, tdata.argnum);
+                    __builtin_unreachable();
+                }
                 if (n == 'Z') {
                     flag |= NV_ZFILL;
                 } else {
@@ -324,6 +328,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             case 'M': {
                 if ((tdata.wctname = opt_info.arg) && !nv_mapchar((Namval_t *)0, tdata.wctname)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_unknownmap, tdata.wctname);
+                    __builtin_unreachable();
                 }
                 if (tdata.wctname && strcmp(tdata.wctname, e_tolower) == 0) {
                     flag |= NV_UTOL;
@@ -400,6 +405,7 @@ endargs:
 #if SHOPT_BASH
     if (local && context->shp->var_base == context->shp->var_tree) {
         errormsg(SH_DICT, ERROR_exit(1), "local can only be used in a function");
+        __builtin_unreachable();
     }
 #endif  // SHOPT_BASH
     opt_info.disc = 0;
@@ -427,6 +433,7 @@ endargs:
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage(NULL));
     if (sizeof(char *) < 8 && tdata.argnum > SHRT_MAX) {
         errormsg(SH_DICT, ERROR_exit(2), "option argument cannot be greater than %d", SHRT_MAX);
+        __builtin_unreachable();
     }
     if (isfloat) flag |= NV_DOUBLE;
     if (isshort) {
@@ -464,6 +471,7 @@ endargs:
         stkseek(stkp, offset);
         if (!tdata.tp) {
             errormsg(SH_DICT, ERROR_exit(1), "%s: unknown type", tdata.prefix);
+            __builtin_unreachable();
         } else if (nv_isnull(tdata.tp)) {
             nv_newtype(tdata.tp);
         }
@@ -479,6 +487,7 @@ endargs:
     if (!tdata.sh->mktype) tdata.help = 0;
     if (tdata.aflag == '+' && (flag & (NV_ARRAY | NV_IARRAY | NV_COMVAR)) && argv[1]) {
         errormsg(SH_DICT, ERROR_exit(1), e_nounattr);
+        __builtin_unreachable();
     }
     return setall(argv, flag, troot, &tdata);
 }
@@ -575,6 +584,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     // Function names cannot be special builtin.
                     if ((np = nv_search(name, shp->bltin_tree, 0)) && nv_isattr(np, BLT_SPC)) {
                         errormsg(SH_DICT, ERROR_exit(1), e_badfun, name);
+                        __builtin_unreachable();
                     }
                     if (shp->namespace) {
                         np = sh_fsearch(shp, name, NV_ADD | HASH_NOSCOPE);
@@ -644,6 +654,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                        (mp = (Namval_t *)np->nvenv) && (ap = nv_arrayptr(mp)) &&
                        (ap->flags & ARRAY_TREE)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_typecompat, nv_name(np));
+                __builtin_unreachable();
             } else if ((ap = nv_arrayptr(np)) && nv_aindex(np) > 0 && ap->nelem == 1 &&
                        nv_getval(np) == Empty) {
                 ap->nelem++;
@@ -652,6 +663,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             } else if (iarray && ap && ap->fun) {
                 errormsg(SH_DICT, ERROR_exit(1),
                          "cannot change associative array %s to index array", nv_name(np));
+                __builtin_unreachable();
             } else if ((iarray || (flag & NV_ARRAY)) && nv_isvtree(np) && !nv_type(np)) {
                 _nv_unset(np, NV_EXPORT);
             }
@@ -730,7 +742,10 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (!(flag & NV_INTEGER) && (flag & (NV_LTOU | NV_UTOL))) {
                 Namfun_t *fp;
                 char *cp;
-                if (!tp->wctname) errormsg(SH_DICT, ERROR_exit(1), e_mapchararg, nv_name(np));
+                if (!tp->wctname) {
+                    errormsg(SH_DICT, ERROR_exit(1), e_mapchararg, nv_name(np));
+                    __builtin_unreachable();
+                }
                 cp = (char *)nv_mapchar(np, 0);
                 fp = nv_mapchar(np, tp->wctname);
                 if (fp) {
@@ -749,6 +764,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             if (tp->aflag == '-') {
                 if ((flag & NV_EXPORT) && (strchr(name, '.') || nv_isvtree(np))) {
                     errormsg(SH_DICT, ERROR_exit(1), e_badexport, name);
+                    __builtin_unreachable();
                 }
 #if SHOPT_BASH
                 if (flag & NV_EXPORT) nv_offattr(np, NV_IMPORT);
@@ -766,6 +782,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
             } else {
                 if ((flag & NV_RDONLY) && (curflag & NV_RDONLY)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+                    __builtin_unreachable();
                 }
                 newflag = curflag & ~flag;
             }
@@ -989,6 +1006,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     if (arg || *argv) {
         if (sh_isoption(tdata.sh, SH_RESTRICTED)) {
             errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[-opt_info.index]);
+            __builtin_unreachable();
         }
         if (tdata.sh->subshell && !tdata.sh->subshare) sh_subfork();
     }
@@ -1016,7 +1034,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #endif  // _AST_VERSION >= 20040404
         {
             errormsg(SH_DICT, ERROR_exit(0), "%s: %s", arg, dlerror());
-            return (1);
+            return 1;
         }
 #endif  // SH_PLUGIN_VERSION
         sh_addlib(tdata.sh, library, arg, NULL);

@@ -117,14 +117,21 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
                     if (*last && (pp = sfprints("p%s", cp))) ns = tmxdate(pp, &last, now);
                 }
             }
-            if (*last) errormsg(SH_DICT, ERROR_exit(1), e_number, *argv);
+            if (*last) {
+                errormsg(SH_DICT, ERROR_exit(1), e_number, *argv);
+                __builtin_unreachable();
+            }
             d = ns - now;
             d /= TMX_RESOLUTION;
         }
     skip:
-        if (argv[1]) errormsg(SH_DICT, ERROR_exit(1), e_oneoperand);
+        if (argv[1]) {
+            errormsg(SH_DICT, ERROR_exit(1), e_oneoperand);
+            __builtin_unreachable();
+        }
     } else if (!sflag) {
         errormsg(SH_DICT, ERROR_exit(1), e_oneoperand);
+        __builtin_unreachable();
     }
     if (d > .10) {
         time(&tloc);

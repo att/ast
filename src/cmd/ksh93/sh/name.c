@@ -195,6 +195,7 @@ Namval_t *nv_addnode(Namval_t *np, int remove) {
             nv_delete(sp->nodes[0], root, NV_NOFREE);
             dtinsert(root, sp->rp);
             errormsg(SH_DICT, ERROR_exit(1), e_redef, sp->nodes[0]->nvname);
+            __builtin_unreachable();
         }
     }
     for (i = 0; i < sp->numnodes; i++) {
@@ -337,6 +338,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                 }
                 if (nv_isattr(np, NV_RDONLY) && np->nvfun && !(flags & NV_RDONLY)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+                    __builtin_unreachable();
                 }
                 if (nv_isattr(np, NV_NOFREE) && nv_isnull(np)) nv_offattr(np, NV_NOFREE);
                 if (nv_istable(np)) _nv_unset(np, 0);
@@ -375,6 +377,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         np == ((struct sh_type *)shp->mktype)->nodes[0]) {
                         shp->mktype = 0;
                         errormsg(SH_DICT, ERROR_exit(1), "%s: not a known type name", argv[0]);
+                        __builtin_unreachable();
                     }
                     if (!(arg->argflag & ARG_APPEND)) {
                         if (!nv_isarray(np) || ((ap = nv_arrayptr(np)) && (ap->nelem))) {
@@ -465,6 +468,7 @@ Namval_t **sh_setlist(Shell_t *shp, struct argnod *arg, int flags, Namval_t *typ
                         if (nv_isarray(np)) {
                             if ((sub = nv_aimax(np)) < 0 && nv_arrayptr(np)) {
                                 errormsg(SH_DICT, ERROR_exit(1), e_badappend, nv_name(np));
+                                __builtin_unreachable();
                             }
                             if (sub == 0 && nv_type(np) && (ap = nv_arrayptr(np)) &&
                                 array_elem(ap) == 0) {
@@ -838,6 +842,7 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     shp->first_root = root;
                     if (nv_isref(np) && (c == '[' || c == '.' || !(flags & NV_ASSIGN))) {
                         errormsg(SH_DICT, ERROR_exit(1), e_noref, nv_name(np));
+                        __builtin_unreachable();
                     }
                     if (sub && c == 0) {
                         if (flags & NV_ARRAY) {
@@ -1363,6 +1368,7 @@ skip:
             msg = e_noarray;
         }
         errormsg(SH_DICT, ERROR_exit(1), msg, name);
+        __builtin_unreachable();
     }
     if (fun.nofree & 1) stkseek(shp->stk, offset);
     return np;
@@ -1397,6 +1403,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
     }
     if (!(flags & NV_RDONLY) && nv_isattr(np, NV_RDONLY) && np->nvalue.cp != Empty) {
         errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+        __builtin_unreachable();
     }
     // The following could cause the shell to fork if assignment would cause a side effect.
     shp->argaddr = 0;
@@ -2108,6 +2115,7 @@ void _nv_unset(Namval_t *np, int flags) {
 
     if (!(flags & NV_RDONLY) && nv_isattr(np, NV_RDONLY)) {
         errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+        __builtin_unreachable();
     }
     if (is_afunction(np) && np->nvalue.ip) {
         struct slnod *slp = (struct slnod *)(np->nvenv);
@@ -2430,7 +2438,10 @@ Sfdouble_t nv_getnum(Namval_t *np) {
     char *str;
 
     if (!nv_local && shp->argaddr) nv_optimize(np);
-    if (nv_istable(np)) errormsg(SH_DICT, ERROR_exit(1), e_number, nv_name(np));
+    if (nv_istable(np)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_number, nv_name(np));
+        __builtin_unreachable();
+    }
     if (np->nvfun && np->nvfun->disc) {
         if (!nv_local) {
             nv_local = 1;
@@ -2447,6 +2458,7 @@ Sfdouble_t nv_getnum(Namval_t *np) {
         if (sh_isoption(shp, SH_NOUNSET) && nv_isattr(np, NV_NOTSET) == NV_NOTSET) {
             int i = nv_aindex(np);
             errormsg(SH_DICT, ERROR_exit(1), e_notset2, nv_name(np), i);
+            __builtin_unreachable();
         }
         up = &np->nvalue;
         if (!up->lp || up->cp == Empty) {
@@ -2515,6 +2527,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
         ((sp = nv_name(np)) == nv_name(PATHNOD) || sp == nv_name(SHELLNOD) ||
          sp == nv_name(ENVNOD) || sp == nv_name(FPATHNOD))) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, nv_name(np));
+        __builtin_unreachable();
     }
     // Handle attributes that do not change data separately.
     n = np->nvflag;
@@ -2736,7 +2749,7 @@ bool nv_rename(Namval_t *np, int flags) {
     if (flags & NV_MOVE) {
         if (!(cp = (char *)(mp ? mp : np)->nvalue.cp)) {
             errormsg(SH_DICT, ERROR_exit(1), e_varname, "");
-            return false;
+            __builtin_unreachable();
         }
         (mp ? mp : np)->nvalue.cp = 0;
     } else if (!(cp = nv_getval(np))) {
@@ -2744,6 +2757,7 @@ bool nv_rename(Namval_t *np, int flags) {
     }
     if (lastdot(cp, 0, (void *)shp) && nv_isattr(np, NV_MINIMAL)) {
         errormsg(SH_DICT, ERROR_exit(1), e_varname, nv_name(np));
+        __builtin_unreachable();
     }
     arraynr = cp[strlen(cp) - 1] == ']';
     if (nv_isarray(np) && !mp) index = nv_aindex(np);
@@ -2762,6 +2776,7 @@ bool nv_rename(Namval_t *np, int flags) {
     shp->prefix = prefix;
     if (sh_isoption(shp, SH_NOUNSET) && (!nr || nv_isnull(nr))) {
         errormsg(SH_DICT, ERROR_exit(1), e_notset, cp);
+        __builtin_unreachable();
     }
     if (!nr) {
         if (!nv_isvtree(np)) _nv_unset(np, 0);
@@ -2873,7 +2888,10 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     Namval_t *last_table = shp->last_table;
 
     if (nv_isref(np)) return;
-    if (nv_isarray(np)) errormsg(SH_DICT, ERROR_exit(1), e_badref, nv_name(np));
+    if (nv_isarray(np)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_badref, nv_name(np));
+        __builtin_unreachable();
+    }
     if (!(cp = nv_getval(np))) {
         _nv_unset(np, 0);
         nv_onattr(np, NV_REF);
@@ -2881,6 +2899,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     }
     if ((ep = lastdot(cp, 0, (void *)shp)) && nv_isattr(np, NV_MINIMAL)) {
         errormsg(SH_DICT, ERROR_exit(1), e_badref, nv_name(np));
+        __builtin_unreachable();
     }
     if (hp) hpnext = dtvnext(hp);
     shp->namref_root = hp;
@@ -2912,10 +2931,12 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
     if (nr == np) {
         if (shp->namespace && nv_dict(shp->namespace) == hp) {
             errormsg(SH_DICT, ERROR_exit(1), e_selfref, nv_name(np));
+            __builtin_unreachable();
         }
         // Bind to earlier scope, or add to global scope.
         if (!(hp = dtvnext(hp)) || (nq = nv_search((char *)np, hp, NV_ADD | HASH_BUCKET)) == np) {
             errormsg(SH_DICT, ERROR_exit(1), e_selfref, nv_name(np));
+            __builtin_unreachable();
         }
         if (nv_isarray(nq)) nv_putsub(nq, (char *)0, 0, ARRAY_UNDEF);
     }
@@ -2937,6 +2958,7 @@ void nv_setref(Namval_t *np, Dt_t *hp, int flags) {
         _nv_unset(np, NV_RDONLY);
         nv_onattr(np, NV_REF);
         errormsg(SH_DICT, ERROR_exit(1), e_globalref, nv_name(np));
+        __builtin_unreachable();
     }
     shp->instance = 1;
     if (nq && !ep && (ap = nv_arrayptr(nq)) && !(ap->flags & (ARRAY_UNDEF | ARRAY_SCAN))) {

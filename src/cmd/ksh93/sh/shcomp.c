@@ -149,7 +149,10 @@ int main(int argc, char *argv[]) {
                 strcmp(nv_name((Namval_t *)t->com.comnamp), "alias") == 0) {
                 sh_exec(shp, t, 0);
             }
-            if (!dflag && sh_tdump(out, t) < 0) errormsg(SH_DICT, ERROR_exit(1), "dump failed");
+            if (!dflag && sh_tdump(out, t) < 0) {
+                errormsg(SH_DICT, ERROR_exit(1), "dump failed");
+                __builtin_unreachable();
+            }
         } else if (sfeof(in)) {
             break;
         }

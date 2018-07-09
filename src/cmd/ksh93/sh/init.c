@@ -209,7 +209,7 @@ static_fn char *nospace(int unused) {
     UNUSED(unused);
 
     errormsg(SH_DICT, ERROR_exit(3), e_nospace);
-    return NULL;
+    __builtin_unreachable();
 }
 
 // Trap for VISUAL and EDITOR variables.
@@ -289,6 +289,7 @@ static_fn void put_restricted(Namval_t *np, const void *val, int flags, Namfun_t
 
     if (!(flags & NV_RDONLY) && sh_isoption(shp, SH_RESTRICTED)) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, nv_name(np));
+        __builtin_unreachable();
     }
     if (np == PATHNOD || (path_scoped = (strcmp(name, PATHNOD->nvname) == 0))) {
         nv_scan(shp->track_tree, rehash, (void *)0, NV_TAGGED, NV_TAGGED);
@@ -1215,7 +1216,10 @@ static_fn void put_mode(Namval_t *np, const char *val, int flag, Namfun_t *nfp) 
             }
         } else {
             mode = strperm(val, &last, 0);
-            if (*last) errormsg(SH_DICT, ERROR_exit(1), "%s: invalid mode string", val);
+            if (*last) {
+                errormsg(SH_DICT, ERROR_exit(1), "%s: invalid mode string", val);
+                __builtin_unreachable();
+            }
         }
         nv_putv(np, (char *)&mode, NV_INTEGER, nfp);
     } else {
@@ -1434,6 +1438,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
         // Careful of #! setuid scripts with name beginning with -.
         if (shp->login_sh && argv[1] && strcmp(argv[0], argv[1]) == 0) {
             errormsg(SH_DICT, ERROR_exit(1), e_prohibited);
+            __builtin_unreachable();
         }
     } else {
         sh_offoption(shp, SH_PRIVILEGED);
@@ -1645,9 +1650,8 @@ static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t
         }
     }
 
-    // This is a can't happen case. The return is just to avoid lint warnings. It isn't reached.
     errormsg(SH_DICT, ERROR_exit(1), e_notelem, strlen(name), name, nv_name(np));
-    return NULL;
+    __builtin_unreachable();
 }
 
 static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {

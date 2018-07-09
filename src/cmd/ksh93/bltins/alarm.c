@@ -259,7 +259,10 @@ int b_alarm(int argc, char *argv[], Shbltin_t *context) {
     if (!nv_isnull(np)) nv_unset(np);
     nv_setattr(np, NV_DOUBLE);
     tp = newof(NULL, struct tevent, 1, 0);
-    if (!tp) errormsg(SH_DICT, ERROR_exit(1), e_nospace);
+    if (!tp) {
+        errormsg(SH_DICT, ERROR_exit(1), e_nospace);
+        __builtin_unreachable();
+    }
     tp->fun.disc = &alarmdisc;
     tp->flags = rflag;
     tp->node = np;

@@ -53,7 +53,7 @@ int b_ulimit(int argc, char *argv[], Shbltin_t *context) {
     UNUSED(context);
 
     errormsg(SH_DICT, ERROR_exit(2), e_nosupport);
-    return 0;
+    __builtin_unreachable();
 }
 
 #else  // _no_ulimit

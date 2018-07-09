@@ -99,7 +99,11 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     int newdirfd;
     Namval_t *opwdnod, *pwdnod;
 
-    if (sh_isoption(shp, SH_RESTRICTED)) errormsg(SH_DICT, ERROR_exit(1), e_restricted + 4);
+    if (sh_isoption(shp, SH_RESTRICTED)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_restricted + 4);
+        __builtin_unreachable();
+    }
+
     while ((rval = optget(argv, sh_optcd))) {
         switch (rval) {
             case 'f': {
@@ -151,7 +155,10 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
         dir = sh_scoped(shp, opwdnod)->nvalue.sp;
     }
 
-    if (!dir || *dir == 0) errormsg(SH_DICT, ERROR_exit(1), argc == 2 ? e_subst + 4 : e_direct);
+    if (!dir || *dir == 0) {
+        errormsg(SH_DICT, ERROR_exit(1), argc == 2 ? e_subst + 4 : e_direct);
+        __builtin_unreachable();
+    }
     if (xattr) {
         if (!shp->strbuf2) shp->strbuf2 = sfstropen();
         j = sfprintf(shp->strbuf2, "%s", dir);

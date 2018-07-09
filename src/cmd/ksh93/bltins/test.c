@@ -141,7 +141,10 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
 
     if (c_eq(cp, '[')) {
         cp = argv[--argc];
-        if (!c_eq(cp, ']')) errormsg(SH_DICT, ERROR_exit(2), e_missing, "']'");
+        if (!c_eq(cp, ']')) {
+            errormsg(SH_DICT, ERROR_exit(2), e_missing, "']'");
+            __builtin_unreachable();
+        }
     }
 
     // According to POSIX, test builtin should return 1 if expression is missing
@@ -188,6 +191,7 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
                     goto done;
                 }
                 errormsg(SH_DICT, ERROR_exit(2), e_badop, cp);
+                __builtin_unreachable();
             }
             result = (test_binop(tdata.sh, op, argv[1], argv[3]) ^ (argc != 5));
             goto done;
@@ -258,6 +262,7 @@ static_fn int eval_expr(struct test *tp, int flag) {
         }
         if (flag == 0) break;
         errormsg(SH_DICT, ERROR_exit(2), e_badsyntax);
+        __builtin_unreachable();
     }
     return r;
 }
@@ -269,6 +274,7 @@ static_fn char *nxtarg(struct test *tp, int mt) {
             return 0;
         }
         errormsg(SH_DICT, ERROR_exit(2), e_argument);
+        __builtin_unreachable();
     }
     return tp->av[tp->ap++];
 }
@@ -283,7 +289,10 @@ static_fn int eval_e3(struct test *tp) {
     if (c_eq(arg, '(')) {
         op = eval_expr(tp, 1);
         cp = nxtarg(tp, 0);
-        if (!cp || !c_eq(cp, ')')) errormsg(SH_DICT, ERROR_exit(2), e_missing, "')'");
+        if (!cp || !c_eq(cp, ')')) {
+            errormsg(SH_DICT, ERROR_exit(2), e_missing, "')'");
+            __builtin_unreachable();
+        }
         return op;
     }
     cp = nxtarg(tp, 1);
@@ -302,8 +311,9 @@ static_fn int eval_e3(struct test *tp) {
         op = arg[1];
         if (!cp) {
             // For backward compatibility with new flags.
-            if (op == 0 || !strchr(test_opchars + 10, op)) return (1);
+            if (op == 0 || !strchr(test_opchars + 10, op)) return 1;
             errormsg(SH_DICT, ERROR_exit(2), e_argument);
+            __builtin_unreachable();
         }
         if (strchr(test_opchars, op)) return (test_unop(tp->sh, op, cp));
     }
@@ -315,7 +325,10 @@ static_fn int eval_e3(struct test *tp) {
 skip:
     op = sh_lookup(binop = cp, shtab_testops);
     if (!(op & TEST_BINOP)) cp = nxtarg(tp, 0);
-    if (!op) errormsg(SH_DICT, ERROR_exit(2), e_badop, binop);
+    if (!op) {
+        errormsg(SH_DICT, ERROR_exit(2), e_badop, binop);
+        __builtin_unreachable();
+    }
     if (op == TEST_AND || op == TEST_OR) tp->ap--;
     return test_binop(tp->sh, op, arg, cp);
 }
@@ -454,8 +467,7 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
             static char a[3] = "-?";
             a[1] = op;
             errormsg(SH_DICT, ERROR_exit(2), e_badop, a);
-            // NOTREACHED
-            return 0;
+            __builtin_unreachable();
         }
     }
 }

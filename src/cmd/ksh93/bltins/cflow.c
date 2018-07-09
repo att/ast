@@ -107,7 +107,10 @@ int b_break(int n, char *argv[], Shbltin_t *context) {
 
     if (arg) {
         n = (int)strtol(arg, &arg, 10);
-        if (n <= 0 || *arg) errormsg(SH_DICT, ERROR_exit(1), e_nolabels, *argv);
+        if (n <= 0 || *arg) {
+            errormsg(SH_DICT, ERROR_exit(1), e_nolabels, *argv);
+            __builtin_unreachable();
+        }
     }
 
     if (shp->st.loopcnt) {

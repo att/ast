@@ -195,6 +195,7 @@ char *sh_mactrim(Shell_t *shp, char *str, int mode) {
             str = arglist->argval;
         } else if (mode > 1) {
             errormsg(SH_DICT, ERROR_exit(1), e_ambiguous, str);
+            __builtin_unreachable();
         }
         sh_trim(str);
     }
@@ -675,6 +676,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                         if (first[c - 2] == '.') offset = stktell(stkp);
                         if (isastchar(*cp) && cp[1] == ']') {
                             errormsg(SH_DICT, ERROR_exit(1), e_badsubscript, *cp);
+                            __builtin_unreachable();
                         }
                     }
                     first = fcseek(c);
@@ -1142,7 +1144,10 @@ retry1:
             if (!v && sh_isoption(mp->shp, SH_NOUNSET)) {
                 d = fcget();
                 fcseek(-1);
-                if (!(d && strchr(":+-?=", d))) errormsg(SH_DICT, ERROR_exit(1), e_notset, ltos(c));
+                if (!(d && strchr(":+-?=", d))) {
+                    errormsg(SH_DICT, ERROR_exit(1), e_notset, ltos(c));
+                    __builtin_unreachable();
+                }
             }
             break;
         }
@@ -1380,6 +1385,7 @@ retry1:
                 if (sh_isoption(mp->shp, SH_NOUNSET) && !isastchar(mode) &&
                     (type == M_VNAME || type == M_SIZE)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_notset, id);
+                    __builtin_unreachable();
                 }
                 v = 0;
                 if (type == M_VNAME) {
@@ -1488,6 +1494,7 @@ skip:
             if (newops && sh_isoption(mp->shp, SH_NOUNSET) && *id && id != idbuff &&
                 (!np || nv_isnull(np))) {
                 errormsg(SH_DICT, ERROR_exit(1), e_notset, id);
+                __builtin_unreachable();
             }
             if (c == ',' || c == '^' || c == '/' || c == ':' ||
                 ((!v || (nulflg && *v == 0)) ^ (c == '+' || c == '#' || c == '%'))) {
@@ -1796,10 +1803,13 @@ retry2:
             if (*argp) {
                 sfputc(stkp, 0);
                 errormsg(SH_DICT, ERROR_exit(1), "%s: %s", id, argp);
+                __builtin_unreachable();
             } else if (v) {
                 errormsg(SH_DICT, ERROR_exit(1), e_nullset, id);
+                __builtin_unreachable();
             } else {
                 errormsg(SH_DICT, ERROR_exit(1), e_notset, id);
+                __builtin_unreachable();
             }
         } else if (c == '=') {
             if (np) {
@@ -1826,6 +1836,7 @@ retry2:
             nv_close(np);
         }
         errormsg(SH_DICT, ERROR_exit(1), e_notset, id);
+        __builtin_unreachable();
     }
     if (np) nv_close(np);
     if (pattern) free(pattern);
@@ -2537,9 +2548,10 @@ static_fn char *special(Shell_t *shp, int c) {
 //
 // Handle macro expansion errors.
 //
-static_fn void mac_error(Namval_t *np) {
+static_fn __attribute__((noreturn)) void mac_error(Namval_t *np) {
     if (np) nv_close(np);
     errormsg(SH_DICT, ERROR_exit(1), e_subst, fcfirst());
+    __builtin_unreachable();
 }
 
 //

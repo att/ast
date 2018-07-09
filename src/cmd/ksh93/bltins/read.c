@@ -292,7 +292,10 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'u': {
                 if (opt_info.arg[0] == 'p' && opt_info.arg[1] == 0) {
-                    if ((fd = shp->cpipe[0]) <= 0) errormsg(SH_DICT, ERROR_exit(1), e_query);
+                    if ((fd = shp->cpipe[0]) <= 0) {
+                        errormsg(SH_DICT, ERROR_exit(1), e_query);
+                        __builtin_unreachable();
+                    }
                     break;
                 }
                 fd = (int)strtol(opt_info.arg, &opt_info.arg, 10);
@@ -642,6 +645,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
         c = sfvalue(iop) + 1;
         if (!sferror(iop) && sfgetc(iop) >= 0) {
             errormsg(SH_DICT, ERROR_exit(1), e_overlimit, "line length");
+            __builtin_unreachable();
         }
     }
     if (timeslot) timerdel(timeslot);
