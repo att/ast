@@ -2643,13 +2643,11 @@ char *sh_getenv(const char *name) {
     return NULL;
 }
 
-#ifndef _NEXT_SOURCE
 //
 // Some dynamic linkers will make this file see the libc getenv(), so sh_getenv() is used for the
 // astintercept() callback.  Plain getenv() is provided for static links.
 //
 char *getenv(const char *name) { return sh_getenv(name); }
-#endif  // _NEXT_SOURCE
 
 #undef putenv
 //
