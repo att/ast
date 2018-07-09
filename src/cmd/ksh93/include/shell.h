@@ -50,15 +50,6 @@ typedef struct Shell_s Shell_t;
 #include "nval.h"
 #endif  // _SH_PRIVATE
 
-/// This is a macro that can be used to silence "unused parameter" warnings from the compiler for
-/// functions which need to accept parameters they do not use because they need to be compatible
-/// with an interface. It's similar to the Python idiom of doing `_ = param` at the top of a
-/// function in the same situation.
-#define UNUSED(expr)  \
-    do {              \
-        (void)(expr); \
-    } while (0)
-
 // Options.
 #if __STDC_VERSION__ >= 199901L
 typedef uint_fast64_t Shopt_t_data_t;
