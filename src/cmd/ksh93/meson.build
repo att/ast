@@ -95,7 +95,7 @@ all_tests = [
     ['basic', 90], ['bracket'], ['builtins'], ['case'], ['comvar'],
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'],
-    ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
+    ['io'], ['locale'], ['math', 50], ['nameref'], ['namespace'], ['modifiers'],
     ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'], ['quoting2'],
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
     ['sh_match'], ['sigchld', 100], ['signal'], ['statics'], ['subshell', 100],

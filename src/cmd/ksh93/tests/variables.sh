@@ -476,22 +476,6 @@ do
 done
 unset IFS
 
-if [[ $( (print ${12345:?}) 2>&1) != *12345* ]]
-then
-    log_error 'incorrect error message with ${12345?}'
-fi
-
-unset foobar
-if [[ $( (print ${foobar:?}) 2>&1) != *foobar* ]]
-then
-    log_error 'incorrect error message with ${foobar?}'
-fi
-
-unset bar
-if [[ $( (print ${bar:?bam}) 2>&1) != *bar*bam* ]]
-then
-    log_error 'incorrect error message with ${foobar?}'
-fi
 
 { $SHELL -c '
 function foo
