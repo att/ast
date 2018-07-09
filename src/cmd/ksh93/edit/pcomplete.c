@@ -293,6 +293,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
     if (comp->fname && !comp->fun &&
         !(comp->fun = nv_search(comp->fname, sh_subfuntree(shp, 0), 0))) {
         errormsg(SH_DICT, ERROR_exit(1), "%s: function not found", comp->fname);
+        __builtin_unreachable();
     }
     if (comp->command || comp->fun) {
         char *cpsave;
@@ -590,6 +591,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 if ((n = action(Action_names, opt_info.arg)) == 0) {
                     errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'A',
                              opt_info.arg);
+                    __builtin_unreachable();
                 }
                 // FALL THRU
             }
@@ -624,6 +626,7 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                 if ((n = action(Option_names, opt_info.arg)) == 0) {
                     errormsg(SH_DICT, ERROR_exit(1), "invalid -%c option name %s", 'o',
                              opt_info.arg);
+                    __builtin_unreachable();
                 }
                 n = (strchr(Options, n) - Options);
                 comp.options |= 1 << n;

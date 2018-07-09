@@ -108,7 +108,10 @@ int b_trap(int argc, char *argv[], Shbltin_t *context) {
                     dflag = true;
                 }
             }
-            if (!argv[0]) errormsg(SH_DICT, ERROR_exit(1), e_condition);
+            if (!argv[0]) {
+                errormsg(SH_DICT, ERROR_exit(1), e_condition);
+                __builtin_unreachable();
+            }
         }
         while ((arg = *argv++)) {
             sig = sig_number(shp, arg);
@@ -238,6 +241,7 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
                 if ((int)shp->sigval != shp->sigval) {
                     errormsg(SH_DICT, ERROR_exit(1), "%lld - too large for sizeof(integer)",
                              shp->sigval);
+                    __builtin_unreachable();
                 }
                 break;
             }
@@ -246,6 +250,7 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
                 shp->sigval = opt_info.num;
                 if ((int)shp->sigval < 0) {
                     errormsg(SH_DICT, ERROR_exit(1), "%lld - Q must be unsigned", shp->sigval);
+                    __builtin_unreachable();
                 }
                 break;
             }
@@ -277,6 +282,7 @@ endopts:
                         shp->exitval = 2;
                         shp->sigval = 0;
                         errormsg(SH_DICT, ERROR_exit(1), e_nosignal, signame);
+                        __builtin_unreachable();
                     }
                     sfprintf(sfstdout, "%d\n", sig);
                 }
@@ -288,6 +294,7 @@ endopts:
         if ((sig = sig_number(shp, signame)) < 0 || sig >= shp->gd->sigmax) {
             shp->exitval = 2;
             errormsg(SH_DICT, ERROR_exit(1), e_nosignal, signame);
+            __builtin_unreachable();
         }
     }
     if (job_walk(shp, sfstdout, job_kill, sig | (flag & (Q_FLAG | QQ_FLAG)), argv)) {

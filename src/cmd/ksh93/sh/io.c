@@ -1181,7 +1181,10 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
 #endif  // SHOPT_COSHELL
         if (iop->iovname) {
             np = nv_open(iop->iovname, shp->var_tree, NV_NOASSIGN | NV_VARNAME);
-            if (nv_isattr(np, NV_RDONLY)) errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+            if (nv_isattr(np, NV_RDONLY)) {
+                errormsg(SH_DICT, ERROR_exit(1), e_readonly, nv_name(np));
+                __builtin_unreachable();
+            }
             io_op[0] = '}';
             if ((iof & IOLSEEK) || ((iof & IOMOV) && *fname == '-')) fn = nv_getnum(np);
         }
@@ -1332,6 +1335,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
             } else if (iof & IORDW) {
                 if (sh_isoption(shp, SH_RESTRICTED)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_restricted, fname);
+                    __builtin_unreachable();
                 }
                 io_op[2] = '>';
                 o_mode = O_RDWR | O_CREAT;
@@ -1343,6 +1347,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 fd = sh_iomovefd(shp, fd);
             } else if (sh_isoption(shp, SH_RESTRICTED)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_restricted, fname);
+                __builtin_unreachable();
             } else {
                 if (iof & IOAPP) {
                     io_op[2] = '>';
@@ -1725,6 +1730,7 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
         filemapsize += 8;
         if (!(filemap = (struct fdsave *)realloc(filemap, filemapsize * sizeof(struct fdsave)))) {
             errormsg(SH_DICT, ERROR_exit(4), e_nospace);
+            __builtin_unreachable();
         }
         moved = (char *)filemap - oldptr;
         if (moved) {

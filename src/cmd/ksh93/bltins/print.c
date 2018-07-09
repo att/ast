@@ -541,7 +541,10 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
     static union types_t number;
 
     if (!np || nv_isnull(np)) {
-        if (sh_isoption(shp, SH_NOUNSET)) errormsg(SH_DICT, ERROR_exit(1), e_notset, string);
+        if (sh_isoption(shp, SH_NOUNSET)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_notset, string);
+            __builtin_unreachable();
+        }
         return 0;
     }
     if (nv_isattr(np, NV_INTEGER) && !nv_isarray(np)) {
@@ -748,8 +751,10 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 break;
             }
             default: {
-                if (!strchr("DdXxoUu", format))
+                if (!strchr("DdXxoUu", format)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_formspec, format);
+                    __builtin_unreachable();
+                }
                 fe->fmt = 'd';
                 value->ll = 0;
                 break;
@@ -935,7 +940,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 fe->fmt = 'd';
                 fe->size = sizeof(value->ll);
                 errormsg(SH_DICT, ERROR_exit(1), e_formspec, format);
-                break;
+                __builtin_unreachable();
             }
         }
 
@@ -986,13 +991,19 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
         }
         case 'P': {
             s = fmtmatch(value->s);
-            if (!s || *s == 0) errormsg(SH_DICT, ERROR_exit(1), e_badregexp, value->s);
+            if (!s || *s == 0) {
+                errormsg(SH_DICT, ERROR_exit(1), e_badregexp, value->s);
+                __builtin_unreachable();
+            }
             value->s = s;
             break;
         }
         case 'R': {
             s = fmtre(value->s);
-            if (!s || *s == 0) errormsg(SH_DICT, ERROR_exit(1), e_badregexp, value->s);
+            if (!s || *s == 0) {
+                errormsg(SH_DICT, ERROR_exit(1), e_badregexp, value->s);
+                __builtin_unreachable();
+            }
             value->s = s;
             break;
         }

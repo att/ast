@@ -1097,6 +1097,7 @@ int sh_lex(Lex_t *lp) {
                         if (mode == ST_NAME) {
                             errormsg(SH_DICT, ERROR_exit(SYNBAD), e_lexsyntax1, shp->inlineno, "[]",
                                      "empty subscript");
+                            __builtin_unreachable();
                         }
                         if (!epatchar || epatchar == '%') continue;
                     } else {
@@ -1541,6 +1542,7 @@ done:
     lp->assignok = (endchar(lp) == RBRACT ? assignok : 0);
     if (lp->heredoc && !inheredoc) {
         errormsg(SH_DICT, ERROR_exit(SYNBAD), e_lexsyntax5, lp->sh->inlineno, lp->heredoc->ioname);
+        __builtin_unreachable();
     }
     return messages;
 }
@@ -1855,7 +1857,7 @@ static_fn char *fmttoken(Lex_t *lp, int sym, char *tok) {
 //
 // Print a bad syntax message.
 //
-void sh_syntax(Lex_t *lp) {
+__attribute__((noreturn)) void sh_syntax(Lex_t *lp) {
     Shell_t *shp = lp->sh;
     const char *cp = sh_translate(e_unexpected);
     char *tokstr;
@@ -1889,8 +1891,10 @@ void sh_syntax(Lex_t *lp) {
     if (shp->inlineno != 1) {
 #endif
         errormsg(SH_DICT, ERROR_exit(SYNBAD), e_lexsyntax1, lp->lastline, tokstr, cp);
+        __builtin_unreachable();
     } else {
         errormsg(SH_DICT, ERROR_exit(SYNBAD), e_lexsyntax2, tokstr, cp);
+        __builtin_unreachable();
     }
 }
 

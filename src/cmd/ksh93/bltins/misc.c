@@ -129,6 +129,7 @@ int B_login(int argc, char *argv[], Shbltin_t *context) {
     pp = (struct checkpt *)shp->jmplist;
     if (sh_isoption(shp, SH_RESTRICTED)) {
         errormsg(SH_DICT, ERROR_exit(1), e_restricted, argv[0]);
+        __builtin_unreachable();
     } else {
         struct argnod *arg = shp->envlist;
         Namval_t *np;
@@ -247,7 +248,10 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     script = *argv;
     if (error_info.errors || !script) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
-    if (shp->dot_depth + 1 > DOTMAX) errormsg(SH_DICT, ERROR_exit(1), e_toodeep, script);
+    if (shp->dot_depth + 1 > DOTMAX) {
+        errormsg(SH_DICT, ERROR_exit(1), e_toodeep, script);
+        __builtin_unreachable();
+    }
     np = shp->posix_fun;
     if (!np) {
         // Check for KornShell style function first.
@@ -259,6 +263,7 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
                     if (nv_isattr(np, NV_FPOSIX)) np = 0;
                 } else {
                     errormsg(SH_DICT, ERROR_exit(1), e_found, script);
+                    __builtin_unreachable();
                 }
             }
         } else {
@@ -368,6 +373,7 @@ int b_shift(int n, char *argv[], Shbltin_t *context) {
     n = ((arg = *argv) ? (int)sh_arith(shp, arg) : 1);
     if (n < 0 || shp->st.dolc < n) {
         errormsg(SH_DICT, ERROR_exit(1), e_number, arg);
+        __builtin_unreachable();
     } else {
         shp->st.dolv += n;
         shp->st.dolc -= n;
@@ -428,11 +434,17 @@ int b_bg(int n, char *argv[], Shbltin_t *context) {
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     argv += opt_info.index;
     if (!sh_isoption(shp, SH_MONITOR) || !job.jobcontrol) {
-        if (sh_isstate(shp, SH_INTERACTIVE)) errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);
+        if (sh_isstate(shp, SH_INTERACTIVE)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_no_jctl);
+            __builtin_unreachable();
+        }
         return 1;
     }
     if (flag == 'd' && *argv == 0) argv = (char **)0;
-    if (job_walk(shp, sfstdout, job_switch, flag, argv)) errormsg(SH_DICT, ERROR_exit(1), e_no_job);
+    if (job_walk(shp, sfstdout, job_switch, flag, argv)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_no_job);
+        __builtin_unreachable();
+    }
     return shp->exitval;
 }
 
@@ -470,7 +482,10 @@ int b_jobs(int n, char *argv[], Shbltin_t *context) {
     argv += opt_info.index;
     if (error_info.errors) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     if (*argv == 0) argv = (char **)0;
-    if (job_walk(shp, sfstdout, job_list, flag, argv)) errormsg(SH_DICT, ERROR_exit(1), e_no_job);
+    if (job_walk(shp, sfstdout, job_list, flag, argv)) {
+        errormsg(SH_DICT, ERROR_exit(1), e_no_job);
+        __builtin_unreachable();
+    }
     job_wait((pid_t)0);
     return shp->exitval;
 }
@@ -503,11 +518,15 @@ int b_universe(int argc, char *argv[], Shbltin_t *context) {
     if (error_info.errors || argc > 1) errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     arg = argv[0];
     if (arg) {
-        if (!astconf("UNIVERSE", 0, arg)) errormsg(SH_DICT, ERROR_exit(1), e_badname, arg);
+        if (!astconf("UNIVERSE", 0, arg)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_badname, arg);
+            __builtin_unreachable();
+        }
     } else {
         arg = astconf("UNIVERSE", 0, 0);
         if (!arg) {
             errormsg(SH_DICT, ERROR_exit(1), e_nouniverse);
+            __builtin_unreachable();
         } else {
             sfputr(sfstdout, arg, '\n');
         }

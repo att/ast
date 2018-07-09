@@ -176,7 +176,10 @@ static_fn union Value *array_getup(Namval_t *np, Namarr_t *arp, int update) {
             return ((union Value *)((*arp->fun)(np, NULL, 0)));
         }
     } else {
-        if (ap->cur >= ap->maxi) errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
+        if (ap->cur >= ap->maxi) {
+            errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
+            __builtin_unreachable();
+        }
         up = &(ap->val[ap->cur]);
         nofree = array_isbit(ap->bits, ap->cur, ARRAY_NOFREE);
     }
@@ -266,7 +269,10 @@ static_fn Namval_t *array_find(Namval_t *np, Namarr_t *arp, int flag) {
         if (!(ap->header.flags & ARRAY_SCAN) && ap->cur >= ap->maxi) {
             ap = array_grow(np, ap, (int)ap->cur);
         }
-        if (ap->cur >= ap->maxi) errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
+        if (ap->cur >= ap->maxi) {
+            errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
+            __builtin_unreachable();
+        }
         up = &(ap->val[ap->cur]);
         if ((!up->cp || up->cp == Empty) && nv_type(np) && nv_isvtree(np)) {
             char *cp;
@@ -614,6 +620,7 @@ static_fn struct index_array *array_grow(Namval_t *np, struct index_array *arp, 
 
     if (maxi >= ARRAY_MAX) {
         errormsg(SH_DICT, ERROR_exit(1), e_subscript, fmtbase((long)maxi, 10, 0));
+        __builtin_unreachable();
     }
     size = (newsize - 1) * sizeof(union Value *) + newsize;
     ap = calloc(1, sizeof(struct index_array) + size);
@@ -692,7 +699,10 @@ bool nv_atypeindex(Namval_t *np, const char *tname) {
     stkseek(shp->stk, offset);
     if (tp) {
         struct index_array *ap = (struct index_array *)nv_arrayptr(np);
-        if (!nv_hasdisc(tp, &ENUM_disc)) errormsg(SH_DICT, ERROR_exit(1), e_notenum, tp->nvname);
+        if (!nv_hasdisc(tp, &ENUM_disc)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_notenum, tp->nvname);
+            __builtin_unreachable();
+        }
         if (!ap) ap = array_grow(np, ap, 1);
         ap->xp = calloc(NV_MINSZ, 1);
         np = nv_namptr(ap->xp, 0);
@@ -702,8 +712,9 @@ bool nv_atypeindex(Namval_t *np, const char *tname) {
         nv_offattr(np, NV_RDONLY);
         return true;
     }
+
     errormsg(SH_DICT, ERROR_exit(1), e_unknowntype, n, tname);
-    return false;
+    __builtin_unreachable();
 }
 
 Namarr_t *nv_arrayptr(Namval_t *np) {
@@ -912,7 +923,7 @@ Namval_t *nv_putsub(Namval_t *np, char *sp, long size, int flags) {
         if (size < 0 && ap) size += array_maxindex(np);
         if (size >= ARRAY_MAX || (size < 0)) {
             errormsg(SH_DICT, ERROR_exit(1), e_subscript, nv_name(np));
-            return NULL;
+            __builtin_unreachable();
         }
         if (!ap || size >= ap->maxi) {
             if (size == 0 && !(flags & ARRAY_FILL)) return (NULL);
@@ -1312,6 +1323,7 @@ void nv_setvec(Namval_t *np, int append, int argc, char *argv[]) {
         if (ap && is_associative(ap)) {
             errormsg(SH_DICT, ERROR_exit(1), "cannot append index array to associative array %s",
                      nv_name(np));
+            __builtin_unreachable();
         }
     }
     if (append) {

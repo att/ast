@@ -70,8 +70,10 @@ int b_command(int argc, char *argv[], Shbltin_t *context) {
     while ((n = optget(argv, sh_optcommand))) {
         switch (n) {
             case 'p': {
-                if (sh_isoption(shp, SH_RESTRICTED))
+                if (sh_isoption(shp, SH_RESTRICTED)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_restricted, "-p");
+                    __builtin_unreachable();
+                }
                 sh_onstate(shp, SH_DEFPATH);
                 break;
             }

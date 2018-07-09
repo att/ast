@@ -351,7 +351,10 @@ void *sh_parse(Shell_t *shp, Sfio_t *iop, int flag) {
             fcclose();
             fcrestore(&sav_input);
             lexp->arg = sav_arg;
-            if (version > 3) errormsg(SH_DICT, ERROR_exit(1), e_lexversion);
+            if (version > 3) {
+                errormsg(SH_DICT, ERROR_exit(1), e_lexversion);
+                __builtin_unreachable();
+            }
             if (sffileno(iop) == shp->infd || (flag & SH_FUNEVAL)) shp->binscript = 1;
             sfgetc(iop);
             t = sh_trestore(shp, iop);
@@ -771,6 +774,7 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
             t->funct.functargs = ac = (struct comnod *)simple(lexp, SH_NOIO | SH_FUNDEF, NULL);
             if (ac->comset || (ac->comtyp & COMSCAN)) {
                 errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
+                __builtin_unreachable();
             }
             argv0 = argv = ((struct dolnod *)ac->comarg)->dolval + ARG_SPARE;
             while ((cp = *argv++)) {
@@ -779,7 +783,10 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
                     while (c = mbchar(cp), isaname(c))
                         ;
             }
-            if (c) errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
+            if (c) {
+                errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax4, lexp->sh->inlineno);
+                __builtin_unreachable();
+            }
             nargs = argv - argv0;
             size += sizeof(struct dolnod) + (nargs + ARG_SPARE) * sizeof(char *);
             if (shp->shcomp && strncmp(".sh.math.", t->funct.functnam, 9) == 0) {
@@ -1209,6 +1216,7 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
                 if (strcmp(argp->argval, lexp->arg->argval) == 0) {
                     errormsg(SH_DICT, ERROR_exit(3), e_lexsyntax3, lexp->sh->inlineno,
                              argp->argval);
+                    __builtin_unreachable();
                 }
                 argp = argp->argnxt.ap;
             }

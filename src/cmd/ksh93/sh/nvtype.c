@@ -415,6 +415,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
                 if (nv_isattr(nq, NV_RDONLY) && nv_type(np) != np &&
                     (nq->nvalue.cp || nv_isattr(nq, NV_INTEGER))) {
                     errormsg(SH_DICT, ERROR_exit(1), e_readonly, nq->nvname);
+                    __builtin_unreachable();
                 }
                 if (nv_isref(nq)) nq = nv_refnode(nq);
                 if ((size = nv_datasize(nr, (size_t *)0)) && size == nv_datasize(nq, (size_t *)0)) {
@@ -524,7 +525,10 @@ found:
                 if ((strncmp(name, dp->names[i], n) == 0) && dp->names[i][n] == 0) return (nq);
             }
         }
-        if (!(flag & NV_NOFAIL)) errormsg(SH_DICT, ERROR_exit(1), e_notelem, n, name, nv_name(np));
+        if (!(flag & NV_NOFAIL)) {
+            errormsg(SH_DICT, ERROR_exit(1), e_notelem, n, name, nv_name(np));
+            __builtin_unreachable();
+        }
     }
     return nq;
 }
@@ -834,6 +838,7 @@ Namval_t *nv_mktype(Namval_t **nodes, int numnodes) {
         cp = nodes[0]->nvname;
         _nv_unset(nodes[0], NV_RDONLY);
         errormsg(SH_DICT, ERROR_exit(1), e_badtypedef, cp);
+        __builtin_unreachable();
     }
     for (nnodes = 1, i = 1; i < numnodes; i++) {
         np = nodes[i];
@@ -1248,6 +1253,7 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
     if (nv_isarray(np) && (tq = nv_type(np))) {
         if (tp == tq) return 0;
         errormsg(SH_DICT, ERROR_exit(1), e_redef, nv_name(np));
+        __builtin_unreachable();
     }
     if ((ap = nv_arrayptr(np)) && ap->nelem > 0) {
         nv_putsub(np, NULL, 0, ARRAY_SCAN);
@@ -1352,7 +1358,10 @@ Namval_t *nv_mkstruct(const char *name, int rsize, stat_fields_t *fields, void *
             tp =
                 nv_open(stkptr(shp->stk, offset), shp->var_tree, NV_VARNAME | NV_NOADD | NV_NOFAIL);
             stkseek(shp->stk, r);
-            if (!tp) errormsg(SH_DICT, ERROR_exit(1), e_unknowntype, strlen(fp->type), fp->type);
+            if (!tp) {
+                errormsg(SH_DICT, ERROR_exit(1), e_unknowntype, strlen(fp->type), fp->type);
+                __builtin_unreachable();
+            }
             dp = (Namtype_t *)nv_hasdisc(tp, &type_disc);
             if (dp) {
                 nnodes += dp->numnodes;
@@ -1596,6 +1605,7 @@ void nv_checkrequired(Namval_t *mp) {
         np = nv_namptr(dp->nodes, i);
         if (nv_isattr(np, NV_RDONLY) && np->nvalue.cp == Empty) {
             errormsg(SH_DICT, ERROR_exit(1), e_required, np->nvname, nv_type(mp)->nvname);
+            __builtin_unreachable();
         }
         if (nv_isattr(nq, NV_RDONLY)) nv_onattr(np, NV_RDONLY);
     }

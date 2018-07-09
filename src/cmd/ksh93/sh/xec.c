@@ -278,7 +278,6 @@ static_fn int p_time(Shell_t *shp, Sfio_t *out, const char *format, clock_t *tm)
         } else if (c != 'R') {
             stkseek(stkp, offset);
             errormsg(SH_DICT, ERROR_exit(0), e_badtformat, c);
-            return (0);
         }
         d = (double)tm[n] / shp->gd->lim.clk_tck;
     skip:
@@ -700,7 +699,10 @@ static_fn void *sh_coinit(Shell_t *shp, char **argv) {
         }
         csp = csp->next;
     }
-    if (!xopen) errormsg(SH_DICT, ERROR_exit(1), "%s: unknown namespace", name);
+    if (!xopen) {
+        errormsg(SH_DICT, ERROR_exit(1), "%s: unknown namespace", name);
+        __builtin_unreachable();
+    }
     environ[0][2] = 0;
     csp = newof(0, struct cosh, 1, strlen(name) + 1);
     if (!(csp->coshell = coopen(NULL, CO_SHELL | CO_SILENT, argv[1]))) {
@@ -1031,6 +1033,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                             if (!nv_getval(SH_FUNNAMENOD)) {
                                 errormsg(SH_DICT, ERROR_exit(1),
                                          "%s: can only be used in a function", com0);
+                                __builtin_unreachable();
                             }
                             if (!shp->st.var_local) {
                                 sh_scope(shp, (struct argnod *)0, 0);
@@ -2435,6 +2438,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     fname = stkptr(stkp, offset);
                 } else if ((mp = nv_search(fname, shp->bltin_tree, 0)) && nv_isattr(mp, BLT_SPC)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_badfun, fname);
+                    __builtin_unreachable();
                 }
                 if (shp->namespace && !shp->prefix && *fname != '.') {
                     np = sh_fsearch(shp, fname, NV_ADD | HASH_NOSCOPE);
@@ -2445,7 +2449,10 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 }
                 if (npv) {
                     if (!shp->mktype) cp = nv_setdisc(npv, cp, np, (Namfun_t *)npv);
-                    if (!cp) errormsg(SH_DICT, ERROR_exit(1), e_baddisc, fname);
+                    if (!cp) {
+                        errormsg(SH_DICT, ERROR_exit(1), e_baddisc, fname);
+                        __builtin_unreachable();
+                    }
                 }
                 if (np->nvalue.rp) {
                     struct Ufunction *rp = np->nvalue.rp;
@@ -3045,7 +3052,10 @@ int cmdrecurse(int argc, char *argv[], int ac, char *av[]) {
 //
 static_fn void coproc_init(Shell_t *shp, int pipes[]) {
     int outfd;
-    if (shp->coutpipe >= 0 && shp->cpid) errormsg(SH_DICT, ERROR_exit(1), e_pexists);
+    if (shp->coutpipe >= 0 && shp->cpid) {
+        errormsg(SH_DICT, ERROR_exit(1), e_pexists);
+        __builtin_unreachable();
+    }
     shp->cpid = 0;
     if (shp->cpipe[0] <= 0 || shp->cpipe[1] <= 0) {
         // First co-process.
@@ -3146,6 +3156,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
             }
         } else if (sh_isoption(shp, SH_RESTRICTED)) {
             errormsg(SH_DICT, ERROR_exit(1), e_restricted, path);
+            __builtin_unreachable();
         }
         if (!path) {
             spawnpid = -1;
@@ -3363,6 +3374,7 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
     if (shp->topscope != (Shscope_t *)shp->st.self) sh_setscope(shp, shp->topscope);
     if (--shp->fn_depth == 1 && jmpval == SH_JMPERRFN) {
         errormsg(SH_DICT, ERROR_exit(1), e_toodeep, argv[0]);
+        __builtin_unreachable();
     }
     sh_popcontext(shp, buffp);
     sh_unscope(shp);

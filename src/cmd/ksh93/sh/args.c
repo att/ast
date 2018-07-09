@@ -267,6 +267,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
             case 'O': {  // shopt options, only in bash mode
                 if (!sh_isoption(shp, SH_BASH))
                     errormsg(SH_DICT, ERROR_exit(1), e_option, opt_info.name);
+                    __builtin_unreachable();
             }
 #endif
             case 'o': {  // set options
@@ -293,6 +294,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
                 o &= 0xff;
                 if (sh_isoption(shp, SH_RESTRICTED) && !f && o == SH_RESTRICTED) {
                     errormsg(SH_DICT, ERROR_exit(1), e_restricted, opt_info.arg);
+                    __builtin_unreachable();
                 }
                 break;
             }
@@ -406,6 +408,7 @@ int sh_argopts(int argc, char *argv[], void *context) {
         } else {
             if (o == SH_RESTRICTED && sh_isoption(shp, SH_RESTRICTED)) {
                 errormsg(SH_DICT, ERROR_exit(1), e_restricted, "r");
+                __builtin_unreachable();
             }
             if (o == SH_XTRACE) trace = 0;
             off_option(&newflags, o);
