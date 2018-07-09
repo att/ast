@@ -606,8 +606,7 @@ int sh_open(const char *path, int flags, ...) {
     mode = (flags & O_CREAT) ? va_arg(ap, int) : 0;
     va_end(ap);
 
-    errno = 0;
-    if (path == 0) {
+    if (path == NULL) {
         errno = EFAULT;
         return -1;
     }
@@ -615,35 +614,20 @@ int sh_open(const char *path, int flags, ...) {
         errno = ENOENT;
         return -1;
     }
-    if (path[0] == '/' && path[1] == 'd' && path[2] == 'e' && path[3] == 'v' && path[4] == '/') {
-        switch (path[5]) {
-            case 'f': {
-                if (path[6] == 'd' && path[7] == '/') {
-                    if (flags == O_NONBLOCK) return (1);
-                    fd = (int)strtol(path + 8, &e, 10);
-                    if (*e) fd = -1;
-                }
-                break;
-            }
-            case 's': {
-                if (path[6] == 't' && path[7] == 'd') {
-                    switch (path[8]) {
-                        case 'e': {
-                            if (path[9] == 'r' && path[10] == 'r' && !path[11]) fd = 2;
-                            break;
-                        }
-                        case 'i': {
-                            if (path[9] == 'n' && !path[10]) fd = 0;
-                            break;
-                        }
-                        case 'o': {
-                            if (path[9] == 'u' && path[10] == 't' && !path[11]) fd = 1;
-                            break;
-                        }
-                    }
-                }
-            }
+
+    if (strncmp(path, "/dev/", sizeof("/dev/") - 1) == 0) {
+        if (strncmp(path, "/dev/fd/", sizeof("/dev/fd/") - 1) == 0) {
+            if (flags == O_NONBLOCK) return (1);
+            fd = (int)strtol(path + sizeof("/dev/fd/") - 1, &e, 10);
+            if (*e) fd = -1;
+        } else if (strcmp(path, "/dev/stdin") == 0) {
+            fd = 0;
+        } else if (strcmp(path, "/dev/stdout") == 0) {
+            fd = 1;
+        } else if (strcmp(path, "/dev/stderr") == 0) {
+            fd = 2;
         }
+
 #ifdef O_SERVICE
         if (fd < 0) {
             if ((fd = inetopen(path + 5, flags, onintr, shp)) < 0 && errno != ENOTDIR) return -1;
