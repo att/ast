@@ -475,7 +475,7 @@ int sh_close(int fd) {
 }
 
 //
-// Return <protocol>/<host>/<service> fd.
+// Return /dev/<protocol>/<host>/<service> fd.
 // If called with flags==O_NONBLOCK return 1 if protocol is supported.
 //
 typedef int (*Inetintr_f)(struct addrinfo *, void *);

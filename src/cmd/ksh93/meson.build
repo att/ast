@@ -100,8 +100,13 @@ all_tests = [
     ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
     ['sh_match'], ['sigchld', 100], ['signal'], ['statics'], ['subshell', 100],
     ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
-    ['variables'], ['vartree1'], ['vartree2'], ['wchar']
+    ['variables'], ['vartree1'], ['vartree2'], ['wchar'], ['special-dev-paths']
 ]
+
+# This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
+# For example, the `special-dev-paths` test opens network connections on fixed TCP/IP port numbers
+# and thus cannot be run in parellel.
+serial_tests = ['special-dev-paths']
 
 # This is a list of tests to be skipped because they are known to be broken when
 # compiled by `shcomp`.
@@ -112,9 +117,10 @@ shcomp_tests_to_skip = ['io', 'namespace', 'treemove']
 foreach testspec : all_tests
     testname = testspec[0]
     timeout = (testspec.length() == 2) ? testspec[1] : default_timeout
+    parallel = serial_tests.contains(testname) ? false : true
     foreach locale : locales
         lang_var = 'LANG=' + locale
-        test(testname + '/' + locale, ksh93_exe, timeout: timeout,
+        test(testname + '/' + locale, ksh93_exe, timeout: timeout, is_parallel: parallel,
              args: [test_driver, testname],
              env: [shell_var, lang_var, ld_library_path, libsample_path])
     endforeach

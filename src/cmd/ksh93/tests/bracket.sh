@@ -418,11 +418,6 @@ unset x y z foo bar
 { x=$($SHELL -c '[[ (( $# -eq 0 )) ]] && print ok') 2> /dev/null;}
 [[ $x == ok ]] || log_error '((...)) inside [[...]] not treated as nested ()'
 
-[[ -e /dev/fd/ ]] || log_error '/dev/fd/ does not exits'
-[[ -e /dev/tcp/ ]] || log_error '/dev/tcp/ does not exist'
-[[ -e /dev/udp/ ]] || log_error '/dev/udp/ does not exist'
-[[ -e /dev/xxx/ ]] &&  log_error '/dev/xxx/ exists'
-
 $SHELL 2> /dev/null -c '[[(-n foo)]]' || log_error '[[(-n foo)]] should not require space in front of ('
 
 $SHELL 2> /dev/null -c '[[ "]" == ~(E)[]] ]]' || log_error 'pattern "~(E)[]]" does not match "]"'
