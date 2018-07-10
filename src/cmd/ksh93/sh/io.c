@@ -1710,12 +1710,12 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
             }
         }
     }
-#if SHOPT_DEVFD
+#if has_dev_fd
     if (origfd < 0) {
         savefd = origfd;
         origfd = -origfd;
     } else
-#endif  // SHOPT_DEVFD
+#endif  // has_dev_fd
         if (flag & IOPICKFD) {
         savefd = -1;
     } else {

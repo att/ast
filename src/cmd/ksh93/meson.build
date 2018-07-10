@@ -41,12 +41,6 @@ shcomp_c_args = shared_c_args + [
     '-DERROR_CATALOG="libshell"',
 ]
 
-shopt_devfd_result = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
-if shopt_devfd_result.returncode() == 0
-    ksh93_c_args += ['-DSHOPT_DEVFD']
-    shcomp_c_args += ['-DSHOPT_DEVFD']
-endif
-
 ksh93_exe = executable('ksh', ksh93_files, c_args: ksh93_c_args,
     include_directories: [configuration_incdir, ksh93_incdir],
     link_with: [libast, libcmd, libcoshell, libdll],

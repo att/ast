@@ -913,23 +913,23 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     ap->argflag &= ~ARG_RAW;
     fd = argp->argflag & ARG_RAW;
     if (fd == 0 && shp->subshell) sh_subtmpfile(shp);
-#if SHOPT_DEVFD
+#if has_dev_fd
     sfwrite(shp->stk, e_devfdNN, 8);
     pv[2] = 0;
     sh_pipe(pv);
     sfputr(shp->stk, fmtbase((long)pv[fd], 10, 0), 0);
-#else
+#else  // has_dev_fd
     pv[0] = -1;
     shp->fifo = pathtemp(0, 0, 0, "ksh.fifo", 0);
     mkfifo(shp->fifo, S_IRUSR | S_IWUSR);
     sfputr(shp->stk, shp->fifo, 0);
-#endif  // SHOPT_DEVFD
+#endif  // has_dev_fd
     ap = (struct argnod *)stkfreeze(shp->stk, 0);
     shp->inpipe = shp->outpipe = 0;
     monitor = (sh_isstate(shp, SH_MONITOR) != 0);
     if (monitor) sh_offstate(shp, SH_MONITOR);
     shp->subshell = 0;
-#if SHOPT_DEVFD
+#if has_dev_fd
 #ifdef SPAWN_cwd
     if (shp->vex || (shp->vex = (void *)spawnvex_open(0))) {
         spawnvex_add((Spawnvex_t *)shp->vex, pv[fd], pv[fd], 0, 0);
@@ -937,7 +937,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
 #endif  // SPAWN_cwd
         fcntl(pv[fd], F_SETFD, 0);
     shp->fdstatus[pv[fd]] &= ~IOCLEX;
-#endif  // SHOPT_DEVFD
+#endif  // has_dev_fd
     pid0 = shp->procsub ? *shp->procsub : 0;
     if (fd) {
         if (!shp->procsub) {
@@ -961,13 +961,13 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     }
     shp->subshell = subshell;
     if (monitor) sh_onstate(shp, SH_MONITOR);
-#if SHOPT_DEVFD
+#if has_dev_fd
     sh_close(pv[1 - fd]);
     sh_iosave(shp, -pv[fd], shp->topfd, (char *)0);
 #else
     free(shp->fifo);
     shp->fifo = 0;
-#endif  // SHOPT_DEVFD
+#endif  // has_dev_fd
     return ap;
 }
 

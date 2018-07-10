@@ -118,7 +118,7 @@ static_fn int io_usevex(struct ionod *iop) {
 
 // ======== command execution ========
 
-#if !SHOPT_DEVFD
+#if !has_dev_fd
 static_fn void fifo_check(void *handle) {
     Shell_t *shp = (Shell_t *)handle;
     pid_t pid = getppid();
@@ -127,7 +127,7 @@ static_fn void fifo_check(void *handle) {
         sh_done(shp, 0);
     }
 }
-#endif  // !SHOPT_DEVFD
+#endif  // !has_dev_fd
 
 //
 // The following two functions allow command substituion for non-builtins to use a pipe and to wait
@@ -1494,11 +1494,11 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                 if (sh_isstate(shp, SH_PROFILE) || shp->dot_depth) {
                     // Disable foreground job monitor.
                     if (!(type & FAMP)) sh_offstate(shp, SH_MONITOR);
-#if SHOPT_DEVFD
+#if has_dev_fd
                     else if (!(type & FINT)) {
                         sh_offstate(shp, SH_MONITOR);
                     }
-#endif  // SHOPT_DEVFD
+#endif  // has_dev_fd
                 }
                 if (no_fork) {
                     job.parent = parent = 0;
@@ -1636,7 +1636,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     // Pipe in or out.
                     if ((type & FAMP) && sh_isoption(shp, SH_BGNICE)) nice(4);
 
-#if !SHOPT_DEVFD
+#if !has_dev_fd
                     if (shp->fifo && (type & (FPIN | FPOU))) {
                         int fn, fd = (type & FPIN) ? 0 : 1;
                         void *fifo_timer = sh_timeradd(500, 1, fifo_check, (void *)shp);
@@ -1650,7 +1650,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         shp->fifo = 0;
                         type &= ~(FPIN | FPOU);
                     }
-#endif  // !SHOPT_DEVFD
+#endif  // !has_dev_fd
                     if (type & FPIN) {
 #if SHOPT_COSHELL
                         if (shp->inpipe[2] > 20000) sh_coaccept(shp, shp->inpipe, 0);

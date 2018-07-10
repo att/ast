@@ -282,6 +282,13 @@ else
     feature_data.set_quoted('_pth_ed', 'ed')
 endif
 
+has_dev_fd = run_command('sh', '-c', 'ls /dev/fd/9 9<&0')
+feature_data.set10('has_dev_fd', has_dev_fd.returncode() == 0)
+
+has_dev_stdout = run_command('sh', '-c', 'echo yes >/dev/stdout')
+feature_data.set10('has_dev_stdout',
+                   has_dev_stdout.returncode() == 0 and has_dev_stdout.stdout() == 'yes\n')
+
 subdir('dll')
 subdir('ids')
 subdir('locales')
