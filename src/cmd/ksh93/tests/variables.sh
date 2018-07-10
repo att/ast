@@ -769,6 +769,11 @@ x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
 [[ ${!.sh.sig@} == *.sh.sig.value.q* ]]  ||  log_error '.sh.sig.value.q not in ${!.sh.sig@]}'
 [[ ${!.sh.sig@} == *.sh.sig.value.Q* ]]  ||  log_error '.sh.sig.value.Q not in ${!.sh.sig@]}'
 
+[[ ${!.sh.sig*} == *.sh.sig.pid* ]]  ||  log_error '.sh.sig.pid not in ${!.sh.sig*]}'
+[[ ${!.sh.sig*} == *.sh.sig.status* ]]  ||  log_error '.sh.sig.status not in ${!.sh.sig*]}'
+[[ ${!.sh.sig*} == *.sh.sig.value.q* ]]  ||  log_error '.sh.sig.value.q not in ${!.sh.sig*]}'
+[[ ${!.sh.sig*} == *.sh.sig.value.Q* ]]  ||  log_error '.sh.sig.value.Q not in ${!.sh.sig*]}'
+
 unset x
 integer x=1
 [[ $(x+=3 command eval echo \$x) == 4 ]] || log_error '+= assignment for environment variables for command special_built-in not working'
