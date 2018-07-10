@@ -80,10 +80,6 @@
 #endif  // !O_NONBLOCK
 #endif  // FNDELAY
 
-#ifndef O_SERVICE
-#define O_SERVICE O_NOCTTY
-#endif
-
 #ifndef ERROR_PIPE
 #ifdef ECONNRESET
 #define ERROR_PIPE(e) ((e) == EPIPE || (e) == ECONNRESET || (e) == EIO)
@@ -492,7 +488,6 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
     struct addrinfo hint;
     struct addrinfo *addr;
     struct addrinfo *p;
-    int server = !!(flags & O_SERVICE);
 
     memset(&hint, 0, sizeof(hint));
     hint.ai_family = PF_UNSPEC;
@@ -557,10 +552,7 @@ static int inetopen(const char *path, int flags, Inetintr_f onintr, void *handle
         if (!p->ai_protocol) p->ai_protocol = hint.ai_protocol;
         if (!p->ai_socktype) p->ai_socktype = hint.ai_socktype;
         while ((fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) >= 0) {
-            if ((server && !bind(fd, p->ai_addr, p->ai_addrlen) && !listen(fd, 5)) ||
-                (!server && !connect(fd, p->ai_addr, p->ai_addrlen))) {
-                goto done;
-            }
+            if (connect(fd, p->ai_addr, p->ai_addrlen) == 0) goto done;
             close(fd);
             fd = -1;
             if (errno != EINTR || !onintr) break;
@@ -574,9 +566,7 @@ done:
     return fd;
 }
 
-#ifdef O_SERVICE
-
-static int onintr(struct addrinfo *addr, void *handle) {
+static_fn int onintr(struct addrinfo *addr, void *handle) {
     Shell_t *sh = (Shell_t *)handle;
 
     if (sh->trapnote & SH_SIGSET) {
@@ -588,8 +578,6 @@ static int onintr(struct addrinfo *addr, void *handle) {
     if (sh->trapnote) sh_chktrap(sh);
     return 0;
 }
-
-#endif
 
 //
 // Mimic open(2) with checks for pseudo /dev files and keep track of fd/sfio descriptors.
@@ -628,14 +616,12 @@ int sh_open(const char *path, int flags, ...) {
             fd = 2;
         }
 
-#ifdef O_SERVICE
         if (fd < 0) {
             if ((fd = inetopen(path + 5, flags, onintr, shp)) < 0 && errno != ENOTDIR) return -1;
             if (flags == O_NONBLOCK) return (fd >= 0);
             if (fd >= 0) goto ok;
         }
         if (flags == O_NONBLOCK) return 0;
-#endif
     }
 
     if (fd >= 0) {
