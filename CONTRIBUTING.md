@@ -284,6 +284,17 @@ The `--setup=malloc` will enable malloc integrity features provided by your
 system's malloc implementation if it supports such things via environment
 variables. That flag can be ommitted but its use is recommended.
 
+### Testing with ASAN -- AddressSanitizer
+
+At the moment this only works on Linux using gcc.
+
+Configure with `meson -DASAN=true -Dbuild-api-tests=false`. Then build with
+`ninja` as usual. Run the tests with `meson test --setup=asan`.
+
+You will need to install the `llvm-symbolizer` tool if the gcc version is less
+than 4.9.3. For example, on OpenSuse 42.3 you'll need to run `sudo zypper
+install llvm`.
+
 ### Testing with Valgrind
 
 The `valgrind` tool is invaluable for finding bugs that may only manifest in
