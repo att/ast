@@ -1,5 +1,21 @@
 project('ksh93', 'c', default_options: ['b_lundef=false', 'default_library=static'])
 
+cc = meson.get_compiler('c')
+system = host_machine.system()
+# So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
+configuration_incdir = include_directories(['.', 'features/locales'])
+if system == 'openbsd'
+    # This is needed because OpenBSD installs a lot of stuff in
+    # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
+    # But the compiler doesn't automatically search /usr/local/include for
+    # headers so force it to do so.
+    #
+    # We could do this unconditionally but it's safer to limit the scope to
+    # the platforms that need it.
+    add_global_arguments('-I/usr/local/include', language: 'c')
+    feature_test_args += '-I/usr/local/include'
+endif
+
 # We require the C99 (aka ISO9899:1999) standard. Note we use `gnu99` rather
 # than `c99` because the former enables language features we need. The latter
 # does that but also limits which APIs are available.
@@ -50,20 +66,28 @@ malloc_debug_env.set('MALLOC_CONF', 'junk:true')
 # Add a malloc specific test setup environment.
 add_test_setup('malloc', env: malloc_debug_env)
 
-cc = meson.get_compiler('c')
-system = host_machine.system()
-# So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
-configuration_incdir = include_directories(['.', 'features/locales'])
-if system == 'openbsd'
-    # This is needed because OpenBSD installs a lot of stuff in
-    # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
-    # But the compiler doesn't automatically search /usr/local/include for
-    # headers so force it to do so.
-    #
-    # We could do this unconditionally but it's safer to limit the scope to
-    # the platforms that need it.
-    add_global_arguments('-I/usr/local/include', language: 'c')
-    feature_test_args += '-I/usr/local/include'
+# Enable ASAN (AddressSanitizer) when running unit tests.
+#
+# To use this add `--setup=asan` to your `meson test` command and configure
+# with `meson -DASAN=true`.
+#
+asan_debug_env = environment()
+asan_debug_env.set('ASAN_SYMBOLIZER_PATH', '/usr/bin/llvm-symbolizer')
+asan_debug_env.set('ASAN_OPTIONS',
+    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=1')
+add_test_setup('asan', timeout_multiplier: 3, env: asan_debug_env)
+
+if get_option('ASAN') == true
+    if get_option('buildtype') != 'debug'
+        error('You must use the "debug" build type to enable ASAN')
+    endif
+    if cc.get_id() == 'clang'
+        error('Sorry, but at the moment -DASAN=true is not compatible with clang')
+    endif
+    add_global_arguments('-fno-omit-frame-pointer', language: 'c')
+    add_global_arguments('-fsanitize=address', language: 'c')
+    add_global_arguments('-Db_lundef=false', language: 'c')
+    add_global_link_arguments('-Wl,-lasan', language: 'c')
 endif
 
 # Error on implicit declarations.
