@@ -476,8 +476,8 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
     const char *name = vp;
     Namtype_t *dp = (Namtype_t *)fp;
     const char *cp = name;
-    int i = 0, n, r = 0, s = 0;
-    Namval_t *nq = 0;
+    int i = 0, n, r = -1, s = 0;
+    Namval_t *nq = NULL;
 
     if (!name) return dp->parent;
     if (*name == '_' && name[1] == '_' && (name[2] == '.' || name[2] == 0)) {
@@ -507,7 +507,7 @@ static_fn Namval_t *create_type(Namval_t *np, const void *vp, int flag, Namfun_t
                 while (nv_isref(nq)) nq = nq->nvalue.nrp->np;
                 goto found;
             }
-            if (r && nq->nvname[r] == 0 && strncmp(name, nq->nvname, r) == 0) s = i;
+            if (strlen(nq->nvname) == r && strncmp(name, nq->nvname, r) == 0) s = i;
         }
     }
     nq = 0;
