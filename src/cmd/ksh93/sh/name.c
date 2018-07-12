@@ -1394,7 +1394,7 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
     char *cp;
     union Value *up;
     int size = 0;
-    int dot;
+    int dot = INT_MAX;  // make sure if used before set bad things happen
     int was_local = nv_local;
 
     if ((flags & NV_APPEND) && nv_isnull(np) && shp->var_tree->view) {
@@ -1626,10 +1626,11 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
             for (; *sp == ' ' || *sp == '\t'; sp++) {
                 ;  // empty loop
             }
-            if ((nv_isattr(np, NV_ZFILL)) && (nv_isattr(np, NV_LJUST)))
+            if ((nv_isattr(np, NV_ZFILL)) && (nv_isattr(np, NV_LJUST))) {
                 for (; *sp == '0'; sp++) {
                     ;  // empty loop
                 }
+            }
             size = nv_size(np);
             if (size) size = ja_size((char *)sp, size, nv_isattr(np, NV_RJUST | NV_ZFILL));
         }
@@ -1680,7 +1681,8 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
             {
                 if (size == 0 && nv_isattr(np, NV_HOST) != NV_HOST &&
                     nv_isattr(np, NV_LJUST | NV_RJUST | NV_ZFILL)) {
-                    nv_setsize(np, size = dot);
+                    size = dot;
+                    nv_setsize(np, size);
                     tofree = up->sp;
                 } else if (size > dot) {
                     dot = size;
@@ -2568,7 +2570,14 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
             if (nv_isattr(np, NV_ZFILL)) {
                 while (*sp == '0') sp++;
             }
-            cp = (char *)malloc((n = strlen(sp)) + 8);
+            // TODO: Figure out what the magic number 8 means and replace with an appropriate
+            // symbol here and elsewhere in this module. This was the original statement:
+            //   cp = malloc((n = strlen(sp)) + 8);
+            // That, however, can result in a buffer that is too small because the `size` passed
+            // into this function may be larger than `n + 8`. Resulting in the memmove() in
+            // nv_putval() to read past the end of the buffer. So instead do this hack:
+            n = strlen(sp);
+            cp = malloc(n + 8 >= size + 8 ? n + 8 : size + 8);
             strcpy(cp, sp);
             if (sp && (mp = nv_opensub(np))) {
                 if (trans) {
