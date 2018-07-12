@@ -918,22 +918,30 @@ int sh_lex(Lex_t *lp) {
             }
             case S_MOD2: {
                 if (lp->kiafile) refvar(lp, 1);
-                if (c != ':' && (n = fcgetc()) > 0) {
-                    if (n != c) c = 0;
-                    if (!c || (n = fcgetc()) > 0) {
-                        fcseek(-LEN);
-                        if (n == LPAREN) {
-                            if (c != '%') {
-                                lp->token = n;
-                                sh_syntax(lp);
-                            } else if (lp->lexd.warn) {
-                                errormsg(SH_DICT, ERROR_warn(0), e_lexquote, shp->inlineno, '%');
+                // Correctly handle issue #475 cases by placing the lexer in
+                // the correct mode when analyzing a modifier with parameter
+                // expansions.
+                if (c == '-' || c == '+' || c == '=') {
+                    mode = ST_QUOTE;
+                } else {
+                    if (c != ':' && (n = fcgetc()) > 0) {
+                        if (n != c) c = 0;
+                        if (!c || (n = fcgetc()) > 0) {
+                            fcseek(-LEN);
+                            if (n == LPAREN) {
+                                if (c != '%') {
+                                    lp->token = n;
+                                    sh_syntax(lp);
+                                } else if (lp->lexd.warn) {
+                                    errormsg(SH_DICT, ERROR_warn(0), e_lexquote, shp->inlineno,
+                                             '%');
+                                }
                             }
                         }
                     }
+                    lp->lex.nestedbrace = 0;
+                    mode = ST_NESTED;
                 }
-                lp->lex.nestedbrace = 0;
-                mode = ST_NESTED;
                 continue;
             }
             case S_LBRA: {
