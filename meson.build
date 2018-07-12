@@ -66,28 +66,51 @@ malloc_debug_env.set('MALLOC_CONF', 'junk:true')
 # Add a malloc specific test setup environment.
 add_test_setup('malloc', env: malloc_debug_env)
 
-# Enable ASAN (AddressSanitizer) when running unit tests.
+# Support for ASAN (AddressSanitizer) when running unit tests.
 #
-# To use this add `--setup=asan` to your `meson test` command and configure
-# with `meson -DASAN=true`.
-#
+# To use this configure with `meson -DASAN=true` and add `--setup=asan` to
+# your `meson test` command.
 asan_debug_env = environment()
-asan_debug_env.set('ASAN_SYMBOLIZER_PATH', '/usr/bin/llvm-symbolizer')
+if cc.get_id() == 'gcc'
+    # This env var isn't needed when using ASAN with clang on macOS.
+    asan_debug_env.set('ASAN_SYMBOLIZER_PATH', '/usr/bin/llvm-symbolizer')
+endif
+
+# We don't include "detect_leaks=1" because it isn't supported by clang (at
+# least on macOS) and causes a test runtime failure. Too, it doesn't seem to
+# do anything with gcc on Linux in so far as I have yet to see it produce any
+# messages about leak errors.
 asan_debug_env.set('ASAN_OPTIONS',
-    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1:detect_leaks=1')
+    'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1')
 add_test_setup('asan', timeout_multiplier: 3, env: asan_debug_env)
 
 if get_option('ASAN') == true
     if get_option('buildtype') != 'debug'
         error('You must use the "debug" build type to enable ASAN')
     endif
-    if cc.get_id() == 'clang'
-        error('Sorry, but at the moment -DASAN=true is not compatible with clang')
-    endif
     add_global_arguments('-fno-omit-frame-pointer', language: 'c')
     add_global_arguments('-fsanitize=address', language: 'c')
     add_global_arguments('-Db_lundef=false', language: 'c')
-    add_global_link_arguments('-Wl,-lasan', language: 'c')
+    if cc.get_id() == 'clang'
+        # We explicitly disable `stack-use-after-scope` because it does not handle
+        # siglongjmp() -- at least on macOS. If we don't disable this it results in
+        # almost every unit test to fail with that error because so much of the code
+        # depends on siglongjmp(). Especially things that depend on `read` command
+        # timeouts.
+        add_global_arguments('-fno-sanitize-address-use-after-scope', language: 'c')
+        # This is a bit of a hack to make using ASAN with clang on my macOS
+        # server work. Meson appears to be running `ld` directly, rather than
+        # via `clang`, for the final link stage. So have clang tell us which
+        # args we need to add.
+        asan_ld_args = run_command('scripts/clang-asan.sh').stdout().strip().split('\n')
+        foreach asan_arg : asan_ld_args
+            message('Adding ASAN ld arg "' + asan_arg + '"')
+            add_global_link_arguments(asan_arg, language: 'c')
+        endforeach
+    endif
+    if cc.get_id() == 'gcc'
+        add_global_link_arguments('-Wl,-lasan', language: 'c')
+    endif
 endif
 
 # Error on implicit declarations.
