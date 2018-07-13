@@ -4,6 +4,10 @@ cc = meson.get_compiler('c')
 system = host_machine.system()
 # So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
 configuration_incdir = include_directories(['.', 'features/locales'])
+
+# Global compiler flags aren't used by the feature tests. So instead put them
+# in an array that will be used by the feature tests.
+feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
 if system == 'openbsd'
     # This is needed because OpenBSD installs a lot of stuff in
     # /usr/local/{include,lib} that would normally be in /usr/{include,lib}.
@@ -35,10 +39,6 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 # TODO: Modify the code to not rely on the assumption that dereferencing a
 # char pointer is safe to use as an array index.
 add_global_arguments('-Wno-char-subscripts', language: 'c')
-
-# Global compiler flags aren't used by the feature tests. So instead put them
-# in an array that will be used by the feature tests.
-feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
 
 # Enable malloc debug options for macOS, GNU, FreeBSD, and other
 # implementations. This isn't a replacement for Valgrind or Asan but is useful
