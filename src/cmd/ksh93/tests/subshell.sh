@@ -870,3 +870,9 @@ builtin -d echo
 # Check if redirections work if backticks are nested inside $()
 foo=$(print `echo bar`)
 [[ $foo == "bar" ]] || log_error 'Redirections do not work if backticks are nested inside $()'
+
+# Buffer boundary tests
+for exp in 65535 65536
+do    got=$($SHELL -c 'x=$(printf "%.*c" '$exp' x); print ${#x}' 2>&1)
+    [[ $got == $exp ]] || log_error "large command substitution failed" "$exp" "$got"
+done
