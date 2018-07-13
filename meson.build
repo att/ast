@@ -66,6 +66,15 @@ malloc_debug_env.set('MALLOC_CONF', 'junk:true')
 # Add a malloc specific test setup environment.
 add_test_setup('malloc', env: malloc_debug_env)
 
+# If this is a debug build tell the compiler not to omit frame pointers. This
+# may improve the ability of `dump_backtrace()` to produce useful information.
+# It is also needed when building with ASAN support enabled. So if you ever
+# remove this block of code be sure to move setting the flag to the ASAN block
+# below.
+if get_option('buildtype') == 'debug'
+    add_global_arguments('-fno-omit-frame-pointer', language: 'c')
+endif
+
 # Enable ASAN (AddressSanitizer) when running unit tests.
 #
 # To use this add `--setup=asan` to your `meson test` command and configure
@@ -84,7 +93,6 @@ if get_option('ASAN') == true
     if cc.get_id() == 'clang'
         error('Sorry, but at the moment -DASAN=true is not compatible with clang')
     endif
-    add_global_arguments('-fno-omit-frame-pointer', language: 'c')
     add_global_arguments('-fsanitize=address', language: 'c')
     add_global_arguments('-Db_lundef=false', language: 'c')
     add_global_link_arguments('-Wl,-lasan', language: 'c')
