@@ -23,6 +23,8 @@
 #include <stddef.h>
 #include <unistd.h>
 
+#include "sfio_t.h"  // IWYU pragma: keep
+
 #include "sfio.h"
 #include "terror.h"
 
@@ -47,6 +49,7 @@ tmain() {
     if (sfopen(f, "123", "s") != NULL) terror("can't reopen a closed stream!");
 #endif
 
+    memset(&sf, 0, sizeof(sf));
     if (sfnew(&sf, NULL, (size_t)SF_UNBOUND, 0, SF_EOF | SF_READ) != &sf) terror("Did not open sf");
     sfset(&sf, SF_STATIC, 1);
     if (!sfclose(&sf) || errno != EBADF) terror("sfclose(sf) should fail with EBADF");
