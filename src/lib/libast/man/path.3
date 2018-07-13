@@ -48,7 +48,6 @@ char*     pathbin(void);
 char*     pathcanon(char* \fIpath\fP, int \fIflags\fP);
 char*     pathcat(char* \fIpath\fP, const char* \fIdirs\fP, int \fIsep\fP, const char* \fIa\fP, const char* \fIb\fP);
 char*     pathcd(char* \fIpath\fP, const char* \fIhome\fP);
-int       pathcheck(const char* \fIpackage\fP, const char* \fItool\fP, Pathcheck_t* \fIpc\fP);
 int       pathgetlink(const char* \fIname\fP, char* \fIbuf\fP, int \fIsiz\fP);
 char*     pathkey(char* \fIkey\fP, char* \fIattr\fP, const char* \fIlang\fP, const char* \fIpath\fP);
 char*     pathnext(char* \fIpath\fP, char* \fIextra\fP, long* \fIvisits\fP);
@@ -212,11 +211,6 @@ is called on each of these.
 For any given system, if you got to a directory, then
 .L pathcd
 can get you back, modulo permission and link changes.
-.PP
-.L pathcheck
-is a stub for license libraries.
-See
-.IR license (3).
 .PP
 .L pathgetlink
 returns the 0-terminated symbolic link text for
