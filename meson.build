@@ -64,7 +64,7 @@ malloc_debug_env.set('MallocLogFile', '/dev/null')
 # "0xA5" and "0x5A" respectively (other than, obviously, `calloc()`'d memory).
 malloc_debug_env.set('MALLOC_CONF', 'junk:true')
 # Add a malloc specific test setup environment.
-add_test_setup('malloc', env: malloc_debug_env)
+add_test_setup('malloc', timeout_multiplier: 1, env: malloc_debug_env)
 
 # If this is a debug build tell the compiler not to omit frame pointers. This
 # may improve the ability of `dump_backtrace()` to produce useful information.
@@ -94,7 +94,7 @@ endif
 # messages about leak errors.
 asan_debug_env.set('ASAN_OPTIONS',
     'symbolize=1:check_initialization_order=1:detect_stack_use_after_return=1')
-add_test_setup('asan', timeout_multiplier: 3, env: asan_debug_env)
+add_test_setup('asan', timeout_multiplier: 2, env: asan_debug_env)
 
 if get_option('ASAN') == true
     if get_option('buildtype') != 'debug'
