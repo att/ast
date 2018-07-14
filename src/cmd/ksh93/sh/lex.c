@@ -1142,13 +1142,10 @@ int sh_lex(Lex_t *lp) {
                 }
                 isfirst = (lp->lexd.first && fcseek(0) == lp->lexd.first + 1);
                 n = fcgetc();
+                if (n < 0) break;
                 // Check for {}.
                 if (c == LBRACE && n == RBRACE) break;
-                if (n > 0) {
-                    fcseek(-LEN);
-                } else if (lp->lex.reservok) {
-                    break;
-                }
+                fcseek(-LEN);
                 // Check for reserved word { or }.
                 if (lp->lex.reservok && state[n] == S_BREAK && isfirst) break;
                 if (sh_isoption(lp->sh, SH_BRACEEXPAND) && c == LBRACE && !assignment &&
