@@ -2652,12 +2652,9 @@ char *sh_getenv(const char *name) {
     return NULL;
 }
 
-//
-// Some dynamic linkers will make this file see the libc getenv(), so sh_getenv() is used for the
-// astintercept() callback.  Plain getenv() is provided for static links.
-//
-char *getenv(const char *name) { return sh_getenv(name); }
-
+// TODO: Remove this. There should be an explicit ksh interface by which plugins can put vars into
+// the set of exported env vars. Not to mention that if you're going to do this you also have to
+// intercept `setenv()` which isn't done.
 #undef putenv
 //
 // This version of putenv uses the hash storage to assign environment values.
@@ -2672,9 +2669,6 @@ int putenv(const char *name) {
     return 0;
 }
 
-//
-// Override libast setenviron().
-//
 char *sh_setenviron(const char *name) {
     Shell_t *shp = sh_getinterp();
     Namval_t *np;
@@ -2686,11 +2680,6 @@ char *sh_setenviron(const char *name) {
     }
     return "";
 }
-
-//
-// Same linker dance as with getenv() above.
-//
-char *setenviron(const char *name) { return sh_setenviron(name); }
 
 //
 // Normalize <cp> and return pointer to subscript if any if <eq> is specified, return pointer to

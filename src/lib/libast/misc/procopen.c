@@ -390,7 +390,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     else if (environ && envv != (char **)environ &&
              (envv || (flags & PROC_PARANOID) ||
               ((argv && (environ[0][0] != '_')) || environ[0][1] != '='))) {
-        if (!setenviron(NULL)) goto bad;
+        if (!sh_setenviron(NULL)) goto bad;
 #if _use_spawnveg
         if (!(flags & PROC_ORPHAN)) newenv = 1;
 #endif
@@ -572,12 +572,12 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
             env[0] = '_';
             env[1] = '=';
             env[2] = 0;
-            if (!setenviron(env)) goto cleanup;
+            if (!sh_setenviron(env)) goto cleanup;
         }
         if ((flags & PROC_PARANOID) && setenv("PATH", astconf("PATH", NULL, NULL), 1)) goto cleanup;
         if ((p = envv) && p != (char **)environ)
             while (*p)
-                if (!setenviron(*p++)) goto cleanup;
+                if (!sh_setenviron(*p++)) goto cleanup;
         p = argv;
         if (forked && !p) return proc;
 #if DEBUG_PROC
@@ -636,7 +636,7 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
         if (p = oenviron) {
             environ = 0;
             while (*p)
-                if (!setenviron(*p++)) goto bad;
+                if (!sh_setenviron(*p++)) goto bad;
             free(oenviron);
         } else if (oenviron0)
             environ[0] = oenviron0;

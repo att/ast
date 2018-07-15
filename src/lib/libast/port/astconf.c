@@ -387,7 +387,7 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
 #if DEBUG_astconf
     error(-7, "astconf synthesize %s", state.data - state.prefix);
 #endif
-    setenviron(state.data - state.prefix);
+    sh_setenviron(state.data - state.prefix);
     if (state.notify) (*state.notify)(NULL, NULL, state.data - state.prefix);
     n = s - (char *)value - 1;
 ok:

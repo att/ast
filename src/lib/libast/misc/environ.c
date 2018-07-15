@@ -24,7 +24,20 @@
 #include <string.h>
 
 #include "ast.h"
-#include "intercepts.h"
+
+// This exists solely for libast unit tests which don't link against the ksh code. It emulates the
+// behavior of the ksh functions of the same name. As of ksh93v- and earlier releases this was much
+// more complex with a dispatch table. The intent was to allow code that used the `getenv()` and
+// `setenviron()` functions to work regardless of whether or not the ksh code was linked into the
+// binary. It also supported, at least in theory if not practice, other code (e.g., ksh plugins and
+// functions from system libraries) to call `getenv()` and get the ksh version.
+
+// TODO: See if this module can be removed. For example, by turning the relevant ksh code into a
+// library that is also linked with the libast unit tests.
+
+#undef getenv
+extern char *getenv(const char *name);
+__attribute__((weak)) char *sh_getenv(const char *name) { return getenv(name); }
 
 /*
  * put name=value in the environment
@@ -40,8 +53,7 @@
 
 #define INCREMENT 16 /* environ increment		*/
 
-char *setenviron(const char *akey) {
-#undef setenviron
+__attribute__((weak)) char *sh_setenviron(const char *akey) {
     static char **envv;    /* recorded environ		*/
     static char **next;    /* next free slot		*/
     static char **last;    /* last free slot (0)		*/
@@ -55,7 +67,6 @@ char *setenviron(const char *akey) {
     int n;
 
     ast.env_serial++;
-    if (intercepts.intercept_setenviron) return (*intercepts.intercept_setenviron)(akey);
     if (p && !v) {
         environ = next = p;
         *++next = 0;

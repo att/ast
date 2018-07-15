@@ -305,8 +305,6 @@ struct Shell_s {
 // Symbolic value for sh_fdnotify.
 #define SH_FDCLOSE (-1)
 
-#undef getenv  // -lshell provides its own
-
 extern int sh_access(const char *, int);
 extern Namval_t *sh_addbuiltin(const char *, int (*)(int, char *[], Shbltin_t *), void *);
 extern Dt_t *sh_bltin_tree(void);
