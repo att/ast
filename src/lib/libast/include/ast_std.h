@@ -54,14 +54,6 @@
 #endif
 #include <wchar.h>
 
-#undef getenv
-#define getenv _ast_getenv
-
-#undef setenviron
-#define setenviron _ast_setenviron
-
-extern char *getenv(const char *);
-
 #undef localeconv
 #define localeconv _ast_localeconv
 
@@ -69,7 +61,6 @@ extern char *getenv(const char *);
 #define setlocale _ast_setlocale
 
 extern struct lconv *localeconv(void);
-extern char *setenviron(const char *);
 extern char *setlocale(int, const char *);
 extern char *strerror(int);
 

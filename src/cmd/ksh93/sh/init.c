@@ -1107,7 +1107,7 @@ static_fn int newconf(const char *name, const char *path, const char *value) {
     char *arg;
 
     if (!name) {
-        setenviron(value);
+        sh_setenviron(value);
     } else if (strcmp(name, "UNIVERSE") == 0 && strcmp(astconf(name, 0, 0), value)) {
         shp->universe = 0;
         // Set directory in new universe.
@@ -1482,7 +1482,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #if _AST_VERSION >= 20080617L
     shp->bltindata.shgetenv = sh_getenv;
     shp->bltindata.shsetenv = sh_setenviron;
-    astintercept(&shp->bltindata, 1);
 #endif
 #if 0
 #define NV_MKINTTYPE(x, y, z) nv_mkinttype(#x, sizeof(x), (x)-1 < 0, (y), (Namdisc_t *)z);

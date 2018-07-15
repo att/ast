@@ -379,4 +379,6 @@ extern volatile bool vmbusy_flag;
 // passed anything other than AT_CWD.
 #define eaccess(p, f) access(p, f)
 
+extern char *sh_getenv(const char *name);
+#define getenv(x) sh_getenv(x)
 #endif
