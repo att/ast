@@ -1533,7 +1533,13 @@ skip:
                 sfputc(stkp, 0);
                 if (c != '=') stkseek(stkp, stktell(stkp) - 1);
             } else {
-                sh_lexskip(lp, RBRACE, 0, (!newops && mp->quote) ? ST_QUOTE : ST_NESTED);
+                if (c == '-' || c == '+' || c == '=') {
+                    // Handle parsing side of issue #475 by placing lexer in quote mode at the start
+                    // of the skip.
+                    sh_lexskip(lp, RBRACE, 0, ST_QUOTE);
+                } else {
+                    sh_lexskip(lp, RBRACE, 0, (!newops && mp->quote) ? ST_QUOTE : ST_NESTED);
+                }
                 stkseek(stkp, offset);
             }
             argp = stkptr(stkp, offset);

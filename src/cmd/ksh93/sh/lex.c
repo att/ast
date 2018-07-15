@@ -338,12 +338,14 @@ int sh_lex(Lex_t *lp) {
     }
     lp->lastline = lp->sh->inlineno;
     lp->typed = 0;
+
     while (1) {
         // Skip over characters in the current state.
         state = sh_lexstates[mode];
         while ((n = STATE(state, c)) == 0) {
             ;  // empty loop
         }
+
         switch (n) {
             case S_BREAK: {
                 if (lp->lex.incase > TEST_RE && mode == ST_NORM && c == LPAREN) {
@@ -375,6 +377,7 @@ int sh_lex(Lex_t *lp) {
                 // End-of-file.
                 if (mode == ST_BEGIN) return (lp->token = EOFSYM);
                 if (mode > ST_NORM && lp->lexd.level > 0) {
+
                     switch (c = endchar(lp)) {
                         case '$': {
                             if (mode == ST_LIT) {
@@ -920,8 +923,8 @@ int sh_lex(Lex_t *lp) {
                 if (lp->kiafile) refvar(lp, 1);
                 // Correctly handle issue #475 cases by placing the lexer in
                 // the correct mode when analyzing a modifier with parameter
-                // expansions.
-                if (c == '-' || c == '+' || c == '=') {
+                // expansions using `:', `-', `+', and `='
+                if (c == ':' || c == '-' || c == '+' || c == '=') {
                     mode = ST_QUOTE;
                 } else {
                     if (c != ':' && (n = fcgetc()) > 0) {
