@@ -27,7 +27,7 @@ incdir = include_directories('..', '../../../lib/libast/include/')
 foreach file: sfio_test_files
     sfio_test_target = executable(file, file,
                              include_directories: [configuration_incdir, incdir],
-                             link_with: [libast ],
+                             link_with: [libast, libenv],
                              install: false)
     test('API/' + file, sfio_test_target)
 endforeach

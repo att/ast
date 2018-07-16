@@ -24,3 +24,11 @@ libast = library('ast', libast_files,
                  c_args: libast_c_args,
                  dependencies: [libm_dep, libiconv_dep, libcatgets_dep],
                  install: get_option('default_library') == 'shared')
+
+# This library exists solely to support libast unit tests so that `sh_getenv()` and
+# `sh_setenviron()` has an implementation. These are normally supplied by ksh but the
+# libast unit tests don't link against the ksh code.
+libenv = library('env', ['misc/environ.c'],
+                 include_directories: [configuration_incdir, libast_incdir],
+                 c_args: libast_c_args,
+                 install: false)

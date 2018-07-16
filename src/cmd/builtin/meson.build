@@ -10,6 +10,6 @@ if get_option('build-pty') == true
     pty_exe = executable('pty', pty_files, c_args: pty_c_args,
         include_directories: [configuration_incdir, builtin_incdir],
         dependencies: [libutil_dep],
-        link_with: [libast, libcmd],
+        link_with: [libast, libcmd, libenv],
         install: true)
 endif

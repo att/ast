@@ -2675,7 +2675,7 @@ char *sh_setenviron(const char *name) {
 
     if (name) {
         np = nv_open(name, shp->var_tree, NV_EXPORT | NV_IDENT | NV_NOARRAY | NV_ASSIGN);
-        if (strchr(name, '=')) return (nv_getval(np));
+        if (strchr(name, '=')) return nv_getval(np);
         _nv_unset(np, 0);
     }
     return "";
