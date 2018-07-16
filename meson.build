@@ -40,6 +40,11 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 # char pointer is safe to use as an array index.
 add_global_arguments('-Wno-char-subscripts', language: 'c')
 
+# The AST/ksh code is littered with aliasing that violates the assumptions the
+# compiler makes when `-fstrict-aliasing` is in effect so make sure those
+# optimizations are disabled.
+add_global_arguments('-fno-strict-aliasing', language: 'c')
+
 # Enable malloc debug options for macOS, GNU, FreeBSD, and other
 # implementations. This isn't a replacement for Valgrind or Asan but is useful
 # for detecting problems without incurring the overhead of those tools.
