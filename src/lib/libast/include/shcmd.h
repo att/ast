@@ -65,8 +65,6 @@ struct Shbltin_s {
     Namval_t *vnode;
     char *data;
     int flags;
-    char *(*shgetenv)(const char *);
-    char *(*shsetenv)(const char *);
     int invariant;
     int pwdfd;
 };

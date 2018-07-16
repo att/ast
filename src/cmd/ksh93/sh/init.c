@@ -1479,10 +1479,6 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #if 1
 #define sh_exit sh_exit_20120720
 #endif
-#if _AST_VERSION >= 20080617L
-    shp->bltindata.shgetenv = sh_getenv;
-    shp->bltindata.shsetenv = sh_setenviron;
-#endif
 #if 0
 #define NV_MKINTTYPE(x, y, z) nv_mkinttype(#x, sizeof(x), (x)-1 < 0, (y), (Namdisc_t *)z);
 	NV_MKINTTYPE(pid_t,"process id",0);
