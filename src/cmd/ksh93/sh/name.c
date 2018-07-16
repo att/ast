@@ -2345,7 +2345,7 @@ char *nv_getval(Namval_t *np) {
         }
         nv_local = 0;
     }
-    numeric = ((nv_isattr(np, NV_INTEGER)) != 0);
+    numeric = (nv_isattr(np, NV_INTEGER) != 0);
     if (numeric) {
         Sflong_t ll;
         if (nv_isattr(np, NV_NOTSET) == NV_NOTSET) return (NULL);
@@ -2424,13 +2424,21 @@ done:
         return cp;
     }
 #endif  // (_AST_VERSION >= 20030127L)
-    if (!nv_isattr(np, NV_LJUST | NV_RJUST) && (numeric = nv_size(np)) && up->cp &&
-        up->cp[numeric]) {
-        char *cp = getbuf(numeric + 1);
-        memcpy(cp, up->cp, numeric);
-        cp[numeric] = 0;
-        return cp;
+
+    // See issue #690. The original version of this block of code did an invalid `up->cp[numeric]`.
+    // That is invalid because it assumes the string pointed to by `up->cp` is at least `numeric`
+    // (i.e., `nv_size(np)`) chars long. That is an invalid assumption. This version avoids a
+    // possible incorrect reference past the end of the string but it's not obvious what this block
+    // is meant to do and may therefore still be incorrect.
+    if (up->cp && !nv_isattr(np, NV_LJUST | NV_RJUST)) {
+        int size = nv_size(np);
+        if (size > 0 && size != strlen(up->cp)) {
+            char *cp = getbuf(size + 1);
+            strlcpy(cp, up->cp, size);
+            return cp;
+        }
     }
+
     return up->sp;
 }
 
