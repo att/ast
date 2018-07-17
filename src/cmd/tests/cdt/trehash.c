@@ -219,6 +219,7 @@ tmain() {
     /* construct the objects to be inserted */
     for (k = 0; k < N_OBJ; ++k) {
         Obj[k].flag = 0;
+        // cppcheck-suppress invalidPrintfArgType_sint
         sprintf(Obj[k].str, FORMAT, k);
     }
 
