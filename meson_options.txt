@@ -1,5 +1,5 @@
 option('build-pty', type : 'boolean', value : true)
-#
+
 # This build symbol used to be named SHOPT_TIMEOUT. It was renamed when it
 # stopped being used to conditionally compile segments of code. It defines
 # the default, and maximum, read timeout value (see the `TMOUT` shell var).
@@ -10,7 +10,7 @@ option('build-pty', type : 'boolean', value : true)
 # option('read-timeout', type : 'integer', min : 0, value : 0)
 #
 option('read-timeout', type : 'string', value : '0')
-#
+
 # This build symbol used to be named SHOPT_AUDITFILE. It was renamed when it
 # stopped being used to conditionally compile segments of code. It defines
 # the default pathname for recording shell auditable events.
@@ -32,3 +32,7 @@ option('fallback-version-number', type : 'string', value : '0.0.0')
 # To build with support for ASAN (AddressSanitizer:
 #   meson -DASAN=true
 option('ASAN', type : 'boolean', value : false)
+
+# Enable this in CI environments to cause compiler warnings to be treated
+# as errors.
+option('warnings-are-errors', type : 'boolean', value : false)
