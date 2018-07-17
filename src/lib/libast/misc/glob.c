@@ -106,25 +106,24 @@ static char *gl_dirnext(glob_t *gp, void *handle) {
 
 static void gl_dirclose(glob_t *gp, void *handle) { (gp->gl_closedir)(handle); }
 
-/*
- * default gl_type
- */
-
+//
+// Default gl_type.
+//
 static int gl_type(glob_t *gp, const char *path, int flags) {
-    int type;
-    struct stat st;
+    struct stat st = {0};
 
-    if ((flags & GLOB_STARSTAR) ? (*gp->gl_lstat)(path, &st) : (*gp->gl_stat)(path, &st))
-        type = 0;
-    else if (S_ISDIR(st.st_mode))
-        type = GLOB_DIR;
-    else if (!S_ISREG(st.st_mode))
-        type = GLOB_DEV;
-    else if (st.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-        type = GLOB_EXE;
-    else
-        type = GLOB_REG;
-    return type;
+    int stat_rv = (flags & GLOB_STARSTAR) ? (*gp->gl_lstat)(path, &st) : (*gp->gl_stat)(path, &st);
+    if (stat_rv == -1) return 0;
+
+    if (S_ISDIR(st.st_mode)) {
+        return GLOB_DIR;
+    } else if (!S_ISREG(st.st_mode)) {
+        return GLOB_DEV;
+    } else if (st.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
+        return GLOB_EXE;
+    }
+
+    return GLOB_REG;
 }
 
 /*
