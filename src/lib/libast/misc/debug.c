@@ -35,8 +35,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "ast.h"
-
 #include "aso.h"
 
 static int indent = 0;

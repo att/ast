@@ -44,7 +44,6 @@
 
 #include "argnod.h"
 #include "ast.h"
-#include "ast_api.h"
 #include "ast_assert.h"
 #include "ast_ccode.h"
 #include "ast_fcntl.h"

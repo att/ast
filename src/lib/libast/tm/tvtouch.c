@@ -34,7 +34,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "tv.h"
 
 #if _lib_utimensat

@@ -52,8 +52,6 @@
 #endif
 #endif
 
-#include "ast.h"
-
 #undef sleep
 
 static int ttctl(int, int, void *);

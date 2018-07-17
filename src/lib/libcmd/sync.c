@@ -26,7 +26,6 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 
-#include "ast.h"
 #include "cmd.h"
 #include "error.h"
 #include "option.h"
