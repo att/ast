@@ -23,6 +23,7 @@
 #include <wchar.h>
 #include <wctype.h>
 
+#define S_NOP 0    // absence of a state change, do nothing.
 #define S_BREAK 1  // end of token
 #define S_EOF 2    // end of buffer
 #define S_NL 3     // new-line when not a token
@@ -92,7 +93,7 @@
 #define LEN _Fcin.fclen
 #define isaname(c) ((c) > 0x7f ? isalpha(c) : sh_lexstates[ST_NAME][(c)] == 0)
 #define isaletter(c) ((c) > 0x7f ? isalpha(c) : sh_lexstates[ST_DOL][(c)] == S_ALP && (c) != '.')
-#define STATE(s, c) (s[mbwide() ? ((c = fcmbget(&LEN)), LEN > 1 ? 'a' : c) : (c = fcget())])
+#define STATE(s, c) ((s)[mbwide() ? (((c) = fcmbget(&LEN)), LEN > 1 ? 'a' : (c)) : ((c) = fcget())])
 #define isadigit(c) (sh_lexstates[ST_DOL][c] == S_DIG)
 #define isastchar(c) ((c) == '@' || (c) == '*')
 #define isexp(c) (sh_lexstates[ST_MACRO][c] == S_PAT || (c) == '$' || (c) == '`')

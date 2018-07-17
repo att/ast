@@ -277,6 +277,20 @@ int sh_lex(Lex_t *lp) {
 #define sh_lex lextoken
 #endif  // DBUG
 
+/// Skip over characters in the current lexeme until a state transition is reached.
+///
+/// \param lexer_mode Index into sh_lexstates table.
+/// \param state_table Output, assigned pointer to state table for the current lexer_mode.
+/// \param next_state Output, assigned a numerical value representing the next state.
+/// \param next_character Output, assigned the character that triggered state change.
+static inline void read_to_next_state_transition(int lexer_mode, char **state_table,
+                                                 int *next_state, int *next_character) {
+    *state_table = sh_lexstates[lexer_mode];
+    do {
+        *next_state = STATE(*state_table, *next_character);
+    } while (*next_state == S_NOP);
+}
+
 //
 // Get the next word and put it on the top of the stak.
 // A pointer to the current word is stored in lp->arg.
@@ -340,11 +354,7 @@ int sh_lex(Lex_t *lp) {
     lp->typed = 0;
 
     while (1) {
-        // Skip over characters in the current state.
-        state = sh_lexstates[mode];
-        while ((n = STATE(state, c)) == 0) {
-            ;  // empty loop
-        }
+        read_to_next_state_transition(mode, &state, &n, &c);
 
         switch (n) {
             case S_BREAK: {
@@ -377,7 +387,6 @@ int sh_lex(Lex_t *lp) {
                 // End-of-file.
                 if (mode == ST_BEGIN) return (lp->token = EOFSYM);
                 if (mode > ST_NORM && lp->lexd.level > 0) {
-
                     switch (c = endchar(lp)) {
                         case '$': {
                             if (mode == ST_LIT) {
