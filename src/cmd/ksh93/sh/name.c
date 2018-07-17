@@ -1026,7 +1026,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     }
                     nv_onattr(np, nofree);
                     nofree = 0;
-                    if (np) qp = np;
+                    qp = np;
+
                 enumfix:
                     if (c == '.' && (fp = np->nvfun)) {
                         for (; fp; fp = fp->next) {
@@ -2579,7 +2580,9 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
             n = strlen(sp);
             cp = malloc(n + 8 >= size + 8 ? n + 8 : size + 8);
             strcpy(cp, sp);
-            if (sp && (mp = nv_opensub(np))) {
+
+            mp = nv_opensub(np);
+            if (mp) {
                 if (trans) {
                     nv_disc(np, &ap->hdr, NV_POP);
                     nv_clone(np, mp, 0);
@@ -2587,8 +2590,7 @@ void nv_newattr(Namval_t *np, unsigned newatts, int size) {
                     nv_offattr(mp, NV_ARRAY);
                 }
                 nv_newattr(mp, newatts & ~NV_ARRAY, size);
-            }
-            if (!mp) {
+            } else {
                 if (ap) ap->flags &= ~ARRAY_SCAN;
                 if (!trans) _nv_unset(np, NV_RDONLY | NV_EXPORT);
                 if (ap) ap->flags |= ARRAY_SCAN;
