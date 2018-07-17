@@ -5,6 +5,10 @@ system = host_machine.system()
 # So the `config_ast.h`, `lc.h`, and other headers can be found (see below).
 configuration_incdir = include_directories(['.', 'features/locales'])
 
+if get_option('warnings-are-errors') == true
+    add_global_arguments('-Werror', language: 'c')
+endif
+
 # Global compiler flags aren't used by the feature tests. So instead put them
 # in an array that will be used by the feature tests.
 feature_test_args = ['-std=gnu99', '-D_GNU_SOURCE']
