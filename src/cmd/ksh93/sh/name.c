@@ -1389,9 +1389,8 @@ static char savechars[8 + 1];
 // becomes value of node and <flags> becomes attributes.
 //
 void nv_putval(Namval_t *np, const void *vp, int flags) {
-    const char *string = vp;
     Shell_t *shp = sh_ptr(np);
-    const char *sp = string;
+    const char *sp = vp;
     char *cp;
     union Value *up;
     int size = 0;
@@ -1440,14 +1439,14 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 Sfdouble_t ld, old = 0;
                 if (flags & NV_INTEGER) {
                     if (flags & NV_LONG) {
-                        ld = *((Sfdouble_t *)sp);
+                        ld = *(Sfdouble_t *)vp;
                     } else if (flags & NV_SHORT) {
-                        ld = *((float *)sp);
+                        ld = *(float *)vp;
                     } else {
-                        ld = *((double *)sp);
+                        ld = *(double *)vp;
                     }
                 } else {
-                    ld = sh_arith(shp, sp);
+                    ld = sh_arith(shp, vp);
                 }
                 if (!up->ldp) {
                     up->ldp = calloc(1, sizeof(Sfdouble_t));
@@ -1459,14 +1458,14 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 double d, od = 0;
                 if (flags & NV_INTEGER) {
                     if (flags & NV_LONG) {
-                        d = (double)(*(Sfdouble_t *)sp);
+                        d = *(Sfdouble_t *)vp;
                     } else if (flags & NV_SHORT) {
-                        d = (double)(*(float *)sp);
+                        d = *(float *)vp;
                     } else {
-                        d = *(double *)sp;
+                        d = *(double *)vp;
                     }
                 } else {
-                    d = sh_arith(shp, sp);
+                    d = sh_arith(shp, vp);
                 }
                 if (!up->dp) {
                     if (nv_isattr(np, NV_SHORT)) {
@@ -1489,31 +1488,31 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                 if (flags & NV_INTEGER) {
                     if ((flags & NV_DOUBLE) == NV_DOUBLE) {
                         if (flags & NV_LONG) {
-                            ll = *((Sfdouble_t *)sp);
+                            ll = *((Sfdouble_t *)vp);
                         } else if (flags & NV_SHORT) {
-                            ll = *((float *)sp);
+                            ll = *(float *)vp;
                         } else {
-                            ll = *((double *)sp);
+                            ll = *(double *)vp;
                         }
                     } else if (nv_isattr(np, NV_UNSIGN)) {
                         if (flags & NV_LONG) {
-                            ll = *((Sfulong_t *)sp);
+                            ll = *(Sfulong_t *)vp;
                         } else if (flags & NV_SHORT) {
-                            ll = *((uint16_t *)sp);
+                            ll = *(uint16_t *)vp;
                         } else {
-                            ll = *((uint32_t *)sp);
+                            ll = *(uint32_t *)vp;
                         }
                     } else {
                         if (flags & NV_LONG) {
-                            ll = *((Sflong_t *)sp);
+                            ll = *(Sflong_t *)vp;
                         } else if (flags & NV_SHORT) {
-                            ll = *((uint16_t *)sp);
+                            ll = *(uint16_t *)vp;
                         } else {
-                            ll = *((uint32_t *)sp);
+                            ll = *(uint32_t *)vp;
                         }
                     }
-                } else if (sp) {
-                    ll = (Sflong_t)sh_arith(shp, sp);
+                } else if (vp) {
+                    ll = sh_arith(shp, vp);
                 }
                 if (!up->llp) {
                     up->llp = calloc(1, sizeof(Sflong_t));
@@ -1527,32 +1526,32 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
                     if ((flags & NV_DOUBLE) == NV_DOUBLE) {
                         Sflong_t ll;
                         if (flags & NV_LONG) {
-                            ll = *((Sfdouble_t *)sp);
+                            ll = *(Sfdouble_t *)vp;
                         } else if (flags & NV_SHORT) {
-                            ll = *((float *)sp);
+                            ll = *(float *)vp;
                         } else {
-                            ll = *((double *)sp);
+                            ll = *(double *)vp;
                         }
                         l = (int32_t)ll;
                     } else if (nv_isattr(np, NV_UNSIGN)) {
                         if (flags & NV_LONG) {
-                            l = *((Sfulong_t *)sp);
+                            l = *(Sfulong_t *)vp;
                         } else if (flags & NV_SHORT) {
-                            l = *((uint16_t *)sp);
+                            l = *(uint16_t *)vp;
                         } else {
-                            l = *(uint32_t *)sp;
+                            l = *(uint32_t *)vp;
                         }
                     } else {
                         if (flags & NV_LONG) {
-                            l = *((Sflong_t *)sp);
+                            l = *((Sflong_t *)vp);
                         } else if (flags & NV_SHORT) {
-                            l = *((int16_t *)sp);
+                            l = *(int16_t *)vp;
                         } else {
-                            l = *(int32_t *)sp;
+                            l = *(int32_t *)vp;
                         }
                     }
-                } else if (sp) {
-                    Sfdouble_t ld = sh_arith(shp, sp);
+                } else if (vp) {
+                    Sfdouble_t ld = sh_arith(shp, vp);
                     if (ld < 0) {
                         l = (int32_t)ld;
                     } else {
@@ -1589,24 +1588,24 @@ void nv_putval(Namval_t *np, const void *vp, int flags) {
         if (flags & NV_INTEGER) {
             if ((flags & NV_DOUBLE) == NV_DOUBLE) {
                 if (flags & NV_LONG) {
-                    sfprintf(shp->strbuf, "%.*Lg", LDBL_DIG, *((Sfdouble_t *)sp));
+                    sfprintf(shp->strbuf, "%.*Lg", LDBL_DIG, *((Sfdouble_t *)vp));
                 } else {
-                    sfprintf(shp->strbuf, "%.*g", DBL_DIG, *((double *)sp));
+                    sfprintf(shp->strbuf, "%.*g", DBL_DIG, *((double *)vp));
                 }
             } else if (flags & NV_UNSIGN) {
                 if (flags & NV_LONG) {
-                    sfprintf(shp->strbuf, "%I*lu", sizeof(Sfulong_t), *((Sfulong_t *)sp));
+                    sfprintf(shp->strbuf, "%I*lu", sizeof(Sfulong_t), *((Sfulong_t *)vp));
                 } else {
                     sfprintf(shp->strbuf, "%lu",
-                             (unsigned long)((flags & NV_SHORT) ? *((uint16_t *)sp)
-                                                                : *((uint32_t *)sp)));
+                             (unsigned long)((flags & NV_SHORT) ? *((uint16_t *)vp)
+                                                                : *((uint32_t *)vp)));
                 }
             } else {
                 if (flags & NV_LONG) {
-                    sfprintf(shp->strbuf, "%I*ld", sizeof(Sflong_t), *((Sflong_t *)sp));
+                    sfprintf(shp->strbuf, "%I*ld", sizeof(Sflong_t), *((Sflong_t *)vp));
                 } else {
                     sfprintf(shp->strbuf, "%ld",
-                             (long)((flags & NV_SHORT) ? *((int16_t *)sp) : *((int32_t *)sp)));
+                             (long)((flags & NV_SHORT) ? *((int16_t *)vp) : *((int32_t *)vp)));
                 }
             }
             sp = sfstruse(shp->strbuf);
