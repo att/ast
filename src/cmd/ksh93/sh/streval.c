@@ -200,7 +200,6 @@ Sfdouble_t arith_exec(Arith_t *ep) {
     const char *ptr = "";
     char *lastval = 0;
     int lastsub = 0;
-    Math_f fun;
     struct lval node;
     Shell_t *shp = ep->shp;
 
@@ -509,30 +508,29 @@ Sfdouble_t arith_exec(Arith_t *ep) {
             }
             case A_CALL1F: {
                 sp--, tp--;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
+                Math_1f_f funx = *(Math_1f_f *)(ep->code + (int)(*sp));
                 type = *tp;
                 if (c & T_BINARY) {
                     c &= ~T_BINARY;
                     arg[0] = num;
                     arg[1] = 0;
                     array_args(shp, tp + 1, 1);
-                    num = sh_mathfun(shp, (void *)fun, 1, arg);
+                    num = sh_mathfun(shp, (void *)funx, 1, arg);
                     node.userfn = 0;
                     break;
                 }
-                num = (*((Math_1f_f)fun))(num);
+                num = (*funx)(num);
                 break;
             }
             case A_CALL1I: {
                 sp--, tp--;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
                 type = *tp;
-                num = (*((Math_1i_f)fun))(num);
+                Math_1i_f funx = *((Math_1i_f *)(ep->code + (int)(*sp)));
+                num = (*funx)(num);
                 break;
             }
             case A_CALL2F: {
                 sp -= 2, tp -= 2;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
                 type = *tp;
                 if (c & T_BINARY) {
                     c &= ~T_BINARY;
@@ -540,34 +538,37 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arg[1] = num;
                     arg[2] = 0;
                     array_args(shp, tp + 1, 2);
-                    num = sh_mathfun(shp, (void *)fun, 2, arg);
+                    Math_2f_i funx = *(Math_2f_i *)(ep->code + (int)(*sp));
+                    num = sh_mathfun(shp, (void *)funx, 2, arg);
                     node.userfn = 0;
                     break;
                 }
                 if (c & T_NOFLOAT) {
-                    num = (*((Math_2f_i)fun))(sp[1], (int)num);
+                    Math_2f_i funx = *(Math_2f_i *)(ep->code + (int)(*sp));
+                    num = (*funx)(sp[1], (int)num);
                 } else {
-                    num = (*((Math_2f_f)fun))(sp[1], num);
+                    Math_2f_f funx = *(Math_2f_f *)(ep->code + (int)(*sp));
+                    num = (*funx)(sp[1], num);
                 }
                 break;
             }
             case A_CALL2V: {
                 sp -= 2, tp -= 2;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
                 type = tp[1];
-                num = (*((Math_2v_f)fun))(type - 1, sp[1], num);
+                Math_2v_f funx = *(Math_2v_f *)(ep->code + (int)(*sp));
+                num = (*funx)(type - 1, sp[1], num);
                 break;
             }
             case A_CALL2I: {
                 sp -= 2, tp -= 2;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
                 type = *tp;
-                num = (*((Math_2i_f)fun))(sp[1], num);
+                Math_2i_f funx = *(Math_2i_f *)(ep->code + (int)(*sp));
+                num = (*funx)(sp[1], num);
                 break;
             }
             case A_CALL3F: {
                 sp -= 3, tp -= 3;
-                fun = *((Math_f *)(ep->code + (int)(*sp)));
+                Math_3f_f funx = *(Math_3f_f *)(ep->code + (int)(*sp));
                 type = *tp;
                 if (c & T_BINARY) {
                     c &= ~T_BINARY;
@@ -576,11 +577,11 @@ Sfdouble_t arith_exec(Arith_t *ep) {
                     arg[2] = num;
                     arg[3] = 0;
                     array_args(shp, tp + 1, 3);
-                    num = sh_mathfun(shp, (void *)fun, 3, arg);
+                    num = sh_mathfun(shp, (void *)funx, 3, arg);
                     node.userfn = 0;
                     break;
                 }
-                num = (*((Math_3f_f)fun))(sp[1], sp[2], num);
+                num = (*funx)(sp[1], sp[2], num);
                 break;
             }
         }
