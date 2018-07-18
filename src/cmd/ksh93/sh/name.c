@@ -2432,7 +2432,7 @@ done:
     // is meant to do and may therefore still be incorrect.
     if (up->cp && !nv_isattr(np, NV_LJUST | NV_RJUST)) {
         int size = nv_size(np);
-        if (size > 0 && size != strlen(up->cp)) {
+        if (size > 0 && size < strlen(up->cp)) {
             char *cp = getbuf(size + 1);
             strlcpy(cp, up->cp, size);
             return cp;
