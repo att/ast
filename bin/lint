@@ -150,12 +150,12 @@ then
                 -Xiwyu --mapping_file="${mapping_file}" \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1
+                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,'
         else # hope for the best
             include-what-you-use -Xiwyu --transitive_includes_only \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1
+                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,'
         fi
     done
 fi
@@ -188,7 +188,8 @@ then
                  --suppress=missingIncludeSystem --inline-suppr \
                  --enable="${cppchecks}" --rule-file=../.cppcheck.rules \
                  --template="${template}" \
-                 --suppressions-list=../.cppcheck.suppressions "${c_file}" 2>&1
+                 --suppressions-list=../.cppcheck.suppressions "${c_file}" 2>&1 |
+            sed -e 's,^\[\([^.]*\)\.\./,[\1,'
     done
 fi
 
@@ -205,5 +206,6 @@ then
     fi
 
     oclint -p "${PWD}" -enable-clang-static-analyzer ${enable_global_analysis} \
-        -extra-arg="-isystem" -extra-arg="${system_hdrs}" "${c_files[@]}"
+        -extra-arg="-isystem" -extra-arg="${system_hdrs}" "${c_files[@]}" |
+        sed -e 's,^\.\./,,'
 fi
