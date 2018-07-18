@@ -46,6 +46,7 @@
 #include "aso.h"
 #include "ast.h"
 #include "ast_aso.h"
+#include "ast_assert.h"
 #include "error.h"
 #include "fault.h"
 #include "history.h"
@@ -475,7 +476,7 @@ bool job_reap(int sig) {
             pw->p_flag = 0;
             lastpid = pw->p_pid = pid;
             px = 0;
-            if (jp && WIFSTOPPED(wstat)) {
+            if (WIFSTOPPED(wstat)) {
                 jp->exitval = SH_STOPSIG;
                 continue;
             }
@@ -776,6 +777,7 @@ static_fn void job_set(struct process *pw) {
 }
 
 static_fn void job_reset(struct process *pw) {
+    assert(pw);
     Shell_t *shp = pw->p_shp;
 
     // Save the terminal state for current job.
@@ -785,7 +787,7 @@ static_fn void job_reset(struct process *pw) {
 #endif  // SIGTSTP
     // Force the following tty_get() to do a tcgetattr() unless fg.
     if (!(pw->p_flag & P_FG)) tty_set(-1, 0, NULL);
-    if (pw && (pw->p_flag & P_SIGNALLED) && pw->p_exit != SIGHUP) {
+    if ((pw->p_flag & P_SIGNALLED) && pw->p_exit != SIGHUP) {
         if (tty_get(job.fd, &pw->p_stty) == 0) pw->p_flag |= P_STTY;
         // Restore terminal state for job.
         tty_set(job.fd, TCSAFLUSH, &my_stty);
@@ -1039,12 +1041,14 @@ int job_kill(struct process *pw, int sig) {
     bool stopsig;
 #endif
     union sigval sig_val;
-    if (pw == 0) goto error;
+
+    if (!pw) goto error;
     shp = pw->p_shp;
-    if (sig & JOB_QQFLAG)
+    if (sig & JOB_QQFLAG) {
         sig_val.sival_ptr = pointerof(shp->sigval);
-    else
+    } else {
         sig_val.sival_int = (int)shp->sigval;
+    }
     sig &= ~(JOB_QFLAG | JOB_QQFLAG);
 #ifdef SIGTSTP
     stopsig = (sig == SIGSTOP || sig == SIGTSTP || sig == SIGTTIN || sig == SIGTTOU);
@@ -1060,7 +1064,7 @@ int job_kill(struct process *pw, int sig) {
     } else
 #endif  // SHOPT_COSHELL
         if (by_number) {
-        if (pid == 0 && job.jobcontrol) r = job_walk(shp, outfile, job_kill, sig, (char **)0);
+        if (pid == 0 && job.jobcontrol) job_walk(shp, outfile, job_kill, sig, NULL);
 #ifdef SIGTSTP
         if (sig == SIGSTOP && pid == shp->gd->pid && shp->gd->ppid == 1) {
             // Can't stop login shell.
@@ -1644,15 +1648,15 @@ static_fn struct process *job_unpost(Shell_t *shp, struct process *pwtop, int no
     sfsync(sfstderr);
 #endif  // DEBUG
     pwtop = pw = job_byjid((int)pwtop->p_job);
-    if (!pw || (pw->p_flag & P_BG)) return (pw);
+    if (!pw || (pw->p_flag & P_BG)) return pw;
     for (; pw && (pw->p_flag & P_DONE) && (notify || !(pw->p_flag & P_NOTIFY) || pw->p_env);
          pw = pw->p_nxtproc) {
         ;  // empty loop
     }
     if (pw) return pw;
-    if (pwtop->p_job == job.curjobid) return (0);
+    if (!pwtop || pwtop->p_job == job.curjobid) return NULL;
     // All processes complete, unpost job.
-    if (pwtop) job_unlink(pwtop);
+    job_unlink(pwtop);
     for (pw = pwtop; pw; pw = pw->p_nxtproc) {
         if (pw && pw->p_exitval) *pw->p_exitval = pw->p_exit;
         // Save the exit status for background jobs.
@@ -1679,7 +1683,7 @@ static_fn struct process *job_unpost(Shell_t *shp, struct process *pwtop, int no
              job.in_critical, pwtop->p_job);
     sfsync(sfstderr);
 #endif  // DEBUG
-    if (pwtop) job_free((int)pwtop->p_job);
+    job_free((int)pwtop->p_job);
     return NULL;
 }
 
