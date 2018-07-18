@@ -206,6 +206,6 @@ then
     fi
 
     oclint -p "${PWD}" -enable-clang-static-analyzer ${enable_global_analysis} \
-        -extra-arg="-isystem" -extra-arg="${system_hdrs}" "${c_files[@]}" |
+        -extra-arg="-isystem" -extra-arg="${system_hdrs}" "${c_files[@]}" 2>&1 |
         sed -e 's,^\.\./,,'
 fi
