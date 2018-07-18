@@ -352,7 +352,7 @@ found:
 /*
  * allocate <n> bytes on the current stack
  */
-char *stkalloc(Sfio_t *stream, size_t n) {
+void *stkalloc(Sfio_t *stream, size_t n) {
     unsigned char *old;
     if (!init) stkinit(n);
     increment(alloc);
