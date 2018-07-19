@@ -25,11 +25,11 @@
 // This is the initial state for tokens.
 //
 static const char sh_lexstate0[256] = {
-    S_EOF,  S_REG,  S_REG,  S_REG,  S_REG,  S_REG,   S_REG,  S_REG,   S_REG,   0,      S_NLTOK,
+    S_EOF,  S_REG,  S_REG,  S_REG,  S_REG,  S_REG,   S_REG,  S_REG,   S_REG,   S_NOP,  S_NLTOK,
     S_REG,  S_REG,  S_REG,  S_REG,  S_REG,  S_REG,   S_REG,  S_REG,   S_REG,   S_REG,  S_REG,
     S_REG,  S_REG,  S_REG,  S_REG,  S_REG,  S_REG,   S_REG,  S_REG,   S_REG,   S_REG,
 
-    0,      S_REG,  S_REG,  S_COM,  S_REG,  S_REG,   S_OP,   S_REG,   S_OP,    S_OP,   S_REG,
+    S_NOP,  S_REG,  S_REG,  S_COM,  S_REG,  S_REG,   S_OP,   S_REG,   S_OP,    S_OP,   S_REG,
     S_REG,  S_REG,  S_REG,  S_NAME, S_REG,  S_REG,   S_REG,  S_REG,   S_REG,   S_REG,  S_REG,
     S_REG,  S_REG,  S_REG,  S_REG,  S_REG,  S_OP,    S_OP,   S_REG,   S_OP,    S_REG,
 
@@ -64,16 +64,16 @@ static const char sh_lexstate1[256] = {
     S_REG,   S_REG,  S_REG,   S_REG, S_REG,   S_REG,   S_REG,   S_REG,   S_REG,   S_REG,
 
     S_BREAK, S_EPAT, S_QUOTE, S_REG, S_DOL,   S_EPAT,  S_BREAK, S_LIT,   S_BREAK, S_BREAK, S_PAT,
-    S_EPAT,  S_REG,  S_EPAT,  S_DOT, S_REG,   0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0,     S_LABEL, S_BREAK, S_BREAK, S_EQ,    S_BREAK, S_PAT,
+    S_EPAT,  S_REG,  S_EPAT,  S_DOT, S_REG,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_LABEL, S_BREAK, S_BREAK, S_EQ,    S_BREAK, S_PAT,
 
-    S_EPAT,  0,      0,       0,     0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0,     0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0,     0,       S_BRACT, S_ESC,   S_REG,   S_REG,   0,
+    S_EPAT,  S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_BRACT, S_ESC,   S_REG,   S_REG,   S_NOP,
 
-    S_GRAVE, 0,      0,       0,     0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0,     0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0,     0,       S_BRACE, S_BREAK, S_BRACE, S_EPAT,  S_REG,
+    S_GRAVE, S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_BRACE, S_BREAK, S_BRACE, S_EPAT,  S_REG,
 
     S_REG,   S_REG,  S_REG,   S_REG, S_REG,   S_REG,   S_REG,   S_REG,   S_REG,   S_REG,   S_REG,
     S_REG,   S_REG,  S_REG,   S_REG, S_REG,   S_REG,   S_REG,   S_REG,   S_REG,   S_REG,   S_REG,
@@ -90,61 +90,72 @@ static const char sh_lexstate1[256] = {
 };
 
 static const char sh_lexstate2[256] = {
-    S_EOF,   0,      0,       0, 0,       0,       0,       0,       0,       S_BREAK, S_BREAK,
-    0,       0,      0,       0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, 0,       0,       0,       0,       0,       0,
+    S_EOF,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_BREAK, S_BREAK,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
 
-    S_BREAK, S_EPAT, S_QUOTE, 0, S_DOL,   S_EPAT,  S_BREAK, S_LIT,   S_BREAK, S_BREAK, S_PAT,
-    S_EPAT,  0,      S_EPAT,  0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, S_COLON, S_BREAK, S_BREAK, 0,       S_BREAK, S_PAT,
+    S_BREAK, S_EPAT, S_QUOTE, S_NOP, S_DOL,   S_EPAT,  S_BREAK, S_LIT,   S_BREAK, S_BREAK, S_PAT,
+    S_EPAT,  S_NOP,  S_EPAT,  S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_COLON, S_BREAK, S_BREAK, S_NOP,   S_BREAK, S_PAT,
 
-    S_EPAT,  0,      0,       0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, 0,       S_PAT,   S_ESC,   0,       0,       0,
+    S_EPAT,  S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_PAT,   S_ESC,   S_NOP,   S_NOP,   S_NOP,
 
-    S_GRAVE, 0,      0,       0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, 0,       0,       0,       0,       0,       0,       0,
-    0,       0,      0,       0, 0,       S_BRACE, S_BREAK, S_BRACE, S_EPAT,  0,
+    S_GRAVE, S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,
+    S_NOP,   S_NOP,  S_NOP,   S_NOP, S_NOP,   S_BRACE, S_BREAK, S_BRACE, S_EPAT,  S_NOP,
 };
 
 //
 // For skipping over  '...' (i.e., single-quoted strings).
 //
 static const char sh_lexstate3[256] = {
-    S_EOF, 0, 0, 0, 0, 0, 0, 0,     0, 0, S_NL, 0, 0,      0, 0, 0,
-    0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 0,    0, 0,      0, 0, 0,
+    S_EOF, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NL,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,
+    S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,
 
-    0,     0, 0, 0, 0, 0, 0, S_LIT, 0, 0, 0,    0, 0,      0, 0, 0,
-    0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 0,    0, 0,      0, 0, 0,
+    S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_LIT, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,
+    S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,
 
-    0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 0,    0, 0,      0, 0, 0,
-    0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 0,    0, S_ESC2, 0, 0, 0};
+    S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,
+    S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_NOP, S_ESC2, S_NOP, S_NOP, S_NOP
+};
 
 //
 // For skipping over  "..." and `...` (i.e., double-quoted and backtick strings).
 //
 static const char sh_lexstate4[256] = {
-    S_EOF, 0, 0, 0, 0,       0, 0, 0, 0, 0, S_NL,   0,       0, 0,     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,     0, 0, 0, 0,       0, 0, 0, 0, 0, 0,      S_QUOTE, 0, S_DOL, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,     0, 0, 0, 0,       0, 0, 0, 0, 0, 0,      0,       0, 0,     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,     0, 0, 0, 0,       0, 0, 0, 0, 0, 0,      0,       0, 0,     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    S_ESC, 0, 0, 0, S_GRAVE, 0, 0, 0, 0, 0, 0,      0,       0, 0,     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,     0, 0, 0, 0,       0, 0, 0, 0, 0, S_RBRA, 0,       0};
+    S_EOF, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NL,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+
+    S_NOP, S_QUOTE, S_NOP, S_DOL, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_ESC,  S_NOP, S_NOP, S_NOP, S_GRAVE, S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP, S_NOP, S_RBRA, S_NOP, S_NOP
+};
 
 //
 // For skipping over ?(...), [...].
 //
 static const char sh_lexstate5[256] = {
-    S_EOF,   0,      0,     0, 0, 0,       0,       0,      0,       S_BLNK,  S_NL,   0, 0,
-    0,       0,      0,     0, 0, 0,       0,       0,      0,       0,       0,      0, 0,
-    0,       0,      0,     0, 0, 0,       S_BLNK,  0,      S_QUOTE, 0,       S_DOL,  0, S_META,
-    S_LIT,   S_PUSH, S_POP, 0, 0, 0,       0,       0,      0,       0,       0,      0, 0,
-    0,       0,      0,     0, 0, 0,       0,       S_POP,  S_META,  0,       S_META, 0, 0,
-    0,       0,      0,     0, 0, 0,       0,       0,      0,       0,       0,      0, 0,
-    0,       0,      0,     0, 0, 0,       0,       0,      0,       0,       0,      0, 0,
-    S_BRACT, S_ESC,  S_POP, 0, 0, S_GRAVE, 0,       0,      0,       0,       0,      0, 0,
-    0,       0,      0,     0, 0, 0,       0,       0,      0,       0,       0,      0, 0,
-    0,       0,      0,     0, 0, 0,       S_BRACE, S_META, S_POP,   S_TILDE, 0};
+    S_EOF,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_BLNK, S_NL,   S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_BLNK,  S_NOP,  S_QUOTE, S_NOP,  S_DOL,  S_NOP, S_META,
+    S_LIT,   S_PUSH, S_POP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_POP,  S_META,  S_NOP,  S_META, S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_BRACT, S_ESC,  S_POP, S_NOP, S_NOP, S_GRAVE, S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_NOP,   S_NOP,  S_NOP,   S_NOP,  S_NOP,  S_NOP, S_NOP,
+    S_NOP,   S_NOP,  S_NOP, S_NOP, S_NOP, S_NOP,   S_BRACE, S_META, S_POP,   S_TILDE, S_NOP
+};
 
 //
 // Defines valid expansion characters.
@@ -187,16 +198,16 @@ static const char sh_lexstate7[256] = {
     S_ERR, S_ERR,  S_ERR,  S_ERR,   S_ERR, S_ERR,  S_ERR, S_ERR,
 
     S_ERR, S_ERR,  S_ERR,  S_MOD2,  S_ERR, S_MOD2, S_ERR, S_ERR,  S_ERR, S_ERR, S_MOD1, S_MOD1,
-    S_ERR, S_MOD1, S_DOT,  S_MOD2,  0,     0,      0,     0,      0,     0,     0,      0,
-    0,     0,      S_MOD1, S_ERR,   S_ERR, S_MOD1, S_ERR, S_MOD1,
+    S_ERR, S_MOD1, S_DOT,  S_MOD2,  S_NOP, S_NOP,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,  S_NOP,
+    S_NOP, S_NOP,  S_MOD1, S_ERR,   S_ERR, S_MOD1, S_ERR, S_MOD1,
 
-    0,     0,      0,      0,       0,     0,      0,     0,      0,     0,     0,      0,
-    0,     0,      0,      0,       0,     0,      0,     0,      0,     0,     0,      0,
-    0,     0,      0,      S_BRACT, S_ESC, S_ERR,  S_ERR, 0,
+    S_NOP, S_NOP,  S_NOP,  S_NOP,   S_NOP, S_NOP,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,  S_NOP,
+    S_NOP, S_NOP,  S_NOP,  S_NOP,   S_NOP, S_NOP,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,  S_NOP,
+    S_NOP, S_NOP,  S_NOP,  S_BRACT, S_ESC, S_ERR,  S_ERR, S_NOP,
 
-    S_ERR, 0,      0,      0,       0,     0,      0,     0,      0,     0,     0,      0,
-    0,     0,      0,      0,       0,     0,      0,     0,      0,     0,     0,      0,
-    0,     0,      0,      S_ERR,   S_ERR, S_POP,  S_ERR, S_ERR,
+    S_ERR, S_NOP,  S_NOP,  S_NOP,   S_NOP, S_NOP,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,  S_NOP,
+    S_NOP, S_NOP,  S_NOP,  S_NOP,   S_NOP, S_NOP,  S_NOP, S_NOP,  S_NOP, S_NOP, S_NOP,  S_NOP,
+    S_NOP, S_NOP,  S_NOP,  S_ERR,   S_ERR, S_POP,  S_ERR, S_ERR,
 
     S_ERR, S_ERR,  S_ERR,  S_ERR,   S_ERR, S_ERR,  S_ERR, S_ERR,  S_ERR, S_ERR, S_ERR,  S_ERR,
     S_ERR, S_ERR,  S_ERR,  S_ERR,   S_ERR, S_ERR,  S_ERR, S_ERR,  S_ERR, S_ERR, S_ERR,  S_ERR,
@@ -220,16 +231,16 @@ static const char sh_lexstate8[256] = {
     S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
 
     S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
-    S_EDOL, S_EDOL, S_EDOL, S_EDOL, 0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
+    S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,
+    S_NOP,  S_NOP,  S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
 
-    S_EDOL, 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      S_EDOL, S_EDOL, S_EDOL, S_EDOL, 0,
+    S_EDOL, S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,
+    S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,
+    S_NOP,  S_NOP,  S_NOP,  S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_NOP,
 
-    S_EDOL, 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
+    S_EDOL, S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,
+    S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,  S_NOP,
+    S_NOP,  S_NOP,  S_NOP,  S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
 
     S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
     S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL, S_EDOL,
@@ -248,18 +259,19 @@ static const char sh_lexstate8[256] = {
 // This is used for macro expansion.
 //
 static const char sh_lexstate9[256] = {
-    S_EOF, 0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     S_QUOTE, 0,       S_DOL,   0,       S_PAT,   S_LIT, S_PAT, S_PAT,   S_PAT, 0,
-    S_COM, 0,       S_DOT,   S_SLASH, S_DIG,   S_DIG,   S_DIG, S_DIG, S_DIG,   S_DIG, S_DIG,
-    S_DIG, S_DIG,   S_DIG,   S_COLON, 0,       0,       S_EQ,  0,     S_PAT,   0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       0,       S_BRACT, S_ESC,   S_ENDCH, 0,     0,     S_GRAVE, 0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       0,       0,       0,       0,       0,     0,     0,       0,     0,
-    0,     0,       S_BRACE, S_PAT,   S_ENDCH, 0,       0};
+    S_EOF, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_QUOTE, S_NOP,   S_DOL,   S_NOP,   S_PAT,   S_LIT, S_PAT, S_PAT,   S_PAT, S_NOP,
+    S_COM, S_NOP,   S_DOT,   S_SLASH, S_DIG,   S_DIG,   S_DIG, S_DIG, S_DIG,   S_DIG, S_DIG,
+    S_DIG, S_DIG,   S_DIG,   S_COLON, S_NOP,   S_NOP,   S_EQ,  S_NOP, S_PAT,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_BRACT, S_ESC,   S_ENDCH, S_NOP, S_NOP, S_GRAVE, S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP,   S_NOP, S_NOP, S_NOP,   S_NOP, S_NOP,
+    S_NOP, S_NOP,   S_BRACE, S_PAT,   S_ENDCH, S_NOP,   S_NOP
+};
 
 const char *sh_lexrstates[ST_NONE] = {sh_lexstate0, sh_lexstate1, sh_lexstate2, sh_lexstate3,
                                       sh_lexstate4, sh_lexstate5, sh_lexstate6, sh_lexstate7,
