@@ -299,9 +299,14 @@ static inline void read_to_next_state_transition(int lexer_mode, char **state_ta
 int sh_lex(Lex_t *lp) {
     Shell_t *shp = lp->sh;
     const char *state;
-    int n, c, mode = ST_BEGIN, wordflags = 0;
+    int n;
+    int c;
+    int mode = ST_BEGIN;
+    int wordflags = 0;
     Stk_t *stkp = shp->stk;
-    int inlevel = lp->lexd.level, assignment = 0, ingrave = 0;
+    int inlevel = lp->lexd.level;
+    int assignment = 0;
+    int ingrave = 0;
     int epatchar = 0;
     Sfio_t *sp;
 
