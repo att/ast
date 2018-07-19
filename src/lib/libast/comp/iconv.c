@@ -1024,7 +1024,7 @@ size_t _ast_iconv(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn)
     char *b;
     char *tfb;
     size_t tfn;
-    size_t i;
+    size_t i = 0;
 
     if (!fb || !*fb) {
         /* TODO: reset to the initial state */
