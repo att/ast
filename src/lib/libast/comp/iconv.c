@@ -317,6 +317,7 @@ int _ast_iconv_name(const char *m, char *b, size_t n) {
  */
 
 static size_t utf2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -380,6 +381,7 @@ static size_t utf2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t 
  */
 
 static size_t bin2utf(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -471,6 +473,7 @@ static int umeinit(void) {
  */
 
 static size_t ume2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -534,6 +537,7 @@ static size_t ume2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t 
  */
 
 static size_t bin2ume(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -593,6 +597,7 @@ static size_t bin2ume(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t 
  */
 
 static size_t u16n2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -632,6 +637,7 @@ static size_t u16n2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t
  */
 
 static size_t bin2u16n(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -672,6 +678,7 @@ static size_t bin2u16n(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t
  */
 
 static size_t u16s2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;
@@ -711,6 +718,7 @@ static size_t u16s2bin(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t
  */
 
 static size_t bin2u16s(_ast_iconv_t cd, char **fb, size_t *fn, char **tb, size_t *tn) {
+    UNUSED(cd);
     unsigned char *f;
     unsigned char *fe;
     unsigned char *t;

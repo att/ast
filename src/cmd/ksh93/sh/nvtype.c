@@ -235,6 +235,9 @@ static_fn void put_chtype(Namval_t *np, const void *val, int flag, Namfun_t *fp)
 }
 
 static_fn Namfun_t *clone_chtype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+    UNUSED(np);
+    UNUSED(mp);
+
     if (flags & NV_NODISC) return NULL;
     return nv_clone_disc(fp, flags);
 }
@@ -586,6 +589,7 @@ static_fn Namval_t *next_type(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 }
 
 static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+    UNUSED(flags);
     Namfun_t *pp = (Namfun_t *)malloc(fp->dsize);
 
     memcpy((void *)pp, (void *)fp, fp->dsize);
@@ -601,6 +605,7 @@ static_fn Namfun_t *clone_inttype(Namval_t *np, Namval_t *mp, int flags, Namfun_
 }
 
 static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
+    UNUSED(op);
     Shell_t *shp = sh_getinterp();
     char *cp, **help, buffer[256];
     Namtype_t *dp;

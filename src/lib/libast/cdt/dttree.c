@@ -643,6 +643,7 @@ dt_return:
 }
 
 static int treeevent(Dt_t *dt, int event, void *arg) {
+    UNUSED(arg);
     Dttree_t *tree = (Dttree_t *)dt->data;
 
     if (event == DT_OPEN) {

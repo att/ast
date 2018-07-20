@@ -523,6 +523,8 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
 
 static char *format(Feature_t *fp, const char *path, const char *value, unsigned int flags,
                     Error_f conferror) {
+    UNUSED(conferror);
+    UNUSED(flags);
     Feature_t *sp;
     int n;
     static struct utsname uts;

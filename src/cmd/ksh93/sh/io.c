@@ -800,6 +800,7 @@ int sh_copipe(Shell_t *shp, int *pv, int out) {
 #endif  // SHOPT_COSHELL
 
 static_fn int pat_seek(void *handle, const char *str, size_t sz) {
+    UNUSED(sz);
     char **bp = (char **)handle;
     *bp = (char *)str;
     return -1;
@@ -1915,6 +1916,7 @@ int sh_ioaccess(int fd, int mode) {
 // Handle interrupts for slow streams.
 //
 static_fn int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
+    UNUSED(data);
     Shell_t *shp = ((struct Iodisc *)handle)->sh;
     int n, fno;
     UNUSED(handle);
@@ -2219,6 +2221,7 @@ done:
 // an infinite loop.
 //
 static_fn int pipeexcept(Sfio_t *iop, int mode, void *data, Sfdisc_t *handle) {
+    UNUSED(data);
     if (mode == SF_DPOP || mode == SF_FINAL) {
         free(handle);
     } else if (mode == SF_WRITE && ERROR_PIPE(errno)) {
@@ -2336,6 +2339,7 @@ Sfio_t *sh_sfeval(char *argv[]) {
 // This code gets called whenever an end of string is found with eval.
 //
 static_fn int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
+    UNUSED(data);
     struct eval *ep = (struct eval *)handle;
     char *cp;
     size_t len;
@@ -2369,6 +2373,7 @@ static_fn int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) 
 // normal stream operations.
 //
 static_fn Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
+    UNUSED(shp);
     struct subfile *disp;
 
     if (sfseek(sp, offset, SEEK_SET) < 0) return NULL;
@@ -2388,9 +2393,9 @@ static_fn Sfio_t *subopen(Shell_t *shp, Sfio_t *sp, off_t offset, long size) {
 // Read function for subfile discipline.
 //
 static_fn ssize_t subread(Sfio_t *sp, void *buff, size_t size, Sfdisc_t *handle) {
+    UNUSED(sp);
     struct subfile *disp = (struct subfile *)handle;
     ssize_t n;
-    UNUSED(sp);
 
     sfseek(disp->oldsp, disp->offset, SEEK_SET);
     if (disp->left == 0) return (0);
@@ -2405,7 +2410,9 @@ static_fn ssize_t subread(Sfio_t *sp, void *buff, size_t size, Sfdisc_t *handle)
 // Exception handler for subfile discipline.
 //
 static_fn int subexcept(Sfio_t *sp, int mode, void *data, Sfdisc_t *handle) {
+    UNUSED(data);
     struct subfile *disp = (struct subfile *)handle;
+
     if (mode == SF_CLOSING) {
         sfdisc(sp, SF_POPDISC);
         sfsetfd(sp, -1);

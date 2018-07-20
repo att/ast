@@ -44,8 +44,10 @@
 #include "variables.h"
 
 static_fn int getopts_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+    UNUSED(op);
     Shell_t *shp = *(Shell_t **)(dp + 1);
     Stk_t *stkp = shp->stk;
+
     if ((shp->namespace && sh_fsearch(shp, s, 0)) || nv_search(s, shp->fun_tree, 0)) {
         int savtop = stktell(stkp);
         char *savptr = stkfreeze(stkp, 0);

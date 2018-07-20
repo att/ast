@@ -36,6 +36,8 @@ ssize_t readbuf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 Sfdisc_t Disc = {readbuf, (Sfwrite_f)0, (Sfseek_f)0, (Sfexcept_f)0, (Sfdisc_t *)0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f, *sf;
     char *ss, *s, *tmp;
     int n, i;

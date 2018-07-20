@@ -212,6 +212,7 @@ static_fn void setsiginfo(Shell_t *shp, siginfo_t *info, struct process *pw) {
 }
 
 void job_chldtrap(Shell_t *shp, const char *trap, int lock) {
+    UNUSED(lock);
     struct process *pw, *pwnext;
     pid_t bckpid;
     int oldexit, trapnote, sorc;
@@ -338,7 +339,10 @@ int job_cowalk(int (*fun)(struct process *, int), int arg, char *name) {
 // done from non-interrupt context.  See issue #563.
 //
 static_fn void job_waitsafe(int sig, siginfo_t *info, void *context) {
+    UNUSED(info);
+    UNUSED(context);
     int saved_errno = errno;
+
     if (job.in_critical || vmbusy()) {
         job.savesig = sig;
         job.waitsafe++;
@@ -594,6 +598,7 @@ bool job_reap(int sig) {
 // message will not print.
 //
 void job_init(Shell_t *shp, int lflag) {
+    UNUSED(lflag);
     int ntry = 0;
     job.fd = JOBTTY;
     sh_signal(SIGCHLD, job_waitsafe);
@@ -1747,6 +1752,7 @@ static_fn void job_free(int n) {
 }
 
 static_fn char *job_sigmsg(Shell_t *shp, int sig) {
+    UNUSED(shp);
     static char signo[40];
 
     if (sig < shgd->sigmax && shgd->sigmsg[sig]) return (shgd->sigmsg[sig]);

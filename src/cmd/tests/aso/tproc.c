@@ -42,6 +42,7 @@ static unsigned int *Active; /* active processes	*/
 static unsigned int *Count;
 
 static void workload(unsigned int pid) {
+    UNUSED(pid);
     int k, r;
 
     asoincint(Active);       /* indicate that we are active */
@@ -53,6 +54,7 @@ static void workload(unsigned int pid) {
 }
 
 tmain() {
+    UNUSED(argc);
     ssize_t k;
     pid_t pid, cpid[N_PROC];
     struct timeval tv1, tv2;

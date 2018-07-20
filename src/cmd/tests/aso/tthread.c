@@ -67,6 +67,8 @@ static void *consumer(void *arg) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int i;
     Obj_t *obj;
     pthread_t thread[N_THREADS];

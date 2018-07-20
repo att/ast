@@ -36,9 +36,15 @@ int Code_line = 42; /* line number of CALL(sfclose(0)) */
 #define CALL(x) ((Code_line += 1), (x))
 #endif
 
-void handler(int sig) { terror("Bad argument handling on code line %d", Code_line); }
+void handler(int sig) {
+    UNUSED(sig);
+
+    terror("Bad argument handling on code line %d", Code_line);
+}
 
 void main_varargs(int argc, char **argv, ...) {
+    UNUSED(argc);
+    UNUSED(argv);
     va_list args;
 
     signal(SIGILL, handler);

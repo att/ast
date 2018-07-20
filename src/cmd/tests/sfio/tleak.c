@@ -23,6 +23,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfoff_t m;
 
     if (sfopen(sfstdout, tstfile("sf", 0), "w") != sfstdout)

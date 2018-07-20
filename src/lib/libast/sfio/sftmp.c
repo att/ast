@@ -124,6 +124,8 @@ static int _rmtmp(Sfio_t *f, char *file) {
     (void)vtmtxunlock(_Sfmutex);
 
 #else /* can remove now */
+    UNUSED(f);
+
     while (sysremovef(file) < 0 && errno == EINTR) errno = 0;
 #endif
 
@@ -141,6 +143,7 @@ static int _tmpfd(Sfio_t *f) {
 }
 
 static int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+    UNUSED(disc);
     int fd, m;
     Sfio_t *sf;
     Sfio_t newf, savf;

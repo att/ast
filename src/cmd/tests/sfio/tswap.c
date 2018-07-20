@@ -25,6 +25,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f1;
     Sfio_t *f2;
     char *s;

@@ -138,6 +138,8 @@ static void ignoresig(int sig) { signal(sig, ignoresig); }
  */
 
 static int modify(Proc_t *proc, int forked, int op, long arg1, long arg2) {
+    UNUSED(proc);
+
     if (forked) {
         int i;
 #ifndef TIOCSCTTY

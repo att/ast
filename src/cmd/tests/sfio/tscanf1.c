@@ -45,6 +45,8 @@ static ssize_t oneread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
 static Mydisc_t Mydisc;
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int n;
     double d;
     int i;

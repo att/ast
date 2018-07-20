@@ -123,6 +123,7 @@ static char *findnames[] = {
  */
 
 char *typefix(char *buf, size_t n, const char *t) {
+    UNUSED(n);
     int c;
     char *b = buf;
 

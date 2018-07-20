@@ -38,6 +38,8 @@
 Sfdisc_t Disc;
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int n, fd;
     Sfio_t *f;
     char *s, buf[1024];

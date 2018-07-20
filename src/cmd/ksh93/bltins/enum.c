@@ -116,6 +116,7 @@ struct Enum {
 };
 
 static_fn int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
+    UNUSED(op);
     Namval_t *np;
     struct Enum *ep;
     int n = 0;
@@ -136,6 +137,9 @@ static_fn int enuminfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *fp) {
 }
 
 static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+    UNUSED(np);
+    UNUSED(mp);
+    UNUSED(flags);
     struct Enum *ep, *pp = (struct Enum *)fp;
     ep = newof(0, struct Enum, 1, pp->nelem * sizeof(char *));
     memcpy((void *)ep, (void *)pp, sizeof(struct Enum) + pp->nelem * sizeof(char *));
@@ -185,6 +189,7 @@ static_fn char *get_enum(Namval_t *np, Namfun_t *fp) {
 static_fn Sfdouble_t get_nenum(Namval_t *np, Namfun_t *fp) { return nv_getn(np, fp); }
 
 static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_t *fp) {
+    UNUSED(flags);
     const char *name = vp;
     struct Enum *ep = (struct Enum *)fp;
     Namval_t *mp;

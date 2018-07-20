@@ -29,13 +29,18 @@ typedef struct _obj_s {
 } Obj_t;
 
 static int objcmp(Dt_t *dt, void *arg1, void *arg2, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
     Obj_t *o1 = (Obj_t *)arg1, *o2 = (Obj_t *)arg2;
 
     return (int)(o1->key - o2->key);
 }
 
 static unsigned int objhash(Dt_t *dt, void *arg, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
     Obj_t *o = (Obj_t *)arg;
+
     return (unsigned int)(o->key);
 }
 
@@ -47,6 +52,8 @@ Dtdisc_t Disc = {0, 0, 0, 0, 0, objcmp, objhash, 0, 0};
 static Obj_t Obj[N_OBJ];
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt;
     Obj_t *o;
     long i, k, count, n;

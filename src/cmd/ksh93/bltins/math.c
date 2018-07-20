@@ -71,6 +71,8 @@ static Sfdouble_t local_j1(Sfdouble_t a1) { return j1(a1); }
 static Sfdouble_t local_jn(Sfdouble_t a1, Sfdouble_t a2) { return jn(a1, a2); }
 
 static Sfdouble_t local_nextafter(int type_1, Sfdouble_t arg_1, int type_2, Sfdouble_t arg_2) {
+    UNUSED(type_2);
+
     switch (type_1) {
         case 1:
             return nextafterf((float)arg_1, arg_2);
@@ -83,6 +85,8 @@ static Sfdouble_t local_nextafter(int type_1, Sfdouble_t arg_1, int type_2, Sfdo
 }
 
 static Sfdouble_t local_nexttoward(int type_1, Sfdouble_t arg_1, int type_2, Sfdouble_t arg_2) {
+    UNUSED(type_2);
+
     switch (type_1) {
         case 1:
             return nexttowardf((float)arg_1, arg_2);

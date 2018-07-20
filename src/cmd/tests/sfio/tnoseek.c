@@ -29,9 +29,19 @@ char *buffer;
 size_t size;
 size_t count;
 
-Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) { return 0; }
+Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(offset);
+    UNUSED(type);
+    UNUSED(disc);
+
+    return 0;
+}
 
 ssize_t discwrite(Sfio_t *f, const void *s, size_t n, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(disc);
+
     buffer = (char *)s;
     size = n;
     count += 1;
@@ -41,6 +51,8 @@ ssize_t discwrite(Sfio_t *f, const void *s, size_t n, Sfdisc_t *disc) {
 Sfdisc_t seekable = {(Sfread_f)0, discwrite, discseek, (Sfexcept_f)0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char buf[1024];
 
     sfsetbuf(sfstdout, buf, sizeof(buf));

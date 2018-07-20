@@ -82,6 +82,7 @@ static_fn double setalarm(double t) {
 // TODO: There is a bug in this code that may cause alarm callback to never get invoked due
 // to timing issues. See https://github.com/att/ast/issues/633
 static_fn void sigalrm(int sig, siginfo_t *info, void *context) {
+    UNUSED(context);
     Timer_t *tp, *tplast, *tpold, *tpnext;
     double now;
     static double left = 0;

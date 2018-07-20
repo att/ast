@@ -42,9 +42,13 @@ static int eventf(Dt_t *dt, int op, void *data, Dtdisc_t *disc) {
 }
 
 static void *memoryf(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     // This was the original Vmalloc based implementation:
     //   return vmresize(((Dc_t *)disc)->vm, addr, size, VM_RSMOVE);
     // That vmresize() call initializes the new bytes to zero which a simple realloc() won't.
+    // But AFAICT the callers don't rely on that behavior.
     return realloc(addr, size);
 }
 

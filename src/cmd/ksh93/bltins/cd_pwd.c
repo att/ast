@@ -67,6 +67,7 @@ static_fn void invalidate(Namval_t *np, void *data) {
 // Obtain a file handle to the directory "path" relative to directory "dir".
 //
 int sh_diropenat(Shell_t *shp, int dir, const char *path) {
+    UNUSED(shp);
     int fd, shfd;
     fd = openat(dir, path, O_DIRECTORY | O_NONBLOCK | O_CLOEXEC);
     if (fd < 0) {

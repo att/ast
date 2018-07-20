@@ -648,6 +648,8 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
 }
 
 static_fn void unset_instance(Namval_t *nq, Namval_t *node, struct Namref *nr, long mode) {
+    UNUSED(nq);
+
     L_ARGNOD->nvalue.nrp = node->nvalue.nrp;
     L_ARGNOD->nvflag = node->nvflag;
     L_ARGNOD->nvfun = node->nvfun;
@@ -3261,6 +3263,7 @@ static_fn pid_t sh_ntfork(Shell_t *shp, const Shnode_t *t, char *argv[], int *jo
 //
 int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *), void *arg,
                          int execflg) {
+    UNUSED(argn);
     char *trap;
     int nsig;
     struct dolnod *argsav = 0, *saveargfor;

@@ -32,6 +32,9 @@
 static Sfio_t *Fclose;
 
 int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(data);
+    UNUSED(disc);
+
     if (type == SF_CLOSING || type == SF_FINAL) {
         if (f != Fclose) return -1;
         if (type == SF_CLOSING && (f->mode & SF_RDWR) != f->mode) terror("Stream should be open");
@@ -44,11 +47,19 @@ int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
 }
 
 ssize_t readf(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(buf);
+    UNUSED(n);
+    UNUSED(disc);
+
     if ((f->mode & SF_RDWR) == f->mode) terror("Stream mode should be inaccessible in readf");
     return 0;
 }
 
 ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(disc);
+    UNUSED(buf);
+    UNUSED(n);
+
     if ((f->mode & SF_RDWR) == f->mode) terror("Stream mode should be inaccessible in writef");
     return 0;
 }
@@ -56,6 +67,8 @@ ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 Sfdisc_t Disc = {readf, writef, NULL, exceptf, 0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f1, *f2, *f3, *f;
     char *s, *s1, *s2, *s3, *s4;
     int n;

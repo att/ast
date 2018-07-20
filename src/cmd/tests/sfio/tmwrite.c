@@ -38,6 +38,8 @@ static long vrandom() {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     ssize_t size[N_WRITER][N_RECORD];
     int count[N_WRITER];
     char record[N_WRITER][128], *s;

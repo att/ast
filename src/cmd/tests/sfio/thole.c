@@ -27,6 +27,8 @@
 /*	Test for /dev/null and hole-preserving code */
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *null;
     Sfio_t *f;
     int k, n;

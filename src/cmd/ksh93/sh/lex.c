@@ -2172,6 +2172,7 @@ static_fn int alias_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle)
 static_fn int alias_exceptf(Sfio_t *iop, int type, Sfdisc_t *handle)
 #endif
 {
+    UNUSED(data);
     struct alias *ap = (struct alias *)handle;
     Namval_t *np;
     Lex_t *lp;

@@ -110,6 +110,7 @@ static_fn void array_syncsub(Namarr_t *ap, Namarr_t *aq) {
 }
 
 static_fn bool array_covered(Namval_t *np, struct index_array *ap) {
+    UNUSED(np);
     struct index_array *aq = (struct index_array *)ap->header.scope;
     if (!ap->header.fun && aq) {
         return ((ap->cur < aq->maxi) && aq->val[ap->cur].cp);

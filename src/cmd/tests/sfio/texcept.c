@@ -30,6 +30,10 @@ static int Type;
 static int Sfn;
 
 static int except(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+    UNUSED(disc);
+
     switch (type) {
         case SF_WRITE:
             Sfn += 1;
@@ -44,9 +48,20 @@ static int except(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
     return -1;
 }
 
-static int except2(Sfio_t *f, int type, void *data, Sfdisc_t *disc) { return 0; }
+static int except2(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(type);
+    UNUSED(data);
+    UNUSED(disc);
+
+    return 0;
+}
 
 static int except3(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+    UNUSED(disc);
+
     if (type == SF_LOCKED) {
         Type = type;
         return -1;
@@ -55,6 +70,10 @@ static int except3(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
 }
 
 static ssize_t readfunc(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(buf);
+    UNUSED(n);
+    UNUSED(disc);
+
     if (sfgetc(f) >= 0) terror("Can't access stream here!");
     return 0;
 }
@@ -62,6 +81,8 @@ static ssize_t readfunc(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 static Sfdisc_t Disc, Disc2;
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f, *f2;
     char buf[1024];
     char rbuf[4 * 1024];

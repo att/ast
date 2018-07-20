@@ -25,6 +25,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     int n, i;
     char buf[50], *s, *string = "111\n222\n333";

@@ -91,6 +91,8 @@ void writeprocess(int send, int recv, Sfio_t *f) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *fw, *fr;
     Mydisc_t disc;
     int parent[2], child[2];

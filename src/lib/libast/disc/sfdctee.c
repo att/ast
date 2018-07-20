@@ -54,6 +54,9 @@ static ssize_t teewrite(Sfio_t *f, const void *buf, size_t size, Sfdisc_t *disc)
 
 /* on close, remove the discipline */
 static int teeexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
 
     return 0;

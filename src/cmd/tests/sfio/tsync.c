@@ -30,6 +30,9 @@
 /* this tests to see if SF_SYNC is raised at the right time */
 static int Count = 0;
 static int except(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(disc);
+
     if (type == SF_SYNC && integralof(arg) == 1) Count += 1;
     return 0;
 }
@@ -41,6 +44,8 @@ typedef struct _mydisc_s {
     int sync;
 } Mydisc_t;
 int event(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
+    UNUSED(f);
+
     if (type == SF_SYNC) ((Mydisc_t *)disc)->sync = integralof(arg);
     return 0;
 }
@@ -64,6 +69,8 @@ ssize_t newline(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 Mydisc_t Mydisc = {{(Sfread_f)0, newline, (Sfseek_f)0, event, (Sfdisc_t *)0}, 0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int p1[2], p2[2];
     int n, dupf2;
     Sfoff_t off;

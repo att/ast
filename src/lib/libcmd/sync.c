@@ -68,6 +68,7 @@ int syncfs(int fd) {
 #endif
 
 int b_sync(int argc, char **argv, Shbltin_t *context) {
+    UNUSED(argc);
     int fsync_fd = -1;
     int syncfs_fd = -1;
     bool do_sfsync = 0;

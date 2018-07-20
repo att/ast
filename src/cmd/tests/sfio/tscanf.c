@@ -53,6 +53,7 @@ typedef struct Fmt_s {
 } Fmt_t;
 
 static int extf(Sfio_t *sp, void *vp, Sffmt_t *dp) {
+    UNUSED(sp);
     Fmt_t *fmt = (Fmt_t *)dp;
 
     dp->flags |= SFFMT_VALUE;
@@ -61,6 +62,8 @@ static int extf(Sfio_t *sp, void *vp, Sffmt_t *dp) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char str[8], c[4], cl[8];
     int i, j, k, n;
     unsigned long a1, a2, a3;

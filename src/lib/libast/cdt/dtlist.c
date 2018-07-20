@@ -328,6 +328,7 @@ dt_return:
 }
 
 static int listevent(Dt_t *dt, int event, void *arg) {
+    UNUSED(arg);
     Dtlist_t *list = (Dtlist_t *)dt->data;
 
     if (event == DT_OPEN) {

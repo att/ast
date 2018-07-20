@@ -23,6 +23,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     int i, c;
 

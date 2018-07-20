@@ -630,6 +630,7 @@ static void ed_nputchar(Edit_t *ep, int n, int c) {
 // handle sfpkrd() correctly (i,e., those that support poll() or select().
 //
 int ed_read(void *context, int fd, char *buff, int size, int reedit) {
+    UNUSED(reedit);
     Edit_t *ep = (Edit_t *)context;
     int rv = -1;
     int delim = ((ep->e_raw & RAWMODE) ? nttyparm.c_cc[VEOL] : '\n');

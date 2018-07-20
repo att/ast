@@ -379,4 +379,9 @@ nope:
 // Set coshell attributes
 //
 
-int coattr(Coshell_t *co, const char *attributes) { return 0; }
+int coattr(Coshell_t *co, const char *attributes) {
+    UNUSED(co);
+    UNUSED(attributes);
+
+    return 0;
+}

@@ -2581,6 +2581,7 @@ bad:
  */
 
 static void bmstr(Cenv_t *env, Rex_t *a, unsigned char *v, int n, Bm_mask_t b) {
+    UNUSED(env);
     int c;
     int m;
     size_t z;

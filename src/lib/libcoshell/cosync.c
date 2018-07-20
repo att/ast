@@ -112,6 +112,11 @@ int cosync(Coshell_t *co, const char *file, int fd, int mode) {
         }
 #endif
     }
+#else
+    UNUSED(co);
+    UNUSED(file);
+    UNUSED(fd);
+    UNUSED(mode);
 #endif
     return 0;
 }

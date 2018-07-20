@@ -43,6 +43,9 @@
 static const char lib[] = "libast:cmdarg";
 
 static int cmdrun(int argc, char **argv, Cmddisc_t *disc) {
+    UNUSED(argc);
+    UNUSED(disc);
+
     return procrun(argv[0], argv, PROC_ARGMOD | PROC_IGNOREPATH);
 }
 

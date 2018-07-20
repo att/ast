@@ -90,11 +90,14 @@ static_fn bool onstdpath(Shell_t *shp, const char *name) {
 
 static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char *const envp[],
                               int spawn) {
+    UNUSED(spawn);
 #ifdef SPAWN_cwd
     if (shp->vex->cur) {
         spawnvex_apply(shp->vex, 0, 0);
         spawnvex_apply(shp->vexp, 0, SPAWN_RESET);
     }
+#else
+    UNUSED(shp);
 #endif
     return execve(path, argv, envp);
 }
@@ -102,6 +105,12 @@ static_fn pid_t path_pfexecve(Shell_t *shp, const char *path, char *argv[], char
 #if _AST_no_spawnveg
 static_fn pid_t _spawnveg(Shell_t *shp, const char *path, char *const argv[], char *const envp[],
                           pid_t pgid) {
+    UNUSED(shp);
+    UNUSED(path);
+    UNUSED(argv);
+    UNUSED(envp);
+    UNUSED(pgid);
+
     abort();
 }
 #else
@@ -204,6 +213,7 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
 // flag==0 and if necessary. Sets the PWD variable to this value.
 //
 char *path_pwd(Shell_t *shp, int flag) {
+    UNUSED(flag);
     char *cp;
     int count = 0;
 
@@ -1158,6 +1168,7 @@ retry:
 // File is executable but not machine code. Assume file is a Shell script and execute it.
 //
 static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *envp) {
+    UNUSED(envp);
     Sfio_t *sp;
 
     path = path_relative(shp, path);
@@ -1558,6 +1569,7 @@ Pathcomp_t *path_dirfind(Pathcomp_t *first, const char *name, int c) {
 // Get discipline for tracked alias.
 //
 static_fn char *talias_get(Namval_t *np, Namfun_t *nvp) {
+    UNUSED(nvp);
     Shell_t *shp = sh_ptr(np);
     Pathcomp_t *pp = (Pathcomp_t *)np->nvalue.cp;
     char *ptr;

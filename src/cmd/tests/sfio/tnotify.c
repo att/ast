@@ -28,6 +28,9 @@ static int Type;
 static int Mttype;
 
 static void notify(Sfio_t *f, int type, void *data) {
+    UNUSED(f);
+    UNUSED(data);
+
     switch (type) {
         case SF_NEW:
         case SF_CLOSING:
@@ -45,6 +48,8 @@ static void notify(Sfio_t *f, int type, void *data) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     int fd;
 

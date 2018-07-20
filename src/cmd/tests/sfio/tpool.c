@@ -28,6 +28,9 @@
 
 static char Serial[128], *S = Serial;
 ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(disc);
+
     memcpy((void *)S, buf, n);
     S += n;
     return n;
@@ -35,6 +38,8 @@ ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 Sfdisc_t Serialdc = {NULL, writef, NULL, NULL};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int i, n, on;
     char *s, *os, *s1, *s2, *s3;
     char poolbuf[1024];

@@ -50,6 +50,8 @@ char *pathkey(char *key, char *attr, const char *lang, const char *tool, const c
 
 char *pathkey_20100601(const char *lang, const char *tool, const char *apath, char *key,
                        size_t keysize, char *attr, size_t attrsize) {
+    UNUSED(keysize);
+    UNUSED(attrsize);
     char *path = (char *)apath;
     char *s;
     char *k;

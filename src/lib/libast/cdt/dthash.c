@@ -447,6 +447,7 @@ dt_return:
 }
 
 static int hashevent(Dt_t *dt, int event, void *arg) {
+    UNUSED(arg);
     Dthash_t *hash = (Dthash_t *)dt->data;
 
     if (event == DT_OPEN) {

@@ -45,6 +45,9 @@ typedef struct Sfmbstate_s {
 } Sfmbstate_t;
 
 static int _sfmbexcept(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(arg);
+
     if (type == SF_DPOP || type == SF_FINAL) free(disc);
     return 0;
 }

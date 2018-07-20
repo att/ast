@@ -2248,6 +2248,11 @@ static_fn void put_optimize(Namval_t *np, const void *val, int flags, Namfun_t *
 }
 
 static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+    UNUSED(np);
+    UNUSED(mp);
+    UNUSED(flags);
+    UNUSED(fp);
+
     return NULL;
 }
 

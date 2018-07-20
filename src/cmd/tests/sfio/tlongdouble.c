@@ -26,6 +26,8 @@
 #endif
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
 #if _typ_long_double
     long double ldval, ldmax;
     char *s, *str;

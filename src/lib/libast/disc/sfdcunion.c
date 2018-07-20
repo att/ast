@@ -52,7 +52,14 @@ typedef struct _union_s {
     File_t f[1];   /* array of streams	*/
 } Union_t;
 
-static ssize_t unwrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) { return -1; }
+static ssize_t unwrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(buf);
+    UNUSED(n);
+    UNUSED(disc);
+
+    return -1;
+}
 
 static ssize_t unread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
     Union_t *un;
@@ -76,6 +83,7 @@ static ssize_t unread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) {
 }
 
 static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
+    UNUSED(f);
     Union_t *un;
     int i;
     Sfoff_t extent, s;
@@ -113,6 +121,9 @@ static Sfoff_t unseek(Sfio_t *f, Sfoff_t addr, int type, Sfdisc_t *disc) {
 
 /* on close, remove the discipline */
 static int unexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
 
     return 0;

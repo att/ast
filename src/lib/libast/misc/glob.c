@@ -131,6 +131,9 @@ static int gl_type(glob_t *gp, const char *path, int flags) {
  */
 
 static int gl_attr(glob_t *gp, const char *path, int flags) {
+    UNUSED(gp);
+    UNUSED(flags);
+
     return strchr(astconf("PATH_ATTRIBUTES", path, NULL), 'c') ? GLOB_ICASE : 0;
 }
 

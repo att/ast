@@ -28,6 +28,10 @@
 static int Event;
 
 static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(obj);
+    UNUSED(disc);
+
     if (type & DT_ANNOUNCE) Event = type & ~DT_ANNOUNCE;
     return 0;
 }
@@ -35,6 +39,8 @@ static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, event};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int k, i;
     Dt_t *dt;
     Dtmethod_t *Meth[8];

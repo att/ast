@@ -30,8 +30,11 @@ typedef struct _obj_s {
 } Obj_t;
 
 static int intcompare(Dt_t *dt, void *arg1, void *arg2, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
     int *o1 = (int *)arg1;
     int *o2 = (int *)arg2;
+
     return *o1 - *o2;
 }
 
@@ -39,6 +42,8 @@ Dtdisc_t Disc = {
     DTOFFSET(Obj_t, key), sizeof(int), DTOFFSET(Obj_t, link), 0, 0, intcompare, 0, 0, 0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Obj_t obj, chk1, chk2, chk22;
     Dt_t *dt;
 

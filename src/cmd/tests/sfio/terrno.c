@@ -29,6 +29,8 @@
 /* errnos tested for xopen-compliance */
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *fw;
     Sfio_t *fr;
     int fds[2];

@@ -27,6 +27,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     unsigned char vc, rc;
     unsigned short vs, rs;
     unsigned int vi, ri;

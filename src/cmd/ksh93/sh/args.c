@@ -203,6 +203,8 @@ void *sh_argopen(Shell_t *shp) {
 }
 
 static_fn int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+    UNUSED(op);
+    UNUSED(dp);
 #if SHOPT_BASH
     Shell_t *shp = sh_getinterp();
     extern const char sh_bash1[], sh_bash2[];

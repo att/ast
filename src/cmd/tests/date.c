@@ -190,6 +190,7 @@ static void gotcha(int sig) {
 }
 
 int main(int argc, char **argv) {
+    UNUSED(argc);
     int i;
     long flags;
     char *p;

@@ -196,6 +196,7 @@ static int debug_mbtowc(wchar_t *p, const char *s, size_t n) {
 }
 
 static size_t debug_wcrtomb(char *s, wchar_t c, mbstate_t *q) {
+    UNUSED(q);
     int w;
     int i;
     int k;
@@ -368,6 +369,7 @@ static int sjis_mbtowc(wchar_t *p, const char *s, size_t n) {
 static int utf8_wctomb(char *u, wchar_t w) { return (int)utf32toutf8(u, w); }
 
 static size_t utf8_mbrlen(const char *str, size_t n, mbstate_t *q) {
+    UNUSED(q);
     uint32_t u;
 
     return utf8toutf32(&u, str, n);
@@ -2184,6 +2186,9 @@ static const Unamval_t options[] = {{"debug", AST_LC_debug},
  */
 
 static int setopt(void *a, const void *p, int n, const char *v) {
+    UNUSED(a);
+    UNUSED(v);
+
     if (p) {
         if (n)
             ast.locale.set |= ((Unamval_t *)p)->value;

@@ -68,6 +68,7 @@
 
 char *mcfind(const char *locale, const char *catalog, int category, int nls, char *path,
              size_t size) {
+    UNUSED(nls);
     int c;
     char *s;
     const char *v;

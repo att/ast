@@ -238,6 +238,8 @@ void tstinfo(char *form, ...) {
     tstputmesg(Tstline, form, args);
 
     va_end(args);
+#else
+    UNUSED(form);
 #endif
 }
 

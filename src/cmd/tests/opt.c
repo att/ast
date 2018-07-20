@@ -52,6 +52,8 @@ static Info_t *info;
 
 #if NEW
 static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+    UNUSED(op);
+    UNUSED(dp);
     Info_t *ip;
 
     for (ip = info; ip; ip = ip->next)
@@ -75,6 +77,7 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
 }
 
 static char *translate(const char *locale, const char *id, const char *catalog, const char *msg) {
+    UNUSED(locale);
     int c;
     int i;
     char *s;
@@ -135,6 +138,7 @@ static char *translate(const char *locale, const char *id, const char *catalog, 
 #endif
 
 int main(int argc, char **argv) {
+    UNUSED(argc);
     int n;
     int ext;
     int ostr;

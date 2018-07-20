@@ -31,6 +31,8 @@ ssize_t myread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *disc) { return sfrd(f, 
 Sfdisc_t Disc = {myread, NULL, NULL, NULL};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int fd[2];
 
     if (pipe(fd) < 0) terror("Can't open pipe");

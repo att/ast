@@ -158,8 +158,12 @@ int b_printf(int argc, char *argv[], Shbltin_t *context) {
 }
 
 static_fn int print_infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
+    UNUSED(op);
+    UNUSED(s);
+    UNUSED(dp);
     const struct printmap *pm;
     char c = '%';
+
     for (pm = Pmap; pm->size > 0; pm++) {
         sfprintf(sp, "[+%c(%s)q?Equivalent to %%%s.]", c, pm->name, pm->map);
     }
@@ -667,6 +671,7 @@ static_fn const char *mapformat(Sffmt_t *fe) {
 }
 
 static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
+    UNUSED(sp);
     char *lastchar = "";
     int neg = 0;
     Sfdouble_t d;

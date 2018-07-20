@@ -29,12 +29,18 @@
 static int Putrextend = 0;
 static char Putrbuf[1024 * 1024];
 static int putrextend(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(arg);
+    UNUSED(disc);
+
     if (type == SF_WRITE) Putrextend += 1;
     return 0;
 }
 static Sfdisc_t Putrdisc = {0, 0, 0, putrextend, 0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     int n;
     char *s, *os, *endos;

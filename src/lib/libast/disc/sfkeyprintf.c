@@ -123,6 +123,7 @@ static char *getfield(Field_t *f, int restore) {
  */
 
 static int getfmt(Sfio_t *sp, void *vp, Sffmt_t *dp) {
+    UNUSED(sp);
     Fmt_t *fp = (Fmt_t *)dp;
     Value_t *value = (Value_t *)vp;
     char *v;

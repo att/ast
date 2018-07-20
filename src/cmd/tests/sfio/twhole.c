@@ -30,6 +30,8 @@ static int Count;
 static int Size;
 
 ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(disc);
+
     Count += 1;
     if ((n % Size) != 0) terror("Wrong record size");
     return write(sffileno(f), buf, n);
@@ -38,6 +40,8 @@ ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 Sfdisc_t Disc = {(Sfread_f)0, writef, (Sfseek_f)0, (Sfexcept_f)0, (Sfdisc_t *)0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     char buf[550];
     int i;

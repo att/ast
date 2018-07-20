@@ -22,9 +22,15 @@
 #include "sfio.h"
 #include "terror.h"
 
-int walkf(Sfio_t *f, void *cntp) { return (*((int *)cntp) += 1); }
+int walkf(Sfio_t *f, void *cntp) {
+    UNUSED(f);
+
+    return (*((int *)cntp) += 1);
+}
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     int c, count = 0;
 

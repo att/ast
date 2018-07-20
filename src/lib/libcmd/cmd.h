@@ -64,6 +64,7 @@ extern int CMD_STANDALONE(int, char **, Shbltin_t *);
  */
 
 static int cmdinit(int argc, char **argv, Shbltin_t *context, const char *catalog, int flags) {
+    UNUSED(argc);
     char *cp;
     char *pp;
 

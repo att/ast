@@ -49,6 +49,9 @@ typedef struct _direct_s {
 
 int sfdcdio(Sfio_t *f, size_t bufsize) {
 #ifndef F_DIOINFO
+    UNUSED(f);
+    UNUSED(bufsize);
+
     return -1;
 #else
     int cntl;

@@ -30,6 +30,7 @@
 #include "sfio.h"
 
 int main(int argc, char **argv) {
+    UNUSED(argc);
     char *s;
     char *e;
     unsigned long t;

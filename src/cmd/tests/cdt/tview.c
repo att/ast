@@ -30,12 +30,17 @@ Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL
 static int Count, See[10];
 
 static int visit(Dt_t *dt, void *obj, void *data) {
+    UNUSED(dt);
+    UNUSED(data);
+
     See[(long)obj] = 1;
     Count += 1;
     return 0;
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt1, *dt2, *dt3;
     long i, k;
 

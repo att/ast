@@ -123,6 +123,7 @@ static mode_t histmode;
 static History_t *hist_ptr;
 
 static int sh_checkaudit(History_t *hp, const char *name, char *logbuf, size_t len) {
+    UNUSED(hp);
     char *cp, *last;
     int id1, id2, r = 0, n, fd;
 
@@ -956,6 +957,7 @@ static int hist_exceptf(Sfio_t *fp, int type, void *data, Sfdisc_t *handle)
 static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
 #endif
 {
+    UNUSED(data);
     History_t *hp = (History_t *)handle;
     if (type == SF_WRITE) {
         if (errno == ENOSPC || hp->histwfail++ >= 10) return 0;

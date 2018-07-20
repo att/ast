@@ -31,6 +31,10 @@
 static int Write_error = 0;
 
 static int except(Sfio_t *f, int type, void *obj, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(obj);
+    UNUSED(disc);
+
     if (type == SF_WRITE) Write_error = 1;
     return 0;
 }

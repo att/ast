@@ -49,6 +49,10 @@ add_global_arguments('-Wno-char-subscripts', language: 'c')
 # optimizations are disabled.
 add_global_arguments('-fno-strict-aliasing', language: 'c')
 
+# Some warnings not enabled by default that are useful.
+# TODO: Someday make this -Wall.
+add_global_arguments('-Wunused-parameter', language: 'c')
+
 # Enable malloc debug options for macOS, GNU, FreeBSD, and other
 # implementations. This isn't a replacement for Valgrind or Asan but is useful
 # for detecting problems without incurring the overhead of those tools.

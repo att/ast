@@ -28,6 +28,8 @@
 
 /* to test handling of writing whole lines */
 static ssize_t writef(Sfio_t *f, const void *data, size_t n, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(disc);
     char *dt;
     ssize_t k;
 
@@ -42,6 +44,8 @@ static ssize_t writef(Sfio_t *f, const void *data, size_t n, Sfdisc_t *disc) {
 Sfdisc_t Disc = {0, writef, 0, 0, 0};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char buf[100];
     Sfio_t *fp;
     int i;

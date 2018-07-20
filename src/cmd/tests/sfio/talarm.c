@@ -50,6 +50,10 @@ void alrmhandler(int sig) {
 }
 
 int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+    UNUSED(disc);
+
     if (type == SF_ATEXIT || type == SF_DPOP) return 0;
 
     if (type != SF_READ) terror("Bad Io type %0o", type);
@@ -62,6 +66,8 @@ int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
 Sfdisc_t Disc = {NULL, NULL, NULL, exceptf};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int fd[2];
     ssize_t n;
     char buf[128];

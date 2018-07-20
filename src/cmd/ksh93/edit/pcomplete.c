@@ -200,11 +200,17 @@ static char action(const char *list[], const char *str) {
 }
 
 static int compgen_info(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
+    UNUSED(op);
+    UNUSED(od);
+
     if (strcmp(str, "description") == 0) sfputr(out, complete_desc, -1);
     return 0;
 }
 
 static int complete_info(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
+    UNUSED(op);
+    UNUSED(od);
+
     if (strcmp(str, "description") == 0) {
         sfputr(out, compgen_desc, -1);
     } else {

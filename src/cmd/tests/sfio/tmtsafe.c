@@ -227,6 +227,11 @@ do_inverted: /* get back to here when trying to make things fail */
 
 #else
 
-tmain() { texit(0); }
+tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
+
+    texit(0);
+}
 
 #endif

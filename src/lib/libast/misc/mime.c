@@ -89,7 +89,12 @@ static int lower(int c) { return isupper(c) ? tolower(c) : c; }
  * Ent_t case insensitive comparf
  */
 
-static int order(Dt_t *dt, void *a, void *b, Dtdisc_t *disc) { return strcasecmp(a, b); }
+static int order(Dt_t *dt, void *a, void *b, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
+    return strcasecmp(a, b);
+}
 
 /*
  * Cap_t free
@@ -109,6 +114,8 @@ static void dropcap(Cap_t *cap) {
  */
 
 static void drop(Dt_t *dt, void *object, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
     Ent_t *ent = (Ent_t *)object;
 
     while (ent->cap) {
@@ -289,6 +296,7 @@ int mimeload(Mime_t *mp, const char *file, unsigned long flags) {
  */
 
 static int list(Dt_t *dt, void *object, void *context) {
+    UNUSED(dt);
     Walk_t *wp = (Walk_t *)context;
     Ent_t *ent = (Ent_t *)object;
     Cap_t *cap;

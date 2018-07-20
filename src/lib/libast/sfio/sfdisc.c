@@ -56,6 +56,9 @@ typedef struct _dccache_s {
 } Dccache_t;
 
 static int _dccaexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(val);
+
     if (disc && type == SF_FINAL) free(disc);
     return 0;
 }

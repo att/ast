@@ -27,6 +27,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char buf[128], cmp[128];
     float d;
     int n, decimal, thousand;

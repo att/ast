@@ -75,6 +75,8 @@ static ssize_t moreread(Sfio_t *f, void *buf, size_t n, Sfdisc_t *dp) {
  */
 
 static int ttyquery(Sfio_t *rp, Sfio_t *wp, const char *label, Sfdisc_t *dp) {
+    UNUSED(wp);
+    UNUSED(dp);
     int r;
     int n;
 
@@ -217,6 +219,7 @@ static ssize_t morewrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *dp) {
  */
 
 static int moreexcept(Sfio_t *f, int type, void *data, Sfdisc_t *dp) {
+    UNUSED(data);
     More_t *more = (More_t *)dp;
 
     if (type == SF_FINAL || type == SF_DPOP) {

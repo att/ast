@@ -226,7 +226,13 @@ int path_complete(Shell_t *shp, const char *name, const char *suffix, struct arg
 
 #endif
 
-static_fn int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) { return -1; }
+static_fn int checkfmt(Sfio_t *sp, void *vp, Sffmt_t *fp) {
+    UNUSED(sp);
+    UNUSED(vp);
+    UNUSED(fp);
+
+    return -1;
+}
 
 int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     char *cp;

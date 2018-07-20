@@ -30,6 +30,8 @@ Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL
 Dtdisc_t Rdisc = {0, sizeof(long), -1, newint, NULL, rcompare, hashint, NULL, NULL};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt;
     Dtlink_t *link;
     long x, g, i, k, count[10];

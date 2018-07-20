@@ -33,6 +33,9 @@
 */
 
 static void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     if (addr) {
         if (size == 0) {
             free(addr);

@@ -268,11 +268,15 @@ static_fn void put_optindex(Namval_t *np, const void *val, int flags, Namfun_t *
 }
 
 static_fn Sfdouble_t nget_optindex(Namval_t *np, Namfun_t *fp) {
+    UNUSED(fp);
+
     return ((Sfdouble_t)*np->nvalue.lp);
 }
 
 static_fn Namfun_t *clone_optindex(Namval_t *np, Namval_t *mp, int flags, Namfun_t *fp) {
+    UNUSED(flags);
     Namfun_t *dp = (Namfun_t *)malloc(sizeof(Namfun_t));
+
     memcpy((void *)dp, (void *)fp, sizeof(Namfun_t));
     mp->nvalue.lp = np->nvalue.lp;
     dp->nofree = 0;
@@ -642,6 +646,7 @@ static_fn char *get_lineno(Namval_t *np, Namfun_t *fp) {
 }
 
 static_fn char *get_lastarg(Namval_t *np, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     char *cp;
     int pid;
@@ -654,6 +659,7 @@ static_fn char *get_lastarg(Namval_t *np, Namfun_t *fp) {
 }
 
 static_fn void put_lastarg(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     if (flags & NV_INTEGER) {
         sfprintf(shp->strbuf, "%.*g", 12, *((double *)val));
@@ -723,6 +729,7 @@ static_fn void put_astbin(Namval_t *np, const void *vp, int flags, Namfun_t *fp)
 
 // These two routines are for SH_OPTIONS.
 static_fn void put_options(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
+    UNUSED(flags);
     Shell_t *shp = np->nvshell;
     Namval_t *mp;
     int c, offset = stktell(shp->stk);
@@ -931,6 +938,7 @@ static_fn char *get_match(Namval_t *np, Namfun_t *fp) {
 }
 
 static_fn char *name_match(Namval_t *np, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     int sub = nv_aindex(SH_MATCHNOD);
     sfprintf(shp->strbuf, ".sh.match[%d]", sub);
@@ -952,6 +960,7 @@ static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp
 // if a date stamp in the correct form did not start exactly 10 characters
 // before the end of the string referred to by`e_version`.
 static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
+    UNUSED(np);
     const char *cp = SH_RELEASE;
     int c;
     Sflong_t t = 0;
@@ -986,6 +995,7 @@ static const Namdisc_t OPTIONS_disc = {sizeof(Namfun_t), put_options, get_option
 #define MAX_MATH_ARGS 3
 
 static_fn char *name_math(Namval_t *np, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     sfprintf(shp->strbuf, ".sh.math.%s", np->nvname);
     return (sfstruse(shp->strbuf));
@@ -1015,6 +1025,7 @@ static_fn void math_init(Shell_t *shp) {
 }
 
 static_fn Namval_t *create_math(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+    UNUSED(flag);
     const char *name = vp;
     Shell_t *shp = sh_ptr(np);
     if (!name) return (SH_MATHNOD);
@@ -1027,6 +1038,7 @@ static_fn Namval_t *create_math(Namval_t *np, const void *vp, int flag, Namfun_t
 }
 
 static_fn char *get_math(Namval_t *np, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp, fake;
     char *val;
@@ -1046,6 +1058,7 @@ static_fn char *get_math(Namval_t *np, Namfun_t *fp) {
 }
 
 static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, Namfun_t *fp) {
+    UNUSED(fp);
     Shell_t *shp = sh_ptr(np);
     Namval_t *mp, fake;
     char *name;
@@ -1102,6 +1115,7 @@ static const Namdisc_t LC_disc = {sizeof(Namfun_t), put_lang};
 // This function will get called whenever a configuration parameter changes.
 //
 static_fn int newconf(const char *name, const char *path, const char *value) {
+    UNUSED(path);
     Shell_t *shp = sh_getinterp();
     char *arg;
 
@@ -1618,6 +1632,7 @@ typedef struct Svars {
 } Svars_t;
 
 static_fn Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
+    UNUSED(np);
     struct Svars *sp = (struct Svars *)fp;
     if (!root) {
         sp->current = 0;
@@ -1630,6 +1645,7 @@ static_fn Namval_t *next_svar(Namval_t *np, Dt_t *root, Namfun_t *fp) {
 // This is used to assign values to the attributes of the .sh.sig compound var.
 // Do not use it for any other purpose.
 static_fn Namval_t *create_svar(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
+    UNUSED(flag);
     const char *name = vp;
     Svars_t *sp = (Svars_t *)fp;
     Shell_t *shp = sp->sh;

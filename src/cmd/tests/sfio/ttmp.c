@@ -36,6 +36,8 @@ static Sfdisc_t Disc;
 static char Rec[] = "0";
 
 void count(Sfio_t *f, int type, void *data) {
+    UNUSED(f);
+    UNUSED(type);
     int fd = integralof(data);
 
     if (fd >= 0) Count += 1;
@@ -44,6 +46,8 @@ void count(Sfio_t *f, int type, void *data) {
 #define TEST_BUFSIZE (1024 * 1024)
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
     char *s;
     ssize_t siz;

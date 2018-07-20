@@ -29,10 +29,14 @@
 static int Fd[2];
 
 void alarmhandler(int sig) {
+    UNUSED(sig);
+
     if (write(Fd[1], "01234\n56789\n", 12) != 12) terror("Writing to pipe");
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char *s;
     char buf[1024];
     int n;

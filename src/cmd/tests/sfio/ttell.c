@@ -35,7 +35,12 @@ static ssize_t discwrite(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 }
 
 static Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) {
-    return (Sfoff_t)(-1); /* pretend that stream is unseekable */
+    UNUSED(f);
+    UNUSED(offset);
+    UNUSED(type);
+    UNUSED(disc);
+
+    return (Sfoff_t)(-1);  // pretend that stream is unseekable
 }
 
 Sfdisc_t Disc1 = {discread, discwrite};

@@ -39,6 +39,7 @@
 #define B_SIZE 256
 
 static ssize_t inspect(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
+    UNUSED(disc);
     int w, k;
     char *s;
     Sfio_t *sf;
@@ -62,6 +63,8 @@ static ssize_t inspect(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
 static Sfdisc_t Disc[N_PROC];
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     ssize_t size[N_PROC][N_REC];
     int count[N_PROC];
     char record[N_PROC][128], *s, *file;

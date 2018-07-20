@@ -288,13 +288,16 @@ retry:
 }
 
 static int dos_except(Sfio_t *iop, int type, void *arg, Sfdisc_t *disc) {
+    UNUSED(iop);
+    UNUSED(arg);
+
     Dosdisc_t *dp = (Dosdisc_t *)disc;
     if (type == SF_DPOP || type == SF_FINAL) {
         if (dp->bsize > 0) free(dp->buff);
         if (dp->mapsize) free(dp->maptable);
         free(disc);
     }
-    return (0);
+    return 0;
 }
 
 int sfdcdos(Sfio_t *f) {

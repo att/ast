@@ -28,6 +28,8 @@
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, NULL, NULL};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt;
     long i, k;
 

@@ -304,6 +304,8 @@ static Proc_t *runcmd(char **argv, int slave, int session) {
 // Default master dance.
 //
 static int process(Sfio_t *mp, Sfio_t *lp, int delay, int timeout) {
+    UNUSED(lp);
+    UNUSED(delay);
     int i;
     int n;
     int t;

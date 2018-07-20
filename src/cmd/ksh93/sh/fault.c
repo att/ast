@@ -113,6 +113,10 @@ void dump_backtrace(int max_frames, int skip_levels) {
 // help ensure we get some useful info when the shell dies due to dereferencing
 // an invalid address.
 void handle_sigsegv(int signo, siginfo_t *info, void *context) {
+    UNUSED(signo);
+    UNUSED(info);
+    UNUSED(context);
+
     dump_backtrace(100, 0);
     abort();
 }
@@ -149,6 +153,7 @@ void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info) {
 // Most signals caught or ignored by the shell come here.
 //
 void sh_fault(int sig, siginfo_t *info, void *context) {
+    UNUSED(context);
     int saved_errno = errno;  // many platforms do not save/restore errno for signal handlers
     Shell_t *shp = sh_getinterp();
     int flag = 0;

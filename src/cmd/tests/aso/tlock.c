@@ -135,6 +135,8 @@ static void workload(int pnum) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     ssize_t k;
     pid_t pid;
 

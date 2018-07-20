@@ -26,6 +26,8 @@
 
 static char *Mystr = "abc";
 int myprint(Sfio_t *f, void *v, Sffmt_t *fe) {
+    UNUSED(f);
+
     switch (fe->fmt) {
         case 's':
             *((char **)v) = Mystr;
@@ -37,6 +39,8 @@ int myprint(Sfio_t *f, void *v, Sffmt_t *fe) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char buf1[1024], buf2[1024];
     Sffmt_t fe;
 

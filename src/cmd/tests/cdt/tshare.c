@@ -31,6 +31,9 @@ static int Close = 0;
 static int Free = 0;
 
 static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     if (type == DT_OPEN) { /* opening first dictionary */
         if (obj) {
             if (Current == &Space[0])
@@ -52,6 +55,9 @@ static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
 }
 
 static void *memory(Dt_t *dt, void *buf, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     if (!buf) {
         size = ((size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
         buf = (void *)Current;
@@ -65,6 +71,8 @@ static void *memory(Dt_t *dt, void *buf, size_t size, Dtdisc_t *disc) {
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, memory, event};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt1, *dt2;
     long i, k;
 

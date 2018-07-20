@@ -402,8 +402,10 @@ Dt_t *sh_subfuntree(Shell_t *shp, int create) {
 }
 
 static_fn void subshell_table_unset(Dt_t *root, int fun) {
+    UNUSED(fun);
     Namval_t *np, *nq;
     int flag;
+
     for (np = (Namval_t *)dtfirst(root); np; np = nq) {
         nq = (Namval_t *)dtnext(root, np);
         flag = 0;

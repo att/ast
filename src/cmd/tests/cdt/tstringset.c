@@ -45,6 +45,8 @@ static char Key[N_OBJ][8]; /* max 7-digit numbers */
 static char *Pat = "%07d";
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int i, k;
     Dt_t *dt;
     Dtdisc_t disc;

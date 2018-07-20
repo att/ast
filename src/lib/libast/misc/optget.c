@@ -288,7 +288,11 @@ static Msg_t C_LC_MESSAGES_libast[] = {
 
 Opt_t _opt_info_ = {0, 0, 0, 0, 0, 0, 0, {0}, {0}, 0, 0, 0, {0}, {0}, &state};
 Opt_t *_opt_infop_ = &_opt_info_;
-Optstate_t *optstate(Opt_t *p) { return &state; }
+Optstate_t *optstate(Opt_t *p) {
+    UNUSED(p);
+
+    return &state;
+}
 
 #if DEBUG || _BLD_DEBUG
 

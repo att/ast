@@ -42,6 +42,9 @@
 static_fn void assign(Namval_t *, const void *, int, Namfun_t *);
 
 int nv_compare(Dt_t *dict, void *sp, void *dp, Dtdisc_t *disc) {
+    UNUSED(dict);
+    UNUSED(disc);
+
     if (sp == dp) return 0;
     return strcmp((char *)sp, (char *)dp);
 }
@@ -859,14 +862,19 @@ int nv_clone(Namval_t *np, Namval_t *mp, int flags) {
 // The following discipline is for copy-on-write semantics.
 //
 static_fn char *clone_getv(Namval_t *np, Namfun_t *handle) {
+    UNUSED(handle);
+
     return np->nvalue.np ? nv_getval(np->nvalue.np) : 0;
 }
 
 static_fn Sfdouble_t clone_getn(Namval_t *np, Namfun_t *handle) {
+    UNUSED(handle);
+
     return np->nvalue.np ? nv_getnum(np->nvalue.np) : 0;
 }
 
 static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *handle) {
+    UNUSED(handle);
     Shell_t *shp = sh_ptr(np);
     Namfun_t *dp = nv_stack(np, (Namfun_t *)0);
     Namval_t *mp = np->nvalue.np;

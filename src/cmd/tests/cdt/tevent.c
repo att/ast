@@ -31,6 +31,9 @@ static int Event[8];
 static int Index;
 
 static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     if (Index >= sizeof(Event) / sizeof(Event[0])) Index = 0;
     Event[Index++] = type;
 
@@ -58,6 +61,9 @@ static int chkevent(int type) {
 }
 
 static void *memory(Dt_t *dt, void *obj, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     if (!obj)
         return malloc(size);
     else {
@@ -69,6 +75,8 @@ static void *memory(Dt_t *dt, void *obj, size_t size, Dtdisc_t *disc) {
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, memory, event};
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Dt_t *dt;
 
     chkevent(-1);

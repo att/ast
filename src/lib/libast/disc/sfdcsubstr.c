@@ -121,6 +121,9 @@ static Sfoff_t streamseek(Sfio_t *f, Sfoff_t pos, int type, Sfdisc_t *disc) {
 }
 
 static int streamexcept(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
+    UNUSED(f);
+    UNUSED(data);
+
     if (type == SF_FINAL || type == SF_DPOP) free(disc);
     return 0;
 }

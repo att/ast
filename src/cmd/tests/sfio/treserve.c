@@ -26,6 +26,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int i, n, k;
     Sfoff_t o;
     char buf[1024], *s;

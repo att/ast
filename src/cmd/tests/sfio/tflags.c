@@ -25,6 +25,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *f;
 
     if (!(f = sfopen(NULL, "ab", "sr"))) terror("Can't open stream");

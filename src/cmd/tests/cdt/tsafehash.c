@@ -89,6 +89,7 @@ static State_t *State; /* insert/delete states		*/
 
 /* memory allocator for shared dictionary - no freeing here */
 static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
     int k;
     Disc_t *dc = (Disc_t *)disc;
 
@@ -113,6 +114,7 @@ static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
 }
 
 static void sigchild(int sig) {
+    UNUSED(sig);
     pid_t pid;
     int status;
     char *st, buf[128];
@@ -194,6 +196,7 @@ static void workload(Dt_t *dt, Proc_t *proc, int p) {
 }
 
 tmain() {
+    UNUSED(argc);
     ssize_t k, z, objn;
     Dt_t *dt;
     pid_t pid[N_PROC];

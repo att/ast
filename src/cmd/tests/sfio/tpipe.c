@@ -30,9 +30,15 @@ static int line;
 
 #define SYNC line = __LINE__;
 
-void alrmf(int sig) { terror("blocked at line %d", line); }
+void alrmf(int sig) {
+    UNUSED(sig);
+
+    terror("blocked at line %d", line);
+}
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     int fd[2];
     Sfio_t *fr, *fw;
     char *s;

@@ -23,6 +23,8 @@
 #include "terror.h"
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     char *s = "1234567890\n";
     Sfoff_t n, i;
     Sfio_t *f;

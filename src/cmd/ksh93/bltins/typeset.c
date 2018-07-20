@@ -915,6 +915,7 @@ int sh_addlib(Shell_t *shp, void *dll, char *name, Pathcomp_t *pp) {
 }
 
 Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
+    UNUSED(shp);
     int n;
 
     for (n = 0; n < nlib; n++) {

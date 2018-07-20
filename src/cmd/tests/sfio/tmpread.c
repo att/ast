@@ -33,6 +33,8 @@
 #define ITER 1024
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     Sfio_t *fr;
     int p[2];
     char wbuf[1023], rbuf[RBUF * 1023], *s;

@@ -50,14 +50,27 @@ static Dt_t *Dict[2];
 static int Nthreads;
 
 /* allocate data from the shared memory region */
-void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) { return realloc(data, size); }
+void *mymemory(Dt_t *dt, void *data, size_t size, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
+    return realloc(data, size);
+}
 
 /* compare two objects by their integer keys */
 static int mycompare(Dt_t *dt, void *key1, void *key2, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
     return *((int *)key1) - *((int *)key2);
 }
 
-unsigned int myhash(Dt_t *dt, void *key, Dtdisc_t *disc) { return *((unsigned *)key); }
+unsigned int myhash(Dt_t *dt, void *key, Dtdisc_t *disc) {
+    UNUSED(dt);
+    UNUSED(disc);
+
+    return *((unsigned *)key);
+}
 
 /* open a shared dictionary */
 static Dt_t *opendictionary(Mydisc_t *dc) {
@@ -119,6 +132,8 @@ static void *volley(void *arg) {
 }
 
 tmain() {
+    UNUSED(argc);
+    UNUSED(argv);
     pthread_t thread[N_THREADS];
     size_t k, p, n;
     Mydisc_t disc[2];

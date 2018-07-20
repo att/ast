@@ -168,6 +168,8 @@ void *dllnext(int flags) {
 #endif
 
 #ifdef RTLD_NEXT
+    UNUSED(flags);
+
     dll = RTLD_NEXT;
 #else
     path = next;
