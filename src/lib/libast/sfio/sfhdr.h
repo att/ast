@@ -203,14 +203,14 @@
 #undef SF_MTSAFE /* no need to worry about thread-safety */
 #define SF_MTSAFE 0
 
-#define SFONCE() /*(0)*/
+#define SFONCE() do { } while(0)
 
-#define SFMTXLOCK(f)   /*(0)*/
-#define SFMTXUNLOCK(f) /*(0)*/
+#define SFMTXLOCK(f) do { } while(0)
+#define SFMTXUNLOCK(f) do { } while(0)
 
-#define SFMTXDECL(ff)     /*(0)*/
-#define SFMTXBEGIN(ff, v) /*(0)*/
-#define SFMTXEND(ff)      /*(0)*/
+#define SFMTXDECL(ff) do { } while(0)
+#define SFMTXBEGIN(ff, v) do { } while(0)
+#define SFMTXEND(ff) do { } while(0)
 #define SFMTXENTER(ff, v)      \
     {                          \
         if (!(ff)) return (v); \
@@ -218,9 +218,9 @@
 #define SFMTXRETURN(ff, v) \
     { return (v); }
 
-#define SFMTXDECL2(ff)     /*(0)*/
-#define SFMTXBEGIN2(ff, v) /*(0)*/
-#define SFMTXEND2(ff)      /*(0)*/
+#define SFMTXDECL2(ff) do { } while(0)
+#define SFMTXBEGIN2(ff, v) do { } while(0)
+#define SFMTXEND2(ff) do { } while(0)
 
 #define POOLMTXLOCK(p)
 #define POOLMTXUNLOCK(p)

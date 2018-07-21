@@ -53,6 +53,7 @@ add_global_arguments('-fno-strict-aliasing', language: 'c')
 # TODO: Someday make this -Wall.
 add_global_arguments('-Wunused-parameter', language: 'c')
 add_global_arguments('-Wmissing-field-initializers', language: 'c')
+add_global_arguments('-Wempty-body', language: 'c')
 
 # Enable malloc debug options for macOS, GNU, FreeBSD, and other
 # implementations. This isn't a replacement for Valgrind or Asan but is useful
