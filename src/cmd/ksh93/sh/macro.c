@@ -388,8 +388,8 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
                     }
                     case S_EOF: {
                         if ((c = fcfill()) > 0) goto again;
-                        // FALL THRU
                     }
+                    // FALLTHRU
                     default:
                     regular : {
                         sfputc(outfile, '$');
@@ -457,8 +457,9 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     case -1:  // illegal multi-byte char
                     case 0: {
                         len = 1;
-                        // Is this supposed to fall thru?
                     }
+                    // TODO: Is this supposed to fall thru?
+                    // FALLTHRU
                     case 1: {
                         n = state[*(unsigned char *)cp++];
                         break;
@@ -616,6 +617,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     continue;
                 }
             }
+            // FALLTHRU
             case S_EOF: {
                 if (c) {
                     if (mp->split && !mp->quote && !mp->lit && endch) {
@@ -639,6 +641,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
             case S_QUOTE: {
                 if (mp->lit || mp->arith) break;
             }
+            // FALLTHRU
             case S_LIT: {
                 if (mp->arith) {
                     if ((*cp == '`' || *cp == '[') && cp[1] == '\'') cp += 2;
@@ -698,6 +701,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                     break;
                 }
             }
+            // FALLTHRU
             case S_PAT: {
                 if (mp->pattern && !(mp->quote || mp->lit)) {
                     mp->patfound = mp->pattern;
@@ -1057,8 +1061,8 @@ retry1:
             // This code handles ${#}.
             c = mode;
             mode = type = 0;
-            // FALL THRU
         }
+        // FALLTHRU
         case S_SPC1: {
             if (type == M_BRACE) {
                 if (isaletter(mode = fcpeek(0)) || mode == '.') {
@@ -1083,8 +1087,8 @@ retry1:
                 }
 #endif
             }
-            // FALL THRU
         }
+        // FALLTHRU
         case S_SPC2: {
             if (type == M_BRACE && c == '$' && isalnum(mode = fcpeek(0))) {
                 type = M_EVAL;

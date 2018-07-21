@@ -889,6 +889,7 @@ int b_pty(int argc, char **argv, Shbltin_t *context) {
             case 'l': {
                 log = opt_info.arg;
             }
+            // FALLTHRU
             case 'm': {
                 messages = opt_info.arg;
                 continue;

@@ -153,11 +153,13 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                         break;
                     case 'u':
                         u = 1;
+                    // FALLTHRU
                     case 'w':
                         t = s + 4;
                         goto wex;
                     case 'U':
                         u = 1;
+                    // FALLTHRU
                     case 'W':
                         t = s + 8;
                     wex:

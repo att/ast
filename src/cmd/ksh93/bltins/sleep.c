@@ -94,16 +94,16 @@ int b_sleep(int argc, char *argv[], Shbltin_t *context) {
                     switch (*last) {
                         case 'd': {
                             d *= 24;
-                            // FALL THRU
                         }
+                        // FALLTHRU
                         case 'h': {
                             d *= 60;
-                            // FALL THRU
                         }
+                        // FALLTHRU
                         case 'm': {
                             d *= 60;
-                            // FALL THRU
                         }
+                        // FALLTHRU
                         case 's': {
                             goto skip;
                         }

@@ -179,11 +179,13 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                 if (isdigit(*form)) {
                     fmt = *form++;
                     goto dot_size;
-                } else if (*form != '*')
+                } else if (*form != '*') {
                     goto loop_flags;
-                else
-                    form += 1; /* drop thru below */
+                } else {
+                    form += 1;
+                }
 
+            // FALLTHRU
             case '*':
                 form = sffmtint(form, &n);
                 if (*form == '$') {

@@ -436,8 +436,8 @@ int sh_lex(Lex_t *lp) {
                 if (c < 0) return (lp->token = EOFSYM);
                 n = S_NLTOK;
                 shp->inlineno--;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_NLTOK: {
                 // Check for here-document.
                 if (lp->heredoc) {
@@ -454,8 +454,8 @@ int sh_lex(Lex_t *lp) {
                 }
                 lp->lex.reservok = !lp->lex.intest;
                 lp->lex.skipword = 0;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_NL: {
                 // Skip over new-lines.
                 lp->lex.last_quote = 0;
@@ -468,8 +468,8 @@ int sh_lex(Lex_t *lp) {
                     lp->token = '\n';
                     return lp->token;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case S_BLNK: {
                 if (lp->lex.incase <= TEST_RE) continue;
                 // Implicit RPAREN for =~ test operator.
@@ -620,8 +620,8 @@ int sh_lex(Lex_t *lp) {
             }
             case S_NAME: {
                 if (!lp->lex.skipword) lp->lex.reservok *= 2;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_TILDE: {
                 if (c == '~' && mode == ST_NESTED) {
                     if (endchar(lp) == RBRACE) {
@@ -631,6 +631,7 @@ int sh_lex(Lex_t *lp) {
                     continue;
                 }
             }
+            // FALLTHRU
             case S_RES: {
                 if (!lp->lexd.dolparen) {
                     lp->lexd.first = fcseek(0) - LEN;
@@ -734,8 +735,8 @@ int sh_lex(Lex_t *lp) {
                 }
                 wordflags |= (ARG_MAC | ARG_EXP);
                 if (mode == ST_QUOTE) ingrave = !ingrave;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_QUOTE: {
                 if (oldmode(lp) == ST_NONE && lp->lexd.arith) {  // in ((...))
                     if (n != S_GRAVE || fcpeek(0) == '\'') continue;
@@ -829,12 +830,12 @@ int sh_lex(Lex_t *lp) {
                     setchar(lp, c);
                     continue;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case S_ALP: {
                 if (c == '.' && endchar(lp) == '$') goto err;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_SPC2: {
 #if SHOPT_BASH
                 if (c == '=' && (lp->lexd.warn || !sh_isoption(shp, SH_BASH))) {
@@ -842,8 +843,8 @@ int sh_lex(Lex_t *lp) {
                     sh_syntax(lp);
                 }
 #endif
-                // FALL THRU
             }
+            // FALLTHRU
             case S_DIG: {
                 wordflags |= ARG_MAC;
                 switch (endchar(lp)) {
@@ -859,12 +860,12 @@ int sh_lex(Lex_t *lp) {
                     case '@':
                     case '!': {
                         if (n != S_ALP && n != S_DIG) goto dolerr;
-                        // FALL THRU
                     }
+                    // FALLTHRU
                     case '#': {
                         if (c == '#') n = S_ALP;
-                        // FALL THRU
                     }
+                    // FALLTHRU
                     case RBRACE: {
                         if (n == S_ALP) {
                             setchar(lp, RBRACE);
@@ -917,8 +918,8 @@ int sh_lex(Lex_t *lp) {
                         continue;
                     }
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case S_MOD2: {
                 if (lp->kiafile) refvar(lp, 1);
                 // Correctly handle issue #475 cases by placing the lexer in
@@ -1073,8 +1074,8 @@ int sh_lex(Lex_t *lp) {
                     fcseek(-LEN);
                     if (c == '(') lp->typed = assignment = 1;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case S_COLON: {
                 if (assignment) {
                     c = fcgetc();
@@ -1161,8 +1162,8 @@ int sh_lex(Lex_t *lp) {
             }
             case S_PAT: {
                 wordflags |= ARG_EXP;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_EPAT: {
             epat:
                 n = fcgetc();
@@ -1321,8 +1322,8 @@ breakloop:
             case TEST_SEQ: {
                 if (lp->lexd.warn && state[1] == 0)
                     errormsg(SH_DICT, ERROR_warn(0), e_lexobsolete3, shp->inlineno);
-                // FALL THRU
             }
+            // FALLTHRU
             default: {
                 if (lp->lex.testop2) {
                     if (lp->lexd.warn && (c & TEST_ARITH)) {
@@ -1339,6 +1340,7 @@ breakloop:
                     return lp->token;
                 }
             }
+            // FALLTHRU
             case TEST_OR:
             case TEST_AND:
             case 0: {
@@ -1535,8 +1537,8 @@ static_fn int comsub(Lex_t *lp, int endtok) {
                     } while (!sh_lexstates[ST_BEGIN][c]);
                     if (c == RBRACE && endtok == LBRACE) goto rbrace;
                     if (c > 0) fcseek(-LEN);
-                    // FALL THRU
                 }
+                // FALLTHRU
                 default: { lp->lex.reservok = 1; }
             }
         }

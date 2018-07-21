@@ -100,6 +100,7 @@ int b_hist(int argc, char *argv[], Shbltin_t *context) {
                     break;
                 }
             }
+            // FALLTHRU
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
                 break;

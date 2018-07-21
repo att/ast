@@ -231,6 +231,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                 if (!isdigit(*(cp + 1))) goto string_event;
                 cp++;
             }
+            // FALLTHRU
             case '0':  // reference by number
             case '1':
             case '2':
@@ -256,6 +257,7 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                 cp++;
                 flag |= HIST_QUESTION;
             }
+            // FALLTHRU
             string_event:
             default: {
                 // Read until end of string or word designator/modifier.
@@ -344,8 +346,9 @@ int hist_expand(Shell_t *shp, const char *ln, char **xp) {
                         goto skip;
                     }
                 }
-                default:
-                skip2 : {
+                // FALLTHRU
+                default: {
+                skip2:
                     cp--;
                     n = 2;
                     break;

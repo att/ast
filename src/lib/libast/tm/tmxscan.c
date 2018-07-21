@@ -343,6 +343,7 @@ again:
                         u = 0;
                     }
                     if (d == 'q') continue;
+                // FALLTHRU
                 case 'z':
                     zp = tmzone(s, &u, u, &m);
                     if (zp) {

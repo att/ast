@@ -164,8 +164,8 @@ static char *find_begin(char outbuff[], char *last, int endchar, int *type) {
             }
             case '~': {
                 if (*cp == '(') break;
-                // FALL THRU
             }
+            // FALLTHRU
             default: {
                 if (c && c == endchar) return xp;
                 if (!inquote && ismeta(c)) {

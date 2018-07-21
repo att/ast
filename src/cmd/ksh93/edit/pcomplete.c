@@ -599,8 +599,8 @@ int b_complete(int argc, char *argv[], Shbltin_t *context) {
                              opt_info.arg);
                     __builtin_unreachable();
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case 'a':
             case 'b':
             case 'c':

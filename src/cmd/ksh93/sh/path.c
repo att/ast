@@ -1127,6 +1127,7 @@ retry:
             exscript(shp, path, argv, envp);
             // TODO: is this supposed to FALL THRU or it is unreachable?
         }
+        // FALLTHRU
         case EACCES: {
             struct stat statb;
             if (stat(path, &statb) >= 0) {
@@ -1159,6 +1160,7 @@ retry:
                 return pid;
             }
         }
+        // FALLTHRU
         default: { errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path); }
     }
     return 0;

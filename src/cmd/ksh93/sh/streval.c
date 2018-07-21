@@ -335,8 +335,9 @@ Sfdouble_t arith_exec(Arith_t *ep) {
             }
             case A_ASSIGNOP1: {
                 node.emode |= ARITH_ASSIGNOP;
-                // TODO: Determine if this should be FALL THRU.
             }
+            // TODO: Determine if this should be FALLTHRU.
+            // FALLTHRU
             case A_PUSHV: {
                 cp = roundptr(ep, cp, Sfdouble_t *);
                 dp = *((Sfdouble_t **)cp);
@@ -378,8 +379,9 @@ Sfdouble_t arith_exec(Arith_t *ep) {
             }
             case A_ASSIGNOP: {
                 node.nosub = lastsub;
-                // TODO: Determine if this should be FALL THRU.
             }
+            // TODO: Determine if this should be FALLTHRU.
+            // FALLTHRU
             case A_STORE: {
                 cp = roundptr(ep, cp, Sfdouble_t *);
                 dp = *((Sfdouble_t **)cp);
@@ -687,8 +689,8 @@ static_fn int gettok(vars_t *vp) {
                 } else {
                     op = A_REG;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case A_DIG:
             case A_REG:
             case A_LIT: {
@@ -710,13 +712,13 @@ static_fn int gettok(vars_t *vp) {
                     op -= 2;
                     break;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case A_NOT:
             case A_COLON: {
                 c = '=';
-                // FALL THRU
             }
+            // FALLTHRU
             case A_ASSIGN:
             case A_TIMES:
             case A_PLUS:
@@ -774,8 +776,8 @@ again:
         case A_PLUSPLUS: {
             c = A_LVALUE;
             op = A_INCR | T_NOFLOAT;
-            // FALL THRU
         }
+        // FALLTHRU
         case A_TILDE: {
             op |= T_NOFLOAT;
         common:
@@ -899,6 +901,7 @@ again:
                 wasop = 0;
                 op |= T_NOFLOAT;
             }
+            // FALLTHRU
             case A_ASSIGN: {
                 if (!lvalue.value) ERROR(vp, e_notlvalue);
                 if (op == A_ASSIGN) {
@@ -962,7 +965,7 @@ again:
             case A_RSHIFT:
             case A_MOD:
                 op |= T_NOFLOAT;
-                // FALL THRU
+            // FALLTHRU
             case A_PLUS:
             case A_MINUS:
             case A_TIMES:

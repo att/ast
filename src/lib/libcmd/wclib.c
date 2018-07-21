@@ -138,6 +138,9 @@ static int chkstate(int state, unsigned int c) {
             break;
         case 8:
             return iswspace(c) ? 10 : 0;
+            break;
+        default:
+            ;  // EMPTY BLOCK
     }
     return state;
 }

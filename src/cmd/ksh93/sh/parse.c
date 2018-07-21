@@ -483,16 +483,16 @@ static_fn Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
     switch (lexp->token) {
         case COOPSYM: {  // set up a cooperating process
             type |= (FPIN | FPOU | FPCL | FCOOP);
-            // FALL THRU
         }
+        // FALLTHRU
         case '&': {
             if (left) {
                 // (...)& -> {...;} &
                 if (left->tre.tretyp == TPAR) left = left->par.partre;
                 left = makeparent(lexp, TFORK | type, left);
             }
-            // FALL THRU
         }
+        // FALLTHRU
         case ';': {
             if (!left) sh_syntax(lexp);
             right = sh_cmd(lexp, sym, flag | SH_EMPTY);
@@ -504,6 +504,7 @@ static_fn Shnode_t *sh_cmd(Lex_t *lexp, int sym, int flag) {
         case EOFSYM: {
             if (sym == NL) break;
         }
+        // FALLTHRU
         default: {
             if (sym && sym != lexp->token) {
                 if (sym != ELSESYM || (lexp->token != ELIFSYM && lexp->token != FISYM)) {
@@ -1265,15 +1266,17 @@ static_fn Shnode_t *item(Lex_t *lexp, int flag) {
         }
 #endif  // SHOPT_COSHELL
         default: {
-            if (io == 0) return 0;
+            if (io == 0) return NULL;
         }
+        // FALLTHRU
         case ';': {
             if (io == 0) {
-                if (!(flag & SH_SEMI)) return (0);
+                if (!(flag & SH_SEMI)) return NULL;
                 if (sh_lex(lexp) == ';') sh_syntax(lexp);
                 showme = FSHOWME;
             }
         }
+        // FALLTHRU
         case 0: {  // simple command
             t = (Shnode_t *)simple(lexp, flag, io);
             if (t->com.comarg && lexp->intypeset) check_typedef(lexp, &t->com);

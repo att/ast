@@ -434,8 +434,8 @@ static_fn void out_pattern(Sfio_t *iop, const char *cp, int n) {
             }
             case '\\': {
                 if (!(c = *++cp)) c = '\\';
-                // FALL THRU
             }
+            // FALLTHRU
             case ' ':
             case '<':
             case '>':
@@ -1468,6 +1468,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     break;
                 }
             }
+            // FALLTHRU
             case TFORK: {
                 pid_t parent;
                 int no_fork, jobid;
@@ -1711,6 +1712,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     sh_done(shp, 0);
                 }
             }
+            // FALLTHRU
             case TSETIO: {
                 // Don't create a new process, just save and restore io-streams.
                 pid_t pid;

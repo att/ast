@@ -87,20 +87,30 @@ int sfputwc(Sfio_t *f, int w) {
         switch (n) {
             case 8:
                 *s++ = *b++;
+            // FALLTHRU
             case 7:
                 *s++ = *b++;
+            // FALLTHRU
             case 6:
                 *s++ = *b++;
+            // FALLTHRU
             case 5:
                 *s++ = *b++;
+            // FALLTHRU
             case 4:
                 *s++ = *b++;
+            // FALLTHRU
             case 3:
                 *s++ = *b++;
+            // FALLTHRU
             case 2:
                 *s++ = *b++;
+            // FALLTHRU
             case 1:
                 *s++ = *b++;
+            // FALLTHRU
+            default:
+                ;  // EMPTY BLOCK
         }
         f->next = s;
     }

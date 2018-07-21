@@ -309,6 +309,7 @@ int b_read(int argc, char *argv[], Shbltin_t *context) {
                     break;
                 }
             }
+            // FALLTHRU
             case 'v': {
                 flags |= V_FLAG;
                 break;
@@ -713,8 +714,8 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             }
             case S_ERR: {
                 cp++;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_EOF: {
                 // Check for end of buffer.
                 if (val && *val) {
@@ -767,8 +768,8 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                     }
                 }
                 if (c != S_DELIM) break;
-                // FALL THRU
             }
+            // FALLTHRU
             case S_DELIM: {
                 if (!del) del = cp - 1;
                 if (name) {
@@ -778,8 +779,8 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                     }
                     break;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case 0: {
                 if (val == 0 || was_escape) {
                     val = (char *)(cp - 1);

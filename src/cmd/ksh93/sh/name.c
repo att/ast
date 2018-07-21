@@ -723,13 +723,14 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     sp = (char *)name + c;
                     c = '.';
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             case '+':
             case '=': {
             skip:
                 *sp = 0;
             }
+            // FALLTHRU
             case 0: {
                 isref = 0;
                 dp->last = cp;
@@ -1071,8 +1072,8 @@ Namval_t *nv_create(const char *name, Dt_t *root, int flags, Namfun_t *dp) {
                     cp = (char *)name + c + 1;
                     break;
                 }
-                // FALL THRU
             }
+            // FALLTHRU
             default: {
                 shp->oldnp = np ? nq : qp;
                 qp = 0;

@@ -369,8 +369,8 @@ char *sh_fmtstr(const char *string, int quote) {
                 case '"':
                 case '\'': {
                     if (c == quote) break;
-                    // FALL THRU
                 }
+                // FALLTHRU
                 default: {
                     if (c < 0) {
                         c = *((unsigned char *)op);

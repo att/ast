@@ -586,6 +586,7 @@ static int cntlmode(Vi_t *vp) {
                     case BAD: {  // no match
                         ed_ringbell();
                     }
+                    // FALLTHRU
                     default: {
                         if (vp->u_column == INVALID) {
                             del_line(vp, BAD);
@@ -683,7 +684,8 @@ static int cntlmode(Vi_t *vp) {
             case 'v': {
                 if (vp->repeat_set == 0) goto vcommand;
             }
-#endif                   // KSHELL
+#endif  // KSHELL
+            // FALLTHRU
             case 'G': {  // goto command repeat
                 if (vp->repeat_set == 0) vp->repeat = histmin + 1;
                 if (vp->repeat <= histmin || vp->repeat > histmax) {
@@ -704,6 +706,7 @@ static int cntlmode(Vi_t *vp) {
                 }
 #endif /* KSHELL */
             }
+            // FALLTHRU
             case '#': {  // insert(delete) # to (no)comment command
                 if (cur_virt != INVALID) {
                     genchar *p = &virtual[last_virt + 1];
@@ -731,10 +734,11 @@ static int cntlmode(Vi_t *vp) {
                     refresh(vp, INPUT);
                 }
             }
+            // FALLTHRU
             case '\n': {  // send to shell
                 if (!vp->ed->hlist) return (ENTER);
-                // FALL THRU
             }
+            // FALLTHRU
             case '\t': {  // bring choice to edit
                 if (vp->ed->hlist) {
                     if (vp->repeat > vp->ed->nhlist - vp->ed->hoff) goto ringbell;
@@ -756,6 +760,7 @@ static int cntlmode(Vi_t *vp) {
                     }
                 }
             }
+            // FALLTHRU
             default: {
             ringbell:
                 ed_ringbell();
@@ -1109,8 +1114,8 @@ static void vigetline(Vi_t *vp, int mode) {
             case UEOF: {  // eof char
                 if (cur_virt != INVALID) continue;
                 vp->addnl = 0;
-                // FALL THRU
             }
+            // FALLTHRU
             case '\n': {  // newline or return
                 if (mode != SEARCH) save_last(vp);
                 refresh(vp, INPUT);
@@ -1136,8 +1141,8 @@ static void vigetline(Vi_t *vp, int mode) {
                     vp->ed->e_tabcount = 0;
                 } else
                     vp->ed->e_tabcount = 1;
-                // FALL THRU
             }
+            // FALLTHRU
             default: {
                 if (mode == REPLACE) {
                     if (cur_virt < last_virt) {
@@ -1183,8 +1188,8 @@ static int mvcursor(Vi_t *vp, int motion) {
         case '|': {
             tcur_virt = vp->repeat - 1;
             if (tcur_virt <= last_virt) break;
-            // FALL THRU
         }
+        // FALLTHRU
         case '$': {  // end of line
             tcur_virt = last_virt;
             break;
@@ -1293,8 +1298,8 @@ static int mvcursor(Vi_t *vp, int motion) {
         case 'f': {  // find new char forward
             bound = last_virt;
             incr = 1;
-            // FALL THRU
         }
+        // FALLTHRU
         case 'T':    // find up to new char backward
         case 'F': {  // find new char backward
             vp->last_find = motion;
@@ -1802,12 +1807,13 @@ addin:
         case '\t': {
             if (vp->ed->e_tabcount != 1) return (BAD);
             c = '=';
-            // FALL THRU
         }
+        // FALLTHRU
         case '*':     // do file name expansion in place
         case '\\': {  // do file name completion in place
-            if (cur_virt == INVALID) return (BAD);
+            if (cur_virt == INVALID) return BAD;
         }
+        // FALLTHRU
         case '=': {  // list file name expansions
             save_v(vp);
             i = last_virt;
@@ -1880,6 +1886,7 @@ addin:
             cur_virt = last_virt;
             sync_cursor(vp);
         }
+        // FALLTHRU
         case 'a': {  // append
             if (fold(mode) == 'A') {
                 c = 'p';
@@ -1897,6 +1904,7 @@ addin:
             cur_virt = first_virt;
             sync_cursor(vp);
         }
+        // FALLTHRU
         case 'i': {  // insert
             if (fold(mode) == 'I') {
                 c = 'P';
@@ -1963,6 +1971,7 @@ addin:
                 --cur_virt;
             }
         }
+        // FALLTHRU
         case 'p': {  // print
             if (p[0] == '\0') return BAD;
 

@@ -49,6 +49,7 @@ tmain() {
     switch (fork()) {
         case -1:
             terror("fork() failed");
+            break;
         case 0:
             for (i = 0; i < RBUF * ITER; ++i)
                 if (write(p[1], wbuf, sizeof(wbuf)) != sizeof(wbuf))

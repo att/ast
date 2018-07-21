@@ -516,8 +516,8 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                     if (pp == (ep->e_prompt + 2)) {  // quote char
                         myquote = *(pp - 1);
                     }
-                    // FALL THRU
                 }
+                // FALLTHRU
                 case '\n': {  // start again
                     ep->e_crlf = 1;
                     qlen = 1;

@@ -259,6 +259,7 @@ int b_print(int argc, char *argv[], Shbltin_t *context) {
                 fmttype = "json";
                 // TODO: Should this FALL THRU?
             }
+            // FALLTHRU
             case 'v': {
                 if (argc < 0) {
                     vname = nv_open(opt_info.arg, shp->var_tree, NV_VARNAME | NV_NOARRAY);
@@ -711,8 +712,8 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             }
             case 'q': {
                 format = 's';
-                // FALL THRU
             }
+            // FALLTHRU
             case 's':
             case 'H':
             case 'B':
@@ -813,6 +814,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                     }
                 }
             }
+            // FALLTHRU
             case 'b':
             case 's':
             case 'B':
@@ -852,12 +854,14 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
             case 'U': {
                 longmax = LDBL_ULLONG_MAX;
             }
+            // FALLTHRU
             case '.': {
                 if (fe->size == 2 && strchr("bcsqHPRQTZ", *fe->form)) {
                     value->ll = ((unsigned char *)argp)[0];
                     break;
                 }
             }
+            // FALLTHRU
             case 'd':
             case 'D':
             case 'i': {
@@ -1123,6 +1127,7 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
                         c |= (*cp - '0');
                     }
                 }
+                // FALLTHRU
                 default: { cp--; }
             }
         }

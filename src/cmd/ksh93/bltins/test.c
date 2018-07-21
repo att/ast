@@ -174,8 +174,8 @@ int b_test(int argc, char *argv[], Shbltin_t *context) {
         case 5: {
             if (!not) break;
             argv++;
-            // FALL THRU
         }
+        // FALLTHRU
         case 4: {
             int op = sh_lookup(cp = argv[2], shtab_testops);
             if (op & TEST_BINOP) break;
@@ -415,8 +415,9 @@ int test_unop(Shell_t *shp, int op, const char *arg) {
         }
         case 's': {
             sfsync(sfstdout);
-            // Is this supposed to FALL THRU?
         }
+        // TODO: Is this supposed to FALLTHRU?
+        // FALLTHRU
         case 'O':
         case 'G': {
             if (*arg == 0 || test_stat(arg, &statb) < 0) return 0;

@@ -56,25 +56,35 @@ int _sfputl(Sfio_t *f, Sflong_t v) {
     n = (ps - s) + 1;
 
     if (n > 8 || SFWPEEK(f, ps, p) < n)
-        n = SFWRITE(f, (void *)s, n); /* write the hard way */
+        n = SFWRITE(f, (void *)s, n);  // write the hard way
     else {
         switch (n) {
             case 8:
                 *ps++ = *s++;
+            // FALLTHRU
             case 7:
                 *ps++ = *s++;
+            // FALLTHRU
             case 6:
                 *ps++ = *s++;
+            // FALLTHRU
             case 5:
                 *ps++ = *s++;
+            // FALLTHRU
             case 4:
                 *ps++ = *s++;
+            // FALLTHRU
             case 3:
                 *ps++ = *s++;
+            // FALLTHRU
             case 2:
                 *ps++ = *s++;
+            // FALLTHRU
             case 1:
                 *ps++ = *s++;
+            // FALLTHRU
+            default:
+                ;  // EMPTY BLOCK
         }
         f->next = ps;
     }

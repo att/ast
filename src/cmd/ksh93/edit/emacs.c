@@ -316,8 +316,10 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                         goto do_escape;
                     }
                     ep->ed->e_tabcount = 0;
-                } else
+                } else {
                     ep->ed->e_tabcount = 1;
+                }
+            // FALLTHRU
             do_default_processing:
             default:
                 if ((eol + 1) >= (scend)) /*  will not fit on line */
@@ -490,6 +492,7 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
                 cur = 0;
                 oadjust = -1;
             }
+            // FALLTHRU
             case cntl('K'): {
                 if (oadjust >= 0) {
 #ifdef ESH_KAPPEND
@@ -847,8 +850,8 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
                 break;
             }
             if (ch == '\n') ed_ungetchar(ep->ed, '\n');
-            // FALL THRU
         }
+        // FALLTHRU
         case cntl('['): {  // filename completion
             if (ep->ed->hlist) {
                 value += ep->ed->hoff;
@@ -863,6 +866,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             }
             i = '\\';
         }
+        // FALLTHRU
         case '*':    // filename expansion
         case '=': {  // escape = - list all matching file names
             ep->mark = cur;
@@ -969,6 +973,7 @@ static int escape(Emacs_t *ep, genchar *out, int count) {
             }
             i = '_';
         }
+        // FALLTHRU
         default: {  // look for user defined macro definitions
             if (ed_macro(ep->ed, i))
 #ifdef ESH_BETTER

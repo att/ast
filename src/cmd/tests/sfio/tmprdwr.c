@@ -117,6 +117,7 @@ tmain() {
     switch (fork()) {
         case -1:
             terror("fork() failed");
+            break;
         case 0:
             close(child[0]);
             close(parent[1]);

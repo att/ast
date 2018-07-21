@@ -117,6 +117,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
             }
             case ':': {
                 errormsg(SH_DICT, 2, "%s", opt_info.arg);
+                break;
             }
             case 'n': {
                 if (*command == 'e') {
@@ -124,6 +125,7 @@ int b_readonly(int argc, char *argv[], Shbltin_t *context) {
                     break;
                 }
             }
+            // FALLTHRU
             case '?': {
                 errormsg(SH_DICT, ERROR_usage(0), "%s", opt_info.arg);
                 return 2;
@@ -262,6 +264,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                     break;
                 }
             }
+            // FALLTHRU
             case 'F':
             case 'X': {
                 if (!opt_info.arg || (tdata.argnum = opt_info.num) < 0) {
@@ -291,6 +294,7 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
             case 'c': {
                 tdata.cflag = true;
             }
+            // FALLTHRU
             case 'm': {
                 flag |= NV_MOVE;
                 break;
@@ -1177,6 +1181,7 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
             case 'n': {
                 nflag = NV_NOREF;
             }
+            // FALLTHRU
             case 'v': {
                 troot = shp->var_tree;
                 break;

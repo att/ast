@@ -90,8 +90,8 @@ char *pathcanon(char *path, size_t size, int flags) {
             }
             case 0: {
                 s--;
-                // FALLTHRU
             }
+            // FALLTHRU
             case '/': {
                 while (*s == '/') s++;
                 switch (dots) {

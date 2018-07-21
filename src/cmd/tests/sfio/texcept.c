@@ -40,6 +40,7 @@ static int except(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
             return 0;
         case SF_CLOSING:
             if (Type == SF_CLOSING) return 0;
+        // FALLTHRU
         case SF_SYNC:
             if (Type == SF_CLOSING) return 0;
     }
