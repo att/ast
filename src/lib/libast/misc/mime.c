@@ -657,15 +657,13 @@ char *mimeview(Mime_t *mp, const char *view, const char *name, const char *type,
  * if e!=0 then it will point to the next char after the match
  */
 
-int mimecmp(const char *s, const char *v, char **e) {
-    int n;
-
+int mimecmp(const char *s, const char *v, void *context) {
     while (isalnum(*v) || (*v == *s && (*v == '_' || *v == '-' || *v == '/'))) {
-        n = lower(*s++) - lower(*v++);
+        int n = lower(*s++) - lower(*v++);
         if (n) return n;
     }
     if (!isalnum(*s) && *s != '_' && *s != '-') {
-        if (e) *e = (char *)s;
+        if (context) *(const char **)context = s;
         return 0;
     }
     return lower(*s) - lower(*v);
@@ -686,13 +684,13 @@ int mimehead(Mime_t *mp, void *tab, size_t num, size_t siz, char *s) {
     if (!strncasecmp(s, "original-", 9)) s += 9;
     if (!strncasecmp(s, "content-", 8)) {
         s += 8;
-        if ((p = strsearch(tab, num, siz, (Strcmp_f)mimecmp, s, &e)) && *e == ':') {
+        if ((p = strsearch(tab, num, siz, mimecmp, s, &e)) && *e == ':') {
             pp.next = e + 1;
             if (arg(&pp, 1)) {
                 if ((*set)(mp, p, pp.name.data, pp.name.size, mp->disc)) return 0;
                 while (arg(&pp, 0))
                     if (pp.value.size &&
-                        (p = strsearch(tab, num, siz, (Strcmp_f)mimecmp, pp.name.data, &e)) &&
+                        (p = strsearch(tab, num, siz, mimecmp, pp.name.data, &e)) &&
                         (*set)(mp, p, pp.value.data, pp.value.size, mp->disc))
                         return 0;
                 return 1;

@@ -76,6 +76,6 @@ extern int mimeset(Mime_t *, char *, unsigned long);
 extern char *mimetype(Mime_t *, Sfio_t *, const char *, struct stat *);
 extern char *mimeview(Mime_t *, const char *, const char *, const char *, const char *);
 extern int mimehead(Mime_t *, void *, size_t, size_t, char *);
-extern int mimecmp(const char *, const char *, char **);
+extern int mimecmp(const char *, const char *, void *);
 
 #endif  // _MIMETYPE_H
