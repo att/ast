@@ -55,6 +55,13 @@ add_global_arguments('-Wunused-parameter', language: 'c')
 add_global_arguments('-Wmissing-field-initializers', language: 'c')
 add_global_arguments('-Wempty-body', language: 'c')
 
+# There are hundreds of instances of the code comparing signed and unsigned
+# ints. Mostly involving a var of type signed int and `sizeof()` (which
+# returns an unsigned value). Since we want to treat every warning as an error
+# we can't enable this on CI builds. And for non-CI builds the noise isn't
+# worth it.
+add_global_arguments('-Wno-sign-compare', language: 'c')
+
 # Enable malloc debug options for macOS, GNU, FreeBSD, and other
 # implementations. This isn't a replacement for Valgrind or Asan but is useful
 # for detecting problems without incurring the overhead of those tools.
