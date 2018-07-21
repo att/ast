@@ -47,14 +47,24 @@ matrix:
               # This variable is not required by macOS builds, but setting it for Travis dashboard.
               - DISTRO_TYPE=macOS
 
+        - os: linux
+          env:
+            - SCAN_TYPE=csbuild
+              DISTRO_TYPE=fedora
+              INSTALL_REQUIREMENTS="dnf repolist; dnf install -y gcc python3 meson sudo ed ncurses vi findutils which csbuild"
+          before_install:
+              - docker pull ${DISTRO_TYPE}
+
 services:
     - docker
 
 script:
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then exec scripts/build-on-macos.sh; fi
 
-    - docker run -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
+    - docker run -e SCAN_TYPE=$SCAN_TYPE
+      -e COMMIT_RANGE=${TRAVIS_COMMIT_RANGE}
+      -v $TRAVIS_BUILD_DIR:/source ${DISTRO_TYPE} bash -c "set -e;
         ${INSTALL_REQUIREMENTS};
         useradd --create-home test;
         chown -R test /source;
-        sudo -u test /source/scripts/build-on-docker.sh"
+        sudo -E -u test /source/scripts/build-on-docker.sh"

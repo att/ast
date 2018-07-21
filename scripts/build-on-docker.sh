@@ -11,6 +11,12 @@ export CC=gcc
 
 # Git repo is mounted to this directory in docker
 cd /source
+
+if [[ $SCAN_TYPE == "csbuild" ]]; then
+    echo ==== Running csbuild
+    exec csbuild --cswrap-timeout=5 --git-commit-range ${COMMIT_RANGE} -c 'meson -Dbuild-api-tests=false build; ninja -C build' -w1
+fi
+
 mkdir build
 cd build
 
