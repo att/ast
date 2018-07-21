@@ -64,9 +64,6 @@ extern int mblen(const char *, size_t);
 #define AST_LC_CANONICAL LC_abbreviated
 #endif
 
-typedef size_t (*Mbtowc_f)(wchar_t *, const char *, size_t, mbstate_t *);
-typedef size_t (*Wctomb_f)(char *, wchar_t, mbstate_t *);
-
 static void header(void) {
     static int done = 0;
 
@@ -2008,6 +2005,16 @@ static size_t ast_wcsrtombs(char *s, const wchar_t **w, size_t n, mbstate_t *q) 
 
 typedef int (*Isw_f)(wchar_t);
 
+static_fn size_t utf8towc_wrapper(wchar_t *wc, const char *s, size_t n, mbstate_t *state) {
+    UNUSED(state);
+    return utf8towc(wc, s, n);
+}
+
+static_fn size_t utf32toutf8_wrapper(char *s, wchar_t wc, mbstate_t *state) {
+    UNUSED(state);
+    return utf32toutf8(s, wc);
+}
+
 /*
  * called when LC_CTYPE initialized or changes
  */
@@ -2041,13 +2048,14 @@ static int set_ctype(Lc_category_t *cp) {
         ast.mb_conv = debug_wctomb;
     } else if ((locales[cp->internal]->flags & LC_utf8) && !(ast.locale.set & AST_LC_native)) {
         ast.mb_cur_max = UTF8_LEN_MAX;
-        if ((locales[cp->internal]->flags & LC_local) || !(ast.mb_width = wcwidth))
+        if ((locales[cp->internal]->flags & LC_local) || !(ast.mb_width = wcwidth)) {
             ast.mb_width = utf8_wcwidth;
+        }
         ast.mb_alpha = utf8_alpha;
         ast._ast_mbrlen = utf8_mbrlen;
-        ast._ast_mbrtowc = (Mbtowc_f)utf8towc;
+        ast._ast_mbrtowc = utf8towc_wrapper;
         ast._ast_mbsrtowcs = ast_mbsrtowcs;
-        ast._ast_wcrtomb = (Wctomb_f)utf32toutf8;
+        ast._ast_wcrtomb = utf32toutf8_wrapper;
         ast._ast_wcsrtombs = ast_wcsrtombs;
         ast.mb_len = utf8_mblen;
         ast.mb_towc = utf8towc;
@@ -2056,11 +2064,11 @@ static int set_ctype(Lc_category_t *cp) {
                !(ast.mb_len = mblen) || !(ast.mb_towc = mbtowc)) {
         ast.mb_cur_max = 1;
         ast.mb_width = default_wcwidth;
-        ast._ast_mbrlen = 0;
-        ast._ast_mbrtowc = 0;
-        ast._ast_mbsrtowcs = 0;
-        ast._ast_wcrtomb = 0;
-        ast._ast_wcsrtombs = 0;
+        ast._ast_mbrlen = NULL;
+        ast._ast_mbrtowc = NULL;
+        ast._ast_mbsrtowcs = NULL;
+        ast._ast_wcrtomb = NULL;
+        ast._ast_wcsrtombs = NULL;
         ast.mb_len = NULL;
         ast.mb_towc = NULL;
         ast.mb_conv = NULL;
