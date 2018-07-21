@@ -87,9 +87,9 @@ char *fgetcwd(int fd, char *buf, size_t len) {
         dev_t dev;
         ino_t ino;
     } env[] = {
-        {/*previous*/ 0},
-        {"PWD"},
-        {"HOME"},
+        {NULL, NULL, 0, 0},  // previous
+        {"PWD", NULL, 0, 0},
+        {"HOME", NULL, 0, 0},
     };
 
     if (buf && !len) ERROR(EINVAL);

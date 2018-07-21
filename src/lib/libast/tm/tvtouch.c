@@ -128,13 +128,13 @@ int tvtouch(const char *path, const Tv_t *av, const Tv_t *mv, const Tv_t *cv, in
 
 // The system doesn't appear to have a usable utimensat() so use utimes().
 int tvtouch(const char *path, const Tv_t *av, const Tv_t *mv, const Tv_t *cv, int flags) {
-    struct stat st = {0};
+    UNUSED(cv);
+    struct stat st;
     Tv_t now;
     struct timeval am[2];
     int oerrno = errno;
 
-    UNUSED(cv);
-
+    memset(&st, 0, sizeof(st));
     if ((av == TV_TOUCH_RETAIN || mv == TV_TOUCH_RETAIN) && stat(path, &st)) {
         errno = oerrno;
         if (av == TV_TOUCH_RETAIN) av = NULL;

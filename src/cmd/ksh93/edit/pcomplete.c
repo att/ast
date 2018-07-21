@@ -43,7 +43,7 @@
 
 #define FILTER_AMP 0x4000
 
-Dtdisc_t _Compdisc = {offsetof(struct Complete, name), -1, 0, 0, 0, nv_compare};
+Dtdisc_t _Compdisc = {.key = offsetof(struct Complete, name), .size = -1, .comparf = nv_compare};
 
 static const char Options[] = "bdDfn";
 static const char *Option_names[] = {

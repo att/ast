@@ -50,6 +50,7 @@
 #define sh_envput(e, p) env_change()
 #define env_delete(e, p) env_change()
 
+extern void init_globals();
 extern char *sh_getenv(const char *);
 extern char *sh_setenviron(const char *);
 

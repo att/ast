@@ -149,12 +149,11 @@ static_fn Namval_t *create_type(Namval_t *, const void *, int, Namfun_t *);
 static_fn Namfun_t *clone_type(Namval_t *, Namval_t *, int, Namfun_t *);
 static_fn Namval_t *next_type(Namval_t *, Dt_t *, Namfun_t *);
 
-static const Namdisc_t type_disc = {
-    sizeof(Namtype_t), put_type, NULL, NULL, NULL, create_type, clone_type, NULL, next_type, NULL,
-#if 0
-	read_type
-#endif
-};
+static const Namdisc_t type_disc = {.dsize = sizeof(Namtype_t),
+                                    .putval = put_type,
+                                    .createf = create_type,
+                                    .clonef = clone_type,
+                                    .nextf = next_type};
 
 static const char *EmptyStr = "";
 
@@ -257,8 +256,11 @@ static_fn Namval_t *create_chtype(Namval_t *np, const void *name, int flag, Namf
     return NULL;
 }
 
-static const Namdisc_t chtype_disc = {sizeof(Namchld_t), put_chtype,   NULL,       NULL, NULL,
-                                      create_chtype,     clone_chtype, name_chtype};
+static const Namdisc_t chtype_disc = {.dsize = sizeof(Namchld_t),
+                                      .putval = put_chtype,
+                                      .createf = create_chtype,
+                                      .clonef = clone_chtype,
+                                      .namef = name_chtype};
 
 static_fn Namval_t *findref(void *nodes, int n) {
     Namval_t *tp, *np = nv_namptr(nodes, n);
@@ -1458,7 +1460,7 @@ static_fn void put_stat(Namval_t *np, const void *val, int flag, Namfun_t *nfp) 
     if (!(nfp->nofree & 1)) free(nfp);
 }
 
-static const Namdisc_t stat_disc = {0, put_stat};
+static const Namdisc_t stat_disc = {.dsize = 0, .putval = put_stat};
 
 void nv_mkstat(Shell_t *shp) {
     Namval_t *tp;

@@ -470,8 +470,10 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
         return 0;
 }
 
-static Dtmethod_t _Dtset = {dthashchain, DT_SET, hashevent, "Dtset"};
-static Dtmethod_t _Dtbag = {dthashchain, DT_BAG, hashevent, "Dtbag"};
+static Dtmethod_t _Dtset = {
+    .searchf = dthashchain, .type = DT_SET, .eventf = hashevent, .name = "Dtset"};
+static Dtmethod_t _Dtbag = {
+    .searchf = dthashchain, .type = DT_BAG, .eventf = hashevent, .name = "Dtbag"};
 Dtmethod_t *Dtset = &_Dtset;
 Dtmethod_t *Dtbag = &_Dtbag;
 

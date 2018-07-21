@@ -52,22 +52,21 @@ static void _sfoncef() {
 
 /* global variables used internally to the package */
 Sfextern_t _Sfextern = {
-    0,                     /* _Sfpage	*/
-    {NULL, 0, 0, 0, NULL}, /* _Sfpool	*/
-    NULL,                  /* _Sfpmove	*/
-    NULL,                  /* _Sfstack	*/
-    NULL,                  /* _Sfnotify	*/
-    NULL,                  /* _Sfstdsync	*/
-    {NULL,                 /* _Sfudisc	*/
-     NULL, NULL, NULL, NULL},
-    NULL,            /* _Sfcleanup	*/
-    0,               /* _Sfexiting	*/
-    0,               /* _Sfdone	*/
-    &Sfonce,         /* _Sfonce	*/
-    _sfoncef,        /* _Sfoncef	*/
-    &Sfmutex,        /* _Sfmutex	*/
-    SF_MAXM_DEFAULT, /* _Sfmaxm	*/
-    SF_TEST_DEFAULT  /* _Sftest	*/
+    0,                // _Sfpage
+    {.next = NULL},   // _Sfpool
+    NULL,             // _Sfpmove
+    NULL,             // _Sfstack
+    NULL,             // _Sfnotify
+    NULL,             // _Sfstdsync
+    {.readf = NULL},  // _Sfudisc
+    NULL,             // _Sfcleanup
+    0,                // _Sfexiting
+    0,                // _Sfdone
+    &Sfonce,          // _Sfonce
+    _sfoncef,         // _Sfoncef
+    &Sfmutex,         // _Sfmutex
+    SF_MAXM_DEFAULT,  // _Sfmaxm
+    SF_TEST_DEFAULT   // _Sftest
 };
 
 ssize_t _Sfi = -1;   /* value for a few fast macro functions	*/

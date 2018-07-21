@@ -36,88 +36,31 @@
 #include "ccode.h"
 
 static const Ccmap_t maps[] = {
-    {
-        "ascii",
-        "a|ascii|?(iso)?(-)646|?(iso)?(-)8859|latin",
-        "8 bit ascii",
-        "ISO-8859-%s",
-        "1",
-        CC_ASCII,
-    },
+    {"ascii", "a|ascii|?(iso)?(-)646|?(iso)?(-)8859|latin", "8 bit ascii", "ISO-8859-%s", "1",
+     CC_ASCII, NULL},
 
-    {
-        "ebcdic",
-        "e|ebcdic?(-)?([1e])",
-        "X/Open ebcdic",
-        "EBCDIC",
-        0,
-        CC_EBCDIC_E,
-    },
+    {"ebcdic", "e|ebcdic?(-)?([1e])", "X/Open ebcdic", "EBCDIC", NULL, CC_EBCDIC_E, NULL},
 
-    {
-        "ebcdic-o",
-        "o|ebcdic?(-)[3o]|?(cp|ibm)1047|open?(-)edition",
-        "mvs OpenEdition ebcdic",
-        "EBCDIC-O",
-        0,
-        CC_EBCDIC_O,
-    },
+    {"ebcdic-o", "o|ebcdic?(-)[3o]|?(cp|ibm)1047|open?(-)edition", "mvs OpenEdition ebcdic",
+     "EBCDIC-O", NULL, CC_EBCDIC_O, NULL},
 
-    {
-        "ebcdic-h",
-        "h|ebcdic?(-)h|?(cp|ibm)?(00)37|[oa]s?(/-)400",
-        "ibm OS/400 AS/400 ebcdic",
-        "EBCDIC-H",
-        0,
-        CC_EBCDIC_H,
-    },
+    {"ebcdic-h", "h|ebcdic?(-)h|?(cp|ibm)?(00)37|[oa]s?(/-)400", "ibm OS/400 AS/400 ebcdic",
+     "EBCDIC-H", NULL, CC_EBCDIC_H, NULL},
 
-    {
-        "ebcdic-s",
-        "s|ebcdic?(-)s|siemens|posix-bc",
-        "siemens posix-bc ebcdic",
-        "EBCDIC-S",
-        0,
-        CC_EBCDIC_S,
-    },
+    {"ebcdic-s", "s|ebcdic?(-)s|siemens|posix-bc", "siemens posix-bc ebcdic", "EBCDIC-S", NULL,
+     CC_EBCDIC_S, NULL},
 
-    {
-        "ebcdic-i",
-        "i|ebcdic?(-)[2i]|ibm",
-        "X/Open ibm ebcdic (not idempotent)",
-        "EBCDIC-I",
-        0,
-        CC_EBCDIC_I,
-    },
+    {"ebcdic-i", "i|ebcdic?(-)[2i]|ibm", "X/Open ibm ebcdic (not idempotent)", "EBCDIC-I", NULL,
+     CC_EBCDIC_I, NULL},
 
-    {
-        "ebcdic-m",
-        "m|ebcdic?(-)m|mvs",
-        "mvs ebcdic",
-        "EBCDIC-M",
-        0,
-        CC_EBCDIC_M,
-    },
+    {"ebcdic-m", "m|ebcdic?(-)m|mvs", "mvs ebcdic", "EBCDIC-M", NULL, CC_EBCDIC_M, NULL},
 
-    {
-        "ebcdic-u",
-        "u|ebcdic?(-)(u|mf)|microfocus",
-        "microfocus cobol ebcdic",
-        "EBCDIC-U",
-        0,
-        CC_EBCDIC_U,
-    },
+    {"ebcdic-u", "u|ebcdic?(-)(u|mf)|microfocus", "microfocus cobol ebcdic", "EBCDIC-U", NULL,
+     CC_EBCDIC_U, NULL},
 
-    {
-        "native",
-        "n|native|local",
-        "native code set",
-        0,
-        0,
-        CC_NATIVE,
-    },
+    {"native", "n|native|local", "native code set", NULL, NULL, CC_NATIVE, NULL},
 
-    {0},
+    {NULL, NULL, NULL, NULL, NULL, 0, NULL},
 };
 
 /*

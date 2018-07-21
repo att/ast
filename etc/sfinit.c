@@ -88,6 +88,10 @@ int main() {
     printf("\t0,\n");
 #else
     printf("\t(_ast_fltmax_t*)&sf_ldbl_pow10[0],\n");
+    printf("\t{0}, // sf_cv36[]\n");
+    printf("\t{0}, // sf_cv64[]\n");
+    printf("\t{0}, // sf_c3v36[]\n");
+    printf("\t{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, // sf_ieee\n");
 #endif
     printf("};\n");
     printf("#endif\n");

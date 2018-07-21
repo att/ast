@@ -39,7 +39,7 @@ static int except(Sfio_t *f, int type, void *obj, Sfdisc_t *disc) {
     return 0;
 }
 
-static Sfdisc_t Wdisc = {NULL, NULL, NULL, except};
+static Sfdisc_t Wdisc = {.exceptf = except};
 
 tmain() {
     int fd[2];

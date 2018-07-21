@@ -48,6 +48,7 @@ State_t state = {
      */
 
     {
+        // escape[]
         {'\\',
          {'\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\',
           '\\'}},
@@ -204,7 +205,15 @@ State_t state = {
         {'x',
          {'x', T_ESCAPE, T_ESCAPE, 'x', T_ESCAPE, T_ESCAPE, 'x', T_ESCAPE, T_ESCAPE, 'x', T_ESCAPE,
           T_ESCAPE, 'x', T_ESCAPE, T_ESCAPE}},
-    }};
+    },                  // escape[]
+    {NULL},             // magic
+    {.re_version = 0},  // disc
+    0,                  // fatal
+    0,                  // initialized
+    NULL,               // attrs
+    NULL,               // names
+    {.key = 0},         // dtdisc
+};
 
 /*
  * all allocation/free done here

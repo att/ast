@@ -81,8 +81,8 @@ typedef struct {
 } State_t;
 
 static State_t state = {
-    {offsetof(Message_t, text), 0, 0},
-    {offsetof(Catalog_t, name), 0, 0},
+    .message_disc = {.key = offsetof(Message_t, text), .size = 0, .link = 0},
+    .catalog_disc = {.key = offsetof(Catalog_t, name), .size = 0, .link = 0},
 };
 
 static int tempget(Sfio_t *sp) {

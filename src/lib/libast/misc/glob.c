@@ -110,8 +110,9 @@ static void gl_dirclose(glob_t *gp, void *handle) { (gp->gl_closedir)(handle); }
 // Default gl_type.
 //
 static int gl_type(glob_t *gp, const char *path, int flags) {
-    struct stat st = {0};
+    struct stat st;
 
+    memset(&st, 0, sizeof(st));
     int stat_rv = (flags & GLOB_STARSTAR) ? (*gp->gl_lstat)(path, &st) : (*gp->gl_stat)(path, &st);
     if (stat_rv == -1) return 0;
 

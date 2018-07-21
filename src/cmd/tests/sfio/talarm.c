@@ -63,7 +63,7 @@ int exceptf(Sfio_t *f, int type, void *data, Sfdisc_t *disc) {
     return -1;
 }
 
-Sfdisc_t Disc = {NULL, NULL, NULL, exceptf};
+Sfdisc_t Disc = {.exceptf = exceptf};
 
 tmain() {
     UNUSED(argc);

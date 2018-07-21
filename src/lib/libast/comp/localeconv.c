@@ -35,13 +35,15 @@
 static char null[] = "";
 
 static struct lconv debug_lconv = {
-    ",",      ".",      &null[0], &null[0], &null[0], &null[0], &null[0], &null[0], &null[0],
-    &null[0], CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX,
+    ",",      ".",      &null[0], &null[0], &null[0], &null[0], &null[0], &null[0],
+    &null[0], &null[0], CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX,
+    CHAR_MAX, CHAR_MAX, 0,        0,        0,        0,        0,        0,
 };
 
 static struct lconv default_lconv = {
-    ".",      &null[0], &null[0], &null[0], &null[0], &null[0], &null[0], &null[0], &null[0],
-    &null[0], CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX,
+    ".",      &null[0], &null[0], &null[0], &null[0], &null[0], &null[0], &null[0],
+    &null[0], &null[0], CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX, CHAR_MAX,
+    CHAR_MAX, CHAR_MAX, 0,        0,        0,        0,        0,        0,
 };
 
 /*

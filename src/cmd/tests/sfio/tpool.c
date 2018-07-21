@@ -35,7 +35,7 @@ ssize_t writef(Sfio_t *f, const void *buf, size_t n, Sfdisc_t *disc) {
     S += n;
     return n;
 }
-Sfdisc_t Serialdc = {NULL, writef, NULL, NULL};
+Sfdisc_t Serialdc = {.writef = writef};
 
 tmain() {
     UNUSED(argc);

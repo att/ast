@@ -1589,8 +1589,8 @@ static_fn void talias_put(Namval_t *np, const void *val, int flags, Namfun_t *fp
     nv_putv(np, val, flags, fp);
 }
 
-static const Namdisc_t talias_disc = {0, talias_put, talias_get};
-static Namfun_t talias_init = {&talias_disc, 1};
+static const Namdisc_t talias_disc = {.dsize = 0, .putval = talias_put, .getval = talias_get};
+static Namfun_t talias_init = {.disc = &talias_disc, .nofree = 1, .subshell = 0, .dsize = 0};
 
 //
 // Set tracked alias node <np> to value <pp>.

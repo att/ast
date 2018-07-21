@@ -230,7 +230,12 @@ static_fn Namval_t *create_enum(Namval_t *np, const void *vp, int flags, Namfun_
     return mp;
 }
 
-const Namdisc_t ENUM_disc = {0, put_enum, get_enum, get_nenum, NULL, create_enum, clone_enum};
+const Namdisc_t ENUM_disc = {.dsize = 0,
+                             .putval = put_enum,
+                             .getval = get_enum,
+                             .getnum = get_nenum,
+                             .createf = create_enum,
+                             .clonef = clone_enum};
 
 static_fn int sh_outenum(Shell_t *shp, Sfio_t *iop, Namval_t *tp) {
     Namval_t *mp;

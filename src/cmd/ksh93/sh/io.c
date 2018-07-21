@@ -169,7 +169,7 @@ static_fn Sfdouble_t nget_cur_eof(Namval_t *np, Namfun_t *fp) {
     return (Sfdouble_t)end;
 }
 
-static const Namdisc_t EOF_disc = {sizeof(struct Eof), NULL, NULL, nget_cur_eof};
+static const Namdisc_t EOF_disc = {.dsize = sizeof(struct Eof), .getnum = nget_cur_eof};
 
 #define MATCH_BUFF (64 * 1024)
 struct Match {

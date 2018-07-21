@@ -353,10 +353,14 @@ static int listevent(Dt_t *dt, int event, void *arg) {
         return 0;
 }
 
-static Dtmethod_t _Dtlist = {dtlist, DT_LIST, listevent, "Dtlist"};
-static Dtmethod_t _Dtdeque = {dtlist, DT_DEQUE, listevent, "Dtdeque"};
-static Dtmethod_t _Dtstack = {dtlist, DT_STACK, listevent, "Dtstack"};
-static Dtmethod_t _Dtqueue = {dtlist, DT_QUEUE, listevent, "Dtqueue"};
+static Dtmethod_t _Dtlist = {
+    .searchf = dtlist, .type = DT_LIST, .eventf = listevent, .name = "Dtlist"};
+static Dtmethod_t _Dtdeque = {
+    .searchf = dtlist, .type = DT_DEQUE, .eventf = listevent, .name = "Dtdeque"};
+static Dtmethod_t _Dtstack = {
+    .searchf = dtlist, .type = DT_STACK, .eventf = listevent, .name = "Dtstack"};
+static Dtmethod_t _Dtqueue = {
+    .searchf = dtlist, .type = DT_QUEUE, .eventf = listevent, .name = "Dtqueue"};
 
 Dtmethod_t *Dtlist = &_Dtlist;
 Dtmethod_t *Dtdeque = &_Dtdeque;

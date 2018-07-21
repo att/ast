@@ -222,8 +222,7 @@ static_fn void alarm_put(Namval_t *np, const void *vp, int flag, Namfun_t *fp) {
 }
 
 static const Namdisc_t alarmdisc = {
-    sizeof(struct tevent), alarm_put, NULL, NULL, alarm_setdisc,
-};
+    .dsize = sizeof(struct tevent), .putval = alarm_put, .setdisc = alarm_setdisc};
 
 int b_alarm(int argc, char *argv[], Shbltin_t *context) {
     int n, rflag = 0;

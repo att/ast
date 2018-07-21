@@ -68,7 +68,8 @@ static Lc_t default_lc = {"C",
                            {&default_lc, 0, 0},
                            {&default_lc, 0, 0},
                            {&default_lc, 0, 0},
-                           {&default_lc, 0, 0}}};
+                           {&default_lc, 0, 0}},
+                          NULL};
 
 static Lc_numeric_t debug_numeric = {',', '.'};
 

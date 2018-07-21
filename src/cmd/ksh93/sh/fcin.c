@@ -32,7 +32,7 @@
 #include "fcin.h"
 #include "sfio.h"
 
-Fcin_t _Fcin = {0};
+Fcin_t _Fcin = {.fcbuff = NULL};
 
 //
 // Open stream <f> for fast character input.

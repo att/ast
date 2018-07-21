@@ -136,24 +136,24 @@ static const Tty_t Ttable[] = {
 #ifdef CBAUD
     {"ispeed", NUM, C_SPEED, 0, CBAUD, 0, C("\an\a is the input baud rate")},
     {"ospeed", NUM, C_SPEED, 0, CBAUD, 0, C("\an\a is the output baud rate")},
-    {"speed", NUM, C_SPEED, IG, CBAUD},
+    {"speed", NUM, C_SPEED, IG, CBAUD, 0, C("")},
 #endif
-    {"0", SPEED, C_FLAG, 0, B0},
-    {"50", SPEED, C_FLAG, 0, B50},
-    {"75", SPEED, C_FLAG, 0, B75},
-    {"110", SPEED, C_FLAG, 0, B110},
-    {"134", SPEED, C_FLAG, 0, B134},
-    {"150", SPEED, C_FLAG, 0, B150},
-    {"200", SPEED, C_FLAG, 0, B200},
-    {"300", SPEED, C_FLAG, 0, B300},
-    {"600", SPEED, C_FLAG, 0, B600},
-    {"1200", SPEED, C_FLAG, 0, B1200},
-    {"1800", SPEED, C_FLAG, 0, B1800},
-    {"2400", SPEED, C_FLAG, 0, B2400},
-    {"4800", SPEED, C_FLAG, 0, B4800},
-    {"9600", SPEED, C_FLAG, 0, B9600},
-    {"19200", SPEED, C_FLAG, 0, B19200},
-    {"38400", SPEED, C_FLAG, 0, B38400},
+    {"0", SPEED, C_FLAG, 0, B0, 0, C("")},
+    {"50", SPEED, C_FLAG, 0, B50, 0, C("")},
+    {"75", SPEED, C_FLAG, 0, B75, 0, C("")},
+    {"110", SPEED, C_FLAG, 0, B110, 0, C("")},
+    {"134", SPEED, C_FLAG, 0, B134, 0, C("")},
+    {"150", SPEED, C_FLAG, 0, B150, 0, C("")},
+    {"200", SPEED, C_FLAG, 0, B200, 0, C("")},
+    {"300", SPEED, C_FLAG, 0, B300, 0, C("")},
+    {"600", SPEED, C_FLAG, 0, B600, 0, C("")},
+    {"1200", SPEED, C_FLAG, 0, B1200, 0, C("")},
+    {"1800", SPEED, C_FLAG, 0, B1800, 0, C("")},
+    {"2400", SPEED, C_FLAG, 0, B2400, 0, C("")},
+    {"4800", SPEED, C_FLAG, 0, B4800, 0, C("")},
+    {"9600", SPEED, C_FLAG, 0, B9600, 0, C("")},
+    {"19200", SPEED, C_FLAG, 0, B19200, 0, C("")},
+    {"38400", SPEED, C_FLAG, 0, B38400, 0, C("")},
 
 #ifdef TIOCSWINSZ
     {"rows", WIND, W_SIZE, IG, 0, 24, C("\an\a is the number of lines for display")},
@@ -259,7 +259,7 @@ static const Tty_t Ttable[] = {
      C("Enable (disable) \bintr\b, \bquit\b, and \bsusp\b special characters")},
     {"icanon", BIT, L_FLAG, SS, ICANON, ICANON,
      C("Enable (disable) \berase\b, \bkill\b, \bwerase\b, and \brprnt\b special characters")},
-    {"icannon", BIT, L_FLAG, SS, ICANON, ICANON},
+    {"icannon", BIT, L_FLAG, SS, ICANON, ICANON, C("")},
 #ifdef IEXTEN
     {"iexten", BIT, L_FLAG, SS, IEXTEN, IEXTEN, C("Enable (disable) non-POSIX special characters")},
 #endif /* IEXTEN */
@@ -337,41 +337,41 @@ static const Tty_t Ttable[] = {
 #endif /* OFDEL */
     {"opost", BIT, O_FLAG, SS, OPOST, OPOST, C(" Postprocess (do not postprocess) output")},
 #ifdef CRDLY
-    {"cr0", BITS, O_FLAG, IG | SS, CRDLY, CR0},
-    {"cr1", BITS, O_FLAG, US, CRDLY, CR1},
-    {"cr2", BITS, O_FLAG, US, CRDLY, CR2},
-    {"cr3", BITS, O_FLAG, US, CRDLY, CR3},
+    {"cr0", BITS, O_FLAG, IG | SS, CRDLY, CR0, C("")},
+    {"cr1", BITS, O_FLAG, US, CRDLY, CR1, C("")},
+    {"cr2", BITS, O_FLAG, US, CRDLY, CR2, C("")},
+    {"cr3", BITS, O_FLAG, US, CRDLY, CR3, C("")},
 #endif
 #ifdef NLDLY
-    {"nl0", BITS, O_FLAG, IG | US, NLDLY, NL0},
-    {"nl1", BITS, O_FLAG, US, NLDLY, NL1},
+    {"nl0", BITS, O_FLAG, IG | US, NLDLY, NL0, C("")},
+    {"nl1", BITS, O_FLAG, US, NLDLY, NL1, C("")},
 #endif
 #ifdef TABDLY
     {"tabs", TABS, O_FLAG, IG, TABDLY, TAB3, C("Preserve (expand to spaces) tabs")},
 #ifdef TAB0
-    {"tab0", BITS, O_FLAG, IG | SS, TABDLY, TAB0},
+    {"tab0", BITS, O_FLAG, IG | SS, TABDLY, TAB0, C("")},
 #endif
 #ifdef TAB1
-    {"tab1", BITS, O_FLAG, US, TABDLY, TAB1},
+    {"tab1", BITS, O_FLAG, US, TABDLY, TAB1, C("")},
 #endif
 #ifdef TAB2
-    {"tab2", BITS, O_FLAG, US, TABDLY, TAB2},
+    {"tab2", BITS, O_FLAG, US, TABDLY, TAB2, C("")},
 #endif
-    {"tab3", BITS, O_FLAG, US, TABDLY, TAB3},
+    {"tab3", BITS, O_FLAG, US, TABDLY, TAB3, C("")},
 #endif
 #ifdef BSDLY
-    {"bs0", BITS, O_FLAG, IG | SS, BSDLY, BS0},
-    {"bs1", BITS, O_FLAG, US, BSDLY, BS1},
+    {"bs0", BITS, O_FLAG, IG | SS, BSDLY, BS0, C("")},
+    {"bs1", BITS, O_FLAG, US, BSDLY, BS1, C("")},
 #endif
 #ifdef VTDLY
-    {"vt0", BITS, O_FLAG, IG | SS, VTDLY, VT0},
-    {"vt1", BITS, O_FLAG, US, VTDLY, VT1},
+    {"vt0", BITS, O_FLAG, IG | SS, VTDLY, VT0, C("")},
+    {"vt1", BITS, O_FLAG, US, VTDLY, VT1, C("")},
 #endif
 #ifdef FFDLY
-    {"ff0", BITS, O_FLAG, IG | SS, FFDLY, FF0},
-    {"ff1", BITS, O_FLAG, US, FFDLY, FF1},
+    {"ff0", BITS, O_FLAG, IG | SS, FFDLY, FF0, C("")},
+    {"ff1", BITS, O_FLAG, US, FFDLY, FF1, C("")},
 #endif
-    {"", MIXED, O_FLAG, NL | IG},
+    {"", MIXED, O_FLAG, NL | IG, 0, 0, C("")},
 
     {"evenp", MIXED, C_FLAG, IG, PARENB, 0, C("Same as \bparenb -parodd cs7\b")},
     {"oddp", MIXED, C_FLAG, IG, PARODD, 0, C("Same as \bparenb parodd cs7\b")},

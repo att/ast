@@ -47,13 +47,15 @@
     Sfoff_t lpos;           /* last seek position		*/        \
     size_t iosz;            /* preferred size for I/O	*/     \
     size_t blksz;           /* preferred block size		*/      \
-    int getr;               /* the last sfgetr separator 	*/ \
+    int getr;               /* the last sfgetr separator 	*/
+#if 0                       // WTF
     _SFIO_PRIVATE_PAD
 
 #if _ast_sizeof_pointer == 8
 #define _SFIO_PRIVATE_PAD int pad;
 #else
 #define _SFIO_PRIVATE_PAD
+#endif
 #endif
 
 #include "sfio.h"
@@ -96,7 +98,7 @@
             (Sfoff_t)0,                                     /* lpos		*/  \
             (size_t)0,                                      /* iosz		*/  \
             0,                                              /* blksz	*/  \
-            0                                               /* getr		*/  \
+            0,                                              /* getr		*/  \
     }
 
 /* function to clear an Sfio_t structure */

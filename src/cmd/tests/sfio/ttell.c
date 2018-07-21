@@ -43,9 +43,9 @@ static Sfoff_t discseek(Sfio_t *f, Sfoff_t offset, int type, Sfdisc_t *disc) {
     return (Sfoff_t)(-1);  // pretend that stream is unseekable
 }
 
-Sfdisc_t Disc1 = {discread, discwrite};
-Sfdisc_t Disc2 = {discread, discwrite};
-Sfdisc_t Disc3 = {discread, discwrite};
+Sfdisc_t Disc1 = {.readf = discread, .writef = discwrite};
+Sfdisc_t Disc2 = {.readf = discread, .writef = discwrite};
+Sfdisc_t Disc3 = {.readf = discread, .writef = discwrite};
 
 tmain() {
     Sfio_t *f;

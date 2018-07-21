@@ -671,8 +671,10 @@ static int treeevent(Dt_t *dt, int event, void *arg) {
 }
 
 /* make this method available */
-static Dtmethod_t _Dtoset = {dttree, DT_OSET, treeevent, "Dtoset"};
-static Dtmethod_t _Dtobag = {dttree, DT_OBAG, treeevent, "Dtobag"};
+static Dtmethod_t _Dtoset = {
+    .searchf = dttree, .type = DT_OSET, .eventf = treeevent, .name = "Dtoset"};
+static Dtmethod_t _Dtobag = {
+    .searchf = dttree, .type = DT_OBAG, .eventf = treeevent, .name = "Dtobag"};
 Dtmethod_t *Dtoset = &_Dtoset;
 Dtmethod_t *Dtobag = &_Dtobag;
 

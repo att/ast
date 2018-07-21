@@ -48,7 +48,7 @@ ssize_t discwrite(Sfio_t *f, const void *s, size_t n, Sfdisc_t *disc) {
     return n;
 }
 
-Sfdisc_t seekable = {(Sfread_f)0, discwrite, discseek, (Sfexcept_f)0};
+Sfdisc_t seekable = {.writef = discwrite, .seekf = discseek};
 
 tmain() {
     UNUSED(argc);

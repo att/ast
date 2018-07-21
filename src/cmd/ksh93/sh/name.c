@@ -60,8 +60,9 @@ static const char *EmptyStr = "";
 static char *savesub = NULL;
 static Namval_t NullNode;
 static Dt_t *Refdict;
-static Dtdisc_t _Refdisc = {offsetof(struct Namref, np), sizeof(struct Namval_t *),
-                            sizeof(struct Namref)};
+static Dtdisc_t _Refdisc = {.key = offsetof(struct Namref, np),
+                            .size = sizeof(struct Namval_t *),
+                            .link = sizeof(struct Namref)};
 
 static_fn void attstore(Namval_t *, void *);
 static_fn void pushnam(Namval_t *, void *);
@@ -2256,8 +2257,8 @@ static_fn Namfun_t *clone_optimize(Namval_t *np, Namval_t *mp, int flags, Namfun
     return NULL;
 }
 
-const Namdisc_t OPTIMIZE_disc = {sizeof(struct optimize), put_optimize, NULL, NULL, NULL, NULL,
-                                 clone_optimize};
+const Namdisc_t OPTIMIZE_disc = {
+    .dsize = sizeof(struct optimize), .putval = put_optimize, .clonef = clone_optimize};
 
 void nv_optimize(Namval_t *np) {
     Shell_t *shp = sh_ptr(np);

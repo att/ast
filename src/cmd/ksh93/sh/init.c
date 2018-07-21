@@ -946,7 +946,7 @@ static_fn char *name_match(Namval_t *np, Namfun_t *fp) {
 }
 
 static const Namdisc_t SH_MATCH_disc = {
-    sizeof(struct match), NULL, get_match, NULL, NULL, NULL, NULL, name_match};
+    .dsize = sizeof(struct match), .getval = get_match, .namef = name_match};
 
 static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp)); }
 
@@ -975,22 +975,31 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     return (Sfdouble_t)t;
 }
 
-static const Namdisc_t SH_VERSION_disc = {0, NULL, get_version, nget_version};
-
-static const Namdisc_t IFS_disc = {sizeof(struct ifs), put_ifs, get_ifs};
-const Namdisc_t RESTRICTED_disc = {sizeof(Namfun_t), put_restricted};
-static const Namdisc_t CDPATH_disc = {sizeof(Namfun_t), put_cdpath};
-static const Namdisc_t EDITOR_disc = {sizeof(Namfun_t), put_ed};
-static const Namdisc_t HISTFILE_disc = {sizeof(Namfun_t), put_history};
-static const Namdisc_t OPTINDEX_disc = {
-    sizeof(Namfun_t), put_optindex, NULL, nget_optindex, NULL, NULL, clone_optindex};
-static const Namdisc_t SECONDS_disc = {sizeof(struct seconds), put_seconds, get_seconds,
-                                       nget_seconds};
-static const Namdisc_t RAND_disc = {sizeof(struct rand), put_rand, get_rand, nget_rand};
-static const Namdisc_t LINENO_disc = {sizeof(Namfun_t), put_lineno, get_lineno, nget_lineno};
-static const Namdisc_t L_ARG_disc = {sizeof(Namfun_t), put_lastarg, get_lastarg};
-static const Namdisc_t OPTastbin_disc = {sizeof(Namfun_t), put_astbin};
-static const Namdisc_t OPTIONS_disc = {sizeof(Namfun_t), put_options, get_options};
+static const Namdisc_t SH_VERSION_disc = {
+    .dsize = 0, .getval = get_version, .getnum = nget_version};
+static const Namdisc_t IFS_disc = {
+    sizeof(struct ifs), put_ifs, get_ifs, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+const Namdisc_t RESTRICTED_disc = {.dsize = sizeof(Namfun_t), .putval = put_restricted};
+static const Namdisc_t CDPATH_disc = {.dsize = sizeof(Namfun_t), .putval = put_cdpath};
+static const Namdisc_t EDITOR_disc = {.dsize = sizeof(Namfun_t), .putval = put_ed};
+static const Namdisc_t HISTFILE_disc = {.dsize = sizeof(Namfun_t), .putval = put_history};
+static const Namdisc_t OPTINDEX_disc = {.dsize = sizeof(Namfun_t),
+                                        .putval = put_optindex,
+                                        .getnum = nget_optindex,
+                                        .clonef = clone_optindex};
+static const Namdisc_t SECONDS_disc = {.dsize = sizeof(struct seconds),
+                                       .putval = put_seconds,
+                                       .getval = get_seconds,
+                                       .getnum = nget_seconds};
+static const Namdisc_t RAND_disc = {
+    .dsize = sizeof(struct rand), .putval = put_rand, .getval = get_rand, .getnum = nget_rand};
+static const Namdisc_t LINENO_disc = {
+    .dsize = sizeof(Namfun_t), .putval = put_lineno, .getval = get_lineno, .getnum = nget_lineno};
+static const Namdisc_t L_ARG_disc = {
+    .dsize = sizeof(Namfun_t), .putval = put_lastarg, .getval = get_lastarg};
+static const Namdisc_t OPTastbin_disc = {.dsize = sizeof(Namfun_t), .putval = put_astbin};
+static const Namdisc_t OPTIONS_disc = {
+    .dsize = sizeof(Namfun_t), .putval = put_options, .getval = get_options};
 
 #define MAX_MATH_ARGS 3
 
@@ -1001,9 +1010,10 @@ static_fn char *name_math(Namval_t *np, Namfun_t *fp) {
     return (sfstruse(shp->strbuf));
 }
 
-static const Namdisc_t math_child_disc = {0, NULL, NULL, NULL, NULL, NULL, NULL, name_math};
+static const Namdisc_t math_child_disc = {.dsize = 0, .namef = name_math};
 
-static Namfun_t math_child_fun = {&math_child_disc, 1, 0, sizeof(Namfun_t)};
+static Namfun_t math_child_fun = {
+    .disc = &math_child_disc, .nofree = 1, .subshell = 0, .dsize = sizeof(Namfun_t)};
 
 static_fn void math_init(Shell_t *shp) {
     Namval_t *np;
@@ -1084,14 +1094,11 @@ static_fn char *setdisc_any(Namval_t *np, const void *event, Namval_t *action, N
     return action ? (char *)action : "";
 }
 
-static const Namdisc_t SH_MATH_disc = {
-    0, NULL, get_math, NULL, setdisc_any, create_math,
-};
+static const Namdisc_t SH_MATH_disc = {0,    NULL, get_math, NULL, setdisc_any, create_math,
+                                       NULL, NULL, NULL,     NULL, NULL,        NULL};
 
 #if SHOPT_COSHELL
-static const Namdisc_t SH_JOBPOOL_disc = {
-    0, NULL, NULL, NULL, setdisc_any,
-};
+static const Namdisc_t SH_JOBPOOL_disc = {.dsize = 0, .setdisc = setdisc_any};
 #endif  // SHOPT_COSHELL
 
 #if 0
@@ -1109,7 +1116,7 @@ static const Namdisc_t NSPACE_disc = {0, NULL, get_nspace};
 static Namfun_t NSPACE_init = {&NSPACE_disc, 1};
 #endif
 
-static const Namdisc_t LC_disc = {sizeof(Namfun_t), put_lang};
+static const Namdisc_t LC_disc = {.dsize = sizeof(Namfun_t), .putval = put_lang};
 
 //
 // This function will get called whenever a configuration parameter changes.
@@ -1693,8 +1700,8 @@ static_fn Namfun_t *clone_svar(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return &dp->hdr;
 }
 
-static const Namdisc_t svar_disc = {0,           NULL,       NULL, NULL,     NULL,
-                                    create_svar, clone_svar, NULL, next_svar};
+static const Namdisc_t svar_disc = {
+    .dsize = 0, .createf = create_svar, .clonef = clone_svar, .nextf = next_svar};
 
 static_fn char *name_svar(Namval_t *np, Namfun_t *fp) {
     Shell_t *shp = sh_ptr(np);
@@ -1703,7 +1710,7 @@ static_fn char *name_svar(Namval_t *np, Namfun_t *fp) {
     return sfstruse(shp->strbuf);
 }
 
-static const Namdisc_t svar_child_disc = {0, NULL, NULL, NULL, NULL, NULL, NULL, name_svar};
+static const Namdisc_t svar_child_disc = {.dsize = 0, .namef = name_svar};
 
 #if 0
 // TODO: Decide if this variable serves a purpose.
@@ -2162,7 +2169,8 @@ skip:
     stakseek(offset);
 }
 
-static const Namdisc_t TRANS_disc = {sizeof(struct Mapchar), put_trans};
+static const Namdisc_t TRANS_disc = {
+    sizeof(struct Mapchar), put_trans, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     wctrans_t trans = name ? wctrans(name) : 0;

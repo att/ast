@@ -543,7 +543,7 @@ static_fn void putdisc(Namval_t *np, const void *val, int flag, Namfun_t *fp) {
     }
 }
 
-static const Namdisc_t Nv_bdisc = {0, putdisc, NULL, NULL, setdisc};
+static const Namdisc_t Nv_bdisc = {.dsize = 0, .putval = putdisc, .setdisc = setdisc};
 
 Namfun_t *nv_clone_disc(Namfun_t *fp, int flags) {
     Namfun_t *nfp;
@@ -682,7 +682,7 @@ static_fn void put_notify(Namval_t *np, const void *val, int flags, Namfun_t *fp
     if (!(fp->nofree & 1)) free(fp);
 }
 
-static const Namdisc_t notify_disc = {0, put_notify};
+static const Namdisc_t notify_disc = {.dsize = 0, .putval = put_notify};
 
 bool nv_unsetnotify(Namval_t *np, char **addr) {
     Namfun_t *fp;
@@ -884,7 +884,8 @@ static_fn void clone_putv(Namval_t *np, const void *val, int flags, Namfun_t *ha
     nv_putval(np, val, flags);
 }
 
-static const Namdisc_t clone_disc = {0, clone_putv, clone_getv, clone_getn};
+static const Namdisc_t clone_disc = {
+    .dsize = 0, .putval = clone_putv, .getval = clone_getv, .getnum = clone_getn};
 
 Namval_t *nv_mkclone(Namval_t *mp) {
     Shell_t *shp = sh_ptr(mp);
@@ -1211,10 +1212,12 @@ static_fn char *get_table(Namval_t *np, Namfun_t *fp) {
     return (char *)out->_data;
 }
 
-static const Namdisc_t table_disc = {
-    sizeof(struct table), put_table,   get_table, NULL,       NULL,
-    create_table,         clone_table, NULL,      next_table,
-};
+static const Namdisc_t table_disc = {.dsize = sizeof(struct table),
+                                     .putval = put_table,
+                                     .getval = get_table,
+                                     .createf = create_table,
+                                     .clonef = clone_table,
+                                     .nextf = next_table};
 
 Namval_t *nv_parent(Namval_t *np) {
     struct table *tp = (struct table *)nv_hasdisc(np, &table_disc);

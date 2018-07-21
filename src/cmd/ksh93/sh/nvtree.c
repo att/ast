@@ -121,8 +121,8 @@ static_fn Namfun_t *clone_tree(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
     return dp;
 }
 
-static const Namdisc_t treedisc = {0,          put_tree, nv_getvtree, NULL, NULL,     create_tree,
-                                   clone_tree, NULL,     NULL,        NULL, read_tree};
+static const Namdisc_t treedisc = {0,          put_tree, nv_getvtree, NULL, NULL,      create_tree,
+                                   clone_tree, NULL,     NULL,        NULL, read_tree, NULL};
 
 static_fn char *nextdot(const char *str, void *context) {
     char *cp;
@@ -990,7 +990,7 @@ static_fn char **genvalue(char **argv, const char *prefix, int n, struct Walk *w
 static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     Shell_t *shp = sh_ptr(np);
     static Sfio_t *out;
-    struct Walk walk = {0};
+    struct Walk walk;
     Sfio_t *outfile;
     Sfoff_t off = 0;
     int len, savtop = stktell(shp->stk);
@@ -1006,6 +1006,7 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
     Namval_t *mp = 0, *table;
     char *xpname = xp ? stkcopy(shp->stk, nv_name(xp)) : 0;
 
+    memset(&walk, 0, sizeof(walk));
     walk.shp = shp;
     if (xp) {
         if (!(last_root = shp->last_root)) last_root = shp->var_tree;

@@ -62,7 +62,7 @@
 #define DEBUG_PROC 1
 #endif
 
-Proc_t proc_default = {-1};
+Proc_t proc_default = {.pid = -1};
 
 #if DEBUG_PROC
 

@@ -49,7 +49,7 @@ static const Namval_t options[] = {
  *            by 2009 _tm_info_ can be static
  */
 
-Tm_info_t _tm_info_ = {0};
+Tm_info_t _tm_info_ = {.flags = 0};
 Tm_info_t *_tm_infop_ = &_tm_info_;
 
 static char TZ[256];

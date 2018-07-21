@@ -58,20 +58,9 @@ typedef Sfdouble_t (*Math_f)(Sfdouble_t, ...);
 extern const Namdisc_t ENUM_disc;
 static bool Varsubscript;
 static Sfdouble_t NaN, Inf, Fun;
-static Namval_t Infnod = {
-    {{NULL}, {NULL}},
-    "Inf",
-};
-
-static Namval_t NaNnod = {
-    {{NULL}, {NULL}},
-    "NaN",
-};
-
-static Namval_t FunNode = {
-    {{NULL}, {NULL}},
-    "?",
-};
+static Namval_t Infnod = {.nvname = "Inf"};
+static Namval_t NaNnod = {.nvname = "NaN"};
+static Namval_t FunNode = {.nvname = "?"};
 
 struct Mathconst {
     char name[9];

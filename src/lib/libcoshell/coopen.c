@@ -53,7 +53,17 @@ static const Namval_t options[] = {
     {"ignore", CO_IGNORE},     {"orphan", CO_ORPHAN},   {"silent", CO_SILENT},
     {"separate", CO_SEPARATE}, {"service", CO_SERVICE}, {NULL, 0}};
 
-Costate_t state = {"libcoshell:coshell"};
+Costate_t state = {
+    "libcoshell:coshell",  // lib
+    NULL,                  // coshells
+    NULL,                  // current
+    NULL,                  // generic
+    NULL,                  // pwd
+    NULL,                  // sh
+    NULL,                  // type
+    0,                     // init
+    0                      // index
+};
 
 //
 // Called when ident sequence hung

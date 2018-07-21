@@ -99,99 +99,29 @@ static const char name_native[] = "native";
 #define UTF32 0 /* UTF-32 callouts need to be coded!! */
 
 static const _ast_iconv_list_t codes[] = {
-    {
-        "utf",
-        "un|unicode|utf",
-        "multibyte 8-bit unicode",
-        "UTF-%s",
-        "8",
-        CC_UTF,
-    },
+    {"utf", "un|unicode|utf", "multibyte 8-bit unicode", "UTF-%s", "8", CC_UTF, NULL},
 
-    {
-        "ume",
-        "um|ume|utf?(-)7",
-        "multibyte 7-bit unicode",
-        "UTF-7",
-        0,
-        CC_UME,
-    },
+    {"ume", "um|ume|utf?(-)7", "multibyte 7-bit unicode", "UTF-7", 0, CC_UME, NULL},
 
-    {
-        "euc",
-        "(big|euc)*",
-        "euc family",
-        0,
-        0,
-        CC_ICONV,
-    },
+    {"euc", "(big|euc)*", "euc family", 0, 0, CC_ICONV, NULL},
 
-    {
-        "dos",
-        "dos?(-)?(855)",
-        "dos code page",
-        "DOS855",
-        0,
-        CC_ICONV,
-    },
+    {"dos", "dos?(-)?(855)", "dos code page", "DOS855", 0, CC_ICONV, NULL},
 
-    {
-        "ucs",
-        "utf?(-)16?(be)",
-        "native unicode 16 runes",
-        "UTF-%s",
-        "16",
-        CC_U16,
-    },
+    {"ucs", "utf?(-)16?(be)", "native unicode 16 runes", "UTF-%s", "16", CC_U16, NULL},
 
-    {
-        "ucs-be",
-        "utf?(-)16be",
-        "little endian unicode 16 runes",
-        "UTF-%sBE",
-        "16",
-        CC_U16BE,
-    },
+    {"ucs-be", "utf?(-)16be", "little endian unicode 16 runes", "UTF-%sBE", "16", CC_U16BE, NULL},
 
-    {
-        "ucs-le",
-        "utf?(-)16le",
-        "little endian unicode 16 runes",
-        "UTF-%sLE",
-        "16",
-        CC_U16LE,
-    },
+    {"ucs-le", "utf?(-)16le", "little endian unicode 16 runes", "UTF-%sLE", "16", CC_U16LE, NULL},
 
 #if UTF32
-    {
-        "utf-32",
-        "utf?(-)32",
-        "native unicode 32 runes",
-        "UTF-%s",
-        "32",
-        CC_U32,
-    },
+    {"utf-32", "utf?(-)32", "native unicode 32 runes", "UTF-%s", "32", CC_U32, NULL},
 
-    {
-        "utf-32be",
-        "utf?(-)32be",
-        "big endian unicode 32 runes",
-        "UTF-%sBE",
-        "32",
-        CC_U32BE,
-    },
+    {"utf-32be", "utf?(-)32be", "big endian unicode 32 runes", "UTF-%sBE", "32", CC_U32BE, NULL},
 
-    {
-        "utf-32le",
-        "utf?(-)32le",
-        "little endian unicode 32 runes",
-        "UTF-%sLE",
-        "32",
-        CC_U32LE,
-    },
+    {"utf-32le", "utf?(-)32le", "little endian unicode 32 runes", "UTF-%sLE", "32", CC_U32LE, NULL},
 #endif
 
-    {0},
+    {NULL, NULL, NULL, NULL, NULL, 0, NULL},
 };
 
 /*

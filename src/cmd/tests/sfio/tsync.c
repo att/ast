@@ -36,7 +36,7 @@ static int except(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     if (type == SF_SYNC && integralof(arg) == 1) Count += 1;
     return 0;
 }
-Sfdisc_t Disc = {NULL, NULL, NULL, except};
+Sfdisc_t Disc = {.exceptf = except};
 
 /* this tests to see if data is written correctly */
 typedef struct _mydisc_s {

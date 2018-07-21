@@ -498,7 +498,7 @@ static_fn void put_level(Namval_t *np, const void *val, int flags, Namfun_t *fp)
     }
 }
 
-static const Namdisc_t level_disc = {sizeof(struct Level), put_level};
+static const Namdisc_t level_disc = {.dsize = sizeof(struct Level), .putval = put_level};
 
 static_fn struct Level *init_level(Shell_t *shp, int level) {
     struct Level *lp = newof(NULL, struct Level, 1, 0);
@@ -2486,8 +2486,9 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                     memset((void *)np->nvalue.rp, 0, sizeof(struct Ufunction));
                 }
                 if (t->funct.functstak) {
-                    static Dtdisc_t _Rpdisc = {offsetof(struct Ufunction, fname), -1,
-                                               sizeof(struct Ufunction)};
+                    static Dtdisc_t _Rpdisc = {.key = offsetof(struct Ufunction, fname),
+                                               .size = -1,
+                                               .link = sizeof(struct Ufunction)};
                     struct functnod *fp;
                     struct comnod *ac = t->funct.functargs;
                     slp = t->funct.functstak;

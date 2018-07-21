@@ -164,7 +164,7 @@ static Feature_t dynamic[] = {
      OP_path_resolve},
 #define OP_universe (OP_path_resolve + 1)
     {NULL, "UNIVERSE", "", "att", NULL, 8, CONF_AST, 0, OP_universe},
-    {NULL}};
+    {.next = NULL}};
 
 typedef struct State_s {
     const char *id;
@@ -189,8 +189,18 @@ typedef struct State_s {
 
 } State_t;
 
-static State_t state = {"getconf",         "_AST_FEATURES", "CONFORMANCE = standard",
-                        "POSIXLY_CORRECT", dynamic,         -1};
+static State_t state = {"getconf",
+                        "_AST_FEATURES",
+                        "CONFORMANCE = standard",
+                        "POSIXLY_CORRECT",
+                        dynamic,
+                        -1,
+                        0,
+                        0,
+                        NULL,
+                        NULL,
+                        NULL,
+                        NULL};
 
 static char *feature(Feature_t *, const char *, const char *, const char *, unsigned int, Error_f);
 

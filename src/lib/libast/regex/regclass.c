@@ -104,20 +104,24 @@ static int Is_wc_16(int);
 #define SZ(s) s, (sizeof(s) - 1)
 
 static Ctype_t ctype[] = {
-    {SZ("alnum"), Isalnum},   {SZ("alpha"), Isalpha}, {SZ("blank"), Isblank},
-    {SZ("cntrl"), Iscntrl},   {SZ("digit"), Isdigit}, {SZ("graph"), Isgraph},
-    {SZ("lower"), Islower},   {SZ("print"), Isprint}, {SZ("punct"), Ispunct},
-    {SZ("space"), Isspace},   {SZ("upper"), Isupper}, {SZ("word"), Isword},
-    {SZ("xdigit"), Isxdigit},
+    {SZ("alnum"), Isalnum, NULL, 0},   {SZ("alpha"), Isalpha, NULL, 0},
+    {SZ("blank"), Isblank, NULL, 0},   {SZ("cntrl"), Iscntrl, NULL, 0},
+    {SZ("digit"), Isdigit, NULL, 0},   {SZ("graph"), Isgraph, NULL, 0},
+    {SZ("lower"), Islower, NULL, 0},   {SZ("print"), Isprint, NULL, 0},
+    {SZ("punct"), Ispunct, NULL, 0},   {SZ("space"), Isspace, NULL, 0},
+    {SZ("upper"), Isupper, NULL, 0},   {SZ("word"), Isword, NULL, 0},
+    {SZ("xdigit"), Isxdigit, NULL, 0},
 
 #define CTYPES 13
 
-    {0, 0, Is_wc_1},          {0, 0, Is_wc_2},        {0, 0, Is_wc_3},
-    {0, 0, Is_wc_4},          {0, 0, Is_wc_5},        {0, 0, Is_wc_6},
-    {0, 0, Is_wc_7},          {0, 0, Is_wc_8},        {0, 0, Is_wc_9},
-    {0, 0, Is_wc_10},         {0, 0, Is_wc_11},       {0, 0, Is_wc_12},
-    {0, 0, Is_wc_13},         {0, 0, Is_wc_14},       {0, 0, Is_wc_15},
-    {0, 0, Is_wc_16},
+    {NULL, 0, Is_wc_1, NULL, 0},       {NULL, 0, Is_wc_2, NULL, 0},
+    {NULL, 0, Is_wc_3, NULL, 0},       {NULL, 0, Is_wc_4, NULL, 0},
+    {NULL, 0, Is_wc_5, NULL, 0},       {NULL, 0, Is_wc_6, NULL, 0},
+    {NULL, 0, Is_wc_7, NULL, 0},       {NULL, 0, Is_wc_8, NULL, 0},
+    {NULL, 0, Is_wc_9, NULL, 0},       {NULL, 0, Is_wc_10, NULL, 0},
+    {NULL, 0, Is_wc_11, NULL, 0},      {NULL, 0, Is_wc_12, NULL, 0},
+    {NULL, 0, Is_wc_13, NULL, 0},      {NULL, 0, Is_wc_14, NULL, 0},
+    {NULL, 0, Is_wc_15, NULL, 0},      {NULL, 0, Is_wc_16, NULL, 0},
 
 #define WTYPES 16
 

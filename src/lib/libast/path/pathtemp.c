@@ -111,7 +111,7 @@ static struct Tmp_s {
     char *pfx;
     char *tmpdir;
     char *tmppath;
-} tmp = {S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH};
+} tmp = {.mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH};
 
 char *pathtemp(char *buf, size_t len, const char *dir, const char *pfx, int *fdp) {
     char *d;

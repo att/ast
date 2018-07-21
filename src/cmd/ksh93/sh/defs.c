@@ -25,23 +25,23 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
+#include <string.h>
 #include <sys/types.h>
 
 #include "defs.h"
 
 #include "cdt.h"
 #include "fault.h"
+#include "fcin.h"
 #include "jobs.h"
 #include "lexstates.h"
 #include "name.h"
 
-Shell_t sh = {};
-struct shared *shgd;
-
-Dtdisc_t _Nvdisc = {offsetof(Namval_t, nvname), -1, 0, 0, 0, nv_compare};
+Shell_t sh = {.shcomp = 0};
+struct jobs job = {.pwlist = NULL};
+Dtdisc_t _Nvdisc = {.key = offsetof(Namval_t, nvname), .size = -1, .comparf = nv_compare};
+struct shared *shgd = NULL;
+int32_t sh_mailchk = 600;
 
 // Reserve room for writable state table.
 char *sh_lexstates[ST_NONE] = {0};
-
-struct jobs job = {0};
-int32_t sh_mailchk = 600;

@@ -589,8 +589,11 @@ static_fn void array_putval(Namval_t *np, const void *string, int flags, Namfun_
     if (!string && (flags & NV_TYPE) && ap) array_unscope(np, ap);
 }
 
-static const Namdisc_t array_disc = {
-    sizeof(Namarr_t), array_putval, array_getval, array_getnum, NULL, NULL, array_clone};
+static const Namdisc_t array_disc = {.dsize = sizeof(Namarr_t),
+                                     .putval = array_putval,
+                                     .getval = array_getval,
+                                     .getnum = array_getnum,
+                                     .clonef = array_clone};
 
 static_fn void array_copytree(Namval_t *np, Namval_t *mp) {
     Namfun_t *fp = nv_disc(np, NULL, NV_POP);
