@@ -72,6 +72,7 @@ struct login {
 // Builtin `exec`.
 //
 int b_exec(int argc, char *argv[], Shbltin_t *context) {
+    UNUSED(argc);
     struct login logdata;
     int n;
     logdata.clear = 0;
@@ -82,7 +83,6 @@ int b_exec(int argc, char *argv[], Shbltin_t *context) {
         switch (n) {
             case 'a': {
                 logdata.arg0 = opt_info.arg;
-                argc = 0;
                 break;
             }
             case 'c': {
