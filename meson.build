@@ -35,6 +35,16 @@ add_global_arguments('-std=gnu99', language: 'c')
 # GNU distros.
 add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
+# The AST/ksh code is littered with aliasing that violates the assumptions the
+# compiler makes when `-fstrict-aliasing` is in effect so make sure those
+# optimizations are disabled.
+add_global_arguments('-fno-strict-aliasing', language: 'c')
+
+# Enable all compiler warnings. Selectively disable (blacklist) those that are
+# more noise than value with `-Wno-...` flags. Note that Meson implicitly adds
+# -Wall.
+add_global_arguments('-Wextra', language: 'c')
+
 # There are quite a few places in the code which use a char to index into an
 # array. All of them appear to be "safe" in as much as they only do so when
 # the value involves an ASCII character which, by definition, won't be
@@ -43,17 +53,6 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 # TODO: Modify the code to not rely on the assumption that dereferencing a
 # char pointer is safe to use as an array index.
 add_global_arguments('-Wno-char-subscripts', language: 'c')
-
-# The AST/ksh code is littered with aliasing that violates the assumptions the
-# compiler makes when `-fstrict-aliasing` is in effect so make sure those
-# optimizations are disabled.
-add_global_arguments('-fno-strict-aliasing', language: 'c')
-
-# Some warnings not enabled by default that are useful.
-# TODO: Someday make this -Wall.
-add_global_arguments('-Wunused-parameter', language: 'c')
-add_global_arguments('-Wmissing-field-initializers', language: 'c')
-add_global_arguments('-Wempty-body', language: 'c')
 
 # There are hundreds of instances of the code comparing signed and unsigned
 # ints. Mostly involving a var of type signed int and `sizeof()` (which
