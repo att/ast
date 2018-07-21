@@ -128,7 +128,9 @@ char *sfgetr(Sfio_t *f, int rc, int type) {
         un += n;
         ends = f->next;
         f->next += n;
-        MEMCPY(s, ends, n);
+        memcpy(s, ends, n);
+        s += n;
+        ends += n;
     }
 
 done:

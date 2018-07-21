@@ -50,7 +50,8 @@ ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
         p = sizeof(buf);
     }
     if ((size_t)p > n) p = n;
-    MEMSET(ps, c, p);
+    memset(ps, c, n);
+    ps += n;
     ps -= p;
 
     w = n;
