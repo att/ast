@@ -45,6 +45,16 @@ add_global_arguments('-fno-strict-aliasing', language: 'c')
 # -Wall.
 add_global_arguments('-Wextra', language: 'c')
 
+# GCC 8 enables -Wcast-function-type when -Wextra is used. Sadly it causes far
+# too many false positives in the ksh code. Such as in the
+# src/cmd/ksh93/bltins/math.c module. So disable it.
+#
+# TODO: Refactor the code so that the incompatible explicit function casts are
+# not needed.
+if cc.get_id() == 'gcc'
+    add_global_arguments('-Wno-cast-function-type', language: 'c')
+endif
+
 # There are quite a few places in the code which use a char to index into an
 # array. All of them appear to be "safe" in as much as they only do so when
 # the value involves an ASCII character which, by definition, won't be
