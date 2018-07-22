@@ -31,12 +31,3 @@ void *sh_waitnotify(int (*newevent)(int, long, int)) {
     shgd->waitevent = newevent;
     return old;
 }
-
-#if __OBSOLETE__ < 20080101
-//
-// This used to be a private symbol. Retain the old name for a bit for a smooth transition.
-//
-
-void *_sh_waitnotify(int (*newevent)(int, long, int)) { return sh_waitnotify(newevent); }
-
-#endif

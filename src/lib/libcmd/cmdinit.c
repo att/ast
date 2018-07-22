@@ -54,13 +54,3 @@ int _cmd_init(int argc, char **argv, Shbltin_t *context, const char *catalog, in
     opt_info.index = 0;
     return 0;
 }
-
-#if __OBSOLETE__ < 20080101
-
-#undef cmdinit
-
-void cmdinit(char **argv, Shbltin_t *context, const char *catalog, int flags) {
-    _cmd_init(0, argv, context, catalog, flags);
-}
-
-#endif

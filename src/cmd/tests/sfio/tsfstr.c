@@ -45,7 +45,7 @@ tmain() {
     if (!(s = sfstrrsrv(fp, 64 * 1024))) terror("Can't reserve space");
     if (strcmp(sfstrbase(fp), "0123456789") != 0) terror("Lost data");
 
-    if (sfstrbuf(fp, buf, sizeof(buf), 0) < 0) terror("sfstrtmp failed");
+    if (sfstrbuf(fp, buf, sizeof(buf), 0) < 0) terror("sfstrbuf failed");
     if (sfstrbase(fp) != buf) terror("Wrong base");
     if (sfstrsize(fp) != sizeof(buf)) terror("Wrong buffer size");
 
