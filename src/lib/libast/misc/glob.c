@@ -51,10 +51,6 @@
 #define MATCHPATH(g) (offsetof(globlist_t, gl_path) + (g)->gl_extra)
 
 typedef int (*GL_error_f)(const char *, int);
-typedef void *(*GL_opendir_f)(const char *);
-typedef struct dirent *(*GL_readdir_f)(void *);
-typedef void (*GL_closedir_f)(void *);
-typedef int (*GL_stat_f)(const char *, struct stat *);
 
 #define _GLOB_PRIVATE_         \
     GL_error_f gl_errfn;       \
@@ -80,13 +76,13 @@ typedef int (*GL_stat_f)(const char *, struct stat *);
  * default gl_diropen
  */
 
-static void *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendir)(path); }
+static DIR *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendir)(path); }
 
 /*
  * default gl_dirnext
  */
 
-static char *gl_dirnext(glob_t *gp, void *handle) {
+static char *gl_dirnext(glob_t *gp, DIR *handle) {
     struct dirent *dp;
 
     while ((dp = (struct dirent *)(*gp->gl_readdir)(handle))) {
@@ -104,7 +100,7 @@ static char *gl_dirnext(glob_t *gp, void *handle) {
  * default gl_dirclose
  */
 
-static void gl_dirclose(glob_t *gp, void *handle) { (gp->gl_closedir)(handle); }
+static int gl_dirclose(glob_t *gp, DIR *handle) { return (gp->gl_closedir)(handle); }
 
 //
 // Default gl_type.
@@ -527,12 +523,12 @@ int _ast_glob(const char *pattern, int flags, int (*errfn)(const char *, int), g
             gp->gl_extra = 0;
         }
         if (!(flags & GLOB_ALTDIRFUNC)) {
-            gp->gl_opendir = (GL_opendir_f)opendir;
-            gp->gl_readdir = (GL_readdir_f)readdir;
-            gp->gl_closedir = (GL_closedir_f)closedir;
-            if (!gp->gl_stat) gp->gl_stat = (GL_stat_f)pathstat;
+            gp->gl_opendir = opendir;
+            gp->gl_readdir = readdir;
+            gp->gl_closedir = closedir;
+            if (!gp->gl_stat) gp->gl_stat = pathstat;
         }
-        if (!gp->gl_lstat) gp->gl_lstat = (GL_stat_f)lstat;
+        if (!gp->gl_lstat) gp->gl_lstat = lstat;
         if (!gp->gl_intr) gp->gl_intr = &intr;
         if (!gp->gl_delim) gp->gl_delim = '/';
         if (!gp->gl_diropen) gp->gl_diropen = gl_diropen;

@@ -27,9 +27,9 @@
 
 #define GLOB_VERSION 20060717L
 
+#include <dirent.h>
 #include <stdlib.h>
 
-struct dirent;
 struct stat;
 
 struct _glob_;
@@ -61,17 +61,17 @@ struct _glob_ {
     int gl_delim;
 
     void *gl_handle;
-    void *(*gl_diropen)(glob_t *, const char *);
-    char *(*gl_dirnext)(glob_t *, void *);
-    void (*gl_dirclose)(glob_t *, void *);
+    DIR *(*gl_diropen)(glob_t *, const char *);
+    char *(*gl_dirnext)(glob_t *, DIR *);
+    int (*gl_dirclose)(glob_t *, DIR *);
     int (*gl_type)(glob_t *, const char *, int);
     int (*gl_attr)(glob_t *, const char *, int);
 
     /* gnu extensions -- but how do you synthesize dirent and stat? */
 
-    void *(*gl_opendir)(const char *);
-    struct dirent *(*gl_readdir)(void *);
-    void (*gl_closedir)(void *);
+    DIR *(*gl_opendir)(const char *);
+    struct dirent *(*gl_readdir)(DIR *);
+    int (*gl_closedir)(DIR *);
     int (*gl_stat)(const char *, struct stat *);
     int (*gl_lstat)(const char *, struct stat *);
 
