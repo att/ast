@@ -50,9 +50,7 @@ ssize_t sfnputc(Sfio_t *f, int c, size_t n) {
         p = sizeof(buf);
     }
     if ((size_t)p > n) p = n;
-    memset(ps, c, n);
-    ps += n;
-    ps -= p;
+    memset(ps, c, p);
 
     w = n;
     if (ps == f->next) { /* simple sfwrite */
