@@ -870,16 +870,6 @@ void *asocasptr(void volatile *p, void *o, void *n) {
     lock(k);
     return o;
 }
-#endif
+#endif  // asocasptr
 
-#if __OBSOLETE__ < 20160101
-
-int asoloop(unsigned int k) {
-    k = (k % 21) + 1;
-    if (k > 21) return asoyield();
-    return asorelax(1 << ((k % 21) + 1));
-}
-
-#endif
-
-#endif
+#endif  // _ast_int8_t
