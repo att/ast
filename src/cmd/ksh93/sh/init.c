@@ -1274,7 +1274,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 #endif
     if (!beenhere) {
         beenhere = 1;
-        shp = &sh;
+        shp = sh_getinterp();
         shgd = newof(0, struct shared, 1, 0);
         shgd->pid = getpid();
         shgd->ppid = getppid();
