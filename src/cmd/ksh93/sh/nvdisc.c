@@ -908,8 +908,6 @@ Namval_t *nv_mkclone(Namval_t *mp) {
 Namval_t *nv_search(const char *name, Dt_t *root, int mode) {
     Shell_t *shp = sh_getinterp();
 
-    if (!shp) shp = &sh;
-
     Namval_t *np;
     Dt_t *dp = 0;
     if (mode & HASH_NOSCOPE) dp = dtview(root, 0);
