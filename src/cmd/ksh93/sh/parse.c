@@ -1783,7 +1783,7 @@ static_fn struct argnod *qscan(Lex_t *lp, struct comnod *ac, int argn) {
 static_fn Shnode_t *test_expr(Lex_t *lp, int sym) {
     Shnode_t *t = test_or(lp);
     if (lp->token != sym) sh_syntax(lp);
-    return (t);
+    return t;
 }
 
 static_fn Shnode_t *test_or(Lex_t *lp) {
@@ -1819,13 +1819,15 @@ static_fn Shnode_t *test_primary(Lex_t *lexp) {
     struct argnod *arg;
     Shnode_t *t;
     int num, token;
+    static Shnode_t dummy_node;
 
     token = skipnl(lexp, 0);
     num = lexp->digits;
     switch (token) {
         case '(': {
             t = test_expr(lexp, ')');
-            t = makelist(lexp, TTST | TTEST | TPAREN, t, pointerof(lexp->sh->inlineno));
+            t = makelist(lexp, TTST | TTEST | TPAREN, t, &dummy_node);
+            t->tst.tstline = lexp->sh->inlineno;
             break;
         }
         case '!': {
