@@ -43,9 +43,6 @@
 #ifndef elementsof
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))
 #endif
-#ifndef integralof
-#define integralof(x) (((char *)(x)) - ((char *)0))
-#endif
 
 #ifndef TIMEOUT
 #define TIMEOUT 0 /* timeout in minutes */

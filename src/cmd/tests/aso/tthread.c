@@ -30,9 +30,6 @@
 #ifndef elementsof
 #define elementsof(x) (sizeof(x) / sizeof(x[0]))
 #endif
-#ifndef integralof
-#define integralof(x) (((char *)(x)) - ((char *)0))
-#endif
 
 #define N_OBJS 1000000
 #define N_THREADS 8
@@ -48,10 +45,11 @@ static unsigned int Asolock;
 
 static unsigned int N_free;
 
-static void *consumer(void *arg) {
+static void *consumer(void *idp) {
     Obj_t *obj;
-    unsigned int id = (unsigned int)integralof(arg);
+    unsigned int id = *(unsigned int *)idp;
 
+    free(idp);
     while (1) {
         asolock(&Asolock, id, ASO_LOCK);
 
@@ -90,8 +88,11 @@ tmain() {
     gettimeofday(&tv1, NULL);
 
     N_free = 0;
-    for (i = 0; i < N_THREADS; ++i) pthread_create(&thread[i], NULL, consumer, pointerof(i + 1));
-
+    for (i = 0; i < N_THREADS; ++i) {
+        unsigned int *idp = malloc(sizeof(unsigned int));
+        *idp = i + 1;
+        pthread_create(&thread[i], NULL, consumer, idp);
+    }
     for (i = 0; i < N_THREADS; ++i) pthread_join(thread[i], NULL);
 
     /* time after threads finished... */
