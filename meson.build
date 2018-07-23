@@ -193,8 +193,16 @@ if get_option('buildtype') == 'debug'
     # This should be `if cc.has_link_argument()` but that isn't available
     # until Meson 0.46 or newer and we can't count on that yet. And in
     # practice this test works fine but can result in a meson warning.
-    if cc.has_argument('-Wl,-E')
-        add_global_link_arguments('-Wl,-E', language: 'c')
+    if system == 'cygwin'
+        # The current (2018/07) gcc compiler on Cygwin generates PE+ executables
+        # and it requires the -W,--export-all-symbols instead of -W,-E.
+        if cc.has_argument('-Wl,--export-all-symbols')
+            add_global_link_arguments('-Wl,--export-all-symbols', language: 'c')
+        endif
+    else
+        if cc.has_argument('-Wl,-E')
+            add_global_link_arguments('-Wl,-E', language: 'c')
+        endif
     endif
 endif
 
