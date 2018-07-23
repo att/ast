@@ -39,12 +39,7 @@
 #include "history.h"
 #include "name.h"
 
-#ifndef pointerof
-#define pointerof(x) ((void *)((char *)0 + (x)))
-#endif
-
 #define Empty ((char *)(e_sptbnl + 3))
-
 #define env_change() (++ast.env_serial)
 #define Env_t void
 #define sh_envput(e, p) env_change()

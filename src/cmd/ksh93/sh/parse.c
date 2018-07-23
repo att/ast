@@ -1825,7 +1825,7 @@ static_fn Shnode_t *test_primary(Lex_t *lexp) {
     switch (token) {
         case '(': {
             t = test_expr(lexp, ')');
-            t = makelist(lexp, TTST | TTEST | TPAREN, t, (Shnode_t *)pointerof(lexp->sh->inlineno));
+            t = makelist(lexp, TTST | TTEST | TPAREN, t, pointerof(lexp->sh->inlineno));
             break;
         }
         case '!': {

@@ -24,6 +24,7 @@
 #include <sys/time.h>
 
 #include "aso.h"
+#include "ast.h"
 #include "terror.h"
 
 #ifndef elementsof
@@ -89,7 +90,7 @@ tmain() {
     gettimeofday(&tv1, NULL);
 
     N_free = 0;
-    for (i = 0; i < N_THREADS; ++i) pthread_create(&thread[i], NULL, consumer, (char *)0 + i + 1);
+    for (i = 0; i < N_THREADS; ++i) pthread_create(&thread[i], NULL, consumer, pointerof(i + 1));
 
     for (i = 0; i < N_THREADS; ++i) pthread_join(thread[i], NULL);
 

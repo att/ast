@@ -3369,7 +3369,7 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
                         if (nv_isattr(nq, NV_LDOUBLE) == NV_LDOUBLE) {
                             np->nvalue.nrp->np = nq;
                         } else {
-                            np->nvalue.nrp->np = (Namval_t *)pointerof((Sflong_t)(*nq->nvalue.ldp));
+                            np->nvalue.nrp->np = pointerof((Sflong_t)(*nq->nvalue.ldp));
                             nv_onattr(nq, NV_LDOUBLE);
                         }
                         nv_onattr(np, NV_REF | NV_NOFREE);

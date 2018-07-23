@@ -2179,8 +2179,8 @@ Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
     size_t n = 0;
     if (np) mp = (struct Mapchar *)nv_hasdisc(np, &TRANS_disc);
     if (!name) return (mp ? (Namfun_t *)mp->name : 0);
-    if (!trans) return (0);
-    if (!np) return (((Namfun_t *)0) + 1);
+    if (!trans) return NULL;
+    if (!np) return pointerof(1);
     if ((low = strcmp(name, e_tolower)) && strcmp(name, e_toupper)) n += strlen(name) + 1;
     if (mp) {
         if (strcmp(name, mp->name) == 0) return (&mp->hdr);
