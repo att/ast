@@ -52,7 +52,6 @@ extern int sfdcprefix(Sfio_t *, const char *);
 extern int sfdcseekable(Sfio_t *);
 extern int sfdcslow(Sfio_t *);
 extern int sfdctee(Sfio_t *, Sfio_t *);
-extern int sfdcunion(Sfio_t *, Sfio_t **, int);
 
 extern Sfio_t *sfdcsubstream(Sfio_t *, Sfio_t *, Sfoff_t, Sfoff_t);
 
