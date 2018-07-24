@@ -53,6 +53,4 @@ extern int sfdcseekable(Sfio_t *);
 extern int sfdcslow(Sfio_t *);
 extern int sfdctee(Sfio_t *, Sfio_t *);
 
-extern Sfio_t *sfdcsubstream(Sfio_t *, Sfio_t *, Sfoff_t, Sfoff_t);
-
 #endif  // _SFDISC_H
