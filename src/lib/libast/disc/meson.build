@@ -8,5 +8,4 @@ libast_files += [
     'disc/sfdcsubstr.c',
     'disc/sfdctee.c',
     'disc/sfdcunion.c',
-    'disc/sfkeyprintf.c',
 ]
