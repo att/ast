@@ -19,11 +19,6 @@
 #define cmdopen cmdopen_20110505
 #endif
 
-#if ASTAPI(20130509)
-#undef memfatal
-#define memfatal memfatal_20130509
-#endif
-
 #if ASTAPI(20100601)
 #undef pathaccess
 #define pathaccess pathaccess_20100601
@@ -80,7 +75,7 @@
 #endif
 
 #define _API_ast_MAP                                                                              \
-    "cmdopen_20120411 cmdopen_20110505 memfatal_20130509 pathaccess_20100601 pathcanon_20100601 " \
+    "cmdopen_20120411 cmdopen_20110505 pathaccess_20100601 pathcanon_20100601 " \
     "pathcat_20100601 pathkey_20100601 pathpath_20100601 pathprobe_20100601 pathrepl_20100601 "   \
     "regexec_20120528 regnexec_20120528 regrexec_20120528 regsubexec_20120528 "                   \
     "strgrpmatch_20120528"

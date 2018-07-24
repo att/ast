@@ -256,8 +256,6 @@ extern char *fmttime(const char *, time_t);
 extern char *fmtuid(int);
 extern char *fmtversion(unsigned long);
 extern void *memdup(const void *, size_t);
-extern void memfatal(void);
-extern int memfatal_20130509(struct Vmdisc_s *);
 extern unsigned int memhash(const void *, int);
 extern unsigned long memsum(const void *, int, unsigned long);
 extern char *pathaccess(char *, const char *, const char *, const char *, int);
