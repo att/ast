@@ -43,6 +43,9 @@ with "sh" (the Bourne Shell).
 
 %install
 %meson_install
+# Allow switching between different ksh implementations (for e.g. mksh) through alternatives.
+mv %{buildroot}/%{_bindir}/ksh %{buildroot}/%{_bindir}/ksh93
+mv %{buildroot}/%{_mandir}/man1/ksh.1.gz %{buildroot}/%{_mandir}/man1/ksh93.1.gz
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/binfmt.d/kshcomp.conf
 install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/kshrc
 install -p -D -m 644 %{SOURCE3} %{buildroot}%{_sysconfdir}/skel/.kshrc
@@ -62,6 +65,22 @@ do
 done
 
 /bin/systemctl try-restart systemd-binfmt.service >/dev/null 2>&1 || :
+
+%{_sbindir}/alternatives --install /bin/ksh ksh \
+                /bin/ksh93 50 \
+        --slave %{_mandir}/man1/ksh.1.gz ksh-man \
+                %{_mandir}/man1/ksh93.1.gz
+
+# If not symlink we are updating ksh where there was no alternatives before
+# so replace with symlink and set alternatives
+if [ ! -L /bin/ksh ]; then
+        %{_sbindir}/alternatives --auto ksh
+        ln -sf /etc/alternatives/ksh /bin/ksh
+        ln -sf /etc/alternatives/ksh-man %{_mandir}/man1/ksh.1.gz
+fi
+
+%preun
+%{_sbindir}/alternatives --remove ksh /bin/ksh93
 
 %postun
 for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
@@ -83,10 +102,10 @@ fi
 %files
 %doc src/cmd/ksh93/COMPATIBILITY src/cmd/ksh93/RELEASE src/cmd/ksh93/TYPES
 # LICENSE file is missing, temporarily?
-%{_bindir}/ksh
+%{_bindir}/ksh93
 %{_bindir}/rksh
 %{_bindir}/shcomp
-%{_mandir}/man1/ksh.1*
+%{_mandir}/man1/ksh93.1*
 %config(noreplace) %{_sysconfdir}/skel/.kshrc
 %config(noreplace) %{_sysconfdir}/kshrc
 %config(noreplace) %{_sysconfdir}/binfmt.d/kshcomp.conf
