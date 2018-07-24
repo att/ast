@@ -574,7 +574,6 @@ static_fn void put_rand(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         return;
     }
 
-
     double seedf;
     if (flags & NV_INTEGER) {
         seedf = *(double *)val;

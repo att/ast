@@ -190,7 +190,7 @@
 #define oldof(p, t, n, x) \
     ((p) ? (t *)realloc((char *)(p), sizeof(t) * (n) + (x)) : (t *)malloc(sizeof(t) * (n) + (x)))
 #define pointerof(x) (void *)((uintptr_t)(x))
-#define roundof(x, y) (((x) + ((y) - 1)) & ~((y) - 1))
+#define roundof(x, y) (((x) + ((y)-1)) & ~((y)-1))
 #define ssizeof(x) ((int)sizeof(x))
 
 #define streq(a, b) (*(a) == *(b) && !strcmp(a, b))

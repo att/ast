@@ -29,8 +29,8 @@
 #include "sfhdr.h"
 #include "vthread.h"
 
-#include "sfdisc.h"
 #include "ast.h"
+#include "sfdisc.h"
 
 /*	Create a temporary stream for read/write.
 **	The stream is originally created as a memory-resident stream.

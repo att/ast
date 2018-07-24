@@ -58,11 +58,11 @@ Wc_t *wc_init(int mode) {
     Wc_t *wp;
     wp = (Wc_t *)stakalloc(sizeof(Wc_t));
     if (!wp) return 0;
-    if (!mbwide()) wp->mb = 0;
+    if (!mbwide())
+        wp->mb = 0;
     else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8)) {
         wp->mb = 1;
-    }
-    else {
+    } else {
         wp->mb = -1;
     }
     w = mode & WC_WORDS;
@@ -139,8 +139,7 @@ static int chkstate(int state, unsigned int c) {
         case 8:
             return iswspace(c) ? 10 : 0;
             break;
-        default:
-            ;  // EMPTY BLOCK
+        default:;  // EMPTY BLOCK
     }
     return state;
 }

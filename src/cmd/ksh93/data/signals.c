@@ -254,110 +254,111 @@ const struct shtable2 shtab_signals[] = {
 #endif  // SIGRES
     {"", 0, NULL}};
 
-const struct shtable4 shtab_siginfo_codes[] = {{SIGCHLD, CLD_EXITED, "EXITED"},
-                                               {SIGCHLD, CLD_DUMPED, "DUMPED"},
-                                               {SIGCHLD, CLD_KILLED, "KILLED"},
+const struct shtable4 shtab_siginfo_codes[] = {
+    {SIGCHLD, CLD_EXITED, "EXITED"},
+    {SIGCHLD, CLD_DUMPED, "DUMPED"},
+    {SIGCHLD, CLD_KILLED, "KILLED"},
 #ifdef CLD_STOPPED
-                                               {SIGCHLD, CLD_STOPPED, "STOPPED"},
+    {SIGCHLD, CLD_STOPPED, "STOPPED"},
 #endif  // CLD_STOPPED
 #ifdef CLD_CONTINUED
-                                               {SIGCHLD, CLD_CONTINUED, "CONTINUED"},
+    {SIGCHLD, CLD_CONTINUED, "CONTINUED"},
 #endif  // CLD_CONTINUED
 #ifdef CLD_TRAPPED
-                                               {SIGCHLD, CLD_TRAPPED, "TRAPPED"},
+    {SIGCHLD, CLD_TRAPPED, "TRAPPED"},
 #endif  // CLD_TRAPPED
 #ifdef SIGILL
 #ifdef POLL_IN
-                                               {SIGILL, POLL_IN, "IN"},
+    {SIGILL, POLL_IN, "IN"},
 #endif  // POLL_IN
 #ifdef ILL_ILLOPC
-                                               {SIGILL, ILL_ILLOPC, "ILLOPC"},
+    {SIGILL, ILL_ILLOPC, "ILLOPC"},
 #endif  // ILL_ILLOPC
 #ifdef ILL_ILLOPN
-                                               {SIGILL, ILL_ILLOPN, "ILLOP"},
+    {SIGILL, ILL_ILLOPN, "ILLOP"},
 #endif  // ILL_ILLOPN
 #ifdef ILL_ADR
-                                               {SIGILL, ILL_ADR, "ADR"},
+    {SIGILL, ILL_ADR, "ADR"},
 #endif  // ILL_ADR
 #ifdef ILL_TRP
-                                               {SIGILL, ILL_TRP, "TRP"},
+    {SIGILL, ILL_TRP, "TRP"},
 #endif  // ILL_TRP
 #ifdef ILL_PRVOPC
-                                               {SIGILL, ILL_PRVOPC, "PRVOPC"},
+    {SIGILL, ILL_PRVOPC, "PRVOPC"},
 #endif  // ILL_PRVOPC
 #ifdef ILL_COPROC
-                                               {SIGILL, ILL_COPROC, "COPROC"},
+    {SIGILL, ILL_COPROC, "COPROC"},
 #endif  // ILL_PRVOPC
 #ifdef ILL_BADSTK
-                                               {SIGILL, ILL_BADSTK, "BADSTK"},
+    {SIGILL, ILL_BADSTK, "BADSTK"},
 #endif  // ILL_BADSTK
 #endif  // SIGILL
 #ifdef SIGPOLL
 #ifdef POLL_IN
-                                               {SIGPOLL, POLL_IN, "IN"},
+    {SIGPOLL, POLL_IN, "IN"},
 #endif  // POLL_IN
 #ifdef POLL_OUT
-                                               {SIGPOLL, POLL_OUT, "OUT"},
+    {SIGPOLL, POLL_OUT, "OUT"},
 #endif  // POLL_OUT
 #ifdef POLL_MSG
-                                               {SIGPOLL, POLL_MSG, "MSG"},
+    {SIGPOLL, POLL_MSG, "MSG"},
 #endif  // POLL_MSG
 #ifdef POLL_ERR
-                                               {SIGPOLL, POLL_ERR, "ERR"},
+    {SIGPOLL, POLL_ERR, "ERR"},
 #endif  // POLL_ERR
 #ifdef POLL_PRI
-                                               {SIGPOLL, POLL_PRI, "PRI"},
+    {SIGPOLL, POLL_PRI, "PRI"},
 #endif  // POLL_PRI
 #ifdef POLL_HUP
-                                               {SIGPOLL, POLL_HUP, "HUP"},
+    {SIGPOLL, POLL_HUP, "HUP"},
 #endif  // POLL_HUP
 #endif  // SIGPOLL
-//
-// Entries with sig==0 must be at the end of the list to prevent possible clashes with
-// signal-specific codes.
-//
+        //
+        // Entries with sig==0 must be at the end of the list to prevent possible clashes with
+        // signal-specific codes.
+        //
 
-                                               // On some systems, e.g., macOS & BSD, si_code is
-                                               // zero rather than whatever SI_USER is defined to
-                                               // be when a signal is sent via kill().
-                                               {0, 0, "SI_USER"},
+    // On some systems, e.g., macOS & BSD, si_code is
+    // zero rather than whatever SI_USER is defined to
+    // be when a signal is sent via kill().
+    {0, 0, "SI_USER"},
 #ifdef SI_USER
-                                               {0, SI_USER, "SI_USER"},
+    {0, SI_USER, "SI_USER"},
 #endif  // SI_USER
 #ifdef SI_QUEUE
-                                               {0, SI_QUEUE, "SI_QUEUE"},
+    {0, SI_QUEUE, "SI_QUEUE"},
 #endif  // SI_QUEUE
 #ifdef SI_TIMER
-                                               {0, SI_TIMER, "SI_TIMER"},
+    {0, SI_TIMER, "SI_TIMER"},
 #endif  // SI_TIMER
 #ifdef SI_ASYNCIO
-                                               {0, SI_ASYNCIO, "SI_ASYNCIO"},
+    {0, SI_ASYNCIO, "SI_ASYNCIO"},
 #endif  // SI_ASYNCIO
 #ifdef SI_MESGQ
-                                               {0, SI_MESGQ, "SI_MESGQ"},
+    {0, SI_MESGQ, "SI_MESGQ"},
 #endif  // SI_MESGQ
 #ifdef SI_NOINFO
-                                               {0, SI_NOINFO, "SI_NOINFO"},
+    {0, SI_NOINFO, "SI_NOINFO"},
 #endif  // SI_NOINFO
 #ifdef SI_DTRACE
-                                               {0, SI_DTRACE, "SI_DTRACE"},
+    {0, SI_DTRACE, "SI_DTRACE"},
 #endif  // SI_DTRACE
 #ifdef SI_RCTL
-                                               {0, SI_RCTL, "SI_RCTL"},
+    {0, SI_RCTL, "SI_RCTL"},
 #endif  // SI_RCTL
 #ifdef SI_LWP
-                                               {0, SI_LWP, "SI_LWP"},
+    {0, SI_LWP, "SI_LWP"},
 #endif  // SI_LWP
 #ifdef SI_KERNEL
-                                               {0, SI_KERNEL, "SI_KERNEL"},
+    {0, SI_KERNEL, "SI_KERNEL"},
 #endif  // SI_KERNEL
 #ifdef SI_SIGIO
-                                               {0, SI_SIGIO, "SI_SIGIO"},
+    {0, SI_SIGIO, "SI_SIGIO"},
 #endif  // SI_SIGIO
 #ifdef SI_TKILL
-                                               {0, SI_TKILL, "SI_TKILL"},
+    {0, SI_TKILL, "SI_TKILL"},
 #endif  // SI_TKILL
 #ifdef SI_ASYNCNL
-                                               {0, SI_ASYNCNL, "SI_ASYNCNL"},
+    {0, SI_ASYNCNL, "SI_ASYNCNL"},
 #endif  // SI_ASYNCNL
-                                               {0, 0, NULL}};
+    {0, 0, NULL}};

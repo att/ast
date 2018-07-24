@@ -23,8 +23,8 @@
 
 #include <stddef.h>
 
-#include "ast_aso.h"
 #include "ast.h"
+#include "ast_aso.h"
 
 /*
  * return small format buffer chunk of size n

@@ -76,8 +76,7 @@ int _sfputu(Sfio_t *f, Sfulong_t v) {
             case 1:
                 *ps++ = *s++;
             // FALLTHRU
-            default:
-                ;  // EMPTY BLOCK
+            default:;  // EMPTY BLOCK
         }
         f->next = ps;
     }

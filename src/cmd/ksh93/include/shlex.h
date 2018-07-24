@@ -28,8 +28,8 @@
 
 #include "cdt.h"
 #include "lexstates.h"
-#include "shnodes.h"
 #include "shell.h"
+#include "shnodes.h"
 #include "shtable.h"
 
 typedef struct _shlex_ {

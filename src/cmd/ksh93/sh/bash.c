@@ -419,4 +419,4 @@ reinit:
     if (verbose) sh_offoption(shp, SH_VERBOSE);
 }
 
-#endif // SHOPT_BASH
+#endif  // SHOPT_BASH

@@ -31,7 +31,7 @@
 
 #include <time.h>
 
-#include "tm.h" 
+#include "tm.h"
 /*
  * format date given clock
  * end of buf is returned

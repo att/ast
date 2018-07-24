@@ -226,7 +226,7 @@ int _sfpclose(Sfio_t *f) {
     else { /* close the associated stream */
         if (p->file >= 0) CLOSE(p->file);
 
-            /* wait for process termination */
+        /* wait for process termination */
         sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
         status = -1;
         while (waitpid(p->pid, &status, 0) == -1 && errno == EINTR)

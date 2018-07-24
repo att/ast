@@ -28,7 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include <sys/stat.h>  // IWYU pragma: keep
+#include <sys/stat.h>   // IWYU pragma: keep
 #include <sys/types.h>  // IWYU pragma: keep
 
 #include <fts.h>  // OpenBSD and possibly others require the above includes first

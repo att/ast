@@ -71,8 +71,7 @@ size_t utf32toutf8(char *s, uint32_t w) {
                 case 6:
                     *s++ = 0x80 | (w & 0x3f);
                 // FALLTHRU
-                default:
-                    ;  // EMPTY BLOCK
+                default:;  // EMPTY BLOCK
             }
             return s - b;
         }

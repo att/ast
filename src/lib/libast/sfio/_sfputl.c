@@ -83,8 +83,7 @@ int _sfputl(Sfio_t *f, Sflong_t v) {
             case 1:
                 *ps++ = *s++;
             // FALLTHRU
-            default:
-                ;  // EMPTY BLOCK
+            default:;  // EMPTY BLOCK
         }
         f->next = ps;
     }

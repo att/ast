@@ -267,11 +267,13 @@ int sh_argopts(int argc, char *argv[], void *context) {
             }
 #if SHOPT_BASH
             case 'O': {  // shopt options, only in bash mode
-                if (!sh_isoption(shp, SH_BASH))
+                if (!sh_isoption(shp, SH_BASH)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_option, opt_info.name);
                     __builtin_unreachable();
+                }
             }
 #endif
+            // FALLTHRU
             case 'o': {  // set options
             byname:
                 if (!opt_info.arg || !*opt_info.arg || *opt_info.arg == '-') {
@@ -920,7 +922,7 @@ struct argnod *sh_argprocsub(Shell_t *shp, struct argnod *argp) {
     pv[2] = 0;
     sh_pipe(pv);
     sfputr(shp->stk, fmtbase((long)pv[fd], 10, 0), 0);
-#else  // has_dev_fd
+#else   // has_dev_fd
     pv[0] = -1;
     shp->fifo = pathtemp(0, 0, 0, "ksh.fifo", 0);
     mkfifo(shp->fifo, S_IRUSR | S_IWUSR);

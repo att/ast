@@ -31,7 +31,6 @@
 #include <unistd.h>
 #endif
 
-
 #if _cmd_universe
 #include <ctype.h>
 

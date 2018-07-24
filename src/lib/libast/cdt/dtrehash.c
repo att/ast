@@ -676,7 +676,7 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
         for (b = DT_HTABLE; b < H_NBITS; ++b) /* count #bits */
             if ((1 << b) >= z) break;
 
-        hash->shft[0] = 0;            /* amount to shift right before masking */
+        hash->shft[0] = 0;             /* amount to shift right before masking */
         hash->mask[0] = (1U << b) - 1; /* mask to get bits after shifting */
         for (k = 1; k < H_NLEV && b < H_NBITS; ++k) {
             z = k == 1 ? H_BIT1

@@ -26,8 +26,8 @@
 
 #include <string.h>
 
-#include "ccode.h"
 #include "ast_ccode.h"
+#include "ccode.h"
 
 #if !_lib_stracmp
 

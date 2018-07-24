@@ -377,7 +377,6 @@ int sh_lex(Lex_t *lp) {
                 // End-of-file.
                 if (mode == ST_BEGIN) return (lp->token = EOFSYM);
                 if (mode > ST_NORM && lp->lexd.level > 0) {
-
                     switch (c = endchar(lp)) {
                         case '$': {
                             if (mode == ST_LIT) {

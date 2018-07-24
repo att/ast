@@ -27,7 +27,6 @@
 
 #include <unistd.h>
 
-
 #if _cmd_universe
 #include "univlib.h"
 #endif

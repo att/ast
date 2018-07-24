@@ -34,10 +34,10 @@
 #define _AST_API_IMPLEMENT 1
 
 #include "ast.h"
-#include "cmdlib.h"
-#include "proc.h"
 #include "ast_errorf.h"
+#include "cmdlib.h"
 #include "error.h"
+#include "proc.h"
 #include "sfio.h"
 
 static const char lib[] = "libast:cmdarg";

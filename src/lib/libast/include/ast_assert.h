@@ -12,12 +12,11 @@
 #undef assert
 
 #ifdef NDEBUG
-#define	assert(e)	((void)0)
+#define assert(e) ((void)0)
 #else  // NDEBUG
-#define assert(e)  \
-    ((void) ((e) ? ((void)0) : __assert (#e, __FILE__, __LINE__)))
+#define assert(e) ((void)((e) ? ((void)0) : __assert(#e, __FILE__, __LINE__)))
 #define __assert(e, file, line) \
-    ((void)fprintf (stderr, "%s:%d: failed assertion '%s'\n", file, line, e), abort())
+    ((void)fprintf(stderr, "%s:%d: failed assertion '%s'\n", file, line, e), abort())
 #endif  // NDEBUG
 
 #endif  // _AST_ASSERT_H

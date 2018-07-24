@@ -49,7 +49,6 @@
 #include "lclib.h"
 #include "sfio.h"
 
-
 #define _MC_PRIVATE_ \
     size_t nstrs;    \
     size_t nmsgs;    \
