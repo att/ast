@@ -251,7 +251,6 @@ ssize_t    sfpkrd(int fd, void* buf, size_t n,
 #include   <sfdisc.h>
 
 int        sfdcdio(Sfio_t* f, size_t bufsize);
-int        sfdcdos(Sfio_t* f);
 int        sfdcfilter(Sfio_t* f, const char* cmd);
 int        sfdcslow(Sfio_t* f);
 int        sfdclzw(Sfio_t* f);
@@ -2158,10 +2157,6 @@ on success and \f5-1\fP on failure.
 This creates a discipline that uses the direct IO feature
 available on file systems such as SGI's XFS to speed up IO.
 The argument \f5bufsize\fP suggests a buffer size to use for data transfer.
-
-.Ss "int sfdcdos(Sfio_t* f)"
-This creates a discipline to read DOS text files.
-It basically transforms pairs of \er\en to \en.
 
 .Ss "int sfdcfilter(Sfio_t* f, const char* cmd)"
 This creates a discipline that sends data from \f5f\fP
