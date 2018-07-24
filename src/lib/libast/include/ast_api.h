@@ -74,11 +74,6 @@
 #define regsubexec regsubexec_20120528
 #endif
 
-#if ASTAPI(20000308)
-#undef sfkeyprintf
-#define sfkeyprintf sfkeyprintf_20000308
-#endif
-
 #if ASTAPI(20120528)
 #undef strgrpmatch
 #define strgrpmatch strgrpmatch_20120528
@@ -88,6 +83,6 @@
     "cmdopen_20120411 cmdopen_20110505 memfatal_20130509 pathaccess_20100601 pathcanon_20100601 " \
     "pathcat_20100601 pathkey_20100601 pathpath_20100601 pathprobe_20100601 pathrepl_20100601 "   \
     "regexec_20120528 regnexec_20120528 regrexec_20120528 regsubexec_20120528 "                   \
-    "sfkeyprintf_20000308 strgrpmatch_20120528"
+    "strgrpmatch_20120528"
 
 #endif
