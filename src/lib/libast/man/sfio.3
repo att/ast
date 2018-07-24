@@ -253,7 +253,6 @@ ssize_t    sfpkrd(int fd, void* buf, size_t n,
 int        sfdcdio(Sfio_t* f, size_t bufsize);
 int        sfdcdos(Sfio_t* f);
 int        sfdcfilter(Sfio_t* f, const char* cmd);
-int        sfdcseekable(Sfio_t* f);
 int        sfdcslow(Sfio_t* f);
 int        sfdclzw(Sfio_t* f);
 int        sfdcgzip(Sfio_t* f, int flags);
@@ -2167,9 +2166,6 @@ It basically transforms pairs of \er\en to \en.
 .Ss "int sfdcfilter(Sfio_t* f, const char* cmd)"
 This creates a discipline that sends data from \f5f\fP
 to the given command \f5cmd\fP to process, then reads back the processed data.
-
-.Ss "int sfdcseekable(Sfio_t* f)"
-This creates a discipline that makes an unseekable reading stream seekable.
 
 .Ss "int sfdcslow(Sfio_t* f)"
 This creates a discipline that makes all Sfio operations return immediately

@@ -49,7 +49,6 @@ extern int sfdcdos(Sfio_t *);
 extern int sfdcfilter(Sfio_t *, const char *);
 extern int sfdcmore(Sfio_t *, const char *, int, int);
 extern int sfdcprefix(Sfio_t *, const char *);
-extern int sfdcseekable(Sfio_t *);
 extern int sfdcslow(Sfio_t *);
 extern int sfdctee(Sfio_t *, Sfio_t *);
 
