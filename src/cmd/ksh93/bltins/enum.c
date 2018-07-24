@@ -149,7 +149,8 @@ static_fn Namfun_t *clone_enum(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
 static_fn void put_enum(Namval_t *np, const void *val, int flags, Namfun_t *fp) {
     struct Enum *ep = (struct Enum *)fp;
     const char *v;
-    unsigned short i = 0, n;
+    unsigned short i = 0;
+    int n;
     if (!val && !(flags & NV_INTEGER)) {
         nv_putv(np, val, flags, fp);
         nv_disc(np, &ep->hdr, NV_POP);
