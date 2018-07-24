@@ -1016,7 +1016,8 @@ done:
 
 //
 // Add or replace built-in version of command corresponding to <path>. The <bltin> argument is a
-// pointer to the built-in. If <extra>==1, the built-in will be deleted. Special builtins cannot be
+// pointer to the built-in. If <extra>==builtin_delete, the built-in will be deleted. If
+// <extra>==builtin_disable, the built-in will be disabled. Special builtins cannot be
 // added or deleted return failure. The return value for adding builtins is a pointer to the node or
 // NULL on failure.  For delete NULL means success and the node that cannot be deleted is returned
 // on failure.
@@ -1024,15 +1025,15 @@ done:
 Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin, void *extra) {
     const char *name;
     char *cp;
-    Namval_t *np, *nq = 0;
+    Namval_t *np, *nq = NULL;
     int offset = stktell(shp->stk);
 
-    if (extra == (void *)1) {
+    if (extra == builtin_delete) {
         name = path;
     } else if ((name = path_basename(path)) == path && bltin != (Shbltin_f)SYSTYPESET->nvalue.bfp &&
                (nq = nv_bfsearch(name, shp->bltin_tree, (Namval_t **)0, &cp))) {
         path = name = stkptr(shp->stk, offset);
-    } else if (shp->bltin_dir && extra != (void *)1) {
+    } else if (shp->bltin_dir && extra != builtin_delete) {
         sfputr(shp->stk, shp->bltin_dir, '/');
         sfputr(shp->stk, name, 0);
         path = stkptr(shp->stk, offset);
@@ -1041,16 +1042,16 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
     if (np) {
         // Exists without a path.
         stkseek(shp->stk, offset);
-        if (extra == (void *)1) {
+        if (extra == builtin_delete) {
             if (nv_isattr(np, BLT_SPC)) {
                 errormsg(SH_DICT, ERROR_exit(1), "Cannot delete: %s%s", name, is_spcbuiltin);
             }
             if (np->nvfun && !nv_isattr(np, NV_NOFREE)) free(np->nvfun);
             dtdelete(shp->bltin_tree, np);
-            return 0;
-        } else if (extra == (void *)2) {
+            return NULL;
+        } else if (extra == builtin_disable) {
             nv_onattr(np, BLT_DISABLE);
-            return 0;
+            return NULL;
         }
         if (!bltin) return np;
     } else {
@@ -1061,11 +1062,11 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
             if (strcmp(path, nv_name(np))) {
                 if (nv_isattr(np, BLT_SPC)) return np;
                 if (!bltin) bltin = (Shbltin_f)np->nvalue.bfp;
-                if (extra == (void *)1) {
+                if (extra == builtin_delete) {
                     dtdelete(shp->bltin_tree, np);
-                    return 0;
+                    return NULL;
                 }
-                np = 0;
+                np = NULL;
             }
             break;
         }
@@ -1073,7 +1074,7 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
     if (!np && !(np = nv_search(path, shp->bltin_tree, bltin ? NV_ADD : 0))) return NULL;
     stkseek(shp->stk, offset);
     if (nv_isattr(np, BLT_SPC)) {
-        if (extra) np->nvfun = (Namfun_t *)extra;
+        if (extra) np->nvfun = extra;
         return np;
     }
     np->nvenv = 0;
@@ -1081,14 +1082,14 @@ Namval_t *sh_addbuiltin_20120720(Shell_t *shp, const char *path, Shbltin_f bltin
     if (bltin) {
         np->nvalue.bfp = (Nambfp_f)bltin;
         nv_onattr(np, NV_BLTIN | NV_NOFREE);
-        np->nvfun = (Namfun_t *)extra;
+        np->nvfun = extra;
     }
     if (nq) {
         cp = nv_setdisc(nq, cp + 1, np, (Namfun_t *)nq);
         nv_close(nq);
         if (!cp) errormsg(SH_DICT, ERROR_exit(1), e_baddisc, name);
     }
-    if (extra == (void *)1) return 0;
+    if (extra == builtin_delete) return NULL;
     return np;
 }
 

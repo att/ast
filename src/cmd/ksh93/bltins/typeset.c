@@ -867,8 +867,8 @@ typedef struct Libcomp_s {
     unsigned int attr;
 } Libcomp_t;
 
-static Libcomp_t *liblist;
-static int nlib;
+static Libcomp_t *liblist = NULL;
+static int nlib = 0;
 
 #if SHOPT_DYNAMIC
 
@@ -945,7 +945,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     char *arg = 0, *name;
     int n, r = 0, flag = 0;
     Namval_t *np = NULL;
-    long dlete = 0;
+    void *delete = NULL;
     struct tdata tdata;
     Shbltin_f addr;
     Stk_t *stkp;
@@ -970,11 +970,11 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'n': {
                 flag = BLT_DISABLE;
-                dlete = 2;
+                delete = builtin_disable;
                 break;
             }
             case 'd': {
-                dlete = 1;
+                delete = builtin_delete;
                 break;
             }
             case 'f': {
@@ -1015,7 +1015,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         }
         if (tdata.sh->subshell && !tdata.sh->subshare) sh_subfork();
     }
-    if (tdata.prefix && dlete == 2) {
+    if (tdata.prefix && delete == builtin_disable) {
         if (*tdata.prefix == 'e') {
             tdata.prefix = "enable -n";
         } else {
@@ -1046,7 +1046,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     } else
 #endif  // SHOPT_DYNAMIC
     {
-        if (*argv == 0 && dlete != 1) {
+        if (*argv == 0 && delete != builtin_delete) {
             if (tdata.prefix) {
                 for (n = 0; n < nlib; n++) {
                     sfprintf(sfstdout, "%s -f %s\n", tdata.prefix, liblist[n].lib);
@@ -1070,18 +1070,18 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         sfputr(stkp, name, 0);
         errmsg = 0;
         addr = 0;
-        if (dlete || liblist) {
-            for (n = (nlib ? nlib : dlete); --n >= 0;) {
+        if (delete || nlib) {
+            for (n = (nlib ? nlib : delete ? 1 : 0); --n >= 0;) {
 #if SHOPT_DYNAMIC
-                if (!dlete && !liblist[n].dll) continue;
-                if (dlete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag))))
+                if (!delete && !liblist[n].dll) continue;
+                if (delete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag))))
 #else   // SHOPT_DYNAMIC
-                if (dlete)
+                if (delete)
 #endif  // SHOPT_DYNAMIC
                 {
-                    np = sh_addbuiltin(tdata.sh, arg, addr, pointerof(dlete));
+                    np = sh_addbuiltin(tdata.sh, arg, addr, delete);
                     if (np) {
-                        if (dlete || nv_isattr(np, BLT_SPC)) {
+                        if (delete || nv_isattr(np, BLT_SPC)) {
                             errmsg = "restricted name";
                         }
 #if SHOPT_DYNAMIC
@@ -1098,14 +1098,14 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             if (nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
             addr = (Shbltin_f)np->nvalue.bfp;
         }
-        if (!dlete && !addr && !(np = sh_addbuiltin(tdata.sh, arg, (Shbltin_f)0, 0))) {
+        if (!delete && !addr && !(np = sh_addbuiltin(tdata.sh, arg, (Shbltin_f)0, 0))) {
             errmsg = "not found";
         }
         if (errmsg) {
             errormsg(SH_DICT, ERROR_exit(0), "%s: %s", *argv, errmsg);
             r = 1;
         }
-        if (!dlete && np) nv_offattr(np, BLT_DISABLE);
+        if (!delete && np) nv_offattr(np, BLT_DISABLE);
         stkseek(stkp, flag);
         argv++;
     }
