@@ -255,9 +255,6 @@ int        sfdcdos(Sfio_t* f);
 int        sfdcfilter(Sfio_t* f, const char* cmd);
 int        sfdcseekable(Sfio_t* f);
 int        sfdcslow(Sfio_t* f);
-int        sfdcsubstream(Sfio_t* f, Sfio_t* parent,
-                         Sfoff_t offset, Sfoff_t extent);
-int        sfdctee(Sfio_t* f, Sfio_t* tee);
 int        sfdclzw(Sfio_t* f);
 int        sfdcgzip(Sfio_t* f, int flags);
 .ft 1
@@ -2177,15 +2174,6 @@ This creates a discipline that makes an unseekable reading stream seekable.
 .Ss "int sfdcslow(Sfio_t* f)"
 This creates a discipline that makes all Sfio operations return immediately
 on interrupts. This is useful for dealing with slow devices.
-
-.Ss "int sfdcsubstream(Sfio_t* f, Sfio_t* parent, Sfoff_t offset, Sfoff_t extent)"
-This creates a discipline that makes \f5f\fP acts as if it
-corresponds exactly to the subsection of \f5parent\fP
-starting at \f5offset\fP with size \f5extent\fP.
-
-.Ss "int sfdctee(Sfio_t* f, Sfio_t* tee)"
-This creates a discipline that copies to the stream \f5tee\fP
-any data written to \f5f\fP.
 
 .Ss "int sfdclzw(Sfio_t* f)"
 This creates a discipline that would decompress data in \f5f\fP.
