@@ -45,7 +45,6 @@ typedef char *(*Sf_key_convert_t)(void *, Sffmt_t *, const char *, char *, Sflon
  */
 
 extern int sfdcdio(Sfio_t *, size_t);
-extern int sfdcdos(Sfio_t *);
 extern int sfdcfilter(Sfio_t *, const char *);
 extern int sfdcprefix(Sfio_t *, const char *);
 extern int sfdcslow(Sfio_t *);
