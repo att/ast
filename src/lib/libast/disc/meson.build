@@ -7,5 +7,4 @@ libast_files += [
     'disc/sfdcslow.c',
     'disc/sfdcsubstr.c',
     'disc/sfdctee.c',
-    'disc/sfdcunion.c',
 ]

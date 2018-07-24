@@ -258,7 +258,6 @@ int        sfdcslow(Sfio_t* f);
 int        sfdcsubstream(Sfio_t* f, Sfio_t* parent,
                          Sfoff_t offset, Sfoff_t extent);
 int        sfdctee(Sfio_t* f, Sfio_t* tee);
-int        sfdcunion(Sfio_t* f, Sfio_t** array, int n);
 int        sfdclzw(Sfio_t* f);
 int        sfdcgzip(Sfio_t* f, int flags);
 .ft 1
@@ -2187,10 +2186,6 @@ starting at \f5offset\fP with size \f5extent\fP.
 .Ss "int sfdctee(Sfio_t* f, Sfio_t* tee)"
 This creates a discipline that copies to the stream \f5tee\fP
 any data written to \f5f\fP.
-
-.Ss "int sfdcunion(Sfio_t* f, Sfio_t** array, int n)"
-This creates a discipline that makes \f5f\fP act as if it is
-the concatenation of the \f5n\fP streams given in \f5array\fP.
 
 .Ss "int sfdclzw(Sfio_t* f)"
 This creates a discipline that would decompress data in \f5f\fP.
