@@ -250,7 +250,6 @@ ssize_t    sfpkrd(int fd, void* buf, size_t n,
 .ft 5
 #include   <sfdisc.h>
 
-int        sfdcdio(Sfio_t* f, size_t bufsize);
 int        sfdcfilter(Sfio_t* f, const char* cmd);
 int        sfdcslow(Sfio_t* f);
 int        sfdclzw(Sfio_t* f);
@@ -2152,11 +2151,6 @@ This defines a discipline if any.
 The below functions create disciplines and insert them into
 the given streams \f5f\fP. These functions return \f50\fP
 on success and \f5-1\fP on failure.
-
-.Ss "int sfdcdio(Sfio_t* f, size_t bufsize)"
-This creates a discipline that uses the direct IO feature
-available on file systems such as SGI's XFS to speed up IO.
-The argument \f5bufsize\fP suggests a buffer size to use for data transfer.
 
 .Ss "int sfdcfilter(Sfio_t* f, const char* cmd)"
 This creates a discipline that sends data from \f5f\fP
