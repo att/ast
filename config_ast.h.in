@@ -67,8 +67,6 @@
 #mesondefine _proto_bcopy
 #mesondefine _proto_bzero
 #mesondefine _ptr_bits
-#mesondefine _pty_clone
-#mesondefine _pty_first
 #mesondefine _socketpair_shutdown_mode
 #mesondefine _std_remove
 #mesondefine _stk_down
@@ -101,7 +99,6 @@
 #mesondefine _hdr_netinet_tcp
 #mesondefine _hdr_nl_types
 #mesondefine _hdr_paths
-#mesondefine _hdr_pty
 #mesondefine _hdr_rld_interface
 #mesondefine _hdr_stat
 #mesondefine _hdr_stddef
@@ -117,7 +114,6 @@
 
 #mesondefine _lib___libc_malloc
 #mesondefine _lib___malloc
-#mesondefine _lib__getpty
 #mesondefine _lib_alloca
 #mesondefine _lib_clock_gettime
 #mesondefine _lib_close64
@@ -168,7 +164,6 @@
 #mesondefine _lib_onexit
 #mesondefine _lib_open64
 #mesondefine _lib_opendir
-#mesondefine _lib_openpty
 #mesondefine _lib_pathnative
 #mesondefine _lib_pathposix
 #mesondefine _lib_pipe2

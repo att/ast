@@ -90,7 +90,7 @@ all_tests = [
     ['comvario'], ['coprocess', 50], ['cubetype'], ['directoryfd'], ['enum'],
     ['exit'], ['expand'], ['functions'], ['glob'], ['grep'], ['heredoc'],
     ['io'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
-    ['modifiers'], ['options'], ['path'], ['pointtype'], ['pty'], ['quoting'],
+    ['modifiers'], ['options'], ['path'], ['pointtype'], ['quoting'],
     ['quoting2'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
     ['sh_match'], ['sigchld', 100], ['signal'], ['statics'], ['subshell', 100],
     ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],

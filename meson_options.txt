@@ -1,5 +1,3 @@
-option('build-pty', type : 'boolean', value : true)
-
 # This build symbol used to be named SHOPT_TIMEOUT. It was renamed when it
 # stopped being used to conditionally compile segments of code. It defines
 # the default, and maximum, read timeout value (see the `TMOUT` shell var).
