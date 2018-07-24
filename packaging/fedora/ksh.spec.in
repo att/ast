@@ -38,7 +38,7 @@ with "sh" (the Bourne Shell).
 %autosetup -n ast-%{commit}
 
 %build
-%meson -Dbuild-pty=false -Dfallback-version-number=%{vcs_version}
+%meson -Dfallback-version-number=%{vcs_version}
 %meson_build
 
 %install

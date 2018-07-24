@@ -234,7 +234,6 @@ subdir('src/lib/libast')
 subdir('src/lib/libcmd')
 subdir('src/lib/libdll')
 subdir('src/lib/libcoshell')
-subdir('src/cmd/builtin')
 
 # Check if api tests should be built
 if get_option('build-api-tests') == true

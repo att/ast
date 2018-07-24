@@ -28,10 +28,6 @@ libm_dep = cc.find_library('m', required: false, dirs: lib_dirs)
 # on others they are found in libdl.
 libdl_dep = cc.find_library('dl', required: false, dirs: lib_dirs)
 
-# On some systems (e.g., FreeBSD) `libutil` contains functions we may need
-# such as `openpty()`.
-libutil_dep = cc.find_library('util', required: false, dirs: lib_dirs)
-
 # On some platforms `backtrace()` and related functions are found in libc,
 # on others they are found in libexecinfo.
 libexecinfo_dep = cc.find_library('execinfo', required: false, dirs: lib_dirs)
@@ -55,20 +51,6 @@ libcatgets_dep = cc.find_library('catgets', required: false, dirs: lib_dirs)
 feature_data.set('_map_malloc', 1)
 
 feature_data.set10('_hdr_execinfo', cc.has_header('execinfo.h', args: feature_test_args))
-
-openpty_hdrs = ['#include <stdlib.h>']
-if cc.has_header('pty.h', args: feature_test_args)
-    feature_data.set('_hdr_pty', 1)
-    openpty_hdrs += ['#include <pty.h>']
-else
-    feature_data.set('_hdr_pty', 0)
-endif
-if cc.has_header('util.h', args: feature_test_args)
-    feature_data.set('_hdr_util', 1)
-    openpty_hdrs += ['#include <util.h>']
-else
-    feature_data.set('_hdr_util', 0)
-endif
 
 # TODO: Figure out if detecting header unistd.h is really necessary.
 # Especially given it is assumed to be present for detecting functions like
@@ -158,41 +140,6 @@ feature_data.set10('_mem_ut_type_utmxp',
     cc.has_member('struct utmp', 'ut_type', prefix: '#include <utmpx.h>', args: feature_test_args))
 feature_data.set10('_mem_ut_user_utmpx',
     cc.has_member('struct utmpx', 'ut_user', prefix: '#include <utmpx.h>', args: feature_test_args))
-
-feature_data.set10('_lib_posix_openpt',
-    cc.has_function('posix_openpt', prefix: '#include <stdlib.h>',
-                    args: feature_test_args,
-                    dependencies: [libutil_dep]))
-
-feature_data.set10('_lib_openpty',
-    cc.has_function('openpty', prefix: '\n'.join(openpty_hdrs),
-                    args: feature_test_args,
-                    dependencies: [libutil_dep]))
-
-feature_data.set10('_lib_ptsname',
-    cc.has_function('ptsname', prefix: '#include <stdlib.h>',
-                    args: feature_test_args,
-                    dependencies: [libutil_dep]))
-
-feature_data.set10('_lib_grantpt',
-    cc.has_function('grantpt', prefix: '#include <stdlib.h>',
-                    args: feature_test_args,
-                    dependencies: [libutil_dep]))
-
-feature_data.set10('_lib_unlockpt',
-    cc.has_function('unlockpt', prefix: '#include <stdlib.h>',
-                    args: feature_test_args,
-                    dependencies: [libutil_dep]))
-
-pty_feature_file = files('pty.c')
-pty_feature_result = cc.run(pty_feature_file, name: 'pty dev name check', args: feature_test_args)
-if not pty_feature_result.compiled()
-    error('Unable to compile the pty_feature.c module to determine pty device names')
-endif
-foreach line : pty_feature_result.stdout().strip().split('\n')
-    split = line.split()
-    feature_data.set(split[0], split[1])
-endforeach
 
 feature_data.set10('_lib_mallinfo',
     cc.has_function('mallinfo', prefix: '#include <malloc.h>', args: feature_test_args))
