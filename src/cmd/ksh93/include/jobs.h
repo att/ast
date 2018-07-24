@@ -127,7 +127,6 @@ struct jobs {
 #define JOB_PFLAG 4
 #define JOB_NLFLAG 8
 #define JOB_QFLAG 0x100
-#define JOB_QQFLAG 0x200
 
 extern struct jobs job;
 

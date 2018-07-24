@@ -1052,12 +1052,8 @@ int job_kill(struct process *pw, int sig) {
 
     if (!pw) goto error;
     shp = pw->p_shp;
-    if (sig & JOB_QQFLAG) {
-        sig_val.sival_ptr = pointerof(shp->sigval);
-    } else {
-        sig_val.sival_int = (int)shp->sigval;
-    }
-    sig &= ~(JOB_QFLAG | JOB_QQFLAG);
+    sig_val.sival_int = (int)shp->sigval;
+    sig &= ~JOB_QFLAG;
 #ifdef SIGTSTP
     stopsig = (sig == SIGSTOP || sig == SIGTSTP || sig == SIGTTIN || sig == SIGTTOU);
 #else
