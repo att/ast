@@ -6445,10 +6445,10 @@ for a description of the format of
 .IR job .
 .TP
 .PD 0
-\f3kill\fP \*(OK \f3\-s\fP \f2signame\^\fP  \*(CK \*(OK \f3\-q\fP  \f2n\^\fP \ \*(CK \*(OK \f3\-Q\fP  \f2n\^\fP \ \*(CK \f2job\^\fP .\|.\|.
+\f3kill\fP \*(OK \f3\-s\fP \f2signame\^\fP  \*(CK \*(OK \f3\-q\fP  \f2n\^\fP \ \*(CK \f2job\^\fP .\|.\|.
 .TP
 .PD 0
-\f3kill\fP \*(OK \f3\-n\fP \f2signum\^\fP \*(CK \*(OK \f3\-q\fP \f2n\^\fP \ \*(CK \*(OK \f3\-Q\fP \f2n\^\fP \ \*(CK  \f2job\^\fP .\|.\|.
+\f3kill\fP \*(OK \f3\-n\fP \f2signum\^\fP \*(CK \*(OK \f3\-q\fP \f2n\^\fP \ \*(CK \f2job\^\fP .\|.\|.
 .TP
 \f3kill\fP \f3\-Ll\fP  \*(OK \f2sig\^\fP .\|.\|. \*(CK
 .PD
@@ -6507,27 +6507,17 @@ is listed.
 On systems that support
 .IR sigqueue (2)
 the
-.B \-Q
-or
 .B \-q
 option can be used to send a queued signal with message number
 .IR n .
-With
-.B \-Q
-.I n\^
-is sent in the pointer portion of the signal value and it can hold an unsigned
-long integer.  With
-.B \-q
-.I n\^
-is sent in the integer portion of the signal value, it can hold a signed
-integer.  Each specified
+Each specified
 .I job
 must be a positive number.
 On systems that do not support
 .IR sigqueue (2),
 a signal is sent without the message number
 .I n\^
-and will not be queued.
+and the signal will not be queued.
 If the signal cannot be queued because of a return of EAGAIN, the exit status
 will be 2.
 .TP

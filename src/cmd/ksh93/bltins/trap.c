@@ -47,7 +47,6 @@
 #define L_FLAG 1
 #define S_FLAG 2
 #define Q_FLAG JOB_QFLAG
-#define QQ_FLAG JOB_QQFLAG
 
 static_fn int sig_number(Shell_t *, const char *);
 
@@ -246,15 +245,6 @@ int b_kill(int argc, char *argv[], Shbltin_t *context) {
                 }
                 break;
             }
-            case 'Q': {
-                flag |= Q_FLAG | QQ_FLAG;
-                shp->sigval = opt_info.num;
-                if ((int)shp->sigval < 0) {
-                    errormsg(SH_DICT, ERROR_exit(1), "%lld - Q must be unsigned", shp->sigval);
-                    __builtin_unreachable();
-                }
-                break;
-            }
             case '?': {
                 shp->sigval = 0;
                 errormsg(SH_DICT, ERROR_usage(2), "%s", opt_info.arg);
@@ -298,7 +288,7 @@ endopts:
             __builtin_unreachable();
         }
     }
-    if (job_walk(shp, sfstdout, job_kill, sig | (flag & (Q_FLAG | QQ_FLAG)), argv)) {
+    if (job_walk(shp, sfstdout, job_kill, sig | (flag & Q_FLAG), argv)) {
         shp->exitval = 1;
     }
     shp->sigval = 0;
