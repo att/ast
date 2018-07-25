@@ -491,7 +491,8 @@ void nv_attribute(Namval_t *np, Sfio_t *out, char *prefix, int noname) {
                     }
                 }
                 if (val == NV_UTOL || val == NV_LTOU) {
-                    if ((cp = (char *)nv_mapchar(np, 0)) && strcmp(cp, tp->sh_name + 2)) {
+                    cp = (char *)nv_mapchar(np, NULL);
+                    if (cp && strcmp(cp, tp->sh_name + 2)) {
                         sfprintf(out, "-M %s ", cp);
                         continue;
                     }

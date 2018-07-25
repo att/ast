@@ -2172,15 +2172,16 @@ static const Namdisc_t TRANS_disc = {
     sizeof(struct Mapchar), put_trans, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 Namfun_t *nv_mapchar(Namval_t *np, const char *name) {
-    wctrans_t trans = name ? wctrans(name) : 0;
-    struct Mapchar *mp = 0;
-    int low;
-    size_t n = 0;
-    if (np) mp = (struct Mapchar *)nv_hasdisc(np, &TRANS_disc);
-    if (!name) return (mp ? (Namfun_t *)mp->name : 0);
+    struct Mapchar *mp = (struct Mapchar *)nv_hasdisc(np, &TRANS_disc);
+
+    if (!name) return mp ? (Namfun_t *)mp->name : NULL;
+
+    wctrans_t trans = wctrans(name);
     if (!trans) return NULL;
-    if (!np) return pointerof(1);
-    if ((low = strcmp(name, e_tolower)) && strcmp(name, e_toupper)) n += strlen(name) + 1;
+
+    size_t n = 0;
+    int low = strcmp(name, e_tolower);
+    if (low && strcmp(name, e_toupper)) n += strlen(name) + 1;
     if (mp) {
         if (strcmp(name, mp->name) == 0) return (&mp->hdr);
         nv_disc(np, &mp->hdr, NV_POP);

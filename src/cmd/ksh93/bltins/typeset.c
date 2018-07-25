@@ -330,7 +330,8 @@ int b_typeset(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'M': {
-                if ((tdata.wctname = opt_info.arg) && !nv_mapchar((Namval_t *)0, tdata.wctname)) {
+                tdata.wctname = opt_info.arg;
+                if (tdata.wctname && !wctrans(tdata.wctname)) {
                     errormsg(SH_DICT, ERROR_exit(1), e_unknownmap, tdata.wctname);
                     __builtin_unreachable();
                 }
@@ -750,7 +751,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                     errormsg(SH_DICT, ERROR_exit(1), e_mapchararg, nv_name(np));
                     __builtin_unreachable();
                 }
-                cp = (char *)nv_mapchar(np, 0);
+                cp = (char *)nv_mapchar(np, NULL);
                 fp = nv_mapchar(np, tp->wctname);
                 if (fp) {
                     if (tp->aflag == '+') {

@@ -1866,7 +1866,7 @@ static_fn void attstore(Namval_t *np, void *data) {
     ap->tp = 0;
     if (!(flag & NV_EXPORT) || (flag & NV_FUNCT)) return;
     if ((flag & (NV_UTOL | NV_LTOU | NV_INTEGER)) == (NV_UTOL | NV_LTOU)) {
-        data = (void *)nv_mapchar(np, 0);
+        data = nv_mapchar(np, NULL);
         if (strcmp(data, e_tolower) && strcmp(data, e_toupper)) return;
     }
     flag &= (NV_RDONLY | NV_UTOL | NV_LTOU | NV_RJUST | NV_LJUST | NV_ZFILL | NV_INTEGER);
@@ -1961,7 +1961,7 @@ static_fn int scanfilter(Dt_t *dict, void *arg, void *data) {
                     return 0;
                 }
             } else if ((sp->scanflags == NV_UTOL || sp->scanflags == NV_LTOU) &&
-                       (cp = (char *)nv_mapchar(np, 0)) && strcmp(cp, tp->mapname)) {
+                       (cp = (char *)nv_mapchar(np, NULL)) && strcmp(cp, tp->mapname)) {
                 return 0;
             }
         }
