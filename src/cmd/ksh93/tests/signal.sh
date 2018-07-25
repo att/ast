@@ -410,7 +410,7 @@ expect='foo bar USR2'
 #then
 #    compound -a rtar
 #    function rttrap {
-#        integer v=${.sh.sig.value.q}
+#        integer v=${.sh.sig.value}
 #        integer s=${#rtar[v][@]}
 #        integer rtnum=$1
 #        rtar[$v][$s]=(
@@ -513,14 +513,14 @@ case "${c.car[0].code}" in
     SI_QUEUE)
         # System has sigqueue().
         expect=4
-        actual=${c.car[0].value.q}
+        actual=${c.car[0].value}
         (( $actual == $expect )) ||
-            log_error "\${c.car[0].value.q} is wrong" "$expect" "$actual"
+            log_error "\${c.car[0].value} is wrong" "$expect" "$actual"
 
         expect=5
-        actual=${c.car[1].value.q}
+        actual=${c.car[1].value}
         (( $actual == $expect )) ||
-            log_error "\${c.car[1].value.q} is wrong" "$expect" "$actual"
+            log_error "\${c.car[1].value} is wrong" "$expect" "$actual"
         ;;
     SI_USER)
         # System lacks sigqueue(), ksh called kill().

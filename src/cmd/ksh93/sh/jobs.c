@@ -196,10 +196,7 @@ static_fn void setsiginfo(Shell_t *shp, siginfo_t *info, struct process *pw) {
     info->si_uid = shp->gd->userid;
     info->si_pid = pw->p_pid;
     info->si_code = CLD_EXITED;
-    // We set sival_ptr to zero because si_value is a union and sival_ptr should be as wide or
-    // wider than sival_int. See sh_setsiginfo() for how this is used to populate compound var
-    // `.sh.sig`.
-    info->si_value.sival_ptr = 0;
+    info->si_value.sival_int = 0;
     if (WIFSTOPPED(pw->p_wstat)) {
         info->si_code = CLD_STOPPED;
         info->si_value.sival_int = WSTOPSIG(pw->p_wstat);

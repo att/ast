@@ -764,15 +764,38 @@ $SHELL -c 'unset .sh' 2> /dev/null
 x=$($SHELL -c 'foo=bar foobar=fbar; print -r -- ${!foo*}')
 [[ $x == 'foo '* ]] || log_error 'foo not included in ${!foo*}'
 
-[[ ${!.sh.sig@} == *.sh.sig.pid* ]]  ||  log_error '.sh.sig.pid not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.status* ]]  ||  log_error '.sh.sig.status not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.value.q* ]]  ||  log_error '.sh.sig.value.q not in ${!.sh.sig@]}'
-[[ ${!.sh.sig@} == *.sh.sig.value.Q* ]]  ||  log_error '.sh.sig.value.Q not in ${!.sh.sig@]}'
+# ==========
+# Verify that the special .sh.sig compound var contains at least a few of the expected members.
+#
+function contains_sig_var1 {
+    typeset want=$1
+    for name in "${!.sh.sig@}"
+    do
+        [[ $want == $name ]] && return 0
+    done
+    return 1
+}
 
-[[ ${!.sh.sig*} == *.sh.sig.pid* ]]  ||  log_error '.sh.sig.pid not in ${!.sh.sig*]}'
-[[ ${!.sh.sig*} == *.sh.sig.status* ]]  ||  log_error '.sh.sig.status not in ${!.sh.sig*]}'
-[[ ${!.sh.sig*} == *.sh.sig.value.q* ]]  ||  log_error '.sh.sig.value.q not in ${!.sh.sig*]}'
-[[ ${!.sh.sig*} == *.sh.sig.value.Q* ]]  ||  log_error '.sh.sig.value.Q not in ${!.sh.sig*]}'
+function contains_sig_var2 {
+    typeset want=$1
+    for name in ${!.sh.sig*}
+    do
+        [[ $want == $name ]] && return 0
+    done
+    return 1
+}
+
+contains_sig_var1 .sh.sig.pid    || log_error '.sh.sig.pid not in ${!.sh.sig@]}'
+contains_sig_var1 .sh.sig.uid    || log_error '.sh.sig.uid not in ${!.sh.sig@]}'
+contains_sig_var1 .sh.sig.signo  || log_error '.sh.sig.signo not in ${!.sh.sig@]}'
+contains_sig_var1 .sh.sig.status || log_error '.sh.sig.status not in ${!.sh.sig@]}'
+contains_sig_var1 .sh.sig.value  || log_error '.sh.sig.value.q not in ${!.sh.sig@]}'
+
+contains_sig_var2 .sh.sig.pid    || log_error '.sh.sig.pid not in ${!.sh.sig*]}'
+contains_sig_var2 .sh.sig.uid    || log_error '.sh.sig.uid not in ${!.sh.sig*]}'
+contains_sig_var2 .sh.sig.signo  || log_error '.sh.sig.signo not in ${!.sh.sig*]}'
+contains_sig_var2 .sh.sig.status || log_error '.sh.sig.status not in ${!.sh.sig*]}'
+contains_sig_var2 .sh.sig.value  || log_error '.sh.sig.value.q not in ${!.sh.sig*]}'
 
 unset x
 integer x=1
