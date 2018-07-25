@@ -1828,13 +1828,9 @@ void sh_setsiginfo(siginfo_t *sip) {
     np = create_svar(SH_SIG, "addr", 0, fp);
     nv_setsize(np, 16);
     np->nvalue.vp = &sip->si_addr;
-    create_svar(SH_SIG, "value", 0, fp);
-    np = create_svar(SH_SIG, "value.q", 0, fp);
+    np = create_svar(SH_SIG, "value", 0, fp);
     nv_setsize(np, 10);
     np->nvalue.ip = &(sip->si_value.sival_int);
-    np = create_svar(SH_SIG, "value.Q", 0, fp);
-    nv_setsize(np, 10);
-    np->nvalue.vp = &sip->si_value.sival_ptr;
 }
 
 //

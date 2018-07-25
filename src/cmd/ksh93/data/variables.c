@@ -126,9 +126,7 @@ const Shtable_t shtab_siginfo[] = {
     {"signo", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
     {"status", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
     {"uid", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
-    {"value", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_NODISC},
-    {"value.q", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
-    {"value.Q", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_UNSIGN | NV_INTEGER | NV_LONG},
+    {"value", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
     {"", 0}};
 
 const Shtable_t shtab_stats[] = {{"arg_cachehits", NV_RDONLY | NV_MINIMAL | NV_NOFREE | NV_INTEGER},
