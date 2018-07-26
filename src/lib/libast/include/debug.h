@@ -123,6 +123,5 @@ extern ssize_t		debug_printf(int, const char*, ...);
 extern ssize_t debug_sprintf(char *, size_t, const char *, ...);
 extern ssize_t debug_vsprintf(char *, size_t, const char *, va_list);
 extern ssize_t debug_vprintf(int, const char *, va_list);
-extern void systrace(const char *);
 
 #endif  // _DEBUG_H
