@@ -1222,7 +1222,7 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                                 for (item = buffp->olist; item; item = item->next) item->strm = 0;
                             }
                             if (!nv_isattr(np, BLT_ENV) && !nv_isattr(np, BLT_SPC)) {
-                                if (!shp->pwd) path_pwd(shp, 0);
+                                if (!shp->pwd) path_pwd(shp);
 #ifndef O_SEARCH
                                 else if (shp->pwdfd >= 0) {
                                     fstat(shp->pwdfd, &statb);

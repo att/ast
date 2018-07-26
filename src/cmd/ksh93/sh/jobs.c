@@ -1336,7 +1336,7 @@ int job_post(Shell_t *shp, pid_t pid, pid_t join) {
         do {
             pw->p_nxtjob = job.pwlist;
         } while (asocasptr(&job.pwlist, pw->p_nxtjob, pw) != pw->p_nxtjob);
-        pw->p_curdir = path_pwd(shp, 0);
+        pw->p_curdir = path_pwd(shp);
         if (pw->p_curdir) pw->p_curdir = strdup(pw->p_curdir);
     }
     job_unlock();
