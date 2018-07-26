@@ -280,9 +280,6 @@
 #mesondefine _mem_pr_sonproc_prpsinfo
 #mesondefine _mem_pr_tgrp_prpsinfo
 #mesondefine _mem_right_parenthesis_lconv
-#mesondefine _mem_st_blksize_stat
-#mesondefine _mem_st_blocks_stat
-#mesondefine _mem_st_rdev_stat
 #mesondefine _mem_thousands_sep_lconv
 #mesondefine _mem_ut_host_utmp
 #mesondefine _mem_ut_host_utmpx
