@@ -25,8 +25,8 @@
 #include <string.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdtlib.h"
-#include "debug.h"
 
 /*	Ordered set/multiset
 **	dt:	dictionary being searched
@@ -212,7 +212,7 @@ static void *tstat(Dt_t *dt, Dtstat_t *st) {
     else {
         memset(st, 0, sizeof(Dtstat_t));
         size = tsize(tree->root, 0, st);
-        /**/ DEBUG_ASSERT((dt->data->type & DT_SHARE) || size == dt->data->size);
+        assert((dt->data->type & DT_SHARE) || size == dt->data->size);
         st->meth = dt->meth->type;
         st->size = size;
         st->space = sizeof(Dttree_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
