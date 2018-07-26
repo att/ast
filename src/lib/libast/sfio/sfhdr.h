@@ -91,10 +91,6 @@
 #undef _lib_wcrtomb
 #define _lib_wcrtomb 1
 
-#if _mem_st_blksize_stat
-#define _stat_blksize 1
-#endif
-
 #define sfoff_t off_t
 #define sfstat_t struct stat
 #define sysclosef close
