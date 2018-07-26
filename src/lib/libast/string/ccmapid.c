@@ -28,7 +28,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <ctype.h>
-#include <sys/types.h>
+#include <stddef.h>
 
 #include "ast.h"
 #include "ast_api.h"

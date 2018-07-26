@@ -43,7 +43,6 @@
 #include "sfdisc.h"
 #include "sfio.h"
 #include "stk.h"
-#include "times.h"
 #include "tv.h"
 
 #define stringify(s) #s

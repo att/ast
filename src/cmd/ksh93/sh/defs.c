@@ -25,14 +25,12 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <stddef.h>
-#include <string.h>
 #include <sys/types.h>
 
 #include "defs.h"
 
 #include "cdt.h"
 #include "fault.h"
-#include "fcin.h"
 #include "jobs.h"
 #include "lexstates.h"
 #include "name.h"
