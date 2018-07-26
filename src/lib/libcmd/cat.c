@@ -433,10 +433,10 @@ int b_cat(int argc, char **argv, Shbltin_t *context) {
     if (error_info.errors) error(ERROR_usage(2), "%s", optusage(NULL));
     memset(states, 0, sizeof(states));
     if (flags & V_FLAG) {
-        memset(states, T_CONTROL, ' ');
+        memset(states, T_CONTROL, 32);
         states[RUBOUT] = T_CONTROL;
         memset(states + 0200, T_EIGHTBIT, 0200);
-        memset(states + 0200, T_CNTL8BIT, ' ');
+        memset(states + 0200, T_CNTL8BIT, 32);
         states[RUBOUT | 0200] = T_CNTL8BIT;
         states['\n'] = 0;
     }
