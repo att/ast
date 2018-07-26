@@ -219,7 +219,6 @@ extern char *astgetconf(const char *, const char *, const char *, int, Error_f);
 extern char *astconf(const char *, const char *, const char *);
 extern Ast_confdisc_f astconfdisc(Ast_confdisc_f);
 extern void astconflist(Sfio_t *, const char *, int, const char *);
-extern int astquery(int, const char *, ...);
 extern void astwinsize(int, int *, int *);
 
 extern ssize_t base64encode(const void *, size_t, void **, void *, size_t, void **);

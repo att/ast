@@ -47,7 +47,6 @@ char*          astconf(const char* \fIname\fP, const char* \fIpath\fP, const cha
 Ast_confdisc_t astconfdisc(Ast_confdisc_t new_notify);
 void           astconflist(Sfio_t* stream, const char* path, int flags);
 off_t          astcopy(int \fIrfd\fP, int \fIwfd\fP, off_t \fIn\fP);
-int            astquery(int \fIfd\fP, const char* \fIformat\fP , ...);
 .EE
 .SH DESCRIPTION
 .L astconf
@@ -219,29 +218,6 @@ is used to do the transfer.
 Some implementations may bypass user buffer copies usually required by the
 .IR read (2)- write (2)
 paradigm.
-.PP
-.L astquery
-outputs an
-.IR sfprintf (3)
-prompt specified by
-.I "format, .\|.\|."
-to the controlling terminal and reads a response from the controlling terminal.
-Offirmative response returns
-.LR 0 ,
-.L EOF
-or quit response returns
-.LR \-1 ,
-otherwise
-.L 1
-is returned.
-If
-.I quit
-is greater than
-.L 0
-then
-.I exit(quit)
-is called on a quit response.
-The responses will eventually be locale specific.
 .PP
 .L astwinsize
 returns the number of rows in
