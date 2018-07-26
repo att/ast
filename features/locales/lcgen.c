@@ -564,7 +564,6 @@ int main(int argc, char **argv) {
     fprintf(hf, "extern int\t\tlcindex(int, int);\n");
     fprintf(hf, "extern Lc_info_t*\tlcinfo(int);\n");
     fprintf(hf, "extern Lc_t*\t\tlcmake(const char*);\n");
-    fprintf(hf, "extern Lc_t*\t\tlcscan(Lc_t*);\n");
     fprintf(hf, "\n");
     fprintf(lf, "\nconst Lc_charset_t lc_charsets[] =\n{\n");
     for (cp = (Charset_t *)state.charset.root; cp; cp = (Charset_t *)cp->link.next) {
