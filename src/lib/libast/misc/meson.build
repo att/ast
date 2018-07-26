@@ -1,5 +1,5 @@
 libast_files += [
-    'misc/cmdarg.c', 'misc/conformance.c',
+    'misc/conformance.c',
     'misc/debug.c', 'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
     'misc/errorx.c', 'misc/fastfind.c', 'misc/fgetcwd.c', 'misc/fmtrec.c', 'misc/glob.c',
     'misc/mime.c', 'misc/optctx.c', 'misc/optesc.c',
