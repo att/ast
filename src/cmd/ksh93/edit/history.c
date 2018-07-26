@@ -44,6 +44,7 @@
 #include "sfio.h"
 #include "stk.h"
 #include "times.h"
+#include "tv.h"
 
 #define stringify(s) #s
 
@@ -149,7 +150,7 @@ done:
 static const unsigned char hist_stamp[2] = {HIST_UNDO, HIST_VERSION};
 static const Sfdisc_t hist_disc = {NULL, hist_write, NULL, hist_exceptf, NULL};
 
-static void hist_touch(void *handle) { touch((char *)handle, (time_t)0, (time_t)0, 0); }
+static void hist_touch(void *handle) { tvtouch(handle, NULL, NULL, NULL, 0); }
 
 //
 // Open the history file. If HISTNAME is not given and userid==0 then no history file. If login_sh
