@@ -41,10 +41,6 @@
 #undef fileid
 #define fileid fileID
 
-#define LS_BLOCKSIZE 512
-
-#define iblocks(p) _iblocks(p)
-
 #if _mem_st_rdev_stat
 #define idevice(p) ((p)->st_rdev)
 #define IDEVICE(p, v) ((p)->st_rdev = (v))
@@ -73,7 +69,6 @@
 #define LS_W_MARK 1    /* LS_MARK field width		*/
 #define LS_W_NAME 9    /* group|user name field width	*/
 
-extern off_t _iblocks(struct stat *);
 extern char *fmtdev(struct stat *);
 extern char *fmtfs(struct stat *);
 extern char *fmtls(char *, const char *, struct stat *, const char *, const char *, int);
