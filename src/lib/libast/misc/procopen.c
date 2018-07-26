@@ -392,7 +392,6 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
     else if (environ && envv != (char **)environ &&
              (envv || (flags & PROC_PARANOID) ||
               ((argv && (environ[0][0] != '_')) || environ[0][1] != '='))) {
-        if (!sh_setenviron(NULL)) goto bad;
 #if _use_spawnveg
         if (!(flags & PROC_ORPHAN)) newenv = 1;
 #endif

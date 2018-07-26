@@ -2687,14 +2687,12 @@ int putenv(const char *name) {
 }
 
 char *sh_setenviron(const char *name) {
-    Shell_t *shp = sh_getinterp();
-    Namval_t *np;
+    assert(name);
 
-    if (name) {
-        np = nv_open(name, shp->var_tree, NV_EXPORT | NV_IDENT | NV_NOARRAY | NV_ASSIGN);
-        if (strchr(name, '=')) return nv_getval(np);
-        _nv_unset(np, 0);
-    }
+    Shell_t *shp = sh_getinterp();
+    Namval_t *np = nv_open(name, shp->var_tree, NV_EXPORT | NV_IDENT | NV_NOARRAY | NV_ASSIGN);
+    if (strchr(name, '=')) return nv_getval(np);
+    _nv_unset(np, 0);
     return "";
 }
 

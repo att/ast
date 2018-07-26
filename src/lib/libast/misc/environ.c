@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "ast.h"
+#include "ast_assert.h"
 
 // This exists solely for libast unit tests and standalone commands (e.g., pty) which don't link
 // against the ksh code. It emulates the behavior of the ksh functions of the same name. As of
@@ -48,12 +49,10 @@ char *sh_getenv(const char *name) { return getenv(name); }
 //
 //	setenviron("N=V")	add N=V
 //	setenviron("N")		delete N
-//	setenviron(0)		expect more (pre-fork optimization)
 //
 char *sh_setenviron(const char *akey) {
+    assert(akey);
     ast.env_serial++;
-    if (!akey) return "";
-
     if (strchr(akey, '=')) {
         putenv((char *)akey);
     } else {

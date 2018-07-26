@@ -61,10 +61,6 @@ copy of
 removes
 .I name
 from the environment and returns the empty string.
-.L setenviron(0)
-reserves a few slots in an internal array and is usually called by
-a parent process that expects many children.
-0 is returned on error.
 .L setenviron
 preserves the
 .IR ksh (1)
