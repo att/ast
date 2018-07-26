@@ -209,11 +209,10 @@ static_fn pid_t path_xargs(Shell_t *shp, const char *path, char *argv[], char *c
 }
 
 //
-// Make sure PWD is set up correctly. Return the present working directory. Invokes getcwd() if
-// flag==0 and if necessary. Sets the PWD variable to this value.
+// Returns the present working directory (PWD). Attempts several different locations before
+// falling back to getcwd(). Sets shp->pwd and $PWD to the first valid value found.
 //
-char *path_pwd(Shell_t *shp, int flag) {
-    UNUSED(flag);
+char *path_pwd(Shell_t *shp) {
     char *cp;
     int count = 0;
 
@@ -381,7 +380,7 @@ Pathcomp_t *path_nextcomp(Shell_t *shp, Pathcomp_t *pp, const char *name, Pathco
     }
     if (pp && (pp->name[0] != '.' || pp->name[1])) {
         if (*pp->name != '/') {
-            sfputr(shp->stk, path_pwd(shp, 1), -1);
+            sfputr(shp->stk, path_pwd(shp), -1);
             if (*stkptr(shp->stk, stktell(shp->stk) - 1) != '/') sfputc(shp->stk, '/');
         }
         sfwrite(shp->stk, pp->name, pp->len);
@@ -495,7 +494,7 @@ char *path_fullname(Shell_t *shp, const char *name) {
     size_t len = strlen(name) + 1, dirlen = 0;
     char *path, *pwd;
     if (*name != '/') {
-        pwd = path_pwd(shp, 1);
+        pwd = path_pwd(shp);
         dirlen = strlen(pwd) + 1;
     }
     path = (char *)malloc(len + dirlen);
@@ -586,7 +585,7 @@ bool path_search(Shell_t *shp, const char *name, Pathcomp_t **oldpp, int flag) {
         }
         if (*name == '/') return true;
         stkseek(shp->stk, PATH_OFFSET);
-        sfputr(shp->stk, path_pwd(shp, 1), '/');
+        sfputr(shp->stk, path_pwd(shp), '/');
         sfputr(shp->stk, name, 0);
         return false;
     }

@@ -276,7 +276,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     if (*cp != '/') {
                         if (!np && (np = nv_search(name, shp->track_tree, 0))) {
                             sfprintf(sfstdout, "%s %s %s/%s\n", name, sh_translate(is_talias),
-                                     path_pwd(shp, 0), cp);
+                                     path_pwd(shp), cp);
                         } else if (!np || nv_isnull(np)) {
                             sfprintf(sfstdout, "%s%s\n", name, sh_translate(is_ufunction));
                         }

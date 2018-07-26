@@ -497,7 +497,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
         path_get(shp, e_dot);
         shp->pathinit = 0;
     }
-    if (!shp->pwd) path_pwd(shp, 0);
+    if (!shp->pwd) path_pwd(shp);
     sp->bckpid = shp->bckpid;
     if (comsub) {
         sh_stats(STAT_COMSUB);

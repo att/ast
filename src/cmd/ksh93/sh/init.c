@@ -1130,7 +1130,7 @@ static_fn int newconf(const char *name, const char *path, const char *value) {
     } else if (strcmp(name, "UNIVERSE") == 0 && strcmp(astconf(name, 0, 0), value)) {
         shp->universe = 0;
         // Set directory in new universe.
-        if (*(arg = path_pwd(shp, 0)) == '/') chdir(arg);
+        if (*(arg = path_pwd(shp)) == '/') chdir(arg);
         // Clear out old tracked alias.
         stkseek(shp->stk, 0);
         sfputr(shp->stk, nv_getval(PATHNOD), 0);
@@ -2086,7 +2086,7 @@ static_fn void env_init(Shell_t *shp) {
 
     if (nv_isnull(PWDNOD) || nv_isattr(PWDNOD, NV_TAGGED)) {
         nv_offattr(PWDNOD, NV_TAGGED);
-        path_pwd(shp, 0);
+        path_pwd(shp);
     }
 
     cp = nv_getval(SHELLNOD);

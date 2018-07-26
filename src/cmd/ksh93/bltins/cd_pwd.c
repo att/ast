@@ -141,7 +141,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
     if (error_info.errors > 0 || argc > 2) {
         errormsg(SH_DICT, ERROR_usage(2), "%s", optusage((char *)0));
     }
-    shp->pwd = path_pwd(shp, 0);
+    shp->pwd = path_pwd(shp);
     oldpwd = (char *)shp->pwd;
     opwdnod = (shp->subshell ? sh_assignok(OLDPWDNOD, 1) : OLDPWDNOD);
     pwdnod = (shp->subshell ? sh_assignok(PWDNOD, 1) : PWDNOD);
@@ -182,7 +182,7 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 cdpath->shp = shp;
             }
         }
-        if (!oldpwd) oldpwd = path_pwd(shp, 1);
+        if (!oldpwd) oldpwd = path_pwd(shp);
     }
     if (dirfd == shp->pwdfd && *dir != '/') {
         // Check for leading ..
@@ -349,11 +349,11 @@ int b_pwd(int argc, char *argv[], Shbltin_t *context) {
         return 0;
     }
     if (pflag) {
-        cp = path_pwd(shp, 0);
+        cp = path_pwd(shp);
         cp = strcpy(stakseek(strlen(cp) + PATH_MAX), cp);
         pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_PHYSICAL);
     } else {
-        cp = path_pwd(shp, 0);
+        cp = path_pwd(shp);
     }
 
     if (*cp != '/') errormsg(SH_DICT, ERROR_system(1), e_pwd);

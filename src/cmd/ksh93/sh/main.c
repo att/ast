@@ -135,7 +135,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
     // Set pidname '$$'.
     srand(shp->gd->pid & 0x7fff);
     if (nv_isnull(PS4NOD)) nv_putval(PS4NOD, e_traceprompt, NV_RDONLY);
-    path_pwd(shp, 1);
+    path_pwd(shp);
     iop = (Sfio_t *)0;
     sh_onoption(shp, SH_BRACEEXPAND);
     if ((beenhere++) == 0) {
@@ -181,7 +181,7 @@ int sh_main(int ac, char *av[], Shinit_f userinit) {
             }
         }
         // Make sure PWD is set up correctly.
-        path_pwd(shp, 1);
+        path_pwd(shp);
         if (!sh_isoption(shp, SH_NOEXEC)) {
             if (!sh_isoption(shp, SH_NOUSRPROFILE) && !sh_isoption(shp, SH_PRIVILEGED) &&
                 sh_isoption(shp, SH_RC)) {

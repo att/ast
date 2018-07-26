@@ -83,7 +83,7 @@ extern void path_exec(Shell_t *, const char *, char *[], struct argnod *);
 extern pid_t path_spawn(Shell_t *, const char *, char *[], char *[], Pathcomp_t *, int);
 extern int path_open(Shell_t *, const char *, Pathcomp_t *);
 extern Pathcomp_t *path_get(Shell_t *, const char *);
-extern char *path_pwd(Shell_t *, int);
+extern char *path_pwd(Shell_t *);
 extern Pathcomp_t *path_nextcomp(Shell_t *, Pathcomp_t *, const char *, Pathcomp_t *);
 extern bool path_search(Shell_t *, const char *, Pathcomp_t **, int);
 extern char *path_relative(Shell_t *, const char *);
