@@ -1135,7 +1135,7 @@ Namfun_t *nv_isvtree(Namval_t *np) {
 // Get discipline for compound initializations.
 //
 char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
-    int flags = 0, dsize = 0;
+    int flags = 0;
     for (; fp && fp->next; fp = fp->next) {
         if (fp->next->disc && (fp->next->disc->getnum || fp->next->disc->getval)) {
             return nv_getv(np, fp);
@@ -1149,7 +1149,6 @@ char *nv_getvtree(Namval_t *np, Namfun_t *fp) {
     if (flags) nv_offattr(np, NV_EXPORT | NV_TAGGED);
     flags |= nv_isattr(np, NV_TABLE);
     if (flags) nv_offattr(np, NV_TABLE);
-    if (dsize && (flags & NV_EXPORT)) return "()";
     return walk_tree(np, (Namval_t *)0, flags);
 }
 
