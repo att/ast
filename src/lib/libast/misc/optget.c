@@ -42,7 +42,6 @@
 #include "ast.h"
 #include "ast_ccode.h"
 #include "cdt.h"
-#include "debug.h"
 #include "error.h"
 #include "option.h"
 #include "optlib.h"
@@ -498,8 +497,6 @@ static char *skip(char *s, int t1, int t2, int t3, int n, int b, int past, int v
     } else {
         while (*s) {
             c = *s++;
-            message((-22, "optget: skip t1=%c t2=%c t3=%c n=%d b=%d `%s'", t1 ? t1 : '@',
-                     t2 ? t2 : '@', t3 ? t3 : '@', n, b, show(s - 1)));
             if (c == '[') {
                 if (!n) n = 1;
             } else if (c == ']') {
@@ -977,8 +974,6 @@ static int init(char *s, Optpass_t *p) {
         s += n;
     }
     p->opts = s;
-    message((-2, "version=%d prefix=%d section=%s flags=%04x id=%s catalog=%s oopts=%p", p->version,
-             p->prefix, p->section, p->flags, p->id, p->catalog, p->oopts));
     return 0;
 }
 
@@ -1511,10 +1506,7 @@ static char *trace_textout(Sfio_t *sp, char *p, char *conform, int conformlen, i
                            int line) {
     static int depth = 0;
 
-    message((-21, "opthelp: txt#%d +++ %2d \"%s\" style=%d level=%d bump=%d", line, ++depth,
-             show(p), style, level, bump));
     p = textout(sp, p, conform, conformlen, style, level, bump, ip, version, id, catalog, hflags);
-    message((-21, "opthelp: txt#%d --- %2d \"%s\"", line, depth--, show(p)));
     return p;
 }
 
@@ -1640,7 +1632,6 @@ again:
                     catalog, hflags);
         if (level > lev && *s && *(s = next(s, version)) == '[') {
             s++;
-            message((-21, "textout#%d s=%s", __LINE__, show(s)));
             goto again;
         }
     } else if (c == '?' || c == ' ') {
@@ -1752,7 +1743,6 @@ again:
                                             version, id, catalog, hflags);
                                 if (*s && *(s = next(s, version)) == '[' && !isalnum(*(s + 1))) {
                                     s++;
-                                    message((-21, "textout#%d s=%s", __LINE__, show(s)));
                                     goto again;
                                 }
                             } else if (*s == '[' && level > lev) {
@@ -2441,7 +2431,6 @@ again:
                 p++;
                 continue;
             }
-            message((-20, "opthelp: opt %s", show(p)));
             if (z < 0) z = 0;
             a = 0;
             f = 0;
@@ -2620,7 +2609,6 @@ again:
             ov = 0;
             u = v = y = 0;
             if ((*p == ':' && (a |= OPT_string)) || (*p == '#' && (a |= OPT_number))) {
-                message((-21, "opthelp: arg %s", show(p)));
                 if (*++p == '?' || *p == *(p - 1)) {
                     p++;
                     a |= OPT_optional;
@@ -3921,7 +3909,6 @@ again:
                 }
                 continue;
             }
-            message((-20, "optget: opt %s  c %c  w %s  num %ld", show(s), c, w, num));
             if (*s == c && !w)
                 break;
             else if (*s == '[') {
@@ -4235,13 +4222,11 @@ again:
                 s++;
                 continue;
             }
-            message((-21, "optget: opt %s", show(s)));
             if (*++s == '?' || *s == *(s - 1)) s++;
             if (*(s = next(s, version)) == '[') {
                 s = skip(s + 1, 0, 0, 0, 1, 0, 1, version);
                 if (*s == GO) s = skip(s + 1, 0, 0, 0, 0, 1, 1, version);
             }
-            message((-21, "optget: opt %s", show(s)));
         }
         if (w && x) {
             s = skip(b, '|', '?', 0, 1, 0, 0, version);

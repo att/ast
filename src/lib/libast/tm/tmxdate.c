@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "debug.h"
 #include "tm.h"
 #include "tmx.h"
 
@@ -185,7 +184,6 @@ Time_t tmxdate(const char *s, char **e, Time_t now) {
      * check DATEMSK first
      */
 
-    debug((error(-1, "AHA tmxdate 2009-03-06")));
     fix = tmxscan(s, &last, NULL, &t, now, 0);
     if (t && !*last) {
         if (e) *e = last;
@@ -219,8 +217,6 @@ again:
         state &= (state & HOLD) ? ~(HOLD) : ~(EXACT | LAST | NEXT | THIS);
         if ((set | state) & (YEAR | MONTH | DAY)) skip['/'] = 1;
         while (isspace(*s)) s++;
-        message(
-            (-1, "AHA#%d state=" FFMT " set=" FFMT " '%s'", __LINE__, FLAGS(state), FLAGS(set), s));
         for (;;) {
             if (*s == '.' || *s == '-' || *s == '+') {
                 if (((set | state) & (MONTH | HOUR | MINUTE | ZONE)) == (MONTH | HOUR | MINUTE) &&
@@ -650,7 +646,6 @@ again:
                 ((set | state) & (YEAR | MONTH | DAY)) == (YEAR | MONTH) && isdigit(*(t + 1)))
                 t++;
             u = t + (*t == '-');
-            message((-1, "AHA#%d n=%d w=%d u='%c' f=%d t=\"%s\"", __LINE__, n, w, *u, f, t));
             if ((w == 2 || w == 4) && (*u == 'W' || *u == 'w') && isdigit(*(u + 1))) {
                 if (w == 4) {
                     if ((n -= 1900) < TM_WINDOW) break;
@@ -720,10 +715,8 @@ again:
             } else if (f == -1 && isalpha(*t) &&
                        tmlex(t, &t, tm_info.format + TM_ORDINAL, TM_ORDINALS - TM_ORDINAL, NULL,
                              0) >= 0) {
-                message((-1, "AHA#%d n=%d", __LINE__, n));
             ordinal:
                 if (n) n--;
-                message((-1, "AHA#%d n=%d", __LINE__, n));
                 state |= ((f = n) ? NEXT : THIS) | ORDINAL;
                 set &= ~(EXACT | LAST | NEXT | THIS);
                 set |= state & (EXACT | LAST | NEXT | THIS);
@@ -738,17 +731,14 @@ again:
                 } else
                     n = -1;
                 dir = f;
-                message((-1, "AHA#%d f=%d n=%d state=" FFMT, __LINE__, f, n, FLAGS(state)));
             } else {
                 for (u = t; isspace(*u); u++)
                     ;
-                message((-1, "AHA#%d n=%d u=\"%s\"", __LINE__, n, u));
                 if ((j = tmlex(u, NULL, tm_info.format, TM_NFORM, tm_info.format + TM_SUFFIXES,
                                TM_PARTS - TM_SUFFIXES)) >= 0 &&
                     tm_data.lex[j] == TM_PARTS)
                     s = u;
                 else {
-                    message((-1, "AHA#%d t=\"%s\"", __LINE__, t));
                     if (!(state & (LAST | NEXT | THIS)) &&
                         (((i = t - s) == 4 &&
                           ((*t == '.' && isdigit(*(t + 1)) && isdigit(*(t + 2)) &&
@@ -766,7 +756,6 @@ again:
                          *	hhmm[.ss[.nn...]]
                          */
 
-                        message((-1, "AHA#%d t=\"%s\"", __LINE__, t));
                         flags = 0;
                         if (state & CCYYMMDDHHMMSS) break;
                         state |= CCYYMMDDHHMMSS;
@@ -870,7 +859,6 @@ again:
                     }
                     for (s = t; skip[*s]; s++)
                         ;
-                    message((-1, "AHA#%d s=\"%s\"", __LINE__, s));
                     if (*s == ':' || (*s == '.' && ((set | state) & (YEAR | MONTH | DAY | HOUR)) ==
                                                        (YEAR | MONTH | DAY))) {
                         c = *s;
@@ -921,8 +909,6 @@ again:
                                 break;
                         }
                         if (f >= 0 || (state & (LAST | NEXT))) {
-                            message(
-                                (-1, "AHA#%d f=%d i=%d j=%d k=%d l=%d", __LINE__, f, i, j, k, l));
                             state &= ~HOLD;
                             if (f < 0) {
                                 if (state & LAST)
@@ -957,7 +943,6 @@ again:
             }
         }
         for (;;) {
-            message((-1, "AHA#%d s=\"%s\"", __LINE__, s));
             if (*s == '-' || *s == '+') {
                 if (((set | state) & (MONTH | DAY | HOUR | MINUTE)) ==
                         (MONTH | DAY | HOUR | MINUTE) ||
@@ -976,7 +961,6 @@ again:
             if (n > 0) {
                 x = s;
                 q = *s++;
-                message((-1, "AHA#%d n=%d q='%c'", __LINE__, n, q));
                 if (isalpha(*s)) {
                     q <<= 8;
                     q |= *s++;
@@ -1113,7 +1097,6 @@ again:
                             set |= state & (EXACT | LAST | NEXT | THIS | FINAL);
                             continue;
                         case TM_WORK:
-                            message((-1, "AHA#%d WORK", __LINE__));
                             state |= WORK;
                             set |= DAY;
                             if (state & LAST) {
@@ -1125,11 +1108,9 @@ again:
                             goto clear_hour;
                         case TM_ORDINAL:
                             j += TM_ORDINALS - TM_ORDINAL;
-                            message((-1, "AHA#%d j=%d", __LINE__, j));
                             /*FALLTHROUGH*/
                         case TM_ORDINALS:
                             n = j - TM_ORDINALS + 1;
-                            message((-1, "AHA#%d n=%d", __LINE__, n));
                             goto ordinal;
                         case TM_MERIDIAN:
                             if (f >= 0)
@@ -1185,8 +1166,6 @@ again:
                                 }
                             /*FALLTHROUGH*/
                         case TM_DAYS:
-                            message((-1, "AHA#%d n=%d j=%d f=%d state=" FFMT, __LINE__, n, j, f,
-                                     FLAGS(state)));
                             if (n == -1) {
                                 /*
                                  * disambiguate english "second"
@@ -1205,7 +1184,6 @@ again:
                              */
 
                             while (isspace(*s)) s++;
-                            message((-1, "AHA#%d disambiguate LAST s='%s'", __LINE__, s));
                             if ((k = tmlex(s, &t, tm_info.format + TM_NEXT, TM_EXACT - TM_NEXT,
                                            NULL, 0)) >= 0 ||
                                 (k = tmlex(s, &t, tm_info.format + TM_PARTS + 3, 1, NULL, 0)) >=
@@ -1216,18 +1194,14 @@ again:
                                     set &= ~LAST;
                                     state |= FINAL;
                                     set |= FINAL;
-                                    message((-1, "AHA#%d LAST => FINAL", __LINE__));
                                 } else
                                     state &= ~(THIS | NEXT);
                             }
-                            message((-1, "AHA#%d disambiguate LAST k=%d", __LINE__, k));
                             if (state & LAST)
                                 n = -n;
                             else if (!(state & NEXT))
                                 n--;
                             m = (f > 0) ? f * n : n;
-                            message((-1, "AHA#%d f=%d n=%d i=%d j=%d k=%d l=%d m=%d state=" FFMT,
-                                     __LINE__, f, n, i, j, k, l, m, FLAGS(state)));
                             switch (j) {
                                 case TM_DAYS + 0:
                                     tm->tm_mday--;
@@ -1257,8 +1231,6 @@ again:
                                     set |= MINUTE;
                                     goto clear_min;
                                 case TM_PARTS + 3:
-                                    message((-1, "AHA#%d DAY m=%d n=%d%s", __LINE__, m, n,
-                                             (state & LAST) ? " LAST" : ""));
                                     if ((state & (LAST | NEXT | THIS)) == LAST)
                                         tm->tm_mday =
                                             tm_data.days[tm->tm_mon] +
@@ -1305,11 +1277,7 @@ again:
                             tm = tmxtm(tm, tmxtime(tm, zone), tm->tm_zone);
                             day = j -= TM_DAY;
                             if (!dir) dir = m;
-                            message((-1, "AHA#%d j=%d m=%d", __LINE__, j, m));
                             j -= tm->tm_wday;
-                            message((
-                                -1, "AHA#%d mday=%d wday=%d day=%d dir=%d f=%d i=%d j=%d l=%d m=%d",
-                                __LINE__, tm->tm_mday, tm->tm_wday, day, dir, f, i, j, l, m));
                             if (state & (LAST | NEXT | THIS)) {
                                 if (state & ORDINAL) {
                                     while (isspace(*s)) s++;
@@ -1322,8 +1290,6 @@ again:
                                 if (j < 0) j += 7;
                             } else if (j > 0)
                                 j -= 7;
-                            message((-1, "AHA#%d day=%d mday=%d f=%d m=%d j=%d state=" FFMT,
-                                     __LINE__, day, tm->tm_mday, f, m, j, FLAGS(state)));
                             set |= DAY;
                             if (set & (FINAL | WORK))
                                 goto clear_hour;
@@ -1484,7 +1450,6 @@ again:
         if ((set | state) & (EXACT | DAY | HOUR)) continue;
         tm->tm_mday = 1;
     clear_hour:
-        message((-1, "AHA#%d DAY", __LINE__));
         set |= DAY;
         if ((set | state) & (EXACT | HOUR)) continue;
         tm->tm_hour = 0;
@@ -1503,7 +1468,6 @@ again:
     }
 done:
     if (day >= 0 && !(state & (MDAY | WDAY))) {
-        message((-1, "AHA#%d day=%d dir=%d state=" FFMT, __LINE__, day, dir, FLAGS(state)));
         tmfix(tm);
         m = dir;
         if (state & MONTH)
@@ -1528,7 +1492,6 @@ done:
                 ? (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year)))
                 : 1;
         tmfix(tm);
-        message((-1, "AHA#%d WORK mday=%d wday=%d", __LINE__, tm->tm_mday, tm->tm_wday));
         if ((tm->tm_wday == 0 && (j = 1)) || (tm->tm_wday == 6 && (j = 2))) {
             if ((tm->tm_mday + j) >
                 (tm_data.days[tm->tm_mon] + (tm->tm_mon == 1 && tmisleapyear(tm->tm_year))))

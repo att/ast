@@ -36,7 +36,6 @@
 
 #include "aso.h"
 #include "cdt.h"
-#include "debug.h"
 
 /* min #bits for a hash table. (1<<this) is table size */
 #define DT_HTABLE 10

@@ -27,8 +27,8 @@
 
 #include "aso.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdtlib.h"
-#include "debug.h"
 
 /*	Hash table with chaining for collisions.
 **
@@ -395,8 +395,8 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
 
                 goto do_insert;
             }
-        } else { /**/
-            DEBUG_ASSERT(type & (DT_INSERT | DT_ATTACH | DT_APPEND | DT_RELINK));
+        } else {
+            assert(type & (DT_INSERT | DT_ATTACH | DT_APPEND | DT_RELINK));
             if ((dt->meth->type & DT_BAG))
                 goto do_insert;
             else {

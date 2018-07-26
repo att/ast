@@ -24,8 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ast_assert.h"
 #include "cdtlib.h"
-#include "debug.h"
 
 /*	Close a dictionary
 **
@@ -56,7 +56,7 @@ int dtclose(Dt_t *dt) {
     {
         (void)(*(dt->meth->searchf))(dt, NULL, DT_CLEAR);
         (void)(*dt->meth->eventf)(dt, DT_CLOSE, (void *)0);
-        /**/ DEBUG_ASSERT(!dt->data);
+        assert(!dt->data);
     }
     if (!(type & DT_INDATA)) (void)free(dt);
 

@@ -28,8 +28,8 @@
 #include "aso.h"
 #include "ast.h"
 #include "ast_aso.h"
+#include "ast_assert.h"
 #include "cdtlib.h"
-#include "debug.h"
 
 /*	Recursive hashing data structure.
 **
@@ -133,13 +133,11 @@ static int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
 
         /* increase reference count */
         asoaddint(refn, 1); /**/
-        DEBUG_ASSERT(refn > 0);
     } else {                /* decrease reference count */
         asosubint(refn, 1); /**/
-        DEBUG_ASSERT(refn >= 0);
 
         if (type & (H_INSERT | H_DELETE)) { /**/
-            DEBUG_ASSERT(*lckp == 1);
+            assert(*lckp == 1);
             asocaschar(lckp, 1, 0); /* unlock */
         }
     }
@@ -152,7 +150,7 @@ static Htbl_t *htable(Dt_t *dt, ssize_t lev, Htbl_t *ptbl, ssize_t ppos) {
     ssize_t z;
     Htbl_t *tbl;
     Hash_t *hash = (Hash_t *)dt->data;
-    /**/ DEBUG_ASSERT(lev <= 0 || (ppos >= 0 && ppos < HSIZE(hash, lev - 1)));
+    assert(lev <= 0 || (ppos >= 0 && ppos < HSIZE(hash, lev - 1)));
 
     /* allocate table and initialize data */
     z = sizeof(Htbl_t) + (HSIZE(hash, lev) - 1) * sizeof(Dtlink_t *);
@@ -175,8 +173,8 @@ static void hdelete(Dt_t *dt, Dtlink_t **lnkp, int type) {
     if (!(lnk = asogetptr(lnkp))) return;
 
     /* get the object off the table first */
-    /**/ DEBUG_ASSERT(!share || hash->lock[lnk->_hash & hash->lmax] != 0);
-    /**/ DEBUG_ASSERT(!share || hash->refn[lnk->_hash & hash->lmax] >= 1);
+    assert(!share || hash->lock[lnk->_hash & hash->lmax] != 0);
+    assert(!share || hash->refn[lnk->_hash & hash->lmax] >= 1);
     asocasptr(lnkp, lnk, NULL);
 
     if (share) /* then wait until no more references to object */
@@ -394,7 +392,7 @@ static void *hstat(Dt_t *dt, Dtstat_t *st) {
         st->meth = dt->meth->type;
         st->size = size = hsize(dt, hash->root, 0, st);
         st->space = sizeof(Hash_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
-        /**/ DEBUG_ASSERT((dt->data->type & DT_SHARE) || size == hash->data.size);
+        assert((dt->data->type & DT_SHARE) || size == hash->data.size);
     }
 
     return (void *)size;
@@ -410,7 +408,6 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
     Hash_t *hash = (Hash_t *)dt->data;
     Fngr_t *fngr = &hash->fngr; /* default finger */
     uint share = hash->data.type & DT_SHARE;
-    /**/ DEBUG_DECLARE(static int, N_trie) DEBUG_COUNT(N_trie);
 
     type = DTTYPE(dt, type); /* map type for upward compatibility */
     if (!(type & DT_OPERATIONS) || !hash->root) return NULL;
@@ -545,13 +542,13 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 HCLSOPEN(dt, hsh, type, share);
                 return obj;
             } else { /**/
-                DEBUG_ASSERT(type & H_INSERT);
+                assert(type & H_INSERT);
                 if (!(dt->meth->type & DT_RHBAG)) /* no duplicates */
                 {
                     if (type & (DT_INSERT | DT_APPEND | DT_ATTACH))
                         type |= DT_MATCH;        /* for announcement */
                     else if (type & DT_RELINK) { /**/
-                        DEBUG_ASSERT(lnk);
+                        assert(lnk);
                         o = _DTOBJ(disc, t); /* remove a duplicate */
                         _dtfree(dt, lnk, DT_DELETE);
                         DTANNOUNCE(dt, o, DT_DELETE);
@@ -623,7 +620,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
     }
 
 do_insert: /**/
-    DEBUG_ASSERT(tbl && hshp >= 0 && hshp < HSIZE(hash, lev));
+    assert(tbl && hshp >= 0 && hshp < HSIZE(hash, lev));
     if (!opnt) /* make a new subtable */
     {
         lev += 1;
@@ -633,7 +630,7 @@ do_insert: /**/
         }
         opnp = HBASP(hash, lev, hsh); /* new insert location */
 
-        /**/ DEBUG_ASSERT(!tbl->list[hshp] || !HTABLE(tbl->list[hshp]));
+        assert(!tbl->list[hshp] || !HTABLE(tbl->list[hshp]));
         opnt->pobj = tbl->list[hshp]; /* move slot content to drop down slot */
         asocasptr(tbl->list + hshp, opnt->pobj, (Dtlink_t *)opnt);
     }
@@ -642,7 +639,7 @@ do_insert: /**/
     if (lnk) {
         lnk->_hash = hsh;         /* memoize hash for fast compares */
         lnkp = HLNKP(opnt, opnp); /**/
-        DEBUG_ASSERT(*lnkp == NULL);
+        assert(*lnkp == NULL);
         asocasptr(lnkp, NULL, lnk);
     }
 

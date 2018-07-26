@@ -1,6 +1,6 @@
 libast_files += [
     'misc/conformance.c',
-    'misc/debug.c', 'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
+    'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
     'misc/errorx.c', 'misc/fastfind.c', 'misc/fgetcwd.c', 'misc/fmtrec.c', 'misc/glob.c',
     'misc/mime.c', 'misc/optctx.c', 'misc/optesc.c',
     'misc/optget.c', 'misc/optjoin.c', 'misc/procclose.c', 'misc/procfree.c',
