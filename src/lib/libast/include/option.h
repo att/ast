@@ -75,11 +75,9 @@ extern Opt_t *_opt_infop_;
     (memset(d, 0, sizeof(*(d))), (d)->version = OPT_VERSION, (d)->infof = (f), opt_info.disc = (d))
 
 extern int optget(char **, const char *);
-extern int optjoin(char **, ...);
 extern char *opthelp(const char *, const char *);
 extern char *optusage(const char *);
 extern int optstr(const char *, const char *);
-extern int optesc(Sfio_t *, const char *, int);
 extern Opt_t *optctx(Opt_t *, Opt_t *);
 
 #endif  // _OPTION_H

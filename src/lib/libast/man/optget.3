@@ -60,9 +60,7 @@ Opt_t   opt_info;
 void    optinit(Optdisc_t* \fIdisc\fP, Error_f \fIerrorf\fP);
 int     optget(char** \fIargv\fP, const char* \fIusage\fP);
 int     optstr(const char* \fIstring\fP, const char* \fIusage\fP);
-int     optjoin(char** \fIargv\fP, ... [int (*\fIoptfun\fP)(char** \fIargv\fP, int \fIlast\fP)]);
 char*   optusage(const char* \fIopts\fP);
-int     optesc(Sfio_t* \fIsp\fP, const char* \fIstring\fP, int \fIflags\fP);
 .EE
 .SH DESCRIPTION
 .SH "SEE ALSO"
