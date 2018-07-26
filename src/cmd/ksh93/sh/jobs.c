@@ -667,19 +667,6 @@ void job_init(Shell_t *shp, int lflag) {
 #ifdef SIGTSTP
     // Make sure that we are a process group leader.
     setpgid(0, shp->gd->pid);
-#if 0
-// The sigflag() should not be needed. It is removing those signals from the mask of blocked signals
-// when SIGCHLD is run. But that should already be the case.
-#if defined(SA_NOCLDSTOP) || defined(SA_NOCLDWAIT)
-#if !defined(SA_NOCLDSTOP)
-#define SA_NOCLDSTOP 0
-#endif
-#if !defined(SA_NOCLDWAIT)
-#define SA_NOCLDWAIT 0
-#endif
-    sigflag(SIGCHLD, SA_NOCLDSTOP | SA_NOCLDWAIT, 0);
-#endif  // SA_NOCLDSTOP || SA_NOCLDWAIT
-#endif  // 0
     sh_signal(SIGTTIN, (sh_sigfun_t)(SIG_IGN));
     sh_signal(SIGTTOU, (sh_sigfun_t)(SIG_IGN));
     shp->sigflag[SIGTTIN] = SH_SIGOFF;
