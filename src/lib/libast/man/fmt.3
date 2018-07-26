@@ -45,7 +45,6 @@ fmt \- string formatting routines
 #include <ls.h>
 
 char*      fmtbase(long \fInumber\fP, int \fIbase\fP, int \fIprefix\fP);
-char*      fmtdev(struct stat* \fIst\fP);
 char*      fmtelapsed(unsigned long \fIcount\fP, int \fIpersec\fP)
 char*      fmterror(int \fIerrno\fP);
 char*      fmtesc(const char* \fIstring\fP);
@@ -86,14 +85,6 @@ If
 or
 .I "base == 0"
 then the output is signed base 10.
-.PP
-.L fmtdev
-returns the device handle name specified by the
-.L stat
-structure
-.IR st .
-This is the device information displayed by
-.IR "ls \-l" .
 .PP
 .L fmtelapsed
 formats the elapsed time for
