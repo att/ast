@@ -43,15 +43,8 @@ sig \- signal interface routines
 .L "#include <ast.h>"
 .L "#include <sig.h>"
 .sp
-.L "int sigunblock(int sig);"
 .L "int sigcritical(int op);"
 .SH DESCRIPTION
-.L sigunblock
-is called to
-unblocks the signal
-.L sig
-from within a handler currently servicing
-.LR sig .
 .PP
 .L sigcritical
 controls a critical region for the

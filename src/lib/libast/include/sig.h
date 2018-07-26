@@ -30,6 +30,5 @@ extern Sig_info_t sig_info;
 
 Sig_handler_t ast_signal(int sig, Sig_handler_t sigfun);
 extern int sigcritical(int);
-extern int sigunblock(int);
 
 #endif  // _AST_SIG_H

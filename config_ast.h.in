@@ -186,7 +186,6 @@
 #mesondefine _lib_sigprocmask
 #mesondefine _lib_sigqueue
 #mesondefine _lib_sigsetmask
-#mesondefine _lib_sigunblock
 #mesondefine _lib_socket
 #mesondefine _lib_socketpair
 #mesondefine _lib_spawn

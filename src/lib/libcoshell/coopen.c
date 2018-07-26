@@ -65,6 +65,21 @@ Costate_t state = {
     0                      // index
 };
 
+static int sigunblock(int s) {
+    int op;
+    sigset_t mask;
+
+    sigemptyset(&mask);
+    if (s) {
+        sigaddset(&mask, s);
+        op = SIG_UNBLOCK;
+    } else {
+        op = SIG_SETMASK;
+    }
+
+    return sigprocmask(op, &mask, NULL);
+}
+
 //
 // Called when ident sequence hung
 //
