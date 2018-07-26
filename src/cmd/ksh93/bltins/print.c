@@ -674,7 +674,6 @@ static_fn const char *mapformat(Sffmt_t *fe) {
 static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
     UNUSED(sp);
     char *lastchar = "";
-    int neg = 0;
     Sfdouble_t d;
     Sfdouble_t longmin = LDBL_LLONG_MIN;
     Sfdouble_t longmax = LDBL_LLONG_MAX;
@@ -899,7 +898,6 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                         break;
                     }
                 }
-                if (neg) value->ll = -value->ll;
                 fe->size = sizeof(value->ll);
                 break;
             }
