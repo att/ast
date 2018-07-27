@@ -241,7 +241,8 @@ wait
 # floor by the kernel. And therefore `sighandler_chld` will not have been run for some of the jobs.
 # But it should be run for the majority of them so verify that is the case.
 #
-expect=$(( 100 * 3 / 10 ))
+# TODO: Increase the expected value from 10% to 100% when issue #735 is fixed.
+expect=$(( 100 * 1 / 10 ))
 actual=${#pids[*]}
 (( actual <= expect )) || \
     log_error "too many jobs missed by sighandler_chld" "$expect" "$actual  $(typeset -p pids)"
