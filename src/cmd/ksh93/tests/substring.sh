@@ -623,10 +623,19 @@ fi
 string='foo(d:\nt\box\something)bar'
 expected='d:\nt\box\something'
 [[ ${string/*\(+([!\)])\)*/\1} == "$expected" ]] || log_error "substring expansion failed '${string/*\(+([!\)])\)*/\1}' returned -- '$expected' expected"
-if [[ $($SHELL -c $'export LC_ALL=C.UTF-8; print -r "\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254" | wc -m' 2>/dev/null) == 10 ]]
-then
-    LC_ALL=C.UTF-8 $SHELL -c b1=$'"\342\202\254\342\202\254\342\202\254\342\202\254w\342\202\254\342\202\254\342\202\254\342\202\254"; [[ ${b1:4:1} == w ]]' || log_error 'multibyte ${var:offset:len} not working correctly'
-fi
+
+b1=$'\342\202\254\342\202\254\342\202\254\342\202\254w'
+b2=$'\342\202\254\342\202\254\342\202\254\342\202\254'
+# Gah! On FreeBSD 11 the LANG var, if left set to `C`, affects the handling of multibyte chars even
+# though LC_ALL is set. So unset LANG.
+actual=$($SHELL -c "unset LANG; export LC_ALL=en_US.UTF-8; print -r '$b1$b2' | wc -m")
+expect="10"
+[[ $actual -eq $expect ]] || log_error "char count incorrect" "$expect" "$actual"
+
+actual=$(LC_ALL=en_US.UTF-8 $SHELL -c "b='$b1$b2'; print \"\${b:4:1}\"")
+expect="w"
+[[ "$actual" == "$expect" ]] || \
+    log_error 'multibyte ${b:4:1} not working correctly' "$expect" "$actual"
 
 { $SHELL -c 'unset x;[[ ${SHELL:$x} == $SHELL ]]';} 2> /dev/null || log_error '${var:$x} fails when x is not set'
 { $SHELL -c 'x=;[[ ${SHELL:$x} == $SHELL ]]';} 2> /dev/null || log_error '${var:$x} fails when x is null'
@@ -687,17 +696,52 @@ do
     shift 4
 done
 
-#multibyte locale tests
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:0:1}" == a || log_error ${x:0:1} should be a'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:1:1}" == "<2b|>" || log_error ${x:1:1} should be <2b|>'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:3:1}" == "<3d|\\>" || log_error ${x:3:1} should be <3d|\>'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:4:1}" == e || log_error ${x:4:1} should bee'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:1}" == "<2b|>c<3d|\\>e" || print -u2   ${x:1}" should be <2b|>c<3d|\>e'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x: -1:1}" == e || log_error ${x: -1:1} should be e'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x: -2:1}" == "<3d|\\>" || log_error ${x: -2:1} == <3d|\>'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:1:3}" == "<2b|>c<3d|\\>" || log_error ${x:1:3} should be <2b|>c<3d|\>'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x:1:20}" == "<2b|>c<3d|\\>e" || log_error ${x:1:20} should be <2b|>c<3d|\>e'
-x='a<2b|>c<3d|\>e' LC_ALL=debug $SHELL -c 'test "${x#??}" == "c<3d|\\>e" || log_error "${x#??} should be c<3d|\>e'
+# Multibyte char substring tests.
+export LC_ALL=en_US.UTF-8
+wc1=$'\342\202\254'
+wc2=$'\342\202\255'
+
+expect="a"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:0:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:0:1} wrong' "$expect" "$actual"
+
+expect="$wc1"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:1:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:1:1} wrong' "$expect" "$actual"
+
+expect="$wc2"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:3:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:3:1} wrong' "$expect" "$actual"
+
+expect="e"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:4:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:4:1} wrong' "$expect" "$actual"
+
+expect="${wc1}c${wc2}e"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:1} wrong' "$expect" "$actual"
+
+expect="e"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x: -1:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x: -1:1} wrong' "$expect" "$actual"
+
+expect="$wc2"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x: -2:1}"')
+[[ "$actual" == "$expect" ]] || log_error '${x: -2:1} wrong' "$expect" "$actual"
+
+expect="${wc1}c${wc2}"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:1:3}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:1:3} wrong' "$expect" "$actual"
+
+expect="${wc1}c${wc2}e"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x:1:20}"')
+[[ "$actual" == "$expect" ]] || log_error '${x:1:20} wrong' "$expect" "$actual"
+
+expect="c${wc2}e"
+actual=$(x="a${wc1}c${wc2}e" $SHELL -c 'print "${x#??}"')
+[[ "$actual" == "$expect" ]] || log_error '${x#??} wrong' "$expect" "$actual"
+
+unset LC_ALL
 
 x='a one and a two'
 [[ "${x//~(E)\<.\>/}" == ' one and  two' ]]  || log_error "\< and \> not working in with ere's"

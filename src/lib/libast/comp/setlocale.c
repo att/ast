@@ -227,9 +227,11 @@ static int debug_wctomb(char *s, wchar_t c) {
     return (int)debug_wcrtomb(s, c, &ms);
 }
 
+#if 0
 static size_t debug_mbrlen(const char *s, size_t n, mbstate_t *q) {
     return debug_mbrtowc(NULL, s, n, q);
 }
+#endif
 
 static int debug_mblen(const char *s, size_t n) { return debug_mbtowc(NULL, s, n); }
 
@@ -365,12 +367,14 @@ static int sjis_mbtowc(wchar_t *p, const char *s, size_t n) {
 
 static int utf8_wctomb(char *u, wchar_t w) { return (int)utf32toutf8(u, w); }
 
+#if 0
 static size_t utf8_mbrlen(const char *str, size_t n, mbstate_t *q) {
     UNUSED(q);
     uint32_t u;
 
     return utf8toutf32(&u, str, n);
 }
+#endif
 
 static int utf8_mblen(const char *str, size_t n) {
     uint32_t u;
@@ -1949,6 +1953,7 @@ size_t ast_mbrchar(wchar_t *w, const char *s, size_t n, Mbstate_t *q) {
  * internal mbsrtowcs that picks up ast set_ctype() intercepts
  */
 
+#if 0
 static size_t ast_mbsrtowcs(wchar_t *w, const char **p, size_t n, mbstate_t *q) {
     const char *s;
     wchar_t *b;
@@ -1969,11 +1974,13 @@ static size_t ast_mbsrtowcs(wchar_t *w, const char **p, size_t n, mbstate_t *q) 
     *p = s;
     return w - b;
 }
+#endif
 
 /*
  * internal wcsrtombs that picks up ast set_ctype() intercepts
  */
 
+#if 0
 static size_t ast_wcsrtombs(char *s, const wchar_t **w, size_t n, mbstate_t *q) {
     char *b;
     char *e;
@@ -2002,6 +2009,7 @@ static size_t ast_wcsrtombs(char *s, const wchar_t **w, size_t n, mbstate_t *q) 
     *w = p;
     return s - b;
 }
+#endif
 
 typedef int (*Isw_f)(wchar_t);
 
@@ -2034,6 +2042,7 @@ static int set_ctype(Lc_category_t *cp) {
     if ((ast.locale.set & (AST_LC_debug | AST_LC_setlocale)) && !(ast.locale.set & AST_LC_internal))
         sfprintf(sfstderr, "locale setf %17s %16s\n", cp->name, locales[cp->internal]->name);
 #endif
+#if 0
     if (locales[cp->internal]->flags & LC_debug) {
         ast.mb_cur_max = DEBUG_LEN_MAX;
         ast.mb_width = debug_wcwidth;
@@ -2073,7 +2082,12 @@ static int set_ctype(Lc_category_t *cp) {
         ast.mb_towc = NULL;
         ast.mb_conv = NULL;
     } else {
-        if (!(ast.mb_width = wcwidth)) ast.mb_width = default_wcwidth;
+#endif
+        ast.mb_width = wcwidth;
+        ast.mb_cur_max = MB_CUR_MAX;
+        ast.mb_len = mblen;
+        ast.mb_towc = mbtowc;
+        ast.mb_conv = wctomb;
         ast._ast_mbrlen = mbrlen;
         ast._ast_mbrtowc = mbrtowc;
         ast._ast_mbsrtowcs = mbsrtowcs;
@@ -2100,7 +2114,9 @@ static int set_ctype(Lc_category_t *cp) {
         }
 #endif
         ast.mb_conv = wctomb;
+#if 0
     }
+#endif
     if (locales[cp->internal]->flags & LC_utf8)
         ast.locale.set |= AST_LC_utf8;
     else
@@ -2452,6 +2468,9 @@ char *_ast_setlocale(int category, const char *locale) {
     int f;
     Lc_t *p;
     int cat[AST_LC_COUNT];
+
+    // Ensure the system's locale subsystem is initialized based on the locale env vars.
+    setlocale(LC_ALL, "");
 
     static Sfio_t *sp;
     static int initialized;
