@@ -26,6 +26,6 @@ if [[ $LC_ALL == en_US.UTF-8 ]]
 
     # Ensure subshells don't get corrupted when IFS becomes multibyte character
     expect=$(printf ":é:\\ntrap -- 'echo end' EXIT\\nend")
-    actual=$(LANG=C.UTF-8; IFS=é; set : :; echo "$*"; trap "echo end" EXIT; trap)
+    actual=$(IFS=é; set : :; echo "$*"; trap "echo end" EXIT; trap)
     [[ "$expect" == "$actual" ]] || log_error "IFS subshell failed" "$expect" "$actual"
 fi

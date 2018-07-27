@@ -365,6 +365,14 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     int type;
     char *name = nv_name(np);
 
+    // So that the platform's locale subsystem will work we need to actually put the locale var in
+    // the environment arena.
+    if (val) {
+        setenv(name, val, 1);
+    } else {
+        unsetenv(name);
+    }
+
     if (name == (LCALLNOD)->nvname) {
         type = LC_ALL;
     } else if (name == (LCTYPENOD)->nvname) {
