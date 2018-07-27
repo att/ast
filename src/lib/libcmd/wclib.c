@@ -388,7 +388,7 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         if (eline != nlines && !(wp->mode & WC_QUIET)) {
                             eline = invalid(file, nlines);
                         }
-                        while (mbc(c) && ((c | WC_ERR) || (c & 7) == 0)) c = type[*cp++];
+                        while (mbc(c) && ((c & WC_ERR) || (c & 7) == 0)) c = type[*cp++];
                         if (eol(c) && (cp > endbuff)) {
                             c = WC_MB | WC_ERR;
                             goto eob;

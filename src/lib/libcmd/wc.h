@@ -53,9 +53,6 @@ typedef struct {
     Mbstate_t q;
 } Wc_t;
 
-#define wc_count _cmd_wccount
-#define wc_init _cmd_wcinit
-
 extern Wc_t *wc_init(int);
 extern int wc_count(Wc_t *, Sfio_t *, const char *);
 
