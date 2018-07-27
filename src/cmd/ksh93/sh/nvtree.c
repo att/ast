@@ -1051,13 +1051,14 @@ static_fn char *walk_tree(Namval_t *np, Namval_t *xp, int flags) {
         }
         if (nq) {
             nv_delete(nq, walk.root, 0);
+            nq = NULL;
         }
         if (!cp) break;
         if (cp[len] != '.') continue;
 
         if (xp) {
             Dt_t *dp = shp->var_tree;
-            Namval_t *nq, *mq;
+            Namval_t *mq;
             if (strlen(cp) <= len) continue;
             nq = nv_open(cp, walk.root, NV_VARNAME | NV_NOADD | NV_NOASSIGN | NV_NOFAIL);
             if (!nq && (flags & NV_MOVE)) nq = nv_search(cp, walk.root, NV_NOADD);
