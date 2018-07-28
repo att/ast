@@ -396,7 +396,7 @@ char **ed_pcomplete(struct Complete *comp, const char *line, const char *prefix,
         }
     }
     if (comp->prefix) plen = strlen(comp->prefix);
-    if (comp->suffix) slen = strlen(comp->prefix);
+    if (comp->suffix) slen = strlen(comp->suffix);
     filter = comp->filter;
     if (comp->options & FILTER_AMP) {
         while (*filter) {
