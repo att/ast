@@ -1792,10 +1792,21 @@ retry2:
                 mp->atmode = mode == '@';
                 mp->pattern = oldpat;
             } else if (d) {
-                if (mp->sp) {
-                    sfputc(mp->sp, d);
+                Sfio_t *sfio_ptr = (mp->sp) ? mp->sp : stkp;
+
+                // We know from above that if we are not performing @-expansion
+                // then we assigned `d` the value of `mp->ifs`, here we check
+                // whether or not we have a valid string of IFS characters to
+                // write as it is possible for `d` to be set to `mp->ifs` and
+                // yet `mp->ifsp` to be NULL.
+                if (mode != '@' && mp->ifsp) {
+                    // Handle multi-byte characters being used for the internal
+                    // field separator (IFS).
+                    for (int i = 0; i < mbsize(mp->ifsp); i++) {
+                        sfputc(sfio_ptr, mp->ifsp[i]);
+                    }
                 } else {
-                    sfputc(stkp, d);
+                    sfputc(sfio_ptr, d);
                 }
             }
         }
