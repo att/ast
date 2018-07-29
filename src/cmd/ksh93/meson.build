@@ -73,16 +73,16 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # Sample loadable builtin will be loaded from this path in builtins test cases
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
-# These are the default locales used by legacy test script.
-# The emptry string is POSIX locale.
-# TODO: Check how ksh code handles '' string while setting locales and
-# explicitly set string to 'C' or 'POSIX' here if possible.
-locales = ['C', 'C.UTF-8']
+# These are the default locales used by legacy test script. This used to use 'C.UTF-8' but because
+# we want to remove reliance on non-standard features of the AST locale subsystem it has been
+# changed to 'en_US.UTF-8' which we ensure is available in all the Travis test environments.
+locales = ['C', 'en_US.UTF-8']
 
 # Each entry in `all_tests` is an array of one or two elements. The first
 # element is the test name. The second is an optional timeout if the default
 # timeout of 30 seconds is too short. Try to keep the list sorted.
 default_timeout = 30
+
 # TODO: Fix and add `leaks` to this list (see issue #403).
 all_tests = [
     ['alias'], ['append'], ['arith'], ['arrays'], ['arrays2'], ['attributes'],
@@ -92,9 +92,9 @@ all_tests = [
     ['io'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['quoting'],
     ['quoting2'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld', 100], ['signal'], ['statics'], ['subshell', 100],
-    ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
-    ['variables'], ['vartree1'], ['vartree2'], ['wchar'], ['special-dev-paths']
+    ['sh_match'], ['sigchld', 100], ['signal'], ['special-dev-paths'], ['statics'],
+    ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
+    ['variables'], ['vartree1'], ['vartree2'], ['wchar']
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
@@ -120,7 +120,7 @@ foreach testspec : all_tests
     endforeach
 
     # shcomp tests
-    lang_var = 'LANG=C.UTF-8'
+    lang_var = 'LANG=en_US.UTF-8'
     if not shcomp_tests_to_skip.contains(testname)
         test(testname + '/shcomp', ksh93_exe, timeout: timeout,
              args: [ test_driver, 'shcomp', testname],
