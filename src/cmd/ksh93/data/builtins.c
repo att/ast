@@ -41,20 +41,12 @@
 #define Bltin(x) 0
 #endif  // KSHELL
 
-#ifndef SHOPT_CMDLIB_DIR
-#define SHOPT_CMDLIB_DIR SH_CMDLIB_DIR
-#else
-#ifndef SHOPT_CMDLIB_HDR
-#define SHOPT_CMDLIB_HDR <cmdlist.h>
-#endif  // SHOPT_CMDLIB_HDR
-#endif  // SHOPT_CMDLIB_DIR
-
 // In the last beta release that came out from AT&T, all the builtins for standard commands
 // were enabled by default. It was a backward incompatible change from the last stable
 // release. Since we want to be as close as possible to the last stable release, I am keeping
 // these builtins disabled by default. Alternative CMDLIST macro which was used in the last
 // beta release has been removed.
-#define CMDLIST(f) SHOPT_CMDLIB_DIR "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
+#define CMDLIST(f) SH_CMDLIB_DIR "/" #f, NV_BLTIN | NV_BLTINOPT | NV_NOFREE, b_##f,
 
 #undef basename
 #undef dirname
@@ -130,10 +122,10 @@ const struct shtable3 shtab_builtins[] = {
     {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"source", NV_BLTIN | BLT_ENV, bltin(dot_cmd)},
-#ifdef SHOPT_CMDLIB_HDR
-#undef mktemp  // undo possible map-libc mktemp => _ast_mktemp
-#include SHOPT_CMDLIB_HDR
-#else   // SHOPT_CMDLIB_HDR
+    // These commands are implemented by the modules in src/lib/libcmd and are only usable if the
+    // user does `builtin cmd` (e.g., `builtin basename`). Or has /opt/ast/bin in PATH ahead of the
+    // directory with an external command of the same name. Otherwise the external command of the
+    // same name, if any, is used.
     {CMDLIST(basename)},
     {CMDLIST(chmod)},
     {CMDLIST(dirname)},
@@ -147,7 +139,6 @@ const struct shtable3 shtab_builtins[] = {
     {CMDLIST(uname)},
     {CMDLIST(wc)},
     {CMDLIST(sync)},
-#endif  // SHOPT_CMDLIB_HDR
     {"", 0, NULL}};
 
 #if SHOPT_COSHELL

@@ -146,9 +146,7 @@ struct shared {
 #define SH_DICT (void *)e_dict
 #endif
 
-#ifndef SH_CMDLIB_DIR
 #define SH_CMDLIB_DIR "/opt/ast/bin"
-#endif
 
 // States. Low numbered states are same as options.
 #define SH_NOFORK 0      // set when fork not necessary
