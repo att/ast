@@ -1309,7 +1309,7 @@ int ed_histgen(Edit_t *ep, const char *pattern) {
     if (ac > 0) {
         l = ac;
         argv = av = (char **)stkalloc(ep->sh->stk, (ac + 1) * sizeof(char *));
-        for (mplast = 0; l >= 0 && (*av = (char *)mp); mplast = mp, mp = mp->next, av++) {
+        for (; l >= 0 && (*av = (char *)mp); mp = mp->next, av++) {
             l--;
         }
         *av = 0;

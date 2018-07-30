@@ -1277,7 +1277,7 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                     nv_onattr(mp, type);
                     mp->nvenv = (char *)np;
                     if ((mode & NV_ADD) && nv_type(np)) nv_arraychild(np, mp, 0);
-                    if (shp->subshell) np = sh_assignok(np, 1);
+                    if (shp->subshell) sh_assignok(np, 1);
                     if (type & NV_INTEGER) {
                         nv_onattr(mp, NV_NOTSET);
                     } else if (!ap->header.scope || !nv_search(sp, dtvnext(ap->header.table), 0)) {
