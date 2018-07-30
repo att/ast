@@ -88,9 +88,12 @@ all_tests = [
     ['io'], ['leaks'], ['locale'], ['math', 50], ['nameref'], ['namespace'],
     ['modifiers'], ['options'], ['path'], ['pointtype'], ['quoting'],
     ['quoting2'], ['readcsv'], ['recttype'], ['restricted'], ['return'], ['select'],
-    ['sh_match'], ['sigchld', 100], ['signal'], ['special-dev-paths'], ['statics'],
+    ['sh_match'], ['sigchld', 100], ['signal'], ['statics'],
     ['subshell', 100], ['substring'], ['tilde'], ['timetype'], ['treemove'], ['types'],
-    ['variables'], ['vartree1'], ['vartree2'], ['wchar']
+    ['variables'], ['vartree1'], ['vartree2'], ['wchar'],
+    # The following are tests that must be run serially after all other tests that might be run in
+    # parallel.
+    ['special-dev-paths'],
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
