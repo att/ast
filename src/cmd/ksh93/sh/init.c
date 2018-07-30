@@ -1446,14 +1446,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
     }
     // set[ug]id scripts require the -p flag.
     if (shp->gd->userid != shp->gd->euserid || shp->gd->groupid != shp->gd->egroupid) {
-#ifdef SHOPT_P_SUID
-        // Require sh -p to run setuid and/or setgid.
-        if (!sh_isoption(shp, SH_PRIVILEGED) && shp->gd->userid >= SHOPT_P_SUID) {
-            setuid(shp->gd->euserid = shp->gd->userid);
-            setgid(shp->gd->egroupid = shp->gd->groupid);
-        } else
-#endif  // SHOPT_P_SUID
-            sh_onoption(shp, SH_PRIVILEGED);
+        sh_onoption(shp, SH_PRIVILEGED);
         // Careful of #! setuid scripts with name beginning with -.
         if (shp->login_sh && argv[1] && strcmp(argv[0], argv[1]) == 0) {
             errormsg(SH_DICT, ERROR_exit(1), e_prohibited);
