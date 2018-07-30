@@ -48,6 +48,7 @@
 #include "ast.h"
 #include "builtins.h"
 #include "cdt.h"
+#include "dlldefs.h"
 #include "error.h"
 #include "fault.h"
 #include "history.h"
@@ -59,10 +60,6 @@
 #include "shellapi.h"
 #include "stk.h"
 #include "variables.h"
-
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
 
 struct tdata {
     Shell_t *sh;
@@ -872,8 +869,6 @@ typedef struct Libcomp_s {
 static Libcomp_t *liblist = NULL;
 static int nlib = 0;
 
-#if SHOPT_DYNAMIC
-
 typedef void (*Libinit_f)(int, void *);
 
 #define GROWLIB 4
@@ -932,14 +927,6 @@ Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
     return 0;
 }
 
-#else  // SHOPT_DYNAMIC
-
-int sh_addlib(Shell_t *shp, void *library, char *name, Pathcomp_t *pp) { return 0; }
-
-Shbltin_f sh_getlib(Shell_t *shp, char *name, Pathcomp_t *pp) { return 0; }
-
-#endif  // SHOPT_DYNAMIC
-
 //
 // Add change or list built-ins. Adding builtins requires dlopen() interface.
 //
@@ -980,12 +967,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 break;
             }
             case 'f': {
-#if SHOPT_DYNAMIC
                 arg = opt_info.arg;
-#else   // SHOPT_DYNAMIC
-                errormsg(SH_DICT, 2, "adding built-ins not supported");
-                error_info.errors++;
-#endif  // SHOPT_DYNAMIC
                 break;
             }
             case 'l': {
@@ -1024,7 +1006,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             tdata.prefix = "builtin -n";
         }
     }
-#if SHOPT_DYNAMIC
+
     if (arg) {
 #ifdef SH_PLUGIN_VERSION
         if (!(library = dllplugin(SH_ID, arg, NULL, SH_PLUGIN_VERSION, &ver, RTLD_LAZY, path,
@@ -1045,9 +1027,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         }
 #endif  // SH_PLUGIN_VERSION
         sh_addlib(tdata.sh, library, arg, NULL);
-    } else
-#endif  // SHOPT_DYNAMIC
-    {
+    } else {
         if (*argv == 0 && delete != builtin_delete) {
             if (tdata.prefix) {
                 for (n = 0; n < nlib; n++) {
@@ -1074,23 +1054,15 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         addr = 0;
         if (delete || nlib) {
             for (n = (nlib ? nlib : delete ? 1 : 0); --n >= 0;) {
-#if SHOPT_DYNAMIC
                 if (!delete && !liblist[n].dll) continue;
-                if (delete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag))))
-#else   // SHOPT_DYNAMIC
-                if (delete)
-#endif  // SHOPT_DYNAMIC
-                {
+                if (delete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag)))) {
                     np = sh_addbuiltin(tdata.sh, arg, addr, delete);
                     if (np) {
                         if (delete || nv_isattr(np, BLT_SPC)) {
                             errmsg = "restricted name";
-                        }
-#if SHOPT_DYNAMIC
-                        else {
+                        } else {
                             nv_onattr(np, liblist[n].attr);
                         }
-#endif  // SHOPT_DYNAMIC
                     }
                     break;
                 }

@@ -23,10 +23,6 @@
 #include "option.h"
 #include "shtable.h"
 
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
-
 #define SYSLOGIN (shgd->bltin_cmds)
 #define SYSEXEC (shgd->bltin_cmds + 1)
 #define SYSSET (shgd->bltin_cmds + 2)

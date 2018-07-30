@@ -22,10 +22,6 @@
 
 #include "option.h"
 
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
-
 // The following defines are coordinated with data in data/variables.c.
 #define PATHNOD (shgd->bltin_nodes)
 #define PS1NOD (shgd->bltin_nodes + 1)

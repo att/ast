@@ -18,16 +18,12 @@ subdir('edit')
 subdir('sh')
 
 # These build time symbols are shared by ksh and shcomp.
-#
-# TODO: Add '-DSHOPT_DYNAMIC' when we have figured out how to get Meson to
-# build the libast libdll code.
 shared_c_args += [
     '-D_BLD_shell',
     '-DERROR_CONTEXT_T=Error_context_t',
     '-DKSHELL',
     '-DREAD_TIMEOUT=' + '@0@'.format(get_option('read-timeout')),
-    '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file')),
-    '-DSHOPT_DYNAMIC'
+    '-DAUDIT_FILE=' + '"@0@"'.format(get_option('audit-file'))
 ]
 
 # TODO: Figure out why there is a different definition of these symbols for

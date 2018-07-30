@@ -41,6 +41,7 @@
 #include "ast.h"
 #include "ast_assert.h"
 #include "cdt.h"
+#include "dlldefs.h"
 #include "error.h"
 #include "fault.h"
 #include "fcin.h"
@@ -54,10 +55,6 @@
 #include "stk.h"
 #include "test.h"
 #include "variables.h"
-
-#if SHOPT_DYNAMIC
-#include "dlldefs.h"
-#endif
 
 #define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)
 #define LIBCMD "cmd"
@@ -674,10 +671,9 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
         if (!isfun && *oldpp->name == '.' && oldpp->name[1] == 0 && pwdinfpath()) isfun = 1;
         if (!isfun && !sh_isoption(shp, SH_RESTRICTED)) {
             char *bp;
-#if SHOPT_DYNAMIC
             Shbltin_f addr;
             int n;
-#endif
+
             if (*stkptr(shp->stk, PATH_OFFSET) == '/' &&
                 (np = nv_search(stkptr(shp->stk, PATH_OFFSET), shp->bltin_tree, 0)) &&
                 !nv_isattr(np, BLT_DISABLE))
@@ -692,16 +688,13 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                     memcpy(bp, save, 4);
                 }
 
-// TODO: Check if this code block should be used when SHOPT_DYNAMIC is off.
-#if SHOPT_DYNAMIC
                 if (np) {
                     addr = (Shbltin_f)np->nvalue.bfp;
                     np = sh_addbuiltin(shp, stkptr(shp->stk, PATH_OFFSET), addr, NULL);
                     if (np) return oldpp;
                 }
-#endif
             }
-#if SHOPT_DYNAMIC
+
             n = stktell(shp->stk);
             sfputr(shp->stk, "b_", -1);
             sfputr(shp->stk, name, 0);
@@ -784,7 +777,6 @@ Pathcomp_t *path_absolute(Shell_t *shp, const char *name, Pathcomp_t *pp) {
                 if (fp) free(fp);
                 stkseek(shp->stk, n);
             }
-#endif  // SHOPT_DYNAMIC
         }
         shp->bltin_dir = 0;
         sh_stats(STAT_PATHS);
