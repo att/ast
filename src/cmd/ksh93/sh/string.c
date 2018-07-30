@@ -335,7 +335,8 @@ char *sh_fmtstr(const char *string, int quote) {
         while (op = cp, c = mbchar(cp)) {
             state = 1;
             switch (c) {
-                case ('a'==97?'\033':39): {
+                // Escape character
+                case ('\033'): {
                         c = 'E';
                         break;
                     }
