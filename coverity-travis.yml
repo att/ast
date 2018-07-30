@@ -27,7 +27,7 @@ addons:
         notification_email: svashisht@redhat.com
 
         # Commands to prepare for build_command
-        build_command_prepend: meson build
+        build_command_prepend: meson -Dbuild-api-tests=false build
 
         # The command that will be added as an argument to "cov-build" to compile your project for analysis,
         build_command: ninja -C build
