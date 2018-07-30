@@ -76,7 +76,7 @@ static_fn int read_tree(Namval_t *np, Sfio_t *in, int n, Namfun_t *dp) {
     if (fun) {
         iop = sftmp(SF_BUFSIZE * sizeof(char *));
         sfputr(iop, nv_name(np), '=');
-        c = (*fun)(shp, in, iop);
+        (*fun)(shp, in, iop);
         sfseek(iop, (Sfoff_t)0, SEEK_SET);
         goto done;
     }

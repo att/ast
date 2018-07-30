@@ -390,7 +390,6 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
                         }
                         while (mbc(c) && ((c & WC_ERR) || (c & 7) == 0)) c = type[*cp++];
                         if (eol(c) && (cp > endbuff)) {
-                            c = WC_MB | WC_ERR;
                             goto eob;
                         }
                         if (mbc(c)) {
