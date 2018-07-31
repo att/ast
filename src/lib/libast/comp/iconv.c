@@ -1144,7 +1144,7 @@ ssize_t _ast_iconv_move(_ast_iconv_t cd, Sfio_t *ip, Sfio_t *op, size_t n, Iconv
     size_t ft;
     size_t tn;
     size_t to;
-    size_t i;
+    size_t i = 0;
     size_t j;
     ssize_t r = 0;
     int ff;
