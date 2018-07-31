@@ -1505,6 +1505,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         status = shp->fdstatus[fx];
                         sfclose(sp);
                         fd = sh_fcntl(fd, fn < 3 ? F_DUPFD : F_DUPFD_CLOEXEC, fx);
+                        if (fd < 0) goto fail;
                         shp->sftable[fn] = sh_iostream(shp, fd, fd);
                         shp->sftable[fx] = spold;
                     } else {
