@@ -668,7 +668,6 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
         if (strchr(nq->nvname, '.')) continue;
         tp = nv_type(nq);
         if (tp) {
-            nv_hasdisc(nq, &type_disc);
             sfprintf(out, "\t[+%s?%s.\n", nq->nvname, tp->nvname);
             n = strlen(nq->nvname);
             while ((cp = nv_namptr(dp->nodes, i + 1)->nvname) && strncmp(cp, nq->nvname, n) == 0 &&
