@@ -193,7 +193,6 @@ int ed_emacsread(void *context, int fd, char *buff, int scend, int reedit) {
 
     // This mess in case the read system call fails.
     ed_setup(ep->ed, fd, reedit);
-    out = (genchar *)buff;
     out = (genchar *)roundof(buff - (char *)0, sizeof(genchar));
     if (reedit) ed_internal(buff, out);
     if (!kstack) {
