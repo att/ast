@@ -436,22 +436,15 @@ static_fn char strformat(char *s) {
     int c;
     char *b;
     char *p;
-#if defined(FMT_EXP_WIDE)
     int w;
-#endif
 
     b = t = s;
     for (;;) {
         switch (c = *s++) {
             case '\\': {
                 if (*s == 0) break;
-#if defined(FMT_EXP_WIDE)
                 c = chrexp(s - 1, &p, &w, FMT_EXP_CHAR | FMT_EXP_LINE | FMT_EXP_WIDE);
-#else
-                c = chresc(s - 1, &p);
-#endif
                 s = p;
-#if defined(FMT_EXP_WIDE)
                 // Conversion failed => empty string.
                 if (c < 0) {
                     continue;
@@ -461,12 +454,6 @@ static_fn char strformat(char *s) {
                     t += mbconv(t, c);
                     continue;
                 }
-#else   // FMT_EXP_WIDE
-                if (c > UCHAR_MAX && mbwide()) {
-                    t += mbconv(t, c);
-                    continue;
-                }
-#endif  // FMT_EXP_WIDE
                 if (c == '%') {
                     *t++ = '%';
                 } else if (c == 0) {
