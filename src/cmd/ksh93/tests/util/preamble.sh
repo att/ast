@@ -22,20 +22,20 @@ integer error_count=0
 integer start_of_test_lineno=0  # redefined later to be read-only
 
 function log_info {
-    typeset -l lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
     print -r "<I> ${test_name}[$lineno]: ${@:2}"
 }
 alias log_info='log_info $LINENO'
 
 function log_warning {
-    typeset -l lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
     print -u2 -r "<W> ${test_name}[$lineno]: ${@:2}"
 }
 alias log_warning='log_warning $LINENO'
 
 function log_error {
-    typeset -l lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
-    typeset -l msg="$2"
+    typeset lineno=$(( $1 < 0 ? $1 : $1 - $start_of_test_lineno ))
+    typeset msg="$2"
     print -u2 -r "<E> ${test_name}[$lineno]: $msg"
     if (( $# > 2 ))
     then
