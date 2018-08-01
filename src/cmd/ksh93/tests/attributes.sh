@@ -216,13 +216,8 @@ unset a z q x
 w1=hello
 w2=world
 t1="$w1 $w2"
-if (( 'a' == 97 ))
-then
-    b1=aGVsbG8gd29ybGQ=
-    b2=aGVsbG8gd29ybGRoZWxsbyB3b3JsZA==
-else    b1=iIWTk5ZAppaZk4Q=
-    b2=iIWTk5ZAppaZk4SIhZOTlkCmlpmThA==
-fi
+b1=aGVsbG8gd29ybGQ=
+b2=aGVsbG8gd29ybGRoZWxsbyB3b3JsZA==
 
 z=$b1
 typeset -b x=$b1

@@ -72,11 +72,7 @@ static int _isblank(int);
 #define isalph(v) _isalph(virtual[v])
 #define ismetach(v) _ismetach(virtual[v])
 
-#if ('a' == 97)               // ASCII?
 #define fold(c) ((c) & ~040)  // lower and uppercase equivalent
-#else                         // ASCII
-#define fold(c) ((c) | 0100)  // lower and uppercase equivalent
-#endif                        // ASCII
 
 #ifndef iswascii
 #define iswascii(c) (!((c) & (~0177)))
