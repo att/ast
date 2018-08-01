@@ -63,7 +63,7 @@ do
         then
             PATH=${PATH}:${DIR}
         fi
-        time=$(date +%T)
+        time=$(date '+%T' 2>/dev/null)
     done
 done
 
