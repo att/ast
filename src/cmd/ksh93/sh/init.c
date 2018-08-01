@@ -1139,26 +1139,6 @@ static_fn int newconf(const char *name, const char *path, const char *value) {
     return 1;
 }
 
-#if (CC_NATIVE != CC_ASCII)
-static_fn void a2e(char *d, const char *s) {
-    const unsigned char *t;
-    int i;
-    t = CCMAP(CC_ASCII, CC_NATIVE);
-    for (i = 0; i < (1 << CHAR_BIT); i++) d[t[i]] = s[i];
-}
-
-static_fn void init_ebcdic(void) {
-    int i;
-    char *cp = (char *)malloc(ST_NONE * (1 << CHAR_BIT));
-
-    for (i = 0; i < ST_NONE; i++) {
-        a2e(cp, sh_lexrstates[i]);
-        sh_lexstates[i] = cp;
-        cp += (1 << CHAR_BIT);
-    }
-}
-#endif
-
 //
 // Return SH_TYPE_* bitmask for path, 0 for "not a shell".
 //
@@ -1266,11 +1246,7 @@ Shell_t *sh_init(int argc, char *argv[], Shinit_f userinit) {
 
     n = strlen(e_version);
     if (e_version[n - 1] == '$' && e_version[n - 2] == ' ') e_version[n - 2] = 0;
-#if (CC_NATIVE == CC_ASCII)
     memcpy(sh_lexstates, sh_lexrstates, ST_NONE * sizeof(char *));
-#else
-    init_ebcdic();
-#endif
     if (!beenhere) {
         beenhere = 1;
         shp = sh_getinterp();
