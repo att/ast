@@ -142,7 +142,7 @@ typedef struct _emacs_ {
 #define ERASECHAR UERASE
 #define EOFCHAR UEOF
 #define LNEXTCHAR ULNEXT
-#define DELETE ('a' == 97 ? 0177 : 7)
+#define DELETE 0177
 
 //
 // A large lookahead helps when the user is inserting characters in the middle of the line.

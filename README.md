@@ -9,6 +9,11 @@ The non-ksh code of the AST project is no longer being actively
 maintained. If you are interested in the non-ksh code see below for
 details on which branches contain the full AST code base.
 
+The project only supports systems where the compiler and underlying
+hardware is ASCII compatible. This includes Linux on IBM zSeries but not
+z/OS. The nascent, incomplete, support for EBCDIC has been removed. See
+[issue #742](https://github.com/att/ast/issues/742).
+
 ## Building Korn shell
 
 Building ksh requires the [Meson](http://mesonbuild.com/) build system. To

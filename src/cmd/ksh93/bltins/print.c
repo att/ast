@@ -1064,7 +1064,7 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
         if (c == '\\') {
             switch (*++cp) {
                 case 'E': {
-                    c = ('a' == 97 ? '\033' : 39);  // ASCII/EBCDIC
+                    c = '\033';
                     break;
                 }
                 case 'a': {
