@@ -359,10 +359,6 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
             p = tempget(state.tmp);
             sfprintf(state.tmp, "(%s,%d,%d)", cp->name, mp->set, mp->seq);
             r = tempuse(state.tmp, p);
-        } else if (ast.locale.set & AST_LC_debug) {
-            p = tempget(state.tmp);
-            sfprintf(state.tmp, "(%s,%d,%d)%s", cp->name, mp->set, mp->seq, r);
-            r = tempuse(state.tmp, p);
         }
     } else {
         /*
@@ -379,11 +375,6 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
                          cp->locale, cp->name, mp->set, mp->seq, r, msg);
                 r = (char *)msg;
             }
-        }
-        if (ast.locale.set & AST_LC_debug) {
-            p = tempget(state.tmp);
-            sfprintf(state.tmp, "(%s,%d,%d)%s", cp->name, mp->set, mp->seq, r);
-            r = tempuse(state.tmp, p);
         }
     }
     if (ast.locale.set & AST_LC_translate)
