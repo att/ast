@@ -348,10 +348,6 @@ static int set_numeric(Lc_category_t *cp) {
     static Lc_numeric_t eu_numeric = {',', '.'};
     static Lc_numeric_t us_numeric = {'.', ','};
 
-#if AHA
-    if ((ast.locale.set & (AST_LC_debug | AST_LC_setlocale)) && !(ast.locale.set & AST_LC_internal))
-        sfprintf(sfstderr, "locale setf %17s %16s\n", cp->name, locales[cp->internal]->name);
-#endif
     if (!LCINFO(category)->data) {
         if (locales[cp->internal]->flags & LC_local)
             dp = locales[cp->internal]->territory == &lc_territories[0]
@@ -403,11 +399,6 @@ static char *single(int category, Lc_t *lc, unsigned int flags) {
     const char *sys;
     int i;
 
-#if AHA
-    if ((ast.locale.set & (AST_LC_debug | AST_LC_setlocale)) && !(ast.locale.set & AST_LC_internal))
-        sfprintf(sfstderr, "locale single %16s %16s flags %04x\n", lc_categories[category].name,
-                 lc ? lc->name : 0, flags);
-#endif
     if (flags & (LC_setenv | LC_setlocale)) {
         if (!(ast.locale.set & AST_LC_internal)) lc_categories[category].prev = lc;
         if ((flags & LC_setenv) && lc_all && locales[category]) {
@@ -628,14 +619,6 @@ char *_ast_setlocale(int category, const char *locale) {
     if (!ast.locale.serial++) {
         initialized = 0;
     }
-    if ((ast.locale.set & (AST_LC_debug | AST_LC_setlocale)) &&
-        !(ast.locale.set & AST_LC_internal)) {
-        header();
-        sfprintf(sfstderr, "locale user %17s %16s %16s %16s%s%s\n",
-                 category == AST_LC_LANG ? "LANG" : lc_categories[category].name,
-                 locale && !*locale ? "''" : locale, "", "", initialized ? "" : " initial",
-                 (ast.locale.set & AST_LC_setenv) ? " setenv" : "");
-    }
     if (ast.locale.set & AST_LC_setenv) {
         f = LC_setenv;
         p = *locale ? lcmake(locale) : (Lc_t *)0;
@@ -680,11 +663,6 @@ char *_ast_setlocale(int category, const char *locale) {
                     while (i--) single(i, NULL, 0);
                     return 0;
                 }
-            if (ast.locale.set & AST_LC_debug)
-                for (i = 1; i < AST_LC_COUNT; i++)
-                    sfprintf(sfstderr, "locale env  %17s %16s %16s %16s\n", lc_categories[i].name,
-                             locales[i]->name, "",
-                             lc_categories[i].prev ? lc_categories[i].prev->name : (char *)0);
             initialized = 1;
         }
         goto compose;
