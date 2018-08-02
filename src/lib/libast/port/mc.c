@@ -181,15 +181,12 @@ char *mcfind(const char *locale, const char *catalog, int category, int nls, cha
                 continue;
             else
                 strlcpy(file, catalog, elementsof(file));
-            if (ast.locale.set & AST_LC_find) sfprintf(sfstderr, "locale find %s\n", file);
             s = pathpath(file, "",
                          (!catalog && category == AST_LC_MESSAGES)
                              ? PATH_READ
                              : (PATH_REGULAR | PATH_READ | PATH_ABSOLUTE),
                          path, size);
             if (s) {
-                if (ast.locale.set & (AST_LC_find | AST_LC_setlocale))
-                    sfprintf(sfstderr, "locale path %s\n", s);
                 errno = oerrno;
                 return s;
             }
