@@ -393,37 +393,6 @@ Lc_category_t lc_categories[] = {
 static Lc_t *lang;
 static Lc_t *lc_all;
 
-typedef struct Unamval_s {
-    char *name;
-    unsigned int value;
-} Unamval_t;
-
-static const Unamval_t options[] = {{"debug", AST_LC_debug},
-                                    {"find", AST_LC_find},
-                                    {"native", AST_LC_native},
-                                    {"setlocale", AST_LC_setlocale},
-                                    {"test", AST_LC_test},
-                                    {"translate", AST_LC_translate},
-                                    {"unicodeliterals", AST_LC_unicodeliterals},
-                                    {0, 0}};
-
-/*
- * called by stropt() to set options
- */
-
-static int setopt(void *a, const void *p, int n, const char *v) {
-    UNUSED(a);
-    UNUSED(v);
-
-    if (p) {
-        if (n)
-            ast.locale.set |= ((Unamval_t *)p)->value;
-        else
-            ast.locale.set &= ~((Unamval_t *)p)->value;
-    }
-    return 0;
-}
-
 /*
  * set a single AST_LC_* locale category
  * the caller must validate category
@@ -657,7 +626,6 @@ char *_ast_setlocale(int category, const char *locale) {
         return sfstruse(sp);
     }
     if (!ast.locale.serial++) {
-        stropt(getenv("LC_OPTIONS"), options, sizeof(*options), setopt, NULL);
         initialized = 0;
     }
     if ((ast.locale.set & (AST_LC_debug | AST_LC_setlocale)) &&
