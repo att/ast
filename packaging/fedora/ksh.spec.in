@@ -80,7 +80,10 @@ if [ ! -L /bin/ksh ]; then
 fi
 
 %preun
-%{_sbindir}/alternatives --remove ksh /bin/ksh93
+# Do not remove ksh from alternatives on upgrades
+if [ $1 -eq 0 ]; then
+    %{_sbindir}/alternatives --remove ksh /bin/ksh93
+fi
 
 %postun
 for s in /bin/ksh /bin/rksh /usr/bin/ksh /usr/bin/rksh 
