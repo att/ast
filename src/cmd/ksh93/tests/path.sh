@@ -409,3 +409,12 @@ then
     builtin -d date
     [[ $(type date) == *builtin* ]] && log_error 'builtin -d does not delete builtin'
 fi
+
+# https://github.com/att/ast/issues/757
+OPATH="$PATH"
+PATH=".:$PATH"
+mkdir cat || log_error "mkdir cat failed"
+cat < /dev/null || log_error "Directories should not be treated as executables"
+
+# Restore PATH
+PATH="$OPATH"
