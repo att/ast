@@ -377,9 +377,7 @@ char *translate(const char *loc, const char *cmd, const char *cat, const char *m
             }
         }
     }
-    if (ast.locale.set & AST_LC_translate)
-        sfprintf(sfstderr, "translate locale=%s catalog=%s set=%d seq=%d \"%s\" => \"%s\"\n",
-                 cp->locale, cp->name, mp->set, mp->seq, msg, r == (char *)msg ? "NOPE" : r);
+
 done:
     if (r == (char *)msg && ((!cp && streq(loc, "debug")) || (cp && cp->debug))) {
         p = tempget(state.tmp);

@@ -287,8 +287,7 @@ char *sh_fmtstr(const char *string, int quote) {
     offset = staktell();
     mbinit();
     state = ((c = mbchar(cp)) == 0);
-    lc_unicodeliterals =
-        quote == 'u' ? 1 : quote == 'U' ? 0 : !!(ast.locale.set & AST_LC_unicodeliterals);
+    lc_unicodeliterals = quote == 'u' ? 1 : 0;
     if (quote == '"') goto skip;
     quote = '\'';
     if (isaletter(c) && (!lc_unicodeliterals || c <= 0x7f)) {
