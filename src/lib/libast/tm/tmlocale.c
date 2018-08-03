@@ -36,7 +36,6 @@
 #include "ast.h"
 #include "ast_iconv.h"
 #include "lclib.h"
-#include "mc.h"
 #include "sfio.h"
 #include "tm.h"
 
@@ -50,6 +49,7 @@ static struct {
  * this is unix dadgummit
  */
 
+#if 0
 static int standardized(Lc_info_t *li, char **b) {
     if ((li->lc->language->flags & LC_default) ||
         streq(li->lc->language->code, "en")) {
@@ -95,6 +95,7 @@ static void fixup(Lc_info_t *li, char **b) {
     if (!(tm_info.deformat = state.format)) tm_info.deformat = tm_info.format[TM_DEFAULT];
     li->data = (void *)b;
 }
+#endif
 
 #if __CYGWIN__
 #include "ast_windows.h"
@@ -480,16 +481,7 @@ static void native_lc_time(Lc_info_t *li) {
  */
 
 static void load(Lc_info_t *li) {
-    char *s;
     char **b;
-    char **v;
-    char **e;
-    unsigned char *u;
-    ssize_t n;
-    iconv_t cvt;
-    Sfio_t *sp;
-    Sfio_t *tp;
-    char path[PATH_MAX];
 
     b = (char **)li->data;
     if (b) {
@@ -499,6 +491,19 @@ static void load(Lc_info_t *li) {
     }
     tm_info.format = tm_data.format;
     if (!(tm_info.deformat = state.format)) tm_info.deformat = tm_info.format[TM_DEFAULT];
+
+#if 0
+    char *s;
+    char **v;
+    char **e;
+    unsigned char *u;
+    ssize_t n;
+    iconv_t cvt;
+    Sfio_t *sp;
+    Sfio_t *tp;
+    char path[PATH_MAX];
+
+    // The mcfind() function no longer exists.
     if (mcfind(NULL, NULL, LC_TIME, 0, path, sizeof(path)) && (sp = sfopen(NULL, path, "r"))) {
         n = sfsize(sp);
         tp = NULL;
@@ -539,6 +544,9 @@ static void load(Lc_info_t *li) {
     } else {
         native_lc_time(li);
     }
+#else
+    native_lc_time(li);
+#endif
 }
 
 /*

@@ -38,7 +38,6 @@
 #include "cdt.h"
 #include "error.h"
 #include "lclib.h"
-#include "mc.h"
 #include "sfio.h"
 
 #ifndef DEBUG_trace
@@ -120,6 +119,23 @@ static int entry(Dt_t *dict, int set, int seq, const char *msg) {
  * find catalog in locale and return catopen() descriptor
  */
 
+#if 1
+
+// TODO: Replace this stub with a working implementation once the replacement of the AST locale
+// subsystem with the platform's implementation is complete.
+static nl_catd find(const char *locale, const char *catalog) {
+    UNUSED(locale);
+    UNUSED(catalog);
+
+    errno = ENOENT;
+    return (nl_catd)-1;
+}
+
+#else
+
+// This is the legacy implementation. It is no longer used because mcfind() no longer exists.
+// But we retain the code for now to provide a template for how to reimplement this using the
+// platform's locale and message catalog subsystems.
 static nl_catd find(const char *locale, const char *catalog) {
     char *o;
     nl_catd d;
@@ -144,6 +160,8 @@ static nl_catd find(const char *locale, const char *catalog) {
     }
     return d;
 }
+
+#endif
 
 /*
  * initialize the catalog s by loading in the default locale messages
