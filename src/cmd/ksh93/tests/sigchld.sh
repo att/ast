@@ -225,7 +225,8 @@ function sighandler_chld
 
 trap 'sighandler_chld' CHLD
 integer i
-for (( i=1 ; i <= 100 ; i++ ))
+typeset -i n_jobs=100
+for (( i=1 ; i <= n_jobs ; i++ ))
 do
     # The multiplication is to slightly stagger the exit time of the sleeps to make it more likely
     # we'll get a SIGCHLD for each one.
@@ -241,8 +242,8 @@ wait
 # floor by the kernel. And therefore `sighandler_chld` will not have been run for some of the jobs.
 # But it should be run for the majority of them so verify that is the case.
 #
-# TODO: Increase the expected value from 10% to 100% when issue #735 is fixed.
-expect=$(( 100 * 1 / 10 ))
+# TODO: Decrease the expected value from 85% to 30% or less when issue #735 is fixed.
+expect=$(( n_jobs * 85 / 10 ))
 actual=${#pids[*]}
 (( actual <= expect )) || \
     log_error "too many jobs missed by sighandler_chld" "$expect" "$actual  $(typeset -p pids)"
