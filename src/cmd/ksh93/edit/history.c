@@ -959,6 +959,7 @@ static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
 {
     UNUSED(data);
     History_t *hp = (History_t *)handle;
+
     if (type == SF_WRITE) {
         if (errno == ENOSPC || hp->histwfail++ >= 10) return 0;
         // Write failure could be NFS problem, try to re-open.
@@ -966,17 +967,15 @@ static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
                          S_IRUSR | S_IWUSR);
         int oldfd = sffileno(fp);
         sh_close(oldfd);
-        if (newfd == -1) {
-            errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno,
-                     hp->histname);
-            return -1;
-        }
+        if (newfd == -1) goto fail;
+
         if (sh_fcntl(newfd, F_DUPFD_CLOEXEC, oldfd) != oldfd) {
             close(newfd);
-            return -1;
+            goto fail;
         }
 
-        fcntl(oldfd, F_SETFD, FD_CLOEXEC);
+        (void)fcntl(oldfd, F_SETFD, FD_CLOEXEC);
+
         close(newfd);
         if (lseek(oldfd, (off_t)0, SEEK_END) < hp->histcnt) {
             int index = hp->histind;
@@ -991,4 +990,9 @@ static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
         return 1;
     }
     return 0;
+
+fail:
+    errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno,
+        hp->histname);
+    return -1;
 }
