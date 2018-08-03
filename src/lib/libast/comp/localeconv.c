@@ -51,8 +51,6 @@ static struct lconv default_lconv = {
  */
 
 struct lconv *_ast_localeconv(void) {
-    if ((locales[AST_LC_MONETARY]->flags | locales[AST_LC_NUMERIC]->flags) & LC_debug)
-        return &debug_lconv;
     if ((locales[AST_LC_NUMERIC]->flags & (LC_default | LC_local)) == LC_local)
         return locales[AST_LC_NUMERIC]->territory == &lc_territories[0] ? &default_lconv
                                                                         : &debug_lconv;

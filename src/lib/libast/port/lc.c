@@ -71,33 +71,7 @@ static Lc_t default_lc = {"C",
                            {&default_lc, 0, 0}},
                           NULL};
 
-static Lc_numeric_t debug_numeric = {',', '.'};
-
-static Lc_t debug_lc = {"debug",
-                        "debug",
-                        &lc_languages[1],
-                        &lc_territories[1],
-                        &lc_charsets[0],
-                        0,
-                        LC_debug | LC_checked | LC_local,
-                        0,
-                        {{&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, (void *)&debug_numeric},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0},
-                         {&debug_lc, 0, 0}},
-                        &default_lc};
-
-static Lc_t *lcs = &debug_lc;
+static Lc_t *lcs = NULL;
 
 Lc_t *locales[] = {&default_lc, &default_lc, &default_lc, &default_lc, &default_lc,
                    &default_lc, &default_lc, &default_lc, &default_lc, &default_lc,
@@ -243,7 +217,7 @@ static size_t canonical(const Lc_language_t *lp, const Lc_territory_t *tp, const
     s = buf;
     e = &buf[siz - 3];
     if (lp) {
-        if (lp->flags & (LC_debug | LC_default)) {
+        if (lp->flags & LC_default) {
             for (t = lp->code; s < e && (*s = *t++); s++)
                 ;
             *s++ = 0;
@@ -326,7 +300,7 @@ static size_t canonical(const Lc_language_t *lp, const Lc_territory_t *tp, const
  */
 
 size_t lccanon(Lc_t *lc, unsigned long flags, char *buf, size_t siz) {
-    if ((flags & LC_local) && (!lc->language || !(lc->language->flags & (LC_debug | LC_default)))) {
+    if ((flags & LC_local) && (!lc->language || !(lc->language->flags & LC_default))) {
 #if __CYGWIN__
         char lang[64];
         char code[64];

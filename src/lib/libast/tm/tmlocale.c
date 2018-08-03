@@ -51,7 +51,7 @@ static struct {
  */
 
 static int standardized(Lc_info_t *li, char **b) {
-    if ((li->lc->language->flags & (LC_debug | LC_default)) ||
+    if ((li->lc->language->flags & LC_default) ||
         streq(li->lc->language->code, "en")) {
         b[TM_TIME] = "%H:%M:%S";
         b[TM_DATE] = "%m/%d/%y";
