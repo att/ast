@@ -76,150 +76,11 @@ extern int mblen(const char *, size_t);
 #endif
 
 /*
- * LC_COLLATE and LC_CTYPE debug support
- *
- * mutibyte debug encoding
- *
- *	DL0 [ '0' .. '4' ] c1 ... c4 DR0
- *	DL1 [ '0' .. '4' ] c1 ... c4 DR1
- *
- * with these ligatures
- *
- *	ch CH sst SST
- *
- * and private collation order
- *
- * wide character display width is the low order 3 bits
- * wctomb() uses DL1...DR1
- */
-
-#define DEBUG_LEN_MAX 7
-
-#if DEBUG_LEN_MAX < MB_LEN_MAX
-#undef DEBUG_LEN_MAX
-#define DEBUG_LEN_MAX MB_LEN_MAX
-#endif
-
-#define DL0 '<'
-#define DL1 0xab /* 8-bit mini << on xterm	*/
-#define DR0 '>'
-#define DR1 0xbb /* 8-bit mini >> on xterm	*/
-
-#define DB ((int)sizeof(wchar_t) * 8 - 1)
-#define DC 7                  /* wchar_t embedded char bits	*/
-#define DX (DB / DC)          /* wchar_t max embedded chars	*/
-#define DZ (DB - DX * DC + 1) /* wchar_t embedded size bits	*/
-#define DD 3                  /* # mb delimiter chars <n...>	*/
-
-static unsigned char debug_order[] = {
-    0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13,  14,  15,  16,  17,  18,
-    19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  99,  100, 101, 102, 98,  103,
-    104, 105, 106, 107, 108, 43,  109, 44,  42,  110, 32,  33,  34,  35,  36,  37,  38,  39,  40,
-    41,  111, 112, 113, 114, 115, 116, 117, 71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,
-    82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  118, 119, 120, 121,
-    97,  122, 45,  46,  47,  48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,
-    62,  63,  64,  65,  66,  67,  68,  69,  70,  123, 124, 125, 126, 127, 128, 129, 130, 131, 132,
-    133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
-    152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170,
-    171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
-    190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
-    209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-    228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246,
-    247, 248, 249, 250, 251, 252, 253, 254, 255,
-};
-
-/*
- * TODO: make ms active for testing shift state codesets
- */
-
-static size_t debug_strxfrm(char *t, const char *s, size_t n) {
-    const char *q;
-    const char *r;
-    char *e;
-    char *o;
-    size_t z;
-    int w;
-
-    o = t;
-    z = 0;
-    e = t;
-    if (e) e += n;
-    while (s[0]) {
-        if ((((unsigned char *)s)[0] == DL0 || ((unsigned char *)s)[0] == DL1) &&
-            (w = s[1]) >= '0' && w <= ('0' + DC)) {
-            w -= '0';
-            q = s + 2;
-            r = q + w;
-            while (q < r && *q) q++;
-            if (*((unsigned char *)q) == DR0 || *((unsigned char *)q) == DR1) {
-                if (t) {
-                    for (q = s + 2; q < r; q++)
-                        if (t < e) *t++ = debug_order[*q];
-                    while (w++ < DX)
-                        if (t < e) *t++ = 1;
-                }
-                s = r + 1;
-                z += DX;
-                continue;
-            }
-        }
-        if ((s[0] == 'c' || s[0] == 'C') && (s[1] == 'h' || s[1] == 'H')) {
-            if (t) {
-                if (t < e) *t++ = debug_order[s[0]];
-                if (t < e) *t++ = debug_order[s[1]];
-                if (t < e) *t++ = 1;
-                if (t < e) *t++ = 1;
-            }
-            s += 2;
-            z += DX;
-            continue;
-        }
-        if ((s[0] == 's' || s[0] == 'S') && (s[1] == 's' || s[1] == 'S') &&
-            (s[2] == 't' || s[2] == 'T')) {
-            if (t) {
-                if (t < e) *t++ = debug_order[s[0]];
-                if (t < e) *t++ = debug_order[s[1]];
-                if (t < e) *t++ = debug_order[s[2]];
-                if (t < e) *t++ = 1;
-            }
-            s += 3;
-            z += DX;
-            continue;
-        }
-        if (t) {
-            if (t < e) *t++ = debug_order[s[0]];
-            if (t < e) *t++ = 1;
-            if (t < e) *t++ = 1;
-            if (t < e) *t++ = 1;
-        }
-        s++;
-        z += DX;
-    }
-    if (!t) return z;
-    if (t < e) *t = 0;
-    return t - o;
-}
-
-static int debug_strcoll(const char *a, const char *b) {
-    char ab[1024];
-    char bb[1024];
-
-    debug_strxfrm(ab, a, sizeof(ab) - 1);
-    ab[sizeof(ab) - 1] = 0;
-    debug_strxfrm(bb, b, sizeof(bb) - 1);
-    bb[sizeof(bb) - 1] = 0;
-    return strcmp(ab, bb);
-}
-
-/*
  * called when LC_COLLATE initialized or changes
  */
 
 static int set_collate(Lc_category_t *cp) {
-    if (locales[cp->internal]->flags & LC_debug) {
-        ast.collate = debug_strcoll;
-        ast.mb_xfrm = debug_strxfrm;
-    } else if (locales[cp->internal]->flags & LC_default) {
+    if (locales[cp->internal]->flags & LC_default) {
         ast.collate = strcmp;
         ast.mb_xfrm = 0;
     } else {
@@ -419,7 +280,7 @@ static char *single(int category, Lc_t *lc, unsigned int flags) {
                     sys = (char *)lc->name;
                     break;
                 }
-        } else if (lc->flags & (LC_debug | LC_local))
+        } else if (lc->flags & LC_local)
             sys = setlocale(lc_categories[category].external, lcmake(NULL)->name);
         else if (!(sys = setlocale(lc_categories[category].external, lc->name)) &&
                  (streq(lc->name, lc->code) ||

@@ -19,6 +19,7 @@ None at this time.
 
 ## Notable non-backward compatible changes
 
+- Support for the `LC_OPTIONS` env var has been removed (issue #579).
 - `case "[0-9]" in [0-9]) echo match;; esac` has stopped matching. When a case
   statement doesn't match a pattern, it no longer tries to use the pattern as
   a literal string (issue #476).
@@ -44,6 +45,8 @@ None at this time.
 
 ## Other significant changes
 
+- The AST locale subsystem has been replaced by the platform's implementation
+  (issue #579).
 - The AST Vmalloc subsystem has been removed. The project now uses the system
   malloc. (issue #396)
 - Operations that depend on the simulated 3DFS behavior found in release

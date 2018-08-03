@@ -260,7 +260,6 @@ int main(int argc, char **argv) {
     fprintf(hf, "\n");
     fprintf(hf, "#define LC_abbreviated\t\t0x00001\n");
     fprintf(hf, "#define LC_checked\t\t0x00002\n");
-    fprintf(hf, "#define LC_debug\t\t0x00004\n");
     fprintf(hf, "#define LC_default\t\t0x00008\n");
     fprintf(hf, "#define LC_defined\t\t0x00010\n");
     fprintf(hf, "#define LC_local\t\t0x00020\n");
@@ -584,9 +583,6 @@ int main(int argc, char **argv) {
     fprintf(lf, "{\"C\",\"C\",\"POSIX\",&lc_charsets[0],LC_default,0,{");
     for (i = 0; i < language_attribute_max; i++) fprintf(lf, "0,");
     fprintf(lf, "}},\n");
-    fprintf(lf, "{\"debug\",\"debug\",0,&lc_charsets[0],LC_debug,0,{");
-    for (i = 0; i < language_attribute_max; i++) fprintf(lf, "0,");
-    fprintf(lf, "}},\n");
     for (lp = (Language_t *)state.language.root; lp; lp = (Language_t *)lp->link.next) {
         fprintf(lf, "{\"%s\",\"%s\",", lp->link.code, lp->name);
         if (lp->alternates)
@@ -608,14 +604,6 @@ int main(int argc, char **argv) {
     fprintf(lf, "{NULL,NULL,NULL,0,0,0,{0,0}}\n");
     fprintf(lf, "};\n");
     fprintf(lf, "\nconst Lc_territory_t lc_territories[] =\n{\n");
-    fprintf(lf, "{\"C\",\"C\",LC_default,0,{&lc_languages[0],0,0,0}\n");
-    fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
-    fprintf(lf, ",{0,0,0,0}\n");
-    fprintf(lf, "#endif\n},\n");
-    fprintf(lf, "{\"debug\",\"debug\",LC_debug,0,{&lc_languages[1],0,0,0}\n");
-    fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
-    fprintf(lf, ",{0,0,0,0}\n");
-    fprintf(lf, "#endif\n},\n");
     fprintf(lf, "{\"eu\",\"euro\",0,0,{&lc_languages[0],0,0,0}\n");
     fprintf(lf, "#ifdef _LC_TERRITORY_PRIVATE_\n");
     fprintf(lf, ",{0,0,0,0}\n");
