@@ -218,13 +218,14 @@ retry:
         if (shgd->userid)
 #endif  // KSHELL
         {
-            if (!(fname = pathtmp(NULL, 0, 0, NULL))) return 0;
+            if (!(fname = pathtmp(NULL, 0, 0, NULL))) goto fail;
             fd = open(fname, O_BINARY | O_APPEND | O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_CLOEXEC);
         }
     }
-    if (fd < 0) return 0;
+    if (fd < 0) goto fail;
     // Set the file to close-on-exec.
-    fcntl(fd, F_SETFD, FD_CLOEXEC);
+    (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
+
     cp = nv_getval(HISTSIZE);
     if (cp) {
         maxlines = (unsigned)strtol(cp, NULL, 10);
@@ -238,7 +239,7 @@ retry:
     hp = calloc(1, sizeof(History_t) + histmask * sizeof(off_t));
     if (!hp) {
         sh_close(fd);
-        return 0;
+        goto fail;
     }
 
     shgd->hist_ptr = hist_ptr = hp;
@@ -301,7 +302,7 @@ retry:
         (hp->auditmask = sh_checkaudit(hp, stringify(AUDIT_FILE), buff, sizeof(buff)))) {
         if ((fd = sh_open(buff, O_BINARY | O_WRONLY | O_APPEND | O_CREAT | O_CLOEXEC,
                           S_IRUSR | S_IWUSR)) >= 0 &&
-            fd < 10) {
+                          fd < 10) {
             int n;
             if ((n = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10)) >= 0) {
                 sh_close(fd);
@@ -309,13 +310,17 @@ retry:
             }
         }
         if (fd >= 0) {
-            fcntl(fd, F_SETFD, FD_CLOEXEC);
+            (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
             hp->tty = strdup(ttyname(2));
             hp->auditfp = sfnew((Sfio_t *)0, NULL, -1, fd, SF_WRITE);
         }
     }
 
     return 1;
+
+fail:
+    // Return 0 on failure
+    return 0;
 }
 
 //
