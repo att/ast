@@ -54,13 +54,9 @@
 #endif
 #include <wchar.h>
 
-#undef localeconv
-#define localeconv _ast_localeconv
-
 #undef setlocale
 #define setlocale _ast_setlocale
 
-extern struct lconv *localeconv(void);
 extern char *setlocale(int, const char *);
 extern char *strerror(int);
 
