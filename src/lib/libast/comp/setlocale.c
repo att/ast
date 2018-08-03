@@ -41,7 +41,6 @@
 #include "ast_iconv.h"
 #include "codeset.h"
 #include "lclib.h"
-#include "mc.h"
 #include "sfio.h"
 
 #undef mbsrtowcs
@@ -296,10 +295,14 @@ static char *single(int category, Lc_t *lc, unsigned int flags) {
              */
 
             if (!(lc->flags & LC_checked)) {
+#if 0
+                // mcfind() has been removed as part of the transition from the AST locale subsystem
+                // to the platform implementation.
                 char path[PATH_MAX];
 
                 if (mcfind(lc->code, NULL, LC_MESSAGES, 0, path, sizeof(path)))
                     lc->flags |= LC_local;
+#endif
                 lc->flags |= LC_checked;
             }
             if (!(lc->flags & LC_local)) return 0;
