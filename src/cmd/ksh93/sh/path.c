@@ -460,7 +460,7 @@ static_fn int path_opentype(Shell_t *shp, const char *name, Pathcomp_t *pp, int 
     }
 
     if (fd >= 0 && (fd = sh_iomovefd(shp, fd)) > 0) {
-        fcntl(fd, F_SETFD, FD_CLOEXEC);
+        (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
         shp->fdstatus[fd] |= IOCLEX;
     }
     return fd;
@@ -1211,7 +1211,7 @@ static_fn void exscript(Shell_t *shp, char *path, char *argv[], char *const *env
         if (fstat(n, &statb) < 0 || statb.st_uid != euserid) goto fail;
         if (n != 10) {
             sh_close(10);
-            fcntl(n, F_DUPFD_CLOEXEC, 10);
+            (void)fcntl(n, F_DUPFD_CLOEXEC, 10);
             sh_close(n);
         }
     }

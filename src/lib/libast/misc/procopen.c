@@ -221,14 +221,14 @@ static int modify(Proc_t *proc, int forked, int op, long arg1, long arg2) {
                             return -1;
                         }
 #if F_DUPFD_CLOEXEC == F_DUPFD
-                        fcntl(m->save, F_SETFD, FD_CLOEXEC);
+                        (void)fcntl(m->save, F_SETFD, FD_CLOEXEC);
 #endif
                         close(arg2);
                         if (fcntl(arg1, F_DUPFD, arg2) != arg2) return -1;
                         if (op & PROC_FD_CHILD) close(arg1);
                     } else if (op & PROC_FD_CHILD) {
                         if (m->arg.fd.parent.flag) break;
-                        fcntl(arg1, F_SETFD, FD_CLOEXEC);
+                        (void)fcntl(arg1, F_SETFD, FD_CLOEXEC);
                     } else if (!m->arg.fd.parent.flag)
                         break;
                     else
@@ -296,7 +296,7 @@ static void restore(Proc_t *proc) {
                     close(m->arg.fd.child.fd);
                     fcntl(m->save, F_DUPFD, m->arg.fd.child.fd);
                     close(m->save);
-                    if (m->arg.fd.child.flag) fcntl(m->arg.fd.child.fd, F_SETFD, FD_CLOEXEC);
+                    if (m->arg.fd.child.flag) (void)fcntl(m->arg.fd.child.fd, F_SETFD, FD_CLOEXEC);
                 } else if ((m->op & (PROC_FD_PARENT | PROC_FD_CHILD)) == PROC_FD_CHILD)
                     fcntl(m->arg.fd.parent.fd, F_SETFD, 0);
                 break;
@@ -700,8 +700,8 @@ Proc_t *procopen(const char *cmd, char **argv, char **envv, long *modv, int flag
                     close(pio[1]);
                     break;
             }
-            if (proc->rfd > 2) fcntl(proc->rfd, F_SETFD, FD_CLOEXEC);
-            if (proc->wfd > 2) fcntl(proc->wfd, F_SETFD, FD_CLOEXEC);
+            if (proc->rfd > 2) (void)fcntl(proc->rfd, F_SETFD, FD_CLOEXEC);
+            if (proc->wfd > 2) (void)fcntl(proc->wfd, F_SETFD, FD_CLOEXEC);
         }
         if (!proc->pid)
             proc->pid = getpid();

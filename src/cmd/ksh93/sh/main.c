@@ -343,7 +343,7 @@ static_fn void exfile(Shell_t *shp, Sfio_t *iop, int fno) {
                 sh_close(fno);
                 fno = r;
             }
-            fcntl(fno, F_SETFD, FD_CLOEXEC);
+            (void)fcntl(fno, F_SETFD, FD_CLOEXEC);
             shp->fdstatus[fno] |= IOCLEX;
             iop = sh_iostream((void *)shp, fno, fno);
         } else {

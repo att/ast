@@ -224,7 +224,7 @@ retry:
     }
     if (fd < 0) return 0;
     // Set the file to close-on-exec.
-    fcntl(fd, F_SETFD, FD_CLOEXEC);
+    (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
     cp = nv_getval(HISTSIZE);
     if (cp) {
         maxlines = (unsigned)strtol(cp, NULL, 10);
@@ -309,7 +309,7 @@ retry:
             }
         }
         if (fd >= 0) {
-            fcntl(fd, F_SETFD, FD_CLOEXEC);
+            (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
             hp->tty = strdup(ttyname(2));
             hp->auditfp = sfnew((Sfio_t *)0, NULL, -1, fd, SF_WRITE);
         }

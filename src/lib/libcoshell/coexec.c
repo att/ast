@@ -66,7 +66,7 @@ static Cojob_t *service(Coshell_t *co, Coservice_t *cs, Cojob_t *cj, int flags, 
         }
     }
     cs->fd = fds[1];
-    fcntl(cs->fd, F_SETFD, FD_CLOEXEC);
+    (void)fcntl(cs->fd, F_SETFD, FD_CLOEXEC);
     ops[0] = PROC_FD_DUP(fds[0], 0, PROC_FD_PARENT);
     ops[1] = PROC_FD_DUP(co->gsmfd, 1, PROC_FD_CHILD);
     ops[2] = 0;
