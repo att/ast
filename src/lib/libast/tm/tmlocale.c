@@ -49,7 +49,7 @@ static struct {
  * this is unix dadgummit
  */
 
-#if 0
+#if __CYGWIN__
 static int standardized(Lc_info_t *li, char **b) {
     if ((li->lc->language->flags & LC_default) ||
         streq(li->lc->language->code, "en")) {
