@@ -88,7 +88,6 @@
 #mesondefine _hdr_float
 #mesondefine _hdr_fsg
 #mesondefine _hdr_jioctl
-#mesondefine _hdr_langinfo
 #mesondefine _hdr_locale
 #mesondefine _hdr_mach_o_dyld
 #mesondefine _hdr_malloc
@@ -158,7 +157,6 @@
 #mesondefine _lib_mmap64
 #mesondefine _lib_mstats
 #mesondefine _lib_munmap64
-#mesondefine _lib_nl_langinfo
 #mesondefine _lib_ntohl
 #mesondefine _lib_ntohs
 #mesondefine _lib_onexit

@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <langinfo.h>
 #include <locale.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -39,7 +40,6 @@
 
 #include "ast.h"
 #include "ast_iconv.h"
-#include "codeset.h"
 #include "lclib.h"
 #include "sfio.h"
 
@@ -191,7 +191,7 @@ static int set_ctype(Lc_category_t *cp) {
         ast.locale.set |= AST_LC_utf8;
     else
         ast.locale.set &= ~AST_LC_utf8;
-    ast.byte_max = ast.mb_cur_max == 1 && strcmp(codeset(CODESET_ctype), "US-ASCII") ? 0xff : 0x7f;
+    ast.byte_max = ast.mb_cur_max == 1 && strcmp(nl_langinfo(CODESET), "US-ASCII") ? 0xff : 0x7f;
     return 0;
 }
 

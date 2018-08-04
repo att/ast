@@ -376,7 +376,7 @@ bad:
 
 #else
 
-#if _lib_nl_langinfo && _hdr_langinfo
+#if _lib_nl_langinfo
 #include <langinfo.h>
 
 typedef struct Map_s {

@@ -27,6 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <langinfo.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -35,7 +36,6 @@
 #include "ast.h"
 #include "ast_ccode.h"
 #include "ast_iconv.h"
-#include "codeset.h"
 
 ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
     size_t i;
@@ -56,7 +56,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
         size_t outbytesleft;
 
         if (ast.mb_uc2wc == (void *)(-1) &&
-            (ast.mb_uc2wc = (void *)iconv_open(codeset(CODESET_ctype), "UTF-8")) == (void *)(-1))
+            (ast.mb_uc2wc = (void *)iconv_open(nl_langinfo(CODESET), "UTF-8")) == (void *)(-1))
             ast.mb_uc2wc = 0;
         if (ast.mb_uc2wc == 0) return -1;
         (void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
