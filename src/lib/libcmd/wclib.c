@@ -60,7 +60,7 @@ Wc_t *wc_init(int mode) {
     if (!wp) return 0;
     if (!mbwide())
         wp->mb = 0;
-    else if (!(mode & WC_NOUTF8) && (lcinfo(LC_CTYPE)->lc->flags & LC_utf8)) {
+    else if (!(mode & WC_NOUTF8) && ast.locale.is_utf8) {
         wp->mb = 1;
     } else {
         wp->mb = -1;

@@ -40,7 +40,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
     ssize_t res;
     Mbstate_t q;
 
-    if (ast.locale.set & AST_LC_utf8) {
+    if (ast.locale.is_utf8) {
         char tmp[UTF8_LEN_MAX + 1];
 
         mbinit(&q);

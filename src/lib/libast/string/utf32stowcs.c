@@ -41,7 +41,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
     size_t i;
     Mbstate_t q;
 
-    if (ast.locale.set & AST_LC_utf8) {
+    if (ast.locale.is_utf8) {
         char tmp[UTF8_LEN_MAX + 1];
 
         mbinit(&q);

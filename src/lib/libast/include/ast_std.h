@@ -38,6 +38,8 @@
 #define _BLD_vmalloc 1
 #endif
 
+#include <stdbool.h>
+
 #include "ast_fcntl.h"
 #include "ast_getopt.h" /* <stdlib.h> does this */
 #include "ast_lib.h"
@@ -84,7 +86,6 @@ extern char *strerror(int);
 #define AST_LC_LANG 255
 
 #define AST_LC_internal 1
-#define AST_LC_utf8 (1L << 25)
 #define AST_LC_setenv (1L << 27)
 
 #ifndef LC_ALL
@@ -147,6 +148,7 @@ typedef struct {
     struct {
         uint32_t serial;
         uint32_t set;
+        bool is_utf8;  // true if current locale uses UTF-8 for its encoding
     } locale;
 
     long tmp_long;

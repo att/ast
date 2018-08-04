@@ -322,7 +322,7 @@ char *sh_fmtstr(const char *string, int quote) {
         if (c) stakwrite(string, c);
         if (state == 1) stakputc(quote);
     } else {
-        int lc_specifier = (ast.locale.set & AST_LC_utf8) ? 'u' : 'w';
+        int lc_specifier = ast.locale.is_utf8 ? 'u' : 'w';
         bool widebyte;
         if (quote == '"') {
             stakputc('"');

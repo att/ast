@@ -144,6 +144,8 @@ static_fn size_t utf32toutf8_wrapper(char *s, wchar_t wc, mbstate_t *state) {
  */
 
 static int set_ctype(Lc_category_t *cp) {
+    UNUSED(cp);
+
     ast.mb_sync = 0;
     ast.mb_alpha = (Isw_f)iswalpha;
     if (ast.mb_uc2wc != (void *)(-1)) {
@@ -155,6 +157,8 @@ static int set_ctype(Lc_category_t *cp) {
         ast.mb_wc2uc = (void *)(-1);
     }
 
+    const char *codeset = nl_langinfo(CODESET);
+    ast.locale.is_utf8 = strcmp(codeset, _locale_utf8_str) == 0;
     ast.mb_width = wcwidth;
     ast.mb_cur_max = MB_CUR_MAX;
     ast.mb_len = mblen;
@@ -187,10 +191,6 @@ static int set_ctype(Lc_category_t *cp) {
 #endif
         ast.mb_conv = wctomb;
 
-    if (locales[cp->internal]->flags & LC_utf8)
-        ast.locale.set |= AST_LC_utf8;
-    else
-        ast.locale.set &= ~AST_LC_utf8;
     ast.byte_max = ast.mb_cur_max == 1 && strcmp(nl_langinfo(CODESET), "US-ASCII") ? 0xff : 0x7f;
     return 0;
 }

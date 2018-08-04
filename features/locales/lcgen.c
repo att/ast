@@ -266,7 +266,6 @@ int main(int argc, char **argv) {
     fprintf(hf, "#define LC_primary\t\t0x00040\n");
     fprintf(hf, "#define LC_qualified\t\t0x00080\n");
     fprintf(hf, "#define LC_undefined\t\t0x00100\n");
-    fprintf(hf, "#define LC_utf8\t\t\t0x00200\n");
     fprintf(hf, "#define LC_verbose\t\t0x00400\n");
     fprintf(hf, "#define LC_setlocale\t\t0x10000\n");
     fprintf(hf, "#define LC_setenv\t\t0x20000\n");
