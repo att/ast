@@ -96,8 +96,8 @@ static pid_t spawn(const char *path, int nmap, const int map[], const struct inh
     if (pipe(msg) < 0) {
         msg[0] = msg[1] = -1;
     } else {
-        fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-        fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+        (void)fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+        (void)fcntl(msg[1], F_SETFD, FD_CLOEXEC);
     }
     sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
     pid = fork();
@@ -108,7 +108,7 @@ static pid_t spawn(const char *path, int nmap, const int map[], const struct inh
         for (i = 0; i < nmap; i++) {
             for (j = 0; j < elementsof(msg); j++) {
                 if (i == msg[j] && (k = fcntl(i, F_DUPFD, 0)) >= 0) {
-                    fcntl(k, F_SETFD, FD_CLOEXEC);
+                    (void)fcntl(k, F_SETFD, FD_CLOEXEC);
                     msg[j] = k;
                 }
             }
@@ -186,8 +186,8 @@ static pid_t spawnve(int mode, const char *path, char *const argv[], char *const
     if (pipe(msg) < 0) {
         msg[0] = msg[1] = -1;
     } else {
-        fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-        fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+        (void)fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+        (void)fcntl(msg[1], F_SETFD, FD_CLOEXEC);
     }
 
     sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
@@ -314,7 +314,7 @@ Spawnvex_t *spawnvex_open(unsigned int flags) {
         vex->debug = (flags & SPAWN_DEBUG) ? fcntl(2, F_DUPFD_CLOEXEC, 60) : -1;
 #else
         if ((vex->debug = (flags & SPAWN_DEBUG) ? fcntl(2, F_DUPFD, 60) : -1) >= 0)
-            fcntl(vex->debug, F_SETFD, FD_CLOEXEC);
+            (void)fcntl(vex->debug, F_SETFD, FD_CLOEXEC);
 #endif
     }
     return vex;
@@ -755,8 +755,8 @@ bad:
         if (pipe(msg) < 0) {
             msg[0] = msg[1] = -1;
         } else {
-            fcntl(msg[0], F_SETFD, FD_CLOEXEC);
-            fcntl(msg[1], F_SETFD, FD_CLOEXEC);
+            (void)fcntl(msg[0], F_SETFD, FD_CLOEXEC);
+            (void)fcntl(msg[1], F_SETFD, FD_CLOEXEC);
         }
         if (!(flags & SPAWN_FOREGROUND)) sigcritical(SIG_REG_EXEC | SIG_REG_PROC);
         pid = fork();

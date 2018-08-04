@@ -354,8 +354,8 @@ Coshell_t *coopen(const char *path, int flags, const char *attributes) {
         }
     }
     co->flags &= ~CO_INIT;
-    fcntl(pio[1], F_SETFD, FD_CLOEXEC);
-    fcntl(pio[2], F_SETFD, FD_CLOEXEC);
+    (void)fcntl(pio[1], F_SETFD, FD_CLOEXEC);
+    (void)fcntl(pio[2], F_SETFD, FD_CLOEXEC);
     co->next = state.coshells;
     state.coshells = co;
     if (!(co->flags & CO_SHELL)) {

@@ -143,7 +143,7 @@ void sh_subtmpfile(Shell_t *shp) {
             fds[2] = 0;
             sh_rpipe(fds);
             sp->pipefd = fds[0];
-            sh_fcntl(sp->pipefd, F_SETFD, FD_CLOEXEC);
+            (void)sh_fcntl(sp->pipefd, F_SETFD, FD_CLOEXEC);
             // Write the data to the pipe.
             off = sftell(sfstdout);
             if (off) {
@@ -639,7 +639,7 @@ Sfio_t *sh_subshell(Shell_t *shp, Shnode_t *t, volatile int flags, int comsub) {
                     if (!sh_iovalidfd(shp, fd)) abort();
                 }
                 shp->sftable[fd] = iop;
-                fcntl(fd, F_SETFD, FD_CLOEXEC);
+                (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
                 shp->fdstatus[fd] = (shp->fdstatus[1] | IOCLEX);
                 shp->fdstatus[1] = IOCLOSE;
             }

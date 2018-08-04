@@ -396,7 +396,7 @@ static_fn void io_preserve(Shell_t *shp, Sfio_t *sp, int f2) {
     shp->sftable[fd] = sp;
     shp->fdstatus[fd] = shp->fdstatus[f2];
     if (fcntl(f2, F_GETFD, 0) & 1) {
-        fcntl(fd, F_SETFD, FD_CLOEXEC);
+        (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
         shp->fdstatus[fd] |= IOCLEX;
     }
     shp->sftable[f2] = 0;
@@ -711,8 +711,8 @@ int sh_pipe(int pv[]) {
     if (!sh_iovalidfd(shp, fd[0])) abort();
     if (!sh_iovalidfd(shp, fd[1])) abort();
 #if _pipe_socketpair && !_stream_peek
-    if (pv[0] > 2) fcntl(pv[0], F_SETFD, FD_CLOEXEC);
-    if (pv[1] > 2) fcntl(pv[1], F_SETFD, FD_CLOEXEC);
+    if (pv[0] > 2) (void)fcntl(pv[0], F_SETFD, FD_CLOEXEC);
+    if (pv[1] > 2) (void)fcntl(pv[1], F_SETFD, FD_CLOEXEC);
 #endif
     if (pv[0] <= 2) pv[0] = sh_iomovefd(shp, pv[0]);
     if (pv[1] <= 2) pv[1] = sh_iomovefd(shp, pv[1]);
@@ -752,7 +752,7 @@ int sh_rpipe(int pv[]) {
 int sh_coaccept(Shell_t *shp, int *pv, int out) {
     int fd = accept(pv[0], NULL, NULL);
 
-    if (fd > 2) fcntl(fd, F_SETFD, FD_CLOEXEC);
+    if (fd > 2) (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
     sh_close(pv[0]);
     pv[0] = -1;
     if (fd < 0) errormsg(SH_DICT, ERROR_system(1), e_pipe);
@@ -761,7 +761,7 @@ int sh_coaccept(Shell_t *shp, int *pv, int out) {
     } else {
         pv[out] = sh_iomovefd(shp, fd);
     }
-    fcntl(pv[out], F_SETFD, FD_CLOEXEC);
+    (void)fcntl(pv[out], F_SETFD, FD_CLOEXEC);
     shp->fdstatus[pv[out]] = (out ? IOWRITE : IOREAD);
     shp->fdstatus[pv[out]] |= IONOSEEK | IOCLEX;
     sh_subsavefd(pv[out]);
@@ -780,7 +780,7 @@ int sh_copipe(Shell_t *shp, int *pv, int out) {
     if (pv[out] < 0) {
         errormsg(SH_DICT, ERROR_system(1), e_pipe);
     }
-    fcntl(pv[out], F_SETFD, FD_CLOEXEC);
+    (void)fcntl(pv[out], F_SETFD, FD_CLOEXEC);
     do {
         sin.sin_family = AF_INET;
         sin.sin_port = htons(++port);
@@ -1568,7 +1568,7 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                 shp->sftable[-1] = 0;
             }
             if (fd > 2 && clexec && !(shp->fdstatus[fd] & IOCLEX)) {
-                fcntl(fd, F_SETFD, FD_CLOEXEC);
+                (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
                 shp->fdstatus[fd] |= IOCLEX;
             }
         } else {
@@ -2267,7 +2267,7 @@ static_fn void sftrack(Sfio_t *sp, int flag, void *data) {
     mode = sfset(sp, 0, 0);
     if (sp == shp->heredocs && fd < 10 && flag == SF_SETFD) {
         fd = sfsetfd(sp, 10);
-        fcntl(fd, F_SETFD, FD_CLOEXEC);
+        (void)fcntl(fd, F_SETFD, FD_CLOEXEC);
     }
     if (fd < 3) return;
     if (flag == SF_NEW) {
