@@ -14,8 +14,11 @@ if not lcgen_feature_result.compiled() or lcgen_feature_result.stderr() != ''
     error('Unable to generate locale implementation tables')
 endif
 
-feature_data.set10('_hdr_langinfo', cc.has_header('langinfo.h'))
 feature_data.set10('_hdr_nl_types', cc.has_header('nl_types.h'))
+
+if not cc.has_function('nl_langinfo', prefix: '#include <langinfo.h>', args: feature_test_args)
+    error('No nl_langinfo() function could be found')
+endif
 
 # For now I'm omitting all the following tests since we've been building and
 # testing ksh without them for a couple of months.

@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <langinfo.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -33,7 +34,6 @@
 
 #include "ast.h"
 #include "ast_iconv.h"
-#include "codeset.h"
 
 ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
     size_t i;
@@ -59,7 +59,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
         int oerrno;
 
         if (ast.mb_wc2uc == (void *)(-1) &&
-            (ast.mb_wc2uc = (void *)iconv_open("UTF-8", codeset(CODESET_ctype))) == (void *)-1)
+            (ast.mb_wc2uc = (void *)iconv_open("UTF-8", nl_langinfo(CODESET))) == (void *)-1)
             ast.mb_wc2uc = 0;
         if (ast.mb_wc2uc == 0) return -1;
         inbytesleft = n * mbmax();

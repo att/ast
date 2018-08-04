@@ -31,6 +31,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <iconv.h>
+#include <langinfo.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,7 +48,6 @@
 
 #include "ast_iconv.h"
 #include "ccode.h"
-#include "codeset.h"
 #include "error.h"
 
 #define CC_ICONV (-1)
@@ -210,7 +210,7 @@ int _ast_iconv_name(const char *m, char *b, size_t n) {
                     m = (const char *)"EBCDIC-O";
                     break;
                 default:
-                    m = codeset(CODESET_ctype);
+                    m = nl_langinfo(CODESET);
                     if (streq(m, "UTF-8"))
                         cc = CC_UTF;
                     else if (streq(m, "US-ASCII"))
