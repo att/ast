@@ -1727,8 +1727,16 @@ void sh_iosave(Shell_t *shp, int origfd, int oldtop, char *name) {
             errormsg(SH_DICT, ERROR_system(1), e_toomany);
         }
         if (savefd < 0 && (sp = shp->sftable[origfd]) && (sfset(sp, 0, 0) & SF_STRING)) {
+            const char *devnull = "/dev/null";
             savestr = 1;
-            if ((fd = open("/dev/null", O_RDONLY | O_CLOEXEC)) < 10) {
+            fd = open(devnull, O_RDONLY | O_CLOEXEC);
+
+            if (fd < 0) {
+                errormsg(SH_DICT, ERROR_system(1), e_open, devnull);
+                __builtin_unreachable();
+            }
+
+            if (fd < 10) {
                 savefd = sh_fcntl(fd, F_DUPFD_CLOEXEC, 10);
                 close(fd);
             }
