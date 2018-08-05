@@ -28,6 +28,7 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <langinfo.h>
 #include <sys/types.h>
 
 #include "ast.h"
@@ -42,7 +43,6 @@ char *fmtscale(Sfulong_t n, int k) {
     char suf[3];
     char *s;
     char *buf;
-    Lc_numeric_t *p = (Lc_numeric_t *)LCINFO(AST_LC_NUMERIC)->data;
 
     static const char scale[] = "bkMGTPE";
 
@@ -76,9 +76,10 @@ char *fmtscale(Sfulong_t n, int k) {
             *s++ = *u;
     }
     *s = 0;
-    if (n > 0 && n < 10)
-        sfsprintf(buf, z, "%I*u%c%d%s", sizeof(n), n, p->decimal >= 0 ? p->decimal : '.', r, suf);
-    else {
+    if (n > 0 && n < 10) {
+        char *decimal = nl_langinfo(RADIXCHAR);
+        sfsprintf(buf, z, "%I*u%c%d%s", sizeof(n), n, decimal, r, suf);
+    } else {
         if (r >= 5) n++;
         sfsprintf(buf, z, "%I*u%s", sizeof(n), n, suf);
     }

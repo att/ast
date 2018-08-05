@@ -29,16 +29,6 @@
 #include "option.h"
 #include "sfio.h"
 
-#if OPT_VERSION >= 20000101L
-#define NEW 1
-#else
-#define NEW 0
-#endif
-
-#if !NEW
-#define name option
-#endif
-
 struct Info_s;
 typedef struct Info_s Info_t;
 
@@ -50,7 +40,6 @@ struct Info_s {
 
 static Info_t *info;
 
-#if NEW
 static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     UNUSED(op);
     UNUSED(dp);
@@ -135,7 +124,6 @@ static char *translate(const char *locale, const char *id, const char *catalog, 
     *t = 0;
     return streq(buf, msg) ? (char *)msg : buf;
 }
-#endif
 
 int main(int argc, char **argv) {
     UNUSED(argc);
@@ -150,9 +138,7 @@ int main(int argc, char **argv) {
     char *usage;
     char **extra;
     char **oargv;
-#if NEW
     Optdisc_t disc;
-#endif
 
     error_info.id = "opt";
     setlocale(LC_ALL, "");
@@ -173,13 +159,10 @@ int main(int argc, char **argv) {
             info = ip;
         } else if (streq(command, "-")) {
             argv++;
-            str = NEW;
+            str = 1;
         } else if (streq(command, "-+")) {
             argv++;
-#if NEW
-            ast.locale.set |= (1 << AST_LC_MESSAGES);
             error_info.translate = translate;
-#endif
         } else if (streq(command, "+") && *(argv + 2)) {
             ext += 2;
             argv += 2;
@@ -191,14 +174,10 @@ int main(int argc, char **argv) {
         error(ERROR_USAGE | 4, "[ - | + usage ... ] command-name usage-string [ arg ... ]");
     argv += str;
     error_info.id = command;
-#if NEW
     memset(&disc, 0, sizeof(disc));
     disc.version = OPT_VERSION;
     disc.infof = infof;
     opt_info.disc = &disc;
-#else
-    memset(&opt_info, 0, sizeof(opt_info));
-#endif
     loop = strncmp(usage, "[-1c", 4) ? 0 : 3;
     oargv = argv;
     ostr = str;
