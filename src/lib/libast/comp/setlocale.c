@@ -158,7 +158,7 @@ static int set_ctype(Lc_category_t *cp) {
     }
 
     const char *codeset = nl_langinfo(CODESET);
-    ast.locale.is_utf8 = strcmp(codeset, _locale_utf8_str) == 0;
+    ast.locale.is_utf8 = strcasecmp(codeset, "utf-8") == 0 || strcasecmp(codeset, "utf8") == 0;
     ast.mb_width = wcwidth;
     ast.mb_cur_max = MB_CUR_MAX;
     ast.mb_len = mblen;

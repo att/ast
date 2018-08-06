@@ -273,14 +273,10 @@ static size_t canonical(const Lc_language_t *lp, const Lc_territory_t *tp, const
         }
         if (lp && (!(flags & (LC_abbreviated | LC_default)) || cp != lp->charset) && s < e) {
             *s++ = '.';
-            t = cp->code;
-            if (streq(cp->code, "utf8") && (t = _locale_utf8_str))
-                for (; s < e && (c = *t++); s++) *s = c;
-            else
-                for (t = cp->code; s < e && (c = *t++); s++) {
-                    if (islower(c)) c = toupper(c);
-                    *s = c;
-                }
+            for (t = cp->code; s < e && (c = *t++); s++) {
+                if (islower(c)) c = toupper(c);
+                *s = c;
+            }
         }
         for (c = '@'; ap && s < e; ap = ap->next)
             if (!(flags & (LC_abbreviated | LC_default | LC_verbose)) ||
