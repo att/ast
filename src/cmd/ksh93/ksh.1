@@ -985,7 +985,7 @@ is a
 .IR variable ,
 one or more digits,
 or any of the characters
-.BR \(** ,
+.BR * ,
 .BR @ ,
 .BR # ,
 .BR ? ,
@@ -1204,7 +1204,7 @@ enclosed in braces.
 If
 .I parameter\^
 is
-.B \(**
+.B *
 or
 .BR @ ,
 then all the positional
@@ -1215,7 +1215,7 @@ are substituted
 If an array
 .I vname\^
 with last subscript
-.B \(**
+.B *
 .BR @ ,
 or for index arrays of the form
 .I sub1\^
@@ -1229,7 +1229,7 @@ elements between
 and
 .I sub2\^
 inclusive (or all elements for
-.B \(**
+.B *
 and
 .BR @ )
 is substituted,
@@ -1243,7 +1243,7 @@ the value of
 If
 .I parameter\^
 is
-.B \(**
+.B *
 or
 .BR @ ,
 the number of positional parameters is substituted.
@@ -1407,11 +1407,11 @@ to prevent the shell from interpreting the operator as
 If
 .I parameter\^
 is
-.B \(**
+.B *
 or
 .BR @ ,
 or is an array name indexed by
-.B \(**
+.B *
 or
 .BR @ ,
 then
@@ -1884,26 +1884,6 @@ If this variable is set,
 the value is used to define the width of the edit window
 for the shell edit modes and for printing
 .B select
-.PD
-.RE
-The following
-variables
-are used by the shell:
-.RS
-.PD 0
-.TP
-.B
-.SM CDPATH
-The search path for the
-.B cd
-command.
-.TP
-.B
-.SM COLUMNS
-If this variable is set,
-the value is used to define the width of the edit window
-for the shell edit modes and for printing
-.B select
 lists.
 .TP
 .B
@@ -2040,7 +2020,7 @@ The first character of the
 .B IFS
 variable is used to separate arguments for the
 .B
-"$\(**"
+"$*"
 substitution (see
 .I Quoting
 below).
@@ -2541,7 +2521,7 @@ and
 .BR z4cx .
 .SS File Name Generation.
 Following splitting, each field is scanned for the characters
-.BR \(** ,
+.BR * ,
 .BR ? ,
 .BR ( ,
 and
@@ -2597,14 +2577,13 @@ are not treated specially.
 .PD 0
 .RS
 .TP
-.B \(**
+.B *
 Matches any string, including the null string.
 When used for filename expansion,
 if the
 .B globstar
-option is on, two adjacent
-.BR \(** 's
-by itself
+option is on, an isolated pattern of two adjacent
+.BR * 's
 will match all files and zero or more directories
 and subdirectories.
 If followed by a
@@ -2956,14 +2935,14 @@ in front of a double quoted string will be ignored
 in the "C" or "POSIX" locale, and may cause
 the string to be replaced by a locale specific string otherwise.
 The meaning of
-.B "$\(**"
+.B "$*"
 and
 .B "$@"
 is identical when not quoted or when used as a variable assignment value
 or as a file name.
 However, when used as a command argument,
 .B
-"$\(**"
+"$*"
 is equivalent to
 \f3"$1\fP\f2d\fP\f3\|$2\fP\f2d\fP\|.\|.\|.\f3"\fP,
 where
@@ -3064,7 +3043,7 @@ can be used within an arithmetic expression:
 .if n abs acos acosh asin asinh atan atan2 atanh cbrt ceil copysign cos cosh erf erfc exp exp2 expm1 fabs fpclassify fdim finite floor fma fmax fmin fmod hypot ilogb int isfinite sinf isnan isnormal issubnormal issubordered iszero j0 j1 jn lgamma log log10 log2 logb nearbyint nextafter nexttoward pow remainder rint round scanb signbit sin sinh sqrt tan tanh tgamma trunc y0 y1 yn
 .if t abs   acos   acosh   asin   asinh   atan   atan2   atanh   cbrt   ceil copysign   cos   cosh   erf  erfc   exp   exp2   expm1   fabs   fpclassify fdim   finite   floor  fma   fmax   fmod   j0      j1      jn      hypot   ilogb   int   isfinite   isinf   isnan   isnormal  issubnormal   issubordered   iszero lgamma   log   log10 log2   logb   nearbyint   nextafter   nexttoward  pow   rint   round   scalb   signbit sin   sinh   sqrt   tan   tanh   tgamma   trunc   y0      y1      yn
 .if t .RE
-In addition, arithmetic functions can be define as shell functions with a
+In addition, arithmetic functions can be defined as shell functions with a
 variant of the
 .B function
 .I name\^
@@ -7083,7 +7062,7 @@ to truncate a file when turned on.
 .TP 8
 .B \-G
 Causes the pattern
-.B \(**\(**
+.B **
 by itself to match files and zero or more directories and sub-directories
 when used for file name generation.
 If followed by a
