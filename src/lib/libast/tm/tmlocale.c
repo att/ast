@@ -41,15 +41,17 @@
 
 static struct {
     char *format;
-    Lc_info_t *locale;
     char null[1];
 } state;
+
+static char **tmlocale_data = NULL;
+static uint32_t tmlocale_serial = UINT_MAX;
 
 /*
  * this is unix dadgummit
  */
 
-#if __CYGWIN__
+#if 0 && __CYGWIN__
 static int standardized(Lc_info_t *li, char **b) {
     if ((li->lc->language->flags & LC_default) ||
         streq(li->lc->language->code, "en")) {
@@ -97,7 +99,7 @@ static void fixup(Lc_info_t *li, char **b) {
 }
 #endif
 
-#if __CYGWIN__
+#if 0 && __CYGWIN__
 #include "ast_windows.h"
 
 typedef struct Map_s {
@@ -368,7 +370,7 @@ static void native_lc_time(Lc_info_t *li) {
      * done
      */
 
-    fixup(li, b);
+    fixup(b);
     return;
 bad:
     free(b);
@@ -443,7 +445,7 @@ static const Map_t map[] = {
 #endif
 };
 
-static void native_lc_time(Lc_info_t *li) {
+static void native_lc_time() {
     char *s;
     char *t;
     char **b;
@@ -463,13 +465,13 @@ static void native_lc_time(Lc_info_t *li) {
         while (*s++ = *t++)
             ;
     }
-    fixup(li, b);
+    fixup(b);
 }
 
 #else
 
-#define native_lc_time(li)                                   \
-    ((li->data = (void *)(tm_info.format = tm_data.format)), \
+#define native_lc_time()                                   \
+    ((tmlocale_data = (void *)(tm_info.format = tm_data.format)), \
      (tm_info.deformat = tm_info.format[TM_DEFAULT]))
 
 #endif
@@ -479,13 +481,10 @@ static void native_lc_time(Lc_info_t *li) {
 /*
  * load the LC_TIME data for the current locale
  */
-
-static void load(Lc_info_t *li) {
-    char **b;
-
-    b = (char **)li->data;
-    if (b) {
-        tm_info.format = b;
+static void load() {
+    tmlocale_serial = ast.locale.serial;
+    if (tmlocale_data) {
+        tm_info.format = tmlocale_data;
         if (!(tm_info.deformat = state.format)) tm_info.deformat = tm_info.format[TM_DEFAULT];
         return;
     }
@@ -534,7 +533,7 @@ static void load(Lc_info_t *li) {
                     if (!(s = strchr(s, '\n'))) break;
                     *s++ = 0;
                 }
-                fixup(li, b);
+                fixup(b);
             } else {
                 free(b);
             }
@@ -542,10 +541,10 @@ static void load(Lc_info_t *li) {
         if (tp) sfclose(tp);
         sfclose(sp);
     } else {
-        native_lc_time(li);
+        native_lc_time();
     }
 #else
-    native_lc_time(li);
+    native_lc_time();
 #endif
 }
 
@@ -554,8 +553,6 @@ static void load(Lc_info_t *li) {
  */
 
 char **tmlocale(void) {
-    Lc_info_t *li;
-
     if (!tm_info.format) {
         tm_info.format = tm_data.format;
         if (!tm_info.deformat)
@@ -563,7 +560,6 @@ char **tmlocale(void) {
         else if (tm_info.deformat != tm_info.format[TM_DEFAULT])
             state.format = tm_info.deformat;
     }
-    li = LCINFO(AST_LC_TIME);
-    if (!li->data) load(li);
+    if (tmlocale_serial != ast.locale.serial || !tmlocale_data) load();
     return tm_info.format;
 }

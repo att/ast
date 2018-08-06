@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <locale.h>
 #include <poll.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -412,21 +413,7 @@
 #define ESPIPE 29
 #endif
 
-/* function to get the decimal point for local environment */
-#if !defined(SFSETLOCALE)
-#include "lclib.h"
-#define SFSETLOCALE(dp, tp)                                                  \
-    do                                                                       \
-        if (*(dp) == 0) {                                                    \
-            Lc_numeric_t *lv = (Lc_numeric_t *)LCINFO(AST_LC_NUMERIC)->data; \
-            *(dp) = lv->decimal;                                             \
-            *(tp) = lv->thousand;                                            \
-        }                                                                    \
-    while (0)
-#endif  // !defined(SFSETLOCALE)
-
-#if !defined(SFSETLOCALE)
-#include <locale.h>
+// Macro to get the decimal point and thousands sep for the current locale.
 #define SFSETLOCALE(decimal, thousand)                                 \
     do {                                                               \
         struct lconv *lv;                                              \
@@ -441,11 +428,6 @@
             }                                                          \
         }                                                              \
     } while (0)
-#endif /*!defined(SFSETLOCALE)*/
-
-#if !defined(SFSETLOCALE)
-#define SFSETLOCALE(decimal, thousand) (*(decimal) = '.', *(thousand) = -1)
-#endif
 
 /* stream pool structure. */
 typedef struct _sfpool_s Sfpool_t;

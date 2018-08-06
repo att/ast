@@ -43,6 +43,11 @@
 #define C_ESC (-1)
 #define C_MB (-2)
 
+static Dt_t *lc_collate_data = NULL;
+static unsigned char *lc_ctype_data = NULL;
+static uint32_t lc_collate_serial = UINT_MAX;
+static uint32_t lc_ctype_serial = UINT_MAX;
+
 #if _AST_REGEX_DEBUG
 
 #define DEBUG_TEST(f, y, n) ((debug & (debug_flag = (f))) ? (y) : (n))
@@ -1255,7 +1260,8 @@ static Rex_t *bra(Cenv_t *env) {
         static const char primary[] =
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-        if (!(dt = (Dt_t *)LCINFO(AST_LC_COLLATE)->data)) {
+        dt = lc_collate_data;
+        if (ast.locale.serial != lc_collate_serial || !dt) {
             disc.key = offsetof(Cchr_t, key);
             if ((cc = newof(0, Cchr_t, elementsof(primary), 0)) && (dt = dtopen(&disc, Dtoset))) {
                 for (i = 0; i < elementsof(primary) - 1; i++, cc++) {
@@ -1265,7 +1271,8 @@ static Rex_t *bra(Cenv_t *env) {
                 }
                 for (i = 0; i < elementsof(cc->key); i++) cc->key[i] = ~0;
                 dtinsert(dt, cc);
-                LCINFO(AST_LC_COLLATE)->data = (void *)dt;
+                lc_collate_data = dt;
+                lc_collate_serial = ast.locale.serial;
             } else {
                 if (cc) free(cc);
                 drop(env->disc, e);
@@ -2860,11 +2867,13 @@ int regcomp(regex_t *p, const char *pattern, regflags_t flags) {
         for (i = 0; i < elementsof(state.escape); i++)
             state.magic[state.escape[i].key] = state.escape[i].val;
     }
-    if (!(fold = (unsigned char *)LCINFO(AST_LC_CTYPE)->data)) {
+    fold = lc_ctype_data;
+    if (ast.locale.serial != lc_ctype_serial || !fold) {
         if (!(fold = newof(0, unsigned char, UCHAR_MAX, 1)))
             return fatal(disc, REG_ESPACE, pattern);
         for (i = 0; i <= UCHAR_MAX; i++) fold[i] = toupper(i);
-        LCINFO(AST_LC_CTYPE)->data = (void *)fold;
+        lc_ctype_data = fold;
+        lc_ctype_serial = ast.locale.serial;
     }
 again:
     if (!(p->env = (Env_t *)alloc(disc, 0, sizeof(Env_t)))) return fatal(disc, REG_ESPACE, pattern);
