@@ -1094,15 +1094,20 @@ pid_t path_spawn(Shell_t *shp, const char *opath, char **argv, char **envp, Path
     }
     if (pid > 0) return pid;
 retry:
-    switch (shp->path_err = errno) {
+    shp->path_err = errno;
+    switch (shp->path_err) {
+        case EISDIR: {
+            return -1;
+        }
         case ENOEXEC:
         case EPERM: {
             // Some systems return EPERM if setuid bit is on.
             errno = ENOEXEC;
             if (spawn) {
-                if (shp->subshell) return (-1);
+                if (shp->subshell) return -1;
                 do {
-                    if ((pid = fork()) > 0) return (pid);
+                    pid = fork();
+                    if (pid > 0) return pid;
                 } while (_sh_fork(shp, pid, 0, (int *)0) < 0);
 #ifdef SPAWN_cwd
                 if (shp->vex) {
@@ -1126,12 +1131,10 @@ retry:
                 if (S_ISSOCK(statb.st_mode)) exscript(shp, path, argv, envp);
 #endif
             }
-            shp->path_err = errno;
             return -1;
         }
 #ifdef ENAMETOOLONG
         case ENAMETOOLONG: {
-            shp->path_err = errno;
             return -1;
         }
 #endif  // ENAMETOOLONG
@@ -1153,6 +1156,7 @@ retry:
         // FALLTHRU
         default: { errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, path); }
     }
+
     return 0;
 }
 
