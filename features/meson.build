@@ -170,12 +170,6 @@ stack_direction_feature_result = cc.run(stack_direction_feature_file, name: 'sta
                                         args: feature_test_args)
 feature_data.set10('_stk_down', stack_direction_feature_result.returncode() == 0)
 
-syslocale_result = run_command('syslocale.sh')
-if syslocale_result.returncode() == 0
-    syslocale_output = syslocale_result.stdout().strip()
-    feature_data.set('_locale_utf8_str', syslocale_output)
-endif
-
 libpath_result = run_command('libpath.sh')
 if libpath_result.returncode() == 0
     libpath_output = libpath_result.stdout().strip()

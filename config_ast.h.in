@@ -54,7 +54,6 @@
 #mesondefine _cmd_universe
 #mesondefine _dll_DYNAMIC
 #mesondefine _DLL_NEXT_PATH
-#mesondefine _locale_utf8_str
 #mesondefine _map_libc
 #mesondefine _map_malloc
 #mesondefine _map_spawnve
