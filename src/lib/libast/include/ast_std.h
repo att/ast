@@ -88,52 +88,6 @@ extern char *strerror(int);
 #define AST_LC_internal 1
 #define AST_LC_setenv (1L << 27)
 
-#ifndef LC_ALL
-#define LC_ALL (-AST_LC_ALL)
-#endif
-#ifndef LC_COLLATE
-#define LC_COLLATE (-AST_LC_COLLATE)
-#endif
-#ifndef LC_CTYPE
-#define LC_CTYPE (-AST_LC_CTYPE)
-#endif
-#ifndef LC_MESSAGES
-#define LC_MESSAGES (-AST_LC_MESSAGES)
-#endif
-#ifndef LC_MONETARY
-#define LC_MONETARY (-AST_LC_MONETARY)
-#endif
-#ifndef LC_NUMERIC
-#define LC_NUMERIC (-AST_LC_NUMERIC)
-#endif
-#ifndef LC_TIME
-#define LC_TIME (-AST_LC_TIME)
-#endif
-#ifndef LC_ADDRESS
-#define LC_ADDRESS (-AST_LC_ADDRESS)
-#endif
-#ifndef LC_IDENTIFICATION
-#define LC_IDENTIFICATION (-AST_LC_IDENTIFICATION)
-#endif
-#ifndef LC_NAME
-#define LC_NAME (-AST_LC_NAME)
-#endif
-#ifndef LC_TELEPHONE
-#define LC_TELEPHONE (-AST_LC_TELEPHONE)
-#endif
-#ifndef LC_XLITERATE
-#define LC_XLITERATE (-AST_LC_XLITERATE)
-#endif
-#ifndef LC_MEASUREMENT
-#define LC_MEASUREMENT (-AST_LC_MEASUREMENT)
-#endif
-#ifndef LC_PAPER
-#define LC_PAPER (-AST_LC_PAPER)
-#endif
-#ifndef LC_LANG
-#define LC_LANG (-AST_LC_LANG)
-#endif
-
 #undef strcoll
 #define strcoll _ast_info.collate
 

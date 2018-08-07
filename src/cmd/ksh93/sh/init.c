@@ -383,30 +383,16 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         type = LC_COLLATE;
     } else if (name == (LCNUMNOD)->nvname) {
         type = LC_NUMERIC;
+    } else if (name == (LANGNOD)->nvname && (!(name = nv_getval(LCALLNOD)) || !*name)) {
+        type = LC_ALL;
     }
-#ifdef LC_LANG
-    else if (name == (LANGNOD)->nvname) {
-        type = LC_LANG;
-    }
-#else
-#define LC_LANG LC_ALL
-    else if (name == (LANGNOD)->nvname && (!(name = nv_getval(LCALLNOD)) || !*name)) {
-        type = LC_LANG;
-    }
-#endif
     else {
         type = -1;
     }
 
-    if (!sh_isstate(shp, SH_INIT) && (type >= 0 || type == LC_ALL || type == LC_LANG)) {
+    if (!sh_isstate(shp, SH_INIT) && (type >= 0 || type == LC_ALL || type == LC_ALL)) {
         char *r;
-#ifdef AST_LC_setenv
-        ast.locale.set |= AST_LC_setenv;
-#endif
         r = setlocale(type, val ? val : "");
-#ifdef AST_LC_setenv
-        ast.locale.set ^= AST_LC_setenv;
-#endif
         if (!r && val) {
             if (!sh_isstate(shp, SH_INIT) || shp->login_sh == 0) {
                 errormsg(SH_DICT, 0, e_badlocale, val);
@@ -416,7 +402,7 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     }
 
     nv_putv(np, val, flags, fp);
-    if (CC_NATIVE != CC_ASCII && (type == LC_ALL || type == LC_LANG || type == LC_CTYPE)) {
+    if (CC_NATIVE != CC_ASCII && (type == LC_ALL || type == LC_ALL || type == LC_CTYPE)) {
         if (sh_lexstates[ST_BEGIN] != sh_lexrstates[ST_BEGIN]) free(sh_lexstates[ST_BEGIN]);
         lctype++;
         if (ast.locale.set & (1 << AST_LC_CTYPE)) {
