@@ -58,10 +58,11 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
         size_t outbytesleft;
         int oerrno;
 
-        if (ast.mb_wc2uc == (void *)(-1) &&
-            (ast.mb_wc2uc = (void *)iconv_open("UTF-8", nl_langinfo(CODESET))) == (void *)-1)
-            ast.mb_wc2uc = 0;
-        if (ast.mb_wc2uc == 0) return -1;
+        if (ast.mb_wc2uc == (iconv_t)-1) {
+            ast.mb_wc2uc = iconv_open("UTF-8", nl_langinfo(CODESET));
+            if (ast.mb_wc2uc == (iconv_t)-1) ast.mb_wc2uc = NULL;
+        }
+        if (ast.mb_wc2uc == NULL) return -1;
         inbytesleft = n * mbmax();
         outbytesleft = n * sizeof(uint32_t);
         inbuf_start = oldof(0, char, (inbytesleft + 2) + outbytesleft, 0);
@@ -89,7 +90,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
         inbuf = inbuf_start;
         outbuf = outbuf_start;
         (void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
-        if ((res = iconv((iconv_t)ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >=
+        if ((res = iconv(ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >=
             0) {
             const char *s;
 

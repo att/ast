@@ -371,12 +371,12 @@ extern char **environ;
 #define mbchar(p)                                                                         \
     (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), mbmax())) > 0 \
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
-                     : (p += ast.mb_sync + 1, ast.tmp_int))                               \
+                     : (p += 1, ast.tmp_int))                               \
               : (*(unsigned char *)(p++)))
 #define mbnchar(p, n)                                                               \
     (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), n)) > 0 \
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                          \
-                     : (p += ast.mb_sync + 1, ast.tmp_int))                         \
+                     : (p += 1, ast.tmp_int))                         \
               : (*(unsigned char *)(p++)))
 #define mbinit() (mbwide() ? (*ast.mb_towc)((wchar_t *)0, (char *)0, mbmax()) : 0)
 // You cannot call this with a parameter that has side-effects (e.g.,

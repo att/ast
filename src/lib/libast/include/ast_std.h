@@ -38,6 +38,7 @@
 #define _BLD_vmalloc 1
 #endif
 
+#include <iconv.h>
 #include <stdbool.h>
 
 #include "ast_fcntl.h"
@@ -108,8 +109,8 @@ typedef struct {
     int pwd;
     int byte_max;
 
-    void *mb_uc2wc;
-    void *mb_wc2uc;
+    iconv_t mb_uc2wc;
+    iconv_t mb_wc2uc;
 
     Mbstate_t _ast_mbstate_init;
 
@@ -118,9 +119,6 @@ typedef struct {
     size_t (*_ast_mbsrtowcs)(wchar_t *, const char **, size_t, mbstate_t *);
     size_t (*_ast_wcrtomb)(char *, wchar_t, mbstate_t *);
     size_t (*_ast_wcsrtombs)(char *, const wchar_t **, size_t, mbstate_t *);
-
-    char pad[936 - sizeof(void *) - 2 * sizeof(int) - 8 * sizeof(void *) - sizeof(Mbstate_t)];
-
 } _Ast_info_t;
 
 extern _Ast_info_t _ast_info;

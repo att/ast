@@ -55,10 +55,11 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
         size_t inbytesleft;
         size_t outbytesleft;
 
-        if (ast.mb_uc2wc == (void *)(-1) &&
-            (ast.mb_uc2wc = (void *)iconv_open(nl_langinfo(CODESET), "UTF-8")) == (void *)(-1))
-            ast.mb_uc2wc = 0;
-        if (ast.mb_uc2wc == 0) return -1;
+        if (ast.mb_uc2wc == (iconv_t)-1) {
+            ast.mb_uc2wc = iconv_open(nl_langinfo(CODESET), "UTF-8");
+            if (ast.mb_uc2wc == (iconv_t)-1) ast.mb_uc2wc = NULL;
+        }
+        if (ast.mb_uc2wc == NULL) return -1;
         (void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
         if (n == 1) {
             char tmp_in[UTF8_LEN_MAX + 1];
@@ -72,7 +73,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             inbuf = tmp_in;
             outbuf = tmp_out;
             outbytesleft = sizeof(tmp_out);
-            size_t r = iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+            size_t r = iconv(ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
             if (r == (size_t)-1 || inbytesleft) return -1;
             if (!mbwide()) {
                 wchar[0] = *(unsigned char *)tmp_out;
@@ -101,7 +102,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             inbuf = inbuf_start;
             outbuf = outbuf_start;
             i = 0;
-            size_t r = iconv((iconv_t)ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+            size_t r = iconv(ast.mb_uc2wc, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
             if (r == (size_t)-1) return -1;
             inbuf = outbuf;
             if (mbwide()) {
