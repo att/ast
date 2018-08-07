@@ -58,12 +58,6 @@ extern int mblen(const char *, size_t);
 #undef strxfrm
 #undef valid
 
-#ifndef AST_LC_CANONICAL
-#define AST_LC_CANONICAL LC_abbreviated
-#endif
-
-#define native_locale(a, b, c) ((char *)0)
-
 /*
  * LC_COLLATE and LC_CTYPE native support
  */

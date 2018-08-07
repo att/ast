@@ -64,30 +64,6 @@ extern char *strerror(int);
 
 #define AST_MESSAGE_SET 3 /* see <mc.h> mcindex()		*/
 
-/*
- * maintain this order when adding categories
- */
-
-#define AST_LC_ALL 0
-#define AST_LC_COLLATE 1
-#define AST_LC_CTYPE 2
-#define AST_LC_MESSAGES 3
-#define AST_LC_MONETARY 4
-#define AST_LC_NUMERIC 5
-#define AST_LC_TIME 6
-#define AST_LC_IDENTIFICATION 7
-#define AST_LC_ADDRESS 8
-#define AST_LC_NAME 9
-#define AST_LC_TELEPHONE 10
-#define AST_LC_XLITERATE 11
-#define AST_LC_MEASUREMENT 12
-#define AST_LC_PAPER 13
-#define AST_LC_COUNT 14
-#define AST_LC_LANG 255
-
-#define AST_LC_internal 1
-#define AST_LC_setenv (1L << 27)
-
 #undef strcoll
 #define strcoll _ast_info.collate
 

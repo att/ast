@@ -50,7 +50,7 @@
 #endif
 
 #ifndef ERROR_translate
-#define ERROR_translating() (error_info.translate && (ast.locale.set & (1 << AST_LC_MESSAGES)))
+#define ERROR_translating() error_info.translate
 #define ERROR_translate(l, i, d, m)                                                           \
     (ERROR_translating()                                                                      \
          ? errorx((const char *)(l), (const char *)(i), (const char *)(d), (const char *)(m)) \

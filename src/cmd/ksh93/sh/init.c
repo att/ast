@@ -402,43 +402,6 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
     }
 
     nv_putv(np, val, flags, fp);
-    if (CC_NATIVE != CC_ASCII && (type == LC_ALL || type == LC_ALL || type == LC_CTYPE)) {
-        if (sh_lexstates[ST_BEGIN] != sh_lexrstates[ST_BEGIN]) free(sh_lexstates[ST_BEGIN]);
-        lctype++;
-        if (ast.locale.set & (1 << AST_LC_CTYPE)) {
-            int c;
-            char *state[4];
-
-            sh_lexstates[ST_BEGIN] = state[0] = (char *)malloc(4 * (1 << CHAR_BIT));
-            memcpy(state[0], sh_lexrstates[ST_BEGIN], (1 << CHAR_BIT));
-            sh_lexstates[ST_NAME] = state[1] = state[0] + (1 << CHAR_BIT);
-            memcpy(state[1], sh_lexrstates[ST_NAME], (1 << CHAR_BIT));
-            sh_lexstates[ST_DOL] = state[2] = state[1] + (1 << CHAR_BIT);
-            memcpy(state[2], sh_lexrstates[ST_DOL], (1 << CHAR_BIT));
-            sh_lexstates[ST_BRACE] = state[3] = state[2] + (1 << CHAR_BIT);
-            memcpy(state[3], sh_lexrstates[ST_BRACE], (1 << CHAR_BIT));
-            for (c = 0; c < (1 << CHAR_BIT); c++) {
-                if (state[0][c] != S_REG) continue;
-                if (state[2][c] != S_ERR) continue;
-                if (isblank(c)) {
-                    state[0][c] = 0;
-                    state[1][c] = S_BREAK;
-                    state[2][c] = S_BREAK;
-                    continue;
-                }
-                if (!isalpha(c)) continue;
-                state[0][c] = S_NAME;
-                if (state[1][c] == S_REG) state[1][c] = 0;
-                state[2][c] = S_ALP;
-                if (state[3][c] == S_ERR) state[3][c] = 0;
-            }
-        } else {
-            sh_lexstates[ST_BEGIN] = (char *)sh_lexrstates[ST_BEGIN];
-            sh_lexstates[ST_NAME] = (char *)sh_lexrstates[ST_NAME];
-            sh_lexstates[ST_DOL] = (char *)sh_lexrstates[ST_DOL];
-            sh_lexstates[ST_BRACE] = (char *)sh_lexrstates[ST_BRACE];
-        }
-    }
 #if ERROR_VERSION < 20000101L
     if (type == LC_ALL || type == LC_MESSAGES) error_info.translate = msg_translate;
 #endif
