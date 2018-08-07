@@ -184,4 +184,6 @@ extern int rename(const char *, const char *);
 #include "regex.h"
 #endif
 
+extern char *translate(const char *, const char *, const char *, const char *);
+
 #endif  // _AST_STD_H

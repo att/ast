@@ -45,7 +45,7 @@
 #include "ast.h"
 #include "ast_api.h"
 #include "ast_ccode.h"
-#include "lclib.h"
+#include "error.h"
 #include "namval.h"
 #include "option.h"
 #include "regex.h"

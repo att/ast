@@ -35,7 +35,6 @@
 #include "ast.h"
 #include "ast_ccode.h"
 #include "ast_std.h"
-#include "lclib.h"
 
 /*	The engine for formatting data.
 **	1. Argument positioning is done in sftable.c so any changes

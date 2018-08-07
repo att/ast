@@ -22,7 +22,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include "ast.h"
-#include "lclib.h"
+#include "error.h"
 
 /*
  * low level for ERROR_translate()

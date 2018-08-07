@@ -41,8 +41,6 @@
 #include <wchar.h>
 #include <wctype.h>
 
-#include "lc.h"
-
 #define WC_SP 0x08
 #define WC_NL 0x10
 #define WC_MB 0x20
