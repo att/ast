@@ -40,7 +40,6 @@
 
 #include "ast.h"
 #include "ast_iconv.h"
-#include "lclib.h"
 #include "sfio.h"
 
 #undef mbsrtowcs
@@ -185,20 +184,6 @@ static int set_ctype() {
     ast.byte_max = ast.mb_cur_max == 1 && !is_us_ascii_codeset() ? 0xff : 0x7f;
     return 0;
 }
-
-/*
- * this table is indexed by AST_LC_[A-Z]*
- */
-
-Lc_category_t lc_categories[] = {
-    {"LC_ALL", LC_ALL, AST_LC_ALL, NULL, NULL, 0},
-    {"LC_COLLATE", LC_COLLATE, AST_LC_COLLATE, NULL, NULL, 0},
-    {"LC_CTYPE", LC_CTYPE, AST_LC_CTYPE, NULL, NULL, 0},
-    {"LC_MESSAGES", LC_MESSAGES, AST_LC_MESSAGES, NULL, NULL, 0},
-    {"LC_MONETARY", LC_MONETARY, AST_LC_MONETARY, NULL, NULL, 0},
-    {"LC_NUMERIC", LC_NUMERIC, AST_LC_NUMERIC, NULL, NULL, 0},
-    {"LC_TIME", LC_TIME, AST_LC_TIME, NULL, NULL, 0},
-};
 
 //
 // setlocale() intercept.

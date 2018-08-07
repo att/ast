@@ -35,7 +35,6 @@
 
 #include "ast.h"
 #include "ast_iconv.h"
-#include "lclib.h"
 #include "sfio.h"
 #include "tm.h"
 

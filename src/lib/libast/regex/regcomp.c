@@ -34,7 +34,6 @@
 
 #include "ast.h"
 #include "cdt.h"
-#include "lclib.h"
 #include "reglib.h"
 #include "stk.h"
 

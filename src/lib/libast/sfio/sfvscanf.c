@@ -32,7 +32,6 @@
 #include "sfhdr.h"
 
 #include "ast_std.h"
-#include "lclib.h"
 
 /*	The main engine for reading formatted data
 **

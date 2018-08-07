@@ -177,7 +177,7 @@ static Optstate_t state;
 
 #define C(s) ERROR_catalog(s)
 #define D(s) (state.msgdict && dtmatch(state.msgdict, (s)))
-#define T(i, c, m) (X(c) ? translate(i, c, C(m)) : (m))
+#define T(i, c, m) (X(c) ? opt_translate(i, c, C(m)) : (m))
 #define X(c) (ERROR_translating() && (c) != native)
 #define Z(x) C(x), sizeof(x) - 1
 
@@ -185,7 +185,7 @@ static Optstate_t state;
  * translate with C_LC_MESSAGES_libast[] check
  */
 
-static char *translate(const char *cmd, const char *cat, const char *msg) {
+static char *opt_translate(const char *cmd, const char *cat, const char *msg) {
     if (!X(cat)) return (char *)msg;
     if (cat != (const char *)ID && D(msg)) cat = (const char *)ID;
     return errorx(NULL, cmd, cat, msg);

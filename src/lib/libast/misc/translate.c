@@ -37,7 +37,6 @@
 #include "ast.h"
 #include "cdt.h"
 #include "error.h"
-#include "lclib.h"
 #include "sfio.h"
 
 #ifndef DEBUG_trace

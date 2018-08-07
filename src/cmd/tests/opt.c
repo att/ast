@@ -65,66 +65,6 @@ static int infof(Opt_t *op, Sfio_t *sp, const char *s, Optdisc_t *dp) {
     return sfprintf(sp, "<* %s info ok *>", s);
 }
 
-static char *translate(const char *locale, const char *id, const char *catalog, const char *msg) {
-    UNUSED(locale);
-    int c;
-    int i;
-    char *s;
-    char *t;
-    char *e;
-    char *r;
-
-    static char buf[8 * 1024];
-
-    static char rot[] =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMabcdefghijklmnopqrstuvwxyzabcdefghijklm";
-
-    sfprintf(sfstdout, "id=%s catalog=%s text=\"%s\"\n", id, catalog, msg);
-    i = !catalog;
-    s = (char *)msg;
-    t = buf;
-    e = buf + sizeof(buf) - 1;
-    while ((c = *s++) && t < e) {
-        switch (c) {
-            case '\\':
-                if (t < e) *t++ = c;
-                if (!(c = *s++)) s--;
-                break;
-            case '%':
-                do {
-                    if (t >= e) break;
-                    *t++ = c;
-                    if (!(c = *s++)) {
-                        s--;
-                        break;
-                    }
-                } while (!isalpha(c) ||
-                         ((!islower(c) || c == 'h' || c == 'l') && t < e && isalpha(*s)));
-                break;
-            case '\b':
-                do {
-                    if (t >= e) break;
-                    *t++ = c;
-                    if (!(c = *s++)) {
-                        s--;
-                        break;
-                    }
-                } while (c != '\b');
-                break;
-            default:
-                r = strchr(rot, c);
-                if (r) {
-                    c = *(r + 13);
-                    if (i) c = isupper(c) ? tolower(c) : toupper(c);
-                }
-                break;
-        }
-        *t++ = c;
-    }
-    *t = 0;
-    return streq(buf, msg) ? (char *)msg : buf;
-}
-
 int main(int argc, char **argv) {
     UNUSED(argc);
     int n;
