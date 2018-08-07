@@ -1,19 +1,6 @@
 # This is derived from the legacy Nmake src/cmd/std/features/locales feature
 # test file.
 
-lcgen_feature_file = files('lcgen.c')
-lcgen_feature_result = cc.run(
-    lcgen_feature_file,
-    name: 'generate locale implementation tables',
-    args: feature_test_args + [
-        '-D_LC_HDR="' + meson.current_build_dir() + '/lc.h"',
-        '-D_LC_LIB="' + meson.current_build_dir() + '/lctab.c"',
-        '-D_LC_TAB="' + meson.current_source_dir() + '/lc.tab"'
-    ])
-if not lcgen_feature_result.compiled() or lcgen_feature_result.stderr() != ''
-    error('Unable to generate locale implementation tables')
-endif
-
 feature_data.set10('_hdr_nl_types', cc.has_header('nl_types.h'))
 
 if not cc.has_function('nl_langinfo', prefix: '#include <langinfo.h>', args: feature_test_args)
