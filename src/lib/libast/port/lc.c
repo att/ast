@@ -82,6 +82,8 @@ Lc_t *locales[] = {&default_lc, &default_lc, &default_lc, &default_lc, &default_
  */
 
 int lcindex(int category, int min) {
+    return -1;
+#if 0
     switch (category) {
         case LC_ALL:
             return min ? -1 : AST_LC_ALL;
@@ -115,6 +117,7 @@ int lcindex(int category, int min) {
             return AST_LC_XLITERATE;
     }
     return -1;
+#endif
 }
 
 /*
