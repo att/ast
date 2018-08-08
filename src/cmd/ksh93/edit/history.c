@@ -638,8 +638,9 @@ void hist_flush(History_t *hp) {
             Shell_t *shp = hp->histshell;
             hist_close(hp);
             if (!sh_histinit(shp)) sh_offoption((Shell_t *)shp, SH_HISTORY);
+        } else {
+            hp->histflush = 0;
         }
-        hp->histflush = 0;
     }
 }
 
