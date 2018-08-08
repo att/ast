@@ -29,13 +29,9 @@
 
 #include <limits.h>
 #include <locale.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#include <stdint.h>
 
 #include "ast.h"
-#include "ast_iconv.h"
-#include "sfio.h"
 #include "tm.h"
 
 static struct {

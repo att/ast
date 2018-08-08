@@ -26,6 +26,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <iconv.h>
 #include <langinfo.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -33,7 +34,6 @@
 #include <wchar.h>
 
 #include "ast.h"
-#include "ast_iconv.h"
 
 ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
     size_t i;
