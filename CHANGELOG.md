@@ -19,6 +19,7 @@ None at this time.
 
 ## Notable non-backward compatible changes
 
+- Support for building on systems using EBCDIC has been removed (issue #742).
 - Support for the `LC_OPTIONS` env var has been removed (issue #579).
 - `case "[0-9]" in [0-9]) echo match;; esac` has stopped matching. When a case
   statement doesn't match a pattern, it no longer tries to use the pattern as

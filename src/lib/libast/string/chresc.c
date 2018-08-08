@@ -112,9 +112,7 @@ int chrexp(const char *s, char **p, int *m, int flags) {
                                 s = (const char *)r;
                             }
                             if (islower(c)) c = toupper(c);
-                            c = ccmapc(c, CC_NATIVE, CC_ASCII);
                             c ^= 0x40;
-                            c = ccmapc(c, CC_ASCII, CC_NATIVE);
                         }
                         break;
                     case 'e': /*DEPRECATED*/

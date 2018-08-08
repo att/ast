@@ -58,9 +58,7 @@ int sh_tdump(Sfio_t *out, const Shnode_t *t) {
 static_fn int outstring(Sfio_t *out, const char *string, int n) {
     int r;
     char *cp = (char *)string;
-    ccmaps(cp, n, CC_NATIVE, CC_ASCII);
     r = sfwrite(out, cp, n);
-    ccmaps(cp, n, CC_ASCII, CC_NATIVE);
     return r;
 }
 

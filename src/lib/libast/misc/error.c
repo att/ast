@@ -232,31 +232,6 @@ static void print(Sfio_t *sp, char *name, char *delim) {
     if (mbwide())
         sfputr(sp, name, -1);
     else {
-#if CC_NATIVE != CC_ASCII
-        int c;
-        unsigned char *n2a;
-        unsigned char *a2n;
-        int aa;
-        int as;
-
-        n2a = ccmap(CC_NATIVE, CC_ASCII);
-        a2n = ccmap(CC_ASCII, CC_NATIVE);
-        aa = n2a['A'];
-        as = n2a[' '];
-        while (c = *name++) {
-            c = n2a[c];
-            if (c & 0200) {
-                c &= 0177;
-                sfputc(sp, '?');
-            }
-            if (c < as) {
-                c += aa - 1;
-                sfputc(sp, '^');
-            }
-            c = a2n[c];
-            sfputc(sp, c);
-        }
-#else
         int c;
 
         while (*name) {
@@ -271,7 +246,6 @@ static void print(Sfio_t *sp, char *name, char *delim) {
             }
             sfputc(sp, c);
         }
-#endif
     }
     if (delim) sfputr(sp, delim, -1);
 }

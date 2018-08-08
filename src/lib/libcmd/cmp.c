@@ -97,7 +97,6 @@ static const char usage[] =
 #define CMP_BYTES 0x08
 
 static void pretty(Sfio_t *out, int o, int delim, int flags) {
-    int c;
     int m;
     char *s;
     char buf[10];
@@ -112,20 +111,17 @@ static void pretty(Sfio_t *out, int o, int delim, int flags) {
     }
     if (flags & CMP_CHARS) {
         *s++ = ' ';
-        c = ccmapc(o, CC_NATIVE, CC_ASCII);
-        if (c & 0x80) {
+        if (o & 0x80) {
             m = 1;
             *s++ = 'M';
-            c &= 0x7f;
-            o = ccmapc(c, CC_ASCII, CC_NATIVE);
+            o &= 0x7f;
         } else {
             m = 0;
         }
         if (isspace(o) || !isprint(o)) {
             if (!m) *s++ = ' ';
             *s++ = '^';
-            c ^= 0x40;
-            o = ccmapc(c, CC_ASCII, CC_NATIVE);
+            o ^= 0x40;
         } else if (m) {
             *s++ = '-';
         } else {

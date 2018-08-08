@@ -30,12 +30,6 @@
 
 #include "ast_ccode.h"
 
-#if CC_NATIVE == CC_ASCII
-#define MAP(m, c) (c)
-#else
-#define MAP(m, c) m[c]
-#endif
-
 /*
  * return a pointer to the isalpha() identifier matching
  * name in the CC_ASCII sorted tab of num elements of
@@ -54,23 +48,17 @@ void *strpsearch(const void *tab, size_t num, size_t siz, const char *name, char
     char *lo = (char *)tab;
     char *hi = lo + (num - 1) * siz;
     char *mid;
-#if CC_NATIVE != CC_ASCII
-    unsigned char *m;
-#endif
     unsigned char *s;
     unsigned char *t;
     int c;
     int v;
     int sequential = 0;
 
-#if CC_NATIVE != CC_ASCII
-    m = ccmap(CC_NATIVE, CC_ASCII);
-#endif
-    c = MAP(m, *((unsigned char *)name));
+    c = *((unsigned char *)name);
     while (lo <= hi) {
         mid = lo + (sequential ? 0 : (((hi - lo) / siz) / 2) * siz);
-        if (!(v = c - MAP(m, *(s = *((unsigned char **)mid)))) ||
-            (*s == '[' && !(v = c - MAP(m, *++s)) && (v = 1))) {
+        if (!(v = c - *(s = *((unsigned char **)mid))) ||
+            (*s == '[' && !(v = c - *++s) && (v = 1))) {
             t = (unsigned char *)name;
             for (;;) {
                 if (!v && (*s == '[' || *s == '*')) {
@@ -86,7 +74,7 @@ void *strpsearch(const void *tab, size_t num, size_t siz, const char *name, char
                     }
                     if (!sequential) {
                         while ((mid -= siz) >= lo && (s = *((unsigned char **)mid)) &&
-                               ((c == MAP(m, *s)) || (*s == '[' && c == MAP(m, *(s + 1))))) {
+                               ((c == *s) || (*s == '[' && c == *(s + 1)))) {
                             ;  // empty loop
                         }
                         sequential = 1;
@@ -94,7 +82,7 @@ void *strpsearch(const void *tab, size_t num, size_t siz, const char *name, char
                     v = 1;
                     break;
                 } else if (*t != *s) {
-                    v = MAP(m, *t) - MAP(m, *s);
+                    v = *t - *s;
                     break;
                 } else {
                     t++;

@@ -505,7 +505,7 @@ static_fn char *fmthtml(Shell_t *shp, const char *string, int flags) {
             } else if (c == ' ') {
                 sfputr(shp->stk, "&nbsp", ';');
             } else if (!isprint(c) && c != '\n' && c != '\r') {
-                sfprintf(shp->stk, "&#%X;", CCMAPC(c, CC_NATIVE, CC_ASCII));
+                sfprintf(shp->stk, "&#%X;", c);
             } else {
                 sfputc(shp->stk, c);
             }
@@ -514,7 +514,7 @@ static_fn char *fmthtml(Shell_t *shp, const char *string, int flags) {
         while ((c = *(unsigned char *)cp++)) {
             if (strchr("!*'();@&+$,#[]<>~.\"{}|\\-`^% ", c) ||
                 (!isprint(c) && c != '\n' && c != '\r')) {
-                sfprintf(stkstd, "%%%02X", CCMAPC(c, CC_NATIVE, CC_ASCII));
+                sfprintf(stkstd, "%%%02X", c);
             } else {
                 sfputc(shp->stk, c);
             }

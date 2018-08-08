@@ -77,9 +77,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             if (r == (size_t)-1 || inbytesleft) return -1;
             if (!mbwide()) {
                 wchar[0] = *(unsigned char *)tmp_out;
-#if CC_NATIVE == CC_ASCII
                 if (utf32[0] > 0x7f && wchar[0] < 0x7f) return -1;
-#endif
             } else {
                 inbuf = tmp_out;
                 mbinit(&q);

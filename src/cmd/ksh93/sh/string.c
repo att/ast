@@ -66,7 +66,7 @@ const Shtable_t *sh_locate(const char *sp, const Shtable_t *table, int size) {
 
     if (sp == 0 || (first = *sp) == 0) return (&empty);
     tp = table;
-    while ((c = *tp->sh_name) && (CC_NATIVE != CC_ASCII || c <= first)) {
+    while ((c = *tp->sh_name) && c <= first) {
         if (first == c && strcmp(sp, tp->sh_name) == 0) return (tp);
         tp = (Shtable_t *)((char *)tp + size);
     }
