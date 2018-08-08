@@ -201,7 +201,6 @@ static struct argnod *r_arg(Shell_t *shp) {
         }
         if (--l > 0) {
             sfread(infile, ap->argval, (size_t)l);
-            ccmaps(ap->argval, l, CC_ASCII, CC_NATIVE);
         }
         ap->argval[l] = 0;
         ap->argchn.cp = 0;
@@ -353,7 +352,6 @@ static char *r_string(Stk_t *stkp) {
     ptr = stkalloc(stkp, (unsigned)l);
     if (--l > 0) {
         if (sfread(in, ptr, (size_t)l) != (size_t)l) return (NULL);
-        ccmaps(ptr, l, CC_ASCII, CC_NATIVE);
     }
     ptr[l] = 0;
     return ptr;

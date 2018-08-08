@@ -191,7 +191,6 @@
 #mesondefine _lib_spawnvex
 #mesondefine _lib_statvfs
 #mesondefine _lib_statvfs64
-#mesondefine _lib_stracmp
 #mesondefine _lib_strlcat
 #mesondefine _lib_strsignal
 #mesondefine _lib_sync

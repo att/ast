@@ -1,6 +1,6 @@
 libast_files += [
     'string/base64.c', 'string/ccmap.c', 'string/ccmapid.c',
-    'string/ccnative.c', 'string/chresc.c', 'string/chrtoi.c',
+    'string/chresc.c', 'string/chrtoi.c',
     'string/fmtbase.c', 'string/fmtbuf.c', 'string/fmtclock.c',
     'string/fmtelapsed.c', 'string/fmterror.c',
     'string/fmtesc.c', 'string/fmtfmt.c',
@@ -11,7 +11,7 @@ libast_files += [
     'string/fmtsignal.c', 'string/fmttime.c', 'string/fmttmx.c',
     'string/fmttv.c', 'string/fmtuid.c', 'string/fmtversion.c',
     'string/memdup.c', 'string/modedata.c', 'string/modei.c',
-    'string/modex.c', 'string/qp.c', 'string/stracmp.c',
+    'string/modex.c', 'string/qp.c',
     'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',
     'string/streval.c', 'string/strexpr.c', 'string/strgid.c',
     'string/strlcat.c', 'string/strlcpy.c', 'string/strlook.c',
