@@ -1,3 +1,3 @@
 libast_files += [
-    'comp/iconv.c', 'comp/setlocale.c'
+    'comp/setlocale.c'
 ]

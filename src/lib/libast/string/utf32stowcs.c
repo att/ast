@@ -27,6 +27,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <iconv.h>
 #include <langinfo.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -35,7 +36,6 @@
 
 #include "ast.h"
 #include "ast_ccode.h"
-#include "ast_iconv.h"
 
 ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
     size_t i;

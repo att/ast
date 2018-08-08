@@ -25,6 +25,7 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
+#include <iconv.h>
 #include <langinfo.h>
 #include <locale.h>
 #include <stdbool.h>
@@ -34,7 +35,6 @@
 #include <wctype.h>
 
 #include "ast.h"
-#include "ast_iconv.h"
 
 #undef setlocale
 #undef mbsrtowcs
