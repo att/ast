@@ -931,7 +931,7 @@ Shbltin_f sh_getlib(Shell_t *shp, char *sym, Pathcomp_t *pp) {
 // Add change or list built-ins. Adding builtins requires dlopen() interface.
 //
 int b_builtin(int argc, char *argv[], Shbltin_t *context) {
-    char *arg = 0, *name;
+    char *arg = NULL, *name;
     int n, r = 0, flag = 0;
     Namval_t *np = NULL;
     void *delete = NULL;
@@ -939,7 +939,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     Shbltin_f addr;
     Stk_t *stkp;
     char *errmsg;
-    void *library = 0;
+    void *library = NULL;
 #ifdef SH_PLUGIN_VERSION
     unsigned long ver;
     int list = 0;
@@ -1051,7 +1051,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         sfwrite(stkp, "b_", 2);
         sfputr(stkp, name, 0);
         errmsg = 0;
-        addr = 0;
+        addr = NULL;
         if (delete || nlib) {
             for (n = (nlib ? nlib : delete ? 1 : 0); --n >= 0;) {
                 if (!delete && !liblist[n].dll) continue;
@@ -1068,12 +1068,16 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 }
             }
         }
-        if (!addr && (np = nv_search(arg, context->shp->bltin_tree, 0))) {
-            if (nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
-            addr = (Shbltin_f)np->nvalue.bfp;
+        if (!addr) {
+            np = nv_search(arg, context->shp->bltin_tree, 0);
+            if (np) {
+                if (nv_isattr(np, BLT_SPC)) errmsg = "restricted name";
+                addr = (Shbltin_f)np->nvalue.bfp;
+            }
         }
-        if (!delete && !addr && !(np = sh_addbuiltin(tdata.sh, arg, (Shbltin_f)0, 0))) {
-            errmsg = "not found";
+        if (!(delete || addr)) {
+            np = sh_addbuiltin(tdata.sh, arg, NULL, 0);
+            if (!np) errmsg = "not found";
         }
         if (errmsg) {
             errormsg(SH_DICT, ERROR_exit(0), "%s: %s", *argv, errmsg);
