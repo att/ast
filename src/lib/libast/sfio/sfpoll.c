@@ -148,7 +148,7 @@ int sfpoll(Sfio_t **fa, int n, int tm) {
             }
         }
 
-        free((void *)fds);
+        free(fds);
     }
 
     if (np < 0 && c > 0) {
@@ -225,6 +225,6 @@ report:
         r += 1;
     }
 
-    free((void *)status);
+    free(status);
     return r ? r : np < 0 ? -1 : 0;
 }

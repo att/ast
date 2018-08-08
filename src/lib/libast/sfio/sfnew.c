@@ -59,7 +59,7 @@ Sfio_t *sfnew(Sfio_t *oldf, void *buf, size_t size, int file, int flags) {
                 return NULL;
 
             if (f->data && ((flags & SF_STRING) || size != (size_t)SF_UNBOUND)) {
-                if (sflags & SF_MALLOC) free((void *)f->data);
+                if (sflags & SF_MALLOC) free(f->data);
                 f->data = NULL;
             }
             if (!f->data) sflags &= ~SF_MALLOC;

@@ -327,7 +327,7 @@ void hist_close(History_t *hp) {
         if (hp->tty) free(hp->tty);
         sfclose(hp->auditfp);
     }
-    free((char *)hp);
+    free(hp);
     hist_ptr = 0;
     shgd->hist_ptr = 0;
 }

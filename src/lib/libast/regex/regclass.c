@@ -184,7 +184,7 @@ regclass_t regclass(const char *s, char **e) {
         if (!(cp = xp)) return 0;
         cp->size = 0;
         if (!streq(cp->name, s)) {
-            free((char *)cp->name);
+            free((void *)cp->name);
             cp->name = 0;
         }
     }
@@ -194,7 +194,7 @@ regclass_t regclass(const char *s, char **e) {
     }
     /* mvs.390 needs the (char*) cast -- barf */
     if (!(cp->wtype = wctype((char *)cp->name))) {
-        free((char *)cp->name);
+        free((void *)cp->name);
         cp->name = 0;
         return 0;
     }

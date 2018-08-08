@@ -306,7 +306,7 @@ static_fn int whence(Shell_t *shp, char **argv, int flags) {
                     pp = 0;
                 }
                 if (tofree) {
-                    free((char *)cp);
+                    free((void *)cp);
                     tofree = 0;
                 }
             } else if (aflag <= 1) {

@@ -181,11 +181,11 @@ char *hashlook(Hash_table_t *tab, const char *name, long flags, const char *valu
                                     (*tab->root->local->region)(tab->root->local->handle,
                                                                 (char *)name, 0, 0);
                                 else
-                                    free((char *)name);
+                                    free((void *)name);
                             }
                         }
                     }
-                    return ((char *)value);
+                    return (char *)value;
 
                 case HASH_RENAME:
                     if (tab != top || tab->frozen || (b->hash & (HASH_KEEP | HASH_OPAQUED)) ||
@@ -225,7 +225,7 @@ char *hashlook(Hash_table_t *tab, const char *name, long flags, const char *valu
                             (*tab->root->local->region)(tab->root->local->handle, (char *)name, 0,
                                                         0);
                         else
-                            free((char *)name);
+                            free((void *)name);
                     }
                     tab->buckets--;
                     tab->table[n] = b->next;

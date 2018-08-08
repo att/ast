@@ -3404,7 +3404,7 @@ int sh_funscope_20120720(Shell_t *shp, int argn, char *argv[], int (*fun)(void *
             }
         }
         memcpy(shp->st.trapcom, savsig, nsig * sizeof(char *));
-        free((void *)savsig);
+        free(savsig);
     }
     shp->trapnote = 0;
     shp->options = options;

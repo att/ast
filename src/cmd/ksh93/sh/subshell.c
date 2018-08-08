@@ -348,7 +348,7 @@ static_fn void nv_restore(struct subshell *sp) {
         } else {
             mp->nvalue.cp = np->nvalue.cp;
         }
-        if (nofree && np->nvfun && !np->nvfun->nofree) free((char *)np->nvfun);
+        if (nofree && np->nvfun && !np->nvfun->nofree) free(np->nvfun);
         np->nvfun = 0;
         if (nv_isattr(mp, NV_EXPORT)) {
             char *name = nv_name(mp);

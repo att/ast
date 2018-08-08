@@ -86,7 +86,7 @@ static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
             f->file = -1;
             while (sysremovef(ff->name) < 0 && errno == EINTR) errno = 0;
 
-            free((void *)ff);
+            free(ff);
         }
         (void)vtmtxunlock(_Sfmutex);
     }
@@ -200,7 +200,7 @@ static int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
         if (!(savf.flags & SF_MALLOC)) (void)sfsetbuf(f, (void *)savf.data, savf.size);
         if (savf.extent > 0) (void)sfwrite(f, (void *)savf.data, (size_t)savf.extent);
         (void)sfseek(f, (Sfoff_t)(savf.next - savf.data), SEEK_SET);
-        if ((savf.flags & SF_MALLOC)) free((void *)savf.data);
+        if ((savf.flags & SF_MALLOC)) free(savf.data);
     }
 
     /* announce change of status */

@@ -449,7 +449,7 @@ setbuf:
     f->flags = (f->flags & ~SF_MALLOC) | sf_malloc;
 
     if (obuf && (obuf != f->data) && (osize > 0) && (oflags & SF_MALLOC)) {
-        free((void *)obuf);
+        free(obuf);
         obuf = NULL;
     }
 
