@@ -925,7 +925,8 @@ void path_exec(Shell_t *shp, const char *arg0, char *argv[], struct argnod *loca
                 opath = arg0;
             }
             path_spawn(shp, opath, argv, envp, libpath, 0);
-            if ((shp->path_err != ENOENT) && (shp->path_err != EACCES) && (shp->path_err != EISDIR)) {
+            if ((shp->path_err != ENOENT) && (shp->path_err != EACCES) &&
+                (shp->path_err != EISDIR)) {
                 // An executable command was found, but failed to execute it
                 errormsg(SH_DICT, ERROR_system(ERROR_NOEXEC), e_exec, arg0);
             } else if (shp->path_err == EACCES) {

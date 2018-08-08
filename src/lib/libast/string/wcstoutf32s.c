@@ -90,8 +90,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
         inbuf = inbuf_start;
         outbuf = outbuf_start;
         (void)iconv(ast.mb_wc2uc, NULL, NULL, NULL, NULL);
-        if ((res = iconv(ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >=
-            0) {
+        if ((res = iconv(ast.mb_wc2uc, &inbuf, &inbytesleft, &outbuf, &outbytesleft)) >= 0) {
             const char *s;
 
             for (s = outbuf_start, i = 0; i < n && s < (const char *)outbuf; i++)

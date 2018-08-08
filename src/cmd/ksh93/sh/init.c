@@ -385,8 +385,7 @@ static_fn void put_lang(Namval_t *np, const void *val, int flags, Namfun_t *fp) 
         type = LC_NUMERIC;
     } else if (name == (LANGNOD)->nvname && (!(name = nv_getval(LCALLNOD)) || !*name)) {
         type = LC_ALL;
-    }
-    else {
+    } else {
         type = -1;
     }
 

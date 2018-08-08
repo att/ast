@@ -48,5 +48,5 @@ char *sh_lexstates[ST_NONE] = {0};
 // `sh_addbuiltin()` function. It should be one of these two values, NULL, or a `Namfun_t*`.
 static int _builtin_delete;
 static int _builtin_disable;
-void * const builtin_delete = &_builtin_delete;
-void * const builtin_disable = &_builtin_disable;
+void *const builtin_delete = &_builtin_delete;
+void *const builtin_disable = &_builtin_disable;

@@ -469,7 +469,7 @@ static void native_lc_time() {
 
 #else
 
-#define native_lc_time()                                   \
+#define native_lc_time()                                          \
     ((tmlocale_data = (void *)(tm_info.format = tm_data.format)), \
      (tm_info.deformat = tm_info.format[TM_DEFAULT]))
 

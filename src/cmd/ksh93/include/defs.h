@@ -304,8 +304,8 @@ extern int sh_strchr(const char *, const char *, size_t);
 
 // These two magic pointers are used to distinguish the purpose of the `extra` parameter of the
 // `sh_addbuiltin()` function. It should be one of these two values, NULL, or a `Namfun_t*`.
-extern void * const builtin_delete;
-extern void * const builtin_disable;
+extern void *const builtin_delete;
+extern void *const builtin_disable;
 
 #ifndef ERROR_dictionary
 #define ERROR_dictionary(s) (s)

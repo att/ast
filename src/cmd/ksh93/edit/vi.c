@@ -680,8 +680,8 @@ static int cntlmode(Vi_t *vp) {
             case 'v': {
                 if (vp->repeat_set == 0) goto vcommand;
             }
-#endif  // KSHELL
-        // FALLTHRU
+#endif                   // KSHELL
+                         // FALLTHRU
             case 'G': {  // goto command repeat
                 if (vp->repeat_set == 0) vp->repeat = histmin + 1;
                 if (vp->repeat <= histmin || vp->repeat > histmax) {

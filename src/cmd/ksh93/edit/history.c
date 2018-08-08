@@ -992,7 +992,6 @@ static int hist_exceptf(Sfio_t *fp, int type, Sfdisc_t *handle)
     return 0;
 
 fail:
-    errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno,
-        hp->histname);
+    errormsg(SH_DICT, 2, "History file write error-%d %s: file unrecoverable", errno, hp->histname);
     return -1;
 }

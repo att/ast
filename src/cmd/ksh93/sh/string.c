@@ -336,9 +336,9 @@ char *sh_fmtstr(const char *string, int quote) {
             switch (c) {
                 // Escape character
                 case ('\033'): {
-                        c = 'E';
-                        break;
-                    }
+                    c = 'E';
+                    break;
+                }
                 case '\n': {
                     c = 'n';
                     break;
