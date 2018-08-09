@@ -171,10 +171,6 @@ static int printchar(int c) {
 #define ECHOMODE 3
 #define SYSERR -1
 
-#ifdef RT
-#define VENIX 1
-#endif  // RT
-
 #if KSHELL
 static int keytrap(Edit_t *, char *, int, int, int);
 #else   // KSHELL
@@ -278,7 +274,7 @@ int tty_raw(int fd, int echomode) {
         return echo ? 0 : -1;
     }
     if (tty_get(fd, &ttyparm) == SYSERR) return -1;
-#if L_MASK || VENIX
+#if L_MASK
     if (ttyparm.sg_flags & LCASE) return -1;
     if (!(ttyparm.sg_flags & ECHO)) {
         if (!echomode) return -1;
@@ -298,7 +294,7 @@ int tty_raw(int fd, int echomode) {
     ep->e_lnext = cntl('V');
     if (tty_set(fd, TCSADRAIN, &nttyparm) == SYSERR) return -1;
     ep->e_ttyspeed = (ttyparm.sg_ospeed >= B1200 ? FAST : SLOW);
-#else  // L_MASK || VENIX
+#else  // L_MASK
     if (!(ttyparm.c_lflag & ECHO)) {
         if (!echomode) return -1;
         echo = 0;
@@ -356,7 +352,7 @@ int tty_raw(int fd, int echomode) {
     ep->e_kill = ttyparm.c_cc[VKILL];
     if (tty_set(fd, TCSADRAIN, &nttyparm) == SYSERR) return -1;
     ep->e_ttyspeed = (cfgetospeed(&ttyparm) >= B1200 ? FAST : SLOW);
-#endif  // L_MASK || VENIX
+#endif  // L_MASK
     ep->e_raw = (echomode ? ECHOMODE : RAWMODE);
     return 0;
 }
@@ -410,9 +406,6 @@ void ed_crlf(Edit_t *ep) {
 #ifdef u370
     ed_putchar(ep, '\r');
 #endif  // u370
-#ifdef VENIX
-    ed_putchar(ep, '\r');
-#endif  // VENIX
     ed_putchar(ep, '\n');
     ed_flush(ep);
 }
