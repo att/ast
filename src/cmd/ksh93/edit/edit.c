@@ -334,7 +334,6 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
     char *last, *prev;
     char *ppmax;
     int myquote = 0;
-    size_t n;
     int qlen = 1, qwid;
     char inquote = 0;
 
@@ -389,8 +388,10 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                     int skip = 0;
                     ep->e_crlf = 0;
                     if (pp < ppmax) *pp++ = c;
-                    for (n = 1; *last; n++) {
-                        c = *last++;
+                    for (int n = 1; ; n++, last++) {
+                        c = *last;
+                        if (!c) break;
+
                         if (pp < ppmax) *pp++ = c;
                         if (c == '\a' || c == ESC || c == '\r') break;
                         if (skip || (c >= '0' && c <= '9')) {
@@ -402,10 +403,12 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                         } else if (n > 1 && c == ';') {
                             skip = 1;
                         } else if (n > 2 || (c != '[' && c != ']' && c != '(')) {
+                            // TODO: Figure out why this increment is needed and document it.
+                            // See issue #774.
+                            if (c != ESC && c != '\r') last++;
                             break;
                         }
                     }
-                    if (c == 0 || c == ESC || c == '\r') last--;
                     qlen += (last - prev);
                     break;
                 }
@@ -502,7 +505,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
         ep->e_wsize = MAXLINE - (ep->e_plen + 1);
     }
     if (ep->e_default && (pp = nv_getval(ep->e_default))) {
-        n = strlen(pp);
+        size_t n = strlen(pp);
         if (n > LOOKAHEAD) n = LOOKAHEAD;
         ep->e_lookahead = n;
         while (n-- > 0) ep->e_lbuf[n] = *pp++;
