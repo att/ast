@@ -150,12 +150,12 @@ then
                 -Xiwyu --mapping_file="${mapping_file}" \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,'
+                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,' -e 's,^\.\./,,'
         else # hope for the best
             include-what-you-use -Xiwyu --transitive_includes_only \
                 --std=c99 -Wno-expansion-to-defined -Wno-nullability-completeness \
                 "${lint_args[@]}" $(../scripts/extract_flags "${project_file}" "${c_file}") \
-                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,'
+                "${c_file}" 2>&1 | sed -e 's,^(\.\./,(,' -e 's,^\.\./,,'
         fi
     done
 fi
