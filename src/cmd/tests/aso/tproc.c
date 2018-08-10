@@ -61,6 +61,7 @@ tmain() {
 
     tchild();
 
+    // cppcheck-suppress leakReturnValNotUsed
     Lock = (unsigned int *)tshared(3 * sizeof(unsigned int)); /* this is used by asolock() */
     Count = Lock + 1;   /* this is the shared counter to be updated asynchronously */
     Active = Count + 1; /* this counter sets all processes to work at the same time */

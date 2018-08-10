@@ -59,70 +59,21 @@ static int Tstline;
 static int Tsttimeout = TIMEOUT;
 static char Tstfile[256][256];
 
-#ifdef __LINE__
-#define terror (Tstline = __LINE__), tsterror
-#else
-#define terror (Tstline = -1), tsterror
-#endif
-
-#ifdef __LINE__
-#define tinfo (Tstline = __LINE__), tstinfo
-#else
-#define tinfo (Tstline = -1), tstinfo
-#endif
-
-#ifdef __LINE__
-#define twarn (Tstline = __LINE__), tstwarn
-#else
-#define twarn (Tstline = -1), tstwarn
-#endif
-
-#ifdef __LINE__
-#define tpause (Tstline = __LINE__), tstpause
-#else
-#define tpause (Tstline = -1), tstpause
-#endif
-
-#ifdef __LINE__
+#define terror ((Tstline = __LINE__), tsterror)
+#define tinfo ((Tstline = __LINE__), tstinfo)
+#define twarn ((Tstline = __LINE__), tstwarn)
+#define tpause ((Tstline = __LINE__), tstpause)
 #define twait(p, n) ((Tstline = __LINE__), tstwait(p, n))
-#else
-#define twait(p, n) ((Tstline = -1), tstwait(p, n))
-#endif
-
-#ifdef __LINE__
-#define tsuccess (Tstline = __LINE__), tstsuccess
-#else
-#define tsuccess (Tstline = -1), tstsuccess
-#endif
-
-#ifdef __LINE__
+#define tsuccess ((Tstline = __LINE__), tstsuccess)
 #define tchild() ((Tstline = __LINE__), tstchild(argv))
-#else
-#define tchild() ((Tstline = -1), tstchild(argv))
-#endif
-
-#ifdef __LINE__
 #define topts() ((Tstline = __LINE__), tstopts(argv))
-#else
-#define topts() ((Tstline = -1), tstopts(argv))
-#endif
-
-#ifdef __LINE__
 #define tshared(n) ((Tstline = __LINE__), tstshared(n))
-#else
-#define tshared(n) ((Tstline = -1), tstshared(n))
-#endif
+#define tmesg ((Tstline = __LINE__), tstwarn)
 
 #define tresource(a, b)
 
-#define tmesg (Tstline = -1), tstwarn
-
 #ifdef DEBUG
-#ifdef __LINE__
 #define TSTDEBUG(x) (Tstline = __LINE__), tstwarn x
-#else
-#define TSTDEBUG(x) (Tstline = -1), tstwarn x
-#endif
 #else
 #define TSTDEBUG(x)
 #endif
@@ -168,7 +119,9 @@ static void tstputmesg(int line, char *form, va_list args) {
     for (n = 0; n < sizeof(buf); ++n) buf[n] = 0;
 
     s = buf;
+#if _SFIO_H
     n = 0;
+#endif
     if (line >= 0) {
 #if _SFIO_H
         sfsprintf(s, sizeof(buf), "\tLine=%d: ", line);

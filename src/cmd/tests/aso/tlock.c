@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 #include "aso.h"
+#include "ast_assert.h"
 #include "terror.h"
 
 /* Test concurrency locking based on Atomic Scalar Operations
@@ -143,9 +144,11 @@ tmain() {
     tchild();
 
     Nproc =
+        // cppcheck-suppress leakReturnValNotUsed
         (unsigned int *)tshared(sizeof(*Nproc) + (N_PROC + 1) * sizeof(pid_t) + sizeof(*Done) +
                                 N_SLOT * sizeof(unsigned char) + N_SLOT * sizeof(unsigned short) +
                                 N_SLOT * sizeof(unsigned int));
+    assert(Nproc);
     Pid = (pid_t *)(Nproc + 1);
     Done = (unsigned int *)(Pid + (N_PROC + 1) * sizeof(pid_t));
     Lcki = (unsigned int *)(Done + 1);
