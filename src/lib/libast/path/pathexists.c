@@ -37,7 +37,6 @@
 #include <sys/stat.h>
 
 #include "ast.h"
-#include "sfio.h"
 
 typedef struct Tree_s {
     struct Tree_s *next;

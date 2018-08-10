@@ -26,8 +26,6 @@
 #include "config_ast.h"  // IWYU pragma: keep
 
 #include <errno.h>
-#include <limits.h>
-#include <locale.h>
 #include <nl_types.h>
 #include <stddef.h>
 #include <stdint.h>

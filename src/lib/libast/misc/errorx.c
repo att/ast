@@ -21,6 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <locale.h>
+
 #include "ast.h"
 #include "error.h"
 

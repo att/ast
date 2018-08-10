@@ -28,7 +28,6 @@
 
 #include <ctype.h>
 #include <limits.h>
-#include <locale.h>
 #include <string.h>
 #include <sys/types.h>
 
