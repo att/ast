@@ -59,16 +59,17 @@ static int Tstline;
 static int Tsttimeout = TIMEOUT;
 static char Tstfile[256][256];
 
-#define terror ((Tstline = __LINE__), tsterror)
-#define tinfo ((Tstline = __LINE__), tstinfo)
-#define twarn ((Tstline = __LINE__), tstwarn)
-#define tpause ((Tstline = __LINE__), tstpause)
-#define twait(p, n) ((Tstline = __LINE__), tstwait(p, n))
-#define tsuccess ((Tstline = __LINE__), tstsuccess)
+#define terror (Tstline = __LINE__), tsterror
+#define tinfo (Tstline = __LINE__), tstinfo
+#define tmesg (Tstline = __LINE__), tstwarn
+#define tpause (Tstline = __LINE__), tstpause
+#define tsuccess (Tstline = __LINE__), tstsuccess
+#define twarn (Tstline = __LINE__), tstwarn
+
 #define tchild() ((Tstline = __LINE__), tstchild(argv))
 #define topts() ((Tstline = __LINE__), tstopts(argv))
 #define tshared(n) ((Tstline = __LINE__), tstshared(n))
-#define tmesg ((Tstline = __LINE__), tstwarn)
+#define twait(p, n) ((Tstline = __LINE__), tstwait(p, n))
 
 #define tresource(a, b)
 
@@ -145,7 +146,7 @@ static void tstputmesg(int line, char *form, va_list args) {
     }
 }
 
-void tsterror(char *form, ...) {
+__attribute__((noreturn)) void tsterror(char *form, ...) {
     char failform[1024];
 
     va_list args;
