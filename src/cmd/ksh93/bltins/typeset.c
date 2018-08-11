@@ -934,7 +934,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
     char *arg = NULL, *name;
     int n, r = 0, flag = 0;
     Namval_t *np = NULL;
-    void *delete = NULL;
+    void *disable = NULL;
     struct tdata tdata;
     Shbltin_f addr;
     Stk_t *stkp;
@@ -959,11 +959,11 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             }
             case 'n': {
                 flag = BLT_DISABLE;
-                delete = builtin_disable;
+                disable = builtin_disable;
                 break;
             }
             case 'd': {
-                delete = builtin_delete;
+                disable = builtin_delete;
                 break;
             }
             case 'f': {
@@ -999,7 +999,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         }
         if (tdata.sh->subshell && !tdata.sh->subshare) sh_subfork();
     }
-    if (tdata.prefix && delete == builtin_disable) {
+    if (tdata.prefix && disable == builtin_disable) {
         if (*tdata.prefix == 'e') {
             tdata.prefix = "enable -n";
         } else {
@@ -1028,7 +1028,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
 #endif  // SH_PLUGIN_VERSION
         sh_addlib(tdata.sh, library, arg, NULL);
     } else {
-        if (*argv == 0 && delete != builtin_delete) {
+        if (*argv == 0 && disable != builtin_delete) {
             if (tdata.prefix) {
                 for (n = 0; n < nlib; n++) {
                     sfprintf(sfstdout, "%s -f %s\n", tdata.prefix, liblist[n].lib);
@@ -1052,13 +1052,13 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
         sfputr(stkp, name, 0);
         errmsg = 0;
         addr = NULL;
-        if (delete || nlib) {
-            for (n = (nlib ? nlib : delete ? 1 : 0); --n >= 0;) {
-                if (!delete && !liblist[n].dll) continue;
-                if (delete || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag)))) {
-                    np = sh_addbuiltin(tdata.sh, arg, addr, delete);
+        if (disable || nlib) {
+            for (n = (nlib ? nlib : disable ? 1 : 0); --n >= 0;) {
+                if (!disable && !liblist[n].dll) continue;
+                if (disable || (addr = (Shbltin_f)dlllook(liblist[n].dll, stkptr(stkp, flag)))) {
+                    np = sh_addbuiltin(tdata.sh, arg, addr, disable);
                     if (np) {
-                        if (delete || nv_isattr(np, BLT_SPC)) {
+                        if (disable || nv_isattr(np, BLT_SPC)) {
                             errmsg = "restricted name";
                         } else {
                             nv_onattr(np, liblist[n].attr);
@@ -1075,7 +1075,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                 addr = (Shbltin_f)np->nvalue.bfp;
             }
         }
-        if (!(delete || addr)) {
+        if (!disable && !addr) {
             np = sh_addbuiltin(tdata.sh, arg, NULL, 0);
             if (!np) errmsg = "not found";
         }
@@ -1083,7 +1083,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
             errormsg(SH_DICT, ERROR_exit(0), "%s: %s", *argv, errmsg);
             r = 1;
         }
-        if (!delete && np) nv_offattr(np, BLT_DISABLE);
+        if (!disable && np) nv_offattr(np, BLT_DISABLE);
         stkseek(stkp, flag);
         argv++;
     }
