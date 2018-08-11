@@ -7,5 +7,4 @@ libast_files += [
     'hash/hashscan.c',
     'hash/hashsize.c',
     'hash/hashview.c',
-    'hash/hashwalk.c',
 ]

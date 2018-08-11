@@ -444,9 +444,7 @@ Returns a pointer to the most recent hash bucket for
 .LR tab .
 The value is set by
 .LR hashlook() ,
-.L hashscan()
-and
-.LR hashwalk() .
+.L hashscan() .
 .TP
 .L "char* hashput(Hash_table_t* tab, char* name, char* value)"
 Set the value of the key
@@ -471,41 +469,6 @@ or
 is used.
 This eliminates a re-hash and re-lookup of
 .LR name .
-.TP
-.L "int hashwalk(Hash_table_t* tab, int flags, (int(*)()) walker, char* handle)"
-The function
-.L walker
-is applied to each entry (not covered by a scope starting at
-.LR tab )
-in the hash table
-.LR tab .
-If
-.L flags
-is
-.L HASH_NOSCOPE
-then only the top level hash table is used, otherwise the walk includes
-all scope covered tables.
-.L walker
-is called with
-.L char*
-.I key
-as the first argument,
-.L char*
-.I value
-as the second argument, and
-.L char*
-.I handle
-as the third argument.
-.I handle
-may be
-.LR 0 .
-The walk terminates after the last entry or when
-.L walker
-returns a negative value.
-The return value of the last call to
-.L walker
-is returned.
-Only one walk may be active within a collection of scoped tables.
 .TP
 .L "Hash_position_t* hashscan(Hash_table_t* tab, int flags)"
 Returns a
