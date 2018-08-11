@@ -156,7 +156,6 @@ extern time_t tmdate(const char *, char **, time_t *);
 extern int tmequiv(Tm_t *);
 extern Tm_t *tmfix(Tm_t *);
 extern char *tmfmt(char *, size_t, const char *, time_t *);
-extern char *tmform(char *, const char *, time_t *);
 extern int tmgoff(const char *, char **, int);
 extern void tminit(Tm_zone_t *);
 extern time_t tmleap(time_t *);
