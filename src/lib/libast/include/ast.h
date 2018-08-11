@@ -232,7 +232,6 @@ extern int eaccess(const char *, int);
 extern char *fmtbase(intmax_t, int, int);
 #define fmtbasell(a, b, c) fmtbase(a, b, c) /* until 2014-01-01 */
 extern char *fmtbuf(size_t);
-extern char *fmtclock(Sfulong_t);
 extern char *fmtelapsed(unsigned long, int);
 extern char *fmterror(int);
 extern char *fmtesc(const char *);
