@@ -44,7 +44,6 @@ chr \- character constant conversion routines
 #include <ast.h>
 
 int          chresc(const char* \fIs\fP, char** \fIe\fP);
-int          chrtoi(const char* \fIs\fP);
 .EE
 .SH DESCRIPTION
 .L chresc
@@ -62,22 +61,6 @@ on return.
 is not modified when the end of
 .I s
 is reached.
-.PP
-.L chrtoi
-converts the 0-terminated string
-.I s
-to an
-.I int
-and returns the value.
-The characters in
-.I s
-are converted in order from the left and shifted into the
-.I int
-value until up to the number of characters in an
-.I int
-is reached.
-This operation is inherently machine-dependent,
-but at least its defined in one place.
 .PP
 The following 
 .B \e

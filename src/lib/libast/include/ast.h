@@ -225,7 +225,6 @@ extern ssize_t base64encode(const void *, size_t, void **, void *, size_t, void 
 extern ssize_t base64decode(const void *, size_t, void **, void *, size_t, void **);
 extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
-extern int chrtoi(const char *);
 extern char *conformance(const char *, size_t);
 extern ssize_t debug_printf(int, const char *, ...);
 extern int eaccess(const char *, int);
