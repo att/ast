@@ -110,9 +110,6 @@
 #define Hashtab_t Hash_table_t
 #define HASHTABLE Hash_table_t
 
-#define vhashalloc hashvalloc
-#define hashvalloc(t, a) hashalloc(t, HASH_va_list, a, 0)
-
 /*
  * the #define's avoid union tags
  */
@@ -182,7 +179,6 @@ struct Hash_table /* hash table information	*/
 #endif
 };
 
-extern Hash_table_t *hashalloc(Hash_table_t *, ...);
 extern void hashdone(Hash_position_t *);
 extern Hash_table_t *hashfree(Hash_table_t *);
 extern Hash_bucket_t *hashnext(Hash_position_t *);

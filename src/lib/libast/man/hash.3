@@ -154,33 +154,6 @@ The current hash bucket pointer.
 .PP
 The routines are:
 .TP
-.L "Hash_table_t* hashalloc(Hash_table_t* ref, int op, ...)"
-Creates a new hash table and returns a pointer to the table.
-.IR malloc (3)
-is used to allocate space for the table.
-.L NULL
-is returned if the table cannot be created.
-.L ref
-is a pointer to a reference hash table that provides
-default values for unspecified information.
-The new hash table and
-.L ref
-share the same root information.
-If
-.L ref
-is
-.L NULL
-then new root information is created for the new table.
-The remaining arguments appear in
-.I op-arg
-pairs, followed by a final
-.L 0
-argument.
-The
-.I op-arg
-pairs are:
-.RS
-.TP
 .L "HASH_alloc, (char(*)()) alloc"
 .L alloc
 is a function that is called to process
