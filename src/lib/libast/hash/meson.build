@@ -9,5 +9,4 @@ libast_files += [
     'hash/hashview.c',
     'hash/hashwalk.c',
     'hash/memhash.c',
-    'hash/memsum.c',
 ]

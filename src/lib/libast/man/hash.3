@@ -600,20 +600,5 @@ bytes using a linear congruent pseudo-random number generator algorithm
 and returns a non-negative
 .L int
 hash value.
-.TP
-.L "long memsum(char* buf, int siz, long sum)"
-Returns a running 31-bit checksum of buffer
-.L buf
-of
-.L siz
-bytes where
-.L sum
-is
-.L 0
-on the first call and
-the return value from a previous
-.L memsum
-call otherwise.
-The checksum value is consistent across all implementations.
 .SH "SEE ALSO"
 sum(1)

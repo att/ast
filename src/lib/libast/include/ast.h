@@ -256,7 +256,6 @@ extern char *fmtuid(int);
 extern char *fmtversion(unsigned long);
 extern void *memdup(const void *, size_t);
 extern unsigned int memhash(const void *, int);
-extern unsigned long memsum(const void *, int, unsigned long);
 extern char *pathaccess(char *, const char *, const char *, const char *, int);
 extern char *pathaccess_20100601(const char *, const char *, const char *, int, char *, size_t);
 extern char *pathbin(void);
