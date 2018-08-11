@@ -307,11 +307,9 @@ extern int stropt(const char *, const void *, int, int (*)(void *, const void *,
 extern int strpcmp(const char *, const char *);
 extern int strperm(const char *, char **, int);
 extern void *strpsearch(const void *, size_t, size_t, const char *, char **);
-extern void *strsearch(const void *, size_t, size_t, Strcmp_context_f, const char *, void *);
 extern void strsort(char **, int, Strcmp_f);
 extern void strsort_r(char **, size_t, Strcmp_context_f, void *);
 extern char *strsubmatch(const char *, const char *, int);
-extern char *strtape(const char *, char **);
 extern long strton(const char *, char **, char *, int);
 extern intmax_t strtonll(const char *, char **, char *, int);
 extern int struniq(char **, int);
