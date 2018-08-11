@@ -306,7 +306,6 @@ extern int stropt(const char *, const void *, int, int (*)(void *, const void *,
                   void *);
 extern int strpcmp(const char *, const char *);
 extern int strperm(const char *, char **, int);
-extern void *strpsearch(const void *, size_t, size_t, const char *, char **);
 extern void strsort(char **, int, Strcmp_f);
 extern void strsort_r(char **, size_t, Strcmp_context_f, void *);
 extern char *strsubmatch(const char *, const char *, int);
