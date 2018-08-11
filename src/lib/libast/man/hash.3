@@ -314,21 +314,6 @@ if
 .L tab
 is not a scope.
 .TP
-.L "char* hashlook(Hash_table_t* tab, char* name, int flags, char* value)"
-Operates on the key
-.L name
-in the hash table
-.L tab
-according to
-.L flags
-and
-.LR value .
-A
-.L Hash_bucket_t
-pointer is returned unless otherwise noted.
-There are three basic lookup operations:
-.RS
-.TP
 .L HASH_CREATE
 .L name
 is entered into the top level scope if it does not already exist.

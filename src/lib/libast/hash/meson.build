@@ -3,6 +3,5 @@ libast_files += [
     'hash/hashdump.c',
     'hash/hashfree.c',
     'hash/hashlast.c',
-    'hash/hashlook.c',
     'hash/hashsize.c',
 ]
