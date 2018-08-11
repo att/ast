@@ -47,8 +47,6 @@ tok \- space separated token stream routines
 .L "void tokclose(void* tok)"
 .sp
 .L "int tokscan(char* string, char** next, const char* format, ...);"
-.sp
-.L "Sfio_t* tokline(const char* input, int flags, int* line);"
 .SH DESCRIPTION
 .L tokopen
 returns a pointer to a space separated token stream on the 0 terminated
@@ -169,49 +167,5 @@ or the data may be
 which represents the
 .L NULL
 string.
-.PP
-.L tokline
-returns an
-.IR sfio (3)
-stream to a file or string that splices
-.I \enewline
-into single lines,
-allows "..." and '...' to quotes to span
-.I newlines
-(done by translating quoted
-.I newline
-to
-.IR carriage-return ;
-.L tokscan
-above converts quoted
-.I carriage-return
-back to 
-.IR newline ),
-and deletes
-.I "# ... newline"
-comments.
-This is done by pushing an
-.I sfio
-discipline onto a string or file stream.
-Seeks are disabled on the resulting stream.
-If
-.L "flags == SF_READ"
-then
-.L input
-is a file name;
-If
-.L "flags == SF_STRING"
-then
-.L input
-is a 0 terminated string;
-otherwise
-.L input
-is an open 
-.L Sfio_t*
-stream.
-If
-.L "line != 0"
-then it points to a line count that is initialized to 0
-and is incremented for each input line.
 .SH "SEE ALSO"
 sfio(3)

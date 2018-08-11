@@ -30,7 +30,6 @@
 
 #include "ast.h"
 
-extern Sfio_t *tokline(const char *, int, int *);
 extern int tokscan(char *, char **, const char *, ...);
 extern char *tokopen(char *, int);
 extern void tokclose(char *);
