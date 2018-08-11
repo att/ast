@@ -275,9 +275,6 @@ extern size_t pathnative(const char *, char *, size_t);
 extern char *pathpath(char *, const char *, const char *, int);
 extern char *pathpath_20100601(const char *, const char *, int, char *, size_t);
 extern size_t pathposix(const char *, char *, size_t);
-extern char *pathprobe(char *, char *, const char *, const char *, const char *, int);
-extern char *pathprobe_20100601(const char *, const char *, const char *, int, char *, size_t,
-                                char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathrepl(char *, const char *, const char *);
 extern char *pathrepl_20100601(char *, size_t, const char *, const char *);
