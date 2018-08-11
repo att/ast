@@ -182,6 +182,5 @@ struct Hash_table /* hash table information	*/
 extern void hashdone(Hash_position_t *);
 extern Hash_table_t *hashfree(Hash_table_t *);
 extern Hash_bucket_t *hashnext(Hash_position_t *);
-extern void hashsize(Hash_table_t *, int);
 
 #endif  // _HASH_H
