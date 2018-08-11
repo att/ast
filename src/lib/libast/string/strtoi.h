@@ -28,7 +28,6 @@
  *
  *	strtol		strtoul		strton
  *	strtoll		strtoull	strtonll
- *	strntol
  *
  * define these macros to instantiate an implementation:
  *

@@ -15,7 +15,7 @@ libast_files += [
     'string/streval.c', 'string/strexpr.c', 'string/strgid.c',
     'string/strlcat.c', 'string/strlcpy.c', 'string/strlook.c',
     'string/strmatch.c',
-    'string/strnpcmp.c', 'string/strntod.c', 'string/strntol.c',
+    'string/strnpcmp.c', 'string/strntod.c',
     'string/stropt.c',
     'string/strperm.c',
     'string/strsort.c',

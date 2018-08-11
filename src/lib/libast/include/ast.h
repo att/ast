@@ -294,7 +294,6 @@ extern void *strlook(const void *, size_t, const char *);
 extern int strmatch(const char *, const char *);
 extern int strnpcmp(const char *, const char *, size_t);
 extern double strntod(const char *, size_t, char **);
-extern long strntol(const char *, size_t, char **, int);
 extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
                   void *);
 extern int strperm(const char *, char **, int);
