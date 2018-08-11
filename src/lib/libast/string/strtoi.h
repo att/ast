@@ -28,7 +28,7 @@
  *
  *	strtol		strtoul		strton
  *	strtoll		strtoull	strtonll
- *	strntol		strnton
+ *	strntol
  *	strntoll
  *
  * define these macros to instantiate an implementation:
