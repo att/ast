@@ -265,7 +265,6 @@ extern char *pathcat(char *, const char *, int, const char *, const char *);
 extern char *pathcat_20100601(const char *, int, const char *, const char *, char *, size_t);
 extern int pathcd(const char *, const char *);
 extern int pathexists(char *, int);
-extern char *pathfind(const char *, const char *, const char *, char *, size_t);
 extern int pathgetlink(const char *, char *, int);
 extern int pathinclude(const char *);
 extern char *pathkey(char *, char *, const char *, const char *, const char *);
