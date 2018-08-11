@@ -40,7 +40,6 @@ typedef struct Tv_s {
 #define tvsetctime(t, s) (ST_CTIME_NSEC_SET(s, (t)->tv_nsec), (s)->st_ctime = (t)->tv_sec)
 
 extern void tvgettime(Tv_t *);
-extern int tvsettime(const Tv_t *);
 extern int tvtouch(const char *, const Tv_t *, const Tv_t *, const Tv_t *, int);
 extern int tvsleep(const Tv_t *, Tv_t *);
 

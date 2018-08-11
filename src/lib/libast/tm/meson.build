@@ -7,5 +7,5 @@ libast_files += [
     'tm/tmxfmt.c', 'tm/tmxgettime.c', 'tm/tmxleap.c',
     'tm/tmxmake.c', 'tm/tmxscan.c', 'tm/tmxsleep.c',
     'tm/tmxtime.c', 'tm/tmzone.c',
-    'tm/tvgettime.c', 'tm/tvsettime.c', 'tm/tvsleep.c', 'tm/tvtouch.c'
+    'tm/tvgettime.c', 'tm/tvsleep.c', 'tm/tvtouch.c'
 ]
