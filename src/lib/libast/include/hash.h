@@ -186,7 +186,6 @@ extern Hash_table_t *hashalloc(Hash_table_t *, ...);
 extern void hashdone(Hash_position_t *);
 extern void hashdump(Hash_table_t *, int);
 extern Hash_table_t *hashfree(Hash_table_t *);
-extern Hash_bucket_t *hashlast(Hash_table_t *);
 extern Hash_bucket_t *hashnext(Hash_position_t *);
 extern void hashsize(Hash_table_t *, int);
 
