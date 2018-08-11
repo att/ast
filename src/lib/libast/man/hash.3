@@ -609,21 +609,6 @@ and returns a non-negative
 .L int
 hash value.
 .TP
-.L "long strsum(char* name, long sum)"
-Returns a running 31-bit checksum of the string
-.L name
-where
-.L sum
-is
-.L 0
-on the first call and
-the return value from a previous
-.L memsum
-or
-.L strsum
-call otherwise.
-The checksum value is consistent across all implementations.
-.TP
 .L "long memsum(char* buf, int siz, long sum)"
 Returns a running 31-bit checksum of buffer
 .L buf
@@ -636,8 +621,6 @@ is
 on the first call and
 the return value from a previous
 .L memsum
-or
-.L strsum
 call otherwise.
 The checksum value is consistent across all implementations.
 .SH "SEE ALSO"

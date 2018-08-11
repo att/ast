@@ -315,7 +315,6 @@ extern void *strsearch(const void *, size_t, size_t, Strcmp_context_f, const cha
 extern void strsort(char **, int, Strcmp_f);
 extern void strsort_r(char **, size_t, Strcmp_context_f, void *);
 extern char *strsubmatch(const char *, const char *, int);
-extern unsigned long strsum(const char *, unsigned long);
 extern char *strtape(const char *, char **);
 extern int strtoip4(const char *, char **, uint32_t *, unsigned char *);
 extern long strton(const char *, char **, char *, int);
