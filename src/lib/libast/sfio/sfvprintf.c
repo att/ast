@@ -33,7 +33,6 @@
 #include "sfhdr.h"
 
 #include "ast.h"
-#include "ast_ccode.h"
 #include "ast_std.h"
 
 /*	The engine for formatting data.

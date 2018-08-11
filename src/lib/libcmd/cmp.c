@@ -38,8 +38,6 @@
 #include <sys/types.h>
 
 #include "ast.h"
-#include "ast_ccode.h"
-#include "ccode.h"
 #include "cmd.h"
 #include "error.h"
 #include "option.h"

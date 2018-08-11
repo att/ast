@@ -35,7 +35,6 @@
 #include <wchar.h>
 
 #include "ast.h"
-#include "ast_ccode.h"
 
 ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
     size_t i;

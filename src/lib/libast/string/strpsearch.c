@@ -28,8 +28,6 @@
 #include <ctype.h>
 #include <stddef.h>
 
-#include "ast_ccode.h"
-
 /*
  * return a pointer to the isalpha() identifier matching
  * name in the CC_ASCII sorted tab of num elements of

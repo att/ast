@@ -45,7 +45,6 @@
 #endif
 
 #include "ast.h"
-#include "ast_ccode.h"
 #include "edit.h"
 #include "fault.h"
 #include "history.h"

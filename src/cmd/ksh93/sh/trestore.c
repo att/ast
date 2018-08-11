@@ -32,8 +32,6 @@
 #include "defs.h"
 
 #include "argnod.h"
-#include "ast_ccode.h"
-#include "ccode.h"
 #include "fault.h"
 #include "name.h"
 #include "sfio.h"

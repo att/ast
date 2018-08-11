@@ -37,8 +37,6 @@
 #include <wchar.h>
 
 #include "ast.h"
-#include "ast_ccode.h"
-#include "ccode.h"
 
 int chrexp(const char *s, char **p, int *m, int flags) {
     const char *t;

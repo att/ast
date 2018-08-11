@@ -401,4 +401,9 @@ extern unsigned long plugin_version(void);
 #undef iswalpha
 #define iswalpha(w) (_ast_info.mb_alpha ? (*_ast_info.mb_alpha)(w) : isalpha(w))
 
+#define CC_bel 0007  // BEL character
+#define CC_esc 0033  // ESC character
+#define CC_sub 0032  // SUB character
+#define CC_vt 0013   // VT character
+
 #endif  // _AST_H

@@ -36,10 +36,8 @@
 #include "defs.h"
 
 #include "ast.h"
-#include "ast_ccode.h"
 #include "ast_float.h"
 #include "builtins.h"
-#include "ccode.h"
 #include "error.h"
 #include "fault.h"
 #include "history.h"

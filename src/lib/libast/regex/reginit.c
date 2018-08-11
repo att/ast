@@ -26,7 +26,7 @@
 
 #include <stdlib.h>
 
-#include "ast_ccode.h"
+#include "ast.h"
 #include "reglib.h"
 
 /*

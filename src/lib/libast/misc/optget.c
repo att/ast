@@ -40,7 +40,6 @@
 #include <unistd.h>
 
 #include "ast.h"
-#include "ast_ccode.h"
 #include "cdt.h"
 #include "error.h"
 #include "option.h"

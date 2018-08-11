@@ -34,7 +34,6 @@
 #include <wctype.h>
 
 #include "ast.h"
-#include "ast_ccode.h"
 
 /*
  * quote string as of length n with qb...qe
