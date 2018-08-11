@@ -238,7 +238,6 @@ extern char *fmterror(int);
 extern char *fmtesc(const char *);
 extern char *fmtesq(const char *, const char *);
 extern char *fmtident(const char *);
-extern char *fmtip4(uint32_t, int);
 extern char *fmtfmt(const char *);
 extern char *fmtgid(int);
 extern char *fmtint(intmax_t, int);
