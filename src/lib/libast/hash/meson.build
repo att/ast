@@ -11,5 +11,4 @@ libast_files += [
     'hash/memhash.c',
     'hash/memsum.c',
     'hash/strhash.c',
-    'hash/strkey.c',
 ]
