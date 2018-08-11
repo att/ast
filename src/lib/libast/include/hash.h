@@ -191,6 +191,5 @@ extern char *hashlook(Hash_table_t *, const char *, long, const char *);
 extern Hash_bucket_t *hashnext(Hash_position_t *);
 extern Hash_position_t *hashscan(Hash_table_t *, int);
 extern void hashsize(Hash_table_t *, int);
-extern Hash_table_t *hashview(Hash_table_t *, Hash_table_t *);
 
 #endif  // _HASH_H
