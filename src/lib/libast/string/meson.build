@@ -8,7 +8,7 @@ libast_files += [
     'string/fmtmatch.c', 'string/fmtmode.c', 'string/fmtnum.c',
     'string/fmtperm.c', 'string/fmtre.c', 'string/fmtscale.c',
     'string/fmtsignal.c', 'string/fmttime.c', 'string/fmttmx.c',
-    'string/fmttv.c', 'string/fmtuid.c',
+    'string/fmtuid.c',
     'string/memdup.c', 'string/modedata.c', 'string/modei.c',
     'string/modex.c',
     'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',

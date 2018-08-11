@@ -43,6 +43,4 @@ extern void tvgettime(Tv_t *);
 extern int tvtouch(const char *, const Tv_t *, const Tv_t *, const Tv_t *, int);
 extern int tvsleep(const Tv_t *, Tv_t *);
 
-extern char *fmttv(const char *, Tv_t *);
-
 #endif  // _TV_H
