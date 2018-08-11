@@ -301,7 +301,6 @@ extern long strnton(const char *, size_t, char **, char *, int);
 extern unsigned long strntoul(const char *, size_t, char **, int);
 extern intmax_t strntonll(const char *, size_t, char **, char *, int);
 extern uintmax_t strntoull(const char *, size_t, char **, int);
-extern int strnvcmp(const char *, const char *, size_t);
 extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
                   void *);
 extern int strperm(const char *, char **, int);

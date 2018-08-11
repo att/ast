@@ -18,7 +18,7 @@ libast_files += [
     'string/strnpcmp.c', 'string/strntod.c', 'string/strntol.c',
     'string/strntold.c', 'string/strntoll.c', 'string/strnton.c',
     'string/strntonll.c', 'string/strntoul.c', 'string/strntoull.c',
-    'string/strnvcmp.c', 'string/stropt.c',
+    'string/stropt.c',
     'string/strperm.c',
     'string/strsort.c',
     'string/strton.c', 'string/strtonll.c',
