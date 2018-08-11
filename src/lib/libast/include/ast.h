@@ -293,7 +293,6 @@ extern int strgid(const char *);
 extern int strgrpmatch(const char *, const char *, int *, int, int);
 extern int strgrpmatch_20120528(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
-extern unsigned int strhash(const char *);
 extern void *strlook(const void *, size_t, const char *);
 extern int strmatch(const char *, const char *);
 extern int strnpcmp(const char *, const char *, size_t);
