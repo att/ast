@@ -244,7 +244,6 @@ extern char *fmtint(intmax_t, int);
 extern char *fmtmatch(const char *);
 extern char *fmtmode(int, int);
 extern char *fmtnesq(const char *, const char *, size_t);
-extern char *fmtnum(unsigned long, int);
 extern char *fmtperm(int);
 extern char *fmtquote(const char *, const char *, const char *, size_t, int);
 extern char *fmtre(const char *);
