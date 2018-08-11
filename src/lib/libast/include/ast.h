@@ -304,7 +304,6 @@ extern uintmax_t strntoull(const char *, size_t, char **, int);
 extern int strnvcmp(const char *, const char *, size_t);
 extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
                   void *);
-extern int strpcmp(const char *, const char *);
 extern int strperm(const char *, char **, int);
 extern void strsort(char **, int, Strcmp_f);
 extern void strsort_r(char **, size_t, Strcmp_context_f, void *);
