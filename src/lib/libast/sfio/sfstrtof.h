@@ -26,7 +26,7 @@
  * common header and implementation for
  *
  *	strtof		strtod		strtold		_sfdscan
- *	strntof		strntod		strntold
+ *	strntof		strntod
  *
  * define these macros to instantiate an implementation:
  *
