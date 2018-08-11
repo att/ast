@@ -22,7 +22,7 @@ libast_files += [
     'string/strnvcmp.c', 'string/stropt.c', 'string/strpcmp.c',
     'string/strperm.c', 'string/strpsearch.c', 'string/strsearch.c',
     'string/strsort.c', 'string/strtape.c', 'string/strtoip4.c',
-    'string/strtoip6.c', 'string/strton.c', 'string/strtonll.c',
+    'string/strton.c', 'string/strtonll.c',
     'string/struniq.c',
     'string/tok.c',
     'string/tokscan.c', 'string/utf32stowcs.c', 'string/utf32toutf8.c',

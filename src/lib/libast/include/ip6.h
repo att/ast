@@ -27,6 +27,5 @@
 #define IP6PREFIX (IP6ADDR + 1)
 
 extern char *fmtip6(const unsigned char *, int);
-extern int strtoip6(const char *, char **, unsigned char *, unsigned char *);
 
 #endif  // _IP6_H
