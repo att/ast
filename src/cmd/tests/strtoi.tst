@@ -21,8 +21,6 @@ strntoll    1 "0" "" 0 OK
 strntoll    0 "0" "0" 0 OK
 strntonll  1 "0" "" 0 OK 0
 strntonll  0 "0" "0" 0 OK 0
-strntoull  1 "0" "" 0 OK
-strntoull  0 "0" "0" 0 OK
 
 strtol    "-0" "" 0 OK
 strton    "-0" "" 0 OK 0
@@ -40,8 +38,6 @@ strntoll    2 "-0" "" 0 OK
 strntoll    1 "-0" "-0" 0 OK
 strntonll  2 "-0" "" 0 OK 0
 strntonll  1 "-0" "-0" 0 OK 10
-strntoull  2 "-0" "" 0 OK
-strntoull  1 "-0" "-0" 0 OK
 
 strtol    "+0" "" 0 OK
 strton    "+0" "" 0 OK 0
@@ -59,8 +55,6 @@ strntoll    2 "+0" "" 0 OK
 strntoll    1 "+0" "+0" 0 OK
 strntonll  2 "+0" "" 0 OK 0
 strntonll  1 "+0" "+0" 0 OK 10
-strntoull  2 "+0" "" 0 OK
-strntoull  1 "+0" "+0" 0 OK
 
 strtol    "00" "" 0 OK
 strton    "00" "" 0 OK 8
@@ -78,8 +72,6 @@ strntoll    2 "00" "" 0 OK
 strntoll    1 "00" "0" 0 OK
 strntonll  2 "00" "" 0 OK 8
 strntonll  1 "00" "0" 0 OK 0
-strntoull  2 "00" "" 0 OK
-strntoull  1 "00" "0" 0 OK
 
 strtol    "-00" "" 0 OK
 strton    "-00" "" 0 OK 8
@@ -97,8 +89,6 @@ strntoll    3 "-00" "" 0 OK
 strntoll    2 "-00" "0" 0 OK
 strntonll  3 "-00" "" 0 OK 8
 strntonll  2 "-00" "0" 0 OK 0
-strntoull  3 "-00" "" 0 OK
-strntoull  2 "-00" "0" 0 OK
 
 strtol    "+00" "" 0 OK
 strton    "+00" "" 0 OK 8
@@ -116,8 +106,6 @@ strntoll    3 "+00" "" 0 OK
 strntoll    2 "+00" "0" 0 OK
 strntonll  3 "+00" "" 0 OK 8
 strntonll  2 "+00" "0" 0 OK 0
-strntoull  3 "+00" "" 0 OK
-strntoull  2 "+00" "0" 0 OK'
 
 	EXEC	32767 -32767 32768 -32768 32769 -32769
 		OUTPUT - $'strtol    "32767" "" 32767 OK
@@ -136,8 +124,6 @@ strntoll    5 "32767" "" 32767 OK
 strntoll    4 "32767" "7" 3276 OK
 strntonll  5 "32767" "" 32767 OK 0
 strntonll  4 "32767" "7" 3276 OK 0
-strntoull  5 "32767" "" 32767 OK
-strntoull  4 "32767" "7" 3276 OK
 
 strtol    "-32767" "" -32767 OK
 strton    "-32767" "" -32767 OK 0
@@ -155,8 +141,6 @@ strntoll    6 "-32767" "" -32767 OK
 strntoll    5 "-32767" "7" -3276 OK
 strntonll  6 "-32767" "" -32767 OK 0
 strntonll  5 "-32767" "7" -3276 OK 0
-strntoull  6 "-32767" "" 18446744073709518849 OK
-strntoull  5 "-32767" "7" 18446744073709548340 OK
 
 strtol    "32768" "" 32768 OK
 strton    "32768" "" 32768 OK 0
@@ -174,8 +158,6 @@ strntoll    5 "32768" "" 32768 OK
 strntoll    4 "32768" "8" 3276 OK
 strntonll  5 "32768" "" 32768 OK 0
 strntonll  4 "32768" "8" 3276 OK 0
-strntoull  5 "32768" "" 32768 OK
-strntoull  4 "32768" "8" 3276 OK
 
 strtol    "-32768" "" -32768 OK
 strton    "-32768" "" -32768 OK 0
@@ -193,8 +175,6 @@ strntoll    6 "-32768" "" -32768 OK
 strntoll    5 "-32768" "8" -3276 OK
 strntonll  6 "-32768" "" -32768 OK 0
 strntonll  5 "-32768" "8" -3276 OK 0
-strntoull  6 "-32768" "" 18446744073709518848 OK
-strntoull  5 "-32768" "8" 18446744073709548340 OK
 
 strtol    "32769" "" 32769 OK
 strton    "32769" "" 32769 OK 0
@@ -212,8 +192,6 @@ strntoll    5 "32769" "" 32769 OK
 strntoll    4 "32769" "9" 3276 OK
 strntonll  5 "32769" "" 32769 OK 0
 strntonll  4 "32769" "9" 3276 OK 0
-strntoull  5 "32769" "" 32769 OK
-strntoull  4 "32769" "9" 3276 OK
 
 strtol    "-32769" "" -32769 OK
 strton    "-32769" "" -32769 OK 0
@@ -231,8 +209,6 @@ strntoll    6 "-32769" "" -32769 OK
 strntoll    5 "-32769" "9" -3276 OK
 strntonll  6 "-32769" "" -32769 OK 0
 strntonll  5 "-32769" "9" -3276 OK 0
-strntoull  6 "-32769" "" 18446744073709518847 OK
-strntoull  5 "-32769" "9" 18446744073709548340 OK'
 
 	EXEC	65535 -65535 65536 -65536 65537 -65537
 		OUTPUT - $'strtol    "65535" "" 65535 OK
@@ -251,8 +227,6 @@ strntoll    5 "65535" "" 65535 OK
 strntoll    4 "65535" "5" 6553 OK
 strntonll  5 "65535" "" 65535 OK 0
 strntonll  4 "65535" "5" 6553 OK 0
-strntoull  5 "65535" "" 65535 OK
-strntoull  4 "65535" "5" 6553 OK
 
 strtol    "-65535" "" -65535 OK
 strton    "-65535" "" -65535 OK 0
@@ -270,8 +244,6 @@ strntoll    6 "-65535" "" -65535 OK
 strntoll    5 "-65535" "5" -6553 OK
 strntonll  6 "-65535" "" -65535 OK 0
 strntonll  5 "-65535" "5" -6553 OK 0
-strntoull  6 "-65535" "" 18446744073709486081 OK
-strntoull  5 "-65535" "5" 18446744073709545063 OK
 
 strtol    "65536" "" 65536 OK
 strton    "65536" "" 65536 OK 0
@@ -289,8 +261,6 @@ strntoll    5 "65536" "" 65536 OK
 strntoll    4 "65536" "6" 6553 OK
 strntonll  5 "65536" "" 65536 OK 0
 strntonll  4 "65536" "6" 6553 OK 0
-strntoull  5 "65536" "" 65536 OK
-strntoull  4 "65536" "6" 6553 OK
 
 strtol    "-65536" "" -65536 OK
 strton    "-65536" "" -65536 OK 0
@@ -308,8 +278,6 @@ strntoll    6 "-65536" "" -65536 OK
 strntoll    5 "-65536" "6" -6553 OK
 strntonll  6 "-65536" "" -65536 OK 0
 strntonll  5 "-65536" "6" -6553 OK 0
-strntoull  6 "-65536" "" 18446744073709486080 OK
-strntoull  5 "-65536" "6" 18446744073709545063 OK
 
 strtol    "65537" "" 65537 OK
 strton    "65537" "" 65537 OK 0
@@ -327,8 +295,6 @@ strntoll    5 "65537" "" 65537 OK
 strntoll    4 "65537" "7" 6553 OK
 strntonll  5 "65537" "" 65537 OK 0
 strntonll  4 "65537" "7" 6553 OK 0
-strntoull  5 "65537" "" 65537 OK
-strntoull  4 "65537" "7" 6553 OK
 
 strtol    "-65537" "" -65537 OK
 strton    "-65537" "" -65537 OK 0
@@ -346,8 +312,6 @@ strntoll    6 "-65537" "" -65537 OK
 strntoll    5 "-65537" "7" -6553 OK
 strntonll  6 "-65537" "" -65537 OK 0
 strntonll  5 "-65537" "7" -6553 OK 0
-strntoull  6 "-65537" "" 18446744073709486079 OK
-strntoull  5 "-65537" "7" 18446744073709545063 OK'
 
 	EXEC	2147483647 -2147483647 2147483648 -2147483648 2147483649 -2147483649
 		OUTPUT - $'strtol    "2147483647" "" 2147483647 OK
@@ -366,8 +330,6 @@ strntoll   10 "2147483647" "" 2147483647 OK
 strntoll    9 "2147483647" "7" 214748364 OK
 strntonll 10 "2147483647" "" 2147483647 OK 0
 strntonll  9 "2147483647" "7" 214748364 OK 0
-strntoull 10 "2147483647" "" 2147483647 OK
-strntoull  9 "2147483647" "7" 214748364 OK
 
 strtol    "-2147483647" "" -2147483647 OK
 strton    "-2147483647" "" -2147483647 OK 0
@@ -385,8 +347,6 @@ strntoll   11 "-2147483647" "" -2147483647 OK
 strntoll   10 "-2147483647" "7" -214748364 OK
 strntonll 11 "-2147483647" "" -2147483647 OK 0
 strntonll 10 "-2147483647" "7" -214748364 OK 0
-strntoull 11 "-2147483647" "" 18446744071562067969 OK
-strntoull 10 "-2147483647" "7" 18446744073494803252 OK
 
 strtol    "2147483648" "" 2147483648 OK
 strton    "2147483648" "" 2147483648 OK 0
@@ -404,8 +364,6 @@ strntoll   10 "2147483648" "" 2147483648 OK
 strntoll    9 "2147483648" "8" 214748364 OK
 strntonll 10 "2147483648" "" 2147483648 OK 0
 strntonll  9 "2147483648" "8" 214748364 OK 0
-strntoull 10 "2147483648" "" 2147483648 OK
-strntoull  9 "2147483648" "8" 214748364 OK
 
 strtol    "-2147483648" "" -2147483648 OK
 strton    "-2147483648" "" -2147483648 OK 0
@@ -423,8 +381,6 @@ strntoll   11 "-2147483648" "" -2147483648 OK
 strntoll   10 "-2147483648" "8" -214748364 OK
 strntonll 11 "-2147483648" "" -2147483648 OK 0
 strntonll 10 "-2147483648" "8" -214748364 OK 0
-strntoull 11 "-2147483648" "" 18446744071562067968 OK
-strntoull 10 "-2147483648" "8" 18446744073494803252 OK
 
 strtol    "2147483649" "" 2147483649 OK
 strton    "2147483649" "" 2147483649 OK 0
@@ -442,8 +398,6 @@ strntoll   10 "2147483649" "" 2147483649 OK
 strntoll    9 "2147483649" "9" 214748364 OK
 strntonll 10 "2147483649" "" 2147483649 OK 0
 strntonll  9 "2147483649" "9" 214748364 OK 0
-strntoull 10 "2147483649" "" 2147483649 OK
-strntoull  9 "2147483649" "9" 214748364 OK
 
 strtol    "-2147483649" "" -2147483649 OK
 strton    "-2147483649" "" -2147483649 OK 0
@@ -461,8 +415,6 @@ strntoll   11 "-2147483649" "" -2147483649 OK
 strntoll   10 "-2147483649" "9" -214748364 OK
 strntonll 11 "-2147483649" "" -2147483649 OK 0
 strntonll 10 "-2147483649" "9" -214748364 OK 0
-strntoull 11 "-2147483649" "" 18446744071562067967 OK
-strntoull 10 "-2147483649" "9" 18446744073494803252 OK'
 
 	EXEC	4294967295 -4294967295 4294967296 -4294967296 4294967297 -4294967297
 		OUTPUT - $'strtol    "4294967295" "" 4294967295 OK
@@ -481,8 +433,6 @@ strntoll   10 "4294967295" "" 4294967295 OK
 strntoll    9 "4294967295" "5" 429496729 OK
 strntonll 10 "4294967295" "" 4294967295 OK 0
 strntonll  9 "4294967295" "5" 429496729 OK 0
-strntoull 10 "4294967295" "" 4294967295 OK
-strntoull  9 "4294967295" "5" 429496729 OK
 
 strtol    "-4294967295" "" -4294967295 OK
 strton    "-4294967295" "" -4294967295 OK 0
@@ -500,8 +450,6 @@ strntoll   11 "-4294967295" "" -4294967295 OK
 strntoll   10 "-4294967295" "5" -429496729 OK
 strntonll 11 "-4294967295" "" -4294967295 OK 0
 strntonll 10 "-4294967295" "5" -429496729 OK 0
-strntoull 11 "-4294967295" "" 18446744069414584321 OK
-strntoull 10 "-4294967295" "5" 18446744073280054887 OK
 
 strtol    "4294967296" "" 4294967296 OK
 strton    "4294967296" "" 4294967296 OK 0
@@ -519,8 +467,6 @@ strntoll   10 "4294967296" "" 4294967296 OK
 strntoll    9 "4294967296" "6" 429496729 OK
 strntonll 10 "4294967296" "" 4294967296 OK 0
 strntonll  9 "4294967296" "6" 429496729 OK 0
-strntoull 10 "4294967296" "" 4294967296 OK
-strntoull  9 "4294967296" "6" 429496729 OK
 
 strtol    "-4294967296" "" -4294967296 OK
 strton    "-4294967296" "" -4294967296 OK 0
@@ -538,8 +484,6 @@ strntoll   11 "-4294967296" "" -4294967296 OK
 strntoll   10 "-4294967296" "6" -429496729 OK
 strntonll 11 "-4294967296" "" -4294967296 OK 0
 strntonll 10 "-4294967296" "6" -429496729 OK 0
-strntoull 11 "-4294967296" "" 18446744069414584320 OK
-strntoull 10 "-4294967296" "6" 18446744073280054887 OK
 
 strtol    "4294967297" "" 4294967297 OK
 strton    "4294967297" "" 4294967297 OK 0
@@ -557,8 +501,6 @@ strntoll   10 "4294967297" "" 4294967297 OK
 strntoll    9 "4294967297" "7" 429496729 OK
 strntonll 10 "4294967297" "" 4294967297 OK 0
 strntonll  9 "4294967297" "7" 429496729 OK 0
-strntoull 10 "4294967297" "" 4294967297 OK
-strntoull  9 "4294967297" "7" 429496729 OK
 
 strtol    "-4294967297" "" -4294967297 OK
 strton    "-4294967297" "" -4294967297 OK 0
@@ -576,8 +518,6 @@ strntoll   11 "-4294967297" "" -4294967297 OK
 strntoll   10 "-4294967297" "7" -429496729 OK
 strntonll 11 "-4294967297" "" -4294967297 OK 0
 strntonll 10 "-4294967297" "7" -429496729 OK 0
-strntoull 11 "-4294967297" "" 18446744069414584319 OK
-strntoull 10 "-4294967297" "7" 18446744073280054887 OK'
 
 	EXEC	9223372036854775807 -9223372036854775807 9223372036854775808 -9223372036854775808 9223372036854775809 -9223372036854775809
 		OUTPUT - $'strtol    "9223372036854775807" "" 9223372036854775807 OK
@@ -596,8 +536,6 @@ strntoll   19 "9223372036854775807" "" 9223372036854775807 OK
 strntoll   18 "9223372036854775807" "7" 922337203685477580 OK
 strntonll 19 "9223372036854775807" "" 9223372036854775807 OK 0
 strntonll 18 "9223372036854775807" "7" 922337203685477580 OK 0
-strntoull 19 "9223372036854775807" "" 9223372036854775807 OK
-strntoull 18 "9223372036854775807" "7" 922337203685477580 OK
 
 strtol    "-9223372036854775807" "" -9223372036854775807 OK
 strton    "-9223372036854775807" "" -9223372036854775807 OK 0
@@ -615,8 +553,6 @@ strntoll   20 "-9223372036854775807" "" -9223372036854775807 OK
 strntoll   19 "-9223372036854775807" "7" -922337203685477580 OK
 strntonll 20 "-9223372036854775807" "" -9223372036854775807 OK 0
 strntonll 19 "-9223372036854775807" "7" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775807" "" 9223372036854775809 OK
-strntoull 19 "-9223372036854775807" "7" 17524406870024074036 OK
 
 strtol    "9223372036854775808" "" 9223372036854775807 ERANGE
 strton    "9223372036854775808" "" 9223372036854775807 ERANGE 0
@@ -634,8 +570,6 @@ strntoll   19 "9223372036854775808" "" 9223372036854775807 ERANGE
 strntoll   18 "9223372036854775808" "8" 922337203685477580 OK
 strntonll 19 "9223372036854775808" "" 9223372036854775807 ERANGE 0
 strntonll 18 "9223372036854775808" "8" 922337203685477580 OK 0
-strntoull 19 "9223372036854775808" "" 9223372036854775808 OK
-strntoull 18 "9223372036854775808" "8" 922337203685477580 OK
 
 strtol    "-9223372036854775808" "" -9223372036854775808 OK
 strton    "-9223372036854775808" "" -9223372036854775808 OK 0
@@ -653,8 +587,6 @@ strntoll   20 "-9223372036854775808" "" -9223372036854775808 OK
 strntoll   19 "-9223372036854775808" "8" -922337203685477580 OK
 strntonll 20 "-9223372036854775808" "" -9223372036854775808 OK 0
 strntonll 19 "-9223372036854775808" "8" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775808" "" 9223372036854775808 OK
-strntoull 19 "-9223372036854775808" "8" 17524406870024074036 OK
 
 strtol    "9223372036854775809" "" 9223372036854775807 ERANGE
 strton    "9223372036854775809" "" 9223372036854775807 ERANGE 0
@@ -672,8 +604,6 @@ strntoll   19 "9223372036854775809" "" 9223372036854775807 ERANGE
 strntoll   18 "9223372036854775809" "9" 922337203685477580 OK
 strntonll 19 "9223372036854775809" "" 9223372036854775807 ERANGE 0
 strntonll 18 "9223372036854775809" "9" 922337203685477580 OK 0
-strntoull 19 "9223372036854775809" "" 9223372036854775809 OK
-strntoull 18 "9223372036854775809" "9" 922337203685477580 OK
 
 strtol    "-9223372036854775809" "" -9223372036854775808 ERANGE
 strton    "-9223372036854775809" "" -9223372036854775808 ERANGE 0
@@ -691,8 +621,6 @@ strntoll   20 "-9223372036854775809" "" -9223372036854775808 ERANGE
 strntoll   19 "-9223372036854775809" "9" -922337203685477580 OK
 strntonll 20 "-9223372036854775809" "" -9223372036854775808 ERANGE 0
 strntonll 19 "-9223372036854775809" "9" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775809" "" 9223372036854775807 OK
-strntoull 19 "-9223372036854775809" "9" 17524406870024074036 OK'
 
 	EXEC	18446744073709551615 -18446744073709551615 18446744073709551616 -18446744073709551616 18446744073709551617 -18446744073709551617
 		OUTPUT - $'strtol    "18446744073709551615" "" 9223372036854775807 ERANGE
@@ -711,8 +639,6 @@ strntoll   20 "18446744073709551615" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551615" "5" 1844674407370955161 OK
 strntonll 20 "18446744073709551615" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551615" "5" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551615" "" 18446744073709551615 OK
-strntoull 19 "18446744073709551615" "5" 1844674407370955161 OK
 
 strtol    "-18446744073709551615" "" -9223372036854775808 ERANGE
 strton    "-18446744073709551615" "" -9223372036854775808 ERANGE 0
@@ -730,8 +656,6 @@ strntoll   21 "-18446744073709551615" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551615" "5" -1844674407370955161 OK
 strntonll 21 "-18446744073709551615" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551615" "5" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551615" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551615" "5" 16602069666338596455 OK
 
 strtol    "18446744073709551616" "" 9223372036854775807 ERANGE
 strton    "18446744073709551616" "" 9223372036854775807 ERANGE 0
@@ -749,8 +673,6 @@ strntoll   20 "18446744073709551616" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551616" "6" 1844674407370955161 OK
 strntonll 20 "18446744073709551616" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551616" "6" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551616" "" 18446744073709551615 ERANGE
-strntoull 19 "18446744073709551616" "6" 1844674407370955161 OK
 
 strtol    "-18446744073709551616" "" -9223372036854775808 ERANGE
 strton    "-18446744073709551616" "" -9223372036854775808 ERANGE 0
@@ -768,8 +690,6 @@ strntoll   21 "-18446744073709551616" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551616" "6" -1844674407370955161 OK
 strntonll 21 "-18446744073709551616" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551616" "6" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551616" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551616" "6" 16602069666338596455 OK
 
 strtol    "18446744073709551617" "" 9223372036854775807 ERANGE
 strton    "18446744073709551617" "" 9223372036854775807 ERANGE 0
@@ -787,8 +707,6 @@ strntoll   20 "18446744073709551617" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551617" "7" 1844674407370955161 OK
 strntonll 20 "18446744073709551617" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551617" "7" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551617" "" 18446744073709551615 ERANGE
-strntoull 19 "18446744073709551617" "7" 1844674407370955161 OK
 
 strtol    "-18446744073709551617" "" -9223372036854775808 ERANGE
 strton    "-18446744073709551617" "" -9223372036854775808 ERANGE 0
@@ -806,8 +724,6 @@ strntoll   21 "-18446744073709551617" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551617" "7" -1844674407370955161 OK
 strntonll 21 "-18446744073709551617" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551617" "7" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551617" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551617" "7" 16602069666338596455 OK'
 
 TEST 02 'hex'
 
@@ -828,8 +744,6 @@ strntoll   11 "0xffffffff0" "" 68719476720 OK
 strntoll   10 "0xffffffff0" "0" 4294967295 OK
 strntonll 11 "0xffffffff0" "" 68719476720 OK 16
 strntonll 10 "0xffffffff0" "0" 4294967295 OK 16
-strntoull 11 "0xffffffff0" "" 68719476720 OK
-strntoull 10 "0xffffffff0" "0" 4294967295 OK
 
 strtol    "0xfffffffff" "" 68719476735 OK
 strton    "0xfffffffff" "" 68719476735 OK 16
@@ -847,8 +761,6 @@ strntoll   11 "0xfffffffff" "" 68719476735 OK
 strntoll   10 "0xfffffffff" "f" 4294967295 OK
 strntonll 11 "0xfffffffff" "" 68719476735 OK 16
 strntonll 10 "0xfffffffff" "f" 4294967295 OK 16
-strntoull 11 "0xfffffffff" "" 68719476735 OK
-strntoull 10 "0xfffffffff" "f" 4294967295 OK
 
 strtol    "0x17fffffff" "" 6442450943 OK
 strton    "0x17fffffff" "" 6442450943 OK 16
@@ -866,8 +778,6 @@ strntoll   11 "0x17fffffff" "" 6442450943 OK
 strntoll   10 "0x17fffffff" "f" 402653183 OK
 strntonll 11 "0x17fffffff" "" 6442450943 OK 16
 strntonll 10 "0x17fffffff" "f" 402653183 OK 16
-strntoull 11 "0x17fffffff" "" 6442450943 OK
-strntoull 10 "0x17fffffff" "f" 402653183 OK'
 
 TEST 03 'thousands separator'
 
@@ -888,8 +798,6 @@ strntoll    8 "12345678" "" 12345678 OK
 strntoll    7 "12345678" "8" 1234567 OK
 strntonll  8 "12345678" "" 12345678 OK 0
 strntonll  7 "12345678" "8" 1234567 OK 0
-strntoull  8 "12345678" "" 12345678 OK
-strntoull  7 "12345678" "8" 1234567 OK
 
 strtol    "12.345.678" "" 12345678 OK
 strton    "12.345.678" "" 12345678 OK 0
@@ -907,8 +815,6 @@ strntoll   10 "12.345.678" "" 12345678 OK
 strntoll    9 "12.345.678" ".678" 12345 OK
 strntonll 10 "12.345.678" "" 12345678 OK 0
 strntonll  9 "12.345.678" ".678" 12345 OK 0
-strntoull 10 "12.345.678" "" 12345678 OK
-strntoull  9 "12.345.678" ".678" 12345 OK
 
 strtol    "12.345678" ".345678" 12 OK
 strton    "12.345678" ".345678" 12 OK 0
@@ -926,8 +832,6 @@ strntoll    9 "12.345678" ".345678" 12 OK
 strntoll    8 "12.345678" ".345678" 12 OK
 strntonll  9 "12.345678" ".345678" 12 OK 0
 strntonll  8 "12.345678" ".345678" 12 OK 0
-strntoull  9 "12.345678" ".345678" 12 OK
-strntoull  8 "12.345678" ".345678" 12 OK
 
 strtol    "12.345.67" ".67" 12345 OK
 strton    "12.345.67" ".67" 12345 OK 0
@@ -945,8 +849,6 @@ strntoll    9 "12.345.67" ".67" 12345 OK
 strntoll    8 "12.345.67" ".67" 12345 OK
 strntonll  9 "12.345.67" ".67" 12345 OK 0
 strntonll  8 "12.345.67" ".67" 12345 OK 0
-strntoull  9 "12.345.67" ".67" 12345 OK
-strntoull  8 "12.345.67" ".67" 12345 OK
 
 strtol    "1.234" "" 1234 OK
 strton    "1.234" "" 1234 OK 0
@@ -964,8 +866,6 @@ strntoll    5 "1.234" "" 1234 OK
 strntoll    4 "1.234" ".234" 1 OK
 strntonll  5 "1.234" "" 1234 OK 0
 strntonll  4 "1.234" ".234" 1 OK 0
-strntoull  5 "1.234" "" 1234 OK
-strntoull  4 "1.234" ".234" 1 OK
 
 strtol    "123.456" "" 123456 OK
 strton    "123.456" "" 123456 OK 0
@@ -983,8 +883,6 @@ strntoll    7 "123.456" "" 123456 OK
 strntoll    6 "123.456" ".456" 123 OK
 strntonll  7 "123.456" "" 123456 OK 0
 strntonll  6 "123.456" ".456" 123 OK 0
-strntoull  7 "123.456" "" 123456 OK
-strntoull  6 "123.456" ".456" 123 OK'
 
 TEST 04 'malformations'
 
@@ -1005,8 +903,6 @@ strntoll    1 "-" "-" 0 OK
 strntoll    0 "-" "-" 0 OK
 strntonll  1 "-" "-" 0 OK 10
 strntonll  0 "-" "-" 0 OK 0
-strntoull  1 "-" "-" 0 OK
-strntoull  0 "-" "-" 0 OK
 
 strtol    "+" "+" 0 OK
 strton    "+" "+" 0 OK 10
@@ -1024,8 +920,6 @@ strntoll    1 "+" "+" 0 OK
 strntoll    0 "+" "+" 0 OK
 strntonll  1 "+" "+" 0 OK 10
 strntonll  0 "+" "+" 0 OK 0
-strntoull  1 "+" "+" 0 OK
-strntoull  0 "+" "+" 0 OK
 
 strtol    "0x" "x" 0 OK
 strton    "0x" "x" 0 OK 10
@@ -1043,8 +937,6 @@ strntoll    2 "0x" "x" 0 OK
 strntoll    1 "0x" "x" 0 OK
 strntonll  2 "0x" "x" 0 OK 10
 strntonll  1 "0x" "x" 0 OK 0
-strntoull  2 "0x" "x" 0 OK
-strntoull  1 "0x" "x" 0 OK
 
 strtol    "-0x" "x" 0 OK
 strton    "-0x" "x" 0 OK 10
@@ -1062,8 +954,6 @@ strntoll    3 "-0x" "x" 0 OK
 strntoll    2 "-0x" "x" 0 OK
 strntonll  3 "-0x" "x" 0 OK 10
 strntonll  2 "-0x" "x" 0 OK 0
-strntoull  3 "-0x" "x" 0 OK
-strntoull  2 "-0x" "x" 0 OK
 
 strtol    "+0x" "x" 0 OK
 strton    "+0x" "x" 0 OK 10
@@ -1081,8 +971,6 @@ strntoll    3 "+0x" "x" 0 OK
 strntoll    2 "+0x" "x" 0 OK
 strntonll  3 "+0x" "x" 0 OK 10
 strntonll  2 "+0x" "x" 0 OK 0
-strntoull  3 "+0x" "x" 0 OK
-strntoull  2 "+0x" "x" 0 OK
 
 strtol    "11#" "#" 0 OK
 strton    "11#" "#" 0 OK 10
@@ -1100,8 +988,6 @@ strntoll    3 "11#" "#" 0 OK
 strntoll    2 "11#" "#" 11 OK
 strntonll  3 "11#" "#" 0 OK 10
 strntonll  2 "11#" "#" 11 OK 0
-strntoull  3 "11#" "#" 0 OK
-strntoull  2 "11#" "#" 11 OK
 
 strtol    "-11#" "#" 0 OK
 strton    "-11#" "#" 0 OK 10
@@ -1119,8 +1005,6 @@ strntoll    4 "-11#" "#" 0 OK
 strntoll    3 "-11#" "#" -11 OK
 strntonll  4 "-11#" "#" 0 OK 10
 strntonll  3 "-11#" "#" -11 OK 0
-strntoull  4 "-11#" "#" 0 OK
-strntoull  3 "-11#" "#" 18446744073709551605 OK
 
 strtol    "+11#" "#" 0 OK
 strton    "+11#" "#" 0 OK 10
@@ -1138,8 +1022,6 @@ strntoll    4 "+11#" "#" 0 OK
 strntoll    3 "+11#" "#" 11 OK
 strntonll  4 "+11#" "#" 0 OK 10
 strntonll  3 "+11#" "#" 11 OK 0
-strntoull  4 "+11#" "#" 0 OK
-strntoull  3 "+11#" "#" 11 OK
 
 strtol    "11#A" "" 10 OK
 strton    "11#A" "" 10 OK 11
@@ -1157,8 +1039,6 @@ strntoll    4 "11#A" "" 10 OK
 strntoll    3 "11#A" "#A" 0 OK
 strntonll  4 "11#A" "" 10 OK 11
 strntonll  3 "11#A" "#A" 0 OK 10
-strntoull  4 "11#A" "" 10 OK
-strntoull  3 "11#A" "#A" 0 OK
 
 strtol    "11#B" "#B" 0 OK
 strton    "11#B" "#B" 0 OK 10
@@ -1176,8 +1056,6 @@ strntoll    4 "11#B" "" 0 OK
 strntoll    3 "11#B" "#B" 0 OK
 strntonll  4 "11#B" "" 0 OK 11
 strntonll  3 "11#B" "#B" 0 OK 10
-strntoull  4 "11#B" "" 0 OK
-strntoull  3 "11#B" "#B" 0 OK'
 
 TEST 05 'multiplier suffixes'
 
@@ -1198,8 +1076,6 @@ strntoll    2 "1b" "" 1 OK
 strntoll    1 "1b" "b" 1 OK
 strntonll  2 "1b" "" 1 OK 0
 strntonll  1 "1b" "b" 1 OK 0
-strntoull  2 "1b" "" 1 OK
-strntoull  1 "1b" "b" 1 OK
 
 strtol    "1k" "k" 1 OK
 strton    "1k" "" 1000 OK 0
@@ -1217,8 +1093,6 @@ strntoll    2 "1k" "" 1 OK
 strntoll    1 "1k" "k" 1 OK
 strntonll  2 "1k" "" 1 OK 0
 strntonll  1 "1k" "k" 1 OK 0
-strntoull  2 "1k" "" 1 OK
-strntoull  1 "1k" "k" 1 OK
 
 strtol    "1m" "m" 1 OK
 strton    "1m" "" 1000000 OK 0
@@ -1236,8 +1110,6 @@ strntoll    2 "1m" "" 1 OK
 strntoll    1 "1m" "m" 1 OK
 strntonll  2 "1m" "" 1 OK 0
 strntonll  1 "1m" "m" 1 OK 0
-strntoull  2 "1m" "" 1 OK
-strntoull  1 "1m" "m" 1 OK
 
 strtol    "1g" "g" 1 OK
 strton    "1g" "" 1000000000 OK 0
@@ -1255,8 +1127,6 @@ strntoll    2 "1g" "" 1 OK
 strntoll    1 "1g" "g" 1 OK
 strntonll  2 "1g" "" 1 OK 0
 strntonll  1 "1g" "g" 1 OK 0
-strntoull  2 "1g" "" 1 OK
-strntoull  1 "1g" "g" 1 OK
 
 strtol    "1t" "t" 1 OK
 strton    "1t" "" 1000000000000 OK 0
@@ -1274,8 +1144,6 @@ strntoll    2 "1t" "" 1 OK
 strntoll    1 "1t" "t" 1 OK
 strntonll  2 "1t" "" 1 OK 0
 strntonll  1 "1t" "t" 1 OK 0
-strntoull  2 "1t" "" 1 OK
-strntoull  1 "1t" "t" 1 OK
 
 strtol    "1p" "p" 1 OK
 strton    "1p" "" 1000000000000000 OK 0
@@ -1293,8 +1161,6 @@ strntoll    2 "1p" "" 1 OK
 strntoll    1 "1p" "p" 1 OK
 strntonll  2 "1p" "" 1 OK 0
 strntonll  1 "1p" "p" 1 OK 0
-strntoull  2 "1p" "" 1 OK
-strntoull  1 "1p" "p" 1 OK
 
 strtol    "1e" "e" 1 OK
 strton    "1e" "" 1000000000000000000 OK 0
@@ -1312,8 +1178,6 @@ strntoll    2 "1e" "" 1 OK
 strntoll    1 "1e" "e" 1 OK
 strntonll  2 "1e" "" 1 OK 0
 strntonll  1 "1e" "e" 1 OK 0
-strntoull  2 "1e" "" 1 OK
-strntoull  1 "1e" "e" 1 OK
 
 strtol    "1." "." 1 OK
 strton    "1." "" 100 OK 0
@@ -1331,8 +1195,6 @@ strntoll    2 "1." "" 1 OK
 strntoll    1 "1." "." 1 OK
 strntonll  2 "1." "" 1 OK 0
 strntonll  1 "1." "." 1 OK 0
-strntoull  2 "1." "" 1 OK
-strntoull  1 "1." "." 1 OK
 
 strtol    "1.2" ".2" 1 OK
 strton    "1.2" "" 120 OK 0
@@ -1350,8 +1212,6 @@ strntoll    3 "1.2" ".2" 1 OK
 strntoll    2 "1.2" "2" 1 OK
 strntonll  3 "1.2" "2" 120 OK 0
 strntonll  2 "1.2" "2" 1 OK 0
-strntoull  3 "1.2" ".2" 1 OK
-strntoull  2 "1.2" "2" 1 OK
 
 strtol    "1.23" ".23" 1 OK
 strton    "1.23" "" 123 OK 0
@@ -1369,8 +1229,6 @@ strntoll    4 "1.23" ".23" 1 OK
 strntoll    3 "1.23" ".23" 1 OK
 strntonll  4 "1.23" "3" 123 OK 0
 strntonll  3 "1.23" "23" 120 OK 0
-strntoull  4 "1.23" ".23" 1 OK
-strntoull  3 "1.23" ".23" 1 OK
 
 strtol    "1.234" ".234" 1 OK
 strton    "1.234" "" 123 OK 0
@@ -1388,8 +1246,6 @@ strntoll    5 "1.234" ".234" 1 OK
 strntoll    4 "1.234" ".234" 1 OK
 strntonll  5 "1.234" "4" 123 OK 0
 strntonll  4 "1.234" "34" 123 OK 0
-strntoull  5 "1.234" ".234" 1 OK
-strntoull  4 "1.234" ".234" 1 OK
 
 strtol    "1.k" ".k" 1 OK
 strton    "1.k" "k" 100 OK 0
@@ -1407,8 +1263,6 @@ strntoll    3 "1.k" ".k" 1 OK
 strntoll    2 "1.k" "k" 1 OK
 strntonll  3 "1.k" "k" 100 OK 0
 strntonll  2 "1.k" "k" 1 OK 0
-strntoull  3 "1.k" ".k" 1 OK
-strntoull  2 "1.k" "k" 1 OK
 
 strtol    "1.2k" ".2k" 1 OK
 strton    "1.2k" "k" 120 OK 0
@@ -1426,8 +1280,6 @@ strntoll    4 "1.2k" ".2k" 1 OK
 strntoll    3 "1.2k" ".2k" 1 OK
 strntonll  4 "1.2k" "k" 120 OK 0
 strntonll  3 "1.2k" "2k" 120 OK 0
-strntoull  4 "1.2k" ".2k" 1 OK
-strntoull  3 "1.2k" ".2k" 1 OK
 
 strtol    "1.23k" ".23k" 1 OK
 strton    "1.23k" "k" 123 OK 0
@@ -1445,8 +1297,6 @@ strntoll    5 "1.23k" ".23k" 1 OK
 strntoll    4 "1.23k" ".23k" 1 OK
 strntonll  5 "1.23k" "k" 123 OK 0
 strntonll  4 "1.23k" "3k" 123 OK 0
-strntoull  5 "1.23k" ".23k" 1 OK
-strntoull  4 "1.23k" ".23k" 1 OK
 
 strtol    "1.234k" ".234k" 1 OK
 strton    "1.234k" "k" 123 OK 0
@@ -1464,8 +1314,6 @@ strntoll    6 "1.234k" ".234k" 1 OK
 strntoll    5 "1.234k" ".234k" 1 OK
 strntonll  6 "1.234k" "k" 123 OK 0
 strntonll  5 "1.234k" "4k" 123 OK 0
-strntoull  6 "1.234k" ".234k" 1 OK
-strntoull  5 "1.234k" ".234k" 1 OK'
 
 	EXEC 1b 1ki 1mi 1gi 1ti 1pi 1ei 1. 1.2 1.23 1.234 1.ki 1.2ki 1.23ki 1.234ki
 		OUTPUT - $'strtol    "1b" "b" 1 OK
@@ -1484,8 +1332,6 @@ strntoll    2 "1b" "" 1 OK
 strntoll    1 "1b" "b" 1 OK
 strntonll  2 "1b" "" 1 OK 0
 strntonll  1 "1b" "b" 1 OK 0
-strntoull  2 "1b" "" 1 OK
-strntoull  1 "1b" "b" 1 OK
 
 strtol    "1ki" "ki" 1 OK
 strton    "1ki" "" 1024 OK 0
@@ -1503,8 +1349,6 @@ strntoll    3 "1ki" "ki" 1 OK
 strntoll    2 "1ki" "i" 1 OK
 strntonll  3 "1ki" "" 1024 OK 0
 strntonll  2 "1ki" "i" 1 OK 0
-strntoull  3 "1ki" "ki" 1 OK
-strntoull  2 "1ki" "i" 1 OK
 
 strtol    "1mi" "mi" 1 OK
 strton    "1mi" "" 1048576 OK 0
@@ -1522,8 +1366,6 @@ strntoll    3 "1mi" "mi" 1 OK
 strntoll    2 "1mi" "i" 1 OK
 strntonll  3 "1mi" "" 1048576 OK 0
 strntonll  2 "1mi" "i" 1 OK 0
-strntoull  3 "1mi" "mi" 1 OK
-strntoull  2 "1mi" "i" 1 OK
 
 strtol    "1gi" "gi" 1 OK
 strton    "1gi" "" 1073741824 OK 0
@@ -1541,8 +1383,6 @@ strntoll    3 "1gi" "gi" 1 OK
 strntoll    2 "1gi" "i" 1 OK
 strntonll  3 "1gi" "" 1073741824 OK 0
 strntonll  2 "1gi" "i" 1 OK 0
-strntoull  3 "1gi" "gi" 1 OK
-strntoull  2 "1gi" "i" 1 OK
 
 strtol    "1ti" "ti" 1 OK
 strton    "1ti" "" 1099511627776 OK 0
@@ -1560,8 +1400,6 @@ strntoll    3 "1ti" "ti" 1 OK
 strntoll    2 "1ti" "i" 1 OK
 strntonll  3 "1ti" "" 1099511627776 OK 0
 strntonll  2 "1ti" "i" 1 OK 0
-strntoull  3 "1ti" "ti" 1 OK
-strntoull  2 "1ti" "i" 1 OK
 
 strtol    "1pi" "pi" 1 OK
 strton    "1pi" "" 1125899906842624 OK 0
@@ -1579,8 +1417,6 @@ strntoll    3 "1pi" "pi" 1 OK
 strntoll    2 "1pi" "i" 1 OK
 strntonll  3 "1pi" "" 1125899906842624 OK 0
 strntonll  2 "1pi" "i" 1 OK 0
-strntoull  3 "1pi" "pi" 1 OK
-strntoull  2 "1pi" "i" 1 OK
 
 strtol    "1ei" "ei" 1 OK
 strton    "1ei" "" 1152921504606846976 OK 0
@@ -1598,8 +1434,6 @@ strntoll    3 "1ei" "ei" 1 OK
 strntoll    2 "1ei" "i" 1 OK
 strntonll  3 "1ei" "" 1152921504606846976 OK 0
 strntonll  2 "1ei" "i" 1 OK 0
-strntoull  3 "1ei" "ei" 1 OK
-strntoull  2 "1ei" "i" 1 OK
 
 strtol    "1." "." 1 OK
 strton    "1." "" 100 OK 0
@@ -1617,8 +1451,6 @@ strntoll    2 "1." "" 1 OK
 strntoll    1 "1." "." 1 OK
 strntonll  2 "1." "" 1 OK 0
 strntonll  1 "1." "." 1 OK 0
-strntoull  2 "1." "" 1 OK
-strntoull  1 "1." "." 1 OK
 
 strtol    "1.2" ".2" 1 OK
 strton    "1.2" "" 120 OK 0
@@ -1636,8 +1468,6 @@ strntoll    3 "1.2" ".2" 1 OK
 strntoll    2 "1.2" "2" 1 OK
 strntonll  3 "1.2" "2" 120 OK 0
 strntonll  2 "1.2" "2" 1 OK 0
-strntoull  3 "1.2" ".2" 1 OK
-strntoull  2 "1.2" "2" 1 OK
 
 strtol    "1.23" ".23" 1 OK
 strton    "1.23" "" 123 OK 0
@@ -1655,8 +1485,6 @@ strntoll    4 "1.23" ".23" 1 OK
 strntoll    3 "1.23" ".23" 1 OK
 strntonll  4 "1.23" "3" 123 OK 0
 strntonll  3 "1.23" "23" 120 OK 0
-strntoull  4 "1.23" ".23" 1 OK
-strntoull  3 "1.23" ".23" 1 OK
 
 strtol    "1.234" ".234" 1 OK
 strton    "1.234" "" 123 OK 0
@@ -1674,8 +1502,6 @@ strntoll    5 "1.234" ".234" 1 OK
 strntoll    4 "1.234" ".234" 1 OK
 strntonll  5 "1.234" "4" 123 OK 0
 strntonll  4 "1.234" "34" 123 OK 0
-strntoull  5 "1.234" ".234" 1 OK
-strntoull  4 "1.234" ".234" 1 OK
 
 strtol    "1.ki" ".ki" 1 OK
 strton    "1.ki" "ki" 100 OK 0
@@ -1693,8 +1519,6 @@ strntoll    4 "1.ki" ".ki" 1 OK
 strntoll    3 "1.ki" ".ki" 1 OK
 strntonll  4 "1.ki" "ki" 100 OK 0
 strntonll  3 "1.ki" "ki" 100 OK 0
-strntoull  4 "1.ki" ".ki" 1 OK
-strntoull  3 "1.ki" ".ki" 1 OK
 
 strtol    "1.2ki" ".2ki" 1 OK
 strton    "1.2ki" "ki" 120 OK 0
@@ -1712,8 +1536,6 @@ strntoll    5 "1.2ki" ".2ki" 1 OK
 strntoll    4 "1.2ki" ".2ki" 1 OK
 strntonll  5 "1.2ki" "ki" 120 OK 0
 strntonll  4 "1.2ki" "ki" 120 OK 0
-strntoull  5 "1.2ki" ".2ki" 1 OK
-strntoull  4 "1.2ki" ".2ki" 1 OK
 
 strtol    "1.23ki" ".23ki" 1 OK
 strton    "1.23ki" "ki" 123 OK 0
@@ -1731,8 +1553,6 @@ strntoll    6 "1.23ki" ".23ki" 1 OK
 strntoll    5 "1.23ki" ".23ki" 1 OK
 strntonll  6 "1.23ki" "ki" 123 OK 0
 strntonll  5 "1.23ki" "ki" 123 OK 0
-strntoull  6 "1.23ki" ".23ki" 1 OK
-strntoull  5 "1.23ki" ".23ki" 1 OK
 
 strtol    "1.234ki" ".234ki" 1 OK
 strton    "1.234ki" "ki" 123 OK 0
@@ -1750,8 +1570,6 @@ strntoll    7 "1.234ki" ".234ki" 1 OK
 strntoll    6 "1.234ki" ".234ki" 1 OK
 strntonll  7 "1.234ki" "ki" 123 OK 0
 strntonll  6 "1.234ki" "ki" 123 OK 0
-strntoull  7 "1.234ki" ".234ki" 1 OK
-strntoull  6 "1.234ki" ".234ki" 1 OK'
 
 ;; 32/64)
 
@@ -1774,8 +1592,6 @@ strntoll    1 "0" "" 0 OK
 strntoll    0 "0" "0" 0 OK
 strntonll  1 "0" "" 0 OK 0
 strntonll  0 "0" "0" 0 OK 0
-strntoull  1 "0" "" 0 OK
-strntoull  0 "0" "0" 0 OK
 
 strtol    "-0" "" 0 OK
 strton    "-0" "" 0 OK 0
@@ -1793,8 +1609,6 @@ strntoll    2 "-0" "" 0 OK
 strntoll    1 "-0" "-0" 0 OK
 strntonll  2 "-0" "" 0 OK 0
 strntonll  1 "-0" "-0" 0 OK 10
-strntoull  2 "-0" "" 0 OK
-strntoull  1 "-0" "-0" 0 OK
 
 strtol    "+0" "" 0 OK
 strton    "+0" "" 0 OK 0
@@ -1812,8 +1626,6 @@ strntoll    2 "+0" "" 0 OK
 strntoll    1 "+0" "+0" 0 OK
 strntonll  2 "+0" "" 0 OK 0
 strntonll  1 "+0" "+0" 0 OK 10
-strntoull  2 "+0" "" 0 OK
-strntoull  1 "+0" "+0" 0 OK
 
 strtol    "00" "" 0 OK
 strton    "00" "" 0 OK 8
@@ -1831,8 +1643,6 @@ strntoll    2 "00" "" 0 OK
 strntoll    1 "00" "0" 0 OK
 strntonll  2 "00" "" 0 OK 8
 strntonll  1 "00" "0" 0 OK 0
-strntoull  2 "00" "" 0 OK
-strntoull  1 "00" "0" 0 OK
 
 strtol    "-00" "" 0 OK
 strton    "-00" "" 0 OK 8
@@ -1850,8 +1660,6 @@ strntoll    3 "-00" "" 0 OK
 strntoll    2 "-00" "0" 0 OK
 strntonll  3 "-00" "" 0 OK 8
 strntonll  2 "-00" "0" 0 OK 0
-strntoull  3 "-00" "" 0 OK
-strntoull  2 "-00" "0" 0 OK
 
 strtol    "+00" "" 0 OK
 strton    "+00" "" 0 OK 8
@@ -1869,8 +1677,6 @@ strntoll    3 "+00" "" 0 OK
 strntoll    2 "+00" "0" 0 OK
 strntonll  3 "+00" "" 0 OK 8
 strntonll  2 "+00" "0" 0 OK 0
-strntoull  3 "+00" "" 0 OK
-strntoull  2 "+00" "0" 0 OK'
 
 	EXEC	32767 -32767 32768 -32768 32769 -32769
 		OUTPUT - $'strtol    "32767" "" 32767 OK
@@ -1889,8 +1695,6 @@ strntoll    5 "32767" "" 32767 OK
 strntoll    4 "32767" "7" 3276 OK
 strntonll  5 "32767" "" 32767 OK 0
 strntonll  4 "32767" "7" 3276 OK 0
-strntoull  5 "32767" "" 32767 OK
-strntoull  4 "32767" "7" 3276 OK
 
 strtol    "-32767" "" -32767 OK
 strton    "-32767" "" -32767 OK 0
@@ -1908,8 +1712,6 @@ strntoll    6 "-32767" "" -32767 OK
 strntoll    5 "-32767" "7" -3276 OK
 strntonll  6 "-32767" "" -32767 OK 0
 strntonll  5 "-32767" "7" -3276 OK 0
-strntoull  6 "-32767" "" 18446744073709518849 OK
-strntoull  5 "-32767" "7" 18446744073709548340 OK
 
 strtol    "32768" "" 32768 OK
 strton    "32768" "" 32768 OK 0
@@ -1927,8 +1729,6 @@ strntoll    5 "32768" "" 32768 OK
 strntoll    4 "32768" "8" 3276 OK
 strntonll  5 "32768" "" 32768 OK 0
 strntonll  4 "32768" "8" 3276 OK 0
-strntoull  5 "32768" "" 32768 OK
-strntoull  4 "32768" "8" 3276 OK
 
 strtol    "-32768" "" -32768 OK
 strton    "-32768" "" -32768 OK 0
@@ -1946,8 +1746,6 @@ strntoll    6 "-32768" "" -32768 OK
 strntoll    5 "-32768" "8" -3276 OK
 strntonll  6 "-32768" "" -32768 OK 0
 strntonll  5 "-32768" "8" -3276 OK 0
-strntoull  6 "-32768" "" 18446744073709518848 OK
-strntoull  5 "-32768" "8" 18446744073709548340 OK
 
 strtol    "32769" "" 32769 OK
 strton    "32769" "" 32769 OK 0
@@ -1965,8 +1763,6 @@ strntoll    5 "32769" "" 32769 OK
 strntoll    4 "32769" "9" 3276 OK
 strntonll  5 "32769" "" 32769 OK 0
 strntonll  4 "32769" "9" 3276 OK 0
-strntoull  5 "32769" "" 32769 OK
-strntoull  4 "32769" "9" 3276 OK
 
 strtol    "-32769" "" -32769 OK
 strton    "-32769" "" -32769 OK 0
@@ -1984,8 +1780,6 @@ strntoll    6 "-32769" "" -32769 OK
 strntoll    5 "-32769" "9" -3276 OK
 strntonll  6 "-32769" "" -32769 OK 0
 strntonll  5 "-32769" "9" -3276 OK 0
-strntoull  6 "-32769" "" 18446744073709518847 OK
-strntoull  5 "-32769" "9" 18446744073709548340 OK'
 
 	EXEC	65535 -65535 65536 -65536 65537 -65537
 		OUTPUT - $'strtol    "65535" "" 65535 OK
@@ -2004,8 +1798,6 @@ strntoll    5 "65535" "" 65535 OK
 strntoll    4 "65535" "5" 6553 OK
 strntonll  5 "65535" "" 65535 OK 0
 strntonll  4 "65535" "5" 6553 OK 0
-strntoull  5 "65535" "" 65535 OK
-strntoull  4 "65535" "5" 6553 OK
 
 strtol    "-65535" "" -65535 OK
 strton    "-65535" "" -65535 OK 0
@@ -2023,8 +1815,6 @@ strntoll    6 "-65535" "" -65535 OK
 strntoll    5 "-65535" "5" -6553 OK
 strntonll  6 "-65535" "" -65535 OK 0
 strntonll  5 "-65535" "5" -6553 OK 0
-strntoull  6 "-65535" "" 18446744073709486081 OK
-strntoull  5 "-65535" "5" 18446744073709545063 OK
 
 strtol    "65536" "" 65536 OK
 strton    "65536" "" 65536 OK 0
@@ -2042,8 +1832,6 @@ strntoll    5 "65536" "" 65536 OK
 strntoll    4 "65536" "6" 6553 OK
 strntonll  5 "65536" "" 65536 OK 0
 strntonll  4 "65536" "6" 6553 OK 0
-strntoull  5 "65536" "" 65536 OK
-strntoull  4 "65536" "6" 6553 OK
 
 strtol    "-65536" "" -65536 OK
 strton    "-65536" "" -65536 OK 0
@@ -2061,8 +1849,6 @@ strntoll    6 "-65536" "" -65536 OK
 strntoll    5 "-65536" "6" -6553 OK
 strntonll  6 "-65536" "" -65536 OK 0
 strntonll  5 "-65536" "6" -6553 OK 0
-strntoull  6 "-65536" "" 18446744073709486080 OK
-strntoull  5 "-65536" "6" 18446744073709545063 OK
 
 strtol    "65537" "" 65537 OK
 strton    "65537" "" 65537 OK 0
@@ -2080,8 +1866,6 @@ strntoll    5 "65537" "" 65537 OK
 strntoll    4 "65537" "7" 6553 OK
 strntonll  5 "65537" "" 65537 OK 0
 strntonll  4 "65537" "7" 6553 OK 0
-strntoull  5 "65537" "" 65537 OK
-strntoull  4 "65537" "7" 6553 OK
 
 strtol    "-65537" "" -65537 OK
 strton    "-65537" "" -65537 OK 0
@@ -2099,8 +1883,6 @@ strntoll    6 "-65537" "" -65537 OK
 strntoll    5 "-65537" "7" -6553 OK
 strntonll  6 "-65537" "" -65537 OK 0
 strntonll  5 "-65537" "7" -6553 OK 0
-strntoull  6 "-65537" "" 18446744073709486079 OK
-strntoull  5 "-65537" "7" 18446744073709545063 OK'
 
 	EXEC	2147483647 -2147483647 2147483648 -2147483648 2147483649 -2147483649
 		OUTPUT - $'strtol    "2147483647" "" 2147483647 OK
@@ -2119,8 +1901,6 @@ strntoll   10 "2147483647" "" 2147483647 OK
 strntoll    9 "2147483647" "7" 214748364 OK
 strntonll 10 "2147483647" "" 2147483647 OK 0
 strntonll  9 "2147483647" "7" 214748364 OK 0
-strntoull 10 "2147483647" "" 2147483647 OK
-strntoull  9 "2147483647" "7" 214748364 OK
 
 strtol    "-2147483647" "" -2147483647 OK
 strton    "-2147483647" "" -2147483647 OK 0
@@ -2138,8 +1918,6 @@ strntoll   11 "-2147483647" "" -2147483647 OK
 strntoll   10 "-2147483647" "7" -214748364 OK
 strntonll 11 "-2147483647" "" -2147483647 OK 0
 strntonll 10 "-2147483647" "7" -214748364 OK 0
-strntoull 11 "-2147483647" "" 18446744071562067969 OK
-strntoull 10 "-2147483647" "7" 18446744073494803252 OK
 
 strtol    "2147483648" "" 2147483647 ERANGE
 strton    "2147483648" "" 2147483647 ERANGE 0
@@ -2157,8 +1935,6 @@ strntoll   10 "2147483648" "" 2147483648 OK
 strntoll    9 "2147483648" "8" 214748364 OK
 strntonll 10 "2147483648" "" 2147483648 OK 0
 strntonll  9 "2147483648" "8" 214748364 OK 0
-strntoull 10 "2147483648" "" 2147483648 OK
-strntoull  9 "2147483648" "8" 214748364 OK
 
 strtol    "-2147483648" "" -2147483648 OK
 strton    "-2147483648" "" -2147483648 OK 0
@@ -2176,8 +1952,6 @@ strntoll   11 "-2147483648" "" -2147483648 OK
 strntoll   10 "-2147483648" "8" -214748364 OK
 strntonll 11 "-2147483648" "" -2147483648 OK 0
 strntonll 10 "-2147483648" "8" -214748364 OK 0
-strntoull 11 "-2147483648" "" 18446744071562067968 OK
-strntoull 10 "-2147483648" "8" 18446744073494803252 OK
 
 strtol    "2147483649" "" 2147483647 ERANGE
 strton    "2147483649" "" 2147483647 ERANGE 0
@@ -2195,8 +1969,6 @@ strntoll   10 "2147483649" "" 2147483649 OK
 strntoll    9 "2147483649" "9" 214748364 OK
 strntonll 10 "2147483649" "" 2147483649 OK 0
 strntonll  9 "2147483649" "9" 214748364 OK 0
-strntoull 10 "2147483649" "" 2147483649 OK
-strntoull  9 "2147483649" "9" 214748364 OK
 
 strtol    "-2147483649" "" -2147483648 ERANGE
 strton    "-2147483649" "" -2147483648 ERANGE 0
@@ -2214,8 +1986,6 @@ strntoll   11 "-2147483649" "" -2147483649 OK
 strntoll   10 "-2147483649" "9" -214748364 OK
 strntonll 11 "-2147483649" "" -2147483649 OK 0
 strntonll 10 "-2147483649" "9" -214748364 OK 0
-strntoull 11 "-2147483649" "" 18446744071562067967 OK
-strntoull 10 "-2147483649" "9" 18446744073494803252 OK'
 
 	EXEC	4294967295 -4294967295 4294967296 -4294967296 4294967297 -4294967297
 		OUTPUT - $'strtol    "4294967295" "" 2147483647 ERANGE
@@ -2234,8 +2004,6 @@ strntoll   10 "4294967295" "" 4294967295 OK
 strntoll    9 "4294967295" "5" 429496729 OK
 strntonll 10 "4294967295" "" 4294967295 OK 0
 strntonll  9 "4294967295" "5" 429496729 OK 0
-strntoull 10 "4294967295" "" 4294967295 OK
-strntoull  9 "4294967295" "5" 429496729 OK
 
 strtol    "-4294967295" "" -2147483648 ERANGE
 strton    "-4294967295" "" -2147483648 ERANGE 0
@@ -2253,8 +2021,6 @@ strntoll   11 "-4294967295" "" -4294967295 OK
 strntoll   10 "-4294967295" "5" -429496729 OK
 strntonll 11 "-4294967295" "" -4294967295 OK 0
 strntonll 10 "-4294967295" "5" -429496729 OK 0
-strntoull 11 "-4294967295" "" 18446744069414584321 OK
-strntoull 10 "-4294967295" "5" 18446744073280054887 OK
 
 strtol    "4294967296" "" 2147483647 ERANGE
 strton    "4294967296" "" 2147483647 ERANGE 0
@@ -2272,8 +2038,6 @@ strntoll   10 "4294967296" "" 4294967296 OK
 strntoll    9 "4294967296" "6" 429496729 OK
 strntonll 10 "4294967296" "" 4294967296 OK 0
 strntonll  9 "4294967296" "6" 429496729 OK 0
-strntoull 10 "4294967296" "" 4294967296 OK
-strntoull  9 "4294967296" "6" 429496729 OK
 
 strtol    "-4294967296" "" -2147483648 ERANGE
 strton    "-4294967296" "" -2147483648 ERANGE 0
@@ -2291,8 +2055,6 @@ strntoll   11 "-4294967296" "" -4294967296 OK
 strntoll   10 "-4294967296" "6" -429496729 OK
 strntonll 11 "-4294967296" "" -4294967296 OK 0
 strntonll 10 "-4294967296" "6" -429496729 OK 0
-strntoull 11 "-4294967296" "" 18446744069414584320 OK
-strntoull 10 "-4294967296" "6" 18446744073280054887 OK
 
 strtol    "4294967297" "" 2147483647 ERANGE
 strton    "4294967297" "" 2147483647 ERANGE 0
@@ -2310,8 +2072,6 @@ strntoll   10 "4294967297" "" 4294967297 OK
 strntoll    9 "4294967297" "7" 429496729 OK
 strntonll 10 "4294967297" "" 4294967297 OK 0
 strntonll  9 "4294967297" "7" 429496729 OK 0
-strntoull 10 "4294967297" "" 4294967297 OK
-strntoull  9 "4294967297" "7" 429496729 OK
 
 strtol    "-4294967297" "" -2147483648 ERANGE
 strton    "-4294967297" "" -2147483648 ERANGE 0
@@ -2329,8 +2089,6 @@ strntoll   11 "-4294967297" "" -4294967297 OK
 strntoll   10 "-4294967297" "7" -429496729 OK
 strntonll 11 "-4294967297" "" -4294967297 OK 0
 strntonll 10 "-4294967297" "7" -429496729 OK 0
-strntoull 11 "-4294967297" "" 18446744069414584319 OK
-strntoull 10 "-4294967297" "7" 18446744073280054887 OK'
 
 	EXEC	9223372036854775807 -9223372036854775807 9223372036854775808 -9223372036854775808 9223372036854775809 -9223372036854775809
 		OUTPUT - $'strtol    "9223372036854775807" "" 2147483647 ERANGE
@@ -2349,8 +2107,6 @@ strntoll   19 "9223372036854775807" "" 9223372036854775807 OK
 strntoll   18 "9223372036854775807" "7" 922337203685477580 OK
 strntonll 19 "9223372036854775807" "" 9223372036854775807 OK 0
 strntonll 18 "9223372036854775807" "7" 922337203685477580 OK 0
-strntoull 19 "9223372036854775807" "" 9223372036854775807 OK
-strntoull 18 "9223372036854775807" "7" 922337203685477580 OK
 
 strtol    "-9223372036854775807" "" -2147483648 ERANGE
 strton    "-9223372036854775807" "" -2147483648 ERANGE 0
@@ -2368,8 +2124,6 @@ strntoll   20 "-9223372036854775807" "" -9223372036854775807 OK
 strntoll   19 "-9223372036854775807" "7" -922337203685477580 OK
 strntonll 20 "-9223372036854775807" "" -9223372036854775807 OK 0
 strntonll 19 "-9223372036854775807" "7" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775807" "" 9223372036854775809 OK
-strntoull 19 "-9223372036854775807" "7" 17524406870024074036 OK
 
 strtol    "9223372036854775808" "" 2147483647 ERANGE
 strton    "9223372036854775808" "" 2147483647 ERANGE 0
@@ -2387,8 +2141,6 @@ strntoll   19 "9223372036854775808" "" 9223372036854775807 ERANGE
 strntoll   18 "9223372036854775808" "8" 922337203685477580 OK
 strntonll 19 "9223372036854775808" "" 9223372036854775807 ERANGE 0
 strntonll 18 "9223372036854775808" "8" 922337203685477580 OK 0
-strntoull 19 "9223372036854775808" "" 9223372036854775808 OK
-strntoull 18 "9223372036854775808" "8" 922337203685477580 OK
 
 strtol    "-9223372036854775808" "" -2147483648 ERANGE
 strton    "-9223372036854775808" "" -2147483648 ERANGE 0
@@ -2406,8 +2158,6 @@ strntoll   20 "-9223372036854775808" "" -9223372036854775808 OK
 strntoll   19 "-9223372036854775808" "8" -922337203685477580 OK
 strntonll 20 "-9223372036854775808" "" -9223372036854775808 OK 0
 strntonll 19 "-9223372036854775808" "8" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775808" "" 9223372036854775808 OK
-strntoull 19 "-9223372036854775808" "8" 17524406870024074036 OK
 
 strtol    "9223372036854775809" "" 2147483647 ERANGE
 strton    "9223372036854775809" "" 2147483647 ERANGE 0
@@ -2425,8 +2175,6 @@ strntoll   19 "9223372036854775809" "" 9223372036854775807 ERANGE
 strntoll   18 "9223372036854775809" "9" 922337203685477580 OK
 strntonll 19 "9223372036854775809" "" 9223372036854775807 ERANGE 0
 strntonll 18 "9223372036854775809" "9" 922337203685477580 OK 0
-strntoull 19 "9223372036854775809" "" 9223372036854775809 OK
-strntoull 18 "9223372036854775809" "9" 922337203685477580 OK
 
 strtol    "-9223372036854775809" "" -2147483648 ERANGE
 strton    "-9223372036854775809" "" -2147483648 ERANGE 0
@@ -2444,8 +2192,6 @@ strntoll   20 "-9223372036854775809" "" -9223372036854775808 ERANGE
 strntoll   19 "-9223372036854775809" "9" -922337203685477580 OK
 strntonll 20 "-9223372036854775809" "" -9223372036854775808 ERANGE 0
 strntonll 19 "-9223372036854775809" "9" -922337203685477580 OK 0
-strntoull 20 "-9223372036854775809" "" 9223372036854775807 OK
-strntoull 19 "-9223372036854775809" "9" 17524406870024074036 OK'
 
 	EXEC	18446744073709551615 -18446744073709551615 18446744073709551616 -18446744073709551616 18446744073709551617 -18446744073709551617
 		OUTPUT - $'strtol    "18446744073709551615" "" 2147483647 ERANGE
@@ -2464,8 +2210,6 @@ strntoll   20 "18446744073709551615" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551615" "5" 1844674407370955161 OK
 strntonll 20 "18446744073709551615" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551615" "5" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551615" "" 18446744073709551615 OK
-strntoull 19 "18446744073709551615" "5" 1844674407370955161 OK
 
 strtol    "-18446744073709551615" "" -2147483648 ERANGE
 strton    "-18446744073709551615" "" -2147483648 ERANGE 0
@@ -2483,8 +2227,6 @@ strntoll   21 "-18446744073709551615" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551615" "5" -1844674407370955161 OK
 strntonll 21 "-18446744073709551615" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551615" "5" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551615" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551615" "5" 16602069666338596455 OK
 
 strtol    "18446744073709551616" "" 2147483647 ERANGE
 strton    "18446744073709551616" "" 2147483647 ERANGE 0
@@ -2502,8 +2244,6 @@ strntoll   20 "18446744073709551616" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551616" "6" 1844674407370955161 OK
 strntonll 20 "18446744073709551616" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551616" "6" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551616" "" 18446744073709551615 ERANGE
-strntoull 19 "18446744073709551616" "6" 1844674407370955161 OK
 
 strtol    "-18446744073709551616" "" -2147483648 ERANGE
 strton    "-18446744073709551616" "" -2147483648 ERANGE 0
@@ -2521,8 +2261,6 @@ strntoll   21 "-18446744073709551616" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551616" "6" -1844674407370955161 OK
 strntonll 21 "-18446744073709551616" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551616" "6" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551616" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551616" "6" 16602069666338596455 OK
 
 strtol    "18446744073709551617" "" 2147483647 ERANGE
 strton    "18446744073709551617" "" 2147483647 ERANGE 0
@@ -2540,8 +2278,6 @@ strntoll   20 "18446744073709551617" "" 9223372036854775807 ERANGE
 strntoll   19 "18446744073709551617" "7" 1844674407370955161 OK
 strntonll 20 "18446744073709551617" "" 9223372036854775807 ERANGE 0
 strntonll 19 "18446744073709551617" "7" 1844674407370955161 OK 0
-strntoull 20 "18446744073709551617" "" 18446744073709551615 ERANGE
-strntoull 19 "18446744073709551617" "7" 1844674407370955161 OK
 
 strtol    "-18446744073709551617" "" -2147483648 ERANGE
 strton    "-18446744073709551617" "" -2147483648 ERANGE 0
@@ -2559,8 +2295,6 @@ strntoll   21 "-18446744073709551617" "" -9223372036854775808 ERANGE
 strntoll   20 "-18446744073709551617" "7" -1844674407370955161 OK
 strntonll 21 "-18446744073709551617" "" -9223372036854775808 ERANGE 0
 strntonll 20 "-18446744073709551617" "7" -1844674407370955161 OK 0
-strntoull 21 "-18446744073709551617" "" 18446744073709551615 ERANGE
-strntoull 20 "-18446744073709551617" "7" 16602069666338596455 OK'
 
 TEST 02 'hex'
 
@@ -2581,8 +2315,6 @@ strntoll   11 "0xffffffff0" "" 68719476720 OK
 strntoll   10 "0xffffffff0" "0" 4294967295 OK
 strntonll 11 "0xffffffff0" "" 68719476720 OK 16
 strntonll 10 "0xffffffff0" "0" 4294967295 OK 16
-strntoull 11 "0xffffffff0" "" 68719476720 OK
-strntoull 10 "0xffffffff0" "0" 4294967295 OK
 
 strtol    "0xfffffffff" "" 2147483647 ERANGE
 strton    "0xfffffffff" "" 2147483647 ERANGE 16
@@ -2600,8 +2332,6 @@ strntoll   11 "0xfffffffff" "" 68719476735 OK
 strntoll   10 "0xfffffffff" "f" 4294967295 OK
 strntonll 11 "0xfffffffff" "" 68719476735 OK 16
 strntonll 10 "0xfffffffff" "f" 4294967295 OK 16
-strntoull 11 "0xfffffffff" "" 68719476735 OK
-strntoull 10 "0xfffffffff" "f" 4294967295 OK
 
 strtol    "0x17fffffff" "" 2147483647 ERANGE
 strton    "0x17fffffff" "" 2147483647 ERANGE 16
@@ -2619,8 +2349,6 @@ strntoll   11 "0x17fffffff" "" 6442450943 OK
 strntoll   10 "0x17fffffff" "f" 402653183 OK
 strntonll 11 "0x17fffffff" "" 6442450943 OK 16
 strntonll 10 "0x17fffffff" "f" 402653183 OK 16
-strntoull 11 "0x17fffffff" "" 6442450943 OK
-strntoull 10 "0x17fffffff" "f" 402653183 OK'
 
 TEST 03 'thousands separator'
 
@@ -2641,8 +2369,6 @@ strntoll    8 "12345678" "" 12345678 OK
 strntoll    7 "12345678" "8" 1234567 OK
 strntonll  8 "12345678" "" 12345678 OK 0
 strntonll  7 "12345678" "8" 1234567 OK 0
-strntoull  8 "12345678" "" 12345678 OK
-strntoull  7 "12345678" "8" 1234567 OK
 
 strtol    "12.345.678" "" 12345678 OK
 strton    "12.345.678" "" 12345678 OK 0
@@ -2660,8 +2386,6 @@ strntoll   10 "12.345.678" "" 12345678 OK
 strntoll    9 "12.345.678" ".678" 12345 OK
 strntonll 10 "12.345.678" "" 12345678 OK 0
 strntonll  9 "12.345.678" ".678" 12345 OK 0
-strntoull 10 "12.345.678" "" 12345678 OK
-strntoull  9 "12.345.678" ".678" 12345 OK
 
 strtol    "12.345678" ".345678" 12 OK
 strton    "12.345678" ".345678" 12 OK 0
@@ -2679,8 +2403,6 @@ strntoll    9 "12.345678" ".345678" 12 OK
 strntoll    8 "12.345678" ".345678" 12 OK
 strntonll  9 "12.345678" ".345678" 12 OK 0
 strntonll  8 "12.345678" ".345678" 12 OK 0
-strntoull  9 "12.345678" ".345678" 12 OK
-strntoull  8 "12.345678" ".345678" 12 OK
 
 strtol    "12.345.67" ".67" 12345 OK
 strton    "12.345.67" ".67" 12345 OK 0
@@ -2698,8 +2420,6 @@ strntoll    9 "12.345.67" ".67" 12345 OK
 strntoll    8 "12.345.67" ".67" 12345 OK
 strntonll  9 "12.345.67" ".67" 12345 OK 0
 strntonll  8 "12.345.67" ".67" 12345 OK 0
-strntoull  9 "12.345.67" ".67" 12345 OK
-strntoull  8 "12.345.67" ".67" 12345 OK
 
 strtol    "1.234" "" 1234 OK
 strton    "1.234" "" 1234 OK 0
@@ -2717,8 +2437,6 @@ strntoll    5 "1.234" "" 1234 OK
 strntoll    4 "1.234" ".234" 1 OK
 strntonll  5 "1.234" "" 1234 OK 0
 strntonll  4 "1.234" ".234" 1 OK 0
-strntoull  5 "1.234" "" 1234 OK
-strntoull  4 "1.234" ".234" 1 OK
 
 strtol    "123.456" "" 123456 OK
 strton    "123.456" "" 123456 OK 0
@@ -2736,8 +2454,6 @@ strntoll    7 "123.456" "" 123456 OK
 strntoll    6 "123.456" ".456" 123 OK
 strntonll  7 "123.456" "" 123456 OK 0
 strntonll  6 "123.456" ".456" 123 OK 0
-strntoull  7 "123.456" "" 123456 OK
-strntoull  6 "123.456" ".456" 123 OK'
 
 TEST 04 'malformations'
 
@@ -2758,8 +2474,6 @@ strntoll    1 "-" "-" 0 OK
 strntoll    0 "-" "-" 0 OK
 strntonll  1 "-" "-" 0 OK 10
 strntonll  0 "-" "-" 0 OK 0
-strntoull  1 "-" "-" 0 OK
-strntoull  0 "-" "-" 0 OK
 
 strtol    "+" "+" 0 OK
 strton    "+" "+" 0 OK 10
@@ -2777,8 +2491,6 @@ strntoll    1 "+" "+" 0 OK
 strntoll    0 "+" "+" 0 OK
 strntonll  1 "+" "+" 0 OK 10
 strntonll  0 "+" "+" 0 OK 0
-strntoull  1 "+" "+" 0 OK
-strntoull  0 "+" "+" 0 OK
 
 strtol    "0x" "x" 0 OK
 strton    "0x" "x" 0 OK 10
@@ -2796,8 +2508,6 @@ strntoll    2 "0x" "x" 0 OK
 strntoll    1 "0x" "x" 0 OK
 strntonll  2 "0x" "x" 0 OK 10
 strntonll  1 "0x" "x" 0 OK 0
-strntoull  2 "0x" "x" 0 OK
-strntoull  1 "0x" "x" 0 OK
 
 strtol    "-0x" "x" 0 OK
 strton    "-0x" "x" 0 OK 10
@@ -2815,8 +2525,6 @@ strntoll    3 "-0x" "x" 0 OK
 strntoll    2 "-0x" "x" 0 OK
 strntonll  3 "-0x" "x" 0 OK 10
 strntonll  2 "-0x" "x" 0 OK 0
-strntoull  3 "-0x" "x" 0 OK
-strntoull  2 "-0x" "x" 0 OK
 
 strtol    "+0x" "x" 0 OK
 strton    "+0x" "x" 0 OK 10
@@ -2834,8 +2542,6 @@ strntoll    3 "+0x" "x" 0 OK
 strntoll    2 "+0x" "x" 0 OK
 strntonll  3 "+0x" "x" 0 OK 10
 strntonll  2 "+0x" "x" 0 OK 0
-strntoull  3 "+0x" "x" 0 OK
-strntoull  2 "+0x" "x" 0 OK
 
 strtol    "11#" "#" 0 OK
 strton    "11#" "#" 0 OK 10
@@ -2853,8 +2559,6 @@ strntoll    3 "11#" "#" 0 OK
 strntoll    2 "11#" "#" 11 OK
 strntonll  3 "11#" "#" 0 OK 10
 strntonll  2 "11#" "#" 11 OK 0
-strntoull  3 "11#" "#" 0 OK
-strntoull  2 "11#" "#" 11 OK
 
 strtol    "-11#" "#" 0 OK
 strton    "-11#" "#" 0 OK 10
@@ -2872,8 +2576,6 @@ strntoll    4 "-11#" "#" 0 OK
 strntoll    3 "-11#" "#" -11 OK
 strntonll  4 "-11#" "#" 0 OK 10
 strntonll  3 "-11#" "#" -11 OK 0
-strntoull  4 "-11#" "#" 0 OK
-strntoull  3 "-11#" "#" 18446744073709551605 OK
 
 strtol    "+11#" "#" 0 OK
 strton    "+11#" "#" 0 OK 10
@@ -2891,8 +2593,6 @@ strntoll    4 "+11#" "#" 0 OK
 strntoll    3 "+11#" "#" 11 OK
 strntonll  4 "+11#" "#" 0 OK 10
 strntonll  3 "+11#" "#" 11 OK 0
-strntoull  4 "+11#" "#" 0 OK
-strntoull  3 "+11#" "#" 11 OK
 
 strtol    "11#A" "" 10 OK
 strton    "11#A" "" 10 OK 11
@@ -2910,8 +2610,6 @@ strntoll    4 "11#A" "" 10 OK
 strntoll    3 "11#A" "#A" 0 OK
 strntonll  4 "11#A" "" 10 OK 11
 strntonll  3 "11#A" "#A" 0 OK 10
-strntoull  4 "11#A" "" 10 OK
-strntoull  3 "11#A" "#A" 0 OK
 
 strtol    "11#B" "#B" 0 OK
 strton    "11#B" "#B" 0 OK 10
@@ -2929,8 +2627,6 @@ strntoll    4 "11#B" "" 0 OK
 strntoll    3 "11#B" "#B" 0 OK
 strntonll  4 "11#B" "" 0 OK 11
 strntonll  3 "11#B" "#B" 0 OK 10
-strntoull  4 "11#B" "" 0 OK
-strntoull  3 "11#B" "#B" 0 OK'
 
 TEST 05 'multiplier suffixes'
 
@@ -2951,8 +2647,6 @@ strntoll    2 "1b" "" 1 OK
 strntoll    1 "1b" "b" 1 OK
 strntonll  2 "1b" "" 1 OK 0
 strntonll  1 "1b" "b" 1 OK 0
-strntoull  2 "1b" "" 1 OK
-strntoull  1 "1b" "b" 1 OK
 
 strtol    "1k" "k" 1 OK
 strton    "1k" "" 1000 OK 0
@@ -2970,8 +2664,6 @@ strntoll    2 "1k" "" 1 OK
 strntoll    1 "1k" "k" 1 OK
 strntonll  2 "1k" "" 1 OK 0
 strntonll  1 "1k" "k" 1 OK 0
-strntoull  2 "1k" "" 1 OK
-strntoull  1 "1k" "k" 1 OK
 
 strtol    "1m" "m" 1 OK
 strton    "1m" "" 1000000 OK 0
@@ -2989,8 +2681,6 @@ strntoll    2 "1m" "" 1 OK
 strntoll    1 "1m" "m" 1 OK
 strntonll  2 "1m" "" 1 OK 0
 strntonll  1 "1m" "m" 1 OK 0
-strntoull  2 "1m" "" 1 OK
-strntoull  1 "1m" "m" 1 OK
 
 strtol    "1g" "g" 1 OK
 strton    "1g" "" 1000000000 OK 0
@@ -3008,8 +2698,6 @@ strntoll    2 "1g" "" 1 OK
 strntoll    1 "1g" "g" 1 OK
 strntonll  2 "1g" "" 1 OK 0
 strntonll  1 "1g" "g" 1 OK 0
-strntoull  2 "1g" "" 1 OK
-strntoull  1 "1g" "g" 1 OK
 
 strtol    "1t" "t" 1 OK
 strton    "1t" "" 2147483647 ERANGE 0
@@ -3027,8 +2715,6 @@ strntoll    2 "1t" "" 1 OK
 strntoll    1 "1t" "t" 1 OK
 strntonll  2 "1t" "" 1 OK 0
 strntonll  1 "1t" "t" 1 OK 0
-strntoull  2 "1t" "" 1 OK
-strntoull  1 "1t" "t" 1 OK
 
 strtol    "1p" "p" 1 OK
 strton    "1p" "" 2147483647 ERANGE 0
@@ -3046,8 +2732,6 @@ strntoll    2 "1p" "" 1 OK
 strntoll    1 "1p" "p" 1 OK
 strntonll  2 "1p" "" 1 OK 0
 strntonll  1 "1p" "p" 1 OK 0
-strntoull  2 "1p" "" 1 OK
-strntoull  1 "1p" "p" 1 OK
 
 strtol    "1e" "e" 1 OK
 strton    "1e" "" 2147483647 ERANGE 0
@@ -3065,8 +2749,6 @@ strntoll    2 "1e" "" 1 OK
 strntoll    1 "1e" "e" 1 OK
 strntonll  2 "1e" "" 1 OK 0
 strntonll  1 "1e" "e" 1 OK 0
-strntoull  2 "1e" "" 1 OK
-strntoull  1 "1e" "e" 1 OK
 
 strtol    "1." "." 1 OK
 strton    "1." "" 100 OK 0
@@ -3084,8 +2766,6 @@ strntoll    2 "1." "" 1 OK
 strntoll    1 "1." "." 1 OK
 strntonll  2 "1." "" 1 OK 0
 strntonll  1 "1." "." 1 OK 0
-strntoull  2 "1." "" 1 OK
-strntoull  1 "1." "." 1 OK
 
 strtol    "1.2" ".2" 1 OK
 strton    "1.2" "" 120 OK 0
@@ -3103,8 +2783,6 @@ strntoll    3 "1.2" ".2" 1 OK
 strntoll    2 "1.2" "2" 1 OK
 strntonll  3 "1.2" "2" 120 OK 0
 strntonll  2 "1.2" "2" 1 OK 0
-strntoull  3 "1.2" ".2" 1 OK
-strntoull  2 "1.2" "2" 1 OK
 
 strtol    "1.23" ".23" 1 OK
 strton    "1.23" "" 123 OK 0
@@ -3122,8 +2800,6 @@ strntoll    4 "1.23" ".23" 1 OK
 strntoll    3 "1.23" ".23" 1 OK
 strntonll  4 "1.23" "3" 123 OK 0
 strntonll  3 "1.23" "23" 120 OK 0
-strntoull  4 "1.23" ".23" 1 OK
-strntoull  3 "1.23" ".23" 1 OK
 
 strtol    "1.234" ".234" 1 OK
 strton    "1.234" "" 123 OK 0
@@ -3141,8 +2817,6 @@ strntoll    5 "1.234" ".234" 1 OK
 strntoll    4 "1.234" ".234" 1 OK
 strntonll  5 "1.234" "4" 123 OK 0
 strntonll  4 "1.234" "34" 123 OK 0
-strntoull  5 "1.234" ".234" 1 OK
-strntoull  4 "1.234" ".234" 1 OK
 
 strtol    "1.k" ".k" 1 OK
 strton    "1.k" "k" 100 OK 0
@@ -3160,8 +2834,6 @@ strntoll    3 "1.k" ".k" 1 OK
 strntoll    2 "1.k" "k" 1 OK
 strntonll  3 "1.k" "k" 100 OK 0
 strntonll  2 "1.k" "k" 1 OK 0
-strntoull  3 "1.k" ".k" 1 OK
-strntoull  2 "1.k" "k" 1 OK
 
 strtol    "1.2k" ".2k" 1 OK
 strton    "1.2k" "k" 120 OK 0
@@ -3179,8 +2851,6 @@ strntoll    4 "1.2k" ".2k" 1 OK
 strntoll    3 "1.2k" ".2k" 1 OK
 strntonll  4 "1.2k" "k" 120 OK 0
 strntonll  3 "1.2k" "2k" 120 OK 0
-strntoull  4 "1.2k" ".2k" 1 OK
-strntoull  3 "1.2k" ".2k" 1 OK
 
 strtol    "1.23k" ".23k" 1 OK
 strton    "1.23k" "k" 123 OK 0
@@ -3198,8 +2868,6 @@ strntoll    5 "1.23k" ".23k" 1 OK
 strntoll    4 "1.23k" ".23k" 1 OK
 strntonll  5 "1.23k" "k" 123 OK 0
 strntonll  4 "1.23k" "3k" 123 OK 0
-strntoull  5 "1.23k" ".23k" 1 OK
-strntoull  4 "1.23k" ".23k" 1 OK
 
 strtol    "1.234k" ".234k" 1 OK
 strton    "1.234k" "k" 123 OK 0
@@ -3217,7 +2885,5 @@ strntoll    6 "1.234k" ".234k" 1 OK
 strntoll    5 "1.234k" ".234k" 1 OK
 strntonll  6 "1.234k" "k" 123 OK 0
 strntonll  5 "1.234k" "4k" 123 OK 0
-strntoull  6 "1.234k" ".234k" 1 OK
-strntoull  5 "1.234k" ".234k" 1 OK'
 
 ;; esac
