@@ -30,23 +30,8 @@
 #endif
 
 #if ASTAPI(20100601)
-#undef pathkey
-#define pathkey pathkey_20100601
-#endif
-
-#if ASTAPI(20100601)
 #undef pathpath
 #define pathpath pathpath_20100601
-#endif
-
-#if ASTAPI(20100601)
-#undef pathprobe
-#define pathprobe pathprobe_20100601
-#endif
-
-#if ASTAPI(20100601)
-#undef pathrepl
-#define pathrepl pathrepl_20100601
 #endif
 
 #if ASTAPI(20120528)

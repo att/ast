@@ -278,7 +278,6 @@ extern size_t pathposix(const char *, char *, size_t);
 extern size_t pathprog(const char *, char *, size_t);
 extern char *pathrepl(char *, const char *, const char *);
 extern char *pathrepl_20100601(char *, size_t, const char *, const char *);
-extern int pathsetlink(const char *, const char *);
 extern char *pathshell(void);
 extern char *pathtemp(char *, size_t, const char *, const char *, int *);
 extern char *pathtmp(char *, const char *, const char *, int *);

@@ -54,7 +54,6 @@ char*     pathnext(char* \fIpath\fP, char* \fIextra\fP, long* \fIvisits\fP);
 char*     pathpath(char* \fIpath\fP, const char* \fIp\fP, const char* \fIa\fP, int \fImode\fP);
 char*     pathprobe(char* \fIpath\fP, char* \fIattr\fP, const char* \fIlang\fP, const char* \fItool\fP, const char* \fIproc\fP, int \fIop\fP);
 char*     pathrepl(char* \fIpath\fP, const char* \fImatch\fP, const char* \fIreplace\fP);
-int       pathsetlink(const char* \fItext\fP, char* \fIname\fP);
 char*     pathshell(void);
 int       pathstat(const char* \fIpath\fP, struct stat* \fIst\fP);
 char*     pathtemp(char* \fIpath\fP, const char* \fIdir\fP, const char* \fIpfx\fP);
@@ -320,17 +319,6 @@ with
 .I /replace/
 in
 .IR path .
-.PP
-.L pathsetlink
-creates a symbolic link
-.I text
-in the path
-.IR name .
-See
-.L pathgetlink
-above for weird
-.IR universe (1)
-interactions hidden by this routine.
 .PP
 .L pathshell
 returns a pointer to the pathname for the shell for the current process.
