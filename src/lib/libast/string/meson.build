@@ -12,7 +12,6 @@ libast_files += [
     'string/memdup.c', 'string/modedata.c', 'string/modei.c',
     'string/modex.c',
     'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',
-    'string/strexpr.c',
     'string/strlcat.c', 'string/strlcpy.c',
     'string/strmatch.c',
     'string/stropt.c',
