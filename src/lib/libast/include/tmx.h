@@ -52,7 +52,6 @@ extern Time_t tmxtime(Tm_t *, int);
 extern Tm_t *tmxtm(Tm_t *, Time_t, Tm_zone_t *);
 extern struct tm *tmlocaltime(const time_t *);
 extern Time_t tmxgettime(void);
-extern int tmxsettime(Time_t);
 extern int tmxtouch(const char *, Time_t, Time_t, Time_t, int);
 extern char *fmttmx(const char *, Time_t);
 
