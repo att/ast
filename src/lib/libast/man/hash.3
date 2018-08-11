@@ -257,8 +257,6 @@ The default mean chain length is 2.
 Associates
 .L name
 with the hash table.
-Used by
-.LR hashdump) .
 .TP
 .L "HASH_namesize, int namesize"
 The fixed size in bytes for
@@ -486,23 +484,6 @@ Only
 and
 .L HASH_FIXED
 may be cleared.
-.TP
-.L "void hashdump(Hash_table_t* tab, int flags)"
-Dumps hash table accounting info to standard error.
-If
-.L tab
-is
-.L NULL
-then all allocated hash tables are dumped, otherwise only information on
-.L tab
-is dumped.
-If
-.L flags
-is
-.L HASH_BUCKET
-then the hash bucket
-.I key-value
-pairs for each collision chain are also dumped.
 .TP
 .L "void hashsize(Hash_table_t* tab, int size)"
 Changes the size of the hash table
