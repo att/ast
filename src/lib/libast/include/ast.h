@@ -318,7 +318,6 @@ extern long strton(const char *, char **, char *, int);
 extern intmax_t strtonll(const char *, char **, char *, int);
 extern int struid(const char *);
 extern int struniq(char **, int);
-extern int strvcmp(const char *, const char *);
 
 extern size_t utf32toutf8(char *, uint32_t);
 extern size_t utf8toutf32(uint32_t *, const char *, size_t);
