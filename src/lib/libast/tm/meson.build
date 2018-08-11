@@ -6,6 +6,6 @@ libast_files += [
     'tm/tmtype.c', 'tm/tmweek.c', 'tm/tmword.c', 'tm/tmxdate.c',
     'tm/tmxfmt.c', 'tm/tmxgettime.c', 'tm/tmxleap.c',
     'tm/tmxmake.c', 'tm/tmxscan.c', 'tm/tmxsleep.c',
-    'tm/tmxtime.c', 'tm/tmzone.c', 'tm/tvcmp.c',
+    'tm/tmxtime.c', 'tm/tmzone.c',
     'tm/tvgettime.c', 'tm/tvsettime.c', 'tm/tvsleep.c', 'tm/tvtouch.c'
 ]
