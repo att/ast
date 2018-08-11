@@ -252,7 +252,6 @@ extern char *fmtscale(Sfulong_t, int);
 extern char *fmtsignal(int);
 extern char *fmttime(const char *, time_t);
 extern char *fmtuid(int);
-extern char *fmtversion(unsigned long);
 extern void *memdup(const void *, size_t);
 extern char *pathaccess(char *, const char *, const char *, const char *, int);
 extern char *pathaccess_20100601(const char *, const char *, const char *, int, char *, size_t);
