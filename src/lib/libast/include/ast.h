@@ -286,7 +286,6 @@ extern int stresc(char *);
 extern int strexp(char *, int);
 extern long streval(const char *, char **, long (*)(const char *, char **));
 extern long strexpr(const char *, char **, long (*)(const char *, char **, void *), void *);
-extern int strgid(const char *);
 extern int strgrpmatch(const char *, const char *, int *, int, int);
 extern int strgrpmatch_20120528(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
