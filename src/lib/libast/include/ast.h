@@ -263,7 +263,6 @@ extern char *pathbin(void);
 extern char *pathcanon(char *, size_t, int);
 extern char *pathcat(char *, const char *, int, const char *, const char *);
 extern char *pathcat_20100601(const char *, int, const char *, const char *, char *, size_t);
-extern int pathcd(const char *, const char *);
 extern int pathexists(char *, int);
 extern int pathgetlink(const char *, char *, int);
 extern int pathinclude(const char *);
