@@ -39,6 +39,5 @@
 
 extern void *swapmem(int, const void *, void *, size_t);
 extern intmax_t swapget(int, const void *, int);
-extern int swapop(const void *, const void *, int);
 
 #endif  // _SWAP_H
