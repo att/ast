@@ -470,23 +470,6 @@ is used.
 This eliminates a re-hash and re-lookup of
 .LR name .
 .TP
-.L "Hash_position_t* hashscan(Hash_table_t* tab, int flags)"
-Returns a
-.L Hash_position_t
-pointer for a sequential scan on the hash table
-.LR tab .
-If
-.L flags
-is
-.L HASH_NOSCOPE
-then only the top level hash table is used, otherwise the scan includes
-all scope covered tables.
-Only one scan may be active within a collection of scoped tables.
-.L hashdone()
-must be called to terminate the scan.
-.L 0
-is returned on error.
-.TP
 .L "Hash_bucket_t* hashnext(Hash_position_t* pos)"
 Returnes a pointer to the next bucket in the sequential scan set up by
 .L hashscan()
