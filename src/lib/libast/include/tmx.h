@@ -42,7 +42,6 @@ typedef uint32_t Tmxnsec_t;
 #define tmxsetmtime(s, t) ((s)->st_mtime = tmxsec(t), ST_MTIME_NSEC_SET(s, tmxnsec(t)))
 
 extern Time_t tmxdate(const char *, char **, Time_t);
-extern Time_t tmxduration(const char *, char **);
 extern char *tmxfmt(char *, size_t, const char *, Time_t);
 extern Time_t tmxleap(Time_t);
 extern Tm_t *tmxmake(Time_t);
