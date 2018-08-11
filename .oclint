@@ -81,3 +81,9 @@ disable-rules:
     # an error. This rule is therefore just noise. Disable this rule.
     #
     - ParameterReassignment
+    #
+    # The project makes so much use of the `goto` statement, many of which
+    # will require significant refactoring to remove, that warnings about its
+    # use are just noise.
+    #
+    - GotoStatement
