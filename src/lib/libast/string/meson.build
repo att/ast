@@ -13,7 +13,7 @@ libast_files += [
     'string/modex.c', 'string/qp.c',
     'string/strcopy.c', 'string/strelapsed.c', 'string/stresc.c',
     'string/streval.c', 'string/strexpr.c', 'string/strgid.c',
-    'string/strlcat.c', 'string/strlcpy.c', 'string/strlook.c',
+    'string/strlcat.c', 'string/strlcpy.c',
     'string/strmatch.c',
     'string/stropt.c',
     'string/strperm.c',

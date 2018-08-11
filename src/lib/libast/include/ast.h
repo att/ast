@@ -290,7 +290,6 @@ extern int strgid(const char *);
 extern int strgrpmatch(const char *, const char *, int *, int, int);
 extern int strgrpmatch_20120528(const char *, const char *, ssize_t *, int, int);
 extern int strngrpmatch(const char *, size_t, const char *, ssize_t *, int, int);
-extern void *strlook(const void *, size_t, const char *);
 extern int strmatch(const char *, const char *);
 extern int stropt(const char *, const void *, int, int (*)(void *, const void *, int, const char *),
                   void *);
