@@ -229,7 +229,6 @@ extern regstat_t *regstat(const regex_t *);
 
 extern regex_t *regcache(const char *, regflags_t, int *);
 
-extern int regsubcomp(regex_t *, const char *, const regflags_t *, int, regflags_t);
 extern int regsubflags(regex_t *, const char *, char **, int, const regflags_t *, int *,
                        regflags_t *);
 extern void regsubfree(regex_t *);
@@ -241,7 +240,5 @@ struct _sfio_s;
 #endif
 
 extern void regalloc(void *, regresize_t, regflags_t);
-extern int regsub(const regex_t *, struct _sfio_s *, const char *, const char *, size_t,
-                  regmatch_t *, regflags_t);
 
 #endif  // _REGEX_H
