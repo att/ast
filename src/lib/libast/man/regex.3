@@ -53,7 +53,6 @@ int        regaddclass(const char* \fIname\fP, regclass_t \fIclassf\fP);
 int        regcollate(const char* \fIstr\fP, char** \fIend\fP, char* \fIbuf\fP, int \fIsize\fP);
 
 int        regcomb(regex_t* \fIre_1\fP, regex_t* \fIre_2\fP);
-size_t     regdecomp(regex_t* \fIre\fP, regflags_t \fIflags\fP, char* \fIbuf\fP, size_t \fIsize\fP);
 int        regdup(regex_t* \fIre_old\fP, regex_t* \fIre_new\fP);
 regstat_t* regstat(const regex_t* \fIre\fP);
 
