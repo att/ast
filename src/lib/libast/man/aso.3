@@ -93,7 +93,6 @@ size_t		asodecsize(size_t volatile*);
 void*		asocasptr(void volatile*, void*, void*);
 void*		asogetptr(void volatile*);
 
-unsigned int	asoactivecpu(void);
 int		asolock(unsigned int volatile*, unsigned int, int);
 unsigned int	asothreadid(void);
 
@@ -193,9 +192,6 @@ The identification number is guaranteed to be non-zero and without the high bit 
 
 It is assumed that the keyword \f5__thread\fP is supported by the C compiler in use.
 If not, probabilistic uniqueness will not be guaranteed.
-.PP
-.Ss "  unsigned int  asoactivecpu(void);"
-This function returns an estimation of the number of active CPU cores.
 .PP
 .Ss "  #define asospindecl()"
 .Ss "  #define asospininit()"

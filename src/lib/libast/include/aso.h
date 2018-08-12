@@ -45,7 +45,6 @@
 #define asospinnext() \
     (tmsleep(0, _asor <<= 1), _asor >= (1 << 21) ? (sched_yield(), asospininit()) : 0)
 
-extern unsigned int asoactivecpu(void);
 extern int asolock(unsigned int volatile *, unsigned int, int);
 extern unsigned int asothreadid(void);
 
