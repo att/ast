@@ -67,7 +67,6 @@ void       regfatal(regex_t* \fIre\fP, int \fIlevel\fP, int \fIcode\fP);
 void       regfatalpat(regex_t* \fIre\fP, int \fIlevel\fP, int \fIcode\fP, const char* \fIpattern\fP);
 
 int        regsubcomp(regex_t* \fIre\fP, const char* \fIstr\fP, const regflags_t* \fImap\fP, int \fIminmatch\fP, regflags_t \fIflags\fP);
-int        regsubexec(const regex_t* \fIre\fP, const char* \fIsubject\fP, size_t \fInmatch\fP, regmatch_t* match);
 int        regsubflags(regex_t* \fIre\fP, const char* \fIstr\fP, char** \fIend\fP, int \fIdelim\fP, const regflags_t* \fImap\fP, int* \fIpm\fP, regflags_t* \fIpf\fP);
 void       regsubfree(regex_t* \fIre\fP);
 .EE

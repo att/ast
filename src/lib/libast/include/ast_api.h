@@ -50,11 +50,6 @@
 #endif
 
 #if ASTAPI(20120528)
-#undef regsubexec
-#define regsubexec regsubexec_20120528
-#endif
-
-#if ASTAPI(20120528)
 #undef strgrpmatch
 #define strgrpmatch strgrpmatch_20120528
 #endif
@@ -62,7 +57,7 @@
 #define _API_ast_MAP                                                                            \
     "cmdopen_20120411 cmdopen_20110505 pathaccess_20100601 pathcanon_20100601 "                 \
     "pathcat_20100601 pathkey_20100601 pathpath_20100601 pathprobe_20100601 pathrepl_20100601 " \
-    "regexec_20120528 regnexec_20120528 regrexec_20120528 regsubexec_20120528 "                 \
+    "regexec_20120528 regnexec_20120528 regrexec_20120528 "                 \
     "strgrpmatch_20120528"
 
 #endif

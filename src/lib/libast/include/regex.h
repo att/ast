@@ -210,7 +210,7 @@ extern void regfree(regex_t *);
 #define _REG_nexec 1   /* have regnexec()			*/
 #define _REG_rexec 1   /* have regrexec(), regrecord()		*/
 #define _REG_stat 1    /* have regstat()			*/
-#define _REG_subcomp 1 /* have regsubcomp(), regsubexec()	*/
+#define _REG_subcomp 1 /* have regsubcomp()               */
 
 extern regclass_t regclass(const char *, char **);
 extern int regaddclass(const char *, regclass_t);
@@ -230,7 +230,6 @@ extern regstat_t *regstat(const regex_t *);
 extern regex_t *regcache(const char *, regflags_t, int *);
 
 extern int regsubcomp(regex_t *, const char *, const regflags_t *, int, regflags_t);
-extern int regsubexec(const regex_t *, const char *, size_t, regmatch_t *);
 extern int regsubflags(regex_t *, const char *, char **, int, const regflags_t *, int *,
                        regflags_t *);
 extern void regsubfree(regex_t *);

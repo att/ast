@@ -4,5 +4,5 @@ libast_files += [
     'regex/regerror.c', 'regex/regexec.c', 'regex/regfatal.c',
     'regex/reginit.c', 'regex/regnexec.c', 'regex/regrecord.c',
     'regex/regrexec.c', 'regex/regstat.c', 'regex/regsub.c',
-    'regex/regsubcomp.c', 'regex/regsubexec.c'
+    'regex/regsubcomp.c',
 ]
