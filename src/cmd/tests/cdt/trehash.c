@@ -33,6 +33,7 @@
 #include "aso.h"
 #include "cdt.h"
 #include "terror.h"
+#include "tm.h"
 
 /* Test concurrency usage of the method Dtrhset.
 **
@@ -96,7 +97,7 @@ static void *memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     if (addr || size <= 0) /* no freeing */
         return NULL;
 
-    for (k = 0;; asorelax(1 << k), k = (k + 1) & 07)
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
         if (asocasint(&dc->lock, 0, 1) == 0) /* get exclusive use first */
             break;
 
@@ -269,7 +270,7 @@ tmain() {
 #endif
 
     tinfo("\ttrehash: Insertion #procs=%d (free shared mem=%d)", k, Disc->size);
-    for (k = 0;; asorelax(1 << k), k = (k + 1) & 07)
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
         if (asogetint(&State->idone) == N_PROC) break;
     tinfo("\ttrehash: Insertion completed, checking integrity");
 
@@ -279,7 +280,7 @@ tmain() {
     asocasint(&State->idone, N_PROC, 0);
 
     tinfo("\ttrehash: Deletion (free shared mem=%d)", Disc->size);
-    for (k = 0;; asorelax(1 << k), k = (k + 1) & 07)
+    for (k = 0;; tmsleep(0, 1 << k), k = (k + 1) & 07)
         if (asogetint(&State->ddone) == N_PROC) /* wait until all are deleted */
             break;
     if (dtfirst(dt)) terror("Dictionary not empty after deletion!");

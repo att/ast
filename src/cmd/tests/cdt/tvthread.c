@@ -28,6 +28,7 @@
 #include "aso.h"
 #include "cdt.h"
 #include "terror.h"
+#include "tm.h"
 
 /* Test concurrency by volleying objects between two dictionaries. */
 
@@ -100,7 +101,7 @@ static void *volley(void *arg) {
     Obj_t obj, *o, *rv;
 
     Nthreads += 1; /* wait until all threads have been started */
-    while (Nthreads < N_THREADS) asorelax(1);
+    while (Nthreads < N_THREADS) tmsleep(0, 1);
 
     if ((deldt = (int)((long)arg)) < 0 || deldt > 1)
         terror("Thread number must be 0 or 1, not %d", deldt);
@@ -123,7 +124,7 @@ static void *volley(void *arg) {
             } else if (rv)
                 terror("Unknown object %d", rv->value);
 
-            if (k % 100 == 0) asorelax(1);
+            if (k % 100 == 0) tmsleep(0, 1);
         }
     }
     tinfo("Move %d (Dict[%d] -> Dict[%d])", n_move, deldt, insdt);

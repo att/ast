@@ -1,6 +1,5 @@
 libast_files += [
-    'aso/aso.c', 'aso/asoactivecpu.c', 'aso/asolock.c', 'aso/asorelax.c',
-    'aso/asothreadid.c',
+    'aso/aso.c', 'aso/asoactivecpu.c', 'aso/asolock.c', 'aso/asothreadid.c',
 ]
 
 if cc.links('''

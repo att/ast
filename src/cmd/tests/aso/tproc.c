@@ -25,6 +25,7 @@
 
 #include "aso.h"
 #include "terror.h"
+#include "tm.h"
 
 #ifndef N_PROC
 #define N_PROC 8
@@ -47,7 +48,7 @@ static void workload(unsigned int pid) {
 
     asoincint(Active);       /* indicate that we are active */
     while (*Active < N_PROC) /* wait for all to be ready */
-        asorelax(1);
+        tmsleep(0, 1);
 
     for (k = 0; k < N_STEP; ++k)
         for (r = 0; r < N_REP; ++r) asoincint(Count);

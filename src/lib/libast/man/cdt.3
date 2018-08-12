@@ -798,7 +798,7 @@ and \f5Dtdisc_t.freef\fP to handle events and to free an object:
    
                 if(type & ~(DT_ANNOUNCE|DT_INSERT|DT_ATTACH))
                     while(asogetchar(&obj->ready) == 0 )
-                        asorelax(1);
+                        tmsleep(0, 1);
 
                 asoaddint(&obj->refn, 1);
             }
@@ -813,10 +813,10 @@ and \f5Dtdisc_t.freef\fP to handle events and to free an object:
         Obj_t  *obj = (Obj_t*)arg;
 
         while(asogetchar(&obj->ready) == 0 )
-            asorelax(1);
+            tmsleep(0, 1);
 
         while(asogetint(&obj->refn) > 0 )
-            asorelax(1);
+            tmsleep(0, 1);
 
         ... destroy the object ...
     }
@@ -833,7 +833,7 @@ the object may/will be already destroyed at that time.
 The \f5while()\fP loops in both \f5eventf()\fP and \f5freef()\fP cause
 the relevant operations to wait until the object is \fIready\fP (i.e.,
 all of its attributes are constructed) before proceeding.
-The \f5asorelax(1)\fP call yields control of the processor for 1 nanosecond
+The \f5tmsleep(0, 1)\fP call yields control of the processor for 1 nanosecond
 so other processes can do their work.
 Note that the test for \f5~(DT_ANNOUNCE|DT_INSERT|DT_ATTACH)\fP in \f5eventf()\fP
 means that the loop will execute for all CDT operations except for

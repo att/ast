@@ -24,6 +24,7 @@
 #endif
 
 #include "dttest.h"
+#include "tm.h"
 
 #include <sys/mman.h>
 
@@ -190,7 +191,7 @@ static int pingpong(char *procnum) {
 
     p = asoaddint(&cdtdt->process, 1);
     for (k = 0; p < N_CONCUR;
-         asorelax(1 << k), k = (k + 1) & 07) /* wait until all inserters are running */
+         tmsleep(0, 1 << k), k = (k + 1) & 07) /* wait until all inserters are running */
         p = asogetint(&cdtdt->process);
     tinfo("Process[num=%d,pid=%d]: ready to go", num, pid);
 

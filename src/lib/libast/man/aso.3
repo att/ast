@@ -95,7 +95,6 @@ void*		asogetptr(void volatile*);
 
 unsigned int	asoactivecpu(void);
 int		asolock(unsigned int volatile*, unsigned int, int);
-int		asorelax(long);
 unsigned int	asothreadid(void);
 
 void		asospindecl(void);
@@ -169,11 +168,6 @@ If the current content of \f5dest\fP is equal to \f5tstval\fP then it will be se
 If multiple threads/processes are performing the same operations only one will succeed with a
 return value of \f5tstval\fP.
 The return value is the old value in \f5*dest\fP.
-.PP
-.Ss "  void asorelax(long nsec);"
-This function causes the calling process or thread to briefly pause operations
-for a number of nanoseconds given in \f5nsec\fP.
-It is useful to implement tight loops that occasionally yield control.
 .PP
 .Ss "  int asolock(unsigned int* lock, unsigned int key, int type);"
 This function uses \f5key\fP, a non-zero unsigned integer, to lock or unlock the \f5lock\fP.
