@@ -237,6 +237,4 @@ extern void regsubfree(regex_t *);
 struct _sfio_s;
 #endif
 
-extern void regalloc(void *, regresize_t, regflags_t);
-
 #endif  // _REGEX_H
