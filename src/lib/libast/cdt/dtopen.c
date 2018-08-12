@@ -85,6 +85,8 @@ Dt_t *_dtopen(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     }
 
     *dt = pdt;
+    pthread_mutex_init(&dt->data->lock, NULL);
+    pthread_mutex_init(&dt->data->user.lock, NULL);
 
     dt->user = &dt->data->user; /* space allocated for application usage */
 

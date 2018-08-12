@@ -36,13 +36,8 @@ tmain() {
 
     if (!(dt = dtopen(&Disc, Dtset))) terror("Opening Dtset");
 
-    if (dtuserlock(dt, 0, 1) >= 0) terror("dtuserlock() should have failed because key == 0");
-
-    if (dtuserlock(dt, 1111, 1) < 0) terror("dtuserlock() should have succeeded to lock");
-    if (dt->user->lock != 1111) terror("user->lock should be 1111");
-
-    if (dtuserlock(dt, 1111, -1) < 0) terror("dtuserlock() should have succeeded to unlock");
-    if (dt->user->lock != 0) terror("user->lock should be 0");
+    if (dtuserlock(dt) != 0) terror("dtuserlock() should have succeeded to lock");
+    if (dtuserunlock(dt) != 0) terror("dtuserlock() should have succeeded to unlock");
 
     if (dtuserdata(dt, (void *)11, 1) != (void *)0)
         terror("dtuserdata() should have returned NULL");

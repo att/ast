@@ -1,4 +1,4 @@
-aso_test_files =['taso.c', 'tproc.c', 'tthread.c', 'tlock.c']
+aso_test_files =['taso.c', 'tlock.c']
 
 incdir = include_directories('..',
                              '../../../lib/libast/include/')
