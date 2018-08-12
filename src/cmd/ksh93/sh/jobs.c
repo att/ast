@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -43,7 +44,6 @@
 
 #include "defs.h"
 
-#include "aso.h"
 #include "ast.h"
 #include "ast_aso.h"
 #include "ast_assert.h"
@@ -1064,7 +1064,7 @@ int job_kill(struct process *pw, int sig) {
                     if (pid == 0) goto no_sigqueue;
                     r = sigqueue(pid, sig, sig_val);
                     if (r < 0 && errno == EAGAIN) {
-                        asoyield();
+                        sched_yield();
                         r = -2;
                     }
                 } else {
@@ -1087,7 +1087,7 @@ int job_kill(struct process *pw, int sig) {
             if (qflag) {
                 r = sigqueue(pid, sig, sig_val);
                 if (r < 0 &&errno = EAGAIN) {
-                    asoyield();
+                    sched_yield();
                     r = -2;
                 }
             } else {

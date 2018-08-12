@@ -24,6 +24,8 @@
 
 #define ASO_VERSION 20130501L
 
+#include <sched.h>
+
 #include "ast_aso.h"
 
 /*
@@ -39,12 +41,12 @@
 #define asospinrest() asorelax(1 << 18)
 #define asospindecl() unsigned int _asor
 #define asospininit() (_asor = 1 << 17)
-#define asospinnext() (asorelax(_asor <<= 1), _asor >= (1 << 21) ? (asoyield(), asospininit()) : 0)
+#define asospinnext() \
+    (asorelax(_asor <<= 1), _asor >= (1 << 21) ? (sched_yield(), asospininit()) : 0)
 
 extern unsigned int asoactivecpu(void);
 extern int asolock(unsigned int volatile *, unsigned int, int);
 extern int asorelax(long);
-extern int asoyield(void);
 extern unsigned int asothreadid(void);
 
 #define asocaschar(p, o, n) asocas8((uint8_t volatile *)p, o, n)
