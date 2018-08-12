@@ -46,7 +46,6 @@
     (tmsleep(0, _asor <<= 1), _asor >= (1 << 21) ? (sched_yield(), asospininit()) : 0)
 
 extern int asolock(unsigned int volatile *, unsigned int, int);
-extern unsigned int asothreadid(void);
 
 #define asocaschar(p, o, n) asocas8((uint8_t volatile *)p, o, n)
 #define asogetchar(p) asoget8((uint8_t volatile *)p)

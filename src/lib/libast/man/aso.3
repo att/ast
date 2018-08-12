@@ -94,7 +94,6 @@ void*		asocasptr(void volatile*, void*, void*);
 void*		asogetptr(void volatile*);
 
 int		asolock(unsigned int volatile*, unsigned int, int);
-unsigned int	asothreadid(void);
 
 void		asospindecl(void);
 void		asospininit(void);
@@ -185,13 +184,6 @@ On success, it returns 1. There is no failure mode with this call.
 \f5ASO_UNLOCK\fP:
 This call unlocks the lock if it was locked with \f5key\fP. It returns 1 on success
 and -1 on failure.
-.PP
-.Ss "  unsigned int  asothreadid(void);"
-This function returns an identification number probabilistically unique to the thread invoking it.
-The identification number is guaranteed to be non-zero and without the high bit on.
-
-It is assumed that the keyword \f5__thread\fP is supported by the C compiler in use.
-If not, probabilistic uniqueness will not be guaranteed.
 .PP
 .Ss "  #define asospindecl()"
 .Ss "  #define asospininit()"
