@@ -33,19 +33,12 @@
  * ast atomic scalar operations interface definitions
  */
 
-/* types of locking operations done by asolock() */
-#define ASO_UNLOCK (0001)  /* unlock a lock locked with a key	*/
-#define ASO_TRYLOCK (0002) /* try-locking, if failed, return	*/
-#define ASO_LOCK (0004)    /* spin-locking, never fail!		*/
-
 /* usable in a spin-loop to acquire resource */
 #define asospinrest() tmsleep(0, 1 << 18)
 #define asospindecl() unsigned int _asor
 #define asospininit() (_asor = 1 << 17)
 #define asospinnext() \
     (tmsleep(0, _asor <<= 1), _asor >= (1 << 21) ? (sched_yield(), asospininit()) : 0)
-
-extern int asolock(unsigned int volatile *, unsigned int, int);
 
 #define asocaschar(p, o, n) asocas8((uint8_t volatile *)p, o, n)
 #define asogetchar(p) asoget8((uint8_t volatile *)p)

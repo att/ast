@@ -30,16 +30,14 @@
 ** Written by Kiem-Phong Vo, phongvo@gmail.com (01/05/2012)
 */
 
-/* managing the lock dt->data->user.lock */
-int dtuserlock(Dt_t *dt, unsigned int key, int type) {
-    if (key == 0)
-        return -1;
-    else if (type > 0)
-        return asolock(&dt->data->user.lock, key, ASO_LOCK);
-    else if (type < 0)
-        return asolock(&dt->data->user.lock, key, ASO_UNLOCK);
-    else
-        return asolock(&dt->data->user.lock, key, ASO_TRYLOCK);
+// Lock dt->data->user.lock.
+int dtuserlock(Dt_t *dt) {
+    return pthread_mutex_lock(&dt->data->user.lock);
+}
+
+// Unlock dt->data->user.lock.
+int dtuserunlock(Dt_t *dt) {
+    return pthread_mutex_unlock(&dt->data->user.lock);
 }
 
 /* managing the user data slot dt->data->user.data */

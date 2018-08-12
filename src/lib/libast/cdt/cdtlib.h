@@ -32,6 +32,7 @@
 #include "dlldefs.h"
 #endif
 
+#include <pthread.h>
 #include <unistd.h>
 
 #include "aso.h"
@@ -50,7 +51,7 @@
 
 /* This struct holds private method data created on DT_OPEN */
 struct _dtdata_s {
-    unsigned int lock; /* general dictionary lock	*/
+    pthread_mutex_t lock; /* general dictionary lock	*/
     unsigned int type; /* method type, control flags	*/
     ssize_t size;      /* number of objects		*/
     Dtuser_t user;     /* application's data		*/
@@ -87,10 +88,11 @@ typedef struct _dtlib_s {
 
 #endif /* _BLD_cdt */
 
-/* these macros lock/unlock dictionaries. DTRETURN substitutes for "return" */
-#define DTSETLOCK(dt) (((dt)->data->type & DT_SHARE) ? asolock(&(dt)->data->lock, 1, ASO_LOCK) : 0)
-#define DTCLRLOCK(dt) \
-    (((dt)->data->type & DT_SHARE) ? asolock(&(dt)->data->lock, 1, ASO_UNLOCK) : 0)
+// These macros lock/unlock dictionaries.
+#define DTSETLOCK(dt) (((dt)->data->type & DT_SHARE) ? pthread_mutex_lock(&(dt)->data->lock) : 0)
+#define DTCLRLOCK(dt) (((dt)->data->type & DT_SHARE) ? pthread_mutex_unlock(&(dt)->data->lock) : 0)
+
+// DTRETURN substitutes for "return".
 #define DTRETURN(ob, rv) \
     do {                 \
         (ob) = (rv);     \
