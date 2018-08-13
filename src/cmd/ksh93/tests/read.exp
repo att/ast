@@ -1,0 +1,36 @@
+# vim: set filetype=expect:
+#
+# Test handling of the `read` command.
+set pid [spawn $ksh]
+expect_prompt
+
+# Since this is the very first `expect` based unit test written for ksh let's start with a very
+# basic sanity test.
+send "echo hello\r"
+expect "\r\nhello\r\n"
+expect_prompt
+
+# This is a regression test for issue #774.
+send "function read1 {\r"
+send "  print -n 'gimme input > '\r"
+send "  read input\r"
+send "  print got \"'\$input'\"\r"
+send "}\r"
+expect_prompt
+send "read1\r"
+send "abc\r"
+expect -ex "\r\ngimme input > abc"
+expect -ex "\r\ngot 'abc'\r\n"
+expect_prompt
+
+# Test that no input to `read` is handled correctly.
+send "read1\r"
+send "\r"
+expect -ex "\r\ngimme input > "
+expect -ex "\r\ngot ''\r\n"
+expect_prompt
+
+# Verify that asking the shell to exit works.
+send "exit\r"
+catch {expect default exp_continue} output
+wait
