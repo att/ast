@@ -69,11 +69,6 @@ ld_library_path = 'LD_LIBRARY_PATH=' + ':'.join(
 # Sample loadable builtin will be loaded from this path in builtins test cases
 libsample_path = 'LIBSAMPLE_PATH=' + libsample.full_path()
 
-# These are the default locales used by legacy test script. This used to use 'C.UTF-8' but because
-# we want to remove reliance on non-standard features of the AST locale subsystem it has been
-# changed to 'en_US.UTF-8' which we ensure is available in all the Travis test environments.
-locales = ['C', 'en_US.UTF-8']
-
 # Each entry in `all_tests` is an array of one or two elements. The first
 # element is the test name. The second is an optional timeout if the default
 # timeout of 30 seconds is too short. Try to keep the list sorted.
@@ -119,21 +114,17 @@ foreach testspec : all_tests
         parallel = false
     endif
 
-    foreach locale : locales
-        if testname.endswith('.exp') and locale != 'C'
-            # For some reason under Travis the expect tests always timeout in the C locale but not
-            # the en_US.UTF-8 locale. This does not happen on any of my local systems.
-            lang_var = 'LANG=' + locale
-            test(testname + '/' + locale, ksh93_exe, timeout: timeout, is_parallel: parallel,
-                args: [test_driver, testname],
-                env: [shell_var, lang_var, ld_library_path, libsample_path])
-        endif
-    endforeach
+    # Run the test without compiling the script (which is how most people use ksh).
+    lang_var = 'LANG=en_US.UTF-8'
+    test(testname, ksh93_exe, timeout: timeout, is_parallel: parallel,
+            args: [test_driver, testname],
+            env: [shell_var, lang_var, ld_library_path, libsample_path])
 
-    # Shcomp tests are only applicable for the non-interactive tests.
+    # Shcomp tests are only applicable to the non-interactive tests.
     if not testname.endswith('.exp')
-        lang_var = 'LANG=en_US.UTF-8'
+        # Run the test after compiling the script with `shcomp`.
         if not shcomp_tests_to_skip.contains(testname)
+            lang_var = 'LANG=C'
             test(testname + '/shcomp', ksh93_exe, timeout: timeout, is_parallel: parallel,
                 args: [ test_driver, 'shcomp', testname],
                 env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
