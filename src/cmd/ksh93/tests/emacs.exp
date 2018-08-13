@@ -1,0 +1,279 @@
+# Check emacs keybindings
+set pid [spawn $ksh]
+expect_prompt
+
+send "echo hello\r"
+expect "\r\nhello\r\n" {
+    puts "echo works"
+}
+
+expect_prompt
+
+# Enable emacs keybindings
+send "set -o emacs\r"
+expect_prompt
+
+# Send ctrl-p to check previous command
+send "\x10"
+expect -exact "set -o emacs" {
+    puts "ctrl-p works"
+}
+
+send "\x10"
+expect -exact "echo hello"
+
+# Send ctrl-n to check next command
+send "\x0E"
+expect -exact "set -o emacs" {
+    puts "ctrl-n works"
+}
+
+# Take cursor at beginning of line with ctrl-a
+send "\x01"
+expect -exact "" {
+    puts "ctrl-a works"
+}
+
+# Take cursor to the end of line with ctrl-e
+send "\x05"
+expect -exact "set -o emacs" {
+    puts "ctrl-e works"
+}
+
+# Move cursor backward one character with ctrl-b
+send "\x02"
+expect -exact "\x08" {
+    puts "ctrl-b works"
+}
+
+# Move cursor forward one character with ctrl-f
+# First move to the beginning of line
+send "\x01"
+expect -exact ""
+send "\x06"
+expect -exact "s" {
+    puts "ctrl-f works"
+}
+
+# Move cursor forward one word with alt-f
+send "\033f"
+expect -exact "et" {
+    puts "alt-f works"
+}
+
+#
+#
+# ^X^X ?
+#
+
+# Delete a character with ctrl-d
+# Move to the beginning of line
+send "\x01"
+send "\x04"
+expect -exact "et -o emacs" {
+    puts "ctrl-d deletes a char"
+}
+
+# Delete current word with alt-d
+send "\033d"
+expect -exact "-o emacs" {
+    puts "alt-d deletes a word"
+}
+
+# Take cursor to the end of line with ctrl-e
+send "\x05"
+# Delete previous word with ALT-backspace
+send "\033\x08"
+expect -exact "-o" {
+    puts "alt-backspace deletes previous word"
+}
+
+# Clear the commandline with ctrl-c
+send "\x03"
+expect -exact ""
+
+# Set command and move to end of line
+send "echo hello"
+send "\x05"
+
+# Delete previous word with ALT-h
+send "\033h"
+expect -exact "echo" {
+    puts "alt-h deletes previous word"
+}
+
+# Delete previous word with alt-delete
+send "\033\x7F"
+expect -exact "" {
+    puts "alt-delete deletes previous word"
+}
+
+# Transpose character with ctrl-t
+send "echo hello\x14"
+expect -exact "echo helol" {
+    puts "ctrl-t transposes characters"
+}
+
+# Clear command line
+send "\x03"
+send "echo hello"
+# Move to beginning of line
+send "\x01"
+# Capitalize current word with alt-c
+# This should capitalize the word 'echo' to 'ECHO'
+send "\033c"
+expect -exact "ECHO" {
+    puts "alt-c capitalizes current word"
+}
+
+# Change current word to lowercase alt-l
+# Move to beginning of line
+send "\x01"
+send "\033l"
+expect -exact "echo" {
+    puts "alt-l changes current word to lowercase"
+}
+
+# Move to beginning of line
+send "\x01"
+# Delete from cursor to end of line with ctrl-k
+send "\x11"
+# Cursor is at beginning of line so that should delete full line
+expect -exact "" {
+    puts "ctrl-k deletes characters to end of line"
+}
+
+# Kill from cursor to mark with ctrl-w
+send "echo hello2"
+send "\x17"
+expect -exact "" {
+    puts "ctrl-w kills from cursor to mark"
+}
+
+#
+# M-p       Push the region from the cursor to the mark on the stack.
+#
+# ^Y        Restore last item removed from line. (Yank item back to the line.)
+send "\x19"
+expect -exact "echo hello2" {
+    puts "ctrl-y yanks back item to the line"
+}
+
+#
+# ^L        Line feed and print current line
+#
+# M-^L      Clear the screen
+#
+
+# ^J        (New line) Execute the current line.
+#
+# ^M        (Return) Execute the current line.
+send "\x03"
+send "echo hello again"
+send "\x0D"
+expect "\r\nhello again\r\n" {
+    puts "hello again"
+}
+
+# Clear command line
+send "\x03"
+# M-<       Fetch the least recent (oldest) history line.
+send "\033<"
+expect "echo hello" {
+    puts "alt-< fetches least recent history line"
+}
+
+#
+# M->       Fetch the most recent (youngest) history line.
+# send ">"
+# expect -re "\r\$ echo hello2"
+
+#
+# ^Rstring  Reverse  search  history  for  a previous command line containing string.
+send "\x03"
+send "echo hello\x12\r"
+expect -re ".*echo hello" {
+    puts "ctrl-r reverse searches history for a previous command"
+}
+
+#
+# ^O        Operate - Execute the current line and fetch the next line relative to current line from the history file.
+send "echo foobar\xF"
+expect -re ".*foobar" {
+    puts "ctrl-o executes current line"
+}
+
+#
+# M-.       The last word of the previous command is inserted on the line.
+send "\033."
+expect "foobar" {
+    puts "alt-. inserts last word from previous command"
+}
+
+#
+# Clear commandline
+send "\x03"
+# M-_       Same as M-.
+send "\033_"
+expect "foobar" {
+    puts "alt-_ inserts last word from previous command"
+}
+
+# Create directories to test completions
+exec mkdir foo1 foo2 foo3 foobar
+
+# Clear commandline
+send "\x03"
+# M-*       Attempt  file  name generation on the current word.
+send "ls fo\033*"
+expect -re ".*foo1 foo2 foo3" {
+    puts "alt-* generates file name completions"
+}
+
+# M-ESC     Command or file name completion as described above. ?
+#
+# ^I tab    Attempts command or file name completion as described above.
+send "\x03"
+send "ls foob	"
+expect -re ".*foobar.*" {
+    puts "tab generates command or file name completions"
+}
+
+#
+# M-=       If  not  preceded by a numeric parameter, it generates the list of matching commands or file names
+send "\x03"
+send "echo foo\033="
+expect -re ".*foo1.*foo2.*foo3.*foobar" {
+    puts "alt-= generates file or command name completions"
+}
+
+#
+# Clear commandline
+send "\x03"
+# M-^V      Display version of the shell.
+send "\033\x16"
+expect -re ".*Version.*" {
+    puts "alt-ctrl-v generates version number"
+}
+
+#
+# M-#       If the line does not begin with a #, a # is inserted at the beginning of the line and after each new-line,  and
+# the  line  is entered.  This causes a comment to be inserted in the history file.  If the line begins with a #,
+# the # is deleted and one # after each new-line is also deleted. ?
+send "\x03"
+send "echo \033#"
+expect -re ".*#echo" {
+    puts "alt-# appends '#' to beginning of line"
+}
+
+#
+# Clear the commandline with ctrl-c
+send "\x03"
+expect -exact ""
+
+# TODO: There are still some keybindings listed in manpage which are not being tested
+
+# Exit shell with ctrl-d
+send "\x04"
+catch {expect default exp_continue} output
+wait
