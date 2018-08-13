@@ -1,6 +1,24 @@
 #
 # Make sure when called via `meson test` we've got the expected args.
 #
+function log_info {
+    typeset lineno=$1
+    print -r "<I> run_test[$lineno]:${test_name}: ${@:2}"
+}
+alias log_info='log_info $LINENO'
+
+function log_warning {
+    typeset lineno=$1
+    print -u2 -r "<W> run_test[$lineno]:${test_name}: ${@:2}"
+}
+alias log_warning='log_warning $LINENO'
+
+function log_error {
+    typeset lineno=$1
+    print -u2 -r "<E> run_test[$lineno]:${test_name}: ${@:2}"
+}
+alias log_error='log_error $LINENO'
+
 shcomp=false
 if [[ $# -eq 2 && $1 == shcomp ]]
 then
@@ -10,7 +28,7 @@ fi
 
 if [[ $# -ne 1 ]]
 then
-    print -u2 "<E> Expected one arg (the test name) possibly preceded by 'shcomp', got $#: $@"
+    log_error "Expected one arg (the test name) possibly preceded by 'shcomp', got $#: $@"
     exit 99
 fi
 
@@ -19,7 +37,12 @@ fi
 #
 export TEST_SRC_DIR=${0%/*/*}  # capture the parent directory containing this script
 readonly test_name=$1
-readonly test_path=$TEST_SRC_DIR/$test_name.sh
+if [[ $test_name == *.exp ]]
+then
+    readonly test_path=$TEST_SRC_DIR/$test_name
+else
+    readonly test_path=$TEST_SRC_DIR/$test_name.sh
+fi
 readonly test_script=$test_name.sh
 export BUILD_DIR=$PWD
 
@@ -32,7 +55,7 @@ export BUILD_DIR=$PWD
 # system.
 #
 export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXXX) ||
-    { print -u2 "<E> mktemp -dt failed"; exit 99; }
+    { log_error "mktemp -dt failed"; exit 99; }
 cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
 
 #
@@ -71,9 +94,47 @@ export OS_NAME=$(uname -s)
 # I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
 if [[ $test_name == io && $OS_NAME == Darwin && $CI == true ]]
 then
-    echo '<I> Skipping io test on macOS on Travis'
+    log_info 'Skipping io test on macOS on Travis'
     exit 0
 fi
+
+function run_interactive {
+    log_info "TEST_DIR=$TEST_DIR"
+
+    # This is a no-op on the first invocation. It is needed so retries have a clean slate.
+    [[ -f $HOME/.kshrc ]] && rm -rf *
+
+    cp $TEST_SRC_DIR/util/interactive.kshrc $HOME/.kshrc
+
+    export TERM=dumb
+    expect -n -c "source $TEST_SRC_DIR/util/interactive.expect.rc" -f $test_path \
+        >$test_name.out 2>$test_name.err
+    exit_status=$?
+
+    if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+    then
+        log_error "Stdout for $test_name had unexpected differences:"
+        diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
+        exit_status=1
+    fi
+
+    if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+    then
+        log_error "Stderr for $test_name had unexpected differences:"
+        diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
+        exit_status=1
+    fi
+
+    if [[ $exit_status -eq 0 ]]
+    then
+        # We only remove the temp test dir if the test is successful. Otherwise we leave it since
+        # it may contain useful clues about why the test failed.
+        cd /tmp
+        rm -rf $TEST_DIR
+    fi
+
+    return $exit_status
+}
 
 #
 # Make sure any locale vars set by the user (or the continuous build environment) don't affect the
@@ -87,19 +148,52 @@ unset LC_MONETARY
 unset LC_NUMERIC
 unset LC_TIME
 
-#
-# Create the actual unit test script by concatenating the stock preamble and postscript to the unit
-# test. Then run the composed script.
-#
-echo "#!$SHELL"                       > $test_script
-cat $TEST_SRC_DIR/util/preamble.sh   >> $test_script
-cat $test_path                       >> $test_script
-cat $TEST_SRC_DIR/util/postscript.sh >> $test_script
-chmod 755 $test_script
-if [[ $shcomp == false ]]
+if [[ $test_name == *.exp ]]
 then
-    $TEST_DIR/$test_script $test_name < /dev/null
+    # Interactive test.
+    if ! command -v expect >/dev/null
+    then
+        log_info "Skipping $test_name because no expect command could be found"
+        exit 0
+    fi
+
+    if [[ $shcomp == true ]]
+    then
+        log_error "Interactive tests cannot be run via shcomp"
+        exit 1
+    fi
+
+    if [[ $OS_NAME == FreeBSD ]]
+    then
+        # TODO: Explore why this was blacklisted or if it can now be enabled on that platform.
+        # These tests always fail on the first `expect_prompt` use. Which suggests a bug in how
+        # `expect` implements timeouts on FreeBSD 11 (at least when run as a VM).
+        log_info "Skipping test on $OS_NAME"
+        exit 0
+    fi
+
+    # Interactive tests are flakey on CI test environments like Travis. So make several attempts
+    # before reporting giving up and reporting failure.
+    for i in 1 2 3 4
+    do
+        run_interactive && break
+        log_info "Iteration $i of interactive test '$test_name' failed"
+    done
 else
-    $SHCOMP $test_script > $test_script.comp
-    $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
+    # Non-interactive test.
+    #
+    # Create the actual unit test script by concatenating the stock preamble and postscript to the
+    # unit test. Then run the composed script.
+    echo "#!$SHELL"                       > $test_script
+    cat $TEST_SRC_DIR/util/preamble.sh   >> $test_script
+    cat $test_path                       >> $test_script
+    cat $TEST_SRC_DIR/util/postscript.sh >> $test_script
+    chmod 755 $test_script
+    if [[ $shcomp == false ]]
+    then
+        $TEST_DIR/$test_script $test_name < /dev/null
+    else
+        $SHCOMP $test_script > $test_script.comp
+        $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
+    fi
 fi

@@ -94,6 +94,8 @@ all_tests = [
     # The following are tests that must be run serially after all other tests that might be run in
     # parallel.
     ['special-dev-paths'],
+    # These are interactive tests to be run via the `expect` utility.
+    ['read.exp'],
 ]
 
 # This is a list of the tests that must be run in isolation; i.e., not in parallel with other tests.
@@ -118,11 +120,13 @@ foreach testspec : all_tests
              env: [shell_var, lang_var, ld_library_path, libsample_path])
     endforeach
 
-    # shcomp tests
-    lang_var = 'LANG=en_US.UTF-8'
-    if not shcomp_tests_to_skip.contains(testname)
-        test(testname + '/shcomp', ksh93_exe, timeout: timeout,
-             args: [ test_driver, 'shcomp', testname],
-             env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+    # Shcomp tests are only applicable for the non-interactive tests.
+    if not testname.endswith('.exp')
+        lang_var = 'LANG=en_US.UTF-8'
+        if not shcomp_tests_to_skip.contains(testname)
+            test(testname + '/shcomp', ksh93_exe, timeout: timeout,
+                args: [ test_driver, 'shcomp', testname],
+                env: [shell_var, lang_var, shcomp_var, ld_library_path, libsample_path])
+        endif
     endif
 endforeach
