@@ -203,17 +203,14 @@ tmain() {
     ssize_t k, z, objn;
     Dt_t *dt;
     pid_t pid[N_PROC];
-    int zerof;
 
     tchild();
-
-    if ((zerof = open("/dev/zero", O_RDWR)) < 0) terror("Can't open /dev/zero");
 
     /* get shared memory */
     if ((k = 4 * N_OBJ * sizeof(void *)) < 64 * 1024 * 1024) k = 64 * 1024 * 1024;
     z = sizeof(State_t) /* insert/delete states */ + sizeof(Disc_t) /* discipline */ +
         N_OBJ * sizeof(Obj_t) /*  Obj  */ + k; /* table memory */
-    State = (State_t *)mmap(0, z, PROT_READ | PROT_WRITE, MAP_SHARED, zerof, 0);
+    State = (State_t *)mmap(NULL, z, PROT_READ | PROT_WRITE, MAP_ANON | MAP_SHARED, -1, 0);
     if (!State || State == (State_t *)(-1)) terror("mmap failed");
     Disc = (Disc_t *)(State + 1);
     Obj = (Obj_t *)(Disc + 1);

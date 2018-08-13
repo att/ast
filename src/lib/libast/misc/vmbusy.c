@@ -43,7 +43,9 @@ void *ast_realloc(void *ptr, size_t size) {
     vmbusy_flag = true;
     void *p = realloc(ptr, size);
     vmbusy_flag = false;
-    assert(p);
+    // On platforms like FreeBSD realloc with size == 0 frees the buffer and returns NULL. On other
+    // platforms a size of zero gets you a minimally sized block (typically four or eight bytes).
+    assert(!size || p);
     return p;
 }
 
