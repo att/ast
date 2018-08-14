@@ -62,8 +62,6 @@ function empty_fifos {
 }
 alias empty_fifos='empty_fifos $LINENO'
 
-'log_info' -1 "TEST_DIR=$TEST_DIR"
-
 #
 # Capture the current line number so we can calculate the correct line number in the unit test file
 # that will be appended to this preamble script. This must be the last line in this preamble script.

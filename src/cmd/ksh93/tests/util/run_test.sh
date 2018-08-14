@@ -3,19 +3,19 @@
 #
 function log_info {
     typeset lineno=$1
-    print -r "<I> run_test[$lineno]:${test_name}: ${@:2}"
+    print -r "<I> run_test[$lineno]: ${@:2}"
 }
 alias log_info='log_info $LINENO'
 
 function log_warning {
     typeset lineno=$1
-    print -u2 -r "<W> run_test[$lineno]:${test_name}: ${@:2}"
+    print -u2 -r "<W> run_test[$lineno]: ${@:2}"
 }
 alias log_warning='log_warning $LINENO'
 
 function log_error {
     typeset lineno=$1
-    print -u2 -r "<E> run_test[$lineno]:${test_name}: ${@:2}"
+    print -u2 -r "<E> run_test[$lineno]: ${@:2}"
 }
 alias log_error='log_error $LINENO'
 
@@ -30,6 +30,19 @@ if [[ $# -ne 1 ]]
 then
     log_error "Expected one arg (the test name) possibly preceded by 'shcomp', got $#: $@"
     exit 99
+fi
+
+#
+# A test may need to alter its behavior based on the OS we're running on.
+#
+export OS_NAME=$(uname -s)
+
+# TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
+# I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
+if [[ $test_name == io && $OS_NAME == Darwin && $CI == true ]]
+then
+    log_info 'Skipping io test on macOS on Travis'
+    exit 0
 fi
 
 #
@@ -57,6 +70,7 @@ export BUILD_DIR=$PWD
 export TEST_DIR=$(mktemp -dt ksh.${test_name}.XXXXXXX) ||
     { log_error "mktemp -dt failed"; exit 99; }
 cd $TEST_DIR || { print -u2 "<E> 'cd $TEST_DIR' failed with status $?"; exit 99; }
+log_info "TEST_DIR=$TEST_DIR"
 
 #
 # Make sure we search for external commands in the temporary test dir, then the test source dir,
@@ -85,24 +99,14 @@ mkfifo fifo8
 mkdir $TEST_DIR/home
 export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
-#
-# A test may need to alter its behavior based on the OS we're running on.
-#
-export OS_NAME=$(uname -s)
-
-# TODO: Enable the `io` test on Travis macOS once we understand why it dies from an abort().
-# I'm not seeing that failure happen on either of my macOS 10.12 or 10.13 systems.
-if [[ $test_name == io && $OS_NAME == Darwin && $CI == true ]]
-then
-    log_info 'Skipping io test on macOS on Travis'
-    exit 0
-fi
 
 function run_interactive {
-    log_info "TEST_DIR=$TEST_DIR"
-
     # This is a no-op on the first invocation. It is needed so retries have a clean slate.
-    [[ -f $HOME/.kshrc ]] && rm -rf *
+    if [[ -f $HOME/.kshrc ]]
+    then
+        rm -rf *
+        mkdir $HOME
+    fi
 
     cp $TEST_SRC_DIR/util/interactive.kshrc $HOME/.kshrc
 
@@ -174,11 +178,14 @@ then
 
     # Interactive tests are flakey on CI test environments like Travis. So make several attempts
     # before reporting giving up and reporting failure.
+    status=0
     for i in 1 2 3 4
     do
         run_interactive && break
+        status=$?
         log_info "Iteration $i of interactive test '$test_name' failed"
     done
+    exit $status
 else
     # Non-interactive test.
     #
