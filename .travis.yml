@@ -21,16 +21,14 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
-# TODO: Renable this test env when issue #783 is fixed.
-#
-#       # Ubuntu requires explicitly generating en_US.UTF-8 locale
-#       - os: linux
-#         compiler: gcc
-#         env:
-#           - DISTRO_TYPE=ubuntu
-#             INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
-#         before_install:
-#             - docker pull ${DISTRO_TYPE}
+        # Ubuntu requires explicitly generating en_US.UTF-8 locale
+        - os: linux
+          compiler: gcc
+          env:
+            - DISTRO_TYPE=ubuntu
+              INSTALL_REQUIREMENTS="apt-get update; apt-get install -y gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
+          before_install:
+              - docker pull ${DISTRO_TYPE}
 
         # Debian requires explicitly generating en_US.UTF-8 locale too
         - os: linux
