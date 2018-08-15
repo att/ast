@@ -246,6 +246,7 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
     Dtlink_t *lnk, *pp, *ll, *p, *l, **tbl;
     void *key, *k, *o;
     uint hsh;
+    bool free_ll = false;
     Dtlink_t **fngr = NULL;
     Dtdisc_t *disc = dt->disc;
     Dthash_t *hash = (Dthash_t *)dt->data;
@@ -376,7 +377,9 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
                 pp->_rght = ll->_rght;
             else
                 *tbl = ll->_rght;
-            _dtfree(dt, ll, type);
+            // Cause a `_dtfree(dt, ll, type)` in the exit path. This is needed because macros like
+            // _DTOBJ() dereference the pointer we want to free.
+            free_ll = true;
             DTRETURN(obj, _DTOBJ(disc, ll));
         } else if (type & DT_INSTALL) {
             if (dt->meth->type & DT_BAG)
@@ -442,6 +445,7 @@ static void *dthashchain(Dt_t *dt, void *obj, int type) {
 
 dt_return:
     DTANNOUNCE(dt, obj, type);
+    if (free_ll) _dtfree(dt, ll, type);
     DTCLRLOCK(dt);
     return obj;
 }
