@@ -150,8 +150,6 @@ feature_data.set10('_lib_mstats',
 
 feature_data.set10('_lib_mallopt',
     cc.has_function('mallopt', prefix: '#include <malloc.h>', args: feature_test_args))
-feature_data.set10('_lib_memalign',
-    cc.has_function('memalign', prefix: '#include <stdlib.h>', args: feature_test_args))
 feature_data.set10('_lib_pvalloc',
     cc.has_function('pvalloc', prefix: '#include <malloc.h>', args: feature_test_args))
 feature_data.set10('_lib___libc_malloc',
