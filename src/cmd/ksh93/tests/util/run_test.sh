@@ -115,18 +115,34 @@ function run_interactive {
         >$test_name.out 2>$test_name.err
     exit_status=$?
 
-    if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+    if [[ -e $TEST_SRC_DIR/$test_name.out ]]
     then
-        log_error "Stdout for $test_name had unexpected differences:"
-        diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
-        exit_status=1
+        if ! diff -q $TEST_SRC_DIR/$test_name.out $test_name.out >/dev/null
+        then
+            log_error "Stdout for $test_name had unexpected differences:"
+            diff -U3 $TEST_SRC_DIR/$test_name.out $test_name.out >&2
+            exit_status=1
+        fi
+    elif [[ -s $test_name.out ]]
+    then
+            log_error "Stdout for $test_name should have been empty:"
+            cat $test_name.out >&2
+            exit_status=1
     fi
 
-    if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+    if [[ -e $TEST_SRC_DIR/$test_name.err ]]
     then
-        log_error "Stderr for $test_name had unexpected differences:"
-        diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
-        exit_status=1
+        if ! diff -q $TEST_SRC_DIR/$test_name.err $test_name.err >/dev/null
+        then
+            log_error "Stderr for $test_name had unexpected differences:"
+            diff -U3 $TEST_SRC_DIR/$test_name.err $test_name.err >&2
+            exit_status=1
+        fi
+    elif [[ -s $test_name.err ]]
+    then
+            log_error "Stderr for $test_name should have been empty:"
+            cat $test_name.err >&2
+            exit_status=1
     fi
 
     if [[ $exit_status -eq 0 ]]

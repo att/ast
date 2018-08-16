@@ -7,7 +7,6 @@
 # which project directory they reside in.
 *.exe
 *.app
-*.out
 *.so
 *.dylib
 *.dll
@@ -34,6 +33,12 @@
 .Trash-*
 ._*
 Desktop.ini
+
+# This is a special suffix. There is exactly one directory where we expect
+# files with a `.out` extension: the ksh93 unit tests. So exclude it
+# everywhere then allow it in the ksh93 unit test directory.
+*.out
+!src/cmd/ksh93/tests/*.out
 
 # Artifacts of the build and test process that should not be committed.
 build/
