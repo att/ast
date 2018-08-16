@@ -114,7 +114,6 @@ struct jobs {
     char waitsafe;            // wait will not block
     char waitall;             // wait for all jobs in pipe
     char toclear;             // job table needs clearing
-    int asol;                 // used for asolock
     unsigned char *freejobs;  // free jobs numbers
 #if SHOPT_COSHELL
     struct cosh *colist;  // coshell job list

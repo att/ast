@@ -26,6 +26,8 @@
 #ifndef _CDT_H
 #define _CDT_H 1
 
+#include <pthread.h>
+
 #ifndef CDT_VERSION
 #ifdef _API_ast
 #define CDT_VERSION _API_ast
@@ -70,7 +72,7 @@ typedef int (*Dttype_f)(Dt_t *, int);
 
 struct _dtuser_s /* for application to access and use */
 {
-    unsigned int lock; /* used by dtapplock	*/
+    pthread_mutex_t lock; /* used by dtapplock	*/
     void *data;        /* for whatever data	*/
 };
 
@@ -257,7 +259,8 @@ extern Dtmethod_t *dtmethod(Dt_t *, Dtmethod_t *);
 extern int dtwalk(Dt_t *, int (*)(Dt_t *, void *, void *), void *);
 extern int dtcustomize(Dt_t *, int, int);
 extern unsigned int dtstrhash(unsigned int, char *, int);
-extern int dtuserlock(Dt_t *, unsigned int, int);
+extern int dtuserlock(Dt_t *);
+extern int dtuserunlock(Dt_t *);
 extern void *dtuserdata(Dt_t *, void *, int);
 extern int dtuserevent(Dt_t *, int, void *);
 extern ssize_t dtstat(Dt_t *, Dtstat_t *);
