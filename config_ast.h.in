@@ -174,7 +174,6 @@
 #mesondefine _lib_posix_spawnattr_setumask
 #mesondefine _lib_pstat
 #mesondefine _lib_ptsname
-#mesondefine _lib_pvalloc
 #mesondefine _lib_rewinddir
 #mesondefine _lib_setlocale
 #mesondefine _lib_setregid

@@ -107,7 +107,6 @@ extern int spawnvex_close(Spawnvex_t *);
 #endif
 
 extern char *fgetcwd(int, char *, size_t);
-extern void *pvalloc(size_t);
 extern char *resolvepath(const char *, char *, size_t);
 #if !_lib_strlcat
 extern size_t strlcat(char *, const char *, size_t);
