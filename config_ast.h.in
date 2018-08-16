@@ -361,12 +361,13 @@ extern volatile bool vmbusy_flag;
 #define free(p) ast_free(p)
 #endif
 
-// TODO: Figure out why the code calls `eaccess()` since a) it isn't
-// available on some systems like macOS, and b) prior to removal of the
-// syscall intercept module (src/lib/libast/port/intercept.c) it was mapped
-// via a #define to be faccessat(). Wich is just `access()` since we never
-// passed anything other than AT_CWD.
-#define eaccess(p, f) access(p, f)
+// Some systems (e.g., macOS, OpenBSD) don't implement `eaccess()`. But all
+// the systems we currently test on do provide `faccessat()` so use that. If
+// and when we evern get built on a system without `faccessat()` we can
+// implement build time feature test and implement a more complex workaround.
+#include <fcntl.h>
+#include <unistd.h>
+#define eaccess(p, f) faccessat(AT_FDCWD, p, f, AT_EACCESS)
 
 extern char *sh_getenv(const char *name);
 #define getenv(x) sh_getenv(x)

@@ -106,10 +106,7 @@ extern int spawnvex_close(Spawnvex_t *);
 
 #endif
 
-extern int eaccess(const char *, int);
-extern int execvpe(const char *, char *const[], char *const[]);
 extern char *fgetcwd(int, char *, size_t);
-extern char *gettxt(const char *, const char *);
 extern void *memalign(size_t, size_t);
 extern void *pvalloc(size_t);
 extern char *resolvepath(const char *, char *, size_t);
