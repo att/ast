@@ -1,0 +1,422 @@
+# Check emacs keybindings
+set pid [spawn $ksh]
+expect_prompt
+
+# ==========
+# Enable emacs keybindings
+send "set -o emacs\r"
+expect_prompt
+
+# ==========
+# Populate the command history with a couple of commands.
+send "echo hello\r"
+expect "\r\nhello\r\n" {
+    puts "echo 1 works"
+}
+expect_prompt
+send "echo buh bye\r"
+expect "\r\nbuh bye\r\n" {
+    puts "echo 2 works"
+}
+expect_prompt
+
+# ==========
+# Send ctrl-p to retrieve previous command
+log_test_entry
+send [ctrl P]
+send [ctrl L]
+expect -ex ": echo buh bye" {
+    puts "ctrl-p works"
+}
+
+# ==========
+# Send ctrl-p to retrieve the second most recent command
+log_test_entry
+send [ctrl P]
+send [ctrl L]
+expect -ex ": echo hello"
+
+# ==========
+# Send ctrl-n to check next command
+log_test_entry
+send [ctrl N]
+send [ctrl L]
+expect -ex ": echo buh bye" {
+    puts "ctrl-n works"
+}
+
+# ==========
+# Take cursor at beginning of line with ctrl-a
+log_test_entry
+send [ctrl A]
+send "x"
+send [ctrl L]
+expect -ex ": xecho buh bye" {
+    puts "ctrl-a works"
+}
+
+# ==========
+# Take cursor to the end of line with ctrl-e
+log_test_entry
+send [ctrl E]
+send "Y"
+send [ctrl L]
+expect -ex ": xecho buh byeY" {
+    puts "ctrl-e works"
+}
+
+# ==========
+# Move cursor backward one character with ctrl-b
+log_test_entry
+send [ctrl B]
+send "X"
+send [ctrl L]
+expect -ex ": xecho buh byeXY" {
+    puts "ctrl-b works"
+}
+
+# ==========
+# Move cursor forward one character with ctrl-f after moving to the start of the line.
+log_test_entry
+send [ctrl A]
+send [ctrl F]
+send "y"
+send [ctrl L]
+expect -ex ": xyecho buh byeXY" {
+    puts "ctrl-f works"
+}
+
+# ==========
+# Move cursor forward one word with alt-f
+log_test_entry
+send [ctrl esc]
+send "f"
+send "z"
+send [ctrl L]
+expect -ex ": xyechoz buh byeXY" {
+    puts "alt-f works"
+}
+
+# ==========
+# Delete a character with ctrl-d
+# Move to the beginning of line
+log_test_entry
+send [ctrl A]
+send [ctrl D]
+send [ctrl L]
+expect -ex ": yechoz buh byeXY" {
+    puts "ctrl-d deletes a char"
+}
+
+# ==========
+# Delete current word with alt-d.
+log_test_entry
+send [ctrl esc]
+send "d"
+expect -ex ":  buh byeXY" {
+    puts "alt-d deletes a word"
+}
+
+# ==========
+# Take cursor to the end of line with ctrl-e.
+# Delete previous word with ALT-backspace.
+log_test_entry
+send [ctrl E]
+send [ctrl esc]
+send [ctrl H]
+send [ctrl L]
+expect -ex ":  buh " {
+    puts "alt-backspace deletes previous word"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# Delete previous word with ALT-h
+log_test_entry
+send "echo hello there"
+send [ctrl esc]
+send "h"
+expect -re ".*"
+send [ctrl L]
+expect -ex "echo hello" {
+    puts "alt-h deletes previous word"
+}
+
+# ==========
+# Delete previous word with alt-delete
+log_test_entry
+send [ctrl esc]
+send [ctrl del]
+expect -re ".*"
+send [ctrl L]
+expect -ex "echo" {
+    puts "alt-delete deletes previous word"
+}
+
+# ==========
+# Make sure we're still in sync after the previous delete token tests.
+send "\r"
+expect_prompt
+
+# ==========
+# Transpose character with ctrl-t
+log_test_entry
+send "echo hello"
+send [ctrl T]
+send [ctrl L]
+expect -ex ": echo helol" {
+    puts "ctrl-t transposes characters"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+
+# ==========
+# Move to beginning of line
+log_test_entry
+send "echo hello"
+send "\x01"
+# Capitalize current word with alt-c
+# This should capitalize the word 'echo' to 'ECHO'
+send [ctrl esc]
+send "c"
+send [ctrl L]
+expect -ex ": ECHO" {
+    puts "alt-c capitalizes current word"
+}
+
+# ==========
+# Change current word to lowercase alt-l
+# Move to beginning of line
+log_test_entry
+send [ctrl A]
+send [ctrl esc]
+send "l"
+send [ctrl L]
+expect -ex ": echo" {
+    puts "alt-l changes current word to lowercase"
+}
+
+# ==========
+# Delete from start of line to end of line with ctrl-k.
+log_test_entry
+send [ctrl A]
+send [ctrl K]
+send [ctrl L]
+expect -re ": \[ \x08\]+$" {
+    puts "ctrl-k deletes characters to end of line"
+}
+
+# ==========
+# Kill from cursor to mark with ctrl-w. We use meta-sp to set the mark before the `word2`.
+log_test_entry
+send "echo word1 "
+send [ctrl esc]
+send " "
+send "word2"
+send [ctrl W]
+send [ctrl L]
+expect -re ": echo word1\[ \x08\]+$" {
+    puts "ctrl-w kills from cursor to mark"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# ^Y
+# Restore last item removed from line. (Yank item back to the line.)
+log_test_entry
+send [ctrl Y]
+expect -ex "word2" {
+    puts "ctrl-y yanks back item to the line"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# M-<
+# Fetch the least recent (oldest) history line.
+log_test_entry
+send [ctrl esc]
+send "<"
+expect -re "^set -o emacs$" {
+    puts "alt-< fetches least recent history line"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# ^Rstring
+# Reverse search history for a previous command line containing string.
+log_test_entry
+send [ctrl R]
+send "buh bye"
+send "\r"
+send [ctrl L]
+expect -ex ": echo buh bye" {
+    puts "ctrl-r reverse searches history for a previous command"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# ^O
+# Operate - Execute the current line and fetch the next line relative to current line from the
+# history file.
+log_test_entry
+send "echo abc def\r"
+expect_prompt
+send "echo ghi jkl\r"
+expect_prompt
+send [ctrl P]
+send [ctrl P]
+send [ctrl O]
+expect "\r\nabc def\r\n" {
+    puts "ctrl-o executes current history entry"
+}
+expect_prompt
+expect -ex "echo ghi jkl" {
+    puts "ctrl-o executes current history entry and retrieves next history entry"
+}
+send "\r"
+expect "\r\nghi jkl\r\n" {
+}
+expect_prompt
+
+# ==========
+# M-.
+# The last word of the previous command is inserted on the line.
+log_test_entry
+send [ctrl esc]
+send "."
+send [ctrl L]
+expect -ex ": jkl" {
+    puts "alt-. inserts last word from previous command"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# M-_       Same as M-.
+log_test_entry
+send [ctrl esc]
+send "_"
+send [ctrl L]
+expect ": jkl" {
+    puts "alt-_ inserts last word from previous command"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# Create directories to test completions
+exec mkdir foo1 foo2 foo3 foobar
+
+# ==========
+# M-*
+# Attempt file name generation on the current word.
+log_test_entry
+send "ls fo"
+send [ctrl esc]
+send "*"
+expect -re ".*foo1 foo2 foo3" {
+    puts "alt-* generates file name completions"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# ^I tab
+# Attempts command or file name completion as described above.
+log_test_entry
+send "ls foob\t"
+expect -re ".*foobar.*" {
+    puts "tab generates command or file name completions"
+}
+
+# ==========
+# M-=
+# If not preceded by a numeric parameter generate list of matching commands or file names
+log_test_entry
+send "echo foo"
+send [ctrl esc]
+send "="
+expect -re ".*foo1.*foo2.*foo3.*foobar" {
+    puts "alt-= generates file or command name completions"
+}
+
+# Kill command line and get a new prompt.
+send [ctrl C]
+expect_prompt
+
+# ==========
+# M-^V      Display version of the shell.
+log_test_entry
+send "echo "
+send [ctrl esc]
+send [ctrl V]
+expect -re ".*Version.*" {
+    puts "alt-ctrl-v generates version number"
+}
+send "\r"
+expect_prompt
+
+# ==========
+# M-#
+# If the line does not begin with a #, a # is inserted at the beginning of the line and after each
+# new-line,  and the  line  is entered.  This causes a comment to be inserted in the history file.
+# If the line begins with a #, the # is deleted and one # after each new-line is also deleted. ?
+log_test_entry
+send "echo comment"
+send [ctrl esc]
+send "#"
+expect -ex "#echo comment" {
+    puts "alt-# appends '#' to beginning of line"
+}
+# And it should have caused a new prompt.
+expect_prompt
+send [ctrl P]
+send [ctrl L]
+expect -ex ": #echo comment" {
+    puts "alt-# appends '#' to beginning of line and puts it in history"
+}
+send "\r"
+expect_prompt
+
+# ==========
+# TODO: There are still some keybindings listed in manpage which are not being tested.
+# A partial list of bindings to be tested:
+#
+# ^X^X
+# M->       Fetch the most recent (youngest) history line.
+# M-^L      Clear the screen
+# M-p       Push the region from the cursor to the mark on the stack.
+# M-ESC     Command or file name completion as described above.
+
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0
