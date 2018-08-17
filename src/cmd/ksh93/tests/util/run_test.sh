@@ -197,10 +197,16 @@ then
     status=0
     for i in 1 2 3 4
     do
-        run_interactive && break
+        run_interactive
         status=$?
+        [[ $status -eq 0 ]] && break
         log_info "Iteration $i of interactive test '$test_name' failed"
     done
+    if [[ $status -ne 0 ]]
+    then
+        log_warning "The expect interactive.tmp.log contains the following:"
+        cat interactive.tmp.log >&2
+    fi
     exit $status
 else
     # Non-interactive test.
