@@ -34,6 +34,7 @@ None at this time.
 - <> operator now redirects standard input by default (issue #75).
 - Support for the build time SHOPT_ACCTFILE symbol and code has been removed
   (issue #210).
+- Versioning scheme has been changed to semantic versioning (issue #335).
 
 ## Notable fixes and improvements
 

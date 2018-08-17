@@ -926,7 +926,12 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
             t += c - '0';
         }
     }
-    return (Sfdouble_t)t;
+    // Last stable version of ksh had version number `2012-08-01` and it was translated
+    // to `20120801` in arithmetic context. Since we have switched to semantic versioning,
+    // version numbers like 2017.0.0 will be translated to 201700. But it should be shown
+    // as `20170000` to maintain backward compatiblilty, so multiply it by 100.
+    // See issue #335 for discussion.
+    return (Sfdouble_t)(t*100);
 }
 
 static const Namdisc_t SH_VERSION_disc = {
