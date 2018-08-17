@@ -23,7 +23,7 @@ proc log_info string {
     switch $loglevel {
         info -
         debug {
-            send_log "\[INFO] $string\n"
+            send_log "<I> $string\n"
         }
     }
 }
@@ -32,7 +32,7 @@ proc log_debug string {
     global loglevel
     switch $loglevel {
         debug {
-            send_log "\[DEBUG] $string\n"
+            send_log "<D> $string\n"
         }
     }
 }
@@ -51,7 +51,7 @@ set prompt_counter 1
 proc expect_prompt {args} {
     global prompt_counter
     upvar expect_out expect_out
-    set prompt_pat [list -re "(?:\\r\\n?|^)(?:\\\[.\\\] )?KSH PROMPT:$prompt_counter: (?:$|\\r)"]
+    set prompt_pat [list -re "(?:^|\\r\\n?)(?:\\\[.\\\] )?KSH PROMPT:$prompt_counter: "]
     if {[llength $args] == 1 && [string match "\n*" $args]} {
         set args [join $args]
     }
@@ -238,6 +238,17 @@ proc quote string {
     string map $map $string
 }
 
+proc lineno args {
+    return [dict get [info frame 1]  line]
+}
+
+proc log_test_entry args {
+    log_info "========== STARTING TEST AT LINE [lineno] =========="
+    if {[llength $args] > 0} {
+        puts "========== STARTING TEST $args"
+    }
+}
+
 proc send_line args {
     if {[llength $args] > 0} {
         lset args end [lindex $args end]\r
@@ -269,4 +280,28 @@ proc print_var_contents name {
         log_debug "unmatched: [quote $expect_out(buffer)]"
         abort "Didn't match output for variable $$name"
     }
+}
+
+# Convert an ASCII character to its control char equivalent.
+#
+# This must be called with a single ASCII char.
+#
+# Returns the control-char version of the char.
+proc ctrl char {
+    if {$char == "esc"} {
+        return \x1b
+    }
+    if {$char == "del"} {
+        return \x7f
+    }
+    if {$char == "?"} {
+        return \x7f
+    }
+    return [format %c [expr ([scan $char %c] & 0x1F)]]
+}
+
+# Send a [ctrl-L] to force the shell to redraw the prompt and command line. Doing so makes it easier
+# to verify the command line contains the expected text.
+proc redraw_prompt args {
+    send [ctrl L]
 }
