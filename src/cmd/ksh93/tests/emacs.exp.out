@@ -1,0 +1,32 @@
+echo 1 works
+echo 2 works
+ctrl-p works
+ctrl-n works
+ctrl-a works
+ctrl-e works
+ctrl-b works
+ctrl-f works
+alt-f works
+ctrl-d deletes a char
+alt-d deletes a word
+alt-backspace deletes previous word
+alt-h deletes previous word
+alt-delete deletes previous word
+ctrl-t transposes characters
+alt-c capitalizes current word
+alt-l changes current word to lowercase
+ctrl-k deletes characters to end of line
+ctrl-w kills from cursor to mark
+ctrl-y yanks back item to the line
+alt-< fetches least recent history line
+ctrl-r reverse searches history for a previous command
+ctrl-o executes current history entry
+ctrl-o executes current history entry and retrieves next history entry
+alt-. inserts last word from previous command
+alt-_ inserts last word from previous command
+alt-* generates file name completions
+tab generates command or file name completions
+alt-= generates file or command name completions
+alt-ctrl-v generates version number
+alt-# appends '#' to beginning of line
+alt-# appends '#' to beginning of line and puts it in history

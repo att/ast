@@ -33,4 +33,4 @@ expect_prompt
 # Verify that asking the shell to exit works.
 send "exit\r"
 catch {expect default exp_continue} output
-wait
+catch {wait}
