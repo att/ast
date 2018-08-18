@@ -51,7 +51,6 @@
 #mesondefine _cmd_newgrp
 #mesondefine _cmd_nfsd
 #mesondefine _cmd_tput
-#mesondefine _cmd_universe
 #mesondefine _dll_DYNAMIC
 #mesondefine _DLL_NEXT_PATH
 #mesondefine _map_libc

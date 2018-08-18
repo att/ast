@@ -36,32 +36,12 @@
 
 #include <errno.h>
 
-#if _cmd_universe && _sys_universe
-#include <sys/universe.h>
-#endif
-
 #include "ast.h"
 #include "ls.h"
 
 #define UNIV_SIZE 9
 
-#if _cmd_universe
-#ifdef NUMUNIV
-#define UNIV_MAX NUMUNIV
-#else
-#define UNIV_MAX univ_max
-extern char *univ_name[];
-extern int univ_max;
-#endif
-
-extern char univ_cond[];
-extern int univ_size;
-
-#else
-
 extern char univ_env[];
-
-#endif
 
 extern int getuniverse(char *);
 extern int setuniverse(int);

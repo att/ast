@@ -115,9 +115,6 @@ const struct shtable3 shtab_builtins[] = {
     {"alarm", NV_BLTIN, bltin(alarm)},
     {"ulimit", NV_BLTIN | BLT_ENV, bltin(ulimit)},
     {"umask", NV_BLTIN | BLT_ENV, bltin(umask)},
-#ifdef _cmd_universe
-    {"universe", NV_BLTIN | BLT_ENV, bltin(universe)},
-#endif  // _cmd_universe
     {"wait", NV_BLTIN | BLT_ENV | BLT_EXIT, bltin(wait)},
     {"type", NV_BLTIN | BLT_ENV, bltin(whence)},
     {"whence", NV_BLTIN | BLT_ENV, bltin(whence)},
@@ -1711,10 +1708,6 @@ const char sh_optumask[] =
     "[+>0?An error occurred.]"
     "}"
     "[+SEE ALSO?\bchmod\b(1)]";
-
-#ifdef _cmd_universe
-const char sh_optuniverse[] = " [name]";
-#endif  // _cmd_universe
 
 const char sh_optunset[] =
     "[-1c?\n@(#)$Id: unset (AT&T Research) 1999-07-07 $\n]" USAGE_LICENSE

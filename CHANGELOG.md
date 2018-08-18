@@ -1,6 +1,6 @@
 # ksh x.y.z (version TBD, this is a work in progress)
 
-This is meant to document changes since the AST (including the `ksh`
+This is meant to document changes since the AST codoe (including the `ksh`
 program) was open-sourced that will be in the next stable release based
 on the original AST code. The next stable version will be treated as a
 major release for several reasons. Not least of which is changing the
@@ -19,6 +19,7 @@ None at this time.
 
 ## Notable non-backward compatible changes
 
+- Support for the `universe` command has been removed (issue #793).
 - Support for building on systems using EBCDIC has been removed (issue #742).
 - Support for the `LC_OPTIONS` env var has been removed (issue #579).
 - `case "[0-9]" in [0-9]) echo match;; esac` has stopped matching. When a case
@@ -37,10 +38,12 @@ None at this time.
 
 ## Notable fixes and improvements
 
+- The project now passes its unit tests when built with malloc debugging
+  enabled (i.e., `meson test --setup=malloc`).
 - Changes to the project are now validated by running unit tests on the Travis
   continuous integration system.
 - The ksh source now builds on BSD based systems such as macOS and FreeBSD.
-- The ksh source now builds on Cygwin.
+- The ksh source now builds on Cygwin; albeit with many unit test failures.
 - The legacy Nmake build system has been replaced by Meson. This improves the
   build time by roughly an order of magnitude (issue #42).
 
