@@ -32,21 +32,17 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define _AST_API_IMPLEMENT 1
-
 #include <limits.h>
 #include <stddef.h>
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_api.h"
 
+#undef pathaccess
 char *pathaccess(char *path, const char *dirs, const char *a, const char *b, int mode) {
     return pathaccess_20100601(dirs, a, b, mode, path, PATH_MAX);
 }
-
-#undef _AST_API_IMPLEMENT
-
-#include "ast_api.h"
 
 char *pathaccess_20100601(const char *dirs, const char *a, const char *b, int mode, char *path,
                           size_t size) {

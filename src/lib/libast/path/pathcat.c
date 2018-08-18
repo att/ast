@@ -27,8 +27,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define _AST_API_IMPLEMENT 1
-
 #include <limits.h>  // for PATH_MAX
 #include <stddef.h>
 
@@ -36,18 +34,17 @@
 // 3DFS support (the comment below notwithstanding). It should be possible to remove the legacay
 // API.
 #include "ast.h"  // IWYU pragma: keep
+#include "ast_api.h"
 
 /*
  * building 3d flirts with the dark side
  */
 
+#undef pathcat
 char *pathcat(char *path, const char *dirs, int sep, const char *a, const char *b) {
     return pathcat_20100601(dirs, sep, a, b, path, PATH_MAX);
 }
 
-#undef _AST_API_IMPLEMENT
-
-#include "ast_api.h"
 
 char *pathcat_20100601(const char *dirs, int sep, const char *a, const char *b, char *path,
                        size_t size) {

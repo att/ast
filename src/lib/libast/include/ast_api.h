@@ -4,9 +4,6 @@
 #define AST_VERSION 20131127
 #define ASTAPI(rel) (_BLD_ast || !_API_ast || _API_ast >= rel)
 
-#ifndef _AST_API_IMPLEMENT
-#define _AST_API_IMPLEMENT 1
-
 #if !defined(_API_ast) && defined(_API_DEFAULT)
 #define _API_ast _API_DEFAULT
 #endif
@@ -52,12 +49,4 @@
 #if ASTAPI(20120528)
 #undef strgrpmatch
 #define strgrpmatch strgrpmatch_20120528
-#endif
-
-#define _API_ast_MAP                                                                            \
-    "cmdopen_20120411 cmdopen_20110505 pathaccess_20100601 pathcanon_20100601 "                 \
-    "pathcat_20100601 pathkey_20100601 pathpath_20100601 pathprobe_20100601 pathrepl_20100601 " \
-    "regexec_20120528 regnexec_20120528 regrexec_20120528 "                 \
-    "strgrpmatch_20120528"
-
 #endif

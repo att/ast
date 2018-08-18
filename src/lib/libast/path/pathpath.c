@@ -33,23 +33,19 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define _AST_API_IMPLEMENT 1
-
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 #include "ast.h"
+#include "ast_api.h"
 #include "sfio.h"
 
+#undef pathpath
 char *pathpath(char *path, const char *p, const char *a, int mode) {
     return pathpath_20100601(p, a, mode, path, PATH_MAX);
 }
-
-#undef _AST_API_IMPLEMENT
-
-#include "ast_api.h"
 
 char *pathpath_20100601(const char *p, const char *a, int mode, char *path, size_t size) {
     char *s;

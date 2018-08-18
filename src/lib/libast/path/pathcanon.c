@@ -42,8 +42,6 @@
  */
 #include "config_ast.h"  // IWYU pragma: keep
 
-#define _AST_API_IMPLEMENT 1
-
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -55,8 +53,6 @@
 #ifndef ELOOP
 #define ELOOP EINVAL
 #endif
-
-#undef _AST_API_IMPLEMENT
 
 #include "ast_api.h"
 
