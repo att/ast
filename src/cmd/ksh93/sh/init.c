@@ -907,25 +907,52 @@ static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp
 // This is invoked when var `.sh.version` is used in a numeric context such as
 // `$(( .sh.version ))`.
 //
-// TODO: Figure out what we want this to do with a semantic version string and
-// a version string that may include information about the git commit used for
-// the build. The original version converted the YYYY-MM-DD date stamp into the
-// number represented by YYYYMMDD. But note it would return a nonsensical value
-// if a date stamp in the correct form did not start exactly 10 characters
-// before the end of the string referred to by`e_version`.
 static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     UNUSED(np);
-    const char *cp = SH_RELEASE;
-    int c;
+    char *cp = strdup(SH_RELEASE);
     Sflong_t t = 0;
+    char *dash;
+    char *dot;
+    char *major_str, *minor_str, *patch_str;
+    int major, minor, patch;
     UNUSED(fp);
 
-    while ((c = *cp++)) {
-        if (c >= '0' && c <= '9') {
-            t *= 10;
-            t += c - '0';
-        }
+    // Version string in development version could be set like 2017.0.0-devel-1509-g95d59865
+    // If a '-' exists in version string, set it as end of string i.e. version string becomes
+    // 2017.0.0
+    dash = strchr(cp, '-');
+    if (dash) *dash = 0;
+
+    // Major version number starts at beginning of string
+    major_str = cp;
+
+    // Find the first '.' and set it to NULL, so major version string is set to 2017
+    dot = strchr(cp, '.');
+    if (!dot) {
+        // If there is no . in version string, it means version string is either empty, invalid
+        // or it's using old versioning scheme.
+        return 0;
     }
+
+    *dot = 0;
+
+    // Minor version string starts after first '.'
+    minor_str = dot + 1;
+
+    // Find the second '.' and set it to NULL, so minor version string is set to 0
+    dot = strchr(minor_str, '.');
+    *dot = 0;
+
+    // Patch number starts after second '.'
+    patch_str = dot + 1;
+
+    major = atoi(major_str);
+    minor = atoi(minor_str);
+    patch = atoi(patch_str);
+
+    t = major * 10000 + minor * 100 + patch;
+
+    free(cp);
     return (Sfdouble_t)t;
 }
 

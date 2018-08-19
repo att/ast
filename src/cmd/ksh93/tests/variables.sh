@@ -821,3 +821,8 @@ expect="$0"
 actual="${.sh.file}"
 [[ $actual == $expect ]] ||
     log_error ".sh.file is not set to correct value after sourcing a file" "$expect" "$actual"
+
+# Check if version string is set to nonsense value in arithmetic context
+# Due to backward compatibility concerns any major release can have maximum yyyy.99.99 releases
+# i.e. minor versions and patches can not go above number 99.
+[[ $((.sh.version)) -ge 20170000 ]] && [[ $((.sh.version)) -le 20990000 ]] || log_error "Version string is set incorrectly to $((.sh.version))"
