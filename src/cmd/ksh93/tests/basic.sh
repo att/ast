@@ -390,12 +390,18 @@ foo
 kill $pids
 
 [[ $( (trap 'print alarm' ALRM; sleep 4) & sleep 2; kill -ALRM $!; sleep 2; wait) == alarm ]] || log_error 'ALRM signal not working'
+
 [[ $($SHELL -c 'trap "" HUP; $SHELL -c "(sleep 2;kill -HUP $$)& sleep 4;print done"') != done ]] && log_error 'ignored traps not being ignored'
+
 [[ $($SHELL -c 'o=foobar; for x in foo bar; do (o=save);print $o;done' 2> /dev/null ) == $'foobar\nfoobar' ]] || log_error 'for loop optimization subshell bug'
+
 command exec 3<> /dev/null
-if cat /dev/fd/3 >/dev/null 2>&1  || whence mkfifo > /dev/null
+if cat /dev/fd/3 >/dev/null 2>&1
 then
+    exec 3>&-
+
     [[ $($SHELL -c 'cat <(print foo)' 2> /dev/null) == foo ]] || log_error 'process substitution not working'
+
     [[ $($SHELL -c  $'tee >(grep \'1$\' > '$TEST_DIR/scriptx$') > /dev/null <<-  \!!!
 	line0
 	line1
@@ -404,6 +410,7 @@ then
     wait
     cat '$TEST_DIR/scriptx 2> /dev/null)  == line1 ]] || log_error '>() process substitution fails'
     > $TEST_DIR/scriptx
+
     [[ $($SHELL -c  $'
     for i in 1
     do
@@ -416,6 +423,7 @@ then
 
     wait
     cat '$TEST_DIR/scriptx 2>> /dev/null) == line1 ]] || log_error '>() process substitution fails in for loop'
+
     [[ $({ $SHELL -c 'cat <(for i in x y z; do print $i; done)';} 2> /dev/null) == $'x\ny\nz' ]] ||
         log_error 'process substitution of compound commands not working'
 
@@ -443,11 +451,10 @@ then
 
     {
         producer() {
-            for    ((i = 0; i < 20000; i++ ))
+            for ((i = 0; i < 20000; i++ ))
             do
                 print xxxxx${i}xxxxx
             done
-
         }
         consumer() {
             while read var
@@ -455,10 +462,16 @@ then
                 print ${var}
             done < ${1}
         }
-        consumer <(producer) >  /dev/null
-    } & pid=$!
-    ( sleep 5 ; kill -HUP $pid) 2> /dev/null  &
-    wait $pid 2> /dev/null || log_error  "process substitution hangs"
+        consumer <(producer) > /dev/null
+    } &
+    pid=$!
+
+    # On most systems a five second timeout is adequate. On my WSL (Windows Subsystem for Linux) VM
+    # This test takes six seconds. Hence the ten second read timeout.
+    (read -t 10 -u 9 x && exit 0; kill -HUP $pid) 2> /dev/null  &
+    wait $pid || log_error "process substitution hangs"
+    print -u 9 exit
+    empty_fifos
 fi
 
 [[ $($SHELL -cr 'command -p :' 2>&1) == *restricted* ]]  || log_error 'command -p not restricted'
@@ -569,16 +582,17 @@ for i in 1 2
 do
       print $i
 done | while read sec; do ( $sleep $sec; $sleep $sec) done
-
 (( (SECONDS-s)  < 4)) && log_error '"command | while read...done" finishing too fast'
+
 s=SECONDS
 set -o pipefail
 for ((i=0; i < 30; i++))
 do
     print hello
     sleep .1
-done |  $sleep 1
+done | $sleep 1
 (( (SECONDS-s) < 2 )) || log_error 'early termination not causing broken pipe'
+
 [[ $({ trap 'print trap' 0; print -n | $(whence -p cat); } & wait $!) == trap ]] || log_error 'trap on exit not getting triggered'
 var=$({ trap 'print trap' ERR; print -n | $binfalse; } & wait $!)
 [[ $var == trap ]] || log_error 'trap on ERR not getting triggered'
