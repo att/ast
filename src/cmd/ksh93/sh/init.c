@@ -931,6 +931,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     if (!dot) {
         // If there is no . in version string, it means version string is either empty, invalid
         // or it's using old versioning scheme.
+        free(cp);
         return 0;
     }
 
