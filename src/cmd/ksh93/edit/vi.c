@@ -469,7 +469,7 @@ static void backword(Vi_t *vp, int nwords, int cmd) {
 // This routine implements the vi command subset. The cursor will always be positioned at the char
 // of interest.
 //
-static int cntlmode(Vi_t *vp) {
+static_fn int cntlmode(Vi_t *vp) {
     int c;
     int i;
     genchar tmp_u_space[MAXLINE];  // temporary u_space
@@ -710,7 +710,7 @@ static int cntlmode(Vi_t *vp) {
                     // See whether first char is comment char.
                     c = (virtual[0] == '#');
                     while (p-- >= virtual) {
-                        if (*p == '\n' || p < virtual) {
+                        if (p < virtual || *p == '\n') {
                             if (c) {  // delete '#'
                                 if (p[1] == '#') {
                                     last_virt--;
