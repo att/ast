@@ -65,8 +65,8 @@
 #if !_lib_iswprint && !defined(iswprint)
 #define iswprint(c) ((c & ~0177) || isprint(c))
 #endif  // !_lib_iswprint && !defined(iswprint)
-static int _isalph(int);
-static int _isblank(int);
+static_fn int _isalph(int);
+static_fn int _isblank(int);
 #undef isblank
 #define isblank(v) _isblank(virtual[v])
 #define isalph(v) _isalph(virtual[v])
@@ -420,7 +420,7 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
 //   APPEND, shift chars right before appending
 //   REPLACE, replace char if possible
 //
-static void append(Vi_t *vp, int c, int mode) {
+static_fn void append(Vi_t *vp, int c, int mode) {
     int i, j;
 
     if (last_virt < max_col && last_phys < max_col) {
@@ -438,7 +438,7 @@ static void append(Vi_t *vp, int c, int mode) {
 //
 // This routine will position cur_virt at the nth previous word.
 //
-static void backword(Vi_t *vp, int nwords, int cmd) {
+static_fn void backword(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords-- && tcur_virt > first_virt) {
         if (!isblank(tcur_virt) && isblank(tcur_virt - 1) && tcur_virt > first_virt) {
@@ -775,7 +775,7 @@ static_fn int cntlmode(Vi_t *vp) {
 //
 // This routine will position the virtual cursor at physical column x in the window.
 //
-static void cursor(Vi_t *vp, int x) {
+static_fn void cursor(Vi_t *vp, int x) {
     while (physical[x] == MARKER) x++;
     cur_phys = ed_setcursor(vp->ed, physical, cur_phys, x, vp->first_wind);
 }
@@ -788,7 +788,7 @@ static void cursor(Vi_t *vp, int x) {
 //   'd', save them in yankbuf and delete.
 //   'y', save them in yankbuf but do not delete.
 //
-static void cdelete(Vi_t *vp, int nchars, int mode) {
+static_fn void cdelete(Vi_t *vp, int nchars, int mode) {
     int i;
     genchar *cp;
 
@@ -824,7 +824,7 @@ static void cdelete(Vi_t *vp, int nchars, int mode) {
 //
 // This routine will delete the line. If mode = GOOD, do a save_v().
 //
-static void del_line(Vi_t *vp, int mode) {
+static_fn void del_line(Vi_t *vp, int mode) {
     if (last_virt == INVALID) return;
     if (mode == GOOD) save_v(vp);
 
@@ -858,7 +858,7 @@ static void del_line(Vi_t *vp, int mode) {
 //
 // Returns 1 if operation successful; else 0.
 //
-static int delmotion(Vi_t *vp, int motion, int mode) {
+static_fn int delmotion(Vi_t *vp, int motion, int mode) {
     int begin, end, delta;
 
     if (cur_virt == INVALID) return (0);
@@ -895,7 +895,7 @@ static int delmotion(Vi_t *vp, int motion, int mode) {
 //
 // This routine will move cur_virt to the end of the nth word.
 //
-static void endword(Vi_t *vp, int nwords, int cmd) {
+static_fn void endword(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords--) {
         if (!isblank(tcur_virt) && tcur_virt <= last_virt) ++tcur_virt;
@@ -920,7 +920,7 @@ static void endword(Vi_t *vp, int nwords, int cmd) {
 //
 // This routine will move cur_virt forward to the next nth word.
 //
-static void forward(Vi_t *vp, int nwords, int cmd) {
+static_fn void forward(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords--) {
         if (cmd == 'W') {
@@ -943,7 +943,7 @@ static void forward(Vi_t *vp, int nwords, int cmd) {
 //
 // Set repeat to the user typed number and return the terminating character.
 //
-static int getcount(Vi_t *vp, int c) {
+static_fn int getcount(Vi_t *vp, int c) {
     int i;
 
     // Get any repeat count.
@@ -973,7 +973,7 @@ static int getcount(Vi_t *vp, int c) {
 // This routine returns when cr, nl, or (eof in column 0) is received (column 0 is the first char
 // position).
 //
-static void vigetline(Vi_t *vp, int mode) {
+static_fn void vigetline(Vi_t *vp, int mode) {
     int c;
     int tmp;
     int max_virt = 0, last_save = 0;
@@ -1163,7 +1163,7 @@ static void vigetline(Vi_t *vp, int mode) {
 //
 // It returns GOOD if successful; else BAD.
 //
-static int mvcursor(Vi_t *vp, int motion) {
+static_fn int mvcursor(Vi_t *vp, int motion) {
     int count;
     int tcur_virt;
     int incr = -1;
@@ -1357,7 +1357,7 @@ static int mvcursor(Vi_t *vp, int motion) {
 //
 // Print a string.
 //
-static void pr_string(Vi_t *vp, const char *sp) {
+static_fn void pr_string(Vi_t *vp, const char *sp) {
     // Copy string sp.
     char *ptr = editb.e_outptr;
     while (*sp) *ptr++ = *sp++;
@@ -1368,7 +1368,7 @@ static void pr_string(Vi_t *vp, const char *sp) {
 //
 // Put nchars starting at column of physical into the workspace to be printed.
 //
-static void putstring(Vi_t *vp, int col, int nchars) {
+static_fn void putstring(Vi_t *vp, int col, int nchars) {
     while (nchars--) putchar(physical[col++]);
     return;
 }
@@ -1398,7 +1398,7 @@ static void putstring(Vi_t *vp, int col, int nchars) {
 //                    +-----------------------+
 //                    cur_window = cur_phys - first_wind
 //
-static void refresh(Vi_t *vp, int mode) {
+static_fn void refresh(Vi_t *vp, int mode) {
     int p;
     int v;
     int first_w = vp->first_wind;
@@ -1557,7 +1557,7 @@ static void refresh(Vi_t *vp, int mode) {
 //   0, leave cur_virt where it is.
 //   1, increment cur_virt after replacement.
 //
-static void replace(Vi_t *vp, int c, int increment) {
+static_fn void replace(Vi_t *vp, int c, int increment) {
     int cur_window;
 
     if (cur_virt == INVALID) {
@@ -1595,7 +1595,7 @@ static void replace(Vi_t *vp, int c, int increment) {
 //
 // Restore the contents of virtual space from u_space.
 //
-static void restore_v(Vi_t *vp) {
+static_fn void restore_v(Vi_t *vp) {
     int tmpcol;
     genchar tmpspace[MAXLINE];
 
@@ -1617,7 +1617,7 @@ static void restore_v(Vi_t *vp) {
 //
 // If the user has typed something, save it in last line.
 //
-static void save_last(Vi_t *vp) {
+static_fn void save_last(Vi_t *vp) {
     int i;
 
     if ((i = cur_virt - first_virt + 1) > 0) {
@@ -1632,7 +1632,7 @@ static void save_last(Vi_t *vp) {
 //
 // This routine will save the contents of virtual in u_space.
 //
-static void save_v(Vi_t *vp) {
+static_fn void save_v(Vi_t *vp) {
     if (!inmacro) {
         virtual[last_virt + 1] = '\0';
         gencpy(vp->u_space, virtual);
@@ -1652,7 +1652,7 @@ static void save_v(Vi_t *vp) {
 //
 // Search for <string> in the current command.
 //
-static int curline_search(Vi_t *vp, const char *string) {
+static_fn int curline_search(Vi_t *vp, const char *string) {
     size_t len = strlen(string);
     const char *dp, *cp = string, *dpmax;
 
@@ -1664,7 +1664,7 @@ static int curline_search(Vi_t *vp, const char *string) {
     return -1;
 }
 
-static int search(Vi_t *vp, int mode) {
+static_fn int search(Vi_t *vp, int mode) {
     int new_direction;
     int oldcurhline;
     int i;
@@ -1727,7 +1727,7 @@ static int search(Vi_t *vp, int mode) {
 //
 // This routine will move the physical cursor to the same column as the virtual cursor.
 //
-static void sync_cursor(Vi_t *vp) {
+static_fn void sync_cursor(Vi_t *vp) {
     int p, v, c, new_phys;
 
     if (cur_virt == INVALID) return;
@@ -1783,7 +1783,7 @@ static void sync_cursor(Vi_t *vp) {
 //
 // If mode != 0, repeat previous operation.
 //
-static int textmod(Vi_t *vp, int c, int mode) {
+static_fn int textmod(Vi_t *vp, int c, int mode) {
     int i;
     genchar *p = vp->lastline;
     int trepeat = vp->repeat;
@@ -2077,7 +2077,7 @@ addin:
     return GOOD;
 }
 
-static int _isalph(int v) {
+static_fn int _isalph(int v) {
 #if _lib_iswalnum
     return iswalnum(v) || v == '_';
 #else
@@ -2085,12 +2085,12 @@ static int _isalph(int v) {
 #endif
 }
 
-static int _isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
+static_fn int _isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
 
 //
 // Get a character, after ^V processing.
 //
-static int getrchar(Vi_t *vp) {
+static_fn int getrchar(Vi_t *vp) {
     int c;
     if ((c = ed_getchar(vp->ed, 1)) == usrlnext) c = ed_getchar(vp->ed, 2);
     return c;
