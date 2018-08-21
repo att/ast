@@ -942,6 +942,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
 
     // Find the second '.' and set it to NULL, so minor version string is set to 0
     dot = strchr(minor_str, '.');
+    assert(dot != NULL);
     *dot = 0;
 
     // Patch number starts after second '.'
