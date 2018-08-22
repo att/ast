@@ -170,7 +170,7 @@ int wc_count(Wc_t *wp, Sfio_t *fd, const char *file) {
     if (wp->mb < 0 && (wp->mode & (WC_MBYTE | WC_WORDS))) {
         cp = buff = endbuff = 0;
         for (;;) {
-            if (cp >= endbuff || (n = mb2wc(x, cp, endbuff - cp)) < 0) {
+            if (cp >= endbuff || (n = mbtowc(&x, (char *)cp, endbuff - cp)) < 0) {
                 o = endbuff - cp;
                 if (o < sizeof(side)) {
                     if (buff) {
