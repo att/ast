@@ -328,7 +328,6 @@ extern char **environ;
 
 #else
 
-#define mb2wc(w, p, n) (*ast.mb_towc)(&(w), (char *)(p), (n))
 #define mbchar(p)                                                                         \
     (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), mbmax())) > 0 \
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
@@ -339,7 +338,7 @@ extern char **environ;
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                          \
                      : (p += 1, ast.tmp_int))                                       \
               : (*(unsigned char *)(p++)))
-#define mbinit() (mbwide() ? (*ast.mb_towc)((wchar_t *)0, (char *)0, mbmax()) : 0)
+#define mbinit()  // this is now a no-op in legacy mode
 // You cannot call this with a parameter that has side-effects (e.g.,
 // decrement/increment) because it won't occur if we're not in a wide locale.
 #define mbsize(p) (mbwide() ? (*ast.mb_len)((char *)(p), mbmax()) : 1)
