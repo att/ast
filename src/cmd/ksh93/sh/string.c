@@ -629,8 +629,12 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
 int sh_strchr(const char *string, const char *dp, size_t size) {
     wchar_t c, d;
     const char *cp = string;
-    mbinit();
-    d = mbnchar(dp, size);
+
+    // This used to use the obsolete `mbnchar()` macro. Then and now the code does not correctly
+    // handle a conversion error. In the old `mbnchar()` using code it would decrement the pointer
+    // by one. Which, at least in the context of this function was pointless and probably wrong
+    // regardless.
+    mbtowc(&d, dp, size);
     mbinit();
     while ((c = mbchar(cp))) {
         if (c == d) return cp - string;

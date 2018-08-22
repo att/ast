@@ -333,11 +333,6 @@ extern char **environ;
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
                      : (p += 1, ast.tmp_int))                                             \
               : (*(unsigned char *)(p++)))
-#define mbnchar(p, n)                                                               \
-    (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), n)) > 0 \
-                     ? ((p += ast.tmp_int), ast.tmp_wchar)                          \
-                     : (p += 1, ast.tmp_int))                                       \
-              : (*(unsigned char *)(p++)))
 #define mbinit()  // this is now a no-op in legacy mode
 // You cannot call this with a parameter that has side-effects (e.g.,
 // decrement/increment) because it won't occur if we're not in a wide locale.
