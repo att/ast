@@ -163,7 +163,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                     ;
                 if (n < T_CONTROL) break;
                 pp = cp - 1;
-                m = mbnsize(pp, MB_LEN_MAX);
+                m = mblen((char *)pp, MB_LEN_MAX);
                 if (m > 1)
                     cp += m - 1;
                 else {
@@ -173,7 +173,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                 *end = last;
                                 last = -1;
                                 c = end - pp + 1;
-                                m = mbnsize(pp, MB_LEN_MAX);
+                                m = mblen((char *)pp, MB_LEN_MAX);
                                 if (m == c) {
                                     any = 1;
                                     if (header) {
@@ -203,7 +203,7 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
                                     n = end - cp + 1;
                                     if (n >= (sizeof(tmp) - c)) n = sizeof(tmp) - c - 1;
                                     memcpy(tmp + c, cp, n);
-                                    m = mbnsize(tmp, MB_LEN_MAX);
+                                    m = mblen((char *)tmp, MB_LEN_MAX);
                                     if (m >= c) {
                                         any = 1;
                                         if (header) {
