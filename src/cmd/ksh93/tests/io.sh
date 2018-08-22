@@ -448,13 +448,6 @@ fi
 [[ $line3 == 'prompt2: ' ]]    || log_error "line3 should be 'prompt2: '"
 [[ ! $line4 ]]            || log_error "line4 should be empty"
 
-if $SHELL -c "export LC_ALL=C.UTF-8; c=$'\342\202\254'; [[ \${#c} == 1 ]]" 2>/dev/null
-then
-    lc_utf8=C.UTF-8
-else
-    lc_utf8=''
-fi
-
 typeset -a e o=(-n2 -N2)
 integer i
 set -- \
@@ -471,7 +464,7 @@ do
     shift 4
     for ((i = 0; i < 2; i++))
     do
-        for lc_all in C $lc_utf8
+        for lc_all in C en_US.UTF-8
         do
             g=$(LC_ALL=$lc_all $SHELL -c "{ print -n '$a'; sleep 0.2; print -n '$b'; sleep 0.2; } | { read ${o[i]} a; print -n \$a; read a; print -n \ \$a; }")
             [[ $g == "${e[i]}" ]] || log_error "LC_ALL=$lc_all read ${o[i]} from pipe '$a $b' failed -- expected '${e[i]}', got '$g'"
@@ -479,33 +472,30 @@ do
     done
 done
 
-if [[ $lc_utf8 ]]
+export LC_ALL=en_US.UTF-8
+typeset -a c=( '' 'A' $'\303\274' $'\342\202\254' )
+integer i w
+typeset o
+if (( ${#c[2]} == 1 && ${#c[3]} == 1 ))
 then
-    export LC_ALL=$lc_utf8
-    typeset -a c=( '' 'A' $'\303\274' $'\342\202\254' )
-    integer i w
-    typeset o
-    if (( ${#c[2]} == 1 && ${#c[3]} == 1 ))
-    then
-    for i in 1 2 3
+for i in 1 2 3
+do
+    for o in n N
     do
-        for o in n N
+        for w in 1 2 3
         do
-            for w in 1 2 3
-            do
-                print -nr "${c[w]}" | read -${o}${i} g
-                if [[ $o == N ]] && (( i > 1 ))
-                then
-                    e=''
-                else
-                    e=${c[w]}
-                fi
+            print -nr "${c[w]}" | read -${o}${i} g
+            if [[ $o == N ]] && (( i > 1 ))
+            then
+                e=''
+            else
+                e=${c[w]}
+            fi
 
-                [[ $g == "$e" ]] || log_error "read -${o}${i} failed for '${c[w]}' -- expected '$e', got '$g'"
-                done
+            [[ $g == "$e" ]] || log_error "read -${o}${i} failed for '${c[w]}' -- expected '$e', got '$g'"
             done
         done
-    fi
+    done
 fi
 
 exec 3<&2
