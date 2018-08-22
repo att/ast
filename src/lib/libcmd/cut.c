@@ -268,7 +268,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                 while (w > 0) {
                     if (!(*s & 0x80)) {
                         z = 1;
-                    } else if ((z = mbnsize(s, w)) <= 0) {
+                    } else if ((z = mblen(s, w)) <= 0) {
                         if (s == bp && xx) {
                             w += s - xx;
                             bp = (char *)(s = xx);
@@ -292,7 +292,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
 
                 while (w > 0 && ncol > 0) {
                     ncol--;
-                    if (!(*s & 0x80) || (z = mbnsize(s, w)) <= 0) z = 1;
+                    if (!(*s & 0x80) || (z = mblen(s, w)) <= 0) z = 1;
                     s += z;
                     w -= z;
                 }
