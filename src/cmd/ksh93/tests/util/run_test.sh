@@ -222,7 +222,7 @@ else
     then
         $TEST_DIR/$test_script $test_name < /dev/null
     else
-        $SHCOMP $test_script > $test_script.comp
+        $SHCOMP $test_script > $test_script.comp || exit
         $SHELL $TEST_DIR/$test_script.comp $test_name < /dev/null
     fi
 fi
