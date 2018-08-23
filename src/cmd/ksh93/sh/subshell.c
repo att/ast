@@ -402,13 +402,20 @@ Dt_t *sh_subfuntree(Shell_t *shp, int create) {
 }
 
 static_fn void subshell_table_unset(Dt_t *root, int fun) {
-    UNUSED(fun);
     Namval_t *np, *nq;
     int flag;
 
     for (np = (Namval_t *)dtfirst(root); np; np = nq) {
         nq = (Namval_t *)dtnext(root, np);
         flag = 0;
+
+        // This code block was restored from last stable release to fix a use after free issue.
+        // https://github.com/att/ast/issues/803
+        if (fun && np->nvalue.rp && np->nvalue.rp->fname && *np->nvalue.rp->fname == '/') {
+            np->nvalue.rp->fdict = 0;
+            flag = NV_NOFREE;
+        }
+
         _nv_unset(np, NV_RDONLY | NV_TABLE);
         nv_delete(np, root, flag | NV_FUNCTION);
     }
