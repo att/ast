@@ -17,21 +17,23 @@ proc redraw_prompt args {
 # Enter vi control mode
 proc control_mode args {
     global is_control_mode
-    send "\033"
     set is_control_mode 1
+    send "\033"
 }
 
 # Enter vi insert mode
 proc insert_mode args {
     global is_control_mode
-    send "i"
     set is_control_mode 0
+    send "i"
 }
 
 # Delete current line, it changes to mode to insert mode
 proc clear_prompt args {
-    send [ctrl C]
+    global is_control_mode
     set is_control_mode 0
+    send [ctrl C]
+    expect_prompt
 }
 
 set pid [spawn $ksh]
@@ -715,10 +717,12 @@ clear_prompt
 # entered.  The last word is used if count is omitted.
 log_test_entry
 send "echo hello\r"
+expect_prompt
 control_mode
 send "_"
+set is_control_mode 0
 redraw_prompt
-expect -re " hello" {
+expect -ex ":  hello" {
     puts "_ inserts last word from previous command"
 }
 clear_prompt
@@ -762,14 +766,15 @@ clear_prompt
 log_test_entry
 send "echo hello"
 control_mode
-send "y"
-# Move to beginning of line
-send "^"
+# Yank to start of line.
+send "y^"
 clear_prompt
+# Put the yanked text after a new command.
+send "true "
 control_mode
 send "p"
 redraw_prompt
-expect -re "echo hello" {
+expect -ex ": true echo hell " {
     puts "y yanks from current character to that motion would move the cursor to"
 }
 clear_prompt
@@ -837,14 +842,17 @@ clear_prompt
 # If count is omitted, then the current line is used.
 log_test_entry
 send "export EDITOR=vi\r"
+expect_prompt
 send "echo hello"
 control_mode
 send "v"
-send ":wq"
-expect -re "hello" {
-    puts "v opens editor"
+sleep 0.1
+send ":q\r"
+expect ":q" { }
+expect -ex "\r\nhello\r\n" {
+    puts "v opens editor and exiting runs the command"
 }
-clear_prompt
+expect_prompt
 
 # ==========
 # ^L        Line feed and print current line.  Has effect only in control mode. This is
@@ -853,22 +861,36 @@ clear_prompt
 # ==========
 # ^J        (New line) Execute the current line, regardless of mode.
 log_test_entry
-send "echo hello"
+send "echo ctrl j in insert mode"
 send [ctrl J]
-expect -re "hello" {
-    puts "ctrl-j executes command"
+expect "\r\nctrl j in insert mode\r\n" {
+    puts "ctrl-j in insert mode executes command"
 }
-clear_prompt
+expect_prompt
+send "echo ctrl j in control mode"
+control_mode
+send [ctrl J]
+expect "\r\nctrl j in control mode\r\n" {
+    puts "ctrl-j in control mode executes command"
+}
+expect_prompt
 
 # ==========
 # ^M        (Return) Execute the current line, regardless of mode.
 log_test_entry
-send "echo hello"
+send "echo ctrl m insert"
 send [ctrl M]
-expect -re "hello" {
-    puts "ctrl-m executes command"
+expect "\r\nctrl m insert\r\n" {
+    puts "ctrl-m in insert mode executes command"
 }
-clear_prompt
+expect_prompt
+send "echo ctrl m control"
+control_mode
+send [ctrl M]
+expect "\r\nctrl m control\r\n" {
+    puts "ctrl-m in control mode executes command"
+}
+expect_prompt
 
 # ==========
 # #         If  the first character of the command is a #, then this command deletes this
@@ -883,22 +905,27 @@ send "#"
 expect -re "#cat foo" {
     puts "# appends comment at beginning of line"
 }
-clear_prompt
-
+expect_prompt
 
 # ==========
 # [count]=  If count is not specified, it generates the list of matching commands or file
 # names as described above.  Otherwise, the word under the the cursor is replaced by the
-# count item from the most  recently  generated command or file list.  If the cursor is 
+# count item from the most  recently  generated command or file list.  If the cursor is
 # not on a word, it is inserted instead.
 log_test_entry
-send "cat foo"
+send "echo foo"
 control_mode
 send "="
 expect -re "foo1.*foo2.*foo3" {
     puts "= generates file or command name completions"
 }
-clear_prompt
+# First return cancels the selection menu and displays the continuation prompt.
+# Second return executes echo.
+send "\r"
+expect ">" { }
+send "\r"
+expect "\r\nfoo\r\n" { }
+expect_prompt
 
 # ==========
 # TOOD: @letter   Your alias list is searched for an alias by the name _letter and if an
@@ -909,13 +936,19 @@ clear_prompt
 # ^V      Display version of the shell.
 log_test_entry
 control_mode
-log_test_entry
 send [ctrl V]
 expect -re ".*Version.*" {
-    puts "ctrl-v generates version number"
+    puts "ctrl-v generates version string"
 }
-clear_prompt
+# A [return] should clear the version string from the command line and leave the same prompt.
+# Since it doesn't result in a new prompt we can't use `expect_prompt`.
+send "\r"
+expect -re ".*\rKSH PROMPT:\[0-9\]+: $" { }
+# Now get a new prompt.
+send "\r"
+expect_prompt
 
+# ==========
 # Exit shell with ctrl-d
 log_test_entry
 send [ctrl D]
