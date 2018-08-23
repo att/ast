@@ -2099,7 +2099,7 @@ static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) 
             c = towctrans(c, mp->trans);
             stakseek(off + c);
             stakseek(off);
-            c = mbconv(stakptr(off), c);
+            c = wctomb(stakptr(off), c);
             off += c;
             stakseek(off);
         }

@@ -780,7 +780,7 @@ void ed_putchar(Edit_t *ep, int c) {
     buf[0] = c;
     // Check for place holder.
     if (c == MARKER) return;
-    if ((size = mbconv(buf, (wchar_t)c)) > 1) {
+    if ((size = wctomb(buf, (wchar_t)c)) > 1) {
         for (i = 0; i < (size - 1); i++) *dp++ = buf[i];
         c = buf[i];
     } else {
@@ -824,7 +824,7 @@ Edpos_t ed_curpos(Edit_t *ep, genchar *phys, int off, int cur, Edpos_t curpos) {
     }
     while (off-- > 0) {
         if (c) c = *sp++;
-        if (c && (mbconv(p, (wchar_t)c)) == 1 && p[0] == '\n') {
+        if (c && (wctomb(p, (wchar_t)c)) == 1 && p[0] == '\n') {
             col = 0;
         } else {
             col++;
@@ -1015,7 +1015,7 @@ int ed_external(const genchar *src, char *dest) {
         return c;
     }
     while ((wc = *src++) && dp < dpmax) {
-        if ((size = mbconv(dp, wc)) < 0) {
+        if ((size = wctomb(dp, wc)) < 0) {
             // Copy the character as is.
             size = 1;
             *dp = wc;

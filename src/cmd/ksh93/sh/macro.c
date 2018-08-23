@@ -491,7 +491,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                         int i;
                         unsigned char mb[8];
 
-                        n = mbconv((char *)mb, c);
+                        n = wctomb((char *)mb, c);
                         for (i = 0; i < n; i++) sfputc(stkp, mb[i]);
                     } else {
                         sfputc(stkp, c);

@@ -331,7 +331,6 @@ extern char **environ;
                      : (p += 1, ast.tmp_int))                                             \
               : (*(unsigned char *)(p++)))
 #define mbinit()  do { } while (0)  // this is now a no-op in legacy mode
-#define mbconv(s, w) (ast.mb_conv ? (*ast.mb_conv)(s, w) : ((*(s) = (w)), 1))
 
 #endif
 
