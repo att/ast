@@ -63,7 +63,7 @@ ssize_t wcstoutf32s(uint32_t *utf32, wchar_t *wchar, size_t n) {
             if (ast.mb_wc2uc == (iconv_t)-1) ast.mb_wc2uc = NULL;
         }
         if (ast.mb_wc2uc == NULL) return -1;
-        inbytesleft = n * mbmax();
+        inbytesleft = n * MB_CUR_MAX;
         outbytesleft = n * sizeof(uint32_t);
         inbuf_start = oldof(0, char, (inbytesleft + 2) + outbytesleft, 0);
         if (!inbuf_start) return -1;

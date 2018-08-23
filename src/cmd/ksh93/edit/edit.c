@@ -666,7 +666,7 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
                 errno = 0;
             }
 #endif  // EILSEQ
-            else if ((endp - p) < mbmax()) {
+            else if ((endp - p) < MB_CUR_MAX) {
                 if ((c = ed_read(ep, ep->e_fd, endp, 1, 0)) == 1) {
                     *++endp = 0;
                     goto again;
@@ -675,7 +675,7 @@ static int putstack(Edit_t *ep, char string[], int nbyte, int type) {
             } else {
                 ed_ringbell();
                 c = -(int)((*p) & STRIP);
-                offset += mbmax() - 1;
+                offset += MB_CUR_MAX - 1;
             }
         }
         ep->e_lbuf[--offset] = c;

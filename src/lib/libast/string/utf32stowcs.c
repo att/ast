@@ -89,7 +89,7 @@ ssize_t utf32stowcs(wchar_t *wchar, uint32_t *utf32, size_t n) {
             char *outbuf_start;
             int oerrno;
 
-            outbytesleft = n * mbmax();
+            outbytesleft = n * MB_CUR_MAX;
             outbuf_start = oldof(0, char, (outbytesleft + 2) + (n * UTF8_LEN_MAX + 1), 0);
             if (!outbuf_start) return -1;
             inbuf_start = outbuf_start + outbytesleft + 2;
