@@ -114,7 +114,6 @@
 
 /* deal with multi-byte character and string conversions */
 
-#define SFMBMAX mbmax()
 #define SFMBCPY(to, fr) (*(Mbstate_t *)(to) = *(fr))
 #define SFMBCLR(mb) mbtinit(((Mbstate_t *)(mb)))
 #define SFMBSET(lhs, v) (lhs = (v))

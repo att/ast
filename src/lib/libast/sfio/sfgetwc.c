@@ -61,7 +61,7 @@ int sfgetwc(Sfio_t *f) {
         c = mbchar(&w, s, n, q);
         if (!mberrno(q))
             f->next = s;
-        else if (n < (m = mbmax())) {
+        else if (n < (m = MB_CUR_MAX)) {
             for (i = 0; i < n; i++) buf[i] = *s++;
             for (;;) {
                 f->next = s;

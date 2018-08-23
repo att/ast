@@ -381,7 +381,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                 wp = --cp;
                                 while ((c = mbtowc(&w, (char *)cp, ep - cp)) <= 0) {
                                     /* mb char possibly spanning buffer boundary -- fun stuff */
-                                    if ((ep - cp) < mbmax()) {
+                                    if ((ep - cp) < MB_CUR_MAX) {
                                         int i;
                                         int j;
                                         int k;
@@ -408,7 +408,7 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         if (lastchar != cut->eob) *ep = cut->eob;
                                         j = i;
                                         k = 0;
-                                        while (j < mbmax()) mb[j++] = cp[k++];
+                                        while (j < MB_CUR_MAX) mb[j++] = cp[k++];
                                         c = mbtowc(&w, (char *)mb, j);
                                         if (c <= 0) {
                                             c = i;

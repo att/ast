@@ -103,8 +103,7 @@ static void init_ast_struct() {
     const char *codeset = nl_langinfo(CODESET);
     ast.locale.is_utf8 = strcasecmp(codeset, "utf-8") == 0 || strcasecmp(codeset, "utf8") == 0;
 
-    ast.mb_cur_max = MB_CUR_MAX;
-    ast.byte_max = ast.mb_cur_max == 1 && !is_us_ascii_codeset() ? 0xff : 0x7f;
+    ast.byte_max = MB_CUR_MAX == 1 && !is_us_ascii_codeset() ? 0xff : 0x7f;
 }
 
 //

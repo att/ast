@@ -29,5 +29,4 @@
 
 #undef strcmp
 
-_Ast_info_t _ast_info = {
-    .id = "libast", .collate = strcmp, .mb_cur_max = 1, .version = 20130624, .pwd = AT_FDCWD};
+_Ast_info_t _ast_info = {.id = "libast", .collate = strcmp, .version = 20130624, .pwd = AT_FDCWD};
