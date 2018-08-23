@@ -1595,7 +1595,6 @@ skip:
             if (vsize < type) {
                 v = 0;
             } else if (mbwide()) {
-                mbinit();
                 for (c = type; c; c--) mbchar(v);
                 c = ':';
             } else {
@@ -1616,7 +1615,6 @@ skip:
             } else if (type < vsize) {
                 if (mbwide()) {
                     char *vp = v;
-                    mbinit();
                     while (type-- > 0) {
                         if ((c = mblen(vp, MB_CUR_MAX)) < 1) c = 1;
                         vp += c;
@@ -2327,7 +2325,6 @@ static_fn char *lastchar(const char *string, const char *endstring) {
     char *str = (char *)string;
     int c;
 
-    mbinit();
     while (*str) {
         if ((c = mblen(str, MB_CUR_MAX)) < 0) c = 1;
         if (str + c > endstring) break;
@@ -2341,7 +2338,6 @@ static_fn int charlen(const char *string, int len) {
     if (mbwide()) {
         const char *str = string, *strmax = string + len;
         int n = 0;
-        mbinit();
         if (len > 0) {
             while (str < strmax && mbchar(str)) n++;
         } else {

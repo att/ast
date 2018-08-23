@@ -151,7 +151,6 @@ static int vcat(char *states, Sfio_t *ip, Sfio_t *op, Reserve_f reserve, int fla
     line = 1;
     states[0] = T_ENDBUF;
     raw = !mbwide();
-    if (!raw) mbinit();
     for (;;) {
         cur = cp;
         if (raw)
