@@ -96,7 +96,6 @@ typedef struct {
     int (*mb_towc)(wchar_t *, const char *, size_t);
     size_t (*mb_xfrm)(char *, const char *, size_t);
     int (*mb_width)(wchar_t);
-    int (*mb_conv)(char *, wchar_t);
 
     uint32_t env_serial;
     uint32_t mb_sync;

@@ -449,7 +449,7 @@ static_fn char strformat(char *s) {
                 }
 
                 if (w) {
-                    t += mbconv(t, c);
+                    t += wctomb(t, c);
                     continue;
                 }
                 if (c == '%') {
