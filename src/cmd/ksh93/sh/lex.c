@@ -1675,7 +1675,7 @@ static_fn int here_copy(Lex_t *lp, struct ionod *iop) {
         if (n != S_NL) {
             // Skip over regular characters.
             do {
-                if (fcleft() < MB_LEN_MAX && mbsize(fcseek(0)) < 0) {
+                if (fcleft() < MB_LEN_MAX && mblen(fcseek(0), MB_CUR_MAX) < 0) {
                     n = S_EOF;
                     LEN = -fcleft();
                     break;
@@ -1944,7 +1944,7 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
     if (mbwide()) {
         do {
             int len;
-            switch (len = mbsize(sp)) {
+            switch (len = mblen(sp, MB_CUR_MAX)) {
                 case -1: /* illegal multi-byte char */
                 case 0:
                 case 1: {
@@ -2119,7 +2119,7 @@ struct argnod *sh_endword(Shell_t *shp, int mode) {
         if (mbwide()) {
             do {
                 int len;
-                switch (len = mbsize(sp)) {
+                switch (len = mblen(sp, MB_CUR_MAX)) {
                     case -1:  // illegal multi-byte char
                     case 0:
                     case 1: {

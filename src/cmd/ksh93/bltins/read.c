@@ -603,7 +603,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                         mbinit();
                         *cur = 0;
                         x = z = 0;
-                        while (up < cur && (z = mbsize(up)) > 0) {
+                        while (up < cur && (z = mblen(up, MB_CUR_MAX)) > 0) {
                             up += z;
                             x++;
                         }
@@ -672,7 +672,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
             case S_MBYTE: {
                 if (val == 0) val = (char *)(cp - 1);
                 if (sh_strchr(ifs, (char *)cp - 1, cpmax - cp + 1) >= 0) {
-                    c = mbsize((char *)cp - 1);
+                    c = mblen((char *)cp - 1, MB_CUR_MAX);
                     if (name) cp[-1] = 0;
                     if (c > 1) cp += (c - 1);
                     c = S_DELIM;
@@ -761,7 +761,7 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                 if (!val) continue;
                 if (c == S_MBYTE) {
                     if (sh_strchr(ifs, (char *)cp - 1, cpmax - cp + 1) >= 0) {
-                        if ((c = mbsize((char *)cp - 1)) > 1) cp += (c - 1);
+                        if ((c = mblen((char *)cp - 1, MB_CUR_MAX)) > 1) cp += (c - 1);
                         c = S_DELIM;
                     } else {
                         c = 0;
