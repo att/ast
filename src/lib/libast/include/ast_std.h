@@ -93,8 +93,6 @@ typedef struct {
     int tmp_int;
     void *tmp_pointer;
 
-    int mb_cur_max;
-    int (*mb_len)(const char *, size_t);
     int (*mb_towc)(wchar_t *, const char *, size_t);
     size_t (*mb_xfrm)(char *, const char *, size_t);
     int (*mb_width)(wchar_t);

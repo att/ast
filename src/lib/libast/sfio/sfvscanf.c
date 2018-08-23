@@ -210,7 +210,7 @@ static int _sfwaccept(wchar_t wc, Accept_t *ac) {
 
 static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     int n, v;
-    char b[16]; /* assuming that SFMBMAX <= 16! */
+    char b[16]; /* assuming that MB_CUR_MAX <= 16! */
 
 #if 0
     // TODO: Figure out why the author of this code thought this was legal.
@@ -220,7 +220,7 @@ static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
 
     /* shift left data so that there will be more room to back up on error.
        this won't help streams with small buffers - c'est la vie! */
-    if (sc->d > sc->f->data && (n = sc->endd - sc->d) > 0 && n < SFMBMAX) {
+    if (sc->d > sc->f->data && (n = sc->endd - sc->d) > 0 && n < MB_CUR_MAX) {
         memcpy(sc->f->data, sc->d, n);
         if (sc->f->endr == sc->f->endb) sc->f->endr = sc->f->data + n;
         if (sc->f->endw == sc->f->endb) sc->f->endw = sc->f->data + n;
@@ -231,7 +231,7 @@ static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     }
 #endif
 
-    for (n = 0; n < SFMBMAX;) {
+    for (n = 0; n < MB_CUR_MAX;) {
         if ((v = _scgetc((void *)sc, 0)) <= 0)
             goto no_match;
         else
@@ -350,7 +350,7 @@ loop_fmt:
             } else {
             match_1:
 #if _has_multibyte
-                if ((n = (int)mbrtowc(&wc, form - 1, SFMBMAX, (mbstate_t *)&fmbs)) <= 0)
+                if ((n = (int)mbrtowc(&wc, form - 1, MB_CUR_MAX, (mbstate_t *)&fmbs)) <= 0)
                     goto pop_fmt;
                 if (n > 1) {
                     acc.wc = wc;

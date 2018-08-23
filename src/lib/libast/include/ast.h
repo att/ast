@@ -158,11 +158,8 @@
 /*
  * multibyte macros
  */
-
-#define mbmax() (ast.mb_cur_max)
-
 #define mbcoll() (ast.mb_xfrm != 0)
-#define mbwide() (mbmax() > 1)
+#define mbwide() (MB_CUR_MAX > 1)
 
 #define mbwidth(w) (ast.mb_width ? (*ast.mb_width)(w) : 1)
 #define mbxfrm(t, f, n) (mbcoll() ? (*ast.mb_xfrm)((char *)(t), (char *)(f), n) : 0)
@@ -328,24 +325,12 @@ extern char **environ;
 
 #else
 
-#define mb2wc(w, p, n) (*ast.mb_towc)(&(w), (char *)(p), (n))
 #define mbchar(p)                                                                         \
-    (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), mbmax())) > 0 \
+    (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0 \
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
                      : (p += 1, ast.tmp_int))                                             \
               : (*(unsigned char *)(p++)))
-#define mbnchar(p, n)                                                               \
-    (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), n)) > 0 \
-                     ? ((p += ast.tmp_int), ast.tmp_wchar)                          \
-                     : (p += 1, ast.tmp_int))                                       \
-              : (*(unsigned char *)(p++)))
-#define mbinit() (mbwide() ? (*ast.mb_towc)((wchar_t *)0, (char *)0, mbmax()) : 0)
-// You cannot call this with a parameter that has side-effects (e.g.,
-// decrement/increment) because it won't occur if we're not in a wide locale.
-#define mbsize(p) (mbwide() ? (*ast.mb_len)((char *)(p), mbmax()) : 1)
-// You cannot call this with a parameter that has side-effects (e.g.,
-// decrement/increment) because it won't occur if we're not in a wide locale.
-#define mbnsize(p, n) (mbwide() ? (*ast.mb_len)((char *)(p), n) : 1)
+#define mbinit()  do { } while (0)  // this is now a no-op in legacy mode
 #define mbconv(s, w) (ast.mb_conv ? (*ast.mb_conv)(s, w) : ((*(s) = (w)), 1))
 
 #endif

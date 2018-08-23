@@ -485,7 +485,7 @@ static_fn char *fmthtml(Shell_t *shp, const char *string, int flags) {
     if (!(flags & SFFMT_ALTER)) {
         while ((c = *(unsigned char *)cp++)) {
             int s;
-            s = mbsize(cp - 1);
+            s = mblen(cp - 1, MB_CUR_MAX);
             if (s > 1) {
                 cp += (s - 1);
                 continue;
@@ -635,7 +635,7 @@ static_fn int varname(const char *str, ssize_t n) {
         n = strlen(str);
     }
     for (; n > 0; n -= len) {
-        len = mbsize(str);
+        len = mblen(str, MB_CUR_MAX);
         c = mbchar(str);
         if (dot && !(isalpha(c) || c == '_')) {
             break;
@@ -818,7 +818,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                 break;
             }
             case 'c': {
-                if (mbwide() && (n = mbsize(argp)) > 1) {
+                if (mbwide() && (n = mblen(argp, MB_CUR_MAX)) > 1) {
                     fe->fmt = 's';
                     fe->size = n;
                     value->s = argp;
@@ -853,7 +853,7 @@ static_fn int extend(Sfio_t *sp, void *v, Sffmt_t *fe) {
                     case '\'':
                     case '"': {
                         w = argp + 1;
-                        if (mbwide() && mbsize(w) > 1) {
+                        if (mbwide() && mblen(w, MB_CUR_MAX) > 1) {
                             value->ll = mbchar(w);
                         } else {
                             value->ll = *(unsigned char *)w++;
@@ -1038,7 +1038,7 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     int chlen;
     if (mbwide()) {
         while (1) {
-            chlen = mbsize(cp);
+            chlen = mblen(cp, MB_CUR_MAX);
             // Skip over multibyte characters.
             if (chlen > 1) {
                 cp += chlen;
@@ -1054,7 +1054,7 @@ static_fn int fmtvecho(Shell_t *shp, const char *string, struct printf *pp) {
     c = --cp - string;
     if (c > 0) sfwrite(shp->stk, (void *)string, c);
     for (; (c = *cp); cp++) {
-        if (mbwide() && ((chlen = mbsize(cp)) > 1)) {
+        if (mbwide() && ((chlen = mblen(cp, MB_CUR_MAX)) > 1)) {
             sfwrite(shp->stk, cp, chlen);
             cp += (chlen - 1);
             continue;

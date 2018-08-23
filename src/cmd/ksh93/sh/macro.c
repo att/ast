@@ -298,7 +298,7 @@ void sh_machere(Shell_t *shp, Sfio_t *infile, Sfio_t *outfile, char *string) {
         if (mbwide()) {
             do {
                 ssize_t len;
-                switch (len = mbsize(cp)) {
+                switch (len = mblen(cp, MB_CUR_MAX)) {
                     case -1:  // illegal multi-byte char
                     case 0:
                     case 1: {
@@ -453,7 +453,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
         if (mbwide()) {
             ssize_t len;
             do {
-                switch (len = mbsize(cp)) {
+                switch (len = mblen(cp, MB_CUR_MAX)) {
                     case -1:  // illegal multi-byte char
                     case 0: {
                         len = 1;
@@ -1618,7 +1618,7 @@ skip:
                     char *vp = v;
                     mbinit();
                     while (type-- > 0) {
-                        if ((c = mbsize(vp)) < 1) c = 1;
+                        if ((c = mblen(vp, MB_CUR_MAX)) < 1) c = 1;
                         vp += c;
                     }
                     type = vp - v;
@@ -1802,7 +1802,7 @@ retry2:
                 if (mode != '@' && mp->ifsp) {
                     // Handle multi-byte characters being used for the internal
                     // field separator (IFS).
-                    for (int i = 0; i < mbsize(mp->ifsp); i++) {
+                    for (int i = 0; i < mblen(mp->ifsp, MB_CUR_MAX); i++) {
                         sfputc(sfio_ptr, mp->ifsp[i]);
                     }
                 } else {
@@ -2104,7 +2104,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
         state = sh_lexstates[ST_MACRO];
         // Insert \ before file expansion characters.
         while (size-- > 0) {
-            len = mbnsize(cp, ep - cp);
+            len = mblen(cp, ep - cp);
             if (len > 1) {
                 cp += len;
                 size -= (len - 1);
@@ -2166,7 +2166,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
         }
         while (size-- > 0) {
             n = state[c = *(unsigned char *)cp++];
-            if (n != S_MBYTE && (len = mbnsize(cp - 1, ep - cp + 1)) > 1) {
+            if (n != S_MBYTE && (len = mblen(cp - 1, ep - cp + 1)) > 1) {
                 sfwrite(stkp, cp - 1, len);
                 cp += --len;
                 size -= len;
@@ -2181,7 +2181,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
             } else if (n && mp->ifs) {
                 if (n == S_MBYTE) {
                     if (sh_strchr(mp->ifsp, cp - 1, ep - cp + 1) < 0) continue;
-                    n = mbnsize(cp - 1, ep - cp + 1) - 1;
+                    n = mblen(cp - 1, ep - cp + 1) - 1;
                     if (n == -2) n = 0;
                     cp += n;
                     size -= n;
@@ -2193,7 +2193,7 @@ static_fn void mac_copy(Mac_t *mp, const char *str, size_t size) {
                         size--;
                     }
                     if (n == S_MBYTE && sh_strchr(mp->ifsp, cp - 1, ep - cp + 1) >= 0) {
-                        n = mbnsize(cp - 1, ep - cp + 1) - 1;
+                        n = mblen(cp - 1, ep - cp + 1) - 1;
                         if (n == -2) n = 0;
                         cp += n;
                         size -= n;
@@ -2329,7 +2329,7 @@ static_fn char *lastchar(const char *string, const char *endstring) {
 
     mbinit();
     while (*str) {
-        if ((c = mbsize(str)) < 0) c = 1;
+        if ((c = mblen(str, MB_CUR_MAX)) < 0) c = 1;
         if (str + c > endstring) break;
         str += c;
     }

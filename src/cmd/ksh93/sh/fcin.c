@@ -145,7 +145,7 @@ void fcrestore(Fcin_t *fp) { _Fcin = *fp; }
 
 int _fcmbget(short *len) {
     int c;
-    *len = mbsize(_Fcin.fcptr);
+    *len = mblen((char *)_Fcin.fcptr, MB_CUR_MAX);
     switch (*len) {
         case -1: {
             *len = 1;

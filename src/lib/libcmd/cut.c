@@ -268,7 +268,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                 while (w > 0) {
                     if (!(*s & 0x80)) {
                         z = 1;
-                    } else if ((z = mbnsize(s, w)) <= 0) {
+                    } else if ((z = mblen(s, w)) <= 0) {
                         if (s == bp && xx) {
                             w += s - xx;
                             bp = (char *)(s = xx);
@@ -292,7 +292,7 @@ static void cutcols(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
 
                 while (w > 0 && ncol > 0) {
                     ncol--;
-                    if (!(*s & 0x80) || (z = mbnsize(s, w)) <= 0) z = 1;
+                    if (!(*s & 0x80) || (z = mblen(s, w)) <= 0) z = 1;
                     s += z;
                     w -= z;
                 }
@@ -379,16 +379,16 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                 continue;
                             case SP_WIDE:
                                 wp = --cp;
-                                while ((c = mb2wc(w, cp, ep - cp)) <= 0) {
+                                while ((c = mbtowc(&w, (char *)cp, ep - cp)) <= 0) {
                                     /* mb char possibly spanning buffer boundary -- fun stuff */
-                                    if ((ep - cp) < mbmax()) {
+                                    if ((ep - cp) < MB_CUR_MAX) {
                                         int i;
                                         int j;
                                         int k;
 
                                         if (lastchar != cut->eob) {
                                             *ep = lastchar;
-                                            c = mb2wc(w, cp, ep - cp);
+                                            c = mbtowc(&w, (char *)cp, ep - cp);
                                             if (c > 0) break;
                                         }
                                         if (copy) {
@@ -408,8 +408,8 @@ static void cutfields(Cut_t *cut, Sfio_t *fdin, Sfio_t *fdout) {
                                         if (lastchar != cut->eob) *ep = cut->eob;
                                         j = i;
                                         k = 0;
-                                        while (j < mbmax()) mb[j++] = cp[k++];
-                                        c = mb2wc(w, (char *)mb, j);
+                                        while (j < MB_CUR_MAX) mb[j++] = cp[k++];
+                                        c = mbtowc(&w, (char *)mb, j);
                                         if (c <= 0) {
                                             c = i;
                                             w = 0;

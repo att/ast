@@ -169,7 +169,7 @@ char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, char *n
         // Skip to first character which matches start of oldsp.
         while (*sp && (savesp == sp || *sp != *cp)) {
             // Skip a whole character at a time.
-            int c = mbsize(sp);
+            int c = mblen(sp, MB_CUR_MAX);
             if (c < 0) sp++;
             while (c-- > 0) sfputc(shp->stk, *sp++);
         }
@@ -206,7 +206,7 @@ void sh_trim(char *sp) {
         dp = sp;
         while ((c = *sp)) {
             int len;
-            if (mbwide() && (len = mbsize(sp)) > 1) {
+            if (mbwide() && (len = mblen(sp, MB_CUR_MAX)) > 1) {
                 memmove(dp, sp, len);
                 dp += len;
                 sp += len;
@@ -629,8 +629,12 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
 int sh_strchr(const char *string, const char *dp, size_t size) {
     wchar_t c, d;
     const char *cp = string;
-    mbinit();
-    d = mbnchar(dp, size);
+
+    // This used to use the obsolete `mbnchar()` macro. Then and now the code does not correctly
+    // handle a conversion error. In the old `mbnchar()` using code it would decrement the pointer
+    // by one. Which, at least in the context of this function was pointless and probably wrong
+    // regardless.
+    mbtowc(&d, dp, size);
     mbinit();
     while ((c = mbchar(cp))) {
         if (c == d) return cp - string;

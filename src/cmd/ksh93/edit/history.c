@@ -839,7 +839,7 @@ int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
         }
         if (!coffset) break;
         if (*cp == '\n') line++;
-        c = mbsize(cp);
+        c = mblen(cp, MB_CUR_MAX);
         if (c < 0) c = 1;
         cp += c;
         m -= c;
