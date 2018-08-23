@@ -169,7 +169,7 @@ char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, char *n
         // Skip to first character which matches start of oldsp.
         while (*sp && (savesp == sp || *sp != *cp)) {
             // Skip a whole character at a time.
-            int c = mbsize(sp);
+            int c = mblen(sp, MB_CUR_MAX);
             if (c < 0) sp++;
             while (c-- > 0) sfputc(shp->stk, *sp++);
         }
@@ -206,7 +206,7 @@ void sh_trim(char *sp) {
         dp = sp;
         while ((c = *sp)) {
             int len;
-            if (mbwide() && (len = mbsize(sp)) > 1) {
+            if (mbwide() && (len = mblen(sp, MB_CUR_MAX)) > 1) {
                 memmove(dp, sp, len);
                 dp += len;
                 sp += len;

@@ -438,7 +438,7 @@ static_fn char *get_ifs(Namval_t *np, Namfun_t *fp) {
         memset(shp->ifstable, 0, (1 << CHAR_BIT));
         cp = value;
         if (cp) {
-            while (n = mbsize(cp), c = *(unsigned char *)cp) {
+            while (n = mblen(cp, MB_CUR_MAX), c = *(unsigned char *)cp) {
                 cp++;
                 if (n > 1) {
                     cp += (n - 1);

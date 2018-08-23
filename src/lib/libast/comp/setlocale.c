@@ -84,7 +84,6 @@ static void init_ast_struct() {
         ast.collate = strcoll;
         ast.mb_alpha = (Isw_f)iswalpha;
         ast.mb_conv = wctomb;
-        ast.mb_len = mblen;
         ast.mb_towc = mbtowc;
         ast.mb_width = wcwidth;
         ast.mb_xfrm = strxfrm;
