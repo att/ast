@@ -330,7 +330,6 @@ extern char **environ;
                      ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
                      : (p += 1, ast.tmp_int))                                             \
               : (*(unsigned char *)(p++)))
-#define mbinit()  do { } while (0)  // this is now a no-op in legacy mode
 
 #endif
 

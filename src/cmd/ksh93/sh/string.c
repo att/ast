@@ -164,7 +164,6 @@ char *sh_substitute(Shell_t *shp, const char *string, const char *oldsp, char *n
     stkseek(shp->stk, 0);
     if (*sp == 0) return NULL;
     if (*(cp = oldsp) == 0) goto found;
-    mbinit();
     do {
         // Skip to first character which matches start of oldsp.
         while (*sp && (savesp == sp || *sp != *cp)) {
@@ -284,7 +283,6 @@ char *sh_fmtstr(const char *string, int quote) {
 
     if (!cp) return NULL;
     offset = staktell();
-    mbinit();
     state = ((c = mbchar(cp)) == 0);
     lc_unicodeliterals = quote == 'u' ? 1 : 0;
     if (quote == '"') goto skip;
@@ -329,7 +327,6 @@ char *sh_fmtstr(const char *string, int quote) {
             stakwrite("$'", 2);
         }
         cp = string;
-        mbinit();
         while (op = cp, c = mbchar(cp)) {
             state = 1;
             switch (c) {
@@ -635,7 +632,6 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
     // by one. Which, at least in the context of this function was pointless and probably wrong
     // regardless.
     mbtowc(&d, dp, size);
-    mbinit();
     while ((c = mbchar(cp))) {
         if (c == d) return cp - string;
     }

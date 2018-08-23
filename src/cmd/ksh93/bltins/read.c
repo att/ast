@@ -600,7 +600,6 @@ int sh_readline(Shell_t *shp, char **names, void *readfn, volatile int fd, int f
                         int x;
                         int z;
 
-                        mbinit();
                         *cur = 0;
                         x = z = 0;
                         while (up < cur && (z = mblen(up, MB_CUR_MAX)) > 0) {

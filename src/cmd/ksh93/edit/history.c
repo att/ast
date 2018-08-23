@@ -826,7 +826,6 @@ int hist_match(History_t *hp, off_t offset, char *string, int *coffset) {
     char *first, *cp;
     int m, n, c = 1, line = 0;
 
-    mbinit();
     sfseek(hp->histfp, offset, SEEK_SET);
     cp = first = sfgetr(hp->histfp, 0, 0);
     if (!cp) return -1;
