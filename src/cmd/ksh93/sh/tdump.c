@@ -51,16 +51,6 @@ int sh_tdump(Sfio_t *out, const Shnode_t *t) {
 }
 
 //
-// Convert to ASCII to write and back again if needed.
-//
-static_fn int outstring(Sfio_t *out, const char *string, int n) {
-    int r;
-    char *cp = (char *)string;
-    r = sfwrite(out, cp, n);
-    return r;
-}
-
-//
 // Print script corresponding to shell tree <t>.
 //
 static_fn int dump_p_tree(const Shnode_t *t) {
@@ -151,9 +141,9 @@ static_fn int dump_p_arg(const struct argnod *arg) {
         sfputu(outfile, n + 1);
         if (fp) {
             sfputc(outfile, 0);
-            outstring(outfile, fp->fornam, n - 1);
+            sfwrite(outfile, fp->fornam, n - 1);
         } else {
-            outstring(outfile, arg->argval, n);
+            sfwrite(outfile, arg->argval, n);
         }
         sfputc(outfile, arg->argflag);
         if (fp) {
@@ -230,5 +220,5 @@ static_fn int dump_p_switch(const struct regnod *reg) {
 static_fn int dump_p_string(const char *string) {
     size_t n = strlen(string);
     if (sfputu(outfile, n + 1) < 0) return -1;
-    return outstring(outfile, string, n);
+    return sfwrite(outfile, string, n);
 }
