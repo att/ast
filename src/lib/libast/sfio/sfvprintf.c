@@ -130,7 +130,6 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     char buf[SF_MAXDIGITS + SLACK], tmp[SF_MAXDIGITS + 1], data[SF_GRAIN];
     int decimal = 0, thousand = 0;
 
-#if _has_multibyte
     wchar_t *wsp;
     SFMBDCL(fmbs) /* state of format string	*/
     SFMBDCL(mbs)  /* state of some string		*/
@@ -138,7 +137,6 @@ int sfvprintf(Sfio_t *f, const char *form, va_list args) {
     char *osp;
     int n_w, wc;
     wchar_t tw;
-#endif
 #endif
 
     /* local io system */
@@ -531,11 +529,9 @@ loop_fmt:
                 } else if (size < 0)
                     size = sizeof(float);
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
-#if _has_multibyte
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
                 } else
-#endif
                     if (size < 0)
                     size = sizeof(int);
             }
@@ -612,7 +608,6 @@ loop_fmt:
                     argv.vp = va_arg(args, void *);
                     break;
                 case SFFMT_CHAR:
-#if _has_multibyte
                     if (base >= 0) {
                         argv.s = va_arg(args, char *);
                     } else if ((flags & SFFMT_LONG) || fmt == 'C') {
@@ -624,13 +619,6 @@ loop_fmt:
                     } else {
                         argv.i = va_arg(args, int);
                     }
-#else   // _has_multibyte
-                    if (base >= 0) {
-                        argv.s = va_arg(args, char *);
-                    } else {
-                        argv.i = va_arg(args, int);
-                    }
-#endif  // _has_multibyte
                     break;
                 default: /* unknown pattern */
                     break;
@@ -691,9 +679,7 @@ loop_fmt:
                 flags = (flags & ~(SFFMT_TYPES | SFFMT_LDOUBLE)) | SFFMT_LONG;
             // FALLTHRU
             case 's':
-#if _has_multibyte && defined(mbwidth)
                 wc = (flags & SFFMT_LDOUBLE) && mbwide();
-#endif
                 if (base >= 0) /* list of strings */
                 {
                     if (!(ls = argv.sp) || !ls[0]) continue;
@@ -711,7 +697,6 @@ loop_fmt:
                     tls[0] = sp;
                 }
                 for (sp = *ls;;) { /* v: number of bytes  w: print width of those v bytes */
-#if _has_multibyte
                     if (flags & SFFMT_LONG) {
                         v = 0;
 #ifdef mbwidth
@@ -759,7 +744,6 @@ loop_fmt:
                     }
 #endif
                     else
-#endif
                     {
                         if ((v = size) < 0)
                             for (v = 0; v != precis && sp[v]; ++v)
@@ -778,7 +762,6 @@ loop_fmt:
                         }
                     }
                     if (n < 0 && (flags & SFFMT_CHOP) && width > 0 && precis < 0) {
-#if _has_multibyte
                         if (flags & SFFMT_LONG) {
                             SFMBCLR(&mbs);
                             wsp = (wchar_t *)sp;
@@ -810,14 +793,12 @@ loop_fmt:
                             }
                             v -= (sp - osp);
                         } else
-#endif
                         {
                             sp += -n;
                             v += n;
                         }
                         n = 0;
                     }
-#if _has_multibyte
                     if (flags & SFFMT_LONG) {
                         SFMBCLR(&mbs);
                         for (wsp = (wchar_t *)sp; w > 0; ++wsp, --w) {
@@ -826,7 +807,6 @@ loop_fmt:
                             SFwrite(f, sp, n_s);
                         }
                     } else
-#endif
                     {
                         SFwrite(f, sp, v);
                     }
@@ -845,12 +825,9 @@ loop_fmt:
                 flags = (flags & ~(SFFMT_TYPES | SFFMT_LDOUBLE)) | SFFMT_LONG;
             // FALLTHRU
             case 'c':
-#if _has_multibyte && defined(mbwidth)
                 wc = (flags & SFFMT_LDOUBLE) && mbwide();
-#endif
                 if (precis <= 0) /* # of times to repeat a character */
                     precis = 1;
-#if _has_multibyte
                 if (flags & SFFMT_LONG) {
                     if (base >= 0) {
                         if (!(wsp = (wchar_t *)argv.s)) continue;
@@ -861,7 +838,6 @@ loop_fmt:
                         size = 1;
                     }
                 } else
-#endif
                 {
                     if (base >= 0) {
                         if (!(sp = argv.s)) continue;
@@ -874,7 +850,6 @@ loop_fmt:
                 }
 
                 while (size > 0) {
-#if _has_multibyte
                     if (flags & SFFMT_LONG) {
                         SFMBCLR(&mbs);
                         if ((n_s = mbconv(buf, *wsp++, &mbs)) <= 0) break;
@@ -883,7 +858,6 @@ loop_fmt:
 #endif
                         n = width - precis * n_s; /* padding amount */
                     } else
-#endif
                         if (flags & SFFMT_ALTER) {
                         n_s = chr2str(buf, *sp++);
                         n = width - precis * n_s;
@@ -903,7 +877,6 @@ loop_fmt:
                     }
 
                     v = precis; /* need this because SFnputc may clear it */
-#if _has_multibyte
                     if (flags & SFFMT_LONG) {
                         for (; v > 0; --v) {
                             ssp = buf;
@@ -911,7 +884,6 @@ loop_fmt:
                             SFwrite(f, ssp, k);
                         }
                     } else
-#endif
                         if (flags & SFFMT_ALTER) {
                         for (; v > 0; --v) {
                             ssp = buf;
@@ -1018,9 +990,7 @@ loop_fmt:
                 long_cvt:
                     if (scale) {
                         sp = fmtscale(lv, scale);
-#if _has_multibyte && defined(mbwidth)
                         wc = 0;
-#endif
                         goto str_cvt;
                     }
                     if (lv == 0 && precis == 0) break;
@@ -1068,9 +1038,7 @@ loop_fmt:
                 int_cvt:
                     if (scale) {
                         sp = fmtscale(v, scale);
-#if _has_multibyte && defined(mbwidth)
                         wc = 0;
-#endif
                         goto str_cvt;
                     }
                     if (v == 0 && precis == 0) break;

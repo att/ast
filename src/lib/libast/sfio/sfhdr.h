@@ -114,8 +114,6 @@
 
 /* deal with multi-byte character and string conversions */
 
-#define _has_multibyte 1
-
 #define SFMBMAX mbmax()
 #define SFMBCPY(to, fr) (*(Mbstate_t *)(to) = *(fr))
 #define SFMBCLR(mb) mbtinit(((Mbstate_t *)(mb)))
@@ -124,15 +122,6 @@
 #define SFMBDCL(ms) Mbstate_t ms;
 #define SFMBDCLP(ms) Mbstate_t *ms;
 #define SFMBSTATE(f) _sfmbstate(f)
-
-#if !_has_multibyte
-#define _has_multibyte 0 /* no multibyte support	*/
-#define SFMBCPY(to, fr)
-#define SFMBCLR(mb)
-#define SFMBSET(lhs, v)
-#define SFMBDCL(mb)
-#define SFMBLEN(s, mb) (*(s) ? 1 : 0)
-#endif /* _has_multibyte */
 
 /* dealing with streams that might be accessed concurrently */
 #if vt_threaded
@@ -274,13 +263,8 @@
 #define SF_DCDOWN 00010000 /* recurse down the discipline stack	*/
 
 #define SF_WCFORMAT 00020000 /* wchar_t formatting - stdio only	*/
-#if _has_multibyte
 #define SFWCSET(f) ((f)->bits |= SF_WCFORMAT)
 #define SFWCGET(f, v) (((v) = (f)->bits & SF_WCFORMAT), ((f)->bits &= ~SF_WCFORMAT))
-#else
-#define SFWCSET(f)
-#define SFWCGET(f, v)
-#endif
 
 #define SF_MVSIZE 00040000 /* f->size was reset in sfmove()	*/
 #define SFMVSET(f) (((f)->size *= SF_NMAP), ((f)->bits |= SF_MVSIZE))
@@ -483,10 +467,8 @@ typedef union {
     Sfdouble_t ld;
     double d;
     float f;
-#if _has_multibyte
     wchar_t wc;
     wchar_t *ws, **wsp;
-#endif
     char c, *s, **sp;
     uchar uc, *us, **usp;
     void *vp;

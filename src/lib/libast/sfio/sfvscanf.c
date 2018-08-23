@@ -125,9 +125,7 @@ typedef struct _accept_s {
     char ok[SF_MAXCHAR + 1];
     int yes;
     char *form, *endf;
-#if _has_multibyte
     wchar_t wc;
-#endif
 } Accept_t;
 
 static char *_sfsetclass(const char *form, Accept_t *ac, int flags) {
@@ -156,18 +154,14 @@ static char *_sfsetclass(const char *form, Accept_t *ac, int flags) {
 
         if (*(form + 1) == '-') {
             endc = *((uchar *)(form + 2));
-#if _has_multibyte
             if (c >= 128 || endc >= 128) /* range must be ascii */
                 goto one_char;
-#endif
             for (; c <= endc; ++c) ac->ok[c] = ac->yes;
             n = 3;
         } else {
         one_char:
-#if _has_multibyte /* true multi-byte chars must be checked differently */
             if ((flags & SFFMT_LONG) && (n = (int)SFMBLEN(form, &mbs)) <= 0) return NULL;
             if (n == 1)
-#endif
                 ac->ok[c] = ac->yes;
         }
     }
@@ -176,7 +170,6 @@ static char *_sfsetclass(const char *form, Accept_t *ac, int flags) {
     return (char *)(form + 1);
 }
 
-#if _has_multibyte
 static int _sfwaccept(wchar_t wc, Accept_t *ac) {
     int endc, c, n;
     wchar_t fwc;
@@ -202,11 +195,7 @@ static int _sfwaccept(wchar_t wc, Accept_t *ac) {
     return !ac->yes;
 }
 
-#if _has_multibyte == 1
 #define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, (void *)(mbs))
-#else
-#define SFgetwc(sc, wc, fmt, ac, mbs) _sfgetwc(sc, wc, fmt, ac, NULL)
-#endif
 
 static int _sfgetwc(Scan_t *sc, wchar_t *wc, int fmt, Accept_t *ac, void *mbs) {
     int n, v;
@@ -266,7 +255,6 @@ no_match: /* this unget is lossy on a stream with small buffer */
     if ((sc->d -= n) < sc->data) sc->d = sc->data;
     return 0;
 }
-#endif /*_has_multibyte*/
 
 int sfvscanf(Sfio_t *f, const char *form, va_list args) {
     int inp, shift, base, width;
@@ -287,11 +275,9 @@ int sfvscanf(Sfio_t *f, const char *form, va_list args) {
 
     int decimal = 0, thousand = 0;
 
-#if _has_multibyte
     wchar_t wc;
     SFMBDCL(fmbs)
     SFMBDCL(mbs)
-#endif
 
     void *value; /* location to assign scanned value */
     char *t_str;
@@ -349,7 +335,6 @@ loop_fmt:
                 }
             } else {
             match_1:
-#if _has_multibyte
                 if ((n = (int)mbrtowc(&wc, form - 1, SFMBMAX, (mbstate_t *)&fmbs)) <= 0)
                     goto pop_fmt;
                 if (n > 1) {
@@ -361,7 +346,6 @@ loop_fmt:
                     if (v == 0) goto pop_fmt;
                     form += n - 1;
                 } else
-#endif
                     if (SFgetc(f, inp) != fmt) {
                     if (inp < 0) goto done;
                     SFungetc(f, inp);
@@ -598,11 +582,9 @@ loop_fmt:
                 } else if (size < 0)
                     size = sizeof(float);
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
-#if _has_multibyte
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
                 } else
-#endif
                     if (size < 0)
                     size = sizeof(int);
             }
@@ -890,11 +872,9 @@ loop_fmt:
             if (value) {
                 if (size < 0) size = MAXWIDTH;
                 if (fmt != 'c') size -= 1;
-#if _has_multibyte
                 if (flags & SFFMT_LONG)
                     argv.ws = (wchar_t *)value;
                 else
-#endif
                     argv.s = (char *)value;
             } else
                 size = 0;
@@ -905,7 +885,6 @@ loop_fmt:
             }
 
             n = 0; /* count number of scanned characters */
-#if _has_multibyte
             if (flags & SFFMT_LONG) {
                 SFungetc(f, inp);
                 SCinit(&scd, 0);
@@ -916,8 +895,6 @@ loop_fmt:
                 }
                 SCend(&scd, 0);
             } else
-#endif
-
                 if (fmt == 's') {
                 do {
                     if (isspace(inp)) break;
@@ -945,11 +922,9 @@ loop_fmt:
             if (value && (n > 0 || fmt == '[')) {
                 n_assign += 1;
                 if (fmt != 'c' && size >= 0) {
-#if _has_multibyte
                     if (flags & SFFMT_LONG)
                         *argv.ws = 0;
                     else
-#endif
                         *argv.s = 0;
                 }
             }

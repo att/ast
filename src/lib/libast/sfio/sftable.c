@@ -296,13 +296,11 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                 } else if (size < 0)
                     size = sizeof(float);
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
-#if _has_multibyte
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
-                } else
-#endif
-                    if (size < 0)
+                } else if (size < 0) {
                     size = sizeof(int);
+                }
             }
         }
 
@@ -428,7 +426,6 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                         break;
                     case SFFMT_CHAR:
                         if (fp[n].ft.base >= 0) fp[n].argv.s = va_arg(args, char *);
-#if _has_multibyte
                         else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
 #if _wchar_t_is_int
                             fp[n].argv.wc = va_arg(args, wchar_t);
@@ -436,7 +433,6 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                             fp[n].argv.wc = (wchar_t)va_arg(args, uint);
 #endif  // _wchar_t_is_int
                         }
-#endif
                         /* observe promotion rule */
                         else
                             fp[n].argv.i = va_arg(args, int);
@@ -500,10 +496,8 @@ static int sfcvinit() {
     _Sftype['s'] = _Sftype['n'] = _Sftype['p'] = _Sftype['!'] = SFFMT_POINTER;
     _Sftype['c'] = SFFMT_CHAR;
     _Sftype['['] = SFFMT_CLASS;
-#if _has_multibyte
     _Sftype['S'] = SFFMT_POINTER;
     _Sftype['C'] = SFFMT_CHAR;
-#endif
 
     /* IEEE floating point computed constants */
 
