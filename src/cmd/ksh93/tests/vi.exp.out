@@ -52,9 +52,11 @@ yy yanks entire line
 Yanks from current position to end of line
 u undoes last text modifying commands
 U undoes all text modifying commands
-v opens editor
-ctrl-j executes command
-ctrl-m executes command
+v opens editor and exiting runs the command
+ctrl-j in insert mode executes command
+ctrl-j in control mode executes command
+ctrl-m in insert mode executes command
+ctrl-m in control mode executes command
 # appends comment at beginning of line
 = generates file or command name completions
-ctrl-v generates version number
+ctrl-v generates version string
