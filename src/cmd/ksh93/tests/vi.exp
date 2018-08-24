@@ -1,0 +1,959 @@
+# Test for vi keybindings
+
+# vi mode requires being in control mode for ctrl-l to work
+# Send a [ctrl-L] to force the shell to redraw the prompt and command line. Doing so makes
+# it easier to verify the command line contains the expected text.
+proc redraw_prompt args {
+    global is_control_mode
+    if {$is_control_mode == 0} {
+        control_mode
+        send [ctrl L]
+        insert_mode
+    } else {
+        send [ctrl L]
+    }
+}
+
+# Enter vi control mode
+proc control_mode args {
+    global is_control_mode
+    set is_control_mode 1
+    send "\033"
+}
+
+# Enter vi insert mode
+proc insert_mode args {
+    global is_control_mode
+    set is_control_mode 0
+    send "i"
+}
+
+# Delete current line, it changes to mode to insert mode
+proc clear_prompt args {
+    global is_control_mode
+    set is_control_mode 0
+    send [ctrl C]
+    expect_prompt
+}
+
+set pid [spawn $ksh]
+expect_prompt
+
+# Enter vi mode
+send "set -o vi\r"
+expect_prompt
+
+# vi mode starts in insert typing mode
+set is_control_mode 0
+
+# ==========
+# Populate the command history with a couple of commands.
+# Also ensures we are in inset mode
+send "echo hello\r"
+expect "\r\nhello\r\n" {
+    puts "echo 1 works"
+}
+expect_prompt
+send "echo buh bye\r"
+expect "\r\nbuh bye\r\n" {
+    puts "echo 2 works"
+}
+expect_prompt
+
+# ==========
+# [count]k  Fetch previous command.  Each time k is entered the previous command back in
+# time is accessed.
+log_test_entry
+control_mode
+send "k"
+redraw_prompt
+expect -ex ": echo buh bye" {
+    puts "k fetches previous history item"
+}
+
+control_mode
+send "k"
+redraw_prompt
+expect -ex ": echo hello"
+
+# ==========
+# [count]j  Fetch next command.  Each time j is entered the next command forward in time
+# is accessed.
+log_test_entry
+control_mode
+send "j"
+redraw_prompt
+expect -ex ": echo buh bye" {
+    puts "j fetches next history item"
+}
+
+# ==========
+# [count]-  Equivalent to k.
+log_test_entry
+control_mode
+send -- "-"
+redraw_prompt
+expect -ex ": echo hello" {
+    puts "- fetches previous history item"
+}
+
+# [count][A If cursor is at the end of the line it is equivalent to / with string^set to
+# the contents of the current line.  Otherwise, it is equivalent to k.
+# [count]+  Equivalent to j.
+log_test_entry
+control_mode
+send "+"
+redraw_prompt
+expect -ex ": echo buh bye" {
+    puts "+ fetches next history item"
+}
+
+# [count][B Equivalent to j.
+# [count]G  The command number count is fetched.  The default is the least recent history
+# command.
+log_test_entry
+control_mode
+send -- "-"
+redraw_prompt
+expect -ex ": echo hello" {
+    puts "G fetches least recent history item"
+}
+clear_prompt
+
+# /string   Search backward through history for a previous command containing string.
+# String is terminated by a `RETURN' or `NEW LINE'.  If string is preceded by a ^, the
+# matched line must begin with string.  If string     is null, the previous string will
+# be used.
+log_test_entry
+control_mode
+send "/echo\r"
+redraw_prompt
+expect -ex ": echo buh bye" {
+    puts "/string searches backward through history"
+}
+clear_prompt
+
+# ?string   Same as / except that search will be in the forward direction.
+log_test_entry
+control_mode
+send "?echo\r"
+redraw_prompt
+expect -ex ": echo hello" {
+    puts "?string searches forward through history"
+}
+
+# n         Search for next match of the last pattern to / or ?  commands.
+log_test_entry
+control_mode
+send "n"
+redraw_prompt
+expect -ex ": echo buh bye" {
+    puts "n searches for next match in history of the last pattern"
+}
+
+# N         Search for next match of the last pattern to / or ?, but in reverse direction.
+log_test_entry
+control_mode
+send "N"
+redraw_prompt
+expect -ex ": echo hello" {
+    puts "N searches for next match in history of the last pattern in reverse direction"
+}
+
+clear_prompt
+
+# ==========
+# ^         Cursor to start of line.
+log_test_entry
+send "echo buh bye"
+control_mode
+send "^"
+insert_mode
+send "x"
+redraw_prompt
+expect -ex "xecho buh bye" {
+    puts "^ takes cursor to beginning of line"
+}
+
+# ==========
+# $         Cursor to end of line.
+log_test_entry
+control_mode
+send "$"
+insert_mode
+send "Y"
+redraw_prompt
+expect -ex "xecho buh byYe" {
+    puts "$ takes cursor to end of line"
+}
+
+# ==========
+# [count]h  Cursor backward (left) one character.
+log_test_entry
+control_mode
+# Move to end of line
+send "$"
+send "h"
+insert_mode
+send "X"
+redraw_prompt
+expect -ex "xecho buh byXYe" {
+    puts "h takes cursor one character backward"
+}
+
+# ==========
+# [count]l  Cursor forward (right) one character.
+log_test_entry
+control_mode
+send "^"
+send "l"
+insert_mode
+send "z"
+redraw_prompt
+expect -ex "xzecho buh byXYe" {
+    puts "l takes cursor one character forward"
+}
+
+# ==========
+# [count]W  Cursor to the beginning of the next word that follows a blank.
+log_test_entry
+control_mode
+send "^"
+send "W"
+insert_mode
+send "1"
+redraw_prompt
+expect -ex "xzecho 1buh byXYe" {
+    puts "W takes cursor one word forward"
+}
+
+# ==========
+# [count]w  Cursor forward one alpha-numeric word.
+log_test_entry
+control_mode
+send "^"
+insert_mode
+send "1"
+control_mode
+send "w"
+insert_mode
+send "2"
+redraw_prompt
+expect -ex "1xzecho 21buh byXYe" {
+    puts "W takes cursor one alpha-numeric word forward"
+}
+clear_prompt
+
+exec mkdir foo1 foo2 foo3
+
+# ==========
+# [count]e  Cursor to end of word
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+send "e"
+insert_mode
+send "x"
+redraw_prompt
+expect -re "echxo hello" {
+    puts "e moves to end of word"
+}
+clear_prompt
+
+# ==========
+# [count]E  Cursor to end of the current blank delimited word
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+send "E"
+insert_mode
+send "x"
+redraw_prompt
+expect -re "echxo hello" {
+    puts "E moves to end of current blank delimited word"
+}
+clear_prompt
+
+# ==========
+# [count]h  Cursor backward (left) one character
+log_test_entry
+send "echo hello"
+control_mode
+send "h"
+insert_mode
+send "x"
+redraw_prompt
+expect -re "echo helxlo" {
+    puts "h moves cursor backward one character"
+}
+clear_prompt
+
+# ==========
+# [count][D Cursor backward (left) one character.
+
+# ==========
+# [count]b  Cursor backward one word.
+log_test_entry
+send "echo hello"
+control_mode
+send "b"
+insert_mode
+send "hello "
+redraw_prompt
+expect -re "echo hello hello" {
+    puts "b moves cursor backward one word"
+}
+clear_prompt
+
+# ==========
+# [count]B  Cursor to preceding blank separated word.
+log_test_entry
+send "echo hello"
+control_mode
+send "B"
+insert_mode
+send "hello "
+redraw_prompt
+expect -re "echo hello hello" {
+    puts "B moves cursor to preceding blank separated word"
+}
+clear_prompt
+
+# ==========
+# [count]⎪  Cursor to column count.
+
+# ==========
+# [count]fc Find the next character c in the current line
+log_test_entry
+send "echo hello"
+control_mode
+send "^"
+send "fh"
+send "x"
+redraw_prompt
+expect -re "eco hello" {
+    puts "fc finds the next character c in current line"
+}
+clear_prompt
+
+# ==========
+# [count]Fc Find the previous character c in the current line
+log_test_entry
+send "echo hello"
+control_mode
+send "Fh"
+send "x"
+redraw_prompt
+expect -re "echo ello" {
+    puts "Fc finds the previous character c in current line"
+}
+clear_prompt
+
+# ==========
+# [count]tc Equivalent to f followed by h
+log_test_entry
+send "echo hello"
+control_mode
+send "^"
+send "th"
+send "x"
+redraw_prompt
+expect -re "eho hello" {
+    puts "tc finds the next character c in current line and moves cursor back" 
+}
+clear_prompt
+
+# ==========
+# [count]Tc Equivalent to F followed by l
+log_test_entry
+send "echo hello"
+control_mode
+send "Th"
+send "x"
+redraw_prompt
+expect -re "echo hllo" {
+    puts "Tc finds the previous character c in current line and move cursor forward"
+}
+clear_prompt
+
+# ==========
+# [count];  Repeats count times, the last single character find command, f, F, t, or T.
+log_test_entry
+send "echo hello"
+control_mode
+send "Fh"
+send ";"
+send "x"
+redraw_prompt
+expect -re "eco hello" {
+    puts "; repeat last character search command"
+}
+
+# ==========
+# count],  Reverses the last single character find command count times.
+log_test_entry
+send ","
+send "x"
+redraw_prompt
+expect -re "eco ello" {
+    puts ", reverses last character search command"
+}
+clear_prompt
+
+# ==========
+# 0         Cursor to start of line
+log_test_entry
+send " hello"
+control_mode
+# Move to beginning of line
+send "0"
+insert_mode
+send "echo"
+control_mode
+redraw_prompt
+expect -re "echo hello" {
+    puts "0 moves to beginning of line"
+}
+clear_prompt
+
+# ==========
+# TODO: These commands do not seem to work
+# [H        Cursor to first non-blank character in line.
+# [Y        Cursor to end of line.
+
+# ==========
+# %         Moves to balancing (, ), {, }, [, or ].  If cursor is not on one of the above
+# characters, the remainder of the line is searched for the first occurrence of one of the
+# above characters first.
+log_test_entry
+send "echo (hello)"
+control_mode
+# Move to beginning of line
+send "%"
+insert_mode
+send "."
+control_mode
+send "%"
+insert_mode
+send "."
+redraw_prompt
+expect -re "echo \.\(hello\.\)" {
+    puts "% moves to balancing ()"
+}
+clear_prompt
+
+# ==========
+# Text Modification Edit Commands
+# a         Enter input mode and enter text after the current character.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line for testing
+send "a"
+send "1"
+control_mode
+redraw_prompt
+expect -re "echo hello1" {
+    puts "a appends text after current cursor"
+}
+clear_prompt
+
+# ==========
+# A         Append text to the end of the line.  Equivalent to $a.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line for testing
+send "^"
+# Move to end of line and enter insert mode
+send "A"
+send "1"
+control_mode
+redraw_prompt
+expect -re "echo hello1" {
+    puts "A append text to the end of the line"
+}
+clear_prompt
+
+# ==========
+# [count]cmotion
+# c[count]motion Delete current character through the character that motion would move the
+# cursor to and enter input mode.  If motion is c, the entire line will be deleted and
+# input mode entered.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+send "c"
+send "e"
+send "print"
+control_mode
+redraw_prompt
+expect -re "print hello" {
+    puts "c deletes current character through the character that motion would move the
+cursor to and enter input mode"
+}
+clear_prompt
+
+# ==========
+# C         Delete the current character through the end of line and enter input mode.
+# Equivalent to c$.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+send "C"
+send "echo foo"
+control_mode
+redraw_prompt
+expect -re "echo foo" {
+    puts "C deletes current character through the end of line and enters input mode"
+}
+clear_prompt
+
+# ==========
+# S         Equivalent to cc.
+log_test_entry
+send "echo hello"
+control_mode
+send "S"
+send "echo foo"
+control_mode
+redraw_prompt
+expect -re "echo foo" {
+    puts "S deletes entire line and enters input mode"
+}
+clear_prompt
+
+# ==========
+# [count]s  Replace characters under the cursor in input mode.
+log_test_entry
+send "echo hello"
+control_mode
+send "sOO"
+control_mode
+redraw_prompt
+expect -re "echo hellOO" {
+    puts "s replaces current character in insert mode"
+}
+clear_prompt
+
+# ==========
+# D         Delete the current character through the end of line.  Equivalent to d$.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+control_mode
+send "D"
+redraw_prompt
+expect "" {
+    puts "D deletes current character through the end of line"
+}
+clear_prompt
+
+# ==========
+# [count]dmotion
+# d[count]motion Delete current character through the character that motion would move to.
+# If motion is d , the entire line will be deleted.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+control_mode
+send "d"
+# Move to end of current word. This would delete 'echo' from line.
+send "e"
+redraw_prompt
+expect -re " hello" {
+    puts "dmotion deletes current character through the character that motion moves to"
+}
+clear_prompt
+
+# ==========
+# i         Enter input mode and insert text before the current character.
+# This is automatically tested so I am not writing separate test for it.
+
+# ==========
+# I         Insert text before the beginning of the line.  Equivalent to 0i.
+log_test_entry
+send "echo hello"
+control_mode
+send "I"
+send "foo "
+control_mode
+redraw_prompt
+expect -re "foo echo hello" {
+    puts "I inserts text before beginning of line"
+}
+clear_prompt
+
+# ==========
+# [count]P  Place the previous text modification before the cursor.
+log_test_entry
+send "echo hello"
+control_mode
+# Delete character under cursor
+send "x"
+# Put deleted 'o' after the cursor
+send "P"
+control_mode
+redraw_prompt
+expect -re "echo helol" {
+    puts "P puts previous text modification before the cursor"
+}
+clear_prompt
+
+# ==========
+# [count]p  Place the previous text modification after the cursor.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of string
+send "x"
+# Put deleted 'o' after the cursor
+send "p"
+redraw_prompt
+expect -re "echo hello" {
+    puts "p puts previous text modification after the cursor"
+}
+clear_prompt
+
+# ==========
+# R         Enter input mode and replace characters on the screen with characters you type
+# overlay fashion.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of string
+send "^"
+# Replace characters in overlay mode
+send "R"
+send "ECHO"
+control_mode
+redraw_prompt
+expect -re "ECHO hello" {
+    puts "R replaces characters in overlay mode"
+}
+clear_prompt
+
+# ==========
+# [count]rc Replace the count character(s) starting at the current cursor position with c,
+# and advance the cursor.
+log_test_entry
+send "echo hello"
+control_mode
+send "rO"
+redraw_prompt
+expect -re "echo hellO" {
+    puts "rO replaces current character"
+}
+clear_prompt
+
+# ==========
+# [count]x  Delete current character.
+log_test_entry
+send "echo hello"
+control_mode
+send "x"
+redraw_prompt
+expect -re "echo hell" {
+    puts "x deletes current character"
+}
+clear_prompt
+
+# ==========
+# [count]X  Delete preceding character.
+log_test_entry
+send "echo hello"
+control_mode
+send "X"
+redraw_prompt
+expect -re "echo helo" {
+    puts "X deletes preceding character"
+}
+clear_prompt
+
+# ==========
+# [count].  Repeat the previous text modification command.
+# clear_prompt
+# control_mode
+# insert_mode
+# send "echo hello"
+# control_mode
+# # For some reason last entered character is seen as last command
+# # And this will insert 'o' at end of string
+# send "."
+# redraw_prompt
+# expect -re "echo helloo" {
+#     puts ". repeats last text modification command"
+# }
+
+# ==========
+# [count]∼  Invert the case of the count character(s) starting at the current cursor
+# position and advance the cursor.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of string
+send "^"
+send "~"
+redraw_prompt
+expect -re "Echo hello" {
+    puts "~ inverts case of character"
+}
+clear_prompt
+
+# ==========
+# [count]_  Causes the count word of the previous command to be appended and input mode
+# entered.  The last word is used if count is omitted.
+log_test_entry
+send "echo hello\r"
+expect_prompt
+control_mode
+send "_"
+set is_control_mode 0
+redraw_prompt
+expect -ex ":  hello" {
+    puts "_ inserts last word from previous command"
+}
+clear_prompt
+
+# ==========
+# *         Causes an * to be appended to the current word and file name generation
+# attempted.  If no match is found, it rings the bell.  Otherwise, the word is replaced
+# by  the  matching  pattern  and  input  mode  is entered.
+log_test_entry
+send "cd f"
+control_mode
+send "*"
+redraw_prompt
+expect -re "foo1.*foo2.*foo3" {
+    puts "* generates file or command name completions"
+}
+clear_prompt
+
+# ==========
+# \         Command or file name completion as described above.
+# TODO: Find why this test does not work
+# clear_prompt
+# control_mode
+# insert_mode
+# send "cd f"
+# control_mode
+# send "\\"
+# redraw_prompt
+# expect -re "foo" {
+#     puts "\\ generates file or command name completions"
+# }
+
+# Other Edit Commands
+# Miscellaneous commands.
+# [count]ymotion
+
+# ==========
+# y[count]motion
+#           Yank current character through character that motion would move the cursor to
+# and puts them into the delete buffer.  The text and cursor are unchanged.
+log_test_entry
+send "echo hello"
+control_mode
+# Yank to start of line.
+send "y^"
+clear_prompt
+# Put the yanked text after a new command.
+send "true "
+control_mode
+send "p"
+redraw_prompt
+expect -ex ": true echo hell " {
+    puts "y yanks from current character to that motion would move the cursor to"
+}
+clear_prompt
+
+# yy        Yanks the entire line.
+log_test_entry
+send "echo hello"
+control_mode
+send "yy"
+clear_prompt
+control_mode
+send "p"
+redraw_prompt
+expect -re "echo hello" {
+    puts "yy yanks entire line"
+}
+clear_prompt
+
+# Y         Yanks from current position to end of line.  Equivalent to y$.
+log_test_entry
+send "echo hello"
+control_mode
+# Move to beginning of line
+send "^"
+send "Y"
+clear_prompt
+control_mode
+send "p"
+redraw_prompt
+expect -re "echo hello" {
+    puts "Yanks from current position to end of line"
+}
+clear_prompt
+
+
+# ==========
+# u         Undo the last text modifying command.
+log_test_entry
+send "echo hello"
+control_mode
+send "x"
+send "u"
+redraw_prompt
+expect -re "echo hello" {
+    puts "u undoes last text modifying commands"
+}
+clear_prompt
+
+# ==========
+# U         Undo all the text modifying commands performed on the line.
+log_test_entry
+send "echo hello"
+control_mode
+send "x"
+send "x"
+send "U"
+redraw_prompt
+expect -re "echo hello" {
+    puts "U undoes all text modifying commands"
+}
+clear_prompt
+
+# ==========
+# [count]v  Returns the command hist -e ${VISUAL:-${EDITOR:-vi}} count in the input buffer
+# If count is omitted, then the current line is used.
+log_test_entry
+send "export EDITOR=vi\r"
+expect_prompt
+send "echo hello"
+control_mode
+send "v"
+sleep 0.1
+send ":q\r"
+expect ":q" { }
+expect -ex "\r\nhello\r\n" {
+    puts "v opens editor and exiting runs the command"
+}
+expect_prompt
+
+# ==========
+# ^L        Line feed and print current line.  Has effect only in control mode. This is
+# automatically tested every time prompt is redrawn.
+
+# ==========
+# ^J        (New line) Execute the current line, regardless of mode.
+log_test_entry
+send "echo ctrl j in insert mode"
+send [ctrl J]
+expect "\r\nctrl j in insert mode\r\n" {
+    puts "ctrl-j in insert mode executes command"
+}
+expect_prompt
+send "echo ctrl j in control mode"
+control_mode
+send [ctrl J]
+expect "\r\nctrl j in control mode\r\n" {
+    puts "ctrl-j in control mode executes command"
+}
+expect_prompt
+
+# ==========
+# ^M        (Return) Execute the current line, regardless of mode.
+log_test_entry
+send "echo ctrl m insert"
+send [ctrl M]
+expect "\r\nctrl m insert\r\n" {
+    puts "ctrl-m in insert mode executes command"
+}
+expect_prompt
+send "echo ctrl m control"
+control_mode
+send [ctrl M]
+expect "\r\nctrl m control\r\n" {
+    puts "ctrl-m in control mode executes command"
+}
+expect_prompt
+
+# ==========
+# #         If  the first character of the command is a #, then this command deletes this
+# # and each # that follows a newline.  Otherwise, sends the line after inserting a # in
+# front of each line in the command.  Useful for causing the current line to be inserted
+# in the history as a comment and uncommenting previously commented commands in the
+# history file.
+log_test_entry
+send "cat foo"
+control_mode
+send "#"
+expect -re "#cat foo" {
+    puts "# appends comment at beginning of line"
+}
+expect_prompt
+
+# ==========
+# [count]=  If count is not specified, it generates the list of matching commands or file
+# names as described above.  Otherwise, the word under the the cursor is replaced by the
+# count item from the most  recently  generated command or file list.  If the cursor is
+# not on a word, it is inserted instead.
+log_test_entry
+send "echo foo"
+control_mode
+send "="
+expect -re "foo1.*foo2.*foo3" {
+    puts "= generates file or command name completions"
+}
+# First return cancels the selection menu and displays the continuation prompt.
+# Second return executes echo.
+send "\r"
+expect ">" { }
+send "\r"
+expect "\r\nfoo\r\n" { }
+expect_prompt
+
+# ==========
+# TOOD: @letter   Your alias list is searched for an alias by the name _letter and if an
+# alias of this name is defined, its value will be inserted on the input queue for
+# processing. ?
+
+# ==========
+# ^V      Display version of the shell.
+log_test_entry
+control_mode
+send [ctrl V]
+expect -re ".*Version.*" {
+    puts "ctrl-v generates version string"
+}
+# A [return] should clear the version string from the command line and leave the same prompt.
+# Since it doesn't result in a new prompt we can't use `expect_prompt`.
+send "\r"
+expect -re ".*\rKSH PROMPT:\[0-9\]+: $" { }
+# Now get a new prompt.
+send "\r"
+expect_prompt
+
+# ==========
+# Exit shell with ctrl-d
+log_test_entry
+send [ctrl D]
+catch {expect default exp_continue} output
+log_debug "EOF output: $output"
+
+catch {wait}
+exit 0

@@ -1,0 +1,62 @@
+echo 1 works
+echo 2 works
+k fetches previous history item
+j fetches next history item
+- fetches previous history item
++ fetches next history item
+G fetches least recent history item
+/string searches backward through history
+?string searches forward through history
+n searches for next match in history of the last pattern
+N searches for next match in history of the last pattern in reverse direction
+^ takes cursor to beginning of line
+$ takes cursor to end of line
+h takes cursor one character backward
+l takes cursor one character forward
+W takes cursor one word forward
+W takes cursor one alpha-numeric word forward
+e moves to end of word
+E moves to end of current blank delimited word
+h moves cursor backward one character
+b moves cursor backward one word
+B moves cursor to preceding blank separated word
+fc finds the next character c in current line
+Fc finds the previous character c in current line
+tc finds the next character c in current line and moves cursor back
+Tc finds the previous character c in current line and move cursor forward
+; repeat last character search command
+, reverses last character search command
+0 moves to beginning of line
+% moves to balancing ()
+a appends text after current cursor
+A append text to the end of the line
+c deletes current character through the character that motion would move the
+cursor to and enter input mode
+C deletes current character through the end of line and enters input mode
+S deletes entire line and enters input mode
+s replaces current character in insert mode
+D deletes current character through the end of line
+dmotion deletes current character through the character that motion moves to
+I inserts text before beginning of line
+P puts previous text modification before the cursor
+p puts previous text modification after the cursor
+R replaces characters in overlay mode
+rO replaces current character
+x deletes current character
+X deletes preceding character
+~ inverts case of character
+_ inserts last word from previous command
+* generates file or command name completions
+y yanks from current character to that motion would move the cursor to
+yy yanks entire line
+Yanks from current position to end of line
+u undoes last text modifying commands
+U undoes all text modifying commands
+v opens editor and exiting runs the command
+ctrl-j in insert mode executes command
+ctrl-j in control mode executes command
+ctrl-m in insert mode executes command
+ctrl-m in control mode executes command
+# appends comment at beginning of line
+= generates file or command name completions
+ctrl-v generates version string
