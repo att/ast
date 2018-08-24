@@ -21,6 +21,7 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
 

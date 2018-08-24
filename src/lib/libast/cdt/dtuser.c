@@ -21,7 +21,8 @@
  ***********************************************************************/
 #include "config_ast.h"  // IWYU pragma: keep
 
-#include "aso.h"
+#include <pthread.h>
+
 #include "ast_aso.h"
 #include "cdtlib.h"
 

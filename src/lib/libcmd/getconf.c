@@ -26,7 +26,7 @@
 #include <limits.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/unistd.h>
+#include <unistd.h>
 
 #include "ast.h"
 #include "ast_errorf.h"

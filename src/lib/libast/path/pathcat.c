@@ -31,7 +31,6 @@
 #include <stddef.h>
 
 #include "ast.h"  // IWYU pragma: keep
-#include "ast_api.h"
 
 #undef pathcat
 char *pathcat(char *path, const char *dirs, int sep, const char *a, const char *b) {

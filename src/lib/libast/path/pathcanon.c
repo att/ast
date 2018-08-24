@@ -54,8 +54,6 @@
 #define ELOOP EINVAL
 #endif
 
-#include "ast_api.h"
-
 char *pathcanon(char *path, size_t size, int flags) {
     char *p;
     char *r;

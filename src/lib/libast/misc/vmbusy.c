@@ -16,10 +16,6 @@
 #include <malloc.h>
 #endif
 
-#if _hdr_unistd
-#include <unistd.h>
-#endif
-
 #include "ast_assert.h"
 
 volatile bool vmbusy_flag = false;

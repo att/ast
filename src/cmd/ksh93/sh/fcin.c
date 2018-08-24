@@ -27,6 +27,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ast.h"
 #include "fcin.h"

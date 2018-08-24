@@ -124,8 +124,8 @@
     { symbol: ["select", "private", "<sys/select.h>", "public"] },
     { symbol: ["_LIBCPP_VERSION", "private", "<stddef.h>", "public"] },
     { symbol: ["_LIBCPP_VERSION", "private", "<unistd.h>", "public"] },
-    { symbol: ["MB_CUR_MAX", "private", "<xlocale.h>", "public"] },
     { symbol: ["MB_CUR_MAX", "private", "<stdlib.h>", "public"] },
+    { symbol: ["MB_CUR_MAX", "private", "<xlocale.h>", "public"] },
     { symbol: ["S_IRUSR", "private", "<sys/stat.h>", "public"] },
     { symbol: ["S_IWUSR", "private", "<sys/stat.h>", "public"] },
     { symbol: ["S_IXUSR", "private", "<sys/stat.h>", "public"] },
@@ -167,6 +167,7 @@
     { symbol: ["TIOCSCTTY", "private", "<sys/ioctl.h>", "public"] },
     { symbol: ["TIOCGWINSZ", "private", "<sys/ioctl.h>", "public"] },
     { symbol: ["winsize", "private", "<sys/ioctl.h>", "public"] },
+    { symbol: ["sched_yield", "private", "<sched.h>", "public"] },
     # All of the sfio.h and sfhdr.h symbol mappings should be removed at some
     # time. They are needed for the moment because in most of the sfio code
     # base you can't actually directly include sfio.h. You have to include
