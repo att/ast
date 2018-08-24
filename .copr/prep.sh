@@ -11,17 +11,25 @@ git fetch --unshallow || :
 # Fetch tags to determine version number
 git fetch --tags
 
-COMMIT=$(git rev-parse HEAD)
-COMMIT_SHORT=$(git rev-parse --short HEAD)
-COMMIT_NUM=$(git rev-list HEAD --count)
-COMMIT_DATE=$(date --date="@$(git show -s --format=%ct HEAD)" +%Y%m%d)
+# 2017.0.0-devel-1535-g7c33a1cd-dirty
 VCS_VERSION=$(git describe --always --dirty --tags)
 
-sed "s,#COMMIT#,${COMMIT},;
-     s,#SHORTCOMMIT#,${COMMIT_SHORT},;
-     s,#COMMITNUM#,${COMMIT_NUM},;
-     s,#COMMITDATE#,${COMMIT_DATE},;
-     s,#VCS_VERSION#,${VCS_VERSION}," \
+# Extract development version number i.e. 2017.0.0
+DEVEL_VERSION_NUM=$(echo $VCS_VERSION | cut -d'-' -f1)
+
+# 1535
+COMMIT_NUM=$(echo $VCS_VERSION | cut -d'-' -f3)
+
+# g7c33a1cd
+SHORT_COMMIT=$(echo $VCS_VERSION | cut -d'-' -f4)
+
+COMMIT=$(git rev-parse HEAD)
+
+sed "s,#VCS_VERSION#,${VCS_VERSION},;
+     s,#DEVEL_VERSION_NUM#,${DEVEL_VERSION_NUM},;
+     s,#COMMIT_NUM#,${COMMIT_NUM},;
+     s,#SHORT_COMMIT#,${SHORT_COMMIT},;
+     s,#COMMIT#,${COMMIT}," \
          packaging/fedora/ksh.spec.in > packaging/fedora/ksh.spec
 
-git archive --prefix "ast-${COMMIT}/" --format "tar.gz" HEAD -o "packaging/fedora/ksh-${COMMIT_SHORT}.tar.gz"
+git archive --prefix "ast-${COMMIT}/" --format "tar.gz" HEAD -o "packaging/fedora/ksh-${SHORT_COMMIT}.tar.gz"

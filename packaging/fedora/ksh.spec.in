@@ -1,16 +1,17 @@
 %global commit #COMMIT#
-%global shortcommit #SHORTCOMMIT#
-%global commitnum #COMMITNUM#
-%global commitdate #COMMITDATE#
+%global devel_version_num #DEVEL_VERSION_NUM#
+%global commit_num #COMMIT_NUM#
+%global short_commit #SHORT_COMMIT#
 %global vcs_version #VCS_VERSION#
 
 Name:           ksh
 Summary:        The Original ATT Korn Shell
 URL:            http://www.kornshell.com/
 License:        EPL
-Version:        %{commitdate}+git.%{commitnum}.%{shortcommit}
+Version:        %{devel_version_num}+git.%{commit_num}.%{short_commit}
+Epoch:          1
 Release:        0%{?dist}
-Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source0:        https://github.com/att/ast/archive/%{commit}/%{name}-%{short_commit}.tar.gz
 Source1:        kshcomp.conf
 Source2:        kshrc.rhs
 Source3:        dotkshrc
