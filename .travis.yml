@@ -43,6 +43,16 @@ matrix:
           before_install:
               - docker pull ${DISTRO_TYPE}
 
+        # 32-bit environment
+        - os: linux
+          compiler: gcc
+          env:
+            # i386 images are built officially by docker but not supported
+            - DISTRO_TYPE=i386/ubuntu
+              INSTALL_REQUIREMENTS="apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -yq gcc python3 sudo locales ed vim python3-pip ninja-build findutils debianutils netcat-openbsd expect git; pip3 install meson==0.44.0; locale-gen en_US.UTF-8"
+          before_install:
+              - docker pull ${DISTRO_TYPE}
+
         - os: osx
           compiler: clang
           before_install:
