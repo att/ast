@@ -220,14 +220,16 @@ int b_dot_cmd(int n, char *argv[], Shbltin_t *context) {
     int jmpval;
     Shell_t *shp = context->shp;
     struct sh_scoped savst, *prevscope = shp->st.self;
-    char *filename = 0, *buffer = 0;
     int fd;
-    struct dolnod *saveargfor;
-    volatile struct dolnod *argsave = 0;
+    char *filename = NULL;
+    char *buffer = NULL;
+    struct dolnod *saveargfor = NULL;
+    volatile struct dolnod *argsave = NULL;
     struct checkpt buff;
-    Sfio_t *iop = 0;
+    Sfio_t *iop = NULL;
     short level;
     Optdisc_t disc;
+
     memset(&disc, 0, sizeof(disc));
     disc.version = OPT_VERSION;
     opt_info.disc = &disc;
