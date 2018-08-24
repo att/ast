@@ -31,14 +31,10 @@
 */
 
 // Lock dt->data->user.lock.
-int dtuserlock(Dt_t *dt) {
-    return pthread_mutex_lock(&dt->data->user.lock);
-}
+int dtuserlock(Dt_t *dt) { return pthread_mutex_lock(&dt->data->user.lock); }
 
 // Unlock dt->data->user.lock.
-int dtuserunlock(Dt_t *dt) {
-    return pthread_mutex_unlock(&dt->data->user.lock);
-}
+int dtuserunlock(Dt_t *dt) { return pthread_mutex_unlock(&dt->data->user.lock); }
 
 /* managing the user data slot dt->data->user.data */
 void *dtuserdata(Dt_t *dt, void *data, int set) {

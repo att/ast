@@ -388,7 +388,7 @@ void ed_setup(Edit_t *ep, int fd, int reedit) {
                     int skip = 0;
                     ep->e_crlf = 0;
                     if (pp < ppmax) *pp++ = c;
-                    for (int n = 1; ; n++, last++) {
+                    for (int n = 1;; n++, last++) {
                         c = *last;
                         if (!c) break;
 

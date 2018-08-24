@@ -531,8 +531,7 @@ loop_fmt:
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
-                } else
-                    if (size < 0)
+                } else if (size < 0)
                     size = sizeof(int);
             }
         }
@@ -743,8 +742,7 @@ loop_fmt:
                         v = ssp - sp;
                     }
 #endif
-                    else
-                    {
+                    else {
                         if ((v = size) < 0)
                             for (v = 0; v != precis && sp[v]; ++v)
                                 ;
@@ -792,8 +790,7 @@ loop_fmt:
 #endif
                             }
                             v -= (sp - osp);
-                        } else
-                        {
+                        } else {
                             sp += -n;
                             v += n;
                         }
@@ -806,8 +803,7 @@ loop_fmt:
                             sp = buf;
                             SFwrite(f, sp, n_s);
                         }
-                    } else
-                    {
+                    } else {
                         SFwrite(f, sp, v);
                     }
                     if (n > 0) {
@@ -837,8 +833,7 @@ loop_fmt:
                         wsp = &argv.wc;
                         size = 1;
                     }
-                } else
-                {
+                } else {
                     if (base >= 0) {
                         if (!(sp = argv.s)) continue;
                         size = strlen(sp);
@@ -857,8 +852,7 @@ loop_fmt:
                         if (wc) n_s = mbwidth(*(wsp - 1));
 #endif
                         n = width - precis * n_s; /* padding amount */
-                    } else
-                        if (flags & SFFMT_ALTER) {
+                    } else if (flags & SFFMT_ALTER) {
                         n_s = chr2str(buf, *sp++);
                         n = width - precis * n_s;
                     } else {
@@ -883,8 +877,7 @@ loop_fmt:
                             k = n_s;
                             SFwrite(f, ssp, k);
                         }
-                    } else
-                        if (flags & SFFMT_ALTER) {
+                    } else if (flags & SFFMT_ALTER) {
                         for (; v > 0; --v) {
                             ssp = buf;
                             k = n_s;

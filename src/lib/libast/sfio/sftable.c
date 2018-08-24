@@ -425,7 +425,8 @@ int type; /* >0: scanf, =0: printf, -1: internal	*/
                         fp[n].argv.vp = va_arg(args, void *);
                         break;
                     case SFFMT_CHAR:
-                        if (fp[n].ft.base >= 0) fp[n].argv.s = va_arg(args, char *);
+                        if (fp[n].ft.base >= 0)
+                            fp[n].argv.s = va_arg(args, char *);
                         else if ((fp[n].ft.flags & SFFMT_LONG) || fp[n].ft.fmt == 'C') {
 #if _wchar_t_is_int
                             fp[n].argv.wc = va_arg(args, wchar_t);

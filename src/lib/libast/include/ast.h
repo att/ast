@@ -325,10 +325,10 @@ extern char **environ;
 
 #else
 
-#define mbchar(p)                                                                         \
+#define mbchar(p)                                                                            \
     (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0 \
-                     ? ((p += ast.tmp_int), ast.tmp_wchar)                                \
-                     : (p += 1, ast.tmp_int))                                             \
+                     ? ((p += ast.tmp_int), ast.tmp_wchar)                                   \
+                     : (p += 1, ast.tmp_int))                                                \
               : (*(unsigned char *)(p++)))
 
 #endif

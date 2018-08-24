@@ -161,8 +161,7 @@ static char *_sfsetclass(const char *form, Accept_t *ac, int flags) {
         } else {
         one_char:
             if ((flags & SFFMT_LONG) && (n = (int)SFMBLEN(form, &mbs)) <= 0) return NULL;
-            if (n == 1)
-                ac->ok[c] = ac->yes;
+            if (n == 1) ac->ok[c] = ac->yes;
         }
     }
 
@@ -345,8 +344,7 @@ loop_fmt:
                     SCend(&scd, 0);
                     if (v == 0) goto pop_fmt;
                     form += n - 1;
-                } else
-                    if (SFgetc(f, inp) != fmt) {
+                } else if (SFgetc(f, inp) != fmt) {
                     if (inp < 0) goto done;
                     SFungetc(f, inp);
                     goto pop_fmt;
@@ -584,8 +582,7 @@ loop_fmt:
             } else if (_Sftype[fmt] & SFFMT_CHAR) {
                 if ((flags & SFFMT_LONG) || fmt == 'C') {
                     size = sizeof(wchar_t) > sizeof(int) ? sizeof(wchar_t) : sizeof(int);
-                } else
-                    if (size < 0)
+                } else if (size < 0)
                     size = sizeof(int);
             }
         }
@@ -894,8 +891,7 @@ loop_fmt:
                     if ((n += 1) <= size) *argv.ws++ = wc;
                 }
                 SCend(&scd, 0);
-            } else
-                if (fmt == 's') {
+            } else if (fmt == 's') {
                 do {
                     if (isspace(inp)) break;
                     if ((n += 1) <= size) *argv.s++ = inp;

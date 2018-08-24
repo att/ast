@@ -73,7 +73,7 @@ typedef int (*Dttype_f)(Dt_t *, int);
 struct _dtuser_s /* for application to access and use */
 {
     pthread_mutex_t lock; /* used by dtapplock	*/
-    void *data;        /* for whatever data	*/
+    void *data;           /* for whatever data	*/
 };
 
 struct _dtlink_s {
