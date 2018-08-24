@@ -6,6 +6,7 @@ Summary:        The Original ATT Korn Shell
 URL:            http://www.kornshell.com/
 License:        EPL
 Version:        #VERSION#
+Epoch:          1
 Release:        0%{?dist}
 Source0:        %{name}_%{version}.orig.tar.gz
 

@@ -26,19 +26,25 @@ pushd "${OBS_REPO}"
 osc rm -f *
 popd
 
+# This is the ksh version number seen inside scripts
+# For e.g. with ksh --version
+# 2017.0.0-devel-1535-g7c33a1cd-dirty
+VCS_VERSION=$(git describe --always --dirty --tags)
+
+# Extract development version number i.e. 2017.0.0
+DEVEL_VERSION_NUM=$(echo $VCS_VERSION | cut -d'-' -f1)
+
+# 1535
+COMMIT_NUM=$(echo $VCS_VERSION | cut -d'-' -f3)
+
+# g7c33a1cd
+SHORT_COMMIT=$(echo $VCS_VERSION | cut -d'-' -f4)
 
 COMMIT=$(git rev-parse HEAD)
-COMMIT_SHORT=$(git rev-parse --short HEAD)
-COMMIT_NUM=$(git rev-list HEAD --count)
-COMMIT_DATE=$(date --date="@$(git show -s --format=%ct HEAD)" +%Y%m%d)
 CHANGELOG_DATE=$(date +"%a\, %d %b %Y %R:%S %z")
 
 # This is version number of rpm and debian packages
-VERSION=${COMMIT_DATE}.0.0+git.${COMMIT_NUM}.${COMMIT_SHORT}
-
-# This is the ksh version number seen inside scripts
-# For e.g. with ksh --version
-VCS_VERSION=$(git describe --always --dirty --tags)
+VERSION=${DEVEL_VERSION_NUM}+git.${COMMIT_NUM}.${SHORT_COMMIT}
 
 sed "s,#VERSION#,${VERSION},;
      s,#VCS_VERSION#,${VCS_VERSION},;
