@@ -33,7 +33,7 @@ typedef struct Dc_s {
     Dtdisc_t *odisc;
 } Dc_t;
 
-static int eventf(Dt_t *dt, int op, void *data, Dtdisc_t *disc) {
+static_fn int dtnew_event(Dt_t *dt, int op, void *data, Dtdisc_t *disc) {
     Dc_t *dc = (Dc_t *)disc;
     int r;
 
@@ -41,7 +41,7 @@ static int eventf(Dt_t *dt, int op, void *data, Dtdisc_t *disc) {
     return op == DT_ENDOPEN ? 1 : 0;
 }
 
-static void *memoryf(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
+static_fn void *dtnew_memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     UNUSED(dt);
     UNUSED(disc);
 
@@ -62,8 +62,8 @@ Dt_t *_dtnew(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
 
     dc.odisc = disc;
     dc.ndisc = *disc;
-    dc.ndisc.eventf = eventf;
-    if (!dc.ndisc.memoryf) dc.ndisc.memoryf = memoryf;
+    dc.ndisc.eventf = dtnew_event;
+    if (!dc.ndisc.memoryf) dc.ndisc.memoryf = dtnew_memory;
     dt = _dtopen(&dc.ndisc, meth, version);
     if (dt) dtdisc(dt, disc, DT_SAMECMP | DT_SAMEHASH);
     return dt;

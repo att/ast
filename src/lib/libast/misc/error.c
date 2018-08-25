@@ -125,8 +125,7 @@ static const Namval_t options[] = {{"break", OPT_BREAK},     {"catalog", OPT_CAT
 /*
  * called by stropt() to set options
  */
-
-static int setopt(void *a, const void *p, int n, const char *v) {
+static_fn int error_setopt(void *a, const void *p, int n, const char *v) {
     UNUSED(a);
     if (p) {
         switch (((Namval_t *)p)->value) {
@@ -227,7 +226,7 @@ static int setopt(void *a, const void *p, int n, const char *v) {
  * print a name with optional delimiter, converting unprintable chars
  */
 
-static void print(Sfio_t *sp, char *name, char *delim) {
+static_fn void error_print(Sfio_t *sp, char *name, char *delim) {
     if (mbwide())
         sfputr(sp, name, -1);
     else {
@@ -256,10 +255,10 @@ static void print(Sfio_t *sp, char *name, char *delim) {
 #define CONTEXT(f, p) \
     (((f)&ERROR_PUSH) ? ((Error_context_t *)&(p)->context->context) : ((Error_context_t *)(p)))
 
-static void context(Sfio_t *sp, Error_context_t *cp) {
-    if (cp->context) context(sp, CONTEXT(cp->flags, cp->context));
+static_fn void error_context(Sfio_t *sp, Error_context_t *cp) {
+    if (cp->context) error_context(sp, CONTEXT(cp->flags, cp->context));
     if (!(cp->flags & ERROR_SILENT)) {
-        if (cp->id) print(sp, cp->id, NULL);
+        if (cp->id) error_print(sp, cp->id, NULL);
         if (cp->line > ((cp->flags & ERROR_INTERACTIVE) != 0)) {
             if (cp->file)
                 sfprintf(sp, ": \"%s\", %s %d", cp->file,
@@ -282,7 +281,7 @@ void error_break(void) {
         s = sfgetr(error_state.tty, '\n', 1);
         if (s) {
             if (streq(s, "q") || streq(s, "quit")) exit(0);
-            stropt(s, options, sizeof(*options), setopt, NULL);
+            stropt(s, options, sizeof(*options), error_setopt, NULL);
         }
     }
 }
@@ -313,7 +312,7 @@ void errorv(const char *id, int level, va_list ap) {
 
     if (!error_info.init) {
         error_info.init = 1;
-        stropt(getenv("ERROR_OPTIONS"), options, sizeof(*options), setopt, NULL);
+        stropt(getenv("ERROR_OPTIONS"), options, sizeof(*options), error_setopt, NULL);
     }
     if (level > 0) {
         flags = level & ~ERROR_LEVEL;
@@ -368,12 +367,12 @@ void errorv(const char *id, int level, va_list ap) {
                 sfprintf(stkstd, "       ");
             else
                 sfprintf(stkstd, "%s: ", ERROR_translate(NULL, NULL, ast.id, "Usage"));
-            if (file || (opt_info.argv && (file = opt_info.argv[0]))) print(stkstd, file, " ");
+            if (file || (opt_info.argv && (file = opt_info.argv[0]))) error_print(stkstd, file, " ");
         } else {
             if (level && !(flags & ERROR_NOID)) {
                 if (error_info.context && level > 0)
-                    context(stkstd, CONTEXT(error_info.flags, error_info.context));
-                if (file) print(stkstd, file, (flags & ERROR_LIBRARY) ? " " : ": ");
+                    error_context(stkstd, CONTEXT(error_info.flags, error_info.context));
+                if (file) error_print(stkstd, file, (flags & ERROR_LIBRARY) ? " " : ": ");
                 if (flags & (ERROR_CATALOG | ERROR_LIBRARY)) {
                     sfprintf(stkstd, "[");
                     if (flags & ERROR_CATALOG)

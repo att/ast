@@ -61,7 +61,7 @@ extern int getpagesize(void);
 
 #define SF_TEST_read 0x01000
 
-static int sfsetlinemode(void) {
+static_fn int sfsetlinemode(void) {
     char *s;
     char *t;
     char *v;

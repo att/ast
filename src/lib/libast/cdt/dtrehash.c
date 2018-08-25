@@ -118,7 +118,7 @@ typedef struct _hash_s /* recursive hashing data */
 } Hash_t;
 
 /* lock/unlock a class of objects by hash values */
-static int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
+static_fn int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
     Hash_t *hash = (Hash_t *)dt->data;
     uchar *lckp = hash->lock + (hsh & hash->lmax);
     uint *refn = hash->refn + (hsh & hash->lmax);
@@ -146,7 +146,7 @@ static int hclslock(Dt_t *dt, uint hsh, int type, int locking) {
 }
 
 /* allocating a trie branch/hash table */
-static Htbl_t *htable(Dt_t *dt, ssize_t lev, Htbl_t *ptbl, ssize_t ppos) {
+static_fn Htbl_t *dtrehash_table(Dt_t *dt, ssize_t lev, Htbl_t *ptbl, ssize_t ppos) {
     ssize_t z;
     Htbl_t *tbl;
     Hash_t *hash = (Hash_t *)dt->data;
@@ -165,7 +165,7 @@ static Htbl_t *htable(Dt_t *dt, ssize_t lev, Htbl_t *ptbl, ssize_t ppos) {
 }
 
 /* delete an object from the hashtrie */
-static void hdelete(Dt_t *dt, Dtlink_t **lnkp, int type) {
+static_fn void dtrehash_delete(Dt_t *dt, Dtlink_t **lnkp, int type) {
     Dtlink_t *lnk;
     Hash_t *hash = (Hash_t *)dt->data;
     int share = hash->data.type & DT_SHARE;
@@ -189,7 +189,7 @@ static void hdelete(Dt_t *dt, Dtlink_t **lnkp, int type) {
 }
 
 /* clear everything from tbl and its children tables */
-static void *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
+static_fn void *dtrehash_clear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
     ssize_t p, tblz;
     Dtlink_t *t;
     Htbl_t *ptbl;
@@ -200,9 +200,9 @@ static void *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
         if (lev == 0) /* lock the class as necessary */
             HCLSLOCK(dt, p, DT_DELETE, share);
 
-        hdelete(dt, HLNKP(tbl, p), DT_DELETE);
+        dtrehash_delete(dt, HLNKP(tbl, p), DT_DELETE);
 
-        if ((t = asogetptr(tbl->list + p)) && HTABLE(t)) hclear(dt, (Htbl_t *)t, lev + 1, zap);
+        if ((t = asogetptr(tbl->list + p)) && HTABLE(t)) dtrehash_clear(dt, (Htbl_t *)t, lev + 1, zap);
 
         if (lev == 0) HCLSOPEN(dt, p, DT_DELETE, share);
     }
@@ -218,7 +218,7 @@ static void *hclear(Dt_t *dt, Htbl_t *tbl, ssize_t lev, int zap) {
 }
 
 /* this constitutes the core of dtfirst() and dtlast() */
-static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
+static_fn void *dtrehash_first(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                     int type) {
     ssize_t tblz;
     void *obj;
@@ -234,7 +234,7 @@ static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t po
         if ((p = t = asogetptr(tbl->list + pos))) {
             if (HTABLE(t)) {
                 if (!(p = asogetptr(&(((Htbl_t *)t)->pobj)))) /* type == 0 */
-                    obj = hfirst(dt, fngr, (Htbl_t *)t, lev + 1, 0, 0, 0);
+                    obj = dtrehash_first(dt, fngr, (Htbl_t *)t, lev + 1, 0, 0, 0);
                 else
                     goto o_bj; /* p is a valid object */
             } else {
@@ -259,17 +259,17 @@ static void *hfirst(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t po
 }
 
 /* this constitutes the core of dtnext() and dtprev() */
-static void *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
+static_fn void *dtrehash_next(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos, uint hsh,
                    int type) {
     Dtlink_t *t;
     void *obj;
 
     if ((t = asogetptr(tbl->list + pos)) && HTABLE(t))
-        if ((obj = hfirst(dt, fngr, (Htbl_t *)t, lev + 1, 0, hsh, type))) return obj;
+        if ((obj = dtrehash_first(dt, fngr, (Htbl_t *)t, lev + 1, 0, hsh, type))) return obj;
 
     for (;;) /* search forward from current position in table */
     {
-        if ((obj = hfirst(dt, fngr, tbl, lev, pos + 1, hsh, type)))
+        if ((obj = dtrehash_first(dt, fngr, tbl, lev, pos + 1, hsh, type)))
             return obj;
         else if ((lev -= 1) < 0) /* just did root table */
             return NULL;
@@ -282,7 +282,7 @@ static void *hnext(Dt_t *dt, Fngr_t *fngr, Htbl_t *tbl, ssize_t lev, ssize_t pos
 }
 
 /* construct a flat list of objects */
-static void *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
+static_fn void *dtrehash_flatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ssize_t lev,
                       int zap) {
     ssize_t tblz, p;
     Dtlink_t *t, **lnkp;
@@ -304,7 +304,7 @@ static void *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ss
         }
 
         if ((t = asogetptr(tbl->list + p)) && HTABLE(t))
-            last = hflatten(dt, list, last, (Htbl_t *)t, lev + 1, zap);
+            last = dtrehash_flatten(dt, list, last, (Htbl_t *)t, lev + 1, zap);
 
         if (lev == 0) HCLSOPEN(dt, p, DT_DELETE, share);
     }
@@ -314,7 +314,7 @@ static void *hflatten(Dt_t *dt, Dtlink_t **list, Dtlink_t *last, Htbl_t *tbl, ss
 }
 
 /* construct/extract a list of objects, or reconstruct from a list */
-static void *hlist(Dt_t *dt, Dtlink_t *list, int type) {
+static_fn void *dtrehash_list(Dt_t *dt, Dtlink_t *list, int type) {
     void *obj;
     Dtlink_t *next, *l;
     Dtdisc_t *disc = dt->disc;
@@ -322,7 +322,7 @@ static void *hlist(Dt_t *dt, Dtlink_t *list, int type) {
 
     if (type & (DT_EXTRACT | DT_FLATTEN)) {
         list = NULL;
-        (void)hflatten(dt, &list, NULL, hash->root, 0, (type & DT_EXTRACT));
+        (void)dtrehash_flatten(dt, &list, NULL, hash->root, 0, (type & DT_EXTRACT));
     } else /*if(type&DT_RESTORE)*/
     {
         hash->data.size = 0;
@@ -337,7 +337,7 @@ static void *hlist(Dt_t *dt, Dtlink_t *list, int type) {
 }
 
 /* compute size and depth of a hash table */
-static ssize_t hsize(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st) {
+static_fn ssize_t dtrehash_size(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st) {
     Dtlink_t *t;
     ssize_t p, z, rz, tblz, size;
     Hash_t *hash = (Hash_t *)dt->data;
@@ -354,7 +354,7 @@ static ssize_t hsize(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st) {
         if ((t = asogetptr(tbl->list + p))) {
             if (!HTABLE(t))
                 z = 1;
-            else if ((rz = hsize(dt, (Htbl_t *)t, lev + 1, st)) >= 0)
+            else if ((rz = dtrehash_size(dt, (Htbl_t *)t, lev + 1, st)) >= 0)
                 z = ((Htbl_t *)t)->pobj ? 1 : 0;
         }
         if (rz >= 0) {
@@ -381,7 +381,7 @@ static ssize_t hsize(Dt_t *dt, Htbl_t *tbl, ssize_t lev, Dtstat_t *st) {
     return size;
 }
 
-static void *hstat(Dt_t *dt, Dtstat_t *st) {
+static_fn void *dtrehash_stat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Hash_t *hash = (Hash_t *)dt->data;
 
@@ -390,7 +390,7 @@ static void *hstat(Dt_t *dt, Dtstat_t *st) {
     else {
         memset(st, 0, sizeof(Dtstat_t));
         st->meth = dt->meth->type;
-        st->size = size = hsize(dt, hash->root, 0, st);
+        st->size = size = dtrehash_size(dt, hash->root, 0, st);
         st->space = sizeof(Hash_t) + (dt->disc->link >= 0 ? 0 : size * sizeof(Dthold_t));
         assert((dt->data->type & DT_SHARE) || size == hash->data.size);
     }
@@ -398,7 +398,7 @@ static void *hstat(Dt_t *dt, Dtstat_t *st) {
     return (void *)size;
 }
 
-static void *dthashtrie(Dt_t *dt, void *obj, int type) {
+static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
     void *o, *ky, *key;
     uint hsh;
     Dtlink_t *lnk, **lnkp, *t;
@@ -423,7 +423,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
             if (!(fngr = (*dt->memoryf)(dt, NULL, sizeof(Fngr_t), disc))) return NULL;
             if (!obj) /* start walk from the first element */
             {
-                if (!(obj = hfirst(dt, fngr, hash->root, 0, 0, 0, type)))
+                if (!(obj = dtrehash_first(dt, fngr, hash->root, 0, 0, 0, type)))
                     (*dt->memoryf)(dt, fngr, 0, disc);
                 return obj ? (void *)fngr : NULL;
             }
@@ -432,7 +432,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
         {
             if (!(fngr = (Fngr_t *)obj) || !(lnk = fngr->here)) return NULL;
             obj = _DTOBJ(disc, lnk);
-            if (!hnext(dt, fngr, fngr->mtbl, fngr->mlev, fngr->mpos, lnk->_hash, type))
+            if (!dtrehash_next(dt, fngr, fngr->mtbl, fngr->mlev, fngr->mpos, lnk->_hash, type))
                 fngr->here = NULL; /* walk will end after this call */
 
             DTANNOUNCE(dt, obj, type);
@@ -443,13 +443,13 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 (*dt->memoryf)(dt, obj, 0, disc);
             return NULL;
         } else if (type & (DT_FIRST | DT_LAST))
-            return hfirst(dt, fngr, hash->root, 0, 0, 0, type);
+            return dtrehash_first(dt, fngr, hash->root, 0, 0, 0, type);
         else if (type & DT_CLEAR)
-            return hclear(dt, hash->root, 0, 0);
+            return dtrehash_clear(dt, hash->root, 0, 0);
         else if (type & DT_STAT)
-            return hstat(dt, (Dtstat_t *)obj);
+            return dtrehash_stat(dt, (Dtstat_t *)obj);
         else /*if(type&(DT_EXTRACT|DT_RESTORE|DT_FLATTEN))*/
-            return hlist(dt, (Dtlink_t *)obj, type);
+            return dtrehash_list(dt, (Dtlink_t *)obj, type);
     }
 
     if (!obj) /* from here on, a non-NULL object is needed */
@@ -458,7 +458,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
     /* optimization for fast walking of a dictionary */
     if (!share && (type & (DT_NEXT | DT_PREV)) && (lnk = fngr->here) && obj == _DTOBJ(disc, lnk) &&
         (tbl = fngr->mtbl) && (pos = fngr->mpos) >= 0 && (lev = fngr->mlev) >= 0)
-        return hnext(dt, fngr, tbl, lev, pos, lnk->_hash, type);
+        return dtrehash_next(dt, fngr, tbl, lev, pos, lnk->_hash, type);
 
     if (type & DT_RELINK) /* reinserting an object */
     {
@@ -533,10 +533,10 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 return obj;
             } else if (type & (DT_NEXT | DT_PREV)) {
                 HCLSOPEN(dt, hsh, type, share);
-                return hnext(dt, fngr, tbl, lev, pos, hsh, type);
+                return dtrehash_next(dt, fngr, tbl, lev, pos, hsh, type);
             } else if (type & (DT_DELETE | DT_DETACH | DT_REMOVE)) {
                 obj = _DTOBJ(disc, t); /* save before deletion */
-                hdelete(dt, HLNKP(tbl, pos), type);
+                dtrehash_delete(dt, HLNKP(tbl, pos), type);
                 asosubsize(&hash->data.size, 1);
                 DTANNOUNCE(dt, obj, type);
                 HCLSOPEN(dt, hsh, type, share);
@@ -555,7 +555,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
                     } else if (type & DT_INSTALL) {
                         o = _DTOBJ(disc, t); /* remove old object */
                         lnkp = HLNKP(tbl, pos);
-                        hdelete(dt, lnkp, DT_DELETE);
+                        dtrehash_delete(dt, lnkp, DT_DELETE);
                         DTANNOUNCE(dt, o, DT_DELETE);
                         if (!opnt) {
                             opnt = tbl;
@@ -607,7 +607,7 @@ static void *dthashtrie(Dt_t *dt, void *obj, int type) {
                 (void)(*dt->memoryf)(dt, (void *)fngr, 0, disc);
                 return NULL;
             } else if (opnt) /* (opnt,opnp,oplv) is the last known matching obj */
-                return hnext(dt, fngr, opnt, oplv, opnp, hsh, type);
+                return dtrehash_next(dt, fngr, opnt, oplv, opnp, hsh, type);
             else
                 return NULL;
         } else if (type & H_INSERT)
@@ -624,7 +624,7 @@ do_insert: /**/
     if (!opnt) /* make a new subtable */
     {
         lev += 1;
-        if (!(opnt = htable(dt, lev, tbl, hshp))) {
+        if (!(opnt = dtrehash_table(dt, lev, tbl, hshp))) {
             HCLSOPEN(dt, hsh, type, share);
             return NULL;
         }
@@ -648,7 +648,7 @@ do_insert: /**/
     return lnk ? _DTOBJ(disc, lnk) : NULL;
 }
 
-static int hashevent(Dt_t *dt, int event, void *arg) {
+static_fn int dtrehash_event(Dt_t *dt, int event, void *arg) {
     ssize_t z, b, k;
     Dtdisc_t *disc = dt->disc;
     Hash_t *hash = (Hash_t *)dt->data;
@@ -687,7 +687,7 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
         }
         hash->nlev = k; /* total number of levels for trie */
 
-        if (!(hash->root = htable(dt, 0, NULL, -1))) /* make root table */
+        if (!(hash->root = dtrehash_table(dt, 0, NULL, -1))) /* make root table */
         {
             (void)(*dt->memoryf)(dt, hash, 0, disc);
             dt->data = NULL;
@@ -697,7 +697,7 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
     } else if (event == DT_CLOSE) {
         if (!hash) return 0;
         if (hash->root) /* free all objects in dictionary */
-            (void)hclear(dt, hash->root, 0, -1);
+            (void)dtrehash_clear(dt, hash->root, 0, -1);
         if (hash->lock) /* free the lock table, if any */
             (void)(*dt->memoryf)(dt, hash->lock, 0, disc);
         if (hash->refn) /* free the hazard table, if any */
@@ -738,9 +738,9 @@ static int hashevent(Dt_t *dt, int event, void *arg) {
 }
 
 static Dtmethod_t _Dtrhset = {
-    .searchf = dthashtrie, .type = DT_RHSET, .eventf = hashevent, .name = "Dtrhset"};
+    .searchf = dthashtrie, .type = DT_RHSET, .eventf = dtrehash_event, .name = "Dtrhset"};
 static Dtmethod_t _Dtrhbag = {
-    .searchf = dthashtrie, .type = DT_RHBAG, .eventf = hashevent, .name = "Dtrhbag"};
+    .searchf = dthashtrie, .type = DT_RHBAG, .eventf = dtrehash_event, .name = "Dtrhbag"};
 Dtmethod_t *Dtrhset = &_Dtrhset;
 Dtmethod_t *Dtrhbag = &_Dtrhbag;
 

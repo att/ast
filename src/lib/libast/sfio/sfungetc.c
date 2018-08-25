@@ -32,7 +32,7 @@
 **
 **	Written by Kiem-Phong Vo.
 */
-static int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+static_fn int _uexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     NOTUSED(val);
 
     /* hmm! This should never happen */

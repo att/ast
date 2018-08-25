@@ -30,7 +30,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfraiseall(int type, void *data) {
+static_fn int _sfraiseall(int type, void *data) {
     Sfio_t *f;
     Sfpool_t *p, *next;
     int n, rv;

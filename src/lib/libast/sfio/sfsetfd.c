@@ -32,7 +32,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfdup(int fd, int newfd) {
+static_fn int _sfdup(int fd, int newfd) {
     int dupfd;
 
 #ifdef F_DUPFD /* the simple case */

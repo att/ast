@@ -63,7 +63,7 @@ struct _file_s {
 
 static File_t *File; /* list pf temp files	*/
 
-static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+static_fn int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     File_t *ff, *last;
 
     NOTUSED(val);
@@ -94,7 +94,7 @@ static int _tmprmfile(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     return 0;
 }
 
-static void _rmfiles(void) {
+static_fn void _rmfiles(void) {
     File_t *ff, *next;
 
     (void)vtmtxlock(_Sfmutex);
@@ -109,7 +109,7 @@ static Sfdisc_t Rmdisc = {NULL, NULL, NULL, _tmprmfile, NULL};
 
 #endif /*_tmp_rmfail*/
 
-static int _rmtmp(Sfio_t *f, char *file) {
+static_fn int _rmtmp(Sfio_t *f, char *file) {
 #if _tmp_rmfail /* remove only when stream is closed */
     File_t *ff;
 
@@ -132,7 +132,7 @@ static int _rmtmp(Sfio_t *f, char *file) {
     return 0;
 }
 
-static int _tmpfd(Sfio_t *f) {
+static_fn int _tmpfd(Sfio_t *f) {
     char *file;
     int fd;
 
@@ -142,7 +142,7 @@ static int _tmpfd(Sfio_t *f) {
     return fd;
 }
 
-static int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+static_fn int _tmpexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     UNUSED(disc);
     int fd, m;
     Sfio_t *sf;

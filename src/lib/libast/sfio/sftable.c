@@ -38,28 +38,13 @@
 **	Written by Kiem-Phong Vo.
 */
 
-#if __STD_C
-static char *sffmtint(const char *str, int *v)
-#else
-static char *sffmtint(str, v) char *str;
-int *v;
-#endif
-{
+static_fn char *sffmtint(const char *str, int *v) {
     for (*v = 0; isdigit(*str); ++str) *v = *v * 10 + (*str - '0');
     *v -= 1;
     return (char *)str;
 }
 
-#if __STD_C
-static Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t *ft, int type)
-#else
-static Fmtpos_t *sffmtpos(f, form, args, ft, type) Sfio_t *f;
-char *form;
-va_list args;
-Sffmt_t *ft;
-int type; /* >0: scanf, =0: printf, -1: internal	*/
-#endif
-{
+static_fn Fmtpos_t *sffmtpos(Sfio_t *f, const char *form, va_list args, Sffmt_t *ft, int type) {
     int base, fmt, flags, dot, width, precis;
     ssize_t n_str, size;
     char *t_str, *sp;
@@ -458,7 +443,7 @@ static const unsigned char ldbl_inf[] = {_ast_ldbl_inf_init};
 #endif
 
 /* function to initialize conversion tables */
-static int sfcvinit() {
+static_fn int sfcvinit() {
     int d, l;
 
     for (d = 0; d <= SF_MAXCHAR; ++d) {

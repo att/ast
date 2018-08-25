@@ -115,7 +115,7 @@ void *tfirstlast(Dt_t *dt, int type) {
 }
 
 /* DT_CLEAR */
-static void *tclear(Dt_t *dt) {
+static_fn void *dttree_clear(Dt_t *dt) {
     Dtlink_t *root, *t;
     Dtdisc_t *disc = dt->disc;
     Dttree_t *tree = (Dttree_t *)dt->data;
@@ -135,7 +135,7 @@ static void *tclear(Dt_t *dt) {
     return NULL;
 }
 
-static void *tlist(Dt_t *dt, Dtlink_t *list, int type) {
+static_fn void *dttree_list(Dt_t *dt, Dtlink_t *list, int type) {
     void *obj;
     Dtlink_t *last, *r, *t;
     Dttree_t *tree = (Dttree_t *)dt->data;
@@ -171,7 +171,7 @@ static void *tlist(Dt_t *dt, Dtlink_t *list, int type) {
     return (void *)list;
 }
 
-static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
+static_fn ssize_t dttree_size(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
     ssize_t size, z;
 
     if (!root) /* nothing to do */
@@ -190,12 +190,12 @@ static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
 
     size = 1;
 
-    if ((z = tsize(root->_left, lev + 1, st)) < 0)
+    if ((z = dttree_size(root->_left, lev + 1, st)) < 0)
         return -1;
     else
         size += z;
 
-    if ((z = tsize(root->_rght, lev + 1, st)) < 0)
+    if ((z = dttree_size(root->_rght, lev + 1, st)) < 0)
         return -1;
     else
         size += z;
@@ -203,7 +203,7 @@ static ssize_t tsize(Dtlink_t *root, ssize_t lev, Dtstat_t *st) {
     return size;
 }
 
-static void *tstat(Dt_t *dt, Dtstat_t *st) {
+static_fn void *dttree_stat(Dt_t *dt, Dtstat_t *st) {
     ssize_t size;
     Dttree_t *tree = (Dttree_t *)dt->data;
 
@@ -211,7 +211,7 @@ static void *tstat(Dt_t *dt, Dtstat_t *st) {
         return (void *)dt->data->size;
     else {
         memset(st, 0, sizeof(Dtstat_t));
-        size = tsize(tree->root, 0, st);
+        size = dttree_size(tree->root, 0, st);
         assert((dt->data->type & DT_SHARE) || size == dt->data->size);
         st->meth = dt->meth->type;
         st->size = size;
@@ -221,7 +221,7 @@ static void *tstat(Dt_t *dt, Dtstat_t *st) {
 }
 
 /* make a list into a balanced tree */
-static Dtlink_t *tbalance(Dtlink_t *list, ssize_t size) {
+static_fn Dtlink_t *dttree_balance(Dtlink_t *list, ssize_t size) {
     ssize_t n;
     Dtlink_t *l, *mid;
 
@@ -231,23 +231,23 @@ static Dtlink_t *tbalance(Dtlink_t *list, ssize_t size) {
 
     mid = l->_rght;
     l->_rght = NULL;
-    mid->_left = tbalance(list, (n = size / 2));
-    mid->_rght = tbalance(mid->_rght, size - (n + 1));
+    mid->_left = dttree_balance(list, (n = size / 2));
+    mid->_rght = dttree_balance(mid->_rght, size - (n + 1));
     return mid;
 }
 
-static void toptimize(Dt_t *dt) {
+static_fn void dttree_optimize(Dt_t *dt) {
     ssize_t size;
     Dtlink_t *l, *list;
     Dttree_t *tree = (Dttree_t *)dt->data;
 
-    if ((list = (Dtlink_t *)tlist(dt, NULL, DT_FLATTEN))) {
+    if ((list = (Dtlink_t *)dttree_list(dt, NULL, DT_FLATTEN))) {
         for (size = 0, l = list; l; l = l->_rght) size += 1;
-        tree->root = tbalance(list, size);
+        tree->root = dttree_balance(list, size);
     }
 }
 
-static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, void *obj, int type) {
+static_fn Dtlink_t *dttree_root(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, void *obj, int type) {
     Dtlink_t *root, *last, *t, *r, *l;
     void *key, *o, *k;
     Dtdisc_t *disc = dt->disc;
@@ -371,7 +371,7 @@ static Dtlink_t *troot(Dt_t *dt, Dtlink_t *list, Dtlink_t *link, void *obj, int 
     return root;
 }
 
-static void *dttree(Dt_t *dt, void *obj, int type) {
+static_fn void *dttree(Dt_t *dt, void *obj, int type) {
     int cmp;
     void *o, *k, *key;
     Dtlink_t *root, *t, *l, *r, *me, link;
@@ -387,12 +387,12 @@ static void *dttree(Dt_t *dt, void *obj, int type) {
     if (type & (DT_FIRST | DT_LAST))
         DTRETURN(obj, tfirstlast(dt, type));
     else if (type & (DT_EXTRACT | DT_RESTORE | DT_FLATTEN))
-        DTRETURN(obj, tlist(dt, (Dtlink_t *)obj, type));
+        DTRETURN(obj, dttree_list(dt, (Dtlink_t *)obj, type));
     else if (type & DT_CLEAR)
-        DTRETURN(obj, tclear(dt));
+        DTRETURN(obj, dttree_clear(dt));
     else if (type & DT_STAT) {
-        toptimize(dt); /* balance tree to avoid deep recursion */
-        DTRETURN(obj, tstat(dt, (Dtstat_t *)obj));
+        dttree_optimize(dt); /* balance tree to avoid deep recursion */
+        DTRETURN(obj, dttree_stat(dt, (Dtstat_t *)obj));
     } else if (type & DT_START) {
         if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc)))
             DTRETURN(obj, NULL);
@@ -502,7 +502,7 @@ static void *dttree(Dt_t *dt, void *obj, int type) {
         {
             if ((type & (DT_ATLEAST | DT_ATMOST)) ||
                 ((type & (DT_NEXT | DT_PREV | DT_REMOVE)) && _DTOBJ(disc, root) != obj))
-                root = troot(dt, root, &link, obj, type);
+                root = dttree_root(dt, root, &link, obj, type);
         }
 
         if (type & (DT_START | DT_SEARCH | DT_MATCH | DT_ATMOST | DT_ATLEAST)) {
@@ -642,7 +642,7 @@ dt_return:
     return obj;
 }
 
-static int treeevent(Dt_t *dt, int event, void *arg) {
+static_fn int dttree_event(Dt_t *dt, int event, void *arg) {
     UNUSED(arg);
     Dttree_t *tree = (Dttree_t *)dt->data;
 
@@ -658,13 +658,13 @@ static int treeevent(Dt_t *dt, int event, void *arg) {
         return 1;
     } else if (event == DT_CLOSE) {
         if (!tree) return 0;
-        if (tree->root) (void)tclear(dt);
+        if (tree->root) (void)dttree_clear(dt);
         (void)(*dt->memoryf)(dt, (void *)tree, 0, dt->disc);
         dt->data = NULL;
         return 0;
     } else if (event == DT_OPTIMIZE) /* balance the search tree */
     {
-        toptimize(dt);
+        dttree_optimize(dt);
         return 0;
     } else
         return 0;
@@ -672,9 +672,9 @@ static int treeevent(Dt_t *dt, int event, void *arg) {
 
 /* make this method available */
 static Dtmethod_t _Dtoset = {
-    .searchf = dttree, .type = DT_OSET, .eventf = treeevent, .name = "Dtoset"};
+    .searchf = dttree, .type = DT_OSET, .eventf = dttree_event, .name = "Dtoset"};
 static Dtmethod_t _Dtobag = {
-    .searchf = dttree, .type = DT_OBAG, .eventf = treeevent, .name = "Dtobag"};
+    .searchf = dttree, .type = DT_OBAG, .eventf = dttree_event, .name = "Dtobag"};
 Dtmethod_t *Dtoset = &_Dtoset;
 Dtmethod_t *Dtobag = &_Dtobag;
 

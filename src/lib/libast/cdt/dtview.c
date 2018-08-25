@@ -35,7 +35,7 @@
     (DT_INSERT | DT_APPEND | DT_DELETE | DT_ATTACH | DT_DETACH | DT_RELINK | DT_CLEAR | \
      DT_FLATTEN | DT_EXTRACT | DT_RESTORE | DT_STAT)
 
-static void *dtvsearch(Dt_t *dt, void *obj, int type) {
+static_fn void *dtvsearch(Dt_t *dt, void *obj, int type) {
     int cmp;
     Dt_t *d, *p;
     void *o, *n, *oky, *nky;

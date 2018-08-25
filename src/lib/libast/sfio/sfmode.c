@@ -70,7 +70,7 @@ static char *Version = "\n@(#)$Id: sfio (AT&T Labs - Research) 2009-09-15 $\0\n"
 static int _Sfsigp = 0; /* # of streams needing SIGPIPE protection */
 
 /* done at exiting time */
-static void _sfcleanup(void) {
+static_fn void _sfcleanup(void) {
     Sfpool_t *p;
     Sfio_t *f;
     int n;
@@ -181,7 +181,7 @@ Sfrsrv_t *_sfrsrv(Sfio_t *f, ssize_t size) {
 }
 
 #ifdef SIGPIPE
-static void ignoresig(int sig) { signal(sig, ignoresig); }
+static_fn void ignoresig(int sig) { signal(sig, ignoresig); }
 #endif
 
 int _sfpopen(Sfio_t *f, int fd, int pid, int stdio) {
@@ -252,7 +252,7 @@ int _sfpclose(Sfio_t *f) {
     return status;
 }
 
-static int _sfpmode(Sfio_t *f, int type) {
+static_fn int _sfpmode(Sfio_t *f, int type) {
     Sfproc_t *p;
 
     if (!(p = f->proc)) return -1;

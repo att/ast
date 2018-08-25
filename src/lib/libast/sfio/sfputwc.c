@@ -44,7 +44,7 @@ typedef struct Sfmbstate_s {
     Mbstate_t mbs;
 } Sfmbstate_t;
 
-static int _sfmbexcept(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
+static_fn int _sfmbexcept(Sfio_t *f, int type, void *arg, Sfdisc_t *disc) {
     UNUSED(f);
     UNUSED(arg);
 

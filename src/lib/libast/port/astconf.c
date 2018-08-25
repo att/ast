@@ -70,7 +70,7 @@
 #define DEFAULT(o) ((state.std || !dynamic[o].ast) ? dynamic[o].std : dynamic[o].ast)
 #define INITIALIZE()                                   \
     do {                                               \
-        if (!state.data) synthesize(NULL, NULL, NULL); \
+        if (!state.data) astconf_synthesize(NULL, NULL, NULL); \
     } while (0)
 #define STANDARD(v) \
     (streq(v, "standard") || streq(v, "strict") || streq(v, "posix") || streq(v, "xopen"))
@@ -202,13 +202,13 @@ static State_t state = {"getconf",
                         NULL,
                         NULL};
 
-static char *feature(Feature_t *, const char *, const char *, const char *, unsigned int, Error_f);
+static_fn char *astconf_feature(Feature_t *, const char *, const char *, const char *, unsigned int, Error_f);
 
 /*
  * return fmtbuf() copy of s
  */
 
-static char *buffer(char *s) { return strcpy(fmtbuf(strlen(s) + 1), s); }
+static_fn char *astconf_buffer(char *s) { return strcpy(fmtbuf(strlen(s) + 1), s); }
 
 /*
  * synthesize state for fp
@@ -217,7 +217,7 @@ static char *buffer(char *s) { return strcpy(fmtbuf(strlen(s) + 1), s); }
  * otherwise state is set to value
  */
 
-static char *synthesize(Feature_t *fp, const char *path, const char *value) {
+static_fn char *astconf_synthesize(Feature_t *fp, const char *path, const char *value) {
     char *s;
     char *d;
     char *v;
@@ -281,7 +281,7 @@ static char *synthesize(Feature_t *fp, const char *path, const char *value) {
                 ve = 0;
             *de = 0;
             *se = 0;
-            feature(0, s, d, v, 0, 0);
+            astconf_feature(0, s, d, v, 0, 0);
             *se = ' ';
             *de = ' ';
             if (!ve) break;
@@ -416,11 +416,11 @@ ok:
 /*
  * initialize the value for fp
  * if command!=0 then it is checked for on $PATH
- * synthesize(fp,path,succeed) called on success
- * otherwise synthesize(fp,path,fail) called
+ * astconf_synthesize(fp,path,succeed) called on success
+ * otherwise astconf_synthesize(fp,path,fail) called
  */
 
-static void initialize(Feature_t *fp, const char *path, const char *command, const char *succeed,
+static_fn void astconf_initialize(Feature_t *fp, const char *path, const char *command, const char *succeed,
                        const char *fail) {
     char *p;
     int ok = 1;
@@ -524,14 +524,14 @@ static void initialize(Feature_t *fp, const char *path, const char *command, con
     error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s ok=%d", state.std, fp->name,
           ok ? succeed : fail, fp->std, fp->ast, fp->value, ok);
 #endif
-    synthesize(fp, path, ok ? succeed : fail);
+    astconf_synthesize(fp, path, ok ? succeed : fail);
 }
 
 /*
  * format synthesized value
  */
 
-static char *format(Feature_t *fp, const char *path, const char *value, unsigned int flags,
+static_fn char *astconf_format(Feature_t *fp, const char *path, const char *value, unsigned int flags,
                     Error_f conferror) {
     UNUSED(conferror);
     UNUSED(flags);
@@ -562,8 +562,8 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
 #endif
             if (state.synthesizing && value == (char *)fp->std)
                 fp->value = (char *)value;
-            else if (!synthesize(fp, path, value))
-                initialize(fp, path, NULL, fp->std, fp->value);
+            else if (!astconf_synthesize(fp, path, value))
+                astconf_initialize(fp, path, NULL, fp->std, fp->value);
 #if DEBUG_astconf
             error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
                   fp->std, fp->ast, fp->value);
@@ -572,7 +572,7 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
                 state.std = 1;
                 for (sp = state.features; sp; sp = sp->next)
                     if (sp->std && sp->op && sp->op != OP_conformance)
-                        feature(sp, 0, path, sp->std, 0, 0);
+                        astconf_feature(sp, 0, path, sp->std, 0, 0);
             }
 #if DEBUG_astconf
             error(-6, "state.std=%d %s [%s] std=%s ast=%s value=%s", state.std, fp->name, value,
@@ -589,8 +589,8 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
         case OP_path_resolve:
             if (state.synthesizing && value == (char *)fp->std)
                 fp->value = (char *)value;
-            else if (!synthesize(fp, path, value))
-                initialize(fp, path, NULL, "logical", DEFAULT(OP_path_resolve));
+            else if (!astconf_synthesize(fp, path, value))
+                astconf_initialize(fp, path, NULL, "logical", DEFAULT(OP_path_resolve));
             break;
 
         case OP_universe:
@@ -630,9 +630,9 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
                         fp->value[n] = 0;
                     }
                 } else
-                    synthesize(fp, path, value);
+                    astconf_synthesize(fp, path, value);
             } else
-                initialize(fp, path, "echo", DEFAULT(OP_universe), "ucb");
+                astconf_initialize(fp, path, "echo", DEFAULT(OP_universe), "ucb");
 #endif
 #endif
             break;
@@ -641,7 +641,7 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
             if (state.synthesizing && value == (char *)fp->std)
                 fp->value = (char *)value;
             else
-                synthesize(fp, path, value);
+                astconf_synthesize(fp, path, value);
             break;
     }
     if (streq(path, "=")) fp->flags |= CONF_GLOBAL;
@@ -654,7 +654,7 @@ static char *format(Feature_t *fp, const char *path, const char *value, unsigned
  * 0 returned if error or not defined; otherwise previous value
  */
 
-static char *feature(Feature_t *fp, const char *name, const char *path, const char *value,
+static_fn char *astconf_feature(Feature_t *fp, const char *name, const char *path, const char *value,
                      unsigned int flags, Error_f conferror) {
     int n;
 
@@ -692,14 +692,14 @@ static char *feature(Feature_t *fp, const char *name, const char *path, const ch
             return 0;
     } else
         state.recent = fp;
-    return format(fp, path, value, flags, conferror);
+    return astconf_format(fp, path, value, flags, conferror);
 }
 
 /*
  * binary search for name in conf[]
  */
 
-static int lookup(Lookup_t *look, const char *name, unsigned int flags) {
+static_fn int astconf_lookup(Lookup_t *look, const char *name, unsigned int flags) {
     Conf_t *mid = (Conf_t *)conf;
     Conf_t *lo = mid;
     Conf_t *hi = mid + conf_elements;
@@ -797,7 +797,7 @@ found:
  * return a tolower'd copy of s
  */
 
-static char *fmtlower(const char *s) {
+static_fn char *astconf_fmtlower(const char *s) {
     int c;
     char *t;
     char *b;
@@ -817,7 +817,7 @@ static char *fmtlower(const char *s) {
  * if (flags & CONF_MINMAX) then default minmax value used
  */
 
-static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *path, int listflags,
+static_fn char *astconf_print(Sfio_t *sp, Lookup_t *look, const char *name, const char *path, int listflags,
                    Error_f conferror) {
     Conf_t *p = look->conf;
     unsigned int flags = look->flags;
@@ -1073,12 +1073,12 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
                     if ((p->flags & CONF_UNDERSCORE) && !(listflags & ASTCONF_base))
                         sfprintf(sp, "_");
                     sfprintf(sp, "%s",
-                             (listflags & ASTCONF_lower) ? fmtlower(prefix[p->standard].name)
+                             (listflags & ASTCONF_lower) ? astconf_fmtlower(prefix[p->standard].name)
                                                          : prefix[p->standard].name);
                     if (p->section > 1) sfprintf(sp, "%d", p->section);
                     sfprintf(sp, "_");
                 }
-                sfprintf(sp, "%s=", (listflags & ASTCONF_lower) ? fmtlower(p->name) : p->name);
+                sfprintf(sp, "%s=", (listflags & ASTCONF_lower) ? astconf_fmtlower(p->name) : p->name);
             }
             if (flags & CONF_ERROR)
                 sfprintf(sp, "error");
@@ -1100,10 +1100,10 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
             (p->flags & (CONF_FEATURE | CONF_MINMAX))) {
             if (p->flags & CONF_UNDERSCORE) sfprintf(sp, "_");
             sfprintf(sp, "%s",
-                     (listflags & ASTCONF_lower) ? fmtlower(prefix[p->standard].name)
+                     (listflags & ASTCONF_lower) ? astconf_fmtlower(prefix[p->standard].name)
                                                  : prefix[p->standard].name);
             if (p->section > 1) sfprintf(sp, "%d", p->section);
-            sfprintf(sp, "_%s=", (listflags & ASTCONF_lower) ? fmtlower(p->name) : p->name);
+            sfprintf(sp, "_%s=", (listflags & ASTCONF_lower) ? astconf_fmtlower(p->name) : p->name);
             if (!defined && !name && (p->flags & CONF_MINMAX_DEF)) {
                 defined = 1;
                 v = p->minmax.number;
@@ -1120,7 +1120,7 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
     if (drop) {
         call = sfstruse(sp);
         if (call)
-            call = buffer(call);
+            call = astconf_buffer(call);
         else
             call = "[ out of space ]";
         sfclose(sp);
@@ -1129,7 +1129,7 @@ static char *print(Sfio_t *sp, Lookup_t *look, const char *name, const char *pat
 bad:
     if (!(listflags & ~(ASTCONF_error | ASTCONF_system)))
         for (fp = state.features; fp; fp = fp->next) {
-            if (streq(name, fp->name)) return format(fp, path, NULL, listflags, conferror);
+            if (streq(name, fp->name)) return astconf_format(fp, path, NULL, listflags, conferror);
         }
     return (listflags & ASTCONF_error) ? NULL : "";
 }
@@ -1138,7 +1138,7 @@ bad:
 /*
  * return read stream to native getconf utility
  */
-static Sfio_t *nativeconf(Proc_t **pp, const char *operand) {
+static_fn Sfio_t *nativeconf(Proc_t **pp, const char *operand) {
 #ifdef _pth_getconf
     Sfio_t *sp;
     char *cmd[3];
@@ -1215,16 +1215,16 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
     INITIALIZE();
     if (!path) path = root;
     if (state.recent && streq(name, state.recent->name) &&
-        (s = format(state.recent, path, value, flags, conferror)))
+        (s = astconf_format(state.recent, path, value, flags, conferror)))
         return s;
-    if (lookup(&look, name, flags)) {
+    if (astconf_lookup(&look, name, flags)) {
         if (value) {
         ro:
             errno = EINVAL;
             if (conferror) (*conferror)(&state, &state, 2, "%s: cannot set value", name);
             return (flags & ASTCONF_error) ? NULL : "";
         }
-        return print(NULL, &look, name, path, flags, conferror);
+        return astconf_print(NULL, &look, name, path, flags, conferror);
     }
     if ((n = strlen(name)) > 3 && n < (ALT + 3)) {
         if (streq(name + n - 3, "DEV")) {
@@ -1235,7 +1235,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
                     sfputc(tmp, isupper(*s) ? tolower(*s) : *s);
                 if ((s = sfstruse(tmp)) && !access(s, F_OK)) {
                     if (value) goto ro;
-                    s = buffer(s);
+                    s = astconf_buffer(s);
                     sfclose(tmp);
                     return s;
                 }
@@ -1249,13 +1249,13 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
 
             strcpy(altname, name);
             altname[n - 3] = 0;
-            if (lookup(&altlook, altname, flags)) {
+            if (astconf_lookup(&altlook, altname, flags)) {
                 if (value) {
                     errno = EINVAL;
                     if (conferror) (*conferror)(&state, &state, 2, "%s: cannot set value", altname);
                     return (flags & ASTCONF_error) ? NULL : "";
                 }
-                return print(NULL, &altlook, altname, path, flags, conferror);
+                return astconf_print(NULL, &altlook, altname, path, flags, conferror);
             }
             for (s = altname; *s; s++)
                 if (isupper(*s)) *s = tolower(*s);
@@ -1265,7 +1265,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
                     sfprintf(tmp, "%s/%s/.", dirs[n], altname);
                     if ((s = sfstruse(tmp)) && !access(s, F_OK)) {
                         if (value) goto ro;
-                        s = buffer(s);
+                        s = astconf_buffer(s);
                         sfclose(tmp);
                         return s;
                     }
@@ -1275,7 +1275,7 @@ char *astgetconf(const char *name, const char *path, const char *value, int flag
         }
     }
     if ((look.standard < 0 || look.standard == CONF_AST) && look.call <= 0 && look.section <= 1 &&
-        (s = feature(0, look.name, path, value, flags, conferror)))
+        (s = astconf_feature(0, look.name, path, value, flags, conferror)))
         return s;
     errno = EINVAL;
     if (conferror && !(flags & ASTCONF_system))
@@ -1368,7 +1368,7 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
             }
             look.standard = look.conf->standard;
             look.section = look.conf->section;
-            print(sp, &look, NULL, path, flags, errorf);
+            astconf_print(sp, &look, NULL, path, flags, errorf);
         }
 #ifdef _pth_getconf_a
         pp = nativeconf(&proc, _pth_getconf_a);
@@ -1380,7 +1380,7 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
                 if (*s)
                     for (*s++ = 0; isspace(*s); s++)
                         ;
-                if (!lookup(&look, f, flags)) {
+                if (!astconf_lookup(&look, f, flags)) {
                     if (flags & ASTCONF_table) {
                         if (look.standard < 0) look.standard = 0;
                         if (look.section < 1) look.section = 1;
@@ -1413,7 +1413,7 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
                     if (regexec(&re, prefix[fp->standard].name, 0, NULL, 0)) continue;
                 }
             }
-            if (!(s = feature(fp, 0, path, NULL, 0, 0)) || !*s) s = "0";
+            if (!(s = astconf_feature(fp, 0, path, NULL, 0, 0)) || !*s) s = "0";
             if (flags & ASTCONF_table) {
                 f = flg;
                 if (fp->flags & CONF_ALLOC) *f++ = 'A';
@@ -1425,11 +1425,11 @@ void astconflist(Sfio_t *sp, const char *path, int flags, const char *pattern) {
                          flg, s);
             } else if (flags & ASTCONF_parse)
                 sfprintf(sp, "%s %s - %s\n", state.id,
-                         (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name,
+                         (flags & ASTCONF_lower) ? astconf_fmtlower(fp->name) : fp->name,
                          fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL));
             else
                 sfprintf(
-                    sp, "%s=%s\n", (flags & ASTCONF_lower) ? fmtlower(fp->name) : fp->name,
+                    sp, "%s=%s\n", (flags & ASTCONF_lower) ? astconf_fmtlower(fp->name) : fp->name,
                     (flags & ASTCONF_quote) ? fmtquote(s, "\"", "\"", strlen(s), FMT_SHELL) : s);
         }
     }

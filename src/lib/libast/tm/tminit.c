@@ -84,7 +84,7 @@ struct tm *tmlocaltime(const time_t *t) {
  * this routine also kicks in the local initialization
  */
 
-static int tzwest(time_t *clock, int *isdst) {
+static_fn int tzwest(time_t *clock, int *isdst) {
     struct tm *tp;
     int n;
     int m;
@@ -128,7 +128,7 @@ static int tzwest(time_t *clock, int *isdst) {
  * stropt() option handler
  */
 
-static int tmopt(void *a, const void *p, int n, const char *v) {
+static_fn int tmopt(void *a, const void *p, int n, const char *v) {
     Tm_zone_t *zp;
 
     UNUSED(a);
@@ -159,7 +159,7 @@ static int tmopt(void *a, const void *p, int n, const char *v) {
  * initialize the local timezone
  */
 
-static void tmlocal(void) {
+static_fn void tmlocal(void) {
     Tm_zone_t *zp;
     int n;
     char *s;

@@ -34,7 +34,7 @@
 **	Written by Glenn Fowler (03/18/1998).
 */
 
-static int slowexcept(Sfio_t *f, int type, void *v, Sfdisc_t *disc) {
+static_fn int slowexcept(Sfio_t *f, int type, void *v, Sfdisc_t *disc) {
     NOTUSED(f);
     NOTUSED(v);
     NOTUSED(disc);

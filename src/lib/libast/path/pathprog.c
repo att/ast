@@ -48,7 +48,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-static size_t prog(const char *command, char *path, size_t size) {
+static_fn size_t path_prog(const char *command, char *path, size_t size) {
     ssize_t n;
     char *s;
 #if __CYGWIN__
@@ -113,7 +113,7 @@ size_t pathprog(const char *command, char *path, size_t size) {
     char *rel;
     ssize_t n;
 
-    if ((n = prog(command, path, size)) > 0 && n < size && *path != '/' && (rel = strdup(path))) {
+    if ((n = path_prog(command, path, size)) > 0 && n < size && *path != '/' && (rel = strdup(path))) {
         n = pathpath(rel, NULL, PATH_REGULAR | PATH_EXECUTE, path, size) ? strlen(path) : 0;
         free(rel);
     }

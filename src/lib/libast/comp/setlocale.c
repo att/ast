@@ -63,7 +63,7 @@ size_t ast_mbrchar(wchar_t *w, const char *s, size_t n, Mbstate_t *q) {
 
 typedef int (*Isw_f)(wchar_t);
 
-static bool is_us_ascii_codeset() {
+static_fn bool is_us_ascii_codeset() {
     char *codeset = nl_langinfo(CODESET);
     return strcasecmp(codeset, "US-ASCII") || strcasecmp(codeset, "USASCII");
 }
@@ -72,7 +72,7 @@ static bool is_us_ascii_codeset() {
 // Called when the locale subsystem is configured. This inits the `ast` structure members
 // related to the locale subsystem.
 //
-static void init_ast_struct() {
+static_fn void init_ast_struct() {
     ast.locale.serial++;
     if (ast.locale.serial == 1) {
         // Initializations that only need to be done once.

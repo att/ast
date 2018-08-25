@@ -122,7 +122,7 @@ void *llist(Dt_t *dt, Dtlink_t *lnk, int type) {
     return (void *)lnk;
 }
 
-static void *listat(Dt_t *dt, Dtstat_t *st) {
+static_fn void *dtlist_at(Dt_t *dt, Dtstat_t *st) {
     if (st) {
         memset(st, 0, sizeof(Dtstat_t));
         st->meth = dt->meth->type;
@@ -134,7 +134,7 @@ static void *listat(Dt_t *dt, Dtstat_t *st) {
     return (void *)dt->data->size;
 }
 
-static void *dtlist(Dt_t *dt, void *obj, int type) {
+static_fn void *dtlist(Dt_t *dt, void *obj, int type) {
     Dtlink_t *r, *t, *h;
     void *key, *o, *k;
     Dtlink_t **fngr = NULL;
@@ -153,7 +153,7 @@ static void *dtlist(Dt_t *dt, void *obj, int type) {
     else if (type & DT_CLEAR)
         DTRETURN(obj, lclear(dt));
     else if (type & DT_STAT)
-        DTRETURN(obj, listat(dt, (Dtstat_t *)obj));
+        DTRETURN(obj, dtlist_at(dt, (Dtstat_t *)obj));
     else if (type & DT_START) {
         if (!(fngr = (Dtlink_t **)(*dt->memoryf)(dt, NULL, sizeof(Dtlink_t *), disc)))
             DTRETURN(obj, NULL);
@@ -327,7 +327,7 @@ dt_return:
     return obj;
 }
 
-static int listevent(Dt_t *dt, int event, void *arg) {
+static_fn int dtlist_event(Dt_t *dt, int event, void *arg) {
     UNUSED(arg);
     Dtlist_t *list = (Dtlist_t *)dt->data;
 
@@ -354,13 +354,13 @@ static int listevent(Dt_t *dt, int event, void *arg) {
 }
 
 static Dtmethod_t _Dtlist = {
-    .searchf = dtlist, .type = DT_LIST, .eventf = listevent, .name = "Dtlist"};
+    .searchf = dtlist, .type = DT_LIST, .eventf = dtlist_event, .name = "Dtlist"};
 static Dtmethod_t _Dtdeque = {
-    .searchf = dtlist, .type = DT_DEQUE, .eventf = listevent, .name = "Dtdeque"};
+    .searchf = dtlist, .type = DT_DEQUE, .eventf = dtlist_event, .name = "Dtdeque"};
 static Dtmethod_t _Dtstack = {
-    .searchf = dtlist, .type = DT_STACK, .eventf = listevent, .name = "Dtstack"};
+    .searchf = dtlist, .type = DT_STACK, .eventf = dtlist_event, .name = "Dtstack"};
 static Dtmethod_t _Dtqueue = {
-    .searchf = dtlist, .type = DT_QUEUE, .eventf = listevent, .name = "Dtqueue"};
+    .searchf = dtlist, .type = DT_QUEUE, .eventf = dtlist_event, .name = "Dtqueue"};
 
 Dtmethod_t *Dtlist = &_Dtlist;
 Dtmethod_t *Dtdeque = &_Dtdeque;

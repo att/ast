@@ -58,7 +58,7 @@ static State_t matchstate;
  * flush the cache
  */
 
-static void flushcache(void) {
+static_fn void regex_flushcache(void) {
     int i;
 
     for (i = matchstate.size; i--;)
@@ -86,7 +86,7 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
      */
 
     if (!pattern) {
-        flushcache();
+        regex_flushcache();
         i = 0;
         if (reflags > matchstate.size) {
             matchstate.cache = newof(matchstate.cache, Cache_t *, reflags, 0);
@@ -113,7 +113,7 @@ regex_t *regcache(const char *pattern, regflags_t reflags, int *status) {
 
     if ((s = setlocale(LC_CTYPE, NULL)) != matchstate.locale) {
         matchstate.locale = s;
-        flushcache();
+        regex_flushcache();
     }
 
     /*

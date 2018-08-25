@@ -36,7 +36,7 @@
 #define FPART 1                 /* doing fractional part */
 #define EPART 2                 /* doing exponent part */
 
-static Sfdouble_t sfpow10(int n) {
+static_fn Sfdouble_t sfpow10(int n) {
     Sfdouble_t dval;
 
     switch (n) {

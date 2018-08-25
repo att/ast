@@ -32,7 +32,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static int _sfall(void) {
+static_fn int _sfall(void) {
     Sfpool_t *p, *next;
     Sfio_t *f;
     int n, rv;

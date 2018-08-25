@@ -54,7 +54,7 @@
 
 #undef sleep
 
-static int ttctl(int, int, void *);
+static_fn int ttctl(int, int, void *);
 
 void astwinsize(int fd, int *rows, int *cols) {
 #ifdef TIOCGWINSZ
@@ -100,7 +100,7 @@ void astwinsize(int fd, int *rows, int *cols) {
  * tty ioctl() -- no cache
  */
 
-static int ttctl(int fd, int op, void *tt) {
+static_fn int ttctl(int fd, int op, void *tt) {
     int v;
 
     if (fd < 0) {

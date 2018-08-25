@@ -39,7 +39,7 @@
 */
 
 /* synchronize unseekable write streams */
-static void _sfwrsync(void) {
+static_fn void _sfwrsync(void) {
     Sfpool_t *p;
     Sfio_t *f;
     int n;

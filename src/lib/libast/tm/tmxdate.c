@@ -79,7 +79,7 @@
  * return: -1:error 0:* 1:some
  */
 
-static int range(char *s, char **e, char *set, int lo, int hi) {
+static_fn int tmx_range(char *s, char **e, char *set, int lo, int hi) {
     int n;
     int m;
     int i;
@@ -117,7 +117,7 @@ static int range(char *s, char **e, char *set, int lo, int hi) {
  * normalize <p,q> to power of 10 u in tm
  */
 
-static void powerize(Tm_t *tm, unsigned long p, unsigned long q, unsigned long u) {
+static_fn void tmx_powerize(Tm_t *tm, unsigned long p, unsigned long q, unsigned long u) {
     Time_t t = p;
 
     while (q > u) {
@@ -332,7 +332,7 @@ again:
                                 break;
                             default:
                                 if (q > 1)
-                                    powerize(tm, p, q, 1000UL);
+                                    tmx_powerize(tm, p, q, 1000UL);
                                 else
                                     tm->tm_nsec += p * 1000000L;
                                 break;
@@ -377,7 +377,7 @@ again:
                     case '\t':
                     case '\v':
                         if (q > 1)
-                            powerize(tm, p, q, 1000000000UL);
+                            tmx_powerize(tm, p, q, 1000000000UL);
                         else
                             tm->tm_sec += p;
                         P_INIT('U');
@@ -392,7 +392,7 @@ again:
                         }
                         m = 0;
                         if (q > 1)
-                            powerize(tm, p, q, 1000000UL);
+                            tmx_powerize(tm, p, q, 1000000UL);
                         else
                             tm->tm_nsec += p * 1000L;
                         P_INIT('N');
@@ -407,7 +407,7 @@ again:
                         }
                         m = 0;
                         if (q > 1)
-                            powerize(tm, p, q, 1000000000UL);
+                            tmx_powerize(tm, p, q, 1000000000UL);
                         else
                             tm->tm_nsec += p;
                         P_INIT('Y');
@@ -527,7 +527,7 @@ again:
                  * minute
                  */
 
-                if ((k = range(t, &t, hit, 0, 59)) < 0) break;
+                if ((k = tmx_range(t, &t, hit, 0, 59)) < 0) break;
                 if (k && !hit[i = tm->tm_min]) {
                     hit[i] = 1;
                     do
@@ -546,7 +546,7 @@ again:
                  * hour
                  */
 
-                if ((k = range(t, &t, hit, 0, 23)) < 0) break;
+                if ((k = tmx_range(t, &t, hit, 0, 23)) < 0) break;
                 if (k && !hit[i = tm->tm_hour]) {
                     hit[i] = 1;
                     do
@@ -565,14 +565,14 @@ again:
                  * day of month
                  */
 
-                if ((k = range(t, &t, hit, 1, 31)) < 0) break;
+                if ((k = tmx_range(t, &t, hit, 1, 31)) < 0) break;
                 if (k) flags |= DAY | MDAY;
 
                 /*
                  * month
                  */
 
-                if ((k = range(t, &t, mon, 1, 12)) < 0) break;
+                if ((k = tmx_range(t, &t, mon, 1, 12)) < 0) break;
                 if (k)
                     flags |= MONTH;
                 else
@@ -582,7 +582,7 @@ again:
                  * day of week
                  */
 
-                if ((k = range(t, &t, day, 0, 6)) < 0) break;
+                if ((k = tmx_range(t, &t, day, 0, 6)) < 0) break;
                 if (k) flags |= WDAY;
                 s = t;
                 if (flags & (MONTH | MDAY | WDAY)) {

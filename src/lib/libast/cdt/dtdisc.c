@@ -32,7 +32,7 @@
 **	Written by Kiem-Phong Vo, phongvo@gmail.com (5/25/96)
 */
 
-static void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
+static_fn void *dtmemory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) {
     UNUSED(dt);
     UNUSED(disc);
 

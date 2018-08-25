@@ -33,7 +33,7 @@
 **	Written by Kiem-Phong Vo.
 */
 
-static void newpos(Sfio_t *f, Sfoff_t p) {
+static_fn void newpos(Sfio_t *f, Sfoff_t p) {
     if ((f->bits & SF_MMAP) && f->data) {
         SFMUNMAP(f, f->data, f->endb - f->data);
         f->data = NULL;

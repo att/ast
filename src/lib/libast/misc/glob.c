@@ -76,13 +76,13 @@ typedef int (*GL_error_f)(const char *, int);
  * default gl_diropen
  */
 
-static DIR *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendir)(path); }
+static_fn DIR *gl_diropen(glob_t *gp, const char *path) { return (*gp->gl_opendir)(path); }
 
 /*
  * default gl_dirnext
  */
 
-static char *gl_dirnext(glob_t *gp, DIR *handle) {
+static_fn char *gl_dirnext(glob_t *gp, DIR *handle) {
     struct dirent *dp;
 
     while ((dp = (struct dirent *)(*gp->gl_readdir)(handle))) {
@@ -100,12 +100,12 @@ static char *gl_dirnext(glob_t *gp, DIR *handle) {
  * default gl_dirclose
  */
 
-static int gl_dirclose(glob_t *gp, DIR *handle) { return (gp->gl_closedir)(handle); }
+static_fn int gl_dirclose(glob_t *gp, DIR *handle) { return (gp->gl_closedir)(handle); }
 
 //
 // Default gl_type.
 //
-static int gl_type(glob_t *gp, const char *path, int flags) {
+static_fn int gl_type(glob_t *gp, const char *path, int flags) {
     struct stat st;
 
     memset(&st, 0, sizeof(st));
@@ -127,7 +127,7 @@ static int gl_type(glob_t *gp, const char *path, int flags) {
  * default gl_attr
  */
 
-static int gl_attr(glob_t *gp, const char *path, int flags) {
+static_fn int gl_attr(glob_t *gp, const char *path, int flags) {
     UNUSED(gp);
     UNUSED(flags);
 
@@ -138,7 +138,7 @@ static int gl_attr(glob_t *gp, const char *path, int flags) {
  * default gl_nextdir
  */
 
-static char *gl_nextdir(glob_t *gp, char *dir) {
+static_fn char *gl_nextdir(glob_t *gp, char *dir) {
     if (!(dir = gp->gl_nextpath)) dir = gp->gl_nextpath = stakcopy(pathbin());
     switch (*gp->gl_nextpath) {
         case 0:
@@ -163,7 +163,7 @@ static char *gl_nextdir(glob_t *gp, char *dir) {
  * error intercept
  */
 
-static int errorcheck(glob_t *gp, const char *path) {
+static_fn int glob_errorcheck(glob_t *gp, const char *path) {
     int r = 1;
 
     if (gp->gl_errfn) r = (*gp->gl_errfn)(path, errno);
@@ -176,7 +176,7 @@ static int errorcheck(glob_t *gp, const char *path) {
  * remove backslashes
  */
 
-static void trim(char *sp, char *p1, int *n1, char *p2, int *n2) {
+static_fn void glob_trim(char *sp, char *p1, int *n1, char *p2, int *n2) {
     char *dp = sp;
     int c;
 
@@ -196,7 +196,7 @@ static void trim(char *sp, char *p1, int *n1, char *p2, int *n2) {
     } while (c);
 }
 
-static void addmatch(glob_t *gp, const char *dir, const char *pat, const char *rescan,
+static_fn void glob_addmatch(glob_t *gp, const char *dir, const char *pat, const char *rescan,
                      char *endslash, int meta) {
     globlist_t *ap;
     int offset;
@@ -248,7 +248,7 @@ static void addmatch(glob_t *gp, const char *dir, const char *pat, const char *r
  * a leading . must match explicitly
  */
 
-static void glob_dir(glob_t *gp, globlist_t *ap, int re_flags) {
+static_fn void glob_dir(glob_t *gp, globlist_t *ap, int re_flags) {
     char *rescan;
     char *prefix;
     char *pat;
@@ -296,17 +296,17 @@ again:
                     break;
                 }
                 if (quote) {
-                    trim(ap->gl_begin, rescan, &t1, NULL, NULL);
+                    glob_trim(ap->gl_begin, rescan, &t1, NULL, NULL);
                     rescan -= t1;
                 }
                 if (!first && !*rescan && *(rescan - 2) == gp->gl_delim) {
                     *(rescan - 2) = 0;
                     c = (*gp->gl_type)(gp, prefix, 0);
                     *(rescan - 2) = gp->gl_delim;
-                    if (c == GLOB_DIR) addmatch(gp, NULL, prefix, NULL, rescan - 1, anymeta);
+                    if (c == GLOB_DIR) glob_addmatch(gp, NULL, prefix, NULL, rescan - 1, anymeta);
                 } else if ((anymeta || !(gp->gl_flags & GLOB_NOCHECK)) &&
                            (*gp->gl_type)(gp, prefix, 0))
-                    addmatch(gp, NULL, prefix, NULL, NULL, anymeta);
+                    glob_addmatch(gp, NULL, prefix, NULL, NULL, anymeta);
                 return;
             case '[':
                 if (!bracket) {
@@ -355,7 +355,7 @@ again:
         if (pat == prefix + 1) dirname = "/";
         if (savequote) {
             quote = 0;
-            trim(ap->gl_begin, pat, &t1, rescan, &t2);
+            glob_trim(ap->gl_begin, pat, &t1, rescan, &t2);
             pat -= t1;
             if (rescan) rescan -= t2;
         }
@@ -444,17 +444,17 @@ skip:
                 if (ire && !regexec(ire, name, 0, NULL, 0)) continue;
                 if (matchdir && (name[0] != '.' || (name[1] && (name[1] != '.' || name[2]))) &&
                     !notdir)
-                    addmatch(gp, prefix, name, matchdir, NULL, anymeta);
+                    glob_addmatch(gp, prefix, name, matchdir, NULL, anymeta);
                 if (!regexec(pre, name, 0, NULL, 0)) {
-                    if (!rescan || !notdir) addmatch(gp, prefix, name, rescan, NULL, anymeta);
+                    if (!rescan || !notdir) glob_addmatch(gp, prefix, name, rescan, NULL, anymeta);
                     if (starstar == 1 || (starstar == 2 && !notdir))
-                        addmatch(gp, prefix, name, starstar == 2 ? "" : NULL, NULL, anymeta);
+                        glob_addmatch(gp, prefix, name, starstar == 2 ? "" : NULL, NULL, anymeta);
                 }
                 errno = 0;
             }
             (*gp->gl_dirclose)(gp, dirf);
-            if (err || (errno && !errorcheck(gp, dirname))) break;
-        } else if (!complete && !errorcheck(gp, dirname))
+            if (err || (errno && !glob_errorcheck(gp, dirname))) break;
+        } else if (!complete && !glob_errorcheck(gp, dirname))
             break;
         if (!complete) break;
         if (*gp->gl_intr) {

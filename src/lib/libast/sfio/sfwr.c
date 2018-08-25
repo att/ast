@@ -38,7 +38,7 @@
 */
 
 /* hole preserving writes */
-static ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
+static_fn ssize_t sfoutput(Sfio_t *f, char *buf, size_t n) {
     char *sp, *wbuf, *endbuf;
     ssize_t s, w, wr;
 

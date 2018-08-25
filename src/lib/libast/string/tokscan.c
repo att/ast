@@ -73,7 +73,7 @@ static char empty[1];
  * get one string token into p
  */
 
-static char *lextok(char *s, int c, char **p, int *n) {
+static_fn char *lextok(char *s, int c, char **p, int *n) {
     char *t;
     int q;
     char *b;

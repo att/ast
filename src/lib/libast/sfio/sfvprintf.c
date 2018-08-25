@@ -51,7 +51,7 @@
 
 #define FPRECIS 6 /* default precision for floats 	*/
 
-static int chr2str(char *buf, int v) {
+static_fn int chr2str(char *buf, int v) {
     if (isprint(v) && v != '\\') {
         *buf++ = v;
         return 1;

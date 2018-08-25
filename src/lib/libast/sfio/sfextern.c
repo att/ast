@@ -33,7 +33,7 @@
 /* code to initialize mutexes */
 static Vtmutex_t Sfmutex;
 static Vtonce_t Sfonce = VTONCE_INITDATA;
-static void _sfoncef() {
+static_fn void _sfoncef() {
     (void)vtmtxopen(_Sfmutex, VT_INIT);
     (void)vtmtxopen(&_Sfpool.mutex, VT_INIT);
     (void)vtmtxopen(sfstdin->mutex, VT_INIT);

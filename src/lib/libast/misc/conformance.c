@@ -37,7 +37,7 @@ static const char *dflt[] = {"ast", "standard", 0};
  * initialize the conformance() id list
  */
 
-static char **initconformance(void) {
+static_fn char **initconformance(void) {
     char *m;
     char **p;
     char *t;

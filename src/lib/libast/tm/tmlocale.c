@@ -47,7 +47,7 @@ static uint32_t tmlocale_serial = UINT_MAX;
  */
 
 #if 0 && __CYGWIN__
-static int standardized(Lc_info_t *li, char **b) {
+static_fn int standardized(Lc_info_t *li, char **b) {
     if ((li->lc->language->flags & LC_default) ||
         streq(li->lc->language->code, "en")) {
         b[TM_TIME] = "%H:%M:%S";
@@ -62,7 +62,7 @@ static int standardized(Lc_info_t *li, char **b) {
  * fix up LC_TIME data after loading
  */
 
-static void fixup(Lc_info_t *li, char **b) {
+static_fn void fixup(Lc_info_t *li, char **b) {
     char **v;
     char **e;
     int n;
@@ -151,7 +151,7 @@ static const Map_t map[] = {
  * the caller already made sure f is big enough
  */
 
-static char *word2posix(char *f, char *w, int alternate) {
+static_fn char *word2posix(char *f, char *w, int alternate) {
     char *r;
     int c;
     int p;
@@ -287,7 +287,7 @@ static char *word2posix(char *f, char *w, int alternate) {
  * load the native LC_TIME data for the current locale
  */
 
-static void native_lc_time(Lc_info_t *li) {
+static_fn void native_lc_time(Lc_info_t *li) {
     char *s;
     char *t;
     char **b;
@@ -440,7 +440,7 @@ static const Map_t map[] = {
 #endif
 };
 
-static void native_lc_time() {
+static_fn void native_lc_time() {
     char *s;
     char *t;
     char **b;
@@ -476,7 +476,7 @@ static void native_lc_time() {
 /*
  * load the LC_TIME data for the current locale
  */
-static void load() {
+static_fn void load() {
     tmlocale_serial = ast.locale.serial;
     if (tmlocale_data) {
         tm_info.format = tmlocale_data;

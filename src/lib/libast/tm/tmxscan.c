@@ -78,7 +78,7 @@ typedef struct {
  * generate a Time_t from tm + set
  */
 
-static Time_t gen(Tm_t *tm, Set_t *set) {
+static_fn Time_t tmx_gen(Tm_t *tm, Set_t *set) {
     int n;
     int z;
     Time_t t;
@@ -144,7 +144,7 @@ static Time_t gen(Tm_t *tm, Set_t *set) {
  * the format scan workhorse
  */
 
-static Time_t scan(const char *s, char **e, const char *format, char **f, Time_t t, long flags) {
+static_fn Time_t tmx_scan(const char *s, char **e, const char *format, char **f, Time_t t, long flags) {
     int d;
     int n;
     char *p;
@@ -356,7 +356,7 @@ again:
                     s = b;
                     goto again;
                 case '&':
-                    x = gen(tm, &set);
+                    x = tmx_gen(tm, &set);
                     x = tmxdate(s, e, t);
                     if (s == (const char *)*e) goto next;
                     t = x;
@@ -390,7 +390,7 @@ next:
                     goto again;
                 }
     }
-    t = gen(tm, &set);
+    t = tmx_gen(tm, &set);
 done:
     if (e) {
         while (isspace(*s)) s++;
@@ -454,7 +454,7 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
         p = datemask;
         if (p) {
             while ((v = *p++)) {
-                x = scan(s, &q, v, &r, t, flags);
+                x = tmx_scan(s, &q, v, &r, t, flags);
                 if (!*q && !*r) {
                     if (e) *e = q;
                     if (f) *f = r;
@@ -467,5 +467,5 @@ Time_t tmxscan(const char *s, char **e, const char *format, char **f, Time_t t, 
         if (e) *e = (char *)s;
         return 0;
     }
-    return scan(s, e, format, f, t, flags);
+    return tmx_scan(s, e, format, f, t, flags);
 }

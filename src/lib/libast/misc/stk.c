@@ -64,8 +64,8 @@
 
 typedef char *(*_stk_overflow_)(int);
 
-static int stkexcept(Sfio_t *, int, void *, Sfdisc_t *);
-static Sfdisc_t stkdisc = {.exceptf = stkexcept};
+static_fn int stkexcept(Sfio_t *, int, void *, Sfdisc_t *);
+static_fn Sfdisc_t stkdisc = {.exceptf = stkexcept};
 
 Sfio_t _Stak_data = SFNEW((char *)0, 0, -1, SF_STATIC | SF_WRITE | SF_STRING, &stkdisc, 0);
 
@@ -86,7 +86,7 @@ struct stk {
 
 static size_t init;        /* 1 when initialized */
 static struct stk *stkcur; /* pointer to current stk */
-static char *stkgrow(Sfio_t *, size_t);
+static_fn char *stkgrow(Sfio_t *, size_t);
 
 #define stream2stk(stream) \
     ((stream) == stkstd ? stkcur : ((struct stk *)(((char *)(stream)) + STK_HDRSIZE)))
@@ -120,7 +120,7 @@ static const char Omsg[] = "malloc failed while growing stack\n";
 /*
  * default overflow exception
  */
-static char *overflow(int n) {
+static_fn char *overflow(int n) {
     UNUSED(n);
     write(2, Omsg, sizeof(Omsg) - 1);
     exit(2);
@@ -131,7 +131,7 @@ static char *overflow(int n) {
 /*
  * initialize stkstd, sfio operations may have already occcured
  */
-static void stkinit(size_t size) {
+static_fn void stkinit(size_t size) {
     Sfio_t *sp;
     init = size;
     sp = stkopen(0);
@@ -139,7 +139,7 @@ static void stkinit(size_t size) {
     stkinstall(sp, overflow);
 }
 
-static int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
+static_fn int stkexcept(Sfio_t *stream, int type, void *val, Sfdisc_t *dp) {
     UNUSED(dp);
     UNUSED(val);
     switch (type) {
@@ -314,7 +314,9 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
     int n;
     if (!init) stkinit(offset + 1);
     increment(set);
+    int ctr = 0;
     while (1) {
+        ctr++;
         fp = (struct frame *)sp->stkbase;
         cp = sp->stkbase + roundof(sizeof(struct frame), STK_ALIGN);
         n = fp->nalias;
@@ -335,6 +337,7 @@ char *stkset(Sfio_t *stream, char *loc, size_t offset) {
             sp->stkbase = fp->prev;
             sp->stkend = ((struct frame *)(fp->prev))->end;
             free(fp);
+            fp = NULL;
         } else
             break;
         frames++;
@@ -438,7 +441,7 @@ char *stkcopy(Sfio_t *stream, const char *str) {
  * to the end is copied into the new stack frame
  */
 
-static char *stkgrow(Sfio_t *stream, size_t size) {
+static_fn char *stkgrow(Sfio_t *stream, size_t size) {
     size_t n = size;
     struct stk *sp = stream2stk(stream);
     struct frame *fp = (struct frame *)sp->stkbase;

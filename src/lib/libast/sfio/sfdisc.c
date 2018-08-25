@@ -55,7 +55,7 @@ typedef struct _dccache_s {
     uchar *endb;
 } Dccache_t;
 
-static int _dccaexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
+static_fn int _dccaexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     UNUSED(f);
     UNUSED(val);
 
@@ -63,7 +63,7 @@ static int _dccaexcept(Sfio_t *f, int type, void *val, Sfdisc_t *disc) {
     return 0;
 }
 
-static ssize_t _dccaread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
+static_fn ssize_t _dccaread(Sfio_t *f, void *buf, size_t size, Sfdisc_t *disc) {
     ssize_t sz;
     Sfdisc_t *prev;
     Dccache_t *dcca;

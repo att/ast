@@ -105,7 +105,7 @@ static const char *rexnames[] = {"REX_NULL",
                                  "REX_WORD",
                                  "REX_WORD_NOT"};
 
-static const char *rexname(Rex_t *rex) {
+static_fn const char *rexname(Rex_t *rex) {
     if (!rex) return "NIL";
     if (rex->type >= elementsof(rexnames)) return "ERROR";
     return rexnames[rex->type];
@@ -129,7 +129,7 @@ static const char *rexname(Rex_t *rex) {
 #define END_ANY 5 /* end of any of above			*/
 
 /*
- * returns from parse()
+ * returns from regnexec_parse()
  */
 
 #define NONE 0 /* no parse found			*/
@@ -162,7 +162,7 @@ typedef struct {
 #define vector(t, v, i) \
     (((i) < (v)->max) ? (t *)((v)->vec + (i) * (v)->siz) : (t *)vecseek(&(v), i))
 
-static Vector_t *vecopen(int inc, int siz) {
+static_fn Vector_t *vecopen(int inc, int siz) {
     Vector_t *v;
     Stk_t *sp;
 
@@ -180,7 +180,7 @@ static Vector_t *vecopen(int inc, int siz) {
     return v;
 }
 
-static void *vecseek(Vector_t **p, int index) {
+static_fn void *vecseek(Vector_t **p, int index) {
     Vector_t *v = *p;
 
     if (index >= v->max) {
@@ -193,7 +193,7 @@ static void *vecseek(Vector_t **p, int index) {
     return v->vec + index * v->siz;
 }
 
-static void vecclose(Vector_t *v) {
+static_fn void vecclose(Vector_t *v) {
     if (v) stkclose(v->stk);
 }
 
@@ -209,7 +209,7 @@ typedef struct {
 #define stkdata(s, t) ((t *)stkframe(s)->data)
 #define stkpop(s) stkold(s, &(stkframe(s)->pos))
 
-static void *stkpush(Stk_t *sp, size_t size) {
+static_fn void *stkpush(Stk_t *sp, size_t size) {
     Stk_frame_t *f;
     Stk_pos_t p;
 
@@ -261,7 +261,7 @@ typedef struct {
  * allocate a frame and push a match onto the stack
  */
 
-static int _matchpush(Env_t *env, Rex_t *rex) {
+static_fn int _matchpush(Env_t *env, Rex_t *rex) {
     Match_frame_t *f;
     regmatch_t *m;
     regmatch_t *e;
@@ -290,7 +290,7 @@ static int _matchpush(Env_t *env, Rex_t *rex) {
  * allocate a frame and push a pos onto the stack
  */
 
-static int pospush(Env_t *env, Rex_t *rex, unsigned char *p, int be) {
+static_fn int pospush(Env_t *env, Rex_t *rex, unsigned char *p, int be) {
     Pos_t *pos;
 
     if (!(pos = vector(Pos_t, env->pos, env->pos->cur))) {
@@ -312,7 +312,7 @@ static int pospush(Env_t *env, Rex_t *rex, unsigned char *p, int be) {
  * returns 1 if new is better, -1 if old, else 0.
  */
 
-static int better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
+static_fn int regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
     Pos_t *oe;
     Pos_t *ne;
     int k;
@@ -359,7 +359,7 @@ static int better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, in
             }
         if (ne->p > oe->p) return 1;
         if (oe->p > ne->p) return -1;
-        k = better(env, os + 1, ns + 1, oe, ne, level + 1);
+        k = regnexec_better(env, os + 1, ns + 1, oe, ne, level + 1);
         if (k) return k;
         os = oe + 1;
         ns = ne + 1;
@@ -368,7 +368,7 @@ static int better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, in
 
 #if _AST_REGEX_DEBUG
 
-static void showmatch(regmatch_t *p) {
+static_fn void regnexec_showmatch(regmatch_t *p) {
     sfputc(sfstdout, '(');
     if (p->rm_so < 0)
         sfputc(sfstdout, '?');
@@ -382,30 +382,30 @@ static void showmatch(regmatch_t *p) {
     sfputc(sfstdout, ')');
 }
 
-static int _better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
+static_fn int _regnexec_better(Env_t *env, Pos_t *os, Pos_t *ns, Pos_t *oend, Pos_t *nend, int level) {
     int i;
 
     DEBUG_CODE(0x0040, {
         sfprintf(sfstdout, "AHA better old ");
-        for (i = 0; i <= env->nsub; i++) showmatch(&env->best[i]);
+        for (i = 0; i <= env->nsub; i++) regnexec_showmatch(&env->best[i]);
         sfprintf(sfstdout, "\n           new ");
-        for (i = 0; i <= env->nsub; i++) showmatch(&env->match[i]);
+        for (i = 0; i <= env->nsub; i++) regnexec_showmatch(&env->match[i]);
         sfprintf(sfstdout, "\n");
     });
-    i = better(env, os, ns, oend, nend, 0);
+    i = regnexec_better(env, os, ns, oend, nend, 0);
     DEBUG_CODE(0x0040, sfprintf(sfstdout, "           %s\n", i <= 0 ? "OLD" : "NEW"));
     return i;
 }
 
-#define better _better
+#define regnexec_better _regnexec_better
 
 #endif
 
-#define follow(e, r, c, s) ((r)->next ? parse(e, (r)->next, c, s) : (c) ? parse(e, c, 0, s) : BEST)
+#define follow(e, r, c, s) ((r)->next ? regnexec_parse(e, (r)->next, c, s) : (c) ? regnexec_parse(e, c, 0, s) : BEST)
 
-static int parse(Env_t *, Rex_t *, Rex_t *, unsigned char *);
+static_fn int regnexec_parse(Env_t *, Rex_t *, Rex_t *, unsigned char *);
 
-static int parserep(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s, int n) {
+static_fn int parserep(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s, int n) {
     int i;
     int r = NONE;
     Rex_t catcher;
@@ -449,7 +449,7 @@ static int parserep(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s, int n
                          env->match[0].rm_eo, env->match[1].rm_so, env->match[1].rm_eo,
                          env->match[2].rm_so, env->match[2].rm_eo));
         }
-        r = parse(env, rex->re.group.expr.rex, &catcher, s);
+        r = regnexec_parse(env, rex->re.group.expr.rex, &catcher, s);
         DEBUG_CODE(0x0010,
                    sfprintf(sfstdout, "AHA#%04d 0x%04x parserep parse %d %d `%-.*s'\n", __LINE__,
                             debug_flag, rex->re.group.number, r, env->end - s, s));
@@ -503,7 +503,7 @@ static int parserep(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s, int n
     return r;
 }
 
-static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsigned char *s) {
+static_fn int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsigned char *s) {
     unsigned char *p;
     int r;
 
@@ -573,7 +573,7 @@ static int parsetrie(Env_t *env, Trie_node_t *x, Rex_t *rex, Rex_t *cont, unsign
     return r;
 }
 
-static int collelt(Celt_t *ce, char *key, int c, int x) {
+static_fn int collelt(Celt_t *ce, char *key, int c, int x) {
     Ckey_t elt = {0};
 
     mbxfrm(elt, key, COLL_KEY_MAX);
@@ -608,7 +608,7 @@ static int collelt(Celt_t *ce, char *key, int c, int x) {
     return 0;
 }
 
-static int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
+static_fn int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
     Mbstate_t q;
 
     if (!x) {
@@ -637,7 +637,7 @@ static int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
     return collelt(ce, key, c, x);
 }
 
-static int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char *e,
+static_fn int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char *e,
                      unsigned char **p) {
     unsigned char *t;
     wchar_t c;
@@ -695,7 +695,7 @@ static int collmatch(Env_t *env, Rex_t *rex, unsigned char *s, unsigned char *e,
     return rex->re.collate.invert ? !r : r;
 }
 
-static unsigned char *nestmatch(unsigned char *s, unsigned char *e, const unsigned short *type,
+static_fn unsigned char *nestmatch(unsigned char *s, unsigned char *e, const unsigned short *type,
                                 int co) {
     int c;
     int cc;
@@ -754,7 +754,7 @@ static unsigned char *nestmatch(unsigned char *s, unsigned char *e, const unsign
     return 0;
 }
 
-static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
+static_fn int regnexec_parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
     int c;
     int d;
     int m;
@@ -786,19 +786,19 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     catcher.serial = rex->serial;
                     catcher.re.alt_catch.cont = cont;
                     catcher.next = rex->next;
-                    r = parse(env, rex->re.group.expr.binary.left, &catcher, s);
+                    r = regnexec_parse(env, rex->re.group.expr.binary.left, &catcher, s);
                     if (r < BEST || (rex->flags & REG_MINIMAL)) {
                         matchcopy(env, rex);
                         ((Pos_t *)env->pos->vec + env->pos->cur - 1)->serial = catcher.serial =
                             rex->re.group.expr.binary.serial;
-                        n = parse(env, rex->re.group.expr.binary.right, &catcher, s);
+                        n = regnexec_parse(env, rex->re.group.expr.binary.right, &catcher, s);
                         if (n != NONE) r = n;
                     }
                     pospop(env);
                     matchpop(env, rex);
                 } else {
-                    if ((r = parse(env, rex->re.group.expr.binary.left, cont, s)) == NONE)
-                        r = parse(env, rex->re.group.expr.binary.right, cont, s);
+                    if ((r = regnexec_parse(env, rex->re.group.expr.binary.left, cont, s)) == NONE)
+                        r = regnexec_parse(env, rex->re.group.expr.binary.right, cont, s);
                     if (r == GOOD) r = BEST;
                 }
                 return r;
@@ -939,7 +939,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.re.conj_left.cont = &next;
                 catcher.re.conj_left.beg = s;
                 catcher.next = 0;
-                return parse(env, rex->re.group.expr.binary.left, &catcher, s);
+                return regnexec_parse(env, rex->re.group.expr.binary.left, &catcher, s);
             case REX_CONJ_LEFT:
                 rex->re.conj_left.cont->re.conj_right.end = s;
                 cont = rex->re.conj_left.cont;
@@ -969,7 +969,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     } else {
                         if (n < i) return GOOD;
                     }
-                    if (n == i && better(env, (Pos_t *)env->bestpos->vec, (Pos_t *)env->pos->vec,
+                    if (n == i && regnexec_better(env, (Pos_t *)env->bestpos->vec, (Pos_t *)env->pos->vec,
                                          (Pos_t *)env->bestpos->vec + env->bestpos->cur,
                                          (Pos_t *)env->pos->vec + env->pos->cur, 0) <= 0)
                         return GOOD;
@@ -1096,7 +1096,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.serial = rex->serial;
                 catcher.re.group_catch.cont = cont;
                 catcher.next = rex->next;
-                r = parse(env, rex->re.group.expr.rex, &catcher, s);
+                r = regnexec_parse(env, rex->re.group.expr.rex, &catcher, s);
                 if (env->stack) {
                     pospop(env);
                     if (rex->re.group.number) env->match[rex->re.group.number].rm_so = -1;
@@ -1123,11 +1123,11 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.re.rep_catch.beg = s;
                 catcher.re.rep_catch.cont = cont;
                 catcher.next = rex->next;
-                return parse(env, rex->re.group.expr.rex, &catcher, s);
+                return regnexec_parse(env, rex->re.group.expr.rex, &catcher, s);
             case REX_GROUP_AHEAD_CATCH:
                 return follow(env, rex, rex->re.rep_catch.cont, rex->re.rep_catch.beg);
             case REX_GROUP_AHEAD_NOT:
-                r = parse(env, rex->re.group.expr.rex, NULL, s);
+                r = regnexec_parse(env, rex->re.group.expr.rex, NULL, s);
                 if (r == NONE)
                     r = follow(env, rex, cont, s);
                 else if (r != BAD)
@@ -1144,7 +1144,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.next = rex->next;
                 for (t = s - rex->re.group.size; t >= env->beg; t--) {
                     env->end = s;
-                    r = parse(env, rex->re.group.expr.rex, &catcher, t);
+                    r = regnexec_parse(env, rex->re.group.expr.rex, &catcher, t);
                     env->end = e;
                     if (r != NONE) return r;
                 }
@@ -1163,7 +1163,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     e = env->end;
                     env->end = s;
                     for (t = s - rex->re.group.size; t >= env->beg; t--) {
-                        r = parse(env, rex->re.group.expr.rex, &catcher, t);
+                        r = regnexec_parse(env, rex->re.group.expr.rex, &catcher, t);
                         if (r != NONE) break;
                     }
                     env->end = e;
@@ -1192,7 +1192,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     catcher.re.cond_catch.beg = s;
                     catcher.re.cond_catch.cont = cont;
                     catcher.next = rex->next;
-                    r = parse(env, q, &catcher, s);
+                    r = regnexec_parse(env, q, &catcher, s);
                     if (r == BAD || catcher.re.cond_catch.yes) return r;
                 } else if (!rex->re.group.size ||
                            (rex->re.group.size > 0 && env->match[rex->re.group.size].rm_so >= 0)) {
@@ -1207,7 +1207,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                     catcher.serial = q->serial;
                     catcher.re.group_catch.cont = cont;
                     catcher.next = rex->next;
-                    return parse(env, q, &catcher, s);
+                    return regnexec_parse(env, q, &catcher, s);
                 }
                 return follow(env, rex, cont, s);
             case REX_GROUP_COND_CATCH:
@@ -1217,7 +1217,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.serial = rex->serial;
                 catcher.re.group_catch.cont = rex->re.cond_catch.cont;
                 catcher.next = rex->next;
-                return parse(env, rex->re.cond_catch.next[1], &catcher, rex->re.cond_catch.beg);
+                return regnexec_parse(env, rex->re.cond_catch.next[1], &catcher, rex->re.cond_catch.beg);
             case REX_CAT:
                 return follow(env, rex, rex->re.group_catch.cont, s);
             case REX_GROUP_CUT:
@@ -1226,7 +1226,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 catcher.serial = rex->serial;
                 catcher.re.group_catch.cont = cont;
                 catcher.next = rex->next;
-                return parse(env, rex->re.group.expr.rex, &catcher, s);
+                return regnexec_parse(env, rex->re.group.expr.rex, &catcher, s);
             case REX_GROUP_CUT_CATCH:
                 switch (r = follow(env, rex, rex->re.group_catch.cont, s)) {
                     case GOOD:
@@ -1299,7 +1299,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
                 if (!(p = (unsigned char *)stkpush(env->mst, n))) return BAD;
                 memset(catcher.re.neg_catch.index = p, 0, n);
                 catcher.next = rex->next;
-                if (parse(env, rex->re.group.expr.rex, &catcher, s) == BAD)
+                if (regnexec_parse(env, rex->re.group.expr.rex, &catcher, s) == BAD)
                     r = BAD;
                 else {
                     r = NONE;
@@ -1615,7 +1615,7 @@ static int parse(Env_t *env, Rex_t *rex, Rex_t *cont, unsigned char *s) {
 
 #if _AST_REGEX_DEBUG
 
-static void listnode(Rex_t *e, int level) {
+static_fn void regnexec_listnode(Rex_t *e, int level) {
     int i;
 
     if (e) {
@@ -1625,8 +1625,8 @@ static void listnode(Rex_t *e, int level) {
             switch (e->type) {
                 case REX_ALT:
                 case REX_CONJ:
-                    listnode(e->re.group.expr.binary.left, level + 1);
-                    listnode(e->re.group.expr.binary.right, level + 1);
+                    regnexec_listnode(e->re.group.expr.binary.left, level + 1);
+                    regnexec_listnode(e->re.group.expr.binary.right, level + 1);
                     break;
                 case REX_GROUP:
                 case REX_GROUP_AHEAD:
@@ -1636,16 +1636,16 @@ static void listnode(Rex_t *e, int level) {
                 case REX_GROUP_CUT:
                 case REX_NEG:
                 case REX_REP:
-                    listnode(e->re.group.expr.rex, level + 1);
+                    regnexec_listnode(e->re.group.expr.rex, level + 1);
                     break;
             }
         } while (e = e->next);
     }
 }
 
-static int list(Env_t *env, Rex_t *rex) {
+static_fn int regnexec_list(Env_t *env, Rex_t *rex) {
     sfprintf(sfstderr, "AHA regex hard=%d stack=%p\n", env->hard, env->stack);
-    if (rex) listnode(rex, 1);
+    if (rex) regnexec_listnode(rex, 1);
     return 0;
 }
 
@@ -1700,7 +1700,7 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
         for (i = 0; i <= n; i++) env->match[i] = state.nomatch;
         if (flags & REG_ADVANCE) advance = 1;
     }
-    DEBUG_CODE(0x1000, list(env, env->rex));
+    DEBUG_CODE(0x1000, regnexec_list(env, env->rex));
     k = REG_NOMATCH;
     if ((e = env->rex)->type == REX_BM) {
         DEBUG_CODE(0x0080, sfprintf(sfstdout, "AHA#%04d REX_BM\n", __LINE__));
@@ -1746,7 +1746,7 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
                         else
                             index -= e->re.bm.back;
                         while (index <= x) {
-                            if ((i = parse(env, e->next, &env->done, buf + index)) != NONE) {
+                            if ((i = regnexec_parse(env, e->next, &env->done, buf + index)) != NONE) {
                                 if (env->stack) env->best[0].rm_so = index;
                                 n = env->nsub;
                                 goto hit;
@@ -1766,7 +1766,7 @@ int regnexec_20120528(const regex_t *p, const char *s, size_t len, size_t nmatch
     }
     j = env->once || (flags & REG_LEFT);
     DEBUG_CODE(0x0080, sfprintf(sfstdout, "AHA#%04d parse once=%d\n", __LINE__, j));
-    while ((i = parse(env, e, &env->done, (unsigned char *)s)) == NONE ||
+    while ((i = regnexec_parse(env, e, &env->done, (unsigned char *)s)) == NONE ||
            (advance && !env->best[0].rm_eo && !(advance = 0))) {
         if (j) goto done;
         i = MBSIZE(env, s);
