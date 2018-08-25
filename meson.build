@@ -186,22 +186,31 @@ endif
 # We need symbols in the program to be visible to `dladdr()` and related
 # functions. This is necessary to be able to resolve addresses in the program
 # to the appropriate function. Otherwise only symbols in dynamically loaded
-# libraries are visible.
+# libraries may be visible.
 if get_option('buildtype') == 'debug'
     feature_data.set('DEBUG_BUILD', 1)
     add_global_arguments('-fno-inline', language: 'c')
-    # This should be `if cc.has_link_argument()` but that isn't available
-    # until Meson 0.46 or newer and we can't count on that yet. And in
-    # practice this test works fine but can result in a meson warning.
     if system == 'cygwin'
         # The current (2018/07) gcc compiler on Cygwin generates PE+ executables
-        # and it requires the -W,--export-all-symbols instead of -W,-E.
-        if cc.has_argument('-Wl,--export-all-symbols')
-            add_global_link_arguments('-Wl,--export-all-symbols', language: 'c')
+        # and it requires the -W,--export-all-symbols instead of -Wl,--export-dynamic.
+        if meson.version().version_compare('>=0.46.0')
+            if cc.has_link_argument('-Wl,--export-all-symbols')
+                add_global_link_arguments('-Wl,--export-all-symbols', language: 'c')
+            endif
+        else
+            if cc.has_argument('-Wl,--export-all-symbols')
+                add_global_link_arguments('-Wl,--export-all-symbols', language: 'c')
+            endif
         endif
     else
-        if cc.has_argument('-Wl,-E')
-            add_global_link_arguments('-Wl,-E', language: 'c')
+        if meson.version().version_compare('>=0.46.0')
+            if cc.has_link_argument('-Wl,--export-dynamic')
+                add_global_link_arguments('-Wl,--export-dynamic', language: 'c')
+            endif
+        else
+            if cc.has_argument('-Wl,--export-dynamic')
+                add_global_link_arguments('-Wl,--export-dynamic', language: 'c')
+            endif
         endif
     endif
 endif
