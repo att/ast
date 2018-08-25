@@ -909,8 +909,12 @@ static_fn char *get_version(Namval_t *np, Namfun_t *fp) { return (nv_getv(np, fp
 //
 static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     UNUSED(np);
+
+    // We should not need to convert version number string every time this function is called
+    static Sflong_t version_number  = -1;
+    if (version_number != -1) return (Sfdouble_t)version_number;
+
     char *cp = strdup(SH_RELEASE);
-    Sflong_t t = 0;
     char *dash;
     char *dot;
     char *major_str, *minor_str, *patch_str;
@@ -932,7 +936,8 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
         // If there is no . in version string, it means version string is either empty, invalid
         // or it's using old versioning scheme.
         free(cp);
-        return 0;
+        version_number = 0;
+        return version_number;
     }
 
     *dot = 0;
@@ -952,10 +957,11 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     minor = atoi(minor_str);
     patch = atoi(patch_str);
 
-    t = major * 10000 + minor * 100 + patch;
+    // This will break if minor or patch number goes above 99
+    version_number = major * 10000 + minor * 100 + patch;
 
     free(cp);
-    return (Sfdouble_t)t;
+    return (Sfdouble_t)version_number;
 }
 
 static const Namdisc_t SH_VERSION_disc = {
