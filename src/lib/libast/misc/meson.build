@@ -1,5 +1,5 @@
 libast_files += [
-    'misc/conformance.c',
+    'misc/backtrace.c', 'misc/conformance.c',
     'misc/error.c', 'misc/errorf.c', 'misc/errormsg.c',
     'misc/errorx.c', 'misc/fgetcwd.c', 'misc/glob.c',
     'misc/optctx.c',

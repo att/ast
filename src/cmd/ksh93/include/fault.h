@@ -135,7 +135,6 @@ extern sh_sigfun_t sh_signal(int, sh_sigfun_t);
 extern void sh_fault(int, siginfo_t *, void *);
 extern void sh_setsiginfo(siginfo_t *);
 extern void set_trapinfo(Shell_t *shp, int sig, siginfo_t *info);
-extern void dump_backtrace(int max_frames, int skip_levels);
 #undef signal
 #define signal(a, b) ERROR("use sh_signal() not signal()")
 

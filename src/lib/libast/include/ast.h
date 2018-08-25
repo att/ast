@@ -224,6 +224,7 @@ extern int chresc(const char *, char **);
 extern int chrexp(const char *, char **, int *, int);
 extern char *conformance(const char *, size_t);
 extern ssize_t debug_printf(int, const char *, ...);
+extern void dump_backtrace(int max_frames, int skip_levels);
 extern char *fmtbase(intmax_t, int, int);
 #define fmtbasell(a, b, c) fmtbase(a, b, c) /* until 2014-01-01 */
 extern char *fmtbuf(size_t);
