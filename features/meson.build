@@ -178,17 +178,6 @@ if prog_result.returncode() == 0
     feature_data.set('_PROC_PROG', prog_output)
 endif
 
-align_feature_file = files('alignment.c')
-align_feature_result = cc.run(align_feature_file, name: 'align bound check',
-                              args: feature_test_args)
-if not align_feature_result.compiled()
-    error('Unable to compile the align_feature.c module to determine compiler alignment')
-endif
-foreach line : align_feature_result.stdout().strip().split('\n')
-    split = line.split()
-    feature_data.set(split[0], split[1])
-endforeach
-
 posix_spawn_feature_file = files('posix_spawn.c')
 posix_spawn_feature_result = cc.run(posix_spawn_feature_file,
                                     name: 'posix_spawn exists and it works and its worth using',

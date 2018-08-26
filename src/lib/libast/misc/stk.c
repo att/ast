@@ -58,7 +58,11 @@
  *	data
  */
 
-#define STK_ALIGN ALIGN_BOUND
+// TODO: Figure out if hardcoding this value is correct. It used to be bound to a config time
+// feature test that defined `ALIGN_BOUND`. But on 32-bit Linux platforms it calculated the wrong
+// value (4 versus 16). That results in an adjacent dynamically allocated buffer header being
+// corrupted. See issue #805.
+#define STK_ALIGN 16
 #define STK_FSIZE (1024 * sizeof(char *))
 #define STK_HDRSIZE (sizeof(Sfio_t) + sizeof(Sfdisc_t))
 
@@ -448,9 +452,9 @@ static_fn char *stkgrow(Sfio_t *stream, size_t size) {
     char *cp, *dp = 0;
     size_t m = stktell(stream);
     size_t endoff;
-    char *end = 0;
+    char *end = NULL;
     int nn = 0, add = 1;
-    n += (m + sizeof(struct frame) + 1);
+    n += (m + sizeof(struct frame) + 1);  // what is the purpose of the `+ 1`?
     if (sp->stkflags & STK_SMALL)
 #ifndef USE_REALLOC
         n = roundof(n, STK_FSIZE / 16);

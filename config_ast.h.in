@@ -38,9 +38,6 @@
 #mesondefine _API_ast
 #mesondefine _PROC_PROG
 #mesondefine _DARWIN_C_SOURCE
-#mesondefine ALIGN_BOUND
-#mesondefine ALIGN_BOUND1
-#mesondefine ALIGN_BOUND2
 #mesondefine LIBICONV_PLUG
 
 #mesondefine _ast_sizeof_int
