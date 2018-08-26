@@ -1,0 +1,4 @@
+#!/bin/sh
+# Run shellcheck on scripts under bin and scripts directories
+# shellcheck disable=SC2046,SC2038
+shellcheck $(find scripts/ bin/ | xargs file | grep sh | cut -d':' -f1)
