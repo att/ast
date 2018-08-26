@@ -2,7 +2,8 @@
 #
 # Generate entries for the 'static struct _m_ map[]' table in src/lib/libast/features/signal.c.
 #
-for sig in `/bin/kill -l | tr '[a-z]' '[A-Z]'`
+# shellcheck disable=SC2021
+for sig in $(/bin/kill -l | tr '[a-z]' '[A-Z]')
 do
     case $sig in
     *[!A-Z0-9_]*|*MIN|*MAX)

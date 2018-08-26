@@ -10,10 +10,10 @@ shift
 
 for name in python python3 python2 python3.6 python3.5 python2.7
 do
-    path=`which $name`
+    path=$(which $name)
     if test -n "$path"
     then
-        exec "$path" $MESON_SOURCE_ROOT/scripts/$script "$@"
+        exec "$path" "$MESON_SOURCE_ROOT/scripts/$script" "$@"
     fi
 done
 

@@ -1,4 +1,4 @@
-#
+#!/bin/sh
 # This is meant to be sourced by the script that actually manages the build
 # and running the unit tests.
 #
@@ -13,5 +13,5 @@ unset MANPATH
 unset MY_RUBY_HOME
 for v in $(env | sed -n -e '/^TRAVIS/s/=.*//p' -e '/^NVM/s/=.*//p' -e '/^rvm/s/=.*//p')
 do
-    unset $v
+    unset "$v"
 done

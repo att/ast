@@ -19,10 +19,11 @@ then
 fi
 
 echo ==== Building the code
-echo CC=$CC
+echo CC="$CC"
 ninja || exit
 
 echo ==== Running unit tests
+# shellcheck disable=SC2039
 ulimit -n 1024
 CORE_COUNT=$(sysctl -n hw.ncpu)
 export MESON_TESTTHREADS=$(( 4 * ${CORE_COUNT:-1} ))
