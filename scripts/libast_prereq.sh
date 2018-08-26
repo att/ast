@@ -18,14 +18,16 @@ INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/include"
 INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/lib/libast/features"
 INC_DIRS="$INC_DIRS -I$MESON_SOURCE_ROOT/src/cmd/std"
 
-cd $MESON_BUILD_ROOT
+cd "$MESON_BUILD_ROOT"
 
 # Generate the conftab.[ch] source files.
+# shellcheck disable=SC2086
 "$comp_dir/conf.sh" cc -std=gnu99 -D_BLD_DLL -D_BLD_ast $INC_DIRS
 
 # Generate header files whose content depends on the current platform.
-$MESON_SOURCE_ROOT/scripts/siglist.sh > features/siglist.h
+"$MESON_SOURCE_ROOT/scripts/siglist.sh" > features/siglist.h
 for name in sfinit signal; do
-    cc -D_BLD_DLL -D_BLD_ast $INC_DIRS -std=gnu99 -o $name $MESON_SOURCE_ROOT/etc/$name.c
+    # shellcheck disable=SC2086
+    cc -D_BLD_DLL -D_BLD_ast $INC_DIRS -std=gnu99 -o "$name" "$MESON_SOURCE_ROOT/etc/$name.c"
     ./$name > features/$name.h
 done

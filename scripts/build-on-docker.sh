@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# shellcheck disable=SC1091
 source /source/scripts/travis_common.sh
 
 # See the "compiler: gcc" and INSTALL_REQUIREMENTS lines in the .travis.yml

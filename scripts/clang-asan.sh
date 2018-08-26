@@ -7,7 +7,7 @@ rpath_arg=no
 
 for arg in $( clang -fsanitize=address -v -o /tmp/clang$$.out etc/hdrs.c 2>&1 | tail -1 )
 do
-    if [ $rpath_arg == yes ]
+    if [ $rpath_arg = yes ]
     then
         rpath_arg=no
         echo "$arg"

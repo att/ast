@@ -11,8 +11,8 @@ os_name=$(uname -s | tr '[:upper:]' '[:lower:]')
 hw_name=$(uname -m | tr '[:upper:]' '[:lower:]')
 # Cygwin on MS Windows is odd in that `uname -s` might output values like
 # `CYGWIN_NT-10.0` where we only want the prefix before the first underscore.
-if test ${os_name%_*} = cygwin
+if test "${os_name%_*}" = cygwin
 then
     os_name=cygwin
 fi
-echo $os_name.$hw_name
+echo "$os_name.$hw_name"

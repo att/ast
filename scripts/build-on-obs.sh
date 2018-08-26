@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -ex
 
 if [[ -z $OBS_REPO ]]; then
     echo "OBS_REPO should be set to path to obs repository"
@@ -23,7 +23,7 @@ fi
 
 # Remove older files first
 pushd "${OBS_REPO}"
-osc rm -f *
+osc rm -f -- *
 popd
 
 # This is the ksh version number seen inside scripts
@@ -32,15 +32,16 @@ popd
 VCS_VERSION=$(git describe --always --dirty --tags)
 
 # Extract development version number i.e. 2017.0.0
-DEVEL_VERSION_NUM=$(echo $VCS_VERSION | cut -d'-' -f1)
+DEVEL_VERSION_NUM=$(echo "$VCS_VERSION" | cut -d'-' -f1)
 
 # 1535
-COMMIT_NUM=$(echo $VCS_VERSION | cut -d'-' -f3)
+COMMIT_NUM=$(echo "$VCS_VERSION" | cut -d'-' -f3)
 
 # g7c33a1cd
-SHORT_COMMIT=$(echo $VCS_VERSION | cut -d'-' -f4)
+SHORT_COMMIT=$(echo "$VCS_VERSION" | cut -d'-' -f4)
 
 COMMIT=$(git rev-parse HEAD)
+# shellcheck disable=SC1117
 CHANGELOG_DATE=$(date +"%a\, %d %b %Y %R:%S %z")
 
 # This is version number of rpm and debian packages
@@ -76,9 +77,9 @@ FILESIZE=$(stat --printf "%s"  "${OBS_REPO}/ksh_${VERSION}.orig.tar.gz")
 sed "s,#VERSION#,${VERSION},;
      s,#MD5SUM#,${MD5SUM},;
      s,#FILESIZE#,${FILESIZE}," \
-        debian/ksh.dsc > ${OBS_REPO}/ksh_${VERSION}.dsc
+        debian/ksh.dsc > "${OBS_REPO}/ksh_${VERSION}.dsc"
 
-pushd ${OBS_REPO}
+pushd "${OBS_REPO}"
 osc addremove
 osc commit -m "Build from ${COMMIT}"
 popd
