@@ -2,6 +2,7 @@
 
 #include <dlfcn.h>
 #include <stdio.h>
+#include <string.h>
 
 #if _hdr_execinfo
 #include <execinfo.h>
