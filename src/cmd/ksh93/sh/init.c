@@ -911,7 +911,7 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     UNUSED(np);
 
     // We should not need to convert version number string every time this function is called
-    static Sflong_t version_number  = -1;
+    static Sflong_t version_number = -1;
     if (version_number != -1) return (Sfdouble_t)version_number;
 
     char *cp = strdup(SH_RELEASE);
@@ -957,8 +957,8 @@ static Sfdouble_t nget_version(Namval_t *np, Namfun_t *fp) {
     minor = atoi(minor_str);
     patch = atoi(patch_str);
 
-    assert (minor < 100);
-    assert (patch < 100);
+    assert(minor < 100);
+    assert(patch < 100);
     // This will break if minor or patch number goes above 99
     version_number = major * 10000 + minor * 100 + patch;
 
@@ -2057,7 +2057,7 @@ static_fn void env_init(Shell_t *shp) {
     return;
 }
 
-// Function versions of these.
+    // Function versions of these.
 
 #define DISABLE  // proto workaround
 
