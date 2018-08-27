@@ -157,7 +157,7 @@ int _fcmbget(short *len) {
             c = fcget();
             break;
         }
-        default: { c = mbchar(_Fcin.fcptr); }
+        default: { c = mb1char(_Fcin.fcptr); }
     }
     return c;
 }

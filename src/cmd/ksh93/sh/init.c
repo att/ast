@@ -2095,7 +2095,7 @@ static_fn void put_trans(Namval_t *np, const void *vp, int flags, Namfun_t *fp) 
             mp->trans = wctrans(mp->name);
         }
         if (!mp->trans || (flags & NV_INTEGER)) goto skip;
-        while ((c = mbchar(val))) {
+        while ((c = mb1char(val))) {
             c = towctrans(c, mp->trans);
             stakseek(off + c);
             stakseek(off);

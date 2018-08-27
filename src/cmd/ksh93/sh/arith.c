@@ -433,7 +433,7 @@ static_fn Namval_t *scope(Namval_t *np, struct lval *lvalue, int assign) {
                 while (*cp == '.') {
                     hasdot = 1;
                     cp++;
-                    while (c = mbchar(cp), isaname(c)) {
+                    while (c = mb1char(cp), isaname(c)) {
                         ;  // empty body
                     }
                 }
@@ -574,12 +574,12 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
             char *xp = str;
             lvalue->value = (char *)0;
             if (c == '.') str++;
-            c = mbchar(str);
+            c = mb1char(str);
             if (isaletter(c)) {
                 Namval_t *np = 0;
                 int dot = 0;
                 while (1) {
-                    while (xp = str, c = mbchar(str), isaname(c)) {
+                    while (xp = str, c = mb1char(str), isaname(c)) {
                         ;  // empty body
                     }
                     str = xp;
@@ -646,7 +646,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                         } else {
                             dot = NV_NOADD | NV_NOFAIL;
                             str++;
-                            while (xp = str, c = mbchar(str), isaname(c)) {
+                            while (xp = str, c = mb1char(str), isaname(c)) {
                                 ;  // empty body
                             }
                             str = xp;
@@ -714,7 +714,7 @@ static_fn Sfdouble_t arith(const char **ptr, struct lval *lvalue, int type, Sfdo
                     do {
                         while (c == '.') {
                             str++;
-                            while (xp = str, c = mbchar(str), isaname(c)) {
+                            while (xp = str, c = mb1char(str), isaname(c)) {
                                 ;  // empty body
                             }
                             c = *(str = xp);

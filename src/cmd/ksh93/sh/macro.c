@@ -709,7 +709,7 @@ static_fn void copyto(Mac_t *mp, int endch, int newquote) {
                         paren++;
                         if ((cp - first) > 1 && cp[-2] == '~') {
                             char *p = cp;
-                            while ((c = mbchar(p)) && c != RPAREN) {
+                            while ((c = mb1char(p)) && c != RPAREN) {
                                 if (c == 'A' || c == 'E' || c == 'K' || c == 'P' || c == 'X') {
                                     ere = 1;
                                     break;
@@ -1595,7 +1595,7 @@ skip:
             if (vsize < type) {
                 v = 0;
             } else if (mbwide()) {
-                for (c = type; c; c--) mbchar(v);
+                for (c = type; c; c--) mb1char(v);
                 c = ':';
             } else {
                 v += type;
@@ -2339,9 +2339,9 @@ static_fn int charlen(const char *string, int len) {
         const char *str = string, *strmax = string + len;
         int n = 0;
         if (len > 0) {
-            while (str < strmax && mbchar(str)) n++;
+            while (str < strmax && mb1char(str)) n++;
         } else {
-            while (mbchar(str)) n++;
+            while (mb1char(str)) n++;
         }
         return n;
     } else {

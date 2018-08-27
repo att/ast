@@ -250,7 +250,7 @@ static_fn char *sh_fmtcsv(const char *string) {
 
     if (!cp) return NULL;
     offset = staktell();
-    while ((c = mbchar(cp)), isaname(c)) {
+    while ((c = mb1char(cp)), isaname(c)) {
         ;  // empty loop
     }
     if (c == 0) return ((char *)string);
@@ -258,7 +258,7 @@ static_fn char *sh_fmtcsv(const char *string) {
     stakwrite(string, cp - string);
     if (c == '"') stakputc('"');
     string = cp;
-    while ((c = mbchar(cp))) {
+    while ((c = mb1char(cp))) {
         if (c == '"') {
             stakwrite(string, cp - string);
             string = cp;
@@ -283,12 +283,12 @@ char *sh_fmtstr(const char *string, int quote) {
 
     if (!cp) return NULL;
     offset = staktell();
-    state = ((c = mbchar(cp)) == 0);
+    state = ((c = mb1char(cp)) == 0);
     lc_unicodeliterals = quote == 'u' ? 1 : 0;
     if (quote == '"') goto skip;
     quote = '\'';
     if (isaletter(c) && (!lc_unicodeliterals || c <= 0x7f)) {
-        while ((c = mbchar(cp)), isaname(c) && (!lc_unicodeliterals || c <= 0x7f)) {
+        while ((c = mb1char(cp)), isaname(c) && (!lc_unicodeliterals || c <= 0x7f)) {
             ;  // empty loop
         }
         if (c == 0) return ((char *)string);
@@ -298,14 +298,14 @@ char *sh_fmtstr(const char *string, int quote) {
             c = cp - string;
             stakwrite(string, c);
             string = cp;
-            c = mbchar(cp);
+            c = mb1char(cp);
         }
     }
     if (c == 0 || c == '#' || c == '~' || (type == '[' && (c == '@' || c == '!'))) {
     skip:
         state = 1;
     }
-    for (; c; c = mbchar(cp)) {
+    for (; c; c = mb1char(cp)) {
         if (c == quote || c >= 128 || c < 0 || !iswprint(c)) {
             state = 2;
         } else if (c == ']' || c == '=' ||
@@ -327,7 +327,7 @@ char *sh_fmtstr(const char *string, int quote) {
             stakwrite("$'", 2);
         }
         cp = string;
-        while (op = cp, c = mbchar(cp)) {
+        while (op = cp, c = mb1char(cp)) {
             state = 1;
             switch (c) {
                 // Escape character
@@ -462,14 +462,14 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
     }
     offset = staktell();
     single = 3;
-    c = mbchar(string);
+    c = mb1char(string);
     a = isaletter(c) ? '=' : 0;
     vp = cp + 1;
     do {
         q = 0;
         n = fold;
         bp = cp;
-        while ((!n || n-- > 0) && (c = mbchar(cp))) {
+        while ((!n || n-- > 0) && (c = mb1char(cp))) {
             if (a && !isaname(c)) a = 0;
             if (c >= 0x200) continue;
             if (c == '\'' || !iswprint(c)) {
@@ -497,7 +497,7 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             cp = bp;
             n = fold - 3;
             q = 1;
-            while ((c = mbchar(cp))) {
+            while ((c = mb1char(cp))) {
                 switch (c) {
                     case ('a' == 97 ? '\033' : 39): {
                             c = 'E';
@@ -574,7 +574,7 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             stakputc('\'');
             cp = bp;
             n = fold ? (fold - 2) : 0;
-            while ((c = mbchar(cp))) {
+            while ((c = mb1char(cp))) {
                 if (c == '\n') {
                     n = fold - 1;
                 } else if (n && --n <= 0) {
@@ -602,7 +602,7 @@ char *sh_fmtqf(const char *string, int flags, int fold) {
             stakputc('\'');
         } else if ((n = fold)) {
             cp = bp;
-            while ((c = mbchar(cp))) {
+            while ((c = mb1char(cp))) {
                 if (--n <= 0) {
                     n = fold;
                     stakwrite(bp, --cp - bp);
@@ -632,7 +632,7 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
     // by one. Which, at least in the context of this function was pointless and probably wrong
     // regardless.
     (void)mbtowc(&d, dp, size);
-    while ((c = mbchar(cp))) {
+    while ((c = mb1char(cp))) {
         if (c == d) return cp - string;
     }
     if (d == 0) return cp - string;
@@ -660,8 +660,8 @@ char *sh_checkid(char *str, char *last) {
     unsigned char *v = cp;
     int c;
 
-    if (c = mbchar(cp), isaletter(c)) {
-        while (c = mbchar(cp), isaname(c)) {
+    if (c = mb1char(cp), isaletter(c)) {
+        while (c = mb1char(cp), isaname(c)) {
             ;  // empty loop
         }
     }

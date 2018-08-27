@@ -324,15 +324,17 @@ extern char **environ;
 #define mbtchar(w, s, n, q) (mbwide() ? mbchar((w), (s), (n), (q)) : (*(unsigned char *)(s++)))
 #define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))
 
-#else
-
-#define mbchar(p)                                                                            \
-    (mbwide() ? ((ast.tmp_int = (*ast.mb_towc)(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0 \
-                     ? ((p += ast.tmp_int), ast.tmp_wchar)                                   \
-                     : (p += 1, ast.tmp_int))                                                \
-              : (*(unsigned char *)(p++)))
-
 #endif
+
+// This is the pre 2013-09-13 implementation of the `mbchar()` macro. We retain it, under a new
+// name, solely to facilitate removing the `ASTAPI()` macro. This allows us to avoid changing every
+// place in the ksh code that uses this legacy macro in a single change. With this in place we can
+// slowly convert the legacy API uses to the new one above.
+#define mb1char(p)                                                                   \
+    (mbwide() ? ((ast.tmp_int = mbtowc(&ast.tmp_wchar, (char *)(p), MB_CUR_MAX)) > 0 \
+                     ? ((p += ast.tmp_int), ast.tmp_wchar)                           \
+                     : (p += 1, ast.tmp_int))                                        \
+              : (*(unsigned char *)(p++)))
 
 /* generic plugin version support */
 

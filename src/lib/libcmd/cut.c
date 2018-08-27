@@ -544,7 +544,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 ldelim.str = opt_info.arg;
                 if (mbwide()) {
                     s = opt_info.arg;
-                    ldelim.chr = mbchar(s);
+                    ldelim.chr = mb1char(s);
                     if ((n = s - opt_info.arg) > 1) {
                         ldelim.len = n;
                         continue;
@@ -557,7 +557,7 @@ int b_cut(int argc, char **argv, Shbltin_t *context) {
                 wdelim.str = opt_info.arg;
                 if (mbwide()) {
                     s = opt_info.arg;
-                    wdelim.chr = mbchar(s);
+                    wdelim.chr = mb1char(s);
                     n = s - opt_info.arg;
                     if (n > 1) {
                         wdelim.len = n;
