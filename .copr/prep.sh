@@ -15,13 +15,13 @@ git fetch --tags
 VCS_VERSION=$(git describe --always --dirty --tags)
 
 # Extract development version number i.e. 2017.0.0
-DEVEL_VERSION_NUM=$(echo $VCS_VERSION | cut -d'-' -f1)
+DEVEL_VERSION_NUM=$(echo "$VCS_VERSION" | cut -d'-' -f1)
 
 # 1535
-COMMIT_NUM=$(echo $VCS_VERSION | cut -d'-' -f3)
+COMMIT_NUM=$(echo "$VCS_VERSION" | cut -d'-' -f3)
 
 # g7c33a1cd
-SHORT_COMMIT=$(echo $VCS_VERSION | cut -d'-' -f4)
+SHORT_COMMIT=$(echo "$VCS_VERSION" | cut -d'-' -f4)
 
 COMMIT=$(git rev-parse HEAD)
 
