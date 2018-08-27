@@ -225,7 +225,8 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 if (!pathcanon(cp, PATH_MAX, PATH_ABSOLUTE | PATH_DOTDOT)) continue;
             }
         }
-        rval = newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
+
+        newdirfd = sh_diropenat(shp, dirfd, path_relative(shp, stakptr(PATH_OFFSET)));
         if (newdirfd >= 0) {
             // chdir for directories on HSM/tapeworms may take minutes.
             rval = fchdir(newdirfd);
@@ -235,15 +236,20 @@ int b_cd(int argc, char *argv[], Shbltin_t *context) {
                 goto success;
             }
             sh_close(newdirfd);
-        }
-#if !O_SEARCH
-        else if ((rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)))) >= 0 && shp->pwdfd >= 0) {
-            sh_close(shp->pwdfd);
-            shp->pwdfd = AT_FDCWD;
-        }
+        } else {
+#if O_SEARCH
+            rval = newdirfd;
+#else
+            rval = chdir(path_relative(shp, stakptr(PATH_OFFSET)));
+            if (rval >= 0 && shp->pwdfd >= 0) {
+                sh_close(shp->pwdfd);
+                shp->pwdfd = AT_FDCWD;
+            }
 #endif
+        }
         if (saverrno == 0) saverrno = errno;
     } while (cdpath);
+
     if (rval < 0 && *dir == '/' && *(path_relative(shp, stakptr(PATH_OFFSET))) != '/') {
         rval = newdirfd = sh_diropenat(shp, shp->pwdfd, dir);
         if (newdirfd >= 0) {
