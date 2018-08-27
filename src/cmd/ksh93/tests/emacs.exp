@@ -248,7 +248,8 @@ expect_prompt
 log_test_entry
 send [ctrl esc]
 send "<"
-expect -re "^set -o emacs$" {
+redraw_prompt
+expect -ex ": set -o emacs" {
     puts "alt-< fetches least recent history line"
 }
 

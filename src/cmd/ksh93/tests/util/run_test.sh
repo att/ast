@@ -101,6 +101,7 @@ export HOME=$TEST_DIR/home
 export HISTFILE=$TEST_DIR/sh_history
 
 function run_interactive {
+    final_iteration=$1
     # This is a no-op on the first invocation. It is needed so retries have a clean slate.
     if [[ -f $HOME/.kshrc ]]
     then
@@ -151,6 +152,10 @@ function run_interactive {
         # it may contain useful clues about why the test failed.
         cd /tmp
         rm -rf $TEST_DIR
+    elif [[ $final_iteration -eq 0 ]]
+    then
+        log_warning "The last 20 lines of expect's interactive.tmp.log:"
+        tail -20 interactive.tmp.log >&2
     fi
 
     return $exit_status
@@ -195,16 +200,18 @@ then
     # Interactive tests are flakey on CI test environments like Travis. So make several attempts
     # before reporting giving up and reporting failure.
     status=0
-    for i in 1 2 3 4
+    for i in 1 2 3
     do
-        run_interactive
+        run_interactive $(( i == 3 ))
         status=$?
         [[ $status -eq 0 ]] && break
         log_info "Iteration $i of interactive test '$test_name' failed"
     done
-    if [[ $status -ne 0 ]]
+    if [[ $status -eq 0 ]]
     then
-        log_warning "The expect interactive.tmp.log contains the following:"
+        log_info "Iteration $i of interactive test '$test_name' passed"
+    else
+        log_warning "The entire expect's interactive.tmp.log:"
         cat interactive.tmp.log >&2
     fi
     exit $status
