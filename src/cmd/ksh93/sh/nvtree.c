@@ -553,7 +553,8 @@ struct Walk {
 };
 
 void nv_outnode(Namval_t *np, Sfio_t *out, int indent, int special) {
-    char *fmtq, *ep, *xp;
+    char *fmtq = "";
+    char *ep, *xp;
     Namval_t *mp;
     Namarr_t *ap = nv_arrayptr(np);
     int scan, tabs = 0, c, more, associative = 0;

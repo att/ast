@@ -631,7 +631,7 @@ int sh_strchr(const char *string, const char *dp, size_t size) {
     // handle a conversion error. In the old `mbnchar()` using code it would decrement the pointer
     // by one. Which, at least in the context of this function was pointless and probably wrong
     // regardless.
-    mbtowc(&d, dp, size);
+    (void)mbtowc(&d, dp, size);
     while ((c = mbchar(cp))) {
         if (c == d) return cp - string;
     }
