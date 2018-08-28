@@ -44,20 +44,21 @@ static void notify(Sfio_t *f, int type, void *data) {
             return;
         default:
             terror("Unexpected nofity-type: %d", type);
+            break;  // this is actually unreachable but here to silence lint warning
     }
 }
 
 tmain() {
     UNUSED(argc);
     UNUSED(argv);
-    Sfio_t *f;
-    int fd;
 
     sfnotify(notify);
 
-    if (!(f = sfopen(NULL, tstfile("sf", 0), "w")) && Type != SF_NEW)
-        terror("Notify did not announce SF_NEW event");
-    fd = sffileno(f);
+    Sfio_t *f = sfopen(NULL, tstfile("sf", 0), "w");
+    if (!f) terror("sfopen() failed");
+    if (Type != SF_NEW) terror("Notify did not announce SF_NEW event");
+
+    int fd = sffileno(f);
     close(fd + 5);
     if (sfsetfd(f, fd + 5) != fd + 5 || Type != SF_SETFD)
         terror("Notify did not announce SF_SETFD event");

@@ -72,12 +72,12 @@ tmain() {
     if (!(s = sfgetr(f, '\n', 1))) terror("Can't get a record");
 
     n = 80;
-    i = sfmaxr(n, 1); /* set maximum record size */
+    (void)sfmaxr(n, 1); /* set maximum record size */
     if ((i = sfmaxr(0, 0)) != n) terror("maxr is %d, expected %d", i, n);
     if ((s = sfgetr(f, '\n', 1)) != 0) terror("Shouldn't have gotten a record");
 
     n = 0;
-    i = sfmaxr(n, 1); /* no record size limit */
+    (void)sfmaxr(n, 1); /* no record size limit */
     if ((i = sfmaxr(0, 0)) != n) terror("maxr is %d, expected %d", i, n);
     if (!(s = sfgetr(f, '\n', 1))) terror("Can't get a record");
     if (!(s = sfgetr(f, '\n', 1))) terror("Can't get a record");

@@ -91,8 +91,6 @@ tmain() {
     sfclose(f2);
     sfclose(f3);
 
-    f1 = sfstdout;
-    f2 = sfstderr;
     sfdisc(sfstdout, &Serialdc);
     sfdisc(sfstderr, &Serialdc);
     sfset(sfstdout, SF_LINE, 0);

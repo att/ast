@@ -91,7 +91,7 @@ tmain() {
 
     sfputr(f, "1234", '\n');  /* write a string into it */
     sfseek(f, (Sfoff_t)0, 0); /* get back so we can read the string */
-    s = sfreserve(f, SF_UNBOUND, 0);
+    (void)sfreserve(f, SF_UNBOUND, 0);
     if (sfvalue(f) != 5) terror("Get n=%d, expect n=5", sfvalue(f));
 
     sfseek(f, (Sfoff_t)10, 1); /* seek to extend buffer */

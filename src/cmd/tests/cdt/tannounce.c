@@ -64,7 +64,7 @@ tmain() {
         i = (int)(long)dtfirst(dt);
         if (Event != DT_FIRST) terror("Did not get dtfirst event %s", Meth[k]->name);
 
-        i = (int)(long)dtnext(dt, (long)i);
+        (void)dtnext(dt, (long)i);
         if (Event != DT_NEXT) terror("Did not get dtnext event %s", Meth[k]->name);
 
         dtsearch(dt, 2);

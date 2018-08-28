@@ -48,7 +48,7 @@
 #define TIMEOUT 0 /* timeout in minutes */
 #endif
 
-extern void tsterror(char *, ...);
+extern __attribute__((noreturn)) void tsterror(char *, ...);
 extern void tstinfo(char *, ...);
 extern void tstwarn(char *, ...);
 extern void tstsuccess(char *, ...);
