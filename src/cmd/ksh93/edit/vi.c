@@ -65,12 +65,10 @@
 #if !_lib_iswprint && !defined(iswprint)
 #define iswprint(c) ((c & ~0177) || isprint(c))
 #endif  // !_lib_iswprint && !defined(iswprint)
-static_fn int _isalph(int);
-static_fn int _isblank(int);
-#undef isblank
-#define isblank(v) _isblank(virtual[v])
-#define isalph(v) _isalph(virtual[v])
-#define ismetach(v) _ismetach(virtual[v])
+static_fn int _vi_isalph(int);
+static_fn int _vi_isblank(int);
+#define vi_isblank(v) _vi_isblank(virtual[v])
+#define vi_isalph(v) _vi_isalph(virtual[v])
 
 #define fold(c) ((c) & ~040)  // lower and uppercase equivalent
 
@@ -441,21 +439,21 @@ static_fn void append(Vi_t *vp, int c, int mode) {
 static_fn void backword(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords-- && tcur_virt > first_virt) {
-        if (!isblank(tcur_virt) && isblank(tcur_virt - 1) && tcur_virt > first_virt) {
+        if (tcur_virt > first_virt && !vi_isblank(tcur_virt) && vi_isblank(tcur_virt - 1)) {
             --tcur_virt;
         } else if (cmd != 'B') {
-            int last = isalph(tcur_virt - 1);
-            int cur = isalph(tcur_virt);
+            int last = vi_isalph(tcur_virt - 1);
+            int cur = vi_isalph(tcur_virt);
             if ((!cur && last) || (cur && !last)) --tcur_virt;
         }
-        while (isblank(tcur_virt) && tcur_virt >= first_virt) --tcur_virt;
+        while (tcur_virt >= first_virt && vi_isblank(tcur_virt)) --tcur_virt;
         if (cmd == 'B') {
-            while (!isblank(tcur_virt) && tcur_virt >= first_virt) --tcur_virt;
+            while (tcur_virt >= first_virt && !vi_isblank(tcur_virt)) --tcur_virt;
         } else {
-            if (isalph(tcur_virt)) {
-                while (isalph(tcur_virt) && tcur_virt >= first_virt) --tcur_virt;
+            if (vi_isalph(tcur_virt)) {
+                while (vi_isalph(tcur_virt) && tcur_virt >= first_virt) --tcur_virt;
             } else {
-                while (!isalph(tcur_virt) && !isblank(tcur_virt) && tcur_virt >= first_virt) {
+                while (tcur_virt >= first_virt && !vi_isalph(tcur_virt) && !vi_isblank(tcur_virt)) {
                     --tcur_virt;
                 }
             }
@@ -875,7 +873,7 @@ static_fn int delmotion(Vi_t *vp, int motion, int mode) {
     if (mode == 'c' && end > begin && strchr("wW", motion)) {
         // Called by change operation, user really expects the effect of the eE commands, so back up
         // to end of word.
-        while (end > begin && isblank(end - 1)) --end;
+        while (end > begin && vi_isblank(end - 1)) --end;
         if (end == begin) ++end;
     }
 
@@ -898,15 +896,15 @@ static_fn int delmotion(Vi_t *vp, int motion, int mode) {
 static_fn void endword(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords--) {
-        if (!isblank(tcur_virt) && tcur_virt <= last_virt) ++tcur_virt;
-        while (isblank(tcur_virt) && tcur_virt <= last_virt) ++tcur_virt;
+        if (tcur_virt <= last_virt && !vi_isblank(tcur_virt)) ++tcur_virt;
+        while (tcur_virt <= last_virt && vi_isblank(tcur_virt)) ++tcur_virt;
         if (cmd == 'E') {
-            while (!isblank(tcur_virt) && tcur_virt <= last_virt) ++tcur_virt;
+            while (tcur_virt <= last_virt && !vi_isblank(tcur_virt)) ++tcur_virt;
         } else {
-            if (isalph(tcur_virt)) {
-                while (isalph(tcur_virt) && tcur_virt <= last_virt) ++tcur_virt;
+            if (vi_isalph(tcur_virt)) {
+                while (tcur_virt <= last_virt && vi_isalph(tcur_virt)) ++tcur_virt;
             } else {
-                while (!isalph(tcur_virt) && !isblank(tcur_virt) && tcur_virt <= last_virt) {
+                while (tcur_virt <= last_virt && !vi_isalph(tcur_virt) && !vi_isblank(tcur_virt)) {
                     ++tcur_virt;
                 }
             }
@@ -924,17 +922,17 @@ static_fn void forward(Vi_t *vp, int nwords, int cmd) {
     int tcur_virt = cur_virt;
     while (nwords--) {
         if (cmd == 'W') {
-            while (!isblank(tcur_virt) && tcur_virt < last_virt) ++tcur_virt;
+            while (tcur_virt < last_virt && !vi_isblank(tcur_virt)) ++tcur_virt;
         } else {
-            if (isalph(tcur_virt)) {
-                while (isalph(tcur_virt) && tcur_virt < last_virt) ++tcur_virt;
+            if (vi_isalph(tcur_virt)) {
+                while (tcur_virt < last_virt && vi_isalph(tcur_virt)) ++tcur_virt;
             } else {
-                while (!isalph(tcur_virt) && !isblank(tcur_virt) && tcur_virt < last_virt) {
+                while (tcur_virt < last_virt && !vi_isalph(tcur_virt) && !vi_isblank(tcur_virt)) {
                     ++tcur_virt;
                 }
             }
         }
-        while (isblank(tcur_virt) && tcur_virt < last_virt) ++tcur_virt;
+        while (tcur_virt < last_virt && vi_isblank(tcur_virt)) ++tcur_virt;
     }
     cur_virt = tcur_virt;
     return;
@@ -1079,8 +1077,8 @@ static_fn void vigetline(Vi_t *vp, int mode) {
                 break;
             }
             case UWERASE: {  // delete back word
-                if (cur_virt > first_virt && !isblank(cur_virt) && !ispunct(virtual[cur_virt]) &&
-                    isblank(cur_virt - 1)) {
+                if (cur_virt > first_virt && !vi_isblank(cur_virt) && !ispunct(virtual[cur_virt]) &&
+                    vi_isblank(cur_virt - 1)) {
                     cdelete(vp, 1, BAD);
                 } else {
                     tmp = cur_virt;
@@ -1178,7 +1176,7 @@ static_fn int mvcursor(Vi_t *vp, int motion) {
         }
         case '^': {  // first nonblank character
             tcur_virt = first_virt;
-            while (isblank(tcur_virt) && tcur_virt < last_virt) ++tcur_virt;
+            while (tcur_virt < last_virt && vi_isblank(tcur_virt)) ++tcur_virt;
             break;
         }
         case '|': {
@@ -2077,7 +2075,7 @@ addin:
     return GOOD;
 }
 
-static_fn int _isalph(int v) {
+static_fn int _vi_isalph(int v) {
 #if _lib_iswalnum
     return iswalnum(v) || v == '_';
 #else
@@ -2085,7 +2083,7 @@ static_fn int _isalph(int v) {
 #endif
 }
 
-static_fn int _isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
+static_fn int _vi_isblank(int v) { return (v & ~STRIP) == 0 && isspace(v); }
 
 //
 // Get a character, after ^V processing.
