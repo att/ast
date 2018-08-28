@@ -44,6 +44,7 @@
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "builtins.h"
 #include "cdt.h"
 #include "error.h"
@@ -864,8 +865,14 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     }
     shp->st.staklist = (struct slnod *)slp;
     last = fctell();
-    fp->functline = (last - first);
-    fp->functtre = t;
+    // It should be impossible for `fp` to be NULL since a longjmp() should not occur before it has
+    // been assigned a non-NULL value in the `if (jmpval == 0) {...}` block above.
+    if (!fp) {
+        abort();
+    } else {
+        fp->functline = last - first;
+        fp->functtre = t;
+    }
     shp->mktype = in_mktype;
     if (lexp->sh->funlog) {
         if (fcfill() > 0) fcseek(-1);
@@ -1333,7 +1340,8 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     int procsub = 0, associative = 0;
 
     Namval_t *np = 0;
-    if ((argp = lexp->arg) && (argp->argflag & ARG_ASSIGN) && argp->argval[0] == '[') {
+    argp = lexp->arg;
+    if (argp && (argp->argflag & ARG_ASSIGN) && argp->argval[0] == '[') {
         flag |= SH_ARRAY;
         associative = 1;
     }
@@ -1351,6 +1359,7 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
     while (lexp->token == 0) {
         was_assign = 0;
         argp = lexp->arg;
+        assert(argp != NULL);
         if (*argp->argval == LBRACE && (flag & SH_FUNDEF) && argp->argval[1] == 0) {
             lexp->token = LBRACE;
             break;
@@ -1831,7 +1840,8 @@ static_fn Shnode_t *test_primary(Lex_t *lexp) {
             break;
         }
         case '!': {
-            if (!(t = test_primary(lexp))) sh_syntax(lexp);
+            t = test_primary(lexp);
+            if (!t) sh_syntax(lexp);
             t->tre.tretyp |= TNEGATE;
             return t;
         }
