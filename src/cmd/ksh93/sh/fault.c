@@ -74,6 +74,8 @@ void handle_sigsegv(int signo, siginfo_t *info, void *context) {
 
 static_fn int notify_builtin(Shell_t *shp, int sig) {
     int action = 0;
+
+    if (!shp->bltinfun) return action;
 #ifdef ERROR_NOTIFY
     if (error_info.flags & ERROR_NOTIFY) action = (*shp->bltinfun)(-sig, NULL, NULL);
     if (action > 0) return action;
@@ -110,7 +112,6 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
     int flag = 0;
     char *trap;
     struct checkpt *pp = (struct checkpt *)shp->jmplist;
-    int action = 0;
 
     if (sig == SIGABRT) {
         sh_signal(sig, (sh_sigfun_t)(SIG_DFL));
@@ -150,8 +151,9 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
             goto done;
         }
         if (flag & SH_SIGDONE) {
-            void *ptr = 0;
-            if (shp->bltinfun) action = notify_builtin(shp, sig);
+            void *ptr = NULL;
+
+            (void)notify_builtin(shp, sig);
             if ((flag & SH_SIGINTERACTIVE) && sh_isstate(shp, SH_INTERACTIVE) &&
                 !sh_isstate(shp, SH_FORKED) && !shp->subshell) {
                 // Check for TERM signal between fork/exec.
@@ -201,7 +203,8 @@ void sh_fault(int sig, siginfo_t *info, void *context) {
         }
 #endif  // SIGTSTP
     }
-    if (shp->bltinfun) action = notify_builtin(shp, sig);
+
+    int action = notify_builtin(shp, sig);
     if (action > 0) goto done;
     shp->trapnote |= flag;
     if (sig < shp->gd->sigmax) shp->sigflag[sig] |= flag;
