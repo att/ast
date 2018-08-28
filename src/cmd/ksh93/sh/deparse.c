@@ -30,6 +30,7 @@
 #include "defs.h"
 
 #include "argnod.h"
+#include "ast_assert.h"
 #include "fault.h"
 #include "sfio.h"
 #include "shnodes.h"
@@ -74,7 +75,7 @@ void sh_deparse(Sfio_t *out, const Shnode_t *t, int tflags) {
 
 // Print script corresponding to shell tree <t>.
 static_fn void p_tree(const Shnode_t *t, int tflags) {
-    char *cp;
+    char *cp = NULL;
     int save = end_line;
     int needbrace = (tflags & NEED_BRACE);
     int bracket = 0;
@@ -305,6 +306,7 @@ static_fn void p_tree(const Shnode_t *t, int tflags) {
                 }
                 p_arg(&(t->lst.lstlef->arg), ' ', 0);
                 if (t->tre.tretyp & TBINARY) {
+                    assert(cp != NULL);
                     sfputr(outfile, cp, ' ');
                     p_arg(&(t->lst.lstrit->arg), ' ', 0);
                 }
@@ -345,8 +347,7 @@ static_fn void p_keyword(const char *word, int flag) {
 }
 
 static_fn void p_arg(const struct argnod *arg, int endchar, int opts) {
-    const char *cp;
-    int flag;
+    int flag = -1;
 
     do {
         if (!arg->argnxt.ap) {
@@ -357,7 +358,7 @@ static_fn void p_arg(const struct argnod *arg, int endchar, int opts) {
         } else if (opts) {
             flag = ' ';
         }
-        cp = arg->argval;
+        const char *cp = arg->argval;
         if (*cp == 0 && (arg->argflag & ARG_EXP) && arg->argchn.ap) {
             int c = (arg->argflag & ARG_RAW) ? '>' : '<';
             sfputc(outfile, c);
