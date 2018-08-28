@@ -34,12 +34,11 @@
 #include "variables.h"
 #else
 #include <setjmp.h>
-
-#include "ast.h"
 #endif  // KSHELL
 
 #include "argnod.h"
 #include "ast.h"
+#include "ast_assert.h"
 #include "cdt.h"
 #include "fault.h"
 #include "glob.h"
@@ -200,7 +199,7 @@ static_fn int scantree(Shell_t *shp, Dt_t *tree, const char *pattern, struct arg
     for (; np && !nv_isnull(np); (np = (Namval_t *)dtnext(tree, np))) {
         cp = nv_name(np);
         if (strmatch(cp, pattern)) {
-            ap = (struct argnod *)stkseek(shp->stk, ARGVAL);
+            (void)stkseek(shp->stk, ARGVAL);
             sfputr(shp->stk, cp, -1);
             ap = (struct argnod *)stkfreeze(shp->stk, 1);
             ap->argbegin = NULL;
@@ -241,7 +240,7 @@ int path_generate(Shell_t *shp, struct argnod *todo, struct argnod **arghead) {
     struct argnod *top = 0;
     struct argnod *apin;
     char *pat, *rescan;
-    char *format;
+    char *format = NULL;
     char comma, range = 0;
     int first, last, incr, count = 0;
     char tmp[32], end[1];
@@ -375,7 +374,9 @@ endloop1:
                 cp = &pat[1];
             } else {
                 *(rescan - 1) = 0;
-                sfsprintf(pat = tmp, sizeof(tmp), format, first);
+                pat = tmp;
+                assert(format != NULL);
+                sfsprintf(pat, sizeof(tmp), format, first);
                 *(rescan - 1) = '}';
                 *(cp = end) = 0;
             }
