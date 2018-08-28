@@ -8,3 +8,7 @@ varFuncNullUB
 // the warning being suppressed. In other words this unmatchedSuppression
 // warnings are false positives.
 unmatchedSuppression
+// There is currently one function which triggers this warning multiple times:
+// src/cmd/ksh93/sh/io.c. Those warnings are all false positives. Suppressing
+// them with inline warnings is too hideous to allow so globally suppress them.
+resourceLeak
