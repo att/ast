@@ -375,12 +375,12 @@ extern const Shtable_t shtab_siginfo[];
 #define sigqueue(sig, action, val) kill(sig, action)
 #endif
 
-#define sh_sigaction(s, action)      \
-    do {                             \
-        sigset_t ss;                 \
-        sigemptyset(&ss);            \
-        if (s) sigaddset(&ss, (s));  \
-        sigprocmask(action, &ss, 0); \
+#define sh_sigaction(s, action)         \
+    do {                                \
+        sigset_t ss;                    \
+        sigemptyset(&ss);               \
+        sigaddset(&ss, (s));            \
+        sigprocmask(action, &ss, NULL); \
     } while (0)
 
 #ifndef CLD_EXITED

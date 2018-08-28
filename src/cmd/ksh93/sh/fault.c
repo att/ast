@@ -222,7 +222,9 @@ void sh_siginit(Shell_t *shp) {
     const struct shtable2 *tp = shtab_signals;
 
     // Make sure no signals are blocked.
-    sh_sigaction(0, SIG_SETMASK);
+    sigset_t ss;
+    sigemptyset(&ss);
+    sigprocmask(SIG_SETMASK, &ss, NULL);
 
     shp->gd->sigmax = MAX_SIGNUM + 1;
     shp->st.trapcom = calloc(shp->gd->sigmax, sizeof(char *));
