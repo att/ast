@@ -276,13 +276,11 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
     ap->argchn.cp = 0;
 
     {
-        int c;
         char *last = out;
         Namval_t *np = nv_search("COMP_KEY", shp->var_tree, 0);
         if (np) np->nvalue.i16 = '\t';
         np = nv_search("COMP_TYPE", shp->var_tree, 0);
         if (np) np->nvalue.i16 = (mode == '\\' ? '\t' : '?');
-        c = *(unsigned char *)out;
         var = mode;
         begin = out = find_begin(outbuff, last, 0, &var);
         if (ep->compdict && mode != '?' &&
@@ -302,7 +300,7 @@ int ed_expand(Edit_t *ep, char outbuff[], int *cur, int *eol, int mode, int coun
         } else {
             addstar = '*';
             while (out < last) {
-                c = *(unsigned char *)out;
+                char c = *out;
                 if (c == 0) break;
                 if (isexp(c)) addstar = 0;
                 if (c == '/') {
