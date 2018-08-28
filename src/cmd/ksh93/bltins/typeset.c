@@ -69,7 +69,7 @@ struct tdata {
     char *prefix;
     char *tname;
     char *help;
-    short aflag;
+    char aflag;
     bool pflag;
     bool cflag;
     int argnum;
@@ -80,10 +80,10 @@ struct tdata {
     int noref;
 };
 
-static_fn int print_namval(Sfio_t *, Namval_t *, int, struct tdata *);
+static_fn int print_namval(Sfio_t *, Namval_t *, bool, struct tdata *);
 static_fn void print_attribute(Namval_t *, void *);
 static_fn void print_all(Sfio_t *, Dt_t *, struct tdata *);
-static_fn void print_scan(Sfio_t *, int, Dt_t *, int, struct tdata *);
+static_fn void print_scan(Sfio_t *, int, Dt_t *, bool, struct tdata *);
 static_fn int unall(int, char **, Dt_t *, Shell_t *);
 static_fn int setall(char **, int, Dt_t *, struct tdata *);
 static_fn void pushname(Namval_t *, void *);
@@ -682,7 +682,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
 #endif
             {
                 if (troot != shp->var_tree &&
-                    (nv_isnull(np) || !print_namval(sfstdout, np, 0, tp))) {
+                    (nv_isnull(np) || !print_namval(sfstdout, np, false, tp))) {
                     sfprintf(sfstderr, sh_translate(e_noalias), name);
                     r++;
                 }
@@ -849,7 +849,7 @@ static_fn int setall(char **argv, int flag, Dt_t *troot, struct tdata *tp) {
                 print_scan(sfstdout, flag | NV_REF, troot, tp->aflag == '+', tp);
             }
         } else if (troot == shp->alias_tree) {
-            print_scan(sfstdout, 0, troot, 0, tp);
+            print_scan(sfstdout, 0, troot, false, tp);
         } else {
             print_all(sfstdout, troot, tp);
         }
@@ -1034,7 +1034,7 @@ int b_builtin(int argc, char *argv[], Shbltin_t *context) {
                     sfprintf(sfstdout, "%s -f %s\n", tdata.prefix, liblist[n].lib);
                 }
             }
-            print_scan(sfstdout, flag, tdata.sh->bltin_tree, 1, &tdata);
+            print_scan(sfstdout, flag, tdata.sh->bltin_tree, true, &tdata);
             return 0;
         }
     }
@@ -1112,7 +1112,7 @@ int b_set(int argc, char *argv[], Shbltin_t *context) {
         }
     } else {
         // Scan name chain and print.
-        print_scan(sfstdout, 0, tdata.sh->var_tree, 0, &tdata);
+        print_scan(sfstdout, 0, tdata.sh->var_tree, false, &tdata);
     }
     return 0;
 }
@@ -1250,12 +1250,11 @@ static_fn int unall(int argc, char **argv, Dt_t *troot, Shell_t *shp) {
 //
 // Print out the name and value of a name-value pair <np>.
 //
-static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *tp) {
+static_fn int print_namval(Sfio_t *file, Namval_t *np, bool omit_attrs, struct tdata *tp) {
     char *cp;
     int indent = tp->indent, outname = 0, isfun;
 
     sh_sigcheck(tp->sh);
-    if (flag) flag = '\n';
     if (tp->noref && nv_isref(np)) return (0);
     if (nv_isattr(np, NV_NOPRINT | NV_INTEGER) == NV_NOPRINT) {
         if (is_abuiltin(np) && strcmp(np->nvname, ".sh.tilde")) {
@@ -1289,10 +1288,12 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *t
         Sfio_t *iop = 0;
         char *fname = 0;
         if (nv_isattr(np, NV_NOFREE)) return (0);
-        if (!flag && !np->nvalue.ip) {
-            sfputr(file, "typeset -fu", ' ');
-        } else if (!flag && !nv_isattr(np, NV_FPOSIX)) {
-            sfputr(file, "function", ' ');
+        if (!omit_attrs) {
+            if (!np->nvalue.ip) {
+                sfputr(file, "typeset -fu", ' ');
+            } else if (!nv_isattr(np, NV_FPOSIX)) {
+                sfputr(file, "function", ' ');
+            }
         }
         cp = nv_name(np);
         if (tp->wctname) cp += strlen(tp->wctname) + 1;
@@ -1301,9 +1302,9 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *t
         if (np->nvalue.ip && np->nvalue.rp->hoffset >= 0) {
             fname = np->nvalue.rp->fname;
         } else {
-            flag = '\n';
+            omit_attrs = false;
         }
-        if (flag) {
+        if (omit_attrs) {
             if (tp->pflag && np->nvalue.ip && np->nvalue.rp->hoffset >= 0) {
                 sfprintf(file, " #line %d %s\n", np->nvalue.rp->lineno,
                          fname ? sh_fmtq(fname) : "");
@@ -1321,26 +1322,25 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *t
             }
             if (iop && sfseek(iop, (Sfoff_t)np->nvalue.rp->hoffset, SEEK_SET) >= 0) {
                 sfmove(iop, file, nv_size(np), -1);
-            } else {
-                flag = '\n';
             }
             if (fname) sfclose(iop);
         }
         return nv_size(np) + 1;
     }
+
     if (nv_arrayptr(np)) {
         if (indent) sfnputc(file, '\t', indent);
         print_value(file, np, tp);
         return 0;
     }
+
     if (nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
     cp = nv_getval(np);
     if (cp) {
         if (indent) sfnputc(file, '\t', indent);
         sfputr(file, nv_name(np), -1);
-        if (!flag) flag = '=';
-        sfputc(file, flag);
-        if (flag != '\n') {
+        sfputc(file, omit_attrs ? '\n' : '=');
+        if (!omit_attrs) {
             if (nv_isref(np) && nv_refsub(np)) {
                 sfputr(file, sh_fmtq(cp), -1);
                 sfprintf(file, "[%s]\n", sh_fmtq(nv_refsub(np)));
@@ -1352,6 +1352,7 @@ static_fn int print_namval(Sfio_t *file, Namval_t *np, int flag, struct tdata *t
     } else if (outname || (tp->scanmask && tp->scanroot == tp->sh->var_tree)) {
         sfputr(file, nv_name(np), '\n');
     }
+
     return 0;
 }
 
@@ -1376,7 +1377,7 @@ static_fn void print_attribute(Namval_t *np, void *data) {
 // subscript or value is printed.
 //
 
-static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct tdata *tp) {
+static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, bool omit_attrs, struct tdata *tp) {
     char **argv;
     Namval_t *np;
     int namec;
@@ -1420,7 +1421,7 @@ static_fn void print_scan(Sfio_t *file, int flag, Dt_t *root, int option, struct
                 tp->scanmask = flag & ~NV_NOSCOPE;
                 tp->scanroot = root;
                 tp->sh->last_root = root;
-                print_namval(file, np, option, tp);
+                print_namval(file, np, omit_attrs, tp);
                 if (!is_abuiltin(np) && nv_isvtree(np)) {
                     name = nv_name(np);
                     len = strlen(name);
