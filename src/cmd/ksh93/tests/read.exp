@@ -30,6 +30,21 @@ expect -ex "\r\ngimme input > "
 expect -ex "\r\ngot ''\r\n"
 expect_prompt
 
+#-p prompt Write prompt on each line before reading.
+send "read -p 'custom_prompt> ' foo\r"
+expect -re "\r\ncustom_prompt> $"
+send [ctrl C]
+expect_prompt
+
+#-v When reading from a terminal the value of the first variable is displayed and used as a default
+# value.
+send "foo=bar\r"
+expect_prompt
+send "read -p 'custom_prompt> ' -v foo\r"
+expect -re "\r\ncustom_prompt> bar$"
+send [ctrl C]
+expect_prompt
+
 # Verify that asking the shell to exit works.
 send "exit\r"
 catch {expect default exp_continue} output

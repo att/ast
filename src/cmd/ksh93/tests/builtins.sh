@@ -64,58 +64,6 @@ do
 done
 
 false ${foo=bar} &&  log_error "false failed"
-read <<!
-hello world
-!
-[[ $REPLY == 'hello world' ]] || log_error "read builtin failed"
-print x:y | IFS=: read a b
-if [[ $a != x ]]
-then
-    log_error "IFS=: read ... not working"
-fi
-
-read <<!
-hello \
-world
-!
-[[ $REPLY == 'hello world' ]] || log_error "read continuation failed"
-read -d x <<!
-hello worldxfoobar
-!
-[[ $REPLY == 'hello world' ]] || log_error "read builtin failed"
-read <<\!
-hello \
-    world \
-
-!
-[[ $REPLY == 'hello     world' ]] || log_error "read continuation2 failed"
-print "one\ntwo" | { read line
-    print $line | /bin/cat > /dev/null
-    read line
-}
-read <<\!
-\
-a\
-\
-\
-b
-!
-if [[ $REPLY != ab ]]
-then
-    log_error "read multiple continuation failed"
-fi
-
-if [[ $line != two ]]
-then
-    log_error "read from pipeline failed"
-fi
-
-line=two
-read line < /dev/null
-if [[ $line != "" ]]
-then
-    log_error "read from /dev/null failed"
-fi
 
 if [[ $(print -R -) != - ]]
 then
@@ -142,7 +90,6 @@ then
 fi
 
 $SHELL -c 'read x <<< hello' 2> /dev/null || log_error 'syntax <<< not recognized'
-($SHELL -c 'read x[1] <<< hello') 2> /dev/null || log_error 'read x[1] not working'
 unset x
 readonly x
 set -- $(readonly)
@@ -206,14 +153,6 @@ then
 fi
 
 $SHELL -c 'command -p ls >/dev/null' 2>/dev/null || log_error 'command -p not working'
-
-read -r var <<\!
-
-!
-if [[ $var != "" ]]
-then
-    log_error "read -r of blank line not working"
-fi
 
 mkdir -p $TEST_DIR/a/b/c 2>/dev/null || log_error  "mkdir -p failed"
 $SHELL -c "cd $TEST_DIR/a/b; cd c" || log_error "initial script relative cd fails"
@@ -305,10 +244,6 @@ then
     log_error 'printf "%g" not working correctly'
 fi
 
-#FIXME#($SHELL read -s foobar <<\!
-#FIXME#testing
-#FIXME#!
-#FIXME#) 2> /dev/null || log_error ksh read -s var fails
 if [[ $(printf +3 2>/dev/null) !=   +3 ]]
 then
     log_error 'printf is not processing formats beginning with + correctly'
@@ -403,30 +338,6 @@ do
    fi
 done
 [[ "$actual" == "$expect" ]] || log_error 'printf "%T" now wrong output' "$expect" "$actual"
-
-behead()
-{
-    read line
-    left=$(cat)
-}
-print $'line1\nline2' | behead
-if [[ $left != line2 ]]
-then
-    log_error "read reading ahead on a pipe"
-fi
-
-expect=a
-read -n1 actual <<!
-abc
-!
-[[ $actual == $expect ]] || log_error "read -n1 failed" "$expect" "$actual"
-
-print -n $'{ read -r line;print $line;}\nhello' > $TEST_DIR/script
-chmod 755 $TEST_DIR/script
-if [[ $($SHELL < $TEST_DIR/script) != hello ]]
-then
-    log_error 'read of incomplete line not working correctly'
-fi
 
 set -f
 set -- *
@@ -550,21 +461,7 @@ done
 
 [[ $($SHELL 2> /dev/null -c 'readonly foo; getopts a: foo -a blah; echo foo') == foo ]] || log_error 'getopts with readonly variable causes script to abort'
 
-expect=abc
-unset actual
-{ read -N3 actual; read -N1 b;}  <<!
-abcdefg
-!
-[[ $actual == $expect ]] || log_error "read -N3 here-document failed" "$expect" "$actual"
-expect=d
-actual="$b"
-[[ $actual == $expect ]] || log_error "read -N1 here-document failed" "$expect" "$actual"
 
-expect=ABC
-read -n3 actual <<!
-ABCDEFG
-!
-[[ $actual == $expect ]] || log_error "read -n3 here-document failed" "$expect" "$actual"
 
 #(print -n a;sleep 1; print -n bcde) | { read -N3 a; read -N1 b;}
 #[[ $a == $exp ]] || log_error "read -N3 from pipe failed -- expected '$exp', got '$a'"
@@ -643,22 +540,6 @@ fi
     do
         (( i++))
     done) == $'0\n0\n1\n1\n2' ]]  || log_error  "DEBUG trap not working"
-typeset -F3 start_x=SECONDS total_t delay=0.02
-typeset reps=50 leeway=5
-sleep $(( 2 * leeway * reps * delay )) |
-for (( i=0 ; i < reps ; i++ ))
-do
-    read -N1 -t $delay
-done
-
-(( total_t = SECONDS - start_x ))
-if (( total_t > leeway * reps * delay ))
-then
-    log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too long"
-elif (( total_t < reps * delay ))
-then
-    log_error "read -t in pipe taking $total_t secs - $(( reps * delay )) minimum - too fast"
-fi
 
 $SHELL -c 'sleep $(printf "%a" .95)' 2> /dev/null || log_error "sleep doesn't except %a format constants"
 $SHELL -c 'test \( ! -e \)' 2> /dev/null ; [[ $? == 1 ]] || log_error 'test \( ! -e \) not working'
@@ -800,14 +681,8 @@ unset ENV
 v=$($SHELL 2> /dev/null +o rc -ic $'getopts a:bc: opt --man\nprint $?')
 [[ $v == 2* ]] || log_error 'getopts --man does not exit 2 for interactive shells'
 
-read baz <<< 'foo\\\\bar'
-[[ $baz == 'foo\\bar' ]] || log_error 'read of foo\\\\bar not getting foo\\bar'
-
 : ~root
 [[ $(builtin) == *.sh.tilde* ]] &&  log_error 'builtin contains .sh.tilde'
-
-IFS=',' read -S a b c <<<'foo,"""title"" data",bar'
-[[ $b == '"title" data' ]] || log_error '"" inside "" not handled correctly with read -S'
 
 PATH=/bin:/usr/bin
 basename=$(whence -p basename)
@@ -853,9 +728,6 @@ actual=$(
 
 { $SHELL -c 'kill %' ;} 2> /dev/null
 [[ $? == 1 ]] || log_error "'kill %' has wrong exit status"
-
-printf '\\\000' | read -r -d ''
-[[ $REPLY == $'\\' ]] || log_error "read -r -d'' ignores -r"
 
 wait
 unset i
