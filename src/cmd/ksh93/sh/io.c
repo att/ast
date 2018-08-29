@@ -2357,7 +2357,7 @@ static_fn int eval_exceptf(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) 
     if (type != SF_READ || !(cp = ep->argv[0])) {
         if (type == SF_CLOSING) {
             sfdisc(iop, SF_POPDISC);
-        } else if (ep && (type == SF_DPOP || type == SF_FINAL)) {
+        } else if (type == SF_DPOP || type == SF_FINAL) {
             free(ep);
         }
         return 0;
