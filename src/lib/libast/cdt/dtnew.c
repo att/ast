@@ -52,11 +52,10 @@ static_fn void *dtnew_memory(Dt_t *dt, void *addr, size_t size, Dtdisc_t *disc) 
     return realloc(addr, size);
 }
 
-/*
- * open a dictionary using disc->memoryf if set or vm otherwise
- */
-
-Dt_t *_dtnew(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
+//
+// Open a dictionary using disc->memoryf if set or vm otherwise.
+//
+Dt_t *dtnew(Dtdisc_t *disc, Dtmethod_t *meth) {
     Dt_t *dt;
     Dc_t dc;
 
@@ -64,11 +63,7 @@ Dt_t *_dtnew(Dtdisc_t *disc, Dtmethod_t *meth, unsigned long version) {
     dc.ndisc = *disc;
     dc.ndisc.eventf = dtnew_event;
     if (!dc.ndisc.memoryf) dc.ndisc.memoryf = dtnew_memory;
-    dt = _dtopen(&dc.ndisc, meth, version);
+    dt = dtopen(&dc.ndisc, meth);
     if (dt) dtdisc(dt, disc, DT_SAMECMP | DT_SAMEHASH);
     return dt;
 }
-
-#undef dtnew
-
-Dt_t *dtnew(Dtdisc_t *disc, Dtmethod_t *meth) { return _dtnew(disc, meth, 20050420L); }

@@ -409,7 +409,6 @@ static_fn void *dthashtrie(Dt_t *dt, void *obj, int type) {
     Fngr_t *fngr = &hash->fngr; /* default finger */
     uint share = hash->data.type & DT_SHARE;
 
-    type = DTTYPE(dt, type); /* map type for upward compatibility */
     if (!(type & DT_OPERATIONS) || !hash->root) return NULL;
 
     /* wipe cached data as they may become stale after these ops */

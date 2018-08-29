@@ -28,7 +28,6 @@
 
 #include <pthread.h>
 
-#define CDT_VERSION 20130509L
 #ifndef AST_PLUGIN_VERSION
 #define AST_PLUGIN_VERSION(v) (v)
 #endif
@@ -71,13 +70,6 @@ struct _dtuser_s /* for application to access and use */
 };
 
 struct _dtlink_s {
-#if CDT_VERSION < 20111111L
-    Dtlink_t *right; /* right child		*/
-    union {
-        unsigned int _hash; /* hash value		*/
-        Dtlink_t *_left;    /* left child		*/
-    } hl;
-#else
     union {
         Dtlink_t *__rght; /* right child or next	*/
         Dtlink_t *__ptbl; /* Dtrehash parent tbl	*/
@@ -86,7 +78,6 @@ struct _dtlink_s {
         Dtlink_t *__left;    /* left child or prev	*/
         unsigned int __hash; /* hash value of object	*/
     } lh;
-#endif
 };
 
 /* private structure to hold an object */
@@ -139,7 +130,6 @@ struct _dt_s {
     Dt_t *view;         /* next on viewpath		*/
     Dt_t *walk;         /* dictionary being walked	*/
     Dtuser_t *user;     /* for user's usage		*/
-    Dttype_f typef;     /* for binary compatibility	*/
 };
 
 /* structure to get status of a dictionary */
@@ -259,9 +249,7 @@ extern void *dtuserdata(Dt_t *, void *, int);
 extern int dtuserevent(Dt_t *, int, void *);
 extern ssize_t dtstat(Dt_t *, Dtstat_t *);
 
-/* deal with upward binary compatibility (operation bit translation, etc.) */
-extern Dt_t *_dtopen(Dtdisc_t *, Dtmethod_t *, unsigned long);
-#define dtopen(dc, mt) _dtopen((dc), (mt), CDT_VERSION)
+extern Dt_t *dtopen(Dtdisc_t *, Dtmethod_t *);
 
 #if !defined(_CDTLIB_H)
 

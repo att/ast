@@ -379,7 +379,6 @@ static_fn void *dttree(Dt_t *dt, void *obj, int type) {
     Dtdisc_t *disc = dt->disc;
     Dttree_t *tree = (Dttree_t *)dt->data;
 
-    type = DTTYPE(dt, type); /* map type for upward compatibility */
     if (!(type & DT_OPERATIONS)) return NULL;
 
     DTSETLOCK(dt);
