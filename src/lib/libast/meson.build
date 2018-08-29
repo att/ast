@@ -4,7 +4,7 @@ libast_files = [meson.build_root() + '/src/lib/libast/comp/conftab.c']
 libast_incdir = include_directories('include', 'aso', 'cdt', 'comp',
                                     'sfio', 'path', 'port', 'string', 'misc',
                                     'tm')
-libast_c_args = shared_c_args + ['-D_BLD_ast']
+libast_c_args = shared_c_args
 
 subdir('aso')
 subdir('comp')
