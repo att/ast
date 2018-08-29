@@ -846,6 +846,8 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
         t->funct.functtre = item(lexp, SH_NOIO);
     } else if (shp->shcomp) {
         exit(1);
+    } else {
+        assert(fp != NULL);
     }
     sh_popcontext(shp, &buff);
     loop_level = saveloop;
@@ -867,12 +869,8 @@ static_fn Shnode_t *funct(Lex_t *lexp) {
     last = fctell();
     // It should be impossible for `fp` to be NULL since a longjmp() should not occur before it has
     // been assigned a non-NULL value in the `if (jmpval == 0) {...}` block above.
-    if (!fp) {
-        abort();
-    } else {
-        fp->functline = last - first;
-        fp->functtre = t;
-    }
+    fp->functline = last - first;
+    fp->functtre = t;
     shp->mktype = in_mktype;
     if (lexp->sh->funlog) {
         if (fcfill() > 0) fcseek(-1);
