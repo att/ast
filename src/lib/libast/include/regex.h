@@ -141,11 +141,7 @@ typedef int (*regexec_t)(const regex_t *, void *, const char *, size_t, const ch
 typedef void *(*regresize_t)(void *, void *, size_t);
 typedef int (*regrecord_t)(void *, const char *, size_t);
 
-#if ASTAPI(20120528)
 typedef ssize_t regoff_t;
-#else
-typedef int regoff_t;
-#endif
 
 typedef struct regmatch_s {
     regoff_t rm_so; /* offset of start		*/

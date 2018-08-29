@@ -28,13 +28,7 @@
 
 #include <pthread.h>
 
-#ifndef CDT_VERSION
-#ifdef _API_ast
-#define CDT_VERSION _API_ast
-#else
 #define CDT_VERSION 20130509L
-#endif /*_AST_api*/
-#endif /*CDT_VERSION*/
 #ifndef AST_PLUGIN_VERSION
 #define AST_PLUGIN_VERSION(v) (v)
 #endif

@@ -35,7 +35,6 @@
 #mesondefine STAT_ST_MTIM
 #mesondefine STAT_ST_MTIMESPEC
 #mesondefine CONF_LIBPATH
-#mesondefine _API_ast
 #mesondefine _PROC_PROG
 #mesondefine _DARWIN_C_SOURCE
 #mesondefine LIBICONV_PLUG

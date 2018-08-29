@@ -308,10 +308,6 @@ extern char **environ;
 
 #include "ast_api.h"
 
-/* api specific mb/wc macros */
-
-#if ASTAPI(20130913)
-
 #define mbsinit(q) (*(q) = ast._ast_mbstate_init.mb_state)
 #define mbinit(q) (*(q) = ast._ast_mbstate_init)
 #define mberrno(q) ((q)->mb_errno)
@@ -323,8 +319,6 @@ extern char **environ;
 #define mbtsize(s, n, q) (mbwide() ? mbsize((s), (n), (q)) : (!!*(s)))
 #define mbtchar(w, s, n, q) (mbwide() ? mbchar((w), (s), (n), (q)) : (*(unsigned char *)(s++)))
 #define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))
-
-#endif
 
 // This is the pre 2013-09-13 implementation of the `mbchar()` macro. We retain it, under a new
 // name, solely to facilitate removing the `ASTAPI()` macro. This allows us to avoid changing every
