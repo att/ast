@@ -32,12 +32,6 @@
 
 #define _AST_STD_I 1
 
-#if _BLD_ast
-#define _BLD_aso 1
-#define _BLD_cdt 1
-#define _BLD_vmalloc 1
-#endif
-
 #include <iconv.h>
 #include <stdbool.h>
 

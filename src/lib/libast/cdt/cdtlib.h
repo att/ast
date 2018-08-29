@@ -28,9 +28,6 @@
 */
 
 #include "ast.h"
-#if !_BLD_cdt
-#include "dlldefs.h"
-#endif
 
 #include <pthread.h>
 #include <unistd.h>
@@ -66,27 +63,6 @@ typedef struct _dtlib_s {
     char *prefix;         /* name prefix */
     Dtmethod_t **methods; /* method list */
 } Dtlib_t;
-
-#if _BLD_cdt
-
-#define CDTLIB(m) Dtmethod_t *m = &_##m;
-
-#else
-
-#define CDTLIB(m)                                                                               \
-    void *cdt_lib(const char *name, Dtdisc_t *disc, const char *type) {                         \
-        int i;                                                                                  \
-        int n;                                                                                  \
-        if (!type) return &cdt_lib_##m;                                                         \
-        n = strlen(cdt_lib_##m.prefix);                                                         \
-        if (!strncmp(type, cdt_lib_##m.prefix, n)) type += n;                                   \
-        for (i = 0; cdt_lib_##m.methods[i]; i++)                                                \
-            if (!strcmp(type, cdt_lib_##m.methods[i]->name + n)) return cdt_lib_##m.methods[i]; \
-        return 0;                                                                               \
-    }                                                                                           \
-    unsigned long plugin_version(void) { return CDT_PLUGIN_VERSION; }
-
-#endif /* _BLD_cdt */
 
 // These macros lock/unlock dictionaries.
 #define DTSETLOCK(dt) (((dt)->data->type & DT_SHARE) ? pthread_mutex_lock(&(dt)->data->lock) : 0)
