@@ -63,12 +63,7 @@
 #include "test.h"
 
 #define HERE_MEM SF_BUFSIZE  // size of here-docs kept in memory
-
-#if CDT_VERSION < 20111111L
-#define hash nvlink.hl._hash
-#else
 #define hash nvlink.lh.__hash
-#endif
 
 // These routines are local to this module.
 

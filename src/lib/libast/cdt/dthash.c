@@ -252,7 +252,6 @@ static_fn void *dthashchain(Dt_t *dt, void *obj, int type) {
     Dtdisc_t *disc = dt->disc;
     Dthash_t *hash = (Dthash_t *)dt->data;
 
-    type = DTTYPE(dt, type); /* map type for upward compatibility */
     if (!(type & DT_OPERATIONS)) return NULL;
 
     DTSETLOCK(dt);
