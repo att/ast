@@ -918,7 +918,6 @@ static_fn char *io_usename(Shell_t *shp, char *name, int *perm, int fno, int mod
         memmove(stkptr(shp->stk, 0), sp, ++ep - sp);
         stkseek(shp->stk, ep - sp);
     } else {
-        ep = sp;
         stkseek(shp->stk, 0);
     }
     sfputc(shp->stk, '.');
@@ -1226,16 +1225,17 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                         if (sfset(sp, 0, 0) & SF_STRING) {
                             tmpname = pathtemp(NULL, 0, NULL, "sf", &f);
                             if (tmpname) {
-                                Sfoff_t last = sfseek(sp, (Sfoff_t)0, SEEK_END);
+                                Sfoff_t last = sfseek(sp, 0, SEEK_END);
                                 unlink(tmpname);
                                 free(tmpname);
                                 write(f, sp->_data, (size_t)last);
-                                lseek(f, (Sfoff_t)0, SEEK_SET);
-                                // Close stream fd, but do not free associated stream
-                                // This is a workaround for use after free issue
-                                // https://github.com/att/ast/issues/398
+                                lseek(f, 0, SEEK_SET);
+                                // Associate the stream with the temp file descriptor. We don't
+                                // close then reopen the stream because the stream pointed to by
+                                // `sp` is used after we return. See
+                                // https://github.com/att/ast/issues/398.
                                 close(sffileno(sp));
-                                sp = sfnew(sp, NULL, -1, f, SF_READ);
+                                (void)sfnew(sp, NULL, -1, f, SF_READ);
                             }
                         }
                         sfsync(shp->sftable[dupfd]);
@@ -2535,9 +2535,8 @@ off_t sh_seek(int fd, off_t offset, int whence) {
     if (!sh_iovalidfd(shp, fd)) abort();
     if ((sp = shp->sftable[fd]) && (sfset(sp, 0, 0) & (SF_READ | SF_WRITE))) {
         return (sfseek(sp, offset, whence));
-    } else {
-        return (lseek(fd, offset, whence));
     }
+    return (lseek(fd, offset, whence));
 }
 
 int sh_dup(int old) {
