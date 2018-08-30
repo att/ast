@@ -1448,11 +1448,16 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
             }
             if (fd < 0) {
                 if (vex) {
-                    if (flag < 2) {
-#ifdef SPAWN_cwd
-                        sh_vexsave(shp, fn, (iof & IODOC) ? -1 : -2, 0, 0);
-#endif
-                    } else if (!(iof & IODOC)) {
+                    // This used to be as follows but AFAICT `flag` can never be negative based on a
+                    // review of all the callers of this function. Leaving this comment in case
+                    // someone debugging a problem in the future finds it helpful.
+                    //
+                    //   if (flag < 2) {
+                    // #ifdef SPAWN_cwd
+                    //     sh_vexsave(shp, fn, (iof & IODOC) ? -1 : -2, 0, 0);
+                    // #endif
+                    //   } else if (!(iof & IODOC)) {
+                    if (!(iof & IODOC)) {
                         sh_close(fn);
                     } else {
                         fd = sh_fcntl(fn, F_DUPFD_CLOEXEC, 10);
@@ -1518,9 +1523,6 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     if (fn <= 2) iovex_stdstream(shp, fn);
 #endif
                 } else if (vex) {
-#ifdef SPAWN_cwd
-                    Spawnvex_f fun = 0;
-#endif
                     void *arg = (void *)shp;
                     if (fn == fd) {
                         fd = sh_fcntl(fn, F_DUPFD_CLOEXEC, fn);
@@ -1528,24 +1530,24 @@ int sh_redirect(Shell_t *shp, struct ionod *iop, int flag) {
                     }
 
 #ifdef SPAWN_cwd
-                    if (trunc)
+                    Spawnvex_f fun = NULL;
+                    if (trunc) {
                         fun = iovex_trunc;
-                    else
-#endif
-                        if (tname) {
+                    } else if (tname) {
                         arg = malloc(sizeof(void *) + strlen(fname) + 1);
                         *(Shell_t **)arg = shp;
                         strcpy((char *)arg + sizeof(void *), fname);
-#ifdef SPAWN_cwd
                         fun = iovex_rename;
-#endif
                     } else if (shp->sftable[fn]) {
-#ifdef SPAWN_cwd
                         fun = iovex_stream;
-#endif
                     }
-#ifdef SPAWN_cwd
                     sh_vexsave(shp, fn, fd, fun, arg);
+#else
+                    if (tname) {
+                        arg = malloc(sizeof(void *) + strlen(fname) + 1);
+                        *(Shell_t **)arg = shp;
+                        strcpy((char *)arg + sizeof(void *), fname);
+                    }
 #endif
                 } else {
                     fd = sh_iorenumber(shp, sh_iomovefd(shp, fd), fn);
