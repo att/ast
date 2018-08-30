@@ -90,7 +90,7 @@
 
 #define RW_ALL (S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH)
 
-static void *timeout;
+static void *timeout = NULL;
 static_fn int (*fdnotify)(int, int);
 
 #if _pipe_socketpair && !_stream_peek
@@ -1983,7 +1983,7 @@ static_fn int slowexcept(Sfio_t *iop, int type, void *data, Sfdisc_t *handle) {
 //
 static_fn void time_grace(void *handle) {
     Shell_t *shp = (Shell_t *)handle;
-    timeout = 0;
+    timeout = NULL;
 
     if (sh_isstate(shp, SH_GRACE)) {
         sh_offstate(shp, SH_GRACE);
@@ -2049,40 +2049,44 @@ static_fn ssize_t slowread(Sfio_t *iop, void *buff, size_t size, Sfdisc_t *handl
     }
     while (1) {
         if (io_prompt(shp, iop, shp->nextprompt) < 0 && errno == EIO) return (0);
-        if (shp->timeout)
-            timeout = (void *)sh_timeradd(
+        if (shp->timeout) {
+            timeout = sh_timeradd(
                 sh_isstate(shp, SH_GRACE) ? 1000L * TGRACE : 1000L * shp->timeout, 0, time_grace,
                 shp);
+        }
         rsize = (*readf)(shgd->ed_context, sffileno(iop), (char *)buff, size, reedit);
-        if (timeout) timerdel(timeout);
-        timeout = 0;
-        if (rsize && *(char *)buff != '\n' && shp->nextprompt == 1 &&
-            sh_isoption(shp, SH_HISTEXPAND)) {
-            int r;
-            ((char *)buff)[rsize] = '\0';
-            if (xp) {
-                free(xp);
-                xp = 0;
+        if (timeout) {
+            timerdel(timeout);
+            timeout = NULL;
+        }
+
+        if (!(rsize && *(char *)buff != '\n' && shp->nextprompt == 1 &&
+            sh_isoption(shp, SH_HISTEXPAND))) break;
+
+        ((char *)buff)[rsize] = '\0';
+        if (xp) {
+            free(xp);
+            xp = 0;
+        }
+
+        int r = hist_expand(shp, buff, &xp);
+        if ((r & (HIST_EVENT | HIST_PRINT)) && !(r & HIST_ERROR) && xp) {
+            strlcpy(buff, xp, size);
+            rsize = strlen(buff);
+            if (!sh_isoption(shp, SH_HISTVERIFY) || readf == ed_read) {
+                sfputr(sfstderr, xp, -1);
+                break;
             }
-            r = hist_expand(shp, buff, &xp);
-            if ((r & (HIST_EVENT | HIST_PRINT)) && !(r & HIST_ERROR) && xp) {
-                strlcpy(buff, xp, size);
-                rsize = strlen(buff);
-                if (!sh_isoption(shp, SH_HISTVERIFY) || readf == ed_read) {
-                    sfputr(sfstderr, xp, -1);
-                    break;
-                }
-                reedit = rsize - 1;
-                continue;
-            }
-            if ((r & HIST_ERROR) && sh_isoption(shp, SH_HISTREEDIT)) {
-                reedit = rsize - 1;
-                continue;
-            }
-            if (r & (HIST_ERROR | HIST_PRINT)) {
-                *(char *)buff = '\n';
-                rsize = 1;
-            }
+            reedit = rsize - 1;
+            continue;
+        }
+        if ((r & HIST_ERROR) && sh_isoption(shp, SH_HISTREEDIT)) {
+            reedit = rsize - 1;
+            continue;
+        }
+        if (r & (HIST_ERROR | HIST_PRINT)) {
+            *(char *)buff = '\n';
+            rsize = 1;
         }
         break;
     }
@@ -2562,32 +2566,33 @@ int sh_fcntl(int fd, int op, ...) {
     arg = va_arg(ap, int);
     va_end(ap);
     newfd = fcntl(fd, op, arg);
-    if (newfd >= 0) {
-        switch (op) {
-            case F_DUPFD:
-            case F_DUPFD_CLOEXEC: {
-                if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
-                if (newfd >= shp->gd->lim.open_max) {
-                    if (!sh_iovalidfd(shp, newfd)) abort();
-                }
-                if (op == F_DUPFD) {
-                    shp->fdstatus[newfd] = (shp->fdstatus[fd] & ~IOCLEX);
-                } else {
-                    shp->fdstatus[newfd] = (shp->fdstatus[fd] | IOCLEX);
-                }
-                if (fdnotify) (*fdnotify)(fd, newfd);
-                break;
+    if (newfd < 0) return newfd;
+
+    switch (op) {
+        case F_DUPFD:
+        case F_DUPFD_CLOEXEC: {
+            if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
+            if (newfd >= shp->gd->lim.open_max) {
+                if (!sh_iovalidfd(shp, newfd)) abort();
             }
-            case F_SETFD: {
-                if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
-                if (arg & FD_CLOEXEC) {
-                    shp->fdstatus[fd] |= IOCLEX;
-                } else {
-                    shp->fdstatus[fd] &= ~IOCLEX;
-                }
+            if (op == F_DUPFD) {
+                shp->fdstatus[newfd] = (shp->fdstatus[fd] & ~IOCLEX);
+            } else {
+                shp->fdstatus[newfd] = (shp->fdstatus[fd] | IOCLEX);
+            }
+            if (fdnotify) (*fdnotify)(fd, newfd);
+            break;
+        }
+        case F_SETFD: {
+            if (shp->fdstatus[fd] == IOCLOSE) shp->fdstatus[fd] = 0;
+            if (arg & FD_CLOEXEC) {
+                shp->fdstatus[fd] |= IOCLEX;
+            } else {
+                shp->fdstatus[fd] &= ~IOCLEX;
             }
         }
     }
+
     return newfd;
 }
 
