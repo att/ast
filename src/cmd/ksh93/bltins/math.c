@@ -25,13 +25,9 @@ static Sfdouble_t local_float(Sfdouble_t a1) { return a1; }
 static int local_fpclassify(Sfdouble_t a1) { return fpclassify(a1); }
 
 static Sfdouble_t local_int(Sfdouble_t a1) {
-    if (a1 < LLONG_MIN || a1 > ULLONG_MAX) {
-        return (Sfdouble_t)0;
-    } else if (a1 < 0) {
-        return (Sfdouble_t)((Sflong_t)a1);
-    } else {
-        return (Sfdouble_t)((Sfulong_t)a1);
-    }
+    if (a1 < LLONG_MIN || a1 > ULLONG_MAX) return (Sfdouble_t)0;
+    if (a1 < 0) return (Sfdouble_t)((Sflong_t)a1);
+    return (Sfdouble_t)((Sfulong_t)a1);
 }
 
 static int local_isfinite(Sfdouble_t a1) { return isfinite(a1); }

@@ -576,23 +576,21 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
         for (fp = np->nvfun; fp; fp = fp->next) {
             if (fp->disc && fp->disc->writef) break;
         }
-        if (fp) {
-            return (*fp->disc->writef)(np, iop, 0, fp);
-        } else {
-            int n = nv_size(np);
-            if (nv_isarray(np)) {
-                nv_onattr(np, NV_RAW);
-                cp = nv_getval(np);
-                nv_offattr(np, NV_RAW);
-            } else {
-                cp = (char *)np->nvalue.cp;
-            }
+        if (fp) return (*fp->disc->writef)(np, iop, 0, fp);
 
-            size = n;
-            if (size == 0) size = strlen(cp);
-            size = sfwrite(iop, cp, size);
-            return (n ? n : size);
+        int n = nv_size(np);
+        if (nv_isarray(np)) {
+            nv_onattr(np, NV_RAW);
+            cp = nv_getval(np);
+            nv_offattr(np, NV_RAW);
+        } else {
+            cp = (char *)np->nvalue.cp;
         }
+
+        size = n;
+        if (size == 0) size = strlen(cp);
+        size = sfwrite(iop, cp, size);
+        return (n ? n : size);
     } else if (nv_isarray(np) && (ap = nv_arrayptr(np)) && array_elem(ap) &&
                (ap->flags & (ARRAY_UNDEF | ARRAY_SCAN))) {
         Namval_t *nspace = shp->namespace;
@@ -601,23 +599,23 @@ static_fn ssize_t fmtbase64(Shell_t *shp, Sfio_t *iop, char *string, const char 
         sfputc(iop, ')');
         shp->namespace = nspace;
         return sftell(iop);
-    } else {
-        Namval_t *nspace = shp->namespace;
-        if (alt == 1 && nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
-        if (fmt && strncmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
-        if (*string == '.') shp->namespace = 0;
-        cp = nv_getval(np);
-        if (*string == '.') shp->namespace = nspace;
-        if (alt == 1) {
-            nv_offattr(np, NV_EXPORT);
-        } else if (fmt && strncmp(fmt, "json", 4) == 0) {
-            nv_offattr(np, NV_JSON);
-        }
-
-        if (!cp) return 0;
-        size = strlen(cp);
-        return sfwrite(iop, cp, size);
     }
+
+    Namval_t *nspace = shp->namespace;
+    if (alt == 1 && nv_isvtree(np)) nv_onattr(np, NV_EXPORT);
+    if (fmt && strncmp(fmt, "json", 4) == 0) nv_onattr(np, NV_JSON);
+    if (*string == '.') shp->namespace = 0;
+    cp = nv_getval(np);
+    if (*string == '.') shp->namespace = nspace;
+    if (alt == 1) {
+        nv_offattr(np, NV_EXPORT);
+    } else if (fmt && strncmp(fmt, "json", 4) == 0) {
+        nv_offattr(np, NV_JSON);
+    }
+
+    if (!cp) return 0;
+    size = strlen(cp);
+    return sfwrite(iop, cp, size);
 #else   // 1
         nv_onattr(np, NV_RAW);
     cp = nv_getval(np);

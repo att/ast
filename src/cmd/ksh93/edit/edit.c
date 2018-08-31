@@ -589,9 +589,9 @@ int ed_read(void *context, int fd, char *buff, int size, int reedit) {
             }
             if (sh_isoption(ep->sh, SH_EMACS) || sh_isoption(ep->sh, SH_VI)) buff[0] = cntl('L');
             return 1;
-        } else {
-            ep->sh->winch = 0;
         }
+        ep->sh->winch = 0;
+
         // An interrupt that should be ignored.
         errno = 0;
         if (!waitevent || (rv = (*waitevent)(fd, -1L, 0)) >= 0) {

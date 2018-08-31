@@ -1305,11 +1305,8 @@ void *nv_associative(Namval_t *np, const char *sp, int mode) {
                 }
                 ap->cur = np;
             }
-            if (ap->cur) {
-                return (void *)(&ap->cur->nvalue);
-            } else {
-                return (void *)(&ap->cur);
-            }
+            if (ap->cur) return &ap->cur->nvalue;
+            return &ap->cur;
         }
     }
 }

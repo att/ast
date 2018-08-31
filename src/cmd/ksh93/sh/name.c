@@ -1779,9 +1779,8 @@ static_fn void rightjust(char *str, int size, int fill) {
             ;  // empty loop
         }
         return;
-    } else {
-        *(sp = str + size) = 0;
     }
+    *(sp = str + size) = 0;
     if (n == 0) {
         while (sp > str) *--sp = ' ';
         return;

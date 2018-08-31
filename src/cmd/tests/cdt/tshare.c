@@ -36,22 +36,17 @@ static int event(Dt_t *dt, int type, void *obj, Dtdisc_t *disc) {
 
     if (type == DT_OPEN) { /* opening first dictionary */
         if (obj) {
-            if (Current == &Space[0])
-                return 0;
-            else /* opening a dictionary sharing with some previous one */
-            {
-                *((void **)obj) = (void *)(&Space[0]);
-                return 1;
-            }
-        } else
-            return 0;
-    } else if (type == DT_CLOSE) {
-        if (Close == 0) /* do not free objects */
+            if (Current == &Space[0]) return 0;
+            // opening a dictionary sharing with some previous one
+            *((void **)obj) = (void *)(&Space[0]);
             return 1;
-        else
-            return 0;
-    } else
+        }
         return 0;
+    } else if (type == DT_CLOSE) {
+        if (Close == 0) return 1;  // do not free objects
+        return 0;
+    }
+    return 0;
 }
 
 static void *memory(Dt_t *dt, void *buf, size_t size, Dtdisc_t *disc) {

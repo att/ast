@@ -302,11 +302,10 @@ static_fn int eval_e3(struct test *tp) {
         if (cp) {
             op = strtol(cp, &binop, 10);
             return *binop ? 0 : tty_check(op);
-        } else {
-            // Test -t with no arguments.
-            tp->ap--;
-            return (tty_check(1));
         }
+        // Test -t with no arguments.
+        tp->ap--;
+        return (tty_check(1));
     }
     if (*arg == '-' && arg[2] == 0) {
         op = arg[1];
@@ -679,8 +678,6 @@ static_fn int test_stat(const char *name, struct stat *buff) {
         errno = ENOENT;
         return (-1);
     }
-    if (sh_isdevfd(name))
-        return (fstat((int)strtol(name + 8, (char **)0, 10), buff));
-    else
-        return (stat(name, buff));
+    if (sh_isdevfd(name)) return (fstat((int)strtol(name + 8, (char **)0, 10), buff));
+    return (stat(name, buff));
 }

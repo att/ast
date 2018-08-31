@@ -407,9 +407,8 @@ int ed_viread(void *context, int fd, char *shbuf, int nchar, int reedit) {
         }
         if (vp->ed->nhlist) ed_histlist(vp->ed, 0);
         return last_virt;
-    } else {
-        return -1;
     }
+    return -1;
 }
 
 //
@@ -693,11 +692,8 @@ static_fn int cntlmode(Vi_t *vp) {
                 }
 #if KSHELL
             vcommand:
-                if (ed_fulledit(vp->ed) == GOOD) {
-                    return (BIGVI);
-                } else {
-                    goto ringbell;
-                }
+                if (ed_fulledit(vp->ed) == GOOD) return (BIGVI);
+                goto ringbell;
 #endif /* KSHELL */
             }
             // FALLTHRU
@@ -2065,9 +2061,8 @@ addin:
                     replace(vp, c, 1);
                 }
                 return GOOD;
-            } else {
-                return BAD;
             }
+            return BAD;
         }
         default: { return BAD; }
     }

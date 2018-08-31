@@ -2344,10 +2344,9 @@ static_fn int charlen(const char *string, int len) {
             while (mb1char(str)) n++;
         }
         return n;
-    } else {
-        if (len < 0) return strlen(string);
-        return len;
     }
+    if (len < 0) return strlen(string);
+    return len;
 }
 
 //
@@ -2554,9 +2553,8 @@ static_fn char *special(Shell_t *shp, int c) {
         case 0: {
             if (sh_isstate(shp, SH_PROFILE) || shp->fn_depth == 0 || !shp->st.cmdname) {
                 return shp->shname;
-            } else {
-                return shp->st.cmdname;
             }
+            return shp->st.cmdname;
         }
     }
     return NULL;

@@ -1110,11 +1110,8 @@ struct table {
 
 static_fn Namval_t *next_table(Namval_t *np, Dt_t *root, Namfun_t *fp) {
     struct table *tp = (struct table *)fp;
-    if (root) {
-        return (Namval_t *)dtnext(root, np);
-    } else {
-        return (Namval_t *)dtfirst(tp->dict);
-    }
+    if (root) return (Namval_t *)dtnext(root, np);
+    return (Namval_t *)dtfirst(tp->dict);
 }
 
 static_fn Namval_t *create_table(Namval_t *np, const void *name, int flags, Namfun_t *fp) {

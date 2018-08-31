@@ -52,24 +52,20 @@ static int chkevent(int type) {
         memset(Event, 0, sizeof(Event));
         Index = 0;
         return 0;
-    } else {
-        cnt = 0;
-        for (i = 0; i < sizeof(Event) / sizeof(Event[0]); ++i)
-            if (Event[i] == type) cnt += 1;
-        return cnt;
     }
+    cnt = 0;
+    for (i = 0; i < sizeof(Event) / sizeof(Event[0]); ++i)
+        if (Event[i] == type) cnt += 1;
+    return cnt;
 }
 
 static void *memory(Dt_t *dt, void *obj, size_t size, Dtdisc_t *disc) {
     UNUSED(dt);
     UNUSED(disc);
 
-    if (!obj)
-        return malloc(size);
-    else {
-        free(obj);
-        return NULL;
-    }
+    if (!obj) return malloc(size);
+    free(obj);
+    return NULL;
 }
 
 Dtdisc_t Disc = {0, sizeof(long), -1, newint, NULL, compare, hashint, memory, event};
