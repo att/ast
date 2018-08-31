@@ -158,11 +158,11 @@
 /*
  * multibyte macros
  */
-#define mbcoll() (ast.mb_xfrm != 0)
+#define mbcoll() (1)
 #define mbwide() (MB_CUR_MAX > 1)
 
 #define mbwidth(w) (ast.mb_width ? (*ast.mb_width)(w) : 1)
-#define mbxfrm(t, f, n) (mbcoll() ? (*ast.mb_xfrm)((char *)(t), (char *)(f), n) : 0)
+#define mbxfrm(t, f, n) strxfrm((char *)(t), (char *)(f), n)
 #define mbalpha(w) (ast.mb_alpha ? (*ast.mb_alpha)(w) : isalpha((w)&0xff))
 
 #define mbsrtowcs(w, s, n, q) (*ast._ast_mbsrtowcs)((s), (w), (n), (mbstate_t *)(q))
