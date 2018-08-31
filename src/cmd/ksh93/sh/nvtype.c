@@ -365,7 +365,7 @@ static_fn Namfun_t *clone_type(Namval_t *np, Namval_t *mp, int flags, Namfun_t *
         pp->childfun.ptype = pp;
         return fp;
     }
-    if (flags & NV_TYPE) return (nv_clone_disc(fp, flags));
+    if (flags & NV_TYPE) return nv_clone_disc(fp, flags);
     if (size == 0 && (!fp->disc || (size = fp->disc->dsize) == 0)) size = sizeof(Namfun_t);
     dp = (Namtype_t *)malloc(size + pp->nref * sizeof(struct Namref));
     if (pp->nref) {
@@ -527,7 +527,7 @@ found:
     } else {
         if (name[n] != '=') {
             for (i = 0; i < dp->ndisc; i++) {
-                if ((strncmp(name, dp->names[i], n) == 0) && dp->names[i][n] == 0) return (nq);
+                if ((strncmp(name, dp->names[i], n) == 0) && dp->names[i][n] == 0) return nq;
             }
         }
         if (!(flag & NV_NOFAIL)) {
@@ -632,7 +632,7 @@ static_fn int typeinfo(Opt_t *op, Sfio_t *out, const char *str, Optdisc_t *od) {
         }
         if (!fp) {
             sfprintf(sfstderr, "%s: not a type\n", np->nvname);
-            return (-1);
+            return -1;
         }
         if (strcmp(str, "other") == 0) return 0;
         tp = fp->type;
@@ -1215,11 +1215,11 @@ Namval_t *nv_type(Namval_t *np) {
 
     if (nv_isattr(np, NV_BLTIN | BLT_DCL) == (NV_BLTIN | BLT_DCL)) {
         Namdecl_t *ntp = (Namdecl_t *)nv_context(np);
-        return (ntp ? ntp->tp : 0);
+        return ntp ? ntp->tp : 0;
     }
     for (fp = np->nvfun; fp; fp = fp->next) {
-        if (fp->type) return (fp->type);
-        if (fp->disc && fp->disc->typef && (np = (*fp->disc->typef)(np, fp))) return (np);
+        if (fp->type) return fp->type;
+        if (fp->disc && fp->disc->typef && (np = (*fp->disc->typef)(np, fp))) return np;
     }
     return NULL;
 }
@@ -1249,8 +1249,8 @@ static_fn void type_init(Namval_t *np) {
 int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
     int isnull = nv_isnull(np);
     int rdonly = nv_isattr(np, NV_RDONLY);
-    char *val = 0;
-    Namarr_t *ap = 0;
+    char *val = NULL;
+    Namarr_t *ap = NULL;
     Shell_t *shp = sh_ptr(np);
     int nelem = 0, subshell = shp->subshell;
     Namval_t *tq;
@@ -1292,7 +1292,10 @@ int nv_settype(Namval_t *np, Namval_t *tp, int flags) {
             val = strdup(nv_getval(np));
             if (!(flags & NV_APPEND)) _nv_unset(np, NV_RDONLY);
         }
-        if (!nv_clone(tp, np, flags | NV_NOFREE)) return (0);
+        if (!nv_clone(tp, np, flags | NV_NOFREE)) {
+            free(val);
+            return 0;
+        }
     }
     if (ap) {
         int nofree;
@@ -1507,7 +1510,7 @@ int sh_outtype(Shell_t *shp, Sfio_t *out) {
         n = cp - shp->prefix + 1;
     }
     strcpy(nvtype, NV_CLASS);
-    if (!(mp = nv_open(nvtype, shp->var_base, NV_NOADD | NV_VARNAME))) return (0);
+    if (!(mp = nv_open(nvtype, shp->var_base, NV_NOADD | NV_VARNAME))) return 0;
     memcpy(&node, L_ARGNOD, sizeof(node));
     L_ARGNOD->nvfun = 0;
     L_ARGNOD->nvalue.cp = 0;
