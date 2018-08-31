@@ -382,10 +382,9 @@ static_fn int sh_tclear(Shell_t *shp, Shnode_t *t) {
         case TTST: {
             if ((t->tre.tretyp & TPAREN) == TPAREN) {
                 return sh_tclear(shp, t->lst.lstlef);
-            } else {
-                n = xec_p_arg(shp, &(t->lst.lstlef->arg), 0);
-                if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
             }
+            n = xec_p_arg(shp, &(t->lst.lstlef->arg), 0);
+            if (t->tre.tretyp & TBINARY) n += xec_p_arg(shp, &(t->lst.lstrit->arg), 0);
         }
     }
     return n;
@@ -610,7 +609,8 @@ static_fn void free_list(struct openlist *olist) {
 // Set _ to reference for ${.sh.name}[$.sh.subscript].
 //
 static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Namref *nr) {
-    char *sp = 0, *cp;
+    char *sp = NULL;
+    char *cp;
     Namarr_t *ap;
     Namval_t *np;
 
@@ -628,7 +628,11 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     nr->table = shp->last_table;
     if (!nr->table && shp->namespace) nr->table = shp->namespace;
     shp->instance = 1;
-    if ((ap = nv_arrayptr(nq)) && (sp = nv_getsub(nq))) sp = strdup(sp);
+    ap = nv_arrayptr(nq);
+    if (ap) {
+        sp = nv_getsub(nq);
+        if (sp) nr->sub = strdup(sp);
+    }
     shp->instance = 0;
     if (shp->var_tree != shp->var_base &&
         !nv_search((char *)nq, nr->root, HASH_BUCKET | HASH_NOSCOPE)) {
@@ -638,10 +642,10 @@ static_fn int set_instance(Shell_t *shp, Namval_t *nq, Namval_t *node, struct Na
     memcpy(node, L_ARGNOD, sizeof(*node));
     L_ARGNOD->nvalue.nrp = nr;
     L_ARGNOD->nvflag = NV_REF | NV_NOFREE;
-    L_ARGNOD->nvfun = 0;
-    L_ARGNOD->nvenv = 0;
-    if (sp) {
-        nv_putval(SH_SUBSCRNOD, nr->sub = sp, NV_NOFREE);
+    L_ARGNOD->nvfun = NULL;
+    L_ARGNOD->nvenv = NULL;
+    if (ap && nr->sub) {
+        nv_putval(SH_SUBSCRNOD, nr->sub, NV_NOFREE);
         return ap->flags & ARRAY_SCAN;
     }
     return 0;
@@ -2408,7 +2412,6 @@ int sh_exec(Shell_t *shp, const Shnode_t *t, int flags) {
                         np = nv_open(xp, shp->var_tree, flag);
                         if (sp) *sp++ = '.';
                     }
-                    offset = stktell(stkp);
                     if (nv_istable(np)) {
                         root = nv_dict(np);
                     } else {
