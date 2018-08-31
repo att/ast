@@ -216,7 +216,7 @@ fi  # if false
 # Multibyte identifiers.
 #
 exp=OK
-got=$(export LC_ALL=en_US.UTF-8; $SHELL -x -c "$(printf '\u[0101]=OK; print ${\u[0101]}')" 2>/tmp/x)
+got=$(export LC_ALL=en_US.UTF-8; $SHELL -c "$(printf '\u[0101]=OK; print ${\u[0101]}')" 2>&1)
 [[ $got == "$exp" ]] || log_error "multibyte variable definition/expansion failed" "$exp" "$got"
 got=$(export LC_ALL=en_US.UTF-8; $SHELL -c "$(printf 'function \u[0101]\n{\nprint OK;\n};
 \u[0101]')" 2>&1)
