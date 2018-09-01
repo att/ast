@@ -49,6 +49,7 @@ set is_control_mode 0
 # ==========
 # Populate the command history with a couple of commands.
 # Also ensures we are in inset mode
+log_test_entry
 send "echo hello\r"
 expect "\r\nhello\r\n" {
     puts "echo 1 works"

@@ -4,13 +4,17 @@
 set pid [spawn $ksh]
 expect_prompt
 
+# ==========
 # Since this is the very first `expect` based unit test written for ksh let's start with a very
 # basic sanity test.
+log_test_entry
 send "echo hello\r"
 expect "\r\nhello\r\n"
 expect_prompt
 
+# ==========
 # This is a regression test for issue #774.
+log_test_entry
 send "function read1 {\r"
 send "  print -n 'gimme input > '\r"
 send "  read input\r"
@@ -23,21 +27,27 @@ expect -ex "\r\ngimme input > abc"
 expect -ex "\r\ngot 'abc'\r\n"
 expect_prompt
 
+# ==========
 # Test that no input to `read` is handled correctly.
+log_test_entry
 send "read1\r"
 send "\r"
 expect -ex "\r\ngimme input > "
 expect -ex "\r\ngot ''\r\n"
 expect_prompt
 
+# ==========
 #-p prompt Write prompt on each line before reading.
+log_test_entry
 send "read -p 'custom_prompt> ' foo\r"
 expect -re "\r\ncustom_prompt> $"
 send [ctrl C]
 expect_prompt
 
+# ==========
 #-v When reading from a terminal the value of the first variable is displayed and used as a default
 # value.
+log_test_entry
 send "foo=bar\r"
 expect_prompt
 send "read -p 'custom_prompt> ' -v foo\r"
@@ -45,7 +55,9 @@ expect -re "\r\ncustom_prompt> bar$"
 send [ctrl C]
 expect_prompt
 
+# ==========
 # Verify that asking the shell to exit works.
+log_test_entry
 send "exit\r"
 catch {expect default exp_continue} output
 catch {wait}
