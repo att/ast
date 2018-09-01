@@ -55,7 +55,8 @@ int chrexp(const char *s, char **p, int *m, int flags) {
     mbinit(&q);
     for (;;) {
         b = s;
-        switch (c = mbtchar(&d, s, MB_LEN_MAX, &q)) {
+        c = mbchar(&d, s, MB_LEN_MAX, &q);
+        switch (c) {
             case 0:
                 s = b;
                 break;

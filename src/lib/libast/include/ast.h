@@ -312,7 +312,6 @@ extern char **environ;
 #define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
 
-#define mbtchar(w, s, n, q) (mbwide() ? mbchar((w), (s), (n), (q)) : (*(unsigned char *)(s++)))
 #define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))
 
 // This is the pre 2013-09-13 implementation of the `mbchar()` macro. We retain it, under a new
