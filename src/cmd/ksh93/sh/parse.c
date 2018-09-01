@@ -1373,9 +1373,10 @@ static_fn Shnode_t *simple(Lex_t *lexp, int flag, struct ionod *io) {
                 char *last, *cp;
                 if (assignment == 1) {
                     last = strchr(argp->argval, '=');
-                    if (last && (last[-1] == ']' || (last[-1] == '+' && last[-2] == ']')) &&
-                        (cp = strchr(argp->argval, '[')) && (cp < last) && cp[-1] != '.') {
-                        last = cp;
+                    assert(last);
+                    if (last[-1] == ']' || (last[-1] == '+' && last[-2] == ']')) {
+                        cp = strchr(argp->argval, '[');
+                        if (cp && cp < last && cp[-1] != '.') last = cp;
                     }
                     stkseek(stkp, ARGVAL);
                     sfwrite(stkp, argp->argval, last - argp->argval);
