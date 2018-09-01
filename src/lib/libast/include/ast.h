@@ -312,8 +312,6 @@ extern char **environ;
 #define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
 
-#define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))
-
 // This is the pre 2013-09-13 implementation of the `mbchar()` macro. We retain it, under a new
 // name, solely to facilitate removing the `ASTAPI()` macro. This allows us to avoid changing every
 // place in the ksh code that uses this legacy macro in a single change. With this in place we can

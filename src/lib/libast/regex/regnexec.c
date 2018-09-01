@@ -620,7 +620,7 @@ static_fn int collic(Celt_t *ce, char *key, char *nxt, int c, int x) {
         else
             return 0;
         mbinit(&q);
-        x = mbtconv(key, c, &q);
+        x = mbconv(key, c, &q);
         key[x] = 0;
         return collelt(ce, key, c, 0);
     }

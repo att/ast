@@ -78,7 +78,7 @@ int sfputwc(Sfio_t *f, int w) {
     if (f->mode != SF_WRITE && _sfmode(f, SF_WRITE, 0) < 0) SFMTXRETURN(f, -1);
     SFLOCK(f, 0);
 
-    n = mbtconv(buf, w, SFMBSTATE(f));
+    n = mbconv(buf, w, SFMBSTATE(f));
 
     if (n > 8 || SFWPEEK(f, s, m) < n)
         n = SFWRITE(f, (void *)s, n); /* write the hard way */
