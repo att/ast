@@ -83,7 +83,7 @@ char *fmtquote(const char *as, const char *qb, const char *qe, size_t n, int fla
     escaped = spaced = !!(flags & FMT_ALWAYS);
     mbinit(&q);
     while (s < e) {
-        if ((m = mbtsize(s, MB_LEN_MAX, &q)) > 1 && (s + m) <= e) {
+        if ((m = mbrlen((char *)s, MB_LEN_MAX, &q.mb_state)) > 1 && (s + m) <= e) {
             c = mbchar(&w, s, MB_LEN_MAX, &q);
             if (!spaced && !escaped && (iswspace(c) || iswcntrl(c))) spaced = 1;
             s -= m;

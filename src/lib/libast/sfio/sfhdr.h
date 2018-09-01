@@ -117,7 +117,8 @@
 #define SFMBCPY(to, fr) (*(Mbstate_t *)(to) = *(fr))
 #define SFMBCLR(mb) mbinit(((Mbstate_t *)(mb)))
 #define SFMBSET(lhs, v) (lhs = (v))
-#define SFMBLEN(s, mb) mbtsize((s), MB_LEN_MAX, (mb))
+// The cast is because some calls pass a `Mbstate_t*` which embeds a `mbstate_t` at its start.
+#define SFMBLEN(s, mb) mbrlen((s), MB_LEN_MAX, (mbstate_t *)(mb))
 #define SFMBDCL(ms) Mbstate_t ms;
 #define SFMBDCLP(ms) Mbstate_t *ms;
 #define SFMBSTATE(f) _sfmbstate(f)

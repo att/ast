@@ -309,11 +309,9 @@ extern char **environ;
 #define mbsinit(q) (*(q) = ast._ast_mbstate_init.mb_state)
 #define mbinit(q) (*(q) = ast._ast_mbstate_init)
 #define mberrno(q) ((q)->mb_errno)
-#define mbsize(s, n, q) (*ast._ast_mbrlen)((char *)(s), (n), (mbstate_t *)(q))
 #define mbchar(w, s, n, q) (((s) += (ast_mbrchar)((wchar_t *)(w), (char *)(s), (n), (q))), (*(w)))
 #define mbconv(s, w, q) (*ast._ast_wcrtomb)((s), (w), (mbstate_t *)(q))
 
-#define mbtsize(s, n, q) (mbwide() ? mbsize((s), (n), (q)) : (!!*(s)))
 #define mbtchar(w, s, n, q) (mbwide() ? mbchar((w), (s), (n), (q)) : (*(unsigned char *)(s++)))
 #define mbtconv(s, w, q) (mbwide() ? mbconv((s), (w), (q)) : ((*(s) = (w)), 1))
 

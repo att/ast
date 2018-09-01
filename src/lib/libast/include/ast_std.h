@@ -103,7 +103,6 @@ typedef struct {
 
     Mbstate_t _ast_mbstate_init;
 
-    size_t (*_ast_mbrlen)(const char *, size_t, mbstate_t *);
     size_t (*_ast_mbrtowc)(wchar_t *, const char *, size_t, mbstate_t *);
     size_t (*_ast_mbsrtowcs)(wchar_t *, const char **, size_t, mbstate_t *);
     size_t (*_ast_wcrtomb)(char *, wchar_t, mbstate_t *);
