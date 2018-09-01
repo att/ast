@@ -34,7 +34,7 @@
 **	Written by Glenn Fowler (03/18/1998).
 */
 
-static_fn int slowexcept(Sfio_t *f, int type, void *v, Sfdisc_t *disc) {
+static_fn int sfdc_slowexcept(Sfio_t *f, int type, void *v, Sfdisc_t *disc) {
     NOTUSED(f);
     NOTUSED(v);
     NOTUSED(disc);
@@ -61,7 +61,7 @@ int sfdcslow(Sfio_t *f) {
     disc->readf = NULL;
     disc->writef = NULL;
     disc->seekf = NULL;
-    disc->exceptf = slowexcept;
+    disc->exceptf = sfdc_slowexcept;
 
     if (sfdisc(f, disc) != disc) {
         free(disc);
